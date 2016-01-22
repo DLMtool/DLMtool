@@ -60,6 +60,8 @@ export(
     "IT10",
     "ITM",
     "L2A",
+	"LBSPR_ItTAC",
+	"LBSPR_ItEff",
     "LstepCC1",
     "LstepCC4",
     "Ltarget1",

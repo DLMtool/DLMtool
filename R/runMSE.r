@@ -504,7 +504,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   print("Determining available methods")  # print an progress report
   flush.console()                         # update the console
   
-  PosMPs <- Can(DLM_data, timelimit=timelimit)                 # list all the methods that could be applied to a DLM data object
+  PosMPs <- Can(DLM_data, timelimit=timelimit)  # list all the methods that could be applied to a DLM data object
   # print(PosMPs)
   if(is.na(MPs[1])) {
     MPs<-PosMPs      # if the user does not supply an argument MPs run the MSE or all available methods
@@ -512,7 +512,10 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     #print(MPs)
   }	
   if(!is.na(MPs[1]))MPs<-MPs[MPs%in%PosMPs] # otherwise run the MSE for all methods that are deemed possible
-  if(length(MPs)==0)stop('MSE stopped: no viable methods \n\n') # if none of the user specied methods are possible stop the run
+  if(length(MPs)==0) {
+    print(Cant(DLM_data, timelimit=timelimit))
+    stop('MSE stopped: no viable methods \n\n') # if none of the user specied methods are possible stop the run
+  }	
   
   nMP <- length(MPs)                    # the total number of methods used
   
@@ -595,6 +598,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
       FM_P[SAYR]<--log(1-temp)
 	  
     }else{ # input control
+	  MSElist[[mm]]@MPrec <- FinF # Current Effort 
 	  runIn <- runInMP(MSElist[[mm]],MPs=MPs[mm], reps=reps) # Apply input control MP
 	  inc <- runIn[[1]]
       DLM_data <- runIn[[2]]
@@ -784,6 +788,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
           FM_P[SAYR]<--log(1-temp)
 		  
         }else{
+		  MSElist[[mm]]@MPrec<-Ei
           runIn <- runInMP(MSElist[[mm]],MPs=MPs[mm], reps=reps) # Apply input control MP
 	      inc <- runIn[[1]]
           DLM_data <- runIn[[2]]
@@ -800,7 +805,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 		      Lens=Len_age[,,y+nyears]))
 	      }
 
-          MSElist[[mm]]@MPrec<-Ei
+          
 
           if(sum(Si!=1)==0){ # if there is no spatial closure
             if(sum(!is.na(newSel[1,1]))==0){ # if no vulnerability schedule is specified
