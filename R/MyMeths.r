@@ -211,7 +211,6 @@ LBSPR <- function(x, DLM_data, yrsmth=1, perc=pstar,reps=reps) {
  SizeBins$Linc <- binWidth
  SizeBins$ToSize <- max(CAL_binsmid) + 0.5*binWidth
 
- st <- Sys.time()
  if(sfIsRunning()){
     AllOpt <- sfSapply(1:length(IsEmpty), function (X) 
 		DoOpt(StockPars, LenDat=LenMatrix[X,], SizeBins=SizeBins, mod="LBSPR"))
@@ -472,5 +471,49 @@ LBSPR_ItEff <- function(x, DLM_data, yrsmth=1, perc=pstar,reps=reps) {
 }
 class(LBSPR_ItEff)<-"DLM_input"
 
+LBSPR_ItSel <- function(x, DLM_data, yrsmth=1, perc=pstar,reps=reps) {
+ dependencies="DLM_data@CAL, DLM_data@CAL_bins, DLM_data@vbLinf, 
+	DLM_data@vbK, DLM_data@Mort, LM_data@vbK, DLM_data@L50, DLM_data@L95, 
+	DLM_data@wlb"
+  MiscList <- LBSPR(x, DLM_data, yrsmth=yrsmth, perc=pstar,reps=reps)
   
+  XX <- 1:4 
+  YY <- MiscList[[2]][(length(MiscList[[2]]) - (max(XX)-1)):length(MiscList[[2]])]
+  
+  EstSPR <- YY[length(YY)]
+  
+  TgSPR <- 0.4
+  h <- DLM_data@steep[x]
+  SPRLim <- -(2*(h-1))/(3*h+1) # SPR that results in 0.5 R0
+ 
+  Allocate <- 1
+  Effort <- 1
+  Spatial <- c(1,1)
+
+  if (EstSPR < TgSPR) {
+    newLFC <- DLM_data@L50[x] * 1.05
+    newLFS <- DLM_data@L50[x] * 1.1
+    Vuln <-c(newLFC, newLFS)
+  }
+  if (EstSPR < SPRLim) {
+    newLFC <- DLM_data@L50[x] * 1.2
+    newLFS <- DLM_data@L50[x] * 1.25
+    Vuln <-c(newLFC, newLFS)  
+  }
+  if (EstSPR >= TgSPR) {
+    newLFC <- DLM_data@L50[x] * 0.85
+    newLFS <- DLM_data@L50[x] * 0.9
+    Vuln <-c(newLFC, newLFS)  
+  }
+   
+ 
+  out <- c(Allocate, Effort, Spatial, Vuln)
+   
+  Out <- list()
+  Out[[1]] <- out 
+  Out[[2]] <- MiscList
+ 
+  return(Out) 
+}
+class(LBSPR_ItSel)<-"DLM_input"
 
