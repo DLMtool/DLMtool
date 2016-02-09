@@ -635,7 +635,7 @@ Sub <- function(MSEobj, MPs=NULL, sims=NULL) {
   ClassSims <- class(sims)
   if (ClassSims == "NULL") SubIts <- 1:MSEobj@nsim
   if (ClassSims == "integer" | ClassSims == "numeric") {
-    sims <- 1:min(MSEobj@nsim, max(sims))
+    # sims <- 1:min(MSEobj@nsim, max(sims))
 	SubIts <- as.integer(sims)
   }	
   if (ClassSims == "logical") SubIts <- which(sims)

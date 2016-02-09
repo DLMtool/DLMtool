@@ -68,45 +68,123 @@ curE75<-function(x,DLM_data, ...){ #75% current effort
 class(curE75)<-"DLM_input"
 
 
-## - Test Input controls
 
-YPR_CC_Input <-function(x,DLM_data,reps=100, Fmin=0.005){
-  #for(x in 1:16){
-    dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@wlb, DLM_data@CAA, DLM_data@Cat"
-  Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  t0c<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
-  LFS<-trlnorm(reps,DLM_data@LFS[x],DLM_data@CV_LFS[x])
-  a<-DLM_data@wla[x]
-  b<-DLM_data@wlb[x]
-  MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
+LBSPR_ItEff <- function(x, DLM_data, yrsmth=1, perc=pstar,reps=reps) {
+ dependencies="DLM_data@CAL, DLM_data@CAL_bins, DLM_data@vbLinf, 
+	DLM_data@vbK, DLM_data@Mort, LM_data@vbK, DLM_data@L50, DLM_data@L95, 
+	DLM_data@wlb"
+  MiscList <- LBSPR(x, DLM_data, yrsmth=yrsmth, perc=pstar,reps=reps)
   
-  Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  Zdb<-CC(x,DLM_data,reps=reps*10)
-  Fdb<-Zdb-Mdb
-  ind<-(1:(reps*10))[Fdb>Fmin][1:reps]
+  XX <- 1:4 
+  YY <- MiscList[[2]][(length(MiscList[[2]]) - (max(XX)-1)):length(MiscList[[2]])]
   
-  Fdb<-Fdb[ind]
-  Mdb<-Mdb[ind]
-  SM <- sum(is.na(ind))
-  if (SM > 0 ) {
-    Mdb[is.na(ind)] <- trlnorm(SM,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-    Fdb[is.na(ind)] <- Fmin
-  }	
+  EstSPR <- YY[length(YY)]
   
-  Fdb # Estimated F
+  TgSPR <- 0.4
+  h <- DLM_data@steep[x]
+  SPRLim <- -(2*(h-1))/(3*h+1) # SPR that results in 0.5 R0
+  
+  phi1 <- 6
+  phi2 <- 1
+  
+  MaxDw <- -0.3
+  MaxUp <- 0.3
+  
+  minSlope <- 0.01
+  
+  Slope <- coef(lm(YY~XX))[2]  
+  # if (abs(Slope) < minSlope) Slope <- 0 
+  Dist <- EstSPR - TgSPR 
+  
+  # Control Rule #
+  Mod <- 0 
+  Buff <- 0.1
+  Buffer <- c(TgSPR - Buff,  TgSPR + Buff)
+  inBuff <- FALSE
+  belowTG <- FALSE 
+  aboveTG <- FALSE
+  slopeUp <- FALSE
+  slopeDw <- FALSE 
+  belowLim <- FALSE
+  if (Dist < 0) belowTG <- TRUE 
+  if (Dist > 0) aboveTG <- TRUE 
+  if (EstSPR > min(Buffer) & EstSPR < max(Buffer)) inBuff <- TRUE
+  if (Slope <= 0) slopeDw <- TRUE
+  if (Slope > 0) slopeUp <- TRUE
+  if (EstSPR < SPRLim) belowLim <- TRUE
+   
+  # If within buffer zone - only slope
+  if (inBuff) Mod <- phi1 * Slope
+  if (slopeUp & aboveTG) Mod <- phi1 * Slope +  phi2 * Dist
+  if (slopeUp & belowTG) Mod <- phi1 * Slope 
+  
+  if (slopeDw & aboveTG) Mod <- phi1 * Slope 
+  if (slopeDw & belowTG) Mod <- phi1 * Slope +  phi2 * Dist
+  
+  if (belowLim) Mod <- MaxDw
+  
+  Mod[Mod > MaxUp] <- MaxUp
+  Mod[Mod < MaxDw] <- MaxDw
+  Mod <- Mod + 1 
+  
+  Allocate <- 1
+  Effort <- DLM_data@MPrec[x] * Mod
+  MiscList[[5]] <- append(MiscList[[5]], Effort)
+  Spatial <- c(1,1)
+  Vuln <- rep(NA,2)
+  out <- c(Allocate, Effort, Spatial, Vuln)
+   
+  Out <- list()
+  Out[[1]] <- out 
+  Out[[2]] <- MiscList
+ 
+  return(Out) 
+}
+class(LBSPR_ItEff)<-"DLM_input"
+
+LBSPR_ItSel <- function(x, DLM_data, yrsmth=1, perc=pstar,reps=reps) {
+ dependencies="DLM_data@CAL, DLM_data@CAL_bins, DLM_data@vbLinf, 
+	DLM_data@vbK, DLM_data@Mort, LM_data@vbK, DLM_data@L50, DLM_data@L95, 
+	DLM_data@wlb"
+  MiscList <- LBSPR(x, DLM_data, yrsmth=yrsmth, perc=pstar,reps=reps)
+  
+  XX <- 1:4 
+  YY <- MiscList[[2]][(length(MiscList[[2]]) - (max(XX)-1)):length(MiscList[[2]])]
+  
+  EstSPR <- YY[length(YY)]
+  
+  TgSPR <- 0.4
+  h <- DLM_data@steep[x]
+  SPRLim <- -(2*(h-1))/(3*h+1) # SPR that results in 0.5 R0
  
   Allocate <- 1
-  Effort<-0.75
-  Spatial<-c(1,1)
-  Vuln<-rep(NA,2)
- 
-  if (median(Fdb) > 0.5) Effort <- 0.5 
-  
-  c(Allocate, Effort, Spatial, Vuln)
-  
-}
-class(YPR_CC_Input)<-"DLM_input"
+  Effort <- 1
+  Spatial <- c(1,1)
 
+  if (EstSPR < TgSPR) {
+    newLFC <- DLM_data@L50[x] * 1.05
+    newLFS <- DLM_data@L50[x] * 1.1
+    Vuln <-c(newLFC, newLFS)
+  }
+  if (EstSPR < SPRLim) {
+    newLFC <- DLM_data@L50[x] * 1.2
+    newLFS <- DLM_data@L50[x] * 1.25
+    Vuln <-c(newLFC, newLFS)  
+  }
+  if (EstSPR >= TgSPR) {
+    newLFC <- DLM_data@L50[x] * 0.85
+    newLFS <- DLM_data@L50[x] * 0.9
+    Vuln <-c(newLFC, newLFS)  
+  }
+   
+ 
+  out <- c(Allocate, Effort, Spatial, Vuln)
+   
+  Out <- list()
+  Out[[1]] <- out 
+  Out[[2]] <- MiscList
+ 
+  return(Out) 
+}
+class(LBSPR_ItSel)<-"DLM_input"
 

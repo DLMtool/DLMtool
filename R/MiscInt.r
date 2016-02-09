@@ -1,11 +1,15 @@
+# DLMtool Internal Functions 
+# January 2016
+# Tom Carruthers UBC (t.carruthers@fisheries.ubc.ca)
+# Adrian Hordyk (a.hordyk@murdoch.edu.au)
 
 # Various short functions that are used internally in the DLMtool.
 # Functions are only used internally, and not directly accessible or available 
 # to users of the package and therefore do not appear in the help manual.
 
-# January 2016
-# Tom Carruthers UBC (t.carruthers@fisheries.ubc.ca)
-# Adrian Hordyk (a.hordyk@murdoch.edu.au)
+# These can (and perhaps should) be exported to the package namespace 
+# and have help files written for them.
+
 
 # Misc. Defintions -------------------------------------------------------------
 utils::globalVariables(c("R0","Mdb","mod","i","nareas","nsim","dFfinal"))
@@ -404,4 +408,182 @@ FitSelect <- function(Pars, V, Linf, Lens) {
   return(SS)
 }
 
+
+# BlankSelPlot
+BlankSelPlot <- function(Stock=NULL, Yr=NULL, N=NULL) {
+  Max <- 3 
+  AxCex <- 1.3
+  By <- 0.05 
+  par(mfrow=c(1,1), mai=c(2, 1, .5, .3), oma=c(1,1,1,1))
+  plot(c(0,3), c(0,1), type="n", xlab="", ylab="", axes=FALSE)
+  mtext(side=2, line=3, "Selectivity", cex=AxCex)
+  axis(side=2)
+  Xax <- seq(from=0, to=Max-By, by=2*By)
+  axis(side=1, at=Xax)
+  axis(side=1, at=c(2, Max), label=c("", "Lmax"), xpd=NA)
+  mtext(side=1, line=3.5, "Relative Length", cex=AxCex)
+  axis(side=1, at=1, line=1.5, label="L50")
+  if (!is.null(Stock) & class(Stock) == "Stock") {
+    L50 <- mean(Stock@L50) # mean length at maturity
+    MatAx <- L50 * Xax
+    axis(side=1, line=5.5, at=Xax, labels=MatAx)
+    axis(side=1, line=5.5, at=c(2, Max), label=c("", "Lmax"), xpd=NA)
+    mtext(side=1, line=8.5, "Approx. Length", cex=AxCex)
+    axis(side=1, at=1, line=6.5, label="Mean L50")
+  } 
+  if (N == 1) {
+    title(paste("Choose selectivity points for Year", Yr, "(First Year)"))
+  } else {
+    title(paste("Choose selectivity points for Year", Yr))
+  }	
+}
+# Choose L5 
+ChooseL5 <- function() {
+  By <- 0.05
+  Xs <-seq(from=0, to=1, by=By)
+  Ys <- rep(0.05, length(Xs))
+  points(Xs, Ys, col="gray", cex=0.5)
+  text(0.5, 0.2, "Choose two points for L5")
+  L5out <- identifyPch(x=Xs, y=Ys, tolerance=0.1, n=2)
+  L5out
+}
+# Choose LFS 
+ChooseLFS <- function(L5out) {
+  Max <- 3
+  By <- 0.05
+  Xs <-seq(from=max(L5out[,1]), to=Max, by=By)
+  Ys <- rep(1, length(Xs))
+  points(Xs, Ys, col="gray", cex=0.5)
+  text(1.5, 0.5, "Choose two points for LFS")
+  LFSout <- identifyPch(x=Xs, y=Ys, tolerance=0.1, n=2)
+  LFSout
+}
+# Choose Vmaxlen
+ChooseVmaxlen <- function(L5out) {
+  Max <- 3 
+  Ys <- seq(from=0, to=1, by=0.05) 
+  Xs <- rep(Max, length(Ys))
+  points(Xs, Ys, col="gray", cex=0.5)
+  text(2, 0.8, "Choose two points for selectivity\n at maximum length")
+  Vmaxout <- identifyPch(x=Xs, y=Ys, tolerance=0.1, n=2)
+  Vmaxout
+}
+	
+# Rough Plot of Historical Selectivity Patterns --------------------------------
+CheckSelect <- function(Fleet, Stock=NULL) {
+ if (length(Fleet@SelYears) < 1) stop("No break points in selectivity pattern")
+ n <- length(Fleet@SelYears)
+ if (n < 4) par(mfrow=c(n, 1), mar=c(4,4,1,1), oma=c(2,3,1,1), bty="l")
+ if(n >= 4) {
+   N <- ceiling(n/2)
+   par(mfrow=c(N, 2), , mar=c(4,4,1,1), oma=c(2,3,1,1), bty="l")
+ }
+ for (X in 1:n) {
+   plot(c(0,3), c(0,1), type="n", xlab="", ylab="")
+   if(length(Fleet@AbsSelYears) > 0) title(Fleet@AbsSelYears[X])
+   if(length(Fleet@AbsSelYears) == 0) title(Fleet@SelYears[X])
+   polygon(x=c(0, max(Fleet@L5[X,]), max(Fleet@LFS[X,]), 3, 
+     rev(c(0, min(Fleet@L5[X,]), min(Fleet@LFS[X,]), 3))),
+	 y= c(0, 0.05, 1, min(Fleet@Vmaxlen[X,]),
+	 rev(c(0, 0.05, 1, max(Fleet@Vmaxlen[X,])))), col="grey")
+  lines(c(1,1), c(0,1), lty=3)
+  text(1.1, 0.2, "L50", cex=1.25)
+}
+  mtext(side=2, outer=TRUE, "Selectivity", cex=1.25, xpd=NA)
+  mtext(side=1, outer=TRUE, "Relative Length", cex=1.25, xpd=NA)
+}
+  
+# Helper functions for above
+identifyPch <- function(x, y = NULL, n = length(x), pch = 19, ...)
+{
+    xy <- xy.coords(x, y); x <- xy$x; y <- xy$y
+    sel <- rep(FALSE, length(x)); res <- integer(0)
+    while(sum(sel) < n) {
+        ans <- identify(x[!sel], y[!sel], n = 1, plot = FALSE, ...)
+        if(!length(ans)) break
+        ans <- which(!sel)[ans]
+        points(x[ans], y[ans], pch = pch)
+        sel[ans] <- TRUE
+		res <- c(res, ans)
+    }
+    out <- cbind(x[res], y[res])
+	out <- out[order(out[,1]),]
+	return(out)
+}
+
+# function to allow users to pick points off a plotted grid
+SketchFun <- function(nyears=NULL, Years=NULL) {
+  
+  if (length(Years) == 0 & length(nyears) == 0) stop()
+  if (length(Years) > 0) { 
+    nyears <- length(Years)
+	years <- Years
+  }	
+  if (length(Years) == 0) years <- 1:nyears
+  par(mfrow=c(1,1), mar=c(5, 4, 5, 2))
+  ys <- seq(from=0, to=1, by=0.05)
+  years1 <- seq(from=years[1], by=2, to=max(years))
+  years2 <- seq(from=years[2], by=2, to=max(years))
+  grd1 <- expand.grid(years1, ys)
+  grd2 <- expand.grid(years2, ys)
+  grd3 <- expand.grid(years, ys)
+  Xs <- grd3[,1]
+  Ys <- grd3[,2]
+
+  plot(grd1[,1], grd1[,2], col="black", pch=19, cex=0.2, xlab="Years", ylab="Variable", cex.lab=1.5)
+  points(grd2[,1], grd2[,2], col="darkgrey", pch=19, cex=0.2)
+  
+  mtext(side=3, "Right Click to Finish. Escape to Quit.", xpd=NA, cex=1.25)
+  line1 <- "Use mouse to select points on the grid"
+  line2 <- "First and last year must be selected."
+  line3 <- "Select two points in a single year to represent range of uncertainty"
+  par(xpd=TRUE) 
+  text(years[1],par("usr")[4]+0.15*(par("usr")[4]-par("usr")[3]), line1,cex=1, pos=4) 
+  text(years[1],par("usr")[4]+0.1125*(par("usr")[4]-par("usr")[3]), line2,cex=1, pos=4) 
+  text(years[1],par("usr")[4]+0.075*(par("usr")[4]-par("usr")[3]),line3,cex=1, pos=4)  
+  par(xpd=FALSE)
+  message(line1,"\n", line2, "\n", line3, "\n")
+  flush.console()
+  
+  par()
+  out <- NULL
+  out <- identifyPch(x=Xs, y=Ys, tolerance=0.1)
+  while(is.null(dim(out))) {
+    message("Must choose more than one point")
+	flush.console()
+    out <- identifyPch(x=Xs, y=Ys, tolerance=0.1)
+  }
+  while(min(out[,1]) != years[1]) {
+    message("Choose point(s) for first year (usually 0)")
+	flush.console()
+	dat <- rbind(out, identifyPch(x=Xs, y=Ys, tolerance=0.1))
+	out <- dat[order(dat[,1]),]
+  }
+  while(max(out[,1]) != years[length(years)]) {
+    message("Choose point(s) for last year (nyear)")
+	flush.console()
+	dat <- rbind(out, identifyPch(x=Xs, y=Ys, tolerance=0.1))
+	out <- dat[order(dat[,1]),]
+  }
+  ord <- order(out[,1], out[,2])
+  out <- out[ord,]
+  yrs <- unique(out[,1])
+  mat <- matrix(NA, nrow=length(yrs), ncol=3)
+  mat[,1] <- yrs
+  ind <- which(!duplicated(out[,1]))
+  mat[,2:3] <- out[ind,2]
+  for (X in seq_along(yrs)) {
+    chk <- out[,1] %in% yrs[X]
+	ind <- range(which(chk))
+    if(sum(chk) > 1) {
+	  mat[X,2:3] <- out[ind,2] 
+	}
+  }
+
+  lines(mat[,1], mat[,2])
+  lines(mat[,1], mat[,3])
+
+  colnames(mat) <- c("Years", "Lower", "Upper")
+  return(mat)
+}
 

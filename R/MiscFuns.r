@@ -1,11 +1,10 @@
-# DLMtool Supporting Functions 
+# DLMtool Miscellaneous Functions 
 # January 2016
 # Tom Carruthers UBC (t.carruthers@fisheries.ubc.ca)
 # Adrian Hordyk (a.hordyk@murdoch.edu.au)
 
-# Various short functions that are used internally in the DLMtool.
-# Functions are only used internally, and not directly accessible or available 
-# to users of the package and therefore do not appear in the help manual.
+# Collection of miscellaneous functions.
+# All functions have accompanying help files.
 
 # Generic class finder
 avail<-function(classy){
@@ -20,7 +19,6 @@ avail<-function(classy){
 	lapply(ls(envir=.GlobalEnv),getclass,classy=classy))])))
   }	
 }
-
 
 # A function that finds all methods in the environment and searches the function
 # text for slots in the DLM data object
@@ -116,7 +114,6 @@ Fease<-function(feaseobj,outy="table"){
   }
   
 }
-
 
 # Internal functions used in runMSE 
 getmov<-function(x,Prob_staying,Frac_area_1){
@@ -329,6 +326,36 @@ L2A<-function(t0c,Linfc,Kc,Len,maxage){
   age
 }  
 
+# Set Cyclic Recruitment Pattern
+SetRecruitCycle <- function(x=1, Period, Amplitude, TotYears, Shape=c("sin", "shift")) {
+  Shape <- match.arg(Shape) 
+  Npers <- ceiling(TotYears/min(Period))
+  pers <- round(runif(Npers, min(Period), max(Period)),0)
+  amp <- runif(Npers, min(Amplitude), max(Amplitude))
+  ct <- 1; Dir <- sample(c(-1, 1),1)
+  Rm <- rep(NA, Npers)
+  if (Shape == "sin") {
+    for (X in 1:length(pers)) {
+      yrper <- pers[X]
+	  Period <- pi/yrper  #round(runif(1,-1, 1),0) * pi/yrper 
+	  xs <- seq(from=0, by=1, to=pers[X])
+	  Dir <- ifelse(Dir >= 0, -1, 1) # change direction each cycle
+	  Rm[ct:(ct+pers[X])] <- amp[X] * sin(xs*Period) * Dir
+	  ct <- ct+pers[X]
+    }
+  }
+  if (Shape == "shift") {
+    for (X in 1:length(pers)) {
+	 Dir <- ifelse(Dir >= 0, -1, 1) # change direction each cycle
+     if (X==1) Rm[ct:(ct+pers[X])] <- 0
+     if (X > 1) Rm[ct:(ct+pers[X])] <- amp[X] * Dir
+	 Rm[ct:(ct+pers[X])] <- amp[X] * Dir
+     ct <- ct+pers[X]
+    }
+  }	
+  Rm <- Rm[1:TotYears] + 1
+  return(Rm)
+}
 
 # Sketch trends in historical fishing mortality --------------------------------
 # Takes Fleet object, runs Sketch function for user to specify historical effort
@@ -341,101 +368,6 @@ ChooseEffort <- function(FleetObj, Years=NULL) {
   FleetObj@EffUpper <- runSketch[,3]
   return(FleetObj)
 }
-
-# Helper functions for above
-identifyPch <- function(x, y = NULL, n = length(x), pch = 19, ...)
-{
-    xy <- xy.coords(x, y); x <- xy$x; y <- xy$y
-    sel <- rep(FALSE, length(x)); res <- integer(0)
-    while(sum(sel) < n) {
-        ans <- identify(x[!sel], y[!sel], n = 1, plot = FALSE, ...)
-        if(!length(ans)) break
-        ans <- which(!sel)[ans]
-        points(x[ans], y[ans], pch = pch)
-        sel[ans] <- TRUE
-		res <- c(res, ans)
-    }
-    out <- cbind(x[res], y[res])
-	out <- out[order(out[,1]),]
-	return(out)
-}
-# function to allow users to pick points off a plotted grid
-SketchFun <- function(nyears=NULL, Years=NULL) {
-  
-  if (length(Years) == 0 & length(nyears) == 0) stop()
-  if (length(Years) > 0) { 
-    nyears <- length(Years)
-	years <- Years
-  }	
-  if (length(Years) == 0) years <- 1:nyears
-  par(mfrow=c(1,1), mar=c(5, 4, 5, 2))
-  ys <- seq(from=0, to=1, by=0.05)
-  years1 <- seq(from=years[1], by=2, to=max(years))
-  years2 <- seq(from=years[2], by=2, to=max(years))
-  grd1 <- expand.grid(years1, ys)
-  grd2 <- expand.grid(years2, ys)
-  grd3 <- expand.grid(years, ys)
-  Xs <- grd3[,1]
-  Ys <- grd3[,2]
-
-  plot(grd1[,1], grd1[,2], col="black", pch=19, cex=0.2, xlab="Years", ylab="Variable", cex.lab=1.5)
-  points(grd2[,1], grd2[,2], col="darkgrey", pch=19, cex=0.2)
-  
-  mtext(side=3, "Right Click to Finish. Escape to Quit.", xpd=NA, cex=1.25)
-  line1 <- "Use mouse to select points on the grid"
-  line2 <- "First and last year must be selected."
-  line3 <- "Select two points in a single year to represent range of uncertainty"
-  par(xpd=TRUE) 
-  text(years[1],par("usr")[4]+0.15*(par("usr")[4]-par("usr")[3]), line1,cex=1, pos=4) 
-  text(years[1],par("usr")[4]+0.1125*(par("usr")[4]-par("usr")[3]), line2,cex=1, pos=4) 
-  text(years[1],par("usr")[4]+0.075*(par("usr")[4]-par("usr")[3]),line3,cex=1, pos=4)  
-  par(xpd=FALSE)
-  message(line1,"\n", line2, "\n", line3, "\n")
-  flush.console()
-  
-  par()
-  out <- NULL
-  out <- identifyPch(x=Xs, y=Ys, tolerance=0.1)
-  while(is.null(dim(out))) {
-    message("Must choose more than one point")
-	flush.console()
-    out <- identifyPch(x=Xs, y=Ys, tolerance=0.1)
-  }
-  while(min(out[,1]) != years[1]) {
-    message("Choose point(s) for first year (usually 0)")
-	flush.console()
-	dat <- rbind(out, identifyPch(x=Xs, y=Ys, tolerance=0.1))
-	out <- dat[order(dat[,1]),]
-  }
-  while(max(out[,1]) != years[length(years)]) {
-    message("Choose point(s) for last year (nyear)")
-	flush.console()
-	dat <- rbind(out, identifyPch(x=Xs, y=Ys, tolerance=0.1))
-	out <- dat[order(dat[,1]),]
-  }
-  ord <- order(out[,1], out[,2])
-  out <- out[ord,]
-  yrs <- unique(out[,1])
-  mat <- matrix(NA, nrow=length(yrs), ncol=3)
-  mat[,1] <- yrs
-  ind <- which(!duplicated(out[,1]))
-  mat[,2:3] <- out[ind,2]
-  for (X in seq_along(yrs)) {
-    chk <- out[,1] %in% yrs[X]
-	ind <- range(which(chk))
-    if(sum(chk) > 1) {
-	  mat[X,2:3] <- out[ind,2] 
-	}
-  }
-
-  lines(mat[,1], mat[,2])
-  lines(mat[,1], mat[,3])
-
-  colnames(mat) <- c("Years", "Lower", "Upper")
-  return(mat)
-}
-
-
 
 # Sketch Historical Selectivity Patterns ---------------------------------------
 ChooseSelect <- function(Fleet, Stock=NULL, FstYr=NULL, SelYears=NULL) {
@@ -484,7 +416,7 @@ ChooseSelect <- function(Fleet, Stock=NULL, FstYr=NULL, SelYears=NULL) {
   message("Select selectivity points on plot")
   flush.console()
   for (N in 1:Selnyears) {
-    BlankPlot(Stock=Stock, Yr=SelYears[N], N=N)
+    BlankSelPlot(Stock=Stock, Yr=SelYears[N], N=N)
     L5Out <- ChooseL5()
     Fleet@L5[N,] <- sort(L5Out[,1])
     LFSout <- ChooseLFS(L5Out)
@@ -498,101 +430,289 @@ ChooseSelect <- function(Fleet, Stock=NULL, FstYr=NULL, SelYears=NULL) {
     par(ask=TRUE)
   }	
   par(set.par)
-  ChckSelect(Fleet, Stock)
+  CheckSelect(Fleet, Stock)
   Fleet
 }
 
-# Rough Plot of Historical Selectivity Patterns --------------------------------
-ChckSelect <- function(Fleet, Stock=NULL) {
- if (length(Fleet@SelYears) < 1) stop("No break points in selectivity pattern")
- n <- length(Fleet@SelYears)
- if (n < 4) par(mfrow=c(n, 1), mar=c(4,4,1,1), oma=c(2,3,1,1), bty="l")
- if(n >= 4) {
-   N <- ceiling(n/2)
-   par(mfrow=c(N, 2), , mar=c(4,4,1,1), oma=c(2,3,1,1), bty="l")
- }
- for (X in 1:n) {
-   plot(c(0,3), c(0,1), type="n", xlab="", ylab="")
-   if(length(Fleet@AbsSelYears) > 0) title(Fleet@AbsSelYears[X])
-   if(length(Fleet@AbsSelYears) == 0) title(Fleet@SelYears[X])
-   polygon(x=c(0, max(Fleet@L5[X,]), max(Fleet@LFS[X,]), 3, 
-     rev(c(0, min(Fleet@L5[X,]), min(Fleet@LFS[X,]), 3))),
-	 y= c(0, 0.05, 1, min(Fleet@Vmaxlen[X,]),
-	 rev(c(0, 0.05, 1, max(Fleet@Vmaxlen[X,])))), col="grey")
-  lines(c(1,1), c(0,1), lty=3)
-  text(1.1, 0.2, "L50", cex=1.25)
-}
-  mtext(side=2, outer=TRUE, "Selectivity", cex=1.25, xpd=NA)
-  mtext(side=1, outer=TRUE, "Relative Length", cex=1.25, xpd=NA)
-}
+# Kalman filter and Rauch-Tung-Striebel smoother
+KalmanFilter <- function(RawEsts, R=1, Q=0.1, Int=100) {
+  # Kalman smoother and Rauch-Tung-Striebel smoother #http://read.pudn.com/downloads88/ebook/336360/Kalman%20Filtering%20Theory%20and%20Practice,%20Using%20MATLAB/CHAPTER4/RTSvsKF.m__.htm
+  # R  # Variance of sampling noise
+  # Q  # Variance of random walk increments
+  # Int # Covariance of initial uncertainty
+  Ppred <-  rep(Int, length(RawEsts))
+  nNA <- sum(is.na(RawEsts))
+  while(nNA > 0) { # NAs get replaced with last non-NA
+    RawEsts[is.na(RawEsts)] <- RawEsts[which(is.na(RawEsts))-1]
+    nNA <- sum(is.na(RawEsts))
+  }
   
-# Supporting
-# BlankPlot
-BlankPlot <- function(Stock=NULL, Yr=NULL, N=NULL) {
-  Max <- 3 
-  AxCex <- 1.3
-  By <- 0.05 
-  par(mfrow=c(1,1), mai=c(2, 1, .5, .3), oma=c(1,1,1,1))
-  plot(c(0,3), c(0,1), type="n", xlab="", ylab="", axes=FALSE)
-  mtext(side=2, line=3, "Selectivity", cex=AxCex)
-  axis(side=2)
-  Xax <- seq(from=0, to=Max-By, by=2*By)
-  axis(side=1, at=Xax)
-  axis(side=1, at=c(2, Max), label=c("", "Lmax"), xpd=NA)
-  mtext(side=1, line=3.5, "Relative Length", cex=AxCex)
-  axis(side=1, at=1, line=1.5, label="L50")
-  if (!is.null(Stock) & class(Stock) == "Stock") {
-    L50 <- mean(Stock@L50) # mean length at maturity
-    MatAx <- L50 * Xax
-    axis(side=1, line=5.5, at=Xax, labels=MatAx)
-    axis(side=1, line=5.5, at=c(2, Max), label=c("", "Lmax"), xpd=NA)
-    mtext(side=1, line=8.5, "Approx. Length", cex=AxCex)
-    axis(side=1, at=1, line=6.5, label="Mean L50")
-  } 
-  if (N == 1) {
-    title(paste("Choose selectivity points for Year", Yr, "(First Year)"))
-  } else {
-    title(paste("Choose selectivity points for Year", Yr))
-  }	
+  Pcorr <- xcorr <- xpred <- rep(0, length(RawEsts))
+  # Kalman Filter
+  for (X in 1:length(Ppred)) {
+    if (X !=1) {
+	  Ppred[X] <- Pcorr[X-1] + Q
+	  xpred[X] <- xcorr[X-1]
+	}
+	W <- Ppred[X]/(Ppred[X] + R)
+	xcorr[X] <- xpred[X] + W * (RawEsts[X] - xpred[X]) # Kalman filter estimate
+	Pcorr[X] <- Ppred[X] - W * Ppred[X]
+  }
+  # Smoother 
+  xsmooth <- xcorr
+  for (X in (length(Pcorr)-1):1) {
+    A <- Pcorr[X]/Ppred[X+1]
+	xsmooth[X] <- xsmooth[X] + A*(xsmooth[X+1] - xpred[X+1]) 
+  }
+  return(xsmooth)
+
 }
-# Choose L5 
-ChooseL5 <- function() {
-  By <- 0.05
-  Xs <-seq(from=0, to=1, by=By)
-  Ys <- rep(0.05, length(Xs))
-  points(Xs, Ys, col="gray", cex=0.5)
-  text(0.5, 0.2, "Choose two points for L5")
-  L5out <- identifyPch(x=Xs, y=Ys, tolerance=0.1, n=2)
-  L5out
+
+
+##################################
+# LBSPR - Hordyk et al ICES 2015 #
+##################################
+LBSPRSim <- function(StockPars, FleetPars, SizeBins=NULL, P=0.001, Nage=201) {
+
+  MK <- StockPars$MK 
+  Linf <- StockPars$Linf
+  CVLinf <- StockPars$CVLinf 
+  L50 <- StockPars$L50 
+  L95 <- StockPars$L95 
+  Beta <- StockPars$FecB 
+  MaxSD <- StockPars$MaxSD
+  
+  # Assumed constant CV here
+  SDLinf <- CVLinf * Linf # Standard Deviation of Length-at-Age 
+  if (is.null(SizeBins)) {
+    SizeBins$Linc <- 5
+	SizeBins$ToSize <- Linf + MaxSD * SDLinf
+  }
+  if (is.null(SizeBins$ToSize)) SizeBins$ToSize <- Linf + MaxSD * SDLinf
+  Linc <- SizeBins$Linc 
+  ToSize <- SizeBins$ToSize
+  
+  FM <- FleetPars$FM 
+  SL50 <- FleetPars$SL50 
+  SL95 <- FleetPars$SL95 
+  
+  LenBins <- seq(from=0, by=Linc, to=ToSize)	
+  LenMids <- seq(from=0.5*Linc, by=Linc, length.out=length(LenBins)-1)
+  x <- seq(from=0, to=1, length.out=Nage) # relative age vector
+  EL <- (1-P^(x/MK)) * Linf # length at relative age 
+  rLens <- EL/Linf # relative length 
+  SDL <- EL * CVLinf # standard deviation of length-at-age
+  
+  Nlen <- length(LenMids) 
+  Prob <- matrix(NA, nrow=Nage, ncol=Nlen)
+  Prob[,1] <- pnorm((LenBins[2] - EL)/SDL, 0, 1) # probablility of length-at-age
+  for (i in 2:(Nlen-1)) {
+    Prob[,i] <- pnorm((LenBins[i+1] - EL)/SDL, 0, 1) - 
+		pnorm((LenBins[i] - EL)/SDL, 0, 1)
+  }
+  Prob[,Nlen] <- 1 - pnorm((LenBins[Nlen] - EL)/SDL, 0, 1)
+  
+  # Truncate normal dist at MaxSD 
+  mat <- array(1, dim=dim(Prob))
+  for (X in 1:Nage) {
+    ind <- which(abs((LenMids - EL[X]) /SDL[X]) >= MaxSD)
+    mat[X,ind] <- 0
+  }
+  
+  Prob <- Prob * mat
+
+  SL <- 1/(1+exp(-log(19)*(LenMids-SL50)/(SL95-SL50))) # Selectivity at length
+  Sx <- apply(t(Prob) * SL, 2, sum) # Selectivity at relative age 
+  MSX <- cumsum(Sx) / seq_along(Sx) # Mean cumulative selectivity for each age 
+  Ns <- (1-rLens)^(MK+(MK*FM)*MSX) # number at relative age in population
+  
+  Cx <- t(t(Prob) * SL) # Conditional catch length-at-age probablilities  
+  Nc <- apply(Ns * Cx, 2, sum) # 
+  Pop <- apply(Ns * Prob, 2, sum)
+  
+  Ml <- 1/(1+exp(-log(19)*(LenMids-L50)/(L95-L50))) # Maturity at length
+  Ma <-  apply(t(Prob) * Ml, 2, sum) # Maturity at relative age 
+  
+  N0 <- (1-rLens)^MK # Unfished numbers-at-age 
+  SPR <- sum(Ma * Ns * rLens^Beta)/sum(Ma * N0 * rLens^Beta)
+  
+  Output <- NULL 
+  Output$SPR <- SPR 
+  Output$LenMids <- LenMids
+  Output$PropLen <- Nc/sum(Nc)
+  Output$Pop <- Pop
+  
+  Output$LCatchFished <- Nc/sum(Nc)
+  Output$LPopFished <- Pop
+  Output$LCatchUnfished <- apply(N0 * Cx, 2, sum)
+  return(Output)
+}  
+
+OptFun <- function(tryFleetPars, LenDat, StockPars, SizeBins=NULL, 
+	mod=c("GTG", "LBSPR")) {
+  Fleet <- NULL
+  Fleet$SL50 <- exp(tryFleetPars[1]) * StockPars$Linf
+  Fleet$SL95 <- Fleet$SL50  + (exp(tryFleetPars[2]) * StockPars$Linf)
+  Fleet$MLLKnife <- NA
+  Fleet$FM <- exp(tryFleetPars[3])
+  
+  if (mod == "GTG") runMod <-  GTGLBSPRSim(StockPars, Fleet, SizeBins)
+  if (mod == "LBSPR") runMod <- LBSPRSim(StockPars, Fleet, SizeBins)
+  
+  LenDat <- LenDat + 1E-15 # add tiny constant for zero catches
+  LenProb <- LenDat/sum(LenDat)
+  predProb <- runMod$LCatchFished 
+  predProb <- predProb + 1E-15 # add tiny constant for zero catches
+  NLL <- -sum(LenDat * log(predProb/LenProb))
+  
+  if(!is.finite(NLL)) return(1E9)
+  
+  # add penalty for SL50 
+  trySL50 <- exp(tryFleetPars[1])
+  PenVal <- NLL
+  Pen <- dbeta(trySL50, shape1=5, shape2=0.01) * PenVal
+  if (Pen == 0) Pen <- PenVal * trySL50
+  
+  # plot(xx, dbeta(xx, shape1=5, shape2=0.01) )
+  
+  NLL <- NLL+Pen 
+
+  return(NLL)
 }
-# Choose LFS 
-ChooseLFS <- function(L5out) {
-  Max <- 3
-  By <- 0.05
-  Xs <-seq(from=max(L5out[,1]), to=Max, by=By)
-  Ys <- rep(1, length(Xs))
-  points(Xs, Ys, col="gray", cex=0.5)
-  text(1.5, 0.5, "Choose two points for LFS")
-  LFSout <- identifyPch(x=Xs, y=Ys, tolerance=0.1, n=2)
-  LFSout
-}
-# Choose Vmaxlen
-ChooseVmaxlen <- function(L5out) {
-  Max <- 3 
-  Ys <- seq(from=0, to=1, by=0.05) 
-  Xs <- rep(Max, length(Ys))
-  points(Xs, Ys, col="gray", cex=0.5)
-  text(2, 0.8, "Choose two points for selectivity\n at maximum length")
-  Vmaxout <- identifyPch(x=Xs, y=Ys, tolerance=0.1, n=2)
-  Vmaxout
-}
+
+DoOpt <- function(StockPars, LenDat, SizeBins=NULL, mod=c("GTG", "LBSPR")) {
+  
+  SDLinf <- StockPars$CVLinf * StockPars$Linf
+  if (is.null(SizeBins)) {
+    SizeBins$Linc <- 5
+	SizeBins$ToSize <- StockPars$Linf + StockPars$MaxSD * SDLinf
+  }
+  if (is.null(SizeBins$ToSize)) 
+	SizeBins$ToSize <- StockPars$Linf + StockPars$MaxSD * SDLinf
+  
+  Linc <- SizeBins$Linc 
+  ToSize <- SizeBins$ToSize
+ 
+  LenBins <- seq(from=0, by=Linc, to=ToSize)	
+  LenMids <- seq(from=0.5*Linc, by=Linc, length.out=length(LenBins)-1)
+  
+  sSL50 <- LenMids[which.max(LenDat)]/StockPars$Linf # Starting guesses
+  sDel <- 0.2 * LenMids[which.max(LenDat)]/StockPars$Linf
+  sFM <- 0.5 
+  Start <- log(c(sSL50, sDel, sFM))
+  
+  # opt <- nlminb(Start, OptFun, LenDat=LenDat, StockPars=StockPars, 
+	# SizeBins=SizeBins, mod=mod) 
 	
+  opt2 <- nlm(OptFun, Start, steptol=1e-4,gradtol=1e-4, LenDat=LenDat, 
+	StockPars=StockPars, SizeBins=SizeBins, mod=mod)
+  opt <- NULL
+  opt$objective <- opt2$minimum
+  opt$par <- opt2$estimate
+	
+  ModFailed <- FALSE 	
+  if (opt$objective	== 1E9) ModFailed <- TRUE 
+	# ,control= list(iter.max=300, eval.max=400, abs.tol=1E-20))
+  # barplot(LenDat, names.arg=LenMids) 
+  
+  newFleet <- NULL 
+  newFleet$FM <- exp(opt$par[3])
+  newFleet$SL50 <- exp(opt$par[1]) * StockPars$Linf 
+  newFleet$SL95 <- newFleet$SL50 + exp(opt$par[2]) * StockPars$Linf
 
+  if (mod == "GTG") runMod <-  GTGLBSPRSim(StockPars, newFleet, SizeBins)
+  if (mod == "LBSPR") runMod <- LBSPRSim(StockPars, newFleet, SizeBins)
+  
+  Out <- NULL 
+  Out$Ests <- c(FM=newFleet$FM, SL50=newFleet$SL50, SL95=newFleet$SL95, 
+	SPR=runMod$SPR)
+  Out$PredLen <- runMod$LCatchFished * sum(LenDat)
+  Out$ModFailed <- ModFailed
+  return(Out)
+}
 
+# Run LBSPR Model for time-series of catch length composition data 
+LBSPR <- function(x, DLM_data, yrsmth=1, perc=pstar,reps=reps) {
+  # Save other stuff for smoothing estimates
+  TotYears <- nrow(DLM_data@CAL[1,,]) # How many years of length data exist
+  if (length(DLM_data@Misc[[x]]) == 0) { # Misc List is empty
+    # Create Empty List Object
+	MiscList <- rep(list(0), 5) # Create empty list
+	MiscList[[1]] <- rep(NA, TotYears) # SPR ests
+	MiscList[[2]] <- rep(NA, TotYears) # Smoothed SPR ests
+	MiscList[[3]] <- rep(NA, TotYears) # FM ests
+	MiscList[[4]] <- rep(NA, TotYears) # Smoothed FM ests
+	MiscList[[5]] <- list()
+  }
+  if (length(DLM_data@Misc[[x]]) != 0) MiscList <- DLM_data@Misc[[x]]
+  
+  # Add Extra Row when needed 
+  if (length(MiscList[[1]]) < TotYears) {
+    Diff <- TotYears - length(DLM_data@Misc[[x]][[1]])
+    MiscList[[1]] <- append(MiscList[[1]], rep(NA,Diff)) 
+	MiscList[[2]] <- append(MiscList[[2]], rep(NA,Diff)) 
+	MiscList[[3]] <- append(MiscList[[3]], rep(NA,Diff)) 
+	MiscList[[4]] <- append(MiscList[[4]], rep(NA,Diff)) 
+  }
 
+  NEmpty <- sum(is.na(MiscList[[1]])) # Number of empty spots
+  IsEmpty <- which(is.na(MiscList[[1]]))
 
+ StockPars <- NULL
+ StockPars$MK <- DLM_data@Mort[x] / DLM_data@vbK[x]
+ StockPars$Linf <- DLM_data@vbLinf[x]
+ StockPars$CVLinf <- 0.1 # NEED TO ADD THIS TO INPUT VARIABLES
+ StockPars$L50 <- DLM_data@L50[x] 
+ StockPars$L95 <- DLM_data@L95[x]
+ StockPars$FecB <- DLM_data@wlb[x]
+ StockPars$MaxSD <- 2
+ 
+ # yrsmth not implemented here
+ LenMatrix <- DLM_data@CAL[x, IsEmpty,]
+ 
+ binWidth <- DLM_data@CAL_bins[2] - DLM_data@CAL_bins[1]
+ CAL_binsmid <- seq(from=0.5*binWidth, by=binWidth, length=length(DLM_data@CAL_bins)-1)
+     
+ SizeBins <- NULL
+ SizeBins$Linc <- binWidth
+ SizeBins$ToSize <- max(CAL_binsmid) + 0.5*binWidth
 
-
-
+ # if(sfIsRunning()){
+    # AllOpt <- sfSapply(1:length(IsEmpty), function (X) 
+		# DoOpt(StockPars, LenDat=LenMatrix[X,], SizeBins=SizeBins, mod="LBSPR"))
+  # } else {
+    AllOpt <- sapply(1:length(IsEmpty), function (X)
+		DoOpt(StockPars, LenDat=LenMatrix[X,], SizeBins=SizeBins, mod="LBSPR"))
+  # } 
+  
+ EstFM <- sapply(AllOpt[1,], "[[", 1)
+ estSL50 <- sapply(AllOpt[1,], "[[", 2)
+ estSL95 <- sapply(AllOpt[1,], "[[", 3)
+ EstSPR <- sapply(AllOpt[1,], "[[", 4)
+ EstFM[EstFM > 5] <- 5 
+ 
+ Fails <- which(sapply(AllOpt[3,], "[[", 1))
+ if (length(Fails) > 0) {
+   EstFM[Fails] <- NA 
+   EstSPR[Fails] <- NA
+ }
+ while(sum(is.na(EstFM)) > 0) { # if model failed, make same as last time 
+   EstFM[is.na(EstFM)] <- EstFM[which(is.na(EstFM))-1]
+   EstSPR[is.na(EstSPR)] <- EstSPR[which(is.na(EstSPR))-1]
+ }
+ 
+ MiscList[[1]][IsEmpty] <- EstSPR # Save estimate of SPR for smoothing
+ MiscList[[3]][IsEmpty] <- EstFM # Save estimate of F/M for smoothing 
+  
+  # Smoothed estimates - SPR
+  MiscList[[2]] <- KalmanFilter(RawEsts=MiscList[[1]]) 
+  MiscList[[2]][MiscList[[2]] <0] <- 0.05
+  MiscList[[2]][MiscList[[2]] > 1] <- 0.99
+ 
+  # Smoothed estimates - FM
+  MiscList[[4]] <- KalmanFilter(RawEsts=MiscList[[3]])
+  
+  return(MiscList)
+}
 
 

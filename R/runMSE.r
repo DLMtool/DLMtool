@@ -103,11 +103,26 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     }
     for(i in 1:ncol(custompars))assign(names(custompars)[i],custompars[ind,i])
   }
-
-  procmu<--0.5*(procsd)^2 # adjusted log normal mean
-  Perr<-array(rnorm((nyears+proyears)*nsim,rep(procmu,nyears+proyears),rep(procsd,nyears+proyears)),c(nsim,nyears+proyears))
+  
+  # Recruitment Deviations 
+  procmu <- -0.5*(procsd)^2 # adjusted log normal mean
+  Perr<-array(rnorm((nyears+proyears)*nsim,
+	rep(procmu,nyears+proyears),
+	rep(procsd,nyears+proyears)),
+	c(nsim,nyears+proyears))
   for(y in 2:(nyears+proyears))Perr[,y]<-AC*Perr[,y-1]+Perr[,y]*(1-AC*AC)^0.5#2#AC*Perr[,y-1]+(1-AC)*Perr[,y] # apply a pseudo AR1 autocorrelation to rec devs (log space)
   Perr <-exp(Perr) # normal space (mean 1 on average)
+  
+  # Add cycle (phase shift) to recruitment deviations - if specified 
+  if (is.finite(OM@Period[1]) & is.finite(OM@Amplitude[1])) {
+    Shape <- "sin" # default sine wave - alterantive - 'shift' for step changes
+    recMulti <- sapply(1:nsim, SetRecruitCycle, Period=OM@Period, Amplitude=OM@Amplitude, 
+	  TotYears=nyears+proyears, Shape=Shape)
+    Perr <- Perr * t(recMulti) # Add cyclic pattern to recruitment
+	print("Adding cyclic recruitment pattern")
+	flush.console()
+  }
+ 
   R0 <- OM@R0 # Initial recruitment
   
   Marray<-gettempvar(M,Msd,Mgrad,nyears+proyears,nsim) # M by sim and year according to gradient and inter annual variability

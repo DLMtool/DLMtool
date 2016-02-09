@@ -343,7 +343,6 @@ Sam<-function(DLM_data,MPs=NA,reps=100,maxlines=10,perc=0.5){
 
 # Input Control Functions 
 # Wrapper function for input control methods 
-
 runInMP <- function(DLM_data,MPs=NA,reps=100) {
 
   nsims<-length(DLM_data@Mort)

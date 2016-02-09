@@ -289,18 +289,19 @@ CC4<-function(x,DLM_data,reps=100,yrsmth=5,xx=0.3){
 }  
 class(CC4)<-"DLM_output"
 
+
 LstepCC1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,stepsz=0.05,llim=c(0.96,0.98,1.05)){
-  dependencies="DLM_data@Cat, DLM_data@CV_Cat, DLM_data@CAL, DLM_data@CAL_bins"
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
-  C_dat<-DLM_data@Cat[x,ind]
-  if(is.na(DLM_data@MPrec[x])){TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
+  dependencies="DLM_data@Cat, DLM_data@CV_Cat, DLM_data@ML"
+  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
+  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
+  ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
+  ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
+  C_dat<-DLM_data@Cat[x,ind2]
+  if(length(DLM_data@Year)==ylast+1) {TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
   }else{TACstar<-rep(DLM_data@MPrec[x],reps)}
   step<-stepsz*TACstar
-  binval<-DLM_data@CAL_bins[1:(length(DLM_data@CAL_bins)-1)]+(DLM_data@CAL_bins[2]-DLM_data@CAL_bins[1])/2
-  CALdat<-DLM_data@CAL[x,,]*rep(binval,each=dim(DLM_data@CAL)[2]) 
-  avCAL<-apply(CALdat,1,sum)/apply(DLM_data@CAL[x,,],1,sum)
-  Lrecent<-mean(avCAL[ind])
-  Lave<-mean(avCAL[(length(DLM_data@Year)-(yrsmth*2-1)):length(DLM_data@Year)])
+  Lrecent<-mean(DLM_data@ML[ind])
+  Lave<-mean(DLM_data@ML[ind3])
   rat<-Lrecent/Lave
   if(rat<llim[1]){TAC<-TACstar-2*step
   }else if(rat<llim[2]){TAC<-TACstar-step
@@ -312,17 +313,17 @@ LstepCC1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,stepsz=0.05,llim=c(0.96,0.9
 class(LstepCC1)<-"DLM_output"
 
 LstepCC4<-function(x,DLM_data,reps=100,yrsmth=5,xx=0.3,stepsz=0.05,llim=c(0.96,0.98,1.05)){
-  dependencies="DLM_data@Cat, DLM_data@CV_Cat, DLM_data@CAL, DLM_data@CAL_bins"
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
-  C_dat<-DLM_data@Cat[x,ind]
-  if(is.na(DLM_data@MPrec[x])){TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
+  dependencies="DLM_data@Cat, DLM_data@CV_Cat, DLM_data@ML"
+  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
+  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
+  ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
+  ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
+  C_dat<-DLM_data@Cat[x,ind2]
+  if(length(DLM_data@Year)==ylast+1) {TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
   }else{TACstar<-rep(DLM_data@MPrec[x],reps)}
   step<-stepsz*TACstar
-  binval<-DLM_data@CAL_bins[1:(length(DLM_data@CAL_bins)-1)]+(DLM_data@CAL_bins[2]-DLM_data@CAL_bins[1])/2
-  CALdat<-DLM_data@CAL[x,,]*rep(binval,each=dim(DLM_data@CAL)[2]) 
-  avCAL<-apply(CALdat,1,sum)/apply(DLM_data@CAL[x,,],1,sum)
-  Lrecent<-mean(avCAL[ind])
-  Lave<-mean(avCAL[(length(DLM_data@Year)-(yrsmth*2-1)):length(DLM_data@Year)])
+  Lrecent<-mean(DLM_data@ML[ind])
+  Lave<-mean(DLM_data@ML[ind3])
   rat<-Lrecent/Lave
   if(rat<llim[1]){TAC<-TACstar-2*step
   }else if(rat<llim[2]){TAC<-TACstar-step
@@ -334,16 +335,15 @@ LstepCC4<-function(x,DLM_data,reps=100,yrsmth=5,xx=0.3,stepsz=0.05,llim=c(0.96,0
 class(LstepCC4)<-"DLM_output"
 
 Ltarget1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,xL=1.05){
-  dependencies="DLM_data@Cat, DLM_data@CV_Cat, DLM_data@CAL, DLM_data@CAL_bins"
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
-  C_dat<-DLM_data@Cat[x,ind]
+  dependencies="DLM_data@Cat, DLM_data@CV_Cat, DLM_data@ML"
+  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
+  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
+  ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
+  ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
+  C_dat<-DLM_data@Cat[x,ind2]
   TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
-  #step<-stepsz*TACstar
-  binval<-DLM_data@CAL_bins[1:(length(DLM_data@CAL_bins)-1)]+(DLM_data@CAL_bins[2]-DLM_data@CAL_bins[1])/2
-  CALdat<-DLM_data@CAL[x,,]*rep(binval,each=dim(DLM_data@CAL)[2]) 
-  avCAL<-apply(CALdat,1,sum)/apply(DLM_data@CAL[x,,],1,sum)
-  Lrecent<-mean(avCAL[ind])
-  Lave<-mean(avCAL[(length(DLM_data@Year)-(yrsmth*2-1)):length(DLM_data@Year)])
+  Lrecent<-mean(DLM_data@ML[ind])
+  Lave<-mean(DLM_data@ML[ind3])
   L0<-0.9*Lave
   Ltarget<-xL*Lave
   if(Lrecent>L0){TAC<-0.5*TACstar*(1+((Lrecent-L0)/(Ltarget-L0)))
@@ -354,16 +354,15 @@ Ltarget1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,xL=1.05){
 class(Ltarget1)<-"DLM_output"
 
 Ltarget4<-function(x,DLM_data,reps=100,yrsmth=5,xx=0.2,xL=1.15){
-  dependencies="DLM_data@Cat, DLM_data@CV_Cat, DLM_data@CAL, DLM_data@CAL_bins"
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
-  C_dat<-DLM_data@Cat[x,ind]
+  dependencies="DLM_data@Cat, DLM_data@CV_Cat, DLM_data@ML"
+  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
+  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
+  ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
+  ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
+  C_dat<-DLM_data@Cat[x,ind2]
   TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
-  #step<-stepsz*TACstar
-  binval<-DLM_data@CAL_bins[1:(length(DLM_data@CAL_bins)-1)]+(DLM_data@CAL_bins[2]-DLM_data@CAL_bins[1])/2
-  CALdat<-DLM_data@CAL[x,,]*rep(binval,each=dim(DLM_data@CAL)[2]) 
-  avCAL<-apply(CALdat,1,sum)/apply(DLM_data@CAL[x,,],1,sum)
-  Lrecent<-mean(avCAL[ind])
-  Lave<-mean(avCAL[(length(DLM_data@Year)-(yrsmth*2-1)):length(DLM_data@Year)])
+  Lrecent<-mean(DLM_data@ML[ind])
+  Lave<-mean(DLM_data@ML[ind3])
   L0<-0.9*Lave
   Ltarget<-xL*Lave
   if(Lrecent>L0){TAC<-0.5*TACstar*(1+((Lrecent-L0)/(Ltarget-L0)))
@@ -373,12 +372,52 @@ Ltarget4<-function(x,DLM_data,reps=100,yrsmth=5,xx=0.2,xL=1.15){
 }  
 class(Ltarget4)<-"DLM_output"
 
+
+Itarget1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,Imulti=1.5){
+  dependencies="DLM_data@Cat, DLM_data@CV_Cat"
+  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
+  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
+  ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
+  ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
+  C_dat<-DLM_data@Cat[x,ind2] 
+  TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
+  Irecent<-mean(DLM_data@Ind[x,ind])
+  Iave<-mean(DLM_data@Ind[x,ind3])
+  Itarget<-Iave*Imulti
+  I0<-0.8*Iave
+  if(Irecent>I0){TAC<-0.5*TACstar*(1+((Irecent-I0)/(Itarget-I0)))
+  }else{TAC<-0.5*TACstar*(Irecent/I0)^2}
+  TACfilter(TAC)  
+}  
+class(Itarget1)<-"DLM_output"
+
+Itarget4<-function(x,DLM_data,reps=100,yrsmth=5,xx=0.3,Imulti=2.5){
+  dependencies="DLM_data@Cat, DLM_data@CV_Cat"
+  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
+  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
+  ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
+  ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
+  C_dat<-DLM_data@Cat[x,ind2] 
+  TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
+  Irecent<-mean(DLM_data@Ind[x,ind])
+  Iave<-mean(DLM_data@Ind[x,ind3])
+  Itarget<-Iave*Imulti
+  I0<-0.8*Iave
+  if(Irecent>I0){TAC<-0.5*TACstar*(1+((Irecent-I0)/(Itarget-I0)))
+  }else{TAC<-0.5*TACstar*(Irecent/I0)^2}
+  TACfilter(TAC)  
+}  
+class(Itarget4)<-"DLM_output"
+
+
 Islope1<-function(x,DLM_data,reps=100,yrsmth=5,lambda=0.4,xx=0.2){
   dependencies="DLM_data@Year, DLM_data@Cat, DLM_data@CV_Cat, DLM_data@Ind"
   ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
+  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
   C_dat<-DLM_data@Cat[x,ind]
-  if(is.na(DLM_data@MPrec[x])){TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
+  if(length(DLM_data@Year)==ylast+1) {TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
   }else{TACstar<-rep(DLM_data@MPrec[x],reps)}
+    
   I_hist<-DLM_data@Ind[x,ind]
   yind<-1:yrsmth
   slppar<-summary(lm(I_hist~yind))$coefficients[2,1:2]
@@ -391,8 +430,9 @@ class(Islope1)<-"DLM_output"
 Islope4<-function(x,DLM_data,reps=100,yrsmth=5,lambda=0.2,xx=0.4){
   dependencies="DLM_data@Year, DLM_data@Cat, DLM_data@CV_Cat, DLM_data@Ind"
   ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
+  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
   C_dat<-DLM_data@Cat[x,ind]
-  if(is.na(DLM_data@MPrec[x])){TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
+  if(length(DLM_data@Year)==ylast+1) {TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
   }else{TACstar<-rep(DLM_data@MPrec[x],reps)}
   I_hist<-DLM_data@Ind[x,ind]
   yind<-1:yrsmth
@@ -403,35 +443,8 @@ Islope4<-function(x,DLM_data,reps=100,yrsmth=5,lambda=0.2,xx=0.4){
 }
 class(Islope4)<-"DLM_output"
 
-Itarget1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,Imulti=1.5){
-  dependencies="DLM_data@Cat, DLM_data@CV_Cat, DLM_data@CAL, DLM_data@CAL_bins"
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
-  C_dat<-DLM_data@Cat[x,ind]
-  TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
-  Irecent<-mean(DLM_data@Ind[x,ind])
-  Iave<-mean(DLM_data@Ind[x,(length(DLM_data@Year)-(yrsmth*2-1)):length(DLM_data@Year)])
-  Itarget<-Iave*Imulti
-  I0<-0.8*Iave
-  if(Irecent>I0){TAC<-0.5*TACstar*(1+((Irecent-I0)/(Itarget-I0)))
-  }else{TAC<-0.5*TACstar*(Irecent/I0)^2}
-  TACfilter(TAC)  
-}  
-class(Itarget1)<-"DLM_output"
 
-Itarget4<-function(x,DLM_data,reps=100,yrsmth=5,xx=0.3,Imulti=2.5){
-  dependencies="DLM_data@Cat, DLM_data@CV_Cat, DLM_data@CAL, DLM_data@CAL_bins"
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
-  C_dat<-DLM_data@Cat[x,ind]
-  TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
-  Irecent<-mean(DLM_data@Ind[x,ind])
-  Iave<-mean(DLM_data@Ind[x,(length(DLM_data@Year)-(yrsmth*2-1)):length(DLM_data@Year)])
-  Itarget<-Iave*Imulti
-  I0<-0.8*Iave
-  if(Irecent>I0){TAC<-0.5*TACstar*(1+((Irecent-I0)/(Itarget-I0)))
-  }else{TAC<-0.5*TACstar*(Irecent/I0)^2}
-  TACfilter(TAC)  
-}  
-class(Itarget4)<-"DLM_output"
+
 
 IT10<-function(x,DLM_data,reps=100,yrsmth=5,mc=0.1){
   
@@ -1929,6 +1942,78 @@ class(EDCAC)<-"DLM_output"
 
 AvC<-function(x,DLM_data,reps=100)rlnorm(reps,log(mean(DLM_data@Cat[x,],na.rm=T)),0.2)
 class(AvC)<-"DLM_output"
+
+
+LBSPR_ItTAC <- function(x, DLM_data, yrsmth=1, perc=pstar,reps=reps) {
+ dependencies="DLM_data@CAL, DLM_data@CAL_bins, DLM_data@vbLinf, 
+	DLM_data@vbK, DLM_data@Mort, LM_data@vbK, DLM_data@L50, DLM_data@L95, 
+	DLM_data@wlb" 
+  
+  MiscList <- LBSPR(x, DLM_data, yrsmth=yrsmth, perc=pstar,reps=reps)
+
+  XX <- 1:4 
+  YY <- MiscList[[2]][(length(MiscList[[2]]) - (max(XX)-1)):length(MiscList[[2]])]
+  
+  EstSPR <- YY[length(YY)]
+  
+  TgSPR <- 0.4
+  h <- DLM_data@steep[x]
+  SPRLim <- -(2*(h-1))/(3*h+1) # SPR that results in 0.5 R0
+  
+  phi1 <- 6
+  phi2 <- 1
+  
+  MaxDw <- -0.3
+  MaxUp <- 0.3
+  
+  minSlope <- 0.01
+  
+  Slope <- coef(lm(YY~XX))[2]  
+  # if (abs(Slope) < minSlope) Slope <- 0 
+  Dist <- EstSPR - TgSPR 
+  
+  # Control Rule #
+  Mod <- 0 
+  Buff <- 0.1
+  Buffer <- c(TgSPR - Buff,  TgSPR + Buff)
+  inBuff <- FALSE
+  belowTG <- FALSE 
+  aboveTG <- FALSE
+  slopeUp <- FALSE
+  slopeDw <- FALSE 
+  belowLim <- FALSE
+  if (Dist < 0) belowTG <- TRUE 
+  if (Dist > 0) aboveTG <- TRUE 
+  if (EstSPR > min(Buffer) & EstSPR < max(Buffer)) inBuff <- TRUE
+  if (Slope <= 0) slopeDw <- TRUE
+  if (Slope > 0) slopeUp <- TRUE
+  if (EstSPR < SPRLim) belowLim <- TRUE
+   
+  # If within buffer zone - only slope
+  if (inBuff) Mod <- phi1 * Slope
+  if (slopeUp & aboveTG) Mod <- phi1 * Slope +  phi2 * Dist
+  if (slopeUp & belowTG) Mod <- phi1 * Slope 
+  
+  if (slopeDw & aboveTG) Mod <- phi1 * Slope 
+  if (slopeDw & belowTG) Mod <- phi1 * Slope +  phi2 * Dist
+  
+  if (belowLim) Mod <- MaxDw
+  
+  Mod[Mod > MaxUp] <- MaxUp
+  Mod[Mod < MaxDw] <- MaxDw
+  Mod <- Mod + 1 
+ 
+  TAC <- DLM_data@MPrec[x] * Mod
+  TAC <- TACfilter(TAC)
+ 
+  Out <- list()
+  Out[[1]] <- TAC 
+  Out[[2]] <- MiscList
+ 
+  return(Out) 
+}
+class(LBSPR_ItTAC)<-"DLM_output"
+
 
 
 

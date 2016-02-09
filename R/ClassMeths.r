@@ -193,7 +193,8 @@ setClass("Stock",representation(Name="character",maxage="numeric",R0="numeric",
   M="numeric", Msd="numeric",Mgrad="numeric",h="numeric",SRrel="numeric",  
   Linf="numeric",K="numeric",t0="numeric", Ksd="numeric",Kgrad="numeric", 
   Linfsd="numeric",Linfgrad="numeric",recgrad="numeric", a="numeric", 
-  b="numeric",D="numeric",Perr="numeric", Size_area_1="numeric", 
+  b="numeric",D="numeric",Perr="numeric", Period="numeric", Amplitude="numeric",
+  Size_area_1="numeric", 
   Frac_area_1="numeric", Prob_staying="numeric",AC="numeric", 
   L50="numeric", L50_95="numeric",Source="character"))
 # initialize Stock
@@ -224,6 +225,8 @@ setMethod("initialize", "Stock", function(.Object,file=NA){
       .Object@b<-as.numeric(dat[match("b",dname),1])
       .Object@D<-as.numeric(dat[match("D",dname),1:2])
       .Object@Perr<-as.numeric(dat[match("Perr",dname),1:2])
+	  .Object@Period<-as.numeric(dat[match("Period",dname),1:2])
+	  .Object@Amplitude<-as.numeric(dat[match("Amplitude",dname),1:2])
       .Object@AC<-as.numeric(dat[match("AC",dname),1:2])
       .Object@Size_area_1<-as.numeric(dat[match("Size_area_1",dname),1:2])
       .Object@Frac_area_1<-as.numeric(dat[match("Frac_area_1",dname),1:2])
@@ -377,7 +380,7 @@ setClass("OM",representation(Name="character",nyears="numeric",maxage="numeric",
   Frac_area_1="numeric",Prob_staying="numeric", Source="character", 
   L50="numeric", L50_95="numeric", SelYears="numeric", AbsSelYears="numeric",
   L5="matrix", LFS="matrix",  Vmaxlen="matrix", beta="numeric", 
-  Spat_targ="numeric", Fsd="numeric",
+  Spat_targ="numeric", Fsd="numeric", Period="numeric", Amplitude="numeric",
   EffYears="numeric", EffLower="numeric", EffUpper="numeric", 
   # Fgrad="numeric", 
   qinc="numeric",qcv="numeric",AC="numeric", Cobs="numeric",Cbiascv="numeric",
@@ -449,7 +452,6 @@ setMethod("initialize", "MSE", function(.Object,Name,nyears,proyears,nMPs,MPs,
   .Object@FM_hist<-FM_hist
   .Object
 })
-  
   
 
 # Create DLM_fease class 
