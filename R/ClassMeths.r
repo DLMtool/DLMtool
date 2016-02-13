@@ -199,6 +199,7 @@ setClass("Stock",representation(Name="character",maxage="numeric",R0="numeric",
   L50="numeric", L50_95="numeric",Source="character"))
 # initialize Stock
 setMethod("initialize", "Stock", function(.Object,file=NA){
+
   if (!is.na(file)) {
     if (file.exists(file)) {
       dat <- read.csv(file,header=F,colClasses="character") # read 1st sheet
@@ -262,7 +263,10 @@ setMethod("initialize", "Fleet", function(.Object,file=NA){
       .Object@Fsd<-as.numeric(dat[match("Fsd",dname),1:2])
       # .Object@Fgrad<-as.numeric(dat[match("Fgrad",dname),1:2])
       nEffYears <- ncol(dat[match("EffYears",dname),])
+	  oldw <- getOption("warn")
+	  options(warn=-1)
 	  chk <- as.numeric(dat[match("EffYears",dname),1:nEffYears])
+	  options(warn = oldw)
 	  ind <- which(!is.na(chk))
 	  nEffYears <- length(ind)
       .Object@EffYears <-as.numeric(dat[match("EffYears",dname),1:nEffYears])
@@ -273,13 +277,19 @@ setMethod("initialize", "Fleet", function(.Object,file=NA){
       .Object@qcv<-as.numeric(dat[match("qcv",dname),1:2])
 	  
 	  chkName <- match("SelYears",dname) # Check if vector of selectivity years exists
-	  if (!is.na(chkName)) {
-	    nSelYears <- ncol(dat[match("SelYears",dname),])
-	    chk <- as.numeric(dat[match("SelYears",dname),1:nSelYears])
-	    ind <- which(!is.na(chk))
-	    nSelYears <- length(ind)
-	    SelYears <- as.numeric(dat[match("SelYears",dname),1:nSelYears])
 	  
+	  if (is.finite(chkName)) {
+	    nSelYears <- ncol(dat[match("SelYears",dname),])
+		oldw <- getOption("warn")
+		options(warn=-1)
+		chk <- as.numeric(dat[match("SelYears",dname),1:nSelYears])
+		options(warn = oldw)
+		ind <- which(is.finite(chk))
+	    nSelYears <- length(ind)
+	    chk <- length(ind)
+	  }
+	  if (is.finite(chk) &  chk > 0) { # parameters for selectivity years exists
+	    SelYears <- as.numeric(dat[match("SelYears",dname),1:nSelYears])
 	    L5Lower <- as.numeric(dat[match("L5Lower",dname),1:nSelYears])
 	    L5Upper <- as.numeric(dat[match("L5Upper",dname),1:nSelYears])
 	    LFSLower <- as.numeric(dat[match("LFSLower",dname),1:nSelYears])

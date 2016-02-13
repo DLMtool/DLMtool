@@ -4,13 +4,14 @@
 # Tom Carruthers UBC (t.carruthers@fisheries.ubc.ca)
 # Adrian Hordyk (a.hordyk@murdoch.edu.au)
 
-runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
-                   maxF=0.8, timelimit=1, reps=1, custompars=0, CheckMPs=FALSE){ 
-  print("Loading operating model")
+# runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
+                   # maxF=0.8, timelimit=1, reps=1, custompars=0, CheckMPs=FALSE){ 
+  # print("Loading operating model")
   flush.console()
   if(class(OM)!="OM")stop("You must specify an operating model")
   #if(!sfIsRunning())stop("You must initialize snowfall functions sfInit() see ??DLMtool")
   
+ 
   nyears <- OM@nyears  # number of  historical years
   maxage <- OM@maxage  # maximum age (no plus group)
   
@@ -113,7 +114,6 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   for(y in 2:(nyears+proyears))Perr[,y]<-AC*Perr[,y-1]+Perr[,y]*(1-AC*AC)^0.5#2#AC*Perr[,y-1]+(1-AC)*Perr[,y] # apply a pseudo AR1 autocorrelation to rec devs (log space)
   Perr <-exp(Perr) # normal space (mean 1 on average)
   
-  
   # Add cycle (phase shift) to recruitment deviations - if specified 
   if (is.finite(OM@Period[1]) & is.finite(OM@Amplitude[1])) {
     Shape <- "sin" # default sine wave - alterantive - 'shift' for step changes
@@ -124,7 +124,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 	flush.console()
   }
  
-  R0 <- OM@R0  # Initial recruitment
+  R0 <- OM@R0 # Initial recruitment
   
   Marray<-gettempvar(M,Msd,Mgrad,nyears+proyears,nsim) # M by sim and year according to gradient and inter annual variability
   SRrel<-rep(OM@SRrel,nsim) # type of Stock-recruit relationship. 1=Beverton Holt, 2=Ricker
@@ -401,11 +401,8 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   
   if(sfIsRunning()){
     sfExport(list=c("Marray","hs","Mat_age","Wt_age","R0","V","nyears","maxage")) # export some newly made arrays to the cluster
-
     MSYrefs<-sfSapply(1:nsim,getFMSY,Marray,hs,Mat_age,Wt_age,R0,V=V[,,nyears],maxage,nyears,proyears=200,Spat_targ,mov,SRrel,aR,bR) # optimize for MSY reference points
-	
   }else{
-
     MSYrefs<-sapply(1:nsim,getFMSY,Marray,hs,Mat_age,Wt_age,R0,V=V[,,nyears],maxage,nyears,proyears=200,Spat_targ,mov,SRrel,aR,bR) # optimize for MSY reference points
   }
     
@@ -517,23 +514,23 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   qvar<-array(exp(rnorm(proyears*nsim,rep(qmu,proyears),rep(qcv,proyears))),c(nsim,proyears)) # Variations in interannual variation
   FinF <-Find[,nyears]
   
-  if(is.na(MPs[1])) CheckMPs <- TRUE
-  if (CheckMPs) {
-    print("Determining available methods")  # print an progress report
-    flush.console()                         # update the console
-    PosMPs <- Can(DLM_data, timelimit=timelimit)  # list all the methods that could be applied to a DLM data object
+  # if(is.na(MPs[1])) CheckMPs <- TRUE
+  # if (CheckMPs) {
+    # print("Determining available methods")  # print an progress report
+    # flush.console()                         # update the console
+    # PosMPs <- Can(DLM_data, timelimit=timelimit)  # list all the methods that could be applied to a DLM data object
  
-    if(is.na(MPs[1])) {
-      MPs<-PosMPs      # if the user does not supply an argument MPs run the MSE or all available methods
-      print("No MPs specified: running all available")
-    }	
+    # if(is.na(MPs[1])) {
+      # MPs<-PosMPs      # if the user does not supply an argument MPs run the MSE or all available methods
+      # print("No MPs specified: running all available")
+    # }	
   
-    if(!is.na(MPs[1]))MPs<-MPs[MPs%in%PosMPs] # otherwise run the MSE for all methods that are deemed possible
-    if(length(MPs)==0) {
-      print(Cant(DLM_data, timelimit=timelimit))
-      stop('MSE stopped: no viable methods \n\n') # if none of the user specied methods are possible stop the run
-    }
-  }	
+    # if(!is.na(MPs[1]))MPs<-MPs[MPs%in%PosMPs] # otherwise run the MSE for all methods that are deemed possible
+    # if(length(MPs)==0) {
+      # print(Cant(DLM_data, timelimit=timelimit))
+      # stop('MSE stopped: no viable methods \n\n') # if none of the user specied methods are possible stop the run
+    # }
+  # }	
   
   nMP <- length(MPs)                    # the total number of methods used
   
@@ -546,7 +543,8 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   Ca<-array(NA,dim=c(nsim,nMP,proyears))       # store the projected catch
   TACa<-array(NA,dim=c(nsim,nMP,proyears))     # store the projected TAC recommendation
   
-  for(mm in 1:nMP){    # MSE Loop over methods
+  mm <- 3 
+  # for(mm in 1:nMP){    # MSE Loop over methods
     
     print(paste(mm,"/",nMP," Running MSE for ",MPs[mm],sep=""))  # print a progress report
     flush.console()                                                  # update the console
@@ -858,8 +856,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 		TACused <- apply(CB_P[,,y,], 1, sum) # Set last years TAC to actual catch from last year
         TACa[,mm,y]<-TACused
         MSElist[[mm]]@MPrec<-TACused		
-      }else{ # not an update yr
-        
+      }else{ # not an update yr       
         if(class(match.fun(MPs[mm]))=="DLM_output"){
           CB_P[SAYR]<-Biomass_P[SAYR]*(1-exp(-fishdist[SR]*V[SAYt]))      # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space
           temp<-CB_P[,,y,]/apply(CB_P[,,y,],1,sum)   # how catches are going to be distributed
@@ -869,7 +866,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
           FM_P[SAYR]<--log(1-temp)
         }else{ #input control
           # FM_P[SAYR] <- FM_P[SAY1R]*qvar[SY] *(1+qinc[S1]/100)^y  # add fishing efficiency changes and variability
-		  FM_P[SAYR] <- FM_P[SAY1R]*qvar[SY] # *(1+qinc[S1]/100)^y  # ignore magnitude of effort or q increase
+          FM_P[SAYR] <- FM_P[SAY1R]*qvar[SY] # *(1+qinc[S1]/100)^y  # ignore magnitude of effort or q increase
         }
 		Z_P[SAYR]<-FM_P[SAYR]+Marray[SYt]
 		# CB_P[SAYR]<-Biomass_P[SAYR]*(1-exp(-FM_P[SAYR])) 
@@ -885,11 +882,54 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     FMa[,mm,]<--log(1-apply(CB_P,c(1,3),sum)/(apply(CB_P,c(1,3),sum)+apply(VBiomass_P,c(1,3),sum)))
     Ca[,mm,]<-apply(CB_P,c(1,3),sum)
     cat("\n")
-  }    # end of mm methods
   
- new('MSE',Name=OM@Name,nyears,proyears,nMP,MPs,nsim,OMtable=DLM_data@OM,DLM_data@Obs,B_BMSYa,F_FMSYa,Ba,FMa,Ca,TACa,SSB_hist=SSB,CB_hist=CB,FM_hist=FM)
+ tt <-  new('MSE',Name=OM@Name,nyears,proyears,nMP,MPs,nsim,OMtable=DLM_data@OM,DLM_data@Obs,B_BMSYa,F_FMSYa,Ba,FMa,Ca,TACa,SSB_hist=SSB,CB_hist=CB,FM_hist=FM)
 
+
+matplot(t(FM_P[, maxage,,2]), type="l")
+
+dim(FM_P)
+
+tFM_P <- FM_P 
+
+for (sim in 1:5){
+for (A in 1:2) {
+for (X in 2:120) tFM_P[sim, ,X, A] <- tFM_P[sim, ,X-1, A]*qvar[sim,X] *(1+qinc[sim]/100)^X 
 }
+}
+
+sim <- 5 
+A <- 2 
+X <- 38
+tFM_P[sim, ,X-1, A]*qvar[sim,X] *(1+qinc[sim]/100)^X 
+ 
+
+plot((FM_P[5, maxage,,2]), type="l", ylab="F")
+lines((tFM_P[5, maxage,,2]), col="blue")
+
+
+round(cbind(FM_P[5, maxage,,2], tFM_P[5, maxage,,2]), 2)
+
+matplot(t(FM_P[, maxage,,2]), type="l", ylim=c(0,10))
+matplot(t(tFM_P[, maxage,,2]), type="l", ylim=c(0,10))
+
+plot((FM_P[5, maxage,,2]), type="l", ylab="F")
+lines((tFM_P[5, maxage,,2]), col="blue")
+
+plot((FM_P[5, maxage,,2]), type="l", ylab="F")
+
+sim <- 5 
+y 
+
+FinF[sim]*Ei[sim]*V[sim,,y+100]*fishdist[sim,2]*qvar[sim,y]*qs[sim]*(1+qinc[sim]/100)^y 
+
+tt <- FM_P[sim, , y-1, 2] * qvar[sim,y]*(1+qinc[sim]/100)^y 
+
+yy <- FM_P[SAY1R]*qvar[SY] *(1+qinc[S1]/100)^y 
+
+tt
+yy[which (yy %in% tt)]
+FM_P[which (yy %in% tt)]
 
 
 

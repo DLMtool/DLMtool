@@ -103,6 +103,7 @@ export(
     "SPSRA",
     "SPSRA_ML",
     "TAC",
+	"TradePlot",
     "Tplot",
     "Tplot2",
     "CheckConverg",
