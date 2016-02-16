@@ -707,7 +707,7 @@ DOM <- function(MSEobj, MPtg=NA) {
 TradePlot <- function(MSEobj, XAxis=c("Overfishing", "Biomass:BMSY"), 
 	YAxis=c("Long-term Yield", "AnnualVar"), XThresh=c(50, 80), YThresh=c(0,50),
 	maxVar=15, BmsyRef=0.5, B0Ref=0.2, AvailMPs=NULL, IdPoints=FALSE, ShowLabs=FALSE, 
-	ShowCols=TRUE, Fact=1) {
+	ShowCols=TRUE) {
   PMs <- c("Long-term Yield", "Short-term Yield", "Overfishing", "Biomass:BMSY",
 	"Biomass:B0", "AnnualVar")
   # Error Checks 	
@@ -727,7 +727,6 @@ TradePlot <- function(MSEobj, XAxis=c("Overfishing", "Biomass:BMSY"),
   if (length(XThresh) != length(XAxis) | length(YThresh) != length(XAxis)) 
 	warning("Risk Threshold not same length as number of PMs")
   
-
   Yd<-rep(NA,MSEobj@nMPs)
   BMSYref<-rep(NA,MSEobj@nMPs)
   B0ref<-rep(NA,MSEobj@nMPs)
@@ -736,15 +735,14 @@ TradePlot <- function(MSEobj, XAxis=c("Overfishing", "Biomass:BMSY"),
   STY<-rep(NA,MSEobj@nMPs)
   VY<-rep(NA,MSEobj@nMPs)
 
-  y1<-1:(MSEobj@proyears-1)
-  y2<-2:MSEobj@proyears
+  y1 <- 1:(MSEobj@proyears-1)
+  y2 <- 2:MSEobj@proyears
   
-  ystart<-1:(5*Fact)
-  yend<-max(MSEobj@proyears-(4*Fact),1):MSEobj@proyears
+  ystart<-1:5
+  yend<-max(MSEobj@proyears-4,1):MSEobj@proyears
   
   RefYd<-MSEobj@OM$RefY
-  
-  if (maxVar > 1) maxVar <- maxVar/100
+  if (maxVar < 1) maxVar <- maxVar * 100
   
   for(mm in 1:MSEobj@nMPs){  
     PNOF[mm]<-round(sum(MSEobj@F_FMSY[,mm,]<1,na.rm=T)/prod(dim(MSEobj@F_FMSY[,mm,]),na.rm=T)*100,1)
@@ -755,7 +753,7 @@ TradePlot <- function(MSEobj, XAxis=c("Overfishing", "Biomass:BMSY"),
 	LTY[mm]<-round(mean(apply(MSEobj@C[,mm,yend],1,mean,na.rm=T)/RefYd,na.rm=T)*100,1)
 	STY[mm]<-round(mean(apply(MSEobj@C[,mm,ystart],1,mean,na.rm=T)/RefYd,na.rm=T)*100,1)
     AAVY<-apply((((MSEobj@C[,mm,y1]-MSEobj@C[,mm,y2])/MSEobj@C[,mm,y2])^2)^0.5,1,mean,na.rm=T) 
-    VY[mm]<-round(sum(AAVY<maxVar,na.rm=T)/MSEobj@nsim,3)*100
+    VY[mm]<-round(sum(AAVY<(maxVar/100),na.rm=T)/MSEobj@nsim,3)*100
   }
   
   for (xx in seq_along(XAxis)) {
