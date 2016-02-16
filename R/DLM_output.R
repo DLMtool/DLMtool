@@ -993,6 +993,7 @@ BK<-function(x,DLM_data,reps=100){   # Beddington and Kirkwood life-history anal
 }  # end of BK
 class(BK)<-"DLM_output"
 
+
 BK_CC<-function(x,DLM_data,reps=100,Fmin=0.005){
   dependencies="DLM_data@LFC, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@CAA, DLM_data@Mort"
   Lc<-trlnorm(reps,DLM_data@LFC[x],0.2)
@@ -1751,7 +1752,7 @@ MLne<-function(x,DLM_data,Linfc,Kc,ML_reps=100,MLtype="F"){
       
       ind<-(which.min(((DLM_data@CAL_bins-DLM_data@LFS[x])^2)^0.5)-1):(length(DLM_data@CAL_bins)-1)
       for(y in 1:length(year))mlen[y]<-mean(sample(mlbin[ind],ceiling(sum(DLM_data@CAL[x,y,ind])/2),replace=T,prob=DLM_data@CAL[x,y,ind]))
-      mlen<-mean(mlen((length(mlen)-2):length(mlen)))
+      mlen<-mean(mlen[(length(mlen)-2):length(mlen)])
       Z2<-bheq(K=Kc[i],Linf=Linfc[i],Lc=DLM_data@LFS[x],Lbar=mlen)
     }
   }
