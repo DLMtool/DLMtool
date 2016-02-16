@@ -16,7 +16,6 @@ vignette: >
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
 
-
 # Introduction
 As many as 90 per cent of the world's fish populations have insufficient data to conduct a conventional stock assessment (Costello et al. 2012). Although a wide range of data-limited management procedures (MPs; stock assessments, harvest control rules) have been described in the primary and gray literature (Newman et al. 2014), these are not readily available, easily tested or compared. Critically, the path forward is unclear.  How do these MPs perform comparatively? What are the performance trade-offs? What MPs are inappropriate for given stock/fishery/data quality? What is the value of collecting additional data? What is an appropriate stop-gap management approach?
 
@@ -508,7 +507,7 @@ Tplot(PorgMSE)
 
 What if starting depletion were different, e.g. likely to be under BMSY?
 
-```{r, cache=TRUE}
+```{r}
 OM@D
 OM@D <- c(0.05,0.3)
 PorgMSE2 <- runMSE(OM, new_MPs, maxF=1, nsim=16, reps=1, proyears=20, interval=5)

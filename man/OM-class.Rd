@@ -41,11 +41,17 @@ Objects can be created by calls of the form \code{new("OM", Stock, Fleet, Observ
     \item{\code{Source}:}{A reference to a website or article form which parameters were taken to define the operating model}
     \item{\code{beta}:}{A parameter controlling hyperstability/hyperdepletion. I^beta therefore values below 1 lead to hyperstability (an index that decreases slower than true abundance) and values above 1 lead to hyperdepletion (an index that decreases more rapidly than true abundance)(uniform distribution)}
     \item{\code{Spat_targ}:}{Distribution of fishing in relation to spatial biomass: F is proportional to B^Spat_targ (uniform distribution) }
-    \item{\code{SelYears}:}{Vector of verticies that index years where historical selectivity pattern changed}
-    \item{\code{AbsSelYears}:}{vector of absolute year values that correspond to year indices in SelYears. Used only for plotting}
     \item{\code{LFS}:}{Shortest length that is fully vulnerable to fishing (uniform distribution)}
     \item{\code{L5}:}{Shortest length at 5 percent vulnerability (uniform distribution)}
-    \item{\code{Vmaxlen}:}{The vulnerability of the longest (oldes) fish (uniform distribution)}
+    \item{\code{Vmaxlen}:}{The vulnerability of the longest (oldest) fish (uniform distribution)}
+    \item{\code{SelYears}:}{Vector of verticies that index years where historical selectivity pattern changed. Leave empty to ignore}
+    \item{\code{AbsSelYears}:}{vector of absolute year values that correspond to year indices in SelYears. Used only for plotting}
+    \item{\code{L5Lower}:}{Optional vector of values of length SelYears, specifiying lower limits of L5 (use \code{ChooseSelect} function to set these. Overrides L5 above)}
+    \item{\code{L5Upper}:}{Optional vector of values of length SelYears, specifiying upper limits of L5 (use \code{ChooseSelect} function to set these. Overrides L5 above)}
+    \item{\code{LFSLower}:}{Optional vector of values of length SelYears, specifiying lower limits of LFS (use \code{ChooseSelect} function to set these. Overrides LFS above)}
+    \item{\code{LFSUpper}:}{Optional vector of values of length SelYears, specifiying upper limits of LFS (use \code{ChooseSelect} function to set these. Overrides LFS above)}
+    \item{\code{VmaxLower}:}{Optional vector of values of length SelYears, specifiying lower limits of Vmaxlen (use \code{ChooseSelect} function to set these. Overrides Vmaxlen above)}
+    \item{\code{VmaxUpper}:}{Optional vector of values of length SelYears, specifiying upper limits of Vmaxlen (use \code{ChooseSelect} function to set these. Overrides Vmaxlen above)}
     \item{\code{L50}:}{Length at 50 percent maturity (uniform distribution)}
     \item{\code{L50_95}:}{Length increment from 50 to 95 percent maturity (uniform distribution)}
     \item{\code{Fsd}:}{Inter-annual variability in fishing mortality rate}
