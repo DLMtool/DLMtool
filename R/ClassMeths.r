@@ -247,8 +247,9 @@ setMethod("initialize", "Stock", function(.Object,file=NA){
 setClass("Fleet",slots=c(Name="character",nyears="numeric", Spat_targ="numeric",
   Fsd="numeric", qinc="numeric",qcv="numeric", 
   EffYears="numeric", EffLower="numeric", EffUpper="numeric",
-  SelYears="numeric", AbsSelYears="numeric", L5="matrix", LFS="matrix",
-  Vmaxlen="matrix") )
+  SelYears="numeric", AbsSelYears="numeric", L5="numeric", LFS="numeric",
+  Vmaxlen="numeric", L5Lower="numeric", L5Upper="numeric", LFSLower="numeric",
+  LFSUpper="numeric",  VmaxLower="numeric", VmaxUpper="numeric"))
 # initialize Fleet 
 setMethod("initialize", "Fleet", function(.Object,file=NA){
   if (!is.na(file)) {
@@ -277,7 +278,6 @@ setMethod("initialize", "Fleet", function(.Object,file=NA){
       .Object@qcv<-as.numeric(dat[match("qcv",dname),1:2])
 	  
 	  chkName <- match("SelYears",dname) # Check if vector of selectivity years exists
-	  
 	  if (is.finite(chkName)) {
 	    nSelYears <- ncol(dat[match("SelYears",dname),])
 		oldw <- getOption("warn")
@@ -288,27 +288,19 @@ setMethod("initialize", "Fleet", function(.Object,file=NA){
 	    nSelYears <- length(ind)
 	    chk <- length(ind)
 	  }
-	  if (is.finite(chk) &  chk > 0) { # parameters for selectivity years exists
-	    SelYears <- as.numeric(dat[match("SelYears",dname),1:nSelYears])
-	    L5Lower <- as.numeric(dat[match("L5Lower",dname),1:nSelYears])
-	    L5Upper <- as.numeric(dat[match("L5Upper",dname),1:nSelYears])
-	    LFSLower <- as.numeric(dat[match("LFSLower",dname),1:nSelYears])
-	    LFSUpper <- as.numeric(dat[match("LFSUpper",dname),1:nSelYears])
-	    VmaxLower <- as.numeric(dat[match("VmaxLower",dname),1:nSelYears])
-	    VmaxUpper <- as.numeric(dat[match("VmaxUpper",dname),1:nSelYears])
-	    
-		.Object@SelYears <- SelYears
-	    .Object@L5 <- matrix(c(L5Lower, L5Upper),  byrow=FALSE, nrow=nSelYears)
-        .Object@LFS <- matrix(c(LFSLower, LFSUpper),  byrow=FALSE, nrow=nSelYears)
-        .Object@Vmaxlen <-matrix(c(VmaxLower, VmaxUpper),  byrow=FALSE, nrow=nSelYears)
-	  } else {
-	    .Object@L5 <- matrix(as.numeric(dat[match("L5",dname),1:2]),  byrow=TRUE, nrow=1)
-        .Object@LFS <- matrix(as.numeric(dat[match("LFS",dname),1:2]),  byrow=TRUE, nrow=1)
-        .Object@Vmaxlen <-matrix(as.numeric(dat[match("Vmaxlen",dname),1:2]),  byrow=TRUE, nrow=1)
+	  if (is.finite(chk) &  chk > 0) { # parameters for selectivity years exists 
+		.Object@SelYears <- as.numeric(dat[match("SelYears",dname),1:nSelYears])
+		.Object@L5Lower <- as.numeric(dat[match("L5Lower",dname),1:nSelYears])
+		.Object@L5Upper <- as.numeric(dat[match("L5Upper",dname),1:nSelYears])
+		.Object@LFSLower <- as.numeric(dat[match("LFSLower",dname),1:nSelYears])
+		.Object@LFSUpper <- as.numeric(dat[match("LFSUpper",dname),1:nSelYears])
+		.Object@VmaxLower <- as.numeric(dat[match("VmaxLower",dname),1:nSelYears])
+		.Object@VmaxUpper <- as.numeric(dat[match("VmaxUpper",dname),1:nSelYears]) 
 	  }
-      # .Object@L5<-as.numeric(dat[match("L5",dname),1:2])
-      # .Object@LFS<-as.numeric(dat[match("LFS",dname),1:2])
-      # .Object@Vmaxlen<-as.numeric(dat[match("Vmaxlen",dname),1:2])
+      # These are ignored in MSE if L5Lower etc are set 
+	  .Object@L5 <- as.numeric(dat[match("L5",dname),1:2])
+      .Object@LFS <- as.numeric(dat[match("LFS",dname),1:2])
+      .Object@Vmaxlen <-as.numeric(dat[match("Vmaxlen",dname),1:2])
 	  
     } else {
 	  message("File doesn't exist")
@@ -389,7 +381,10 @@ setClass("OM",representation(Name="character",nyears="numeric",maxage="numeric",
   a="numeric",b="numeric",D="numeric", Size_area_1="numeric", 
   Frac_area_1="numeric",Prob_staying="numeric", Source="character", 
   L50="numeric", L50_95="numeric", SelYears="numeric", AbsSelYears="numeric",
-  L5="matrix", LFS="matrix",  Vmaxlen="matrix", beta="numeric", 
+  L5="numeric", LFS="numeric",  Vmaxlen="numeric", 
+  L5Lower="numeric", L5Upper="numeric", LFSLower="numeric",
+  LFSUpper="numeric",  VmaxLower="numeric", VmaxUpper="numeric",
+  beta="numeric", 
   Spat_targ="numeric", Fsd="numeric", Period="numeric", Amplitude="numeric",
   EffYears="numeric", EffLower="numeric", EffUpper="numeric", 
   # Fgrad="numeric", 
@@ -408,12 +403,7 @@ setMethod("initialize", "OM", function(.Object,Stock,Fleet,Observation){
   if(class(Fleet)!='Fleet')print(paste('Could not build operating model:',deparse(substitute(Fleet)),'not of class Fleet'))
   if(class(Observation)!='Observation')print(paste('Could not build operating model:',deparse(substitute(Observation)),'not of class Observation'))
   if(class(Stock)!='Stock'|class(Fleet)!='Fleet'|class(Observation)!='Observation')stop()
-  
-  # Work around for Fleet Selectivity Objects
-  if(class(Fleet@L5) == "numeric") slot(Fleet, "L5", check=FALSE) <- t(as(Fleet@L5, "matrix"))
-  if(class(Fleet@LFS) == "numeric") slot(Fleet, "LFS", check=FALSE) <- t(as(Fleet@LFS, "matrix"))
-  if(class(Fleet@Vmaxlen) == "numeric") slot(Fleet, "Vmaxlen", check=FALSE) <- t(as(Fleet@Vmaxlen, "matrix"))
-  
+   
   .Object@Name<-paste("Stock:",Stock@Name,"  Fleet:",Fleet@Name,"  Observation model:",Observation@Name,sep="")
   # Now copy the values for stock, fleet and observation slots to same slots in the Sim object
   Sslots<-slotNames(Stock)
@@ -650,6 +640,54 @@ setMethod("summary",
   mtext(paste("Data summary for",deparse(substitute(DLM_data)),sep=" "),3,font=2,line=0.25,outer=T)
 
 })
+
+# Define generic summary method for MSE objects 
+setMethod("summary",
+          signature(object = "MSE"),
+          function(object){            
+
+    MSEobj<-object      
+    nm<-MSEobj@nMPs
+    nsim<-MSEobj@nsim
+    proyears<-MSEobj@proyears
+    
+    Yd<-P10<-P50<-P100<-POF<-LTY<-STY<-VY<-array(NA,c(nm,nsim))
+    
+    yind<-max(MSEobj@proyears-4,1):MSEobj@proyears
+    RefYd<-MSEobj@OM$RefY
+    yend<-max(MSEobj@proyears-9,1):MSEobj@proyears
+    ystart<-1:10
+    y1<-1:(MSEobj@proyears-1)
+    y2<-2:MSEobj@proyears
+    
+    for(m in 1:nm){
+      Yd[m,]<-round(apply(MSEobj@C[,m,yind],1,mean,na.rm=T)/RefYd*100,1)
+      POF[m,]<-round(apply(MSEobj@F_FMSY[,m,]>1,1,sum,na.rm=T)/proyears*100,1)
+      P10[m,]<-round(apply(MSEobj@B_BMSY[,m,]<0.1,1,sum,na.rm=T)/proyears*100,1)
+      P50[m,]<-round(apply(MSEobj@B_BMSY[,m,]<0.5,1,sum,na.rm=T)/proyears*100,1)
+      P100[m,]<-round(apply(MSEobj@B_BMSY[,m,]<1,1,sum,na.rm=T)/proyears*100,1)
+      LTY[m]<-round(sum(MSEobj@C[,m,yend]/RefYd>0.5)/(MSEobj@nsim*length(yend))*100,1)
+      STY[m]<-round(sum(MSEobj@C[,m,ystart]/RefYd>0.5)/(MSEobj@nsim*length(ystart))*100,1)
+      AAVY<-apply(((MSEobj@C[,m,y1]-MSEobj@C[,m,y2])^2)^0.5,1,mean)/apply(MSEobj@C[,m,y2],1,mean)
+      VY[m]<-round(sum(AAVY<0.1)/MSEobj@nsim*100,1)
+    }
+    nr<-2
+    out<-cbind(MSEobj@MPs,round(apply(Yd,1,mean,na.rm=T),nr),round(apply(Yd,1,sd,na.rm=T),nr),
+                             round(apply(POF,1,mean,na.rm=T),nr),round(apply(POF,1,sd,na.rm=T),nr),
+                             round(apply(P10,1,mean,na.rm=T),nr),round(apply(P10,1,sd,na.rm=T),nr),
+                             round(apply(P50,1,mean,na.rm=T),nr),round(apply(P50,1,sd,na.rm=T),nr),
+                             round(apply(P100,1,mean,na.rm=T),nr),round(apply(P100,1,sd,na.rm=T),nr),
+                             round(apply(LTY,1,mean,na.rm=T),nr),
+                             round(apply(STY,1,mean,na.rm=T),nr),
+                             round(apply(VY,1,mean,na.rm=T),nr))
+    out<-as.data.frame(out)
+    names(out)<-c("MP","Yield","stdev","POF","stdev ","P10","stdev",
+                  "P50","stdev","P100","stdev","LTY","STY","VY")
+    out[,1]<-as.character(out[,1])
+    for(i in 2:ncol(out))out[,i]<-as.numeric(as.character(out[,i]))
+    out
+  })
+
 
 # Plotting code for MSE object
 setMethod("plot",

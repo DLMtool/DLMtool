@@ -83,6 +83,7 @@ Objects can be created by calls of the form \code{new("DLM_data", stock)}.
     \item{\code{Rec}:}{Recent recruitment strength}
     \item{\code{MPrec}:}{The previous recommendation of a management proceedure}
     \item{\code{LHYear}:}{The last historical year of the simulation (before projection)}
+    \item{\code{Misc}:}{Optional list which is passed to MPs}
   }
 }
 \section{Methods}{

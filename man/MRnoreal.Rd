@@ -8,7 +8,7 @@ An marine reserve in area 1 with no spatial reallocation of fishing effort
 A spatial control that prevents fishing in area 1 and does not reallocate this fishing effort to area 2.  
 }
 \usage{
-MRnoreal(x, DLM_data)
+MRnoreal(x, DLM_data, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,6 +18,7 @@ A position in data / simulation object DLM
   \item{DLM_data}{
 A data limited methods data object
 }
+\item{...}{Optional additional arguments that are ignored. Note arguments \code{reps} or \code{...} are required for all input controls }
 }
 \author{
 T. Carruthers

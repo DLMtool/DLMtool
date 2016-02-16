@@ -37,6 +37,8 @@ Objects can be created by calls of the form \code{new("Stock", OM)}.
     \item{\code{L50_95}:}{Length increment from 50 percent to 95 percent maturity}
     \item{\code{D}:}{Current level of stock depletion (Bcurrent/Bunfished) (uniform distribution)}
     \item{\code{Perr}:}{Process error, the CV of lognormal recruitment deviations  (uniform distribution)}
+    \item{\code{Period}:}{Period for cylical recruitment pattern in years (uniform distribution). Leave empty to ignore }
+    \item{\code{Amplitude}:}{Amplitude in deviation from long-term average recruitment during recruitment cycle, both positive and negative (uniform distribution). E.g., a range from 0 to 0.5 means recruitment decreases or increases by up to 50\% each cycle. Leave empty to ignore}
     \item{\code{Size_area_1}:}{The size of area 1 relative to area 2 (uniform distribution)}
     \item{\code{Frac_area_1}:}{The fraction of the unfished biomass in stock 1 (uniform distribution)}
     \item{\code{Prob_staying}:}{The probability of inviduals in area 1 remaining in area 1 over the course of one year}

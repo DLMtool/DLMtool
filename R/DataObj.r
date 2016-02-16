@@ -55,9 +55,12 @@ DLMdiag<-function(DLM_data,command="available",reps=5,timelimit=1){
 needed<-function(DLM_data,funcs=NA){
   if(is.na(funcs[1]))funcs<-avail("DLM_output")
   slots<-slotNames('DLM_data')
+  rr <- try(slot(DLM_data, "Misc"), silent=TRUE)
+  if (class(rr) == "try-error") DLM_data@Misc <- list()
+  
   slotnams<-paste("DLM_data@",slotNames(DLM_data),sep="")
   repp<-rep("",length(funcs))
-
+  DLM_data@Misc <- list()
   for(i in 1:length(funcs)){
     temp<-format(match.fun(funcs[i]))
     temp<-paste(temp[1:(length(temp))],collapse=" ")
@@ -137,7 +140,7 @@ Sense <-function(DLM_data,MP,nsense=6,reps=100,perc=c(0.05,0.5,0.95),ploty=T){
 
   DLM_data2<-DLM_data
   nm <-deparse(substitute(DLM_data2))
-  refTAC<-quantile(getTAC(DLM_data2,MP,reps),perc,na.rm=T)
+  refTAC<-quantile(getTAC(DLM_data2,MP,reps)[[1]],perc,na.rm=T)
  
   DLM_data<-DLM_data2
   reqs<-Required(MP)#read.csv(paste(getwd(),"/Data/Data requirements.csv",sep=""),header=T)
@@ -179,7 +182,7 @@ Sense <-function(DLM_data,MP,nsense=6,reps=100,perc=c(0.05,0.5,0.95),ploty=T){
     }
   }
 
-  TACa<-getTAC(DLM_data,MPs=MP,reps=reps)
+  TACa<-getTAC(DLM_data,MPs=MP,reps=reps)[[1]]
   TACa<-apply(TACa,3,quantile,p=perc,na.rm=T)
   LB<-((1:nslots)-1)*4+1
   UB<-(1:nslots)*4

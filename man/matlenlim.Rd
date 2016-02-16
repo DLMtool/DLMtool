@@ -1,14 +1,14 @@
-\name{matagelim}
-\alias{matagelim}
+\name{matlenlim}
+\alias{matlenlim}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 A data-limited method in which fishing vulnerability is set according to the maturity curve
 }
 \description{
-A very naive approach to demonstrate the implementation of input controls in the DLM toolkit
+An example of the implementation of input controls in the DLM toolkit, where selectivity-at-length is set equivalent to maturity-at-length
 }
 \usage{
-matagelim(x, DLM_data)
+matlenlim(x, DLM_data, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -18,6 +18,7 @@ A position in a data-limited methods object
   \item{DLM_data}{
 A data-limited methods object
 }
+\item{...}{Optional additional arguments that are ignored. Note arguments \code{reps} or \code{...} are required for all input controls }
 }
 
 \value{

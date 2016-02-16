@@ -1039,8 +1039,7 @@ BK_ML<-function(x,DLM_data,reps=100){
 class(BK_ML)<-"DLM_output"
 
 Fratio<-function(x,DLM_data,reps=100){  # FMSY / M ratio method e.g. Gulland ===============================================================================
-  depends="DLM_data@Abun,DLM_data@CV_Abun,DLM_data@FMSY_M,
-          DLM_data@CV_FMSY_M,DLM_data@Mort,DLM_data@CV_Mort"
+  depends="DLM_data@Abun,DLM_data@CV_Abun,DLM_data@FMSY_M, DLM_data@CV_FMSY_M,DLM_data@Mort,DLM_data@CV_Mort"
   Ac<-trlnorm(reps,DLM_data@Abun[x],DLM_data@CV_Abun[x])
   TACfilter(Ac*trlnorm(reps,DLM_data@Mort[x],
             DLM_data@CV_Mort[x])*trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x]))
@@ -1745,14 +1744,22 @@ MLne<-function(x,DLM_data,Linfc,Kc,ML_reps=100,MLtype="F"){
     mlen<-rep(NA,length(year))
      ss<-ceiling(apply(DLM_data@CAL[x,,],1,sum)/2)
     if(MLtype=="dep"){
-      for(y in 1:length(year))mlen[y]<-mean(sample(mlbin,ceiling(sum(DLM_data@CAL[x,y,])/2),replace=T,prob=DLM_data@CAL[x,y,]))
+      for(y in 1:length(year)) {
+	    if (sum(DLM_data@CAL[x,y,] > 0) > 0.25 * length(DLM_data@CAL[x,y,])) {
+	      mlen[y]<-mean(sample(mlbin,ceiling(sum(DLM_data@CAL[x,y,])/2),replace=T,prob=DLM_data@CAL[x,y,]), na.rm=TRUE)
+		}  
+	  }
       Z[i,]<-bhnoneq(year=year,mlen=mlen,ss=ss,K=Kc[i],Linf=Linfc[i],Lc=DLM_data@LFS[x],nbreaks=nbreaks,
            styrs=ceiling(length(year)*((1:nbreaks)/(nbreaks+1))),stZ=rep(0.05,nbreaks+1),stsigma=20,graph=F)
     }else{
       
       ind<-(which.min(((DLM_data@CAL_bins-DLM_data@LFS[x])^2)^0.5)-1):(length(DLM_data@CAL_bins)-1)
-      for(y in 1:length(year))mlen[y]<-mean(sample(mlbin[ind],ceiling(sum(DLM_data@CAL[x,y,ind])/2),replace=T,prob=DLM_data@CAL[x,y,ind]))
-      mlen<-mean(mlen[(length(mlen)-2):length(mlen)])
+      for(y in 1:length(year)) {
+	    if (sum(DLM_data@CAL[x,y,] > 0) > 0.25 * length(DLM_data@CAL[x,y,])) {
+		  mlen[y]<-mean(sample(mlbin[ind],ceiling(sum(DLM_data@CAL[x,y,ind])/2),replace=T,prob=DLM_data@CAL[x,y,ind]), na.rm=TRUE)
+		}
+      }		
+      mlen<-mean(mlen[(length(mlen)-2):length(mlen)], na.rm=TRUE)
       Z2<-bheq(K=Kc[i],Linf=Linfc[i],Lc=DLM_data@LFS[x],Lbar=mlen)
     }
   }
@@ -1945,12 +1952,10 @@ AvC<-function(x,DLM_data,reps=100)rlnorm(reps,log(mean(DLM_data@Cat[x,],na.rm=T)
 class(AvC)<-"DLM_output"
 
 
-LBSPR_ItTAC <- function(x, DLM_data, yrsmth=1, perc=pstar,reps=reps) {
- dependencies="DLM_data@CAL, DLM_data@CAL_bins, DLM_data@vbLinf, 
-	DLM_data@vbK, DLM_data@Mort, LM_data@vbK, DLM_data@L50, DLM_data@L95, 
-	DLM_data@wlb" 
+LBSPR_ItTAC <- function(x, DLM_data, yrsmth=1,reps=reps) {
+ dependencies="DLM_data@CAL, DLM_data@CAL_bins, DLM_data@vbLinf, DLM_data@vbK, DLM_data@Mort, LM_data@vbK, DLM_data@L50, DLM_data@L95, DLM_data@wlb" 
   
-  MiscList <- LBSPR(x, DLM_data, yrsmth=yrsmth, perc=pstar,reps=reps)
+  MiscList <- LBSPR(x, DLM_data, yrsmth=yrsmth,reps=reps)
 
   XX <- 1:4 
   YY <- MiscList[[2]][(length(MiscList[[2]]) - (max(XX)-1)):length(MiscList[[2]])]

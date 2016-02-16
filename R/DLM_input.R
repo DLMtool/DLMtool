@@ -67,13 +67,11 @@ curE75<-function(x,DLM_data, ...){ #75% current effort
 }
 class(curE75)<-"DLM_input"
 
-
-
-LBSPR_ItEff <- function(x, DLM_data, yrsmth=1, perc=pstar,reps=reps) {
+LBSPR_ItEff <- function(x, DLM_data, yrsmth=1, reps=reps) {
  dependencies="DLM_data@CAL, DLM_data@CAL_bins, DLM_data@vbLinf, 
 	DLM_data@vbK, DLM_data@Mort, LM_data@vbK, DLM_data@L50, DLM_data@L95, 
 	DLM_data@wlb"
-  MiscList <- LBSPR(x, DLM_data, yrsmth=yrsmth, perc=pstar,reps=reps)
+  MiscList <- LBSPR(x, DLM_data, yrsmth=yrsmth, reps=reps)
   
   XX <- 1:4 
   YY <- MiscList[[2]][(length(MiscList[[2]]) - (max(XX)-1)):length(MiscList[[2]])]
@@ -142,11 +140,11 @@ LBSPR_ItEff <- function(x, DLM_data, yrsmth=1, perc=pstar,reps=reps) {
 }
 class(LBSPR_ItEff)<-"DLM_input"
 
-LBSPR_ItSel <- function(x, DLM_data, yrsmth=1, perc=pstar,reps=reps) {
+LBSPR_ItSel <- function(x, DLM_data, yrsmth=1, reps=reps) {
  dependencies="DLM_data@CAL, DLM_data@CAL_bins, DLM_data@vbLinf, 
 	DLM_data@vbK, DLM_data@Mort, LM_data@vbK, DLM_data@L50, DLM_data@L95, 
 	DLM_data@wlb"
-  MiscList <- LBSPR(x, DLM_data, yrsmth=yrsmth, perc=pstar,reps=reps)
+  MiscList <- LBSPR(x, DLM_data, yrsmth=yrsmth,reps=reps)
   
   XX <- 1:4 
   YY <- MiscList[[2]][(length(MiscList[[2]]) - (max(XX)-1)):length(MiscList[[2]])]

@@ -431,6 +431,12 @@ ChooseSelect <- function(Fleet, Stock=NULL, FstYr=NULL, SelYears=NULL) {
   }	
   par(set.par)
   CheckSelect(Fleet, Stock)
+  Fleet@L5Lower <- Fleet@L5[,1]
+  Fleet@L5Upper <- Fleet@L5[,2]
+  Fleet@LFSLower <- Fleet@LFS[,1]
+  Fleet@LFSUpper <- Fleet@LFS[,2]
+  Fleet@VmaxLower <- Fleet@Vmaxlen[,1]
+  Fleet@VmaxUpper <- Fleet@Vmaxlen[,2]
   Fleet
 }
 
@@ -469,9 +475,7 @@ KalmanFilter <- function(RawEsts, R=1, Q=0.1, Int=100) {
 }
 
 
-##################################
-# LBSPR - Hordyk et al ICES 2015 #
-##################################
+# LBSPR - Hordyk et al ICES 2015 (slow!)
 LBSPRSim <- function(StockPars, FleetPars, SizeBins=NULL, P=0.001, Nage=201) {
 
   MK <- StockPars$MK 
@@ -556,7 +560,7 @@ OptFun <- function(tryFleetPars, LenDat, StockPars, SizeBins=NULL,
   Fleet$MLLKnife <- NA
   Fleet$FM <- exp(tryFleetPars[3])
   
-  if (mod == "GTG") runMod <-  GTGLBSPRSim(StockPars, Fleet, SizeBins)
+  # if (mod == "GTG") runMod <-  GTGLBSPRSim(StockPars, Fleet, SizeBins)
   if (mod == "LBSPR") runMod <- LBSPRSim(StockPars, Fleet, SizeBins)
   
   LenDat <- LenDat + 1E-15 # add tiny constant for zero catches
@@ -620,7 +624,7 @@ DoOpt <- function(StockPars, LenDat, SizeBins=NULL, mod=c("GTG", "LBSPR")) {
   newFleet$SL50 <- exp(opt$par[1]) * StockPars$Linf 
   newFleet$SL95 <- newFleet$SL50 + exp(opt$par[2]) * StockPars$Linf
 
-  if (mod == "GTG") runMod <-  GTGLBSPRSim(StockPars, newFleet, SizeBins)
+  # if (mod == "GTG") runMod <-  GTGLBSPRSim(StockPars, newFleet, SizeBins) # not used
   if (mod == "LBSPR") runMod <- LBSPRSim(StockPars, newFleet, SizeBins)
   
   Out <- NULL 
@@ -632,7 +636,7 @@ DoOpt <- function(StockPars, LenDat, SizeBins=NULL, mod=c("GTG", "LBSPR")) {
 }
 
 # Run LBSPR Model for time-series of catch length composition data 
-LBSPR <- function(x, DLM_data, yrsmth=1, perc=pstar,reps=reps) {
+LBSPR <- function(x, DLM_data, yrsmth=1,reps=reps) {
   # Save other stuff for smoothing estimates
   TotYears <- nrow(DLM_data@CAL[1,,]) # How many years of length data exist
   if (length(DLM_data@Misc[[x]]) == 0) { # Misc List is empty

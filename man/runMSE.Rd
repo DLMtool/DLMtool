@@ -8,9 +8,9 @@ Run a Management Strategy Evaluation
 A function that runs a Management Strategy Evaluation (closed-loop simulation) for a specified operating model
 }
 \usage{
-runMSE(OM = "1", MPs = NA, nsim = 48, proyears = 28, 
+runMSE(OM, MPs = NA, nsim = 48, proyears = 28, 
        interval = 4, pstar = 0.5, maxF = 0.8, 
-       timelimit = 1, reps=1, custompars = 0)
+       timelimit = 1, reps=1, custompars = 0, CheckMPs=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -44,6 +44,10 @@ Number of samples of the management recommendation for each method. Note that wh
 \item{custompars}{
 A data.table with nsim rows and nparameter columns. The column names must respond to variables of the operating model or observation model see the OM and Obs slots of the MSE class for correct names and interpretation. This allows users to prescribe correlated parameters or estimates from stock assessments. 
 }
+\item{CheckMPs}{
+Logical to indicate if Can function should be used to check if MPs can be run. 
+}
+
 }
 \value{
 An object of class MSE

@@ -8,7 +8,7 @@ Maintainer: Tom Carruthers <t.carruthers@fisheries.ubc.ca>
 Description: Simulation testing and implementation of data-limited fishery stock
     assessment methods.
 License: GPL-2
-Depends:
+Depends: 
     R (>= 2.10.0),
     methods,
     snowfall,
@@ -18,8 +18,9 @@ Depends:
 LazyData: yes
 LazyLoad: yes
 VignetteBuilder: knitr
-Suggests:
-    knitr
+Suggests: 
+    knitr,
+    rmarkdown
 NeedsCompilation: no
 Packaged: 2015-11-13 23:33:05 UTC; Tom Carruthers
 RoxygenNote: 5.0.0

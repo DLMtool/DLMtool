@@ -420,16 +420,16 @@ BlankSelPlot <- function(Stock=NULL, Yr=NULL, N=NULL) {
   axis(side=2)
   Xax <- seq(from=0, to=Max-By, by=2*By)
   axis(side=1, at=Xax)
-  axis(side=1, at=c(2, Max), label=c("", "Lmax"), xpd=NA)
+  axis(side=1, at=c(2, Max), labels=c("", "Lmax"), xpd=NA)
   mtext(side=1, line=3.5, "Relative Length", cex=AxCex)
-  axis(side=1, at=1, line=1.5, label="L50")
+  axis(side=1, at=1, line=1.5, labels="L50")
   if (!is.null(Stock) & class(Stock) == "Stock") {
     L50 <- mean(Stock@L50) # mean length at maturity
     MatAx <- L50 * Xax
     axis(side=1, line=5.5, at=Xax, labels=MatAx)
-    axis(side=1, line=5.5, at=c(2, Max), label=c("", "Lmax"), xpd=NA)
+    axis(side=1, line=5.5, at=c(2, Max), labels=c("", "Lmax"), xpd=NA)
     mtext(side=1, line=8.5, "Approx. Length", cex=AxCex)
-    axis(side=1, at=1, line=6.5, label="Mean L50")
+    axis(side=1, at=1, line=6.5, labels="Mean L50")
   } 
   if (N == 1) {
     title(paste("Choose selectivity points for Year", Yr, "(First Year)"))

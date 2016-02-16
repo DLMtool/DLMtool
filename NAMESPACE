@@ -9,7 +9,6 @@ export(
     "BK",
     "BK_CC",
     "BK_ML",
-	"BlankSelPlot",
     "Can",
     "Cant",
     "CC1",

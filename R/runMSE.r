@@ -5,15 +5,21 @@
 # Adrian Hordyk (a.hordyk@murdoch.edu.au)
 
 runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
-                   maxF=0.8, timelimit=1, reps=1, custompars=0, CheckMPs=TRUE, SetSeed=NULL){ 
+                   maxF=0.8, timelimit=1, reps=1, custompars=0, CheckMPs=TRUE){ 
   print("Loading operating model")
-  if (is.finite(SetSeed)) set.seed(SetSeed)
+
   flush.console()
   if(class(OM)!="OM")stop("You must specify an operating model")
   #if(!sfIsRunning())stop("You must initialize snowfall functions sfInit() see ??DLMtool")
   
   nyears <- OM@nyears  # number of  historical years
   maxage <- OM@maxage  # maximum age (no plus group)
+  
+  calcMax <- -log(0.001)/(min(OM@M)) # Age at which 0.01% of cohort survives
+  maxage <- max(maxage, calcMax) # If maximum age is lower, increase it to calcMax
+  OM@maxage <- maxage
+  
+  # WARNING FOR NYEAR AND PROYEARS? 
   
   dep <- runif(nsim,OM@D[1],OM@D[2])  # sample from the range of user-specified depletion (Bcurrent/B0)
   Esd <- runif(nsim,OM@Fsd[1],OM@Fsd[2]) # interannual variability in fishing effort (log normal sd)
@@ -169,11 +175,11 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     Vmaxlen <- matrix(0, nrow=nyears+proyears, ncol=nsim, byrow=TRUE)
     SelYears <- OM@SelYears
 	# length at 0.05% selectivity ascending
-	L5_bk <- mapply(runif, n=nsim, min=OM@L5[,1], max=OM@L5[,2]) * lenM 
+	L5_bk <- mapply(runif, n=nsim, min=OM@L5Lower, max=OM@L5Upper) * lenM 
 	# first length at 100% selection
-    LFS_bk <- mapply(runif, n=nsim, min=OM@LFS[,1], max=OM@LFS[,2]) * lenM
+    LFS_bk <- mapply(runif, n=nsim, min=OM@LFSLower, max=OM@LFSUpper) * lenM
 	# selectivity at maximum length
-    Vmaxlen_bk <- mapply(runif, n=nsim, min=OM@Vmaxlen[,1], max=OM@Vmaxlen[,2])
+    Vmaxlen_bk <- mapply(runif, n=nsim, min=OM@VmaxLower, max=OM@VmaxUpper)
  
     for (X in 1:(Selnyears-1)) { 
       bkyears <- SelYears[X]:SelYears[X+1]

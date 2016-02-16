@@ -17,13 +17,21 @@ Objects can be created by calls of the form \code{new("Fleet", OM)}.
     \item{\code{Name}:}{Name of the Fleet object}
     \item{\code{nyears}:}{The number of years for the historical simulation}
     \item{\code{Spat_targ}:}{Distribution of fishing in relation to spatial biomass: F is proportional to B^Spat_targ (uniform distribution) }
-    \item{\code{LFS}:}{Shortest length that is fully vulnerable to fishing (uniform distribution)}
-    \item{\code{L5}:}{Shortest length corresponding ot 5 percent vulnerability (uniform distribution)}
-    \item{\code{Vmaxlen}:}{The vulnerability of the longest (oldest) fish (uniform distribution)}
     \item{\code{Fsd}:}{Inter-annual variability in fishing mortality rate}
     \item{\code{EffYears}:}{Vector of verticies, years at which to simulate varying relative effort}
     \item{\code{EffLower}:}{Lower bound on relative effort corresponding to EffYears (uniform distribution)}
-    \item{\code{EffYears}:}{Uppper bound on relative effort corresponding to EffYears (uniform distribution)}
+    \item{\code{EffUpper}:}{Uppper bound on relative effort corresponding to EffYears (uniform distribution)}
+    \item{\code{LFS}:}{Shortest length that is fully vulnerable to fishing (uniform distribution)}
+    \item{\code{L5}:}{Shortest length corresponding ot 5 percent vulnerability (uniform distribution)}
+    \item{\code{Vmaxlen}:}{The vulnerability of the longest (oldest) fish (uniform distribution)}
+    \item{\code{SelYears}:}{Vector of verticies, index for years at which historical selectivity pattern changed. If left empty, historical selectivity is constant}
+    \item{\code{AbsSelYears}:}{Optional values for SelYears, used for plotting only. Must be of same length as SelYears}
+    \item{\code{L5Lower}:}{Optional vector of values of length SelYears, specifiying lower limits of L5 (use \code{ChooseSelect} function to set these)}
+    \item{\code{L5Upper}:}{Optional vector of values of length SelYears, specifiying upper limits of L5 (use \code{ChooseSelect} function to set these)}
+    \item{\code{LFSLower}:}{Optional vector of values of length SelYears, specifiying lower limits of LFS (use \code{ChooseSelect} function to set these)}
+    \item{\code{LFSUpper}:}{Optional vector of values of length SelYears, specifiying upper limits of LFS (use \code{ChooseSelect} function to set these)}
+    \item{\code{VmaxLower}:}{Optional vector of values of length SelYears, specifiying lower limits of Vmaxlen (use \code{ChooseSelect} function to set these)}
+    \item{\code{VmaxUpper}:}{Optional vector of values of length SelYears, specifiying upper limits of Vmaxlen (use \code{ChooseSelect} function to set these)}
     \item{\code{qinc}:}{Average percentage change in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls)}
     \item{\code{qcv}:}{Inter-annual variability in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls)}
   }

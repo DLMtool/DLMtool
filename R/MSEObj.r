@@ -705,8 +705,8 @@ DOM <- function(MSEobj, MPtg=NA) {
 
 # Trade-Off Plot Function ------------------------------------------------------
 TradePlot <- function(MSEobj, XAxis=c("Overfishing", "Biomass:BMSY"), 
-	YAxis=c("Long-term Yield", "AnnualVar"), XThresh=c(50, 80), YThresh=c(0,50),
-	maxVar=15, BmsyRef=0.5, B0Ref=0.2, AvailMPs=NULL, IdPoints=FALSE, ShowLabs=FALSE, 
+	YAxis=c("Long-term Yield", "AnnualVar"), XThresh=c(30, 80), YThresh=c(0,50),
+	maxVar=15, BmsyRef=0.5, B0Ref=0.2, AvailMPs=NULL, ShowLabs=FALSE, 
 	ShowCols=TRUE) {
   PMs <- c("Long-term Yield", "Short-term Yield", "Overfishing", "Biomass:BMSY",
 	"Biomass:B0", "AnnualVar")
@@ -781,7 +781,7 @@ TradePlot <- function(MSEobj, XAxis=c("Overfishing", "Biomass:BMSY"),
 	YLab <- paste0("YLab", xx)
     rr <- tradeoffplot4(x=get(Xname), y=get(Yname), get(XLab), get(YLab), 
 		labs=MSEobj@MPs[1:MSEobj@nMPs],vl=XThresh[xx],hl=YThresh[xx], 
-		IdPoints=IdPoints, ShowLabs=ShowLabs,  ShowCols=ShowCols)
+		ShowLabs=ShowLabs,  ShowCols=ShowCols, AvailMPs=AvailMPs)
 	
 	labs <- MSEobj@MPs[1:MSEobj@nMPs]
 	ind <- which(labs %in% rr)
@@ -822,8 +822,8 @@ StatLab <- function(PM, maxVar, BmsyRef, B0Ref) {
 	)
 }
 
-tradeoffplot4<-function(x,y,xlab,ylab,labs,cex,vl,hl, IdPoints=FALSE, 
-	ShowLabs=FALSE,  ShowCols=FALSE){
+tradeoffplot4<-function(x,y,xlab,ylab,labs,cex,vl,hl, 
+	ShowLabs=FALSE,  ShowCols=FALSE, AvailMPs=NULL){
    adjj<-c(0.7,1.3)
    XLim <- c(min(c(-10, min(x,na.rm=T)*adjj)), max(c(max(x,na.rm=T)*adjj, 110)))
    YLim <- c(min(c(-10, min(y,na.rm=T)*adjj)), max(c(max(y,na.rm=T)*adjj, 110)))
@@ -832,9 +832,12 @@ tradeoffplot4<-function(x,y,xlab,ylab,labs,cex,vl,hl, IdPoints=FALSE,
    ind <- which(x >= vl & y >=hl)
    coly <- rep("darkgray", length(labs)) 
    coly[ind] <- "black" 
-   coly[labs%in%c("AvC","curE","FMSYref")]<-'black'
+   # coly[labs%in%c("AvC","curE","FMSYref")]<-'black'
+   coly[labs%in%c("FMSYref")]<-'black'
    Pch <- rep(19, length(labs))
-   Pch[labs%in%c("AvC","curE","FMSYref")] <- 17
+   # Pch[labs%in%c("AvC","curE","FMSYref")] <- 17
+   Pch[labs%in%c("FMSYref")] <- 17
+   if (!is.null(AvailMPs)) Pch[labs%in%AvailMPs] <- 16
    # coly<-rep(c('#0000ff95','#ff000095','#20ff1095'),50)[1:length(labs)]
 
    plot(NA,xlim=XLim,ylim=YLim,xlab=xlab,ylab=ylab, bty="l", las=1)
@@ -858,12 +861,12 @@ tradeoffplot4<-function(x,y,xlab,ylab,labs,cex,vl,hl, IdPoints=FALSE,
     Cex <- 1.15
    if(!ShowLabs) points(x,y, col=coly, pch=Pch, cex=Cex)
    if(ShowLabs) text(x,y,labs,font=2,col="black",cex=1)
-   if(IdPoints) {
-    message("Click points on plot to display MP name")
-	message("Click Stop to finish")
-	flush.console()
-	identify(x,y, labels=labs)
-   }	
+   # if(IdPoints) {
+    # message("Click points on plot to display MP name")
+	# message("Click Stop to finish")
+	# flush.console()
+	# identify(x,y, labels=labs)
+   # }	
    
    labs[ind]
    
