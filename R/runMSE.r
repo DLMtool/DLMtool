@@ -5,8 +5,9 @@
 # Adrian Hordyk (a.hordyk@murdoch.edu.au)
 
 runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
-                   maxF=0.8, timelimit=1, reps=1, custompars=0, CheckMPs=FALSE){ 
+                   maxF=0.8, timelimit=1, reps=1, custompars=0, CheckMPs=TRUE, SetSeed=NULL){ 
   print("Loading operating model")
+  if (is.finite(SetSeed)) set.seed(SetSeed)
   flush.console()
   if(class(OM)!="OM")stop("You must specify an operating model")
   #if(!sfIsRunning())stop("You must initialize snowfall functions sfInit() see ??DLMtool")
@@ -112,8 +113,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 	c(nsim,nyears+proyears))
   for(y in 2:(nyears+proyears))Perr[,y]<-AC*Perr[,y-1]+Perr[,y]*(1-AC*AC)^0.5#2#AC*Perr[,y-1]+(1-AC)*Perr[,y] # apply a pseudo AR1 autocorrelation to rec devs (log space)
   Perr <-exp(Perr) # normal space (mean 1 on average)
-  
-  
+ 
   # Add cycle (phase shift) to recruitment deviations - if specified 
   if (is.finite(OM@Period[1]) & is.finite(OM@Amplitude[1])) {
     Shape <- "sin" # default sine wave - alterantive - 'shift' for step changes
@@ -230,7 +230,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   SSN<-array(NA,dim=c(nsim,maxage,nyears,nareas)) # spawning stock numbers array
   SSB<-array(NA,dim=c(nsim,maxage,nyears,nareas)) # spawning stock biomass array
   FM<-array(NA,dim=c(nsim,maxage,nyears,nareas))  # fishing mortality rate array
-  Z<-array(NA,dim=c(nsim,maxage,nyears,nareas))   # total mortlaity rate array
+  Z<-array(NA,dim=c(nsim,maxage,nyears,nareas))   # total mortality rate array
   
   Agearray<-array(rep(1:maxage,each=nsim),dim=c(nsim,maxage))   # Age array
   surv<-exp(-Marray[,1])^(Agearray-1)                           # Survival array
@@ -398,14 +398,10 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   
   print("Calculating MSY reference points")                 # Print a progress update
   flush.console()                                           # update the console
-  
   if(sfIsRunning()){
     sfExport(list=c("Marray","hs","Mat_age","Wt_age","R0","V","nyears","maxage")) # export some newly made arrays to the cluster
-
-    MSYrefs<-sfSapply(1:nsim,getFMSY,Marray,hs,Mat_age,Wt_age,R0,V=V[,,nyears],maxage,nyears,proyears=200,Spat_targ,mov,SRrel,aR,bR) # optimize for MSY reference points
-	
+    MSYrefs<-sfSapply(1:nsim,getFMSY,Marray,hs,Mat_age,Wt_age,R0,V=V[,,nyears],maxage,nyears,proyears=200,Spat_targ,mov,SRrel,aR,bR) # optimize for MSY reference points	
   }else{
-
     MSYrefs<-sapply(1:nsim,getFMSY,Marray,hs,Mat_age,Wt_age,R0,V=V[,,nyears],maxage,nyears,proyears=200,Spat_targ,mov,SRrel,aR,bR) # optimize for MSY reference points
   }
     
@@ -417,7 +413,6 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   
   print("Calculating reference yield - best fixed F strategy") # Print a progress update
   flush.console()                                              # update the console
-  
   if(sfIsRunning()){ # Numerically optimize for F that provides highest long term yield
     RefY<-sfSapply(1:nsim,getFref,Marray=Marray,Wt_age=Wt_age,Mat_age=Mat_age,Perr=Perr,N_s=N[,,nyears,],SSN_s=SSN[,,nyears,],
                    Biomass_s=Biomass[,,nyears,],VBiomass_s=VBiomass[,,nyears,],SSB_s=SSB[,,nyears,],
@@ -430,7 +425,6 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
                  aR=aR,bR=bR,SRrel=SRrel) 
   }
 
- 
   Depletion<-(apply(Biomass[,,nyears,],1,sum)/apply(Biomass[,,1,],1,sum))#^betas   # apply hyperstability / hyperdepletion
   #cbind(dep,Depletion)
   FMSY_M<-FMSY/M                      # ratio of true FMSY to natural mortality rate M
@@ -601,7 +595,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
       # DLM_data <- MSElist[[mm]]
     if (class(match.fun(MPs[mm]))=="DLM_output") {
       DLM_data <- Sam(MSElist[[mm]],MPs=MPs[mm],perc=pstar,reps=reps)
-      TACused <- apply(DLM_data@TAC,3,quantile,p=pstar,na.rm=T)
+      TACused <- apply(DLM_data@TAC,3,quantile,p=pstar,na.rm=T) 
       TACa[,mm,1] <- TACused
 	  
       fishdist<-(apply(VBiomass_P[,,1,],c(1,3),sum)^Spat_targ)/apply(apply(VBiomass_P[,,1,],c(1,3),sum)^Spat_targ,1,mean)   # spatial preference according to spatial biomass
@@ -744,6 +738,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
         I2<-I2/apply(I2,1,mean)
         
         Depletion<-apply(Biomass_P[,,y,],1,sum)/apply(Biomass[,,1,],1,sum)
+		Depletion[Depletion < tiny] <- tiny
         A<-apply(VBiomass_P[,,y,],1,sum)
         A[is.na(A)]<-tiny
         OFLreal<-A*FMSY
@@ -785,7 +780,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
         
         if(class(match.fun(MPs[mm]))=="DLM_output"){
 		  DLM_data <- Sam(MSElist[[mm]],MPs=MPs[mm],perc=pstar,reps=reps)
-          TACused<-apply(DLM_data@TAC,3,quantile,p=pstar,na.rm=TRUE)
+          TACused<-apply(DLM_data@TAC,3,quantile,p=pstar,na.rm=TRUE) #
           NAs <- which(is.na(TACused))
           if (length(NAs) >0 ) { # robustifying TAC setting!
             TACused[NAs] <- TACa[NAs,mm,y-1] #
@@ -879,7 +874,9 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 	 
     } # end of year
     
-    B_BMSYa[,mm,]<-apply(Biomass_P,c(1,3),sum)/BMSY
+    # B_BMSYa[,mm,]<-apply(Biomass_P,c(1,3),sum)/BMSY
+	B_BMSYa[,mm,]<-apply(VBiomass_P,c(1,3),sum)/BMSY
+	
     F_FMSYa[,mm,]<-(-log(1-apply(CB_P,c(1,3),sum)/(apply(CB_P,c(1,3),sum)+apply(VBiomass_P,c(1,3),sum))))/FMSY
     Ba[,mm,]<-apply(Biomass_P,c(1,3),sum)
     FMa[,mm,]<--log(1-apply(CB_P,c(1,3),sum)/(apply(CB_P,c(1,3),sum)+apply(VBiomass_P,c(1,3),sum)))
