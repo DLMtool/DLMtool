@@ -95,11 +95,7 @@ Its probably best not to try and use the package for very short lived stocks (th
 ## New to version 2.0 
 (1) Much has changed in package terminology to make the package more generally applicable. For example, OFL (overfishing limits, FMSY x current biomass), now belongs to a larger class of TACs (Total Allowable Catches). 
 
-(2) There are now just two classes of DLM MPs, DLM\_output (MPs linked to output controls e.g. TACs) and DLM\_input (MPs linked to input controls such as time-area closures, age selectivity and effort). 
-
-The new DLM\_input function classes have four components, fractional reallocation of spatial effort, fraction of effort in final historical year prescribed in the current year, spatial limits on fishing mortality and a user-defined age-selectivity curve. For example, given an hypothetical stock with 8 age classes a DLM\_input method might return a vector c(0.5,  0.8,  0,1,  0,0,0,0,1,1,1,1). This is interpreted as a 50 percent reallocation (Allocation = 0.5) of spatial effort, with a total effort that is 80 percent of historical levels (Effort = 0.8) with a closure in area 1 and full fishing in area 2 (Spatial = c(0,1)) and knife-edge selectivity at age class 5 (Selectivity = c(0,0,0,0,1,1,1,1)). 
-
-To demonstrate this new feature there are four new input controls, current effort (curE), 75 percent of current effort (curE75), age selectivity that matches the maturity ogive (matagelim) and a marine reserve in area 1 (area1MR).
+(2) There are now just two classes of DLM MPs, DLM\_output (MPs linked to output controls e.g. TACs) and DLM\_input (MPs linked to input controls such as time-area closures, age selectivity and effort). The new DLM\_input function classes have four components, fractional reallocation of spatial effort, fraction of effort in final historical year prescribed in the current year, spatial limits on fishing mortality and a user-defined age-selectivity curve. For example, given an hypothetical stock with 8 age classes a DLM\_input method might return a vector c(0.5,  0.8,  0,1,  0,0,0,0,1,1,1,1). This is interpreted as a 50 percent reallocation (Allocation = 0.5) of spatial effort, with a total effort that is 80 percent of historical levels (Effort = 0.8) with a closure in area 1 and full fishing in area 2 (Spatial = c(0,1)) and knife-edge selectivity at age class 5 (Selectivity = c(0,0,0,0,1,1,1,1)) [note that Selectivity has changed in newer versions of the package]. To demonstrate this new feature there are four new input controls, current effort (curE), 75 percent of current effort (curE75), age selectivity that matches the maturity ogive (matagelim) and a marine reserve in area 1 (area1MR) [note that matagelim has changed to matlenlim in recent versions].
 
 (3) A 'dumb' MP has been added: Mean Catch Depletion (MCD) that simply calculates a TAC based on mean catches and depletion ie depletion  x 2 x mean catch. This is to demonstrate the (theoretically) very high information content of a reliable estimate of current stock depletion. 
 
@@ -149,7 +145,7 @@ for(i in 1:length(DLMdat))assign(DLMdat[[i]]@Name,DLMdat[[i]])
 ### Initiating the cluster
 Note that most computers make use of hyperthreading technology so a quad-core PC has 8 threads, this is set to 2 here to meet CRAN-R package submission requirements. 
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 sfInit(parallel=TRUE, cpus=2) 
 
 ```
@@ -159,7 +155,7 @@ You can automatically detect the number of threads using `detectCores()`. Ie typ
 ## Exporting all data and objects to the cluster
 In order to make all DLMtool functions and objects available for parallel processing we export them to the cluster. As with `sfInit()` I couldnt' include cluster computing for vignette building so this line is disabled - you should however run this after `sfInit()`. 
 
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 sfExportAll()
 ```
 
@@ -303,7 +299,7 @@ ourOM <- new('OM',ourstock, ourfleet, Imprecise_Biased)
 ## MSE evaluation of methods
 Now that we have our operating model we run a trial MSE. In this case we use a very small number of simulations (20, which is low to meet CRAN-R package building requirements) but change the length of the projection and the length of the interval between updates to reflect our stock and management system. 
 
-Since we do not specify a vector of particular methods, the MSE will run for all possible MPs. Note that this could take a few minutes depending on how monstrous you computer is. Note that in a real setting it might be advisable to increase the number of simulations to at least 200 and, if stochastic MPs are to be used, increase the samples per method (reps) to at least 100 for this first stage to obtain stable aggregate results. 
+Since we do not specify a vector of particular methods, the MSE will run for all possible MPs. Note that this could take a few minutes depending on how monstrous your computer is. Note that in a real setting it might be advisable to increase the number of simulations to at least 200 and, if stochastic MPs are to be used, increase the samples per method (reps) to at least 100 for this first stage to obtain stable aggregate results. 
 
 ```{r}
 ourMSE <- runMSE(ourOM, proyears=20, interval=5, nsim=16,reps=1)
@@ -392,13 +388,13 @@ ourOM@Btbias
 
 In other words our MSE generated observations of current biomass that could easily be 1/5 or five times the true level  across the whole time series and were very noisy. The question now is whether gathering such data would be worthwhile (e.g. a systematic fishery independent survey). To refresh our memory we can re-plot the tradeoffs of the targetted MSE:
 
-```{r, fig.width=7}
+```{r, fig.width=7, fig.height=7}
 Tplot2(ourMSE2)
 ```
 
 If we focus on output controls there are a cluster of MPs that offer comparable performance that are available for our real data such as the delay-difference stock assessment (`DD`). We can use sensitivity testing to better understand how fragile TAC recommendations are to changes in our data inputs:
 
-```{r, fig.width=7}
+```{r, fig.width=7, fig.height=7}
 ourReefFish <- Sense(ourReefFish,'DD')
 ```
 
@@ -435,7 +431,7 @@ class(AvC) <-"DLM_output"
 environment(AvC) <-asNamespace('DLMtool')
 ```
 and - if we are using parallel computing - exported to the cluster:
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 sfExport("AvC")
 ```
 
@@ -451,7 +447,7 @@ environment(THC) <- asNamespace('DLMtool')
 
 ```
 and again export to cluster (if we are using paralllel computing):
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 sfExport("THC")
 ```
 
@@ -471,8 +467,13 @@ matlenlim <- function (x, DLM_data, ...) {
 }
 class(matlenlim) <- "DLM_input"
 environment(matlenlim) <- asNamespace("DLMtool")
-#sfExport("matlenlim")
+
 ```
+and export to cluster:
+```{r, eval=TRUE}
+sfExport("matlenlim")
+```
+
 Note that for compatibility, these approaches still require an 'x' argument even if they don't make use of it (i.e., they are the same regardless of the data or simulated data).  
 Also note that the arguments for the input methods must include either `reps` or `...`, even if these are not used. 
 
@@ -489,7 +490,10 @@ area1_50<-function(x,DLM_data, ...){
 }
 class(area1_50)<-"DLM_input"
 environment(area1_50) <- asNamespace('DLMtool')
-#sfExport("area1_50")
+```
+
+```{r, eval=TRUE}
+sfExport("area1_50")
 ```
 
 ## Applying the new MPs
