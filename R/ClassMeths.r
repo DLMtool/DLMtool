@@ -287,15 +287,15 @@ setMethod("initialize", "Fleet", function(.Object,file=NA){
 		ind <- which(is.finite(chk))
 	    nSelYears <- length(ind)
 	    chk <- length(ind)
-	  }
-	  if (is.finite(chk) &  chk > 0) { # parameters for selectivity years exists 
-		.Object@SelYears <- as.numeric(dat[match("SelYears",dname),1:nSelYears])
-		.Object@L5Lower <- as.numeric(dat[match("L5Lower",dname),1:nSelYears])
-		.Object@L5Upper <- as.numeric(dat[match("L5Upper",dname),1:nSelYears])
-		.Object@LFSLower <- as.numeric(dat[match("LFSLower",dname),1:nSelYears])
-		.Object@LFSUpper <- as.numeric(dat[match("LFSUpper",dname),1:nSelYears])
-		.Object@VmaxLower <- as.numeric(dat[match("VmaxLower",dname),1:nSelYears])
-		.Object@VmaxUpper <- as.numeric(dat[match("VmaxUpper",dname),1:nSelYears]) 
+	    if (is.finite(chk) &  chk > 0) { # parameters for selectivity years exists 
+		  .Object@SelYears <- as.numeric(dat[match("SelYears",dname),1:nSelYears])
+		  .Object@L5Lower <- as.numeric(dat[match("L5Lower",dname),1:nSelYears])
+		  .Object@L5Upper <- as.numeric(dat[match("L5Upper",dname),1:nSelYears])
+		  .Object@LFSLower <- as.numeric(dat[match("LFSLower",dname),1:nSelYears])
+		  .Object@LFSUpper <- as.numeric(dat[match("LFSUpper",dname),1:nSelYears])
+		  .Object@VmaxLower <- as.numeric(dat[match("VmaxLower",dname),1:nSelYears])
+		  .Object@VmaxUpper <- as.numeric(dat[match("VmaxUpper",dname),1:nSelYears]) 
+	    }
 	  }
       # These are ignored in MSE if L5Lower etc are set 
 	  .Object@L5 <- as.numeric(dat[match("L5",dname),1:2])

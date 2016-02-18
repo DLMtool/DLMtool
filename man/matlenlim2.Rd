@@ -1,14 +1,14 @@
-\name{matlenlim}
-\alias{matlenlim}
+\name{matlenlim2}
+\alias{matlenlim2}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-A data-limited method in which fishing vulnerability is set according to the maturity curve
+A data-limited method in which fishing vulnerability is set slightly higher than the maturity curve
 }
 \description{
-An example of the implementation of input controls in the DLM toolkit, where selectivity-at-length is set equivalent to maturity-at-length
+An example of the implementation of input controls in the DLM toolkit, where selectivity-at-length is set slightly higher than the maturity-at-length
 }
 \usage{
-matlenlim(x, DLM_data, ...)
+matlenlim2(x, DLM_data, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,5 +28,5 @@ A vector of input control recommendations, with values for length at first captu
 Made-up for this package
 }
 \author{
-T. Carruthers
+A. Hordyk
 }

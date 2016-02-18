@@ -13,6 +13,19 @@ matlenlim<-function(x,DLM_data, ...){ # Length at maturity is knife-edge vulnera
 }
 class(matlenlim)<-"DLM_input"
 
+matlenlim2 <-function(x,DLM_data, ...){ # Knife-edge vulnerability slightly higher than length at maturity 
+  dependencies="DLM_data@LFC, DLM_data@LFS"
+  Allocate<-1
+  Effort<-1
+  Spatial<-c(1,1)
+  newLFS <- 14 + 1.1 * DLM_data@L50[x] 
+  newLFC <- 0.95 * newLFS
+  Vuln <-c(newLFC, newLFS)
+  c(Allocate, Effort, Spatial, Vuln)
+}
+class(matlenlim2)<-"DLM_input"
+
+
 # matagelim<-function(x,DLM_data, ...){ # Age at maturity is knife-edge vulnerability
   # dependencies="DLM_data@AM, DLM_data@MaxAge"
   # Allocate<-1

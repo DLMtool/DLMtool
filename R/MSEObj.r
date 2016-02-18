@@ -747,7 +747,7 @@ TradePlot <- function(MSEobj, XAxis=c("Overfishing", "Biomass:BMSY"),
   for(mm in 1:MSEobj@nMPs){  
     PNOF[mm]<-round(sum(MSEobj@F_FMSY[,mm,]<1,na.rm=T)/prod(dim(MSEobj@F_FMSY[,mm,]),na.rm=T)*100,1)
     BMSYref[mm]<-round(sum(MSEobj@B_BMSY[,mm,]>BmsyRef,na.rm=T)/prod(dim(MSEobj@B_BMSY[,mm,]))*100,1)
-	B0ref[mm]<-round(sum(MSEobj@B[,mm,]>(B0Ref * MSEobj@B[,mm,1]),na.rm=T)/prod(dim(MSEobj@B_BMSY[,mm,]))*100,1)
+	B0ref[mm]<-round(sum((MSEobj@B[,mm,]/MSEobj@B[,mm,1] * MSEobj@OM$Depletion) >B0Ref,na.rm=T)/prod(dim(MSEobj@B_BMSY[,mm,]))*100,1)
     # LTY[mm]<-round(sum(MSEobj@C[,mm,yend]/RefYd>0.5,na.rm=T)/(MSEobj@nsim*length(yend)),3)*100
 	# STY[mm]<-round(sum(MSEobj@C[,mm,ystart]/RefYd>0.5,na.rm=T)/(MSEobj@nsim*length(ystart)),3)*100
 	LTY[mm]<-round(mean(apply(MSEobj@C[,mm,yend],1,mean,na.rm=T)/RefYd,na.rm=T)*100,1)
@@ -833,10 +833,11 @@ tradeoffplot4<-function(x,y,xlab,ylab,labs,cex,vl,hl,
    coly <- rep("darkgray", length(labs)) 
    coly[ind] <- "black" 
    # coly[labs%in%c("AvC","curE","FMSYref")]<-'black'
-   coly[labs%in%c("FMSYref")]<-'black'
+   
    Pch <- rep(19, length(labs))
    # Pch[labs%in%c("AvC","curE","FMSYref")] <- 17
-   Pch[labs%in%c("FMSYref")] <- 17
+   coly[grep("FMSY", labs)]<-'black'
+   Pch[grep("FMSY", labs)] <- 17
    if (!is.null(AvailMPs)) Pch[labs%in%AvailMPs] <- 16
    # coly<-rep(c('#0000ff95','#ff000095','#20ff1095'),50)[1:length(labs)]
 
