@@ -834,18 +834,19 @@ tradeoffplot4<-function(x,y,xlab,ylab,labs,cex,vl,hl,
    coly[ind] <- "black" 
    # coly[labs%in%c("AvC","curE","FMSYref")]<-'black'
    
-   Pch <- rep(19, length(labs))
+   Pch <- rep(21, length(labs))
    # Pch[labs%in%c("AvC","curE","FMSYref")] <- 17
    coly[grep("FMSY", labs)]<-'black'
-   Pch[grep("FMSY", labs)] <- 17
-   if (!is.null(AvailMPs)) Pch[labs%in%AvailMPs] <- 16
+   Pch[grep("FMSY", labs)] <- 24
+   if (!is.null(AvailMPs)) Pch[labs%in%AvailMPs] <- 21
+   if (!is.null(AvailMPs)) coly[labs%in%AvailMPs & (x >= vl & y >=hl)] <- "green"
    # coly<-rep(c('#0000ff95','#ff000095','#20ff1095'),50)[1:length(labs)]
 
    plot(NA,xlim=XLim,ylim=YLim,xlab=xlab,ylab=ylab, bty="l", las=1)
    abline(v=vl,col="#99999940",lwd=2)
    abline(h=hl,col="#99999940",lwd=2)
    
-   Alpha <- 40
+   Alpha <- 30
    # polygons 
    LeftCol <- rgb(red=255, green=0, blue=0, alpha=Alpha, names = NULL, 
 	maxColorValue = 255)
@@ -859,9 +860,9 @@ tradeoffplot4<-function(x,y,xlab,ylab,labs,cex,vl,hl,
      polygon(x=c(vl, 100,  100, vl), y=c(hl, hl, 100, 100), col=RightCol, border=NA)
     }
    
-    Cex <- 1.15
-   if(!ShowLabs) points(x,y, col=coly, pch=Pch, cex=Cex)
-   if(ShowLabs) text(x,y,labs,font=2,col="black",cex=1)
+    Cex <- 1.5
+   if(!ShowLabs) points(x,y, bg=coly, pch=Pch, cex=Cex, col="black" )
+   if(ShowLabs) text(x,y,labs,font=2,col=coly,cex=1)
    # if(IdPoints) {
     # message("Click points on plot to display MP name")
 	# message("Click Stop to finish")
