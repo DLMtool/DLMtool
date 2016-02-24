@@ -440,6 +440,7 @@ ChooseSelect <- function(Fleet, Stock=NULL, FstYr=NULL, SelYears=NULL) {
   Fleet
 }
 
+
 # Kalman filter and Rauch-Tung-Striebel smoother
 KalmanFilter <- function(RawEsts, R=1, Q=0.1, Int=100) {
   # Kalman smoother and Rauch-Tung-Striebel smoother #http://read.pudn.com/downloads88/ebook/336360/Kalman%20Filtering%20Theory%20and%20Practice,%20Using%20MATLAB/CHAPTER4/RTSvsKF.m__.htm
@@ -476,7 +477,7 @@ KalmanFilter <- function(RawEsts, R=1, Q=0.1, Int=100) {
 
 
 # LBSPR - Hordyk et al ICES 2015 (slow!)
-LBSPRSim <- function(StockPars, FleetPars, SizeBins=NULL, P=0.001, Nage=201) {
+LBSPRSim <- function(StockPars, FleetPars, SizeBins=NULL, P=0.001, Nage=101) {
 
   MK <- StockPars$MK 
   Linf <- StockPars$Linf
