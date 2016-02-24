@@ -219,7 +219,6 @@ plot(SnapMSE)
 
 You can access these plots individually: trade-offs - `Tplot()`, overfishing trajectories - `Pplot()` and Kobe plots - `Kplot()` 
 
-** Example of TradePlot and Performance Metrics here **
 
 ## Applying MPs to real data
 A number of real DLM data-objects (class DLM\_data) were loaded into the workspace at the start of this session. In this section we examine a real data object and apply data-limited MPs to these data. Just like the operating model we can find all the objects of real data class 'DLM\_data':, 
@@ -347,10 +346,6 @@ and alternative trade-off plots:
 ```{r, fig.width=7, fig.height=3.5}
 Tplot2(ourMSE2)
 ```
-
-**TradePlot Example Here** 
-
-**Check results below are consistent**
 
 These plots indicate that the depletion based *F* MPs based on a fixed ratio of FMSY to M (`DepF`) and the simple delay-difference model (`DD`) linked ot the 40-10 harvest control rule (`DD4010`) are at the upper limit of the trade-off space (i.e., all other MPs provide worse performance in one or more dimensions). In this case the MPs offer a contrasting trade-ofcf between probability of overfishing and long-term yield. It remains to be seen whether these approaches can be applied to the real data for our reef fish. 
 
@@ -521,7 +516,6 @@ PorgMSE2 <- runMSE(OM, new_MPs, maxF=1, nsim=16, reps=1, proyears=20, interval=5
 Tplot(PorgMSE2)  
 ```
 
-** Check performance of methods here **
 Conveniently putting aside the likelihood of implementing a perfect knife-edge vulnerability at length-at-maturity, it appears that we have a winner in `matlenlim` even under different starting depletion levels. Third highest catch on the other hand appears risky to say the least. You could try some other starting depletion levels to see under what circumstances the trade-off space changes dramatically.  
 
 
@@ -592,7 +586,6 @@ plot(Atlantic_mackerel)
 
 # Limitations
 ## Idealised observation models for catch composition data
-** Update these sections **
 Currently, DLMtool simulates catch-composition data from the true simulated catch composition data via a multinomial distribution and some effective sample size. This observation model may be unrealistically well-behaved and favour those approaches that use these data. We (and by that I mean Adrian) is adding a growth-type-group model to improve the realism of simulated length composition data. 
 
 ## Harvest control rules must be integrated into data-limited MPs
