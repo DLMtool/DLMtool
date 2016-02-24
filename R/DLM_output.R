@@ -111,6 +111,7 @@ class(Fadapt)<-"DLM_output"
 DepF<-function(x,DLM_data,reps=100){
   dependencies="DLM_data@Year, DLM_data@Dep, DLM_data@Mort, DLM_data@FMSY_M, DLM_data@BMSY_B0"
   Frat<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])*trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x])
+  if (is.na(DLM_data@Dep[x]) | is.na(DLM_data@CV_Dep[x])) return(NA)
   depo<-max(0.01,min(0.99,DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
   Bt_K<-rbeta(reps*100,alphaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])),betaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
   Bt_K<-Bt_K[Bt_K>=0.01&Bt_K<=0.99][1:reps] # interval censor (0.01,0.99)  as in Dick and MacCall 2011
@@ -735,7 +736,7 @@ DBSRA<-function(x,DLM_data,reps=100){  # returns a vector of DBSRA estimates of 
   C_hist<-DLM_data@Cat[x,]
   TAC<-rep(NA,reps)
   DBSRAcount<-1
-  if (is.na(DLM_data@Dep[x])) return(NA)
+  if (is.na(DLM_data@Dep[x]) | is.na(DLM_data@CV_Dep[x])) return(NA)
   while(DBSRAcount<(reps+1)){
     depo<-max(0.01,min(0.99,DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
     Bt_K<-rbeta(100,alphaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])),betaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
@@ -780,7 +781,7 @@ DBSRA_40<-function(x,DLM_data,reps=100){  # returns a vector of DBSRA estimates 
   C_hist<-DLM_data@Cat[x,]
   TAC<-rep(NA,reps)
   DBSRAcount<-1
-  if (is.na(DLM_data@Dep[x])) return(NA)
+  if (is.na(DLM_data@Dep[x]) | is.na(DLM_data@CV_Dep[x])) return(NA)
   while(DBSRAcount<(reps+1)){
     depo<-0.4
     Bt_K<-rbeta(100,alphaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])),betaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
@@ -813,7 +814,7 @@ DBSRA_ML<-function(x,DLM_data,reps=100){
   C_hist<-DLM_data@Cat[x,]
   TAC<-rep(NA,reps)
   DBSRAcount<-1
-  if (is.na(DLM_data@Dep[x])) return(NA)
+  if (is.na(DLM_data@Dep[x]) | is.na(DLM_data@CV_Dep[x])) return(NA)
   while(DBSRAcount<(reps+1)){
     Linfc<-trlnorm(1,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
     Kc<-trlnorm(1,DLM_data@vbK[x],DLM_data@CV_vbK[x])
@@ -857,7 +858,7 @@ DBSRA4010<-function(x,DLM_data,reps=100){  # returns a vector of DBSRA estimates
   C_hist<-DLM_data@Cat[x,]
   TAC<-rep(NA,reps)
   DBSRAcount<-1
-  if (is.na(DLM_data@Dep[x])) return(NA)
+  if (is.na(DLM_data@Dep[x]) | is.na(DLM_data@CV_Dep[x])) return(NA)
   while(DBSRAcount<(reps+1)){
     depo<-max(0.01,min(0.99,DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
     Bt_K<-rbeta(100,alphaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])),betaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
@@ -925,6 +926,7 @@ C_tot<-nyearsDCAC<-NULL
 
 DCAC<-function(x,DLM_data,reps=100){
   dependencies="DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@Dt, DLM_data@CV_Dt, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
+  if (is.na(DLM_data@BMSY_B0[x]) | is.na(DLM_data@CV_BMSY_B0[x])) return(NA)
   C_tot<-DLM_data@AvC[x]*DLM_data@t[x]
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
   FMSY_M<-trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x]) # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
