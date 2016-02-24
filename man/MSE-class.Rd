@@ -92,6 +92,7 @@ Objects can be created by calls of the form \code{new("MSE", Name, nyears, proye
     \item{\code{SSB_hist}:}{Stored historical spawning stock biomass (historical simulations - an array with dimensions nsim, nages, nyears, nareas)}
     \item{\code{CB_hist}:}{Stored historical catches in weight (historical simulations - an array with dimensions nsim, nages, nyears, nareas)}
     \item{\code{FM_hist}:}{Stored historical fishing mortality rate (historical simulations - an array with dimensions nsim, nages, nyears, nareas)}
+	\item{\code{DLM_data}:}{Stored complete simulated Data Object for all management procedures - a list of length nMP}
   }
 }
 \section{Methods}{
