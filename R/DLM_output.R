@@ -735,6 +735,7 @@ DBSRA<-function(x,DLM_data,reps=100){  # returns a vector of DBSRA estimates of 
   C_hist<-DLM_data@Cat[x,]
   TAC<-rep(NA,reps)
   DBSRAcount<-1
+  if (is.na(DLM_data@Dep[x])) return(NA)
   while(DBSRAcount<(reps+1)){
     depo<-max(0.01,min(0.99,DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
     Bt_K<-rbeta(100,alphaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])),betaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
@@ -779,6 +780,7 @@ DBSRA_40<-function(x,DLM_data,reps=100){  # returns a vector of DBSRA estimates 
   C_hist<-DLM_data@Cat[x,]
   TAC<-rep(NA,reps)
   DBSRAcount<-1
+  if (is.na(DLM_data@Dep[x])) return(NA)
   while(DBSRAcount<(reps+1)){
     depo<-0.4
     Bt_K<-rbeta(100,alphaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])),betaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
@@ -811,6 +813,7 @@ DBSRA_ML<-function(x,DLM_data,reps=100){
   C_hist<-DLM_data@Cat[x,]
   TAC<-rep(NA,reps)
   DBSRAcount<-1
+  if (is.na(DLM_data@Dep[x])) return(NA)
   while(DBSRAcount<(reps+1)){
     Linfc<-trlnorm(1,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
     Kc<-trlnorm(1,DLM_data@vbK[x],DLM_data@CV_vbK[x])
@@ -854,6 +857,7 @@ DBSRA4010<-function(x,DLM_data,reps=100){  # returns a vector of DBSRA estimates
   C_hist<-DLM_data@Cat[x,]
   TAC<-rep(NA,reps)
   DBSRAcount<-1
+  if (is.na(DLM_data@Dep[x])) return(NA)
   while(DBSRAcount<(reps+1)){
     depo<-max(0.01,min(0.99,DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
     Bt_K<-rbeta(100,alphaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])),betaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
