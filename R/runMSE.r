@@ -546,8 +546,6 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   Ca<-array(NA,dim=c(nsim,nMP,proyears))       # store the projected catch
   TACa<-array(NA,dim=c(nsim,nMP,proyears))     # store the projected TAC recommendation
   
-  V_P <- replicate(nMP, V) # Vulnerability array by MP 
-
   for(mm in 1:nMP){    # MSE Loop over methods
     
     print(paste(mm,"/",nMP," Running MSE for ",MPs[mm],sep=""))  # print a progress report
@@ -571,7 +569,6 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     SAYR<-as.matrix(expand.grid(1:nsim,1:maxage,1,1:nareas))
     SYt<-SAYRt[,c(1,3)]
     SAYt<-SAYRt[,1:3]
-	SAYtMP <- cbind(SAYt, mm)
     SR<-SAYR[,c(1,4)]
     SA1<-SAYR[,1:2]
     S1<-SAYR[,1]
@@ -582,6 +579,8 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     SA<-SYA[,c(1,3)]
     SAY<-SYA[,c(1,3,2)]
     S<-SYA[,1]
+	
+    V_P <- V # Reset vulnerability array for MP 
     
     if(SRrel[1]==1){
       N_P[,1,1,]<-Perr[,nyears]*(0.8*R0a*hs*apply(SSB[,,nyears,],c(1,3),sum))/(0.2*SSBpR*R0a*(1-hs)+(hs-0.2)*apply(SSB[,,nyears,],c(1,3),sum))  # Recruitment assuming regional R0 and stock wide steepness
@@ -596,7 +595,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     temp<-array(N_P[indMov2]*mov[indMov3],dim=c(nareas,nareas,maxage,nsim))   # Move individuals
     N_P[,,1,]<-apply(temp,c(4,3,1),sum)
     Biomass_P[SAYR]<-N_P[SAYR]*Wt_age[SAY1]                                    # Calculate biomass
-    VBiomass_P[SAYR]<-Biomass_P[SAYR]*V_P[SAYtMP]                                  # Calculate vulnerable biomass
+    VBiomass_P[SAYR]<-Biomass_P[SAYR]*V_P[SAYt]                                  # Calculate vulnerable biomass
     SSN_P[SAYR]<-N_P[SAYR]*Mat_age[SA1]                                        # Calculate spawning stock numbers
     SSB_P[SAYR]<-SSN_P[SAYR]*Wt_age[SAY1]
     FML<-apply(FM[,,nyears,],c(1,3),max)
@@ -609,7 +608,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 	  
       fishdist<-(apply(VBiomass_P[,,1,],c(1,3),sum)^Spat_targ)/apply(apply(VBiomass_P[,,1,],c(1,3),sum)^Spat_targ,1,mean)   # spatial preference according to spatial biomass
 	  
-      CB_P[SAYR]<-Biomass_P[SAYR]*(1-exp(-V_P[SAYtMP]*fishdist[SR]))      # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space
+      CB_P[SAYR]<-Biomass_P[SAYR]*(1-exp(-V_P[SAYt]*fishdist[SR]))      # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space
 	  
       temp<-CB_P[,,1,]/apply(CB_P[,,1,],1,sum)   # how catches are going to be distributed
       CB_P[,,1,]<-TACused*temp           # debug - to test distribution code make TAC = TAC2, should be identical
@@ -642,9 +641,9 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
         if(sum(!is.na(newSel[1,1]))==0){ # if no vulnerability schedule is specified
           newVB<-apply(VBiomass_P[,,y,],c(1,3),sum) # vulnerability isn't changed
           fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
-          FM_P[SAYR]<-FinF[S1]*Ei[S1]*V_P[SAYtMP]*fishdist[SR]*qvar[SY1]*qs[S1]*(1+qinc[S1]/100)^y   # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
+          FM_P[SAYR]<-FinF[S1]*Ei[S1]*V_P[SAYt]*fishdist[SR]*qvar[SY1]*qs[S1]*(1+qinc[S1]/100)^y   # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
         }else{
-		  V_P[,,(nyears+1):(proyears+nyears), mm] <- Vi # Update vulnerability schedule for all future years	  
+		  V_P[,,(nyears+1):(proyears+nyears)] <- Vi # Update vulnerability schedule for all future years	  
           newVB<-apply(VBiomass_P[,,y,]*Vi[SA1],c(1,3),sum) # vulnerability modified
           fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
           FM_P[SAYR]<-FinF[S1]*Ei[S1]*Vi[SA1]*fishdist[SR]*qvar[SY1]*qs[S1]*(1+qinc[S1]/100)^y   # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
@@ -654,9 +653,9 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
           newVB<-apply(VBiomass_P[,,y,],c(1,3),sum) # vulnerability isn't changed
           fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
           Emult<-1+((2/apply(fishdist*Si,1,sum))-1)*Ai  # allocate effort to new area according to fraction allocation Ai
-          FM_P[SAYR]<-FinF[S1]*Ei[S1]*V_P[SAYtMP]*Si[SR]*fishdist[SR]*Emult[S1]*qvar[SY1]*qs[S1]^(1+qinc[S1]/100)^y 
+          FM_P[SAYR]<-FinF[S1]*Ei[S1]*V_P[SAYt]*Si[SR]*fishdist[SR]*Emult[S1]*qvar[SY1]*qs[S1]^(1+qinc[S1]/100)^y 
         }else{
-		  V_P[,,(nyears+1):(proyears+nyears), mm] <- Vi # Update vulnerability schedule for all future years
+		  V_P[,,(nyears+1):(proyears+nyears)] <- Vi # Update vulnerability schedule for all future years
           newVB<-apply(VBiomass_P[,,y,]*Vi[SA1],c(1,3),sum) # vulnerability modified
           fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
           Emult<-1+((2/apply(fishdist*Si,1,sum))-1)*Ai  # allocate effort to new area according to fraction allocation Ai
@@ -711,7 +710,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
       N_P[,,y,]<-apply(temp,c(4,3,1),sum)
       
       Biomass_P[SAYR]<-N_P[SAYR]*Wt_age[SAYt]                                    # Calculate biomass
-      VBiomass_P[SAYR]<-Biomass_P[SAYR]*V_P[SAYtMP]                       # Calculate vulnerable biomass
+      VBiomass_P[SAYR]<-Biomass_P[SAYR]*V_P[SAYt]                       # Calculate vulnerable biomass
       SSN_P[SAYR]<-N_P[SAYR]*Mat_age[SA]                                       # Calculate spawning stock numbers
       SSB_P[SAYR]<-SSN_P[SAYR]*Wt_age[SAYt]                                      # Calculate spawning stock biomass
       
@@ -801,7 +800,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
           MSElist[[mm]]@MPrec<-TACused
           fishdist<-(apply(VBiomass_P[,,y,],c(1,3),sum)^Spat_targ)/apply(apply(VBiomass_P[,,y,],c(1,3),sum)^Spat_targ,1,mean)   # spatial preference according to spatial biomass
 		  
-          CB_P[SAYR]<-Biomass_P[SAYR]*(1-exp(-V_P[SAYtMP]*fishdist[SR]))      # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space
+          CB_P[SAYR]<-Biomass_P[SAYR]*(1-exp(-V_P[SAYt]*fishdist[SR]))      # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space
 		  
           temp<-CB_P[,,y,]/apply(CB_P[,,y,],1,sum)   # how catches are going to be distributed
           CB_P[,,y,]<-TACused*temp           # debug - to test distribution code make TAC = TAC2, should be identical
@@ -832,9 +831,9 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
             if(sum(!is.na(newSel[1,1]))==0){ # if no vulnerability schedule is specified
               newVB<-apply(VBiomass_P[,,y,],c(1,3),sum) # vulnerability isn't changed
               fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
-              FM_P[SAYR]<-FinF[S1]*Ei[S1]*V_P[SAYtMP]*fishdist[SR]*qvar[SY]*qs[S1]*(1+qinc[S1]/100)^y   # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
+              FM_P[SAYR]<-FinF[S1]*Ei[S1]*V_P[SAYt]*fishdist[SR]*qvar[SY]*qs[S1]*(1+qinc[S1]/100)^y   # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
             }else{
-			  V_P[,,(y+nyears+1):(proyears+nyears),mm] <- Vi # Update vulnerability schedule for all future years
+			  V_P[,,(y+nyears+1):(proyears+nyears)] <- Vi # Update vulnerability schedule for all future years
               newVB<-apply(VBiomass_P[,,y,]*Vi[SA],c(1,3),sum) # vulnerability modified
               fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
 			  FM_P[SAYR]<-FinF[S1]*Ei[S1]*Vi[SA]*fishdist[SR]*qvar[SY]*qs[S1]*(1+qinc[S1]/100)^y   # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
@@ -845,9 +844,9 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
               newVB<-apply(VBiomass_P[,,y,],c(1,3),sum) # vulnerability isn't changed
               fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
               Emult<-1+((2/apply(fishdist*Si,1,sum))-1)*Ai  # allocate effort to new area according to fraction allocation Ai
-              FM_P[SAYR]<-FinF[S1]*Ei[S1]*V_P[SAYtMP]*Si[SR]*fishdist[SR]*Emult[S1]*qvar[SY]*qs[S1]*(1+qinc[S1]/100)^y 
+              FM_P[SAYR]<-FinF[S1]*Ei[S1]*V_P[SAYt]*Si[SR]*fishdist[SR]*Emult[S1]*qvar[SY]*qs[S1]*(1+qinc[S1]/100)^y 
             }else{
-			  V_P[,,(y+nyears+1):(proyears+nyears),mm] <- Vi # Update vulnerability schedule for all future years
+			  V_P[,,(y+nyears+1):(proyears+nyears)] <- Vi # Update vulnerability schedule for all future years
               newVB<-apply(VBiomass_P[,,y,]*Vi[SA],c(1,3),sum) # vulnerability modified
               fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
               Emult<-1+((2/apply(fishdist*Si,1,sum))-1)*Ai  # allocate effort to new area according to fraction allocation Ai
@@ -866,7 +865,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
       }else{ # not an update yr
         
         if(class(match.fun(MPs[mm]))=="DLM_output"){
-          CB_P[SAYR]<-Biomass_P[SAYR]*(1-exp(-fishdist[SR]*V_P[SAYtMP]))      # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space
+          CB_P[SAYR]<-Biomass_P[SAYR]*(1-exp(-fishdist[SR]*V_P[SAYt]))      # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space
           temp<-CB_P[,,y,]/apply(CB_P[,,y,],1,sum)   # how catches are going to be distributed
           CB_P[,,y,]<-TACused*temp           # debug - to test distribution code make TAC = TAC2, should be identical
           temp<-CB_P[SAYR]/(Biomass_P[SAYR]*exp(-Marray[SYt]/2)) # Pope's approximation
