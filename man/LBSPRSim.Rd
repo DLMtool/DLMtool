@@ -8,7 +8,7 @@ Per-Recruit Length-Based Spawning Potential Ratio Simulation Model
 Function that takes stock (biology) and fleet (selectivity and fishing mortality) parameters and returns expected equilibrum size strucure of the catch and spawning potential ratio. 
 }
 \usage{
-LBSPRSim(StockPars, FleetPars, SizeBins = NULL, P = 0.001, Nage = 201)
+LBSPRSim(StockPars, FleetPars, SizeBins = NULL, P = 0.001, Nage = 101)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

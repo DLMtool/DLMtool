@@ -132,12 +132,13 @@ import(
     "parallel",
     "methods"
 )
-importFrom("grDevices", "col2rgb", "rainbow", "rgb")
+importFrom("grDevices", "col2rgb", "rainbow", "rgb", "xy.coords")
 importFrom("graphics", "abline", "hist", "layout", "legend", "lines",
-               "matplot", "mtext", "par", "points", "text","axis","identify")
+               "matplot", "mtext", "par", "points", "text","axis","identify",
+			   "polygon", "title")
 importFrom("stats", "coef", "density", "dlnorm", "dnorm", "lm",
                "loess", "optim", "optimise", "optimize", "predict",
                "qlnorm", "quantile", "rbeta", "rlnorm", "rmultinom",
-               "rnorm", "runif", "sd", "uniroot")
+               "rnorm", "runif", "sd", "uniroot", "approx", "dbeta", "nlm", "pnorm")
 importFrom("utils", "flush.console", "read.csv")
 
