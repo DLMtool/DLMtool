@@ -1,9 +1,9 @@
 Package: DLMtool
 Type: Package
 Title: Data-Limited Methods Toolkit
-Version: 2.11.1
-Date: 2015-11-13
-Author: Tom Carruthers
+Version: 3.1
+Date: 2016-02-25
+Author: Tom Carruthers and Adrian Hordyk
 Maintainer: Tom Carruthers <t.carruthers@fisheries.ubc.ca>
 Description: Simulation testing and implementation of data-limited fishery stock
     assessment methods.

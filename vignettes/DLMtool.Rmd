@@ -1,5 +1,5 @@
 ---
-title: "DLMtool: Data-Limited Methods Toolkit (v2.XX.X)"
+title: "DLMtool: Data-Limited Methods Toolkit (v3.1)"
 author: "Tom Carruthers (<t.carruthers@fisheries.ubc.ca>) and Adrian Hordyk (<a.hordyk@murdoch.edu.au>)"
 date: "`r Sys.Date()`"
 output: 
@@ -26,11 +26,18 @@ While DLMtool includes over 55 MPs (e.g. DCAC, DBSRA), it is also designed to be
 DLMtool has been used in setting catch-limits at the Mid-Atlantic Fishery Management Council (US) and is being used to test management procedures in California state fisheries (California Deparment of Fish and Wildlife), the Caribbean (NOAA), and for seafood certification purposes (MSC). 
 
 # Version Notes
-The package is subject to ongoing testing. Once again, if you find a bug or a problem please send a report to <t.carruthers@fisheries.ubc.ca> so that I can fix it!  
+The package is subject to ongoing testing. Once again, if you find a bug or a problem please send a report to <t.carruthers@fisheries.ubc.ca> or <a.hordyk@murdoch.edu.au> so that I can fix it!  
 
-## New Additions to this Version (add V number)
+## New Additions to this Version (3.1)
+Variable historical selectivity patterns. In order to simulate fisheries that have experienced important shifts in historical length selectivity, this can now be user specified using a graphical user interface (the 'ChooseSelect' function) or by manually editing a series of new slots in the Fleet object ('SelYears', 'AbsSelYears', 'L5Upper', 'L5Lower','LFSUpper','LFSLower','VmaxUpper','VmaxLower').  
 
+Cyclic Recruitment patterns. Persistent shifts in stock productivity are a particular concern for fishery management. These can now be generated in the toolkit using a new function 'SetRecruitCycle' that generates cyclical pattern in recruitment strength. 
 
+Length-based spawning potential ratio (SPR) MPs. 
+
+Two features have been added to allow MPs to return additional information for future reference and use that information in the future. (1) The DLM_data object that MPs operate on now has a miscellaneous slot 'misc'. (2) MPs can now return a list. The first position is the management recommendation (e.g. TAC) the second is information that is stored in the 'misc' slot that can be used by the MP in the next iteration. 
+
+A new generic trade-off performance plot 'TradePlot'. 
 
 ## A note on version 2.11 
 Operating model effort is now simulated by a time-series of year verticies and relative magnitude of effort at each vertex. It follows that the slot `Fleet@Fgrad` is no longer, and has been replaced by three slots with vectors of equal length: `Fleet@EffYear`, `Fleet@EffUpper` and `Fleet@EffLower`.
@@ -116,17 +123,11 @@ Its probably best not to try and use the package for very short lived stocks (th
 (11) The butterfish stock type now has less variable recruitment and slightly lower natural mortality rate as previous values were rather extreme and lead to data generation errors (with natural mortality rate as high as 0.9, butterfish is right at the limit of what can be simulated reasonably with an annual age-structured operating model) 
 
 
-## Coming soon to v2.11 
+## Coming soon to v3.02 
 
-Spawning Potential Ratio (SPR) based MPs (e.g. Prince et al. 2015).
+Worm plots (likelihood of obtaining biomass reference levels)
 
-Input control versions of existing DLM\_output MPs.
-
-Growth type group simulators of length composition data.
-
-Better simulation of length at maturity and maximum length. 
-
-An implementation model that allows for simple bioeconomics and deliberate adaptive management practices. 
+Data-rich assessment MPs (for comparison)
 
 # Prerequisites
 At the start of every session there are a few things to do: load the DLMtool library, make data available and set up parallel computing. 

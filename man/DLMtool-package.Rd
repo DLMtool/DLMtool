@@ -12,8 +12,8 @@ Simulation testing and implementation of data-limited fishery stock assessment m
 \tabular{ll}{
 Package: \tab DLMtool\cr
 Type: \tab Package\cr
-Version: \tab 2.1.2\cr
-Date: \tab 2015-11-03\cr
+Version: \tab 3.1\cr
+Date: \tab 2016-02-25\cr
 License: \tab GPL-2\cr
 Depends: \tab methods\cr
 }
@@ -21,9 +21,12 @@ Depends: \tab methods\cr
 \author{
 Tom Carruthers
 <t.carruthers@fisheries.ubc.ca>
+Adrian Hordyk
+<a.hordyk@murdoch.edu.au>
 }
 \references{
 Carruthers, T.R., Punt, A.E., Walters, C.J., MacCall, A., McAllister, M.K., Dick, E.J., Cope, J. 2014. Evaluating methods for setting catch limits in data-limited fisheries. Fisheries Research. 153: 48-68. 
+Carruthers, T.R., Kell, L.T., Butterworth, D.S., Maunder, M.N., Geromont, H.F., Walters, C., McAllister, M.K., Hillary, R., Levontin, P., Kitakado, T., Davies, C.R. Performance review of simple management procedures. ICES Journal of Marine Science. 
 }
 \keyword{data-limited}
 \keyword{fisheries}
