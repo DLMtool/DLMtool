@@ -471,6 +471,7 @@ ChooseVmaxlen <- function(L5out) {
 	
 # Rough Plot of Historical Selectivity Patterns --------------------------------
 CheckSelect <- function(Fleet, Stock=NULL) {
+ # NEEDS TO BE FIXED 
  if (length(Fleet@SelYears) < 1) stop("No break points in selectivity pattern")
  n <- length(Fleet@SelYears)
  if (n < 4) par(mfrow=c(n, 1), mar=c(4,4,1,1), oma=c(2,3,1,1), bty="l")

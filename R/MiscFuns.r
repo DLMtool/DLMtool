@@ -407,9 +407,9 @@ ChooseSelect <- function(Fleet, Stock=NULL, FstYr=NULL, SelYears=NULL) {
   Fleet@AbsSelYears <- SelYears 
   Fleet@SelYears <- ind
   
-  Fleet@L5 <- matrix(0, nrow=Selnyears, ncol=2)
-  Fleet@LFS <- matrix(0, nrow=Selnyears, ncol=2)
-  Fleet@Vmaxlen <- matrix(0, nrow=Selnyears, ncol=2)
+  tempL5 <- matrix(0, nrow=Selnyears, ncol=2)
+  tempLFS <- matrix(0, nrow=Selnyears, ncol=2)
+  tempmaxlen <- matrix(0, nrow=Selnyears, ncol=2)
   
   # if(is.null(Stock)) Stock <- NA
   set.par <- par(no.readonly=TRUE)
@@ -418,25 +418,25 @@ ChooseSelect <- function(Fleet, Stock=NULL, FstYr=NULL, SelYears=NULL) {
   for (N in 1:Selnyears) {
     BlankSelPlot(Stock=Stock, Yr=SelYears[N], N=N)
     L5Out <- ChooseL5()
-    Fleet@L5[N,] <- sort(L5Out[,1])
+    tempL5[N,] <- sort(L5Out[,1])
     LFSout <- ChooseLFS(L5Out)
-    Fleet@LFS[N,] <- sort(LFSout[,1])
+    tempLFS[N,] <- sort(LFSout[,1])
     Vmaxout <- ChooseVmaxlen()
-    Fleet@Vmaxlen[N,] <- sort(Vmaxout[,2])
-    polygon(x=c(0, max(Fleet@L5[N,]), max(Fleet@LFS[N,]), 3, 
-     rev(c(0, min(Fleet@L5[N,]), min(Fleet@LFS[N,]), 3))),
-	 y= c(0, 0.05, 1, min(Fleet@Vmaxlen[N,]),
-	 rev(c(0, 0.05, 1, max(Fleet@Vmaxlen[N,])))), col="grey")
+    tempmaxlen[N,] <- sort(Vmaxout[,2])
+    polygon(x=c(0, max(tempL5[N,]), max(tempLFS[N,]), 3, 
+     rev(c(0, min(tempL5[N,]), min(tempLFS[N,]), 3))),
+	 y= c(0, 0.05, 1, min(tempmaxlen[N,]),
+	 rev(c(0, 0.05, 1, max(tempmaxlen[N,])))), col="grey")
     par(ask=TRUE)
   }	
   par(set.par)
-  CheckSelect(Fleet, Stock)
-  Fleet@L5Lower <- Fleet@L5[,1]
-  Fleet@L5Upper <- Fleet@L5[,2]
-  Fleet@LFSLower <- Fleet@LFS[,1]
-  Fleet@LFSUpper <- Fleet@LFS[,2]
-  Fleet@VmaxLower <- Fleet@Vmaxlen[,1]
-  Fleet@VmaxUpper <- Fleet@Vmaxlen[,2]
+  # CheckSelect(Fleet, Stock)
+  Fleet@L5Lower <- tempL5[,1]
+  Fleet@L5Upper <- tempL5[,2]
+  Fleet@LFSLower <- tempLFS[,1]
+  Fleet@LFSUpper <- tempLFS[,2]
+  Fleet@VmaxLower <- tempmaxlen[,1]
+  Fleet@VmaxUpper <- tempmaxlen[,2]
   Fleet
 }
 

@@ -160,7 +160,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   }
   
   Selnyears <- length(OM@SelYears)
-  if (Selnyears < 1) { 
+  if (Selnyears <= 1) { 
     tL5 <- runif(nsim, OM@L5[1], OM@L5[2]) * lenM  # length at 0.05% selectivity ascending
 	tLFS <- runif(nsim, OM@LFS[1], OM@LFS[2]) * lenM   # first length at 100% selection
 	tVmaxlen <- runif(nsim,OM@Vmaxlen[1],OM@Vmaxlen[2])   # selectivity at maximum length 
@@ -169,7 +169,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     Vmaxlen <- matrix(tVmaxlen, nrow=nyears+proyears, ncol=nsim, byrow=TRUE)
   }
   
-  if (Selnyears > 0) { # More than one break point in historical selection pattern
+  if (Selnyears > 1) { # More than one break point in historical selection pattern
     L5 <- matrix(0, nrow=nyears+proyears, ncol=nsim, byrow=TRUE)
     LFS <- matrix(0, nrow=nyears+proyears, ncol=nsim, byrow=TRUE)
     Vmaxlen <- matrix(0, nrow=nyears+proyears, ncol=nsim, byrow=TRUE)
