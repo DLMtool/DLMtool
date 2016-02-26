@@ -302,10 +302,27 @@ ourOM <- new('OM',ourstock, ourfleet, Imprecise_Biased)
 ## MSE evaluation of methods
 Now that we have our operating model we run a trial MSE. In this case we use a very small number of simulations (16, which is low to meet CRAN-R package building requirements) but change the length of the projection and the length of the interval between updates to reflect our stock and management system. 
 
-Since we do not specify a vector of particular methods, the MSE will run for all possible MPs. Note that this could take a few minutes depending on how monstrous your computer is. Note that in a real setting it might be advisable to increase the number of simulations (`nsim`) to at least 200 and, if stochastic MPs are to be used, increase the samples per method (`reps`) to at least 100 for this first stage to obtain stable aggregate results. 
+We can see all of the available output control methods using the `avail` function:
+```{r availOut}
+avail("DLM_output")
+```
+and input control methods:
+```{r availIn}
+avail("DLM_output")
+```
+
+If you do not specify a vector of particular methods, the MSE will run for all possible MPs. Note that this could take a few minutes depending on how monstrous your computer is. In this example, we will choose a subset of the available methods:
+
+```{r chooseMPs}
+MPs <- c("BK", "CC1", "CompSRA", "DBSRA", "DBSRA4010", "DCAC", "DCAC4010", "DepF", "DynF",
+         "EDCAC", "Fratio", "Itarget1", "Itarget4", "MCD", "MCD4010", "SBT1")
+```
+
+Note that in a real setting it might be advisable to increase the number of simulations (`nsim`) to at least 200 and, if stochastic MPs are to be used, increase the samples per method (`reps`) to at least 100 for this first stage to obtain stable aggregate results. 
+
 
 ```{r, eval=FALSE}
-ourMSE <- runMSE(ourOM, proyears=20, interval=5, nsim=16,reps=1)
+ourMSE <- runMSE(ourOM, MPs=MPs, proyears=20, interval=5, nsim=16,reps=1)
 ```
 
 A summary trade-off plot reveals a wide range of performance:
@@ -327,7 +344,12 @@ Our new subsetted methods can be used to run a more focused MSE that includes a 
 
 ```{r ourMSE2, eval=FALSE}
 TargMP <- Targetted$MP[grep("FMSYref",Targetted$MP,invert=T)]
-ourMSE2 <- runMSE(ourOM, TargMP, proyears=20, interval=5, nsim=32, reps=1)
+ourMSE2 <- runMSE(ourOM, TargMP, proyears=20, interval=5, nsim=16, reps=1)
+```
+
+```{r Sub, eval=TRUE, echo=FALSE}
+TargMP <- Targetted$MP[grep("FMSYref",Targetted$MP,invert=T)]
+ourMSE2 <- Sub(ourMSE, MPs=TargMP)
 ```
 
 Let's check convergence in some performance metrics as simulations are added (the first plot is for all MPs, the second shows only those that did not converge):
@@ -527,6 +549,12 @@ What if starting depletion were different, e.g. likely to be under BMSY?
 OM@D
 OM@D <- c(0.05,0.3)
 PorgMSE2 <- runMSE(OM, new_MPs, maxF=1, nsim=20, reps=1, proyears=20, interval=5)
+```
+
+```{r SubPorg, eval=TRUE, echo=FALSE}
+ind <- which(PorgMSE@OM$D < 0.3)
+PorgMSE2 <- Sub(PorgMSE, sims=ind)
+
 ```
 
 ```{r, fig.width=7,fig.height=7}

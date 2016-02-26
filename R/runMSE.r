@@ -628,14 +628,16 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
       Si<-t(inc[3:4,,1])
 	  newSel<-(inc[5:6,,1])
 	  y<-1
-	  if (sum(is.na(newSel[1,1]))==0) { # selectivity pattern changed 
-	    L5[y+nyears,] <- newSel[1,]
-		LFS[y+nyears,] <- newSel[2,]
-		Vmaxlen[y+nyears,] <- 1 
-	    Vi <- t(sapply(1:nsim, SelectFun, L5[y+nyears,], LFS[y+nyears,], 
-		Vmaxlen[y+nyears,], Linfs=Linfarray[,y+nyears], 
-		Lens=Len_age[,,y+nyears]))
-	  }
+	  
+	  chngSel <- which(colSums(apply(newSel, 2, is.na))==0) # selectivity pattern changed 
+	  if (length(chngSel) >0) {
+	    L5[y+nyears,chngSel] <- newSel[1,chngSel]
+		LFS[y+nyears,chngSel] <- newSel[2,chngSel]
+		Vmaxlen[y+nyears,chngSel] <- 1 # 
+	  }	
+	  Vi <- t(sapply(1:nsim, SelectFun, L5[y+nyears,], LFS[y+nyears,], 
+	  Vmaxlen[y+nyears,], Linfs=Linfarray[,y+nyears], 
+	  Lens=Len_age[,,y+nyears]))
  
       if(sum(Si!=1)==0){ # if there is no spatial closure
         if(sum(!is.na(newSel[1,1]))==0){ # if no vulnerability schedule is specified
@@ -817,16 +819,17 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
           Ai<-inc[1,,1]
           Ei<-inc[2,,1]
           Si<-t(inc[3:4,,1])
-          newSel<-(inc[5:6,,1])
-		  if (sum(is.na(newSel[1,1]))==0) { # selectivity pattern changed 
-	        L5[y+nyears,] <- newSel[1,]
-		    LFS[y+nyears,] <- newSel[2,]
-		    Vmaxlen[y+nyears,] <- 1 
-	        Vi <- t(sapply(1:nsim, SelectFun, L5[y+nyears,], LFS[y+nyears,], 
-		      Vmaxlen[y+nyears,], Linfs=Linfarray[,y+nyears], 
-		      Lens=Len_age[,,y+nyears]))
-	      }
-
+          newSel<-(inc[5:6,,1])		  
+		  chngSel <- which(colSums(apply(newSel, 2, is.na))==0) # selectivity pattern changed 
+		  if (length(chngSel) >0) {
+		    L5[y+nyears,chngSel] <- newSel[1,chngSel]
+		    LFS[y+nyears,chngSel] <- newSel[2,chngSel]
+			Vmaxlen[y+nyears,chngSel] <- 1 # 
+		  }	
+		  Vi <- t(sapply(1:nsim, SelectFun, L5[y+nyears,], LFS[y+nyears,], 
+		    Vmaxlen[y+nyears,], Linfs=Linfarray[,y+nyears], 
+		    Lens=Len_age[,,y+nyears]))
+			
           if(sum(Si!=1)==0){ # if there is no spatial closure
             if(sum(!is.na(newSel[1,1]))==0){ # if no vulnerability schedule is specified
               newVB<-apply(VBiomass_P[,,y,],c(1,3),sum) # vulnerability isn't changed
