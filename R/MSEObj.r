@@ -874,4 +874,66 @@ tradeoffplot4<-function(x,y,xlab,ylab,labs,cex,vl,hl,
    
 }
 
+wormplot<-function(MSEobj,Bref=0.5,LB=0.25,UB=0.75){
+  
+  if(UB<LB)stop("LB parameter must be lower than UB parameter")
+  if(LB<0|LB>1)stop("LB parameter must be in the range of 0 to 1")
+  if(UB<0|UB>1)stop("UB parameter must be in the range of 0 to 1")
+  
+  ncol<-ceiling(MSEobj@nMPs^0.3)
+  nrow<-ceiling(MSEobj@nMPs/ncol)
+  
+  par(mfcol=c(nrow,ncol),mar=c(0.1,0.1,0.1,0.1),omi=c(0.6,0.25,0.3,0))
+  
+  Bprob<-apply(MSEobj@B_BMSY>Bref,2:3,sum)/MSEobj@nsim
+  
+  ind<-order(apply(Bprob,1,sum),decreasing=T)
+  
+  BLB<-Bprob>LB
+  BUB<-Bprob>UB
+  
+  col<-array('red',dim(Bprob))
+  col[BLB&!BUB]="yellow"
+  col[BUB]="green"
+  
+  for(i in 1:(nrow*ncol)){
+    if(i<(MSEobj@nMPs+1)){
+      MP<-ind[i]
+      plot(c(1,MSEobj@proyears+2),c(-1,1),col='white',axes=F)
+      # abline(h=0)
+    
+      for(ys in 1:MSEobj@proyears){
+        x<-c(ys-1,ys,ys,ys-1)
+        y<-c(rep(Bprob[MP,ys],2),rep(-Bprob[MP,ys],2))
+        pol<-data.frame(x,y)
+        polygon(pol,col=col[MP,ys],border=NA)
+      }
+    
+      legend('top',legend=MSEobj@MPs[MP],bty='n')
+      if((i/nrow)==round(i/nrow,0)) axis(1,pretty(1:MSEobj@proyears),pretty(1:MSEobj@proyears))
+      
+      
+    }else{
+      
+      plot.new()
+ 
+    }
+    
+    if(i==(nrow*ncol)){
+      legend('topright',fill=c("green","red"),
+             legend=c(paste(">",round(UB*100,0),"% prob.",sep=""),
+                      paste("<",round(LB*100,0),"% prob.",sep="")
+             ),
+             bty="n")
+      
+    }
+    
+  }
+  
+  mtext(paste("Probability of biomass above ",round(Bref*100,0),"% BMSY for ",deparse(substitute(MSE)),sep=""),3,outer=T,line=0.5)
+  mtext("Projection year",1,outer=T,line=2.5)
+  mtext(paste("Fraction of simulations above ",round(Bref*100,0),"% BMSY",sep=""),2,outer=T,line=0.25)
+  Bprob
+  
+}
 
