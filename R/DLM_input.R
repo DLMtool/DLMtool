@@ -85,9 +85,11 @@ LBSPR_ItEff <- function(x, DLM_data, yrsmth=1, reps=reps) {
 	DLM_data@vbK, DLM_data@Mort, LM_data@vbK, DLM_data@L50, DLM_data@L95, 
 	DLM_data@wlb"
   MiscList <- LBSPR(x, DLM_data, yrsmth=yrsmth, reps=reps)
+  if(all(is.na(MiscList[[1]]))) return(rep(NA, 6))
+  if(all(is.na(MiscList[[1]][,2]))) return(rep(NA, 6))
   
   XX <- 1:4 
-  YY <- MiscList[[2]][(length(MiscList[[2]]) - (max(XX)-1)):length(MiscList[[2]])]
+  YY <- MiscList[[1]][,2][(length(MiscList[[1]][,2]) - (max(XX)-1)):length(MiscList[[1]][,2])]
   
   EstSPR <- YY[length(YY)]
   
@@ -139,8 +141,9 @@ LBSPR_ItEff <- function(x, DLM_data, yrsmth=1, reps=reps) {
   Mod <- Mod + 1 
   
   Allocate <- 1
+  if (is.na(DLM_data@MPrec[x])) DLM_data@MPrec[x] <- 1 
   Effort <- DLM_data@MPrec[x] * Mod
-  MiscList[[5]] <- append(MiscList[[5]], Effort)
+  MiscList[[2]] <- append(MiscList[[2]], Effort)
   Spatial <- c(1,1)
   Vuln <- rep(NA,2)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -158,9 +161,10 @@ LBSPR_ItSel <- function(x, DLM_data, yrsmth=1, reps=reps) {
 	DLM_data@vbK, DLM_data@Mort, LM_data@vbK, DLM_data@L50, DLM_data@L95, 
 	DLM_data@wlb"
   MiscList <- LBSPR(x, DLM_data, yrsmth=yrsmth,reps=reps)
-  
+  if(all(is.na(MiscList[[1]]))) return(rep(NA, 6))
+  if(all(is.na(MiscList[[1]][,2]))) return(rep(NA, 6))
   XX <- 1:4 
-  YY <- MiscList[[2]][(length(MiscList[[2]]) - (max(XX)-1)):length(MiscList[[2]])]
+  YY <- MiscList[[1]][,2][(length(MiscList[[1]][,2]) - (max(XX)-1)):length(MiscList[[1]][,2])]
   
   EstSPR <- YY[length(YY)]
   

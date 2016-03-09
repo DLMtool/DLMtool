@@ -9,7 +9,7 @@
 # Tom Carruthers UBC (t.carruthers@fisheries.ubc.ca)
 # Adrian Hordyk (a.hordyk@murdoch.edu.au)
 
-DLMdiag<-function(DLM_data,command="available",reps=5,timelimit=1){
+DLMdiag <- function(DLM_data,command="available",reps=5,timelimit=1){
   funcs1<-c(avail("DLM_output"),avail("DLM_input"))
   good<-rep(TRUE,length(funcs1))
   report<-rep("Worked fine",length(funcs1))

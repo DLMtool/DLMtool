@@ -154,9 +154,9 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   Mat_age <- 1/(1+exp((ageMarray-(Agearray))/(ageMarray*ageMsd)))  # Maturity at age array
   
   # Selectivity at Length ------------------------------------------------------
-  if (max(OM@L5) > 1) {
-    message("L5 set too high (maximum value of 1). \nDefaulting to L5 = 1")
-    OM@L5[OM@L5 > 1] <- 1 
+  if (max(OM@L5) > 1.5) {
+    message("L5 set too high (maximum value of 1.5). \nDefaulting to L5 = 1.5")
+    OM@L5[OM@L5 > 1.5] <- 1.5
   }
   
   Selnyears <- length(OM@SelYears)

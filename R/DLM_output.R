@@ -581,7 +581,8 @@ DD<-function(x,DLM_data,reps=100){
   dependencies="DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@Mort, DLM_data@CV_Mort. DLM_data@wla, DLM_data@ wlb"
   Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  t0c<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  t0c[!is.finite(t0c)] <- 0 
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
   a<-DLM_data@wla[x]
   b<-DLM_data@wlb[x]
@@ -630,6 +631,7 @@ DD4010<-function(x,DLM_data,reps=100){
   Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
   t0c<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  t0c[!is.finite(t0c)] <- 0 
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
   a<-DLM_data@wla[x]
   b<-DLM_data@wlb[x]
@@ -1228,9 +1230,11 @@ SPSRA<-function(x,DLM_data,reps=100){  # Surplus productin stock reduction analy
   dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@Dep, DLM_data@CV_Dep, DLM_data@Cat, DLM_data@steep"
   Mvec<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
   Kvec<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Linfvec=trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
+  Linfvec <- trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   t0vec<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  if(all(is.nan(t0vec))) t0vec <- rep(0,reps) 
   hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
+  if (all(!is.finite(hvec))) return(NA)
   rsamp<-getr(x,DLM_data,Mvec,Kvec,Linfvec,t0vec,hvec,maxage=DLM_data@MaxAge,r_reps=reps)
   dep<-trlnorm(reps,DLM_data@Dep[x],DLM_data@CV_Dep[x])
   Ct<-DLM_data@Cat[x,]
@@ -1291,6 +1295,7 @@ YPR<-function(x,DLM_data,reps=100){   # Yield per recruit analysis F01 - Meaghan
   Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
   t0c<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  t0c[!is.finite(t0c)] <- 0 
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
   LFS<-trlnorm(reps,DLM_data@LFS[x],DLM_data@CV_LFS[x])
   a<-DLM_data@wla[x]
@@ -1309,6 +1314,7 @@ YPR_CC<-function(x,DLM_data,reps=100,Fmin=0.005){
   Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
   t0c<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  t0c[!is.finite(t0c)] <- 0 
   LFS<-trlnorm(reps,DLM_data@LFS[x],DLM_data@CV_LFS[x])
   a<-DLM_data@wla[x]
   b<-DLM_data@wlb[x]
@@ -1341,6 +1347,7 @@ YPR_ML<-function(x,DLM_data,reps=100){
   Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
   t0c<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  t0c[!is.finite(t0c)] <- 0 
   LFS<-trlnorm(reps,DLM_data@LFS[x],DLM_data@CV_LFS[x])
   a<-DLM_data@wla[x]
   b<-DLM_data@wlb[x]
@@ -1361,6 +1368,7 @@ Fdem<-function(x,DLM_data,reps=100){   # Demographic FMSY estimate (FMSY=r/2)
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
   Linfc=trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   t0c<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  t0c[!is.finite(t0c)] <- 0 
   hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
   Ac<-trlnorm(reps,DLM_data@Abun[x],DLM_data@CV_Abun[x])
   FMSY<-getr(x,DLM_data,Mvec,Kc,Linfc,t0c,hvec,maxage=DLM_data@MaxAge,r_reps=reps)/2
@@ -1375,6 +1383,7 @@ Fdem_CC<-function(x,DLM_data,reps=100,Fmin=0.005){
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
   Linfc=trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   t0c<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  t0c[!is.finite(t0c)] <- 0 
   hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
   MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
   Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
@@ -1426,6 +1435,7 @@ Fdem_ML<-function(x,DLM_data,reps=100){
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
   Linfc=trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   t0c<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  t0c[!is.finite(t0c)] <- 0 
   hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
   MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
   Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
@@ -1448,6 +1458,7 @@ CompSRA<-function(x,DLM_data,reps=100){    # optimize for fixed F to get you to 
     Linfc<-trlnorm(1,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
     Kc<-trlnorm(1,DLM_data@vbK[x],DLM_data@CV_vbK[x])
     t0c<--trlnorm(1,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+	t0c[!is.finite(t0c)] <- 0 
     LFSc<-trlnorm(1,DLM_data@LFS[x],DLM_data@CV_LFS[x])
     LFCc<-trlnorm(1,DLM_data@LFC[x],DLM_data@CV_LFC[x])
     AMc<-trlnorm(1,iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x]),DLM_data@CV_L50[x])
@@ -1498,6 +1509,7 @@ CompSRA4010<-function(x,DLM_data,reps=100){    # optimize for fixed F to get you
     Linfc<-trlnorm(1,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
     Kc<-trlnorm(1,DLM_data@vbK[x],DLM_data@CV_vbK[x])
     t0c<--trlnorm(1,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+	t0c[!is.finite(t0c)] <- 0 
     LFSc<-trlnorm(1,DLM_data@LFS[x],DLM_data@CV_LFS[x])
     LFCc<-trlnorm(1,DLM_data@LFC[x],DLM_data@CV_LFC[x])
     AMc<-trlnorm(1,iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x]),DLM_data@CV_L50[x])
@@ -1962,9 +1974,10 @@ LBSPR_ItTAC <- function(x, DLM_data, yrsmth=1,reps=reps) {
  dependencies="DLM_data@CAL, DLM_data@CAL_bins, DLM_data@vbLinf, DLM_data@vbK, DLM_data@Mort, LM_data@vbK, DLM_data@L50, DLM_data@L95, DLM_data@wlb" 
   
   MiscList <- LBSPR(x, DLM_data, yrsmth=yrsmth,reps=reps)
-
+  if(all(is.na(MiscList[[1]]))) return(rep(NA, 6))
+  if(all(is.na(MiscList[[1]][,2]))) return(rep(NA, 6))
   XX <- 1:4 
-  YY <- MiscList[[2]][(length(MiscList[[2]]) - (max(XX)-1)):length(MiscList[[2]])]
+  YY <- MiscList[[1]][,2][(length(MiscList[[1]][,2]) - (max(XX)-1)):length(MiscList[[1]][,2])]
   
   EstSPR <- YY[length(YY)]
   

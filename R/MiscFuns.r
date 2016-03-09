@@ -639,29 +639,44 @@ DoOpt <- function(StockPars, LenDat, SizeBins=NULL, mod=c("GTG", "LBSPR")) {
 # Run LBSPR Model for time-series of catch length composition data 
 LBSPR <- function(x, DLM_data, yrsmth=1,reps=reps) {
   # Save other stuff for smoothing estimates
+  if (length(DLM_data@Misc) == 0) DLM_data@Misc <- vector("list", 1)
   TotYears <- nrow(DLM_data@CAL[1,,]) # How many years of length data exist
+  if (is.null(TotYears)) TotYears <- length(DLM_data@CAL[1,,])
+  if(is.null(dim(DLM_data@CAL[1,,]))) TotYears <- 1  
   if (length(DLM_data@Misc[[x]]) == 0) { # Misc List is empty
     # Create Empty List Object
-	MiscList <- rep(list(0), 5) # Create empty list
-	MiscList[[1]] <- rep(NA, TotYears) # SPR ests
-	MiscList[[2]] <- rep(NA, TotYears) # Smoothed SPR ests
-	MiscList[[3]] <- rep(NA, TotYears) # FM ests
-	MiscList[[4]] <- rep(NA, TotYears) # Smoothed FM ests
-	MiscList[[5]] <- list()
+	# MiscList <- rep(list(0), 5) # Create empty list
+	# MiscList[[1]] <- rep(NA, TotYears) # SPR ests
+	# MiscList[[2]] <- rep(NA, TotYears) # Smoothed SPR ests
+	# MiscList[[3]] <- rep(NA, TotYears) # FM ests
+	# MiscList[[4]] <- rep(NA, TotYears) # Smoothed FM ests
+	# MiscList[[5]] <- list()
+	# Create Empty Object
+    MiscList <- rep(list(0), 2) # Create empty list
+	MiscList[[1]] <- matrix(NA, nrow=TotYears, ncol=4)
+	colnames(MiscList[[1]]) <- c("Raw Est SPR", "Smooth Est SPR", 
+	"Raw Est F/M", "Smooth Est F/M")
+	MiscList[[2]] <- list()
   }
   if (length(DLM_data@Misc[[x]]) != 0) MiscList <- DLM_data@Misc[[x]]
   
   # Add Extra Row when needed 
-  if (length(MiscList[[1]]) < TotYears) {
-    Diff <- TotYears - length(DLM_data@Misc[[x]][[1]])
-    MiscList[[1]] <- append(MiscList[[1]], rep(NA,Diff)) 
-	MiscList[[2]] <- append(MiscList[[2]], rep(NA,Diff)) 
-	MiscList[[3]] <- append(MiscList[[3]], rep(NA,Diff)) 
-	MiscList[[4]] <- append(MiscList[[4]], rep(NA,Diff)) 
+  if (length(MiscList[[1]][,1]) < TotYears) {
+    # Diff <- TotYears - length(DLM_data@Misc[[x]][[1]])
+    # MiscList[[1]] <- append(MiscList[[1]], rep(NA,Diff)) 
+	# MiscList[[2]] <- append(MiscList[[2]], rep(NA,Diff)) 
+	# MiscList[[3]] <- append(MiscList[[3]], rep(NA,Diff)) 
+	# MiscList[[4]] <- append(MiscList[[4]], rep(NA,Diff))
+    Diff <- TotYears - nrow(DLM_data@Misc[[x]][[1]])	
+	newmat <- matrix(NA, nrow=Diff, ncol=4)
+	names(newmat) <- names(MiscList[[1]]) 
+	MiscList[[1]] <- rbind(MiscList[[1]], newmat) 
+	# MiscList[[1]] <- as.data.frame(MiscList[[1]])
   }
 
-  NEmpty <- sum(is.na(MiscList[[1]])) # Number of empty spots
-  IsEmpty <- which(is.na(MiscList[[1]]))
+  NEmpty <- sum(is.na(MiscList[[1]][,1])) # Number of empty spots
+  IsEmpty <- which(is.na(MiscList[[1]][,1]))
+
 
  StockPars <- NULL
  StockPars$MK <- DLM_data@Mort[x] / DLM_data@vbK[x]
@@ -671,10 +686,13 @@ LBSPR <- function(x, DLM_data, yrsmth=1,reps=reps) {
  StockPars$L95 <- DLM_data@L95[x]
  StockPars$FecB <- DLM_data@wlb[x]
  StockPars$MaxSD <- 2
+ if(any(is.na(StockPars))) {
+   return(list(NA, paste(names(unlist(StockPars))[which(is.na(StockPars))], "are NA")))
+ }
  
  # yrsmth not implemented here
  LenMatrix <- DLM_data@CAL[x, IsEmpty,]
- 
+ if (TotYears == 1) LenMatrix <- t(as.matrix(LenMatrix))
  binWidth <- DLM_data@CAL_bins[2] - DLM_data@CAL_bins[1]
  CAL_binsmid <- seq(from=0.5*binWidth, by=binWidth, length=length(DLM_data@CAL_bins)-1)
      
@@ -695,7 +713,7 @@ LBSPR <- function(x, DLM_data, yrsmth=1,reps=reps) {
  estSL95 <- sapply(AllOpt[1,], "[[", 3)
  EstSPR <- sapply(AllOpt[1,], "[[", 4)
  EstFM[EstFM > 5] <- 5 
- 
+
  Fails <- which(sapply(AllOpt[3,], "[[", 1))
  if (length(Fails) > 0) {
    EstFM[Fails] <- NA 
@@ -705,19 +723,45 @@ LBSPR <- function(x, DLM_data, yrsmth=1,reps=reps) {
    EstFM[is.na(EstFM)] <- EstFM[which(is.na(EstFM))-1]
    EstSPR[is.na(EstSPR)] <- EstSPR[which(is.na(EstSPR))-1]
  }
- 
- MiscList[[1]][IsEmpty] <- EstSPR # Save estimate of SPR for smoothing
- MiscList[[3]][IsEmpty] <- EstFM # Save estimate of F/M for smoothing 
+ MiscList[[1]][IsEmpty,1] <- EstSPR # Save estimate of SPR for smoothing
+ MiscList[[1]][IsEmpty,3] <- EstFM # Save estimate of F/M for smoothing 
   
   # Smoothed estimates - SPR
-  MiscList[[2]] <- KalmanFilter(RawEsts=MiscList[[1]]) 
-  MiscList[[2]][MiscList[[2]] <0] <- 0.05
-  MiscList[[2]][MiscList[[2]] > 1] <- 0.99
- 
+  MiscList[[1]][,2] <- KalmanFilter(RawEsts=MiscList[[1]][,1]) 
+  MiscList[[1]][,2][MiscList[[1]][,2] < 0 ] <- 0.05
+  MiscList[[1]][,2][MiscList[[1]][,2]  > 1] <- 0.99
+
   # Smoothed estimates - FM
-  MiscList[[4]] <- KalmanFilter(RawEsts=MiscList[[3]])
+  MiscList[[1]][,4] <- KalmanFilter(RawEsts=MiscList[[1]][,3])
   
   return(MiscList)
 }
 
 
+Input <- function(DLM_data, MPs=NA, reps=100, timelimit=10, CheckMPs=TRUE) {
+  print("Checking which MPs can be run")
+  flush.console()
+  if(CheckMPs) PosMPs <- Can(DLM_data, timelimit=timelimit)
+  if(!CheckMPs) PosMPs <- MPs
+  PosMPs <- PosMPs[PosMPs%in%avail("DLM_input")]
+  if(!is.na(MPs[1]))DLM_data@MPs<-MPs[MPs%in%PosMPs]
+  if(is.na(MPs[1]))DLM_data@MPs<-PosMPs
+  funcs<-DLM_data@MPs
+
+  if(length(funcs)==0){
+    stop("None of the methods 'MPs' are possible given the data available")
+  }else{
+    Out <- matrix(NA, nrow=length(funcs), ncol=5)
+	colnames(Out) <- c("Effort", "Area 1",  "Area 2", "SL50", "SL95")
+	rownames(Out) <- funcs
+    for (mm in 1:length(funcs)) {
+	  print(paste("Running", mm, "of", length(funcs), "-", funcs[mm]))
+	  flush.console()
+      runIn <- runInMP(DLM_data,MPs=funcs[mm], reps=reps)[[1]][,,1]
+	  Out[mm,] <- runIn[2:6]
+	  Out[,4:5] <- round(Out[,4:5], 2)
+	}
+  }
+  Out 
+
+}

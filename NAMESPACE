@@ -53,6 +53,7 @@ export(
     "GB_target",
     "Gcontrol",
     "getmov",
+	 "Input",
     "Islope1",
     "Islope4",
     "Itarget1",

@@ -39,7 +39,12 @@ alphaconv<-function(m,sd)m*(((m*(1-m))/(sd^2))-1)
 
 betaconv<-function(m,sd)(1-m)*(((m*(1-m))/(sd^2))-1)
 
-trlnorm<-function(reps,mu,cv)return(rlnorm(reps,mconv(mu,mu*cv),sdconv(mu,mu*cv)))
+trlnorm<-function(reps,mu,cv) {
+ if (all(is.na(mu))) return(rep(NA, reps))
+ if (all(is.na(cv))) return(rep(NA, reps))
+ return(rlnorm(reps,mconv(mu,mu*cv),sdconv(mu,mu*cv)))
+}
+
 
 condmet<-function(vec)TRUE%in%vec
 
@@ -66,6 +71,7 @@ getEffhist <- function(Esd, nyears, EffYears, EffLower, EffUpper) {
  	}
     
 	effort <- range01(effort)
+	effort[effort == 0] <- 0.01
 	
     Emu <- -0.5*Esd^2
     Eerr <-array(exp(rnorm(nyears*nsim,rep(Emu,nyears),rep(Esd,nyears))),c(nsim,nyears)) # calc error
@@ -440,7 +446,7 @@ BlankSelPlot <- function(Stock=NULL, Yr=NULL, N=NULL) {
 # Choose L5 
 ChooseL5 <- function() {
   By <- 0.05
-  Xs <-seq(from=0, to=1, by=By)
+  Xs <-seq(from=0, to=1.5, by=By)
   Ys <- rep(0.05, length(Xs))
   points(Xs, Ys, col="gray", cex=0.5)
   text(0.5, 0.2, "Choose two points for L5")
