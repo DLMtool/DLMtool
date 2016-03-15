@@ -970,6 +970,8 @@ class(DCAC_40)<-"DLM_output"
 
 DCAC_ML<-function(x,DLM_data,reps=100){
   dependencies="DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0, DLM_data@Year, DLM_data@CAL"
+  if (is.na(DLM_data@BMSY_B0[x]) | is.na(DLM_data@CV_BMSY_B0[x])) return(NA)
+  if (is.na(DLM_data@FMSY_M[x]) | is.na(DLM_data@CV_FMSY_M[x])) return(NA)
   C_tot<-DLM_data@AvC[x]*DLM_data@t[x]
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # default CV of 0.5 as in MacCall 2009
   FMSY_M<-trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x]) # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
@@ -982,7 +984,8 @@ DCAC_ML<-function(x,DLM_data,reps=100){
   Ct1<-mean(DLM_data@Cat[x,1:3])
   Ct2<-mean(DLM_data@Cat[x,(nyears-2):nyears])
   dep<-rep(c(Ct1,Ct2),each=reps)/(1-exp(-FM[,c(1,2)]))
-  Bt_K<-dep[,2]/dep[,1]
+  if (reps == 1) Bt_K<-dep[2]/dep[1]
+  if (reps > 1)  Bt_K<-dep[,2]/dep[,1]
   BMSY_K<-rbeta(reps,alphaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]),betaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
   TAC<-C_tot/(DLM_data@t[x]+((1-Bt_K)/(BMSY_K*FMSY_M*Mdb)))
   TACfilter(TAC)
@@ -1263,7 +1266,8 @@ SPSRA_ML<-function(x,DLM_data,reps=100){
   Ct1<-mean(DLM_data@Cat[x,1:3])
   Ct2<-mean(DLM_data@Cat[x,(nyears-2):nyears])
   dep<-rep(c(Ct1,Ct2),each=reps)/(1-exp(-FM[,c(1,2)]))
-  dep<-dep[,2]/dep[,1]
+  if (reps == 1) dep<-dep[2]/dep[1]
+  if (reps > 1)  dep<-dep[,2]/dep[,1]
   Ksamp<-rep(NA,reps)
   Ct<-DLM_data@Cat[x,]
   Csamp<-array(rep(Ct,each=reps)*trlnorm(length(Ct)*reps,1,DLM_data@CV_Cat[x]),dim=c(reps,length(Ct)))
