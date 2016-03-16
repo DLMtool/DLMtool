@@ -1794,122 +1794,13 @@ bheq<-function(K,Linf,Lc,Lbar){
   K*(Linf-Lbar)/(Lbar-Lc)
 }
 
-bhnoneq<-function (year = NULL, mlen = NULL, ss = NULL, K = NULL, Linf = NULL,
-    Lc = NULL, nbreaks = NULL, styrs = NULL, stZ = NULL, stsigma = NULL,
-    graph = TRUE)  {
-    if (is.null(mlen))
-        stop("mean length vector does not exist")
-    if (is.null(year))
-        stop("year vector does not exist")
-    if (is.null(ss))
-        stop("numbers vector does not exist")
-    if (!is.numeric(mlen))
-        stop("vector is not numeric")
-    if (is.null(stZ))
-        stop("Initial Z vector does not exist")
-    if (is.null(stsigma))
-        stop("Initial sigma value does not exist")
-    if (is.null(K))
-        stop("K not specified")
-    if (is.null(Linf))
-        stop("Linf not specified")
-    if (is.null(Lc))
-        stop("Lc not specified")
-    if (is.null(nbreaks))
-        stop("Number of mortality breaks not specified")
-    if (is.null(styrs))
-        stop("Starting guesses for years of mortality breaks not specified ")
-    if (length(mlen) != length(year))
-        stop("vectors have different lengths")
-    gyr <- styrs
-    xx <- as.data.frame(cbind(year, mlen, ss))
-    fyr <- min(xx$year)
-    lyr <- max(xx$year)
-    names(xx) <- c("year", "mlen", "m")
-    nyr <- length(xx[!is.na(xx[, 2]), 2])
-    count <- length(xx[, 1])
-    mdata <- xx
-    ggyr <- gyr - fyr + 1
-    tm <- array(0, dim = c(nbreaks, 1))
-    if (length(stZ) == nbreaks + 1)
-        parms <- c(stZ, ggyr, stsigma)
-    if (length(stZ) < nbreaks + 1)
-        stop("The number of stZ values does not equal nbreak+1")
-    if (length(stZ) > nbreaks + 1)
-        stop("Too many stZ values for match to nbreak+1")
-    Lpred <- NULL
-    results <- NULL
-    Zest <- function(y) {
-        Z <- y[1:as.numeric(nbreaks + 1)]
-        sigma <- y[length(y)]
-        tm[1:nbreaks, 1] <- y[as.numeric(nbreaks + 2):as.numeric(length(y) -
-            1)]
-        dy <- array(0, dim = c(nbreaks, count))
-        for (i in 1:nbreaks) {
-            for (j in 1:count) {
-                dy[i, j] <- ifelse(tm[i, 1] >= j, 0, j - tm[i,
-                  1])
-            }
-        }
-        if (nbreaks > 1) {
-            for (i in 1:as.numeric(nbreaks - 1)) {
-                for (j in 1:count) {
-                  if (j > round(tm[i + 1, 1], 0)) {
-                    dy[i, j] <- dy[i, j - 1]
-                  }
-                }
-            }
-        }
-        a <- array(0, dim = c(nbreaks + 1, count))
-        s <- array(0, dim = c(nbreaks + 1, count))
-        r <- array(0, dim = c(nbreaks + 1, count))
-        denom <- rep(0, count)
-        numersum <- rep(0, count)
-        numerator <- rep(0, count)
-        for (m in 1:count) {
-            a[1, m] <- 1
-            r[1, m] <- 1
-            for (i in 1:as.numeric(nbreaks + 1)) {
-                a[i, m] <- 1
-                r[i, m] <- 1
-                if (i < as.numeric(nbreaks + 1)) {
-                  s[i, m] <- 1 - exp(-(Z[nbreaks + 2 - i] + K) *
-                    dy[nbreaks + 1 - i, m])
-                }
-                if (i == as.numeric(nbreaks + 1)) {
-                  s[i, m] <- 1
-                }
-                for (j in 1:as.numeric(i - 1)) {
-                  if (i > 1) {
-                    a[i, m] <- a[i, m] * exp(-Z[nbreaks + 2 -
-                      j] * dy[nbreaks + 1 - j, m])
-                    r[i, m] <- r[i, m] * exp(-(Z[nbreaks + 2 -
-                      j] + K) * dy[nbreaks + 1 - j, m])
-                  }
-                }
-                if (i <= nbreaks) {
-                  denom[m] <- denom[m] + a[i, m] * ((1 - exp(-Z[nbreaks +
-                    2 - i] * dy[nbreaks + 1 - i, m]))/Z[nbreaks +
-                    2 - i])
-                }
-                if (i == as.numeric(nbreaks + 1)) {
-                  denom[m] <- denom[m] + a[i, m]/Z[nbreaks +
-                    2 - i]
-                }
-                numersum[m] <- numersum[m] + (-((1 - Lc/Linf) *
-                  r[i, m] * s[i, m])/(Z[nbreaks + 2 - i] + K))
-            }
-        }
-        numerator <- Linf * (denom + numersum)
-        Lpred <<- numerator/denom
-        LL <- -nyr * log(sigma) - sum((mdata[, 3]/(2 * sigma^2)) *
-            (mdata[, 2] - Lpred)^2, na.rm = T)
-        LL * -1
-    }
-    results <- optim(parms, Zest, gr = NULL, control = list(maxit = 1e+06,
-        abstol = 1e-07), hessian = TRUE)
-    return(results$par[1:(nbreaks + 1)])
-
+bhnoneq<-function(year,mlen,ss,K,Linf,Lc,nbreaks,styrs,stZ) {
+  mlen[mlen<=0|is.na(mlen)]<--99
+  ss[ss<=0|is.na(ss)]<-0
+  stpar<-c(stZ,styrs)
+  results <- optim(stpar,bhnoneq_LL,method="BFGS",year=year,Lbar=mlen,ss=ss,
+                   nbreaks=nbreaks,K=K,Linf=Linf,Lc=Lc,control=list(maxit=1e6))
+  return(results$par[1:(nbreaks+1)])
 }
 
 getdep<-function(lnFF,targ,Md,Linfd,Kd,t0d,AFSd,ad,bd,maxage,opt){
