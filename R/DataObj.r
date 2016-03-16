@@ -249,7 +249,7 @@ replic8<-function(DLM_data,nrep){
 TAC<-function(DLM_data,MPs=NA,reps=100,maxlines=6,perc=NA,xlims=NA,timelimit=1){
 
   nm <-deparse(substitute(DLM_data))
-  PosMPs<-Can(DLM_data)
+  PosMPs<-Can(DLM_data,timelimit=timelimit)
   PosMPs<-PosMPs[PosMPs%in%avail("DLM_output")]
   DLM_data@PosMPs<-PosMPs
   if(!is.na(MPs[1]))DLM_data@MPs<-MPs[MPs%in%PosMPs]
