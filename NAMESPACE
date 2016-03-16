@@ -142,4 +142,4 @@ importFrom("stats", "coef", "density", "dlnorm", "dnorm", "lm",
                "qlnorm", "quantile", "rbeta", "rlnorm", "rmultinom",
                "rnorm", "runif", "sd", "uniroot", "approx", "dbeta", "nlm", "pnorm")
 importFrom("utils", "flush.console", "read.csv")
-
+importFrom("Rcpp", "sourceCpp")
