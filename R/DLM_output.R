@@ -1348,6 +1348,7 @@ class(YPR_CC)<-"DLM_output"
 
 YPR_ML<-function(x,DLM_data,reps=100){
   dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@wlb, DLM_data@CAL, DLM_data@Cat"
+  Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
   Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
   t0c<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
