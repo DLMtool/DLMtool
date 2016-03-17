@@ -34,7 +34,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 .Rproj.user
-.Rhistory
+*.Rhistory
 .Rbuildignore
 .Rproj.user/1427710/pcs/files-pane.pper
 .Rproj.user/1427710/pcs/windowlayoutstate.pper
