@@ -254,6 +254,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   
   SSN[SAYR]<-Nfrac[SA]*R0*initdist[SR]                           # Calculate initial spawning stock numbers
   N[SAYR]<-R0*surv[SA]*initdist[SR]                              # Calculate initial stock numbers
+  
   Biomass[SAYR]<-N[SAYR]*Wt_age[SAY]                             # Calculate initial stock biomass
   SSB[SAYR]<-SSN[SAYR]*Wt_age[SAY]                               # Calculate spawning stock biomass
   VBiomass[SAYR]<-Biomass[SAYR]*V[SAY]                            # Calculate vunerable biomass
@@ -375,6 +376,9 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   fixind<-as.matrix(cbind(expand.grid(1:nsim,1:nyears),rep(ceiling(mod),nyears))) # more fix
   CN[fixind[cond,]]<-1                                                      # puts a catch in the most vulnerable age class
   for(i in 1:nsim)for(j in 1:nyears)CAA[i,j,]<-ceiling(-0.5+rmultinom(1,CAA_nsamp[i],CN[i,j,])*CAA_nsamp[i]/CAA_ESS[i]) # a multinomial observation model for catch-at-age data
+  
+  # Temporary fix til effdist simulator is fixed
+  for(i in 1:nsim)CAA[i,1,]<-CAA[i,2,]
   
   LatASD <- Len_age * 0.1 # This is currently fixed to cv of 10%
   MaxBin <- ceiling(max(Linfarray) + 2 * max(LatASD))
@@ -887,8 +891,9 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     } # end of year
     
     # B_BMSYa[,mm,]<-apply(Biomass_P,c(1,3),sum)/BMSY
-	B_BMSYa[,mm,]<-apply(VBiomass_P,c(1,3),sum)/BMSY
-	
+	  # B_BMSYa[,mm,]<-apply(VBiomass_P,c(1,3),sum)/BMSY
+	  B_BMSYa[,mm,]<-apply(SSB_P,c(1,3),sum)/BMSY
+	  
     F_FMSYa[,mm,]<-(-log(1-apply(CB_P,c(1,3),sum)/(apply(CB_P,c(1,3),sum)+apply(VBiomass_P,c(1,3),sum))))/FMSY
     Ba[,mm,]<-apply(Biomass_P,c(1,3),sum)
     FMa[,mm,]<--log(1-apply(CB_P,c(1,3),sum)/(apply(CB_P,c(1,3),sum)+apply(VBiomass_P,c(1,3),sum)))

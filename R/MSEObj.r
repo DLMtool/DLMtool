@@ -937,3 +937,176 @@ wormplot<-function(MSEobj,Bref=0.5,LB=0.25,UB=0.75){
   
 }
 
+VOI2<-function(MSEobj,ncomp=6,nbins=4,Ut=NA,Utnam="yield"){
+  
+  objnam<-deparse(substitute(MSEobj))
+  nsim<-MSEobj@nsim
+  
+  if(is.na(Ut[1])){
+    Ut<-array(NA,c(nsim,MSEobj@nMPs))
+    yind<-max(MSEobj@proyears-4,1):MSEobj@proyears
+    RefYd<-MSEobj@OM$RefY
+    
+    for(mm in 1:MSEobj@nMPs){
+      Ut[,mm]<-apply(MSEobj@C[,mm,yind],1,mean,na.rm=T)/RefYd*100
+      #POF[,mm]<-apply(MSEobj@F_FMSY[,mm,]>1,1,sum)/MSEobj@proyears
+      #P10[,mm]<-apply(MSEobj@B_BMSY[,mm,]<0.1,1,sum)/MSEobj@proyears
+    }
+    
+  }
+  
+  MPs<-MSEobj@MPs
+  nMPs<-MSEobj@nMPs
+  
+  # -- Observation model variables
+  slots<-c( "Cat",  "Cat","AvC",  "AvC","CAA",      "CAA",    "CAL",      "CAL",    "Ind","Ind",  "Dep",  "Dep", "Dt",   "Dt", "Mort", "FMSY_M",    "BMSY_B0",     "L50",      "L95",    "LFC",    "LFS",    "Abun",  "Abun","vbK",  "vbt0",  "vbLinf",  "Steep","Iref",    "Cref",    "Bref")
+  Obsnam<-c("Cbias","Csd","Cbias","Csd","CAA_nsamp","CAA_ESS","CAL_nsamp","CAL_ESS","Isd","betas","Dbias","Derr","Dbias","Derr","Mbias","FMSY_Mbias","BMSY_B0bias", "lenMbias","lenMbias","LFCbias","LFSbias","Abias","Aerr","Kbias","t0bias","Linfbias","hbias","Irefbias","Crefbias","Brefbias")
+  
+  Obsnam2<-c("Cbias","Csd","CAA_nsamp","CAA_ESS","CAL_nsamp","CAL_ESS","Isd","betas","Dbias","Derr","Mbias","FMSY_Mbias","BMSY_B0bias", "lenMbias","LFCbias","LFSbias","Abias","Aerr","Kbias","t0bias","Linfbias","hbias","Irefbias","Crefbias","Brefbias")
+  #Types of observation error model   1:lognorm   2:percentile  3:replicates (higher is better) ##4:uniform on log  5:logit space
+  oem<-c(     1,      2,    3,          3,        3,          3,        2,    4,      1,      2,     1,      1,            1,             1,        1,        1,        4,      2,     1,      1,       1,         2,      1,         1,         1)
+  
+  Obsd<-apply(MSEobj@Obs,2,sd)
+  Obm<-apply(MSEobj@Obs,2,mean)
+  Obmd<-apply(MSEobj@Obs,2,quantile,p=0.5)
+  
+  maxcomp<-length(Obsnam2) 
+  Obsv<-array(NA,c(nMPs,maxcomp,nbins))
+  Obsval<-array(NA,c(nMPs,maxcomp,nbins))
+  Obscost<-array(NA,c(nMPs,maxcomp,nbins))
+  Obsname<-list()
+  
+  div<-seq(1,2,length.out=nbins+1)[2:(nbins+1)] # for distributions
+  percs<-seq(0.5,1,length.out=nbins+1)[1:nbins] # for samples
+  percsCAA<-seq(0,1,length.out=nbins+2)[2:(nbins+1)]
+  percUL<-seq(0,0.25,length.out=nbins+1)[2:(nbins+1)]
+  percUU<-1-percUL
+  for(mm in 1:nMPs){
+    Y1<-Ut[,mm]
+    relobs<-Obsnam[slots%in%unlist(strsplit(Required(MPs[mm])[,2],split=", "))]
+    Obsname[[mm]]<-relobs
+    nr<-length(relobs)
+    if(length(relobs)>0){
+      
+      for(r in 1:nr){
+        oemi<-match(relobs[r],Obsnam2)
+        obsi<-match(relobs[r],names(MSEobj@Obs))
+        for(cc in 1:nbins){
+          if(oem[oemi]==1){
+            T1<-tdlnorm(MSEobj@Obs[,obsi],Obm[obsi],Obsd[obsi]/Obm[obsi]) 
+            #plot(MSEobj@Obs[,obsi],T1) # check
+            T2<-tdlnorm(MSEobj@Obs[,obsi],Obm[obsi],Obsd[obsi]/(div[cc]*Obm[obsi])) 
+            W<-T2/T1
+            nrep2<-nsim
+            Y2<-sample(Y1,nrep2*5,replace=T,prob=W)
+            Obsv[mm,r,cc]<-(mean(Y2)-mean(Y1))/mean(Y1)*100
+            Obsval[mm,r,cc]<-Obsd[obsi]/(div[cc]*Obm[obsi])
+            Obscost[mm,r,cc]<-div[cc]^2
+          }else if(oem[oemi]==2){
+            refval<-quantile(MSEobj@Obs[,obsi],percs[nbins:1][cc])
+            ind<-MSEobj@Obs[,obsi]<refval
+            Obsv[mm,r,cc]<-(mean(Y1[ind])-mean(Y1))/mean(Y1)*100
+            Obsval[mm,r,cc]<-mean(MSEobj@Obs[ind,obsi])
+            Obscost[mm,r,cc]<-1/(Obsval[mm,r,cc]/mean(MSEobj@Obs[,obsi]))^2
+          }else if(oem[oemi]==3){  
+            refval<-quantile(MSEobj@Obs[,obsi],percsCAA[cc])
+            ind<-MSEobj@Obs[,obsi]>refval
+            Obsv[mm,r,cc]<-(mean(Y1[ind])-mean(Y1))/mean(Y1)*100
+            Obsval[mm,r,cc]<-mean(MSEobj@Obs[ind,obsi])
+            Obscost[mm,r,cc]<-Obsval[mm,r,cc]
+          }else if(oem[oemi]==4){
+            refval<-quantile(MSEobj@Obs[,obsi],percUL[cc])
+            refval2<-quantile(MSEobj@Obs[,obsi],percUU[cc])
+            
+            ind<-(MSEobj@Obs[,obsi]>refval)&(MSEobj@Obs[,obsi]<refval2)
+            Obsv[mm,r,cc]<-(mean(Y1[ind])-mean(Y1))/mean(Y1)*100
+            Obsval[mm,r,cc]<-sd(MSEobj@Obs[ind,obsi])
+            Obscost[mm,r,cc]<-1/(Obsval[mm,r,cc]/sd(MSEobj@Obs[,obsi]))^2
+          }
+          # observation model type
+        } # loop over bins
+      } # loop over r
+    } # observation variables?
+  } # loop over MPs
+  
+  
+  cb<-array(NA,c(MSEobj@nMPs,maxcomp))
+  for(mm in 1:MSEobj@nMPs){
+    if(sum(!is.na(Obscost[mm,,]))>0){
+      for(r in 1:length(Obsname[[mm]])){ 
+        dat<-data.frame(x=Obscost[mm,r,],y=Obsv[mm,r,])
+        #plot(dat$x,dat$y)
+        cb[mm,r]<-lm(y~x-1,data=dat)$coefficients[1]
+      }
+    }
+  } 
+  
+  ncols<-100
+  #colsse<-makeTransparent(rainbow(ncols,start=0,end=0.36),95)[ncols:1]
+  colt<-rainbow(ncols,start=0,end=0.36)[1:ncols]
+  colsse<-makeTransparent(colt,98)
+  
+  cb[cb<0|is.na(cb)]<-0
+  coly<-ceiling((cb/max(cb,na.rm=T))^0.5*ncols)
+  coly[coly==0]<-1
+  
+  ncol<-ceiling(MSEobj@nMPs^0.5)
+  nrow<-ceiling(MSEobj@nMPs/ncol)
+  
+  par(mfrow=c(nrow,ncol),mar=c(2.4,2.4,0.1,0.1),omi=c(0.4,0.35,0.3,0))
+  
+  gcol1<-"#99999960"
+  gcol2<-"#99999940"
+  gcol3<-"#99999920"
+  
+  for(mm in 1:MSEobj@nMPs){
+    if(sum(!is.na(Obscost[mm,,]))>0){
+      
+      plot(c(1,5),range(Obsv,na.rm=T),col='white',main="")
+      legend('topleft',legend=MSEobj@MPs[mm],bty='n',text.font=2,cex=1.4)
+      
+      abline(h=(-20:50)*4,col=gcol2,lwd=1.5)
+      abline(h=(-20:50)*4+2,col=gcol3,lwd=1)
+      
+      abline(v=1:4,col=gcol2,lwd=1.5)
+      abline(v=(1:4)+0.5,col=gcol3,lwd=1)
+      abline(h=0,col=gcol1,lwd=3)
+      
+      
+      no<-length(Obsname[[mm]])
+      ind<-order(cb[mm,1:no],decreasing=T)[1:ncomp]
+      ind<-ind[!is.na(ind)]
+      
+      ind2<-order(Obsv[mm,1:no,nbins])[1:ncomp]
+      ind2<-ind2[!is.na(ind2)]
+      
+      
+      lpos<-Obsv[mm,ind2,nbins]
+      ppos<-seq(min(Obsv,na.rm=T),max(Obsv,na.rm=T),length.out=no)
+      wt<-(max(Obsv[mm,1:no,nbins],na.rm=T)-min(Obsv[mm,1:no,nbins],na.rm=T))/(max(Obsv,na.rm=T)-min(Obsv,na.rm=T))/(no/ncomp)
+      wt<-wt^0.66
+      nupos<-wt*lpos+(1-wt)*ppos
+      
+      for(r2 in 1:length(ind)){
+        r<-ind2[r2]
+        lines(c(1,Obscost[mm,r,]),c(0,Obsv[mm,r,]),col=colsse[coly[mm,r]],lwd=3)
+        text(4.5,nupos[r2],Obsname[[mm]][r],col=colt[coly[mm,r]],font=2,cex=1.2)
+      } # observation quantities (lines)
+      
+      
+      #legend('topleft',legend=Obsname[[mm]][ind],text.col=colt[coly[mm,ind]],text.font=2,cex=1.2,bty='n')
+      
+    } # if there is data to plot
+    
+    
+  } # MPs (plots)
+  
+  
+  mtext("Cost relative to today",1,outer=T,cex=0.9,line=1,font=2)
+  #mtext(paste("Operating model parameters: ",objnam,"@OM",sep=""),3,outer=T,font=2,cex=0.9)
+  mtext(paste("% Change in ",Utnam," relative to today",sep=""),2,outer=T,line=0.6,font=2,cex=0.9)
+  
+  list(Obscost,Obsv,Obsval,cb,Obsname,MSEobj@MPs)
+  
+} # VOI2
+

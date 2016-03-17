@@ -46,6 +46,8 @@ trlnorm<-function(reps,mu,cv) {
 }
 
 
+tdlnorm<-function(x,mu,cv) return(dlnorm(x,mconv(mu,mu*cv),sdconv(mu,mu*cv)))
+
 condmet<-function(vec)TRUE%in%vec
 
 sampy<-function(x) sample(x,1,prob=!is.na(x))
