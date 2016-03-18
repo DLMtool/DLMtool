@@ -15,7 +15,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   nyears <- OM@nyears  # number of  historical years
   maxage <- OM@maxage  # maximum age (no plus group)
   
-  calcMax <- -log(0.001)/(min(OM@M)) # Age at which 0.01% of cohort survives
+  calcMax <- -log(0.01)/(min(OM@M)) # Age at which 0.01% of cohort survives
   maxage <- max(maxage, calcMax) # If maximum age is lower, increase it to calcMax
   OM@maxage <- maxage
   
