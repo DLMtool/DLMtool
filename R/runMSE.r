@@ -508,6 +508,8 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
                                    FMSY,Linf,K,t0,hs,Linfgrad,Kgrad,Linfsd,recgrad,Ksd,ageM,
                                    L5[nyears,],LFS[nyears,],Vmaxlen[nyears,],LFC,OFLreal,Spat_targ,Frac_area_1,Prob_staying,AC)) # put all the operating model parameters in one table
   
+  names(DLM_data@OM)[26:28]<-c("L5","LFS","Vmaxlen") # These are missing labels in the line above
+  
   DLM_data@Obs<-as.data.frame(cbind(Cbias,Csd,CAA_nsamp,CAA_ESS,CAL_nsamp,CAL_ESS,Isd,Dbias,Derr,Mbias,FMSY_Mbias,BMSY_B0bias,
                                     lenMbias,LFCbias,LFSbias,Abias,Aerr,Kbias,t0bias,Linfbias,hbias,Irefbias,Crefbias,Brefbias,betas))  # put all the observation error model parameters in one table
   
