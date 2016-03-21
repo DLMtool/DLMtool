@@ -937,7 +937,7 @@ wormplot<-function(MSEobj,Bref=0.5,LB=0.25,UB=0.75){
   
 }
 
-VOI2<-function(MSEobj,ncomp=6,nbins=4,Ut=NA,Utnam="yield"){
+VOI2<-function(MSEobj,ncomp=6,nbins=4,Ut=NA,Utnam="yield",lay=F){
   
   objnam<-deparse(substitute(MSEobj))
   nsim<-MSEobj@nsim
@@ -962,9 +962,13 @@ VOI2<-function(MSEobj,ncomp=6,nbins=4,Ut=NA,Utnam="yield"){
   slots<-c( "Cat",  "Cat","AvC",  "AvC","CAA",      "CAA",    "CAL",      "CAL",    "Ind","Ind",  "Dep",  "Dep", "Dt",   "Dt", "Mort", "FMSY_M",    "BMSY_B0",     "L50",      "L95",    "LFC",    "LFS",    "Abun",  "Abun","vbK",  "vbt0",  "vbLinf",  "Steep","Iref",    "Cref",    "Bref")
   Obsnam<-c("Cbias","Csd","Cbias","Csd","CAA_nsamp","CAA_ESS","CAL_nsamp","CAL_ESS","Isd","betas","Dbias","Derr","Dbias","Derr","Mbias","FMSY_Mbias","BMSY_B0bias", "lenMbias","lenMbias","LFCbias","LFSbias","Abias","Aerr","Kbias","t0bias","Linfbias","hbias","Irefbias","Crefbias","Brefbias")
   
+  
   Obsnam2<-c("Cbias","Csd","CAA_nsamp","CAA_ESS","CAL_nsamp","CAL_ESS","Isd","betas","Dbias","Derr","Mbias","FMSY_Mbias","BMSY_B0bias", "lenMbias","LFCbias","LFSbias","Abias","Aerr","Kbias","t0bias","Linfbias","hbias","Irefbias","Crefbias","Brefbias")
+  Obsnam3<-c("Catch bias","Catch error","n CAA samples", "CAA ESS","n CAL samples","CAL ESS","Abun. Ind. error","Hyperstability","Depln. bias",
+             "Depln. error","M bias","FMSY/M bias","BMSY/B0 bias","lenMbias","Len 1st Cap bias","Len full sel bias","Cur Abund bias","Cur Abun err","vB K bias","vB t0 bias","vB Linf bias","Steepness bias","Ref index bias","Ref catch bias", "Ref biomass bias")
   #Types of observation error model   1:lognorm   2:percentile  3:replicates (higher is better) ##4:uniform on log  5:logit space
   oem<-c(     1,      2,    3,          3,        3,          3,        2,    4,      1,      2,     1,      1,            1,             1,        1,        1,        4,      2,     1,      1,       1,         2,      1,         1,         1)
+  #oem<-c(     2,      2,    3,          3,        3,          3,        2,    4,      2,      2,     2,      2,            2,             2,        2,        2,        4,      2,     2,      2,       2,         2,      1,         1,         1)
   
   Obsd<-apply(MSEobj@Obs,2,sd)
   Obm<-apply(MSEobj@Obs,2,mean)
@@ -992,12 +996,12 @@ VOI2<-function(MSEobj,ncomp=6,nbins=4,Ut=NA,Utnam="yield"){
         oemi<-match(relobs[r],Obsnam2)
         obsi<-match(relobs[r],names(MSEobj@Obs))
         for(cc in 1:nbins){
-          if(oem[oemi]==1){
+          if(oem[oemi]==1){ # Redundant SIR code for log-normal biases
             T1<-tdlnorm(MSEobj@Obs[,obsi],Obm[obsi],Obsd[obsi]/Obm[obsi]) 
             #plot(MSEobj@Obs[,obsi],T1) # check
             T2<-tdlnorm(MSEobj@Obs[,obsi],Obm[obsi],Obsd[obsi]/(div[cc]*Obm[obsi])) 
             W<-T2/T1
-            nrep2<-nsim
+            nrep2<-nsim*20
             Y2<-sample(Y1,nrep2*5,replace=T,prob=W)
             Obsv[mm,r,cc]<-(mean(Y2)-mean(Y1))/mean(Y1)*100
             Obsval[mm,r,cc]<-Obsd[obsi]/(div[cc]*Obm[obsi])
@@ -1017,7 +1021,6 @@ VOI2<-function(MSEobj,ncomp=6,nbins=4,Ut=NA,Utnam="yield"){
           }else if(oem[oemi]==4){
             refval<-quantile(MSEobj@Obs[,obsi],percUL[cc])
             refval2<-quantile(MSEobj@Obs[,obsi],percUU[cc])
-            
             ind<-(MSEobj@Obs[,obsi]>refval)&(MSEobj@Obs[,obsi]<refval2)
             Obsv[mm,r,cc]<-(mean(Y1[ind])-mean(Y1))/mean(Y1)*100
             Obsval[mm,r,cc]<-sd(MSEobj@Obs[ind,obsi])
@@ -1082,7 +1085,7 @@ VOI2<-function(MSEobj,ncomp=6,nbins=4,Ut=NA,Utnam="yield"){
       
       
       lpos<-Obsv[mm,ind2,nbins]
-      ppos<-seq(min(Obsv,na.rm=T),max(Obsv,na.rm=T),length.out=no)
+      ppos<-seq(min(Obsv,na.rm=T),max(Obsv,na.rm=T),length.out=length(ind2))
       wt<-(max(Obsv[mm,1:no,nbins],na.rm=T)-min(Obsv[mm,1:no,nbins],na.rm=T))/(max(Obsv,na.rm=T)-min(Obsv,na.rm=T))/(no/ncomp)
       wt<-wt^0.66
       nupos<-wt*lpos+(1-wt)*ppos
@@ -1090,7 +1093,11 @@ VOI2<-function(MSEobj,ncomp=6,nbins=4,Ut=NA,Utnam="yield"){
       for(r2 in 1:length(ind)){
         r<-ind2[r2]
         lines(c(1,Obscost[mm,r,]),c(0,Obsv[mm,r,]),col=colsse[coly[mm,r]],lwd=3)
-        text(4.5,nupos[r2],Obsname[[mm]][r],col=colt[coly[mm,r]],font=2,cex=1.2)
+        if(!lay){
+          text(4.5,nupos[r2],Obsname[[mm]][r],col=colt[coly[mm,r]],font=2,cex=1.2)
+        }else{
+          text(4.5,nupos[r2],Obsnam3[match(Obsname[[mm]][r],Obsnam2)],col=colt[coly[mm,r]],font=2,cex=1.2)
+        }
       } # observation quantities (lines)
       
       
@@ -1109,4 +1116,3 @@ VOI2<-function(MSEobj,ncomp=6,nbins=4,Ut=NA,Utnam="yield"){
   list(Obscost,Obsv,Obsval,cb,Obsname,MSEobj@MPs)
   
 } # VOI2
-

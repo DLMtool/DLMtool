@@ -8,7 +8,7 @@ Calculate Value Of Information 2
 A function that relates operating model parameters and parameters of the observation model to relative yield (yield over last 5 years of projection relative to a 'best F' scenario that maximizes yield).
 }
 \usage{
-VOI2(MSEobj, ncomp = 6, nbins = 4, Ut = NA, Utnam = "Yield")
+VOI2(MSEobj, ncomp = 6, nbins = 4, Ut = NA, Utnam = "Yield", lay = F)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -17,6 +17,7 @@ VOI2(MSEobj, ncomp = 6, nbins = 4, Ut = NA, Utnam = "Yield")
   \item{nbins}{Number of bins for sampled observation variables used for calculating variability in utility across the sampled range of each parameter}
   \item{Ut}{A matrix of user-specified utility values of nsim rows and nMPs columns}
   \item{Utnam}{The name of the utility measure for plotting}
+  \item{lay}{Controls whether labels are in lay terms or not}
 }
 \author{
 T. Carruthers
