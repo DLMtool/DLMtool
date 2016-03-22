@@ -31,9 +31,9 @@ Objects can be created by calls of the form \code{new("DLM_data", stock)}.
     \item{\code{LFC}:}{Length at first capture}
     \item{\code{LFS}:}{smallest Length at full selection}
     \item{\code{CAA}:}{Catch at Age data}
-    \item{\code{Dep}:}{Stock depletion Bnow/Bunfished}
-    \item{\code{Abun}:}{An estimate of absolute current abundance}
-    \item{\code{vbK}:}{The von Bertallanfy growth coefficient}
+    \item{\code{Dep}:}{Stock depletion Bnow/Bunfished (total stock)}
+    \item{\code{Abun}:}{An estimate of absolute current vulnerable abundance}
+    \item{\code{vbK}:}{The von Bertalanffy growth coefficient}
     \item{\code{vbLinf}:}{Maximum length}
     \item{\code{vbt0}:}{Theoretical age at length zero}
     \item{\code{wla}:}{Weight-Length parameter alpha}

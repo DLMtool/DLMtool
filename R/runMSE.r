@@ -15,7 +15,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   nyears <- OM@nyears  # number of  historical years
   maxage <- OM@maxage  # maximum age (no plus group)
   
-  calcMax <- -log(0.01)/(min(OM@M)) # Age at which 0.01% of cohort survives
+  calcMax <- -log(0.01)/(min(OM@M)) # Age at which 1% of cohort survives
   maxage <- max(maxage, calcMax) # If maximum age is lower, increase it to calcMax
   OM@maxage <- maxage
   
@@ -414,11 +414,14 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   }else{
     MSYrefs<-sapply(1:nsim,getFMSY,Marray,hs,Mat_age,Wt_age,R0,V=V[,,nyears],maxage,nyears,proyears=200,Spat_targ,mov,SRrel,aR,bR) # optimize for MSY reference points
   }
-    
-  MSY<-MSYrefs[1,]  # record the MSY results (Vulnerable)
-  FMSY<-MSYrefs[2,] # instantaneous FMSY  (Vulnerable)
-  BMSY<-(MSY/(1-exp(-FMSY))) # Biomass at MSY (Vulnerable)
-  BMSY_B0<-MSYrefs[3,] # SSBMSY relative to unfished (SSB)
+  
+  MSY <- MSYrefs[1,]  # record the MSY results (Vulnerable)
+  FMSY <- MSYrefs[2,] # instantaneous apical FMSY  (Vulnerable)
+  VBMSY <-(MSY/(1-exp(-FMSY))) # Biomass at MSY (Vulnerable)
+  UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
+  SSBMSY <- MSYrefs[3,] # Spawing Stock Biomass at MSY
+  BMSY_B0 <- MSYrefs[4,] # SSBMSY relative to unfished (SSB)
+  
   BMSY_B0bias<-array(rlnorm(nsim*ntest,mconv(1,OM@BMSY_B0cv),sdconv(1,OM@BMSY_B0cv)),dim=c(nsim,ntest)) # trial samples of BMSY relative to unfished
   
   print("Calculating reference yield - best fixed F strategy") # Print a progress update
@@ -473,7 +476,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   DLM_data@FMSY_M<-FMSY_M*FMSY_Mbias
   DLM_data@BMSY_B0<-BMSY_B0*BMSY_B0bias
   DLM_data@Cref<-MSY*Crefbias
-  DLM_data@Bref<-BMSY*Brefbias
+  DLM_data@Bref<-VBMSY*Brefbias
   DLM_data@Iref<-Iref*Irefbias
   DLM_data@LFC<-LFC*LFCbias
   DLM_data@LFS<-LFS*LFSbias
@@ -892,9 +895,8 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 	 
     } # end of year
     
-    # B_BMSYa[,mm,]<-apply(Biomass_P,c(1,3),sum)/BMSY
-	  # B_BMSYa[,mm,]<-apply(VBiomass_P,c(1,3),sum)/BMSY
-	  B_BMSYa[,mm,]<-apply(SSB_P,c(1,3),sum)/BMSY
+  
+	B_BMSYa[,mm,]<-apply(SSB_P,c(1,3),sum)/SSBMSY # SSB relative to SSBMSY
 	  
     F_FMSYa[,mm,]<-(-log(1-apply(CB_P,c(1,3),sum)/(apply(CB_P,c(1,3),sum)+apply(VBiomass_P,c(1,3),sum))))/FMSY
     Ba[,mm,]<-apply(Biomass_P,c(1,3),sum)

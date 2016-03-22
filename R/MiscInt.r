@@ -153,7 +153,13 @@ FMSYopt<-function(lnF,Mc,hc,Mac,Wac,R0c,Vc,maxage,nyears,proyears,Spat_targc,mov
   if(Opt){
     return(-CBc)
   }else{
-    return(c(CBc,-log(1-(CBc/(sum(VBiomass)+CBc))),sum(SSB)/sum(SSB0)))
+    return(c(
+		MSY=CBc,
+		FMSY=-log(1-(CBc/(sum(VBiomass)+CBc))),
+		SSB=sum(SSB),
+		SSB_SSB0=sum(SSB)/sum(SSB0),
+		B = sum(N * Wac),
+		B_B0 = sum(N * Wac)/B0))
   }
 }
 
