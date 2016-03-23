@@ -111,6 +111,7 @@ export(
     "Pplot",
     "Kplot",
     "VOI",
+	"VOI2",
     "YPR",
     "YPR_CC",
     "YPR_ML",
