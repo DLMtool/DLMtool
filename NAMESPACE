@@ -143,3 +143,4 @@ importFrom("stats", "coef", "density", "dlnorm", "dnorm", "lm",
                "rnorm", "runif", "sd", "uniroot", "approx", "dbeta", "nlm", "pnorm")
 importFrom("utils", "flush.console", "read.csv")
 importFrom("Rcpp", "sourceCpp")
+useDynLib(DLMtool)
