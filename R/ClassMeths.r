@@ -133,8 +133,8 @@ setMethod("initialize", "DLM_data", function(.Object,stock="nada"){
     
     .Object@LHYear<-as.numeric(dat[match("LHYear",dname),1])
     .Object@Units<-dat[match("Units", dname),1]
-    .Object@Ref<-as.numeric(dat[match("Reference TAC",dname),1])
-    .Object@Ref_type<-dat[match("Reference TAC type",dname),1]
+    .Object@Ref<-as.numeric(dat[match("Reference OFL",dname),1])
+    .Object@Ref_type<-dat[match("Reference OFL type",dname),1]
     .Object@Log[[1]]<-paste("Created:", Sys.time())
     .Object@params<-new('list')
     .Object@OM<-data.frame(NA)
