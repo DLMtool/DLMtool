@@ -1761,28 +1761,33 @@ MLne<-function(x,DLM_data,Linfc,Kc,ML_reps=100,MLtype="F"){
   mlbin<-(DLM_data@CAL_bins[1:nlbin]+DLM_data@CAL_bins[2:(nlbin+1)])/2
   nbreaks<-1
   Z<-matrix(NA,nrow=ML_reps,ncol=nbreaks+1)
-  Z2<-rep(NA,nrow=ML_reps)
+  Z2<-rep(NA,ML_reps)
+  temp<-apply(DLM_data@CAL[x,,],2,sum)
+  Lc<-mlbin[which.max(temp)] # modal length  
+  
   for(i in 1:ML_reps){
     mlen<-rep(NA,length(year))
-     ss<-ceiling(apply(DLM_data@CAL[x,,],1,sum)/2)
+    ss<-ceiling(apply(DLM_data@CAL[x,,],1,sum)/2)
     if(MLtype=="dep"){
       for(y in 1:length(year)) {
 	    if (sum(DLM_data@CAL[x,y,] > 0) > 0.25 * length(DLM_data@CAL[x,y,])) {
-	      mlen[y]<-mean(sample(mlbin,ceiling(sum(DLM_data@CAL[x,y,])/2),replace=T,prob=DLM_data@CAL[x,y,]), na.rm=TRUE)
-		}  
-	  }
-      Z[i,]<-bhnoneq(year=year,mlen=mlen,ss=ss,K=Kc[i],Linf=Linfc[i],Lc=DLM_data@LFS[x],nbreaks=nbreaks,
-           styrs=ceiling(length(year)*((1:nbreaks)/(nbreaks+1))),stZ=rep(0.05,nbreaks+1),stsigma=20,graph=F)
+	      temp2<-sample(mlbin,ceiling(sum(DLM_data@CAL[x,y,])/2),replace=T,prob=DLM_data@CAL[x,y,])
+              mlen[y]<-mean(temp2[temp2>=Lc],na.rm=TRUE)
+	    }  
+      }
+      Z[i,]<-bhnoneq(year=year,mlen=mlen,ss=ss,K=Kc[i],Linf=Linfc[i],Lc=Lc,nbreaks=nbreaks,
+           styrs=ceiling(length(year)*((1:nbreaks)/(nbreaks+1))),stZ=rep(0.5,nbreaks+1))
     }else{
       
-      ind<-(which.min(((DLM_data@CAL_bins-DLM_data@LFS[x])^2)^0.5)-1):(length(DLM_data@CAL_bins)-1)
+      #ind<-(which.min(((DLM_data@CAL_bins-DLM_data@LFS[x])^2)^0.5)-1):(length(DLM_data@CAL_bins)-1)
       for(y in 1:length(year)) {
 	    if (sum(DLM_data@CAL[x,y,] > 0) > 0.25 * length(DLM_data@CAL[x,y,])) {
-		  mlen[y]<-mean(sample(mlbin[ind],ceiling(sum(DLM_data@CAL[x,y,ind])/2),replace=T,prob=DLM_data@CAL[x,y,ind]), na.rm=TRUE)
-		}
+	      temp2<-sample(mlbin,ceiling(sum(DLM_data@CAL[x,y,])/2),replace=T,prob=DLM_data@CAL[x,y,])
+              mlen[y]<-mean(temp2[temp2>=Lc],na.rm=TRUE)
+	    }  
       }		
       mlen<-mean(mlen[(length(mlen)-2):length(mlen)], na.rm=TRUE)
-      Z2<-bheq(K=Kc[i],Linf=Linfc[i],Lc=DLM_data@LFS[x],Lbar=mlen)
+      Z2<-bheq(K=Kc[i],Linf=Linfc[i],Lc=Lc,Lbar=mlen)
     }
   }
   if(MLtype=="F")return(Z2)
@@ -1795,7 +1800,7 @@ bheq<-function(K,Linf,Lc,Lbar){
 
 bhnoneq<-function(year,mlen,ss,K,Linf,Lc,nbreaks,styrs,stZ) {
   mlen[mlen<=0|is.na(mlen)]<--99
-  ss[ss<=0|is.na(ss)]<-0
+  ss[ss<=0|is.na(ss)|mlen==-99]<-0
   stpar<-c(stZ,styrs)
   results <- optim(stpar,bhnoneq_LL,method="BFGS",year=year,Lbar=mlen,ss=ss,
                    nbreaks=nbreaks,K=K,Linf=Linf,Lc=Lc,control=list(maxit=1e6))
