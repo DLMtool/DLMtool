@@ -1122,10 +1122,10 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50, lastYrs
 	AvailMPs=NULL, bplot=TRUE, maxmp=10) {
 
   PMChoices <- c("B_BMSY", "B_B0", "F_FMSY", "AAVY")
-  if (length(PMs) != 3) {
-    message("Must choose 3 Performance metrics")
-	stop("Available choices are: ", paste(PMChoices, " "))
-  }	
+  # if (length(PMs) != 3) {
+    # message("Must choose 3 Performance metrics")
+	# stop("Available choices are: ", paste(PMChoices, " "))
+  # }	
   PMs <- match.arg(PMs, PMChoices, several.ok=TRUE)
        
   if (maxVar < 1) maxVar <- maxVar * 100 # maximum variability in % 
@@ -1261,10 +1261,13 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50, lastYrs
   }
   
   text(quantile(XLim,0.05), max(YLim), "Performance Metrics", xpd=NA, pos=4, cex=1.2)
-  text(quantile(XLim,0.05), max(YLim*0.95), rownames(output)[1], xpd=NA, pos=4)  
-  text(quantile(XLim,0.05), max(YLim*.9), rownames(output)[2], xpd=NA, pos=4)
-  text(quantile(XLim,0.05), max(YLim*.85), rownames(output)[3], xpd=NA, pos=4)
+  temp <- 1 
+  for (xx in 1:length(Ind)) {
+    temp <- temp - 0.05
+    text(quantile(XLim,0.05), max(YLim*temp), rownames(output)[xx], xpd=NA, pos=4)  
   
+  }
+
   Cex <- 1.5
   if(!ShowLabs) points(x,y, bg=coly, pch=Pch, cex=Cex, col="black" )
   if(ShowLabs) text(x,y,labs,font=2,col=coly,cex=1)

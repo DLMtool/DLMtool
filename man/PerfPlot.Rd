@@ -7,7 +7,7 @@ Joint Satisficing Trade-off Plot
 \description{
 Calculates and plots the probability of each method meeting the individual performance metrics, 
 as well as joint satisficing; that is, the probabilitity that a method meets the minimum requirements 
-for three performance metrics.
+for the  performance metrics.
 }
 \usage{
 PerfPlot(MSEobj, PMs = c("B_BMSY", "F_FMSY", "AAVY"), PLim = 50, lastYrs = 10, 
@@ -21,7 +21,7 @@ PerfPlot(MSEobj, PMs = c("B_BMSY", "F_FMSY", "AAVY"), PLim = 50, lastYrs = 10,
 Object of class MSE, output of the runMSE function
 }
   \item{PMs}{
-Character vector of three performance metrics.  Choices are \code{"B_BMSY", "B_B0", "F_FMSY", "AAVY"}, and defaults are \code{"B_BMSY", "F_FMSY", "AAVY"}.
+Character vector of performance metrics.  Choices are \code{"B_BMSY", "B_B0", "F_FMSY", "AAVY"}, and defaults are \code{"B_BMSY", "F_FMSY", "AAVY"}.
 }
   \item{PLim}{
 Minimum probability threshold for meeting the performance criteria as a percentage. Default is 50\%.
@@ -58,7 +58,7 @@ Maximum number of methods to include in each barplot
 }
 }
 \details{
-Returns a list containing the probability of each method meeting the individual performance metrics, and the joint satisficing of all three performance metrics with average yield in final \code{lastYrs} of the projection period. 
+Returns a list containing the probability of each method meeting the individual performance metrics, and the joint satisficing of all the performance metrics with average yield in final \code{lastYrs} of the projection period. 
 }
 \author{
 A. Hordyk
