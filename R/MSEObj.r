@@ -1192,25 +1192,29 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50, lastYrs
     Ncol <- ceiling(sqrt(nplots))
     Nrow <- ceiling(nplots/Ncol) 
     plotlist <- list()
-    par(mfrow=c(Nrow, Ncol), oma=c(0,3,0,0), mar=c(8,3,2,2))
+    par(mfrow=c(Nrow, Ncol), oma=c(0,3,2,0), mar=c(8,3,2,2))
     if (nMPs <= maxmp) {
       barplot(plotout, beside=TRUE, ylab="Probability",
     	las=3, ylim=c(0,100), 
     	legend.text=rownames(output), args.legend=list(bty="n", x="topleft"),
     	cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5, xpd=NA)
     } else {
+	  npplot <- min(ceiling(nMPs/nplots), maxmp)
       xx <- 1 
-      xx2 <- maxmp 
+      xx2 <- npplot 
       for (X in 1:nplots) {
         splitdat <- plotout[,xx:xx2] 
 		if (X == 1) {
     	  barplot(splitdat, beside=TRUE, ylab="Probability",
     	  las=3, ylim=c(0,100), 
-    	  legend.text=rownames(output), args.legend=list(bty="n", x="topleft"),
     	  cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5, xpd=NA)
 		} else {
+		  tt <- barplot(splitdat, plot=FALSE, beside=TRUE,las=3, ylim=c(0,100))
     	  barplot(splitdat, beside=TRUE, ylab="",
-    	  las=3, ylim=c(0,100), cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5)
+    	  las=3, ylim=c(0,100), cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5,
+		  legend.text=rownames(output), 
+		  args.legend=list(bty="n", x=tt[1,1], y=130, xpd=NA)
+		  )
         }		
         xx <- xx2 + 1 
     	xx2 <- min(xx + maxmp, nMPs)
