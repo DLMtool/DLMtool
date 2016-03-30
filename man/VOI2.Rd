@@ -8,7 +8,7 @@ Calculate Value Of Information 2
 A function that relates operating model parameters and parameters of the observation model to relative yield (yield over last 5 years of projection relative to a 'best F' scenario that maximizes yield).
 }
 \usage{
-VOI2(MSEobj, ncomp = 6, nbins = 4, Ut = NA, Utnam = "Yield", lay = F)
+VOI2(MSEobj, ncomp = 6, nbins = 4, Ut = NA, Utnam = "yield", lay = F)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

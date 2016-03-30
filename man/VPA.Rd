@@ -8,7 +8,7 @@ Robust Virtual Population Analysis
 A simple 2 parameter (q, terminal F) VPA. Note that this is an early version that needs more testing.
 }
 \usage{
-VPA(x, DLM_data, reps = 100)
+VPA(x, DLM_data, reps = reps)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
