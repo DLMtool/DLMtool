@@ -1848,13 +1848,13 @@ iVB<-function(t0,K,Linf,L)((-log(1-L/Linf))/K+t0) # Inverse Von-B
 
 EDCAC<-function (x, DLM_data, reps = 100) # extended depletion-corrected average catch (Harford and Carruthers 2015)
 {
-  dependencies = "DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@Dt, DLM_data@CV_Dt, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
+  dependencies = "DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@Dt, DLM_data@CV_Dt, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
   C_tot <- DLM_data@AvC[x] * DLM_data@t[x]
   Mdb <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])
   FMSY_M <- trlnorm(reps, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])
   Bt_K <- trlnorm(reps, DLM_data@Dt[x], DLM_data@CV_Dt[x])
-  BMSY_K <- rbeta(reps, alphaconv(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x]), 
-                  betaconv(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x]))
+  BMSY_K <- rbeta(reps, alphaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]), 
+                  betaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]))
   dcac<-C_tot/(DLM_data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
   TAC<-dcac*Bt_K/BMSY_K
   TACfilter(TAC)
