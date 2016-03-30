@@ -83,6 +83,7 @@ export(
     "NOAA_plot",
 	"OptFun",
     "plotOFL",
+	 "PerfPlot",
 	"SetRecruitCycle",
     "SPmod",
     "SPslope",
