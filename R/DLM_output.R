@@ -842,7 +842,7 @@ DBSRA_ML<-function(x,DLM_data,reps=100){
     adelay<-max(floor(iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x])),1)
     opt<-optimize(DBSRAopt,log(c(0.1*mean(C_hist),1000*mean(C_hist))),C_hist=C_hist,nys=length(C_hist),Mdb=Mdb,
               FMSY_M=FMSY_M,BMSY_K=BMSY_K,Bt_K=Bt_K,adelay=adelay,tol=0.01)
-    if(opt$objective<0.1){
+    # if(opt$objective<0.1){
       Kc<-exp(opt$minimum)
       BMSYc<-Kc*BMSY_K
       FMSYc<-Mdb*FMSY_M
@@ -850,7 +850,7 @@ DBSRA_ML<-function(x,DLM_data,reps=100){
       MSYc<-Kc*BMSY_K*UMSYc
       TAC[DBSRAcount]<-UMSYc*Kc*Bt_K
       DBSRAcount<-DBSRAcount+1
-    }
+    # }
   } # end of reps
   TACfilter(TAC)
 }
@@ -929,24 +929,23 @@ DBSRAopt<-function(lnK,C_hist,nys,Mdb,FMSY_M,BMSY_K,Bt_K,adelay){         # the 
 C_tot<-nyearsDCAC<-NULL
 
 DCAC<-function(x,DLM_data,reps=100){
-  dependencies="DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@Dt, DLM_data@CV_Dt, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
-  if (is.na(DLM_data@BMSY_B0[x]) | is.na(DLM_data@CV_BMSY_B0[x])) return(NA)
+  dependencies="DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@Dt, DLM_data@CV_Dt, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
   C_tot<-DLM_data@AvC[x]*DLM_data@t[x]
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
   FMSY_M<-trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x]) # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
   Bt_K<-trlnorm(reps,DLM_data@Dt[x],DLM_data@CV_Dt[x])
-  BMSY_K<-rbeta(reps,alphaconv(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x]),betaconv(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+  BMSY_K<-rbeta(reps,alphaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]),betaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
   TACfilter(C_tot/(DLM_data@t[x]+((1-Bt_K)/(BMSY_K*FMSY_M*Mdb))))
 } # end of DCAC
 class(DCAC)<-"DLM_output"
 
 DCAC4010<-function(x,DLM_data,reps=100){
-  dependencies="DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@Dt, DLM_data@CV_Dt, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
+  dependencies="DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@Dt, DLM_data@CV_Dt, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
   C_tot<-DLM_data@AvC[x]*DLM_data@t[x]
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
   FMSY_M<-trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x]) # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
   Bt_K<-trlnorm(reps,DLM_data@Dt[x],DLM_data@CV_Dt[x])
-  BMSY_K<-rbeta(reps,alphaconv(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x]),betaconv(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+  BMSY_K<-rbeta(reps,alphaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]),betaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
   TAC<-C_tot/(DLM_data@t[x]+((1-Bt_K)/(BMSY_K*FMSY_M*Mdb)))
   # 40-10 rule
   cond1<-Bt_K<0.4 & Bt_K>0.1
@@ -960,18 +959,18 @@ DCAC4010<-function(x,DLM_data,reps=100){
 class(DCAC4010)<-"DLM_output"
 
 DCAC_40<-function(x,DLM_data,reps=100){
-  dependencies="DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
+  dependencies="DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
   C_tot<-DLM_data@AvC[x]*DLM_data@t[x]
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
   FMSY_M<-trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x])
   Bt_K<-0.4
-  BMSY_K<-rbeta(reps,alphaconv(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x]),betaconv(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+  BMSY_K<-rbeta(reps,alphaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]),betaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
   TACfilter(C_tot/(DLM_data@t[x]+((1-Bt_K)/(BMSY_K*FMSY_M*Mdb))))
 } # end of DCAC40
 class(DCAC_40)<-"DLM_output"
 
 DCAC_ML<-function(x,DLM_data,reps=100){
-  dependencies="DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0, DLM_data@Year, DLM_data@CAL"
+  dependencies="DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0, DLM_data@Year, DLM_data@CAL, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK"
   if (is.na(DLM_data@BMSY_B0[x]) | is.na(DLM_data@CV_BMSY_B0[x])) return(NA)
   if (is.na(DLM_data@FMSY_M[x]) | is.na(DLM_data@CV_FMSY_M[x])) return(NA)
   C_tot<-DLM_data@AvC[x]*DLM_data@t[x]
@@ -1034,22 +1033,22 @@ BK_CC<-function(x,DLM_data,reps=100,Fmin=0.005){
 class(BK_CC)<-"DLM_output"
 
 
-BK_ML<-function(x,DLM_data,reps=100){
-  dependencies="DLM_data@LFC, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@CAL, DLM_data@Mort"
-  Lc<-trlnorm(reps*10,DLM_data@LFC[x],0.2)
-  Linfc<-trlnorm(reps*10,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  Kc<-trlnorm(reps*10,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps*2,MLtype="F")
-  FM<-Z-Mdb
-  MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
-  Ac<-Cc/(1-exp(-FM))
-  FMSY<-(0.6*Kc)/(0.67-(Lc/Linfc))  # robustifying for use in MSETAC<-Ac*FMSY
-  TAC<-Ac*FMSY
-  TAC[TAC>0&TAC<(mean(TAC,na.rm=T)+3*sd(TAC,na.rm=T))][1:reps]
-}
-class(BK_ML)<-"DLM_output"
+# BK_ML<-function(x,DLM_data,reps=100){
+  # dependencies="DLM_data@LFC, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@CAL, DLM_data@Mort"
+  # Lc<-trlnorm(reps*10,DLM_data@LFC[x],0.2)
+  # Linfc<-trlnorm(reps*10,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
+  # Kc<-trlnorm(reps*10,DLM_data@vbK[x],DLM_data@CV_vbK[x])
+  # Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
+  # Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps*2,MLtype="F")
+  # FM<-Z-Mdb
+  # MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
+  # Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
+  # Ac<-Cc/(1-exp(-FM))
+  # FMSY<-(0.6*Kc)/(0.67-(Lc/Linfc))  # robustifying for use in MSETAC<-Ac*FMSY
+  # TAC<-Ac*FMSY
+  # print(TAC[TAC>0&TAC<(mean(TAC,na.rm=T)+3*sd(TAC,na.rm=T))][1:reps])
+# }
+# class(BK_ML)<-"DLM_output"
 
 Fratio<-function(x,DLM_data,reps=100){  # FMSY / M ratio method e.g. Gulland ===============================================================================
   depends="DLM_data@Abun,DLM_data@CV_Abun,DLM_data@FMSY_M, DLM_data@CV_FMSY_M,DLM_data@Mort,DLM_data@CV_Mort"
@@ -1350,6 +1349,7 @@ class(YPR_CC)<-"DLM_output"
 
 YPR_ML<-function(x,DLM_data,reps=100){
   dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@wlb, DLM_data@CAL, DLM_data@Cat"
+  Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
   Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
   Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
@@ -1764,28 +1764,33 @@ MLne<-function(x,DLM_data,Linfc,Kc,ML_reps=100,MLtype="F"){
   mlbin<-(DLM_data@CAL_bins[1:nlbin]+DLM_data@CAL_bins[2:(nlbin+1)])/2
   nbreaks<-1
   Z<-matrix(NA,nrow=ML_reps,ncol=nbreaks+1)
-  Z2<-rep(NA,nrow=ML_reps)
+  Z2<-rep(NA,ML_reps)
+  temp<-apply(DLM_data@CAL[x,,],2,sum)
+  Lc<-mlbin[which.max(temp)] # modal length  
+  
   for(i in 1:ML_reps){
     mlen<-rep(NA,length(year))
-     ss<-ceiling(apply(DLM_data@CAL[x,,],1,sum)/2)
+    ss<-ceiling(apply(DLM_data@CAL[x,,],1,sum)/2)
     if(MLtype=="dep"){
       for(y in 1:length(year)) {
 	    if (sum(DLM_data@CAL[x,y,] > 0) > 0.25 * length(DLM_data@CAL[x,y,])) {
-	      mlen[y]<-mean(sample(mlbin,ceiling(sum(DLM_data@CAL[x,y,])/2),replace=T,prob=DLM_data@CAL[x,y,]), na.rm=TRUE)
-		}  
-	  }
-      Z[i,]<-bhnoneq(year=year,mlen=mlen,ss=ss,K=Kc[i],Linf=Linfc[i],Lc=DLM_data@LFS[x],nbreaks=nbreaks,
-           styrs=ceiling(length(year)*((1:nbreaks)/(nbreaks+1))),stZ=rep(0.05,nbreaks+1),stsigma=20,graph=F)
+	      temp2<-sample(mlbin,ceiling(sum(DLM_data@CAL[x,y,])/2),replace=T,prob=DLM_data@CAL[x,y,])
+              mlen[y]<-mean(temp2[temp2>=Lc],na.rm=TRUE)
+	    }  
+      }
+      Z[i,]<-bhnoneq(year=year,mlen=mlen,ss=ss,K=Kc[i],Linf=Linfc[i],Lc=Lc,nbreaks=nbreaks,
+           styrs=ceiling(length(year)*((1:nbreaks)/(nbreaks+1))),stZ=rep(0.5,nbreaks+1))
     }else{
       
-      ind<-(which.min(((DLM_data@CAL_bins-DLM_data@LFS[x])^2)^0.5)-1):(length(DLM_data@CAL_bins)-1)
+      #ind<-(which.min(((DLM_data@CAL_bins-DLM_data@LFS[x])^2)^0.5)-1):(length(DLM_data@CAL_bins)-1)
       for(y in 1:length(year)) {
 	    if (sum(DLM_data@CAL[x,y,] > 0) > 0.25 * length(DLM_data@CAL[x,y,])) {
-		  mlen[y]<-mean(sample(mlbin[ind],ceiling(sum(DLM_data@CAL[x,y,ind])/2),replace=T,prob=DLM_data@CAL[x,y,ind]), na.rm=TRUE)
-		}
+	      temp2<-sample(mlbin,ceiling(sum(DLM_data@CAL[x,y,])/2),replace=T,prob=DLM_data@CAL[x,y,])
+              mlen[y]<-mean(temp2[temp2>=Lc],na.rm=TRUE)
+	    }  
       }		
       mlen<-mean(mlen[(length(mlen)-2):length(mlen)], na.rm=TRUE)
-      Z2<-bheq(K=Kc[i],Linf=Linfc[i],Lc=DLM_data@LFS[x],Lbar=mlen)
+      Z2<-bheq(K=Kc[i],Linf=Linfc[i],Lc=Lc,Lbar=mlen)
     }
   }
   if(MLtype=="F")return(Z2)
@@ -1796,122 +1801,16 @@ bheq<-function(K,Linf,Lc,Lbar){
   K*(Linf-Lbar)/(Lbar-Lc)
 }
 
-bhnoneq<-function (year = NULL, mlen = NULL, ss = NULL, K = NULL, Linf = NULL,
-    Lc = NULL, nbreaks = NULL, styrs = NULL, stZ = NULL, stsigma = NULL,
-    graph = TRUE)  {
-    if (is.null(mlen))
-        stop("mean length vector does not exist")
-    if (is.null(year))
-        stop("year vector does not exist")
-    if (is.null(ss))
-        stop("numbers vector does not exist")
-    if (!is.numeric(mlen))
-        stop("vector is not numeric")
-    if (is.null(stZ))
-        stop("Initial Z vector does not exist")
-    if (is.null(stsigma))
-        stop("Initial sigma value does not exist")
-    if (is.null(K))
-        stop("K not specified")
-    if (is.null(Linf))
-        stop("Linf not specified")
-    if (is.null(Lc))
-        stop("Lc not specified")
-    if (is.null(nbreaks))
-        stop("Number of mortality breaks not specified")
-    if (is.null(styrs))
-        stop("Starting guesses for years of mortality breaks not specified ")
-    if (length(mlen) != length(year))
-        stop("vectors have different lengths")
-    gyr <- styrs
-    xx <- as.data.frame(cbind(year, mlen, ss))
-    fyr <- min(xx$year)
-    lyr <- max(xx$year)
-    names(xx) <- c("year", "mlen", "m")
-    nyr <- length(xx[!is.na(xx[, 2]), 2])
-    count <- length(xx[, 1])
-    mdata <- xx
-    ggyr <- gyr - fyr + 1
-    tm <- array(0, dim = c(nbreaks, 1))
-    if (length(stZ) == nbreaks + 1)
-        parms <- c(stZ, ggyr, stsigma)
-    if (length(stZ) < nbreaks + 1)
-        stop("The number of stZ values does not equal nbreak+1")
-    if (length(stZ) > nbreaks + 1)
-        stop("Too many stZ values for match to nbreak+1")
-    Lpred <- NULL
-    results <- NULL
-    Zest <- function(y) {
-        Z <- y[1:as.numeric(nbreaks + 1)]
-        sigma <- y[length(y)]
-        tm[1:nbreaks, 1] <- y[as.numeric(nbreaks + 2):as.numeric(length(y) -
-            1)]
-        dy <- array(0, dim = c(nbreaks, count))
-        for (i in 1:nbreaks) {
-            for (j in 1:count) {
-                dy[i, j] <- ifelse(tm[i, 1] >= j, 0, j - tm[i,
-                  1])
-            }
-        }
-        if (nbreaks > 1) {
-            for (i in 1:as.numeric(nbreaks - 1)) {
-                for (j in 1:count) {
-                  if (j > round(tm[i + 1, 1], 0)) {
-                    dy[i, j] <- dy[i, j - 1]
-                  }
-                }
-            }
-        }
-        a <- array(0, dim = c(nbreaks + 1, count))
-        s <- array(0, dim = c(nbreaks + 1, count))
-        r <- array(0, dim = c(nbreaks + 1, count))
-        denom <- rep(0, count)
-        numersum <- rep(0, count)
-        numerator <- rep(0, count)
-        for (m in 1:count) {
-            a[1, m] <- 1
-            r[1, m] <- 1
-            for (i in 1:as.numeric(nbreaks + 1)) {
-                a[i, m] <- 1
-                r[i, m] <- 1
-                if (i < as.numeric(nbreaks + 1)) {
-                  s[i, m] <- 1 - exp(-(Z[nbreaks + 2 - i] + K) *
-                    dy[nbreaks + 1 - i, m])
-                }
-                if (i == as.numeric(nbreaks + 1)) {
-                  s[i, m] <- 1
-                }
-                for (j in 1:as.numeric(i - 1)) {
-                  if (i > 1) {
-                    a[i, m] <- a[i, m] * exp(-Z[nbreaks + 2 -
-                      j] * dy[nbreaks + 1 - j, m])
-                    r[i, m] <- r[i, m] * exp(-(Z[nbreaks + 2 -
-                      j] + K) * dy[nbreaks + 1 - j, m])
-                  }
-                }
-                if (i <= nbreaks) {
-                  denom[m] <- denom[m] + a[i, m] * ((1 - exp(-Z[nbreaks +
-                    2 - i] * dy[nbreaks + 1 - i, m]))/Z[nbreaks +
-                    2 - i])
-                }
-                if (i == as.numeric(nbreaks + 1)) {
-                  denom[m] <- denom[m] + a[i, m]/Z[nbreaks +
-                    2 - i]
-                }
-                numersum[m] <- numersum[m] + (-((1 - Lc/Linf) *
-                  r[i, m] * s[i, m])/(Z[nbreaks + 2 - i] + K))
-            }
-        }
-        numerator <- Linf * (denom + numersum)
-        Lpred <<- numerator/denom
-        LL <- -nyr * log(sigma) - sum((mdata[, 3]/(2 * sigma^2)) *
-            (mdata[, 2] - Lpred)^2, na.rm = T)
-        LL * -1
-    }
-    results <- optim(parms, Zest, gr = NULL, control = list(maxit = 1e+06,
-        abstol = 1e-07), hessian = TRUE)
-    return(results$par[1:(nbreaks + 1)])
-
+bhnoneq<-function(year,mlen,ss,K,Linf,Lc,nbreaks,styrs,stZ) {
+  mlen[mlen<=0|is.na(mlen)]<--99
+  ss[ss<=0|is.na(ss)|mlen==-99]<-0
+  stpar<-c(stZ,styrs)
+  # results <- optim(stpar,bhnoneq_LL,method="BFGS",year=year,Lbar=mlen,ss=ss,
+                   # nbreaks=nbreaks,K=K,Linf=Linf,Lc=Lc,control=list(maxit=1e6))
+  results <- optim(stpar,bhnoneq_LL,method="Nelder-Mead", year=year,Lbar=mlen,ss=ss,
+                   nbreaks=nbreaks,K=K,Linf=Linf,Lc=Lc,control=list(maxit=1e6),
+				   hessian=FALSE)					   
+  return(results$par[1:(nbreaks+1)])
 }
 
 getdep<-function(lnFF,targ,Md,Linfd,Kd,t0d,AFSd,ad,bd,maxage,opt){
@@ -1960,13 +1859,13 @@ iVB<-function(t0,K,Linf,L)((-log(1-L/Linf))/K+t0) # Inverse Von-B
 
 EDCAC<-function (x, DLM_data, reps = 100) # extended depletion-corrected average catch (Harford and Carruthers 2015)
 {
-  dependencies = "DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@Dt, DLM_data@CV_Dt, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
+  dependencies = "DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@Dt, DLM_data@CV_Dt, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
   C_tot <- DLM_data@AvC[x] * DLM_data@t[x]
   Mdb <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])
   FMSY_M <- trlnorm(reps, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])
   Bt_K <- trlnorm(reps, DLM_data@Dt[x], DLM_data@CV_Dt[x])
-  BMSY_K <- rbeta(reps, alphaconv(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x]), 
-                  betaconv(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x]))
+  BMSY_K <- rbeta(reps, alphaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]), 
+                  betaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]))
   dcac<-C_tot/(DLM_data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
   TAC<-dcac*Bt_K/BMSY_K
   TACfilter(TAC)
