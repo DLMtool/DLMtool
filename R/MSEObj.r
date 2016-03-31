@@ -439,7 +439,6 @@ makeTransparent<-function(someColor, alpha=100){
     blue=curcoldata[3],alpha=alpha, maxColorValue=255)})
 }
 
-
 # Value of information analysis ------------------------------------------------
 # Value of information
 VOI<-function(MSEobj,ncomp=6,nbins=8,maxrow=8,Ut=NA,Utnam="Utility"){
@@ -701,7 +700,6 @@ DOM <- function(MSEobj, MPtg=NA) {
   out$AAVY <- IAVmat
   return(out)
 }
-
 
 # Trade-Off Plot Function ------------------------------------------------------
 TradePlot <- function(MSEobj, XAxis=c("Overfishing", "Biomass:BMSY"), 
@@ -1032,7 +1030,6 @@ VOI2<-function(MSEobj,ncomp=6,nbins=4,Ut=NA,Utnam="yield",lay=F){
     } # observation variables?
   } # loop over MPs
   
-  
   cb<-array(NA,c(MSEobj@nMPs,maxcomp))
   for(mm in 1:MSEobj@nMPs){
     if(sum(!is.na(Obscost[mm,,]))>0){
@@ -1192,7 +1189,7 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50, lastYrs
     Ncol <- ceiling(sqrt(nplots))
     Nrow <- ceiling(nplots/Ncol) 
     plotlist <- list()
-    par(mfrow=c(Nrow, Ncol), oma=c(0,3,2,0), mar=c(8,3,2,2))
+    par(mfrow=c(Nrow, Ncol), oma=c(0,3,2,0), mar=c(10,3,5,2))
     if (nMPs <= maxmp) {
       barplot(plotout, beside=TRUE, ylab="Probability",
     	las=3, ylim=c(0,100), 
@@ -1211,9 +1208,10 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50, lastYrs
 		} else {
 		  tt <- barplot(splitdat, plot=FALSE, beside=TRUE,las=3, ylim=c(0,100))
     	  barplot(splitdat, beside=TRUE, ylab="",
-    	  las=3, ylim=c(0,100), cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5,
+    	  las=3, ylim=c(0,100), 
+		  cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5,
 		  legend.text=rownames(output), 
-		  args.legend=list(bty="n", x=tt[1,1], y=130, xpd=NA)
+		  args.legend=list(bty="n", x=tt[1,1], y=120, xpd=NA)
 		  )
         }		
         xx <- xx2 + 1 
