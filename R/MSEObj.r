@@ -1116,9 +1116,9 @@ VOI2<-function(MSEobj,ncomp=6,nbins=4,Ut=NA,Utnam="yield",lay=F){
   
 } # VOI2
 
-PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50, lastYrs=10, BmsyRef=0.5, 
-	B0Ref=0.2, FRef=1.25, maxVar=15, ShowCols=TRUE, ShowLabs=TRUE,
-	AvailMPs=NULL, bplot=TRUE, maxmp=10) {
+PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50, 
+	lastYrs=10, BmsyRef=0.5, B0Ref=0.2, FRef=1.25, maxVar=15, ShowCols=TRUE, 
+	ShowLabs=TRUE, AvailMPs=NULL, bplot=TRUE, maxmp=10) {
 
   PMChoices <- c("B_BMSY", "B_B0", "F_FMSY", "AAVY")
   # if (length(PMs) != 3) {
@@ -1161,9 +1161,9 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50, lastYrs
   # Calculate Stats  
   for (mm in 1:nMPs) {
     # sims where Bmsy > BmsyRef for all lastYrs 
-	B_BMSY[,mm] 	<- apply(MSEobj@B_BMSY[,mm,yrs] > BmsyRef, 1, prod) 
-    B_B0[,mm] 		<- apply(MSEobj@B_BMSY[,mm,yrs] > B0Ref, 1, prod) # B > B0ref
-    F_FMSY[,mm] 	<- apply(MSEobj@F_FMSY[,mm,yrs] < FRef, 1, prod)
+	B_BMSY[,mm] 	<- apply(MSEobj@B_BMSY[,mm,yrs] > BmsyRef, 1, prod, na.rm=TRUE) 
+    B_B0[,mm] 		<- apply(MSEobj@B_BMSY[,mm,yrs] > B0Ref, 1, prod, na.rm=TRUE) # B > B0ref
+    F_FMSY[,mm] 	<- apply(MSEobj@F_FMSY[,mm,yrs] < FRef, 1, prod, na.rm=TRUE)
     aavy 			<- apply((((MSEobj@C[,mm,y1]-MSEobj@C[,mm,y2])/MSEobj@C[,mm,y2])^2)^0.5,1,mean,na.rm=T) 
     aavy[is.nan(aavy)] <- 1
     AAVY[,mm]		<- as.numeric(aavy<(maxVar/100))
@@ -1191,7 +1191,7 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50, lastYrs
     Ncol <- ceiling(sqrt(nplots))
     Nrow <- ceiling(nplots/Ncol) 
     plotlist <- list()
-    par(mfrow=c(Nrow, Ncol), oma=c(0,3,2,0), mar=c(10,3,6,2))
+    par(mfrow=c(Nrow, Ncol), oma=c(0,3,2,0), mar=c(10,3,2,2))
     if (nMPs <= maxmp) {
       barplot(plotout, beside=TRUE, ylab="Probability",
     	las=3, ylim=c(0,100), 
