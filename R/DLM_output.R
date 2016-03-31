@@ -1032,23 +1032,22 @@ BK_CC<-function(x,DLM_data,reps=100,Fmin=0.005){
 }  # end of BK_CC
 class(BK_CC)<-"DLM_output"
 
-
-# BK_ML<-function(x,DLM_data,reps=100){
-  # dependencies="DLM_data@LFC, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@CAL, DLM_data@Mort"
-  # Lc<-trlnorm(reps*10,DLM_data@LFC[x],0.2)
-  # Linfc<-trlnorm(reps*10,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  # Kc<-trlnorm(reps*10,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  # Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  # Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps*2,MLtype="F")
-  # FM<-Z-Mdb
-  # MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  # Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
-  # Ac<-Cc/(1-exp(-FM))
-  # FMSY<-(0.6*Kc)/(0.67-(Lc/Linfc))  # robustifying for use in MSETAC<-Ac*FMSY
-  # TAC<-Ac*FMSY
-  # print(TAC[TAC>0&TAC<(mean(TAC,na.rm=T)+3*sd(TAC,na.rm=T))][1:reps])
-# }
-# class(BK_ML)<-"DLM_output"
+BK_ML<-function(x,DLM_data,reps=100){
+  dependencies="DLM_data@LFC, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@CAL, DLM_data@Mort"
+  Lc<-trlnorm(reps*10,DLM_data@LFC[x],0.2)
+  Linfc<-trlnorm(reps*10,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
+  Kc<-trlnorm(reps*10,DLM_data@vbK[x],DLM_data@CV_vbK[x])
+  Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
+  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps*2,MLtype="F")
+  FM<-Z-Mdb
+  MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
+  Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
+  Ac<-Cc/(1-exp(-FM))
+  FMSY<-(0.6*Kc)/(0.67-(Lc/Linfc))  # robustifying for use in MSETAC<-Ac*FMSY
+  TAC<-Ac*FMSY
+  print(TAC[TAC>0&TAC<(mean(TAC,na.rm=T)+3*sd(TAC,na.rm=T))][1:reps])
+}
+class(BK_ML)<-"DLM_output"
 
 Fratio<-function(x,DLM_data,reps=100){  # FMSY / M ratio method e.g. Gulland ===============================================================================
   depends="DLM_data@Abun,DLM_data@CV_Abun,DLM_data@FMSY_M, DLM_data@CV_FMSY_M,DLM_data@Mort,DLM_data@CV_Mort"
