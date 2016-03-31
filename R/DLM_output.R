@@ -592,6 +592,7 @@ DD<-function(x,DLM_data,reps=100){
   la<-DLM_data@vbLinf[x]*(1-exp(-DLM_data@vbK[x]*((age-DLM_data@vbt0[x]))))
   wa<-DLM_data@wla[x]*la^DLM_data@wlb[x]
   a50V<-iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x])
+  a50V <- max(a50V, 1)
   yind<-(1:length(DLM_data@Cat[x,]))[!is.na(DLM_data@Cat[x,]+DLM_data@Ind[x,])]
   C_hist<-DLM_data@Cat[x,yind]
   E_hist<-C_hist/DLM_data@Ind[x,yind]
@@ -641,6 +642,7 @@ DD4010<-function(x,DLM_data,reps=100){
   la<-DLM_data@vbLinf[x]*(1-exp(-DLM_data@vbK[x]*((age-DLM_data@vbt0[x]))))
   wa<-DLM_data@wla[x]*la^DLM_data@wlb[x]
   a50V<-iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x])
+  a50V <- max(a50V, 1)
   yind<-(1:length(DLM_data@Cat[x,]))[!is.na(DLM_data@Cat[x,]+DLM_data@Ind[x,])]
   C_hist<-DLM_data@Cat[x,yind]
   E_hist<-DLM_data@Ind[x,yind]
