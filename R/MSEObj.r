@@ -1035,8 +1035,10 @@ VOI2<-function(MSEobj,ncomp=6,nbins=4,Ut=NA,Utnam="yield",lay=F){
     if(sum(!is.na(Obscost[mm,,]))>0){
       for(r in 1:length(Obsname[[mm]])){ 
         dat<-data.frame(x=Obscost[mm,r,],y=Obsv[mm,r,])
+		if (prod(apply(dat, 2, is.finite)) > 0) {
         #plot(dat$x,dat$y)
-        cb[mm,r]<-lm(y~x-1,data=dat)$coefficients[1]
+          cb[mm,r]<-lm(y~x-1,data=dat)$coefficients[1]
+		}  
       }
     }
   } 
@@ -1189,7 +1191,7 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50, lastYrs
     Ncol <- ceiling(sqrt(nplots))
     Nrow <- ceiling(nplots/Ncol) 
     plotlist <- list()
-    par(mfrow=c(Nrow, Ncol), oma=c(0,3,2,0), mar=c(10,3,5,2))
+    par(mfrow=c(Nrow, Ncol), oma=c(0,3,2,0), mar=c(10,3,6,2))
     if (nMPs <= maxmp) {
       barplot(plotout, beside=TRUE, ylab="Probability",
     	las=3, ylim=c(0,100), 
@@ -1204,15 +1206,14 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50, lastYrs
 		if (X == 1) {
     	  barplot(splitdat, beside=TRUE, ylab="Probability",
     	  las=3, ylim=c(0,100), 
-    	  cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5, xpd=NA)
+    	  cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5, xpd=NA,
+		  legend.text=rownames(output), 
+		  args.legend=list(bty="n", x="topleft", xpd=NA))
 		} else {
 		  tt <- barplot(splitdat, plot=FALSE, beside=TRUE,las=3, ylim=c(0,100))
     	  barplot(splitdat, beside=TRUE, ylab="",
     	  las=3, ylim=c(0,100), 
-		  cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5,
-		  legend.text=rownames(output), 
-		  args.legend=list(bty="n", x=tt[1,1], y=120, xpd=NA)
-		  )
+		  cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5)
         }		
         xx <- xx2 + 1 
     	xx2 <- min(xx + maxmp, nMPs)
