@@ -1351,7 +1351,7 @@ YPR_ML<-function(x,DLM_data,reps=100){
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
   Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
+  Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
   t0c<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
   t0c[!is.finite(t0c)] <- 0 
   LFS<-trlnorm(reps,DLM_data@LFS[x],DLM_data@CV_LFS[x])
