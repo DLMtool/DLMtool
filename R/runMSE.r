@@ -5,7 +5,8 @@
 # Adrian Hordyk (a.hordyk@murdoch.edu.au)
 
 runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
-                   maxF=0.8, timelimit=1, reps=1, custompars=0, CheckMPs=TRUE){ 
+                   maxF=0.8, timelimit=1, reps=1, custompars=0, CheckMPs=TRUE,
+				   Debug=FALSE){ 
   print("Loading operating model")
 
   flush.console()
@@ -609,7 +610,6 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     SSB_P[SAYR]<-SSN_P[SAYR]*Wt_age[SAY1]
     FML<-apply(FM[,,nyears,],c(1,3),max)
     
-      # DLM_data <- MSElist[[mm]]
     if (class(match.fun(MPs[mm]))=="DLM_output") {
       DLM_data <- Sam(MSElist[[mm]],MPs=MPs[mm],perc=pstar,reps=reps)
       TACused <- apply(DLM_data@TAC,3,quantile,p=pstar,na.rm=T) 
@@ -796,7 +796,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
         MSElist[[mm]]@Ref_type<-'Simulated OFL'
 		MSElist[[mm]]@Misc  <- DLM_data@Misc
         
-        #assign("DLM_data",MSElist[[mm]],envir=.GlobalEnv) # for debugging fun
+        if (Debug) assign("DLM_data",MSElist[[mm]],envir=.GlobalEnv) # for debugging fun
         
         if(class(match.fun(MPs[mm]))=="DLM_output"){
 		  DLM_data <- Sam(MSElist[[mm]],MPs=MPs[mm],perc=pstar,reps=reps)
