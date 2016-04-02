@@ -631,24 +631,37 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 	  inc <- runIn[[1]]
       DLM_data <- runIn[[2]]
 
-      Ai<-inc[1,,1]
-      Ei<-inc[2,,1]
-      Si<-t(inc[3:4,,1])
-	  newSel<-(inc[5:6,,1])
-	  y<-1
+      Ai <- inc[1,,1]
+      Ei <- inc[2,,1]
+      Si <- t(inc[3:4,,1])
+	  newSel <- inc[5:6,,1]
+	  
+	  newUppLim <- inc[7,,1]
+	  newVmax <- inc[8,,1]
+	  y <- 1
 	  
 	  chngSel <- which(colSums(apply(newSel, 2, is.na))==0) # selectivity pattern changed 
-	  if (length(chngSel) >0) {
+	  if (length(chngSel) > 0) {
 	    L5[y+nyears,chngSel] <- newSel[1,chngSel]
 		LFS[y+nyears,chngSel] <- newSel[2,chngSel]
-		Vmaxlen[y+nyears,chngSel] <- 1 # 
-	  }	
+		if (any(!is.na(inc[7,,1]))) {
+	      ind <- which(!is.na(inc[7,,1]))
+	      Vmaxlen[y+nyears,ind] <- inc[7,ind,1]
+	    }
+	  }	  
 	  Vi <- t(sapply(1:nsim, SelectFun, L5[y+nyears,], LFS[y+nyears,], 
 	  Vmaxlen[y+nyears,], Linfs=Linfarray[,y+nyears], 
 	  Lens=Len_age[,,y+nyears]))
- 
+	  
+	  # Maximum Size Limit 
+	  if (!all(is.na(newUppLim))) { # a upper size limit has been set 
+	    Vi[Len_age[,,y+nyears] >= newUppLim] <- 0   
+	  }
+	  # Vuln flag 
+	  Vchange <- any(!is.na(inc[5:8]))
+	  
       if(sum(Si!=1)==0){ # if there is no spatial closure
-        if(sum(!is.na(newSel[1,1]))==0){ # if no vulnerability schedule is specified
+        if(!Vchange){ # if no vulnerability schedule is specified
           newVB<-apply(VBiomass_P[,,y,],c(1,3),sum) # vulnerability isn't changed
           fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
           FM_P[SAYR]<-FinF[S1]*Ei[S1]*V_P[SAYt]*fishdist[SR]*qvar[SY1]*qs[S1]*(1+qinc[S1]/100)^y   # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
@@ -659,7 +672,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
           FM_P[SAYR]<-FinF[S1]*Ei[S1]*Vi[SA1]*fishdist[SR]*qvar[SY1]*qs[S1]*(1+qinc[S1]/100)^y   # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
         }
       }else{  # A spatial closure
-        if(sum(!is.na(newSel[1,1]))==0){ # if no vulnerability schedule is specified
+        if(!Vchange){ # if no vulnerability schedule is specified
           newVB<-apply(VBiomass_P[,,y,],c(1,3),sum) # vulnerability isn't changed
           fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
           Emult<-1+((2/apply(fishdist*Si,1,sum))-1)*Ai  # allocate effort to new area according to fraction allocation Ai
@@ -827,19 +840,33 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
           Ai<-inc[1,,1]
           Ei<-inc[2,,1]
           Si<-t(inc[3:4,,1])
-          newSel<-(inc[5:6,,1])		  
+          newSel<-(inc[5:6,,1])
+		  
+		  newUppLim <- inc[7,,1]
+		  newVmax <- inc[8,,1]
+
 		  chngSel <- which(colSums(apply(newSel, 2, is.na))==0) # selectivity pattern changed 
 		  if (length(chngSel) >0) {
 		    L5[y+nyears,chngSel] <- newSel[1,chngSel]
 		    LFS[y+nyears,chngSel] <- newSel[2,chngSel]
-			Vmaxlen[y+nyears,chngSel] <- 1 # 
+			if (any(!is.na(inc[7,,1]))) {
+	          ind <- which(!is.na(inc[7,,1]))
+	          Vmaxlen[y+nyears,ind] <- inc[7,ind,1]
+	        }
 		  }	
 		  Vi <- t(sapply(1:nsim, SelectFun, L5[y+nyears,], LFS[y+nyears,], 
 		    Vmaxlen[y+nyears,], Linfs=Linfarray[,y+nyears], 
 		    Lens=Len_age[,,y+nyears]))
 			
+		   # Maximum Size Limit 
+	       if (!all(is.na(newUppLim))) { # a upper size limit has been set 
+	         Vi[Len_age[,,y+nyears] >= newUppLim] <- 0   
+	       }
+	       # Vuln flag 
+	       Vchange <- any(!is.na(inc[5:8]))	
+			
           if(sum(Si!=1)==0){ # if there is no spatial closure
-            if(sum(!is.na(newSel[1,1]))==0){ # if no vulnerability schedule is specified
+            if(!Vchange){ # if no vulnerability schedule is specified
               newVB<-apply(VBiomass_P[,,y,],c(1,3),sum) # vulnerability isn't changed
               fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
               FM_P[SAYR]<-FinF[S1]*Ei[S1]*V_P[SAYt]*fishdist[SR]*qvar[SY]*qs[S1]*(1+qinc[S1]/100)^y   # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
@@ -851,7 +878,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
               # FM_P[SAYR]<-FinF[S1]*Ei[S1]*Vi[SY]*fishdist[SR]*qvar[SY]*qs[S1]*(1+qinc[S1]/100)^y   # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
             }
           }else{  # A spatial closure
-            if(sum(!is.na(newSel[1,1]))==0){ # if no vulnerability schedule is specified
+            if(!Vchange){ # if no vulnerability schedule is specified
               newVB<-apply(VBiomass_P[,,y,],c(1,3),sum) # vulnerability isn't changed
               fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
               Emult<-1+((2/apply(fishdist*Si,1,sum))-1)*Ai  # allocate effort to new area according to fraction allocation Ai

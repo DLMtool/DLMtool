@@ -25,6 +25,19 @@ matlenlim2 <-function(x,DLM_data, ...){ # Knife-edge vulnerability slightly high
 }
 class(matlenlim2)<-"DLM_input"
 
+slotlim <-function(x,DLM_data, ...){ # Example of slot limit between 0.95 and 1.25 * L50 
+  dependencies="DLM_data@LFC, DLM_data@LFS"
+  Allocate<-1
+  Effort<-1
+  Spatial<-c(1,1)
+  
+  newLFS <- 14 + 1.1 * DLM_data@L50[x]
+  newLFC <- 0.95 * newLFS  
+  UppLim <- as.numeric(quantile(c(newLFS, DLM_data@vbLinf[x]), 0.75))
+  Vuln <-c(newLFC, newLFS, UppLim)
+  c(Allocate, Effort, Spatial, Vuln)
+}
+class(slotlim)<-"DLM_input"
 
 # matagelim<-function(x,DLM_data, ...){ # Age at maturity is knife-edge vulnerability
   # dependencies="DLM_data@AM, DLM_data@MaxAge"

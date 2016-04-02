@@ -101,6 +101,7 @@ export(
     "SBT1",
     "SBT2",
     "Sense",
+	"slotlim",
     "SPMSY",
     "SPSRA",
     #"SPSRA_ML",
