@@ -117,6 +117,7 @@ export(
     "YPR",
     "YPR_CC",
     #"YPR_ML",
+	"wormplot",
     "CSRA",
     "CSRAfunc",
     "getAFC"
