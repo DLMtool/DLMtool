@@ -1279,6 +1279,7 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50,
   OutList <- list() 
   OutList$IndividProb <- t(plotout)
   OutList$Overall <- mat 
-  print(OutList)
-  invisible(OutList)
+  # print(OutList)
+  # invisible(OutList)
+  OutList 
 }
