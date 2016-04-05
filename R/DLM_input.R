@@ -324,29 +324,115 @@ DDe75<-function(x,DLM_data,reps=100){
 }
 class(DDe75)<-"DLM_input"
 
-DTe<-function(x,DLM_data,reps=100,alpha=0.4,LB=0.9,UB=1.1){
+DDes<-function(x,DLM_data,reps=100,LB=0.9,UB=1.1){
+  #for(x in 1:nsim){
+  dependencies="DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@Mort, DLM_data@CV_Mort. DLM_data@wla, DLM_data@ wlb"
+  Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
+  Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
+  t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  t0c[!is.finite(t0c)] <- 0 
+  Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
+  a<-DLM_data@wla[x]
+  b<-DLM_data@wlb[x]
   
-  dependencies="DLM_data@Dep"
-  if(length(DLM_data@Misc[[x]])==0)DLM_data@Misc[[x]]<-1 # default is effort of last historical year
+  Winf=DLM_data@wla[x]*DLM_data@vbLinf[x]^DLM_data@wlb[x]
+  age<-1:DLM_data@MaxAge
+  la<-DLM_data@vbLinf[x]*(1-exp(-DLM_data@vbK[x]*((age-DLM_data@vbt0[x]))))
+  wa<-DLM_data@wla[x]*la^DLM_data@wlb[x]
+  a50V<-iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x])
+  a50V <- max(a50V, 1)
+  yind<-(1:length(DLM_data@Cat[x,]))[!is.na(DLM_data@Cat[x,]+DLM_data@Ind[x,])]
+  C_hist<-DLM_data@Cat[x,yind]
+  E_hist<-C_hist/DLM_data@Ind[x,yind]
+  E_hist<-E_hist/mean(E_hist)
+  ny_DD<-length(C_hist)
+  params<-log(c(DLM_data@Mort[x],mean(C_hist,na.rm=T),DLM_data@Mort[x]))
+  k_DD<-ceiling(a50V)   # get age nearest to 50% vulnerability (ascending limb)  -------------
+  k_DD[k_DD>DLM_data@MaxAge/2]<-ceiling(DLM_data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
+  Rho_DD<-(wa[k_DD+2]-Winf)/(wa[k_DD+1]-Winf)
+  Alpha_DD<-Winf*(1-Rho_DD)
+  So_DD<-exp(-DLM_data@Mort[x]) # get So survival rate
+  wa_DD<-wa[k_DD]
+  UMSYprior<-c(1-exp(-DLM_data@Mort[x]*0.5),0.3)
+  opt<-optim(params,DD_R,opty=1,So_DD=So_DD,Alpha_DD=Alpha_DD,Rho_DD=Rho_DD,
+             ny_DD=ny_DD,k_DD=k_DD,wa_DD=wa_DD,E_hist=E_hist,
+             C_hist=C_hist,UMSYprior=UMSYprior,
+             method="L-BFGS-B",
+             lower=log(exp(params)/20),upper=log(exp(params)*20),
+             hessian=TRUE)
   
-  fac<-DLM_data@Dep/alpha
+  U_hist<-1-exp(-exp(opt$par[3])*E_hist)
+  fac<-exp(opt$par[1])/U_hist[DLM_data@LHYear] # ratio of UMSY to reference U
+  fac<-fac*(U_hist[DLM_data@LHYear]/U_hist[length(U_hist)]) # ratio of last U to reference U
+ 
   if(fac<LB)fac<-LB
   if(fac>UB)fac<-UB
   
   Allocate <- 1
-  Effort<-DLM_data@Misc[[x]]*fac 
+  Effort<-DLM_data@MPrec[x]*fac
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
   
-  MiscList<-Effort
-  
-  Out <- list()
-  Out[[1]] <- out 
-  Out[[2]] <- MiscList
+  #Out <- list()
+  #Out[[1]] <- out 
+  #Out[[2]] <- MiscList
   
   return(out) 
   
 }
-class(DTe)<-"DLM_input"
+class(DDes)<-"DLM_input"
+
+
+DTe40<-function(x,DLM_data,reps=100,alpha=0.4,LB=0.9,UB=1.1){
+  
+  dependencies="DLM_data@Dep"
+  
+  fac<-DLM_data@Dep[x]/alpha
+  if(fac<LB)fac<-LB
+  if(fac>UB)fac<-UB
+  
+  Allocate <- 1
+  Effort<-DLM_data@MPrec[x]*fac 
+  Spatial <- c(1,1)
+  Vuln<-rep(NA,3)
+  out <- c(Allocate, Effort, Spatial, Vuln)
+  
+  #MiscList<-Effort
+  
+  #Out <- list()
+  #Out[[1]] <- out 
+  #Out[[2]] <- MiscList
+  
+  return(out) 
+  
+}
+class(DTe40)<-"DLM_input"
+
+
+DTe50<-function(x,DLM_data,reps=100,alpha=0.5,LB=0.9,UB=1.1){
+  
+  dependencies="DLM_data@Dep"
+  
+  fac<-DLM_data@Dep[x]/alpha
+  if(fac<LB)fac<-LB
+  if(fac>UB)fac<-UB
+  
+  Allocate <- 1
+  Effort<-DLM_data@MPrec[x]*fac 
+  Spatial <- c(1,1)
+  Vuln<-rep(NA,3)
+  out <- c(Allocate, Effort, Spatial, Vuln)
+  
+  #MiscList<-Effort
+  
+  #Out <- list()
+  #Out[[1]] <- out 
+  #Out[[2]] <- MiscList
+  
+  return(out) 
+  
+}
+class(DTe50)<-"DLM_input"
+
 

@@ -29,6 +29,7 @@ export(
     "DCAC4010",
     "DD",
 	  "DDe",
+    "DDes",
 	  "DDe75",
     "DD4010",
     "DepF",
@@ -36,7 +37,8 @@ export(
     "DOM",
 	  "DoOpt",
     "DynF",
-	  "DTe",
+	  "DTe40",
+    "DTe50",
     "EDCAC",
     "Fadapt",
     "Fdem",
@@ -123,7 +125,8 @@ export(
 	"wormplot",
     "CSRA",
     "CSRAfunc",
-    "getAFC"
+    "getAFC",
+	  "wormplot"
 )
 exportClasses(
     "DLM_data",
