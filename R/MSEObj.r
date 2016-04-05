@@ -1202,7 +1202,7 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50,
       xx <- 1 
       xx2 <- npplot 
       for (X in 1:nplots) {
-        splitdat <- plotout[,xx:xx2] 
+		splitdat <- plotout[,xx:xx2] 
 		if (X == 1) {
     	  barplot(splitdat, beside=TRUE, ylab="Probability",
     	  las=3, ylim=c(0,100), 
@@ -1216,7 +1216,7 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50,
 		  cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5)
         }		
         xx <- xx2 + 1 
-    	xx2 <- min(xx + maxmp, nMPs)
+    	xx2 <- min(xx + npplot, nMPs)
       }
     }
   }
