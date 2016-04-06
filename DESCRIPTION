@@ -14,7 +14,8 @@ Depends:
     snowfall,
     boot,
     MASS,
-    parallel
+    parallel,
+	abind
 LazyData: yes
 LazyLoad: yes
 VignetteBuilder: knitr

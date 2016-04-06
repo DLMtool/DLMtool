@@ -66,6 +66,7 @@ export(
     "IT5",
     "IT10",
     "ITM",
+	"joinMSE",
 	"KalmanFilter",
     "L2A",
 	"LBSPRSim",
@@ -141,7 +142,8 @@ import(
     "boot",
     "snowfall",
     "parallel",
-    "methods"
+    "methods",
+	"abind"
 )
 importFrom("grDevices", "col2rgb", "rainbow", "rgb", "xy.coords")
 importFrom("graphics", "abline", "hist", "layout", "legend", "lines",
@@ -152,4 +154,5 @@ importFrom("stats", "coef", "density", "dlnorm", "dnorm", "lm",
                "qlnorm", "quantile", "rbeta", "rlnorm", "rmultinom",
                "rnorm", "runif", "sd", "uniroot", "approx", "dbeta", "nlm", "pnorm")
 importFrom("utils", "flush.console", "read.csv")
+importFrom("abind", "abind")
 

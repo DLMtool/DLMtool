@@ -668,6 +668,77 @@ Sub <- function(MSEobj, MPs=NULL, sims=NULL, years=NULL) {
  return(SubResults)
 }
 
+# Join two or more MSE objects together 
+joinMSE <- function(MSEobj1=NULL, MSEobj2=NULL, MSEobjs=NULL) {
+  # join two MSE objects 
+  if (class(MSEobj1) == "MSE" & class(MSEobj2) == "MSE") {
+    obj1 <- MSEobj1
+	obj2 <- MSEobj2
+	if(!all(slotNames(MSEobj1) == slotNames(MSEobj2))) stop("The MSE objects don't have the same slots")
+	if (any(MSEobj1@MPs != MSEobj2@MPs)) stop("MPs must be the same for all MSE objects")
+	Nobjs <- 2 
+  }
+  if (class(MSEobjs) == "character") {
+    Nobjs <- length(MSEobjs)
+	for (X in 1:Nobjs) {
+	  tt <- get(MSEobjs[X])
+	  assign(paste0("obj", X), tt)
+	}
+	# Check 
+	if (X > 1) {
+	  tt <- get(MSEobjs[X])
+	  tt2 <- get(MSEobjs[X-1])
+	  if(!all(slotNames(tt) == slotNames(tt2))) stop("The MSE objects don't have the same slots")
+	  if (any(tt@MPs != tt2@MPs)) stop("MPs must be the same for all MSE objects")
+	}
+  }
+  
+  # Check that nyears and proyears are the same for all 
+  chkmat <- matrix(NA, nrow=Nobjs, ncol=2)
+  nms <- NULL
+  for (X in 1:Nobjs) {
+    tt <- get(paste0("obj", X))
+	chkmat[X, ] <- c(tt@nyears, tt@proyears)
+	if (X > 1) if (!any(grepl(tt@Name, nms))) stop("MSE objects have different names")
+	nms <- append(nms, tt@Name)
+  }
+  chk <- all(colSums(chkmat) == chkmat[1,] * Nobjs)
+  if (!chk) stop("The MSE objects have different number of nyears or proyears")
+  
+  # Join them together
+  Allobjs <- mget(paste0("obj", 1:Nobjs))
+  sns <- slotNames(obj1)
+  outlist <- vector("list", length(sns))
+  for (sn in 1:length(sns)) {
+    templs <- lapply(Allobjs, slot, name=sns[sn])
+    if (class(templs[[1]]) == "character") {
+	  outlist[[sn]] <- templs[[1]]
+	}
+	if (class(templs[[1]]) == "numeric" | class(templs[[1]]) == "integer") {
+	  outlist[[sn]] <- do.call(c, templs)
+	}
+	if (class(templs[[1]]) == "matrix" | class(templs[[1]]) == "data.frame") {
+	  outlist[[sn]] <- do.call(rbind, templs)
+	}
+	if (class(templs[[1]]) == "array") {
+	  outlist[[sn]] <- abind(templs, along=1)
+	}
+  }
+  names(outlist) <- sns
+ 
+  newMSE <- new('MSE', Name=outlist$Name,nyears=unique(outlist$nyears),
+    proyears=unique(outlist$proyears), nMP=unique(outlist$nMP), 
+	MPs=unique(outlist$MPs), nsim=sum(outlist$nsim),OM=outlist$OM,
+	Obs=outlist$Obs, B_BMSY=outlist$B_BMSY, F_FMSY=outlist$F_FMSY,
+    outlist$B, outlist$FM, outlist$C, outlist$TAC, 
+	outlist$SSB_hist, outlist$CB_hist, outlist$FM_hist)
+ 
+  newMSE
+}	
+  
+
+
+
 
 # Evaluate Peformance of MPs ---------------------------------------------------
 # Function examines how consistently an MP outperforms another. 

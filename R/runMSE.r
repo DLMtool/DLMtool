@@ -519,7 +519,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   DLM_data@LHYear<-OM@nyears # Last historical year is nyears (for fixed MPs)
   DLM_data@MPrec<-Cobs[,nyears]
   DLM_data@Misc  <- vector("list", nsim)
-  assign("DLM_data",DLM_data,envir=.GlobalEnv) # for debugging fun
+  # assign("DLM_data",DLM_data,envir=.GlobalEnv) # for debugging fun
   
   # Run projections ===========================================================================
   qmu<--0.5*qcv^2                                      # Mean
