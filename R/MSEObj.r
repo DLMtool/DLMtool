@@ -616,7 +616,7 @@ VOI<-function(MSEobj,ncomp=6,nbins=8,maxrow=8,Ut=NA,Utnam="Utility"){
 # Manipulation of MSE Object ---------------------------------------------------
 # Subset the MSE object by particular MPs (either MP number or name), 
 #  or particular simulations
-Sub <- function(MSEobj, MPs=NULL, sims=NULL) {
+Sub <- function(MSEobj, MPs=NULL, sims=NULL, years=NULL) {
   Class <- class(MPs)
   if(Class == "NULL") subMPs <- MSEobj@MPs
   if(Class == "integer" | Class == "numeric") subMPs <- MSEobj@MPs[as.integer(MPs)]
@@ -639,13 +639,30 @@ Sub <- function(MSEobj, MPs=NULL, sims=NULL) {
   }	
   if (ClassSims == "logical") SubIts <- which(sims)
 
-  SubF <- MSEobj@F_FMSY[SubIts,SubMPs,]
-  SubB <- MSEobj@B_BMSY[SubIts,SubMPs,]
+  ClassYrs <- class(years)
+  AllNYears <- MSEobj@proyears
+  if (ClassYrs == "NULL")  Years <- 1:AllNYears
+  if (ClassYrs == "integer" | ClassYrs == "numeric") Years <- years
+  if (max(Years) > AllNYears) stop("years exceeds number of years in MSE")
+  if (min(Years) <= 0) stop("years must be positive")
+  if (min(Years) != 1) {
+    message("Not starting from first year. Are you sure you want to do this?")
+    message("Probably a bad idea!")
+  }
+  if (!all(diff(Years) == 1)) stop("years are not consecutive")
+  if (length(Years) <= 1) stop("You are going to want more than 1 projection year")
+  MSEobj@proyears <- max(Years)
+  
+  SubF <- MSEobj@F_FMSY[SubIts,SubMPs,Years]
+  SubB <- MSEobj@B_BMSY[SubIts,SubMPs,Years]
   OutOM <- MSEobj@OM[SubIts,]
   
-  SubResults <- new('MSE',Name=MSEobj@Name, nyears=MSEobj@nyears, proyears=MSEobj@proyears, nMPs=length(SubMPs),
-	MPs=newMPs, nsim=length(SubIts), OMtable=OutOM, Obs=MSEobj@Obs[SubIts,], B_BMSYa=SubB, F_FMSYa=SubF, Ba=MSEobj@B[SubIts,SubMPs,], 
-	FMa=MSEobj@FM[SubIts,SubMPs,], Ca=MSEobj@C[SubIts,SubMPs,], TACa=MSEobj@TAC[SubIts,SubMPs,], SSB_hist=MSEobj@SSB_hist[SubIts,,,],
+  SubResults <- new('MSE',Name=MSEobj@Name, nyears=MSEobj@nyears, 
+    proyears=MSEobj@proyears, nMPs=length(SubMPs), MPs=newMPs, 
+	nsim=length(SubIts), OMtable=OutOM, Obs=MSEobj@Obs[SubIts,], 
+	B_BMSYa=SubB, F_FMSYa=SubF, Ba=MSEobj@B[SubIts,SubMPs,Years], 
+	FMa=MSEobj@FM[SubIts,SubMPs,Years], Ca=MSEobj@C[SubIts,SubMPs,Years], 
+	TACa=MSEobj@TAC[SubIts,SubMPs,Years], SSB_hist=MSEobj@SSB_hist[SubIts,,,],
 	CB_hist=MSEobj@CB_hist[SubIts,,,], FM_hist=MSEobj@FM_hist[SubIts,,,])
   
  return(SubResults)
