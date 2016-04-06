@@ -833,7 +833,7 @@ TradePlot <- function(MSEobj, XAxis=c("Overfishing", "Biomass:BMSY"),
   for(mm in 1:MSEobj@nMPs){  
     PNOF[mm]<-round(sum(MSEobj@F_FMSY[,mm,]<1,na.rm=T)/prod(dim(MSEobj@F_FMSY[,mm,]),na.rm=T)*100,1)
     BMSYref[mm]<-round(sum(MSEobj@B_BMSY[,mm,]>BmsyRef,na.rm=T)/prod(dim(MSEobj@B_BMSY[,mm,]))*100,1)
-	B0ref[mm]<-round(sum((MSEobj@B[,mm,]/MSEobj@B[,mm,1] * MSEobj@OM$Depletion) >B0Ref,na.rm=T)/prod(dim(MSEobj@B_BMSY[,mm,]))*100,1)
+	B0ref[mm]<-round(sum((MSEobj@B_BMSY[,mm,] * MSEobj@OM$BMSY_B0) >B0Ref,na.rm=T)/prod(dim(MSEobj@B_BMSY[,mm,]))*100,1)
     # LTY[mm]<-round(sum(MSEobj@C[,mm,yend]/RefYd>0.5,na.rm=T)/(MSEobj@nsim*length(yend)),3)*100
 	# STY[mm]<-round(sum(MSEobj@C[,mm,ystart]/RefYd>0.5,na.rm=T)/(MSEobj@nsim*length(ystart)),3)*100
 	LTY[mm]<-round(mean(apply(MSEobj@C[,mm,yend],1,mean,na.rm=T)/RefYd,na.rm=T)*100,1)
@@ -1250,7 +1250,7 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50,
   for (mm in 1:nMPs) {
     # sims where Bmsy > BmsyRef for all lastYrs 
 	B_BMSY[,mm] 	<- apply(MSEobj@B_BMSY[,mm,yrs] > BmsyRef, 1, prod, na.rm=TRUE) 
-    B_B0[,mm] 		<- apply(MSEobj@B_BMSY[,mm,yrs] > B0Ref, 1, prod, na.rm=TRUE) # B > B0ref
+    B_B0[,mm] 		<- apply((MSEobj@B_BMSY[,mm,yrs] * MSEobj@OM$BMSY_B0 > B0Ref), 1, prod,na.rm=T)
     F_FMSY[,mm] 	<- apply(MSEobj@F_FMSY[,mm,yrs] < FRef, 1, prod, na.rm=TRUE)
     aavy 			<- apply((((MSEobj@C[,mm,y1]-MSEobj@C[,mm,y2])/MSEobj@C[,mm,y2])^2)^0.5,1,mean,na.rm=T) 
     aavy[is.nan(aavy)] <- 1
