@@ -765,3 +765,33 @@ Input <- function(DLM_data, MPs=NA, reps=100, timelimit=10, CheckMPs=TRUE) {
   Out 
 
 }
+
+# Take an OM object and convert it into a almost pefect OM with no 
+# observation error and very little process error 
+makePerf <- function(OMin, except=NULL) {
+    nms <- slotNames(OMin)
+	# exceptions 
+	if (is.null(except)) except <- "EVERYTHING"
+	exclude <- unique(grep(paste(except,collapse="|"), nms, value=FALSE))
+	
+	vars <- c("grad", "cv", "sd")
+	ind <- unique(grep(paste(vars,collapse="|"), nms, value=FALSE))
+	ind <- ind[(!(nms[ind] %in% exclude ))]
+	for (X in seq_along(ind)) {
+	  n <- length(slot(OMin, nms[ind[X]]))
+	  slot(OMin, nms[ind[X]]) <- rep(0, n)
+	}
+
+	if (!("Cobs" %in% exclude)) OMin@Cobs <- c(0,0)
+	if (!("Perr" %in% exclude)) OMin@Perr <- c(0,0)
+	if (!("Iobs" %in% exclude)) OMin@Iobs <- c(0,0)
+	if (!("AC" %in% exclude)) OMin@AC <- c(0, 0)
+	if (!("Btbias" %in% exclude)) OMin@Btbias <- c(1,1)
+	if (!("CAA_ESS" %in% exclude)) OMin@CAA_ESS <- c(1000, 1000)
+	if (!("CAA_nsamp" %in% exclude)) OMin@CAA_nsamp <- c(2000, 2000)
+	if (!("CAL_ESS" %in% exclude)) OMin@CAL_ESS <- c(1000, 1000)
+	if (!("CAL_nsamp" %in% exclude)) OMin@CAL_nsamp <- c(2000, 2000)
+	if (!("beta" %in% exclude)) OMin@beta <- c(1,1)
+	return(OMin)
+  }
+
