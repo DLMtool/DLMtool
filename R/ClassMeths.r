@@ -45,9 +45,9 @@ setClass("DLM_data", representation(Name = "character", Year = "vector",
     Units = "character", Ref = "numeric", Ref_type = "character", 
     Log = "list", params = "list", PosMPs = "vector", MPs = "vector", 
     OM = "data.frame", Obs = "data.frame", TAC = "array", TACbias = "array", 
-    Sense = "array", CAL_bins = "numeric", CAL = "array", MPrec = "vector", 
-    ML = "array", Lbar = "array", Lc = "array", LHYear = "numeric",
-	Misc = "list")) 
+    Sense = "array", CAL_bins = "numeric", CAL = "array", MPrec = "vector",
+    MPeff = "vector", ML = "array", Lbar = "array", Lc = "array", 
+	LHYear = "numeric", Misc = "list")) 
 
 # initialize DLM_data
 setMethod("initialize", "DLM_data", function(.Object,stock="nada"){
@@ -112,7 +112,8 @@ setMethod("initialize", "DLM_data", function(.Object,stock="nada"){
     .Object@CV_steep<-as.numeric(dat[match("CV Steepness", dname),1])
     .Object@MaxAge<-as.numeric(dat[match("Maximum age", dname),1])
     .Object@MPrec<-as.numeric(dat[match("MPrec", dname),1])
-    
+	.Object@MPeff<-as.numeric(dat[match("MPeff", dname),1])
+	
     if(length(grep("CAL",dname))>1){
       CAL_bins<-as.numeric(dat[match("CAL_bins",dname),dat[match("CAL_bins",dname),]!=""])
       nCAL<-length(CAL_bins)-1

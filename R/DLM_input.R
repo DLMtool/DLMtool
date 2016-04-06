@@ -154,8 +154,8 @@ LBSPR_ItEff <- function(x, DLM_data, yrsmth=1, reps=reps) {
   Mod <- Mod + 1 
   
   Allocate <- 1
-  if (is.na(DLM_data@MPrec[x])) DLM_data@MPrec[x] <- 1 
-  Effort <- DLM_data@MPrec[x] * Mod
+  if (is.na(DLM_data@MPeff[x])) DLM_data@MPeff[x] <- 1 
+  Effort <- DLM_data@MPeff[x] * Mod
   MiscList[[2]] <- append(MiscList[[2]], Effort)
   Spatial <- c(1,1)
   Vuln <- rep(NA,2)
@@ -369,7 +369,7 @@ DDes<-function(x,DLM_data,reps=100,LB=0.9,UB=1.1){
   if(fac>UB)fac<-UB
   
   Allocate <- 1
-  Effort<-DLM_data@MPrec[x]*fac
+  Effort<-DLM_data@MPeff[x]*fac
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -387,13 +387,15 @@ class(DDes)<-"DLM_input"
 DTe40<-function(x,DLM_data,reps=100,alpha=0.4,LB=0.9,UB=1.1){
   
   dependencies="DLM_data@Dep"
-  
+
   fac<-DLM_data@Dep[x]/alpha
-  if(fac<LB)fac<-LB
-  if(fac>UB)fac<-UB
+  print(DLM_data@Dep[x])
+ 
+  if(fac<LB)fac<- LB
+  if(fac>UB)fac<- UB
   
   Allocate <- 1
-  Effort<-DLM_data@MPrec[x]*fac 
+  Effort<-DLM_data@MPeff[x]*fac 
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -419,7 +421,7 @@ DTe50<-function(x,DLM_data,reps=100,alpha=0.5,LB=0.9,UB=1.1){
   if(fac>UB)fac<-UB
   
   Allocate <- 1
-  Effort<-DLM_data@MPrec[x]*fac 
+  Effort<-DLM_data@MPeff[x]*fac 
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)

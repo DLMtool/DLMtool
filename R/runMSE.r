@@ -518,6 +518,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   
   DLM_data@LHYear<-OM@nyears # Last historical year is nyears (for fixed MPs)
   DLM_data@MPrec<-Cobs[,nyears]
+  DLM_data@MPeff <- rep(1, nsim)
   DLM_data@Misc  <- vector("list", nsim)
   # assign("DLM_data",DLM_data,envir=.GlobalEnv) # for debugging fun
   
@@ -625,8 +626,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
       temp[temp>(1-exp(-maxF))]<-1-exp(-maxF)
       FM_P[SAYR]<--log(1-temp)
 	  
-    }else{ # input control
-	  MSElist[[mm]]@MPrec <- FinF # Current Effort 
+    }else{ # input control 
 	  runIn <- runInMP(MSElist[[mm]],MPs=MPs[mm], reps=reps) # Apply input control MP
 	  inc <- runIn[[1]]
       DLM_data <- runIn[[2]]
@@ -699,7 +699,6 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     flush.console()
     
     for(y in 2:proyears){
-      
       cat(".")
       flush.console()
       if(class(match.fun(MPs[mm]))=="DLM_output") TACa[,mm,y]<-TACused
@@ -833,7 +832,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
           FM_P[SAYR]<--log(1-temp)
 		  
         }else{
-		  MSElist[[mm]]@MPrec<-Ei
+		  MSElist[[mm]]@MPeff<-Ei
           runIn <- runInMP(MSElist[[mm]],MPs=MPs[mm], reps=reps) # Apply input control MP
 	      inc <- runIn[[1]]
           DLM_data <- runIn[[2]]

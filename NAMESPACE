@@ -78,6 +78,7 @@ export(
     "LstepCC4",
     "Ltarget1",
     "Ltarget4",
+	"makePerf",
     "matlenlim",
 	"matlenlim2",
     "MCD",
