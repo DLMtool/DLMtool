@@ -389,7 +389,6 @@ DTe40<-function(x,DLM_data,reps=100,alpha=0.4,LB=0.9,UB=1.1){
   dependencies="DLM_data@Dep"
 
   fac<-DLM_data@Dep[x]/alpha
-  print(DLM_data@Dep[x])
  
   if(fac<LB)fac<- LB
   if(fac>UB)fac<- UB

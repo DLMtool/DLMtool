@@ -768,7 +768,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
         I2[is.na(I2)]<-tiny
         I2<-I2/apply(I2,1,mean)
         
-        Depletion<-apply(Biomass_P[,,y,],1,sum)/apply(Biomass[,,1,],1,sum)
+        Depletion <- apply(Biomass_P[,,y,],1,sum)/apply(Biomass[,,1,],1,sum)
 		Depletion[Depletion < tiny] <- tiny
         A<-apply(VBiomass_P[,,y,],1,sum)
         A[is.na(A)]<-tiny
