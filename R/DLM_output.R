@@ -1787,7 +1787,7 @@ MLne<-function(x,DLM_data,Linfc,Kc,ML_reps=100,MLtype="F"){
 	    }  
       }		
       mlen<-mean(mlen[(length(mlen)-2):length(mlen)], na.rm=TRUE)
-      Z2<-bheq(K=Kc[i],Linf=Linfc[i],Lc=Lc,Lbar=mlen)
+      Z2[i]<-bheq(K=Kc[i],Linf=Linfc[i],Lc=Lc,Lbar=mlen)
     }
   }
   if(MLtype=="F")return(Z2)
