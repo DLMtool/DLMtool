@@ -371,7 +371,18 @@ ChooseEffort <- function(FleetObj, Years=NULL) {
 
 # Sketch Historical Selectivity Patterns ---------------------------------------
 ChooseSelect <- function(Fleet, Stock=NULL, FstYr=NULL, SelYears=NULL) {
-  
+  chk <- class(OM@isRel)
+  if (chk == "character") {
+    chkrel <- tolower(OM@isRel)
+    if (chkrel == "true" | OM@isRel == "1") isRel <- TRUE
+	if (chkrel == "false" | OM@isRel == "0") isRel <- FALSE
+  }
+  if (chk == "numeric") {
+    if (OM@isRel == 1) isRel <- TRUE
+	if (OM@isRel == 0) isRel <- FALSE 
+  }
+
+  if ((!isRel) & is.null(Stock)) stop("Require Stock object")
   LastYr <- as.numeric(format(Sys.Date(), format="%Y"))
   if (is.null(FstYr)) {
     message("*****************")
@@ -416,18 +427,26 @@ ChooseSelect <- function(Fleet, Stock=NULL, FstYr=NULL, SelYears=NULL) {
   message("Select selectivity points on plot")
   flush.console()
   for (N in 1:Selnyears) {
-    BlankSelPlot(Stock=Stock, Yr=SelYears[N], N=N)
-    L5Out <- ChooseL5()
+    BlankSelPlot(Stock=Stock, Yr=SelYears[N], N=N, isRel=isRel)
+    L5Out <- ChooseL5(Fleet, Stock, isRel)
     tempL5[N,] <- sort(L5Out[,1])
-    LFSout <- ChooseLFS(L5Out)
+    LFSout <- ChooseLFS(L5Out, Fleet, Stock, isRel)
     tempLFS[N,] <- sort(LFSout[,1])
-    Vmaxout <- ChooseVmaxlen()
+    Vmaxout <- ChooseVmaxlen(Fleet, Stock, isRel)
     tempmaxlen[N,] <- sort(Vmaxout[,2])
-    polygon(x=c(0, max(tempL5[N,]), max(tempLFS[N,]), 3, 
-     rev(c(0, min(tempL5[N,]), min(tempLFS[N,]), 3))),
-	 y= c(0, 0.05, 1, min(tempmaxlen[N,]),
-	 rev(c(0, 0.05, 1, max(tempmaxlen[N,])))), col="grey")
-    par(ask=TRUE)
+	if (isRel) {
+      polygon(x=c(0, max(tempL5[N,]), max(tempLFS[N,]), 3, 
+       rev(c(0, min(tempL5[N,]), min(tempLFS[N,]), 3))),
+	   y= c(0, 0.05, 1, min(tempmaxlen[N,]),
+	   rev(c(0, 0.05, 1, max(tempmaxlen[N,])))), col="grey")
+      par(ask=TRUE)
+	} else {
+      polygon(x=c(0, max(tempL5[N,]), max(tempLFS[N,]), mean(Stock@Linf), 
+       rev(c(0, min(tempL5[N,]), min(tempLFS[N,]), mean(Stock@Linf)))),
+	   y= c(0, 0.05, 1, min(tempmaxlen[N,]),
+	   rev(c(0, 0.05, 1, max(tempmaxlen[N,])))), col="grey")
+      par(ask=TRUE)	
+	}
   }	
   par(set.par)
   # CheckSelect(Fleet, Stock)
