@@ -373,12 +373,12 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   
   CAA<-array(NA,dim=c(nsim,nyears,maxage))                                  # Catch  at age array
   cond<-apply(CN,1:2,sum,na.rm=T)<1                                         # this is a fix for low sample sizes. If CN is zero across the board a single fish is caught in age class of model selectivity (dumb I know)
-  fixind<-as.matrix(cbind(expand.grid(1:nsim,1:nyears),rep(ceiling(mod),nyears))) # more fix
+  fixind<-as.matrix(cbind(expand.grid(1:nsim,1:nyears),rep(floor(maxage/3),nyears))) # more fix
   CN[fixind[cond,]]<-1                                                      # puts a catch in the most vulnerable age class
   for(i in 1:nsim)for(j in 1:nyears)CAA[i,j,]<-ceiling(-0.5+rmultinom(1,CAA_nsamp[i],CN[i,j,])*CAA_nsamp[i]/CAA_ESS[i]) # a multinomial observation model for catch-at-age data
   
   # Temporary fix til effdist simulator is fixed
-  for(i in 1:nsim)CAA[i,1,]<-CAA[i,2,]
+  #for(i in 1:nsim)CAA[i,1,]<-CAA[i,2,]
   
   LatASD <- Len_age * 0.1 # This is currently fixed to cv of 10%
   MaxBin <- ceiling(max(Linfarray) + 2 * max(LatASD))
@@ -740,14 +740,21 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
         yind<-upyrs[match(y,upyrs)-1]:(upyrs[match(y,upyrs)]-1)
         CNtemp<-array(N_P[,,yind,]*exp(Z_P[,,yind,])*(1-exp(-Z_P[,,yind,]))*(FM_P[,,yind,]/Z_P[,,yind,]),c(nsim,maxage,interval,nareas))
         CBtemp<-array(Biomass_P[,,yind,]*exp(Z_P[,,yind,])*(1-exp(-Z_P[,,yind,]))*(FM_P[,,yind,]/Z_P[,,yind,]),c(nsim,maxage,interval,nareas))
-        CNtemp[is.na(CNtemp)]<-1e-20
-        CBtemp[is.na(CNtemp)]<-1e-20
-        CNtemp<-apply(CNtemp,c(1,3,2),sum)
-	
-        CNtemp[CNtemp==0]<-CNtemp[CNtemp==0]+tiny
-        Cobs<-Cbiasa[,nyears+yind]*Cerr[,nyears+yind]*apply(CBtemp,c(1,3),sum)
+        CNtemp[is.na(CNtemp)]<-0
+        CBtemp[is.na(CNtemp)]<-0
+        CNtemp<-apply(CNtemp,c(1,3,2),sum,na.rm=T)
+	      
+        Cobs<-Cbiasa[,nyears+yind]*Cerr[,nyears+yind]*apply(CBtemp,c(1,3),sum,na.rm=T)
         Cobs[is.na(Cobs)]<-tiny
         Recobs<-Recerr[,nyears+yind]*apply(array(N_P[,1,yind,],c(nsim,interval,nareas)),c(1,2),sum)
+        
+        cond<-apply(CNtemp,1:2,sum,na.rm=T)<1                                         # this is a fix for low sample sizes. If CN is zero across the board a single fish is caught in age class of model selectivity (dumb I know)
+        fixind<-as.matrix(cbind(expand.grid(1:nsim,1:interval),rep(floor(maxage/3),interval))) # more fix
+        assign("fixind",fixind,envir=.GlobalEnv) # for debugging fun
+        
+        assign("CNtemp",CNtemp,envir=.GlobalEnv) # for debugging fun
+        
+        CNtemp[fixind[cond,]]<-1                                                      # puts a catch in the most vulnerable age class
         
         CAA<-array(NA,dim=c(nsim,interval,maxage))                                  # Catch  at age array
         for(i in 1:nsim)for(j in 1:interval)CAA[i,j,]<-ceiling(-0.5+rmultinom(1,CAA_nsamp[i],CNtemp[i,j,])*CAA_nsamp[i]/CAA_ESS[i]) # a multinomial observation model for catch-at-age data
@@ -807,7 +814,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
         MSElist[[mm]]@Ref_type<-'Simulated OFL'
 		MSElist[[mm]]@Misc  <- DLM_data@Misc
         
-        # assign("DLM_data",MSElist[[mm]],envir=.GlobalEnv) # for debugging fun
+         assign("DLM_data",MSElist[[mm]],envir=.GlobalEnv) # for debugging fun
         
         if(class(match.fun(MPs[mm]))=="DLM_output"){
 		  DLM_data <- Sam(MSElist[[mm]],MPs=MPs[mm],perc=pstar,reps=reps)

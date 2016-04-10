@@ -256,7 +256,7 @@ DDe<-function(x,DLM_data,reps=100){
   U_hist<-1-exp(-exp(opt$par[3])*E_hist)
  
   Allocate <- 1
-  Effort<-exp(opt$par[1])/U_hist[DLM_data@LHYear]
+  Effort<-max(0.05,exp(opt$par[1])/U_hist[DLM_data@LHYear])
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -310,7 +310,7 @@ DDe75<-function(x,DLM_data,reps=100){
   U_hist<-1-exp(-exp(opt$par[3])*E_hist)
   
   Allocate <- 1
-  Effort<-0.75*exp(opt$par[1])/U_hist[DLM_data@LHYear]
+  Effort<-max(0.75*exp(opt$par[1])/U_hist[DLM_data@LHYear],0.05)
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -369,7 +369,7 @@ DDes<-function(x,DLM_data,reps=100,LB=0.9,UB=1.1){
   if(fac>UB)fac<-UB
   
   Allocate <- 1
-  Effort<-DLM_data@MPeff[x]*fac
+  Effort<-max(0.05,DLM_data@MPeff[x]*fac)
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -394,7 +394,7 @@ DTe40<-function(x,DLM_data,reps=100,alpha=0.4,LB=0.9,UB=1.1){
   if(fac>UB)fac<- UB
   
   Allocate <- 1
-  Effort<-DLM_data@MPeff[x]*fac 
+  Effort<-max(0.05,DLM_data@MPeff[x]*fac) 
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -420,7 +420,7 @@ DTe50<-function(x,DLM_data,reps=100,alpha=0.5,LB=0.9,UB=1.1){
   if(fac>UB)fac<-UB
   
   Allocate <- 1
-  Effort<-DLM_data@MPeff[x]*fac 
+  Effort<-max(DLM_data@MPeff[x]*fac,0.05) 
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
