@@ -1304,7 +1304,7 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50,
 		  cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5)
         }		
         xx <- xx2 + 1 
-    	xx2 <- min(xx + npplot, nMPs)
+    	xx2 <- min(xx + npplot -1, nMPs)
       }
     }
   }
