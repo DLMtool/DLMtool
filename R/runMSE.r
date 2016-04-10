@@ -761,9 +761,9 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
         
         cond<-apply(CNtemp,1:2,sum,na.rm=T)<1                                         # this is a fix for low sample sizes. If CN is zero across the board a single fish is caught in age class of model selectivity (dumb I know)
         fixind<-as.matrix(cbind(expand.grid(1:nsim,1:interval),rep(floor(maxage/3),interval))) # more fix
-        assign("fixind",fixind,envir=.GlobalEnv) # for debugging fun
         
-        assign("CNtemp",CNtemp,envir=.GlobalEnv) # for debugging fun
+		# assign("fixind",fixind,envir=.GlobalEnv) # for debugging fun
+        # assign("CNtemp",CNtemp,envir=.GlobalEnv) # for debugging fun
         
         CNtemp[fixind[cond,]]<-1                                                      # puts a catch in the most vulnerable age class
         
@@ -825,7 +825,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
         MSElist[[mm]]@Ref_type<-'Simulated OFL'
 		MSElist[[mm]]@Misc  <- DLM_data@Misc
         
-         assign("DLM_data",MSElist[[mm]],envir=.GlobalEnv) # for debugging fun
+         # assign("DLM_data",MSElist[[mm]],envir=.GlobalEnv) # for debugging fun
         
         if(class(match.fun(MPs[mm]))=="DLM_output"){
 		  DLM_data <- Sam(MSElist[[mm]],MPs=MPs[mm],perc=pstar,reps=reps)
