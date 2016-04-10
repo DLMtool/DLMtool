@@ -371,15 +371,15 @@ ChooseEffort <- function(FleetObj, Years=NULL) {
 
 # Sketch Historical Selectivity Patterns ---------------------------------------
 ChooseSelect <- function(Fleet, Stock=NULL, FstYr=NULL, SelYears=NULL) {
-  chk <- class(OM@isRel)
+  chk <- class(Fleet@isRel)
   if (chk == "character") {
-    chkrel <- tolower(OM@isRel)
-    if (chkrel == "true" | OM@isRel == "1") isRel <- TRUE
-	if (chkrel == "false" | OM@isRel == "0") isRel <- FALSE
+    chkrel <- tolower(Fleet@isRel)
+    if (chkrel == "true" | Fleet@isRel == "1") isRel <- TRUE
+	if (chkrel == "false" | Fleet@isRel == "0") isRel <- FALSE
   }
   if (chk == "numeric") {
-    if (OM@isRel == 1) isRel <- TRUE
-	if (OM@isRel == 0) isRel <- FALSE 
+    if (Fleet@isRel == 1) isRel <- TRUE
+	if (Fleet@isRel == 0) isRel <- FALSE 
   }
 
   if ((!isRel) & is.null(Stock)) stop("Require Stock object")
