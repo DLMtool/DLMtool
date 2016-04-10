@@ -52,6 +52,7 @@ Objects can be created by calls of the form \code{new("OM", Stock, Fleet, Observ
     \item{\code{LFSUpper}:}{Optional vector of values of length SelYears, specifiying upper limits of LFS (use \code{ChooseSelect} function to set these. Overrides LFS above)}
     \item{\code{VmaxLower}:}{Optional vector of values of length SelYears, specifiying lower limits of Vmaxlen (use \code{ChooseSelect} function to set these. Overrides Vmaxlen above)}
     \item{\code{VmaxUpper}:}{Optional vector of values of length SelYears, specifiying upper limits of Vmaxlen (use \code{ChooseSelect} function to set these. Overrides Vmaxlen above)}
+    \item{\code{isRel}:}{Are the selectivity parameters relative to size-of-maturity? TRUE or FALSE}
     \item{\code{L50}:}{Length at 50 percent maturity (uniform distribution)}
     \item{\code{L50_95}:}{Length increment from 50 to 95 percent maturity (uniform distribution)}
     \item{\code{Fsd}:}{Inter-annual variability in fishing mortality rate}

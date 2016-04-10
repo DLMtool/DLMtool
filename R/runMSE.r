@@ -154,15 +154,26 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   Mat_age <- 1/(1+exp((ageMarray-(Agearray))/(ageMarray*ageMsd)))  # Maturity at age array
   
   # Selectivity at Length ------------------------------------------------------
-  if (max(OM@L5) > 1.5) {
-    message("L5 set too high (maximum value of 1.5). \nDefaulting to L5 = 1.5")
-    OM@L5[OM@L5 > 1.5] <- 1.5
-  }
+  # if (max(OM@L5) > 1.5) {
+    # message("L5 set too high (maximum value of 1.5). \nDefaulting to L5 = 1.5")
+    # OM@L5[OM@L5 > 1.5] <- 1.5
+  # }
   
   Selnyears <- length(OM@SelYears)
+  # are selectivity parameters relative to size at maturity?
+  chk <- class(OM@isRel)
+  if (chk == "character") {
+    chkRel <- tolower(OM@isRel)
+    if (chkRel == "true" | OM@isRel == "1") multi <- lenM
+	if (chkRel == "false" | OM@isRel == "0") multi <- 1
+  }
+  if (chk == "numeric") {
+    if (OM@isRel == 1) multi <- lenM
+	if (OM@isRel == 0) multi <- 1
+  }
   if (Selnyears <= 1) { 
-    tL5 <- runif(nsim, OM@L5[1], OM@L5[2]) * lenM  # length at 0.05% selectivity ascending
-	tLFS <- runif(nsim, OM@LFS[1], OM@LFS[2]) * lenM   # first length at 100% selection
+    tL5 <- runif(nsim, OM@L5[1], OM@L5[2]) * multi  # length at 0.05% selectivity ascending
+	tLFS <- runif(nsim, OM@LFS[1], OM@LFS[2]) * multi   # first length at 100% selection
 	tVmaxlen <- runif(nsim,OM@Vmaxlen[1],OM@Vmaxlen[2])   # selectivity at maximum length 
     L5 <- matrix(tL5, nrow=nyears+proyears, ncol=nsim, byrow=TRUE)
     LFS <- matrix(tLFS, nrow=nyears+proyears, ncol=nsim, byrow=TRUE)
@@ -175,9 +186,9 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     Vmaxlen <- matrix(0, nrow=nyears+proyears, ncol=nsim, byrow=TRUE)
     SelYears <- OM@SelYears
 	# length at 0.05% selectivity ascending
-	L5_bk <- mapply(runif, n=nsim, min=OM@L5Lower, max=OM@L5Upper) * lenM 
+	L5_bk <- mapply(runif, n=nsim, min=OM@L5Lower, max=OM@L5Upper) * multi 
 	# first length at 100% selection
-    LFS_bk <- mapply(runif, n=nsim, min=OM@LFSLower, max=OM@LFSUpper) * lenM
+    LFS_bk <- mapply(runif, n=nsim, min=OM@LFSLower, max=OM@LFSUpper) * multi
 	# selectivity at maximum length
     Vmaxlen_bk <- mapply(runif, n=nsim, min=OM@VmaxLower, max=OM@VmaxUpper)
  
@@ -201,8 +212,8 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
  
   ind <- which(LFS/Linf>1, arr.ind=T)
   if (length(ind) > 0) {
-    message("LFS too high (LFS > Linf) in some cases. \nDefaulting to LFS = Linf for the affected simulations")
-    LFS[ind] <- Linf[ind[,2]]
+    message("LFS too high (LFS > Linf) in some cases. \nDefaulting to LFS = 0.9 Linf for the affected simulations")
+    LFS[ind] <- Linf[ind[,2]] * 0.9 
   }
    
   # LFS[LFS/Linf>1]<-NA

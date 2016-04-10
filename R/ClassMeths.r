@@ -250,7 +250,7 @@ setClass("Fleet",slots=c(Name="character",nyears="numeric", Spat_targ="numeric",
   EffYears="numeric", EffLower="numeric", EffUpper="numeric",
   SelYears="numeric", AbsSelYears="numeric", L5="numeric", LFS="numeric",
   Vmaxlen="numeric", L5Lower="numeric", L5Upper="numeric", LFSLower="numeric",
-  LFSUpper="numeric",  VmaxLower="numeric", VmaxUpper="numeric"))
+  LFSUpper="numeric",  VmaxLower="numeric", VmaxUpper="numeric", isRel="character"))
 # initialize Fleet 
 setMethod("initialize", "Fleet", function(.Object,file=NA){
   if (!is.na(file)) {
@@ -303,14 +303,14 @@ setMethod("initialize", "Fleet", function(.Object,file=NA){
       .Object@LFS <- as.numeric(dat[match("LFS",dname),1:2])
       .Object@Vmaxlen <-as.numeric(dat[match("Vmaxlen",dname),1:2])
 	  
+	  .Object@isRel <- dat[match("isRel",dname),1] # Are selecivity parameters relative to maturity?
+	  if(NAor0(.Object@isRel)).Object@isRel <- "TRUE"
     } else {
 	  message("File doesn't exist")
 	}
-   }	
- 	
+   }		
   .Object
 })
-
 
 # Create Observation class 
 setClass("Observation",representation(Name="character",LenMcv="numeric",
@@ -384,7 +384,7 @@ setClass("OM",representation(Name="character",nyears="numeric",maxage="numeric",
   L50="numeric", L50_95="numeric", SelYears="numeric", AbsSelYears="numeric",
   L5="numeric", LFS="numeric",  Vmaxlen="numeric", 
   L5Lower="numeric", L5Upper="numeric", LFSLower="numeric",
-  LFSUpper="numeric",  VmaxLower="numeric", VmaxUpper="numeric",
+  LFSUpper="numeric",  VmaxLower="numeric", VmaxUpper="numeric", isRel="character",
   beta="numeric", 
   Spat_targ="numeric", Fsd="numeric", Period="numeric", Amplitude="numeric",
   EffYears="numeric", EffLower="numeric", EffUpper="numeric", 
