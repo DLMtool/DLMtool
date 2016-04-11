@@ -87,7 +87,7 @@ Fease<-function(feaseobj,outy="table"){
     for(m in 1:nMPs){
       brec<-unlist(strsplit(req[m,2],", "))
       brec<-brec[grep("CV_",brec,invert=T)] #remove CV dependencies (we think we can guess these...)
-      brec<-brec[brec!="Year"&brec!="MaxAge"&brec!="FMSY_M"&brec!="BMSY_B0"&brec!="t"&brec!="OM"&brec!="MPrec"&brec!="CAL_bins"]
+      brec<-brec[brec!="Year"&brec!="MaxAge"&brec!="FMSY_M"&brec!="BMSY_B0"&brec!="t"&brec!="OM"&brec!="MPrec"&brec!="CAL_bins" &brec!="MPeff" &brec !="LHYear"]
       nr<-length(brec) 
       if(nr==0){
         gridy[m,i]<-"Yes"
