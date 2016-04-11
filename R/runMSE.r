@@ -518,9 +518,10 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   DLM_data@Ref_type<-'Simulated OFL'
   DLM_data@wla<-rep(OM@a,nsim)
   DLM_data@wlb<-rep(OM@b,nsim)
-  DLM_data@OM<-as.data.frame(cbind(RefY,M,Depletion,A,BMSY_B0,FMSY_M,Mgrad,Msd,procsd,Esd,dFfinal,MSY,qinc,qcv,
-                                   FMSY,Linf,K,t0,hs,Linfgrad,Kgrad,Linfsd,recgrad,Ksd,ageM,
-                                   L5[nyears,],LFS[nyears,],Vmaxlen[nyears,],LFC,OFLreal,Spat_targ,Frac_area_1,Prob_staying,AC)) # put all the operating model parameters in one table
+  DLM_data@OM<-as.data.frame(cbind(RefY,M,Depletion,A,BMSY_B0,FMSY_M,Mgrad,Msd,
+    procsd,Esd,dFfinal,MSY,qinc,qcv, FMSY,Linf,K,t0,hs,Linfgrad,Kgrad,Linfsd,
+	recgrad,Ksd,ageM, L5[nyears,],LFS[nyears,],Vmaxlen[nyears,],LFC,OFLreal,
+	Spat_targ,Frac_area_1,Prob_staying,AC, lenM, len95)) # put all the operating model parameters in one table
   
   names(DLM_data@OM)[26:28]<-c("L5","LFS","Vmaxlen") # These are missing labels in the line above
   
