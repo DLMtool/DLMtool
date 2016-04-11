@@ -131,7 +131,13 @@ export(
 	"wormplot",
 	"Fease_xl",
 	"OM_xl",
-	"writeCSV"
+	"writeCSV",
+	"LstepCE1",
+	"LstepCE2",
+	"LtargetE1",
+	"LtargetE4",
+	"ItargetE1",
+	"ItargetE4"
 )
 exportClasses(
     "DLM_data",
