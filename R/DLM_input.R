@@ -319,6 +319,7 @@ DDe75<-function(x,DLM_data,reps=100){
   
   Allocate <- 1
   Effort<-max(0.75*exp(opt$par[1])/U_hist[DLM_data@LHYear],0.05)
+  Effort <- min(Effort, 10) # some maximum effort 
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -382,6 +383,7 @@ DDes<-function(x,DLM_data,reps=100,LB=0.9,UB=1.1){
   
   Allocate <- 1
   Effort<-max(0.05,DLM_data@MPeff[x]*fac)
+  Effort <- min(Effort, 10) # some maximum effort 
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -406,6 +408,7 @@ DTe40<-function(x,DLM_data,reps=100,alpha=0.4,LB=0.9,UB=1.1){
   
   Allocate <- 1
   Effort<-max(0.05,DLM_data@MPeff[x]*fac) 
+  Effort <- min(Effort, 10) # some maximum effort
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -430,7 +433,8 @@ DTe50<-function(x,DLM_data,reps=100,alpha=0.5,LB=0.9,UB=1.1){
   if(fac>UB)fac<-UB
   
   Allocate <- 1
-  Effort<-max(DLM_data@MPeff[x]*fac,0.05) 
+  Effort<-max(DLM_data@MPeff[x]*fac,0.05)
+  Effort <- min(Effort, 10) # some maximum effort  
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -518,7 +522,7 @@ LtargetE1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,xL=1.05){
   if(Lrecent>L0){
     Effort <- 0.5 * DLM_data@MPeff[x]*(1+((Lrecent-L0)/(Ltarget-L0)))
   }else{ 
-    Effort <- 0.5 * DLM_data@MPeff[x]*(Lrecent/L0)^                 
+    Effort <- 0.5 * DLM_data@MPeff[x]*(Lrecent/L0)^2         
   }
   Allocate <- 1
   Effort <- max(0.05,Effort)
