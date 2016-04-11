@@ -581,7 +581,11 @@ DD<-function(x,DLM_data,reps=100){
   dependencies="DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@Mort, DLM_data@CV_Mort. DLM_data@wla, DLM_data@ wlb"
   Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  } else {
+    t0c <- rep(DLM_data@vbt0[x], reps)
+  }
   t0c[!is.finite(t0c)] <- 0 
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
   a<-DLM_data@wla[x]
@@ -631,8 +635,12 @@ DD4010<-function(x,DLM_data,reps=100){
   dependencies="DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@Mort, DLM_data@CV_Mort. DLM_data@wla, DLM_data@ wlb"
   Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  t0c<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
-  t0c[!is.finite(t0c)] <- 0 
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  } else {
+    t0c <- rep(DLM_data@vbt0[x], reps)
+  }
+  t0c[!is.finite(t0c)] <- 0  
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
   a<-DLM_data@wla[x]
   b<-DLM_data@wlb[x]
@@ -1298,7 +1306,11 @@ YPR<-function(x,DLM_data,reps=100){   # Yield per recruit analysis F01 - Meaghan
   dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@Abun, DLM_data@CV_Abun, DLM_data@wla, DLM_data@wlb"
   Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  t0c<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  } else {
+    t0c <- rep(DLM_data@vbt0[x], reps)
+  }
   t0c[!is.finite(t0c)] <- 0 
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
   LFS<-trlnorm(reps,DLM_data@LFS[x],DLM_data@CV_LFS[x])
@@ -1317,7 +1329,11 @@ YPR_CC<-function(x,DLM_data,reps=100,Fmin=0.005){
     dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@wlb, DLM_data@CAA, DLM_data@Cat"
   Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  t0c<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  } else {
+    t0c <- rep(DLM_data@vbt0[x], reps)
+  }
   t0c[!is.finite(t0c)] <- 0 
   LFS<-trlnorm(reps,DLM_data@LFS[x],DLM_data@CV_LFS[x])
   a<-DLM_data@wla[x]
@@ -1373,8 +1389,12 @@ Fdem<-function(x,DLM_data,reps=100){   # Demographic FMSY estimate (FMSY=r/2)
   Mvec<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
   Linfc=trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  t0c<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
-  t0c[!is.finite(t0c)] <- 0 
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  } else {
+    t0c <- rep(DLM_data@vbt0[x], reps)
+  }
+  t0c[!is.finite(t0c)] <- 0  
   hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
   Ac<-trlnorm(reps,DLM_data@Abun[x],DLM_data@CV_Abun[x])
   FMSY<-getr(x,DLM_data,Mvec,Kc,Linfc,t0c,hvec,maxage=DLM_data@MaxAge,r_reps=reps)/2
@@ -1388,8 +1408,12 @@ Fdem_CC<-function(x,DLM_data,reps=100,Fmin=0.005){
   Mvec<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
   Linfc=trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  t0c<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
-  t0c[!is.finite(t0c)] <- 0 
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  } else {
+    t0c <- rep(DLM_data@vbt0[x], reps)
+  }
+  t0c[!is.finite(t0c)] <- 0  
   hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
   MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
   Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
@@ -1463,8 +1487,12 @@ CompSRA<-function(x,DLM_data,reps=100){    # optimize for fixed F to get you to 
     hc<-trlnorm(1,DLM_data@steep[x],DLM_data@CV_steep[x])
     Linfc<-trlnorm(1,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
     Kc<-trlnorm(1,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-    t0c<--trlnorm(1,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
-	t0c[!is.finite(t0c)] <- 0 
+    if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+      t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+    } else {
+      t0c <- rep(DLM_data@vbt0[x], reps)
+    }
+    t0c[!is.finite(t0c)] <- 0 
     LFSc<-trlnorm(1,DLM_data@LFS[x],DLM_data@CV_LFS[x])
     LFCc<-trlnorm(1,DLM_data@LFC[x],DLM_data@CV_LFC[x])
     AMc<-trlnorm(1,iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x]),DLM_data@CV_L50[x])
@@ -1514,8 +1542,12 @@ CompSRA4010<-function(x,DLM_data,reps=100){    # optimize for fixed F to get you
     hc<-trlnorm(1,DLM_data@steep[x],DLM_data@CV_steep[x])
     Linfc<-trlnorm(1,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
     Kc<-trlnorm(1,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-    t0c<--trlnorm(1,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
-	t0c[!is.finite(t0c)] <- 0 
+    if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+      t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+    } else {
+      t0c <- rep(DLM_data@vbt0[x], reps)
+    }
+    t0c[!is.finite(t0c)] <- 0 
     LFSc<-trlnorm(1,DLM_data@LFS[x],DLM_data@CV_LFS[x])
     LFCc<-trlnorm(1,DLM_data@LFC[x],DLM_data@CV_LFC[x])
     AMc<-trlnorm(1,iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x]),DLM_data@CV_L50[x])
