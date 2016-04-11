@@ -128,7 +128,10 @@ export(
     "CSRA",
     "CSRAfunc",
     "getAFC",
-	  "wormplot"
+	"wormplot",
+	"Fease_xl",
+	"OM_xl",
+	"writeCSV"
 )
 exportClasses(
     "DLM_data",
