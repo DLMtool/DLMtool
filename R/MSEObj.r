@@ -1204,9 +1204,11 @@ VOI2<-function(MSEobj,ncomp=6,nbins=4,Ut=NA,Utnam="yield",lay=F){
   
 } # VOI2
 
+
 PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50, 
 	lastYrs=10, BmsyRef=0.5, B0Ref=0.2, FRef=1.25, maxVar=15, ShowCols=TRUE, 
-	ShowLabs=TRUE, AvailMPs=NULL, bplot=TRUE, maxmp=10) {
+	ShowLabs=TRUE, ShowPMs=TRUE, AvailMPs=NULL, bplot=TRUE, tplot=TRUE, 
+	maxmp=12, txlim=NULL) {
 
   PMChoices <- c("B_BMSY", "B_B0", "F_FMSY", "AAVY")
   # if (length(PMs) != 3) {
@@ -1261,30 +1263,39 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50,
 
   Stats <- list(B_BMSY=B_BMSY, B_B0=B_B0, F_FMSY=F_FMSY, AAVY=AAVY,
   Yield=Yield)
+  
+  Names <- list(4)
+  Names[[1]] <- bquote(italic(B) > ~ .(BmsyRef) ~ italic(B[MSY]))
+  Names[[2]] <- bquote(italic(B) > ~ .(B0Ref) ~ italic(B[0]))
+  Names[[3]] <- bquote(italic(F) < ~ .(FRef) ~ italic(F[MSY]))
+  Names[[4]] <- bquote(AAVY < ~ .(maxVar)* '%')
+  
   Ind <- match(PMs, names(Stats))
-  names(Stats)[1] <- paste("Prob", names(Stats)[1], " > ", BmsyRef, " MSY")
-  names(Stats)[2] <- paste("Prob", names(Stats)[2], " > ", B0Ref, " B0")
-  names(Stats)[3] <- paste("Prob", names(Stats)[3], " < ", FRef, " FMSY")
-  names(Stats)[4] <- paste("Prob", names(Stats)[4], " < ", maxVar, "%")
+  Legend <- NULL
+  for (X in 1:length(Ind)) Legend <- append(Legend, as.expression(Names[[Ind[X]]]))
 
   # individual probabilities
   inProbs <- lapply(lapply(Stats[Ind], colSums), "/" , nsim) 
   output <- matrix(unlist(inProbs), ncol = nMPs, byrow = TRUE) * 100 
   colnames(output) <- MPs 
-  rownames(output) <- names(Stats)[Ind]
+  rownames(output) <- Names[Ind]
   plotout <- output[,order(output[1,])]
   
-  if (bplot) { # show barplots of individual probabilities 
-    nplots <- ceiling(nMPs/maxmp)
+  if (bplot) { # show barplots of individual probabilities
+	if (nMPs > maxmp) maxmp <- max(which(nMPs %% 1:maxmp==0))
+	nplots <- ceiling(nMPs/maxmp)
     Ncol <- ceiling(sqrt(nplots))
-    Nrow <- ceiling(nplots/Ncol) 
+    Nrow <- ceiling(nplots/Ncol)
+    tempmat <- matrix(1:(Ncol*Nrow), nrow=Nrow, byrow=TRUE)	
     plotlist <- list()
-    par(mfrow=c(Nrow, Ncol), oma=c(0,3,2,0), mar=c(10,3,2,2))
-    if (nMPs <= maxmp) {
-      barplot(plotout, beside=TRUE, ylab="Probability",
-    	las=3, ylim=c(0,100), 
-    	legend.text=rownames(output), args.legend=list(bty="n", x="topleft"),
-    	cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5, xpd=NA)
+
+    par(mfrow=c(Nrow, Ncol), oma=c(0,5,3,0), mar=c(10,1,1,1))
+    if (nplots == 1) {
+      tt <- barplot(plotout, beside=TRUE, ylab="Probability",
+    	las=3, ylim=c(0,100),cex.axis=1.5, cex.lab=2, las=2, 
+		cex.names=1.5,,xpd=NA)
+	  legend(x=tt[1], y=105, legend=Legend,bty="n", 
+		  cex=1.25, xpd=NA, fill=gray.colors(nrow(output)))
     } else {
 	  npplot <- min(ceiling(nMPs/nplots), maxmp)
       xx <- 1 
@@ -1292,19 +1303,23 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50,
       for (X in 1:nplots) {
 		splitdat <- plotout[,xx:xx2] 
 		if (X == 1) {
-    	  barplot(splitdat, beside=TRUE, ylab="Probability",
+    	  tt <- barplot(splitdat, beside=TRUE, ylab="",
     	  las=3, ylim=c(0,100), 
-    	  cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5, xpd=NA,
-		  legend.text=rownames(output), 
-		  args.legend=list(bty="n", x="topleft", xpd=NA))
+    	  cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5, xpd=NA)
+		  legend(x=tt[1], y=140, legend=Legend,bty="n", 
+		  cex=1.25, xpd=NA, fill=gray.colors(nrow(output)))
 		} else {
-		  tt <- barplot(splitdat, plot=FALSE, beside=TRUE,las=3, ylim=c(0,100))
-    	  barplot(splitdat, beside=TRUE, ylab="",
-    	  las=3, ylim=c(0,100), 
-		  cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5)
+    	  barplot(splitdat, beside=TRUE, ylab="", las=3, ylim=c(0,100), 
+		  cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5, axes=FALSE)
+		  if (X %in% tempmat[,1]) axis(side=2, label=TRUE, 
+		    cex.axis=1.5, cex.lab=2, las=2)
+		  if (!X %in% tempmat[,1]) axis(side=2, label=FALSE)
         }		
         xx <- xx2 + 1 
     	xx2 <- min(xx + npplot -1, nMPs)
+		mtext(side=2, outer=TRUE, "Probability", line=3, cex=1.4)
+		mtext(side=3, outer=TRUE, paste("Last", lastYrs, "years of projection period"),
+		line=1, cex=1.25)
       }
     }
   }
@@ -1312,57 +1327,63 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50,
   total <- Reduce("*", Stats[Ind]) # does each sim meet the performance criteria?
 
   prob <- round(colSums(total)/nrow(total) * 100, 2) # probability of meeting PMs 
-
-  # trade-off plot of yield and prob of meeting PMs 
-  x <- prob
-  y <- AvgYield
-  labs <- MPs 
-  xlab <- "Probability of meeting PMs"
-  ylab <- "Average Yield"
-  par(mfrow=c(1,1), mar=c(5,5,2,1), oma=c(1,1,0,0))
-  adjj<-c(0.9,1.1)
-  XLim <- c(min(c(-10, min(x,na.rm=T)*adjj)), max(c(max(x,na.rm=T)*adjj, 110)))
-  YLim <- c(min(c(-10, min(y,na.rm=T)*adjj)), max(c(max(y,na.rm=T)*adjj, 110)))
-  # Which MPs meet minimum PMs 
-  ind <- which(x >= PLim)
-  coly <- rep("darkgray", length(labs)) 
-  coly[ind] <- "black"   
-  Pch <- rep(21, length(labs))
-  coly[grep("FMSY", labs)]<-'black'
-  Pch[grep("FMSY", labs)] <- 24
-  if (!is.null(AvailMPs)) Pch[labs%in%AvailMPs] <- 21
-  if (!is.null(AvailMPs)) coly[labs%in%AvailMPs & (x >= PLim)] <- "green"
   
-  plot(NA,xlim=XLim,ylim=YLim,xlab=xlab,ylab=ylab, bty="l", las=1, 
-  	xaxs="i", yaxs="i", cex.lab=1.5, cex.axis=1.25)
-  abline(v=PLim,col="#99999940",lwd=2)
-  Alpha <- 30
-  # polygons 
-  LeftCol <- rgb(red=255, green=0, blue=0, alpha=Alpha, names = NULL, 
-    maxColorValue = 255)
-  RightCol <- rgb(red=0, green=255, blue=0, alpha=Alpha, names = NULL, 
-    maxColorValue = 255) 
-  if(ShowCols) {
-    polygon(x=c(0, PLim,  PLim, 0), y=c(0, 0, 100, 100), col=LeftCol, border=NA)
-    polygon(x=c(PLim,  100, 100, PLim), y=c(0, 0, 100, 100), col=RightCol, border=NA)
+  if (tplot) {
+    # trade-off plot of yield and prob of meeting PMs 
+    x <- prob
+    y <- AvgYield
+    labs <- MPs 
+    xlab <- "Probability of meeting PMs"
+    ylab <- "Average Yield"
+    par(mfrow=c(1,1), mar=c(5,5,2,1), oma=c(1,1,0,0))
+    adjj<-c(0.9,1.1)
+    XLim <- c(min(c(-10, min(x,na.rm=T)*adjj)), max(c(max(x,na.rm=T)*adjj, 110)))
+	if (!is.null(txlim)) XLim <- txlim
+    YLim <- c(min(c(-10, min(y,na.rm=T)*adjj)), max(c(max(y,na.rm=T)*adjj, 110)))
+    # Which MPs meet minimum PMs 
+    ind <- which(x >= PLim)
+    coly <- rep("darkgray", length(labs)) 
+    coly[ind] <- "black"   
+    Pch <- rep(21, length(labs))
+    coly[grep("FMSY", labs)]<-'black'
+    Pch[grep("FMSY", labs)] <- 24
+    if (!is.null(AvailMPs)) Pch[labs%in%AvailMPs] <- 21
+    if (!is.null(AvailMPs)) coly[labs%in%AvailMPs & (x >= PLim)] <- "green"
+    
+    plot(NA,xlim=XLim,ylim=YLim,xlab=xlab,ylab=ylab, bty="l", las=1, 
+    	xaxs="i", yaxs="i", cex.lab=1.5, cex.axis=1.25)
+    if (PLim > 0) abline(v=PLim,col="#99999940",lwd=2)
+    Alpha <- 30
+    # polygons 
+    LeftCol <- rgb(red=255, green=0, blue=0, alpha=Alpha, names = NULL, 
+      maxColorValue = 255)
+    RightCol <- rgb(red=0, green=255, blue=0, alpha=Alpha, names = NULL, 
+      maxColorValue = 255) 
+    if(ShowCols) {
+      polygon(x=c(0, PLim,  PLim, 0), y=c(0, 0, 100, 100), col=LeftCol, border=NA)
+      polygon(x=c(PLim,  100, 100, PLim), y=c(0, 0, 100, 100), col=RightCol, border=NA)
+    }
+    
+    if(ShowPMs){
+      temp <- 1 
+      text(quantile(XLim,0.05), max(YLim)*1.05, "Performance Metrics", xpd=NA, pos=4, cex=1.2)
+      for (xx in 1:length(Ind)) {
+        temp <- temp - 0.05
+        text(quantile(XLim,0.05), max(YLim*temp)*1.05, Legend[xx], xpd=NA, pos=4)  
+      }
+    }
+
+    Cex <- 1.5
+    if(!ShowLabs) points(x,y, bg=coly, pch=Pch, cex=Cex, col="black" )
+    if(ShowLabs) text(x,y,labs,font=2,col=coly,cex=1)
   }
-  
-  text(quantile(XLim,0.05), max(YLim), "Performance Metrics", xpd=NA, pos=4, cex=1.2)
-  temp <- 1 
-  for (xx in 1:length(Ind)) {
-    temp <- temp - 0.05
-    text(quantile(XLim,0.05), max(YLim*temp), rownames(output)[xx], xpd=NA, pos=4)  
-  
-  }
-
-  Cex <- 1.5
-  if(!ShowLabs) points(x,y, bg=coly, pch=Pch, cex=Cex, col="black" )
-  if(ShowLabs) text(x,y,labs,font=2,col=coly,cex=1)
-
   mat <- cbind(prob, AvgYield)
   rownames(mat) <- MPs
   colnames(mat) <- c("Prob", "Yield")
-  mat <- mat[order(mat[,1]),]
+  
+  Dist <- NULL # calculate distance from corner
+  for (X in 1:nrow(mat)) Dist[X] <- euc.dist(c(mat[X,1], mat[X,2]), c(100, 100))
+  mat <- mat[order(Dist),]
   
   OutList <- list() 
   OutList$IndividProb <- t(plotout)
