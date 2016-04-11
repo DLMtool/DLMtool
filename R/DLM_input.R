@@ -217,11 +217,15 @@ LBSPR_ItSel <- function(x, DLM_data, yrsmth=1, reps=reps) {
 class(LBSPR_ItSel)<-"DLM_input"
 
 DDe<-function(x,DLM_data,reps=100){
-  #for(x in 1:nsim){
+  # for(x in 1:nsim){
   dependencies="DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@Mort, DLM_data@CV_Mort. DLM_data@wla, DLM_data@ wlb"
   Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  } else {
+    t0c <- rep(DLM_data@vbt0[x], reps)
+  }
   t0c[!is.finite(t0c)] <- 0 
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
   a<-DLM_data@wla[x]
@@ -257,6 +261,7 @@ DDe<-function(x,DLM_data,reps=100){
  
   Allocate <- 1
   Effort<-max(0.05,exp(opt$par[1])/U_hist[DLM_data@LHYear])
+  Effort <- min(Effort, 10) # some maximum effort 
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -264,7 +269,6 @@ DDe<-function(x,DLM_data,reps=100){
   #Out <- list()
   #Out[[1]] <- out 
   #Out[[2]] <- MiscList
-  
   return(out) 
 
 }
@@ -275,7 +279,11 @@ DDe75<-function(x,DLM_data,reps=100){
   dependencies="DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@Mort, DLM_data@CV_Mort. DLM_data@wla, DLM_data@ wlb"
   Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  } else {
+    t0c <- rep(DLM_data@vbt0[x], reps)
+  }
   t0c[!is.finite(t0c)] <- 0 
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
   a<-DLM_data@wla[x]
@@ -329,7 +337,11 @@ DDes<-function(x,DLM_data,reps=100,LB=0.9,UB=1.1){
   dependencies="DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@Mort, DLM_data@CV_Mort. DLM_data@wla, DLM_data@ wlb"
   Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  } else {
+    t0c <- rep(DLM_data@vbt0[x], reps)
+  }
   t0c[!is.finite(t0c)] <- 0 
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
   a<-DLM_data@wla[x]
@@ -383,7 +395,6 @@ DDes<-function(x,DLM_data,reps=100,LB=0.9,UB=1.1){
 }
 class(DDes)<-"DLM_input"
 
-
 DTe40<-function(x,DLM_data,reps=100,alpha=0.4,LB=0.9,UB=1.1){
   
   dependencies="DLM_data@Dep"
@@ -410,7 +421,6 @@ DTe40<-function(x,DLM_data,reps=100,alpha=0.4,LB=0.9,UB=1.1){
 }
 class(DTe40)<-"DLM_input"
 
-
 DTe50<-function(x,DLM_data,reps=100,alpha=0.5,LB=0.9,UB=1.1){
   
   dependencies="DLM_data@Dep"
@@ -435,5 +445,167 @@ DTe50<-function(x,DLM_data,reps=100,alpha=0.5,LB=0.9,UB=1.1){
   
 }
 class(DTe50)<-"DLM_input"
+
+LstepCE1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,stepsz=0.05,llim=c(0.96,0.98,1.05)){
+  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
+  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
+  # ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
+  ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
+
+  Lrecent<-mean(DLM_data@ML[ind])
+  Lave<-mean(DLM_data@ML[ind3])
+  rat<-Lrecent/Lave
+  
+  if(rat<llim[1]){ 
+    Effort <- DLM_data@MPeff[x]-2*stepsz
+  }else if(rat<llim[2]) {
+    Effort <- DLM_data@MPeff[x]-stepsz
+  }else if(rat>llim[3]){
+    Effort <- DLM_data@MPeff[x]+stepsz
+  }else{
+    Effort <- DLM_data@MPeff[x]
+  }
+ 
+  Allocate <- 1
+  Effort <- max(0.05,Effort)
+  Effort <- min(Effort, 10)
+  Spatial <- c(1,1)
+  Vuln<-rep(NA,3)
+  out <- c(Allocate, Effort, Spatial, Vuln)
+}  
+class(LstepCE1)<-"DLM_input"
+
+LstepCE2<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,stepsz=0.1,llim=c(0.96,0.98,1.05)){
+  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
+  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
+  # ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
+  ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
+
+  Lrecent<-mean(DLM_data@ML[ind])
+  Lave<-mean(DLM_data@ML[ind3])
+  rat<-Lrecent/Lave
+  
+  if(rat<llim[1]){ 
+    Effort <- DLM_data@MPeff[x]-2*stepsz
+  }else if(rat<llim[2]) {
+    Effort <- DLM_data@MPeff[x]-stepsz
+  }else if(rat>llim[3]){
+    Effort <- DLM_data@MPeff[x]+stepsz
+  }else{
+    Effort <- DLM_data@MPeff[x]
+  }
+ 
+  Allocate <- 1
+  Effort <- max(0.05,Effort)
+  Effort <- min(Effort, 10)
+  Spatial <- c(1,1)
+  Vuln<-rep(NA,3)
+  out <- c(Allocate, Effort, Spatial, Vuln)
+}  
+class(LstepCE2)<-"DLM_input"
+
+LtargetE1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,xL=1.05){
+  
+  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
+  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
+  ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
+  ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
+
+  Lrecent<-mean(DLM_data@ML[ind])
+  Lave<-mean(DLM_data@ML[ind3])
+  L0<-0.9*Lave
+  Ltarget<-xL*Lave
+  if(Lrecent>L0){
+    Effort <- 0.5 * DLM_data@MPeff[x]*(1+((Lrecent-L0)/(Ltarget-L0)))
+  }else{ 
+    Effort <- 0.5 * DLM_data@MPeff[x]*(Lrecent/L0)^                 
+  }
+  Allocate <- 1
+  Effort <- max(0.05,Effort)
+  Effort <- min(Effort, 10)
+  Spatial <- c(1,1)
+  Vuln<-rep(NA,3)
+  out <- c(Allocate, Effort, Spatial, Vuln)
+}  
+class(LtargetE1)<-"DLM_input"
+
+LtargetE4 <-function(x,DLM_data,reps=100,yrsmth=5,xx=0,xL=1.15){
+  
+  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
+  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
+  ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
+  ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
+
+  Lrecent<-mean(DLM_data@ML[ind])
+  Lave<-mean(DLM_data@ML[ind3])
+  L0<-0.9*Lave
+  Ltarget<-xL*Lave
+  if(Lrecent>L0){
+    Effort <- 0.5 * DLM_data@MPeff[x]*(1+((Lrecent-L0)/(Ltarget-L0)))
+  }else{ 
+    Effort <- 0.5 * DLM_data@MPeff[x]*(Lrecent/L0)^2                 
+  }
+  
+  Allocate <- 1
+  Effort <- max(0.05,Effort)
+  Effort <- min(Effort, 10)
+  Spatial <- c(1,1)
+  Vuln<-rep(NA,3)
+  out <- c(Allocate, Effort, Spatial, Vuln)
+}  
+class(LtargetE4)<-"DLM_input"
+
+ItargetE1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,Imulti=1.5){
+
+  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
+  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
+  ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
+  ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
+
+  Irecent<-mean(DLM_data@Ind[x,ind])
+  Iave<-mean(DLM_data@Ind[x,ind3])
+  Itarget<-Iave*Imulti
+  I0<-0.8*Iave
+  if(Irecent>I0){
+    Effort <- 0.5 * DLM_data@MPeff[x]*(1+((Irecent-I0)/(Itarget-I0)))
+  }else{
+    Effort <- 0.5 * DLM_data@MPeff[x]*(Irecent/I0)^2
+  }
+  
+  Allocate <- 1
+  Effort <- max(0.05,Effort)
+  Effort <- min(Effort, 10)
+  Spatial <- c(1,1)
+  Vuln<-rep(NA,3)
+  out <- c(Allocate, Effort, Spatial, Vuln) 
+}  
+class(ItargetE1)<-"DLM_input"
+
+ItargetE4 <-function(x,DLM_data,reps=100,yrsmth=5,xx=0,Imulti=2.5){
+
+  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
+  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
+  ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
+  ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
+
+  Irecent<-mean(DLM_data@Ind[x,ind])
+  Iave<-mean(DLM_data@Ind[x,ind3])
+  Itarget<-Iave*Imulti
+  I0<-0.8*Iave
+  if(Irecent>I0){
+    Effort <- 0.5 * DLM_data@MPeff[x]*(1+((Irecent-I0)/(Itarget-I0)))
+  }else{
+    Effort <- 0.5 * DLM_data@MPeff[x]*(Irecent/I0)^2
+  }
+  
+  Allocate <- 1
+  Effort <- max(0.05,Effort)
+  Effort <- min(Effort, 10)
+  Spatial <- c(1,1)
+  Vuln<-rep(NA,3)
+  out <- c(Allocate, Effort, Spatial, Vuln) 
+}  
+class(ItargetE4)<-"DLM_input"
+
 
 
