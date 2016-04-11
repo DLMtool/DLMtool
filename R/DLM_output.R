@@ -161,7 +161,7 @@ Rcontrol<-function(x,DLM_data,reps=100,yrsmth=10,gg=2,glim=c(0.5,2)){
   } else {
     t0vec <- rep(DLM_data@vbt0[x], reps)
   }
-  t0vec[!is.finite(t0c)] <- 0 
+  t0vec[!is.finite(t0vec)] <- 0 
 
   hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
   rsamp<-getr(x,DLM_data,Mvec,Kvec,Linfvec,t0vec,hvec,maxage=DLM_data@MaxAge,r_reps=reps)
@@ -208,7 +208,7 @@ Rcontrol2<-function(x,DLM_data,reps=100,yrsmth=10,gg=2,glim=c(0.5,2)){
   } else {
     t0vec <- rep(DLM_data@vbt0[x], reps)
   }
-  t0vec[!is.finite(t0c)] <- 0 
+  t0vec[!is.finite(t0vec)]  <- 0 
   hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
   rsamp<-getr(x,DLM_data,Mvec,Kvec,Linfvec,t0vec,hvec,maxage=DLM_data@MaxAge,r_reps=reps)
 
@@ -1258,7 +1258,7 @@ SPSRA<-function(x,DLM_data,reps=100){  # Surplus productin stock reduction analy
   } else {
     t0vec <- rep(DLM_data@vbt0[x], reps)
   }
-  t0vec[!is.finite(t0c)] <- 0 
+  t0vec[!is.finite(t0vec)] <- 0 
   if(all(is.nan(t0vec))) t0vec <- rep(0,reps) 
   hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
   if (all(!is.finite(hvec))) return(NA)
@@ -1285,7 +1285,7 @@ class(SPSRA)<-"DLM_output"
   # } else {
     # t0vec <- rep(DLM_data@vbt0[x], reps)
   # }
-  # t0vec[!is.finite(t0c)] <- 0 
+  # t0vec[!is.finite(t0vec)] <- 0 
   # hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
   # rsamp<-getr(x,DLM_data,Mvec,Kvec,Linfvec,t0vec,hvec,maxage=DLM_data@MaxAge,r_reps=reps)
   # Z<-MLne(x,DLM_data,Linfc=Linfvec,Kc=Kvec,ML_reps=reps,MLtype="dep")
