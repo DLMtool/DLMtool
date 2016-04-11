@@ -156,7 +156,13 @@ Rcontrol<-function(x,DLM_data,reps=100,yrsmth=10,gg=2,glim=c(0.5,2)){
   Mvec<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
   Kvec<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
   Linfvec<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  t0vec<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0vec <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  } else {
+    t0vec <- rep(DLM_data@vbt0[x], reps)
+  }
+  t0vec[!is.finite(t0c)] <- 0 
+
   hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
   rsamp<-getr(x,DLM_data,Mvec,Kvec,Linfvec,t0vec,hvec,maxage=DLM_data@MaxAge,r_reps=reps)
 
@@ -197,7 +203,12 @@ Rcontrol2<-function(x,DLM_data,reps=100,yrsmth=10,gg=2,glim=c(0.5,2)){
   Mvec<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
   Kvec<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
   Linfvec<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  t0vec<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0vec <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  } else {
+    t0vec <- rep(DLM_data@vbt0[x], reps)
+  }
+  t0vec[!is.finite(t0c)] <- 0 
   hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
   rsamp<-getr(x,DLM_data,Mvec,Kvec,Linfvec,t0vec,hvec,maxage=DLM_data@MaxAge,r_reps=reps)
 
@@ -1242,7 +1253,12 @@ SPSRA<-function(x,DLM_data,reps=100){  # Surplus productin stock reduction analy
   Mvec<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
   Kvec<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
   Linfvec <- trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  t0vec<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0vec <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  } else {
+    t0vec <- rep(DLM_data@vbt0[x], reps)
+  }
+  t0vec[!is.finite(t0c)] <- 0 
   if(all(is.nan(t0vec))) t0vec <- rep(0,reps) 
   hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
   if (all(!is.finite(hvec))) return(NA)
@@ -1264,7 +1280,12 @@ class(SPSRA)<-"DLM_output"
   # Mvec<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
   # Kvec<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
   # Linfvec=trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  # t0vec<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  # if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    # t0vec <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  # } else {
+    # t0vec <- rep(DLM_data@vbt0[x], reps)
+  # }
+  # t0vec[!is.finite(t0c)] <- 0 
   # hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
   # rsamp<-getr(x,DLM_data,Mvec,Kvec,Linfvec,t0vec,hvec,maxage=DLM_data@MaxAge,r_reps=reps)
   # Z<-MLne(x,DLM_data,Linfc=Linfvec,Kc=Kvec,ML_reps=reps,MLtype="dep")
