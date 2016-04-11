@@ -1360,7 +1360,7 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50,
     RightCol <- rgb(red=0, green=255, blue=0, alpha=Alpha, names = NULL, 
       maxColorValue = 255) 
     if(ShowCols) {
-      polygon(x=c(0, PLim,  PLim, 0), y=c(0, 0, 100, 100), col=LeftCol, border=NA)
+      polygon(x=c(max(0, XLim[1]), PLim,  PLim, max(0, XLim[1])), y=c(0, 0, 100, 100), col=LeftCol, border=NA)
       polygon(x=c(PLim,  100, 100, PLim), y=c(0, 0, 100, 100), col=RightCol, border=NA)
     }
     
