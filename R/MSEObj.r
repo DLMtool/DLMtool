@@ -1384,10 +1384,10 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50,
   Dist <- NULL # calculate distance from corner
   for (X in 1:nrow(mat)) Dist[X] <- euc.dist(c(mat[X,1], mat[X,2]), c(100, 100))
   mat <- mat[order(Dist),]
-  
+  out <- data.frame(Prob=mat[,1], Yield=mat[,2], Name=rownames(mat))
   OutList <- list() 
   OutList$IndividProb <- t(plotout)
-  OutList$Overall <- mat 
+  OutList$Overall <- out 
   # print(OutList)
   # invisible(OutList)
   OutList 
