@@ -692,6 +692,20 @@ joinMSE <- function(MSEobj1=NULL, MSEobj2=NULL, MSEobjs=NULL) {
 	  if (any(tt@MPs != tt2@MPs)) stop("MPs must be the same for all MSE objects")
 	}
   }
+  if (class(MSEobjs) == "list") {
+    Nobjs <- length(MSEobjs)
+	for (X in 1:Nobjs) {
+	  tt <- MSEobjs[[X]]
+	  assign(paste0("obj", X), tt)
+	}
+	# Check 
+	if (X > 1) {
+	  tt <- MSEobjs[[X]]
+	  tt2 <- MSEobjs[[X-1]]
+	  if(!all(slotNames(tt) == slotNames(tt2))) stop("The MSE objects don't have the same slots")
+	  if (any(tt@MPs != tt2@MPs)) stop("MPs must be the same for all MSE objects")
+	}
+  }
   
   # Check that nyears and proyears are the same for all 
   chkmat <- matrix(NA, nrow=Nobjs, ncol=2)
