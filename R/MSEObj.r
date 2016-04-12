@@ -1216,7 +1216,7 @@ VOI2<-function(MSEobj,ncomp=6,nbins=4,Ut=NA,Utnam="yield",lay=F){
 
 
 PerfPlot <- function(MSEobj, myPMs=c("B_BMSY", "F_FMSY", "AAVY"), 
-  myrefs=c(0.5, 1.25, 20), Yield=c("LTY","STY"), PLim=0.5,
+  myrefs=c(0.5, 1.25, 20), Yield=c("LTY","STY"), PLim=0.5, lastYrs=10,
   ShowCols=TRUE, ShowLabs=TRUE, ShowPMs=TRUE, bcol=NULL,
   AvailMPs=NULL, bplot=TRUE, tplot=TRUE, maxmp=12, txlim=NULL) {
   
