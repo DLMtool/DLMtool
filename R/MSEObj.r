@@ -1358,11 +1358,10 @@ PerfPlot <- function(MSEobj, myPMs=c("B_BMSY", "F_FMSY", "AAVY"),
       tt <- barplot(plotout, beside=TRUE, ylab="Probability",
     	las=3, ylim=c(0,100),cex.axis=1.5, cex.lab=2, las=2, 
 		cex.names=1.5,xpd=NA, col=bcol)
-	  legend(x=tt[1], y=130, legend=Legend,bty="n", 
+	  legend(x=tt[1], y=105, legend=Legend,bty="n", 
 		  cex=1.25, horiz=TRUE, xpd=NA, fill=bcol)
-      mtext(side=2, outer=TRUE, "Probability", line=3, cex=1.4)
 	  mtext(side=3, outer=TRUE, paste("Last", lastYrs, 
-	    "years of projection period"), line=3, cex=1.25)	
+	    "years of projection period"), line=1, cex=1.25)	
       abline(h=PLim, lty=linet, col=Col)		
     } else {
 	  npplot <- min(ceiling(nMPs/nplots), maxmp)
