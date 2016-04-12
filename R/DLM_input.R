@@ -478,6 +478,7 @@ LstepCE1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,stepsz=0.05,llim=c(0.96,0.9
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
+  out
 }  
 class(LstepCE1)<-"DLM_input"
 
@@ -508,6 +509,7 @@ LstepCE2<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,stepsz=0.1,llim=c(0.96,0.98
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
+  out
 }  
 class(LstepCE2)<-"DLM_input"
 
@@ -533,6 +535,7 @@ LtargetE1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,xL=1.05){
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
+  out
 }  
 class(LtargetE1)<-"DLM_input"
 
@@ -559,6 +562,7 @@ LtargetE4 <-function(x,DLM_data,reps=100,yrsmth=5,xx=0,xL=1.15){
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
+  out
 }  
 class(LtargetE4)<-"DLM_input"
 
@@ -585,6 +589,7 @@ ItargetE1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,Imulti=1.5){
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln) 
+  out
 }  
 class(ItargetE1)<-"DLM_input"
 
@@ -611,8 +616,47 @@ ItargetE4 <-function(x,DLM_data,reps=100,yrsmth=5,xx=0,Imulti=2.5){
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln) 
+  out
 }  
 class(ItargetE4)<-"DLM_input"
 
+ITe10<-function(x,DLM_data,reps=100,yrsmth=5,mc=0.1){
+  
+  dependencies="DLM_data@Ind, DLM_data@MPeff, DLMdata@CV_Ind, DLMdata@Iref"
+  ind<-max(1,(length(DLM_data@Year)-yrsmth+1)):length(DLM_data@Year)
+  
+  deltaI<-mean(DLM_data@Ind[x,ind])/DLM_data@Iref[x]
+  if(deltaI<(1-mc))deltaI<-1-mc
+  if(deltaI>(1+mc))deltaI<-1+mc
+  
+  Effort<-DLM_data@MPeff[x]*deltaI*trlnorm(reps,1,DLM_data@CV_Ind[x])
+  Allocate <- 1
+  Effort <- max(0.05,Effort)
+  Effort <- min(Effort, 10)
+  Spatial <- c(1,1)
+  Vuln<-rep(NA,3)
+  out<-c(Allocate, Effort, Spatial, Vuln)
+  out
+}
+class(ITe10)<-"DLM_input"
+
+ITe5<-function(x,DLM_data,reps=100,yrsmth=5,mc=0.05){
+  
+  dependencies="DLM_data@Ind, DLM_data@MPeff, DLMdata@CV_Ind, DLMdata@Iref"
+  ind<-max(1,(length(DLM_data@Year)-yrsmth+1)):length(DLM_data@Year)
+  deltaI<-mean(DLM_data@Ind[x,ind])/DLM_data@Iref[x]
+  if(deltaI<(1-mc))deltaI<-1-mc
+  if(deltaI>(1+mc))deltaI<-1+mc
+  
+  Effort<-DLM_data@MPeff[x]*deltaI*trlnorm(reps,1,DLM_data@CV_Ind[x])
+  Allocate <- 1
+  Effort <- max(0.05,Effort)
+  Effort <- min(Effort, 10)
+  Spatial <- c(1,1)
+  Vuln<-rep(NA,3)
+  out<-c(Allocate, Effort, Spatial, Vuln)
+  out
+}
+class(ITe5)<-"DLM_input"
 
 

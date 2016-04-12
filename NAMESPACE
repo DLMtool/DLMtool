@@ -65,6 +65,8 @@ export(
     "Itarget4",
     "IT5",
     "IT10",
+	  "ITe5",
+	  "ITe10",
     "ITM",
 	"joinMSE",
 	"KalmanFilter",
