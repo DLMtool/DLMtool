@@ -460,12 +460,14 @@ LstepCE1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,stepsz=0.05,llim=c(0.96,0.9
   Lave<-mean(DLM_data@ML[ind3])
   rat<-Lrecent/Lave
   
+  step <- stepsz
+  
   if(rat<llim[1]){ 
-    Effort <- DLM_data@MPeff[x]-2*stepsz
+    Effort <- DLM_data@MPeff[x]-2*(step *DLM_data@MPeff[x])
   }else if(rat<llim[2]) {
-    Effort <- DLM_data@MPeff[x]-stepsz
+    Effort <- DLM_data@MPeff[x]-(step *DLM_data@MPeff[x])
   }else if(rat>llim[3]){
-    Effort <- DLM_data@MPeff[x]+stepsz
+    Effort <- DLM_data@MPeff[x]+(step *DLM_data@MPeff[x])
   }else{
     Effort <- DLM_data@MPeff[x]
   }
@@ -488,13 +490,14 @@ LstepCE2<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,stepsz=0.1,llim=c(0.96,0.98
   Lrecent<-mean(DLM_data@ML[ind])
   Lave<-mean(DLM_data@ML[ind3])
   rat<-Lrecent/Lave
+  step <- stepsz
   
   if(rat<llim[1]){ 
-    Effort <- DLM_data@MPeff[x]-2*stepsz
+    Effort <- DLM_data@MPeff[x]-2*(step *DLM_data@MPeff[x])
   }else if(rat<llim[2]) {
-    Effort <- DLM_data@MPeff[x]-stepsz
+    Effort <- DLM_data@MPeff[x]-(step*DLM_data@MPeff[x])
   }else if(rat>llim[3]){
-    Effort <- DLM_data@MPeff[x]+stepsz
+    Effort <- DLM_data@MPeff[x]+(step*DLM_data@MPeff[x])
   }else{
     Effort <- DLM_data@MPeff[x]
   }
