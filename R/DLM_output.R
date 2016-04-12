@@ -1509,9 +1509,9 @@ CompSRA<-function(x,DLM_data,reps=100){    # optimize for fixed F to get you to 
     Linfc<-trlnorm(1,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
     Kc<-trlnorm(1,DLM_data@vbK[x],DLM_data@CV_vbK[x])
     if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
-      t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+      t0c <- -trlnorm(1,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
     } else {
-      t0c <- rep(DLM_data@vbt0[x], reps)
+      t0c <- DLM_data@vbt0[x]
     }
     t0c[!is.finite(t0c)] <- 0 
     LFSc<-trlnorm(1,DLM_data@LFS[x],DLM_data@CV_LFS[x])
@@ -1564,9 +1564,9 @@ CompSRA4010<-function(x,DLM_data,reps=100){    # optimize for fixed F to get you
     Linfc<-trlnorm(1,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
     Kc<-trlnorm(1,DLM_data@vbK[x],DLM_data@CV_vbK[x])
     if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
-      t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+      t0c <- -trlnorm(1,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
     } else {
-      t0c <- rep(DLM_data@vbt0[x], reps)
+      t0c <- DLM_data@vbt0[x]
     }
     t0c[!is.finite(t0c)] <- 0 
     LFSc<-trlnorm(1,DLM_data@LFS[x],DLM_data@CV_LFS[x])
