@@ -750,10 +750,6 @@ joinMSE <- function(MSEobj1=NULL, MSEobj2=NULL, MSEobjs=NULL) {
   newMSE
 }	
   
-
-
-
-
 # Evaluate Peformance of MPs ---------------------------------------------------
 # Function examines how consistently an MP outperforms another. 
 DOM <- function(MSEobj, MPtg=NA) {
@@ -1219,82 +1215,136 @@ VOI2<-function(MSEobj,ncomp=6,nbins=4,Ut=NA,Utnam="yield",lay=F){
 } # VOI2
 
 
-PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50, 
-	lastYrs=10, BmsyRef=0.5, B0Ref=0.2, FRef=1.25, maxVar=15, ShowCols=TRUE, 
-	ShowLabs=TRUE, ShowPMs=TRUE, AvailMPs=NULL, bplot=TRUE, tplot=TRUE, 
-	maxmp=12, txlim=NULL) {
-
-  PMChoices <- c("B_BMSY", "B_B0", "F_FMSY", "AAVY")
-  # if (length(PMs) != 3) {
-    # message("Must choose 3 Performance metrics")
-	# stop("Available choices are: ", paste(PMChoices, " "))
-  # }	
-  PMs <- match.arg(PMs, PMChoices, several.ok=TRUE)
-       
-  if (maxVar < 1) maxVar <- maxVar * 100 # maximum variability in % 
+PerfPlot <- function(MSEobj, myPMs=c("B_BMSY", "F_FMSY", "AAVY"), 
+  myrefs=c(0.5, 1.25, 20), Yield=c("LTY","STY"), PLim=0.5,
+  ShowCols=TRUE, ShowLabs=TRUE, ShowPMs=TRUE, bcol=NULL,
+  AvailMPs=NULL, bplot=TRUE, tplot=TRUE, maxmp=12, txlim=NULL) {
+  
+  # Assign Variables
   Nyears <- MSEobj@nyears
   Pyears <- MSEobj@proyears
   nMPs <- MSEobj@nMPs
   MPs <- MSEobj@MPs 
   nsim <- MSEobj@nsim
   RefYd <- MSEobj@OM$RefY
+  Yield <- match.arg(Yield)
   
+  # Error Checks 
   if (lastYrs >= Pyears) {
     message("lastYrs set too high. Defaulting to all years")
     lastYrs <- 0 
   }
-
   if (lastYrs <= 0 | lastYrs == FALSE | lastYrs == "all" | lastYrs == "All") 
     lastYrs <- Pyears - 1  
-
-  yrs <- (Pyears-lastYrs+1):Pyears # Years to summarize performance
-  yend <- max(Pyears-4,1):Pyears # Last five years of yield
-
-  y1 <- yrs[1]:yrs[length(yrs)-1]
+  if (length(myrefs) != length(myPMs)) stop("Length of myPMs and myrefs must be equal")
+  if (PLim < 1) PLim <- PLim * 100
+  # Performance metrics 
+  allPMs <- c("B_BMSY", "B_B0", "F_FMSY", "AAVY", "AAVE", "AAVB")
+  dfRefs <- c(0.5, 0.2, 1.25, 20, 20, 20) # Default reference points
+  PMdf <- data.frame(allPMs, dfRefs) # Default performance metrics 
+  
+  myPMs <- match.arg(myPMs, allPMs, several.ok=TRUE)
+  myPMdf <- PMdf[match(myPMs, PMdf[,1]),]
+  myPMdf[,2] <- myrefs
+  
+  BmsyRef <- myPMdf[grep("B_BMSY", myPMdf[,1]),2]
+  B0Ref <- myPMdf[grep("B_B0", myPMdf[,1]),2]
+  FRef <- myPMdf[grep("F_FMSY", myPMdf[,1]),2]
+  maxVar <- myPMdf[grep("AAVY", myPMdf[,1]),2]
+  maxVarE <- myPMdf[grep("AAVE", myPMdf[,1]),2]
+  maxVarB <- myPMdf[grep("AAVB", myPMdf[,1]),2]
+  
+  if(length(BmsyRef) < 1) BmsyRef <- PMdf[grep("B_BMSY", PMdf[,1]),2]
+  if(length(B0Ref) < 1) B0Ref <- PMdf[grep("B_B0", PMdf[,1]),2]
+  if(length(FRef) < 1) FRef <- PMdf[grep("F_FMSY", PMdf[,1]),2]
+  if(length(maxVar) < 1) maxVar <- PMdf[grep("AAVY", PMdf[,1]),2]
+  if(length(maxVarE) < 1) maxVarE <- PMdf[grep("AAVE", PMdf[,1]),2]
+  if(length(maxVarB) < 1) maxVarB <- PMdf[grep("AAVB", PMdf[,1]),2]
+  
+  
+  if (length(BmsyRef)> 1 | length(B0Ref)> 1 | length(B0Ref)> 1
+    | length(maxVar) > 1 | length(maxVarE) > 1) 
+	stop("Repeated performance metrics")
+  if (maxVar < 1) maxVar <- maxVar * 100 # maximum variability in % 
+  if (maxVarE < 1) maxVarE <- maxVarE * 100 # maximum variability in %
+  
+  yrs <- (Pyears-lastYrs+1):Pyears 	# Years to summarize performance
+  ystart <- 1:lastYrs			 	# First 10 years
+  y1 <- yrs[1]:yrs[length(yrs)-1] 	# for calculating interannual variability
   y2 <- y1+1
  
-  # Output matrices 
-  B_BMSY 	<- array(NA, dim=c(nsim, nMPs))
+  # Satisficing matrices 
+  B_BMSY  <- array(NA, dim=c(nsim, nMPs))
   B_B0    <- array(NA, dim=c(nsim, nMPs))
   F_FMSY  <- array(NA, dim=c(nsim, nMPs))
   AAVY    <- array(NA, dim=c(nsim, nMPs))
-  Yield   <- array(NA, dim=c(nsim, nMPs))
-  AvgYield<- rep(NA, nMPs)
-  # Yield5  <- array(NA, dim=c(nsim, nMPs))
-
+  AAVE    <- array(NA, dim=c(nsim, nMPs))
+  VarYE   <- array(NA, dim=c(nsim, nMPs)) # variability in catch or effort
+    
+  # Maximizing
+  LTY <- rep(NA, nMPs)
+  STY <- rep(NA, nMPs)
+  
   # Calculate Stats  
+  print("Calculating probability of meeting performance metrics")
   for (mm in 1:nMPs) {
-    # sims where Bmsy > BmsyRef for all lastYrs 
+    cat(".")
+	flush.console()
+    # Statisicing - proportion of simulations above threshold 
 	B_BMSY[,mm] 	<- apply(MSEobj@B_BMSY[,mm,yrs] > BmsyRef, 1, prod, na.rm=TRUE) 
     B_B0[,mm] 		<- apply((MSEobj@B_BMSY[,mm,yrs] * MSEobj@OM$BMSY_B0 > B0Ref), 1, prod,na.rm=T)
     F_FMSY[,mm] 	<- apply(MSEobj@F_FMSY[,mm,yrs] < FRef, 1, prod, na.rm=TRUE)
+	
+	# Interannual variability in yield
+	MSEobj@C[(!is.finite(MSEobj@C[,,]))] <- 0 # if catch is NAN or NA, make it 0
+	
     aavy 			<- apply((((MSEobj@C[,mm,y1]-MSEobj@C[,mm,y2])/MSEobj@C[,mm,y2])^2)^0.5,1,mean,na.rm=T) 
     aavy[is.nan(aavy)] <- 1
     AAVY[,mm]		<- as.numeric(aavy<(maxVar/100))
-    Yield[,mm]		<- apply(MSEobj@C[,mm,yrs],1,mean,na.rm=TRUE)/RefYd
-    AvgYield[mm] 	<- round(mean(Yield[,mm], na.rm=TRUE)*100, 1)
-  }
+	# Interannual variability in effort (actually fishing mortality here) - need to change MSE object
+	aave 			<- apply((((MSEobj@FM[,mm,y1]-MSEobj@FM[,mm,y2])/MSEobj@FM[,mm,y2])^2)^0.5,1,mean,na.rm=T) 
+    aave[is.nan(aave)] <- 1
+    AAVE[,mm]		<- as.numeric(aave<(maxVarE/100))
+	
+	if (class(get(MSEobj@MPs[mm])) == "DLM_input") {
+	  aave 	<- apply((((MSEobj@FM[,mm,y1]-MSEobj@FM[,mm,y2])/MSEobj@FM[,mm,y2])^2)^0.5,1,mean,na.rm=T)
+	  VarYE[,mm]  <- as.numeric(aave<(maxVarB/100))
+	} else {
+	  aavy 	<- apply((((MSEobj@C[,mm,y1]-MSEobj@C[,mm,y2])/MSEobj@C[,mm,y2])^2)^0.5,1,mean,na.rm=T)
+	  aave[is.nan(aave)] <- 1
+	  aavy[is.nan(aavy)] <- 1
+	  VarYE[,mm]  <- as.numeric(aavy<(maxVarB/100))
+	}
 
-  Stats <- list(B_BMSY=B_BMSY, B_B0=B_B0, F_FMSY=F_FMSY, AAVY=AAVY,
-  Yield=Yield)
+	# Maximizing - average over simulations and years 
+	LTY[mm] <- round(mean(apply(MSEobj@C[,mm,yrs],1,mean,na.rm=TRUE)/RefYd)*100,1)
+	STY[mm] <- round(mean(apply(MSEobj@C[,mm,ystart],1,mean,na.rm=TRUE)/RefYd)*100,1)
+  }
+  cat("\n")
+  Stats <- list(B_BMSY=B_BMSY, B_B0=B_B0, F_FMSY=F_FMSY, AAVY=AAVY, AAVE=AAVE, AAVB=VarYE)
   
-  Names <- list(4)
+  Names <- list(6)
   Names[[1]] <- bquote(italic(B) > ~ .(BmsyRef) ~ italic(B[MSY]))
   Names[[2]] <- bquote(italic(B) > ~ .(B0Ref) ~ italic(B[0]))
   Names[[3]] <- bquote(italic(F) < ~ .(FRef) ~ italic(F[MSY]))
   Names[[4]] <- bquote(AAVY < ~ .(maxVar)* '%')
+  Names[[5]] <- bquote(AAVE < ~ .(maxVarE)* '%')
+  Names[[6]] <- bquote(AAVB < ~ .(maxVarB)* '%')
   
-  Ind <- match(PMs, names(Stats))
+  Ind <- match(myPMdf[,1], names(Stats))
   Legend <- NULL
   for (X in 1:length(Ind)) Legend <- append(Legend, as.expression(Names[[Ind[X]]]))
-
+	
   # individual probabilities
   inProbs <- lapply(lapply(Stats[Ind], colSums), "/" , nsim) 
   output <- matrix(unlist(inProbs), ncol = nMPs, byrow = TRUE) * 100 
   colnames(output) <- MPs 
   rownames(output) <- Names[Ind]
   plotout <- output[,order(output[1,])]
-  
+  linet <- 2 
+  Col <- "gray"
+  if (is.null(bcol)) bcol <- gray.colors(nrow(output))
+  if (length(bcol) != length(Ind)) warning("Colors are not same length as PMs")
   if (bplot) { # show barplots of individual probabilities
 	if (nMPs > maxmp) maxmp <- max(which(nMPs %% 1:maxmp==0))
 	nplots <- ceiling(nMPs/maxmp)
@@ -1303,13 +1353,17 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50,
     tempmat <- matrix(1:(Ncol*Nrow), nrow=Nrow, byrow=TRUE)	
     plotlist <- list()
 
-    par(mfrow=c(Nrow, Ncol), oma=c(0,5,3,0), mar=c(10,1,1,1))
+    par(mfrow=c(Nrow, Ncol), oma=c(0,5,5,0), mar=c(10,1,1,1))
     if (nplots == 1) {
       tt <- barplot(plotout, beside=TRUE, ylab="Probability",
     	las=3, ylim=c(0,100),cex.axis=1.5, cex.lab=2, las=2, 
-		cex.names=1.5,,xpd=NA)
-	  legend(x=tt[1], y=105, legend=Legend,bty="n", 
-		  cex=1.25, xpd=NA, fill=gray.colors(nrow(output)))
+		cex.names=1.5,xpd=NA, col=bcol)
+	  legend(x=tt[1], y=110, legend=Legend,bty="n", 
+		  cex=1.25, horiz=TRUE, xpd=NA, fill=bcol)
+      mtext(side=2, outer=TRUE, "Probability", line=3, cex=1.4)
+	  mtext(side=3, outer=TRUE, paste("Last", lastYrs, 
+	    "years of projection period"), line=3, cex=1.25)	
+      abline(h=PLim, lty=linet, col=Col)		
     } else {
 	  npplot <- min(ceiling(nMPs/nplots), maxmp)
       xx <- 1 
@@ -1318,38 +1372,46 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50,
 		splitdat <- plotout[,xx:xx2] 
 		if (X == 1) {
     	  tt <- barplot(splitdat, beside=TRUE, ylab="",
-    	  las=3, ylim=c(0,100), 
+    	  las=3, ylim=c(0,100), col=bcol,
     	  cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5, xpd=NA)
-		  legend(x=tt[1], y=140, legend=Legend,bty="n", 
-		  cex=1.25, xpd=NA, fill=gray.colors(nrow(output)))
+		  legend(x=tt[1], y=110, legend=Legend,bty="n", horiz=TRUE,
+		  cex=1.25, xpd=NA, fill=bcol)
+		  abline(h=PLim, lty=linet, col=Col)
 		} else {
     	  barplot(splitdat, beside=TRUE, ylab="", las=3, ylim=c(0,100), 
-		  cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5, axes=FALSE)
+		  cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5, axes=FALSE, col=bcol)
 		  if (X %in% tempmat[,1]) axis(side=2, label=TRUE, 
 		    cex.axis=1.5, cex.lab=2, las=2)
 		  if (!X %in% tempmat[,1]) axis(side=2, label=FALSE)
+		  abline(h=PLim, lty=linet, col=Col)
         }		
         xx <- xx2 + 1 
     	xx2 <- min(xx + npplot -1, nMPs)
 		mtext(side=2, outer=TRUE, "Probability", line=3, cex=1.4)
 		mtext(side=3, outer=TRUE, paste("Last", lastYrs, "years of projection period"),
-		line=1, cex=1.25)
+		line=3, cex=1.25)
       }
     }
   }
   # Overall performance relative to chosen PMs 
+  
   total <- Reduce("*", Stats[Ind]) # does each sim meet the performance criteria?
 
-  prob <- round(colSums(total)/nrow(total) * 100, 2) # probability of meeting PMs 
+  prob <- round(colSums(total)/nrow(total) * 100, 2) # probability of meeting PMs
   
+  yield <- switch(Yield, LTY=LTY, STY=STY)
+  ylb <- switch(Yield, LTY="Long-Term", STY="Short-Term")
+  ylb2 <- switch(Yield, LTY=paste(" (last", lastYrs, "years)"), 
+    STY=paste(" (first", lastYrs, "years)"))
+	
   if (tplot) {
     # trade-off plot of yield and prob of meeting PMs 
     x <- prob
-    y <- AvgYield
+    y <- yield
     labs <- MPs 
-    xlab <- "Probability of meeting PMs"
-    ylab <- "Average Yield"
-    par(mfrow=c(1,1), mar=c(5,5,2,1), oma=c(1,1,0,0))
+    xlab <- "Joint probability of meeting Performance Metrics"
+    ylab <- paste0("Average ", ylb, " Yield", ylb2)
+    par(mfrow=c(1,1), mar=c(5,5,2,1), oma=c(1,1,1,0))
     adjj<-c(0.9,1.1)
     XLim <- c(min(c(-10, min(x,na.rm=T)*adjj)), max(c(max(x,na.rm=T)*adjj, 110)))
 	if (!is.null(txlim)) XLim <- txlim
@@ -1377,7 +1439,7 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50,
       polygon(x=c(max(0, XLim[1]), PLim,  PLim, max(0, XLim[1])), y=c(0, 0, 100, 100), col=LeftCol, border=NA)
       polygon(x=c(PLim,  100, 100, PLim), y=c(0, 0, 100, 100), col=RightCol, border=NA)
     }
-    
+ 
     if(ShowPMs){
       temp <- 1 
       text(quantile(XLim,0.05), max(YLim)*1.05, "Performance Metrics", xpd=NA, pos=4, cex=1.2)
@@ -1391,7 +1453,7 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50,
     if(!ShowLabs) points(x,y, bg=coly, pch=Pch, cex=Cex, col="black" )
     if(ShowLabs) text(x,y,labs,font=2,col=coly,cex=1)
   }
-  mat <- cbind(prob, AvgYield)
+  mat <- cbind(prob, switch(Yield, LTY=LTY, STY=STY))
   rownames(mat) <- MPs
   colnames(mat) <- c("Prob", "Yield")
   
@@ -1402,7 +1464,195 @@ PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50,
   OutList <- list() 
   OutList$IndividProb <- t(plotout)
   OutList$Overall <- out 
-  # print(OutList)
-  # invisible(OutList)
-  OutList 
+ 
+  OutList 	
 }
+
+# PerfPlot <- function(MSEobj, PMs=c("B_BMSY", "F_FMSY", "AAVY"), PLim=50, 
+	# lastYrs=10, BmsyRef=0.5, B0Ref=0.2, FRef=1.25, maxVar=15, ShowCols=TRUE, 
+	# ShowLabs=TRUE, ShowPMs=TRUE, AvailMPs=NULL, bplot=TRUE, tplot=TRUE, 
+	# maxmp=12, txlim=NULL) {
+
+  # PMChoices <- c("B_BMSY", "B_B0", "F_FMSY", "AAVY")
+  # # if (length(PMs) != 3) {
+    # # message("Must choose 3 Performance metrics")
+	# # stop("Available choices are: ", paste(PMChoices, " "))
+  # # }	
+  # PMs <- match.arg(PMs, PMChoices, several.ok=TRUE)
+       
+  # if (maxVar < 1) maxVar <- maxVar * 100 # maximum variability in % 
+  # Nyears <- MSEobj@nyears
+  # Pyears <- MSEobj@proyears
+  # nMPs <- MSEobj@nMPs
+  # MPs <- MSEobj@MPs 
+  # nsim <- MSEobj@nsim
+  # RefYd <- MSEobj@OM$RefY
+  
+
+
+  # if (lastYrs <= 0 | lastYrs == FALSE | lastYrs == "all" | lastYrs == "All") 
+    # lastYrs <- Pyears - 1  
+
+  # yrs <- (Pyears-lastYrs+1):Pyears # Final years to summarize performance
+  # ystart <- 1:10 					# First 10 years
+  
+  # y1 <- yrs[1]:yrs[length(yrs)-1] # for calculating interannual variability
+  # y2 <- y1+1
+ 
+  # # Output matrices 
+  # B_BMSY  <- array(NA, dim=c(nsim, nMPs))
+  # B_B0    <- array(NA, dim=c(nsim, nMPs))
+  # F_FMSY  <- array(NA, dim=c(nsim, nMPs))
+  # AAVY    <- array(NA, dim=c(nsim, nMPs))
+  # AAVE    <- array(NA, dim=c(nsim, nMPs))
+  # LTY     <- array(NA, dim=c(nsim, nMPs))
+  # STY     <- array(NA, dim=c(nsim, nMPs))
+  # AVL     <- array(NA, dim=c(nsim, nMPs))
+  
+  # AvgYield<- rep(NA, nMPs)
+  
+
+  # # Calculate Stats  
+  # for (mm in 1:nMPs) {
+    # # sims where Bmsy > BmsyRef for all lastYrs 
+	# B_BMSY[,mm] 	<- apply(MSEobj@B_BMSY[,mm,yrs] > BmsyRef, 1, prod, na.rm=TRUE) 
+    # B_B0[,mm] 		<- apply((MSEobj@B_BMSY[,mm,yrs] * MSEobj@OM$BMSY_B0 > B0Ref), 1, prod,na.rm=T)
+    # F_FMSY[,mm] 	<- apply(MSEobj@F_FMSY[,mm,yrs] < FRef, 1, prod, na.rm=TRUE)
+    # aavy 			<- apply((((MSEobj@C[,mm,y1]-MSEobj@C[,mm,y2])/MSEobj@C[,mm,y2])^2)^0.5,1,mean,na.rm=T) 
+    # aavy[is.nan(aavy)] <- 1
+    # AAVY[,mm]		<- as.numeric(aavy<(maxVar/100))
+    # Yield[,mm]		<- apply(MSEobj@C[,mm,yrs],1,mean,na.rm=TRUE)/RefYd
+    # AvgYield[mm] 	<- round(mean(Yield[,mm], na.rm=TRUE)*100, 1)
+  # }
+
+  # Stats <- list(B_BMSY=B_BMSY, B_B0=B_B0, F_FMSY=F_FMSY, AAVY=AAVY,
+  # Yield=Yield)
+  
+  # Names <- list(4)
+  # Names[[1]] <- bquote(italic(B) > ~ .(BmsyRef) ~ italic(B[MSY]))
+  # Names[[2]] <- bquote(italic(B) > ~ .(B0Ref) ~ italic(B[0]))
+  # Names[[3]] <- bquote(italic(F) < ~ .(FRef) ~ italic(F[MSY]))
+  # Names[[4]] <- bquote(AAVY < ~ .(maxVar)* '%')
+  
+  # Ind <- match(PMs, names(Stats))
+  # Legend <- NULL
+  # for (X in 1:length(Ind)) Legend <- append(Legend, as.expression(Names[[Ind[X]]]))
+
+  # # individual probabilities
+  # inProbs <- lapply(lapply(Stats[Ind], colSums), "/" , nsim) 
+  # output <- matrix(unlist(inProbs), ncol = nMPs, byrow = TRUE) * 100 
+  # colnames(output) <- MPs 
+  # rownames(output) <- Names[Ind]
+  # plotout <- output[,order(output[1,])]
+  
+  # if (bplot) { # show barplots of individual probabilities
+	# if (nMPs > maxmp) maxmp <- max(which(nMPs %% 1:maxmp==0))
+	# nplots <- ceiling(nMPs/maxmp)
+    # Ncol <- ceiling(sqrt(nplots))
+    # Nrow <- ceiling(nplots/Ncol)
+    # tempmat <- matrix(1:(Ncol*Nrow), nrow=Nrow, byrow=TRUE)	
+    # plotlist <- list()
+
+    # par(mfrow=c(Nrow, Ncol), oma=c(0,5,3,0), mar=c(10,1,1,1))
+    # if (nplots == 1) {
+      # tt <- barplot(plotout, beside=TRUE, ylab="Probability",
+    	# las=3, ylim=c(0,100),cex.axis=1.5, cex.lab=2, las=2, 
+		# cex.names=1.5,,xpd=NA)
+	  # legend(x=tt[1], y=105, legend=Legend,bty="n", 
+		  # cex=1.25, xpd=NA, fill=gray.colors(nrow(output)))
+    # } else {
+	  # npplot <- min(ceiling(nMPs/nplots), maxmp)
+      # xx <- 1 
+      # xx2 <- npplot 
+      # for (X in 1:nplots) {
+		# splitdat <- plotout[,xx:xx2] 
+		# if (X == 1) {
+    	  # tt <- barplot(splitdat, beside=TRUE, ylab="",
+    	  # las=3, ylim=c(0,100), 
+    	  # cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5, xpd=NA)
+		  # legend(x=tt[1], y=140, legend=Legend,bty="n", 
+		  # cex=1.25, xpd=NA, fill=gray.colors(nrow(output)))
+		# } else {
+    	  # barplot(splitdat, beside=TRUE, ylab="", las=3, ylim=c(0,100), 
+		  # cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5, axes=FALSE)
+		  # if (X %in% tempmat[,1]) axis(side=2, label=TRUE, 
+		    # cex.axis=1.5, cex.lab=2, las=2)
+		  # if (!X %in% tempmat[,1]) axis(side=2, label=FALSE)
+        # }		
+        # xx <- xx2 + 1 
+    	# xx2 <- min(xx + npplot -1, nMPs)
+		# mtext(side=2, outer=TRUE, "Probability", line=3, cex=1.4)
+		# mtext(side=3, outer=TRUE, paste("Last", lastYrs, "years of projection period"),
+		# line=1, cex=1.25)
+      # }
+    # }
+  # }
+  # # Overall performance relative to chosen PMs 
+  # total <- Reduce("*", Stats[Ind]) # does each sim meet the performance criteria?
+
+  # prob <- round(colSums(total)/nrow(total) * 100, 2) # probability of meeting PMs 
+  
+  # if (tplot) {
+    # # trade-off plot of yield and prob of meeting PMs 
+    # x <- prob
+    # y <- AvgYield
+    # labs <- MPs 
+    # xlab <- "Probability of meeting PMs"
+    # ylab <- "Average Yield"
+    # par(mfrow=c(1,1), mar=c(5,5,2,1), oma=c(1,1,0,0))
+    # adjj<-c(0.9,1.1)
+    # XLim <- c(min(c(-10, min(x,na.rm=T)*adjj)), max(c(max(x,na.rm=T)*adjj, 110)))
+	# if (!is.null(txlim)) XLim <- txlim
+    # YLim <- c(min(c(-10, min(y,na.rm=T)*adjj)), max(c(max(y,na.rm=T)*adjj, 110)))
+    # # Which MPs meet minimum PMs 
+    # ind <- which(x >= PLim)
+    # coly <- rep("darkgray", length(labs)) 
+    # coly[ind] <- "black"   
+    # Pch <- rep(21, length(labs))
+    # coly[grep("FMSY", labs)]<-'black'
+    # Pch[grep("FMSY", labs)] <- 24
+    # if (!is.null(AvailMPs)) Pch[labs%in%AvailMPs] <- 21
+    # if (!is.null(AvailMPs)) coly[labs%in%AvailMPs & (x >= PLim)] <- "green"
+    
+    # plot(NA,xlim=XLim,ylim=YLim,xlab=xlab,ylab=ylab, bty="l", las=1, 
+    	# xaxs="i", yaxs="i", cex.lab=1.5, cex.axis=1.25)
+    # if (PLim > 0) abline(v=PLim,col="#99999940",lwd=2)
+    # Alpha <- 30
+    # # polygons 
+    # LeftCol <- rgb(red=255, green=0, blue=0, alpha=Alpha, names = NULL, 
+      # maxColorValue = 255)
+    # RightCol <- rgb(red=0, green=255, blue=0, alpha=Alpha, names = NULL, 
+      # maxColorValue = 255) 
+    # if(ShowCols) {
+      # polygon(x=c(max(0, XLim[1]), PLim,  PLim, max(0, XLim[1])), y=c(0, 0, 100, 100), col=LeftCol, border=NA)
+      # polygon(x=c(PLim,  100, 100, PLim), y=c(0, 0, 100, 100), col=RightCol, border=NA)
+    # }
+    
+    # if(ShowPMs){
+      # temp <- 1 
+      # text(quantile(XLim,0.05), max(YLim)*1.05, "Performance Metrics", xpd=NA, pos=4, cex=1.2)
+      # for (xx in 1:length(Ind)) {
+        # temp <- temp - 0.05
+        # text(quantile(XLim,0.05), max(YLim*temp)*1.05, Legend[xx], xpd=NA, pos=4)  
+      # }
+    # }
+
+    # Cex <- 1.5
+    # if(!ShowLabs) points(x,y, bg=coly, pch=Pch, cex=Cex, col="black" )
+    # if(ShowLabs) text(x,y,labs,font=2,col=coly,cex=1)
+  # }
+  # mat <- cbind(prob, AvgYield)
+  # rownames(mat) <- MPs
+  # colnames(mat) <- c("Prob", "Yield")
+  
+  # Dist <- NULL # calculate distance from corner
+  # for (X in 1:nrow(mat)) Dist[X] <- euc.dist(c(mat[X,1], mat[X,2]), c(100, 100))
+  # mat <- mat[order(Dist),]
+  # out <- data.frame(Prob=mat[,1], Yield=mat[,2], Name=rownames(mat))
+  # OutList <- list() 
+  # OutList$IndividProb <- t(plotout)
+  # OutList$Overall <- out 
+  # # print(OutList)
+  # # invisible(OutList)
+  # OutList 
+# }
