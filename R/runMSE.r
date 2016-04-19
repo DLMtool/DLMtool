@@ -162,7 +162,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   Selnyears <- length(OM@SelYears)
   # are selectivity parameters relative to size at maturity?
   chk <- class(OM@isRel)
-  if (length(OM@isRel) < 1) OM@isRel <- "false" 
+  if (length(OM@isRel) < 1) OM@isRel <- "true" 
   if (chk == "character") {
     chkRel <- tolower(OM@isRel)
     if (chkRel == "true" | OM@isRel == "1") multi <- lenM
