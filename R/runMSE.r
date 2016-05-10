@@ -387,8 +387,9 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   cond<-apply(CN,1:2,sum,na.rm=T)<1                                         # this is a fix for low sample sizes. If CN is zero across the board a single fish is caught in age class of model selectivity (dumb I know)
   fixind<-as.matrix(cbind(expand.grid(1:nsim,1:nyears),rep(floor(maxage/3),nyears))) # more fix
   CN[fixind[cond,]]<-1                                                      # puts a catch in the most vulnerable age class
-  for(i in 1:nsim)for(j in 1:nyears)CAA[i,j,]<-ceiling(-0.5+rmultinom(1,CAA_nsamp[i],CN[i,j,])*CAA_nsamp[i]/CAA_ESS[i]) # a multinomial observation model for catch-at-age data
-  
+  # for(i in 1:nsim)for(j in 1:nyears)CAA[i,j,]<-ceiling(-0.5+rmultinom(1,CAA_nsamp[i],CN[i,j,])*CAA_nsamp[i]/CAA_ESS[i]) # a multinomial observation model for catch-at-age data
+  for(i in 1:nsim)for(j in 1:nyears)CAA[i,j,]<-ceiling(-0.5+rmultinom(1,CAA_ESS[i],CN[i,j,])*CAA_nsamp[i]/CAA_ESS[i]) # a multinomial observation model for catch-at-age data
+   
   # Temporary fix til effdist simulator is fixed
   #for(i in 1:nsim)CAA[i,1,]<-CAA[i,2,]
   
@@ -404,7 +405,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   
   for(i in 1:nsim){
     for(j in 1:nyears){
-      tempCN<-rmultinom(1, size=CAL_ESS[i], prob=CN[i,j,])
+      tempCN <- ceiling(-0.5+rmultinom(1, size=CAL_ESS[i], prob=CN[i,j,])*CAL_nsamp[i]/CAL_ESS[i])
       #ages <- rep(1:maxage,tempCN)+runif(sum(tempCN),-0.5,0.5)          # sample expected age
       lens <- unlist(sapply(1:maxage, function (X) rnorm(tempCN[X],  Len_age[i,X,j], LatASD[i,X,j])))
       lens[lens > (max(Linfarray) + 2 * max(LatASD))|lens>max(CAL_bins)] <- max(Linfarray) + 2 * max(LatASD) # truncate at 2 sd 
@@ -770,13 +771,14 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
         CNtemp[fixind[cond,]]<-1                                                      # puts a catch in the most vulnerable age class
         
         CAA<-array(NA,dim=c(nsim,interval,maxage))                                  # Catch  at age array
-        for(i in 1:nsim)for(j in 1:interval)CAA[i,j,]<-ceiling(-0.5+rmultinom(1,CAA_nsamp[i],CNtemp[i,j,])*CAA_nsamp[i]/CAA_ESS[i]) # a multinomial observation model for catch-at-age data
+        # for(i in 1:nsim)for(j in 1:interval)CAA[i,j,]<-ceiling(-0.5+rmultinom(1,CAA_nsamp[i],CNtemp[i,j,])*CAA_nsamp[i]/CAA_ESS[i]) # a multinomial observation model for catch-at-age data
+	    for(i in 1:nsim)for(j in 1:interval)CAA[i,j,]<-ceiling(-0.5+rmultinom(1,CAA_ESS[i],CN[i,j,])*CAA_nsamp[i]/CAA_ESS[i]) # a multinomial observation model for catch-at-age data
         CAL <- array(NA,dim=c(nsim,interval,nCALbins))                                # the catch at length array
         CNtemp[is.na(CNtemp)]<-0
         for(i in 1:nsim){
           for(j in 1:interval){
             yy<-yind[j]
-            tempCN<-rmultinom(1, size=CAL_ESS[i], prob=CNtemp[i,j,])
+            tempCN <- ceiling(-0.5+rmultinom(1, size=CAL_ESS[i], prob=CN[i,j,])*CAL_nsamp[i]/CAL_ESS[i])
             #ages <- rep(1:maxage,tempCN)+runif(sum(tempCN),-0.5,0.5)          # sample expected age
             lens <- unlist(sapply(1:maxage, function (X) rnorm(tempCN[X],  Len_age[i,X,yy+nyears], LatASD[i,X,yy+nyears])))
             lens[lens > (max(Linfarray) + 2 * max(LatASD))|lens>max(CAL_bins)] <- max(Linfarray) + 2 * max(LatASD) # truncate at 2 sd 
