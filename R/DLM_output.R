@@ -1842,7 +1842,7 @@ MLne<-function(x,DLM_data,Linfc,Kc,ML_reps=100,MLtype="F"){
 	    }  
       }		
       mlen<-mean(mlen[(length(mlen)-2):length(mlen)], na.rm=TRUE)
-      Z2<-bheq(K=Kc[i],Linf=Linfc[i],Lc=Lc,Lbar=mlen)
+      Z2[i]<-bheq(K=Kc[i],Linf=Linfc[i],Lc=Lc,Lbar=mlen)
     }
   }
   if(MLtype=="F")return(Z2)
@@ -1926,7 +1926,6 @@ class(EDCAC)<-"DLM_output"
 
 AvC<-function(x,DLM_data,reps=100)rlnorm(reps,log(mean(DLM_data@Cat[x,],na.rm=T)),0.2)
 class(AvC)<-"DLM_output"
-
 
 LBSPR_ItTAC <- function(x, DLM_data, yrsmth=1,reps=reps) {
  dependencies="DLM_data@CAL, DLM_data@CAL_bins, DLM_data@vbLinf, DLM_data@vbK, DLM_data@Mort, LM_data@vbK, DLM_data@L50, DLM_data@L95, DLM_data@wlb" 
