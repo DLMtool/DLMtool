@@ -1057,7 +1057,7 @@ BK_ML<-function(x,DLM_data,reps=100){
   Linfc<-trlnorm(reps*10,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   Kc<-trlnorm(reps*10,DLM_data@vbK[x],DLM_data@CV_vbK[x])
   Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps*2,MLtype="F")
+  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps*2,MLtype="dep")
   FM<-Z-Mdb
   MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
   Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
@@ -1124,7 +1124,7 @@ Fratio_ML<-function(x,DLM_data,reps=100){
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
   Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps,MLtype="F")
+  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps,MLtype="dep")
   FM<-Z-Mdb
   Ac<-Cc/(1-exp(-FM))
   TAC<-Ac*trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x])*trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
@@ -1396,7 +1396,7 @@ YPR_ML<-function(x,DLM_data,reps=100){
   b<-DLM_data@wlb[x]
   MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
   Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
-  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps,MLtype="F")
+  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps,MLtype="dep")
   FM<-Z-Mdb
   Ac<-Cc/(1-exp(-FM))
   FMSY<-YPRopt(Linfc,Kc,t0c,Mdb,a,b,LFS,DLM_data@MaxAge,reps)
@@ -1490,7 +1490,7 @@ Fdem_ML<-function(x,DLM_data,reps=100){
   hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
   MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
   Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
-  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps,MLtype="F")
+  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps,MLtype="dep")
   FM<-Z-Mvec
   Ac<-Cc/(1-exp(-FM))
   FMSY<-getr(x,DLM_data,Mvec,Kc,Linfc,t0c,hvec,maxage=DLM_data@MaxAge,r_reps=reps)/2
@@ -1809,7 +1809,7 @@ YPRopt=function(Linfc,Kc,t0c,Mdb,a,b,LFS,maxage,reps=100) {
 }
 
 
-MLne<-function(x,DLM_data,Linfc,Kc,ML_reps=100,MLtype="F"){
+MLne<-function(x,DLM_data,Linfc,Kc,ML_reps=100,MLtype="dep"){
   year<-1:dim(DLM_data@CAL)[2]
   nlbin<-ncol(DLM_data@CAL[x,,])
   nlyr<-nrow(DLM_data@CAL[x,,])
@@ -1817,8 +1817,12 @@ MLne<-function(x,DLM_data,Linfc,Kc,ML_reps=100,MLtype="F"){
   nbreaks<-1
   Z<-matrix(NA,nrow=ML_reps,ncol=nbreaks+1)
   Z2<-rep(NA,ML_reps)
-  temp<-apply(DLM_data@CAL[x,,],2,sum)
-  Lc<-mlbin[which.max(temp)] # modal length  
+  # temp<-apply(DLM_data@CAL[x,,],2,sum)
+  # Lc<-mlbin[which.max(temp)] # modal length
+  
+  dd <- dim(DLM_data@CAL[x,,])
+  curLen <- DLM_data@CAL[x,dd[1],]
+  Lc <-  mlbin[which.max(curLen)]
   
   for(i in 1:ML_reps){
     mlen<-rep(NA,length(year))
@@ -1845,6 +1849,7 @@ MLne<-function(x,DLM_data,Linfc,Kc,ML_reps=100,MLtype="F"){
       Z2[i]<-bheq(K=Kc[i],Linf=Linfc[i],Lc=Lc,Lbar=mlen)
     }
   }
+  Z <- Z[,ncol(Z)] # last estimate of Z? Z needs to be vector reps long 
   if(MLtype=="F")return(Z2)
   if(MLtype=="dep")return(Z)
 }
