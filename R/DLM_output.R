@@ -1823,6 +1823,8 @@ MLne<-function(x,DLM_data,Linfc,Kc,ML_reps=100,MLtype="dep"){
   dd <- dim(DLM_data@CAL[x,,])
   curLen <- DLM_data@CAL[x,dd[1],]
   Lc <-  mlbin[which.max(curLen)]
+  # Lc <-  DLM_data@LFS[,x] 
+  # Lc <- Lc[length(Lc)]
   
   for(i in 1:ML_reps){
     mlen<-rep(NA,length(year))
