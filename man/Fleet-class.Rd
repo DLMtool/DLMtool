@@ -34,6 +34,7 @@ Objects can be created by calls of the form \code{new("Fleet", OM)}.
     \item{\code{VmaxUpper}:}{Optional vector of values of length SelYears, specifiying upper limits of Vmaxlen (use \code{ChooseSelect} function to set these)}
     \item{\code{qinc}:}{Average percentage change in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls)}
     \item{\code{qcv}:}{Inter-annual variability in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls)}
+    \item{\code{isRel}:}{Are the selectivity parameters relative to size-of-maturity? TRUE or FALSE}
   }
 }
 \section{Methods}{

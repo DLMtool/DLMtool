@@ -45,9 +45,9 @@ setClass("DLM_data", representation(Name = "character", Year = "vector",
     Units = "character", Ref = "numeric", Ref_type = "character", 
     Log = "list", params = "list", PosMPs = "vector", MPs = "vector", 
     OM = "data.frame", Obs = "data.frame", TAC = "array", TACbias = "array", 
-    Sense = "array", CAL_bins = "numeric", CAL = "array", MPrec = "vector", 
-    ML = "array", Lbar = "array", Lc = "array", LHYear = "numeric",
-	Misc = "list")) 
+    Sense = "array", CAL_bins = "numeric", CAL = "array", MPrec = "vector",
+    MPeff = "vector", ML = "array", Lbar = "array", Lc = "array", 
+	LHYear = "numeric", Misc = "list")) 
 
 # initialize DLM_data
 setMethod("initialize", "DLM_data", function(.Object,stock="nada"){
@@ -112,7 +112,8 @@ setMethod("initialize", "DLM_data", function(.Object,stock="nada"){
     .Object@CV_steep<-as.numeric(dat[match("CV Steepness", dname),1])
     .Object@MaxAge<-as.numeric(dat[match("Maximum age", dname),1])
     .Object@MPrec<-as.numeric(dat[match("MPrec", dname),1])
-    
+	.Object@MPeff<-as.numeric(dat[match("MPeff", dname),1])
+	
     if(length(grep("CAL",dname))>1){
       CAL_bins<-as.numeric(dat[match("CAL_bins",dname),dat[match("CAL_bins",dname),]!=""])
       nCAL<-length(CAL_bins)-1
@@ -133,8 +134,8 @@ setMethod("initialize", "DLM_data", function(.Object,stock="nada"){
     
     .Object@LHYear<-as.numeric(dat[match("LHYear",dname),1])
     .Object@Units<-dat[match("Units", dname),1]
-    .Object@Ref<-as.numeric(dat[match("Reference TAC",dname),1])
-    .Object@Ref_type<-dat[match("Reference TAC type",dname),1]
+    .Object@Ref<-as.numeric(dat[match("Reference OFL",dname),1])
+    .Object@Ref_type<-dat[match("Reference OFL type",dname),1]
     .Object@Log[[1]]<-paste("Created:", Sys.time())
     .Object@params<-new('list')
     .Object@OM<-data.frame(NA)
@@ -202,7 +203,8 @@ setMethod("initialize", "Stock", function(.Object,file=NA){
 
   if (!is.na(file)) {
     if (file.exists(file)) {
-      dat <- read.csv(file,header=F,colClasses="character") # read 1st sheet
+	  Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
+      dat <- read.csv(file,header=F,colClasses="character", col.names=paste0("V", 1:Ncol)) # read 1st sheet
       dname<-dat[,1]
       dat<-dat[,2:ncol(dat)]
       
@@ -249,12 +251,13 @@ setClass("Fleet",slots=c(Name="character",nyears="numeric", Spat_targ="numeric",
   EffYears="numeric", EffLower="numeric", EffUpper="numeric",
   SelYears="numeric", AbsSelYears="numeric", L5="numeric", LFS="numeric",
   Vmaxlen="numeric", L5Lower="numeric", L5Upper="numeric", LFSLower="numeric",
-  LFSUpper="numeric",  VmaxLower="numeric", VmaxUpper="numeric"))
+  LFSUpper="numeric",  VmaxLower="numeric", VmaxUpper="numeric", isRel="character"))
 # initialize Fleet 
 setMethod("initialize", "Fleet", function(.Object,file=NA){
   if (!is.na(file)) {
     if (file.exists(file)) {
-      dat <- read.csv(file,header=F,colClasses="character") # read 1st sheet
+	  Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
+      dat <- read.csv(file,header=F,colClasses="character", col.names=paste0("V", 1:Ncol)) # read 1st sheet
       dname<-dat[,1]
       dat<-dat[,2:ncol(dat)]
       
@@ -302,14 +305,14 @@ setMethod("initialize", "Fleet", function(.Object,file=NA){
       .Object@LFS <- as.numeric(dat[match("LFS",dname),1:2])
       .Object@Vmaxlen <-as.numeric(dat[match("Vmaxlen",dname),1:2])
 	  
+	  .Object@isRel <- dat[match("isRel",dname),1] # Are selecivity parameters relative to maturity?
+	  if(NAor0(.Object@isRel)).Object@isRel <- "TRUE"
     } else {
 	  message("File doesn't exist")
 	}
-   }	
- 	
+   }		
   .Object
 })
-
 
 # Create Observation class 
 setClass("Observation",representation(Name="character",LenMcv="numeric",
@@ -326,7 +329,8 @@ setClass("Observation",representation(Name="character",LenMcv="numeric",
 setMethod("initialize", "Observation", function(.Object,file=NA){
   if (!is.na(file)) {
     if (file.exists(file)) {
-      dat <- read.csv(file,header=F,colClasses="character") # read 1st sheet
+	  Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
+      dat <- read.csv(file,header=F,colClasses="character", col.names=paste0("V", 1:Ncol)) # read 1st sheet
       dname<-dat[,1]
       dat<-dat[,2:ncol(dat)]
       
@@ -383,7 +387,7 @@ setClass("OM",representation(Name="character",nyears="numeric",maxage="numeric",
   L50="numeric", L50_95="numeric", SelYears="numeric", AbsSelYears="numeric",
   L5="numeric", LFS="numeric",  Vmaxlen="numeric", 
   L5Lower="numeric", L5Upper="numeric", LFSLower="numeric",
-  LFSUpper="numeric",  VmaxLower="numeric", VmaxUpper="numeric",
+  LFSUpper="numeric",  VmaxLower="numeric", VmaxUpper="numeric", isRel="character",
   beta="numeric", 
   Spat_targ="numeric", Fsd="numeric", Period="numeric", Amplitude="numeric",
   EffYears="numeric", EffLower="numeric", EffUpper="numeric", 
@@ -465,7 +469,8 @@ setClass("DLM_fease",representation(Name="character",Case="character",Catch="num
 setMethod("initialize", "DLM_fease", function(.Object,file="nada",ncases=1){
   # run an error check here
   if(file.exists(file)){
-    dat <- read.csv(file,header=F,colClasses="character") # read 1st sheet
+	Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
+    dat <- read.csv(file,header=F,colClasses="character", col.names=paste0("V", 1:Ncol)) # read 1st sheet
     nr<-nrow(dat)
     ncases=ncol(dat)-1
     dname<-dat[,1]

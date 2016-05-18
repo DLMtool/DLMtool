@@ -14,7 +14,8 @@ Depends:
     snowfall,
     boot,
     MASS,
-    parallel
+    parallel,
+	abind
 LazyData: yes
 LazyLoad: yes
 VignetteBuilder: knitr
@@ -23,6 +24,7 @@ Suggests:
     rmarkdown
 NeedsCompilation: no
 Packaged: 2015-11-13 23:33:05 UTC; Tom Carruthers
-RoxygenNote: 5.0.0
-LinkingTo: Rcpp
 Imports: Rcpp
+LinkingTo: Rcpp
+
+

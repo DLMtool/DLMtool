@@ -28,12 +28,17 @@ export(
     "DCAC_ML",
     "DCAC4010",
     "DD",
+	"DDe",
+    "DDes",
+	"DDe75",
     "DD4010",
     "DepF",
     "DLMDataDir",
     "DOM",
 	"DoOpt",
     "DynF",
+	"DTe40",
+    "DTe50",
     "EDCAC",
     "Fadapt",
     "Fdem",
@@ -60,7 +65,10 @@ export(
     "Itarget4",
     "IT5",
     "IT10",
+	"ITe5",
+	"ITe10",
     "ITM",
+	"joinMSE",
 	"KalmanFilter",
     "L2A",
 	"LBSPRSim",
@@ -72,6 +80,7 @@ export(
     "LstepCC4",
     "Ltarget1",
     "Ltarget4",
+	"makePerf",
     "matlenlim",
 	"matlenlim2",
     "MCD",
@@ -83,6 +92,7 @@ export(
     "NOAA_plot",
 	"OptFun",
     "plotOFL",
+	#"PerfPlot",
 	"SetRecruitCycle",
     "SPmod",
     "SPslope",
@@ -100,6 +110,7 @@ export(
     "SBT1",
     "SBT2",
     "Sense",
+	"slotlim",
     "SPMSY",
     "SPSRA",
     "SPSRA_ML",
@@ -111,12 +122,24 @@ export(
     "Pplot",
     "Kplot",
     "VOI",
+	"VOI2",
     "YPR",
     "YPR_CC",
     "YPR_ML",
+	"wormplot",
     "CSRA",
     "CSRAfunc",
-    "getAFC"
+    "getAFC",
+	"wormplot",
+	#"Fease_xl",
+	#"OM_xl",
+	#"writeCSV",
+	"LstepCE1",
+	"LstepCE2",
+	"LtargetE1",
+	"LtargetE4",
+	"ItargetE1",
+	"ItargetE4"
 )
 exportClasses(
     "DLM_data",
@@ -131,7 +154,8 @@ import(
     "boot",
     "snowfall",
     "parallel",
-    "methods"
+    "methods",
+	"abind"
 )
 importFrom("grDevices", "col2rgb", "rainbow", "rgb", "xy.coords")
 importFrom("graphics", "abline", "hist", "layout", "legend", "lines",
@@ -142,5 +166,10 @@ importFrom("stats", "coef", "density", "dlnorm", "dnorm", "lm",
                "qlnorm", "quantile", "rbeta", "rlnorm", "rmultinom",
                "rnorm", "runif", "sd", "uniroot", "approx", "dbeta", "nlm", "pnorm")
 importFrom("utils", "flush.console", "read.csv")
-importFrom("Rcpp", "sourceCpp")
+importFrom("abind", "abind")
+
 useDynLib(DLMtool)
+exportPattern("^[[:alpha:]]+")
+importFrom("Rcpp", "sourceCpp")
+
+

@@ -46,6 +46,8 @@ trlnorm<-function(reps,mu,cv) {
 }
 
 
+tdlnorm<-function(x,mu,cv) return(dlnorm(x,mconv(mu,mu*cv),sdconv(mu,mu*cv)))
+
 condmet<-function(vec)TRUE%in%vec
 
 sampy<-function(x) sample(x,1,prob=!is.na(x))
@@ -151,7 +153,13 @@ FMSYopt<-function(lnF,Mc,hc,Mac,Wac,R0c,Vc,maxage,nyears,proyears,Spat_targc,mov
   if(Opt){
     return(-CBc)
   }else{
-    return(c(CBc,-log(1-(CBc/(sum(VBiomass)+CBc))),sum(SSB)/sum(SSB0)))
+    return(c(
+		MSY=CBc,
+		FMSY=-log(1-(CBc/(sum(VBiomass)+CBc))),
+		SSB=sum(SSB),
+		SSB_SSB0=sum(SSB)/sum(SSB0),
+		B = sum(N * Wac),
+		B_B0 = sum(N * Wac)/B0))
   }
 }
 
@@ -416,27 +424,40 @@ FitSelect <- function(Pars, V, Linf, Lens) {
 
 
 # BlankSelPlot
-BlankSelPlot <- function(Stock=NULL, Yr=NULL, N=NULL) {
-  Max <- 3 
-  AxCex <- 1.3
-  By <- 0.05 
-  par(mfrow=c(1,1), mai=c(2, 1, .5, .3), oma=c(1,1,1,1))
-  plot(c(0,3), c(0,1), type="n", xlab="", ylab="", axes=FALSE)
-  mtext(side=2, line=3, "Selectivity", cex=AxCex)
-  axis(side=2)
-  Xax <- seq(from=0, to=Max-By, by=2*By)
-  axis(side=1, at=Xax)
-  axis(side=1, at=c(2, Max), labels=c("", "Lmax"), xpd=NA)
-  mtext(side=1, line=3.5, "Relative Length", cex=AxCex)
-  axis(side=1, at=1, line=1.5, labels="L50")
-  if (!is.null(Stock) & class(Stock) == "Stock") {
-    L50 <- mean(Stock@L50) # mean length at maturity
-    MatAx <- L50 * Xax
-    axis(side=1, line=5.5, at=Xax, labels=MatAx)
-    axis(side=1, line=5.5, at=c(2, Max), labels=c("", "Lmax"), xpd=NA)
-    mtext(side=1, line=8.5, "Approx. Length", cex=AxCex)
-    axis(side=1, at=1, line=6.5, labels="Mean L50")
-  } 
+BlankSelPlot <- function(Stock=NULL, Yr=NULL, N=NULL, isRel) {
+  if (isRel) {
+    Max <- 3 
+    AxCex <- 1.3
+    By <- 0.05 
+    par(mfrow=c(1,1), mai=c(2, 1, .5, .3), oma=c(1,1,1,1))
+    plot(c(0,3), c(0,1), type="n", xlab="", ylab="", axes=FALSE)
+    mtext(side=2, line=3, "Selectivity", cex=AxCex)
+    axis(side=2)
+    Xax <- seq(from=0, to=Max-By, by=2*By)
+    axis(side=1, at=Xax)
+    axis(side=1, at=c(2, Max), labels=c("", "Lmax"), xpd=NA)
+    mtext(side=1, line=3.5, "Relative Length", cex=AxCex)
+    axis(side=1, at=1, line=1.5, labels="L50")
+    if (!is.null(Stock) & class(Stock) == "Stock") {
+      L50 <- mean(Stock@L50) # mean length at maturity
+      MatAx <- L50 * Xax
+      axis(side=1, line=5.5, at=Xax, labels=MatAx)
+      axis(side=1, line=5.5, at=c(2, Max), labels=c("", "Lmax"), xpd=NA)
+      mtext(side=1, line=8.5, "Approx. Length", cex=AxCex)
+      axis(side=1, at=1, line=6.5, labels="Mean L50")
+    }
+  } else {
+    Max <- mean(Stock@Linf)
+    AxCex <- 1.3
+    By <- 2.5 
+    par(mfrow=c(1,1), mai=c(2, 1, .5, .3), oma=c(1,1,1,1))
+    plot(c(0,Max), c(0,1), type="n", xlab="", ylab="", axes=FALSE)
+    mtext(side=2, line=3, "Selectivity", cex=AxCex)
+    axis(side=2)
+    Xax <- seq(from=0, to=Max, by=2*By)
+    axis(side=1, at=Xax, labels=Xax)
+    mtext(side=1, line=3.5, "Length", cex=AxCex)
+  }  
   if (N == 1) {
     title(paste("Choose selectivity points for Year", Yr, "(First Year)"))
   } else {
@@ -444,34 +465,65 @@ BlankSelPlot <- function(Stock=NULL, Yr=NULL, N=NULL) {
   }	
 }
 # Choose L5 
-ChooseL5 <- function() {
-  By <- 0.05
-  Xs <-seq(from=0, to=1.5, by=By)
-  Ys <- rep(0.05, length(Xs))
-  points(Xs, Ys, col="gray", cex=0.5)
-  text(0.5, 0.2, "Choose two points for L5")
-  L5out <- identifyPch(x=Xs, y=Ys, tolerance=0.1, n=2)
+ChooseL5 <- function(Fleet, Stock, isRel) {
+  if (isRel) {
+    By <- 0.05
+    Xs <-seq(from=0, to=1.5, by=By)
+    Ys <- rep(0.05, length(Xs))
+    points(Xs, Ys, col="gray", cex=0.5)
+    text(0.5, 0.2, "Choose two points for L5")
+    L5out <- identifyPch(x=Xs, y=Ys, tolerance=0.1, n=2)
+  } else {
+    By <- 2.5
+    Xs <- seq(from=0, to=max(Stock@L50)*1.5, by=By)
+    Ys <- rep(0.05, length(Xs))
+    points(Xs, Ys, col="gray", cex=0.5)
+    text(Xs[5], 0.2, "Choose two points for L5", pos=4)
+    L5out <- identifyPch(x=Xs, y=Ys, tolerance=0.1, n=2)  
+  }
   L5out
 }
+
 # Choose LFS 
-ChooseLFS <- function(L5out) {
-  Max <- 3
-  By <- 0.05
-  Xs <-seq(from=max(L5out[,1]), to=Max, by=By)
-  Ys <- rep(1, length(Xs))
-  points(Xs, Ys, col="gray", cex=0.5)
-  text(1.5, 0.5, "Choose two points for LFS")
-  LFSout <- identifyPch(x=Xs, y=Ys, tolerance=0.1, n=2)
+ChooseLFS <- function(L5out, Fleet, Stock, isRel) {
+  if (isRel) {
+    Max <- 3
+    By <- 0.05
+    Xs <-seq(from=max(L5out[,1]), to=Max, by=By)
+    Ys <- rep(1, length(Xs))
+    points(Xs, Ys, col="gray", cex=0.5)
+    text(1.5, 0.5, "Choose two points for LFS", pos=4)
+    LFSout <- identifyPch(x=Xs, y=Ys, tolerance=0.1, n=2)
+  } else {
+    Max <- 3
+    By <- 2.5
+    Xs <-seq(from=max(L5out[,1]), to=max(Stock@L50)*2, by=By)
+    Ys <- rep(1, length(Xs))
+    points(Xs, Ys, col="gray", cex=0.5)
+    text(Xs[5], 0.5, "Choose two points for LFS", pos=4)
+    LFSout <- identifyPch(x=Xs, y=Ys, tolerance=0.1, n=2)  
+  }
   LFSout
 }
+
 # Choose Vmaxlen
-ChooseVmaxlen <- function(L5out) {
-  Max <- 3 
-  Ys <- seq(from=0, to=1, by=0.05) 
-  Xs <- rep(Max, length(Ys))
-  points(Xs, Ys, col="gray", cex=0.5)
-  text(2, 0.8, "Choose two points for selectivity\n at maximum length")
-  Vmaxout <- identifyPch(x=Xs, y=Ys, tolerance=0.1, n=2)
+ChooseVmaxlen <- function(Fleet, Stock, isRel) {
+  if (isRel) {
+    Max <- 3 
+    Ys <- seq(from=0, to=1, by=0.05) 
+    Xs <- rep(Max, length(Ys))
+    points(Xs, Ys, col="gray", cex=0.5)
+    text(2, 0.8, "Choose two points for selectivity\n at maximum length")
+    Vmaxout <- identifyPch(x=Xs, y=Ys, tolerance=0.1, n=2)
+  } else {
+    Max <- mean(Stock@Linf)
+	By <- 2.5 
+    Ys <- seq(from=0, to=1, by=0.05) 
+    Xs <- rep(Max, length(Ys))
+    points(Xs, Ys, col="gray", cex=0.5)
+    text(Xs[1], 0.8, "Choose two points for selectivity\n at maximum length", pos=2)
+    Vmaxout <- identifyPch(x=Xs, y=Ys, tolerance=0.1, n=2)
+  }
   Vmaxout
 }
 	
