@@ -203,7 +203,8 @@ setMethod("initialize", "Stock", function(.Object,file=NA){
 
   if (!is.na(file)) {
     if (file.exists(file)) {
-      dat <- read.csv(file,header=F,colClasses="character") # read 1st sheet
+	  Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
+      dat <- read.csv(file,header=F,colClasses="character", col.names=paste0("V", 1:Ncol)) # read 1st sheet
       dname<-dat[,1]
       dat<-dat[,2:ncol(dat)]
       
@@ -255,7 +256,8 @@ setClass("Fleet",slots=c(Name="character",nyears="numeric", Spat_targ="numeric",
 setMethod("initialize", "Fleet", function(.Object,file=NA){
   if (!is.na(file)) {
     if (file.exists(file)) {
-      dat <- read.csv(file,header=F,colClasses="character") # read 1st sheet
+	  Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
+      dat <- read.csv(file,header=F,colClasses="character", col.names=paste0("V", 1:Ncol)) # read 1st sheet
       dname<-dat[,1]
       dat<-dat[,2:ncol(dat)]
       
@@ -327,7 +329,8 @@ setClass("Observation",representation(Name="character",LenMcv="numeric",
 setMethod("initialize", "Observation", function(.Object,file=NA){
   if (!is.na(file)) {
     if (file.exists(file)) {
-      dat <- read.csv(file,header=F,colClasses="character") # read 1st sheet
+	  Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
+      dat <- read.csv(file,header=F,colClasses="character", col.names=paste0("V", 1:Ncol)) # read 1st sheet
       dname<-dat[,1]
       dat<-dat[,2:ncol(dat)]
       
@@ -466,7 +469,8 @@ setClass("DLM_fease",representation(Name="character",Case="character",Catch="num
 setMethod("initialize", "DLM_fease", function(.Object,file="nada",ncases=1){
   # run an error check here
   if(file.exists(file)){
-    dat <- read.csv(file,header=F,colClasses="character") # read 1st sheet
+	Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
+    dat <- read.csv(file,header=F,colClasses="character", col.names=paste0("V", 1:Ncol)) # read 1st sheet
     nr<-nrow(dat)
     ncases=ncol(dat)-1
     dname<-dat[,1]
