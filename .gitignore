@@ -1,7 +1,6 @@
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
-
 # Folder config file
 Desktop.ini
 # Recycle Bin used on file shares
@@ -35,7 +34,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 .Rproj.user
-.Rhistory
+*.Rhistory
 .Rbuildignore
 .Rproj.user/1427710/pcs/files-pane.pper
 .Rproj.user/1427710/pcs/windowlayoutstate.pper

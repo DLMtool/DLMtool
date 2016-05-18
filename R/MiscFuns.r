@@ -87,7 +87,7 @@ Fease<-function(feaseobj,outy="table"){
     for(m in 1:nMPs){
       brec<-unlist(strsplit(req[m,2],", "))
       brec<-brec[grep("CV_",brec,invert=T)] #remove CV dependencies (we think we can guess these...)
-      brec<-brec[brec!="Year"&brec!="MaxAge"&brec!="FMSY_M"&brec!="BMSY_B0"&brec!="t"&brec!="OM"&brec!="MPrec"&brec!="CAL_bins"]
+      brec<-brec[brec!="Year"&brec!="MaxAge"&brec!="FMSY_M"&brec!="BMSY_B0"&brec!="t"&brec!="OM"&brec!="MPrec"&brec!="CAL_bins" &brec!="MPeff" &brec !="LHYear"]
       nr<-length(brec) 
       if(nr==0){
         gridy[m,i]<-"Yes"
@@ -371,7 +371,18 @@ ChooseEffort <- function(FleetObj, Years=NULL) {
 
 # Sketch Historical Selectivity Patterns ---------------------------------------
 ChooseSelect <- function(Fleet, Stock=NULL, FstYr=NULL, SelYears=NULL) {
-  
+  chk <- class(Fleet@isRel)
+  if (chk == "character") {
+    chkrel <- tolower(Fleet@isRel)
+    if (chkrel == "true" | Fleet@isRel == "1") isRel <- TRUE
+	if (chkrel == "false" | Fleet@isRel == "0") isRel <- FALSE
+  }
+  if (chk == "numeric") {
+    if (Fleet@isRel == 1) isRel <- TRUE
+	if (Fleet@isRel == 0) isRel <- FALSE 
+  }
+
+  if ((!isRel) & is.null(Stock)) stop("Require Stock object")
   LastYr <- as.numeric(format(Sys.Date(), format="%Y"))
   if (is.null(FstYr)) {
     message("*****************")
@@ -416,18 +427,26 @@ ChooseSelect <- function(Fleet, Stock=NULL, FstYr=NULL, SelYears=NULL) {
   message("Select selectivity points on plot")
   flush.console()
   for (N in 1:Selnyears) {
-    BlankSelPlot(Stock=Stock, Yr=SelYears[N], N=N)
-    L5Out <- ChooseL5()
+    BlankSelPlot(Stock=Stock, Yr=SelYears[N], N=N, isRel=isRel)
+    L5Out <- ChooseL5(Fleet, Stock, isRel)
     tempL5[N,] <- sort(L5Out[,1])
-    LFSout <- ChooseLFS(L5Out)
+    LFSout <- ChooseLFS(L5Out, Fleet, Stock, isRel)
     tempLFS[N,] <- sort(LFSout[,1])
-    Vmaxout <- ChooseVmaxlen()
+    Vmaxout <- ChooseVmaxlen(Fleet, Stock, isRel)
     tempmaxlen[N,] <- sort(Vmaxout[,2])
-    polygon(x=c(0, max(tempL5[N,]), max(tempLFS[N,]), 3, 
-     rev(c(0, min(tempL5[N,]), min(tempLFS[N,]), 3))),
-	 y= c(0, 0.05, 1, min(tempmaxlen[N,]),
-	 rev(c(0, 0.05, 1, max(tempmaxlen[N,])))), col="grey")
-    par(ask=TRUE)
+	if (isRel) {
+      polygon(x=c(0, max(tempL5[N,]), max(tempLFS[N,]), 3, 
+       rev(c(0, min(tempL5[N,]), min(tempLFS[N,]), 3))),
+	   y= c(0, 0.05, 1, min(tempmaxlen[N,]),
+	   rev(c(0, 0.05, 1, max(tempmaxlen[N,])))), col="grey")
+      par(ask=TRUE)
+	} else {
+      polygon(x=c(0, max(tempL5[N,]), max(tempLFS[N,]), mean(Stock@Linf), 
+       rev(c(0, min(tempL5[N,]), min(tempLFS[N,]), mean(Stock@Linf)))),
+	   y= c(0, 0.05, 1, min(tempmaxlen[N,]),
+	   rev(c(0, 0.05, 1, max(tempmaxlen[N,])))), col="grey")
+      par(ask=TRUE)	
+	}
   }	
   par(set.par)
   # CheckSelect(Fleet, Stock)
@@ -765,3 +784,115 @@ Input <- function(DLM_data, MPs=NA, reps=100, timelimit=10, CheckMPs=TRUE) {
   Out 
 
 }
+
+# Take an OM object and convert it into a almost pefect OM with no 
+# observation error and very little process error 
+makePerf <- function(OMin, except=NULL) {
+    nms <- slotNames(OMin)
+	# exceptions 
+	if (is.null(except)) except <- "EVERYTHING"
+	exclude <- unique(grep(paste(except,collapse="|"), nms, value=FALSE))
+	
+	vars <- c("grad", "cv", "sd")
+	ind <- unique(grep(paste(vars,collapse="|"), nms, value=FALSE))
+	ind <- ind[(!(nms[ind] %in% exclude ))]
+	for (X in seq_along(ind)) {
+	  n <- length(slot(OMin, nms[ind[X]]))
+	  slot(OMin, nms[ind[X]]) <- rep(0, n)
+	}
+
+	if (!("Cobs" %in% exclude)) OMin@Cobs <- c(0,0)
+	if (!("Perr" %in% exclude)) OMin@Perr <- c(0,0)
+	if (!("Iobs" %in% exclude)) OMin@Iobs <- c(0,0)
+	if (!("AC" %in% exclude)) OMin@AC <- c(0, 0)
+	if (!("Btbias" %in% exclude)) OMin@Btbias <- c(1,1)
+	if (!("CAA_ESS" %in% exclude)) OMin@CAA_ESS <- c(1000, 1000)
+	if (!("CAA_nsamp" %in% exclude)) OMin@CAA_nsamp <- c(2000, 2000)
+	if (!("CAL_ESS" %in% exclude)) OMin@CAL_ESS <- c(1000, 1000)
+	if (!("CAL_nsamp" %in% exclude)) OMin@CAL_nsamp <- c(2000, 2000)
+	if (!("beta" %in% exclude)) OMin@beta <- c(1,1)
+	return(OMin)
+}
+
+
+# # Still to add Help Manual for these 
+# OM_xl <- function(fname, stkname, fpath="", saveCSV=FALSE) {
+  # library(readxl)
+  # infile <- paste0(fpath, fname)	# full path and name 
+  # shtname <- excel_sheets(infile) # names of the sheets 
+  # # Stock 
+  # stock <- read_excel(infile, sheet=grep(paste0(stkname, "Stock"), shtname),
+			# col_names=FALSE)
+  # tmpfile <- paste0(fpath, stkname, "Stock.csv")
+  # if (file.exists(tmpfile)) unlink(tmpfile) 
+  # writeCSV(fpath, stkname, inobj=stock, tmpfile, objtype="Stock")
+  # tmpstock <- new("Stock", tmpfile)
+  # if (!saveCSV) unlink(tmpfile)
+
+  # # Fleet 
+  # fleet <- read_excel(infile, sheet=grep(paste0(stkname, "Fleet"), shtname),
+			# col_names=FALSE)			
+  # tmpfile <- paste0(fpath, stkname, "Fleet.csv")
+  # if (file.exists(tmpfile)) unlink(tmpfile) 
+  # writeCSV(fpath, stkname, inobj=fleet, tmpfile, objtype="Fleet")
+  # tmpfleet <- new("Fleet", tmpfile)
+  # if (!saveCSV) unlink(tmpfile)  
+
+  # # Observation 
+  # index <- which(pmatch(shtname, paste0(stkname, "Observation")) == 1)
+  # if (length(index) > 1) stop("More than one match")
+  # obs <- read_excel(infile, sheet=index, col_names=FALSE)
+  # tmpfile <- paste0(fpath, stkname, "Observation.csv")
+  # if (file.exists(tmpfile)) unlink(tmpfile) 
+  # writeCSV(fpath, stkname, inobj=obs, tmpfile, objtype="Observation")
+  # tmpobs <- new("Observation", tmpfile)
+  # if (!saveCSV) unlink(tmpfile)  
+  
+  # # Operating Model 
+  # OM <- new("OM",  Stock=tmpstock,  Fleet=tmpfleet,  Observation=tmpobs)
+  # OM 
+# }
+
+# Fease_xl <- function(fname, stkname, fpath="", saveCSV=FALSE) {
+  # library(readxl)
+  # infile <- paste0(fpath, fname)	# full path and name 
+  # shtname <- excel_sheets(infile) # names of the sheets 
+  # # Fease
+  # feasedat <- read_excel(infile, sheet=grep(paste0(stkname, "Fease"), shtname),
+			# col_names=FALSE)
+  # feasedat <- feasedat[,1:2]			
+  # tmpfile <- paste0(fpath, stkname, "Fease.csv")
+  # if (file.exists(tmpfile)) unlink(tmpfile) 
+  # writeCSV(fpath, stkname, inobj=feasedat, tmpfile, objtype="DLM_fease")
+  # fease <- new("DLM_fease", tmpfile)
+  # if (!saveCSV) unlink(tmpfile)
+
+  # fease
+# }
+
+# writeCSV <- function(fpath, stkname, inobj, tmpfile=NULL,
+  # objtype=c("Stock", "Fleet", "Observation",  "DLM_data", "OM", "DLM_fease")) {
+  # objtype <- match.arg(objtype)
+  # tmpobj <- new(objtype)
+  # sn <- slotNames(tmpobj)
+  # ind <- which(inobj[,1] %in% sn == FALSE)
+  # if (length(ind) > 0) {
+    # message("Input file names don't match slot names for ", objtype, " object")
+	# message("Unknown input name:", inobj[ind,1])
+    # stop("Check the input file row names")
+  # }
+  # for (X in seq_along(sn)) {
+    # ind <- match(sn[X], inobj[,1])
+	# if (!is.na(ind)) {
+	  # indat <- inobj[ind,]
+	  # index <- which(!is.na(indat))
+	  # index <- 2:max(index)
+      # if (X == 1) write(do.call(paste, c(sn[X], as.list(indat[index]), sep=","))
+	    # ,tmpfile,1)
+	  # if (X > 1)  write(do.call(paste, c(sn[X], as.list(indat[index]), sep=",")),
+	    # tmpfile,1, append=TRUE) 
+	# } 
+  # }
+# }
+
+
