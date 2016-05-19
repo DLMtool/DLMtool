@@ -92,7 +92,6 @@ export(
     "NOAA_plot",
 	"OptFun",
     "plotOFL",
-	#"PerfPlot",
 	"SetRecruitCycle",
     "SPmod",
     "SPslope",
@@ -130,10 +129,6 @@ export(
     "CSRA",
     "CSRAfunc",
     "getAFC",
-	"wormplot",
-	#"Fease_xl",
-	#"OM_xl",
-	#"writeCSV",
 	"LstepCE1",
 	"LstepCE2",
 	"LtargetE1",
@@ -168,7 +163,6 @@ importFrom("stats", "coef", "density", "dlnorm", "dnorm", "lm",
 importFrom("utils", "flush.console", "read.csv")
 
 useDynLib(DLMtool)
-exportPattern("^[[:alpha:]]+")
 importFrom("Rcpp", "evalCpp")
 
 
