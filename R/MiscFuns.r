@@ -64,7 +64,7 @@ Fease<-function(feaseobj,outy="table"){
   if(class(feaseobj)!="DLM_fease")stop("Incorrect format: you need an object of class DLM_fease")
   
   sloty<-c("Cat","Ind","AvC","Dt","Rec","CAA","CAL","Mort","L50","L95","vbK",
-           "vbLinf","vbt0","wla","wlb","steep","LFC","LFS","Cref","Bref","Iref","Dep","Abun")
+           "vbLinf","vbt0","wla","wlb","steep","LFC","LFS","Cref","Bref","Iref","Dep","Abun", "ML")
   
   type<-c("Catch","Index","Catch","Index","Recruitment_index","Catch_at_age","Catch_at_length",
           "Natural_mortality_rate","Maturity_at_length","Maturity_at_length","Growth","Growth","Growth",
