@@ -1064,7 +1064,7 @@ BK_ML<-function(x,DLM_data,reps=100){
   Ac<-Cc/(1-exp(-FM))
   FMSY<-(0.6*Kc)/(0.67-(Lc/Linfc))  # robustifying for use in MSETAC<-Ac*FMSY
   TAC<-Ac*FMSY
-  TAC[TAC>0&TAC<(mean(TAC,na.rm=T)+3*sd(TAC,na.rm=T))][1:reps]
+  TAC<-TAC[TAC>0&TAC<(mean(TAC,na.rm=T)+3*sd(TAC,na.rm=T))][1:reps]
   TACfilter(TAC)
 }
 class(BK_ML)<-"DLM_output"
