@@ -170,6 +170,6 @@ importFrom("abind", "abind")
 
 useDynLib(DLMtool)
 exportPattern("^[[:alpha:]]+")
-importFrom("Rcpp", "sourceCpp")
+importFrom("Rcpp", "evalCpp")
 
 
