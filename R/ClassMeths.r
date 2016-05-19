@@ -496,21 +496,21 @@ setMethod("initialize", "DLM_fease", function(.Object,file="nada",ncases=1){
   }else{
     .Object@Name<-"Blank DLM_Fease"
     .Object@Case<-"Case 1"
-    .Object@Catch<-0
-    .Object@Index<-0
-    .Object@Natural_mortality_rate<-0
-    .Object@Maturity_at_length<-0
-    .Object@Growth<-0
-    .Object@Length_weight_conversion<-0
-    .Object@Fleet_selectivity<-0
-    .Object@Catch_at_length<-0
-    .Object@Catch_at_age<-0
-    .Object@Recruitment_index<-0
-    .Object@Stock_recruitment_relationship<-0
-    .Object@Target_catch<-0
-    .Object@Target_biomass<-0
-    .Object@Target_index<-0
-    .Object@Abundance<-0
+    .Object@Catch<-1
+    .Object@Index<-1
+    .Object@Natural_mortality_rate<-1
+    .Object@Maturity_at_length<-1
+    .Object@Growth<-1
+    .Object@Length_weight_conversion<-1
+    .Object@Fleet_selectivity<-1
+    .Object@Catch_at_length<-1
+    .Object@Catch_at_age<-1
+    .Object@Recruitment_index<-1
+    .Object@Stock_recruitment_relationship<-1
+    .Object@Target_catch<-1
+    .Object@Target_biomass<-1
+    .Object@Target_index<-1
+    .Object@Abundance<-1
   }  
   .Object
   
