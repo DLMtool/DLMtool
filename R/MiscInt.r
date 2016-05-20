@@ -69,7 +69,7 @@ getEffhist <- function(Esd, nyears, EffYears, EffLower, EffUpper) {
 	}  
 	if (nsim == 1) {
 	  # Effs <- Effs/max(Effs)
-	  effort <- approx(x=refYear, y = Effs,  method = "linear", n=nyears)$y
+	  effort <- matrix(approx(x=refYear, y = Effs,  method = "linear", n=nyears)$y, nrow = 1)
  	}
     
 	effort <- range01(effort)
