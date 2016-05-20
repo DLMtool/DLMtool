@@ -1838,7 +1838,7 @@ MLne<-function(x,DLM_data,Linfc,Kc,ML_reps=100,MLtype="dep"){
 	    }  
       }
       Z[i,]<-bhnoneq(year=year,mlen=mlen,ss=ss,K=Kc[i],Linf=Linfc[i],Lc=Lc,nbreaks=nbreaks,
-           styrs=ceiling(length(year)*((1:nbreaks)/(nbreaks+1))),stZ=rep(0.5,nbreaks+1))
+           styrs=ceiling(length(year)*((1:nbreaks)/(nbreaks+1))),stZ=rep(DLM_data@Mort[x],nbreaks+1))
     }else{
       
       #ind<-(which.min(((DLM_data@CAL_bins-DLM_data@LFS[x])^2)^0.5)-1):(length(DLM_data@CAL_bins)-1)
