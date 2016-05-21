@@ -1821,11 +1821,12 @@ MLne<-function(x,DLM_data,Linfc,Kc,ML_reps=100,MLtype="dep"){
   # temp<-apply(DLM_data@CAL[x,,],2,sum)
   # Lc<-mlbin[which.max(temp)] # modal length
   
-  dd <- dim(DLM_data@CAL[x,,])
-  curLen <- DLM_data@CAL[x,dd[1],]
-  Lc <-  mlbin[which.max(curLen)]
+  #dd <- dim(DLM_data@CAL[x,,])
+  #curLen <- DLM_data@CAL[x,dd[1],]
+  #Lc <-  mlbin[which.max(curLen)]
   # Lc <-  DLM_data@LFS[,x] 
   # Lc <- Lc[length(Lc)]
+  Lc <- DLM_data@LFS[x]
   
   for(i in 1:ML_reps){
     mlen<-rep(NA,length(year))
@@ -1838,7 +1839,7 @@ MLne<-function(x,DLM_data,Linfc,Kc,ML_reps=100,MLtype="dep"){
 	    }  
       }
       Z[i,]<-bhnoneq(year=year,mlen=mlen,ss=ss,K=Kc[i],Linf=Linfc[i],Lc=Lc,nbreaks=nbreaks,
-           styrs=ceiling(length(year)*((1:nbreaks)/(nbreaks+1))),stZ=rep(0.5,nbreaks+1))
+           styrs=ceiling(length(year)*((1:nbreaks)/(nbreaks+1))),stZ=rep(DLM_data@Mort[x],nbreaks+1))
     }else{
       
       #ind<-(which.min(((DLM_data@CAL_bins-DLM_data@LFS[x])^2)^0.5)-1):(length(DLM_data@CAL_bins)-1)
