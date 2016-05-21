@@ -440,15 +440,16 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   print("Calculating reference yield - best fixed F strategy") # Print a progress update
   flush.console()                                              # update the console
   if(sfIsRunning()){ # Numerically optimize for F that provides highest long term yield
-    RefY<-sfSapply(1:nsim,getFref,Marray=Marray,Wt_age=Wt_age,Mat_age=Mat_age,Perr=Perr,N_s=N[,,nyears,],SSN_s=SSN[,,nyears,],
-                   Biomass_s=Biomass[,,nyears,],VBiomass_s=VBiomass[,,nyears,],SSB_s=SSB[,,nyears,],
-                   Vn=V[,,nyears],hs=hs,R0a=R0a,nyears=nyears,proyears=proyears,nareas=nareas,maxage=maxage,mov=mov,SSBpR=SSBpR,
-                   aR=aR,bR=bR,SRrel=SRrel)
+    RefY<-sfSapply(1:nsim,getFref,Marray=Marray,Wt_age=Wt_age,Mat_age=Mat_age,
+	  Perr=Perr,N_s=N[,,nyears,],SSN_s=SSN[,,nyears,], Biomass_s=Biomass[,,nyears,],
+	  VBiomass_s=VBiomass[,,nyears,],SSB_s=SSB[,,nyears,],Vn=V[,,(nyears+1):(nyears+proyears)],
+	  hs=hs,R0a=R0a,nyears=nyears,proyears=proyears,nareas=nareas,maxage=maxage,mov=mov,SSBpR=SSBpR,
+      aR=aR,bR=bR,SRrel=SRrel, Spat_targ=Spat_targ)
   }else{
     RefY<-sapply(1:nsim,getFref,Marray=Marray,Wt_age=Wt_age,Mat_age=Mat_age,Perr=Perr,N_s=N[,,nyears,],SSN_s=SSN[,,nyears,],
                  Biomass_s=Biomass[,,nyears,],VBiomass_s=VBiomass[,,nyears,],SSB_s=SSB[,,nyears,],
-                 Vn=V[,,nyears],hs=hs,R0a=R0a,nyears=nyears,proyears=proyears,nareas=nareas,maxage=maxage,mov=mov,SSBpR=SSBpR,
-                 aR=aR,bR=bR,SRrel=SRrel) 
+                 Vn=V[,,(nyears+1):(nyears+proyears)],hs=hs,R0a=R0a,nyears=nyears,proyears=proyears,nareas=nareas,maxage=maxage,mov=mov,SSBpR=SSBpR,
+                 aR=aR,bR=bR,SRrel=SRrel, Spat_targ=Spat_targ) 
   }
 
   Depletion<-(apply(Biomass[,,nyears,],1,sum)/apply(Biomass[,,1,],1,sum))#^betas   # apply hyperstability / hyperdepletion

@@ -196,21 +196,21 @@ getFhist<-function(nsim,Esd,nyears,dFmin,dFmax,bb){
 }
 
 getFref<-function(x,Marray,Wt_age,Mat_age,Perr,N_s,SSN_s, Biomass_s,VBiomass_s,SSB_s,
-                  Vn,hs,R0a,nyears,proyears,nareas,maxage,mov,SSBpR,aR,bR,SRrel){
+                  Vn,hs,R0a,nyears,proyears,nareas,maxage,mov,SSBpR,aR,bR,SRrel,Spat_targ){
   
   opt<-optimize(doprojPI,log(c(0.001,10)),
                 Mvec=Marray[x,(nyears+1):(nyears+proyears)],Wac=Wt_age[x,,(nyears+1):(nyears+proyears)],Mac=Mat_age[x,],
                 Pc=Perr[x,(nyears+1):(nyears+proyears)],N_c=N_s[x,,],SSN_c=SSN_s[x,,],Biomass_c=Biomass_s[x,,],
-                VBiomass_c=VBiomass_s[x,,],SSB_c=SSB_s[x,,],Vc=Vn[x,],hc=hs[x],R0ac=R0a[x,],proyears,nareas,maxage,movc=mov[x,,],SSBpRc=SSBpR[x],aRc=aR[x,],bRc=bR[x,],SRrelc=SRrel[x])
+                VBiomass_c=VBiomass_s[x,,],SSB_c=SSB_s[x,,],Vc=Vn[x,,],hc=hs[x],R0ac=R0a[x,],proyears,nareas,maxage,movc=mov[x,,],SSBpRc=SSBpR[x],aRc=aR[x,],bRc=bR[x,],SRrelc=SRrel[x], spat_targ=Spat_targ[x])
   # print(exp(opt$minimum))
   return(-opt$objective)
   
 }
 
-doprojPI<-function(lnF,Mvec,Wac,Mac,Pc,N_c,SSN_c,Biomass_c,VBiomass_c,SSB_c,Vc,hc,R0ac,proyears,nareas,maxage,movc,SSBpRc,aRc,bRc,SRrelc){
+doprojPI<-function(lnF,Mvec,Wac,Mac,Pc,N_c,SSN_c,Biomass_c,VBiomass_c,SSB_c,Vc,hc,R0ac,proyears,nareas,maxage,movc,SSBpRc,aRc,bRc,SRrelc, spat_targ){
   
   FF<-exp(lnF)
-  
+ 
   N_P<-array(NA,dim=c(maxage,proyears,nareas))
   Biomass_P<-array(NA,dim=c(maxage,proyears,nareas))
   VBiomass_P<-array(NA,dim=c(maxage,proyears,nareas))
@@ -220,11 +220,13 @@ doprojPI<-function(lnF,Mvec,Wac,Mac,Pc,N_c,SSN_c,Biomass_c,VBiomass_c,SSB_c,Vc,h
   Z_P<-array(NA,dim=c(maxage,proyears,nareas))
   CB_P<-rep(NA,proyears)
   
-  AYR<-as.matrix(expand.grid(1:maxage,1,1:nareas))
+  # AYR<-as.matrix(expand.grid(1:maxage,1,1:nareas))
+  AYR <- as.matrix(expand.grid(1:maxage,1,1:nareas))
   YA<-as.matrix(expand.grid(1,1:maxage))         # Projection year
   Y<-YA[,1]
   A<-YA[,2]
   AY<-YA[,c(2,1)]
+  R <- matrix(AYR[,3])
   
   N_P[AYR]<-N_c#[AYRL]
   SSN_P[AYR]<-SSN_c#SSN[AYRL]
@@ -232,11 +234,14 @@ doprojPI<-function(lnF,Mvec,Wac,Mac,Pc,N_c,SSN_c,Biomass_c,VBiomass_c,SSB_c,Vc,h
   VBiomass_P[AYR]<-VBiomass_c#[AYRL]
   SSB_P[AYR]<-SSB_c#[AYRL]
   
-  FM_P[AYR]<-FF*Vc[A]
-  Z_P[AYR]<-FM_P[A]+Mvec[Y]
+  fishdist<-(apply(VBiomass_P[,1,], 2,sum)^spat_targ)/mean(apply(VBiomass_P[,1,], 2,sum)^spat_targ)  # spatial preference according to spatial biomass
+  fishdist <- matrix(fishdist, ncol=nareas)
+  FM_P[AYR] <- FF*Vc[AY] *fishdist[R] 
+ 
+  # FM_P[AYR]<-FF*Vc[A]
+  Z_P[AYR]<-FM_P[AYR]+Mvec[Y]
   
   for(y in 2:proyears){
-    
     AY1R<-as.matrix(expand.grid(1:maxage,y-1,1:nareas))
     AYR<-as.matrix(expand.grid(1:maxage,y,1:nareas))
     Y<-AYR[,2]
@@ -251,7 +256,7 @@ doprojPI<-function(lnF,Mvec,Wac,Mac,Pc,N_c,SSN_c,Biomass_c,VBiomass_c,SSB_c,Vc,h
     indMov2<-indMov[,c(1,2,3)]
     indMov3<-indMov[,c(3,4)]
     
-    N_P[A2YR]<-N_P[A1YR]*exp(-Z_P[A1Y])         # Total mortality
+    N_P[A2YR] <- N_P[A1YR]*exp(-Z_P[A1YR])         # Total mortality
     
     if(SRrelc==1){
       N_P[1,y,]<-Pc[y]*(0.8*R0ac*hc*apply(SSB_P[,y-1,],2,sum))/(0.2*SSBpRc*R0ac*(1-hc)+(hc-0.2)*apply(SSB_P[,y-1,],2,sum))  # Recruitment assuming regional R0 and stock wide steepness
@@ -262,17 +267,32 @@ doprojPI<-function(lnF,Mvec,Wac,Mac,Pc,N_c,SSN_c,Biomass_c,VBiomass_c,SSB_c,Vc,h
     temp<-array(N_P[indMov2]*movc[indMov3],dim=c(nareas,nareas,maxage))  # Move individuals
     N_P[,y,]<-apply(temp,c(3,1),sum)
     
-    Biomass_P[AYR]<-N_P[AYR]*Wac[AY]                                    # Calculate biomass
+    Biomass_P[AYR]<-N_P[AYR]*Wac[AY]                            # Calculate biomass
     VBiomass_P[AYR]<-Biomass_P[AYR]*Vc[A]                       # Calculate vulnerable biomass
-    SSN_P[AYR] <-N_P[AYR]*Mac[A]                                       # Calculate spawning stock numbers
+    SSN_P[AYR] <-N_P[AYR]*Mac[A]                                # Calculate spawning stock numbers
     SSB_P[AYR]<-SSN_P[AYR]*Wac[AY] # Calculate spawning stock biomass
-    FM_P[AYR]<-FF*Vc[A]
+    
+	fishdist<-(apply(VBiomass_P[,y,], 2,sum)^spat_targ)/mean(apply(VBiomass_P[,y,], 2,sum)^spat_targ)  # spatial preference according to spatial biomass
+    FM_P[AYR] <- FF*Vc[AY]*fishdist[R] 
+	# FM_P[AYR]<-FF*Vc[A]
+	
     Z_P[AYR]<-FM_P[AYR]+Mvec[Y]
     CNtemp<-N_P[,y,]*exp(Z_P[,y,])*(1-exp(-Z_P[,y,]))*(FM_P[,y,]/Z_P[,y,])
-    CB_P[y]<-sum(Biomass_P[,y,]*exp(Z_P[,y,])*(1-exp(-Z_P[,y,]))*(FM_P[,y,]/Z_P[,y,]))
+    CB_P[y] <- sum(Biomass_P[,y,]*exp(Z_P[,y,])*(1-exp(-Z_P[,y,]))*(FM_P[,y,]/Z_P[,y,]))
+	
+	CNtemp <- (FM_P[,y,]/Z_P[,y,] * N_P[,y,]*(1-exp(-Z_P[,y,])))
+	CB_P[y] <- sum(FM_P[,y,]/Z_P[,y,] * Biomass_P[,y,]*(1-exp(-Z_P[,y,])))
+	
+	# temp <- sum(CNtemp*Wac[AY])
+	# print(c(CB_P[y], temp))
 	
 	# CB_P[y] <- sum(CNtemp*Wac[AY]) 
   } # end of year
+  
+  # plot(CB_P, type="l", ylim=c(0, max(CB_P, na.rm=TRUE)))
+  # Biomass_P[,1,]
+  # apply(N_P[,1:6,1:2], c(1,2), sum)
+  
   return(-mean(CB_P[(proyears-min(4,(proyears-1))):proyears],na.rm=T))
   
 }
