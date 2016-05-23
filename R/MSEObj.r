@@ -621,7 +621,7 @@ Sub <- function(MSEobj, MPs=NULL, sims=NULL, years=NULL) {
   if(Class == "NULL") subMPs <- MSEobj@MPs
   if(Class == "integer" | Class == "numeric") subMPs <- MSEobj@MPs[as.integer(MPs)]
   if(Class == "character") subMPs <- MPs
-  SubMPs <- which(MSEobj@MPs %in% subMPs)
+  SubMPs <- match(subMPs, MSEobj@MPs ) #  which(MSEobj@MPs %in% subMPs)
   not <- (subMPs %in% MSEobj@MPs) # Check for MPs misspelled
   ind <- which(not == FALSE)
   newMPs <- MSEobj@MPs[SubMPs]
@@ -667,6 +667,10 @@ Sub <- function(MSEobj, MPs=NULL, sims=NULL, years=NULL) {
   
  return(SubResults)
 }
+
+
+
+
 
 # Join two or more MSE objects together 
 joinMSE <- function(MSEobj1=NULL, MSEobj2=NULL, MSEobjs=NULL) {
