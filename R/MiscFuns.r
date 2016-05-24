@@ -793,7 +793,7 @@ makePerf <- function(OMin, except=NULL) {
 	if (is.null(except)) except <- "EVERYTHING"
 	exclude <- unique(grep(paste(except,collapse="|"), nms, value=FALSE))
 	
-	vars <- c("grad", "cv", "sd")
+	vars <- c("grad", "cv", "sd", "inc")
 	ind <- unique(grep(paste(vars,collapse="|"), nms, value=FALSE))
 	ind <- ind[(!(nms[ind] %in% exclude ))]
 	for (X in seq_along(ind)) {
