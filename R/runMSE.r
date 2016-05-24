@@ -475,6 +475,11 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   hsim[!cond]<-0.2+rbeta(sum(hs<0.6),alphaconv((hs[!cond]-0.2)/0.8,(hs[!cond]-0.2)/0.8*OM@hcv),betaconv((hs[!cond]-0.2)/0.8,(hs[!cond]-0.2)/0.8*OM@hcv))*0.8
   hbias<-hsim/hs                          # back calculate the simulated bias
   
+  qmu<--0.5*qcv^2                                      # Mean
+  qvar<-array(exp(rnorm(proyears*nsim,rep(qmu,proyears),rep(qcv,proyears))),c(nsim,proyears)) # Variations in interannual variation
+  colnames(qvar) <- paste0("qvar", 1:proyears)
+  FinF <-Find[,nyears]
+  
   DLM_data<-new('DLM_data',stock="MSE")             # create a blank DLM data object
   if(reps==1)DLM_data<-OneRep(DLM_data)             # make stochastic variables certain for only one rep
   DLM_data<-replic8(DLM_data,nsim)                  # make nsim sized slots in the DLM data object
@@ -524,7 +529,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   DLM_data@OM<-as.data.frame(cbind(RefY,M,Depletion,A,BMSY_B0,FMSY_M,Mgrad,Msd,
     procsd,Esd,dFfinal,MSY,qinc,qcv, FMSY,Linf,K,t0,hs,Linfgrad,Kgrad,Linfsd,
 	recgrad,Ksd,ageM, L5[nyears,],LFS[nyears,],Vmaxlen[nyears,],LFC,OFLreal,
-	Spat_targ,Frac_area_1,Prob_staying,AC, lenM, len95)) # put all the operating model parameters in one table
+	Spat_targ,Frac_area_1,Prob_staying,AC, lenM, len95, qvar)) # put all the operating model parameters in one table
   
   names(DLM_data@OM)[26:28]<-c("L5","LFS","Vmaxlen") # These are missing labels in the line above
   
@@ -538,10 +543,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   # assign("DLM_data",DLM_data,envir=.GlobalEnv) # for debugging fun
   
   # Run projections ===========================================================================
-  qmu<--0.5*qcv^2                                      # Mean
-  qvar<-array(exp(rnorm(proyears*nsim,rep(qmu,proyears),rep(qcv,proyears))),c(nsim,proyears)) # Variations in interannual variation
-  FinF <-Find[,nyears]
-  
+ 
   if(is.na(MPs[1])) CheckMPs <- TRUE
   if (CheckMPs) {
     print("Determining available methods")  # print an progress report
