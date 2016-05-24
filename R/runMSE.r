@@ -922,8 +922,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 		TACused <- apply(CB_P[,,y,], 1, sum) # Set last years TAC to actual catch from last year
         TACa[,mm,y]<-TACused
         MSElist[[mm]]@MPrec<-TACused		
-      }else{ # not an update yr
-        
+      }else{ # not an update yr      
         if(class(match.fun(MPs[mm]))=="DLM_output"){
           CB_P[SAYR]<-Biomass_P[SAYR]*(1-exp(-fishdist[SR]*V_P[SAYt]))      # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space
           temp<-CB_P[,,y,]/apply(CB_P[,,y,],1,sum)   # how catches are going to be distributed
@@ -933,7 +932,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
           FM_P[SAYR]<--log(1-temp)
         }else{ #input control
           # FM_P[SAYR] <- FM_P[SAY1R]*qvar[SY] *(1+qinc[S1]/100)^y  # add fishing efficiency changes and variability
-		  FM_P[SAYR] <- FM_P[SAY1R]*qvar[SY] # *(1+qinc[S1]/100)^y  # ignore magnitude of effort or q increase
+		  FM_P[SAYR] <- FM_P[SAY1R]*qvar[SY] *(1+qinc[S1]/100)  # add fishing efficiency changes and variability
         }
 		Z_P[SAYR]<-FM_P[SAYR]+Marray[SYt]
 		# CB_P[SAYR]<-Biomass_P[SAYR]*(1-exp(-FM_P[SAYR])) 
