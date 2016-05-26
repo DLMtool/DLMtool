@@ -34,7 +34,7 @@ Objects can be created by calls of the form \code{new("Observation", OM)}.
     \item{\code{FMSY_Mcv}:}{Persistent bias in the prescription of FMSY/M sampled from a log-normal distribution with coefficient of variation (FMSY_cv)(uniform distribution)}
     \item{\code{BMSY_B0cv}:}{Persistent bias in the prescription of BMsY relative to unfished sampled from a log-normal distribution with coefficient of variation (BMSY_B0cv)(uniform distribution)}
    \item{\code{rcv}:}{Persistent bias in the prescription of intrinsic rate of increase sampled from a log-normal distribution with coefficient of variation (rcv)(uniform distribution)}
-    \item{\code{LenMcv}:}{Persistent bias in the prescription of age at 50 percent vulnerability sampled from a log-normal distribution with coefficient of variation (A50cv)(uniform distribution)}
+    \item{\code{LenMcv}:}{Persistent bias in the prescription of length at 50 percent maturity sampled from a log-normal distribution with coefficient of variation (A50cv)(uniform distribution)}
     \item{\code{Dbiascv}:}{Persistent bias in the prescription of stock depletion sampled from a log-normal distribution with coefficient of variation (Linfcv)(uniform distribution)}
     \item{\code{Dcv}:}{Imprecision in the prescription of stock depletion among years, expressed as a coefficient of variation (uniform distribution)}
     \item{\code{Btbias}:}{Persistent bias in the prescription of current stock biomass sampled from a uniform-log distribution with range (Btbias)(uniform distribution)}
