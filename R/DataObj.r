@@ -22,6 +22,7 @@ DLMdiag <- function(DLM_data,command="available",reps=5,timelimit=1){
       suppressWarnings({
         setTimeLimit(timelimit*1.5)
         test[[y]]<-try(do.call(funcs1[y],list(x=1,DLM_data=DLM_data,reps=5)),silent=T)
+		if (class(test[[y]]) == "list") test[[y]] <-  test[[y]][[1]]
         setTimeLimit(Inf)
       })
     }else{
@@ -289,17 +290,18 @@ getTAC<-function(DLM_data,MPs=NA,reps=100){
     if(nsims<8){
       sfExport(list=c("MPs","reps"))
       for(ss in 1:nsims){
-	    temp <- t(sfSapply(1:length(MPs),parallelMPs,DLM_data=DLM_data,reps=reps,MPs=MPs,ss=ss))
+	    temp <<- t(sfSapply(1:length(MPs),parallelMPs,DLM_data=DLM_data,reps=reps,MPs=MPs,ss=ss))
 		if (mode(temp) == "numeric") TACa[,,ss] <- temp
 		if (mode(temp) == "list") {
 		  Lens <- unlist(lapply(temp, length))
-		  ind <- which(Lens > 1) # these have Misc objects
 		  for (X in 1:length(Lens)) {
-		    if (any(X == ind)) {
-			  TACa[X,,ss] <- unlist(temp[[1]][1,X])
-			  DLM_data@Misc[[ss]] <- temp[[1]][2,X][[1]]
-			} else {
+		    Classes <- unlist(lapply(temp[,X][[1]], class))
+			if (length(unique(Classes)) == 1) { # no Misc object
 			  TACa[X,,ss] <- unlist(temp[,X])
+			} else { # a Misc object is include 
+			  ind <- which(Classes == "list")
+			  TACa[X,,ss] <- unlist(temp[,X][[1]][1:(ind-1),])
+			  DLM_data@Misc[[ss]] <- temp[,X][[1]][ind,]
 			}
 		  }
 	    } 

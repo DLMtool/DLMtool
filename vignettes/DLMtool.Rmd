@@ -315,7 +315,7 @@ If you do not specify a vector of particular methods, the MSE will run for all p
 
 ```{r chooseMPs}
 MPs <- c("BK", "CC1", "CompSRA", "DBSRA", "DBSRA4010", "DCAC", "DCAC4010", "DepF", "DynF",
-         "EDCAC", "Fratio", "Itarget1", "Itarget4", "MCD", "MCD4010", "SBT1")
+         "Fratio", "Itarget1", "Itarget4", "MCD", "MCD4010", "SBT1")
 ```
 
 Note that in a real setting it might be advisable to increase the number of simulations (`nsim`) to at least 200 and, if stochastic MPs are to be used, increase the samples per method (`reps`) to at least 100 for this first stage to obtain stable aggregate results. 

@@ -659,6 +659,7 @@ DoOpt <- function(StockPars, LenDat, SizeBins=NULL, mod=c("GTG", "LBSPR")) {
 LBSPR <- function(x, DLM_data, yrsmth=1,reps=reps) {
   # Save other stuff for smoothing estimates
   if (length(DLM_data@Misc) == 0) DLM_data@Misc <- vector("list", 1)
+  
   TotYears <- nrow(DLM_data@CAL[1,,]) # How many years of length data exist
   if (is.null(TotYears)) TotYears <- length(DLM_data@CAL[1,,])
   if(is.null(dim(DLM_data@CAL[1,,]))) TotYears <- 1  

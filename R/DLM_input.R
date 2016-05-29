@@ -18,7 +18,7 @@ matlenlim2 <-function(x,DLM_data, ...){ # Knife-edge vulnerability slightly high
   Allocate<-1
   Effort<-1
   Spatial<-c(1,1)
-  newLFS <- 14 + 1.1 * DLM_data@L50[x] 
+  newLFS <- 1.1 * DLM_data@L50[x] 
   newLFC <- 0.95 * newLFS
   Vuln <-c(newLFC, newLFS)
   c(Allocate, Effort, Spatial, Vuln)

@@ -36,7 +36,9 @@ DynF<-function(x,DLM_data,yrsmth=10,gg=2,reps=100){
   ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
   
   C_dat<-log(DLM_data@Cat[x,ind])
+  C_dat[C_dat == -Inf] <- 0
   B_dat<-log(DLM_data@Ind[x,ind]/DLM_data@Ind[x,ind[yrsmth]]*DLM_data@Abun[x])
+  B_dat[B_dat == -Inf] <- 0
   C_hist<-exp(predict(loess(C_dat~ind,degree=1)))
   B_hist<-exp(predict(loess(B_dat~ind,degree=1)))
   
@@ -74,7 +76,9 @@ Fadapt<-function(x,DLM_data,reps=100,yrsmth=7,gg=1){
   ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
   
   C_dat<-log(DLM_data@Cat[x,ind])
+  C_dat[C_dat == -Inf] <- 0
   B_dat<-log(DLM_data@Ind[x,ind]/DLM_data@Ind[x,ind[yrsmth]]*DLM_data@Abun[x])
+  B_dat[B_dat == -Inf] <- 0
   C_hist<-exp(predict(loess(C_dat~ind,degree=1)))
   B_hist<-exp(predict(loess(B_dat~ind,degree=1)))
   
@@ -126,7 +130,9 @@ Gcontrol<-function(x,DLM_data,reps=100,yrsmth=10,gg=2,glim=c(0.5,2)){
   dependencies="DLM_data@Year, DLM_data@Cat, DLM_data@Ind, DLM_data@Abun"
   ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
   C_dat<-log(DLM_data@Cat[x,ind])
+  C_dat[C_dat == -Inf] <- 0
   B_dat<-log(DLM_data@Ind[x,ind]/DLM_data@Ind[x,ind[yrsmth]]*DLM_data@Abun[x])
+  B_dat[B_dat == -Inf] <- 0
   C_hist<-exp(predict(loess(C_dat~ind,degree=1)))
   B_hist<-exp(predict(loess(B_dat~ind,degree=1)))
   ind<-2:yrsmth
@@ -151,6 +157,7 @@ Gcontrol<-function(x,DLM_data,reps=100,yrsmth=10,gg=2,glim=c(0.5,2)){
 }
 class(Gcontrol)<-"DLM_output"
 
+
 Rcontrol<-function(x,DLM_data,reps=100,yrsmth=10,gg=2,glim=c(0.5,2)){
   dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0DLM_data@steep, DLM_data@CV_steep, DLM_data@MaxAge, DLM_data@Dep, DLM_data@CV_Dep, DLM_data@Cat, DLM_data@Ind"
   Mvec<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
@@ -174,7 +181,9 @@ Rcontrol<-function(x,DLM_data,reps=100,yrsmth=10,gg=2,glim=c(0.5,2)){
 
   ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
   C_dat<-log(DLM_data@Cat[x,ind])
+  C_dat[C_dat == -Inf] <- 0 
   B_dat<-log(DLM_data@Ind[x,ind]/DLM_data@Ind[x,ind[yrsmth]]*DLM_data@Abun[x])
+  B_dat[B_dat == -Inf] <- 0 
   C_hist<-exp(predict(loess(C_dat~ind,degree=1)))
   B_hist<-exp(predict(loess(B_dat~ind,degree=1)))
   ind<-2:yrsmth
@@ -194,7 +203,6 @@ Rcontrol<-function(x,DLM_data,reps=100,yrsmth=10,gg=2,glim=c(0.5,2)){
   #Warr<-Warr/sum(Warr)
   #TAC<-apply(t(matrix(Warr,nrow=ncol(Carr),ncol=reps))*Carr,1,sum)
   TACfilter(TAC)
-
 }
 class(Rcontrol)<-"DLM_output"
 
@@ -214,7 +222,9 @@ Rcontrol2<-function(x,DLM_data,reps=100,yrsmth=10,gg=2,glim=c(0.5,2)){
 
   ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
   C_dat<-log(DLM_data@Cat[x,ind])
+  C_dat[C_dat == -Inf] <- 0
   B_dat<-log(DLM_data@Ind[x,ind]/DLM_data@Ind[x,ind[yrsmth]]*DLM_data@Abun[x])
+  B_dat[B_dat == -Inf] <- 0
   C_hist<-exp(predict(loess(C_dat~ind,degree=1)))
   B_hist<-exp(predict(loess(B_dat~ind,degree=1)))
   ind<-2:yrsmth
@@ -837,8 +847,10 @@ DBSRA_ML<-function(x,DLM_data,reps=100){
   C_hist<-DLM_data@Cat[x,]
   TAC<-rep(NA,reps)
   DBSRAcount<-1
+  maxIts <- 200
+  nIts <- 0 
   if (is.na(DLM_data@Dep[x]) | is.na(DLM_data@CV_Dep[x])) return(NA)
-  while(DBSRAcount<(reps+1)){
+  while(DBSRAcount<(reps+1) & nIts < maxIts){
     Linfc<-trlnorm(1,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
     Kc<-trlnorm(1,DLM_data@vbK[x],DLM_data@CV_vbK[x])
     Mdb<-trlnorm(100,DLM_data@Mort[x],DLM_data@CV_Mort[x])
@@ -850,7 +862,8 @@ DBSRA_ML<-function(x,DLM_data,reps=100){
     nyears<-length(DLM_data@Year)
     Ct1<-mean(DLM_data@Cat[x,1:3])
     Ct2<-mean(DLM_data@Cat[x,(nyears-2):nyears])
-    dep<-c(Ct1,Ct2)/(1-exp(-FM[,c(1,2)]))
+    # dep<-c(Ct1,Ct2)/(1-exp(-FM[,c(1,2)]))
+	dep<-c(Ct1,Ct2)/(1-exp(-FM))
     Bt_K<-dep[2]/dep[1]
     if(Bt_K<0.01)Bt_K<-0.01       # interval censor / temporary hack to avoid doing multiple depletion estimates that would take far too long
     if(Bt_K>0.99)Bt_K<-0.99       # interval censor / temporary hack to avoid doing multiple depletion estimates that would take far too long
@@ -861,6 +874,7 @@ DBSRA_ML<-function(x,DLM_data,reps=100){
     adelay<-max(floor(iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x])),1)
     opt<-optimize(DBSRAopt,log(c(0.1*mean(C_hist),1000*mean(C_hist))),C_hist=C_hist,nys=length(C_hist),Mdb=Mdb,
               FMSY_M=FMSY_M,BMSY_K=BMSY_K,Bt_K=Bt_K,adelay=adelay,tol=0.01)
+    nIts <- nIts + 1 
     if(opt$objective<0.1){
       Kc<-exp(opt$minimum)
       BMSYc<-Kc*BMSY_K
@@ -869,6 +883,7 @@ DBSRA_ML<-function(x,DLM_data,reps=100){
       MSYc<-Kc*BMSY_K*UMSYc
       TAC[DBSRAcount]<-UMSYc*Kc*Bt_K
       DBSRAcount<-DBSRAcount+1
+	  nIts <- 0 
     }
   } # end of reps
   TACfilter(TAC)
@@ -989,6 +1004,7 @@ DCAC_40<-function(x,DLM_data,reps=100){
 class(DCAC_40)<-"DLM_output"
 
 DCAC_ML<-function(x,DLM_data,reps=100){
+
   dependencies="DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0, DLM_data@Year, DLM_data@CAL, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK"
   if (is.na(DLM_data@BMSY_B0[x]) | is.na(DLM_data@CV_BMSY_B0[x])) return(NA)
   if (is.na(DLM_data@FMSY_M[x]) | is.na(DLM_data@CV_FMSY_M[x])) return(NA)
@@ -999,17 +1015,18 @@ DCAC_ML<-function(x,DLM_data,reps=100){
   Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
   Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps,MLtype="dep")
   FM<-Z-Mdb
-  FM[FM<0]<-0.01
   nyears<-length(DLM_data@Year)
   Ct1<-mean(DLM_data@Cat[x,1:3])
   Ct2<-mean(DLM_data@Cat[x,(nyears-2):nyears])
-  dep<-rep(c(Ct1,Ct2),each=reps)/(1-exp(-FM[,c(1,2)]))
+  dep<-rep(c(Ct1,Ct2),each=reps)/(1-exp(-FM))
   if (reps == 1) Bt_K<-dep[2]/dep[1]
   if (reps > 1)  Bt_K<-dep[,2]/dep[,1]
-  BMSY_K<-rbeta(reps,alphaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]),betaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+  BMSY_K<-rbeta(reps,alphaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]), 
+    betaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
   TAC<-C_tot/(DLM_data@t[x]+((1-Bt_K)/(BMSY_K*FMSY_M*Mdb)))
+  
   TACfilter(TAC)
-} # end of DCAC_ML
+}# end of DCAC_ML
 class(DCAC_ML)<-"DLM_output"
 
 BK<-function(x,DLM_data,reps=100){   # Beddington and Kirkwood life-history analysis ==============================================
@@ -1057,10 +1074,10 @@ BK_ML<-function(x,DLM_data,reps=100){
   Linfc<-trlnorm(reps*10,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
   Kc<-trlnorm(reps*10,DLM_data@vbK[x],DLM_data@CV_vbK[x])
   Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps*2,MLtype="dep")
+  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps*10,MLtype="F")
   FM<-Z-Mdb
   MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
+  Cc<-trlnorm(reps*10,MuC,DLM_data@CV_Cat[x])
   Ac<-Cc/(1-exp(-FM))
   FMSY<-(0.6*Kc)/(0.67-(Lc/Linfc))  # robustifying for use in MSETAC<-Ac*FMSY
   TAC<-Ac*FMSY
@@ -1121,14 +1138,15 @@ class(Fratio_CC)<-"DLM_output"
 Fratio_ML<-function(x,DLM_data,reps=100){
   dependencies=" DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@Cat, DLM_data@CV_Cat, DLM_data@CAL"
   MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
-  Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
-  Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps,MLtype="dep")
+  Cc<-trlnorm(reps*10,MuC,DLM_data@CV_Cat[x])
+  Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
+  Linfc<-trlnorm(reps*10,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
+  Kc<-trlnorm(reps*10,DLM_data@vbK[x],DLM_data@CV_vbK[x])
+  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps*10,MLtype="F")
   FM<-Z-Mdb
   Ac<-Cc/(1-exp(-FM))
-  TAC<-Ac*trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x])*trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
+  TAC<-Ac*trlnorm(reps*10,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x])*trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
+  TAC <- TAC[TAC >0][1:reps]
   TACfilter(TAC)
 }
 class(Fratio_ML)<-"DLM_output"
@@ -1291,11 +1309,10 @@ SPSRA_ML<-function(x,DLM_data,reps=100){
   rsamp<-getr(x,DLM_data,Mvec,Kvec,Linfvec,t0vec,hvec,maxage=DLM_data@MaxAge,r_reps=reps)
   Z<-MLne(x,DLM_data,Linfc=Linfvec,Kc=Kvec,ML_reps=reps,MLtype="dep")
   FM<-Z-Mvec
-  FM[FM<0]<-0.01
   nyears<-length(DLM_data@Year)
   Ct1<-mean(DLM_data@Cat[x,1:3])
   Ct2<-mean(DLM_data@Cat[x,(nyears-2):nyears])
-  dep<-rep(c(Ct1,Ct2),each=reps)/(1-exp(-FM[,c(1,2)]))
+  dep<-rep(c(Ct1,Ct2),each=reps)/(1-exp(-FM))
   if (reps == 1) dep<-dep[2]/dep[1]
   if (reps > 1)  dep<-dep[,2]/dep[,1]
   Ksamp<-rep(NA,reps)
@@ -1386,23 +1403,25 @@ class(YPR_CC)<-"DLM_output"
 
 YPR_ML<-function(x,DLM_data,reps=100){
   dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@wlb, DLM_data@CAL, DLM_data@Cat"
-  Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  t0c<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
+  Linfc<-trlnorm(reps*10,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
+  Kc<-trlnorm(reps*10,DLM_data@vbK[x],DLM_data@CV_vbK[x])
+  Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
+  t0c<--trlnorm(reps*10,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
   t0c[!is.finite(t0c)] <- 0 
-  LFS<-trlnorm(reps,DLM_data@LFS[x],DLM_data@CV_LFS[x])
+  LFS<-trlnorm(reps*10,DLM_data@LFS[x],DLM_data@CV_LFS[x])
   a<-DLM_data@wla[x]
   b<-DLM_data@wlb[x]
   MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
-  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps,MLtype="dep")
+  Cc<-trlnorm(reps*10,MuC,DLM_data@CV_Cat[x])
+  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps*10, MLtype="F")
   FM<-Z-Mdb
   Ac<-Cc/(1-exp(-FM))
-  FMSY<-YPRopt(Linfc,Kc,t0c,Mdb,a,b,LFS,DLM_data@MaxAge,reps)
+  FMSY<-YPRopt(Linfc,Kc,t0c,Mdb,a,b,LFS,DLM_data@MaxAge,reps*10)
   TAC<-Ac*FMSY
+  TAC <- TAC[TAC > 0][1:reps]
   TACfilter(TAC)
+ 
 }
 class(YPR_ML)<-"DLM_output"
 
@@ -1483,19 +1502,20 @@ CC<-function(x,DLM_data,reps=100){
 
 Fdem_ML<-function(x,DLM_data,reps=100){
   dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@wlb, DLM_data@CAL, DLM_data@steep, DLM_data@CV_steep"
-  Mvec<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Linfc=trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  t0c<--trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+  Mvec<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
+  Kc<-trlnorm(reps*10,DLM_data@vbK[x],DLM_data@CV_vbK[x])
+  Linfc=trlnorm(reps*10,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
+  t0c<--trlnorm(reps*10,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
   t0c[!is.finite(t0c)] <- 0 
-  hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
+  hvec<-trlnorm(reps*10,DLM_data@steep[x],DLM_data@CV_steep[x])
   MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
-  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps,MLtype="dep")
+  Cc<-trlnorm(reps*10,MuC,DLM_data@CV_Cat[x])
+  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps*10,MLtype="F")
   FM<-Z-Mvec
   Ac<-Cc/(1-exp(-FM))
-  FMSY<-getr(x,DLM_data,Mvec,Kc,Linfc,t0c,hvec,maxage=DLM_data@MaxAge,r_reps=reps)/2
+  FMSY<-getr(x,DLM_data,Mvec,Kc,Linfc,t0c,hvec,maxage=DLM_data@MaxAge,r_reps=reps*10)/2
   TAC<-FMSY*Ac
+  TAC <- TAC[TAC >0][1:reps]
   TACfilter(TAC)
 }
 class(Fdem_ML)<-"DLM_output"
@@ -1553,6 +1573,7 @@ CompSRA<-function(x,DLM_data,reps=100){    # optimize for fixed F to get you to 
   TACfilter(TAC)
 }
 class(CompSRA)<-"DLM_output"
+
 
 CompSRA4010<-function(x,DLM_data,reps=100){    # optimize for fixed F to get you to current depletion C/Fcur = abundance
  # for (x in 1:nsim) {
@@ -1620,6 +1641,7 @@ CompSRA4010<-function(x,DLM_data,reps=100){    # optimize for fixed F to get you
 class(CompSRA4010)<-"DLM_output"
 
 # options(warn=2)
+# options(warn=1)
 # options(warn=1)
 
 SRAfunc<-function(lnR0c,Mc,hc,maxage,LFSc,LFCc,Linfc,Kc,t0c,AMc,ac,bc,Catch,CAA,opt=1){
@@ -1853,7 +1875,7 @@ MLne<-function(x,DLM_data,Linfc,Kc,ML_reps=100,MLtype="dep"){
       Z2[i]<-bheq(K=Kc[i],Linf=Linfc[i],Lc=Lc,Lbar=mlen)
     }
   }
-  Z <- Z[,ncol(Z)] # last estimate of Z? Z needs to be vector reps long 
+  # Z <- Z[,ncol(Z)] # last estimate of Z? Z needs to be vector reps long 
   if(MLtype=="F")return(Z2)
   if(MLtype=="dep")return(Z)
 }
@@ -1918,7 +1940,7 @@ getr <- function(x,DLM_data,Mvec,Kvec,Linfvec,t0vec,hvec,maxage,r_reps=100){
 
 iVB<-function(t0,K,Linf,L)((-log(1-L/Linf))/K+t0) # Inverse Von-B
 
-EDCAC<-function (x, DLM_data, reps = 100) # extended depletion-corrected average catch (Harford and Carruthers 2015)
+DAAC<-function (x, DLM_data, reps = 100) # extended depletion-corrected average catch (Harford and Carruthers 2015)
 {
   dependencies = "DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@Dt, DLM_data@CV_Dt, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
   C_tot <- DLM_data@AvC[x] * DLM_data@t[x]
@@ -1931,7 +1953,24 @@ EDCAC<-function (x, DLM_data, reps = 100) # extended depletion-corrected average
   TAC<-dcac*Bt_K/BMSY_K
   TACfilter(TAC)
 }
-class(EDCAC)<-"DLM_output"
+class(DAAC)<-"DLM_output"
+
+HDAAC<-function (x, DLM_data, reps = 100) 
+{
+  dependencies = "DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@Dt, DLM_data@CV_Dt, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
+  C_tot <- DLM_data@AvC[x] * DLM_data@t[x]
+  Mdb <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+  FMSY_M <- trlnorm(reps, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])
+  Bt_K <- trlnorm(reps, DLM_data@Dt[x], DLM_data@CV_Dt[x])
+  BMSY_K <- rbeta(reps, alphaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x] * DLM_data@CV_BMSY_B0[x]), 
+                  betaconv(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x]))
+  dcac<-C_tot/(DLM_data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
+  ddcac<-dcac*Bt_K/BMSY_K
+  TAC<-dcac
+  TAC[Bt_K<BMSY_K]<-ddcac[Bt_K<BMSY_K]
+  TACfilter(TAC)
+}
+class(HDAAC)<-"DLM_output"
 
 AvC<-function(x,DLM_data,reps=100)rlnorm(reps,log(mean(DLM_data@Cat[x,],na.rm=T)),0.2)
 class(AvC)<-"DLM_output"
@@ -2056,7 +2095,6 @@ VPA<-function(x, DLM_data, reps=reps) {
   TACfilter(TAC)
   
 }
-
 class(VPA)<-"DLM_output"
 
 #VPAFMSY<-function(lnFMc,Mc,hc,maxage,vul,Linfc,Kc,t0c,AMc,ac,bc,opt=T,ny=50){

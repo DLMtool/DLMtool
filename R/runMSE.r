@@ -18,9 +18,6 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   calcMax <- -log(0.01)/(min(OM@M)) # Age at which 1% of cohort survives
   maxage <- max(maxage, calcMax) # If maximum age is lower, increase it to calcMax
   OM@maxage <- maxage
-  
-  # WARNING FOR NYEAR AND PROYEARS? 
-  
   dep <- runif(nsim,OM@D[1],OM@D[2])  # sample from the range of user-specified depletion (Bcurrent/B0)
   Esd <- runif(nsim,OM@Fsd[1],OM@Fsd[2]) # interannual variability in fishing effort (log normal sd)
   
@@ -796,7 +793,6 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
         I2<-I2/apply(I2,1,mean)
         
         Depletion <- apply(Biomass_P[,,y,],1,sum)/apply(Biomass[,,1,],1,sum)
-		# Depletion <- apply(SSB_P[,,y,],1,sum)/apply(SSB_P[,,1,],1,sum)
 		Depletion[Depletion < tiny] <- tiny
         A<-apply(VBiomass_P[,,y,],1,sum)
         A[is.na(A)]<-tiny

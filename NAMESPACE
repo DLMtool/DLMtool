@@ -19,6 +19,7 @@ export(
     "CompSRA4010",
     "curE",
     "curE75",
+	"DAAC",
     "DBSRA",
     "DBSRA_40",
     "DBSRA_ML",
@@ -39,7 +40,6 @@ export(
     "DynF",
 	"DTe40",
     "DTe50",
-    "EDCAC",
     "Fadapt",
     "Fdem",
     "Fdem_CC",
@@ -58,7 +58,8 @@ export(
     "GB_target",
     "Gcontrol",
     "getmov",
-	 "Input",
+	"HDAAC",
+	"Input",
     "Islope1",
     "Islope4",
     "Itarget1",
@@ -134,7 +135,8 @@ export(
 	"LtargetE1",
 	"LtargetE4",
 	"ItargetE1",
-	"ItargetE4"
+	"ItargetE4",
+	"VOIplot"
 )
 exportClasses(
     "DLM_data",
@@ -149,20 +151,21 @@ import(
     "boot",
     "snowfall",
     "parallel",
-    "methods",
-	"abind"
+    "methods"
 )
-importFrom("grDevices", "col2rgb", "rainbow", "rgb", "xy.coords")
+importFrom("grDevices", "col2rgb", "rainbow", "rgb", "xy.coords", "colorRampPalette")
 importFrom("graphics", "abline", "hist", "layout", "legend", "lines",
                "matplot", "mtext", "par", "points", "text","axis","identify",
-			   "polygon", "title")
+			   "polygon", "title", "plot.new")
 importFrom("stats", "coef", "density", "dlnorm", "dnorm", "lm",
                "loess", "optim", "optimise", "optimize", "predict",
                "qlnorm", "quantile", "rbeta", "rlnorm", "rmultinom",
-               "rnorm", "runif", "sd", "uniroot", "approx", "dbeta", "nlm", "pnorm")
+               "rnorm", "runif", "sd", "uniroot", "approx", "dbeta", "nlm", 
+			   "pnorm", "loess.smooth", "plogis")
 importFrom("utils", "flush.console", "read.csv")
-
-useDynLib(DLMtool)
+importFrom("abind", "abind")
 importFrom("Rcpp", "evalCpp")
+useDynLib(DLMtool)
+
 
 

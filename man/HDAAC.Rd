@@ -1,14 +1,14 @@
-\name{EDCAC}
-\alias{EDCAC}
+\name{HDAAC}
+\alias{HDAAC}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Extra Depletion Corrected Average Catch
+Hybrid Depletion Adjusted Average Catch
 }
 \description{
-Essentially DCAC multiplied by 2*depletion and divided by BMSY/B0 (Bpeak)
+Essentially DCAC multiplied by 2*depletion and divided by BMSY/B0 (Bpeak) when below BMSY, and DCAC above BMSY
 }
 \usage{
-EDCAC(x, DLM_data, reps = 100)
+HDAAC(x, DLM_data, reps = 100)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,7 +24,7 @@ The number of stochastic samples of the TAC recommendation
 }
 \references{
 MacCall, A.D., 2009. Depletion-corrected average catch: a simple formula for estimating sustainable yields in data-poor situations. ICES J. Mar. Sci. 66, 2267-2271.
-Harford W. and Carruthers, T. 2015. A simple modification to MacCAll's depletion-corrected average catch. In draft, intended for Fish. Bull. 
+Harford W. and Carruthers, T. 2016. Testing novel catch-based fisheries management procedures. 
 }
 \author{
 W. Harford and T. Carruthers

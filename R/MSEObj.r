@@ -464,7 +464,8 @@ VOI<-function(MSEobj,ncomp=6,nbins=8,maxrow=8,Ut=NA,Utnam="Utility"){
   onlycor<-c("RefY","A","MSY","Linf","t0","OFLreal","Spat_targ")
   vargood<-(apply(MSEobj@OM,2,sd)/(apply(MSEobj@OM,2,mean)^2)^0.5)>0.005
   # MSEobj@OM<- MSEobj@OM[,(!names(MSEobj@OM)%in%onlycor)&vargood]
-  MSEobj@OM[,which((!names(MSEobj@OM)%in%onlycor)&vargood)]  
+  vargood[grep("qvar", names(MSEobj@OM))] <- FALSE
+  MSEobj@OM<- MSEobj@OM[,which((!names(MSEobj@OM)%in%onlycor)&vargood)]  
   OMp<-apply(MSEobj@OM,2,quantile,p=seq(0,1,length.out=nbins+1))
   Obsp<-apply(MSEobj@Obs,2,quantile,p=seq(0,1,length.out=nbins+1))
   OMv<-array(NA,c(nMPs,ncol(MSEobj@OM),nbins))
@@ -498,8 +499,8 @@ VOI<-function(MSEobj,ncomp=6,nbins=8,maxrow=8,Ut=NA,Utnam="Utility"){
   
   
   # -- Observation model variables
-  slots<-c( "Cat",  "Cat","AvC",  "AvC","CAA",      "CAA",    "CAL",      "CAL",    "Ind","Dep",  "Dep", "Dt",   "Dt", "Mort", "FMSY_M",    "BMSY_B0",     "L50",      "L95",    "LFC",    "LFS",    "Abun",  "Abun","vbK",  "vbt0",  "vbLinf",  "Steep","Iref",    "Cref",    "Bref")
-  Obsnam<-c("Cbias","Csd","Cbias","Csd","CAA_nsamp","CAA_ESS","CAL_nsamp","CAL_ESS","Isd","Dbias","Derr","Dbias","Derr","Mbias","FMSY_Mbias","BMSY_B0bias", "lenMbias","lenMbias","LFCbias","LFSbias","Abias","Aerr","Kbias","t0bias","Linfbias","hbias","Irefbias","Crefbias","Brefbias")
+  slots<-c( "Cat",  "Cat","AvC",  "AvC","CAA",      "CAA",    "CAL",      "CAL",    "Ind","Dep",  "Dep", "Dt",   "Dt", "Mort", "FMSY_M",    "BMSY_B0",     "L50",      "L95",    "LFC",    "LFS",    "Abun",  "Abun","vbK",  "vbt0",  "vbLinf",  "Steep","Iref",    "Cref",    "Bref", "ML")
+  Obsnam<-c("Cbias","Csd","Cbias","Csd","CAA_nsamp","CAA_ESS","CAL_nsamp","CAL_ESS","Isd","Dbias","Derr","Dbias","Derr","Mbias","FMSY_Mbias","BMSY_B0bias", "lenMbias","lenMbias","LFCbias","LFSbias","Abias","Aerr","Kbias","t0bias","Linfbias","hbias","Irefbias","Crefbias","Brefbias", "")
   Obss<-apply(Obsv,1:2,sd,na.rm=T)
   Obsstr<-array("",c(nMPs*2,ncomp+1))
   for(mm in 1:nMPs){
@@ -669,9 +670,6 @@ Sub <- function(MSEobj, MPs=NULL, sims=NULL, years=NULL) {
 }
 
 
-
-
-
 # Join two or more MSE objects together 
 joinMSE <- function(MSEobj1=NULL, MSEobj2=NULL, MSEobjs=NULL) {
   # join two MSE objects 
@@ -760,6 +758,7 @@ DOM <- function(MSEobj, MPtg=NA) {
   if (any(is.na(MPtg))) MPtg <- MSEobj@MPs 
   proyears<-MSEobj@proyears
   nMP <- MSEobj@nMPs
+  nsim <- MSEobj@nsim
   ind <- which(MSEobj@MPs %in%  MPtg)
   MPr <- which(!(MSEobj@MPs %in%  MPtg))
   yind<-max(MSEobj@proyears-4,1):MSEobj@proyears
@@ -1219,950 +1218,280 @@ VOI2<-function(MSEobj,ncomp=6,nbins=4,Ut=NA,Utnam="yield",lay=F){
 } # VOI2
 
 
-##############
-# These are temporary plotting functions
-# Need to be cleaned up!
-
-# calcperf <- function(MSEobj, 
-  # Lims=c("B_BMSY", "B_B0", "F_FMSY", "AAVY", "AAVE"), 
-  # Refs=c(0.5, 0.2, 1.5, 30, 30), lastYrs=10, allyrs=FALSE) {
+## Plotting Functions ## (new) 
+# Value of Information 
+VOIplot <- function(MSEobj, MPs=NA, nvars=5, nMP=4, Par=c("Obs", "OM"), 
+  doPlot=TRUE, incStat=FALSE, availMP=NULL, acceptMP=NULL, incNames=TRUE, 
+  labcex=0.8, ...) {
  
- # # Assign Variables
-  # Nyears <- MSEobj@nyears
-  # Pyears <- MSEobj@proyears
-  # nMPs <- MSEobj@nMPs
-  # MPs <- MSEobj@MPs 
-  # nsim <- MSEobj@nsim
-  # RefYd <- MSEobj@OM$RefY
- 
-  # # Error Checks 
-  # if (lastYrs >= Pyears) {
-    # message("lastYrs set too high. Defaulting to last 10 years")
-    # lastYrs <- 10
-  # }
-  # if (lastYrs <= 0 | lastYrs == FALSE | lastYrs == "all" | lastYrs == "All") 
-    # lastYrs <- Pyears   
-  # if (length(Refs) != length(Lims)) stop("Length of Lims and Refs must be equal")
-  # # Performance metrics 
-  # allMets <- c("B_BMSY", "B_B0", "F_FMSY", "AAVY", "AAVE")
-  # dfRefs <- c(0.5, 0.2, 1.25, 20, 20) # Default reference points
-  # PMdf <- data.frame(allMets, dfRefs) # Default performance metrics 
+  nvars <- max(nvars, 2) # maximum number of variables 
+  Par <- match.arg(Par)  # Operating Model or Observation 
+  nMPs <- MSEobj@nMPs # Number of MPs  
+  # Subset to specified MPs 
+  if (any(is.na(MPs))) MPs <- MSEobj@MPs
+  if (class(MPs) == "numeric" | class(MPs) == "integer") MPs <- MSEobj@MPs[MPs]
+  if (length(MPs) < 1) stop("No MPss found")
+  nMPss <- length(MPs)
+  if (nMP > nMPs) nMP <- nMPs 
+  if (!all(MSEobj@MPs %in% MPs)) {
+    mse <- Sub(MSEobj, MPs=MPs)
+	nMPs <- mse@nMPs
+  } else {
+    mse <- MSEobj 
+  }
   
-  # Lims <- match.arg(Lims, allMets, several.ok=TRUE)
-  # myPMdf <- PMdf[match(Lims, PMdf[,1]),]
-  # myPMdf[,2] <- Refs
+  # Calculate MSE sensitivities per MP 
+  if (length(MPs) > 1)  senseDat <- sapply(1:nMPs, calcMSESense, MSEobj=mse)
+  if (length(MPs) == 1) senseDat <- calcMSESense(MP=MPs, MSEobj=mse)
   
-  # BmsyRef <- myPMdf[grep("B_BMSY", myPMdf[,1]),2]
-  # B0Ref <- myPMdf[grep("B_B0", myPMdf[,1]),2]
-  # FRef <- myPMdf[grep("F_FMSY", myPMdf[,1]),2]
-  # maxVar <- myPMdf[grep("AAVY", myPMdf[,1]),2]
-  # maxVarE <- myPMdf[grep("AAVE", myPMdf[,1]),2]
-  # if (length(BmsyRef)> 1 | length(B0Ref)> 1 | length(B0Ref)> 1
-    # | length(maxVar) > 1 | length(maxVarE) > 1) 
-	# stop("Repeated performance metrics")
+  # Yield   
+  if (nMPs> 1) yvals <- senseDat["Yield",]
+  if (nMPs == 1) yvals <- senseDat$Yield
   
-  # if(length(BmsyRef) < 1) BmsyRef <- PMdf[grep("B_BMSY", PMdf[,1]),2]
-  # if(length(B0Ref) < 1) B0Ref <- PMdf[grep("B_B0", PMdf[,1]),2]
-  # if(length(FRef) < 1) FRef <- PMdf[grep("F_FMSY", PMdf[,1]),2]
-  # if(length(maxVar) < 1) maxVar <- PMdf[grep("AAVY", PMdf[,1]),2]
-  # if(length(maxVarE) < 1) maxVarE <- PMdf[grep("AAVE", PMdf[,1]),2]
-  
-  # Names <- list(5)
-  # Names[[1]] <- bquote(italic(B) > ~ .(BmsyRef) ~ italic(B[MSY]))
-  # Names[[2]] <- bquote(italic(B) > ~ .(B0Ref) ~ italic(B[0]))
-  # Names[[3]] <- bquote(italic(F) < ~ .(FRef) ~ italic(F[MSY]))
-  # Names[[4]] <- bquote(AAVY < ~ .(maxVar)* '%')
-  # Names[[5]] <- bquote(AAVE < ~ .(maxVarE)* '%')
-  
-  # myRefs <- list(BmsyRef=BmsyRef, B0Ref=B0Ref, FRef=FRef, maxVar=maxVar, maxVarE=maxVarE)
-  # myRefsind <- as.logical(unlist(lapply(myRefs, length)))
-    
-  # if (length(maxVar) > 0 && maxVar < 1) maxVar <- maxVar * 100 # maximum variability in % 
-  # if (length(maxVarE) > 0 && maxVarE < 1) maxVarE <- maxVarE * 100 # maximum variability in %
-  
-  # yrs <- (Pyears-lastYrs+1):Pyears 	# Years to summarize performance
-  # ystart <- 1:lastYrs			 	# First 10 years
-  # y1 <- yrs[1]:yrs[length(yrs)-1] 	# for calculating interannual variability
-  # y2 <- y1+1
- 
-  # # Satisficing matrices 
-  # B_BMSY  <- array(NA, dim=c(nsim, nMPs))
-  # B_B0    <- array(NA, dim=c(nsim, nMPs))
-  # F_FMSY  <- array(NA, dim=c(nsim, nMPs))
-  # AAVY    <- array(NA, dim=c(nsim, nMPs))
-  # AAVE    <- array(NA, dim=c(nsim, nMPs)) # Need to add this to MSE obj 
-
-  # # Maximizing & Reporting 
-  # LTY <- rep(NA, nMPs)
-  # STY <- rep(NA, nMPs)
- 
-  # # Calculate Joint Probability
-  # # Probability that MP exceeds metric for all of lastYrs  
-  # print("Calculating probability of meeting performance metrics")
-  # flush.console()
-  
-  # if (!allyrs) {
-    # B_BMSY2 <- MSEobj@B_BMSY[,,yrs] > BmsyRef
-    # B_B02 <- (MSEobj@B_BMSY[,,yrs] * MSEobj@OM$BMSY_B0) > B0Ref
-    # F_FMSY2 <- MSEobj@F_FMSY[,,yrs] < FRef
-    
-    # # Interannual variability in yield
-    # MSEobj@C[(!is.finite(MSEobj@C[,,]))] <- 0 # if catch is NAN or NA, make it 0
-    # aavy <- (((MSEobj@C[,,y1]-MSEobj@C[,,y2])/MSEobj@C[,,y2])^2)^0.5
-    # aavy[is.nan(aavy)] <- 1
-    # AAVY2	<- aavy < (maxVar/100)
-    
-    # # Interannual variability in effort (actually fishing mortality here) - need to change MSE object
-    # aave <- (((MSEobj@FM[,,y1]-MSEobj@C[,,y2])/MSEobj@FM[,,y2])^2)^0.5
-    # aave[is.nan(aave)] <- 1
-    # AAVE2	<- aave < (maxVar/100) 
-    
-    # Stats2 <- list(B_BMSY=B_BMSY2, B_B0=B_B02, F_FMSY=F_FMSY2, AAVY=AAVY2, AAVE=AAVE2)  
-    
-    # Ind2 <- match(myPMdf[,1], names(Stats2)) # Specified Joint Performance Metrics
-    
-    # Legend <- NULL
-    # for (X in 1:length(Ind2)) Legend <- append(Legend, as.expression(Names[[Ind2[X]]]))
-    
-    # LTY <-sapply(1:nMPs, function(mm) 
-      # round(mean(apply(MSEobj@C[,mm,yrs],1,mean,na.rm=TRUE)/RefYd)*100,1))
-    # STY <-sapply(1:nMPs, function(mm) 
-     # round(mean(apply(MSEobj@C[,mm,ystart],1,mean,na.rm=TRUE)/RefYd)*100,1))
-     
-    # # individual probabilities
-    # bmsy <- apply(B_BMSY2, 2, sum, na.rm=TRUE)/(lastYrs * nsim)
-    # b0 <- apply(B_B02, 2, sum, na.rm=TRUE)/(lastYrs * nsim)
-    # fmsy <- apply(F_FMSY2, 2, sum, na.rm=TRUE)/(lastYrs * nsim)
-    # aavy <- apply(AAVY2, 2, sum, na.rm=TRUE)/(lastYrs * nsim)
-    # aave <- apply(AAVE2, 2, sum, na.rm=TRUE)/(lastYrs * nsim)
-    
-    # indivProbs2 <- rbind(bmsy, b0, fmsy, aavy, aave)
-    # Ind2 <- match(myPMdf[,1], names(Stats2)) # Specified Joint Performance Metrics
-    # indivProbs2 <- indivProbs2[Ind2,]
-    # colnames(indivProbs2) <- MPs 
-    # indivProbs2 <- indivProbs2[,order(indivProbs2[1,])] * 100
-    
-    # # Joint probabilities
-	# total2 <- Reduce("*", Stats2[Ind2]) 
-    # prob2 <- apply(total2, 2, sum, na.rm=TRUE)/(lastYrs * nsim) * 100
-    # jointDF <- data.frame(MPs=MPs, Prob=prob2, LTY=LTY, STY=STY)
-  # } 
-  # if (allyrs) { 
-    # B_BMSY <-sapply(1:nMPs, function(mm) 
-      # apply(MSEobj@B_BMSY[,mm,yrs] > BmsyRef, 1, prod, na.rm=TRUE))
-    # B_B0 <-sapply(1:nMPs, function(mm) 
-      # apply(MSEobj@B_BMSY[,mm,yrs] * MSEobj@OM$BMSY_B0 > B0Ref, 1, prod,na.rm=T))
-    # F_FMSY <-sapply(1:nMPs, function(mm) 	
-      # apply(MSEobj@F_FMSY[,mm,yrs] < FRef, 1, prod, na.rm=TRUE))
-    # # Interannual variability in yield
-    # MSEobj@C[(!is.finite(MSEobj@C[,,]))] <- 0 # if catch is NAN or NA, make it 0
-    # aavy <- sapply(1:nMPs, function(mm)
-      # apply((((MSEobj@C[,mm,y1]-MSEobj@C[,mm,y2])/MSEobj@C[,mm,y2])^2)^0.5,1,mean,na.rm=T)) 
-    # aavy[is.nan(aavy)] <- 1
-    # AAVY	<- aavy < (maxVar/100)
-    # # Interannual variability in effort (actually fishing mortality here) - need to change MSE object
-    # aave <- sapply(1:nMPs, function(mm)
-      # apply((((MSEobj@FM[,mm,y1]-MSEobj@FM[,mm,y2])/MSEobj@FM[,mm,y2])^2)^0.5,1,mean,na.rm=T)) 
-    # aave[is.nan(aave)] <- 1
-    # AAVE	<- aave < (maxVarE/100)
-    
-    # # Maximizing - average over simulations and years 
-    # LTY <-sapply(1:nMPs, function(mm) 
-      # round(mean(apply(MSEobj@C[,mm,yrs],1,mean,na.rm=TRUE)/RefYd)*100,1))
-    # STY <-sapply(1:nMPs, function(mm) 
-     # round(mean(apply(MSEobj@C[,mm,ystart],1,mean,na.rm=TRUE)/RefYd)*100,1))
-    
-    
-    # Stats <- list(B_BMSY=B_BMSY, B_B0=B_B0, F_FMSY=F_FMSY, AAVY=AAVY, AAVE=AAVE)  
-    
-    # Ind <- match(myPMdf[,1], names(Stats)) # Specified Joint Performance Metrics
-    
-    # Legend <- NULL
-    # for (X in 1:length(Ind)) Legend <- append(Legend, as.expression(Names[[Ind[X]]]))
-    
-    # # individual probabilities
-    # inProbs <- lapply(lapply(Stats[Ind], colSums), "/" , nsim) 
-    # indivProbs <- matrix(unlist(inProbs), ncol = nMPs, byrow = TRUE) * 100 
-    # colnames(indivProbs) <- MPs 
-    # indivProbs <- indivProbs[,order(indivProbs[1,])]
-    
-    # # Joint probabilities
-    # # does each sim meet the joint performance criteria?
-    # total <- Reduce("*", Stats[Ind]) 
-    # prob <- round(colSums(total)/nrow(total) * 100, 2) # probability of meeting PMs
-    
-    # jointDF <- data.frame(MPs=MPs, Prob=prob, LTY=LTY, STY=STY)
-  # }
-  
-  # out <- NULL 
-  # out$Leg <- Legend 
-  # if (allyrs) out$iprobs <- indivProbs
-  # if (!allyrs) out$iprobs <- indivProbs2
-  # out$jprobs <- jointDF
-  # out$MPs <- MPs 
-  # out$LTY <- LTY 
-  # out$STY <- STY
-  # out$lastYrs <- lastYrs
-  # return(out) 
-# }
-
-# bplot2 <- function(perfobj, PLim=0.5, bcol=NULL, maxmp=20, lastYrs=NULL) {
-  # iprobs <- perfobj$iprobs 
-  # Legend <- perfobj$Leg
-  # MPs <- perfobj$MPs
-  # nMPs <- length(MPs)
-  # if (is.null(lastYrs)) lastYrs <- perfobj$lastYrs 
-  # if (PLim < 1) PLim <- PLim * 100
-  # linet <- 2 
-  # Col <- "gray"
-  # if (is.null(bcol)) bcol <- gray.colors(length(Legend))
-  # if (length(bcol) < length(Legend)) warning("Colors are not same length as PMs")
-  # if (length(bcol) > length(Legend)) bcol <- bcol[1:length(Legend)]
-  
-  
-  # nplots <- ceiling(nMPs / maxmp)
-  # Ncol <- ceiling(sqrt(nplots))
-  # Nrow <- ceiling(nplots/Ncol)
-  # if (!(Ncol * Nrow >= nplots)) stop()
-  
-  # tempmat <- matrix(1:(Ncol*Nrow), nrow=Nrow, byrow=TRUE)
-  # bspace <- max(nchar(MPs)) - 1 
-  
-  # par(mfrow=c(Nrow, Ncol), oma=c(2.5,1,5,2), mar=c(3,bspace,0,0))
- 
-  # if (nplots == 1) {
-    # tt <- barplot(iprobs, beside=TRUE, ylab="Probability",
-  	  # las=3, xlim=c(0,100),cex.axis=1.5, cex.lab=2, las=2, 
-	  # cex.names=1.5,xpd=NA, col=bcol, names=names(iprobs), horiz=TRUE)
+  # Operating Model or Observation Statistics 
+  if (nMPs > 1) {
+    if (Par == "OM") {
+      xvals <- senseDat["OMVals",1]
+	  stat <- senseDat["OMStat",]
+	  smth <- senseDat["OMSmooth",]
+	  varNames <- colnames(senseDat["OMVals",1][[1]])
+    } else {
+      xvals <- senseDat["OBVals",1]
+	  stat <- senseDat["OBStat",]
+	  smth <- senseDat["OBSmooth",]
+	  varNames <- colnames(senseDat["OBVals",1][[1]])
 	
-	# mtext(side=3, outer=TRUE, paste("Last", lastYrs, 
-	  # "years of projection period"), line=1, cex=1.25)	
-    # abline(h=PLim, lty=linet, col=Col)		
-	# rng <- par("usr")
-    # lg <- legend(rng[1], rng[2], legend=Legend,bty="n", 
-	  # cex=1.25, horiz=TRUE, xpd=NA, fill=bcol, title="Limit Reference Points", 
-	  # plot=FALSE)
-    # legend(rng[1], rng[4]+lg$rect$h, legend=Legend,bty="n", 
-	  # cex=1.25, horiz=TRUE, xpd=NA, fill=bcol, title="Limit Reference Points")
-  # } else {
-	# npplot <- min(ceiling(nMPs/nplots), maxmp)
-    # xx <- 1 
-    # xx2 <- npplot 
-    # for (X in 1:nplots) {
-	  # if (length(Legend) > 1) splitdat <- iprobs[,xx:xx2] 
-	  # if (length(Legend) == 1) splitdat <- iprobs[xx:xx2]
-	  # if (X == 1) {
-    	# tt <- barplot(splitdat, beside=TRUE, ylab="",
-    	# xlim=c(0,100), col=bcol, names=names(splitdat),
-    	# cex.axis=1.5, cex.lab=2, las=1, cex.names=1.5, xpd=NA, horiz=TRUE)
-		# abline(v=PLim, lty=linet, col=Col, xpd=FALSE)
-		# rng <- par("usr")
-        # lg <- legend(rng[1], rng[2], legend=Legend,bty="n", 
-	      # cex=1.25, horiz=TRUE, xpd=NA, fill=bcol, title="Limit Reference Points", 
-	      # plot=FALSE)
-        # legend(rng[1], rng[4]+lg$rect$h, legend=Legend,bty="n", 
-	    # cex=1.25, horiz=TRUE, xpd=NA, fill=bcol, title="Limit Reference Points")
-	  # } else {
-    	# barplot(splitdat, beside=TRUE, ylab="", xlim=c(0,100), 
-		# names=names(splitdat), cex.axis=1.5, cex.lab=2, las=1, cex.names=1.5, 
-		# axes=TRUE, col=bcol, horiz=TRUE)
-		# # if (X %in% tempmat[,1]) 
-		  # # axis(side=2, labels=TRUE, cex.axis=1.5, cex.lab=2, las=2)
-		# # if (!X %in% tempmat[,1]) axis(side=2, labels=FALSE)
-		# abline(v=PLim, lty=linet, col=Col, xpd=FALSE)
-      # }		
-      # xx <- xx2 + 1 
-      # xx2 <- min(xx + npplot -1, nMPs)
-	  # mtext(side=1, outer=TRUE, "Probability", line=1, cex=1.4)
-	  # mtext(side=3, outer=TRUE, paste("Last", lastYrs, "years of projection period"),
-	  # line=3.5, cex=1.25)
-    # }
-  # }
-
+    }
+  }
+  if (nMPs == 1) {
+    if (Par == "OM") {
+      xvals <- senseDat$OMVals
+	  stat <- senseDat$OMStat
+	  smth <- senseDat$OMSmooth
+	  varNames <- names(stat)
+    } else {
+      xvals <- senseDat$OBVals
+	  stat <- senseDat$OBStat
+	  smth <- senseDat$OBSmooth
+	  varNames <- names(stat)
+    }    
+  }
   
-  # if (!is.null(nrow(iprobs))) {
-    # rownames(iprobs) <- Legend
-  # }	
-  # perfobj$iprobs <- iprobs 
-  # perfobj$ipass <- iprobs > PLim
-  # perfobj
-# }
-
-# bplot <- function(perfobj, PLim=0.5, bcol=NULL, maxmp=10, lastYrs=NULL) {
-  # iprobs <- perfobj$iprobs 
-  # Legend <- perfobj$Leg
-  # MPs <- perfobj$MPs
-  # nMPs <- length(MPs)
-  # if (is.null(lastYrs)) lastYrs <- perfobj$lastYrs 
-  # if (PLim < 1) PLim <- PLim * 100
-  # linet <- 2 
-  # Col <- "gray"
-  # if (is.null(bcol)) bcol <- gray.colors(length(Legend))
-  # if (length(bcol) < length(Legend)) warning("Colors are not same length as PMs")
-  # if (length(bcol) > length(Legend)) bcol <- bcol[1:length(Legend)]
+  # Check what MPs used what variables 
+  used <- matrix(FALSE, nrow=length(varNames), ncol=nMPs) 
+  if (Par == "OM") {
+    used <- matrix(TRUE, nrow=length(varNames), ncol=nMPs) # all OM parameters used 
+	Obsnam <- varNames
+	LnName <- c("Reference yield", "Natural mortality", "Depletion", "Abundance",  
+    "BMSY/B0", "FMSY/M", "M gradient", "Inter-annual variability M",
+    "Recruitment variability", "Inter-annual variability effort",        
+    "Final effort", "MSY", "Average change in catchability", 
+    "Inter-annual variabilility in catchability", "FSMY", "von Bert. Linf", 
+    "von Bert. K", "von Bert. t0", "Steepness", "Linf gradient", "K gradient", 
+    "Inter-annual variability in Linf", "Recruitment gradient", 
+    "Inter-annual variability in K", "Age at maturity", "Length at 5% selection", 
+    "Length at full selection", "Length at first capture", "True MSY", "Size Area 1",                               
+    "Prob. Movement", "Auto-correlation recruitment", "Length 50% maturity", "Length 95% maturity")	
+  }
+  if (Par == "Obs") {
+     slots <- c("Cat", "Cat", "AvC", "AvC", "CAA", "CAA", "CAL", "CAL", "Ind", "Ind", "Dep",
+     "Dep", "Dt", "Dt", "Mort", "FMSY_M", "BMSY_B0", "L50", "L95", "LFC", "LFS", 
+     "Abun", "Abun", "vbK", "vbt0", "vbLinf", "Steep", "Iref", "Cref", "Bref", "ML")
+	 Obsnam <- c("Cbias", "Csd", "Cbias", "Csd", "CAA_nsamp", "CAA_ESS", "CAL_nsamp", "CAL_ESS",    
+     "Isd", "betas", "Dbias", "Derr", "Dbias", "Derr", "Mbias", "FMSY_Mbias",
+     "BMSY_B0Bias", "lenMbias", "lenMbias", "LFCbias", "LFSbias", "Abias", "Aerr",
+     "Kbias", "t0bias", "Linfbias", "hbias", "Irefbias", "Crefbias", "Brefbias", "")
+	 LnName <- c("Catch bias", "Catch error", "Catch bias", "Catch error", "n CAA samples",
+     "CAA effective sample size", "n CAL samples", "CAL effective sample size",
+     "Index Abundance error", "Hyperstability/hyperdepletion", "Depletion bias", 
+     "Depletion error", "Depletion bias", "Depletion error", "M bias", "FMSY/M bias",
+     "BMSY/B0 bias", "Length maturity bias", "Length maturity bias", 
+     "Length first capture bias", "Length full capture bias", 
+     "Current abundance bias", "Current abundance error", "vB K bias",            
+     "vB t0 bias", "vB Linf bias",  "Steepness bias", "Reference index bias",
+     "Reference catch bias", "Reference biomass bias", "Mean length")
+	# cbind(slots, Obsnam, LnName) 
+    for (mm in 1:nMPs) {
+      ids <- Obsnam[slots%in%unlist(strsplit(Required(MPs[mm])[,2],split=", "))]
+	  used[match(ids, varNames),mm] <- TRUE
+    }
+  }
+  colnames(used) <- MPs 
+  rownames(used) <- varNames
   
-  # nplots <- ceiling(nMPs / maxmp)
-  # Ncol <- ceiling(sqrt(nplots))
-  # Nrow <- ceiling(nplots/Ncol)
-  # if (!(Ncol * Nrow >= nplots)) stop()
-  
-  # tempmat <- matrix(1:(Ncol*Nrow), nrow=Nrow, byrow=TRUE)
-  # bspace <- max(nchar(MPs)) - 1 
-  
-  # par(mfrow=c(Nrow, Ncol), oma=c(0,5,5,0), mar=c(bspace,1,0,1))
  
-  # if (nplots == 1) {
-    # tt <- barplot(iprobs, beside=TRUE, ylab="Probability",
-  	  # las=3, ylim=c(0,100),cex.axis=1.5, cex.lab=2, las=2, 
-	  # cex.names=1.5,xpd=NA, col=bcol, names=names(iprobs))
-	
-	# mtext(side=3, outer=TRUE, paste("Last", lastYrs, 
-	  # "years of projection period"), line=1, cex=1.25)	
-    # abline(h=PLim, lty=linet, col=Col)		
-	# rng <- par("usr")
-    # lg <- legend(rng[1], rng[2], legend=Legend,bty="n", 
-	  # cex=1.25, horiz=TRUE, xpd=NA, fill=bcol, title="Limit Reference Points", 
-	  # plot=FALSE)
-    # legend(rng[1], rng[4]+lg$rect$h, legend=Legend,bty="n", 
-	  # cex=1.25, horiz=TRUE, xpd=NA, fill=bcol, title="Limit Reference Points")
-  # } else {
-	# npplot <- min(ceiling(nMPs/nplots), maxmp)
-    # xx <- 1 
-    # xx2 <- npplot 
-    # for (X in 1:nplots) {
-	  # if (length(Legend) > 1) splitdat <- iprobs[,xx:xx2] 
-	  # if (length(Legend) == 1) splitdat <- iprobs[xx:xx2]
-	  # if (X == 1) {
-    	# tt <- barplot(splitdat, beside=TRUE, ylab="",
-    	# las=3, ylim=c(0,100), col=bcol, names=names(splitdat),
-    	# cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5, xpd=NA)
-		# abline(h=PLim, lty=linet, col=Col, xpd=FALSE)
-		# rng <- par("usr")
-        # lg <- legend(rng[1], rng[2], legend=Legend,bty="n", 
-	      # cex=1.25, horiz=TRUE, xpd=NA, fill=bcol, title="Limit Reference Points", 
-	      # plot=FALSE)
-        # legend(rng[1], rng[4]+lg$rect$h, legend=Legend,bty="n", 
-	    # cex=1.25, horiz=TRUE, xpd=NA, fill=bcol, title="Limit Reference Points")
-	  # } else {
-    	# barplot(splitdat, beside=TRUE, ylab="", las=3, ylim=c(0,100), 
-		# names=names(splitdat), cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5, 
-		# axes=FALSE, col=bcol)
-		# if (X %in% tempmat[,1]) 
-		  # axis(side=2, labels=TRUE, cex.axis=1.5, cex.lab=2, las=2)
-		# if (!X %in% tempmat[,1]) axis(side=2, labels=FALSE)
-		  # abline(h=PLim, lty=linet, col=Col, xpd=FALSE)
-      # }		
-      # xx <- xx2 + 1 
-      # xx2 <- min(xx + npplot -1, nMPs)
-	  # mtext(side=2, outer=TRUE, "Probability", line=3, cex=1.4)
-	  # mtext(side=3, outer=TRUE, paste("Last", lastYrs, "years of projection period"),
-	  # line=3, cex=1.25)
-    # }
-  # }
-
+  # Find the highest Stat for each variable 
+  Stat <- matrix(unlist(stat), ncol=nMPs) * used
+  rownames(Stat) <- varNames
+  statord <- apply(Stat, 2, order, decreasing=TRUE)
   
-  # if (!is.null(nrow(iprobs))) {
-    # rownames(iprobs) <- Legend
-  # }	
-  # perfobj$iprobs <- iprobs 
-  # perfobj$ipass <- iprobs > PLim
-  # perfobj
-# }
-
-# jplot <- function(perfobj, Yield=c("LTY","STY"), PLim=0.5, lastYrs=10,
-  # ShowCols=TRUE, ShowLabs=TRUE, ShowPMs=TRUE, AvailMPs=NULL, xlim=NULL, 
-  # labcol=NULL, lcex=0.9, onlyAvail=FALSE, doPlot=TRUE) {
- 
-  # jointDF <- perfobj$jprobs
-  # MPs <- as.character(jointDF[,1])
-  # nMPs <- length(MPs)
-  # prob <- jointDF[,2]
-  # LTY <- jointDF[,3]
-  # STY <- jointDF[,4]
-  # Leg <- perfobj$Leg
-  
-  # if (PLim < 1) PLim <- PLim * 100 
-  # if (!is.null(xlim)) if (max(xlim) <= 1) xlim <- xlim * 100 
-  
-  # Yield <- match.arg(Yield)
-  # yield <- switch(Yield, LTY=LTY, STY=STY)
-  # ylb <- switch(Yield, LTY="Long-Term", STY="Short-Term")
-  # ylb2 <- switch(Yield, LTY=paste(" (last", lastYrs, "years)"), 
-    # STY=paste(" (first", lastYrs, "years)"))
-  # # trade-off plot of yield and prob of meeting PMs 
-  # x <- prob
-  # y <- yield
-  # labs <- MPs 
-  # xlab <- "Joint probability of exceeding Limit Reference Points"
-  # ylab <- paste0("Average ", ylb, " Yield", ylb2)
-  # par(mfrow=c(1,1), mar=c(5,5,2,1), oma=c(1,1,1,3))
-  # adjj<-c(0.9,1.1)
-  # XLim <- c(min(c(-10, min(x,na.rm=T)*adjj)), max(c(max(x,na.rm=T)*adjj, 110)))
-  # if (!is.null(xlim)) XLim <- c(min(xlim)*0.975, max(xlim*1.025))
-  # YLim <- c(min(c(-10, min(y,na.rm=T)*adjj)), max(c(max(y,na.rm=T)*adjj, 110)))
-  # # Which MPs meet minimum PMs 
-  # ind <- which(x >= PLim)
-  # coly <- rep("darkgray", length(labs)) 
-  # coly[ind] <- "black"   
-  # Pch <- rep(21, length(labs))
-  # coly[grep("FMSY", labs)]<-'darkgray'
-  # Pch[grep("FMSY", labs)] <- 24
-  # if (!is.null(AvailMPs)) Pch[labs%in%AvailMPs] <- 21
-  # if (!is.null(AvailMPs)) coly[labs%in%AvailMPs & (x >= PLim)] <- "green"
-  # pmtype <- sapply(1:length(coly), function(X) class(get(labs[X])))
-  # if (doPlot) {
-    # plot(NA,xlim=XLim,ylim=YLim,xlab=xlab,ylab=ylab, bty="l", las=1, 
-    	# xaxs="i", yaxs="i", cex.lab=1.5, cex.axis=1.25)
-    # if (PLim > 0) abline(v=PLim,col="#99999940",lwd=2)
-    # Alpha <- 30
-    # # polygons 
-    # LeftCol <- rgb(red=255, green=0, blue=0, alpha=Alpha, names = NULL, 
-      # maxColorValue = 255)
-    # RightCol <- rgb(red=0, green=255, blue=0, alpha=Alpha, names = NULL, 
-      # maxColorValue = 255) 
-    # if(ShowCols) {
-      # polygon(x=c(max(0, XLim[1]), PLim,  PLim, max(0, XLim[1])),
-    	  # y=c(0, 0, max(YLim), max(YLim)), col=LeftCol, border=NA)
-      # polygon(x=c(PLim,  100, 100, PLim), y=c(0, 0, max(YLim), max(YLim)), 
-	    # col=RightCol, border=NA)
-    # }
-    # if(ShowPMs){
-      # temp <- 1 
-      # text(quantile(XLim,0.05), max(YLim)*1.05, "Limit Reference Points", 
-	    # xpd=NA, pos=4, cex=1.2)
-      # for (xx in 1:length(Leg)) {
-        # temp <- temp - 0.05
-        # text(quantile(XLim,0.05), max(YLim*temp)*1.05, Leg[xx], xpd=NA, pos=4)  
-      # }
-    # }
+  topStat <- statord[1:nvars,] # highest nvars for each MP
+  Out <- list()
+  if (Par == "Obs") {
+    Out$xvals <- xvals
+    Out$stat <- Stat 
+    Out$topStat <- topStat
+    Out$smth <- smth
+    Out$varNames <- varNames
+	Out$MPs <- MPs
+  }
+   
+  if(doPlot) {
+    ## Create Plotting Space ##
+	Ncol <- nvars 
+	if (nMPs < 2) Ncol <- min(sum(used[,MPs]), nvars)
+	if (nMPs > 1) {
+	  temp <- apply(used[,MPs], 2, sum)
+	  if (all(temp<nvars)) Ncol <- max(temp)
+	}
+	Nrow <- min(nMP, sum(apply(used, 2, sum) > 0 ))
+   
+    mat <- matrix(1:(Nrow*Ncol), nrow=Nrow, byrow=TRUE)  
+    par(mfrow=c(Nrow, Ncol), oma=c(3,6,2,0), mar=c(3,2,2,1))
+    if (Par == "OM") Title <- "Operating Model Parameters"
+    if (Par == "Obs") Title <- "Observation Parameters"
     
-    # Cex <- 1.5
-    # if(!ShowLabs) {
-	  # points(x,y, bg=coly, pch=Pch, cex=Cex, col="black")
-	  # if (PLim <= 0) {
-	    # legend(-5, 0.92*max(YLim), legend=c("MPs", "Reference"), 
-	      # col="black", bty="n", pch=c(21, 24), pt.bg=c("black", "darkgray"), 
-		  # pt.cex=Cex, xpd=NA)
-	  # } else {
-	    # legend(-5, 0.92*max(YLim), legend=c("Accept", "Reject", "Reference"), 
-	      # col="black", bty="n", pch=c(21, 21, 24), pt.bg=c("black", "darkgray", "darkgray"), 
-		  # pt.cex=Cex, xpd=NA)
-      # }	  
-	# }  
-    # if (is.null(labcol)) coly2 <- coly 
-    # if (!is.null(labcol)) coly2 <- rep(labcol, length.out=length(coly))[1:length(coly)]
+    # Colors and Controls
+    ncols <- nrow(Stat) * ncol(Stat)
+    Cols <- colorRampPalette(c("green", "red"))(ncols)
+	# rev(rainbow(ncols,start=0,end=0.36))
+	highest <- max(Stat)
+    pch <- 18 
+    LWD <- 3 
+    LCol <- "black"
+    count <- 1 
+	mm <- 1
+	AxCex <- 1.15
+	doneMP <- 1 
+
+	# Make MP colors for Available, Acceptable, and Not-Acceptable 
+	availCol <- "green"
+	acceptCol <- "black"
+	nonAAcol <- "darkgray"
+	mpcol <- "black" # default
+	mpCols <- data.frame(MPs=MPs, col=rep(mpcol, nMPs), stringsAsFactors=FALSE)
+	if (is.null(acceptMP)) acceptMP <- MPs 
+	if (!is.null(availMP) & (!is.null(acceptMP))) {
+	  mpCols[,2] <- nonAAcol
+	  mpCols[MPs %in% acceptMP, 2] <- acceptCol
+	  mpCols[MPs %in% acceptMP & MPs %in% availMP, 2] <- availCol
+	}
     
-    # labcex <- rep(lcex, nMPs)
-    # if (!is.null(AvailMPs)) {
-      # labcex[labs%in%AvailMPs & (x >= PLim)] <- lcex * 1.5
-      # coly2[!(labs%in%AvailMPs) | (x <= PLim)] <- "#d3d3d3" 
-    # }	
-    
-    # coly2[(x <= PLim)] <- "#d3d3d3"
-    # coly2[grep("FMSY", labs)] <- '#000000'
-    # labcex[grep("FMSY", labs)] <- lcex * 0.9 
-    # font <- rep(2, length(coly)) # make all bold 
-    # font[pmtype == "DLM_input"] <- 4
-    # font[grep("FMSY", labs)] <- 1 
-    # if(ShowLabs) {
-      # if (onlyAvail & !is.null(AvailMPs)) {
-	    # text(x[labs%in%AvailMPs & (x >= PLim)],
-	    # y[labs%in%AvailMPs & (x >= PLim)],
-	    # labs[labs%in%AvailMPs & (x >= PLim)],
-	    # font=font[labs%in%AvailMPs & (x >= PLim)],
-	    # col=coly2[labs%in%AvailMPs & (x >= PLim)],
-	    # cex=labcex[labs%in%AvailMPs & (x >= PLim)])
-		# temp <- length(grep("FMSY", labs[labs%in%AvailMPs & (x >= PLim)]))
-		# if (!is.finite(temp)) temp <- 0 
-		# Num <- table(pmtype[labs%in%AvailMPs & (x >= PLim)])
-		# intext <- paste0("Input (n=", Num[1],")")
-		# outtext <- paste0("Output (n=", Num[2]-temp,")")
-		# legend(99, max(YLim), legend=c(intext, outtext), text.font=c(4,2), xpd=NA, 
-	    # bty="n", title="Method Type")
-	  # } else {
-        # text(x,y,labs,font=font,col=coly2,cex=labcex)
-		# temp <- length(grep("FMSY", labs[x >= PLim]))
-		# if (!is.finite(temp)) temp <- 0 
-		# Num <- table(pmtype[x > PLim])
-		# intext <- paste0("Input (n=", Num[1],")")
-		# outtext <- paste0("Output (n=", Num[2]-temp,")")
-		# legend(99, max(YLim), legend=c(intext, outtext), text.font=c(4,2), xpd=NA, 
-	    # bty="n", title="Method Type")
-	  # }
-	  
-    # }	
-  # } 
-  # mat <- cbind(prob, switch(Yield, LTY=LTY, STY=STY))
-  # rownames(mat) <- MPs
-  # colnames(mat) <- c("Prob", "Yield")
-  
-  # Avail <- rep(NA, nMPs) 
-  # if(!is.null(AvailMPs)) { 
-    # Avail <- rep(FALSE, nMPs)
-    # Avail[labs%in%AvailMPs] <- TRUE
-  # }	
-  # Dist <- NULL # calculate distance from corner
-  # for (X in 1:nrow(mat)) Dist[X] <- euc.dist(c(mat[X,1], mat[X,2]), 
-    # c(100, max(mat[,2])))
-  # out <- data.frame(Prob=mat[,1], Yield=mat[,2], Name=rownames(mat), Dist=Dist, 
-    # Type=pmtype, Avail=Avail, stringsAsFactors=FALSE)
-  # refind <- grep("FMSY", out$Name)
-  # if (length(refind) > 0) {
-    # out <- out[-refind,] # remove the reference methods from the list of MPs 
-  # }
-  # out <- out[order(out$Dist),]
-  # # out <- data.frame(Prob=mat[,1], Yield=mat[,2], Name=rownames(mat), 
-    # # stringsAsFactors=FALSE)
+	AllMPs <- 1:nMPs
+	AllMPs <- AllMPs[apply(used, 2, sum) > 0] # only include MPs which use the parameter 
+	AllMPs <- AllMPs[1:Nrow] # first nMPs 
 	
-  # perfobj$pass <- out[out[,1] >= PLim,]
-  # perfobj$perf <- out
-  # perfobj
-  
-  
-# }
+	for (mm in AllMPs) { # Loop along MPs 
+	  for (vr in 1:Ncol) { # Loop along variables
+	    if (nMPs > 1) varind <- topStat[vr,mm] # Variable index 
+		if (nMPs == 1) varind <- topStat[vr]
+		varSN <- varNames[varind]
+		varLN <- LnName[match(varSN,  Obsnam)]
+		if (nMPs > 1) {
+		  xs <- xvals[[1]][,varind]
+	  	  ys <- yvals[[mm]]
+		} else {
+		  xs <- xvals[,varind]
+		  ys <- yvals
+        }	
+		if (used[varSN, MPs[mm]]) { # variable is used
+		  Col <- Cols[ceiling(Stat[varind,MPs[mm]]/highest * ncols)]
+		  plot(xs, ys, col=Col, pch=pch, bty="n", axes=FALSE, xlab="", ylab="")
+	  	  if (vr == 1) {
+			MyCol <- mpCols[match(MPs[mm], mpCols[,1]),2]
+	  	    axis(side=2, las=1, cex.axis=AxCex)
+			mtext(side=2, MPs[mm], line=2.75, cex=1.4, col=MyCol)	
+  	      }		  
+		  if (vr != 1) axis(side=2, labels=FALSE)
+	  	  axis(side=1, cex.axis=AxCex)
+	  	  if(incStat) text(0.95*max(xs), 0.05*max(ys), round(Stat[varind,MPs[mm]],2))		  
+	      # Smoother line 
+	      if (nMPs > 1) {
+	  	    smX <- smth[[mm]][[varind]]$x
+	  	    smY <- smth[[mm]][[varind]]$y		
+		  } else {
+		    smX <- smth[[varind]]$x
+		    smY <- smth[[varind]]$y
+		  }
+          lines(smX, smY, lwd=LWD, col=LCol)
+	      # Variable Name
+		  if (!incNames) mtext(side=1, varSN, cex=1, line=2.5)	
+		  if (incNames) mtext(side=1, varLN, cex=labcex, line=2.5)	
+		  
+		} else {
+          plot(c(0,1), axes=FALSE, type="n", xlab="", ylab="")
+        }	
+      }
+	}  
+	mtext(side=3, outer=TRUE, Title, cex=1.5)
+    mtext(side=2, outer=TRUE, "Long-term yield relative to MSY (%)", cex=1.25, line=3)
+  }
+ invisible(Out)
+}
 
-# dplot <- function(MSEobj, perfobj=NULL, MPs=NULL, outline=FALSE,
-   # maxN=3, bytype=TRUE, cols=TRUE, onlyAvail=TRUE, 
-   # refs=c(0.3, 1, 1, 0, 0), incline=TRUE, PLim=0.8) {
+calcStat <- function(rr, evalbreaks) { # supporting function for above
+  ind <- as.integer(evalbreaks/2)
+  ind2 <- as.integer(0.1 * evalbreaks)
+  ind3 <- as.integer(0.9 * evalbreaks)
+  sum(abs(diff(rr$y[c(ind2, ind , ind3)])))
+}
+
+calcMSESense <- function(MP=1, MSEobj) { # supporting function for above 
+
+  # Calculate for a single MP 
+  if(length(MP) > 1) stop("Only one MP")
+  nMPs <- MSEobj@nMPs 
+  MPs <- MSEobj@MPs 
+  if (class(MP) == "character")  mm <- which(MPs %in% MP)
+  if (class(MP) == "numeric" | class(MP) == "integer") {
+    mm <- MP
+	MP <- MPs[mm]
+  }
+  nsims <- MSEobj@nsim
+  RefYd <- MSEobj@OM$RefY
+  yind <- max(MSEobj@proyears-4,1):MSEobj@proyears
+  evalbreaks <- as.integer(nsims/4) # number of breaks for loess smoother
+  if (length(dim(MSEobj@C)) > 2) {
+    yields <- apply(MSEobj@C[,mm,yind],1,mean,na.rm=T)/RefYd*100 
+  } else {
+    yields <- apply(MSEobj@C[,yind],1,mean,na.rm=T)/RefYd*100 
+  }  
   
-  # if (is.null(perfobj) | is.null(perfobj$pass)) stop("Run jplot first")
-  # if (onlyAvail) Avail <- perfobj$pass$Avail
-  # if (!onlyAvail) Avail <- rep(TRUE, nrow(perfobj$pass))
-  # if(!is.null(perfobj) && bytype) { 
-    # output <- which(perfobj$pass$Type == "DLM_output" & Avail)[1:maxN]
-	# input <- which(perfobj$pass$Type == "DLM_input" & Avail)[1:maxN]
-	# mps <- c(perfobj$pass$Name[input], perfobj$pass$Name[output])
-	# mps <- mps[!is.na(mps)]
-    # mseobj <- Sub(MSEobj, MPs=mps)	
-	# lastYrs <- perfobj$lastYrs
-	
-  # }
-  # if (is.null(MPs) & (!bytype)) {
-    # mps <- perfobj$pass$Name[perfobj$pass$Avail][1:maxN]
-    # mseobj <- Sub(MSEobj, MPs=mps)	
-  # }	
-  # if (!exists("lastYrs")) lastYrs <- 10 
-  # if (!is.null(MPs)) mseobj <- Sub(MSEobj, MPs=MPs)	
-  # if (is.null(MPs) & is.null(perfobj)) mseobj <- Sub(MSEobj, MPs=1:maxN)	
+  # Operating Model names to include 
+  varnames <- names(MSEobj@OM)
+  vars <- MSEobj@OM
+  vargood <- (apply(vars,2,sd)/(apply(vars,2,mean)^2)^0.5)>0.005
+  vargood[grep("qvar", varnames)] <- FALSE
+  varnames <- varnames[vargood] 
+  omvals <- MSEobj@OM[varnames]
+
+  # Apply loess smoother to Operating Model parameters
+  OMSmooth <- apply(as.matrix(omvals), 2, loess.smooth, y=yields)
+
+  # Calculate stat for OM curve
+  OMStat <- unlist(lapply(OMSmooth, calcStat, evalbreaks=evalbreaks))
   
-  # Nyears <- mseobj@nyears
-  # Pyears <- mseobj@proyears
-  # nMPs <- mseobj@nMPs
-  # MPs <- mseobj@MPs 
-  # nsim <- mseobj@nsim
-  # RefYd <- mseobj@OM$RefY
-  
-  # yrs <- (Pyears-lastYrs+1):Pyears 	# Years to summarize performance
-  # ystart <- 1:lastYrs			 	# First 10 years
-  # y1 <- yrs[1]:yrs[length(yrs)-1] 	# for calculating interannual variability
-  # y2 <- y1+1
-  
-  # if (lastYrs >= Pyears) {
-    # message("lastYrs set too high. Defaulting to last 10 years")
-    # lastYrs <- 10
-  # }
-  # if (lastYrs <= 0 | lastYrs == FALSE | lastYrs == "all" | lastYrs == "All") 
-    # lastYrs <- Pyears 
+  # Observation Parameters
+  varnames <- names(MSEobj@Obs)
+  vars <- MSEobj@Obs 
+  vargood <- (apply(vars,2,sd)/(apply(vars,2,mean)^2)^0.5)>0.005
+  varnames <- varnames[vargood]
+  obvals <- MSEobj@Obs[varnames]
  
-  # # Reporting Distribution in last years 
-  # BBMSY <- mseobj@B_BMSY[,,yrs]
-  # BBMSY <- aperm(BBMSY, c(1,3,2))
-  # dim(BBMSY) <- c(nsim*lastYrs,nMPs)
-  
-  # BB0 <- mseobj@B_BMSY[,,yrs] * mseobj@OM$BMSY_B0
-  # BB0 <- aperm(BB0, c(1,3,2))
-  # dim(BB0) <- c(nsim*lastYrs,nMPs) 
+  # Apply loess smoother to Operating Model parameters
+  OBSmooth <- apply(as.matrix(obvals), 2, loess.smooth, y=yields)
 
-  # FFMSY <- mseobj@F_FMSY[,,yrs] 
-  # FFMSY <- aperm(FFMSY, c(1,3,2))
-  # dim(FFMSY) <- c(nsim*lastYrs,nMPs) 
-  
-  # LTY <- mseobj@C[,,yrs]/RefYd
-  # LTY <- aperm(LTY, c(1,3,2))
-  # dim(LTY) <- c(nsim*lastYrs,nMPs)
-
-  # aavy <- sapply(1:nMPs, function(mm)
-    # apply((((mseobj@C[,mm,y1]-mseobj@C[,mm,y2])/mseobj@C[,mm,y2])^2)^0.5,1,mean,na.rm=T)) 
-  # # aavy[is.nan(aavy)] <- 1
-  # # aavy[aavy > 5] <- 5
-  # #Interannual variability in effort (actually fishing mortality here) - need to change MSE object  
-  # aave <- sapply(1:nMPs, function(mm)
-    # apply((((mseobj@FM[,mm,y1]-mseobj@FM[,mm,y2])/mseobj@FM[,mm,y2])^2)^0.5,1,mean,na.rm=T)) 
-  # # aave[is.nan(aave)] <- 1
-  # # aave[aave > 5] <- 5 
- 
-  # # Colors - to make the plot a bit more cheerful 
-  # pmtype <- sapply(1:nMPs, function(X) class(get(MPs[X])))
-  # font1 <- 2 
-  # font2 <- 4
-  # inputs <- which(pmtype=="DLM_input")
-  # outputs <- which(pmtype=="DLM_output")
-  # if (!(cols)) Col <- "lightblue"
-  # if (cols) {
-    # cols1 <- brewer.pal(8, "Set1")
-	# cols2 <-  brewer.pal(8, "Set2")
-    # Col <- rep(cols1, length.out=nMPs)[1:nMPs]
-	# if (length(inputs) > 0) Col[inputs] <- cols2[1:length(inputs)]
-  # }
-
-  # Line <- 3.5
-  # Cex <- 1.05 
-  # CexName <- 1.25
-  # lncol <- "slategray"
-  # topcex <- 0.75
-  # ncharmp <- max(nchar(MPs)) - 2
-  # par(mfrow=c(2,3), bty="n", oma=c(4,ncharmp,0,0), mar=c(3,2,4,3))
-  # # B/B0 
-  # boxplot(BB0, names=FALSE, las=1, outline=outline, horizontal=TRUE,
-      # xlab="", bty="n", col=Col, xpd=NA, cex.names=CexName, axes=FALSE)
-  # axis(side=1, cex.axis=CexName)
-  # axis(side=2, at=outputs, labels=MPs[outputs], cex.axis=CexName, font=font1, las=2)	  
-  # axis(side=2, at=inputs, labels=MPs[inputs], cex.axis=CexName, font=font2, las=2)
-  
-  # mtext(side=1, expression(italic(B/B[0])), cex=Cex, line=Line)
-  # if(incline && refs[1] > 0) {
-    # ps <- apply(BB0 > refs[1], 2, sum, na.rm=TRUE)/(nrow(BB0))
-	# ps <- sprintf("%3.2f", ps)
-	# ps <- c(ps, "Prob")
-    # axis(side=4, at=1:(nMPs+1), labels=ps, las=1, tick=FALSE, line=-1, xpd=NA)
-    # abline(v=refs[1], lty=2, lwd=2, col=lncol)
-	# mtext(side=3, bquote(italic(B) > ~ .(refs[1]) ~ italic(B[0])), cex=topcex)
-  # }
-  # # B/BMSY
-  # boxplot(BBMSY, names=FALSE, las=1, outline=outline, horizontal=TRUE,
-      # xlab="", bty="n", col=Col, xpd=NA, axes=FALSE)
-  # mtext(side=1, expression(italic(B/B[MSY])), cex=Cex, line=Line)  
-  # axis(side=1, cex.axis=CexName)
-  # axis(side=2, at=outputs, labels=FALSE, cex.axis=CexName, font=font1, las=2)	  
-  # axis(side=2, at=inputs, labels=FALSE, cex.axis=CexName, font=font2, las=2)
-  # if(incline && refs[2] > 0) { 
-    # ps <- apply(BBMSY > refs[2], 2, sum, na.rm=TRUE)/(nrow(BBMSY))
-	# ps <- sprintf("%3.2f", ps)
-	# ps <- c(ps, "Prob")
-    # axis(side=4, at=1:(nMPs+1), labels=ps, las=1, tick=FALSE, line=-1, xpd=NA)
-    # abline(v=refs[2], lty=2, lwd=2, col=lncol)
-	# mtext(side=3, bquote(italic(B) > ~ .(refs[2]) ~ italic(B[MSY])), cex=topcex)
-  # }
-  # # F/FMSY 
-  # boxplot(FFMSY, names=FALSE, las=1, outline=outline, horizontal=TRUE,
-      # xlab="", bty="n", col=Col, xpd=NA, axes=FALSE)
-  # mtext(side=1, expression(italic(F/F[MSY])), cex=Cex, line=Line)
-  # axis(side=1, cex.axis=CexName)
-  # axis(side=2, at=outputs, labels=FALSE, cex.axis=CexName, font=font1, las=2)	  
-  # axis(side=2, at=inputs, labels=FALSE, cex.axis=CexName, font=font2, las=2)
-  # if(incline && refs[3] > 0) {
-    # ps <- apply(FFMSY < refs[3], 2, sum, na.rm=TRUE)/(nrow(FFMSY))
-	# ps <- sprintf("%3.2f", ps)
-	# ps <- c(ps, "Prob")
-    # axis(side=4, at=1:(nMPs+1), labels=ps, las=1, tick=FALSE, line=-1, xpd=NA)
-    # abline(v=refs[3], lty=2, lwd=2, col=lncol)
-	# mtext(side=3, bquote(italic(F) < ~ .(refs[3]) ~ italic(F[MSY])), cex=topcex)
-  # }
-  # # AAVY 
-  # if (refs[4] < 1) refs[4] <- refs[4] * 100 
-  # aavy <- aavy * 100 
-  # boxplot(aavy, names=FALSE, las=1, outline=outline, horizontal=TRUE,
-      # xlab="", bty="n", col=Col, xpd=NA, axes=FALSE)
-  # mtext(side=1, "Average Annual Variation Yield (%)", cex=Cex, line=Line)
-  # axis(side=1, cex.axis=CexName)
-  # axis(side=2, at=outputs, labels=MPs[outputs], cex.axis=CexName, font=font1, las=2)	  
-  # axis(side=2, at=inputs, labels=MPs[inputs], cex.axis=CexName, font=font2, las=2)  
-  # if(incline && refs[4] > 0) {
-    # ps <- apply(aavy < refs[4], 2, sum, na.rm=TRUE)/(nrow(aavy))
-	# ps <- sprintf("%3.2f", ps)
-	# ps <- c(ps, "Prob")
-    # axis(side=4, at=1:(nMPs+1), labels=ps, las=1, tick=FALSE, line=-1, xpd=NA)
-    # abline(v=refs[4], lty=2, lwd=2, col=lncol)
-	# mtext(side=3, bquote(italic(AAVY) < ~ .(refs[4]) ~ "%"), cex=topcex) 
-  # }
-  # abline(v=refs[4], lty=2, lwd=2, col=lncol)
- # # # AAVE 
-  # # boxplot(aave, names=FALSE, las=1, outline=outline, horizontal=TRUE,
-      # # xlab="", bty="n", col=Col, xpd=NA)
-  # # mtext(side=1, "Average Annual Variation Effort", cex=1.25, line=Line)  
-  
-  # # LTY 
-  # boxplot(LTY, names=FALSE, las=1, outline=outline, horizontal=TRUE,
-      # xlab="", bty="n", col=Col, xpd=NA, axes=FALSE)
-  # mtext(side=1, "Relative Long-Term Yield", cex=Cex, line=Line)  
-  # axis(side=1, cex.axis=CexName)
-  # axis(side=2, at=outputs, labels=FALSE, cex.axis=CexName, font=font1, las=2)	  
-  # axis(side=2, at=inputs, labels=FALSE, cex.axis=CexName, font=font2, las=2)
-  # if(incline && refs[5] > 0) abline(v=refs[4], lty=2, lwd=2, col="darkgray")
-# }
-
-# PerfPlot <- function(MSEobj, 
-  # myPMs=c("B_BMSY", "B_B0", "F_FMSY", "AAVY", "AAVE"), 
-  # myrefs=c(0.5, 0.2, 1.5, 30, 30), Yield=c("LTY","STY"), PLim=0.5, lastYrs=10,
-  # ShowCols=TRUE, ShowLabs=TRUE, ShowPMs=TRUE, bcol=NULL,
-  # AvailMPs=NULL, bplot=TRUE, tplot=TRUE, maxmp=12, txlim=NULL) {
-  
-  # # Assign Variables
-  # Nyears <- MSEobj@nyears
-  # Pyears <- MSEobj@proyears
-  # nMPs <- MSEobj@nMPs
-  # MPs <- MSEobj@MPs 
-  # nsim <- MSEobj@nsim
-  # RefYd <- MSEobj@OM$RefY
-  # Yield <- match.arg(Yield)
-  
-  # # Error Checks 
-  # if (lastYrs >= Pyears) {
-    # message("lastYrs set too high. Defaulting to all years")
-    # lastYrs <- 0 
-  # }
-  # if (lastYrs <= 0 | lastYrs == FALSE | lastYrs == "all" | lastYrs == "All") 
-    # lastYrs <- Pyears - 1  
-  # if (length(myrefs) != length(myPMs)) stop("Length of myPMs and myrefs must be equal")
-  # if (PLim < 1) PLim <- PLim * 100
-  # # Performance metrics 
-  # allPMs <- c("B_BMSY", "B_B0", "F_FMSY", "AAVY", "AAVE", "AAVB")
-  # dfRefs <- c(0.5, 0.2, 1.25, 20, 20, 20) # Default reference points
-  # PMdf <- data.frame(allPMs, dfRefs) # Default performance metrics 
-  
-  # myPMs <- match.arg(myPMs, allPMs, several.ok=TRUE)
-  # myPMdf <- PMdf[match(myPMs, PMdf[,1]),]
-  # myPMdf[,2] <- myrefs
-  
-  # BmsyRef <- myPMdf[grep("B_BMSY", myPMdf[,1]),2]
-  # B0Ref <- myPMdf[grep("B_B0", myPMdf[,1]),2]
-  # FRef <- myPMdf[grep("F_FMSY", myPMdf[,1]),2]
-  # maxVar <- myPMdf[grep("AAVY", myPMdf[,1]),2]
-  # maxVarE <- myPMdf[grep("AAVE", myPMdf[,1]),2]
-  # maxVarB <- myPMdf[grep("AAVB", myPMdf[,1]),2]
-  
-  # if(length(BmsyRef) < 1) BmsyRef <- PMdf[grep("B_BMSY", PMdf[,1]),2]
-  # if(length(B0Ref) < 1) B0Ref <- PMdf[grep("B_B0", PMdf[,1]),2]
-  # if(length(FRef) < 1) FRef <- PMdf[grep("F_FMSY", PMdf[,1]),2]
-  # if(length(maxVar) < 1) maxVar <- PMdf[grep("AAVY", PMdf[,1]),2]
-  # if(length(maxVarE) < 1) maxVarE <- PMdf[grep("AAVE", PMdf[,1]),2]
-  # if(length(maxVarB) < 1) maxVarB <- PMdf[grep("AAVB", PMdf[,1]),2]
-  
-  # Names <- list(6)
-  # Names[[1]] <- bquote(italic(B) > ~ .(BmsyRef) ~ italic(B[MSY]))
-  # Names[[2]] <- bquote(italic(B) > ~ .(B0Ref) ~ italic(B[0]))
-  # Names[[3]] <- bquote(italic(F) < ~ .(FRef) ~ italic(F[MSY]))
-  # Names[[4]] <- bquote(AAVY < ~ .(maxVar)* '%')
-  # Names[[5]] <- bquote(AAVE < ~ .(maxVarE)* '%')
-  # Names[[6]] <- bquote(AAVB < ~ .(maxVarB)* '%')
-    
-  # if (length(BmsyRef)> 1 | length(B0Ref)> 1 | length(B0Ref)> 1
-    # | length(maxVar) > 1 | length(maxVarE) > 1) 
-	# stop("Repeated performance metrics")
-  # if (maxVar < 1) maxVar <- maxVar * 100 # maximum variability in % 
-  # if (maxVarE < 1) maxVarE <- maxVarE * 100 # maximum variability in %
-  
-  # yrs <- (Pyears-lastYrs+1):Pyears 	# Years to summarize performance
-  # ystart <- 1:lastYrs			 	# First 10 years
-  # y1 <- yrs[1]:yrs[length(yrs)-1] 	# for calculating interannual variability
-  # y2 <- y1+1
- 
-  # # Satisficing matrices 
-  # B_BMSY  <- array(NA, dim=c(nsim, nMPs))
-  # B_B0    <- array(NA, dim=c(nsim, nMPs))
-  # F_FMSY  <- array(NA, dim=c(nsim, nMPs))
-  # AAVY    <- array(NA, dim=c(nsim, nMPs))
-  # AAVE    <- array(NA, dim=c(nsim, nMPs))
-  # VarYE   <- array(NA, dim=c(nsim, nMPs)) # variability in catch or effort
-    
-  # # Maximizing & Reporting 
-  # LTY <- rep(NA, nMPs)
-  # STY <- rep(NA, nMPs)
-  # BBMSY <- array(NA, dim=c(nsim, nMPs))
-  # BB0 <- array(NA, dim=c(nsim, nMPs))
-  # FFMSY <- array(NA, dim=c(nsim, nMPs))
- 
-  # # Calculate Stats  
-  # print("Calculating probability of meeting performance metrics")
-  # for (mm in 1:nMPs) {
-    # cat(".")
-	# flush.console()
-    # # Statisicing - proportion of simulations above threshold 
-	# B_BMSY[,mm] 	<- apply(MSEobj@B_BMSY[,mm,yrs] > BmsyRef, 1, prod, na.rm=TRUE) 
-    # B_B0[,mm] 		<- apply((MSEobj@B_BMSY[,mm,yrs] * MSEobj@OM$BMSY_B0 > B0Ref), 1, prod,na.rm=T)
-    # F_FMSY[,mm] 	<- apply(MSEobj@F_FMSY[,mm,yrs] < FRef, 1, prod, na.rm=TRUE)
-	
-	# # Interannual variability in yield
-	# MSEobj@C[(!is.finite(MSEobj@C[,,]))] <- 0 # if catch is NAN or NA, make it 0
-	
-    # aavy 			<- apply((((MSEobj@C[,mm,y1]-MSEobj@C[,mm,y2])/MSEobj@C[,mm,y2])^2)^0.5,1,mean,na.rm=T) 
-    # aavy[is.nan(aavy)] <- 1
-    # AAVY[,mm]		<- as.numeric(aavy<(maxVar/100))
-	# # Interannual variability in effort (actually fishing mortality here) - need to change MSE object
-	# aave 			<- apply((((MSEobj@FM[,mm,y1]-MSEobj@FM[,mm,y2])/MSEobj@FM[,mm,y2])^2)^0.5,1,mean,na.rm=T) 
-    # aave[is.nan(aave)] <- 1
-    # AAVE[,mm]		<- as.numeric(aave<(maxVarE/100))
-	
-	# if (class(get(MSEobj@MPs[mm])) == "DLM_input") {
-	  # aave 	<- apply((((MSEobj@FM[,mm,y1]-MSEobj@FM[,mm,y2])/MSEobj@FM[,mm,y2])^2)^0.5,1,mean,na.rm=T)
-	  # VarYE[,mm]  <- as.numeric(aave<(maxVarB/100))
-	# } else {
-	  # aavy 	<- apply((((MSEobj@C[,mm,y1]-MSEobj@C[,mm,y2])/MSEobj@C[,mm,y2])^2)^0.5,1,mean,na.rm=T)
-	  # aave[is.nan(aave)] <- 1
-	  # aavy[is.nan(aavy)] <- 1
-	  # VarYE[,mm]  <- as.numeric(aavy<(maxVarB/100))
-	# }
-
-	# # Maximizing - average over simulations and years 
-	# LTY[mm] <- round(mean(apply(MSEobj@C[,mm,yrs],1,mean,na.rm=TRUE)/RefYd)*100,1)
-	# STY[mm] <- round(mean(apply(MSEobj@C[,mm,ystart],1,mean,na.rm=TRUE)/RefYd)*100,1)
-	# # Reporting Distribution in last years 
-	# BBMSY[,mm] <- apply(MSEobj@B_BMSY[,mm,yrs], 1, mean, na.rm=TRUE)
-	# BB0[,mm] <- apply(MSEobj@B_BMSY[,mm,yrs] * MSEobj@OM$BMSY_B0, 1, mean, na.rm=TRUE)
-	# FFMSY[,mm] <- apply(MSEobj@F_FMSY[,mm,yrs], 1, mean, na.rm=TRUE)	
-  # }
-  # cat("\n")
-  # Stats <- list(B_BMSY=B_BMSY, B_B0=B_B0, F_FMSY=F_FMSY, AAVY=AAVY, AAVE=AAVE, AAVB=VarYE)
-  
-  # Names <- list(6)
-  # Names[[1]] <- bquote(italic(B) > ~ .(BmsyRef) ~ italic(B[MSY]))
-  # Names[[2]] <- bquote(italic(B) > ~ .(B0Ref) ~ italic(B[0]))
-  # Names[[3]] <- bquote(italic(F) < ~ .(FRef) ~ italic(F[MSY]))
-  # Names[[4]] <- bquote(AAVY < ~ .(maxVar)* '%')
-  # Names[[5]] <- bquote(AAVE < ~ .(maxVarE)* '%')
-  # Names[[6]] <- bquote(AAVB < ~ .(maxVarB)* '%')
-  
-  # Ind <- match(myPMdf[,1], names(Stats))
-  # Legend <- NULL
-  # for (X in 1:length(Ind)) Legend <- append(Legend, as.expression(Names[[Ind[X]]]))
-	
-  # # individual probabilities
-  # inProbs <- lapply(lapply(Stats[Ind], colSums), "/" , nsim) 
-  # output <- matrix(unlist(inProbs), ncol = nMPs, byrow = TRUE) * 100 
-  # colnames(output) <- MPs 
-  # rownames(output) <- Names[Ind]
-  # plotout <- output[,order(output[1,])]
-  # linet <- 2 
-  # Col <- "gray"
-  # if (is.null(bcol)) bcol <- gray.colors(nrow(output))
-  # if (length(bcol) != length(Ind)) warning("Colors are not same length as PMs")
-  # if (bplot) { # show barplots of individual probabilities
-	# if (nMPs > maxmp) maxmp <- max(which(nMPs %% 1:maxmp==0))
-	# nplots <- ceiling(nMPs/maxmp)
-    # Ncol <- ceiling(sqrt(nplots))
-    # Nrow <- ceiling(nplots/Ncol)
-    # tempmat <- matrix(1:(Ncol*Nrow), nrow=Nrow, byrow=TRUE)	
-    # plotlist <- list()
-
-    # par(mfrow=c(Nrow, Ncol), oma=c(0,5,5,0), mar=c(10,1,1,1))
-    # if (nplots == 1) {
-      # tt <- barplot(plotout, beside=TRUE, ylab="Probability",
-    	# las=3, ylim=c(0,100),cex.axis=1.5, cex.lab=2, las=2, 
-		# cex.names=1.5,xpd=NA, col=bcol)
-	  # legend(x=tt[1], y=105, legend=Legend,bty="n", 
-		  # cex=1.25, horiz=TRUE, xpd=NA, fill=bcol)
-	  # mtext(side=3, outer=TRUE, paste("Last", lastYrs, 
-	    # "years of projection period"), line=1, cex=1.25)	
-      # abline(h=PLim, lty=linet, col=Col)		
-    # } else {
-	  # npplot <- min(ceiling(nMPs/nplots), maxmp)
-      # xx <- 1 
-      # xx2 <- npplot 
-      # for (X in 1:nplots) {
-		# if (length(Ind) > 1) splitdat <- plotout[,xx:xx2] 
-		# if (length(Ind) == 1) splitdat <- plotout[xx:xx2]
-		# if (X == 1) {
-    	  # tt <- barplot(splitdat, beside=TRUE, ylab="",
-    	  # las=3, ylim=c(0,100), col=bcol,
-    	  # cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5, xpd=NA)
-		  # legend(x=tt[1], y=130, legend=Legend,bty="n", horiz=TRUE,
-		  # cex=1.25, xpd=NA, fill=bcol)
-		  # abline(h=PLim, lty=linet, col=Col)
-		# } else {
-    	  # barplot(splitdat, beside=TRUE, ylab="", las=3, ylim=c(0,100), 
-		  # cex.axis=1.5, cex.lab=2, las=2, cex.names=1.5, axes=FALSE, col=bcol)
-		  # if (X %in% tempmat[,1]) axis(side=2, labels=TRUE, 
-		    # cex.axis=1.5, cex.lab=2, las=2)
-		  # if (!X %in% tempmat[,1]) axis(side=2, labels=FALSE)
-		  # abline(h=PLim, lty=linet, col=Col)
-        # }		
-        # xx <- xx2 + 1 
-    	# xx2 <- min(xx + npplot -1, nMPs)
-		# mtext(side=2, outer=TRUE, "Probability", line=3, cex=1.4)
-		# mtext(side=3, outer=TRUE, paste("Last", lastYrs, "years of projection period"),
-		# line=3, cex=1.25)
-      # }
-    # }
-  # }
-  # # Overall performance relative to chosen PMs 
-  
-  # total <- Reduce("*", Stats[Ind]) # does each sim meet the performance criteria?
-
-  # prob <- round(colSums(total)/nrow(total) * 100, 2) # probability of meeting PMs
-  
-  # yield <- switch(Yield, LTY=LTY, STY=STY)
-  # ylb <- switch(Yield, LTY="Long-Term", STY="Short-Term")
-  # ylb2 <- switch(Yield, LTY=paste(" (last", lastYrs, "years)"), 
-    # STY=paste(" (first", lastYrs, "years)"))
-	
-  # if (tplot) {
-    # # trade-off plot of yield and prob of meeting PMs 
-    # x <- prob
-    # y <- yield
-    # labs <- MPs 
-    # xlab <- "Joint probability of meeting Performance Metrics"
-    # ylab <- paste0("Average ", ylb, " Yield", ylb2)
-    # par(mfrow=c(1,1), mar=c(5,5,2,1), oma=c(1,1,1,0))
-    # adjj<-c(0.9,1.1)
-    # XLim <- c(min(c(-10, min(x,na.rm=T)*adjj)), max(c(max(x,na.rm=T)*adjj, 110)))
-	# if (!is.null(txlim)) XLim <- txlim
-    # YLim <- c(min(c(-10, min(y,na.rm=T)*adjj)), max(c(max(y,na.rm=T)*adjj, 110)))
-    # # Which MPs meet minimum PMs 
-    # ind <- which(x >= PLim)
-    # coly <- rep("darkgray", length(labs)) 
-    # coly[ind] <- "black"   
-    # Pch <- rep(21, length(labs))
-    # coly[grep("FMSY", labs)]<-'black'
-    # Pch[grep("FMSY", labs)] <- 24
-    # if (!is.null(AvailMPs)) Pch[labs%in%AvailMPs] <- 21
-    # if (!is.null(AvailMPs)) coly[labs%in%AvailMPs & (x >= PLim)] <- "green"
-    
-    # plot(NA,xlim=XLim,ylim=YLim,xlab=xlab,ylab=ylab, bty="l", las=1, 
-    	# xaxs="i", yaxs="i", cex.lab=1.5, cex.axis=1.25)
-    # if (PLim > 0) abline(v=PLim,col="#99999940",lwd=2)
-    # Alpha <- 30
-    # # polygons 
-    # LeftCol <- rgb(red=255, green=0, blue=0, alpha=Alpha, names = NULL, 
-      # maxColorValue = 255)
-    # RightCol <- rgb(red=0, green=255, blue=0, alpha=Alpha, names = NULL, 
-      # maxColorValue = 255) 
-    # if(ShowCols) {
-      # polygon(x=c(max(0, XLim[1]), PLim,  PLim, max(0, XLim[1])), y=c(0, 0, 100, 100), col=LeftCol, border=NA)
-      # polygon(x=c(PLim,  100, 100, PLim), y=c(0, 0, 100, 100), col=RightCol, border=NA)
-    # }
- 
-    # if(ShowPMs){
-      # temp <- 1 
-      # text(quantile(XLim,0.05), max(YLim)*1.05, "Performance Metrics", xpd=NA, pos=4, cex=1.2)
-      # for (xx in 1:length(Ind)) {
-        # temp <- temp - 0.05
-        # text(quantile(XLim,0.05), max(YLim*temp)*1.05, Legend[xx], xpd=NA, pos=4)  
-      # }
-    # }
-
-    # Cex <- 1.5
-    # if(!ShowLabs) points(x,y, bg=coly, pch=Pch, cex=Cex, col="black" )
-    # if(ShowLabs) text(x,y,labs,font=2,col=coly,cex=1)
-  # }
-  
-  # mat <- cbind(prob, switch(Yield, LTY=LTY, STY=STY))
-  # rownames(mat) <- MPs
-  # colnames(mat) <- c("Prob", "Yield")
-  
-  # Dist <- NULL # calculate distance from corner
-  # for (X in 1:nrow(mat)) Dist[X] <- euc.dist(c(mat[X,1], mat[X,2]), c(100, 100))
-  # mat <- mat[order(Dist),]
-  # out <- data.frame(Prob=mat[,1], Yield=mat[,2], Name=rownames(mat), 
-    # stringsAsFactors=FALSE)
-  # OutList <- list() 
-  # OutList$IndP <- t(plotout)
-  # OutList$JointP <- out 
-  # OutList$Pass <- out[out[,1] >= PLim,]
-  # OutList$MPs <- MPs 
-  # OutList$Means <- array(c(BBMSY=BBMSY, BB0=BB0, FFMSY=FFMSY), 
-    # dim=c(nsim, nMPs, 3))
-
-  # OutList 	
-# }
-
-
+  # Calculate stat for OM curve
+  OBStat <- unlist(lapply(OBSmooth, calcStat, evalbreaks=evalbreaks)) 
+   
+  Out <- list()
+  Out$OMVals <- omvals
+  Out$OMSmooth <- OMSmooth
+  Out$OMStat <- OMStat 
+  Out$OBVals <- obvals
+  Out$OBSmooth <- OBSmooth
+  Out$OBStat <-OBStat
+  Out$Yield <- yields
+  Out$MP <- MP
+  Out
+}

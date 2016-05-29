@@ -1,7 +1,7 @@
 Package: DLMtool
 Type: Package
 Title: Data-Limited Methods Toolkit
-Version: 3.2
+Version: 3.11
 Date: 2016-05-20
 Author: Tom Carruthers and Adrian Hordyk
 Maintainer: Tom Carruthers <t.carruthers@fisheries.ubc.ca>
