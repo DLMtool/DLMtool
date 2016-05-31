@@ -671,37 +671,30 @@ Sub <- function(MSEobj, MPs=NULL, sims=NULL, years=NULL) {
 
 
 # Join two or more MSE objects together 
-joinMSE <- function(MSEobj1=NULL, MSEobj2=NULL, MSEobjs=NULL) {
-  # join two MSE objects 
-  if (class(MSEobj1) == "MSE" & class(MSEobj2) == "MSE") {
-    obj1 <- MSEobj1
-	obj2 <- MSEobj2
-	if(!all(slotNames(MSEobj1) == slotNames(MSEobj2))) stop("The MSE objects don't have the same slots")
-	if (any(MSEobj1@MPs != MSEobj2@MPs)) stop("MPs must be the same for all MSE objects")
-	Nobjs <- 2 
+joinMSE <- function(MSEobjs=NULL){ 
+  # join two or more MSE objects 
+  if (class(MSEobjs) != "list") stop("MSEobjs must be a list")
+  if (length(MSEobjs) < 2) stop("MSEobjs list doesn't contain multiple MSE objects")
+
+  MPNames <- lapply(MSEobjs, getElement, name="MPs") # MPs in each object 
+  allsame <- length(unique(MPNames)) == 1
+  if (!allsame) { # some more work to do - drop the MPs that don't appear in all MSEobjs
+      mpnames <- unlist(MPNames)
+	  npack <- length(MSEobjs)
+	  tab <- table(mpnames)
+	  ind <- tab == npack
+	  commonMPs <- names(tab)[ind]
+	  MSEobjs <- lapply(MSEobjs, Sub, MPs=commonMPs)
+	  print("MPs not in all MSE objects:")
+	  print(names(tab)[!ind])
+	  print("Dropped from final MSE object.") 
   }
-  if (class(MSEobjs) == "character") {
-    Nobjs <- length(MSEobjs)
-	for (X in 1:Nobjs) {
-	  tt <- get(MSEobjs[X])
-	  assign(paste0("obj", X), tt)
-	}
-	# Check 
-	if (X > 1) {
-	  tt <- get(MSEobjs[X])
-	  tt2 <- get(MSEobjs[X-1])
-	  if(!all(slotNames(tt) == slotNames(tt2))) stop("The MSE objects don't have the same slots")
-	  if (any(tt@MPs != tt2@MPs)) stop("MPs must be the same for all MSE objects")
-	}
-  }
-  if (class(MSEobjs) == "list") {
-    Nobjs <- length(MSEobjs)
-	for (X in 1:Nobjs) {
-	  tt <- MSEobjs[[X]]
-	  assign(paste0("obj", X), tt)
-	}
-	# Check 
-	if (X > 1) {
+ 
+  Nobjs <- length(MSEobjs)
+  for (X in 1:Nobjs) {
+	tt <- MSEobjs[[X]]
+	assign(paste0("obj", X), tt)
+ 	if (X > 1) {
 	  tt <- MSEobjs[[X]]
 	  tt2 <- MSEobjs[[X-1]]
 	  if(!all(slotNames(tt) == slotNames(tt2))) stop("The MSE objects don't have the same slots")
