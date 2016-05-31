@@ -285,7 +285,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   }
   
   # Check that depletion target is reached
-  HighQ <- which(qs> 13)
+  HighQ <- which(qs> 13 | qs < 0.00052)
   if (length(HighQ) > 0) { # If q has hit bound, re-sample depletion and try again. Tries 10 times 
     # and then alerts user
     Err <- TRUE
@@ -311,7 +311,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
       }else{
         qs[HighQ] <- sapply(HighQ,getq,dep,Find,Perr,Marray,hs,Mat_age,Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR) # find the q that gives current stock depletion
       }
-      HighQ <- which(qs> 13)
+      HighQ <- which(qs> 13| qs < 0.00052)
       if (length(HighQ) == 0) Err <- FALSE
     }
     if (!Err) {
