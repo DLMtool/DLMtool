@@ -815,3 +815,63 @@ makePerf <- function(OMin, except=NULL) {
 	return(OMin)
 }
 
+
+# runMSE robust
+# A wrapper for runMSE which splits simulations into a series of packets,
+# tests for errors to avoid crashes, and saves out resulting MSE object 
+runMSErobust <- function(OM = "1", MPs = NA, nsim = 200, proyears = 28, interval = 4, 
+    pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, custompars = 0, 
+    CheckMPs = TRUE, maxsims=64, name=NULL, maxCrash=10, saveMSE=TRUE, savePack=FALSE){
+
+  packets <- new('list')   # a list of completed MSE objects
+  simsplit <- split(1:nsim, ceiling(seq_along(1:nsim)/maxsims)) # split the runs
+  
+  IsPar <- sfIsRunning() # Is a cluster running?
+  if (!IsPar) stop("You must set up parallel processing to use runMSErobust. 
+  Use: sfInit(parallel=TRUE, cpus=detectCores())")
+  
+  if (is.null(name)) { # make file name for packets if not input
+    st <- as.numeric(regexpr(":", OM@Name))+1
+	nd <- st + 3 # as.numeric(regexpr(" ", OM@Name))-1
+	name <- substr(OM@Name, st, nd)
+    name <- gsub("\\s+","",name)	
+  }	
+  if (nchar(name) < 1) name <- "MyMSE"
+  
+  # name <- paste0(sample(0:9, 1), sample(LETTERS, 1), name)
+ 
+  for (i in 1:length(simsplit)){
+    error <- 1
+	crash <- 0 
+    while(error==1 & crash <= maxCrash){
+      trialMSE <- try(runMSE(OM=OM, MPs=MPs, nsim =length(simsplit[[i]]), 
+	  proyears=proyears, interval=interval, pstar=pstar, maxF=maxF, 
+	  timelimit=timelimit, reps=reps, custompars=custompars, CheckMPs=CheckMPs))
+      crash <- crash + 1 
+      if (crash >= maxCrash) stop("Crashed too many times!")	  
+      if(class(trialMSE)=="MSE"){
+        packets[[i]] <- trialMSE
+		fname <- paste0(name, "pack", i, "MSE.rdata")
+        if (savePack) {
+		  save(trialMSE, file=fname)
+          print(paste("Saving", fname, "to", getwd()))
+          flush.console()		  
+		}  
+        error <- 0
+		crash <- 0 
+      }
+    } 
+    print(paste("Packet", i, "of", 	length(simsplit), "complete"))
+	flush.console()
+  }
+  if (i == 1)  MSEobj <- packets[[1]]
+  if (i > 1) MSEobj <- joinMSE(MSEobjs=packets)
+  if (saveMSE) {
+    fname <- paste0(name, "MSE.rdata")
+	save(MSEobj, file=fname)
+    print(paste("Saving", fname, "to", getwd()))
+    flush.console()
+  }
+  MSEobj
+}
+
