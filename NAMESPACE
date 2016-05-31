@@ -105,6 +105,7 @@ export(
     "replic8",
     "Required",
     "runMSE",
+	"runMSErobust",
 	"runInMP",
     "Sam",
     "SBT1",
