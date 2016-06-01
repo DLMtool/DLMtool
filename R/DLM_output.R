@@ -174,6 +174,8 @@ Rcontrol<-function(x,DLM_data,reps=100,yrsmth=10,gg=2,glim=c(0.5,2)){
   rsamp<-getr(x,DLM_data,Mvec,Kvec,Linfvec,t0vec,hvec,maxage=DLM_data@MaxAge,r_reps=reps)
 
   depo<-max(0.01,min(0.99,DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
+  if (any(is.na(c(DLM_data@Dep[x],DLM_data@CV_Dep[x])))) return(NA)
+  
   Bt_K<-rbeta(100,alphaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])),betaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
   Bt_K<-Bt_K[Bt_K>0.01&Bt_K<0.99][1] # interval censor (0.01,0.99)  as in Dick and MacCall 2011
 
@@ -968,6 +970,7 @@ DCAC<-function(x,DLM_data,reps=100){
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
   FMSY_M<-trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x]) # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
   Bt_K<-trlnorm(reps,DLM_data@Dt[x],DLM_data@CV_Dt[x])
+  if (any(is.na(c(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x])))) return(NA)
   BMSY_K<-rbeta(reps,alphaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]),betaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
   TACfilter(C_tot/(DLM_data@t[x]+((1-Bt_K)/(BMSY_K*FMSY_M*Mdb))))
 } # end of DCAC
@@ -979,6 +982,7 @@ DCAC4010<-function(x,DLM_data,reps=100){
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
   FMSY_M<-trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x]) # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
   Bt_K<-trlnorm(reps,DLM_data@Dt[x],DLM_data@CV_Dt[x])
+  if (any(is.na(c(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x])))) return(NA)
   BMSY_K<-rbeta(reps,alphaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]),betaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
   TAC<-C_tot/(DLM_data@t[x]+((1-Bt_K)/(BMSY_K*FMSY_M*Mdb)))
   # 40-10 rule
@@ -998,6 +1002,7 @@ DCAC_40<-function(x,DLM_data,reps=100){
   Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
   FMSY_M<-trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x])
   Bt_K<-0.4
+  if (any(is.na(c(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x])))) return(NA)
   BMSY_K<-rbeta(reps,alphaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]),betaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
   TACfilter(C_tot/(DLM_data@t[x]+((1-Bt_K)/(BMSY_K*FMSY_M*Mdb))))
 } # end of DCAC40
@@ -1021,6 +1026,7 @@ DCAC_ML<-function(x,DLM_data,reps=100){
   dep<-rep(c(Ct1,Ct2),each=reps)/(1-exp(-FM))
   if (reps == 1) Bt_K<-dep[2]/dep[1]
   if (reps > 1)  Bt_K<-dep[,2]/dep[,1]
+  if (any(is.na(c(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x])))) return(NA)
   BMSY_K<-rbeta(reps,alphaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]), 
     betaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
   TAC<-C_tot/(DLM_data@t[x]+((1-Bt_K)/(BMSY_K*FMSY_M*Mdb)))
@@ -1240,6 +1246,7 @@ class(SPMSY)<-"DLM_output"
 
 MCD<-function(x,DLM_data,reps=100){  # Daft method to demonstrate the relative value of information of current depletion
   dependencies="DLM_data@Dep, DLM_data@CV_Dep, DLM_data@Cat"
+  if(is.na(DLM_data@Dep[x])) return(NA)
   depo<-max(0.01,min(0.99,DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
   Bt_K<-rbeta(reps*100,alphaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])),betaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
   Bt_K<-Bt_K[Bt_K>0.00999&Bt_K<0.99001][1:reps] # interval censor (0.01,0.99)  as in Dick and MacCall 2011
@@ -1251,6 +1258,7 @@ class(MCD)<-"DLM_output"
 
 MCD4010<-function(x,DLM_data,reps=100){  # Daft method to demonstrate the relative value of information of current depletion
   dependencies="DLM_data@Dep, DLM_data@CV_Dep, DLM_data@Cat"
+  if(is.na(DLM_data@Dep[x])) return(NA)
   depo<-max(0.01,min(0.99,DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
   Bt_K<-rbeta(reps*100,alphaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])),betaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
   Bt_K<-Bt_K[Bt_K>0.00999&Bt_K<0.99001][1:reps] # interval censor (0.01,0.99)  as in Dick and MacCall 2011
@@ -1947,6 +1955,7 @@ DAAC<-function (x, DLM_data, reps = 100) # extended depletion-corrected average 
   Mdb <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])
   FMSY_M <- trlnorm(reps, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])
   Bt_K <- trlnorm(reps, DLM_data@Dt[x], DLM_data@CV_Dt[x])
+  if (any(is.na(c(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x])))) return(NA)
   BMSY_K <- rbeta(reps, alphaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]), 
                   betaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]))
   dcac<-C_tot/(DLM_data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
@@ -1962,6 +1971,7 @@ HDAAC<-function (x, DLM_data, reps = 100)
   Mdb <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])
   FMSY_M <- trlnorm(reps, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])
   Bt_K <- trlnorm(reps, DLM_data@Dt[x], DLM_data@CV_Dt[x])
+  if (any(is.na(c(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x])))) return(NA)
   BMSY_K <- rbeta(reps, alphaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x] * DLM_data@CV_BMSY_B0[x]), 
                   betaconv(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x]))
   dcac<-C_tot/(DLM_data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
@@ -1977,7 +1987,7 @@ class(AvC)<-"DLM_output"
 
 LBSPR_ItTAC <- function(x, DLM_data, yrsmth=1,reps=reps) {
  dependencies="DLM_data@CAL, DLM_data@CAL_bins, DLM_data@vbLinf, DLM_data@vbK, DLM_data@Mort, LM_data@vbK, DLM_data@L50, DLM_data@L95, DLM_data@wlb" 
-  
+  if (is.na(DLM_data@MPrec[x])) return(NA)
   MiscList <- LBSPR(x, DLM_data, yrsmth=yrsmth,reps=reps)
   if(all(is.na(MiscList[[1]]))) return(rep(NA, 6))
   if(all(is.na(MiscList[[1]][,2]))) return(rep(NA, 6))
