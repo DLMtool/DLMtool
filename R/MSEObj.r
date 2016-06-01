@@ -654,16 +654,20 @@ Sub <- function(MSEobj, MPs=NULL, sims=NULL, years=NULL) {
   if (length(Years) <= 1) stop("You are going to want more than 1 projection year")
   MSEobj@proyears <- max(Years)
   
-  SubF <- MSEobj@F_FMSY[SubIts,SubMPs,Years]
-  SubB <- MSEobj@B_BMSY[SubIts,SubMPs,Years]
+  SubF <- array(MSEobj@F_FMSY[SubIts,SubMPs,Years], dim=c(nsim, length(SubMPs), length(Years)))
+  SubB <- array(MSEobj@B_BMSY[SubIts,SubMPs,Years], dim=c(nsim, length(SubMPs), length(Years)))
+  SubC <- array(MSEobj@C[SubIts,SubMPs,Years], dim=c(nsim, length(SubMPs), length(Years)))
+  SubBa <- array(MSEobj@B[SubIts,SubMPs,Years], dim=c(nsim, length(SubMPs), length(Years)))
+  SubFMa <- array(MSEobj@FM[SubIts,SubMPs,Years], dim=c(nsim, length(SubMPs), length(Years)))
+  SubTACa <- array(MSEobj@TAC[SubIts,SubMPs,Years], dim=c(nsim, length(SubMPs), length(Years)))
+  
   OutOM <- MSEobj@OM[SubIts,]
   
   SubResults <- new('MSE',Name=MSEobj@Name, nyears=MSEobj@nyears, 
     proyears=MSEobj@proyears, nMPs=length(SubMPs), MPs=newMPs, 
 	nsim=length(SubIts), OMtable=OutOM, Obs=MSEobj@Obs[SubIts,], 
-	B_BMSYa=SubB, F_FMSYa=SubF, Ba=MSEobj@B[SubIts,SubMPs,Years], 
-	FMa=MSEobj@FM[SubIts,SubMPs,Years], Ca=MSEobj@C[SubIts,SubMPs,Years], 
-	TACa=MSEobj@TAC[SubIts,SubMPs,Years], SSB_hist=MSEobj@SSB_hist[SubIts,,,],
+	B_BMSYa=SubB, F_FMSYa=SubF, Ba=SubBa, FMa=SubFMa, Ca=SubC, 
+	TACa=SubTACa, SSB_hist=MSEobj@SSB_hist[SubIts,,,],
 	CB_hist=MSEobj@CB_hist[SubIts,,,], FM_hist=MSEobj@FM_hist[SubIts,,,])
   
  return(SubResults)
