@@ -133,7 +133,7 @@ movfit<-function(par,prb,frac){
 }
 
 getq<-function(x,dep,Find,Perr,Marray,hs,Mat_age,Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR){
-  opt<-optimize(qopt,log(c(0.005,15)),depc=dep[x],Fc=Find[x,],Perrc=Perr[x,],
+  opt<-optimize(qopt,log(c(0.0075,15)),depc=dep[x],Fc=Find[x,],Perrc=Perr[x,],
                      Mc=Marray[x,],hc=hs[x],Mac=Mat_age[x,],Wac=Wt_age[x,,],
                      R0c=R0,Vc=V[x,,],nyears=nyears,maxage=maxage,movc=mov[x,,],
                      Spat_targc=Spat_targ[x],SRrelc=SRrel[x],aRc=aR[x,],bRc=bR[x,])

@@ -285,23 +285,21 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   }
   
   # Check that depletion target is reached
-  HighQ <- which(qs> 13 | qs < 0.0052)
-  if (length(HighQ) > 0) { # If q has hit bound, re-sample depletion and try again. Tries 10 times 
+  HighQ <- which(qs> 13 | qs < 0.008)
+  if (length(HighQ) > 0) { # If q has hit bound, re-sample depletion and try again. Tries 20 times 
     # and then alerts user
     Err <- TRUE
     Nsec <- 10
     Nprob <- length(HighQ)
     message(Nprob," simulations have final biomass that is not close to specified depletion. \n qs have hit bounds.\n ")
     message("Re-sampling depletion and trying again")
-    #This is likely going to cause problems later on, such as infinite Fs")
-    #message("Check life history gradients")
-    # if (length(HighQ) == 1) HighQ <- rep(HighQ,2)
-    #PlotLHs(HighQ) # plot life history matrices	
+	
     # Attempt again with different depletions
     count <- 0
-    while (Err & count < 10) {
+    while (Err & count < 20) {
       count <- count + 1
-      message("Attempt ", count)
+      # message("Attempt ", count)
+	  cat(".")
       flush.console()
       Nprob <- length(HighQ)
       dep[HighQ] <- runif(Nprob,OM@D[1],OM@D[2])
@@ -311,7 +309,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
       }else{
         qs[HighQ] <- sapply(HighQ,getq,dep,Find,Perr,Marray,hs,Mat_age,Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR) # find the q that gives current stock depletion
       }
-      HighQ <- which(qs> 13| qs < 0.0052)
+      HighQ <- which(qs> 13| qs < 0.008)
       if (length(HighQ) == 0) Err <- FALSE
     }
     if (!Err) {
