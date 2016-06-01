@@ -632,6 +632,7 @@ Sub <- function(MSEobj, MPs=NULL, sims=NULL, years=NULL) {
 	message("Subsetting by MPs: ", paste0(newMPs, " "))
   }
   
+  
   ClassSims <- class(sims)
   if (ClassSims == "NULL") SubIts <- 1:MSEobj@nsim
   if (ClassSims == "integer" | ClassSims == "numeric") {
@@ -639,6 +640,7 @@ Sub <- function(MSEobj, MPs=NULL, sims=NULL, years=NULL) {
 	SubIts <- as.integer(sims)
   }	
   if (ClassSims == "logical") SubIts <- which(sims)
+  nsim <- length(SubIts)
 
   ClassYrs <- class(years)
   AllNYears <- MSEobj@proyears
@@ -654,12 +656,12 @@ Sub <- function(MSEobj, MPs=NULL, sims=NULL, years=NULL) {
   if (length(Years) <= 1) stop("You are going to want more than 1 projection year")
   MSEobj@proyears <- max(Years)
   
-  SubF <- array(MSEobj@F_FMSY[SubIts,SubMPs,Years], dim=c(nsim, length(SubMPs), length(Years)))
-  SubB <- array(MSEobj@B_BMSY[SubIts,SubMPs,Years], dim=c(nsim, length(SubMPs), length(Years)))
-  SubC <- array(MSEobj@C[SubIts,SubMPs,Years], dim=c(nsim, length(SubMPs), length(Years)))
-  SubBa <- array(MSEobj@B[SubIts,SubMPs,Years], dim=c(nsim, length(SubMPs), length(Years)))
-  SubFMa <- array(MSEobj@FM[SubIts,SubMPs,Years], dim=c(nsim, length(SubMPs), length(Years)))
-  SubTACa <- array(MSEobj@TAC[SubIts,SubMPs,Years], dim=c(nsim, length(SubMPs), length(Years)))
+  SubF <- MSEobj@F_FMSY[SubIts,SubMPs,Years, drop=FALSE]
+  SubB <- MSEobj@B_BMSY[SubIts,SubMPs,Years, drop=FALSE]
+  SubC <- MSEobj@C[SubIts,SubMPs,Years, drop=FALSE]
+  SubBa <- MSEobj@B[SubIts,SubMPs,Years, drop=FALSE]
+  SubFMa <- MSEobj@FM[SubIts,SubMPs,Years, drop=FALSE]
+  SubTACa <- MSEobj@TAC[SubIts,SubMPs,Years, drop=FALSE]
   
   OutOM <- MSEobj@OM[SubIts,]
   
