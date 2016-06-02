@@ -722,7 +722,7 @@ joinMSE <- function(MSEobjs=NULL){
   
   # Join them together
   Allobjs <- mget(paste0("obj", 1:Nobjs))
-  sns <- slotNames(obj1)
+  sns <- slotNames(Allobjs[[1]])
   outlist <- vector("list", length(sns))
   for (sn in 1:length(sns)) {
     templs <- lapply(Allobjs, slot, name=sns[sn])
@@ -1221,8 +1221,8 @@ VOI2<-function(MSEobj,ncomp=6,nbins=4,Ut=NA,Utnam="yield",lay=F){
 # Value of Information 
 VOIplot <- function(MSEobj, MPs=NA, nvars=5, nMP=4, Par=c("Obs", "OM"), 
   doPlot=TRUE, incStat=FALSE, availMP=NULL, acceptMP=NULL, incNames=TRUE, 
-  labcex=0.8, ...) {
- 
+  labcex=0.8, YVar=c("Y", "B"), ...) {
+  YVar <- match.arg(YVar)
   nvars <- max(nvars, 2) # maximum number of variables 
   Par <- match.arg(Par)  # Operating Model or Observation 
   nMPs <- MSEobj@nMPs # Number of MPs  
@@ -1240,12 +1240,12 @@ VOIplot <- function(MSEobj, MPs=NA, nvars=5, nMP=4, Par=c("Obs", "OM"),
   }
   
   # Calculate MSE sensitivities per MP 
-  if (length(MPs) > 1)  senseDat <- sapply(1:nMPs, calcMSESense, MSEobj=mse)
-  if (length(MPs) == 1) senseDat <- calcMSESense(MP=MPs, MSEobj=mse)
+  if (length(MPs) > 1)  senseDat <- sapply(1:nMPs, calcMSESense, MSEobj=mse, YVar=YVar)
+  if (length(MPs) == 1) senseDat <- calcMSESense(MP=MPs, MSEobj=mse, YVar=YVar)
   
-  # Yield   
-  if (nMPs> 1) yvals <- senseDat["Yield",]
-  if (nMPs == 1) yvals <- senseDat$Yield
+  # Y Variable    
+  if (nMPs> 1) yvals <- senseDat["YVar",]
+  if (nMPs == 1) yvals <- senseDat$YVar
   
   # Operating Model or Observation Statistics 
   if (nMPs > 1) {
@@ -1285,21 +1285,22 @@ VOIplot <- function(MSEobj, MPs=NA, nvars=5, nMP=4, Par=c("Obs", "OM"),
     "BMSY/B0", "FMSY/M", "M gradient", "Inter-annual variability M",
     "Recruitment variability", "Inter-annual variability effort",        
     "Final effort", "MSY", "Average change in catchability", 
-    "Inter-annual variabilility in catchability", "FSMY", "von Bert. Linf", 
+    "Inter-annual variabilility in catchability", "FMSY", "von Bert. Linf", 
     "von Bert. K", "von Bert. t0", "Steepness", "Linf gradient", "K gradient", 
     "Inter-annual variability in Linf", "Recruitment gradient", 
     "Inter-annual variability in K", "Age at maturity", "Length at 5% selection", 
     "Length at full selection", "Length at first capture", "True MSY", "Size Area 1",                               
-    "Prob. Movement", "Auto-correlation recruitment", "Length 50% maturity", "Length 95% maturity")	
+    "Prob. Movement", "Auto-correlation recruitment", "Length 50% maturity", "Length 95% maturity")
+	cbind(Obsnam, LnName) 
   }
   if (Par == "Obs") {
      slots <- c("Cat", "Cat", "AvC", "AvC", "CAA", "CAA", "CAL", "CAL", "Ind", "Ind", "Dep",
      "Dep", "Dt", "Dt", "Mort", "FMSY_M", "BMSY_B0", "L50", "L95", "LFC", "LFS", 
-     "Abun", "Abun", "vbK", "vbt0", "vbLinf", "Steep", "Iref", "Cref", "Bref", "ML")
+     "Abun", "Abun", "vbK", "vbt0", "vbLinf", "Steep", "Iref", "Cref", "Bref", "ML", "ML")
 	 Obsnam <- c("Cbias", "Csd", "Cbias", "Csd", "CAA_nsamp", "CAA_ESS", "CAL_nsamp", "CAL_ESS",    
      "Isd", "betas", "Dbias", "Derr", "Dbias", "Derr", "Mbias", "FMSY_Mbias",
      "BMSY_B0Bias", "lenMbias", "lenMbias", "LFCbias", "LFSbias", "Abias", "Aerr",
-     "Kbias", "t0bias", "Linfbias", "hbias", "Irefbias", "Crefbias", "Brefbias", "")
+     "Kbias", "t0bias", "Linfbias", "hbias", "Irefbias", "Crefbias", "Brefbias", "CAL_nsamp", "CAL_ESS")
 	 LnName <- c("Catch bias", "Catch error", "Catch bias", "Catch error", "n CAA samples",
      "CAA effective sample size", "n CAL samples", "CAL effective sample size",
      "Index Abundance error", "Hyperstability/hyperdepletion", "Depletion bias", 
@@ -1308,7 +1309,7 @@ VOIplot <- function(MSEobj, MPs=NA, nvars=5, nMP=4, Par=c("Obs", "OM"),
      "Length first capture bias", "Length full capture bias", 
      "Current abundance bias", "Current abundance error", "vB K bias",            
      "vB t0 bias", "vB Linf bias",  "Steepness bias", "Reference index bias",
-     "Reference catch bias", "Reference biomass bias", "Mean length")
+     "Reference catch bias", "Reference biomass bias", "Mean length", "Mean length")
 	# cbind(slots, Obsnam, LnName) 
     for (mm in 1:nMPs) {
       ids <- Obsnam[slots%in%unlist(strsplit(Required(MPs[mm])[,2],split=", "))]
@@ -1321,6 +1322,7 @@ VOIplot <- function(MSEobj, MPs=NA, nvars=5, nMP=4, Par=c("Obs", "OM"),
  
   # Find the highest Stat for each variable 
   Stat <- matrix(unlist(stat), ncol=nMPs) * used
+  if (max(Stat, na.rm=TRUE) > 100) Stat <- Stat/100
   rownames(Stat) <- varNames
   statord <- apply(Stat, 2, order, decreasing=TRUE)
   
@@ -1344,6 +1346,7 @@ VOIplot <- function(MSEobj, MPs=NA, nvars=5, nMP=4, Par=c("Obs", "OM"),
 	  if (all(temp<nvars)) Ncol <- max(temp)
 	}
 	Nrow <- min(nMP, sum(apply(used, 2, sum) > 0 ))
+	if (sum(apply(used, 2, sum) > 0) == 0) print(paste("No", Par, "used for these MPs"))
    
     mat <- matrix(1:(Nrow*Ncol), nrow=Nrow, byrow=TRUE)  
     par(mfrow=c(Nrow, Ncol), oma=c(3,6,2,0), mar=c(3,2,2,1))
@@ -1403,7 +1406,7 @@ VOIplot <- function(MSEobj, MPs=NA, nvars=5, nMP=4, Par=c("Obs", "OM"),
   	      }		  
 		  if (vr != 1) axis(side=2, labels=FALSE)
 	  	  axis(side=1, cex.axis=AxCex)
-	  	  if(incStat) text(0.95*max(xs), 0.05*max(ys), round(Stat[varind,MPs[mm]],2))		  
+	  	  if(incStat) text(max(xs), 0.05*max(ys), round(Stat[varind,MPs[mm]],2), pos=2)		  
 	      # Smoother line 
 	      if (nMPs > 1) {
 	  	    smX <- smth[[mm]][[varind]]$x
@@ -1423,7 +1426,8 @@ VOIplot <- function(MSEobj, MPs=NA, nvars=5, nMP=4, Par=c("Obs", "OM"),
       }
 	}  
 	mtext(side=3, outer=TRUE, Title, cex=1.5)
-    mtext(side=2, outer=TRUE, "Long-term yield relative to MSY (%)", cex=1.25, line=3)
+    if (YVar == "Y") mtext(side=2, outer=TRUE, "Long-term yield relative to MSY (%)", cex=1.25, line=3)
+	if (YVar == "B") mtext(side=2, outer=TRUE, "B/BMSY in last 5 years", cex=1.25, line=3)
   }
  invisible(Out)
 }
@@ -1432,11 +1436,13 @@ calcStat <- function(rr, evalbreaks) { # supporting function for above
   ind <- as.integer(evalbreaks/2)
   ind2 <- as.integer(0.1 * evalbreaks)
   ind3 <- as.integer(0.9 * evalbreaks)
-  sum(abs(diff(rr$y[c(ind2, ind , ind3)])))
+  if (all(rr$x == 0)) return(0)
+  sum((rr$y - mean(rr$y, na.rm=TRUE))^2)
 }
 
-calcMSESense <- function(MP=1, MSEobj) { # supporting function for above 
 
+calcMSESense <- function(MP=1, MSEobj, YVar=c("Y", "B")) { # supporting function for above 
+  YVar <- match.arg(YVar)
   # Calculate for a single MP 
   if(length(MP) > 1) stop("Only one MP")
   nMPs <- MSEobj@nMPs 
@@ -1450,23 +1456,43 @@ calcMSESense <- function(MP=1, MSEobj) { # supporting function for above
   RefYd <- MSEobj@OM$RefY
   yind <- max(MSEobj@proyears-4,1):MSEobj@proyears
   evalbreaks <- as.integer(nsims/4) # number of breaks for loess smoother
-  if (length(dim(MSEobj@C)) > 2) {
-    yields <- apply(MSEobj@C[,mm,yind],1,mean,na.rm=T)/RefYd*100 
-  } else {
-    yields <- apply(MSEobj@C[,yind],1,mean,na.rm=T)/RefYd*100 
-  }  
+  if (YVar == "Y") {
+    if (length(dim(MSEobj@C)) > 2) {
+      yout <- apply(MSEobj@C[,mm,yind],1,mean,na.rm=T)/RefYd*100 
+    } else {
+      yout <- apply(MSEobj@C[,yind],1,mean,na.rm=T)/RefYd*100 
+    }
+  }	
+  if (YVar == "B") {
+    if (length(dim(MSEobj@B_BMSY)) > 2) {
+      yout <- apply(MSEobj@B_BMSY[,mm,yind],1,mean,na.rm=T)
+    } else {
+      yout <- apply(MSEobj@B_BMSY[,yind],1,mean,na.rm=T)
+    }
+  }
   
   # Operating Model names to include 
   varnames <- names(MSEobj@OM)
   vars <- MSEobj@OM
-  vargood <- (apply(vars,2,sd)/(apply(vars,2,mean)^2)^0.5)>0.005
+  vargood <- (apply(vars,2,sd, na.rm=TRUE)/(apply(vars,2,mean, na.rm=TRUE)^2)^0.5)>0.005
   vargood[grep("qvar", varnames)] <- FALSE
+  vargood[is.na(vargood)] <- TRUE
   varnames <- varnames[vargood] 
-  omvals <- MSEobj@OM[varnames]
+  
+  omvals <- MSEobj@OM[,varnames]
+  
+  # Ignore these parameters from VOI plot
+  omvals$RefY <- 0
+  omvals$A <- 0
+  omvals$OFLreal <- 0 
+  omvals$FMSY <- 0 
+  omvals$MSY <- 0 
+  omvals$dFfinal <- 0 
+  omvals[is.na(omvals)] <- 0
 
   # Apply loess smoother to Operating Model parameters
-  OMSmooth <- apply(as.matrix(omvals), 2, loess.smooth, y=yields)
-
+  OMSmooth <- suppressWarnings(apply(as.matrix(omvals), 2, loess.smooth, y=yout))
+  
   # Calculate stat for OM curve
   OMStat <- unlist(lapply(OMSmooth, calcStat, evalbreaks=evalbreaks))
   
@@ -1475,10 +1501,10 @@ calcMSESense <- function(MP=1, MSEobj) { # supporting function for above
   vars <- MSEobj@Obs 
   vargood <- (apply(vars,2,sd)/(apply(vars,2,mean)^2)^0.5)>0.005
   varnames <- varnames[vargood]
-  obvals <- MSEobj@Obs[varnames]
+  obvals <- MSEobj@Obs[,varnames]
  
   # Apply loess smoother to Operating Model parameters
-  OBSmooth <- apply(as.matrix(obvals), 2, loess.smooth, y=yields)
+  OBSmooth <- suppressWarnings(apply(as.matrix(obvals), 2, loess.smooth, y=yout))
 
   # Calculate stat for OM curve
   OBStat <- unlist(lapply(OBSmooth, calcStat, evalbreaks=evalbreaks)) 
@@ -1490,7 +1516,7 @@ calcMSESense <- function(MP=1, MSEobj) { # supporting function for above
   Out$OBVals <- obvals
   Out$OBSmooth <- OBSmooth
   Out$OBStat <-OBStat
-  Out$Yield <- yields
+  Out$YVar <- yout
   Out$MP <- MP
   Out
 }

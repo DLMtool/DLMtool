@@ -137,7 +137,10 @@ export(
 	"LtargetE4",
 	"ItargetE1",
 	"ItargetE4",
-	"VOIplot"
+	"VOIplot",
+	"OM_xl",
+	"Fease_xl",
+	"writeCSV"
 )
 exportClasses(
     "DLM_data",
@@ -166,6 +169,7 @@ importFrom("stats", "coef", "density", "dlnorm", "dnorm", "lm",
 importFrom("utils", "flush.console", "read.csv")
 importFrom("abind", "abind")
 importFrom("Rcpp", "evalCpp")
+importFrom("readxl", "read_excel", "excel_sheets")
 useDynLib(DLMtool)
 
 
