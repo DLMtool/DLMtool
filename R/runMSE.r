@@ -25,7 +25,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   Find <- Deriv[[1]] # Calculate fishing effort rate
   dFfinal <- Deriv[[2]] # Final gradient in fishing effort yr-1 
   
-  dep[order(dFfinal)]<-dep[order(dep,decreasing=T)] # robustifies 
+  # dep[order(dFfinal)]<-dep[order(dep,decreasing=T)] # robustifies 
   
   # matplot(t(Find), type="l")
   # plot(dep, dFfinal) 
@@ -119,14 +119,17 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
  
   # Add cycle (phase shift) to recruitment deviations - if specified 
   if (is.finite(OM@Period[1]) & is.finite(OM@Amplitude[1])) {
-    Shape <- "sin" # default sine wave - alterantive - 'shift' for step changes
+    Shape <- "sin" # default sine wave - alternative - 'shift' for step changes
     recMulti <- sapply(1:nsim, SetRecruitCycle, Period=OM@Period, Amplitude=OM@Amplitude, 
 	  TotYears=nyears+proyears, Shape=Shape)
     Perr <- Perr * t(recMulti) # Add cyclic pattern to recruitment
 	print("Adding cyclic recruitment pattern")
 	flush.console()
   }
- 
+  
+  cumlRecDev <- apply(Perr[,1:nyears], 1, prod)
+  dep[order(cumlRecDev)] <- dep[order(dep,decreasing=F)] # robustifies 
+  
   R0 <- OM@R0  # Initial recruitment
   
   Marray<-gettempvar(M,Msd,Mgrad,nyears+proyears,nsim) # M by sim and year according to gradient and inter annual variability
@@ -318,15 +321,17 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
       flush.console()
     }
     if (Err) { # still a problem
-      print(qs[HighQ])
-      cat ("qs still very high \n")
-      cat ("Press ESC to quit now, or will continue in", Nsec, "seconds \n")
-      flush.console()
-      for (xx in 1:Nsec) {
-        Sys.sleep(1)
-        message(Nsec+1-xx)
-        flush.console()
-      }
+	  print(qs[HighQ])
+	  stop("Can't get to specified level of depletion")
+      # print(qs[HighQ])
+      # cat ("qs still very high \n")
+      # cat ("Press ESC to quit now, or will continue in", Nsec, "seconds \n")
+      # flush.console()
+      # for (xx in 1:Nsec) {
+        # Sys.sleep(1)
+        # message(Nsec+1-xx)
+        # flush.console()
+      # }
     }  
   }
   
