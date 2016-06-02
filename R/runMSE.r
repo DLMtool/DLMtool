@@ -289,7 +289,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   
   # Check that depletion target is reached
   HighQ <- which(qs> 13 | qs < 0.008)
-  if (length(HighQ) > 0) { # If q has hit bound, re-sample depletion and try again. Tries 20 times 
+  if (length(HighQ) > 0) { # If q has hit bound, re-sample depletion and try again. Tries 30 times 
     # and then alerts user
     Err <- TRUE
     Nsec <- 10
@@ -299,7 +299,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 	
     # Attempt again with different depletions
     count <- 0
-    while (Err & count < 20) {
+    while (Err & count < 30) {
       count <- count + 1
       # message("Attempt ", count)
 	  cat(".")
@@ -312,7 +312,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
       }else{
         qs[HighQ] <- sapply(HighQ,getq,dep,Find,Perr,Marray,hs,Mat_age,Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR) # find the q that gives current stock depletion
       }
-      HighQ <- which(qs> 13| qs < 0.008)
+      HighQ <- which(qs > 13 | qs < 0.008)
       if (length(HighQ) == 0) Err <- FALSE
     }
     if (!Err) {
@@ -321,8 +321,8 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
       flush.console()
     }
     if (Err) { # still a problem
-	  print(qs[HighQ])
-	  stop("Can't get to specified level of depletion")
+	  # print(qs[HighQ])
+	  stop("Can't get to specified level of depletion. Try again for a complete new sample, or modify the input parameters")
       # print(qs[HighQ])
       # cat ("qs still very high \n")
       # cat ("Press ESC to quit now, or will continue in", Nsec, "seconds \n")
