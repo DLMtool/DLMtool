@@ -1220,8 +1220,7 @@ VOI2<-function(MSEobj,ncomp=6,nbins=4,Ut=NA,Utnam="yield",lay=F){
 ## Plotting Functions ## (new) 
 # Value of Information 
 VOIplot <- function(MSEobj, MPs=NA, nvars=5, nMP=4, Par=c("Obs", "OM"), 
-  doPlot=TRUE, incStat=FALSE, availMP=NULL, acceptMP=NULL, incNames=TRUE, 
-  labcex=0.8, YVar=c("Y", "B"), ...) {
+  YVar=c("Y", "B"), doPlot=TRUE, incStat=FALSE, availMP=NULL, 
   YVar <- match.arg(YVar)
   nvars <- max(nvars, 2) # maximum number of variables 
   Par <- match.arg(Par)  # Operating Model or Observation 

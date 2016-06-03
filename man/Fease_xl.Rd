@@ -1,0 +1,42 @@
+\name{Fease_xl}
+\alias{Fease_xl}
+\title{
+Read in feasibility parameters from Excel spreadsheet
+}
+\description{
+A function to read in feasibility parameters from an Excel spreadsheet with tabs named following specific convention
+}
+\usage{
+Fease_xl(fname, stkname, fpath = "", saveCSV = FALSE)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{fname}{
+Name of the Excel spreadsheet file. Must include file extension.
+}
+  \item{stkname}{
+Name of the Stock.
+}
+  \item{fpath}{
+Full file path, if file is not in current working directory
+}
+  \item{saveCSV}{
+Do you also want to save the Stock, Fleet and Observation parameters to CSV files?
+}
+}
+\details{
+The Excel spreadsheet must have tabs named with the following convention.
+For example if \code{stkname} is "myFish", the tab must be named "myFishFease,
+}
+\value{
+A object of class Fease
+}
+\author{
+A. Hordyk
+}
+
+\examples{
+ \dontrun{
+ myFease <- Fease_xl(fname="FeaseTables.xlsx", stkname="myFish")
+}
+}

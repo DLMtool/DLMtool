@@ -1,5 +1,5 @@
 ---
-title: "DLMtool: Data-Limited Methods Toolkit (v3.1)"
+title: "DLMtool: Data-Limited Methods Toolkit (v3.11)"
 author: "Tom Carruthers (<t.carruthers@fisheries.ubc.ca>) and Adrian Hordyk (<a.hordyk@murdoch.edu.au>)"
 date: "`r Sys.Date()`"
 output: 
@@ -31,7 +31,26 @@ DLMtool has been used in setting catch-limits at the Mid-Atlantic Fishery Manage
 # Version Notes
 The package is subject to ongoing testing. Once again, if you find a bug or a problem please send a report to <t.carruthers@fisheries.ubc.ca> or <a.hordyk@murdoch.edu.au> so that it can be fixed!  
 
-## New Additions to this Version (3.1)
+## New Additions to this Version (3.11)
+A number of small but important bugs have been fixed, with special thanks to Liz Brooks, Helena Geromont, and Bill Harford, for alerting us to some of these issues.  
+
+Quang Huynh has recoded the mean length methods in C++, and they now run much faster, and should pass the timelimit constraint.
+
+A new function (`runMSErobust`) has been added which is a wrapper for the `runMSE` function.  In time this may replace `runMSE` as the primary function to use when running a MSE.  `runMSErobust` splits large simulations into a series of smaller packets and stitches them together to return a MSE object. This has the benefit of increasing speed and efficiency, particularly for runs with large number of simulations.  The function also checks for errors and re-starts the MSE if the model crash.  
+
+A set of functions `OM_xl` and `Fease_xl` have been added. These are used to read in operating model and feasibility parameters from a Excel spreadsheet rather than CSVs.  These are essentially wrappers for the `new` function, but allow you store all operating model tables in a single spreadsheet rather than a whole lot of CSVs.  Mainly useful if you are working on multiple species/stocks.
+
+The size limit feature has been updated to include an upper slot limit. See `slotlim` for an example MP.  The slot limit is specified as the last element in the input control vector.  Similar to the lower size limit, all individuals above the slot limit experience no fishing mortality. 
+
+A number of new MPs have been added. There are now 63 output and 22 input control MPs in the DLMtool.
+
+A new function `makePerf` has been added. This function takes an OM object, and returns the same OM object with no process or observation error. Useful for testing the performance of methods under perfect conditions, to see if work as expected. And for debugging!
+
+Two new plotting functions: `wormplot` which creates worm plots of the likelihood of meeting biomass targets in future years and `VOIplot` which is another value of information plot, similar to the `VOI` function, and shows how observation and operating model parameter values affect trends in long-term yield and biomass.
+
+Coming soon: bag limit MPs for recreational fisheries
+
+## Notes from version 3.1
 Variable historical selectivity patterns. In order to simulate fisheries that have experienced important shifts in historical length selectivity, this can now be user specified using a graphical user interface (the 'ChooseSelect' function) or by manually editing a series of new slots in the Fleet object (`SelYears`, `AbsSelYears`, `L5Upper`, `L5Lower`, `LFSUpper`, `LFSLower`, `VmaxUpper`, `VmaxLower`).  
 
 Cyclic Recruitment patterns. Persistent shifts in stock productivity are a particular concern for fishery management. These can now be generated in the toolkit using a new function `SetRecruitCycle` that generates cyclical pattern in recruitment strength. 

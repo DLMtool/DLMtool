@@ -8,7 +8,7 @@ OM_xl <- function(fname, stkname, fpath="", saveCSV=FALSE) {
 			col_names=FALSE)
   tmpfile <- paste0(fpath, stkname, "Stock.csv")
   if (file.exists(tmpfile)) unlink(tmpfile) 
-  writeCSV(fpath, stkname, inobj=stock, tmpfile, objtype="Stock")
+  writeCSV(inobj=stock, tmpfile, objtype="Stock")
   tmpstock <- new("Stock", tmpfile)
   if (!saveCSV) unlink(tmpfile)
 
@@ -17,7 +17,7 @@ OM_xl <- function(fname, stkname, fpath="", saveCSV=FALSE) {
 			col_names=FALSE)			
   tmpfile <- paste0(fpath, stkname, "Fleet.csv")
   if (file.exists(tmpfile)) unlink(tmpfile) 
-  writeCSV(fpath, stkname, inobj=fleet, tmpfile, objtype="Fleet")
+  writeCSV(inobj=fleet, tmpfile, objtype="Fleet")
   tmpfleet <- new("Fleet", tmpfile)
   if (!saveCSV) unlink(tmpfile)  
 
@@ -27,7 +27,7 @@ OM_xl <- function(fname, stkname, fpath="", saveCSV=FALSE) {
   obs <- read_excel(infile, sheet=index, col_names=FALSE)
   tmpfile <- paste0(fpath, stkname, "Observation.csv")
   if (file.exists(tmpfile)) unlink(tmpfile) 
-  writeCSV(fpath, stkname, inobj=obs, tmpfile, objtype="Observation")
+  writeCSV(inobj=obs, tmpfile, objtype="Observation")
   tmpobs <- new("Observation", tmpfile)
   if (!saveCSV) unlink(tmpfile)  
   
@@ -45,14 +45,14 @@ Fease_xl <- function(fname, stkname, fpath="", saveCSV=FALSE) {
   feasedat <- feasedat[,1:2]			
   tmpfile <- paste0(fpath, stkname, "Fease.csv")
   if (file.exists(tmpfile)) unlink(tmpfile) 
-  writeCSV(fpath, stkname, inobj=feasedat, tmpfile, objtype="DLM_fease")
+  writeCSV(inobj=feasedat, tmpfile, objtype="DLM_fease")
   fease <- new("DLM_fease", tmpfile)
   if (!saveCSV) unlink(tmpfile)
 
   fease
 }
 
-writeCSV <- function(fpath, stkname, inobj, tmpfile=NULL,
+writeCSV <- function(inobj, tmpfile=NULL,
   objtype=c("Stock", "Fleet", "Observation",  "DLM_data", "OM", "DLM_fease")) {
   objtype <- match.arg(objtype)
   tmpobj <- new(objtype)
