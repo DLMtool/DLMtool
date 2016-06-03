@@ -90,6 +90,7 @@ export(
     "MRreal",
     "MRnoreal",
     "NAor0",
+	"NFref",
     "NOAA_plot",
 	"OptFun",
     "plotOFL",

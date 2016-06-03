@@ -2222,6 +2222,12 @@ VPAFMSY<-function(lnFMc,Mc,hc,maxage,vul,Linfc,Kc,t0c,AMc,ac,bc,opt=T,ny=50){
   }
 }
 
+# A reference MP with zero(ish) catch
+NFref <- function (x, DLM_data, reps = 100) {
+  0.01
+}
+class(NFref)<-"DLM_output"
+
 # SCA<-function(x,DLM_data,reps=100){ # Requires a character string DLMexe (e.g. "C:/DLMexe") that represents the 
   
   # dependencies=""
