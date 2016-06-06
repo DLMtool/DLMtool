@@ -1,5 +1,19 @@
 # DLM_input MPs
 
+BL_MP <-function(x,DLM_data, ...){ 
+
+  Allocate<-1
+  Effort<-1
+  Spatial<-c(1,1) 
+  newLFC <- NA
+  newLFS <- NA
+  Vuln <-c(newLFC, newLFS, NA) # Lc, LFS and upper limit (knife-edge) 
+  BL <- 4 # baglimit 
+  c(Allocate=Allocate, Effort=Effort, Spatial=Spatial, Vuln=Vuln, BL=BL)
+}
+class(BL_MP)<-"DLM_input"
+
+
 matlenlim<-function(x,DLM_data, ...){ # Length at maturity is knife-edge vulnerability
   dependencies="DLM_data@LFC, DLM_data@LFS"
   Allocate<-1
@@ -38,16 +52,6 @@ slotlim <-function(x,DLM_data, ...){ # Example of slot limit between 0.95 and 1.
   c(Allocate, Effort, Spatial, Vuln)
 }
 class(slotlim)<-"DLM_input"
-
-# matagelim<-function(x,DLM_data, ...){ # Age at maturity is knife-edge vulnerability
-  # dependencies="DLM_data@AM, DLM_data@MaxAge"
-  # Allocate<-1
-  # Effort<-1
-  # Spatial<-c(1,1)
-  # Vuln<-1/(1+exp((DLM_data@AM[x]-(1:DLM_data@MaxAge))/(DLM_data@AM[x]*DLM_data@AM[x]*0.05)))
-  # c(Allocate, Effort, Spatial, Vuln)
-# }
-# class(matagelim)<-"DLM_input"
 
 MRreal<-function(x,DLM_data, ...){ # A Marine reserve in area 1 with spatial reallocation of effort
   dependencies="DLM_data@MaxAge"
@@ -260,8 +264,7 @@ DDe<-function(x,DLM_data,reps=100){
   U_hist<-1-exp(-exp(opt$par[3])*E_hist)
  
   Allocate <- 1
-  Effort<-max(0.05,exp(opt$par[1])/U_hist[DLM_data@LHYear])
-  Effort <- min(Effort, 10) # some maximum effort 
+  Effort<-max(0.01,exp(opt$par[1])/U_hist[DLM_data@LHYear])
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -318,8 +321,7 @@ DDe75<-function(x,DLM_data,reps=100){
   U_hist<-1-exp(-exp(opt$par[3])*E_hist)
   
   Allocate <- 1
-  Effort<-max(0.75*exp(opt$par[1])/U_hist[DLM_data@LHYear],0.05)
-  Effort <- min(Effort, 10) # some maximum effort 
+  Effort<-max(0.75*exp(opt$par[1])/U_hist[DLM_data@LHYear],0.01)
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -382,8 +384,7 @@ DDes<-function(x,DLM_data,reps=100,LB=0.9,UB=1.1){
   if(fac>UB)fac<-UB
   
   Allocate <- 1
-  Effort<-max(0.05,DLM_data@MPeff[x]*fac)
-  Effort <- min(Effort, 10) # some maximum effort 
+  Effort<-max(0.01,DLM_data@MPeff[x]*fac)
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -407,8 +408,7 @@ DTe40<-function(x,DLM_data,reps=100,alpha=0.4,LB=0.9,UB=1.1){
   if(fac>UB)fac<- UB
   
   Allocate <- 1
-  Effort<-max(0.05,DLM_data@MPeff[x]*fac) 
-  Effort <- min(Effort, 10) # some maximum effort
+  Effort<-max(0.01,DLM_data@MPeff[x]*fac) 
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -433,8 +433,7 @@ DTe50<-function(x,DLM_data,reps=100,alpha=0.5,LB=0.9,UB=1.1){
   if(fac>UB)fac<-UB
   
   Allocate <- 1
-  Effort<-max(DLM_data@MPeff[x]*fac,0.05)
-  Effort <- min(Effort, 10) # some maximum effort  
+  Effort<-max(DLM_data@MPeff[x]*fac,0.01)
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -451,7 +450,7 @@ DTe50<-function(x,DLM_data,reps=100,alpha=0.5,LB=0.9,UB=1.1){
 class(DTe50)<-"DLM_input"
 
 LstepCE1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,stepsz=0.05,llim=c(0.96,0.98,1.05)){
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
+  ind<-(length(DLM_data@Year)-(yrsmth-1)):length (DLM_data@Year) # recent 5 years
   ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
   # ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
   ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
@@ -473,8 +472,7 @@ LstepCE1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,stepsz=0.05,llim=c(0.96,0.9
   }
  
   Allocate <- 1
-  Effort <- max(0.05,Effort)
-  Effort <- min(Effort, 10)
+  Effort <- max(0.01,Effort) # for simulations in case Effort goes negative
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -502,10 +500,8 @@ LstepCE2<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,stepsz=0.1,llim=c(0.96,0.98
   }else{
     Effort <- DLM_data@MPeff[x]
   }
- 
+  Effort <- max(0.01,Effort) # for simulations in case Effort goes negative
   Allocate <- 1
-  Effort <- max(0.05,Effort)
-  Effort <- min(Effort, 10)
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -529,9 +525,13 @@ LtargetE1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,xL=1.05){
   }else{ 
     Effort <- 0.5 * DLM_data@MPeff[x]*(Lrecent/L0)^2         
   }
+  Step <- 1 - (Effort/DLM_data@MPeff[x])  # step change in effort 
+  Step[Step<0.85] <- 0.85
+  Step[Step>1.15] <- 1.15
+
   Allocate <- 1
-  Effort <- max(0.05,Effort)
-  Effort <- min(Effort, 10)
+  Effort <- Step * DLM_data@MPeff[x]
+  Effort <- max(0.01,Effort) # for simulations in case Effort goes negative
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -556,9 +556,12 @@ LtargetE4 <-function(x,DLM_data,reps=100,yrsmth=5,xx=0,xL=1.15){
     Effort <- 0.5 * DLM_data@MPeff[x]*(Lrecent/L0)^2                 
   }
   
+  Step <- 1 - (Effort/DLM_data@MPeff[x])  # step change in effort 
+  Step[Step<0.85] <- 0.85
+  Step[Step>1.15] <- 1.15
   Allocate <- 1
-  Effort <- max(0.05,Effort)
-  Effort <- min(Effort, 10)
+  Effort <- Step * DLM_data@MPeff[x]
+  Effort <- max(0.01,Effort) # for simulations in case Effort goes negative
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)
@@ -583,9 +586,12 @@ ItargetE1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,Imulti=1.5){
     Effort <- 0.5 * DLM_data@MPeff[x]*(Irecent/I0)^2
   }
   
+  Step <- 1 - (Effort/DLM_data@MPeff[x])  # step change in effort 
+  Step[Step<0.85] <- 0.85
+  Step[Step>1.15] <- 1.15
   Allocate <- 1
-  Effort <- max(0.05,Effort)
-  Effort <- min(Effort, 10)
+  Effort <- Step * DLM_data@MPeff[x]
+  Effort <- max(0.01,Effort) # for simulations in case Effort goes negative
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln) 
@@ -609,10 +615,13 @@ ItargetE4 <-function(x,DLM_data,reps=100,yrsmth=5,xx=0,Imulti=2.5){
   }else{
     Effort <- 0.5 * DLM_data@MPeff[x]*(Irecent/I0)^2
   }
-  
+  Step <- 1 - (Effort/DLM_data@MPeff[x])  # step change in effort 
+  Step[Step<0.85] <- 0.85
+  Step[Step>1.15] <- 1.15
+
   Allocate <- 1
-  Effort <- max(0.05,Effort)
-  Effort <- min(Effort, 10)
+  Effort <- Step * DLM_data@MPeff[x]
+  Effort <- max(0.01,Effort) # for simulations in case Effort goes negative
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln) 
@@ -630,9 +639,13 @@ ITe10<-function(x,DLM_data,reps=100,yrsmth=5,mc=0.1){
   if(deltaI>(1+mc))deltaI<-1+mc
   
   Effort<-DLM_data@MPeff[x]*deltaI*trlnorm(reps,1,DLM_data@CV_Ind[x])
+  
+  Step <- 1 - (Effort/DLM_data@MPeff[x])  # step change in effort 
+  Step[Step<0.85] <- 0.85
+  Step[Step>1.15] <- 1.15
   Allocate <- 1
-  Effort <- max(0.05,Effort)
-  Effort <- min(Effort, 10)
+  Effort <- Step * DLM_data@MPeff[x]
+  Effort <- max(0.01,Effort) # for simulations in case Effort goes negative
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out<-c(Allocate, Effort, Spatial, Vuln)
@@ -649,9 +662,13 @@ ITe5<-function(x,DLM_data,reps=100,yrsmth=5,mc=0.05){
   if(deltaI>(1+mc))deltaI<-1+mc
   
   Effort<-DLM_data@MPeff[x]*deltaI*trlnorm(reps,1,DLM_data@CV_Ind[x])
+  Allocate <- 1  
+  Step <- 1 - (Effort/DLM_data@MPeff[x])  # step change in effort 
+  Step[Step<0.85] <- 0.85
+  Step[Step>1.15] <- 1.15
   Allocate <- 1
-  Effort <- max(0.05,Effort)
-  Effort <- min(Effort, 10)
+  Effort <- Step * DLM_data@MPeff[x]
+  Effort <- max(0.01,Effort) # for simulations in case Effort goes negative
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out<-c(Allocate, Effort, Spatial, Vuln)
