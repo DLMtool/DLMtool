@@ -760,9 +760,9 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
         CNtemp<-array(N_P[,,yind,]*exp(Z_P[,,yind,])*(1-exp(-Z_P[,,yind,]))*(FM_P[,,yind,]/Z_P[,,yind,]),c(nsim,maxage,interval,nareas))
         CBtemp<-array(Biomass_P[,,yind,]*exp(Z_P[,,yind,])*(1-exp(-Z_P[,,yind,]))*(FM_P[,,yind,]/Z_P[,,yind,]),c(nsim,maxage,interval,nareas))
         CNtemp[is.na(CNtemp)]<-0
-        CBtemp[is.na(CNtemp)]<-0
+        CBtemp[is.na(CBtemp)]<-0
 	    CNtemp[!is.finite(CNtemp)]<-0
-        CBtemp[!is.finite(CNtemp)]<-0
+        CBtemp[!is.finite(CBtemp)]<-0
         CNtemp<-apply(CNtemp,c(1,3,2),sum,na.rm=T)
 	      
         Cobs<-Cbiasa[,nyears+yind]*Cerr[,nyears+yind]*apply(CBtemp,c(1,3),sum,na.rm=T)
