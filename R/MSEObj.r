@@ -1290,7 +1290,7 @@ VOIplot <- function(MSEobj, MPs=NA, nvars=5, nMP=4, Par=c("Obs", "OM"),
     "Inter-annual variability in Linf", "Recruitment gradient", 
     "Inter-annual variability in K", "Age at maturity", "Length at 5% selection", 
     "Length at full selection", "Length at first capture", "True MSY", "Size Area 1",                               
-    "Prob. Movement", "Auto-correlation recruitment", "Length 50% maturity", "Length 95% maturity")
+    "Prob. Movement", "Auto-correlation recruitment", "Length 50% maturity", "Length 95% maturity", "Relative Length at Capture")
 	# cbind(Obsnam, LnName) 
   }
   if (Par == "Obs") {
@@ -1472,6 +1472,7 @@ calcMSESense <- function(MP=1, MSEobj, YVar=c("Y", "B")) { # supporting function
   }
   
   # Operating Model names to include 
+  MSEobj@OM$Lm_SL <- MSEobj@OM$LFS/MSEobj@OM$lenM
   varnames <- names(MSEobj@OM)
   vars <- MSEobj@OM
   vargood <- (apply(vars,2,sd, na.rm=TRUE)/(apply(vars,2,mean, na.rm=TRUE)^2)^0.5)>0.005

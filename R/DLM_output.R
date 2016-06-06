@@ -1946,7 +1946,7 @@ getr <- function(x,DLM_data,Mvec,Kvec,Linfvec,t0vec,hvec,maxage,r_reps=100){
   r
 }
 
-iVB<-function(t0,K,Linf,L)((-log(1-L/Linf))/K+t0) # Inverse Von-B
+iVB<-function(t0,K,Linf,L) max(1, ((-log(1-L/Linf))/K+t0)) # Inverse Von-B
 
 DAAC<-function (x, DLM_data, reps = 100) # extended depletion-corrected average catch (Harford and Carruthers 2015)
 {
