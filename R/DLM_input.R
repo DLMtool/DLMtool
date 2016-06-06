@@ -325,7 +325,11 @@ DDe75<-function(x,DLM_data,reps=100){
   U_hist<-1-exp(-exp(opt$par[3])*E_hist)
   
   Allocate <- 1
-  Effort<-max(0.75*exp(opt$par[1])/U_hist[DLM_data@LHYear],0.01)
+  eff <- exp(0.75 * opt$par[1])/U_hist[DLM_data@LHYear]
+  eff[!is.finite(eff)] <- 0.01
+  eff[eff > 1E5] <- 0.01
+  Effort<-max(0.01,eff)
+  
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
   out <- c(Allocate, Effort, Spatial, Vuln)

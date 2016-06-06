@@ -1291,7 +1291,7 @@ VOIplot <- function(MSEobj, MPs=NA, nvars=5, nMP=4, Par=c("Obs", "OM"),
     "Inter-annual variability in K", "Age at maturity", "Length at 5% selection", 
     "Length at full selection", "Length at first capture", "True MSY", "Size Area 1",                               
     "Prob. Movement", "Auto-correlation recruitment", "Length 50% maturity", "Length 95% maturity")
-	cbind(Obsnam, LnName) 
+	# cbind(Obsnam, LnName) 
   }
   if (Par == "Obs") {
      slots <- c("Cat", "Cat", "AvC", "AvC", "CAA", "CAA", "CAL", "CAL", "Ind", "Ind", "Dep",
