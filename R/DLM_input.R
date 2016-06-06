@@ -647,12 +647,7 @@ ITe10<-function(x,DLM_data,reps=100,yrsmth=5,mc=0.1){
   if(deltaI>(1+mc))deltaI<-1+mc
   
   Effort<-DLM_data@MPeff[x]*deltaI*trlnorm(reps,1,DLM_data@CV_Ind[x])
-  
-  Step <- 1 - (Effort/DLM_data@MPeff[x])  # step change in effort 
-  Step[Step<0.85] <- 0.85
-  Step[Step>1.15] <- 1.15
   Allocate <- 1
-  Effort <- Step * DLM_data@MPeff[x]
   Effort <- max(0.01,Effort) # for simulations in case Effort goes negative
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
@@ -671,11 +666,6 @@ ITe5<-function(x,DLM_data,reps=100,yrsmth=5,mc=0.05){
   
   Effort<-DLM_data@MPeff[x]*deltaI*trlnorm(reps,1,DLM_data@CV_Ind[x])
   Allocate <- 1  
-  Step <- 1 - (Effort/DLM_data@MPeff[x])  # step change in effort 
-  Step[Step<0.85] <- 0.85
-  Step[Step>1.15] <- 1.15
-  Allocate <- 1
-  Effort <- Step * DLM_data@MPeff[x]
   Effort <- max(0.01,Effort) # for simulations in case Effort goes negative
   Spatial <- c(1,1)
   Vuln<-rep(NA,3)
