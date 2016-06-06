@@ -565,8 +565,8 @@ LtargetE4 <-function(x,DLM_data,reps=100,yrsmth=5,xx=0,xL=1.15){
   }
   
   Step <- 1 - (Effort/DLM_data@MPeff[x])  # step change in effort 
-  Step[Step<0.85] <- 0.85
-  Step[Step>1.15] <- 1.15
+  Step[Step<0.80] <- 0.80
+  Step[Step>1.2] <- 1.2
   Allocate <- 1
   Effort <- Step * DLM_data@MPeff[x]
   Effort <- max(0.01,Effort) # for simulations in case Effort goes negative
@@ -624,8 +624,8 @@ ItargetE4 <-function(x,DLM_data,reps=100,yrsmth=5,xx=0,Imulti=2.5){
     Effort <- 0.5 * DLM_data@MPeff[x]*(Irecent/I0)^2
   }
   Step <- 1 - (Effort/DLM_data@MPeff[x])  # step change in effort 
-  Step[Step<0.85] <- 0.85
-  Step[Step>1.15] <- 1.15
+  Step[Step<0.80] <- 0.80
+  Step[Step>1.20] <- 1.20
 
   Allocate <- 1
   Effort <- Step * DLM_data@MPeff[x]
