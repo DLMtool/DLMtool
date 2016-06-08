@@ -1382,7 +1382,8 @@ VOIplot <- function(MSEobj, MPs=NA, nvars=5, nMP=4, Par=c("Obs", "OM"),
 	AllMPs <- 1:nMPs
 	AllMPs <- AllMPs[apply(used, 2, sum) > 0] # only include MPs which use the parameter 
 	AllMPs <- AllMPs[1:Nrow] # first nMPs 
-	
+	if (YVar == "Y") YLim <- c(0, 100)
+	if (YVar == "B") YLim <- c(0, 3)
 	for (mm in AllMPs) { # Loop along MPs 
 	  for (vr in 1:Ncol) { # Loop along variables
 	    if (nMPs > 1) varind <- topStat[vr,mm] # Variable index 
@@ -1398,7 +1399,7 @@ VOIplot <- function(MSEobj, MPs=NA, nvars=5, nMP=4, Par=c("Obs", "OM"),
         }	
 		if (used[varSN, MPs[mm]]) { # variable is used
 		  Col <- Cols[ceiling(Stat[varind,MPs[mm]]/highest * ncols)]
-		  plot(xs, ys, col=Col, pch=pch, bty="n", axes=FALSE, xlab="", ylab="")
+		  plot(xs, ys, col=Col, pch=pch, bty="n", axes=FALSE, xlab="", ylab="", ylim=YLim)
 	  	  if (vr == 1) {
 			MyCol <- mpCols[match(MPs[mm], mpCols[,1]),2]
 	  	    axis(side=2, las=1, cex.axis=AxCex)
