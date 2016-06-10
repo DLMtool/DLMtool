@@ -12,8 +12,8 @@ Simulation testing and implementation of data-limited fishery stock assessment m
 \tabular{ll}{
 Package: \tab DLMtool\cr
 Type: \tab Package\cr
-Version: \tab 3.11\cr
-Date: \tab 2016-06-03\cr
+Version: \tab 3.2\cr
+Date: \tab 2016-06-08\cr
 License: \tab GPL-2\cr
 Depends: \tab methods\cr
 }
