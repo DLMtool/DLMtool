@@ -321,7 +321,7 @@ LstepCC1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,stepsz=0.05,llim=c(0.96,0.9
   ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
   ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
   C_dat<-DLM_data@Cat[x,ind2]
-  if(length(DLM_data@Year)==ylast+1) {TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
+  if(is.na(DLM_data@MPrec[x]) || length(DLM_data@Year)==ylast+1) {TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
   }else{TACstar<-rep(DLM_data@MPrec[x],reps)}
   step<-stepsz*TACstar
   Lrecent<-mean(DLM_data@ML[ind])
@@ -336,6 +336,7 @@ LstepCC1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,stepsz=0.05,llim=c(0.96,0.9
 }  
 class(LstepCC1)<-"DLM_output"
 
+
 LstepCC4<-function(x,DLM_data,reps=100,yrsmth=5,xx=0.3,stepsz=0.05,llim=c(0.96,0.98,1.05)){
   dependencies="DLM_data@Cat, DLM_data@CV_Cat, DLM_data@ML"
   ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
@@ -343,7 +344,7 @@ LstepCC4<-function(x,DLM_data,reps=100,yrsmth=5,xx=0.3,stepsz=0.05,llim=c(0.96,0
   ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
   ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
   C_dat<-DLM_data@Cat[x,ind2]
-  if(length(DLM_data@Year)==ylast+1) {TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
+  if(is.na(DLM_data@MPrec[x]) || length(DLM_data@Year)==ylast+1)  {TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
   }else{TACstar<-rep(DLM_data@MPrec[x],reps)}
   step<-stepsz*TACstar
   Lrecent<-mean(DLM_data@ML[ind])
@@ -357,6 +358,7 @@ LstepCC4<-function(x,DLM_data,reps=100,yrsmth=5,xx=0.3,stepsz=0.05,llim=c(0.96,0
   TACfilter(TAC)
 }  
 class(LstepCC4)<-"DLM_output"
+
 
 Ltarget1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,xL=1.05){
   dependencies="DLM_data@Cat, DLM_data@CV_Cat, DLM_data@ML"
@@ -439,7 +441,7 @@ Islope1<-function(x,DLM_data,reps=100,yrsmth=5,lambda=0.4,xx=0.2){
   ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
   ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
   C_dat<-DLM_data@Cat[x,ind]
-  if(length(DLM_data@Year)==ylast+1) {TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
+  if (is.na(DLM_data@MPrec[x]) || length(DLM_data@Year)==ylast+1) {TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
   }else{TACstar<-rep(DLM_data@MPrec[x],reps)}
     
   I_hist<-DLM_data@Ind[x,ind]
@@ -456,7 +458,7 @@ Islope4<-function(x,DLM_data,reps=100,yrsmth=5,lambda=0.2,xx=0.4){
   ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
   ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
   C_dat<-DLM_data@Cat[x,ind]
-  if(length(DLM_data@Year)==ylast+1) {TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
+  if(is.na(DLM_data@MPrec[x]) || length(DLM_data@Year)==ylast+1) {TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
   }else{TACstar<-rep(DLM_data@MPrec[x],reps)}
   I_hist<-DLM_data@Ind[x,ind]
   yind<-1:yrsmth
@@ -466,7 +468,6 @@ Islope4<-function(x,DLM_data,reps=100,yrsmth=5,lambda=0.2,xx=0.4){
   TACfilter(TAC)
 }
 class(Islope4)<-"DLM_output"
-
 
 
 
