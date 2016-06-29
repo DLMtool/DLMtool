@@ -294,7 +294,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     Err <- TRUE
     Nsec <- 10
     Nprob <- length(HighQ)
-    message(Nprob," simulations have final biomass that is not close to specified depletion. \n qs have hit bounds.\n ")
+    message(Nprob," simulations have final biomass that is not close to specified depletion.")
     message("Re-sampling depletion and trying again")
 	
     # Attempt again with different depletions
@@ -306,6 +306,15 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
       flush.console()
       Nprob <- length(HighQ)
       dep[HighQ] <- runif(Nprob,OM@D[1],OM@D[2])
+	  # Get New Recruitment Deviations 
+      procmu2 <- -0.5*(procsd[HighQ])^2 # adjusted log normal mean
+      Perr2<-array(rnorm((nyears+proyears)*length(HighQ),
+                     rep(procmu[HighQ],nyears+proyears),
+                     rep(procsd[HighQ],nyears+proyears)),
+                     c(length(HighQ),nyears+proyears))
+      for(y in 2:(nyears+proyears))Perr2[,y]<-AC[HighQ]*Perr2[,y-1]+Perr2[,y]*(1-AC[HighQ]*AC[HighQ])^0.5
+      Perr[HighQ,] <-exp(Perr2) # normal space (mean 1 on average)
+
       if(sfIsRunning()){
         sfExport(list=c("dep","Find","Perr","Marray","hs","Mat_age","Wt_age","R0","V","nyears","maxage","SRrel","aR","bR"))
         qs[HighQ]<-sfSapply(HighQ,getq,dep,Find,Perr,Marray,hs,Mat_age,Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR) # find the q that gives current stock depletion
@@ -317,7 +326,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     }
     if (!Err) {
       cat ("Success \n")
-      cat("q range = ", range(qs),"\n")
+      # cat("q range = ", range(qs),"\n")
       flush.console()
     }
     if (Err) { # still a problem
@@ -685,7 +694,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
           fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
           FM_P[SAYR]<-FinF[S1]*Ei[S1]*V_P[SAYt]*fishdist[SR]*qvar[SY1]*qs[S1]*(1+qinc[S1]/100)^y   # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
         }else{
-		  V_P[,,(nyears+1):(proyears+nyears)] <- Vi # Update vulnerability schedule for all future years	  
+		  if (y<proyears) V_P[,,(nyears+1):(proyears+nyears)] <- Vi # Update vulnerability schedule for all future years	  
           newVB<-apply(VBiomass_P[,,y,]*Vi[SA1],c(1,3),sum) # vulnerability modified
           fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
           FM_P[SAYR]<-FinF[S1]*Ei[S1]*Vi[SA1]*fishdist[SR]*qvar[SY1]*qs[S1]*(1+qinc[S1]/100)^y   # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
@@ -697,7 +706,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
           Emult<-1+((2/apply(fishdist*Si,1,sum))-1)*Ai  # allocate effort to new area according to fraction allocation Ai
           FM_P[SAYR]<-FinF[S1]*Ei[S1]*V_P[SAYt]*Si[SR]*fishdist[SR]*Emult[S1]*qvar[SY1]*qs[S1]^(1+qinc[S1]/100)^y 
         }else{
-		  V_P[,,(nyears+1):(proyears+nyears)] <- Vi # Update vulnerability schedule for all future years
+		  if (y<proyears) V_P[,,(nyears+1):(proyears+nyears)] <- Vi # Update vulnerability schedule for all future years
           newVB<-apply(VBiomass_P[,,y,]*Vi[SA1],c(1,3),sum) # vulnerability modified
           fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
           Emult<-1+((2/apply(fishdist*Si,1,sum))-1)*Ai  # allocate effort to new area according to fraction allocation Ai
@@ -903,7 +912,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 			  FM_P[SAYR] <- FinF[S1] * qs[S1] * QVar[S1] * (1+qinc[S1]/100)^y  * V_P[SAYt] * Ei[S1] * fishdist[SR]
 
             }else{
-			  V_P[,,(y+nyears+1):(proyears+nyears)] <- Vi # Update vulnerability schedule for all future years
+			  if (y<proyears) V_P[,,(y+nyears+1):(proyears+nyears)] <- Vi # Update vulnerability schedule for all future years
               newVB<-apply(VBiomass_P[,,y,]*Vi[SA],c(1,3),sum) # vulnerability modified
               fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
 			  FM_P[SAYR]<-FinF[S1]*Ei[S1]*Vi[SA]*fishdist[SR]*qvar[SY]*qs[S1]*(1+qinc[S1]/100)^y   # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
@@ -921,7 +930,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 			  QVar <- apply(qvar[,1:y], 1, prod) # qvar from 1:y
 			  FM_P[SAYR] <- FinF[S1] * qs[S1] * QVar[S1] * (1+qinc[S1]/100)^y * V_P[SAYt] *Ei[S1] * fishdist[SR] * Emult[S1]
             }else{
-			  V_P[,,(y+nyears+1):(proyears+nyears)] <- Vi # Update vulnerability schedule for all future years
+			  if (y<proyears) V_P[,,(y+nyears+1):(proyears+nyears)] <- Vi # Update vulnerability schedule for all future years
               newVB<-apply(VBiomass_P[,,y,]*Vi[SA],c(1,3),sum) # vulnerability modified
               fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
               Emult<-1+((2/apply(fishdist*Si,1,sum))-1)*Ai  # allocate effort to new area according to fraction allocation Ai
