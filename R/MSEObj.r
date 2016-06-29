@@ -667,10 +667,10 @@ Sub <- function(MSEobj, MPs=NULL, sims=NULL, years=NULL) {
   
   SubResults <- new('MSE',Name=MSEobj@Name, nyears=MSEobj@nyears, 
     proyears=MSEobj@proyears, nMPs=length(SubMPs), MPs=newMPs, 
-	nsim=length(SubIts), OMtable=OutOM, Obs=MSEobj@Obs[SubIts,], 
+	nsim=length(SubIts), OMtable=OutOM, Obs=MSEobj@Obs[SubIts, , drop=FALSE], 
 	B_BMSYa=SubB, F_FMSYa=SubF, Ba=SubBa, FMa=SubFMa, Ca=SubC, 
 	TACa=SubTACa, SSB_hist=MSEobj@SSB_hist[SubIts,,,],
-	CB_hist=MSEobj@CB_hist[SubIts,,,], FM_hist=MSEobj@FM_hist[SubIts,,,])
+	CB_hist=MSEobj@CB_hist[SubIts,,,,drop=FALSE], FM_hist=MSEobj@FM_hist[SubIts,,, ,drop=FALSE])
   
  return(SubResults)
 }
