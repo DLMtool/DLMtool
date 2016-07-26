@@ -1,17 +1,17 @@
 # DLM_input MPs
 
-BL_MP <-function(x,DLM_data, ...){ 
+# BL_MP <-function(x,DLM_data, ...){ 
 
-  Allocate<-1
-  Effort<-1
-  Spatial<-c(1,1) 
-  newLFC <- NA
-  newLFS <- NA
-  Vuln <-c(newLFC, newLFS, NA) # Lc, LFS and upper limit (knife-edge) 
-  BL <- 4 # baglimit 
-  c(Allocate=Allocate, Effort=Effort, Spatial=Spatial, Vuln=Vuln, BL=BL)
-}
-class(BL_MP)<-"DLM_input"
+  # Allocate<-1
+  # Effort<-1
+  # Spatial<-c(1,1) 
+  # newLFC <- NA
+  # newLFS <- NA
+  # Vuln <-c(newLFC, newLFS, NA) # Lc, LFS and upper limit (knife-edge) 
+  # BL <- 4 # baglimit 
+  # c(Allocate=Allocate, Effort=Effort, Spatial=Spatial, Vuln=Vuln, BL=BL)
+# }
+# class(BL_MP)<-"DLM_input"
 
 
 matlenlim<-function(x,DLM_data, ...){ # Length at maturity is knife-edge vulnerability
@@ -533,7 +533,7 @@ LtargetE1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,xL=1.05){
   }else{ 
     Effort <- 0.5 * DLM_data@MPeff[x]*(Lrecent/L0)^2         
   }
-  Step <- 1 - (Effort/DLM_data@MPeff[x])  # step change in effort 
+  Step <- (Effort/DLM_data@MPeff[x])  # step change in effort 
   Step[Step<0.85] <- 0.85
   Step[Step>1.15] <- 1.15
 
@@ -564,7 +564,7 @@ LtargetE4 <-function(x,DLM_data,reps=100,yrsmth=5,xx=0,xL=1.15){
     Effort <- 0.5 * DLM_data@MPeff[x]*(Lrecent/L0)^2                 
   }
   
-  Step <- 1 - (Effort/DLM_data@MPeff[x])  # step change in effort 
+  Step <- (Effort/DLM_data@MPeff[x])  # step change in effort 
   Step[Step<0.80] <- 0.80
   Step[Step>1.2] <- 1.2
   Allocate <- 1
@@ -594,7 +594,7 @@ ItargetE1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,Imulti=1.5){
     Effort <- 0.5 * DLM_data@MPeff[x]*(Irecent/I0)^2
   }
   
-  Step <- 1 - (Effort/DLM_data@MPeff[x])  # step change in effort 
+  Step <- (Effort/DLM_data@MPeff[x])  # step change in effort 
   Step[Step<0.85] <- 0.85
   Step[Step>1.15] <- 1.15
   Allocate <- 1
@@ -623,7 +623,7 @@ ItargetE4 <-function(x,DLM_data,reps=100,yrsmth=5,xx=0,Imulti=2.5){
   }else{
     Effort <- 0.5 * DLM_data@MPeff[x]*(Irecent/I0)^2
   }
-  Step <- 1 - (Effort/DLM_data@MPeff[x])  # step change in effort 
+  Step <- (Effort/DLM_data@MPeff[x])  # step change in effort 
   Step[Step<0.80] <- 0.80
   Step[Step>1.20] <- 1.20
 
