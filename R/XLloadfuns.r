@@ -6,6 +6,7 @@ OM_xl <- function(fname, stkname, fpath="", saveCSV=FALSE) {
   # Stock 
   stock <- read_excel(infile, sheet=grep(paste0(stkname, "Stock"), shtname),
 			col_names=FALSE)
+  stock <- as.data.frame(stock)
   tmpfile <- paste0(fpath, stkname, "Stock.csv")
   if (file.exists(tmpfile)) unlink(tmpfile) 
   writeCSV(inobj=stock, tmpfile, objtype="Stock")
@@ -14,7 +15,8 @@ OM_xl <- function(fname, stkname, fpath="", saveCSV=FALSE) {
 
   # Fleet 
   fleet <- read_excel(infile, sheet=grep(paste0(stkname, "Fleet"), shtname),
-			col_names=FALSE)			
+			col_names=FALSE)	
+  fleet <- as.data.frame(fleet)			
   tmpfile <- paste0(fpath, stkname, "Fleet.csv")
   if (file.exists(tmpfile)) unlink(tmpfile) 
   writeCSV(inobj=fleet, tmpfile, objtype="Fleet")
@@ -25,6 +27,7 @@ OM_xl <- function(fname, stkname, fpath="", saveCSV=FALSE) {
   index <- which(pmatch(shtname, paste0(stkname, "Observation")) == 1)
   if (length(index) > 1) stop("More than one match")
   obs <- read_excel(infile, sheet=index, col_names=FALSE)
+  obs <- as.data.frame(obs)		
   tmpfile <- paste0(fpath, stkname, "Observation.csv")
   if (file.exists(tmpfile)) unlink(tmpfile) 
   writeCSV(inobj=obs, tmpfile, objtype="Observation")
