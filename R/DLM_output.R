@@ -321,8 +321,11 @@ LstepCC1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,stepsz=0.05,llim=c(0.96,0.9
   ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
   ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
   C_dat<-DLM_data@Cat[x,ind2]
-  if(is.na(DLM_data@MPrec[x]) || length(DLM_data@Year)==ylast+1) {TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
-  }else{TACstar<-rep(DLM_data@MPrec[x],reps)}
+  if(is.na(DLM_data@MPrec[x]) || length(DLM_data@Year)==ylast+1) {
+    TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
+  } else { 
+    TACstar<-rep(DLM_data@MPrec[x],reps)
+  }
   step<-stepsz*TACstar
   Lrecent<-mean(DLM_data@ML[ind])
   Lave<-mean(DLM_data@ML[ind3])

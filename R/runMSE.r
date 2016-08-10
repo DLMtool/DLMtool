@@ -292,18 +292,18 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   if (length(HighQ) > 0) { # If q has hit bound, re-sample depletion and try again. Tries 30 times 
     # and then alerts user
     Err <- TRUE
-    Nsec <- 10
+    # Nsec <- 10
     Nprob <- length(HighQ)
-    message(Nprob," simulations have final biomass that is not close to specified depletion.")
-    message("Re-sampling depletion and trying again")
+    # message(Nprob," simulations have final biomass that is not close to specified depletion.")
+    # message("Re-sampling depletion and trying again")
 	
     # Attempt again with different depletions
     count <- 0
     while (Err & count < 30) {
       count <- count + 1
       # message("Attempt ", count)
-	  cat(".")
-      flush.console()
+	  # cat(".")
+      # flush.console()
       Nprob <- length(HighQ)
       dep[HighQ] <- runif(Nprob,OM@D[1],OM@D[2])
 	  # Get New Recruitment Deviations 
@@ -324,23 +324,8 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
       HighQ <- which(qs > 13 | qs < 0.008)
       if (length(HighQ) == 0) Err <- FALSE
     }
-    if (!Err) {
-      cat ("Success \n")
-      # cat("q range = ", range(qs),"\n")
-      flush.console()
-    }
     if (Err) { # still a problem
-	  # print(qs[HighQ])
-	  stop("Can't get to specified level of depletion. Try again for a complete new sample, or modify the input parameters")
-      # print(qs[HighQ])
-      # cat ("qs still very high \n")
-      # cat ("Press ESC to quit now, or will continue in", Nsec, "seconds \n")
-      # flush.console()
-      # for (xx in 1:Nsec) {
-        # Sys.sleep(1)
-        # message(Nsec+1-xx)
-        # flush.console()
-      # }
+	  stop("Can't get to specified level of depletion with these Operating Model parameters. Try again for a complete new sample, or modify the input parameters (perhaps depletion is too high or too low?)")
     }  
   }
   
@@ -486,9 +471,9 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   hsim[!cond]<-0.2+rbeta(sum(hs<0.6),alphaconv((hs[!cond]-0.2)/0.8,(hs[!cond]-0.2)/0.8*OM@hcv),betaconv((hs[!cond]-0.2)/0.8,(hs[!cond]-0.2)/0.8*OM@hcv))*0.8
   hbias<-hsim/hs                          # back calculate the simulated bias
   
-  qmu<--0.5*qcv^2                                      # Mean
-  qvar<-array(exp(rnorm(proyears*nsim,rep(qmu,proyears),rep(qcv,proyears))),c(nsim,proyears)) # Variations in interannual variation
-  colnames(qvar) <- paste0("qvar", 1:proyears)
+  qmu <- -0.5*qcv^2                                      # Mean
+  qvar <-array(exp(rnorm(proyears*nsim,rep(qmu,proyears),rep(qcv,proyears))),c(nsim,proyears)) # Variations in interannual variation
+  # colnames(qvar) <- paste0("qvar", 1:proyears)
   FinF <-Find[,nyears] # Effort in final historical year
   
   DLM_data<-new('DLM_data',stock="MSE")             # create a blank DLM data object
@@ -540,7 +525,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   DLM_data@OM<-as.data.frame(cbind(RefY,M,Depletion,A,BMSY_B0,FMSY_M,Mgrad,Msd,
     procsd,Esd,dFfinal,MSY,qinc,qcv, FMSY,Linf,K,t0,hs,Linfgrad,Kgrad,Linfsd,
 	recgrad,Ksd,ageM, L5[nyears,],LFS[nyears,],Vmaxlen[nyears,],LFC,OFLreal,
-	Spat_targ,Frac_area_1,Prob_staying,AC, lenM, len95, qvar)) # put all the operating model parameters in one table
+	Spat_targ,Frac_area_1,Prob_staying,AC, lenM, len95)) # put all the operating model parameters in one table
   
   names(DLM_data@OM)[26:28]<-c("L5","LFS","Vmaxlen") # These are missing labels in the line above
   
@@ -583,9 +568,13 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   FMa<-array(NA,dim=c(nsim,nMP,proyears))      # store the projected fishing mortality rate
   Ca<-array(NA,dim=c(nsim,nMP,proyears))       # store the projected catch
   TACa<-array(NA,dim=c(nsim,nMP,proyears))     # store the projected TAC recommendation
+  Effort <- array(NA,dim=c(nsim,nMP,proyears)) # store the Effort
   
   for(mm in 1:nMP){    # MSE Loop over methods
-    
+    pL5 <- L5 # reset selectivity parameters for projections
+	pLFS <- LFS
+	pVmaxlen <- Vmaxlen
+	
     print(paste(mm,"/",nMP," Running MSE for ",MPs[mm],sep=""))  # print a progress report
     flush.console()                                                  # update the console
     
@@ -638,6 +627,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     SSB_P[SAYR]<-SSN_P[SAYR]*Wt_age[SAY1]
     FML<-apply(FM[,,nyears,],c(1,3),max)
     
+	y <- 1
     if (class(match.fun(MPs[mm]))=="DLM_output") {
       DLM_data <- Sam(MSElist[[mm]],MPs=MPs[mm],perc=pstar,reps=reps)
       TACused <- apply(DLM_data@TAC,3,quantile,p=pstar,na.rm=T) 
@@ -654,6 +644,8 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
       temp[temp>(1-exp(-maxF))]<-1-exp(-maxF)
       FM_P[SAYR]<--log(1-temp)
 	  
+	  Effort[,mm,y] <- (-log(1-apply(CB_P[,,y,],1,sum)/(apply(CB_P[,,y,],1,sum)+apply(VBiomass_P[,,y,],1,sum))))/qs
+	  
     }else{ # input control 
 	  runIn <- runInMP(MSElist[[mm]],MPs=MPs[mm], reps=reps) # Apply input control MP
 	  inc <- runIn[[1]]
@@ -661,25 +653,25 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 
       Ai <- inc[1,,1]
       Ei <- inc[2,,1]
+	  Effort[,mm,y] <- Ei # Change in Effort
       Si <- t(inc[3:4,,1])
 	  newSel <- inc[5:6,,1]
 	  
 	  newUppLim <- inc[7,,1]
 	  newVmax <- inc[8,,1]
-	  y <- 1
-	  
+  
 	  chngSel <- which(colSums(apply(newSel, 2, is.na))==0) # selectivity pattern changed 
 	  if (length(chngSel) > 0) {
-	    L5[y+nyears,chngSel] <- newSel[1,chngSel]
-		LFS[y+nyears,chngSel] <- newSel[2,chngSel]
+	    pL5[y+nyears,chngSel] <- newSel[1,chngSel]
+		pLFS[y+nyears,chngSel] <- newSel[2,chngSel]
 		if (any(!is.na(inc[7,,1]))) {
 	      ind <- which(!is.na(inc[7,,1]))
-	      Vmaxlen[y+nyears,ind] <- inc[7,ind,1]
+	      pVmaxlen[y+nyears,ind] <- inc[7,ind,1]
 	    }
 	  }	  
-	  Vi <- t(sapply(1:nsim, SelectFun, L5[y+nyears,], LFS[y+nyears,], 
-	  Vmaxlen[y+nyears,], Linfs=Linfarray[,y+nyears], 
-	  Lens=Len_age[,,y+nyears]))
+	  Vi <- t(sapply(1:nsim, SelectFun, pL5[y+nyears,], pLFS[y+nyears,], 
+	    pVmaxlen[y+nyears,], Linfs=Linfarray[,y+nyears], 
+	    Lens=Len_age[,,y+nyears]))
 	  
 	  # Maximum Size Limit 
 	  if (!all(is.na(newUppLim))) { # a upper size limit has been set 
@@ -869,6 +861,8 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
           temp[temp>(1-exp(-maxF))]<-1-exp(-maxF)
           FM_P[SAYR]<--log(1-temp)
 		  
+		  Effort[,mm,y] <- (-log(1-apply(CB_P[,,y,],1,sum)/(apply(CB_P[,,y,],1,sum)+apply(VBiomass_P[,,y,],1,sum))))/qs
+		  
         }else{
 		  MSElist[[mm]]@MPeff<-Ei
           runIn <- runInMP(MSElist[[mm]],MPs=MPs[mm], reps=reps) # Apply input control MP
@@ -876,6 +870,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
           DLM_data <- runIn[[2]]
           Ai<-inc[1,,1]
           Ei<-inc[2,,1]
+		  Effort[,mm,y] <- Ei # Change in Effort
           Si<-t(inc[3:4,,1])
           newSel<-(inc[5:6,,1])
 		  
@@ -884,15 +879,15 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 
 		  chngSel <- which(colSums(apply(newSel, 2, is.na))==0) # selectivity pattern changed 
 		  if (length(chngSel) >0) {
-		    L5[y+nyears,chngSel] <- newSel[1,chngSel]
-		    LFS[y+nyears,chngSel] <- newSel[2,chngSel]
+		    pL5[y+nyears,chngSel] <- newSel[1,chngSel]
+		    pLFS[y+nyears,chngSel] <- newSel[2,chngSel]
 			if (any(!is.na(inc[7,,1]))) {
 	          ind <- which(!is.na(inc[7,,1]))
-	          Vmaxlen[y+nyears,ind] <- inc[7,ind,1]
+	          pVmaxlen[y+nyears,ind] <- inc[7,ind,1]
 	        }
 		  }	
-		  Vi <- t(sapply(1:nsim, SelectFun, L5[y+nyears,], LFS[y+nyears,], 
-		    Vmaxlen[y+nyears,], Linfs=Linfarray[,y+nyears], 
+		  Vi <- t(sapply(1:nsim, SelectFun, pL5[y+nyears,], pLFS[y+nyears,], 
+		    pVmaxlen[y+nyears,], Linfs=Linfarray[,y+nyears], 
 		    Lens=Len_age[,,y+nyears]))
 			
 		   # Maximum Size Limit 
@@ -906,19 +901,14 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
             if(!Vchange){ # if no vulnerability schedule is specified
               newVB<-apply(VBiomass_P[,,y,],c(1,3),sum) # vulnerability isn't changed
               fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
-              # FM_P[SAYR]<-FinF[S1]*Ei[S1]*V_P[SAYt]*fishdist[SR]*qvar[SY]*qs[S1]*(1+qinc[S1]/100)^y   # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
+              FM_P[SAYR]<-FinF[S1]*Ei[S1]*V_P[SAYt]*fishdist[SR]*qvar[SY]*qs[S1]*(1+qinc[S1]/100)^y   # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
 			  
-			  QVar <- apply(qvar[,1:y], 1, prod) # qvar from 1:y
-			  FM_P[SAYR] <- FinF[S1] * qs[S1] * QVar[S1] * (1+qinc[S1]/100)^y  * V_P[SAYt] * Ei[S1] * fishdist[SR]
-
             }else{
 			  if (y<proyears) V_P[,,(y+nyears+1):(proyears+nyears)] <- Vi # Update vulnerability schedule for all future years
               newVB<-apply(VBiomass_P[,,y,]*Vi[SA],c(1,3),sum) # vulnerability modified
               fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
 			  FM_P[SAYR]<-FinF[S1]*Ei[S1]*Vi[SA]*fishdist[SR]*qvar[SY]*qs[S1]*(1+qinc[S1]/100)^y   # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
-              			  
-			  QVar <- apply(qvar[,1:y], 1, prod) # qvar from 1:y
-			  FM_P[SAYR] <- FinF[S1] * qs[S1] * QVar[S1] * (1+qinc[S1]/100)^y * Vi[SA] *Ei[S1] * fishdist[SR]
+
             }
           }else{  # A spatial closure
             if(!Vchange){ # if no vulnerability schedule is specified
@@ -927,17 +917,13 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
               Emult<-1+((2/apply(fishdist*Si,1,sum))-1)*Ai  # allocate effort to new area according to fraction allocation Ai
               FM_P[SAYR]<-FinF[S1]*Ei[S1]*V_P[SAYt]*Si[SR]*fishdist[SR]*Emult[S1]*qvar[SY]*qs[S1]*(1+qinc[S1]/100)^y 
 			  
-			  QVar <- apply(qvar[,1:y], 1, prod) # qvar from 1:y
-			  FM_P[SAYR] <- FinF[S1] * qs[S1] * QVar[S1] * (1+qinc[S1]/100)^y * V_P[SAYt] *Ei[S1] * fishdist[SR] * Emult[S1]
             }else{
 			  if (y<proyears) V_P[,,(y+nyears+1):(proyears+nyears)] <- Vi # Update vulnerability schedule for all future years
               newVB<-apply(VBiomass_P[,,y,]*Vi[SA],c(1,3),sum) # vulnerability modified
               fishdist<-(newVB^Spat_targ)/apply(newVB^Spat_targ,1,mean)   # spatial preference according to spatial biomass
               Emult<-1+((2/apply(fishdist*Si,1,sum))-1)*Ai  # allocate effort to new area according to fraction allocation Ai
               FM_P[SAYR]<-FinF[S1]*Ei[S1]*Vi[SA]*Si[SR]*fishdist[SR]*Emult[S1]*qvar[SY]*qs[S1]*(1+qinc[S1]/100)^y 
-			  
-			  QVar <- apply(qvar[,1:y], 1, prod) # qvar from 1:y
-			  FM_P[SAYR] <- FinF[S1] * qs[S1] * QVar[S1] * (1+qinc[S1]/100)^y * Vi[SA] *Ei[S1] * fishdist[SR] * Emult[S1]
+
             } #vuln not changed
           }   # spatial closure
           
@@ -959,9 +945,11 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
           temp<-CB_P[SAYR]/(Biomass_P[SAYR]*exp(-Marray[SYt]/2)) # Pope's approximation
           temp[temp>(1-exp(-maxF))]<-1-exp(-maxF)
           FM_P[SAYR]<--log(1-temp)
+		  Effort[,mm,y] <- (-log(1-apply(CB_P[,,y,],1,sum)/(apply(CB_P[,,y,],1,sum)+apply(VBiomass_P[,,y,],1,sum))))/qs
         }else{ #input control
           # FM_P[SAYR] <- FM_P[SAY1R]*qvar[SY] *(1+qinc[S1]/100)^y  # add fishing efficiency changes and variability
 		  FM_P[SAYR] <- FM_P[SAY1R]*qvar[SY] *(1+qinc[S1]/100)  # add fishing efficiency changes and variability
+		  Effort[,mm,y] <- Effort[,mm,y-1] # Effort doesn't change in non-update year
         }
 		Z_P[SAYR]<-FM_P[SAYR]+Marray[SYt]
 		# CB_P[SAYR]<-Biomass_P[SAYR]*(1-exp(-FM_P[SAYR])) 
@@ -980,8 +968,8 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     Ca[,mm,]<-apply(CB_P,c(1,3),sum)
     cat("\n")
   }    # end of mm methods
-   
- new('MSE',Name=OM@Name,nyears,proyears,nMP,MPs,nsim,OMtable=DLM_data@OM,DLM_data@Obs,B_BMSYa,F_FMSYa,Ba,FMa,Ca,TACa,SSB_hist=SSB,CB_hist=CB,FM_hist=FM)
+  
+ new('MSE',Name=OM@Name,nyears,proyears,nMP,MPs,nsim,OMtable=DLM_data@OM,DLM_data@Obs,B_BMSYa,F_FMSYa,Ba,FMa,Ca,TACa,SSB_hist=SSB,CB_hist=CB,FM_hist=FM, Effort=Effort)
 
 }
 

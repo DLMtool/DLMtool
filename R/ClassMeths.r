@@ -433,10 +433,12 @@ setClass("MSE",representation(Name="character",nyears="numeric",
   proyears="numeric",nMPs="numeric",MPs="character", nsim="numeric",
   OM="data.frame",Obs="data.frame",B_BMSY="array", F_FMSY="array",
   B="array",FM="array",C="array",TAC="array",SSB_hist="array",
-  CB_hist="array",FM_hist="array"))
+  CB_hist="array",FM_hist="array", Effort="array"))
 
 setMethod("initialize", "MSE", function(.Object,Name,nyears,proyears,nMPs,MPs,
-                                                nsim,OMtable,Obs,B_BMSYa,F_FMSYa,Ba,FMa,Ca,TACa,SSB_hist,CB_hist,FM_hist){
+                                                nsim,OMtable,Obs,B_BMSYa,F_FMSYa,
+												Ba,FMa,Ca,TACa,SSB_hist,CB_hist,FM_hist, 
+												Effort=array()){
   .Object@Name<-Name
   .Object@nyears <-nyears
   .Object@proyears<-proyears
@@ -454,6 +456,7 @@ setMethod("initialize", "MSE", function(.Object,Name,nyears,proyears,nMPs,MPs,
   .Object@SSB_hist<-SSB_hist
   .Object@CB_hist<-CB_hist
   .Object@FM_hist<-FM_hist
+  .Object@Effort <- Effort
   .Object
 })
   

@@ -664,13 +664,19 @@ Sub <- function(MSEobj, MPs=NULL, sims=NULL, years=NULL) {
   SubTACa <- MSEobj@TAC[SubIts,SubMPs,Years, drop=FALSE]
   
   OutOM <- MSEobj@OM[SubIts,]
+  if (all(is.na(MSEobj@Effort))) {
+    SubEffort <- array(NA)
+  } else {
+    SubEffort <- MSEobj@Effort[SubIts,SubMPs,Years, drop=FALSE]
+  }
   
   SubResults <- new('MSE',Name=MSEobj@Name, nyears=MSEobj@nyears, 
     proyears=MSEobj@proyears, nMPs=length(SubMPs), MPs=newMPs, 
 	nsim=length(SubIts), OMtable=OutOM, Obs=MSEobj@Obs[SubIts, , drop=FALSE], 
 	B_BMSYa=SubB, F_FMSYa=SubF, Ba=SubBa, FMa=SubFMa, Ca=SubC, 
 	TACa=SubTACa, SSB_hist=MSEobj@SSB_hist[SubIts,,,],
-	CB_hist=MSEobj@CB_hist[SubIts,,,,drop=FALSE], FM_hist=MSEobj@FM_hist[SubIts,,, ,drop=FALSE])
+	CB_hist=MSEobj@CB_hist[SubIts,,,,drop=FALSE], 
+	FM_hist=MSEobj@FM_hist[SubIts,,, ,drop=FALSE], Effort=SubEffort)
   
  return(SubResults)
 }
