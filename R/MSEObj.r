@@ -754,7 +754,7 @@ joinMSE <- function(MSEobjs=NULL){
 	MPs=unique(outlist$MPs), nsim=sum(outlist$nsim),OM=outlist$OM,
 	Obs=outlist$Obs, B_BMSY=outlist$B_BMSY, F_FMSY=outlist$F_FMSY,
     outlist$B, outlist$FM, outlist$C, outlist$TAC, 
-	outlist$SSB_hist, outlist$CB_hist, outlist$FM_hist)
+	outlist$SSB_hist, outlist$CB_hist, outlist$FM_hist, outlist$Effort)
  
   newMSE
 }	
