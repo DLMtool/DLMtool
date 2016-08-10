@@ -690,7 +690,7 @@ joinMSE <- function(MSEobjs=NULL){
 
   MPNames <- lapply(MSEobjs, getElement, name="MPs") # MPs in each object 
   allsame <- length(unique(MPNames)) == 1
-  if (!allsame) { # some more work to do - drop the MPs that don't appear in all MSEobjs
+  if (!allsame) { # drop the MPs that don't appear in all MSEobjs
       mpnames <- unlist(MPNames)
 	  npack <- length(MSEobjs)
 	  tab <- table(mpnames)

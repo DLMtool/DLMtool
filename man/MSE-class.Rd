@@ -10,7 +10,7 @@
 A Management Strategy Evaluation object that contains information about simulation conditions and performance of data-limited methods
 }
 \section{Objects from the Class}{
-Objects can be created by calls of the form \code{new("MSE", Name, nyears, proyears, nMPs, MPs, nsim, OMtable, Obs, B_BMSYa, F_FMSYa, Ba, FMa, Ca, OFLa)}.
+Objects can be created by calls of the form \code{new("MSE", Name, nyears, proyears, nMPs, MPs, nsim, OMtable, Obs, B_BMSYa, F_FMSYa, Ba, FMa, Ca, OFLa, Effort)}.
 %%  ~~ describe objects here ~~ 
 }
 \section{Slots}{
@@ -92,7 +92,7 @@ Objects can be created by calls of the form \code{new("MSE", Name, nyears, proye
     \item{\code{SSB_hist}:}{Stored historical spawning stock biomass (historical simulations - an array with dimensions nsim, nages, nyears, nareas)}
     \item{\code{CB_hist}:}{Stored historical catches in weight (historical simulations - an array with dimensions nsim, nages, nyears, nareas)}
     \item{\code{FM_hist}:}{Stored historical fishing mortality rate (historical simulations - an array with dimensions nsim, nages, nyears, nareas)}
-
+	\item{\code{Effort}:}{Stored relative fishing effort in the projection years}
   }
 }
 \section{Methods}{
