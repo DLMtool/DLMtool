@@ -664,6 +664,9 @@ Sub <- function(MSEobj, MPs=NULL, sims=NULL, years=NULL) {
   SubTACa <- MSEobj@TAC[SubIts,SubMPs,Years, drop=FALSE]
   
   OutOM <- MSEobj@OM[SubIts,]
+  # check if slot exists
+  tt <- try(slot(MSEobj, "Effort"), silent=TRUE)
+  if (class(tt) == "try-error") slot(MSEobj, "Effort") <- array(NA)
   if (all(is.na(MSEobj@Effort))) {
     SubEffort <- array(NA)
   } else {
@@ -680,7 +683,6 @@ Sub <- function(MSEobj, MPs=NULL, sims=NULL, years=NULL) {
   
  return(SubResults)
 }
-
 
 # Join two or more MSE objects together 
 joinMSE <- function(MSEobjs=NULL){ 
