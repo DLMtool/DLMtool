@@ -675,3 +675,52 @@ ITe5<-function(x,DLM_data,reps=100,yrsmth=5,mc=0.05){
 class(ITe5)<-"DLM_input"
 
 
+minlenLopt1<-function(x,DLM_data,reps=reps,buffer=0.1){
+
+  # Minimum length MPs: Fix length-at-full-selectivity to 0.8*Lopt and set length-at-first-capture 10% below LFs 
+
+  dependencies="DLM_data@MPeff, DLM_data@vbLinf, DLM_data@wlb, DLM_data@Mort, DLM_data@vbK"
+  
+  Lopt<-DLM_data@vbLinf[x]*DLM_data@wlb[x]/((DLM_data@Mort[x]/DLM_data@vbK[x])+DLM_data@wlb[x]) 
+  
+  Allocate<-1
+  Spatial<-c(1,1)
+  newLFS <- Lopt*(0.7+buffer) # Lopt too precautionary, so set it to % below
+  newLFC<-newLFS*0.9
+  Vuln <-c(newLFC, newLFS)
+  Effort<-1
+  
+  out <- c(Allocate, Effort, Spatial, Vuln)
+  out
+  
+}  
+class(minlenLopt1)<-"DLM_input"
+
+
+EtargetLopt<-function(x,DLM_data,reps=reps,yrsmth=3){
+  
+  # Effort MP: adjust effort up/down if mean length above/below Ltarget 
+  
+  dependencies="DLM_data@Year, DLM_data@ML, DLM_data@L50, DLM_data@MPeff, DLM_data@vbLinf, DLM_data@wlb, DLM_data@Mort, DLM_data@vbK"
+  
+  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 3 years
+  Lrecent<-mean(DLM_data@ML[ind])
+  Lopt<-DLM_data@vbLinf[x]*DLM_data@wlb[x]/((DLM_data@Mort[x]/DLM_data@vbK[x])+DLM_data@wlb[x]) 
+  ratio<-Lrecent/Lopt
+  
+  Allocate<-1
+  Spatial<-c(1,1)
+  Vuln<-c(NA,2) 
+  w<-0.5
+  Effort<-(1-buffer)*(w+(1-w)*ratio)
+  
+  out <- c(Allocate, Effort, Spatial, Vuln)
+  out
+  
+}  
+class(EtargetLopt)<-"DLM_input"
+
+
+
+
+

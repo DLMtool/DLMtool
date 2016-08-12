@@ -2232,6 +2232,27 @@ NFref <- function (x, DLM_data, reps = 100) {
 }
 class(NFref)<-"DLM_output"
 
+L95target<-function(x,DLM_data,reps=100,yrsmth=5,buffer=0.0){
+  
+  # Set target length to L95 and limit to 0.9L50
+  # Alternative targets TACstar depending on buffer value  
+  
+  dependencies="DLM_data@Cat, DLM_data@Year, DLM_data@LHYear, DLM_data@ML, DLM_data@L50, DLM_data@L95"
+  
+  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
+  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
+  ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
+  C_dat<-DLM_data@Cat[x,ind2]
+  TACstar<-(1-buffer)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
+  Lrecent<-mean(DLM_data@ML[ind])
+  Ltarget<-DLM_data@L95[x]
+  L0<-0.9*DLM_data@L50[x]
+  if(Lrecent>L0){TAC<-0.5*TACstar*(1+((Lrecent-L0)/(Ltarget-L0)))}
+  else{TAC<-0.5*TACstar*(Lrecent/L0)^2}
+  TACfilter(TAC)
+}  
+class(L95target)<-"DLM_output"
+
 # SCA<-function(x,DLM_data,reps=100){ # Requires a character string DLMexe (e.g. "C:/DLMexe") that represents the 
   
   # dependencies=""

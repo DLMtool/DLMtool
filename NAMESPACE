@@ -40,6 +40,7 @@ export(
     "DynF",
 	"DTe40",
     "DTe50",
+	"EtargetLopt",
     "Fadapt",
     "Fdem",
     "Fdem_CC",
@@ -72,6 +73,7 @@ export(
 	"joinMSE",
 	"KalmanFilter",
     "L2A",
+	"L95target",
 	"LBSPRSim",
 	"LBSPR",
 	"LBSPR_ItTAC",
@@ -86,6 +88,7 @@ export(
 	"matlenlim2",
     "MCD",
     "MCD4010",
+	"minlenLopt1",
     "ML2D",
     "MRreal",
     "MRnoreal",
@@ -141,7 +144,8 @@ export(
 	"VOIplot",
 	"OM_xl",
 	"Fease_xl",
-	"writeCSV"
+	"writeCSV",
+	"updateMSE"
 )
 exportClasses(
     "DLM_data",
