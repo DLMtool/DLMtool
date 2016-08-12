@@ -29,7 +29,7 @@ Parameter controlling the fraction of Lopt to set the minimum length of fish cau
 The length at first caprture, LFC, and length at full selectivity
 }
 \references{
-Hordyk, A., Ono, K., Sainsbury, K., Loneragan, N., and J. Prince. 2014. Some explorations of the life history ratios to describe length composition, spawning-per-recruit, and the spawning potential ratio – ICES Journal of Marine Science, doi:10.1093/icesjms/fst235.	
+Hordyk, A., Ono, K., Sainsbury, K., Loneragan, N., and J. Prince. 2014. Some explorations of the life history ratios to describe length composition, spawning-per-recruit, and the spawning potential ratio ICES Journal of Marine Science, doi:10.1093/icesjms/fst235.	
 }
 \author{
 HF Geromont

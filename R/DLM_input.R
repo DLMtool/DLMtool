@@ -675,7 +675,7 @@ ITe5<-function(x,DLM_data,reps=100,yrsmth=5,mc=0.05){
 class(ITe5)<-"DLM_input"
 
 
-minlenLopt1<-function(x,DLM_data,reps=reps,buffer=0.1){
+minlenLopt1<-function(x,DLM_data,reps=100,buffer=0.1){
 
   # Minimum length MPs: Fix length-at-full-selectivity to 0.8*Lopt and set length-at-first-capture 10% below LFs 
 
@@ -697,7 +697,7 @@ minlenLopt1<-function(x,DLM_data,reps=reps,buffer=0.1){
 class(minlenLopt1)<-"DLM_input"
 
 
-EtargetLopt<-function(x,DLM_data,reps=reps,yrsmth=3){
+EtargetLopt<-function(x,DLM_data,reps=100,yrsmth=3){
   
   # Effort MP: adjust effort up/down if mean length above/below Ltarget 
   
