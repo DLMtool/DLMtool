@@ -697,7 +697,7 @@ minlenLopt1<-function(x,DLM_data,reps=100,buffer=0.1){
 class(minlenLopt1)<-"DLM_input"
 
 
-EtargetLopt<-function(x,DLM_data,reps=100,yrsmth=3){
+EtargetLopt<-function(x,DLM_data,reps=100,yrsmth=3, buffer=0.1){
   
   # Effort MP: adjust effort up/down if mean length above/below Ltarget 
   

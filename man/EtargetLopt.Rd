@@ -8,7 +8,7 @@ Effort MP: adjust effort up/down if mean length above/below Ltarget
 Effort MP: adjust effort up/down if mean length above/below Ltarget 
 }
 \usage{
-EtargetLopt(x, DLM_data, reps = 100, yrsmth=3)
+EtargetLopt(x, DLM_data, reps = 100, yrsmth=3, buffer=0.1)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -23,6 +23,9 @@ The number of TAC samples
 }
 \item{yrsmth}{
 Number of years to calculate average length
+}
+\item{buffer}{
+Parameter controlling the fraction of mean catch to set the reference (or target) TAC level - acts as a precautionary buffer 
 }
 }
 \value{
