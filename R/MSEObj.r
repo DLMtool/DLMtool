@@ -1530,3 +1530,19 @@ calcMSESense <- function(MP=1, MSEobj, YVar=c("Y", "B")) { # supporting function
   Out$MP <- MP
   Out
 }
+
+
+# Update the MSE object 
+updateMSE <- function(MSEobj) {
+  slots <- slotNames(MSEobj)
+  for (X in seq_along(slots)) {
+    classDef <- getClassDef(class(MSEobj))
+    slotTypes <- classDef@slots
+    tt <- try(slot(MSEobj, slots[X]), silent=TRUE)
+   if (class(tt) == "try-error") {
+     fun <- get(as.character(slotTypes[X]))
+     slot(MSEobj, slots[X]) <- fun(NA)
+   }
+ }
+ MSEobj
+}

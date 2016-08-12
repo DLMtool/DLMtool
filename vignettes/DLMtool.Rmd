@@ -31,7 +31,15 @@ DLMtool has been used in setting catch-limits at the Mid-Atlantic Fishery Manage
 # Version Notes
 The package is subject to ongoing testing. Once again, if you find a bug or a problem please send a report to <t.carruthers@fisheries.ubc.ca> or <a.hordyk@murdoch.edu.au> so that it can be fixed!  
 
-## New Additions to this Version (3.11)
+## New Additions to this Version (3.2.1)
+A new slot (Effort) has been added to the MSC object. This stores the fishing effort for each year, simulation, and MP in the projection years.  The addition of the new slot may cause a warning message to be thrown up if a MSE object from a previous version of the DLMtool is loaded.
+
+You can update the old MSE object by adding an empty `Effort` slot:
+`MSEobj <- updateMSE(MSEobj)`
+
+There were some issues with a couple of the input control MPs, which have now been addressed (thanks Helena for identifying these). There was also a problem with effort and selectivity was being calculated for the input controls.
+
+## New Additions to this Version (3.2)
 A number of small but important bugs have been fixed, with special thanks to Liz Brooks, Helena Geromont, and Bill Harford, for alerting us to some of these issues.  
 
 Quang Huynh has recoded the mean length methods in C++, and they now run much faster, and should pass the timelimit constraint.
