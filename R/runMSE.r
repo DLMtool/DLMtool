@@ -211,7 +211,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
       length(restYears)), ncol=nsim, byrow=TRUE)  
   }
  
-  ind <- which(LFS/Linf>1, arr.ind=T)
+  ind <- which(LFS/matrix(Linf, nrow=proyears+nyears, ncol=nsim, byrow=TRUE) >1, arr.ind=T)
   if (length(ind) > 0) {
     message("LFS too high (LFS > Linf) in some cases. \nDefaulting to LFS = 0.9 Linf for the affected simulations")
     LFS[ind] <- Linf[ind[,2]] * 0.9 
