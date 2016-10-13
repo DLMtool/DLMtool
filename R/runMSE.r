@@ -3,7 +3,6 @@
 # January 2016
 # Tom Carruthers UBC (t.carruthers@fisheries.ubc.ca)
 # Adrian Hordyk (a.hordyk@murdoch.edu.au)
-
 runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
                    maxF=0.8, timelimit=1, reps=1, custompars=0, CheckMPs=TRUE){ 
   print("Loading operating model")
@@ -288,7 +287,9 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   }
   
   # Check that depletion target is reached
-  HighQ <- which(qs> 13 | qs < 0.008)
+  UpperBound <- 13  # bounds for q (catchability). Flag if bounded optimizer hits the bounds 
+  LowerBound <- 0.008
+  HighQ <- which(qs> UpperBound | qs < LowerBound)
   if (length(HighQ) > 0) { # If q has hit bound, re-sample depletion and try again. Tries 30 times 
     # and then alerts user
     Err <- TRUE
@@ -321,11 +322,25 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
       }else{
         qs[HighQ] <- sapply(HighQ,getq,dep,Find,Perr,Marray,hs,Mat_age,Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR) # find the q that gives current stock depletion
       }
-      HighQ <- which(qs > 13 | qs < 0.008)
+      HighQ <- which(qs > UpperBound | qs < LowerBound)
       if (length(HighQ) == 0) Err <- FALSE
     }
     if (Err) { # still a problem
-	  stop("Can't get to specified level of depletion with these Operating Model parameters. Try again for a complete new sample, or modify the input parameters (perhaps depletion is too high or too low?)")
+	  tooLow <- length(which(qs > UpperBound))
+	  tooHigh <- length(which(qs < LowerBound))
+	  prErr <- length(HighQ)/nsim
+	  if (prErr > 0.01 & length(HighQ) > 1) {
+		if (length(tooLow) > 0) message(tooLow, " sims can't get down to the lower bound on depletion")
+		if (length(tooHigh) > 0) message(tooHigh, " sims can't get to the upper bound on depletion")
+	    message("More than 1% of simulations can't get to the specified level of depletion with these Operating Model parameters")
+		stop("Try again for a complete new sample, or modify the input parameters")
+	  } else {
+	  	if (length(tooLow) > 0) message(tooLow, " sims can't get down to the lower bound on depletion")
+		if (length(tooHigh) > 0) message(tooHigh, " sims can't get to the upper bound on depletion")
+	    message("Some simulations can't get to the specified level of depletion")
+		message("Less than 1% of simulations, continuing anyway")
+	  }
+	
     }  
   }
   
@@ -569,6 +584,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   Ca<-array(NA,dim=c(nsim,nMP,proyears))       # store the projected catch
   TACa<-array(NA,dim=c(nsim,nMP,proyears))     # store the projected TAC recommendation
   Effort <- array(NA,dim=c(nsim,nMP,proyears)) # store the Effort
+  # SPRa <- array(NA,dim=c(nsim,nMP,proyears))   # store the Spawning Potential Ratio
   
   for(mm in 1:nMP){    # MSE Loop over methods
     pL5 <- L5 # reset selectivity parameters for projections
@@ -664,9 +680,9 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 	  if (length(chngSel) > 0) {
 	    pL5[y+nyears,chngSel] <- newSel[1,chngSel]
 		pLFS[y+nyears,chngSel] <- newSel[2,chngSel]
-		if (any(!is.na(inc[7,,1]))) {
-	      ind <- which(!is.na(inc[7,,1]))
-	      pVmaxlen[y+nyears,ind] <- inc[7,ind,1]
+		if (any(!is.na(inc[8,,1]))) {
+	      ind <- which(!is.na(inc[8,,1]))
+	      pVmaxlen[y+nyears,ind] <- inc[8,ind,1]
 	    }
 	  }	  
 	  Vi <- t(sapply(1:nsim, SelectFun, pL5[y+nyears,], pLFS[y+nyears,], 
@@ -705,7 +721,8 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
           FM_P[SAYR]<-FinF[S1]*Ei[S1]*Vi[SA1]*Si[SR]*fishdist[SR]*Emult[S1]*qvar[SY1]*qs[S1]^(1+qinc[S1]/100)^y 
         } # vulnerability specified
       }  # spatial closure specified  
-    }   # input control  
+      VBiomass_P[SAYR] <- Biomass_P[SAYR]*V_P[SAYt]  # update vulnerable biomass    
+	}   # input control  
     
 	Z_P[SAYR]<-FM_P[SAYR]+Marray[SYt]
     # CB_P[SAYR] <- Biomass_P[SAYR]*(1-exp(-FM_P[SAYR])) 
@@ -881,9 +898,9 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 		  if (length(chngSel) >0) {
 		    pL5[y+nyears,chngSel] <- newSel[1,chngSel]
 		    pLFS[y+nyears,chngSel] <- newSel[2,chngSel]
-			if (any(!is.na(inc[7,,1]))) {
-	          ind <- which(!is.na(inc[7,,1]))
-	          pVmaxlen[y+nyears,ind] <- inc[7,ind,1]
+			if (any(!is.na(inc[8,,1]))) {
+	          ind <- which(!is.na(inc[8,,1]))
+	          pVmaxlen[y+nyears,ind] <- inc[8,ind,1]
 	        }
 		  }	
 		  Vi <- t(sapply(1:nsim, SelectFun, pL5[y+nyears,], pLFS[y+nyears,], 
@@ -926,7 +943,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 
             } #vuln not changed
           }   # spatial closure
-          
+          VBiomass_P[SAYR] <- Biomass_P[SAYR]*V_P[SAYt]  # update vulnerable biomass        
         }   # input or output control 
 		Z_P[SAYR]<-FM_P[SAYR]+Marray[SYt] 
         # CB_P[SAYR]<-Biomass_P[SAYR]*(1-exp(-FM_P[SAYR])) 
@@ -956,7 +973,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 		CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] *  Biomass_P[SAYR]*(1-exp(-Z_P[SAYR]))
         
       } # not an update year
-	 
+	  
     } # end of year
     
   
