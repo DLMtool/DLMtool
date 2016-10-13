@@ -41,19 +41,10 @@ Required <- function(funcs=NA){
 # A way of locating where the package was installed so you can find example 
 # data files and code etc.
 DLMDataDir<-function(stock=NA){
-  chk <- "package:DLMtooldev" %in% search() 
-  if (chk) { # dev version 
-    if(is.na(stock)){
-      return(paste(searchpaths()[match("package:DLMtooldev",search())],"/",sep=""))
-    }else{
-      return(paste(searchpaths()[match("package:DLMtooldev",search())],"/",stock,".csv",sep=""))
-    }
-  } else {
-    if(is.na(stock)){
-      return(paste(searchpaths()[match("package:DLMtool",search())],"/",sep=""))
-    }else{
-      return(paste(searchpaths()[match("package:DLMtool",search())],"/",stock,".csv",sep=""))
-    }
+  if(is.na(stock)){
+    return(paste(searchpaths()[match("package:DLMtool",search())],"/",sep=""))
+  }else{
+    return(paste(searchpaths()[match("package:DLMtool",search())],"/",stock,".csv",sep=""))
   }  
 }
 
@@ -363,6 +354,7 @@ SetRecruitCycle <- function(x=1, Period, Amplitude, TotYears, Shape=c("sin", "sh
 ChooseEffort <- function(FleetObj, Years=NULL) {
   nyears <- FleetObj@nyears
   runSketch <- SketchFun(nyears, Years)
+  FleetObj@nyears <- length(Years)
   FleetObj@EffYears <- runSketch[,1]
   FleetObj@EffLower <- runSketch[,2]
   FleetObj@EffUpper <- runSketch[,3]
@@ -758,33 +750,6 @@ LBSPR <- function(x, DLM_data, yrsmth=1,reps=reps) {
 }
 
 
-Input <- function(DLM_data, MPs=NA, reps=100, timelimit=10, CheckMPs=TRUE) {
-  print("Checking which MPs can be run")
-  flush.console()
-  if(CheckMPs) PosMPs <- Can(DLM_data, timelimit=timelimit)
-  if(!CheckMPs) PosMPs <- MPs
-  PosMPs <- PosMPs[PosMPs%in%avail("DLM_input")]
-  if(!is.na(MPs[1]))DLM_data@MPs<-MPs[MPs%in%PosMPs]
-  if(is.na(MPs[1]))DLM_data@MPs<-PosMPs
-  funcs<-DLM_data@MPs
-
-  if(length(funcs)==0){
-    stop("None of the methods 'MPs' are possible given the data available")
-  }else{
-    Out <- matrix(NA, nrow=length(funcs), ncol=5)
-	colnames(Out) <- c("Effort", "Area 1",  "Area 2", "SL50", "SL95")
-	rownames(Out) <- funcs
-    for (mm in 1:length(funcs)) {
-	  print(paste("Running", mm, "of", length(funcs), "-", funcs[mm]))
-	  flush.console()
-      runIn <- runInMP(DLM_data,MPs=funcs[mm], reps=reps)[[1]][,,1]
-	  Out[mm,] <- runIn[2:6]
-	  Out[,4:5] <- round(Out[,4:5], 2)
-	}
-  }
-  Out 
-
-}
 
 # Take an OM object and convert it into a almost pefect OM with no 
 # observation error and very little process error 
@@ -851,9 +816,9 @@ runMSErobust <- function(OM = "1", MPs = NA, nsim = 200, proyears = 28, interval
       if (crash >= maxCrash) stop("Crashed too many times!")	  
       if(class(trialMSE)=="MSE"){
         packets[[i]] <- trialMSE
-		fname <- paste0(name, "pack", i, "MSE.rdata")
+		fname <- paste0(name, "pack", i, ".rdata")
         if (savePack) {
-		  save(trialMSE, file=fname)
+		  saveRDS(trialMSE, file=fname)
           print(paste("Saving", fname, "to", getwd()))
           flush.console()		  
 		}  
@@ -867,11 +832,35 @@ runMSErobust <- function(OM = "1", MPs = NA, nsim = 200, proyears = 28, interval
   if (i == 1)  MSEobj <- packets[[1]]
   if (i > 1) MSEobj <- joinMSE(MSEobjs=packets)
   if (saveMSE) {
-    fname <- paste0(name, "MSE.rdata")
-	save(MSEobj, file=fname)
+    fname <- paste0(name, ".rdata")
+	saveRDS(MSEobj, file=fname)
     print(paste("Saving", fname, "to", getwd()))
     flush.console()
   }
   MSEobj
 }
 
+# Find plotting functions in the DLMtool
+plotFun <- function(class=c("MSE", "DLM_data")) {
+  class <- match.arg(class)
+  tt <- lsf.str("package:DLMtool")
+  p <- p2 <- rep(FALSE, length(tt)) 
+  for (X in seq_along(tt)) {
+    temp <- grep("plot", tolower(tt[[X]]))
+    if (length(temp) > 0) p[X] <- TRUE
+    temp2 <- grep(class, paste(format(match.fun(tt[[X]])), collapse=" "))
+    if (length(temp2) > 0) p2[X] <- TRUE
+  }
+  message("DLMtool functions for plotting objects of class ", class, " are:")
+  out <- sort(tt[which(p & p2)])
+  out <- out[-grep("plotFun", out)]
+  if (length(out) > 5) {
+    sq <- seq(from=1, to=length(out), by=5)
+    for (x in seq_along(sq)) {
+	  cat(out[sq[x]:min(sq[x+1]-1, length(out), na.rm=TRUE)])
+	  cat("\n")
+	}
+  } else cat(out)
+  cat("\n")
+  invisible(out)
+}
