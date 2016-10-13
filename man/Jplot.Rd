@@ -1,0 +1,57 @@
+\name{Jplot}
+\alias{Jplot}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{
+Joint probability plot
+}
+\description{
+Calculates and plots the joint probability of meeting all performance metrics simultaneously
+}
+\usage{
+Jplot(MSEobj, PLim = 0.8, YVar = c("LTY", "STY", "avgB_B0", "avgB_BMSY"), 
+  PMRefs = list(B_BMSY = 0.5, B_B0 = 0.2), UseMean = TRUE, lastYrs = 10, 
+  AvailMPs = NULL, XLim = NULL, ShowCols = TRUE, ShowLabs = FALSE, All = TRUE)
+}
+\arguments{
+  \item{MSEobj}{
+An object of class MSE
+}
+  \item{PLim}{
+Probability limit (acceptable risk threshold; e.g., 0.8 for 80 percent)
+}
+  \item{YVar}{
+What to plot of the y-axis: choose from \code{c("LTY", "STY", "avgB_B0", "avgB_BMSY")}
+}
+  \item{PMRefs}{
+List containing the reference limits for each metric 
+}
+  \item{UseMean}{
+Logical. Calculate mean (TRUE) or median (FALSE)
+}
+  \item{lastYrs}{
+Last number of years in projection period to calculate summary statistics
+}
+  \item{AvailMPs}{
+Optional character vector of available MPs (plotted in a different colour)
+}
+  \item{XLim}{
+Optional limits for the x-axis
+}
+  \item{ShowCols}{
+Logical. Show the background colours?
+}
+  \item{ShowLabs}{
+Logical. Show the MP labels?
+}
+  \item{All}{
+Logical. Plot all MPs (TRUE) or only those above the probability limit (\code{PLim}))?
+}
+}
+
+\value{
+Invisibly returns data frame containing statistics shown in the plot
+}
+
+\author{
+A. Hordyk
+}

@@ -8,8 +8,9 @@ A function that relates parameters of the observation model and the operating mo
 to yield. 
 }
 \usage{
-VOIplot(MSEobj, MPs=NA, nvars=5, nMP=4, Par=c("Obs", "OM"), YVar=c("Y", "B"), 
-  doPlot=TRUE, incStat=FALSE, availMP=NULL, acceptMP=NULL, incNames=TRUE, labcex=0.8)
+VOIplot(MSEobj, MPs=NA, nvars=5, nMP=4, Par=c("Obs", "OM"), 
+  YVar=c("Y", "B"), doPlot=TRUE, incStat=FALSE, availMP=NULL, 
+  acceptMP=NULL, incNames=TRUE, labcex=0.8, quants=c(0.05, 0.95))
 }
 \arguments{
   \item{MSEobj}{
@@ -47,6 +48,9 @@ Include the names?
 }
   \item{labcex}{
 Character size of the label
+}
+  \item{quants}{
+Quantiles to calculate
 }
 }
 \value{
