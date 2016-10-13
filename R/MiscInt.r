@@ -420,8 +420,8 @@ getSlopeFun <- function(SD, age50, age95) 0.95 - (1/(1+exp((age50-age95)/(age50*
 
 # Selectivity at length function 
 SelectFun <- function(i, SL0.05, SL1, MaxSel, Linfs, Lens) {
-  s1 <- optimise(getSlope1, interval=c(0, 100), L1=SL1[i], L0.05=SL0.05[i])$minimum
-  s2 <- optimise(getSlope2, interval=c(0, 1000), L1=SL1[i], s1=s1, Linf=Linfs[i], MaxSel=MaxSel[i])$minimum 
+  s1 <- optimise(getSlope1, interval=c(0, 1E6), L1=SL1[i], L0.05=SL0.05[i])$minimum
+  s2 <- optimise(getSlope2, interval=c(0, 1E6), L1=SL1[i], s1=s1, Linf=Linfs[i], MaxSel=MaxSel[i])$minimum 
   if(is.vector(Lens)) TwoSidedFun(L1=SL1[i], s1=s1, s2=s2, Lens=Lens) #nsim = 1
   else TwoSidedFun(L1=SL1[i], s1=s1, s2=s2, Lens=Lens[i,]) #nsim > 1
 }
