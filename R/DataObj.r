@@ -445,7 +445,7 @@ runInMP <- function(DLM_data,MPs=NA,reps=100) {
 
 # Plot TAC 
 boxplot.DLM_data <- function(x, outline=FALSE, ...) {
-  x <- DLM_data
+  DLM_data <- x 
   if (class(DLM_data) != "DLM_data") stop("Object must be of class 'DLM_data'")
   if (all(is.na(dim(DLM_data@TAC[,,1])))) stop("No TAC data found")
   tacs <- t(DLM_data@TAC[,,1])
