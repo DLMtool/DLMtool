@@ -26,20 +26,44 @@ DLMtool is a collaboration between the University of British Columbia and the Na
 
 While DLMtool includes over 55 MPs (e.g. DCAC, DBSRA), it is also designed to be extensible in order to encourage the development and testing of new MPs for informing management of data-limited fish stocks. The package is structured such that the same MP functions that are tested by MSE can be applied to provide management recommendations from real data. Easy incorporation of real data is central advantage of the software and a set of related functions automatically detect what MP can be applied given the available data and what additional data are required to get other MPs working.
 
-DLMtool has been used in setting catch-limits at the Mid-Atlantic Fishery Management Council (US) and is being used to test management procedures in California state fisheries (California Deparment of Fish and Wildlife), the Caribbean (NOAA), and for seafood certification purposes (MSC). 
+DLMtool has been used in setting catch-limits at the Mid-Atlantic Fishery Management Council (US) and is being used to test management procedures in California state fisheries (California Department of Fish and Wildlife), the Caribbean (NOAA), and for seafood certification purposes (MSC). 
 
 # Version Notes
 The package is subject to ongoing testing. Once again, if you find a bug or a problem please send a report to <t.carruthers@fisheries.ubc.ca> or <a.hordyk@murdoch.edu.au> so that it can be fixed!  
 
-## New Additions to this Version (3.2.1)
+## New Additions to this Version (3.2.2) 
+A number of additional plotting functions, and a few new MPs have been added in this version.  Also a few minor changes to improve performance and reliability of the model.
+
+For improved stability, especially with large files, the `runMSErobust` function has been changed so that it now uses the `saveRDS` function to write the MSE objects to disk. MSE objects saved with this version of the function need to be loaded with `readRDS`.  
+
+### New Functions
+`plotFun` function can be used to print out all available plotting functions for objects of class `MSE` or `DLM_data`
+
+*MSE Object*
+Pplot and Kplot functions have been modified for extra control of various features of the plots.
+
+Two functions, `barplot.MSE` and `boxplot.MSE`, have been added to plot the MSE object. Call them using the generic `barplot` or `boxplot` functions, and see `?barplot.MSE` and `?boxplot.MSE` for information on the arguments for the function.
+
+New functions: `Jplot`, `Splot`, `Cplot`, and `VOIplot` added.
+
+*DLM_data Object*
+`boxplot.DLM_data` has been added and can be used to plot boxplots of the TACs recommendations from different methods. Call with `boxplot(DLM_data)`
+
+*New MPs*
+Three new input control methods, developed by Helena Geremont, have been added to the package: `EtargetLopt`, `L95target`, and `minlenLopt1`.
+
+### Coming Soon!
+A user manual for the DLMtool is currently being developed and should be available soon (hopefully!)
+
+## New Additions to Version 3.2.1
 A new slot (Effort) has been added to the MSC object. This stores the fishing effort for each year, simulation, and MP in the projection years.  The addition of the new slot may cause a warning message to be thrown up if a MSE object from a previous version of the DLMtool is loaded.
 
 You can update the old MSE object by adding an empty `Effort` slot:
 `MSEobj <- updateMSE(MSEobj)`
 
-There were some issues with a couple of the input control MPs, which have now been addressed (thanks Helena for identifying these). There was also a problem with effort and selectivity was being calculated for the input controls.
+There were some issues with a couple of the input control MPs, which have now been addressed (thanks Helena for identifying these). There was also a problem with how effort and selectivity was being calculated for the input controls.
 
-## New Additions to this Version (3.2)
+## New Additions to Version 3.2
 A number of small but important bugs have been fixed, with special thanks to Liz Brooks, Helena Geromont, and Bill Harford, for alerting us to some of these issues.  
 
 Quang Huynh has recoded the mean length methods in C++, and they now run much faster, and should pass the timelimit constraint.
@@ -70,7 +94,7 @@ Two features have been added to allow MPs to return additional information for f
 A new generic trade-off performance plot `TradePlot`. 
 
 ## A note on version 2.11 
-Operating model effort is now simulated by a time-series of year verticies and relative magnitude of effort at each vertex. It follows that the slot `Fleet@Fgrad` is no longer, and has been replaced by three slots with vectors of equal length: `Fleet@EffYear`, `Fleet@EffUpper` and `Fleet@EffLower`.
+Operating model effort is now simulated by a time-series of year vertices and relative magnitude of effort at each vertex. It follows that the slot `Fleet@Fgrad` is no longer, and has been replaced by three slots with vectors of equal length: `Fleet@EffYear`, `Fleet@EffUpper` and `Fleet@EffLower`.
 
 These effort trajectories can now be specified by a new graphical interface (function `ChooseEffort()`) which uses points to determine the three slots described above.
 
@@ -97,9 +121,9 @@ Its probably best not to try and use the package for very short lived stocks (th
 ## New to version 2.1
 (1) The whole toolkit has moved to a length-based simulator (maturity, fisheries selectivity by length)
 
-(2) We've dropped spatial targetting for the moment as it was a flawed implementation and could not distribute fishing correctly with respect to both density and amount of resource among the two areas. 
+(2) We've dropped spatial targeting for the moment as it was a flawed implementation and could not distribute fishing correctly with respect to both density and amount of resource among the two areas. 
 
-(3) `Tplot2` adds a different set of tradeoffs including long term and short term probability of achieving 50 per cent of FMSY yield and average annual variability in yields
+(3) `Tplot2` adds a different set of trade-offs including long term and short term probability of achieving 50 per cent of FMSY yield and average annual variability in yields
  
 (4) Version 2.0 was bugged and did not include observation error in estimates of current stock abundance and depletion (only biases were simulated). Many thanks to Helena Geromont for spotting this. This has now been corrected
 
@@ -117,9 +141,9 @@ Its probably best not to try and use the package for very short lived stocks (th
 
 (11) After deliberation, Pope's approximation has been used to account for intra-year mortality (ie TACs are taken from biomass at the start of the year subject to half of natural mortality rate). This is probably a reasonable approximation in a data-limited setting: alternative structural assumptions for *M* are eclipsed by uncertainty in *M* itself and other operating model parameters such as selectivity and bias in observation of data such as annual catches. 
 
-(12) The simulation of length composition data was bugged in version 2.0. The variability in length at age was taken from the observation model. Using the perfect information observation model therefore led to no variabiltiy in length at age and hence very odd length composition data. This has been solved and for now a fixed 10 per cent CV in length at age is assumed (normally distributed). 
+(12) The simulation of length composition data was bugged in version 2.0. The variability in length at age was taken from the observation model. Using the perfect information observation model therefore led to no variability in length at age and hence very odd length composition data. This has been solved and for now a fixed 10 per cent CV in length at age is assumed (normally distributed). 
 
-(13) A bug with delay-difference MPs has been fixed (`DD` and `DD4010`) in which stochastic TACs were sampled when reps =1. This should just be the mean estimate. The result is that DD is much less variable between years but comes with less contrast in the data. In addition to the much less variable catch recommendations, long term mean performance of the MP is reduced while medium term peformance has been improved. 
+(13) A bug with delay-difference MPs has been fixed (`DD` and `DD4010`) in which stochastic TACs were sampled when reps =1. This should just be the mean estimate. The result is that DD is much less variable between years but comes with less contrast in the data. In addition to the much less variable catch recommendations, long term mean performance of the MP is reduced while medium term performance has been improved. 
 
 (14) In the move to length-based inputs it is possible to prescribe wild biases for maximum length and length at maturity. In this version these sampled biases are not correlated so it is possible to create simulated data sets where maximum length is lower than length at 95 percent maturity and length at 50 per cent maturity. We put a hard ceiling on this such that length at 95 percent maturity must be below 90 percent of maximum length and length at 50 percent maturity must be below 90 percent of length at 95 percent maturity. This isn't great and this will be improved for v2.11 
 
@@ -288,7 +312,7 @@ RockReal <- Sense(RockReal,"DCAC")
 # From MSE to management recommendations
 In this section we take a more thorough, systematic approach to MSE and data implementation. This is an example of how DLMtool may be used to select MPs and then apply them to real data. This is intended to be a straw-man demonstration and in no way should this be interpreted as a recommendation about appropriate management objectives! 
 
-In this example our real-life stock is a moderately long-lived reef fish species of moderately high recruitment compensation that has been subject to fairly consistent fishing pressure over recent years. We suspect that fishing activities do not effectively operate on older age classes since the fish exhibit ontogenetic movements offshore where there is less fishing. In general the stock is thought to be a relatively low stock levels going by catch rate observations but frankly, we don't have a precise handle on stock depletion. Since fishing activities have changed spatial distribution and the stock is targetted there is the potential for hyperstability in our observations of catch rates over time. 
+In this example our real-life stock is a moderately long-lived reef fish species of moderately high recruitment compensation that has been subject to fairly consistent fishing pressure over recent years. We suspect that fishing activities do not effectively operate on older age classes since the fish exhibit ontogenetic movements offshore where there is less fishing. In general the stock is thought to be a relatively low stock levels going by catch rate observations but frankly, we don't have a precise handle on stock depletion. Since fishing activities have changed spatial distribution and the stock is targeted there is the potential for hyper-stability in our observations of catch rates over time. 
 
 This section assumes that you have completed the prerequisites.
 
@@ -358,7 +382,7 @@ A summary trade-off plot reveals a wide range of performance:
 Tplot(ourMSE)
 ```
 
-In this example process, we decide that we would like to select a targetted subset of these MPs that have greater than 30 percent of long-term best yield (given ideal fixed fishing mortality rate), less than a 50 percent probability of overfishing and less than a 20 percent probability of dropping below a low stock level, in this case 50 percent of BMSY. To do this we calculate the summary table and subset it:
+In this example process, we decide that we would like to select a targeted subset of these MPs that have greater than 30 percent of long-term best yield (given ideal fixed fishing mortality rate), less than a 50 percent probability of overfishing and less than a 20 percent probability of dropping below a low stock level, in this case 50 percent of BMSY. To do this we calculate the summary table and subset it:
 
 ```{r}
 Results <- summary(ourMSE) 
@@ -456,13 +480,13 @@ If we focus on output controls there are a cluster of MPs that offer comparable 
 ourReefFish <- Sense(ourReefFish,'MCD')
 ```
 
-Not suprisingly, the Mean Catch Depletion method is sensitive to the error in historical catch and current depletion.
+Not surprisingly, the Mean Catch Depletion method is sensitive to the error in historical catch and current depletion.
 <!--
 In this case it is a toss-up between them. Both show primary sensitivity to bias in reported catches (fairly obviously) and little sensitivity to the remaining inputs. In this case it might be necessary to try an alternative run of the operating model given other credible parameters to see if we can distinguish between these MPs.
 -->
 
 ## What have we learned?
-In this simple walkthrough we have established what MPs work best for our stock, fishery and observation type. It was possible to establish the frailties of these MPs by examining what simulated parameters drive yield and probability of overfishing (using the `VOI()` function). Our application to real data produced actual TAC recommendations for MPs that were available. Several MPs could not be applied, and the MSE results can be used to evaluate whether these MPs are likely to provide benefits in terms of both yield and limiting overfishing (remember that with such a small number of simluations in this example, these results are not reliable!). We know what data are necessary to make these work but have yet to decide whether collecting these data is worthwhile. Above all, the approach is transparent and reproducible. 
+In this simple walk-through we have established what MPs work best for our stock, fishery and observation type. It was possible to establish the frailties of these MPs by examining what simulated parameters drive yield and probability of overfishing (using the `VOI()` function). Our application to real data produced actual TAC recommendations for MPs that were available. Several MPs could not be applied, and the MSE results can be used to evaluate whether these MPs are likely to provide benefits in terms of both yield and limiting overfishing (remember that with such a small number of simulations in this example, these results are not reliable!). We know what data are necessary to make these work but have yet to decide whether collecting these data is worthwhile. Above all, the approach is transparent and reproducible. 
 
 Depending on how utility is characterised, it may be possible to establish the cost-efficacy of future data-collection based on the long-term yield differential of the methods that are available and those that need additional data. 
 
@@ -507,7 +531,7 @@ class(THC)<-"DLM_output"
 environment(THC) <- asNamespace('DLMtool')
 
 ```
-and again export to cluster (if we are using paralllel computing):
+and again export to cluster (if we are using parallel computing):
 ```{r, eval=FALSE}
 sfExport("THC")
 ```

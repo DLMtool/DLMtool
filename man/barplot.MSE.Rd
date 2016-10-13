@@ -1,6 +1,5 @@
 \name{barplot.MSE}
 \alias{barplot.MSE}
-\alias{barplot}
 \title{
 Plot a barplot of MSE results
 }
