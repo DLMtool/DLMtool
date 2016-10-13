@@ -443,4 +443,65 @@ runInMP <- function(DLM_data,MPs=NA,reps=100) {
 }
 
 
+# Plot TAC 
+boxplot.DLM_data <- function(x, outline=FALSE, ...) {
+  x <- DLM_data
+  if (class(DLM_data) != "DLM_data") stop("Object must be of class 'DLM_data'")
+  if (all(is.na(dim(DLM_data@TAC[,,1])))) stop("No TAC data found")
+  tacs <- t(DLM_data@TAC[,,1])
+  MPs <- DLM_data@MPs 
+  ind <- grep("ref", MPs)
+  if (length(ind) > 0) {
+    tacs <- tacs[,-ind]
+    MPs <- MPs[-ind]
+  }
+  ord <- order(apply(tacs, 2, median, na.rm=TRUE))
+  MPs <- MPs[ord]
+  tacs <- tacs[,ord]
+  
+  cols <- rainbow(30)
+  ymax <- quantile(apply(tacs, 2, quantile, 0.99, na.rm=TRUE), 0.99)
+  ymin <- quantile(apply(tacs, 2, quantile, 0.01, na.rm=TRUE), 0.01)
+  ylim <- c(ymin, ymax)
+  par(mfrow=c(1,1), oma=c(2,4,1,0), mar=c(3,3,0,0))
+  boxplot(tacs, names=MPs, las=1, col=cols, outline=outline, frame=FALSE, ylim=ylim, 
+          horizontal=TRUE, ...)
+  
+  mtext(paste("TAC (",DLM_data@Units,")",sep=""), side=1, outer=T,line=0.5, cex=1.25)
+  mtext(side=2, "Management Procedures", outer=TRUE, line=3, cex=1.25)
+  mtext(paste("TAC calculation for ",DLM_data@Name,sep=""),3,outer=T,line=-0.5, cex=1.25)
+  
+  data.frame(MP=MPs, Median=round(apply(tacs, 2, median, na.rm=TRUE),2),
+             SD=round(apply(tacs, 2, sd, na.rm=TRUE),2), Units=DLM_data@Units)
+  
+}
+
+# run input control method 
+Input <- function(DLM_data, MPs=NA, reps=100, timelimit=10, CheckMPs=TRUE) {
+  print("Checking which MPs can be run")
+  flush.console()
+  if(CheckMPs) PosMPs <- Can(DLM_data, timelimit=timelimit)
+  if(!CheckMPs) PosMPs <- MPs
+  PosMPs <- PosMPs[PosMPs%in%avail("DLM_input")]
+  if(!is.na(MPs[1]))DLM_data@MPs<-MPs[MPs%in%PosMPs]
+  if(is.na(MPs[1]))DLM_data@MPs<-PosMPs
+  funcs<-DLM_data@MPs
+
+  if(length(funcs)==0){
+    stop("None of the methods 'MPs' are possible given the data available")
+  }else{
+    Out <- matrix(NA, nrow=length(funcs), ncol=6)
+	colnames(Out) <- c("Effort", "Area 1",  "Area 2", "SL50", "SL95", "UpperLimit")
+	rownames(Out) <- funcs
+    for (mm in 1:length(funcs)) {
+	  print(paste("Running", mm, "of", length(funcs), "-", funcs[mm]))
+	  flush.console()
+      runIn <- runInMP(DLM_data,MPs=funcs[mm], reps=reps)[[1]][,,1]
+	  Out[mm,] <- runIn[2:7]
+	  Out[,4:6] <- round(Out[,4:6], 2)
+	}
+  }
+  Out 
+
+}
 
