@@ -1,3 +1,6 @@
+S3method("barplot", "MSE")
+S3method("boxplot", "MSE")
+S3method("boxplot", "DLM_data")
 exportMethods(
     "initialize",
     "plot",
@@ -15,6 +18,7 @@ export(
     "CC4",
     "ChooseEffort",
 	"ChooseSelect",
+	"Cplot",
     "CompSRA",
     "CompSRA4010",
     "curE",
@@ -71,6 +75,7 @@ export(
 	"ITe10",
     "ITM",
 	"joinMSE",
+	"Jplot",
 	"KalmanFilter",
     "L2A",
 	"L95target",
@@ -90,6 +95,7 @@ export(
     "MCD4010",
 	"minlenLopt1",
     "ML2D",
+	"MPStats",
     "MRreal",
     "MRnoreal",
     "NAor0",
@@ -97,6 +103,7 @@ export(
     "NOAA_plot",
 	"OptFun",
     "plotOFL",
+	"plotFun",
 	"SetRecruitCycle",
     "SPmod",
     "SPslope",
@@ -117,12 +124,14 @@ export(
     "Sense",
 	"slotlim",
     "SPMSY",
+	"Splot",
     "SPSRA",
     "SPSRA_ML",
     "TAC",
 	"TradePlot",
     "Tplot",
     "Tplot2",
+	"updateMSE",
     "CheckConverg",
     "Pplot",
     "Kplot",
@@ -131,6 +140,7 @@ export(
     "YPR",
     "YPR_CC",
     "YPR_ML",
+	"VOIplot",
 	"wormplot",
     "CSRA",
     "CSRAfunc",
@@ -144,8 +154,7 @@ export(
 	"VOIplot",
 	"OM_xl",
 	"Fease_xl",
-	"writeCSV",
-	"updateMSE"
+	"writeCSV"
 )
 exportClasses(
     "DLM_data",
@@ -164,18 +173,20 @@ import(
 )
 importFrom("grDevices", "col2rgb", "rainbow", "rgb", "xy.coords", "colorRampPalette")
 importFrom("graphics", "abline", "hist", "layout", "legend", "lines",
-               "matplot", "mtext", "par", "points", "text","axis","identify",
-			   "polygon", "title", "plot.new")
+          "matplot", "mtext", "par", "points", "text","axis","identify",
+			    "polygon", "title", "plot.new", "barplot", "boxplot", "segments")
 importFrom("stats", "coef", "density", "dlnorm", "dnorm", "lm",
-               "loess", "optim", "optimise", "optimize", "predict",
-               "qlnorm", "quantile", "rbeta", "rlnorm", "rmultinom",
-               "rnorm", "runif", "sd", "uniroot", "approx", "dbeta", "nlm", 
-			   "pnorm", "loess.smooth", "plogis")
-importFrom("utils", "flush.console", "read.csv")
+           "loess", "optim", "optimise", "optimize", "predict",
+           "qlnorm", "quantile", "rbeta", "rlnorm", "rmultinom",
+           "rnorm", "runif", "sd", "uniroot", "approx", "dbeta", "nlm", 
+			     "pnorm", "loess.smooth", "plogis", "median")
+importFrom("utils", "flush.console", "read.csv", "lsf.str")
 importFrom("abind", "abind")
 importFrom("Rcpp", "evalCpp")
 importFrom("readxl", "read_excel", "excel_sheets")
 useDynLib(DLMtool)
+
+
 
 
 
