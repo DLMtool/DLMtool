@@ -180,7 +180,7 @@ importFrom("stats", "coef", "density", "dlnorm", "dnorm", "lm",
            "qlnorm", "quantile", "rbeta", "rlnorm", "rmultinom",
            "rnorm", "runif", "sd", "uniroot", "approx", "dbeta", "nlm", 
 			     "pnorm", "loess.smooth", "plogis", "median")
-importFrom("utils", "flush.console", "read.csv", "lsf.str")
+importFrom("utils", "flush.console", "read.csv", "lsf.str", "packageVersion")
 importFrom("abind", "abind")
 importFrom("Rcpp", "evalCpp")
 importFrom("readxl", "read_excel", "excel_sheets")
