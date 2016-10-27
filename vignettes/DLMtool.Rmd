@@ -39,17 +39,20 @@ For improved stability, especially with large files, the `runMSErobust` function
 ### New Functions
 `plotFun` function can be used to print out all available plotting functions for objects of class `MSE` or `DLM_data`
 
-*MSE Object*
+**MSE Object**
+
 Pplot and Kplot functions have been modified for extra control of various features of the plots.
 
 Two functions, `barplot.MSE` and `boxplot.MSE`, have been added to plot the MSE object. Call them using the generic `barplot` or `boxplot` functions, and see `?barplot.MSE` and `?boxplot.MSE` for information on the arguments for the function.
 
 New functions: `Jplot`, `Splot`, `Cplot`, and `VOIplot` added.
 
-*DLM_data Object*
+**DLM_data Object**
+
 `boxplot.DLM_data` has been added and can be used to plot boxplots of the TACs recommendations from different methods. Call with `boxplot(DLM_data)`
 
-*New MPs*
+**New MPs**
+
 Three new input control methods, developed by Helena Geremont, have been added to the package: `EtargetLopt`, `L95target`, and `minlenLopt1`.
 
 ### Coming Soon!
@@ -452,11 +455,12 @@ The `Can()` function reveals that a range of MPs are available, and we can calcu
 ourReefFish <- TAC(ourReefFish)
 ```
 
-```{r Load, echo=FALSE}
-data(ourReefFish)
+```{r plotOurReefFish, eval=FALSE}
+plot(ourReefFish)
 ```
 
-```{r plotOurReefFish, fig.width=7, fig.height=7}
+```{r Load, echo=FALSE, eval=TRUE, fig.height=7, fig.width=7}
+data(ourReefFish)
 plot(ourReefFish)
 ```
 
