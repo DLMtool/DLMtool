@@ -544,6 +544,14 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   
   names(DLM_data@OM)[26:28]<-c("L5","LFS","Vmaxlen") # These are missing labels in the line above
   
+  # Store MSE info
+  DLM_data@OM$interval <- interval 
+  DLM_data@OM$maxF <- maxF 
+  DLM_data@OM$timelimit <- timelimit 
+  DLM_data@OM$version <- packageVersion('DLMtool')
+  DLM_data@OM$pstar <- pstar 
+  DLM_data@OM$reps <- reps 
+  
   DLM_data@Obs<-as.data.frame(cbind(Cbias,Csd,CAA_nsamp,CAA_ESS,CAL_nsamp,CAL_ESS,Isd,Dbias,Derr,Mbias,FMSY_Mbias,BMSY_B0bias,
                                     lenMbias,LFCbias,LFSbias,Abias,Aerr,Kbias,t0bias,Linfbias,hbias,Irefbias,Crefbias,Brefbias,betas))  # put all the observation error model parameters in one table
   
