@@ -854,6 +854,10 @@ plotFun <- function(class=c("MSE", "DLM_data")) {
   message("DLMtool functions for plotting objects of class ", class, " are:")
   out <- sort(tt[which(p & p2)])
   out <- out[-grep("plotFun", out)]
+  if (class=="MSE") {
+    out <- c(out, "barplot", "boxplot", "VOI", "VOI2")
+	out <- sort(out)
+  }
   if (length(out) > 5) {
     sq <- seq(from=1, to=length(out), by=5)
     for (x in seq_along(sq)) {
