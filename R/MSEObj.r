@@ -296,7 +296,7 @@ Pplot <- function(MSEobj, YVar=c("B_BMSY", "F_FMSY"), MPs=NA, sims=NULL,
   traj=c("all", "quant"), quants=c(0.1, 0.9), incquant=TRUE, quantcol="lightgray",
   RefYield=c("lto", "curr"), LastYr=TRUE,  maxMP=6, alpha=60, cex.axis=1.35, 
   cex.lab=1.4,  YLab=NULL, incMP=TRUE, MPcex=1.4, incLeg=TRUE, cex.leg=1.5, 
-  legPos="topleft", yline=NULL, ...) {
+  legPos="topleft", yline=NULL, parOR=FALSE, xaxis=TRUE, yaxis=TRUE, ...) {
   YVars <- c("B_B0", "B_BMSY", "F_FMSY", "Yield")
   YVar <- match.arg(YVar, choices=YVars, several.ok=TRUE)
   
@@ -346,7 +346,11 @@ Pplot <- function(MSEobj, YVar=c("B_BMSY", "F_FMSY"), MPs=NA, sims=NULL,
   
   dots <- list(...)
 
-  ylims <- cbind(0, unlist(lapply(Dat, quantile, 0.95, na.rm=TRUE)))
+  ylims <- cbind(0, unlist(lapply(Dat, quantile, 0.90, na.rm=TRUE)))
+  if ("B_B0" %in% YVar) {
+    index <- which(YVar == "B_B0")
+	ylims[index, ] <- c(0, max(1, max(ylims[index,])))
+  }	
   if (length(dots$ylim) != 0) ylims <-  matrix(rep((dots$ylim), length(Dat)), nrow=nr, byrow=TRUE)
   colrange <- matrix(unlist(lapply(Dat, quantile, c(0.001,0.975), na.rm=TRUE)), nrow=nr, byrow=TRUE)
 
@@ -362,10 +366,17 @@ Pplot <- function(MSEobj, YVar=c("B_BMSY", "F_FMSY"), MPs=NA, sims=NULL,
     expression(F/F[MSY]), "Yield relative\n to Long-Term\n Optimum")
   if ("Yield" %in% YVar & RefYield=="curr") YLabs[[4]] <- expression(Yield/Yield[current])
   YLabs <- YLabs[match(YVar, YVars)]
+  if (!is.null(YLab)) YLabs <- YLab 
+  if (!parOR) {
+    if ("Yield" %in% YVar & RefYield!="curr") {
+      par(mfrow=c(nr, nc), bty="n", mar=c(2,2,0,0), oma=c(4,8,2,1))
+    } else par(mfrow=c(nr, nc), bty="n", mar=c(2,2,0,0), oma=c(4,4,2,1))
+  }
+  if (parOR) {
+    nr <- par()$mfrow[1]
+	nc <- par()$mfrow[2]
+  }
 
-  if ("Yield" %in% YVar & RefYield!="curr") {
-    par(mfrow=c(nr, nc), bty="n", mar=c(2,2,0,0), oma=c(4,8,2,1))
-  } else par(mfrow=c(nr, nc), bty="n", mar=c(2,2,0,0), oma=c(4,4,2,1))
   for (X in 1:nr) {
     dat <- Dat[[X]]
 	ylim <- ylims[X,]
@@ -391,13 +402,19 @@ Pplot <- function(MSEobj, YVar=c("B_BMSY", "F_FMSY"), MPs=NA, sims=NULL,
 		  lines(1:length(stats[2,]), stats[2,], lwd=3)
 	    }
 	  }
-	  if (X == nr) axis(side=1, labels=TRUE, cex.axis=cex.axis)
-      if (X !=nr) axis(side=1, labels=FALSE)
-	  if (mm ==1) {
+	  if (X == nr & xaxis) axis(side=1, labels=TRUE, cex.axis=cex.axis)
+      if (X !=nr | !xaxis) axis(side=1, labels=FALSE)
+	  if (mm == 1 & yaxis) {
 	    axis(side=2, labels=TRUE, cex.axis=cex.axis, las=1)
 		mtext(side=2, ylab, cex=cex.lab, line=3)
 	  }
-	  if (incMP & X ==1) mtext(side=3, MSEobj@MPs[mm], cex=MPcex)
+	  if (parOR) {
+	    if (xaxis) axis(side=1, labels=TRUE, cex.axis=cex.axis, las=1)
+		if (yaxis & mm ==1) axis(side=2, labels=TRUE, cex.axis=cex.axis, las=1)  
+	  }
+	  axis(side=2, labels=FALSE)
+	  if (incMP & X ==1 & !parOR) mtext(side=3, MSEobj@MPs[mm], cex=MPcex)
+	  if (incMP & parOR) mtext(side=3, MSEobj@MPs[mm], cex=MPcex)
 	  
 	  # Legend # 
 	  if (mm == 1 & incLeg & traj=="quant" & X == 1) {
@@ -1636,36 +1653,46 @@ MPStats <- function(MSEobj,
 }
 
 # barplot 
-barplot.MSE <- function(height, MSEobj=NULL, PMs=list(B_BMSY=0.5, B_B0=0.2), PLim=0.8,
-  lastYrs=10, maxMP=14, MPs=NA, Title=NULL,
-  sims=NULL, msg=TRUE, cex.names=1.3, ...) {
+barplot.MSE <- function(height, MSEobj=NULL, PMs=list(B_BMSY=0.5, B_B0=0.2), 
+  PLim=0.8, lastYrs=10, maxMP=14, MPs=NA, Title=NULL, sims=NULL, msg=TRUE, 
+  cex.names=1.3, incRef=FALSE, ...) {
   MSEobj <- match.arg(MSEobj)
   if (is.null(MSEobj)) MSEobj <- height
   if (!is.null(sims) & all(is.na(MPs))) MSEobj <- Sub(MSEobj, sims=sims)
   if (!is.null(sims) & all(!is.na(MPs))) MSEobj <- Sub(MSEobj, sims=sims, MPs=MPs)	
   if (is.null(sims) & !all(is.na(MPs)))  MSEobj <- Sub(MSEobj,  MPs=MPs)
   
-
-  DF <- MPStats(MSEobj, PMRefs=PMs, lastYrs=lastYrs, UseMean=TRUE, msg=msg)$Perf
-  if(lastYrs >= MSEobj@proyears)  lastYrs <- 10
+  if (!incRef) {
+    mps <- MSEobj@MPs[!grepl("ref", MSEobj@MPs)] 
+	MSEobj <- Sub(MSEobj,  MPs=mps)
+  }
+  DF <- list()
+  if (length(lastYrs) > 1) {
+    for (xx in seq_along(lastYrs))
+	  DF[[xx]] <- MPStats(MSEobj, PMRefs=PMs, lastYrs=lastYrs[xx], UseMean=TRUE, msg=msg)$Perf
+  } else {
+    DF[[1]] <- MPStats(MSEobj, PMRefs=PMs, lastYrs=lastYrs, UseMean=TRUE, msg=msg)$Perf
+  }
+  lastYrs[lastYrs >= MSEobj@proyears] <- 10
   PosPMs <- c("B_B0", "B_BMSY", "F_FMSY", "AAVE", "AAVY")
   PMNames <- names(PMs)
   ind <- match(PMNames, PosPMs)
   
   pms <- paste0(names(PMs), "p")
 
-  vars <- which(!is.na(match(names(DF),pms)))
+  vars <- which(!is.na(match(names(DF[[1]]),pms)))
   
-  DF2 <- DF[, c(1, vars)]
-  	
-  B0Ref <- unique(DF$B_B0Ref)
-  B_BMSYRef <- unique(DF$B_BMSYRef)
-  F_FMSYRef <- unique(DF$F_FMSYRef)
-  AAVERef <- unique(DF$AAVERef)
-  AAVYRef <- unique(DF$AAVYRef)
+  temp <- lapply(DF, '[', vars)
+  DF2 <- cbind(DF[[1]][,1], do.call(cbind.data.frame, temp) )
+  names(DF2)[1] <- "MP"
   
-  Years <- paste("Years", (MSEobj@proyears - lastYrs) + 1, "-", MSEobj@proyears,
-    "(last", lastYrs, "years)")
+  B0Ref <- unique(DF[[1]]$B_B0Ref)
+  B_BMSYRef <- unique(DF[[1]]$B_BMSYRef)
+  F_FMSYRef <- unique(DF[[1]]$F_FMSYRef)
+  AAVERef <- unique(DF[[1]]$AAVERef)
+  AAVYRef <- unique(DF[[1]]$AAVYRef)
+  
+  Years <- paste("Years", (MSEobj@proyears - lastYrs) + 1, "-", MSEobj@proyears)
   
   B0Leg <- bquote(italic(B) >  ~ .(B0Ref) ~ italic(B[0]))
   BMSYLeg <- bquote(italic(B) >  ~ .(B_BMSYRef) ~ italic(B[MSY]))
@@ -1676,7 +1703,19 @@ barplot.MSE <- function(height, MSEobj=NULL, PMs=list(B_BMSY=0.5, B_B0=0.2), PLi
   Legend <- NULL
   Legend <- append(Legend, as.expression(LegList[ind]))
   
-  MPs <- DF$MP
+  if (length(Years) > 1) {
+    temp <- NULL
+	count <- 1
+    for (xx in seq_along(Years)) {
+	  for (yy in seq_along(LegList[ind])) {
+	    temp[[count]] <-   bquote(.(LegList[ind][[yy]]) ~(Years ~ .((MSEobj@proyears - lastYrs[xx]) + 1) ~ "-" ~ .(MSEobj@proyears)))
+		count <- count + 1 
+	  }
+	}
+	Legend <- append(NULL, as.expression(temp))
+  }
+
+  MPs <- as.character(DF2$MP)
   nMPs <- length(MPs)
   if (is.null(MPs)) stop("Dataframe must a column named `MP`")
   ndat <- ncol(DF2) - 1
@@ -1686,10 +1725,20 @@ barplot.MSE <- function(height, MSEobj=NULL, PMs=list(B_BMSY=0.5, B_B0=0.2), PLi
   if (max(Probs) <= 1) Probs <- Probs * 100
   ProbLims <- VLine <- PLim  
   if (max(ProbLims) <=1) ProbLims <- ProbLims * 100 
-  Ord <- order(apply(Probs, 2, mean))
-  Probs <- Probs[,Ord]
-  MPnames <- names(Probs)
-  Pass <- as.logical(apply(Probs > ProbLims, 2, prod))
+  if (nrow(Probs) > 1) {
+    Ord <- order(apply(Probs, 2, mean))
+    Probs <- Probs[,Ord]
+    MPnames <- colnames(Probs)
+    Pass <- as.logical(apply(Probs >= ProbLims, 2, prod))
+  } else {
+    MPnames <- colnames(Probs)
+	Ord <- order(Probs)
+    Probs <- t(as.matrix(Probs[Ord, drop=FALSE]))
+	MPnames <- MPnames[Ord]
+	colnames(Probs) <- MPnames
+	Pass <- as.logical(Probs >= ProbLims)
+  }
+  
   # if (length(ProbLims) == 1) Pass <- Probs > ProbLims
   
   # bcols <- brewer.pal(8, "Dark2")[1:length(vars)]
@@ -1719,14 +1768,15 @@ barplot.MSE <- function(height, MSEobj=NULL, PMs=list(B_BMSY=0.5, B_B0=0.2), PLi
 	  cex=1.25, horiz=TRUE, xpd=NA, fill=bcols, title="")
   }
   # Split the MPs over multiple plots 
-  if (length(vars) == 1) names(Probs) <- MPnames
+  if (length(vars) == 1) colnames(Probs) <- MPnames
   if (nplots > 1) {
   	npplot <- min(ceiling(nMPs/nplots), maxMP) # number per plot 
     xx <- 1 
     xx2 <- npplot 
     for (X in 1:nplots) {
-	  if (length(Legend) > 1) splitdat <- Probs[,xx:xx2] 
-	  if (length(Legend) == 1) splitdat <- Probs[xx:xx2]
+	  # if (length(Legend) > 1) splitdat <- Probs[,xx:xx2] 
+	  # if (length(Legend) == 1) splitdat <- Probs[,xx:xx2]
+	  splitdat <- Probs[,xx:xx2]
 	  if (X == 1) {
     	tt <- barplot(splitdat, beside=TRUE, ylab="",
     	xlim=c(0,100), col=bcols, names.arg=NULL, #=names(splitdat)
@@ -1758,7 +1808,7 @@ barplot.MSE <- function(height, MSEobj=NULL, PMs=list(B_BMSY=0.5, B_B0=0.2), PLi
   }  
   if (!is.null(Title)) mtext(side=3, outer=TRUE, title,line=3.5, cex=1.25)
   
-  mtext(side=3, outer=TRUE, Years, line=-0.5)
+  if (length(Years) == 1) mtext(side=3, outer=TRUE, Years, line=1.5)
   Pout <- t(Probs)
   if (is.null(rownames(Pout))) {
     MP <- colnames(Pout)
@@ -2151,9 +2201,9 @@ Jplot <- function(MSEobj, PLim=0.8, YVar=c("LTY","STY", "avgB_B0", "avgB_BMSY"),
 }
 
 # Scatter plot of B/BMSY or B/B0 and F/FMSY for lastYrs 
-Splot <- function(MSEobj=NULL, MPs=NA, All=TRUE, YVar=c("B_BMSY", "B_B0"), 
+Splot <- function(MSEobj=NULL, MPs=NA, All=TRUE, Var=c("B_BMSY", "B_B0"), 
   lastYrs=10, Fref=1, BMSYref=1, B0ref=0.4, cex.MP=1, Fbg=FALSE, Bbg=FALSE, Props=FALSE, TP=FALSE) {
-  Var <- match.arg(YVar)
+  Var <- match.arg(Var)
   if (!any(is.na(MPs))) MSEobj <- Sub(MSEobj, MPs=MPs)
   
   nMPs <- MSEobj@nMPs 
@@ -2169,13 +2219,13 @@ Splot <- function(MSEobj=NULL, MPs=NA, All=TRUE, YVar=c("B_BMSY", "B_B0"),
   sims <- perf$BySim
   Nrow <- ceiling(sqrt(nMPs))
   Ncol <- ceiling(nMPs/Nrow)
-  Xvar <- sims[["F_FMSY"]]
-  Yvar <- sims[[Var]]
-  XLim <- c(0, 2)
-  YMax <- ceiling(min(max(apply(Yvar[,,yrs], c(1,2), mean), na.rm=TRUE), 3)/0.5)*.5
-  YLim <- c(0, YMax)
-  XLab <- expression(F/F[MSY])
-  YLab <- switch(Var, 
+  Yvar <- sims[["F_FMSY"]]
+  Xvar <- sims[[Var]]
+  YLim <- c(0, 2)
+  XMax <- ceiling(min(max(apply(Xvar[,,yrs], c(1,2), mean), na.rm=TRUE), 3)/0.5)*.5
+  XLim <- c(0, XMax)
+  YLab <- expression(F/F[MSY])
+  XLab <- switch(Var, 
     "B_B0" = expression(B/B[0]),
     "B_BMSY" = expression(B/B[MSY]))
   
@@ -2314,7 +2364,7 @@ VOIplot <- function(MSEobj, MPs=NA, nvars=5, nMP=4, Par=c("Obs", "OM"),
   # Subset to specified MPs 
   if (any(is.na(MPs))) MPs <- MSEobj@MPs
   if (class(MPs) == "numeric" | class(MPs) == "integer") MPs <- MSEobj@MPs[MPs]
-  if (length(MPs) < 1) stop("No MPss found")
+  if (length(MPs) < 1) stop("No MPs found")
   nMPss <- length(MPs)
   if (nMP > nMPs) nMP <- nMPs 
   if (!all(MSEobj@MPs %in% MPs)) {

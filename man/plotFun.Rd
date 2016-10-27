@@ -13,7 +13,7 @@ plotFun(class = c("MSE", "DLM_data"))
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{class}{
-Character string. Prints out the plotting functions for objects of this class.
+Character string. Prints out the plotting functions for objects of this class. Options are \code{MSE} or \code{DLM_data}
 }
 }
 
