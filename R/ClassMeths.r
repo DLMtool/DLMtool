@@ -542,6 +542,8 @@ setMethod("plot",
   function(x,funcs=NA,maxlines=6,perc=0.5,xlims=NA){
     
     DLM_data<-x
+	if (class(DLM_data) != "DLM_data") stop("Must supply object of class DLM_data")
+	if (all(is.na(DLM_data@TAC))) stop("No TAC data found")
     cols<-rep(c('black','red','green','blue','orange','brown','purple','dark grey','violet','dark red','pink','dark blue','grey'),4)
     ltys<-rep(1:4,each=13)
     
