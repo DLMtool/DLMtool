@@ -9,7 +9,7 @@ Find more information about DLMtool at [http://datalimitedtoolkit.org/](http://d
 
 ## Installation
 
-The relased version of `DLMtool` can be downloaded from CRAN:
+The released version of `DLMtool` can be downloaded from CRAN:
 
 ```
 install.packages("DLMtool")
