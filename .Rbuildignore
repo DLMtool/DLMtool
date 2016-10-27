@@ -4,4 +4,5 @@
 README.MD
 .Rhistory
 ^.*\.git
-.travis.yml
+## Ignore travis config file
+^\.travis\.yml$
