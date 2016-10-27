@@ -9,7 +9,7 @@ Plot a barplot of MSE results
 \usage{
 \method{barplot}{MSE}(height, MSEobj=NULL, PMs = list(B_BMSY = 0.5, B_B0 = 0.2), 
   PLim = 0.8, lastYrs = 10, maxMP = 14, MPs = NA, Title = NULL, sims = NULL, 
-  msg = TRUE, cex.names = 1.3, ...)
+  msg = TRUE, cex.names = 1.3, incRef=FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -45,6 +45,9 @@ Logical. Print out messages?
 }
   \item{cex.names}{
 Size of names
+}
+\item{incRef}{
+Logical. Include the reference MPs? Defaults to \code{FALSE}
 }
   \item{...}{
 Optional additional arguments passed to \code{barplot}
