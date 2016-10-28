@@ -841,7 +841,7 @@ runMSErobust <- function(OM = "1", MPs = NA, nsim = 200, proyears = 28, interval
 }
 
 # Find plotting functions in the DLMtool
-plotFun <- function(class=c("MSE", "DLM_data")) {
+plotFun <- function(class=c("MSE", "DLM_data"), msg=TRUE) {
   class <- match.arg(class)
   tt <- lsf.str("package:DLMtool")
   p <- p2 <- rep(FALSE, length(tt)) 
@@ -851,20 +851,26 @@ plotFun <- function(class=c("MSE", "DLM_data")) {
     temp2 <- grep(class, paste(format(match.fun(tt[[X]])), collapse=" "))
     if (length(temp2) > 0) p2[X] <- TRUE
   }
-  message("DLMtool functions for plotting objects of class ", class, " are:")
+  if (msg) message("DLMtool functions for plotting objects of class ", class, " are:")
   out <- sort(tt[which(p & p2)])
   out <- out[-grep("plotFun", out)]
   if (class=="MSE") {
-    out <- c(out, "barplot", "boxplot", "VOI", "VOI2")
+    out <- c(out, "barplot", "boxplot", "VOI", "VOI2", "comp")
 	out <- sort(out)
   }
-  if (length(out) > 5) {
-    sq <- seq(from=1, to=length(out), by=5)
-    for (x in seq_along(sq)) {
-	  cat(out[sq[x]:min(sq[x+1]-1, length(out), na.rm=TRUE)])
-	  cat("\n")
-	}
-  } else cat(out)
-  cat("\n")
+  if (class=="DLM_data") {
+    out <- c(out, "boxplot", "Sense")
+	out <- sort(out)
+  }  
+  if (msg) {
+    if (length(out) > 5) {
+      sq <- seq(from=1, to=length(out), by=5)
+      for (x in seq_along(sq)) {
+	    cat(out[sq[x]:min(sq[x+1]-1, length(out), na.rm=TRUE)])
+	    cat("\n")
+	  }
+    } else cat(out)
+    cat("\n")
+  }
   invisible(out)
 }

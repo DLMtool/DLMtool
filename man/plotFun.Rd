@@ -8,12 +8,15 @@ Print out plotting functions
 This function prints out the available plotting functions for objects of class MSE or DLM_data
 }
 \usage{
-plotFun(class = c("MSE", "DLM_data"))
+plotFun(class = c("MSE", "DLM_data"), msg=TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{class}{
 Character string. Prints out the plotting functions for objects of this class. Options are \code{MSE} or \code{DLM_data}
+}
+  \item{msg}{
+Should the plotting functions be printed out? Otherwise just returned invisibly
 }
 }
 
