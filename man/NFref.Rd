@@ -1,9 +1,7 @@
 \name{NFref}
 \alias{NFref}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-No Fishing Reference MP
-}
+\title{No Fishing Reference MP}
 \description{
 A reference MP that sets annual catch to zero (or very close to it). Used for looking at variability in stock with no fishing.
 }

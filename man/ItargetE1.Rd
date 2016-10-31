@@ -1,9 +1,7 @@
 \name{ItargetE1}
 \alias{ItargetE1}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-A management procedure that incrementally adjusts the effort to reach a target CPUE / relative abundance index.
-}
+\title{A management procedure that incrementally adjusts the effort to reach a target CPUE / relative abundance index}
 \description{
 An effort-based version of the least biologically precautionary of two index/CPUE target MPs proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
 }

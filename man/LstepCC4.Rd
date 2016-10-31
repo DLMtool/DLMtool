@@ -1,9 +1,7 @@
 \name{LstepCC4}
 \alias{LstepCC4}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-A management procedure that incrementally adjusts the TAC according to the mean length of recent catches.
-}
+\title{A management procedure that incrementally adjusts the TAC according to the mean length of recent catches.}
 \description{
 The most biologically precautionary of four adaptive length-based MPs proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
 }

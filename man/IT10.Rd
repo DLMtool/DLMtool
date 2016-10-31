@@ -1,9 +1,7 @@
 \name{IT10}
 \alias{IT10}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Index Target 10
-}
+\title{Index Target 10}
 \description{
 An index target MP where the TAC is modified according to current index levels (mean index over last 5 years) relative to a target level. Maximum annual changes are 10 per cent. 
 }

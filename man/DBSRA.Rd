@@ -1,9 +1,7 @@
 \name{DBSRA}
 \alias{DBSRA}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Depletion-Based Stock Reduction Analysis
-}
+\title{Depletion-Based Stock Reduction Analysis}
 \description{
 User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the OFL by back-constructing the stock to match a user specified level of stock depletion (OFL = M * FMSY/M * depletion* B0).
 }

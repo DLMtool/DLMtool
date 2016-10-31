@@ -1,9 +1,7 @@
 \name{makePerf}
 \alias{makePerf}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Convert a OM object to one without observation or process error
-}
+\title{Convert a OM object to one without observation or process error}
 \description{
 Takes an existing OM object and converts it to one without any observation error, and 
 very little process error.  Used for debugging and testing that MPs perform as expected 

@@ -1,9 +1,7 @@
 \name{Tplot}
 \alias{Tplot}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-A trade-off plot for an MSE object 
-}
+\title{A trade-off plot for an MSE object }
 \description{
 A shorter version of the plot method for MSEs that just shows the overall trade-offs
 }

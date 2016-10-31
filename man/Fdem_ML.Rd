@@ -1,9 +1,7 @@
 \name{Fdem_ML}
 \alias{Fdem_ML}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Demographic FMSY method that uses mean length data to estimate recent Z
-}
+\title{Demographic FMSY method that uses mean length data to estimate recent Z}
 \description{
 Demographic F (r/2) method using the mean length estimator to calculate current abundance. 
 }

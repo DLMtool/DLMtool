@@ -1,9 +1,7 @@
 \name{GB_CC}
 \alias{GB_CC}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Geromont and Butterworth Constant Catch Harvest Control Rule
-}
+\title{Geromont and Butterworth Constant Catch Harvest Control Rule}
 \description{
 A simple MP that aims for average historical catches (as a proxy for MSY) subject to imperfect information.
 }

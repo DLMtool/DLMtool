@@ -1,9 +1,6 @@
 \name{AvC}
 \alias{AvC}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-An MP where the TAC is average historical catch 
-}
+\title{An MP where the TAC is average historical catch}
 \description{
 A simple average catch MP that is included to demonstrate a 'status quo' management option.
 }
@@ -24,6 +21,10 @@ The number of stochastic samples of the quota recommendation
 }
 \value{
 A numeric vector of TAC recommendations
+}
+\details{
+Test Equation:
+\eqn{\text{TAC} = \frac{\sum_y{C}}{\sum{y}}}
 }
 \author{
 T. Carruthers

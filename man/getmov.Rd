@@ -1,9 +1,7 @@
 \name{getmov}
 \alias{getmov}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Optimization function to find a movement model that matches user specified movement characteristics.
-}
+\title{Optimization function to find a movement model that matches user specified movement characteristics.}
 \description{
 The user specifies the probability of staying in the same area and spatial heterogeneity (both in the unfished state). 
 }

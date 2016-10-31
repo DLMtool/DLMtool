@@ -1,9 +1,7 @@
 \name{LtargetE4}
 \alias{LtargetE4}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-A management procedure that incrementally adjusts the Effort to reach a target mean length in catches.
-}
+\title{A management procedure that incrementally adjusts the Effort to reach a target mean length in catches.}
 \description{
 A effort based version of the most biologically precautionary of four target length MPs proposed by Geromont and Butterworth 2014. 
 }

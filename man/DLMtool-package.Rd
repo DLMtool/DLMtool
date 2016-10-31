@@ -2,9 +2,7 @@
 \alias{DLMtool-package}
 \alias{DLMtool}
 \docType{package}
-\title{
-Data-Limited Methods Toolkit
-}
+\title{Data-Limited Methods Toolkit}
 \description{
 Simulation testing and implementation of data-limited fishery stock assessment methods
 }

@@ -1,9 +1,7 @@
 \name{LstepCE2}
 \alias{LstepCE2}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-A management procedure that incrementally adjusts the Effort according to the mean length of recent catches.
-}
+\title{A management procedure that incrementally adjusts the Effort according to the mean length of recent catches.}
 \description{
 A effort-based version of one of the four adaptive length-based MPs proposed by Geromont and Butterworth 2014.
 }

@@ -1,12 +1,8 @@
 \name{LBSPR_ItTAC}
 \alias{LBSPR_ItTAC}
 
-\title{
-Length-based SPR model with HCR that iteratively adjusts TAC
-}
-\description{
-Iteratively adjusts TAC based on distance between estimated and target SPR (40\%), and slope of recent SPR estimates.
-}
+\title{Length-based SPR model with HCR that iteratively adjusts TAC}
+\description{Iteratively adjusts TAC based on distance between estimated and target SPR (40\%), and slope of recent SPR estimates.}
 \usage{
 LBSPR_ItTAC(x, DLM_data, yrsmth = 1, reps = reps)
 }

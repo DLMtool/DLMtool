@@ -1,9 +1,7 @@
 \name{TradePlot}
 \alias{TradePlot}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Generic Trade-off Plot
-}
+\title{Generic Trade-off Plot}
 \description{
 Creates a trade-off plot (up to four panels) of built-in performance metrics.  
 }

@@ -1,9 +1,7 @@
 \name{runMSE}
 \alias{runMSE}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Run a Management Strategy Evaluation
-}
+\title{Run a Management Strategy Evaluation}
 \description{
 A function that runs a Management Strategy Evaluation (closed-loop simulation) for a specified operating model
 }

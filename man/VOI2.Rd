@@ -1,9 +1,7 @@
 \name{VOI2}
 \alias{VOI2}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Calculate Value Of Information 2
-}
+\title{Calculate Value Of Information 2}
 \description{
 A function that relates operating model parameters and parameters of the observation model to relative yield (yield over last 5 years of projection relative to a 'best F' scenario that maximizes yield).
 }

@@ -1,9 +1,7 @@
 \name{TAC}
 \alias{TAC}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Calculate TAC recommendations for more than one MP
-}
+\title{Calculate TAC recommendations for more than one MP}
 \description{
 A function that returns the stochastic TAC recommendations from a vector of data-limited MPs (DLM_output) given a data-limited data object DLM_data
 }

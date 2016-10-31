@@ -1,9 +1,7 @@
 \name{getq}
 \alias{getq}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Optimization function that find the catchability (q where F=qE) value required to get to user-specified stock depletion (current biomass / unfished biomass)
-}
+\title{Optimization function that find the catchability (q where F=qE) value required to get to user-specified stock depletion (current biomass / unfished biomass)}
 \description{
 The user specifies the level of stock depleiton. This funciton takes the derived effort trajectories and finds the catchabiltiy to get the stock there.   
 }

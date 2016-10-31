@@ -1,9 +1,7 @@
 \name{Cplot}
 \alias{Cplot}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Plot the median biomass and yield relative to last historical year
-}
+\title{Plot the median biomass and yield relative to last historical year}
 \description{
 Compare median biomass and yield in first year and last 5 years of projection
 }

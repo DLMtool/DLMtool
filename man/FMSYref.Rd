@@ -1,9 +1,7 @@
 \name{FMSYref}
 \alias{FMSYref}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-A reference FMSY method (uses perfect information about FMSY)
-}
+\title{A reference FMSY method (uses perfect information about FMSY)}
 \description{
 FMSY is taken from the operating model stored at DLM@OM$FMSY
 }

@@ -1,9 +1,7 @@
 \name{avail}
 \alias{avail}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-What objects of this class are available
-}
+\title{What objects of this class are available}
 \description{
 Generic class finder
 }

@@ -1,9 +1,7 @@
 \name{SPSRA_ML}
 \alias{SPSRA_ML}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Surplus Production Stock Reduction Analysis using a mean-length estimate of current stock depletion
-}
+\title{Surplus Production Stock Reduction Analysis using a mean-length estimate of current stock depletion}
 \description{
 A surplus production equivalent of DB-SRA that uses a demographically derived prior for intrinsic rate of increase. A prior for depletion is calculated from a mean-length estimator
 }

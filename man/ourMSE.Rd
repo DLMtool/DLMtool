@@ -1,9 +1,7 @@
 \name{ourMSE}
 \alias{ourMSE}
 \docType{data}
-\title{
-Example MSE object used in the vignette
-}
+\title{Example MSE object used in the vignette}
 \description{
 A dummy example MSE object, with customized stock and fleet, all MPs, and 16 simulations.
 }

@@ -1,9 +1,7 @@
 \name{Pplot}
 \alias{Pplot}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-A projection by projection plot of F/FMSY and B/BMSY 
-}
+\title{A projection by projection plot of F/FMSY and B/BMSY }
 \description{
 A shorter version of the plot method for MSEs that just shows the projected trends in stock status and over exploitation
 }
@@ -80,14 +78,10 @@ An object of class MSE
    Optional horizontal line
 }
 \item{parOR}{
-Logical to over-ride the \code{par} command in the function
+  Logical to over-ride the par parameters
 }
-\item{xaxis}{
-Logical. Include labels for x-axis?
-}
-\item{yaxis}{
-Logical. Include labels for y-axis?
-}
+\item{xaxis}{Logical. Should x-axis labels be displayed?}
+\item{yaxis}{Logical. Should y-axis labels be displayed?}
   \item{...}{
    Additional arguments to be passed to plotting functions
 }

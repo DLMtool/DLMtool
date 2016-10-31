@@ -1,9 +1,7 @@
 \name{Splot}
 \alias{Splot}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Scatter plot of B/BMSY or B/B0 and F/FMSY
-}
+\title{Scatter plot of B/BMSY or B/B0 and F/FMSY}
 \description{
 Scatter plot of B/BMSY or B/B0 and F/FMSY 
 }
@@ -24,7 +22,7 @@ Optional subset by MP
 Logical. Plot all points or just the mean?
 }
   \item{Var}{
-What to plot on the x-axis: \code{B_BMSY} or \code{B_B0}
+What to plot on the y-axis: \code{B_BMSY} or \code{B_B0}
 }
   \item{lastYrs}{
 Last number of years in projection to calculate statistics

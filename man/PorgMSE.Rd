@@ -1,9 +1,7 @@
 \name{PorgMSE}
 \alias{PorgMSE}
 \docType{data}
-\title{
-Example MSE object used in the vignette
-}
+\title{Example MSE object used in the vignette}
 \description{
 A dummy example MSE object, based on porgy, generic fleet and imprecise and unbiased observation model, four new MPs, and 20 simulations.
 }

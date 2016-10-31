@@ -1,9 +1,7 @@
 \name{curE75}
 \alias{curE75}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Fishing at 75 per cent of current effort levels
-}
+\title{Fishing at 75 per cent of current effort levels}
 \description{
 Constant fishing effort set at 75 per cent of final year of historical simulations subject to changes in catchability determined by OM@qinc and interannual variability in catchability determined by OM@qcv. This MP is intended to represent a 'status quo' management approach. 
 }

@@ -1,9 +1,7 @@
 \name{CC4}
 \alias{CC4}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Constant catch management procedure of Geromont and Butterworth (2014)
-}
+\title{Constant catch management procedure of Geromont and Butterworth (2014)}
 \description{
 The TAC is the average catch over last yrsmth years reduced by 30%.
 }

@@ -1,9 +1,7 @@
 \name{slotlim}
 \alias{slotlim}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-An data-limited method which sets a slot limit
-}
+\title{An data-limited method which sets a slot limit}
 \description{
 An example of the implementation of input controls in the DLM toolkit, where selectivity-at-length is set using a slot limit; that is, a minimum and maximum legal length.  The maximum limit is set here, quite arbitrarily, as the 75th percentile between the new minimum legal length and the estimated asymptotic length.  
 }

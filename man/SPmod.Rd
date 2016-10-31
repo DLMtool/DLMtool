@@ -1,9 +1,7 @@
 \name{SPmod}
 \alias{SPmod}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Surplus production based catch-limit modifier
-}
+\title{Surplus production based catch-limit modifier}
 \description{
 An MP that makes incremental adjustments to TAC recommendations based on the apparent trend in surplus production. Based on the theory of Mark Maunder (IATTC)
 }

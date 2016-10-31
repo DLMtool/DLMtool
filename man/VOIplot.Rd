@@ -1,8 +1,6 @@
 \name{VOIplot}
 \alias{VOIplot}
-\title{
-Yet another Value of Information Plot
-}
+\title{Yet another Value of Information Plot}
 \description{
 A function that relates parameters of the observation model and the operating model parameters  
 to yield. 

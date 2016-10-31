@@ -1,9 +1,7 @@
 \name{L2A}
 \alias{L2A}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Length to age conversion
-}
+\title{Length to age conversion}
 \description{
 Simple deterministic length to age conversion given inverse von Bertalanffy growth.
 }

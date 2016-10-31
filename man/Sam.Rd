@@ -1,9 +1,7 @@
 \name{Sam}
 \alias{Sam}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Conduct stock assessment 
-}
+\title{Conduct stock assessment }
 \description{
 A wrapper function that gets the OFL recommendation in cases where a method of DLM quota has been specified
 }

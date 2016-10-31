@@ -1,9 +1,7 @@
 \name{Islope4}
 \alias{Islope4}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-A management procedure that incrementally adjusts the TAC to maintain a constant CPUE or relative abundance index.
-}
+\title{A management procedure that incrementally adjusts the TAC to maintain a constant CPUE or relative abundance index}
 \description{
 The most biologically precautionary of two constant index / CPUE methods proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
 }

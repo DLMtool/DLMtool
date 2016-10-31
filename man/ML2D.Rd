@@ -1,9 +1,7 @@
 \name{ML2D}
 \alias{ML2D}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Depletion and F estimation from mean length of catches
-}
+\title{Depletion and F estimation from mean length of catches}
 \description{
 A highly dubious means of getting very uncertain estimates of current stock biomass and (equilibrium) fishing mortality rate from growth, natural mortality rate, recruitment and fishing selectivity. 
 }

@@ -1,9 +1,7 @@
 \name{Can}
 \alias{Can}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-What data-limited methods can be applied to this DLM_data object?
-}
+\title{What data-limited methods can be applied to this DLM_data object?}
 \description{
 An diagnostic tool that looks up the slot requirements of each method and compares this to the data available to limit the analysis to methods that have the correct data, do not produce errors and run within a time limit. Time limit is the maximum time taken to carry out five reps (stochastic samples) of a given method and is in units of seconds. 
 }

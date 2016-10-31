@@ -1,8 +1,6 @@
 \name{barplot.MSE}
 \alias{barplot.MSE}
-\title{
-Plot a barplot of MSE results
-}
+\title{Plot a barplot of MSE results}
 \description{
 Plot a barplot of MSE results
 }
@@ -43,11 +41,9 @@ Optional subset MSE object by simulation
   \item{msg}{
 Logical. Print out messages?
 }
+\item{incRef}{Logical. Include the reference methods?}
   \item{cex.names}{
 Size of names
-}
-\item{incRef}{
-Logical. Include the reference MPs? Defaults to \code{FALSE}
 }
   \item{...}{
 Optional additional arguments passed to \code{barplot}

@@ -1,9 +1,7 @@
 \name{runInMP}
 \alias{runInMP}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Runs input control MPs on a DLM_data object.
-}
+\title{Runs input control MPs on a DLM_data object.}
 \description{
 Function runs a MP (or MPs) of class 'DLM_input' and returns a list: input control recommendation(s) in element 1 and DLM_data object in element 2.
 }

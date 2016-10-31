@@ -1,9 +1,7 @@
 \name{VOI}
 \alias{VOI}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Calculate Value Of Information
-}
+\title{Calculate Value Of Information}
 \description{
 A function that relates operating model parameters and parameters of the observation model to yield (by default). A user can also specific their own utility values (Ut) which is arranged in a matrix of nsim rows and nMP columns. 
 }

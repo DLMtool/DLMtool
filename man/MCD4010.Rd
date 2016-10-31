@@ -1,9 +1,7 @@
 \name{MCD4010}
 \alias{MCD4010}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Mean Catch Depletion
-}
+\title{Mean Catch Depletion}
 \description{
 A simple average catch-depletion MP linked to a 40-10 harvest controle rule that was included to demonstrate just how informative an estimate of current stock depletion can be. TAC=d(1-d)AvC
 }

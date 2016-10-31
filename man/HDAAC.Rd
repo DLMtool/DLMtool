@@ -1,9 +1,7 @@
 \name{HDAAC}
 \alias{HDAAC}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Hybrid Depletion Adjusted Average Catch
-}
+\title{Hybrid Depletion Adjusted Average Catch}
 \description{
 Essentially DCAC multiplied by 2*depletion and divided by BMSY/B0 (Bpeak) when below BMSY, and DCAC above BMSY
 }

@@ -1,9 +1,7 @@
 \name{LBSPRSim}
 \alias{LBSPRSim}
 
-\title{
-Per-Recruit Length-Based Spawning Potential Ratio Simulation Model
-}
+\title{Per-Recruit Length-Based Spawning Potential Ratio Simulation Model}
 \description{
 Function that takes stock (biology) and fleet (selectivity and fishing mortality) parameters and returns expected equilibrum size strucure of the catch and spawning potential ratio. 
 }

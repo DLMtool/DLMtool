@@ -1,9 +1,7 @@
 \name{DBSRA_ML}
 \alias{DBSRA_ML}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Depletion-Based Stock Reduction Analysis using mean length estimator of stock depletion
-}
+\title{Depletion-Based Stock Reduction Analysis using mean length estimator of stock depletion}
 \description{
 DBSRA using the mean length estimator to calculate current stock depletion. 
 }

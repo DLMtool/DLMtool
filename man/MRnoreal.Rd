@@ -1,9 +1,7 @@
 \name{MRnoreal}
 \alias{MRnoreal}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-An marine reserve in area 1 with no spatial reallocation of fishing effort
-}
+\title{An marine reserve in area 1 with no spatial reallocation of fishing effort}
 \description{
 A spatial control that prevents fishing in area 1 and does not reallocate this fishing effort to area 2.  
 }

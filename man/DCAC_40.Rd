@@ -1,9 +1,7 @@
 \name{DCAC_40}
 \alias{DCAC_40}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Depletion Corrected Average Catch assuming 40 per cent stock depletion
-}
+\title{Depletion Corrected Average Catch assuming 40 per cent stock depletion}
 \description{
 DCAC assuming that current stock biomass is exactly 40 per cent of unfished levels. 
 }

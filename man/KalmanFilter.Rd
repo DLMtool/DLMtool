@@ -1,9 +1,7 @@
 \name{KalmanFilter}
 \alias{KalmanFilter}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Kalman filter and Rauch-Tung-Striebel smoother
-}
+\title{Kalman filter and Rauch-Tung-Striebel smoother}
 \description{
 Kalman filter to predict new points and smoother for time-series. 
 }

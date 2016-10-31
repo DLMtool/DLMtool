@@ -1,9 +1,7 @@
 \name{Rcontrol}
 \alias{Rcontrol}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Harvest Control Rule using prior for intrinsic rate of increase
-}
+\title{Harvest Control Rule using prior for intrinsic rate of increase}
 \description{
 An MP proposed by Carl Walters that modifies TACs according to trends in apparent surplus production that includes information from a demographically derived prior for intrinsic rate of increase
 }

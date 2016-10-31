@@ -1,9 +1,7 @@
 \name{Fease}
 \alias{Fease}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-MP feasibility diagnostic
-}
+\title{MP feasibility diagnostic}
 \description{
 What MPs may be run (best case scenario) for various data-availability scenarios?
 }

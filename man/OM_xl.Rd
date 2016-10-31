@@ -1,8 +1,6 @@
 \name{OM_xl}
 \alias{OM_xl}
-\title{
-Read in operating model parameters from Excel spreadsheet
-}
+\title{Read in operating model parameters from Excel spreadsheet}
 \description{
 A function to read in operating model parameters from an Excel spreadsheet with tabs named following specific convention.
 }

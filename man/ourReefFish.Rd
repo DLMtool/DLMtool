@@ -1,9 +1,7 @@
 \name{ourReefFish}
 \alias{ourReefFish}
 \docType{data}
-\title{
-Example data object
-}
+\title{Example data object}
 \description{
 Example data object with a number of output control MPs run on it, and includes resulting distributions of TACs 
 }

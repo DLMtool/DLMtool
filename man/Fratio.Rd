@@ -1,9 +1,7 @@
 \name{Fratio}
 \alias{Fratio}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-An FMSY/M ratio method
-}
+\title{An FMSY/M ratio method}
 \description{
 Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a current estimate of abundance. 
 }

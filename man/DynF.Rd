@@ -1,9 +1,7 @@
 \name{DynF}
 \alias{DynF}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Dynamic Fratio MP
-}
+\title{Dynamic Fratio MP}
 \description{
 The Fratio MP with a controller that changes the level of F according to the relationship between Surplus production and biomass. Ie lower F when dSP/dB is positive and higher F when dSP/dB is negative. 
 }

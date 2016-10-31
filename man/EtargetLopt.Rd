@@ -1,9 +1,7 @@
 \name{EtargetLopt}
 \alias{EtargetLopt}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Effort MP: adjust effort up/down if mean length above/below Ltarget 
-}
+\title{Effort MP: adjust effort up/down if mean length above/below Ltarget }
 \description{
 Effort MP: adjust effort up/down if mean length above/below Ltarget 
 }

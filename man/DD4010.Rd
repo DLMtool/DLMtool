@@ -1,9 +1,7 @@
 \name{DD4010}
 \alias{DD4010}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Delay - Difference Stock Assessment with UMSY and MSY leading coupled with a 40-10 harvest control rule
-}
+\title{Delay - Difference Stock Assessment with UMSY and MSY leading coupled with a 40-10 harvest control rule}
 \description{
 A simple delay-difference assessment that estimates the OFL using a time-series of catches and a relative abundance index. In this version of the DD MP a 40-10 rule is imposed over the OFL recommendation.  
 }

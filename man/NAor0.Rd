@@ -1,9 +1,7 @@
 \name{NAor0}
 \alias{NAor0}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Is a value NA or zero.
-}
+\title{Is a value NA or zero.}
 \description{
 As title
 }

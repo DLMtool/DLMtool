@@ -1,9 +1,7 @@
 \name{writeCSV}
 \alias{writeCSV}
 
-\title{
-Internal function to write CSVs for objects
-}
+\title{Internal function to write CSVs for objects}
 \description{
 Used internally in the DLMtool package to write CSV files from an existing DLMtool object
 }

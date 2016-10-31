@@ -1,9 +1,7 @@
 \name{DTe50}
 \alias{DTe50}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Effort searching MP aiming for 50 per cent stock depletion.
-}
+\title{Effort searching MP aiming for 50 per cent stock depletion}
 \description{
 A very simple MP that modifies effort to reach 50 percent stock depletion
 }

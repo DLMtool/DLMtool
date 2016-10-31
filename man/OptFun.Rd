@@ -1,9 +1,7 @@
 \name{OptFun}
 \alias{OptFun}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Objective function for LBSPR methods
-}
+\title{Objective function for LBSPR methods}
 \description{
 Used internally to define objective function for LBSPR methods.
 }

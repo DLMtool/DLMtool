@@ -1,9 +1,7 @@
 \name{Sense}
 \alias{Sense}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Sensitivity analysis
-}
+\title{Sensitivity analysis}
 \description{
 A function that determines the inputs for a given data-limited method of class DLM_output and then analyses the sensitivity of TAC estimates to marginal differences in each input. The range used for sensitivity is based on the user-specified CV for that input (e.g. CV_Mort, Mort)
 }

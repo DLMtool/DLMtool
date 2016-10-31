@@ -1,9 +1,7 @@
 \name{SetRecruitCycle}
 \alias{SetRecruitCycle}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
- Function to calculate cyclic recruitment pattern given user-specified values of period and amplitude.
-}
+\title{ Function to calculate cyclic recruitment pattern given user-specified values of period and amplitude.}
 \description{
  Calculates cyclic pattern in recruitment deviations for a simulation. Ranges for Period and Amplitude are specified by user, and function produces cyclic pattern from within these ranges. Default is a sine wave.
 }

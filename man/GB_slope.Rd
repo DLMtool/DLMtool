@@ -1,9 +1,7 @@
 \name{GB_slope}
 \alias{GB_slope}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Geromont and Butterworth index slope Harvest Control Rule
-}
+\title{Geromont and Butterworth index slope Harvest Control Rule}
 \description{
 An MP similar to SBT1 that modifies a time-series of catch recommendations and aims for a stable catch rates.
 }

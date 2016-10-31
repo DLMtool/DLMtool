@@ -1,9 +1,7 @@
 \name{matlenlim}
 \alias{matlenlim}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-A data-limited method in which fishing vulnerability is set according to the maturity curve
-}
+\title{A data-limited method in which fishing vulnerability is set according to the maturity curve}
 \description{
 An example of the implementation of input controls in the DLM toolkit, where selectivity-at-length is set equivalent to maturity-at-length
 }

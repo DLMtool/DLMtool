@@ -1,9 +1,7 @@
 \name{ITe5}
 \alias{ITe5}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Index Target Effort-Based 5
-}
+\title{Index Target Effort-Based 5}
 \description{
 An index target MP where the Effort is modified according to current index levels (mean index over last 5 years) relative to a target level. Maximum annual changes are 5 per cent. 
 }

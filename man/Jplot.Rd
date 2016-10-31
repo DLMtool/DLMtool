@@ -1,9 +1,6 @@
 \name{Jplot}
 \alias{Jplot}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Joint probability plot
-}
+\title{Joint probability plot}
 \description{
 Calculates and plots the joint probability of meeting all performance metrics simultaneously
 }

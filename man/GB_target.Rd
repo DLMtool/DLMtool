@@ -1,9 +1,7 @@
 \name{GB_target}
 \alias{GB_target}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Geromont and Butterworth target CPUE and catch MP
-}
+\title{Geromont and Butterworth target CPUE and catch MP}
 \description{
 An MP similar to SBT2 that modifies a time-series of catch recommendations and aims for target catch rate and catch level based on BMSY/B0 and MSY, respectively.
 }

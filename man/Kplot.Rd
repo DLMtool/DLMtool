@@ -1,9 +1,7 @@
 \name{Kplot}
 \alias{Kplot}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-KOBE plot: a projection by projection plot of F/FMSY and B/BMSY
-}
+\title{KOBE plot: a projection by projection plot of F/FMSY and B/BMSY}
 \description{
 A standard KOBE plot by each method that also shows the percentage of methods that ended up in each quadrant.
 }

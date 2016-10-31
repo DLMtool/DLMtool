@@ -1,9 +1,7 @@
 \name{DDe75}
 \alias{DDe75}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Effort control version of DD - Delay - Difference Stock Assessment with UMSY and MSY leading that fishes at 75 per cent of FMSY
-}
+\title{Effort control version of DD - Delay - Difference Stock Assessment with UMSY and MSY leading that fishes at 75 per cent of FMSY}
 \description{
 A simple delay-difference assessment that estimates and recommends 75 per cent FMSY using a time-series of catches and a relative abundance index. 
 }

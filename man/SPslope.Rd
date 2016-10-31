@@ -1,9 +1,7 @@
 \name{SPslope}
 \alias{SPslope}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Slope in surplus production MP
-}
+\title{Slope in surplus production MP}
 \description{
 A management procedure that makes incremental adjustments to TAC recommendations based on the apparent trend in recent surplus production. Based on the theory of Mark Maunder (IATTC)
 }

@@ -1,9 +1,7 @@
 \name{CSRAfunc}
 \alias{CSRAfunc}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Optimization function for CSRA
-}
+\title{Optimization function for CSRA}
 \description{
 What depletion level and corresponding equlibrium F arise from data regarding mean length of current catches, natural mortality rate, steepness of the stock recruitment curve, maximum length, maximum growth rate, age at maturity, age based vulnerability, maturity at age, maximum age and number of historical years of fishing. 
 }

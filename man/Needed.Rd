@@ -1,9 +1,7 @@
 \name{Needed}
 \alias{Needed}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Data needed to get MPs running
-}
+\title{Data needed to get MPs running}
 \description{
 Wrapper function for DLMdiag that lists what data are needed to run data-limited methods that are current not able to run given a DLM_cdata object
 }

@@ -1,9 +1,7 @@
 \name{plotOFL}
 \alias{plotOFL}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-A generic OFL plot for NOAA use
-}
+\title{A generic OFL plot for NOAA use}
 \description{
 As title. 
 }

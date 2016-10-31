@@ -1,11 +1,9 @@
 \name{Tplot2}
 \alias{Tplot2}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-A trade-off plot for an MSE object that compares long-term yield (LTY: fraction of simulations getting over half FMSY yield in the last ten years of the projection), short-term yield (STY: fraction of simulations getting over half FMSY yield in the first ten years of the projection), variability in yield (VY: fraction of simulations where average annual variability in yield is less than 10 per cent) and biomass level (B10: the fraction of simulations in which biomass stays above 10 percent of BMSY).
-}
+\title{A shorter version of the plot method for MSEs that just shows the overall trade-offs}
 \description{
-A shorter version of the plot method for MSEs that just shows the overall trade-offs
+A trade-off plot for an MSE object that compares long-term yield (LTY: fraction of simulations getting over half FMSY yield in the last ten years of the projection), short-term yield (STY: fraction of simulations getting over half FMSY yield in the first ten years of the projection), variability in yield (VY: fraction of simulations where average annual variability in yield is less than 10 per cent) and biomass level (B10: the fraction of simulations in which biomass stays above 10 percent of BMSY).
 }
 \usage{
 Tplot2(MSEobj,nam=NA)

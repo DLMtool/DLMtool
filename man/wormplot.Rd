@@ -1,9 +1,7 @@
 \name{wormplot}
 \alias{wormplot}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Biomass wormplot.
-}
+\title{Biomass wormplot}
 \description{
 A worm plot for plotting the likelihood of meeting biomass targets in future years.
 }

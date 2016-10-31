@@ -1,12 +1,9 @@
 \name{ChooseSelect}
 \alias{ChooseSelect}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
- Manually choose the historical selectivity pattern.
-}
+\title{ Manually choose the historical selectivity pattern}
 \description{
  Input the first historical year, and all years where selectivity pattern changed (separated by comma).  
- 
  Interactive plot which allows users to specify a range for the length at 5\% and full selection (LFS), as well as selectivity at maximum length for each year.  
  Produces a simple plot which shows the range in selectivity pattern for each break-point year. Selectivity-at-length is fixed in between break-point years.
  Note that this function replaces 'nyears' in the Fleet object with the value defined here (FstYr:current year).

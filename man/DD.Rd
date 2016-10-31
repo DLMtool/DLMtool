@@ -1,9 +1,7 @@
 \name{DD}
 \alias{DD}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Delay - Difference Stock Assessment with UMSY and MSY leading
-}
+\title{Delay - Difference Stock Assessment with UMSY and MSY leading}
 \description{
 A simple delay-difference assessment that estimates the TAC using a time-series of catches and a relative abundance index. 
 }

@@ -1,9 +1,7 @@
 \name{Fadapt}
 \alias{Fadapt}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-An adaptive MP that uses trajectory in inferred suplus production and fishing mortality rate to update a TAC
-}
+\title{An adaptive MP that uses trajectory in inferred suplus production and fishing mortality rate to update a TAC}
 \description{
 Fishing rate is modified each year according to the gradient of surplus production with biomass (aims for zero).  F is bounded by FMSY/2 and 2FMSY and walks in the logit space according to dSP/dB. This is derived from the theory of Maunder 2014. 
 }

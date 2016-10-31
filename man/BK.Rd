@@ -1,9 +1,6 @@
 \name{BK}
 \alias{BK}
-%- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Beddington and Kirkwood life-history MP (simple version)
-}
+\title{Beddington and Kirkwood life-history MP (simple version)}
 \description{
 Sets an OFL according to current abundance and an approximation of FMSY based on length at first capture. 
 }

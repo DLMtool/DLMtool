@@ -1,8 +1,6 @@
 \name{boxplot.MSE}
 \alias{boxplot.MSE}
-\title{
-Boxplot of MP performance from MSE object
-}
+\title{Boxplot of MP performance from MSE object}
 \description{
 Boxplot of MP performance from MSE object
 }

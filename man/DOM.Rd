@@ -1,9 +1,7 @@
 \name{DOM}
 \alias{DOM}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-How dominant is an MP?
-}
+\title{How dominant is an MP?}
 \description{
 The DOM function examines how consistently an MP outperforms another. For example DCAC might provide higher yield than AvC on average but outperforms AvC in less than half of simulations. 
 }

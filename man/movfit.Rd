@@ -1,9 +1,7 @@
 \name{movfit}
 \alias{movfit}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Optimization function that returns the squared difference between user specified and calculated movement parameters. 
-}
+\title{Optimization function that returns the squared difference between user specified and calculated movement parameters. }
 \description{
 The user specifies the probability of staying in the same area and spatial heterogeneity (both in the unfished state). This function returns the squared difference between these values and those produced by the three logit movement model.  
 }

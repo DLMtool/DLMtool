@@ -1,9 +1,7 @@
 \name{getAFC}
 \alias{getAFC}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Calculate age at first capture from length at first capture and growth
-}
+\title{Calculate age at first capture from length at first capture and growth}
 \description{
 As title.  
 }

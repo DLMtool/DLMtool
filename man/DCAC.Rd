@@ -1,9 +1,7 @@
 \name{DCAC}
 \alias{DCAC}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Depletion Corrected Average Catch
-}
+\title{Depletion Corrected Average Catch}
 \description{
 A method of calculating an MSY proxy (FMSY * BMSY and therefore the OFL at most productive stock size) based on average catches accounting for the windfall catch that got the stock down to BMSY levels.
 }

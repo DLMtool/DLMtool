@@ -1,9 +1,7 @@
 \name{CheckConverg}
 \alias{CheckConverg}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-MSE convergence diagnostic
-}
+\title{MSE convergence diagnostic}
 \description{
 Have I undertaken enough simulations (nsim)? Has my MSE converged on stable (reliable) peformance metrics?
 }

@@ -1,9 +1,7 @@
 \name{SBT1}
 \alias{SBT1}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-SBT simple MP
-}
+\title{SBT simple MP}
 \description{
 An MP that makes incremental adjustments to TAC recommendations based on the apparent trend in CPUE
 }

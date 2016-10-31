@@ -1,9 +1,7 @@
 \name{Fratio_CC}
 \alias{Fratio_CC}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-A data-limited method that uses FMSY/M ratio and a naive catch-curve estimate of recent Z
-}
+\title{A data-limited method that uses FMSY/M ratio and a naive catch-curve estimate of recent Z}
 \description{
 Calculates the OFL based on a fixed ratio of FMSY to M and a catch curve estimate of current stock size.
 }

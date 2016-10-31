@@ -1,9 +1,7 @@
 \name{SPSRA}
 \alias{SPSRA}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Surplus Production Stock Reduction Analysis
-}
+\title{Surplus Production Stock Reduction Analysis}
 \description{
 A surplus production equivalent of DB-SRA that uses a demographically derived prior for intrinsic rate of increase (McAllister method, below)
 }

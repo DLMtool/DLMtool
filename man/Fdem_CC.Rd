@@ -1,9 +1,7 @@
 \name{Fdem_CC}
 \alias{Fdem_CC}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Demographic FMSY method using catch-curve analysis to estimate recent Z
-}
+\title{Demographic FMSY method using catch-curve analysis to estimate recent Z}
 \description{
 FMSY is calculated as r/2 from a demographic r prior method, current abudnance is estimated from naive catch curve analysis.
 }

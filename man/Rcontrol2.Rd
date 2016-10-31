@@ -1,9 +1,7 @@
 \name{Rcontrol2}
 \alias{Rcontrol2}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-MP using prior for intrinsic rate of increase with a quadratic approximation to surplus production
-}
+\title{MP using prior for intrinsic rate of increase with a quadratic approximation to surplus production}
 \description{
 An MP proposed by Carl Walters that modifies quotas according to trends in apparent surplus production that includes information from a demographically derived prior for intrinsic rate of increase. This is different from Rcontrol because it includes a quadratic approximation of recent trend in surplus production given biomass
 }

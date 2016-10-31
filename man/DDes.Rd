@@ -1,9 +1,7 @@
 \name{DDes}
 \alias{DDes}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Effort searching version of DD - Delay - Difference Stock Assessment with UMSY and MSY leading that fishes at 75 per cent of FMSY
-}
+\title{Effort searching version of DD - Delay - Difference Stock Assessment with UMSY and MSY leading that fishes at 75 per cent of FMSY}
 \description{
 A simple delay-difference assessment that estimates FMSY using a time-series of catches and a relative abundance index. The MP provides a change in effort in the direction of FMSY up to a maximum change of 10 percent. 
 }

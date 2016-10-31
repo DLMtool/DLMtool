@@ -1,9 +1,7 @@
 \name{MPStats}
 \alias{MPStats}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Calculate Statistics for MP Performance
-}
+\title{Calculate Statistics for MP Performance}
 \description{
 Function calculates probabilities and other statistics for a range of performance metrics
 }

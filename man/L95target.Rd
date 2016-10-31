@@ -1,9 +1,7 @@
 \name{L95target}
 \alias{L95target}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-A management procedure that adjusts the TAC up/down from reference (target) level (that is a fraction of mean recent premanagement catches) to reach a target mean length of fish caught.
-}
+\title{A management procedure that adjusts the TAC up/down from reference (target) level (that is a fraction of mean recent premanagement catches) to reach a target mean length of fish caught.}
 \description{
 This MP is based on Ltarget1 proposed by Geromont and Butterworth 2014, but here the target and limit mean lengths are based on the length at maturity distribution rather than an arbitrary multiplicative of the mean length. 
 }

@@ -1,9 +1,7 @@
 \name{DepF}
 \alias{DepF}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Depletion Corrected Fratio
-}
+\title{Depletion Corrected Fratio}
 \description{
 The Fratio MP with a harvest control rule that reduces F according to the production curve given an estimate of current stock depletion. 
 }

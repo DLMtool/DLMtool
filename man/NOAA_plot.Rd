@@ -1,9 +1,7 @@
 \name{NOAA_plot}
 \alias{NOAA_plot}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-National Oceanographic and Atmospheric Administration default plot 1
-}
+\title{National Oceanographic and Atmospheric Administration default plot 1}
 \description{
 A preliminary plot for returning trade-offs plots and performance table for total yield, variability in yield, probability of overfishing and likelihood of biomass dropping below 50 per cent BMSY
 }

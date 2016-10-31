@@ -1,9 +1,7 @@
 \name{YPR}
 \alias{YPR}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Yield Per Recruit analysis to get FMSY proxy F01
-}
+\title{Yield Per Recruit analysis to get FMSY proxy F01}
 \description{
 A simple yield per recruit approximation to FMSY (F01) which is the position of the ascending YPR curve for which dYPR/dF = 0.1(dYPR/d0)
 }

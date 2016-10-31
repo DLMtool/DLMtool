@@ -1,9 +1,7 @@
 \name{SnapMSE}
 \alias{SnapMSE}
 \docType{data}
-\title{
-Example MSE object used in the vignette
-}
+\title{Example MSE object used in the vignette}
 \description{
 A dummy example MSE object, with blue shark, generic fleet and imprecise and biased observation model, four MPs, and 16 simulations.
 }

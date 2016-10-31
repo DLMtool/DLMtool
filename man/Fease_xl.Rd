@@ -1,8 +1,6 @@
 \name{Fease_xl}
 \alias{Fease_xl}
-\title{
-Read in feasibility parameters from Excel spreadsheet
-}
+\title{Read in feasibility parameters from Excel spreadsheet}
 \description{
 A function to read in feasibility parameters from an Excel spreadsheet with tabs named following specific convention
 }

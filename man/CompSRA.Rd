@@ -1,9 +1,7 @@
 \name{CompSRA}
 \alias{CompSRA}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Age-composition-based estimate of current stock depletion given constant Z linked to an FMSY estimate to provide OFL. 
-}
+\title{Age-composition-based estimate of current stock depletion given constant Z linked to an FMSY estimate to provide OFL}
 \description{
 Estimates an OFL based on a Stock Reduction analysis fitted to current age-composition data. Knife-edge vulnerability at age at maturity allows for an FMSY estimate. OFL=FMSY*F/C
 }

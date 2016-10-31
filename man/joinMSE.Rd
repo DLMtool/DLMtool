@@ -1,8 +1,6 @@
 \name{joinMSE}
 \alias{joinMSE}
-\title{
-Join multiple MSE objects together
-}
+\title{Join multiple MSE objects together}
 \description{
 Joins two or more MSE objects together. MSE objects must have identical number of historical years, and projection years. 
 }

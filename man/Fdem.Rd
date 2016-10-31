@@ -1,9 +1,7 @@
 \name{Fdem}
 \alias{Fdem}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Demographic FMSY method 
-}
+\title{Demographic FMSY method }
 \description{
 FMSY is calculated as r/2 where r is calculated from a demographic approach (inc steepness). Coupled with an estimate of current abundance that gives you the OFL. 
 }

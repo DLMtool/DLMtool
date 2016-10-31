@@ -1,9 +1,7 @@
 \name{Fratio4010}
 \alias{Fratio4010}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-An FMSY/M ratio method paired with the 40-10 rule
-}
+\title{An FMSY/M ratio method paired with the 40-10 rule}
 \description{
 Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a current estimate of abundance. In this method DBSRA is paired with the 40-10 rule that throttles back the OFL to zero at 10 percent of unfished biomass.
 }

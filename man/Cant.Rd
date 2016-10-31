@@ -1,9 +1,7 @@
 \name{Cant}
 \alias{Cant}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-What methods can't be applied to this DLM data object
-}
+\title{What methods can't be applied to this DLM data object}
 \description{
 The methods that don't have sufficient data, lead to errors or don't run in time along with a list of their data requirments. 
 }

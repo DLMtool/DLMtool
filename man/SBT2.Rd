@@ -1,9 +1,7 @@
 \name{SBT2}
 \alias{SBT2}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-SBT complex MP
-}
+\title{SBT complex MP}
 \description{
 An MP that makes incremental adjustments to TAC recommendations based on index levels relative to target levels (BMSY/B0) and catch levels relative to target levels (MSY)
 }

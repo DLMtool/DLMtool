@@ -1,9 +1,7 @@
 \name{minlenLopt1}
 \alias{minlenLopt1}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-This input control sets the minimum length of fish caught to a fraction of the length that maximises the biomass, Lopt. 
-}
+\title{This input control sets the minimum length of fish caught to a fraction of the length that maximises the biomass, Lopt.}
 \description{
 This aim of this simple MP is restrict the catch of small fish to rebuild the stock biomass towards the optimal length, Lopt, expressed in terms of the growth parameters Lopt=b/(M/k+b) (Hordyk et al. (2014)
 }

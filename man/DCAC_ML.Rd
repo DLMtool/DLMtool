@@ -1,9 +1,7 @@
 \name{DCAC_ML}
 \alias{DCAC_ML}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Depletion-Based Stock Reduction Analysis using mean-length estimator of current depletion
-}
+\title{Depletion-Based Stock Reduction Analysis using mean-length estimator of current depletion}
 \description{
 DCAC that uses the mean length estimator to calculate current stock depletion. 
 }

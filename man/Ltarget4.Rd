@@ -1,9 +1,7 @@
 \name{Ltarget4}
 \alias{Ltarget4}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-A management procedure that incrementally adjusts the TAC to reach a target mean length in catches.
-}
+\title{A management procedure that incrementally adjusts the TAC to reach a target mean length in catches.}
 \description{
 The most biologically precautionary of four target length MPs proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
 }

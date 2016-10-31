@@ -1,9 +1,7 @@
 \name{MCD}
 \alias{MCD}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Mean Catch Depletion
-}
+\title{Mean Catch Depletion}
 \description{
 A simple average catch-depletion MP that was included to demonstrate just how informative an estimate of current stock depletion can be. TAC=2*D*AvC
 }

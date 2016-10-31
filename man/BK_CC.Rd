@@ -1,9 +1,7 @@
 \name{BK_CC}
 \alias{BK_CC}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Beddington and Kirkwood life-history method combined with catch curve analysis
-}
+\title{Beddington and Kirkwood life-history method combined with catch curve analysis}
 \description{
 Calculates an OFL using a catch curve estimate of current F and an approximation of FMSY based on length at first capture. 
 }

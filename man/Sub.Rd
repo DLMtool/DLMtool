@@ -1,9 +1,7 @@
 \name{Sub}
 \alias{Sub}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Subset MSE object by management procedure (MP) or simulation. 
-}
+\title{Subset MSE object by management procedure (MP) or simulation.}
 \description{
  Subset the MSE object by particular MPs (either MP number or name), or 
  particular simulations, or a subset of the projection years (e.g., 1: < projection years). 

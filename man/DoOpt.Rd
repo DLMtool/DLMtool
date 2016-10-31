@@ -1,9 +1,7 @@
 \name{DoOpt}
 \alias{DoOpt}
 
-\title{
-Optimization routine for LBSPR methods
-}
+\title{Optimization routine for LBSPR methods}
 \description{
 Internal optimization routine. 
 }

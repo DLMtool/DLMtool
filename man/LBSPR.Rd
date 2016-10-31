@@ -1,11 +1,7 @@
 \name{LBSPR}
 \alias{LBSPR}
-\title{
-Apply LBSPR model to time-series of catch-at-length
-}
-\description{
-Apply LBSPR model to time-series of catch-at-length data, and return smoothed estimates of SPR, and relative fishing mortality (F/M). 
-}
+\title{Apply LBSPR model to time-series of catch-at-length}
+\description{Apply LBSPR model to time-series of catch-at-length data, and return smoothed estimates of SPR, and relative fishing mortality (F/M). }
 \usage{
 LBSPR(x, DLM_data, yrsmth = 1, reps = reps)
 }

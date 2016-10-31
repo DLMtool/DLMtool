@@ -1,9 +1,7 @@
 \name{DCAC4010}
 \alias{DCAC4010}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Depletion Corrected Average Catch paired with the 40-10 rule
-}
+\title{Depletion Corrected Average Catch paired with the 40-10 rule}
 \description{
 A method of calculating an MSY proxy (FMSY * BMSY and therefore the OFL at most productive stock size) based on average catches accounting for the windfall catch that got the stock down to BMSY levels. In this method DCAC is paired with the 40-10 rule that throttles back the OFL to zero at 10 percent of unfished stock size (the OFL is not subject to downward adjustment above 40 percent unfished)
 }

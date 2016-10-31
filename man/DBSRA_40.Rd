@@ -1,9 +1,7 @@
 \name{DBSRA_40}
 \alias{DBSRA_40}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Depletion-Based Stock Reduction Analysis assuming 40 per cent stock depletion
-}
+\title{Depletion-Based Stock Reduction Analysis assuming 40 per cent stock depletion}
 \description{
 DBSRA assuming that current stock depletion is exactly 40 per cent of unfished stock levels. 
 }

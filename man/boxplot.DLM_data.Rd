@@ -1,9 +1,7 @@
 \name{boxplot.DLM_data}
 \alias{boxplot.DLM_data}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Boxplot of TAC recommendations
-}
+\title{Boxplot of TAC recommendations}
 \description{
 Boxplot of TAC recommendations from a DLM_data object
 }

@@ -1,9 +1,7 @@
 \name{BK_ML}
 \alias{BK_ML}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Beddington and Kirkwood life-history analysis with mean-length estimator of current abundance
-}
+\title{Beddington and Kirkwood life-history analysis with mean-length estimator of current abundance}
 \description{
 Uses an approximation to FMSY based on length at first capture and an estimate of current abundance based on a mean-length estimator. 
 }

@@ -1,8 +1,6 @@
 \name{runMSErobust}
 \alias{runMSErobust}
-\title{
-Run a Management Strategy Evaluation
-}
+\title{Run a Management Strategy Evaluation}
 \description{
 Run a Management Strategy Evaluation and save out the results to a Rdata file.  To increase speed and efficiency, particulary for runs with a large number simulations (\code{nsim}), the simulations are split into a number of packets.  The functions loops over the packets and combines the output into a single MSE object. If the MSE model crashes during a run, the MSE is run again until it is successfully completed. The MSE is stopped if the number of consecutive crashes exceeds \code{maxCrash}.  There is an ption to save the packets as Rdata files to the current working directory (default is FALSE). By default, the functions saves the completed MSE object as a Rdata file (to the current working directory). 
 }

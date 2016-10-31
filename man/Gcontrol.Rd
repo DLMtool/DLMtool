@@ -1,9 +1,7 @@
 \name{Gcontrol}
 \alias{Gcontrol}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-G-control MP
-}
+\title{G-control MP}
 \description{
 A harvest control rule proposed by Carl Walters that uses trajectory in inferred surplus production to make upward/downward adjustments to TAC recommendations
 }

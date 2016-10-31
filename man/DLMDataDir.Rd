@@ -1,9 +1,7 @@
 \name{DLMDataDir}
 \alias{DLMDataDir}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Directory of the installed package on your computer
-}
+\title{Directory of the installed package on your computer}
 \description{
 A way of locating where the package was installed so you can find example data files and code etc.
 }

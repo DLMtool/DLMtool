@@ -1,9 +1,7 @@
 \name{Input}
 \alias{Input}
 %- Also NEED an '\alias' for EACH other topic documented here.
-\title{
-Function to run a set of input control methods
-}
+\title{Function to run a set of input control methods}
 \description{
 Runs a set of input control methods are returns the output in a single table
 }
