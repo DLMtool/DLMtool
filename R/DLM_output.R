@@ -2228,7 +2228,7 @@ VPAFMSY<-function(lnFMc,Mc,hc,maxage,vul,Linfc,Kc,t0c,AMc,ac,bc,opt=T,ny=50){
 
 # A reference MP with zero(ish) catch
 NFref <- function (x, DLM_data, reps = 100) {
-  0.01
+  rep(0.01, reps)
 }
 class(NFref)<-"DLM_output"
 
