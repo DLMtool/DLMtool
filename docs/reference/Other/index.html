@@ -6,11 +6,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Other. DLMtool Documentation</title>
+<title>Other • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
-
 <!-- Bootstrap -->
 
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -22,6 +21,7 @@
 
 <!-- pkgdown -->
 <link href="../../pkgdown.css" rel="stylesheet">
+<script src="../../jquery.sticky-kit.min.js"></script>
 <script src="../../pkgdown.js"></script>
 
 <!-- mathjax -->
@@ -34,10 +34,9 @@
   </head>
 
   <body>
-    <div class="container">
+    <div class="container template-reference-index">
       <header>
-      
-<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
@@ -45,7 +44,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../../index.html">DLMtool Documentation</a>
+      <a class="navbar-brand" href="../../index.html">DLM tool</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -139,54 +138,99 @@
   <a href="http://www.datalimitedtoolkit.org/">DLMtool Website</a>
 </li>
       </ul>
+      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+
       
       </header>
 
-      <div class="page-header">
-  <!-- <h1>Function reference <small>version&nbsp;3.2.3</small></h1> -->
-  <h1>DLMtool <small>version&nbsp;3.2.3</small></h1>
-</div>
-
-<div class="row">
+      <div class="row">
   <div class="col-md-9">
-    <div class="section ">
-      <h2>Other</h2>
+    <div class="page-header">
+      <h1>Function reference</h1>
+      <h4>version&nbsp;3.2.3</h4>
+    </div>
+
+    <div class="contents">
+      <h2 id="section-other" class="hasAnchor"><a href="#section-other" class="anchor"></a>Other</h2>
       <p class="section-desc"></p>
 
-      <dl class="dl-horizontal">
-        <dt><a href="DLMdat.html">DLMdat</a></dt>
-        <dd>Data and Operating model objects</dd>
-        <dt><a href="DoOpt.html">DoOpt</a></dt>
-        <dd>Optimization routine for LBSPR methods</dd>
-        <dt><a href="getAFC.html">getAFC</a></dt>
-        <dd>Calculate age at first capture from length at first capture and growth</dd>
-        <dt><a href="getmov.html">getmov</a></dt>
-        <dd>Optimization function to find a movement model that matches user specified movement characteristics.</dd>
-        <dt><a href="getq.html">getq</a></dt>
-        <dd>Optimization function that find the catchability (q where F=qE) value required to get to user-specified stock depletion (current biomass / unfished biomass)</dd>
-        <dt><a href="LBSPR.html">LBSPR</a></dt>
-        <dd>Apply LBSPR model to time-series of catch-at-length</dd>
-        <dt><a href="LBSPRSim.html">LBSPRSim</a></dt>
-        <dd>Per-Recruit Length-Based Spawning Potential Ratio Simulation Model</dd>
-        <dt><a href="movfit.html">movfit</a></dt>
-        <dd>Optimization function that returns the squared difference between user specified and calculated movement parameters. </dd>
-        <dt><a href="OptFun.html">OptFun</a></dt>
-        <dd>Objective function for LBSPR methods</dd>
-        <dt><a href="qopt.html">qopt</a></dt>
-        <dd>Internal optimization function that find the catchability (q where F=qE) value required to get to user-specified stock depletion (current biomass / unfished biomass)</dd>
-      </dl>
+      
+      <p><a href="DLMdat.html">Data and Operating model objects</a></p>
+      <ul>
+        <li><code><a href="DLMdat.html">DLMdat</a></code></li>
+      </ul>
+      
+      <p><a href="DoOpt.html">Optimization routine for LBSPR methods</a></p>
+      <ul>
+        <li><code><a href="DoOpt.html">DoOpt</a></code></li>
+      </ul>
+      
+      <p><a href="getAFC.html">Calculate age at first capture from length at first capture and growth</a></p>
+      <ul>
+        <li><code><a href="getAFC.html">getAFC</a></code></li>
+      </ul>
+      
+      <p><a href="getmov.html">Optimization function to find a movement model that matches user specified movement characteristics.</a></p>
+      <ul>
+        <li><code><a href="getmov.html">getmov</a></code></li>
+      </ul>
+      
+      <p><a href="getq.html">Optimization function that find the catchability (q where F=qE) value required to get to user-specified stock depletion (current biomass / unfished biomass)</a></p>
+      <ul>
+        <li><code><a href="getq.html">getq</a></code></li>
+      </ul>
+      
+      <p><a href="LBSPR.html">Apply LBSPR model to time-series of catch-at-length</a></p>
+      <ul>
+        <li><code><a href="LBSPR.html">LBSPR</a></code></li>
+      </ul>
+      
+      <p><a href="LBSPRSim.html">Per-Recruit Length-Based Spawning Potential Ratio Simulation Model</a></p>
+      <ul>
+        <li><code><a href="LBSPRSim.html">LBSPRSim</a></code></li>
+      </ul>
+      
+      <p><a href="movfit.html">Optimization function that returns the squared difference between user specified and calculated movement parameters. </a></p>
+      <ul>
+        <li><code><a href="movfit.html">movfit</a></code></li>
+      </ul>
+      
+      <p><a href="OptFun.html">Objective function for LBSPR methods</a></p>
+      <ul>
+        <li><code><a href="OptFun.html">OptFun</a></code></li>
+      </ul>
+      
+      <p><a href="qopt.html">Internal optimization function that find the catchability (q where F=qE) value required to get to user-specified stock depletion (current biomass / unfished biomass)</a></p>
+      <ul>
+        <li><code><a href="qopt.html">qopt</a></code></li>
+      </ul>
+    
     </div>
+  </div>
+
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#section-other">Other</a></li>
+    </ul>
   </div>
 </div>
 
       <footer>
-      <p>Built by <a href="http://hadley.github.io/pkgdown/">pkgdown</a>. Styled with <a href="http://getbootstrap.com">Bootstrap 3</a>.</p>
+      <div class="copyright">
+  <p>Developed by Tom Carruthers, Adrian Hordyk.</p>
+</div>
+
+<div class="pkgdown">
+  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+</div>
+
       </footer>
    </div>
 

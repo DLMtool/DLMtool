@@ -6,11 +6,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SetRecruitCycle. DLMtool Documentation</title>
+<title> Function to calculate cyclic recruitment pattern given user-specified values of period and amplitude. — SetRecruitCycle â€¢ DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
-
 <!-- Bootstrap -->
 
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -22,6 +21,7 @@
 
 <!-- pkgdown -->
 <link href="../../pkgdown.css" rel="stylesheet">
+<script src="../../jquery.sticky-kit.min.js"></script>
 <script src="../../pkgdown.js"></script>
 
 <!-- mathjax -->
@@ -34,10 +34,9 @@
   </head>
 
   <body>
-    <div class="container">
+    <div class="container template-reference-topic">
       <header>
-      
-<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
@@ -45,7 +44,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../../index.html">DLMtool Documentation</a>
+      <a class="navbar-brand" href="../../index.html">DLM tool</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -139,28 +138,30 @@
   <a href="http://www.datalimitedtoolkit.org/">DLMtool Website</a>
 </li>
       </ul>
+      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+
       
       </header>
 
-      <div class="page-header">
-  <h1> Function to calculate cyclic recruitment pattern given user-specified values of period and amplitude.</h1>
-</div>
+      <div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1> Function to calculate cyclic recruitment pattern given user-specified values of period and amplitude.</h1>
+    </div>
 
-<div class="row">
-  <div class="col-md-9">
     
     <p>Calculates cyclic pattern in recruitment deviations for a simulation. Ranges for Period and Amplitude are specified by user, and function produces cyclic pattern from within these ranges. Default is a sine wave.</p>
     
 
     <pre><span class='fu'>SetRecruitCycle</span>(<span class='kw'>x</span><span class='kw'>=</span><span class='fl'>1</span>, <span class='no'>Period</span>, <span class='no'>Amplitude</span>, <span class='no'>TotYears</span>, <span class='kw'>Shape</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"sin"</span>, <span class='st'>"shift"</span>))</pre>
     
-    <h2>Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
       <dt>x</dt>
       <dd>
@@ -183,8 +184,15 @@
   Specifies whether cyclic recruitment pattern is sine wave (default) or a step-change (shift).
   </dd>
     </dl>
-          </div>
-  <div class="col-md-3">
+    
+
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+                </ul>
+
     <h2>Author</h2>
     
 A. Hordyk
@@ -193,7 +201,14 @@ A. Hordyk
 </div>
 
       <footer>
-      <p>Built by <a href="http://hadley.github.io/pkgdown/">pkgdown</a>. Styled with <a href="http://getbootstrap.com">Bootstrap 3</a>.</p>
+      <div class="copyright">
+  <p>Developed by Tom Carruthers, Adrian Hordyk.</p>
+</div>
+
+<div class="pkgdown">
+  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+</div>
+
       </footer>
    </div>
 

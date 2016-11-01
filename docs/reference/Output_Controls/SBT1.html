@@ -6,11 +6,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SBT1. DLMtool Documentation</title>
+<title>SBT simple MP — SBT1 â€¢ DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
-
 <!-- Bootstrap -->
 
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -22,6 +21,7 @@
 
 <!-- pkgdown -->
 <link href="../../pkgdown.css" rel="stylesheet">
+<script src="../../jquery.sticky-kit.min.js"></script>
 <script src="../../pkgdown.js"></script>
 
 <!-- mathjax -->
@@ -34,10 +34,9 @@
   </head>
 
   <body>
-    <div class="container">
+    <div class="container template-reference-topic">
       <header>
-      
-<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
@@ -45,7 +44,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../../index.html">DLMtool Documentation</a>
+      <a class="navbar-brand" href="../../index.html">DLM tool</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -139,28 +138,30 @@
   <a href="http://www.datalimitedtoolkit.org/">DLMtool Website</a>
 </li>
       </ul>
+      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+
       
       </header>
 
-      <div class="page-header">
-  <h1>SBT simple MP</h1>
-</div>
+      <div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>SBT simple MP</h1>
+    </div>
 
-<div class="row">
-  <div class="col-md-9">
     
     <p>An MP that makes incremental adjustments to TAC recommendations based on the apparent trend in CPUE</p>
     
 
     <pre><span class='fu'>SBT1</span>(<span class='no'>x</span>, <span class='no'>DLM_data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>yrsmth</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>k1</span><span class='kw'>=</span><span class='fl'>1.5</span>, <span class='kw'>k2</span><span class='kw'>=</span><span class='fl'>3</span>, <span class='kw'>gamma</span><span class='kw'>=</span><span class='fl'>1</span>)</pre>
     
-    <h2>Arguments</h2>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <dl class="dl-horizontal">
       <dt>x</dt>
       <dd>
@@ -192,19 +193,26 @@ Control parameter
 </dd>
     </dl>
     
-    <div class="Details">
-      <h2>Details</h2>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-      <p>This isn&#39;t exactly the same as the proposed methods and is stochastic in this implementation. The method doesn&#39;t tend to work too well under many circumstances possibly due to the lack of &#39;tuning&#39; that occurs in the real SBT assessment environment. You could try asking Rich Hillary at CSIRO about this approach.</p>
-    </div>
+    <p>This isn&#39;t exactly the same as the proposed methods and is stochastic in this implementation. The method doesn&#39;t tend to work too well under many circumstances possibly due to the lack of &#39;tuning&#39; that occurs in the real SBT assessment environment. You could try asking Rich Hillary at CSIRO about this approach.</p>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
-    <div class="References">
-      <h2>References</h2>
+    <p>http://www.ccsbt.org/site/recent_assessment.php</p>
+    
 
-      <p>http://www.ccsbt.org/site/recent_assessment.php</p>
-    </div>
-      </div>
-  <div class="col-md-3">
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#arguments">Arguments</a></li>
+      
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#references">References</a></li>
+          </ul>
+
     <h2>Author</h2>
     
 T. Carruthers
@@ -213,7 +221,14 @@ T. Carruthers
 </div>
 
       <footer>
-      <p>Built by <a href="http://hadley.github.io/pkgdown/">pkgdown</a>. Styled with <a href="http://getbootstrap.com">Bootstrap 3</a>.</p>
+      <div class="copyright">
+  <p>Developed by Tom Carruthers, Adrian Hordyk.</p>
+</div>
+
+<div class="pkgdown">
+  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+</div>
+
       </footer>
    </div>
 

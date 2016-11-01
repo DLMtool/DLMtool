@@ -6,11 +6,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Input Controls. DLMtool Documentation</title>
+<title>Input Controls • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
-
 <!-- Bootstrap -->
 
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -22,6 +21,7 @@
 
 <!-- pkgdown -->
 <link href="../../pkgdown.css" rel="stylesheet">
+<script src="../../jquery.sticky-kit.min.js"></script>
 <script src="../../pkgdown.js"></script>
 
 <!-- mathjax -->
@@ -34,10 +34,9 @@
   </head>
 
   <body>
-    <div class="container">
+    <div class="container template-reference-index">
       <header>
-      
-<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
@@ -45,7 +44,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../../index.html">DLMtool Documentation</a>
+      <a class="navbar-brand" href="../../index.html">DLM tool</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -139,82 +138,169 @@
   <a href="http://www.datalimitedtoolkit.org/">DLMtool Website</a>
 </li>
       </ul>
+      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+
       
       </header>
 
-      <div class="page-header">
-  <!-- <h1>Function reference <small>version&nbsp;3.2.3</small></h1> -->
-  <h1>DLMtool <small>version&nbsp;3.2.3</small></h1>
-</div>
-
-<div class="row">
+      <div class="row">
   <div class="col-md-9">
-    <div class="section ">
-      <h2>Input Controls</h2>
+    <div class="page-header">
+      <h1>Function reference</h1>
+      <h4>version&nbsp;3.2.3</h4>
+    </div>
+
+    <div class="contents">
+      <h2 id="section-input-controls" class="hasAnchor"><a href="#section-input-controls" class="anchor"></a>Input Controls</h2>
       <p class="section-desc"></p>
 
-      <dl class="dl-horizontal">
-        <dt><a href="curE.html">curE</a></dt>
-        <dd>Fishing at current effort levels</dd>
-        <dt><a href="curE75.html">curE75</a></dt>
-        <dd>Fishing at 75 per cent of current effort levels</dd>
-        <dt><a href="DDe.html">DDe</a></dt>
-        <dd>Effort control version of DD - Delay - Difference Stock Assessment with UMSY and MSY leading</dd>
-        <dt><a href="DDe75.html">DDe75</a></dt>
-        <dd>Effort control version of DD - Delay - Difference Stock Assessment with UMSY and MSY leading that fishes at 75 per cent of FMSY</dd>
-        <dt><a href="DDes.html">DDes</a></dt>
-        <dd>Effort searching version of DD - Delay - Difference Stock Assessment with UMSY and MSY leading that fishes at 75 per cent of FMSY</dd>
-        <dt><a href="DTe40.html">DTe40</a></dt>
-        <dd>Effort searching MP aiming for 40 per cent stock depletion</dd>
-        <dt><a href="DTe50.html">DTe50</a></dt>
-        <dd>Effort searching MP aiming for 50 per cent stock depletion</dd>
-        <dt><a href="EtargetLopt.html">EtargetLopt</a></dt>
-        <dd>Effort MP: adjust effort up/down if mean length above/below Ltarget </dd>
-        <dt><a href="ItargetE1.html">ItargetE1</a></dt>
-        <dd>A management procedure that incrementally adjusts the effort to reach a target CPUE / relative abundance index</dd>
-        <dt><a href="ItargetE4.html">ItargetE4</a></dt>
-        <dd>A management procedure that incrementally adjusts the Effort to reach a target CPUE / relative abundance index</dd>
-        <dt><a href="ITe10.html">ITe10</a></dt>
-        <dd>Index Target Effort-Based 10 </dd>
-        <dt><a href="ITe5.html">ITe5</a></dt>
-        <dd>Index Target Effort-Based 5</dd>
-        <dt><a href="LBSPR_ItEff.html">LBSPR_ItEff</a></dt>
-        <dd>Length-based SPR model with HCR that iteratively adjusts Effort</dd>
-        <dt><a href="LBSPR_ItSel.html">LBSPR_ItSel</a></dt>
-        <dd>Length-based SPR model with HCR that iteratively adjusts Selectivity</dd>
-        <dt><a href="LstepCE1.html">LstepCE1</a></dt>
-        <dd>A management procedure that incrementally adjusts the TAC according to the mean length of recent catches.</dd>
-        <dt><a href="LstepCE2.html">LstepCE2</a></dt>
-        <dd>A management procedure that incrementally adjusts the Effort according to the mean length of recent catches.</dd>
-        <dt><a href="LtargetE1.html">LtargetE1</a></dt>
-        <dd>A management procedure that incrementally adjusts the Effort to reach a target mean length in catches.</dd>
-        <dt><a href="LtargetE4.html">LtargetE4</a></dt>
-        <dd>A management procedure that incrementally adjusts the Effort to reach a target mean length in catches.</dd>
-        <dt><a href="matlenlim.html">matlenlim</a></dt>
-        <dd>A data-limited method in which fishing vulnerability is set according to the maturity curve</dd>
-        <dt><a href="matlenlim2.html">matlenlim2</a></dt>
-        <dd>A data-limited method in which fishing vulnerability is set slightly higher than the maturity curve</dd>
-        <dt><a href="minlenLopt1.html">minlenLopt1</a></dt>
-        <dd>This input control sets the minimum length of fish caught to a fraction of the length that maximises the biomass, Lopt.</dd>
-        <dt><a href="MRnoreal.html">MRnoreal</a></dt>
-        <dd>An marine reserve in area 1 with no spatial reallocation of fishing effort</dd>
-        <dt><a href="MRreal.html">MRreal</a></dt>
-        <dd>An marine reserve in area 1 with full reallocation of fishing effort</dd>
-        <dt><a href="slotlim.html">slotlim</a></dt>
-        <dd>An data-limited method which sets a slot limit</dd>
-      </dl>
+      
+      <p><a href="curE.html">Fishing at current effort levels</a></p>
+      <ul>
+        <li><code><a href="curE.html">curE</a></code></li>
+      </ul>
+      
+      <p><a href="curE75.html">Fishing at 75 per cent of current effort levels</a></p>
+      <ul>
+        <li><code><a href="curE75.html">curE75</a></code></li>
+      </ul>
+      
+      <p><a href="DDe.html">Effort control version of DD - Delay - Difference Stock Assessment with UMSY and MSY leading</a></p>
+      <ul>
+        <li><code><a href="DDe.html">DDe</a></code></li>
+      </ul>
+      
+      <p><a href="DDe75.html">Effort control version of DD - Delay - Difference Stock Assessment with UMSY and MSY leading that fishes at 75 per cent of FMSY</a></p>
+      <ul>
+        <li><code><a href="DDe75.html">DDe75</a></code></li>
+      </ul>
+      
+      <p><a href="DDes.html">Effort searching version of DD - Delay - Difference Stock Assessment with UMSY and MSY leading that fishes at 75 per cent of FMSY</a></p>
+      <ul>
+        <li><code><a href="DDes.html">DDes</a></code></li>
+      </ul>
+      
+      <p><a href="DTe40.html">Effort searching MP aiming for 40 per cent stock depletion</a></p>
+      <ul>
+        <li><code><a href="DTe40.html">DTe40</a></code></li>
+      </ul>
+      
+      <p><a href="DTe50.html">Effort searching MP aiming for 50 per cent stock depletion</a></p>
+      <ul>
+        <li><code><a href="DTe50.html">DTe50</a></code></li>
+      </ul>
+      
+      <p><a href="EtargetLopt.html">Effort MP: adjust effort up/down if mean length above/below Ltarget </a></p>
+      <ul>
+        <li><code><a href="EtargetLopt.html">EtargetLopt</a></code></li>
+      </ul>
+      
+      <p><a href="ItargetE1.html">A management procedure that incrementally adjusts the effort to reach a target CPUE / relative abundance index</a></p>
+      <ul>
+        <li><code><a href="ItargetE1.html">ItargetE1</a></code></li>
+      </ul>
+      
+      <p><a href="ItargetE4.html">A management procedure that incrementally adjusts the Effort to reach a target CPUE / relative abundance index</a></p>
+      <ul>
+        <li><code><a href="ItargetE4.html">ItargetE4</a></code></li>
+      </ul>
+      
+      <p><a href="ITe10.html">Index Target Effort-Based 10 </a></p>
+      <ul>
+        <li><code><a href="ITe10.html">ITe10</a></code></li>
+      </ul>
+      
+      <p><a href="ITe5.html">Index Target Effort-Based 5</a></p>
+      <ul>
+        <li><code><a href="ITe5.html">ITe5</a></code></li>
+      </ul>
+      
+      <p><a href="LBSPR_ItEff.html">Length-based SPR model with HCR that iteratively adjusts Effort</a></p>
+      <ul>
+        <li><code><a href="LBSPR_ItEff.html">LBSPR_ItEff</a></code></li>
+      </ul>
+      
+      <p><a href="LBSPR_ItSel.html">Length-based SPR model with HCR that iteratively adjusts Selectivity</a></p>
+      <ul>
+        <li><code><a href="LBSPR_ItSel.html">LBSPR_ItSel</a></code></li>
+      </ul>
+      
+      <p><a href="LstepCE1.html">A management procedure that incrementally adjusts the TAC according to the mean length of recent catches.</a></p>
+      <ul>
+        <li><code><a href="LstepCE1.html">LstepCE1</a></code></li>
+      </ul>
+      
+      <p><a href="LstepCE2.html">A management procedure that incrementally adjusts the Effort according to the mean length of recent catches.</a></p>
+      <ul>
+        <li><code><a href="LstepCE2.html">LstepCE2</a></code></li>
+      </ul>
+      
+      <p><a href="LtargetE1.html">A management procedure that incrementally adjusts the Effort to reach a target mean length in catches.</a></p>
+      <ul>
+        <li><code><a href="LtargetE1.html">LtargetE1</a></code></li>
+      </ul>
+      
+      <p><a href="LtargetE4.html">A management procedure that incrementally adjusts the Effort to reach a target mean length in catches.</a></p>
+      <ul>
+        <li><code><a href="LtargetE4.html">LtargetE4</a></code></li>
+      </ul>
+      
+      <p><a href="matlenlim.html">A data-limited method in which fishing vulnerability is set according to the maturity curve</a></p>
+      <ul>
+        <li><code><a href="matlenlim.html">matlenlim</a></code></li>
+      </ul>
+      
+      <p><a href="matlenlim2.html">A data-limited method in which fishing vulnerability is set slightly higher than the maturity curve</a></p>
+      <ul>
+        <li><code><a href="matlenlim2.html">matlenlim2</a></code></li>
+      </ul>
+      
+      <p><a href="minlenLopt1.html">This input control sets the minimum length of fish caught to a fraction of the length that maximises the biomass, Lopt.</a></p>
+      <ul>
+        <li><code><a href="minlenLopt1.html">minlenLopt1</a></code></li>
+      </ul>
+      
+      <p><a href="MRnoreal.html">An marine reserve in area 1 with no spatial reallocation of fishing effort</a></p>
+      <ul>
+        <li><code><a href="MRnoreal.html">MRnoreal</a></code></li>
+      </ul>
+      
+      <p><a href="MRreal.html">An marine reserve in area 1 with full reallocation of fishing effort</a></p>
+      <ul>
+        <li><code><a href="MRreal.html">MRreal</a></code></li>
+      </ul>
+      
+      <p><a href="slotlim.html">An data-limited method which sets a slot limit</a></p>
+      <ul>
+        <li><code><a href="slotlim.html">slotlim</a></code></li>
+      </ul>
+    
     </div>
+  </div>
+
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#section-input-controls">Input Controls</a></li>
+    </ul>
   </div>
 </div>
 
       <footer>
-      <p>Built by <a href="http://hadley.github.io/pkgdown/">pkgdown</a>. Styled with <a href="http://getbootstrap.com">Bootstrap 3</a>.</p>
+      <div class="copyright">
+  <p>Developed by Tom Carruthers, Adrian Hordyk.</p>
+</div>
+
+<div class="pkgdown">
+  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+</div>
+
       </footer>
    </div>
 

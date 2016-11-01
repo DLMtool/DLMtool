@@ -6,11 +6,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Output Controls. DLMtool Documentation</title>
+<title>Output Controls • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
-
 <!-- Bootstrap -->
 
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -22,6 +21,7 @@
 
 <!-- pkgdown -->
 <link href="../../pkgdown.css" rel="stylesheet">
+<script src="../../jquery.sticky-kit.min.js"></script>
 <script src="../../pkgdown.js"></script>
 
 <!-- mathjax -->
@@ -34,10 +34,9 @@
   </head>
 
   <body>
-    <div class="container">
+    <div class="container template-reference-index">
       <header>
-      
-<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
@@ -45,7 +44,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../../index.html">DLMtool Documentation</a>
+      <a class="navbar-brand" href="../../index.html">DLM tool</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -139,156 +138,354 @@
   <a href="http://www.datalimitedtoolkit.org/">DLMtool Website</a>
 </li>
       </ul>
+      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+
       
       </header>
 
-      <div class="page-header">
-  <!-- <h1>Function reference <small>version&nbsp;3.2.3</small></h1> -->
-  <h1>DLMtool <small>version&nbsp;3.2.3</small></h1>
-</div>
-
-<div class="row">
+      <div class="row">
   <div class="col-md-9">
-    <div class="section ">
-      <h2>Output Controls</h2>
+    <div class="page-header">
+      <h1>Function reference</h1>
+      <h4>version&nbsp;3.2.3</h4>
+    </div>
+
+    <div class="contents">
+      <h2 id="section-output-controls" class="hasAnchor"><a href="#section-output-controls" class="anchor"></a>Output Controls</h2>
       <p class="section-desc"></p>
 
-      <dl class="dl-horizontal">
-        <dt><a href="AvC.html">AvC</a></dt>
-        <dd>An MP where the TAC is average historical catch</dd>
-        <dt><a href="BK.html">BK</a></dt>
-        <dd>Beddington and Kirkwood life-history MP (simple version)</dd>
-        <dt><a href="BK_CC.html">BK_CC</a></dt>
-        <dd>Beddington and Kirkwood life-history method combined with catch curve analysis</dd>
-        <dt><a href="BK_ML.html">BK_ML</a></dt>
-        <dd>Beddington and Kirkwood life-history analysis with mean-length estimator of current abundance</dd>
-        <dt><a href="CC1.html">CC1</a></dt>
-        <dd>Constant catch management procedure of Geromont and Butterworth (2014)</dd>
-        <dt><a href="CC4.html">CC4</a></dt>
-        <dd>Constant catch management procedure of Geromont and Butterworth (2014)</dd>
-        <dt><a href="CompSRA.html">CompSRA</a></dt>
-        <dd>Age-composition-based estimate of current stock depletion given constant Z linked to an FMSY estimate to provide OFL</dd>
-        <dt><a href="CompSRA4010.html">CompSRA4010</a></dt>
-        <dd>Age-composition-based estimate of current stock depletion given constant Z linked to an FMSY estimate to provide OFL (with a 40-10 rule)</dd>
-        <dt><a href="DAAC.html">DAAC</a></dt>
-        <dd>Depletion Adjusted Average Catch</dd>
-        <dt><a href="DBSRA.html">DBSRA</a></dt>
-        <dd>Depletion-Based Stock Reduction Analysis</dd>
-        <dt><a href="DBSRA_40.html">DBSRA_40</a></dt>
-        <dd>Depletion-Based Stock Reduction Analysis assuming 40 per cent stock depletion</dd>
-        <dt><a href="DBSRA_ML.html">DBSRA_ML</a></dt>
-        <dd>Depletion-Based Stock Reduction Analysis using mean length estimator of stock depletion</dd>
-        <dt><a href="DBSRA4010.html">DBSRA4010</a></dt>
-        <dd>Depletion-Based Stock Reduction Analysis paired with 40-10 harvest control rule</dd>
-        <dt><a href="DCAC.html">DCAC</a></dt>
-        <dd>Depletion Corrected Average Catch</dd>
-        <dt><a href="DCAC_40.html">DCAC_40</a></dt>
-        <dd>Depletion Corrected Average Catch assuming 40 per cent stock depletion</dd>
-        <dt><a href="DCAC_ML.html">DCAC_ML</a></dt>
-        <dd>Depletion-Based Stock Reduction Analysis using mean-length estimator of current depletion</dd>
-        <dt><a href="DCAC4010.html">DCAC4010</a></dt>
-        <dd>Depletion Corrected Average Catch paired with the 40-10 rule</dd>
-        <dt><a href="DD.html">DD</a></dt>
-        <dd>Delay - Difference Stock Assessment with UMSY and MSY leading</dd>
-        <dt><a href="DD4010.html">DD4010</a></dt>
-        <dd>Delay - Difference Stock Assessment with UMSY and MSY leading coupled with a 40-10 harvest control rule</dd>
-        <dt><a href="DepF.html">DepF</a></dt>
-        <dd>Depletion Corrected Fratio</dd>
-        <dt><a href="DynF.html">DynF</a></dt>
-        <dd>Dynamic Fratio MP</dd>
-        <dt><a href="Fadapt.html">Fadapt</a></dt>
-        <dd>An adaptive MP that uses trajectory in inferred suplus production and fishing mortality rate to update a TAC</dd>
-        <dt><a href="Fdem.html">Fdem</a></dt>
-        <dd>Demographic FMSY method </dd>
-        <dt><a href="Fdem_CC.html">Fdem_CC</a></dt>
-        <dd>Demographic FMSY method using catch-curve analysis to estimate recent Z</dd>
-        <dt><a href="Fdem_ML.html">Fdem_ML</a></dt>
-        <dd>Demographic FMSY method that uses mean length data to estimate recent Z</dd>
-        <dt><a href="Fratio.html">Fratio</a></dt>
-        <dd>An FMSY/M ratio method</dd>
-        <dt><a href="Fratio_CC.html">Fratio_CC</a></dt>
-        <dd>A data-limited method that uses FMSY/M ratio and a naive catch-curve estimate of recent Z</dd>
-        <dt><a href="Fratio_ML.html">Fratio_ML</a></dt>
-        <dd>An FMSY/M ratio MP that uses a mean length estimator of recent Z</dd>
-        <dt><a href="Fratio4010.html">Fratio4010</a></dt>
-        <dd>An FMSY/M ratio method paired with the 40-10 rule</dd>
-        <dt><a href="GB_CC.html">GB_CC</a></dt>
-        <dd>Geromont and Butterworth Constant Catch Harvest Control Rule</dd>
-        <dt><a href="GB_slope.html">GB_slope</a></dt>
-        <dd>Geromont and Butterworth index slope Harvest Control Rule</dd>
-        <dt><a href="GB_target.html">GB_target</a></dt>
-        <dd>Geromont and Butterworth target CPUE and catch MP</dd>
-        <dt><a href="Gcontrol.html">Gcontrol</a></dt>
-        <dd>G-control MP</dd>
-        <dt><a href="HDAAC.html">HDAAC</a></dt>
-        <dd>Hybrid Depletion Adjusted Average Catch</dd>
-        <dt><a href="Islope1.html">Islope1</a></dt>
-        <dd>A management procedure that incrementally adjusts the TAC to maintain a constant CPUE or relative abundance index</dd>
-        <dt><a href="Islope4.html">Islope4</a></dt>
-        <dd>A management procedure that incrementally adjusts the TAC to maintain a constant CPUE or relative abundance index</dd>
-        <dt><a href="IT10.html">IT10</a></dt>
-        <dd>Index Target 10</dd>
-        <dt><a href="IT5.html">IT5</a></dt>
-        <dd>Index Target 5</dd>
-        <dt><a href="Itarget1.html">Itarget1</a></dt>
-        <dd>A management procedure that incrementally adjusts the TAC (starting from reference level that is a fraction of mean recent catches) to reach a target CPUE / relative abundance index</dd>
-        <dt><a href="Itarget4.html">Itarget4</a></dt>
-        <dd>A management procedure that incrementally adjusts the TAC (starting from reference level that is a fraction of mean recent catches) to reach a target CPUE / relative abundance index</dd>
-        <dt><a href="ITM.html">ITM</a></dt>
-        <dd>Index Target based on natural mortality rate</dd>
-        <dt><a href="L95target.html">L95target</a></dt>
-        <dd>A management procedure that adjusts the TAC up/down from reference (target) level (that is a fraction of mean recent premanagement catches) to reach a target mean length of fish caught.</dd>
-        <dt><a href="LBSPR_ItTAC.html">LBSPR_ItTAC</a></dt>
-        <dd>Length-based SPR model with HCR that iteratively adjusts TAC</dd>
-        <dt><a href="LstepCC1.html">LstepCC1</a></dt>
-        <dd>A management procedure that incrementally adjusts the TAC according to the mean length of recent catches.</dd>
-        <dt><a href="LstepCC4.html">LstepCC4</a></dt>
-        <dd>A management procedure that incrementally adjusts the TAC according to the mean length of recent catches.</dd>
-        <dt><a href="Ltarget1.html">Ltarget1</a></dt>
-        <dd>A management procedure that incrementally adjusts the TAC to reach a target mean length in catches.</dd>
-        <dt><a href="Ltarget4.html">Ltarget4</a></dt>
-        <dd>A management procedure that incrementally adjusts the TAC to reach a target mean length in catches.</dd>
-        <dt><a href="MCD.html">MCD</a></dt>
-        <dd>Mean Catch Depletion</dd>
-        <dt><a href="MCD4010.html">MCD4010</a></dt>
-        <dd>Mean Catch Depletion</dd>
-        <dt><a href="Rcontrol.html">Rcontrol</a></dt>
-        <dd>Harvest Control Rule using prior for intrinsic rate of increase</dd>
-        <dt><a href="Rcontrol2.html">Rcontrol2</a></dt>
-        <dd>MP using prior for intrinsic rate of increase with a quadratic approximation to surplus production</dd>
-        <dt><a href="SBT1.html">SBT1</a></dt>
-        <dd>SBT simple MP</dd>
-        <dt><a href="SBT2.html">SBT2</a></dt>
-        <dd>SBT complex MP</dd>
-        <dt><a href="SPmod.html">SPmod</a></dt>
-        <dd>Surplus production based catch-limit modifier</dd>
-        <dt><a href="SPMSY.html">SPMSY</a></dt>
-        <dd>Catch trend Surplus Production MSY MP</dd>
-        <dt><a href="SPslope.html">SPslope</a></dt>
-        <dd>Slope in surplus production MP</dd>
-        <dt><a href="SPSRA.html">SPSRA</a></dt>
-        <dd>Surplus Production Stock Reduction Analysis</dd>
-        <dt><a href="SPSRA_ML.html">SPSRA_ML</a></dt>
-        <dd>Surplus Production Stock Reduction Analysis using a mean-length estimate of current stock depletion</dd>
-        <dt><a href="YPR.html">YPR</a></dt>
-        <dd>Yield Per Recruit analysis to get FMSY proxy F01</dd>
-        <dt><a href="YPR_CC.html">YPR_CC</a></dt>
-        <dd>Yield Per Recruit analysis to get FMSY proxy F01 paired to a naive catch curve estimate of recent Z</dd>
-        <dt><a href="YPR_ML.html">YPR_ML</a></dt>
-        <dd>Yield Per Recruit analysis to get FMSY proxy F01 paired with a mean-length estimate of current stock size</dd>
-      </dl>
+      
+      <p><a href="AvC.html">An MP where the TAC is average historical catch</a></p>
+      <ul>
+        <li><code><a href="AvC.html">AvC</a></code></li>
+      </ul>
+      
+      <p><a href="BK.html">Beddington and Kirkwood life-history MP (simple version)</a></p>
+      <ul>
+        <li><code><a href="BK.html">BK</a></code></li>
+      </ul>
+      
+      <p><a href="BK_CC.html">Beddington and Kirkwood life-history method combined with catch curve analysis</a></p>
+      <ul>
+        <li><code><a href="BK_CC.html">BK_CC</a></code></li>
+      </ul>
+      
+      <p><a href="BK_ML.html">Beddington and Kirkwood life-history analysis with mean-length estimator of current abundance</a></p>
+      <ul>
+        <li><code><a href="BK_ML.html">BK_ML</a></code></li>
+      </ul>
+      
+      <p><a href="CC1.html">Constant catch management procedure of Geromont and Butterworth (2014)</a></p>
+      <ul>
+        <li><code><a href="CC1.html">CC1</a></code></li>
+      </ul>
+      
+      <p><a href="CC4.html">Constant catch management procedure of Geromont and Butterworth (2014)</a></p>
+      <ul>
+        <li><code><a href="CC4.html">CC4</a></code></li>
+      </ul>
+      
+      <p><a href="CompSRA.html">Age-composition-based estimate of current stock depletion given constant Z linked to an FMSY estimate to provide OFL</a></p>
+      <ul>
+        <li><code><a href="CompSRA.html">CompSRA</a></code></li>
+      </ul>
+      
+      <p><a href="CompSRA4010.html">Age-composition-based estimate of current stock depletion given constant Z linked to an FMSY estimate to provide OFL (with a 40-10 rule)</a></p>
+      <ul>
+        <li><code><a href="CompSRA4010.html">CompSRA4010</a></code></li>
+      </ul>
+      
+      <p><a href="DAAC.html">Depletion Adjusted Average Catch</a></p>
+      <ul>
+        <li><code><a href="DAAC.html">DAAC</a></code></li>
+      </ul>
+      
+      <p><a href="DBSRA.html">Depletion-Based Stock Reduction Analysis</a></p>
+      <ul>
+        <li><code><a href="DBSRA.html">DBSRA</a></code></li>
+      </ul>
+      
+      <p><a href="DBSRA_40.html">Depletion-Based Stock Reduction Analysis assuming 40 per cent stock depletion</a></p>
+      <ul>
+        <li><code><a href="DBSRA_40.html">DBSRA_40</a></code></li>
+      </ul>
+      
+      <p><a href="DBSRA_ML.html">Depletion-Based Stock Reduction Analysis using mean length estimator of stock depletion</a></p>
+      <ul>
+        <li><code><a href="DBSRA_ML.html">DBSRA_ML</a></code></li>
+      </ul>
+      
+      <p><a href="DBSRA4010.html">Depletion-Based Stock Reduction Analysis paired with 40-10 harvest control rule</a></p>
+      <ul>
+        <li><code><a href="DBSRA4010.html">DBSRA4010</a></code></li>
+      </ul>
+      
+      <p><a href="DCAC.html">Depletion Corrected Average Catch</a></p>
+      <ul>
+        <li><code><a href="DCAC.html">DCAC</a></code></li>
+      </ul>
+      
+      <p><a href="DCAC_40.html">Depletion Corrected Average Catch assuming 40 per cent stock depletion</a></p>
+      <ul>
+        <li><code><a href="DCAC_40.html">DCAC_40</a></code></li>
+      </ul>
+      
+      <p><a href="DCAC_ML.html">Depletion-Based Stock Reduction Analysis using mean-length estimator of current depletion</a></p>
+      <ul>
+        <li><code><a href="DCAC_ML.html">DCAC_ML</a></code></li>
+      </ul>
+      
+      <p><a href="DCAC4010.html">Depletion Corrected Average Catch paired with the 40-10 rule</a></p>
+      <ul>
+        <li><code><a href="DCAC4010.html">DCAC4010</a></code></li>
+      </ul>
+      
+      <p><a href="DD.html">Delay - Difference Stock Assessment with UMSY and MSY leading</a></p>
+      <ul>
+        <li><code><a href="DD.html">DD</a></code></li>
+      </ul>
+      
+      <p><a href="DD4010.html">Delay - Difference Stock Assessment with UMSY and MSY leading coupled with a 40-10 harvest control rule</a></p>
+      <ul>
+        <li><code><a href="DD4010.html">DD4010</a></code></li>
+      </ul>
+      
+      <p><a href="DepF.html">Depletion Corrected Fratio</a></p>
+      <ul>
+        <li><code><a href="DepF.html">DepF</a></code></li>
+      </ul>
+      
+      <p><a href="DynF.html">Dynamic Fratio MP</a></p>
+      <ul>
+        <li><code><a href="DynF.html">DynF</a></code></li>
+      </ul>
+      
+      <p><a href="Fadapt.html">An adaptive MP that uses trajectory in inferred suplus production and fishing mortality rate to update a TAC</a></p>
+      <ul>
+        <li><code><a href="Fadapt.html">Fadapt</a></code></li>
+      </ul>
+      
+      <p><a href="Fdem.html">Demographic FMSY method </a></p>
+      <ul>
+        <li><code><a href="Fdem.html">Fdem</a></code></li>
+      </ul>
+      
+      <p><a href="Fdem_CC.html">Demographic FMSY method using catch-curve analysis to estimate recent Z</a></p>
+      <ul>
+        <li><code><a href="Fdem_CC.html">Fdem_CC</a></code></li>
+      </ul>
+      
+      <p><a href="Fdem_ML.html">Demographic FMSY method that uses mean length data to estimate recent Z</a></p>
+      <ul>
+        <li><code><a href="Fdem_ML.html">Fdem_ML</a></code></li>
+      </ul>
+      
+      <p><a href="Fratio.html">An FMSY/M ratio method</a></p>
+      <ul>
+        <li><code><a href="Fratio.html">Fratio</a></code></li>
+      </ul>
+      
+      <p><a href="Fratio_CC.html">A data-limited method that uses FMSY/M ratio and a naive catch-curve estimate of recent Z</a></p>
+      <ul>
+        <li><code><a href="Fratio_CC.html">Fratio_CC</a></code></li>
+      </ul>
+      
+      <p><a href="Fratio_ML.html">An FMSY/M ratio MP that uses a mean length estimator of recent Z</a></p>
+      <ul>
+        <li><code><a href="Fratio_ML.html">Fratio_ML</a></code></li>
+      </ul>
+      
+      <p><a href="Fratio4010.html">An FMSY/M ratio method paired with the 40-10 rule</a></p>
+      <ul>
+        <li><code><a href="Fratio4010.html">Fratio4010</a></code></li>
+      </ul>
+      
+      <p><a href="GB_CC.html">Geromont and Butterworth Constant Catch Harvest Control Rule</a></p>
+      <ul>
+        <li><code><a href="GB_CC.html">GB_CC</a></code></li>
+      </ul>
+      
+      <p><a href="GB_slope.html">Geromont and Butterworth index slope Harvest Control Rule</a></p>
+      <ul>
+        <li><code><a href="GB_slope.html">GB_slope</a></code></li>
+      </ul>
+      
+      <p><a href="GB_target.html">Geromont and Butterworth target CPUE and catch MP</a></p>
+      <ul>
+        <li><code><a href="GB_target.html">GB_target</a></code></li>
+      </ul>
+      
+      <p><a href="Gcontrol.html">G-control MP</a></p>
+      <ul>
+        <li><code><a href="Gcontrol.html">Gcontrol</a></code></li>
+      </ul>
+      
+      <p><a href="HDAAC.html">Hybrid Depletion Adjusted Average Catch</a></p>
+      <ul>
+        <li><code><a href="HDAAC.html">HDAAC</a></code></li>
+      </ul>
+      
+      <p><a href="Islope1.html">A management procedure that incrementally adjusts the TAC to maintain a constant CPUE or relative abundance index</a></p>
+      <ul>
+        <li><code><a href="Islope1.html">Islope1</a></code></li>
+      </ul>
+      
+      <p><a href="Islope4.html">A management procedure that incrementally adjusts the TAC to maintain a constant CPUE or relative abundance index</a></p>
+      <ul>
+        <li><code><a href="Islope4.html">Islope4</a></code></li>
+      </ul>
+      
+      <p><a href="IT10.html">Index Target 10</a></p>
+      <ul>
+        <li><code><a href="IT10.html">IT10</a></code></li>
+      </ul>
+      
+      <p><a href="IT5.html">Index Target 5</a></p>
+      <ul>
+        <li><code><a href="IT5.html">IT5</a></code></li>
+      </ul>
+      
+      <p><a href="Itarget1.html">A management procedure that incrementally adjusts the TAC (starting from reference level that is a fraction of mean recent catches) to reach a target CPUE / relative abundance index</a></p>
+      <ul>
+        <li><code><a href="Itarget1.html">Itarget1</a></code></li>
+      </ul>
+      
+      <p><a href="Itarget4.html">A management procedure that incrementally adjusts the TAC (starting from reference level that is a fraction of mean recent catches) to reach a target CPUE / relative abundance index</a></p>
+      <ul>
+        <li><code><a href="Itarget4.html">Itarget4</a></code></li>
+      </ul>
+      
+      <p><a href="ITM.html">Index Target based on natural mortality rate</a></p>
+      <ul>
+        <li><code><a href="ITM.html">ITM</a></code></li>
+      </ul>
+      
+      <p><a href="L95target.html">A management procedure that adjusts the TAC up/down from reference (target) level (that is a fraction of mean recent premanagement catches) to reach a target mean length of fish caught.</a></p>
+      <ul>
+        <li><code><a href="L95target.html">L95target</a></code></li>
+      </ul>
+      
+      <p><a href="LBSPR_ItTAC.html">Length-based SPR model with HCR that iteratively adjusts TAC</a></p>
+      <ul>
+        <li><code><a href="LBSPR_ItTAC.html">LBSPR_ItTAC</a></code></li>
+      </ul>
+      
+      <p><a href="LstepCC1.html">A management procedure that incrementally adjusts the TAC according to the mean length of recent catches.</a></p>
+      <ul>
+        <li><code><a href="LstepCC1.html">LstepCC1</a></code></li>
+      </ul>
+      
+      <p><a href="LstepCC4.html">A management procedure that incrementally adjusts the TAC according to the mean length of recent catches.</a></p>
+      <ul>
+        <li><code><a href="LstepCC4.html">LstepCC4</a></code></li>
+      </ul>
+      
+      <p><a href="Ltarget1.html">A management procedure that incrementally adjusts the TAC to reach a target mean length in catches.</a></p>
+      <ul>
+        <li><code><a href="Ltarget1.html">Ltarget1</a></code></li>
+      </ul>
+      
+      <p><a href="Ltarget4.html">A management procedure that incrementally adjusts the TAC to reach a target mean length in catches.</a></p>
+      <ul>
+        <li><code><a href="Ltarget4.html">Ltarget4</a></code></li>
+      </ul>
+      
+      <p><a href="MCD.html">Mean Catch Depletion</a></p>
+      <ul>
+        <li><code><a href="MCD.html">MCD</a></code></li>
+      </ul>
+      
+      <p><a href="MCD4010.html">Mean Catch Depletion</a></p>
+      <ul>
+        <li><code><a href="MCD4010.html">MCD4010</a></code></li>
+      </ul>
+      
+      <p><a href="Rcontrol.html">Harvest Control Rule using prior for intrinsic rate of increase</a></p>
+      <ul>
+        <li><code><a href="Rcontrol.html">Rcontrol</a></code></li>
+      </ul>
+      
+      <p><a href="Rcontrol2.html">MP using prior for intrinsic rate of increase with a quadratic approximation to surplus production</a></p>
+      <ul>
+        <li><code><a href="Rcontrol2.html">Rcontrol2</a></code></li>
+      </ul>
+      
+      <p><a href="SBT1.html">SBT simple MP</a></p>
+      <ul>
+        <li><code><a href="SBT1.html">SBT1</a></code></li>
+      </ul>
+      
+      <p><a href="SBT2.html">SBT complex MP</a></p>
+      <ul>
+        <li><code><a href="SBT2.html">SBT2</a></code></li>
+      </ul>
+      
+      <p><a href="SPmod.html">Surplus production based catch-limit modifier</a></p>
+      <ul>
+        <li><code><a href="SPmod.html">SPmod</a></code></li>
+      </ul>
+      
+      <p><a href="SPMSY.html">Catch trend Surplus Production MSY MP</a></p>
+      <ul>
+        <li><code><a href="SPMSY.html">SPMSY</a></code></li>
+      </ul>
+      
+      <p><a href="SPslope.html">Slope in surplus production MP</a></p>
+      <ul>
+        <li><code><a href="SPslope.html">SPslope</a></code></li>
+      </ul>
+      
+      <p><a href="SPSRA.html">Surplus Production Stock Reduction Analysis</a></p>
+      <ul>
+        <li><code><a href="SPSRA.html">SPSRA</a></code></li>
+      </ul>
+      
+      <p><a href="SPSRA_ML.html">Surplus Production Stock Reduction Analysis using a mean-length estimate of current stock depletion</a></p>
+      <ul>
+        <li><code><a href="SPSRA_ML.html">SPSRA_ML</a></code></li>
+      </ul>
+      
+      <p><a href="YPR.html">Yield Per Recruit analysis to get FMSY proxy F01</a></p>
+      <ul>
+        <li><code><a href="YPR.html">YPR</a></code></li>
+      </ul>
+      
+      <p><a href="YPR_CC.html">Yield Per Recruit analysis to get FMSY proxy F01 paired to a naive catch curve estimate of recent Z</a></p>
+      <ul>
+        <li><code><a href="YPR_CC.html">YPR_CC</a></code></li>
+      </ul>
+      
+      <p><a href="YPR_ML.html">Yield Per Recruit analysis to get FMSY proxy F01 paired with a mean-length estimate of current stock size</a></p>
+      <ul>
+        <li><code><a href="YPR_ML.html">YPR_ML</a></code></li>
+      </ul>
+    
     </div>
+  </div>
+
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      <li><a href="#section-output-controls">Output Controls</a></li>
+    </ul>
   </div>
 </div>
 
       <footer>
-      <p>Built by <a href="http://hadley.github.io/pkgdown/">pkgdown</a>. Styled with <a href="http://getbootstrap.com">Bootstrap 3</a>.</p>
+      <div class="copyright">
+  <p>Developed by Tom Carruthers, Adrian Hordyk.</p>
+</div>
+
+<div class="pkgdown">
+  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+</div>
+
       </footer>
    </div>
 

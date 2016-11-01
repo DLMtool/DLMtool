@@ -6,11 +6,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>DLMtool-package. DLMtool Documentation</title>
+<title>Data-Limited Methods Toolkit — DLMtool-package â€¢ DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
-
 <!-- Bootstrap -->
 
 <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -22,6 +21,7 @@
 
 <!-- pkgdown -->
 <link href="../../pkgdown.css" rel="stylesheet">
+<script src="../../jquery.sticky-kit.min.js"></script>
 <script src="../../pkgdown.js"></script>
 
 <!-- mathjax -->
@@ -34,10 +34,9 @@
   </head>
 
   <body>
-    <div class="container">
+    <div class="container template-reference-topic">
       <header>
-      
-<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+      <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
@@ -45,7 +44,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../../index.html">DLMtool Documentation</a>
+      <a class="navbar-brand" href="../../index.html">DLM tool</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -139,30 +138,31 @@
   <a href="http://www.datalimitedtoolkit.org/">DLMtool Website</a>
 </li>
       </ul>
+      
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+
       
       </header>
 
-      <div class="page-header">
-  <h1>Data-Limited Methods Toolkit</h1>
-</div>
+      <div class="row">
+  <div class="col-md-9 contents">
+    <div class="page-header">
+    <h1>Data-Limited Methods Toolkit</h1>
+    </div>
 
-<div class="row">
-  <div class="col-md-9">
     
     <p>Simulation testing and implementation of data-limited fishery stock assessment methods</p>
     
 
         
-    <div class="Details">
-      <h2>Details</h2>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-      <p><table><tr><td>
+    <p><table><tr><td>
 Package: </td>
 </tr><tr><td> DLMtool</td>
 </tr><tr><td>
@@ -181,21 +181,24 @@ License: </td>
 Depends: </td>
 </tr><tr><td> methods</td>
 </tr></table></p>
-    </div>
-
-    <div class="References">
-      <h2>References</h2>
-
-      <p>Carruthers, T.R., Punt, A.E., Walters, C.J., MacCall, A., McAllister, M.K., Dick, E.J., Cope, J. 2014. Evaluating methods for setting catch limits in data-limited fisheries. Fisheries Research. 153: 48-68.</p>
-      <p>Carruthers, T.R., Kell, L.T., Butterworth, D.S., Maunder, M.N., Geromont, H.F., Walters, C., McAllister, M.K., Hillary, R., Levontin, P., Kitakado, T., Davies, C.R. Performance review of simple management procedures. ICES Journal of Marine Science.</p>
-    </div>
     
-    <h2 id="examples">Examples</h2>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Carruthers, T.R., Punt, A.E., Walters, C.J., MacCall, A., McAllister, M.K., Dick, E.J., Cope, J. 2014. Evaluating methods for setting catch limits in data-limited fisheries. Fisheries Research. 153: 48-68.</p>
+    <p>Carruthers, T.R., Kell, L.T., Butterworth, D.S., Maunder, M.N., Geromont, H.F., Walters, C., McAllister, M.K., Hillary, R., Levontin, P., Kitakado, T., Davies, C.R. Performance review of simple management procedures. ICES Journal of Marine Science.</p>
+    
+
+    <h2 class="hasAnchor" id="examples">
+      <a class="anchor" href="#examples"></a>
+      Examples
+    </h2>
     <pre class="examples"><div class='input'>
 <span class='co'># --- Application to real fishery data ---</span>
 <span class='fu'>library</span>(<span class='no'>DLMtool</span>)
 <span class='fu'>library</span>(<span class='no'>snowfall</span>)              <span class='co'># load package for parallel computing</span>
-<span class='fu'>sfInit</span>(<span class='kw'>parallel</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>cpus</span><span class='kw'>=</span><span class='fl'>2</span>)   <span class='co'># initiate the cluster with two cpus</span></div><div class='output'><strong class='text-info'>snowfall 1.84-6.1 initialized (using snow 0.4-1): parallel execution on 2 CPUs.
+<span class='fu'>sfInit</span>(<span class='kw'>parallel</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>cpus</span><span class='kw'>=</span><span class='fl'>2</span>)   <span class='co'># initiate the cluster with two cpus</span></div><div class='output co'>#&gt; R Version:  R version 3.3.1 (2016-06-21) 
+#&gt; 
+#&gt; </div><div class='output'><strong class='text-info'>snowfall 1.84-6.1 initialized (using snow 0.4-1): parallel execution on 2 CPUs.
 </strong></div><div class='input'>
 <span class='no'>mydata</span><span class='kw'>&lt;-</span><span class='fu'>new</span>(<span class='st'>'DLM_data'</span>)        <span class='co'># create a new DLM data object and define:</span></div><div class='output co'>#&gt; [1] &quot;Couldn&#39;t find specified csv file, blank DLM object created&quot;
 #&gt; </div><div class='input'><span class='no'>mydata</span>@<span class='kw'>Year</span><span class='kw'>&lt;-</span><span class='fl'>2001</span>:<span class='fl'>2010</span>         <span class='co'># years</span>
@@ -209,12 +212,22 @@ Depends: </td>
 <span class='no'>mydata</span>@<span class='kw'>LFC</span><span class='kw'>&lt;-</span><span class='fl'>50</span>                 <span class='co'># length at first capture</span>
 <span class='no'>mydata</span><span class='kw'>&lt;-</span><span class='fu'>TAC</span>(<span class='no'>mydata</span>)            <span class='co'># calculate quotas</span>
 <span class='fu'>plot</span>(<span class='no'>mydata</span>)                   <span class='co'># plot them</span>
-<span class='no'>mydata</span><span class='kw'>&lt;-</span><span class='fu'>Sense</span>(<span class='no'>mydata</span>,<span class='st'>"Fratio"</span>) <span class='co'># conduct a sensitivity analysis for one of the methods</span></div><img src='DLMtool-package-6.png' alt='' width='540' height='400' /><div class='input'>
+<span class='no'>mydata</span><span class='kw'>&lt;-</span><span class='fu'>Sense</span>(<span class='no'>mydata</span>,<span class='st'>"Fratio"</span>) <span class='co'># conduct a sensitivity analysis for one of the methods</span></div><img src='DLMtool-package-7.png' alt='' width='540' height='400' /><div class='input'>
 <span class='fu'>sfStop</span>()</div><div class='output'><strong class='text-info'>
 Stopping cluster
-</strong></div><img src='DLMtool-package-9.png' alt='' width='540' height='400' /></pre>
+</strong></div><img src='DLMtool-package-10.png' alt='' width='540' height='400' /></pre>
   </div>
-  <div class="col-md-3">
+  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
+    <h2>Contents</h2>
+    <ul class="nav nav-pills nav-stacked">
+      
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#references">References</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
+
     <h2>Author</h2>
     
 Tom Carruthers
@@ -226,7 +239,14 @@ Adrian Hordyk
 </div>
 
       <footer>
-      <p>Built by <a href="http://hadley.github.io/pkgdown/">pkgdown</a>. Styled with <a href="http://getbootstrap.com">Bootstrap 3</a>.</p>
+      <div class="copyright">
+  <p>Developed by Tom Carruthers, Adrian Hordyk.</p>
+</div>
+
+<div class="pkgdown">
+  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+</div>
+
       </footer>
    </div>
 
