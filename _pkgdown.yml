@@ -1,0 +1,53 @@
+title: DLMtool Documentation
+bootswatch: darkly
+navbar:
+  title: "DLM tool"
+  type: inverse
+  left:
+    - text: "Operating Model"
+      menu:
+      - text: "OM Input"
+        href: reference/OM_Input/index.html
+      - text: "OM Setup"
+        href: reference/OM_Setup/index.html
+      - text: "Run MSE"
+        href: reference/Run_MSE/index.html          
+    - text: "Management Procedures"
+      menu:
+      - text: "Output Controls"
+        href: reference/Output_Controls/index.html
+      - text: "Input Controls"
+        href: reference/Input_Controls/index.html
+      - text: "Reference Methods"
+        href: reference/Reference_Methods/index.html      
+    - text: "R Objects" 
+      menu:
+      - text: "MSE Object"
+      - text: "Plotting Functions"
+        href: reference/MSE_Plots/index.html  
+      - text: "MSE Object Functions"
+        href: reference/MSE_Functions/index.html       
+      - text: "Data Object"
+      - text: "Available Methods"
+        href: reference/Available_Methods/index.html 
+      - text: "Apply Methods"
+        href: reference/Apply_MP/index.html 
+      - text: "Plotting Functions"
+        href: reference/Data_Plots/index.html 
+    - text: "Other"
+      menu:
+      - text: "Object Classes"
+        href: reference/Class/index.html   
+      - text: "Estimation Methods"
+        href: reference/Estimation_Methods/index.html    
+      - text: "Handy Functions"
+        href: reference/Handy_Functions/index.html    
+      - text: "Other"
+        href: reference/Other/index.html      
+    - text: "User Guide"
+      href: https://dl.dropboxusercontent.com/u/24856730/userguide/_book/index.html
+    - text: "DLMtool Website"
+      href: http://www.datalimitedtoolkit.org/     
+  # right:
+    # - icon: fa-github
+      # href: https://github.com/adrianhordyk/DLMtool
