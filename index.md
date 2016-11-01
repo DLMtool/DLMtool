@@ -14,7 +14,7 @@ This site contains the documentation for the functions in the DLMtool package.
 A comprehensive user guide for DLMtool is available [here](userguide/index.html).
 
 ### DLMtool Website
-For more information about DLMtool, including a demonstration of the main features of the toolkit, go to the [Data-Limimted Methods Toolkit Website](http://datalimitedtoolkit.org/).
+For more information about DLMtool, including a demonstration of the main features of the toolkit, go to the [Data-Limited Methods Toolkit Website](http://datalimitedtoolkit.org/).
 
 ### Installation
 
