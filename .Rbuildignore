@@ -2,6 +2,7 @@
 .Rhistory
 .Rapp.history
 
+logo.png
 
 # Output files from R CMD build
 /*.tar.gz

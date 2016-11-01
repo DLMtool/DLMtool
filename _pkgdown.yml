@@ -1,7 +1,7 @@
 title: DLMtool Documentation
 bootswatch: darkly
 navbar:
-  title: "DLM tool"
+  title: "Documentation Home"
   type: inverse
   left:
     - text: "Operating Model"
@@ -48,6 +48,6 @@ navbar:
       href: userguide/index.html
     - text: "DLMtool Website"
       href: http://www.datalimitedtoolkit.org/     
-  # right:
-    # - icon: fa-github
-      # href: https://github.com/adrianhordyk/DLMtool
+  right:
+    - icon: fa-github
+      href: https://github.com/DLMtool/DLMtool
