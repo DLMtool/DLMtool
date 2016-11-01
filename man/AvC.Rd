@@ -22,10 +22,6 @@ The number of stochastic samples of the quota recommendation
 \value{
 A numeric vector of TAC recommendations
 }
-\details{
-Test Equation:
-\eqn{\text{TAC} = \frac{\sum_y{C}}{\sum{y}}}
-}
 \author{
 T. Carruthers
 }
