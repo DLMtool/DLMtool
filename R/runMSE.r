@@ -544,14 +544,6 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   
   names(DLM_data@OM)[26:28]<-c("L5","LFS","Vmaxlen") # These are missing labels in the line above
   
-  # Store MSE info
-  DLM_data@OM$interval <- interval 
-  DLM_data@OM$maxF <- maxF 
-  DLM_data@OM$timelimit <- timelimit 
-  DLM_data@OM$version <- packageVersion('DLMtool')
-  DLM_data@OM$pstar <- pstar 
-  DLM_data@OM$reps <- reps 
-  
   DLM_data@Obs<-as.data.frame(cbind(Cbias,Csd,CAA_nsamp,CAA_ESS,CAL_nsamp,CAL_ESS,Isd,Dbias,Derr,Mbias,FMSY_Mbias,BMSY_B0bias,
                                     lenMbias,LFCbias,LFSbias,Abias,Aerr,Kbias,t0bias,Linfbias,hbias,Irefbias,Crefbias,Brefbias,betas))  # put all the observation error model parameters in one table
   
@@ -593,6 +585,8 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
   TACa<-array(NA,dim=c(nsim,nMP,proyears))     # store the projected TAC recommendation
   Effort <- array(NA,dim=c(nsim,nMP,proyears)) # store the Effort
   # SPRa <- array(NA,dim=c(nsim,nMP,proyears))   # store the Spawning Potential Ratio
+  
+  MPdur <- rep(NA, nMP)
   
   for(mm in 1:nMP){    # MSE Loop over methods
     pL5 <- L5 # reset selectivity parameters for projections
@@ -653,7 +647,10 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     
 	y <- 1
     if (class(match.fun(MPs[mm]))=="DLM_output") {
+	  st <- Sys.time()
       DLM_data <- Sam(MSElist[[mm]],MPs=MPs[mm],perc=pstar,reps=reps)
+	  nd <- Sys.time()
+	  MPdur[mm] <- nd - st
       TACused <- apply(DLM_data@TAC,3,quantile,p=pstar,na.rm=T) 
       TACa[,mm,1] <- TACused
 	  
@@ -671,7 +668,11 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
 	  Effort[,mm,y] <- (-log(1-apply(CB_P[,,y,],1,sum)/(apply(CB_P[,,y,],1,sum)+apply(VBiomass_P[,,y,],1,sum))))/qs
 	  
     }else{ # input control 
+	  st <- Sys.time()
 	  runIn <- runInMP(MSElist[[mm]],MPs=MPs[mm], reps=reps) # Apply input control MP
+	  nd <- Sys.time()
+	  MPdur[mm] <- nd - st
+	  
 	  inc <- runIn[[1]]
       DLM_data <- runIn[[2]]
 
@@ -993,6 +994,20 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     Ca[,mm,]<-apply(CB_P,c(1,3),sum)
     cat("\n")
   }    # end of mm methods
+  
+ # Store MP duration 
+ attr(MPs, "duration") <- MPdur
+ # Store MSE info
+ attr(OM@Name, "version") <- packageVersion('DLMtool')
+ attr(OM@Name, "interval") <-interval
+ attr(OM@Name, "maxF") <- maxF
+ attr(OM@Name, "timelimit") <- timelimit
+ attr(OM@Name, "pstar") <- pstar
+ attr(OM@Name, "reps") <- reps
+ attr(OM@Name, "version") <- packageVersion('DLMtool')
+ attr(OM@Name, "date") <-  date()
+ attr(OM@Name, "R.version") <-  R.version
+   
   
  new('MSE',Name=OM@Name,nyears,proyears,nMP,MPs,nsim,OMtable=DLM_data@OM,DLM_data@Obs,B_BMSYa,F_FMSYa,Ba,FMa,Ca,TACa,SSB_hist=SSB,CB_hist=CB,FM_hist=FM, Effort=Effort)
 
