@@ -1,9 +1,19 @@
-# DLMtool Documentation
+# Data-Limited Methods Toolkit (DLMtool)
 
-DLMtool is a R package for management strategy evalaution and implementation of data-limited fishery stock assessment methods.
+The Data-Limited Methods Toolkit (DLMtool) is a R package that uses computer simulations of real-world fisheries to help scientists and managers with three common objectives: 
 
-This site contains the documentation for the DLMtool package.
+1.	Identifying effective management methods given the uncertainties associated with data-limited fisheries
+2.	Computing explicit management recommendations based on the best-available data
+3.	Prioritizing future data collection programs 
 
-For more information about DLMtool go to the [DLMtool website](http://datalimitedtoolkit.org/).
+
+### DLMtool Documentation 
+This site contains the documentation for the functions in the DLMtool package.  
+
+### DLMtool User Guide
+A comprehensive user guide for DLMtool is available [here](userguide/index.html).
+
+### DLMtool Website
+For more information about DLMtool, including a demonstration of the main features of the toolkit, go to the [Data-Limimted Methods Toolkit Website](http://datalimitedtoolkit.org/).
 
 
