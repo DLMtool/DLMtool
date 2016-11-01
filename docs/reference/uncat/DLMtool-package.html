@@ -133,7 +133,7 @@
   </ul>
 </li>
 <li>
-  <a href="https://dl.dropboxusercontent.com/u/24856730/userguide/_book/index.html">User Guide</a>
+  <a href="../../userguide/index.html">User Guide</a>
 </li>
 <li>
   <a href="http://www.datalimitedtoolkit.org/">DLMtool Website</a>
@@ -195,9 +195,7 @@ Depends: </td>
 <span class='co'># --- Application to real fishery data ---</span>
 <span class='fu'>library</span>(<span class='no'>DLMtool</span>)
 <span class='fu'>library</span>(<span class='no'>snowfall</span>)              <span class='co'># load package for parallel computing</span>
-<span class='fu'>sfInit</span>(<span class='kw'>parallel</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>cpus</span><span class='kw'>=</span><span class='fl'>2</span>)   <span class='co'># initiate the cluster with two cpus</span></div><div class='output co'>#&gt; R Version:  R version 3.3.1 (2016-06-21) 
-#&gt; 
-#&gt; </div><div class='output'><strong class='text-info'>snowfall 1.84-6.1 initialized (using snow 0.4-1): parallel execution on 2 CPUs.
+<span class='fu'>sfInit</span>(<span class='kw'>parallel</span><span class='kw'>=</span><span class='fl'>TRUE</span>,<span class='kw'>cpus</span><span class='kw'>=</span><span class='fl'>2</span>)   <span class='co'># initiate the cluster with two cpus</span></div><div class='output'><strong class='text-info'>snowfall 1.84-6.1 initialized (using snow 0.4-1): parallel execution on 2 CPUs.
 </strong></div><div class='input'>
 <span class='no'>mydata</span><span class='kw'>&lt;-</span><span class='fu'>new</span>(<span class='st'>'DLM_data'</span>)        <span class='co'># create a new DLM data object and define:</span></div><div class='output co'>#&gt; [1] &quot;Couldn&#39;t find specified csv file, blank DLM object created&quot;
 #&gt; </div><div class='input'><span class='no'>mydata</span>@<span class='kw'>Year</span><span class='kw'>&lt;-</span><span class='fl'>2001</span>:<span class='fl'>2010</span>         <span class='co'># years</span>
@@ -211,10 +209,10 @@ Depends: </td>
 <span class='no'>mydata</span>@<span class='kw'>LFC</span><span class='kw'>&lt;-</span><span class='fl'>50</span>                 <span class='co'># length at first capture</span>
 <span class='no'>mydata</span><span class='kw'>&lt;-</span><span class='fu'>TAC</span>(<span class='no'>mydata</span>)            <span class='co'># calculate quotas</span>
 <span class='fu'>plot</span>(<span class='no'>mydata</span>)                   <span class='co'># plot them</span>
-<span class='no'>mydata</span><span class='kw'>&lt;-</span><span class='fu'>Sense</span>(<span class='no'>mydata</span>,<span class='st'>"Fratio"</span>) <span class='co'># conduct a sensitivity analysis for one of the methods</span></div><img src='DLMtool-package-7.png' alt='' width='540' height='400' /><div class='input'>
+<span class='no'>mydata</span><span class='kw'>&lt;-</span><span class='fu'>Sense</span>(<span class='no'>mydata</span>,<span class='st'>"Fratio"</span>) <span class='co'># conduct a sensitivity analysis for one of the methods</span></div><img src='DLMtool-package-6.png' alt='' width='540' height='400' /><div class='input'>
 <span class='fu'>sfStop</span>()</div><div class='output'><strong class='text-info'>
 Stopping cluster
-</strong></div><img src='DLMtool-package-10.png' alt='' width='540' height='400' /></pre>
+</strong></div><img src='DLMtool-package-9.png' alt='' width='540' height='400' /></pre>
   </div>
   <div class="col-md-3">
     <h2>Author</h2>

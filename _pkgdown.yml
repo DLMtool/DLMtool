@@ -45,7 +45,7 @@ navbar:
       - text: "Other"
         href: reference/Other/index.html      
     - text: "User Guide"
-      href: https://dl.dropboxusercontent.com/u/24856730/userguide/_book/index.html
+      href: userguide/index.html
     - text: "DLMtool Website"
       href: http://www.datalimitedtoolkit.org/     
   # right:

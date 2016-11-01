@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Data-Limited Methods Toolkit (DLMtool)</title>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+  <meta name="description" content="User guide for the DLMtool R package">
+  <meta name="generator" content="bookdown 0.1 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool)" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="User guide for the DLMtool R package" />
+  <meta name="github-repo" content="DLMtool/DLMtool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool)" />
+  
+  <meta name="twitter:description" content="User guide for the DLMtool R package" />
+  
+
+
+<meta name="date" content="2016-10-27">
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+});
+</script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
+<link rel="prev" href="MSE.html">
+<link rel="next" href="managing-fishery-data.html">
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./index.html">DLMtool User Guide</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#data-limited-methods-toolkit"><i class="fa fa-check"></i><b>1.1</b> Data-Limited Methods Toolkit</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#management-strategy-evaluation"><i class="fa fa-check"></i><b>1.2</b> Management Strategy Evaluation</a></li>
+<li class="chapter" data-level="1.3" data-path="index.html"><a href="index.html#how-does-management-strategy-evaluation-differ-from-stock-assessment"><i class="fa fa-check"></i><b>1.3</b> How does Management Strategy Evaluation Differ from Stock Assessment?</a></li>
+<li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#overview-of-the-user-guide"><i class="fa fa-check"></i><b>1.4</b> Overview of the User Guide</a></li>
+<li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#acknowledgements"><i class="fa fa-check"></i><b>1.5</b> Acknowledgements</a></li>
+<li class="chapter" data-level="1.6" data-path="index.html"><a href="index.html#bug-reports"><i class="fa fa-check"></i><b>1.6</b> Bug Reports</a></li>
+<li class="chapter" data-level="1.7" data-path="index.html"><a href="index.html#version-notes"><i class="fa fa-check"></i><b>1.7</b> Version Notes</a><ul>
+<li class="chapter" data-level="1.7.1" data-path="index.html"><a href="index.html#new-additions-to-version-3.2.2"><i class="fa fa-check"></i><b>1.7.1</b> New Additions to Version 3.2.2</a></li>
+<li class="chapter" data-level="1.7.2" data-path="index.html"><a href="index.html#new-additions-to-version-3.2.1"><i class="fa fa-check"></i><b>1.7.2</b> New Additions to Version 3.2.1</a></li>
+<li class="chapter" data-level="1.7.3" data-path="index.html"><a href="index.html#new-additions-to-version-3.2"><i class="fa fa-check"></i><b>1.7.3</b> New Additions to Version 3.2</a></li>
+<li class="chapter" data-level="1.7.4" data-path="index.html"><a href="index.html#notes-from-version-3.1"><i class="fa fa-check"></i><b>1.7.4</b> Notes from Version 3.1</a></li>
+<li class="chapter" data-level="1.7.5" data-path="index.html"><a href="index.html#a-note-on-version-2.11"><i class="fa fa-check"></i><b>1.7.5</b> A Note on Version 2.11</a></li>
+<li class="chapter" data-level="1.7.6" data-path="index.html"><a href="index.html#a-note-on-bug-fixes-in-2.1.1-and-2.1.2"><i class="fa fa-check"></i><b>1.7.6</b> A Note on Bug Fixes in 2.1.1 and 2.1.2</a></li>
+<li class="chapter" data-level="1.7.7" data-path="index.html"><a href="index.html#a-note-on-version-2.1"><i class="fa fa-check"></i><b>1.7.7</b> A Note on Version 2.1</a></li>
+<li class="chapter" data-level="1.7.8" data-path="index.html"><a href="index.html#new-to-version-2.1"><i class="fa fa-check"></i><b>1.7.8</b> New to Version 2.1</a></li>
+<li class="chapter" data-level="1.7.9" data-path="index.html"><a href="index.html#new-to-version-2.0"><i class="fa fa-check"></i><b>1.7.9</b> New to Version 2.0</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html"><i class="fa fa-check"></i><b>2</b> First Time Working With R?</a><ul>
+<li class="chapter" data-level="2.1" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#r-and-rstudio"><i class="fa fa-check"></i><b>2.1</b> R and RStudio</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#the-r-software"><i class="fa fa-check"></i><b>2.1.1</b> The R Software</a></li>
+<li class="chapter" data-level="2.1.2" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#rstudio"><i class="fa fa-check"></i><b>2.1.2</b> RStudio</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#loadDLM"><i class="fa fa-check"></i><b>2.2</b> Installing the DLMtool Package</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#installing-dlmtool-using-r-console"><i class="fa fa-check"></i><b>2.2.1</b> Installing DLMtool Using R Console</a></li>
+<li class="chapter" data-level="2.2.2" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#installing-dlmtool-using-rstudio"><i class="fa fa-check"></i><b>2.2.2</b> Installing DLMtool Using RStudio</a></li>
+<li class="chapter" data-level="2.2.3" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#updating-the-dlmtool-package"><i class="fa fa-check"></i><b>2.2.3</b> Updating the DLMtool Package</a></li>
+<li class="chapter" data-level="2.2.4" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#loading-the-dlmtool-package"><i class="fa fa-check"></i><b>2.2.4</b> Loading the DLMtool Package</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#assumed-knowledge"><i class="fa fa-check"></i><b>2.3</b> Assumed Knowledge</a></li>
+<li class="chapter" data-level="2.4" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#a-brief-note-on-s4-methods"><i class="fa fa-check"></i><b>2.4</b> A Brief Note on S4 Methods</a></li>
+<li class="chapter" data-level="2.5" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#getting-help"><i class="fa fa-check"></i><b>2.5</b> Getting Help</a><ul>
+<li class="chapter" data-level="2.5.1" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#additional-help-on-the-dlmtool"><i class="fa fa-check"></i><b>2.5.1</b> Additional Help on the DLMtool</a></li>
+<li class="chapter" data-level="2.5.2" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#questions-on-r-related-problems"><i class="fa fa-check"></i><b>2.5.2</b> Questions on R-related Problems</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="preq.html"><a href="preq.html"><i class="fa fa-check"></i><b>3</b> Prerequisites to Using DLMtool</a><ul>
+<li class="chapter" data-level="3.1" data-path="preq.html"><a href="preq.html#load-the-library"><i class="fa fa-check"></i><b>3.1</b> Load the Library</a></li>
+<li class="chapter" data-level="3.2" data-path="preq.html"><a href="preq.html#unpack-the-data"><i class="fa fa-check"></i><b>3.2</b> Unpack the Data</a></li>
+<li class="chapter" data-level="3.3" data-path="preq.html"><a href="preq.html#initiate-the-cluster"><i class="fa fa-check"></i><b>3.3</b> Initiate the Cluster</a></li>
+<li class="chapter" data-level="3.4" data-path="preq.html"><a href="preq.html#export-all-data-and-objects-to-the-cluster"><i class="fa fa-check"></i><b>3.4</b> Export all Data and Objects to the Cluster</a></li>
+<li class="chapter" data-level="3.5" data-path="preq.html"><a href="preq.html#set-a-random-seed"><i class="fa fa-check"></i><b>3.5</b> Set a Random Seed</a></li>
+<li class="chapter" data-level="3.6" data-path="preq.html"><a href="preq.html#summary"><i class="fa fa-check"></i><b>3.6</b> Summary</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="setupOM.html"><a href="setupOM.html"><i class="fa fa-check"></i><b>4</b> Setting up the MSE Operating Model</a><ul>
+<li class="chapter" data-level="4.1" data-path="setupOM.html"><a href="setupOM.html#overview"><i class="fa fa-check"></i><b>4.1</b> Overview</a></li>
+<li class="chapter" data-level="4.2" data-path="setupOM.html"><a href="setupOM.html#the-operating-model-object"><i class="fa fa-check"></i><b>4.2</b> The Operating Model Object</a><ul>
+<li class="chapter" data-level="4.2.1" data-path="setupOM.html"><a href="setupOM.html#stock-object"><i class="fa fa-check"></i><b>4.2.1</b> Stock Object</a></li>
+<li class="chapter" data-level="4.2.2" data-path="setupOM.html"><a href="setupOM.html#fleet-object"><i class="fa fa-check"></i><b>4.2.2</b> Fleet Object</a></li>
+<li class="chapter" data-level="4.2.3" data-path="setupOM.html"><a href="setupOM.html#observation-object"><i class="fa fa-check"></i><b>4.2.3</b> Observation Object</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="setupOM.html"><a href="setupOM.html#existing-stock-fleet-and-observation-objects"><i class="fa fa-check"></i><b>4.3</b> Existing Stock, Fleet, and Observation Objects</a></li>
+<li class="chapter" data-level="4.4" data-path="setupOM.html"><a href="setupOM.html#creating-the-operating-model-object"><i class="fa fa-check"></i><b>4.4</b> Creating the Operating Model Object</a></li>
+<li class="chapter" data-level="4.5" data-path="setupOM.html"><a href="setupOM.html#customizing-the-operating-model"><i class="fa fa-check"></i><b>4.5</b> Customizing the Operating Model</a><ul>
+<li class="chapter" data-level="4.5.1" data-path="setupOM.html"><a href="setupOM.html#creating-new-objects"><i class="fa fa-check"></i><b>4.5.1</b> Creating New Objects</a></li>
+<li class="chapter" data-level="4.5.2" data-path="setupOM.html"><a href="setupOM.html#importing-objects"><i class="fa fa-check"></i><b>4.5.2</b> Importing Objects</a></li>
+</ul></li>
+<li class="chapter" data-level="4.6" data-path="setupOM.html"><a href="setupOM.html#modifying-existing-objects"><i class="fa fa-check"></i><b>4.6</b> Modifying Existing Objects</a></li>
+<li class="chapter" data-level="4.7" data-path="setupOM.html"><a href="setupOM.html#more-on-customizing-the-operating-model"><i class="fa fa-check"></i><b>4.7</b> More on Customizing the Operating Model</a><ul>
+<li class="chapter" data-level="4.7.1" data-path="setupOM.html"><a href="setupOM.html#historical-trends-in-fishing-mortality"><i class="fa fa-check"></i><b>4.7.1</b> Historical Trends in Fishing Mortality</a></li>
+<li class="chapter" data-level="4.7.2" data-path="setupOM.html"><a href="setupOM.html#historical-trends-in-the-selectivity-pattern"><i class="fa fa-check"></i><b>4.7.2</b> Historical Trends in the Selectivity Pattern</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="MPs.html"><a href="MPs.html"><i class="fa fa-check"></i><b>5</b> Management Procedures</a><ul>
+<li class="chapter" data-level="5.1" data-path="MPs.html"><a href="MPs.html#what-is-a-management-procedure"><i class="fa fa-check"></i><b>5.1</b> What is a Management Procedure?</a></li>
+<li class="chapter" data-level="5.2" data-path="MPs.html"><a href="MPs.html#management-procedure-classes"><i class="fa fa-check"></i><b>5.2</b> Management Procedure Classes</a><ul>
+<li class="chapter" data-level="5.2.1" data-path="MPs.html"><a href="MPs.html#output-controls"><i class="fa fa-check"></i><b>5.2.1</b> Output Controls</a></li>
+<li class="chapter" data-level="5.2.2" data-path="MPs.html"><a href="MPs.html#input-controls"><i class="fa fa-check"></i><b>5.2.2</b> Input Controls</a></li>
+</ul></li>
+<li class="chapter" data-level="5.3" data-path="MPs.html"><a href="MPs.html#built-in-management-procedures"><i class="fa fa-check"></i><b>5.3</b> Built-in Management Procedures</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="MPs.html"><a href="MPs.html#output-controls-1"><i class="fa fa-check"></i><b>5.3.1</b> Output Controls</a></li>
+<li class="chapter" data-level="5.3.2" data-path="MPs.html"><a href="MPs.html#input-controls-1"><i class="fa fa-check"></i><b>5.3.2</b> Input Controls</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="MPs.html"><a href="MPs.html#details-of-the-methods"><i class="fa fa-check"></i><b>5.4</b> Details of the Methods</a></li>
+<li class="chapter" data-level="5.5" data-path="MPs.html"><a href="MPs.html#designing-new-methods"><i class="fa fa-check"></i><b>5.5</b> Designing New Methods</a><ul>
+<li class="chapter" data-level="5.5.1" data-path="MPs.html"><a href="MPs.html#average-historical-catch-management-procedure"><i class="fa fa-check"></i><b>5.5.1</b> Average Historical Catch Management Procedure</a></li>
+<li class="chapter" data-level="5.5.2" data-path="MPs.html"><a href="MPs.html#length-at-selection-set-equal-to-length-at-maturity"><i class="fa fa-check"></i><b>5.5.2</b> Length-at-Selection Set Equal to Length-at-Maturity</a></li>
+<li class="chapter" data-level="5.5.3" data-path="MPs.html"><a href="MPs.html#harvest-slot-limit"><i class="fa fa-check"></i><b>5.5.3</b> Harvest Slot Limit</a></li>
+<li class="chapter" data-level="5.5.4" data-path="MPs.html"><a href="MPs.html#reducing-fishing-rate-in-area-1-by-50"><i class="fa fa-check"></i><b>5.5.4</b> Reducing Fishing Rate in area 1 by 50%</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="MSE.html"><a href="MSE.html"><i class="fa fa-check"></i><b>6</b> Management Strategy Evaluation</a><ul>
+<li class="chapter" data-level="6.1" data-path="MSE.html"><a href="MSE.html#re-cap-on-setting-up-dlmtool"><i class="fa fa-check"></i><b>6.1</b> Re-cap on Setting up DLMtool</a></li>
+<li class="chapter" data-level="6.2" data-path="MSE.html"><a href="MSE.html#defining-the-operating-model"><i class="fa fa-check"></i><b>6.2</b> Defining the Operating Model</a></li>
+<li class="chapter" data-level="6.3" data-path="MSE.html"><a href="MSE.html#choose-management-procedures"><i class="fa fa-check"></i><b>6.3</b> Choose Management Procedures</a></li>
+<li class="chapter" data-level="6.4" data-path="MSE.html"><a href="MSE.html#the-runmse-function"><i class="fa fa-check"></i><b>6.4</b> The <code>runMSE</code> Function</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="MSE.html"><a href="MSE.html#description-of-the-arguments"><i class="fa fa-check"></i><b>6.4.1</b> Description of the Arguments</a></li>
+<li class="chapter" data-level="6.4.2" data-path="MSE.html"><a href="MSE.html#using-runmse"><i class="fa fa-check"></i><b>6.4.2</b> Using <code>runMSE</code></a></li>
+<li class="chapter" data-level="6.4.3" data-path="MSE.html"><a href="MSE.html#robust-wrapper-function"><i class="fa fa-check"></i><b>6.4.3</b> Robust Wrapper Function</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="MSE.html"><a href="MSE.html#checking-convergence"><i class="fa fa-check"></i><b>6.5</b> Checking Convergence</a></li>
+<li class="chapter" data-level="6.6" data-path="MSE.html"><a href="MSE.html#a-quick-recap"><i class="fa fa-check"></i><b>6.6</b> A Quick Recap</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html"><i class="fa fa-check"></i><b>7</b> Examining the MSE object</a><ul>
+<li class="chapter" data-level="7.1" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-mse-object"><i class="fa fa-check"></i><b>7.1</b> The MSE Object</a><ul>
+<li class="chapter" data-level="7.1.1" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-first-six-slots"><i class="fa fa-check"></i><b>7.1.1</b> The First Six Slots</a></li>
+<li class="chapter" data-level="7.1.2" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-om-slot"><i class="fa fa-check"></i><b>7.1.2</b> The <code>OM</code> Slot</a></li>
+<li class="chapter" data-level="7.1.3" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-obs-slot"><i class="fa fa-check"></i><b>7.1.3</b> The <code>Obs</code> Slot</a></li>
+<li class="chapter" data-level="7.1.4" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-b_bmsy-and-f_fmsy-slots"><i class="fa fa-check"></i><b>7.1.4</b> The <code>B_BMSY</code> and <code>F_FMSY</code> Slots</a></li>
+<li class="chapter" data-level="7.1.5" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-b-fm-and-c-slots"><i class="fa fa-check"></i><b>7.1.5</b> The <code>B</code>, <code>FM</code>, and <code>C</code> Slots</a></li>
+<li class="chapter" data-level="7.1.6" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-tac-slot"><i class="fa fa-check"></i><b>7.1.6</b> The <code>TAC</code> Slot</a></li>
+<li class="chapter" data-level="7.1.7" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-ssb_hist-cb_hist-and-fm_hist-slots"><i class="fa fa-check"></i><b>7.1.7</b> The <code>SSB_hist</code>, <code>CB_hist</code>, and <code>FM_hist</code> Slots</a></li>
+<li class="chapter" data-level="7.1.8" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-effort-slot"><i class="fa fa-check"></i><b>7.1.8</b> The <code>Effort</code> Slot</a></li>
+</ul></li>
+<li class="chapter" data-level="7.2" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#performance-metrics"><i class="fa fa-check"></i><b>7.2</b> Performance Metrics</a><ul>
+<li class="chapter" data-level="7.2.1" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-need-for-performance-metrics"><i class="fa fa-check"></i><b>7.2.1</b> The Need for Performance Metrics</a></li>
+<li class="chapter" data-level="7.2.2" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#inevitable-trade-offs"><i class="fa fa-check"></i><b>7.2.2</b> Inevitable Trade-Offs</a></li>
+<li class="chapter" data-level="7.2.3" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#operational-management-objectives"><i class="fa fa-check"></i><b>7.2.3</b> Operational Management Objectives</a></li>
+<li class="chapter" data-level="7.2.4" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#performance-metrics-in-the-dlmtool"><i class="fa fa-check"></i><b>7.2.4</b> Performance Metrics in the DLMtool</a></li>
+<li class="chapter" data-level="7.2.5" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#developing-additional-performance-metrics"><i class="fa fa-check"></i><b>7.2.5</b> Developing Additional Performance Metrics</a></li>
+<li class="chapter" data-level="7.2.6" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#summarizing-management-procedure-performance"><i class="fa fa-check"></i><b>7.2.6</b> Summarizing Management Procedure Performance</a></li>
+</ul></li>
+<li class="chapter" data-level="7.3" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#plotting-the-mse-results"><i class="fa fa-check"></i><b>7.3</b> Plotting the MSE Results</a><ul>
+<li class="chapter" data-level="7.3.1" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#trade-off-plots"><i class="fa fa-check"></i><b>7.3.1</b> Trade-off Plots</a></li>
+<li class="chapter" data-level="7.3.2" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#boxplot"><i class="fa fa-check"></i><b>7.3.2</b> Boxplot</a></li>
+<li class="chapter" data-level="7.3.3" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#barplot"><i class="fa fa-check"></i><b>7.3.3</b> Barplot</a></li>
+<li class="chapter" data-level="7.3.4" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#joint-probability-plot"><i class="fa fa-check"></i><b>7.3.4</b> Joint Probability Plot</a></li>
+<li class="chapter" data-level="7.3.5" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#wormplot"><i class="fa fa-check"></i><b>7.3.5</b> Wormplot</a></li>
+<li class="chapter" data-level="7.3.6" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#projection-plots"><i class="fa fa-check"></i><b>7.3.6</b> Projection Plots</a></li>
+<li class="chapter" data-level="7.3.7" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#kobe-plots"><i class="fa fa-check"></i><b>7.3.7</b> Kobe Plots</a></li>
+<li class="chapter" data-level="7.3.8" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#scatter-plots"><i class="fa fa-check"></i><b>7.3.8</b> Scatter Plots</a></li>
+<li class="chapter" data-level="7.3.9" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#compare-to-current-conditions"><i class="fa fa-check"></i><b>7.3.9</b> Compare to Current Conditions</a></li>
+<li class="chapter" data-level="7.3.10" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#list-the-mse-plotting-functions"><i class="fa fa-check"></i><b>7.3.10</b> List the MSE Plotting Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#subsetting-the-mse-object"><i class="fa fa-check"></i><b>7.4</b> Subsetting the MSE Object</a><ul>
+<li class="chapter" data-level="7.4.1" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#subsetting-by-performance"><i class="fa fa-check"></i><b>7.4.1</b> Subsetting by Performance</a></li>
+<li class="chapter" data-level="7.4.2" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#subsetting-by-operating-model-parameters"><i class="fa fa-check"></i><b>7.4.2</b> Subsetting by Operating Model Parameters</a></li>
+</ul></li>
+<li class="chapter" data-level="7.5" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#value-of-information"><i class="fa fa-check"></i><b>7.5</b> Value of Information</a><ul>
+<li class="chapter" data-level="7.5.1" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#observation-parameters"><i class="fa fa-check"></i><b>7.5.1</b> Observation Parameters</a></li>
+<li class="chapter" data-level="7.5.2" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#operating-model-parameters"><i class="fa fa-check"></i><b>7.5.2</b> Operating Model Parameters</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html"><i class="fa fa-check"></i><b>8</b> Managing Fishery Data</a><ul>
+<li class="chapter" data-level="8.1" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#the-fishery-data-object-dlm_data"><i class="fa fa-check"></i><b>8.1</b> The Fishery Data Object (<code>DLM_data</code>)</a><ul>
+<li class="chapter" data-level="8.1.1" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#in-the-mse"><i class="fa fa-check"></i><b>8.1.1</b> In the MSE</a></li>
+<li class="chapter" data-level="8.1.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#application-of-management-procedures-using-real-fisheries-data"><i class="fa fa-check"></i><b>8.1.2</b> Application of Management Procedures Using Real Fisheries Data</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#example-dlm_data-objects"><i class="fa fa-check"></i><b>8.2</b> Example <code>DLM_data</code> Objects</a></li>
+<li class="chapter" data-level="8.3" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#creating-your-own-dlm_data-object"><i class="fa fa-check"></i><b>8.3</b> Creating Your Own <code>DLM_data</code> Object</a><ul>
+<li class="chapter" data-level="8.3.1" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#creating-a-csv-data-file"><i class="fa fa-check"></i><b>8.3.1</b> Creating a CSV Data File</a></li>
+<li class="chapter" data-level="8.3.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#populating-a-dlm_data-object-in-r"><i class="fa fa-check"></i><b>8.3.2</b> Populating a <code>DLM_data</code> Object in R</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#working-with-dlm_data-objects"><i class="fa fa-check"></i><b>8.4</b> Working With <code>DLM_data</code> Objects</a></li>
+<li class="chapter" data-level="8.5" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#applying-management-procedures"><i class="fa fa-check"></i><b>8.5</b> Applying Management Procedures</a><ul>
+<li class="chapter" data-level="8.5.1" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#dlm_input-methods"><i class="fa fa-check"></i><b>8.5.1</b> <code>DLM_input</code> Methods</a></li>
+<li class="chapter" data-level="8.5.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#dlm_output-methods"><i class="fa fa-check"></i><b>8.5.2</b> <code>DLM_output</code> Methods</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="assumptions-and-limitations-of-the-dlmtool.html"><a href="assumptions-and-limitations-of-the-dlmtool.html"><i class="fa fa-check"></i><b>9</b> Assumptions and Limitations of the DLMtool</a><ul>
+<li class="chapter" data-level="9.1" data-path="assumptions-and-limitations-of-the-dlmtool.html"><a href="assumptions-and-limitations-of-the-dlmtool.html#idealised-observation-models-for-catch-composition-data"><i class="fa fa-check"></i><b>9.1</b> Idealised Observation Models for Catch Composition Data</a></li>
+<li class="chapter" data-level="9.2" data-path="assumptions-and-limitations-of-the-dlmtool.html"><a href="assumptions-and-limitations-of-the-dlmtool.html#harvest-control-rules-must-be-integrated-into-data-limited-mps"><i class="fa fa-check"></i><b>9.2</b> Harvest Control Rules Must be Integrated into Data-Limited MPs</a></li>
+<li class="chapter" data-level="9.3" data-path="assumptions-and-limitations-of-the-dlmtool.html"><a href="assumptions-and-limitations-of-the-dlmtool.html#natural-mortality-rate-at-age"><i class="fa fa-check"></i><b>9.3</b> Natural Mortality Rate at Age</a></li>
+<li class="chapter" data-level="9.4" data-path="assumptions-and-limitations-of-the-dlmtool.html"><a href="assumptions-and-limitations-of-the-dlmtool.html#ontogenetic-habitat-shifts"><i class="fa fa-check"></i><b>9.4</b> Ontogenetic Habitat Shifts</a></li>
+<li class="chapter" data-level="9.5" data-path="assumptions-and-limitations-of-the-dlmtool.html"><a href="assumptions-and-limitations-of-the-dlmtool.html#implementation-error"><i class="fa fa-check"></i><b>9.5</b> Implementation Error</a></li>
+<li class="chapter" data-level="9.6" data-path="assumptions-and-limitations-of-the-dlmtool.html"><a href="assumptions-and-limitations-of-the-dlmtool.html#short-lived-species"><i class="fa fa-check"></i><b>9.6</b> Short-Lived Species</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>10</b> References</a></li>
+<li class="divider"></li>
+<li><a href="http://www.datalimitedfisheries.com" target="blank">DLMtool website</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool)</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="examining-the-mse-object" class="section level1">
+<h1><span class="header-section-number">Chapter 7</span> Examining the MSE object</h1>
+<p>In the Chapter <a href="MSE.html#MSE">6</a> we used the DLMtool to run a Management Strategy Evaluation for the blue shark stock.</p>
+<p>The output of the MSE was saved to an object, of the class <code>MSE</code>, called <code>BSharkMSE</code>. You should be able to create the <code>BSharkMSE</code> object following the steps outlined in the previous chapters.</p>
+<p>Alternatively you can download the ‘BSharkMSE’ <code>MSE</code> object by executing the following command:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">BSharkMSE &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="kw">gzcon</span>(<span class="kw">url</span>(<span class="st">&quot;https://dl.dropboxusercontent.com/u/24856730/bluesharkMSE.rdata&quot;</span>)))</code></pre></div>
+<p>Note that objects of class <code>MSE</code> contain a lot of information and can be quite large in size. Downloading from the above link may take some time, depending on the speed of your internet connection.</p>
+<div id="the-mse-object" class="section level2">
+<h2><span class="header-section-number">7.1</span> The MSE Object</h2>
+<p>The names of the slots in an object of class <code>MSE</code> can be displayed using the <code>slotNames</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">slotNames</span>(BSharkMSE)</code></pre></div>
+<pre><code>##  [1] &quot;Name&quot;     &quot;nyears&quot;   &quot;proyears&quot; &quot;nMPs&quot;     &quot;MPs&quot;      &quot;nsim&quot;    
+##  [7] &quot;OM&quot;       &quot;Obs&quot;      &quot;B_BMSY&quot;   &quot;F_FMSY&quot;   &quot;B&quot;        &quot;FM&quot;      
+## [13] &quot;C&quot;        &quot;TAC&quot;      &quot;SSB_hist&quot; &quot;CB_hist&quot;  &quot;FM_hist&quot;  &quot;Effort&quot;</code></pre>
+<p>As you can see, <code>MSE</code> objects contain all of the information from the MSE, stored in 18 slots.</p>
+<div id="the-first-six-slots" class="section level3">
+<h3><span class="header-section-number">7.1.1</span> The First Six Slots</h3>
+<p>The first six slots contain information on the structure of the MSE. For example the first slot (<code>Name</code>), is a combination of the names of the <code>Stock</code>, <code>Fleet</code>, and <code>Observation</code> objects that were used in the MSE:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">BSharkMSE@Name</code></pre></div>
+<pre><code>## [1] &quot;Stock:Blue_shark  Fleet:Generic_fleet  Observation model:Imprecise_Biased&quot;</code></pre>
+<p>Other information in these first slots includes the number of historical years (<code>nyears</code>), the number of projection years (<code>proyears</code>), the number of name of the Management Procedures (<code>nMPs</code> and <code>MPs</code>), and the number of simulations (<code>nsim</code>).</p>
+</div>
+<div id="the-om-slot" class="section level3">
+<h3><span class="header-section-number">7.1.2</span> The <code>OM</code> Slot</h3>
+<p>The <code>OM</code> slot in the <code>MSE</code> object is a data frame that the values of the parameters used in the Operating Model:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(BSharkMSE@OM)</code></pre></div>
+<pre><code>##  [1] &quot;RefY&quot;         &quot;M&quot;            &quot;Depletion&quot;    &quot;A&quot;           
+##  [5] &quot;BMSY_B0&quot;      &quot;FMSY_M&quot;       &quot;Mgrad&quot;        &quot;Msd&quot;         
+##  [9] &quot;procsd&quot;       &quot;Esd&quot;          &quot;dFfinal&quot;      &quot;MSY&quot;         
+## [13] &quot;qinc&quot;         &quot;qcv&quot;          &quot;FMSY&quot;         &quot;Linf&quot;        
+## [17] &quot;K&quot;            &quot;t0&quot;           &quot;hs&quot;           &quot;Linfgrad&quot;    
+## [21] &quot;Kgrad&quot;        &quot;Linfsd&quot;       &quot;recgrad&quot;      &quot;Ksd&quot;         
+## [25] &quot;ageM&quot;         &quot;L5&quot;           &quot;LFS&quot;          &quot;Vmaxlen&quot;     
+## [29] &quot;LFC&quot;          &quot;OFLreal&quot;      &quot;Spat_targ&quot;    &quot;Frac_area_1&quot; 
+## [33] &quot;Prob_staying&quot; &quot;AC&quot;           &quot;lenM&quot;         &quot;len95&quot;</code></pre>
+<p>If you use the <code>dim</code> function to report the dimensions of the <code>OM</code> data frame, you’ll notice that there are 36 columns, corresponding to the 36 parameters in the Operating Model, and 300 rows, each corresponding to a single simulation of the MSE.</p>
+</div>
+<div id="the-obs-slot" class="section level3">
+<h3><span class="header-section-number">7.1.3</span> The <code>Obs</code> Slot</h3>
+<p>The <code>Obs</code> slot contains another data frame, this one with 25 columns corresponding to the values drawn from the Observation model:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(BSharkMSE@Obs)</code></pre></div>
+<pre><code>##  [1] &quot;Cbias&quot;       &quot;Csd&quot;         &quot;CAA_nsamp&quot;   &quot;CAA_ESS&quot;     &quot;CAL_nsamp&quot;  
+##  [6] &quot;CAL_ESS&quot;     &quot;Isd&quot;         &quot;Dbias&quot;       &quot;Derr&quot;        &quot;Mbias&quot;      
+## [11] &quot;FMSY_Mbias&quot;  &quot;BMSY_B0bias&quot; &quot;lenMbias&quot;    &quot;LFCbias&quot;     &quot;LFSbias&quot;    
+## [16] &quot;Abias&quot;       &quot;Aerr&quot;        &quot;Kbias&quot;       &quot;t0bias&quot;      &quot;Linfbias&quot;   
+## [21] &quot;hbias&quot;       &quot;Irefbias&quot;    &quot;Crefbias&quot;    &quot;Brefbias&quot;    &quot;betas&quot;</code></pre>
+<p>The <code>Obs</code> data frame also has 300 rows, each corresponding to a single simulation.</p>
+<p>The information contained in the <code>OM</code> and <code>Obs</code> slots can be used to examine the sensitivity of the performance of Management Procedures with respect to different operating model and observation parameters. This is discussed in more detail below.</p>
+</div>
+<div id="the-b_bmsy-and-f_fmsy-slots" class="section level3">
+<h3><span class="header-section-number">7.1.4</span> The <code>B_BMSY</code> and <code>F_FMSY</code> Slots</h3>
+<p>The <code>B_BMSY</code> and <code>F_FMSY</code> are data frames containing the biomass relative to biomass at maximum sustainable yield <span class="math inline">\(\left(\frac{B}{B_{MSY}}\right)\)</span>, and fishing mortality relative to the rate corresponding to maximum sustainable yield <span class="math inline">\(\left(\frac{F}{F_{MSY}}\right)\)</span> for each simulation, Management Procedure and projection year.</p>
+<p>If we look at the class of the <code>B_BMSY</code> slot, we see that it is an <code>array</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(BSharkMSE@B_BMSY)</code></pre></div>
+<pre><code>## [1] &quot;array&quot;</code></pre>
+<p>Using the <code>dim</code> function we can see that it is a 3-dimensional array, with the size corresponding to the number of simulations (<code>nsim</code>), the number of Management Procedures (<code>nMPs</code>), and the number of projection years (<code>proyears</code>):</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(BSharkMSE@B_BMSY)</code></pre></div>
+<pre><code>## [1] 300   5  28</code></pre>
+<p>This information can be used to calculate statistics relating to the performance of each Management Procedure with respect to these metrics.</p>
+<p>For example, if you wish to look at the distribution of <span class="math inline">\(\frac{B}{B_{MSY}}\)</span> for the second Management Procedure (DCAC), you could use the <code>boxplot</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">boxplot</span>(BSharkMSE@B_BMSY[,<span class="dv">2</span>,], <span class="dt">xlab=</span><span class="st">&quot;Year&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;B/BMSY&quot;</span>)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-90-1.png" width="672" /></p>
+<p>This plot shows that the relative biomass for the stock generally increases through the projection period when the DCAC method is used, with the median relative biomass increasing from about 0.83 in the first year to 1.52 in the final year.</p>
+<p>However, the distribution appears to have quite high variability, which suggests that although the method works well on average, the final biomass was very low in some simulations.</p>
+<p>We will look at more aspects of plotting the MSE results in the sections below.</p>
+</div>
+<div id="the-b-fm-and-c-slots" class="section level3">
+<h3><span class="header-section-number">7.1.5</span> The <code>B</code>, <code>FM</code>, and <code>C</code> Slots</h3>
+<p>The <code>B</code>, <code>FM</code>, and <code>C</code> slots contain the information relating to the stock biomass, the fishing mortality rate, and the catch for each simulation, Management Procedure, and projection year.</p>
+<p>Typically, the MSE model in the DLMtool does not include information on the absolute scale of the stock biomass or recruitment, and all results usually must be interpreted in a relativistic context.</p>
+<p>This is particularly true for the biomass (<code>B</code>) and catch (<code>C</code>) where the absolute values in the MSE results (other than 0!) have little meaning.</p>
+<p>The biomass can by made relative to <span class="math inline">\(B_{MSY}\)</span>, as shown above. Alternatively, biomass can be calculated with respect to the unfished biomass <span class="math inline">\(\left(B_0\right)\)</span>, from information stored in the <code>OM</code> slot.</p>
+<p>The catch information is usually made relative to the highest long-term yield (mean over last five years of projection) for each simulation obtained from a fixed <em>F</em> strategy. This information (<code>RefY</code>) can be found in the <code>OM</code> slot.</p>
+<p>Alternatively, the catch can be made relative to the catch in last historical year (<code>CB_hist</code>; see below), to see how future catches are expected to change relative to the current conditions.</p>
+<p>Examples of this are shown in sections below.</p>
+</div>
+<div id="the-tac-slot" class="section level3">
+<h3><span class="header-section-number">7.1.6</span> The <code>TAC</code> Slot</h3>
+<p>Currently, the information in this slot is identical to that in the Catch (<code>C</code>) slot. This may change when an implementation error model is included in the DLMtool.</p>
+</div>
+<div id="the-ssb_hist-cb_hist-and-fm_hist-slots" class="section level3">
+<h3><span class="header-section-number">7.1.7</span> The <code>SSB_hist</code>, <code>CB_hist</code>, and <code>FM_hist</code> Slots</h3>
+<p>The <code>SSB_hist</code>, <code>CB_hist</code>, and <code>FM_hist</code> slots contain information on the spawning stock biomass, the catch biomass, and the fishing mortality from the historical period (the <code>nyears</code> in the operating model).</p>
+<p>These data frames differ from the previously discussed slots as they are 4-dimensional arrays, with dimensions corresponding to the simulation, the age classes, the historical year, and the spatial areas.</p>
+<p>The <code>apply</code> function can be used to aggregate these data over the age-classes or spatial areas.</p>
+</div>
+<div id="the-effort-slot" class="section level3">
+<h3><span class="header-section-number">7.1.8</span> The <code>Effort</code> Slot</h3>
+<p>The <code>Effort</code> slot is a 3-dimensional array containing information on the relative fishing effort (relative to last historical year, or current conditions) for each simulation, Management Procedure and projection year.</p>
+<p>We can look at the distribution of fishing effort for each Management Procedure in the final year of the projection period:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pyear &lt;-<span class="st"> </span>BSharkMSE@proyears
+<span class="kw">boxplot</span>(BSharkMSE@Effort[,, pyear], <span class="dt">outline=</span><span class="ot">FALSE</span>, <span class="dt">names=</span>BSharkMSE@MPs, <span class="dt">ylab=</span><span class="st">&quot;Relative fishing effort&quot;</span>)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-91-1.png" width="672" /></p>
+<p>This plot shows that the median fishing effort in the final year ranges from 0.45 to 0.77 for the first four output control methods, and is constant for the input control method (<code>matlenlim</code>).</p>
+<p>This is because the output control method adjusts the total allowable catch, which depending on the amount of available stock, also impacts the amount of fishing activity.</p>
+<p>The input control methods assume that fishing effort is held at constant levels in the future, although the catchability is able to randomly or systematically vary between years. Furthermore, input control methods can also adjust the amount of fishing effort in each year.</p>
+</div>
+</div>
+<div id="performance-metrics" class="section level2">
+<h2><span class="header-section-number">7.2</span> Performance Metrics</h2>
+<p>A key use of the DLMtool is to evaluate the trade-offs in the performance of different potential Management Procedures and to assist in the decision-making process as to which Management Procedure is most likely to satisfy the various management objectives under realistic range of uncertainty and variability in the system.</p>
+<div id="the-need-for-performance-metrics" class="section level3">
+<h3><span class="header-section-number">7.2.1</span> The Need for Performance Metrics</h3>
+<p>In order to evaluate the relative effectiveness of different Management Procedures, it is important that decision-makers have clearly-defined management objectives. These management objectives can be incorporated into the MSE process in the form of performance metrics, which provide the yardstick with which to compare the relative performance of different management strategies.</p>
+<p>Fisheries managers are confronted with the difficult task of maximizing yield and ensuring the sustainability of the resource and the overall health of the marine environment. The principal objectives of fisheries management could be described as ensuring sustainable harvests and viable fishing communities, while maintaining healthy ecosystems. However, this simplistic view overlooks the fact that there are often conflicts in different management objectives and that there is rarely an optimal management approach that fully satisfies all management objectives (Punt, 2015). Walters and Martell (2004) explain that the task of modern fisheries management is to identify the various trade-offs among conflicting objectives and decide how to balance them in a satisfactory way.</p>
+</div>
+<div id="inevitable-trade-offs" class="section level3">
+<h3><span class="header-section-number">7.2.2</span> Inevitable Trade-Offs</h3>
+<p>A typical trade-off is the abundance of the target species versus the catch. Assuming no significant system-wide natural perturbations, a fish stock may be exploited sustainability if catches are set at low levels. However, such economic under-utilization of the resource is often seen as undesirable. Alternatively, high catches may produce immediate short-term benefits, but may result in long-term degradation, or perhaps collapse, of the stock.</p>
+<p>Additionally, there is often a trade-off between stock size and fishing effort, which results in lower catch rates (and lower profit) for individual fishers when a large number of fishers are active in the fishery (Walters and Martell, 2004). Other common trade-offs include the age and size at first capture, either delaying harvest until individuals are fewer in number (due to natural mortality) but larger in size, or capturing a large number of small sized fish (Punt, 2015).</p>
+<p>When multiple objectives are considered, there is usually not a single optimum solution, and fisheries managers are faced with the difficult task of determining the most appropriate management action that satisfies the numerous management objectives and stakeholder interests (Punt, 2015).</p>
+</div>
+<div id="operational-management-objectives" class="section level3">
+<h3><span class="header-section-number">7.2.3</span> Operational Management Objectives</h3>
+<p>A key strength of the MSE approach is that decision-makers are required to specify clear objectives, which can be classified as either “conceptual” or “operational” (Punt et al., 2014). Conceptual objectives are typically high-level policy goals that may be broadly defined.</p>
+<p>However, in order to be included in an MSE, conceptual objectives must be translated into operational objectives (i.e., expressed as values for performance metrics). Such operational objectives, or performance metrics, may consist of both a reference point (e.g., biomass some fraction of equilibrium unfished level) as well as a measure of the acceptable associated risk (e.g., less than 10% chance that biomass declines below this reference level).</p>
+<p>It is not unusual that some of the management objectives are in conflict. A key benefit of the MSE approach is to highlight these trade-offs among the different management objectives to guide the decision-making process. However, in order for these trade-offs to be quantified, it is critically important that the performance metrics are quantifiable and thus able to be incorporated into the MSE framework (Punt, 2015).</p>
+</div>
+<div id="performance-metrics-in-the-dlmtool" class="section level3">
+<h3><span class="header-section-number">7.2.4</span> Performance Metrics in the DLMtool</h3>
+<p>Management strategy evaluation is a simulation exercise where the model can track the specific performance with perfect information, so it is possible to state performance objectives in specific terms that are consistent with the typical objectives of fisheries policies, such as:</p>
+<ul>
+<li>Biomass relative to unfished biomass <span class="math inline">\(\left(B_0\right)\)</span> or biomass at maximum sustainable yield <span class="math inline">\(\left(B_{MSY}\right)\)</span>.</li>
+<li>Fishing mortality rate relative to fishing at maximum sustainable yield <span class="math inline">\(\left(F_{MSY}\right)\)</span>.</li>
+<li>Yield (short-term or long-term) of a particular management strategy relative to the yield if the fishery were being exploited at <span class="math inline">\(F_{MSY}\)</span>.</li>
+<li>Inter-annual variability in yield or effort (e.g., fluctuations in yield from year to year).</li>
+</ul>
+<p>Because the management strategy evaluation runs many simulations of the fisheries performance under each management strategy being tested, the performance can be stated probabilistically, such as the specific probability of biomass being above or below a specific biomass threshold or target.</p>
+<div id="fishing-mortality" class="section level4">
+<h4><span class="header-section-number">7.2.4.1</span> Fishing Mortality</h4>
+<p>For example, the management strategies can be ranked by the likelihood of overfishing to occur, where the probability of overfishing is measured by the proportion of simulation runs where the fishing mortality rate (<em>F</em>) under a specific management strategy is higher than the <em>F</em> that is expected to produce the maximum sustainable yield.</p>
+<p>Management strategies that have a lower probability of overfishing occurring are typically preferable to those that frequently cause excessive fishing mortality rates. If there are 1,000 simulation runs for each management strategy over a 50-year projection period, then the probability of overfishing could be based on the proportion where <em>F</em> is greater than (or less than) <span class="math inline">\(F_{MSY}\)</span> over all years or any subset of years (e.g., probability of overfishing in years 41-50 of the 50-year projection period).</p>
+</div>
+<div id="stock-biomass" class="section level4">
+<h4><span class="header-section-number">7.2.4.2</span> Stock Biomass</h4>
+<p>Another performance metric included in DLMtool is the probability that the stock biomass is above or below some biological reference point. For example, a minimum performance limit may be half the biomass at maximum sustainable yield (0.5 BMSY), and the performance of the management strategies can be ranked by the probability of the stock remaining above this level.</p>
+<p>Management strategies that fail to maintain biomass above this limit with a high priority may be considered too risky and therefore excluded from further examination.</p>
+</div>
+</div>
+<div id="developing-additional-performance-metrics" class="section level3">
+<h3><span class="header-section-number">7.2.5</span> Developing Additional Performance Metrics</h3>
+<p>There may be other performance metrics that are of interest to fishery managers and stakeholders. Stakeholder participation is critical when developing performance metrics to evaluate different biological scenarios or management strategies in a MSE. Furthermore, it is important that the performance metrics, together with any acceptable risk thresholds are identified and agreed upon before the MSE is conducted.</p>
+<p>The DLMtool can be customized to track and display additional performance metrics as identified by stakeholders.</p>
+</div>
+<div id="summarizing-management-procedure-performance" class="section level3">
+<h3><span class="header-section-number">7.2.6</span> Summarizing Management Procedure Performance</h3>
+<p>The information in the <code>MSE</code> object can be summarized in a number of ways.</p>
+<p>The <code>summary</code> function provides information on the performance of the Management Procedures with respect to various metrics, including the probability of overfishing, and the probability that the biomass is below various reference levels:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(BSharkMSE)</code></pre></div>
+<pre><code>##          MP Yield stdev   POF stdev    P10 stdev   P50 stdev  P100 stdev
+## 1    Fratio 57.51 37.21 39.49  42.29 11.93 26.59 30.38 38.79 50.82 40.78
+## 2      DCAC 63.46 40.96 31.04  42.57  9.74 23.93 20.63 34.84 40.88 41.71
+## 3      Fdem 59.08 40.94 48.77  41.98 15.74 30.27 36.03 40.44 59.47 40.81
+## 4        DD 75.65 41.92 48.56  38.34 11.26 23.39 31.50 34.58 62.60 35.20
+## 5 matlenlim 96.45 37.48 52.29  39.52  0.85  6.57 13.65 28.77 38.17 40.97
+##    LTY  STY   VY
+## 1 51.7 54.7 38.3
+## 2 65.7 67.9 91.0
+## 3 53.1 59.6 37.7
+## 4 75.3 71.7 64.3
+## 5 86.3 74.1  1.3</code></pre>
+<p>This information can be used to identify poorly performing methods, and exclude them from further, perhaps more comprehensive, runs of the MSE.</p>
+</div>
+</div>
+<div id="plotting-the-mse-results" class="section level2">
+<h2><span class="header-section-number">7.3</span> Plotting the MSE Results</h2>
+<p>The DLMtool has 15 plotting functions which can be used to examine the performance of the Management Procedures.</p>
+<div id="trade-off-plots" class="section level3">
+<h3><span class="header-section-number">7.3.1</span> Trade-off Plots</h3>
+<p>One of the most common use of a MSE is to examine the trade-offs in the performance of alternative management procedures.</p>
+<p>The DLMtool has a number of functions to examine these trade-offs, and users of the Toolkit can easily develop their own.</p>
+<p>The <code>Tplot</code> function creates four plots that show the trade-off between the expected relative yield and the probability of overfishing and the probability of the biomass being below three different reference points:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Tplot</span>(BSharkMSE)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-94-1.png" width="672" /></p>
+<p>In this case, the plot shows that the <code>matlenlim</code> method results in the highest long-term yield, and also one of the lower probabilities that the biomass will fall below <span class="math inline">\(0.5B_{MSY}\)</span>.</p>
+<p>The <code>Tplot2</code> function shows the trade-off between long-term and short-term yield, and the trade-off between biomass being above <span class="math inline">\(0.1B_{MSY}\)</span> and the expected variability in the yield:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Tplot2</span>(BSharkMSE)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-95-1.png" width="672" /></p>
+<p>The <code>NOAA_plot</code> function was developed from applications of the DLMtool to fisheries in the Caribbean. This plot shows the trade-offs between the probability of not overfishing and long-term yield, and the probability of not being in an overfished state versus the probability of the annual variation in yield being less than 15%:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">NOAA_plot</span>(BSharkMSE)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-96-1.png" width="672" /></p>
+<pre><code>##           PNOF  B50  LTY   VY
+## Fratio    60.5 69.6 52.2 58.7
+## DCAC      69.0 79.4 64.9 86.0
+## Fdem      51.2 64.0 51.5 59.0
+## DD        51.4 68.5 74.1 70.0
+## matlenlim 47.7 86.3 86.1 16.7</code></pre>
+<p>The <code>TradePlot</code> function was developed as a generic plot that could be used to examine various trade-offs:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TradePlot</span>(BSharkMSE)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-97-1.png" width="672" /></p>
+<pre><code>## [[1]]
+##          MP    X    Y
+## 1      DCAC 69.0 63.5
+## 2 matlenlim 47.7 96.5
+## 3        DD 51.4 75.7
+## 4    Fratio 60.5 57.5
+## 5      Fdem 51.2 59.1
+## 
+## [[2]]
+##     MP  X  Y
+## 1 &lt;NA&gt; NA NA</code></pre>
+<p>The <code>Tradeplot</code> function has several arguments which allow users to choose what trade-offs to display, specify the acceptable risk thresholds, and control other aspects of the plot.</p>
+<p>The acceptable level of risk can be changed using the <code>XThresh</code> and <code>YThresh</code> arguments. For example, here we set the risk threshold for both not overfishing and not being in an overfished state to 50%, and also choose to display the names of the Management Procedures:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TradePlot</span>(BSharkMSE, <span class="dt">XThresh=</span><span class="kw">c</span>(<span class="dv">50</span>, <span class="dv">50</span>), <span class="dt">ShowLabs=</span><span class="ot">TRUE</span>)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-98-1.png" width="672" /></p>
+<pre><code>## [[1]]
+##       MP    X    Y
+## 1   DCAC 69.0 63.5
+## 2     DD 51.4 75.7
+## 3 Fratio 60.5 57.5
+## 4   Fdem 51.2 59.1
+## 
+## [[2]]
+##       MP    X    Y
+## 1   DCAC 79.4 86.0
+## 2     DD 68.5 70.0
+## 3 Fratio 69.6 58.7
+## 4   Fdem 64.0 59.0</code></pre>
+<p>The <code>Tradeplot</code> function returns a list of the performance of the Management Procedures that meet the requirements specified in the risk thresholds (the green space in the plots).</p>
+<p>Like all methods in the DLMtool, the help page for the <code>TradePlot</code> can be accessed by typing <code>?TradePlot</code> into the R console.</p>
+</div>
+<div id="boxplot" class="section level3">
+<h3><span class="header-section-number">7.3.2</span> Boxplot</h3>
+<p>The distribution of various statistics can be examined for the Management Procedures using the <code>boxplot</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">boxplot</span>(BSharkMSE)</code></pre></div>
+<pre><code>## Calculating MP Performance for last 10 years</code></pre>
+<p><img src="userguide_files/figure-html/unnamed-chunk-99-1.png" width="576" /></p>
+<p><code>boxplot</code> is a generic function, which means that its behavior depends on the class of object that is supplied to it. In this case, R recognizes that we pass an object of class <code>MSE</code> to the <code>boxplot</code> function, and calls the appropriate plotting function <code>boxplot.MSE</code>.</p>
+<p>The <code>boxplot.MSE</code> function has a number of arguments which allow users to control various aspects of the plot. You can display the arguments by using the <code>args</code> function (<code>args(boxplot.MSE)</code>) or looking at the help documentation (<code>?boxplot.MSE</code>).</p>
+</div>
+<div id="barplot" class="section level3">
+<h3><span class="header-section-number">7.3.3</span> Barplot</h3>
+<p>The <code>barplot</code> function is another generic function, which calls <code>barplot.MSE</code> when it is supplied with an object of class <code>MSE</code>.</p>
+<p>The <code>barplot</code> function shows the probability of each Management Procedure meeting the specified performance criteria:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">out &lt;-<span class="st"> </span><span class="kw">barplot</span>(BSharkMSE)</code></pre></div>
+<pre><code>## Calculating MP Performance for last 10 years</code></pre>
+<p><img src="userguide_files/figure-html/unnamed-chunk-100-1.png" width="384" /></p>
+<p>Many aspects of the plot can be controlled using the arguments to the <code>barplot.MSE</code> function, including the number of years over which to calculate the probabilities, as well control the performance metrics that shown in the plot.</p>
+<p>The <code>barplot</code> function returns invisible output, which we have captured here by assigning the output of the function to the variable <code>out</code>. We can display this output by typing <code>out</code> into the R console:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">out </code></pre></div>
+<pre><code>##          MP B_BMSYp B_B0p  Pass    MPClass
+## 1      Fdem      63    60 FALSE DLM_output
+## 2        DD      65    62 FALSE DLM_output
+## 3    Fratio      68    65 FALSE DLM_output
+## 4      DCAC      78    76 FALSE DLM_output
+## 5 matlenlim      90    87  TRUE  DLM_input</code></pre>
+<p>This data frame displays the probability with respect to the different performance metrics, as well as whether the Management Procedure passed or failed the specified level of acceptable risk.</p>
+<p>In this can, we can see that the <code>matlenlim</code> method is the only method that meets the requirement of at least 80% probability that the biomass in the last 10 years of the projection period is above <span class="math inline">\(0.5B_{MSY}\)</span> and above <span class="math inline">\(0.2B_0\)</span>.</p>
+</div>
+<div id="joint-probability-plot" class="section level3">
+<h3><span class="header-section-number">7.3.4</span> Joint Probability Plot</h3>
+<p>The previous plots calculate the probability of that Management Procedure will meet individual performance criteria.</p>
+<p>An alternative is to calculate the probability that a Management Procedure will simultaneously meet all of the performance criteria. The <code>Jplot</code> function has been designed to calculate and display the joint probability of meeting multiple criteria.</p>
+<p>For example, the plot below calculates the probability that the biomass in the last 10 years of the projection period is above <span class="math inline">\(0.5B_{MSY}\)</span> and <span class="math inline">\(0.2B_0\)</span> for each of the 5 Management Procedures included in the MSE:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Jplot</span>(BSharkMSE)</code></pre></div>
+<pre><code>## Calculating MP Performance for last 10 years</code></pre>
+<p><img src="userguide_files/figure-html/unnamed-chunk-102-1.png" width="672" /></p>
+<p>The risk threshold and the performance criteria can be adjusted in the arguments to the <code>Jplot</code> function.</p>
+</div>
+<div id="wormplot" class="section level3">
+<h3><span class="header-section-number">7.3.5</span> Wormplot</h3>
+<p>The <code>wormplot</code> function plots the likelihood of meeting biomass targets in future years:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">wormplot</span>(BSharkMSE)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-103-1.png" width="672" /></p>
+<p>The arguments to the <code>wormplot</code> function allow you to choose the reference level for the biomass relative to <span class="math inline">\(B_{MSY}\)</span>, as well as the upper and lower bounds of the colored bands.</p>
+</div>
+<div id="projection-plots" class="section level3">
+<h3><span class="header-section-number">7.3.6</span> Projection Plots</h3>
+<p>The <code>Pplot</code> function plots the trajectories of biomass, fishing mortality, and relative yield for the Management Procedures.</p>
+<p>By default, the <code>Pplot</code> function shows the individual trajectories of <span class="math inline">\(B/B_{MSY}\)</span> and <span class="math inline">\(F/F_{MSY}\)</span> for each simulation:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Pplot</span>(BSharkMSE)</code></pre></div>
+<p><img src="userguide_files/figure-html/projection-plot-1.png" width="672" /></p>
+<p>The <code>YVar</code> argument can be used to specify additional variables of interest. For example, here we have included the projections of yield relative to the long-term optimum yield:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Pplot</span>(BSharkMSE, <span class="dt">YVar=</span><span class="kw">c</span>(<span class="st">&quot;B_BMSY&quot;</span>, <span class="st">&quot;F_FMSY&quot;</span>, <span class="st">&quot;Yield&quot;</span>))</code></pre></div>
+<p><img src="userguide_files/figure-html/projection-plot2-1.png" width="672" /></p>
+<p>The <code>traj</code> argument can be used to summarize the projections into quarantines. Here we show the 20th and 80th percentiles of the distributions (the median (50th percentile) is included by default):</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Pplot</span>(BSharkMSE, <span class="dt">traj=</span><span class="st">&quot;quant&quot;</span>, <span class="dt">quants=</span><span class="kw">c</span>(<span class="fl">0.2</span>, <span class="fl">0.8</span>))</code></pre></div>
+<p><img src="userguide_files/figure-html/projection-plot3-1.png" width="672" /></p>
+<p>Details on additional controls for the <code>Pplot</code> function can be found in the help documentation associated with this function.</p>
+</div>
+<div id="kobe-plots" class="section level3">
+<h3><span class="header-section-number">7.3.7</span> Kobe Plots</h3>
+<p>Kobe plots are often used in stock assessment and MSE to examine the proportion of time the stock spends in different states. A Kobe plot of the MSE results can be produced with the <code>Kplot</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Kplot</span>(BSharkMSE)</code></pre></div>
+<p><img src="userguide_files/figure-html/kobe-plot-1.png" width="672" /></p>
+<p>Because of the way it uses transparent colors to show the overlapping lines, the <code>Kplot</code> function can take a long time to render, especially on machines with a Windows OS.</p>
+</div>
+<div id="scatter-plots" class="section level3">
+<h3><span class="header-section-number">7.3.8</span> Scatter Plots</h3>
+<p>The <code>Splot</code> function can be used to create a simulation-by-simulation scatter plot of the relative fishing mortality and stock biomass for each Management Procedure:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Splot</span>(BSharkMSE)</code></pre></div>
+<pre><code>## Calculating MP Performance for last 10 years</code></pre>
+<p><img src="userguide_files/figure-html/unnamed-chunk-104-1.png" width="672" /></p>
+</div>
+<div id="compare-to-current-conditions" class="section level3">
+<h3><span class="header-section-number">7.3.9</span> Compare to Current Conditions</h3>
+<p>The <code>Cplot</code> shows a scatter plot of the median biomass and median yield over the last five years of the projection relative to the current conditions (the last year in the historical period):</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Cplot</span>(BSharkMSE, <span class="dt">ShowLabs=</span><span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>## Calculating MP Performance for last 5 years</code></pre>
+<p><img src="userguide_files/figure-html/unnamed-chunk-105-1.png" width="672" /></p>
+<p>In this example, the results show that catches in the future are likely to be lower than the current levels of catch regardless of which Management Procedure is used.</p>
+<p>However, the future median biomass for the <code>DD</code> and <code>Fdem</code> methods is also lower than the current levels, which suggests that, in this case, these two methods result in both lower catches and lower biomass and are probably not the most suitable for managing this fishery.</p>
+</div>
+<div id="list-the-mse-plotting-functions" class="section level3">
+<h3><span class="header-section-number">7.3.10</span> List the MSE Plotting Functions</h3>
+<p>You can see a list of all the plotting functions in the DLMtool for <code>MSE</code> objects using the <code>plotFun</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plotFun</span>()</code></pre></div>
+<pre><code>## DLMtool functions for plotting objects of class MSE are:</code></pre>
+<pre><code>## barplot boxplot Cplot Jplot Kplot
+## NOAA_plot Pplot Splot Tplot Tplot2
+## TradePlot VOI VOI2 VOIplot wormplot</code></pre>
+</div>
+</div>
+<div id="subsetting-the-mse-object" class="section level2">
+<h2><span class="header-section-number">7.4</span> Subsetting the MSE Object</h2>
+<p>The plotting functions demonstrated above calculate the probabilities and show the trade-offs for all the simulations in the MSE. However, sometimes it is interesting to examine the results of individual Management Procedures or simulations.</p>
+<p>Many of the plotting functions have the optional arguments <code>MPs</code> and <code>sims</code> which allow you to specify which particular Management Procedures or simulations to include in the plots.</p>
+<p>You can also manually subset the <code>MSE</code> object using the <code>Sub</code> function.</p>
+<div id="subsetting-by-performance" class="section level3">
+<h3><span class="header-section-number">7.4.1</span> Subsetting by Performance</h3>
+<p>For example, we may wish to exclude any Management Procedures that have less than 30% probability that the biomass is below <span class="math inline">\(0.5B_{MSY}\)</span>, and focus our analysis on the remaining Management Procedures.</p>
+<p>We can do this using a combination of the <code>summary</code> function and the <code>Sub</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">stats &lt;-<span class="st"> </span><span class="kw">summary</span>(BSharkMSE) <span class="co"># save summary object to `stats`</span>
+accept &lt;-<span class="st"> </span><span class="kw">which</span>(stats$P50 &lt;<span class="st"> </span><span class="dv">30</span>) <span class="co"># index of methods that pass the criteria</span>
+MPs &lt;-<span class="st"> </span>stats[accept,<span class="st">&quot;MP&quot;</span>] <span class="co"># the acceptable MPs</span>
+
+subMSE &lt;-<span class="st"> </span><span class="kw">Sub</span>(BSharkMSE, <span class="dt">MPs=</span>MPs)</code></pre></div>
+<p>Here we can see that the DCAC, matlenlim methods (2 of the 5) met our specified criteria. We used the <code>Sub</code> function to create a new <code>MSE</code> object that only includes these Management Procedures.</p>
+<p>We can than proceed to continue our analysis on the <code>subMSE</code> object, e.g.:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Tplot</span>(subMSE)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-108-1.png" width="672" /></p>
+</div>
+<div id="subsetting-by-operating-model-parameters" class="section level3">
+<h3><span class="header-section-number">7.4.2</span> Subsetting by Operating Model Parameters</h3>
+<p>We can also subset the <code>MSE</code> object by simulation. For example, we may be interested to look at how the methods perform under different assumptions about the natural mortality rate (<em>M</em>).</p>
+<p>In this MSE <em>M</em> ranged from 0.15 to 0.25. Here we identify the simulations where <em>M</em> was below and above the median rate:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">below &lt;-<span class="st"> </span>BSharkMSE@OM$M &lt;<span class="st"> </span><span class="kw">median</span>(BSharkMSE@OM$M)
+above &lt;-<span class="st"> </span>BSharkMSE@OM$M &gt;<span class="st"> </span><span class="kw">median</span>(BSharkMSE@OM$M)</code></pre></div>
+<p>We can then use the <code>Sub</code> function to create two MSE objects, one only including simulations with lower values of <em>M</em>, and the other with simulations where <em>M</em> was above the median value:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">belowMSE &lt;-<span class="st"> </span><span class="kw">Sub</span>(BSharkMSE, <span class="dt">sims=</span>below)
+aboveMSE &lt;-<span class="st"> </span><span class="kw">Sub</span>(BSharkMSE, <span class="dt">sims=</span>above)</code></pre></div>
+<p>You can see that the original MSE object has been split into two objects, each with half of the simulations:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">belowMSE@nsim</code></pre></div>
+<pre><code>## [1] 150</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aboveMSE@nsim</code></pre></div>
+<pre><code>## [1] 150</code></pre>
+<p>We could then continue our analysis on each subset MSE and determine if the natural mortality rate is critical in determining which Management Procedure we would choose as the best option for managing the fishery.</p>
+</div>
+</div>
+<div id="value-of-information" class="section level2">
+<h2><span class="header-section-number">7.5</span> Value of Information</h2>
+<p>In the last section we looked at how the <code>MSE</code> object can subset by simulations which allows us to explore the sensitivity to various operating model parameters. However, this method only allows us the examine the sensitivity to a single parameter at a time. The Value of Information (VOI) functions have been designed to explore the sensitivity of the performance of the Management Procedures in more detail.</p>
+<div id="observation-parameters" class="section level3">
+<h3><span class="header-section-number">7.5.1</span> Observation Parameters</h3>
+<p>The <code>VOIplot</code> function shows how the relative long-term yield changes with respect to the Observation parameters:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOIplot</span>(BSharkMSE, <span class="dt">nMP=</span><span class="dv">5</span>)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-112-1.png" width="864" /></p>
+<p>By default, the <code>VOIplot</code> function only shows the four Management Procedures with the greatest sensitivity. Here we’ve made it show all five methods using the <code>nMP</code> argument.</p>
+<p>In this example, we can see that the <code>Fratio</code> method is particularly sensitive to bias in the current estimate of abundance, and over-estimates of the current abundance result in very low long-term yield (probably do to collapse of the stock). The DCAC method appears most sensitive to bias in the estimated catch.</p>
+</div>
+<div id="operating-model-parameters" class="section level3">
+<h3><span class="header-section-number">7.5.2</span> Operating Model Parameters</h3>
+<p>We can also look at the sensitivity with respect to the Operating Model parameters:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOIplot</span>(BSharkMSE, <span class="dt">Par=</span><span class="st">&quot;OM&quot;</span>, <span class="dt">nMP=</span><span class="dv">5</span>)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-113-1.png" width="864" /></p>
+<p>Here we can see that the <code>Fratio</code> method is most sensitive to <span class="math inline">\(F_{MSY}/M\)</span>, with yield generally increasing for higher values of the ratio.</p>
+<p>We can also use the <code>VOIplot</code> function to look at the sensitivity with respect to the final biomass by specifying the <code>YVar</code> argument:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOIplot</span>(BSharkMSE, <span class="dt">Par=</span><span class="st">&quot;OM&quot;</span>, <span class="dt">nMP=</span><span class="dv">5</span>, <span class="dt">YVar=</span><span class="st">&quot;B&quot;</span>)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-114-1.png" width="864" /></p>
+<p>This result shows, perhaps unsurprisingly, that the final biomass is often strongly sensitive to the initial depletion, particularly for the DCAC and matlenlim methods.</p>
+<p>The DLMtool also includes other value of information functions (<code>VOI</code> and <code>VOI2</code>) which present this information in alternative ways.</p>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="MSE.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="managing-fishery-data.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
+
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": null,
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": ["userguide.pdf"],
+"toc": {
+"collapse": "section"
+},
+"<!--edit": "https://github.com/DLMtool/DLMtool_UserGuide/edit/master/%s-->"
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    if (location.protocol !== "file:" && /^https?:/.test(script.src))
+      script.src  = script.src.replace(/^https?:/, '');
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
