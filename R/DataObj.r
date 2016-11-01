@@ -290,8 +290,7 @@ getTAC<-function(DLM_data,MPs=NA,reps=100){
     if(nsims<8){
       sfExport(list=c("MPs","reps"))
       for(ss in 1:nsims){
-	    temp <<- t(sfSapply(1:length(MPs),parallelMPs,DLM_data=DLM_data,reps=reps,MPs=MPs,ss=ss))
-		if (mode(temp) == "numeric") TACa[,,ss] <- temp
+		temp <- (sfSapply(1:length(MPs),parallelMPs,DLM_data=DLM_data,reps=reps,MPs=MPs,ss=ss))
 		if (mode(temp) == "list") {
 		  Lens <- unlist(lapply(temp, length))
 		  for (X in 1:length(Lens)) {
@@ -304,7 +303,10 @@ getTAC<-function(DLM_data,MPs=NA,reps=100){
 			  DLM_data@Misc[[ss]] <- temp[,X][[1]][ind,]
 			}
 		  }
-	    } 
+	    } else {
+		  temp <- matrix(temp, nrow=nMPs, ncol=reps, byrow=TRUE)
+		  TACa[,,ss] <- temp
+		}
       }
     }else{
       for(ff in 1:nMPs){
@@ -447,7 +449,6 @@ runInMP <- function(DLM_data,MPs=NA,reps=100) {
 boxplot.DLM_data <- function(x, outline=FALSE, ...) {
   DLM_data <- x 
   if (class(DLM_data) != "DLM_data") stop("Object must be of class 'DLM_data'")
-  if (all(is.na(dim(DLM_data@TAC[,,1])))) stop("No TAC data found")
   tacs <- t(DLM_data@TAC[,,1])
   MPs <- DLM_data@MPs 
   ind <- grep("ref", MPs)
@@ -455,14 +456,24 @@ boxplot.DLM_data <- function(x, outline=FALSE, ...) {
     tacs <- tacs[,-ind]
     MPs <- MPs[-ind]
   }
-  ord <- order(apply(tacs, 2, median, na.rm=TRUE))
-  MPs <- MPs[ord]
-  tacs <- tacs[,ord]
+  if (nrow(tacs)>1) {
+    ord <- order(apply(tacs, 2, median, na.rm=TRUE))
+    MPs <- MPs[ord]
+    tacs <- tacs[,ord]
+	cols <- rainbow(30)
+    ymax <- quantile(apply(tacs, 2, quantile, 0.99, na.rm=TRUE), 0.99)
+    ymin <- quantile(apply(tacs, 2, quantile, 0.01, na.rm=TRUE), 0.01)
+    ylim <- c(ymin, ymax)
+	Median <- round(apply(tacs, 2, median, na.rm=TRUE),2)
+	SD <- round(apply(tacs, 2, sd, na.rm=TRUE),2)
+  } else {
+    ylim <- range(tacs)
+	Median <- median(tacs)
+	SD <- sd(tacs)
+	tacs <- as.numeric(tacs)
+	cols <- "black"
+  }
   
-  cols <- rainbow(30)
-  ymax <- quantile(apply(tacs, 2, quantile, 0.99, na.rm=TRUE), 0.99)
-  ymin <- quantile(apply(tacs, 2, quantile, 0.01, na.rm=TRUE), 0.01)
-  ylim <- c(ymin, ymax)
   par(mfrow=c(1,1), oma=c(2,4,1,0), mar=c(3,3,0,0))
   boxplot(tacs, names=MPs, las=1, col=cols, outline=outline, frame=FALSE, ylim=ylim, 
           horizontal=TRUE, ...)
@@ -471,8 +482,7 @@ boxplot.DLM_data <- function(x, outline=FALSE, ...) {
   mtext(side=2, "Management Procedures", outer=TRUE, line=3, cex=1.25)
   mtext(paste("TAC calculation for ",DLM_data@Name,sep=""),3,outer=T,line=-0.5, cex=1.25)
   
-  data.frame(MP=MPs, Median=round(apply(tacs, 2, median, na.rm=TRUE),2),
-             SD=round(apply(tacs, 2, sd, na.rm=TRUE),2), Units=DLM_data@Units)
+  data.frame(MP=MPs, Median=Median,SD=SD, Units=DLM_data@Units)
   
 }
 
@@ -504,4 +514,5 @@ Input <- function(DLM_data, MPs=NA, reps=100, timelimit=10, CheckMPs=TRUE) {
   Out 
 
 }
+
 
