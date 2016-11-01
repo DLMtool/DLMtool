@@ -23,6 +23,3 @@ The released version of DLMtool can be downloaded from CRAN:
 ```
 install.packages("DLMtool")
 ```
-
-### Bugs and Issues
-Please report any bugs or issues through [GitHub](https://github.com/DLMtool/DLMtool/issues) or the [DLMtool Website](http://www.datalimitedtoolkit.org/contact).

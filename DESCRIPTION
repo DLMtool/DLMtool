@@ -31,3 +31,5 @@ Imports:
     readxl
 LinkingTo: Rcpp
 RoxygenNote: 5.0.1
+URL: https://github.com/DLMtool/DLMtool
+BugReports: https://github.com/DLMtool/DLMtool/issues
