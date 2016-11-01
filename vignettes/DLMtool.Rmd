@@ -456,12 +456,12 @@ ourReefFish <- TAC(ourReefFish)
 ```
 
 ```{r plotOurReefFish, eval=FALSE}
-plot(ourReefFish)
+boxplot(ourReefFish)
 ```
 
 ```{r Load, echo=FALSE, eval=TRUE, fig.height=7, fig.width=7}
-data(ourReefFish)
-plot(ourReefFish)
+ourReefFish <- TAC(ourReefFish)
+boxplot(ourReefFish)
 ```
 
 <!--
