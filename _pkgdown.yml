@@ -1,5 +1,10 @@
 title: DLMtool Documentation
-bootswatch: darkly
+icon: logo.png
+
+templates:
+  params:
+    bootswatch: yeti
+
 navbar:
   title: "Documentation Home"
   type: inverse
