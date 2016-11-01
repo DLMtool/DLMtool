@@ -42,6 +42,7 @@ betaconv<-function(m,sd)(1-m)*(((m*(1-m))/(sd^2))-1)
 trlnorm<-function(reps,mu,cv) {
  if (all(is.na(mu))) return(rep(NA, reps))
  if (all(is.na(cv))) return(rep(NA, reps))
+ if (reps==1) return(mu)
  return(rlnorm(reps,mconv(mu,mu*cv),sdconv(mu,mu*cv)))
 }
 
