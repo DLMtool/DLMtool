@@ -12,25 +12,12 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">Documentation Home</a>
+      <a class="navbar-brand" href="index.html">DLMtool Documentation</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav"><li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Operating Model
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu"><li>
-      <a href="reference/OM_Input/index.html">OM Input</a>
-    </li>
-    <li>
-      <a href="reference/OM_Setup/index.html">OM Setup</a>
-    </li>
-    <li>
-      <a href="reference/Run_MSE/index.html">Run MSE</a>
-    </li>
-  </ul></li>
+      <ul class="nav navbar-nav"><li>
+  <a href="userguide/index.html">User Guide</a>
+</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Management Procedures
@@ -49,26 +36,32 @@
   </ul></li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    R Objects
+    Functions
      
     <span class="caret"></span>
   </a>
-  <ul class="dropdown-menu" role="menu"><li class="dropdown-header">MSE Object</li>
-    <li>
-      <a href="reference/MSE_Plots/index.html">Plotting Functions</a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="reference/Operating_Model_Functions/index.html">Setup Operating Model</a>
     </li>
     <li>
-      <a href="reference/MSE_Functions/index.html">MSE Object Functions</a>
+      <a href="reference/Run_MSE_Functions/index.html">Run MSE Functions</a>
     </li>
-    <li class="dropdown-header">Data Object</li>
+    <li class="dropdown-header">MSE Object</li>
     <li>
-      <a href="reference/Available_Methods/index.html">Available Methods</a>
-    </li>
-    <li>
-      <a href="reference/Apply_MP/index.html">Apply Methods</a>
+      <a href="reference/MSE_Object_Plotting_Functions/index.html">MSE Plotting Functions</a>
     </li>
     <li>
-      <a href="reference/Data_Plots/index.html">Plotting Functions</a>
+      <a href="reference/MSE_Object_Functions/index.html">MSE Object Functions</a>
+    </li>
+    <li class="dropdown-header">Fishery Data Object</li>
+    <li>
+      <a href="reference/Available_Methods_and_Required_Data/index.html">Available Methods and Required Data</a>
+    </li>
+    <li>
+      <a href="reference/Apply_Management_Procedures/index.html">Apply Management Procedures</a>
+    </li>
+    <li>
+      <a href="reference/Fishery_Data_Plotting_Functions/index.html">Fishery Data Plotting Functions</a>
     </li>
   </ul></li>
 <li class="dropdown">
@@ -78,31 +71,19 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
-      <a href="reference/Class/index.html">Object Classes</a>
+      <a href="reference/Estimation_Functions/index.html">Estimation Functions</a>
     </li>
     <li>
-      <a href="reference/Estimation_Methods/index.html">Estimation Methods</a>
+      <a href="reference/Other_Functions/index.html">Other Functions</a>
     </li>
     <li>
-      <a href="reference/Handy_Functions/index.html">Handy Functions</a>
+      <a href="reference/R_Object_Classes/index.html">R Object Classes</a>
     </li>
     <li>
-      <a href="reference/Other/index.html">Other</a>
+      <a href="reference/Internal_Functions/index.html">Internal Functions</a>
     </li>
   </ul></li>
-<li>
-  <a href="userguide/index.html">User Guide</a>
-</li>
-<li>
-  <a href="http://www.datalimitedtoolkit.org/">DLMtool Website</a>
-</li>
-      </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/DLMtool/DLMtool">
-    <span class="fa fa-github"></span>
-     
-  </a>
-</li>
-      </ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -113,16 +94,11 @@
 <div class="page-header"><h1 class="hasAnchor">
 <a href="#data-limited-methods-toolkit-dlmtool" class="anchor"> </a>Data-Limited Methods Toolkit (DLMtool)</h1></div>
 
-<p>The Data-Limited Methods Toolkit (DLMtool) is a R package that uses computer simulations of real-world fisheries to help scientists and managers with three common objectives:</p>
+<p>The Data-Limited Methods Toolkit (DLMtool) is an R package that uses computer simulations of real-world fisheries to help scientists and managers with three common objectives:</p>
 <ol><li>Identifying effective management methods given the uncertainties associated with data-limited fisheries</li>
-<li>Computing explicit management recommendations based on the best-available data</li>
+<li>Computing explicit management recommendations based on the currently available data</li>
 <li>Prioritizing future data collection programs</li>
-</ol><div id="dlmtool-documentation" class="section level3">
-<h3 class="hasAnchor">
-<a href="#dlmtool-documentation" class="anchor"> </a>DLMtool Documentation</h3>
-<p>This site contains the documentation for the functions in the DLMtool package.</p>
-</div>
-<div id="dlmtool-user-guide" class="section level3">
+</ol><div id="dlmtool-user-guide" class="section level3">
 <h3 class="hasAnchor">
 <a href="#dlmtool-user-guide" class="anchor"> </a>DLMtool User Guide</h3>
 <p>A comprehensive user guide for DLMtool is available <a href="userguide/index.html">here</a>.</p>
@@ -142,9 +118,8 @@
   </div>
 
   <div class="col-md-3" id="sidebar">
-    <h2>Links</h2><ul class="list-unstyled"><li>Download from CRAN at <br><a href="https://cran.r-project.org/package=DLMtool">https://cran.r-project.org/package=DLMtool</a></li>
-<li>Browse source code at <br><a href="https://github.com/DLMtool/DLMtool">https://github.com/DLMtool/DLMtool</a></li>
-<li>Report a bug at <br><a href="https://github.com/DLMtool/DLMtool/issues">https://github.com/DLMtool/DLMtool/issues</a></li>
+    <h2>Links</h2><ul class="list-unstyled"><li>Download from CRAN at <br><a href="https://cran.r-project.org/package=DLMtool">https://&#8203;cran.r-project.org/&#8203;package=DLMtool</a></li>
+<li>Report a bug at <br><a href="https://github.com/DLMtool/DLMtool/issues">https://&#8203;github.com/&#8203;DLMtool/&#8203;DLMtool/&#8203;issues</a></li>
 </ul><h2>License</h2>
 <p><a href="https://www.r-project.org/Licenses/GPL-2">GPL-2</a></p>
 <h2>Developers</h2><ul class="list-unstyled"><li>Tom Carruthers <br><small class="roles"> Author, maintainer </small> </li>
