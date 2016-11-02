@@ -6,17 +6,11 @@ templates:
     bootswatch: yeti
 
 navbar:
-  title: "Documentation Home"
+  title: "DLMtool Documentation"
   type: inverse
   left:
-    - text: "Operating Model"
-      menu:
-      - text: "OM Input"
-        href: reference/OM_Input/index.html
-      - text: "OM Setup"
-        href: reference/OM_Setup/index.html
-      - text: "Run MSE"
-        href: reference/Run_MSE/index.html          
+    - text: "User Guide"
+      href: userguide/index.html 
     - text: "Management Procedures"
       menu:
       - text: "Output Controls"
@@ -24,35 +18,35 @@ navbar:
       - text: "Input Controls"
         href: reference/Input_Controls/index.html
       - text: "Reference Methods"
-        href: reference/Reference_Methods/index.html      
-    - text: "R Objects" 
+        href: reference/Reference_Methods/index.html             
+    - text: "Functions" 
       menu:
+      - text: "Setup Operating Model"
+        href: reference/Operating_Model_Functions/index.html
+      - text: "Run MSE Functions"
+        href: reference/Run_MSE_Functions/index.html         
       - text: "MSE Object"
-      - text: "Plotting Functions"
-        href: reference/MSE_Plots/index.html  
+      - text: "MSE Plotting Functions"
+        href: reference/MSE_Object_Plotting_Functions/index.html  
       - text: "MSE Object Functions"
-        href: reference/MSE_Functions/index.html       
-      - text: "Data Object"
-      - text: "Available Methods"
-        href: reference/Available_Methods/index.html 
-      - text: "Apply Methods"
-        href: reference/Apply_MP/index.html 
-      - text: "Plotting Functions"
-        href: reference/Data_Plots/index.html 
+        href: reference/MSE_Object_Functions/index.html       
+      - text: "Fishery Data Object"
+      - text: "Available Methods and Required Data"
+        href: reference/Available_Methods_and_Required_Data/index.html 
+      - text: "Apply Management Procedures"
+        href: reference/Apply_Management_Procedures/index.html 
+      - text: "Fishery Data Plotting Functions"
+        href: reference/Fishery_Data_Plotting_Functions/index.html 
     - text: "Other"
-      menu:
-      - text: "Object Classes"
-        href: reference/Class/index.html   
-      - text: "Estimation Methods"
-        href: reference/Estimation_Methods/index.html    
-      - text: "Handy Functions"
-        href: reference/Handy_Functions/index.html    
-      - text: "Other"
-        href: reference/Other/index.html      
-    - text: "User Guide"
-      href: userguide/index.html
-    - text: "DLMtool Website"
-      href: http://www.datalimitedtoolkit.org/     
-  right:
-    - icon: fa-github
-      href: https://github.com/DLMtool/DLMtool
+      menu: 
+      - text: "Estimation Functions"
+        href: reference/Estimation_Functions/index.html    
+      - text: "Other Functions"
+        href: reference/Other_Functions/index.html   
+      - text: "R Object Classes"
+        href: reference/R_Object_Classes/index.html          
+      - text: "Internal Functions"
+        href: reference/Internal_Functions/index.html      
+
+    # - text: "DLMtool Website"
+      # href: http://www.datalimitedtoolkit.org/     
