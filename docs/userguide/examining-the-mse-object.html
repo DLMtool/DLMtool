@@ -24,7 +24,7 @@
   
 
 
-<meta name="date" content="2016-11-01">
+<meta name="date" content="2016-11-03">
 
 <script type="text/x-mathjax-config">
 MathJax.Hub.Config({
@@ -292,8 +292,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1><span class="header-section-number">Chapter 7</span> Examining the MSE object</h1>
 <p>In the Chapter <a href="MSE.html#MSE">6</a> we used the DLMtool to run a Management Strategy Evaluation for the blue shark stock.</p>
 <p>The output of the MSE was saved to an object, of the class <code>MSE</code>, called <code>BSharkMSE</code>. You should be able to create the <code>BSharkMSE</code> object following the steps outlined in the previous chapters.</p>
-<p>Alternatively you can download the ‘BSharkMSE’ <code>MSE</code> object by executing the following command:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">BSharkMSE &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="kw">gzcon</span>(<span class="kw">url</span>(<span class="st">&quot;https://dl.dropboxusercontent.com/u/24856730/bluesharkMSE.rdata&quot;</span>)))</code></pre></div>
+<p>Alternatively you can <a href="https://github.com/DLMtool/DLMtool_Data/raw/master/bluesharkMSE.rdata">download</a> the ‘BSharkMSE’ <code>MSE</code> object and save to your working directory.</p>
+<p>You may be able to import the MSE data file directly into R by executing the following command, although this may only working on some operating systems:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">BSharkMSE &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="kw">gzcon</span>(<span class="kw">url</span>(<span class="st">&quot;https://github.com/DLMtool/DLMtool_Data/raw/master/bluesharkMSE.rdata&quot;</span>)))</code></pre></div>
 <p>Note that objects of class <code>MSE</code> contain a lot of information and can be quite large in size. Downloading from the above link may take some time, depending on the speed of your internet connection.</p>
 <div id="the-mse-object" class="section level2">
 <h2><span class="header-section-number">7.1</span> The MSE Object</h2>
