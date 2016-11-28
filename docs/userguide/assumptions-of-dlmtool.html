@@ -37,8 +37,8 @@ MathJax.Hub.Config({
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
-<link rel="prev" href="MPs.html">
-<link rel="next" href="examining-the-mse-object.html">
+<link rel="prev" href="managing-fishery-data.html">
+<link rel="next" href="references.html">
 
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -303,114 +303,80 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="MSE" class="section level1">
-<h1><span class="header-section-number">Chapter 6</span> Management Strategy Evaluation</h1>
-<p>The last two chapters described how to set up an Operating Model object and to select or develop Management Procedures.</p>
-<p>This chapter will describe how to run the Management Strategy Evaluation using the DLMtool</p>
-<div id="re-cap-on-setting-up-dlmtool" class="section level2">
-<h2><span class="header-section-number">6.1</span> Re-cap on Setting up DLMtool</h2>
-<p>Chapter <a href="preq.html#preq">3</a> describes the necessary to set up the DLMtool. In brief, the following five lines should appear at the top of your script whenever you are using the DLMtool to run a MSE:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(DLMtool)
-for(i in <span class="dv">1</span>:<span class="kw">length</span>(DLMdat)) <span class="kw">assign</span>(DLMdat[[i]]@Name, DLMdat[[i]])
-<span class="kw">sfInit</span>(<span class="dt">parallel=</span><span class="ot">TRUE</span>, <span class="dt">cpus=</span><span class="kw">detectCores</span>())
-<span class="kw">sfExportAll</span>()
-<span class="kw">set.seed</span>(<span class="dv">101</span>) </code></pre></div>
+<div id="assumptions-of-dlmtool" class="section level1">
+<h1><span class="header-section-number">Chapter 9</span> Assumptions of DLMtool</h1>
+<!-- Tips, and Additional Information -->
+<!-- FAQ list to come -->
+<p>Like all models, DLMtool is a simplication of reality. In order to approximate real fishery dynamics, DLMtool relies on a number of simplifying assumptions.</p>
+<p>Some of these assumptions are common to many fishery science models (e.g., age-structured population dynamics) and are a central to the structure of DLMtool. Other assumptions are a result of the way DLMtool was designed and developed, and may represent limitations of DLMtool for applications to particular situations. It may be possible to deal with some of these assumptions by further development of DLMtool.</p>
+<div id="biology" class="section level2">
+<h2><span class="header-section-number">9.1</span> Biology</h2>
+<div id="short-lived-species" class="section level3">
+<h3><span class="header-section-number">9.1.1</span> Short-Lived Species</h3>
+<p>Due to the problems with approximating fine-scale temporal dynamics with an annual model it is not advised to use the DLMtool for very short lived stocks (i.e., species with a longevity of 5 years or less).</p>
+<p>Technically, you could just divide all temporal parameters by a subyear resolution, but the TAC would be set by sub year and the data would also be available at this fine-scale which is highly unlikely in a data-limited setting.</p>
+<p>A MSE model with monthly or weekly time-steps for the population dynamics is required for short-lived species, and may be developed in the future.</p>
 </div>
-<div id="defining-the-operating-model" class="section level2">
-<h2><span class="header-section-number">6.2</span> Defining the Operating Model</h2>
-<p>The operating model is the ‘simulated reality’: a series of known simulations for testing various data-limited Management Procedures. Operating models can either be specified in detail according to each variable (e.g. sample natural mortality rate between 0.2 and 0.3) or alternatively the user can rapidly construct an operating model based on a set of predefined <code>Stock</code>, <code>Fleet</code> and <code>Observation</code> models. See Chapter <a href="setupOM.html#setupOM">4</a> for more details on the operating model.</p>
-<p>In this case we take the latter approach and pick the <code>Blue_shark</code> stock type, a generic fleet type and an observation model that generates data that can be both imprecise and biased.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;OM&#39;</span>, Blue_shark, Generic_fleet, Imprecise_Biased)</code></pre></div>
+<div id="density-dependent-compensation" class="section level3">
+<h3><span class="header-section-number">9.1.2</span> Density-Dependent Compensation</h3>
+<p>DLMtool assumes there is no density-dependent compensation in the population dynamics, and fish growth, maturity, and mortality does not change directly in response to changes in stock size.</p>
 </div>
-<div id="choose-management-procedures" class="section level2">
-<h2><span class="header-section-number">6.3</span> Choose Management Procedures</h2>
-<p>The MSE can be run either with all of the Management Procedures contained within DLMtool or a subset of methods, for example, only the output control class of methods. As an example, if you wanted to choose four output controls, and one input control method, you would enter the following code. See Chapter <a href="MPs.html#MPs">5</a> for more details on the Management Procedures, including how we created the <code>matlenlim</code> input control method.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MPs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Fratio&quot;</span>, <span class="st">&quot;DCAC&quot;</span>, <span class="st">&quot;Fdem&quot;</span>, <span class="st">&quot;DD&quot;</span>, <span class="st">&quot;matlenlim&quot;</span>) </code></pre></div>
+<div id="von-bertalanffy-growth" class="section level3">
+<h3><span class="header-section-number">9.1.3</span> von Bertalanffy Growth</h3>
+<p>Growth model in DLMtool is modelled using the von Bertalanffy growth curve. While this is the most commonly applied model to describe fish growth, it may not be the preferred growth model for some species. The consequences of assuming the von Bertalanffy growth model should be considered when using the DLMtool for species with alternative growth patterns.</p>
 </div>
-<div id="the-runmse-function" class="section level2">
-<h2><span class="header-section-number">6.4</span> The <code>runMSE</code> Function</h2>
-<p>The MSE is run using the <code>runMSE</code> function. In addition to the <code>OM</code> (Operating Model) and <code>MPs</code> (Management Procedures) arguments, the <code>RunMSE</code> function has a number of other arguments to control the MSE.</p>
-<p>You can access the help file for the <code>runMSE</code> function by typing: <code>?runMSE</code> into the R console.</p>
-<div id="description-of-the-arguments" class="section level3">
-<h3><span class="header-section-number">6.4.1</span> Description of the Arguments</h3>
-<p>Here we briefly describe the arguments for the <code>runMSE</code> function:</p>
-<ul>
-<li><code>OM</code> - An object of class <code>OM</code>. Must be specified, see Chapter <a href="setupOM.html#setupOM">4</a> for details.</li>
-<li><code>MPs</code> - A character vector specifying the Management Procedures to be included in the MSE. If not specified, the DLMtool will run the MSE for all available methods in the Toolkit.</li>
-<li><code>nsim</code> - Number of simulations</li>
-<li><code>proyears</code> - Number of projected years</li>
-<li><code>interval</code> - The assessment interval - how often would you like to update the management system?</li>
-<li><code>pstar</code> - The percentile of the sample of the management recommendation for each method</li>
-<li><code>maxF</code> - Maximum instantaneous fishing mortality rate that may be simulated for any given age class</li>
-<li><code>timelimit</code> - Maximum time taken for a method to carry out 10 reps (methods are ignored that take longer)</li>
-<li><code>reps</code> - The number of samples of the management recommendation for each method. Note that when this is set to 1, the mean value of the data inputs is used</li>
-<li><code>custompars</code> - An optional data table that allows users to prescribe correlated parameters or estimates from stock assessments.</li>
-<li><code>CheckMPs</code> - A logical value to specify if the DLMtool should check if the Management Procedures can be run before running the entire MSE. Mainly used for developing and testing new methods.</li>
-</ul>
-</div>
-<div id="using-runmse" class="section level3">
-<h3><span class="header-section-number">6.4.2</span> Using <code>runMSE</code></h3>
-<p>Most of the arguments for the <code>runMSE</code> function have default values. The most important parameters to specify are the Operating Model object, the Management Procedures to include, the number of simulations, the number of projection years, and the interval for management.</p>
-<p>Here we will demonstrate running the blue shark operating model that we created above, for the five Management Procedures selected above. Note that in this example we have chosen to include 10 simulations (<code>nsim</code>=10) and left the other parameters at the default values.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">BSharkMSE &lt;-<span class="st"> </span><span class="kw">runMSE</span>(<span class="dt">OM=</span>OM, <span class="dt">MPs=</span>MPs, <span class="dt">nsim=</span><span class="dv">10</span>)</code></pre></div>
-<pre><code>## [1] &quot;Loading operating model&quot;
-## [1] &quot;Optimizing for user-specified movement&quot;
-## [1] &quot;Optimizing for user-specified depletion&quot;
-## [1] &quot;Calculating historical stock and fishing dynamics&quot;
-## [1] &quot;Calculating MSY reference points&quot;
-## [1] &quot;Calculating reference yield - best fixed F strategy&quot;
-## [1] &quot;Determining available methods&quot;
-## [1] &quot;1/5 Running MSE for Fratio&quot;
-## ............................
-## [1] &quot;2/5 Running MSE for DCAC&quot;
-## ............................
-## [1] &quot;3/5 Running MSE for Fdem&quot;
-## ............................
-## [1] &quot;4/5 Running MSE for DD&quot;
-## ............................
-## [1] &quot;5/5 Running MSE for matlenlim&quot;
-## ............................</code></pre>
-<p>Note that this is just a demonstration, in a real MSE you should use many more simulations (<code>nsim</code> more than 200), <code>reps</code> (samples per method more than 100) and perhaps a more frequent assessment interval (<code>interval</code> of 2 or 3 years).</p>
-<p>Note that when <code>reps</code> is set to 1, all stochastic MPs use the mean value of an input and do not sample from the distribution according to the specified CV (the <code>DLM_output</code> MPs become deterministic and no longer produce samples of the TAC recommendation).</p>
-</div>
-<div id="robust-wrapper-function" class="section level3">
-<h3><span class="header-section-number">6.4.3</span> Robust Wrapper Function</h3>
-<p>The above example, with 10 simulations and 5 Management Procedures, should take about 20 seconds to complete. A real MSE would include many more simulations and take significantly longer.</p>
-<p>The <code>runMSErobust</code> function has been designed as a more efficient way to run the MSE for a large number of simulations. The <code>runMSErobust</code> function splits the MSE into a number of individual packets.</p>
-<p>The advantages are that it is more efficient (i.e., quicker), it automatically saves the final MSE object to the hard disk, and re-starts a packet if the MSE model crashes. Furthermore, he individual packets can be saved so if the model crashes, or you suffer a power outage the work is not lost.</p>
-<p>It is recommended to use the <code>runMSErobust</code> function if you are running a large number of simulations. However, it is always a good idea to run a small number of simulations first, to test that the MSE is running correctly, and not crashing due to mis-specified parameters or bugs in the Management Procedure code.</p>
-<p>The <code>runMSErobust</code> function is essentially a wrapper for the <code>runMSE</code> function and takes the same arguments as <code>runMSE</code>. The <code>runMSErobust</code> function has several additional arguments, including:</p>
-<ul>
-<li><code>maxsims</code> - The maximum number of simulations to include in each packet.</li>
-<li><code>name</code> - The file name of the MSE object that is saved to the hard disk.</li>
-<li><code>maxCrash</code> - The maximum number of consecutive crashes before the MSE stops.</li>
-<li><code>saveMSE</code> - A logical value (<code>TRUE</code>/<code>FALSE</code>) to indicate if final <code>MSE</code> object should be saved to current working directory (this is probably a good idea).</li>
-<li><code>savePack</code> - A logical value (<code>TRUE</code>/<code>FALSE</code>) to indicate if the packets should be save to current working directory.</li>
-</ul>
-<p>Here we will run the blue shark MSE with 300 simulations. Note that the output is not printed out in the User Manual.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">BSharkMSE &lt;-<span class="st"> </span><span class="kw">runMSErobust</span>(<span class="dt">OM=</span>OM, <span class="dt">MPs=</span>MPs, <span class="dt">nsim=</span><span class="dv">300</span>, <span class="dt">name=</span><span class="st">&quot;blueshark&quot;</span>)</code></pre></div>
-<p>This run should be completed in 10 minutes or less. The MSE object was saved (using the <code>saveRDS</code> function) to the current working directory as a <code>rdata</code> object named ‘bluesharkMSE.rdata’.</p>
-<p>A saved MSE object can be loaded using the <code>readRDS</code> function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">BSharkMSE &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;bluesharkMSE.rdata&quot;</span>)</code></pre></div>
+<div id="natural-mortality-rate-at-age" class="section level3">
+<h3><span class="header-section-number">9.1.4</span> Natural Mortality Rate at Age</h3>
+<p>DLMtool currently assumes that natural mortality (<em>M</em>) is constant with age. Age-specific M may be added in a future developments.</p>
 </div>
 </div>
-<div id="checking-convergence" class="section level2">
-<h2><span class="header-section-number">6.5</span> Checking Convergence</h2>
-<p>The MSE is now complete. We can use the <code>CheckConverg</code> function to confirm that the number of simulations is sufficient and the MSE model has converged, by which we mean that the relative position of the Management Procedures are stable with respect to different performance metrics:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">CheckConverg</span>(BSharkMSE)</code></pre></div>
-<pre><code>## All MPs appear to have converged in 300 iterations (threshold = 2%)</code></pre>
-<p><img src="userguide_files/figure-html/unnamed-chunk-79-1.png" width="672" /></p>
+<div id="mse-model-assumptions" class="section level2">
+<h2><span class="header-section-number">9.2</span> MSE Model Assumptions</h2>
+<div id="idealised-observation-models-for-catch-composition-data" class="section level3">
+<h3><span class="header-section-number">9.2.1</span> Idealised Observation Models for Catch Composition Data</h3>
+<p>Currently, DLMtool simulates catch-composition data from the true simulated catch composition data via a multinomial distribution and some effective sample size. This observation model may be unrealistically well-behaved and favour those approaches that use these data. We are considering adding a growth-type-group model to improve the realism of simulated length composition data.</p>
 </div>
-<div id="a-quick-recap" class="section level2">
-<h2><span class="header-section-number">6.6</span> A Quick Recap</h2>
-<p>The next step is exploring the output of the MSE, and determining which Management Procedure best meets the management objectives.</p>
-<p>The information above is spread out over a number of sections and paragraphs, and may appear a little complex. In fact, other than the initial set up of the DLMtool, it only took 4 lines of code to run the MSE and check the model for convergence:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;OM&#39;</span>, Blue_shark, Generic_fleet, Imprecise_Biased)
-MPs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Fratio&quot;</span>, <span class="st">&quot;DCAC&quot;</span>, <span class="st">&quot;Fdem&quot;</span>, <span class="st">&quot;DD&quot;</span>, <span class="st">&quot;matlenlim&quot;</span>)
-BSharkMSE &lt;-<span class="st"> </span><span class="kw">runMSErobust</span>(<span class="dt">OM=</span>OM, <span class="dt">MPs=</span>MPs, <span class="dt">nsim=</span><span class="dv">300</span>, <span class="dt">name=</span><span class="st">&quot;blueshark&quot;</span>)
-<span class="kw">CheckConverg</span>(BSharkMSE)</code></pre></div>
-<p>In the next Chapter we will look at how to examine the output of the MSE.</p>
+<div id="implementation-error" class="section level3">
+<h3><span class="header-section-number">9.2.2</span> Implementation Error</h3>
+<p>In this edition of DLMtool there is no implementation error. The only imperfection between a management recommendation and the simulated TAC comes in the form of the MaxF argument that limits the maximum fishing mortality rate on any given age-class in the operating model. The default is 0.8 which is high for all but the shortest living fish species.</p>
+</div>
+<div id="discard-mortality" class="section level3">
+<h3><span class="header-section-number">9.2.3</span> Discard Mortality</h3>
+<p>Related to the previous point, DLMtool assumes that there is no discard mortality or fishing mortality for fish that are below the length of selectivity. This can be an important assumption, particularly when evaluating the impact of size-selectivity management methods such as a minimum legal length.</p>
+</div>
+<div id="two-box-model" class="section level3">
+<h3><span class="header-section-number">9.2.4</span> Two-Box Model</h3>
+<p>DLMtool uses a two-box spatial model and assumes homogeneous fishing, and distribution of the fish stock. That is, growth and other life-history characteristics do not vary across the two spatial areas. Spatial targeting of the fishing fleet is currently being developed in the model.</p>
+</div>
+<div id="ontogenetic-habitat-shifts" class="section level3">
+<h3><span class="header-section-number">9.2.5</span> Ontogenetic Habitat Shifts</h3>
+<p>Since the operating model simulates two areas, it is possible to prescribe a log-linear model that moves fish from one area to the other as they grow older. This could be used to simulate the ontogenetic shift of groupers from near shore waters to offshore reefs. Currently this feature is in development.</p>
+</div>
+<div id="closed-system" class="section level3">
+<h3><span class="header-section-number">9.2.6</span> Closed System</h3>
+<p>DLMtool assumes that the population being modelled is in a closed system. There is no immigration or emigration, and a unit stock is assumed to be represented in the model and impacted by the management decisions. This assumption may be violated where the stock extends across management jurisdictions. Violations of this assumption may impact the interpretation of the MSE results, and these implications should be considered when applying DLMtool.</p>
+<p>Although a unit stock is a central assumption of many modeling and assessment approaches, it may be possible to further develop DLMtool to account for stocks that cross management boundaries.</p>
+</div>
+<div id="marine-protected-areas-mpa" class="section level3">
+<h3><span class="header-section-number">9.2.7</span> Marine Protected Areas (MPA)</h3>
+<p>MPAs can be evaluated as management action in DLMtool by closing one area to fishing in the future projections. Currently, it is not possible to include MPAs in future projections alongside other management methods such as TAC or effort controls. Similarly, further development of DLMtool is required to fully incorporate existing MPA networks into the MSE simulations</p>
+</div>
+</div>
+<div id="management-procedures" class="section level2">
+<h2><span class="header-section-number">9.3</span> Management Procedures</h2>
+<div id="harvest-control-rules-must-be-integrated-into-data-limited-mps" class="section level3">
+<h3><span class="header-section-number">9.3.1</span> Harvest Control Rules Must be Integrated into Data-Limited MPs</h3>
+<p>In this version of DLMtool, harvest control rules (e.g. the 40-10 rule) must be written into a data-limited MP. There is currently no ability to do a factorial comparison of say 4 harvest controls rules against 3 MPs (the user must describe all 12 combinations). The reason for this is that it would require further subclasses.</p>
+<p>For example the 40-10 rule may be appropriate for the output of DBSRA but it would not be appropriate for some of the simple management procedures such as DynF that already incorporate throttling of TAC recommendations according to stock depletion.</p>
+</div>
+</div>
+<div id="data-and-method-application" class="section level2">
+<h2><span class="header-section-number">9.4</span> Data and Method Application</h2>
+<div id="data-assumed-to-be-representative" class="section level3">
+<h3><span class="header-section-number">9.4.1</span> Data Assumed to be Representative</h3>
+<p>The MSE model accounts for observation error in the simulated fishery data. However, the application of management procedures for management advice assumes that the provided fishery data is representative of the fishery and is the best available information on the stock. Processing of fishery data should take place before entering the data into the fishery data tables, and assumptions of the management procedures should be carefully evaluated when applying methods using DLMtool.</p>
 
+</div>
 </div>
 </div>
             </section>
@@ -418,8 +384,8 @@ BSharkMSE &lt;-<span class="st"> </span><span class="kw">runMSErobust</span>(<sp
           </div>
         </div>
       </div>
-<a href="MPs.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="examining-the-mse-object.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
+<a href="managing-fishery-data.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
 
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
