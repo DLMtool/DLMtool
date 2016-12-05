@@ -368,6 +368,7 @@ runMSE <- function(OM="1", MPs=NA, nsim=48, proyears=28, interval=4, pstar=0.5,
     if(SRrel[1]==1){
       N[,1,y+1,]<-Perr[,y]*(0.8*R0a*hs*apply(SSB[,,y,],c(1,3),sum))/(0.2*SSBpR*R0a*(1-hs)+(hs-0.2)*apply(SSB[,,y,],c(1,3),sum))  # Recruitment assuming regional R0 and stock wide steepness
     }else{ # most transparent form of the Ricker uses alpha and beta params
+      N[,1,y+1,]<-Perr[,y]*aR*apply(SSB[,,y,],c(1,3),sum)*exp(-bR*apply(SSB[,,y,],c(1,3),sum))
     }
     
     fishdist<-(apply(VBiomass[,,y,],c(1,3),sum)^Spat_targ)/apply(apply(VBiomass[,,y,],c(1,3),sum)^Spat_targ,1,mean)   # spatial preference according to spatial biomass
