@@ -1,876 +1,1031 @@
-# DLMtool Miscellaneous Functions 
-# January 2016
-# Tom Carruthers UBC (t.carruthers@fisheries.ubc.ca)
-# Adrian Hordyk (a.hordyk@murdoch.edu.au)
+# Collection of miscellaneous functions.  All functions have
+# accompanying help files.
 
-# Collection of miscellaneous functions.
-# All functions have accompanying help files.
-
-# Generic class finder
-avail<-function(classy){
-  chk <- "package:DLMtooldev" %in% search() 
-  if (chk) { # development version
-    return(unique(c(ls('package:DLMtooldev')[unlist(lapply(ls('package:DLMtooldev'),
-      getclass,classy=classy))], ls(envir=.GlobalEnv)[unlist(
-	  lapply(ls(envir=.GlobalEnv),getclass,classy=classy))]))) 
-  } else {	  
-    return(unique(c(ls('package:DLMtool')[unlist(lapply(ls('package:DLMtool'),
-    getclass,classy=classy))], ls(envir=.GlobalEnv)[unlist(
-	lapply(ls(envir=.GlobalEnv),getclass,classy=classy))])))
-  }	
+#' Setup parallel processing
+#'
+#' Sets up parallel processing using the snowfall package
+#' @importFrom snowfall sfExport sfIsRunning sfSapply
+#' @importFrom snow setDefaultClusterOptions
+#' @export 
+setup <- function() {
+  snowfall::sfInit(parallel=TRUE,cpus=parallel::detectCores())  
+  if (length(ls()) > 0) snowfall::sfExportAll() 
 }
 
-# A function that finds all methods in the environment and searches the function
-# text for slots in the DLM data object
-Required <- function(funcs=NA){
-  if(is.na(funcs[1]))funcs<-c(avail("DLM_output"),avail("DLM_input"))
-  slots<-slotNames('DLM_data')
-  slotnams<-paste("DLM_data@",slotNames('DLM_data'),sep="")
-  repp<-rep("",length(funcs))
+#' What objects of this class are available
+#' 
+#' Generic class finder
+#' 
+#' Finds objects of the specified class in the global environment or the
+#' package:DLMtool
+#' 
+#' @usage avail(classy)
+#' @param classy A class of object (character string, e.g. 'Fleet')
+#' @author T. Carruthers
+#' @export avail
+avail <- function(classy) {
+  return(unique(c(ls("package:DLMtool")[unlist(lapply(ls("package:DLMtool"), 
+    getclass, classy = classy))], ls(envir = .GlobalEnv)[unlist(lapply(ls(envir = .GlobalEnv), 
+    getclass, classy = classy))])))
+}
 
-  for(i in 1:length(funcs)){
-    temp<-format(match.fun(funcs[i]))
-    temp<-paste(temp[1:(length(temp))],collapse=" ")
-    rec<-""
-    for(j in 1:length(slotnams))if(grepl(slotnams[j],temp))rec<-c(rec,slots[j])
-    if(length(rec)>1)repp[i]<-paste(rec[2:length(rec)],collapse=", ")
+#' get object class
+#' 
+#' Internal function for determining if object is of classy
+#' 
+#' 
+#' @usage getclass(x, classy)
+#' @param x Character string object name
+#' @param classy A class of object (character string, e.g. 'Fleet')
+#' @author T. Carruthers
+#' @return TRUE or FALSE
+#' @export getclass
+getclass <- function(x, classy) inherits(get(x), classy)
+
+
+#' What methods need what data
+#' 
+#' A function that finds all methods in the environment and searches the
+#' function text for slots in the DLM data object
+#' 
+#' 
+#' @usage Required(funcs = NA)
+#' @param funcs A character vector of possible methods of class DLM quota, DLM
+#' space or DLM size
+#' @author T. Carruthers
+#' @export Required
+Required <- function(funcs = NA) {
+  if (is.na(funcs[1])) 
+    funcs <- c(avail("DLM_output"), avail("DLM_input"))
+  slots <- slotNames("DLM_data")
+  slotnams <- paste("DLM_data@", slotNames("DLM_data"), sep = "")
+  repp <- rep("", length(funcs))
+  
+  for (i in 1:length(funcs)) {
+    temp <- format(match.fun(funcs[i]))
+    temp <- paste(temp[1:(length(temp))], collapse = " ")
+    rec <- ""
+    for (j in 1:length(slotnams)) if (grepl(slotnams[j], temp)) 
+      rec <- c(rec, slots[j])
+    if (length(rec) > 1) 
+      repp[i] <- paste(rec[2:length(rec)], collapse = ", ")
   }
-  cbind(funcs,repp,deparse.level=0)
+  cbind(funcs, repp, deparse.level = 0)
 }
 
-# A way of locating where the package was installed so you can find example 
-# data files and code etc.
-DLMDataDir<-function(stock=NA){
-  if(is.na(stock)){
-    return(paste(searchpaths()[match("package:DLMtool",search())],"/",sep=""))
-  }else{
-    return(paste(searchpaths()[match("package:DLMtool",search())],"/",stock,".csv",sep=""))
-  }  
+# A way of locating where the package was installed so you can find
+# example data files and code etc.
+
+
+#' Directory of the installed package on your computer
+#' 
+#' A way of locating where the package was installed so you can find example
+#' data files and code etc.
+#' 
+#' 
+#' @usage DLMDataDir(stock=NA)
+#' @param stock Character string representing the name of a .csv file e.g.
+#' 'Snapper', 'Rockfish'
+#' @author T. Carruthers
+#' @export DLMDataDir
+DLMDataDir <- function(stock = NA) {
+  if (is.na(stock)) {
+    return(paste(searchpaths()[match("package:DLMtool", search())], 
+      "/", sep = ""))
+  } else {
+    return(paste(searchpaths()[match("package:DLMtool", search())], 
+      "/", stock, ".csv", sep = ""))
+  }
 }
 
-# What MPs may be run (best case scenario) for various data-availability 
-#  scenarios?
-Fease<-function(feaseobj,outy="table"){
+
+#' MP feasibility diagnostic
+#' 
+#' What MPs may be run (best case scenario) for various data-availability
+#' scenarios?
+#' 
+#' 
+#' @usage Fease(feaseobj,outy='table')
+#' @param feaseobj An object of class 'DLM_fease'
+#' @param outy Determines whether you would like a full table or some column of
+#' the table for a specific case of the feasibility object. When set equal to
+#' table, the full table is produced. When set equal to an integer number the
+#' names of MPs that are feasible for that case are returned.
+#' @author T. Carruthers
+#' @export Fease
+Fease <- function(feaseobj, outy = "table") {
   
-  if(class(feaseobj)!="DLM_fease")stop("Incorrect format: you need an object of class DLM_fease")
+  if (class(feaseobj) != "DLM_fease") 
+    stop("Incorrect format: you need an object of class DLM_fease")
   
-  sloty<-c("Cat","Ind","AvC","Dt","Rec","CAA","CAL","Mort","L50","L95","vbK",
-           "vbLinf","vbt0","wla","wlb","steep","LFC","LFS","Cref","Bref","Iref","Dep","Abun", "ML")
+  sloty <- c("Cat", "Ind", "AvC", "Dt", "Rec", "CAA", "CAL", "Mort", 
+    "L50", "L95", "vbK", "vbLinf", "vbt0", "wla", "wlb", "steep", "LFC", 
+    "LFS", "Cref", "Bref", "Iref", "Dep", "Abun", "ML")
   
-  type<-c("Catch","Index","Catch","Index","Recruitment_index","Catch_at_age","Catch_at_length",
-          "Natural_mortality_rate","Maturity_at_length","Maturity_at_length","Growth","Growth","Growth",
-          "Length_weight_conversion","Length_weight_conversion","Stock_recruitment_relationship",
-          "Fleet_selectivity","Fleet_selectivity","Target_catch","Target_biomass","Target_index",
-          "Index","Abundance") 
+  type <- c("Catch", "Index", "Catch", "Index", "Recruitment_index", 
+    "Catch_at_age", "Catch_at_length", "Natural_mortality_rate", "Maturity_at_length", 
+    "Maturity_at_length", "Growth", "Growth", "Growth", "Length_weight_conversion", 
+    "Length_weight_conversion", "Stock_recruitment_relationship", "Fleet_selectivity", 
+    "Fleet_selectivity", "Target_catch", "Target_biomass", "Target_index", 
+    "Index", "Abundance")
   
-  ncases<-length(feaseobj@Case)
-  slots<-slotNames(feaseobj)
-  ns<-length(slots)
-  ftab<-array(TRUE,c(ns-2,ncases))
-  for(j in 3:ns)ftab[j-2,]<-as.logical(as.numeric(slot(feaseobj,slots[j])))
+  ncases <- length(feaseobj@Case)
+  slots <- slotNames(feaseobj)
+  ns <- length(slots)
+  ftab <- array(TRUE, c(ns - 2, ncases))
+  for (j in 3:ns) ftab[j - 2, ] <- as.logical(as.numeric(slot(feaseobj, 
+    slots[j])))
   
-  req<-Required()
-  nMPs<-nrow(req)
-  gridy<-array("",c(nMPs,ncases))
-  for(i in 1:ncases){
-    types<-slotNames(feaseobj)[3:17][ftab[,i]]
-    slots<-sloty[type%in%types]
-    for(m in 1:nMPs){
-      brec<-unlist(strsplit(req[m,2],", "))
-      brec<-brec[grep("CV_",brec,invert=T)] #remove CV dependencies (we think we can guess these...)
-      brec<-brec[brec!="Year"&brec!="MaxAge"&brec!="FMSY_M"&brec!="BMSY_B0"&brec!="t"&brec!="OM"&brec!="MPrec"&brec!="CAL_bins" &brec!="MPeff" &brec !="LHYear"]
-      nr<-length(brec) 
-      if(nr==0){
-        gridy[m,i]<-"Yes"
-      }else{ 
-        cc<-0
-        for(r in 1:nr){ #loop over requirements
-          if(brec[r]%in%slots)cc<-cc+1
+  req <- Required()
+  nMPs <- nrow(req)
+  gridy <- array("", c(nMPs, ncases))
+  for (i in 1:ncases) {
+    types <- slotNames(feaseobj)[3:17][ftab[, i]]
+    slots <- sloty[type %in% types]
+    for (m in 1:nMPs) {
+      brec <- unlist(strsplit(req[m, 2], ", "))
+      brec <- brec[grep("CV_", brec, invert = T)]  #remove CV dependencies (we think we can guess these...)
+      brec <- brec[brec != "Year" & brec != "MaxAge" & brec != "FMSY_M" & 
+        brec != "BMSY_B0" & brec != "t" & brec != "OM" & brec != 
+        "MPrec" & brec != "CAL_bins" & brec != "MPeff" & brec != 
+        "LHYear"]
+      nr <- length(brec)
+      if (nr == 0) {
+        gridy[m, i] <- "Yes"
+      } else {
+        cc <- 0
+        for (r in 1:nr) {
+          # loop over requirements
+          if (brec[r] %in% slots) 
+          cc <- cc + 1
         }
-        if(cc==nr)gridy[m,i]<-"Yes"
+        if (cc == nr) 
+          gridy[m, i] <- "Yes"
       }
     }
   }
-  gridy<-as.data.frame(gridy)
-  row.names(gridy)=req[,1]
-  names(gridy)=feaseobj@Case
-  if(outy=="table")return(gridy)
-  if(outy!="table"&class(outy)!="numeric")return(req[,1][gridy[,1]=="Yes"])
-  if(class(outy)=="numeric"){
-    if(outy<(ncases+1)){
-      return(req[,1][gridy[,as.integer(outy)]=="Yes"])
-    }else{
-      return(req[,1][gridy[,1]=="Yes"])
-    }  
+  gridy <- as.data.frame(gridy)
+  row.names(gridy) = req[, 1]
+  names(gridy) = feaseobj@Case
+  if (outy == "table") 
+    return(gridy)
+  if (outy != "table" & class(outy) != "numeric") 
+    return(req[, 1][gridy[, 1] == "Yes"])
+  if (class(outy) == "numeric") {
+    if (outy < (ncases + 1)) {
+      return(req[, 1][gridy[, as.integer(outy)] == "Yes"])
+    } else {
+      return(req[, 1][gridy[, 1] == "Yes"])
+    }
   }
   
 }
 
-# Internal functions used in runMSE 
-getmov<-function(x,Prob_staying,Frac_area_1){
-  test<-optim(par=c(0,0,0),movfit,method="L-BFGS-B",lower=rep(-6,3),upper=rep(6,3),prb=Prob_staying[x],frac=Frac_area_1[x])
-  mov<-array(c(test$par[1],test$par[2],0,test$par[3]),dim=c(2,2))
-  mov<-exp(mov)
-  mov/array(apply(mov,1,sum),dim=c(2,2))
+
+
+#' Optimization function to find a movement model that matches user specified
+#' movement characteristics.
+#' 
+#' The user specifies the probability of staying in the same area and spatial
+#' heterogeneity (both in the unfished state).
+#' 
+#' This is paired with movfit to find the correct movement model.
+#' 
+#' @usage getmov(x,Prob_staying,Frac_area_1)
+#' @param x A position in vectors Prob_staying and Frac_area_1
+#' @param Prob_staying User specified probability that individuals in area 1
+#' remain in that area (unfished conditions)
+#' @param Frac_area_1 User specified fraction of individuals found in area 1
+#' (unfished conditions)
+#' @return A markov movement matrix
+#' @author T. Carruthers
+#' @examples
+#' 
+#' Prob_staying<-0.8 # probability  that individuals remain in area 1 between time-steps
+#' Frac_area_1<-0.35 # the fraction of the stock found in area 1 under equilibrium conditions
+#' markovmat<-getmov(1,Prob_staying, Frac_area_1)
+#' vec<-c(0.5,0.5) # initial guess at equilibrium distribution (2 areas)
+#' for(i in 1:300)vec<-apply(vec*markovmat,2,sum) # numerical approximation to stable distribution
+#' c(markovmat[1,1],vec[1]) # pretty close right?
+#' 
+#' 
+#' @export getmov
+getmov <- function(x, Prob_staying, Frac_area_1) {
+  test <- optim(par = c(0, 0, 0), movfit, method = "L-BFGS-B", lower = rep(-6, 
+    3), upper = rep(6, 3), prb = Prob_staying[x], frac = Frac_area_1[x])
+  mov <- array(c(test$par[1], test$par[2], 0, test$par[3]), dim = c(2, 
+    2))
+  mov <- exp(mov)
+  mov/array(apply(mov, 1, sum), dim = c(2, 2))
 }
 
-movfit<-function(par,prb,frac){
-  mov<-array(c(par[1],par[2],0,par[3]),dim=c(2,2))
-  mov<-exp(mov)
-  mov<-mov/array(apply(mov,1,sum),dim=c(2,2))
-  dis<-c(frac,1-frac)
-  for(i in 1:100)dis<-apply(array(dis,c(2,2))*mov,2,sum)
-  (log(mov[1,1])-log(prb))^2+(log(frac)-log(dis[1]))^2
+
+
+#' Optimization function that returns the squared difference between user
+#' specified and calculated movement parameters.
+#' 
+#' The user specifies the probability of staying in the same area and spatial
+#' heterogeneity (both in the unfished state). This function returns the
+#' squared difference between these values and those produced by the three
+#' logit movement model.
+#' 
+#' This is paired with getmov to find the correct movement model.
+#' 
+#' @usage movfit(par,prb,frac)
+#' @param par Three parameters in the logit space that control the four
+#' probabilities of moving between 2 areas
+#' @param prb User specified probability that individuals in area 1 remain in
+#' that area (unfished conditions)
+#' @param frac User specified fraction of individuals found in area 1 (unfished
+#' conditions)
+#' @author T. Carruthers
+#' @export movfit
+movfit <- function(par, prb, frac) {
+  mov <- array(c(par[1], par[2], 0, par[3]), dim = c(2, 2))
+  mov <- exp(mov)
+  mov <- mov/array(apply(mov, 1, sum), dim = c(2, 2))
+  dis <- c(frac, 1 - frac)
+  for (i in 1:100) dis <- apply(array(dis, c(2, 2)) * mov, 2, sum)
+  (log(mov[1, 1]) - log(prb))^2 + (log(frac) - log(dis[1]))^2
 }
 
-getq<-function(x,dep,Find,Perr,Marray,hs,Mat_age,Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR){
-  opt<-optimize(qopt,log(c(0.0075,15)),depc=dep[x],Fc=Find[x,],Perrc=Perr[x,],
-                     Mc=Marray[x,],hc=hs[x],Mac=Mat_age[x,],Wac=Wt_age[x,,],
-                     R0c=R0,Vc=V[x,,],nyears=nyears,maxage=maxage,movc=mov[x,,],
-                     Spat_targc=Spat_targ[x],SRrelc=SRrel[x],aRc=aR[x,],bRc=bR[x,])
+
+
+#' Optimization function that find the catchability (q where F=qE) value
+#' required to get to user-specified stock depletion (current biomass /
+#' unfished biomass)
+#' 
+#' The user specifies the level of stock depleiton. This funciton takes the
+#' derived effort trajectories and finds the catchabiltiy to get the stock
+#' there.
+#'
+#' @param x internal parameter
+#' @param dep internal parameter
+#' @param Find internal parameter
+#' @param Perr internal parameter
+#' @param Marray internal parameter
+#' @param hs internal parameter
+#' @param Mat_age internal parameter
+#' @param Wt_age internal parameter
+#' @param R0 internal parameter
+#' @param V internal parameter
+#' @param nyears internal parameter
+#' @param maxage internal parameter
+#' @param mov internal parameter
+#' @param Spat_targ internal parameter
+#' @param SRrel internal parameter
+#' @param aR internal parameter
+#' @param bR internal parameter
+#' 
+#' Paired with qopt
+#' @keywords internal
+#' @export getq 
+#'
+#' @author T. Carruthers
+getq <- function(x, dep, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V, 
+  nyears, maxage, mov, Spat_targ, SRrel, aR, bR) {
+  opt <- optimize(qopt, log(c(0.0075, 15)), depc = dep[x], Fc = Find[x, 
+    ], Perrc = Perr[x, ], Mc = Marray[x, ], hc = hs[x], Mac = Mat_age[x, 
+    ], Wac = Wt_age[x, , ], R0c = R0, Vc = V[x, , ], nyears = nyears, 
+    maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x], 
+    SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ])
   return(exp(opt$minimum))
 }
 
-qopt<-function(lnq,depc,Fc,Perrc,Mc,hc,Mac,Wac,R0c,Vc,nyears,maxage,movc,Spat_targc,SRrelc,aRc,bRc,opt=T){
-  qc<-exp(lnq)
-  nareas<-nrow(movc)
-  #areasize<-c(asizec,1-asizec)
-  idist<-rep(1/nareas,nareas)
-  for(i in 1:300)idist<-apply(array(idist,c(2,2))*movc,2,sum)
 
-  N<-array(exp(-Mc[1]*((1:maxage)-1))*R0c,dim=c(maxage,nareas))*array(rep(idist,each=maxage),dim=c(maxage,nareas))
-  SSN<-Mac*N   # Calculate initial spawning stock numbers
-  Biomass<-N*Wac[,1]
-  SSB<-SSN*Wac[,1]                               # Calculate spawning stock biomass
-
-  B0<-sum(Biomass)
-  R0a<-idist*R0c
-  SSB0<-apply(SSB,2,sum)
-  SSBpR<-SSB0/R0a                              # Calculate spawning stock biomass per recruit
-
-  for(y in 1:nyears){
+#' Internal optimization function that find the catchability (q where F=qE)
+#' value required to get to user-specified stock depletion (current biomass /
+#' unfished biomass)
+#' 
+#' The user specifies the level of stock depleiton. This funciton takes the
+#' derived effort trajectories and finds the catchabiltiy to get the stock
+#' there.
+#' 
+#' @param lnq internal parameter
+#' @param depc internal parameter
+#' @param Fc internal parameter
+#' @param Perrc internal parameter
+#' @param Mc internal parameter
+#' @param hc internal parameter
+#' @param Mac internal parameter
+#' @param Wac internal parameter
+#' @param R0c internal parameter
+#' @param Vc internal parameter
+#' @param nyears internal parameter
+#' @param maxage internal parameter
+#' @param movc internal parameter
+#' @param Spat_targc internal parameter
+#' @param SRrelc internal parameter
+#' @param aRc internal parameter
+#' @param bRc internal parameter
+#' @param opt internal parameter
+#' 
+#' @export qopt 
+#' @keywords internal
+#' @author T. Carruthers 
+qopt <- function(lnq, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, 
+  maxage, movc, Spat_targc, SRrelc, aRc, bRc, opt = T) {
+  qc <- exp(lnq)
+  nareas <- nrow(movc)
+  # areasize<-c(asizec,1-asizec)
+  idist <- rep(1/nareas, nareas)
+  for (i in 1:300) idist <- apply(array(idist, c(2, 2)) * movc, 2, sum)
+  
+  N <- array(exp(-Mc[1] * ((1:maxage) - 1)) * R0c, dim = c(maxage, nareas)) * 
+    array(rep(idist, each = maxage), dim = c(maxage, nareas))
+  SSN <- Mac * N  # Calculate initial spawning stock numbers
+  Biomass <- N * Wac[, 1]
+  SSB <- SSN * Wac[, 1]  # Calculate spawning stock biomass
+  
+  B0 <- sum(Biomass)
+  R0a <- idist * R0c
+  SSB0 <- apply(SSB, 2, sum)
+  SSBpR <- SSB0/R0a  # Calculate spawning stock biomass per recruit
+  
+  for (y in 1:nyears) {
     # set up some indices for indexed calculation
-    targ<-(apply(Vc[,y]*Biomass,2,sum)^Spat_targc)/mean(apply(Vc[,y]*Biomass,2,sum)^Spat_targc)
-    FMc<-array(qc*Fc[y]*Vc[,y],dim=c(maxage,nareas))*array(rep(targ,each=maxage),dim=c(maxage,nareas))                                           # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
-    Zc<-FMc+Mc[y]
-    N[2:maxage,]<-N[1:(maxage-1),]*exp(-Zc[1:(maxage-1),])         # Total mortality
-    if(SRrelc==1){
-      N[1,]<-Perrc[y]*(0.8*R0a*hc*apply(SSB,2,sum))/(0.2*SSBpR*R0a*(1-hc)+(hc-0.2)*apply(SSB,2,sum))  # Recruitment assuming regional R0 and stock wide steepness
-    }else{
-      N[1,]<- aRc*apply(SSB,2,sum)*exp(-bRc*apply(SSB,2,sum)) 
+    targ <- (apply(Vc[, y] * Biomass, 2, sum)^Spat_targc)/mean(apply(Vc[, 
+      y] * Biomass, 2, sum)^Spat_targc)
+    FMc <- array(qc * Fc[y] * Vc[, y], dim = c(maxage, nareas)) * array(rep(targ, 
+      each = maxage), dim = c(maxage, nareas))  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
+    Zc <- FMc + Mc[y]
+    N[2:maxage, ] <- N[1:(maxage - 1), ] * exp(-Zc[1:(maxage - 1), 
+      ])  # Total mortality
+    if (SRrelc == 1) {
+      N[1, ] <- Perrc[y] * (0.8 * R0a * hc * apply(SSB, 2, sum))/(0.2 * 
+        SSBpR * R0a * (1 - hc) + (hc - 0.2) * apply(SSB, 2, sum))  # Recruitment assuming regional R0 and stock wide steepness
+    } else {
+      N[1, ] <- aRc * apply(SSB, 2, sum) * exp(-bRc * apply(SSB, 
+        2, sum))
     }
-      
-    #print(N[1])
-    indMov<-as.matrix(expand.grid(1:nareas,1:nareas,1:maxage)[3:1])
-    indMov2<-indMov[,1:2]
-    indMov3<-indMov[,2:3]
-    temp<-array(N[indMov2]*movc[indMov3],dim=c(nareas,nareas,maxage))
-    N<-apply(temp,c(3,1),sum)
-    SSN<-N*Mac
-    SSB<-SSN*Wac[,y]
-    Biomass<-N*Wac[,y]
-    SBiomass<-SSN*Wac[,y]
-    #print(sum(Biomass))
-  } # end of year
-  return((log(depc)-log(sum(SBiomass)/sum(SSB0)))^2)
+    
+    # print(N[1])
+    indMov <- as.matrix(expand.grid(1:nareas, 1:nareas, 1:maxage)[3:1])
+    indMov2 <- indMov[, 1:2]
+    indMov3 <- indMov[, 2:3]
+    temp <- array(N[indMov2] * movc[indMov3], dim = c(nareas, nareas, 
+      maxage))
+    N <- apply(temp, c(3, 1), sum)
+    SSN <- N * Mac
+    SSB <- SSN * Wac[, y]
+    Biomass <- N * Wac[, y]
+    SBiomass <- SSN * Wac[, y]
+    # print(sum(Biomass))
+  }  # end of year
+  return((log(depc) - log(sum(SBiomass)/sum(SSB0)))^2)
 }
 
 
-## Operating Model Functions ---------------------------------------------------
-# These functions are used to manually specify, choose, or estimate various 
-# parameters of the Operating Model.
-# The functions typically take OM object (or Stock or Fleet) and return the same
-# object with the relevant parameters populated.
+## Operating Model Functions
+## --------------------------------------------------- These functions
+## are used to manually specify, choose, or estimate various parameters
+## of the Operating Model.  The functions typically take OM object (or
+## Stock or Fleet) and return the same object with the relevant
+## parameters populated.
 
-# A highly dubious means of getting very uncertain estimates of current stock 
-# biomass and (equilibrium) fishing mortality rate from growth, natural 
-# mortality rate, recruitment and fishing selectivity.
-ML2D<-function(OM,ML,nsim=100,ploty=T,Dlim=c(0.05,0.6)){
+#' Depletion and F estimation from mean length of catches
+#' 
+#' A highly dubious means of getting very uncertain estimates of current stock
+#' biomass and (equilibrium) fishing mortality rate from growth, natural
+#' mortality rate, recruitment and fishing selectivity.
+#' 
+#' 
+#' @usage ML2D(OM,ML,nsim=100,ploty=T,Dlim=c(0.05,0.6))
+#' @param OM An object of class 'OM'
+#' @param ML A estimate of current mean length of catches
+#' @param nsim Number of simulations
+#' @param ploty Produce a plot of depletion and F
+#' @param Dlim Limits on the depletion that is returned as a fraction of
+#' unfished biomass.
+#' @return A table of nsim rows and 2 columns (depletion, fishing mortality
+#' rate)
+#' @author T. Carruthers
+#' @export ML2D
+ML2D <- function(OM, ML, nsim = 100, ploty = T, Dlim = c(0.05, 0.6)) {
   
-  maxage<-OM@maxage
-  M<-runif(nsim,OM@M[1],OM@M[2]) # Natural mortality rate
-  h<-runif(nsim,OM@h[1],OM@h[2]) # Steepness
-  Linf<-runif(nsim,OM@Linf[1],OM@Linf[2]) # Maximum length
-  K<-runif(nsim,OM@K[1],OM@K[2]) # Maximum growth rate
-  t0<-runif(nsim,OM@t0[1],OM@t0[2]) # Theorectical length at age zero
-
-  LFS<-runif(nsim,OM@LFS[1],OM@LFS[2])*mean(OM@L50)
-  AFS<-L2A(t0,Linf,K,LFS,maxage)
-
-  L5<-runif(nsim,OM@L5[1],OM@L5[2])*mean(OM@L50)
-  age05<-L2A(t0,Linf,K,L5,maxage)
-
-  Vmaxage<-runif(nsim,OM@Vmaxlen[1],OM@Vmaxlen[2])#runif(BT_fleet@Vmaxage[1],BT_fleet@Vmaxage[2]) # selectivity of oldest age class
-
-  LM<-runif(nsim,OM@L50[1],OM@L50[2])
-  AM<-L2A(t0,Linf,K,LM,maxage)
-
-  # age at maturity
-  a<-OM@a # length-weight parameter a
-  b<-OM@b # length-weight parameter b
-
-  mod<-AFS          # the age at modal (or youngest max) selectivity
-  deriv<-getDNvulnS(mod,age05,Vmaxage,maxage,nsim)           # The vulnerability schedule
-  vuln<-deriv[[1]]
-
-  Agearray<-array(rep(1:maxage,each=nsim),c(nsim,maxage))
-  mat<-1/(1+exp((AM-(Agearray))/(AM*0.1)))  # Maturity at age array
-
-  nyears<-100
-  #bootfun<-function(dat,ind)mean(dat[ind])
-  #MLo<-boot(MLt,bootfun,nsim)
-  #ML<-MLo$t
-  out<-CSRA(M,h,Linf,K,t0,AM,a,b,vuln,mat,ML=rep(ML,nsim),NA,NA,maxage,nyears)
-  cond<-out[,1]>Dlim[1]&out[,1]<Dlim[2]&out[,2]<2.5 # Stock levels are unlikely to be above 80% unfished, F is unlikely to be above 2.5
+  maxage <- OM@maxage
+  M <- runif(nsim, OM@M[1], OM@M[2])  # Natural mortality rate
+  h <- runif(nsim, OM@h[1], OM@h[2])  # Steepness
+  Linf <- runif(nsim, OM@Linf[1], OM@Linf[2])  # Maximum length
+  K <- runif(nsim, OM@K[1], OM@K[2])  # Maximum growth rate
+  t0 <- runif(nsim, OM@t0[1], OM@t0[2])  # Theorectical length at age zero
   
-  if(ploty){
-    par(mfrow=c(1,2))
-    plot(density(out[cond,1],from=0,adj=0.4),main="Depletion")
-    plot(density(out[cond,2],from=0,adj=0.4),main="Fishing mortality rate")
-    OM@D<-quantile(out[cond,1],c(0.05,0.95))
+  if (OM@isRel == "0" | OM@isRel == "FALSE" | OM@isRel == FALSE) {
+    if (max(OM@LFS) > 0) {
+      LFS <- runif(nsim, OM@LFS[1], OM@LFS[2])
+    } else {
+      LFS <- runif(nsim, mean(OM@LFSLower), mean(OM@LFSUpper))
+    }
+  } else {
+    if (max(OM@LFS) > 0) {
+      LFS <- runif(nsim, OM@LFS[1], OM@LFS[2]) * mean(OM@L50)
+    } else {
+      LFS <- runif(nsim, mean(OM@LFSLower), mean(OM@LFSUpper)) * 
+        mean(OM@L50)
+    }
   }
-
+  AFS <- L2A(t0, Linf, K, LFS, maxage)
+  
+  L5 <- runif(nsim, OM@L5[1], OM@L5[2]) * mean(OM@L50)
+  age05 <- L2A(t0, Linf, K, L5, maxage)
+  
+  Vmaxage <- runif(nsim, OM@Vmaxlen[1], OM@Vmaxlen[2])  #runif(BT_fleet@Vmaxage[1],BT_fleet@Vmaxage[2]) # selectivity of oldest age class
+  
+  LM <- runif(nsim, OM@L50[1], OM@L50[2])
+  AM <- L2A(t0, Linf, K, LM, maxage)
+  
+  # age at maturity
+  a <- OM@a  # length-weight parameter a
+  b <- OM@b  # length-weight parameter b
+  
+  mod <- AFS  # the age at modal (or youngest max) selectivity
+  deriv <- getDNvulnS(mod, age05, Vmaxage, maxage, nsim)  # The vulnerability schedule
+  vuln <- deriv[[1]]
+  
+  Agearray <- array(rep(1:maxage, each = nsim), c(nsim, maxage))
+  mat <- 1/(1 + exp((AM - (Agearray))/(AM * 0.1)))  # Maturity at age array
+  
+  nyears <- 100
+  # bootfun<-function(dat,ind)mean(dat[ind]) MLo<-boot(MLt,bootfun,nsim)
+  # ML<-MLo$t
+  out <- CSRA(M, h, Linf, K, t0, AM, a, b, vuln, mat, ML = rep(ML, nsim), 
+    NA, NA, maxage, nyears)
+  cond <- out[, 1] > Dlim[1] & out[, 1] < Dlim[2] & out[, 2] < 2.5  # Stock levels are unlikely to be above 80% unfished, F is unlikely to be above 2.5
+  
+  if (ploty & sum(cond) > 0) {
+    par(mfrow = c(1, 2))
+    plot(density(out[cond, 1], from = 0, adj = 0.4), main = "Depletion")
+    plot(density(out[cond, 2], from = 0, adj = 0.4), main = "Fishing mortality rate")
+    OM@D <- quantile(out[cond, 1], c(0.05, 0.95))
+  }
+  if (sum(cond) == 0) {
+    message("All estimates of Depletion outside bounds of Dlim")
+    message("Operating Model object not updated")
+  }
+  if (!ploty) 
+    message("Operating Model object not updated")
   OM
 }
 
-# Composition stock reduction analysis 
-CSRA<-function(M,h,Linf,K,t0,AM,a,b,vuln,mat,ML,CAL,CAA,maxage,nyears){ 
-  nsim<-length(M)
-  Dep<-rep(NA,nsim)
-  Fm<-rep(NA,nsim)
-  for(i in 1:nsim){
-    fit<-optimize(CSRAfunc,log(c(0.0001,5)),Mc=M[i],hc=h[i],maxage,nyears,Linfc=Linf[i],Kc=K[i],t0c=t0[i],AMc=AM[i],
-                  ac=a,bc=b,vulnc=vuln[i,],matc=mat[i,],MLc=ML[i],CAL=NA,CAA=NA,opt=T)
+# Composition stock reduction analysis
+
+
+#' Catch at size reduction analysis
+#' 
+#' What depletion level and corresponding equlibrium F arise from data
+#' regarding mean length of current catches, natural mortality rate, steepness
+#' of the stock recruitment curve, maximum length, maximum growth rate, age at
+#' maturity, age based vulnerability, maturity at age, maximum age and number
+#' of historical years of fishing.
+#' 
+#' 
+#' @usage CSRA(M,h,Linf,K,t0,AM,a,b,vuln,mat,ML,CAL,CAA,maxage,nyears)
+#' @param M A vector of natural mortality rate estimates
+#' @param h A vector of sampled steepness (Beverton-Holt stock recruitment)
+#' @param Linf A vector of maximum length (von Bertalanffy growth)
+#' @param K A vector of maximum growth rate (von Bertalanffy growth)
+#' @param t0 A vector of theoretical age at length zero (von Bertalanffy
+#' growth)
+#' @param AM A vector of age at maturity
+#' @param a Length-weight conversion parameter a (W=aL^b)
+#' @param b Length-weight conversion parameter b (W=aL^b)
+#' @param vuln A matrix nsim x nage of the vulnerabilty at age (max 1) to
+#' fishing.
+#' @param mat A matrix nsim x nage of the maturity at age (max 1)
+#' @param ML A vector of current mean length estimates
+#' @param CAL A catch-at-length matrix nyears x (1 Linf unit) length bins
+#' @param CAA A catch-at-age matrix nyears x maximum age
+#' @param maxage Maximum age
+#' @param nyears Number of historical years of fishing
+#' @author T. Carruthers
+#' @export CSRA
+CSRA <- function(M, h, Linf, K, t0, AM, a, b, vuln, mat, ML, CAL, CAA, 
+  maxage, nyears) {
+  nsim <- length(M)
+  Dep <- rep(NA, nsim)
+  Fm <- rep(NA, nsim)
+  for (i in 1:nsim) {
+    fit <- optimize(CSRAfunc, log(c(1e-04, 5)), Mc = M[i], hc = h[i], 
+      maxage, nyears, Linfc = Linf[i], Kc = K[i], t0c = t0[i], AMc = AM[i], 
+      ac = a, bc = b, vulnc = vuln[i, ], matc = mat[i, ], MLc = ML[i], 
+      CAL = NA, CAA = NA, opt = T)
     
     
-    out<-CSRAfunc(fit$minimum,Mc=M[i],hc=h[i],maxage,nyears,Linfc=Linf[i],Kc=K[i],t0c=t0[i],AMc=AM[i],
-                  ac=a,bc=b,vulnc=vuln[i,],matc=mat[i,],MLc=ML[i],CAL=NA,CAA=NA,opt=3)
+    out <- CSRAfunc(fit$minimum, Mc = M[i], hc = h[i], maxage, nyears, 
+      Linfc = Linf[i], Kc = K[i], t0c = t0[i], AMc = AM[i], ac = a, 
+      bc = b, vulnc = vuln[i, ], matc = mat[i, ], MLc = ML[i], CAL = NA, 
+      CAA = NA, opt = 3)
     
-    Dep[i]<-out[1]
-    Fm[i]<-out[2]
+    Dep[i] <- out[1]
+    Fm[i] <- out[2]
     
     
   }
-  cbind(Dep,Fm)
+  cbind(Dep, Fm)
 }
 
 # The function that CSRA operates on
-CSRAfunc<-function(lnF,Mc,hc,maxage,nyears,AFSc,AFCc,Linfc,Kc,t0c,AMc,ac,bc,vulnc,matc,MLc,CAL,CAA,opt=T,meth="ML"){
+
+#' Optimization function for CSRA
+#' 
+#' What depletion level and corresponding equlibrium F arise from data
+#' regarding mean length of current catches, natural mortality rate, steepness
+#' of the stock recruitment curve, maximum length, maximum growth rate, age at
+#' maturity, age based vulnerability, maturity at age, maximum age and number
+#' of historical years of fishing.
+#' 
+#' 
+#' @usage CSRAfunc(lnF,Mc,hc,maxage,nyears,AFSc,AFCc,Linfc,
+#' Kc,t0c,AMc,ac,bc,vulnc,matc,MLc,CAL,CAA, opt=T,meth='ML')
+#' @param lnF A proposed value of current instantaneous fishing mortality rate
+#' @param Mc Natural mortality rate estimates
+#' @param hc Steepness (Beverton-Holt stock recruitment)
+#' @param maxage Maximum age
+#' @param nyears Number of historical years of fishing
+#' @param AFSc Age at full selection
+#' @param AFCc Age at first capture
+#' @param Linfc Maximum length (von Bertalanffy growth)
+#' @param Kc Maximum growth rate (von Bertalanffy growth)
+#' @param t0c Theoretical age at length zero (von Bertalanffy growth)
+#' @param AMc Age at maturity
+#' @param ac Length-weight conversion parameter a (W=aL^b)
+#' @param bc Length-weight conversion parameter b (W=aL^b)
+#' @param vulnc A vector (nage long) of the vulnerabilty at age (max 1) to
+#' fishing.
+#' @param matc A vector (nage long) of the maturity at age (max 1)
+#' @param MLc A current mean length estimates
+#' @param CAL A catch-at-length matrix nyears x (1 Linf unit) length bins
+#' @param CAA A catch-at-age matrix nyears x maximum age
+#' @param opt Should the measure of fit be returned?
+#' @param meth Are we fitting to mean length or catch composition?
+#' @author T. Carruthers
+#' @export CSRAfunc
+CSRAfunc <- function(lnF, Mc, hc, maxage, nyears, AFSc, AFCc, Linfc, Kc, 
+  t0c, AMc, ac, bc, vulnc, matc, MLc, CAL, CAA, opt = T, meth = "ML") {
   
-  Fm<-exp(lnF)
-  Fc<-vulnc*Fm
-  Lac<-Linfc*(1-exp(-Kc*((1:maxage)-t0c)))
-  Wac<-ac*Lac^bc
-  N<-exp(-Mc*((1:maxage)-1))
-  SSN<-matc*N                                 # Calculate initial spawning stock numbers
-  Biomass<-N*Wac
-  SSB<-SSN*Wac                               # Calculate spawning stock biomass
+  Fm <- exp(lnF)
+  Fc <- vulnc * Fm
+  Lac <- Linfc * (1 - exp(-Kc * ((1:maxage) - t0c)))
+  Wac <- ac * Lac^bc
+  N <- exp(-Mc * ((1:maxage) - 1))
+  SSN <- matc * N  # Calculate initial spawning stock numbers
+  Biomass <- N * Wac
+  SSB <- SSN * Wac  # Calculate spawning stock biomass
   
-  B0<-sum(Biomass)
-  SSB0<-sum(SSB)
-  SSN0<-SSN
-  SSBpR<-sum(SSB)                             # Calculate spawning stock biomass per recruit
-  SSNpR<-SSN
-  Zc<-Fc+Mc
-  CN<-array(NA,dim=c(nyears,maxage))
-  HR<-rep(0,maxage)
-  pen<-0
-  for(y in 1:nyears){
-    VB<-Biomass*vulnc*exp(-Mc)
-    CN[y,]<-N*(1-exp(-Zc))*(Fc/Zc)
-    N[2:maxage]<-N[1:(maxage-1)]*exp(-Zc[1:(maxage-1)])         # Total mortality
-    N[1]<-(0.8*hc*sum(SSB))/(0.2*SSBpR*(1-hc)+(hc-0.2)*sum(SSB))  # Recruitment assuming regional R0 and stock wide steepness
-    Biomass<-N*Wac
-    SSN<-N*matc
-    SSB<-SSN*Wac
-  } # end of year
+  B0 <- sum(Biomass)
+  SSB0 <- sum(SSB)
+  SSN0 <- SSN
+  SSBpR <- sum(SSB)  # Calculate spawning stock biomass per recruit
+  SSNpR <- SSN
+  Zc <- Fc + Mc
+  CN <- array(NA, dim = c(nyears, maxage))
+  HR <- rep(0, maxage)
+  pen <- 0
+  for (y in 1:nyears) {
+    VB <- Biomass * vulnc * exp(-Mc)
+    CN[y, ] <- N * (1 - exp(-Zc)) * (Fc/Zc)
+    N[2:maxage] <- N[1:(maxage - 1)] * exp(-Zc[1:(maxage - 1)])  # Total mortality
+    N[1] <- (0.8 * hc * sum(SSB))/(0.2 * SSBpR * (1 - hc) + (hc - 0.2) * 
+      sum(SSB))  # Recruitment assuming regional R0 and stock wide steepness
+    Biomass <- N * Wac
+    SSN <- N * matc
+    SSB <- SSN * Wac
+  }  # end of year
   
-  pred<-sum((CN[nyears,]*Lac))/sum(CN[nyears,])
-  fobj<-(pred-MLc)^2 # Currently a least squares estimator. Probably not worth splitting hairs WRT likelihood functions!
-  if(opt==1){return(fobj)
-  }else{c(sum(SSB)/sum(SSB0),Fm)
+  pred <- sum((CN[nyears, ] * Lac))/sum(CN[nyears, ])
+  fobj <- (pred - MLc)^2  # Currently a least squares estimator. Probably not worth splitting hairs WRT likelihood functions!
+  if (opt == 1) {
+    return(fobj)
+  } else {
+    c(sum(SSB)/sum(SSB0), Fm)
   }
 }
 
-# Stochastic inverse growth curve used to back-calculate age at first capture from length at first capture
-getAFC<-function(t0c,Linfc,Kc,LFC,maxage){ 
-  nsim<-length(t0c)
-  agev<-c(0.0001,1:maxage)
-  agearray<-matrix(rep(agev,each=nsim),nrow=nsim)
-  Larray<-Linfc*(1-exp(-Kc*(agearray-t0c)))
-  matplot(agev,t(Larray),type='l')
-  abline(h=LFC,col="#ff000030",lwd=2)
-  AFC<-(log(1-(LFC/Linfc))/-Kc)+t0c
-  abline(v=AFC,col="#0000ff30",lwd=2)
+# Stochastic inverse growth curve used to back-calculate age at first
+# capture from length at first capture
+#' Calculate age at first capture from length at first capture and growth
+#' 
+#' As title.
+#' 
+#' 
+#' @usage getAFC(t0c,Linfc,Kc,LFC,maxage)
+#' @param t0c A vector of theoretical age at length zero (von Bertalanffy
+#' growth)
+#' @param Linfc A vector of maximum length (von Bertalanffy growth)
+#' @param Kc A vector of maximum growth rate (von Bertalanffy growth)
+#' @param LFC A vector of length at first capture
+#' @param maxage Maximum age
+#' @author T. Carruthers
+#' @export getAFC
+getAFC <- function(t0c, Linfc, Kc, LFC, maxage) {
+  nsim <- length(t0c)
+  agev <- c(1e-04, 1:maxage)
+  agearray <- matrix(rep(agev, each = nsim), nrow = nsim)
+  Larray <- Linfc * (1 - exp(-Kc * (agearray - t0c)))
+  matplot(agev, t(Larray), type = "l")
+  abline(h = LFC, col = "#ff000030", lwd = 2)
+  AFC <- (log(1 - (LFC/Linfc))/-Kc) + t0c
+  abline(v = AFC, col = "#0000ff30", lwd = 2)
   AFC
-}  
+}
 
-L2A<-function(t0c,Linfc,Kc,Len,maxage){ 
-  nsim<-length(t0c)
-  agev<-c(0.0001,1:maxage)
-  agearray<-matrix(rep(agev,each=nsim),nrow=nsim)
-  Larray<-Linfc*(1-exp(-Kc*(agearray-t0c)))
-  matplot(agev,t(Larray),type='l')
-  abline(h=Len,col="#ff000030",lwd=2)
-  age<-(log(1-(Len/Linfc))/-Kc)+t0c
-  abline(v=age,col="#0000ff30",lwd=2)
+
+
+#' Length to age conversion
+#' 
+#' Simple deterministic length to age conversion given inverse von Bertalanffy
+#' growth.
+#' 
+#' 
+#' @usage L2A(t0c,Linfc,Kc,Len,maxage)
+#' @param t0c Theoretical age at length zero
+#' @param Linfc Maximum length
+#' @param Kc Maximum growth rate
+#' @param Len Length
+#' @param maxage Maximum age
+#' @return An age (vector of ages, matrix of ages) corresponding with Len
+#' @author T. Carruthers
+#' @export L2A
+L2A <- function(t0c, Linfc, Kc, Len, maxage) {
+  nsim <- length(t0c)
+  agev <- c(1e-04, 1:maxage)
+  agearray <- matrix(rep(agev, each = nsim), nrow = nsim)
+  Larray <- Linfc * (1 - exp(-Kc * (agearray - t0c)))
+  matplot(agev, t(Larray), type = "l")
+  abline(h = Len, col = "#ff000030", lwd = 2)
+  age <- (log(1 - (Len/Linfc))/-Kc) + t0c
+  abline(v = age, col = "#0000ff30", lwd = 2)
   age
-}  
+}
 
-# Set Cyclic Recruitment Pattern
-SetRecruitCycle <- function(x=1, Period, Amplitude, TotYears, Shape=c("sin", "shift")) {
-  Shape <- match.arg(Shape) 
+
+#' Function to calculate cyclic recruitment pattern given user-specified values
+#' of period and amplitude.
+#' 
+#' Calculates cyclic pattern in recruitment deviations for a simulation. Ranges
+#' for Period and Amplitude are specified by user, and function produces cyclic
+#' pattern from within these ranges. Default is a sine wave.
+#' 
+#' 
+#' @usage SetRecruitCycle(x=1, Period, Amplitude, TotYears, Shape=c('sin',
+#' 'shift'))
+#' @param x Simulation number.
+#' @param Period A vector of length 2 specifying the minimum and maximum values
+#' for the period of the recruitment cycles. e.g., if Period = c(10,10), then
+#' recruitment cycle occurs every 10 years exactly.
+#' @param Amplitude A vector of length 2 specifying the minimum and maximum
+#' values for the amplitude of the recruitment cycles. e.g., if Amplitude =
+#' c(0,0.5), the average recruitment will increase (or decrease) by a factor
+#' between 0 and 0.5 each cycle.
+#' @param TotYears A numeric value specifying the total number of years (should
+#' be nyears + proyears).
+#' @param Shape Specifies whether cyclic recruitment pattern is sine wave
+#' (default) or a step-change (shift).
+#' @author A. Hordyk
+#' @export SetRecruitCycle
+SetRecruitCycle <- function(x = 1, Period, Amplitude, TotYears, Shape = c("sin", 
+  "shift")) {
+  Shape <- match.arg(Shape)
   Npers <- ceiling(TotYears/min(Period))
-  pers <- round(runif(Npers, min(Period), max(Period)),0)
+  pers <- round(runif(Npers, min(Period), max(Period)), 0)
   amp <- runif(Npers, min(Amplitude), max(Amplitude))
-  ct <- 1; Dir <- sample(c(-1, 1),1)
+  ct <- 1
+  Dir <- sample(c(-1, 1), 1)
   Rm <- rep(NA, Npers)
   if (Shape == "sin") {
     for (X in 1:length(pers)) {
       yrper <- pers[X]
-	  Period <- pi/yrper  #round(runif(1,-1, 1),0) * pi/yrper 
-	  xs <- seq(from=0, by=1, to=pers[X])
-	  Dir <- ifelse(Dir >= 0, -1, 1) # change direction each cycle
-	  Rm[ct:(ct+pers[X])] <- amp[X] * sin(xs*Period) * Dir
-	  ct <- ct+pers[X]
+      Period <- pi/yrper  #round(runif(1,-1, 1),0) * pi/yrper 
+      xs <- seq(from = 0, by = 1, to = pers[X])
+      Dir <- ifelse(Dir >= 0, -1, 1)  # change direction each cycle
+      Rm[ct:(ct + pers[X])] <- amp[X] * sin(xs * Period) * Dir
+      ct <- ct + pers[X]
     }
   }
   if (Shape == "shift") {
     for (X in 1:length(pers)) {
-	 Dir <- ifelse(Dir >= 0, -1, 1) # change direction each cycle
-     if (X==1) Rm[ct:(ct+pers[X])] <- 0
-     if (X > 1) Rm[ct:(ct+pers[X])] <- amp[X] * Dir
-	 Rm[ct:(ct+pers[X])] <- amp[X] * Dir
-     ct <- ct+pers[X]
+      Dir <- ifelse(Dir >= 0, -1, 1)  # change direction each cycle
+      if (X == 1) 
+        Rm[ct:(ct + pers[X])] <- 0
+      if (X > 1) 
+        Rm[ct:(ct + pers[X])] <- amp[X] * Dir
+      Rm[ct:(ct + pers[X])] <- amp[X] * Dir
+      ct <- ct + pers[X]
     }
-  }	
+  }
   Rm <- Rm[1:TotYears] + 1
   return(Rm)
 }
 
-# Sketch trends in historical fishing mortality --------------------------------
-# Takes Fleet object, runs Sketch function for user to specify historical effort
-# Then returns Fleet object with Effort objects populated with output of Sketch
-ChooseEffort <- function(FleetObj, Years=NULL) {
-  nyears <- FleetObj@nyears
-  runSketch <- SketchFun(nyears, Years)
-  FleetObj@nyears <- length(Years)
-  FleetObj@EffYears <- runSketch[,1]
-  FleetObj@EffLower <- runSketch[,2]
-  FleetObj@EffUpper <- runSketch[,3]
-  return(FleetObj)
-}
 
-# Sketch Historical Selectivity Patterns ---------------------------------------
-ChooseSelect <- function(Fleet, Stock=NULL, FstYr=NULL, SelYears=NULL) {
-  chk <- class(Fleet@isRel)
-  if (chk == "character") {
-    chkrel <- tolower(Fleet@isRel)
-    if (chkrel == "true" | Fleet@isRel == "1") isRel <- TRUE
-	if (chkrel == "false" | Fleet@isRel == "0") isRel <- FALSE
-  }
-  if (chk == "numeric") {
-    if (Fleet@isRel == 1) isRel <- TRUE
-	if (Fleet@isRel == 0) isRel <- FALSE 
-  }
 
-  if ((!isRel) & is.null(Stock)) stop("Require Stock object")
-  LastYr <- as.numeric(format(Sys.Date(), format="%Y"))
-  if (is.null(FstYr)) {
-    message("*****************")
-    message("Enter first historical year")
-    message("Note: *nyears* will be specified from this value")
-    FstYr <- as.numeric(readline("First Historical Year: "))
-	message("\n")
-  }
-  if (is.null(SelYears)) {
-    message("Enter each selectivity break point year, seperated by a comma")
-    message("Note: break points are the years where selectivity pattern changed")
-    message("Note: break points must be within year range")
-    inString <- readline("Enter each selectivity break point year, seperated by a comma: ")
-    options(warn=-1)
-    SelYears <- as.numeric(unlist(strsplit(inString, ",")))
-    if (is.na(SelYears))  SelYears <- as.numeric(unlist(strsplit(inString, " ")))
-    options(warn=0)
-  }	
-  SelYears <- sort(SelYears)
-  if (SelYears[1] != FstYr) SelYears <- c(FstYr, SelYears)
-  message("Break Points Years are: ")
-  print(SelYears)
-  if (length(SelYears) < 2) stop("Must be more than one year")
-  if (max(SelYears) > LastYr) stop("Must specify historical year")
-  if (min(SelYears) < FstYr) stop("Year before first year")
-  flush.console()
-  Selnyears <- length(SelYears)
- 
-  Years <- FstYr:LastYr #SelYears[1]:SelYears[length(SelYears)]
-  Fleet@nyears <- length(Years)
-  ind <- round((Range(SelYears, Max=LastYr, Min=FstYr)) * Fleet@nyears,0) +1
-  ind[length(ind)] <- max(ind) - 1  
-  Fleet@AbsSelYears <- SelYears 
-  Fleet@SelYears <- ind
+
+
+
+#' Convert a OM object to one without observation or process error
+#' 
+#' Takes an existing OM object and converts it to one without any observation
+#' error, and very little process error.  Used for debugging and testing that
+#' MPs perform as expected under perfect conditions.
+#' 
+#' 
+#' @usage makePerf(OMin, except = NULL)
+#' @param OMin An object of class \code{OM}
+#' @param except An optional vector of slot names in the OM that will not be
+#' changed (not tested perfectly so watch out!)
+#' @return A new \code{OM} object
+#' @author A. Hordyk
+#' @export makePerf
+makePerf <- function(OMin, except = NULL) {
+  nms <- slotNames(OMin)
+  # exceptions
+  if (is.null(except)) 
+    except <- "EVERYTHING"
+  exclude <- unique(grep(paste(except, collapse = "|"), nms, value = FALSE))
   
-  tempL5 <- matrix(0, nrow=Selnyears, ncol=2)
-  tempLFS <- matrix(0, nrow=Selnyears, ncol=2)
-  tempmaxlen <- matrix(0, nrow=Selnyears, ncol=2)
-  
-  # if(is.null(Stock)) Stock <- NA
-  set.par <- par(no.readonly=TRUE)
-  message("Select selectivity points on plot")
-  flush.console()
-  for (N in 1:Selnyears) {
-    BlankSelPlot(Stock=Stock, Yr=SelYears[N], N=N, isRel=isRel)
-    L5Out <- ChooseL5(Fleet, Stock, isRel)
-    tempL5[N,] <- sort(L5Out[,1])
-    LFSout <- ChooseLFS(L5Out, Fleet, Stock, isRel)
-    tempLFS[N,] <- sort(LFSout[,1])
-    Vmaxout <- ChooseVmaxlen(Fleet, Stock, isRel)
-    tempmaxlen[N,] <- sort(Vmaxout[,2])
-	if (isRel) {
-      polygon(x=c(0, max(tempL5[N,]), max(tempLFS[N,]), 3, 
-       rev(c(0, min(tempL5[N,]), min(tempLFS[N,]), 3))),
-	   y= c(0, 0.05, 1, min(tempmaxlen[N,]),
-	   rev(c(0, 0.05, 1, max(tempmaxlen[N,])))), col="grey")
-      par(ask=TRUE)
-	} else {
-      polygon(x=c(0, max(tempL5[N,]), max(tempLFS[N,]), mean(Stock@Linf), 
-       rev(c(0, min(tempL5[N,]), min(tempLFS[N,]), mean(Stock@Linf)))),
-	   y= c(0, 0.05, 1, min(tempmaxlen[N,]),
-	   rev(c(0, 0.05, 1, max(tempmaxlen[N,])))), col="grey")
-      par(ask=TRUE)	
-	}
-  }	
-  par(set.par)
-  # CheckSelect(Fleet, Stock)
-  Fleet@L5Lower <- tempL5[,1]
-  Fleet@L5Upper <- tempL5[,2]
-  Fleet@LFSLower <- tempLFS[,1]
-  Fleet@LFSUpper <- tempLFS[,2]
-  Fleet@VmaxLower <- tempmaxlen[,1]
-  Fleet@VmaxUpper <- tempmaxlen[,2]
-  Fleet
-}
-
-
-# Kalman filter and Rauch-Tung-Striebel smoother
-KalmanFilter <- function(RawEsts, R=1, Q=0.1, Int=100) {
-  # Kalman smoother and Rauch-Tung-Striebel smoother #http://read.pudn.com/downloads88/ebook/336360/Kalman%20Filtering%20Theory%20and%20Practice,%20Using%20MATLAB/CHAPTER4/RTSvsKF.m__.htm
-  # R  # Variance of sampling noise
-  # Q  # Variance of random walk increments
-  # Int # Covariance of initial uncertainty
-  Ppred <-  rep(Int, length(RawEsts))
-  nNA <- sum(is.na(RawEsts))
-  while(nNA > 0) { # NAs get replaced with last non-NA
-    RawEsts[is.na(RawEsts)] <- RawEsts[which(is.na(RawEsts))-1]
-    nNA <- sum(is.na(RawEsts))
+  vars <- c("grad", "cv", "sd", "inc")
+  ind <- unique(grep(paste(vars, collapse = "|"), nms, value = FALSE))
+  ind <- ind[(!(nms[ind] %in% exclude))]
+  for (X in seq_along(ind)) {
+    n <- length(slot(OMin, nms[ind[X]]))
+    slot(OMin, nms[ind[X]]) <- rep(0, n)
   }
   
-  Pcorr <- xcorr <- xpred <- rep(0, length(RawEsts))
-  # Kalman Filter
-  for (X in 1:length(Ppred)) {
-    if (X !=1) {
-	  Ppred[X] <- Pcorr[X-1] + Q
-	  xpred[X] <- xcorr[X-1]
-	}
-	W <- Ppred[X]/(Ppred[X] + R)
-	xcorr[X] <- xpred[X] + W * (RawEsts[X] - xpred[X]) # Kalman filter estimate
-	Pcorr[X] <- Ppred[X] - W * Ppred[X]
-  }
-  # Smoother 
-  xsmooth <- xcorr
-  for (X in (length(Pcorr)-1):1) {
-    A <- Pcorr[X]/Ppred[X+1]
-	xsmooth[X] <- xsmooth[X] + A*(xsmooth[X+1] - xpred[X+1]) 
-  }
-  return(xsmooth)
-
-}
-
-
-# LBSPR - Hordyk et al ICES 2015 (slow!)
-LBSPRSim <- function(StockPars, FleetPars, SizeBins=NULL, P=0.001, Nage=101) {
-
-  MK <- StockPars$MK 
-  Linf <- StockPars$Linf
-  CVLinf <- StockPars$CVLinf 
-  L50 <- StockPars$L50 
-  L95 <- StockPars$L95 
-  Beta <- StockPars$FecB 
-  MaxSD <- StockPars$MaxSD
-  
-  # Assumed constant CV here
-  SDLinf <- CVLinf * Linf # Standard Deviation of Length-at-Age 
-  if (is.null(SizeBins)) {
-    SizeBins$Linc <- 5
-	SizeBins$ToSize <- Linf + MaxSD * SDLinf
-  }
-  if (is.null(SizeBins$ToSize)) SizeBins$ToSize <- Linf + MaxSD * SDLinf
-  Linc <- SizeBins$Linc 
-  ToSize <- SizeBins$ToSize
-  
-  FM <- FleetPars$FM 
-  SL50 <- FleetPars$SL50 
-  SL95 <- FleetPars$SL95 
-  
-  LenBins <- seq(from=0, by=Linc, to=ToSize)	
-  LenMids <- seq(from=0.5*Linc, by=Linc, length.out=length(LenBins)-1)
-  x <- seq(from=0, to=1, length.out=Nage) # relative age vector
-  EL <- (1-P^(x/MK)) * Linf # length at relative age 
-  rLens <- EL/Linf # relative length 
-  SDL <- EL * CVLinf # standard deviation of length-at-age
-  
-  Nlen <- length(LenMids) 
-  Prob <- matrix(NA, nrow=Nage, ncol=Nlen)
-  Prob[,1] <- pnorm((LenBins[2] - EL)/SDL, 0, 1) # probablility of length-at-age
-  for (i in 2:(Nlen-1)) {
-    Prob[,i] <- pnorm((LenBins[i+1] - EL)/SDL, 0, 1) - 
-		pnorm((LenBins[i] - EL)/SDL, 0, 1)
-  }
-  Prob[,Nlen] <- 1 - pnorm((LenBins[Nlen] - EL)/SDL, 0, 1)
-  
-  # Truncate normal dist at MaxSD 
-  mat <- array(1, dim=dim(Prob))
-  for (X in 1:Nage) {
-    ind <- which(abs((LenMids - EL[X]) /SDL[X]) >= MaxSD)
-    mat[X,ind] <- 0
-  }
-  
-  Prob <- Prob * mat
-
-  SL <- 1/(1+exp(-log(19)*(LenMids-SL50)/(SL95-SL50))) # Selectivity at length
-  Sx <- apply(t(Prob) * SL, 2, sum) # Selectivity at relative age 
-  MSX <- cumsum(Sx) / seq_along(Sx) # Mean cumulative selectivity for each age 
-  Ns <- (1-rLens)^(MK+(MK*FM)*MSX) # number at relative age in population
-  
-  Cx <- t(t(Prob) * SL) # Conditional catch length-at-age probablilities  
-  Nc <- apply(Ns * Cx, 2, sum) # 
-  Pop <- apply(Ns * Prob, 2, sum)
-  
-  Ml <- 1/(1+exp(-log(19)*(LenMids-L50)/(L95-L50))) # Maturity at length
-  Ma <-  apply(t(Prob) * Ml, 2, sum) # Maturity at relative age 
-  
-  N0 <- (1-rLens)^MK # Unfished numbers-at-age 
-  SPR <- sum(Ma * Ns * rLens^Beta)/sum(Ma * N0 * rLens^Beta)
-  
-  Output <- NULL 
-  Output$SPR <- SPR 
-  Output$LenMids <- LenMids
-  Output$PropLen <- Nc/sum(Nc)
-  Output$Pop <- Pop
-  
-  Output$LCatchFished <- Nc/sum(Nc)
-  Output$LPopFished <- Pop
-  Output$LCatchUnfished <- apply(N0 * Cx, 2, sum)
-  return(Output)
-}  
-
-OptFun <- function(tryFleetPars, LenDat, StockPars, SizeBins=NULL, 
-	mod=c("GTG", "LBSPR")) {
-  Fleet <- NULL
-  Fleet$SL50 <- exp(tryFleetPars[1]) * StockPars$Linf
-  Fleet$SL95 <- Fleet$SL50  + (exp(tryFleetPars[2]) * StockPars$Linf)
-  Fleet$MLLKnife <- NA
-  Fleet$FM <- exp(tryFleetPars[3])
-  
-  # if (mod == "GTG") runMod <-  GTGLBSPRSim(StockPars, Fleet, SizeBins)
-  if (mod == "LBSPR") runMod <- LBSPRSim(StockPars, Fleet, SizeBins)
-  
-  LenDat <- LenDat + 1E-15 # add tiny constant for zero catches
-  LenProb <- LenDat/sum(LenDat)
-  predProb <- runMod$LCatchFished 
-  predProb <- predProb + 1E-15 # add tiny constant for zero catches
-  NLL <- -sum(LenDat * log(predProb/LenProb))
-  
-  if(!is.finite(NLL)) return(1E9)
-  
-  # add penalty for SL50 
-  trySL50 <- exp(tryFleetPars[1])
-  PenVal <- NLL
-  Pen <- dbeta(trySL50, shape1=5, shape2=0.01) * PenVal
-  if (Pen == 0) Pen <- PenVal * trySL50
-  
-  # plot(xx, dbeta(xx, shape1=5, shape2=0.01) )
-  
-  NLL <- NLL+Pen 
-
-  return(NLL)
-}
-
-DoOpt <- function(StockPars, LenDat, SizeBins=NULL, mod=c("GTG", "LBSPR")) {
-  
-  SDLinf <- StockPars$CVLinf * StockPars$Linf
-  if (is.null(SizeBins)) {
-    SizeBins$Linc <- 5
-	SizeBins$ToSize <- StockPars$Linf + StockPars$MaxSD * SDLinf
-  }
-  if (is.null(SizeBins$ToSize)) 
-	SizeBins$ToSize <- StockPars$Linf + StockPars$MaxSD * SDLinf
-  
-  Linc <- SizeBins$Linc 
-  ToSize <- SizeBins$ToSize
- 
-  LenBins <- seq(from=0, by=Linc, to=ToSize)	
-  LenMids <- seq(from=0.5*Linc, by=Linc, length.out=length(LenBins)-1)
-  
-  sSL50 <- LenMids[which.max(LenDat)]/StockPars$Linf # Starting guesses
-  sDel <- 0.2 * LenMids[which.max(LenDat)]/StockPars$Linf
-  sFM <- 0.5 
-  Start <- log(c(sSL50, sDel, sFM))
-  
-  # opt <- nlminb(Start, OptFun, LenDat=LenDat, StockPars=StockPars, 
-	# SizeBins=SizeBins, mod=mod) 
-	
-  opt2 <- nlm(OptFun, Start, steptol=1e-4,gradtol=1e-4, LenDat=LenDat, 
-	StockPars=StockPars, SizeBins=SizeBins, mod=mod)
-  opt <- NULL
-  opt$objective <- opt2$minimum
-  opt$par <- opt2$estimate
-	
-  ModFailed <- FALSE 	
-  if (opt$objective	== 1E9) ModFailed <- TRUE 
-	# ,control= list(iter.max=300, eval.max=400, abs.tol=1E-20))
-  # barplot(LenDat, names.arg=LenMids) 
-  
-  newFleet <- NULL 
-  newFleet$FM <- exp(opt$par[3])
-  newFleet$SL50 <- exp(opt$par[1]) * StockPars$Linf 
-  newFleet$SL95 <- newFleet$SL50 + exp(opt$par[2]) * StockPars$Linf
-
-  # if (mod == "GTG") runMod <-  GTGLBSPRSim(StockPars, newFleet, SizeBins) # not used
-  if (mod == "LBSPR") runMod <- LBSPRSim(StockPars, newFleet, SizeBins)
-  
-  Out <- NULL 
-  Out$Ests <- c(FM=newFleet$FM, SL50=newFleet$SL50, SL95=newFleet$SL95, 
-	SPR=runMod$SPR)
-  Out$PredLen <- runMod$LCatchFished * sum(LenDat)
-  Out$ModFailed <- ModFailed
-  return(Out)
-}
-
-# Run LBSPR Model for time-series of catch length composition data 
-LBSPR <- function(x, DLM_data, yrsmth=1,reps=reps) {
-  # Save other stuff for smoothing estimates
-  if (length(DLM_data@Misc) == 0) DLM_data@Misc <- vector("list", 1)
-  
-  TotYears <- nrow(DLM_data@CAL[1,,]) # How many years of length data exist
-  if (is.null(TotYears)) TotYears <- length(DLM_data@CAL[1,,])
-  if(is.null(dim(DLM_data@CAL[1,,]))) TotYears <- 1  
-  if (length(DLM_data@Misc[[x]]) == 0) { # Misc List is empty
-    # Create Empty List Object
-	# MiscList <- rep(list(0), 5) # Create empty list
-	# MiscList[[1]] <- rep(NA, TotYears) # SPR ests
-	# MiscList[[2]] <- rep(NA, TotYears) # Smoothed SPR ests
-	# MiscList[[3]] <- rep(NA, TotYears) # FM ests
-	# MiscList[[4]] <- rep(NA, TotYears) # Smoothed FM ests
-	# MiscList[[5]] <- list()
-	# Create Empty Object
-    MiscList <- rep(list(0), 2) # Create empty list
-	MiscList[[1]] <- matrix(NA, nrow=TotYears, ncol=4)
-	colnames(MiscList[[1]]) <- c("Raw Est SPR", "Smooth Est SPR", 
-	"Raw Est F/M", "Smooth Est F/M")
-	MiscList[[2]] <- list()
-  }
-  if (length(DLM_data@Misc[[x]]) != 0) MiscList <- DLM_data@Misc[[x]]
-  
-  # Add Extra Row when needed 
-  if (length(MiscList[[1]][,1]) < TotYears) {
-    # Diff <- TotYears - length(DLM_data@Misc[[x]][[1]])
-    # MiscList[[1]] <- append(MiscList[[1]], rep(NA,Diff)) 
-	# MiscList[[2]] <- append(MiscList[[2]], rep(NA,Diff)) 
-	# MiscList[[3]] <- append(MiscList[[3]], rep(NA,Diff)) 
-	# MiscList[[4]] <- append(MiscList[[4]], rep(NA,Diff))
-    Diff <- TotYears - nrow(DLM_data@Misc[[x]][[1]])	
-	newmat <- matrix(NA, nrow=Diff, ncol=4)
-	names(newmat) <- names(MiscList[[1]]) 
-	MiscList[[1]] <- rbind(MiscList[[1]], newmat) 
-	# MiscList[[1]] <- as.data.frame(MiscList[[1]])
-  }
-
-  NEmpty <- sum(is.na(MiscList[[1]][,1])) # Number of empty spots
-  IsEmpty <- which(is.na(MiscList[[1]][,1]))
-
-
- StockPars <- NULL
- StockPars$MK <- DLM_data@Mort[x] / DLM_data@vbK[x]
- StockPars$Linf <- DLM_data@vbLinf[x]
- StockPars$CVLinf <- 0.1 # NEED TO ADD THIS TO INPUT VARIABLES
- StockPars$L50 <- DLM_data@L50[x] 
- StockPars$L95 <- DLM_data@L95[x]
- StockPars$FecB <- DLM_data@wlb[x]
- StockPars$MaxSD <- 2
- if(any(is.na(StockPars))) {
-   return(list(NA, paste(names(unlist(StockPars))[which(is.na(StockPars))], "are NA")))
- }
- 
- # yrsmth not implemented here
- LenMatrix <- DLM_data@CAL[x, IsEmpty,]
- if (TotYears == 1) LenMatrix <- t(as.matrix(LenMatrix))
- binWidth <- DLM_data@CAL_bins[2] - DLM_data@CAL_bins[1]
- CAL_binsmid <- seq(from=0.5*binWidth, by=binWidth, length=length(DLM_data@CAL_bins)-1)
-     
- SizeBins <- NULL
- SizeBins$Linc <- binWidth
- SizeBins$ToSize <- max(CAL_binsmid) + 0.5*binWidth
-
- # if(sfIsRunning()){
-    # AllOpt <- sfSapply(1:length(IsEmpty), function (X) 
-		# DoOpt(StockPars, LenDat=LenMatrix[X,], SizeBins=SizeBins, mod="LBSPR"))
-  # } else {
-    AllOpt <- sapply(1:length(IsEmpty), function (X)
-		DoOpt(StockPars, LenDat=LenMatrix[X,], SizeBins=SizeBins, mod="LBSPR"))
-  # } 
-  
- EstFM <- sapply(AllOpt[1,], "[[", 1)
- estSL50 <- sapply(AllOpt[1,], "[[", 2)
- estSL95 <- sapply(AllOpt[1,], "[[", 3)
- EstSPR <- sapply(AllOpt[1,], "[[", 4)
- EstFM[EstFM > 5] <- 5 
-
- Fails <- which(sapply(AllOpt[3,], "[[", 1))
- if (length(Fails) > 0) {
-   EstFM[Fails] <- NA 
-   EstSPR[Fails] <- NA
- }
- while(sum(is.na(EstFM)) > 0) { # if model failed, make same as last time 
-   EstFM[is.na(EstFM)] <- EstFM[which(is.na(EstFM))-1]
-   EstSPR[is.na(EstSPR)] <- EstSPR[which(is.na(EstSPR))-1]
- }
- MiscList[[1]][IsEmpty,1] <- EstSPR # Save estimate of SPR for smoothing
- MiscList[[1]][IsEmpty,3] <- EstFM # Save estimate of F/M for smoothing 
-  
-  # Smoothed estimates - SPR
-  MiscList[[1]][,2] <- KalmanFilter(RawEsts=MiscList[[1]][,1]) 
-  MiscList[[1]][,2][MiscList[[1]][,2] < 0 ] <- 0.05
-  MiscList[[1]][,2][MiscList[[1]][,2]  > 1] <- 0.99
-
-  # Smoothed estimates - FM
-  MiscList[[1]][,4] <- KalmanFilter(RawEsts=MiscList[[1]][,3])
-  
-  return(MiscList)
+  if (!("Cobs" %in% exclude)) 
+    OMin@Cobs <- c(0, 0)
+  if (!("Perr" %in% exclude)) 
+    OMin@Perr <- c(0, 0)
+  if (!("Iobs" %in% exclude)) 
+    OMin@Iobs <- c(0, 0)
+  if (!("AC" %in% exclude)) 
+    OMin@AC <- c(0, 0)
+  if (!("Btbias" %in% exclude)) 
+    OMin@Btbias <- c(1, 1)
+  if (!("CAA_ESS" %in% exclude)) 
+    OMin@CAA_ESS <- c(1000, 1000)
+  if (!("CAA_nsamp" %in% exclude)) 
+    OMin@CAA_nsamp <- c(2000, 2000)
+  if (!("CAL_ESS" %in% exclude)) 
+    OMin@CAL_ESS <- c(1000, 1000)
+  if (!("CAL_nsamp" %in% exclude)) 
+    OMin@CAL_nsamp <- c(2000, 2000)
+  if (!("beta" %in% exclude)) 
+    OMin@beta <- c(1, 1)
+  return(OMin)
 }
 
 
 
-# Take an OM object and convert it into a almost pefect OM with no 
-# observation error and very little process error 
-makePerf <- function(OMin, except=NULL) {
-    nms <- slotNames(OMin)
-	# exceptions 
-	if (is.null(except)) except <- "EVERYTHING"
-	exclude <- unique(grep(paste(except,collapse="|"), nms, value=FALSE))
-	
-	vars <- c("grad", "cv", "sd", "inc")
-	ind <- unique(grep(paste(vars,collapse="|"), nms, value=FALSE))
-	ind <- ind[(!(nms[ind] %in% exclude ))]
-	for (X in seq_along(ind)) {
-	  n <- length(slot(OMin, nms[ind[X]]))
-	  slot(OMin, nms[ind[X]]) <- rep(0, n)
-	}
-
-	if (!("Cobs" %in% exclude)) OMin@Cobs <- c(0,0)
-	if (!("Perr" %in% exclude)) OMin@Perr <- c(0,0)
-	if (!("Iobs" %in% exclude)) OMin@Iobs <- c(0,0)
-	if (!("AC" %in% exclude)) OMin@AC <- c(0, 0)
-	if (!("Btbias" %in% exclude)) OMin@Btbias <- c(1,1)
-	if (!("CAA_ESS" %in% exclude)) OMin@CAA_ESS <- c(1000, 1000)
-	if (!("CAA_nsamp" %in% exclude)) OMin@CAA_nsamp <- c(2000, 2000)
-	if (!("CAL_ESS" %in% exclude)) OMin@CAL_ESS <- c(1000, 1000)
-	if (!("CAL_nsamp" %in% exclude)) OMin@CAL_nsamp <- c(2000, 2000)
-	if (!("beta" %in% exclude)) OMin@beta <- c(1,1)
-	return(OMin)
-}
-
-
-# runMSE robust
-# A wrapper for runMSE which splits simulations into a series of packets,
-# tests for errors to avoid crashes, and saves out resulting MSE object 
-runMSErobust <- function(OM = "1", MPs = NA, nsim = 200, proyears = 28, interval = 4, 
-    pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, custompars = 0, 
-    CheckMPs = TRUE, maxsims=64, name=NULL, maxCrash=10, saveMSE=TRUE, savePack=FALSE){
-
-  packets <- new('list')   # a list of completed MSE objects
-  simsplit <- split(1:nsim, ceiling(seq_along(1:nsim)/maxsims)) # split the runs
-  
-  IsPar <- sfIsRunning() # Is a cluster running?
-  if (!IsPar) stop("You must set up parallel processing to use runMSErobust. 
-  Use: sfInit(parallel=TRUE, cpus=detectCores())")
-  
-  if (is.null(name)) { # make file name for packets if not input
-    st <- as.numeric(regexpr(":", OM@Name))+1
-	nd <- st + 3 # as.numeric(regexpr(" ", OM@Name))-1
-	name <- substr(OM@Name, st, nd)
-    name <- gsub("\\s+","",name)	
-  }	
-  if (nchar(name) < 1) name <- "MyMSE"
-  
-  # name <- paste0(sample(0:9, 1), sample(LETTERS, 1), name)
- 
-  for (i in 1:length(simsplit)){
-    error <- 1
-	crash <- 0 
-    while(error==1 & crash <= maxCrash){
-      trialMSE <- try(runMSE(OM=OM, MPs=MPs, nsim =length(simsplit[[i]]), 
-	  proyears=proyears, interval=interval, pstar=pstar, maxF=maxF, 
-	  timelimit=timelimit, reps=reps, custompars=custompars, CheckMPs=CheckMPs))
-      crash <- crash + 1 
-      if (crash >= maxCrash) stop("Crashed too many times!")	  
-      if(class(trialMSE)=="MSE"){
-        packets[[i]] <- trialMSE
-		fname <- paste0(name, "pack", i, ".rdata")
-        if (savePack) {
-		  saveRDS(trialMSE, file=fname)
-          print(paste("Saving", fname, "to", getwd()))
-          flush.console()		  
-		}  
-        error <- 0
-		crash <- 0 
-      }
-    } 
-    print(paste("Packet", i, "of", 	length(simsplit), "complete"))
-	flush.console()
-  }
-  if (i == 1)  MSEobj <- packets[[1]]
-  if (i > 1) MSEobj <- joinMSE(MSEobjs=packets)
-  if (saveMSE) {
-    fname <- paste0(name, ".rdata")
-	saveRDS(MSEobj, file=fname)
-    print(paste("Saving", fname, "to", getwd()))
-    flush.console()
-  }
-  MSEobj
-}
-
-# Find plotting functions in the DLMtool
-plotFun <- function(class=c("MSE", "DLM_data"), msg=TRUE) {
+#' Print out plotting functions
+#' 
+#' This function prints out the available plotting functions for objects of
+#' class MSE or DLM_data
+#' 
+#' 
+#' @usage plotFun(class = c('MSE', 'DLM_data'), msg=TRUE)
+#' @param class Character string. Prints out the plotting functions for objects
+#' of this class.
+#' @param msg Logical. Should the functions be printed to screen?
+#' @note Basically the function looks for any functions in the DLMtool that
+#' have the word `plot` in them.  There is a chance that some plotting
+#' functions are missed. Let us know if you find any and we will add them.
+#' @author A. Hordyk
+#' @export plotFun
+plotFun <- function(class = c("MSE", "DLM_data"), msg = TRUE) {
   class <- match.arg(class)
   tt <- lsf.str("package:DLMtool")
-  p <- p2 <- rep(FALSE, length(tt)) 
+  p <- p2 <- rep(FALSE, length(tt))
   for (X in seq_along(tt)) {
     temp <- grep("plot", tolower(tt[[X]]))
-    if (length(temp) > 0) p[X] <- TRUE
-    temp2 <- grep(class, paste(format(match.fun(tt[[X]])), collapse=" "))
-    if (length(temp2) > 0) p2[X] <- TRUE
+    if (length(temp) > 0) 
+      p[X] <- TRUE
+    temp2 <- grep(class, paste(format(match.fun(tt[[X]])), collapse = " "))
+    if (length(temp2) > 0) 
+      p2[X] <- TRUE
   }
-  if (msg) message("DLMtool functions for plotting objects of class ", class, " are:")
+  if (msg) 
+    message("DLMtool functions for plotting objects of class ", class, 
+      " are:")
   out <- sort(tt[which(p & p2)])
   out <- out[-grep("plotFun", out)]
-  if (class=="MSE") {
+  if (class == "MSE") {
     out <- c(out, "barplot", "boxplot", "VOI", "VOI2")
-	out <- sort(out)
+    out <- sort(out)
   }
-  if (class=="DLM_data") {
+  if (class == "DLM_data") {
     out <- c(out, "boxplot", "Sense")
-	out <- sort(out)
-  }  
+    out <- sort(out)
+  }
   if (msg) {
     if (length(out) > 5) {
-      sq <- seq(from=1, to=length(out), by=5)
+      sq <- seq(from = 1, to = length(out), by = 5)
       for (x in seq_along(sq)) {
-	    cat(out[sq[x]:min(sq[x+1]-1, length(out), na.rm=TRUE)])
-	    cat("\n")
-	  }
+        cat(out[sq[x]:min(sq[x + 1] - 1, length(out), na.rm = TRUE)])
+        cat("\n")
+      }
     } else cat(out)
     cat("\n")
   }
   invisible(out)
+}
+
+
+### Various Small Helper Functions ###
+
+
+#' Is a value NA or zero.
+#' 
+#' As title
+#' 
+#' 
+#' @usage NAor0(x)
+#' @param x A numeric value.
+#' @return TRUE or FALSE 
+#' @author T. Carruthers
+#' @export NAor0
+NAor0 <- function(x) {
+    if (length(x) == 0) 
+        return(TRUE)
+    if (length(x) > 0) 
+        return(is.na(x[1]))
+}
+
+
+
+
+#' Calculate CV from vector of values 
+#' 
+#' 
+#' @usage cv(x)
+#' @param x vector of numeric values 
+#' @author T. Carruthers
+#' @return numeric
+#' @export cv
+cv <- function(x) sd(x)/mean(x)
+
+
+#' Get log normal standard deviation from transformed space mean and standard deviation 
+#' 
+#' @usage sdconv(m, sd)
+#' @param m mean 
+#' @param sd standard deviation
+#' @author T. Carruthers
+#' @return numeric
+#' @export sdconv
+sdconv <- function(m, sd) (log(1 + ((sd^2)/(m^2))))^0.5
+
+#' Get log normal mean from transformed space mean and standard deviation
+#' 
+#' @usage mconv(m, sd)
+#' @param m mean 
+#' @param sd standard deviation
+#' @author T. Carruthers
+#' @return numeric
+#' @export mconv
+mconv <- function(m, sd) log(m) - 0.5 * log(1 + ((sd^2)/(m^2)))
+
+#' Calculate alpha parameter for beta distribution from mean and standard deviation 
+#' 
+#' @usage alphaconv(m, sd)
+#' @param m mean 
+#' @param sd standard deviation
+#' @author T. Carruthers
+#' @return numeric
+#' @export alphaconv
+alphaconv <- function(m, sd) m * (((m * (1 - m))/(sd^2)) - 1)
+
+#' Calculate beta parameter for beta distribution from mean and standard deviation 
+#' 
+#' @usage betaconv(m, sd)
+#' @param m mean 
+#' @param sd standard deviation
+#' @author T. Carruthers
+#' @return numeric
+#' @export betaconv
+betaconv <- function(m, sd) (1 - m) * (((m * (1 - m))/(sd^2)) - 1)
+
+#'  Generate log-normally distributed random numbers 
+#' 
+#' @usage trlnorm(reps, mu, cv)
+#' @param reps number of random numbers 
+#' @param mu mean 
+#' @param cv coefficient of variation
+#' @author T. Carruthers
+#' @return numeric
+#' @export trlnorm
+trlnorm <- function(reps, mu, cv) {
+    if (all(is.na(mu))) return(rep(NA, reps))
+    if (all(is.na(cv))) return(rep(NA, reps))
+    if (reps == 1)  return(mu)
+    return(rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)))
+}
+
+
+#'  Calculate density of log-normally distributed random numbers 
+#' 
+#' @usage tdlnorm(x, mu, cv)
+#' @param x vector 
+#' @param mu mean 
+#' @param cv coefficient of variation
+#' @author T. Carruthers
+#' @return numeric
+#' @export tdlnorm
+tdlnorm <- function(x, mu, cv) dlnorm(x, mconv(mu, mu * cv), sdconv(mu, mu * cv))
+
+#'  Condition met?
+#' 
+#' @usage condmet(vec)
+#' @param vec vector of logical values 
+#' @export condmet
+condmet <- function(vec) TRUE %in% vec
+
+#'  Sample vector
+#' 
+#' @usage sampy(x)
+#' @param x vector of values 
+#' @export sampy
+sampy <- function(x) sample(x, 1, prob = !is.na(x))
+
+#' Standardize values
+#' 
+#' Function to standardize to value relative to minimum and maximum values
+#' 
+#' @usage Range(x, Max, Min)
+#' @param x vector of values 
+#' @param Max Maximum value
+#' @param Min Minimum value 
+#' @export Range
+#'  
+Range <- function(x, Max, Min) (x - Min)/(Max - Min)  
+
+
+#' @rdname Range
+#' @export range01
+range01 <- function(x) (x - min(x))/(max(x) - min(x))  
+
+
+#' Calculate historical fishing mortality
+#' 
+#' 
+#' @param Esd vector of standard deviation 
+#' @param nyears number of years 
+#' @param EffYears index of years
+#' @param EffLower vector of lower bound
+#' @param EffUpper vector of upper bound
+#' @export getEffhist
+#' @keywords internal
+#'  
+getEffhist <- function(Esd, nyears, EffYears, EffLower, EffUpper) {
+    if (length(EffLower) == length(EffUpper) & length(EffUpper) == length(EffYears)) {
+        nsim <- length(Esd)  # get nsim 
+        refYear <- floor(range01(EffYears + 0.5) * nyears) + 1  # standardize years 
+        refYear[length(refYear)] <- nyears  # first year is year 1 
+        Effs <- mapply(runif, n = nsim, min = EffLower, max = EffUpper)  # sample Effort
+        if (nsim > 1) {
+            effort <- t(sapply(1:nsim, function(x) approx(x = refYear, 
+                y = Effs[x, ], method = "linear", n = nyears)$y))  # linear interpolation
+        }
+        if (nsim == 1) {
+            # Effs <- Effs/max(Effs)
+            effort <- matrix(approx(x = refYear, y = Effs, method = "linear", 
+                n = nyears)$y, nrow = 1)
+        }
+        
+        effort <- range01(effort)
+        effort[effort == 0] <- 0.01
+        
+        Emu <- -0.5 * Esd^2
+        Eerr <- array(exp(rnorm(nyears * nsim, rep(Emu, nyears), rep(Esd, 
+            nyears))), c(nsim, nyears))  # calc error
+        out <- NULL
+        eff <- effort * Eerr  # add error 
+        out[[1]] <- eff
+        out[[2]] <- (effort[, nyears] - effort[, nyears - 4])/5
+        return(out)
+    } else {
+        message("Input vectors of effort years and bounds not of same length")
+        return(NULL)
+    }
+}
+
+
+#' Creates a time series per simulation that has gradient grad and random normal walk with sigma
+#' 
+#' @param targ mean
+#' @param targsd standard deviation
+#' @param targgrad gradient 
+#' @param nyears number of historical years
+#' @param nsim number of simulations
+#' @export gettempvar
+#' @keywords internal
+#'  
+gettempvar <- function(targ, targsd, targgrad, nyears, nsim) {
+    mutemp <- -0.5 * targsd^2
+    temp <- array(1, dim = c(nsim, nyears))
+    for (i in 2:nyears) {
+        temp[, i] <- temp[, i] * exp(rnorm(nsim, mutemp, targsd))
+    }
+    yarray <- array(rep((1:nyears) - 1, each = nsim), dim = c(nsim, nyears))
+    temp <- temp * (1 + targgrad/100)^yarray
+    targ * temp/apply(temp, 1, mean)
 }

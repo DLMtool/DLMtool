@@ -1,2618 +1,4347 @@
 # DLM_output methods
-TACfilter<-function(TAC) {
-  TAC[TAC<0]<-NA    # Have to robustify due to R optmization problems.. work in progress.
-  TAC[TAC>(mean(TAC,na.rm=T)+5*sd(TAC,na.rm=T))]<-NA  # remove very large TAC samples
+
+#' TAC Filter
+#' 
+#' Filters vector of TAC recommendations by replacing negatives with NA and
+#' and values beyond five standard deviations from the mean as NA
+#' 
+#' @usage TACfilter(TAC)
+#' @param TAC A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @export TACfilter
+TACfilter <- function(TAC) {
+  TAC[TAC < 0] <- NA  # Have to robustify due to R optmization problems.. work in progress.
+  TAC[TAC > (mean(TAC, na.rm = T) + 5 * stats::sd(TAC, na.rm = T))] <- NA  # remove very large TAC samples
   return(TAC)
 }
 
-prodPTF<-function(depletion,n,MSY){   # Pella-Tomlinson production function required for DB-SRA
-   y<-(n^(n/(n-1)))/(n-1)
-   MSY*y*depletion-MSY*y*depletion^n
+prodPTF <- function(depletion, n, MSY) {
+  # Pella-Tomlinson production function required for DB-SRA
+  y <- (n^(n/(n - 1)))/(n - 1)
+  MSY * y * depletion - MSY * y * depletion^n
 }
 
-fn<-function(n,BMSY_K){               # optimizer to find parameter n according to sampled BMSY/B0 (theta)
-   thetapred<-n^(-1/(n-1))
-   (BMSY_K-thetapred)^2
+fn <- function(n, BMSY_K) {
+  # optimizer to find parameter n according to sampled BMSY/B0 (theta)
+  thetapred <- n^(-1/(n - 1))
+  (BMSY_K - thetapred)^2
 }
 
-getn<-function(BMSY_K){               # wrapper for n finder
-   optimize(fn,c(0.01,6),BMSY_K=BMSY_K)$minimum #get the optimum
+getn <- function(BMSY_K) {
+  # wrapper for n finder
+  optimize(fn, c(0.01, 6), BMSY_K = BMSY_K)$minimum  #get the optimum
 }
 
-gety<-function(n)  (n^(n/(n-1)))/(n-1) # More DBSRA code: get the y parameter for n
+gety <- function(n) (n^(n/(n - 1)))/(n - 1)  # More DBSRA code: get the y parameter for n
 
-FMSYref<-function(x,DLM_data,reps=100)trlnorm(reps,DLM_data@OM$A[x]*(1-exp(-DLM_data@OM$FMSY[x])),0.01)
-class(FMSYref)<-"DLM_output"
+#' Average Catch
+#' 
+#' A simple average catch MP that is included to demonstrate a 'status quo' management option
+#' 
+#' @usage AvC(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the TAC recommendation
+#' @author T. Carruthers
+#' @export AvC
+#' 
+#' @importFrom abind abind
+#' @importFrom graphics abline axis barplot boxplot hist identify layout legend 
+#' lines matplot mtext par plot plot.new points polygon segments text title text 
+#' @importFrom grDevices col2rgb colorRampPalette rainbow rgb xy.coords
+#' @importFrom methods getClassDef .hasSlot new slot slot<- slotNames
+#' @importFrom stats approx coef dbeta density dnorm dlnorm lm loess loess.smooth 
+#' median nlm optim optimise optimize plogis pnorm predict qlnorm quantile rbeta 
+#' rlnorm rmultinom rnorm runif sd uniroot   
+#' @importFrom utils packageVersion lsf.str read.csv
+AvC <- function(x, DLM_data, reps = 100) 
+  rlnorm(reps, log(mean(DLM_data@Cat[x, ], na.rm = T)), 0.2)
+class(AvC) <- "DLM_output"
 
-FMSYref50<-function(x,DLM_data,reps=100)trlnorm(reps,DLM_data@OM$A[x]*(1-exp(-DLM_data@OM$FMSY[x]))*0.5,0.01)
-class(FMSYref50)<-"DLM_output"
 
-FMSYref75<-function(x,DLM_data,reps=100)trlnorm(reps,DLM_data@OM$A[x]*(1-exp(-DLM_data@OM$FMSY[x]))*0.75,0.01)
-class(FMSYref75)<-"DLM_output"
+#' A reference FMSY method (uses perfect information about FMSY)
+#' 
+#' FMSY is taken from the operating model stored at DLM@OM$FMSY
+#' 
+#' Note that you can out-perform this MP even though it has perfect
+#' information of FMSY and current abundance. The requirment for fixed F is
+#' actually quite strict and is by no means the upper limit in terms of yield.
+#' Don't panic if your method beats this one for yield, especially for
+#' short-lived species of high temporal variability in productivity!
+#' 
+#' @usage FMSYref(x, DLM_data, reps = 100)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @author T. Carruthers
+#' @export FMSYref
+FMSYref <- function(x, DLM_data, reps = 100) 
+  trlnorm(reps, DLM_data@OM$A[x] * (1 - exp(-DLM_data@OM$FMSY[x])), 0.01)
+class(FMSYref) <- "DLM_output"
 
-DynF<-function(x,DLM_data,yrsmth=10,gg=2,reps=100){
-    
-  dependencies="DLM_data@Year, DLM_data@Cat, DLM_data@Ind, DLM_data@Abun, DLM_data@Mort, DLM_data@FMSY_M"
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
+
+
+#' A reference FMSY method that fishes at half of FMSY (uses perfect
+#' information about FMSY)
+#' 
+#' FMSY is taken from the operating model stored at DLM@OM$FMSY
+#' 
+#' Note that you can out-performm this method easily. The requirement for fixed
+#' F is actually quite strict and is by no means the upper limit in terms of
+#' yield. Don't panic if your method beats this one for yield!
+#' 
+#' Interesting that the reduction in yield is no way near commensurate with the
+#' reduction in F - as predicted by a yield curve and expressed in the pretty
+#' good yield theory.
+#' 
+#' @usage FMSYref50(x, DLM_data, reps = 100)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC (OFL) samples
+#' @author T. Carruthers
+#' @export FMSYref50
+FMSYref50 <- function(x, DLM_data, reps = 100) 
+  trlnorm(reps, DLM_data@OM$A[x] * (1 - exp(-DLM_data@OM$FMSY[x])) * 0.5, 0.01)
+class(FMSYref50) <- "DLM_output"
+
+
+
+#' A reference FMSY method that fishes at three quarters of FMSY (uses perfect
+#' information about FMSY)
+#' 
+#' FMSY is taken from the operating model stored at DLM@OM$FMSY
+#' 
+#' Note that you can out-performm this method easily. The requirement for fixed
+#' F is actually quite strict and is by no means the upper limit in terms of
+#' yield. Don't panic if your method beats this one for yield!
+#' 
+#' Interesting that the reduction in yield is no way near commensurate with the
+#' reduction in F as predicted by a yield curve and expressed in the pretty
+#' good yield theory.
+#' 
+#' @usage FMSYref75(x, DLM_data, reps = 100)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @author T. Carruthers
+#' @export FMSYref75
+FMSYref75 <- function(x, DLM_data, reps = 100) 
+  trlnorm(reps, DLM_data@OM$A[x] * (1 - exp(-DLM_data@OM$FMSY[x])) * 0.75, 0.01)
+class(FMSYref75) <- "DLM_output"
+
+
+
+#' Dynamic Fratio MP
+#' 
+#' The Fratio MP with a controller that changes the level of F according to the
+#' relationship between Surplus production and biomass. Ie lower F when dSP/dB
+#' is positive and higher F when dSP/dB is negative.
+#' 
+#' The method smoothes historical catches and biomass and then infers the
+#' relationship between surplus production and biomass (as suggested by Mark
+#' Maunder and Carl Walters). The approach then regulates a F based policy
+#' according to this gradient in which F may range between two different
+#' fractions of natural mortality rate.
+#' 
+#' The core advantage is the TAC(t) is not strongly determined by TAC(t-1) and
+#' therefore errors are not as readily propagated. The result is method that
+#' tends to perform alarmingly well and therefore requires debunking ASAP.
+#' 
+#' @usage DynF(x, DLM_data, yrsmth=10, gg=2, reps = 100)
+#' @param x A position in a data-limited methods object
+#' @param DLM_data A data-limited methods object
+#' @param yrsmth The number of historical recent years used for smoothing catch
+#' and biomass data
+#' @param gg A gain parameter that modifies F according to the gradient in
+#' surplus production with biomass
+#' @param reps The number samples of the TAC
+#' @return A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @references Made-up for this package.
+#' @export DynF
+DynF <- function(x, DLM_data, yrsmth = 10, gg = 2, reps = 100) {
   
-  C_dat<-log(DLM_data@Cat[x,ind])
+  dependencies = "DLM_data@Year, DLM_data@Cat, DLM_data@Ind, DLM_data@Abun, DLM_data@Mort, DLM_data@FMSY_M"
+  ind <- (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)
+  
+  C_dat <- log(DLM_data@Cat[x, ind])
   C_dat[C_dat == -Inf] <- 0
-  B_dat<-log(DLM_data@Ind[x,ind]/DLM_data@Ind[x,ind[yrsmth]]*DLM_data@Abun[x])
+  B_dat <- log(DLM_data@Ind[x, ind]/DLM_data@Ind[x, ind[yrsmth]] * DLM_data@Abun[x])
   B_dat[B_dat == -Inf] <- 0
-  C_hist<-exp(predict(loess(C_dat~ind,degree=1)))
-  B_hist<-exp(predict(loess(B_dat~ind,degree=1)))
+  C_hist <- exp(predict(loess(C_dat ~ ind, degree = 1)))
+  B_hist <- exp(predict(loess(B_dat ~ ind, degree = 1)))
   
-  ind<-2:yrsmth
-  ind1<-1:(yrsmth-1)
-  SP_hist<-B_hist[ind]-B_hist[ind1]+C_hist[ind1]
+  ind <- 2:yrsmth
+  ind1 <- 1:(yrsmth - 1)
+  SP_hist <- B_hist[ind] - B_hist[ind1] + C_hist[ind1]
   
-  Frat<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])*trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x])
-  Flim <- matrix(NA, nrow=2, ncol=reps)
-  Flim[1,] <- Frat * 0.5 
-  Flim[2,] <- Frat * 2
-
-  yind<-1:length(SP_hist)
-  SP_mu<-predict(lm(SP_hist~yind),newdat=list(yind=length(SP_hist)+1))
-  SP_se<-predict(lm(SP_hist~yind),newdat=list(yind=length(SP_hist)+1),se=T)$se.fit
-  SP_new<-rnorm(reps,SP_mu,SP_se/2)
-  Glm<-summary(lm(SP_hist~B_hist[ind1]))$coefficients[2,1:2] # plot(B_hist[ind1],SP_hist) # points(B_hist[ind1],SP_hist,col='green')
-  G_new<-rnorm(reps,Glm[1],Glm[2]/2)
-  #G_new[G_new>2*Frat]<-2*Frat[G_new<(2*Frat)]
-  #G_new[G_new<(-2*Frat)]<--2*Frat[G_new<(-2*Frat)]
-  G_new[G_new>0]<-G_new[G_new>0]*3
-  newF<-Frat*exp(-G_new*gg)
-  newF[newF<Flim[1]]<-Flim[1]
-  newF[newF>Flim[2]]<-Flim[2]
+  Frat <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x]) * trlnorm(reps, 
+    DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])
+  Flim <- matrix(NA, nrow = 2, ncol = reps)
+  Flim[1, ] <- Frat * 0.5
+  Flim[2, ] <- Frat * 2
   
-  TAC<-newF*B_hist[yrsmth]
+  yind <- 1:length(SP_hist)
+  SP_mu <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
+    1))
+  SP_se <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
+    1), se = T)$se.fit
+  SP_new <- rnorm(reps, SP_mu, SP_se/2)
+  Glm <- summary(lm(SP_hist ~ B_hist[ind1]))$coefficients[2, 1:2]  # plot(B_hist[ind1],SP_hist) # points(B_hist[ind1],SP_hist,col='green')
+  G_new <- rnorm(reps, Glm[1], Glm[2]/2)
+  # G_new[G_new>2*Frat]<-2*Frat[G_new<(2*Frat)]
+  # G_new[G_new<(-2*Frat)]<--2*Frat[G_new<(-2*Frat)]
+  G_new[G_new > 0] <- G_new[G_new > 0] * 3
+  newF <- Frat * exp(-G_new * gg)
+  newF[newF < Flim[1]] <- Flim[1]
+  newF[newF > Flim[2]] <- Flim[2]
+  
+  TAC <- newF * B_hist[yrsmth]
   TACfilter(TAC)
   
 }
-class(DynF)<-"DLM_output"
+class(DynF) <- "DLM_output"
 
-Fadapt<-function(x,DLM_data,reps=100,yrsmth=7,gg=1){
+
+
+#' An adaptive MP that uses trajectory in inferred suplus production and
+#' fishing mortality rate to update a TAC
+#' 
+#' Fishing rate is modified each year according to the gradient of surplus
+#' production with biomass (aims for zero).  F is bounded by FMSY/2 and 2FMSY
+#' and walks in the logit space according to dSP/dB. This is derived from the
+#' theory of Maunder 2014.
+#' 
+#' Tested in Carruthers et al. 2015.
+#' 
+#' @usage Fadapt(x, DLM_data, reps = 100, yrsmth = 7, gg=1)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param yrsmth Years over which to smooth recent estimates of surplus
+#' production
+#' @param gg A gain parameter controlling the speed in update in TAC.
+#' @return A numeric vector of quota recommendations
+#' @author T. Carruthers
+#' @references Carruthers et al. 2015. Performance evaluation of simple
+#' management procedures. Fish and Fisheries. In press.  Maunder. 2014.
+#' http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf
+#' @export Fadapt
+Fadapt <- function(x, DLM_data, reps = 100, yrsmth = 7, gg = 1) {
   
-  dependencies="DLM_data@Year, DLM_data@Cat, DLM_data@Ind, DLM_data@Abun, DLM_data@Mort, DLM_data@FMSY_M"
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
+  dependencies = "DLM_data@Year, DLM_data@Cat, DLM_data@Ind, DLM_data@Abun, DLM_data@Mort, DLM_data@FMSY_M"
+  ind <- (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)
   
-  C_dat<-log(DLM_data@Cat[x,ind])
+  C_dat <- log(DLM_data@Cat[x, ind])
   C_dat[C_dat == -Inf] <- 0
-  B_dat<-log(DLM_data@Ind[x,ind]/DLM_data@Ind[x,ind[yrsmth]]*DLM_data@Abun[x])
+  B_dat <- log(DLM_data@Ind[x, ind]/DLM_data@Ind[x, ind[yrsmth]] * DLM_data@Abun[x])
   B_dat[B_dat == -Inf] <- 0
-  C_hist<-exp(predict(loess(C_dat~ind,degree=1)))
-  B_hist<-exp(predict(loess(B_dat~ind,degree=1)))
+  C_hist <- exp(predict(loess(C_dat ~ ind, degree = 1)))
+  B_hist <- exp(predict(loess(B_dat ~ ind, degree = 1)))
   
-  ind<-2:yrsmth
-  ind1<-1:(yrsmth-1)
-  SP_hist<-B_hist[ind]-B_hist[ind1]+C_hist[ind1]
+  ind <- 2:yrsmth
+  ind1 <- 1:(yrsmth - 1)
+  SP_hist <- B_hist[ind] - B_hist[ind1] + C_hist[ind1]
   
-  Frat<-DLM_data@Mort[x]*DLM_data@FMSY_M[x]
-  Flim<-Frat*c(0.5,2)
-  Flimr<-Flim[2]-Flim[1]
+  Frat <- DLM_data@Mort[x] * DLM_data@FMSY_M[x]
+  Flim <- Frat * c(0.5, 2)
+  Flimr <- Flim[2] - Flim[1]
   
-  yind<-1:length(SP_hist)
-  SP_mu<-predict(lm(SP_hist~yind),newdat=list(yind=length(SP_hist)+1))
-  SP_se<-predict(lm(SP_hist~yind),newdat=list(yind=length(SP_hist)+1),se=T)$se.fit
-  SP_new<-rnorm(reps,SP_mu,SP_se/2)
-  Glm<-summary(lm(SP_hist~B_hist[ind1]))$coefficients[2,1:2] # plot(B_hist[ind1],SP_hist) # points(B_hist[ind1],SP_hist,col='green')
-  G_new<-rnorm(reps,Glm[1],Glm[2])
+  yind <- 1:length(SP_hist)
+  SP_mu <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
+    1))
+  SP_se <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
+    1), se = T)$se.fit
+  SP_new <- rnorm(reps, SP_mu, SP_se/2)
+  Glm <- summary(lm(SP_hist ~ B_hist[ind1]))$coefficients[2, 1:2]  # plot(B_hist[ind1],SP_hist) # points(B_hist[ind1],SP_hist,col='green')
+  G_new <- rnorm(reps, Glm[1], Glm[2])
   
-  Fold<-mean(C_hist/B_hist)
+  Fold <- mean(C_hist/B_hist)
   
-  if(Fold<Flim[1])Fmod1<-(-2)
-  if(Fold>Flim[2])Fmod1<-2
-  if(Fold>Flim[1]&Fold<Flim[2]){
-    Ffrac<-(Fold-Flim[1])/Flimr
-    Fmod1<-log(Ffrac/(1-Ffrac))
+  if (Fold < Flim[1]) 
+    Fmod1 <- (-2)
+  if (Fold > Flim[2]) 
+    Fmod1 <- 2
+  if (Fold > Flim[1] & Fold < Flim[2]) {
+    Ffrac <- (Fold - Flim[1])/Flimr
+    Fmod1 <- log(Ffrac/(1 - Ffrac))
   }
-  Fmod2<-Fmod1+gg*-G_new
-  newF<-Flim[1]+(exp(Fmod2)/(1+exp(Fmod2)))*Flimr
-  TAC<-newF*B_hist[yrsmth]
+  Fmod2 <- Fmod1 + gg * -G_new
+  newF <- Flim[1] + (exp(Fmod2)/(1 + exp(Fmod2))) * Flimr
+  TAC <- newF * B_hist[yrsmth]
   TACfilter(TAC)
 }
-class(Fadapt)<-"DLM_output"
+class(Fadapt) <- "DLM_output"
 
-DepF<-function(x,DLM_data,reps=100){
-  dependencies="DLM_data@Year, DLM_data@Dep, DLM_data@Mort, DLM_data@FMSY_M, DLM_data@BMSY_B0"
-  Frat<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])*trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x])
-  if (is.na(DLM_data@Dep[x]) | is.na(DLM_data@CV_Dep[x])) return(NA)
-  depo<-max(0.01,min(0.99,DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
-  Bt_K<-rbeta(reps*100,alphaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])),betaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
-  Bt_K<-Bt_K[Bt_K>=0.01&Bt_K<=0.99][1:reps] # interval censor (0.01,0.99)  as in Dick and MacCall 2011
-  adj<-Bt_K*(1-Bt_K)*4
-  adj[Bt_K>0.5]<-1
-  TAC<-Frat*DLM_data@Abun[x]*adj
+
+
+#' Depletion Corrected Fratio
+#' 
+#' The Fratio MP with a harvest control rule that reduces F according to the
+#' production curve given an estimate of current stock depletion.
+#' 
+#' 
+#' @usage DepF(x, DLM_data, reps = 100)
+#' @param x A position in data-limited methods data object DLM
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @return A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @references Made-up for this package.
+#' @export DepF
+DepF <- function(x, DLM_data, reps = 100) {
+  dependencies = "DLM_data@Year, DLM_data@Dep, DLM_data@Mort, DLM_data@FMSY_M, DLM_data@BMSY_B0"
+  Frat <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x]) * trlnorm(reps, 
+    DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])
+  if (is.na(DLM_data@Dep[x]) | is.na(DLM_data@CV_Dep[x])) 
+    return(NA)
+  depo <- max(0.01, min(0.99, DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
+  Bt_K <- rbeta(reps * 100, alphaconv(depo, min(depo * DLM_data@CV_Dep[x], 
+    (1 - depo) * DLM_data@CV_Dep[x])), betaconv(depo, min(depo * DLM_data@CV_Dep[x], 
+    (1 - depo) * DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
+  Bt_K <- Bt_K[Bt_K >= 0.01 & Bt_K <= 0.99][1:reps]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
+  adj <- Bt_K * (1 - Bt_K) * 4
+  adj[Bt_K > 0.5] <- 1
+  TAC <- Frat * DLM_data@Abun[x] * adj
   TACfilter(TAC)
 }
-class(DepF)<-"DLM_output"
+class(DepF) <- "DLM_output"
 
-Gcontrol<-function(x,DLM_data,reps=100,yrsmth=10,gg=2,glim=c(0.5,2)){
-  dependencies="DLM_data@Year, DLM_data@Cat, DLM_data@Ind, DLM_data@Abun"
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
-  C_dat<-log(DLM_data@Cat[x,ind])
+
+
+#' G-control MP
+#' 
+#' A harvest control rule proposed by Carl Walters that uses trajectory in
+#' inferred surplus production to make upward/downward adjustments to TAC
+#' recommendations
+#' 
+#' 
+#' @usage Gcontrol(x, DLM_data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5,
+#' 2))
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of quota samples
+#' @param yrsmth The number of years over which to smooth catch and biomass
+#' data
+#' @param gg A gain parameter
+#' @param glim A constraint limiting the maximum level of change in quota
+#' recommendations
+#' @author C. Walters and T. Carruthers
+#' @references Made-up for this package. Carruthers et al. 2015. Performance of
+#' Simple Management Procedures.
+#' @export Gcontrol
+Gcontrol <- function(x, DLM_data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 
+  2)) {
+  dependencies = "DLM_data@Year, DLM_data@Cat, DLM_data@Ind, DLM_data@Abun"
+  ind <- (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)
+  C_dat <- log(DLM_data@Cat[x, ind])
   C_dat[C_dat == -Inf] <- 0
-  B_dat<-log(DLM_data@Ind[x,ind]/DLM_data@Ind[x,ind[yrsmth]]*DLM_data@Abun[x])
+  B_dat <- log(DLM_data@Ind[x, ind]/DLM_data@Ind[x, ind[yrsmth]] * DLM_data@Abun[x])
   B_dat[B_dat == -Inf] <- 0
-  C_hist<-exp(predict(loess(C_dat~ind,degree=1)))
-  B_hist<-exp(predict(loess(B_dat~ind,degree=1)))
-  ind<-2:yrsmth
-  ind1<-1:(yrsmth-1)
-  SP_hist<-B_hist[ind]-B_hist[ind1]+C_hist[ind1]
-  yind<-1:length(SP_hist)
-  SP_mu<-predict(lm(SP_hist~yind),newdat=list(yind=length(SP_hist)+1))
-  SP_se<-predict(lm(SP_hist~yind),newdat=list(yind=length(SP_hist)+1),se=T)$se.fit
-  SP_new<-rnorm(reps,SP_mu,SP_se/2)
-  Glm<-summary(lm(SP_hist~B_hist[ind1]))$coefficients[2,1:2]
-  G_new<-rnorm(reps,Glm[1],Glm[2]/2)
-
-  TAC<-SP_new*(1-gg*G_new)
-  TAC[TAC<glim[1]*C_hist[yrsmth]]<-glim[1]*C_hist[yrsmth]
-  TAC[TAC>glim[2]*C_hist[yrsmth]]<-glim[2]*C_hist[yrsmth]
+  C_hist <- exp(predict(loess(C_dat ~ ind, degree = 1)))
+  B_hist <- exp(predict(loess(B_dat ~ ind, degree = 1)))
+  ind <- 2:yrsmth
+  ind1 <- 1:(yrsmth - 1)
+  SP_hist <- B_hist[ind] - B_hist[ind1] + C_hist[ind1]
+  yind <- 1:length(SP_hist)
+  SP_mu <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
+    1))
+  SP_se <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
+    1), se = T)$se.fit
+  SP_new <- rnorm(reps, SP_mu, SP_se/2)
+  Glm <- summary(lm(SP_hist ~ B_hist[ind1]))$coefficients[2, 1:2]
+  G_new <- rnorm(reps, Glm[1], Glm[2]/2)
   
-  #Carr<-cbind(array(rep(DLM_data@Cat[x,],each=reps),c(reps,length(DLM_data@Cat[x,]))),TAC)
-  #Warr<-(DLM_data@Mort[x]*exp(-DLM_data@Mort[x]*(1:ncol(Carr))))[ncol(Carr):1]
-  #Warr<-Warr/sum(Warr)
-  #TAC<-apply(t(matrix(Warr,nrow=ncol(Carr),ncol=reps))*Carr,1,sum)
+  TAC <- SP_new * (1 - gg * G_new)
+  TAC[TAC < glim[1] * C_hist[yrsmth]] <- glim[1] * C_hist[yrsmth]
+  TAC[TAC > glim[2] * C_hist[yrsmth]] <- glim[2] * C_hist[yrsmth]
+  
+  # Carr<-cbind(array(rep(DLM_data@Cat[x,],each=reps),c(reps,length(DLM_data@Cat[x,]))),TAC)
+  # Warr<-(DLM_data@Mort[x]*exp(-DLM_data@Mort[x]*(1:ncol(Carr))))[ncol(Carr):1]
+  # Warr<-Warr/sum(Warr)
+  # TAC<-apply(t(matrix(Warr,nrow=ncol(Carr),ncol=reps))*Carr,1,sum)
   TACfilter(TAC)
 }
-class(Gcontrol)<-"DLM_output"
+class(Gcontrol) <- "DLM_output"
 
 
-Rcontrol<-function(x,DLM_data,reps=100,yrsmth=10,gg=2,glim=c(0.5,2)){
-  dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0DLM_data@steep, DLM_data@CV_steep, DLM_data@MaxAge, DLM_data@Dep, DLM_data@CV_Dep, DLM_data@Cat, DLM_data@Ind"
-  Mvec<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  Kvec<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Linfvec<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
+
+
+#' Harvest Control Rule using prior for intrinsic rate of increase
+#' 
+#' An MP proposed by Carl Walters that modifies TACs according to trends in
+#' apparent surplus production that includes information from a demographically
+#' derived prior for intrinsic rate of increase
+#' 
+#' 
+#' @usage Rcontrol(x, DLM_data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5,
+#' 2))
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of quota samples
+#' @param yrsmth The number of years for smoothing catch and biomass data
+#' @param gg A gain parameters
+#' @param glim Limits for the change in TAC among years
+#' @author C. Walters and T. Carruthers
+#' @references Made-up for this package.
+#' @export Rcontrol
+Rcontrol <- function(x, DLM_data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 
+  2)) {
+  dependencies = "DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0DLM_data@steep, DLM_data@CV_steep, DLM_data@MaxAge, DLM_data@Dep, DLM_data@CV_Dep, DLM_data@Cat, DLM_data@Ind"
+  Mvec <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+  Kvec <- trlnorm(reps, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+  Linfvec <- trlnorm(reps, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
   if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
-    t0vec <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+    t0vec <- -trlnorm(reps, -DLM_data@vbt0[x], DLM_data@CV_vbt0[x])
   } else {
     t0vec <- rep(DLM_data@vbt0[x], reps)
   }
-  t0vec[!is.finite(t0vec)] <- 0 
-
-  hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
-  rsamp<-getr(x,DLM_data,Mvec,Kvec,Linfvec,t0vec,hvec,maxage=DLM_data@MaxAge,r_reps=reps)
-
-  depo<-max(0.01,min(0.99,DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
-  if (any(is.na(c(DLM_data@Dep[x],DLM_data@CV_Dep[x])))) return(NA)
+  t0vec[!is.finite(t0vec)] <- 0
   
-  Bt_K<-rbeta(100,alphaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])),betaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
-  Bt_K<-Bt_K[Bt_K>0.01&Bt_K<0.99][1] # interval censor (0.01,0.99)  as in Dick and MacCall 2011
-
-  G_new<-rsamp*(1-2*Bt_K)          # here is a big difference from SPHCR
-
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
-  C_dat<-log(DLM_data@Cat[x,ind])
-  C_dat[C_dat == -Inf] <- 0 
-  B_dat<-log(DLM_data@Ind[x,ind]/DLM_data@Ind[x,ind[yrsmth]]*DLM_data@Abun[x])
-  B_dat[B_dat == -Inf] <- 0 
-  C_hist<-exp(predict(loess(C_dat~ind,degree=1)))
-  B_hist<-exp(predict(loess(B_dat~ind,degree=1)))
-  ind<-2:yrsmth
-  ind1<-1:(yrsmth-1)
-  SP_hist<-B_hist[ind]-B_hist[ind1]+C_hist[ind1]
-  yind<-1:length(SP_hist)
-  SP_mu<-predict(lm(SP_hist~yind),newdat=list(yind=length(SP_hist)+1))
-  SP_se<-predict(lm(SP_hist~yind),newdat=list(yind=length(SP_hist)+1),se=T)$se.fit
-  SP_new<-rnorm(reps,SP_mu,SP_se/2)
-
-  TAC<-SP_new*(1-gg*G_new)
-  TAC[TAC<glim[1]*C_hist[yrsmth]]<-glim[1]*C_hist[yrsmth]
-  TAC[TAC>glim[2]*C_hist[yrsmth]]<-glim[2]*C_hist[yrsmth]
+  hvec <- trlnorm(reps, DLM_data@steep[x], DLM_data@CV_steep[x])
+  rsamp <- getr(x, DLM_data, Mvec, Kvec, Linfvec, t0vec, hvec, maxage = DLM_data@MaxAge, 
+    r_reps = reps)
   
-  #Carr<-cbind(array(rep(DLM_data@Cat[x,],each=reps),c(reps,length(DLM_data@Cat[x,]))),TAC)
-  #Warr<-(DLM_data@Mort[x]*exp(-DLM_data@Mort[x]*(1:ncol(Carr))))[ncol(Carr):1]
-  #Warr<-Warr/sum(Warr)
-  #TAC<-apply(t(matrix(Warr,nrow=ncol(Carr),ncol=reps))*Carr,1,sum)
+  depo <- max(0.01, min(0.99, DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
+  if (any(is.na(c(DLM_data@Dep[x], DLM_data@CV_Dep[x])))) 
+    return(NA)
+  
+  Bt_K <- rbeta(100, alphaconv(depo, min(depo * DLM_data@CV_Dep[x], (1 - 
+    depo) * DLM_data@CV_Dep[x])), betaconv(depo, min(depo * DLM_data@CV_Dep[x], 
+    (1 - depo) * DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
+  Bt_K <- Bt_K[Bt_K > 0.01 & Bt_K < 0.99][1]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
+  
+  G_new <- rsamp * (1 - 2 * Bt_K)  # here is a big difference from SPHCR
+  
+  ind <- (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)
+  C_dat <- log(DLM_data@Cat[x, ind])
+  C_dat[C_dat == -Inf] <- 0
+  B_dat <- log(DLM_data@Ind[x, ind]/DLM_data@Ind[x, ind[yrsmth]] * DLM_data@Abun[x])
+  B_dat[B_dat == -Inf] <- 0
+  C_hist <- exp(predict(loess(C_dat ~ ind, degree = 1)))
+  B_hist <- exp(predict(loess(B_dat ~ ind, degree = 1)))
+  ind <- 2:yrsmth
+  ind1 <- 1:(yrsmth - 1)
+  SP_hist <- B_hist[ind] - B_hist[ind1] + C_hist[ind1]
+  yind <- 1:length(SP_hist)
+  SP_mu <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
+    1))
+  SP_se <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
+    1), se = T)$se.fit
+  SP_new <- rnorm(reps, SP_mu, SP_se/2)
+  
+  TAC <- SP_new * (1 - gg * G_new)
+  TAC[TAC < glim[1] * C_hist[yrsmth]] <- glim[1] * C_hist[yrsmth]
+  TAC[TAC > glim[2] * C_hist[yrsmth]] <- glim[2] * C_hist[yrsmth]
+  
+  # Carr<-cbind(array(rep(DLM_data@Cat[x,],each=reps),c(reps,length(DLM_data@Cat[x,]))),TAC)
+  # Warr<-(DLM_data@Mort[x]*exp(-DLM_data@Mort[x]*(1:ncol(Carr))))[ncol(Carr):1]
+  # Warr<-Warr/sum(Warr)
+  # TAC<-apply(t(matrix(Warr,nrow=ncol(Carr),ncol=reps))*Carr,1,sum)
   TACfilter(TAC)
 }
-class(Rcontrol)<-"DLM_output"
+class(Rcontrol) <- "DLM_output"
 
-Rcontrol2<-function(x,DLM_data,reps=100,yrsmth=10,gg=2,glim=c(0.5,2)){
-  dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@steep, DLM_data@CV_steep, DLM_data@MaxAge, DLM_data@Dep, DLM_data@CV_Dep, DLM_data@Cat, DLM_data@Ind"
-  Mvec<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  Kvec<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Linfvec<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
+
+
+#' MP using prior for intrinsic rate of increase with a quadratic approximation
+#' to surplus production
+#' 
+#' An MP proposed by Carl Walters that modifies quotas according to trends in
+#' apparent surplus production that includes information from a demographically
+#' derived prior for intrinsic rate of increase. This is different from
+#' Rcontrol because it includes a quadratic approximation of recent trend in
+#' surplus production given biomass
+#' 
+#' 
+#' @usage Rcontrol2(x, DLM_data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5,
+#' 2))
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param yrsmth The number of years for smoothing catch and biomass data
+#' @param gg A gain parameters
+#' @param glim Limits for the change in TAC among years
+#' @author C. Walters and T. Carruthers
+#' @references Made-up for this package.
+#' @export Rcontrol2
+Rcontrol2 <- function(x, DLM_data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 
+  2)) {
+  dependencies = "DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@steep, DLM_data@CV_steep, DLM_data@MaxAge, DLM_data@Dep, DLM_data@CV_Dep, DLM_data@Cat, DLM_data@Ind"
+  Mvec <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+  Kvec <- trlnorm(reps, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+  Linfvec <- trlnorm(reps, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
   if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
-    t0vec <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+    t0vec <- -trlnorm(reps, -DLM_data@vbt0[x], DLM_data@CV_vbt0[x])
   } else {
     t0vec <- rep(DLM_data@vbt0[x], reps)
   }
-  t0vec[!is.finite(t0vec)]  <- 0 
-  hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
-  rsamp<-getr(x,DLM_data,Mvec,Kvec,Linfvec,t0vec,hvec,maxage=DLM_data@MaxAge,r_reps=reps)
-
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
-  C_dat<-log(DLM_data@Cat[x,ind])
+  t0vec[!is.finite(t0vec)] <- 0
+  hvec <- trlnorm(reps, DLM_data@steep[x], DLM_data@CV_steep[x])
+  rsamp <- getr(x, DLM_data, Mvec, Kvec, Linfvec, t0vec, hvec, maxage = DLM_data@MaxAge, 
+    r_reps = reps)
+  
+  ind <- (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)
+  C_dat <- log(DLM_data@Cat[x, ind])
   C_dat[C_dat == -Inf] <- 0
-  B_dat<-log(DLM_data@Ind[x,ind]/DLM_data@Ind[x,ind[yrsmth]]*DLM_data@Abun[x])
+  B_dat <- log(DLM_data@Ind[x, ind]/DLM_data@Ind[x, ind[yrsmth]] * DLM_data@Abun[x])
   B_dat[B_dat == -Inf] <- 0
-  C_hist<-exp(predict(loess(C_dat~ind,degree=1)))
-  B_hist<-exp(predict(loess(B_dat~ind,degree=1)))
-  ind<-2:yrsmth
-  ind1<-1:(yrsmth-1)
-  SP_hist<-B_hist[ind]-B_hist[ind1]+C_hist[ind1]
-  yind<-1:length(SP_hist)
-  SP_mu<-predict(lm(SP_hist~yind),newdat=list(yind=length(SP_hist)+1))
-  SP_se<-predict(lm(SP_hist~yind),newdat=list(yind=length(SP_hist)+1),se=T)$se.fit
-  SP_new<-rnorm(reps,SP_mu,SP_se/2)
-  SParr<-array(rep(SP_hist,each=reps),dim=c(reps,yrsmth-1))
-  Barr<-array(rep(B_hist[ind],each=reps),dim=c(reps,yrsmth-1))
-  rarr<-array(rep(rsamp,yrsmth-1),dim=c(reps,yrsmth-1))
-  b2<-apply(SParr/Barr-rarr,1,sum)*apply(Barr,1,sum)/apply(Barr^2,1,sum)
-  G_new<-rsamp-2*b2*B_hist[yrsmth]
-
-  TAC<-SP_new*(1-gg*G_new)
-  TAC[TAC<glim[1]*C_hist[yrsmth]]<-glim[1]*C_hist[yrsmth]
-  TAC[TAC>glim[2]*C_hist[yrsmth]]<-glim[2]*C_hist[yrsmth]
-  #Carr<-cbind(array(rep(DLM_data@Cat[x,],each=reps),c(reps,length(DLM_data@Cat[x,]))),TAC)
-  #Warr<-(DLM_data@Mort[x]*exp(-DLM_data@Mort[x]*(1:ncol(Carr))))[ncol(Carr):1]
-  #Warr<-Warr/sum(Warr)
-  #TAC<-apply(t(matrix(Warr,nrow=ncol(Carr),ncol=reps))*Carr,1,sum)
-  TACfilter(TAC)
-}
-class(Rcontrol2)<-"DLM_output"
-
-GB_CC<-function(x,DLM_data,reps=100){
-  dependencies="DLM_data@Cref,DLM_data@Cat"
-  Catrec<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  TAC<-trlnorm(reps,DLM_data@Cref[x],DLM_data@CV_Cref)
-  TAC[TAC>(1.2*Catrec)]<-1.2*Catrec
-  TAC[TAC<(0.8*Catrec)]<-0.8*Catrec
-  TACfilter(TAC)
-}
-class(GB_CC)<-"DLM_output"
-
-GB_slope<-function(x,DLM_data,reps=100,yrsmth=5,lambda=1){
-  dependencies="DLM_data@Year, DLM_data@Cat, DLM_data@CV_Cat, DLM_data@Ind"
-  Catrec<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
-  I_hist<-DLM_data@Ind[x,ind]
-  yind<-1:yrsmth
-  slppar<-summary(lm(I_hist~yind))$coefficients[2,1:2]
-  Islp <-rnorm(reps,slppar[1],slppar[2])
-  MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  Cc<-rlnorm(reps,mconv(MuC,DLM_data@CV_Cat[x]*MuC),sdconv(MuC,DLM_data@CV_Cat[x]*MuC))
-  TAC<-Cc*(1+lambda*Islp)
-  TAC[TAC>(1.2*Catrec)]<-1.2*Catrec
-  TAC[TAC<(0.8*Catrec)]<-0.8*Catrec
-  TACfilter(TAC)
-}
-class(GB_slope)<-"DLM_output"
-
-GB_target<-function(x,DLM_data,reps=100,w=0.5){
-  dependencies="DLM_data@Cat, DLM_data@Cref, DLM_data@Iref, DLM_data@Ind"
-  Catrec<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  TACtarg<-trlnorm(reps,DLM_data@Cref[x],DLM_data@CV_Cref)
-  Itarg<-trlnorm(reps,DLM_data@Iref[x],DLM_data@CV_Iref)
-  Iav<-mean(DLM_data@Ind[x,(length(DLM_data@Ind[x,])-4):length(DLM_data@Ind[x,])],na.rm=T)
-  Irec<-mean(DLM_data@Ind[x,(length(DLM_data@Ind[x,])-3):length(DLM_data@Ind[x,])],na.rm=T)
-  I0<-0.2*Iav
-  TAC<-rep(NA,reps)
-  if(Irec>I0)TAC<-TACtarg*(w+(1-w)*((Irec-I0)/(Itarg-I0)))
-  if(Irec<I0)TAC<-TACtarg*w*(Irec/I0)^2
-  TAC[TAC>(1.2*Catrec)]<-1.2*Catrec
-  TAC[TAC<(0.8*Catrec)]<-0.8*Catrec
-  TACfilter(TAC)
-}
-class(GB_target)<-"DLM_output"
-
-CC1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0){
-  dependencies="DLM_data@Cat, DLM_data@CV_Cat"
-  C_dat<-DLM_data@Cat[x,(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)]
-  TAC<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5)) # mean catches over the interval
-  TACfilter(TAC)
-}  
-class(CC1)<-"DLM_output"
-
-CC4<-function(x,DLM_data,reps=100,yrsmth=5,xx=0.3){
-  dependencies="DLM_data@Cat, DLM_data@CV_Cat"
-  C_dat<-DLM_data@Cat[x,(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)]
-  TAC<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5)) # mean catches over the interval
-  TACfilter(TAC)
-}  
-class(CC4)<-"DLM_output"
-
-
-LstepCC1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,stepsz=0.05,llim=c(0.96,0.98,1.05)){
-  dependencies="DLM_data@Cat, DLM_data@CV_Cat, DLM_data@ML"
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
-  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
-  ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
-  ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
-  C_dat<-DLM_data@Cat[x,ind2]
-  if(is.na(DLM_data@MPrec[x]) || length(DLM_data@Year)==ylast+1) {
-    TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
-  } else { 
-    TACstar<-rep(DLM_data@MPrec[x],reps)
-  }
-  step<-stepsz*TACstar
-  Lrecent<-mean(DLM_data@ML[ind])
-  Lave<-mean(DLM_data@ML[ind3])
-  rat<-Lrecent/Lave
-  if(rat<llim[1]){TAC<-TACstar-2*step
-  }else if(rat<llim[2]){TAC<-TACstar-step
-  }else if(rat>llim[3]){TAC<-TACstar+step
-  }else{TAC<-TACstar
-  }
-  TACfilter(TAC)
-}  
-class(LstepCC1)<-"DLM_output"
-
-
-LstepCC4<-function(x,DLM_data,reps=100,yrsmth=5,xx=0.3,stepsz=0.05,llim=c(0.96,0.98,1.05)){
-  dependencies="DLM_data@Cat, DLM_data@CV_Cat, DLM_data@ML"
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
-  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
-  ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
-  ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
-  C_dat<-DLM_data@Cat[x,ind2]
-  if(is.na(DLM_data@MPrec[x]) || length(DLM_data@Year)==ylast+1)  {TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
-  }else{TACstar<-rep(DLM_data@MPrec[x],reps)}
-  step<-stepsz*TACstar
-  Lrecent<-mean(DLM_data@ML[ind])
-  Lave<-mean(DLM_data@ML[ind3])
-  rat<-Lrecent/Lave
-  if(rat<llim[1]){TAC<-TACstar-2*step
-  }else if(rat<llim[2]){TAC<-TACstar-step
-  }else if(rat>llim[3]){TAC<-TACstar+step
-  }else{TAC<-TACstar
-  }
-  TACfilter(TAC)
-}  
-class(LstepCC4)<-"DLM_output"
-
-
-Ltarget1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,xL=1.05){
-  dependencies="DLM_data@Cat, DLM_data@CV_Cat, DLM_data@ML"
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
-  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
-  ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
-  ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
-  C_dat<-DLM_data@Cat[x,ind2]
-  TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
-  Lrecent<-mean(DLM_data@ML[ind])
-  Lave<-mean(DLM_data@ML[ind3])
-  L0<-0.9*Lave
-  Ltarget<-xL*Lave
-  if(Lrecent>L0){TAC<-0.5*TACstar*(1+((Lrecent-L0)/(Ltarget-L0)))
-  }else{TAC<-0.5*TACstar*(Lrecent/L0)^2                  
-  }
-  TACfilter(TAC)
-}  
-class(Ltarget1)<-"DLM_output"
-
-Ltarget4<-function(x,DLM_data,reps=100,yrsmth=5,xx=0.2,xL=1.15){
-  dependencies="DLM_data@Cat, DLM_data@CV_Cat, DLM_data@ML"
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
-  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
-  ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
-  ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
-  C_dat<-DLM_data@Cat[x,ind2]
-  TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
-  Lrecent<-mean(DLM_data@ML[ind])
-  Lave<-mean(DLM_data@ML[ind3])
-  L0<-0.9*Lave
-  Ltarget<-xL*Lave
-  if(Lrecent>L0){TAC<-0.5*TACstar*(1+((Lrecent-L0)/(Ltarget-L0)))
-  }else{TAC<-0.5*TACstar*(Lrecent/L0)^2                  
-  }
-  TACfilter(TAC)
-}  
-class(Ltarget4)<-"DLM_output"
-
-
-Itarget1<-function(x,DLM_data,reps=100,yrsmth=5,xx=0,Imulti=1.5){
-  dependencies="DLM_data@Cat, DLM_data@CV_Cat"
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
-  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
-  ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
-  ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
-  C_dat<-DLM_data@Cat[x,ind2] 
-  TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
-  Irecent<-mean(DLM_data@Ind[x,ind])
-  Iave<-mean(DLM_data@Ind[x,ind3])
-  Itarget<-Iave*Imulti
-  I0<-0.8*Iave
-  if(Irecent>I0){TAC<-0.5*TACstar*(1+((Irecent-I0)/(Itarget-I0)))
-  }else{TAC<-0.5*TACstar*(Irecent/I0)^2}
-  TACfilter(TAC)  
-}  
-class(Itarget1)<-"DLM_output"
-
-Itarget4<-function(x,DLM_data,reps=100,yrsmth=5,xx=0.3,Imulti=2.5){
-  dependencies="DLM_data@Cat, DLM_data@CV_Cat"
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
-  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
-  ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
-  ind3<-((ylast-(yrsmth*2-1)):ylast) # historical 10 pre-projection years
-  C_dat<-DLM_data@Cat[x,ind2] 
-  TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
-  Irecent<-mean(DLM_data@Ind[x,ind])
-  Iave<-mean(DLM_data@Ind[x,ind3])
-  Itarget<-Iave*Imulti
-  I0<-0.8*Iave
-  if(Irecent>I0){TAC<-0.5*TACstar*(1+((Irecent-I0)/(Itarget-I0)))
-  }else{TAC<-0.5*TACstar*(Irecent/I0)^2}
-  TACfilter(TAC)  
-}  
-class(Itarget4)<-"DLM_output"
-
-
-Islope1<-function(x,DLM_data,reps=100,yrsmth=5,lambda=0.4,xx=0.2){
-  dependencies="DLM_data@Year, DLM_data@Cat, DLM_data@CV_Cat, DLM_data@Ind"
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
-  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
-  C_dat<-DLM_data@Cat[x,ind]
-  if (is.na(DLM_data@MPrec[x]) || length(DLM_data@Year)==ylast+1) {TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
-  }else{TACstar<-rep(DLM_data@MPrec[x],reps)}
-    
-  I_hist<-DLM_data@Ind[x,ind]
-  yind<-1:yrsmth
-  slppar<-summary(lm(I_hist~yind))$coefficients[2,1:2]
-  Islp <-rnorm(reps,slppar[1],slppar[2])
-  TAC<-TACstar*(1+lambda*Islp)
-  TACfilter(TAC)
-}
-class(Islope1)<-"DLM_output"
-
-Islope4<-function(x,DLM_data,reps=100,yrsmth=5,lambda=0.2,xx=0.4){
-  dependencies="DLM_data@Year, DLM_data@Cat, DLM_data@CV_Cat, DLM_data@Ind"
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
-  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
-  C_dat<-DLM_data@Cat[x,ind]
-  if(is.na(DLM_data@MPrec[x]) || length(DLM_data@Year)==ylast+1) {TACstar<-(1-xx)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
-  }else{TACstar<-rep(DLM_data@MPrec[x],reps)}
-  I_hist<-DLM_data@Ind[x,ind]
-  yind<-1:yrsmth
-  slppar<-summary(lm(I_hist~yind))$coefficients[2,1:2]
-  Islp <-rnorm(reps,slppar[1],slppar[2])
-  TAC<-TACstar*(1+lambda*Islp)
-  TACfilter(TAC)
-}
-class(Islope4)<-"DLM_output"
-
-
-
-IT10<-function(x,DLM_data,reps=100,yrsmth=5,mc=0.1){
+  C_hist <- exp(predict(loess(C_dat ~ ind, degree = 1)))
+  B_hist <- exp(predict(loess(B_dat ~ ind, degree = 1)))
+  ind <- 2:yrsmth
+  ind1 <- 1:(yrsmth - 1)
+  SP_hist <- B_hist[ind] - B_hist[ind1] + C_hist[ind1]
+  yind <- 1:length(SP_hist)
+  SP_mu <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
+    1))
+  SP_se <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
+    1), se = T)$se.fit
+  SP_new <- rnorm(reps, SP_mu, SP_se/2)
+  SParr <- array(rep(SP_hist, each = reps), dim = c(reps, yrsmth - 1))
+  Barr <- array(rep(B_hist[ind], each = reps), dim = c(reps, yrsmth - 
+    1))
+  rarr <- array(rep(rsamp, yrsmth - 1), dim = c(reps, yrsmth - 1))
+  b2 <- apply(SParr/Barr - rarr, 1, sum) * apply(Barr, 1, sum)/apply(Barr^2, 
+    1, sum)
+  G_new <- rsamp - 2 * b2 * B_hist[yrsmth]
   
-  dependencies="DLM_data@Ind, DLM_data@Cat, DLMdata@CV_Ind, DLMdata@Iref"
-  ind<-max(1,(length(DLM_data@Year)-yrsmth+1)):length(DLM_data@Year)
+  TAC <- SP_new * (1 - gg * G_new)
+  TAC[TAC < glim[1] * C_hist[yrsmth]] <- glim[1] * C_hist[yrsmth]
+  TAC[TAC > glim[2] * C_hist[yrsmth]] <- glim[2] * C_hist[yrsmth]
+  # Carr<-cbind(array(rep(DLM_data@Cat[x,],each=reps),c(reps,length(DLM_data@Cat[x,]))),TAC)
+  # Warr<-(DLM_data@Mort[x]*exp(-DLM_data@Mort[x]*(1:ncol(Carr))))[ncol(Carr):1]
+  # Warr<-Warr/sum(Warr)
+  # TAC<-apply(t(matrix(Warr,nrow=ncol(Carr),ncol=reps))*Carr,1,sum)
+  TACfilter(TAC)
+}
+class(Rcontrol2) <- "DLM_output"
+
+
+
+#' Geromont and Butterworth Constant Catch Harvest Control Rule
+#' 
+#' A simple MP that aims for average historical catches (as a proxy for MSY)
+#' subject to imperfect information.
+#' 
+#' Note that this is my interpretation of their MP and is now stochastic.
+#' Currently it is generalized and is not 'tuned' to more detailed assessment
+#' data which might explain why in some cases it leads to stock declines.
+#' 
+#' @usage GB_CC(x, DLM_data, reps = 100)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @author T. Carruthers
+#' @references Geromont, H.F. and Butterworth, D.S. 2014. Complex assessment or
+#' simple management procedures for efficient fisheries management: a
+#' comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017
+#' @export GB_CC
+GB_CC <- function(x, DLM_data, reps = 100) {
+  dependencies = "DLM_data@Cref,DLM_data@Cat"
+  Catrec <- DLM_data@Cat[x, length(DLM_data@Cat[x, ])]
+  TAC <- trlnorm(reps, DLM_data@Cref[x], DLM_data@CV_Cref)
+  TAC[TAC > (1.2 * Catrec)] <- 1.2 * Catrec
+  TAC[TAC < (0.8 * Catrec)] <- 0.8 * Catrec
+  TACfilter(TAC)
+}
+class(GB_CC) <- "DLM_output"
+
+
+
+#' Geromont and Butterworth index slope Harvest Control Rule
+#' 
+#' An MP similar to SBT1 that modifies a time-series of catch recommendations
+#' and aims for a stable catch rates.
+#' 
+#' Note that this is my interpretation of their approach and is now stochastic.
+#' Currently it is generalized and is not 'tuned' to more detailed assessment
+#' data which might explain why in some cases it leads to stock declines.
+#' 
+#' @usage GB_slope(x, DLM_data, reps = 100, yrsmth = 5, lambda = 1)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param yrsmth Number of years for evaluating slope in relative abundance
+#' index
+#' @param lambda A gain parameter
+#' @author T. Carruthers
+#' @references Geromont, H.F. and Butterworth, D.S. 2014. Complex assessment or
+#' simple management procedures for efficient fisheries management: a
+#' comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017
+#' @export GB_slope
+GB_slope <- function(x, DLM_data, reps = 100, yrsmth = 5, lambda = 1) {
+  dependencies = "DLM_data@Year, DLM_data@Cat, DLM_data@CV_Cat, DLM_data@Ind"
+  Catrec <- DLM_data@Cat[x, length(DLM_data@Cat[x, ])]
+  ind <- (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)
+  I_hist <- DLM_data@Ind[x, ind]
+  yind <- 1:yrsmth
+  slppar <- summary(lm(I_hist ~ yind))$coefficients[2, 1:2]
+  Islp <- rnorm(reps, slppar[1], slppar[2])
+  MuC <- DLM_data@Cat[x, length(DLM_data@Cat[x, ])]
+  Cc <- stats::rlnorm(reps, mconv(MuC, DLM_data@CV_Cat[x] * MuC), sdconv(MuC, 
+    DLM_data@CV_Cat[x] * MuC))
+  TAC <- Cc * (1 + lambda * Islp)
+  TAC[TAC > (1.2 * Catrec)] <- 1.2 * Catrec
+  TAC[TAC < (0.8 * Catrec)] <- 0.8 * Catrec
+  TACfilter(TAC)
+}
+class(GB_slope) <- "DLM_output"
+
+
+
+#' Geromont and Butterworth target CPUE and catch MP
+#' 
+#' An MP similar to SBT2 that modifies a time-series of catch recommendations
+#' and aims for target catch rate and catch level based on BMSY/B0 and MSY,
+#' respectively.
+#' 
+#' Note that this is my interpretation of their MP and is now stochastic.
+#' Currently it is generalized and is not 'tuned' to more detailed assessment
+#' data which might explain why in some cases it leads to stock declines.
+#' 
+#' @usage GB_target(x, DLM_data, reps = 100, w = 0.5)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of quota samples
+#' @param w A gain parameter
+#' @author T. Carruthers
+#' @references Geromont, H.F. and Butterworth, D.S. 2014. Complex assessment or
+#' simple management procedures for efficient fisheries management: a
+#' comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017
+#' @export GB_target
+GB_target <- function(x, DLM_data, reps = 100, w = 0.5) {
+  dependencies = "DLM_data@Cat, DLM_data@Cref, DLM_data@Iref, DLM_data@Ind"
+  Catrec <- DLM_data@Cat[x, length(DLM_data@Cat[x, ])]
+  TACtarg <- trlnorm(reps, DLM_data@Cref[x], DLM_data@CV_Cref)
+  Itarg <- trlnorm(reps, DLM_data@Iref[x], DLM_data@CV_Iref)
+  Iav <- mean(DLM_data@Ind[x, (length(DLM_data@Ind[x, ]) - 4):length(DLM_data@Ind[x, 
+    ])], na.rm = T)
+  Irec <- mean(DLM_data@Ind[x, (length(DLM_data@Ind[x, ]) - 3):length(DLM_data@Ind[x, 
+    ])], na.rm = T)
+  I0 <- 0.2 * Iav
+  TAC <- rep(NA, reps)
+  if (Irec > I0) 
+    TAC <- TACtarg * (w + (1 - w) * ((Irec - I0)/(Itarg - I0)))
+  if (Irec < I0) 
+    TAC <- TACtarg * w * (Irec/I0)^2
+  TAC[TAC > (1.2 * Catrec)] <- 1.2 * Catrec
+  TAC[TAC < (0.8 * Catrec)] <- 0.8 * Catrec
+  TACfilter(TAC)
+}
+class(GB_target) <- "DLM_output"
+
+
+
+#' Constant catch management procedure of Geromont and Butterworth (2014)
+#' 
+#' The TAC is the average catch over last yrsmth years.
+#' 
+#' This is one of four constant catch rules of Geromont and Butterworth 2014.
+#' 
+#' @usage CC1(x, DLM_data, reps = 100, yrsmth = 5, xx=0)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param yrsmth Years over which to calculate mean catches
+#' @param xx Parameter controlling the TAC. Mean catches are multiplied by
+#' (1-xx)
+#' @return A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @references Geromont, H.F., Butterworth, D.S. 2014. Generic management
+#' procedures for data-poor fisheries; forecasting with few data. ICES J. Mar.
+#' Sci. doi:10.1093/icesjms/fst232
+#' @export CC1
+CC1 <- function(x, DLM_data, reps = 100, yrsmth = 5, xx = 0) {
+  dependencies = "DLM_data@Cat, DLM_data@CV_Cat"
+  C_dat <- DLM_data@Cat[x, (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)]
+  TAC <- (1 - xx) * trlnorm(reps, mean(C_dat), DLM_data@CV_Cat/(yrsmth^0.5))  # mean catches over the interval
+  TACfilter(TAC)
+}
+class(CC1) <- "DLM_output"
+
+
+
+#' Constant catch management procedure of Geromont and Butterworth (2014)
+#' 
+#' The TAC is the average catch over last yrsmth years reduced by 30%.
+#' 
+#' This is one of four constant catch MPs of Geromont and Butterworth 2014.
+#' 
+#' @usage CC4(x, DLM_data, reps = 100, yrsmth = 5, xx=0.3)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param yrsmth Years over which to average catches
+#' @param xx Parameter controlling the TAC. Mean catches are multiplied by
+#' (1-xx)
+#' @return A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @references Geromont, H.F., Butterworth, D.S. 2014. Generic management
+#' procedures for data-poor fisheries; forecasting with few data. ICES J. Mar.
+#' Sci. doi:10.1093/icesjms/fst232
+#' @export CC4
+CC4 <- function(x, DLM_data, reps = 100, yrsmth = 5, xx = 0.3) {
+  dependencies = "DLM_data@Cat, DLM_data@CV_Cat"
+  C_dat <- DLM_data@Cat[x, (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)]
+  TAC <- (1 - xx) * trlnorm(reps, mean(C_dat), DLM_data@CV_Cat/(yrsmth^0.5))  # mean catches over the interval
+  TACfilter(TAC)
+}
+class(CC4) <- "DLM_output"
+
+
+
+
+#' A management procedure that incrementally adjusts the TAC according to the
+#' mean length of recent catches.
+#' 
+#' The least biologically precautionary of four adaptive length-based MPs
+#' proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
+#' 
+#' Tested by Carruthers et al. 2015.
+#' 
+#' @usage LstepCC1(x, DLM_data, reps = 100, yrsmth = 5, xx=0, stepsz=0.05,
+#' llim=c(0.96,0.98,1.05))
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param yrsmth Years over which to smooth recent estimates of surplus
+#' production
+#' @param xx Parameter controlling the fraction of mean catch to start using in
+#' first year
+#' @param stepsz Parameter controlling the size of the TAC update increment.
+#' @param llim A vector of length reference points that determine the
+#' conditions for increasing, maintaining or reducing the TAC.
+#' @return A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @references Carruthers et al. 2015. Performance evaluation of simple
+#' management procedures. Fish and Fisheries. In press.
+#' 
+#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
+#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
+#' doi:10.1093/icesjms/fst232
+#' @export LstepCC1
+LstepCC1 <- function(x, DLM_data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.05, 
+  llim = c(0.96, 0.98, 1.05)) {
+  dependencies = "DLM_data@Cat, DLM_data@CV_Cat, DLM_data@ML"
+  ind <- (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)  # recent 5 years
+  ylast <- (DLM_data@LHYear - DLM_data@Year[1]) + 1  #last historical year
+  ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
+  ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
+  C_dat <- DLM_data@Cat[x, ind2]
+  if (is.na(DLM_data@MPrec[x]) || length(DLM_data@Year) == ylast + 1) {
+    TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), DLM_data@CV_Cat/(yrsmth^0.5))
+  } else {
+    TACstar <- rep(DLM_data@MPrec[x], reps)
+  }
+  step <- stepsz * TACstar
+  Lrecent <- mean(DLM_data@ML[ind])
+  Lave <- mean(DLM_data@ML[ind3])
+  rat <- Lrecent/Lave
+  if (rat < llim[1]) {
+    TAC <- TACstar - 2 * step
+  } else if (rat < llim[2]) {
+    TAC <- TACstar - step
+  } else if (rat > llim[3]) {
+    TAC <- TACstar + step
+  } else {
+    TAC <- TACstar
+  }
+  TACfilter(TAC)
+}
+class(LstepCC1) <- "DLM_output"
+
+
+
+
+#' A management procedure that incrementally adjusts the TAC according to the
+#' mean length of recent catches.
+#' 
+#' The most biologically precautionary of four adaptive length-based MPs
+#' proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
+#' 
+#' Tested by Carruthers et al. 2015.
+#' 
+#' @usage LstepCC4(x, DLM_data, reps = 100, yrsmth = 5, xx=0.3, stepsz=0.05,
+#' llim=c(0.96,0.98,1.05))
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param yrsmth Years over which to smooth recent estimates of surplus
+#' production
+#' @param xx Parameter controlling the fraction of mean catch to start using in
+#' first year
+#' @param stepsz Parameter controlling the size of the TAC update increment.
+#' @param llim A vector of length reference points that determine the
+#' conditions for increasing, maintaining or reducing the TAC.
+#' @return A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @references Carruthers et al. 2015. Performance evaluation of simple
+#' management procedures. Fish and Fisheries. In press.
+#' 
+#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
+#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
+#' doi:10.1093/icesjms/fst232
+#' @export LstepCC4
+LstepCC4 <- function(x, DLM_data, reps = 100, yrsmth = 5, xx = 0.3, stepsz = 0.05, 
+  llim = c(0.96, 0.98, 1.05)) {
+  dependencies = "DLM_data@Cat, DLM_data@CV_Cat, DLM_data@ML"
+  ind <- (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)  # recent 5 years
+  ylast <- (DLM_data@LHYear - DLM_data@Year[1]) + 1  #last historical year
+  ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
+  ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
+  C_dat <- DLM_data@Cat[x, ind2]
+  if (is.na(DLM_data@MPrec[x]) || length(DLM_data@Year) == ylast + 1) {
+    TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), DLM_data@CV_Cat/(yrsmth^0.5))
+  } else {
+    TACstar <- rep(DLM_data@MPrec[x], reps)
+  }
+  step <- stepsz * TACstar
+  Lrecent <- mean(DLM_data@ML[ind])
+  Lave <- mean(DLM_data@ML[ind3])
+  rat <- Lrecent/Lave
+  if (rat < llim[1]) {
+    TAC <- TACstar - 2 * step
+  } else if (rat < llim[2]) {
+    TAC <- TACstar - step
+  } else if (rat > llim[3]) {
+    TAC <- TACstar + step
+  } else {
+    TAC <- TACstar
+  }
+  TACfilter(TAC)
+}
+class(LstepCC4) <- "DLM_output"
+
+
+
+
+#' A management procedure that incrementally adjusts the TAC to reach a target
+#' mean length in catches.
+#' 
+#' The least biologically precautionary of four target length MPs proposed by
+#' Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
+#' 
+#' Tested by Carruthers et al. 2015.
+#' 
+#' @usage Ltarget1(x, DLM_data, reps = 100, yrsmth = 5, xx=0, xL=1.05)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param yrsmth Years over which to smooth recent estimates of surplus
+#' production
+#' @param xx Parameter controlling the fraction of mean catch to start using in
+#' first year
+#' @param xL Parameter controlling the magnitude of the target mean length of
+#' catches relative to average length in catches.
+#' @return A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @references Carruthers et al. 2015. Performance evaluation of simple
+#' management procedures. Fish and Fisheries. In press.
+#' 
+#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
+#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
+#' doi:10.1093/icesjms/fst232
+#' @export Ltarget1
+Ltarget1 <- function(x, DLM_data, reps = 100, yrsmth = 5, xx = 0, xL = 1.05) {
+  dependencies = "DLM_data@Cat, DLM_data@CV_Cat, DLM_data@ML"
+  ind <- (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)  # recent 5 years
+  ylast <- (DLM_data@LHYear - DLM_data@Year[1]) + 1  #last historical year
+  ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
+  ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
+  C_dat <- DLM_data@Cat[x, ind2]
+  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), DLM_data@CV_Cat/(yrsmth^0.5))
+  Lrecent <- mean(DLM_data@ML[ind])
+  Lave <- mean(DLM_data@ML[ind3])
+  L0 <- 0.9 * Lave
+  Ltarget <- xL * Lave
+  if (Lrecent > L0) {
+    TAC <- 0.5 * TACstar * (1 + ((Lrecent - L0)/(Ltarget - L0)))
+  } else {
+    TAC <- 0.5 * TACstar * (Lrecent/L0)^2
+  }
+  TACfilter(TAC)
+}
+class(Ltarget1) <- "DLM_output"
+
+
+
+#' A management procedure that incrementally adjusts the TAC to reach a target
+#' mean length in catches.
+#' 
+#' The most biologically precautionary of four target length MPs proposed by
+#' Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
+#' 
+#' Tested by Carruthers et al. 2015.
+#' 
+#' @usage Ltarget4(x, DLM_data, reps = 100, yrsmth = 5, xx=0.2, xL=1.15)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param yrsmth Years over which to smooth recent estimates of surplus
+#' production
+#' @param xx Parameter controlling the fraction of mean catch to start using in
+#' first year
+#' @param xL Parameter controlling the magnitude of the target mean length of
+#' catches relative to average length in catches.
+#' @return A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @references Carruthers et al. 2015. Performance evaluation of simple
+#' management procedures. Fish and Fisheries. In press.
+#' 
+#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
+#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
+#' doi:10.1093/icesjms/fst232
+#' @export Ltarget4
+Ltarget4 <- function(x, DLM_data, reps = 100, yrsmth = 5, xx = 0.2, xL = 1.15) {
+  dependencies = "DLM_data@Cat, DLM_data@CV_Cat, DLM_data@ML"
+  ind <- (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)  # recent 5 years
+  ylast <- (DLM_data@LHYear - DLM_data@Year[1]) + 1  #last historical year
+  ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
+  ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
+  C_dat <- DLM_data@Cat[x, ind2]
+  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), DLM_data@CV_Cat/(yrsmth^0.5))
+  Lrecent <- mean(DLM_data@ML[ind])
+  Lave <- mean(DLM_data@ML[ind3])
+  L0 <- 0.9 * Lave
+  Ltarget <- xL * Lave
+  if (Lrecent > L0) {
+    TAC <- 0.5 * TACstar * (1 + ((Lrecent - L0)/(Ltarget - L0)))
+  } else {
+    TAC <- 0.5 * TACstar * (Lrecent/L0)^2
+  }
+  TACfilter(TAC)
+}
+class(Ltarget4) <- "DLM_output"
+
+
+
+
+#' A management procedure that incrementally adjusts the TAC (starting from
+#' reference level that is a fraction of mean recent catches) to reach a target
+#' CPUE / relative abundance index
+#' 
+#' The least biologically precautionary of two index/CPUE target MPs proposed
+#' by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
+#' 
+#' Tested by Carruthers et al. 2015.
+#' 
+#' @usage Itarget1(x, DLM_data, reps = 100, yrsmth = 5, xx=0, Imulti=1.5)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param yrsmth Years over which to smooth recent estimates of surplus
+#' production
+#' @param xx Parameter controlling the fraction of mean catch to start using in
+#' first year
+#' @param Imulti Parameter controlling how much larger target CPUE / index is
+#' compared with recent levels.
+#' @return A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @references Carruthers et al. 2015. Performance evaluation of simple
+#' management procedures. Fish and Fisheries. In press.
+#' 
+#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
+#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
+#' doi:10.1093/icesjms/fst232
+#' @export Itarget1
+Itarget1 <- function(x, DLM_data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5) {
+  dependencies = "DLM_data@Cat, DLM_data@CV_Cat"
+  ind <- (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)  # recent 5 years
+  ylast <- (DLM_data@LHYear - DLM_data@Year[1]) + 1  #last historical year
+  ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
+  ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
+  C_dat <- DLM_data@Cat[x, ind2]
+  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), DLM_data@CV_Cat/(yrsmth^0.5))
+  Irecent <- mean(DLM_data@Ind[x, ind])
+  Iave <- mean(DLM_data@Ind[x, ind3])
+  Itarget <- Iave * Imulti
+  I0 <- 0.8 * Iave
+  if (Irecent > I0) {
+    TAC <- 0.5 * TACstar * (1 + ((Irecent - I0)/(Itarget - I0)))
+  } else {
+    TAC <- 0.5 * TACstar * (Irecent/I0)^2
+  }
+  TACfilter(TAC)
+}
+class(Itarget1) <- "DLM_output"
+
+
+
+#' A management procedure that incrementally adjusts the TAC (starting from
+#' reference level that is a fraction of mean recent catches) to reach a target
+#' CPUE / relative abundance index
+#' 
+#' The most biologically precautionary of two index/CPUE target MPs proposed by
+#' Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
+#' 
+#' Tested by Carruthers et al. 2015.
+#' 
+#' @usage Itarget4(x, DLM_data, reps = 100, yrsmth = 5, xx=0.3, Imulti=2.5)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param yrsmth Years over which to smooth recent estimates of surplus
+#' production
+#' @param xx Parameter controlling the fraction of mean catch to start using in
+#' first year
+#' @param Imulti Parameter controlling how much larger target CPUE / index is
+#' compared with recent levels.
+#' @return A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @references Carruthers et al. 2015. Performance evaluation of simple
+#' management procedures. Fish and Fisheries. In press.
+#' 
+#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
+#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
+#' doi:10.1093/icesjms/fst232
+#' @export Itarget4
+Itarget4 <- function(x, DLM_data, reps = 100, yrsmth = 5, xx = 0.3, Imulti = 2.5) {
+  dependencies = "DLM_data@Cat, DLM_data@CV_Cat"
+  ind <- (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)  # recent 5 years
+  ylast <- (DLM_data@LHYear - DLM_data@Year[1]) + 1  #last historical year
+  ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
+  ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
+  C_dat <- DLM_data@Cat[x, ind2]
+  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), DLM_data@CV_Cat/(yrsmth^0.5))
+  Irecent <- mean(DLM_data@Ind[x, ind])
+  Iave <- mean(DLM_data@Ind[x, ind3])
+  Itarget <- Iave * Imulti
+  I0 <- 0.8 * Iave
+  if (Irecent > I0) {
+    TAC <- 0.5 * TACstar * (1 + ((Irecent - I0)/(Itarget - I0)))
+  } else {
+    TAC <- 0.5 * TACstar * (Irecent/I0)^2
+  }
+  TACfilter(TAC)
+}
+class(Itarget4) <- "DLM_output"
+
+
+
+
+#' A management procedure that incrementally adjusts the TAC to maintain a
+#' constant CPUE or relative abundance index
+#' 
+#' The least biologically precautionary of two constant index / CPUE methods
+#' proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
+#' 
+#' Tested by Carruthers et al. 2015.
+#' 
+#' @usage Islope1(x, DLM_data, reps = 100, yrsmth = 5, lambda=0.4,xx=0.2)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param yrsmth Years over which to smooth recent estimates of surplus
+#' production
+#' @param lambda A gain parameter controlling the speed in update in TAC.
+#' @param xx Parameter controlling the fraction of mean catch to start using in
+#' first year
+#' @return A numeric vector of quota recommendations
+#' @author T. Carruthers
+#' @references Carruthers et al. 2015. Performance review of simple management
+#' procedures. Fish and Fisheries. In press.
+#' 
+#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
+#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
+#' doi:10.1093/icesjms/fst232
+#' @export Islope1
+Islope1 <- function(x, DLM_data, reps = 100, yrsmth = 5, lambda = 0.4, 
+  xx = 0.2) {
+  dependencies = "DLM_data@Year, DLM_data@Cat, DLM_data@CV_Cat, DLM_data@Ind"
+  ind <- (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)
+  ylast <- (DLM_data@LHYear - DLM_data@Year[1]) + 1  #last historical year
+  C_dat <- DLM_data@Cat[x, ind]
+  if (is.na(DLM_data@MPrec[x]) || length(DLM_data@Year) == ylast + 1) {
+    TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), DLM_data@CV_Cat/(yrsmth^0.5))
+  } else {
+    TACstar <- rep(DLM_data@MPrec[x], reps)
+  }
+  
+  I_hist <- DLM_data@Ind[x, ind]
+  yind <- 1:yrsmth
+  slppar <- summary(lm(I_hist ~ yind))$coefficients[2, 1:2]
+  Islp <- rnorm(reps, slppar[1], slppar[2])
+  TAC <- TACstar * (1 + lambda * Islp)
+  TACfilter(TAC)
+}
+class(Islope1) <- "DLM_output"
+
+
+
+#' A management procedure that incrementally adjusts the TAC to maintain a
+#' constant CPUE or relative abundance index
+#' 
+#' The most biologically precautionary of two constant index / CPUE methods
+#' proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
+#' 
+#' Tested by Carruthers et al. 2015.
+#' 
+#' @usage Islope4(x, DLM_data, reps = 100, yrsmth = 5, lambda=0.2,xx=0.4)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param yrsmth Years over which to smooth recent estimates of surplus
+#' production
+#' @param lambda A gain parameter controlling the speed in update in TAC.
+#' @param xx Parameter controlling the fraction of mean catch to start using in
+#' first year
+#' @return A numeric vector of quota recommendations
+#' @author T. Carruthers
+#' @references Carruthers et al. 2015. Performance evaluation of simple
+#' management procedures. Fish and Fisheries. In press.
+#' 
+#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
+#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
+#' doi:10.1093/icesjms/fst232
+#' @export Islope4
+Islope4 <- function(x, DLM_data, reps = 100, yrsmth = 5, lambda = 0.2, 
+  xx = 0.4) {
+  dependencies = "DLM_data@Year, DLM_data@Cat, DLM_data@CV_Cat, DLM_data@Ind"
+  ind <- (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)
+  ylast <- (DLM_data@LHYear - DLM_data@Year[1]) + 1  #last historical year
+  C_dat <- DLM_data@Cat[x, ind]
+  if (is.na(DLM_data@MPrec[x]) || length(DLM_data@Year) == ylast + 1) {
+    TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), DLM_data@CV_Cat/(yrsmth^0.5))
+  } else {
+    TACstar <- rep(DLM_data@MPrec[x], reps)
+  }
+  I_hist <- DLM_data@Ind[x, ind]
+  yind <- 1:yrsmth
+  slppar <- summary(lm(I_hist ~ yind))$coefficients[2, 1:2]
+  Islp <- rnorm(reps, slppar[1], slppar[2])
+  TAC <- TACstar * (1 + lambda * Islp)
+  TACfilter(TAC)
+}
+class(Islope4) <- "DLM_output"
+
+
+
+
+
+#' Index Target 10
+#' 
+#' An index target MP where the TAC is modified according to current index
+#' levels (mean index over last 5 years) relative to a target level. Maximum
+#' annual changes are 10 per cent.
+#' 
+#' 
+#' @usage IT10(x, DLM_data, reps = 100,yrsmth=5,mc=0.1)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the quota recommendation
+#' @param yrsmth The number of historical years over which to average the index
+#' @param mc The maximum fractional change in the TAC among years.
+#' @return A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @export IT10
+IT10 <- function(x, DLM_data, reps = 100, yrsmth = 5, mc = 0.1) {
+  
+  dependencies = "DLM_data@Ind, DLM_data@Cat, DLMdata@CV_Ind, DLMdata@Iref"
+  ind <- max(1, (length(DLM_data@Year) - yrsmth + 1)):length(DLM_data@Year)
   
   
   
-  deltaI<-mean(DLM_data@Ind[x,ind])/DLM_data@Iref[x]
-  if(deltaI<(1-mc))deltaI<-1-mc
-  if(deltaI>(1+mc))deltaI<-1+mc
+  deltaI <- mean(DLM_data@Ind[x, ind])/DLM_data@Iref[x]
+  if (deltaI < (1 - mc)) 
+    deltaI <- 1 - mc
+  if (deltaI > (1 + mc)) 
+    deltaI <- 1 + mc
   
-  TAC<-DLM_data@MPrec[x]*deltaI*trlnorm(reps,1,DLM_data@CV_Ind[x])
+  TAC <- DLM_data@MPrec[x] * deltaI * trlnorm(reps, 1, DLM_data@CV_Ind[x])
   TAC
 }
-class(IT10)<-"DLM_output"
+class(IT10) <- "DLM_output"
 
-IT5<-function(x,DLM_data,reps=100,yrsmth=5,mc=0.05){
+
+
+#' Index Target 5
+#' 
+#' An index target MP where the TAC is modified according to current index
+#' levels (mean index over last 5 years) relative to a target level. Maximum
+#' annual changes are 5 per cent.
+#' 
+#' 
+#' @usage IT5(x, DLM_data, reps = 100,yrsmth=5,mc=0.05)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the quota recommendation
+#' @param yrsmth The number of historical years over which to average the index
+#' @param mc The maximum fractional change in the TAC among years.
+#' @return A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @export IT5
+IT5 <- function(x, DLM_data, reps = 100, yrsmth = 5, mc = 0.05) {
   
-  dependencies="DLM_data@Ind, DLM_data@Cat, DLMdata@CV_Ind, DLMdata@Iref"
-  ind<-max(1,(length(DLM_data@Year)-yrsmth+1)):length(DLM_data@Year)
-  deltaI<-mean(DLM_data@Ind[x,ind])/DLM_data@Iref[x]
-  if(deltaI<(1-mc))deltaI<-1-mc
-  if(deltaI>(1+mc))deltaI<-1+mc
+  dependencies = "DLM_data@Ind, DLM_data@Cat, DLMdata@CV_Ind, DLMdata@Iref"
+  ind <- max(1, (length(DLM_data@Year) - yrsmth + 1)):length(DLM_data@Year)
+  deltaI <- mean(DLM_data@Ind[x, ind])/DLM_data@Iref[x]
+  if (deltaI < (1 - mc)) 
+    deltaI <- 1 - mc
+  if (deltaI > (1 + mc)) 
+    deltaI <- 1 + mc
   
-  TAC<-DLM_data@MPrec[x]*deltaI*trlnorm(reps,1,DLM_data@CV_Ind[x])
+  TAC <- DLM_data@MPrec[x] * deltaI * trlnorm(reps, 1, DLM_data@CV_Ind[x])
   TAC
 }
-class(IT5)<-"DLM_output"
+class(IT5) <- "DLM_output"
 
-ITM<-function(x,DLM_data,reps=100){
+
+
+#' Index Target based on natural mortality rate
+#' 
+#' An index target MP where the TAC is modified according to current index
+#' levels (mean index over last yrsmth years) relative to a target level.
+#' Maximum fractional annual changes are mc.  mc=(5+M*25)/100
+#' yrsmth=4*(1/M)^(0.25)
+#' 
+#' 
+#' @usage ITM(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the quota recommendation
+#' @return A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @export ITM
+ITM <- function(x, DLM_data, reps = 100) {
   
-  dependencies="DLM_data@Ind, DLM_data@Cat, DLMdata@CV_Ind, DLMdata@Iref, DLMdata@Mort"
-  mc<-(5+DLM_data@Mort[x]*25)/100
-  if(mc>0.2)mc<-0.2
-  yrsmth<-floor(4*(1/DLM_data@Mort[x])^(1/4))
-  ind<-max(1,(length(DLM_data@Year)-yrsmth+1)):length(DLM_data@Year)
+  dependencies = "DLM_data@Ind, DLM_data@Cat, DLMdata@CV_Ind, DLMdata@Iref, DLMdata@Mort"
+  mc <- (5 + DLM_data@Mort[x] * 25)/100
+  if (mc > 0.2) 
+    mc <- 0.2
+  yrsmth <- floor(4 * (1/DLM_data@Mort[x])^(1/4))
+  ind <- max(1, (length(DLM_data@Year) - yrsmth + 1)):length(DLM_data@Year)
   
-  deltaI<-mean(DLM_data@Ind[x,ind])/DLM_data@Iref[x]
-  if(deltaI<(1-mc))deltaI<-1-mc
-  if(deltaI>(1+mc))deltaI<-1+mc
+  deltaI <- mean(DLM_data@Ind[x, ind])/DLM_data@Iref[x]
+  if (deltaI < (1 - mc)) 
+    deltaI <- 1 - mc
+  if (deltaI > (1 + mc)) 
+    deltaI <- 1 + mc
   
-  TAC<-DLM_data@MPrec[x]*deltaI*trlnorm(reps,1,DLM_data@CV_Ind[x])
+  TAC <- DLM_data@MPrec[x] * deltaI * trlnorm(reps, 1, DLM_data@CV_Ind[x])
   TAC
 }
-class(ITM)<-"DLM_output"
+class(ITM) <- "DLM_output"
 
-SPmod<-function(x,DLM_data,reps=100,alp=c(0.8,1.2),bet=c(0.8,1.2)){
-  dependencies="DLM_data@Cat, DLM_data@Ind, DLM_data@Abun"
-  Ir<-length(DLM_data@Ind[x,])
-  Cr<-length(DLM_data@Cat[x,])
-  rat<-trlnorm(reps,DLM_data@Ind[x,Ir],DLM_data@CV_Ind)/trlnorm(reps,DLM_data@Ind[x,Ir-1],DLM_data@CV_Ind)
-  cct<-trlnorm(reps,DLM_data@Cat[x,Cr],DLM_data@CV_Cat)
-  Abun<-trlnorm(reps,DLM_data@Abun[x],DLM_data@CV_Abun)
-  TAC<-rep(NA,reps)
-  TAC[rat<alp[1]]<-cct[rat<alp[1]]*bet[1]
-  TAC[rat>alp[1]& rat<alp[2]]<-cct[rat>alp[1]& rat<alp[2]]
- 
-  cond<-rat>alp[2]
-  reps2<-sum(cond)
-  if(reps2>0){
-    qq1<-trlnorm(reps2,DLM_data@Ind[x,Ir]/Abun,DLM_data@CV_Ind)
-    bio1<-DLM_data@Ind[x,Ir-1]/qq1
-    bio2<-DLM_data@Ind[x,Ir]/qq1
-    cct1<-trlnorm(reps2,DLM_data@Cat[x,Cr-1],DLM_data@CV_Cat)
-    PP<-bio2-bio1+cct1
-    TAC[cond]<-bet[2]*PP
+
+
+#' Surplus production based catch-limit modifier
+#' 
+#' An MP that makes incremental adjustments to TAC recommendations based on the
+#' apparent trend in surplus production. Based on the theory of Mark Maunder
+#' (IATTC)
+#' 
+#' Note that this isn't exactly what Mark has previously suggested and is
+#' stochastic in this implementation.
+#' 
+#' @usage SPmod(x, DLM_data, reps = 100, alp = c(0.8, 1.2), bet = c(0.8, 1.2))
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of quota samples
+#' @param alp Condition for modifying the TAC (bounds on change in abundance)
+#' @param bet Limits for how much the TAC can change among years
+#' @return A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @references
+#' http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf
+#' @export SPmod
+SPmod <- function(x, DLM_data, reps = 100, alp = c(0.8, 1.2), bet = c(0.8, 
+  1.2)) {
+  dependencies = "DLM_data@Cat, DLM_data@Ind, DLM_data@Abun"
+  Ir <- length(DLM_data@Ind[x, ])
+  Cr <- length(DLM_data@Cat[x, ])
+  rat <- trlnorm(reps, DLM_data@Ind[x, Ir], DLM_data@CV_Ind)/trlnorm(reps, 
+    DLM_data@Ind[x, Ir - 1], DLM_data@CV_Ind)
+  cct <- trlnorm(reps, DLM_data@Cat[x, Cr], DLM_data@CV_Cat)
+  Abun <- trlnorm(reps, DLM_data@Abun[x], DLM_data@CV_Abun)
+  TAC <- rep(NA, reps)
+  TAC[rat < alp[1]] <- cct[rat < alp[1]] * bet[1]
+  TAC[rat > alp[1] & rat < alp[2]] <- cct[rat > alp[1] & rat < alp[2]]
+  
+  cond <- rat > alp[2]
+  reps2 <- sum(cond)
+  if (reps2 > 0) {
+    qq1 <- trlnorm(reps2, DLM_data@Ind[x, Ir]/Abun, DLM_data@CV_Ind)
+    bio1 <- DLM_data@Ind[x, Ir - 1]/qq1
+    bio2 <- DLM_data@Ind[x, Ir]/qq1
+    cct1 <- trlnorm(reps2, DLM_data@Cat[x, Cr - 1], DLM_data@CV_Cat)
+    PP <- bio2 - bio1 + cct1
+    TAC[cond] <- bet[2] * PP
   }
   TACfilter(TAC)
 }
-class(SPmod)<-"DLM_output"
+class(SPmod) <- "DLM_output"
 
-SPslope<-function(x,DLM_data,reps=100,yrsmth=4,alp=c(0.9,1.1),bet=c(1.5,0.9)){
+
+
+#' Slope in surplus production MP
+#' 
+#' A management procedure that makes incremental adjustments to TAC
+#' recommendations based on the apparent trend in recent surplus production.
+#' Based on the theory of Mark Maunder (IATTC)
+#' 
+#' Note that this isn't exactly what Mark has previously suggested and is
+#' stochastic in this implementation.
+#' 
+#' @usage SPslope(x, DLM_data, reps = 100, yrsmth = 4, alp = c(0.9, 1.1), bet =
+#' c(1.5, 0.9))
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of quota samples
+#' @param yrsmth Years over which to smooth recent estimates of surplus
+#' production
+#' @param alp Condition for modifying the DLM_data (bounds on change in
+#' abundance)
+#' @param bet Limits for how much the DLM_data can change among years
+#' @return A numeric vector of DLM_data recommendations
+#' @author T. Carruthers
+#' @references
+#' http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf
+#' @export SPslope
+SPslope <- function(x, DLM_data, reps = 100, yrsmth = 4, alp = c(0.9, 1.1), 
+  bet = c(1.5, 0.9)) {
   
-  dependencies="DLM_data@Year, DLM_data@Cat, DLM_data@Ind, DLM_data@Abun"
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
-  yind<-1:yrsmth
-  C_dat<-DLM_data@Cat[x,ind]
-  B_dat<-DLM_data@Ind[x,ind]/DLM_data@Ind[x,ind[yrsmth]]*DLM_data@Abun[x]
-  Pt_mu<-max(B_dat[yrsmth]-B_dat[yrsmth-1]+C_dat[yrsmth-1],tiny)
-  Pt_1<-trlnorm(reps,Pt_mu,DLM_data@CV_Cat)
-  It<-exp(predict(lm(log(B_dat)~yind),newdat=list(yind=yrsmth+1)))
-  Ilast<-B_dat[yrsmth]
+  dependencies = "DLM_data@Year, DLM_data@Cat, DLM_data@Ind, DLM_data@Abun"
+  ind <- (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)
+  yind <- 1:yrsmth
+  C_dat <- DLM_data@Cat[x, ind]
+  B_dat <- DLM_data@Ind[x, ind]/DLM_data@Ind[x, ind[yrsmth]] * DLM_data@Abun[x]
+  Pt_mu <- max(B_dat[yrsmth] - B_dat[yrsmth - 1] + C_dat[yrsmth - 1], 
+    tiny)
+  Pt_1 <- trlnorm(reps, Pt_mu, DLM_data@CV_Cat)
+  It <- exp(predict(lm(log(B_dat) ~ yind), newdat = list(yind = yrsmth + 
+    1)))
+  Ilast <- B_dat[yrsmth]
   MC <- max(mean(C_dat), tiny)
-  Ct_1<-trlnorm(reps,MC,DLM_data@CV_Cat/(yrsmth^0.5)) # mean catches over the interval
- 
-  rat<-It/Ilast
+  Ct_1 <- trlnorm(reps, MC, DLM_data@CV_Cat/(yrsmth^0.5))  # mean catches over the interval
   
-  mult <- max((1-bet[1]*(Ilast-It)/Ilast), tiny)
-  if(rat<alp[1])TAC<-mult*Ct_1
-  if(rat>alp[1]&rat<alp[2])TAC<-Ct_1
-  if(rat>alp[2])TAC<-bet[2]*Pt_1
+  rat <- It/Ilast
+  
+  mult <- max((1 - bet[1] * (Ilast - It)/Ilast), tiny)
+  if (rat < alp[1]) 
+    TAC <- mult * Ct_1
+  if (rat > alp[1] & rat < alp[2]) 
+    TAC <- Ct_1
+  if (rat > alp[2]) 
+    TAC <- bet[2] * Pt_1
   TACfilter(TAC)
 }
-class(SPslope)<-"DLM_output"
+class(SPslope) <- "DLM_output"
 
-SBT1<-function(x,DLM_data,reps=100,yrsmth=10,k1=1.5,k2=3,gamma=1){
-  dependencies="DLM_data@Cat, DLM_data@Year, DLM_data@Ind"
-  Cr<-length(DLM_data@Cat[x,])
-  cct<-trlnorm(reps,DLM_data@Cat[x,Cr],DLM_data@CV_Cat)
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year)
-  I_hist<-DLM_data@Ind[x,ind]
-  test<-summary(lm(I_hist~ind))$coefficients[2,1:2]
-  lambda<-rnorm(reps,test[1],test[2])
-  TAC<-cct*1+k2*lambda
-  cond<-lambda<0
-  TAC[cond]<-cct[cond]*1-k1*-lambda[cond]^gamma
-  TACfilter(TAC) 
-}
-class(SBT1)<-"DLM_output"
 
-SBT2<-function(x,DLM_data,reps=100,epsB=0.25,epsR=0.75,tauR=5,tauB=7,gamma=1){
-  dependencies="DLM_data@Cref, DLM_data@Rec, DLM_data@Cat"
-  #Bnow<-trlnorm(reps,DLM_data@Abun[x],DLM_data@CV_Abun)
-  #testrat<-Bnow/DLM_data@Bref
-  #Ctarg<-rep(NA,reps)
-  #Ctarg[testrat>1]<-delta*testrat[testrat>1]^(1-epsB)
-  #Ctarg[testrat<1]<-detla*testrat[testrat<1]^(1+epsB)
-  Ctarg<-trlnorm(reps,DLM_data@Cref[x],DLM_data@CV_Cref)
-  muR<-mean(DLM_data@Rec[x,(length(DLM_data@Rec[x,])-tauR+1):length(DLM_data@Rec[x,])])
-  phi<-mean(DLM_data@Rec[x,(length(DLM_data@Rec[x,])-9):length(DLM_data@Rec[x,])])
-  Rrat<-muR/phi
-  deltaR<-rep(NA,reps)
-  deltaR[Rrat>1]<-Rrat[Rrat>1]^(1-epsR)
-  deltaR[Rrat<1]<-Rrat[Rrat<1]^(1+epsR)
-  TAC<-0.5*(DLM_data@Cat[x,length(DLM_data@Cat[x,])]+Ctarg*deltaR)
-  TACfilter(TAC) 
-}
-class(SBT2)<-"DLM_output"
 
-DD<-function(x,DLM_data,reps=100){
-#for(x in 1:nsim){
-  dependencies="DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@Mort, DLM_data@CV_Mort. DLM_data@wla, DLM_data@ wlb"
-  Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
-    t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
-  } else {
-    t0c <- rep(DLM_data@vbt0[x], reps)
-  }
-  t0c[!is.finite(t0c)] <- 0 
-  Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
-  a<-DLM_data@wla[x]
-  b<-DLM_data@wlb[x]
-
-  Winf=DLM_data@wla[x]*DLM_data@vbLinf[x]^DLM_data@wlb[x]
-	age<-1:DLM_data@MaxAge
-  la<-DLM_data@vbLinf[x]*(1-exp(-DLM_data@vbK[x]*((age-DLM_data@vbt0[x]))))
-  wa<-DLM_data@wla[x]*la^DLM_data@wlb[x]
-  a50V<-iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x])
-  a50V <- max(a50V, 1)
-  yind<-(1:length(DLM_data@Cat[x,]))[!is.na(DLM_data@Cat[x,]+DLM_data@Ind[x,])]
-  C_hist<-DLM_data@Cat[x,yind]
-  E_hist<-C_hist/DLM_data@Ind[x,yind]
-  E_hist<-E_hist/mean(E_hist)
-  ny_DD<-length(C_hist)
-  params<-log(c(DLM_data@Mort[x],mean(C_hist,na.rm=T),DLM_data@Mort[x]))
-  k_DD<-ceiling(a50V)   # get age nearest to 50% vulnerability (ascending limb)  -------------
-  k_DD[k_DD>DLM_data@MaxAge/2]<-ceiling(DLM_data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
-  Rho_DD<-(wa[k_DD+2]-Winf)/(wa[k_DD+1]-Winf)
-  Alpha_DD<-Winf*(1-Rho_DD)
-  So_DD<-exp(-DLM_data@Mort[x]) # get So survival rate
-  wa_DD<-wa[k_DD]
-  UMSYprior<-c(1-exp(-DLM_data@Mort[x]*0.5),0.3)
-  opt<-optim(params,DD_R,opty=1,So_DD=So_DD,Alpha_DD=Alpha_DD,Rho_DD=Rho_DD,
-                    ny_DD=ny_DD,k_DD=k_DD,wa_DD=wa_DD,E_hist=E_hist,
-                    C_hist=C_hist,UMSYprior=UMSYprior,
-                    method="L-BFGS-B",
-                    lower=log(exp(params)/20),upper=log(exp(params)*20),
-                    hessian=TRUE)
-
-  #Catfit<-DD_R(opt$par,opty=3,So_DD=So_DD,Alpha_DD=Alpha_DD,Rho_DD=Rho_DD,ny_DD=ny_DD,k_DD=k_DD,wa_DD=wa_DD,E_hist=E_hist,C_hist=C_hist,UMSYprior=UMSYprior)
-  #plot(Catfit[,1],ylim=c(0,max(Catfit)))
-  #lines(Catfit[,2],col="red")
-
-  TAC<-rep(NA,reps)
-  #samps<-rmvnorm(reps,opt$par,solve(opt$hessian)) # assuming log parameters are multivariate normal hessian approximation
-  samps<-cbind(rnorm(reps,opt$par[1],((opt$par[1])^2)^0.5*0.1),rnorm(reps,opt$par[2],((opt$par[2])^2)^0.5*0.1),rnorm(reps,opt$par[3],((opt$par[3])^2)^0.5*0.1))
-  if(reps==1)samps<-matrix(c(opt$par[1],opt$par[2],opt$par[3]),nrow=1)
-  for(i in 1:reps)TAC[i]<-DD_R(samps[i,],opty=2,So_DD=So_DD,Alpha_DD=Alpha_DD,Rho_DD=Rho_DD,ny_DD=ny_DD,k_DD=k_DD,wa_DD=wa_DD,E_hist=E_hist,C_hist=C_hist,UMSYprior=UMSYprior)
+#' SBT simple MP
+#' 
+#' An MP that makes incremental adjustments to TAC recommendations based on the
+#' apparent trend in CPUE
+#' 
+#' This isn't exactly the same as the proposed methods and is stochastic in
+#' this implementation. The method doesn't tend to work too well under many
+#' circumstances possibly due to the lack of 'tuning' that occurs in the real
+#' SBT assessment environment. You could try asking Rich Hillary at CSIRO about
+#' this approach.
+#' 
+#' @usage SBT1(x, DLM_data, reps = 100, yrsmth=10, k1=1.5, k2=3, gamma=1)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of samples of the TAC
+#' @param yrsmth The number of years for evaluating trend in relative abundance
+#' indices
+#' @param k1 Control parameter
+#' @param k2 Control parameter
+#' @param gamma Control parameter
+#' @author T. Carruthers
+#' @references http://www.ccsbt.org/site/recent_assessment.php
+#' @export SBT1
+SBT1 <- function(x, DLM_data, reps = 100, yrsmth = 10, k1 = 1.5, k2 = 3, 
+  gamma = 1) {
+  dependencies = "DLM_data@Cat, DLM_data@Year, DLM_data@Ind"
+  Cr <- length(DLM_data@Cat[x, ])
+  cct <- trlnorm(reps, DLM_data@Cat[x, Cr], DLM_data@CV_Cat)
+  ind <- (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)
+  I_hist <- DLM_data@Ind[x, ind]
+  test <- summary(lm(I_hist ~ ind))$coefficients[2, 1:2]
+  lambda <- rnorm(reps, test[1], test[2])
+  TAC <- cct * 1 + k2 * lambda
+  cond <- lambda < 0
+  TAC[cond] <- cct[cond] * 1 - k1 * -lambda[cond]^gamma
   TACfilter(TAC)
 }
-class(DD)<-"DLM_output"
+class(SBT1) <- "DLM_output"
 
 
-DD4010<-function(x,DLM_data,reps=100){
-  dependencies="DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@Mort, DLM_data@CV_Mort. DLM_data@wla, DLM_data@ wlb"
-  Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
-    t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
-  } else {
-    t0c <- rep(DLM_data@vbt0[x], reps)
-  }
-  t0c[!is.finite(t0c)] <- 0  
-  Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
-  a<-DLM_data@wla[x]
-  b<-DLM_data@wlb[x]
-  
-  Winf=DLM_data@wla[x]*DLM_data@vbLinf[x]^DLM_data@wlb[x]
-  age<-1:DLM_data@MaxAge
-  la<-DLM_data@vbLinf[x]*(1-exp(-DLM_data@vbK[x]*((age-DLM_data@vbt0[x]))))
-  wa<-DLM_data@wla[x]*la^DLM_data@wlb[x]
-  a50V<-iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x])
-  a50V <- max(a50V, 1)
-  yind<-(1:length(DLM_data@Cat[x,]))[!is.na(DLM_data@Cat[x,]+DLM_data@Ind[x,])]
-  C_hist<-DLM_data@Cat[x,yind]
-  E_hist<-DLM_data@Ind[x,yind]
-  E_hist<-C_hist/E_hist
-  E_hist<-E_hist/mean(E_hist)
-  ny_DD<-length(C_hist)
-  params<-log(c(DLM_data@Mort[x],mean(C_hist,na.rm=T),DLM_data@Mort[x]))
-  k_DD<-ceiling(a50V)   # get age nearest to 50% vulnerability (ascending limb)  -------------
-  k_DD[k_DD>DLM_data@MaxAge/2]<-ceiling(DLM_data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
-  Rho_DD<-(wa[k_DD+2]-Winf)/(wa[k_DD+1]-Winf)
-  Alpha_DD<-Winf*(1-Rho_DD)
-  So_DD<-exp(-DLM_data@Mort[x]) # get So survival rate
-  wa_DD<-wa[k_DD]
-  UMSYprior<-c(1-exp(-DLM_data@Mort*0.5),0.3)
-  opt<-optim(params,DD_R,opty=1,So_DD=So_DD,Alpha_DD=Alpha_DD,Rho_DD=Rho_DD,
-             ny_DD=ny_DD,k_DD=k_DD,wa_DD=wa_DD,E_hist=E_hist,
-             C_hist=C_hist,UMSYprior=UMSYprior,
-             method="L-BFGS-B",
-             lower=log(exp(params)/20),upper=log(exp(params)*20),
-             hessian=TRUE)
-  
-  #Catfit<-DD_R(opt$par,opty=3,So_DD=So_DD,Alpha_DD=Alpha_DD,Rho_DD=Rho_DD,ny_DD=ny_DD,k_DD=k_DD,wa_DD=wa_DD,E_hist=E_hist,C_hist=C_hist,UMSYprior=UMSYprior)
-  #plot(Catfit[,1],ylim=c(0,max(Catfit)))
-  #lines(Catfit[,2],col="red")
-  
-  TAC<-rep(NA,reps)
-  dep<-rep(NA,reps)
-  #samps<-rmvnorm(reps,opt$par,solve(opt$hessian)) # assuming log parameters are multivariate normal hessian approximation
-  samps<-cbind(rnorm(reps,opt$par[1],((opt$par[1])^2)^0.5*0.1),rnorm(reps,opt$par[2],((opt$par[2])^2)^0.5*0.1),rnorm(reps,opt$par[3],((opt$par[3])^2)^0.5*0.1))
-  if(reps==1)samps<-matrix(c(opt$par[1],opt$par[2],opt$par[3]),nrow=1)
-  for(i in 1:reps)TAC[i]<-DD_R(samps[i,],opty=2,So_DD=So_DD,Alpha_DD=Alpha_DD,Rho_DD=Rho_DD,ny_DD=ny_DD,k_DD=k_DD,wa_DD=wa_DD,E_hist=E_hist,C_hist=C_hist,UMSYprior=UMSYprior)
-  for(i in 1:reps)dep[i]<-DD_R(samps[i,],opty=3,So_DD=So_DD,Alpha_DD=Alpha_DD,Rho_DD=Rho_DD,ny_DD=ny_DD,k_DD=k_DD,wa_DD=wa_DD,E_hist=E_hist,C_hist=C_hist,UMSYprior=UMSYprior)
-  cond1<-!is.na(dep) & dep<0.4 & dep>0.1
-  cond2<-!is.na(dep) & dep<0.1
-  TAC[cond1]<-TAC[cond1]*(dep[cond1]-0.1)/0.3
-  TAC[cond2]<-TAC[cond2]*tiny # this has to still be stochastic albeit very small
+
+#' SBT complex MP
+#' 
+#' An MP that makes incremental adjustments to TAC recommendations based on
+#' index levels relative to target levels (BMSY/B0) and catch levels relative
+#' to target levels (MSY)
+#' 
+#' This isn't exactly the same as the proposed methods and is stochastic in
+#' this implementation. The method doesn't tend to work too well under many
+#' circumstances possibly due to the lack of 'tuning' that occurs in the real
+#' SBT assessment environment. You could try asking Rich Hillary at CSIRO about
+#' this approach.
+#' 
+#' @usage SBT2(x, DLM_data, reps = 100,
+#' epsB=0.25,epsR=0.75,tauR=5,tauB=7,gamma=1)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of samples of the TAC
+#' @param epsB Control parameter
+#' @param epsR Control parameter
+#' @param tauR Control parameter
+#' @param tauB Control parameter
+#' @param gamma Control parameter
+#' @author T. Carruthers
+#' @references http://www.ccsbt.org/site/recent_assessment.php
+#' @export SBT2
+SBT2 <- function(x, DLM_data, reps = 100, epsB = 0.25, epsR = 0.75, tauR = 5, 
+  tauB = 7, gamma = 1) {
+  dependencies = "DLM_data@Cref, DLM_data@Rec, DLM_data@Cat"
+  # Bnow<-trlnorm(reps,DLM_data@Abun[x],DLM_data@CV_Abun)
+  # testrat<-Bnow/DLM_data@Bref Ctarg<-rep(NA,reps)
+  # Ctarg[testrat>1]<-delta*testrat[testrat>1]^(1-epsB)
+  # Ctarg[testrat<1]<-detla*testrat[testrat<1]^(1+epsB)
+  Ctarg <- trlnorm(reps, DLM_data@Cref[x], DLM_data@CV_Cref)
+  muR <- mean(DLM_data@Rec[x, (length(DLM_data@Rec[x, ]) - tauR + 1):length(DLM_data@Rec[x, 
+    ])])
+  phi <- mean(DLM_data@Rec[x, (length(DLM_data@Rec[x, ]) - 9):length(DLM_data@Rec[x, 
+    ])])
+  Rrat <- muR/phi
+  deltaR <- rep(NA, reps)
+  deltaR[Rrat > 1] <- Rrat[Rrat > 1]^(1 - epsR)
+  deltaR[Rrat < 1] <- Rrat[Rrat < 1]^(1 + epsR)
+  TAC <- 0.5 * (DLM_data@Cat[x, length(DLM_data@Cat[x, ])] + Ctarg * 
+    deltaR)
   TACfilter(TAC)
 }
-class(DD4010)<-"DLM_output"
+class(SBT2) <- "DLM_output"
 
-DD_R<-function(params,opty,So_DD,Alpha_DD,Rho_DD,ny_DD,k_DD,wa_DD,E_hist,C_hist,UMSYprior){
-  UMSY_DD=exp(params[1])
-  MSY_DD=exp(params[2])
-  q_DD=exp(params[3])
-  SS_DD=So_DD*(1-UMSY_DD)    # Initialise for UMSY, MSY and q leading.
-  Spr_DD=(SS_DD*Alpha_DD/(1-SS_DD)+wa_DD)/(1-Rho_DD*SS_DD)
-  DsprDu_DD=-So_DD*(Rho_DD/(1-Rho_DD*SS_DD)*Spr_DD+1/(1-Rho_DD*SS_DD)*(Alpha_DD/(1-SS_DD)+SS_DD*Alpha_DD/(1-SS_DD)^2))
-  Arec_DD=1/(((1-UMSY_DD)^2)*(Spr_DD+UMSY_DD*DsprDu_DD))
-  Brec_DD=UMSY_DD*(Arec_DD*Spr_DD-1/(1-UMSY_DD))/MSY_DD
-  Spr0_DD=(So_DD*Alpha_DD/(1-So_DD)+wa_DD)/(1-Rho_DD*So_DD)
-  Ro_DD=(Arec_DD*Spr0_DD-1)/(Brec_DD*Spr0_DD)
-  Bo_DD=Ro_DD*Spr0_DD
-  No_DD=Ro_DD/(1-So_DD)
 
-  B_DD<-rep(NA,ny_DD+1)
-  N_DD<-rep(NA,ny_DD+1)
-  R_DD<-rep(NA,ny_DD+k_DD)
-  Cpred_DD<-rep(NA,ny_DD)
 
-  B_DD[1]=Bo_DD
-  N_DD[1]=No_DD
-  R_DD[1:k_DD]=Ro_DD
-
-  for(tt in 1:ny_DD){
-
-    Surv_DD=So_DD*exp(-q_DD*E_hist[tt])
-    Cpred_DD[tt]=B_DD[tt]*(1-exp(-q_DD*E_hist[tt]))
-    Sp_DD=B_DD[tt]-Cpred_DD[tt]
-    R_DD[tt+k_DD]=Arec_DD*Sp_DD/(1+Brec_DD*Sp_DD);
-    B_DD[tt+1]=Surv_DD*(Alpha_DD*N_DD[tt]+Rho_DD*B_DD[tt])+wa_DD*R_DD[tt+1]
-    N_DD[tt+1]=Surv_DD*N_DD[tt]+R_DD[tt+1]
-
-  }
-  Cpred_DD[Cpred_DD<tiny]<-tiny
-
-  if(opty==1){
-    test<-dnorm(log(Cpred_DD),log(C_hist),0.25,log=T)
-    test2<-dlnorm(UMSY_DD,log(UMSYprior[1]),UMSYprior[2],log=T)
-    test[is.na(test)]<--1000
-    test[test==(-Inf)]<--1000
-    if(is.na(test2)|test2==-Inf|test2==Inf)test2<-1000
-    return(-sum(test,test2))      # return objective function
-  }else if(opty==2){                                  # return MLE TAC estimate
-    UMSY_DD*B_DD[ny_DD]
-  }else if(opty==3){ 
-    B_DD[tt+1]/Bo_DD
-  }else{
-    cbind(C_hist,Cpred_DD)                           # return observations vs predictions
-  }
-}
-
-DBSRA<-function(x,DLM_data,reps=100){  # returns a vector of DBSRA estimates of the TAC for a particular simulation x
+#' Delay - Difference Stock Assessment with UMSY and MSY leading
+#' 
+#' A simple delay-difference assessment that estimates the TAC using a
+#' time-series of catches and a relative abundance index.
+#' 
+#' 
+#' @usage DD(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the TAC recommendation
+#' @return A numeric vector of TAC recommendations
+#' @note This DD model is observation error only and has does not estimate
+#' process error (recruitment deviations). Similar to many other assessment
+#' models it depends on a whole host of dubious assumptions such as temporally
+#' stationary productivity and proportionality between the abundance index and
+#' real abundance. Unsurprisingly the extent to which these assumptions are
+#' violated tends to be the biggest driver of performance for this method.
+#' @author T. Carruthers
+#' @references Method based on equations of Carl Walters (bug him with
+#' questions and expect colourful responses)
+#' @export DD
+DD <- function(x, DLM_data, reps = 100) {
   # for(x in 1:nsim){
-  dependencies="DLM_data@Cat, DLM_data@Dep, DLM_data@CV_Dep, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M,DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0, DLM_data@L50"
-  C_hist<-DLM_data@Cat[x,]
-  TAC<-rep(NA,reps)
-  DBSRAcount<-1
-  if (is.na(DLM_data@Dep[x]) | is.na(DLM_data@CV_Dep[x])) return(NA)
-  while(DBSRAcount<(reps+1)){
-    depo<-max(0.01,min(0.99,DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
-    Bt_K<-rbeta(100,alphaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])),betaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
-    Bt_K<-Bt_K[Bt_K>0.00999&Bt_K<0.99001][1] # interval censor (0.01,0.99)  as in Dick and MacCall 2011
-    Mdb<-trlnorm(100,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-    Mdb<-Mdb[Mdb<0.9][1]    # !!!! maximum M is 0.9   interval censor
-    if(is.na(Mdb))Mdb<-0.9  # !!!! maximum M is 0.9   absolute limit
-    FMSY_M<-trlnorm(1,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x])
-    BMSY_K<-rbeta(100,alphaconv(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x]*DLM_data@BMSY_B0[x]),betaconv(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x]*DLM_data@BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-    tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1] # interval censor (0.05,0.95) as in Dick and MacCall, 2011
-	if (is.na(tryBMSY_K)) {
-	  Min <- min(BMSY_K, na.rm=TRUE)
-	  Max <- max(BMSY_K, na.rm=TRUE)
-	  if (Max <= 0.05) BMSY_K <- 0.05
-	  if (Min >= 0.95) BMSY_K <- 0.95
-	}
-	if (!is.na(tryBMSY_K)) BMSY_K <- tryBMSY_K
-	
-    adelay<-max(floor(iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x])),1)
-    opt<-optimize(DBSRAopt,log(c(0.01*mean(C_hist),1000*mean(C_hist))),C_hist=C_hist,nys=length(C_hist),Mdb=Mdb,
-              FMSY_M=FMSY_M,BMSY_K=BMSY_K,Bt_K=Bt_K,adelay=adelay,tol=0.01)
-    # if(opt$objective<0.1){
-    Kc<-exp(opt$minimum)
-    BMSYc<-Kc*BMSY_K
-    FMSYc<-Mdb*FMSY_M
-    UMSYc<-(FMSYc/(FMSYc+Mdb))*(1-exp(-(FMSYc+Mdb)))
-    MSYc<-Kc*BMSY_K*UMSYc
-    TAC[DBSRAcount]<-UMSYc*Kc*Bt_K
-    DBSRAcount<-DBSRAcount+1
-    # }
-	 
-	# print(DBSRAcount)
-  } # end of reps
+  dependencies = "DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@Mort, DLM_data@CV_Mort. DLM_data@wla, DLM_data@ wlb"
+  Linfc <- trlnorm(reps, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
+  Kc <- trlnorm(reps, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0c <- -trlnorm(reps, -DLM_data@vbt0[x], DLM_data@CV_vbt0[x])
+  } else {
+    t0c <- rep(DLM_data@vbt0[x], reps)
+  }
+  t0c[!is.finite(t0c)] <- 0
+  Mdb <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
+  a <- DLM_data@wla[x]
+  b <- DLM_data@wlb[x]
+  
+  Winf = DLM_data@wla[x] * DLM_data@vbLinf[x]^DLM_data@wlb[x]
+  age <- 1:DLM_data@MaxAge
+  la <- DLM_data@vbLinf[x] * (1 - exp(-DLM_data@vbK[x] * ((age - DLM_data@vbt0[x]))))
+  wa <- DLM_data@wla[x] * la^DLM_data@wlb[x]
+  a50V <- iVB(DLM_data@vbt0[x], DLM_data@vbK[x], DLM_data@vbLinf[x], 
+    DLM_data@L50[x])
+  a50V <- max(a50V, 1)
+  yind <- (1:length(DLM_data@Cat[x, ]))[!is.na(DLM_data@Cat[x, ] + DLM_data@Ind[x, 
+    ])]
+  C_hist <- DLM_data@Cat[x, yind]
+  E_hist <- C_hist/DLM_data@Ind[x, yind]
+  E_hist <- E_hist/mean(E_hist)
+  ny_DD <- length(C_hist)
+  params <- log(c(DLM_data@Mort[x], mean(C_hist, na.rm = T), DLM_data@Mort[x]))
+  k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  -------------
+  k_DD[k_DD > DLM_data@MaxAge/2] <- ceiling(DLM_data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
+  Rho_DD <- (wa[k_DD + 2] - Winf)/(wa[k_DD + 1] - Winf)
+  Alpha_DD <- Winf * (1 - Rho_DD)
+  So_DD <- exp(-DLM_data@Mort[x])  # get So survival rate
+  wa_DD <- wa[k_DD]
+  UMSYprior <- c(1 - exp(-DLM_data@Mort[x] * 0.5), 0.3)
+  opt <- optim(params, DD_R, opty = 1, So_DD = So_DD, Alpha_DD = Alpha_DD, 
+    Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, wa_DD = wa_DD, E_hist = E_hist, 
+    C_hist = C_hist, UMSYprior = UMSYprior, method = "L-BFGS-B", lower = log(exp(params)/20), 
+    upper = log(exp(params) * 20), hessian = TRUE)
+  
+  # Catfit<-DD_R(opt$par,opty=3,So_DD=So_DD,Alpha_DD=Alpha_DD,Rho_DD=Rho_DD,ny_DD=ny_DD,k_DD=k_DD,wa_DD=wa_DD,E_hist=E_hist,C_hist=C_hist,UMSYprior=UMSYprior)
+  # plot(Catfit[,1],ylim=c(0,max(Catfit))) lines(Catfit[,2],col='red')
+  
+  TAC <- rep(NA, reps)
+  # samps<-rmvnorm(reps,opt$par,solve(opt$hessian)) # assuming log
+  # parameters are multivariate normal hessian approximation
+  samps <- cbind(rnorm(reps, opt$par[1], ((opt$par[1])^2)^0.5 * 0.1), 
+    rnorm(reps, opt$par[2], ((opt$par[2])^2)^0.5 * 0.1), rnorm(reps, 
+      opt$par[3], ((opt$par[3])^2)^0.5 * 0.1))
+  if (reps == 1) 
+    samps <- matrix(c(opt$par[1], opt$par[2], opt$par[3]), nrow = 1)
+  for (i in 1:reps) TAC[i] <- DD_R(samps[i, ], opty = 2, So_DD = So_DD, 
+    Alpha_DD = Alpha_DD, Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, 
+    wa_DD = wa_DD, E_hist = E_hist, C_hist = C_hist, UMSYprior = UMSYprior)
   TACfilter(TAC)
-   # print(x)
+}
+class(DD) <- "DLM_output"
+
+
+
+
+#' Delay - Difference Stock Assessment with UMSY and MSY leading coupled with a
+#' 40-10 harvest control rule
+#' 
+#' A simple delay-difference assessment that estimates the OFL using a
+#' time-series of catches and a relative abundance index. In this version of
+#' the DD MP a 40-10 rule is imposed over the OFL recommendation.
+#' 
+#' 
+#' @usage DD4010(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the TAC recommendation
+#' @return A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @references Method based on equations of Carl Walters
+#' @export DD4010
+DD4010 <- function(x, DLM_data, reps = 100) {
+  dependencies = "DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@Mort, DLM_data@CV_Mort. DLM_data@wla, DLM_data@ wlb"
+  Linfc <- trlnorm(reps, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
+  Kc <- trlnorm(reps, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0c <- -trlnorm(reps, -DLM_data@vbt0[x], DLM_data@CV_vbt0[x])
+  } else {
+    t0c <- rep(DLM_data@vbt0[x], reps)
+  }
+  t0c[!is.finite(t0c)] <- 0
+  Mdb <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
+  a <- DLM_data@wla[x]
+  b <- DLM_data@wlb[x]
+  
+  Winf = DLM_data@wla[x] * DLM_data@vbLinf[x]^DLM_data@wlb[x]
+  age <- 1:DLM_data@MaxAge
+  la <- DLM_data@vbLinf[x] * (1 - exp(-DLM_data@vbK[x] * ((age - DLM_data@vbt0[x]))))
+  wa <- DLM_data@wla[x] * la^DLM_data@wlb[x]
+  a50V <- iVB(DLM_data@vbt0[x], DLM_data@vbK[x], DLM_data@vbLinf[x], 
+    DLM_data@L50[x])
+  a50V <- max(a50V, 1)
+  yind <- (1:length(DLM_data@Cat[x, ]))[!is.na(DLM_data@Cat[x, ] + DLM_data@Ind[x, 
+    ])]
+  C_hist <- DLM_data@Cat[x, yind]
+  E_hist <- DLM_data@Ind[x, yind]
+  E_hist <- C_hist/E_hist
+  E_hist <- E_hist/mean(E_hist)
+  ny_DD <- length(C_hist)
+  params <- log(c(DLM_data@Mort[x], mean(C_hist, na.rm = T), DLM_data@Mort[x]))
+  k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  -------------
+  k_DD[k_DD > DLM_data@MaxAge/2] <- ceiling(DLM_data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
+  Rho_DD <- (wa[k_DD + 2] - Winf)/(wa[k_DD + 1] - Winf)
+  Alpha_DD <- Winf * (1 - Rho_DD)
+  So_DD <- exp(-DLM_data@Mort[x])  # get So survival rate
+  wa_DD <- wa[k_DD]
+  UMSYprior <- c(1 - exp(-DLM_data@Mort * 0.5), 0.3)
+  opt <- optim(params, DD_R, opty = 1, So_DD = So_DD, Alpha_DD = Alpha_DD, 
+    Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, wa_DD = wa_DD, E_hist = E_hist, 
+    C_hist = C_hist, UMSYprior = UMSYprior, method = "L-BFGS-B", lower = log(exp(params)/20), 
+    upper = log(exp(params) * 20), hessian = TRUE)
+  
+  # Catfit<-DD_R(opt$par,opty=3,So_DD=So_DD,Alpha_DD=Alpha_DD,Rho_DD=Rho_DD,ny_DD=ny_DD,k_DD=k_DD,wa_DD=wa_DD,E_hist=E_hist,C_hist=C_hist,UMSYprior=UMSYprior)
+  # plot(Catfit[,1],ylim=c(0,max(Catfit))) lines(Catfit[,2],col='red')
+  
+  TAC <- rep(NA, reps)
+  dep <- rep(NA, reps)
+  # samps<-rmvnorm(reps,opt$par,solve(opt$hessian)) # assuming log
+  # parameters are multivariate normal hessian approximation
+  samps <- cbind(rnorm(reps, opt$par[1], ((opt$par[1])^2)^0.5 * 0.1), 
+    rnorm(reps, opt$par[2], ((opt$par[2])^2)^0.5 * 0.1), rnorm(reps, 
+      opt$par[3], ((opt$par[3])^2)^0.5 * 0.1))
+  if (reps == 1) 
+    samps <- matrix(c(opt$par[1], opt$par[2], opt$par[3]), nrow = 1)
+  for (i in 1:reps) TAC[i] <- DD_R(samps[i, ], opty = 2, So_DD = So_DD, 
+    Alpha_DD = Alpha_DD, Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, 
+    wa_DD = wa_DD, E_hist = E_hist, C_hist = C_hist, UMSYprior = UMSYprior)
+  for (i in 1:reps) dep[i] <- DD_R(samps[i, ], opty = 3, So_DD = So_DD, 
+    Alpha_DD = Alpha_DD, Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, 
+    wa_DD = wa_DD, E_hist = E_hist, C_hist = C_hist, UMSYprior = UMSYprior)
+  cond1 <- !is.na(dep) & dep < 0.4 & dep > 0.1
+  cond2 <- !is.na(dep) & dep < 0.1
+  TAC[cond1] <- TAC[cond1] * (dep[cond1] - 0.1)/0.3
+  TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
+  TACfilter(TAC)
+}
+class(DD4010) <- "DLM_output"
+
+DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, 
+  E_hist, C_hist, UMSYprior) {
+  UMSY_DD = exp(params[1])
+  MSY_DD = exp(params[2])
+  q_DD = exp(params[3])
+  SS_DD = So_DD * (1 - UMSY_DD)  # Initialise for UMSY, MSY and q leading.
+  Spr_DD = (SS_DD * Alpha_DD/(1 - SS_DD) + wa_DD)/(1 - Rho_DD * SS_DD)
+  DsprDu_DD = -So_DD * (Rho_DD/(1 - Rho_DD * SS_DD) * Spr_DD + 1/(1 - 
+    Rho_DD * SS_DD) * (Alpha_DD/(1 - SS_DD) + SS_DD * Alpha_DD/(1 - 
+    SS_DD)^2))
+  Arec_DD = 1/(((1 - UMSY_DD)^2) * (Spr_DD + UMSY_DD * DsprDu_DD))
+  Brec_DD = UMSY_DD * (Arec_DD * Spr_DD - 1/(1 - UMSY_DD))/MSY_DD
+  Spr0_DD = (So_DD * Alpha_DD/(1 - So_DD) + wa_DD)/(1 - Rho_DD * So_DD)
+  Ro_DD = (Arec_DD * Spr0_DD - 1)/(Brec_DD * Spr0_DD)
+  Bo_DD = Ro_DD * Spr0_DD
+  No_DD = Ro_DD/(1 - So_DD)
+  
+  B_DD <- rep(NA, ny_DD + 1)
+  N_DD <- rep(NA, ny_DD + 1)
+  R_DD <- rep(NA, ny_DD + k_DD)
+  Cpred_DD <- rep(NA, ny_DD)
+  
+  B_DD[1] = Bo_DD
+  N_DD[1] = No_DD
+  R_DD[1:k_DD] = Ro_DD
+  
+  for (tt in 1:ny_DD) {
+    
+    Surv_DD = So_DD * exp(-q_DD * E_hist[tt])
+    Cpred_DD[tt] = B_DD[tt] * (1 - exp(-q_DD * E_hist[tt]))
+    Sp_DD = B_DD[tt] - Cpred_DD[tt]
+    R_DD[tt + k_DD] = Arec_DD * Sp_DD/(1 + Brec_DD * Sp_DD)
+    B_DD[tt + 1] = Surv_DD * (Alpha_DD * N_DD[tt] + Rho_DD * B_DD[tt]) + 
+      wa_DD * R_DD[tt + 1]
+    N_DD[tt + 1] = Surv_DD * N_DD[tt] + R_DD[tt + 1]
+    
+  }
+  Cpred_DD[Cpred_DD < tiny] <- tiny
+  
+  if (opty == 1) {
+    test <- dnorm(log(Cpred_DD), log(C_hist), 0.25, log = T)
+    test2 <- dlnorm(UMSY_DD, log(UMSYprior[1]), UMSYprior[2], log = T)
+    test[is.na(test)] <- -1000
+    test[test == (-Inf)] <- -1000
+    if (is.na(test2) | test2 == -Inf | test2 == Inf) 
+      test2 <- 1000
+    return(-sum(test, test2))  # return objective function
+  } else if (opty == 2) {
+    # return MLE TAC estimate
+    UMSY_DD * B_DD[ny_DD]
+  } else if (opty == 3) {
+    B_DD[tt + 1]/Bo_DD
+  } else {
+    cbind(C_hist, Cpred_DD)  # return observations vs predictions
+  }
+}
+
+
+
+#' Depletion-Based Stock Reduction Analysis
+#' 
+#' User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the OFL
+#' by back-constructing the stock to match a user specified level of stock
+#' depletion (OFL = M * FMSY/M * depletion* B0).
+#' 
+#' You specify a range of stock depletion and, given historical catches DB-SRA
+#' calculates what unfished biomass must have been to get you here given
+#' samples for M, FMSY relative to M and also BMSY relative to Bunfished.
+#' 
+#' @usage DBSRA(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods object.
+#' @param DLM_data A data-limited methods object.
+#' @param reps The number of samples of the TAC (OFL) recommendation.
+#' @return A vector of TAC (OFL) values.
+#' @note This is set up to return the OFL (FMSY * current biomass).
+#' 
+#' You may have noticed that you -the user- specify three of the factors that
+#' make the quota recommendation. So this can be quite a subjective method.
+#' 
+#' Also the DB-SRA method of this package isn't exactly the same as the
+#' original method of Dick and MacCall (2011) because it has to work for
+#' simulated depletions above BMSY/B0 and even on occasion over B0. Also it
+#' doesn't have the modification for flatfish life histories that has
+#' previously been applied by Dick and MacCall.
+#' @author T. Carruthers
+#' @references Dick, E.J., MacCall, A.D., 2011. Depletion-Based Stock Reduction
+#' Analysis: A catch-based method for determining sustainable yields for
+#' data-poor fish stocks. Fish. Res. 110, 331-341.
+#' @export DBSRA
+DBSRA <- function(x, DLM_data, reps = 100) {
+  # returns a vector of DBSRA estimates of the TAC for a particular
+  # simulation x for(x in 1:nsim){
+  dependencies = "DLM_data@Cat, DLM_data@Dep, DLM_data@CV_Dep, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M,DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0, DLM_data@L50"
+  C_hist <- DLM_data@Cat[x, ]
+  TAC <- rep(NA, reps)
+  DBSRAcount <- 1
+  if (is.na(DLM_data@Dep[x]) | is.na(DLM_data@CV_Dep[x])) 
+    return(NA)
+  while (DBSRAcount < (reps + 1)) {
+    depo <- max(0.01, min(0.99, DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
+    Bt_K <- rbeta(100, alphaconv(depo, min(depo * DLM_data@CV_Dep[x], 
+      (1 - depo) * DLM_data@CV_Dep[x])), betaconv(depo, min(depo * 
+      DLM_data@CV_Dep[x], (1 - depo) * DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
+    Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
+    Mdb <- trlnorm(100, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+    Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
+    if (is.na(Mdb)) 
+      Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
+    FMSY_M <- trlnorm(1, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])
+    BMSY_K <- rbeta(100, alphaconv(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x] * 
+      DLM_data@BMSY_B0[x]), betaconv(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x] * 
+      DLM_data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+    tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
+    if (is.na(tryBMSY_K)) {
+      Min <- min(BMSY_K, na.rm = TRUE)
+      Max <- max(BMSY_K, na.rm = TRUE)
+      if (Max <= 0.05) 
+        BMSY_K <- 0.05
+      if (Min >= 0.95) 
+        BMSY_K <- 0.95
+    }
+    if (!is.na(tryBMSY_K)) 
+      BMSY_K <- tryBMSY_K
+    
+    adelay <- max(floor(iVB(DLM_data@vbt0[x], DLM_data@vbK[x], DLM_data@vbLinf[x], 
+      DLM_data@L50[x])), 1)
+    opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist), 1000 * mean(C_hist))), 
+      C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
+      BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+    # if(opt$objective<0.1){
+    Kc <- exp(opt$minimum)
+    BMSYc <- Kc * BMSY_K
+    FMSYc <- Mdb * FMSY_M
+    UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
+    MSYc <- Kc * BMSY_K * UMSYc
+    TAC[DBSRAcount] <- UMSYc * Kc * Bt_K
+    DBSRAcount <- DBSRAcount + 1
+    # }
+    
+    # print(DBSRAcount)
+  }  # end of reps
+  TACfilter(TAC)
+  # print(x) }
+}  # end of DBSRA_apply
+class(DBSRA) <- "DLM_output"
+
+
+
+#' Depletion-Based Stock Reduction Analysis assuming 40 per cent stock
+#' depletion
+#' 
+#' DBSRA assuming that current stock depletion is exactly 40 per cent of
+#' unfished stock levels.
+#' 
+#' 
+#' @usage DBSRA_40(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the TAC recommendation
+#' @note A 40 percent assumption for current depletion is more or less the most
+#' optimistic state for a stock (ie very close to BMSY/B0 for many stocks).
+#' @author T. Carruthers.
+#' @references Dick, E.J., MacCall, A.D., 2010. Estimates of sustainable yield
+#' for 50 data-poor stocks in the Pacific Coast groundfish fishery management
+#' plan. Technical memorandum. Southwest fisheries Science Centre, Santa Cruz,
+#' CA. National Marine Fisheries Service, National Oceanic and Atmospheric
+#' Administration of the U.S. Department of Commerce. NOAA-TM-NMFS-SWFSC-460.
+#' @export DBSRA_40
+DBSRA_40 <- function(x, DLM_data, reps = 100) {
+  # returns a vector of DBSRA estimates of the TAC for a particular
+  # simulation x
+  dependencies = "DLM_data@Cat, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0, DLM_data@L50"
+  C_hist <- DLM_data@Cat[x, ]
+  TAC <- rep(NA, reps)
+  DBSRAcount <- 1
+  if (is.na(DLM_data@Dep[x]) | is.na(DLM_data@CV_Dep[x])) 
+    return(NA)
+  while (DBSRAcount < (reps + 1)) {
+    depo <- 0.4
+    Bt_K <- rbeta(100, alphaconv(depo, min(depo * DLM_data@CV_Dep[x], 
+      (1 - depo) * DLM_data@CV_Dep[x])), betaconv(depo, min(depo * 
+      DLM_data@CV_Dep[x], (1 - depo) * DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
+    Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
+    Mdb <- stats::rlnorm(100, mconv(DLM_data@Mort[x], DLM_data@CV_Mort[x] * 
+      DLM_data@Mort[x]), sdconv(DLM_data@Mort[x], DLM_data@CV_Mort[x] * 
+      DLM_data@Mort[x]))  # log space stdev 0.4 as in Dick and MacCall 2011
+    Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
+    if (is.na(Mdb)) 
+      Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
+    FMSY_M <- trlnorm(1, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])
+    BMSY_K <- rbeta(100, alphaconv(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x] * 
+      DLM_data@BMSY_B0[x]), betaconv(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x] * 
+      DLM_data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+    BMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
+    adelay <- max(floor(iVB(DLM_data@vbt0[x], DLM_data@vbK[x], DLM_data@vbLinf[x], 
+      DLM_data@L50[x])), 1)
+    opt <- optimize(DBSRAopt, log(c(0.1 * mean(C_hist), 1000 * mean(C_hist))), 
+      C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
+      BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+    # if(opt$objective<0.1){
+    Kc <- exp(opt$minimum)
+    BMSYc <- Kc * BMSY_K
+    FMSYc <- Mdb * FMSY_M
+    UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
+    MSYc <- Kc * BMSY_K * UMSYc
+    TAC[DBSRAcount] <- UMSYc * Kc * Bt_K
+    DBSRAcount <- DBSRAcount + 1
+    # }
+  }  # end of reps
+  TACfilter(TAC)
+}  # end of DBSRA_apply
+class(DBSRA_40) <- "DLM_output"
+
+
+
+#' Depletion-Based Stock Reduction Analysis using mean length estimator of
+#' stock depletion
+#' 
+#' DBSRA using the mean length estimator to calculate current stock depletion.
+#' 
+#' 
+#' @usage DBSRA_ML(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the quota recommendation
+#' @note The mean length extension was programmed by Gary Nelson as part of his
+#' excellent R package 'fishmethods'
+#' @author T. Carruthers
+#' @references Dick, E.J., MacCall, A.D., 2011. Depletion-Based Stock Reduction
+#' Analysis: A catch-based method for determining sustainable yields for
+#' data-poor fish stocks. Fish. Res. 110, 331-341.
+#' @export DBSRA_ML
+DBSRA_ML <- function(x, DLM_data, reps = 100) {
+  dependencies = "DLM_data@Cat, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0, DLM_data@L50, DLM_data@CAL, DLM_data@Year, DLM_data@Cat"
+  C_hist <- DLM_data@Cat[x, ]
+  TAC <- rep(NA, reps)
+  DBSRAcount <- 1
+  maxIts <- 200
+  nIts <- 0
+  if (is.na(DLM_data@Dep[x]) | is.na(DLM_data@CV_Dep[x])) 
+    return(NA)
+  while (DBSRAcount < (reps + 1) & nIts < maxIts) {
+    Linfc <- trlnorm(1, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
+    Kc <- trlnorm(1, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+    Mdb <- trlnorm(100, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+    Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
+    if (is.na(Mdb)) 
+      Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
+    Z <- MLne(x, DLM_data, Linfc = Linfc, Kc = Kc, ML_reps = 1, MLtype = "dep")
+    FM <- Z - Mdb
+    FM[FM < 0] <- 0.01
+    nyears <- length(DLM_data@Year)
+    Ct1 <- mean(DLM_data@Cat[x, 1:3])
+    Ct2 <- mean(DLM_data@Cat[x, (nyears - 2):nyears])
+    # dep<-c(Ct1,Ct2)/(1-exp(-FM[,c(1,2)]))
+    dep <- c(Ct1, Ct2)/(1 - exp(-FM))
+    Bt_K <- dep[2]/dep[1]
+    if (Bt_K < 0.01) 
+      Bt_K <- 0.01  # interval censor / temporary hack to avoid doing multiple depletion estimates that would take far too long
+    if (Bt_K > 0.99) 
+      Bt_K <- 0.99  # interval censor / temporary hack to avoid doing multiple depletion estimates that would take far too long
+    
+    FMSY_M <- trlnorm(1, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])
+    BMSY_K <- rbeta(100, alphaconv(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x] * 
+      DLM_data@BMSY_B0[x]), betaconv(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x] * 
+      DLM_data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+    BMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
+    adelay <- max(floor(iVB(DLM_data@vbt0[x], DLM_data@vbK[x], DLM_data@vbLinf[x], 
+      DLM_data@L50[x])), 1)
+    opt <- optimize(DBSRAopt, log(c(0.1 * mean(C_hist), 1000 * mean(C_hist))), 
+      C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
+      BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+    nIts <- nIts + 1
+    if (opt$objective < 0.1) {
+      Kc <- exp(opt$minimum)
+      BMSYc <- Kc * BMSY_K
+      FMSYc <- Mdb * FMSY_M
+      UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
+      MSYc <- Kc * BMSY_K * UMSYc
+      TAC[DBSRAcount] <- UMSYc * Kc * Bt_K
+      DBSRAcount <- DBSRAcount + 1
+      nIts <- 0
+    }
+  }  # end of reps
+  TACfilter(TAC)
+}
+class(DBSRA_ML) <- "DLM_output"
+
+
+
+#' Depletion-Based Stock Reduction Analysis paired with 40-10 harvest control
+#' rule
+#' 
+#' User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the OFL
+#' by back-constructing the stock to match a user specified level of stock
+#' depletion (OFL = M * FMSY/M * depletion* B0). In this method DBSRA is paried
+#' with the 40-10 rule that throttles back the OFL to zero at 10 percent of
+#' unfished biomass.
+#' 
+#' 
+#' @usage DBSRA4010(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the TAC recommendation
+#' @author T. Carruthers
+#' @references Dick, E.J., MacCall, A.D., 2011. Depletion-Based Stock Reduction
+#' Analysis: A catch-based method for determining sustainable yields for
+#' data-poor fish stocks. Fish. Res. 110, 331-341.
+#' @export DBSRA4010
+DBSRA4010 <- function(x, DLM_data, reps = 100) {
+  # returns a vector of DBSRA estimates of the TAC for a particular
+  # simulation x for(x in 1:nsim){
+  dependencies = "DLM_data@Cat, DLM_data@Dep, DLM_data@CV_Dep, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M,DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0, DLM_data@L50"
+  C_hist <- DLM_data@Cat[x, ]
+  TAC <- rep(NA, reps)
+  DBSRAcount <- 1
+  if (is.na(DLM_data@Dep[x]) | is.na(DLM_data@CV_Dep[x])) 
+    return(NA)
+  while (DBSRAcount < (reps + 1)) {
+    depo <- max(0.01, min(0.99, DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
+    Bt_K <- rbeta(100, alphaconv(depo, min(depo * DLM_data@CV_Dep[x], 
+      (1 - depo) * DLM_data@CV_Dep[x])), betaconv(depo, min(depo * 
+      DLM_data@CV_Dep[x], (1 - depo) * DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
+    Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
+    Mdb <- trlnorm(100, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+    Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
+    if (is.na(Mdb)) 
+      Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
+    FMSY_M <- trlnorm(1, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])
+    BMSY_K <- rbeta(100, alphaconv(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x] * 
+      DLM_data@BMSY_B0[x]), betaconv(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x] * 
+      DLM_data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+    BMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
+    adelay <- max(floor(iVB(DLM_data@vbt0[x], DLM_data@vbK[x], DLM_data@vbLinf[x], 
+      DLM_data@L50[x])), 1)
+    opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist), 1000 * mean(C_hist))), 
+      C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
+      BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+    # if(opt$objective<0.1){
+    Kc <- exp(opt$minimum)
+    BMSYc <- Kc * BMSY_K
+    FMSYc <- Mdb * FMSY_M
+    UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
+    MSYc <- Kc * BMSY_K * UMSYc
+    TAC[DBSRAcount] <- UMSYc * Kc * Bt_K
+    # 40-10 rule
+    if (Bt_K < 0.4 & Bt_K > 0.1) 
+      TAC[DBSRAcount] <- TAC[DBSRAcount] * (Bt_K - 0.1)/0.3
+    if (Bt_K < 0.1) 
+      TAC[DBSRAcount] <- TAC[DBSRAcount] * tiny  # this has to still be stochastic albeit very small
+    DBSRAcount <- DBSRAcount + 1
+    # }
+  }  # end of reps
+  TACfilter(TAC)
   # }
 }  # end of DBSRA_apply
-class(DBSRA)<-"DLM_output"
+class(DBSRA4010) <- "DLM_output"
 
-DBSRA_40<-function(x,DLM_data,reps=100){  # returns a vector of DBSRA estimates of the TAC for a particular simulation x
-  dependencies="DLM_data@Cat, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0, DLM_data@L50"
-  C_hist<-DLM_data@Cat[x,]
-  TAC<-rep(NA,reps)
-  DBSRAcount<-1
-  if (is.na(DLM_data@Dep[x]) | is.na(DLM_data@CV_Dep[x])) return(NA)
-  while(DBSRAcount<(reps+1)){
-    depo<-0.4
-    Bt_K<-rbeta(100,alphaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])),betaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
-    Bt_K<-Bt_K[Bt_K>0.00999&Bt_K<0.99001][1] # interval censor (0.01,0.99)  as in Dick and MacCall 2011
-    Mdb<-rlnorm(100,mconv(DLM_data@Mort[x],DLM_data@CV_Mort[x]*DLM_data@Mort[x]),sdconv(DLM_data@Mort[x],DLM_data@CV_Mort[x]*DLM_data@Mort[x]))   # log space stdev 0.4 as in Dick and MacCall 2011
-    Mdb<-Mdb[Mdb<0.9][1]    # !!!! maximum M is 0.9   interval censor
-    if(is.na(Mdb))Mdb<-0.9  # !!!! maximum M is 0.9   absolute limit
-    FMSY_M<-trlnorm(1,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x])
-    BMSY_K<-rbeta(100,alphaconv(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x]*DLM_data@BMSY_B0[x]),betaconv(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x]*DLM_data@BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-    BMSY_K<-BMSY_K[BMSY_K>0.05&BMSY_K<0.95][1] # interval censor (0.05,0.95) as in Dick and MacCall, 2011
-    adelay<-max(floor(iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x])),1)
-    opt<-optimize(DBSRAopt,log(c(0.1*mean(C_hist),1000*mean(C_hist))),C_hist=C_hist,nys=length(C_hist),Mdb=Mdb,
-              FMSY_M=FMSY_M,BMSY_K=BMSY_K,Bt_K=Bt_K,adelay=adelay,tol=0.01)
-    #if(opt$objective<0.1){
-      Kc<-exp(opt$minimum)
-      BMSYc<-Kc*BMSY_K
-      FMSYc<-Mdb*FMSY_M
-      UMSYc<-(FMSYc/(FMSYc+Mdb))*(1-exp(-(FMSYc+Mdb)))
-      MSYc<-Kc*BMSY_K*UMSYc
-      TAC[DBSRAcount]<-UMSYc*Kc*Bt_K
-      DBSRAcount<-DBSRAcount+1
-    #}
-  } # end of reps
-  TACfilter(TAC)
-}  # end of DBSRA_apply
-class(DBSRA_40)<-"DLM_output"
-
-DBSRA_ML<-function(x,DLM_data,reps=100){
-  dependencies="DLM_data@Cat, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0, DLM_data@L50, DLM_data@CAL, DLM_data@Year, DLM_data@Cat"
-  C_hist<-DLM_data@Cat[x,]
-  TAC<-rep(NA,reps)
-  DBSRAcount<-1
-  maxIts <- 200
-  nIts <- 0 
-  if (is.na(DLM_data@Dep[x]) | is.na(DLM_data@CV_Dep[x])) return(NA)
-  while(DBSRAcount<(reps+1) & nIts < maxIts){
-    Linfc<-trlnorm(1,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-    Kc<-trlnorm(1,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-    Mdb<-trlnorm(100,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-    Mdb<-Mdb[Mdb<0.9][1]    # !!!! maximum M is 0.9   interval censor
-    if(is.na(Mdb))Mdb<-0.9  # !!!! maximum M is 0.9   absolute limit
-    Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=1,MLtype="dep")
-    FM<-Z-Mdb
-    FM[FM<0]<-0.01
-    nyears<-length(DLM_data@Year)
-    Ct1<-mean(DLM_data@Cat[x,1:3])
-    Ct2<-mean(DLM_data@Cat[x,(nyears-2):nyears])
-    # dep<-c(Ct1,Ct2)/(1-exp(-FM[,c(1,2)]))
-	dep<-c(Ct1,Ct2)/(1-exp(-FM))
-    Bt_K<-dep[2]/dep[1]
-    if(Bt_K<0.01)Bt_K<-0.01       # interval censor / temporary hack to avoid doing multiple depletion estimates that would take far too long
-    if(Bt_K>0.99)Bt_K<-0.99       # interval censor / temporary hack to avoid doing multiple depletion estimates that would take far too long
-
-    FMSY_M<-trlnorm(1,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x])
-    BMSY_K<-rbeta(100,alphaconv(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x]*DLM_data@BMSY_B0[x]),betaconv(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x]*DLM_data@BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-    BMSY_K<-BMSY_K[BMSY_K>0.05&BMSY_K<0.95][1] # interval censor (0.05,0.95) as in Dick and MacCall, 2011
-    adelay<-max(floor(iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x])),1)
-    opt<-optimize(DBSRAopt,log(c(0.1*mean(C_hist),1000*mean(C_hist))),C_hist=C_hist,nys=length(C_hist),Mdb=Mdb,
-              FMSY_M=FMSY_M,BMSY_K=BMSY_K,Bt_K=Bt_K,adelay=adelay,tol=0.01)
-    nIts <- nIts + 1 
-    if(opt$objective<0.1){
-      Kc<-exp(opt$minimum)
-      BMSYc<-Kc*BMSY_K
-      FMSYc<-Mdb*FMSY_M
-      UMSYc<-(FMSYc/(FMSYc+Mdb))*(1-exp(-(FMSYc+Mdb)))
-      MSYc<-Kc*BMSY_K*UMSYc
-      TAC[DBSRAcount]<-UMSYc*Kc*Bt_K
-      DBSRAcount<-DBSRAcount+1
-	  nIts <- 0 
+DBSRAopt <- function(lnK, C_hist, nys, Mdb, FMSY_M, BMSY_K, Bt_K, adelay) {
+  # the optimization for B0 given DBSRA assumptions
+  Kc <- exp(lnK)
+  n <- getn(BMSY_K)
+  g <- gety(n)
+  FMSY <- FMSY_M * Mdb
+  UMSY <- (FMSY/(FMSY + Mdb)) * (1 - exp(-(FMSY + Mdb)))
+  MSY <- Kc * BMSY_K * UMSY
+  # Bjoin rules from Dick & MacCall 2011 ---------
+  Bjoin_K <- 0.5
+  if (BMSY_K < 0.3) 
+    Bjoin_K <- 0.5 * BMSY_K
+  if (BMSY_K > 0.3 & BMSY_K < 0.5) 
+    Bjoin_K <- 0.75 * BMSY_K - 0.075
+  Bjoin <- Bjoin_K * Kc
+  PBjoin <- prodPTF(Bjoin_K, n, MSY)
+  cp <- (1 - n) * g * MSY * (Bjoin^(n - 2)) * Kc^-n
+  Bc <- rep(NA, nys)
+  Bc[1] <- Kc
+  obj <- 0
+  for (yr in 2:nys) {
+    yref <- max(1, yr - adelay)
+    if (Bc[yref] > Bjoin | BMSY_K > 0.5) {
+      Bc[yr] <- Bc[yr - 1] + g * MSY * (Bc[yref]/Kc) - g * MSY * 
+        (Bc[yref]/Kc)^n - C_hist[yr - 1]
+    } else {
+      Bc[yr] <- Bc[yr - 1] + Bc[yref] * ((PBjoin/Bjoin) + cp * (Bc[yref] - 
+        Bjoin)) - C_hist[yr - 1]
     }
-  } # end of reps
-  TACfilter(TAC)
-}
-class(DBSRA_ML)<-"DLM_output"
-
-DBSRA4010<-function(x,DLM_data,reps=100){  # returns a vector of DBSRA estimates of the TAC for a particular simulation x
-  #for(x in 1:nsim){
-  dependencies="DLM_data@Cat, DLM_data@Dep, DLM_data@CV_Dep, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M,DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0, DLM_data@L50"
-  C_hist<-DLM_data@Cat[x,]
-  TAC<-rep(NA,reps)
-  DBSRAcount<-1
-  if (is.na(DLM_data@Dep[x]) | is.na(DLM_data@CV_Dep[x])) return(NA)
-  while(DBSRAcount<(reps+1)){
-    depo<-max(0.01,min(0.99,DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
-    Bt_K<-rbeta(100,alphaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])),betaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
-    Bt_K<-Bt_K[Bt_K>0.00999&Bt_K<0.99001][1] # interval censor (0.01,0.99)  as in Dick and MacCall 2011
-    Mdb<-trlnorm(100,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-    Mdb<-Mdb[Mdb<0.9][1]    # !!!! maximum M is 0.9   interval censor
-    if(is.na(Mdb))Mdb<-0.9  # !!!! maximum M is 0.9   absolute limit
-    FMSY_M<-trlnorm(1,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x])
-    BMSY_K<-rbeta(100,alphaconv(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x]*DLM_data@BMSY_B0[x]),betaconv(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x]*DLM_data@BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-    BMSY_K<-BMSY_K[BMSY_K>0.05&BMSY_K<0.95][1] # interval censor (0.05,0.95) as in Dick and MacCall, 2011
-    adelay<-max(floor(iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x])),1)
-    opt<-optimize(DBSRAopt,log(c(0.01*mean(C_hist),1000*mean(C_hist))),C_hist=C_hist,nys=length(C_hist),Mdb=Mdb,
-                  FMSY_M=FMSY_M,BMSY_K=BMSY_K,Bt_K=Bt_K,adelay=adelay,tol=0.01)
-    #if(opt$objective<0.1){
-    Kc<-exp(opt$minimum)
-    BMSYc<-Kc*BMSY_K
-    FMSYc<-Mdb*FMSY_M
-    UMSYc<-(FMSYc/(FMSYc+Mdb))*(1-exp(-(FMSYc+Mdb)))
-    MSYc<-Kc*BMSY_K*UMSYc
-    TAC[DBSRAcount]<-UMSYc*Kc*Bt_K
-    # 40-10 rule
-    if(Bt_K<0.4 & Bt_K>0.1)TAC[DBSRAcount]<-TAC[DBSRAcount]*(Bt_K-0.1)/0.3
-    if(Bt_K<0.1)TAC[DBSRAcount]<-TAC[DBSRAcount]*tiny # this has to still be stochastic albeit very small
-    DBSRAcount<-DBSRAcount+1
-    #}
-  } # end of reps
-  TACfilter(TAC)
-  #}
-}  # end of DBSRA_apply
-class(DBSRA4010)<-"DLM_output"
-
-DBSRAopt<-function(lnK,C_hist,nys,Mdb,FMSY_M,BMSY_K,Bt_K,adelay){         # the optimization for B0 given DBSRA assumptions
-  Kc<-exp(lnK)
-  n<-getn(BMSY_K)
-  g<-gety(n)
-  FMSY<-FMSY_M*Mdb
-  UMSY<-(FMSY/(FMSY+Mdb))*(1-exp(-(FMSY+Mdb)))
-  MSY<-Kc*BMSY_K*UMSY
-  # Bjoin rules from Dick & MacCall 2011  ---------
-  Bjoin_K<-0.5
-  if(BMSY_K<0.3)Bjoin_K<-0.5*BMSY_K
-  if(BMSY_K>0.3&BMSY_K<0.5)Bjoin_K<-0.75*BMSY_K-0.075
-  Bjoin<-Bjoin_K*Kc
-  PBjoin<-prodPTF(Bjoin_K,n,MSY)
-  cp<-(1-n)*g*MSY*(Bjoin^(n-2))*Kc^-n
-  Bc<-rep(NA,nys)
-  Bc[1]<-Kc
-  obj<-0
-  for(yr in 2:nys){
-    yref<-max(1,yr-adelay)
-    if(Bc[yref]>Bjoin|BMSY_K>0.5){
-      Bc[yr]<-Bc[yr-1]+g*MSY*(Bc[yref]/Kc)-g*MSY*(Bc[yref]/Kc)^n-C_hist[yr-1]
-    }else{
-      Bc[yr]<-Bc[yr-1]+Bc[yref]*((PBjoin/Bjoin)+cp*(Bc[yref]-Bjoin))-C_hist[yr-1]
-    }
-    if(Bc[yr]<0)obj<-obj+log(-Bc[yr])
-    Bc[yr]<-max(0.000001,Bc[yr])
+    if (Bc[yr] < 0) 
+      obj <- obj + log(-Bc[yr])
+    Bc[yr] <- max(1e-06, Bc[yr])
   }
-  obj+((Bc[nys]/Kc)-Bt_K)^2
+  obj + ((Bc[nys]/Kc) - Bt_K)^2
 }  # end of DBSRA optimization function
 
-# DCAC =====================================================================================================================
-# Variables for parallel processing of DCAC_apply function using sfSapply()
-C_tot<-nyearsDCAC<-NULL
+# DCAC
+# =====================================================================================================================
+# Variables for parallel processing of DCAC_apply function using
+# sfSapply()
+C_tot <- nyearsDCAC <- NULL
 
-DCAC<-function(x,DLM_data,reps=100){
-  dependencies="DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@Dt, DLM_data@CV_Dt, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
-  C_tot<-DLM_data@AvC[x]*DLM_data@t[x]
-  Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
-  FMSY_M<-trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x]) # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
-  Bt_K<-trlnorm(reps,DLM_data@Dt[x],DLM_data@CV_Dt[x])
-  if (any(is.na(c(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x])))) return(NA)
-  BMSY_K<-rbeta(reps,alphaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]),betaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-  TACfilter(C_tot/(DLM_data@t[x]+((1-Bt_K)/(BMSY_K*FMSY_M*Mdb))))
-} # end of DCAC
-class(DCAC)<-"DLM_output"
 
-DCAC4010<-function(x,DLM_data,reps=100){
-  dependencies="DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@Dt, DLM_data@CV_Dt, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
-  C_tot<-DLM_data@AvC[x]*DLM_data@t[x]
-  Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
-  FMSY_M<-trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x]) # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
-  Bt_K<-trlnorm(reps,DLM_data@Dt[x],DLM_data@CV_Dt[x])
-  if (any(is.na(c(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x])))) return(NA)
-  BMSY_K<-rbeta(reps,alphaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]),betaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-  TAC<-C_tot/(DLM_data@t[x]+((1-Bt_K)/(BMSY_K*FMSY_M*Mdb)))
+
+#' Depletion Corrected Average Catch
+#' 
+#' A method of calculating an MSY proxy (FMSY * BMSY and therefore the OFL at
+#' most productive stock size) based on average catches accounting for the
+#' windfall catch that got the stock down to BMSY levels.
+#' 
+#' 
+#' @usage DCAC(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the TAC recommendation
+#' @note It's probably worth noting that DCAC TAC recommendations do not tend
+#' to zero as depletion tends to zero. It adjusts for depletion only in
+#' calculating historical average catch. It follows that at stock levels much
+#' below BMSY, DCAC tends to chronically overfish.
+#' @author T. Carruthers
+#' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
+#' formula for estimating sustainable yields in data-poor situations. ICES J.
+#' Mar. Sci. 66, 2267-2271.
+#' @export DCAC
+DCAC <- function(x, DLM_data, reps = 100) {
+  dependencies = "DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@Dt, DLM_data@CV_Dt, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
+  C_tot <- DLM_data@AvC[x] * DLM_data@t[x]
+  Mdb <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
+  FMSY_M <- trlnorm(reps, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])  # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
+  Bt_K <- trlnorm(reps, DLM_data@Dt[x], DLM_data@CV_Dt[x])
+  if (any(is.na(c(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x])))) 
+    return(NA)
+  BMSY_K <- rbeta(reps, alphaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x] * 
+    DLM_data@CV_BMSY_B0[x]), betaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x] * 
+    DLM_data@CV_BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+  TACfilter(C_tot/(DLM_data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb))))
+}  # end of DCAC
+class(DCAC) <- "DLM_output"
+
+
+
+#' Depletion Corrected Average Catch paired with the 40-10 rule
+#' 
+#' A method of calculating an MSY proxy (FMSY * BMSY and therefore the OFL at
+#' most productive stock size) based on average catches accounting for the
+#' windfall catch that got the stock down to BMSY levels. In this method DCAC
+#' is paired with the 40-10 rule that throttles back the OFL to zero at 10
+#' percent of unfished stock size (the OFL is not subject to downward
+#' adjustment above 40 percent unfished)
+#' 
+#' 
+#' @usage DCAC4010(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the TAC recommendation
+#' @note DCAC can overfish below BMSY levels. The 40-10 harvest control rule
+#' largely resolves this problem providing an MP with surprisingly good
+#' performance even at low stock levels.
+#' @author T. Carruthers
+#' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
+#' formula for estimating sustainable yields in data-poor situations. ICES J.
+#' Mar. Sci. 66, 2267-2271.
+#' @export DCAC4010
+DCAC4010 <- function(x, DLM_data, reps = 100) {
+  dependencies = "DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@Dt, DLM_data@CV_Dt, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
+  C_tot <- DLM_data@AvC[x] * DLM_data@t[x]
+  Mdb <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
+  FMSY_M <- trlnorm(reps, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])  # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
+  Bt_K <- trlnorm(reps, DLM_data@Dt[x], DLM_data@CV_Dt[x])
+  if (any(is.na(c(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x])))) 
+    return(NA)
+  BMSY_K <- rbeta(reps, alphaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x] * 
+    DLM_data@CV_BMSY_B0[x]), betaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x] * 
+    DLM_data@CV_BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+  TAC <- C_tot/(DLM_data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
   # 40-10 rule
-  cond1<-Bt_K<0.4 & Bt_K>0.1
-  cond2<-Bt_K<0.1
-  if (length(cond1)>0) TAC[cond1]<-TAC[cond1]*(Bt_K[cond1]-0.1)/0.3
-  if (length(cond2)>0) TAC[cond2]<-TAC[cond2]*tiny # this has to still be stochastic albeit very small
-  if (length(cond1) <1 & length(cond2) < 1) return(NA)
+  cond1 <- Bt_K < 0.4 & Bt_K > 0.1
+  cond2 <- Bt_K < 0.1
+  if (length(cond1) > 0) 
+    TAC[cond1] <- TAC[cond1] * (Bt_K[cond1] - 0.1)/0.3
+  if (length(cond2) > 0) 
+    TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
+  if (length(cond1) < 1 & length(cond2) < 1) 
+    return(NA)
   TACfilter(TAC)
   
-} # end of DCAC
-class(DCAC4010)<-"DLM_output"
+}  # end of DCAC
+class(DCAC4010) <- "DLM_output"
 
-DCAC_40<-function(x,DLM_data,reps=100){
-  dependencies="DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
-  C_tot<-DLM_data@AvC[x]*DLM_data@t[x]
-  Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  FMSY_M<-trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x])
-  Bt_K<-0.4
-  if (any(is.na(c(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x])))) return(NA)
-  BMSY_K<-rbeta(reps,alphaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]),betaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-  TACfilter(C_tot/(DLM_data@t[x]+((1-Bt_K)/(BMSY_K*FMSY_M*Mdb))))
-} # end of DCAC40
-class(DCAC_40)<-"DLM_output"
 
-DCAC_ML<-function(x,DLM_data,reps=100){
 
-  dependencies="DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0, DLM_data@Year, DLM_data@CAL, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK"
-  if (is.na(DLM_data@BMSY_B0[x]) | is.na(DLM_data@CV_BMSY_B0[x])) return(NA)
-  if (is.na(DLM_data@FMSY_M[x]) | is.na(DLM_data@CV_FMSY_M[x])) return(NA)
-  C_tot<-DLM_data@AvC[x]*DLM_data@t[x]
-  Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # default CV of 0.5 as in MacCall 2009
-  FMSY_M<-trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x]) # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
-  Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps,MLtype="dep")
-  FM<-Z-Mdb
-  nyears<-length(DLM_data@Year)
-  Ct1<-mean(DLM_data@Cat[x,1:3])
-  Ct2<-mean(DLM_data@Cat[x,(nyears-2):nyears])
-  dep<-rep(c(Ct1,Ct2),each=reps)/(1-exp(-FM))
-  if (reps == 1) Bt_K<-dep[2]/dep[1]
-  if (reps > 1)  Bt_K<-dep[,2]/dep[,1]
-  if (any(is.na(c(DLM_data@BMSY_B0[x],DLM_data@CV_BMSY_B0[x])))) return(NA)
-  BMSY_K<-rbeta(reps,alphaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]), 
-    betaconv(DLM_data@BMSY_B0[x],DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x])) #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-  TAC<-C_tot/(DLM_data@t[x]+((1-Bt_K)/(BMSY_K*FMSY_M*Mdb)))
+#' Depletion Corrected Average Catch assuming 40 per cent stock depletion
+#' 
+#' DCAC assuming that current stock biomass is exactly 40 per cent of unfished
+#' levels.
+#' 
+#' 
+#' @usage DCAC_40(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the TAC recommendation
+#' @note The 40 percent depletion assumption doesn't really affect DCAC that
+#' much as it already makes TAC recommendations that are quite MSY-like.
+#' @author T. Carruthers
+#' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
+#' formula for estimating sustainable yields in data-poor situations. ICES J.
+#' Mar. Sci. 66, 2267-2271.
+#' @export DCAC_40
+DCAC_40 <- function(x, DLM_data, reps = 100) {
+  dependencies = "DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
+  C_tot <- DLM_data@AvC[x] * DLM_data@t[x]
+  Mdb <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+  FMSY_M <- trlnorm(reps, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])
+  Bt_K <- 0.4
+  if (any(is.na(c(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x])))) 
+    return(NA)
+  BMSY_K <- rbeta(reps, alphaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x] * 
+    DLM_data@CV_BMSY_B0[x]), betaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x] * 
+    DLM_data@CV_BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+  TACfilter(C_tot/(DLM_data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb))))
+}  # end of DCAC40
+class(DCAC_40) <- "DLM_output"
+
+
+
+#' Depletion-Based Stock Reduction Analysis using mean-length estimator of
+#' current depletion
+#' 
+#' DCAC that uses the mean length estimator to calculate current stock
+#' depletion.
+#' 
+#' 
+#' @usage DCAC_ML(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the TAC recommendation
+#' @note The mean length extension was programmed by Gary Nelson as part of his
+#' excellent R package 'fishmethods'
+#' @author T. Carruthers
+#' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
+#' formula for estimating sustainable yields in data-poor situations. ICES J.
+#' Mar. Sci. 66, 2267-2271.
+#' @export DCAC_ML
+DCAC_ML <- function(x, DLM_data, reps = 100) {
+  
+  dependencies = "DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0, DLM_data@Year, DLM_data@CAL, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK"
+  if (is.na(DLM_data@BMSY_B0[x]) | is.na(DLM_data@CV_BMSY_B0[x])) 
+    return(NA)
+  if (is.na(DLM_data@FMSY_M[x]) | is.na(DLM_data@CV_FMSY_M[x])) 
+    return(NA)
+  C_tot <- DLM_data@AvC[x] * DLM_data@t[x]
+  Mdb <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])  # default CV of 0.5 as in MacCall 2009
+  FMSY_M <- trlnorm(reps, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])  # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
+  Linfc <- trlnorm(reps, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
+  Kc <- trlnorm(reps, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+  Z <- MLne(x, DLM_data, Linfc = Linfc, Kc = Kc, ML_reps = reps, MLtype = "dep")
+  FM <- Z - Mdb
+  nyears <- length(DLM_data@Year)
+  Ct1 <- mean(DLM_data@Cat[x, 1:3])
+  Ct2 <- mean(DLM_data@Cat[x, (nyears - 2):nyears])
+  dep <- rep(c(Ct1, Ct2), each = reps)/(1 - exp(-FM))
+  if (reps == 1) 
+    Bt_K <- dep[2]/dep[1]
+  if (reps > 1) 
+    Bt_K <- dep[, 2]/dep[, 1]
+  if (any(is.na(c(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x])))) 
+    return(NA)
+  BMSY_K <- rbeta(reps, alphaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x] * 
+    DLM_data@CV_BMSY_B0[x]), betaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x] * 
+    DLM_data@CV_BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+  TAC <- C_tot/(DLM_data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
   
   TACfilter(TAC)
-}# end of DCAC_ML
-class(DCAC_ML)<-"DLM_output"
+}  # end of DCAC_ML
+class(DCAC_ML) <- "DLM_output"
 
-BK<-function(x,DLM_data,reps=100){   # Beddington and Kirkwood life-history analysis ==============================================
-  dependencies="DLM_data@LFC, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@Abun, DLM_data@CV_Abun, DLM_data@vbK, DLM_data@CV_vbK"
-  Lc<-trlnorm(reps*10,DLM_data@LFC[x],0.2)
-  Linfc<-trlnorm(reps*10,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  Ac<-trlnorm(reps*10,DLM_data@Abun[x],DLM_data@CV_Abun[x])
-  Kc<-trlnorm(reps*10,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  TAC<-Ac*(0.6*Kc)/(0.67-(Lc/Linfc))         # robustifying for use in MSE
-  TACfilter(TAC[TAC>0][1:reps])              # Interval censor only those positive catch recommendations
 
+
+#' Beddington and Kirkwood life-history MP (simple version)
+#' 
+#' Sets an OFL according to current abundance and an approximation of FMSY
+#' based on length at first capture.
+#' 
+#' 
+#' @usage BK(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object.
+#' @param DLM_data A data-limited methods data object.
+#' @param reps The number of stochastic samples of the TAC recommendation
+#' @note This is the simple version of the BK MP. The paper has a more complex
+#' approach that might work better.
+#' @author T. Carruthers.
+#' @references Beddington, J.R., Kirkwood, G.P., 2005. The estimation of
+#' potential yield and stock status using life history parameters. Philos.
+#' Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.
+#' @export BK
+BK <- function(x, DLM_data, reps = 100) {
+  # Beddington and Kirkwood life-history analysis
+  # ==============================================
+  dependencies = "DLM_data@LFC, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@Abun, DLM_data@CV_Abun, DLM_data@vbK, DLM_data@CV_vbK"
+  Lc <- trlnorm(reps * 10, DLM_data@LFC[x], 0.2)
+  Linfc <- trlnorm(reps * 10, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
+  Ac <- trlnorm(reps * 10, DLM_data@Abun[x], DLM_data@CV_Abun[x])
+  Kc <- trlnorm(reps * 10, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+  TAC <- Ac * (0.6 * Kc)/(0.67 - (Lc/Linfc))  # robustifying for use in MSE
+  TACfilter(TAC[TAC > 0][1:reps])  # Interval censor only those positive catch recommendations
+  
 }  # end of BK
-class(BK)<-"DLM_output"
+class(BK) <- "DLM_output"
 
 
-BK_CC<-function(x,DLM_data,reps=100,Fmin=0.005){
-  dependencies="DLM_data@LFC, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@CAA, DLM_data@Mort"
-  Lc<-trlnorm(reps,DLM_data@LFC[x],0.2)
-  Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
-  Zdb<-CC(x,DLM_data,reps=reps*10)
-  Fdb<-Zdb-Mdb
-  ind<-(1:(reps*10))[Fdb>Fmin][1:reps]
-  Fdb<-Fdb[ind]
-  Mdb<-Mdb[ind]
+
+
+#' Beddington and Kirkwood life-history method combined with catch curve
+#' analysis
+#' 
+#' Calculates an OFL using a catch curve estimate of current F and an
+#' approximation of FMSY based on length at first capture.
+#' 
+#' 
+#' @usage BK_CC(x, DLM_data, reps = 100, Fmin=0.005)
+#' @param x Position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object (class DLM_data)
+#' @param reps The number of samples of the TAC recommendation
+#' @param Fmin The minimum fishing mortality rate that is derived from the
+#' catch-curve (interval censor)
+#' @author T. Carruthers
+#' @references Beddington, J.R., Kirkwood, G.P., 2005. The estimation of
+#' potential yield and stock status using life history parameters. Philos.
+#' Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.
+#' @export BK_CC
+BK_CC <- function(x, DLM_data, reps = 100, Fmin = 0.005) {
+  dependencies = "DLM_data@LFC, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@CAA, DLM_data@Mort"
+  Lc <- trlnorm(reps, DLM_data@LFC[x], 0.2)
+  Linfc <- trlnorm(reps, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
+  Kc <- trlnorm(reps, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+  Mdb <- trlnorm(reps * 10, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+  MuC <- DLM_data@Cat[x, length(DLM_data@Cat[x, ])]
+  Cc <- trlnorm(reps, MuC, DLM_data@CV_Cat[x])
+  Zdb <- CC(x, DLM_data, reps = reps * 10)
+  Fdb <- Zdb - Mdb
+  ind <- (1:(reps * 10))[Fdb > Fmin][1:reps]
+  Fdb <- Fdb[ind]
+  Mdb <- Mdb[ind]
   SM <- sum(is.na(ind))
-  if (SM > 0 ) {
-    Mdb[is.na(ind)] <- trlnorm(SM,DLM_data@Mort[x],DLM_data@CV_Mort[x])
+  if (SM > 0) {
+    Mdb[is.na(ind)] <- trlnorm(SM, DLM_data@Mort[x], DLM_data@CV_Mort[x])
     Fdb[is.na(ind)] <- Fmin
-  }	
+  }
   
-  Ac<-Cc/(1-exp(-Fdb))
-  TAC<-Ac*(0.6*Kc)/(0.67-(Lc/Linfc))  
-  TACfilter(TAC) 
-    
+  Ac <- Cc/(1 - exp(-Fdb))
+  TAC <- Ac * (0.6 * Kc)/(0.67 - (Lc/Linfc))
+  TACfilter(TAC)
+  
 }  # end of BK_CC
-class(BK_CC)<-"DLM_output"
+class(BK_CC) <- "DLM_output"
 
-BK_ML<-function(x,DLM_data,reps=100){
-  dependencies="DLM_data@LFC, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@CAL, DLM_data@Mort"
-  Lc<-trlnorm(reps*10,DLM_data@LFC[x],0.2)
-  Linfc<-trlnorm(reps*10,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  Kc<-trlnorm(reps*10,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps*10,MLtype="F")
-  FM<-Z-Mdb
-  MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  Cc<-trlnorm(reps*10,MuC,DLM_data@CV_Cat[x])
-  Ac<-Cc/(1-exp(-FM))
-  FMSY<-(0.6*Kc)/(0.67-(Lc/Linfc))  # robustifying for use in MSETAC<-Ac*FMSY
-  TAC<-Ac*FMSY
-  TAC<-TAC[TAC>0&TAC<(mean(TAC,na.rm=T)+3*sd(TAC,na.rm=T))][1:reps]
+
+
+#' Beddington and Kirkwood life-history analysis with mean-length estimator of
+#' current abundance
+#' 
+#' Uses an approximation to FMSY based on length at first capture and an
+#' estimate of current abundance based on a mean-length estimator.
+#' 
+#' 
+#' @usage BK_ML(x, DLM_data, reps = 100)
+#' @param x Position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object (class DLM_data)
+#' @param reps The number of samples of the TAC recommendation
+#' @note The mean length extension was programmed by Gary Nelson as part of his
+#' excellent R package 'fishmethods'
+#' @author T. Carruthers
+#' @references Beddington, J.R., Kirkwood, G.P., 2005. The estimation of
+#' potential yield and stock status using life history parameters. Philos.
+#' Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.
+#' @export BK_ML
+BK_ML <- function(x, DLM_data, reps = 100) {
+  dependencies = "DLM_data@LFC, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@CAL, DLM_data@Mort"
+  Lc <- trlnorm(reps * 10, DLM_data@LFC[x], 0.2)
+  Linfc <- trlnorm(reps * 10, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
+  Kc <- trlnorm(reps * 10, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+  Mdb <- trlnorm(reps * 10, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+  Z <- MLne(x, DLM_data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, 
+    MLtype = "F")
+  FM <- Z - Mdb
+  MuC <- DLM_data@Cat[x, length(DLM_data@Cat[x, ])]
+  Cc <- trlnorm(reps * 10, MuC, DLM_data@CV_Cat[x])
+  Ac <- Cc/(1 - exp(-FM))
+  FMSY <- (0.6 * Kc)/(0.67 - (Lc/Linfc))  # robustifying for use in MSETAC<-Ac*FMSY
+  TAC <- Ac * FMSY
+  TAC <- TAC[TAC > 0 & TAC < (mean(TAC, na.rm = T) + 3 * stats::sd(TAC, na.rm = T))][1:reps]
   TACfilter(TAC)
 }
-class(BK_ML)<-"DLM_output"
+class(BK_ML) <- "DLM_output"
 
-Fratio<-function(x,DLM_data,reps=100){  # FMSY / M ratio method e.g. Gulland ===============================================================================
-  depends="DLM_data@Abun,DLM_data@CV_Abun,DLM_data@FMSY_M, DLM_data@CV_FMSY_M,DLM_data@Mort,DLM_data@CV_Mort"
-  Ac<-trlnorm(reps,DLM_data@Abun[x],DLM_data@CV_Abun[x])
-  TACfilter(Ac*trlnorm(reps,DLM_data@Mort[x],
-            DLM_data@CV_Mort[x])*trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x]))
-} # end of Fratio
-class(Fratio)<-"DLM_output"
 
-Fratio4010<-function(x,DLM_data,reps=100){  # FMSY / M ratio method e.g. Gulland ===============================================================================
-  dependencies="DLM_data@Abun, DLM_data@CV_Abun, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@Dep"
-  Ac<-trlnorm(reps,DLM_data@Abun[x],DLM_data@CV_Abun[x])
-  TAC<-Ac*trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])*trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x])
-  Bt_K<-trlnorm(reps,DLM_data@Dt[x],DLM_data@CV_Dt[x])
+
+#' An FMSY/M ratio method
+#' 
+#' Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a
+#' current estimate of abundance.
+#' 
+#' A simple method that tends to outperform many other approaches alarmingly
+#' often even when current biomass is relatively poorly known. The low stock
+#' crash potential is largely due to the quite large difference between Fmax
+#' and FMSY for most stocks.
+#' 
+#' @usage Fratio(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of samples of the TAC recommendation
+#' @return A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @references Gulland, J.A., 1971. The fish resources of the ocean. Fishing
+#' News Books, West Byfleet, UK.
+#' 
+#' Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
+#' and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.
+#' @export Fratio
+Fratio <- function(x, DLM_data, reps = 100) {
+  # FMSY / M ratio method e.g. Gulland
+  # ===============================================================================
+  depends = "DLM_data@Abun,DLM_data@CV_Abun,DLM_data@FMSY_M, DLM_data@CV_FMSY_M,DLM_data@Mort,DLM_data@CV_Mort"
+  Ac <- trlnorm(reps, DLM_data@Abun[x], DLM_data@CV_Abun[x])
+  TACfilter(Ac * trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x]) * 
+    trlnorm(reps, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x]))
+}  # end of Fratio
+class(Fratio) <- "DLM_output"
+
+
+
+#' An FMSY/M ratio method paired with the 40-10 rule
+#' 
+#' Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a
+#' current estimate of abundance. In this method DBSRA is paired with the 40-10
+#' rule that throttles back the OFL to zero at 10 percent of unfished biomass.
+#' 
+#' 
+#' @usage Fratio4010(x, DLM_data, reps = 100)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @author T. Carruthers
+#' @references Gulland, J.A., 1971. The fish resources of the ocean. Fishing
+#' News Books, West Byfleet, UK.
+#' 
+#' Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
+#' and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.
+#' @export Fratio4010
+Fratio4010 <- function(x, DLM_data, reps = 100) {
+  # FMSY / M ratio method e.g. Gulland
+  # ===============================================================================
+  dependencies = "DLM_data@Abun, DLM_data@CV_Abun, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@Dep"
+  Ac <- trlnorm(reps, DLM_data@Abun[x], DLM_data@CV_Abun[x])
+  TAC <- Ac * trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x]) * 
+    trlnorm(reps, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])
+  Bt_K <- trlnorm(reps, DLM_data@Dt[x], DLM_data@CV_Dt[x])
   # 40-10 rule
-  cond1<-Bt_K<0.4 & Bt_K>0.1
-  cond2<-Bt_K<0.1
-  TAC[cond1]<-TAC[cond1]*(Bt_K[cond1]-0.1)/0.3
-  TAC[cond2]<-TAC[cond2]*tiny # this has to still be stochastic albeit very small
-  TACfilter(TAC)  
-} # end of Fratio
-class(Fratio4010)<-"DLM_output"
+  cond1 <- Bt_K < 0.4 & Bt_K > 0.1
+  cond2 <- Bt_K < 0.1
+  TAC[cond1] <- TAC[cond1] * (Bt_K[cond1] - 0.1)/0.3
+  TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
+  TACfilter(TAC)
+}  # end of Fratio
+class(Fratio4010) <- "DLM_output"
 
-Fratio_CC<-function(x,DLM_data,reps=100,Fmin=0.005){ # FMSY / M ratio method using catch curve analysis to determine current abundance ==================================
-# for (x in 1:nsim) {
-  dependencies=" DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@Cat, DLM_data@CV_Cat, DLM_data@CAA"
-  MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
-  Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
-  Zdb<-CC(x,DLM_data,reps=reps*10)
-  Fdb<-Zdb-Mdb
-  ind <-(1:(reps*10))[Fdb>0.005][1:reps]
+
+
+#' A data-limited method that uses FMSY/M ratio and a naive catch-curve
+#' estimate of recent Z
+#' 
+#' Calculates the OFL based on a fixed ratio of FMSY to M and a catch curve
+#' estimate of current stock size.
+#' 
+#' 
+#' @usage Fratio_CC(x, DLM_data, reps = 100, Fmin = 0.005)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param Fmin Minimum current fishing mortality rate for the catch-curve
+#' analysis
+#' @author T. Carruthers
+#' @references Gulland, J.A., 1971. The fish resources of the ocean. Fishing
+#' News Books, West Byfleet, UK.
+#' 
+#' Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
+#' and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.
+#' @export Fratio_CC
+Fratio_CC <- function(x, DLM_data, reps = 100, Fmin = 0.005) {
+  # FMSY / M ratio method using catch curve analysis to determine current
+  # abundance ================================== for (x in 1:nsim) {
+  dependencies = " DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@Cat, DLM_data@CV_Cat, DLM_data@CAA"
+  MuC <- DLM_data@Cat[x, length(DLM_data@Cat[x, ])]
+  Cc <- trlnorm(reps, MuC, DLM_data@CV_Cat[x])
+  Mdb <- trlnorm(reps * 10, DLM_data@Mort[x], DLM_data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
+  Zdb <- CC(x, DLM_data, reps = reps * 10)
+  Fdb <- Zdb - Mdb
+  ind <- (1:(reps * 10))[Fdb > 0.005][1:reps]
   
-  Fdb<-Fdb[ind]
-  Mdb<-Mdb[ind]
+  Fdb <- Fdb[ind]
+  Mdb <- Mdb[ind]
   SM <- sum(is.na(ind))
-  if (SM > 0 ) {
-    Mdb[is.na(ind)] <- trlnorm(SM,DLM_data@Mort[x],DLM_data@CV_Mort[x])
+  if (SM > 0) {
+    Mdb[is.na(ind)] <- trlnorm(SM, DLM_data@Mort[x], DLM_data@CV_Mort[x])
     Fdb[is.na(ind)] <- Fmin
-  }	
+  }
   
-  Ac<-Cc/(1-exp(-Fdb))
-  TAC<-Ac*Mdb*trlnorm(reps,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x])
-
-  TACfilter(TAC)
-# }
-} # end of Fratio_CC
-class(Fratio_CC)<-"DLM_output"
-
-
-Fratio_ML<-function(x,DLM_data,reps=100){
-  dependencies=" DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@Cat, DLM_data@CV_Cat, DLM_data@CAL"
-  MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  Cc<-trlnorm(reps*10,MuC,DLM_data@CV_Cat[x])
-  Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])   # CV of 0.5 as in MacCall 2009
-  Linfc<-trlnorm(reps*10,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  Kc<-trlnorm(reps*10,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps*10,MLtype="F")
-  FM<-Z-Mdb
-  Ac<-Cc/(1-exp(-FM))
-  TAC<-Ac*trlnorm(reps*10,DLM_data@FMSY_M[x],DLM_data@CV_FMSY_M[x])*trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  TAC <- TAC[TAC >0][1:reps]
-  TACfilter(TAC)
-}
-class(Fratio_ML)<-"DLM_output"
-
-SPMSY<-function(x,DLM_data,reps=100){  # Martell and Froese 2012 Schaefer SP estimate of MSY given priors on r, k and depletion
-  #for(x in 1:100){
-  dependencies="DLM_data@MaxAge, DLM_data@vbK, DLM_data@L50, DLM_data@Cat"
-  maxage<-DLM_data@MaxAge
-  nsamp<-reps*200
-
-  # Froese 2012 http://www.fishbase.de/rfroese/Catch-MSY_SummaryFinal.doc
-  rule<-rep(4,3)
-
-  if(DLM_data@vbK[x]>0.3){   # K rules
-   rule[1]<-1
-  }else if(DLM_data@vbK[x]<0.3 & DLM_data@vbK[x]>0.16){
-   rule[1]<-2
-  }else if(DLM_data@vbK[x]<0.16 & DLM_data@vbK[x]>0.05){
-   rule[1]<-3
-  }
-  AM<-iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x])
-  if(AM<1.5){  # Age at maturity rules
-   rule[2]<-1
-  }else if(AM<4.5 & AM>1.5){
-   rule[2]<-2
-  }else if(AM<10 & AM>4.5){
-   rule[2]<-3
-  }
-
-  if(DLM_data@MaxAge<4){   # Maximum age rules
-   rule[3]<-1
-  }else if(DLM_data@MaxAge<11 & DLM_data@MaxAge>3){
-   rule[3]<-2
-  }else if(DLM_data@MaxAge<31 & DLM_data@MaxAge>10){
-   rule[3]<-3
-  }
-
-  if(mean(rule)<1.5) rsamp<-runif(nsamp,0.6,1.5)
-  if(mean(rule)>1.5&mean(rule)<2.5)rsamp<-runif(nsamp,0.2,1)
-  if(mean(rule)>2.5&mean(rule)<3.5)rsamp<-runif(nsamp,0.05,0.5)
-  if(mean(rule)>3.5) rsamp<-runif(nsamp,0.015,0.1)
-
-  Ksamp<-runif(nsamp,mean(DLM_data@Cat[x,])/rsamp,(10*mean(DLM_data@Cat[x,]))/rsamp)
-  nyears<-length(DLM_data@Cat[x,])
-  B<-array(NA,dim=c(nsamp,nyears))
-
-  if(DLM_data@Cat[x,1]<(0.5*max(DLM_data@Cat[x,]))){    # Martell and Froese decision rules (makes absolutely no sense to me!)
-    B[,1]<-Ksamp*runif(nsamp,0.5,0.9)
-  }else{
-    B[,1]<-Ksamp*runif(nsamp,0.3,0.6)
-  }
-
-  if(DLM_data@Cat[x,nyears]<(0.5*max(DLM_data@Cat[x,]))){    # Martell and Froese decision rules (makes absolutely no sense to me!)
-    LB<-0.01
-    UB<-0.4
-  }else{
-    LB<-0.3
-    UB<-0.7
-  }
-
-  for(i in 2:nyears){
-   B[,i]<-B[,i-1]-DLM_data@Cat[x,i-1]
-   B[,i]<-B[,i]+rsamp*B[,i]*(1-B[,i]/Ksamp)
-  }
-  B<-B/rep(Ksamp,nyears)
-  cond<-(B[,nyears]>=LB)&(B[,nyears]<=UB)
-  if (sum(cond) < 1) {
-	B[B[,nyears]>=UB ,nyears]<- UB
-	cond<-(B[,nyears]>=LB)&(B[,nyears]<=UB)
-  }	
-  dep<-B[cond,nyears][1:reps]
-  MSY<-rsamp[cond][1:reps]*Ksamp[cond][1:reps]/4
-  Kc<-Ksamp[cond][1:reps]
-  rc<-rsamp[cond][1:reps]
-  TAC<-Kc*dep*rc/2
-
-  if(sum(!is.na(TAC))<ceiling(reps/10)){ # a fudge of the original method that widens current depletion to the lowest and higest bounds to get an TAC sample
-    cond<-(B[,nyears]>=0.01)&(B[,nyears]<=0.7)
-    dep<-B[cond,nyears][1:reps]
-    MSY<-rsamp[cond][1:reps]*Ksamp[cond][1:reps]/4
-    Kc<-Ksamp[cond][1:reps]
-    rc<-rsamp[cond][1:reps]
-    TAC<-Kc*dep*rc/2
-	
-  }
-  #}
+  Ac <- Cc/(1 - exp(-Fdb))
+  TAC <- Ac * Mdb * trlnorm(reps, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])
   
   TACfilter(TAC)
-} # end of SPMSY
-class(SPMSY)<-"DLM_output"
-
-MCD<-function(x,DLM_data,reps=100){  # Daft method to demonstrate the relative value of information of current depletion
-  dependencies="DLM_data@Dep, DLM_data@CV_Dep, DLM_data@Cat"
-  if(is.na(DLM_data@Dep[x])) return(NA)
-  depo<-max(0.01,min(0.99,DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
-  Bt_K<-rbeta(reps*100,alphaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])),betaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
-  Bt_K<-Bt_K[Bt_K>0.00999&Bt_K<0.99001][1:reps] # interval censor (0.01,0.99)  as in Dick and MacCall 2011
-  AvC<-rlnorm(reps,log(mean(DLM_data@Cat[x,],na.rm=T)),DLM_data@CV_Cat[x])
-  TAC<-AvC*2*Bt_K
-  TACfilter(TAC)
-}
-class(MCD)<-"DLM_output"
-
-MCD4010<-function(x,DLM_data,reps=100){  # Daft method to demonstrate the relative value of information of current depletion
-  dependencies="DLM_data@Dep, DLM_data@CV_Dep, DLM_data@Cat"
-  if(is.na(DLM_data@Dep[x])) return(NA)
-  depo<-max(0.01,min(0.99,DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
-  Bt_K<-rbeta(reps*100,alphaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])),betaconv(depo,min(depo*DLM_data@CV_Dep[x],(1-depo)*DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
-  Bt_K<-Bt_K[Bt_K>0.00999&Bt_K<0.99001][1:reps] # interval censor (0.01,0.99)  as in Dick and MacCall 2011
-  AvC<-rlnorm(reps,log(mean(DLM_data@Cat[x,],na.rm=T)),DLM_data@CV_Cat[x])
-  TAC<-AvC*2*Bt_K
-  
-  #40-10 HCR
-  cond1<-Bt_K<0.4 & Bt_K>0.1
-  cond2<-Bt_K<0.1
-  TAC[cond1]<-TAC[cond1]*(Bt_K[cond1]-0.1)/0.3
-  TAC[cond2]<-TAC[cond2]*tiny # this has to still be stochastic albeit very small
-  
-  TACfilter(TAC)
-}
-class(MCD4010)<-"DLM_output"
-
-SPSRA<-function(x,DLM_data,reps=100){  # Surplus productin stock reduction analysis T.Carruthers - basically an SP version of DBSRA
-  dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@Dep, DLM_data@CV_Dep, DLM_data@Cat, DLM_data@steep"
-  Mvec<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  Kvec<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Linfvec <- trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
-    t0vec <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
-  } else {
-    t0vec <- rep(DLM_data@vbt0[x], reps)
-  }
-  t0vec[!is.finite(t0vec)] <- 0 
-  if(all(is.nan(t0vec))) t0vec <- rep(0,reps) 
-  hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
-  if (all(!is.finite(hvec))) return(NA)
-  rsamp<-getr(x,DLM_data,Mvec,Kvec,Linfvec,t0vec,hvec,maxage=DLM_data@MaxAge,r_reps=reps)
-  dep<-trlnorm(reps,DLM_data@Dep[x],DLM_data@CV_Dep[x])
-  Ct<-DLM_data@Cat[x,]
-  Csamp<-array(rep(Ct,each=reps)*trlnorm(length(Ct)*reps,1,DLM_data@CV_Cat[x]),dim=c(reps,length(Ct)))
-  Psamp<-array(trlnorm(length(Ct)*reps,1,0.1),dim=c(reps,length(Ct)))
-  Ksamp<-rep(NA,reps)
-  for(i in 1:reps)Ksamp[i]<-exp(optimize(SPSRAopt,log(c(mean(Csamp[i,]),1000*mean(Csamp[i,]))),dep=dep[i],r=rsamp[i],Ct=Csamp[i,],PE=Psamp[i,])$minimum)
-  MSY<-Ksamp*rsamp/4
-  TAC<-Ksamp*dep*rsamp/2
-  TACfilter(TAC)
-}
-class(SPSRA)<-"DLM_output"
-
-SPSRA_ML<-function(x,DLM_data,reps=100){
-  dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@CAL, DLM_data@Cat, DLM_data@steep"
-  Mvec<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  Kvec<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Linfvec=trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
-    t0vec <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
-  } else {
-    t0vec <- rep(DLM_data@vbt0[x], reps)
-  }
-  t0vec[!is.finite(t0vec)] <- 0 
-  hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
-  rsamp<-getr(x,DLM_data,Mvec,Kvec,Linfvec,t0vec,hvec,maxage=DLM_data@MaxAge,r_reps=reps)
-  Z<-MLne(x,DLM_data,Linfc=Linfvec,Kc=Kvec,ML_reps=reps,MLtype="dep")
-  FM<-Z-Mvec
-  nyears<-length(DLM_data@Year)
-  Ct1<-mean(DLM_data@Cat[x,1:3])
-  Ct2<-mean(DLM_data@Cat[x,(nyears-2):nyears])
-  dep<-rep(c(Ct1,Ct2),each=reps)/(1-exp(-FM))
-  if (reps == 1) dep<-dep[2]/dep[1]
-  if (reps > 1)  dep<-dep[,2]/dep[,1]
-  Ksamp<-rep(NA,reps)
-  Ct<-DLM_data@Cat[x,]
-  Csamp<-array(rep(Ct,each=reps)*trlnorm(length(Ct)*reps,1,DLM_data@CV_Cat[x]),dim=c(reps,length(Ct)))
-  Psamp<-array(trlnorm(length(Ct)*reps,1,0.1),dim=c(reps,length(Ct)))
-  for(i in 1:reps)Ksamp[i]<-exp(optimize(SPSRAopt,log(c(mean(Csamp[i,]),1000*mean(Csamp[i,]))),dep=dep[i],r=rsamp[i],Ct=Csamp[i,],PE=Psamp[i,])$minimum)
-  MSY<-Ksamp*rsamp/4
-  TAC<-Ksamp*dep*rsamp/2
-  TACfilter(TAC)
-}
-class(SPSRA_ML)<-"DLM_output"
-
-SPSRAopt<-function(lnK,dep,r,Ct,PE){
-  nyears<-length(Ct)
-  B<-rep(NA,nyears)
-  B[1]<-exp(lnK)
-  OBJ<-0
-  for(y in 2:nyears){
-    if((B[y-1]-Ct[y-1])<0)OBJ<-OBJ+(B[y-1]-Ct[y-1])^2
-    B[y]<-max(0.01,B[y-1]-Ct[y-1])
-    B[y]<-B[y]+r*B[y]*(1-B[y]/B[1])*PE[y]
-  }
-  return(OBJ+((B[nyears]/B[1])-dep)^2)
-}
+  # }
+}  # end of Fratio_CC
+class(Fratio_CC) <- "DLM_output"
 
 
-YPR<-function(x,DLM_data,reps=100){   # Yield per recruit analysis F01 - Meaghan Bryan
-  #for(x in 1:10){
-  dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@Abun, DLM_data@CV_Abun, DLM_data@wla, DLM_data@wlb"
-  Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
-    t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
-  } else {
-    t0c <- rep(DLM_data@vbt0[x], reps)
-  }
-  t0c[!is.finite(t0c)] <- 0 
-  Mdb<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  LFS<-trlnorm(reps,DLM_data@LFS[x],DLM_data@CV_LFS[x])
-  a<-DLM_data@wla[x]
-  b<-DLM_data@wlb[x]
-  Ac<-trlnorm(reps,DLM_data@Abun[x],DLM_data@CV_Abun[x])
-  FMSY<-YPRopt(Linfc,Kc,t0c,Mdb,a,b,LFS,DLM_data@MaxAge,reps)
-  TAC<-Ac*FMSY
-  TACfilter(TAC)
-  #}
-}   # end of YPR
-class(YPR)<-"DLM_output"
 
-YPR_CC<-function(x,DLM_data,reps=100,Fmin=0.005){
-  #for(x in 1:16){
-    dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@wlb, DLM_data@CAA, DLM_data@Cat"
-  Linfc<-trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
-    t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
-  } else {
-    t0c <- rep(DLM_data@vbt0[x], reps)
-  }
-  t0c[!is.finite(t0c)] <- 0 
-  LFS<-trlnorm(reps,DLM_data@LFS[x],DLM_data@CV_LFS[x])
-  a<-DLM_data@wla[x]
-  b<-DLM_data@wlb[x]
-  MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
-  
-  Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  Zdb<-CC(x,DLM_data,reps=reps*10)
-  Fdb<-Zdb-Mdb
-  ind<-(1:(reps*10))[Fdb>Fmin][1:reps]
-  
-  Fdb<-Fdb[ind]
-  Mdb<-Mdb[ind]
-  SM <- sum(is.na(ind))
-  if (SM > 0 ) {
-    Mdb[is.na(ind)] <- trlnorm(SM,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-    Fdb[is.na(ind)] <- Fmin
-  }	
-  
-  Ac<-Cc/(1-exp(-Fdb))
-  FMSY<-YPRopt(Linfc,Kc,t0c,Mdb,a,b,LFS,DLM_data@MaxAge,reps)
-  TAC<-Ac*FMSY
- # }
-  TACfilter(TAC)
-}
-class(YPR_CC)<-"DLM_output"
 
-YPR_ML<-function(x,DLM_data,reps=100){
-  dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@wlb, DLM_data@CAL, DLM_data@Cat"
-  Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  Linfc<-trlnorm(reps*10,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  Kc<-trlnorm(reps*10,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Mdb<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  t0c<--trlnorm(reps*10,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
-  t0c[!is.finite(t0c)] <- 0 
-  LFS<-trlnorm(reps*10,DLM_data@LFS[x],DLM_data@CV_LFS[x])
-  a<-DLM_data@wla[x]
-  b<-DLM_data@wlb[x]
-  MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  Cc<-trlnorm(reps*10,MuC,DLM_data@CV_Cat[x])
-  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps*10, MLtype="F")
-  FM<-Z-Mdb
-  Ac<-Cc/(1-exp(-FM))
-  FMSY<-YPRopt(Linfc,Kc,t0c,Mdb,a,b,LFS,DLM_data@MaxAge,reps*10)
-  TAC<-Ac*FMSY
+#' An FMSY/M ratio MP that uses a mean length estimator of recent Z
+#' 
+#' Calculates the OFL based on a fixed ratio of FMSY/M and an estimate of
+#' current stock size from a mean-length estimator.
+#' 
+#' 
+#' @usage Fratio_ML(x, DLM_data, reps = 100)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @note The mean length extension was programmed by Gary Nelson as part of his
+#' excellent R package 'fishmethods'
+#' @author T. Carruthers
+#' @references Gulland, J.A., 1971. The fish resources of the ocean. Fishing
+#' News Books, West Byfleet, UK.
+#' 
+#' Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
+#' and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.
+#' @export Fratio_ML
+Fratio_ML <- function(x, DLM_data, reps = 100) {
+  dependencies = " DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@Cat, DLM_data@CV_Cat, DLM_data@CAL"
+  MuC <- DLM_data@Cat[x, length(DLM_data@Cat[x, ])]
+  Cc <- trlnorm(reps * 10, MuC, DLM_data@CV_Cat[x])
+  Mdb <- trlnorm(reps * 10, DLM_data@Mort[x], DLM_data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
+  Linfc <- trlnorm(reps * 10, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
+  Kc <- trlnorm(reps * 10, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+  Z <- MLne(x, DLM_data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, 
+    MLtype = "F")
+  FM <- Z - Mdb
+  Ac <- Cc/(1 - exp(-FM))
+  TAC <- Ac * trlnorm(reps * 10, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x]) * 
+    trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])
   TAC <- TAC[TAC > 0][1:reps]
   TACfilter(TAC)
- 
 }
-class(YPR_ML)<-"DLM_output"
+class(Fratio_ML) <- "DLM_output"
 
-Fdem<-function(x,DLM_data,reps=100){   # Demographic FMSY estimate (FMSY=r/2)
-  dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@wlb, DLM_data@Abun, DLM_data@CV_Abun, DLM_data@steep, DLM_data@CV_steep"
-  Mvec<-trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Linfc=trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
-    t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
-  } else {
-    t0c <- rep(DLM_data@vbt0[x], reps)
+
+
+#' Catch trend Surplus Production MSY MP
+#' 
+#' An MP that uses Martell and Froese (2012) method for estimating MSY to
+#' determine the OFL. Since their approach estimates stock trajectories based
+#' on catches and a rule for intrinsic rate of increase it also returns
+#' depletion. Given their surplus production model predicts K, r and depletion
+#' it is straighforward to calculate the OFL based on the Schaefer productivity
+#' curve. OFL = dep x (1-dep) x r x K x 2
+#' 
+#' Requires the assumption that catch is proportional to abundance.
+#' Occasionally the rule that limits r and K ranges does not allow r-K pairs to
+#' be found that lead to the depletion inferred by the catch trajectories. In
+#' this case this method widens the search.
+#' 
+#' @usage SPMSY(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of samples of the TAC
+#' @author T. Carruthers
+#' @references Martell, S. and Froese, R. 2012. A simple method for estimating
+#' MSY from catch and resilience. Fish and Fisheries. DOI:
+#' 10.1111/j.1467-2979.2012.00485.x
+#' @export SPMSY
+SPMSY <- function(x, DLM_data, reps = 100) {
+  # Martell and Froese 2012 Schaefer SP estimate of MSY given priors on
+  # r, k and depletion for(x in 1:100){
+  dependencies = "DLM_data@MaxAge, DLM_data@vbK, DLM_data@L50, DLM_data@Cat"
+  maxage <- DLM_data@MaxAge
+  nsamp <- reps * 200
+  
+  # Froese 2012 http://www.fishbase.de/rfroese/Catch-MSY_SummaryFinal.doc
+  rule <- rep(4, 3)
+  
+  if (DLM_data@vbK[x] > 0.3) {
+    # K rules
+    rule[1] <- 1
+  } else if (DLM_data@vbK[x] < 0.3 & DLM_data@vbK[x] > 0.16) {
+    rule[1] <- 2
+  } else if (DLM_data@vbK[x] < 0.16 & DLM_data@vbK[x] > 0.05) {
+    rule[1] <- 3
   }
-  t0c[!is.finite(t0c)] <- 0  
-  hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
-  Ac<-trlnorm(reps,DLM_data@Abun[x],DLM_data@CV_Abun[x])
-  FMSY<-getr(x,DLM_data,Mvec,Kc,Linfc,t0c,hvec,maxage=DLM_data@MaxAge,r_reps=reps)/2
-  TAC<-FMSY*Ac
+  AM <- iVB(DLM_data@vbt0[x], DLM_data@vbK[x], DLM_data@vbLinf[x], DLM_data@L50[x])
+  if (AM < 1.5) {
+    # Age at maturity rules
+    rule[2] <- 1
+  } else if (AM < 4.5 & AM > 1.5) {
+    rule[2] <- 2
+  } else if (AM < 10 & AM > 4.5) {
+    rule[2] <- 3
+  }
+  
+  if (DLM_data@MaxAge < 4) {
+    # Maximum age rules
+    rule[3] <- 1
+  } else if (DLM_data@MaxAge < 11 & DLM_data@MaxAge > 3) {
+    rule[3] <- 2
+  } else if (DLM_data@MaxAge < 31 & DLM_data@MaxAge > 10) {
+    rule[3] <- 3
+  }
+  
+  if (mean(rule) < 1.5) 
+    rsamp <- runif(nsamp, 0.6, 1.5)
+  if (mean(rule) > 1.5 & mean(rule) < 2.5) 
+    rsamp <- runif(nsamp, 0.2, 1)
+  if (mean(rule) > 2.5 & mean(rule) < 3.5) 
+    rsamp <- runif(nsamp, 0.05, 0.5)
+  if (mean(rule) > 3.5) 
+    rsamp <- runif(nsamp, 0.015, 0.1)
+  
+  Ksamp <- runif(nsamp, mean(DLM_data@Cat[x, ])/rsamp, (10 * mean(DLM_data@Cat[x, 
+    ]))/rsamp)
+  nyears <- length(DLM_data@Cat[x, ])
+  B <- array(NA, dim = c(nsamp, nyears))
+  
+  if (DLM_data@Cat[x, 1] < (0.5 * max(DLM_data@Cat[x, ]))) {
+    # Martell and Froese decision rules (makes absolutely no sense to me!)
+    B[, 1] <- Ksamp * runif(nsamp, 0.5, 0.9)
+  } else {
+    B[, 1] <- Ksamp * runif(nsamp, 0.3, 0.6)
+  }
+  
+  if (DLM_data@Cat[x, nyears] < (0.5 * max(DLM_data@Cat[x, ]))) {
+    # Martell and Froese decision rules (makes absolutely no sense to me!)
+    LB <- 0.01
+    UB <- 0.4
+  } else {
+    LB <- 0.3
+    UB <- 0.7
+  }
+  
+  for (i in 2:nyears) {
+    B[, i] <- B[, i - 1] - DLM_data@Cat[x, i - 1]
+    B[, i] <- B[, i] + rsamp * B[, i] * (1 - B[, i]/Ksamp)
+  }
+  B <- B/rep(Ksamp, nyears)
+  cond <- (B[, nyears] >= LB) & (B[, nyears] <= UB)
+  if (sum(cond) < 1) {
+    B[B[, nyears] >= UB, nyears] <- UB
+    cond <- (B[, nyears] >= LB) & (B[, nyears] <= UB)
+  }
+  dep <- B[cond, nyears][1:reps]
+  MSY <- rsamp[cond][1:reps] * Ksamp[cond][1:reps]/4
+  Kc <- Ksamp[cond][1:reps]
+  rc <- rsamp[cond][1:reps]
+  TAC <- Kc * dep * rc/2
+  
+  if (sum(!is.na(TAC)) < ceiling(reps/10)) {
+    # a fudge of the original method that widens current depletion to the
+    # lowest and higest bounds to get an TAC sample
+    cond <- (B[, nyears] >= 0.01) & (B[, nyears] <= 0.7)
+    dep <- B[cond, nyears][1:reps]
+    MSY <- rsamp[cond][1:reps] * Ksamp[cond][1:reps]/4
+    Kc <- Ksamp[cond][1:reps]
+    rc <- rsamp[cond][1:reps]
+    TAC <- Kc * dep * rc/2
+    
+  }
+  # }
+  
+  TACfilter(TAC)
+}  # end of SPMSY
+class(SPMSY) <- "DLM_output"
+
+
+
+#' Mean Catch Depletion
+#' 
+#' A simple average catch-depletion MP that was included to demonstrate just
+#' how informative an estimate of current stock depletion can be. TAC=2*D*AvC
+#' 
+#' 
+#' @usage MCD(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the quota recommendation
+#' @return A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @export MCD
+MCD <- function(x, DLM_data, reps = 100) {
+  # Daft method to demonstrate the relative value of information of
+  # current depletion
+  dependencies = "DLM_data@Dep, DLM_data@CV_Dep, DLM_data@Cat"
+  if (is.na(DLM_data@Dep[x])) 
+    return(NA)
+  depo <- max(0.01, min(0.99, DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
+  Bt_K <- rbeta(reps * 100, alphaconv(depo, min(depo * DLM_data@CV_Dep[x], 
+    (1 - depo) * DLM_data@CV_Dep[x])), betaconv(depo, min(depo * DLM_data@CV_Dep[x], 
+    (1 - depo) * DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
+  Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1:reps]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
+  AvC <- stats::rlnorm(reps, log(mean(DLM_data@Cat[x, ], na.rm = T)), DLM_data@CV_Cat[x])
+  TAC <- AvC * 2 * Bt_K
   TACfilter(TAC)
 }
-class(Fdem)<-"DLM_output"
+class(MCD) <- "DLM_output"
 
-Fdem_CC<-function(x,DLM_data,reps=100,Fmin=0.005){
-  dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@wlb, DLM_data@CAA, DLM_data@steep, DLM_data@CV_steep"
-  Mvec<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  Kc<-trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Linfc=trlnorm(reps,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
+
+
+#' Mean Catch Depletion
+#' 
+#' A simple average catch-depletion MP linked to a 40-10 harvest controle rule
+#' that was included to demonstrate just how informative an estimate of current
+#' stock depletion can be. TAC=d(1-d)AvC
+#' 
+#' 
+#' @usage MCD4010(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the quota recommendation
+#' @return A numeric vector of TAC recommendations
+#' @author T. Carruthers
+#' @export MCD4010
+MCD4010 <- function(x, DLM_data, reps = 100) {
+  # Daft method to demonstrate the relative value of information of
+  # current depletion
+  dependencies = "DLM_data@Dep, DLM_data@CV_Dep, DLM_data@Cat"
+  if (is.na(DLM_data@Dep[x])) 
+    return(NA)
+  depo <- max(0.01, min(0.99, DLM_data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
+  Bt_K <- rbeta(reps * 100, alphaconv(depo, min(depo * DLM_data@CV_Dep[x], 
+    (1 - depo) * DLM_data@CV_Dep[x])), betaconv(depo, min(depo * DLM_data@CV_Dep[x], 
+    (1 - depo) * DLM_data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
+  Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1:reps]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
+  AvC <- stats::rlnorm(reps, log(mean(DLM_data@Cat[x, ], na.rm = T)), DLM_data@CV_Cat[x])
+  TAC <- AvC * 2 * Bt_K
+  
+  # 40-10 HCR
+  cond1 <- Bt_K < 0.4 & Bt_K > 0.1
+  cond2 <- Bt_K < 0.1
+  TAC[cond1] <- TAC[cond1] * (Bt_K[cond1] - 0.1)/0.3
+  TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
+  
+  TACfilter(TAC)
+}
+class(MCD4010) <- "DLM_output"
+
+
+
+#' Surplus Production Stock Reduction Analysis
+#' 
+#' A surplus production equivalent of DB-SRA that uses a demographically
+#' derived prior for intrinsic rate of increase (McAllister method, below)
+#' 
+#' 
+#' @usage SPSRA(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object (class DLM)
+#' @param reps The number of samples of the TAC taken for the calculation of
+#' the quota
+#' @author T. Carruthers
+#' @references McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
+#' demographic methods to construct Bayesian priors for the intrinsic rate of
+#' increase in the Schaefer model and implications for stock rebuilding. Can.
+#' J. Fish. Aquat. Sci. 58: 1871-1890.
+#' @export SPSRA
+SPSRA <- function(x, DLM_data, reps = 100) {
+  # Surplus productin stock reduction analysis T.Carruthers - basically
+  # an SP version of DBSRA
+  dependencies = "DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@Dep, DLM_data@CV_Dep, DLM_data@Cat, DLM_data@steep"
+  Mvec <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+  Kvec <- trlnorm(reps, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+  Linfvec <- trlnorm(reps, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
   if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
-    t0c <- -trlnorm(reps,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+    t0vec <- -trlnorm(reps, -DLM_data@vbt0[x], DLM_data@CV_vbt0[x])
+  } else {
+    t0vec <- rep(DLM_data@vbt0[x], reps)
+  }
+  t0vec[!is.finite(t0vec)] <- 0
+  if (all(is.nan(t0vec))) 
+    t0vec <- rep(0, reps)
+  hvec <- trlnorm(reps, DLM_data@steep[x], DLM_data@CV_steep[x])
+  if (all(!is.finite(hvec))) 
+    return(NA)
+  rsamp <- getr(x, DLM_data, Mvec, Kvec, Linfvec, t0vec, hvec, maxage = DLM_data@MaxAge, 
+    r_reps = reps)
+  dep <- trlnorm(reps, DLM_data@Dep[x], DLM_data@CV_Dep[x])
+  Ct <- DLM_data@Cat[x, ]
+  Csamp <- array(rep(Ct, each = reps) * trlnorm(length(Ct) * reps, 1, 
+    DLM_data@CV_Cat[x]), dim = c(reps, length(Ct)))
+  Psamp <- array(trlnorm(length(Ct) * reps, 1, 0.1), dim = c(reps, length(Ct)))
+  Ksamp <- rep(NA, reps)
+  for (i in 1:reps) Ksamp[i] <- exp(optimize(SPSRAopt, log(c(mean(Csamp[i, 
+    ]), 1000 * mean(Csamp[i, ]))), dep = dep[i], r = rsamp[i], Ct = Csamp[i, 
+    ], PE = Psamp[i, ])$minimum)
+  MSY <- Ksamp * rsamp/4
+  TAC <- Ksamp * dep * rsamp/2
+  TACfilter(TAC)
+}
+class(SPSRA) <- "DLM_output"
+
+
+
+#' Surplus Production Stock Reduction Analysis using a mean-length estimate of
+#' current stock depletion
+#' 
+#' A surplus production equivalent of DB-SRA that uses a demographically
+#' derived prior for intrinsic rate of increase. A prior for depletion is
+#' calculated from a mean-length estimator
+#' 
+#' 
+#' @usage SPSRA_ML(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object (class DLM)
+#' @param reps The number of samples of the TAC taken
+#' @note The mean length extension was programmed by Gary Nelson as part of his
+#' excellent R package 'fishmethods'
+#' @author T. Carruthers
+#' @references McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
+#' demographic methods to construct Bayesian priors for the intrinsic rate of
+#' increase in the Schaefer model and implications for stock rebuilding. Can.
+#' J. Fish. Aquat. Sci. 58: 1871-1890.
+#' @export SPSRA_ML
+SPSRA_ML <- function(x, DLM_data, reps = 100) {
+  dependencies = "DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@CAL, DLM_data@Cat, DLM_data@steep"
+  Mvec <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+  Kvec <- trlnorm(reps, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+  Linfvec = trlnorm(reps, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0vec <- -trlnorm(reps, -DLM_data@vbt0[x], DLM_data@CV_vbt0[x])
+  } else {
+    t0vec <- rep(DLM_data@vbt0[x], reps)
+  }
+  t0vec[!is.finite(t0vec)] <- 0
+  hvec <- trlnorm(reps, DLM_data@steep[x], DLM_data@CV_steep[x])
+  rsamp <- getr(x, DLM_data, Mvec, Kvec, Linfvec, t0vec, hvec, maxage = DLM_data@MaxAge, 
+    r_reps = reps)
+  Z <- MLne(x, DLM_data, Linfc = Linfvec, Kc = Kvec, ML_reps = reps, 
+    MLtype = "dep")
+  FM <- Z - Mvec
+  nyears <- length(DLM_data@Year)
+  Ct1 <- mean(DLM_data@Cat[x, 1:3])
+  Ct2 <- mean(DLM_data@Cat[x, (nyears - 2):nyears])
+  dep <- rep(c(Ct1, Ct2), each = reps)/(1 - exp(-FM))
+  if (reps == 1) 
+    dep <- dep[2]/dep[1]
+  if (reps > 1) 
+    dep <- dep[, 2]/dep[, 1]
+  Ksamp <- rep(NA, reps)
+  Ct <- DLM_data@Cat[x, ]
+  Csamp <- array(rep(Ct, each = reps) * trlnorm(length(Ct) * reps, 1, 
+    DLM_data@CV_Cat[x]), dim = c(reps, length(Ct)))
+  Psamp <- array(trlnorm(length(Ct) * reps, 1, 0.1), dim = c(reps, length(Ct)))
+  for (i in 1:reps) Ksamp[i] <- exp(optimize(SPSRAopt, log(c(mean(Csamp[i, 
+    ]), 1000 * mean(Csamp[i, ]))), dep = dep[i], r = rsamp[i], Ct = Csamp[i, 
+    ], PE = Psamp[i, ])$minimum)
+  MSY <- Ksamp * rsamp/4
+  TAC <- Ksamp * dep * rsamp/2
+  TACfilter(TAC)
+}
+class(SPSRA_ML) <- "DLM_output"
+
+SPSRAopt <- function(lnK, dep, r, Ct, PE) {
+  nyears <- length(Ct)
+  B <- rep(NA, nyears)
+  B[1] <- exp(lnK)
+  OBJ <- 0
+  for (y in 2:nyears) {
+    if ((B[y - 1] - Ct[y - 1]) < 0) 
+      OBJ <- OBJ + (B[y - 1] - Ct[y - 1])^2
+    B[y] <- max(0.01, B[y - 1] - Ct[y - 1])
+    B[y] <- B[y] + r * B[y] * (1 - B[y]/B[1]) * PE[y]
+  }
+  return(OBJ + ((B[nyears]/B[1]) - dep)^2)
+}
+
+
+
+
+#' Yield Per Recruit analysis to get FMSY proxy F01
+#' 
+#' A simple yield per recruit approximation to FMSY (F01) which is the position
+#' of the ascending YPR curve for which dYPR/dF = 0.1(dYPR/d0)
+#' 
+#' 
+#' @usage YPR(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of samples of the TAC
+#' @return A numeric vector of TAC samples
+#' @note Based on the code of Meaghan Bryan
+#' @author Meaghan Bryan and Tom Carruthers
+#' @references Beverton and Holt. 1954.
+#' @export YPR
+YPR <- function(x, DLM_data, reps = 100) {
+  # Yield per recruit analysis F01 - Meaghan Bryan for(x in 1:10){
+  dependencies = "DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@Abun, DLM_data@CV_Abun, DLM_data@wla, DLM_data@wlb"
+  Linfc <- trlnorm(reps, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
+  Kc <- trlnorm(reps, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0c <- -trlnorm(reps, -DLM_data@vbt0[x], DLM_data@CV_vbt0[x])
   } else {
     t0c <- rep(DLM_data@vbt0[x], reps)
   }
-  t0c[!is.finite(t0c)] <- 0  
-  hvec<-trlnorm(reps,DLM_data@steep[x],DLM_data@CV_steep[x])
-  MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  Cc<-trlnorm(reps,MuC,DLM_data@CV_Cat[x])
-  Zdb<-CC(x,DLM_data,reps=reps*10)
-  Fdb<-Zdb-Mvec
-  ind<-(1:(reps*10))[Fdb>Fmin][1:reps]
+  t0c[!is.finite(t0c)] <- 0
+  Mdb <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+  LFS <- trlnorm(reps, DLM_data@LFS[x], DLM_data@CV_LFS[x])
+  a <- DLM_data@wla[x]
+  b <- DLM_data@wlb[x]
+  Ac <- trlnorm(reps, DLM_data@Abun[x], DLM_data@CV_Abun[x])
+  FMSY <- YPRopt(Linfc, Kc, t0c, Mdb, a, b, LFS, DLM_data@MaxAge, reps)
+  TAC <- Ac * FMSY
+  TACfilter(TAC)
+  # }
+}  # end of YPR
+class(YPR) <- "DLM_output"
+
+
+
+#' Yield Per Recruit analysis to get FMSY proxy F01 paired to a naive catch
+#' curve estimate of recent Z
+#' 
+#' A simple yield per recruit approximation to FMSY (F01) which is the position
+#' of the ascending YPR curve for which dYPR/dF = 0.1(dYPR/d0) A naive
+#' catch-curve analysis is used to determine recent Z which given M (Mort)
+#' gives F and thus abundance = Ct/(1-exp(-F))
+#' 
+#' 
+#' @usage YPR_CC(x, DLM_data, reps = 100, Fmin=0.005)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object (class DLM)
+#' @param reps The number of samples of the TAC
+#' @param Fmin The minimum fishing mortality rate inferred from the catch-curve
+#' analysis
+#' @author Meaghan Bryan and T. Carruthers
+#' @export YPR_CC
+YPR_CC <- function(x, DLM_data, reps = 100, Fmin = 0.005) {
+  # for(x in 1:16){
+  dependencies = "DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@wlb, DLM_data@CAA, DLM_data@Cat"
+  Linfc <- trlnorm(reps, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
+  Kc <- trlnorm(reps, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0c <- -trlnorm(reps, -DLM_data@vbt0[x], DLM_data@CV_vbt0[x])
+  } else {
+    t0c <- rep(DLM_data@vbt0[x], reps)
+  }
+  t0c[!is.finite(t0c)] <- 0
+  LFS <- trlnorm(reps, DLM_data@LFS[x], DLM_data@CV_LFS[x])
+  a <- DLM_data@wla[x]
+  b <- DLM_data@wlb[x]
+  MuC <- DLM_data@Cat[x, length(DLM_data@Cat[x, ])]
+  Cc <- trlnorm(reps, MuC, DLM_data@CV_Cat[x])
   
-  Fdb<-Fdb[ind]
+  Mdb <- trlnorm(reps * 10, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+  Zdb <- CC(x, DLM_data, reps = reps * 10)
+  Fdb <- Zdb - Mdb
+  ind <- (1:(reps * 10))[Fdb > Fmin][1:reps]
+  
+  Fdb <- Fdb[ind]
+  Mdb <- Mdb[ind]
   SM <- sum(is.na(ind))
-  if (SM > 0 ) {
+  if (SM > 0) {
+    Mdb[is.na(ind)] <- trlnorm(SM, DLM_data@Mort[x], DLM_data@CV_Mort[x])
     Fdb[is.na(ind)] <- Fmin
-  }	
+  }
+  
+  Ac <- Cc/(1 - exp(-Fdb))
+  FMSY <- YPRopt(Linfc, Kc, t0c, Mdb, a, b, LFS, DLM_data@MaxAge, reps)
+  TAC <- Ac * FMSY
+  # }
+  TACfilter(TAC)
+}
+class(YPR_CC) <- "DLM_output"
 
-  Ac<-Cc/(1-exp(-Fdb))
-  FMSY<-getr(x,DLM_data,Mvec,Kc,Linfc,t0c,hvec,maxage=DLM_data@MaxAge,r_reps=reps)/2
-  TAC<-FMSY*Ac
+
+
+#' Yield Per Recruit analysis to get FMSY proxy F01 paired with a mean-length
+#' estimate of current stock size
+#' 
+#' A simple yield per recruit approximation to FMSY (F01) which is the position
+#' of the ascending YPR curve for which dYPR/dF = 0.1(dYPR/d0) A mean-length
+#' estimate of recent Z is used to infer current abundance
+#' 
+#' 
+#' @usage YPR_ML(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of samples of the TAC
+#' @note The mean length extension was programmed by Gary Nelson as part of his
+#' excellent R package 'fishmethods'
+#' @author Meaghan Bryan and T. Carruthers
+#' @export YPR_ML
+YPR_ML <- function(x, DLM_data, reps = 100) {
+  dependencies = "DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@wlb, DLM_data@CAL, DLM_data@Cat"
+  Mdb <- trlnorm(reps * 10, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+  Linfc <- trlnorm(reps * 10, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
+  Kc <- trlnorm(reps * 10, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+  Mdb <- trlnorm(reps * 10, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+  t0c <- -trlnorm(reps * 10, -DLM_data@vbt0[x], DLM_data@CV_vbt0[x])
+  t0c[!is.finite(t0c)] <- 0
+  LFS <- trlnorm(reps * 10, DLM_data@LFS[x], DLM_data@CV_LFS[x])
+  a <- DLM_data@wla[x]
+  b <- DLM_data@wlb[x]
+  MuC <- DLM_data@Cat[x, length(DLM_data@Cat[x, ])]
+  Cc <- trlnorm(reps * 10, MuC, DLM_data@CV_Cat[x])
+  Z <- MLne(x, DLM_data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, 
+    MLtype = "F")
+  FM <- Z - Mdb
+  Ac <- Cc/(1 - exp(-FM))
+  FMSY <- YPRopt(Linfc, Kc, t0c, Mdb, a, b, LFS, DLM_data@MaxAge, reps * 
+    10)
+  TAC <- Ac * FMSY
+  TAC <- TAC[TAC > 0][1:reps]
+  TACfilter(TAC)
+  
+}
+class(YPR_ML) <- "DLM_output"
+
+
+
+#' Demographic FMSY method
+#' 
+#' FMSY is calculated as r/2 where r is calculated from a demographic approach
+#' (inc steepness). Coupled with an estimate of current abundance that gives
+#' you the OFL.
+#' 
+#' Made up for this package. This uses Murdoch McAllister's demographic r
+#' method to derive FMSY (r/2) and then makes the quota r*current biomass / 2.
+#' Easy.
+#' 
+#' @usage Fdem(x, DLM_data, reps = 100)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @author T. Carruthers
+#' @references McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
+#' demographic methods to construct Bayesian priors for the intrinsic rate of
+#' increase in the Schaefer model and implications for stock rebuilding. Can.
+#' J. Fish. Aquat. Sci. 58: 1871-1890.
+#' @export Fdem
+Fdem <- function(x, DLM_data, reps = 100) {
+  # Demographic FMSY estimate (FMSY=r/2)
+  dependencies = "DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@wlb, DLM_data@Abun, DLM_data@CV_Abun, DLM_data@steep, DLM_data@CV_steep"
+  Mvec <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+  Kc <- trlnorm(reps, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+  Linfc = trlnorm(reps, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0c <- -trlnorm(reps, -DLM_data@vbt0[x], DLM_data@CV_vbt0[x])
+  } else {
+    t0c <- rep(DLM_data@vbt0[x], reps)
+  }
+  t0c[!is.finite(t0c)] <- 0
+  hvec <- trlnorm(reps, DLM_data@steep[x], DLM_data@CV_steep[x])
+  Ac <- trlnorm(reps, DLM_data@Abun[x], DLM_data@CV_Abun[x])
+  FMSY <- getr(x, DLM_data, Mvec, Kc, Linfc, t0c, hvec, maxage = DLM_data@MaxAge, 
+    r_reps = reps)/2
+  TAC <- FMSY * Ac
+  TACfilter(TAC)
+}
+class(Fdem) <- "DLM_output"
+
+
+
+#' Demographic FMSY method using catch-curve analysis to estimate recent Z
+#' 
+#' FMSY is calculated as r/2 from a demographic r prior method, current
+#' abudnance is estimated from naive catch curve analysis.
+#' 
+#' 
+#' @usage Fdem_CC(x, DLM_data, reps = 100, Fmin=0.005)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param Fmin The minimum fishing mortality rate derived from the catch-curve
+#' analysis
+#' @author T. Carruthers
+#' @references McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
+#' demographic methods to construct Bayesian priors for the intrinsic rate of
+#' increase in the Schaefer model and implications for stock rebuilding. Can.
+#' J. Fish. Aquat. Sci. 58: 1871-1890.
+#' @export Fdem_CC
+Fdem_CC <- function(x, DLM_data, reps = 100, Fmin = 0.005) {
+  dependencies = "DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@wlb, DLM_data@CAA, DLM_data@steep, DLM_data@CV_steep"
+  Mvec <- trlnorm(reps * 10, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+  Kc <- trlnorm(reps, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+  Linfc = trlnorm(reps, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
+  if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
+    t0c <- -trlnorm(reps, -DLM_data@vbt0[x], DLM_data@CV_vbt0[x])
+  } else {
+    t0c <- rep(DLM_data@vbt0[x], reps)
+  }
+  t0c[!is.finite(t0c)] <- 0
+  hvec <- trlnorm(reps, DLM_data@steep[x], DLM_data@CV_steep[x])
+  MuC <- DLM_data@Cat[x, length(DLM_data@Cat[x, ])]
+  Cc <- trlnorm(reps, MuC, DLM_data@CV_Cat[x])
+  Zdb <- CC(x, DLM_data, reps = reps * 10)
+  Fdb <- Zdb - Mvec
+  ind <- (1:(reps * 10))[Fdb > Fmin][1:reps]
+  
+  Fdb <- Fdb[ind]
+  SM <- sum(is.na(ind))
+  if (SM > 0) {
+    Fdb[is.na(ind)] <- Fmin
+  }
+  
+  Ac <- Cc/(1 - exp(-Fdb))
+  FMSY <- getr(x, DLM_data, Mvec, Kc, Linfc, t0c, hvec, maxage = DLM_data@MaxAge, 
+    r_reps = reps)/2
+  TAC <- FMSY * Ac
   
   TACfilter(TAC)
 }
-class(Fdem_CC)<-"DLM_output"
+class(Fdem_CC) <- "DLM_output"
 
-# Catch curve estimate of recent F (naive) ========================================================================================
-CC<-function(x,DLM_data,reps=100){
-  ny<-dim(DLM_data@CAA)[2]
-  CAA<-apply(DLM_data@CAA[x,max(ny-2,1):ny,],2,sum) # takes last two years as the sample (or last year if there is only one
-  maxageobs<-length(CAA)
-  AFS<-which.max(CAA)
-  AFS[AFS>(maxageobs-3)]<-maxageobs-3   # provides at least three datapoints
+# Catch curve estimate of recent F (naive)
+# ========================================================================================
+CC <- function(x, DLM_data, reps = 100) {
+  ny <- dim(DLM_data@CAA)[2]
+  CAA <- apply(DLM_data@CAA[x, max(ny - 2, 1):ny, ], 2, sum)  # takes last two years as the sample (or last year if there is only one)
+  maxageobs <- length(CAA)
+  AFS <- which.max(CAA)
+  AFS[AFS > (maxageobs - 3)] <- maxageobs - 3  # provides at least three datapoints
   
-  nS<-ceiling(sum(CAA)/2)
-  y <-log(CAA[AFS:maxageobs]/sum(CAA[AFS:maxageobs],na.rm=T))
-  xc<-1:length(y)
-  y[y=='-Inf']<-NA
-  mod <- lm(y~xc)
-  chk <- sum(is.na(coef(mod))) # check if model failed
+  nS <- ceiling(sum(CAA)/2)
+  y <- log(CAA[AFS:maxageobs]/sum(CAA[AFS:maxageobs], na.rm = T))
+  xc <- 1:length(y)
+  y[y == "-Inf"] <- NA
+  mod <- lm(y ~ xc)
+  chk <- sum(is.na(coef(mod)))  # check if model failed
   if (chk) {
     return(NA)
   } else {
-    coefs <-summary(mod,weights=CAA[AFS:maxageobs])$coefficients[2,1:2]
-	coefs[is.nan(coefs)] <- tiny
-   return(-rnorm(reps,coefs[1],coefs[2]))
-  } 
+    coefs <- summary(mod, weights = CAA[AFS:maxageobs])$coefficients[2, 1:2]
+    coefs[is.nan(coefs)] <- tiny
+    return(-rnorm(reps, coefs[1], coefs[2]))
+  }
 }
-# class(CC)<-"DLM_output"
+# class(CC)<-'DLM_output'
 
-Fdem_ML<-function(x,DLM_data,reps=100){
-  dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@wlb, DLM_data@CAL, DLM_data@steep, DLM_data@CV_steep"
-  Mvec<-trlnorm(reps*10,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-  Kc<-trlnorm(reps*10,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-  Linfc=trlnorm(reps*10,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-  t0c<--trlnorm(reps*10,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
-  t0c[!is.finite(t0c)] <- 0 
-  hvec<-trlnorm(reps*10,DLM_data@steep[x],DLM_data@CV_steep[x])
-  MuC<-DLM_data@Cat[x,length(DLM_data@Cat[x,])]
-  Cc<-trlnorm(reps*10,MuC,DLM_data@CV_Cat[x])
-  Z<-MLne(x,DLM_data,Linfc=Linfc,Kc=Kc,ML_reps=reps*10,MLtype="F")
-  FM<-Z-Mvec
-  Ac<-Cc/(1-exp(-FM))
-  FMSY<-getr(x,DLM_data,Mvec,Kc,Linfc,t0c,hvec,maxage=DLM_data@MaxAge,r_reps=reps*10)/2
-  TAC<-FMSY*Ac
-  TAC <- TAC[TAC >0][1:reps]
+
+
+#' Demographic FMSY method that uses mean length data to estimate recent Z
+#' 
+#' Demographic F (r/2) method using the mean length estimator to calculate
+#' current abundance.
+#' 
+#' 
+#' @usage Fdem_ML(x, DLM_data, reps = 100)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @note The mean length extension was programmed by Gary Nelson as part of his
+#' excellent R package 'fishmethods'
+#' @author T. Carruthers
+#' @references McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
+#' demographic methods to construct Bayesian priors for the intrinsic rate of
+#' increase in the Schaefer model and implications for stock rebuilding. Can.
+#' J. Fish. Aquat. Sci. 58: 1871-1890.
+#' @export Fdem_ML
+Fdem_ML <- function(x, DLM_data, reps = 100) {
+  dependencies = "DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@wlb, DLM_data@CAL, DLM_data@steep, DLM_data@CV_steep"
+  Mvec <- trlnorm(reps * 10, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+  Kc <- trlnorm(reps * 10, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+  Linfc = trlnorm(reps * 10, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
+  t0c <- -trlnorm(reps * 10, -DLM_data@vbt0[x], DLM_data@CV_vbt0[x])
+  t0c[!is.finite(t0c)] <- 0
+  hvec <- trlnorm(reps * 10, DLM_data@steep[x], DLM_data@CV_steep[x])
+  MuC <- DLM_data@Cat[x, length(DLM_data@Cat[x, ])]
+  Cc <- trlnorm(reps * 10, MuC, DLM_data@CV_Cat[x])
+  Z <- MLne(x, DLM_data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, 
+    MLtype = "F")
+  FM <- Z - Mvec
+  Ac <- Cc/(1 - exp(-FM))
+  FMSY <- getr(x, DLM_data, Mvec, Kc, Linfc, t0c, hvec, maxage = DLM_data@MaxAge, 
+    r_reps = reps * 10)/2
+  TAC <- FMSY * Ac
+  TAC <- TAC[TAC > 0][1:reps]
   TACfilter(TAC)
 }
-class(Fdem_ML)<-"DLM_output"
+class(Fdem_ML) <- "DLM_output"
 
-CompSRA<-function(x,DLM_data,reps=100){    # optimize for fixed F to get you to current depletion C/Fcur = abundance
-  dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@CV_wla, DLM_data@wlb, DLM_data@CV_wlb, DLM_data@L50, DLM_data@CV_L50, DLM_data@CAA, DLM_data@steep, DLM_data@CV_steep, DLM_data@LFS, DLM_data@CV_LFS, DLM_data@LFC, DLM_data@CV_LFC, DLM_data@Cat"
-  maxage<-DLM_data@MaxAge
-  TAC<-rep(NA,reps)
-  for(i in 1:reps){
-    Mc<-trlnorm(1,DLM_data@Mort[x],DLM_data@CV_Mort)
-    hc<-trlnorm(1,DLM_data@steep[x],DLM_data@CV_steep[x])
-    Linfc<-trlnorm(1,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-    Kc<-trlnorm(1,DLM_data@vbK[x],DLM_data@CV_vbK[x])
+
+
+#' Age-composition-based estimate of current stock depletion given constant Z
+#' linked to an FMSY estimate to provide OFL
+#' 
+#' Estimates an OFL based on a Stock Reduction analysis fitted to current
+#' age-composition data. Knife-edge vulnerability at age at maturity allows for
+#' an FMSY estimate. OFL=FMSY*F/C
+#' 
+#' 
+#' @usage CompSRA(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the TAC.
+#' @note Given a fixed historical F, What level of depletion gives you this
+#' length composition?
+#' @author T. Carruthers
+
+#' @export CompSRA
+CompSRA <- function(x, DLM_data, reps = 100) {
+  # optimize for fixed F to get you to current depletion C/Fcur =
+  # abundance
+  dependencies = "DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@CV_wla, DLM_data@wlb, DLM_data@CV_wlb, DLM_data@L50, DLM_data@CV_L50, DLM_data@CAA, DLM_data@steep, DLM_data@CV_steep, DLM_data@LFS, DLM_data@CV_LFS, DLM_data@LFC, DLM_data@CV_LFC, DLM_data@Cat"
+  maxage <- DLM_data@MaxAge
+  TAC <- rep(NA, reps)
+  for (i in 1:reps) {
+    Mc <- trlnorm(1, DLM_data@Mort[x], DLM_data@CV_Mort)
+    hc <- trlnorm(1, DLM_data@steep[x], DLM_data@CV_steep[x])
+    Linfc <- trlnorm(1, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
+    Kc <- trlnorm(1, DLM_data@vbK[x], DLM_data@CV_vbK[x])
     if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
-      t0c <- -trlnorm(1,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+      t0c <- -trlnorm(1, -DLM_data@vbt0[x], DLM_data@CV_vbt0[x])
     } else {
       t0c <- DLM_data@vbt0[x]
     }
-    t0c[!is.finite(t0c)] <- 0 
-    LFSc<-trlnorm(1,DLM_data@LFS[x],DLM_data@CV_LFS[x])
-    LFCc<-trlnorm(1,DLM_data@LFC[x],DLM_data@CV_LFC[x])
-    AMc<-trlnorm(1,iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x]),DLM_data@CV_L50[x])
-    ac<-trlnorm(1,DLM_data@wla[x],DLM_data@CV_wla[x])
-    bc<-trlnorm(1,DLM_data@wlb[x],DLM_data@CV_wlb[x])
-    Catch<-DLM_data@Cat[x,]
-    ny<-length(Catch)
-    nyCAA<-dim(DLM_data@CAA)[2]
-    CAA<-DLM_data@CAA[x,max(nyCAA-2,1):nyCAA,] # takes last two years as the sample (or last year if there is only one
-
-    Nac<-exp(-Mc*((1:maxage)-1)) # put a rough range on estimate of R0 assuming a mean harvest rate of 10%
-    Lac<-Linfc*(1-exp(-Kc*((1:maxage)-t0c)))
-    Wac<-ac*Lac^bc
-    AFC<-log(1-min(0.99,LFCc/Linfc))/-Kc+t0c
-    AFS<-log(1-min(0.99,LFSc/Linfc))/-Kc+t0c
-    if (AFC >= 0.7 * maxage) AFC <- 0.7 * maxage
-    if (AFS >= 0.9 * maxage) AFS <- 0.9 * maxage
-    KES<-max(2,ceiling(mean(c(AFC,AFS))))
-    pred<-Nac*Wac
-    pred[1:(KES-1)]<-0
-    pred<-pred/sum(pred)
-    pred<-((mean(Catch)/0.1)*pred/Wac)/exp(-(1:maxage)*Mc)
-    pred<-pred[pred>0]
-    R0range<-c(mean(pred)/1000,mean(pred)*1000)
-
-    fit<-optimize(SRAfunc,log(R0range),Mc,hc,maxage,LFSc,LFCc,Linfc,Kc,t0c,AMc,ac,bc,Catch,CAA)
-    Ac<-SRAfunc(fit$minimum,Mc,hc,maxage,LFSc,LFCc,Linfc,Kc,t0c,AMc,ac,bc,Catch,CAA,opt=2)
-    fit2<-optimize(SRAFMSY,log(c(0.0001,3)),Mc,hc,maxage,LFSc,LFCc,Linfc,Kc,t0c,AMc,ac,bc)
+    t0c[!is.finite(t0c)] <- 0
+    LFSc <- trlnorm(1, DLM_data@LFS[x], DLM_data@CV_LFS[x])
+    LFCc <- trlnorm(1, DLM_data@LFC[x], DLM_data@CV_LFC[x])
+    AMc <- trlnorm(1, iVB(DLM_data@vbt0[x], DLM_data@vbK[x], DLM_data@vbLinf[x], 
+      DLM_data@L50[x]), DLM_data@CV_L50[x])
+    ac <- trlnorm(1, DLM_data@wla[x], DLM_data@CV_wla[x])
+    bc <- trlnorm(1, DLM_data@wlb[x], DLM_data@CV_wlb[x])
+    Catch <- DLM_data@Cat[x, ]
+    ny <- length(Catch)
+    nyCAA <- dim(DLM_data@CAA)[2]
+    CAA <- DLM_data@CAA[x, max(nyCAA - 2, 1):nyCAA, ]  # takes last two years as the sample (or last year if there is only one
+    
+    Nac <- exp(-Mc * ((1:maxage) - 1))  # put a rough range on estimate of R0 assuming a mean harvest rate of 10%
+    Lac <- Linfc * (1 - exp(-Kc * ((1:maxage) - t0c)))
+    Wac <- ac * Lac^bc
+    AFC <- log(1 - min(0.99, LFCc/Linfc))/-Kc + t0c
+    AFS <- log(1 - min(0.99, LFSc/Linfc))/-Kc + t0c
+    if (AFC >= 0.7 * maxage) 
+      AFC <- 0.7 * maxage
+    if (AFS >= 0.9 * maxage) 
+      AFS <- 0.9 * maxage
+    KES <- max(2, ceiling(mean(c(AFC, AFS))))
+    pred <- Nac * Wac
+    pred[1:(KES - 1)] <- 0
+    pred <- pred/sum(pred)
+    pred <- ((mean(Catch)/0.1) * pred/Wac)/exp(-(1:maxage) * Mc)
+    pred <- pred[pred > 0]
+    R0range <- c(mean(pred)/1000, mean(pred) * 1000)
+    
+    fit <- optimize(SRAfunc, log(R0range), Mc, hc, maxage, LFSc, LFCc, 
+      Linfc, Kc, t0c, AMc, ac, bc, Catch, CAA)
+    Ac <- SRAfunc(fit$minimum, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, 
+      t0c, AMc, ac, bc, Catch, CAA, opt = 2)
+    fit2 <- optimize(SRAFMSY, log(c(1e-04, 3)), Mc, hc, maxage, LFSc, 
+      LFCc, Linfc, Kc, t0c, AMc, ac, bc)
     # FMSY<-SRAFMSY(fit2$minimum,Mc,hc,maxage,LFSc,LFCc,Linfc,Kc,t0c,AMc,ac,bc,opt=F)
-	FMSY <- exp(fit2$minimum)
-    if ((FMSY / Mc) > 3) FMSY <- 3 * Mc
-    TAC[i]<-Ac*FMSY
-	# message(i, " of ", reps)
-    # flush.console()
+    FMSY <- exp(fit2$minimum)
+    if ((FMSY/Mc) > 3) 
+      FMSY <- 3 * Mc
+    TAC[i] <- Ac * FMSY
+    # message(i, ' of ', reps) flush.console()
   }
   TACfilter(TAC)
 }
-class(CompSRA)<-"DLM_output"
+class(CompSRA) <- "DLM_output"
 
 
-CompSRA4010<-function(x,DLM_data,reps=100){    # optimize for fixed F to get you to current depletion C/Fcur = abundance
- # for (x in 1:nsim) {
-  dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@CV_wla, DLM_data@wlb, DLM_data@CV_wlb, DLM_data@L50, DLM_data@CV_L50, DLM_data@CAA, DLM_data@steep, DLM_data@CV_steep, DLM_data@LFS, DLM_data@CV_LFS, DLM_data@LFC, DLM_data@CV_LFC, DLM_data@Cat"
-  maxage<-DLM_data@MaxAge
-  TAC<-Bt_K<-rep(NA,reps)
-  for(i in 1:reps){
-    Mc<-trlnorm(1,DLM_data@Mort[x],DLM_data@CV_Mort)
-    hc<-trlnorm(1,DLM_data@steep[x],DLM_data@CV_steep[x])
-    Linfc<-trlnorm(1,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-    Kc<-trlnorm(1,DLM_data@vbK[x],DLM_data@CV_vbK[x])
+
+
+#' Age-composition-based estimate of current stock depletion given constant Z
+#' linked to an FMSY estimate to provide OFL (with a 40-10 rule)
+#' 
+#' Estimates an OFL based on a Stock Reduction analysis fitted to current
+#' age-composition data. Knife-edge vulnerability at age at maturity allows for
+#' an FMSY estimate. OFL=FMSY*F/C
+#' 
+#' 
+#' @usage CompSRA4010(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the TAC.
+#' @note Given a fixed historical F, What level of depletion gives you this
+#' length composition?
+#' @author T. Carruthers
+#' @export CompSRA4010
+CompSRA4010 <- function(x, DLM_data, reps = 100) {
+  # optimize for fixed F to get you to current depletion C/Fcur =
+  # abundance for (x in 1:nsim) {
+  dependencies = "DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@CV_wla, DLM_data@wlb, DLM_data@CV_wlb, DLM_data@L50, DLM_data@CV_L50, DLM_data@CAA, DLM_data@steep, DLM_data@CV_steep, DLM_data@LFS, DLM_data@CV_LFS, DLM_data@LFC, DLM_data@CV_LFC, DLM_data@Cat"
+  maxage <- DLM_data@MaxAge
+  TAC <- Bt_K <- rep(NA, reps)
+  for (i in 1:reps) {
+    Mc <- trlnorm(1, DLM_data@Mort[x], DLM_data@CV_Mort)
+    hc <- trlnorm(1, DLM_data@steep[x], DLM_data@CV_steep[x])
+    Linfc <- trlnorm(1, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
+    Kc <- trlnorm(1, DLM_data@vbK[x], DLM_data@CV_vbK[x])
     if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
-      t0c <- -trlnorm(1,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
+      t0c <- -trlnorm(1, -DLM_data@vbt0[x], DLM_data@CV_vbt0[x])
     } else {
       t0c <- DLM_data@vbt0[x]
     }
-    t0c[!is.finite(t0c)] <- 0 
-    LFSc<-trlnorm(1,DLM_data@LFS[x],DLM_data@CV_LFS[x])
-    LFCc<-trlnorm(1,DLM_data@LFC[x],DLM_data@CV_LFC[x])
-    AMc<-trlnorm(1,iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x]),DLM_data@CV_L50[x])
-    ac<-trlnorm(1,DLM_data@wla[x],DLM_data@CV_wla[x])
-    bc<-trlnorm(1,DLM_data@wlb[x],DLM_data@CV_wlb[x])
-    Catch<-DLM_data@Cat[x,]
-    ny<-length(Catch)
-    nyCAA<-dim(DLM_data@CAA)[2]
-    CAA<-DLM_data@CAA[x,max(nyCAA-2,1):nyCAA,] # takes last two years as the sample (or last year if there is only one
+    t0c[!is.finite(t0c)] <- 0
+    LFSc <- trlnorm(1, DLM_data@LFS[x], DLM_data@CV_LFS[x])
+    LFCc <- trlnorm(1, DLM_data@LFC[x], DLM_data@CV_LFC[x])
+    AMc <- trlnorm(1, iVB(DLM_data@vbt0[x], DLM_data@vbK[x], DLM_data@vbLinf[x], 
+      DLM_data@L50[x]), DLM_data@CV_L50[x])
+    ac <- trlnorm(1, DLM_data@wla[x], DLM_data@CV_wla[x])
+    bc <- trlnorm(1, DLM_data@wlb[x], DLM_data@CV_wlb[x])
+    Catch <- DLM_data@Cat[x, ]
+    ny <- length(Catch)
+    nyCAA <- dim(DLM_data@CAA)[2]
+    CAA <- DLM_data@CAA[x, max(nyCAA - 2, 1):nyCAA, ]  # takes last two years as the sample (or last year if there is only one
     
-    Nac<-exp(-Mc*((1:maxage)-1)) # put a rough range on estimate of R0 assuming a mean harvest rate of 10%
-    Lac<-Linfc*(1-exp(-Kc*((1:maxage)-t0c)))
-    Wac<-ac*Lac^bc
-	
-	AFC<-log(1-min(0.99,LFCc/Linfc))/-Kc+t0c
-	AFS<-log(1-min(0.99,LFSc/Linfc))/-Kc+t0c
-	if (AFC >= 0.7 * maxage) AFC <- 0.7 * maxage
-	if (AFS >= 0.9 * maxage) AFS <- 0.9 * maxage
-	
-    KES<-max(2,ceiling(mean(c(AFC,AFS))))
-    pred<-Nac*Wac
-    pred[1:(KES-1)]<-0
-    pred<-pred/sum(pred)
-    pred<-((mean(Catch)/0.1)*pred/Wac)/exp(-(1:maxage)*Mc)
-    pred<-pred[pred>0]
-    R0range<-c(mean(pred)/1000,mean(pred)*1000)
+    Nac <- exp(-Mc * ((1:maxage) - 1))  # put a rough range on estimate of R0 assuming a mean harvest rate of 10%
+    Lac <- Linfc * (1 - exp(-Kc * ((1:maxage) - t0c)))
+    Wac <- ac * Lac^bc
     
-    fit<-optimize(SRAfunc,log(R0range),Mc,hc,maxage,LFSc,LFCc,Linfc,Kc,t0c,AMc,ac,bc,Catch,CAA)
-    Ac<-SRAfunc(fit$minimum,Mc,hc,maxage,LFSc,LFCc,Linfc,Kc,t0c,AMc,ac,bc,Catch,CAA,opt=2)
-    Bt_K[i]<-SRAfunc(fit$minimum,Mc,hc,maxage,LFSc,LFCc,Linfc,Kc,t0c,AMc,ac,bc,Catch,CAA,opt=3)
-    fit2<-optimize(SRAFMSY,log(c(0.0001,3)),Mc,hc,maxage,LFSc,LFCc,Linfc,Kc,t0c,AMc,ac,bc)
-    FMSY<-SRAFMSY(fit2$minimum,Mc,hc,maxage,LFSc,LFCc,Linfc,Kc,t0c,AMc,ac,bc,opt=F)
-    if ((FMSY / Mc) > 3) FMSY <- 3 * Mc
-    TAC[i]<-Ac*FMSY
-  }   
+    AFC <- log(1 - min(0.99, LFCc/Linfc))/-Kc + t0c
+    AFS <- log(1 - min(0.99, LFSc/Linfc))/-Kc + t0c
+    if (AFC >= 0.7 * maxage) 
+      AFC <- 0.7 * maxage
+    if (AFS >= 0.9 * maxage) 
+      AFS <- 0.9 * maxage
+    
+    KES <- max(2, ceiling(mean(c(AFC, AFS))))
+    pred <- Nac * Wac
+    pred[1:(KES - 1)] <- 0
+    pred <- pred/sum(pred)
+    pred <- ((mean(Catch)/0.1) * pred/Wac)/exp(-(1:maxage) * Mc)
+    pred <- pred[pred > 0]
+    R0range <- c(mean(pred)/1000, mean(pred) * 1000)
+    
+    fit <- optimize(SRAfunc, log(R0range), Mc, hc, maxage, LFSc, LFCc, 
+      Linfc, Kc, t0c, AMc, ac, bc, Catch, CAA)
+    Ac <- SRAfunc(fit$minimum, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, 
+      t0c, AMc, ac, bc, Catch, CAA, opt = 2)
+    Bt_K[i] <- SRAfunc(fit$minimum, Mc, hc, maxage, LFSc, LFCc, Linfc, 
+      Kc, t0c, AMc, ac, bc, Catch, CAA, opt = 3)
+    fit2 <- optimize(SRAFMSY, log(c(1e-04, 3)), Mc, hc, maxage, LFSc, 
+      LFCc, Linfc, Kc, t0c, AMc, ac, bc)
+    FMSY <- SRAFMSY(fit2$minimum, Mc, hc, maxage, LFSc, LFCc, Linfc, 
+      Kc, t0c, AMc, ac, bc, opt = F)
+    if ((FMSY/Mc) > 3) 
+      FMSY <- 3 * Mc
+    TAC[i] <- Ac * FMSY
+  }
   # 40-10 rule
-  cond1<-Bt_K<0.4 & Bt_K>0.1
-  cond2<-Bt_K<0.1
-  TAC[cond1]<-TAC[cond1]*(Bt_K[cond1]-0.1)/0.3
-  TAC[cond2]<-TAC[cond2]*tiny # this has to still be stochastic albeit very small
-
+  cond1 <- Bt_K < 0.4 & Bt_K > 0.1
+  cond2 <- Bt_K < 0.1
+  TAC[cond1] <- TAC[cond1] * (Bt_K[cond1] - 0.1)/0.3
+  TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
+  
   TACfilter(TAC)
   
-  # message(x, " of ", nsim)
-  # flush.console()
-  # }
+  # message(x, ' of ', nsim) flush.console() }
 }
-class(CompSRA4010)<-"DLM_output"
+class(CompSRA4010) <- "DLM_output"
 
-# options(warn=2)
-# options(warn=1)
-# options(warn=1)
+# options(warn=2) options(warn=1) options(warn=1)
 
-SRAfunc<-function(lnR0c,Mc,hc,maxage,LFSc,LFCc,Linfc,Kc,t0c,AMc,ac,bc,Catch,CAA,opt=1){
-
-  ny<-length(Catch)
-  AFC<-log(1-min(0.99,LFCc/Linfc))/-Kc+t0c
-  AFS<-log(1-min(0.99,LFSc/Linfc))/-Kc+t0c
-  if (AFC >= 0.7 * maxage) AFC <- 0.7 * maxage
-  if (AFS >= 0.9 * maxage) AFS <- 0.9 * maxage
-  KES<-max(2,ceiling(mean(c(AFC,AFS))))
-  vul<-rep(1,maxage)
-  vul[1:(KES-1)]<-0
-  Mac<-rep(1,maxage)
-  Mac[1:max(1,floor(AMc))]<-0
-  Lac<-Linfc*(1-exp(-Kc*((1:maxage)-t0c)))
-  Wac<-ac*Lac^bc
-  R0c<-exp(lnR0c)
-  N<-exp(-Mc*((1:maxage)-1))*R0c
-  SSN<-Mac*N                                 # Calculate initial spawning stock numbers
-  Biomass<-N*Wac
-  SSB<-SSN*Wac                               # Calculate spawning stock biomass
-
-  B0<-sum(Biomass)
-  SSB0<-sum(SSB)
-  SSN0<-SSN
-  SSBpR<-sum(SSB)/R0c                              # Calculate spawning stock biomass per recruit
-  SSNpR<-SSN/R0c
-
-  CN<-array(NA,dim=c(ny,maxage))
-  HR<-rep(0,maxage)
-  pen<-0
-  for(y in 1:ny){
+SRAfunc <- function(lnR0c, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c, 
+  AMc, ac, bc, Catch, CAA, opt = 1) {
+  
+  ny <- length(Catch)
+  AFC <- log(1 - min(0.99, LFCc/Linfc))/-Kc + t0c
+  AFS <- log(1 - min(0.99, LFSc/Linfc))/-Kc + t0c
+  if (AFC >= 0.7 * maxage) 
+    AFC <- 0.7 * maxage
+  if (AFS >= 0.9 * maxage) 
+    AFS <- 0.9 * maxage
+  KES <- max(2, ceiling(mean(c(AFC, AFS))))
+  vul <- rep(1, maxage)
+  vul[1:(KES - 1)] <- 0
+  Mac <- rep(1, maxage)
+  Mac[1:max(1, floor(AMc))] <- 0
+  Lac <- Linfc * (1 - exp(-Kc * ((1:maxage) - t0c)))
+  Wac <- ac * Lac^bc
+  R0c <- exp(lnR0c)
+  N <- exp(-Mc * ((1:maxage) - 1)) * R0c
+  SSN <- Mac * N  # Calculate initial spawning stock numbers
+  Biomass <- N * Wac
+  SSB <- SSN * Wac  # Calculate spawning stock biomass
+  
+  B0 <- sum(Biomass)
+  SSB0 <- sum(SSB)
+  SSN0 <- SSN
+  SSBpR <- sum(SSB)/R0c  # Calculate spawning stock biomass per recruit
+  SSNpR <- SSN/R0c
+  
+  CN <- array(NA, dim = c(ny, maxage))
+  HR <- rep(0, maxage)
+  pen <- 0
+  for (y in 1:ny) {
     # set up some indices for indexed calculation
-    VB<-Biomass[KES:maxage]*exp(-Mc)
-    CB<-Catch[y]*VB/sum(VB)
-    testHR<-CB[1]/VB[1]
-    if(testHR>0.8)pen<-pen+(testHR-0.8)^2
-    HR[KES:maxage]<-min(testHR,0.8)
-    FMc<--log(1-HR)                                        # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
-    Zc<-FMc+Mc
-
-    CN[y,]<-N * (1-exp(-Zc))*(FMc/Zc)
-    N[2:maxage]<-N[1:(maxage-1)]*exp(-Zc[1:(maxage-1)])         # Total mortality
-    N[1]<-(0.8*R0c*hc*sum(SSB))/(0.2*SSBpR*R0c*(1-hc)+(hc-0.2)*sum(SSB))  # Recruitment assuming regional R0 and stock wide steepness
-    #print(N[1])
-    Biomass<-N*Wac
-    SSN<-N*Mac
-    SSB<-SSN*Wac
-
-  } # end of year
+    VB <- Biomass[KES:maxage] * exp(-Mc)
+    CB <- Catch[y] * VB/sum(VB)
+    testHR <- CB[1]/VB[1]
+    if (testHR > 0.8) 
+      pen <- pen + (testHR - 0.8)^2
+    HR[KES:maxage] <- min(testHR, 0.8)
+    FMc <- -log(1 - HR)  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
+    Zc <- FMc + Mc
+    
+    CN[y, ] <- N * (1 - exp(-Zc)) * (FMc/Zc)
+    N[2:maxage] <- N[1:(maxage - 1)] * exp(-Zc[1:(maxage - 1)])  # Total mortality
+    N[1] <- (0.8 * R0c * hc * sum(SSB))/(0.2 * SSBpR * R0c * (1 - hc) + 
+      (hc - 0.2) * sum(SSB))  # Recruitment assuming regional R0 and stock wide steepness
+    # print(N[1])
+    Biomass <- N * Wac
+    SSN <- N * Mac
+    SSB <- SSN * Wac
+    
+  }  # end of year
   
-  CN[CN<0] <- 0 # stop any negative catches
-  syear<-ny-dim(CAA)[1]+1
-  pred<-CN[syear:ny,]
-  pred<-pred/array(apply(pred,1,sum),dim=c(dim(CAA)[1],maxage))
- 
-  fobj<-pen-sum(log(pred+tiny)*CAA,na.rm=T)
-  if(opt==1){return(fobj)
-  }else if(opt==2){return(sum(Biomass))
-  }else if(opt==3){sum(SSB)/sum(SSB0)
+  CN[CN < 0] <- 0  # stop any negative catches
+  syear <- ny - dim(CAA)[1] + 1
+  pred <- CN[syear:ny, ]
+  pred <- pred/array(apply(pred, 1, sum), dim = c(dim(CAA)[1], maxage))
+  
+  fobj <- pen - sum(log(pred + tiny) * CAA, na.rm = T)
+  if (opt == 1) {
+    return(fobj)
+  } else if (opt == 2) {
+    return(sum(Biomass))
+  } else if (opt == 3) {
+    sum(SSB)/sum(SSB0)
   }
-  #CBc<-sum(CB)
+  # CBc<-sum(CB)
 }
 
-SRAFMSY<-function(lnFMc,Mc,hc,maxage,LFSc,LFCc,Linfc,Kc,t0c,AMc,ac,bc,opt=T){
-
-  FMc<-exp(lnFMc)
-  ny<-100
-  AFC<-log(1-min(0.99,LFCc/Linfc))/-Kc+t0c
-  AFS<-log(1-min(0.99,LFSc/Linfc))/-Kc+t0c
-  if (AFC >= 0.7 * maxage) AFC <- 0.7 * maxage
-  if (AFS >= 0.9 * maxage) AFS <- 0.9 * maxage
+SRAFMSY <- function(lnFMc, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c, 
+  AMc, ac, bc, opt = T) {
   
-  KES<-max(2,ceiling(mean(c(AFC,AFS))))
-  vul<-rep(1,maxage)
-  vul[1:(KES-1)]<-0
-  Mac<-rep(1,maxage)
-  Mac[1:max(1,floor(AMc))]<-0
-  Lac<-Linfc*(1-exp(-Kc*((1:maxage)-t0c)))
-  Wac<-ac*Lac^bc
-  R0c<-1
-  N<-exp(-Mc*((1:maxage)-1))*R0c
-  SSN<-Mac*N   # Calculate initial spawning stock numbers
-  Biomass<-N*Wac
-  SSB<-SSN*Wac                               # Calculate spawning stock biomass
-
-  B0<-sum(Biomass)
-  SSB0<-sum(SSB)
-  SSN0<-SSN
-  SSBpR<-sum(SSB)/R0c                              # Calculate spawning stock biomass per recruit
-  SSNpR<-SSN/R0c
-
-  N<-N/2
-  SSN<-Mac*N   # Calculate initial spawning stock numbers
-  Biomass<-N*Wac
-  SSB<-SSN*Wac
-
-  for(y in 1:ny){
-    # set up some indices for indexed calculation
-                                           # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
-    Zc<-FMc*vul+Mc
-    CN<-N*(1-exp(-Zc))*(FMc/Zc)
-    CB<-CN*Wac
-    Biomass<-N*Wac
-    N[2:maxage]<-N[1:(maxage-1)]*exp(-Zc[1:(maxage-1)])         # Total mortality
-    N[1]<-(0.8*R0c*hc*sum(SSB))/(0.2*SSBpR*R0c*(1-hc)+(hc-0.2)*sum(SSB))  # Recruitment assuming regional R0 and stock wide steepness
-    #print(N[1])
-    SSN<-N*Mac
-    SSB<-SSN*Wac
-
-  } # end of year
+  FMc <- exp(lnFMc)
+  ny <- 100
+  AFC <- log(1 - min(0.99, LFCc/Linfc))/-Kc + t0c
+  AFS <- log(1 - min(0.99, LFSc/Linfc))/-Kc + t0c
+  if (AFC >= 0.7 * maxage) 
+    AFC <- 0.7 * maxage
+  if (AFS >= 0.9 * maxage) 
+    AFS <- 0.9 * maxage
   
-  if(opt){return(-sum(CB))
-  }else{return(FMc)
+  KES <- max(2, ceiling(mean(c(AFC, AFS))))
+  vul <- rep(1, maxage)
+  vul[1:(KES - 1)] <- 0
+  Mac <- rep(1, maxage)
+  Mac[1:max(1, floor(AMc))] <- 0
+  Lac <- Linfc * (1 - exp(-Kc * ((1:maxage) - t0c)))
+  Wac <- ac * Lac^bc
+  R0c <- 1
+  N <- exp(-Mc * ((1:maxage) - 1)) * R0c
+  SSN <- Mac * N  # Calculate initial spawning stock numbers
+  Biomass <- N * Wac
+  SSB <- SSN * Wac  # Calculate spawning stock biomass
+  
+  B0 <- sum(Biomass)
+  SSB0 <- sum(SSB)
+  SSN0 <- SSN
+  SSBpR <- sum(SSB)/R0c  # Calculate spawning stock biomass per recruit
+  SSNpR <- SSN/R0c
+  
+  N <- N/2
+  SSN <- Mac * N  # Calculate initial spawning stock numbers
+  Biomass <- N * Wac
+  SSB <- SSN * Wac
+  
+  for (y in 1:ny) {
+    # set up some indices for indexed calculation Fishing mortality rate
+    # determined by effort, catchability, vulnerability and spatial
+    # preference according to biomass
+    Zc <- FMc * vul + Mc
+    CN <- N * (1 - exp(-Zc)) * (FMc/Zc)
+    CB <- CN * Wac
+    Biomass <- N * Wac
+    N[2:maxage] <- N[1:(maxage - 1)] * exp(-Zc[1:(maxage - 1)])  # Total mortality
+    N[1] <- (0.8 * R0c * hc * sum(SSB))/(0.2 * SSBpR * R0c * (1 - hc) + 
+      (hc - 0.2) * sum(SSB))  # Recruitment assuming regional R0 and stock wide steepness
+    # print(N[1])
+    SSN <- N * Mac
+    SSB <- SSN * Wac
+    
+  }  # end of year
+  
+  if (opt) {
+    return(-sum(CB))
+  } else {
+    return(FMc)
   }
 }
 
 
-# Yield per recruit estimate of FMSY Meaghan Bryan 2013 ==================================
-YPRopt=function(Linfc,Kc,t0c,Mdb,a,b,LFS,maxage,reps=100) {
-
-  nf<-200
-  frates<-seq(0,3,length.out=nf)
-
-  Winf=a*Linfc^b
-	rat<-LFS/Linfc
-	rat[rat>0.8]<-0.8     # need to robustify this for occasionally very high samples of LFS
-  tc=log(1-rat)/-Kc+t0c
-	tc=round(tc,0)
-  tc[tc<1]<-1
-  tc[tc>maxage]<-maxage
-
-	vul<-array(0,dim=c(reps,maxage))
-	mat<-array(0,dim=c(reps,maxage))
-	lx<-array(NA,dim=c(reps,maxage))
-	lxo<-array(NA,dim=c(reps,maxage))
-
-  ypr<-array(NA,dim=c(reps,nf))
-	sbpr<-array(NA,dim=c(reps,nf))
-	sbpr.ratio<-array(NA,dim=c(reps,nf))
-	sbpr.dif<-array(NA,dim=c(reps,nf))
-
-  f.max<-array(NA,dim=c(reps,maxage))
-
-	#average weight at age - follow von Bertalanffy growth
-	age<-array(rep(1:maxage,each=reps),dim=c(reps,maxage))
-  la<-Linfc*(1-exp(-Kc*((age-t0c))))
-  wa<-a*la^b
-
-	#vulnerability schedule - assumes knife-edge vulnerability, where all individuals age tc to maxage are fully vulnerbale
-	#all individulas less than age tc are not vulnerable
-	for(i in 1:reps){
-    if(tc[i]>0)vul[i,tc[i]:maxage]<-1
-  	if(tc[i]>1)mat[i,max(1,tc[i]-1):maxage]<-1
+# Yield per recruit estimate of FMSY Meaghan Bryan 2013
+# ==================================
+YPRopt = function(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage, reps = 100) {
+  
+  nf <- 200
+  frates <- seq(0, 3, length.out = nf)
+  
+  Winf = a * Linfc^b
+  rat <- LFS/Linfc
+  rat[rat > 0.8] <- 0.8  # need to robustify this for occasionally very high samples of LFS
+  tc = log(1 - rat)/-Kc + t0c
+  tc = round(tc, 0)
+  tc[tc < 1] <- 1
+  tc[tc > maxage] <- maxage
+  
+  vul <- array(0, dim = c(reps, maxage))
+  mat <- array(0, dim = c(reps, maxage))
+  lx <- array(NA, dim = c(reps, maxage))
+  lxo <- array(NA, dim = c(reps, maxage))
+  
+  ypr <- array(NA, dim = c(reps, nf))
+  sbpr <- array(NA, dim = c(reps, nf))
+  sbpr.ratio <- array(NA, dim = c(reps, nf))
+  sbpr.dif <- array(NA, dim = c(reps, nf))
+  
+  f.max <- array(NA, dim = c(reps, maxage))
+  
+  # average weight at age - follow von Bertalanffy growth
+  age <- array(rep(1:maxage, each = reps), dim = c(reps, maxage))
+  la <- Linfc * (1 - exp(-Kc * ((age - t0c))))
+  wa <- a * la^b
+  
+  # vulnerability schedule - assumes knife-edge vulnerability, where all
+  # individuals age tc to maxage are fully vulnerbale all individulas
+  # less than age tc are not vulnerable
+  for (i in 1:reps) {
+    if (tc[i] > 0) 
+      vul[i, tc[i]:maxage] <- 1
+    if (tc[i] > 1) 
+      mat[i, max(1, tc[i] - 1):maxage] <- 1
   }
-
-  lx[,1]<-1
-  lxo[,1]<-1
-  for(k in 1:nf){
-    for(i in 2:maxage){
-      lx[,i]=lx[,i-1]*exp(-(Mdb+vul[,i-1]*frates[k]))
-      lxo[,i]=lx[,i]*exp(-Mdb)
+  
+  lx[, 1] <- 1
+  lxo[, 1] <- 1
+  for (k in 1:nf) {
+    for (i in 2:maxage) {
+      lx[, i] = lx[, i - 1] * exp(-(Mdb + vul[, i - 1] * frates[k]))
+      lxo[, i] = lx[, i] * exp(-Mdb)
     }
-    phi_vb=apply(lx*wa*vul,1,sum)
-		sbpro=apply(lxo*wa*mat,1,sum)
-
-		ypr[,k]=(1-exp(-frates[k]))*phi_vb
-		sbpr[,k]=apply(lx*wa*mat,1,sum)
-		sbpr.ratio[,k]=sbpr[,k]/sbpro
-		sbpr.dif[,k]=abs(sbpr.ratio[,k]-0.3)	#hard code comparison ratio
+    phi_vb = apply(lx * wa * vul, 1, sum)
+    sbpro = apply(lxo * wa * mat, 1, sum)
+    
+    ypr[, k] = (1 - exp(-frates[k])) * phi_vb
+    sbpr[, k] = apply(lx * wa * mat, 1, sum)
+    sbpr.ratio[, k] = sbpr[, k]/sbpro
+    sbpr.dif[, k] = abs(sbpr.ratio[, k] - 0.3)  #hard code comparison ratio
   }
-
-  #frates[apply(ypr,1,which.max)]    Fmaxypr
-
-  # More code that derived F0.1 in 'per recruit analysis.R' (Meaghan Bryan)
-  slope.origin=(ypr[,2]-ypr[,1])/(frates[2]-frates[1])
-	slope.10=round(0.1*slope.origin,2)
-
-	slope=array(NA,dim=dim(ypr))#vector(length=length(ypr))
-	slope[,1]=slope.origin
-	for(i in 3:ncol(ypr))
-	{
-		slope[,i-1]=round((ypr[,i]-ypr[,i-1])/(frates[i]-frates[i-1]),2)
-	}
-	dif=abs(slope-slope.10)
-  dif[is.na(dif)]<-10e10
-	frates[apply(dif,1,which.min)]#frates[which.min(dif)]
+  
+  # frates[apply(ypr,1,which.max)] Fmaxypr
+  
+  # More code that derived F0.1 in 'per recruit analysis.R' (Meaghan
+  # Bryan)
+  slope.origin = (ypr[, 2] - ypr[, 1])/(frates[2] - frates[1])
+  slope.10 = round(0.1 * slope.origin, 2)
+  
+  slope = array(NA, dim = dim(ypr))  #vector(length=length(ypr))
+  slope[, 1] = slope.origin
+  for (i in 3:ncol(ypr)) {
+    slope[, i - 1] = round((ypr[, i] - ypr[, i - 1])/(frates[i] - frates[i - 
+      1]), 2)
+  }
+  dif = abs(slope - slope.10)
+  dif[is.na(dif)] <- 1e+11
+  frates[apply(dif, 1, which.min)]  #frates[which.min(dif)]
 }
 
 
-MLne<-function(x,DLM_data,Linfc,Kc,ML_reps=100,MLtype="dep"){
-  year<-1:dim(DLM_data@CAL)[2]
-  nlbin<-ncol(DLM_data@CAL[x,,])
-  nlyr<-nrow(DLM_data@CAL[x,,])
-  mlbin<-(DLM_data@CAL_bins[1:nlbin]+DLM_data@CAL_bins[2:(nlbin+1)])/2
-  nbreaks<-1
-  Z<-matrix(NA,nrow=ML_reps,ncol=nbreaks+1)
-  Z2<-rep(NA,ML_reps)
-  # temp<-apply(DLM_data@CAL[x,,],2,sum)
-  # Lc<-mlbin[which.max(temp)] # modal length
+MLne <- function(x, DLM_data, Linfc, Kc, ML_reps = 100, MLtype = "dep") {
+  year <- 1:dim(DLM_data@CAL)[2]
+  nlbin <- ncol(DLM_data@CAL[x, , ])
+  nlyr <- nrow(DLM_data@CAL[x, , ])
+  mlbin <- (DLM_data@CAL_bins[1:nlbin] + DLM_data@CAL_bins[2:(nlbin + 
+    1)])/2
+  nbreaks <- 1
+  Z <- matrix(NA, nrow = ML_reps, ncol = nbreaks + 1)
+  Z2 <- rep(NA, ML_reps)
+  # temp<-apply(DLM_data@CAL[x,,],2,sum) Lc<-mlbin[which.max(temp)] #
+  # modal length
   
-  #dd <- dim(DLM_data@CAL[x,,])
-  #curLen <- DLM_data@CAL[x,dd[1],]
-  #Lc <-  mlbin[which.max(curLen)]
-  # Lc <-  DLM_data@LFS[,x] 
-  # Lc <- Lc[length(Lc)]
+  # dd <- dim(DLM_data@CAL[x,,]) curLen <- DLM_data@CAL[x,dd[1],] Lc <-
+  # mlbin[which.max(curLen)] Lc <- DLM_data@LFS[,x] Lc <- Lc[length(Lc)]
   Lc <- DLM_data@LFS[x]
   
-  for(i in 1:ML_reps){
-    mlen<-rep(NA,length(year))
-    ss<-ceiling(apply(DLM_data@CAL[x,,],1,sum)/2)
-    if(MLtype=="dep"){
-      for(y in 1:length(year)) {
-	    if (sum(DLM_data@CAL[x,y,] > 0) > 0.25 * length(DLM_data@CAL[x,y,])) {
-	      temp2<-sample(mlbin,ceiling(sum(DLM_data@CAL[x,y,])/2),replace=T,prob=DLM_data@CAL[x,y,])
-              mlen[y]<-mean(temp2[temp2>=Lc],na.rm=TRUE)
-	    }  
+  for (i in 1:ML_reps) {
+    mlen <- rep(NA, length(year))
+    ss <- ceiling(apply(DLM_data@CAL[x, , ], 1, sum)/2)
+    if (MLtype == "dep") {
+      for (y in 1:length(year)) {
+        if (sum(DLM_data@CAL[x, y, ] > 0) > 0.25 * length(DLM_data@CAL[x, 
+          y, ])) {
+          temp2 <- sample(mlbin, ceiling(sum(DLM_data@CAL[x, y, 
+          ])/2), replace = T, prob = DLM_data@CAL[x, y, ])
+          mlen[y] <- mean(temp2[temp2 >= Lc], na.rm = TRUE)
+        }
       }
-      Z[i,]<-bhnoneq(year=year,mlen=mlen,ss=ss,K=Kc[i],Linf=Linfc[i],Lc=Lc,nbreaks=nbreaks,
-           styrs=ceiling(length(year)*((1:nbreaks)/(nbreaks+1))),stZ=rep(DLM_data@Mort[x],nbreaks+1))
-    }else{
+      Z[i, ] <- bhnoneq(year = year, mlen = mlen, ss = ss, K = Kc[i], 
+        Linf = Linfc[i], Lc = Lc, nbreaks = nbreaks, styrs = ceiling(length(year) * 
+          ((1:nbreaks)/(nbreaks + 1))), stZ = rep(DLM_data@Mort[x], 
+          nbreaks + 1))
+    } else {
       
-      #ind<-(which.min(((DLM_data@CAL_bins-DLM_data@LFS[x])^2)^0.5)-1):(length(DLM_data@CAL_bins)-1)
-      for(y in 1:length(year)) {
-	    if (sum(DLM_data@CAL[x,y,] > 0) > 0.25 * length(DLM_data@CAL[x,y,])) {
-	      temp2<-sample(mlbin,ceiling(sum(DLM_data@CAL[x,y,])/2),replace=T,prob=DLM_data@CAL[x,y,])
-              mlen[y]<-mean(temp2[temp2>=Lc],na.rm=TRUE)
-	    }  
-      }		
-      mlen<-mean(mlen[(length(mlen)-2):length(mlen)], na.rm=TRUE)
-      Z2[i]<-bheq(K=Kc[i],Linf=Linfc[i],Lc=Lc,Lbar=mlen)
+      # ind<-(which.min(((DLM_data@CAL_bins-DLM_data@LFS[x])^2)^0.5)-1):(length(DLM_data@CAL_bins)-1)
+      for (y in 1:length(year)) {
+        if (sum(DLM_data@CAL[x, y, ] > 0) > 0.25 * length(DLM_data@CAL[x, 
+          y, ])) {
+          temp2 <- sample(mlbin, ceiling(sum(DLM_data@CAL[x, y, 
+          ])/2), replace = T, prob = DLM_data@CAL[x, y, ])
+          mlen[y] <- mean(temp2[temp2 >= Lc], na.rm = TRUE)
+        }
+      }
+      mlen <- mean(mlen[(length(mlen) - 2):length(mlen)], na.rm = TRUE)
+      Z2[i] <- bheq(K = Kc[i], Linf = Linfc[i], Lc = Lc, Lbar = mlen)
     }
   }
-  # Z <- Z[,ncol(Z)] # last estimate of Z? Z needs to be vector reps long 
-  if(MLtype=="F")return(Z2)
-  if(MLtype=="dep")return(Z)
+  # Z <- Z[,ncol(Z)] # last estimate of Z? Z needs to be vector reps long
+  if (MLtype == "F") 
+    return(Z2)
+  if (MLtype == "dep") 
+    return(Z)
 }
 
-bheq<-function(K,Linf,Lc,Lbar){
-  K*(Linf-Lbar)/(Lbar-Lc)
+bheq <- function(K, Linf, Lc, Lbar) {
+  K * (Linf - Lbar)/(Lbar - Lc)
 }
 
-bhnoneq<-function(year,mlen,ss,K,Linf,Lc,nbreaks,styrs,stZ) {
-  mlen[mlen<=0|is.na(mlen)]<--99
-  ss[ss<=0|is.na(ss)|mlen==-99]<-0
-  stpar<-c(stZ,styrs)
-  # results <- optim(stpar,bhnoneq_LL,method="BFGS",year=year,Lbar=mlen,ss=ss,
-                   # nbreaks=nbreaks,K=K,Linf=Linf,Lc=Lc,control=list(maxit=1e6))
-  results <- optim(stpar,bhnoneq_LL,method="Nelder-Mead", year=year,Lbar=mlen,ss=ss,
-                   nbreaks=nbreaks,K=K,Linf=Linf,Lc=Lc,control=list(maxit=1e6),
-				   hessian=FALSE)					   
-  return(results$par[1:(nbreaks+1)])
+bhnoneq <- function(year, mlen, ss, K, Linf, Lc, nbreaks, styrs, stZ) {
+  mlen[mlen <= 0 | is.na(mlen)] <- -99
+  ss[ss <= 0 | is.na(ss) | mlen == -99] <- 0
+  stpar <- c(stZ, styrs)
+  # results <-
+  # optim(stpar,bhnoneq_LL,method='BFGS',year=year,Lbar=mlen,ss=ss,
+  # nbreaks=nbreaks,K=K,Linf=Linf,Lc=Lc,control=list(maxit=1e6))
+  results <- optim(stpar, bhnoneq_LL, method = "Nelder-Mead", year = year, 
+    Lbar = mlen, ss = ss, nbreaks = nbreaks, K = K, Linf = Linf, Lc = Lc, 
+    control = list(maxit = 1e+06), hessian = FALSE)
+  return(results$par[1:(nbreaks + 1)])
 }
 
-getdep<-function(lnFF,targ,Md,Linfd,Kd,t0d,AFSd,ad,bd,maxage,opt){
-
-   FF<-exp(lnFF)
-   Z<-rep(Md,maxage)
-   Z[1]<-0
-   Z[AFSd:maxage]<-Z[AFSd:maxage]+FF
-   for(a in 2:maxage)Z[a]<-Z[a-1]+Z[a]
-   Nd<-exp(-Z)
-   Nobs<-Nd
-   Nobs[1:max(1,(AFSd-1))]<-0
-   Ld<-Linfd*(1-exp(-Kd*(((1:maxage)-0.5)-t0d)))
-
-   if(opt)return(((sum(Nobs*Ld)/sum(Nobs))-targ)^2)
-   if(!opt){
-     Nd0<-exp(-Md*((1:maxage)-0.5))
-     Wd<-ad*Ld^bd
-     return((sum(Nd*Wd)/sum(Nd))/(sum(Nd0*Wd)/sum(Nd0)))
-   }
+getdep <- function(lnFF, targ, Md, Linfd, Kd, t0d, AFSd, ad, bd, maxage, 
+  opt) {
+  
+  FF <- exp(lnFF)
+  Z <- rep(Md, maxage)
+  Z[1] <- 0
+  Z[AFSd:maxage] <- Z[AFSd:maxage] + FF
+  for (a in 2:maxage) Z[a] <- Z[a - 1] + Z[a]
+  Nd <- exp(-Z)
+  Nobs <- Nd
+  Nobs[1:max(1, (AFSd - 1))] <- 0
+  Ld <- Linfd * (1 - exp(-Kd * (((1:maxage) - 0.5) - t0d)))
+  
+  if (opt) 
+    return(((sum(Nobs * Ld)/sum(Nobs)) - targ)^2)
+  if (!opt) {
+    Nd0 <- exp(-Md * ((1:maxage) - 0.5))
+    Wd <- ad * Ld^bd
+    return((sum(Nd * Wd)/sum(Nd))/(sum(Nd0 * Wd)/sum(Nd0)))
+  }
 }
 
-getr <- function(x,DLM_data,Mvec,Kvec,Linfvec,t0vec,hvec,maxage,r_reps=100){
-  r<-rep(NA,r_reps)
-  for(i in 1:r_reps){
-    log.r=log(0.3)
-
-    opt=optimize(demofn,lower=log(0.0001),upper=log(1.4),
-    M=Mvec[i],
-    amat=iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x]),
-    sigma=0.2,
-    K=Kvec[i],
-    Linf=Linfvec[i],
-    to=t0vec[i],
-    hR=hvec[i],
-    maxage=maxage,
-    a=DLM_data@wla[x],
-    b=DLM_data@wlb[x])
-    #demographic2(opt$minimum,M[x],ageM[x],0.2,K[x],Linf,t0,steepness[x],maxage,a,b)$r
-    r[i]<-exp(opt$minimum)
+getr <- function(x, DLM_data, Mvec, Kvec, Linfvec, t0vec, hvec, maxage, 
+  r_reps = 100) {
+  r <- rep(NA, r_reps)
+  for (i in 1:r_reps) {
+    log.r = log(0.3)
+    
+    opt = optimize(demofn, lower = log(1e-04), upper = log(1.4), M = Mvec[i], 
+      amat = iVB(DLM_data@vbt0[x], DLM_data@vbK[x], DLM_data@vbLinf[x], 
+        DLM_data@L50[x]), sigma = 0.2, K = Kvec[i], Linf = Linfvec[i], 
+      to = t0vec[i], hR = hvec[i], maxage = maxage, a = DLM_data@wla[x], 
+      b = DLM_data@wlb[x])
+    # demographic2(opt$minimum,M[x],ageM[x],0.2,K[x],Linf,t0,steepness[x],maxage,a,b)$r
+    r[i] <- exp(opt$minimum)
   }
   r
 }
 
-iVB<-function(t0,K,Linf,L) max(1, ((-log(1-L/Linf))/K+t0)) # Inverse Von-B
+iVB <- function(t0, K, Linf, L) max(1, ((-log(1 - L/Linf))/K + t0))  # Inverse Von-B
 
-DAAC<-function (x, DLM_data, reps = 100) # extended depletion-corrected average catch (Harford and Carruthers 2015)
-{
+
+
+#' Depletion Adjusted Average Catch
+#' 
+#' Essentially DCAC multiplied by 2*depletion and divided by BMSY/B0 (Bpeak)
+#' 
+#' 
+#' @usage DAAC(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the TAC recommendation
+#' @author W. Harford and T. Carruthers
+#' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
+#' formula for estimating sustainable yields in data-poor situations. ICES J.
+#' Mar. Sci. 66, 2267-2271. Harford W. and Carruthers, T. 2016. Simulation
+#' testing novel catch-based fisheries management. In draft, intended for Fish.
+#' Bull.
+#' @export DAAC
+DAAC <- function(x, DLM_data, reps = 100) {
+  # extended depletion-corrected average catch (Harford and Carruthers
+  # 2015)
   dependencies = "DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@FMSY_M, DLM_data@CV_FMSY_M, DLM_data@Dt, DLM_data@CV_Dt, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
   C_tot <- DLM_data@AvC[x] * DLM_data@t[x]
   Mdb <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])
   FMSY_M <- trlnorm(reps, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])
   Bt_K <- trlnorm(reps, DLM_data@Dt[x], DLM_data@CV_Dt[x])
-  if (any(is.na(c(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x])))) return(NA)
-  BMSY_K <- rbeta(reps, alphaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]), 
-                  betaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x]*DLM_data@CV_BMSY_B0[x]))
-  dcac<-C_tot/(DLM_data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
-  TAC<-dcac*Bt_K/BMSY_K
+  if (any(is.na(c(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x])))) 
+    return(NA)
+  BMSY_K <- rbeta(reps, alphaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x] * 
+    DLM_data@CV_BMSY_B0[x]), betaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x] * 
+    DLM_data@CV_BMSY_B0[x]))
+  dcac <- C_tot/(DLM_data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
+  TAC <- dcac * Bt_K/BMSY_K
   TACfilter(TAC)
 }
-class(DAAC)<-"DLM_output"
+class(DAAC) <- "DLM_output"
 
-HDAAC<-function (x, DLM_data, reps = 100) 
-{
+
+
+#' Hybrid Depletion Adjusted Average Catch
+#' 
+#' Essentially DCAC multiplied by 2*depletion and divided by BMSY/B0 (Bpeak)
+#' when below BMSY, and DCAC above BMSY
+#' 
+#' 
+#' @usage HDAAC(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the TAC recommendation
+#' @author W. Harford and T. Carruthers
+#' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
+#' formula for estimating sustainable yields in data-poor situations. ICES J.
+#' Mar. Sci. 66, 2267-2271. Harford W. and Carruthers, T. 2016. Testing novel
+#' catch-based fisheries management procedures.
+#' @export HDAAC
+HDAAC <- function(x, DLM_data, reps = 100) {
   dependencies = "DLM_data@AvC, DLM_data@t, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@Dt, DLM_data@CV_Dt, DLM_data@BMSY_B0, DLM_data@CV_BMSY_B0"
   C_tot <- DLM_data@AvC[x] * DLM_data@t[x]
   Mdb <- trlnorm(reps, DLM_data@Mort[x], DLM_data@CV_Mort[x])
   FMSY_M <- trlnorm(reps, DLM_data@FMSY_M[x], DLM_data@CV_FMSY_M[x])
   Bt_K <- trlnorm(reps, DLM_data@Dt[x], DLM_data@CV_Dt[x])
-  if (any(is.na(c(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x])))) return(NA)
-  BMSY_K <- rbeta(reps, alphaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x] * DLM_data@CV_BMSY_B0[x]), 
-                  betaconv(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x]))
-  dcac<-C_tot/(DLM_data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
-  ddcac<-dcac*Bt_K/BMSY_K
-  TAC<-dcac
-  TAC[Bt_K<BMSY_K]<-ddcac[Bt_K<BMSY_K]
+  if (any(is.na(c(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x])))) 
+    return(NA)
+  BMSY_K <- rbeta(reps, alphaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x] * 
+    DLM_data@CV_BMSY_B0[x]), betaconv(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x]))
+  dcac <- C_tot/(DLM_data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
+  ddcac <- dcac * Bt_K/BMSY_K
+  TAC <- dcac
+  TAC[Bt_K < BMSY_K] <- ddcac[Bt_K < BMSY_K]
   TACfilter(TAC)
 }
-class(HDAAC)<-"DLM_output"
+class(HDAAC) <- "DLM_output"
 
-AvC<-function(x,DLM_data,reps=100)rlnorm(reps,log(mean(DLM_data@Cat[x,],na.rm=T)),0.2)
-class(AvC)<-"DLM_output"
 
-LBSPR_ItTAC <- function(x, DLM_data, yrsmth=1,reps=reps) {
- dependencies="DLM_data@CAL, DLM_data@CAL_bins, DLM_data@vbLinf, DLM_data@vbK, DLM_data@Mort, LM_data@vbK, DLM_data@L50, DLM_data@L95, DLM_data@wlb" 
-  if (is.na(DLM_data@MPrec[x])) return(NA)
-  MiscList <- LBSPR(x, DLM_data, yrsmth=yrsmth,reps=reps)
-  if(all(is.na(MiscList[[1]]))) return(rep(NA, 6))
-  if(all(is.na(MiscList[[1]][,2]))) return(rep(NA, 6))
-  XX <- 1:4 
-  YY <- MiscList[[1]][,2][(length(MiscList[[1]][,2]) - (max(XX)-1)):length(MiscList[[1]][,2])]
-  
-  EstSPR <- YY[length(YY)]
-  
-  TgSPR <- 0.4
-  h <- DLM_data@steep[x]
-  SPRLim <- -(2*(h-1))/(3*h+1) # SPR that results in 0.5 R0
-  
-  phi1 <- 6
-  phi2 <- 1
-  
-  MaxDw <- -0.3
-  MaxUp <- 0.3
-  
-  minSlope <- 0.01
-  
-  Slope <- coef(lm(YY~XX))[2]  
-  # if (abs(Slope) < minSlope) Slope <- 0 
-  Dist <- EstSPR - TgSPR 
-  
-  # Control Rule #
-  Mod <- 0 
-  Buff <- 0.1
-  Buffer <- c(TgSPR - Buff,  TgSPR + Buff)
-  inBuff <- FALSE
-  belowTG <- FALSE 
-  aboveTG <- FALSE
-  slopeUp <- FALSE
-  slopeDw <- FALSE 
-  belowLim <- FALSE
-  if (Dist < 0) belowTG <- TRUE 
-  if (Dist > 0) aboveTG <- TRUE 
-  if (EstSPR > min(Buffer) & EstSPR < max(Buffer)) inBuff <- TRUE
-  if (Slope <= 0) slopeDw <- TRUE
-  if (Slope > 0) slopeUp <- TRUE
-  if (EstSPR < SPRLim) belowLim <- TRUE
-   
-  # If within buffer zone - only slope
-  if (inBuff) Mod <- phi1 * Slope
-  if (slopeUp & aboveTG) Mod <- phi1 * Slope +  phi2 * Dist
-  if (slopeUp & belowTG) Mod <- phi1 * Slope 
-  
-  if (slopeDw & aboveTG) Mod <- phi1 * Slope 
-  if (slopeDw & belowTG) Mod <- phi1 * Slope +  phi2 * Dist
-  
-  if (belowLim) Mod <- MaxDw
-  
-  Mod[Mod > MaxUp] <- MaxUp
-  Mod[Mod < MaxDw] <- MaxDw
-  Mod <- Mod + 1 
- 
-  TAC <- DLM_data@MPrec[x] * Mod
-  TAC <- TACfilter(TAC)
- 
-  Out <- list()
-  Out[[1]] <- TAC 
-  Out[[2]] <- MiscList
- 
-  return(Out) 
-}
-class(LBSPR_ItTAC)<-"DLM_output"
 
 # A generic VPA (Walters and Licandeo UBC)
-VPA<-function(x, DLM_data, reps=reps) {
-   
+VPA <- function(x, DLM_data, reps = reps) {
+  
   # now do optimization for FMSY
-  dependencies="DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@CV_wla, DLM_data@wlb, DLM_data@CV_wlb, DLM_data@L50, DLM_data@CV_L50, DLM_data@CAA, DLM_data@steep, DLM_data@CV_steep, DLM_data@LFS, DLM_data@CV_LFS, DLM_data@LFC, DLM_data@CV_LFC, DLM_data@Cat"
-  CAAind<-(DLM_data@CAA[x,,]==0)*array(rep(1:DLM_data@MaxAge,each=length(DLM_data@CAA[x,,1])),dim(DLM_data@CAA[x,,]))
-  maxage<-min(CAAind[CAAind!=0]) 
-  maxage<-which.min(abs(cumsum(apply(DLM_data@CAA[x,,],2,sum))/sum(DLM_data@CAA[x,,])-0.75))
-  CAAv<-DLM_data@CAA[x,,1:maxage]
-  CAAv[,maxage]<-CAAv[,maxage]+apply(DLM_data@CAA[x,,(maxage+1):length(DLM_data@CAA[x,1,])],1,sum)
-
-  TAC<-Bt_K<-rep(NA,reps)
+  dependencies = "DLM_data@Mort, DLM_data@CV_Mort, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@MaxAge, DLM_data@wla, DLM_data@CV_wla, DLM_data@wlb, DLM_data@CV_wlb, DLM_data@L50, DLM_data@CV_L50, DLM_data@CAA, DLM_data@steep, DLM_data@CV_steep, DLM_data@LFS, DLM_data@CV_LFS, DLM_data@LFC, DLM_data@CV_LFC, DLM_data@Cat"
+  CAAind <- (DLM_data@CAA[x, , ] == 0) * array(rep(1:DLM_data@MaxAge, 
+    each = length(DLM_data@CAA[x, , 1])), dim(DLM_data@CAA[x, , ]))
+  maxage <- min(CAAind[CAAind != 0])
+  maxage <- which.min(abs(cumsum(apply(DLM_data@CAA[x, , ], 2, sum))/sum(DLM_data@CAA[x, 
+    , ]) - 0.75))
+  CAAv <- DLM_data@CAA[x, , 1:maxage]
+  CAAv[, maxage] <- CAAv[, maxage] + apply(DLM_data@CAA[x, , (maxage + 
+    1):length(DLM_data@CAA[x, 1, ])], 1, sum)
   
-  for(i in 1:reps){
+  TAC <- Bt_K <- rep(NA, reps)
   
-    Mc<-trlnorm(1,DLM_data@Mort[x],DLM_data@CV_Mort[x])
-    hc<-trlnorm(1,DLM_data@steep[x],DLM_data@CV_steep[x])
-    Linfc<-trlnorm(1,DLM_data@vbLinf[x],DLM_data@CV_vbLinf[x])
-    Kc<-trlnorm(1,DLM_data@vbK[x],DLM_data@CV_vbK[x])
-    t0c<--trlnorm(1,-DLM_data@vbt0[x],DLM_data@CV_vbt0[x])
-    LFSc<-trlnorm(1,DLM_data@LFS[x],DLM_data@CV_LFS[x])
-    LFCc<-trlnorm(1,DLM_data@LFC[x],DLM_data@CV_LFC[x])
-    AMc<-trlnorm(1,iVB(DLM_data@vbt0[x],DLM_data@vbK[x],DLM_data@vbLinf[x],DLM_data@L50[x]),DLM_data@CV_L50[x])
-    ac<-trlnorm(1,DLM_data@wla[x],DLM_data@CV_wla[x])
-    bc<-trlnorm(1,DLM_data@wlb[x],DLM_data@CV_wlb[x])
+  for (i in 1:reps) {
     
-    pmat<-rep(1,maxage)
-    pmat[1:ceiling(AMc)]<-0
-    age<-1:maxage
-    la<-DLM_data@vbLinf[x]*(1-exp(-DLM_data@vbK[x]*((age-DLM_data@vbt0[x]))))
-    wa<-ac*la^bc
+    Mc <- trlnorm(1, DLM_data@Mort[x], DLM_data@CV_Mort[x])
+    hc <- trlnorm(1, DLM_data@steep[x], DLM_data@CV_steep[x])
+    Linfc <- trlnorm(1, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
+    Kc <- trlnorm(1, DLM_data@vbK[x], DLM_data@CV_vbK[x])
+    t0c <- -trlnorm(1, -DLM_data@vbt0[x], DLM_data@CV_vbt0[x])
+    LFSc <- trlnorm(1, DLM_data@LFS[x], DLM_data@CV_LFS[x])
+    LFCc <- trlnorm(1, DLM_data@LFC[x], DLM_data@CV_LFC[x])
+    AMc <- trlnorm(1, iVB(DLM_data@vbt0[x], DLM_data@vbK[x], DLM_data@vbLinf[x], 
+      DLM_data@L50[x]), DLM_data@CV_L50[x])
+    ac <- trlnorm(1, DLM_data@wla[x], DLM_data@CV_wla[x])
+    bc <- trlnorm(1, DLM_data@wlb[x], DLM_data@CV_wlb[x])
     
-    Cat<-DLM_data@Cat[x,]
-    Cat[1]<-Cat[2] # temporary fix until effort simulation function gets sorted
+    pmat <- rep(1, maxage)
+    pmat[1:ceiling(AMc)] <- 0
+    age <- 1:maxage
+    la <- DLM_data@vbLinf[x] * (1 - exp(-DLM_data@vbK[x] * ((age - 
+      DLM_data@vbt0[x]))))
+    wa <- ac * la^bc
+    
+    Cat <- DLM_data@Cat[x, ]
+    Cat[1] <- Cat[2]  # temporary fix until effort simulation function gets sorted
     
     
-    CAAv[,maxage][CAAv[,maxage]==0]<-1
+    CAAv[, maxage][CAAv[, maxage] == 0] <- 1
     
     
-    opt=optim(c(-3,-2),VPAopt,Cat=CAAv,yt=DLM_data@Ind[x,],S=exp(-Mc),maxage=maxage,wa=wa,pmat=pmat,method="L-BFGS-B",lower=c(-5,-5),upper=c(5,5))
-    out=VPAopt(opt$par,Cat=CAAv,yt=DLM_data@Ind[x,],S=exp(-DLM_data@Mort[x]),maxage=maxage,wa=wa,pmat=pmat,opt=F)
+    opt = optim(c(-3, -2), VPAopt, Cat = CAAv, yt = DLM_data@Ind[x, 
+      ], S = exp(-Mc), maxage = maxage, wa = wa, pmat = pmat, method = "L-BFGS-B", 
+      lower = c(-5, -5), upper = c(5, 5))
+    out = VPAopt(opt$par, Cat = CAAv, yt = DLM_data@Ind[x, ], S = exp(-DLM_data@Mort[x]), 
+      maxage = maxage, wa = wa, pmat = pmat, opt = F)
     
-    fit2<-optimize(VPAFMSY,log(c(0.0001,3)),Mc=Mc,hc=hc,maxage=maxage,vul=out$va,Linfc=Linfc,Kc=Kc,t0c=t0c,AMc=AMc,ac=ac,bc=bc)
-    FMSY<-VPAFMSY(fit2$minimum,Mc=Mc,hc=hc,,maxage=maxage,vul=out$va,Linfc=Linfc,Kc=Kc,t0c=t0c,AMc=AMc,ac=ac,bc=bc,opt=F)
-    if ((FMSY / Mc) > 3) FMSY <- 3 * Mc
-    TAC[i]<-out$bt[length(out$bt)]*FMSY
-  }   
-
+    fit2 <- optimize(VPAFMSY, log(c(1e-04, 3)), Mc = Mc, hc = hc, maxage = maxage, 
+      vul = out$va, Linfc = Linfc, Kc = Kc, t0c = t0c, AMc = AMc, 
+      ac = ac, bc = bc)
+    FMSY <- VPAFMSY(fit2$minimum, Mc = Mc, hc = hc, , maxage = maxage, 
+      vul = out$va, Linfc = Linfc, Kc = Kc, t0c = t0c, AMc = AMc, 
+      ac = ac, bc = bc, opt = F)
+    if ((FMSY/Mc) > 3) 
+      FMSY <- 3 * Mc
+    TAC[i] <- out$bt[length(out$bt)] * FMSY
+  }
+  
   TACfilter(TAC)
   
 }
-class(VPA)<-"DLM_output"
+class(VPA) <- "DLM_output"
 
-#VPAFMSY<-function(lnFMc,Mc,hc,maxage,vul,Linfc,Kc,t0c,AMc,ac,bc,opt=T,ny=50){
+# VPAFMSY<-function(lnFMc,Mc,hc,maxage,vul,Linfc,Kc,t0c,AMc,ac,bc,opt=T,ny=50){
+
+VPAopt = function(theta, Cat, yt, S, maxage, wa, pmat, opt = T, usewat = F) {
   
-VPAopt=function(theta,Cat,yt,S,maxage,wa,pmat,opt=T,usewat = F) {  
- 
-  Uterm<-exp(theta[1])/(1+exp(theta[1]))
-  minagecom=1
-  minagesel=ceiling(maxage*0.66)
-  avg_yrsel<-max(2,(min(5,floor(dim(Cat)[1]/2))))
+  Uterm <- exp(theta[1])/(1 + exp(theta[1]))
+  minagecom = 1
+  minagesel = ceiling(maxage * 0.66)
+  avg_yrsel <- max(2, (min(5, floor(dim(Cat)[1]/2))))
   
-  sig = exp(theta[2]); 
+  sig = exp(theta[2])
   tiny = 1e-10
-  n = dim(Cat)[1]; A=dim(Cat)[2]
-  Nat = matrix(NA,n,A)	 # Numbers-at-age matrix
-  Ut = rep(NA,length=n)
-  ai = 1:(A-2)
-  va = c(plogis(1:(A-4),2,0.2),rep(1,4));	# Initial values at the terminal selectivy
+  n = dim(Cat)[1]
+  A = dim(Cat)[2]
+  Nat = matrix(NA, n, A)  # Numbers-at-age matrix
+  Ut = rep(NA, length = n)
+  ai = 1:(A - 2)
+  va = c(plogis(1:(A - 4), 2, 0.2), rep(1, 4))  # Initial values at the terminal selectivy
   Ut[n] = Uterm
   
-  for(j in 1:15) {                  # Numerical convergence to terminal F
-    #print(Ut)
-    Nat[n,]=Cat[n,]/(Uterm*va)  		# Initialize the terminal year
+  for (j in 1:15) {
+    # Numerical convergence to terminal F print(Ut)
+    Nat[n, ] = Cat[n, ]/(Uterm * va)  # Initialize the terminal year
     
-    for(i in (n-1):1) {
-      Nat[i,ai]  = Nat[i+1,ai+1]/S + Cat[i,ai]
-      Nat[i,A-1] = (Nat[i+1,A]/S + Cat[i,A-1] + Cat[i,A])*( Cat[i,A-1]/( Cat[i,A-1] + Cat[i,A] + tiny) )
-      Nat[i,A]   = (Nat[i+1,A]/S + Cat[i,A-1] + Cat[i,A])*( Cat[i,A]  /( Cat[i,A-1] + Cat[i,A] + tiny) ) 
+    for (i in (n - 1):1) {
+      Nat[i, ai] = Nat[i + 1, ai + 1]/S + Cat[i, ai]
+      Nat[i, A - 1] = (Nat[i + 1, A]/S + Cat[i, A - 1] + Cat[i, A]) * 
+        (Cat[i, A - 1]/(Cat[i, A - 1] + Cat[i, A] + tiny))
+      Nat[i, A] = (Nat[i + 1, A]/S + Cat[i, A - 1] + Cat[i, A]) * 
+        (Cat[i, A]/(Cat[i, A - 1] + Cat[i, A] + tiny))
     }
-    ##############################################
-    ### modify this parameters if need it   #####
-    ##############################################
+    ############################################## modify this parameters if need it #####
     
     # minagesel = 8
     minagecom = 1
     
-    Ut = rowSums(Cat[,minagesel:(A-1)])/rowSums(Nat[,minagesel:(A-1)])  	# Exploitation rate for fully recruited fish
-    #    Ut[n] = 0.4
-    vat=Cat/Nat/Ut					                     	                        # relative vulnerablility at age
-    va=colMeans(vat[(n-avg_yrsel):(n-minagecom),])				                # update terminal vul
+    Ut = rowSums(Cat[, minagesel:(A - 1)])/rowSums(Nat[, minagesel:(A - 
+      1)])  # Exploitation rate for fully recruited fish
+    # Ut[n] = 0.4
+    vat = Cat/Nat/Ut  # relative vulnerablility at age
+    va = colMeans(vat[(n - avg_yrsel):(n - minagecom), ])  # update terminal vul
     va[minagesel:A] = 1
-  
+    
   }
   
-  vat[is.na(vat)]<-1
-  Ut[n]=Uterm
-  if(usewat==T) vbt = rowSums((Nat*vat)*wa) else vbt = (Nat*vat)%*%wa
-  if(usewat==T) bt = as.vector(rowSums(Nat * wa)) else bt = as.vector(Nat %*% wa)
-  fec = pmat*wa
+  vat[is.na(vat)] <- 1
+  Ut[n] = Uterm
+  if (usewat == T) 
+    vbt = rowSums((Nat * vat) * wa) else vbt = (Nat * vat) %*% wa
+  if (usewat == T) 
+    bt = as.vector(rowSums(Nat * wa)) else bt = as.vector(Nat %*% wa)
+  fec = pmat * wa
   zt = log(yt/vbt)
   epsilon = zt - mean(zt)
-  if(usewat==T) ssb = as.vector(rowSums(Nat * fec)) else ssb = as.vector(Nat %*% fec)
-  predcpue = exp(mean(zt))*vbt ### check again if bt or vbt
+  if (usewat == T) 
+    ssb = as.vector(rowSums(Nat * fec)) else ssb = as.vector(Nat %*% fec)
+  predcpue = exp(mean(zt)) * vbt  ### check again if bt or vbt
   cpue_q = yt/exp(mean(zt))
   qhat = exp(mean(epsilon))
   
-  lnl=sum(dnorm(epsilon,mean=0,sd=sig,log=T))
+  lnl = sum(dnorm(epsilon, mean = 0, sd = sig, log = T))
   
-  if(opt){
+  if (opt) {
     return(-lnl)
-  }else{
-  #   ss = sum(epsilon^2)
-  #   lnl = 0.5*n*log(ss) 
-   return(list(Uterm=Uterm,va=va,rt=Nat[,1],ssb=ssb,yt=yt,vbt=vbt,cpue_q=cpue_q,Nat=Nat,vat=vat
-              ,Ut=Ut,bt=bt,predcpue=predcpue,epsilon=epsilon/sig,lnl=lnl,qhat=qhat,
-              #               ,Ut=Ut,bt=bt,predcpue=predcpue,lnl=lnl,
-              minagesel=minagesel,minagecom=minagecom,avg_yrsel=avg_yrsel))
+  } else {
+    # ss = sum(epsilon^2) lnl = 0.5*n*log(ss)
+    return(list(Uterm = Uterm, va = va, rt = Nat[, 1], ssb = ssb, yt = yt, 
+      vbt = vbt, cpue_q = cpue_q, Nat = Nat, vat = vat, Ut = Ut, 
+      bt = bt, predcpue = predcpue, epsilon = epsilon/sig, lnl = lnl, 
+      qhat = qhat, minagesel = minagesel, minagecom = minagecom, 
+      avg_yrsel = avg_yrsel))
   }
   
   
 }
 
-VPAFMSY<-function(lnFMc,Mc,hc,maxage,vul,Linfc,Kc,t0c,AMc,ac,bc,opt=T,ny=50){
+VPAFMSY <- function(lnFMc, Mc, hc, maxage, vul, Linfc, Kc, t0c, AMc, ac, 
+  bc, opt = T, ny = 50) {
   
-  FMc<-exp(lnFMc)
+  FMc <- exp(lnFMc)
   
-  Mac<-rep(1,maxage)
-  Mac[1:max(1,floor(AMc))]<-0
-  Lac<-Linfc*(1-exp(-Kc*((1:maxage)-t0c)))
-  Wac<-ac*Lac^bc
-  R0c<-1
-  N<-exp(-Mc*((1:maxage)-1))*R0c
-  SSN<-Mac*N   # Calculate initial spawning stock numbers
-  Biomass<-N*Wac
-  SSB<-SSN*Wac                               # Calculate spawning stock biomass
+  Mac <- rep(1, maxage)
+  Mac[1:max(1, floor(AMc))] <- 0
+  Lac <- Linfc * (1 - exp(-Kc * ((1:maxage) - t0c)))
+  Wac <- ac * Lac^bc
+  R0c <- 1
+  N <- exp(-Mc * ((1:maxage) - 1)) * R0c
+  SSN <- Mac * N  # Calculate initial spawning stock numbers
+  Biomass <- N * Wac
+  SSB <- SSN * Wac  # Calculate spawning stock biomass
   
-  B0<-sum(Biomass)
-  SSB0<-sum(SSB)
-  SSN0<-SSN
-  SSBpR<-sum(SSB)/R0c                              # Calculate spawning stock biomass per recruit
-  SSNpR<-SSN/R0c
+  B0 <- sum(Biomass)
+  SSB0 <- sum(SSB)
+  SSN0 <- SSN
+  SSBpR <- sum(SSB)/R0c  # Calculate spawning stock biomass per recruit
+  SSNpR <- SSN/R0c
   
-  N<-N/2
-  SSN<-Mac*N   # Calculate initial spawning stock numbers
-  Biomass<-N*Wac
-  SSB<-SSN*Wac
+  N <- N/2
+  SSN <- Mac * N  # Calculate initial spawning stock numbers
+  Biomass <- N * Wac
+  SSB <- SSN * Wac
   
-  for(y in 1:ny){
-    # set up some indices for indexed calculation
-    # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
-    Zc<-FMc*vul+Mc
-    CN<-N*(1-exp(-Zc))*(FMc/Zc)
-    CB<-CN*Wac
-    Biomass<-N*Wac
-    N[2:maxage]<-N[1:(maxage-1)]*exp(-Zc[1:(maxage-1)])         # Total mortality
-    N[1]<-(0.8*R0c*hc*sum(SSB))/(0.2*SSBpR*R0c*(1-hc)+(hc-0.2)*sum(SSB))  # Recruitment assuming regional R0 and stock wide steepness
-    #print(N[1])
-    SSN<-N*Mac
-    SSB<-SSN*Wac
+  for (y in 1:ny) {
+    # set up some indices for indexed calculation Fishing mortality rate
+    # determined by effort, catchability, vulnerability and spatial
+    # preference according to biomass
+    Zc <- FMc * vul + Mc
+    CN <- N * (1 - exp(-Zc)) * (FMc/Zc)
+    CB <- CN * Wac
+    Biomass <- N * Wac
+    N[2:maxage] <- N[1:(maxage - 1)] * exp(-Zc[1:(maxage - 1)])  # Total mortality
+    N[1] <- (0.8 * R0c * hc * sum(SSB))/(0.2 * SSBpR * R0c * (1 - hc) + 
+      (hc - 0.2) * sum(SSB))  # Recruitment assuming regional R0 and stock wide steepness
+    # print(N[1])
+    SSN <- N * Mac
+    SSB <- SSN * Wac
     
-  } # end of year
+  }  # end of year
   
-  if(opt){return(-sum(CB))
-  }else{return(FMc)
+  if (opt) {
+    return(-sum(CB))
+  } else {
+    return(FMc)
   }
 }
 
 # A reference MP with zero(ish) catch
-NFref <- function (x, DLM_data, reps = 100) {
+
+
+#' No Fishing Reference MP
+#' 
+#' A reference MP that sets annual catch to zero (or very close to it). Used
+#' for looking at variability in stock with no fishing.
+#' 
+#' 
+#' @usage NFref(x, DLM_data, reps = 100)
+#' @param x A position in a data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of stochastic samples of the quota recommendation
+#' @return A TAC of 0.01
+#' @author A. Hordyk
+#' @export NFref
+NFref <- function(x, DLM_data, reps = 100) {
   rep(0.01, reps)
 }
-class(NFref)<-"DLM_output"
+class(NFref) <- "DLM_output"
 
-L95target<-function(x,DLM_data,reps=100,yrsmth=5,buffer=0.0){
+
+
+#' A management procedure that adjusts the TAC up/down from reference (target)
+#' level (that is a fraction of mean recent premanagement catches) to reach a
+#' target mean length of fish caught.
+#' 
+#' This MP is based on Ltarget1 proposed by Geromont and Butterworth 2014, but
+#' here the target and limit mean lengths are based on the length at maturity
+#' distribution rather than an arbitrary multiplicative of the mean length.
+#' 
+#' 
+#' @usage L95target(x, DLM_data, reps = 100, yrsmth = 5, buffer=0)
+#' @param x A position in data-limited methods data object
+#' @param DLM_data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param yrsmth Years over which to calculate the mean historical catch
+#' @param buffer Parameter controlling the fraction of mean catch to set the
+#' reference (or target) TAC level - acts as a precautionary buffer
+#' @return A numeric vector of TAC recommendations
+#' @author HF Geromont
+#' @references Geromont, H.F., Butterworth, D.S. 2014. Generic management
+#' procedures for data-poor fisheries; forecasting with few data. ICES J. Mar.
+#' Sci. doi:10.1093/icesjms/fst232
+#' @export L95target
+L95target <- function(x, DLM_data, reps = 100, yrsmth = 5, buffer = 0) {
   
-  # Set target length to L95 and limit to 0.9L50
-  # Alternative targets TACstar depending on buffer value  
+  # Set target length to L95 and limit to 0.9L50 Alternative targets
+  # TACstar depending on buffer value
   
-  dependencies="DLM_data@Cat, DLM_data@Year, DLM_data@LHYear, DLM_data@ML, DLM_data@L50, DLM_data@L95"
+  dependencies = "DLM_data@Cat, DLM_data@Year, DLM_data@LHYear, DLM_data@ML, DLM_data@L50, DLM_data@L95"
   
-  ind<-(length(DLM_data@Year)-(yrsmth-1)):length(DLM_data@Year) # recent 5 years
-  ylast<-(DLM_data@LHYear-DLM_data@Year[1])+1 #last historical year
-  ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
-  C_dat<-DLM_data@Cat[x,ind2]
-  TACstar<-(1-buffer)*trlnorm(reps,mean(C_dat),DLM_data@CV_Cat/(yrsmth^0.5))
-  Lrecent<-mean(DLM_data@ML[ind])
-  Ltarget<-DLM_data@L95[x]
-  L0<-0.9*DLM_data@L50[x]
-  if(Lrecent>L0){TAC<-0.5*TACstar*(1+((Lrecent-L0)/(Ltarget-L0)))}
-  else{TAC<-0.5*TACstar*(Lrecent/L0)^2}
+  ind <- (length(DLM_data@Year) - (yrsmth - 1)):length(DLM_data@Year)  # recent 5 years
+  ylast <- (DLM_data@LHYear - DLM_data@Year[1]) + 1  #last historical year
+  ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
+  C_dat <- DLM_data@Cat[x, ind2]
+  TACstar <- (1 - buffer) * trlnorm(reps, mean(C_dat), DLM_data@CV_Cat/(yrsmth^0.5))
+  Lrecent <- mean(DLM_data@ML[ind])
+  Ltarget <- DLM_data@L95[x]
+  L0 <- 0.9 * DLM_data@L50[x]
+  if (Lrecent > L0) {
+    TAC <- 0.5 * TACstar * (1 + ((Lrecent - L0)/(Ltarget - L0)))
+  } else {
+    TAC <- 0.5 * TACstar * (Lrecent/L0)^2
+  }
   TACfilter(TAC)
-}  
-class(L95target)<-"DLM_output"
+}
+class(L95target) <- "DLM_output"
 
-# SCA<-function(x,DLM_data,reps=100){ # Requires a character string DLMexe (e.g. "C:/DLMexe") that represents the 
-  
-  # dependencies=""
-  
-  # ny<-dim(DLM_data@CAA)[2]
-  # na<-dim(DLM_data@CAA)[3]
-  
-  # write starter file ---------------------------------------------------------------------------------------------------------------------------------
-  
-  # starterfile=paste(DLMexe,"SCA/Starter.ss",sep="/")
-  # write("SCA.dat",starterfile,1,append=F)
-  # write("SCA.ctl",starterfile,1,append=T)
-  # write(0,starterfile,1,append=T) # use init values
-  # write(1,starterfile,1,append=T) # run display detail (0,1,2)
-  # write(1,starterfile,1,append=T) # detailed age-structured reports in REPORT.SSO (0,1) 
-  
-  # write(0,starterfile,1,append=T) # write detailed checkup.sso file (0,1)
-  # write(1,starterfile,1,append=T) # write parm values to ParmTrace.sso
-  # write(0,starterfile,1,append=T) # write to cumreport.sso (0=no, 1=like$tiemseries; 2=add survey fits)
-  
-  # write(1,starterfile,1,append=T) # include prior like for non-estimated parameters (0,1)
-  # write(0,starterfile,1,append=T) # use soft boundaries to aid convergence (0,1) (recommended)
-  # write(3,starterfile,1,append=T) # Number of data files to produce: 1st is input, 2nd is estimates, 3rd and higher are bootstrap
-  
-  # write(10,starterfile,1,append=T) # Turn off estimation for parameters entering after this phase
-  # write(10,starterfile,1,append=T) # MCeval burn interval
-  # write(2,starterfile,1,append=T) # MCeval thin interval
-  
-  # write(0,starterfile,1,append=T) # jitter initial parm value by this fraction
-  # write(-1,starterfile,1,append=T) # min yr for sdreport outputs (-1 for styr)
-  # write(-2,starterfile,1,append=T) # max yr for sdreport outputs
-  
-  # write(0,starterfile,1,append=T) # N individual STD years 
-  # write(0.001,starterfile,1,append=T) # final convergence criteria (e.g. 1.0e-04)
-  # write(0,starterfile,1,append=T) # retrospective year relative to end year (e.g. -4)
-  
-  # write(1,starterfile,1,append=T) # min age for calc of summary biomass
-  # write(2,starterfile,1,append=T) # Depletion basis:  denom is: 0=skip; 1=rel X*B0; 2=rel X*Bmsy; 3=rel X*B_styr
-  # !!!!!!!!!!!!!!!! 
-  # write("1.0",starterfile,1,append=T) # Fraction (X) for Depletion denominator (e.g. 0.4)
-  
-  # write(2,starterfile,1,append=T) # SPR_report_basis:  0=skip; 1=(1-SPR)/(1-SPR_tgt); 2=(1-SPR)/(1-SPR_MSY); 3=(1-SPR)/(1-SPR_Btarget); 4=rawSPR
-  # write(4,starterfile,1,append=T) # F_report_units: 0=skip; 1=exploitation(Bio); 2=exploitation(Num); 3=sum(Frates); 4=true F for range of ages
-  # write(c(floor(max(1,DLM_data@MaxAge/4)), ceiling(DLM_data@MaxAge/3)),starterfile,2,append=T) #_min and max age over which average F will be calculated
-  
-  # write(2,starterfile,1,append=T) # F_report_basis: 0=raw; 1=F/Fspr; 2=F/Fmsy ; 3=F/Fbtgt
-  # write(999,starterfile,1,append=T) # check value for end of file
-  
-  
-  
-  # write control file ---------------------------------------------------------------------------------------------------------------------------------
-  
-  # ctlfile=paste(DLMexe,"SCA/SCA.ctl",sep="/")
-  
-  # write(1,ctlfile,1,append=F) #_N_Growth_Patterns
-  # write(1,ctlfile,1,append=T) #_N_Morphs_Within_GrowthPattern
-  # write(0,ctlfile,1,append=T) #_Nblock_Patterns
-  # write(0.5,ctlfile,1,append=T) #_fracfemale
-  # write(0,ctlfile,1,append=T) #_natM_type:_0=1Parm; 1=N_breakpoints;_2=Lorenzen;_3=agespecific;_4=agespec_withseasinterpolate
-  
-  # write(1,ctlfile,1,append=T) # GrowthModel: 1=vonBert with L1&L2; 2=Richards with L1&L2; 3=age_speciific_K; 4=not implemented
-  # write(0,ctlfile,1,append=T) #_Growth_Age_for_L1  !!!!!!!
-  # write(999,ctlfile,1,append=T) #_Growth_Age_for_L2 (999 to use as Linf)
-  
-  # write(0,ctlfile,1,append=T) #_SD_add_to_LAA (set to 0.1 for SS2 V1.x compatibility)
-  # write(0,ctlfile,1,append=T) #_CV_Growth_Pattern:  0 CV=f(LAA); 1 CV=F(A); 2 SD=F(LAA); 3 SD=F(A); 4 logSD=F(A)
-  # write(1,ctlfile,1,append=T) #_maturity_option:  1=length logistic; 2=age logistic; 3=read age-maturity matrix by growth_pattern; 4=read age-fecundity; 5=read fec and wt from wtatage.ss
-  
-  # write(1,ctlfile,1,append=T) #_First_Mature_Age
-  # !!!!!!!!!!!!!!!!!!!!
-  # write(1,ctlfile,1,append=T) #_fecundity option:(1)eggs=Wt*(a+b*Wt);(2)eggs=a*L^b;(3)eggs=a*Wt^b; (4)eggs=a+b*L; (5)eggs=a+b*W
-  # write(0,ctlfile,1,append=T) #_hermaphroditism option:  0=none; 1=age-specific fxn
-  
-  # write(1,ctlfile,1,append=T) #_parameter_offset_approach (1=none, 2= M, G, CV_G as offset from female-GP1, 3=like SS2 V1.x)
-  # !!!!!!!!!!!!!!!!!!!!
-  # write(2,ctlfile,1,append=T) #_env/block/dev_adjust_method (1=standard; 2=logistic transform keeps in base parm bounds; 3=standard w/ no bound check)
-  
-  # female
-  # write(paste(round(DLM_data@Mort[x]*0.9,3), round(DLM_data@Mort[x]*1.1,3),round(DLM_data@Mort[x],3),round(DLM_data@Mort[x],3),-1,0.1,-3,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)                 # NatM_p_1_Fem_GP_1
-  # write(paste(0,0,0,0,-1,10,-3,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)                                                                                       # L_at_Amin_Fem_GP_1
-  # write(paste(round(DLM_data@vbLinf[x]*0.9,3),round(DLM_data@vbLinf[x]*1.1,3), round(DLM_data@vbLinf[x],3),round(DLM_data@vbLinf[x],3),-1,0.1,-3,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)         # L_at_Amax_Fem_GP_1 
-  
-  # write(paste(round(DLM_data@vbK[x]*0.9,3),round(DLM_data@vbK[x]*1.1,3), round(DLM_data@vbK[x],3),round(DLM_data@vbK[x],3),-1,0.1,-3,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)                     # VonBert_K_Fem_GP_1
-  # write(paste(0.05,0.25,0.1,0.1,-1,0.8,-3,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)                                                                            # CV_young_Fem_GP_1
-  # write(paste(0.05,0.25,0.1,0.1,-1,0.8,-3,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)                                                                            # CV_old_Fem_GP_1
-  
-  # write(paste(DLM_data@wla[x]*0.9, DLM_data@wla[x]*1.1,DLM_data@wla[x],DLM_data@wla[x],-1,0.1,-3,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)                     # Wtlen_1_Fem
-  # write(paste(DLM_data@wlb[x]*0.9, DLM_data@wlb[x]*1.1,DLM_data@wlb[x],DLM_data@wlb[x],-1,0.1,-3,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)                     # Wtlen_2_Fem
-  
-  # write(paste(round(DLM_data@L50[x]*0.9,3), round(DLM_data@L50[x]*1.1,3),round(DLM_data@L50[x],3),round(DLM_data@L50[x],3),-1,0.1,-3,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)                     # Mat50%_Fem
-  # Lsd=-2.94439/(DLM_data@L95[x]-DLM_data@L50[x]) # slope=log(1/0.95-1)/(L95-L50)
-  # write(paste(-3,3,round(Lsd,3),round(Lsd,3),-1,0.8,-3,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)                                                                                 # Mat_slope_Fem
-  
-  # write(paste(DLM_data@wla[x]*0.9, DLM_data@wla[x]*1.1,DLM_data@wla[x],DLM_data@wla[x],-1,0.1,-3,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)                     # Wtlen_1_Mal
-  # write(paste(DLM_data@wlb[x]*0.9, DLM_data@wlb[x]*1.1,DLM_data@wlb[x],DLM_data@wlb[x],-1,0.1,-3,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)                     # Wtlen_2_Mal
-  
-  # write(paste(0,3,1,1,-1,0.8,-3,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)                                                                                        # RecrDist_Area_1
-  # write(paste(0,3,0,0,-1,0.8,-3,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)                                                                                        # RecrDist_Seas_1
-  
-  # write(paste(0,0,0,0,-1,0,-4,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)                                                                                        # RecrDist_Area_1
-  # write(paste(0,0,0,0,-1,0,-4,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)                                                                                        # RecrDist_Seas_1
-  # write(paste(0,0,0,0,-1,0,-4,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)                                                                                        # CohortGrowDev
-  
-  # write(paste(0.5,1.5,1,1,-1,0,-4,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)                                                                                        # CohortGrowDev
-  
-  
-  # write(paste(0,0,0,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)    #_femwtlen1,femwtlen2,mat1,mat2,fec1,fec2,Malewtlen1,malewtlen2,L1,K
-  
-  
-  # Reconstruct a possible catch-at-age matrix to get to R0 given M
-  # la<-DLM_data@vbLinf[x]*(1-exp(-DLM_data@vbK[x]*(((1:na)-DLM_data@vbt0[x]))))
-  # wa<-DLM_data@wla[x]*la^DLM_data@wlb[x]
-  # Cw<-t(array(wa,c(na,ny)))*DLM_data@CAA[x,,] # weight of the observed CAA
-  # Cwtot<-apply(Cw,1,sum) # summation by year
-  # CAAup<-DLM_data@CAA[x,,]*DLM_data@Cat[x,]/Cwtot # uprate CAA to total catch weight
-  # c1<-apply(CAAup,2,mean)
-  # plusgroup<-which.min((cumsum(c1)/sum(c1)-0.95)^2)
-  # c1[plusgroup]<-c1[plusgroup]+sum(c1[(plusgroup+1):na])
-  # c1<-c1[plusgroup:1]
-  # aa<-rep(NA,plusgroup)
-  # aa[1]<-c1[1]
-  # for(i in 2:plusgroup)aa[i]=aa[i-1]/exp(-DLM_data@Mort[x])+c1[i]
-  # R0est<-aa[plusgroup]
-  # _Spawner-Recruitment
-  # write(3,ctlfile,1,append=T)                                     #_SR_function: 2=Ricker; 3=std_B-H; 4=SCAA; 5=Hockey; 6=B-H_flattop; 7=survival_3Parm
-  # _LO HI INIT PRIOR PR_type SD PHASE
-  
-  # write(paste(round(log(R0est/10),3),round(log(R0est*10),3),round(log(R0est),3),round(log(R0est),3),-1,10,1,sep=" "),ctlfile,1,append=T)                                      # SR_LN(R0)
-  # write(paste(round(DLM_data@steep[x]*0.9,3),round(DLM_data@steep[x],3), round(DLM_data@steep[x],3),round(DLM_data@steep[x],3),1,0.04,-3,sep=" "),ctlfile,1,append=T)         # SR_BH_steep
-  # write(paste(0,2,0.6,0.8,-1,0.8,-4,sep=" "),ctlfile,1,append=T)                                                                          # SR_sigmaR
-  
-  # write(paste(-5,5,0,0,-1,1,-3,sep=" "),ctlfile,1,append=T)                                                                             # SR_envlink
-  # write(paste(-5,5,0,0,-1,1,-2,sep=" "),ctlfile,1,append=T)                                                                               # SR_R1_offset
-  # write(paste(0,0,0,0,-1,0,-99,sep=" "),ctlfile,1,append=T)                                                                               # SR_autocorr
-  
-  # write(0,ctlfile,1,append=T)                                     #_SR_env_link
-  # write(0,ctlfile,1,append=T)                                     #_SR_env_target_0=none;1=devs;_2=R0;_3=steepness
-  # write(1,ctlfile,1,append=T)                                     # do_recdev
-  # write(1,ctlfile,1,append=T)                                     # first year of main recr_devs; early devs can preceed this era
-  # write(ny,ctlfile,1,append=T)                                    # last year of main recr_devs; forecast devs start in following year
-  # write(2,ctlfile,1,append=T)                                     #_recdev phase 
-  
-  # write(1,ctlfile,1,append=T)                                     # (0/1) to read 13 advanced options
-  
-  # write(-na+2,ctlfile,1,append=T)                                     #
-  # write(4,ctlfile,1,append=T)                                    #
-  # write(0,ctlfile,1,append=T)                                     #
-  # write(1,ctlfile,1,append=T)                                     #
-  # write(1,ctlfile,1,append=T) 
-  # write(10,ctlfile,1,append=T)                                     #
-  # write(ny-8,ctlfile,1,append=T)                                  #
-  # write(ny-1,ctlfile,1,append=T)                                    #
-  # write(0.8,ctlfile,1,append=T)                                     #
-  # write(0,ctlfile,1,append=T)                                     #
-  # write(-5,ctlfile,1,append=T)                                    #
-  # write(5,ctlfile,1,append=T)                                     #
-  # write(0,ctlfile,1,append=T)                                     #
-  
-  
-  # write(DLM_data@Mort[x],ctlfile,1,append=T)                      # F ballpark for tuning early phases
-  # write(-ny,ctlfile,1,append=T)                                   # F ballpark year (neg value to disable)
-  # write(3,ctlfile,1,append=T)                                     # F_Method:  1=Pope; 2=instan. F; 3=hybrid (hybrid is recommended)
-  # write(2.9,ctlfile,1,append=T)                                   # max F or harvest rate, depends on F_Method
-  # write(4,ctlfile,1,append=T)                                     # N iterations for tuning F in hybrid method (recommend 3 to 7)
-  
-  # _LO HI INIT PRIOR PR_type SD PHASE
-  # write(paste(0,round(DLM_data@Mort[x]*3,3),0,0.01,0,99,-1,sep=" "),ctlfile,1,append=T)     #InitF_1FISHERY1
-  
-  # _Den-dep  env-var  extra_se  Q_type
-  # write(paste(0,0,0,0,sep=" "),ctlfile,1,append=T)          # FISHERY                   
-  # write(paste(0,0,0,2,sep=" "),ctlfile,1,append=T)          # SURVEY                    
-  
-  # LOq<-1/(mean(DLM_data@Cat[x,])/(DLM_data@Mort[x]/10))
-  # HIq<-1/(mean(DLM_data@Cat[x,])/(DLM_data@Mort[x]*5))
-  # muq<-1/(mean(DLM_data@Cat[x,])/DLM_data@Mort[x])
-  # LO HI INIT PRIOR PR_type SD PHASE
-  # write(paste(round(log(LOq),3),round(log(HIq),3),round(log(muq),3),round(log(muq),3),0,1,-1,sep=" "),ctlfile,1,append=T)      # Q_base_SURVEY
-  
-  # _Pattern Discard Male Special
-  # write(paste(0,0,0,0,sep=" "),ctlfile,1,append=T)      # FISHERY                                                                         
-  # write(paste(0,0,0,0,sep=" "),ctlfile,1,append=T)      # SURVEY                                                                         
-  
-  # _age_selex_types
-  # write(paste(12,0,0,0,sep=" "),ctlfile,1,append=T)     # FISHERY                                                                         
-  # write(paste(12,0,0,0,sep=" "),ctlfile,1,append=T)     # SURVEY                                                                         
-  
-  # LO HI INIT PRIOR PR_type SD PHASE env-var use_dev dev_minyr dev_maxyr dev_stddev Block Block_Fxn
-  # write(paste(1,floor(na*0.666),5,5,-1,10,1,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)      # AgeSel 1 Fishery     
-  # write(paste(0,0.5,  0.25,0.25,-1,10,1,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)        # AgeSel 2 Fishery     
-  # write(paste(1,floor(na*0.666),5,5,-1,10,1,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)      # AgeSel 1 Fishery     
-  # write(paste(0,0.5,  0.25,0.25,-1,10,1,0,0,0,0,0,0,0,sep=" "),ctlfile,1,append=T)        # AgeSel 2 Fishery     
-  
-  # write(paste(0,floor(na*0.666),floor(na/3),floor(na/3),0,2,2,0,0,0,0,0.5,0,0,sep=" "),ctlfile,1,append=T)      # AgeSel 1 SURVEY     
-   # write(paste(0.01,floor(na*0.8),floor(na/2),floor(na/2),0,2,2,0,0,0,0,0.5,0,0,sep=" "),ctlfile,1,append=T)      # AgeSel 1 SURVEY     
-  
-  # Tag loss and Tag reporting parameters go next
-  # write(0,ctlfile,1,append=T)  # TG_custom:  0=no read; 1=read if tags exist    
-  
-  # write(0,ctlfile,1,append=T)#_Variance_adjustments_to_input_values
-  # _fleet: 1 2 3 
-  # write(0,ctlfile,1,append=T)  #_add_to_survey_CV
-  # write(0,ctlfile,1,append=T)  #_add_to_discard_stddev
-  # write(0,ctlfile,1,append=T)  #_add_to_bodywt_CV
-  # write(1,ctlfile,1,append=T)  #_mult_by_lencomp_N 
-  # write(1,ctlfile,1,append=T)  #_mult_by_agecomp_N
-  # write(1,ctlfile,1,append=T)  #_mult_by_size-at-age_N
-  
-  # write(2,ctlfile,1,append=T)  #_maxlambdaphase
-  # write(1,ctlfile,1,append=T)  #_sd_offset
-  # write(1,ctlfile,1,append=T)  # number of changes to make to default Lambdas (default value is 1.0)
-  # write(paste(1,2,1,0,1,sep=" "),ctlfile,1,append=T)     # Like_comp SURVEY                                                                         
-  
-  # 1 2 2 1 1
-  # 4 2 2 1 1
-  # 4 2 3 1 1
-  
-  # write(0,ctlfile,1,append=T)  # (0/1) read specs for more stddev reporting 
-  # write(999,ctlfile,1,append=T)  # end-of-file
-  
-  
-  
-  # write data file ---------------------------------------------------------------------------------------------------------------------------------
-  
-  # datfile=paste(DLMexe,"SCA/SCA.dat",sep="/")
-  
-  # write(1,datfile,1,append=F)     #_styr
-  # write(ny,datfile,1,append=T)    #_endyr
-  # write(1,datfile,1,append=T)     #_nseas
-  # write(12,datfile,1,append=T)    # months/season
-  # write(1,datfile,1,append=T)     #_spawn_seas
-  # write(1,datfile,1,append=T)     #_Nfleet
-  # write(1,datfile,1,append=T)     #_Nsurveys
-  # write(1,datfile,1,append=T)     #_N_areas
-  # write("FISHERY%SURVEY",datfile,1,append=T)
-  # write(paste(c(-1,0.5),collapse=" "),datfile,1,append=T)   #_surveytiming_in_season
-  # write(paste(c(1,1),collapse=" "),datfile,1,append=T)     #_area_assignments_for_each_fishery_and_survey
-  # write(1,datfile,1,append=T)     #_units of catch:  1=bio; 2=num
-  # write(0.1,datfile,1,append=T)   #_se of log(catch) only used for init_eq_catch and for Fmethod 2 and 3; use -1 for discard only fleets
-  # write(1,datfile,1,append=T)     #_Ngenders
-  # write(na,datfile,1,append=T)    #_Nages
-  # write(0,datfile,1,append=T)     #_init_equil_catch_for_each_fishery
-  # write(ny,datfile,1,append=T)    #_N_lines_of_catch_to_read
-  # _catch_biomass(mtons):_columns_are_fisheries,year,season
-  # for(i in 1:ny) write(paste(round(DLM_data@Cat[x,i],2),i,1,sep=" "),datfile,1,append=T)   
-  
-  # write(ny,datfile,1,append=T)    #_N_cpue_and_surveyabundance_observation
-  # _Units:  0=numbers; 1=biomass; 2=F
-  # _Errtype:  -1=normal; 0=lognormal; >0=T
-  # _Fleet Units Errtype
-  # write(paste(1,1,0,sep=" "),datfile,1,append=T)     # SURVEY                                                                         
-  # write(paste(2,1,0,sep=" "),datfile,1,append=T)     # FISHERY                                                                         
-  
-  # _year seas index obs err
-  # for(i in 1:ny) write(paste(i,1,2,round(DLM_data@Ind[x,i],2),0.2,sep=" "),datfile,1,append=T)    # index 2 is SURVEY
-  
-  # write(0,datfile,1,append=T)     #_N_fleets_with_discard
-  # write(0,datfile,1,append=T)     # N discard obs
-  # write(0,datfile,1,append=T)     #_N_meanbodywt_obs
-  # write(30,datfile,1,append=T)    #_DF_for_meanbodywt_T-distribution_like
-  
-  # write(2,datfile,1,append=T)     # length bin method: 1=use databins; 2=generate from binwidth,min,max below; 3=read vector
-  # write(2,datfile,1,append=T)     # binwidth for population size comp 
-  # write(DLM_data@CAL_bins[2],datfile,1,append=T)    # minimum size in the population (lower edge of first bin and size at age 0.00) 
-  # write(DLM_data@CAL_bins[length(DLM_data@CAL_bins)],datfile,1,append=T)    # maximum size in the population (lower edge of last bin) 
-  
-  # write(0.0001,datfile,1,append=T)    #_comp_tail_compression
-  # write(1e-007,datfile,1,append=T)    #_add_to_comp
-  # write(0,datfile,1,append=T)    #_combine males into females at or below this bin number
-  # write(length(DLM_data@CAL_bins),datfile,1,append=T)    #_N_LengthBins
-  # write(paste(DLM_data@CAL_bins,collapse=" "),datfile,1,append=T)    # Length bins
-  # write(0,datfile,1,append=T)    #_N_Length_obs
-  
-  
-  # maxage<-which.min(abs(cumsum(apply(DLM_data@CAA[x,,],2,sum))/sum(DLM_data@CAA[x,,])-0.95)) # plus group at cumulative 75th percentile
-  # CAA<-DLM_data@CAA[x,,1:maxage]
-  # CAA[,maxage]<-CAA[,maxage]+apply(DLM_data@CAA[x,,maxage:na],1,sum)
-  
-  # write(maxage,datfile,1,append=T)    #_N_age_bins
-  # write(paste(1:maxage,collapse=" "),datfile,1,append=T)    #age_bins
-  
-  # write(1,datfile,1,append=T)    #_N_ageerror_definitions
-  # write(paste(rep(-1,na+1),collapse=" "),datfile,1,append=T)
-  # write(paste(rep(0.001,na+1),collapse=" "),datfile,1,append=T)
-  
-  # write(ny*2,datfile,1,append=T)   #_N_Agecomp_obs
-  # write(1,datfile,1,append=T)    #_Lbin_method: 1=poplenbins; 2=datalenbins; 3=lengths
-  # write(1,datfile,1,append=T)    #_combine males into females at or below this bin number
-  
-  # Yr Seas Flt/Svy Gender Part Ageerr Lbin_lo Lbin_hi Nsamp datavector(female-male)
-  
-  # for(i in 1:ny) write(paste(" ",i,1,1,0,0,1,-1,-1,sum(CAA[i,]),paste(CAA[i,],collapse=" "),sep=" "),datfile,1,append=T)   
-  # for(i in 1:ny) write(paste(" ",i,1,2,0,0,1,-1,-1,sum(CAA[i,]),paste(CAA[i,],collapse=" "),sep=" "),datfile,1,append=T)   
-  
-  # write(0,datfile,1,append=T)      #_N_MeanSize-at-Age_obs
-  # write(0,datfile,1,append=T)      #_N_environ_variables
-  # write(0,datfile,1,append=T)      #_N_environ_obs
-  # write(0,datfile,1,append=T)      # N sizefreq methods to read 
-  # write(0,datfile,1,append=T)      # no tag data 
-  # write(0,datfile,1,append=T)      # no morphcomp data
-  # write(999,datfile,1,append=T)    # end of file
-  
-  
-  
-  # write forecast file ---------------------------------------------------------------------------------------------------------------------------------
-  
-  # forefile=paste(DLMexe,"SCA/Forecast.ss",sep="/")
-  
-  # write(1,forefile,1,append=F)       # Benchmarks: 0=skip; 1=calc F_spr,F_btgt,F_msy
-  # write(2,forefile,1,append=T)       # MSY: 1= set to F(SPR); 2=calc F(MSY); 3=set to F(Btgt); 4=set to F(endyr)
-  # write(0.40,forefile,1,append=T)    # SPR target (e.g. 0.40)
-  # write(0.35,forefile,1,append=T)    # Biomass target (e.g. 0.40)
-  # _Bmark_years: beg_bio, end_bio, beg_selex, end_selex, beg_relF, end_relF (enter actual year, or values of 0 or -integer to be rel. endyr)
-  # write(paste(0,0,0,0,0,0,sep=" "),forefile,1,append=T)     # FISHERY                                                                         
-  # write(1,forefile,1,append=T)       #Bmark_relF_Basis: 1 = use year range; 2 = set relF same as forecast below
-  # write(2,forefile,1,append=T)       # Forecast: 0=none; 1=F(SPR); 2=F(MSY) 3=F(Btgt); 4=Ave F (uses first-last relF yrs); 5=input annual F scalar
-  # write(3,forefile,1,append=T)       # N Forecast years
-  # write(0.2,forefile,1,append=T)     # F scalar (only used for Do_Forecast==5) 
-  # _Fcast_years:  beg_selex, end_selex, beg_relF, end_relF  (enter actual year, or values of 0 or -integer to be rel. endyr)
-  # write(paste(0,0,-10,0,sep=" "),forefile,1,append=T)     # FISHERY                                                                         
-  # write(1,forefile,1,append=T)       # Control rule method (1=catch=f(SSB) west coast; 2=F=f(SSB) )                                                                       
-  # write(0.4,forefile,1,append=T)     # Control rule Biomass level for constant F (as frac of Bzero, e.g. 0.40)                                                                      
-  # write(0.1,forefile,1,append=T)     # Control rule Biomass level for no F (as frac of Bzero, e.g. 0.10)
-  # write(0.75,forefile,1,append=T)    # Control rule target as fraction of Flimit (e.g. 0.75)
-  # write(3,forefile,1,append=T)       #_N forecast loops (1-3) (fixed at 3 for now)
-  # write(3,forefile,1,append=T)       #_First forecast loop with stochastic recruitment
-  # write(0,forefile,1,append=T)       #_Forecast loop control #3 (reserved for future bells&whistles)
-  # write(0,forefile,1,append=T)       #_Forecast loop control #4 (reserved for future bells&whistles)
-  # write(0,forefile,1,append=T)       #_Forecast loop control #5 (reserved for future bells&whistles)
-  # write(ny,forefile,1,append=T)      #FirstYear for caps and allocations (should be after years with fixed inputs)
-  # write(0.0,forefile,1,append=T)     # stddev of log(realized catch/target catch) in forecast (set value>0.0 to cause active impl_error)
-  # write(0,forefile,1,append=T)       # Do West Coast gfish rebuilder output (0/1)
-  # write(ny-10,forefile,1,append=T)   # Rebuilder:  first year catch could have been set to zero (Ydecl)(-1 to set to 1999)
-  # write(ny-5,forefile,1,append=T)    # Rebuilder:  year for current age structure (Yinit) (-1 to set to endyear+1)
-  # write(1,forefile,1,append=T)       # fleet relative F:  1=use first-last alloc year; 2=read seas(row) x fleet(col) below
-  # write(2,forefile,1,append=T)       # basis for fcast catch tuning and for fcast catch caps and allocation  (2=deadbio; 3=retainbio; 5=deadnum; 6=retainnum)
-  # write(-1,forefile,1,append=T)      # max totalcatch by fleet (-1 to have no max)
-  # write(-1,forefile,1,append=T)      # max totalcatch by area (-1 to have no max)
-  # write(0,forefile,1,append=T)       # fleet assignment to allocation group (enter group ID# for each fleet, 0 for not included in an alloc group)
-  # write(0,forefile,1,append=T)       # Number of forecast catch levels to input (else calc catch from forecast F)
-  # write(2,forefile,1,append=T)       # basis for input Fcast catch:  2=dead catch; 3=retained catch; 99=input Hrate(F) (units are from fleetunits; note new codes in SSV3.20)
-  # write(999,forefile,1,append=T)     # End of input
-  
-  
-  
-  # Run SS3 and read outputs ----------------------------------------------------------------------------------------------------------------------------
-  
-  # system(paste(DLMexe,"/SCA/SS3.exe",sep=""),wait=T,show.output.on.console=T)
-  # rl <- SS_output(dir=paste(DLMexe,"/SCA/",sep=""))
-  # F_FMSY<-rl$Kobe$F.Fmsy[1:ny]
-  # B_BMSY<-rl$Kobe$B.Bmsy[1:ny]
-  # ind<-match(paste("F_",1:ny,sep=""),row.names(rl$derived_quants))
-  # Fs<-rl$derived_quants[ind,2]
-  # Fs/F_FMSY
-  
-  # SS_plots(replist=myreplist)
-  
-  
-  
-# }
-# class(SCA)<-"DLM_output"
+# SCA<-function(x,DLM_data,reps=100){ # Requires a character string
+# DLMexe (e.g. 'C:/DLMexe') that represents the
+
+# dependencies=''
+
+# ny<-dim(DLM_data@CAA)[2] na<-dim(DLM_data@CAA)[3]
+
+# write starter file
+# ---------------------------------------------------------------------------------------------------------------------------------
+
+# starterfile=paste(DLMexe,'SCA/Starter.ss',sep='/')
+# write('SCA.dat',starterfile,1,append=F)
+# write('SCA.ctl',starterfile,1,append=T)
+# write(0,starterfile,1,append=T) # use init values
+# write(1,starterfile,1,append=T) # run display detail (0,1,2)
+# write(1,starterfile,1,append=T) # detailed age-structured reports in
+# REPORT.SSO (0,1)
+
+# write(0,starterfile,1,append=T) # write detailed checkup.sso file
+# (0,1) write(1,starterfile,1,append=T) # write parm values to
+# ParmTrace.sso write(0,starterfile,1,append=T) # write to
+# cumreport.sso (0=no, 1=like$tiemseries; 2=add survey fits)
+
+# write(1,starterfile,1,append=T) # include prior like for
+# non-estimated parameters (0,1) write(0,starterfile,1,append=T) # use
+# soft boundaries to aid convergence (0,1) (recommended)
+# write(3,starterfile,1,append=T) # Number of data files to produce:
+# 1st is input, 2nd is estimates, 3rd and higher are bootstrap
+
+# write(10,starterfile,1,append=T) # Turn off estimation for parameters
+# entering after this phase write(10,starterfile,1,append=T) # MCeval
+# burn interval write(2,starterfile,1,append=T) # MCeval thin interval
+
+# write(0,starterfile,1,append=T) # jitter initial parm value by this
+# fraction write(-1,starterfile,1,append=T) # min yr for sdreport
+# outputs (-1 for styr) write(-2,starterfile,1,append=T) # max yr for
+# sdreport outputs
+
+# write(0,starterfile,1,append=T) # N individual STD years
+# write(0.001,starterfile,1,append=T) # final convergence criteria
+# (e.g. 1.0e-04) write(0,starterfile,1,append=T) # retrospective year
+# relative to end year (e.g. -4)
+
+# write(1,starterfile,1,append=T) # min age for calc of summary biomass
+# write(2,starterfile,1,append=T) # Depletion basis: denom is: 0=skip;
+# 1=rel X*B0; 2=rel X*Bmsy; 3=rel X*B_styr !!!!!!!!!!!!!!!!
+# write('1.0',starterfile,1,append=T) # Fraction (X) for Depletion
+# denominator (e.g. 0.4)
+
+# write(2,starterfile,1,append=T) # SPR_report_basis: 0=skip;
+# 1=(1-SPR)/(1-SPR_tgt); 2=(1-SPR)/(1-SPR_MSY);
+# 3=(1-SPR)/(1-SPR_Btarget); 4=rawSPR write(4,starterfile,1,append=T) #
+# F_report_units: 0=skip; 1=exploitation(Bio); 2=exploitation(Num);
+# 3=sum(Frates); 4=true F for range of ages
+# write(c(floor(max(1,DLM_data@MaxAge/4)),
+# ceiling(DLM_data@MaxAge/3)),starterfile,2,append=T) #_min and max age
+# over which average F will be calculated
+
+# write(2,starterfile,1,append=T) # F_report_basis: 0=raw; 1=F/Fspr;
+# 2=F/Fmsy ; 3=F/Fbtgt write(999,starterfile,1,append=T) # check value
+# for end of file
+
+
+
+# write control file
+# ---------------------------------------------------------------------------------------------------------------------------------
+
+# ctlfile=paste(DLMexe,'SCA/SCA.ctl',sep='/')
+
+# write(1,ctlfile,1,append=F) #_N_Growth_Patterns
+# write(1,ctlfile,1,append=T) #_N_Morphs_Within_GrowthPattern
+# write(0,ctlfile,1,append=T) #_Nblock_Patterns
+# write(0.5,ctlfile,1,append=T) #_fracfemale
+# write(0,ctlfile,1,append=T) #_natM_type:_0=1Parm;
+# 1=N_breakpoints;_2=Lorenzen;_3=agespecific;_4=agespec_withseasinterpolate
+
+# write(1,ctlfile,1,append=T) # GrowthModel: 1=vonBert with L1&L2;
+# 2=Richards with L1&L2; 3=age_speciific_K; 4=not implemented
+# write(0,ctlfile,1,append=T) #_Growth_Age_for_L1 !!!!!!!
+# write(999,ctlfile,1,append=T) #_Growth_Age_for_L2 (999 to use as
+# Linf)
+
+# write(0,ctlfile,1,append=T) #_SD_add_to_LAA (set to 0.1 for SS2 V1.x
+# compatibility) write(0,ctlfile,1,append=T) #_CV_Growth_Pattern: 0
+# CV=f(LAA); 1 CV=F(A); 2 SD=F(LAA); 3 SD=F(A); 4 logSD=F(A)
+# write(1,ctlfile,1,append=T) #_maturity_option: 1=length logistic;
+# 2=age logistic; 3=read age-maturity matrix by growth_pattern; 4=read
+# age-fecundity; 5=read fec and wt from wtatage.ss
+
+# write(1,ctlfile,1,append=T) #_First_Mature_Age !!!!!!!!!!!!!!!!!!!!
+# write(1,ctlfile,1,append=T) #_fecundity
+# option:(1)eggs=Wt*(a+b*Wt);(2)eggs=a*L^b;(3)eggs=a*Wt^b;
+# (4)eggs=a+b*L; (5)eggs=a+b*W write(0,ctlfile,1,append=T)
+# #_hermaphroditism option: 0=none; 1=age-specific fxn
+
+# write(1,ctlfile,1,append=T) #_parameter_offset_approach (1=none, 2=
+# M, G, CV_G as offset from female-GP1, 3=like SS2 V1.x)
+# !!!!!!!!!!!!!!!!!!!!  write(2,ctlfile,1,append=T)
+# #_env/block/dev_adjust_method (1=standard; 2=logistic transform keeps
+# in base parm bounds; 3=standard w/ no bound check)
+
+# female write(paste(round(DLM_data@Mort[x]*0.9,3),
+# round(DLM_data@Mort[x]*1.1,3),round(DLM_data@Mort[x],3),round(DLM_data@Mort[x],3),-1,0.1,-3,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # NatM_p_1_Fem_GP_1
+# write(paste(0,0,0,0,-1,10,-3,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # L_at_Amin_Fem_GP_1
+# write(paste(round(DLM_data@vbLinf[x]*0.9,3),round(DLM_data@vbLinf[x]*1.1,3),
+# round(DLM_data@vbLinf[x],3),round(DLM_data@vbLinf[x],3),-1,0.1,-3,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # L_at_Amax_Fem_GP_1
+
+# write(paste(round(DLM_data@vbK[x]*0.9,3),round(DLM_data@vbK[x]*1.1,3),
+# round(DLM_data@vbK[x],3),round(DLM_data@vbK[x],3),-1,0.1,-3,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # VonBert_K_Fem_GP_1
+# write(paste(0.05,0.25,0.1,0.1,-1,0.8,-3,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # CV_young_Fem_GP_1
+# write(paste(0.05,0.25,0.1,0.1,-1,0.8,-3,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # CV_old_Fem_GP_1
+
+# write(paste(DLM_data@wla[x]*0.9,
+# DLM_data@wla[x]*1.1,DLM_data@wla[x],DLM_data@wla[x],-1,0.1,-3,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # Wtlen_1_Fem write(paste(DLM_data@wlb[x]*0.9,
+# DLM_data@wlb[x]*1.1,DLM_data@wlb[x],DLM_data@wlb[x],-1,0.1,-3,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # Wtlen_2_Fem
+
+# write(paste(round(DLM_data@L50[x]*0.9,3),
+# round(DLM_data@L50[x]*1.1,3),round(DLM_data@L50[x],3),round(DLM_data@L50[x],3),-1,0.1,-3,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # Mat50%_Fem
+# Lsd=-2.94439/(DLM_data@L95[x]-DLM_data@L50[x]) #
+# slope=log(1/0.95-1)/(L95-L50)
+# write(paste(-3,3,round(Lsd,3),round(Lsd,3),-1,0.8,-3,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # Mat_slope_Fem
+
+# write(paste(DLM_data@wla[x]*0.9,
+# DLM_data@wla[x]*1.1,DLM_data@wla[x],DLM_data@wla[x],-1,0.1,-3,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # Wtlen_1_Mal write(paste(DLM_data@wlb[x]*0.9,
+# DLM_data@wlb[x]*1.1,DLM_data@wlb[x],DLM_data@wlb[x],-1,0.1,-3,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # Wtlen_2_Mal
+
+# write(paste(0,3,1,1,-1,0.8,-3,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # RecrDist_Area_1
+# write(paste(0,3,0,0,-1,0.8,-3,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # RecrDist_Seas_1
+
+# write(paste(0,0,0,0,-1,0,-4,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # RecrDist_Area_1
+# write(paste(0,0,0,0,-1,0,-4,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # RecrDist_Seas_1
+# write(paste(0,0,0,0,-1,0,-4,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # CohortGrowDev
+
+# write(paste(0.5,1.5,1,1,-1,0,-4,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # CohortGrowDev
+
+
+# write(paste(0,0,0,0,0,0,0,0,0,0,sep=' '),ctlfile,1,append=T)
+# #_femwtlen1,femwtlen2,mat1,mat2,fec1,fec2,Malewtlen1,malewtlen2,L1,K
+
+
+# Reconstruct a possible catch-at-age matrix to get to R0 given M
+# la<-DLM_data@vbLinf[x]*(1-exp(-DLM_data@vbK[x]*(((1:na)-DLM_data@vbt0[x]))))
+# wa<-DLM_data@wla[x]*la^DLM_data@wlb[x]
+# Cw<-t(array(wa,c(na,ny)))*DLM_data@CAA[x,,] # weight of the observed
+# CAA Cwtot<-apply(Cw,1,sum) # summation by year
+# CAAup<-DLM_data@CAA[x,,]*DLM_data@Cat[x,]/Cwtot # uprate CAA to total
+# catch weight c1<-apply(CAAup,2,mean)
+# plusgroup<-which.min((cumsum(c1)/sum(c1)-0.95)^2)
+# c1[plusgroup]<-c1[plusgroup]+sum(c1[(plusgroup+1):na])
+# c1<-c1[plusgroup:1] aa<-rep(NA,plusgroup) aa[1]<-c1[1] for(i in
+# 2:plusgroup)aa[i]=aa[i-1]/exp(-DLM_data@Mort[x])+c1[i]
+# R0est<-aa[plusgroup] _Spawner-Recruitment write(3,ctlfile,1,append=T)
+# #_SR_function: 2=Ricker; 3=std_B-H; 4=SCAA; 5=Hockey; 6=B-H_flattop;
+# 7=survival_3Parm _LO HI INIT PRIOR PR_type SD PHASE
+
+# write(paste(round(log(R0est/10),3),round(log(R0est*10),3),round(log(R0est),3),round(log(R0est),3),-1,10,1,sep='
+# '),ctlfile,1,append=T) # SR_LN(R0)
+# write(paste(round(DLM_data@steep[x]*0.9,3),round(DLM_data@steep[x],3),
+# round(DLM_data@steep[x],3),round(DLM_data@steep[x],3),1,0.04,-3,sep='
+# '),ctlfile,1,append=T) # SR_BH_steep
+# write(paste(0,2,0.6,0.8,-1,0.8,-4,sep=' '),ctlfile,1,append=T) #
+# SR_sigmaR
+
+# write(paste(-5,5,0,0,-1,1,-3,sep=' '),ctlfile,1,append=T) #
+# SR_envlink write(paste(-5,5,0,0,-1,1,-2,sep=' '),ctlfile,1,append=T)
+# # SR_R1_offset write(paste(0,0,0,0,-1,0,-99,sep='
+# '),ctlfile,1,append=T) # SR_autocorr
+
+# write(0,ctlfile,1,append=T) #_SR_env_link write(0,ctlfile,1,append=T)
+# #_SR_env_target_0=none;1=devs;_2=R0;_3=steepness
+# write(1,ctlfile,1,append=T) # do_recdev write(1,ctlfile,1,append=T) #
+# first year of main recr_devs; early devs can preceed this era
+# write(ny,ctlfile,1,append=T) # last year of main recr_devs; forecast
+# devs start in following year write(2,ctlfile,1,append=T) #_recdev
+# phase
+
+# write(1,ctlfile,1,append=T) # (0/1) to read 13 advanced options
+
+# write(-na+2,ctlfile,1,append=T) # write(4,ctlfile,1,append=T) #
+# write(0,ctlfile,1,append=T) # write(1,ctlfile,1,append=T) #
+# write(1,ctlfile,1,append=T) write(10,ctlfile,1,append=T) #
+# write(ny-8,ctlfile,1,append=T) # write(ny-1,ctlfile,1,append=T) #
+# write(0.8,ctlfile,1,append=T) # write(0,ctlfile,1,append=T) #
+# write(-5,ctlfile,1,append=T) # write(5,ctlfile,1,append=T) #
+# write(0,ctlfile,1,append=T) #
+
+
+# write(DLM_data@Mort[x],ctlfile,1,append=T) # F ballpark for tuning
+# early phases write(-ny,ctlfile,1,append=T) # F ballpark year (neg
+# value to disable) write(3,ctlfile,1,append=T) # F_Method: 1=Pope;
+# 2=instan. F; 3=hybrid (hybrid is recommended)
+# write(2.9,ctlfile,1,append=T) # max F or harvest rate, depends on
+# F_Method write(4,ctlfile,1,append=T) # N iterations for tuning F in
+# hybrid method (recommend 3 to 7)
+
+# _LO HI INIT PRIOR PR_type SD PHASE
+# write(paste(0,round(DLM_data@Mort[x]*3,3),0,0.01,0,99,-1,sep='
+# '),ctlfile,1,append=T) #InitF_1FISHERY1
+
+# _Den-dep env-var extra_se Q_type write(paste(0,0,0,0,sep='
+# '),ctlfile,1,append=T) # FISHERY write(paste(0,0,0,2,sep='
+# '),ctlfile,1,append=T) # SURVEY
+
+# LOq<-1/(mean(DLM_data@Cat[x,])/(DLM_data@Mort[x]/10))
+# HIq<-1/(mean(DLM_data@Cat[x,])/(DLM_data@Mort[x]*5))
+# muq<-1/(mean(DLM_data@Cat[x,])/DLM_data@Mort[x]) LO HI INIT PRIOR
+# PR_type SD PHASE
+# write(paste(round(log(LOq),3),round(log(HIq),3),round(log(muq),3),round(log(muq),3),0,1,-1,sep='
+# '),ctlfile,1,append=T) # Q_base_SURVEY
+
+# _Pattern Discard Male Special write(paste(0,0,0,0,sep='
+# '),ctlfile,1,append=T) # FISHERY write(paste(0,0,0,0,sep='
+# '),ctlfile,1,append=T) # SURVEY
+
+# _age_selex_types write(paste(12,0,0,0,sep=' '),ctlfile,1,append=T) #
+# FISHERY write(paste(12,0,0,0,sep=' '),ctlfile,1,append=T) # SURVEY
+
+# LO HI INIT PRIOR PR_type SD PHASE env-var use_dev dev_minyr dev_maxyr
+# dev_stddev Block Block_Fxn
+# write(paste(1,floor(na*0.666),5,5,-1,10,1,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # AgeSel 1 Fishery write(paste(0,0.5,
+# 0.25,0.25,-1,10,1,0,0,0,0,0,0,0,sep=' '),ctlfile,1,append=T) # AgeSel
+# 2 Fishery
+# write(paste(1,floor(na*0.666),5,5,-1,10,1,0,0,0,0,0,0,0,sep='
+# '),ctlfile,1,append=T) # AgeSel 1 Fishery write(paste(0,0.5,
+# 0.25,0.25,-1,10,1,0,0,0,0,0,0,0,sep=' '),ctlfile,1,append=T) # AgeSel
+# 2 Fishery
+
+# write(paste(0,floor(na*0.666),floor(na/3),floor(na/3),0,2,2,0,0,0,0,0.5,0,0,sep='
+# '),ctlfile,1,append=T) # AgeSel 1 SURVEY
+# write(paste(0.01,floor(na*0.8),floor(na/2),floor(na/2),0,2,2,0,0,0,0,0.5,0,0,sep='
+# '),ctlfile,1,append=T) # AgeSel 1 SURVEY
+
+# Tag loss and Tag reporting parameters go next
+# write(0,ctlfile,1,append=T) # TG_custom: 0=no read; 1=read if tags
+# exist
+
+# write(0,ctlfile,1,append=T)#_Variance_adjustments_to_input_values
+# _fleet: 1 2 3 write(0,ctlfile,1,append=T) #_add_to_survey_CV
+# write(0,ctlfile,1,append=T) #_add_to_discard_stddev
+# write(0,ctlfile,1,append=T) #_add_to_bodywt_CV
+# write(1,ctlfile,1,append=T) #_mult_by_lencomp_N
+# write(1,ctlfile,1,append=T) #_mult_by_agecomp_N
+# write(1,ctlfile,1,append=T) #_mult_by_size-at-age_N
+
+# write(2,ctlfile,1,append=T) #_maxlambdaphase
+# write(1,ctlfile,1,append=T) #_sd_offset write(1,ctlfile,1,append=T) #
+# number of changes to make to default Lambdas (default value is 1.0)
+# write(paste(1,2,1,0,1,sep=' '),ctlfile,1,append=T) # Like_comp SURVEY
+
+# 1 2 2 1 1 4 2 2 1 1 4 2 3 1 1
+
+# write(0,ctlfile,1,append=T) # (0/1) read specs for more stddev
+# reporting write(999,ctlfile,1,append=T) # end-of-file
+
+
+
+# write data file
+# ---------------------------------------------------------------------------------------------------------------------------------
+
+# datfile=paste(DLMexe,'SCA/SCA.dat',sep='/')
+
+# write(1,datfile,1,append=F) #_styr write(ny,datfile,1,append=T)
+# #_endyr write(1,datfile,1,append=T) #_nseas
+# write(12,datfile,1,append=T) # months/season
+# write(1,datfile,1,append=T) #_spawn_seas write(1,datfile,1,append=T)
+# #_Nfleet write(1,datfile,1,append=T) #_Nsurveys
+# write(1,datfile,1,append=T) #_N_areas
+# write('FISHERY%SURVEY',datfile,1,append=T)
+# write(paste(c(-1,0.5),collapse=' '),datfile,1,append=T)
+# #_surveytiming_in_season write(paste(c(1,1),collapse='
+# '),datfile,1,append=T) #_area_assignments_for_each_fishery_and_survey
+# write(1,datfile,1,append=T) #_units of catch: 1=bio; 2=num
+# write(0.1,datfile,1,append=T) #_se of log(catch) only used for
+# init_eq_catch and for Fmethod 2 and 3; use -1 for discard only fleets
+# write(1,datfile,1,append=T) #_Ngenders write(na,datfile,1,append=T)
+# #_Nages write(0,datfile,1,append=T)
+# #_init_equil_catch_for_each_fishery write(ny,datfile,1,append=T)
+# #_N_lines_of_catch_to_read
+# _catch_biomass(mtons):_columns_are_fisheries,year,season for(i in
+# 1:ny) write(paste(round(DLM_data@Cat[x,i],2),i,1,sep='
+# '),datfile,1,append=T)
+
+# write(ny,datfile,1,append=T) #_N_cpue_and_surveyabundance_observation
+# _Units: 0=numbers; 1=biomass; 2=F _Errtype: -1=normal; 0=lognormal;
+# >0=T _Fleet Units Errtype write(paste(1,1,0,sep='
+# '),datfile,1,append=T) # SURVEY write(paste(2,1,0,sep='
+# '),datfile,1,append=T) # FISHERY
+
+# _year seas index obs err for(i in 1:ny)
+# write(paste(i,1,2,round(DLM_data@Ind[x,i],2),0.2,sep='
+# '),datfile,1,append=T) # index 2 is SURVEY
+
+# write(0,datfile,1,append=T) #_N_fleets_with_discard
+# write(0,datfile,1,append=T) # N discard obs
+# write(0,datfile,1,append=T) #_N_meanbodywt_obs
+# write(30,datfile,1,append=T) #_DF_for_meanbodywt_T-distribution_like
+
+# write(2,datfile,1,append=T) # length bin method: 1=use databins;
+# 2=generate from binwidth,min,max below; 3=read vector
+# write(2,datfile,1,append=T) # binwidth for population size comp
+# write(DLM_data@CAL_bins[2],datfile,1,append=T) # minimum size in the
+# population (lower edge of first bin and size at age 0.00)
+# write(DLM_data@CAL_bins[length(DLM_data@CAL_bins)],datfile,1,append=T)
+# # maximum size in the population (lower edge of last bin)
+
+# write(0.0001,datfile,1,append=T) #_comp_tail_compression
+# write(1e-007,datfile,1,append=T) #_add_to_comp
+# write(0,datfile,1,append=T) #_combine males into females at or below
+# this bin number write(length(DLM_data@CAL_bins),datfile,1,append=T)
+# #_N_LengthBins write(paste(DLM_data@CAL_bins,collapse='
+# '),datfile,1,append=T) # Length bins write(0,datfile,1,append=T)
+# #_N_Length_obs
+
+
+# maxage<-which.min(abs(cumsum(apply(DLM_data@CAA[x,,],2,sum))/sum(DLM_data@CAA[x,,])-0.95))
+# # plus group at cumulative 75th percentile
+# CAA<-DLM_data@CAA[x,,1:maxage]
+# CAA[,maxage]<-CAA[,maxage]+apply(DLM_data@CAA[x,,maxage:na],1,sum)
+
+# write(maxage,datfile,1,append=T) #_N_age_bins
+# write(paste(1:maxage,collapse=' '),datfile,1,append=T) #age_bins
+
+# write(1,datfile,1,append=T) #_N_ageerror_definitions
+# write(paste(rep(-1,na+1),collapse=' '),datfile,1,append=T)
+# write(paste(rep(0.001,na+1),collapse=' '),datfile,1,append=T)
+
+# write(ny*2,datfile,1,append=T) #_N_Agecomp_obs
+# write(1,datfile,1,append=T) #_Lbin_method: 1=poplenbins;
+# 2=datalenbins; 3=lengths write(1,datfile,1,append=T) #_combine males
+# into females at or below this bin number
+
+# Yr Seas Flt/Svy Gender Part Ageerr Lbin_lo Lbin_hi Nsamp
+# datavector(female-male)
+
+# for(i in 1:ny) write(paste('
+# ',i,1,1,0,0,1,-1,-1,sum(CAA[i,]),paste(CAA[i,],collapse=' '),sep='
+# '),datfile,1,append=T) for(i in 1:ny) write(paste('
+# ',i,1,2,0,0,1,-1,-1,sum(CAA[i,]),paste(CAA[i,],collapse=' '),sep='
+# '),datfile,1,append=T)
+
+# write(0,datfile,1,append=T) #_N_MeanSize-at-Age_obs
+# write(0,datfile,1,append=T) #_N_environ_variables
+# write(0,datfile,1,append=T) #_N_environ_obs
+# write(0,datfile,1,append=T) # N sizefreq methods to read
+# write(0,datfile,1,append=T) # no tag data write(0,datfile,1,append=T)
+# # no morphcomp data write(999,datfile,1,append=T) # end of file
+
+
+
+# write forecast file
+# ---------------------------------------------------------------------------------------------------------------------------------
+
+# forefile=paste(DLMexe,'SCA/Forecast.ss',sep='/')
+
+# write(1,forefile,1,append=F) # Benchmarks: 0=skip; 1=calc
+# F_spr,F_btgt,F_msy write(2,forefile,1,append=T) # MSY: 1= set to
+# F(SPR); 2=calc F(MSY); 3=set to F(Btgt); 4=set to F(endyr)
+# write(0.40,forefile,1,append=T) # SPR target (e.g. 0.40)
+# write(0.35,forefile,1,append=T) # Biomass target (e.g. 0.40)
+# _Bmark_years: beg_bio, end_bio, beg_selex, end_selex, beg_relF,
+# end_relF (enter actual year, or values of 0 or -integer to be rel.
+# endyr) write(paste(0,0,0,0,0,0,sep=' '),forefile,1,append=T) #
+# FISHERY write(1,forefile,1,append=T) #Bmark_relF_Basis: 1 = use year
+# range; 2 = set relF same as forecast below
+# write(2,forefile,1,append=T) # Forecast: 0=none; 1=F(SPR); 2=F(MSY)
+# 3=F(Btgt); 4=Ave F (uses first-last relF yrs); 5=input annual F
+# scalar write(3,forefile,1,append=T) # N Forecast years
+# write(0.2,forefile,1,append=T) # F scalar (only used for
+# Do_Forecast==5) _Fcast_years: beg_selex, end_selex, beg_relF,
+# end_relF (enter actual year, or values of 0 or -integer to be rel.
+# endyr) write(paste(0,0,-10,0,sep=' '),forefile,1,append=T) # FISHERY
+# write(1,forefile,1,append=T) # Control rule method (1=catch=f(SSB)
+# west coast; 2=F=f(SSB) ) write(0.4,forefile,1,append=T) # Control
+# rule Biomass level for constant F (as frac of Bzero, e.g. 0.40)
+# write(0.1,forefile,1,append=T) # Control rule Biomass level for no F
+# (as frac of Bzero, e.g. 0.10) write(0.75,forefile,1,append=T) #
+# Control rule target as fraction of Flimit (e.g. 0.75)
+# write(3,forefile,1,append=T) #_N forecast loops (1-3) (fixed at 3 for
+# now) write(3,forefile,1,append=T) #_First forecast loop with
+# stochastic recruitment write(0,forefile,1,append=T) #_Forecast loop
+# control #3 (reserved for future bells&whistles)
+# write(0,forefile,1,append=T) #_Forecast loop control #4 (reserved for
+# future bells&whistles) write(0,forefile,1,append=T) #_Forecast loop
+# control #5 (reserved for future bells&whistles)
+# write(ny,forefile,1,append=T) #FirstYear for caps and allocations
+# (should be after years with fixed inputs)
+# write(0.0,forefile,1,append=T) # stddev of log(realized catch/target
+# catch) in forecast (set value>0.0 to cause active impl_error)
+# write(0,forefile,1,append=T) # Do West Coast gfish rebuilder output
+# (0/1) write(ny-10,forefile,1,append=T) # Rebuilder: first year catch
+# could have been set to zero (Ydecl)(-1 to set to 1999)
+# write(ny-5,forefile,1,append=T) # Rebuilder: year for current age
+# structure (Yinit) (-1 to set to endyear+1)
+# write(1,forefile,1,append=T) # fleet relative F: 1=use first-last
+# alloc year; 2=read seas(row) x fleet(col) below
+# write(2,forefile,1,append=T) # basis for fcast catch tuning and for
+# fcast catch caps and allocation (2=deadbio; 3=retainbio; 5=deadnum;
+# 6=retainnum) write(-1,forefile,1,append=T) # max totalcatch by fleet
+# (-1 to have no max) write(-1,forefile,1,append=T) # max totalcatch by
+# area (-1 to have no max) write(0,forefile,1,append=T) # fleet
+# assignment to allocation group (enter group ID# for each fleet, 0 for
+# not included in an alloc group) write(0,forefile,1,append=T) # Number
+# of forecast catch levels to input (else calc catch from forecast F)
+# write(2,forefile,1,append=T) # basis for input Fcast catch: 2=dead
+# catch; 3=retained catch; 99=input Hrate(F) (units are from
+# fleetunits; note new codes in SSV3.20) write(999,forefile,1,append=T)
+# # End of input
+
+
+
+# Run SS3 and read outputs
+# ----------------------------------------------------------------------------------------------------------------------------
+
+# system(paste(DLMexe,'/SCA/SS3.exe',sep=''),wait=T,show.output.on.console=T)
+# rl <- SS_output(dir=paste(DLMexe,'/SCA/',sep=''))
+# F_FMSY<-rl$Kobe$F.Fmsy[1:ny] B_BMSY<-rl$Kobe$B.Bmsy[1:ny]
+# ind<-match(paste('F_',1:ny,sep=''),row.names(rl$derived_quants))
+# Fs<-rl$derived_quants[ind,2] Fs/F_FMSY
+
+# SS_plots(replist=myreplist)
+
+
+
+# } class(SCA)<-'DLM_output'
 
 
 
