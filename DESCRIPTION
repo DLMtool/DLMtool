@@ -1,8 +1,8 @@
 Package: DLMtool
 Type: Package
 Title: Data-Limited Methods Toolkit
-Version: 3.2.2
-Date: 2016-10-13
+Version: 3.2.9001
+Date: 2017-01-23
 Authors@R: c(
     person("Tom", "Carruthers",, "t.carruthers@fisheries.ubc.ca", role=c("aut", "cre")),
     person("Adrian", "Hordyk", , "ar.hordyk@gmail.com", "aut"))
@@ -10,13 +10,22 @@ Maintainer: Tom Carruthers <t.carruthers@fisheries.ubc.ca>
 Description: Simulation testing and implementation of data-limited fishery stock
     assessment methods.
 License: GPL-2
-Depends:
+Depends:  
     R (>= 2.10.0),
+	snow
+Imports:
+    abind,
     boot,
     MASS,
     methods,
-    parallel,
-    snowfall
+	LBSPR,
+	grDevices,
+	parallel,
+	Rcpp,
+	readxl,
+	snowfall,
+	stats,
+	utils
 LazyData: yes
 LazyLoad: yes
 VignetteBuilder: knitr
@@ -24,11 +33,7 @@ Suggests:
     knitr,
     rmarkdown
 NeedsCompilation: no
-Packaged: 2015-11-13 23:33:05 UTC; Tom Carruthers
-Imports:
-    Rcpp,
-    abind,
-    readxl
+Packaged: 2015-11-13 23:33:05 UTC; Tom Carruthers 
 LinkingTo: Rcpp
 RoxygenNote: 5.0.1
 BugReports: https://github.com/DLMtool/DLMtool/issues
