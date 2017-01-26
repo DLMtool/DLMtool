@@ -52,7 +52,10 @@ Converge <- function(MSEobj, thresh = 2, Plot = TRUE) {
   # CumlYd[is.nan(CumlYd)] <- 1 CumlPOF[is.nan(CumlPOF)] <- 1
   # CumlP10[is.nan(CumlP10)] <- 1 CumlP50[is.nan(CumlP50)] <- 1
   # CumlP100[is.nan(CumlP100)] <- 1
-  if (Plot) {
+  if (Plot) {	  
+    old_par <- par(no.readonly = TRUE)
+    on.exit(par(list = old_par), add = TRUE)
+
     par(mfrow = c(2, 3), cex.axis = 1.5, cex.lab = 1.7, oma = c(1, 
       1, 0, 0), mar = c(5, 5, 1, 1), bty = "l")
     matplot(t(CumlYd), type = "l", xlab = "Iteration", ylab = "Rel. Yield")
@@ -169,6 +172,9 @@ CheckConverg <- function(MSEobj, thresh = 2, Plot = TRUE) {
   # CumlP10[is.nan(CumlP10)] <- 1 CumlP50[is.nan(CumlP50)] <- 1
   # CumlP100[is.nan(CumlP100)] <- 1
   if (Plot) {
+    old_par <- par(no.readonly = TRUE)
+    on.exit(par(list = old_par), add = TRUE)
+
     par(mfrow = c(2, 3), cex.axis = 1.5, cex.lab = 1.7, oma = c(1, 
       1, 0, 0), mar = c(5, 5, 1, 1), bty = "l")
     matplot(t(CumlYd), type = "l", xlab = "Iteration", ylab = "Rel. Yield")
@@ -250,6 +256,9 @@ CheckConverg <- function(MSEobj, thresh = 2, Plot = TRUE) {
 #' @author T. Carruthers
 #' @export Tplot
 Tplot <- function(MSEobj, nam = NA) {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(list = old_par), add = TRUE)
+
   FMSYr <- quantile(MSEobj@F_FMSY, c(0.001, 0.9), na.rm = T)
   BMSYr <- quantile(MSEobj@B_BMSY, c(0.001, 0.975), na.rm = T)
   
@@ -325,6 +334,9 @@ Tplot <- function(MSEobj, nam = NA) {
 #' @author T. Carruthers
 #' @export Tplot2
 Tplot2 <- function(MSEobj, nam = NA) {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(list = old_par), add = TRUE)
+
   LTY <- rep(NA, MSEobj@nMPs)
   STY <- rep(NA, MSEobj@nMPs)
   VY <- rep(NA, MSEobj@nMPs)
@@ -377,6 +389,8 @@ Tplot2 <- function(MSEobj, nam = NA) {
 #' @author T. Carruthers
 #' @export NOAA_plot
 NOAA_plot <- function(MSEobj, nam = NA, type = NA, panel = T) {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(list = old_par), add = TRUE)
   
   Yd <- rep(NA, MSEobj@nMPs)
   B50 <- rep(NA, MSEobj@nMPs)
@@ -451,6 +465,8 @@ NOAA_plot <- function(MSEobj, nam = NA, type = NA, panel = T) {
 #' @author T. Carruthers 
 #' @export Pplot
 Pplot <- function(MSEobj, nam = NA) {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(list = old_par), add = TRUE)
   
   FMSYr <- quantile(MSEobj@F_FMSY, c(0.001, 0.9), na.rm = T)
   BMSYr <- quantile(MSEobj@B_BMSY, c(0.001, 0.975), na.rm = T)
@@ -587,6 +603,9 @@ Pplot2 <- function(MSEobj, YVar = c("B_BMSY", "F_FMSY"), MPs = NA, sims = NULL,
   cex.axis = 1.35, cex.lab = 1.4, YLab = NULL, incMP = TRUE, MPcex = 1.4, 
   incLeg = TRUE, cex.leg = 1.5, legPos = "topleft", yline = NULL, parOR = FALSE, 
   xaxis = TRUE, yaxis = TRUE, ...) {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(list = old_par), add = TRUE)
+
   YVars <- c("B_B0", "B_BMSY", "F_FMSY", "Yield")
   YVar <- match.arg(YVar, choices = YVars, several.ok = TRUE)
   
@@ -846,6 +865,9 @@ Pplot2 <- function(MSEobj, YVar = c("B_BMSY", "F_FMSY"), MPs = NA, sims = NULL,
 #' @export Kplot
 Kplot <- function(MSEobj, maxsim = 60, MPs = NA, sims = NULL, maxMP = 9, 
   nam = NA, cex.leg = 1.5) {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(list = old_par), add = TRUE)
+
   # png('Kplot.png')
   
   if (!is.null(sims) & all(is.na(MPs))) 
@@ -983,6 +1005,8 @@ Kplot <- function(MSEobj, maxsim = 60, MPs = NA, sims = NULL, maxMP = 9,
 
 # A simulation by simulation approach to plotting results
 comp <- function(MSEobj, MPs = NA) {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(list = old_par), add = TRUE)
   
   if (is.na(MPs)) 
     MPs <- MSEobj@MPs
@@ -1124,6 +1148,9 @@ makeTransparent <- function(someColor, alpha = 100) {
 #' @author T. Carruthers
 #' @export VOI
 VOI <- function(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA, Utnam = "Utility") {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(list = old_par), add = TRUE)
+
   objnam <- deparse(substitute(MSEobj))
   nsim <- MSEobj@nsim
   
@@ -1860,6 +1887,8 @@ tradeoffplot4 <- function(x, y, xlab, ylab, labs, cex, vl, hl, ShowLabs = FALSE,
 #' @author T. Carruthers
 #' @export wormplot
 wormplot <- function(MSEobj, Bref = 0.5, LB = 0.25, UB = 0.75) {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(list = old_par), add = TRUE)
   
   if (UB < LB) 
     stop("LB parameter must be lower than UB parameter")
@@ -1955,6 +1984,8 @@ wormplot <- function(MSEobj, Bref = 0.5, LB = 0.25, UB = 0.75) {
 #' @export VOI2
 VOI2 <- function(MSEobj, ncomp = 6, nbins = 4, Ut = NA, Utnam = "yield", 
   lay = F) {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(list = old_par), add = TRUE)
   
   objnam <- deparse(substitute(MSEobj))
   nsim <- MSEobj@nsim
@@ -2404,6 +2435,9 @@ MPStats <- function(MSEobj, PMRefs = list(B_BMSY = 0.5, B_B0 = 0.2, F_FMSY = 1,
 barplot.MSE <- function(height, MSEobj = NULL, PMs = list(B_BMSY = 0.5, 
   B_B0 = 0.2), PLim = 0.8, lastYrs = 10, maxMP = 14, MPs = NA, Title = NULL, 
   sims = NULL, msg = TRUE, cex.names = 1.3, incRef = FALSE, ...) {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(list = old_par), add = TRUE)
+
   MSEobj <- match.arg(MSEobj)
   if (is.null(MSEobj)) 
     MSEobj <- height
@@ -2624,6 +2658,9 @@ boxplot.MSE <- function(x, MPs = NA, maxMP = 8, PMRefs = list(B_BMSY = 1,
   B_B0 = 0.2, F_FMSY = 1, AAVY = 30, AAVE = 30), lastYrs = 10, cex.lab = 1.2, 
   cex.PM = 0.75, canMPs = NULL, cols = TRUE, outline = FALSE, CexName = 1.25, 
   incLine = TRUE, incref = FALSE, Names = TRUE, ...) {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(list = old_par), add = TRUE)
+
   MSEobj <- x
   if (!all(is.na(MPs))) {
     if (!incref) {
@@ -2935,6 +2972,8 @@ Jplot <- function(MSEobj, PLim = 0.8, YVar = c("LTY", "STY", "avgB_B0",
   "avgB_BMSY"), PMRefs = list(B_BMSY = 0.5, B_B0 = 0.2), UseMean = TRUE, 
   lastYrs = 10, AvailMPs = NULL, XLim = NULL, ShowCols = TRUE, ShowLabs = FALSE, 
   All = TRUE) {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(list = old_par), add = TRUE)
   
   nsim <- MSEobj@nsim
   nMPs <- MSEobj@nMPs
@@ -3124,6 +3163,9 @@ Jplot <- function(MSEobj, PLim = 0.8, YVar = c("LTY", "STY", "avgB_B0",
 Splot <- function(MSEobj = NULL, MPs = NA, All = TRUE, Var = c("B_BMSY", 
   "B_B0"), lastYrs = 10, Fref = 1, BMSYref = 1, B0ref = 0.4, cex.MP = 1, 
   Fbg = FALSE, Bbg = FALSE, Props = FALSE, TP = FALSE) {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(list = old_par), add = TRUE)
+
   Var <- match.arg(Var)
   if (!any(is.na(MPs))) 
     MSEobj <- Sub(MSEobj, MPs = MPs)
@@ -3266,6 +3308,9 @@ Splot <- function(MSEobj = NULL, MPs = NA, All = TRUE, Var = c("B_BMSY",
 #' @export Cplot
 Cplot <- function(MSEobj, MPs = NA, lastYrs = 5, XMin = NULL, YMin = NULL, 
   ShowLabs = FALSE) {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(list = old_par), add = TRUE)
+
   if (!all(is.na(MPs))) 
     MSEobj <- Sub(MSEobj, MPs = MPs)
   nsim <- MSEobj@nsim
@@ -3359,6 +3404,9 @@ calcStat <- function(rr, evalbreaks) {
 VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4, Par = c("Obs", 
   "OM"), YVar = c("Y", "B"), doPlot = TRUE, incStat = FALSE, availMP = NULL, 
   acceptMP = NULL, incNames = TRUE, labcex = 0.8, quants = c(0.05, 0.95)) {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(list = old_par), add = TRUE)
+
   YVar <- match.arg(YVar)
   nvars <- max(nvars, 2)  # maximum number of variables 
   Par <- match.arg(Par)  # Operating Model or Observation 
