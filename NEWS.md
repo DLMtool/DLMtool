@@ -1,7 +1,7 @@
 ## DLMtool 
 The current version of the DLMtool package is available for download from [CRAN](https://cran.r-project.org/web/packages/DLMtool/index.html).
 
-### DLMtool V3.2.9000 Current Development Version
+### DLMtool V3.2.9003 Current Development Version
 
 
 #### Major Changes
@@ -15,6 +15,14 @@ The current version of the DLMtool package is available for download from [CRAN]
 - `setup` function can be used to setting up parallel processing
 - exported several functions that some users required
 - removed LBSPR functions and replaced with dependency on LBSPR package. 
+
+##### fitHistoricalData branch 
+- allow R0 to be a vector nsim long
+- add Hist argument to runMSE - returns historical simulations
+- add `set.seed`to runMSE ## Needs more work
+- converted movement optimizer to Rcpp (about 10x faster)
+- convert qopt to Rcpp
+
 
 #### Bug Fixes 
 - fixed typo in `getr` function  
