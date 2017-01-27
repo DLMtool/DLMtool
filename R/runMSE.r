@@ -29,11 +29,15 @@
 #' estimates from stock assessments.
 #' @param CheckMPs Logical to indicate if Can function should be used to check
 #' if MPs can be run.
+#' @param Hist Should model stop after historical simulations? Returns a list 
+#' containing all historical data
+#' @param Debug Development switch
 #' @return An object of class MSE
 #' @author T. Carruthers
 #' @export runMSE
 runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4, 
-  pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, custompars = 0, CheckMPs = TRUE) {
+  pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, custompars = 0, CheckMPs = TRUE,
+  Hist=FALSE, Debug=FALSE) {
   
   message("Loading operating model")
   tiny <- 1e-15  # define tiny variable
@@ -167,6 +171,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   dep[order(cumlRecDev)] <- dep[order(dep, decreasing = F)]  # robustifies 
   
   R0 <- OM@R0  # Initial recruitment
+  if (length(R0) != nsim) R0 <- rep(R0, nsim)[1:nsim]
   
   Marray <- gettempvar(M, Msd, Mgrad, nyears + proyears, nsim)  # M by sim and year according to gradient and inter annual variability
   SRrel <- rep(OM@SRrel, nsim)  # type of Stock-recruit relationship. 1=Beverton Holt, 2=Ricker
@@ -269,13 +274,14 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   # age05 <- -((log(1-L5/Linf))/K) + t0# the highest age at %5
   # selectivity
   
-  V <- array(NA, dim = c(nsim, maxage, nyears + proyears))
+
+  V <- array(NA, dim = c(nsim, maxage, nyears + proyears)) 
   for (Yr in 1:(nyears + proyears)) {
     # selectivity pattern for all years (possibly updated in projection)
     V[, , Yr] <- t(sapply(1:nsim, SelectFun, L5[Yr, ], LFS[Yr, ], 
 	  Vmaxlen[Yr, ], Linfs = Linfarray[, Yr], Lens = Len_age[, , Yr]))
   }
-  
+   
   Asize <- cbind(Size_area_1, 1 - Size_area_1)
   
   message("Optimizing for user-specified movement")  # Print a progress update
@@ -284,12 +290,16 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   if (snowfall::sfIsRunning()) {
     # if the cluster is initiated
     snowfall::sfExport(list = c("Frac_area_1", "Prob_staying"))  # export some of the new arrays and ...
-    mov <- array(t(snowfall::sfSapply(1:nsim, getmov, Frac_area_1 = Frac_area_1, 
+    if (Debug) mov <- array(t(snowfall::sfSapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
+      Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
+    if (!Debug) mov <- array(t(snowfall::sfSapply(1:nsim, getmov, Frac_area_1 = Frac_area_1, 
       Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
   } else {
     # no cluster initiated
-    mov <- array(t(sapply(1:nsim, getmov, Frac_area_1 = Frac_area_1, 
+	if (Debug) mov <- array(t(sapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
       Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
+    if (!Debug) mov <- array(t(sapply(1:nsim, getmov, Frac_area_1 = Frac_area_1, 
+      Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1	  
   }
   
   nareas <- 2  # default is a two area model
@@ -318,7 +328,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   SY <- SAYR[, c(1, 3)]
   
   SSN[SAYR] <- Nfrac[SA] * R0 * initdist[SR]  # Calculate initial spawning stock numbers
-  N[SAYR] <- R0 * surv[SA] * initdist[SR]  # Calculate initial stock numbers
+  N[SAYR] <- R0[S] * surv[SA] * initdist[SR]  # Calculate initial stock numbers
   
   Biomass[SAYR] <- N[SAYR] * Wt_age[SAY]  # Calculate initial stock biomass
   SSB[SAYR] <- SSN[SAYR] * Wt_age[SAY]    # Calculate spawning stock biomass
@@ -333,16 +343,21 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   
   message("Optimizing for user-specified depletion")  # Print a progress update
   flush.console()  # update console
-  
+ 
   if (snowfall::sfIsRunning()) {
     snowfall::sfExport(list = c("dep", "Find", "Perr", "Marray", "hs", "Mat_age", 
       "Wt_age", "R0", "V", "nyears", "maxage", "SRrel", "aR", "bR"))
-    qs <- snowfall::sfSapply(1:nsim, getq, dep, Find, Perr, Marray, hs, Mat_age, 
+    if (Debug) qs <- snowfall::sfSapply(1:nsim, getq2, dep, Find, Perr, Marray, hs, Mat_age, 
       Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR)  # find the q that gives current stock depletion
+    if (!Debug) qs <- snowfall::sfSapply(1:nsim, getq, dep, Find, Perr, Marray, hs, Mat_age, 
+      Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR)  # find the q that gives current stock depletion	  
   } else {
-    qs <- sapply(1:nsim, getq, dep, Find, Perr, Marray, hs, Mat_age, 
+    if (Debug) qs <- sapply(1:nsim, getq2, dep, Find, Perr, Marray, hs, Mat_age, 
       Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR)  # find the q that gives current stock depletion
+    if (!Debug) qs <- sapply(1:nsim, getq, dep, Find, Perr, Marray, hs, Mat_age, 
+      Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR)  # find the q that gives current stock depletion	  
   }
+  
   
   # Check that depletion target is reached
   UpperBound <- 13  # bounds for q (catchability). Flag if bounded optimizer hits the bounds 
@@ -370,6 +385,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
       Perr2 <- array(rnorm((nyears + proyears) * length(HighQ), rep(procmu[HighQ], 
         nyears + proyears), rep(procsd[HighQ], nyears + proyears)), 
         c(length(HighQ), nyears + proyears))
+		
       for (y in 2:(nyears + proyears)) Perr2[, y] <- AC[HighQ] * 
         Perr2[, y - 1] + Perr2[, y] * (1 - AC[HighQ] * AC[HighQ])^0.5
       Perr[HighQ, ] <- exp(Perr2)  # normal space (mean 1 on average)
@@ -378,13 +394,19 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
         sfExport(list = c("dep", "Find", "Perr", "Marray", "hs", 
           "Mat_age", "Wt_age", "R0", "V", "nyears", "maxage", "SRrel", 
           "aR", "bR"))
-        qs[HighQ] <- sfSapply(HighQ, getq, dep, Find, Perr, Marray, 
+        if (Debug) qs[HighQ] <- sfSapply(HighQ, getq2, dep, Find, Perr, Marray, 
           hs, Mat_age, Wt_age, R0, V, nyears, maxage, mov, Spat_targ, 
           SRrel, aR, bR)  # find the q that gives current stock depletion
+        if (!Debug) qs[HighQ] <- sfSapply(HighQ, getq, dep, Find, Perr, Marray, 
+          hs, Mat_age, Wt_age, R0, V, nyears, maxage, mov, Spat_targ, 
+          SRrel, aR, bR)  # find the q that gives current stock depletion		  
       } else {
-        qs[HighQ] <- sapply(HighQ, getq, dep, Find, Perr, Marray, 
+        if (Debug) qs[HighQ] <- sapply(HighQ, getq2, dep, Find, Perr, Marray, 
           hs, Mat_age, Wt_age, R0, V, nyears, maxage, mov, Spat_targ, 
           SRrel, aR, bR)  # find the q that gives current stock depletion
+        if (!Debug) qs[HighQ] <- sapply(HighQ, getq, dep, Find, Perr, Marray, 
+          hs, Mat_age, Wt_age, R0, V, nyears, maxage, mov, Spat_targ, 
+          SRrel, aR, bR)  # find the q that gives current stock depletion		  
       }
       HighQ <- which(qs > UpperBound | qs < LowerBound)
       if (length(HighQ) == 0) 
@@ -501,7 +523,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     for (j in 1:nyears) {
       tempCN <- ceiling(-0.5 + rmultinom(1, size = CAL_ESS[i], prob = CN[i, j, ]) * CAL_nsamp[i]/CAL_ESS[i])
       # ages <- rep(1:maxage,tempCN)+runif(sum(tempCN),-0.5,0.5) # sample
-      # expected age
+      # expected age	  
       lens <- unlist(sapply(1:maxage, function(X) 
 	    rnorm(tempCN[X], Len_age[i, X, j], LatASD[i, X, j])))
       lens[lens > (max(Linfarray) + 2 * max(LatASD)) | lens > max(CAL_bins)] <- max(Linfarray) + 
@@ -523,24 +545,46 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   message("Calculating MSY reference points")  # Print a progress update
   flush.console()  # update the console
   if (snowfall::sfIsRunning()) {
-    snowfall::sfExport(list = c("Marray", "hs", "Mat_age", "Wt_age", "R0", "V", 
-      "nyears", "maxage"))  # export some newly made arrays to the cluster
-    MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY, Marray, hs, Mat_age, Wt_age, 
+    snowfall::sfExport(list = c("Marray", "hs", "Mat_age", "Wt_age", "R0", "V", "nyears", "maxage"))  # export some newly made arrays to the cluster
+    if (!Debug) MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY, Marray, hs, Mat_age, Wt_age, 
       R0, V = V[, , nyears], maxage, nyears, proyears = 200, Spat_targ, 
       mov, SRrel, aR, bR)  # optimize for MSY reference points\t
+	## Above version didn't include proyears or recruitment variability in projections
+	## Didn't account for future changes in V and W@Age
+	
+    # Using Rcpp code 	
+    if (Debug) MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY2, Perr, Marray, hs, Mat_age, Wt_age, 
+      R0, V = V, maxage, nyears, proyears = proyears, Spat_targ, 
+      mov, SRrel, aR, bR)  # optimize for MSY reference points\t	  
+	  
   } else {
-    MSYrefs <- sapply(1:nsim, getFMSY, Marray, hs, Mat_age, Wt_age, 
+    if (!Debug) MSYrefs <- sapply(1:nsim, getFMSY, Marray, hs, Mat_age, Wt_age, 
       R0, V = V[, , nyears], maxage, nyears, proyears = 200, Spat_targ, 
       mov, SRrel, aR, bR)  # optimize for MSY reference points
+    if (Debug) MSYrefs <- sapply(1:nsim, getFMSY2, Perr, Marray, hs, Mat_age, Wt_age, 
+      R0, V = V, maxage, nyears, proyears = proyears, Spat_targ, 
+      mov, SRrel, aR, bR)  # optimize for MSY reference points	  
   }
   
-  MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
-  FMSY <- MSYrefs[2, ]  # instantaneous apical FMSY  (Vulnerable)
-  VBMSY <- (MSY/(1 - exp(-FMSY)))  # Biomass at MSY (Vulnerable)
-  UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
-  SSBMSY <- MSYrefs[3, ]  # Spawing Stock Biomass at MSY
-  BMSY_B0 <- MSYrefs[4, ]  # SSBMSY relative to unfished (SSB)
+  if (!Debug) { #
+    MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
+    FMSY <- MSYrefs[2, ]  # instantaneous apical FMSY  (Vulnerable)
+    VBMSY <- (MSY/(1 - exp(-FMSY)))  # Biomass at MSY (Vulnerable)
+    UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
+    SSBMSY <- MSYrefs[3, ]  # Spawing Stock Biomass at MSY
+    BMSY_B0 <- MSYrefs[4, ]  # SSBMSY relative to unfished (SSB)
+  }
+  if (Debug) {
+    MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
+    FMSY <- MSYrefs[2, ]  # instantaneous apical FMSY (Vulnerable)
+    SSBMSY <- MSYrefs[3, ]  # Spawing Stock Biomass at MSY  
+    SSBMSY_SSB0 <- SSBMSY/apply(SSB[,,1,], 1, sum)  # SSBMSY relative to unfished (SSB)   
+    BMSY_B0 <- MSYrefs[4, ]/apply(Biomass[,,1,], 1, sum) # Biomass relative to unfished (B0)
+	VBMSY <- MSYrefs[5, ] # (MSY/(1 - exp(-FMSY)))  # Biomass at MSY (Vulnerable)
+  }
   
+  UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
+
   BMSY_B0bias <- array(rlnorm(nsim * ntest, mconv(1, OM@BMSY_B0cv), sdconv(1, 
     OM@BMSY_B0cv)), dim = c(nsim, ntest))  # trial samples of BMSY relative to unfished
   
@@ -548,23 +592,34 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   flush.console()  # update the console
   if (snowfall::sfIsRunning()) {
     # Numerically optimize for F that provides highest long term yield
-    RefY <- snowfall::sfSapply(1:nsim, getFref, Marray = Marray, Wt_age = Wt_age, 
+    if (!Debug) RefY <- snowfall::sfSapply(1:nsim, getFref, Marray = Marray, Wt_age = Wt_age, 
+        Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, ], SSN_s = SSN[, 
+        , nyears, ], Biomass_s = Biomass[, , nyears, ], VBiomass_s = VBiomass[, , nyears, ], 
+		SSB_s = SSB[, , nyears, ], Vn = V[, , (nyears + 1):(nyears + proyears)], 
+		hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas, 
+		maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)
+    if (Debug) RefY <- snowfall::sfSapply(1:nsim, getFref2, Marray = Marray, Wt_age = Wt_age, 
       Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, ], SSN_s = SSN[, 
-        , nyears, ], Biomass_s = Biomass[, , nyears, ], VBiomass_s = VBiomass[, 
-        , nyears, ], SSB_s = SSB[, , nyears, ], Vn = V[, , (nyears + 
-        1):(nyears + proyears)], hs = hs, R0a = R0a, nyears = nyears, 
-      proyears = proyears, nareas = nareas, maxage = maxage, mov = mov, 
-      SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)
+        , nyears, ], Biomass_s = Biomass[, , nyears, ], VBiomass_s = VBiomass[, , nyears, ], 
+		SSB_s = SSB[, , nyears, ], Vn = V[, , (nyears + 1):(nyears + proyears)], 
+		hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas, 
+		maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)		
   } else {
-    RefY <- sapply(1:nsim, getFref, Marray = Marray, Wt_age = Wt_age, 
-      Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, ], SSN_s = SSN[, 
-        , nyears, ], Biomass_s = Biomass[, , nyears, ], VBiomass_s = VBiomass[, 
-        , nyears, ], SSB_s = SSB[, , nyears, ], Vn = V[, , (nyears + 
-        1):(nyears + proyears)], hs = hs, R0a = R0a, nyears = nyears, 
-      proyears = proyears, nareas = nareas, maxage = maxage, mov = mov, 
-      SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)
+    if (!Debug) RefY <- sapply(1:nsim, getFref, Marray = Marray, Wt_age = Wt_age, 
+      Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, ], SSN_s = SSN[, , nyears, ], 
+	  Biomass_s = Biomass[, , nyears, ], VBiomass_s = VBiomass[, , nyears, ], 
+	  SSB_s = SSB[, , nyears, ], Vn = V[, , (nyears + 1):(nyears + proyears)], 
+	  hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas,
+	  maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)
+    if (Debug) RefY <- sapply(1:nsim, getFref2, Marray = Marray, Wt_age = Wt_age, 
+      Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, ], SSN_s = SSN[, , nyears, ], 
+	  Biomass_s = Biomass[, , nyears, ], VBiomass_s = VBiomass[, , nyears, ], 
+	  SSB_s = SSB[, , nyears, ], Vn = V[, , (nyears + 1):(nyears + proyears)], 
+	  hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas,
+	  maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)	  
   }
-  
+
+
   Depletion <- apply(Biomass[, , nyears, ], 1, sum)/apply(Biomass[, , 1, ], 1, sum)  #^betas   # apply hyperstability / hyperdepletion
   # Depletion<-(apply(SSB[,,nyears,],1,sum)/apply(SSB[,,1,],1,sum))#^betas
   # # apply hyperstability / hyperdepletion
@@ -577,6 +632,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   Recerr <- array(rlnorm((nyears + proyears) * nsim, mconv(1, rep(Recsd, (nyears + proyears))), 
     sdconv(1, rep(Recsd, nyears + proyears))), c(nsim, nyears + proyears))
   
+  ## CHECK IF BMSY_B0 SHOULD BY Vulnerable Biomass 
   test <- array(BMSY_B0 * BMSY_B0bias, dim = c(nsim, ntest))  # the simulated observed BMSY_B0 
   indy <- array(rep(1:ntest, each = nsim), c(nsim, ntest))  # index
   indy[test > 0.9] <- NA  # interval censor
@@ -667,7 +723,24 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   DLM_data@MPrec <- Cobs[, nyears]
   DLM_data@MPeff <- rep(1, nsim)
   DLM_data@Misc <- vector("list", nsim)
-  HistDat <- DLM_data
+
+  ## Return Historical Simulations and DLM_data from last historical year ##
+  if (Hist) { # Stop the model after historical simulations are complete
+  	message("Returning historical simulations")
+	vb <- t(apply(VBiomass, c(1, 3), sum))
+	b <- t(apply(Biomass, c(1, 3), sum))
+	ssb <- t(apply(SSB, c(1, 3), sum))
+    Cc <- t(apply(CB, c(1,3), sum))
+	rec <- t(apply(N[, 1, , ], c(1,2), sum))
+	
+    TSdata <- list(VB=vb, SSB=ssb, Bio=b, Catch=Cc, Rec=rec)
+    AtAge <- list(Len_age=Len_age[,,1:nyears], Wt_age=Wt_age[,,1:nyears], 
+	  Sl_age=V, Mat_age=Mat_age)
+  
+	HistData <- list(TSdata=TSdata, AtAge=AtAge, DLM_data=DLM_data)
+	class(HistData) <- c("list", "hist")
+	return(HistData)
+  }
 
   # assign('DLM_data',DLM_data,envir=.GlobalEnv) # for debugging fun
    
