@@ -5,3 +5,91 @@ bhnoneq_LL <- function(stpar, year, Lbar, ss, Linf, K, Lc, nbreaks) {
     .Call('DLMtool_bhnoneq_LL', PACKAGE = 'DLMtool', stpar, year, Lbar, ss, Linf, K, Lc, nbreaks)
 }
 
+#' Rcpp version of the Projection function for calculating Reference Yield
+#'
+#' 
+#' @param lnF internal
+#' @param Mvec internal
+#' @param Wac internal
+#' @param Mac internal
+#' @param Pc internal
+#' @param N_c internal
+#' @param SSN_c internal
+#' @param Biomass_c internal
+#' @param VBiomass_c internal
+#' @param SSB_c internal
+#' @param Vc internal
+#' @param hc internal
+#' @param R0ac internal
+#' @param proyears internal
+#' @param nareas internal
+#' @param maxage internal
+#' @param movc internal
+#' @param SSBpRc internal
+#' @param aRc internal
+#' @param bRc internal
+#' @param SRrelc internal
+#' @param Spat_targc internal
+#' 
+#' @export
+#' @keywords internal
+doprojPI_cpp <- function(lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc) {
+    .Call('DLMtool_doprojPI_cpp', PACKAGE = 'DLMtool', lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc)
+}
+
+#' Rcpp version of the Optimization function that returns the squared difference between user
+#' specified and calculated movement parameters. 
+#'
+#' The user specifies the probability of staying in the same area and spatial
+#' heterogeneity (both in the unfished state). This function returns the
+#' squared difference between these values and those produced by the three
+#' logit movement model.
+#'
+#' This is paired with getmov to find the correct movement model. 
+#' 
+#' @param par Three parameters in the logit space that control the four
+#' probabilities of moving between 2 areas
+#' @param prb User specified probability that individuals in area 1 remain in
+#' that area (unfished conditions)
+#' @param frac User specified fraction of individuals found in area 1 (unfished
+#' conditions)
+#' 
+#' @author T. Carruthers with an amateur attempt at converting to Rcpp by A. Hordyk (but it works!)
+#' @useDynLib DLMtool
+#' @export
+movfit_Rcpp <- function(par, prb, frac) {
+    .Call('DLMtool_movfit_Rcpp', PACKAGE = 'DLMtool', par, prb, frac)
+}
+
+#' Rcpp version of the Projection Optimizer
+#'
+#' Optimize q for current depletion, optimize and calculate MSY accounting for future productivity, 
+#'
+#' @param lnIn internal
+#' @param Fc internal
+#' @param Perrc internal
+#' @param Mc internal
+#' @param hc internal
+#' @param Mac internal
+#' @param Wac internal
+#' @param R0c internal
+#' @param Vc internal
+#' @param nyears internal
+#' @param maxage internal
+#' @param movc internal
+#' @param Spat_targc internal
+#' @param SRrelc internal
+#' @param aRc internal
+#' @param bRc internal
+#' @param movc internal
+#' @param SSBpRc internal
+#' @param proyears internal
+#' @param FMSY internal
+#' @param Control internal
+#' 
+#' @export
+#' @keywords internal
+projOpt_cpp <- function(lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, FMSY, Control) {
+    .Call('DLMtool_projOpt_cpp', PACKAGE = 'DLMtool', lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, FMSY, Control)
+}
+
