@@ -36,16 +36,64 @@ proportionMat = vector()
 getFMSY <- function(x, Marray, hs, Mat_age, Wt_age, R0, V, maxage, nyears, 
     proyears, Spat_targ, mov, SRrel, aR, bR) {
     opt <- optimize(FMSYopt, log(c(0.001, 5)), Mc = Marray[x, nyears], 
-        hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , nyears], R0c = R0, 
+        hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , nyears], R0c = R0[x], 
         Vc = V[x, ], maxage = maxage, nyears = nyears, proyears = proyears, 
         Spat_targc = Spat_targ[x], movc = mov[x, , ], SRrelc = SRrel[x], 
         aRc = aR[x, ], bRc = bR[x, ], Opt = T)
-    
     return(FMSYopt(opt$minimum, Mc = Marray[x, nyears], hc = hs[x], Mac = Mat_age[x, 
-        ], Wac = Wt_age[x, , nyears], R0c = R0, Vc = V[x, ], maxage = maxage, 
+        ], Wac = Wt_age[x, , nyears], R0c = R0[x], Vc = V[x,  ], maxage = maxage, 
         nyears = nyears, proyears = proyears, Spat_targc = Spat_targ[x], 
         movc = mov[x, , ], SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, 
             ], Opt = F))
+}
+
+#' Calculate FMSY and related metrics using Rcpp code 
+#' 
+#' @param x internal parameter
+#' @param Marray internal parameter
+#' @param hs internal parameter
+#' @param Mat_age internal parameter
+#' @param Wt_age internal parameter
+#' @param R0 internal parameter
+#' @param V internal parameter
+#' @param maxage internal parameter
+#' @param nyears internal parameter
+#' @param proyears internal parameter
+#' @param Spat_targ internal parameter
+#' @param mov internal parameter
+#' @param SRrel internal parameter
+#' @param aR internal parameter
+#' @param bR internal parameter
+#' 
+#' @keywords internal
+#' @export getFMSY2		
+getFMSY2 <- function(x, Perr, Marray, hs, Mat_age, Wt_age, R0, V, maxage, nyears, 
+    proyears, Spat_targ, mov, SRrel, aR, bR, Control=2) {
+    opt <- optimize(projOpt_cpp, log(c(0.001, 5)), depc=0, Fc=0, Perrc=Perr[x,],
+		Mc = Marray[x, ], hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , ], R0c = R0[x], 
+        Vc = V[x, ,], nyears = nyears, maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x],
+        SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ], proyears = proyears, FMSY=0, Control=Control)
+ 
+    F_MSY <- exp(opt$minimum)
+	MSY <- -opt$objective 
+    SSB_MSY <-  projOpt_cpp(lnIn = 0, depc=0, Fc=0, Perrc=Perr[x,],
+		Mc = Marray[x, ], hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , ], R0c = R0[x], 
+        Vc = V[x, ,], nyears = nyears, maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x],
+        SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ], proyears = proyears, FMSY=F_MSY,
+		Control=3)
+    B_MSY <-  projOpt_cpp(lnIn = 0, depc=0, Fc=0, Perrc=Perr[x,],
+		Mc = Marray[x, ], hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , ], R0c = R0[x], 
+        Vc = V[x, ,], nyears = nyears, maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x],
+        SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ], proyears = proyears, FMSY=F_MSY,
+		Control=4)  
+     V_BMSY <-  projOpt_cpp(lnIn = 0, depc=0, Fc=0, Perrc=Perr[x,],
+		Mc = Marray[x, ], hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , ], R0c = R0[x], 
+        Vc = V[x, ,], nyears = nyears, maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x],
+        SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ], proyears = proyears, FMSY=F_MSY,
+		Control=5)     
+
+    return(c(MSY = MSY, FMSY = F_MSY, SSB = SSB_MSY, B = B_MSY, VB=V_BMSY))
+					
 }
 
 #' Internal function FMSY and related metrics 
@@ -76,7 +124,7 @@ FMSYopt <- function(lnF, Mc, hc, Mac, Wac, R0c, Vc, maxage, nyears, proyears,
     nareas <- nrow(movc)
     # areasize<-c(asizec,1-asizec)
     idist <- rep(1/nareas, nareas)
-    for (i in 1:100) idist <- apply(array(idist, c(2, 2)) * movc, 2, sum)
+    for (i in 1:300) idist <- apply(array(idist, c(2, 2)) * movc, 2, sum)
     
     N <- array(exp(-Mc * ((1:maxage) - 1)) * R0c, dim = c(maxage, nareas)) * 
         array(rep(idist, each = maxage), dim = c(maxage, nareas))
@@ -201,19 +249,67 @@ getFref <- function(x, Marray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s,
     VBiomass_s, SSB_s, Vn, hs, R0a, nyears, proyears, nareas, maxage, mov, 
     SSBpR, aR, bR, SRrel, Spat_targ) {
     
-    opt <- optimize(doprojPI, log(c(0.001, 10)), Mvec = Marray[x, (nyears + 
-        1):(nyears + proyears)], Wac = Wt_age[x, , (nyears + 1):(nyears + 
-        proyears)], Mac = Mat_age[x, ], Pc = Perr[x, (nyears + 1):(nyears + 
-        proyears)], N_c = N_s[x, , ], SSN_c = SSN_s[x, , ], Biomass_c = Biomass_s[x, 
-        , ], VBiomass_c = VBiomass_s[x, , ], SSB_c = SSB_s[x, , ], Vc = Vn[x, 
-        , ], hc = hs[x], R0ac = R0a[x, ], proyears, nareas, maxage, movc = mov[x, 
-        , ], SSBpRc = SSBpR[x], aRc = aR[x, ], bRc = bR[x, ], SRrelc = SRrel[x], 
+    opt <- optimize(doprojPI, log(c(0.001, 10)), Mvec = Marray[x, (nyears + 1):(nyears + proyears)], 
+	  Wac = Wt_age[x, , (nyears + 1):(nyears + proyears)], Mac = Mat_age[x, ], 
+	    Pc = Perr[x, (nyears + 1):(nyears + proyears)], N_c = N_s[x, , ], 
+		SSN_c = SSN_s[x, , ], Biomass_c = Biomass_s[x, , ], 
+		VBiomass_c = VBiomass_s[x, , ], SSB_c = SSB_s[x, , ], Vc = Vn[x, , ], 
+		hc = hs[x], R0ac = R0a[x, ], proyears, nareas, maxage, movc = mov[x, , ], 
+		SSBpRc = SSBpR[x], aRc = aR[x, ], bRc = bR[x, ], SRrelc = SRrel[x], 
         spat_targ = Spat_targ[x])
     # print(exp(opt$minimum))
     return(-opt$objective)
     
 }
 
+
+#' Internal Get Reference F using Rcpp 
+#' 
+#' @param x internal parameter
+#' @param Marray internal parameter
+#' @param Wt_age internal parameter
+#' @param Mat_age internal parameter
+#' @param Perr internal parameter
+#' @param N_s internal parameter
+#' @param SSN_s internal parameter
+#' @param N_s internal parameter
+#' @param Biomass_s internal parameter
+#' @param VBiomass_s internal parameter
+#' @param SSB_s internal parameter
+#' @param Vn internal parameter
+#' @param hs internal parameter
+#' @param R0a internal parameter
+#' @param nyears internal parameter
+#' @param proyears internal parameter
+#' @param nareas internal parameter
+#' @param maxage internal parameter
+#' @param mov internal parameter
+#' @param SSBpR internal parameter
+#' @param aR internal parameter
+#' @param bR internal parameter
+#' @param SRrel internal parameter
+#' @param Spat_targ internal parameter
+#' 
+#' @keywords internal
+#' @export getFref2
+getFref2 <- function(x, Marray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s, 
+    VBiomass_s, SSB_s, Vn, hs, R0a, nyears, proyears, nareas, maxage, mov, 
+    SSBpR, aR, bR, SRrel, Spat_targ) {
+    
+    opt <- optimize(doprojPI_cpp, log(c(0.001, 10)), Mvec = Marray[x, (nyears + 1):(nyears + proyears)], 
+	  Wac = Wt_age[x, , (nyears + 1):(nyears + proyears)], Mac = Mat_age[x, ], 
+	    Pc = Perr[x, (nyears + 1):(nyears + proyears)], N_c = N_s[x, , ], 
+		SSN_c = SSN_s[x, , ], Biomass_c = Biomass_s[x, , ], 
+		VBiomass_c = VBiomass_s[x, , ], SSB_c = SSB_s[x, , ], Vc = Vn[x, , ], 
+		hc = hs[x], R0ac = R0a[x, ], proyears, nareas, maxage, movc = mov[x, , ], 
+		SSBpRc = SSBpR[x], aRc = aR[x, ], bRc = bR[x, ], SRrelc = SRrel[x], 
+        Spat_targc = Spat_targ[x])
+    # print(exp(opt$minimum))
+    return(-opt$objective)
+    
+}
+
+			
 #' Internal Projection Function
 #' 
 #' @param lnF internal parameter
@@ -273,7 +369,6 @@ doprojPI <- function(lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c,
         1, ], 2, sum)^spat_targ)  # spatial preference according to spatial biomass
     fishdist <- matrix(fishdist, ncol = nareas)
     FM_P[AYR] <- FF * Vc[AY] * fishdist[R]
-    
     # FM_P[AYR]<-FF*Vc[A]
     Z_P[AYR] <- FM_P[AYR] + Mvec[Y]
     
@@ -293,22 +388,19 @@ doprojPI <- function(lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c,
         indMov3 <- indMov[, c(3, 4)]
         
         N_P[A2YR] <- N_P[A1YR] * exp(-Z_P[A1YR])  # Total mortality
-        
         if (SRrelc == 1) {
-            N_P[1, y, ] <- Pc[y] * (0.8 * R0ac * hc * apply(SSB_P[, y - 
-                1, ], 2, sum))/(0.2 * SSBpRc * R0ac * (1 - hc) + (hc - 
-                0.2) * apply(SSB_P[, y - 1, ], 2, sum))  # Recruitment assuming regional R0 and stock wide steepness
+            N_P[1, y, ] <- Pc[y] * (0.8 * R0ac * hc * apply(SSB_P[, y - 1, ], 2, sum))/
+			  (0.2 * SSBpRc * R0ac * (1 - hc) + (hc - 0.2) * apply(SSB_P[, y - 1, ], 2, sum))  # Recruitment assuming regional R0 and stock wide steepness
         } else {
             N_P[1, y, ] <- Pc[y] * aRc * apply(SSB_P[, y - 1, ], 2, sum) * 
                 exp(-bRc * apply(SSB_P[, y - 1, ], 2, sum))
         }
         
-        temp <- array(N_P[indMov2] * movc[indMov3], dim = c(nareas, nareas, 
-            maxage))  # Move individuals
+        temp <- array(N_P[indMov2] * movc[indMov3], dim = c(nareas, nareas,  maxage))  # Move individuals		
         N_P[, y, ] <- apply(temp, c(3, 1), sum)
         
         Biomass_P[AYR] <- N_P[AYR] * Wac[AY]  # Calculate biomass
-        VBiomass_P[AYR] <- Biomass_P[AYR] * Vc[A]  # Calculate vulnerable biomass
+        VBiomass_P[AYR] <- Biomass_P[AYR] * Vc[AY]  # Calculate vulnerable biomass
         SSN_P[AYR] <- N_P[AYR] * Mac[A]  # Calculate spawning stock numbers
         SSB_P[AYR] <- SSN_P[AYR] * Wac[AY]  # Calculate spawning stock biomass
         
@@ -336,8 +428,7 @@ doprojPI <- function(lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c,
     # plot(CB_P, type='l', ylim=c(0, max(CB_P, na.rm=TRUE))) Biomass_P[,1,]
     # apply(N_P[,1:6,1:2], c(1,2), sum)
     
-    return(-mean(CB_P[(proyears - min(4, (proyears - 1))):proyears], na.rm = T))
-    
+    return(-mean(CB_P[(proyears - min(4, (proyears - 1))):proyears], na.rm = T))  
 }
 
 
@@ -456,58 +547,55 @@ GenLenFun <- function(NatAGTG, LenatAgeGTG, LenBin, LenMid) {
 #' @param L1 length one
 #' @param s1 s1
 #' @param s2 s2
-#' @param Lens vector of lengths 
+#' @param lens vector of lengths 
 #' @keywords internal
 #' @export TwoSidedFun
-TwoSidedFun <- function(L1, s1, s2, Lens) {
-    Sl <- rep(0, length(Lens))
-    Sl[Lens < L1] <- exp(-((Lens[Lens < L1] - L1)^2)/(2 * s1^2))
-    Sl[Lens >= L1] <- exp(-((Lens[Lens >= L1] - L1)^2)/(2 * s2^2))
+TwoSidedFun <- function(L1, s1, s2, lens) {
+    Sl <- rep(0, length(lens))
+    Sl[lens < L1] <- exp(-((lens[lens < L1] - L1)^2)/(2 * s1^2))
+    Sl[lens >= L1] <- exp(-((lens[lens >= L1] - L1)^2)/(2 * s2^2))
     return(Sl)
 }
 
-#' Calculate slope from ageM and age95 
-#'
-#' @param X index 
-#' @param ageM age at maturity
-#' @param age95 age at 95 percent maturity
-#' @keywords internal
-#' @export getroot
-getroot <- function(X, ageM, age95) 
-  uniroot(getSlopeFun, interval = c(1e-04, 5), age50 = ageM[X], age95 = age95[X])$root
-  
-#' Internal function to calculate slope
-#'
-#' @param tst s2 
-#' @param L1 length one
-#' @param L0.05 L0.05
-#' @keywords internal
-#' @export getSlope1
-getSlope1 <- function(tst, L1, L0.05) 
-  (0.05 - TwoSidedFun(L1 = L1, s1 = tst, s2 = 1000, L0.05))^2
 
 #' Internal function to calculate slope
 #'
-#' @param tst s2 
+#' @param s1 s1 
+#' @param L1 length one
+#' @param L0.05 length at 5 percent selection 
+#' @keywords internal
+#' @export getSlope1
+getSlope1 <- function(s1, L1, L0.05) 
+  (0.05 - TwoSidedFun(L1 = L1, s1 = s1, s2 = 1000, lens=L0.05))^2
+
+#' Internal function to calculate slope
+#'
+#' @param s2 s2 
 #' @param L1 length one
 #' @param s1 s1
 #' @param Linf asymptotic length 
 #' @param MaxSel Maximum selectivity
 #' @keywords internal
 #' @export getSlope2
-getSlope2 <- function(tst, L1, s1, Linf, MaxSel) 
-  (MaxSel - TwoSidedFun(L1 = L1, s1 = s1, s2 = tst, Linf))^2
+getSlope2 <- function(s2, L1, s1, Linf, MaxSel) 
+  (MaxSel - TwoSidedFun(L1 = L1, s1 = s1, s2 = s2, Linf))^2
 
-#' Internal function to calculate slope
-#'
-#' @param SD standard deviation 
-#' @param age50 age at maturity
-#' @param age95 age at 95 percent maturity
-#' @keywords internal
-#' @export getSlopeFun
-getSlopeFun <- function(SD, age50, age95) 
-  0.95 - (1/(1 + exp((age50 - age95)/(age50 * SD))))
-
+# #' Internal function to calculate slope
+# #'
+# #' @param pars log parameters  
+# #' @param L0.05 length at 5 percent seleciton
+# #' @param L1 length at full selection
+# #' @param Linf asymptotic length 
+# #' @param MaxSel Maximum selectivity
+# #' @keywords internal
+# #' @export getSlopes
+# getSlopes <- function(pars, L0.05, L1, Linf, MaxSel) {
+  # s1 <- exp(pars[1]) 
+  # s2 <- exp(pars[2]) 
+  # (MaxSel - TwoSidedFun(L1 = L1, s1 = s1, s2 = s2, lens=Linf))^2 + 
+  # (0.05 - TwoSidedFun(L1 = L1, s1 = s1, s2 = s2, lens=L0.05))^2
+# }
+  
   
   
   
@@ -522,14 +610,39 @@ getSlopeFun <- function(SD, age50, age95)
 #' @keywords internal
 #' @export SelectFun
 SelectFun <- function(i, SL0.05, SL1, MaxSel, Linfs, Lens) {
-    s1 <- optimise(getSlope1, interval = c(0, 1e+06), L1 = SL1[i], L0.05 = SL0.05[i])$minimum
-    s2 <- optimise(getSlope2, interval = c(0, 1e+06), L1 = SL1[i], s1 = s1, 
-        Linf = Linfs[i], MaxSel = MaxSel[i])$minimum
-    if (is.vector(Lens)) 
-        TwoSidedFun(L1 = SL1[i], s1 = s1, s2 = s2, Lens = Lens)  #nsim = 1
- else TwoSidedFun(L1 = SL1[i], s1 = s1, s2 = s2, Lens = Lens[i, ])  #nsim > 1
+  
+  s1 <- optimise(getSlope1, interval = c(0, 1e+06), L1 = SL1[i], L0.05 = SL0.05[i])$minimum
+  s2 <- optimise(getSlope2, interval = c(0, 1e+06), L1 = SL1[i], s1 = s1, 
+      Linf = Linfs[i], MaxSel = MaxSel[i])$minimum
+ 
+  if (is.vector(Lens)) 
+    TwoSidedFun(L1 = SL1[i], s1 = s1, s2 = s2, lens = Lens)  #nsim = 1
+  else TwoSidedFun(L1 = SL1[i], s1 = s1, s2 = s2, lens = Lens[i, ])  #nsim > 1
 }
 
+
+
+#' Calculate slope from ageM and age95 
+#'
+#' @param X index 
+#' @param ageM age at maturity
+#' @param age95 age at 95 percent maturity
+#' @keywords internal
+#' @export getroot
+getroot <- function(X, ageM, age95) 
+  uniroot(getSlopeFun, interval = c(1e-04, 5), age50 = ageM[X], age95 = age95[X])$root
+  
+#' Internal function to calculate slope
+#'
+#' @param SD standard deviation 
+#' @param age50 age at maturity
+#' @param age95 age at 95 percent maturity
+#' @keywords internal
+#' @export getSlopeFun
+getSlopeFun <- function(SD, age50, age95) 
+  0.95 - (1/(1 + exp((age50 - age95)/(age50 * SD))))
+  
+  
 # Selectivity at length function for GTG model
 SelectFunGTG <- function(i, SL0.05, SL1, MaxSel, Linfs, LenGTG) {
     s1 <- optimise(getSlope1, interval = c(0, 100), L1 = SL1[i], L0.05 = SL0.05[i])$minimum
