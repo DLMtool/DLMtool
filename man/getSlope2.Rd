@@ -4,10 +4,10 @@
 \alias{getSlope2}
 \title{Internal function to calculate slope}
 \usage{
-getSlope2(tst, L1, s1, Linf, MaxSel)
+getSlope2(s2, L1, s1, Linf, MaxSel)
 }
 \arguments{
-\item{tst}{s2}
+\item{s2}{s2}
 
 \item{L1}{length one}
 

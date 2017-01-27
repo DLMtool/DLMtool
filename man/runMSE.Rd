@@ -41,6 +41,11 @@ estimates from stock assessments.}
 
 \item{CheckMPs}{Logical to indicate if Can function should be used to check
 if MPs can be run.}
+
+\item{Hist}{Should model stop after historical simulations? Returns a list 
+containing all historical data}
+
+\item{Debug}{Development switch}
 }
 \value{
 An object of class MSE

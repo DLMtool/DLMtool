@@ -4,14 +4,14 @@
 \alias{getSlope1}
 \title{Internal function to calculate slope}
 \usage{
-getSlope1(tst, L1, L0.05)
+getSlope1(s1, L1, L0.05)
 }
 \arguments{
-\item{tst}{s2}
+\item{s1}{s1}
 
 \item{L1}{length one}
 
-\item{L0.05}{L0.05}
+\item{L0.05}{length at 5 percent selection}
 }
 \description{
 Internal function to calculate slope

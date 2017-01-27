@@ -4,7 +4,7 @@
 \alias{TwoSidedFun}
 \title{Internal Two sided selectivity curve}
 \usage{
-TwoSidedFun(L1, s1, s2, Lens)
+TwoSidedFun(L1, s1, s2, lens)
 }
 \arguments{
 \item{L1}{length one}
@@ -13,7 +13,7 @@ TwoSidedFun(L1, s1, s2, Lens)
 
 \item{s2}{s2}
 
-\item{Lens}{vector of lengths}
+\item{lens}{vector of lengths}
 
 \item{tst}{s2}
 }
