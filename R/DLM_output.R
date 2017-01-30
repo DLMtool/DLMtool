@@ -3628,7 +3628,7 @@ HDAAC <- function(x, DLM_data, reps = 100) {
   if (any(is.na(c(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x])))) 
     return(NA)
   BMSY_K <- rbeta(reps, alphaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x] * 
-    DLM_data@CV_BMSY_B0[x]), betaconv(DLM_data@BMSY_B0[x], DLM_data@CV_BMSY_B0[x]))
+    DLM_data@CV_BMSY_B0[x]), betaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x] * DLM_data@CV_BMSY_B0[x]))
   dcac <- C_tot/(DLM_data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
   ddcac <- dcac * Bt_K/BMSY_K
   TAC <- dcac
