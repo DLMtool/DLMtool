@@ -1442,7 +1442,7 @@ class(SBT2) <- "DLM_output"
 #' @export DD
 DD <- function(x, DLM_data, reps = 100) {
   # for(x in 1:nsim){
-  dependencies = "DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@Mort, DLM_data@CV_Mort. DLM_data@wla, DLM_data@ wlb"
+  dependencies = "DLM_data@vbLinf, DLM_data@CV_vbLinf, DLM_data@vbK, DLM_data@CV_vbK, DLM_data@vbt0, DLM_data@CV_vbt0, DLM_data@Mort, DLM_data@CV_Mort, DLM_data@wla, DLM_data@wlb"
   Linfc <- trlnorm(reps, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
   Kc <- trlnorm(reps, DLM_data@vbK[x], DLM_data@CV_vbK[x])
   if (DLM_data@vbt0[x] != 0 & DLM_data@CV_vbt0[x] != tiny) {
