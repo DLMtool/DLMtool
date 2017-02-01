@@ -4,7 +4,8 @@
 \alias{ChooseSelect}
 \title{Manually choose the historical selectivity pattern}
 \usage{
-ChooseSelect(Fleet, Stock=NULL, FstYr=NULL, SelYears=NULL)
+ChooseSelect(Fleet, Stock = NULL, FstYr = NULL, LastYr = NULL,
+  SelYears = NULL)
 }
 \arguments{
 \item{Fleet}{A fleet object.}
@@ -14,6 +15,8 @@ is included on plot for reference.}
 
 \item{FstYr}{Optional value for first historical year. If empty, user must
 specify the year in console.}
+
+\item{LastYr}{Optional value for last historical year. If empty, it is assumed to be the current year}
 
 \item{SelYears}{Optional vector of values for each year where selectivity
 pattern changed. If empty, user must specify the years in console (comma

@@ -4,18 +4,18 @@
 \alias{getSlope2}
 \title{Internal function to calculate slope}
 \usage{
-getSlope2(s2, L1, s1, Linf, MaxSel)
+getSlope2(s2, LFS, s1, maxlen, MaxSel)
 }
 \arguments{
-\item{s2}{s2}
+\item{s2}{desceding slope}
 
-\item{L1}{length one}
+\item{LFS}{length one}
 
-\item{s1}{s1}
+\item{s1}{ascending slope}
 
-\item{Linf}{asymptotic length}
+\item{maxlen}{length of oldest age class}
 
-\item{MaxSel}{Maximum selectivity}
+\item{MaxSel}{selectivity of maxlen}
 }
 \description{
 Internal function to calculate slope

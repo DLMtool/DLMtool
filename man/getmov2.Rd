@@ -5,7 +5,7 @@
 \title{Optimization function to find a movement model that matches user specified
 movement characteristics modified for Rcpp.}
 \usage{
-getmov(x,Prob_staying,Frac_area_1)
+getmov2(x, Prob_staying, Frac_area_1)
 }
 \arguments{
 \item{x}{A position in vectors Prob_staying and Frac_area_1}

@@ -2,19 +2,19 @@
 % Please edit documentation in R/MiscInt.r
 \name{getSlope1}
 \alias{getSlope1}
-\title{Internal function to calculate slope}
+\title{Internal function to calculate ascending slope of selectivity curve}
 \usage{
-getSlope1(s1, L1, L0.05)
+getSlope1(s1, LFS, L0.05)
 }
 \arguments{
-\item{s1}{s1}
+\item{s1}{slope 1}
 
-\item{L1}{length one}
+\item{LFS}{first length at fulll selection}
 
 \item{L0.05}{length at 5 percent selection}
 }
 \description{
-Internal function to calculate slope
+Internal function to calculate ascending slope of selectivity curve
 }
 \keyword{internal}
 
