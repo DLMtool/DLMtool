@@ -1,3 +1,4 @@
+
 # Collection of miscellaneous functions.  All functions have
 # accompanying help files.
 
@@ -227,7 +228,6 @@ getmov <- function(x, Prob_staying, Frac_area_1) {
 #' 
 #' This is paired with movfit to find the correct movement model.
 #' 
-#' @usage getmov(x,Prob_staying,Frac_area_1)
 #' @param x A position in vectors Prob_staying and Frac_area_1
 #' @param Prob_staying User specified probability that individuals in area 1
 #' remain in that area (unfished conditions)
@@ -366,6 +366,8 @@ getq2 <- function(x, dep, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V,
     SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ], proyears=0, FMSY=0, Control=1)	
   return(exp(opt$minimum))
 }
+
+
 
 #' Internal optimization function that find the catchability (q where F=qE)
 #' value required to get to user-specified stock depletion (current biomass /
@@ -1095,13 +1097,24 @@ getEffhist <- function(Esd, nyears, EffYears, EffLower, EffUpper) {
 #' @export gettempvar
 #' @keywords internal
 #'  
-gettempvar <- function(targ, targsd, targgrad, nyears, nsim) {
+gettempvar <- function(targ, targsd, targgrad, nyears, nsim, rands=NULL) {
     mutemp <- -0.5 * targsd^2
     temp <- array(1, dim = c(nsim, nyears))
-    for (i in 2:nyears) {
+    if (is.null(rands)) {
+	  for (i in 2:nyears) {
         temp[, i] <- temp[, i] * exp(rnorm(nsim, mutemp, targsd))
-    }
+      }
+	}
+	if (!is.null(rands)) {
+	  for (i in 2:nyears) {
+          temp[, i] <- temp[, i] * rands[,i]
+      }
+	}
     yarray <- array(rep((1:nyears) - 1, each = nsim), dim = c(nsim, nyears))
     temp <- temp * (1 + targgrad/100)^yarray
     targ * temp/apply(temp, 1, mean)
 }
+
+
+
+
