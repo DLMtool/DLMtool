@@ -298,9 +298,9 @@ getFref2 <- function(x, Marray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s,
     
     opt <- optimize(doprojPI_cpp, log(c(0.001, 10)), Mvec = Marray[x, (nyears + 1):(nyears + proyears)], 
 	  Wac = Wt_age[x, , (nyears + 1):(nyears + proyears)], Mac = Mat_age[x, ], 
-	    Pc = Perr[x, (nyears + 1):(nyears + proyears)], N_c = N_s[x, , ], 
-		SSN_c = SSN_s[x, , ], Biomass_c = Biomass_s[x, , ], 
-		VBiomass_c = VBiomass_s[x, , ], SSB_c = SSB_s[x, , ], Vc = Vn[x, , ], 
+	    Pc = Perr[x, (nyears + 1):(nyears + proyears)], N_c = N_s[x, , 1,], 
+		SSN_c = SSN_s[x, , 1, ], Biomass_c = Biomass_s[x, , 1, ], 
+		VBiomass_c = VBiomass_s[x, , 1, ], SSB_c = SSB_s[x, , 1, ], Vc = Vn[x, , ], 
 		hc = hs[x], R0ac = R0a[x, ], proyears, nareas, maxage, movc = mov[x, , ], 
 		SSBpRc = SSBpR[x], aRc = aR[x, ], bRc = bR[x, ], SRrelc = SRrel[x], 
         Spat_targc = Spat_targ[x])
@@ -527,77 +527,45 @@ getDNvulnS <- function(mod, age05, Vmaxage, maxage, nsim) {
 
 
 
-# Growth-Type-Group Functions (not currently used - Jan 2016)
-GenLenFun <- function(NatAGTG, LenatAgeGTG, LenBin, LenMid) {
-    Nbins <- length(LenMid)
-    SizeComp <- rep(0, Nbins)
-    for (L in 1:length(LenMid)) {
-        temp <- NatAGTG
-        ind <- LenatAgeGTG <= LenBin[L + 1] & LenatAgeGTG > LenBin[L]
-        temp[!ind] <- 0
-        SizeComp[L] <- SizeComp[L] + sum(temp)
-    }
-    return(SizeComp)
-}
-
-
 #' Internal Two sided selectivity curve
 #'
-#' @param tst s2 
-#' @param L1 length one
-#' @param s1 s1
-#' @param s2 s2
+#' @param LFS first length at fulll selection 
+#' @param s1 ascending slope
+#' @param s2 descending slope 
 #' @param lens vector of lengths 
 #' @keywords internal
 #' @export TwoSidedFun
-TwoSidedFun <- function(L1, s1, s2, lens) {
+TwoSidedFun <- function(LFS, s1, s2, lens) {
     Sl <- rep(0, length(lens))
-    Sl[lens < L1] <- exp(-((lens[lens < L1] - L1)^2)/(2 * s1^2))
-    Sl[lens >= L1] <- exp(-((lens[lens >= L1] - L1)^2)/(2 * s2^2))
+    Sl[lens < LFS] <- exp(-((lens[lens < LFS] - LFS)^2)/(2 * s1^2))
+    Sl[lens >= LFS] <- exp(-((lens[lens >= LFS] - LFS)^2)/(2 * s2^2))
     return(Sl)
 }
 
-
-#' Internal function to calculate slope
+#' Internal function to calculate ascending slope of selectivity curve 
 #'
-#' @param s1 s1 
-#' @param L1 length one
+#' @param s1 slope 1 
+#' @param LFS first length at fulll selection 
 #' @param L0.05 length at 5 percent selection 
 #' @keywords internal
 #' @export getSlope1
-getSlope1 <- function(s1, L1, L0.05) 
-  (0.05 - TwoSidedFun(L1 = L1, s1 = s1, s2 = 1000, lens=L0.05))^2
+getSlope1 <- function(s1, LFS, L0.05) 
+  (0.05 - TwoSidedFun(LFS, s1 = s1, s2 = 1E5, lens=L0.05))^2
+
 
 #' Internal function to calculate slope
 #'
-#' @param s2 s2 
-#' @param L1 length one
-#' @param s1 s1
-#' @param Linf asymptotic length 
-#' @param MaxSel Maximum selectivity
+#' @param s2 desceding slope 
+#' @param LFS length one
+#' @param s1 ascending slope 
+#' @param maxlen length of oldest age class
+#' @param MaxSel selectivity of maxlen 
 #' @keywords internal
 #' @export getSlope2
-getSlope2 <- function(s2, L1, s1, Linf, MaxSel) 
-  (MaxSel - TwoSidedFun(L1 = L1, s1 = s1, s2 = s2, Linf))^2
+getSlope2 <- function(s2, LFS, s1, maxlen, MaxSel) 
+  (MaxSel - TwoSidedFun(LFS, s1, s2, maxlen))^2
 
-# #' Internal function to calculate slope
-# #'
-# #' @param pars log parameters  
-# #' @param L0.05 length at 5 percent seleciton
-# #' @param L1 length at full selection
-# #' @param Linf asymptotic length 
-# #' @param MaxSel Maximum selectivity
-# #' @keywords internal
-# #' @export getSlopes
-# getSlopes <- function(pars, L0.05, L1, Linf, MaxSel) {
-  # s1 <- exp(pars[1]) 
-  # s2 <- exp(pars[2]) 
-  # (MaxSel - TwoSidedFun(L1 = L1, s1 = s1, s2 = s2, lens=Linf))^2 + 
-  # (0.05 - TwoSidedFun(L1 = L1, s1 = s1, s2 = s2, lens=L0.05))^2
-# }
-  
-  
-  
+ 
   
 #' Selectivity at length function
 #'
@@ -605,21 +573,17 @@ getSlope2 <- function(s2, L1, s1, Linf, MaxSel)
 #' @param SL0.05 length at 5 percent selection
 #' @param SL1 length at full selection
 #' @param MaxSel Maximum selectivity
-#' @param Linfs asymptotic length 
+#' @param maxlens maximum length 
 #' @param Lens vector of lengths 
 #' @keywords internal
 #' @export SelectFun
-SelectFun <- function(i, SL0.05, SL1, MaxSel, Linfs, Lens) {
-  
-  s1 <- optimise(getSlope1, interval = c(0, 1e+06), L1 = SL1[i], L0.05 = SL0.05[i])$minimum
-  s2 <- optimise(getSlope2, interval = c(0, 1e+06), L1 = SL1[i], s1 = s1, 
-      Linf = Linfs[i], MaxSel = MaxSel[i])$minimum
- 
-  if (is.vector(Lens)) 
-    TwoSidedFun(L1 = SL1[i], s1 = s1, s2 = s2, lens = Lens)  #nsim = 1
-  else TwoSidedFun(L1 = SL1[i], s1 = s1, s2 = s2, lens = Lens[i, ])  #nsim > 1
+SelectFun <- function(i, SL0.05, SL1, MaxSel, maxlens, Lens) {
+  s1 <- optimise(getSlope1, interval = c(0, 1e+06), LFS = SL1[i], L0.05 = SL0.05[i])$minimum
+  s2 <- optimise(getSlope2, interval = c(0, 1e+06), LFS = SL1[i], s1 = s1, maxlen = maxlens[i], 
+    MaxSel = MaxSel[i])$minimum
+  if (is.vector(Lens)) TwoSidedFun(LFS = SL1[i], s1 = s1, s2 = s2, lens = Lens)  #nsim = 1
+  else TwoSidedFun(LFS = SL1[i], s1 = s1, s2 = s2, lens = Lens[i, ])  #nsim > 1
 }
-
 
 
 #' Calculate slope from ageM and age95 
@@ -649,8 +613,7 @@ SelectFunGTG <- function(i, SL0.05, SL1, MaxSel, Linfs, LenGTG) {
     s2 <- optimise(getSlope2, interval = c(0, 1000), L1 = SL1[i], s1 = s1, 
         Linf = Linfs[i], MaxSel = MaxSel[i])$minimum
     NGTG <- dim(LenGTG)[1]
-    t(sapply(1:NGTG, function(X) TwoSidedFun(L1 = SL1[i], s1 = s1, s2 = s2, 
-        Lens = LenGTG[X, i, ])))
+    t(sapply(1:NGTG, function(X) TwoSidedFun(SL1[i], s1, s2, LenGTG[X, i, ])))
 }
 
 # Obj value for opt routine
@@ -661,6 +624,20 @@ FitSelect <- function(Pars, V, Linf, Lens) {
     Lens <- t(as.matrix(Lens))
     SS <- sum((V - SelectFun(1, SL0.05, SL1, MaxSel, Linf, Lens))^2)
     return(SS)
+}
+
+
+# Growth-Type-Group Functions (not currently used - Jan 2016)
+GenLenFun <- function(NatAGTG, LenatAgeGTG, LenBin, LenMid) {
+    Nbins <- length(LenMid)
+    SizeComp <- rep(0, Nbins)
+    for (L in 1:length(LenMid)) {
+        temp <- NatAGTG
+        ind <- LenatAgeGTG <= LenBin[L + 1] & LenatAgeGTG > LenBin[L]
+        temp[!ind] <- 0
+        SizeComp[L] <- SizeComp[L] + sum(temp)
+    }
+    return(SizeComp)
 }
 
 
