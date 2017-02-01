@@ -106,7 +106,7 @@ double projOpt_cpp(double lnIn, double depc, NumericVector Fc,
 	} 
   }	
   
-  for (int yr=0; yr < NYears; yr++) {
+  for (int yr=0; yr < (NYears-1); yr++) {
 	  for (int A=0; A < nareas; A++) {
 		for (int age=0; age < maxage; age++) tempMat(age, A) = Vc(age, yr) * Biomass(age, A);
 		tempVec(A) = pow(sum(tempMat.column(A)), Spat_targc); 
