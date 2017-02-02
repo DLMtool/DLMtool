@@ -24,7 +24,8 @@ The current version of the DLMtool package is available for download from [CRAN]
 - moved `custompars` section in `runMSE.r` and renamed parameters to match OM object
 - print out message alerting user to invalid names in `custompars`
 
-
+- test line 
+- 
 #### Bug Fixes 
 - fixed typo in `getr` function  
 - fixed indexing error in Ricker SRR fixed
