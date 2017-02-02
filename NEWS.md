@@ -16,12 +16,13 @@ The current version of the DLMtool package is available for download from [CRAN]
 - exported several functions that some users required
 - removed LBSPR functions and replaced with dependency on LBSPR package. 
 
-##### fitHistoricalData branch 
+##### CAHerringMSE branch 
 - allow R0 to be a vector nsim long
 - add Hist argument to runMSE - returns historical simulations
-- add `set.seed`to runMSE ## Needs more work
 - converted movement optimizer to Rcpp (about 10x faster)
-- convert qopt to Rcpp
+- converted `qopt` to Rcpp
+- moved `custompars` section in `runMSE.r` and renamed parameters to match OM object
+- print out message alerting user to invalid names in `custompars`
 
 
 #### Bug Fixes 
