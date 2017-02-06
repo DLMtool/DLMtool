@@ -364,6 +364,7 @@ getq2 <- function(x, dep, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V,
     Wac = Wt_age[x, , ], R0c = R0[x], Vc = V[x, , ], nyears = nyears, 
 	maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x], 
     SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ], proyears=0, FMSY=0, Control=1)	
+  
   return(exp(opt$minimum))
 }
 
@@ -1073,8 +1074,7 @@ getEffhist <- function(Esd, nyears, EffYears, EffLower, EffUpper) {
         effort[effort == 0] <- 0.01
         
         Emu <- -0.5 * Esd^2
-        Eerr <- array(exp(rnorm(nyears * nsim, rep(Emu, nyears), rep(Esd, 
-            nyears))), c(nsim, nyears))  # calc error
+        Eerr <- array(exp(rnorm(nyears * nsim, rep(Emu, nyears), rep(Esd, nyears))), c(nsim, nyears))  # calc error
         out <- NULL
         eff <- effort * Eerr  # add error 
         out[[1]] <- eff

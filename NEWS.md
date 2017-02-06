@@ -23,9 +23,13 @@ The current version of the DLMtool package is available for download from [CRAN]
 - converted `qopt` to Rcpp
 - moved `custompars` section in `runMSE.r` and renamed parameters to match OM object
 - print out message alerting user to invalid names in `custompars`
+- changed variable name `BMSY_B0` to `SSBMSY_SSB0` to avoid confusion
+- added projected SSB and VB to MSE object
+- added empty list `Extra` to MSE object for future additional information
 
-- test line 
-- 
+#### To Do 
+- change dimensions of `SSB_hist` in MSE object from `nsim, maxage, nyears, narea` to `nsim, nyear` - others? 
+
 #### Bug Fixes 
 - fixed typo in `getr` function  
 - fixed indexing error in Ricker SRR fixed
@@ -35,6 +39,7 @@ The current version of the DLMtool package is available for download from [CRAN]
 - corrected colors in `Pplot2` for F/FMSY
 - corrected calculation of bias in steepness when `hcv` is 0
 - LFC and LFS in future projections weren't being updated correctly
+- write B0, SSB0, SSN0, and N0 to `DLM_data@OM`
 
 ## Previous Versions
 ### New Additions to Version 3.2.2

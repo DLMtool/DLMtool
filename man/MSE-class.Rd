@@ -93,6 +93,10 @@ simulation conditions and performance of data-limited methods
 
 \item{\code{B}}{Stored stock biomass over the projection (an array with dimensions nsim, nMPs, proyears)}
 
+\item{\code{SSB}}{Stored spawning stock biomass over the projection (an array with dimensions nsim, nMPs, proyears)}
+
+\item{\code{VB}}{Stored vulnerable biomass over the projection (an array with dimensions nsim, nMPs, proyears)}
+
 \item{\code{FM}}{Stored fishing mortality rate over the projection (an array with dimensions nsim, nMPs, proyears)}
 
 \item{\code{C}}{Stored catches (taken) over the projection (an array with dimensions nsim, nMPs, proyears)}
@@ -106,6 +110,8 @@ simulation conditions and performance of data-limited methods
 \item{\code{FM_hist}}{Stored historical fishing mortality rate (historical simulations - an array with dimensions nsim, nages, nyears, nareas)}
 
 \item{\code{Effort}}{Stored relative fishing effort in the projection years}
+
+\item{\code{Extra}}{A list for additional information}
 }}
 \section{Objects from the Class}{
  Objects can be created by calls of the form

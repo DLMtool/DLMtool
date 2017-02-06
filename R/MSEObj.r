@@ -18,6 +18,7 @@
 #' can be considered to have converged.
 #' @param Plot Should figures be plotted?
 #' @author A. Hordyk
+#' @export Converge
 Converge <- function(MSEobj, thresh = 2, Plot = TRUE) {
   nm <- MSEobj@nMPs
   nsim <- MSEobj@nsim
@@ -32,16 +33,11 @@ Converge <- function(MSEobj, thresh = 2, Plot = TRUE) {
   RefYd <- MSEobj@OM$RefY
   
   for (m in 1:nm) {
-    Yd[m, ] <- round(apply(MSEobj@C[, m, yind], 1, mean, na.rm = T)/RefYd * 
-      100, 1)
-    POF[m, ] <- round(apply(MSEobj@F_FMSY[, m, ] > 1, 1, sum, na.rm = T)/proyears * 
-      100, 1)
-    P10[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] < 0.1, 1, sum, na.rm = T)/proyears * 
-      100, 1)
-    P50[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] < 0.5, 1, sum, na.rm = T)/proyears * 
-      100, 1)
-    P100[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] < 1, 1, sum, na.rm = T)/proyears * 
-      100, 1)
+    Yd[m, ] <- round(apply(MSEobj@C[, m, yind], 1, mean, na.rm = T)/RefYd *  100, 1)
+    POF[m, ] <- round(apply(MSEobj@F_FMSY[, m, ] > 1, 1, sum, na.rm = T)/proyears * 100, 1)
+    P10[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] < 0.1, 1, sum, na.rm = T)/proyears * 100, 1)
+    P50[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] < 0.5, 1, sum, na.rm = T)/proyears * 100, 1)
+    P100[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] < 1, 1, sum, na.rm = T)/proyears * 100, 1)
     CumlYd[m, ] <- cumsum(Yd[m, ])/seq_along(Yd[m, ])  #/ mean(Yd[m,], na.rm=TRUE) 
     CumlPOF[m, ] <- cumsum(POF[m, ])/seq_along(POF[m, ])  # / mean(POF[m,], na.rm=TRUE)
     CumlP10[m, ] <- cumsum(P10[m, ])/seq_along(P10[m, ])  # / mean(P10[m,], na.rm=TRUE)
@@ -587,6 +583,8 @@ Pplot2 <- function(MSEobj, YVar = c("B_BMSY", "F_FMSY"), MPs = NA, sims = NULL,
   cex.axis = 1.35, cex.lab = 1.4, YLab = NULL, incMP = TRUE, MPcex = 1.4, 
   incLeg = TRUE, cex.leg = 1.5, legPos = "topleft", yline = NULL, parOR = FALSE, 
   xaxis = TRUE, yaxis = TRUE, ...) {
+  
+ 
   YVars <- c("B_B0", "B_BMSY", "F_FMSY", "Yield")
   YVar <- match.arg(YVar, choices = YVars, several.ok = TRUE)
   
@@ -617,7 +615,7 @@ Pplot2 <- function(MSEobj, YVar = c("B_BMSY", "F_FMSY"), MPs = NA, sims = NULL,
   # Calculate Statistics Biomass/B0
   temp <- as.matrix(expand.grid(1:nsim, 1:nMPs, 1:proyears))
   Deplet <- array(NA, dim = dim(MSEobj@B_BMSY))
-  Deplet[temp] <- (MSEobj@B_BMSY[temp] * MSEobj@OM$BMSY_B0[temp[, 1]])
+  Deplet[temp] <- (MSEobj@B_BMSY[temp] * MSEobj@OM$SSBMSY_SSB0[temp[, 1]])
   
   # Yield - including last historical year (current year)
   pastC <- apply(MSEobj@CB_hist[, , , , drop = FALSE], c(1, 3), sum, 
@@ -770,6 +768,7 @@ Pplot2 <- function(MSEobj, YVar = c("B_BMSY", "F_FMSY"), MPs = NA, sims = NULL,
     }
   }
   mtext(side = 1, "Projection Years", line = 2, cex = cex.lab, outer = TRUE)
+  
   invisible(Dat)
 }
 
@@ -1188,7 +1187,7 @@ VOI <- function(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA, Utnam = "Util
   
   # -- Observation model variables
   slots <- c("Cat", "Cat", "AvC", "AvC", "CAA", "CAA", "CAL", "CAL", 
-    "Ind", "Dep", "Dep", "Dt", "Dt", "Mort", "FMSY_M", "BMSY_B0", "L50", 
+    "Ind", "Dep", "Dep", "Dt", "Dt", "Mort", "FMSY_M", "SSBMSY_SSB0", "L50", 
     "L95", "LFC", "LFS", "Abun", "Abun", "vbK", "vbt0", "vbLinf", "Steep", 
     "Iref", "Cref", "Bref", "ML")
   Obsnam <- c("Cbias", "Csd", "Cbias", "Csd", "CAA_nsamp", "CAA_ESS", 
@@ -1515,17 +1514,34 @@ joinMSE <- function(MSEobjs = NULL) {
       outlist[[sn]] <- do.call(rbind, templs)
     }
     if (class(templs[[1]]) == "array") {
-      outlist[[sn]] <- abind(templs, along = 1)
+      outlist[[sn]] <- abind::abind(templs, along = 1)
     }
+	if (class(templs[[1]]) == "list") {
+	  diffs <- diff(unlist(lapply(templs, length)))
+	  if (any(diffs != 0))
+	    stop("Length of slot Extra is not identical for each MSE object", call.=FALSE)
+	  OutList <- templs[[1]]
+	  for (N in 2:Nobjs) {
+	    for (xx in 1:length(templs[[1]])) {
+	      OutList[[xx]] <- append(unlist(OutList[[xx]]), unlist(templs[[N]][[xx]]))
+		}
+	  }
+	  ind <- unlist(lapply(lapply(OutList, is.finite), prod))
+	  ind2 <- which (ind == 0)
+	  if (length(ind2) > 0) OutList[ind2] <- NULL
+	  outlist[[sn]] <- OutList
+	}
   }
+
   names(outlist) <- sns
   
   newMSE <- new("MSE", Name = outlist$Name, nyears = unique(outlist$nyears), 
     proyears = unique(outlist$proyears), nMP = unique(outlist$nMP), 
     MPs = unique(outlist$MPs), nsim = sum(outlist$nsim), OM = outlist$OM, 
     Obs = outlist$Obs, B_BMSY = outlist$B_BMSY, F_FMSY = outlist$F_FMSY, 
-    outlist$B, outlist$FM, outlist$C, outlist$TAC, outlist$SSB_hist, 
-    outlist$CB_hist, outlist$FM_hist, outlist$Effort)
+    outlist$B, outlist$SSB, outlist$VB,
+	outlist$FM, outlist$C, outlist$TAC, outlist$SSB_hist, 
+    outlist$CB_hist, outlist$FM_hist, outlist$Effort, outlist$Extra)
   
   newMSE
 }
@@ -1699,7 +1715,7 @@ TradePlot <- function(MSEobj, XAxis = c("Overfishing", "Biomass:BMSY"),
       mm, ]), na.rm = T) * 100, 1)
     BMSYref[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] > BmsyRef, na.rm = T)/prod(dim(MSEobj@B_BMSY[, 
       mm, ])) * 100, 1)
-    B0ref[mm] <- round(sum((MSEobj@B_BMSY[, mm, ] * MSEobj@OM$BMSY_B0) > 
+    B0ref[mm] <- round(sum((MSEobj@B_BMSY[, mm, ] * MSEobj@OM$SSBMSY_SSB0) > 
       B0Ref, na.rm = T)/prod(dim(MSEobj@B_BMSY[, mm, ])) * 100, 1)
     # LTY[mm]<-round(sum(MSEobj@C[,mm,yend]/RefYd>0.5,na.rm=T)/(MSEobj@nsim*length(yend)),3)*100
     # STY[mm]<-round(sum(MSEobj@C[,mm,ystart]/RefYd>0.5,na.rm=T)/(MSEobj@nsim*length(ystart)),3)*100
@@ -1978,7 +1994,7 @@ VOI2 <- function(MSEobj, ncomp = 6, nbins = 4, Ut = NA, Utnam = "yield",
   
   # -- Observation model variables
   slots <- c("Cat", "Cat", "AvC", "AvC", "CAA", "CAA", "CAL", "CAL", 
-    "Ind", "Ind", "Dep", "Dep", "Dt", "Dt", "Mort", "FMSY_M", "BMSY_B0", 
+    "Ind", "Ind", "Dep", "Dep", "Dt", "Dt", "Mort", "FMSY_M", "SSBMSY_SSB0", 
     "L50", "L95", "LFC", "LFS", "Abun", "Abun", "vbK", "vbt0", "vbLinf", 
     "Steep", "Iref", "Cref", "Bref")
   Obsnam <- c("Cbias", "Csd", "Cbias", "Csd", "CAA_nsamp", "CAA_ESS", 
@@ -2282,7 +2298,7 @@ MPStats <- function(MSEobj, PMRefs = list(B_BMSY = 0.5, B_B0 = 0.2, F_FMSY = 1,
   # Biomass/B0
   temp <- as.matrix(expand.grid(1:nsim, 1:nMPs, 1:Pyears))
   Deplet <- array(NA, dim = dim(MSEobj@B_BMSY))
-  Deplet[temp] <- (MSEobj@B_BMSY[temp] * MSEobj@OM$BMSY_B0[temp[, 1]])
+  Deplet[temp] <- (MSEobj@B_BMSY[temp] * MSEobj@OM$SSBMSY_SSB0[temp[, 1]])
   
   B_B0ref <- Deplet[, , yrs, drop = FALSE] > trefs$B_B0  #  above reference?
   B_B0m <- apply(Deplet[, , yrs, drop = FALSE], 2, sumFun, na.rm = TRUE)  # median/mean in last yrs
@@ -3412,7 +3428,7 @@ VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4, Par = c("Obs",
   }
   if (Par == "Obs") {
     slots <- c("Cat", "Cat", "AvC", "AvC", "CAA", "CAA", "CAL", "CAL", 
-      "Ind", "Ind", "Dep", "Dep", "Dt", "Dt", "Mort", "FMSY_M", "BMSY_B0", 
+      "Ind", "Ind", "Dep", "Dep", "Dt", "Dt", "Mort", "FMSY_M", "SSBMSY_SSB0", 
       "L50", "L95", "LFC", "LFS", "Abun", "Abun", "vbK", "vbt0", 
       "vbLinf", "Steep", "Iref", "Cref", "Bref", "ML", "ML")
     Obsnam <- c("Cbias", "Csd", "Cbias", "Csd", "CAA_nsamp", "CAA_ESS", 

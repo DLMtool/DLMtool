@@ -29,13 +29,18 @@
 #' if MPs can be run.
 #' @param Hist Should model stop after historical simulations? Returns a list 
 #' containing all historical data
-#' @param Debug Development switch
+#' @param useTestCode Development switch
+#' @param ntrials Maximum of times depletion and recruitment deviations are 
+#' resampled to optimize for depletion. After this the model stops if more than 
+#' percent of simulations are not close to the required depletion
+#' @param fracD maximum allowed proportion of simulations where depletion is not 
+#' close to sampled depletion from OM before model stops with error
 #' @return An object of class MSE
 #' @author T. Carruthers
 #' @export runMSE
 runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4, 
   pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, custompars = NULL, CheckMPs = TRUE,
-  Hist=FALSE, Debug=FALSE) {
+  Hist=FALSE, useTestCode=FALSE, ntrials=30, fracD=0.05) {
 
   tiny <- 1e-15  # define tiny variable
   message("Loading operating model")
@@ -49,17 +54,16 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   
   calcMax <- -log(0.01)/(min(OM@M))  # Age at which 1% of cohort survives
   maxage <- round(max(maxage, calcMax),0)  # If maximum age is lower, increase it to calcMax
-  OM@maxage <- maxage
-  
+    
   dep <- runif(nsim, OM@D[1], OM@D[2])  # sample from the range of user-specified depletion (Bcurrent/B0)
   Esd <- runif(nsim, OM@Fsd[1], OM@Fsd[2])  # interannual variability in fishing effort (log normal sd)
   
+  EffLower <- OM@EffLower
+  EffUpper <- OM@EffUpper 
   Deriv <- getEffhist(Esd, nyears, EffYears = OM@EffYears, EffLower = OM@EffLower, EffUpper = OM@EffUpper)  # Historical fishing effort
   Find <- Deriv[[1]]  # Calculate fishing effort rate
   dFfinal <- Deriv[[2]]  # Final gradient in fishing effort yr-1 
-  
   # dep[order(dFfinal)]<-dep[order(dep,decreasing=T)] # robustifies
-  
   # matplot(t(Find), type='l') plot(dep, dFfinal)
   
   # Sample operating model parameters
@@ -110,7 +114,6 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   Mbias <- rlnorm(nsim, mconv(1, OM@Mcv), sdconv(1, OM@Mcv))  # sample of M bias
   FMSY_Mbias <- rlnorm(nsim, mconv(1, OM@FMSY_Mcv), sdconv(1, OM@FMSY_Mcv))  # sample of FMSY/M bias
 
-  
   lenMbias <- rlnorm(nsim, mconv(1, OM@LenMcv), sdconv(1, OM@LenMcv))  # sample of length at maturity bias - assume same error as age based maturity
   LFCbias <- rlnorm(nsim, mconv(1, OM@LFCcv), sdconv(1, OM@LFCcv))  # sample of length at first capture bias
   LFSbias <- rlnorm(nsim, mconv(1, OM@LFScv), sdconv(1, OM@LFScv))  # sample of length at full selection bias
@@ -198,15 +201,14 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   
   R0 <- OM@R0  # Initial recruitment
   if (length(R0) != nsim) R0 <- rep(R0, nsim*50)[1:nsim] # modified to allow for different R0 per sim 
-  
-  
+   
   # Generate random numbers for random walk - done here so that they can be written
   # out to SampPars 
   Mrand <- matrix(exp(rnorm(nsim*(proyears+nyears), -0.5 * Msd^2, Msd)), nrow=nsim, ncol=proyears+nyears)
   Linfrand <- matrix(exp(rnorm(nsim*(proyears+nyears), -0.5 * Linfsd^2, Linfsd)), nrow=nsim, ncol=proyears+nyears)
   Krand <- matrix(exp(rnorm(nsim*(proyears+nyears), -0.5 * Ksd^2, Ksd)), nrow=nsim, ncol=proyears+nyears)
-  
-  # Write out list of sampled parameter values 
+   
+ # Write out list of sampled parameter values 
   SampPars <- list(dep=dep, Esd=Esd, Find=Find, procsd=procsd, AC=AC, M=M, Msd=Msd, 
     Mgrad=Mgrad, hs=hs, Linf=Linf, Linfsd=Linfsd, Linfgrad=Linfgrad, recgrad=recgrad,
 	K=K, Ksd=Ksd, Kgrad=Kgrad, t0=t0, L50=L50, L50_95=L50_95, Spat_targ=Spat_targ,
@@ -218,8 +220,10 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	Linfbias=Linfbias, Irefbias=Irefbias, Crefbias=Crefbias, Brefbias=Brefbias,
 	Recsd=Recsd, qinc=qinc, qcv=qcv, L5=L5, LFS=LFS, Vmaxlen=Vmaxlen, L5s=L5s, 
 	LFSs=LFSs, Vmaxlens=Vmaxlens, Perr=Perr, R0=R0, 
-	Mrand=Mrand, Linfrand=Linfrand, Krand=Krand) 
-  ParsNames <- names(SampPars)
+	Mrand=Mrand, Linfrand=Linfrand, Krand=Krand, maxage=maxage) 
+  
+  # Vector of valid names for custompars list or data.frame. Names not in this list will be printed out in warning and ignored #	
+  ParsNames <- c(names(SampPars), "ageM", "age95", "V", "EffYears", "EffLower", "EffUpper","Mat_age") 
   
   # Sample custom parameters
   # ===================================================================
@@ -253,16 +257,40 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	for (i in seq(5, by=5, length.out=floor(length(outNames)/5)))
   	  outNames <- gsub(outNames[i], paste0(outNames[i], "\n"), outNames)
 	message("valid custompars found: \n", outNames)
-    
-	ind <- 1:nsim # if (length(custompars[[1]]) < nsim) ind <- sample(1:length(custompars[[1]]), nsim, replace=TRUE)
-	# if (!length(custompars[[1]]) < nsim) ind <- sample(1:length(custompars[[1]]), nsim, replace=FALSE)
-		
+    flush.console()
+	if (length(custompars[[1]]) < nsim) ind <- sample(1:length(custompars[[1]]), nsim, replace=TRUE)
+	if (!length(custompars[[1]]) < nsim) ind <- sample(1:length(custompars[[1]]), nsim, replace=FALSE)
+	
+	usedName <- 0 	
     for (i in 1:length(custompars)) {
 	  samps <- custompars[[i]]
 	  name <- names(custompars)[i]
-	  if (class(samps) == "numeric" | class(samps) == "integer")   assign(name, samps[ind])
-	  if (class(samps) == "matrix") assign(name, samps[ind,, drop=FALSE])
-	}	
+	  if (any(c("EffUpper", "EffLower", "EffYears", "maxage") %in% name)) {
+	    assign(name, samps)
+		usedName <- usedName + 1
+	  } else {
+	    if (class(samps) == "numeric" | class(samps) == "integer") {
+ 		  assign(name, samps[ind])
+		  usedName <- usedName + 1
+		}
+	    if (class(samps) == "matrix") {
+		  assign(name, samps[ind,, drop=FALSE])
+		  usedName <- usedName + 1
+		}
+		if (class(samps) == "array") {
+		  if (length(dim(samps)) == 3 &  dim(samps)[1]== nsim) {
+		    assign(name, samps[ind, , ,drop=FALSE])
+			usedName <- usedName + 1 
+          }
+		}
+	  }	
+	}
+	if ("EffUpper" %in% Names) {
+      Deriv <- getEffhist(Esd, nyears, EffYears = EffYears, EffUpper = EffUpper, EffLower = EffLower)  # Historical fishing effort
+      Find <- Deriv[[1]]  # Calculate fishing effort rate
+      dFfinal <- Deriv[[2]]  # Final gradient in fishing effort yr-1 
+    }
+	if ("EffUpper" %in% Names & "Find" %in% Names) warning("EffUpper and Find both in custompars. Find is ignored")
     # if (nrow(custompars) < nsim) {
       # ind <- sample(nrow(custompars), nsim, replace = T)
     # } else {
@@ -271,7 +299,12 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     # for (i in 1:ncol(custompars)) assign(names(custompars)[i], custompars[ind, i])
   }
   
-
+  # Checks that parameters are correct dimensions - could be messed up with custompars   
+  if (length(maxage) > 1) maxage <- maxage[1] # check if maxage has been passed in custompars
+  OM@maxage <- maxage # update OM object with maxage that is used 
+  if (any(dim(Perr) != c(nsim, proyears + nyears))) stop("Perr must matrix with dimensions: nsim, proyears+nyears")
+  if (any(dim(Find) != c(nsim, nyears))) stop("Find must be matrix with dimensions: nsim, nyears")
+      
   SRrel <- rep(OM@SRrel, nsim)  # type of Stock-recruit relationship. 1=Beverton Holt, 2=Ricker
   
   Marray <- gettempvar(M, Msd, Mgrad, nyears + proyears, nsim, Mrand)  # M by sim and year according to gradient and inter annual variability
@@ -286,93 +319,119 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   Wt_age <- array(NA, dim = c(nsim, maxage, nyears + proyears))  # Weight at age array
   Wt_age[ind] <- OM@a * Len_age[ind]^OM@b  # Calculation of weight array
   
-  ageM <- -((log(1 - L50/Linf))/K) + t0  # calculate ageM from L50 and growth parameters (non-time-varying)
+  # Calcaluate age at maturity 
+  if (!exists("ageM", inherits=FALSE)) ageM <- -((log(1 - L50/Linf))/K) + t0  # calculate ageM from L50 and growth parameters (non-time-varying)
   ageM[ageM < 1] <- 1  # age at maturity must be at least 1
   L95 <- L50 + L50_95 # reassign if updated in custompars 
-  age95 <- -((log(1 - L95/Linf))/K) + t0
+  if (!exists("age95", inherits=FALSE)) age95 <- -((log(1 - L95/Linf))/K) + t0
   age95[age95 < 1] <- 1.5  # must be greater than 0 and ageM
   
   ageMsd <- sapply(1:nsim, getroot, ageM, age95)
   ageMarray <- array(ageM, dim = c(nsim, maxage))  # Age at maturity array
-  Mat_age <- 1/(1 + exp((ageMarray - (Agearray))/(ageMarray * ageMsd)))  # Maturity at age array
-  
+  if (!exists("Mat_age", inherits=FALSE)) Mat_age <- 1/(1 + exp((ageMarray - (Agearray))/(ageMarray * ageMsd)))  # Maturity at age array
+
   # Selectivity at Length
   # ------------------------------------------------------ if (max(OM@L5)
   # > 1.5) { message('L5 set too high (maximum value of 1.5).
   # \nDefaulting to L5 = 1.5') OM@L5[OM@L5 > 1.5] <- 1.5 }
-   
-  if (Selnyears <= 1) {    
-    L5 <- matrix(L5, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
-    LFS <- matrix(LFS, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
-    Vmaxlen <- matrix(Vmaxlen, nrow = nyears + proyears, ncol = nsim, byrow = TRUE) 
 
-    ind <- which(LFS/matrix(Linf, nrow = proyears + nyears, ncol = nsim, byrow = TRUE) > 1, arr.ind = T)
-    if (length(ind) > 0) {
-      message("LFS too high (LFS > Linf) in some cases. \nDefaulting to LFS = 0.9 Linf for the affected simulations")
-      LFS[ind] <- Linf[ind[, 2]] * 0.9
-    } 
+  if (exists("V", inherits=FALSE)) { # V has been passed in with custompars 
+    # assign L5, LFS and Vmaxlen - dodgy loop 
+	# should calculate length at 5% selectivity from vB 
+	L5 <- matrix(NA, nrow = nyears + proyears, ncol = nsim)
+    LFS <- matrix(NA, nrow = nyears + proyears, ncol = nsim)
+    Vmaxlen <- matrix(NA, nrow = nyears + proyears, ncol = nsim)
 	
-	# Calculate selectivity-at-age  curve 
-	V <- array(NA, dim = c(nsim, maxage, nyears + proyears)) 
-    s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
-      LFS = LFS[1, i], L0.05 = L5[1,i])$minimum)	
-	if (all(Vmaxlen >= 0.99)) s2 <- rep(1E5, nsim)
-    if (!all(Vmaxlen >= 0.99)) 
-	  s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
-		             LFS = LFS[1,i], s1=s1[i], maxlen=mean(Len_age[i,maxage,]), 
-					 MaxSel=Vmaxlen[1, i])$minimum)
-    for (yr in 1:(nyears+proyears)) 
- 	  V[ , , yr] <- t(sapply(1:nsim, function(i)TwoSidedFun(LFS[1,i], s1[i], s2[i], lens=Len_age[i,,yr])))
+	for (yr in 1:(nyears+proyears)) {
+	  for (s in 1:nsim) {
+	    ind <- min(which(V[s,,yr] >=0.05))
+	    L5[yr, s] <- Len_age[s, ind, yr]
+	    ind <- min(which(V[s,,yr] >=0.50))
+	    LFS[yr, s] <- Len_age[s, ind, yr]
+		Vmaxlen[yr, s] <- V[s, maxage, yr]
+	  }
+	}
   }
   
-  if (Selnyears > 1) {
-    # More than one break point in historical selection pattern
-    L5 <- matrix(0, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
-    LFS <- matrix(0, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
-    Vmaxlen <- matrix(0, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
-    SelYears <- OM@SelYears
-	
-	ind <- which(LFSs/ matrix(Linf, nrow=nsim, ncol=Selnyears) > 1, arr.ind = T)
-    if (length(ind) > 0) {
-      message("LFS too high (LFS > Linf) in some cases. \nDefaulting to LFS = 0.9 Linf for the affected simulations")
-      LFSs[ind] <- Linf[ind[, 1]] * 0.9
-    }     
-	
-	# Calculate selectivity-at-age  curve 
-	V <- array(NA, dim = c(nsim, maxage, nyears + proyears))     
-    for (X in 1:(Selnyears - 1)) {	
-      bkyears <- SelYears[X]:SelYears[X + 1]
-      L5[bkyears, ] <- matrix(rep((L5s[, X]), length(bkyears)), ncol = nsim, byrow = TRUE)
-      LFS[bkyears, ] <- matrix(rep((LFSs[, X]), length(bkyears)), ncol = nsim, byrow = TRUE)
-      Vmaxlen[bkyears, ] <- matrix(rep((Vmaxlens[, X]), length(bkyears)), ncol = nsim, byrow = TRUE)
-      
-	  s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
-        LFS = LFSs[i, X], L0.05 = L5s[i, X])$minimum)
-	  s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
-		             LFS = LFSs[i, X], s1=s1[i], maxlen=mean(Len_age[i,maxage,]), 
-					 MaxSel=Vmaxlens[i, X])$minimum)	
-	  for (yr in bkyears) 
- 	    V[ , , yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[yr, i], s1[i], s2[i], lens=Len_age[i,,yr])))				 
+  
+  if (!exists("V", inherits=FALSE)) { # don't run if V has been passed in with custompars 
+    if (Selnyears <= 1) {    
+      L5 <- matrix(L5, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+      LFS <- matrix(LFS, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+      Vmaxlen <- matrix(Vmaxlen, nrow = nyears + proyears, ncol = nsim, byrow = TRUE) 
+    
+      ind <- which(LFS/matrix(Linf, nrow = proyears + nyears, ncol = nsim, byrow = TRUE) > 1, arr.ind = T)
+      if (length(ind) > 0) {
+        message("LFS too high (LFS > Linf) in some cases. \nDefaulting to LFS = 0.9 Linf for the affected simulations")
+        LFS[ind] <- Linf[ind[, 2]] * 0.9
+      } 
+	  
+	  # Calculate selectivity-at-age  curve 
+	  V <- array(NA, dim = c(nsim, maxage, nyears + proyears)) 
+      s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
+        LFS = LFS[1, i], L0.05 = L5[1,i])$minimum)	
+	  if (all(Vmaxlen >= 0.99)) s2 <- rep(1E5, nsim)
+      if (!all(Vmaxlen >= 0.99)) 
+	    s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
+	  	             LFS = LFS[1,i], s1=s1[i], maxlen=mean(Len_age[i,maxage,]), 
+	  				 MaxSel=Vmaxlen[1, i])$minimum)
+      for (yr in 1:(nyears+proyears)) 
+  	   V[ , , yr] <- t(sapply(1:nsim, function(i)TwoSidedFun(LFS[1,i], s1[i], s2[i], lens=Len_age[i,,yr])))
     }
-	
-    restYears <- max(SelYears):(nyears + proyears)
-    L5[restYears, ] <- matrix(rep((L5s[, Selnyears]), length(restYears)), ncol = nsim, byrow = TRUE)
-    LFS[restYears, ] <- matrix(rep((LFSs[, Selnyears]), length(restYears)), ncol = nsim, byrow = TRUE)
-    Vmaxlen[restYears, ] <- matrix(rep((Vmaxlens[, Selnyears]), length(restYears)), ncol = nsim, byrow = TRUE)
-  
-    s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
-        LFS = LFSs[i, Selnyears], L0.05 = L5s[i, Selnyears])$minimum)
-	s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
-		             LFS = LFSs[i, Selnyears], s1=s1[i], maxlen=mean(Len_age[i,maxage,]), 
-					 MaxSel=Vmaxlens[i, Selnyears])$minimum)	
-	for (yr in restYears) 
- 	    V[ , , restYears] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[yr, i], s1[i], s2[i], lens=Len_age[i,,yr])))		
-		
+    
+    if (Selnyears > 1) {
+      # More than one break point in historical selection pattern
+      L5 <- matrix(0, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+      LFS <- matrix(0, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+      Vmaxlen <- matrix(0, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+      SelYears <- OM@SelYears
+	  
+	  ind <- which(LFSs/ matrix(Linf, nrow=nsim, ncol=Selnyears) > 1, arr.ind = T)
+      if (length(ind) > 0) {
+        message("LFS too high (LFS > Linf) in some cases. \nDefaulting to LFS = 0.9 Linf for the affected simulations")
+        LFSs[ind] <- Linf[ind[, 1]] * 0.9
+      }     
+	  
+	  # Calculate selectivity-at-age  curve 
+	  V <- array(NA, dim = c(nsim, maxage, nyears + proyears))     
+      for (X in 1:(Selnyears - 1)) {	
+        bkyears <- SelYears[X]:SelYears[X + 1]
+        L5[bkyears, ] <- matrix(rep((L5s[, X]), length(bkyears)), ncol = nsim, byrow = TRUE)
+        LFS[bkyears, ] <- matrix(rep((LFSs[, X]), length(bkyears)), ncol = nsim, byrow = TRUE)
+        Vmaxlen[bkyears, ] <- matrix(rep((Vmaxlens[, X]), length(bkyears)), ncol = nsim, byrow = TRUE)
+        
+	    s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
+          LFS = LFSs[i, X], L0.05 = L5s[i, X])$minimum)
+	    s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
+	  	             LFS = LFSs[i, X], s1=s1[i], maxlen=mean(Len_age[i,maxage,]), 
+	  				 MaxSel=Vmaxlens[i, X])$minimum)	
+	    for (yr in bkyears) 
+  	     V[ , , yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[yr, i], s1[i], s2[i], lens=Len_age[i,,yr])))				 
+      }
+	  
+      restYears <- max(SelYears):(nyears + proyears)
+      L5[restYears, ] <- matrix(rep((L5s[, Selnyears]), length(restYears)), ncol = nsim, byrow = TRUE)
+      LFS[restYears, ] <- matrix(rep((LFSs[, Selnyears]), length(restYears)), ncol = nsim, byrow = TRUE)
+      Vmaxlen[restYears, ] <- matrix(rep((Vmaxlens[, Selnyears]), length(restYears)), ncol = nsim, byrow = TRUE)
+    
+      s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
+          LFS = LFSs[i, Selnyears], L0.05 = L5s[i, Selnyears])$minimum)
+	  s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
+	  	             LFS = LFSs[i, Selnyears], s1=s1[i], maxlen=mean(Len_age[i,maxage,]), 
+	  				 MaxSel=Vmaxlens[i, Selnyears])$minimum)	
+	  for (yr in restYears) 
+  	     V[ , , restYears] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[yr, i], s1[i], s2[i], lens=Len_age[i,,yr])))		
+	  	
+    }
   }
 
+  if (any((dim(V) != c(nsim, maxage, proyears+nyears)))) 
+    stop("V must have dimensions: nsim, maxage, proyears+nyears, but has ", 
+	  dim(V)[1], " ", dim(V)[2], " ", dim(V)[3], call.=FALSE)
+  
   # LFS[LFS/Linf>1]<-NA LFS<-apply(LFS,1,function(x)x[!is.na(x)][1])
   
-  mod <- -((log(1 - LFS[nyears, ]/Linf))/K) + t0  # the age at modal (or youngest max) selectivity
+  # mod <- -((log(1 - LFS[nyears, ]/Linf))/K) + t0  # the age at modal (or youngest max) selectivity
   # age05 <- -((log(1-L5/Linf))/K) + t0# the highest age at %5
   # selectivity
       
@@ -384,15 +443,15 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   if (snowfall::sfIsRunning()) {
     # if the cluster is initiated
     snowfall::sfExport(list = c("Frac_area_1", "Prob_staying"))  # export some of the new arrays and ...
-    if (Debug) mov <- array(t(snowfall::sfSapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
+    if (useTestCode) mov <- array(t(snowfall::sfSapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
       Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
-    if (!Debug) mov <- array(t(snowfall::sfSapply(1:nsim, getmov, Frac_area_1 = Frac_area_1, 
+    if (!useTestCode) mov <- array(t(snowfall::sfSapply(1:nsim, getmov, Frac_area_1 = Frac_area_1, 
       Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
   } else {
     # no cluster initiated
-	if (Debug) mov <- array(t(sapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
+	if (useTestCode) mov <- array(t(sapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
       Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
-    if (!Debug) mov <- array(t(sapply(1:nsim, getmov, Frac_area_1 = Frac_area_1, 
+    if (!useTestCode) mov <- array(t(sapply(1:nsim, getmov, Frac_area_1 = Frac_area_1, 
       Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1	  
   }
    
@@ -433,11 +492,15 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     SSB0 <- apply(SSB[, , 1, ], 1, sum)  # Calculate unfished spawning stock numbers
     SSBpR <- SSB0/R0  # Spawning stock biomass per recruit
     SSB0a <- apply(SSB[, , 1, ], c(1, 3), sum)  # Calculate unfished spawning stock numbers
+    B0 <- apply(Biomass[, , 1, ], c(1, 3), sum)
+	N0 <- apply(N[, , 1, ], c(1, 3), sum)
   } else {
     SSN0 <- apply(SSN[, , 1, ], 2, sum)  # Calculate unfished spawning stock numbers  
     SSB0 <-  sum(SSB[, , 1, ])  # Calculate unfished spawning stock numbers
     SSBpR <- SSB0/R0  # Spawning stock biomass per recruit
-    SSB0a <- apply(SSB[, , 1, ], 2, sum)  # Calculate unfished spawning stock numbers  
+    SSB0a <- apply(SSB[, , 1, ], 2, sum)  # Calculate unfished spawning stock numbers
+    B0 <- apply(Biomass[, , 1, ], 2, sum)
+	N0 <- apply(N[, , 1, ], 2, sum)
   }
     
   bR <- matrix(log(5 * hs)/(0.8 * SSB0a), nrow=nsim)  # Ricker SR params
@@ -445,18 +508,18 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   
   message("Optimizing for user-specified depletion")  # Print a progress update
   flush.console()  # update console
- 
+  
   if (snowfall::sfIsRunning()) {
     snowfall::sfExport(list = c("dep", "Find", "Perr", "Marray", "hs", "Mat_age", 
       "Wt_age", "R0", "V", "nyears", "maxage", "SRrel", "aR", "bR"))
-    if (Debug) qs <- snowfall::sfSapply(1:nsim, getq2, dep, Find, Perr, Marray, hs, Mat_age, 
+    if (useTestCode) qs <- snowfall::sfSapply(1:nsim, getq2, dep, Find, Perr, Marray, hs, Mat_age, 
       Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR)  # find the q that gives current stock depletion
-    if (!Debug) qs <- snowfall::sfSapply(1:nsim, getq, dep, Find, Perr, Marray, hs, Mat_age, 
+    if (!useTestCode) qs <- snowfall::sfSapply(1:nsim, getq, dep, Find, Perr, Marray, hs, Mat_age, 
       Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR)  # find the q that gives current stock depletion	  
   } else {
-    if (Debug) qs <- sapply(1:nsim, getq2, dep, Find, Perr, Marray, hs, Mat_age, 
+    if (useTestCode) qs <- sapply(1:nsim, getq2, dep, Find, Perr, Marray, hs, Mat_age, 
       Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR)  # find the q that gives current stock depletion
-    if (!Debug) qs <- sapply(1:nsim, getq, dep, Find, Perr, Marray, hs, Mat_age, 
+    if (!useTestCode) qs <- sapply(1:nsim, getq, dep, Find, Perr, Marray, hs, Mat_age, 
       Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR)  # find the q that gives current stock depletion	  
   }
 
@@ -471,71 +534,75 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     # Nsec <- 10
     Nprob <- length(HighQ)
 	
-    # message(Nprob,' simulations have final biomass that is not close to
-    # specified depletion.') message('Re-sampling depletion and trying
-    # again')
-    
+    message(Nprob,' simulations have final biomass that is not close to specified depletion.') 
+	message('Re-sampling depletion and recruitment error')
+	# message('Re-sampling depletion, recruitment error and fishing effort')
+    flush.console()
     # Attempt again with different depletions
     count <- 0
-    while (Err & count < 30) {
+    while (Err & count < ntrials) {
       count <- count + 1
       # message('Attempt ', count) cat('.') flush.console()
       Nprob <- length(HighQ)
+	  
+	  # Re-sample depletion 
       dep[HighQ] <- runif(Nprob, OM@D[1], OM@D[2])
-      # Get New Recruitment Deviations
+      # Re-sample recruitment deviations
       procmu2 <- -0.5 * (procsd[HighQ])^2  # adjusted log normal mean
       Perr2 <- array(rnorm((nyears + proyears) * length(HighQ), rep(procmu[HighQ], 
         nyears + proyears), rep(procsd[HighQ], nyears + proyears)), 
-        c(length(HighQ), nyears + proyears))
-		
+        c(length(HighQ), nyears + proyears))	
       for (y in 2:(nyears + proyears)) Perr2[, y] <- AC[HighQ] * 
         Perr2[, y - 1] + Perr2[, y] * (1 - AC[HighQ] * AC[HighQ])^0.5
       Perr[HighQ, ] <- exp(Perr2)  # normal space (mean 1 on average)
       
+	  # Re-sample historical fishing effort 
+	  Esd2 <- runif(Nprob, OM@Fsd[1], OM@Fsd[2])
+	  Esd[HighQ] <- Esd2
+	  Deriv2 <- getEffhist(Esd2, nyears, EffYears = EffYears, EffLower = EffLower, EffUpper = EffUpper)  # Historical fishing effort
+      Find[HighQ, ] <- Deriv2[[1]]  # Calculate fishing effort rate
+      dFfinal[HighQ] <- Deriv2[[2]]  # Final gradient in fishing effort yr-1 
+	  
       if (snowfall::sfIsRunning()) {
         snowfall::sfExport(list = c("dep", "Find", "Perr", "Marray", "hs", 
           "Mat_age", "Wt_age", "R0", "V", "nyears", "maxage", "SRrel", 
           "aR", "bR"))
-        if (Debug) qs[HighQ] <- snowfall::sfSapply(HighQ, getq2, dep, Find, Perr, Marray, 
+        if (useTestCode) qs[HighQ] <- snowfall::sfSapply(HighQ, getq2, dep, Find, Perr, Marray, 
           hs, Mat_age, Wt_age, R0, V, nyears, maxage, mov, Spat_targ, 
           SRrel, aR, bR)  # find the q that gives current stock depletion
-        if (!Debug) qs[HighQ] <- snowfall::sfSapply(HighQ, getq, dep, Find, Perr, Marray, 
+        if (!useTestCode) qs[HighQ] <- snowfall::sfSapply(HighQ, getq, dep, Find, Perr, Marray, 
           hs, Mat_age, Wt_age, R0, V, nyears, maxage, mov, Spat_targ, 
           SRrel, aR, bR)  # find the q that gives current stock depletion		  
       } else {
-        if (Debug) qs[HighQ] <- sapply(HighQ, getq2, dep, Find, Perr, Marray, 
+        if (useTestCode) qs[HighQ] <- sapply(HighQ, getq2, dep, Find, Perr, Marray, 
           hs, Mat_age, Wt_age, R0, V, nyears, maxage, mov, Spat_targ, 
           SRrel, aR, bR)  # find the q that gives current stock depletion
-        if (!Debug) qs[HighQ] <- sapply(HighQ, getq, dep, Find, Perr, Marray, 
+        if (!useTestCode) qs[HighQ] <- sapply(HighQ, getq, dep, Find, Perr, Marray, 
           hs, Mat_age, Wt_age, R0, V, nyears, maxage, mov, Spat_targ, 
           SRrel, aR, bR)  # find the q that gives current stock depletion		  
       }
 	  
       HighQ <- which(qs > UpperBound | qs < LowerBound)
-      if (length(HighQ) == 0) 
-        Err <- FALSE
+      if (length(HighQ) == 0) Err <- FALSE
     }
-	SampPars$Perr <- Perr # updated sampled pars
-	SampPars$dep <- dep # updated sampled pars
     if (Err) {
       # still a problem
       tooLow <- length(which(qs > UpperBound))
       tooHigh <- length(which(qs < LowerBound))
       prErr <- length(HighQ)/nsim
-      if (prErr > 0.01 & length(HighQ) > 1) {
+      if (prErr > fracD & length(HighQ) >= 1) {
         if (length(tooLow) > 0) 
           message(tooLow, " sims can't get down to the lower bound on depletion")
         if (length(tooHigh) > 0) 
           message(tooHigh, " sims can't get to the upper bound on depletion")
-        message("More than 1% of simulations can't get to the specified level of depletion with these Operating Model parameters")
-        stop("Try again for a complete new sample, or modify the input parameters")
+        message("More than ", fracD*100, "% of simulations can't get to the specified level of depletion with these Operating Model parameters")
+        stop("Try again for a complete new sample, modify the input parameters, or increase ")
       } else {
         if (length(tooLow) > 0) 
           message(tooLow, " sims can't get down to the lower bound on depletion")
         if (length(tooHigh) > 0) 
           message(tooHigh, " sims can't get to the upper bound on depletion")
-        message("Some simulations can't get to the specified level of depletion")
-        message("Less than 1% of simulations, continuing anyway")
+        message("Less than ", fracD*100, "% simulations can't get to the specified level of depletion.\nContinuing")
       }
       
     }
@@ -600,9 +667,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   if (nsim == 1) Depletion <- sum(SSB[,,nyears,])/sum(SSB[,,1,])#^betas
   # # apply hyperstability / hyperdepletion
   
-  
   # print(paste("Depletion: ", round(cbind(dep,Depletion),2)))
-  
   
   CN <- apply(N * (1 - exp(-Z)) * (FM/Z), c(1, 3, 2), sum)  # Catch in numbers
   CN[is.na(CN)] <- 0
@@ -665,27 +730,27 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   flush.console()  # update the console
   if (snowfall::sfIsRunning()) {
     snowfall::sfExport(list = c("Marray", "hs", "Mat_age", "Wt_age", "R0", "V", "nyears", "maxage"))  # export some newly made arrays to the cluster
-    if (!Debug) MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY, Marray, hs, Mat_age, Wt_age, 
+    if (!useTestCode) MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY, Marray, hs, Mat_age, Wt_age, 
       R0, V = V[, , nyears], maxage, nyears, proyears = 200, Spat_targ, 
       mov, SRrel, aR, bR)  # optimize for MSY reference points\t
 	## Above version didn't include proyears or recruitment variability in projections
 	## Didn't account for future changes in V and W@Age
 	
     # Using Rcpp code 	
-    if (Debug) MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY2, Perr, Marray, hs, Mat_age, Wt_age, 
+    if (useTestCode) MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY2, Perr, Marray, hs, Mat_age, Wt_age, 
       R0, V = V, maxage, nyears, proyears = proyears, Spat_targ, 
       mov, SRrel, aR, bR)  # optimize for MSY reference points\t	  
 	  
   } else {
-    if (!Debug) MSYrefs <- sapply(1:nsim, getFMSY, Marray, hs, Mat_age, Wt_age, 
+    if (!useTestCode) MSYrefs <- sapply(1:nsim, getFMSY, Marray, hs, Mat_age, Wt_age, 
       R0, V = V[, , nyears], maxage, nyears, proyears = 200, Spat_targ, 
       mov, SRrel, aR, bR)  # optimize for MSY reference points
-    if (Debug) MSYrefs <- sapply(1:nsim, getFMSY2, Perr, Marray, hs, Mat_age, Wt_age, 
+    if (useTestCode) MSYrefs <- sapply(1:nsim, getFMSY2, Perr, Marray, hs, Mat_age, Wt_age, 
       R0, V = V, maxage, nyears, proyears = proyears, Spat_targ, 
       mov, SRrel, aR, bR)  # optimize for MSY reference points	  
   }
   
-  if (!Debug) { #
+  if (!useTestCode) { #
     MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
     FMSY <- MSYrefs[2, ]  # instantaneous apical FMSY  (Vulnerable)
     VBMSY <- (MSY/(1 - exp(-FMSY)))  # Biomass at MSY (Vulnerable)
@@ -694,7 +759,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     BMSY_B0 <- SSBMSY_SSB0 <- MSYrefs[4, ]  # SSBMSY relative to unfished (SSB)
 	
   }
-  if (Debug) {
+  if (useTestCode) {
     MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
     FMSY <- MSYrefs[2, ]  # instantaneous apical FMSY (Vulnerable)
     SSBMSY <- MSYrefs[3, ]  # Spawning Stock Biomass at MSY  
@@ -715,26 +780,26 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   flush.console()  # update the console
   if (snowfall::sfIsRunning()) {
     # Numerically optimize for F that provides highest long term yield
-    if (!Debug) RefY <- snowfall::sfSapply(1:nsim, getFref, Marray = Marray, Wt_age = Wt_age, 
+    if (!useTestCode) RefY <- snowfall::sfSapply(1:nsim, getFref, Marray = Marray, Wt_age = Wt_age, 
         Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, ], SSN_s = SSN[, 
         , nyears, ], Biomass_s = Biomass[, , nyears, ], VBiomass_s = VBiomass[, , nyears, ], 
 		SSB_s = SSB[, , nyears, ], Vn = V[, , (nyears + 1):(nyears + proyears)], 
 		hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas, 
 		maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)
-    if (Debug) RefY <- snowfall::sfSapply(1:nsim, getFref2, Marray = Marray, Wt_age = Wt_age, 
+    if (useTestCode) RefY <- snowfall::sfSapply(1:nsim, getFref2, Marray = Marray, Wt_age = Wt_age, 
       Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, , drop=FALSE], SSN_s = SSN[, , nyears, , drop=FALSE], 
 	  Biomass_s = Biomass[, , nyears, , drop=FALSE], VBiomass_s = VBiomass[, , nyears, , drop=FALSE], 
 	  SSB_s = SSB[, , nyears, , drop=FALSE], Vn = V[, , (nyears + 1):(nyears + proyears), drop=FALSE], 
 	  hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas,
 	  maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)	
   } else {
-    if (!Debug) RefY <- sapply(1:nsim, getFref, Marray = Marray, Wt_age = Wt_age, 
+    if (!useTestCode) RefY <- sapply(1:nsim, getFref, Marray = Marray, Wt_age = Wt_age, 
       Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, ], SSN_s = SSN[, , nyears, ], 
 	  Biomass_s = Biomass[, , nyears, ], VBiomass_s = VBiomass[, , nyears, ], 
 	  SSB_s = SSB[, , nyears, ], Vn = V[, , (nyears + 1):(nyears + proyears)], 
 	  hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas,
 	  maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)
-    if (Debug) RefY <- sapply(1:nsim, getFref2, Marray = Marray, Wt_age = Wt_age, 
+    if (useTestCode) RefY <- sapply(1:nsim, getFref2, Marray = Marray, Wt_age = Wt_age, 
       Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, , drop=FALSE], SSN_s = SSN[, , nyears, , drop=FALSE], 
 	  Biomass_s = Biomass[, , nyears, , drop=FALSE], VBiomass_s = VBiomass[, , nyears, , drop=FALSE], 
 	  SSB_s = SSB[, , nyears, , drop=FALSE], Vn = V[, , (nyears + 1):(nyears + proyears), drop=FALSE], 
@@ -752,8 +817,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     sdconv(1, rep(Recsd, nyears + proyears))), c(nsim, nyears + proyears))
 
   ntest <- 20  # number of trials  
-  BMSY_B0bias <- array(rlnorm(nsim * ntest, mconv(1, OM@BMSY_B0cv), sdconv(1, 
-    OM@BMSY_B0cv)), dim = c(nsim, ntest))  # trial samples of BMSY relative to unfished  
+  BMSY_B0bias <- array(rlnorm(nsim * ntest, mconv(1, OM@BMSY_B0cv), sdconv(1, OM@BMSY_B0cv)), dim = c(nsim, ntest))  # trial samples of BMSY relative to unfished  
   # test <- array(BMSY_B0 * BMSY_B0bias, dim = c(nsim, ntest))  # the simulated observed BMSY_B0 
   test <- array(SSBMSY_SSB0 * BMSY_B0bias, dim = c(nsim, ntest))  # the simulated observed BMSY_B0 
   indy <- array(rep(1:ntest, each = nsim), c(nsim, ntest))  # index
@@ -836,7 +900,8 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     FMSY_M, Mgrad, Msd, procsd, Esd, dFfinal, MSY, qinc, qcv, FMSY, 
     Linf, K, t0, hs, Linfgrad, Kgrad, Linfsd, recgrad, Ksd, ageM, L5[nyears, ], 
 	LFS[nyears, ], Vmaxlen[nyears, ], LFC, OFLreal, Spat_targ, 
-    Frac_area_1, Prob_staying, AC, L50, L95))  # put all the operating model parameters in one table
+    Frac_area_1, Prob_staying, AC, L50, L95,
+	B0, N0, SSB0, SSN0))  # put all the operating model parameters in one table
   
   names(DLM_data@OM)[26:28] <- c("L5", "LFS", "Vmaxlen")  # These are missing labels in the line above
   
@@ -860,16 +925,31 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   ## Return Historical Simulations and DLM_data from last historical year ##
   if (Hist) { # Stop the model after historical simulations are complete
   	message("Returning historical simulations")
+	nout <- t(apply(N, c(1, 3), sum))
 	vb <- t(apply(VBiomass, c(1, 3), sum))
 	b <- t(apply(Biomass, c(1, 3), sum))
 	ssb <- t(apply(SSB, c(1, 3), sum))
     Cc <- t(apply(CB, c(1,3), sum))
 	rec <- t(apply(N[, 1, , ], c(1,2), sum))
 	
-    TSdata <- list(VB=vb, SSB=ssb, Bio=b, Catch=Cc, Rec=rec)
+    TSdata <- list(VB=vb, SSB=ssb, Bio=b, Catch=Cc, Rec=rec, N=nout)
     AtAge <- list(Len_age=Len_age, Wt_age=Wt_age, 
-	  Sl_age=V, Mat_age=Mat_age)
-  
+	  Sl_age=V, Mat_age=Mat_age, Nage=apply(N, c(1:3), sum), SSBage=apply(SSB, c(1:3), sum))
+    
+	# updated sampled pars
+	SampPars <- list(dep=dep, Esd=Esd, Find=Find, procsd=procsd, AC=AC, M=M, Msd=Msd, 
+      Mgrad=Mgrad, hs=hs, Linf=Linf, Linfsd=Linfsd, Linfgrad=Linfgrad, recgrad=recgrad,
+	  K=K, Ksd=Ksd, Kgrad=Kgrad, t0=t0, L50=L50, L50_95=L50_95, Spat_targ=Spat_targ,
+	  Frac_area_1=Frac_area_1, Prob_staying=Prob_staying, Size_area_1=Size_area_1, 
+	  Csd=Csd, Cbias=Cbias, CAA_nsamp=CAA_nsamp, CAA_ESS=CAA_ESS, CAL_nsamp=CAL_nsamp,
+	  CAL_ESS=CAL_ESS, CALcv=CALcv, betas=betas, Isd=Isd, Derr=Derr, Dbias=Dbias, 
+	  Mbias=Mbias, FMSY_Mbias=FMSY_Mbias, lenMbias=lenMbias, LFCbias=LFCbias,
+	  LFSbias=LFSbias, Aerr=Aerr, Abias=Abias, Kbias=Kbias, t0bias=t0bias, 
+	  Linfbias=Linfbias, Irefbias=Irefbias, Crefbias=Crefbias, Brefbias=Brefbias,
+	  Recsd=Recsd, qinc=qinc, qcv=qcv, L5=L5, LFS=LFS, Vmaxlen=Vmaxlen, L5s=L5s, 
+	  LFSs=LFSs, Vmaxlens=Vmaxlens, Perr=Perr, R0=R0, Mat_age=Mat_age, 
+	  Mrand=Mrand, Linfrand=Linfrand, Krand=Krand, maxage=maxage, V=V) 
+
 	HistData <- list(SampPars=SampPars, TSdata=TSdata, AtAge=AtAge, DLM_data=DLM_data)
 	class(HistData) <- c("list", "hist")
 	return(HistData)
@@ -904,6 +984,8 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   B_BMSYa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected B_BMSY
   F_FMSYa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected F_FMSY
   Ba <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected Biomass
+  SSBa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected SSB
+  VBa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected vulnerable biomass
   FMa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected fishing mortality rate
   Ca <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected catch
   TACa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected TAC recommendation
@@ -1098,8 +1180,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     for (y in 2:proyears) {
       cat(".")
       flush.console()
-      if (class(match.fun(MPs[mm])) == "DLM_output") 
-        TACa[, mm, y] <- TACused
+      if (class(match.fun(MPs[mm])) == "DLM_output")  TACa[, mm, y] <- TACused
       SAYRt <- as.matrix(expand.grid(1:nsim, 1:maxage, y + nyears, 
         1:nareas))  # Trajectory year
       SAYt <- SAYRt[, 1:3]
@@ -1278,9 +1359,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
           temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF)
           FM_P[SAYR] <- -log(1 - temp)
           
-          Effort[, mm, y] <- (-log(1 - apply(CB_P[, , y, ], 1, 
-          sum)/(apply(CB_P[, , y, ], 1, sum) + apply(VBiomass_P[, 
-          , y, ], 1, sum))))/qs
+          Effort[, mm, y] <- (-log(1 - apply(CB_P[, , y, ], 1, sum)/(apply(CB_P[, , y, ], 1, sum) + apply(VBiomass_P[, , y, ], 1, sum))))/qs
           
         } else {
           MSElist[[mm]]@MPeff <- Ei
@@ -1372,17 +1451,18 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
         
         # TACused <- apply(CB_P[, , y, ], 1, sum)  # Set last years TAC to actual catch from last year
         # TACa[, mm, y] <- TACused
+		tempcatch <- apply(CB_P[, , y, ], 1, sum) 
 		
-        MSElist[[mm]]@MPrec <- TACused
+        MSElist[[mm]]@MPrec <- tempcatch
       } else {
         # not an update yr
         vbio <- apply(VBiomass_P[, , y, ], c(1, 3), sum)
         fishdist <- (vbio^Spat_targ)/apply(vbio^Spat_targ, 1, mean)  # calculate distribution of effort \t  
         if (class(match.fun(MPs[mm])) == "DLM_output") {
-          CB_P[SAYR] <- Biomass_P[SAYR] * (1 - exp(-fishdist[SR] * 
-          V_P[SAYt]))  # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space
+          CB_P[SAYR] <- Biomass_P[SAYR] * (1 - exp(-fishdist[SR] *  V_P[SAYt]))  # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space
           temp <- CB_P[, , y, ]/apply(CB_P[, , y, ], 1, sum)  # how catches are going to be distributed
-          CB_P[, , y, ] <- TACused * temp  # debug - to test distribution code make TAC = TAC2, should be identical
+          tempcatch <- TACa[, mm, y-1]
+		  CB_P[, , y, ] <- tempcatch * temp  # debug - to test distribution code make TAC = TAC2, should be identical
           temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-Marray[SYt]/2))  # Pope's approximation
           temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF)
           FM_P[SAYR] <- -log(1 - temp)
@@ -1407,10 +1487,12 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum)/SSBMSY  # SSB relative to SSBMSY
     
     F_FMSYa[, mm, ] <- (-log(1 - apply(CB_P, c(1, 3), sum)/(apply(CB_P, c(1, 3), sum) + 
-	  apply(VBiomass_P, c(1, 3), sum))))/FMSY
-    Ba[, mm, ] <- apply(Biomass_P, c(1, 3), sum)
+	                    apply(VBiomass_P, c(1, 3), sum))))/FMSY
+    Ba[, mm, ] <- apply(Biomass_P, c(1, 3), sum) # biomass 
+	SSBa[, mm, ] <- apply(SSB_P, c(1, 3), sum) # spawning stock biomass
+	VBa[, mm, ] <- apply(VBiomass_P, c(1, 3), sum) # vulnerable biomass
     FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum)/(apply(CB_P, c(1, 3), sum) + 
-	  apply(VBiomass_P, c(1, 3), sum)))
+	               apply(VBiomass_P, c(1, 3), sum)))
     Ca[, mm, ] <- apply(CB_P, c(1, 3), sum)
     cat("\n")
   }  # end of mm methods
@@ -1427,11 +1509,14 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   attr(OM@Name, "date") <- date()
   attr(OM@Name, "R.version") <- R.version
   
-  
-  MSEout <- new("MSE", Name = OM@Name, nyears, proyears, nMP, MPs, nsim, OMtable = DLM_data@OM, 
-    DLM_data@Obs, B_BMSYa, F_FMSYa, Ba, FMa, Ca, TACa, SSB_hist = SSB, 
-    CB_hist = CB, FM_hist = FM, Effort = Effort)
-  MSEout
+
+  MSEout <- new("MSE", Name = OM@Name, nyears, proyears, nMPs=nMP, MPs, nsim, 
+    OM = DLM_data@OM, Obs=DLM_data@Obs, B_BMSY=B_BMSYa, F_FMSY=F_FMSYa, B=Ba, 
+	SSB=SSBa, VB=VBa, FM=FMa, Ca, TAC=TACa, SSB_hist = SSB, CB_hist = CB, 
+	FM_hist = FM, Effort = Effort, Extra=list())
+	
+  MSEout 
+
 }
 
 

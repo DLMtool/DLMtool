@@ -714,6 +714,8 @@ setMethod("initialize", "lmmodel", function(.Object,Name,models){
 #' @slot B_BMSY Stored biomass relative to BMSY over the projection (an array with dimensions nsim, nMPs, proyears) 
 #' @slot F_FMSY Stored fishing mortality rate relative to FMSY over the projection (an array with dimensions nsim, nMPs, proyears) 
 #' @slot B Stored stock biomass over the projection (an array with dimensions nsim, nMPs, proyears)
+#' @slot SSB Stored spawning stock biomass over the projection (an array with dimensions nsim, nMPs, proyears)
+#' @slot VB Stored vulnerable biomass over the projection (an array with dimensions nsim, nMPs, proyears) 
 #' @slot FM Stored fishing mortality rate over the projection (an array with dimensions nsim, nMPs, proyears)
 #' @slot C Stored catches (taken) over the projection (an array with dimensions nsim, nMPs, proyears) 
 #' @slot TAC Stored Total Allowable Catch (prescribed) over the projection (an array with dimensions nsim, nMPs, proyears)(note that this is NA for input controls) 
@@ -721,39 +723,68 @@ setMethod("initialize", "lmmodel", function(.Object,Name,models){
 #' @slot CB_hist Stored historical catches in weight (historical simulations - an array with dimensions nsim, nages, nyears, nareas)
 #' @slot FM_hist Stored historical fishing mortality rate (historical simulations - an array with dimensions nsim, nages, nyears, nareas)
 #' @slot Effort Stored relative fishing effort in the projection years
+#' @slot Extra A list for additional information
 #'
 #' @author T. Carruthers
 #' @keywords classes
 setClass("MSE", representation(Name = "character", nyears = "numeric", 
   proyears = "numeric", nMPs = "numeric", MPs = "character", nsim = "numeric", 
   OM = "data.frame", Obs = "data.frame", B_BMSY = "array", F_FMSY = "array", 
-  B = "array", FM = "array", C = "array", TAC = "array", SSB_hist = "array", 
-  CB_hist = "array", FM_hist = "array", Effort = "array"))
+  B = "array", SSB="array", VB="array", FM = "array", C = "array", 
+  TAC = "array", SSB_hist = "array", 
+  CB_hist = "array", FM_hist = "array", Effort = "array", Extra="list"))
 
+  
 setMethod("initialize", "MSE", function(.Object, Name, nyears, proyears, 
-  nMPs, MPs, nsim, OMtable, Obs, B_BMSYa, F_FMSYa, Ba, FMa, Ca, TACa, 
-  SSB_hist, CB_hist, FM_hist, Effort = array()) {
+  nMPs, MPs, nsim, OM, Obs, B_BMSY, F_FMSY, B, SSB, VB, FM, C, TAC, 
+  SSB_hist, CB_hist, FM_hist, Effort = array(), Extra=list()) {
   .Object@Name <- Name
   .Object@nyears <- nyears
   .Object@proyears <- proyears
   .Object@nMPs <- nMPs
   .Object@MPs <- MPs
   .Object@nsim <- nsim
-  .Object@OM <- OMtable
+  .Object@OM <- OM
   .Object@Obs <- Obs
-  .Object@B_BMSY <- B_BMSYa
-  .Object@F_FMSY <- F_FMSYa
-  .Object@B <- Ba
-  .Object@FM <- FMa
-  .Object@C <- Ca
-  .Object@TAC <- TACa
+  .Object@B_BMSY <- B_BMSY
+  .Object@F_FMSY <- F_FMSY
+  .Object@B <- B
+  .Object@SSB <- SSB
+  .Object@VB <- VB
+  .Object@FM <- FM
+  .Object@C <- C  
+  .Object@TAC <- TAC
   .Object@SSB_hist <- SSB_hist
   .Object@CB_hist <- CB_hist
   .Object@FM_hist <- FM_hist
   .Object@Effort <- Effort
+  .Object@Extra <- Extra 
   .Object
 })
 
+# setMethod("initialize", "MSE", function(.Object, Name, nyears, proyears, 
+  # nMPs, MPs, nsim, OMtable, Obs, B_BMSYa, F_FMSYa, Ba, FMa, Ca, TACa, 
+  # SSB_hist, CB_hist, FM_hist, Effort = array()) {
+  # .Object@Name <- Name
+  # .Object@nyears <- nyears
+  # .Object@proyears <- proyears
+  # .Object@nMPs <- nMPs
+  # .Object@MPs <- MPs
+  # .Object@nsim <- nsim
+  # .Object@OM <- OMtable
+  # .Object@Obs <- Obs
+  # .Object@B_BMSY <- B_BMSYa
+  # .Object@F_FMSY <- F_FMSYa
+  # .Object@B <- Ba
+  # .Object@FM <- FMa
+  # .Object@C <- Ca
+  # .Object@TAC <- TACa
+  # .Object@SSB_hist <- SSB_hist
+  # .Object@CB_hist <- CB_hist
+  # .Object@FM_hist <- FM_hist
+  # .Object@Effort <- Effort
+  # .Object
+# })
 
 
 #' Class \code{'Observation'}

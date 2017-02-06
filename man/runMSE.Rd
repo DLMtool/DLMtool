@@ -6,7 +6,8 @@
 \usage{
 runMSE(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, custompars = NULL,
-  CheckMPs = TRUE, Hist = FALSE, Debug = FALSE)
+  CheckMPs = TRUE, Hist = FALSE, useTestCode = FALSE, ntrials = 30,
+  fracD = 0.05)
 }
 \arguments{
 \item{OM}{An operating model object (class OM)}
@@ -46,7 +47,14 @@ if MPs can be run.}
 \item{Hist}{Should model stop after historical simulations? Returns a list 
 containing all historical data}
 
-\item{Debug}{Development switch}
+\item{useTestCode}{Development switch}
+
+\item{ntrials}{Maximum of times depletion and recruitment deviations are 
+resampled to optimize for depletion. After this the model stops if more than 
+percent of simulations are not close to the required depletion}
+
+\item{fracD}{maximum allowed proportion of simulations where depletion is not 
+close to sampled depletion from OM before model stops with error}
 }
 \value{
 An object of class MSE
