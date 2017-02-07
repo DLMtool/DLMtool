@@ -40,7 +40,7 @@
 #' @export runMSE
 runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4, 
   pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, custompars = NULL, CheckMPs = TRUE,
-  Hist=FALSE, useTestCode=FALSE, ntrials=30, fracD=0.05) {
+  Hist=FALSE, useTestCode=FALSE, ntrials=50, fracD=0.05) {
 
   tiny <- 1e-15  # define tiny variable
   message("Loading operating model")
@@ -187,9 +187,9 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   # Add cycle (phase shift) to recruitment deviations - if specified
   if (is.finite(OM@Period[1]) & is.finite(OM@Amplitude[1])) {
     Shape <- "sin"  # default sine wave - alternative - 'shift' for step changes
-    recMulti <- sapply(1:nsim, SetRecruitCycle, Period = OM@Period, 
-      Amplitude = OM@Amplitude, TotYears = nyears + proyears, Shape = Shape)
-    Perr <- Perr * t(recMulti)  # Add cyclic pattern to recruitment
+    recMulti <- t(sapply(1:nsim, SetRecruitCycle, Period = OM@Period, 
+      Amplitude = OM@Amplitude, TotYears = nyears + proyears, Shape = Shape))
+    Perr <- Perr * recMulti  # Add cyclic pattern to recruitment
     message("Adding cyclic recruitment pattern")
     flush.console()
   }
@@ -223,7 +223,8 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	Mrand=Mrand, Linfrand=Linfrand, Krand=Krand, maxage=maxage) 
   
   # Vector of valid names for custompars list or data.frame. Names not in this list will be printed out in warning and ignored #	
-  ParsNames <- c(names(SampPars), "ageM", "age95", "V", "EffYears", "EffLower", "EffUpper","Mat_age") 
+  ParsNames <- c(names(SampPars), "ageM", "age95", "V", "EffYears", "EffLower", "EffUpper","Mat_age",
+    "Wt_age") 
   
   # Sample custom parameters
   # ===================================================================
@@ -316,8 +317,10 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   ind <- as.matrix(expand.grid(1:nsim, 1:maxage, 1:(nyears + proyears)))  # an index for calculating Length at age
   Len_age[ind] <- Linfarray[ind[, c(1, 3)]] * (1 - exp(-Karray[ind[, c(1, 3)]] * 
     (Agearray[ind[, 1:2]] - t0[ind[, 1]])))
-  Wt_age <- array(NA, dim = c(nsim, maxage, nyears + proyears))  # Weight at age array
-  Wt_age[ind] <- OM@a * Len_age[ind]^OM@b  # Calculation of weight array
+  if (!exists("Wt_age", inherits=FALSE)) {
+    Wt_age <- array(NA, dim = c(nsim, maxage, nyears + proyears))  # Weight at age array
+    Wt_age[ind] <- OM@a * Len_age[ind]^OM@b  # Calculation of weight array
+  }	
   
   # Calcaluate age at maturity 
   if (!exists("ageM", inherits=FALSE)) ageM <- -((log(1 - L50/Linf))/K) + t0  # calculate ageM from L50 and growth parameters (non-time-varying)
@@ -341,7 +344,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	L5 <- matrix(NA, nrow = nyears + proyears, ncol = nsim)
     LFS <- matrix(NA, nrow = nyears + proyears, ncol = nsim)
     Vmaxlen <- matrix(NA, nrow = nyears + proyears, ncol = nsim)
-	
+
 	for (yr in 1:(nyears+proyears)) {
 	  for (s in 1:nsim) {
 	    ind <- min(which(V[s,,yr] >=0.05))
@@ -534,20 +537,20 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     # Nsec <- 10
     Nprob <- length(HighQ)
 	
-    message(Nprob,' simulations have final biomass that is not close to specified depletion.') 
-	message('Re-sampling depletion and recruitment error')
-	# message('Re-sampling depletion, recruitment error and fishing effort')
+    message(Nprob,' simulations have final biomass that is not close to sampled depletion') 
+	message('Re-sampling depletion, recruitment error, and fishing effort')
     flush.console()
-    # Attempt again with different depletions
     count <- 0
     while (Err & count < ntrials) {
       count <- count + 1
-      # message('Attempt ', count) cat('.') flush.console()
       Nprob <- length(HighQ)
 	  
 	  # Re-sample depletion 
       dep[HighQ] <- runif(Nprob, OM@D[1], OM@D[2])
-      # Re-sample recruitment deviations
+      
+	  # Re-sample recruitment deviations
+	  procsd[HighQ] <- runif(Nprob, OM@Perr[1], OM@Perr[2])  # Re-sample process error standard deviation 
+      AC[HighQ] <- runif(Nprob, OM@AC[1], OM@AC[2])  # Re-sample auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)  
       procmu2 <- -0.5 * (procsd[HighQ])^2  # adjusted log normal mean
       Perr2 <- array(rnorm((nyears + proyears) * length(HighQ), rep(procmu[HighQ], 
         nyears + proyears), rep(procsd[HighQ], nyears + proyears)), 
@@ -556,6 +559,8 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
         Perr2[, y - 1] + Perr2[, y] * (1 - AC[HighQ] * AC[HighQ])^0.5
       Perr[HighQ, ] <- exp(Perr2)  # normal space (mean 1 on average)
       
+	  if (exists("recMulti", inherits=FALSE))  Perr[HighQ,] <- Perr[HighQ,] * recMulti[HighQ,]
+	  
 	  # Re-sample historical fishing effort 
 	  Esd2 <- runif(Nprob, OM@Fsd[1], OM@Fsd[2])
 	  Esd[HighQ] <- Esd2
@@ -733,9 +738,9 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     if (!useTestCode) MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY, Marray, hs, Mat_age, Wt_age, 
       R0, V = V[, , nyears], maxage, nyears, proyears = 200, Spat_targ, 
       mov, SRrel, aR, bR)  # optimize for MSY reference points\t
-	## Above version didn't include proyears or recruitment variability in projections
+	## Above version didn't include proyears in projections
 	## Didn't account for future changes in V and W@Age
-	
+
     # Using Rcpp code 	
     if (useTestCode) MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY2, Perr, Marray, hs, Mat_age, Wt_age, 
       R0, V = V, maxage, nyears, proyears = proyears, Spat_targ, 
@@ -757,11 +762,11 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
     SSBMSY <- MSYrefs[3, ]  # Spawing Stock Biomass at MSY
     BMSY_B0 <- SSBMSY_SSB0 <- MSYrefs[4, ]  # SSBMSY relative to unfished (SSB)
-	
+	FMSYb <- -log(1-(MSY/(SSBMSY+MSY))) # instantaneous FMSY (Spawning Biomass)
   }
   if (useTestCode) {
     MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
-    FMSY <- MSYrefs[2, ]  # instantaneous apical FMSY (Vulnerable)
+    FMSY <- MSYrefs[2, ]  # instantaneous FMSY (Vulnerable)
     SSBMSY <- MSYrefs[3, ]  # Spawning Stock Biomass at MSY  
     if (nsim > 1) {
 	  SSBMSY_SSB0 <- SSBMSY/apply(SSB[,,1,], 1, sum)  # SSBMSY relative to unfished (SSB)   
@@ -771,11 +776,13 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	  SSBMSY_SSB0 <- SSBMSY/sum(SSB[,,1,])  # SSBMSY relative to unfished (SSB)   
       BMSY_B0 <- MSYrefs[4, ]/sum(Biomass[,,1,]) # Biomass relative to unfished (B0)
 	}
-	VBMSY <- MSYrefs[5, ] # (MSY/(1 - exp(-FMSY)))  # Biomass at MSY (Vulnerable)
+	VBMSY <- (MSY/(1 - exp(-FMSY)))  # Biomass at MSY (Vulnerable)
+	FMSYb <- MSYrefs[6,]  # instantaneous FMSY (Spawning Biomass)
+	UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
   }
+   
   
-  UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
-
+  
   message("Calculating reference yield - best fixed F strategy")  # Print a progress update
   flush.console()  # update the console
   if (snowfall::sfIsRunning()) {
@@ -812,6 +819,9 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   # LFS<-Linf*(1-exp(-K*(mod-t0))) # Length at full selection
   if (nsim > 1) A <- apply(VBiomass[, , nyears, ], 1, sum)  # Abundance
   if (nsim == 1) A <- sum(VBiomass[, , nyears, ])  # Abundance
+  if (nsim > 1) Asp <- apply(SSB[, , nyears, ], 1, sum)  # SSB Abundance
+  if (nsim == 1) Asp <- sum(SSB[, , nyears, ])  # SSB Abundance  
+  
   OFLreal <- A * FMSY  # the true simulated Over Fishing Limit
   Recerr <- array(rlnorm((nyears + proyears) * nsim, mconv(1, rep(Recsd, (nyears + proyears))), 
     sdconv(1, rep(Recsd, nyears + proyears))), c(nsim, nyears + proyears))
@@ -869,6 +879,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   DLM_data@CAA <- CAA
   DLM_data@Dep <- Dbias * Depletion * rlnorm(nsim, mconv(1, Derr), sdconv(1, Derr))
   DLM_data@Abun <- A * Abias * rlnorm(nsim, mconv(1, Aerr), sdconv(1, Aerr))
+  DLM_data@SpAbun <- Asp * Abias * rlnorm(nsim, mconv(1, Aerr), sdconv(1, Aerr))
   DLM_data@vbK <- K * Kbias
   DLM_data@vbt0 <- t0 * t0bias
   DLM_data@vbLinf <- Linf * Linfbias
@@ -935,7 +946,9 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     TSdata <- list(VB=vb, SSB=ssb, Bio=b, Catch=Cc, Rec=rec, N=nout)
     AtAge <- list(Len_age=Len_age, Wt_age=Wt_age, 
 	  Sl_age=V, Mat_age=Mat_age, Nage=apply(N, c(1:3), sum), SSBage=apply(SSB, c(1:3), sum))
-    
+    MSYs <- list(MSY=MSY, FMSY=FMSY, FMSYb=FMSYb, VBMSY=VBMSY, UMSY=UMSY, 
+	             SSBMSY=SSBMSY, BMSY_B0=BMSY_B0)
+	
 	# updated sampled pars
 	SampPars <- list(dep=dep, Esd=Esd, Find=Find, procsd=procsd, AC=AC, M=M, Msd=Msd, 
       Mgrad=Mgrad, hs=hs, Linf=Linf, Linfsd=Linfsd, Linfgrad=Linfgrad, recgrad=recgrad,
@@ -948,12 +961,11 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	  Linfbias=Linfbias, Irefbias=Irefbias, Crefbias=Crefbias, Brefbias=Brefbias,
 	  Recsd=Recsd, qinc=qinc, qcv=qcv, L5=L5, LFS=LFS, Vmaxlen=Vmaxlen, L5s=L5s, 
 	  LFSs=LFSs, Vmaxlens=Vmaxlens, Perr=Perr, R0=R0, Mat_age=Mat_age, 
-	  Mrand=Mrand, Linfrand=Linfrand, Krand=Krand, maxage=maxage, V=V) 
+	  Mrand=Mrand, Linfrand=Linfrand, Krand=Krand, maxage=maxage, V=V, Depletion=Depletion) 
 
-	HistData <- list(SampPars=SampPars, TSdata=TSdata, AtAge=AtAge, DLM_data=DLM_data)
+	HistData <- list(SampPars=SampPars, TSdata=TSdata, AtAge=AtAge, MSYs=MSYs, DLM_data=DLM_data)
 	class(HistData) <- c("list", "hist")
-	return(HistData)
-	
+	return(HistData)	
   }
 
   # assign('DLM_data',DLM_data,envir=.GlobalEnv) # for debugging fun
@@ -1292,6 +1304,8 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
         Depletion[Depletion < tiny] <- tiny
         A <- apply(VBiomass_P[, , y, ], 1, sum)
         A[is.na(A)] <- tiny
+		Asp <- apply(SSB_P[, , y, ], 1, sum)  # SSB Abundance
+        Asp[is.na(Asp)] <- tiny
         OFLreal <- A * FMSY
         
         # assign all the new data
@@ -1309,6 +1323,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
         MSElist[[mm]]@CAA[, nyears + yind, ] <- CAA
         MSElist[[mm]]@Dep <- Dbias * Depletion * rlnorm(nsim, mconv(1, Derr), sdconv(1, Derr))
         MSElist[[mm]]@Abun <- A * Abias * rlnorm(nsim, mconv(1, Aerr), sdconv(1, Aerr))
+		MSElist[[mm]]@SpAbun <- Asp * Abias * rlnorm(nsim, mconv(1, Aerr), sdconv(1, Aerr))
         MSElist[[mm]]@CAL_bins <- CAL_bins
         oldCAL <- MSElist[[mm]]@CAL
         MSElist[[mm]]@CAL <- array(0, dim = c(nsim, nyears + y - 1, nCALbins))
