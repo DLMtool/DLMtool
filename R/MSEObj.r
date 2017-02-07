@@ -404,8 +404,7 @@ NOAA_plot <- function(MSEobj, nam = NA, type = NA, panel = T) {
   
   # dev.new2(width=7,height=7)
   if (panel) 
-    par(mfrow = c(1, 2), mai = c(1.5, 1.5, 0.1, 0.1), omi = c(0.1, 
-      0.1, 0.4, 0))
+    op <- par(mfrow = c(1, 2), mai = c(1.5, 1.5, 0.1, 0.1), omi = c(0.1, 0.1, 0.4, 0))
   
   if (is.na(type)) {
     tradeoffplot(PNOF, LTY, "Prob. of not overfishing (%)", "Long-term yield ", 
@@ -426,7 +425,7 @@ NOAA_plot <- function(MSEobj, nam = NA, type = NA, panel = T) {
   # !is.character(nam))mtext(MSEobj@Name,3,outer=T,line=0.3,font=2)
   # if(!is.na(nam) &
   # is.character(nam))mtext(nam,3,outer=T,line=0.3,font=2)
-  
+  par(op)
   
   temp <- data.frame(PNOF, B50, LTY, VY)
   row.names(temp) <- MSEobj@MPs[1:MSEobj@nMPs]
@@ -667,9 +666,9 @@ Pplot2 <- function(MSEobj, YVar = c("B_BMSY", "F_FMSY"), MPs = NA, sims = NULL,
     YLabs <- YLab
   if (!parOR) {
     if ("Yield" %in% YVar & RefYield != "curr") {
-      par(mfrow = c(nr, nc), bty = "n", mar = c(2, 2, 0, 0), oma = c(4, 
+      op <- par(mfrow = c(nr, nc), bty = "n", mar = c(2, 2, 0, 0), oma = c(4, 
         8, 2, 1))
-    } else par(mfrow = c(nr, nc), bty = "n", mar = c(2, 2, 0, 0), oma = c(4, 
+    } else op <- par(mfrow = c(nr, nc), bty = "n", mar = c(2, 2, 0, 0), oma = c(4, 
       4, 2, 1))
   }
   if (parOR) {
@@ -768,7 +767,7 @@ Pplot2 <- function(MSEobj, YVar = c("B_BMSY", "F_FMSY"), MPs = NA, sims = NULL,
     }
   }
   mtext(side = 1, "Projection Years", line = 2, cex = cex.lab, outer = TRUE)
-  
+  par(op)
   invisible(Dat)
 }
 
@@ -1409,6 +1408,7 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
   SubB <- MSEobj@B_BMSY[SubIts, SubMPs, Years, drop = FALSE]
   SubC <- MSEobj@C[SubIts, SubMPs, Years, drop = FALSE]
   SubBa <- MSEobj@B[SubIts, SubMPs, Years, drop = FALSE]
+  
   SubFMa <- MSEobj@FM[SubIts, SubMPs, Years, drop = FALSE]
   SubTACa <- MSEobj@TAC[SubIts, SubMPs, Years, drop = FALSE]
   
@@ -1425,11 +1425,12 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
   
   SubResults <- new("MSE", Name = MSEobj@Name, nyears = MSEobj@nyears, 
     proyears = MSEobj@proyears, nMPs = length(SubMPs), MPs = newMPs, 
-    nsim = length(SubIts), OMtable = OutOM, Obs = MSEobj@Obs[SubIts, 
-      , drop = FALSE], B_BMSYa = SubB, F_FMSYa = SubF, Ba = SubBa, 
-    FMa = SubFMa, Ca = SubC, TACa = SubTACa, SSB_hist = MSEobj@SSB_hist[SubIts, 
-      , , , drop = FALSE], CB_hist = MSEobj@CB_hist[SubIts, , , , 
-      drop = FALSE], FM_hist = MSEobj@FM_hist[SubIts, , , , drop = FALSE], 
+    nsim = length(SubIts), OM = OutOM, Obs = MSEobj@Obs[SubIts, , drop = FALSE],
+	B_BMSY = SubB, F_FMSY = SubF, B = SubBa, SSB=SubSSB, VB=SubSSB, 
+	FM = SubFMa, C = SubC, 
+	TAC = SubTACa, SSB_hist = MSEobj@SSB_hist[SubIts, , , , drop = FALSE], 
+	CB_hist = MSEobj@CB_hist[SubIts, , , , drop = FALSE], 
+	FM_hist = MSEobj@FM_hist[SubIts, , , , drop = FALSE], 
     Effort = SubEffort)
   
   return(SubResults)
