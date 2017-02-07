@@ -6,7 +6,7 @@
 \usage{
 runMSE(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, custompars = NULL,
-  CheckMPs = TRUE, Hist = FALSE, useTestCode = FALSE, ntrials = 30,
+  CheckMPs = TRUE, Hist = FALSE, useTestCode = FALSE, ntrials = 50,
   fracD = 0.05)
 }
 \arguments{
