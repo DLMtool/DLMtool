@@ -28,7 +28,8 @@
 #' @slot LFS smallest Length at full selection 
 #' @slot CAA Catch at Age data 
 #' @slot Dep Stock depletion Bnow/Bunfished (total stock) 
-#' @slot Abun An estimate of absolute current vulnerable abundance 
+#' @slot Abun An estimate of absolute current vulnerable abundance
+#' @slot SpAbun An estimate of absolute current spawning stock abundance
 #' @slot vbK The von Bertalanffy growth coefficient 
 #' @slot vbLinf Maximum length 
 #' @slot vbt0 Theoretical age at length zero 
@@ -93,7 +94,7 @@ setClass("DLM_data", representation(Name = "character", Year = "vector",
   Dt = "vector", Mort = "vector", FMSY_M = "vector", BMSY_B0 = "vector", 
   Cref = "vector", Bref = "vector", Iref = "vector", L50 = "vector", 
   L95 = "vector", LFC = "vector", LFS = "vector", CAA = "array", Dep = "vector", 
-  Abun = "vector", vbK = "vector", vbLinf = "vector", vbt0 = "vector", 
+  Abun = "vector", SpAbun="vector", vbK = "vector", vbLinf = "vector", vbt0 = "vector", 
   wla = "vector", wlb = "vector", steep = "vector", CV_Cat = "vector", 
   CV_Dt = "vector", CV_AvC = "vector", CV_Ind = "vector", CV_Mort = "vector", 
   CV_FMSY_M = "vector", CV_BMSY_B0 = "vector", CV_Cref = "vector", CV_Bref = "vector", 
@@ -116,87 +117,57 @@ setMethod("initialize", "DLM_data", function(.Object, stock = "nada") {
     dat <- dat[, 2:ncol(dat)]
     
     .Object@Name <- dat[match("Name", dname), 1]
-    .Object@Year <- as.numeric(dat[match("Year", dname), dat[match("Year", 
-      dname), ] != ""])
-    .Object@Cat <- matrix(as.numeric(dat[match("Catch", dname), dat[match("Catch", 
-      dname), ] != ""]), nrow = 1)
+    .Object@Year <- as.numeric(dat[match("Year", dname), dat[match("Year", dname), ] != ""])
+    .Object@Cat <- matrix(as.numeric(dat[match("Catch", dname), dat[match("Catch", dname), ] != ""]), nrow = 1)
     .Object@Ind <- matrix(as.numeric(dat[match("Abundance index", dname), 
       1:length(.Object@Year)]), nrow = 1)
-    .Object@Rec <- matrix(as.numeric(dat[match("Recruitment", dname), 
-      1:length(.Object@Year)]), nrow = 1)
+    .Object@Rec <- matrix(as.numeric(dat[match("Recruitment", dname), 1:length(.Object@Year)]), nrow = 1)
     .Object@t <- as.numeric(dat[match("Duration t", dname), 1])
-    .Object@AvC <- as.numeric(dat[match("Average catch over time t", 
-      dname), 1])
-    .Object@Dt <- as.numeric(dat[match("Depletion over time t", dname), 
-      1])
+    .Object@AvC <- as.numeric(dat[match("Average catch over time t", dname), 1])
+    .Object@Dt <- as.numeric(dat[match("Depletion over time t", dname), 1])
     .Object@Mort <- as.numeric(dat[match("M", dname), 1])
     .Object@FMSY_M <- as.numeric(dat[match("FMSY/M", dname), 1])
     .Object@BMSY_B0 <- as.numeric(dat[match("BMSY/B0", dname), 1])
     .Object@Cref <- as.numeric(dat[match("Cref", dname), 1])
     .Object@Bref <- as.numeric(dat[match("Bref", dname), 1])
     .Object@Iref <- as.numeric(dat[match("Iref", dname), 1])
-    .Object@L50 <- as.numeric(dat[match("Length at 50% maturity", dname), 
-      1])
-    .Object@L95 <- as.numeric(dat[match("Length at 95% maturity", dname), 
-      1])
-    .Object@LFC <- as.numeric(dat[match("Length at first capture", 
-      dname), 1])
-    .Object@LFS <- as.numeric(dat[match("Length at full selection", 
-      dname), 1])
-    .Object@Dep <- as.numeric(dat[match("Current stock depletion", 
-      dname), 1])
-    .Object@Abun <- as.numeric(dat[match("Current stock abundance", 
-      dname), 1])
-    .Object@vbK <- as.numeric(dat[match("Von Bertalanffy K parameter", 
-      dname), 1])
-    .Object@vbLinf <- as.numeric(dat[match("Von Bertalanffy Linf parameter", 
-      dname), 1])
-    .Object@vbt0 <- as.numeric(dat[match("Von Bertalanffy t0 parameter", 
-      dname), 1])
-    .Object@wla <- as.numeric(dat[match("Length-weight parameter a", 
-      dname), 1])
-    .Object@wlb <- as.numeric(dat[match("Length-weight parameter b", 
-      dname), 1])
+    .Object@L50 <- as.numeric(dat[match("Length at 50% maturity", dname), 1])
+    .Object@L95 <- as.numeric(dat[match("Length at 95% maturity", dname), 1])
+    .Object@LFC <- as.numeric(dat[match("Length at first capture",  dname), 1])
+    .Object@LFS <- as.numeric(dat[match("Length at full selection", dname), 1])
+    .Object@Dep <- as.numeric(dat[match("Current stock depletion",  dname), 1])
+    .Object@Abun <- as.numeric(dat[match("Current stock abundance",  dname), 1])
+	.Object@SpAbun <- as.numeric(dat[match("Current spawning stock abundance",  dname), 1])
+    .Object@vbK <- as.numeric(dat[match("Von Bertalanffy K parameter", dname), 1])
+    .Object@vbLinf <- as.numeric(dat[match("Von Bertalanffy Linf parameter", dname), 1])
+    .Object@vbt0 <- as.numeric(dat[match("Von Bertalanffy t0 parameter", dname), 1])
+    .Object@wla <- as.numeric(dat[match("Length-weight parameter a", dname), 1])
+    .Object@wlb <- as.numeric(dat[match("Length-weight parameter b", dname), 1])
     .Object@steep <- as.numeric(dat[match("Steepness", dname), 1])
-    .Object@sigmaL <- as.numeric(dat[match("Sigma length composition", 
-      dname), 1])
+    .Object@sigmaL <- as.numeric(dat[match("Sigma length composition", dname), 1])
     
     .Object@CV_Cat <- as.numeric(dat[match("CV Catch", dname), 1])
-    .Object@CV_Dt <- as.numeric(dat[match("CV Depletion over time t", 
-      dname), 1])
-    .Object@CV_AvC <- as.numeric(dat[match("CV Average catch over time t", 
-      dname), 1])
-    .Object@CV_Ind <- as.numeric(dat[match("CV Abundance index", dname), 
-      1])
+    .Object@CV_Dt <- as.numeric(dat[match("CV Depletion over time t", dname), 1])
+    .Object@CV_AvC <- as.numeric(dat[match("CV Average catch over time t", dname), 1])
+    .Object@CV_Ind <- as.numeric(dat[match("CV Abundance index", dname), 1])
     .Object@CV_Mort <- as.numeric(dat[match("CV M", dname), 1])
     .Object@CV_Rec <- as.numeric(dat[match("CV Rec", dname), 1])
     .Object@CV_FMSY_M <- as.numeric(dat[match("CV FMSY/M", dname), 
       1])
-    .Object@CV_BMSY_B0 <- as.numeric(dat[match("CV BMSY/B0", dname), 
-      1])
+    .Object@CV_BMSY_B0 <- as.numeric(dat[match("CV BMSY/B0", dname), 1])
     .Object@CV_Cref <- as.numeric(dat[match("CV Cref", dname), 1])
     .Object@CV_Bref <- as.numeric(dat[match("CV Bref", dname), 1])
     .Object@CV_Iref <- as.numeric(dat[match("CV Iref", dname), 1])
-    .Object@CV_Dep <- as.numeric(dat[match("CV current stock depletion", 
-      dname), 1])
-    .Object@CV_Abun <- as.numeric(dat[match("CV current stock abundance", 
-      dname), 1])
-    .Object@CV_vbK <- as.numeric(dat[match("CV von B. K parameter", 
-      dname), 1])
-    .Object@CV_vbLinf <- as.numeric(dat[match("CV von B. Linf parameter", 
-      dname), 1])
-    .Object@CV_vbt0 <- as.numeric(dat[match("CV von B. t0 parameter", 
-      dname), 1])
-    .Object@CV_L50 <- as.numeric(dat[match("CV Length at 50% maturity", 
-      dname), 1])
-    .Object@CV_LFC <- as.numeric(dat[match("CV Length at first capture", 
-      dname), 1])
-    .Object@CV_LFS <- as.numeric(dat[match("CV Length at full selection", 
-      dname), 1])
-    .Object@CV_wla <- as.numeric(dat[match("CV Length-weight parameter a", 
-      dname), 1])
-    .Object@CV_wlb <- as.numeric(dat[match("CV Length-weight parameter b", 
-      dname), 1])
+    .Object@CV_Dep <- as.numeric(dat[match("CV current stock depletion", dname), 1])
+    .Object@CV_Abun <- as.numeric(dat[match("CV current stock abundance", dname), 1])
+    .Object@CV_vbK <- as.numeric(dat[match("CV von B. K parameter", dname), 1])
+    .Object@CV_vbLinf <- as.numeric(dat[match("CV von B. Linf parameter", dname), 1])
+    .Object@CV_vbt0 <- as.numeric(dat[match("CV von B. t0 parameter", dname), 1])
+    .Object@CV_L50 <- as.numeric(dat[match("CV Length at 50% maturity", dname), 1])
+    .Object@CV_LFC <- as.numeric(dat[match("CV Length at first capture", dname), 1])
+    .Object@CV_LFS <- as.numeric(dat[match("CV Length at full selection", dname), 1])
+    .Object@CV_wla <- as.numeric(dat[match("CV Length-weight parameter a", dname), 1])
+    .Object@CV_wlb <- as.numeric(dat[match("CV Length-weight parameter b", dname), 1])
     .Object@CV_steep <- as.numeric(dat[match("CV Steepness", dname), 
       1])
     .Object@MaxAge <- as.numeric(dat[match("Maximum age", dname), 1])
@@ -204,8 +175,7 @@ setMethod("initialize", "DLM_data", function(.Object, stock = "nada") {
     .Object@MPeff <- as.numeric(dat[match("MPeff", dname), 1])
     
     if (length(grep("CAL", dname)) > 1) {
-      CAL_bins <- as.numeric(dat[match("CAL_bins", dname), dat[match("CAL_bins", 
-        dname), ] != ""])
+      CAL_bins <- as.numeric(dat[match("CAL_bins", dname), dat[match("CAL_bins", dname), ] != ""])
       nCAL <- length(CAL_bins) - 1
       .Object@CAL_bins <- CAL_bins
       CALdat <- grep("CAL ", dname)
