@@ -60,6 +60,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   
   EffLower <- OM@EffLower
   EffUpper <- OM@EffUpper 
+  EffYears <- OM@EffYears
   Deriv <- getEffhist(Esd, nyears, EffYears = OM@EffYears, EffLower = OM@EffLower, EffUpper = OM@EffUpper)  # Historical fishing effort
   Find <- Deriv[[1]]  # Calculate fishing effort rate
   dFfinal <- Deriv[[2]]  # Final gradient in fishing effort yr-1 
@@ -607,7 +608,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
           message(tooLow, " sims can't get down to the lower bound on depletion")
         if (length(tooHigh) > 0) 
           message(tooHigh, " sims can't get to the upper bound on depletion")
-        message("Less than ", fracD*100, "% simulations can't get to the specified level of depletion.\nContinuing")
+        message("Less than ", fracD*100, "% simulations can't get to the sampled depletion.\nContinuing")
       }
       
     }
@@ -733,25 +734,25 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   
   message("Calculating MSY reference points")  # Print a progress update
   flush.console()  # update the console
+
   if (snowfall::sfIsRunning()) {
     snowfall::sfExport(list = c("Marray", "hs", "Mat_age", "Wt_age", "R0", "V", "nyears", "maxage"))  # export some newly made arrays to the cluster
     if (!useTestCode) MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY, Marray, hs, Mat_age, Wt_age, 
       R0, V = V[, , nyears], maxage, nyears, proyears = 200, Spat_targ, 
       mov, SRrel, aR, bR)  # optimize for MSY reference points\t
 	## Above version didn't include proyears in projections
-	## Didn't account for future changes in V and W@Age
 
     # Using Rcpp code 	
-    if (useTestCode) MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY2, Perr, Marray, hs, Mat_age, Wt_age, 
-      R0, V = V, maxage, nyears, proyears = proyears, Spat_targ, 
+    if (useTestCode) MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY2, Marray, hs, Mat_age, Wt_age, 
+      R0, V = V, maxage, nyears, proyears = 200, Spat_targ, 
       mov, SRrel, aR, bR)  # optimize for MSY reference points\t	  
 	  
   } else {
     if (!useTestCode) MSYrefs <- sapply(1:nsim, getFMSY, Marray, hs, Mat_age, Wt_age, 
       R0, V = V[, , nyears], maxage, nyears, proyears = 200, Spat_targ, 
       mov, SRrel, aR, bR)  # optimize for MSY reference points
-    if (useTestCode) MSYrefs <- sapply(1:nsim, getFMSY2, Perr, Marray, hs, Mat_age, Wt_age, 
-      R0, V = V, maxage, nyears, proyears = proyears, Spat_targ, 
+    if (useTestCode) MSYrefs <- sapply(1:nsim, getFMSY2, Marray, hs, Mat_age, Wt_age, 
+      R0, V = V, maxage, nyears, proyears = 200, Spat_targ, 
       mov, SRrel, aR, bR)  # optimize for MSY reference points	  
   }
   
@@ -780,9 +781,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	FMSYb <- MSYrefs[6,]  # instantaneous FMSY (Spawning Biomass)
 	UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
   }
-   
-  
-  
+     
   message("Calculating reference yield - best fixed F strategy")  # Print a progress update
   flush.console()  # update the console
   if (snowfall::sfIsRunning()) {
@@ -814,7 +813,6 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	  maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)	  
   }
 
-  
   FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
   # LFS<-Linf*(1-exp(-K*(mod-t0))) # Length at full selection
   if (nsim > 1) A <- apply(VBiomass[, , nyears, ], 1, sum)  # Abundance
@@ -1005,7 +1003,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   # SPRa <- array(NA,dim=c(nsim,nMP,proyears)) # store the Spawning Potential Ratio
   
   MPdur <- rep(NA, nMP)
-  mm <- 1 # for debugging
+  mm <- 2 # for debugging
   for (mm in 1:nMP) {
     # MSE Loop over methods
     pL5 <- L5  # reset selectivity parameters for projections
@@ -1092,7 +1090,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	       
       Effort[, mm, y] <- (-log(1 - apply(CB_P[, , y, ], 1, sum)/(apply(CB_P[, , y, ], 1, sum) + 
 	    apply(VBiomass_P[, , y, ], 1, sum))))/qs
-      
+	  
     } else {
       # input control
       st <- Sys.time()
@@ -1501,13 +1499,17 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     
     B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum)/SSBMSY  # SSB relative to SSBMSY
     
-    F_FMSYa[, mm, ] <- (-log(1 - apply(CB_P, c(1, 3), sum)/(apply(CB_P, c(1, 3), sum) + 
-	                    apply(VBiomass_P, c(1, 3), sum))))/FMSY
+    # F_FMSYa[, mm, ] <- (-log(1 - apply(CB_P, c(1, 3), sum)/(apply(CB_P, c(1, 3), sum) + 
+	                    # apply(VBiomass_P, c(1, 3), sum))))/FMSY 
+	# VBiomass_P is calculated before Catch is taken 	
+	F_FMSYa[, mm, ] <- (-log(1 - apply(CB_P, c(1, 3), sum)/apply(VBiomass_P, c(1, 3), sum)))/FMSY
+	                    	
     Ba[, mm, ] <- apply(Biomass_P, c(1, 3), sum) # biomass 
 	SSBa[, mm, ] <- apply(SSB_P, c(1, 3), sum) # spawning stock biomass
 	VBa[, mm, ] <- apply(VBiomass_P, c(1, 3), sum) # vulnerable biomass
-    FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum)/(apply(CB_P, c(1, 3), sum) + 
-	               apply(VBiomass_P, c(1, 3), sum)))
+    # FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum)/(apply(CB_P, c(1, 3), sum) + 
+	               # apply(VBiomass_P, c(1, 3), sum)))
+    FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum)/apply(VBiomass_P, c(1, 3), sum))				   
     Ca[, mm, ] <- apply(CB_P, c(1, 3), sum)
     cat("\n")
   }  # end of mm methods
@@ -1524,11 +1526,10 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   attr(OM@Name, "date") <- date()
   attr(OM@Name, "R.version") <- R.version
   
-
   MSEout <- new("MSE", Name = OM@Name, nyears, proyears, nMPs=nMP, MPs, nsim, 
-    OM = DLM_data@OM, Obs=DLM_data@Obs, B_BMSY=B_BMSYa, F_FMSY=F_FMSYa, B=Ba, 
+    DLM_data@OM, Obs=DLM_data@Obs, B_BMSY=B_BMSYa, F_FMSY=F_FMSYa, B=Ba, 
 	SSB=SSBa, VB=VBa, FM=FMa, Ca, TAC=TACa, SSB_hist = SSB, CB_hist = CB, 
-	FM_hist = FM, Effort = Effort, Extra=list())
+	FM_hist = FM, Effort = Effort)
 	
   MSEout 
 
