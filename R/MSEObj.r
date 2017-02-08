@@ -49,7 +49,7 @@ Converge <- function(MSEobj, thresh = 2, Plot = TRUE) {
   # CumlP10[is.nan(CumlP10)] <- 1 CumlP50[is.nan(CumlP50)] <- 1
   # CumlP100[is.nan(CumlP100)] <- 1
   if (Plot) {
-    par(mfrow = c(2, 3), cex.axis = 1.5, cex.lab = 1.7, oma = c(1, 
+    op <- par(mfrow = c(2, 3), cex.axis = 1.5, cex.lab = 1.7, oma = c(1, 
       1, 0, 0), mar = c(5, 5, 1, 1), bty = "l")
     matplot(t(CumlYd), type = "l", xlab = "Iteration", ylab = "Rel. Yield")
     matplot(t(CumlPOF), type = "l", xlab = "Iteration", ylab = "Prob. F/FMSY > 1")
@@ -110,7 +110,7 @@ Converge <- function(MSEobj, thresh = 2, Plot = TRUE) {
     message("All MPs appear to have converged in ", nsim, " iterations (threshold = ", 
       thresh, "%)")
   }
-  
+  par(op)
 }
 
 
@@ -165,7 +165,7 @@ CheckConverg <- function(MSEobj, thresh = 2, Plot = TRUE) {
   # CumlP10[is.nan(CumlP10)] <- 1 CumlP50[is.nan(CumlP50)] <- 1
   # CumlP100[is.nan(CumlP100)] <- 1
   if (Plot) {
-    par(mfrow = c(2, 3), cex.axis = 1.5, cex.lab = 1.7, oma = c(1, 
+    op <- par(mfrow = c(2, 3), cex.axis = 1.5, cex.lab = 1.7, oma = c(1, 
       1, 0, 0), mar = c(5, 5, 1, 1), bty = "l")
     matplot(t(CumlYd), type = "l", xlab = "Iteration", ylab = "Rel. Yield")
     matplot(t(CumlPOF), type = "l", xlab = "Iteration", ylab = "Prob. F/FMSY > 1")
@@ -226,7 +226,7 @@ CheckConverg <- function(MSEobj, thresh = 2, Plot = TRUE) {
     message("All MPs appear to have converged in ", nsim, " iterations (threshold = ", 
       thresh, "%)")
   }
-  
+  par(op)
 }
 
 
@@ -1334,6 +1334,30 @@ VOI <- function(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA, Utnam = "Util
 # object by particular MPs (either MP number or name), or particular
 # simulations
 
+#' Check that MSE object includes all slots
+#' 
+#' Check that an MSE object includes all slots in the latest version of DLMtool
+#' Use `updateMSE` to update the MSE object
+#' 
+
+#' @param MSEobj A MSE object.
+#' @param MPs A vector MPs names or MP numbers to subset the MSE object.
+#' @author A. Hordyk
+#' @export checkMSE
+checkMSE <- function(MSEobj) {
+  nms <- slotNames(MSEobj)
+  errs <- NULL
+  for (x in seq_along(nms)) {
+    chk <- try(slot(MSEobj, nms[x]), silent=TRUE)
+	if (class(chk) == "try-error") errs <- c(errs, x)
+  }
+  if (length(errs) > 0) {
+    message("MSE object slots not found: ", paste(nms[errs], ""))
+    stop("slot names of MSEobj don't match MSE object class. Try use `updateMSE`", call.=FALSE)
+	return(FALSE)
+  }
+  return(TRUE)
+}
 
 #' Subset MSE object by management procedure (MP) or simulation.
 #' 
@@ -1354,6 +1378,9 @@ VOI <- function(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA, Utnam = "Util
 #' @author A. Hordyk
 #' @export Sub
 Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
+  
+  checkMSE(MSEobj) # check that MSE object contains all slots 
+  
   Class <- class(MPs)
   if (Class == "NULL") 
     subMPs <- MSEobj@MPs
@@ -1374,14 +1401,12 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
   
   
   ClassSims <- class(sims)
-  if (ClassSims == "NULL") 
-    SubIts <- 1:MSEobj@nsim
+  if (ClassSims == "NULL")  SubIts <- 1:MSEobj@nsim
   if (ClassSims == "integer" | ClassSims == "numeric") {
     # sims <- 1:min(MSEobj@nsim, max(sims))
     SubIts <- as.integer(sims)
   }
-  if (ClassSims == "logical") 
-    SubIts <- which(sims)
+  if (ClassSims == "logical")  SubIts <- which(sims)
   nsim <- length(SubIts)
   
   ClassYrs <- class(years)
@@ -1408,26 +1433,44 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
   SubB <- MSEobj@B_BMSY[SubIts, SubMPs, Years, drop = FALSE]
   SubC <- MSEobj@C[SubIts, SubMPs, Years, drop = FALSE]
   SubBa <- MSEobj@B[SubIts, SubMPs, Years, drop = FALSE]
-  
   SubFMa <- MSEobj@FM[SubIts, SubMPs, Years, drop = FALSE]
   SubTACa <- MSEobj@TAC[SubIts, SubMPs, Years, drop = FALSE]
   
   OutOM <- MSEobj@OM[SubIts, ]
   # check if slot exists
   tt <- try(slot(MSEobj, "Effort"), silent = TRUE)
-  if (class(tt) == "try-error") 
-    slot(MSEobj, "Effort") <- array(NA)
+  if (class(tt) == "try-error")  slot(MSEobj, "Effort") <- array(NA)
   if (all(is.na(MSEobj@Effort))) {
     SubEffort <- array(NA)
   } else {
     SubEffort <- MSEobj@Effort[SubIts, SubMPs, Years, drop = FALSE]
   }
+
+  # check if slot exists
+  tt <- try(slot(MSEobj, "SSB"), silent = TRUE)
+  if (class(tt) == "try-error") slot(MSEobj, "SSB") <- array(NA)
+  if (all(is.na(MSEobj@SSB))) {
+    SubSSB <- array(NA)
+  } else {
+    SubSSB <- MSEobj@SSB[SubIts, SubMPs, Years, drop = FALSE]
+  }
+
+  # check if slot exists
+  tt <- try(slot(MSEobj, "VB"), silent = TRUE)
+  if (class(tt) == "try-error") slot(MSEobj, "VB") <- array(NA)
+  if (all(is.na(MSEobj@VB))) {
+    SubVB <- array(NA)
+  } else {
+    SubVB <- MSEobj@VB[SubIts, SubMPs, Years, drop = FALSE]
+  }
+  
+ 
   
   SubResults <- new("MSE", Name = MSEobj@Name, nyears = MSEobj@nyears, 
     proyears = MSEobj@proyears, nMPs = length(SubMPs), MPs = newMPs, 
     nsim = length(SubIts), OM = OutOM, Obs = MSEobj@Obs[SubIts, , drop = FALSE],
-	B_BMSY = SubB, F_FMSY = SubF, B = SubBa, SSB=SubSSB, VB=SubSSB, 
-	FM = SubFMa, C = SubC, 
+	B_BMSY = SubB, F_FMSY = SubF, B = SubBa, SSB=SubSSB, VB=SubVB, 
+	FM = SubFMa,  SubC, 
 	TAC = SubTACa, SSB_hist = MSEobj@SSB_hist[SubIts, , , , drop = FALSE], 
 	CB_hist = MSEobj@CB_hist[SubIts, , , , drop = FALSE], 
 	FM_hist = MSEobj@FM_hist[SubIts, , , , drop = FALSE], 
@@ -1455,6 +1498,8 @@ joinMSE <- function(MSEobjs = NULL) {
   if (length(MSEobjs) < 2) 
     stop("MSEobjs list doesn't contain multiple MSE objects")
   
+  lapply(MSEobjs, checkMSE) # check that MSE objects contains all slots 
+  
   MPNames <- lapply(MSEobjs, getElement, name = "MPs")  # MPs in each object 
   allsame <- length(unique(MPNames)) == 1
   if (!allsame) {
@@ -1465,9 +1510,9 @@ joinMSE <- function(MSEobjs = NULL) {
     ind <- tab == npack
     commonMPs <- names(tab)[ind]
     MSEobjs <- lapply(MSEobjs, Sub, MPs = commonMPs)
-    print("MPs not in all MSE objects:")
-    print(names(tab)[!ind])
-    print("Dropped from final MSE object.")
+    message("MPs not in all MSE objects:")
+    message(paste(names(tab)[!ind], ""))
+    message("Dropped from final MSE object.")
   }
   
   Nobjs <- length(MSEobjs)
@@ -1517,21 +1562,21 @@ joinMSE <- function(MSEobjs = NULL) {
     if (class(templs[[1]]) == "array") {
       outlist[[sn]] <- abind::abind(templs, along = 1)
     }
-	if (class(templs[[1]]) == "list") {
-	  diffs <- diff(unlist(lapply(templs, length)))
-	  if (any(diffs != 0))
-	    stop("Length of slot Extra is not identical for each MSE object", call.=FALSE)
-	  OutList <- templs[[1]]
-	  for (N in 2:Nobjs) {
-	    for (xx in 1:length(templs[[1]])) {
-	      OutList[[xx]] <- append(unlist(OutList[[xx]]), unlist(templs[[N]][[xx]]))
-		}
-	  }
-	  ind <- unlist(lapply(lapply(OutList, is.finite), prod))
-	  ind2 <- which (ind == 0)
-	  if (length(ind2) > 0) OutList[ind2] <- NULL
-	  outlist[[sn]] <- OutList
-	}
+	# if (class(templs[[1]]) == "list") {
+	  # diffs <- diff(unlist(lapply(templs, length)))
+	  # if (any(diffs != 0))
+	    # stop("Length of slot Extra is not identical for each MSE object", call.=FALSE)
+	  # OutList <- templs[[1]]
+	  # for (N in 2:Nobjs) {
+	    # for (xx in 1:length(templs[[1]])) {
+	      # OutList[[xx]] <- append(unlist(OutList[[xx]]), unlist(templs[[N]][[xx]]))
+		# }
+	  # }
+	  # ind <- unlist(lapply(lapply(OutList, is.finite), prod))
+	  # ind2 <- which (ind == 0)
+	  # if (length(ind2) > 0) OutList[ind2] <- NULL
+	  # outlist[[sn]] <- OutList
+	# }
   }
 
   names(outlist) <- sns
@@ -1542,7 +1587,7 @@ joinMSE <- function(MSEobjs = NULL) {
     Obs = outlist$Obs, B_BMSY = outlist$B_BMSY, F_FMSY = outlist$F_FMSY, 
     outlist$B, outlist$SSB, outlist$VB,
 	outlist$FM, outlist$C, outlist$TAC, outlist$SSB_hist, 
-    outlist$CB_hist, outlist$FM_hist, outlist$Effort, outlist$Extra)
+    outlist$CB_hist, outlist$FM_hist, outlist$Effort)
   
   newMSE
 }
