@@ -8,8 +8,6 @@ checkMSE(MSEobj)
 }
 \arguments{
 \item{MSEobj}{A MSE object.}
-
-\item{MPs}{A vector MPs names or MP numbers to subset the MSE object.}
 }
 \description{
 Check that an MSE object includes all slots in the latest version of DLMtool

@@ -1339,9 +1339,7 @@ VOI <- function(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA, Utnam = "Util
 #' Check that an MSE object includes all slots in the latest version of DLMtool
 #' Use `updateMSE` to update the MSE object
 #' 
-
 #' @param MSEobj A MSE object.
-#' @param MPs A vector MPs names or MP numbers to subset the MSE object.
 #' @author A. Hordyk
 #' @export checkMSE
 checkMSE <- function(MSEobj) {
