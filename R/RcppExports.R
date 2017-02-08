@@ -61,13 +61,41 @@ movfit_Rcpp <- function(par, prb, frac) {
     .Call('DLMtool_movfit_Rcpp', PACKAGE = 'DLMtool', par, prb, frac)
 }
 
-#' Rcpp version of the Projection Optimizer
+#' Rcpp version of the q Optimizer
 #'
-#' Optimize q for current depletion, optimize and calculate MSY accounting for future productivity, 
+#' Optimize for catchability coefficient
 #'
 #' @param lnIn internal
 #' @param Fc internal
 #' @param Perrc internal
+#' @param Mc internal
+#' @param hc internal
+#' @param Mac internal
+#' @param Wac internal
+#' @param R0c internal
+#' @param Vc internal
+#' @param nyears internal
+#' @param maxage internal
+#' @param movc internal
+#' @param Spat_targc internal
+#' @param SRrelc internal
+#' @param aRc internal
+#' @param bRc internal
+#' @param movc internal
+#' @param SSBpRc internal
+#' 
+#' @export
+#' @keywords internal
+optQ_cpp <- function(lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc) {
+    .Call('DLMtool_optQ_cpp', PACKAGE = 'DLMtool', lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc)
+}
+
+#' Rcpp version of the Projection Optimizer
+#'
+#' Optimize for MSY and calculate MSY reference points 
+#'
+#' @param lnIn internal
+#' @param Fc internal
 #' @param Mc internal
 #' @param hc internal
 #' @param Mac internal
@@ -89,7 +117,7 @@ movfit_Rcpp <- function(par, prb, frac) {
 #' 
 #' @export
 #' @keywords internal
-projOpt_cpp <- function(lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, FMSY, Control) {
-    .Call('DLMtool_projOpt_cpp', PACKAGE = 'DLMtool', lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, FMSY, Control)
+projOpt_cpp <- function(lnIn, depc, Fc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, FMSY, Control) {
+    .Call('DLMtool_projOpt_cpp', PACKAGE = 'DLMtool', lnIn, depc, Fc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, FMSY, Control)
 }
 
