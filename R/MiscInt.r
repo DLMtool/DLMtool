@@ -67,30 +67,30 @@ getFMSY <- function(x, Marray, hs, Mat_age, Wt_age, R0, V, maxage, nyears,
 #' 
 #' @keywords internal
 #' @export getFMSY2		
-getFMSY2 <- function(x, Perr, Marray, hs, Mat_age, Wt_age, R0, V, maxage, nyears, 
-    proyears, Spat_targ, mov, SRrel, aR, bR, Control=2) {
-    opt <- optimize(projOpt_cpp, log(c(0.001, 8)), depc=0, Fc=0, Perrc=Perr[x,],
-		Mc = Marray[x, ], hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , ], R0c = R0[x], 
-        Vc = V[x, ,], nyears = nyears, maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x],
+getFMSY2 <- function(x, Marray, hs, Mat_age, Wt_age, R0, V, maxage, nyears, 
+    proyears, Spat_targ, mov, SRrel, aR, bR, Control=1) {
+    opt <- optimize(projOpt_cpp, log(c(0.001, 8)), depc=0, Fc=0,
+		Mc = Marray[x, nyears], hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , nyears], R0c = R0[x], 
+        Vc = V[x, ,nyears], nyears = nyears, maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x],
         SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ], proyears = proyears, FMSY=0, Control=Control)
 
     Fmax <- exp(opt$minimum)
 	MSY <- -opt$objective 
-    SSB_MSY <-  projOpt_cpp(lnIn = 0, depc=0, Fc=0, Perrc=Perr[x,],
-		Mc = Marray[x, ], hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , ], R0c = R0[x], 
-        Vc = V[x, ,], nyears = nyears, maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x],
+    SSB_MSY <-  projOpt_cpp(lnIn = 0, depc=0, Fc=0, 
+		Mc = Marray[x, nyears], hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , nyears], R0c = R0[x], 
+        Vc = V[x, ,nyears], nyears = nyears, maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x],
         SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ], proyears = proyears, FMSY=Fmax,
-		Control=3)
-    B_MSY <-  projOpt_cpp(lnIn = 0, depc=0, Fc=0, Perrc=Perr[x,],
-		Mc = Marray[x, ], hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , ], R0c = R0[x], 
-        Vc = V[x, ,], nyears = nyears, maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x],
+		Control=2)
+    B_MSY <-  projOpt_cpp(lnIn = 0, depc=0, Fc=0, 
+		Mc = Marray[x, nyears], hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , nyears], R0c = R0[x], 
+        Vc = V[x, ,nyears], nyears = nyears, maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x],
         SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ], proyears = proyears, FMSY=Fmax,
-		Control=4)  
-     V_BMSY <-  projOpt_cpp(lnIn = 0, depc=0, Fc=0, Perrc=Perr[x,],
-		Mc = Marray[x, ], hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , ], R0c = R0[x], 
-        Vc = V[x, ,], nyears = nyears, maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x],
+		Control=3)  
+     V_BMSY <-  projOpt_cpp(lnIn = 0, depc=0, Fc=0, 
+		Mc = Marray[x, nyears], hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , nyears], R0c = R0[x], 
+        Vc = V[x, ,nyears], nyears = nyears, maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x],
         SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ], proyears = proyears, FMSY=Fmax,
-		Control=5) 	
+		Control=4) 	
 		
     F_MSYv <- -log(1 - (MSY/(V_BMSY+MSY))) 
 	F_MSYb <- -log(1 - (MSY/(SSB_MSY+MSY))) 

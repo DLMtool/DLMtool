@@ -359,11 +359,11 @@ getq <- function(x, dep, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V,
 #' @author T. Carruthers
 getq2 <- function(x, dep, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V, 
   nyears, maxage, mov, Spat_targ, SRrel, aR, bR) {
-  opt <- optimize(projOpt_cpp, log(c(0.0075, 15)), depc = dep[x], Fc = Find[x, ], 
+  opt <- optimize(optQ_cpp, log(c(0.0075, 15)), depc = dep[x], Fc = Find[x, ], 
     Perrc = Perr[x, ], Mc = Marray[x, ], hc = hs[x], Mac = Mat_age[x, ], 
     Wac = Wt_age[x, , ], R0c = R0[x], Vc = V[x, , ], nyears = nyears, 
 	maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x], 
-    SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ], proyears=0, FMSY=0, Control=1)	
+    SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ])	
   
   return(exp(opt$minimum))
 }
