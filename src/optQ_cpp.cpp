@@ -1,12 +1,14 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-//' Rcpp version of the Projection Optimizer
+
+//' Rcpp version of the q Optimizer
 //'
-//' Optimize for MSY and calculate MSY reference points 
+//' Optimize for catchability coefficient
 //'
 //' @param lnIn internal
 //' @param Fc internal
+//' @param Perrc internal
 //' @param Mc internal
 //' @param hc internal
 //' @param Mac internal
@@ -22,24 +24,19 @@ using namespace Rcpp;
 //' @param bRc internal
 //' @param movc internal
 //' @param SSBpRc internal
-//' @param proyears internal
-//' @param FMSY internal
-//' @param Control internal
 //' 
 //' @export
 //' @keywords internal
 // [[Rcpp::export]]
-double projOpt_cpp(double lnIn, double depc, NumericVector Fc, 
-  double Mc, double hc, NumericVector Mac, NumericVector Wac, 
-  double R0c, NumericVector Vc, double nyears, double maxage, NumericMatrix movc, 
-  double Spat_targc, double SRrelc, NumericVector aRc, NumericVector bRc, double proyears, double FMSY, 
-  double Control) {
+double optQ_cpp(double lnIn, double depc, NumericVector Fc, 
+  NumericVector Perrc, NumericVector Mc, double hc, NumericVector Mac, NumericMatrix Wac, 
+  double R0c, NumericMatrix Vc, double nyears, double maxage, NumericMatrix movc, 
+  double Spat_targc, double SRrelc, NumericVector aRc, NumericVector bRc) {
   
-  // double B0; 
   double nareas = movc.nrow();
-  double FMSYc = 0 ;
-  double NYears = 0;
+  double qc = 0;
   double RetVal = 0;
+
   NumericVector idist(nareas);
   NumericVector store(nareas);
   NumericMatrix idistA(nareas, nareas);
@@ -63,15 +60,8 @@ double projOpt_cpp(double lnIn, double depc, NumericVector Fc,
   NumericVector SSB0(nareas); 
   NumericVector tempVec(nareas);
 
-  // Controls for switching 
-   NYears = nyears + proyears;
-  if (Control == 1) {
-	  FMSYc = exp(lnIn); // MSY Optimizer	 
-  }
-  if (Control > 1) {
-	  FMSYc = FMSY; // Return Biomass 
-  }
-  
+  qc = exp(lnIn);  
+    
   for (int i = 0; i < nareas; i++) idist[i] = 1/nareas;
   for (int X = 0; X < 300; X++) {
 	for (int A= 0; A < nareas; A++) {  
@@ -87,10 +77,10 @@ double projOpt_cpp(double lnIn, double depc, NumericVector Fc,
   
   for (int A=0; A < nareas; A++) {
 	for (int age=0; age < maxage; age++) {
-		N(age, A) = R0c * exp(-Mc * age) * idist(A);
+		N(age, A) = R0c * exp(-Mc(0) * age) * idist(A);
 		SSN(age, A) = Mac(age) * N(age, A); 
-		Biomass(age, A) = Wac(age) * N(age, A);
-		SSB(age, A) = SSN(age, A) * Wac(age);	
+		Biomass(age, A) = Wac(age, 0) * N(age, A);
+		SSB(age, A) = SSN(age, A) * Wac(age, 0);	
 		// B0 = sum(Biomass);
 		R0a(A) = idist(A) * R0c;
 		SSB0(A) = sum(SSB.column(A));
@@ -98,9 +88,9 @@ double projOpt_cpp(double lnIn, double depc, NumericVector Fc,
 	} 
   }	
   
-  for (int yr=0; yr < (NYears-1); yr++) {
+  for (int yr=0; yr < (nyears-1); yr++) {
 	  for (int A=0; A < nareas; A++) {
-		for (int age=0; age < maxage; age++) tempMat(age, A) = Vc(age) * Biomass(age, A);
+		for (int age=0; age < maxage; age++) tempMat(age, A) = Vc(age, yr) * Biomass(age, A);
 		tempVec(A) = pow(sum(tempMat.column(A)), Spat_targc); 
 	  }
 	  for (int A=0; A < nareas; A++) {
@@ -108,19 +98,18 @@ double projOpt_cpp(double lnIn, double depc, NumericVector Fc,
 		
 		SSBbyA(A) = sum(SSB.column(A));
 		for (int age=0; age < maxage; age++) {
-          FMc(age, A) = FMSYc * Vc(age) * targ(A); // 
-		  Zc(age, A) = FMc(age, A) + Mc;  
+		  FMc(age, A) = qc * Fc(yr) * Vc(age, yr) * targ(A); // 
+		  Zc(age, A) = FMc(age, A) + Mc(yr);  
 		  if (age > 0) Nstore(age, A) = N(age-1, A) * exp(-Zc(age-1, A));
 	      
-		  // Recruitment 
-		  // no process error when estimating MSY			   
+		  // Recruitment 	  			   
 		  if (age == 0) {
 		    if (SRrelc == 1) {
- 		      Nstore(0, A) = (0.8 * R0a(A) * hc * SSBbyA(A))/
+ 		      Nstore(0, A) = Perrc(yr) * (0.8 * R0a(A) * hc * SSBbyA(A))/
                           (0.2 * SSBpR(A) * R0a(A) * (1-hc) + (hc - 0.2) * SSBbyA(A));     						   
 		    }	
 		    if (SRrelc == 2) {
- 		      Nstore(0, A) = aRc(A) * SSBbyA(A) * exp(-bRc(A) * SSBbyA(A));
+ 		      Nstore(0, A) = Perrc(yr) * aRc(A) * SSBbyA(A) * exp(-bRc(A) * SSBbyA(A));
 		    }		
 		  }	
 		}
@@ -142,29 +131,16 @@ double projOpt_cpp(double lnIn, double depc, NumericVector Fc,
 		for (int A =0; A < nareas; A++) {
 		  N(age, A) = Nstore(age, A);
 		  CN(age, A) = FMc(age, A)/Zc(age,A) * N(age,A) * (1-exp(-Zc(age, A)));
-		  CB(age, A) = CN(age, A) * Wac(age);
+		  CB(age, A) = CN(age, A) * Wac(age, yr);
 		  SSN(age, A) = N(age, A) * Mac(age);
-          SSB(age, A) = SSN(age, A) * Wac(age);
-          Biomass(age, A) = N(age, A) * Wac(age);
-          VB(age, A) = N(age, A) * Wac(age) * Vc(age);		  
+          SSB(age, A) = SSN(age, A) * Wac(age, yr);
+          Biomass(age, A) = N(age, A) * Wac(age, yr);
+          VB(age, A) = N(age, A) * Wac(age, yr) * Vc(age, yr);		  
 		}	  
 	  }
 		  		  
   }
 
-  if (Control == 1) RetVal = -sum(CB); // optimize MSY 
-  if (Control == 2) RetVal = sum(SSB); // return SSB 
-  if (Control == 3) RetVal = sum(Biomass); // return Biomass
-  if (Control == 4) RetVal = sum(VB); // return Vulnerable Biomass
-  return RetVal;
-  
+  RetVal = pow(log(depc) - log(sum(SSB)/sum(SSB0)),2); // optimize q
+  return RetVal; 
 }
-
-
-
-
-
-
-
-
-

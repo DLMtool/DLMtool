@@ -31,9 +31,9 @@ using namespace Rcpp;
 //' @keywords internal
 // [[Rcpp::export]]
 double doprojPI_cpp(double lnF, NumericVector Mvec,  
-  NumericMatrix Wac, NumericVector Mac, NumericVector Pc, NumericMatrix N_c,
+  NumericVector Wac, NumericVector Mac, NumericVector Pc, NumericMatrix N_c,
   NumericMatrix SSN_c, NumericMatrix Biomass_c, NumericMatrix VBiomass_c, 
-  NumericMatrix SSB_c, NumericMatrix Vc, double hc, NumericVector R0ac, double proyears,
+  NumericMatrix SSB_c, NumericVector Vc, double hc, NumericVector R0ac, double proyears,
   double nareas, double maxage, NumericMatrix movc, double SSBpRc,   
   NumericVector aRc, NumericVector bRc, double SRrelc, double Spat_targc)  {
   
@@ -67,7 +67,7 @@ double doprojPI_cpp(double lnF, NumericVector Mvec,
   for (int A=0; A < nareas; A++) {
 	  fishdist(A) = tempVec(A) / (sum(tempVec)/nareas);
 	  for (int age=0; age<maxage; age++) {
-		  FM_P(age, A) = FF * Vc(age,0) * fishdist(A);
+		  FM_P(age, A) = FF * Vc(age) * fishdist(A);
 		  Z_P(age, A) = FM_P(age, A) + Mvec(0);  
       }
   }    
@@ -98,10 +98,10 @@ double doprojPI_cpp(double lnF, NumericVector Mvec,
 		  }
           for (int A=0; A < nareas; A++) {
 		    N_Pnext(age, A) = Nstore(age, A);
-		    Biomass_P(age, A) = N_Pnext(age, A) * Wac(age, yr); 
-            VBiomass_P(age, A) = Biomass_P(age, A) * Vc(age, yr);		
+		    Biomass_P(age, A) = N_Pnext(age, A) * Wac(age); 
+            VBiomass_P(age, A) = Biomass_P(age, A) * Vc(age);		
 		    SSN_P(age, A) = N_Pnext(age, A) * Mac(age);
-		    SSB_P(age, A) = SSN_P(age, A) * Wac(age, yr);	    
+		    SSB_P(age, A) = SSN_P(age, A) * Wac(age);	    
 		}		  
 	  }
 	  // Debug - ok up to here
@@ -113,7 +113,7 @@ double doprojPI_cpp(double lnF, NumericVector Mvec,
       for (int A=0; A < nareas; A++) {
 	    fishdist(A) = tempVec(A) / (sum(tempVec)/nareas);
 	    for (int age=0; age<maxage; age++) {
-		  FM_P(age, A) = FF * Vc(age,yr) * fishdist(A);
+		  FM_P(age, A) = FF * Vc(age) * fishdist(A);
 		  Z_P(age, A) = FM_P(age, A) + Mvec(yr);  
 		  Cyr(age, A) = FM_P(age,A)/Z_P(age,A) * (1-exp(-Z_P(age, A))) * Biomass_P(age,A);
 		  N_Pcurr(age, A) = N_Pnext(age, A);
