@@ -1003,7 +1003,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   # SPRa <- array(NA,dim=c(nsim,nMP,proyears)) # store the Spawning Potential Ratio
   
   MPdur <- rep(NA, nMP)
-  mm <- 2 # for debugging
+  # mm <- 1 # for debugging
   for (mm in 1:nMP) {
     # MSE Loop over methods
     pL5 <- L5  # reset selectivity parameters for projections
@@ -1499,17 +1499,17 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     
     B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum)/SSBMSY  # SSB relative to SSBMSY
     
-    # F_FMSYa[, mm, ] <- (-log(1 - apply(CB_P, c(1, 3), sum)/(apply(CB_P, c(1, 3), sum) + 
-	                    # apply(VBiomass_P, c(1, 3), sum))))/FMSY 
-	# VBiomass_P is calculated before Catch is taken 	
-	F_FMSYa[, mm, ] <- (-log(1 - apply(CB_P, c(1, 3), sum)/apply(VBiomass_P, c(1, 3), sum)))/FMSY
+    F_FMSYa[, mm, ] <- (-log(1 - apply(CB_P, c(1, 3), sum)/(apply(CB_P, c(1, 3), sum) + 
+	                    apply(VBiomass_P, c(1, 3), sum))))/FMSY 
+		
+	# F_FMSYa[, mm, ] <- (-log(1 - apply(CB_P, c(1, 3), sum)/apply(VBiomass_P, c(1, 3), sum)))/FMSY
 	                    	
     Ba[, mm, ] <- apply(Biomass_P, c(1, 3), sum) # biomass 
 	SSBa[, mm, ] <- apply(SSB_P, c(1, 3), sum) # spawning stock biomass
 	VBa[, mm, ] <- apply(VBiomass_P, c(1, 3), sum) # vulnerable biomass
-    # FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum)/(apply(CB_P, c(1, 3), sum) + 
-	               # apply(VBiomass_P, c(1, 3), sum)))
-    FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum)/apply(VBiomass_P, c(1, 3), sum))				   
+    FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum)/(apply(CB_P, c(1, 3), sum) + 
+	               apply(VBiomass_P, c(1, 3), sum)))
+    # FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum)/apply(VBiomass_P, c(1, 3), sum))				   
     Ca[, mm, ] <- apply(CB_P, c(1, 3), sum)
     cat("\n")
   }  # end of mm methods
