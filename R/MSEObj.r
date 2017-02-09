@@ -34,10 +34,10 @@ Converge <- function(MSEobj, thresh = 2, Plot = TRUE) {
   
   for (m in 1:nm) {
     Yd[m, ] <- round(apply(MSEobj@C[, m, yind], 1, mean, na.rm = T)/RefYd *  100, 1)
-    POF[m, ] <- round(apply(MSEobj@F_FMSY[, m, ] > 1, 1, sum, na.rm = T)/proyears * 100, 1)
-    P10[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] < 0.1, 1, sum, na.rm = T)/proyears * 100, 1)
-    P50[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] < 0.5, 1, sum, na.rm = T)/proyears * 100, 1)
-    P100[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] < 1, 1, sum, na.rm = T)/proyears * 100, 1)
+    POF[m, ] <- round(apply(MSEobj@F_FMSY[, m, ] >= 1, 1, sum, na.rm = T)/proyears * 100, 1)
+    P10[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] <= 0.1, 1, sum, na.rm = T)/proyears * 100, 1)
+    P50[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] <= 0.5, 1, sum, na.rm = T)/proyears * 100, 1)
+    P100[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] <= 1, 1, sum, na.rm = T)/proyears * 100, 1)
     CumlYd[m, ] <- cumsum(Yd[m, ])/seq_along(Yd[m, ])  #/ mean(Yd[m,], na.rm=TRUE) 
     CumlPOF[m, ] <- cumsum(POF[m, ])/seq_along(POF[m, ])  # / mean(POF[m,], na.rm=TRUE)
     CumlP10[m, ] <- cumsum(P10[m, ])/seq_along(P10[m, ])  # / mean(P10[m,], na.rm=TRUE)
@@ -146,13 +146,13 @@ CheckConverg <- function(MSEobj, thresh = 2, Plot = TRUE) {
   for (m in 1:nm) {
     Yd[m, ] <- round(apply(MSEobj@C[, m, yind], 1, mean, na.rm = T)/RefYd * 
       100, 1)
-    POF[m, ] <- round(apply(MSEobj@F_FMSY[, m, ] > 1, 1, sum, na.rm = T)/proyears * 
+    POF[m, ] <- round(apply(MSEobj@F_FMSY[, m, ] >= 1, 1, sum, na.rm = T)/proyears * 
       100, 1)
-    P10[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] < 0.1, 1, sum, na.rm = T)/proyears * 
+    P10[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] <= 0.1, 1, sum, na.rm = T)/proyears * 
       100, 1)
-    P50[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] < 0.5, 1, sum, na.rm = T)/proyears * 
+    P50[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] <= 0.5, 1, sum, na.rm = T)/proyears * 
       100, 1)
-    P100[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] < 1, 1, sum, na.rm = T)/proyears * 
+    P100[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] <= 1, 1, sum, na.rm = T)/proyears * 
       100, 1)
     CumlYd[m, ] <- cumsum(Yd[m, ])/seq_along(Yd[m, ])  #/ mean(Yd[m,], na.rm=TRUE) 
     CumlPOF[m, ] <- cumsum(POF[m, ])/seq_along(POF[m, ])  # / mean(POF[m,], na.rm=TRUE)
@@ -270,13 +270,13 @@ Tplot <- function(MSEobj, nam = NA) {
     Yd[mm] <- round(mean(apply(MSEobj@C[, mm, yind], 1, mean, na.rm = T)/RefYd, 
       na.rm = T) * 100, 1)
     # cbind(MSEobj@C[,mm,yind],unlist(MSEobj@OM$MSY))
-    POF[mm] <- round(sum(MSEobj@F_FMSY[, mm, ] > 1, na.rm = T)/prod(dim(MSEobj@F_FMSY[, 
+    POF[mm] <- round(sum(MSEobj@F_FMSY[, mm, ] >= 1, na.rm = T)/prod(dim(MSEobj@F_FMSY[, 
       mm, ]), na.rm = T) * 100, 1)
-    P10[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] < 0.1, na.rm = T)/prod(dim(MSEobj@B_BMSY[, 
+    P10[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] <= 0.1, na.rm = T)/prod(dim(MSEobj@B_BMSY[, 
       mm, ])) * 100, 1)
-    P50[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] < 0.5, na.rm = T)/prod(dim(MSEobj@B_BMSY[, 
+    P50[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] <= 0.5, na.rm = T)/prod(dim(MSEobj@B_BMSY[, 
       mm, ])) * 100, 1)
-    P100[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] < 1, na.rm = T)/prod(dim(MSEobj@B_BMSY[, 
+    P100[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] <= 1, na.rm = T)/prod(dim(MSEobj@B_BMSY[, 
       mm, ])) * 100, 1)
   }
   
@@ -390,15 +390,11 @@ NOAA_plot <- function(MSEobj, nam = NA, type = NA, panel = T) {
   
   for (mm in 1:MSEobj@nMPs) {
     
-    PNOF[mm] <- round(sum(MSEobj@F_FMSY[, mm, ] < 1, na.rm = T)/prod(dim(MSEobj@F_FMSY[, 
-      mm, ]), na.rm = T) * 100, 1)
-    B50[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] > 0.5, na.rm = T)/prod(dim(MSEobj@B_BMSY[, 
-      mm, ])) * 100, 1)
-    LTY[mm] <- round(sum(MSEobj@C[, mm, yend]/RefYd > 0.5, na.rm = T)/(MSEobj@nsim * 
-      length(yend)), 3) * 100
-    AAVY <- apply((((MSEobj@C[, mm, y1] - MSEobj@C[, mm, y2])/MSEobj@C[, 
-      mm, y2])^2)^0.5, 1, mean, na.rm = T)
-    VY[mm] <- round(sum(AAVY < 0.15, na.rm = T)/MSEobj@nsim, 3) * 100
+    PNOF[mm] <- round(sum(MSEobj@F_FMSY[, mm, ] <= 1, na.rm = T)/prod(dim(MSEobj@F_FMSY[, mm, ]), na.rm = T) * 100, 1)
+    B50[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] >= 0.5, na.rm = T)/prod(dim(MSEobj@B_BMSY[, mm, ])) * 100, 1)
+    LTY[mm] <- round(sum(MSEobj@C[, mm, yend]/RefYd >= 0.5, na.rm = T)/(MSEobj@nsim * length(yend)), 3) * 100
+    AAVY <- apply((((MSEobj@C[, mm, y1] - MSEobj@C[, mm, y2])/MSEobj@C[, mm, y2])^2)^0.5, 1, mean, na.rm = T)
+    VY[mm] <- round(sum(AAVY <= 0.15, na.rm = T)/MSEobj@nsim, 3) * 100
     
   }
   
@@ -473,11 +469,11 @@ Pplot <- function(MSEobj, nam = NA) {
     # cbind(MSEobj@C[,mm,yind],unlist(MSEobj@OM$MSY))
     POF[mm] <- round(sum(MSEobj@F_FMSY[, mm, ] > 1, na.rm = T)/prod(dim(MSEobj@F_FMSY[, 
       mm, ]), na.rm = T) * 100, 1)
-    P10[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] < 0.1, na.rm = T)/prod(dim(MSEobj@B_BMSY[, 
+    P10[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] <= 0.1, na.rm = T)/prod(dim(MSEobj@B_BMSY[, 
       mm, ])) * 100, 1)
-    P50[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] < 0.5, na.rm = T)/prod(dim(MSEobj@B_BMSY[, 
+    P50[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] <= 0.5, na.rm = T)/prod(dim(MSEobj@B_BMSY[, 
       mm, ])) * 100, 1)
-    P100[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] < 1, na.rm = T)/prod(dim(MSEobj@B_BMSY[, 
+    P100[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] <= 1, na.rm = T)/prod(dim(MSEobj@B_BMSY[, 
       mm, ])) * 100, 1)
   }
   
@@ -1755,7 +1751,7 @@ TradePlot <- function(MSEobj, XAxis = c("Overfishing", "Biomass:BMSY"),
     maxVar <- maxVar * 100
   
   for (mm in 1:MSEobj@nMPs) {
-    PNOF[mm] <- round(sum(MSEobj@F_FMSY[, mm, ] < 1, na.rm = T)/prod(dim(MSEobj@F_FMSY[, 
+    PNOF[mm] <- round(sum(MSEobj@F_FMSY[, mm, ] <= 1, na.rm = T)/prod(dim(MSEobj@F_FMSY[, 
       mm, ]), na.rm = T) * 100, 1)
     BMSYref[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] > BmsyRef, na.rm = T)/prod(dim(MSEobj@B_BMSY[, 
       mm, ])) * 100, 1)
@@ -2354,8 +2350,7 @@ MPStats <- function(MSEobj, PMRefs = list(B_BMSY = 0.5, B_B0 = 0.2, F_FMSY = 1,
   F_FMSYm <- apply(MSEobj@F_FMSY[, , yrs, drop = FALSE], 2, sumFun, na.rm = TRUE)  # median/mean in last yrs
   F_FMSYsd <- apply(MSEobj@F_FMSY[, , yrs, drop = FALSE], 2, sd, na.rm = TRUE)  # sd in last yrs 
   F_FMSYref <- MSEobj@F_FMSY[, , yrs, drop = FALSE] < trefs$F_FMSY  #  below reference?
-  F_FMSYp <- round(apply(F_FMSYref, 2, sum, na.rm = TRUE)/(lastYrs * 
-    nsim), 2)  # prob below ref
+  F_FMSYp <- round(apply(F_FMSYref, 2, sum, na.rm = TRUE)/(lastYrs * nsim), 2)  # prob below ref
   
   # AAVY - Interannual variability in yield
   maxVar <- ifelse(trefs$AAVY > 1, trefs$AAVY/100, trefs$AAVY)
