@@ -1079,7 +1079,8 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	  availB <- apply(VBiomass_P[,,1,], 1, sum) # total available biomass
 	  maxC <- (1 - exp(-maxF)) * availB
       # if the TAC is higher than maxC than catch is equal to maxC
-	  TACused[TACused > maxC] <- maxC[TACused > maxC]
+	  notNA <- which(!is.na(TACused) & !is.na(availB)) # robustify for MPs that return NA 
+	  TACused[TACused[notNA] > maxC[notNA]] <- maxC[TACused[notNA] > maxC[notNA]]
 	   
       fishdist <- (apply(VBiomass_P[, , 1, ], c(1, 3), sum)^Spat_targ)/
 	    apply(apply(VBiomass_P[, , 1, ], c(1, 3), sum)^Spat_targ, 1, mean)  # spatial preference according to spatial biomass
@@ -1363,7 +1364,9 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 		  availB <- apply(VBiomass_P[,,y,], 1, sum) # total available biomass
 	      maxC <- (1 - exp(-maxF)) * availB
           # if the TAC is higher than maxC than catch is equal to maxC
-	      TACused[TACused > maxC] <- maxC[TACused > maxC] 	
+		  notNA <- which(!is.na(TACused) & !is.na(availB))
+	      TACused[TACused[notNA] > maxC[notNA]] <- maxC[TACused[notNA] > maxC[notNA]]
+		  # TACused[TACused > maxC] <- maxC[TACused > maxC] 	
 		  
 		  fishdist <- (apply(VBiomass_P[, , y, ], c(1, 3), sum)^Spat_targ)/apply(apply(VBiomass_P[, , y, ], c(1, 3), sum)^Spat_targ, 1, mean)  # spatial preference according to spatial biomass     
           CB_P[SAYR] <- Biomass_P[SAYR] * (1 - exp(-V_P[SAYt] *  fishdist[SR]))  # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space          
@@ -1472,7 +1475,9 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	      availB <- apply(VBiomass_P[,,y,], 1, sum) # total available biomass
 	      maxC <- (1 - exp(-maxF)) * availB
           # if the TAC is higher than maxC than catch is equal to maxC
-	      tempcatch[tempcatch > maxC] <- maxC[tempcatch > maxC] 		 
+	      notNA <- which(!is.na(tempcatch) & !is.na(availB))		  
+	      tempcatch[tempcatch[notNA] > maxC[notNA]] <- maxC[tempcatch[notNA] > maxC[notNA]]		  
+	      # tempcatch[tempcatch > maxC] <- maxC[tempcatch > maxC] 		 
   		  
 		  CB_P[, , y, ] <- tempcatch * temp  # debug - to test distribution code make TAC = TAC2, should be identical
           temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-Marray[SYt]/2))  # Pope's approximation
@@ -1495,23 +1500,26 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
       
     }  # end of year
        
-    B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum)/SSBMSY  # SSB relative to SSBMSY  
+    B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY  # SSB relative to SSBMSY  
     # F_FMSYa[, mm, ] <- (-log(1 - apply(CB_P, c(1, 3), sum)/(apply(CB_P, c(1, 3), sum) + 
 	                    # apply(VBiomass_P, c(1, 3), sum))))/FMSY 
-    # VBiomass is calculated before catches are taken 
-	F_FMSYa[, mm, ] <- (-log(1 - apply(CB_P, c(1, 3), sum)/apply(VBiomass_P, c(1, 3), sum)))/FMSY
+    # VBiomass is calculated before catches are taken
+    suppressWarnings(	# gives an error message if CB_P or VBiomass_P is NA 
+	FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum, na.rm=TRUE)/apply(VBiomass_P, c(1, 3), sum, na.rm=TRUE))		
+	)
+	F_FMSYa[, mm, ] <- FMa[, mm, ]/FMSY
 	                    	
-    Ba[, mm, ] <- apply(Biomass_P, c(1, 3), sum) # biomass 
-	SSBa[, mm, ] <- apply(SSB_P, c(1, 3), sum) # spawning stock biomass
-	VBa[, mm, ] <- apply(VBiomass_P, c(1, 3), sum) # vulnerable biomass
+    Ba[, mm, ] <- apply(Biomass_P, c(1, 3), sum, na.rm=TRUE) # biomass 
+	SSBa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE) # spawning stock biomass
+	VBa[, mm, ] <- apply(VBiomass_P, c(1, 3), sum, na.rm=TRUE) # vulnerable biomass
     # FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum)/(apply(CB_P, c(1, 3), sum) + 
 	               # apply(VBiomass_P, c(1, 3), sum)))
     # VBiomass is calculated before catches are taken 				   
-    FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum)/apply(VBiomass_P, c(1, 3), sum))				   
-    Ca[, mm, ] <- apply(CB_P, c(1, 3), sum)
+	
+    Ca[, mm, ] <- apply(CB_P, c(1, 3), sum, na.rm=TRUE)
     cat("\n")
   }  # end of mm methods
-  
+
   # Store MP duration
   attr(MPs, "duration") <- MPdur
   # Store MSE info
