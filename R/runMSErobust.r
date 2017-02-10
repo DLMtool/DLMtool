@@ -12,10 +12,6 @@
 #' file (to the current working directory).
 #' 
 #' 
-#' @usage runMSErobust(OM = '1', MPs = NA, nsim = 200, proyears = 28, interval
-#' = 4, pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, custompars = 0,
-#' CheckMPs = TRUE, maxsims = 64, name = NULL, unique=TRUE, maxCrash = 10, saveMSE = TRUE,
-#' savePack = FALSE)
 #' @param OM An operating model object (class OM)
 #' @param MPs A vector of methods (character string) of class DLM_output or
 #' DLM_input. If NA all available MPs are run.
