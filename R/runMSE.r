@@ -29,7 +29,6 @@
 #' if MPs can be run.
 #' @param Hist Should model stop after historical simulations? Returns a list 
 #' containing all historical data
-#' @param useTestCode Development switch
 #' @param ntrials Maximum of times depletion and recruitment deviations are 
 #' resampled to optimize for depletion. After this the model stops if more than 
 #' percent of simulations are not close to the required depletion
@@ -40,7 +39,7 @@
 #' @export runMSE
 runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4, 
   pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, custompars = NULL, CheckMPs = TRUE,
-  Hist=FALSE, useTestCode=FALSE, ntrials=50, fracD=0.05) {
+  Hist=FALSE, ntrials=50, fracD=0.05) {
 
   tiny <- 1e-15  # define tiny variable
   message("Loading operating model")
@@ -287,12 +286,11 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 		}
 	  }	
 	}
-	if ("EffUpper" %in% Names) {
+	if ("EffUpper" %in% Names & !"Find" %in% Names) {
       Deriv <- getEffhist(Esd, nyears, EffYears = EffYears, EffUpper = EffUpper, EffLower = EffLower)  # Historical fishing effort
       Find <- Deriv[[1]]  # Calculate fishing effort rate
       dFfinal <- Deriv[[2]]  # Final gradient in fishing effort yr-1 
     }
-	if ("EffUpper" %in% Names & "Find" %in% Names) warning("EffUpper and Find both in custompars. Find is ignored")
     # if (nrow(custompars) < nsim) {
       # ind <- sample(nrow(custompars), nsim, replace = T)
     # } else {
@@ -304,7 +302,10 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   # Checks that parameters are correct dimensions - could be messed up with custompars   
   if (length(maxage) > 1) maxage <- maxage[1] # check if maxage has been passed in custompars
   OM@maxage <- maxage # update OM object with maxage that is used 
-  if (any(dim(Perr) != c(nsim, proyears + nyears))) stop("Perr must matrix with dimensions: nsim, proyears+nyears")
+  if (any(dim(Perr) != c(nsim, proyears + nyears))) 
+      stop("Perr must have dimensions: nsim (", nsim,") proyears+nyears (", proyears+nyears, ") \nbut has ", 
+	      dim(Perr)[1], " ", dim(Perr)[2], call.=FALSE)
+		  
   if (any(dim(Find) != c(nsim, nyears))) stop("Find must be matrix with dimensions: nsim, nyears")
       
   SRrel <- rep(OM@SRrel, nsim)  # type of Stock-recruit relationship. 1=Beverton Holt, 2=Ricker
@@ -318,28 +319,28 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   ind <- as.matrix(expand.grid(1:nsim, 1:maxage, 1:(nyears + proyears)))  # an index for calculating Length at age
   Len_age[ind] <- Linfarray[ind[, c(1, 3)]] * (1 - exp(-Karray[ind[, c(1, 3)]] * 
     (Agearray[ind[, 1:2]] - t0[ind[, 1]])))
-  if (!exists("Wt_age", inherits=FALSE)) {
+  if (!exists("Wt_age", inherits=FALSE)| is.null(custompars)) {
     Wt_age <- array(NA, dim = c(nsim, maxage, nyears + proyears))  # Weight at age array
     Wt_age[ind] <- OM@a * Len_age[ind]^OM@b  # Calculation of weight array
   }	
   
   # Calcaluate age at maturity 
-  if (!exists("ageM", inherits=FALSE)) ageM <- -((log(1 - L50/Linf))/K) + t0  # calculate ageM from L50 and growth parameters (non-time-varying)
+  if (!exists("ageM", inherits=FALSE) | is.null(custompars)) ageM <- -((log(1 - L50/Linf))/K) + t0  # calculate ageM from L50 and growth parameters (non-time-varying)
   ageM[ageM < 1] <- 1  # age at maturity must be at least 1
   L95 <- L50 + L50_95 # reassign if updated in custompars 
-  if (!exists("age95", inherits=FALSE)) age95 <- -((log(1 - L95/Linf))/K) + t0
+  if (!exists("age95", inherits=FALSE) | is.null(custompars)) age95 <- -((log(1 - L95/Linf))/K) + t0
   age95[age95 < 1] <- 1.5  # must be greater than 0 and ageM
   
   ageMsd <- sapply(1:nsim, getroot, ageM, age95)
   ageMarray <- array(ageM, dim = c(nsim, maxage))  # Age at maturity array
-  if (!exists("Mat_age", inherits=FALSE)) Mat_age <- 1/(1 + exp((ageMarray - (Agearray))/(ageMarray * ageMsd)))  # Maturity at age array
+  if (!exists("Mat_age", inherits=FALSE)| is.null(custompars)) Mat_age <- 1/(1 + exp((ageMarray - (Agearray))/(ageMarray * ageMsd)))  # Maturity at age array
 
   # Selectivity at Length
   # ------------------------------------------------------ if (max(OM@L5)
   # > 1.5) { message('L5 set too high (maximum value of 1.5).
   # \nDefaulting to L5 = 1.5') OM@L5[OM@L5 > 1.5] <- 1.5 }
 
-  if (exists("V", inherits=FALSE)) { # V has been passed in with custompars 
+  if (exists("V", inherits=FALSE) & !is.null(custompars)) { # V has been passed in with custompars 
     # assign L5, LFS and Vmaxlen - dodgy loop 
 	# should calculate length at 5% selectivity from vB 
 	L5 <- matrix(NA, nrow = nyears + proyears, ncol = nsim)
@@ -358,7 +359,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   }
   
   
-  if (!exists("V", inherits=FALSE)) { # don't run if V has been passed in with custompars 
+  if (!exists("V", inherits=FALSE) | is.null(custompars)) { # don't run if V has been passed in with custompars 
     if (Selnyears <= 1) {    
       L5 <- matrix(L5, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
       LFS <- matrix(LFS, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
@@ -448,16 +449,16 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   if (snowfall::sfIsRunning()) {
     # if the cluster is initiated
     snowfall::sfExport(list = c("Frac_area_1", "Prob_staying"))  # export some of the new arrays and ...
-    if (useTestCode) mov <- array(t(snowfall::sfSapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
+    mov <- array(t(snowfall::sfSapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
       Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
-    if (!useTestCode) mov <- array(t(snowfall::sfSapply(1:nsim, getmov, Frac_area_1 = Frac_area_1, 
-      Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
+    # mov <- array(t(snowfall::sfSapply(1:nsim, getmov, Frac_area_1 = Frac_area_1, 
+      # Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
   } else {
     # no cluster initiated
-	if (useTestCode) mov <- array(t(sapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
+	mov <- array(t(sapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
       Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
-    if (!useTestCode) mov <- array(t(sapply(1:nsim, getmov, Frac_area_1 = Frac_area_1, 
-      Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1	  
+    # mov <- array(t(sapply(1:nsim, getmov, Frac_area_1 = Frac_area_1, 
+      # Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1	  
   }
    
   nareas <- 2  # default is a two area model
@@ -494,14 +495,14 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   
   if (nsim > 1) {
     SSN0 <- apply(SSN[, , 1, ], c(1, 3), sum)  # Calculate unfished spawning stock numbers  
-    SSB0 <- apply(SSB[, , 1, ], 1, sum)  # Calculate unfished spawning stock numbers
+    SSB0 <- apply(SSB[, , 1, ], 1, sum)  # Calculate unfished spawning stock biomass
     SSBpR <- SSB0/R0  # Spawning stock biomass per recruit
     SSB0a <- apply(SSB[, , 1, ], c(1, 3), sum)  # Calculate unfished spawning stock numbers
-    B0 <- apply(Biomass[, , 1, ], c(1, 3), sum)
-	N0 <- apply(N[, , 1, ], c(1, 3), sum)
+    B0 <- apply(Biomass[, , 1, ], 1, sum)
+	N0 <- apply(N[, , 1, ], 1, sum)
   } else {
     SSN0 <- apply(SSN[, , 1, ], 2, sum)  # Calculate unfished spawning stock numbers  
-    SSB0 <-  sum(SSB[, , 1, ])  # Calculate unfished spawning stock numbers
+    SSB0 <-  sum(SSB[, , 1, ])  # Calculate unfished spawning stock biomass
     SSBpR <- SSB0/R0  # Spawning stock biomass per recruit
     SSB0a <- apply(SSB[, , 1, ], 2, sum)  # Calculate unfished spawning stock numbers
     B0 <- apply(Biomass[, , 1, ], 2, sum)
@@ -517,15 +518,15 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   if (snowfall::sfIsRunning()) {
     snowfall::sfExport(list = c("dep", "Find", "Perr", "Marray", "hs", "Mat_age", 
       "Wt_age", "R0", "V", "nyears", "maxage", "SRrel", "aR", "bR"))
-    if (useTestCode) qs <- snowfall::sfSapply(1:nsim, getq2, dep, Find, Perr, Marray, hs, Mat_age, 
+    qs <- snowfall::sfSapply(1:nsim, getq2, dep, Find, Perr, Marray, hs, Mat_age, 
       Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR)  # find the q that gives current stock depletion
-    if (!useTestCode) qs <- snowfall::sfSapply(1:nsim, getq, dep, Find, Perr, Marray, hs, Mat_age, 
-      Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR)  # find the q that gives current stock depletion	  
+    # qs <- snowfall::sfSapply(1:nsim, getq, dep, Find, Perr, Marray, hs, Mat_age, 
+      # Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR)  # find the q that gives current stock depletion	  
   } else {
-    if (useTestCode) qs <- sapply(1:nsim, getq2, dep, Find, Perr, Marray, hs, Mat_age, 
+    qs <- sapply(1:nsim, getq2, dep, Find, Perr, Marray, hs, Mat_age, 
       Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR)  # find the q that gives current stock depletion
-    if (!useTestCode) qs <- sapply(1:nsim, getq, dep, Find, Perr, Marray, hs, Mat_age, 
-      Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR)  # find the q that gives current stock depletion	  
+    # qs <- sapply(1:nsim, getq, dep, Find, Perr, Marray, hs, Mat_age, 
+      # Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR)  # find the q that gives current stock depletion	  
   }
 
   # Check that depletion target is reached
@@ -574,19 +575,19 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
         snowfall::sfExport(list = c("dep", "Find", "Perr", "Marray", "hs", 
           "Mat_age", "Wt_age", "R0", "V", "nyears", "maxage", "SRrel", 
           "aR", "bR"))
-        if (useTestCode) qs[HighQ] <- snowfall::sfSapply(HighQ, getq2, dep, Find, Perr, Marray, 
+        qs[HighQ] <- snowfall::sfSapply(HighQ, getq2, dep, Find, Perr, Marray, 
           hs, Mat_age, Wt_age, R0, V, nyears, maxage, mov, Spat_targ, 
           SRrel, aR, bR)  # find the q that gives current stock depletion
-        if (!useTestCode) qs[HighQ] <- snowfall::sfSapply(HighQ, getq, dep, Find, Perr, Marray, 
-          hs, Mat_age, Wt_age, R0, V, nyears, maxage, mov, Spat_targ, 
-          SRrel, aR, bR)  # find the q that gives current stock depletion		  
+        # qs[HighQ] <- snowfall::sfSapply(HighQ, getq, dep, Find, Perr, Marray, 
+          # hs, Mat_age, Wt_age, R0, V, nyears, maxage, mov, Spat_targ, 
+          # SRrel, aR, bR)  # find the q that gives current stock depletion		  
       } else {
-        if (useTestCode) qs[HighQ] <- sapply(HighQ, getq2, dep, Find, Perr, Marray, 
+        qs[HighQ] <- sapply(HighQ, getq2, dep, Find, Perr, Marray, 
           hs, Mat_age, Wt_age, R0, V, nyears, maxage, mov, Spat_targ, 
           SRrel, aR, bR)  # find the q that gives current stock depletion
-        if (!useTestCode) qs[HighQ] <- sapply(HighQ, getq, dep, Find, Perr, Marray, 
-          hs, Mat_age, Wt_age, R0, V, nyears, maxage, mov, Spat_targ, 
-          SRrel, aR, bR)  # find the q that gives current stock depletion		  
+        #qs[HighQ] <- sapply(HighQ, getq, dep, Find, Perr, Marray, 
+          # hs, Mat_age, Wt_age, R0, V, nyears, maxage, mov, Spat_targ, 
+          # SRrel, aR, bR)  # find the q that gives current stock depletion		  
       }
 	  
       HighQ <- which(qs > UpperBound | qs < LowerBound)
@@ -668,7 +669,6 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	  
   }  # end of year
   
-  
   # Depletion <- apply(Biomass[, , nyears, ], 1, sum)/apply(Biomass[, , 1, ], 1, sum)  #^betas   # apply hyperstability / hyperdepletion
   if (nsim > 1) Depletion <- (apply(SSB[,,nyears,],1,sum)/apply(SSB[,,1,],1,sum))#^betas
   if (nsim == 1) Depletion <- sum(SSB[,,nyears,])/sum(SSB[,,1,])#^betas
@@ -738,75 +738,74 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 
   if (snowfall::sfIsRunning()) {
     snowfall::sfExport(list = c("Marray", "hs", "Mat_age", "Wt_age", "R0", "V", "nyears", "maxage"))  # export some newly made arrays to the cluster
-    if (!useTestCode) MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY, Marray, hs, Mat_age, Wt_age, 
-      R0, V = V[, , nyears], maxage, nyears, proyears = 200, Spat_targ, 
-      mov, SRrel, aR, bR)  # optimize for MSY reference points\t
+    # MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY, Marray, hs, Mat_age, Wt_age, 
+      # R0, V = V[, , nyears], maxage, nyears, proyears = 200, Spat_targ, 
+      # mov, SRrel, aR, bR)  # optimize for MSY reference points\t
 	## Above version didn't include proyears in projections
 
     # Using Rcpp code 	
-    if (useTestCode) MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY2, Marray, hs, Mat_age, Wt_age, 
+    MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY2, Marray, hs, Mat_age, Wt_age, 
       R0, V = V, maxage, nyears, proyears = 200, Spat_targ, 
       mov, SRrel, aR, bR)  # optimize for MSY reference points\t	  
 	  
   } else {
-    if (!useTestCode) MSYrefs <- sapply(1:nsim, getFMSY, Marray, hs, Mat_age, Wt_age, 
-      R0, V = V[, , nyears], maxage, nyears, proyears = 200, Spat_targ, 
-      mov, SRrel, aR, bR)  # optimize for MSY reference points
-    if (useTestCode) MSYrefs <- sapply(1:nsim, getFMSY2, Marray, hs, Mat_age, Wt_age, 
+    # MSYrefs <- sapply(1:nsim, getFMSY, Marray, hs, Mat_age, Wt_age, 
+      # R0, V = V[, , nyears], maxage, nyears, proyears = 200, Spat_targ, 
+      # mov, SRrel, aR, bR)  # optimize for MSY reference points
+    MSYrefs <- sapply(1:nsim, getFMSY2, Marray, hs, Mat_age, Wt_age, 
       R0, V = V, maxage, nyears, proyears = 200, Spat_targ, 
-      mov, SRrel, aR, bR)  # optimize for MSY reference points	  
+      mov, SRrel, aR, bR)  # optimize for MSY reference points	   
   }
   
-  if (!useTestCode) { #
-    MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
-    FMSY <- MSYrefs[2, ]  # instantaneous apical FMSY  (Vulnerable)
-    VBMSY <- (MSY/(1 - exp(-FMSY)))  # Biomass at MSY (Vulnerable)
-    UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
-    SSBMSY <- MSYrefs[3, ]  # Spawing Stock Biomass at MSY
-    BMSY_B0 <- SSBMSY_SSB0 <- MSYrefs[4, ]  # SSBMSY relative to unfished (SSB)
-	FMSYb <- -log(1-(MSY/(SSBMSY+MSY))) # instantaneous FMSY (Spawning Biomass)
+  ## Commented out MSYrefs calculations  
+  # MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
+  # FMSY <- MSYrefs[2, ]  # instantaneous apical FMSY  (Vulnerable)
+  # VBMSY <- (MSY/(1 - exp(-FMSY)))  # Biomass at MSY (Vulnerable)
+  # UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
+  # SSBMSY <- MSYrefs[3, ]  # Spawing Stock Biomass at MSY
+  # BMSY_B0 <- SSBMSY_SSB0 <- MSYrefs[4, ]  # SSBMSY relative to unfished (SSB)
+  # FMSYb <- -log(1-(MSY/(SSBMSY+MSY))) # instantaneous FMSY (Spawning Biomass)
+  
+  
+  MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
+  FMSY <- MSYrefs[2, ]  # instantaneous FMSY (Vulnerable)
+  SSBMSY <- MSYrefs[3, ]  # Spawning Stock Biomass at MSY  
+  if (nsim > 1) {
+    SSBMSY_SSB0 <- SSBMSY/apply(SSB[,,1,], 1, sum)  # SSBMSY relative to unfished (SSB)   
+	BMSY_B0 <- MSYrefs[4, ]/apply(Biomass[,,1,], 1, sum) # Biomass relative to unfished (B0)
   }
-  if (useTestCode) {
-    MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
-    FMSY <- MSYrefs[2, ]  # instantaneous FMSY (Vulnerable)
-    SSBMSY <- MSYrefs[3, ]  # Spawning Stock Biomass at MSY  
-    if (nsim > 1) {
-	  SSBMSY_SSB0 <- SSBMSY/apply(SSB[,,1,], 1, sum)  # SSBMSY relative to unfished (SSB)   
-	  BMSY_B0 <- MSYrefs[4, ]/apply(Biomass[,,1,], 1, sum) # Biomass relative to unfished (B0)
-	}
-	if (nsim == 1) {
-	  SSBMSY_SSB0 <- SSBMSY/sum(SSB[,,1,])  # SSBMSY relative to unfished (SSB)   
-      BMSY_B0 <- MSYrefs[4, ]/sum(Biomass[,,1,]) # Biomass relative to unfished (B0)
-	}
-	VBMSY <- (MSY/(1 - exp(-FMSY)))  # Biomass at MSY (Vulnerable)
-	FMSYb <- MSYrefs[6,]  # instantaneous FMSY (Spawning Biomass)
-	UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
+  if (nsim == 1) {
+    SSBMSY_SSB0 <- SSBMSY/sum(SSB[,,1,])  # SSBMSY relative to unfished (SSB)   
+    BMSY_B0 <- MSYrefs[4, ]/sum(Biomass[,,1,]) # Biomass relative to unfished (B0)
   }
-     
+  VBMSY <- (MSY/(1 - exp(-FMSY)))  # Biomass at MSY (Vulnerable)
+  FMSYb <- MSYrefs[6,]  # instantaneous FMSY (Spawning Biomass)
+  UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
+       
   message("Calculating reference yield - best fixed F strategy")  # Print a progress update
   flush.console()  # update the console
   if (snowfall::sfIsRunning()) {
     # Numerically optimize for F that provides highest long term yield
-    if (!useTestCode) RefY <- snowfall::sfSapply(1:nsim, getFref, Marray = Marray, Wt_age = Wt_age, 
-        Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, ], SSN_s = SSN[, 
-        , nyears, ], Biomass_s = Biomass[, , nyears, ], VBiomass_s = VBiomass[, , nyears, ], 
-		SSB_s = SSB[, , nyears, ], Vn = V[, , (nyears + 1):(nyears + proyears)], 
-		hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas, 
-		maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)
-    if (useTestCode) RefY <- snowfall::sfSapply(1:nsim, getFref2, Marray = Marray, Wt_age = Wt_age, 
+    # RefY <- snowfall::sfSapply(1:nsim, getFref, Marray = Marray, Wt_age = Wt_age, 
+        # Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, ], SSN_s = SSN[, 
+        # , nyears, ], Biomass_s = Biomass[, , nyears, ], VBiomass_s = VBiomass[, , nyears, ], 
+		# SSB_s = SSB[, , nyears, ], Vn = V[, , (nyears + 1):(nyears + proyears)], 
+		# hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas, 
+		# maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)
+    RefY <- snowfall::sfSapply(1:nsim, getFref2, Marray = Marray, Wt_age = Wt_age, 
       Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, , drop=FALSE], SSN_s = SSN[, , nyears, , drop=FALSE], 
 	  Biomass_s = Biomass[, , nyears, , drop=FALSE], VBiomass_s = VBiomass[, , nyears, , drop=FALSE], 
 	  SSB_s = SSB[, , nyears, , drop=FALSE], Vn = V[, , (nyears + 1):(nyears + proyears), drop=FALSE], 
 	  hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas,
 	  maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)	
   } else {
-    if (!useTestCode) RefY <- sapply(1:nsim, getFref, Marray = Marray, Wt_age = Wt_age, 
-      Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, ], SSN_s = SSN[, , nyears, ], 
-	  Biomass_s = Biomass[, , nyears, ], VBiomass_s = VBiomass[, , nyears, ], 
-	  SSB_s = SSB[, , nyears, ], Vn = V[, , (nyears + 1):(nyears + proyears)], 
-	  hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas,
-	  maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)
-    if (useTestCode) RefY <- sapply(1:nsim, getFref2, Marray = Marray, Wt_age = Wt_age, 
+    # RefY <- sapply(1:nsim, getFref, Marray = Marray, Wt_age = Wt_age, 
+      # Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, ], SSN_s = SSN[, , nyears, ], 
+	  # Biomass_s = Biomass[, , nyears, ], VBiomass_s = VBiomass[, , nyears, ], 
+	  # SSB_s = SSB[, , nyears, ], Vn = V[, , (nyears + 1):(nyears + proyears)], 
+	  # hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas,
+	  # maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)
+    RefY <- sapply(1:nsim, getFref2, Marray = Marray, Wt_age = Wt_age, 
       Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, , drop=FALSE], SSN_s = SSN[, , nyears, , drop=FALSE], 
 	  Biomass_s = Biomass[, , nyears, , drop=FALSE], VBiomass_s = VBiomass[, , nyears, , drop=FALSE], 
 	  SSB_s = SSB[, , nyears, , drop=FALSE], Vn = V[, , (nyears + 1):(nyears + proyears), drop=FALSE], 
@@ -850,8 +849,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   hbias <- hsim/hs  # back calculate the simulated bias
   if (OM@hcv == 0) hbias <- rep(1, nsim) 
   qmu <- -0.5 * qcv^2  # Mean
-  qvar <- array(exp(rnorm(proyears * nsim, rep(qmu, proyears), rep(qcv, 
-    proyears))), c(nsim, proyears))  # Variations in interannual variation
+  qvar <- array(exp(rnorm(proyears * nsim, rep(qmu, proyears), rep(qcv, proyears))), c(nsim, proyears))  # Variations in interannual variation
   # colnames(qvar) <- paste0('qvar', 1:proyears)
   FinF <- Find[, nyears]  # Effort in final historical year
   
@@ -910,8 +908,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     FMSY_M, Mgrad, Msd, procsd, Esd, dFfinal, MSY, qinc, qcv, FMSY, 
     Linf, K, t0, hs, Linfgrad, Kgrad, Linfsd, recgrad, Ksd, ageM, L5[nyears, ], 
 	LFS[nyears, ], Vmaxlen[nyears, ], LFC, OFLreal, Spat_targ, 
-    Frac_area_1, Prob_staying, AC, L50, L95,
-	B0, N0, SSB0, SSN0))  # put all the operating model parameters in one table
+    Frac_area_1, Prob_staying, AC, L50, L95, B0, N0, SSB0, SSN0))  # put all the operating model parameters in one table
   
   names(DLM_data@OM)[26:28] <- c("L5", "LFS", "Vmaxlen")  # These are missing labels in the line above
   
@@ -946,7 +943,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     AtAge <- list(Len_age=Len_age, Wt_age=Wt_age, 
 	  Sl_age=V, Mat_age=Mat_age, Nage=apply(N, c(1:3), sum), SSBage=apply(SSB, c(1:3), sum))
     MSYs <- list(MSY=MSY, FMSY=FMSY, FMSYb=FMSYb, VBMSY=VBMSY, UMSY=UMSY, 
-	             SSBMSY=SSBMSY, BMSY_B0=BMSY_B0)
+	             SSBMSY=SSBMSY, BMSY_B0=BMSY_B0, SSBMSY_SSB0=SSBMSY_SSB0, SSB0=SSB0, B0=B0)
 	
 	# updated sampled pars
 	SampPars <- list(dep=dep, Esd=Esd, Find=Find, procsd=procsd, AC=AC, M=M, Msd=Msd, 

@@ -28,12 +28,15 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 - add `SpAbun` slot to data object for abundance of spawning stock 
 - write B0, SSB0, SSN0, and N0 to `DLM_data@OM`
-BUG 
-- fixed F/FMSY calculation in `runMSE`
+
+#### BUGs?
+- fixed F calculations at end of MSE 
+- maxF now also applies to catch
 
 
 #### To Do 
-- change dimensions of `SSB_hist` in MSE object from `nsim, maxage, nyears, narea` to `nsim, nyear` - others? 
+- change dimensions of `SSB_hist` in MSE object from `nsim, maxage, nyears, narea` to `nsim, nyear` - others?
+- update runMSErobust to match runMSE function 
 
 #### Bug Fixes 
 - fixed typo in `getr` function  

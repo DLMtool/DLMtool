@@ -96,14 +96,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // projOpt_cpp
-double projOpt_cpp(double lnIn, double depc, NumericVector Fc, double Mc, double hc, NumericVector Mac, NumericVector Wac, double R0c, NumericVector Vc, double nyears, double maxage, NumericMatrix movc, double Spat_targc, double SRrelc, NumericVector aRc, NumericVector bRc, double proyears, double FMSY, double Control);
-RcppExport SEXP DLMtool_projOpt_cpp(SEXP lnInSEXP, SEXP depcSEXP, SEXP FcSEXP, SEXP McSEXP, SEXP hcSEXP, SEXP MacSEXP, SEXP WacSEXP, SEXP R0cSEXP, SEXP VcSEXP, SEXP nyearsSEXP, SEXP maxageSEXP, SEXP movcSEXP, SEXP Spat_targcSEXP, SEXP SRrelcSEXP, SEXP aRcSEXP, SEXP bRcSEXP, SEXP proyearsSEXP, SEXP FMSYSEXP, SEXP ControlSEXP) {
+NumericVector projOpt_cpp(double lnIn, double Mc, double hc, NumericVector Mac, NumericVector Wac, double R0c, NumericVector Vc, double nyears, double maxage, NumericMatrix movc, double Spat_targc, double SRrelc, NumericVector aRc, NumericVector bRc, double proyears, double Control);
+RcppExport SEXP DLMtool_projOpt_cpp(SEXP lnInSEXP, SEXP McSEXP, SEXP hcSEXP, SEXP MacSEXP, SEXP WacSEXP, SEXP R0cSEXP, SEXP VcSEXP, SEXP nyearsSEXP, SEXP maxageSEXP, SEXP movcSEXP, SEXP Spat_targcSEXP, SEXP SRrelcSEXP, SEXP aRcSEXP, SEXP bRcSEXP, SEXP proyearsSEXP, SEXP ControlSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< double >::type lnIn(lnInSEXP);
-    Rcpp::traits::input_parameter< double >::type depc(depcSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Fc(FcSEXP);
     Rcpp::traits::input_parameter< double >::type Mc(McSEXP);
     Rcpp::traits::input_parameter< double >::type hc(hcSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type Mac(MacSEXP);
@@ -118,9 +116,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type aRc(aRcSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type bRc(bRcSEXP);
     Rcpp::traits::input_parameter< double >::type proyears(proyearsSEXP);
-    Rcpp::traits::input_parameter< double >::type FMSY(FMSYSEXP);
     Rcpp::traits::input_parameter< double >::type Control(ControlSEXP);
-    rcpp_result_gen = Rcpp::wrap(projOpt_cpp(lnIn, depc, Fc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, FMSY, Control));
+    rcpp_result_gen = Rcpp::wrap(projOpt_cpp(lnIn, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, Control));
     return rcpp_result_gen;
 END_RCPP
 }

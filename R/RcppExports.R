@@ -95,7 +95,6 @@ optQ_cpp <- function(lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, m
 #' Optimize for MSY and calculate MSY reference points 
 #'
 #' @param lnIn internal
-#' @param Fc internal
 #' @param Mc internal
 #' @param hc internal
 #' @param Mac internal
@@ -112,12 +111,11 @@ optQ_cpp <- function(lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, m
 #' @param movc internal
 #' @param SSBpRc internal
 #' @param proyears internal
-#' @param FMSY internal
 #' @param Control internal
 #' 
 #' @export
 #' @keywords internal
-projOpt_cpp <- function(lnIn, depc, Fc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, FMSY, Control) {
-    .Call('DLMtool_projOpt_cpp', PACKAGE = 'DLMtool', lnIn, depc, Fc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, FMSY, Control)
+projOpt_cpp <- function(lnIn, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, Control) {
+    .Call('DLMtool_projOpt_cpp', PACKAGE = 'DLMtool', lnIn, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, Control)
 }
 

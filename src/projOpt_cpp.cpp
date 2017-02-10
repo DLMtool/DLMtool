@@ -6,7 +6,6 @@ using namespace Rcpp;
 //' Optimize for MSY and calculate MSY reference points 
 //'
 //' @param lnIn internal
-//' @param Fc internal
 //' @param Mc internal
 //' @param hc internal
 //' @param Mac internal
@@ -23,23 +22,22 @@ using namespace Rcpp;
 //' @param movc internal
 //' @param SSBpRc internal
 //' @param proyears internal
-//' @param FMSY internal
 //' @param Control internal
 //' 
 //' @export
 //' @keywords internal
 // [[Rcpp::export]]
-double projOpt_cpp(double lnIn, double depc, NumericVector Fc, 
+NumericVector projOpt_cpp(double lnIn,  
   double Mc, double hc, NumericVector Mac, NumericVector Wac, 
   double R0c, NumericVector Vc, double nyears, double maxage, NumericMatrix movc, 
-  double Spat_targc, double SRrelc, NumericVector aRc, NumericVector bRc, double proyears, double FMSY, 
+  double Spat_targc, double SRrelc, NumericVector aRc, NumericVector bRc, double proyears, 
   double Control) {
   
   // double B0; 
   double nareas = movc.nrow();
   double FMSYc = 0 ;
   double NYears = 0;
-  double RetVal = 0;
+  // double RetVal = 0;
   NumericVector idist(nareas);
   NumericVector store(nareas);
   NumericMatrix idistA(nareas, nareas);
@@ -64,14 +62,9 @@ double projOpt_cpp(double lnIn, double depc, NumericVector Fc,
   NumericVector tempVec(nareas);
 
   // Controls for switching 
-   NYears = nyears + proyears;
-  if (Control == 1) {
-	  FMSYc = exp(lnIn); // MSY Optimizer	 
-  }
-  if (Control > 1) {
-	  FMSYc = FMSY; // Return Biomass 
-  }
-  
+  NYears = nyears + proyears;
+  FMSYc = exp(lnIn); 	 
+    
   for (int i = 0; i < nareas; i++) idist[i] = 1/nareas;
   for (int X = 0; X < 300; X++) {
 	for (int A= 0; A < nareas; A++) {  
@@ -151,17 +144,19 @@ double projOpt_cpp(double lnIn, double depc, NumericVector Fc,
 	  }
 		  		  
   }
-
-  if (Control == 1) RetVal = -sum(CB); // optimize MSY 
-  if (Control == 2) RetVal = sum(SSB); // return SSB 
-  if (Control == 3) RetVal = sum(Biomass); // return Biomass
-  if (Control == 4) RetVal = sum(VB); // return Vulnerable Biomass
-  return RetVal;
-  
+  if (Control == 1) {
+	  NumericVector out(1);
+      out(0) = -sum(CB);
+	  return out; 
+  }
+  if (Control == 2) {
+	NumericVector out(3);
+    out(0) = sum(SSB);
+    out(1) = sum(Biomass);
+    out(2) = sum(VB);
+	return out; 
+  } 
 }
-
-
-
 
 
 
