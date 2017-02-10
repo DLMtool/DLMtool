@@ -83,7 +83,7 @@ runMSErobust <- function(OM = "1", MPs = NA, nsim = 200, proyears = 28,
       trialMSE <- try(runMSE(OM = OM, MPs = MPs, nsim = length(simsplit[[i]]), 
         proyears = proyears, interval = interval, pstar = pstar, 
         maxF = maxF, timelimit = timelimit, reps = reps, custompars = custompars, 
-        CheckMPs = CheckMPs, Hist, ntrial, fracD))
+        CheckMPs = CheckMPs, Hist, ntrials, fracD))
       crash <- crash + 1
       if (crash >= maxCrash) 
         stop("Crashed too many times!")

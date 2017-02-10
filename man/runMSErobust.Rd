@@ -4,10 +4,11 @@
 \alias{runMSErobust}
 \title{Run a Management Strategy Evaluation}
 \usage{
-runMSErobust(OM = '1', MPs = NA, nsim = 200, proyears = 28, interval
-= 4, pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, custompars = 0,
-CheckMPs = TRUE, maxsims = 64, name = NULL, unique=TRUE, maxCrash = 10, saveMSE = TRUE,
-savePack = FALSE)
+runMSErobust(OM = "1", MPs = NA, nsim = 200, proyears = 28,
+  interval = 4, pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1,
+  custompars = NULL, CheckMPs = TRUE, Hist = FALSE, ntrials = 50,
+  fracD = 0.05, maxsims = 64, name = NULL, unique = TRUE,
+  maxCrash = 10, saveMSE = TRUE, savePack = FALSE)
 }
 \arguments{
 \item{OM}{An operating model object (class OM)}

@@ -148,8 +148,7 @@ NumericVector projOpt_cpp(double lnIn,
 	  NumericVector out(1);
       out(0) = -sum(CB);
 	  return out; 
-  }
-  if (Control == 2) {
+  } else {
 	NumericVector out(3);
     out(0) = sum(SSB);
     out(1) = sum(Biomass);
