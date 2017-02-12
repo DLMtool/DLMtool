@@ -4,7 +4,7 @@
 \alias{Splot}
 \title{Scatter plot of B/BMSY or B/B0 and F/FMSY for lastYrs}
 \usage{
-Splot(MSEobj = NULL, MPs = NA, All = TRUE, Var = c('B_BMSY', 'B_B0'),
+Splot(MSEobj = NULL, MPs = NA, All = TRUE, Var = c('B_BMSY', 'SSB_SSB0'),
 lastYrs = 10, Fref = 1, BMSYref = 1, B0ref = 0.4, cex.MP = 1, Fbg = FALSE,
 Bbg = FALSE, Props = FALSE, TP = FALSE)
 }
@@ -15,7 +15,7 @@ Bbg = FALSE, Props = FALSE, TP = FALSE)
 
 \item{All}{Logical. Plot all points or just the mean?}
 
-\item{Var}{What to plot on the y-axis: \code{B_BMSY} or \code{B_B0}}
+\item{Var}{What to plot on the y-axis: \code{B_BMSY} or \code{SSB_SSB0}}
 
 \item{lastYrs}{Last number of years in projection to calculate statistics}
 

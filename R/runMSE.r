@@ -64,8 +64,8 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   Find <- Deriv[[1]]  # Calculate fishing effort rate
   dFfinal <- Deriv[[2]]  # Final gradient in fishing effort yr-1 
   # dep[order(dFfinal)]<-dep[order(dep,decreasing=T)] # robustifies
-  # matplot(t(Find), type='l') plot(dep, dFfinal)
-  
+  # matplot(t(Find), type='l') # plot(dep, dFfinal)
+
   # Sample operating model parameters
   # ===========================================================
   procsd <- runif(nsim, OM@Perr[1], OM@Perr[2])  # Process error standard deviation
@@ -745,9 +745,8 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 
     # Using Rcpp code 	
     MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY2, Marray, hs, Mat_age, Wt_age, 
-      R0, V = V, maxage, nyears, proyears = 200, Spat_targ, 
+      R0, V = V, maxage, nyears, proyears = maxage * 3, Spat_targ, 
       mov, SRrel, aR, bR)  # optimize for MSY reference points\t	  
-	  
   } else {
     # MSYrefs <- sapply(1:nsim, getFMSY, Marray, hs, Mat_age, Wt_age, 
       # R0, V = V[, , nyears], maxage, nyears, proyears = 200, Spat_targ, 

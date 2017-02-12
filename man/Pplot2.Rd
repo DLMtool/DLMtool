@@ -14,7 +14,7 @@ xaxis=TRUE, yaxis=TRUE, ...)
 \arguments{
 \item{MSEobj}{An object of class MSE}
 
-\item{YVar}{What to plot on the y-axis? Options are: \code{c('B_B0',
+\item{YVar}{What to plot on the y-axis? Options are: \code{c('SSB_SSB0',
 'B_BMSY', 'F_FMSY', 'Yield')}}
 
 \item{MPs}{Optional subset by MP}

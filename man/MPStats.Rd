@@ -4,7 +4,7 @@
 \alias{MPStats}
 \title{Calculate Statistics for MP Performance}
 \usage{
-MPStats(MSEobj, PMRefs = list(B_BMSY = 0.5, B_B0 = 0.2, F_FMSY = 1,
+MPStats(MSEobj, PMRefs = list(B_BMSY = 0.5, SSB_SSB0 = 0.2, F_FMSY = 1,
 AAVY = 30, AAVE = 30), lastYrs = 10, UseMean = TRUE, msg = TRUE)
 }
 \arguments{

@@ -5,7 +5,7 @@
 \title{Boxplot of MP performance from MSE object}
 \usage{
 \method{boxplot}{MSE}(x, MPs = NA, maxMP = 8, PMRefs = list(B_BMSY = 1,
-  B_B0 = 0.2, F_FMSY = 1, AAVY = 30, AAVE = 30), lastYrs = 10,
+  SSB_SSB0 = 0.2, F_FMSY = 1, AAVY = 30, AAVE = 30), lastYrs = 10,
   cex.lab = 1.2, cex.PM = 0.75, canMPs = NULL, cols = TRUE,
   outline = FALSE, CexName = 1.25, incLine = TRUE, incref = FALSE,
   Names = TRUE, ...)
@@ -18,7 +18,7 @@
 \item{maxMP}{Maximum number of MPs to plot}
 
 \item{PMRefs}{List containing the Performance Metrics reference points.
-Options are \code{'B_B0', 'B_BMSY', 'F_FMSY', 'AAVE', 'AAVY'}}
+Options are \code{'SSB_SSB0', 'B_BMSY', 'F_FMSY', 'AAVE', 'AAVY'}}
 
 \item{lastYrs}{Last number of years in projection to calculate statistics}
 
