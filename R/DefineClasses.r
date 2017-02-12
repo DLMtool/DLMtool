@@ -1094,7 +1094,10 @@ NULL
 setMethod("plot",
   signature(x = "DLM_data"),
   function(x,funcs=NA,maxlines=6,perc=0.5,xlims=NA){
-    
+   
+    old_par <- par(no.readonly = TRUE)
+    on.exit(par(list = old_par), add = TRUE)
+	  
     DLM_data<-x
 	if (class(DLM_data) != "DLM_data") stop("Must supply object of class DLM_data")
 	if (all(is.na(DLM_data@TAC))) stop("No TAC data found")
@@ -1298,6 +1301,9 @@ setMethod("summary",
           signature(object = "DLM_data"),
           function(object){
   
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(list = old_par), add = TRUE)
+
   scols<-c('red','green','blue','orange','brown','purple','dark grey','violet','dark red','pink','dark blue','grey')
   
   #dev.new2(width=8,height=4.5)
