@@ -4,18 +4,16 @@
 \alias{TwoSidedFun}
 \title{Internal Two sided selectivity curve}
 \usage{
-TwoSidedFun(L1, s1, s2, Lens)
+TwoSidedFun(LFS, s1, s2, lens)
 }
 \arguments{
-\item{L1}{length one}
+\item{LFS}{first length at fulll selection}
 
-\item{s1}{s1}
+\item{s1}{ascending slope}
 
-\item{s2}{s2}
+\item{s2}{descending slope}
 
-\item{Lens}{vector of lengths}
-
-\item{tst}{s2}
+\item{lens}{vector of lengths}
 }
 \description{
 Internal Two sided selectivity curve

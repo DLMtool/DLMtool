@@ -50,6 +50,8 @@ An object for storing data for analysis using data-limited methods
 
 \item{\code{Abun}}{An estimate of absolute current vulnerable abundance}
 
+\item{\code{SpAbun}}{An estimate of absolute current spawning stock abundance}
+
 \item{\code{vbK}}{The von Bertalanffy growth coefficient}
 
 \item{\code{vbLinf}}{Maximum length}

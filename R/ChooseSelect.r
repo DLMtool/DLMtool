@@ -10,37 +10,35 @@
 #' (FstYr:current year).
 #' 
 #' 
-#' @usage ChooseSelect(Fleet, Stock=NULL, FstYr=NULL, SelYears=NULL)
 #' @param Fleet A fleet object.
 #' @param Stock Optional Stock object. If provided, average length-at-maturity
 #' is included on plot for reference.
 #' @param FstYr Optional value for first historical year. If empty, user must
 #' specify the year in console.
+#' @param LastYr Optional value for last historical year. If empty, it is assumed to be the current year
 #' @param SelYears Optional vector of values for each year where selectivity
 #' pattern changed. If empty, user must specify the years in console (comma
 #' separated).
 #' @author A. Hordyk
 #' @importFrom utils flush.console
 #' @export ChooseSelect
-ChooseSelect <- function(Fleet, Stock = NULL, FstYr = NULL, SelYears = NULL) {
+ChooseSelect <- function(Fleet, Stock = NULL, FstYr = NULL, LastYr = NULL, SelYears = NULL) {
   chk <- class(Fleet@isRel)
   if (chk == "character") {
     chkrel <- tolower(Fleet@isRel)
-    if (chkrel == "true" | Fleet@isRel == "1") 
-      isRel <- TRUE
-    if (chkrel == "false" | Fleet@isRel == "0") 
-      isRel <- FALSE
+    if (chkrel == "true" | Fleet@isRel == "1") isRel <- TRUE
+    if (chkrel == "false" | Fleet@isRel == "0") isRel <- FALSE
   }
   if (chk == "numeric") {
-    if (Fleet@isRel == 1) 
-      isRel <- TRUE
-    if (Fleet@isRel == 0) 
-      isRel <- FALSE
+    if (Fleet@isRel == 1) isRel <- TRUE
+    if (Fleet@isRel == 0) isRel <- FALSE
   }
   
-  if ((!isRel) & is.null(Stock)) 
-    stop("Require Stock object")
-  LastYr <- as.numeric(format(Sys.Date(), format = "%Y"))
+  if ((!isRel) & is.null(Stock))  stop("Require Stock object")
+  if (is.null(LastYr)) {
+    LastYr <- as.numeric(format(Sys.Date(), format = "%Y"))
+	message("Last historical year assumed to be ", LastYr)
+  }
   if (is.null(FstYr)) {
     message("*****************")
     message("Enter first historical year")
@@ -60,23 +58,18 @@ ChooseSelect <- function(Fleet, Stock = NULL, FstYr = NULL, SelYears = NULL) {
     options(warn = 0)
   }
   SelYears <- sort(SelYears)
-  if (SelYears[1] != FstYr) 
-    SelYears <- c(FstYr, SelYears)
+  if (SelYears[1] != FstYr)  SelYears <- c(FstYr, SelYears)
   message("Break Points Years are: ")
   print(SelYears)
-  if (length(SelYears) < 2) 
-    stop("Must be more than one year")
-  if (max(SelYears) > LastYr) 
-    stop("Must specify historical year")
-  if (min(SelYears) < FstYr) 
-    stop("Year before first year")
+  if (length(SelYears) < 2) stop("Must be more than one year")
+  if (max(SelYears) > LastYr) stop("Must specify historical year")
+  if (min(SelYears) < FstYr) stop("Year before first year")
   flush.console()
   Selnyears <- length(SelYears)
   
   Years <- FstYr:LastYr  #SelYears[1]:SelYears[length(SelYears)]
   Fleet@nyears <- length(Years)
-  ind <- round((Range(SelYears, Max = LastYr, Min = FstYr)) * Fleet@nyears, 
-    0) + 1
+  ind <- round((Range(SelYears, Max = LastYr, Min = FstYr)) * Fleet@nyears, 0) + 1
   ind[length(ind)] <- max(ind) - 1
   Fleet@AbsSelYears <- SelYears
   Fleet@SelYears <- ind
@@ -138,8 +131,7 @@ BlankSelPlot <- function(Stock = NULL, Yr = NULL, N = NULL, isRel) {
         Max <- 3
         AxCex <- 1.3
         By <- 0.05
-        par(mfrow = c(1, 1), mai = c(2, 1, 0.5, 0.3), oma = c(1, 1, 1, 
-            1))
+        par(mfrow = c(1, 1), mai = c(2, 1, 0.5, 0.3), oma = c(1, 1, 1, 1))
         plot(c(0, 3), c(0, 1), type = "n", xlab = "", ylab = "", axes = FALSE)
         mtext(side = 2, line = 3, "Selectivity", cex = AxCex)
         axis(side = 2)

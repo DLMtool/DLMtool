@@ -4,10 +4,11 @@
 \alias{runMSErobust}
 \title{Run a Management Strategy Evaluation}
 \usage{
-runMSErobust(OM = '1', MPs = NA, nsim = 200, proyears = 28, interval
-= 4, pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, custompars = 0,
-CheckMPs = TRUE, maxsims = 64, name = NULL, unique=TRUE, maxCrash = 10, saveMSE = TRUE,
-savePack = FALSE)
+runMSErobust(OM = "1", MPs = NA, nsim = 200, proyears = 28,
+  interval = 4, pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1,
+  custompars = NULL, CheckMPs = TRUE, Hist = FALSE, ntrials = 50,
+  fracD = 0.05, maxsims = 64, name = NULL, unique = TRUE,
+  maxCrash = 10, saveMSE = TRUE, savePack = FALSE)
 }
 \arguments{
 \item{OM}{An operating model object (class OM)}
@@ -43,6 +44,16 @@ estimates from stock assessments.}
 
 \item{CheckMPs}{Logical to indicate if Can function should be used to check
 if MPs can be run}
+
+\item{Hist}{Should model stop after historical simulations? Returns a list 
+containing all historical data}
+
+\item{ntrials}{Maximum of times depletion and recruitment deviations are 
+resampled to optimize for depletion. After this the model stops if more than 
+percent of simulations are not close to the required depletion}
+
+\item{fracD}{maximum allowed proportion of simulations where depletion is not 
+close to sampled depletion from OM before model stops with error}
 
 \item{maxsims}{Maximum number of simulations per packet}
 

@@ -4,9 +4,10 @@
 \alias{barplot.MSE}
 \title{Plot a barplot of MSE results}
 \usage{
-\method{barplot}{MSE}(height, MSEobj = NULL, PMs = list(B_BMSY = 0.5, B_B0 =
-  0.2), PLim = 0.8, lastYrs = 10, maxMP = 14, MPs = NA, Title = NULL,
-  sims = NULL, msg = TRUE, cex.names = 1.3, incRef = FALSE, ...)
+\method{barplot}{MSE}(height, MSEobj = NULL, PMs = list(B_BMSY = 0.5,
+  SSB_SSB0 = 0.2), PLim = 0.8, lastYrs = 10, maxMP = 14, MPs = NA,
+  Title = NULL, sims = NULL, msg = TRUE, cex.names = 1.3,
+  incRef = FALSE, ...)
 }
 \arguments{
 \item{height}{An object of class MSE. Generic function must have argument
@@ -14,7 +15,7 @@ height. But note that this must be an MSE object.}
 
 \item{MSEobj}{Optional. An object of class MSE. Overides \code{height}}
 
-\item{PMs}{List of performance metrics. Options are \code{c('B_B0',
+\item{PMs}{List of performance metrics. Options are \code{c('SSB_SSB0',
 'B_BMSY', 'F_FMSY', 'AAVE', 'AAVY')}}
 
 \item{PLim}{Probability threshold}

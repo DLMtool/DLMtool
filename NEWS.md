@@ -1,30 +1,48 @@
 ## DLMtool 
 The current version of the DLMtool package is available for download from [CRAN](https://cran.r-project.org/web/packages/DLMtool/index.html).
 
-### DLMtool V3.2.9000 Current Development Version
+### DLMtool V3.2.9005 Current Development Version
 
 
 #### Major Changes
-
-
+- all objects previously in `DLMdat` have now been added as separate data objects. This means that it is no longer neccessary to unpack data objects at the beginning of an R session.
+- parallel processing can be initialized with a new function `setup()`
+- `runMSE` and `runMSErobust` functions have a new logical argument `Hist`. When `Hist=TRUE` the model returns the historical simulations only. 
+- `CheckConverg` has been deprecated - use `Converge` now to check MSE for convergence
+- several optimization functions in the historical simulations have been re-coded in C++ using the Rcpp package (about 10x faster)
 
 #### Minor Changes
-- All objects previously in `DLMdat` have now been added as separate data objects. This means that it is no longer neccessary to unpack data objects at the beginning of an R session.
-- `CheckConverg` has been deprecated - use `Converge` now 
 - package now uses Roxygen2 for all documentation. 
-- `setup` function can be used to setting up parallel processing
-- exported several functions that some users required
-- removed LBSPR functions and replaced with dependency on LBSPR package. 
+- exported several previously internal functions that make it easier for users to examine code
+- removed LBSPR functions and replaced with dependency on LBSPR package 
+- moved `custompars` section in `runMSE.r` and renamed parameters to match OM object
+- modified MSE code so that `R0` can be a vector `nsim` long
+- `custompars` has been moved in the MSE code so that more parameters can be passed in to the MSE. A message alerts users which valid parameters have been found in `custompars` and any invalid parameters are displayed in a warning message 
+- changed variable name `BMSY_B0` to `SSBMSY_SSB0` to avoid confusion
+- added projected spawning stock biomass `SSB` and vulnerable biomass `VB` to MSE object
+- added `SpAbun` slot to data object for abundance of spawning stock. The `Abun` slot relates to vulnerable biomass
+- added `ntrials` and `fracD` control arguments to `runMSE`. Allows user to modify the maximum number of re-samples in the optimization to achieve the sampled depletion. The model will stop if a proprtion greater than `fracD` of the simulated depletion values are not the same as the sampled values after more than `ntrials` re-samples
+
 
 #### Bug Fixes 
 - fixed typo in `getr` function  
 - fixed indexing error in Ricker SRR fixed
 - fixed bug in catch-at-length and catch-at-age generation code where years were being indexed incorrectly
-- fixed bug in `ChooseEffort` function where nyears was being set to 0 
+- fixed bug in `ChooseEffort` function where nyears was being set to 0 in some cases 
 - fixed bug in calculation of Lbar
-- corrected colors in `Pplot2` for F/FMSY
-- corrected calculation of bias in steepness when `hcv` is 0
+- fixed colors in `Pplot2` for F/FMSY
+- fixed calculation of bias in steepness when `hcv` is 0 in the runMSE code
 - LFC and LFS in future projections weren't being updated correctly
+- fixed F calculations at end of MSE so that `FMSYref` results in exactly F/FSMY = 1 
+- `maxF` now also applies to the catch that is taken from the population
+
+#### To Do 
+- change dimensions of `SSB_hist` in MSE object from `nsim, maxage, nyears, narea` to `nsim, nyear` - others as well?
+- test and add new MPs developed by Quang
+- add Roxygen2 documentation for new MPs
+- go through issue list on GithHub
+- update User Manual and Documentation prior to new release on CRAN
+
 
 ## Previous Versions
 ### New Additions to Version 3.2.2

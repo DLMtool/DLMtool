@@ -2265,8 +2265,7 @@ BK_ML <- function(x, DLM_data, reps = 100) {
   Linfc <- trlnorm(reps * 10, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])
   Kc <- trlnorm(reps * 10, DLM_data@vbK[x], DLM_data@CV_vbK[x])
   Mdb <- trlnorm(reps * 10, DLM_data@Mort[x], DLM_data@CV_Mort[x])
-  Z <- MLne(x, DLM_data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, 
-    MLtype = "F")
+  Z <- MLne(x, DLM_data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
   FM <- Z - Mdb
   MuC <- DLM_data@Cat[x, length(DLM_data@Cat[x, ])]
   Cc <- trlnorm(reps * 10, MuC, DLM_data@CV_Cat[x])
