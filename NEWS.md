@@ -1,5 +1,5 @@
 ## DLMtool 
-The current version of the DLMtool package is available for download from [CRAN](https://cran.r-project.org/web/packages/DLMtool/index.html).
+The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/web/packages/DLMtool/index.html).
 
 ### DLMtool V3.2.9005 Current Development Version
 
