@@ -32,7 +32,6 @@ VignetteBuilder: knitr
 Suggests:
     knitr,
     rmarkdown
-NeedsCompilation: no
 Packaged: 2015-11-13 23:33:05 UTC; Tom Carruthers 
 LinkingTo: Rcpp
 RoxygenNote: 5.0.1
