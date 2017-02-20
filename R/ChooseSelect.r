@@ -1,3 +1,4 @@
+
 #' Manually choose the historical selectivity pattern
 #' 
 #' Input the first historical year, and all years where selectivity pattern
@@ -8,7 +9,6 @@
 #' Selectivity-at-length is fixed in between break-point years.  Note that this
 #' function replaces 'nyears' in the Fleet object with the value defined here
 #' (FstYr:current year).
-#' 
 #' 
 #' @param Fleet A fleet object.
 #' @param Stock Optional Stock object. If provided, average length-at-maturity
