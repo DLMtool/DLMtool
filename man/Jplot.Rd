@@ -4,8 +4,8 @@
 \alias{Jplot}
 \title{Joint probability plot}
 \usage{
-Jplot(MSEobj, PLim = 0.8, YVar = c('LTY', 'STY', 'avgB_B0',
-'avgB_BMSY'), PMRefs = list(B_BMSY = 0.5, B_B0 = 0.2), UseMean = TRUE,
+Jplot(MSEobj, PLim = 0.8, YVar = c('LTY', 'STY', 'avgSSB_SSB0',
+'avgB_BMSY'), PMRefs = list(B_BMSY = 0.5, SSB_SSB0 = 0.2), UseMean = TRUE,
 lastYrs = 10, AvailMPs = NULL, XLim = NULL, ShowCols = TRUE, ShowLabs =
 FALSE, All = TRUE)
 }
@@ -16,7 +16,7 @@ FALSE, All = TRUE)
 percent)}
 
 \item{YVar}{What to plot of the y-axis: choose from \code{c('LTY', 'STY',
-'avgB_B0', 'avgB_BMSY')}}
+'avgSSB_SSB0', 'avgB_BMSY')}}
 
 \item{PMRefs}{List containing the reference limits for each metric}
 

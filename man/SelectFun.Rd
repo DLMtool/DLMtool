@@ -4,7 +4,7 @@
 \alias{SelectFun}
 \title{Selectivity at length function}
 \usage{
-SelectFun(i, SL0.05, SL1, MaxSel, Linfs, Lens)
+SelectFun(i, SL0.05, SL1, MaxSel, maxlens, Lens)
 }
 \arguments{
 \item{i}{index}
@@ -15,7 +15,7 @@ SelectFun(i, SL0.05, SL1, MaxSel, Linfs, Lens)
 
 \item{MaxSel}{Maximum selectivity}
 
-\item{Linfs}{asymptotic length}
+\item{maxlens}{maximum length}
 
 \item{Lens}{vector of lengths}
 }

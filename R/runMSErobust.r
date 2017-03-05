@@ -12,10 +12,6 @@
 #' file (to the current working directory).
 #' 
 #' 
-#' @usage runMSErobust(OM = '1', MPs = NA, nsim = 200, proyears = 28, interval
-#' = 4, pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, custompars = 0,
-#' CheckMPs = TRUE, maxsims = 64, name = NULL, unique=TRUE, maxCrash = 10, saveMSE = TRUE,
-#' savePack = FALSE)
 #' @param OM An operating model object (class OM)
 #' @param MPs A vector of methods (character string) of class DLM_output or
 #' DLM_input. If NA all available MPs are run.
@@ -39,6 +35,13 @@
 #' estimates from stock assessments.
 #' @param CheckMPs Logical to indicate if Can function should be used to check
 #' if MPs can be run
+#' @param Hist Should model stop after historical simulations? Returns a list 
+#' containing all historical data
+#' @param ntrials Maximum of times depletion and recruitment deviations are 
+#' resampled to optimize for depletion. After this the model stops if more than 
+#' percent of simulations are not close to the required depletion
+#' @param fracD maximum allowed proportion of simulations where depletion is not 
+#' close to sampled depletion from OM before model stops with error
 #' @param maxsims Maximum number of simulations per packet
 #' @param name Character string for name of saved MSE packets (if
 #' \code{savePack=TRUE}) and final MSE object. If none provided, it uses the
@@ -53,14 +56,15 @@
 #' @author A. Hordyk and T. Carruthers
 #' @export runMSErobust
 runMSErobust <- function(OM = "1", MPs = NA, nsim = 200, proyears = 28, 
-  interval = 4, pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, custompars = 0, 
-  CheckMPs = TRUE, maxsims = 64, name = NULL, unique=TRUE, maxCrash = 10, saveMSE = TRUE, 
+  interval = 4, pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, custompars = NULL, 
+  CheckMPs = TRUE, Hist=FALSE, ntrials=50, fracD=0.05,
+  maxsims = 64, name = NULL, unique=TRUE, maxCrash = 10, saveMSE = TRUE, 
   savePack = FALSE) {
   
   packets <- new("list")  # a list of completed MSE objects
   simsplit <- split(1:nsim, ceiling(seq_along(1:nsim)/maxsims))  # split the runs
   
-  if (!sfIsRunning()) stop("You must set up parallel processing to use runMSErobust. Use: setup()")
+  if (!snowfall::sfIsRunning()) stop("You must set up parallel processing to use runMSErobust. Use: setup()", call.=FALSE)
   
   if (is.null(name)) {
     st <- as.numeric(regexpr(":", OM@Name)) + 1
@@ -79,7 +83,7 @@ runMSErobust <- function(OM = "1", MPs = NA, nsim = 200, proyears = 28,
       trialMSE <- try(runMSE(OM = OM, MPs = MPs, nsim = length(simsplit[[i]]), 
         proyears = proyears, interval = interval, pstar = pstar, 
         maxF = maxF, timelimit = timelimit, reps = reps, custompars = custompars, 
-        CheckMPs = CheckMPs))
+        CheckMPs = CheckMPs, Hist, ntrials, fracD))
       crash <- crash + 1
       if (crash >= maxCrash) 
         stop("Crashed too many times!")
@@ -88,14 +92,14 @@ runMSErobust <- function(OM = "1", MPs = NA, nsim = 200, proyears = 28,
         fname <- paste0(name, "pack", i, ".rdata")
         if (savePack) {
           saveRDS(trialMSE, file = fname)
-          print(paste("Saving", fname, "to", getwd()))
+          message(paste("Saving", fname, "to", getwd()))
           flush.console()
         }
         error <- 0
         crash <- 0
       }
     }
-    print(paste("Packet", i, "of", length(simsplit), "complete"))
+    message(paste("Packet", i, "of", length(simsplit), "complete"))
     flush.console()
   }
   if (i == 1) MSEobj <- packets[[1]]
@@ -103,7 +107,7 @@ runMSErobust <- function(OM = "1", MPs = NA, nsim = 200, proyears = 28,
   if (saveMSE) {
     fname <- paste0(name, ".rdata")
     saveRDS(MSEobj, file = fname)
-    print(paste("Saving", fname, "to", getwd()))
+    message(paste("Saving", fname, "to", getwd()))
     flush.console()
   }
   MSEobj

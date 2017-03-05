@@ -83,7 +83,14 @@ needed <- function(DLM_data, funcs = NA) {
 parallelMPs <- function(x, DLM_data, reps, MPs, ss) sapply(ss, MPs[x], 
   DLM_data, reps = reps)
 
-
+#' Make stochastic variables certain for only one rep
+#' 
+#' As title.
+#'
+#' @param DLM_data An object of class DLM_data that has been run though TAC()
+#' @author T. Carruthers
+#' @keywords internal 
+#' @export OneRep
 OneRep <- function(DLM_data) {
   DLM_data@CV_Cat = DLM_data@CV_Dt = DLM_data@CV_AvC = DLM_data@CV_Ind = DLM_data@CV_Mort = DLM_data@CV_FMSY_M = DLM_data@CV_BMSY_B0 = DLM_data@CV_Cref = DLM_data@CV_Bref = DLM_data@CV_Iref = DLM_data@CV_Rec = DLM_data@CV_Dep = DLM_data@CV_Abun = DLM_data@CV_L50 = DLM_data@CV_vbK = DLM_data@CV_vbLinf = DLM_data@CV_vbt0 = DLM_data@CV_LFC = DLM_data@CV_LFS = DLM_data@CV_wla = DLM_data@CV_wlb = DLM_data@CV_steep = DLM_data@sigmaL = tiny
   DLM_data

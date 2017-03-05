@@ -1,4 +1,6 @@
 language: R
+repos:
+  CRAN: http://cran.rstudio.com
 cache: packages
 r:
   - oldrel

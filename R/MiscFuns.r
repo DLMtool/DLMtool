@@ -1,3 +1,4 @@
+
 # Collection of miscellaneous functions.  All functions have
 # accompanying help files.
 
@@ -211,18 +212,51 @@ Fease <- function(feaseobj, outy = "table") {
 #' 
 #' @export getmov
 getmov <- function(x, Prob_staying, Frac_area_1) {
-  test <- optim(par = c(0, 0, 0), movfit, method = "L-BFGS-B", lower = rep(-6, 
-    3), upper = rep(6, 3), prb = Prob_staying[x], frac = Frac_area_1[x])
-  mov <- array(c(test$par[1], test$par[2], 0, test$par[3]), dim = c(2, 
-    2))
+  test <- optim(par = c(0, 0, 0), movfit, method = "L-BFGS-B", 
+    lower = rep(-6, 3), upper = rep(6, 3), prb = Prob_staying[x], 
+	frac = Frac_area_1[x])
+  mov <- array(c(test$par[1], test$par[2], 0, test$par[3]), dim = c(2, 2))
   mov <- exp(mov)
   mov/array(apply(mov, 1, sum), dim = c(2, 2))
 }
 
-
+#' Optimization function to find a movement model that matches user specified
+#' movement characteristics modified for Rcpp.
+#' 
+#' The user specifies the probability of staying in the same area and spatial
+#' heterogeneity (both in the unfished state).
+#' 
+#' This is paired with movfit to find the correct movement model.
+#' 
+#' @param x A position in vectors Prob_staying and Frac_area_1
+#' @param Prob_staying User specified probability that individuals in area 1
+#' remain in that area (unfished conditions)
+#' @param Frac_area_1 User specified fraction of individuals found in area 1
+#' (unfished conditions)
+#' @return A markov movement matrix
+#' @author T. Carruthers
+#' @examples
+#' 
+#' Prob_staying<-0.8 # probability  that individuals remain in area 1 between time-steps
+#' Frac_area_1<-0.35 # the fraction of the stock found in area 1 under equilibrium conditions
+#' markovmat<-getmov(1,Prob_staying, Frac_area_1)
+#' vec<-c(0.5,0.5) # initial guess at equilibrium distribution (2 areas)
+#' for(i in 1:300)vec<-apply(vec*markovmat,2,sum) # numerical approximation to stable distribution
+#' c(markovmat[1,1],vec[1]) # pretty close right?
+#' 
+#' 
+#' @export getmov2
+getmov2 <- function(x, Prob_staying, Frac_area_1) {
+  test <- optim(par = c(0, 0, 0), movfit_Rcpp, method = "L-BFGS-B", 
+    lower = rep(-6, 3), upper = rep(6, 3), prb = Prob_staying[x], 
+	frac = Frac_area_1[x])	
+  mov <- array(c(test$par[1], test$par[2], 0, test$par[3]), dim = c(2, 2))
+  mov <- exp(mov)
+  mov/array(apply(mov, 1, sum), dim = c(2, 2))
+}
 
 #' Optimization function that returns the squared difference between user
-#' specified and calculated movement parameters.
+#' specified and calculated movement parameters. (deprecated: now in Rcpp)
 #' 
 #' The user specifies the probability of staying in the same area and spatial
 #' heterogeneity (both in the unfished state). This function returns the
@@ -241,14 +275,14 @@ getmov <- function(x, Prob_staying, Frac_area_1) {
 #' @author T. Carruthers
 #' @export movfit
 movfit <- function(par, prb, frac) {
+  # .Deprecated("movfit_Rcpp")
   mov <- array(c(par[1], par[2], 0, par[3]), dim = c(2, 2))
   mov <- exp(mov)
   mov <- mov/array(apply(mov, 1, sum), dim = c(2, 2))
   dis <- c(frac, 1 - frac)
-  for (i in 1:100) dis <- apply(array(dis, c(2, 2)) * mov, 2, sum)
+  for (i in 1:100) dis <-  apply(array(dis, c(2, 2)) * mov, 2, sum)
   (log(mov[1, 1]) - log(prb))^2 + (log(frac) - log(dis[1]))^2
 }
-
 
 
 #' Optimization function that find the catchability (q where F=qE) value
@@ -284,13 +318,56 @@ movfit <- function(par, prb, frac) {
 #' @author T. Carruthers
 getq <- function(x, dep, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V, 
   nyears, maxage, mov, Spat_targ, SRrel, aR, bR) {
-  opt <- optimize(qopt, log(c(0.0075, 15)), depc = dep[x], Fc = Find[x, 
-    ], Perrc = Perr[x, ], Mc = Marray[x, ], hc = hs[x], Mac = Mat_age[x, 
-    ], Wac = Wt_age[x, , ], R0c = R0, Vc = V[x, , ], nyears = nyears, 
-    maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x], 
-    SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ])
+  opt <- optimize(qopt, log(c(0.0075, 15)), depc = dep[x], Fc = Find[x, ], 
+    Perrc = Perr[x, ], Mc = Marray[x, ], hc = hs[x], Mac = Mat_age[x, ], 
+    Wac = Wt_age[x, , ], R0c = R0[x], Vc = V[x, , ], nyears = nyears, 
+	maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x], 
+    SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ])	
   return(exp(opt$minimum))
 }
+
+#' Optimization function that find the catchability (q where F=qE) value
+#' required to get to user-specified stock depletion (current biomass /
+#' unfished biomass) modified for Rcpp 
+#' 
+#' The user specifies the level of stock depleiton. This funciton takes the
+#' derived effort trajectories and finds the catchabiltiy to get the stock
+#' there.
+#'
+#' @param x internal parameter
+#' @param dep internal parameter
+#' @param Find internal parameter
+#' @param Perr internal parameter
+#' @param Marray internal parameter
+#' @param hs internal parameter
+#' @param Mat_age internal parameter
+#' @param Wt_age internal parameter
+#' @param R0 internal parameter
+#' @param V internal parameter
+#' @param nyears internal parameter
+#' @param maxage internal parameter
+#' @param mov internal parameter
+#' @param Spat_targ internal parameter
+#' @param SRrel internal parameter
+#' @param aR internal parameter
+#' @param bR internal parameter
+#' 
+#' Paired with qopt
+#' @keywords internal
+#' @export getq2 
+#'
+#' @author T. Carruthers
+getq2 <- function(x, dep, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V, 
+  nyears, maxage, mov, Spat_targ, SRrel, aR, bR) {
+  opt <- optimize(optQ_cpp, log(c(0.0075, 15)), depc = dep[x], Fc = Find[x, ], 
+    Perrc = Perr[x, ], Mc = Marray[x, ], hc = hs[x], Mac = Mat_age[x, ], 
+    Wac = Wt_age[x, , ], R0c = R0[x], Vc = V[x, , ], nyears = nyears, 
+	maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x], 
+    SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ])	
+  
+  return(exp(opt$minimum))
+}
+
 
 
 #' Internal optimization function that find the catchability (q where F=qE)
@@ -330,7 +407,7 @@ qopt <- function(lnq, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears,
   # areasize<-c(asizec,1-asizec)
   idist <- rep(1/nareas, nareas)
   for (i in 1:300) idist <- apply(array(idist, c(2, 2)) * movc, 2, sum)
-  
+ 
   N <- array(exp(-Mc[1] * ((1:maxage) - 1)) * R0c, dim = c(maxage, nareas)) * 
     array(rep(idist, each = maxage), dim = c(maxage, nareas))
   SSN <- Mac * N  # Calculate initial spawning stock numbers
@@ -344,27 +421,26 @@ qopt <- function(lnq, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears,
   
   for (y in 1:nyears) {
     # set up some indices for indexed calculation
-    targ <- (apply(Vc[, y] * Biomass, 2, sum)^Spat_targc)/mean(apply(Vc[, 
-      y] * Biomass, 2, sum)^Spat_targc)
-    FMc <- array(qc * Fc[y] * Vc[, y], dim = c(maxage, nareas)) * array(rep(targ, 
-      each = maxage), dim = c(maxage, nareas))  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
+    targ <- (apply(Vc[, y] * Biomass, 2, sum)^Spat_targc)/mean(apply(Vc[, y] * 
+	  Biomass, 2, sum)^Spat_targc)
+    FMc <- array(qc * Fc[y] * Vc[, y], dim = c(maxage, nareas)) * array(rep(targ, each = maxage), 
+	  dim = c(maxage, nareas))  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
     Zc <- FMc + Mc[y]
-    N[2:maxage, ] <- N[1:(maxage - 1), ] * exp(-Zc[1:(maxage - 1), 
-      ])  # Total mortality
+
+    N[2:maxage, ] <- N[1:(maxage - 1), ] * exp(-Zc[1:(maxage - 1), ])  # Total mortality
     if (SRrelc == 1) {
       N[1, ] <- Perrc[y] * (0.8 * R0a * hc * apply(SSB, 2, sum))/(0.2 * 
         SSBpR * R0a * (1 - hc) + (hc - 0.2) * apply(SSB, 2, sum))  # Recruitment assuming regional R0 and stock wide steepness
     } else {
-      N[1, ] <- aRc * apply(SSB, 2, sum) * exp(-bRc * apply(SSB, 
-        2, sum))
+      N[1, ] <- aRc * apply(SSB, 2, sum) * exp(-bRc * apply(SSB, 2, sum)) # No error?
     }
-    
+	  
     # print(N[1])
     indMov <- as.matrix(expand.grid(1:nareas, 1:nareas, 1:maxage)[3:1])
     indMov2 <- indMov[, 1:2]
     indMov3 <- indMov[, 2:3]
-    temp <- array(N[indMov2] * movc[indMov3], dim = c(nareas, nareas, 
-      maxage))
+    temp <- array(N[indMov2] * movc[indMov3], dim = c(nareas, nareas, maxage))
+		
     N <- apply(temp, c(3, 1), sum)
     SSN <- N * Mac
     SSB <- SSN * Wac[, y]
@@ -372,10 +448,13 @@ qopt <- function(lnq, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears,
     SBiomass <- SSN * Wac[, y]
     # print(sum(Biomass))
   }  # end of year
-  return((log(depc) - log(sum(SBiomass)/sum(SSB0)))^2)
+  
+return((log(depc) - log(sum(SBiomass)/sum(SSB0)))^2)
 }
 
 
+
+	
 ## Operating Model Functions
 ## --------------------------------------------------- These functions
 ## are used to manually specify, choose, or estimate various parameters
@@ -995,8 +1074,7 @@ getEffhist <- function(Esd, nyears, EffYears, EffLower, EffUpper) {
         effort[effort == 0] <- 0.01
         
         Emu <- -0.5 * Esd^2
-        Eerr <- array(exp(rnorm(nyears * nsim, rep(Emu, nyears), rep(Esd, 
-            nyears))), c(nsim, nyears))  # calc error
+        Eerr <- array(exp(rnorm(nyears * nsim, rep(Emu, nyears), rep(Esd, nyears))), c(nsim, nyears))  # calc error
         out <- NULL
         eff <- effort * Eerr  # add error 
         out[[1]] <- eff
@@ -1019,13 +1097,24 @@ getEffhist <- function(Esd, nyears, EffYears, EffLower, EffUpper) {
 #' @export gettempvar
 #' @keywords internal
 #'  
-gettempvar <- function(targ, targsd, targgrad, nyears, nsim) {
+gettempvar <- function(targ, targsd, targgrad, nyears, nsim, rands=NULL) {
     mutemp <- -0.5 * targsd^2
     temp <- array(1, dim = c(nsim, nyears))
-    for (i in 2:nyears) {
+    if (is.null(rands)) {
+	  for (i in 2:nyears) {
         temp[, i] <- temp[, i] * exp(rnorm(nsim, mutemp, targsd))
-    }
+      }
+	}
+	if (!is.null(rands)) {
+	  for (i in 2:nyears) {
+          temp[, i] <- temp[, i] * rands[,i]
+      }
+	}
     yarray <- array(rep((1:nyears) - 1, each = nsim), dim = c(nsim, nyears))
     temp <- temp * (1 + targgrad/100)^yarray
     targ * temp/apply(temp, 1, mean)
 }
+
+
+
+

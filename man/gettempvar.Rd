@@ -4,7 +4,7 @@
 \alias{gettempvar}
 \title{Creates a time series per simulation that has gradient grad and random normal walk with sigma}
 \usage{
-gettempvar(targ, targsd, targgrad, nyears, nsim)
+gettempvar(targ, targsd, targgrad, nyears, nsim, rands = NULL)
 }
 \arguments{
 \item{targ}{mean}
