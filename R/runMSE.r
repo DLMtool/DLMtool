@@ -796,7 +796,8 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	  Biomass_s = Biomass[, , nyears, , drop=FALSE], VBiomass_s = VBiomass[, , nyears, , drop=FALSE], 
 	  SSB_s = SSB[, , nyears, , drop=FALSE], Vn = V[, , (nyears + 1):(nyears + proyears), drop=FALSE], 
 	  hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas,
-	  maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)	
+	  maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)
+	
   } else {
     # RefY <- sapply(1:nsim, getFref, Marray = Marray, Wt_age = Wt_age, 
       # Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, ], SSN_s = SSN[, , nyears, ], 
@@ -1518,21 +1519,21 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 
   # Store MP duration
   attr(MPs, "duration") <- MPdur
-  # Store MSE info
-  attr(OM@Name, "version") <- packageVersion("DLMtool")
-  attr(OM@Name, "interval") <- interval
-  attr(OM@Name, "maxF") <- maxF
-  attr(OM@Name, "timelimit") <- timelimit
-  attr(OM@Name, "pstar") <- pstar
-  attr(OM@Name, "reps") <- reps
-  attr(OM@Name, "date") <- date()
-  attr(OM@Name, "R.version") <- R.version
+
   
   MSEout <- new("MSE", Name = OM@Name, nyears, proyears, nMPs=nMP, MPs, nsim, 
     DLM_data@OM, Obs=DLM_data@Obs, B_BMSY=B_BMSYa, F_FMSY=F_FMSYa, B=Ba, 
 	SSB=SSBa, VB=VBa, FM=FMa, Ca, TAC=TACa, SSB_hist = SSB, CB_hist = CB, 
 	FM_hist = FM, Effort = Effort)
-	
+    # Store MSE info
+  attr(MSEout, "version") <- packageVersion("DLMtool")
+  attr(MSEout, "interval") <- interval
+  attr(MSEout, "maxF") <- maxF
+  attr(MSEout, "timelimit") <- timelimit
+  attr(MSEout, "pstar") <- pstar
+  attr(MSEout, "reps") <- reps
+  attr(MSEout, "date") <- date()
+  attr(MSEout, "R.version") <- R.version	
   MSEout 
 
 }
