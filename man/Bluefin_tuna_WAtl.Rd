@@ -12,4 +12,3 @@ Bluefin_tuna_WAtl
 An object of class Stock
 }
 \keyword{datasets}
-

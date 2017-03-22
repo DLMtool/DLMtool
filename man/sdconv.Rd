@@ -20,4 +20,3 @@ Get log normal standard deviation from transformed space mean and standard devia
 \author{
 T. Carruthers
 }
-

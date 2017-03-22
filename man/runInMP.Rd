@@ -21,4 +21,3 @@ control recommendation(s) in element 1 and DLM_data object in element 2.
 \author{
 A. Hordyk
 }
-

@@ -22,4 +22,3 @@ DLMtool object
 \author{
 A. Hordyk
 }
-

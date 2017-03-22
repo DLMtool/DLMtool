@@ -36,4 +36,3 @@ function of improved precision and bias e.g.: relative cost=
 \author{
 T. Carruthers
 }
-

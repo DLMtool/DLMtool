@@ -13,4 +13,3 @@ Internal function for mapping selectivity
 A. Hordyk
 }
 \keyword{internal}
-

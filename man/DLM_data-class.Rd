@@ -156,10 +156,12 @@ An object for storing data for analysis using data-limited methods
 
 \item{\code{Misc}}{Optional list which is passed to MPs}
 }}
+
 \section{Objects from the Class}{
  Objects can be created by calls of the form
 \code{new('DLM_data', stock)}
 }
+
 \examples{
 
 newdata<-new('DLM_data')
@@ -169,4 +171,3 @@ newdata<-new('DLM_data')
 T. Carruthers
 }
 \keyword{classes}
-

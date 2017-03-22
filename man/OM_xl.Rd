@@ -42,4 +42,3 @@ OM <- OM_xl(fname='OMTables.xlsx', stkname='myFish')
 \author{
 A. Hordyk
 }
-

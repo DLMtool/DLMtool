@@ -179,10 +179,12 @@ bounds of a uniform distribution from which to sample the parameter.
 
 \item{\code{Crefcv}}{Bias in the knowledge of MSY(uniform distribution)}
 }}
+
 \section{Objects from the Class}{
  Objects can be created by calls of the form
 \code{new('OM', Stock, Fleet, Observation)}.
 }
+
 \examples{
 
 showClass('OM')
@@ -192,4 +194,3 @@ showClass('OM')
 T. Carruthers
 }
 \keyword{classes}
-

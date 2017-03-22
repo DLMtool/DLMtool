@@ -45,10 +45,12 @@ available
 
 \item{\code{Abundance}}{Fishery independent survey, current fishing mortality rate from recent length composition, natural mortality rate, maturity at age, growth and stock recruitment relationship, habitat and relative density extrapolation}
 }}
+
 \section{Objects from the Class}{
  Objects can be created by calls of the form
 \code{new('DLM_fease', stock)}
 }
+
 \examples{
 
 newdata<-new('DLM_fease')
@@ -58,4 +60,3 @@ newdata<-new('DLM_fease')
 T. Carruthers
 }
 \keyword{classes}
-

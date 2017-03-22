@@ -29,4 +29,3 @@ This is paired with getmov to find the correct movement model.
 \author{
 T. Carruthers with an amateur attempt at converting to Rcpp by A. Hordyk (but it works!)
 }
-

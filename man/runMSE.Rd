@@ -63,4 +63,3 @@ simulation) for a specified operating model
 \author{
 T. Carruthers
 }
-

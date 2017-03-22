@@ -16,4 +16,3 @@ and values beyond five standard deviations from the mean as NA
 \author{
 T. Carruthers
 }
-

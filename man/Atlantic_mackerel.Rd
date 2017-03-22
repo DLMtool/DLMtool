@@ -12,4 +12,3 @@ Atlantic_mackerel
 An object of class DLM_data
 }
 \keyword{datasets}
-

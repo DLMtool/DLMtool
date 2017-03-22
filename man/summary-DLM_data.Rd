@@ -13,4 +13,3 @@
 \description{
 Summary of DLM_data object
 }
-

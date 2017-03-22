@@ -27,4 +27,3 @@ performance metrics
 \author{
 A. Hordyk
 }
-

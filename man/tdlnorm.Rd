@@ -22,4 +22,3 @@ Calculate density of log-normally distributed random numbers
 \author{
 T. Carruthers
 }
-

@@ -9,4 +9,3 @@ setup()
 \description{
 Sets up parallel processing using the snowfall package
 }
-

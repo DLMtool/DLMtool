@@ -31,4 +31,3 @@ projection
 \author{
 A. Hordyk
 }
-

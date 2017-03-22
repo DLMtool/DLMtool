@@ -57,4 +57,3 @@ doprojPI_cpp(lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c,
 Rcpp version of the Projection function for calculating Reference Yield
 }
 \keyword{internal}
-

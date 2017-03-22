@@ -12,4 +12,3 @@ Cobia
 An object of class DLM_data
 }
 \keyword{datasets}
-

@@ -27,4 +27,3 @@ growth.
 \author{
 T. Carruthers
 }
-

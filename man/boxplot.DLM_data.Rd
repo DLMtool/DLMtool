@@ -22,4 +22,3 @@ Boxplot of TAC recommendations
 \author{
 A. Hordyk
 }
-

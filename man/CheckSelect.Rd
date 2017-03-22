@@ -13,4 +13,3 @@ Rough Plot of Historical Selectivity Patterns
 A. Hordyk
 }
 \keyword{internal}
-

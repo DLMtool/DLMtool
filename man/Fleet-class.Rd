@@ -52,10 +52,12 @@ The component of the operating model that controls fishing dynamics
 
 \item{\code{isRel}}{Are the selectivity parameters relative to size-of-maturity? TRUE or FALSE}
 }}
+
 \section{Objects from the Class}{
  Objects can be created by calls of the form
 \code{new('Fleet', OM)}
 }
+
 \examples{
 
 showClass('Fleet')
@@ -65,4 +67,3 @@ showClass('Fleet')
 T. Carruthers
 }
 \keyword{classes}
-

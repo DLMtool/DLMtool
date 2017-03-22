@@ -12,4 +12,3 @@ Simulation_1
 An object of class DLM_data
 }
 \keyword{datasets}
-

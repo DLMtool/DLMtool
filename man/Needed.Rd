@@ -19,4 +19,3 @@ object
 \author{
 T. Carruthers
 }
-
