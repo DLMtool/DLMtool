@@ -18,7 +18,7 @@ LBSPR_ItTAC <- function(x, DLM_data, yrsmth=1,reps=5, ...) {
    DLM_data@L50, DLM_data@L95, DLM_data@wlb, DLM_data@MPrec" 
   
   if (is.na(DLM_data@MPrec[x])) {
-    message("No previous TAC recommendation")
+    # message("No previous TAC recommendation")
 	return(NA) # 
   }
   
