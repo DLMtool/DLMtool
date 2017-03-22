@@ -11,8 +11,8 @@
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/yeti/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -31,6 +31,8 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -141,42 +143,32 @@
     </div>
 
     
-    <p>A function that returns the stochastic TAC recommendations from a vector of data-limited MPs (DLM_output) given a data-limited data object DLM_data</p>
+    <p>A function that returns the stochastic TAC recommendations from a vector of
+data-limited MPs (DLM_output) given a data-limited data object DLM_data</p>
     
 
-    <pre><span class='fu'>TAC</span>(<span class='no'>DLM_data</span>, <span class='kw'>MPs</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>maxlines</span> <span class='kw'>=</span> <span class='fl'>6</span>, <span class='kw'>perc</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>xlims</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>timelimit</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
+    <pre><span class='fu'>TAC</span>(<span class='no'>DLM_data</span>, <span class='kw'>MPs</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>timelimit</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>DLM_data</dt>
-      <dd>
-<!-- %%     ~~Describe \code{DLM} here~~ -->
-</dd>
-      <dt>MPs</dt>
-      <dd>
-<!-- %%     ~~Describe \code{Meths} here~~ -->
-</dd>
-      <dt>reps</dt>
-      <dd>
-<!-- %%     ~~Describe \code{reps} here~~ -->
-</dd>
-      <dt>maxlines</dt>
-      <dd>
-<!-- %%     ~~Describe \code{maxlines} here~~ -->
-</dd>
-      <dt>perc</dt>
-      <dd>
-<!-- %%     ~~Describe \code{perc} here~~ -->
-</dd>
-      <dt>xlims</dt>
-      <dd>
-<!-- %%     ~~Describe \code{xlims} here~~ -->
-</dd>
-      <dt>timelimit</dt>
-      <dd>
-<!-- %%     ~~Describe \code{xlims} here~~ -->
-</dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>DLM_data</th>
+      <td><p>A data-limited methods data object</p></td>
+    </tr>
+    <tr>
+      <th>MPs</th>
+      <td><p>optional vector of MP names</p></td>
+    </tr>
+    <tr>
+      <th>reps</th>
+      <td><p>Number of repititions</p></td>
+    </tr>
+    <tr>
+      <th>timelimit</th>
+      <td><p>The maximum time (seconds) taken to complete 10 reps</p></td>
+    </tr>
+    </table>
     
 
   </div>

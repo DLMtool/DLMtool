@@ -11,8 +11,8 @@
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/yeti/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -31,6 +31,8 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -141,44 +143,56 @@
     </div>
 
     
-    <p>User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the OFL by back-constructing the stock to match a user specified level of stock depletion (OFL = M * FMSY/M * depletion* B0).</p>
+    <p>User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the OFL
+by back-constructing the stock to match a user specified level of stock
+depletion (OFL = M * FMSY/M * depletion* B0).</p>
     
 
     <pre><span class='fu'>DBSRA</span>(<span class='no'>x</span>, <span class='no'>DLM_data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>x</dt>
-      <dd>
-A position in a data-limited methods object.
-</dd>
-      <dt>DLM_data</dt>
-      <dd>
-A data-limited methods object.
-</dd>
-      <dt>reps</dt>
-      <dd>
-The number of samples of the TAC (OFL) recommendation.
-</dd>
-    </dl>
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>You specify a range of stock depletion and, given historical catches DB-SRA calculates what unfished biomass must have been to get you here given samples for M, FMSY relative to M and also BMSY relative to Bunfished.</p>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>x</th>
+      <td><p>A position in a data-limited methods object.</p></td>
+    </tr>
+    <tr>
+      <th>DLM_data</th>
+      <td><p>A data-limited methods object.</p></td>
+    </tr>
+    <tr>
+      <th>reps</th>
+      <td><p>The number of samples of the TAC (OFL) recommendation.</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A vector of TAC (OFL) values.</p>
     
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Dick, E.J., MacCall, A.D., 2011. Depletion-Based Stock Reduction Analysis: A catch-based method for determining sustainable yields for data-poor fish stocks. Fish. Res. 110, 331-341.</p>
+    <p>You specify a range of stock depletion and, given historical catches DB-SRA
+calculates what unfished biomass must have been to get you here given
+samples for M, FMSY relative to M and also BMSY relative to Bunfished.</p>
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
     <p>This is set up to return the OFL (FMSY * current biomass).</p>
-    <p>You may  have noticed that you -the user- specify three of the factors that make the quota recommendation. So this can be quite a subjective method.</p>
-    <p>Also the DB-SRA method of this package isn&#39;t exactly the same as the original method of Dick and MacCall (2011) because it has to work for simulated depletions above BMSY/B0 and even on occasion over B0. Also it doesn&#39;t have the modification for flatfish life histories that has previously been applied by Dick and MacCall.</p>
+<p>You may have noticed that you -the user- specify three of the factors that
+make the quota recommendation. So this can be quite a subjective method.</p>
+<p>Also the DB-SRA method of this package isn't exactly the same as the
+original method of Dick and MacCall (2011) because it has to work for
+simulated depletions above BMSY/B0 and even on occasion over B0. Also it
+doesn't have the modification for flatfish life histories that has
+previously been applied by Dick and MacCall.</p>
+    
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Dick, E.J., MacCall, A.D., 2011. Depletion-Based Stock Reduction
+Analysis: A catch-based method for determining sustainable yields for
+data-poor fish stocks. Fish. Res. 110, 331-341.</p>
     
 
   </div>
@@ -187,13 +201,13 @@ The number of samples of the TAC (OFL) recommendation.
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#details">Details</a></li>
-
       <li><a href="#value">Value</a></li>
 
-      <li><a href="#references">References</a></li>
+      <li><a href="#details">Details</a></li>
 
       <li><a href="#note">Note</a></li>
+
+      <li><a href="#references">References</a></li>
           </ul>
 
     <h2>Author</h2>

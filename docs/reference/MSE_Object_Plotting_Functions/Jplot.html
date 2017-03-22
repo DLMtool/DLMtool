@@ -11,8 +11,8 @@
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/yeti/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -31,6 +31,8 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -141,60 +143,68 @@
     </div>
 
     
-    <p>Calculates and plots the joint probability of meeting all performance metrics simultaneously</p>
+    <p>Calculates and plots the joint probability of meeting all performance
+metrics simultaneously</p>
     
 
-    <pre><span class='fu'>Jplot</span>(<span class='no'>MSEobj</span>, <span class='kw'>PLim</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>YVar</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"LTY"</span>, <span class='st'>"STY"</span>, <span class='st'>"avgB_B0"</span>, <span class='st'>"avgB_BMSY"</span>),
-  <span class='kw'>PMRefs</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>B_BMSY</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>B_B0</span> <span class='kw'>=</span> <span class='fl'>0.2</span>), <span class='kw'>UseMean</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>lastYrs</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>AvailMPs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>XLim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ShowCols</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>ShowLabs</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>All</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre><span class='fu'>Jplot</span>(<span class='no'>MSEobj</span>, <span class='kw'>PLim</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>YVar</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>'LTY'</span>, <span class='st'>'STY'</span>, <span class='st'>'avgSSB_SSB0'</span>,
+<span class='st'>'avgB_BMSY'</span>), <span class='kw'>PMRefs</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>B_BMSY</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>SSB_SSB0</span> <span class='kw'>=</span> <span class='fl'>0.2</span>), <span class='kw'>UseMean</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+<span class='kw'>lastYrs</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>AvailMPs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>XLim</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ShowCols</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>ShowLabs</span> <span class='kw'>=</span>
+<span class='fl'>FALSE</span>, <span class='kw'>All</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>MSEobj</dt>
-      <dd>
-An object of class MSE
-</dd>
-      <dt>PLim</dt>
-      <dd>
-Probability limit (acceptable risk threshold; e.g., 0.8 for 80 percent)
-</dd>
-      <dt>YVar</dt>
-      <dd>
-What to plot of the y-axis: choose from <code>c(&quot;LTY&quot;, &quot;STY&quot;, &quot;avgB_B0&quot;, &quot;avgB_BMSY&quot;)</code>
-</dd>
-      <dt>PMRefs</dt>
-      <dd>
-List containing the reference limits for each metric 
-</dd>
-      <dt>UseMean</dt>
-      <dd>
-Logical. Calculate mean (TRUE) or median (FALSE)
-</dd>
-      <dt>lastYrs</dt>
-      <dd>
-Last number of years in projection period to calculate summary statistics
-</dd>
-      <dt>AvailMPs</dt>
-      <dd>
-Optional character vector of available MPs (plotted in a different colour)
-</dd>
-      <dt>XLim</dt>
-      <dd>
-Optional limits for the x-axis
-</dd>
-      <dt>ShowCols</dt>
-      <dd>
-Logical. Show the background colours?
-</dd>
-      <dt>ShowLabs</dt>
-      <dd>
-Logical. Show the MP labels?
-</dd>
-      <dt>All</dt>
-      <dd>
-Logical. Plot all MPs (TRUE) or only those above the probability limit (<code>PLim</code>))?
-</dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>MSEobj</th>
+      <td><p>An object of class MSE</p></td>
+    </tr>
+    <tr>
+      <th>PLim</th>
+      <td><p>Probability limit (acceptable risk threshold; e.g., 0.8 for 80
+percent)</p></td>
+    </tr>
+    <tr>
+      <th>YVar</th>
+      <td><p>What to plot of the y-axis: choose from <code>c('LTY', 'STY',
+'avgSSB_SSB0', 'avgB_BMSY')</code></p></td>
+    </tr>
+    <tr>
+      <th>PMRefs</th>
+      <td><p>List containing the reference limits for each metric</p></td>
+    </tr>
+    <tr>
+      <th>UseMean</th>
+      <td><p>Logical. Calculate mean (TRUE) or median (FALSE)</p></td>
+    </tr>
+    <tr>
+      <th>lastYrs</th>
+      <td><p>Last number of years in projection period to calculate
+summary statistics</p></td>
+    </tr>
+    <tr>
+      <th>AvailMPs</th>
+      <td><p>Optional character vector of available MPs (plotted in a
+different colour)</p></td>
+    </tr>
+    <tr>
+      <th>XLim</th>
+      <td><p>Optional limits for the x-axis</p></td>
+    </tr>
+    <tr>
+      <th>ShowCols</th>
+      <td><p>Logical. Show the background colours?</p></td>
+    </tr>
+    <tr>
+      <th>ShowLabs</th>
+      <td><p>Logical. Show the MP labels?</p></td>
+    </tr>
+    <tr>
+      <th>All</th>
+      <td><p>Logical. Plot all MPs (TRUE) or only those above the probability
+limit (<code>PLim</code>))?</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
