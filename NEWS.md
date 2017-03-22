@@ -1,7 +1,7 @@
 ## DLMtool 
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
-### DLMtool V3.2.9005 Current Development Version
+### DLMtool V3.2.3
 
 #### Major Changes
 - all objects previously in `DLMdat` have now been added as separate data objects. This means that it is no longer neccessary to unpack data objects at the beginning of an R session.
@@ -34,13 +34,6 @@ The current version of the DLMtool package is available for download from [CRAN]
 - LFC and LFS in future projections weren't being updated correctly
 - fixed F calculations at end of MSE so that `FMSYref` results in exactly F/FSMY = 1 
 - `maxF` now also applies to the catch that is taken from the population
-
-#### To Do 
-- change dimensions of `SSB_hist` in MSE object from `nsim, maxage, nyears, narea` to `nsim, nyear` - others as well?
-- test and add new MPs developed by Quang
-- add Roxygen2 documentation for new MPs
-- go through issue list on GithHub
-- update User Manual and Documentation prior to new release on CRAN
 
 
 ## Previous Versions
