@@ -8,7 +8,7 @@
   <title>Data-Limited Methods Toolkit (DLMtool)</title>
   <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.1 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.3 and GitBook 2.6.7">
 
   <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool)" />
   <meta property="og:type" content="book" />
@@ -24,13 +24,8 @@
   
 
 
-<meta name="date" content="2016-11-28">
 
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  TeX: { equationNumbers: { autoNumber: "AMS" } }
-});
-</script>
+<meta name="date" content="2017-03-22">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -115,17 +110,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#overview-of-the-user-guide"><i class="fa fa-check"></i><b>1.4</b> Overview of the User Guide</a></li>
 <li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#acknowledgements"><i class="fa fa-check"></i><b>1.5</b> Acknowledgements</a></li>
 <li class="chapter" data-level="1.6" data-path="index.html"><a href="index.html#bug-reports"><i class="fa fa-check"></i><b>1.6</b> Bug Reports</a></li>
-<li class="chapter" data-level="1.7" data-path="index.html"><a href="index.html#version-notes"><i class="fa fa-check"></i><b>1.7</b> Version Notes</a><ul>
-<li class="chapter" data-level="1.7.1" data-path="index.html"><a href="index.html#new-additions-to-version-3.2.2"><i class="fa fa-check"></i><b>1.7.1</b> New Additions to Version 3.2.2</a></li>
-<li class="chapter" data-level="1.7.2" data-path="index.html"><a href="index.html#new-additions-to-version-3.2.1"><i class="fa fa-check"></i><b>1.7.2</b> New Additions to Version 3.2.1</a></li>
-<li class="chapter" data-level="1.7.3" data-path="index.html"><a href="index.html#new-additions-to-version-3.2"><i class="fa fa-check"></i><b>1.7.3</b> New Additions to Version 3.2</a></li>
-<li class="chapter" data-level="1.7.4" data-path="index.html"><a href="index.html#notes-from-version-3.1"><i class="fa fa-check"></i><b>1.7.4</b> Notes from Version 3.1</a></li>
-<li class="chapter" data-level="1.7.5" data-path="index.html"><a href="index.html#a-note-on-version-2.11"><i class="fa fa-check"></i><b>1.7.5</b> A Note on Version 2.11</a></li>
-<li class="chapter" data-level="1.7.6" data-path="index.html"><a href="index.html#a-note-on-bug-fixes-in-2.1.1-and-2.1.2"><i class="fa fa-check"></i><b>1.7.6</b> A Note on Bug Fixes in 2.1.1 and 2.1.2</a></li>
-<li class="chapter" data-level="1.7.7" data-path="index.html"><a href="index.html#a-note-on-version-2.1"><i class="fa fa-check"></i><b>1.7.7</b> A Note on Version 2.1</a></li>
-<li class="chapter" data-level="1.7.8" data-path="index.html"><a href="index.html#new-to-version-2.1"><i class="fa fa-check"></i><b>1.7.8</b> New to Version 2.1</a></li>
-<li class="chapter" data-level="1.7.9" data-path="index.html"><a href="index.html#new-to-version-2.0"><i class="fa fa-check"></i><b>1.7.9</b> New to Version 2.0</a></li>
-</ul></li>
+<li class="chapter" data-level="1.7" data-path="index.html"><a href="index.html#version-notes"><i class="fa fa-check"></i><b>1.7</b> Version Notes</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html"><i class="fa fa-check"></i><b>2</b> First Time Working With R?</a><ul>
 <li class="chapter" data-level="2.1" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#r-and-rstudio"><i class="fa fa-check"></i><b>2.1</b> R and RStudio</a><ul>
@@ -147,11 +132,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="3" data-path="preq.html"><a href="preq.html"><i class="fa fa-check"></i><b>3</b> Prerequisites to Using DLMtool</a><ul>
 <li class="chapter" data-level="3.1" data-path="preq.html"><a href="preq.html#load-the-library"><i class="fa fa-check"></i><b>3.1</b> Load the Library</a></li>
-<li class="chapter" data-level="3.2" data-path="preq.html"><a href="preq.html#unpack-the-data"><i class="fa fa-check"></i><b>3.2</b> Unpack the Data</a></li>
+<li class="chapter" data-level="3.2" data-path="preq.html"><a href="preq.html#unpack-the-data-only-for-versions-3.2.3"><i class="fa fa-check"></i><b>3.2</b> Unpack the Data (only for versions &lt; 3.2.3)</a></li>
 <li class="chapter" data-level="3.3" data-path="preq.html"><a href="preq.html#initiate-the-cluster"><i class="fa fa-check"></i><b>3.3</b> Initiate the Cluster</a></li>
-<li class="chapter" data-level="3.4" data-path="preq.html"><a href="preq.html#export-all-data-and-objects-to-the-cluster"><i class="fa fa-check"></i><b>3.4</b> Export all Data and Objects to the Cluster</a></li>
-<li class="chapter" data-level="3.5" data-path="preq.html"><a href="preq.html#set-a-random-seed"><i class="fa fa-check"></i><b>3.5</b> Set a Random Seed</a></li>
-<li class="chapter" data-level="3.6" data-path="preq.html"><a href="preq.html#summary"><i class="fa fa-check"></i><b>3.6</b> Summary</a></li>
+<li class="chapter" data-level="3.4" data-path="preq.html"><a href="preq.html#set-a-random-seed"><i class="fa fa-check"></i><b>3.4</b> Set a Random Seed</a></li>
+<li class="chapter" data-level="3.5" data-path="preq.html"><a href="preq.html#summary"><i class="fa fa-check"></i><b>3.5</b> Summary</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="setupOM.html"><a href="setupOM.html"><i class="fa fa-check"></i><b>4</b> Setting up the MSE Operating Model</a><ul>
 <li class="chapter" data-level="4.1" data-path="setupOM.html"><a href="setupOM.html#overview"><i class="fa fa-check"></i><b>4.1</b> Overview</a></li>
@@ -328,7 +312,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>First we will look at the contents of the <em>Stock</em> object. There are a number of stocks built into the DLMtool, and we will explore one of these. Later we will look at how to develop our own <em>Stock</em> objects, or modify an existing <em>Stock</em> object.</p>
 <p>One of the <em>Stock</em> objects that is built into the DLMtool is <code>Albacore</code>.<br />
 If you type <code>Albacore</code> into the R console (or into your R script and click <em>Run</em>) you will see a large amount of information printed out in the R console.</p>
-<p><strong>Note:</strong> if you get an error message that says <em>Error: object ‘Albacore’ not found</em>, it suggests you have not loaded the DLMtool data correctly. Go to <a href="preq.html#unpack-the-data">Unpack the data</a> to see how to do this.</p>
+<p><strong>Note:</strong> if you get an error message that says <em>Error: object ‘Albacore’ not found</em>, it suggests you have not loaded the DLMtool data correctly. Go to [Unpack the data] to see how to do this.</p>
 <p>Let’s take a look at the contents of the Albacore Stock object:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">slotNames</span>(Albacore)</code></pre></div>
 <pre><code>##  [1] &quot;Name&quot;         &quot;maxage&quot;       &quot;R0&quot;           &quot;M&quot;           
@@ -341,13 +325,13 @@ If you type <code>Albacore</code> into the R console (or into your R script and 
 ## [29] &quot;Source&quot;</code></pre>
 <p>The output tells us that there are 29 slots in the <code>Albacore</code> Stock object. Each of these slots contains information relating to stock that is used in the MSE.</p>
 <p>We can examine the information that is stored in the slots using the @ symbol. For example, the name of the species in the Stock object is:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Albacore@Name</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Albacore<span class="op">@</span>Name</code></pre></div>
 <pre><code>## [1] &quot;Albacore&quot;</code></pre>
 <p>The maximum age parameter is:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Albacore@maxage </code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Albacore<span class="op">@</span>maxage </code></pre></div>
 <pre><code>## [1] 15</code></pre>
 <p>The values for the natural mortality (<em>M</em>) parameter for this stock are:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Albacore@M</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Albacore<span class="op">@</span>M</code></pre></div>
 <pre><code>## [1] 0.35 0.45</code></pre>
 <p>Note that the natural mortality parameter (<em>M</em>) has two values, while the maximum age (<em>maxage</em>) only has one value.</p>
 <p>The MSE in the DLMtool is a stochastic model, and almost all parameters are drawn from a distribution. By default this distribution is assumed to be uniform, and the two values for the <em>M</em> parameter represent the lower and upper bounds of this uniform distribution.</p>
@@ -367,10 +351,10 @@ If you type <code>Albacore</code> into the R console (or into your R script and 
 ## [21] &quot;isRel&quot;</code></pre>
 <p>There are 21 slots in the <em>Fleet</em> object. The parameters in the <em>Fleet</em> object relate to the exploitation pattern of the stock.</p>
 <p>For example, the number of years that the stock has been exploited is specified in the <code>nyears</code> slot:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Generic_fleet@nyears</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Generic_fleet<span class="op">@</span>nyears</code></pre></div>
 <pre><code>## [1] 50</code></pre>
 <p>As another example, the smallest length at full selection is specified in the <code>LFS</code> slot:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Generic_fleet@LFS</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Generic_fleet<span class="op">@</span>LFS</code></pre></div>
 <pre><code>## [1] 0.75 1.10</code></pre>
 <p>Note that by default the values in the <code>LFS</code> (and the <code>L5</code> [smallest length at 5% selectivity]) slots are specified as multiples of the length of maturity (e.g., <code>Albacore@L50</code>). This is necessary because the <em>Fleet</em> objects built into the DLMtool are all generic, in the sense that they can be used with any <em>Stock</em> object.</p>
 <p>You will notice that the <code>isRel</code> slot in the <code>Generic_fleet</code> object is set to “TRUE”. This means that the selectivity parameters are relative to the length of maturity in the <em>Stock</em> object. Absolute values for the selectivity parameters can be used, for example by specifying <code>LFS</code> and <code>L5</code> to, say, 100 - 150 and 50 - 70 respectively. The <code>isRel</code> parameter must then be set to “FALSE”, so that the Operating Model knows that these selectivity values are in absolute terms, and does not multiply them by the length of maturity (strange things may happen if the model assumes that the size of first capture is 50 to 70 times greater than the size of maturity!).</p>
@@ -396,7 +380,7 @@ If you type <code>Albacore</code> into the R console (or into your R script and 
 ## [31] &quot;Reccv&quot;      &quot;Irefcv&quot;     &quot;Crefcv&quot;     &quot;Brefcv&quot;     &quot;beta&quot;</code></pre>
 <p>There are 35 slots in <em>Observation</em> objects, each with information relating to the uncertainty of a data type.</p>
 <p>For example, the <code>LenMcv</code> slot defines the uncertainty (coefficient of variability) in the length of maturity:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Imprecise_Biased@LenMcv</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Imprecise_Biased<span class="op">@</span>LenMcv</code></pre></div>
 <pre><code>## [1] 0.2</code></pre>
 <p>This means that the assumed length of maturity that is generated by the Operating Model, and used in the simulated application of a management procedure, is not the ‘true’ value set in the <em>Stock</em> object, but a value sampled with a 20% coefficient of variation.</p>
 <p>More information on the <em>Observation</em> object can be found by typing:</p>
@@ -437,15 +421,15 @@ myFleet &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="s
 myObservation &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Observation&quot;</span>)</code></pre></div>
 <p>This code creates new <em>Stock</em>, <em>Fleet</em>, and <em>Observation</em> objects that are empty and contain no information.</p>
 <p>You can check this by looking at a slot in one of the objects, for example:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myStock@M</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myStock<span class="op">@</span>M</code></pre></div>
 <pre><code>## numeric(0)</code></pre>
 <p>The object can then be manually populated. For example,</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myStock@M &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.1</span>, <span class="fl">0.25</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myStock<span class="op">@</span>M &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.1</span>, <span class="fl">0.25</span>)</code></pre></div>
 <p>Here we set value of the natural mortality parameter (<code>M</code>) to range from 0.1 to 0.25.</p>
 <p>The MSE requires values for each parameter (or slot) in the Operating Model object, and the three objects that were just created would have to be manually populated.</p>
 <p>This is possible to do, but perhaps a little tedious. More importantly, it is easy to introduce errors using this method.</p>
 <p>For example, let’s try to populate the slot that contains information on the asymptotic size (<code>Linf</code>)</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myStock@Linf &lt;-<span class="st"> </span><span class="dv">100</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myStock<span class="op">@</span>Linf &lt;-<span class="st"> </span><span class="dv">100</span></code></pre></div>
 <p>This seemed to work okay. However, if we try to run an MSE using this <em>Stock</em> object we will be confronted with an error. This is because the Operating Model requires <strong>two</strong> values (lower and upper bounds) for the <code>Linf</code> parameter. The DLMtool isn’t smart enough (yet!) to detect this error before it is too late.</p>
 </div>
 <div id="importing-objects" class="section level3">
@@ -501,22 +485,22 @@ Example2OM &lt;-<span class="st"> </span><span class="kw">OM_xl</span>(<span cla
 <p>First we create a new object by copying the existing <code>Herring</code> object:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MyStock &lt;-<span class="st"> </span>Herring</code></pre></div>
 <p>Then we can modify the parameters so that it better suits our particular species. For example, we may wish to modify the asymptotic size (<code>Linf</code>), the von Bertalanffy <em>K</em> parameter (<code>K</code>), and the length at maturity (<code>L50</code> and <code>L50_95</code>):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MyStock@Linf &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">60</span>, <span class="dv">80</span>) 
-MyStock@K &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.2</span>, <span class="fl">0.25</span>)
-MyStock@L50 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">30</span>, <span class="dv">40</span>)
-MyStock@L50_95 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">10</span>, <span class="dv">15</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MyStock<span class="op">@</span>Linf &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">60</span>, <span class="dv">80</span>) 
+MyStock<span class="op">@</span>K &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.2</span>, <span class="fl">0.25</span>)
+MyStock<span class="op">@</span>L50 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">30</span>, <span class="dv">40</span>)
+MyStock<span class="op">@</span>L50_<span class="dv">95</span> &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">10</span>, <span class="dv">15</span>)</code></pre></div>
 <p>We should also change the <code>Name</code> and <code>Source</code> for our stock:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MyStock@Name &lt;-<span class="st"> &quot;Herringish&quot;</span>
-MyStock@Source &lt;-<span class="st"> &quot;None. I made this up&quot;</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MyStock<span class="op">@</span>Name &lt;-<span class="st"> &quot;Herringish&quot;</span>
+MyStock<span class="op">@</span>Source &lt;-<span class="st"> &quot;None. I made this up&quot;</span></code></pre></div>
 <p>You can continue modifying the remaining parameters as required.</p>
 <p>The <em>Fleet</em> and <em>Observation</em> objects can be modified in from existing objects in a similar way. First we copy existing objects, and then modify them to suit our needs:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MyFleet &lt;-<span class="st"> </span>FlatE_Dom <span class="co"># Dome-shaped selectivity and flat effort trajectory</span>
-MyFleet@L5 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">15</span>, <span class="dv">20</span>) <span class="co"># change the selectivity pattern</span>
-MyFleet@LFS &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">30</span>)
-MyFleet@isRel &lt;-<span class="st"> &quot;FALSE&quot;</span> <span class="co"># remember to change this</span>
+MyFleet<span class="op">@</span>L5 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">15</span>, <span class="dv">20</span>) <span class="co"># change the selectivity pattern</span>
+MyFleet<span class="op">@</span>LFS &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">30</span>)
+MyFleet<span class="op">@</span>isRel &lt;-<span class="st"> &quot;FALSE&quot;</span> <span class="co"># remember to change this</span>
 
 MyObs &lt;-<span class="st"> </span>Imprecise_Unbiased
-MyObs@Mcv &lt;-<span class="st"> </span><span class="fl">0.15</span> <span class="co"># increase uncertainty in M</span></code></pre></div>
+MyObs<span class="op">@</span>Mcv &lt;-<span class="st"> </span><span class="fl">0.15</span> <span class="co"># increase uncertainty in M</span></code></pre></div>
 <p>Here we have modified a few parameters in the <em>Stock</em>, <em>Fleet</em>, and <em>Observation</em> objects and assumed that the rest of the values in built-in objects adequately describe our fishery. We can now create an <em>Operating Model</em> object using the same method described previously:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MyOM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, MyStock, MyFleet, MyObs)</code></pre></div>
 </div>
@@ -529,7 +513,7 @@ MyObs@Mcv &lt;-<span class="st"> </span><span class="fl">0.15</span> <span class
 <p>Suppose that we know the fishery began in 1950, and fishing effort increased slowly over the next decade, was relatively stable between 1960 and 1970, then increased dramatically over the next 10 years. We also know that, while fishing effort stayed relatively constant from 1980 to around 2000, there has been a general decline in fishing effort in recent years.</p>
 <p>This information can be included in the <em>Operating Model</em> by using the <code>ChooseEffort</code> function. The <code>ChooseEffort</code> function takes an existing <em>Fleet</em> object as its first argument, and allows the user to manually map out the range for the historical trend in fishing effort. The <code>ChooseEffort</code> function then returns the updated <em>Fleet</em> object.</p>
 <p>A second optional argument can be used to specify the historical years. If used, this will replace the <code>nyears</code> in the <em>Fleet</em> object with the length of the <code>Years</code> vector.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MyFleet &lt;-<span class="st"> </span><span class="kw">ChooseEffort</span>(MyFleet, <span class="dt">Years=</span><span class="dv">1950</span>:<span class="dv">2016</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MyFleet &lt;-<span class="st"> </span><span class="kw">ChooseEffort</span>(MyFleet, <span class="dt">Years=</span><span class="dv">1950</span><span class="op">:</span><span class="dv">2016</span>)</code></pre></div>
 <p><img src="images/EffortTraj.png" /><!-- --></p>
 <p>If we take a look at the <code>MyFleet</code> object, we will see that three slots <code>EffYears</code>, <code>EffLower</code> and <code>EffUpper</code> have been replaced with the new values.</p>
 <p>Note that the trajectory that is mapped out here represents the bounds on the relative fishing mortality for each year. In this example, the fishing mortality rate was highest (on average) between 1980 and 2000, and is currently around 65 - 80% of this maximum level.</p>

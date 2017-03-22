@@ -8,7 +8,7 @@
   <title>Data-Limited Methods Toolkit (DLMtool)</title>
   <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.1 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.3 and GitBook 2.6.7">
 
   <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool)" />
   <meta property="og:type" content="book" />
@@ -24,13 +24,8 @@
   
 
 
-<meta name="date" content="2016-11-28">
 
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  TeX: { equationNumbers: { autoNumber: "AMS" } }
-});
-</script>
+<meta name="date" content="2017-03-22">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -115,17 +110,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#overview-of-the-user-guide"><i class="fa fa-check"></i><b>1.4</b> Overview of the User Guide</a></li>
 <li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#acknowledgements"><i class="fa fa-check"></i><b>1.5</b> Acknowledgements</a></li>
 <li class="chapter" data-level="1.6" data-path="index.html"><a href="index.html#bug-reports"><i class="fa fa-check"></i><b>1.6</b> Bug Reports</a></li>
-<li class="chapter" data-level="1.7" data-path="index.html"><a href="index.html#version-notes"><i class="fa fa-check"></i><b>1.7</b> Version Notes</a><ul>
-<li class="chapter" data-level="1.7.1" data-path="index.html"><a href="index.html#new-additions-to-version-3.2.2"><i class="fa fa-check"></i><b>1.7.1</b> New Additions to Version 3.2.2</a></li>
-<li class="chapter" data-level="1.7.2" data-path="index.html"><a href="index.html#new-additions-to-version-3.2.1"><i class="fa fa-check"></i><b>1.7.2</b> New Additions to Version 3.2.1</a></li>
-<li class="chapter" data-level="1.7.3" data-path="index.html"><a href="index.html#new-additions-to-version-3.2"><i class="fa fa-check"></i><b>1.7.3</b> New Additions to Version 3.2</a></li>
-<li class="chapter" data-level="1.7.4" data-path="index.html"><a href="index.html#notes-from-version-3.1"><i class="fa fa-check"></i><b>1.7.4</b> Notes from Version 3.1</a></li>
-<li class="chapter" data-level="1.7.5" data-path="index.html"><a href="index.html#a-note-on-version-2.11"><i class="fa fa-check"></i><b>1.7.5</b> A Note on Version 2.11</a></li>
-<li class="chapter" data-level="1.7.6" data-path="index.html"><a href="index.html#a-note-on-bug-fixes-in-2.1.1-and-2.1.2"><i class="fa fa-check"></i><b>1.7.6</b> A Note on Bug Fixes in 2.1.1 and 2.1.2</a></li>
-<li class="chapter" data-level="1.7.7" data-path="index.html"><a href="index.html#a-note-on-version-2.1"><i class="fa fa-check"></i><b>1.7.7</b> A Note on Version 2.1</a></li>
-<li class="chapter" data-level="1.7.8" data-path="index.html"><a href="index.html#new-to-version-2.1"><i class="fa fa-check"></i><b>1.7.8</b> New to Version 2.1</a></li>
-<li class="chapter" data-level="1.7.9" data-path="index.html"><a href="index.html#new-to-version-2.0"><i class="fa fa-check"></i><b>1.7.9</b> New to Version 2.0</a></li>
-</ul></li>
+<li class="chapter" data-level="1.7" data-path="index.html"><a href="index.html#version-notes"><i class="fa fa-check"></i><b>1.7</b> Version Notes</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html"><i class="fa fa-check"></i><b>2</b> First Time Working With R?</a><ul>
 <li class="chapter" data-level="2.1" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#r-and-rstudio"><i class="fa fa-check"></i><b>2.1</b> R and RStudio</a><ul>
@@ -147,11 +132,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="3" data-path="preq.html"><a href="preq.html"><i class="fa fa-check"></i><b>3</b> Prerequisites to Using DLMtool</a><ul>
 <li class="chapter" data-level="3.1" data-path="preq.html"><a href="preq.html#load-the-library"><i class="fa fa-check"></i><b>3.1</b> Load the Library</a></li>
-<li class="chapter" data-level="3.2" data-path="preq.html"><a href="preq.html#unpack-the-data"><i class="fa fa-check"></i><b>3.2</b> Unpack the Data</a></li>
+<li class="chapter" data-level="3.2" data-path="preq.html"><a href="preq.html#unpack-the-data-only-for-versions-3.2.3"><i class="fa fa-check"></i><b>3.2</b> Unpack the Data (only for versions &lt; 3.2.3)</a></li>
 <li class="chapter" data-level="3.3" data-path="preq.html"><a href="preq.html#initiate-the-cluster"><i class="fa fa-check"></i><b>3.3</b> Initiate the Cluster</a></li>
-<li class="chapter" data-level="3.4" data-path="preq.html"><a href="preq.html#export-all-data-and-objects-to-the-cluster"><i class="fa fa-check"></i><b>3.4</b> Export all Data and Objects to the Cluster</a></li>
-<li class="chapter" data-level="3.5" data-path="preq.html"><a href="preq.html#set-a-random-seed"><i class="fa fa-check"></i><b>3.5</b> Set a Random Seed</a></li>
-<li class="chapter" data-level="3.6" data-path="preq.html"><a href="preq.html#summary"><i class="fa fa-check"></i><b>3.6</b> Summary</a></li>
+<li class="chapter" data-level="3.4" data-path="preq.html"><a href="preq.html#set-a-random-seed"><i class="fa fa-check"></i><b>3.4</b> Set a Random Seed</a></li>
+<li class="chapter" data-level="3.5" data-path="preq.html"><a href="preq.html#summary"><i class="fa fa-check"></i><b>3.5</b> Summary</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="setupOM.html"><a href="setupOM.html"><i class="fa fa-check"></i><b>4</b> Setting up the MSE Operating Model</a><ul>
 <li class="chapter" data-level="4.1" data-path="setupOM.html"><a href="setupOM.html#overview"><i class="fa fa-check"></i><b>4.1</b> Overview</a></li>
@@ -312,36 +296,37 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>At the beginning of every session you must load the DLMtool library:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(DLMtool)</code></pre></div>
 </div>
-<div id="unpack-the-data" class="section level2">
-<h2><span class="header-section-number">3.2</span> Unpack the Data</h2>
-<p>A list object <code>DLMdat</code> is unpacked which puts all objects and data in the current workspace:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">for(i in <span class="dv">1</span>:<span class="kw">length</span>(DLMdat)) <span class="kw">assign</span>(DLMdat[[i]]@Name, DLMdat[[i]])</code></pre></div>
+<div id="unpack-the-data-only-for-versions-3.2.3" class="section level2">
+<h2><span class="header-section-number">3.2</span> Unpack the Data (only for versions &lt; 3.2.3)</h2>
+<p>Previous versions of DLMtool required the list object <code>DLMdat</code> to be unpacked into the current workspace:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="kw">length</span>(DLMdat)) <span class="kw">assign</span>(DLMdat[[i]]<span class="op">@</span>Name, DLMdat[[i]])</code></pre></div>
+<p><strong>Note that this is no longer required for V3.2.3 and greater</strong></p>
 </div>
 <div id="initiate-the-cluster" class="section level2">
 <h2><span class="header-section-number">3.3</span> Initiate the Cluster</h2>
-<p>Note that most computers make use of hyperthreading technology so a quad-core PC has 8 threads. Here we are using the <code>detectCores</code> function to calculate the number of available cores on the machine:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sfInit</span>(<span class="dt">parallel=</span><span class="ot">TRUE</span>, <span class="dt">cpus=</span><span class="kw">detectCores</span>()) </code></pre></div>
-<pre><code>## R Version:  R version 3.3.1 (2016-06-21)</code></pre>
-<pre><code>## snowfall 1.84-6.1 initialized (using snow 0.4-1): parallel execution on 4 CPUs.</code></pre>
-</div>
-<div id="export-all-data-and-objects-to-the-cluster" class="section level2">
-<h2><span class="header-section-number">3.4</span> Export all Data and Objects to the Cluster</h2>
-<p>In order to make all DLMtool functions and objects available for parallel processing we must export them to the cluster:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sfExportAll</span>()</code></pre></div>
+<p>Note that most computers make use of hyperthreading technology so a quad-core PC has 8 threads. DLMtool Version 3.2.3 included a new function <code>setup</code> which can be used to set up parallel processing on the available cores on the machine:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">setup</span>()</code></pre></div>
+<pre><code>## R Version:  R version 3.3.3 (2017-03-06)</code></pre>
+<pre><code>## snowfall 1.84-6.1 initialized (using snow 0.4-2): parallel execution on 4 CPUs.</code></pre>
+<!-- No Longer Required if setup is used -->
+<!-- ## Export all Data and Objects to the Cluster  -->
+<!-- In order to make all DLMtool functions and objects available for parallel processing we must export them to the cluster:  -->
+<!-- ```{r, eval} -->
+<!-- sfExportAll() -->
+<!-- ``` -->
+<!-- -->
 </div>
 <div id="set-a-random-seed" class="section level2">
-<h2><span class="header-section-number">3.5</span> Set a Random Seed</h2>
+<h2><span class="header-section-number">3.4</span> Set a Random Seed</h2>
 <p>In order to make results presented here reproducible, we set a random seed for this R session:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">101</span>) </code></pre></div>
 </div>
 <div id="summary" class="section level2">
-<h2><span class="header-section-number">3.6</span> Summary</h2>
+<h2><span class="header-section-number">3.5</span> Summary</h2>
 <p>The above steps need to be done each time you start a new instance of R/RStudio and use the DLMtool. It is recommended that you start a new instance of R (by restarting RStudio) each time you begin a new analysis.</p>
-<p>The code in the sections above is spread out and interspersed with explanation, which may make it appear much longer and more complicated than it really is. There are five lines of code that need to be run each time you begin using the DLMtool:</p>
+<p>The code in the sections above is spread out and interspersed with explanation, which may make it appear much longer and more complicated than it really is. There are three lines of code that need to be run each time you begin using the DLMtool:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(DLMtool)
-for(i in <span class="dv">1</span>:<span class="kw">length</span>(DLMdat)) <span class="kw">assign</span>(DLMdat[[i]]@Name, DLMdat[[i]])
-<span class="kw">sfInit</span>(<span class="dt">parallel=</span><span class="ot">TRUE</span>, <span class="dt">cpus=</span><span class="kw">detectCores</span>())
-<span class="kw">sfExportAll</span>()
+<span class="kw">setup</span>()
 <span class="kw">set.seed</span>(<span class="dv">101</span>) </code></pre></div>
 <p>These lines can be copy-pasted into your R script, and should appear at the top so that they are run before anything else.</p>
 

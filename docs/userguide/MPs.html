@@ -8,7 +8,7 @@
   <title>Data-Limited Methods Toolkit (DLMtool)</title>
   <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.1 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.3 and GitBook 2.6.7">
 
   <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool)" />
   <meta property="og:type" content="book" />
@@ -24,13 +24,8 @@
   
 
 
-<meta name="date" content="2016-11-28">
 
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  TeX: { equationNumbers: { autoNumber: "AMS" } }
-});
-</script>
+<meta name="date" content="2017-03-22">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -115,17 +110,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#overview-of-the-user-guide"><i class="fa fa-check"></i><b>1.4</b> Overview of the User Guide</a></li>
 <li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#acknowledgements"><i class="fa fa-check"></i><b>1.5</b> Acknowledgements</a></li>
 <li class="chapter" data-level="1.6" data-path="index.html"><a href="index.html#bug-reports"><i class="fa fa-check"></i><b>1.6</b> Bug Reports</a></li>
-<li class="chapter" data-level="1.7" data-path="index.html"><a href="index.html#version-notes"><i class="fa fa-check"></i><b>1.7</b> Version Notes</a><ul>
-<li class="chapter" data-level="1.7.1" data-path="index.html"><a href="index.html#new-additions-to-version-3.2.2"><i class="fa fa-check"></i><b>1.7.1</b> New Additions to Version 3.2.2</a></li>
-<li class="chapter" data-level="1.7.2" data-path="index.html"><a href="index.html#new-additions-to-version-3.2.1"><i class="fa fa-check"></i><b>1.7.2</b> New Additions to Version 3.2.1</a></li>
-<li class="chapter" data-level="1.7.3" data-path="index.html"><a href="index.html#new-additions-to-version-3.2"><i class="fa fa-check"></i><b>1.7.3</b> New Additions to Version 3.2</a></li>
-<li class="chapter" data-level="1.7.4" data-path="index.html"><a href="index.html#notes-from-version-3.1"><i class="fa fa-check"></i><b>1.7.4</b> Notes from Version 3.1</a></li>
-<li class="chapter" data-level="1.7.5" data-path="index.html"><a href="index.html#a-note-on-version-2.11"><i class="fa fa-check"></i><b>1.7.5</b> A Note on Version 2.11</a></li>
-<li class="chapter" data-level="1.7.6" data-path="index.html"><a href="index.html#a-note-on-bug-fixes-in-2.1.1-and-2.1.2"><i class="fa fa-check"></i><b>1.7.6</b> A Note on Bug Fixes in 2.1.1 and 2.1.2</a></li>
-<li class="chapter" data-level="1.7.7" data-path="index.html"><a href="index.html#a-note-on-version-2.1"><i class="fa fa-check"></i><b>1.7.7</b> A Note on Version 2.1</a></li>
-<li class="chapter" data-level="1.7.8" data-path="index.html"><a href="index.html#new-to-version-2.1"><i class="fa fa-check"></i><b>1.7.8</b> New to Version 2.1</a></li>
-<li class="chapter" data-level="1.7.9" data-path="index.html"><a href="index.html#new-to-version-2.0"><i class="fa fa-check"></i><b>1.7.9</b> New to Version 2.0</a></li>
-</ul></li>
+<li class="chapter" data-level="1.7" data-path="index.html"><a href="index.html#version-notes"><i class="fa fa-check"></i><b>1.7</b> Version Notes</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html"><i class="fa fa-check"></i><b>2</b> First Time Working With R?</a><ul>
 <li class="chapter" data-level="2.1" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#r-and-rstudio"><i class="fa fa-check"></i><b>2.1</b> R and RStudio</a><ul>
@@ -147,11 +132,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 <li class="chapter" data-level="3" data-path="preq.html"><a href="preq.html"><i class="fa fa-check"></i><b>3</b> Prerequisites to Using DLMtool</a><ul>
 <li class="chapter" data-level="3.1" data-path="preq.html"><a href="preq.html#load-the-library"><i class="fa fa-check"></i><b>3.1</b> Load the Library</a></li>
-<li class="chapter" data-level="3.2" data-path="preq.html"><a href="preq.html#unpack-the-data"><i class="fa fa-check"></i><b>3.2</b> Unpack the Data</a></li>
+<li class="chapter" data-level="3.2" data-path="preq.html"><a href="preq.html#unpack-the-data-only-for-versions-3.2.3"><i class="fa fa-check"></i><b>3.2</b> Unpack the Data (only for versions &lt; 3.2.3)</a></li>
 <li class="chapter" data-level="3.3" data-path="preq.html"><a href="preq.html#initiate-the-cluster"><i class="fa fa-check"></i><b>3.3</b> Initiate the Cluster</a></li>
-<li class="chapter" data-level="3.4" data-path="preq.html"><a href="preq.html#export-all-data-and-objects-to-the-cluster"><i class="fa fa-check"></i><b>3.4</b> Export all Data and Objects to the Cluster</a></li>
-<li class="chapter" data-level="3.5" data-path="preq.html"><a href="preq.html#set-a-random-seed"><i class="fa fa-check"></i><b>3.5</b> Set a Random Seed</a></li>
-<li class="chapter" data-level="3.6" data-path="preq.html"><a href="preq.html#summary"><i class="fa fa-check"></i><b>3.6</b> Summary</a></li>
+<li class="chapter" data-level="3.4" data-path="preq.html"><a href="preq.html#set-a-random-seed"><i class="fa fa-check"></i><b>3.4</b> Set a Random Seed</a></li>
+<li class="chapter" data-level="3.5" data-path="preq.html"><a href="preq.html#summary"><i class="fa fa-check"></i><b>3.5</b> Summary</a></li>
 </ul></li>
 <li class="chapter" data-level="4" data-path="setupOM.html"><a href="setupOM.html"><i class="fa fa-check"></i><b>4</b> Setting up the MSE Operating Model</a><ul>
 <li class="chapter" data-level="4.1" data-path="setupOM.html"><a href="setupOM.html#overview"><i class="fa fa-check"></i><b>4.1</b> Overview</a></li>
@@ -397,8 +381,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h3><span class="header-section-number">5.5.1</span> Average Historical Catch Management Procedure</h3>
 <p>The average historical catch has been suggested as a starting point for setting TACs in the most data-limited situations (following Restrepo et al., 1998).</p>
 <p>Here we design such an Management Procedure:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">AvC &lt;-<span class="st"> </span>function(x, DLM_data, reps) {
-  <span class="kw">rlnorm</span>(reps, <span class="kw">log</span>(<span class="kw">mean</span>(DLM_data@Cat[x,], <span class="dt">na.rm=</span>T)), <span class="fl">0.1</span>) 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">AvC &lt;-<span class="st"> </span><span class="cf">function</span>(x, DLM_data, reps) {
+  <span class="kw">rlnorm</span>(reps, <span class="kw">log</span>(<span class="kw">mean</span>(DLM_data<span class="op">@</span>Cat[x,], <span class="dt">na.rm=</span>T)), <span class="fl">0.1</span>) 
 }</code></pre></div>
 <p>Note that all Management Procedures have to be stochastic in this framework, which is why we sample from a log-normal distribution with a CV of roughly 10 per cent.</p>
 <p>Before the Management Procedure can be ‘seen’ by the rest of the DLMtool package we have to do three more things.</p>
@@ -407,35 +391,17 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">environment</span>(AvC) &lt;-<span class="kw">asNamespace</span>(<span class="st">&#39;DLMtool&#39;</span>)</code></pre></div>
 <p>and - if we are using parallel computing - exported to the cluster:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sfExport</span>(<span class="st">&quot;AvC&quot;</span>)</code></pre></div>
-<!--
-### Third-highest catch
-In some data-limited settings third highest historical catch has been suggested as a possible catch-limit. Here we use a similar approach to the average catch MP above (`AvC`) and take draws from a log-normal distribution with CV of 10 per cent:
-
-
-```r
-THC <- function(x,DLM_data, reps){
-  rlnorm(reps,log(DLM_data@Cat[x,order(DLM_data@Cat[x,],decreasing=T)[3]]),0.1)
-}
-class(THC)<-"DLM_output"
-environment(THC) <- asNamespace('DLMtool')
-```
-and again export to cluster (if we are using parallel computing):
-
-```r
-sfExport("THC")
-```
--->
 </div>
 <div id="length-at-selection-set-equal-to-length-at-maturity" class="section level3">
 <h3><span class="header-section-number">5.5.2</span> Length-at-Selection Set Equal to Length-at-Maturity</h3>
 <p>To simulate input controls that aim to alter the length-vulnerability to fishing it is possible to design a Management Procedure of class <code>DLM_input</code>.</p>
 <p>In this example we set selectivity equal to the maturity curve, while the spatial and effort regulations remain constant:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">matlenlim &lt;-<span class="st"> </span>function (x, DLM_data, ...) {
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">matlenlim &lt;-<span class="st"> </span><span class="cf">function</span> (x, DLM_data, ...) {
     Allocate &lt;-<span class="st"> </span><span class="dv">1</span>
     Effort &lt;-<span class="st"> </span><span class="dv">1</span>
     Spatial &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)
-    newLFC &lt;-<span class="st"> </span>DLM_data@L50[x] *<span class="st"> </span><span class="fl">0.95</span>
-    newLFS &lt;-<span class="st"> </span>DLM_data@L50[x]
+    newLFC &lt;-<span class="st"> </span>DLM_data<span class="op">@</span>L50[x] <span class="op">*</span><span class="st"> </span><span class="fl">0.95</span>
+    newLFS &lt;-<span class="st"> </span>DLM_data<span class="op">@</span>L50[x]
     Vuln &lt;-<span class="st"> </span><span class="kw">c</span>(newLFC, newLFS)
     <span class="kw">c</span>(Allocate, Effort, Spatial, Vuln)
 }
@@ -447,13 +413,13 @@ sfExport("THC")
 <div id="harvest-slot-limit" class="section level3">
 <h3><span class="header-section-number">5.5.3</span> Harvest Slot Limit</h3>
 <p>We can also choose to create a Management Procedure with a harvest slot limit. This example sets a minimum legal length at 1.1 times the size of maturity, and a maximum size limit at 75% of the distance between the minimum legal length and the estimate of asymptotic length recorded in the fishery data object:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">slotlim &lt;-<span class="st"> </span>function (x, DLM_data, ...) {
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">slotlim &lt;-<span class="st"> </span><span class="cf">function</span> (x, DLM_data, ...) {
     Allocate &lt;-<span class="st"> </span><span class="dv">1</span>
     Effort &lt;-<span class="st"> </span><span class="dv">1</span>
     Spatial &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)
-    newLFS &lt;-<span class="st"> </span><span class="fl">1.1</span> *<span class="st"> </span>DLM_data@L50[x]
-    newLFC &lt;-<span class="st"> </span><span class="fl">0.95</span> *<span class="st"> </span>newLFS
-    UppLim &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">quantile</span>(<span class="kw">c</span>(newLFS, DLM_data@vbLinf[x]), <span class="fl">0.75</span>))
+    newLFS &lt;-<span class="st"> </span><span class="fl">1.1</span> <span class="op">*</span><span class="st"> </span>DLM_data<span class="op">@</span>L50[x]
+    newLFC &lt;-<span class="st"> </span><span class="fl">0.95</span> <span class="op">*</span><span class="st"> </span>newLFS
+    UppLim &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">quantile</span>(<span class="kw">c</span>(newLFS, DLM_data<span class="op">@</span>vbLinf[x]), <span class="fl">0.75</span>))
     Vuln &lt;-<span class="st"> </span><span class="kw">c</span>(newLFC, newLFS, UppLim)
     <span class="kw">c</span>(Allocate, Effort, Spatial, Vuln)
 }
@@ -466,15 +432,15 @@ sfExport("THC")
 <div id="reducing-fishing-rate-in-area-1-by-50" class="section level3">
 <h3><span class="header-section-number">5.5.4</span> Reducing Fishing Rate in area 1 by 50%</h3>
 <p>Spatial controls operate similarly to the age/size based controls: a vector of length 2 (the spatial simulator is a 2-box model) that indicates the fraction of current spatial catches. In this example we reduce effort in area 1 by 50%.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">area1_50 &lt;-<span class="st"> </span>function(x,DLM_data, ...){ 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">area1_<span class="dv">50</span> &lt;-<span class="st"> </span><span class="cf">function</span>(x,DLM_data, ...){ 
   Allocate &lt;-<span class="st"> </span><span class="dv">0</span> <span class="co"># Fraction of effort reallocated to open area</span>
   Effort &lt;-<span class="st"> </span><span class="dv">1</span>  <span class="co"># Fraction of effort in last historical year</span>
   Spatial &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.5</span>,<span class="dv">1</span>) <span class="co"># Fraction of effort found in each area</span>
   Vuln &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>,<span class="dv">2</span>) <span class="co"># Length vulnerability is not specified   </span>
   <span class="kw">c</span>(Allocate, Effort, Spatial, Vuln) <span class="co"># Input controls stitched togther</span>
 }
-<span class="kw">class</span>(area1_50)&lt;-<span class="st">&quot;DLM_input&quot;</span>
-<span class="kw">environment</span>(area1_50) &lt;-<span class="st"> </span><span class="kw">asNamespace</span>(<span class="st">&#39;DLMtool&#39;</span>)</code></pre></div>
+<span class="kw">class</span>(area1_<span class="dv">50</span>)&lt;-<span class="st">&quot;DLM_input&quot;</span>
+<span class="kw">environment</span>(area1_<span class="dv">50</span>) &lt;-<span class="st"> </span><span class="kw">asNamespace</span>(<span class="st">&#39;DLMtool&#39;</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sfExport</span>(<span class="st">&quot;area1_50&quot;</span>)</code></pre></div>
 
 </div>

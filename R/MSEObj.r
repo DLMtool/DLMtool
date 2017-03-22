@@ -2384,18 +2384,19 @@ MPStats <- function(MSEobj, PMRefs = list(B_BMSY = 0.5, SSB_SSB0 = 0.2, F_FMSY =
   MSEobj@C[(!is.finite(MSEobj@C[, , , drop = FALSE]))] <- 0  # if catch is NAN or NA, make it 0
   aavy <- (((MSEobj@C[, , y1, drop = FALSE] - MSEobj@C[, , y2, drop = FALSE])/MSEobj@C[, 
     , y2, drop = FALSE])^2)^0.5
+
   aavy[is.nan(aavy)] <- NA
-  aavy[aavy == Inf] <- NA
-  aavy[aavy > 10 * median(aavy, na.rm = TRUE)] <- NA  # remove huge spikes from F=0
+  if (sum(aavy == Inf, na.rm=TRUE) > 0) aavy[aavy == Inf] <- NA
+  
+  # aavy[aavy > 10 * median(aavy, na.rm = TRUE)] <- NA  # remove huge spikes from F=0
   AAVYm <- apply(aavy, 2, sumFun, na.rm = TRUE)  # median/mean in last yrs
   
   AAVYsd <- apply(aavy, 2, sd, na.rm = TRUE)  # sd in last yrs
   AAVYref <- aavy < maxVar
-  AAVYp <- round(apply(AAVYref, 2, sum, na.rm = TRUE)/(lastYrs * nsim), 
-    2)
+  AAVYp <- round(apply(AAVYref, 2, sum, na.rm = TRUE)/(lastYrs * nsim),  2)
   
   # AAVE - Interannual varialility in effort
-  maxVar <- ifelse(trefs$AAVY > 1, trefs$AAVE/100, trefs$AAVE)
+  maxVar <- ifelse(trefs$AAVE > 1, trefs$AAVE/100, trefs$AAVE)
   eff <- MSEobj@Effort
   if (all(is.na(eff))) {
     message("Variability in effort unable to be calculated from this version of MSE object")
@@ -2410,7 +2411,7 @@ MPStats <- function(MSEobj, PMRefs = list(B_BMSY = 0.5, SSB_SSB0 = 0.2, F_FMSY =
       , y2 - 1, drop = FALSE])^2)^0.5
     aave[is.nan(aave)] <- NA
     aave[aave == Inf] <- NA
-    aave[aave > 10 * apply(aave, 2, median, na.rm = TRUE)] <- NA  # remove huge spikes from F=0
+    # aave[aave > 10 * apply(aave, 2, median, na.rm = TRUE)] <- NA  # remove huge spikes from F=0
     AAVEm <- apply(aave, 2, sumFun, na.rm = TRUE)  # median/mean in last yrs
     AAVEsd <- apply(aave, 2, sd, na.rm = TRUE)  # sd in last yrs
     AAVEref <- aave < maxVar
