@@ -1776,8 +1776,8 @@ TradePlot <- function(MSEobj, XAxis = c("Overfishing", "Biomass:BMSY"),
   for (mm in 1:MSEobj@nMPs) {
     PNOF[mm] <- round(sum(MSEobj@F_FMSY[, mm, ] <= 1, na.rm = T)/prod(dim(MSEobj@F_FMSY[, 
       mm, ]), na.rm = T) * 100, 1)
-    BMSYref[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] > BmsyRef, na.rm = T)/prod(dim(MSEobj@B_BMSY[, 
-      mm, ])) * 100, 1)
+    BMSYref[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] > BmsyRef, na.rm = T)/prod(dim(MSEobj@B_BMSY[, mm, ])) * 100, 1)
+	
     B0ref[mm] <- round(sum((MSEobj@B_BMSY[, mm, ] * MSEobj@OM$SSBMSY_SSB0) > 
       B0Ref, na.rm = T)/prod(dim(MSEobj@B_BMSY[, mm, ])) * 100, 1)
     # LTY[mm]<-round(sum(MSEobj@C[,mm,yend]/RefYd>0.5,na.rm=T)/(MSEobj@nsim*length(yend)),3)*100
@@ -3718,7 +3718,7 @@ calcMSESense <- function(MP = 1, MSEobj, YVar = c("Y", "B"), Par = c("Obs",
   }
   
   # Operating Model names to include
-  MSEobj@OM$Lm_SL <- MSEobj@OM$LFS/MSEobj@OM$lenM
+  MSEobj@OM$Lm_SL <- MSEobj@OM$L50/MSEobj@OM$LFS
   varnames <- names(MSEobj@OM)
   vars <- MSEobj@OM
   vargood <- (apply(vars, 2, sd, na.rm = TRUE)/(apply(vars, 2, mean, 
