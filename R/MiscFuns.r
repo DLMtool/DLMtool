@@ -5,8 +5,7 @@
 #' Setup parallel processing
 #'
 #' Sets up parallel processing using the snowfall package
-#' @importFrom snowfall sfExport sfIsRunning sfSapply
-#' @importFrom snow setDefaultClusterOptions
+#' @importFrom snowfall sfInit sfExportAll sfIsRunning sfExport sfSapply
 #' @export 
 setup <- function() {
   snowfall::sfInit(parallel=TRUE,cpus=parallel::detectCores())  

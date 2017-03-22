@@ -1,8 +1,7 @@
 ## DLMtool 
-The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/web/packages/DLMtool/index.html).
+The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
 ### DLMtool V3.2.9005 Current Development Version
-
 
 #### Major Changes
 - all objects previously in `DLMdat` have now been added as separate data objects. This means that it is no longer neccessary to unpack data objects at the beginning of an R session.

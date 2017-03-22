@@ -10,9 +10,9 @@ Maintainer: Tom Carruthers <t.carruthers@fisheries.ubc.ca>
 Description: Simulation testing and implementation of data-limited fishery stock
     assessment methods.
 License: GPL-2
-Depends:  
+Depends: 
     R (>= 2.10.0),
-	snow
+	snowfall
 Imports:
     abind,
     boot,
@@ -23,16 +23,14 @@ Imports:
 	parallel,
 	Rcpp,
 	readxl,
-	snowfall,
 	stats,
 	utils
 LazyData: yes
 LazyLoad: yes
-VignetteBuilder: knitr
 Suggests:
     knitr,
     rmarkdown
 Packaged: 2015-11-13 23:33:05 UTC; Tom Carruthers 
 LinkingTo: Rcpp
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 BugReports: https://github.com/DLMtool/DLMtool/issues
