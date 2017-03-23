@@ -5,11 +5,12 @@
 #' Setup parallel processing
 #'
 #' Sets up parallel processing using the snowfall package
+#'
+#' @param cpus number of CPUs 
 #' @importFrom snowfall sfInit sfExportAll sfIsRunning sfExport sfSapply
 #' @export 
-setup <- function() {
-  snowfall::sfInit(parallel=TRUE,cpus=parallel::detectCores())  
-  if (length(ls()) > 0) snowfall::sfExportAll() 
+setup <- function(cpus=parallel::detectCores()) {
+  snowfall::sfInit(parallel=TRUE,cpus=cpus)  
 }
 
 #' What objects of this class are available
@@ -19,7 +20,6 @@ setup <- function() {
 #' Finds objects of the specified class in the global environment or the
 #' package:DLMtool
 #' 
-#' @usage avail(classy)
 #' @param classy A class of object (character string, e.g. 'Fleet')
 #' @author T. Carruthers
 #' @export avail
@@ -475,8 +475,7 @@ return((log(depc) - log(sum(SBiomass)/sum(SSB0)))^2)
 #' @param ploty Produce a plot of depletion and F
 #' @param Dlim Limits on the depletion that is returned as a fraction of
 #' unfished biomass.
-#' @return A table of nsim rows and 2 columns (depletion, fishing mortality
-#' rate)
+#' @return An object of class 'OM' with 'D' slot populated 
 #' @author T. Carruthers
 #' @export ML2D
 ML2D <- function(OM, ML, nsim = 100, ploty = T, Dlim = c(0.05, 0.6)) {
