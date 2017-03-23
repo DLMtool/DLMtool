@@ -1518,7 +1518,8 @@ joinMSE <- function(MSEobjs = NULL) {
   lapply(MSEobjs, checkMSE) # check that MSE objects contains all slots 
   
   MPNames <- lapply(MSEobjs, getElement, name = "MPs")  # MPs in each object 
-  allsame <- length(unique(MPNames)) == 1
+  allsame <- length(unique(lapply(MPNames, unique))) == 1
+ 
   if (!allsame) {
     # drop the MPs that don't appear in all MSEobjs
     mpnames <- unlist(MPNames)
