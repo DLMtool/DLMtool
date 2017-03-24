@@ -4,7 +4,10 @@
 \alias{setup}
 \title{Setup parallel processing}
 \usage{
-setup()
+setup(cpus=parallel::detectCores())
+}
+\arguments{
+\item{cpus}{number of CPUs}
 }
 \description{
 Sets up parallel processing using the snowfall package
