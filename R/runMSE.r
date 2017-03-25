@@ -745,12 +745,13 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 
     # Using Rcpp code 	
     MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY2, Marray, hs, Mat_age, Wt_age, 
-      R0, V = V, maxage, nyears, proyears = maxage * 3, Spat_targ, 
+      R0, V = V, maxage, nyears, proyears = 200, Spat_targ, 
       mov, SRrel, aR, bR)  # optimize for MSY reference points\t	  
   } else {
-    # MSYrefs <- sapply(1:nsim, getFMSY, Marray, hs, Mat_age, Wt_age, 
+    # MSYrefs_R <- sapply(1:nsim, getFMSY, Marray, hs, Mat_age, Wt_age, 
       # R0, V = V[, , nyears], maxage, nyears, proyears = 200, Spat_targ, 
       # mov, SRrel, aR, bR)  # optimize for MSY reference points
+    # Using Rcpp code 	  
     MSYrefs <- sapply(1:nsim, getFMSY2, Marray, hs, Mat_age, Wt_age, 
       R0, V = V, maxage, nyears, proyears = 200, Spat_targ, 
       mov, SRrel, aR, bR)  # optimize for MSY reference points	   
@@ -769,23 +770,19 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
   FMSY <- MSYrefs[2, ]  # instantaneous FMSY (Vulnerable)
   SSBMSY <- MSYrefs[3, ]  # Spawning Stock Biomass at MSY  
-  if (nsim > 1) {
-    SSBMSY_SSB0 <- SSBMSY/apply(SSB[,,1,], 1, sum)  # SSBMSY relative to unfished (SSB)   
-	BMSY_B0 <- MSYrefs[4, ]/apply(Biomass[,,1,], 1, sum) # Biomass relative to unfished (B0)
-  }
-  if (nsim == 1) {
-    SSBMSY_SSB0 <- SSBMSY/sum(SSB[,,1,])  # SSBMSY relative to unfished (SSB)   
-    BMSY_B0 <- MSYrefs[4, ]/sum(Biomass[,,1,]) # Biomass relative to unfished (B0)
-  }
+  SSBMSY_SSB0 <- MSYrefs[4, ] # SSBMSY relative to unfished (SSB) 
+  BMSY_B0 <- MSYrefs[5, ] # Biomass relative to unfished (B0)
+  
   VBMSY <- (MSY/(1 - exp(-FMSY)))  # Biomass at MSY (Vulnerable)
-  FMSYb <- MSYrefs[6,]  # instantaneous FMSY (Spawning Biomass)
+  FMSYb <- MSYrefs[8,]  # instantaneous FMSY (Spawning Biomass)
   UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
-       
+  FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
+  
   message("Calculating reference yield - best fixed F strategy")  # Print a progress update
   flush.console()  # update the console
   if (snowfall::sfIsRunning()) {
     # Numerically optimize for F that provides highest long term yield
-    # RefY <- snowfall::sfSapply(1:nsim, getFref, Marray = Marray, Wt_age = Wt_age, 
+    # RefY_R <- snowfall::sfSapply(1:nsim, getFref, Marray = Marray, Wt_age = Wt_age, 
         # Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, ], SSN_s = SSN[, 
         # , nyears, ], Biomass_s = Biomass[, , nyears, ], VBiomass_s = VBiomass[, , nyears, ], 
 		# SSB_s = SSB[, , nyears, ], Vn = V[, , (nyears + 1):(nyears + proyears)], 
@@ -805,15 +802,16 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	  # SSB_s = SSB[, , nyears, ], Vn = V[, , (nyears + 1):(nyears + proyears)], 
 	  # hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas,
 	  # maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)
+	  
     RefY <- sapply(1:nsim, getFref2, Marray = Marray, Wt_age = Wt_age, 
       Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, , drop=FALSE], SSN_s = SSN[, , nyears, , drop=FALSE], 
 	  Biomass_s = Biomass[, , nyears, , drop=FALSE], VBiomass_s = VBiomass[, , nyears, , drop=FALSE], 
 	  SSB_s = SSB[, , nyears, , drop=FALSE], Vn = V[, , (nyears + 1):(nyears + proyears), drop=FALSE], 
 	  hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas,
-	  maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)	  
-  }
+	  maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)
 
-  FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
+  }
+  
   # LFS<-Linf*(1-exp(-K*(mod-t0))) # Length at full selection
   if (nsim > 1) A <- apply(VBiomass[, , nyears, ], 1, sum)  # Abundance
   if (nsim == 1) A <- sum(VBiomass[, , nyears, ])  # Abundance
