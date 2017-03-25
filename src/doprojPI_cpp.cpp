@@ -33,18 +33,19 @@ using namespace Rcpp;
 double doprojPI_cpp(double lnF, NumericVector Mvec,  
   NumericVector Wac, NumericVector Mac, NumericVector Pc, NumericMatrix N_c,
   NumericMatrix SSN_c, NumericMatrix Biomass_c, NumericMatrix VBiomass_c, 
-  NumericMatrix SSB_c, NumericVector Vc, double hc, NumericVector R0ac, double proyears,
+  NumericMatrix SSB_c, NumericMatrix Vc, double hc, NumericVector R0ac, double proyears,
   double nareas, double maxage, NumericMatrix movc, double SSBpRc,   
   NumericVector aRc, NumericVector bRc, double SRrelc, double Spat_targc)  {
   
   double FF = exp(lnF);
   
-  NumericMatrix N_Pcurr = N_c; 
+  NumericMatrix N_Pcurr(clone(N_c));
   NumericMatrix N_Pnext(maxage, nareas);  
-  NumericMatrix SSN_P = SSN_c;  
-  NumericMatrix Biomass_P = Biomass_c;
-  NumericMatrix VBiomass_P = VBiomass_c; 
-  NumericMatrix SSB_P = SSB_c; 
+  NumericMatrix SSN_P(clone(SSN_c));  
+  NumericMatrix Biomass_P(clone(Biomass_c));
+  NumericMatrix VBiomass_P(clone(VBiomass_c)); 
+
+  NumericMatrix SSB_P(clone(SSB_c)); 
   NumericMatrix Biomass_Pnext(maxage, nareas); 
   NumericMatrix VBiomass_Pnext(maxage, nareas);   
   NumericMatrix SSB_Pnext(maxage, nareas);    
@@ -67,10 +68,11 @@ double doprojPI_cpp(double lnF, NumericVector Mvec,
   for (int A=0; A < nareas; A++) {
 	  fishdist(A) = tempVec(A) / (sum(tempVec)/nareas);
 	  for (int age=0; age<maxage; age++) {
-		  FM_P(age, A) = FF * Vc(age) * fishdist(A);
+		  FM_P(age, A) = FF * Vc(age,0) * fishdist(A);
 		  Z_P(age, A) = FM_P(age, A) + Mvec(0);  
       }
-  }    
+  }   
+  
   for (int yr=1; yr < proyears; yr++) {
 	  for (int A=0; A < nareas; A++) {
           SSBbyA(A) = sum(SSB_P.column(A));		  
@@ -85,6 +87,7 @@ double doprojPI_cpp(double lnF, NumericVector Mvec,
  		      N_Pnext(0, A) = Pc(yr) * aRc(A) * SSBbyA(A) * exp(-bRc(A) * SSBbyA(A));
 		  }
 	  } 
+	  
       // move fish 
 	  for (int age=0; age < maxage; age++) {				
           NumericMatrix tempMat2(nareas, nareas);		
@@ -98,38 +101,46 @@ double doprojPI_cpp(double lnF, NumericVector Mvec,
 		  }
           for (int A=0; A < nareas; A++) {
 		    N_Pnext(age, A) = Nstore(age, A);
-		    Biomass_P(age, A) = N_Pnext(age, A) * Wac(age); 
-            VBiomass_P(age, A) = Biomass_P(age, A) * Vc(age);		
+		    Biomass_P(age, A) = N_Pnext(age, A) * Wac(age,yr); 
+            VBiomass_P(age, A) = Biomass_P(age, A) * Vc(age,yr);		
 		    SSN_P(age, A) = N_Pnext(age, A) * Mac(age);
-		    SSB_P(age, A) = SSN_P(age, A) * Wac(age);	    
+		    SSB_P(age, A) = SSN_P(age, A) * Wac(age,yr);	    
 		}		  
 	  }
-	  // Debug - ok up to here
+	   // if (yr==1) Rcpp::Rcout << Biomass_P << std::endl;
+	   
 	  // move fishing effort 
       for (int A=0; A < nareas; A++) {
 	    for (int age=0; age < maxage; age++) tempMat(age, A) = VBiomass_P(age, A);
 	    tempVec(A) = pow(sum(tempMat.column(A)), Spat_targc); 
-      }	  
+      }	 
+     	  
       for (int A=0; A < nareas; A++) {
 	    fishdist(A) = tempVec(A) / (sum(tempVec)/nareas);
-	    for (int age=0; age<maxage; age++) {
-		  FM_P(age, A) = FF * Vc(age) * fishdist(A);
+	    // if (yr==1) Rcpp::Rcout << "The value of fishdist is " << fishdist << std::endl;
+		for (int age=0; age<maxage; age++) {
+		  FM_P(age, A) = FF * Vc(age,yr) * fishdist(A);		  
 		  Z_P(age, A) = FM_P(age, A) + Mvec(yr);  
 		  Cyr(age, A) = FM_P(age,A)/Z_P(age,A) * (1-exp(-Z_P(age, A))) * Biomass_P(age,A);
 		  N_Pcurr(age, A) = N_Pnext(age, A);
         }
-      }		
-	  // Debug - ok up to here
+      }
+       // if (yr==1) Rcpp::Rcout << fishdist << std::endl;	  
 	  
     C_P(yr) = sum(Cyr); 
   }
   
-  double RetVal; 
-  double temp;
-  double temp2;
+  // Rcpp::Rcout << "The value of FM_P is " << FM_P << std::endl;
+  // Rcpp::Rcout << "The value of Z_P is " << Z_P << std::endl;
+  // Rcpp::Rcout << C_P << std::endl;
+  
+  double RetVal = 0; 
+  double temp = 0;
+  double temp2 = 0;
   temp = std::min(4.0, (proyears-1));
   temp2 = proyears - temp - 1; 
   NumericVector Store(temp+1);
+  // Rcpp::Rcout << Store <<  std::endl;
   int XX = 0;
   for (int i=temp2; i<proyears; i++) {
 	  Store(XX) = C_P(i);
@@ -137,6 +148,13 @@ double doprojPI_cpp(double lnF, NumericVector Mvec,
   }
   RetVal = sum(Store)/(temp+1);
  
+  // Rcpp::Rcout << C_P << std::endl;
+  
+  // Rcpp::Rcout << "-----------" << std::endl;  
+  // Rcpp::Rcout << FF << " " << -RetVal << std::endl;
+  // Rcpp::Rcout << N_Pcurr<< std::endl;  
+  // Rcpp::Rcout << "-----------" << std::endl; 
+  
   return -RetVal;
 }
 
