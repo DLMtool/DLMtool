@@ -24,7 +24,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // doprojPI_cpp
-double doprojPI_cpp(double lnF, NumericVector Mvec, NumericVector Wac, NumericVector Mac, NumericVector Pc, NumericMatrix N_c, NumericMatrix SSN_c, NumericMatrix Biomass_c, NumericMatrix VBiomass_c, NumericMatrix SSB_c, NumericVector Vc, double hc, NumericVector R0ac, double proyears, double nareas, double maxage, NumericMatrix movc, double SSBpRc, NumericVector aRc, NumericVector bRc, double SRrelc, double Spat_targc);
+double doprojPI_cpp(double lnF, NumericVector Mvec, NumericVector Wac, NumericVector Mac, NumericVector Pc, NumericMatrix N_c, NumericMatrix SSN_c, NumericMatrix Biomass_c, NumericMatrix VBiomass_c, NumericMatrix SSB_c, NumericMatrix Vc, double hc, NumericVector R0ac, double proyears, double nareas, double maxage, NumericMatrix movc, double SSBpRc, NumericVector aRc, NumericVector bRc, double SRrelc, double Spat_targc);
 RcppExport SEXP DLMtool_doprojPI_cpp(SEXP lnFSEXP, SEXP MvecSEXP, SEXP WacSEXP, SEXP MacSEXP, SEXP PcSEXP, SEXP N_cSEXP, SEXP SSN_cSEXP, SEXP Biomass_cSEXP, SEXP VBiomass_cSEXP, SEXP SSB_cSEXP, SEXP VcSEXP, SEXP hcSEXP, SEXP R0acSEXP, SEXP proyearsSEXP, SEXP nareasSEXP, SEXP maxageSEXP, SEXP movcSEXP, SEXP SSBpRcSEXP, SEXP aRcSEXP, SEXP bRcSEXP, SEXP SRrelcSEXP, SEXP Spat_targcSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -39,7 +39,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericMatrix >::type Biomass_c(Biomass_cSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type VBiomass_c(VBiomass_cSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type SSB_c(SSB_cSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Vc(VcSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type Vc(VcSEXP);
     Rcpp::traits::input_parameter< double >::type hc(hcSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type R0ac(R0acSEXP);
     Rcpp::traits::input_parameter< double >::type proyears(proyearsSEXP);
