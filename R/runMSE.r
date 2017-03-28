@@ -1298,13 +1298,13 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
         
 		CAL <- array(NA, dim = c(nsim, interval, nCALbins))  # the catch at length array
 		  # # a multinomial observation model for catch-at-length data
+		cn <- as.matrix(CNtemp[i,,])
+		if (interval == 1) cn <- t(cn) # dodgy hack to ensure matrix is correct 
         for (i in 1:nsim) { # Rcpp code 
-
-          CAL[i, 1:interval, ] <- genLenComp(CAL_bins, CAL_binsmid, pSLarray[i,, nyears + yind], CAL_ESS[i], CAL_nsamp[i], 
-            CNtemp[i,,], Len_age[i,,nyears + yind], LatASD[i,, nyears + yind], truncSD=0) 
+          CAL[i, 1:interval, ] <- genLenComp(CAL_bins, CAL_binsmid, as.matrix(pSLarray[i,, nyears + yind]), CAL_ESS[i], CAL_nsamp[i], 
+            cn, as.matrix(Len_age[i,,nyears + yind]), as.matrix(LatASD[i,, nyears + yind]), truncSD=0) 
           LFC[i] <- CAL_binsmid[min(which(round(CAL[i, interval, ],0) > 1))] # get the smallest CAL observation	
-        }
-			
+        }	
         # for (i in 1:nsim) {
           # for (j in 1:interval) {
             # yy <- yind[j]
