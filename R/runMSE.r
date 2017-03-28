@@ -335,11 +335,23 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   ageMarray <- array(ageM, dim = c(nsim, maxage))  # Age at maturity array
   if (!exists("Mat_age", inherits=FALSE)| is.null(custompars)) Mat_age <- 1/(1 + exp((ageMarray - (Agearray))/(ageMarray * ageMsd)))  # Maturity at age array
 
+  
+  # Catch at Length Classes
+  LatASD <- Len_age * 0.1  # SD of length-at-age - this is currently fixed to cv of 10%
+ 
+  MaxBin <- ceiling(max(Linfarray) + 3 * max(LatASD))
+  binWidth <- ceiling(0.03 * MaxBin)
+  CAL_bins <- seq(from = 0, to = MaxBin + binWidth, by = binWidth)
+  CAL_binsmid <- seq(from = 0.5 * binWidth, by = binWidth, length = length(CAL_bins) - 1)
+  nCALbins <- length(CAL_binsmid)
+  
+  
   # Selectivity at Length
   # ------------------------------------------------------ if (max(OM@L5)
   # > 1.5) { message('L5 set too high (maximum value of 1.5).
   # \nDefaulting to L5 = 1.5') OM@L5[OM@L5 > 1.5] <- 1.5 }
-
+  SLarray <- array(NA, dim=c(nsim, nCALbins, nyears+proyears)) # Selectivity-at-length 
+  
   if (exists("V", inherits=FALSE) & !is.null(custompars)) { # V has been passed in with custompars 
     # assign L5, LFS and Vmaxlen - dodgy loop 
 	# should calculate length at 5% selectivity from vB 
@@ -351,13 +363,18 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	  for (s in 1:nsim) {
 	    ind <- min(which(V[s,,yr] >=0.05))
 	    L5[yr, s] <- Len_age[s, ind, yr]
-	    ind <- min(which(V[s,,yr] >=0.50))
-	    LFS[yr, s] <- Len_age[s, ind, yr]
+	    ind2 <- min(which(V[s,,yr] >=0.50))
+		if (ind2 == ind) ind2 <- ind + 1
+	    LFS[yr, s] <- Len_age[s, ind2, yr]
 		Vmaxlen[yr, s] <- V[s, maxage, yr]
+		SLarray[s,, yr] <- SelectFun(s, SL0.05=L5[yr, ], SL1=LFS[yr, ], MaxSel=Vmaxlen[yr, ], 
+ 	                            maxlens=Len_age[, maxage, nyears], Lens=CAL_binsmid)
 	  }
 	}
   }
   
+  maxlen <- Len_age[, maxage, nyears] # reference length for Vmaxlen 
+  # assume it is expected length at maximum age for current (nyears) year 
   
   if (!exists("V", inherits=FALSE) | is.null(custompars)) { # don't run if V has been passed in with custompars 
     if (Selnyears <= 1) {    
@@ -378,12 +395,16 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	  if (all(Vmaxlen >= 0.99)) s2 <- rep(1E5, nsim)
       if (!all(Vmaxlen >= 0.99)) 
 	    s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
-	  	             LFS = LFS[1,i], s1=s1[i], maxlen=mean(Len_age[i,maxage,]), 
+	  	             LFS = LFS[1,i], s1=s1[i], maxlen=maxlen[i], 
 	  				 MaxSel=Vmaxlen[1, i])$minimum)
-      for (yr in 1:(nyears+proyears)) 
-  	   V[ , , yr] <- t(sapply(1:nsim, function(i)TwoSidedFun(LFS[1,i], s1[i], s2[i], lens=Len_age[i,,yr])))
+      for (yr in 1:(nyears+proyears)) {
+  	   # Calculate selectivity at age class 
+	   V[ , , yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[1,i], s1[i], s2[i], lens=Len_age[i,,yr])))
+	   # Calculate selectivity at length class 
+	   SLarray[,, yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[1,i], s1[i], s2[i], lens=CAL_binsmid)))   
+	  }	 
     }
-    
+	     
     if (Selnyears > 1) {
       # More than one break point in historical selection pattern
       L5 <- matrix(0, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
@@ -408,10 +429,12 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	    s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
           LFS = LFSs[i, X], L0.05 = L5s[i, X])$minimum)
 	    s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
-	  	             LFS = LFSs[i, X], s1=s1[i], maxlen=mean(Len_age[i,maxage,]), 
+	  	             LFS = LFSs[i, X], s1=s1[i], maxlen=maxlen[i], 
 	  				 MaxSel=Vmaxlens[i, X])$minimum)	
-	    for (yr in bkyears) 
-  	     V[ , , yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[yr, i], s1[i], s2[i], lens=Len_age[i,,yr])))				 
+	    for (yr in bkyears) {
+  	      V[ , , yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[yr, i], s1[i], s2[i], lens=Len_age[i,,yr])))
+          SLarray[,, yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[1,i], s1[i], s2[i], lens=CAL_binsmid)))   		 
+		}
       }
 	  
       restYears <- max(SelYears):(nyears + proyears)
@@ -422,14 +445,15 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
       s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
           LFS = LFSs[i, Selnyears], L0.05 = L5s[i, Selnyears])$minimum)
 	  s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
-	  	             LFS = LFSs[i, Selnyears], s1=s1[i], maxlen=mean(Len_age[i,maxage,]), 
+	  	             LFS = LFSs[i, Selnyears], s1=s1[i], maxlen=maxlen[i], 
 	  				 MaxSel=Vmaxlens[i, Selnyears])$minimum)	
-	  for (yr in restYears) 
+	  for (yr in restYears) { 
   	     V[ , , restYears] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[yr, i], s1[i], s2[i], lens=Len_age[i,,yr])))		
-	  	
+		 SLarray[,, yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[1,i], s1[i], s2[i], lens=CAL_binsmid))) 
+	  }	 
     }
   }
-
+   
   if (any((dim(V) != c(nsim, maxage, proyears+nyears)))) 
     stop("V must have dimensions: nsim (", nsim,") maxage (", maxage, 
 	      ") proyears+nyears (", proyears+nyears, ") \nbut has ", 
@@ -696,37 +720,32 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   for (i in 1:nsim) for (j in 1:nyears) CAA[i, j, ] <- ceiling(-0.5 + 
     rmultinom(1, CAA_ESS[i], CN[i, j, ]) * CAA_nsamp[i]/CAA_ESS[i])  # a multinomial observation model for catch-at-age data
   
-  # Temporary fix til effdist simulator is fixed for(i in
-  # 1:nsim)CAA[i,1,]<-CAA[i,2,]
+  # for (i in 1:nsim) {
+    # for (j in 1:nyears) {
+      # tempCN <- ceiling(-0.5 + rmultinom(1, size = CAL_ESS[i], prob = CN[i, j, ]) * CAL_nsamp[i]/CAL_ESS[i])
+      # # ages <- rep(1:maxage,tempCN)+runif(sum(tempCN),-0.5,0.5) # sample
+      # # expected age	  
+      # lens <- unlist(sapply(1:maxage, function(X) 
+	    # rnorm(tempCN[X], Len_age[i, X, j], LatASD[i, X, j])))
+      # lens[lens > (max(Linfarray) + 2 * max(LatASD)) | lens > max(CAL_bins)] <- max(Linfarray) + 
+        # 2 * max(LatASD)  # truncate at 2 sd 
+      # CAL[i, j, ] <- hist(lens, CAL_bins, plot = F)$counts  # assign to bins
+      # LFC[i] <- min(c(lens, LFC[i]), na.rm = T)  # get the smallest CAL observation
+      # # CAL[i,j,] <- ceiling(rmultinom(1, size=ESS[i],
+      # # prob=tempCAL)*CAL_nsamp[i]*CAL_ESS[i]-0.5) # could replace with
+      # # Dirichlet distribution
+    # }
+  # }
   
-  LatASD <- Len_age * 0.1  # This is currently fixed to cv of 10%
- 
-  MaxBin <- ceiling(max(Linfarray) + 3 * max(LatASD))
-  binWidth <- ceiling(0.03 * MaxBin)
-  CAL_bins <- seq(from = 0, to = MaxBin + binWidth, by = binWidth)
-  CAL_binsmid <- seq(from = 0.5 * binWidth, by = binWidth, length = length(CAL_bins) - 1)
-  nCALbins <- length(CAL_binsmid)
-  
-  CAL <- array(NA, dim = c(nsim, nyears, nCALbins))  # the catch at length array
-  LFC <- rep(NA, nsim)  # length at first capture
-  
-  for (i in 1:nsim) {
-    for (j in 1:nyears) {
-      tempCN <- ceiling(-0.5 + rmultinom(1, size = CAL_ESS[i], prob = CN[i, j, ]) * CAL_nsamp[i]/CAL_ESS[i])
-      # ages <- rep(1:maxage,tempCN)+runif(sum(tempCN),-0.5,0.5) # sample
-      # expected age	  
-      lens <- unlist(sapply(1:maxage, function(X) 
-	    rnorm(tempCN[X], Len_age[i, X, j], LatASD[i, X, j])))
-      lens[lens > (max(Linfarray) + 2 * max(LatASD)) | lens > max(CAL_bins)] <- max(Linfarray) + 
-        2 * max(LatASD)  # truncate at 2 sd 
-      CAL[i, j, ] <- hist(lens, CAL_bins, plot = F)$counts  # assign to bins
-      LFC[i] <- min(c(lens, LFC[i]), na.rm = T)  # get the smallest CAL observation
-      # CAL[i,j,] <- ceiling(rmultinom(1, size=ESS[i],
-      # prob=tempCAL)*CAL_nsamp[i]*CAL_ESS[i]-0.5) # could replace with
-      # Dirichlet distribution
-    }
+  # # a multinomial observation model for catch-at-length data
+  CAL <- array(NA, dim=c(nsim,  nyears, nCALbins))
+  LFC <- rep(NA, nsim)
+  for (i in 1:nsim) { # Rcpp code 
+    CAL[i, , ] <-  genLenComp(CAL_bins, CAL_binsmid, SLarray[i,,], CAL_ESS[i], CAL_nsamp[i], 
+      CN[i,,], Len_age[i,,], LatASD[i,,], truncSD=0) 
+    LFC[i] <- CAL_binsmid[min(which(round(CAL[i,nyears, ],0) > 1))] # get the smallest CAL observation	  
   }
-    
+  
   Ierr <- array(rlnorm((nyears + proyears) * nsim, mconv(1, rep(Isd, 
     nyears + proyears)), sdconv(1, rep(Isd, nyears + proyears))), c(nsim, 
     nyears + proyears))
@@ -1005,6 +1024,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     pL5 <- L5  # reset selectivity parameters for projections
     pLFS <- LFS
     pVmaxlen <- Vmaxlen
+	pSLarray <- SLarray # selectivity at length array
     
     message(paste(mm, "/", nMP, " Running MSE for ", MPs[mm], sep = ""))  # print a progress report
     flush.console()  # update the console
@@ -1046,9 +1066,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
         (hs - 0.2) * apply(SSB[, , nyears, ], c(1, 3), sum))  # Recruitment assuming regional R0 and stock wide steepness
     } else {
       # most transparent form of the Ricker uses alpha and beta params
-      N_P[, 1, 1, ] <- Perr[, nyears] * aR * apply(SSB[, , nyears, 
-        ], c(1, 3), sum) * exp(-bR * apply(SSB[, , nyears, ], c(1, 
-        3), sum))
+      N_P[, 1, 1, ] <- Perr[, nyears] * aR * apply(SSB[, , nyears, ], c(1, 3), sum) * exp(-bR * apply(SSB[, , nyears, ], c(1, 3), sum))
     }
     indMov <- as.matrix(expand.grid(1:nareas, 1:nareas, 1, 1:maxage, 1:nsim)[5:1])
     indMov2 <- indMov[, c(1, 2, 3, 4)]
@@ -1112,20 +1130,29 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
       newVmax <- inc[8, , 1]
       
       chngSel <- which(colSums(apply(newSel, 2, is.na)) == 0)  # selectivity pattern changed 
+	  ind <- as.matrix(expand.grid((y+nyears):(nyears+proyears), chngSel))
       if (length(chngSel) > 0) {
-        pL5[y + nyears, chngSel] <- newSel[1, chngSel]
-        pLFS[y + nyears, chngSel] <- newSel[2, chngSel]
+	    pL5[ind] <- newSel[1, ind[,2]]	# update size of first capture for future years 
+        pLFS[ind] <- newSel[2, ind[,2]] # update size of first full selection for future years 
         if (any(!is.na(inc[8, , 1]))) {
-          ind <- which(!is.na(inc[8, , 1]))
-          pVmaxlen[y + nyears, ind] <- inc[8, ind, 1]
+          ind <- which(!is.na(inc[8, , 1])) # update Vmaxlen for future years where applicable
+		  ind2 <- as.matrix(expand.grid((y+nyears):(nyears+proyears), ind))
+          pVmaxlen[ind2] <- inc[8, ind2[,2], 1]
         }
       }
+	  
       Vi <- t(sapply(1:nsim, SelectFun, pL5[y + nyears, ], pLFS[y + nyears, ], 
-	    pVmaxlen[y + nyears, ], Linfarray[, y + nyears], Len_age[, , y + nyears]))
+	    pVmaxlen[y + nyears, ], Len_age[, maxage, nyears], Len_age[, , y + nyears])) # update vulnerability-at-age schedule 
       
-      # Maximum Size Limit a upper size limit has been set
+	  ind <- as.matrix(expand.grid(1:nsim, 1:length(CAL_binsmid), (y+nyears):(nyears+proyears)))
+      pSLarray[ind] <- t(sapply(1:nsim, SelectFun, SL0.05=pL5[y+nyears, ], SL1=pLFS[y+nyears, ], 
+	                             MaxSel=pVmaxlen[y+nyears, ], maxlens=maxlen, Lens=CAL_binsmid)) # update vulnerability-at-length schedule 
+								 
+      # Maximum Size Limit - upper size limit has been set
       if (!all(is.na(newUppLim))) {
-        Vi[Len_age[, , y + nyears] >= newUppLim] <- 0
+        Vi[Len_age[, , (y + nyears)] >= newUppLim] <- 0
+		ind <- sapply(1:nsim, function(i) (which(CAL_binsmid >= newUppLim[i])))	
+		pSLarray[, ind, (y+nyears):(nyears+proyears)] <- 0 
       }
       # Vuln flag
       Vchange <- any(!is.na(inc[5:8]))
@@ -1141,7 +1168,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
           qvar[SY1] * qs[S1] * (1 + qinc[S1]/100)^y  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
         } else {
           if (y < proyears) 
-          V_P[, , (nyears + 1):(proyears + nyears)] <- Vi  # Update vulnerability schedule for all future years\t  
+          V_P[, , (nyears + 1):(proyears + nyears)] <- Vi  # Update vulnerability schedule for all future years  
           newVB <- apply(VBiomass_P[, , y, ] * Vi[SA1], c(1, 3), 
           sum)  # vulnerability modified
           fishdist <- (newVB^Spat_targ)/apply(newVB^Spat_targ, 
@@ -1270,22 +1297,31 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 		}	  
         
 		CAL <- array(NA, dim = c(nsim, interval, nCALbins))  # the catch at length array
-        for (i in 1:nsim) {
-          for (j in 1:interval) {
-            yy <- yind[j]
-            # tempCN <- ceiling(-0.5 + rmultinom(1, size = CAL_ESS[i], prob = CN[i, j, ]) * CAL_nsamp[i]/CAL_ESS[i])
-            tempCN <- ceiling(-0.5 + rmultinom(1, size = CAL_ESS[i], prob = CNtemp[i, j , ]) * CAL_nsamp[i]/CAL_ESS[i])
-		    # ages <- rep(1:maxage,tempCN)+runif(sum(tempCN),-0.5,0.5) # sample
-            # expected age
-            lens <- unlist(sapply(1:maxage, function(X) 
-		      rnorm(tempCN[X], Len_age[i, X, yy + nyears], LatASD[i, X, yy + nyears])))
-            lens[lens > (max(Linfarray) + 2 * max(LatASD)) | lens > 
-              max(CAL_bins)] <- max(Linfarray) + 2 * max(LatASD)  # truncate at 2 sd 
-            CAL[i, j, ] <- hist(lens, CAL_bins, plot = F)$counts  # assign to bins
-		    LFC[i] <- min(c(lens, LFC[i]), na.rm = T)  # get the smallest CAL observation
-			
-          }
+		  # # a multinomial observation model for catch-at-length data
+        for (i in 1:nsim) { # Rcpp code 
+
+          CAL[i, 1:interval, ] <- genLenComp(CAL_bins, CAL_binsmid, pSLarray[i,, nyears + yind], CAL_ESS[i], CAL_nsamp[i], 
+            CNtemp[i,,], Len_age[i,,nyears + yind], LatASD[i,, nyears + yind], truncSD=0) 
+          LFC[i] <- CAL_binsmid[min(which(round(CAL[i, interval, ],0) > 1))] # get the smallest CAL observation	
         }
+			
+        # for (i in 1:nsim) {
+          # for (j in 1:interval) {
+            # yy <- yind[j]
+            # # tempCN <- ceiling(-0.5 + rmultinom(1, size = CAL_ESS[i], prob = CN[i, j, ]) * CAL_nsamp[i]/CAL_ESS[i])
+            # tempCN <- ceiling(-0.5 + rmultinom(1, size = CAL_ESS[i], prob = CNtemp[i, j , ]) * CAL_nsamp[i]/CAL_ESS[i])
+		    # # ages <- rep(1:maxage,tempCN)+runif(sum(tempCN),-0.5,0.5) # sample
+            # # expected age
+            # lens <- unlist(sapply(1:maxage, function(X) 
+		      # rnorm(tempCN[X], Len_age[i, X, yy + nyears], LatASD[i, X, yy + nyears])))
+            # lens[lens > (max(Linfarray) + 2 * max(LatASD)) | lens > 
+              # max(CAL_bins)] <- max(Linfarray) + 2 * max(LatASD)  # truncate at 2 sd 
+            # CAL[i, j, ] <- hist(lens, CAL_bins, plot = F)$counts  # assign to bins
+		    # LFC[i] <- min(c(lens, LFC[i]), na.rm = T)  # get the smallest CAL observation
+			
+          # }
+        # }
+
         
         I2 <- cbind(apply(Biomass, c(1, 3), sum), apply(Biomass_P, 
           c(1, 3), sum)[, 1:(y - 1)]) * Ierr[, 1:(nyears + (y - 
@@ -1387,24 +1423,34 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
           newUppLim <- inc[7, , 1]
           newVmax <- inc[8, , 1]
           
-          chngSel <- which(colSums(apply(newSel, 2, is.na)) == 0)  # selectivity pattern changed 
+          chngSel <- which(colSums(apply(newSel, 2, is.na)) == 0)  # selectivity pattern changed
+	      ind <- as.matrix(expand.grid((y+nyears):(nyears+proyears), chngSel))		  
           if (length(chngSel) > 0) {
-          pL5[y + nyears, chngSel] <- newSel[1, chngSel]
-          pLFS[y + nyears, chngSel] <- newSel[2, chngSel]
-            if (any(!is.na(inc[8, , 1]))) {
-              ind <- which(!is.na(inc[8, , 1]))
-              pVmaxlen[y + nyears, ind] <- inc[8, ind, 1]
-            }
+		  pL5[ind] <- newSel[1, ind[,2]]	# update size of first capture for future years 
+          pLFS[ind] <- newSel[2, ind[,2]] # update size of first full selection for future years 
+          if (any(!is.na(inc[8, , 1]))) {
+            ind <- which(!is.na(inc[8, , 1])) # update Vmaxlen for future years where applicable
+		    ind2 <- as.matrix(expand.grid((y+nyears):(nyears+proyears), ind))
+            pVmaxlen[ind2] <- inc[8, ind2[,2], 1]
           }
-          Vi <- t(sapply(1:nsim, SelectFun, pL5[y + nyears, ], pLFS[y + nyears, ], 
-		    pVmaxlen[y + nyears, ], Linfarray[, y + nyears], Len_age[, , y + nyears]))
-          
-          # Maximum Size Limit a upper size limit has been set
-          if (!all(is.na(newUppLim))) {
-            Vi[Len_age[, , y + nyears] >= newUppLim] <- 0
-          }
-          # Vuln flag
-          Vchange <- any(!is.na(inc[5:8]))
+        }
+
+        Vi <- t(sapply(1:nsim, SelectFun, pL5[y + nyears, ], pLFS[y + nyears, ], 
+           pVmaxlen[y + nyears, ], Len_age[, maxage, nyears], Len_age[, , y + nyears])) # update vulnerability-at-age schedule 
+        
+        ind <- as.matrix(expand.grid(1:nsim, 1:length(CAL_binsmid), (y+nyears):(nyears+proyears)))
+        pSLarray[ind] <- t(sapply(1:nsim, SelectFun, SL0.05=pL5[y+nyears, ], SL1=pLFS[y+nyears, ], 
+                                MaxSel=pVmaxlen[y+nyears, ], maxlens=maxlen, Lens=CAL_binsmid)) # update vulnerability-at-length schedule 
+   							 
+        # Maximum Size Limit - upper size limit has been set
+        if (!all(is.na(newUppLim))) {
+          Vi[Len_age[, , (y + nyears)] >= newUppLim] <- 0
+   	      ind <- sapply(1:nsim, function(i) (which(CAL_binsmid >= newUppLim[i])))	
+   	      pSLarray[, ind, (y+nyears):(nyears+proyears)] <- 0 
+        }
+        
+		# Vuln flag
+        Vchange <- any(!is.na(inc[5:8]))
           
           if (sum(Si != 1) == 0) {
           # if there is no spatial closure if no vulnerability schedule is
@@ -1518,7 +1564,6 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   # Store MP duration
   attr(MPs, "duration") <- MPdur
 
-  
   MSEout <- new("MSE", Name = OM@Name, nyears, proyears, nMPs=nMP, MPs, nsim, 
     DLM_data@OM, Obs=DLM_data@Obs, B_BMSY=B_BMSYa, F_FMSY=F_FMSYa, B=Ba, 
 	SSB=SSBa, VB=VBa, FM=FMa, Ca, TAC=TACa, SSB_hist = SSB, CB_hist = CB, 
@@ -1533,7 +1578,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   attr(MSEout, "date") <- date()
   attr(MSEout, "R.version") <- R.version	
   MSEout 
-
+  
 }
 
 
