@@ -1151,8 +1151,10 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
       # Maximum Size Limit - upper size limit has been set
       if (!all(is.na(newUppLim))) {
         Vi[Len_age[, , (y + nyears)] >= newUppLim] <- 0
-		ind <- sapply(1:nsim, function(i) (which(CAL_binsmid >= newUppLim[i])))	
-		pSLarray[, ind, (y+nyears):(nyears+proyears)] <- 0 
+		for (ss in 1:nsim) {
+		  index <- which(CAL_binsmid >= newUppLim[ss])
+		  pSLarray[ss, index, (y+nyears):(nyears+proyears)] <- 0 
+		}	
       }
       # Vuln flag
       Vchange <- any(!is.na(inc[5:8]))
@@ -1445,10 +1447,12 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
         # Maximum Size Limit - upper size limit has been set
         if (!all(is.na(newUppLim))) {
           Vi[Len_age[, , (y + nyears)] >= newUppLim] <- 0
-   	      ind <- sapply(1:nsim, function(i) (which(CAL_binsmid >= newUppLim[i])))	
-   	      pSLarray[, ind, (y+nyears):(nyears+proyears)] <- 0 
+		  for (ss in 1:nsim) {
+		    index <- which(CAL_binsmid >= newUppLim[ss])
+		    pSLarray[ss, index, (y+nyears):(nyears+proyears)] <- 0 
+		  }	
         }
-        
+	  
 		# Vuln flag
         Vchange <- any(!is.na(inc[5:8]))
           
