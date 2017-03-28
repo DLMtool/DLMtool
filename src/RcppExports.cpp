@@ -55,6 +55,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// genLenComp
+NumericMatrix genLenComp(NumericVector CAL_bins, NumericVector CAL_binsmid, NumericMatrix SL, double CAL_ESS, double CAL_nsamp, NumericMatrix CN, NumericMatrix LaA, NumericMatrix LaASD, double truncSD);
+RcppExport SEXP DLMtool_genLenComp(SEXP CAL_binsSEXP, SEXP CAL_binsmidSEXP, SEXP SLSEXP, SEXP CAL_ESSSEXP, SEXP CAL_nsampSEXP, SEXP CNSEXP, SEXP LaASEXP, SEXP LaASDSEXP, SEXP truncSDSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type CAL_bins(CAL_binsSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type CAL_binsmid(CAL_binsmidSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type SL(SLSEXP);
+    Rcpp::traits::input_parameter< double >::type CAL_ESS(CAL_ESSSEXP);
+    Rcpp::traits::input_parameter< double >::type CAL_nsamp(CAL_nsampSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type CN(CNSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type LaA(LaASEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type LaASD(LaASDSEXP);
+    Rcpp::traits::input_parameter< double >::type truncSD(truncSDSEXP);
+    rcpp_result_gen = Rcpp::wrap(genLenComp(CAL_bins, CAL_binsmid, SL, CAL_ESS, CAL_nsamp, CN, LaA, LaASD, truncSD));
+    return rcpp_result_gen;
+END_RCPP
+}
 // movfit_Rcpp
 double movfit_Rcpp(NumericVector par, double prb, double frac);
 RcppExport SEXP DLMtool_movfit_Rcpp(SEXP parSEXP, SEXP prbSEXP, SEXP fracSEXP) {

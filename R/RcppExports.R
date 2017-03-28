@@ -37,6 +37,29 @@ doprojPI_cpp <- function(lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomas
     .Call('DLMtool_doprojPI_cpp', PACKAGE = 'DLMtool', lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc)
 }
 
+#' Generate length composition of catch 
+#'
+#' Generate size composition of catch given sample of catch-at-age,
+#' expected length-at-age, and standard deviation of length-at-age.
+#' Model assumes length-at-age is normally distributed, and that
+#' selectivity is size-dependant
+#'
+#' @param CAL_bins vector of catch-at-length size bins
+#' @param CAL_binsmid vector (nbins = length(CAL_bins) - 1) of mid-points for catch-at-length size bins 
+#' @param SL matrix (nbins, nyears) of selectivity-at-length class for each year
+#' @param CAL_ESS effective sample size of catch-at-length data 
+#' @param CAL_nsamp sample size of catch-at-length data 
+#' @param CN matrix (nyears, maxage) of catch-at-age for each year
+#' @param LaA matrix (maxage, nyears) of expected length-at-age for each year
+#' @param LaASD matrix (maxage, nyears) of standard deviation of length-at-age for each year
+#' @param truncSD optional argument to truncate the length-at-age distribution at `truncSD` standard deviations 
+#' e.g., a value of 2 truncates the length-at-age distribution at two standard deviations (set to 0 to ignore (default))
+#' 
+#' @export
+genLenComp <- function(CAL_bins, CAL_binsmid, SL, CAL_ESS, CAL_nsamp, CN, LaA, LaASD, truncSD) {
+    .Call('DLMtool_genLenComp', PACKAGE = 'DLMtool', CAL_bins, CAL_binsmid, SL, CAL_ESS, CAL_nsamp, CN, LaA, LaASD, truncSD)
+}
+
 #' Rcpp version of the Optimization function that returns the squared difference between user
 #' specified and calculated movement parameters. 
 #'
