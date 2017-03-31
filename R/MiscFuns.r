@@ -8,6 +8,7 @@
 #'
 #' @param cpus number of CPUs 
 #' @importFrom snowfall sfInit sfExportAll sfIsRunning sfExport sfSapply
+#' @importFrom parallel detectCores
 #' @export 
 setup <- function(cpus=parallel::detectCores()) {
   snowfall::sfInit(parallel=TRUE,cpus=cpus)  

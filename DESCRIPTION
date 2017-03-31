@@ -15,13 +15,10 @@ Depends:
 	snowfall
 Imports:
     abind,
-    boot,
-    MASS,
     methods,
 	LBSPR,
 	grDevices,
 	parallel,
-	Rcpp,
 	readxl,
 	stats,
 	utils
