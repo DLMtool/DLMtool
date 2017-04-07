@@ -121,7 +121,7 @@ runMSErobust <- function(OM = "1", MPs = NA, nsim = 200, proyears = 28,
 	  units <- "mins"
 	}
 	if (i != length(simsplit))
-	  message("\nEstimated time to completion is: ", eta, " ", units, " (", format(st + eta, "%H:%M %x"), ")\n")
+	  message("\nEstimated time to completion is: ", eta, " ", units)
 	flush.console()
 	
   }
