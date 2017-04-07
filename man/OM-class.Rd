@@ -178,6 +178,10 @@ bounds of a uniform distribution from which to sample the parameter.
 \item{\code{Brefcv}}{Bias in the knowledge of BMSY (uniform distribution)}
 
 \item{\code{Crefcv}}{Bias in the knowledge of MSY(uniform distribution)}
+
+\item{\code{cpars}}{A list of custom parameters (single parameters are a vector nsim long, time series are a matrix nsim rows by nyears columns)}
+
+\item{\code{seed}}{A random seed to ensure users can reproduce results exactly}
 }}
 
 \section{Objects from the Class}{

@@ -987,6 +987,8 @@ setMethod("initialize", "Observation", function(.Object, file = NA) {
 #' @slot Irefcv Bias in the knowledge of the relative abundance index at BMSY (uniform distribution) 
 #' @slot Brefcv Bias in the knowledge of BMSY (uniform distribution) 
 #' @slot Crefcv Bias in the knowledge of MSY(uniform distribution) 
+#' @slot cpars A list of custom parameters (single parameters are a vector nsim long, time series are a matrix nsim rows by nyears columns)
+#' @slot seed A random seed to ensure users can reproduce results exactly
 #' 
 #' @author T. Carruthers
 #' @keywords classes
@@ -1015,7 +1017,7 @@ setClass("OM", representation(Name = "character", nyears = "numeric", maxage = "
   rcv = "numeric", Dbiascv = "numeric", Dcv = "numeric", Btbias = "numeric", 
   Btcv = "numeric", Fcurbiascv = "numeric", Fcurcv = "numeric", hcv = "numeric", 
   Icv = "numeric", maxagecv = "numeric", Reccv = "numeric", Irefcv = "numeric", 
-  Crefcv = "numeric", Brefcv = "numeric"))
+  Crefcv = "numeric", Brefcv = "numeric",cpars="list",seed="numeric"))
 
 # initialize OM
 setMethod("initialize", "OM", function(.Object, Stock, Fleet, Observation) {
@@ -1054,9 +1056,9 @@ setMethod("initialize", "OM", function(.Object, Stock, Fleet, Observation) {
     if (tt) 
       slot(.Object, Oslots[i]) <- slot(Observation, Oslots[i])
   }
+  .Object@seed=1
   .Object
 })
-
 
 
 
