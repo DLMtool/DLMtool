@@ -60,7 +60,7 @@ runMSErobust <- function(OM = "1", MPs = NA, nsim = 200, proyears = 28,
   CheckMPs = TRUE, Hist=FALSE, ntrials=50, fracD=0.05,
   maxsims = 64, name = NULL, unique=TRUE, maxCrash = 10, saveMSE = TRUE, 
   savePack = FALSE) {
-  
+  if (!is.null(custompars)) stop("runMSErobust doesn't work with custompars - fix is coming!", call.=FALSE)
   if (!snowfall::sfIsRunning()) {
     message("Setting up parallel processing")
 	setup()
@@ -135,3 +135,12 @@ runMSErobust <- function(OM = "1", MPs = NA, nsim = 200, proyears = 28,
   }
   MSEobj
 }
+
+
+
+
+
+
+
+
+
