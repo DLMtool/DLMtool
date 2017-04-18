@@ -904,6 +904,8 @@ setMethod("initialize", "Observation", function(.Object, file = NA) {
 #' \code{new('OM', Stock, Fleet, Observation)}. 
 
 #' @slot Name Name of the operating model
+#' @slot nsim The number of simulations
+#' @slot proyears The number of projected years
 #' @slot nyears The number of years for the historical simulation 
 #' @slot maxage The maximum age of individuals that is simulated (there is no 'plus group': individuals die off beyone the maximum age so there isn't a huge cost to simulating more older age classes) 
 #' @slot R0 The magnitude of unfished recruitment. This is normally fixed to some arbitrary value since it simply scales the simulated numbers) 
@@ -996,7 +998,8 @@ setMethod("initialize", "Observation", function(.Object, file = NA) {
 #' 
 #' showClass('OM')
 #' 
-setClass("OM", representation(Name = "character", nyears = "numeric", maxage = "numeric", 
+setClass("OM", representation(Name = "character", nsim="numeric",proyears="numeric",
+  nyears = "numeric", maxage = "numeric", 
   R0 = "numeric", M = "numeric", Msd = "numeric", Mgrad = "numeric", 
   h = "numeric", SRrel = "numeric", Linf = "numeric", K = "numeric", 
   t0 = "numeric", Ksd = "numeric", Kgrad = "numeric", Linfsd = "numeric", 
@@ -1056,6 +1059,11 @@ setMethod("initialize", "OM", function(.Object, Stock, Fleet, Observation) {
     if (tt) 
       slot(.Object, Oslots[i]) <- slot(Observation, Oslots[i])
   }
+  
+  # Default MSE parameters
+  .Object@nsim=48       
+  .Object@proyears=50
+  
   .Object@seed=1
   .Object
 })

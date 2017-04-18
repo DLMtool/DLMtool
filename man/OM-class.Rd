@@ -15,6 +15,10 @@ bounds of a uniform distribution from which to sample the parameter.
 \describe{
 \item{\code{Name}}{Name of the operating model}
 
+\item{\code{nsim}}{The number of simulations}
+
+\item{\code{proyears}}{The number of projected years}
+
 \item{\code{nyears}}{The number of years for the historical simulation}
 
 \item{\code{maxage}}{The maximum age of individuals that is simulated (there is no 'plus group': individuals die off beyone the maximum age so there isn't a huge cost to simulating more older age classes)}

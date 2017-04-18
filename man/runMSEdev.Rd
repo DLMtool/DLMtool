@@ -4,22 +4,14 @@
 \alias{runMSEdev}
 \title{Run a Management Strategy Evaluation}
 \usage{
-runMSEdev(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
-  pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, CheckMPs = TRUE,
-  Hist = FALSE, ntrials = 50, fracD = 0.05)
+runMSEdev(OM = "1", MPs = NA, pstar = 0.5, maxF = 0.8, timelimit = 1,
+  reps = 1, CheckMPs = TRUE, Hist = FALSE, ntrials = 50, fracD = 0.05)
 }
 \arguments{
 \item{OM}{An operating model object (class OM)}
 
 \item{MPs}{A vector of methods (character string) of class DLM_output or
 DLM_input.}
-
-\item{nsim}{Number of simulations}
-
-\item{proyears}{Number of projected years}
-
-\item{interval}{The assessment interval - how often would you like to update
-the management system?}
 
 \item{pstar}{The percentile of the sample of the management recommendation
 for each method}
@@ -46,6 +38,13 @@ percent of simulations are not close to the required depletion}
 
 \item{fracD}{maximum allowed proportion of simulations where depletion is not 
 close to sampled depletion from OM before model stops with error}
+
+\item{nsim}{Number of simulations}
+
+\item{proyears}{Number of projected years}
+
+\item{interval}{The assessment interval - how often would you like to update
+the management system?}
 }
 \value{
 An object of class MSE
