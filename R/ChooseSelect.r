@@ -47,10 +47,10 @@ ChooseSelect <- function(Fleet, Stock = NULL, FstYr = NULL, LastYr = NULL, SelYe
     message("\n")
   }
   if (is.null(SelYears)) {
-    message("Enter each selectivity break point year, seperated by a comma")
+    message("Enter each selectivity break point year, separated by a comma")
     message("Note: break points are the years where selectivity pattern changed")
     message("Note: break points must be within year range")
-    inString <- readline("Enter each selectivity break point year, seperated by a comma: ")
+    inString <- readline("Enter each selectivity break point year, separated by a comma: ")
     options(warn = -1)
     SelYears <- as.numeric(unlist(strsplit(inString, ",")))
     if (is.na(SelYears)) 
