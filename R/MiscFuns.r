@@ -25,6 +25,8 @@ setup <- function(cpus=parallel::detectCores()) {
 #' @author T. Carruthers
 #' @export avail
 avail <- function(classy) {
+ temp <- try(class(classy), silent=TRUE)
+  if (class(temp) == "try-error") classy <- deparse(substitute(classy))
   return(unique(c(ls("package:DLMtool")[unlist(lapply(ls("package:DLMtool"), 
     getclass, classy = classy))], ls(envir = .GlobalEnv)[unlist(lapply(ls(envir = .GlobalEnv), 
     getclass, classy = classy))])))

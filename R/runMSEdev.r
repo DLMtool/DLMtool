@@ -32,8 +32,13 @@
 #' @return An object of class MSE
 #' @author T. Carruthers and A. Hordyk
 #' @export runMSEdev
+<<<<<<< HEAD
 runMSEdev <- function(OM = "1", MPs = c("AvC","DCAC","DD","Fref","CurE"), interval=4,
   pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, CheckMPs = FALSE,
+=======
+runMSEdev <- function(OM = "1", MPs = NA, interval=4,
+  pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, CheckMPs = TRUE,
+>>>>>>> origin/master
   Hist=FALSE, ntrials=50, fracD=0.05) {
 
   if("seed"%in%slotNames(OM))set.seed(OM@seed)

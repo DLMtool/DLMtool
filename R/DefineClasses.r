@@ -1069,7 +1069,10 @@ setMethod("initialize", "OM", function(.Object, Stock, Fleet, Observation) {
   # Default MSE parameters
   .Object@nsim=48       
   .Object@proyears=50
+<<<<<<< HEAD
   if(length(.Object@CurrentYr)==0).Object@CurrentYr=.Object@nyears
+=======
+>>>>>>> origin/master
   
   .Object@seed=1
   .Object
