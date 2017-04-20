@@ -7,26 +7,28 @@ Authors@R: c(
     person("Tom", "Carruthers",, "t.carruthers@fisheries.ubc.ca", role=c("aut", "cre")),
     person("Adrian", "Hordyk", , "ar.hordyk@gmail.com", "aut"))
 Maintainer: Tom Carruthers <t.carruthers@fisheries.ubc.ca>
-Description: Development, simulation testing, and implementation of management procedures for data-limited fisheries (see Carruthers et al (2014) <doi:10.1016/j.fishres.2013.12.014>).
+Description: Development, simulation testing, and implementation of management
+    procedures for data-limited fisheries (see Carruthers et al (2014) <doi:10.1016/
+    j.fishres.2013.12.014>).
 License: GPL-2
-Depends: 
+Depends:
     R (>= 2.10.0),
-	snowfall
+    snowfall
 Imports:
     abind,
     methods,
-	LBSPR,
-	grDevices,
-	parallel,
-	readxl,
-	stats,
-	utils
+    LBSPR,
+    grDevices,
+    parallel,
+    readxl,
+    stats,
+    utils
 LazyData: yes
 LazyLoad: yes
 Suggests:
     knitr,
     rmarkdown
-Packaged: 2015-11-13 23:33:05 UTC; Tom Carruthers 
+Packaged: 2015-11-13 23:33:05 UTC; Tom Carruthers
 LinkingTo: Rcpp
 RoxygenNote: 6.0.1
 BugReports: https://github.com/DLMtool/DLMtool/issues

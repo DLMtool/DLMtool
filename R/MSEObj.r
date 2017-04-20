@@ -957,7 +957,7 @@ Kplot <- function(MSEobj, maxsim = 60, MPs = NA, sims = NULL, maxMP = 9,
     x1 <- as.vector(MSEobj@B_BMSY[, mm, y1])
     y0 <- as.vector(MSEobj@F_FMSY[, mm, y])
     y1 <- as.vector(MSEobj@F_FMSY[, mm, y1])
-    segments(x0, y0, x1, y1, col = colsse)
+    segments(x0, y0, x1, y1, col = rep(colsse,each=nsim))
     
     rng <- 1:min(maxsim, MSEobj@nsim)
     points(MSEobj@B_BMSY[rng, mm, 1], MSEobj@F_FMSY[rng, mm, 1], pch = 19, 

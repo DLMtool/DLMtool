@@ -974,7 +974,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	  Linfbias=Linfbias, Irefbias=Irefbias, Crefbias=Crefbias, Brefbias=Brefbias,
 	  Recsd=Recsd, qinc=qinc, qcv=qcv, L5=L5, LFS=LFS, Vmaxlen=Vmaxlen, L5s=L5s, 
 	  LFSs=LFSs, Vmaxlens=Vmaxlens, Perr=Perr, R0=R0, Mat_age=Mat_age, 
-	  Mrand=Mrand, Linfrand=Linfrand, Krand=Krand, maxage=maxage, V=V, Depletion=Depletion) 
+	  Mrand=Mrand, Linfrand=Linfrand, Krand=Krand, maxage=maxage, V=V, Depletion=Depletion,qs=qs) 
 
 	HistData <- list(SampPars=SampPars, TSdata=TSdata, AtAge=AtAge, MSYs=MSYs, DLM_data=DLM_data)
 	class(HistData) <- c("list", "hist")

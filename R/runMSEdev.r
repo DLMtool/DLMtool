@@ -32,8 +32,8 @@
 #' @return An object of class MSE
 #' @author T. Carruthers and A. Hordyk
 #' @export runMSEdev
-runMSEdev <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4, 
-  pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, CheckMPs = TRUE,
+runMSEdev <- function(OM = "1", MPs = c("AvC","DCAC","DD","Fref","CurE"), interval=4,
+  pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, CheckMPs = FALSE,
   Hist=FALSE, ntrials=50, fracD=0.05) {
 
   if("seed"%in%slotNames(OM))set.seed(OM@seed)
@@ -45,6 +45,8 @@ runMSEdev <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4
     ncparsim<-cparscheck(OM@cpars)   # check each list object has the same length and if not stop and error report
     cpars<-OM@cpars
   }
+  nsim<-OM@nsim
+  proyears<-OM@proyears
   nyears <- OM@nyears  # number of  historical years
   maxage <- OM@maxage  # maximum age (no plus group)
   
@@ -410,21 +412,22 @@ runMSEdev <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4
 	  
 	  # Calculate selectivity-at-age  curve 
 	  V <- array(NA, dim = c(nsim, maxage, nyears + proyears))     
-      for (X in 1:(Selnyears - 1)) {	
+      
+	  for (X in 1:(Selnyears - 1)) {	
         bkyears <- SelYears[X]:SelYears[X + 1]
         L5[bkyears, ] <- matrix(rep((L5s[, X]), length(bkyears)), ncol = nsim, byrow = TRUE)
         LFS[bkyears, ] <- matrix(rep((LFSs[, X]), length(bkyears)), ncol = nsim, byrow = TRUE)
         Vmaxlen[bkyears, ] <- matrix(rep((Vmaxlens[, X]), length(bkyears)), ncol = nsim, byrow = TRUE)
         
-	    s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
+	      s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
           LFS = LFSs[i, X], L0.05 = L5s[i, X])$minimum)
-	    s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
+	      s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
 	  	             LFS = LFSs[i, X], s1=s1[i], maxlen=maxlen[i], 
 	  				 MaxSel=Vmaxlens[i, X])$minimum)	
-	    for (yr in bkyears) {
+	      for (yr in bkyears) {
   	      V[ , , yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[yr, i], s1[i], s2[i], lens=Len_age[i,,yr])))
           SLarray[,, yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[1,i], s1[i], s2[i], lens=CAL_binsmid)))   		 
-		}
+		    }
       }
 	  
       restYears <- max(SelYears):(nyears + proyears)
@@ -434,15 +437,15 @@ runMSEdev <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4
     
       s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
           LFS = LFSs[i, Selnyears], L0.05 = L5s[i, Selnyears])$minimum)
-	  s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
+	    s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
 	  	             LFS = LFSs[i, Selnyears], s1=s1[i], maxlen=maxlen[i], 
 	  				 MaxSel=Vmaxlens[i, Selnyears])$minimum)	
-	  for (yr in restYears) { 
+	    for (yr in restYears) { 
   	     V[ , , restYears] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[yr, i], s1[i], s2[i], lens=Len_age[i,,yr])))		
-		 SLarray[,, yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[1,i], s1[i], s2[i], lens=CAL_binsmid))) 
-	  }	 
+		    SLarray[,, yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[1,i], s1[i], s2[i], lens=CAL_binsmid))) 
+	    }	 
     }
-  }
+  } # end of 'if V exists'
    
   if (any((dim(V) != c(nsim, maxage, proyears+nyears)))) 
     stop("V must have dimensions: nsim (", nsim,") maxage (", maxage, 
@@ -959,7 +962,7 @@ runMSEdev <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4
 	  Linfbias=Linfbias, Irefbias=Irefbias, Crefbias=Crefbias, Brefbias=Brefbias,
 	  Recsd=Recsd, qinc=qinc, qcv=qcv, L5=L5, LFS=LFS, Vmaxlen=Vmaxlen, L5s=L5s, 
 	  LFSs=LFSs, Vmaxlens=Vmaxlens, Perr=Perr, R0=R0, Mat_age=Mat_age, 
-	  Mrand=Mrand, Linfrand=Linfrand, Krand=Krand, maxage=maxage, V=V, Depletion=Depletion) 
+	  Mrand=Mrand, Linfrand=Linfrand, Krand=Krand, maxage=maxage, V=V, Depletion=Depletion,qs=qs) 
 
 	HistData <- list(SampPars=SampPars, TSdata=TSdata, AtAge=AtAge, MSYs=MSYs, DLM_data=DLM_data)
 	class(HistData) <- c("list", "hist")
