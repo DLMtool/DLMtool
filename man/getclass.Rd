@@ -20,3 +20,4 @@ Internal function for determining if object is of classy
 \author{
 T. Carruthers
 }
+

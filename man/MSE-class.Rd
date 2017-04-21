@@ -113,14 +113,13 @@ simulation conditions and performance of data-limited methods
 
 \item{\code{Extra}}{A list for additional information}
 }}
-
 \section{Objects from the Class}{
  Objects can be created by calls of the form
 \code{new('MSE', Name, nyears, proyears, nMPs, MPs, nsim, OMtable, Obs,
 B_BMSYa, F_FMSYa, Ba, FMa, Ca, OFLa, Effort)}
 }
-
 \author{
 T. Carruthers
 }
 \keyword{classes}
+

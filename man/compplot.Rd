@@ -36,3 +36,4 @@ compplot(simy,samy,xlab="Year",ylab="Some time varying parameter")
 \author{
 T. Carruthers (Canadian DFO grant)
 }
+

@@ -12,3 +12,4 @@ FlatE_HDom
 An object of class Fleet
 }
 \keyword{datasets}
+

@@ -186,13 +186,13 @@ bounds of a uniform distribution from which to sample the parameter.
 \item{\code{cpars}}{A list of custom parameters (single parameters are a vector nsim long, time series are a matrix nsim rows by nyears columns)}
 
 \item{\code{seed}}{A random seed to ensure users can reproduce results exactly}
-}}
 
+\item{\code{CurrentYr}}{The current calendar year (final year) of the historical simulations (e.g. 2011)}
+}}
 \section{Objects from the Class}{
  Objects can be created by calls of the form
 \code{new('OM', Stock, Fleet, Observation)}.
 }
-
 \examples{
 
 showClass('OM')
@@ -202,3 +202,4 @@ showClass('OM')
 T. Carruthers
 }
 \keyword{classes}
+

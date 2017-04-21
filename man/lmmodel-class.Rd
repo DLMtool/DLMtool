@@ -12,7 +12,6 @@ relationship between M, age-at-maturity and the von B. K parameter.
  Objects can be created by calls of the form
 \code{new('lmmodel', stock)}. %% ~~ describe objects here ~~
 }
-
 \examples{
 
 newdata<-new('lmmodel','Name',new('list'))
@@ -22,3 +21,4 @@ newdata<-new('lmmodel','Name',new('list'))
 T. Carruthers
 }
 \keyword{classes}
+

@@ -51,13 +51,13 @@ The component of the operating model that controls fishing dynamics
 \item{\code{qcv}}{Inter-annual variability in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls)}
 
 \item{\code{isRel}}{Are the selectivity parameters relative to size-of-maturity? TRUE or FALSE}
-}}
 
+\item{\code{CurrentYr}}{The current calendar year (final year) of the historical simulations (e.g. 2011)}
+}}
 \section{Objects from the Class}{
  Objects can be created by calls of the form
 \code{new('Fleet', OM)}
 }
-
 \examples{
 
 showClass('Fleet')
@@ -67,3 +67,4 @@ showClass('Fleet')
 T. Carruthers
 }
 \keyword{classes}
+

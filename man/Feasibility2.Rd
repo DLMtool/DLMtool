@@ -12,3 +12,4 @@ Feasibility2
 An object of class DLM_fease
 }
 \keyword{datasets}
+

@@ -35,3 +35,4 @@ Internal estimation function for LSRA and LSRA2 functions
 \author{
 T. Carruthers
 }
+

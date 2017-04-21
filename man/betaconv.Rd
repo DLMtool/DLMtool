@@ -20,3 +20,4 @@ Calculate beta parameter for beta distribution from mean and standard deviation
 \author{
 T. Carruthers
 }
+
