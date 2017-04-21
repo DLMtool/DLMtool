@@ -53,7 +53,7 @@ plot.OM <-function(OM){
     mtext(paste0("Time series plots for operating model ",OM@Name),3,outer=T,line= 0.2,font=2)
     
     on.exit(par(op))       
-})
+}
 
 TSplot<-function(x,y,xlab=NA,ylab=NA,zeroy=T,incx=T,incy=T,type='l',mat=T){
   
