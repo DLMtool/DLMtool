@@ -2,6 +2,8 @@
 % Please edit documentation in R/AssessmentToOM.R, R/SS2DLM.R, R/iSCAM2DLM.R
 \name{getBH}
 \alias{getBH}
+\alias{getBH}
+\alias{getBH}
 \title{Predict Beverton-Holt recruitment and return fit to S-R observations}
 \usage{
 getBH(pars, SSB, rec, SSBpR, mode = 1, plot = F)
@@ -61,4 +63,3 @@ T. Carruthers
 
 T. Carruthers
 }
-

@@ -33,4 +33,3 @@ expected length-at-age, and standard deviation of length-at-age.
 Model assumes length-at-age is normally distributed, and that
 selectivity is size-dependant
 }
-

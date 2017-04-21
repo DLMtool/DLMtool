@@ -24,4 +24,3 @@ A function that uses the file location of a fitted SS3 model including input fil
 \author{
 T. Carruthers
 }
-

@@ -3,13 +3,12 @@
 \docType{data}
 \name{Perfect_Info}
 \alias{Perfect_Info}
-\title{Perfect_Info Observation}
-\format{An object of class \code{Observation} of length 1.}
+\title{Perfect_Info Obs}
+\format{An object of class \code{Obs} of length 1.}
 \usage{
 Perfect_Info
 }
 \description{
-An object of class Observation
+An object of class Obs
 }
 \keyword{datasets}
-

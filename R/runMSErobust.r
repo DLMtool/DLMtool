@@ -13,8 +13,8 @@
 #' 
 #' 
 #' @param OM An operating model object (class OM)
-#' @param MPs A vector of methods (character string) of class DLM_output or
-#' DLM_input. If NA all available MPs are run.
+#' @param MPs A vector of methods (character string) of class Output or
+#' Input. If NA all available MPs are run.
 #' @param nsim Number of simulations
 #' @param proyears Number of projected years
 #' @param interval The assessment interval - how often would you like to update

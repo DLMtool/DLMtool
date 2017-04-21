@@ -2,16 +2,16 @@
 % Please edit documentation in R/DefineClasses.r
 \docType{methods}
 \name{initialize-methods}
-\alias{initialize,DLM_data-method}
-\alias{initialize,DLM_fease-method}
-\alias{initialize,DLM_general-method}
+\alias{initialize-methods}
+\alias{initialize,Data-method}
 \alias{initialize,Fleet-method}
 \alias{initialize,MSE-method}
+\alias{initialize,Obs-method}
 \alias{initialize,OM-method}
-\alias{initialize,Observation-method}
 \alias{initialize,Stock-method}
 \alias{initialize,lmmodel-method}
-\alias{initialize-methods}
+\alias{initialize,Fease-method}
+\alias{initialize,DLM_general-method}
 \title{~~ Methods for Function \code{initialize} ~~}
 \description{
 ~~ Methods for function \code{initialize} ~~
@@ -28,7 +28,7 @@ here~~ }
 \item{list('signature(.Object = \'MSE\')')}{ %% ~~describe this method
 here~~ }
 
-\item{list('signature(.Object = \'Observation\')')}{ %% ~~describe this
+\item{list('signature(.Object = \'Obs\')')}{ %% ~~describe this
 method here~~ }
 
 \item{list('signature(.Object = \'OM\')')}{ %% ~~describe this method here~~
@@ -40,15 +40,15 @@ here~~ }
 \item{list('signature(.Object = \'lmmodel\')')}{ %% ~~describe this method
 here~~ }
 
-\item{list('signature(.Object = \'DLM_fease\')')}{ %% ~~describe this method
+\item{list('signature(.Object = \'Fease\')')}{ %% ~~describe this method
 here~~ } \item{list('signature(.Object = \'DLM_general\')')}{ %% ~~describe
 this method here~~ }
 
 }
 }
+
 \keyword{keyword(s)}
 \keyword{methods}
 \keyword{other}
 \keyword{possible}
 \keyword{~~}
-

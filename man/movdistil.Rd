@@ -2,6 +2,8 @@
 % Please edit documentation in R/AssessmentToOM.R, R/SS2DLM.R, R/iSCAM2DLM.R
 \name{movdistil}
 \alias{movdistil}
+\alias{movdistil}
+\alias{movdistil}
 \title{Simplified a multi-area transition matrix into the best 2 x 2 representation}
 \usage{
 movdistil(movtab)
@@ -37,4 +39,3 @@ T. Carruthers
 
 T. Carruthers
 }
-

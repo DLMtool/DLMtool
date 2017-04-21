@@ -194,122 +194,129 @@
 "Targeting_Small_Fish"
 
 
-#'  Generic_obs Observation
+#'  Generic_obs Obs
 #'
-#'  An object of class Observation
+#'  An object of class Obs
 #'
 "Generic_obs"
 
 
-#'  Imprecise_Biased Observation
+#'  Imprecise_Biased Obs
 #'
-#'  An object of class Observation
+#'  An object of class Obs
 #'
 "Imprecise_Biased"
 
 
-#'  Imprecise_Unbiased Observation
+#'  Imprecise_Unbiased Obs
 #'
-#'  An object of class Observation
+#'  An object of class Obs
 #'
 "Imprecise_Unbiased"
 
 
-#'  Perfect_Info Observation
+#'  Perfect_Info Obs
 #'
-#'  An object of class Observation
+#'  An object of class Obs
 #'
 "Perfect_Info"
 
 
-#'  Precise_Biased Observation
+#'  Precise_Biased Obs
 #'
-#'  An object of class Observation
+#'  An object of class Obs
 #'
 "Precise_Biased"
 
 
-#'  Precise_Unbiased Observation
+#'  Precise_Unbiased Obs
 #'
-#'  An object of class Observation
+#'  An object of class Obs
 #'
 "Precise_Unbiased"
 
 
-#'  Feasibility DLM_fease
+#'  Feasibility Fease
 #'
-#'  An object of class DLM_fease
+#'  An object of class Fease
 #'
 "Feasibility"
 
 
-#'  Feasibility2 DLM_fease
+#'  Feasibility2 Fease
 #'
-#'  An object of class DLM_fease
+#'  An object of class Fease
 #'
 "Feasibility2"
 
 
-#'  mypars DLM_general
+#'  Atlantic_mackerel Data
 #'
-#'  An object of class DLM_general
-#'
-"mypars"
-
-
-#'  Atlantic_mackerel DLM_data
-#'
-#'  An object of class DLM_data
+#'  An object of class Data
 #'
 "Atlantic_mackerel"
 
 
-#'  China_rockfish DLM_data
+#'  China_rockfish Data
 #'
-#'  An object of class DLM_data
+#'  An object of class Data
 #'
 "China_rockfish"
 
 
-#'  Cobia DLM_data
+#'  Cobia Data
 #'
-#'  An object of class DLM_data
+#'  An object of class Data
 #'
 "Cobia"
 
 
-#'  Example_datafile DLM_data
+#'  Example_datafile Data
 #'
-#'  An object of class DLM_data
+#'  An object of class Data
 #'
 "Example_datafile"
 
 
-#'  Gulf_blue_tilefish DLM_data
+#'  Gulf_blue_tilefish Data
 #'
-#'  An object of class DLM_data
+#'  An object of class Data
 #'
 "Gulf_blue_tilefish"
 
 
-#'  ourReefFish DLM_data
+#'  ourReefFish Data
 #'
-#'  An object of class DLM_data
+#'  An object of class Data
 #'
 "ourReefFish"
 
 
-#'  Red_snapper DLM_data
+#'  Red_snapper Data
 #'
-#'  An object of class DLM_data
+#'  An object of class Data
 #'
 "Red_snapper"
 
 
-#'  Simulation_1 DLM_data
+#'  Simulation_1 Data
 #'
-#'  An object of class DLM_data
+#'  An object of class Data
 #'
 "Simulation_1"
+
+
+#'  testOM OM
+#'
+#'  An object of class OM
+#'
+"testOM"
+
+
+#'  testMSE MSE
+#'
+#'  An object of class MSE
+#'
+"testMSE"
 
 

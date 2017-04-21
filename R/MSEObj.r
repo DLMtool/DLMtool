@@ -2742,18 +2742,18 @@ boxplot.MSE <- function(x, MPs = NA, maxMP = 8, PMRefs = list(B_BMSY = 1,
     "(last", lastYrs, "years)")
   
   MPtype <- perfdat$MPtype
-  outmps <- perfdat[MPtype == "DLM_output", ]$MP
-  inmps <- perfdat[MPtype == "DLM_input", ]$MP
+  outmps <- perfdat[MPtype == "Output", ]$MP
+  inmps <- perfdat[MPtype == "Input", ]$MP
   nOut <- ceiling(nmp/2)
   nIn <- floor(nmp - nOut)
   if (nMPs > nmp) {
-    outDist <- perfdat[MPtype == "DLM_output", ]$Dist
-    OutMPs <- perfdat[MPtype == "DLM_output", ]$MP[order(outDist)[1:nOut]]
-    inDist <- perfdat[MPtype == "DLM_input", ]$Dist
-    InMPs <- perfdat[MPtype == "DLM_input", ]$MP[order(inDist)[1:nIn]]
+    outDist <- perfdat[MPtype == "Output", ]$Dist
+    OutMPs <- perfdat[MPtype == "Output", ]$MP[order(outDist)[1:nOut]]
+    inDist <- perfdat[MPtype == "Input", ]$Dist
+    InMPs <- perfdat[MPtype == "Input", ]$MP[order(inDist)[1:nIn]]
   } else {
-    OutMPs <- perfdat[MPtype == "DLM_output", ]$MP
-    InMPs <- perfdat[MPtype == "DLM_input", ]$MP
+    OutMPs <- perfdat[MPtype == "Output", ]$MP
+    InMPs <- perfdat[MPtype == "Input", ]$MP
   }
   
   mseobj <- Sub(MSEobj, MPs = c(OutMPs, InMPs))
@@ -2792,10 +2792,10 @@ boxplot.MSE <- function(x, MPs = NA, maxMP = 8, PMRefs = list(B_BMSY = 1,
   # apply(AAVE, 2, mean, na.rm=TRUE)
   
   # Colors - to make the plot a bit more cheerful
-  inputs <- which(MPtype == "DLM_input")
-  outputs <- which(MPtype == "DLM_output")
+  inputs <- which(MPtype == "Input")
+  outputs <- which(MPtype == "Output")
   fonts <- rep(2, nmp)
-  fonts[MPtype == "DLM_input"] <- 4
+  fonts[MPtype == "Input"] <- 4
   NameCol <- rep("black", nmp)
   NameCol[MPs %in% canMPs] <- "green"
   index <- grep("ref", MPs)
@@ -3151,7 +3151,7 @@ Jplot <- function(MSEobj, PLim = 0.8, YVar = c("LTY", "STY", "avgSSB_SSB0",
   
   MPtype <- sapply(1:nMPs, function(X) class(get(MPs[X])))
   fonts <- rep(2, nMPs)
-  fonts[MPtype == "DLM_input"] <- 4
+  fonts[MPtype == "Input"] <- 4
   Cex <- 1.5
   if (!ShowLabs) 
     points(x, y, bg = coly, pch = Pch, cex = Cex, col = "black")

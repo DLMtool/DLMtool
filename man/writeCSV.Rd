@@ -5,11 +5,11 @@
 \title{Internal function to write CSVs for objects}
 \usage{
 writeCSV(inobj, tmpfile = NULL, objtype = c('Stock', 'Fleet',
-'Observation', 'DLM_data', 'OM', 'DLM_fease'))
+'Observation', 'Data', 'OM', 'Fease'))
 }
 \arguments{
-\item{inobj}{A object of class Stock, Fleet, Observation, DLM_data, OM, or
-DLM_fease}
+\item{inobj}{A object of class Stock, Fleet, Observation, Data, OM, or
+Fease}
 
 \item{tmpfile}{The full file path and name for the saved CSV file}
 
@@ -22,4 +22,3 @@ DLMtool object
 \author{
 A. Hordyk
 }
-

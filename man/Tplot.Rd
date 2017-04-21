@@ -18,4 +18,3 @@ trade-offs
 \author{
 T. Carruthers
 }
-

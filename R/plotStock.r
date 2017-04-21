@@ -19,8 +19,8 @@ plot.Stock <- function(Stock, nsamp=3, nsim=500, nyears=50, proyears=28,
   col="darkgray", breaks=10, ask=FALSE, incVB=TRUE) {
   if (class(Stock) == "OM") {
     if (is.finite(Stock@nyears)) nyears <- Stock@nyears
-	if (is.finite(Stock@proyears)) nyears <- Stock@proyears
-	if (is.finite(Stock@nsim)) nyears <- Stock@nsim	
+	if (is.finite(Stock@proyears)) proyears <- Stock@proyears
+	if (is.finite(Stock@nsim)) nsim <- Stock@nsim	
 	Stock <- SubOM(Stock)
   }
   its <- sample(1:nsim, nsamp)

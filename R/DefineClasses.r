@@ -1,14 +1,14 @@
 
 
-#' Class \code{'DLM_data'}
+#' Class \code{'Data'}
 #' 
 #' An object for storing data for analysis using data-limited methods
 #' 
 #' 
-#' @name DLM_data-class
+#' @name Data-class
 #' @docType class
 #' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new('DLM_data', stock)} 
+#' \code{new('Data', stock)} 
 #' @slot Name The name of the case-study
 #' @slot Year A vector of years that correspond to catch and relative abundance data
 #' @slot Cat Total annual catches
@@ -87,9 +87,9 @@
 #' @keywords classes
 #' @examples
 #' 
-#' newdata<-new('DLM_data')
+#' newdata<-new('Data')
 #' 
-setClass("DLM_data", representation(Name = "character", Year = "vector", 
+setClass("Data", representation(Name = "character", Year = "vector", 
   Cat = "matrix", Ind = "matrix", Rec = "matrix", t = "vector", AvC = "vector", 
   Dt = "vector", Mort = "vector", FMSY_M = "vector", BMSY_B0 = "vector", 
   Cref = "vector", Bref = "vector", Iref = "vector", L50 = "vector", 
@@ -108,9 +108,9 @@ setClass("DLM_data", representation(Name = "character", Year = "vector",
   CAL = "array", MPrec = "vector", MPeff = "vector", ML = "array", Lbar = "array", 
   Lc = "array", LHYear = "numeric", Misc = "list"))
 
-# initialize DLM_data
-setMethod("initialize", "DLM_data", function(.Object, stock = "nada") {
-  # .Object }) .Object<-new('DLM_data') run an error check here
+# initialize Data
+setMethod("initialize", "Data", function(.Object, stock = "nada") {
+  # .Object }) .Object<-new('Data') run an error check here
   if (file.exists(stock)) {
     dat <- read.csv(stock, header = F, colClasses = "character")  # read 1st sheet
     dname <- dat[, 1]
@@ -291,16 +291,16 @@ setMethod("initialize", "DLM_data", function(.Object, stock = "nada") {
 
 
 
-#' Class \code{'DLM_fease'}
+#' Class \code{'Fease'}
 #' 
 #' An object for storing information about what data are available or might be
 #' available
 #' 
 #' 
-#' @name DLM_fease-class
+#' @name Fease-class
 #' @docType class
 #' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new('DLM_fease', stock)}
+#' \code{new('Fease', stock)}
 #'
 #' @slot Name The name of the data feasibility object
 #' @slot Case The names of the data feasibility cases
@@ -324,9 +324,9 @@ setMethod("initialize", "DLM_data", function(.Object, stock = "nada") {
 #' @keywords classes
 #' @examples
 #' 
-#' newdata<-new('DLM_fease')
+#' newdata<-new('Fease')
 #' 
-setClass("DLM_fease", representation(Name = "character", Case = "character", 
+setClass("Fease", representation(Name = "character", Case = "character", 
   Catch = "numeric", Index = "numeric", Natural_mortality_rate = "numeric", 
   Maturity_at_length = "numeric", Growth = "numeric", Length_weight_conversion = "numeric", 
   Fleet_selectivity = "numeric", Catch_at_length = "numeric", Catch_at_age = "numeric", 
@@ -334,8 +334,8 @@ setClass("DLM_fease", representation(Name = "character", Case = "character",
   Target_catch = "numeric", Target_biomass = "numeric", Target_index = "numeric", 
   Abundance = "numeric"))
 
-# initialize DLM_fease
-setMethod("initialize", "DLM_fease", function(.Object, file = "nada", ncases = 1) {
+# initialize Fease
+setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
   # run an error check here
   if (file.exists(file)) {
     Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
@@ -538,10 +538,10 @@ setMethod("initialize", "Fleet", function(.Object, file = NA) {
 #' 
 #' 
 #' @name initialize-methods
-#' @aliases initialize-methods initialize,DLM_data-method
+#' @aliases initialize-methods initialize,Data-method
 #' initialize,Fleet-method initialize,MSE-method initialize,Obs-method
 #' initialize,OM-method initialize,Stock-method initialize,lmmodel-method
-#' initialize,DLM_fease-method initialize,DLM_general-method
+#' initialize,Fease-method initialize,DLM_general-method
 #' @docType methods
 #' @section Methods: \describe{
 #' 
@@ -566,7 +566,7 @@ setMethod("initialize", "Fleet", function(.Object, file = NA) {
 #' \item{list('signature(.Object = \'lmmodel\')')}{ %% ~~describe this method
 #' here~~ }
 #' 
-#' \item{list('signature(.Object = \'DLM_fease\')')}{ %% ~~describe this method
+#' \item{list('signature(.Object = \'Fease\')')}{ %% ~~describe this method
 #' here~~ } \item{list('signature(.Object = \'DLM_general\')')}{ %% ~~describe
 #' this method here~~ }
 #' 
@@ -1098,29 +1098,29 @@ NULL
 
 
 
-#' Plot DLM_data object
+#' Plot Data object
 #'
-#' @rdname plot-DLM_data 
-#' @param x object of class DLM_data
+#' @rdname plot-Data 
+#' @param x object of class Data
 #' @param funcs MPs 
 #' @param maxlines maximum number of lines
 #' @param perc percentile of TAC recommendation
 #' @param xlims limits of x-axis
 #' @export
 setMethod("plot",
-  signature(x = "DLM_data"),
+  signature(x = "Data"),
   function(x,funcs=NA,maxlines=6,perc=0.5,xlims=NA){
    
     old_par <- par(no.readonly = TRUE)
     on.exit(par(list = old_par), add = TRUE)
 	  
-    DLM_data<-x
-	if (class(DLM_data) != "DLM_data") stop("Must supply object of class DLM_data")
-	if (all(is.na(DLM_data@TAC))) stop("No TAC data found")
+    Data<-x
+	if (class(Data) != "Data") stop("Must supply object of class Data")
+	if (all(is.na(Data@TAC))) stop("No TAC data found")
     cols<-rep(c('black','red','green','blue','orange','brown','purple','dark grey','violet','dark red','pink','dark blue','grey'),4)
     ltys<-rep(1:4,each=13)
     
-    if(is.na(funcs[1]))funcs<-DLM_data@MPs
+    if(is.na(funcs[1]))funcs<-Data@MPs
 
     nMPs<-length(funcs)
     nplots<-ceiling(nMPs/maxlines)
@@ -1128,18 +1128,18 @@ setMethod("plot",
     mbyp <- split(1:nMPs, ceiling(1:nMPs/maxl))   # assign methods to plots
 
     if(is.na(xlims[1])|length(xlims)!=2){
-      xlims<-quantile(DLM_data@TAC,c(0.005,0.95),na.rm=T)
+      xlims<-quantile(Data@TAC,c(0.005,0.95),na.rm=T)
       if(xlims[1]<0)xlims[1]<-0
     }
-    if(!NAor0(DLM_data@Ref)){
-      if(xlims[1]>DLM_data@Ref)xlims[1]<-max(0,0.98*DLM_data@Ref)
-      if(xlims[2]<DLM_data@Ref)xlims[2]<-1.02*DLM_data@Ref
+    if(!NAor0(Data@Ref)){
+      if(xlims[1]>Data@Ref)xlims[1]<-max(0,0.98*Data@Ref)
+      if(xlims[2]<Data@Ref)xlims[2]<-1.02*Data@Ref
     }
     ylims<-c(0,1)
 
     #for(m in 1:nMPs){
-     # if(sum(!is.na(DLM_data@TAC[m,,1]))>2){
-       # dens<-density(DLM_data@TAC[m,,1],na.rm=T)
+     # if(sum(!is.na(Data@TAC[m,,1]))>2){
+       # dens<-density(Data@TAC[m,,1],na.rm=T)
         #print(quantile(dens$y,0.99,na.rm=T))
       #  if(quantile(dens$y,0.9,na.rm=T)>ylims[2])ylims[2]<-quantile(dens$y,0.90,na.rm=T)
       #}
@@ -1152,34 +1152,34 @@ setMethod("plot",
       m<-mbyp[[p]][1]
       plot(NA,NA,xlim=xlims,ylim=ylims,main="",xlab="",ylab="",col="white",lwd=3,type="l")
       abline(h=0)
-      if(!NAor0(DLM_data@Ref)){
-        abline(v=DLM_data@Ref,col="light grey",lwd=2)
-        if(!NAor0(DLM_data@Ref_type[1]))legend('right',DLM_data@Ref_type,text.col="grey",bty='n')
+      if(!NAor0(Data@Ref)){
+        abline(v=Data@Ref,col="light grey",lwd=2)
+        if(!NAor0(Data@Ref_type[1]))legend('right',Data@Ref_type,text.col="grey",bty='n')
       }
       #plot(density(DLM@TAC[m,,1],from=0,na.rm=T),xlim=xlims,ylim=ylims,main="",xlab="",ylab="",col=coly[m],lty=ltyy[m],type="l")
 
-      if(!is.na(perc[1]))abline(v=quantile(DLM_data@TAC[m,,1],p=perc,na.rm=T),col=cols[m],lty=ltys[m])
+      if(!is.na(perc[1]))abline(v=quantile(Data@TAC[m,,1],p=perc,na.rm=T),col=cols[m],lty=ltys[m])
       #if(length(mbyp[[p]])>0){
         for(ll in 1:length(mbyp[[p]])){
           m<-mbyp[[p]][ll]
-          if(sum(!is.na(DLM_data@TAC[m,,1]))>10){  # only plot if there are sufficient non-NA TAC samples
-            x<-density(DLM_data@TAC[m,,1],from=0,na.rm=T)$x
-            y<-density(DLM_data@TAC[m,,1],from=0,na.rm=T)$y
+          if(sum(!is.na(Data@TAC[m,,1]))>10){  # only plot if there are sufficient non-NA TAC samples
+            x<-density(Data@TAC[m,,1],from=0,na.rm=T)$x
+            y<-density(Data@TAC[m,,1],from=0,na.rm=T)$y
             y<-y/max(y)
             lines(x,y,col=cols[ll])
           }else{
             print(paste("Method ",funcs[m]," produced too many NA TAC values for plotting densities",sep=""))
           }
-          if(!is.na(perc[1]))abline(v=quantile(DLM_data@TAC[m,,1],p=perc,na.rm=T),col=cols[ll],lty=2)
+          if(!is.na(perc[1]))abline(v=quantile(Data@TAC[m,,1],p=perc,na.rm=T),col=cols[ll],lty=2)
         }
       #}
       cind<-1:length(mbyp[[p]])
       legend('topright',funcs[mbyp[[p]]],text.col=cols[cind],col=cols[cind],lty=1,bty='n',cex=0.75)
     }
 
-    mtext(paste("TAC (",DLM_data@Units,")",sep=""),1,outer=T,line=0.5)
+    mtext(paste("TAC (",Data@Units,")",sep=""),1,outer=T,line=0.5)
     mtext(paste("Standardized relative frequency",sep=""),2,outer=T,line=0.5)
-    mtext(paste("TAC calculation for ",DLM_data@Name,sep=""),3,outer=T,line=0.5)
+    mtext(paste("TAC calculation for ",Data@Name,sep=""),3,outer=T,line=0.5)
 })
 
 #' Plot MSE object
@@ -1308,13 +1308,13 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
 
 
 
-#' Summary of DLM_data object
+#' Summary of Data object
 #'
-#' @rdname summary-DLM_data
-#' @param object object of class DLM_data
+#' @rdname summary-Data
+#' @param object object of class Data
 #' @export
 setMethod("summary",
-          signature(object = "DLM_data"),
+          signature(object = "Data"),
           function(object){
   
   old_par <- par(no.readonly = TRUE)
@@ -1353,7 +1353,7 @@ setMethod("summary",
     for(i in 2:length(slots)) lines(xstore[i,],ystore[i,],col=scols[i])
   }
   legend('topright',legend=namey[ind],text.col=scols[1:length(slots)],bty='n')
-  mtext(paste("Data summary for",deparse(substitute(DLM_data)),sep=" "),3,font=2,line=0.25,outer=T)
+  mtext(paste("Data summary for",deparse(substitute(Data)),sep=" "),3,font=2,line=0.25,outer=T)
 
 })
 

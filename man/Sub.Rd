@@ -27,4 +27,3 @@ projection years).
 \author{
 A. Hordyk
 }
-

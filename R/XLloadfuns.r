@@ -110,8 +110,8 @@ Fease_xl <- function(fname, stkname, fpath = "", saveCSV = FALSE) {
   tmpfile <- paste0(fpath, stkname, "Fease.csv")
   if (file.exists(tmpfile)) 
     unlink(tmpfile)
-  writeCSV(inobj = feasedat, tmpfile, objtype = "DLM_fease")
-  fease <- new("DLM_fease", tmpfile)
+  writeCSV(inobj = feasedat, tmpfile, objtype = "Fease")
+  fease <- new("Fease", tmpfile)
   if (!saveCSV) 
     unlink(tmpfile)
   
@@ -127,15 +127,15 @@ Fease_xl <- function(fname, stkname, fpath = "", saveCSV = FALSE) {
 #' 
 #' 
 #' @usage writeCSV(inobj, tmpfile = NULL, objtype = c('Stock', 'Fleet',
-#' 'Observation', 'DLM_data', 'OM', 'DLM_fease'))
-#' @param inobj A object of class Stock, Fleet, Observation, DLM_data, OM, or
-#' DLM_fease
+#' 'Observation', 'Data', 'OM', 'Fease'))
+#' @param inobj A object of class Stock, Fleet, Observation, Data, OM, or
+#' Fease
 #' @param tmpfile The full file path and name for the saved CSV file
 #' @param objtype The class corresonding to the \code{inobj}
 #' @author A. Hordyk
 #' @export writeCSV
 writeCSV <- function(inobj, tmpfile = NULL, objtype = c("Stock", "Fleet", 
-  "Observation", "DLM_data", "OM", "DLM_fease")) {
+  "Observation", "Data", "OM", "Fease")) {
   objtype <- match.arg(objtype)
   tmpobj <- new(objtype)
   sn <- slotNames(tmpobj)

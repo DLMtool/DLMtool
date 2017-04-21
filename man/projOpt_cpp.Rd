@@ -48,4 +48,3 @@ projOpt_cpp(lnIn, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc,
 Optimize for MSY and calculate MSY reference points
 }
 \keyword{internal}
-

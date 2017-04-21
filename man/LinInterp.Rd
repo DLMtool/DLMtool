@@ -2,6 +2,8 @@
 % Please edit documentation in R/AssessmentToOM.R, R/SS2DLM.R, R/iSCAM2DLM.R
 \name{LinInterp}
 \alias{LinInterp}
+\alias{LinInterp}
+\alias{LinInterp}
 \title{Linear interpolation of a y value at level xlev based on a vector x and y}
 \usage{
 LinInterp(x, y, xlev, ascending = F, zeroint = F)
@@ -43,4 +45,3 @@ T. Carruthers
 
 T. Carruthers
 }
-

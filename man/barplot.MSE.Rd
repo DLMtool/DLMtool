@@ -44,4 +44,3 @@ Plot a barplot of MSE results
 \author{
 A. Hordyk
 }
-

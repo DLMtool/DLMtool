@@ -2,6 +2,8 @@
 % Please edit documentation in R/AssessmentToOM.R, R/SS2DLM.R, R/iSCAM2DLM.R
 \name{SRopt}
 \alias{SRopt}
+\alias{SRopt}
+\alias{SRopt}
 \title{Function that returns a stochastic estimate of steepness given observed stock recruitment data}
 \usage{
 SRopt(nsim, SSB, rec, SSBpR, plot = F, type = "BH")
@@ -61,4 +63,3 @@ T. Carruthers
 
 T. Carruthers
 }
-

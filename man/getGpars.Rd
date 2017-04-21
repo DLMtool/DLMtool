@@ -2,6 +2,7 @@
 % Please edit documentation in R/AssessmentToOM.R, R/SS2DLM.R
 \name{getGpars}
 \alias{getGpars}
+\alias{getGpars}
 \title{Extracts growth parameters from a SS3 r4ss replist}
 \usage{
 getGpars(replist, seas = 1)
@@ -27,4 +28,3 @@ T. Carruthers
 
 T. Carruthers
 }
-

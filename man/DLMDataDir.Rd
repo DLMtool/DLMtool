@@ -17,4 +17,3 @@ data files and code etc.
 \author{
 T. Carruthers
 }
-

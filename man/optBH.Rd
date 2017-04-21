@@ -2,6 +2,8 @@
 % Please edit documentation in R/AssessmentToOM.R, R/SS2DLM.R, R/iSCAM2DLM.R
 \name{optBH}
 \alias{optBH}
+\alias{optBH}
+\alias{optBH}
 \title{Wrapper for estimating stock recruitment parameters from resampled stock-recruitment data}
 \usage{
 optBH(x, SSB, rec, SSBpR, R0temp, pars, frac = 0.5, plot = F)
@@ -73,4 +75,3 @@ T. Carruthers
 
 T. Carruthers
 }
-

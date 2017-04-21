@@ -3,13 +3,12 @@
 \docType{data}
 \name{Imprecise_Biased}
 \alias{Imprecise_Biased}
-\title{Imprecise_Biased Observation}
-\format{An object of class \code{Observation} of length 1.}
+\title{Imprecise_Biased Obs}
+\format{An object of class \code{Obs} of length 1.}
 \usage{
 Imprecise_Biased
 }
 \description{
-An object of class Observation
+An object of class Obs
 }
 \keyword{datasets}
-

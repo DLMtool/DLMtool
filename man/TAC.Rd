@@ -4,10 +4,10 @@
 \alias{TAC}
 \title{Calculate TAC recommendations for more than one MP}
 \usage{
-TAC(DLM_data, MPs = NA, reps = 100, timelimit = 1)
+TAC(Data, MPs = NA, reps = 100, timelimit = 1)
 }
 \arguments{
-\item{DLM_data}{A data-limited methods data object}
+\item{Data}{A data-limited methods data object}
 
 \item{MPs}{optional vector of MP names}
 
@@ -17,9 +17,8 @@ TAC(DLM_data, MPs = NA, reps = 100, timelimit = 1)
 }
 \description{
 A function that returns the stochastic TAC recommendations from a vector of
-data-limited MPs (DLM_output) given a data-limited data object DLM_data
+data-limited MPs (Output) given a data-limited data object Data
 }
 \author{
 T. Carruthers
 }
-

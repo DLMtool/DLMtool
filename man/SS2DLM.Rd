@@ -2,6 +2,7 @@
 % Please edit documentation in R/AssessmentToOM.R, R/SS2DLM.R
 \name{SS2DLM}
 \alias{SS2DLM}
+\alias{SS2DLM}
 \title{Reads MLE estimates from Stock Synthesis file structure into an operating model using package r4ss}
 \usage{
 SS2DLM(SSdir, nsim = 48, proyears = 50, length_timestep = NA,
@@ -43,4 +44,3 @@ T. Carruthers
 
 T. Carruthers
 }
-

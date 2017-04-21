@@ -2,6 +2,8 @@
 % Please edit documentation in R/AssessmentToOM.R, R/SS2DLM.R, R/iSCAM2DLM.R
 \name{negcorlogspace}
 \alias{negcorlogspace}
+\alias{negcorlogspace}
+\alias{negcorlogspace}
 \title{A function that samples multivariate normal (logspace) variables}
 \usage{
 negcorlogspace(xmu, ymu, xcv = 0.1, nsim, cor = -0.9, ploty = F)
@@ -61,4 +63,3 @@ T. Carruthers
 
 T. Carruthers
 }
-

@@ -4,15 +4,15 @@
 \alias{runMSEdev}
 \title{Run a Management Strategy Evaluation}
 \usage{
-runMSEdev(OM = "1", MPs = c("AvC", "DCAC", "DD", "Fref", "CurE"),
+runMSEdev(OM = "1", MPs = c("AvC", "DCAC", "DD", "FMSYref", "curE"),
   interval = 4, pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1,
   CheckMPs = FALSE, Hist = FALSE, ntrials = 50, fracD = 0.05)
 }
 \arguments{
 \item{OM}{An operating model object (class OM)}
 
-\item{MPs}{A vector of methods (character string) of class DLM_output or
-DLM_input.}
+\item{MPs}{A vector of methods (character string) of class Output or
+Input.}
 
 \item{interval}{The assessment interval - how often would you like to update
 the management system?}
@@ -57,4 +57,3 @@ simulation) for a specified operating model
 \author{
 T. Carruthers and A. Hordyk
 }
-

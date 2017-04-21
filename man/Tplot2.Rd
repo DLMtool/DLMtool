@@ -24,4 +24,3 @@ simulations in which biomass stays above 10 percent of BMSY).
 \author{
 T. Carruthers
 }
-

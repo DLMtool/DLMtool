@@ -11,8 +11,8 @@ runMSE(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 \arguments{
 \item{OM}{An operating model object (class OM)}
 
-\item{MPs}{A vector of methods (character string) of class DLM_output or
-DLM_input.}
+\item{MPs}{A vector of methods (character string) of class Output or
+Input.}
 
 \item{nsim}{Number of simulations}
 
@@ -63,4 +63,3 @@ simulation) for a specified operating model
 \author{
 T. Carruthers
 }
-

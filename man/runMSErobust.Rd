@@ -13,8 +13,8 @@ runMSErobust(OM = "1", MPs = NA, nsim = 200, proyears = 28,
 \arguments{
 \item{OM}{An operating model object (class OM)}
 
-\item{MPs}{A vector of methods (character string) of class DLM_output or
-DLM_input. If NA all available MPs are run.}
+\item{MPs}{A vector of methods (character string) of class Output or
+Input. If NA all available MPs are run.}
 
 \item{nsim}{Number of simulations}
 
@@ -89,4 +89,3 @@ file (to the current working directory).
 \author{
 A. Hordyk and T. Carruthers
 }
-

@@ -36,4 +36,3 @@ Alternative version of LSRA that's a wrapper for LSRA_opt to return the right ty
 \author{
 T. Carruthers
 }
-

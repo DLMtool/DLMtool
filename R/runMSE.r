@@ -5,8 +5,8 @@
 #' 
 #' 
 #' @param OM An operating model object (class OM)
-#' @param MPs A vector of methods (character string) of class DLM_output or
-#' DLM_input.
+#' @param MPs A vector of methods (character string) of class Output or
+#' Input.
 #' @param nsim Number of simulations
 #' @param proyears Number of projected years
 #' @param interval The assessment interval - how often would you like to update
@@ -870,74 +870,74 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   # colnames(qvar) <- paste0('qvar', 1:proyears)
   FinF <- Find[, nyears]  # Effort in final historical year
   
-  DLM_data <- new("DLM_data", stock = "MSE")  # create a blank DLM data object
-  if (reps == 1) DLM_data <- OneRep(DLM_data)  # make stochastic variables certain for only one rep
-  DLM_data <- replic8(DLM_data, nsim)  # make nsim sized slots in the DLM data object
-  DLM_data@Name <- OM@Name
-  DLM_data@Year <- 1:nyears
-  DLM_data@Cat <- Cobs
-  DLM_data@Ind <- II
-  DLM_data@Rec <- apply(N[, 1, , ], c(1, 2), sum) * Recerr[, 1:nyears]
-  DLM_data@t <- rep(nyears, nsim)
-  DLM_data@AvC <- apply(Cobs, 1, mean)
-  DLM_data@Dt <- Dbias * Depletion * rlnorm(nsim, mconv(1, Derr), sdconv(1, Derr))
-  DLM_data@Mort <- M * Mbias
-  DLM_data@FMSY_M <- FMSY_M * FMSY_Mbias
-  # DLM_data@BMSY_B0 <- BMSY_B0 * BMSY_B0bias
-  DLM_data@BMSY_B0 <- SSBMSY_SSB0 * BMSY_B0bias
-  DLM_data@Cref <- MSY * Crefbias
-  DLM_data@Bref <- VBMSY * Brefbias
-  DLM_data@Iref <- Iref * Irefbias
-  DLM_data@LFC <- LFC * LFCbias
-  DLM_data@LFS <- LFS[nyears,] * LFSbias
-  DLM_data@CAA <- CAA
-  DLM_data@Dep <- Dbias * Depletion * rlnorm(nsim, mconv(1, Derr), sdconv(1, Derr))
-  DLM_data@Abun <- A * Abias * rlnorm(nsim, mconv(1, Aerr), sdconv(1, Aerr))
-  DLM_data@SpAbun <- Asp * Abias * rlnorm(nsim, mconv(1, Aerr), sdconv(1, Aerr))
-  DLM_data@vbK <- K * Kbias
-  DLM_data@vbt0 <- t0 * t0bias
-  DLM_data@vbLinf <- Linf * Linfbias
-  DLM_data@L50 <- L50 * lenMbias
-  DLM_data@L95 <- L95 * lenMbias
-  DLM_data@L95[DLM_data@L95 > 0.9 * DLM_data@vbLinf] <- 0.9 * DLM_data@vbLinf[DLM_data@L95 > 
-    0.9 * DLM_data@vbLinf]  # Set a hard limit on ratio of L95 to Linf
-  DLM_data@L50[DLM_data@L50 > 0.9 * DLM_data@L95] <- 0.9 * DLM_data@L95[DLM_data@L50 > 
-    0.9 * DLM_data@L95]  # Set a hard limit on ratio of L95 to Linf
-  DLM_data@steep <- hs * hbias
-  DLM_data@CAL_bins <- CAL_bins
-  DLM_data@CAL <- CAL
+  Data <- new("Data", stock = "MSE")  # create a blank DLM data object
+  if (reps == 1) Data <- OneRep(Data)  # make stochastic variables certain for only one rep
+  Data <- replic8(Data, nsim)  # make nsim sized slots in the DLM data object
+  Data@Name <- OM@Name
+  Data@Year <- 1:nyears
+  Data@Cat <- Cobs
+  Data@Ind <- II
+  Data@Rec <- apply(N[, 1, , ], c(1, 2), sum) * Recerr[, 1:nyears]
+  Data@t <- rep(nyears, nsim)
+  Data@AvC <- apply(Cobs, 1, mean)
+  Data@Dt <- Dbias * Depletion * rlnorm(nsim, mconv(1, Derr), sdconv(1, Derr))
+  Data@Mort <- M * Mbias
+  Data@FMSY_M <- FMSY_M * FMSY_Mbias
+  # Data@BMSY_B0 <- BMSY_B0 * BMSY_B0bias
+  Data@BMSY_B0 <- SSBMSY_SSB0 * BMSY_B0bias
+  Data@Cref <- MSY * Crefbias
+  Data@Bref <- VBMSY * Brefbias
+  Data@Iref <- Iref * Irefbias
+  Data@LFC <- LFC * LFCbias
+  Data@LFS <- LFS[nyears,] * LFSbias
+  Data@CAA <- CAA
+  Data@Dep <- Dbias * Depletion * rlnorm(nsim, mconv(1, Derr), sdconv(1, Derr))
+  Data@Abun <- A * Abias * rlnorm(nsim, mconv(1, Aerr), sdconv(1, Aerr))
+  Data@SpAbun <- Asp * Abias * rlnorm(nsim, mconv(1, Aerr), sdconv(1, Aerr))
+  Data@vbK <- K * Kbias
+  Data@vbt0 <- t0 * t0bias
+  Data@vbLinf <- Linf * Linfbias
+  Data@L50 <- L50 * lenMbias
+  Data@L95 <- L95 * lenMbias
+  Data@L95[Data@L95 > 0.9 * Data@vbLinf] <- 0.9 * Data@vbLinf[Data@L95 > 
+    0.9 * Data@vbLinf]  # Set a hard limit on ratio of L95 to Linf
+  Data@L50[Data@L50 > 0.9 * Data@L95] <- 0.9 * Data@L95[Data@L50 > 
+    0.9 * Data@L95]  # Set a hard limit on ratio of L95 to Linf
+  Data@steep <- hs * hbias
+  Data@CAL_bins <- CAL_bins
+  Data@CAL <- CAL
   MLbin <- (CAL_bins[1:(length(CAL_bins) - 1)] + CAL_bins[2:length(CAL_bins)])/2
   temp <- CAL * rep(MLbin, each = nsim * nyears)
-  DLM_data@ML <- apply(temp, 1:2, sum)/apply(CAL, 1:2, sum)
-  DLM_data@Lc <- array(MLbin[apply(CAL, 1:2, which.max)], dim = c(nsim, nyears))
+  Data@ML <- apply(temp, 1:2, sum)/apply(CAL, 1:2, sum)
+  Data@Lc <- array(MLbin[apply(CAL, 1:2, which.max)], dim = c(nsim, nyears))
   nuCAL <- CAL
-  for (i in 1:nsim) for (j in 1:nyears) nuCAL[i, j, 1:match(max(1, DLM_data@Lc[i, j]), MLbin)] <- NA
+  for (i in 1:nsim) for (j in 1:nyears) nuCAL[i, j, 1:match(max(1, Data@Lc[i, j]), MLbin)] <- NA
   temp <- nuCAL * rep(MLbin, each = nsim * nyears)
-  DLM_data@Lbar <- apply(temp, 1:2, sum, na.rm=TRUE)/apply(nuCAL, 1:2, sum, na.rm=TRUE)
-  DLM_data@MaxAge <- maxage
-  DLM_data@Units <- "unitless"
-  DLM_data@Ref <- OFLreal
-  DLM_data@Ref_type <- "Simulated OFL"
-  DLM_data@wla <- rep(OM@a, nsim)
-  DLM_data@wlb <- rep(OM@b, nsim)
-  # DLM_data@OM <- as.data.frame(cbind(RefY, M, Depletion, A, BMSY_B0, 
-  DLM_data@OM <- as.data.frame(cbind(RefY, M, Depletion, A, SSBMSY_SSB0, 
+  Data@Lbar <- apply(temp, 1:2, sum, na.rm=TRUE)/apply(nuCAL, 1:2, sum, na.rm=TRUE)
+  Data@MaxAge <- maxage
+  Data@Units <- "unitless"
+  Data@Ref <- OFLreal
+  Data@Ref_type <- "Simulated OFL"
+  Data@wla <- rep(OM@a, nsim)
+  Data@wlb <- rep(OM@b, nsim)
+  # Data@OM <- as.data.frame(cbind(RefY, M, Depletion, A, BMSY_B0, 
+  Data@OM <- as.data.frame(cbind(RefY, M, Depletion, A, SSBMSY_SSB0, 
     FMSY_M, Mgrad, Msd, procsd, Esd, dFfinal, MSY, qinc, qcv, FMSY, 
     Linf, K, t0, hs, Linfgrad, Kgrad, Linfsd, recgrad, Ksd, ageM, L5[nyears, ], 
 	LFS[nyears, ], Vmaxlen[nyears, ], LFC, OFLreal, Spat_targ, 
     Frac_area_1, Prob_staying, AC, L50, L95, B0, N0, SSB0, BMSY_B0))  # put all the operating model parameters in one table
   
-  names(DLM_data@OM)[26:28] <- c("L5", "LFS", "Vmaxlen")  # These are missing labels in the line above
+  names(Data@OM)[26:28] <- c("L5", "LFS", "Vmaxlen")  # These are missing labels in the line above
   
-  DLM_data@Obs <- as.data.frame(cbind(Cbias, Csd, CAA_nsamp, CAA_ESS, 
+  Data@Obs <- as.data.frame(cbind(Cbias, Csd, CAA_nsamp, CAA_ESS, 
     CAL_nsamp, CAL_ESS, Isd, Dbias, Derr, Mbias, FMSY_Mbias, BMSY_B0bias, 
     lenMbias, LFCbias, LFSbias, Abias, Aerr, Kbias, t0bias, Linfbias, 
     hbias, Irefbias, Crefbias, Brefbias, betas))  # put all the observation error model parameters in one table
   
-  DLM_data@LHYear <- OM@nyears  # Last historical year is nyears (for fixed MPs)
-  DLM_data@MPrec <- Cobs[, nyears]
-  DLM_data@MPeff <- rep(1, nsim)
-  DLM_data@Misc <- vector("list", nsim)
+  Data@LHYear <- OM@nyears  # Last historical year is nyears (for fixed MPs)
+  Data@MPrec <- Cobs[, nyears]
+  Data@MPeff <- rep(1, nsim)
+  Data@Misc <- vector("list", nsim)
 
   ## Write custompars ##
   # datout <- as.data.frame(cbind(procsd,AC,M,Msd,Mgrad,hs,Linf,Linfsd,Linfgrad,recgrad,K,Ksd,Kgrad,t0,L50,L95,L5,LFS,
@@ -946,7 +946,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   # t0bias,Linfbias,Irefbias,Crefbias,Brefbias,Recsd,qinc,qcv))
   
   
-  ## Return Historical Simulations and DLM_data from last historical year ##
+  ## Return Historical Simulations and Data from last historical year ##
   if (Hist) { # Stop the model after historical simulations are complete
   	message("Returning historical simulations")
 	nout <- t(apply(N, c(1, 3), sum))
@@ -976,12 +976,12 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
 	  LFSs=LFSs, Vmaxlens=Vmaxlens, Perr=Perr, R0=R0, Mat_age=Mat_age, 
 	  Mrand=Mrand, Linfrand=Linfrand, Krand=Krand, maxage=maxage, V=V, Depletion=Depletion,qs=qs) 
 
-	HistData <- list(SampPars=SampPars, TSdata=TSdata, AtAge=AtAge, MSYs=MSYs, DLM_data=DLM_data)
+	HistData <- list(SampPars=SampPars, TSdata=TSdata, AtAge=AtAge, MSYs=MSYs, Data=Data)
 	class(HistData) <- c("list", "hist")
 	return(HistData)	
   }
 
-  # assign('DLM_data',DLM_data,envir=.GlobalEnv) # for debugging fun
+  # assign('Data',Data,envir=.GlobalEnv) # for debugging fun
    
   # Run projections
   # ===========================================================================
@@ -990,21 +990,21 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   if (CheckMPs) {
     message("Determining available methods")  # print an progress report
     flush.console()  # update the console
-    PosMPs <- Can(DLM_data, timelimit = timelimit)  # list all the methods that could be applied to a DLM data object 
+    PosMPs <- Can(Data, timelimit = timelimit)  # list all the methods that could be applied to a DLM data object 
     if (is.na(MPs[1])) {
       MPs <- PosMPs  # if the user does not supply an argument MPs run the MSE or all available methods
       message("No MPs specified: running all available")
     }
     if (!is.na(MPs[1])) MPs <- MPs[MPs %in% PosMPs]  # otherwise run the MSE for all methods that are deemed possible
     if (length(MPs) == 0) {
-      message(Cant(DLM_data, timelimit = timelimit))
+      message(Cant(Data, timelimit = timelimit))
       stop("MSE stopped: no viable methods \n\n")  # if none of the user specied methods are possible stop the run
     }
   }
   
   nMP <- length(MPs)  # the total number of methods used
   
-  MSElist <- list(DLM_data)[rep(1, nMP)]  # create a data object for each method (they have identical historical data and branch in projected years)
+  MSElist <- list(Data)[rep(1, nMP)]  # create a data object for each method (they have identical historical data and branch in projected years)
   
   B_BMSYa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected B_BMSY
   F_FMSYa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected F_FMSY
@@ -1082,12 +1082,12 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     FML <- apply(FM[, , nyears, ], c(1, 3), max)
     
     y <- 1 
-    if (class(match.fun(MPs[mm])) == "DLM_output") {
+    if (class(match.fun(MPs[mm])) == "Output") {
       st <- Sys.time()
-      DLM_data <- Sam(MSElist[[mm]], MPs = MPs[mm], perc = pstar, reps = reps)
+      Data <- Sam(MSElist[[mm]], MPs = MPs[mm], perc = pstar, reps = reps)
       nd <- Sys.time()
       MPdur[mm] <- nd - st
-      TACused <- apply(DLM_data@TAC, 3, quantile, p = pstar, na.rm = T)
+      TACused <- apply(Data@TAC, 3, quantile, p = pstar, na.rm = T)
       TACa[, mm, 1] <- TACused
 	  availB <- apply(VBiomass_P[,,1,], 1, sum) # total available biomass
 	  maxC <- (1 - exp(-maxF)) * availB
@@ -1118,7 +1118,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
       MPdur[mm] <- nd - st
       
       inc <- runIn[[1]]
-      DLM_data <- runIn[[2]]
+      Data <- runIn[[2]]
       
       Ai <- inc[1, , 1]
       Ei <- inc[2, , 1]
@@ -1215,7 +1215,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
     for (y in 2:proyears) {
       cat(".")
       flush.console()
-      if (class(match.fun(MPs[mm])) == "DLM_output")  TACa[, mm, y] <- TACa[, mm, y-1] # TAC same as last year unless changed 
+      if (class(match.fun(MPs[mm])) == "Output")  TACa[, mm, y] <- TACa[, mm, y-1] # TAC same as last year unless changed 
       SAYRt <- as.matrix(expand.grid(1:nsim, 1:maxage, y + nyears, 
         1:nareas))  # Trajectory year
       SAYt <- SAYRt[, 1:3]
@@ -1375,13 +1375,13 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   
         MSElist[[mm]]@Ref <- OFLreal
         MSElist[[mm]]@Ref_type <- "Simulated OFL"
-        MSElist[[mm]]@Misc <- DLM_data@Misc
+        MSElist[[mm]]@Misc <- Data@Misc
         
-        # assign('DLM_data',MSElist[[mm]],envir=.GlobalEnv) # for debugging fun
+        # assign('Data',MSElist[[mm]],envir=.GlobalEnv) # for debugging fun
         
-        if (class(match.fun(MPs[mm])) == "DLM_output") {
-          DLM_data <- Sam(MSElist[[mm]], MPs = MPs[mm], perc = pstar, reps = reps)
-          TACused <- apply(DLM_data@TAC, 3, quantile, p = pstar, 
+        if (class(match.fun(MPs[mm])) == "Output") {
+          Data <- Sam(MSElist[[mm]], MPs = MPs[mm], perc = pstar, reps = reps)
+          TACused <- apply(Data@TAC, 3, quantile, p = pstar, 
           na.rm = TRUE)  #
           NAs <- which(is.na(TACused))
           if (length(NAs) > 0) {
@@ -1415,7 +1415,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
           MSElist[[mm]]@MPeff <- Ei
           runIn <- runInMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply input control MP
           inc <- runIn[[1]]
-          DLM_data <- runIn[[2]]
+          Data <- runIn[[2]]
           Ai <- inc[1, , 1]
           Ei <- inc[2, , 1]
           Effort[, mm, y] <- Ei  # Change in Effort
@@ -1512,7 +1512,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
         # not an update yr
         vbio <- apply(VBiomass_P[, , y, ], c(1, 3), sum)
         fishdist <- (vbio^Spat_targ)/apply(vbio^Spat_targ, 1, mean)  # calculate distribution of effort \t  
-        if (class(match.fun(MPs[mm])) == "DLM_output") {
+        if (class(match.fun(MPs[mm])) == "Output") {
           CB_P[SAYR] <- Biomass_P[SAYR] * (1 - exp(-fishdist[SR] *  V_P[SAYt]))  # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space
           temp <- CB_P[, , y, ]/apply(CB_P[, , y, ], 1, sum)  # how catches are going to be distributed
           tempcatch <- TACa[, mm, y-1]
@@ -1569,7 +1569,7 @@ runMSE <- function(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
   attr(MPs, "duration") <- MPdur
 
   MSEout <- new("MSE", Name = OM@Name, nyears, proyears, nMPs=nMP, MPs, nsim, 
-    DLM_data@OM, Obs=DLM_data@Obs, B_BMSY=B_BMSYa, F_FMSY=F_FMSYa, B=Ba, 
+    Data@OM, Obs=Data@Obs, B_BMSY=B_BMSYa, F_FMSY=F_FMSYa, B=Ba, 
 	SSB=SSBa, VB=VBa, FM=FMa, Ca, TAC=TACa, SSB_hist = SSB, CB_hist = CB, 
 	FM_hist = FM, Effort = Effort)
     # Store MSE info

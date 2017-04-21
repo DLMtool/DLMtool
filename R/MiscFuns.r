@@ -59,9 +59,9 @@ getclass <- function(x, classy) inherits(get(x), classy)
 #' @export Required
 Required <- function(funcs = NA) {
   if (is.na(funcs[1])) 
-    funcs <- c(avail("DLM_output"), avail("DLM_input"))
-  slots <- slotNames("DLM_data")
-  slotnams <- paste("DLM_data@", slotNames("DLM_data"), sep = "")
+    funcs <- c(avail("Output"), avail("Input"))
+  slots <- slotNames("Data")
+  slotnams <- paste("Data@", slotNames("Data"), sep = "")
   repp <- rep("", length(funcs))
   
   for (i in 1:length(funcs)) {
@@ -109,7 +109,7 @@ DLMDataDir <- function(stock = NA) {
 #' 
 #' 
 #' @usage Fease(feaseobj,outy='table')
-#' @param feaseobj An object of class 'DLM_fease'
+#' @param feaseobj An object of class 'Fease'
 #' @param outy Determines whether you would like a full table or some column of
 #' the table for a specific case of the feasibility object. When set equal to
 #' table, the full table is produced. When set equal to an integer number the
@@ -118,8 +118,8 @@ DLMDataDir <- function(stock = NA) {
 #' @export Fease
 Fease <- function(feaseobj, outy = "table") {
   
-  if (class(feaseobj) != "DLM_fease") 
-    stop("Incorrect format: you need an object of class DLM_fease")
+  if (class(feaseobj) != "Fease") 
+    stop("Incorrect format: you need an object of class Fease")
   
   sloty <- c("Cat", "Ind", "AvC", "Dt", "Rec", "CAA", "CAL", "Mort", 
     "L50", "L95", "vbK", "vbLinf", "vbt0", "wla", "wlb", "steep", "LFC", 
@@ -859,10 +859,10 @@ makePerf <- function(OMin, except = NULL) {
 #' Print out plotting functions
 #' 
 #' This function prints out the available plotting functions for objects of
-#' class MSE or DLM_data
+#' class MSE or Data
 #' 
 #' 
-#' @usage plotFun(class = c('MSE', 'DLM_data'), msg=TRUE)
+#' @usage plotFun(class = c('MSE', 'Data'), msg=TRUE)
 #' @param class Character string. Prints out the plotting functions for objects
 #' of this class.
 #' @param msg Logical. Should the functions be printed to screen?
@@ -871,7 +871,7 @@ makePerf <- function(OMin, except = NULL) {
 #' functions are missed. Let us know if you find any and we will add them.
 #' @author A. Hordyk
 #' @export plotFun
-plotFun <- function(class = c("MSE", "DLM_data"), msg = TRUE) {
+plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
   class <- match.arg(class)
   tt <- lsf.str("package:DLMtool")
   p <- p2 <- rep(FALSE, length(tt))
@@ -892,7 +892,7 @@ plotFun <- function(class = c("MSE", "DLM_data"), msg = TRUE) {
     out <- c(out, "barplot", "boxplot", "VOI", "VOI2")
     out <- sort(out)
   }
-  if (class == "DLM_data") {
+  if (class == "Data") {
     out <- c(out, "boxplot", "Sense")
     out <- sort(out)
   }

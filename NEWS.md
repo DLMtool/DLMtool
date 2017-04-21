@@ -1,6 +1,14 @@
 ## DLMtool 
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
+### New Changes 
+
+Observation has been renamed to Obs 
+DLM_fease has been renamed to Fease 
+DLM_output has been renamed Output
+DLM_input has been renamed Input 
+DLM_data has been renamed Data 
+
 ### DLMtool V3.2.3
 
 #### Major Changes

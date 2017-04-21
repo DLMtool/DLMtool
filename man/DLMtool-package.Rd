@@ -2,8 +2,8 @@
 % Please edit documentation in R/DLMtool-package.R
 \docType{package}
 \name{DLMtool-package}
-\alias{DLMtool}
 \alias{DLMtool-package}
+\alias{DLMtool}
 \title{Data-Limited Methods Toolkit}
 \description{
 Simulation testing and implementation of data-limited fishery stock
@@ -17,7 +17,7 @@ library(DLMtool)
 library(snowfall)              # load package for parallel computing
 sfInit(parallel=TRUE,cpus=2)   # initiate the cluster with two cpus
 
-mydata<-new('DLM_data')        # create a new DLM data object and define:
+mydata<-new('Data')        # create a new DLM data object and define:
 mydata@Year<-2001:2010         # years
 mydata@Cat<-matrix((11:20)*10*runif(10,0.5,1.5),nrow=1) # make up some annual catches
 mydata@Ind<-matrix(seq(1.1,0.9,length.out=10)*runif(10,0.5,1.5),nrow=1) 
@@ -34,10 +34,6 @@ mydata<-Sense(mydata,'Fratio') # conduct a sensitivity analysis for one of the m
 sfStop()
 
 }
-\author{
-Tom Carruthers <t.carruthers@fisheries.ubc.ca> Adrian Hordyk
-<a.hordyk@murdoch.edu.au>
-}
 \references{
 Carruthers, T.R., Punt, A.E., Walters, C.J., MacCall, A.,
 McAllister, M.K., Dick, E.J., Cope, J. 2014. Evaluating methods for setting
@@ -48,6 +44,10 @@ H.F., Walters, C., McAllister, M.K., Hillary, R., Levontin, P., Kitakado,
 T., Davies, C.R. Performance review of simple management procedures. ICES
 Journal of Marine Science.
 }
+\author{
+Tom Carruthers <t.carruthers@fisheries.ubc.ca> Adrian Hordyk
+<a.hordyk@murdoch.edu.au>
+}
 \keyword{assessment}
 \keyword{data-limited}
 \keyword{data-poor}
@@ -56,4 +56,3 @@ Journal of Marine Science.
 \keyword{management}
 \keyword{stock}
 \keyword{strategy}
-
