@@ -14,7 +14,7 @@
 #' @param ask Ask before displaying next page?
 #' @param incVB Show the sampled von Bertalanffy growth curves on second page?
 #' @author A. Hordyk
-#' @export plot.Stock
+#' @export 
 plot.Stock <- function(Stock, nsamp=3, nsim=500, nyears=50, proyears=28, 
   col="darkgray", breaks=10, ask=FALSE, incVB=TRUE) {
   if (class(Stock) == "OM") {
