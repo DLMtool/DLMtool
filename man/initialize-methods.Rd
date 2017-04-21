@@ -8,7 +8,7 @@
 \alias{initialize,Fleet-method}
 \alias{initialize,MSE-method}
 \alias{initialize,OM-method}
-\alias{initialize,Observation-method}
+\alias{initialize,Obs-method}
 \alias{initialize,Stock-method}
 \alias{initialize,lmmodel-method}
 \alias{initialize-methods}
@@ -28,7 +28,7 @@ here~~ }
 \item{list('signature(.Object = \'MSE\')')}{ %% ~~describe this method
 here~~ }
 
-\item{list('signature(.Object = \'Observation\')')}{ %% ~~describe this
+\item{list('signature(.Object = \'Obs\')')}{ %% ~~describe this
 method here~~ }
 
 \item{list('signature(.Object = \'OM\')')}{ %% ~~describe this method here~~
