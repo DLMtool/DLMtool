@@ -906,11 +906,12 @@ setMethod("initialize", "Obs", function(.Object, file = NA) {
 #' @name OM-class
 #' @docType class
 #' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new('OM', Stock, Fleet, Obs)}. 
+#' \code{new('OM', Stock, Fleet, Obs, Imp)}. 
 
 #' @slot Name Name of the operating model
 #' @slot nsim The number of simulations
 #' @slot proyears The number of projected years
+
 #' @slot nyears The number of years for the historical simulation 
 #' @slot maxage The maximum age of individuals that is simulated (there is no 'plus group': individuals die off beyone the maximum age so there isn't a huge cost to simulating more older age classes) 
 #' @slot R0 The magnitude of unfished recruitment. This is normally fixed to some arbitrary value since it simply scales the simulated numbers) 
@@ -934,7 +935,7 @@ setMethod("initialize", "Obs", function(.Object, file = NA) {
 #' @slot Size_area_1 The size of area 1 relative to area 2 (uniform distribution) 
 #' @slot Frac_area_1 The fraction of the unfished biomass in stock 1 (uniform distribution) 
 #' @slot Prob_staying The probability of inviduals in area 1 remaining in area 1 over the course of one year 
-#' @slot Source A reference to a website or article form which parameters were taken to define the operating model 
+
 #' @slot beta A parameter controlling hyperstability/hyperdepletion. I^beta therefore values below 1 lead to hyperstability (an index that decreases slower than true abundance) and values above 1 lead to hyperdepletion (an index that decreases more rapidly than true abundance)(uniform distribution) 
 #' @slot Spat_targ Distribution of fishing in relation to spatial biomass: F is proportional to B^Spat_targ (uniform distribution)  
 #' @slot LFS Shortest length that is fully vulnerable to fishing (uniform distribution) 
@@ -955,9 +956,10 @@ setMethod("initialize", "Obs", function(.Object, file = NA) {
 #' @slot EffYears Vector of verticies, years at which to simulate varying relative effort 
 #' @slot EffLower Lower bound on relative effort corresponding to EffYears (uniform distribution) 
 #' @slot EffUpper Uppper bound on relative effort corresponding to EffYears (uniform distribution) 
-
 #' @slot qinc Average percentage change in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls) 
 #' @slot qcv Inter-annual variability in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls) 
+#' @slot CurrentYr The current calendar year (final year) of the historical simulations (e.g. 2011)
+
 #' @slot Cobs Log-normal catch observation error expressed as a coefficient of variation (uniform distribution) 
 #' @slot Cbiascv A coefficient of variation controlling the sampling of bias in catch observations for each simulation (uniform distribution) 
 #' @slot CAA_nsamp Number of catch-at-age observation per time step (uniform distribution) 
@@ -994,10 +996,18 @@ setMethod("initialize", "Obs", function(.Object, file = NA) {
 #' @slot Irefcv Bias in the knowledge of the relative abundance index at BMSY (uniform distribution) 
 #' @slot Brefcv Bias in the knowledge of BMSY (uniform distribution) 
 #' @slot Crefcv Bias in the knowledge of MSY(uniform distribution) 
+
 #' @slot cpars A list of custom parameters (single parameters are a vector nsim long, time series are a matrix nsim rows by nyears columns)
 #' @slot seed A random seed to ensure users can reproduce results exactly
-#' @slot CurrentYr The current calendar year (final year) of the historical simulations (e.g. 2011)
-#' 
+#' @slot Source A reference to a website or article form which parameters were taken to define the operating model 
+
+#' @slot TACvar lognormal standard deviation in fraction of TAC taken (uniform distribution)
+#' @slot TACdif Mean fraction of TAC taken (uniform distribution)
+#' @slot Evar lognormal standard deviation in fraction of TAE taken(uniform distribution)
+#' @slot Edif Mean fraction of recommended effort taken (uniform distribution)
+#' @slot DiscMort Discard mortality rate (uniform distribution)
+#' @slot SizeLimvar Degree of error in size limit implementation (uniform distribution) 
+
 #' @author T. Carruthers
 #' @keywords classes
 #' @examples
@@ -1015,9 +1025,10 @@ setClass("OM", representation(Name = "character", nsim="numeric",proyears="numer
   AbsSelYears = "numeric", L5 = "numeric", LFS = "numeric", Vmaxlen = "numeric", 
   L5Lower = "numeric", L5Upper = "numeric", LFSLower = "numeric", LFSUpper = "numeric", 
   VmaxLower = "numeric", VmaxUpper = "numeric", isRel = "character", 
-  beta = "numeric", Spat_targ = "numeric", Fsd = "numeric", Period = "numeric", 
-  Amplitude = "numeric", EffYears = "numeric", EffLower = "numeric", 
+  beta = "numeric", Spat_targ = "numeric", Fsd = "numeric",
+  Period = "numeric", Amplitude = "numeric", EffYears = "numeric", EffLower = "numeric", 
   EffUpper = "numeric", qinc = "numeric", qcv = "numeric", AC = "numeric", 
+  
   Cobs = "numeric", Cbiascv = "numeric", CAA_nsamp = "numeric", CAA_ESS = "numeric", 
   CAL_nsamp = "numeric", CAL_ESS = "numeric", CALcv = "numeric", Iobs = "numeric", 
   Perr = "numeric", Mcv = "numeric", Kcv = "numeric", t0cv = "numeric", 
@@ -1026,10 +1037,16 @@ setClass("OM", representation(Name = "character", nsim="numeric",proyears="numer
   rcv = "numeric", Dbiascv = "numeric", Dcv = "numeric", Btbias = "numeric", 
   Btcv = "numeric", Fcurbiascv = "numeric", Fcurcv = "numeric", hcv = "numeric", 
   Icv = "numeric", maxagecv = "numeric", Reccv = "numeric", Irefcv = "numeric", 
-  Crefcv = "numeric", Brefcv = "numeric",cpars="list",seed="numeric",CurrentYr="numeric"))
+  Crefcv = "numeric", Brefcv = "numeric",
+  
+  TACvar = "numeric", 
+  TACdif = "numeric", Evar = "numeric", Edif = "numeric",
+  DiscMort = "numeric", SizeLimvar = "numeric",
+  
+  cpars="list",seed="numeric",CurrentYr="numeric"))
 
 # initialize OM
-setMethod("initialize", "OM", function(.Object, Stock, Fleet, Obs) {
+setMethod("initialize", "OM", function(.Object, Stock, Fleet, Obs, Imp) {
   if (class(Stock) != "Stock") 
     print(paste("Could not build operating model:", deparse(substitute(Stock)), 
       "not of class Stock"))
@@ -1039,9 +1056,12 @@ setMethod("initialize", "OM", function(.Object, Stock, Fleet, Obs) {
   if (class(Obs) != "Obs") 
     print(paste("Could not build operating model:", deparse(substitute(Obs)), 
       "not of class Obs"))
-  if (class(Stock) != "Stock" | class(Fleet) != "Fleet" | class(Obs) != 
-    "Obs") 
-    stop()
+  if (class(Imp) != "Imp") 
+    print(paste("Could not build operating model:", deparse(substitute(Imp)), 
+                "not of class Imp"))
+  if (class(Stock) != "Stock" | class(Fleet) != "Fleet" | 
+      class(Obs) != "Obs"  | class(Imp) != "Imp") 
+        stop()
   
   .Object@Name <- paste("Stock:", Stock@Name, "  Fleet:", Fleet@Name, 
     "  Obs model:", Obs@Name, sep = "")
@@ -1065,11 +1085,19 @@ setMethod("initialize", "OM", function(.Object, Stock, Fleet, Obs) {
     if (tt) 
       slot(.Object, Oslots[i]) <- slot(Obs, Oslots[i])
   }
+  Islots <- slotNames(Imp)
+  for (i in 2:length(Islots)) {
+    tt <- .hasSlot(Imp, Islots[i])
+    if (tt) 
+      slot(.Object, Islots[i]) <- slot(Imp, Islots[i])
+  }
   
   # Default MSE parameters
   .Object@nsim=48       
   .Object@proyears=50
+  
   if(length(.Object@CurrentYr)==0).Object@CurrentYr=.Object@nyears
+  
   .Object@seed=1
   .Object
 })
