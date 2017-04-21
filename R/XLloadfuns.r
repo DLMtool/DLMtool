@@ -55,21 +55,21 @@ OM_xl <- function(fname, stkname, fpath = "", saveCSV = FALSE) {
     unlink(tmpfile)
   
   # Observation
-  index <- which(pmatch(shtname, paste0(stkname, "Observation")) == 1)
+  index <- which(pmatch(shtname, paste0(stkname, "Obs")) == 1)
   if (length(index) > 1) 
     stop("More than one match")
   obs <- readxl::read_excel(infile, sheet = index, col_names = FALSE)
   obs <- as.data.frame(obs)
-  tmpfile <- paste0(fpath, stkname, "Observation.csv")
+  tmpfile <- paste0(fpath, stkname, "Obs.csv")
   if (file.exists(tmpfile)) 
     unlink(tmpfile)
-  writeCSV(inobj = obs, tmpfile, objtype = "Observation")
-  tmpobs <- new("Observation", tmpfile)
+  writeCSV(inobj = obs, tmpfile, objtype = "Obs")
+  tmpobs <- new("Obs", tmpfile)
   if (!saveCSV) 
     unlink(tmpfile)
   
   # Operating Model
-  OM <- new("OM", Stock = tmpstock, Fleet = tmpfleet, Observation = tmpobs)
+  OM <- new("OM", Stock = tmpstock, Fleet = tmpfleet, Obs = tmpobs)
   OM
 }
 

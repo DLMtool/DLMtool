@@ -539,7 +539,7 @@ setMethod("initialize", "Fleet", function(.Object, file = NA) {
 #' 
 #' @name initialize-methods
 #' @aliases initialize-methods initialize,DLM_data-method
-#' initialize,Fleet-method initialize,MSE-method initialize,Observation-method
+#' initialize,Fleet-method initialize,MSE-method initialize,Obs-method
 #' initialize,OM-method initialize,Stock-method initialize,lmmodel-method
 #' initialize,DLM_fease-method initialize,DLM_general-method
 #' @docType methods
@@ -554,7 +554,7 @@ setMethod("initialize", "Fleet", function(.Object, file = NA) {
 #' \item{list('signature(.Object = \'MSE\')')}{ %% ~~describe this method
 #' here~~ }
 #' 
-#' \item{list('signature(.Object = \'Observation\')')}{ %% ~~describe this
+#' \item{list('signature(.Object = \'Obs\')')}{ %% ~~describe this
 #' method here~~ }
 #' 
 #' \item{list('signature(.Object = \'OM\')')}{ %% ~~describe this method here~~
@@ -761,12 +761,12 @@ setMethod("initialize", "MSE", function(.Object, Name, nyears, proyears,
 # })
 
 
-#' Class \code{'Observation'}
+#' Class \code{'Obs'}
 #' 
 #' An operating model component that controls the observation model
 #' 
 #' 
-#' @name Observation-class
+#' @name Obs-class
 #' @docType class
 #' @note Its questionable whether the hyperstability/hyperdepletion should be
 #' categorised as an observation model characteristic as it is most often
@@ -774,7 +774,7 @@ setMethod("initialize", "MSE", function(.Object, Name, nyears, proyears,
 #' well its here and you might want to make it hyperstable beta < 1 or
 #' hyperdeplete beta > 1, only.
 #' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new('Observation', OM)} 
+#' \code{new('Obs', OM)} 
 #' @slot Name The name of the observation model object 
 #' @slot Cobs Log-normal catch observation error expressed as a coefficient of variation (uniform distribution) 
 #' @slot Cbiascv A coefficient of variation controlling the sampling of bias in catch observations for each simulation (uniform distribution) 
@@ -815,9 +815,9 @@ setMethod("initialize", "MSE", function(.Object, Name, nyears, proyears,
 #' @keywords classes
 #' @examples
 #' 
-#' showClass('Observation')
+#' showClass('Obs')
 #' 
-setClass("Observation", representation(Name = "character", LenMcv = "numeric", 
+setClass("Obs", representation(Name = "character", LenMcv = "numeric", 
   Cobs = "numeric", Cbiascv = "numeric", CAA_nsamp = "numeric", CAA_ESS = "numeric", 
   CAL_nsamp = "numeric", CAL_ESS = "numeric", CALcv = "numeric", Iobs = "numeric", 
   Mcv = "numeric", Kcv = "numeric", t0cv = "numeric", Linfcv = "numeric", 
@@ -828,8 +828,8 @@ setClass("Observation", representation(Name = "character", LenMcv = "numeric",
   Reccv = "numeric", Irefcv = "numeric", Crefcv = "numeric", Brefcv = "numeric", 
   beta = "numeric"))
 
-# initialize Observation
-setMethod("initialize", "Observation", function(.Object, file = NA) {
+# initialize Obs
+setMethod("initialize", "Obs", function(.Object, file = NA) {
   if (!is.na(file)) {
     if (file.exists(file)) {
       Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
@@ -898,7 +898,7 @@ setMethod("initialize", "Observation", function(.Object, file = NA) {
 #' Class \code{'OM'}
 #' 
 #' An object containing all the parameters needed to control the MSE which can
-#' be build from component Stock, Fleet and Observation objects. Almost all of
+#' be build from component Stock, Fleet and Obs objects. Almost all of
 #' these inputs are a vector of length 2 which describes the upper and lower
 #' bounds of a uniform distribution from which to sample the parameter.
 #' 
@@ -906,7 +906,7 @@ setMethod("initialize", "Observation", function(.Object, file = NA) {
 #' @name OM-class
 #' @docType class
 #' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new('OM', Stock, Fleet, Observation)}. 
+#' \code{new('OM', Stock, Fleet, Obs)}. 
 
 #' @slot Name Name of the operating model
 #' @slot nsim The number of simulations
@@ -1029,22 +1029,22 @@ setClass("OM", representation(Name = "character", nsim="numeric",proyears="numer
   Crefcv = "numeric", Brefcv = "numeric",cpars="list",seed="numeric",CurrentYr="numeric"))
 
 # initialize OM
-setMethod("initialize", "OM", function(.Object, Stock, Fleet, Observation) {
+setMethod("initialize", "OM", function(.Object, Stock, Fleet, Obs) {
   if (class(Stock) != "Stock") 
     print(paste("Could not build operating model:", deparse(substitute(Stock)), 
       "not of class Stock"))
   if (class(Fleet) != "Fleet") 
     print(paste("Could not build operating model:", deparse(substitute(Fleet)), 
       "not of class Fleet"))
-  if (class(Observation) != "Observation") 
-    print(paste("Could not build operating model:", deparse(substitute(Observation)), 
-      "not of class Observation"))
-  if (class(Stock) != "Stock" | class(Fleet) != "Fleet" | class(Observation) != 
-    "Observation") 
+  if (class(Obs) != "Obs") 
+    print(paste("Could not build operating model:", deparse(substitute(Obs)), 
+      "not of class Obs"))
+  if (class(Stock) != "Stock" | class(Fleet) != "Fleet" | class(Obs) != 
+    "Obs") 
     stop()
   
   .Object@Name <- paste("Stock:", Stock@Name, "  Fleet:", Fleet@Name, 
-    "  Observation model:", Observation@Name, sep = "")
+    "  Obs model:", Obs@Name, sep = "")
   # Now copy the values for stock, fleet and observation slots to same
   # slots in the Sim object
   Sslots <- slotNames(Stock)
@@ -1059,11 +1059,11 @@ setMethod("initialize", "OM", function(.Object, Stock, Fleet, Observation) {
     if (tt) 
       slot(.Object, Fslots[i]) <- slot(Fleet, Fslots[i])
   }
-  Oslots <- slotNames(Observation)
+  Oslots <- slotNames(Obs)
   for (i in 2:length(Oslots)) {
-    tt <- .hasSlot(Observation, Oslots[i])
+    tt <- .hasSlot(Obs, Oslots[i])
     if (tt) 
-      slot(.Object, Oslots[i]) <- slot(Observation, Oslots[i])
+      slot(.Object, Oslots[i]) <- slot(Obs, Oslots[i])
   }
   
   # Default MSE parameters
