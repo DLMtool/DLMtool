@@ -3,12 +3,12 @@
 \docType{data}
 \name{Feasibility}
 \alias{Feasibility}
-\title{Feasibility DLM_fease}
-\format{An object of class \code{DLM_fease} of length 1.}
+\title{Feasibility Fease}
+\format{An object of class \code{Fease} of length 1.}
 \usage{
 Feasibility
 }
 \description{
-An object of class DLM_fease
+An object of class Fease
 }
 \keyword{datasets}
