@@ -5,7 +5,7 @@
 \title{Plot the Stock object parameters}
 \usage{
 plot.Stock(Stock, nsamp = 3, nsim = 500, nyears = 50, proyears = 28,
-  col = "darkgray", breaks = 10, ask = FALSE, incVB = TRUE)
+  col = "darkgray", breaks = 10, lwd = 2, ask = FALSE, incVB = TRUE)
 }
 \arguments{
 \item{Stock}{An object of class Stock (or of class OM)}
@@ -21,6 +21,8 @@ plot.Stock(Stock, nsamp = 3, nsim = 500, nyears = 50, proyears = 28,
 \item{col}{Color of histograms}
 
 \item{breaks}{Number of breaks for histograms}
+
+\item{lwd}{line width}
 
 \item{ask}{Ask before displaying next page?}
 

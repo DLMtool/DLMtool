@@ -313,10 +313,24 @@
 "testOM"
 
 
-#'  testMSE MSE
+#'  Yellowfin_OM OM
 #'
-#'  An object of class MSE
+#'  An object of class OM
 #'
-"testMSE"
+"Yellowfin_OM"
+
+
+#'  Perfect_Imp Imp
+#'
+#'  An object of class Imp
+#'
+"Perfect_Imp"
+
+
+#'  testOM OM
+#'
+#'  An object of class OM
+#'
+"testOM"
 
 
