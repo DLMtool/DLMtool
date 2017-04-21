@@ -19,7 +19,9 @@ Imports:
     methods,
     LBSPR,
     grDevices,
+    mvtnorm,
     parallel,
+    r4ss,
     readxl,
     stats,
     utils
