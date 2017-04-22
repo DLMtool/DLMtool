@@ -306,20 +306,6 @@
 "Simulation_1"
 
 
-#'  testOM OM
-#'
-#'  An object of class OM
-#'
-"testOM"
-
-
-#'  Yellowfin_OM OM
-#'
-#'  An object of class OM
-#'
-"Yellowfin_OM"
-
-
 #'  Perfect_Imp Imp
 #'
 #'  An object of class Imp
@@ -332,5 +318,12 @@
 #'  An object of class OM
 #'
 "testOM"
+
+
+#'  Yellowfin_OM OM
+#'
+#'  An object of class OM
+#'
+"Yellowfin_OM"
 
 

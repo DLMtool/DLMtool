@@ -65,8 +65,6 @@ bounds of a uniform distribution from which to sample the parameter.
 
 \item{\code{Prob_staying}}{The probability of inviduals in area 1 remaining in area 1 over the course of one year}
 
-\item{\code{Source}}{A reference to a website or article form which parameters were taken to define the operating model}
-
 \item{\code{beta}}{A parameter controlling hyperstability/hyperdepletion. I^beta therefore values below 1 lead to hyperstability (an index that decreases slower than true abundance) and values above 1 lead to hyperdepletion (an index that decreases more rapidly than true abundance)(uniform distribution)}
 
 \item{\code{Spat_targ}}{Distribution of fishing in relation to spatial biomass: F is proportional to B^Spat_targ (uniform distribution)}
@@ -99,7 +97,7 @@ bounds of a uniform distribution from which to sample the parameter.
 
 \item{\code{L50_95}}{Length increment from 50 to 95 percent maturity (uniform distribution)}
 
-\item{\code{Fsd}}{Inter-annual variability in fishing mortality rate}
+\item{\code{Esd}}{Inter-annual variability in fishing mortality rate}
 
 \item{\code{EffYears}}{Vector of verticies, years at which to simulate varying relative effort}
 
@@ -110,6 +108,8 @@ bounds of a uniform distribution from which to sample the parameter.
 \item{\code{qinc}}{Average percentage change in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls)}
 
 \item{\code{qcv}}{Inter-annual variability in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls)}
+
+\item{\code{CurrentYr}}{The current calendar year (final year) of the historical simulations (e.g. 2011)}
 
 \item{\code{Cobs}}{Log-normal catch observation error expressed as a coefficient of variation (uniform distribution)}
 
@@ -187,12 +187,24 @@ bounds of a uniform distribution from which to sample the parameter.
 
 \item{\code{seed}}{A random seed to ensure users can reproduce results exactly}
 
-\item{\code{CurrentYr}}{The current calendar year (final year) of the historical simulations (e.g. 2011)}
+\item{\code{Source}}{A reference to a website or article form which parameters were taken to define the operating model}
+
+\item{\code{TACvar}}{lognormal standard deviation in fraction of TAC taken (uniform distribution)}
+
+\item{\code{TACdif}}{Mean fraction of TAC taken (uniform distribution)}
+
+\item{\code{Evar}}{lognormal standard deviation in fraction of TAE taken(uniform distribution)}
+
+\item{\code{Edif}}{Mean fraction of recommended effort taken (uniform distribution)}
+
+\item{\code{DiscMort}}{Discard mortality rate (uniform distribution)}
+
+\item{\code{SizeLimvar}}{Degree of error in size limit implementation (uniform distribution)}
 }}
 
 \section{Objects from the Class}{
  Objects can be created by calls of the form
-\code{new('OM', Stock, Fleet, Obs)}.
+\code{new('OM', Stock, Fleet, Obs, Imp)}.
 }
 
 \examples{
