@@ -414,7 +414,7 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
 #' @slot Name Name of the Fleet object
 #' @slot nyears The number of years for the historical simulation
 #' @slot Spat_targ Distribution of fishing in relation to spatial biomass: F is proportional to B^Spat_targ (uniform distribution) 
-#' @slot Fsd Inter-annual variability in fishing mortality rate
+#' @slot Esd Inter-annual variability in fishing mortality rate
 #' @slot EffYears Vector of verticies, years at which to simulate varying relative effort
 #' @slot EffLower Lower bound on relative effort corresponding to EffYears (uniform distribution)
 #' @slot EffUpper Uppper bound on relative effort corresponding to EffYears (uniform distribution)
@@ -441,7 +441,7 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
 #' showClass('Fleet')
 #' 
 setClass("Fleet", slots = c(Name = "character", nyears = "numeric", Spat_targ = "numeric", 
-  Fsd = "numeric", qinc = "numeric", qcv = "numeric", EffYears = "numeric", 
+  Esd = "numeric", qinc = "numeric", qcv = "numeric", EffYears = "numeric", 
   EffLower = "numeric", EffUpper = "numeric", SelYears = "numeric", AbsSelYears = "numeric", 
   L5 = "numeric", LFS = "numeric", Vmaxlen = "numeric", L5Lower = "numeric", 
   L5Upper = "numeric", LFSLower = "numeric", LFSUpper = "numeric", VmaxLower = "numeric", 
@@ -465,7 +465,8 @@ setMethod("initialize", "Fleet", function(.Object, file = NA) {
       
       .Object@Spat_targ <- as.numeric(dat[match("Spat_targ", dname), 
         1:2])
-      .Object@Fsd <- as.numeric(dat[match("Fsd", dname), 1:2])
+      .Object@Esd <- as.numeric(dat[match("Esd", dname), 1:2])
+	  .Object@Esd <- as.numeric(dat[match("Fsd", dname), 1:2])
       # .Object@Fgrad<-as.numeric(dat[match('Fgrad',dname),1:2])
       nEffYears <- ncol(dat[match("EffYears", dname), ])
       oldw <- getOption("warn")
@@ -952,7 +953,7 @@ setMethod("initialize", "Obs", function(.Object, file = NA) {
 #' @slot isRel Are the selectivity parameters relative to size-of-maturity? TRUE or FALSE 
 #' @slot L50 Length at 50 percent maturity (uniform distribution) 
 #' @slot L50_95 Length increment from 50 to 95 percent maturity (uniform distribution) 
-#' @slot Fsd Inter-annual variability in fishing mortality rate 
+#' @slot Esd Inter-annual variability in fishing mortality rate 
 #' @slot EffYears Vector of verticies, years at which to simulate varying relative effort 
 #' @slot EffLower Lower bound on relative effort corresponding to EffYears (uniform distribution) 
 #' @slot EffUpper Uppper bound on relative effort corresponding to EffYears (uniform distribution) 
@@ -1025,7 +1026,7 @@ setClass("OM", representation(Name = "character", nsim="numeric",proyears="numer
   AbsSelYears = "numeric", L5 = "numeric", LFS = "numeric", Vmaxlen = "numeric", 
   L5Lower = "numeric", L5Upper = "numeric", LFSLower = "numeric", LFSUpper = "numeric", 
   VmaxLower = "numeric", VmaxUpper = "numeric", isRel = "character", 
-  beta = "numeric", Spat_targ = "numeric", Fsd = "numeric",
+  beta = "numeric", Spat_targ = "numeric", Esd = "numeric",
   Period = "numeric", Amplitude = "numeric", EffYears = "numeric", EffLower = "numeric", 
   EffUpper = "numeric", qinc = "numeric", qcv = "numeric", AC = "numeric", 
   

@@ -9,6 +9,10 @@ DLM_output has been renamed Output
 DLM_input has been renamed Input 
 DLM_data has been renamed Data 
 
+Fsd in Fleet object has been re-named Esd 
+
+
+
 ### DLMtool V3.2.3
 
 #### Major Changes

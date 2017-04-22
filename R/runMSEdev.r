@@ -54,7 +54,7 @@ runMSEdev <- function(OM = "1", MPs = c("AvC","DCAC","DD","FMSYref","curE"), int
   maxage <- round(max(maxage, calcMax),0)  # If maximum age is lower, increase it to calcMax
     
   dep <- runif(nsim, OM@D[1], OM@D[2])      # sample from the range of user-specified depletion (Bcurrent/B0)
-  Esd <- runif(nsim, OM@Fsd[1], OM@Fsd[2])  # interannual variability in fishing effort (log normal sd)
+  Esd <- runif(nsim, OM@Esd[1], OM@Esd[2])  # interannual variability in fishing effort (log normal sd)
 
   EffLower <- OM@EffLower
   EffUpper <- OM@EffUpper 
@@ -577,7 +577,7 @@ runMSEdev <- function(OM = "1", MPs = c("AvC","DCAC","DD","FMSYref","curE"), int
 	  if (exists("recMulti", inherits=FALSE))  Perr[HighQ,] <- Perr[HighQ,] * recMulti[HighQ,]
 	  
 	  # Re-sample historical fishing effort 
-	  Esd2 <- runif(Nprob, OM@Fsd[1], OM@Fsd[2])
+	  Esd2 <- runif(Nprob, OM@Esd[1], OM@Esd[2])
 	  Esd[HighQ] <- Esd2
 	  Deriv2 <- getEffhist(Esd2, nyears, EffYears = EffYears, EffLower = EffLower, EffUpper = EffUpper)  # Historical fishing effort
       Find[HighQ, ] <- Deriv2[[1]]  # Calculate fishing effort rate
