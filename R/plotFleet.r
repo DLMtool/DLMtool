@@ -346,17 +346,17 @@ plot.Fleet <- function(Fleet, Stock=Albacore, nsamp=3, nsim=500, nyears=50, proy
   
   # Selectivity at length
   sampV <- V[its,,]
-  matplot(t(Len_age[its,,1]), t(sampV[,,1]), type="l", lwd=lwd, bty="l", main="First historical\n year", xlab="Length")  
-  matplot(t(Len_age[its,,nyears]), t(sampV[,,nyears]), type="l", lwd=lwd, bty="l", main="Last historical\n year", xlab="Length")  
+  matplot(t(Len_age[its,,1]), t(sampV[,,1]), type="l", lwd=lwd, bty="l", main="First historical\n year", xlab="Length", ylim=c(0,1))  
+  matplot(t(Len_age[its,,nyears]), t(sampV[,,nyears]), type="l", lwd=lwd, bty="l", main="Last historical\n year", xlab="Length", ylim=c(0,1))  
   title(line=3, cex.main=1.5, "Selectivity-at-length", xpd=NA)
   matplot(t(Len_age[its,,nyears+proyears]), t(sampV[,,nyears+proyears]), type="l", lwd=lwd, bty="l", 
-    main="Last projected\n year", xlab="Length")  
+    main="Last projected\n year", xlab="Length", ylim=c(0,1))  
   
   
-  matplot(t(sampV[,,1]), type="l", lwd=lwd, bty="l", main="First historical\n year", xlab="Age")  
-  matplot(t(sampV[,,nyears]), type="l", lwd=lwd, bty="l", main="Last historical\n year", xlab="Age")  
+  matplot(t(sampV[,,1]), type="l", lwd=lwd, bty="l", main="First historical\n year", xlab="Age", ylim=c(0,1))  
+  matplot(t(sampV[,,nyears]), type="l", lwd=lwd, bty="l", main="Last historical\n year", xlab="Age", ylim=c(0,1))  
   title(line=3, cex.main=1.5, "Selectivity-at-age", xpd=NA)
-  matplot(t(sampV[,,nyears+proyears]), type="l", lwd=lwd, bty="l", main="Last projected\n year", xlab="Age")  
+  matplot(t(sampV[,,nyears+proyears]), type="l", lwd=lwd, bty="l", main="Last projected\n year", xlab="Age", ylim=c(0,1))  
   
   title(Fleet@Name, outer=TRUE)
   title(paste("nyears =", nyears, "  proyears =", proyears, "  ", nsamp, "sampled iterations"), outer=TRUE, line=0)
