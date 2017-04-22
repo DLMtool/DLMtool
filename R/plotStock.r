@@ -18,11 +18,11 @@
 #' @export 
 plot.Stock <- function(Stock, nsamp=3, nsim=500, nyears=50, proyears=28, 
   col="darkgray", breaks=10, lwd=2, ask=FALSE, incVB=TRUE) {
+  cpars <- NULL
   if (class(Stock) == "OM") {
     if (is.finite(Stock@nyears)) nyears <- Stock@nyears
 	if (is.finite(Stock@proyears)) proyears <- Stock@proyears
 	if (is.finite(Stock@nsim)) nsim <- Stock@nsim	
-	cpars <- NULL
 	if (length(Stock@cpars) > 0) {
 	  cpars <- Stock@cpars
 	  ncparsim <- cparscheck(cpars)
