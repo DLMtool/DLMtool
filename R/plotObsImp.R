@@ -127,19 +127,19 @@ plot.Obs <- function(Obs, nsim=500, nyears=50,
   
   ObsTSplot(Cbias,Csd,nyears,labs=c("Catch bias (Cbias)",
             "Catch error (Csd)","Catch discrepancy for three samples",
-            "Cbias","Csd"))
+            "Cbias","Csd"), breaks=breaks, its=its, nsamp=nsamp, col=col)
   
   # --- Depletion -------------
   
   ObsTSplot(Dbias,Derr,nyears,labs=c("Depletion bias (Dbias)",
                                      "Depletion error (Derr)","Depletion discrepancy for three samples",
-                                     "Depletion bias","Depletion error"))
+                                     "Depletion bias","Depletion error"), breaks=breaks, its=its, nsamp=nsamp, col=col)
   
   # --- Abundance -------------
   
   ObsTSplot(Abias,Aerr,nyears,labs=c("Current abundance bias (Abias)",
                                      "Current abundance error (Derr)","Abundance discrepancy for three samples",
-                                     "Abias","Aerr"))
+                                     "Abias","Aerr"), breaks=breaks, its=its, nsamp=nsamp, col=col)
   
   # --- Indices --------------
   
@@ -172,7 +172,7 @@ plot.Obs <- function(Obs, nsim=500, nyears=50,
 }
 
 
-ObsTSplot<-function(Cbias,Csd,nyears,labs){
+ObsTSplot<-function(Cbias,Csd,nyears,labs, breaks, its, nsamp, col){
   
   hist(Cbias,col=col,border="white", axes=FALSE, main=labs[1], breaks=breaks,cex.main=0.95)
   axis(side=1) 
