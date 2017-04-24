@@ -4,8 +4,8 @@
 \alias{plot.Fleet}
 \title{Plot the Fleet object parameters}
 \usage{
-plot.Fleet(Fleet, Stock, nsamp = 3, nsim = 500, nyears = 50,
-  proyears = 28, col = "darkgray", breaks = 10, lwd = 2)
+plot.Fleet(Fleet, Stock, nsamp = 3, nsim = 500, proyears = 28,
+  col = "darkgray", breaks = 10, lwd = 2)
 }
 \arguments{
 \item{Fleet}{An object of class Fleet (or of class Fleet)}
@@ -13,8 +13,6 @@ plot.Fleet(Fleet, Stock, nsamp = 3, nsim = 500, nyears = 50,
 \item{nsamp}{Number of random samples for time-series plots}
 
 \item{nsim}{Number of iterations for histograms}
-
-\item{nyears}{Number of historical years}
 
 \item{proyears}{Number of projection years}
 
