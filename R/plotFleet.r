@@ -3,18 +3,17 @@
 #' @param Fleet An object of class Fleet (or of class Fleet) 
 #' @param nsamp Number of random samples for time-series plots
 #' @param nsim Number of iterations for histograms
-#' @param nyears Number of historical years
 #' @param proyears Number of projection years 
 #' @param col Color of histograms 
 #' @param breaks Number of breaks for histograms 
 #' @param lwd line width 
 #' @author A. Hordyk
 #' @export 
-plot.Fleet <- function(Fleet, Stock, nsamp=3, nsim=500, nyears=50, proyears=28, 
+plot.Fleet <- function(Fleet, Stock, nsamp=3, nsim=500, proyears=28, 
   col="darkgray", breaks=10, lwd=2) { 
   cpars <- NULL
+  nyears <- Fleet@nyears
   if (class(Fleet) == "OM") {
-    if (is.finite(Fleet@nyears)) nyears <- Fleet@nyears
 	if (is.finite(Fleet@proyears)) proyears <- Fleet@proyears
 	if (is.finite(Fleet@nsim)) nsim <- Fleet@nsim	
 	if (length(Fleet@cpars) > 0) {
@@ -84,8 +83,7 @@ plot.Fleet <- function(Fleet, Stock, nsamp=3, nsim=500, nyears=50, proyears=28,
   Selnyears <- length(Fleet@SelYears)
   # are selectivity parameters relative to size at maturity?
   chk <- class(Fleet@isRel)
-  if (length(Fleet@isRel) < 1) 
-    Fleet@isRel <- "true"
+  if (length(Fleet@isRel) < 1) Fleet@isRel <- "true"
   if (chk == "character") {
     chkRel <- tolower(Fleet@isRel)
     if (chkRel == "true" | Fleet@isRel == "1") 
@@ -269,15 +267,15 @@ plot.Fleet <- function(Fleet, Stock, nsamp=3, nsim=500, nyears=50, proyears=28,
         LFS[bkyears, ] <- matrix(rep((LFSs[, X]), length(bkyears)), ncol = nsim, byrow = TRUE)
         Vmaxlen[bkyears, ] <- matrix(rep((Vmaxlens[, X]), length(bkyears)), ncol = nsim, byrow = TRUE)
         
-	      s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
-          LFS = LFSs[i, X], L0.05 = L5s[i, X])$minimum)
-	      s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
+	    s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
+        LFS = LFSs[i, X], L0.05 = L5s[i, X])$minimum)
+	    s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
 	  	             LFS = LFSs[i, X], s1=s1[i], maxlen=maxlen[i], 
 	  				 MaxSel=Vmaxlens[i, X])$minimum)	
-	      for (yr in bkyears) {
+	    for (yr in bkyears) {
   	      V[ , , yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[yr, i], s1[i], s2[i], lens=Len_age[i,,yr])))
           SLarray[,, yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[1,i], s1[i], s2[i], lens=CAL_binsmid)))   		 
-		    }
+		}
       }
 	  
       restYears <- max(SelYears):(nyears + proyears)
@@ -298,8 +296,7 @@ plot.Fleet <- function(Fleet, Stock, nsamp=3, nsim=500, nyears=50, proyears=28,
   } # end of 'if V exists'
    
   if (any((dim(V) != c(nsim, maxage, proyears+nyears)))) 
-    stop("V must have dimensions: nsim (", nsim,") maxage (", maxage, 
-	      ") proyears+nyears (", proyears+nyears, ") \nbut has ", 
+    stop("V must have dimensions: nsim (", nsim,") maxage (", maxage,") proyears+nyears (", proyears+nyears, ") \nbut has ", 
 	      dim(V)[1], " ", dim(V)[2], " ", dim(V)[3], call.=FALSE)
 
 
@@ -346,10 +343,11 @@ plot.Fleet <- function(Fleet, Stock, nsamp=3, nsim=500, nyears=50, proyears=28,
   
   # Selectivity at length
   sampV <- V[its,,]
-  matplot(t(Len_age[its,,1]), t(sampV[,,1]), type="l", lwd=lwd, bty="l", main="First historical\n year", xlab="Length", ylim=c(0,1))  
-  matplot(t(Len_age[its,,nyears]), t(sampV[,,nyears]), type="l", lwd=lwd, bty="l", main="Last historical\n year", xlab="Length", ylim=c(0,1))  
+  sampVL <- SLarray[its,,]
+  matplot(CAL_binsmid, t(sampVL[,,1]), type="l", lwd=lwd, bty="l", main="First historical\n year", xlab="Length", ylim=c(0,1))  
+  matplot(CAL_binsmid, t(sampVL[,,nyears]), type="l", lwd=lwd, bty="l", main="Last historical\n year", xlab="Length", ylim=c(0,1))  
   title(line=3, cex.main=1.5, "Selectivity-at-length", xpd=NA)
-  matplot(t(Len_age[its,,nyears+proyears]), t(sampV[,,nyears+proyears]), type="l", lwd=lwd, bty="l", 
+  matplot(CAL_binsmid, t(sampVL[,,nyears+proyears]), type="l", lwd=lwd, bty="l", 
     main="Last projected\n year", xlab="Length", ylim=c(0,1))  
   
   
