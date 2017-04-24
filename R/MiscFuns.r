@@ -27,9 +27,12 @@ setup <- function(cpus=parallel::detectCores()) {
 avail <- function(classy) {
  temp <- try(class(classy), silent=TRUE)
   if (class(temp) == "try-error") classy <- deparse(substitute(classy))
-  return(unique(c(ls("package:DLMtool")[unlist(lapply(ls("package:DLMtool"), 
+  temp <- unique(c(ls("package:DLMtool")[unlist(lapply(ls("package:DLMtool"), 
     getclass, classy = classy))], ls(envir = .GlobalEnv)[unlist(lapply(ls(envir = .GlobalEnv), 
-    getclass, classy = classy))])))
+    getclass, classy = classy))])) 
+   if (classy == "Observation") message("Class 'Observation' has been re-named 'Obs'")	
+   if (length(temp) <1) stop("'", classy, "' is not a valid class type in DLMtool package", call.=FALSE)
+  return(temp)
 }
 
 #' get object class
@@ -888,6 +891,7 @@ plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
       " are:")
   out <- sort(tt[which(p & p2)])
   out <- out[-grep("plotFun", out)]
+  out <- out[-grep("plot.OM", out)]
   if (class == "MSE") {
     out <- c(out, "barplot", "boxplot", "VOI", "VOI2")
     out <- sort(out)
