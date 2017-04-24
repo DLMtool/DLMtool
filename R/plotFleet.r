@@ -10,7 +10,7 @@
 #' @param lwd line width 
 #' @author A. Hordyk
 #' @export 
-plot.Fleet <- function(Fleet, Stock=Albacore, nsamp=3, nsim=500, nyears=50, proyears=28, 
+plot.Fleet <- function(Fleet, Stock, nsamp=3, nsim=500, nyears=50, proyears=28, 
   col="darkgray", breaks=10, lwd=2) { 
   cpars <- NULL
   if (class(Fleet) == "OM") {
@@ -358,7 +358,7 @@ plot.Fleet <- function(Fleet, Stock=Albacore, nsamp=3, nsim=500, nyears=50, proy
   title(line=3, cex.main=1.5, "Selectivity-at-age", xpd=NA)
   matplot(t(sampV[,,nyears+proyears]), type="l", lwd=lwd, bty="l", main="Last projected\n year", xlab="Age", ylim=c(0,1))  
   
-  title(Fleet@Name, outer=TRUE)
+  title(paste("Fleet:", Fleet@Name, "Stock:", Stock@Name), outer=TRUE)
   title(paste("nyears =", nyears, "  proyears =", proyears, "  ", nsamp, "sampled iterations"), outer=TRUE, line=0)
     
   on.exit(par(op))	  
