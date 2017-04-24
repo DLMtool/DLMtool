@@ -12,17 +12,19 @@ An operating model component that specifies the degree of adherence to managemen
 \describe{
 \item{\code{Name}}{The name of the Implementation error object}
 
-\item{\code{TACvar}}{lognormal standard deviation in fraction of TAC taken (uniform distribution)}
+\item{\code{TACSD}}{lognormal standard deviation in fraction of TAC taken (uniform distribution)}
 
-\item{\code{TACdif}}{Mean fraction of TAC taken (uniform distribution)}
+\item{\code{TACFrac}}{Mean fraction of TAC taken (uniform distribution) (can be an improper fraction greater than 1)}
 
-\item{\code{Evar}}{lognormal standard deviation in fraction of TAE taken(uniform distribution)}
+\item{\code{ESD}}{lognormal standard deviation in fraction of TAE taken(uniform distribution)}
 
-\item{\code{Edif}}{Mean fraction of recommended effort taken (uniform distribution)}
+\item{\code{EFrac}}{Mean fraction of recommended effort taken (uniform distribution)}
 
-\item{\code{DiscMort}}{Discard mortality rate (uniform distribution)}
+\item{\code{SizeLimSD}}{lognormal error in size limit implementation (uniform distribution)}
 
-\item{\code{SizeLimvar}}{Degree of error in size limit implementation (uniform distribution)}
+\item{\code{SizeLimFrac}}{Mean fraction of the size limit (uniform distribution) (can be an improper fraction greater than 1)}
+
+\item{\code{DiscMort}}{Discard mortality rate (uniform distribution) (can be an improper fraction greater than 1)}
 
 \item{\code{Source}}{A reference to a website or article form which parameters were taken to define the operating model}
 }}

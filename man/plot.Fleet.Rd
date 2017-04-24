@@ -4,7 +4,7 @@
 \alias{plot.Fleet}
 \title{Plot the Fleet object parameters}
 \usage{
-plot.Fleet(Fleet, Stock = Albacore, nsamp = 3, nsim = 500, nyears = 50,
+plot.Fleet(Fleet, Stock, nsamp = 3, nsim = 500, nyears = 50,
   proyears = 28, col = "darkgray", breaks = 10, lwd = 2)
 }
 \arguments{

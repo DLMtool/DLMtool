@@ -3,17 +3,12 @@
 \docType{data}
 \name{testOM}
 \alias{testOM}
-\alias{testOM}
 \title{testOM OM}
 \format{An object of class \code{OM} of length 1.}
 \usage{
 testOM
-
-testOM
 }
 \description{
-An object of class OM
-
 An object of class OM
 }
 \keyword{datasets}
