@@ -369,17 +369,17 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
   # -- Recruitment -----------------------------------------------
   
   nrecs<-length(replist$recruit$dev)
-  recdevs<-replist$recruit$dev[(nrecs-nyears+1):(nrecs-1)]# last year is mean recruitment
+  recdevs<-replist$recruit$dev# last year is mean recruitment
   #recdevs<-replist[length(replist$recruit$dev)-nyears)]
   #recdevs[is.na(recdevs)]<-0
   OM@AC<-rep(acf(recdevs,plot=F)$acf[2,1,1],2)
   
-  Perr<-array(NA,c(nsim,nyears+proyears))
-  Perr[,1:(nyears-1)]<-matrix(rnorm(nsim*(nyears-1),rep(recdevs,each=nsim),0.2),nrow=nsim) # generate a bunch of simulations with uncertainty
+  Perr<-array(NA,c(nsim,nyears+proyears+maxage-1))
+  Perr[,1:(maxage+nyears-1)]<-matrix(rnorm(nsim*(nyears-1),rep(recdevs,each=nsim),0.2),nrow=nsim) # generate a bunch of simulations with uncertainty
   procsd<-apply(Perr,1,sd,na.rm=T)
   OM@Perr<-quantile(procsd,c(0.025,0.975)) # uniform range is a point estimate from assessment MLE
   procmu <- -0.5 * (procsd)^2  # adjusted log normal mean
-  Perr[,nyears:(nyears+proyears)]<-matrix(rnorm(nsim*(proyears+1),rep(procmu,proyears+1),rep(procsd,proyears+1)),nrow=nsim)
+  Perr[,(maxage+nyears-1)+(1:proyears)]<-matrix(rnorm(nsim*proyears,rep(procmu,proyears),rep(procsd,proyears)),nrow=nsim)
   AC<-mean(OM@AC)
   for (y in nyears:(nyears + proyears)) Perr[, y] <- AC * Perr[, y - 1] +   Perr[, y] * (1 - AC * AC)^0.5  
   Perr<-exp(Perr)
