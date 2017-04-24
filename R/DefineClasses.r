@@ -1002,13 +1002,14 @@ setMethod("initialize", "Obs", function(.Object, file = NA) {
 #' @slot seed A random seed to ensure users can reproduce results exactly
 #' @slot Source A reference to a website or article form which parameters were taken to define the operating model 
 
-#' @slot TACvar lognormal standard deviation in fraction of TAC taken (uniform distribution)
-#' @slot TACdif Mean fraction of TAC taken (uniform distribution)
-#' @slot Evar lognormal standard deviation in fraction of TAE taken(uniform distribution)
-#' @slot Edif Mean fraction of recommended effort taken (uniform distribution)
-#' @slot DiscMort Discard mortality rate (uniform distribution)
-#' @slot SizeLimvar Degree of error in size limit implementation (uniform distribution) 
-
+#' @slot TACSD lognormal standard deviation in fraction of TAC taken (uniform distribution) 
+#' @slot TACFrac Mean fraction of TAC taken (uniform distribution) (can be an improper fraction greater than 1)
+#' @slot ESD lognormal standard deviation in fraction of TAE taken(uniform distribution)
+#' @slot EFrac Mean fraction of recommended effort taken (uniform distribution)
+#' @slot SizeLimSD lognormal error in size limit implementation (uniform distribution)
+#' @slot SizeLimFrac Mean fraction of the size limit (uniform distribution) (can be an improper fraction greater than 1)
+#' @slot DiscMort Discard mortality rate (uniform distribution) (can be an improper fraction greater than 1)
+#' 
 #' @author T. Carruthers
 #' @keywords classes
 #' @examples
@@ -1040,9 +1041,10 @@ setClass("OM", representation(Name = "character", nsim="numeric",proyears="numer
   Icv = "numeric", maxagecv = "numeric", Reccv = "numeric", Irefcv = "numeric", 
   Crefcv = "numeric", Brefcv = "numeric",
   
-  TACvar = "numeric", 
-  TACdif = "numeric", Evar = "numeric", Edif = "numeric",
-  DiscMort = "numeric", SizeLimvar = "numeric",
+  TACSD = "numeric", TACFrac = "numeric", 
+  ESD = "numeric", EFrac = "numeric",
+  SizeLimSD = "numeric", SizeLimFrac="numeric",
+  DiscMort = "numeric", 
   
   cpars="list",seed="numeric",CurrentYr="numeric"))
 
@@ -1449,35 +1451,37 @@ setMethod("summary",
 #' @section Objects from the Class: Objects can be created by calls of the form
 #' \code{new('Imp', OM)}
 #' @slot Name The name of the Implementation error object 
-#' @slot TACvar lognormal standard deviation in fraction of TAC taken (uniform distribution)
-#' @slot TACdif Mean fraction of TAC taken (uniform distribution)
-#' @slot Evar lognormal standard deviation in fraction of TAE taken(uniform distribution)
-#' @slot Edif Mean fraction of recommended effort taken (uniform distribution)
-#' @slot DiscMort Discard mortality rate (uniform distribution)
-#' @slot SizeLimvar Degree of error in size limit implementation (uniform distribution)
+#' @slot TACSD lognormal standard deviation in fraction of TAC taken (uniform distribution) 
+#' @slot TACFrac Mean fraction of TAC taken (uniform distribution) (can be an improper fraction greater than 1)
+#' @slot ESD lognormal standard deviation in fraction of TAE taken(uniform distribution)
+#' @slot EFrac Mean fraction of recommended effort taken (uniform distribution)
+#' @slot SizeLimSD lognormal error in size limit implementation (uniform distribution)
+#' @slot SizeLimFrac Mean fraction of the size limit (uniform distribution) (can be an improper fraction greater than 1)
+#' @slot DiscMort Discard mortality rate (uniform distribution) (can be an improper fraction greater than 1)
 #' @slot Source A reference to a website or article form which parameters were taken to define the operating model
-
 #' @author T. Carruthers
 #' @keywords classes
 #' @examples
 #' 
 #' showClass('Imp')
 #' 
-setClass("Imp", representation(Name = "character", TACvar = "numeric", 
-                               TACdif = "numeric", Evar = "numeric", Edif = "numeric",
-                               DiscMort = "numeric", SizeLimvar = "numeric",
+setClass("Imp", representation(Name = "character", TACSD = "numeric", TACFrac = "numeric", 
+                               ESD = "numeric", EFrac = "numeric",
+                               SizeLimSD = "numeric", SizeLimFrac="numeric",
+                               DiscMort = "numeric", 
                                Source = "character"))
 
 # initialize Imp
 setMethod("initialize", "Imp", function(.Object, file = NA) {
   
   .Object@Name <- "Perfect implementation"
-  .Object@TACvar <- c(0,0)
-  .Object@TACdif <- c(1,1)
-  .Object@Evar <- c(0,0)
-  .Object@Edif <-c(1,1)
+  .Object@TACSD <- c(0,0)
+  .Object@TACFrac <- c(1,1)
+  .Object@ESD <- c(0,0)
+  .Object@EFrac <-c(1,1)
+  .Object@SizeLimSD <- c(0,0)
+  .Object@SizeLimFrac<-c(1,1)
   .Object@DiscMort <- c(0,0)
-  .Object@SizeLimvar <- c(0,0)
   .Object@Source <-"DLMtool generated"
   
   if (!is.na(file)) {
@@ -1489,12 +1493,13 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
       dat <- dat[, 2:ncol(dat)]
       
       .Object@Name <- dat[match("Name", dname), 1]
-      .Object@TACvar <- as.numeric(dat[match("TACvar", dname), 1])
-      .Object@TACdif <- as.numeric(dat[match("TACdif", dname), 1])
-      .Object@Evar <- as.numeric(dat[match("Evar", dname), 1:2])
-      .Object@Edif <- as.numeric(dat[match("Edif", dname), 1:2])
+      .Object@TACSD <- as.numeric(dat[match("TACSD", dname), 1])
+      .Object@TACFrac <- as.numeric(dat[match("TACFrac", dname), 1])
+      .Object@ESD <- as.numeric(dat[match("ESD", dname), 1:2])
+      .Object@EFrac <- as.numeric(dat[match("EFrac", dname), 1:2])
+      .Object@SizeLimSD <- as.numeric(dat[match("SizeLimSD", dname), 1:2])
+      .Object@SizeLimFrac <- as.numeric(dat[match("SizeLimFrac", dname), 1:2])
       .Object@DiscMort <- as.numeric(dat[match("DiscMort", dname), 1:2])
-      .Object@SizeLimvar <- as.numeric(dat[match("SizeLimvar", dname), 1:2])
       .Object@Source <- dat[match("Source", dname), 1]
       
     } else {
