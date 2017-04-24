@@ -1138,44 +1138,43 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
       nd <- Sys.time()
       MPdur[mm] <- nd - st
       
-      inc <- runIn[[1]]
-      Data <- runIn[[2]]
+      inc <- runIn[[1]] # input control recommendations 
+      Data <- runIn[[2]] # Data object object with saved info from MP 
       
-      Ai <- inc[1, , 1]
-      Ei <- inc[2, , 1]
+      Ai <- inc[1, , 1] 
+      Ei <- inc[2, , 1] # effort
       Effort[, mm, y] <- Ei *E_f[,y] # Change in Effort
-      Si <- t(inc[3:4, , 1])
-      newSel <- inc[5:6, , 1]
+      Si <- t(inc[3:4, , 1]) 
+      newSel <- inc[5:6, , 1] # new selectivity parameters (L5 and LFS)
+      newUppLim <- inc[7, , 1] # new upper size limit (ignored if NA) 
+      newVmax <- inc[8, , 1] # new vulnerability at max length
       
-      newUppLim <- inc[7, , 1]
-      newVmax <- inc[8, , 1]
-      
-      chngSel <- which(colSums(apply(newSel, 2, is.na)) == 0)  # selectivity pattern changed 
-	    ind <- as.matrix(expand.grid((y+nyears):(nyears+proyears), chngSel))
+      chngSel <- which(colSums(apply(newSel, 2, is.na)) == 0)  # selectivity pattern changed in which sims?
+	  ind <- as.matrix(expand.grid((y+nyears):(nyears+proyears), chngSel))
       if (length(chngSel) > 0) {
 	      pL5[ind] <- newSel[1, ind[,2]]	# update size of first capture for future years 
-        pLFS[ind] <- newSel[2, ind[,2]] # update size of first full selection for future years 
-        if (any(!is.na(inc[8, , 1]))) {
-          ind <- which(!is.na(inc[8, , 1])) # update Vmaxlen for future years where applicable
-		      ind2 <- as.matrix(expand.grid((y+nyears):(nyears+proyears), ind))
-          pVmaxlen[ind2] <- inc[8, ind2[,2], 1]
-        }
+          pLFS[ind] <- newSel[2, ind[,2]] # update size of first full selection for future years 
+          if (any(!is.na(inc[8, , 1]))) {
+            ind <- which(!is.na(inc[8, , 1])) # update Vmaxlen for future years where applicable
+		    ind2 <- as.matrix(expand.grid((y+nyears):(nyears+proyears), ind))
+            pVmaxlen[ind2] <- inc[8, ind2[,2], 1]
+          }
       }
 	  
-      Vi <- t(sapply(1:nsim, SelectFun, pL5[y + nyears, ], pLFS[y + nyears, ], 
-	    pVmaxlen[y + nyears, ], Len_age[, maxage, nyears], Len_age[, , y + nyears])) # update vulnerability-at-age schedule 
+      Vi <- t(sapply(1:nsim, SelectFun, pL5[y + nyears, ]*SizeLim_f[,y], pLFS[y + nyears, ]*SizeLim_f[,y], 
+	          pVmaxlen[y + nyears, ], Len_age[, maxage, nyears], Len_age[, , y + nyears])) # update vulnerability-at-age schedule with implementation error on L5 and LFS
       
-	    ind <- as.matrix(expand.grid(1:nsim, 1:length(CAL_binsmid), (y+nyears):(nyears+proyears)))
-      pSLarray[ind] <- t(sapply(1:nsim, SelectFun, SL0.05=pL5[y+nyears, ], SL1=pLFS[y+nyears, ], 
-	                             MaxSel=pVmaxlen[y+nyears, ], maxlens=maxlen, Lens=CAL_binsmid)) # update vulnerability-at-length schedule 
+	  ind <- as.matrix(expand.grid(1:nsim, 1:length(CAL_binsmid), (y+nyears):(nyears+proyears)))
+      pSLarray[ind] <- t(sapply(1:nsim, SelectFun, SL0.05=pL5[y+nyears, ]*SizeLim_f[,y], SL1=pLFS[y+nyears, ]*SizeLim_f[,y], 
+	                             MaxSel=pVmaxlen[y+nyears, ], maxlens=maxlen, Lens=CAL_binsmid)) # update vulnerability-at-length schedule with implementation error on L5 and LFS
 								 
       # Maximum Size Limit - upper size limit has been set
       if (!all(is.na(newUppLim))) {
         Vi[Len_age[, , (y + nyears)] >= newUppLim] <- 0
-	    	for (ss in 1:nsim) {
-		      index <- which(CAL_binsmid >= newUppLim[ss])
-		      pSLarray[ss, index, (y+nyears):(nyears+proyears)] <- 0 
-		    }	
+	    for (ss in 1:nsim) {
+		  index <- which(CAL_binsmid >= newUppLim[ss])
+		  pSLarray[ss, index, (y+nyears):(nyears+proyears)] <- 0 
+		}	
       }
       # Vuln flag
       Vchange <- any(!is.na(inc[5:8]))
@@ -1457,13 +1456,13 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
             pVmaxlen[ind2] <- inc[8, ind2[,2], 1]
           }
         }
-
-        Vi <- t(sapply(1:nsim, SelectFun, pL5[y + nyears, ], pLFS[y + nyears, ], 
-           pVmaxlen[y + nyears, ], Len_age[, maxage, nyears], Len_age[, , y + nyears])) # update vulnerability-at-age schedule 
+			  
+        Vi <- t(sapply(1:nsim, SelectFun, pL5[y + nyears, ]*SizeLim_f[,y], pLFS[y + nyears, ]*SizeLim_f[,y], 
+           pVmaxlen[y + nyears, ], Len_age[, maxage, nyears], Len_age[, , y + nyears])) # update vulnerability-at-age schedule with implementation error on L5 and LFS
         
         ind <- as.matrix(expand.grid(1:nsim, 1:length(CAL_binsmid), (y+nyears):(nyears+proyears)))
-        pSLarray[ind] <- t(sapply(1:nsim, SelectFun, SL0.05=pL5[y+nyears, ], SL1=pLFS[y+nyears, ], 
-                                MaxSel=pVmaxlen[y+nyears, ], maxlens=maxlen, Lens=CAL_binsmid)) # update vulnerability-at-length schedule 
+        pSLarray[ind] <- t(sapply(1:nsim, SelectFun, SL0.05=pL5[y+nyears, ]*SizeLim_f[,y], SL1=pLFS[y+nyears, ]*SizeLim_f[,y], 
+                                MaxSel=pVmaxlen[y+nyears, ], maxlens=maxlen, Lens=CAL_binsmid)) # update vulnerability-at-length schedule with implementation error on L5 and LFS
    							 
         # Maximum Size Limit - upper size limit has been set
         if (!all(is.na(newUppLim))) {
