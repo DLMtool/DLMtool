@@ -1067,7 +1067,7 @@ setMethod("initialize", "OM", function(.Object, Stock, Fleet=Generic_fleet, Obs=
         stop()
   
   .Object@Name <- paste("Stock:", Stock@Name, "  Fleet:", Fleet@Name, 
-    "  Obs model:", Obs@Name, sep = "")
+    "  Obs model:", Obs@Name, "  Imp model:", Imp@Name, sep = "")
   # Now copy the values for stock, fleet and observation slots to same
   # slots in the Sim object
   Sslots <- slotNames(Stock)

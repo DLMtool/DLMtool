@@ -9,7 +9,7 @@
 #' @return An object of class Stock, Fleet, or Obs
 #' @author A. Hordyk
 #' @export SubOM
-SubOM <- function(OM, Sub=c("Stock", "Fleet", "Obs")) {
+SubOM <- function(OM, Sub=c("Stock", "Fleet", "Obs", "Imp")) {
   if (class(OM) !="OM") stop("OM must be of class OM ", call.=FALSE)
   Sub <- match.arg(Sub)
   temp <- new(Sub)
@@ -20,10 +20,11 @@ SubOM <- function(OM, Sub=c("Stock", "Fleet", "Obs")) {
 
   colon <- gregexpr(":", temp@Name)
   space <- gregexpr("  ", temp@Name)
-  ind <- switch(Sub, Stock=1, Fleet=2, Obs=3)
+  ind <- switch(Sub, Stock=1, Fleet=2, Obs=3, Imp=4)
   
-  if (ind < 3) temp@Name <- substr(temp@Name, colon[[1]][ind]+1, space[[1]][ind]-1)
-  if (ind == 3) temp@Name <- substr(temp@Name, colon[[1]][ind]+1, nchar(temp@Name))
- 
+  if (ind < 4) temp@Name <- substr(temp@Name, colon[[1]][ind]+1, space[[1]][ind]-1)
+  if (ind == 4) temp@Name <- substr(temp@Name, colon[[1]][ind]+1, nchar(temp@Name))
+   
   temp 
 }
+
