@@ -18,7 +18,7 @@ SRAsim<-function(OM,qmult=0.5,patchy=0.2,nCAA=100,sigmaE=0.25){
   M<-mean(OM@M)          # Natural mortality rate
   h<-mean(OM@h)          # Steepness
   Linf<-mean(OM@Linf)
-  K<-mean(OM@K)          # Maximum growth rate
+  K<-mean(OM@K)         # Maximum growth rate
   t0<-mean(OM@t0)       # Theorectical length at age zero
 
   lenM <- mean(OM@L50)
@@ -185,13 +185,24 @@ StochasticSRA<-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proyea
 
   LHD<-array(NA,c(nsim,nits))
 
-  sfExport(list=c("Chist"))
-  R0LB<-sfSapply(1:nsim,LSRA,FF=M*4,Chist_arr=Chist_a,M=M,Mat_age=Mat_age,Wt_age=Wt_age,
+ # if(sfIsRunning())sfExport(list=c("Chist_a"))
+  
+  if(sfIsRunning()){
+    R0LB<-sfSapply(1:nsim,LSRA,FF=M*4,Chist_arr=Chist_a,M=M,Mat_age=Mat_age,Wt_age=Wt_age,
                  sel=Mat_age,Recdevs=array(1,c(nsim,nyears+maxage)),h=h)
 
-  R0UB<-sfSapply(1:nsim,LSRA,FF=M/10,Chist_arr=Chist_a,M=M,Mat_age=Mat_age,Wt_age=Wt_age,
+    R0UB<-sfSapply(1:nsim,LSRA,FF=M/10,Chist_arr=Chist_a,M=M,Mat_age=Mat_age,Wt_age=Wt_age,
                sel=Mat_age,Recdevs=array(1,c(nsim,nyears+maxage)),h=h)
-
+  }else{
+    
+    R0LB<-sapply(1:nsim,LSRA,FF=M*4,Chist_arr=Chist_a,M=M,Mat_age=Mat_age,Wt_age=Wt_age,
+                   sel=Mat_age,Recdevs=array(1,c(nsim,nyears+maxage)),h=h)
+    
+    R0UB<-sapply(1:nsim,LSRA,FF=M/10,Chist_arr=Chist_a,M=M,Mat_age=Mat_age,Wt_age=Wt_age,
+                   sel=Mat_age,Recdevs=array(1,c(nsim,nyears+maxage)),h=h)
+    
+  }
+   
   R0b=cbind(R0LB-1,R0UB+1)
   inflb<-log(c(0.5,maxage*0.5))
   slpb<-log(exp(inflb)*c(0.1,2))#c(-3,3)
@@ -594,7 +605,8 @@ SRAcomp<-function(sim,OM,maxplot=10,outfile=NA){
 LSRA<-function(x,FF,Chist_arr,M,Mat_age,Wt_age,sel,Recdevs,h){
   
   maxage<-ncol(Mat_age)
-  SSB0guess<-sum(Chist)*c(0.05,100)
+  
+  SSB0guess<-sum(Chist_arr[x,])*c(0.05,100)
   SSBpR<-sum(exp(-M[x]*(0:(maxage-1)))*Mat_age[x,]*Wt_age[x,])
   R0range=SSB0guess/SSBpR
   

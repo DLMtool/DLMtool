@@ -18,7 +18,7 @@ plot.Obs <- function(Obs, nsim=500, nyears=50,
   if (class(Obs) == "OM") {
     if (is.finite(Obs@nyears)) nyears <- Obs@nyears
     if (is.finite(Obs@nsim)) nyears <- Obs@nsim	
-    Obs <- SubOM(Obs,"Observation")
+    Obs <- SubOM(Obs,"Obs")
   }
   
   nsamp=3

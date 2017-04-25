@@ -11,6 +11,11 @@ plot.OM <-function(OM){
     nsim<-OM@nsim
     nyears<-OM@nyears
     
+    plot.Stock(OM)
+    plot.Fleet(OM)
+    plot.Obs(OM)
+    
+    
     # Time series
     yrlab<-OM@CurrentYr-((nyears-1):0)
     op <-par(mfrow=c(4,2),mai=c(0.7,0.7,0.05,0.05),omi=c(0.01,0.01,0.3,0.01))
@@ -19,7 +24,7 @@ plot.OM <-function(OM){
     TSplot(yrlab,out$TSdata$SSB,xlab="Historical year",ylab="Spawning biomass")
     
     # Depletion
-    TSplot(yrlab,out$TSdata$SSB/rep(out$TSdata$SSB[1,],each=nyears),xlab="Historical year",ylab="Stock depletion (SSB)")
+    TSplot(yrlab,out$TSdata$SSB/rep(out$MSYs$SSB0,each=nyears),xlab="Historical year",ylab="Stock depletion (SSB)")
     
     # Apical F
     FM<-out$SampPars$Find*out$SampPars$qs
