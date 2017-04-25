@@ -14,6 +14,7 @@ plot.OM <-function(OM){
     plot.Stock(OM)
     plot.Fleet(OM)
     plot.Obs(OM)
+    plot.Imp(OM)
     
     
     # Time series

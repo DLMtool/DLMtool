@@ -180,8 +180,11 @@ SRopt<-function(nsim,SSB,rec,SSBpR,plot=F,type="BH"){
     R0temp<-rec[1] # have a guess at R0 for initializing nlm
     pars<-c(0,log(R0temp))
     SSBpR=SSB[1]/rec[1]
-    
-    sfSapply(1:nsim,optBH,SSB=SSB,rec=rec,SSBpR=SSBpR,R0temp=R0temp,pars=pars,frac=0.8,plot=plot)
+    if(sfIsRunning()){
+      sfSapply(1:nsim,optBH,SSB=SSB,rec=rec,SSBpR=SSBpR,R0temp=R0temp,pars=pars,frac=0.8,plot=plot)
+    }else{
+      sapply(1:nsim,optBH,SSB=SSB,rec=rec,SSBpR=SSBpR,R0temp=R0temp,pars=pars,frac=0.8,plot=plot)
+    }
 
 }
 
@@ -369,19 +372,21 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
   # -- Recruitment -----------------------------------------------
   
   nrecs<-length(replist$recruit$dev)
-  recdevs<-replist$recruit$dev# last year is mean recruitment
+  recdevs<-rep(1,nyears+maxage-1)
+  recdevs[(nyears+maxage)-(nrecs:1)]<-replist$recruit$dev# last year is mean recruitment
+  recdevs<-recdevs[1:(nyears+maxage-2)]
   #recdevs<-replist[length(replist$recruit$dev)-nyears)]
   #recdevs[is.na(recdevs)]<-0
-  OM@AC<-rep(acf(recdevs,plot=F)$acf[2,1,1],2)
+  OM@AC<-rep(acf(recdevs[!is.na(recdevs)],plot=F)$acf[2,1,1],2)
   
   Perr<-array(NA,c(nsim,nyears+proyears+maxage-1))
-  Perr[,1:(maxage+nyears-1)]<-matrix(rnorm(nsim*(nyears-1),rep(recdevs,each=nsim),0.2),nrow=nsim) # generate a bunch of simulations with uncertainty
+  Perr[,1:(maxage+nyears-2)]<-matrix(rnorm(nsim*(maxage+nyears-2),rep(recdevs,each=nsim),0.2),nrow=nsim) # generate a bunch of simulations with uncertainty
   procsd<-apply(Perr,1,sd,na.rm=T)
   OM@Perr<-quantile(procsd,c(0.025,0.975)) # uniform range is a point estimate from assessment MLE
   procmu <- -0.5 * (procsd)^2  # adjusted log normal mean
-  Perr[,(maxage+nyears-1)+(1:proyears)]<-matrix(rnorm(nsim*proyears,rep(procmu,proyears),rep(procsd,proyears)),nrow=nsim)
+  Perr[,(maxage+nyears-2)+(1:(proyears+1))]<-matrix(rnorm(nsim*(proyears+1),rep(procmu,proyears+1),rep(procsd,proyears+1)),nrow=nsim)
   AC<-mean(OM@AC)
-  for (y in nyears:(nyears + proyears)) Perr[, y] <- AC * Perr[, y - 1] +   Perr[, y] * (1 - AC * AC)^0.5  
+  for (y in (nyears-1):(nyears + proyears)) Perr[, y] <- AC * Perr[, y - 1] +   Perr[, y] * (1 - AC * AC)^0.5  
   Perr<-exp(Perr)
   
   
@@ -399,7 +404,7 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
   #plot(replist$cpue$Obs,replist$cpue$Exp)
    
   OM@Spat_targ<-rep(1,2)
-  OM@Fsd<-quantile(apply((Find[,1:(nyears-1)]-Find[,2:nyears])/Find[,2:nyears],1,sd),c(0.05,0.95))
+  OM@Esd<-quantile(apply((Find[,1:(nyears-1)]-Find[,2:nyears])/Find[,2:nyears],1,sd),c(0.05,0.95))
   
   OM@Period<-rep(NaN,2)
   OM@Amplitude<-rep(NaN,2)
@@ -407,7 +412,7 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
   OM@EffLower<-Find[1,]
   OM@EffUpper<-Find[1,]
   OM@qinc<-c(0,0)
-  OM@qcv<-OM@Fsd
+  OM@qcv<-OM@Esd
   
   
   # Observation model parameters ==============================================================================
