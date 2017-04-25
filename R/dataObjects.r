@@ -327,3 +327,122 @@
 "Yellowfin_OM"
 
 
+#'  AJ_GOM OM
+#'
+#'  An object of class OM
+#'
+"AJ_GOM"
+
+
+#'  LS_GOM OM
+#'
+#'  An object of class OM
+#'
+"LS_GOM"
+
+
+#'  LAJ_GOM OM
+#'
+#'  An object of class OM
+#'
+"LAJ_GOM"
+
+
+#'  RD_GOM OM
+#'
+#'  An object of class OM
+#'
+"RD_GOM"
+
+
+#'  SG_GOM OM
+#'
+#'  An object of class OM
+#'
+"SG_GOM"
+
+
+#'  SH_GOM OM
+#'
+#'  An object of class OM
+#'
+"SH_GOM"
+
+
+#'  WM_GOM OM
+#'
+#'  An object of class OM
+#'
+"WM_GOM"
+
+
+#'  YM_GOM OM
+#'
+#'  An object of class OM
+#'
+"YM_GOM"
+
+
+#'  testMSE MSE
+#'
+#'  An object of class MSE
+#'
+"testMSE"
+
+
+#'  AJ_GOM OM
+#'
+#'  An object of class OM
+#'
+"AJ_GOM"
+
+
+#'  LS_GOM OM
+#'
+#'  An object of class OM
+#'
+"LS_GOM"
+
+
+#'  LAJ_GOM OM
+#'
+#'  An object of class OM
+#'
+"LAJ_GOM"
+
+
+#'  RD_GOM OM
+#'
+#'  An object of class OM
+#'
+"RD_GOM"
+
+
+#'  SG_GOM OM
+#'
+#'  An object of class OM
+#'
+"SG_GOM"
+
+
+#'  SH_GOM OM
+#'
+#'  An object of class OM
+#'
+"SH_GOM"
+
+
+#'  WM_GOM OM
+#'
+#'  An object of class OM
+#'
+"WM_GOM"
+
+
+#'  YM_GOM OM
+#'
+#'  An object of class OM
+#'
+"YM_GOM"
+
+
