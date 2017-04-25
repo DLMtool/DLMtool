@@ -320,11 +320,13 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
   # Maturity --------------------------------------
   
   Mat_age<-growdat$Age_Mat
+  if(max(Mat_age)>1)Mat_age<-as.numeric(Mat_age>1)
+  
   Len_age<-growdat$Len_Mid
   
   # Currently using linear interpolation of mat vs len, is robust and very close to true logistic model predictions
   
-  L50<-LinInterp(Mat_age,Len_age,0.5)
+  L50<-LinInterp(Mat_age,Len_age,0.5+1E-6)
   OM@L50<-rep(L50,2)
   
   L95<-LinInterp(Mat_age,Len_age,0.95)
@@ -360,7 +362,7 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
    
   # guess at length parameters # this is over ridden anyway
   
-  muFage<-as.vector(apply(F_at_age[,ceiling(ncol(F_at_age)*0.75):ncol(F_at_age)],1,mean))
+  muFage<-as.vector(apply(F_at_age,1,mean))
   Vuln<-muFage/max(muFage,na.rm=T)
   
   OM@L5<-rep(LinInterp(Vuln,Len_age,0.05,ascending=T,zeroint=T),2)                            # not used if V is in cpars
@@ -371,9 +373,12 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
   
   # -- Recruitment -----------------------------------------------
   
-  nrecs<-length(replist$recruit$dev)
-  recdevs<-rep(1,nyears+maxage-1)
-  recdevs[(nyears+maxage)-(nrecs:1)]<-replist$recruit$dev# last year is mean recruitment
+  rind<-rep(1:1000,each=nseas)[1:length(replist$recruit$dev)]
+  recs<-aggregate(replist$recruit$dev,list(rind),mean,na.rm=T)$x
+  recs<-recs[!is.na(recs)&recs!=0]
+  nrecs<-length(recs)
+  recdevs<-rep(0,nyears+maxage-1)
+  recdevs[(nyears+maxage)-(nrecs:1)]<-recs# last year is mean recruitment
   recdevs<-recdevs[1:(nyears+maxage-2)]
   #recdevs<-replist[length(replist$recruit$dev)-nyears)]
   #recdevs[is.na(recdevs)]<-0

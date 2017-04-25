@@ -1,29 +1,27 @@
-# === OM specification using stock assessments ====================
+# === OM specification using iSCAM stock assessment ====================
 
-
-#' Reads MLE estimates from Stock Synthesis file structure into an operating model using package r4ss
+#' Reads MLE estimates from iSCAM file structure into an operating model 
 #'
 #' @description A function that uses the file location of a fitted SS3 model including input files to population the various slots of an operating model with MLE parameter estimates 
-#' @param SSdir A folder with Stock Synthesis input and output files in it
+#' @param iscamdir A folder with Stock Synthesis input and output files in it
 #' @param nsim The number of simulations to take for parameters with uncertainty (for OM@cpars custom parameters)
 #' @param Name The name of the operating model
 #' @param Source Reference to assessment documentation e.g. a url
 #' @param Author Who did the assessment
 #' @author T. Carruthers
-#' @export SS2DLM
-#' @importFrom r4ss SS_output
+#' @export iSCAM2DLM
 iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,Name=NULL,Source="No source provided",
                  Author="No author provided"){
   
   message("-- Using function SS_output of package r4ss to extract data from SS file structure --")
 
-  replist <- SS_output(dir=SSdir,covar=F,ncols=1000,printstats=printstats,verbose=verbose)
+ # replist <- SS_output(dir=SSdir,covar=F,ncols=1000,printstats=printstats,verbose=verbose)
   #replistB <- SS_output(dir="F:/Base",covar=F,ncols=1000,printstats=printstats,verbose=verbose)
   #replistY <- SS_output(dir="F:/Base3",covar=F,ncols=1000,printstats=printstats,verbose=verbose)
 
   message("-- End of r4ss operations --")
   
-  OM<-new('OM',Albacore,Generic_fleet,Generic_obs)
+  OM<-new('OM',testOM,Generic_fleet,Generic_obs)
   OM@nsim<-nsim
   OM@proyears<-proyears
   
