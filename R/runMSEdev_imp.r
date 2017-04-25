@@ -518,6 +518,7 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
     SSN0 <- apply(SSN[, , 1, ], c(1, 3), sum)  # Calculate unfished spawning stock numbers  
     SSB0 <- apply(SSB[, , 1, ], 1, sum)  # Calculate unfished spawning stock biomass
     SSBpR <- SSB0/R0  # Spawning stock biomass per recruit
+	SSBpR <- matrix(SSB0/R0, nrow=nsim, ncol=nareas)  # Spawning stock biomass per recruit
     SSB0a <- apply(SSB[, , 1, ], c(1, 3), sum)  # Calculate unfished spawning stock numbers
     B0 <- apply(Biomass[, , 1, ], 1, sum)
 	N0 <- apply(N[, , 1, ], 1, sum)
@@ -690,7 +691,8 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
     FM[SAY1R] <- qs[S] * Find[SY1] * V[SAY] * fishdist[SR]  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
     Z[SAY1R] <- FM[SAY1R] + Marray[SY]  # Total mortality rate
     N[, 2:maxage, y + 1, ] <- N[, 1:(maxage - 1), y, ] * exp(-Z[, 1:(maxage - 1), y, ])  # Total mortality
-    temp <- array(N[indMov2] * mov[indMov3], dim = c(nareas, nareas, maxage, nsim))  # Move individuals
+    N[1,,y+1,]
+	temp <- array(N[indMov2] * mov[indMov3], dim = c(nareas, nareas, maxage, nsim))  # Move individuals
     N[, , y + 1, ] <- apply(temp, c(4, 3, 1), sum)
     Biomass[SAY1R] <- N[SAY1R] * Wt_age[SAY]  # Calculate biomass
     VBiomass[SAY1R] <- Biomass[SAY1R] * V[SAY]  # Calculate vulnerable biomass
@@ -700,12 +702,12 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
   }  # end of year
   
   # Depletion <- apply(Biomass[, , nyears, ], 1, sum)/apply(Biomass[, , 1, ], 1, sum)  #^betas   # apply hyperstability / hyperdepletion
-  if (nsim > 1) Depletion <- (apply(SSB[,,nyears,],1,sum)/apply(SSB[,,1,],1,sum))#^betas
-  if (nsim == 1) Depletion <- sum(SSB[,,nyears,])/sum(SSB[,,1,])#^betas
+  if (nsim > 1) Depletion <- apply(SSB[,,nyears,],1,sum)/SSB0#^betas
+  if (nsim == 1) Depletion <- sum(SSB[,,nyears,])/SSB0 #^betas
   # # apply hyperstability / hyperdepletion
   
-  # print(round(cbind(dep,Depletion),2))
-   
+  # print(round(cbind(dep,Depletion),4))
+  
   CN <- apply(N * (1 - exp(-Z)) * (FM/Z), c(1, 3, 2), sum)  # Catch in numbers
   CN[is.na(CN)] <- 0
   CB <- Biomass * (1 - exp(-Z)) * (FM/Z)  # Catch in biomass
