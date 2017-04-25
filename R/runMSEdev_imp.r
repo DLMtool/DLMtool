@@ -175,26 +175,26 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
   
   # save(dat,file='F:/DLM/Operating models/Other/custompars')
    
-  # Recruitment Deviations
+  # All recruitment Deviations
   procmu <- -0.5 * (procsd)^2  # adjusted log normal mean
-  Perr <- array(rnorm((nyears + proyears) * nsim, rep(procmu, nyears + 
-    proyears), rep(procsd, nyears + proyears)), c(nsim, nyears + proyears))
-  for (y in 2:(nyears + proyears)) Perr[, y] <- AC * Perr[, y - 1] + 
+  Perr <- array(rnorm((nyears + proyears+maxage-1) * nsim, rep(procmu, nyears + 
+    proyears+maxage-1), rep(procsd, nyears + proyears+maxage-1)), c(nsim, nyears + proyears+maxage-1))
+  for (y in 2:(nyears + proyears+maxage-1)) Perr[, y] <- AC * Perr[, y - 1] + 
     Perr[, y] * (1 - AC * AC)^0.5  #2#AC*Perr[,y-1]+(1-AC)*Perr[,y] # apply a pseudo AR1 autocorrelation to rec devs (log space)
   Perr <- exp(Perr)  # normal space (mean 1 on average)
-  
+ 
   # Add cycle (phase shift) to recruitment deviations - if specified
   if (is.finite(OM@Period[1]) & is.finite(OM@Amplitude[1])) {
     Shape <- "sin"  # default sine wave - alternative - 'shift' for step changes
     recMulti <- t(sapply(1:nsim, SetRecruitCycle, Period = OM@Period, 
-      Amplitude = OM@Amplitude, TotYears = nyears + proyears, Shape = Shape))
+      Amplitude = OM@Amplitude, TotYears = nyears + proyears+maxage-1, Shape = Shape))
     Perr <- Perr * recMulti  # Add cyclic pattern to recruitment
     message("Adding cyclic recruitment pattern")
     flush.console()
   }
   
   if (nsim > 1) {
-    cumlRecDev <- apply(Perr[, 1:nyears], 1, prod)
+    cumlRecDev <- apply(Perr[, 1:(nyears+maxage-1)], 1, prod)
     dep[order(cumlRecDev)] <- dep[order(dep, decreasing = F)]  # robustifies 
   }
   
@@ -300,15 +300,7 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
   # Checks that parameters are correct dimensions - could be messed up with custompars   
   if (length(maxage) > 1) maxage <- maxage[1] # check if maxage has been passed in custompars
   OM@maxage <- maxage # update OM object with maxage that is used 
-  if (dim(Perr)[2] != proyears + nyears){
-     
-      procmu <- -0.5 * (procsd)^2  # adjusted log normal mean
-      Perr_nu<-cbind(log(Perr),array(rnorm(proyears * nsim, rep(procmu, proyears), rep(procsd, proyears)), c(nsim, proyears)))
-      
-      for (y in (nyears+1):(nyears+proyears)) Perr_nu[, y] <- AC * Perr_nu[, y - 1]  +  Perr_nu[, y] * (1 - AC * AC)^0.5   # apply a pseudo AR1 autocorrelation to rec devs (log space)
-      Perr <- exp(Perr_nu)  # normal space (mean 1 on average)
-     
-  }
+  
   
   if(exists("V",inherits=FALSE))if(dim(V)[3] != proyears + nyears)   V<-abind(V,array(V[,,nyears],c(nsim,maxage,proyears)),along=3) # extend future Vulnerabiliy according to final historical vulnerability
    
@@ -350,7 +342,6 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
   CAL_bins <- seq(from = 0, to = MaxBin + binWidth, by = binWidth)
   CAL_binsmid <- seq(from = 0.5 * binWidth, by = binWidth, length = length(CAL_bins) - 1)
   nCALbins <- length(CAL_binsmid)
-  
   
   # Selectivity at Length
   # ------------------------------------------------------ if (max(OM@L5)
@@ -507,10 +498,14 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
   
   SAYR <- as.matrix(expand.grid(1:nareas, 1, 1:maxage, 1:nsim)[4:1])  # Set up some array indexes sim (S) age (A) year (Y) region/area (R)
   SAY <- SAYR[, 1:3]
-  SA <- SAYR[, 1:2]
+  SA <- Sa<-SAYR[, 1:2]
   SR <- SAYR[, c(1, 4)]
   S <- SAYR[, 1]
   SY <- SAYR[, c(1, 3)]
+  Sa[,2]<-maxage-Sa[,2]+1 # This is the process error index for initial year
+  
+  
+  #  -- Equilibrium calcs --
   
   SSN[SAYR] <- Nfrac[SA] * R0[S] * initdist[SR]  # Calculate initial spawning stock numbers
   N[SAYR] <- R0[S] * surv[SA] * initdist[SR]  # Calculate initial stock numbers
@@ -534,7 +529,7 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
     B0 <- apply(Biomass[, , 1, ], 2, sum)
 	N0 <- apply(N[, , 1, ], 2, sum)
   }
-    
+  
   bR <- matrix(log(5 * hs)/(0.8 * SSB0a), nrow=nsim)  # Ricker SR params
   aR <- matrix(exp(bR * SSB0a)/SSBpR, nrow=nsim)  # Ricker SR params
   
@@ -581,10 +576,10 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
 	  procsd[HighQ] <- runif(Nprob, OM@Perr[1], OM@Perr[2])  # Re-sample process error standard deviation 
       AC[HighQ] <- runif(Nprob, OM@AC[1], OM@AC[2])  # Re-sample auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)  
       procmu2 <- -0.5 * (procsd[HighQ])^2  # adjusted log normal mean
-      Perr2 <- array(rnorm((nyears + proyears) * length(HighQ), rep(procmu[HighQ], 
-        nyears + proyears), rep(procsd[HighQ], nyears + proyears)), 
-        c(length(HighQ), nyears + proyears))	
-      for (y in 2:(nyears + proyears)) Perr2[, y] <- AC[HighQ] * 
+      Perr2 <- array(rnorm((nyears + proyears+maxage-1) * length(HighQ), rep(procmu[HighQ], 
+        nyears + proyears+maxage-1), rep(procsd[HighQ], nyears + proyears+maxage-1)), 
+        c(length(HighQ), nyears + proyears+maxage-1))	
+      for (y in 2:(nyears + proyears+maxage-1)) Perr2[, y] <- AC[HighQ] * 
         Perr2[, y - 1] + Perr2[, y] * (1 - AC[HighQ] * AC[HighQ])^0.5
       Perr[HighQ, ] <- exp(Perr2)  # normal space (mean 1 on average)
       
@@ -596,7 +591,7 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
 	  Deriv2 <- getEffhist(Esd2, nyears, EffYears = EffYears, EffLower = EffLower, EffUpper = EffUpper)  # Historical fishing effort
       Find[HighQ, ] <- Deriv2[[1]]  # Calculate fishing effort rate
       dFfinal[HighQ] <- Deriv2[[2]]  # Final gradient in fishing effort yr-1 
-	  
+	
       if (snowfall::sfIsRunning()) {
         snowfall::sfExport(list = c("dep", "Find", "Perr", "Marray", "hs", 
           "Mat_age", "Wt_age", "R0", "V", "nyears", "maxage", "SRrel", 
@@ -641,7 +636,16 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
       
     }
   }
+ 
+  #  -- Non-equilibrium calcs --
   
+  SSN[SAYR] <- Nfrac[SA] * R0[S] * initdist[SR]*Perr[Sa]  # Calculate initial spawning stock numbers
+  N[SAYR] <- R0[S] * surv[SA] * initdist[SR]*Perr[Sa]  # Calculate initial stock numbers
+  
+  Biomass[SAYR] <- N[SAYR] * Wt_age[SAY]  # Calculate initial stock biomass
+  SSB[SAYR] <- SSN[SAYR] * Wt_age[SAY]    # Calculate spawning stock biomass
+  VBiomass[SAYR] <- Biomass[SAYR] * V[SAY]  # Calculate vunerable biomass
+     
   message("Calculating historical stock and fishing dynamics")  # Print a progress update
   flush.console()  # update console
   
@@ -670,13 +674,13 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
 	if (nsim == 1) MAR <- 2 
 	if (nsim >  1) MAR <- c(1, 3)
     if (SRrel[1] == 1) {
-      N[, 1, y + 1, ] <- Perr[, y] * (0.8 * R0a * hs * 
+      N[, 1, y + 1, ] <- Perr[, y+maxage-1] * (0.8 * R0a * hs * 
 	               apply(SSB[, , y, ], MAR, sum))/(0.2 * SSBpR * R0a * (1 - hs) + 
                    (hs - 0.2) * apply(SSB[, , y, ], MAR, sum))  # Recruitment assuming regional R0 and stock wide steepness
     } else {
       # most transparent form of the Ricker uses alpha and beta params
-      N[, 1, y + 1, ] <- Perr[, y] * aR * apply(SSB[, , y, ], MAR, sum) * 
-	  exp(-bR * apply(SSB[, , y, ], MAR, sum))
+      N[, 1, y + 1, ] <- Perr[, y+maxage-1] * aR * apply(SSB[, , y, ], MAR, sum) * 
+	    exp(-bR * apply(SSB[, , y, ], MAR, sum))
     }
     
     if (nsim > 1) fishdist <- (apply(VBiomass[, , y, ], c(1, 3), sum)^Spat_targ)/
@@ -700,8 +704,8 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
   if (nsim == 1) Depletion <- sum(SSB[,,nyears,])/sum(SSB[,,1,])#^betas
   # # apply hyperstability / hyperdepletion
   
-  # print(paste("Depletion: ", round(cbind(dep,Depletion),2)))
-  
+  # print(round(cbind(dep,Depletion),2))
+   
   CN <- apply(N * (1 - exp(-Z)) * (FM/Z), c(1, 3, 2), sum)  # Catch in numbers
   CN[is.na(CN)] <- 0
   CB <- Biomass * (1 - exp(-Z)) * (FM/Z)  # Catch in biomass
@@ -940,8 +944,9 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
   Data@OM <- as.data.frame(cbind(RefY, M, Depletion, A, SSBMSY_SSB0, 
     FMSY_M, Mgrad, Msd, procsd, Esd, dFfinal, MSY, qinc, qcv, FMSY, 
     Linf, K, t0, hs, Linfgrad, Kgrad, Linfsd, recgrad, Ksd, ageM, L5[nyears, ], 
-	LFS[nyears, ], Vmaxlen[nyears, ], LFC, OFLreal, Spat_targ, 
-    Frac_area_1, Prob_staying, AC, L50, L95, B0, N0, SSB0, BMSY_B0))  # put all the operating model parameters in one table
+	  LFS[nyears, ], Vmaxlen[nyears, ], LFC, OFLreal, Spat_targ, 
+    Frac_area_1, Prob_staying, AC, L50, L95, B0, N0, SSB0, BMSY_B0,
+	  TACSD,TACFrac,ESD,EFrac,SizeLimSD,SizeLimFrac,DiscMort))  # put all the operating model parameters in one table
   
   names(Data@OM)[26:28] <- c("L5", "LFS", "Vmaxlen")  # These are missing labels in the line above
   
@@ -1037,12 +1042,13 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
   
   MPdur <- rep(NA, nMP)
   mm <- 1 # for debugging
+  
   for (mm in 1:nMP) {
     # MSE Loop over methods
     pL5 <- L5  # reset selectivity parameters for projections
     pLFS <- LFS
     pVmaxlen <- Vmaxlen
-	pSLarray <- SLarray # selectivity at length array
+	  pSLarray <- SLarray # selectivity at length array
     
     message(paste(mm, "/", nMP, " Running MSE for ", MPs[mm], sep = ""))  # print a progress report
     flush.console()  # update the console
@@ -1051,7 +1057,7 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
     N_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
     Biomass_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
     VBiomass_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
-    SSN_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
+    SSN_P <-array(NA, dim = c(nsim, maxage, proyears, nareas))
     SSB_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
     FM_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
     FM_nospace <- array(NA, dim = c(nsim, maxage, proyears, nareas))  # stores prospective F before reallocation to new areas
@@ -1079,12 +1085,12 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
     V_P <- V  # Reset vulnerability array for MP 
     
     if (SRrel[1] == 1) {
-      N_P[, 1, 1, ] <- Perr[, nyears] * (0.8 * R0a * hs * apply(SSB[, 
+      N_P[, 1, 1, ] <- Perr[, nyears+maxage-1] * (0.8 * R0a * hs * apply(SSB[, 
         , nyears, ], c(1, 3), sum))/(0.2 * SSBpR * R0a * (1 - hs) + 
         (hs - 0.2) * apply(SSB[, , nyears, ], c(1, 3), sum))  # Recruitment assuming regional R0 and stock wide steepness
     } else {
       # most transparent form of the Ricker uses alpha and beta params
-      N_P[, 1, 1, ] <- Perr[, nyears] * aR * apply(SSB[, , nyears, ], c(1, 3), sum) * exp(-bR * apply(SSB[, , nyears, ], c(1, 3), sum))
+      N_P[, 1, 1, ] <- Perr[, nyears+maxage-1] * aR * apply(SSB[, , nyears, ], c(1, 3), sum) * exp(-bR * apply(SSB[, , nyears, ], c(1, 3), sum))
     }
     indMov <- as.matrix(expand.grid(1:nareas, 1:nareas, 1, 1:maxage, 1:nsim)[5:1])
     indMov2 <- indMov[, c(1, 2, 3, 4)]
@@ -1112,7 +1118,7 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
 	    maxC <- (1 - exp(-maxF)) * availB                                      # max catch given maxF
       # if the TAC is higher than maxC than catch is equal to maxC
 	    notNA <- which(!is.na(TACused) & !is.na(availB)) # robustify for MPs that return NA 
-	    TACused[TACused[notNA] > maxC[notNA]] <- maxC[TACused[notNA] > maxC[notNA]]
+	    TACused[notNA][TACused[notNA] > maxC[notNA]] <- maxC[notNA][TACused[notNA] > maxC[notNA]]
 	    
 	    
       fishdist <- (apply(VBiomass_P[, , 1, ], c(1, 3), sum)^Spat_targ)/
@@ -1259,12 +1265,12 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
       
       N_P[SA2YR] <- N_P[SA1YR] * exp(-Z_P[SA1YR])  # Total mortality
       if (SRrel[1] == 1) {
-        N_P[, 1, y, ] <- Perr[, y + nyears] * (0.8 * R0a * hs * 
+        N_P[, 1, y, ] <- Perr[, y + nyears+maxage-1] * (0.8 * R0a * hs * 
           apply(SSB_P[, , y - 1, ], c(1, 3), sum))/(0.2 * SSBpR * 
           R0a * (1 - hs) + (hs - 0.2) * apply(SSB_P[, , y - 1, ], c(1, 3), sum))  # Recruitment assuming regional R0 and stock wide steepness
       } else {
         # most transparent form of the Ricker uses alpha and beta params
-        N_P[, 1, y, ] <- Perr[, y + nyears] * aR *
+        N_P[, 1, y, ] <- Perr[, y + nyears+maxage-1] * aR *
   		  apply(SSB_P[, , y - 1, ], c(1, 3), sum) * exp(-bR * apply(SSB_P[, , y - 1, ], c(1, 3), sum))
       }
       
@@ -1542,7 +1548,7 @@ runMSEdev_imp <- function(OM = testOM, MPs = c("AvC","DCAC","DD","FMSYref","curE
 	        maxC <- (1 - exp(-maxF)) * availB
           # if the TAC is higher than maxC than catch is equal to maxC
 	        notNA <- which(!is.na(tempcatch) & !is.na(availB))		  
-	        tempcatch[notNA] > maxC[notNA] <- maxC[tempcatch[notNA] > maxC[notNA]]		  
+	        tempcatch[notNA][tempcatch[notNA] > maxC[notNA]] <- maxC[notNA][tempcatch[notNA] > maxC[notNA]]		  
 	        # tempcatch[tempcatch > maxC] <- maxC[tempcatch > maxC] 		 
   		  
 		      CB_P[, , y, ] <- tempcatch * temp  # debug - to test distribution code make TAC = TAC2, should be identical

@@ -1049,7 +1049,7 @@ setClass("OM", representation(Name = "character", nsim="numeric",proyears="numer
   cpars="list",seed="numeric",CurrentYr="numeric"))
 
 # initialize OM
-setMethod("initialize", "OM", function(.Object, Stock, Fleet, Obs, Imp) {
+setMethod("initialize", "OM", function(.Object, Stock, Fleet=Generic_fleet, Obs=Generic_obs, Imp=Perfect_Imp) {
   if (class(Stock) != "Stock") 
     print(paste("Could not build operating model:", deparse(substitute(Stock)), 
       "not of class Stock"))

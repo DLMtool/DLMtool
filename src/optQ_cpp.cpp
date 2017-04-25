@@ -31,7 +31,7 @@ using namespace Rcpp;
 double optQ_cpp(double lnIn, double depc, NumericVector Fc, 
   NumericVector Perrc, NumericVector Mc, double hc, NumericVector Mac, NumericMatrix Wac, 
   double R0c, NumericMatrix Vc, double nyears, double maxage, NumericMatrix movc, 
-  double Spat_targc, double SRrelc, NumericVector aRc, NumericVector bRc) {
+  double Spat_targc, double SRrelc, NumericVector aRc, NumericVector bRc, double YR) {
   
   double nareas = movc.nrow();
   double qc = 0;
@@ -40,14 +40,17 @@ double optQ_cpp(double lnIn, double depc, NumericVector Fc,
   NumericVector idist(nareas);
   NumericVector store(nareas);
   NumericMatrix idistA(nareas, nareas);
+  NumericMatrix Neq(maxage, nareas);   
   NumericMatrix N(maxage, nareas); 
   NumericMatrix CB(maxage, nareas); 
   NumericMatrix CN(maxage, nareas); 
   NumericMatrix Nstore(maxage, nareas); 
+  NumericMatrix SSNeq(maxage, nareas);   
   NumericMatrix SSN(maxage, nareas); 
   NumericMatrix Biomass(maxage, nareas); 
   NumericMatrix VB(maxage, nareas);  
-  NumericMatrix SSB(maxage, nareas);  
+  NumericMatrix SSBeq(maxage, nareas);  
+  NumericMatrix SSB(maxage, nareas);
   NumericMatrix FMc(maxage, nareas); 
   NumericMatrix Zc(maxage, nareas); 
   
@@ -75,19 +78,29 @@ double optQ_cpp(double lnIn, double depc, NumericVector Fc,
 	for (int A= 0; A < nareas; A++) idist(A) = store(A);
   }
   
+  // Equilibrium initial conditions
   for (int A=0; A < nareas; A++) {
 	for (int age=0; age < maxage; age++) {
-		N(age, A) = R0c * exp(-Mc(0) * age) * idist(A);
-		SSN(age, A) = Mac(age) * N(age, A); 
-		Biomass(age, A) = Wac(age, 0) * N(age, A);
-		SSB(age, A) = SSN(age, A) * Wac(age, 0);	
+		Neq(age, A) = R0c * exp(-Mc(0) * age) * idist(A);
+		SSNeq(age, A) = Mac(age) * Neq(age, A); 
+		SSBeq(age, A) = SSNeq(age, A) * Wac(age, 0);	
 		// B0 = sum(Biomass);
 		R0a(A) = idist(A) * R0c;
-		SSB0(A) = sum(SSB.column(A));
+		SSB0(A) = sum(SSBeq.column(A));
 		SSBpR(A) = SSB0(A) / R0a(A);
 	} 
   }	
-  
+ 
+  // Non-equilibrium initial conditions
+  for (int A=0; A < nareas; A++) {
+	for (int age=0; age < maxage; age++) {
+		N(age, A) = R0c * exp(-Mc(0) * age) * idist(A) * Perrc(maxage-age-1);
+		SSN(age, A) = Mac(age) * N(age, A); 
+		Biomass(age, A) = Wac(age, 0) * N(age, A);
+		SSB(age, A) = SSN(age, A) * Wac(age, 0);	
+	} 
+  }	
+
   for (int yr=0; yr < (nyears-1); yr++) {
 	  for (int A=0; A < nareas; A++) {
 		for (int age=0; age < maxage; age++) tempMat(age, A) = Vc(age, yr) * Biomass(age, A);
@@ -105,16 +118,17 @@ double optQ_cpp(double lnIn, double depc, NumericVector Fc,
 		  // Recruitment 	  			   
 		  if (age == 0) {
 		    if (SRrelc == 1) {
- 		      Nstore(0, A) = Perrc(yr) * (0.8 * R0a(A) * hc * SSBbyA(A))/
+ 		      Nstore(0, A) = Perrc(yr+maxage-1) * (0.8 * R0a(A) * hc * SSBbyA(A))/
                           (0.2 * SSBpR(A) * R0a(A) * (1-hc) + (hc - 0.2) * SSBbyA(A));     						   
 		    }	
 		    if (SRrelc == 2) {
- 		      Nstore(0, A) = Perrc(yr) * aRc(A) * SSBbyA(A) * exp(-bRc(A) * SSBbyA(A));
-		    }		
+ 		      Nstore(0, A) = Perrc(yr+maxage-1) * aRc(A) * SSBbyA(A) * exp(-bRc(A) * SSBbyA(A));
+		    }	
 		  }	
 		}
 		for (int age=0; age < maxage; age++) N(age, A) = Nstore(age, A);
 	  }	
+	  // Rcout << "Yr == "<< yr+1 << " " << sum(Nstore.row(0)) <<"\n";
   
 	  for (int age=0; age < maxage; age++) {
 		// Movement  				
@@ -138,9 +152,9 @@ double optQ_cpp(double lnIn, double depc, NumericVector Fc,
           VB(age, A) = N(age, A) * Wac(age, yr) * Vc(age, yr);		  
 		}	  
 	  }
-		  		  
+  if (yr==YR) Rcout << "N = " << N << "\n";	  
   }
-
+  
   RetVal = pow(log(depc) - log(sum(SSB)/sum(SSB0)),2); // optimize q
   return RetVal; 
 }
