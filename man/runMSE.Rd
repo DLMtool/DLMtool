@@ -4,9 +4,10 @@
 \alias{runMSE}
 \title{Run a Management Strategy Evaluation}
 \usage{
-runMSE(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
-  pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, custompars = NULL,
-  CheckMPs = TRUE, Hist = FALSE, ntrials = 50, fracD = 0.05)
+runMSE(OM = testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE", "matlenlim"),
+  nsim = 48, proyears = 50, interval = 4, pstar = 0.5, maxF = 0.8,
+  timelimit = 1, reps = 1, CheckMPs = FALSE, Hist = FALSE,
+  ntrials = 50, fracD = 0.05)
 }
 \arguments{
 \item{OM}{An operating model object (class OM)}
@@ -34,12 +35,6 @@ simulated for any given age class}
 method. Note that when this is set to 1, the mean value of the data inputs
 is used.}
 
-\item{custompars}{A data.table with nsim rows and nparameter columns. The
-column names must respond to variables of the operating model or observation
-model see the OM and Obs slots of the MSE class for correct names and
-interpretation. This allows users to prescribe correlated parameters or
-estimates from stock assessments.}
-
 \item{CheckMPs}{Logical to indicate if Can function should be used to check
 if MPs can be run.}
 
@@ -61,5 +56,5 @@ A function that runs a Management Strategy Evaluation (closed-loop
 simulation) for a specified operating model
 }
 \author{
-T. Carruthers
+T. Carruthers and A. Hordyk
 }

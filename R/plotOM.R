@@ -7,7 +7,7 @@
 #' @export 
 plot.OM <-function(OM){  
            
-    out<-runMSEdev(OM,Hist=T)
+    out<-runMSE(OM,Hist=T)
     nsim<-OM@nsim
     nyears<-OM@nyears
     

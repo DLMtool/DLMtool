@@ -208,7 +208,7 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
 
   message("-- End of r4ss operations --")
   
-  OM<-new('OM',Albacore,Generic_fleet,Generic_obs)
+  OM<-testOM
   OM@nsim<-nsim
   OM@proyears<-proyears
   

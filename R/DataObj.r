@@ -433,7 +433,7 @@ getTAC <- function(Data, MPs = NA, reps = 100) {
   nMPs <- length(MPs)
   TACa <- array(NA, dim = c(nMPs, reps, nsims))
   
-  if (!sfIsRunning() | (nMPs < 8 & nsims < 8)) {
+  if (!sfIsRunning()) {
     for (ff in 1:nMPs) {
       temp <- sapply(1:nsims, MPs[ff], Data = Data, reps = reps)
       if (mode(temp) == "numeric") 
@@ -444,7 +444,7 @@ getTAC <- function(Data, MPs = NA, reps = 100) {
       }
     }
   } else {
-    sfExport(list = c("Data"))
+    sfExport("Data") #####
     if (nsims < 8) {
       sfExport(list = c("MPs", "reps"))
       for (ss in 1:nsims) {
