@@ -1,14 +1,14 @@
-#' Subset a Stock, Fleet, or Obs object from an OM object
+#' Subset a Stock, Fleet, Obs, or Imp object from an OM object
 #' 
-#' A function that strips out a Stock, Fleet, or Obs object from a 
+#' A function that strips out a Stock, Fleet, Obs, or Imp object from a 
 #' complete OM object. Mainly used for internal functions.
 #' 
 #' @param OM An operating model object (class OM)
 #' @param Sub A character string specifying what object type to strip out
-#' "Stock", "Fleet", or "Obs"
-#' @return An object of class Stock, Fleet, or Obs
+#' "Stock", "Fleet", "Obs", or "Imp"
+#' @return An object of class Stock, Fleet, Obs, or Imp
 #' @author A. Hordyk
-#' @export SubOM
+#' @export 
 SubOM <- function(OM, Sub=c("Stock", "Fleet", "Obs", "Imp")) {
   if (class(OM) !="OM") stop("OM must be of class OM ", call.=FALSE)
   Sub <- match.arg(Sub)
@@ -27,4 +27,11 @@ SubOM <- function(OM, Sub=c("Stock", "Fleet", "Obs", "Imp")) {
    
   temp 
 }
+
+
+ 
+
+
+
+
 

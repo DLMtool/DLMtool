@@ -1,6 +1,7 @@
 #' Plot the Fleet object parameters 
 #' 
-#' @param Fleet An object of class Fleet (or of class Fleet) 
+#' @param Fleet An object of class Fleet (or of class OM)
+#' @param Stock  An object of class Stock 
 #' @param nsamp Number of random samples for time-series plots
 #' @param nsim Number of iterations for histograms
 #' @param proyears Number of projection years 
@@ -9,7 +10,7 @@
 #' @param lwd line width 
 #' @author A. Hordyk
 #' @export 
-plot.Fleet <- function(Fleet, Stock, nsamp=3, nsim=500, proyears=28, 
+plot.Fleet <- function(Fleet, Stock=NULL, nsamp=3, nsim=500, proyears=28, 
   col="darkgray", breaks=10, lwd=2) { 
   cpars <- NULL
   nyears <- Fleet@nyears

@@ -4,11 +4,13 @@
 \alias{plot.Fleet}
 \title{Plot the Fleet object parameters}
 \usage{
-plot.Fleet(Fleet, Stock, nsamp = 3, nsim = 500, proyears = 28,
+plot.Fleet(Fleet, Stock = NULL, nsamp = 3, nsim = 500, proyears = 28,
   col = "darkgray", breaks = 10, lwd = 2)
 }
 \arguments{
-\item{Fleet}{An object of class Fleet (or of class Fleet)}
+\item{Fleet}{An object of class Fleet (or of class OM)}
+
+\item{Stock}{An object of class Stock}
 
 \item{nsamp}{Number of random samples for time-series plots}
 

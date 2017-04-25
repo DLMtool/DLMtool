@@ -5,8 +5,8 @@
 \title{Stochastic SRA construction of operating models}
 \usage{
 StochasticSRA(OM, CAA, Chist, Cobs = 0.1, sigmaR = 0.5, Umax = 0.9,
-  Jump_fac = 1, nits = 2000, burnin = 200, thin = 10, ESS = 300,
-  ploty = T, nplot = 6, SRAdir = NA)
+  nsim = 48, proyears = 50, Jump_fac = 1, nits = 4000, burnin = 500,
+  thin = 10, ESS = 300, ploty = T, nplot = 6, SRAdir = NA)
 }
 \arguments{
 \item{OM}{An operating model object with M, growth, stock-recruitment and maturity parameters specified.}
@@ -21,6 +21,8 @@ StochasticSRA(OM, CAA, Chist, Cobs = 0.1, sigmaR = 0.5, Umax = 0.9,
 
 \item{Umax}{A numeric value representing the maximum harvest rate for any age class (rejection of sims where this occurs)}
 
+\item{nsim}{The number desired draws of parameters / effort trajectories}
+
 \item{Jump_fac}{A multiplier of the jumping distribution variance to increase acceptance (lower Jump_fac) or decrease acceptance rate (higher Jump_fac)}
 
 \item{nits}{The number of MCMC iterations}
@@ -34,8 +36,6 @@ StochasticSRA(OM, CAA, Chist, Cobs = 0.1, sigmaR = 0.5, Umax = 0.9,
 \item{nplot}{how many MCMC samples should be plotted in convergence plots?}
 
 \item{SRAdir}{A directory where the SRA diagnostics / fit are stored}
-
-\item{nsim}{The number desired draws of parameters / effort trajectories}
 
 \item{ESS:}{Effective sample size - the weighting of the catch at age data}
 }
