@@ -4,16 +4,20 @@
 #' and time-series plots of `nsamp` samples of time-series examples. Used to 
 #' visually examine the parameter values and ranges entered into the Obs object.
 #' 
-#' @param Obs An object of class Obs (or of class OM) 
+#' @param x An object of class Obs (or of class OM) 
 #' @param nsim Number of iterations for histograms
 #' @param nyears Number of historical years
 #' @param col Color of histograms 
 #' @param breaks Number of breaks for histograms 
+#' @param ...  Optional additional arguments passed to \code{plot}
+#' @rdname plot-Obs 
+#' @method plot Obs 
 #' @author T. Carruthers and A. Hordyk
 #' @export 
-plot.Obs <- function(Obs, nsim=500, nyears=50, 
-                       col="darkgray", breaks=10) {
+plot.Obs <- function(x, nsim=500, nyears=50, 
+                       col="darkgray", breaks=10, ...) {
   
+  Obs <- x
   if (class(Obs) == "OM") {
     if (is.finite(Obs@nyears)) nyears <- Obs@nyears
     if (is.finite(Obs@nsim)) nyears <- Obs@nsim	
@@ -176,16 +180,19 @@ plot.Obs <- function(Obs, nsim=500, nyears=50,
 #' and time-series plots of `nsamp` samples of time-series examples. Used to 
 #' visually examine the parameter values and ranges entered into the Obs object.
 #' 
-#' @param Imp An object of class Imp (or of class OM) 
+#' @param x An object of class Imp (or of class OM) 
 #' @param nsim Number of iterations for histograms
 #' @param nyears Number of historical years
 #' @param col Color of histograms 
 #' @param breaks Number of breaks for histograms 
+#' @param ...  Optional additional arguments passed to \code{plot}
+#' @rdname plot-Imp 
+#' @method plot Imp 
 #' @author T. Carruthers and A. Hordyk
 #' @export 
-plot.Imp<-function(Imp,nsim=500, nyears=50, 
-                   col="darkgray", breaks=10){
-  
+plot.Imp<-function(x,nsim=500, nyears=50, 
+                   col="darkgray", breaks=10, ...){
+  Imp <- x
   if (class(Imp) == "OM") {
     if (is.finite(Imp@nyears)) nyears <- Imp@nyears
     if (is.finite(Imp@nsim)) nyears <- Imp@nsim	

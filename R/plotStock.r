@@ -4,7 +4,7 @@
 #' and time-series plots of `nsamp` samples of time-varying parameters. Used to 
 #' visually examine the parameter values and ranges entered into the Stock object.
 #' 
-#' @param Stock An object of class Stock (or of class OM) 
+#' @param x An object of class Stock (or of class OM) 
 #' @param nsamp Number of random samples for time-series plots
 #' @param nsim Number of iterations for histograms
 #' @param nyears Number of historical years
@@ -14,10 +14,14 @@
 #' @param lwd line width 
 #' @param ask Ask before displaying next page?
 #' @param incVB Show the sampled von Bertalanffy growth curves on second page?
+#' @param ...  Optional additional arguments passed to \code{plot}
+#' @rdname plot-Stock
+#' @method plot Stock
 #' @author A. Hordyk
 #' @export 
-plot.Stock <- function(Stock, nsamp=3, nsim=500, nyears=50, proyears=28, 
-  col="darkgray", breaks=10, lwd=2, ask=FALSE, incVB=TRUE) {
+plot.Stock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28, 
+  col="darkgray", breaks=10, lwd=2, ask=FALSE, incVB=TRUE, ...) {
+  Stock <- x 
   cpars <- NULL
   if (class(Stock) == "OM") {
     if (is.finite(Stock@nyears)) nyears <- Stock@nyears
@@ -80,6 +84,7 @@ plot.Stock <- function(Stock, nsamp=3, nsim=500, nyears=50, proyears=28,
   Wt_age[ind] <- Stock@a * Len_age[ind]^Stock@b  # Calculation of weight array
   
   # edit for cpars slot
+  EffYears <- EffUpper <- EffUpper <- EffLower <- NULL # hack for CRAN checks
   # Vector of valid names for custompars list or data.frame. Names not in this list will be printed out in warning and ignored #	
   ParsNames <- c("dep","Esd","Find","procsd","AC","M","Msd", 
                  "Mgrad","hs","Linf","Linfsd","Linfgrad","recgrad",
@@ -144,7 +149,7 @@ plot.Stock <- function(Stock, nsamp=3, nsim=500, nyears=50, proyears=28,
 	    }	
     }
 	  
-	  if ("EffUpper" %in% Names & !"Find" %in% Names) {
+	if ("EffUpper" %in% Names & !"Find" %in% Names) {
       Deriv <- getEffhist(Esd, nyears, EffYears = EffYears, EffUpper = EffUpper, EffLower = EffLower)  # Historical fishing effort
       Find <- Deriv[[1]]  # Calculate fishing effort rate
       dFfinal <- Deriv[[2]]  # Final gradient in fishing effort yr-1 
@@ -246,7 +251,7 @@ plot.Stock <- function(Stock, nsamp=3, nsim=500, nyears=50, proyears=28,
   matplot(biomass, recs, type="l", bty="l", main="Stock-Recruit", 
     ylim=c(0,1), xlim=c(0,1), axes=FALSE, lwd=lwd)
   axis(side=1)
-  axis(side=2, label=FALSE)
+  axis(side=2, labels=FALSE)
   
   
   # Depletion
@@ -282,10 +287,10 @@ plot.Stock <- function(Stock, nsamp=3, nsim=500, nyears=50, proyears=28,
     matplot(t(fstYr), type="l", bty="l", main="First historical year", ylim=c(0, MaxL), xlab="Age", ylab="Length", cex.lab=cex.lab, lwd=lwd)
     matplot(t(curYr), type="l", bty="l", main="Last historical year", ylim=c(0, MaxL),  axes=FALSE, xlab="Age", ylab="", cex.lab=cex.lab, lwd=lwd)
     axis(side=1)
-    axis(side=2, label=FALSE)  
+    axis(side=2, labels=FALSE)  
     matplot(t(lstYr), type="l", bty="l", main="Last projected year", ylim=c(0, MaxL), axes=FALSE, xlab="Age", ylab="", cex.lab=cex.lab, lwd=lwd)	
     axis(side=1)
-    axis(side=2, label=FALSE)  
+    axis(side=2, labels=FALSE)  
 	title("Sampled length-at-age curves", outer=TRUE, cex.main=2)
   }
 

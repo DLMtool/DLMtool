@@ -2,11 +2,14 @@
 #' 
 #' A function that plots the parameters and resulting time series of an operating model.
 #' 
-#' @param OM An object of class OM 
+#' @param x An object of class OM 
+#' @param ...  Optional additional arguments passed to \code{plot}
+#' @rdname plot-OM
+#' @method plot OM 
 #' @author T. Carruthers
 #' @export 
-plot.OM <-function(OM){  
-           
+plot.OM <-function(x, ...){  
+    OM <- x
     out<-runMSE(OM,Hist=T)
     nsim<-OM@nsim
     nyears<-OM@nyears
