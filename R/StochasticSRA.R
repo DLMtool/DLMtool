@@ -143,12 +143,14 @@ SRAtestfunc<-function(){
 #' cpars<-out[[2]]
 #' runMSE(filledOM,MPs=c("DCAC","MCD"),cpars=cpars)
 #' matplot(out$Find,type='l')
-StochasticSRA<-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=100,Jump_fac=1,nits=2000,
+StochasticSRA<-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,Jump_fac=1,nits=2000,
                         burnin=200,thin=10,ESS=300,ploty=T,nplot=6,SRAdir=NA){
 
   #snowfall::sfExport(list = c("LSRA_opt")) 
   nyears<-length(Chist)
   maxage<-OM@maxage
+  proyears<-OM@proyears
+  nsim<-OM@nsim
 
   # Sampled arrays
   Chist_a<-array(trlnorm(nyears*nsim,1,Cobs)*rep(Chist,each=nsim),c(nsim,nyears)) # Historical catch
@@ -429,9 +431,9 @@ StochasticSRA<-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=100,Jump_
 
 
   dep<-SSB[,nyears]/SSB0
-  PE<-apply(RD,1,sd)
+  procsd<-apply(RD,1,sd,na.rm=T)
   OM@D<-quantile(dep,c(0.05,0.95))
-  OM@Perr<-quantile(apply(RD,1,sd),c(0.05,0.95))
+  OM@Perr<-quantile(procsd,c(0.025,0.975))
   
   getAC<-function(recdev)acf(recdev,plot=F)$acf[2,1,1]
   AC<-apply(RD,1,getAC)
@@ -452,10 +454,18 @@ StochasticSRA<-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=100,Jump_
   OM@EffUpper<-apply(PredF,2,quantile,p=0.95)
   OM@nyears<-nyears
 
+  Perr<-array(NA,c(nsim,maxage+nyears+proyears-1))
+  Perr[,1:(nyears+maxage-1)]<-log(RD[,2:(maxage+nyears)]) 
+  Perr[,(nyears+maxage):(nyears+maxage+proyears-1)]<-matrix(rnorm(nsim*(proyears),rep(procmu,proyears),rep(procsd,proyears)),nrow=nsim)
+    
+  AC<-mean(OM@AC)
+  for (y in (maxage+nyears):(nyears + proyears+maxage-1)) Perr[, y] <- AC * Perr[, y - 1] +   Perr[, y] * (1 - AC * AC)^0.5  
+  Perr<-exp(Perr)
+  
   OM@cpars<-list(dep=dep,M=M,procsd=PE,AC=AC,hs=h,Linf=Linf,
                                    K=K,t0=t0,L50=lenM,
                                    L5=L5,LFS=L95,Find=PredF,
-                                   V=array(sel,c(nsim,maxage,nyears)),Perr=RD[,(maxage+1):(maxage+nyears)],R0=R0,
+                                   V=array(sel,c(nsim,maxage,nyears)),Perr=Perr,R0=R0,
                                    SSB=SSB,SSB0=SSB0,RD=RD) # not valid for runMSE code but required
 
   OM
