@@ -4,8 +4,7 @@
 #' and time-series plots of `nsamp` samples of time-series examples. Used to 
 #' visually examine the parameter values and ranges entered into the Obs object.
 #' 
-#' @param Obs An object of class Stock (or of class OM) 
-#' @param nsamp Number of random samples for time-series plots
+#' @param Obs An object of class Obs (or of class OM) 
 #' @param nsim Number of iterations for histograms
 #' @param nyears Number of historical years
 #' @param col Color of histograms 
@@ -171,16 +170,78 @@ plot.Obs <- function(Obs, nsim=500, nyears=50,
   
 }
 
+#' Plot the Implementation object parameters 
+#' 
+#' A function that plots histograms of samples from the implementation object parameters,
+#' and time-series plots of `nsamp` samples of time-series examples. Used to 
+#' visually examine the parameter values and ranges entered into the Obs object.
+#' 
+#' @param Imp An object of class Imp (or of class OM) 
+#' @param nsim Number of iterations for histograms
+#' @param nyears Number of historical years
+#' @param col Color of histograms 
+#' @param breaks Number of breaks for histograms 
+#' @author T. Carruthers and A. Hordyk
+#' @export 
+plot.Imp<-function(Imp,nsim=500, nyears=50, 
+                   col="darkgray", breaks=10){
+  
+  if (class(Imp) == "OM") {
+    if (is.finite(Imp@nyears)) nyears <- Imp@nyears
+    if (is.finite(Imp@nsim)) nyears <- Imp@nsim	
+    Imp <- SubOM(Imp,"Imp")
+  }
+
+  nsamp=3
+  its <- sample(1:nsim, nsamp)
+
+  op <- par(mfrow=c(4,3),mai=c(0.6,0.6,0.2,0.01),omi=c(0.01,0.01,0.4,0.01))
+   
+  
+  TACSD <- runif(nsim, Imp@TACSD[1], Imp@TACSD[2])  # Sampled TAC error (lognormal sd)
+  TACFrac <- runif(nsim, Imp@TACFrac[1], Imp@TACFrac[2])  # Sampled TAC fraction (log normal sd)
+  
+  ESD <- runif(nsim, Imp@ESD[1], Imp@ESD[2])  # Sampled Effort error (lognormal sd)
+  EFrac <- runif(nsim, Imp@EFrac[1], Imp@EFrac[2])  # Sampled Effort fraction (log normal sd)
+  
+  SizeLimSD<-runif(nsim,Imp@SizeLimSD[1],Imp@SizeLimSD[2])
+  SizeLimFrac<-runif(nsim,Imp@SizeLimFrac[1],Imp@SizeLimFrac[2])
+  
+  DiscMort<-runif(nsim,Imp@DiscMort[1],Imp@DiscMort[2])
+  
+  ObsTSplot(TACFrac,TACSD,nyears,labs=c("Fraction of TAC (TACFrac)",
+                                     "TAC error (TACSD)","TAC discrepancy for three samples",
+                                     "TACFrac","TACSD"), breaks=breaks, its=its, nsamp=nsamp, col=col)
+  
+  ObsTSplot(EFrac,ESD,nyears,labs=c("Fraction of effort (EFrac)",
+                                        "Effort error (ESD)","Effort discrepancy for three samples",
+                                        "EFrac","ESD"), breaks=breaks, its=its, nsamp=nsamp, col=col)
+  
+  ObsTSplot(SizeLimFrac,SizeLimSD,nyears,labs=c("Fraction of Size Limit (SizeLimFrac)",
+                                        "Size Limit error (SizeLimSD)","Size limit discrepancy for three samples",
+                                        "SizeLimFrac","SizeLimSD"), breaks=breaks, its=its, nsamp=nsamp, col=col)
+ 
+  hist(DiscMort,col=col,border="white", axes=FALSE, main="Discard Mortality rate (DiscMort)", breaks=breaks,cex.main=0.9)
+  if(sd(DiscMort)>0.01)axis(side=1)
+  
+   
+  mtext(paste0("Implementation error time series plots for implementation object ",Imp@Name),3,outer=T,line= 0.7,font=2)
+  
+  on.exit(par(op))
+
+}
+
+
 
 ObsTSplot<-function(Cbias,Csd,nyears,labs, breaks, its, nsamp, col){
   
   hist(Cbias,col=col,border="white", axes=FALSE, main=labs[1], breaks=breaks,cex.main=0.95)
-  axis(side=1) 
+  if(sd(Cbias)>0.01)axis(side=1) 
   abline(v=1)
   abline(v=Cbias[its],col=makeTransparent(c("Black","Red","Green"),80),lwd=2)
   hist(Csd,col=col,border="white", axes=FALSE, main=labs[2], breaks=breaks,cex.main=0.95)
   abline(v=Csd[its],col=makeTransparent(c("Black","Red","Green"),80),lwd=2)
-  axis(side=1)  
+  if(sd(Csd)>0.01)axis(side=1)  
   
   Cbiasa <- array(Cbias[its], c(nsamp, nyears))  # Bias array
   Cerr <- array(rlnorm(nyears * nsamp, mconv(1, rep(Csd[its], nyears)), sdconv(1, rep(Csd[its], nyears))),  c(nsamp, nyears))  # composite of bias and observation error
