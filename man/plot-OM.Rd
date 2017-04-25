@@ -4,10 +4,12 @@
 \alias{plot.OM}
 \title{Plot the operating model (OM) object parameters}
 \usage{
-plot.OM(OM)
+\method{plot}{OM}(x, ...)
 }
 \arguments{
-\item{OM}{An object of class OM}
+\item{x}{An object of class OM}
+
+\item{...}{Optional additional arguments passed to \code{plot}}
 }
 \description{
 A function that plots the parameters and resulting time series of an operating model.

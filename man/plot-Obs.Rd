@@ -4,10 +4,11 @@
 \alias{plot.Obs}
 \title{Plot the Observation object parameters}
 \usage{
-plot.Obs(Obs, nsim = 500, nyears = 50, col = "darkgray", breaks = 10)
+\method{plot}{Obs}(x, nsim = 500, nyears = 50, col = "darkgray",
+  breaks = 10, ...)
 }
 \arguments{
-\item{Obs}{An object of class Obs (or of class OM)}
+\item{x}{An object of class Obs (or of class OM)}
 
 \item{nsim}{Number of iterations for histograms}
 
@@ -16,6 +17,8 @@ plot.Obs(Obs, nsim = 500, nyears = 50, col = "darkgray", breaks = 10)
 \item{col}{Color of histograms}
 
 \item{breaks}{Number of breaks for histograms}
+
+\item{...}{Optional additional arguments passed to \code{plot}}
 }
 \description{
 A function that plots histograms of samples from the observation object parameters,

@@ -4,11 +4,12 @@
 \alias{plot.Stock}
 \title{Plot the Stock object parameters}
 \usage{
-plot.Stock(Stock, nsamp = 3, nsim = 500, nyears = 50, proyears = 28,
-  col = "darkgray", breaks = 10, lwd = 2, ask = FALSE, incVB = TRUE)
+\method{plot}{Stock}(x, nsamp = 3, nsim = 500, nyears = 50,
+  proyears = 28, col = "darkgray", breaks = 10, lwd = 2, ask = FALSE,
+  incVB = TRUE, ...)
 }
 \arguments{
-\item{Stock}{An object of class Stock (or of class OM)}
+\item{x}{An object of class Stock (or of class OM)}
 
 \item{nsamp}{Number of random samples for time-series plots}
 
@@ -27,6 +28,8 @@ plot.Stock(Stock, nsamp = 3, nsim = 500, nyears = 50, proyears = 28,
 \item{ask}{Ask before displaying next page?}
 
 \item{incVB}{Show the sampled von Bertalanffy growth curves on second page?}
+
+\item{...}{Optional additional arguments passed to \code{plot}}
 }
 \description{
 A function that plots histograms of samples from the Stock object parameters,

@@ -4,10 +4,11 @@
 \alias{plot.Imp}
 \title{Plot the Implementation object parameters}
 \usage{
-plot.Imp(Imp, nsim = 500, nyears = 50, col = "darkgray", breaks = 10)
+\method{plot}{Imp}(x, nsim = 500, nyears = 50, col = "darkgray",
+  breaks = 10, ...)
 }
 \arguments{
-\item{Imp}{An object of class Imp (or of class OM)}
+\item{x}{An object of class Imp (or of class OM)}
 
 \item{nsim}{Number of iterations for histograms}
 
@@ -16,6 +17,8 @@ plot.Imp(Imp, nsim = 500, nyears = 50, col = "darkgray", breaks = 10)
 \item{col}{Color of histograms}
 
 \item{breaks}{Number of breaks for histograms}
+
+\item{...}{Optional additional arguments passed to \code{plot}}
 }
 \description{
 A function that plots histograms of samples from the implementation object parameters,
