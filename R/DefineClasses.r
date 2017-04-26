@@ -699,7 +699,9 @@ setMethod("initialize", "lmmodel", function(.Object,Name,models){
 #' @slot CB_hist Stored historical catches in weight (historical simulations - an array with dimensions nsim, nages, nyears, nareas)
 #' @slot FM_hist Stored historical fishing mortality rate (historical simulations - an array with dimensions nsim, nages, nyears, nareas)
 #' @slot Effort Stored relative fishing effort in the projection years
-#' @slot Extra A list for additional information
+#' @slot PAA Population at age in last projection year (an array with dimensions nsim, nMPs, nages)
+#' @slot CAA Catch at age in last projection year (an array with dimensions nsim, nMPs, nages)
+#' @slot CAL Catch at length in last projection year (an array with dimensions nsim, nMPs, nlengthbins)
 #'
 #' @author T. Carruthers
 #' @keywords classes
@@ -708,12 +710,13 @@ setClass("MSE", representation(Name = "character", nyears = "numeric",
   OM = "data.frame", Obs = "data.frame", B_BMSY = "array", F_FMSY = "array", 
   B = "array", SSB="array", VB="array", FM = "array", C = "array", 
   TAC = "array", SSB_hist = "array", 
-  CB_hist = "array", FM_hist = "array", Effort = "array"))
+  CB_hist = "array", FM_hist = "array", Effort = "array", PAA= "array", CAL= "array", 
+  CAA= "array", CALbins="numeric"))
 
   
 setMethod("initialize", "MSE", function(.Object, Name, nyears, proyears, 
   nMPs, MPs, nsim, OM, Obs, B_BMSY, F_FMSY, B, SSB, VB, FM, C, TAC, 
-  SSB_hist, CB_hist, FM_hist, Effort = array()) {
+  SSB_hist, CB_hist, FM_hist, Effort = array(), PAA,  CAA, CAL, CALbins) {
   .Object@Name <- Name
   .Object@nyears <- nyears
   .Object@proyears <- proyears
@@ -734,6 +737,11 @@ setMethod("initialize", "MSE", function(.Object, Name, nyears, proyears,
   .Object@CB_hist <- CB_hist
   .Object@FM_hist <- FM_hist
   .Object@Effort <- Effort
+  .Object@PAA <- PAA
+  .Object@CAA <- CAA
+  .Object@CAL <- CAL
+  .Object@CALbins <- CALbins
+	  
   .Object
 })
 
