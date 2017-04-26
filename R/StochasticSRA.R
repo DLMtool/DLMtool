@@ -149,7 +149,7 @@ StochasticSRA<-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proyea
                         burnin=500,thin=10,ESS=300,ploty=T,nplot=6,SRAdir=NA){
 
   #snowfall::sfExport(list = c("LSRA_opt")) 
-  nyears<-length(Chist)
+  nyears<-nrow(Chist)
   maxage<-OM@maxage
   
   if("nsim"%in%slotNames(OM))nsim<-OM@nsim
@@ -255,7 +255,10 @@ StochasticSRA<-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proyea
 
   for(i in 1:nits){
 
-    if(i %in% update)cat(".")
+    if(i %in% update){
+	  cat(".")
+	  flush.console()
+	}
 
     #i<-i+1# debugging
 

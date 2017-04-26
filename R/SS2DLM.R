@@ -45,7 +45,7 @@ LinInterp<-function(x,y,xlev,ascending=F,zeroint=F){
 negcorlogspace<-function(xmu,ymu,xcv=0.1,nsim,cor=-0.9,ploty=F){
   
   varcov=matrix(c(1,cor,cor,1),nrow=2)
-  out<-rmvnorm(nsim,c(0,0),sigma=varcov)
+  out<-mvtnorm::rmvnorm(nsim,c(0,0),sigma=varcov)
   out<-out/rep(apply(out,2,sd)/xcv,each=nsim)
   out<-exp(out)
   out<-out/rep(apply(out,2,mean),each=nsim)
@@ -205,7 +205,7 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
   
   message("-- Using function SS_output of package r4ss to extract data from SS file structure --")
 
-  replist <- SS_output(dir=SSdir,covar=F,ncols=1000,printstats=printstats,verbose=verbose)
+  replist <- r4ss::SS_output(dir=SSdir,covar=F,ncols=1000,printstats=printstats,verbose=verbose)
   #replistB <- SS_output(dir="F:/Base",covar=F,ncols=1000,printstats=printstats,verbose=verbose)
   #replistY <- SS_output(dir="F:/Base3",covar=F,ncols=1000,printstats=printstats,verbose=verbose)
 
@@ -315,7 +315,7 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
     OM@Prob_staying<-rep(0.5,2)
   }
     
-  OM@Source<-paste0(Source,". Author: ",Author,".")
+  OM@Source <-paste0(Source,". Author: ",Author,".")
   
   # Maturity --------------------------------------
   
@@ -439,6 +439,7 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
   Wt_age2[,,nyears+1:proyears]<-rep(Wt_age[,,nyears],proyears)
   
   OM@cpars<-list(V=V,Perr=Perr,Wt_age=Wt_age2,K=K,Linf=Linf,hs=hs,Find=Find)
+  attr(OM, "build") <- "SS2DLM"
   OM
  
 }
