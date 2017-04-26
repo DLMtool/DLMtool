@@ -345,81 +345,81 @@
 "Yellowfin_Tuna_IO"
 
 
-#'  AJ_AJ_Rec_comb_GOM OM
+#'  AJ_GOM OM
 #'
 #'  An object of class OM
 #'
-"AJ_AJ_Rec_comb_GOM"
+"AJ_GOM"
 
 
-#'  LS_LS_rec_PR_GOM OM
+#'  LS_GOM OM
 #'
 #'  An object of class OM
 #'
-"LS_LS_rec_PR_GOM"
+"LS_GOM"
 
 
-#'  LAJ_LAJ_commHL_GOM OM
+#'  LAJ_GOM OM
 #'
 #'  An object of class OM
 #'
-"LAJ_LAJ_commHL_GOM"
+"LAJ_GOM"
 
 
-#'  RD_RD_Rec_PR_GOM OM
+#'  RD_GOM OM
 #'
 #'  An object of class OM
 #'
-"RD_RD_Rec_PR_GOM"
+"RD_GOM"
 
 
-#'  SG_SG_ComLL_GOM OM
+#'  SG_GOM OM
 #'
 #'  An object of class OM
 #'
-"SG_SG_ComLL_GOM"
+"SG_GOM"
 
 
-#'  SH_SH_ComLL_GOM OM
+#'  SH_GOM OM
 #'
 #'  An object of class OM
 #'
-"SH_SH_ComLL_GOM"
+"SH_GOM"
 
 
-#'  WM_Generic_fleet_GOM OM
+#'  WM_GOM OM
 #'
 #'  An object of class OM
 #'
-"WM_Generic_fleet_GOM"
+"WM_GOM"
 
 
-#'  YM_YM_Rec_comb_GOM OM
+#'  YM_GOM OM
 #'
 #'  An object of class OM
 #'
-"YM_YM_Rec_comb_GOM"
+"YM_GOM"
 
 
-#'  San_Francisco_Bay_herring_San_Francisco_Bay_herring_fleet_California OM
+#'  San_Francisco_Bay_herring_California OM
 #'
 #'  An object of class OM
 #'
-"San_Francisco_Bay_herring_San_Francisco_Bay_herring_fleet_California"
+"San_Francisco_Bay_herring_California"
 
 
-#'  Darnley_Bay_Char_Darnley_Bay_Char_DFO OM
+#'  Darnley_Bay_Char_DFO OM
 #'
 #'  An object of class OM
 #'
-"Darnley_Bay_Char_Darnley_Bay_Char_DFO"
+"Darnley_Bay_Char_DFO"
 
 
-#'  Canary_Rockfish_BC_Canary_Rockfish_BC_DFO OM
+#'  Canary_Rockfish_BC_DFO OM
 #'
 #'  An object of class OM
 #'
-"Canary_Rockfish_BC_Canary_Rockfish_BC_DFO"
+"Canary_Rockfish_BC_DFO"
 
 
 #'  Red_snapper_GOM_OM OM
@@ -438,12 +438,12 @@
 "Yellowfin_tuna_IO_OM"
 
 
-#'  Rougheye_Rockfish_BCCanary_Rockfish_BC_OM OM
+#'  Rougheye_Rockfish_BC_OM OM
 #'
 #'  An object of class OM (built using StochasticSRA)
 #'  DLMtool generated
 #' 
-"Rougheye_Rockfish_BCCanary_Rockfish_BC_OM"
+"Rougheye_Rockfish_BC_OM"
 
 
 #'  testMSE MSE
