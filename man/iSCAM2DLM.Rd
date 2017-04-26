@@ -2,7 +2,7 @@
 % Please edit documentation in R/iSCAM2DLM.R
 \name{iSCAM2DLM}
 \alias{iSCAM2DLM}
-\title{Reads MLE estimates from Stock Synthesis file structure into an operating model using package r4ss}
+\title{Reads MLE estimates from iSCAM file structure into an operating model}
 \usage{
 iSCAM2DLM(iSCAMdir, nsim = 48, proyears = 50, Name = NULL,
   Source = "No source provided", Author = "No author provided")
@@ -16,7 +16,7 @@ iSCAM2DLM(iSCAMdir, nsim = 48, proyears = 50, Name = NULL,
 
 \item{Author}{Who did the assessment}
 
-\item{SSdir}{A folder with Stock Synthesis input and output files in it}
+\item{iscamdir}{A folder with Stock Synthesis input and output files in it}
 }
 \description{
 A function that uses the file location of a fitted SS3 model including input files to population the various slots of an operating model with MLE parameter estimates

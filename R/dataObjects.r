@@ -1,3 +1,7 @@
+# This file is automatically built by createObjects.r in DLMDev
+# Don't edit by hand!
+# 
+
 #'  Albacore Stock
 #'
 #'  An object of class Stock
@@ -313,6 +317,20 @@
 "Perfect_Imp"
 
 
+#'  Red_Snapper_GOM OM
+#'
+#'  An object of class OM
+#'
+"Red_Snapper_GOM"
+
+
+#'  Rougheye_Rockfish_BC OM
+#'
+#'  An object of class OM
+#'
+"Rougheye_Rockfish_BC"
+
+
 #'  testOM OM
 #'
 #'  An object of class OM
@@ -322,83 +340,110 @@
 
 #'  Yellowfin_Tuna_IO OM
 #'
-#'  Indian Ocean Yellowfin tuna, an object of class OM
+#'  An object of class OM
 #'
 "Yellowfin_Tuna_IO"
 
 
-#'  Red_Snapper_GOM OM
-#'
-#'  Gulf of Mexico Red Snapper (from SS using SS2DLM)(SEDAR 31, 2014 update assessment), an object of class OM
-"Red_Snapper_GOM"
-
-
-#'  Rougheye_Rockfish_BC OM
-#'
-#'  British Columbia Rougheye Rockfish (using StochasticSRA) 
-"Rougheye_Rockfish_BC"
-
-
-#'  Canary_Rockfish_BC OM
-#'
-#'  British Columbia Canary Rockfish 
-"Canary_Rockfish_BC"
-
-
-#'  AJ_GOM OM
+#'  AJ_AJ_Rec_comb_GOM OM
 #'
 #'  An object of class OM
 #'
-"AJ_GOM"
+"AJ_AJ_Rec_comb_GOM"
 
 
-#'  LS_GOM OM
+#'  LS_LS_rec_PR_GOM OM
 #'
 #'  An object of class OM
 #'
-"LS_GOM"
+"LS_LS_rec_PR_GOM"
 
 
-#'  LAJ_GOM OM
+#'  LAJ_LAJ_commHL_GOM OM
 #'
 #'  An object of class OM
 #'
-"LAJ_GOM"
+"LAJ_LAJ_commHL_GOM"
 
 
-#'  RD_GOM OM
+#'  RD_RD_Rec_PR_GOM OM
 #'
 #'  An object of class OM
 #'
-"RD_GOM"
+"RD_RD_Rec_PR_GOM"
 
 
-#'  SG_GOM OM
+#'  SG_SG_ComLL_GOM OM
 #'
 #'  An object of class OM
 #'
-"SG_GOM"
+"SG_SG_ComLL_GOM"
 
 
-#'  SH_GOM OM
+#'  SH_SH_ComLL_GOM OM
 #'
 #'  An object of class OM
 #'
-"SH_GOM"
+"SH_SH_ComLL_GOM"
 
 
-#'  WM_GOM OM
+#'  WM_Generic_fleet_GOM OM
 #'
 #'  An object of class OM
 #'
-"WM_GOM"
+"WM_Generic_fleet_GOM"
 
 
-#'  YM_GOM OM
+#'  YM_YM_Rec_comb_GOM OM
 #'
 #'  An object of class OM
 #'
-"YM_GOM"
+"YM_YM_Rec_comb_GOM"
+
+
+#'  San_Francisco_Bay_herring_San_Francisco_Bay_herring_fleet_California OM
+#'
+#'  An object of class OM
+#'
+"San_Francisco_Bay_herring_San_Francisco_Bay_herring_fleet_California"
+
+
+#'  Darnley_Bay_Char_Darnley_Bay_Char_DFO OM
+#'
+#'  An object of class OM
+#'
+"Darnley_Bay_Char_Darnley_Bay_Char_DFO"
+
+
+#'  Canary_Rockfish_BC_Canary_Rockfish_BC_DFO OM
+#'
+#'  An object of class OM
+#'
+"Canary_Rockfish_BC_Canary_Rockfish_BC_DFO"
+
+
+#'  Red_snapper_GOM_OM OM
+#'
+#'  An object of class OM (from SS using SS2DLM)
+#'  SEDAR 31, 2014 update assessment. Author: No author provided.
+#' 
+"Red_snapper_GOM_OM"
+
+
+#'  Yellowfin_tuna_IO_OM OM
+#'
+#'  An object of class OM (from SS using SS2DLM)
+#'  SEDAR 31, 2014 update assessment. Author: No author provided.
+#' 
+"Yellowfin_tuna_IO_OM"
+
+
+#'  Rougheye_Rockfish_BCCanary_Rockfish_BC_OM OM
+#'
+#'  An object of class OM (built using StochasticSRA)
+#'  DLMtool generated
+#' 
+"Rougheye_Rockfish_BCCanary_Rockfish_BC_OM"
 
 
 #'  testMSE MSE
@@ -406,61 +451,5 @@
 #'  An object of class MSE
 #'
 "testMSE"
-
-
-#'  AJ_GOM OM
-#'
-#'  An object of class OM
-#'
-"AJ_GOM"
-
-
-#'  LS_GOM OM
-#'
-#'  An object of class OM
-#'
-"LS_GOM"
-
-
-#'  LAJ_GOM OM
-#'
-#'  An object of class OM
-#'
-"LAJ_GOM"
-
-
-#'  RD_GOM OM
-#'
-#'  An object of class OM
-#'
-"RD_GOM"
-
-
-#'  SG_GOM OM
-#'
-#'  An object of class OM
-#'
-"SG_GOM"
-
-
-#'  SH_GOM OM
-#'
-#'  An object of class OM
-#'
-"SH_GOM"
-
-
-#'  WM_GOM OM
-#'
-#'  An object of class OM
-#'
-"WM_GOM"
-
-
-#'  YM_GOM OM
-#'
-#'  An object of class OM
-#'
-"YM_GOM"
 
 
