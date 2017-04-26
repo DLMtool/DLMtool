@@ -320,11 +320,29 @@
 "testOM"
 
 
-#'  Yellowfin_OM OM
+#'  Yellowfin_Tuna_IO OM
 #'
-#'  An object of class OM
+#'  Indian Ocean Yellowfin tuna, an object of class OM
 #'
-"Yellowfin_OM"
+"Yellowfin_Tuna_IO"
+
+
+#'  Red_Snapper_GOM OM
+#'
+#'  Gulf of Mexico Red Snapper (from SS using SS2DLM)(SEDAR 31, 2014 update assessment), an object of class OM
+"Red_Snapper_GOM"
+
+
+#'  Rougheye_Rockfish_BC OM
+#'
+#'  British Columbia Rougheye Rockfish (using StochasticSRA) 
+"Rougheye_Rockfish_BC"
+
+
+#'  Canary_Rockfish_BC OM
+#'
+#'  British Columbia Canary Rockfish 
+"Canary_Rockfish_BC"
 
 
 #'  AJ_GOM OM
