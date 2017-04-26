@@ -1057,7 +1057,7 @@ setClass("OM", representation(Name = "character", nsim="numeric",proyears="numer
   cpars="list",seed="numeric",CurrentYr="numeric"))
 
 # initialize OM
-setMethod("initialize", "OM", function(.Object, Stock, Fleet=Generic_fleet, Obs=Generic_obs, Imp=Perfect_Imp) {
+setMethod("initialize", "OM", function(.Object, Stock, Fleet=Generic_fleet, Obs=Generic_obs, Imp=Perfect_Imp, nsim=48, proyears=50) {
   if (class(Stock) != "Stock") 
     print(paste("Could not build operating model:", deparse(substitute(Stock)), 
       "not of class Stock"))
@@ -1104,8 +1104,8 @@ setMethod("initialize", "OM", function(.Object, Stock, Fleet=Generic_fleet, Obs=
   }
   
   # Default MSE parameters
-  .Object@nsim=48       
-  .Object@proyears=50
+  .Object@nsim <- nsim       
+  .Object@proyears <- proyears
   
   if(length(.Object@CurrentYr)==0).Object@CurrentYr=.Object@nyears
   

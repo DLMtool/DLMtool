@@ -1480,8 +1480,35 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
   } else {
     SubVB <- MSEobj@VB[SubIts, SubMPs, Years, drop = FALSE]
   }
+
+  # check if slot exists
+  tt <- try(slot(MSEobj, "PAA"), silent = TRUE)
+  if (class(tt) == "try-error") slot(MSEobj, "PAA") <- array(NA)
+  if (all(is.na(MSEobj@PAA))) {
+    SubPAA <- array(NA)
+  } else {
+    SubPAA <- MSEobj@PAA[SubIts, SubMPs, , drop = FALSE]
+  }  
+
+  # check if slot exists
+  tt <- try(slot(MSEobj, "CAL"), silent = TRUE)
+  if (class(tt) == "try-error") slot(MSEobj, "CAL") <- array(NA)
+  if (all(is.na(MSEobj@CAL))) {
+    SubCAL <- array(NA)
+  } else {
+    SubCAL <- MSEobj@CAL[SubIts, SubMPs, , drop = FALSE]
+  } 
   
- 
+  # check if slot exists
+  tt <- try(slot(MSEobj, "CAA"), silent = TRUE)
+  if (class(tt) == "try-error") slot(MSEobj, "CAA") <- array(NA)
+  if (all(is.na(MSEobj@CAA))) {
+    SubCAA <- array(NA)
+  } else {
+    SubCAA <- MSEobj@CAA[SubIts, SubMPs, , drop = FALSE]
+  } 
+  
+  CALbins <- MSEobj@CALbins 
   
   SubResults <- new("MSE", Name = MSEobj@Name, nyears = MSEobj@nyears, 
     proyears = MSEobj@proyears, nMPs = length(SubMPs), MPs = newMPs, 
@@ -1491,7 +1518,7 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
 	TAC = SubTACa, SSB_hist = MSEobj@SSB_hist[SubIts, , , , drop = FALSE], 
 	CB_hist = MSEobj@CB_hist[SubIts, , , , drop = FALSE], 
 	FM_hist = MSEobj@FM_hist[SubIts, , , , drop = FALSE], 
-    Effort = SubEffort)
+    Effort = SubEffort, PAA=SubPAA, CAL=SubCAL, CAA=SubCAA , CALbins=CALbins)
   
   return(SubResults)
 }
@@ -2452,7 +2479,7 @@ MPStats <- function(MSEobj, PMRefs = list(B_BMSY = 0.5, SSB_SSB0 = 0.2, F_FMSY =
   
   lastYr <- temp[, , Nyears, drop = FALSE]
   lastYr2 <- replicate(Pyears, lastYr)
-  Yield <- abind(lastYr, MSEobj@C[, , , drop = FALSE]/RefYd, along = 3)
+  Yield <- abind::abind(lastYr, MSEobj@C[, , , drop = FALSE]/RefYd, along = 3)
   # dim(Yield)
   
   # totC <- abind(temp, MSEobj@C[,,, drop=FALSE]/RefYd, along=3)

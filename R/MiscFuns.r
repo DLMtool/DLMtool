@@ -890,8 +890,8 @@ plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
     message("DLMtool functions for plotting objects of class ", class, 
       " are:")
   out <- sort(tt[which(p & p2)])
-  out <- out[-grep("plotFun", out)]
-  out <- out[-grep("plot.OM", out)]
+  if (any(grepl("plotFun", out))) out <- out[-grep("plotFun", out)]
+  if (any(grepl("plot.OM", out))) out <- out[-grep("plot.OM", out)]
   if (class == "MSE") {
     out <- c(out, "barplot", "boxplot", "VOI", "VOI2")
     out <- sort(out)
