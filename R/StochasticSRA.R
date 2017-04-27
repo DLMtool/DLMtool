@@ -483,6 +483,8 @@ StochasticSRA<-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proyea
   for (y in (maxage+nyears):(nyears + proyears+maxage-1)) Perr[, y] <- AC * Perr[, y - 1] +   Perr[, y] * (1 - AC * AC)^0.5  
   Perr<-exp(Perr)
   
+  PredF<-PredF/apply(PredF,1,mean) # Find should be mean 1 so qs optimizers are standardized
+  
   OM@cpars<-list(dep=dep,M=M,procsd=procsd,AC=AC,hs=h,Linf=Linf,
                                    K=K,t0=t0,L50=lenM,
                                    L5=L5,LFS=L95,Find=PredF,

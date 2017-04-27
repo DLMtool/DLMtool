@@ -22,11 +22,11 @@ ForceCor<-function(OM,nsim=48,plot=T){
   sigma<-matrix(c(1,-0.9,-0.9,1),nrow=2)
   
   # Other Parameters correlation  from meta analysis (technically incorrect in the sapce of other v
-  #                  M           K        F_linf      Linf
-  sigma=matrix(c(1,            0.7214454, -0.5683248, -0.721,
-                 0.7214454,    1.0000000, -0.1072046, -0.910,
-                 -0.5683248, -0.1072046,  1.0000000, 0.4072,
-                 -0.721,      -0.910,       0.4072,    1),nrow=4)
+  #                  M     K    F_linf    Linf
+  sigma=matrix(c(1.000,  0.721, -0.568, -0.721,
+                 0.721,  1.000, -0.107, -0.910,
+                -0.568, -0.107, 1.000,  0.407,
+                -0.721, -0.910, 0.407,  1.000),nrow=4)
   
   
   means<-c(mean(OM@M),mean(OM@K),mean(OM@L50),mean(OM@Linf))

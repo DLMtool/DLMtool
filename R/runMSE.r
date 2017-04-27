@@ -566,7 +566,7 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
 
   # Check that depletion target is reached
   UpperBound <- 13  # bounds for q (catchability). Flag if bounded optimizer hits the bounds 
-  LowerBound <- 0.008
+  LowerBound <- 0.0001
   HighQ <- which(qs > UpperBound | qs < LowerBound)
   if (length(HighQ) > 0) {
     # If q has hit bound, re-sample depletion and try again. Tries 30 times
