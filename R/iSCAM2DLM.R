@@ -1,5 +1,6 @@
 # === OM specification using iSCAM stock assessment ====================
 
+
 #' Reads MLE estimates from iSCAM file structure into an operating model 
 #'
 #' @description A function that uses the file location of a fitted iSCAM 
@@ -25,6 +26,8 @@ iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,Name=NULL,Source="No source pro
     
   message("-- End of iSCAM extraction operations --")
   
+ # print(names(replist))
+#  print(replist$dat$to)
   if(replist$dat$num.sex>1)message("More than one sex was modelled with iSCAM, DLMtool currently does not include sex specific-parameters and will use growth etc from the first sex specified by iSCAM")
   
   OM<-testOM
@@ -66,53 +69,68 @@ iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,Name=NULL,Source="No source pro
   muLinf=replist$dat$linf[1]
   cvLinf=0.025
   muK=replist$dat$k[1]
+  mut0<-replist$dat$to[1]
   out<-negcorlogspace(muLinf,muK,cvLinf,nsim) # K and Linf negatively correlated 90% with identifcal CV to Linf
   Linf<-out[,1]
   K<-out[,2]
   OM@K<-quantile(K,c(0.025,0.975))
   OM@Linf<-quantile(Linf,c(0.025,0.975))
-  OM@t0=rep(replist$dat$t0,2) # t0 is not 
+  
+  OM@t0=rep(replist$dat$to,2) # t0 is not 
   OM@Msd<-OM@Ksd<-OM@Linfsd<-OM@Mgrad<-OM@Kgrad<-OM@Linfgrad<-OM@recgrad<-c(0,0)
-  L50=GP$Mat1[1]
-  OM@a=GP$WtLen1[1]
-  OM@b=GP$WtLen2[1]
+  L50=Linf*(1-exp(-K*(replist$dat$age.at.50.mat-mean(OM@t0))))
+  OM@a=replist$dat$lw.alpha
+  OM@b=replist$dat$lw.beta
   
-  M<-aggregate(growdat$M,by=list(aind),mean)$x
-  Wt<-aggregate(growdat$Wt_Mid,by=list(aind),mean)$x
-  Wt_age<-array(rep(Wt,each=nsim)*trlnorm(nsim,1,cvLinf), dim = c(nsim, maxage, nyears)) 
-  Mat<-aggregate(growdat$Age_Mat,by=list(aind),mean)$x
+ 
   
+   #SSB0<-replist$mpd$sbo*1000
+  R0<-replist$mpd$ro*1E6
+  surv<-exp(cumsum(c(0,rep(-replist$mpd$m,maxage-1))))
+  
+  SSBpR<-sum(replist$mpd$d3_wt_mat[1,]*surv)/1000 # in kg per recruit
+  SSB0<-SSBpR*R0
+  
+  rbar<-replist$mpd$rbar #mean recruitment
+  RD<-replist$mpd$delta
+  
+  ageM<-replist$dat$age.at.50.mat
+  ageMsd<-replist$dat$sd.at.50.mat
+  
+   
+ 
+  #OM@R0<-rep(replist$mpd$rho,2)
+  
+  ageArray<-array(rep(1:maxage,each=nsim),c(nsim,maxage))
+  Len_age<-Linf*(1-exp(-K*(ageArray-mut0)))
+  Wt_age<-array(OM@a*Len_age^OM@b, dim = c(nsim, maxage, nyears)) /1000 #in kg
+   
   # SO FAR: Wt_age K Linf  
   
-  surv<-c(1,exp(cumsum(-c(M[2:maxage]))))# currently M and survival ignore age 0 fish
-  OM@M<-rep(sum(M[2:maxage]*surv[2:maxage])/sum(surv[2:maxage]),2)
-  SSB0<-as.numeric(replist$Dynamic_Bzero$SPB[replist$Dynamic_Bzero$Era=="VIRG"])
-  SpR<-sum(Wt*Mat*surv)
-  OM@R0<-rep(SSB0/SpR,2)
+  OM@M<-rep(replist$mpd$m,2)
+  OM@R0<-rep(R0,2)
  
-  SSB<-replist$recruit$spawn_bio
-  rec<-replist$recruit$pred_recr
-  SSBpR<-SSB[1]/rec[1]
+
+  rec<-replist$mpd$rbar *exp(replist$mpd$delta)*1E6
+  SSB<-(replist$mpd$sbt*1000)[1:length(rec)]
+  
   hs<-SRopt(nsim,SSB,rec,SSBpR,plot=F,type="BH")
   OM@h<-quantile(hs,c(0.025,0.975))
-  OM@SRrel<-1 # This is the default 
+  OM@SRrel<-replist$mpd$rectype # This is the default 
  
   # SO FAR OM:     Name, nsim, proyears, nyears, maxage, R0, M, Msd, Mgrad, h, SRrel, Linf, K, t0, Ksd, Kgrad, Linfsd, Linfgrad, recgrad, a, b,
   # SO FAR cpars:  Wt_age, K Linf hs
   
-  #SSBcur<-as.numeric(replist$Dynamic_Bzero[nrow(replist$Dynamic_Bzero),3])
-  #othdep<-SSBcur/SSB0
-  OM@D<-rep(replist$current_depletion,2)
+    
+  OM@D<-rep(replist$mpd$sbt[length(replist$mpd$sbt)]/replist$mpd$sbo,2)
   
   # Movement modelling ----------------------------
-  
-  if(nrow(replist$movement)>0){
-    mov<-movdistil(replist$movement)
-    vec<-rep(1/2,2)
-    for(i in 1:200)vec<-vec%*%mov
-    OM@Frac_area_1<-OM@Size_area_1<-rep(vec[1],2)
-    OM@Prob_staying<-rep(mean(mov[cbind(1:2,1:2)]),2)
+  nASSareas<-replist$dat$num.areas
+  if(nASSareas==1){ # mixed stock
+    OM@Frac_area_1<-OM@Size_area_1<-rep(0.5,2)
+    OM@Prob_staying<-rep(0.5,2)
   }else{
+    message("More than one iSCAM area found, a stock mixed throughout 2 areas is currently assumed")
     OM@Frac_area_1<-OM@Size_area_1<-rep(0.5,2)
     OM@Prob_staying<-rep(0.5,2)
   }
@@ -121,15 +139,16 @@ iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,Name=NULL,Source="No source pro
   
   # Maturity --------------------------------------
   
-  Mat_age<-growdat$Age_Mat
-  Len_age<-growdat$Len_Mid
+  Mat_age<- 1/(1 + exp((ageM - (1:maxage))/ageMsd))
+
+  muLen_age<-muLinf*(1-exp(-muK*((1:maxage)-mut0)))
   
   # Currently using linear interpolation of mat vs len, is robust and very close to true logistic model predictions
   
-  L50<-LinInterp(Mat_age,Len_age,0.5)
+  L50<-LinInterp(Mat_age,muLen_age,0.5)
   OM@L50<-rep(L50,2)
   
-  L95<-LinInterp(Mat_age,Len_age,0.95)
+  L95<-LinInterp(Mat_age,muLen_age,0.95)
   OM@L50_95<-rep(L95-L50,2)
   
   
@@ -137,10 +156,7 @@ iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,Name=NULL,Source="No source pro
   
   # Vulnerability --------------------------------------------
   
-  ages<-growdat$Age
-  cols<-match(ages,names(replist$Z_at_age))
-  F_at_age=t(replist$Z_at_age[,cols]-replist$M_at_age[,cols])
-  F_at_age[nrow(F_at_age),]<-F_at_age[nrow(F_at_age)-1,]# ad-hoc mirroring to deal with SS missing predicitons of F in terminal age
+  F_at_age<-t(replist$mpd$F)
   Ftab<-cbind(expand.grid(1:dim(F_at_age)[1],1:dim(F_at_age)[2]),as.vector(F_at_age))
   
   if(nseas>1){
@@ -150,10 +166,9 @@ iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,Name=NULL,Source="No source pro
    sumF<-Ftab
   }
   
-  sumF<-sumF[sumF[,2]<nyears,] # generic solution: delete partial observation of final F predictions in seasonal model (last season of last year is NA)
   V <- array(NA, dim = c(nsim, maxage, nyears + proyears)) 
-  V[,,1:(nyears-1)]<-rep(sumF[,3],each=nsim) # for some reason SS doesn't predict F in final year
-  V[,,nyears:(nyears+proyears)]<-V[,,nyears-1]
+  V[,,1:nyears]<-rep(sumF[,3],each=nsim) # for some reason SS doesn't predict F in final year
+  V[,,(nyears+1):(nyears+proyears)]<-V[,,nyears]
   
   Find<-apply(V,c(1,3),max,na.rm=T) # get apical F
   
@@ -165,26 +180,31 @@ iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,Name=NULL,Source="No source pro
   muFage<-as.vector(apply(F_at_age[,ceiling(ncol(F_at_age)*0.75):ncol(F_at_age)],1,mean))
   Vuln<-muFage/max(muFage,na.rm=T)
   
-  OM@L5<-rep(LinInterp(Vuln,Len_age,0.05,ascending=T,zeroint=T),2)                            # not used if V is in cpars
-  OM@LFS<-rep(Len_age[which.min((exp(Vuln)-exp(1.05))^2 * 1:length(Vuln))],2)  # not used if V is in cpars
+  OM@L5<-rep(LinInterp(Vuln,muLen_age,0.05,ascending=T,zeroint=T),2)                            # not used if V is in cpars
+  OM@LFS<-rep(muLen_age[which.min((exp(Vuln)-exp(1.05))^2 * 1:length(Vuln))],2)  # not used if V is in cpars
   OM@Vmaxlen<-rep(mean(Vuln[(length(Vuln)-(nseas+1)):length(Vuln)],na.rm=T),2)  # not used if V is in cpars
   
   OM@isRel="FALSE" # these are real lengths not relative to length at 50% maturity
   
   # -- Recruitment -----------------------------------------------
   
-  nrecs<-length(replist$recruit$dev)
-  recdevs<-replist$recruit$dev[(nrecs-nyears+1):(nrecs-1)]# last year is mean recruitment
+  
+  recs<-replist$mpd$rbar *exp(replist$mpd$delta)*1E6
+  nrecs<-length(recs)
+  recdevs<-replist$mpd$delta# last year is mean recruitment
   #recdevs<-replist[length(replist$recruit$dev)-nyears)]
   #recdevs[is.na(recdevs)]<-0
   OM@AC<-rep(acf(recdevs)$acf[2,1,1],2)
   
-  Perr<-array(NA,c(nsim,nyears+proyears))
-  Perr[,1:(nyears-1)]<-matrix(rnorm(nsim*(nyears-1),rep(recdevs,each=nsim),0.2),nrow=nsim) # generate a bunch of simulations with uncertainty
-  procsd<-apply(Perr,1,sd,na.rm=T)
-  OM@Perr<-quantile(procsd,c(0.025,0.975)) # uniform range is a point estimate from assessment MLE
+  Perrest<-matrix(rnorm(nsim*(nyears-1),rep(recdevs,each=nsim),0.2),nrow=nsim)
+  procsd<-apply(Perrest,1,sd,na.rm=T)
   procmu <- -0.5 * (procsd)^2  # adjusted log normal mean
-  Perr[,nyears:(nyears+proyears)]<-matrix(rnorm(nsim*(proyears+1),rep(procmu,proyears+1),rep(procsd,proyears+1)),nrow=nsim)
+  
+  Perr<-array(NA,c(nsim,nyears+proyears+maxage-1))
+  Perr<-matrix(rnorm(nsim*(maxage+nyears+proyears-1),rep(procmu,maxage+nyears+proyears-1),rep(procsd,maxage+nyears+proyears-1)),nrow=nsim)
+  Perr[,(maxage-1)+1:(nyears-1)]<-Perrest # generate a bunch of simulations with uncertainty
+ 
+  OM@Perr<-quantile(procsd,c(0.025,0.975)) # uniform range is a point estimate from assessment MLE
   AC<-mean(OM@AC)
   for (y in nyears:(nyears + proyears)) Perr[, y] <- AC * Perr[, y - 1] +   Perr[, y] * (1 - AC * AC)^0.5  
   Perr<-exp(Perr)
@@ -204,7 +224,7 @@ iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,Name=NULL,Source="No source pro
   #plot(replist$cpue$Obs,replist$cpue$Exp)
    
   OM@Spat_targ<-rep(1,2)
-  OM@Fsd<-quantile(apply((Find[,1:(nyears-1)]-Find[,2:nyears])/Find[,2:nyears],1,sd),c(0.05,0.95))
+  OM@Esd<-quantile(apply((Find[,1:(nyears-1)]-Find[,2:nyears])/Find[,2:nyears],1,sd),c(0.05,0.95))
   
   OM@Period<-rep(NaN,2)
   OM@Amplitude<-rep(NaN,2)
@@ -212,16 +232,28 @@ iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,Name=NULL,Source="No source pro
   OM@EffLower<-Find[1,]
   OM@EffUpper<-Find[1,]
   OM@qinc<-c(0,0)
-  OM@qcv<-OM@Fsd
+  OM@qcv<-OM@Esd
   
   
   # Observation model parameters ==============================================================================
   
   # Index observations -------------------------------------------------------
+  sizeinds<-lapply(replist$dat$indices,nrow)
   
-  OM@Iobs<-rep(sd(log(replist$cpue$Obs)-log(replist$cpue$Exp)),2)
-  getbeta<-function(beta,x,y)sum((y-x^beta)^2)
-  OM@beta<-rep(optimize(getbeta,x=replist$cpue$Obs,y=replist$cpue$Exp,interval=c(0.1,10))$minimum,2)
+  Io<-replist$dat$indices[[which.max(sizeinds)]]
+  Ip<-replist$mpd$sbt[1:nyears][Io[,1]-replist$dat$start.yr+1]
+  Io<-Io[,2]/mean(Io[,2])
+  Ip<-Ip/mean(Ip)
+  
+  
+  OM@Iobs<-rep(sd(Io-Ip),2)
+  
+  getbeta<-function(beta,x,y){
+    x<-x^beta
+    x<-x/mean(x)
+    sum((y-x)^2)
+  }
+  OM@beta<-rep(optimize(getbeta,x=Ip,y=Io,interval=c(0.1,10))$minimum,2)
  
   #F_FMSY<-replist$derived_quants[grep("F_",replist$derived_quants[,1]),2]
   #Fref<-F_FMSY[length(F_FMSY)]
@@ -239,9 +271,17 @@ iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,Name=NULL,Source="No source pro
 }
 
 
-
-require(coda)
-iSCAMdir<-model.dir<-"C:/Arrowtooth_Flounder_BC_DFO"
+#' Reads iSCAM files into a hierarchical R list object
+#'
+#' @description A function for reading iSCAM input and output files 
+#' into R 
+#' @param model.dir An iSCAM directory
+#' @param burnin The initial mcmc samples to be discarded
+#' @param thin The degree of chain thinning 1 in every thin 
+#' iterations is kept
+#' @param verbose Should detailed outputs be provided. 
+#' @author Chris Grandin (DFO PBS)
+#' @export load.iscam.files
 load.iscam.files <- function(model.dir,
                              burnin = 1000,
                              thin = 1,
@@ -299,6 +339,14 @@ load.iscam.files <- function(model.dir,
   model
 }
 
+#' Reads iSCAM Data, Control and Projection files 
+#'
+#' @description A function for returning the three types of 
+#' iSCAM input and output files 
+#' @param path File path
+#' @param filename The filename  
+#' @author Chris Grandin (DFO PBS)
+#' @export fetch.file.names
 fetch.file.names <- function(path, ## Full path to the file
                              filename){
   ## Read the starter file and return a list with 3 elements:
@@ -317,6 +365,14 @@ fetch.file.names <- function(path, ## Full path to the file
        file.path(path, d[3]))
 }
 
+
+#' Reads iSCAM Rep file 
+#'
+#' @description A function for returning the results of the
+#' .rep iscam file
+#' @param fn File location
+#' @author Chris Grandin (DFO PBS)
+#' @export read.report.file
 read.report.file <- function(fn){
   # Read in the data from the REP file given as 'fn'.
   # File structure:
@@ -391,6 +447,16 @@ read.report.file <- function(fn){
   return(ret)
 }
 
+
+
+#' Reads iSCAM dat file 
+#'
+#' @description A function for returning the results of the
+#' .dat iscam file
+#' @param file File location
+#' @param verbose should detailed results be printed to console
+#' @author Chris Grandin (DFO PBS)
+#' @export read.data.file
 read.data.file <- function(file = NULL,
                            verbose = FALSE){
   ## Read in the iscam datafile given by 'file'
@@ -624,6 +690,17 @@ read.data.file <- function(file = NULL,
   tmp
 }
 
+
+#' Reads iSCAM control file 
+#'
+#' @description A function for returning the results of the
+#' iscam control file
+#' @param file File location
+#' @param num.gears The number of gears
+#' @param num.age.gear The number age-gears
+#' @param verbose should detailed results be printed to console
+#' @author Chris Grandin (DFO PBS)
+#' @export read.control.file
 read.control.file <- function(file = NULL,
                               num.gears = NULL,
                               num.age.gears = NULL,
@@ -808,6 +885,15 @@ read.control.file <- function(file = NULL,
   tmp
 }
 
+
+#' Reads iSCAM projection file 
+#'
+#' @description A function for returning the results of the
+#' iscam projection file
+#' @param file File location
+#' @param verbose should detailed results be printed to console
+#' @author Chris Grandin (DFO PBS)
+#' @export read.projection.file
 read.projection.file <- function(file = NULL,
                                  verbose = FALSE){
   ## Read in the projection file given by 'file'
@@ -875,6 +961,14 @@ read.projection.file <- function(file = NULL,
   tmp
 }
 
+#' Reads iSCAM parameter file 
+#'
+#' @description A function for returning the results of the
+#' iscam .par file
+#' @param file File location
+#' @param verbose should detailed results be printed to console
+#' @author Chris Grandin (DFO PBS)
+#' @export read.par.file
 read.par.file <- function(file = NULL,
                           verbose = FALSE){
   ## Read in the parameter estimates file given by 'file'
@@ -945,12 +1039,32 @@ read.par.file <- function(file = NULL,
   tmp
 }
 
+#' Reads iSCAM mcmc output files
+#'
+#' @description A function for returning the results of the
+#' iscam mcmc files
+#' @param model.dir Folder name
+#' @param verbose should detailed results be printed to console
+#' @author Chris Grandin (DFO PBS)
+#' @export read.mcmc
 read.mcmc <- function(model.dir = NULL,
                       verbose = TRUE){
   ## Read in the MCMC results from an iscam model run found in the directory
   ##  model.dir.
   ## Returns a list of the mcmc outputs, or NULL if there was a problem or
   ##  there are no MCMC outputs.
+  
+
+  mcmc.file <- "iscam_mcmc.csv"
+  mcmc.biomass.file <- "iscam_sbt_mcmc.csv"
+  mcmc.recr.file <- "iscam_rt_mcmc.csv"
+  mcmc.recr.devs.file <- "iscam_rdev_mcmc.csv"
+  mcmc.fishing.mort.file <- "iscam_ft_mcmc.csv"
+  mcmc.fishing.mort.u.file <- "iscam_ut_mcmc.csv"
+  mcmc.vuln.biomass.file <- "iscam_vbt_mcmc.csv"
+  mcmc.proj.file <- "iscammcmc_proj_Gear1.csv"
+  mpd.proj.file <- "iscammpd_proj_Gear1.csv"
+  
   
   if(is.null(model.dir)){
     cat0("You must supply a directory name (model.dir). Returning NULL.")
