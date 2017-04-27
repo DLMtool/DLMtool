@@ -44,10 +44,10 @@ NumericMatrix  genLenComp(NumericVector CAL_bins, NumericVector CAL_binsmid, Num
 	// sample ages from catch 
 	NumericVector tempCN(k);
 	probs = CN.row(yr)/sum(CN.row(yr));
-    rmultinom(CAL_ESS, probs.begin(), k, ans.begin()); // multinom age sample with ess 
+  rmultinom(CAL_ESS, probs.begin(), k, ans.begin()); // multinom age sample with ess 
 	ans2 = ans; // convert to numeric vector
-    tempCN = ans2 * (CAL_nsamp/CAL_ESS); // scale up from ess to sample size
-    
+  tempCN = ans2 * (CAL_nsamp/CAL_ESS); // scale up from ess to sample size
+  ;   
 	NumericVector EL(k); 
 	NumericVector SDL(k); 
 	
@@ -74,13 +74,15 @@ NumericMatrix  genLenComp(NumericVector CAL_bins, NumericVector CAL_binsmid, Num
 	  Sx(age) = sum(SL.column(yr) * Prob.row(age));	// Calculate selectivity at age given length-at-age dist 	
 	  Cx.row(age) = Prob.row(age) * SL.column(yr);  // Length-at-age of catch conditional on selectivity
 	  Cx2.row(age) = Cx.row(age)/sum(Cx.row(age));  // standardise so prob sum to 1 for each age 
-	}
+	  }
 	
     for (int L=0; L < (nbins); L++) {	
-	  for (int age=0; age < k; age++) {
-		 CAL(yr, L) += (tempCN(age) * Cx2(age, L));
+	    for (int age=0; age < k; age++) {
+	      double tempVal = 0;
+	      tempVal = (tempCN(age) * Cx2(age, L));
+		    if (tempVal > 0) CAL(yr, L) += tempVal;
+	    }
 	  }
-	}
 	
   }
   
