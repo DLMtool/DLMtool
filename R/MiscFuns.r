@@ -96,11 +96,9 @@ Required <- function(funcs = NA) {
 #' @export DLMDataDir
 DLMDataDir <- function(stock = NA) {
   if (is.na(stock)) {
-    return(paste(searchpaths()[match("package:DLMtool", search())], 
-      "/", sep = ""))
+    return(paste(searchpaths()[match("package:DLMtool", search())], "/", sep = ""))
   } else {
-    return(paste(searchpaths()[match("package:DLMtool", search())], 
-      "/", stock, ".csv", sep = ""))
+    return(paste(searchpaths()[match("package:DLMtool", search())], "/", stock, ".csv", sep = ""))
   }
 }
 
@@ -822,8 +820,7 @@ SetRecruitCycle <- function(x = 1, Period, Amplitude, TotYears, Shape = c("sin",
 makePerf <- function(OMin, except = NULL) {
   nms <- slotNames(OMin)
   # exceptions
-  if (is.null(except)) 
-    except <- "EVERYTHING"
+  if (is.null(except)) except <- "EVERYTHING"
   exclude <- unique(grep(paste(except, collapse = "|"), nms, value = FALSE))
   
   vars <- c("grad", "cv", "sd", "inc")
@@ -831,6 +828,7 @@ makePerf <- function(OMin, except = NULL) {
   ind <- ind[(!(nms[ind] %in% exclude))]
   for (X in seq_along(ind)) {
     n <- length(slot(OMin, nms[ind[X]]))
+    if (n == 0) n <- 2
     slot(OMin, nms[ind[X]]) <- rep(0, n)
   }
   

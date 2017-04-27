@@ -1805,7 +1805,6 @@ TradePlot <- function(MSEobj, XAxis = c("Overfishing", "Biomass:BMSY"),
     PNOF[mm] <- round(sum(MSEobj@F_FMSY[, mm, ] <= 1, na.rm = T)/prod(dim(MSEobj@F_FMSY[, 
       mm, ]), na.rm = T) * 100, 1)
     BMSYref[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] > BmsyRef, na.rm = T)/prod(dim(MSEobj@B_BMSY[, mm, ])) * 100, 1)
-	
     B0ref[mm] <- round(sum((MSEobj@B_BMSY[, mm, ] * MSEobj@OM$SSBMSY_SSB0) > 
       B0Ref, na.rm = T)/prod(dim(MSEobj@B_BMSY[, mm, ])) * 100, 1)
     # LTY[mm]<-round(sum(MSEobj@C[,mm,yend]/RefYd>0.5,na.rm=T)/(MSEobj@nsim*length(yend)),3)*100

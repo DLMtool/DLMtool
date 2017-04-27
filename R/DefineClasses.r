@@ -701,7 +701,8 @@ setMethod("initialize", "lmmodel", function(.Object,Name,models){
 #' @slot Effort Stored relative fishing effort in the projection years
 #' @slot PAA Population at age in last projection year (an array with dimensions nsim, nMPs, nages)
 #' @slot CAA Catch at age in last projection year (an array with dimensions nsim, nMPs, nages)
-#' @slot CAL Catch at length in last projection year (an array with dimensions nsim, nMPs, nlengthbins)
+#' @slot CAL Catch at length in last projection year (an array with dimensions nsim, nMPs, nCALbins)
+#' @slot CALbins Mid-points of the catch-at-length bins
 #'
 #' @author T. Carruthers
 #' @keywords classes
@@ -710,8 +711,8 @@ setClass("MSE", representation(Name = "character", nyears = "numeric",
   OM = "data.frame", Obs = "data.frame", B_BMSY = "array", F_FMSY = "array", 
   B = "array", SSB="array", VB="array", FM = "array", C = "array", 
   TAC = "array", SSB_hist = "array", 
-  CB_hist = "array", FM_hist = "array", Effort = "array", PAA= "array", CAL= "array", 
-  CAA= "array", CALbins="numeric"))
+  CB_hist = "array", FM_hist = "array", Effort = "array", PAA= "array", CAA= "array", 
+  CAL= "array", CALbins="numeric"))
 
   
 setMethod("initialize", "MSE", function(.Object, Name, nyears, proyears, 
@@ -1057,7 +1058,12 @@ setClass("OM", representation(Name = "character", nsim="numeric",proyears="numer
   cpars="list",seed="numeric",CurrentYr="numeric"))
 
 # initialize OM
-setMethod("initialize", "OM", function(.Object, Stock, Fleet=Generic_fleet, Obs=Generic_obs, Imp=Perfect_Imp, nsim=48, proyears=50) {
+setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=Generic_fleet, Obs=Generic_obs, Imp=Perfect_Imp, nsim=48, proyears=50) {
+  if (is.null(Stock)) {
+    message("No Stock object found. Returning a blank OM object") 
+    return(makePerf(.Object))
+  }
+
   if (class(Stock) != "Stock") 
     print(paste("Could not build operating model:", deparse(substitute(Stock)), 
       "not of class Stock"))
@@ -1071,8 +1077,7 @@ setMethod("initialize", "OM", function(.Object, Stock, Fleet=Generic_fleet, Obs=
     print(paste("Could not build operating model:", deparse(substitute(Imp)), 
                 "not of class Imp"))
   if (class(Stock) != "Stock" | class(Fleet) != "Fleet" | 
-      class(Obs) != "Obs"  | class(Imp) != "Imp") 
-        stop()
+      class(Obs) != "Obs"  | class(Imp) != "Imp") stop()
   
   .Object@Name <- paste("Stock:", Stock@Name, "  Fleet:", Fleet@Name, 
     "  Obs model:", Obs@Name, "  Imp model:", Imp@Name, sep = "")
