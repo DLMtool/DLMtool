@@ -12,3 +12,4 @@ Rougheye_Rockfish_BC
 An object of class OM
 }
 \keyword{datasets}
+

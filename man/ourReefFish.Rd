@@ -3,7 +3,6 @@
 \docType{data}
 \name{ourReefFish}
 \alias{ourReefFish}
-\alias{ourReefFish}
 \title{Example data object}
 \format{An object of class \code{Data} of length 1.}
 \usage{
@@ -26,3 +25,4 @@ plot(ourReefFish)
 
 }
 \keyword{datasets}
+

@@ -12,3 +12,4 @@ DecE_Dom
 An object of class Fleet
 }
 \keyword{datasets}
+

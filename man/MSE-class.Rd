@@ -115,16 +115,17 @@ simulation conditions and performance of data-limited methods
 
 \item{\code{CAA}}{Catch at age in last projection year (an array with dimensions nsim, nMPs, nages)}
 
-\item{\code{CAL}}{Catch at length in last projection year (an array with dimensions nsim, nMPs, nlengthbins)}
-}}
+\item{\code{CAL}}{Catch at length in last projection year (an array with dimensions nsim, nMPs, nCALbins)}
 
+\item{\code{CALbins}}{Mid-points of the catch-at-length bins}
+}}
 \section{Objects from the Class}{
  Objects can be created by calls of the form
 \code{new('MSE', Name, nyears, proyears, nMPs, MPs, nsim, OMtable, Obs,
 B_BMSYa, F_FMSYa, Ba, FMa, Ca, OFLa, Effort)}
 }
-
 \author{
 T. Carruthers
 }
 \keyword{classes}
+

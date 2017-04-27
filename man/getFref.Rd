@@ -61,3 +61,4 @@ getFref(x, Marray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s, VBiomass_s,
 Internal Get Reference F
 }
 \keyword{internal}
+

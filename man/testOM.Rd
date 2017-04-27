@@ -12,3 +12,4 @@ testOM
 An object of class OM
 }
 \keyword{datasets}
+

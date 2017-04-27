@@ -29,12 +29,20 @@
 #' percent of simulations are not close to the required depletion
 #' @param fracD maximum allowed proportion of simulations where depletion is not 
 #' close to sampled depletion from OM before model stops with error
+#' @param CalcBlow Should low biomass be calculated where this is the spawning
+#' biomass at which it takes HZN mean generation times of zero fishing to reach 
+#' Bfrac fraction of SSBMSY
+#' @param HZN The number of mean generation times required to reach Bfrac SSBMSY
+#' in the Blow calculation
+#' @param Bfrac The target fraction of SSBMSY for calculating Blow
 #' @return An object of class MSE
 #' @author T. Carruthers and A. Hordyk
 #' @export runMSE
 runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim"),nsim=48,proyears=50,interval=4,
   pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, CheckMPs = FALSE,
-  Hist=FALSE, ntrials=50, fracD=0.05) {
+  Hist=FALSE, ntrials=50, fracD=0.05, 
+  CalcBlow=FALSE, HZN=2, Bfrac=0.5
+  ) {
 
   if("seed"%in%slotNames(OM))set.seed(OM@seed)
   tiny <- 1e-15  # define tiny variable
@@ -814,30 +822,25 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
   
   # Code for deriving low biomass (SSB where it takes MGThorizon x MGT to reach Bfrac of BMSY)
   
-  calcBlow=FALSE
-  Bfrac<-0.5 # Fraction of SSBMSY to aim for  !!ARGUMENT TO runMSE!!
-  MGThorizon<-2 # Duration til                !!ARGUMENT TO runMSE!!
-  
-  if(calcBlow){
-    
+  if(CalcBlow){
     message("Calculating Blow reference points")              # Print a progress update  
-    
+      
     Znow<-apply(Z[,,nyears,]*N[,,nyears,],1:2,sum)/apply(N[,,nyears,],1:2,sum)
     MGTsurv<-t(exp(-apply(Znow,1,cumsum)))
     MGT<-apply(Agearray*(Mat_age*MGTsurv),1,sum)/apply(Mat_age*MGTsurv,1,sum)
     MGThorizon<-floor(HZN*MGT)
     SSBMSY<-MSYrefs[3,]
-     
-    if(sfIsRunning()){
-      sfExport(list=c("Blow_opt","getBlow","SSBMSY","MGT","Find","Perr","Marray","hs","Mat_age","Wt_age","R0","V","nyears","maxage","SRrel","aR","bR"))
+       
+    if(snowfall::sfIsRunning()){
+      snowfall::sfExport(list=c("SSBMSY","MGT","Find","Perr","Marray","hs","Mat_age","Wt_age","R0","V","nyears","maxage","SRrel","aR","bR"))
       Blow<-sfSapply(1:nsim,getBlow,SSBMSY,MGThorizon,Find,Perr,Marray,hs,Mat_age,Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR,Bfrac) # find the q that gives current stock depletion
     }else{
       Blow <- sapply(1:nsim,getBlow,SSBMSY,MGThorizon,Find,Perr,Marray,hs,Mat_age,Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR,Bfrac) # find the q that gives current stock depletion
     }
-    
+  
+  }else{
+    Blow<-rep(NA,nsim)
   }
-  
-  
   
   message("Calculating reference yield - best fixed F strategy")  # Print a progress update
   flush.console()  # update the console
@@ -982,7 +985,7 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
     Linf, K, t0, hs, Linfgrad, Kgrad, Linfsd, recgrad, Ksd, ageM, L5[nyears, ], 
 	  LFS[nyears, ], Vmaxlen[nyears, ], LFC, OFLreal, Spat_targ, 
     Frac_area_1, Prob_staying, AC, L50, L95, B0, N0, SSB0, BMSY_B0,
-	  TACSD,TACFrac,ESD,EFrac,SizeLimSD,SizeLimFrac,DiscMort))  # put all the operating model parameters in one table
+	  TACSD,TACFrac,ESD,EFrac,SizeLimSD,SizeLimFrac,DiscMort,Blow))  # put all the operating model parameters in one table
   
   names(Data@OM)[26:28] <- c("L5", "LFS", "Vmaxlen")  # These are missing labels in the line above
   

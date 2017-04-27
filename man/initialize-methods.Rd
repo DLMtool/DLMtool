@@ -2,16 +2,16 @@
 % Please edit documentation in R/DefineClasses.r
 \docType{methods}
 \name{initialize-methods}
-\alias{initialize-methods}
+\alias{initialize,DLM_general-method}
 \alias{initialize,Data-method}
+\alias{initialize,Fease-method}
 \alias{initialize,Fleet-method}
 \alias{initialize,MSE-method}
-\alias{initialize,Obs-method}
 \alias{initialize,OM-method}
+\alias{initialize,Obs-method}
 \alias{initialize,Stock-method}
 \alias{initialize,lmmodel-method}
-\alias{initialize,Fease-method}
-\alias{initialize,DLM_general-method}
+\alias{initialize-methods}
 \title{~~ Methods for Function \code{initialize} ~~}
 \description{
 ~~ Methods for function \code{initialize} ~~
@@ -46,9 +46,9 @@ this method here~~ }
 
 }
 }
-
 \keyword{keyword(s)}
 \keyword{methods}
 \keyword{other}
 \keyword{possible}
 \keyword{~~}
+

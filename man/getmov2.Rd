@@ -40,3 +40,4 @@ c(markovmat[1,1],vec[1]) # pretty close right?
 \author{
 T. Carruthers
 }
+

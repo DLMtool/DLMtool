@@ -44,3 +44,4 @@ FMSYopt(lnF, Mc, hc, Mac, Wac, R0c, Vc, maxage, nyears, proyears, Spat_targc,
 Internal function FMSY and related metrics
 }
 \keyword{internal}
+

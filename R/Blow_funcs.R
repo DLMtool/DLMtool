@@ -1,5 +1,32 @@
 # Blow optimization code
 
+#' Blow parallel optimization function
+#'
+#' Find the current biomass at which it would take HZN mean generation times
+#' to reach Bfrac x SSBMSY biomass level given zero catches
+#'
+#' @param x position in a vector
+#' @param SSBMSY vector nsim long of spawning biomass at MSY
+#' @param MGThorizon vector nsim long of MGT x HZN
+#' @param Find matrix of fishing mortality rate nsim x nyears 
+#' @param Perr matrix of recruitment devitions nsim x nyears + maxage -1
+#' @param Marray matrix of natural mortality rate nsim x nyears + proyears
+#' @param hs vector nsim long of steepness values
+#' @param Mat_age matrix nsim x nages of maturity at age
+#' @param Wt_age matrix nsim x nages of weight at age
+#' @param R0 vector nsim long of unfished recruitment
+#' @param V array of vulnerability nsim x maxage x nyears 
+#' @param nyears integer: number of historical years
+#' @param maxage integer: maximum age
+#' @param mov array of movement nsim x 2 x 2
+#' @param Spat_targ vector of spatial targetting parameters
+#' @param SRrel integer representing recruitmetn dynamics type 1: Bev Holt 2: Ricker
+#' @param aR vector of recruitment parameters
+#' @param bR vector of recruitment parameters
+#' @param Bfrac fraction of SSBMSY that is the target 
+#' @param ploty logical: should a plot be produced 
+#' @author T. Carruthers
+#' @export getBlow
 getBlow<-function(x,SSBMSY,MGThorizon,Find,Perr,Marray,hs,Mat_age,Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR,Bfrac=0.5,ploty=F){
   
   opt<-optimize(Blow_opt,log(c(0.0075,15)),SSBMSYc=SSBMSY[x],MGThorizon=MGThorizon[x],Fc=Find[x,],Perrc=Perr[x,],
@@ -21,7 +48,33 @@ getBlow<-function(x,SSBMSY,MGThorizon,Find,Perr,Marray,hs,Mat_age,Wt_age,R0,V,ny
   
 }
 
-
+#' Blow internal parallel optimization function
+#'
+#' Find the current biomass at which it would take HZN mean generation times
+#' to reach Bfrac x SSBMSY biomass level given zero catches
+#'
+#' @param lnq number: estimate of log catchability
+#' @param SSBMSYc number: spawning biomass at MSY
+#' @param MGThorizonc number: MGT x HZN
+#' @param Fc vector nyears long of fishing mortality rate
+#' @param Perrc vector nyears+maxage-1 long of recruitment devitions 
+#' @param Mc vector nyears+proyears long of natural mortality rate
+#' @param hc number: steepness values
+#' @param Mac vector nages long of maturity at age
+#' @param Wac vector nages long  of weight at age
+#' @param R0c number: unfished recruitment
+#' @param Vc matrix of vulnerability maxage x nyears 
+#' @param nyears integer: number of historical years
+#' @param maxage integer: maximum age
+#' @param movc matrix of movement 2 x 2
+#' @param Spat_targc number: spatial targetting parameters
+#' @param SRrelc integer representing recruitmetn dynamics type 1: Bev Holt 2: Ricker
+#' @param aRc number: recruitment parameter
+#' @param bRc number: recruitment parameter
+#' @param Bfrac fraction of SSBMSY that is the target 
+#' @param mode 1: find Blow 2:report blow  3:plot results 
+#' @author T. Carruthers
+#' @export Blow_opt
 Blow_opt<-function(lnq,SSBMSYc,MGThorizon,Fc,Perrc,Mc,hc,Mac,Wac,R0c,Vc,nyears,maxage,movc,Spat_targc,SRrelc,aRc,bRc,Bfrac,mode=1){
   
   qc<-exp(lnq)

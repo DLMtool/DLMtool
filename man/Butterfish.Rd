@@ -12,3 +12,4 @@ Butterfish
 An object of class Stock
 }
 \keyword{datasets}
+

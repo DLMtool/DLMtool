@@ -12,3 +12,4 @@ Atlantic_mackerel
 An object of class Data
 }
 \keyword{datasets}
+

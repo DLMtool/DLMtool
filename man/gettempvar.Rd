@@ -21,3 +21,4 @@ gettempvar(targ, targsd, targgrad, nyears, nsim, rands = NULL)
 Creates a time series per simulation that has gradient grad and random normal walk with sigma
 }
 \keyword{internal}
+

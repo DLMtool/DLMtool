@@ -12,3 +12,4 @@ Canary_Rockfish_BC_DFO
 An object of class OM
 }
 \keyword{datasets}
+

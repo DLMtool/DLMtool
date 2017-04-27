@@ -57,9 +57,10 @@ cpars<-out[[2]]
 runMSE(filledOM,MPs=c("DCAC","MCD"),cpars=cpars)
 matplot(out$Find,type='l')
 }
-\references{
-Walters, C.J., Martell, S.J.D., Korman, J. 2006. A stochastic approach to stock reduction analysis. Can. J. Fish. Aqua. Sci. 63:212-213.
-}
 \author{
 T. Carruthers (Canadian DFO grant)
 }
+\references{
+Walters, C.J., Martell, S.J.D., Korman, J. 2006. A stochastic approach to stock reduction analysis. Can. J. Fish. Aqua. Sci. 63:212-213.
+}
+

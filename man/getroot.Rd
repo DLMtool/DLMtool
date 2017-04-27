@@ -17,3 +17,4 @@ getroot(X, ageM, age95)
 Calculate slope from ageM and age95
 }
 \keyword{internal}
+

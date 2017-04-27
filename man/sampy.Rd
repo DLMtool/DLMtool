@@ -12,3 +12,4 @@ sampy(x)
 \description{
 Sample vector
 }
+

@@ -54,12 +54,10 @@ The component of the operating model that controls fishing dynamics
 
 \item{\code{CurrentYr}}{The current calendar year (final year) of the historical simulations (e.g. 2011)}
 }}
-
 \section{Objects from the Class}{
  Objects can be created by calls of the form
 \code{new('Fleet', OM)}
 }
-
 \examples{
 
 showClass('Fleet')
@@ -69,3 +67,4 @@ showClass('Fleet')
 T. Carruthers
 }
 \keyword{classes}
+

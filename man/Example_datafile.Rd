@@ -12,3 +12,4 @@ Example_datafile
 An object of class Data
 }
 \keyword{datasets}
+

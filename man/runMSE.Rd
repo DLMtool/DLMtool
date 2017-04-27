@@ -7,7 +7,7 @@
 runMSE(OM = testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE", "matlenlim"),
   nsim = 48, proyears = 50, interval = 4, pstar = 0.5, maxF = 0.8,
   timelimit = 1, reps = 1, CheckMPs = FALSE, Hist = FALSE,
-  ntrials = 50, fracD = 0.05)
+  ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2, Bfrac = 0.5)
 }
 \arguments{
 \item{OM}{An operating model object (class OM)}
@@ -47,6 +47,15 @@ percent of simulations are not close to the required depletion}
 
 \item{fracD}{maximum allowed proportion of simulations where depletion is not 
 close to sampled depletion from OM before model stops with error}
+
+\item{CalcBlow}{Should low biomass be calculated where this is the spawning
+biomass at which it takes HZN mean generation times of zero fishing to reach 
+Bfrac fraction of SSBMSY}
+
+\item{HZN}{The number of mean generation times required to reach Bfrac SSBMSY
+in the Blow calculation}
+
+\item{Bfrac}{The target fraction of SSBMSY for calculating Blow}
 }
 \value{
 An object of class MSE
@@ -58,3 +67,4 @@ simulation) for a specified operating model
 \author{
 T. Carruthers and A. Hordyk
 }
+

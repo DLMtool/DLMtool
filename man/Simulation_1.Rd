@@ -12,3 +12,4 @@ Simulation_1
 An object of class Data
 }
 \keyword{datasets}
+
