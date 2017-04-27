@@ -234,7 +234,7 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
                  "LFSs","Vmaxlens","Perr","R0","Mat_age", 
                  "Mrand","Linfrand","Krand","maxage","V","Depletion", # end of OM variables
                  "ageM", "age95", "V", "EffYears", "EffLower", "EffUpper","Mat_age", # start of runMSE derived variables
-                 "Wt_age") 
+                 "Wt_age", "Len_age", "Marray") 
   
   
   # Sample implementation error parameters
@@ -251,8 +251,7 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
   DiscMort<-runif(nsim,OM@DiscMort[1],OM@DiscMort[2])
   
   
-  # Sample custom parameters
-  # ===================================================================
+  #Sample custom parameters ===================================================================
   if (length(OM@cpars) > 0) { # custom parameters exist
      
 	  Names <- names(cpars)
@@ -278,7 +277,6 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
 	
 	  usedName <- 0 	
     for (i in 1:length(cpars)) {
-	    
       samps <- cpars[[i]]
 	    name <- names(cpars)[i]
 	    if (any(c("EffUpper", "EffLower", "EffYears", "maxage") %in% name)) {
@@ -314,26 +312,37 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
   if (length(maxage) > 1) maxage <- maxage[1] # check if maxage has been passed in custompars
   OM@maxage <- maxage # update OM object with maxage that is used 
   
-  
   if(exists("V",inherits=FALSE))if(dim(V)[3] != proyears + nyears)   V<-abind(V,array(V[,,nyears],c(nsim,maxage,proyears)),along=3) # extend future Vulnerabiliy according to final historical vulnerability
    
   if (any(dim(Find) != c(nsim, nyears))) stop("Find must be matrix with dimensions: nsim, nyears")
       
   SRrel <- rep(OM@SRrel, nsim)  # type of Stock-recruit relationship. 1=Beverton Holt, 2=Ricker
   
-  Marray <- gettempvar(M, Msd, Mgrad, nyears + proyears, nsim, Mrand)  # M by sim and year according to gradient and inter annual variability
+  if (!exists("Marray", inherits=FALSE)|length(OM@cpars)==0) {
+    Marray <- gettempvar(M, Msd, Mgrad, nyears + proyears, nsim, Mrand)  # M by sim and year according to gradient and inter annual variability
+  }
   Linfarray <- gettempvar(Linf, Linfsd, Linfgrad, nyears + proyears, nsim, Linfrand)  # Linf array
   Karray <- gettempvar(K, Ksd, Kgrad, nyears + proyears, nsim, Krand)  # the K array
   
   Agearray <- array(rep(1:maxage, each = nsim), dim = c(nsim, maxage))  # Age array
-  Len_age <- array(NA, dim = c(nsim, maxage, nyears + proyears))  # Length at age array
-  ind <- as.matrix(expand.grid(1:nsim, 1:maxage, 1:(nyears + proyears)))  # an index for calculating Length at age
-  Len_age[ind] <- Linfarray[ind[, c(1, 3)]] * (1 - exp(-Karray[ind[, c(1, 3)]] * 
-    (Agearray[ind[, 1:2]] - t0[ind[, 1]])))
+  
+  if (!exists("Len_age", inherits=FALSE)|length(OM@cpars)==0) {
+    Len_age <- array(NA, dim = c(nsim, maxage, nyears + proyears))  # Length at age array
+    ind <- as.matrix(expand.grid(1:nsim, 1:maxage, 1:(nyears + proyears)))  # an index for calculating Length at age
+    Len_age[ind] <- Linfarray[ind[, c(1, 3)]] * (1 - exp(-Karray[ind[, c(1, 3)]] * 
+      (Agearray[ind[, 1:2]] - t0[ind[, 1]])))
+  }
+  
   if (!exists("Wt_age", inherits=FALSE)|length(OM@cpars)==0) {
     Wt_age <- array(NA, dim = c(nsim, maxage, nyears + proyears))  # Weight at age array
     Wt_age[ind] <- OM@a * Len_age[ind]^OM@b  # Calculation of weight array
   }	
+  
+  ## Add checks for dimensions 
+  # Marray 
+  # Len_age 
+  # Wt_age 
+  
   
   # Calcaluate age at maturity 
   if (!exists("ageM", inherits=FALSE) |length(OM@cpars)==0) ageM <- -((log(1 - L50/Linf))/K) + t0  # calculate ageM from L50 and growth parameters (non-time-varying)
@@ -531,17 +540,17 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
     SSN0 <- apply(SSN[, , 1, ], c(1, 3), sum)  # Calculate unfished spawning stock numbers  
     SSB0 <- apply(SSB[, , 1, ], 1, sum)  # Calculate unfished spawning stock biomass
     SSBpR <- SSB0/R0  # Spawning stock biomass per recruit
-	SSBpR <- matrix(SSB0/R0, nrow=nsim, ncol=nareas)  # Spawning stock biomass per recruit
+	  SSBpR <- matrix(SSB0/R0, nrow=nsim, ncol=nareas)  # Spawning stock biomass per recruit
     SSB0a <- apply(SSB[, , 1, ], c(1, 3), sum)  # Calculate unfished spawning stock numbers
     B0 <- apply(Biomass[, , 1, ], 1, sum)
-	N0 <- apply(N[, , 1, ], 1, sum)
+	  N0 <- apply(N[, , 1, ], 1, sum)
   } else {
     SSN0 <- apply(SSN[, , 1, ], 2, sum)  # Calculate unfished spawning stock numbers  
     SSB0 <-  sum(SSB[, , 1, ])  # Calculate unfished spawning stock biomass
     SSBpR <- SSB0/R0  # Spawning stock biomass per recruit
     SSB0a <- apply(SSB[, , 1, ], 2, sum)  # Calculate unfished spawning stock numbers
     B0 <- apply(Biomass[, , 1, ], 2, sum)
-	N0 <- apply(N[, , 1, ], 2, sum)
+	  N0 <- apply(N[, , 1, ], 2, sum)
   }
   
   bR <- matrix(log(5 * hs)/(0.8 * SSB0a), nrow=nsim)  # Ricker SR params
@@ -550,6 +559,7 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
   message("Optimizing for user-specified depletion")  # Print a progress update
   flush.console()  # update console
   
+  # opt q ===== 
   if (snowfall::sfIsRunning()) {
     snowfall::sfExport(list = c("dep", "Find", "Perr", "Marray", "hs", "Mat_age", 
       "Wt_age", "R0", "V", "nyears", "maxage", "SRrel", "aR", "bR"))
@@ -576,7 +586,7 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
     Nprob <- length(HighQ)
 	
     message(Nprob,' simulations have final biomass that is not close to sampled depletion') 
-	message('Re-sampling depletion, recruitment error, and fishing effort')
+	  message('Re-sampling depletion, recruitment error, and fishing effort')
     flush.console()
     count <- 0
     while (Err & count < ntrials) {
@@ -1084,8 +1094,9 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
   # SPRa <- array(NA,dim=c(nsim,nMP,proyears)) # store the Spawning Potential Ratio
   
   MPdur <- rep(NA, nMP)
+
+  # Begin loop over MPs ----
   mm <- 1 # for debugging
-  
   for (mm in 1:nMP) {
     # MSE Loop over methods
     pL5 <- L5  # reset selectivity parameters for projections
@@ -1280,6 +1291,7 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
     cat(".")
     flush.console()
     
+    # begin projection years ----
     for (y in 2:proyears) {
       cat(".")
       flush.console()
@@ -1326,13 +1338,14 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
       SSN_P[SAYR] <- N_P[SAYR] * Mat_age[SA]  # Calculate spawning stock numbers
       SSB_P[SAYR] <- SSN_P[SAYR] * Wt_age[SAYt]  # Calculate spawning stock biomass
       
+      # update year ----
       if (y %in% upyrs) {
         # rewrite the DLM object and run the TAC function
         yind <- upyrs[match(y, upyrs) - 1]:(upyrs[match(y, upyrs)] - 1)
         CNtemp <- array(N_P[, , yind, ] * exp(Z_P[, , yind, ]) * 
           (1 - exp(-Z_P[, , yind, ])) * (FM_P[, , yind, ]/Z_P[, , yind, ]), c(nsim, maxage, interval, nareas))
         CBtemp <- array(Biomass_P[, , yind, ] * exp(Z_P[, , yind, ]) * 
-		  (1 - exp(-Z_P[, , yind, ])) * (FM_P[, , yind, ]/Z_P[, , yind, ]), c(nsim, maxage, interval, nareas))
+		      (1 - exp(-Z_P[, , yind, ])) * (FM_P[, , yind, ]/Z_P[, , yind, ]), c(nsim, maxage, interval, nareas))
         CNtemp[is.na(CNtemp)] <- tiny
         CBtemp[is.na(CBtemp)] <- tiny
         CNtemp[!is.finite(CNtemp)] <- tiny
@@ -1359,20 +1372,23 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
         # 1:interval)CAA[i,j,]<-ceiling(-0.5+rmultinom(1,CAA_nsamp[i],CNtemp[i,j,])*CAA_nsamp[i]/CAA_ESS[i])
         # # a multinomial observation model for catch-at-age data
         for (i in 1:nsim) {
-		  for (j in 1:interval) {
-		    CAA[i, j, ] <- ceiling(-0.5 + 
-			  rmultinom(1, CAA_ESS[i], CNtemp[i, j, ]) * CAA_nsamp[i]/CAA_ESS[i])   # a multinomial observation model for catch-at-age data
-			  # rmultinom(1, CAA_ESS[i], CN[i, j, ]) * CAA_nsamp[i]/CAA_ESS[i])   # a multinomial observation model for catch-at-age data
-		  }
-		}	  
+		      for (j in 1:interval) {
+		      CAA[i, j, ] <- ceiling(-0.5 + 
+			    rmultinom(1, CAA_ESS[i], CNtemp[i, j, ]) * CAA_nsamp[i]/CAA_ESS[i])   # a multinomial observation model for catch-at-age data
+			    # rmultinom(1, CAA_ESS[i], CN[i, j, ]) * CAA_nsamp[i]/CAA_ESS[i])   # a multinomial observation model for catch-at-age data
+		      }
+		    }	  
         
-		CAL <- array(NA, dim = c(nsim, interval, nCALbins))  # the catch at length array
-		  # # a multinomial observation model for catch-at-length data
-		cn <- as.matrix(CNtemp[i,,])
-		if (interval == 1) cn <- t(cn) # dodgy hack to ensure matrix is correct 
+		    CAL <- array(NA, dim = c(nsim, interval, nCALbins))  # the catch at length array
+		      # # a multinomial observation model for catch-at-length data
+		    cn <- as.matrix(CNtemp[i,,])
+		    if (interval == 1) cn <- t(cn) # dodgy hack to ensure matrix is correct 
         for (i in 1:nsim) { # Rcpp code 
-          CAL[i, 1:interval, ] <- genLenComp(CAL_bins, CAL_binsmid, as.matrix(pSLarray[i,, nyears + yind]), CAL_ESS[i], CAL_nsamp[i], 
-            cn, as.matrix(Len_age[i,,nyears + yind]), as.matrix(LatASD[i,, nyears + yind]), truncSD=0) 
+          CAL[i, 1:interval, ] <- genLenComp(CAL_bins, CAL_binsmid, 
+                                             as.matrix(pSLarray[i,, nyears + yind]), 
+                                             CAL_ESS[i], CAL_nsamp[i], 
+                                             cn, as.matrix(Len_age[i,,nyears + yind]), 
+                                             as.matrix(LatASD[i,, nyears + yind]), truncSD=0) 
           LFC[i] <- CAL_binsmid[min(which(round(CAL[i, interval, ],0) > 1))] # get the smallest CAL observation	
         }	
         # for (i in 1:nsim) {
