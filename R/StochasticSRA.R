@@ -149,7 +149,8 @@ StochasticSRA<-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proyea
                         burnin=500,thin=10,ESS=300,ploty=T,nplot=6,SRAdir=NA){
 
   #snowfall::sfExport(list = c("LSRA_opt")) 
-  nyears<-nrow(Chist)
+  nyears<-length(Chist)
+  if(class(Chist)=="matrix")nyears<-nrow(Chist)
   maxage<-OM@maxage
   
   if("nsim"%in%slotNames(OM))nsim<-OM@nsim
@@ -460,7 +461,6 @@ StochasticSRA<-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proyea
   AC<-apply(RD,1,getAC)
   OM@AC<-quantile(AC,c(0.05,0.95))
   
-  
   A5<--(slp*log(1/0.05-1)-infl)
   A95<--(slp*log(1/0.95-1)-infl)
   L5<-Linf*(1-exp(-K*(A5-t0)))
@@ -485,7 +485,11 @@ StochasticSRA<-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proyea
   
   PredF<-PredF/apply(PredF,1,mean) # Find should be mean 1 so qs optimizers are standardized
   
-  OM@cpars<-list(dep=dep,M=M,procsd=procsd,AC=AC,hs=h,Linf=Linf,
+  Wt_age <- array(Wt_age, dim=c(dim=c(nsim, maxage, nyears+proyears)))
+  Len_age <- array(Len_age, dim=c(nsim, maxage, nyears+proyears))
+  Marray <- matrix(M, nrow=nsim, ncol=proyears+nyears)
+  OM@cpars<-list(dep=dep,M=M,procsd=procsd,AC=AC,hs=h,Linf=Linf, 
+                                   Wt_age=Wt_age, Len_age=Len_age, Marray=Marray, 
                                    K=K,t0=t0,L50=lenM,
                                    L5=L5,LFS=L95,Find=PredF,
                                    V=array(sel,c(nsim,maxage,nyears)),Perr=Perr,R0=R0,
