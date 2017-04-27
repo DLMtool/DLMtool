@@ -16,6 +16,7 @@
 #' (e.g. a quarterly model is 0.25, a monthly model 1/12)
 #' @param Author Who did the assessment
 #' @author T. Carruthers 
+#' @importFrom coda mcmc
 #' @export iSCAM2DLM
 iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,Name=NULL,Source="No source provided",
                  length_timestep=1,Author="No author provided"){

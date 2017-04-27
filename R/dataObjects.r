@@ -422,28 +422,44 @@
 "Canary_Rockfish_BC_DFO"
 
 
-#'  Red_snapper_GOM_OM OM
+#'  Red_snapper_GOM_SS OM
 #'
 #'  An object of class OM (from SS using SS2DLM)
 #'  SEDAR 31, 2014 update assessment. Author: No author provided.
 #' 
-"Red_snapper_GOM_OM"
+"Red_snapper_GOM_SS"
 
 
-#'  Yellowfin_tuna_IO_OM OM
+#'  Yellowfin_tuna_IO_SS OM
 #'
 #'  An object of class OM (from SS using SS2DLM)
 #'  SEDAR 31, 2014 update assessment. Author: No author provided.
 #' 
-"Yellowfin_tuna_IO_OM"
+"Yellowfin_tuna_IO_SS"
 
 
-#'  Rougheye_Rockfish_BC_OM OM
+#'  Rougheye_Rockfish_BC_SRA OM
 #'
 #'  An object of class OM (built using StochasticSRA)
 #'  DLMtool generated
 #' 
-"Rougheye_Rockfish_BC_OM"
+"Rougheye_Rockfish_BC_SRA"
+
+
+#'  Swordfish_OM OM
+#'
+#'  An object of class OM
+#'  Author: Alex Hanke (DFO)  Assessment: http://iccat.org/Documents/SCRS/Manual/CH2/2_1_9_SWO_ENG.pdf
+#' 
+"Swordfish_OM"
+
+
+#'  Arrowtooth_Flounder_BC_DFO_iSCAM OM
+#'
+#'  An object of class OM (built using iSCAM2DLM)
+#'  No source provided. Author: No author provided.
+#' 
+"Arrowtooth_Flounder_BC_DFO_iSCAM"
 
 
 #'  testMSE MSE
