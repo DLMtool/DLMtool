@@ -810,6 +810,35 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
   UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
   FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
   
+  
+  
+  # Code for deriving low biomass (SSB where it takes MGThorizon x MGT to reach Bfrac of BMSY)
+  
+  calcBlow=FALSE
+  Bfrac<-0.5 # Fraction of SSBMSY to aim for  !!ARGUMENT TO runMSE!!
+  MGThorizon<-2 # Duration til                !!ARGUMENT TO runMSE!!
+  
+  if(calcBlow){
+    
+    message("Calculating Blow reference points")              # Print a progress update  
+    
+    Znow<-apply(Z[,,nyears,]*N[,,nyears,],1:2,sum)/apply(N[,,nyears,],1:2,sum)
+    MGTsurv<-t(exp(-apply(Znow,1,cumsum)))
+    MGT<-apply(Agearray*(Mat_age*MGTsurv),1,sum)/apply(Mat_age*MGTsurv,1,sum)
+    MGThorizon<-floor(HZN*MGT)
+    SSBMSY<-MSYrefs[3,]
+     
+    if(sfIsRunning()){
+      sfExport(list=c("Blow_opt","getBlow","SSBMSY","MGT","Find","Perr","Marray","hs","Mat_age","Wt_age","R0","V","nyears","maxage","SRrel","aR","bR"))
+      Blow<-sfSapply(1:nsim,getBlow,SSBMSY,MGThorizon,Find,Perr,Marray,hs,Mat_age,Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR,Bfrac) # find the q that gives current stock depletion
+    }else{
+      Blow <- sapply(1:nsim,getBlow,SSBMSY,MGThorizon,Find,Perr,Marray,hs,Mat_age,Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR,Bfrac) # find the q that gives current stock depletion
+    }
+    
+  }
+  
+  
+  
   message("Calculating reference yield - best fixed F strategy")  # Print a progress update
   flush.console()  # update the console
   if (snowfall::sfIsRunning()) {
