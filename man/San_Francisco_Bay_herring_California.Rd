@@ -12,4 +12,3 @@ San_Francisco_Bay_herring_California
 An object of class OM
 }
 \keyword{datasets}
-

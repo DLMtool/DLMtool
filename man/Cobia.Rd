@@ -12,4 +12,3 @@ Cobia
 An object of class Data
 }
 \keyword{datasets}
-

@@ -13,4 +13,3 @@
 \description{
 Plot MSE object
 }
-

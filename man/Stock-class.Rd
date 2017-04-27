@@ -69,10 +69,12 @@ dynamics model
 
 \item{\code{Source}}{A reference to a website or article form which parameters were taken to define the operating model}
 }}
+
 \section{Objects from the Class}{
  Objects can be created by calls of the form
 \code{new('Stock', OM)}
 }
+
 \examples{
 
 showClass('Stock')
@@ -82,4 +84,3 @@ showClass('Stock')
 T. Carruthers
 }
 \keyword{classes}
-

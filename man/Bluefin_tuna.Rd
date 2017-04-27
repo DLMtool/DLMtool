@@ -12,4 +12,3 @@ Bluefin_tuna
 An object of class Stock
 }
 \keyword{datasets}
-

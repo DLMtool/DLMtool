@@ -25,4 +25,3 @@ testOM<-ForceCor(testOM)
 \author{
 T. Carruthers (Canadian DFO grant)
 }
-

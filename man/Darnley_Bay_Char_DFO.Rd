@@ -12,4 +12,3 @@ Darnley_Bay_Char_DFO
 An object of class OM
 }
 \keyword{datasets}
-

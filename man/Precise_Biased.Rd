@@ -12,4 +12,3 @@ Precise_Biased
 An object of class Obs
 }
 \keyword{datasets}
-

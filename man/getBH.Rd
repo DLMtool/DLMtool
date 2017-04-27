@@ -25,4 +25,3 @@ Internal function to optBH
 \author{
 T. Carruthers
 }
-

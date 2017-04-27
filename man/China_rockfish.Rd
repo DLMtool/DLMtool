@@ -12,4 +12,3 @@ China_rockfish
 An object of class Data
 }
 \keyword{datasets}
-

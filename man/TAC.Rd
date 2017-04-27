@@ -22,4 +22,3 @@ data-limited MPs (Output) given a data-limited data object Data
 \author{
 T. Carruthers
 }
-

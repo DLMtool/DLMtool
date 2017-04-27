@@ -12,4 +12,3 @@ Perfect_Imp
 An object of class Imp
 }
 \keyword{datasets}
-

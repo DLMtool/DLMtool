@@ -49,4 +49,3 @@ Boxplot of MP performance from MSE object
 \author{
 A. Hordyk
 }
-

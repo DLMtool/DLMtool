@@ -29,4 +29,3 @@ Wrapper for estimating stock recruitment parameters from resampled stock-recruit
 \author{
 T. Carruthers
 }
-

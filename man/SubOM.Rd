@@ -22,4 +22,3 @@ complete OM object. Mainly used for internal functions.
 \author{
 A. Hordyk
 }
-

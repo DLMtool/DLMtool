@@ -12,4 +12,3 @@ Red_snapper
 An object of class Data
 }
 \keyword{datasets}
-

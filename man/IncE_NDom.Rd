@@ -12,4 +12,3 @@ IncE_NDom
 An object of class Fleet
 }
 \keyword{datasets}
-

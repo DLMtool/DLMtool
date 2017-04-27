@@ -12,4 +12,3 @@ YM_GOM
 An object of class OM
 }
 \keyword{datasets}
-

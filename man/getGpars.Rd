@@ -17,4 +17,3 @@ Extracts growth parameters from a SS3 r4ss replist
 \author{
 T. Carruthers
 }
-

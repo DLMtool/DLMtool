@@ -28,4 +28,3 @@ visually examine the parameter values and ranges entered into the Obs object.
 \author{
 T. Carruthers and A. Hordyk
 }
-

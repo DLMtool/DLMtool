@@ -19,4 +19,3 @@ range01(x)
 \description{
 Function to standardize to value relative to minimum and maximum values
 }
-

@@ -12,4 +12,3 @@ Generic_DecE
 An object of class Fleet
 }
 \keyword{datasets}
-

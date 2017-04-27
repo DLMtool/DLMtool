@@ -32,4 +32,3 @@ Plot the Fleet object parameters
 \author{
 A. Hordyk
 }
-

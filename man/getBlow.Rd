@@ -55,4 +55,3 @@ to reach Bfrac x SSBMSY biomass level given zero catches
 \author{
 T. Carruthers
 }
-

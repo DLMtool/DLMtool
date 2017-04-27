@@ -21,4 +21,3 @@ control recommendation(s) in element 1 and Data object in element 2.
 \author{
 A. Hordyk
 }
-

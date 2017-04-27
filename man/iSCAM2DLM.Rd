@@ -5,23 +5,30 @@
 \title{Reads MLE estimates from iSCAM file structure into an operating model}
 \usage{
 iSCAM2DLM(iSCAMdir, nsim = 48, proyears = 50, Name = NULL,
-  Source = "No source provided", Author = "No author provided")
+  Source = "No source provided", length_timestep = 1,
+  Author = "No author provided")
 }
 \arguments{
-\item{nsim}{The number of simulations to take for parameters with uncertainty (for OM@cpars custom parameters)}
+\item{nsim}{The number of simulations to take for parameters with 
+uncertainty (for OM@cpars custom parameters)}
 
 \item{Name}{The name of the operating model}
 
 \item{Source}{Reference to assessment documentation e.g. a url}
 
+\item{length_timestep}{How long is a model time step in years 
+(e.g. a quarterly model is 0.25, a monthly model 1/12)}
+
 \item{Author}{Who did the assessment}
 
-\item{iscamdir}{A folder with Stock Synthesis input and output files in it}
+\item{iscamdir}{A folder with iSCAM input and output files in it}
 }
 \description{
-A function that uses the file location of a fitted SS3 model including input files to population the various slots of an operating model with MLE parameter estimates
+A function that uses the file location of a fitted iSCAM 
+model including input files to population the various slots of an 
+operating model parameter estimates. iSCAM2DLM relies on several 
+functions written by Chris Grandin (DFO PBS).
 }
 \author{
 T. Carruthers
 }
-

@@ -28,10 +28,12 @@ An operating model component that specifies the degree of adherence to managemen
 
 \item{\code{Source}}{A reference to a website or article form which parameters were taken to define the operating model}
 }}
+
 \section{Objects from the Class}{
  Objects can be created by calls of the form
 \code{new('Imp', OM)}
 }
+
 \examples{
 
 showClass('Imp')
@@ -41,4 +43,3 @@ showClass('Imp')
 T. Carruthers
 }
 \keyword{classes}
-

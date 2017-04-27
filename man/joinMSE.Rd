@@ -20,4 +20,3 @@ number of historical years, and projection years.
 \author{
 A. Hordyk
 }
-

@@ -203,10 +203,12 @@ bounds of a uniform distribution from which to sample the parameter.
 
 \item{\code{DiscMort}}{Discard mortality rate (uniform distribution) (can be an improper fraction greater than 1)}
 }}
+
 \section{Objects from the Class}{
  Objects can be created by calls of the form
 \code{new('OM', Stock, Fleet, Obs, Imp)}.
 }
+
 \examples{
 
 showClass('OM')
@@ -216,4 +218,3 @@ showClass('OM')
 T. Carruthers
 }
 \keyword{classes}
-

@@ -39,4 +39,3 @@ visually examine the parameter values and ranges entered into the Stock object.
 \author{
 A. Hordyk
 }
-

@@ -12,4 +12,3 @@ Gulf_blue_tilefish
 An object of class Data
 }
 \keyword{datasets}
-

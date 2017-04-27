@@ -80,6 +80,7 @@ An operating model component that controls the observation model
 
 \item{\code{Crefcv}}{Bias in the knowledge of MSY(uniform distribution)}
 }}
+
 \note{
 Its questionable whether the hyperstability/hyperdepletion should be
 categorised as an observation model characteristic as it is most often
@@ -91,6 +92,7 @@ hyperdeplete beta > 1, only.
  Objects can be created by calls of the form
 \code{new('Obs', OM)}
 }
+
 \examples{
 
 showClass('Obs')
@@ -100,4 +102,3 @@ showClass('Obs')
 T. Carruthers
 }
 \keyword{classes}
-

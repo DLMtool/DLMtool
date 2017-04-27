@@ -21,4 +21,3 @@ getSlope2(s2, LFS, s1, maxlen, MaxSel)
 Internal function to calculate slope
 }
 \keyword{internal}
-

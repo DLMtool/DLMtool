@@ -12,4 +12,3 @@ Low_Effort_Non_Target
 An object of class Fleet
 }
 \keyword{datasets}
-

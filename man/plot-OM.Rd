@@ -17,4 +17,3 @@ A function that plots the parameters and resulting time series of an operating m
 \author{
 T. Carruthers
 }
-

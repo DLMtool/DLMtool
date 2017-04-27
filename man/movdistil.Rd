@@ -17,4 +17,3 @@ A Function that takes a larger movement matrix, identifies the most parsimonious
 \author{
 T. Carruthers
 }
-

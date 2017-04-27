@@ -19,4 +19,3 @@ Linear interpolation of a y value at level xlev based on a vector x and y
 \author{
 T. Carruthers
 }
-

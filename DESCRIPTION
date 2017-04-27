@@ -32,5 +32,5 @@ Suggests:
     rmarkdown
 Packaged: 2015-11-13 23:33:05 UTC; Tom Carruthers
 LinkingTo: Rcpp
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 BugReports: https://github.com/DLMtool/DLMtool/issues

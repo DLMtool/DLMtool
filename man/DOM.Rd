@@ -24,4 +24,3 @@ AvC in less than half of simulations.
 \author{
 A. Hordyk
 }
-

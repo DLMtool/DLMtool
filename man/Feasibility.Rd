@@ -12,4 +12,3 @@ Feasibility
 An object of class Fease
 }
 \keyword{datasets}
-

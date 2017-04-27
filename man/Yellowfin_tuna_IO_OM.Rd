@@ -13,4 +13,3 @@ An object of class OM (from SS using SS2DLM)
  SEDAR 31, 2014 update assessment. Author: No author provided.
 }
 \keyword{datasets}
-

@@ -25,4 +25,3 @@ Function that returns a stochastic estimate of steepness given observed stock re
 \author{
 T. Carruthers
 }
-

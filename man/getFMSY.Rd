@@ -42,4 +42,3 @@ getFMSY(x, Marray, hs, Mat_age, Wt_age, R0, V, maxage, nyears, proyears,
 Calculate FMSY and related metrics
 }
 \keyword{internal}
-

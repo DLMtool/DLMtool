@@ -12,4 +12,3 @@ Generic_fleet
 An object of class Fleet
 }
 \keyword{datasets}
-

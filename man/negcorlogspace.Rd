@@ -25,4 +25,3 @@ A function that samples multivariate normal (logspace) variables
 \author{
 T. Carruthers
 }
-

@@ -73,4 +73,3 @@ A projection by projection plot of F/FMSY, B/BMSY, B/B0, and yield
 \author{
 T. Carruthers & A.Hordyk
 }
-

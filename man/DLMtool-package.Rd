@@ -2,8 +2,8 @@
 % Please edit documentation in R/DLMtool-package.R
 \docType{package}
 \name{DLMtool-package}
-\alias{DLMtool}
 \alias{DLMtool-package}
+\alias{DLMtool}
 \title{Data-Limited Methods Toolkit}
 \description{
 Simulation testing and implementation of data-limited fishery stock
@@ -34,10 +34,6 @@ mydata<-Sense(mydata,'Fratio') # conduct a sensitivity analysis for one of the m
 sfStop()
 
 }
-\author{
-Tom Carruthers <t.carruthers@fisheries.ubc.ca> Adrian Hordyk
-<a.hordyk@murdoch.edu.au>
-}
 \references{
 Carruthers, T.R., Punt, A.E., Walters, C.J., MacCall, A.,
 McAllister, M.K., Dick, E.J., Cope, J. 2014. Evaluating methods for setting
@@ -48,6 +44,10 @@ H.F., Walters, C., McAllister, M.K., Hillary, R., Levontin, P., Kitakado,
 T., Davies, C.R. Performance review of simple management procedures. ICES
 Journal of Marine Science.
 }
+\author{
+Tom Carruthers <t.carruthers@fisheries.ubc.ca> Adrian Hordyk
+<a.hordyk@murdoch.edu.au>
+}
 \keyword{assessment}
 \keyword{data-limited}
 \keyword{data-poor}
@@ -56,4 +56,3 @@ Journal of Marine Science.
 \keyword{management}
 \keyword{stock}
 \keyword{strategy}
-

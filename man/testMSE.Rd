@@ -12,4 +12,3 @@ testMSE
 An object of class MSE
 }
 \keyword{datasets}
-

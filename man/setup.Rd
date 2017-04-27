@@ -12,4 +12,3 @@ setup(cpus = parallel::detectCores())
 \description{
 Sets up parallel processing using the snowfall package
 }
-
