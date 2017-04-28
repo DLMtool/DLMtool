@@ -5,9 +5,13 @@
 #' @description A function that uses the file location of a fitted SS3 model including input files to population the various slots of an operating model with MLE parameter estimates 
 #' @param SSdir A folder with Stock Synthesis input and output files in it
 #' @param nsim The number of simulations to take for parameters with uncertainty (for OM@cpars custom parameters)
+#' @param proyears The number of projection years for MSE
+#' @param length_timestep The duration (in years) of each timestep in the model (if an quarterly model is used this is 0.25)
 #' @param Name The name of the operating model
 #' @param Source Reference to assessment documentation e.g. a url
 #' @param Author Who did the assessment
+#' @param printstats Should the r4ss function SS_output return info on data that was read in?
+#' @param verbose Should the r4ss function SS_ouput return detailed messages?
 #' @author T. Carruthers
 #' @export SS2DLM
 #' @importFrom r4ss SS_output
@@ -256,27 +260,13 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #' Linear interpolation of a y value at level xlev based on a vector x and y
 #'
 #' @param x A vector of x values
 #' @param y A vector of y values (identical length to x)
 #' @param xlev A the target level of x from which to guess y
+#' @param ascending Are the the x values supposed to be ordered before interpolation
+#' @param zeroint is there a zero-zero x-y intercept?
 #' @author T. Carruthers
 #' @export LinInterp
 LinInterp<-function(x,y,xlev,ascending=F,zeroint=F){
@@ -329,8 +319,7 @@ negcorlogspace<-function(xmu,ymu,xcv=0.1,nsim,cor=-0.9,ploty=F){
 #' Simplified a multi-area transition matrix into the best 2 x 2 representation
 #'
 #' @description A Function that takes a larger movement matrix, identifies the most parsimonious representation of 2 non-mixed areas and returns the final unfished movement matrix
-#' @param replist the list output of the r4ss SS_output function (a list of assessment inputs / outputs)
-#' @param seas The reference season for the growth (not actually sure what this does yet) 
+#' @param movtab a table of estimated movements 
 #' @author T. Carruthers
 #' @export getGpars
 movdistil<-function(movtab){

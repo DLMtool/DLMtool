@@ -13,11 +13,19 @@ SS2DLM(SSdir, nsim = 48, proyears = 50, length_timestep = NA,
 
 \item{nsim}{The number of simulations to take for parameters with uncertainty (for OM@cpars custom parameters)}
 
+\item{proyears}{The number of projection years for MSE}
+
+\item{length_timestep}{The duration (in years) of each timestep in the model (if an quarterly model is used this is 0.25)}
+
 \item{Name}{The name of the operating model}
 
 \item{Source}{Reference to assessment documentation e.g. a url}
 
 \item{Author}{Who did the assessment}
+
+\item{printstats}{Should the r4ss function SS_output return info on data that was read in?}
+
+\item{verbose}{Should the r4ss function SS_ouput return detailed messages?}
 }
 \description{
 A function that uses the file location of a fitted SS3 model including input files to population the various slots of an operating model with MLE parameter estimates

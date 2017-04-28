@@ -4,7 +4,7 @@
 \name{Generic_fleet}
 \alias{Generic_fleet}
 \title{Generic_fleet Fleet}
-\format{An object of class \code{Fleet} of length 1.}
+\format{An object of class \code{NULL} of length 0.}
 \usage{
 Generic_fleet
 }

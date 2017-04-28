@@ -55,7 +55,7 @@ getBlow<-function(x,SSBMSY,MGThorizon,Find,Perr,Marray,hs,Mat_age,Wt_age,R0,V,ny
 #'
 #' @param lnq number: estimate of log catchability
 #' @param SSBMSYc number: spawning biomass at MSY
-#' @param MGThorizonc number: MGT x HZN
+#' @param MGThorizon number: MGT x HZN
 #' @param Fc vector nyears long of fishing mortality rate
 #' @param Perrc vector nyears+maxage-1 long of recruitment devitions 
 #' @param Mc vector nyears+proyears long of natural mortality rate
@@ -93,7 +93,7 @@ Blow_opt<-function(lnq,SSBMSYc,MGThorizon,Fc,Perrc,Mc,hc,Mac,Wac,R0c,Vc,nyears,m
   SSB0<-apply(SSB,2,sum)
   SSBpR<-SSB0/R0a                              # Calculate spawning stock biomass per recruit
   
-  N<-Perr[maxage:1]*array(exp(-Mc[1]*((1:maxage)-1))*R0c,dim=c(maxage,nareas))*array(rep(idist,each=maxage),dim=c(maxage,nareas))
+  N<-Perrc[maxage:1]*array(exp(-Mc[1]*((1:maxage)-1))*R0c,dim=c(maxage,nareas))*array(rep(idist,each=maxage),dim=c(maxage,nareas))
   SSN<-Mac*N   # Calculate initial spawning stock numbers
   Biomass<-N*Wac[,1]
   SSB<-SSN*Wac[,1]                               # Calculate spawning stock biomass

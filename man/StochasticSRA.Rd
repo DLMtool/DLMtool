@@ -23,6 +23,8 @@ StochasticSRA(OM, CAA, Chist, Cobs = 0.1, sigmaR = 0.5, Umax = 0.9,
 
 \item{nsim}{The number desired draws of parameters / effort trajectories}
 
+\item{proyears}{The number of projected MSE years}
+
 \item{Jump_fac}{A multiplier of the jumping distribution variance to increase acceptance (lower Jump_fac) or decrease acceptance rate (higher Jump_fac)}
 
 \item{nits}{The number of MCMC iterations}
@@ -31,13 +33,13 @@ StochasticSRA(OM, CAA, Chist, Cobs = 0.1, sigmaR = 0.5, Umax = 0.9,
 
 \item{thin}{The interval over which MCMC samples are extracted for use in graphing / statistics}
 
+\item{ESS}{Effective sample size - the weighting of the catch at age data}
+
 \item{ploty}{Do you want to see diagnostics plotted?}
 
 \item{nplot}{how many MCMC samples should be plotted in convergence plots?}
 
 \item{SRAdir}{A directory where the SRA diagnostics / fit are stored}
-
-\item{ESS:}{Effective sample size - the weighting of the catch at age data}
 }
 \value{
 A list with three positions. Position 1 is the filled OM object, position 2 is the custompars data.frame that may be submitted as an argument to runMSE() and position 3 is the matrix of effort histories [nyears x nsim] vector of objects of class\code{classy}

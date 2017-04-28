@@ -11,6 +11,8 @@ LSRA(x, FF, Chist_arr, M, Mat_age, Wt_age, sel, Recdevs, h)
 
 \item{FF}{a vector of recent fishign mortality rates (apical Fs)}
 
+\item{Chist_arr}{a vector of historical catch observations [nyears]}
+
 \item{M}{a vector of natural mortality rates [nsim]}
 
 \item{Mat_age}{a matrix of maturity at age [nsim x nage]}
@@ -22,8 +24,6 @@ LSRA(x, FF, Chist_arr, M, Mat_age, Wt_age, sel, Recdevs, h)
 \item{Recdevs}{a matrix of recruitment deviations [nsim x nyears]}
 
 \item{h}{a vector of steepness values of the Bev-Holt Stock-Recruitment relationship}
-
-\item{Chist}{a vector of historical catch observations [nyears]}
 }
 \value{
 all package data objects are placed in the global namespace \code{dir}

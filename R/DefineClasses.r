@@ -1057,6 +1057,13 @@ setClass("OM", representation(Name = "character", nsim="numeric",proyears="numer
   
   cpars="list",seed="numeric",CurrentYr="numeric"))
 
+
+Generic_fleet<-NULL
+Generic_obs<-NULL
+Perfect_Imp<-NULL
+
+
+
 # initialize OM
 setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=Generic_fleet, Obs=Generic_obs, Imp=Perfect_Imp, nsim=48, proyears=50) {
   if (is.null(Stock)) {

@@ -14,6 +14,8 @@ SRAsim(OM, qmult = 0.5, patchy = 0.2, nCAA = 100, sigmaE = 0.25)
 \item{patchy}{The fraction of years that have catch at age data}
 
 \item{nCAA}{The number of independent annual catch at age observations (same among all years)}
+
+\item{sigmaE}{Level of simulated interannual variability in effort (F) expressed as a lognorma SD}
 }
 \value{
 A list: Chist = historical catch series,Recdevs = historical recruitment deviations (mean = 1), CAA = catch at age matrix, N = numbers at age matrix, SSB = annual spawning biomass, FM = Fishing mortality rate at age matrix, M = natural mortality rate \code{classy}

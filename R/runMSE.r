@@ -1,3 +1,6 @@
+
+testOM<-NULL
+
 #' Run a Management Strategy Evaluation
 #' 
 #' A function that runs a Management Strategy Evaluation (closed-loop

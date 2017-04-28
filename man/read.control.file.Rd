@@ -12,9 +12,9 @@ read.control.file(file = NULL, num.gears = NULL, num.age.gears = NULL,
 
 \item{num.gears}{The number of gears}
 
-\item{verbose}{should detailed results be printed to console}
+\item{num.age.gears}{The number age-gears}
 
-\item{num.age.gear}{The number age-gears}
+\item{verbose}{should detailed results be printed to console}
 }
 \description{
 A function for returning the results of the

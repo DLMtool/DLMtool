@@ -26,6 +26,8 @@ LSRA2(x, lnR0s, FF, Chist, M, Mat_age, Wt_age, sel, Recdevs, h, mode = 2)
 \item{Recdevs}{a matrix of recruitment deviations [nsim x nyears]}
 
 \item{h}{a vector of steepness values of the Bev-Holt Stock-Recruitment relationship}
+
+\item{mode}{optimization or plotting}
 }
 \value{
 all package data objects are placed in the global namespace \code{dir}

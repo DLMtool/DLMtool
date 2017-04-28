@@ -17,7 +17,7 @@
 #' @author T. Carruthers
 #' @export DFO_hist
 #' @importFrom MASS kde2d
-DFO_hist <- function(OM, nam = NA, panel= T,nsim=48) {
+DFO_hist <- function(OM, panel= T,nsim=48) {
   
   if(length(OM@cpars)>0){
     message("cpars slot is specified, OM@nsim used for historical simulations")
@@ -54,7 +54,7 @@ DFO_hist <- function(OM, nam = NA, panel= T,nsim=48) {
 #' @author T. Carruthers
 #' @export DFO_proj
 #' @importFrom MASS kde2d
-DFO_proj <- function(MSEobj, nam = NA, maxplot=3) {
+DFO_proj <- function(MSEobj,maxplot=3) {
   
   nsim<-MSEobj@nsim
   nMPs<-MSEobj@nMPs
@@ -247,18 +247,18 @@ encircle<-function(x,y,col="red",perc=0.05,xrange=NA,yrange=NA,log=F,lty=1,lwd=1
 #' Deparment of Fisheries and Oceans default plot 2
 #'
 #' A preliminary plot for returning trade-offs plots and performance table for
-#' total yield, variability in yield, probability of overfishing and likelihood
-#' of biomass dropping below 50 per cent BMSY
+#' probability of obtaining half reference (FMSY) yield and probability of biomass 
+#' dropping below 50 per cent BMSY
 #'
-#'
-#' @usage DFO_plot2(MSEobj,nam=NA,type=NA,panel=T)
 #' @param MSEobj An object of class MSE
 #' @param nam Title of plot
-#' @param type Plots full range of data if NA. Plots a subset that meet thresholds if not NA.
+#' @param panel Should the plots be organized in many panels in a single figure
+#' @param Bcut The cutoff biomass for satisficing (relative to BMSY)
+#' @param Ycut the cutoff yield for satisficing (relative to reference yield)
 #' @return A table of performance metrics.
 #' @author T. Carruthers
 #' @export DFO_plot2
-DFO_plot2 <- function(MSEobj, nam = NA, type = NA, panel = T,Bcut=50, Ycut=50) {
+DFO_plot2 <- function(MSEobj, nam = NA,panel = T,Bcut=50, Ycut=50) {
 
   Yd <- rep(NA, MSEobj@nMPs)
   B50 <- rep(NA, MSEobj@nMPs)

@@ -12,6 +12,46 @@ DLM_data has been renamed Data
 Fsd in Fleet object has been re-named Esd 
 
 
+### DLMtool v4.1
+
+#### Major Changes
+
+- Implementation error and a dedicated implementation error object called 'Imp', (like Stock, Fleet and Obs)
+   that can account for variability and overages/underages in both effort, catch and size limit advice (discarding
+   rate and post release mortality rate are coming soon)
+
+- At least 10 new example operating models from real DLMtool applications in the US and Canada
+
+- Stochastic SRA operating model functions (i.e. build a full operating model accounting for correlations in
+   parameters using historical catch trends and some composition data)
+
+- Full plots of operating model conditions
+
+- Stock-synthesis assessment to DLM function for specifying operating models (currently MLE only but adding
+   MCMC and hessian options)
+
+- iSCAM assessment to DLM support for specifying operating models (MPD only but adding MCMC and hessian options soon)
+
+- Tracking of historical versus current simulated age composition in catches and population over simulations
+
+- New function 'replace' for copying parts of an operating model to another operating model (e.g. Robin Hood
+  approach,where you may want to borrow say, the fleet characteristics from another operating model)
+
+- Estimation of a new reference point 'Blow' for calculation of conservation-related performance metrics
+   (Blow is the spawning biomass where it takes HZN number of mean generation times to reach Bfrac 
+   fraction of SSBMSY given zero catches, where the user can specify HZN and Bfrac). 
+
+- Canadian DFO performance plots (DFO_hist, DFO_proj, DFO_plot2)
+
+- Biomass recovery relative to Blow plots (COSEWIC_plot)
+
+- A dedicated custom parameters slot in the operating model object. This is a list where the user can place custom 
+   parameters samples (from any distribution / correlation structure you wish) that are named as they appear in 
+   the operating model. 
+
+
+
+## Previous Versions
 
 ### DLMtool V3.2.3
 
@@ -48,7 +88,6 @@ Fsd in Fleet object has been re-named Esd
 - `maxF` now also applies to the catch that is taken from the population
 
 
-## Previous Versions
 ### New Additions to Version 3.2.2
 A number of additional plotting functions, and a few new MPs have been added in this version.  Also a few minor changes to improve performance and reliability of the model.
 

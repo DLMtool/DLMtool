@@ -7,9 +7,7 @@
 movdistil(movtab)
 }
 \arguments{
-\item{replist}{the list output of the r4ss SS_output function (a list of assessment inputs / outputs)}
-
-\item{seas}{The reference season for the growth (not actually sure what this does yet)}
+\item{movtab}{a table of estimated movements}
 }
 \description{
 A Function that takes a larger movement matrix, identifies the most parsimonious representation of 2 non-mixed areas and returns the final unfished movement matrix

@@ -4,7 +4,7 @@
 \alias{DFO_hist}
 \title{Deparment of Fisheries and Oceans historical plot}
 \usage{
-DFO_hist(OM, nam = NA, panel = T, nsim = 48)
+DFO_hist(OM, panel = T, nsim = 48)
 }
 \arguments{
 \item{OM}{An operating model object of class OM}

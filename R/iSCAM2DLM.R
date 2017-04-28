@@ -7,16 +7,20 @@
 #' model including input files to population the various slots of an 
 #' operating model parameter estimates. iSCAM2DLM relies on several 
 #' functions written by Chris Grandin (DFO PBS).
-#' @param iscamdir A folder with iSCAM input and output files in it
+#' @param iSCAMdir A folder with iSCAM input and output files in it
 #' @param nsim The number of simulations to take for parameters with 
 #' uncertainty (for OM@cpars custom parameters)
+#' @param proyears The number of MSE projection years
 #' @param Name The name of the operating model
 #' @param Source Reference to assessment documentation e.g. a url
 #' @param length_timestep How long is a model time step in years 
 #' (e.g. a quarterly model is 0.25, a monthly model 1/12)
 #' @param Author Who did the assessment
 #' @author T. Carruthers 
+#' @importFrom grDevices dev.off gray jpeg png
 #' @importFrom coda mcmc
+#' @importFrom graphics arrows contour
+#' @importFrom stats acf aggregate qnorm window
 #' @export iSCAM2DLM
 iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,Name=NULL,Source="No source provided",
                  length_timestep=1,Author="No author provided"){
@@ -698,7 +702,7 @@ read.data.file <- function(file = NULL,
 #' iscam control file
 #' @param file File location
 #' @param num.gears The number of gears
-#' @param num.age.gear The number age-gears
+#' @param num.age.gears The number age-gears
 #' @param verbose should detailed results be printed to console
 #' @author Chris Grandin (DFO PBS)
 #' @export read.control.file
@@ -714,12 +718,12 @@ read.control.file <- function(file = NULL,
   ##  datafile
   
   if(is.null(num.gears)){
-    cat0("You must supply the total number of gears (num.gears). ",
+    cat("You must supply the total number of gears (num.gears). ",
          "Returning NULL.")
     return(NULL)
   }
   if(is.null(num.age.gears)){
-    cat0("You must supply the number of gears with age composition ",
+    cat("You must supply the number of gears with age composition ",
          "(num.age.gears). Returning NULL.")
     return(NULL)
   }
@@ -1068,7 +1072,7 @@ read.mcmc <- function(model.dir = NULL,
   
   
   if(is.null(model.dir)){
-    cat0("You must supply a directory name (model.dir). Returning NULL.")
+    cat("You must supply a directory name (model.dir). Returning NULL.")
     return(NULL)
   }
   mcmcfn     <- file.path(model.dir, mcmc.file)
@@ -1125,7 +1129,7 @@ extract.group.matrices <- function(data = NULL,
   ## Returns a list of matrices, one element per group.
   
   if(is.null(data) || is.null(prefix)){
-    cat0("You must give two arguments (data & prefix). Returning NULL.")
+    cat("You must give two arguments (data & prefix). Returning NULL.")
     return(NULL)
   }
   tmp <- list()
@@ -1166,7 +1170,7 @@ extract.area.sex.matrices <- function(data = NULL,
   ##  per group.
   
   if(is.null(data) || is.null(prefix)){
-    cat0("You must give two arguments (data & prefix). Returning NULL.")
+    cat("You must give two arguments (data & prefix). Returning NULL.")
     return(NULL)
   }
   

@@ -5,7 +5,7 @@
 \title{Internal estimation function for LSRA and LSRA2 functions}
 \usage{
 LSRA_opt(param, FF_a, Chist, M_a, Mat_age_a, Wt_age_a, sel_a, Recdevs_a, h_a,
-  Umax = 0.2, mode = 1)
+  Umax = 0.5, mode = 1)
 }
 \arguments{
 \item{param}{a numeric value representing log(R0)}
@@ -16,15 +16,19 @@ LSRA_opt(param, FF_a, Chist, M_a, Mat_age_a, Wt_age_a, sel_a, Recdevs_a, h_a,
 
 \item{M_a}{numeric value, natural mortality rate}
 
-\item{Mat_age_A}{a vector of maturity at age [nage]}
+\item{Mat_age_a}{a vector of maturity at age [nage]}
 
-\item{Wt_age}{a vector of weight at age [nage]}
+\item{Wt_age_a}{a vector of weight at age [nage]}
 
-\item{sel}{a vector of selectivity at age [nage]}
+\item{sel_a}{a vector of selectivity at age [nage]}
 
-\item{Recdevs}{a vector of recruitment deviations [nyears]}
+\item{Recdevs_a}{a vector of recruitment deviations [nyears]}
 
-\item{h}{a numeric value of steepness values of the Bev-Holt Stock-Recruitment relationship}
+\item{h_a}{a numeric value of steepness values of the Bev-Holt Stock-Recruitment relationship}
+
+\item{Umax}{maximum harvest rate per year}
+
+\item{mode}{1-5 see below}
 }
 \value{
 depends on mode but could be 1:objective function 2:trajectory of Fs 3: SSB depletion 4:log(R0) 5:diagnostic plots

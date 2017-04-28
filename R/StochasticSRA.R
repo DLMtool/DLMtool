@@ -5,6 +5,7 @@
 #' @param qmult Fraction of natural mortality rate that is mean fishing mortality (Fishing catchability multiplier)
 #' @param patchy The fraction of years that have catch at age data
 #' @param nCAA The number of independent annual catch at age observations (same among all years)
+#' @param sigmaE Level of simulated interannual variability in effort (F) expressed as a lognorma SD
 #' @return A list: Chist = historical catch series,Recdevs = historical recruitment deviations (mean = 1), CAA = catch at age matrix, N = numbers at age matrix, SSB = annual spawning biomass, FM = Fishing mortality rate at age matrix, M = natural mortality rate \code{classy}
 #' @author T. Carruthers (Canadian DFO grant)
 #' @export SRAsim
@@ -93,23 +94,6 @@ SRAsim<-function(OM,qmult=0.5,patchy=0.2,nCAA=100,sigmaE=0.25){
 
 }
 
-SRAtestfunc<-function(){
-  CAA<-sim$CAA
-  Chist<-sim$Chist
-  Cobs=0.2
-  sigmaR=0.5
-  nsim<-10
-  Jump_fac=1
-  nits<-2000
-  burnin<-200
-  thin<-10
-  ESS<-100
-  Umax<-0.9
-  nplot=6
-  ploty=T
-  SRAdir<-NA
-}
-
 
 #' Stochastic SRA construction of operating models
 #'
@@ -121,11 +105,12 @@ SRAtestfunc<-function(){
 #' @param sigmaR A numeric value representing the prior standard deviation of log space recruitment deviations
 #' @param Umax A numeric value representing the maximum harvest rate for any age class (rejection of sims where this occurs)
 #' @param nsim The number desired draws of parameters / effort trajectories
+#' @param proyears The number of projected MSE years
 #' @param Jump_fac A multiplier of the jumping distribution variance to increase acceptance (lower Jump_fac) or decrease acceptance rate (higher Jump_fac)
 #' @param nits The number of MCMC iterations
 #' @param burnin The number of initial MCMC iterations to discard
 #' @param thin The interval over which MCMC samples are extracted for use in graphing / statistics
-#' @param ESS: Effective sample size - the weighting of the catch at age data
+#' @param ESS Effective sample size - the weighting of the catch at age data
 #' @param ploty Do you want to see diagnostics plotted?
 #' @param nplot how many MCMC samples should be plotted in convergence plots?
 #' @param SRAdir A directory where the SRA diagnostics / fit are stored
@@ -543,10 +528,9 @@ compplot<-function(simy,samy,xlab="",ylab="",maxplot=10,type="l"){
 #'
 #' @description Plots simulation variables versus estimation variables for Stochastic SRA methods of conditioning operating models.
 #' @param sim The output list object of SRAsim() function.
-#' @param sam The output object of StochasticSRA() function.
-#' @param patchy The fraction of years that have catch at age data
-#' @param nCAA The number of annual catch at age observations (same among all years)
-#' @return A list: Chist = historical catch series,Recdevs = historical recruitment deviations (mean = 1), CAA = catch at age matrix, N = numbers at age matrix, SSB = annual spawning biomass, FM = Fishing mortality rate at age matrix, M = natural mortality rate \code{classy}
+#' @param OM The output object of StochasticSRA() function.
+#' @param outfile The name of the figure (something.jpg) you wish to make using SRAcomp
+#' @param maxplot The maximum number of simulations to plot
 #' @author T. Carruthers (Canadian DFO grant)
 #' @export SRAcomp
 #' @examples
@@ -556,7 +540,7 @@ compplot<-function(simy,samy,xlab="",ylab="",maxplot=10,type="l"){
 #' Chist<-sim$Chist
 #' testOM<-StochasticSRA(testOM,CAA,Chist,nsim=30,nits=500)
 #' SRAcomp(sim,testOM) 
-SRAcomp<-function(sim,OM,maxplot=10,outfile=NA){
+SRAcomp<-function(sim,OM,outfile=NA,maxplot=10){
 
   sam<-OM@cpars
   if(!is.na(outfile))jpeg(outfile,width=7,height=9,units='in',res=400)
@@ -595,7 +579,7 @@ SRAcomp<-function(sim,OM,maxplot=10,outfile=NA){
 #'
 #' @param x a position in the various arrays and vectors that corresponds with a simulation (for use with sapply)
 #' @param FF a vector of recent fishign mortality rates (apical Fs)
-#' @param Chist a vector of historical catch observations [nyears]
+#' @param Chist_arr a vector of historical catch observations [nyears]
 #' @param M a vector of natural mortality rates [nsim]
 #' @param Mat_age a matrix of maturity at age [nsim x nage]
 #' @param Wt_age a matrix of weight at age [nsim x nage]
@@ -640,6 +624,7 @@ LSRA<-function(x,FF,Chist_arr,M,Mat_age,Wt_age,sel,Recdevs,h){
 #' @param sel a matrix of selectivity at age [nsim x nage]
 #' @param Recdevs a matrix of recruitment deviations [nsim x nyears]
 #' @param h a vector of steepness values of the Bev-Holt Stock-Recruitment relationship
+#' @param mode optimization or plotting
 #' @return all package data objects are placed in the global namespace \code{dir}
 #' @export LSRA2
 #' @author T. Carruthers
@@ -658,15 +643,17 @@ LSRA2<-function(x,lnR0s,FF,Chist,M,Mat_age,Wt_age,sel,Recdevs,h,mode=2){
 #' @param FF_a numeric value, recent fishign mortality rate (apical F)
 #' @param Chist a vector of historical catch observations [nyears]
 #' @param M_a numeric value, natural mortality rate
-#' @param Mat_age_A a vector of maturity at age [nage]
-#' @param Wt_age a vector of weight at age [nage]
-#' @param sel a vector of selectivity at age [nage]
-#' @param Recdevs a vector of recruitment deviations [nyears]
-#' @param h a numeric value of steepness values of the Bev-Holt Stock-Recruitment relationship
+#' @param Mat_age_a a vector of maturity at age [nage]
+#' @param Wt_age_a a vector of weight at age [nage]
+#' @param sel_a a vector of selectivity at age [nage]
+#' @param Recdevs_a a vector of recruitment deviations [nyears]
+#' @param h_a a numeric value of steepness values of the Bev-Holt Stock-Recruitment relationship
+#' @param Umax maximum harvest rate per year
+#' @param mode 1-5 see below
 #' @return depends on mode but could be 1:objective function 2:trajectory of Fs 3: SSB depletion 4:log(R0) 5:diagnostic plots
 #' @export LSRA_opt
 #' @author T. Carruthers
-LSRA_opt<-function(param,FF_a,Chist,M_a,Mat_age_a,Wt_age_a,sel_a,Recdevs_a,h_a,Umax=0.2,mode=1){
+LSRA_opt<-function(param,FF_a,Chist,M_a,Mat_age_a,Wt_age_a,sel_a,Recdevs_a,h_a,Umax=0.5,mode=1){
   
   nyears<-length(Chist)
   maxage<-length(Mat_age_a)

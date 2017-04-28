@@ -4,22 +4,26 @@
 \alias{DFO_plot2}
 \title{Deparment of Fisheries and Oceans default plot 2}
 \usage{
-DFO_plot2(MSEobj,nam=NA,type=NA,panel=T)
+DFO_plot2(MSEobj, nam = NA, panel = T, Bcut = 50, Ycut = 50)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}
 
 \item{nam}{Title of plot}
 
-\item{type}{Plots full range of data if NA. Plots a subset that meet thresholds if not NA.}
+\item{panel}{Should the plots be organized in many panels in a single figure}
+
+\item{Bcut}{The cutoff biomass for satisficing (relative to BMSY)}
+
+\item{Ycut}{the cutoff yield for satisficing (relative to reference yield)}
 }
 \value{
 A table of performance metrics.
 }
 \description{
 A preliminary plot for returning trade-offs plots and performance table for
-total yield, variability in yield, probability of overfishing and likelihood
-of biomass dropping below 50 per cent BMSY
+probability of obtaining half reference (FMSY) yield and probability of biomass 
+dropping below 50 per cent BMSY
 }
 \author{
 T. Carruthers

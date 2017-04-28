@@ -9,8 +9,12 @@ iSCAM2DLM(iSCAMdir, nsim = 48, proyears = 50, Name = NULL,
   Author = "No author provided")
 }
 \arguments{
+\item{iSCAMdir}{A folder with iSCAM input and output files in it}
+
 \item{nsim}{The number of simulations to take for parameters with 
 uncertainty (for OM@cpars custom parameters)}
+
+\item{proyears}{The number of MSE projection years}
 
 \item{Name}{The name of the operating model}
 
@@ -20,8 +24,6 @@ uncertainty (for OM@cpars custom parameters)}
 (e.g. a quarterly model is 0.25, a monthly model 1/12)}
 
 \item{Author}{Who did the assessment}
-
-\item{iscamdir}{A folder with iSCAM input and output files in it}
 }
 \description{
 A function that uses the file location of a fitted iSCAM 

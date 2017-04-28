@@ -4,7 +4,7 @@
 \name{Generic_obs}
 \alias{Generic_obs}
 \title{Generic_obs Obs}
-\format{An object of class \code{Obs} of length 1.}
+\format{An object of class \code{NULL} of length 0.}
 \usage{
 Generic_obs
 }

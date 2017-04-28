@@ -4,19 +4,16 @@
 \alias{SRAcomp}
 \title{Plot simulation test of Stochastic SRA method}
 \usage{
-SRAcomp(sim, OM, maxplot = 10, outfile = NA)
+SRAcomp(sim, OM, outfile = NA, maxplot = 10)
 }
 \arguments{
 \item{sim}{The output list object of SRAsim() function.}
 
-\item{sam}{The output object of StochasticSRA() function.}
+\item{OM}{The output object of StochasticSRA() function.}
 
-\item{patchy}{The fraction of years that have catch at age data}
+\item{outfile}{The name of the figure (something.jpg) you wish to make using SRAcomp}
 
-\item{nCAA}{The number of annual catch at age observations (same among all years)}
-}
-\value{
-A list: Chist = historical catch series,Recdevs = historical recruitment deviations (mean = 1), CAA = catch at age matrix, N = numbers at age matrix, SSB = annual spawning biomass, FM = Fishing mortality rate at age matrix, M = natural mortality rate \code{classy}
+\item{maxplot}{The maximum number of simulations to plot}
 }
 \description{
 Plots simulation variables versus estimation variables for Stochastic SRA methods of conditioning operating models.

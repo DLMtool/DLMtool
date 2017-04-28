@@ -1,8 +1,8 @@
 Package: DLMtool
 Type: Package
 Title: Data-Limited Methods Toolkit
-Version: 3.2.3
-Date: 2017-04-07
+Version: 4.1
+Date: 2017-04-28
 Authors@R: c(
     person("Tom", "Carruthers",, "t.carruthers@fisheries.ubc.ca", role=c("aut", "cre")),
     person("Adrian", "Hordyk", , "ar.hordyk@gmail.com", "aut"))
@@ -32,7 +32,6 @@ LazyLoad: yes
 Suggests:
     knitr,
     rmarkdown
-Packaged: 2015-11-13 23:33:05 UTC; Tom Carruthers
 LinkingTo: Rcpp
 RoxygenNote: 6.0.1
 BugReports: https://github.com/DLMtool/DLMtool/issues

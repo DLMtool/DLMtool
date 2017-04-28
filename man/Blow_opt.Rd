@@ -12,6 +12,8 @@ Blow_opt(lnq, SSBMSYc, MGThorizon, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears,
 
 \item{SSBMSYc}{number: spawning biomass at MSY}
 
+\item{MGThorizon}{number: MGT x HZN}
+
 \item{Fc}{vector nyears long of fishing mortality rate}
 
 \item{Perrc}{vector nyears+maxage-1 long of recruitment devitions}
@@ -45,8 +47,6 @@ Blow_opt(lnq, SSBMSYc, MGThorizon, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears,
 \item{Bfrac}{fraction of SSBMSY that is the target}
 
 \item{mode}{1: find Blow 2:report blow  3:plot results}
-
-\item{MGThorizonc}{number: MGT x HZN}
 }
 \description{
 Find the current biomass at which it would take HZN mean generation times

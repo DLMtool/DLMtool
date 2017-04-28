@@ -148,13 +148,7 @@ plot.Stock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
 		    }
 	    }	
     }
-	  
-	if ("EffUpper" %in% Names & !"Find" %in% Names) {
-      Deriv <- getEffhist(Esd, nyears, EffYears = EffYears, EffUpper = EffUpper, EffLower = EffLower)  # Historical fishing effort
-      Find <- Deriv[[1]]  # Calculate fishing effort rate
-      dFfinal <- Deriv[[2]]  # Final gradient in fishing effort yr-1 
-    }
-   
+
   }
    
   ncol <- 8
