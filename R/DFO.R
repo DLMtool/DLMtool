@@ -21,14 +21,251 @@ tradeoffplot <- function(x, y, xlab, ylab, labs, cex, vl, hl) {
 }
 
 
-#' Deparment of Fisheries and Oceans default plot 1
+
+#' Deparment of Fisheries and Oceans historical plot
+#'
+#' A plot of current and historical stock status by simulation according to the
+#' stock status zones and reference points of DFO. 
+#' http://www.dfo-mpo.gc.ca/reports-rapports/regs/sff-cpd/precaution-eng.htm
+#'
+#' @param OM An operating model object of class OM
+#' @param panel should the plots be seperate or in two panels?
+#' @param nsim how many simulations should be plotted (over-ridden 
+#' by OM@nsim where cpars is specified) 
+#' @author T. Carruthers
+#' @export DFO_hist
+#' @importFrom MASS kde2d
+DFO_hist <- function(OM, nam = NA, panel= T,nsim=48) {
+  
+  if(length(OM@cpars)>0){
+    message("cpars slot is specified, OM@nsim used for historical simulations")
+    nsim<-OM@nsim
+  }else{
+    OM@nsim=nsim
+  }
+  
+  out<-runMSE(OM,nsim=nsim,Hist=T)
+  Brel<-t(out$TSdata$SSB)/out$MSYs$SSBMSY
+  Frel<-t(-log(1-out$TSdata$Catch/out$TSdata$VB))/out$MSYs$FMSY
+ 
+  if(panel)op<-par(mfrow=c(1,2),mai=c(0.7,0.8,0.5,0.1),omi=rep(0.01,4))
+  if(!panel)opt<-par(mai=c(0.7,0.8,0.5,0.1),omi=rep(0.01,4))
+  
+  now<-ncol(Brel)
+  DFO_Kobe(Br=Brel[,now],Fr=Frel[,now])
+  mtext("Current status",3,line=0.7,font=2)
+  DFO_Kobe_TS(Brel,Frel)
+  mtext("Historical time series",3,line=0.7,font=2)
+  
+  on.exit(par(op))
+
+}
+
+#' Deparment of Fisheries and Oceans projection plot
+#'
+#' A projection plot of MP performance by simulation according to the
+#' stock status zones and reference points of DFO. 
+#' http://www.dfo-mpo.gc.ca/reports-rapports/regs/sff-cpd/precaution-eng.htm
+#'
+#' @param MSEobj An operating model object of class MSE
+#' @param maxplot The maximum number of MPs to be plotted per figure 
+#' @author T. Carruthers
+#' @export DFO_proj
+#' @importFrom MASS kde2d
+DFO_proj <- function(MSEobj, nam = NA, maxplot=3) {
+  
+  nsim<-MSEobj@nsim
+  nMPs<-MSEobj@nMPs
+  proyears<-MSEobj@proyears
+  plotorg<-split(1:nMPs, ceiling(seq_along(1:nMPs)/maxplot))
+  op<-par(mfrow=c(maxplot,2),mai=c(0.7,0.8,0.05,0.1),omi=c(0.01,0.01,0.5,0.01))
+  
+  for(i in 1:nMPs){
+  
+    DFO_Kobe(Br=MSEobj@B_BMSY[,i,proyears],Fr=MSEobj@F_FMSY[,i,proyears])
+    legend('top',MSEobj@MPs[i],text.font=2,bty='n')
+    DFO_Kobe_TS(Brel=MSEobj@B_BMSY[,i,],Frel=MSEobj@F_FMSY[,i,],labs=c("Current","Projection"))
+    legend('top',MSEobj@MPs[i],text.font=2,bty='n')
+    
+    if(i==max(plotorg[[ceiling(i/maxplot)]]))  mtext(c("Status at end of projection (Projected)",
+                                                       "Projected time series"),3,at=c(0.27,0.77),line=0.8,outer=T,font=2)
+    
+  }
+
+  on.exit(par(op))
+  
+}
+
+
+DFO_Kobe_TS<-function(Brel,Frel,labs=c("Then","Current")){
+  
+  Brange<-c(0,max(Brel))
+  Frange<-c(0,max(Frel))
+  
+  sampcols<-c("red","blue","green")
+  plot(Brange,Frange,axes=F,col="white",xlab="",ylab="")
+  
+  add_zones()
+  
+  xp<-pretty(seq(0,max(Brange),length.out=10))
+  yp<-pretty(seq(0,max(Frange),length.out=10))
+  axis(1,xp,xp)
+  axis(2,yp,yp)
+  
+  mtext("B/BMSY",1,line=2.5)
+  mtext("F/FMSY",2,line=2.5)
+  
+  for(i in 1:2)lines(Brel[i,],Frel[i,],col=sampcols[i])  
+  for(i in 1:2){
+    points(Brel[i,1],Frel[i,1],pch=3,lwd=2,col=sampcols[i],cex=1.5)
+    points(Brel[i,length(Bmu)],Frel[i,length(Fmu)],pch=19,lwd=2,col=sampcols[i],cex=1.5)
+  }
+  
+  pointcol<-makeTransparent('black',80)
+  linecol<-"black"#makeTransparent('black',95)
+ 
+  encircle(Brel[,1],Frel[,1],col=linecol,xrange=Brange+c(0,0.1),yrange=Frange+c(0,0.1),perc=0.1,lwd=1.2,labels=labs[1],lty=2)
+  
+  encircle(Brel[,ncol(Brel)],Frel[,ncol(Frel)],col=linecol,xrange=Brange+c(0,0.1),yrange=Frange+c(0,0.1),perc=0.1,lwd=1.2,labels=labs[2],lty=2)
+  
+  Bmu<-apply(Brel,2,quantile,0.5)
+  Fmu<-apply(Frel,2,quantile,0.5)
+  lines(Bmu,Fmu,col="grey40",lwd=4)
+  
+  afun<-function(x1,x2)x1-(x1-x2)*c(0.25,0.75)
+  arrows(afun(Bmu[1],Bmu[length(Bmu)])[1],
+         afun(Fmu[1],Fmu[length(Fmu)])[1],
+         afun(Bmu[1],Bmu[length(Bmu)])[2],
+         afun(Fmu[1],Fmu[length(Fmu)])[2],col='black',lwd=2)
+  
+  points(Bmu[1],Fmu[1],pch=3,lwd=3,col="black",cex=2)
+  points(Bmu[length(Bmu)],Fmu[length(Fmu)],pch=19,lwd=3,col="black",cex=2)
+  
+  legend("topright",legend=c("Mean trend","Sim 1","Sim 2"),bty='n',text.col=c("black","red","blue"),text.font=c(2,1,1))
+  legend("right",legend=labs,pch=c(3,19))
+  
+  
+}
+
+
+DFO_Kobe<-function(Br,Fr){
+  
+  Brange<-c(0,max(Br))
+  Frange<-c(0,max(Fr))
+  
+  plot(Brange,Frange,axes=F,col="white",xlab="",ylab="")
+  
+  add_zones()
+  
+  xp<-pretty(seq(0,max(Brange),length.out=10))
+  yp<-pretty(seq(0,max(Frange),length.out=10))
+  axis(1,xp,xp)
+  axis(2,yp,yp)
+  
+  mtext("B/BMSY",1,line=2.5)
+  mtext("F/FMSY",2,line=2.5)
+  
+  pointcol<-makeTransparent('black',80)
+  linecol<-"black"#makeTransparent('black',95)
+  
+  points(Br,Fr,pch=19,cex=0.9,col=pointcol)
+  
+  encircle(Br,Fr,col=linecol,xrange=Brange+c(0,0.1),yrange=Frange+c(0,0.1),perc=0.1,lty=2,lwd=1.2)
+  encircle(Br,Fr,col=linecol,xrange=Brange+c(0,0.1),yrange=Frange+c(0,0.1),perc=0.50,lwd=1.2)
+  points(quantile(Br,0.5),quantile(Fr,0.5),col='black',pch=3,cex=1.2,lwd=2)
+ 
+  fracs<-c(sum(Br<0.4&Fr>1),sum(0.4<Br&Br<0.8&Fr>1),sum(0.8<Br&Fr>1),
+           sum(Br<0.4&Fr<1),sum(0.4<Br&Br<0.8&Fr<1),sum(0.8<Br&Fr<1))
+  fracs<-round(fracs/nsim*100,1)
+  
+  fposH<-Frange[1]+0.99*(Frange[2]-Frange[1])
+  fposL<-Frange[1]+0.02*(Frange[2]-Frange[1])
+  
+  text(0.2,fposH,paste(fracs[1],"%"),col="white",cex=0.9,font=2)
+  text(0.6,fposH,paste(fracs[2],"%"),col="grey73",cex=0.9,font=2)
+  text(1.1,fposH,paste(fracs[3],"%"),col="grey73",cex=0.9,font=2)
+  text(0.2,fposL,paste(fracs[4],"%"),col="white",cex=0.9,font=2)
+  text(0.6,fposL,paste(fracs[5],"%"),col="grey73",cex=0.9,font=2)
+  text(1.1,fposL,paste(fracs[6],"%"),col="grey73",cex=0.9,font=2)
+  legend('right',legend="A simulation",pch=19,col=pointcol)
+  legend('topright',legend=c("50%","90%"),lty=c(1,2),col=linecol,bty='n')
+  
+}
+
+
+add_zones<-function(){
+
+  cols<-c("grey86","grey96","white",
+          "grey85","grey95","grey98")
+  
+  polygon(c(-0,0.4,0.4,0),c(0,0,1,1),col=cols[1],border=cols[1])
+  polygon(c(0.4,0.8,0.8,0.4),c(0,0,1,1),col=cols[2],border=cols[2])
+  polygon(c(0.8,1000,1000,0.8),c(0,0,1,1),col=cols[3],border=cols[3])
+  
+  polygon(c(0,0.4,0.4,0),c(1,1,1000,1000),col=cols[4],border=cols[4])
+  polygon(c(0.4,0.8,0.8,0.4),c(1,1,1000,1000),col=cols[5],border=cols[5])
+  polygon(c(0.8,1000,1000,0.8),c(1,1,1000,1000),col=cols[6],border=cols[6])
+  
+  textpos<-Frange[1]+0.85*(Frange[2]-Frange[1])
+  text(0.2,textpos,"Critical",col="white",font=2,srt=270,cex=1.1)
+  text(0.6,textpos,"Cautious",col="grey73",font=2,srt=270,cex=1.1)
+  text(1.1,textpos,"Healthy",col="grey73",font=2,srt=270,cex=1.1)
+  
+}
+
+encircle<-function(x,y,col="red",perc=0.05,xrange=NA,yrange=NA,log=F,lty=1,lwd=1,labels=NA,drawlabels=F){
+
+  if(log){
+    x<-log(x)
+    y<-log(y)
+  }
+  
+  if(is.na(xrange[1]))xrange<-range(x)
+  if(is.na(yrange[1]))yrange<-range(y)
+  
+  if(log){
+    xrange[xrange==0]<-0.01
+    yrange[yrange==0]<-0.01
+    xrange<-log(xrange)
+    yrange<-log(yrange)
+  }
+
+  kerneld <- kde2d(Brelnow, Frelnow, n = 100, lims = c(xrange, yrange))
+
+  pp <- array()
+  for (i in 1:nsim){
+    z.x <- max(which(kerneld$x < x[i]))
+    z.y <- max(which(kerneld$y < y[i]))
+    pp[i] <- kerneld$z[z.x, z.y]
+  }
+  
+  confidencebound <- quantile(pp, perc, na.rm = TRUE)
+  
+  if(log){
+    kerneld$x<-exp(kerneld$x)
+    kerneld$y<-exp(kerneld$y)
+  }
+  
+ if(is.na(labels)){
+   
+   contour(kerneld, levels = confidencebound, col = col, add = TRUE,drawlabels=drawlabels,lty=lty,lwd=lwd)
+ 
+ }else{
+   
+   contour(kerneld, levels = confidencebound, col = col, add = TRUE,drawlabels=T,lty=lty,lwd=lwd,labels=labels)
+ 
+ }
+
+}
+
+#' Deparment of Fisheries and Oceans default plot 2
 #'
 #' A preliminary plot for returning trade-offs plots and performance table for
 #' total yield, variability in yield, probability of overfishing and likelihood
 #' of biomass dropping below 50 per cent BMSY
 #'
 #'
-#' @usage DFO_plot(MSEobj,nam=NA,type=NA,panel=T)
+#' @usage DFO_plot2(MSEobj,nam=NA,type=NA,panel=T)
 #' @param MSEobj An object of class MSE
 #' @param nam Title of plot
 #' @param type Plots full range of data if NA. Plots a subset that meet thresholds if not NA.
