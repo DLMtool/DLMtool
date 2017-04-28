@@ -23,12 +23,11 @@ Plots simulation variables versus estimation variables for Stochastic SRA method
 }
 \examples{
 setup()
-OM<-new('OM',Albacore,Generic_fleet,Generic_obs)
-sim<-SRAsim(OM,qmult=1,patchy=0.8)
+sim<-SRAsim(testOM,qmult=1,patchy=0.8)
 CAA<-sim$CAA
 Chist<-sim$Chist
-OM<-StochasticSRA(OM,CAA,Chist,nsim=30,nits=500)
-SRAcomp(sim,OM) 
+testOM<-StochasticSRA(testOM,CAA,Chist,nsim=30,nits=500)
+SRAcomp(sim,testOM) 
 }
 \author{
 T. Carruthers (Canadian DFO grant)

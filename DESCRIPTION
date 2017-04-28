@@ -20,6 +20,7 @@ Imports:
     methods,
     LBSPR,
     grDevices,
+    MASS,
     mvtnorm,
     parallel,
     r4ss,

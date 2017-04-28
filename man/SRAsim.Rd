@@ -22,7 +22,7 @@ A list: Chist = historical catch series,Recdevs = historical recruitment deviati
 Catch at age and catch simulator.
 }
 \examples{
-out<-SRAsim(new('OM',Albacore,Generic_fleet,Generic_obs))
+out<-SRAsim(testOM)
 }
 \author{
 T. Carruthers (Canadian DFO grant)

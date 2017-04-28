@@ -47,15 +47,11 @@ Specify an operating model, using catch composition data and a historical catch 
 }
 \examples{
 setup()
-OM<-new('OM',Albacore,Generic_fleet,Generic_obs)
-sim<-SRAsim(OM,patchy=0.8)
+sim<-SRAsim(testOM,patchy=0.8)
 CAA<-sim$CAA
 Chist<-sim$Chist
-OM<-StochasticSRA(OM,CAA,Chist,nsim=30,nits=1000)
-filledOM<-out[[1]]
-cpars<-out[[2]]
-runMSE(filledOM,MPs=c("DCAC","MCD"),cpars=cpars)
-matplot(out$Find,type='l')
+testOM<-StochasticSRA(testOM,CAA,Chist,nsim=30,nits=1000)
+runMSE(testOM)
 }
 \references{
 Walters, C.J., Martell, S.J.D., Korman, J. 2006. A stochastic approach to stock reduction analysis. Can. J. Fish. Aqua. Sci. 63:212-213.
