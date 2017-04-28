@@ -9,7 +9,7 @@
 #' @author T. Carruthers (Canadian DFO grant)
 #' @export SRAsim
 #' @examples
-#' out<-SRAsim(new('OM',Albacore,Generic_fleet,Generic_obs))
+#' out<-SRAsim(testOM)
 SRAsim<-function(OM,qmult=0.5,patchy=0.2,nCAA=100,sigmaE=0.25){
 
   maxage<-OM@maxage
@@ -135,15 +135,11 @@ SRAtestfunc<-function(){
 #' @export StochasticSRA
 #' @examples
 #' setup()
-#' OM<-new('OM',Albacore,Generic_fleet,Generic_obs)
-#' sim<-SRAsim(OM,patchy=0.8)
+#' sim<-SRAsim(testOM,patchy=0.8)
 #' CAA<-sim$CAA
 #' Chist<-sim$Chist
-#' OM<-StochasticSRA(OM,CAA,Chist,nsim=30,nits=1000)
-#' filledOM<-out[[1]]
-#' cpars<-out[[2]]
-#' runMSE(filledOM,MPs=c("DCAC","MCD"),cpars=cpars)
-#' matplot(out$Find,type='l')
+#' testOM<-StochasticSRA(testOM,CAA,Chist,nsim=30,nits=1000)
+#' runMSE(testOM)
 StochasticSRA<-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proyears=50,
                         Jump_fac=1,nits=4000,
                         burnin=500,thin=10,ESS=300,ploty=T,nplot=6,SRAdir=NA){
@@ -543,7 +539,6 @@ compplot<-function(simy,samy,xlab="",ylab="",maxplot=10,type="l"){
 }
 
 
-
 #' Plot simulation test of Stochastic SRA method
 #'
 #' @description Plots simulation variables versus estimation variables for Stochastic SRA methods of conditioning operating models.
@@ -556,12 +551,11 @@ compplot<-function(simy,samy,xlab="",ylab="",maxplot=10,type="l"){
 #' @export SRAcomp
 #' @examples
 #' setup()
-#' OM<-new('OM',Albacore,Generic_fleet,Generic_obs)
-#' sim<-SRAsim(OM,qmult=1,patchy=0.8)
+#' sim<-SRAsim(testOM,qmult=1,patchy=0.8)
 #' CAA<-sim$CAA
 #' Chist<-sim$Chist
-#' OM<-StochasticSRA(OM,CAA,Chist,nsim=30,nits=500)
-#' SRAcomp(sim,OM) 
+#' testOM<-StochasticSRA(testOM,CAA,Chist,nsim=30,nits=500)
+#' SRAcomp(sim,testOM) 
 SRAcomp<-function(sim,OM,maxplot=10,outfile=NA){
 
   sam<-OM@cpars
