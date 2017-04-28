@@ -4,17 +4,18 @@
 \alias{runMSErobust}
 \title{Run a Management Strategy Evaluation}
 \usage{
-runMSErobust(OM = "1", MPs = NA, nsim = 200, proyears = 28,
-  interval = 4, pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1,
-  custompars = NULL, CheckMPs = TRUE, Hist = FALSE, ntrials = 50,
-  fracD = 0.05, maxsims = 64, name = NULL, unique = TRUE,
-  maxCrash = 10, saveMSE = TRUE, savePack = FALSE)
+runMSErobust(OM = testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
+  "matlenlim"), nsim = 256, proyears = 50, interval = 4, pstar = 0.5,
+  maxF = 0.8, timelimit = 1, reps = 1, CheckMPs = FALSE, Hist = FALSE,
+  ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2, Bfrac = 0.5,
+  maxsims = 64, name = NULL, unique = FALSE, maxCrash = 10,
+  saveMSE = TRUE, savePack = FALSE)
 }
 \arguments{
 \item{OM}{An operating model object (class OM)}
 
 \item{MPs}{A vector of methods (character string) of class Output or
-Input. If NA all available MPs are run.}
+Input.}
 
 \item{nsim}{Number of simulations}
 
@@ -36,14 +37,8 @@ simulated for any given age class}
 method. Note that when this is set to 1, the mean value of the data inputs
 is used.}
 
-\item{custompars}{A data.table with nsim rows and nparameter columns. The
-column names must respond to variables of the operating model or observation
-model see the OM and Obs slots of the MSE class for correct names and
-interpretation. This allows users to prescribe correlated parameters or
-estimates from stock assessments.}
-
 \item{CheckMPs}{Logical to indicate if Can function should be used to check
-if MPs can be run}
+if MPs can be run.}
 
 \item{Hist}{Should model stop after historical simulations? Returns a list 
 containing all historical data}
@@ -55,21 +50,26 @@ percent of simulations are not close to the required depletion}
 \item{fracD}{maximum allowed proportion of simulations where depletion is not 
 close to sampled depletion from OM before model stops with error}
 
+\item{CalcBlow}{Should low biomass be calculated where this is the spawning
+biomass at which it takes HZN mean generation times of zero fishing to reach 
+Bfrac fraction of SSBMSY}
+
+\item{HZN}{The number of mean generation times required to reach Bfrac SSBMSY
+in the Blow calculation}
+
 \item{maxsims}{Maximum number of simulations per packet}
 
-\item{name}{Character string for name of saved MSE packets (if
-\code{savePack=TRUE}) and final MSE object. If none provided, it uses the
-first four letters from the \code{OM} name}
+\item{name}{Character string for name of saved MSE packets (if \code{savePack=TRUE}) 
+and final MSE object. If none provided, it uses the first five letters from the \code{OM} name}
 
 \item{unique}{Logical. Should the name be unique? Current date and time appended to name.}
 
 \item{maxCrash}{Maximum number of consecutive crashes before the MSE stops}
 
-\item{saveMSE}{Logical to indiciate if final MSEobject should be saved to
-current working directory (this is probably a good idea)}
+\item{saveMSE}{Logical to indicate if final MSE object should be saved to current 
+working directory (this is probably a good idea)}
 
-\item{savePack}{Logical to indicate if packets should be save to current
-working directory}
+\item{savePack}{Logical to indicate if packets should be save to current working directory}
 }
 \value{
 An object of class MSE
