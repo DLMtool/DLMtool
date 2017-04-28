@@ -3,24 +3,6 @@
 # === Tools for COSEWIC designation ========================================
 # ==========================================================================
 
-# Generic tradeoffplot
-tradeoffplot <- function(x, y, xlab, ylab, labs, cex, vl, hl) {
-  adjj <- c(0.7, 1.3)
-  XLim <- c(min(c(-10, min(x, na.rm = T) * adjj)), max(c(max(x, na.rm = T) *
-                                                           adjj, 110)))
-  YLim <- c(min(c(-10, min(y, na.rm = T) * adjj)), max(c(max(y, na.rm = T) *
-                                                           adjj, 110)))
-  coly <- rep(c("#0000ff95", "#ff000095", "#20ff1095"), 50)[1:length(labs)]
-  #coly[labs %in% c("AvC", "curE", "FMSYref")] <- "black"
-  col[grepl%in%c("AvC","curE","FMSYref")]<-black
-  # plot(NA,xlim=range(x,na.rm=T)*adjj,ylim=range(y,na.rm=T)*adjj,xlab=xlab,ylab=ylab)
-  plot(NA, xlim = XLim, ylim = YLim, xlab = xlab, ylab = ylab)
-  abline(v = vl, col = "#99999940", lwd = 2)
-  abline(h = hl, col = "#99999940", lwd = 2)
-  text(x, y, labs, font = 2, col = coly, cex = 0.9)
-}
-
-
 
 #' Deparment of Fisheries and Oceans historical plot
 #'
