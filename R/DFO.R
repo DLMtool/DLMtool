@@ -99,13 +99,16 @@ DFO_proj <- function(MSEobj, nam = NA, maxplot=3) {
 
 DFO_Kobe_TS<-function(Brel,Frel,labs=c("Then","Current")){
   
+  nsim<-nrow(Brel)
+  ny<-ncol(Brel)
   Brange<-c(0,max(Brel))
   Frange<-c(0,max(Frel))
   
   sampcols<-c("red","blue","green")
   plot(Brange,Frange,axes=F,col="white",xlab="",ylab="")
   
-  add_zones()
+  textpos<-Frange[1]+0.85*(Frange[2]-Frange[1])
+  add_zones(textpos)
   
   xp<-pretty(seq(0,max(Brange),length.out=10))
   yp<-pretty(seq(0,max(Frange),length.out=10))
@@ -118,7 +121,7 @@ DFO_Kobe_TS<-function(Brel,Frel,labs=c("Then","Current")){
   for(i in 1:2)lines(Brel[i,],Frel[i,],col=sampcols[i])  
   for(i in 1:2){
     points(Brel[i,1],Frel[i,1],pch=3,lwd=2,col=sampcols[i],cex=1.5)
-    points(Brel[i,length(Bmu)],Frel[i,length(Fmu)],pch=19,lwd=2,col=sampcols[i],cex=1.5)
+    points(Brel[i,ny],Frel[i,ny],pch=19,lwd=2,col=sampcols[i],cex=1.5)
   }
   
   pointcol<-makeTransparent('black',80)
@@ -126,20 +129,20 @@ DFO_Kobe_TS<-function(Brel,Frel,labs=c("Then","Current")){
  
   encircle(Brel[,1],Frel[,1],col=linecol,xrange=Brange+c(0,0.1),yrange=Frange+c(0,0.1),perc=0.1,lwd=1.2,labels=labs[1],lty=2)
   
-  encircle(Brel[,ncol(Brel)],Frel[,ncol(Frel)],col=linecol,xrange=Brange+c(0,0.1),yrange=Frange+c(0,0.1),perc=0.1,lwd=1.2,labels=labs[2],lty=2)
+  encircle(Brel[,ny],Frel[,ny],col=linecol,xrange=Brange+c(0,0.1),yrange=Frange+c(0,0.1),perc=0.1,lwd=1.2,labels=labs[2],lty=2)
   
   Bmu<-apply(Brel,2,quantile,0.5)
   Fmu<-apply(Frel,2,quantile,0.5)
   lines(Bmu,Fmu,col="grey40",lwd=4)
   
   afun<-function(x1,x2)x1-(x1-x2)*c(0.25,0.75)
-  arrows(afun(Bmu[1],Bmu[length(Bmu)])[1],
-         afun(Fmu[1],Fmu[length(Fmu)])[1],
-         afun(Bmu[1],Bmu[length(Bmu)])[2],
-         afun(Fmu[1],Fmu[length(Fmu)])[2],col='black',lwd=2)
+  arrows(afun(Bmu[1],Bmu[ny])[1],
+         afun(Fmu[1],Fmu[ny])[1],
+         afun(Bmu[1],Bmu[ny])[2],
+         afun(Fmu[1],Fmu[ny])[2],col='black',lwd=2)
   
   points(Bmu[1],Fmu[1],pch=3,lwd=3,col="black",cex=2)
-  points(Bmu[length(Bmu)],Fmu[length(Fmu)],pch=19,lwd=3,col="black",cex=2)
+  points(Bmu[ny],Fmu[ny],pch=19,lwd=3,col="black",cex=2)
   
   legend("topright",legend=c("Mean trend","Sim 1","Sim 2"),bty='n',text.col=c("black","red","blue"),text.font=c(2,1,1))
   legend("right",legend=labs,pch=c(3,19))
@@ -152,10 +155,11 @@ DFO_Kobe<-function(Br,Fr){
   
   Brange<-c(0,max(Br))
   Frange<-c(0,max(Fr))
-  
+  nsim<-length(Br)
   plot(Brange,Frange,axes=F,col="white",xlab="",ylab="")
+  textpos<-Frange[1]+0.85*(Frange[2]-Frange[1])
   
-  add_zones()
+  add_zones(textpos)
   
   xp<-pretty(seq(0,max(Brange),length.out=10))
   yp<-pretty(seq(0,max(Frange),length.out=10))
@@ -187,13 +191,13 @@ DFO_Kobe<-function(Br,Fr){
   text(0.2,fposL,paste(fracs[4],"%"),col="white",cex=0.9,font=2)
   text(0.6,fposL,paste(fracs[5],"%"),col="grey73",cex=0.9,font=2)
   text(1.1,fposL,paste(fracs[6],"%"),col="grey73",cex=0.9,font=2)
-  legend('right',legend="A simulation",pch=19,col=pointcol)
+  legend('right',legend=c("A simulation","Median"),pch=c(19,3),col=pointcol)
   legend('topright',legend=c("50%","90%"),lty=c(1,2),col=linecol,bty='n')
   
 }
 
 
-add_zones<-function(){
+add_zones<-function(textpos){
 
   cols<-c("grey86","grey96","white",
           "grey85","grey95","grey98")
@@ -206,7 +210,6 @@ add_zones<-function(){
   polygon(c(0.4,0.8,0.8,0.4),c(1,1,1000,1000),col=cols[5],border=cols[5])
   polygon(c(0.8,1000,1000,0.8),c(1,1,1000,1000),col=cols[6],border=cols[6])
   
-  textpos<-Frange[1]+0.85*(Frange[2]-Frange[1])
   text(0.2,textpos,"Critical",col="white",font=2,srt=270,cex=1.1)
   text(0.6,textpos,"Cautious",col="grey73",font=2,srt=270,cex=1.1)
   text(1.1,textpos,"Healthy",col="grey73",font=2,srt=270,cex=1.1)
@@ -214,7 +217,8 @@ add_zones<-function(){
 }
 
 encircle<-function(x,y,col="red",perc=0.05,xrange=NA,yrange=NA,log=F,lty=1,lwd=1,labels=NA,drawlabels=F){
-
+  nsim<-length(x)
+  
   if(log){
     x<-log(x)
     y<-log(y)
@@ -230,7 +234,7 @@ encircle<-function(x,y,col="red",perc=0.05,xrange=NA,yrange=NA,log=F,lty=1,lwd=1
     yrange<-log(yrange)
   }
 
-  kerneld <- kde2d(Brelnow, Frelnow, n = 100, lims = c(xrange, yrange))
+  kerneld <- kde2d(x, y, n = 100, lims = c(xrange, yrange))
 
   pp <- array()
   for (i in 1:nsim){
