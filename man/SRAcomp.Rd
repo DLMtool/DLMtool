@@ -19,12 +19,13 @@ SRAcomp(sim, OM, outfile = NA, maxplot = 10)
 Plots simulation variables versus estimation variables for Stochastic SRA methods of conditioning operating models.
 }
 \examples{
-setup()
+\dontrun{
 sim<-SRAsim(testOM,qmult=1,patchy=0.8)
 CAA<-sim$CAA
 Chist<-sim$Chist
 testOM<-StochasticSRA(testOM,CAA,Chist,nsim=30,nits=500)
 SRAcomp(sim,testOM) 
+}
 }
 \author{
 T. Carruthers (Canadian DFO grant)

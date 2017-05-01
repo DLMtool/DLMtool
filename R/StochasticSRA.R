@@ -119,12 +119,14 @@ SRAsim<-function(OM,qmult=0.5,patchy=0.2,nCAA=100,sigmaE=0.25){
 #' @references Walters, C.J., Martell, S.J.D., Korman, J. 2006. A stochastic approach to stock reduction analysis. Can. J. Fish. Aqua. Sci. 63:212-213.
 #' @export StochasticSRA
 #' @examples
+#' \dontrun{
 #' setup()
 #' sim<-SRAsim(testOM,patchy=0.8)
 #' CAA<-sim$CAA
 #' Chist<-sim$Chist
 #' testOM<-StochasticSRA(testOM,CAA,Chist,nsim=30,nits=1000)
 #' runMSE(testOM)
+#' }
 StochasticSRA<-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proyears=50,
                         Jump_fac=1,nits=4000,
                         burnin=500,thin=10,ESS=300,ploty=T,nplot=6,SRAdir=NA){
@@ -534,12 +536,13 @@ compplot<-function(simy,samy,xlab="",ylab="",maxplot=10,type="l"){
 #' @author T. Carruthers (Canadian DFO grant)
 #' @export SRAcomp
 #' @examples
-#' setup()
+#' \dontrun{
 #' sim<-SRAsim(testOM,qmult=1,patchy=0.8)
 #' CAA<-sim$CAA
 #' Chist<-sim$Chist
 #' testOM<-StochasticSRA(testOM,CAA,Chist,nsim=30,nits=500)
 #' SRAcomp(sim,testOM) 
+#' }
 SRAcomp<-function(sim,OM,outfile=NA,maxplot=10){
 
   sam<-OM@cpars

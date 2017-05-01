@@ -38,7 +38,7 @@
 #' close to sampled depletion from OM before model stops with error
 #' @param CalcBlow Should low biomass be calculated where this is the spawning
 #' biomass at which it takes HZN mean generation times of zero fishing to reach 
-#' Bfrac fraction of SSBMSY
+#' @param Bfrac fraction of SSBMSY
 #' @param HZN The number of mean generation times required to reach Bfrac SSBMSY
 #' in the Blow calculation
 #' @param maxsims Maximum number of simulations per packet

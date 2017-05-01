@@ -18,15 +18,16 @@
 #' Journal of Marine Science.
 #' @keywords data-limited fisheries stock assessment data-poor management
 #' strategy evaluation
+#' 
+NULL
 #' @examples
 #' 
-#' 
+#' \dontrun{
 #' # --- Application to real fishery data ---
-#' library(DLMtool)
-#' library(snowfall)              # load package for parallel computing
-#' sfInit(parallel=TRUE,cpus=2)   # initiate the cluster with two cpus
 #' 
-#' mydata<-new('Data')        # create a new DLM data object and define:
+#' library(DLMtool)
+#' setup()                        # setup parallel processing
+#' mydata<-new('Data')            # create a new DLM data object and define:
 #' mydata@Year<-2001:2010         # years
 #' mydata@Cat<-matrix((11:20)*10*runif(10,0.5,1.5),nrow=1) # make up some annual catches
 #' mydata@Ind<-matrix(seq(1.1,0.9,length.out=10)*runif(10,0.5,1.5),nrow=1) 
@@ -39,7 +40,4 @@
 #' mydata<-TAC(mydata)            # calculate quotas
 #' plot(mydata)                   # plot them
 #' mydata<-Sense(mydata,'Fratio') # conduct a sensitivity analysis for one of the methods
-#' 
-#' sfStop()
-#' 
-NULL
+#' }

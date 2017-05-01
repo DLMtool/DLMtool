@@ -51,11 +51,12 @@ percent of simulations are not close to the required depletion}
 close to sampled depletion from OM before model stops with error}
 
 \item{CalcBlow}{Should low biomass be calculated where this is the spawning
-biomass at which it takes HZN mean generation times of zero fishing to reach 
-Bfrac fraction of SSBMSY}
+biomass at which it takes HZN mean generation times of zero fishing to reach}
 
 \item{HZN}{The number of mean generation times required to reach Bfrac SSBMSY
 in the Blow calculation}
+
+\item{Bfrac}{fraction of SSBMSY}
 
 \item{maxsims}{Maximum number of simulations per packet}
 

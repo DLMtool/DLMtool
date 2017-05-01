@@ -48,12 +48,14 @@ A list with three positions. Position 1 is the filled OM object, position 2 is t
 Specify an operating model, using catch composition data and a historical catch series. Returns and operating model with depletion (D), selectivity parameters (L5, LFS) and effort trajectory (Effyears, EffLower, EffUpper) filled.
 }
 \examples{
+\dontrun{
 setup()
 sim<-SRAsim(testOM,patchy=0.8)
 CAA<-sim$CAA
 Chist<-sim$Chist
 testOM<-StochasticSRA(testOM,CAA,Chist,nsim=30,nits=1000)
 runMSE(testOM)
+}
 }
 \references{
 Walters, C.J., Martell, S.J.D., Korman, J. 2006. A stochastic approach to stock reduction analysis. Can. J. Fish. Aqua. Sci. 63:212-213.

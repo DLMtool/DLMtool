@@ -1,7 +1,11 @@
 language: R
 repos:
   CRAN: http://cran.rstudio.com
-cache: packages
+addons:
+  apt:
+    packages:
+    - tcl8.5-dev
+    - tk8.5-dev
 r:
   - oldrel
   - release

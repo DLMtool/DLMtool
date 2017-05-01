@@ -11,6 +11,7 @@
 #' @importFrom parallel detectCores
 #' @export 
 setup <- function(cpus=parallel::detectCores()) {
+  if(snowfall::sfIsRunning()) snowfall::sfStop()
   snowfall::sfInit(parallel=TRUE,cpus=cpus)  
 }
 
