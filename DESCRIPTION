@@ -2,7 +2,7 @@ Package: DLMtool
 Type: Package
 Title: Data-Limited Methods Toolkit
 Version: 4.1
-Date: 2017-04-28
+Date: 2017-05-01
 Authors@R: c(
     person("Tom", "Carruthers",, "t.carruthers@fisheries.ubc.ca", role=c("aut", "cre")),
     person("Adrian", "Hordyk", , "ar.hordyk@gmail.com", "aut"))
