@@ -26,7 +26,7 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
   
   message("-- End of r4ss operations --")
   
-  OM<-testOM
+  OM<- new("OM") 
   OM@nsim<-nsim
   OM@proyears<-proyears
   
@@ -254,7 +254,7 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
   Wt_age2[,,nyears+1:proyears]<-rep(Wt_age[,,nyears],proyears)
   
   OM@cpars<-list(V=V,Perr=Perr,Wt_age=Wt_age2,K=K,Linf=Linf,hs=hs,Find=Find)
-  attr(OM, "build") <- "SS2DLM"
+  # attr(OM, "build") <- "SS2DLM"
   OM
   
 }

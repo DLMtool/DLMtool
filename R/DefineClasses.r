@@ -1513,8 +1513,8 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
       dat <- dat[, 2:ncol(dat)]
       
       .Object@Name <- dat[match("Name", dname), 1]
-      .Object@TACSD <- as.numeric(dat[match("TACSD", dname), 1])
-      .Object@TACFrac <- as.numeric(dat[match("TACFrac", dname), 1])
+      .Object@TACSD <- as.numeric(dat[match("TACSD", dname), 1:2])
+      .Object@TACFrac <- as.numeric(dat[match("TACFrac", dname), 1:2])
       .Object@ESD <- as.numeric(dat[match("ESD", dname), 1:2])
       .Object@EFrac <- as.numeric(dat[match("EFrac", dname), 1:2])
       .Object@SizeLimSD <- as.numeric(dat[match("SizeLimSD", dname), 1:2])

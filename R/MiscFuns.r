@@ -32,7 +32,7 @@ avail <- function(classy) {
     getclass, classy = classy))], ls(envir = .GlobalEnv)[unlist(lapply(ls(envir = .GlobalEnv), 
     getclass, classy = classy))])) 
    if (classy == "Observation") message("Class 'Observation' has been re-named 'Obs'")	
-   if (length(temp) <1) stop("'", classy, "' is not a valid class type in DLMtool package", call.=FALSE)
+   if (length(temp) <1) stop("No objects of class '", classy, "' found", call.=FALSE)
   return(temp)
 }
 
@@ -48,7 +48,6 @@ avail <- function(classy) {
 #' @return TRUE or FALSE
 #' @export getclass
 getclass <- function(x, classy) inherits(get(x), classy)
-
 
 #' What methods need what data
 #' 

@@ -438,14 +438,6 @@
 "Yellowfin_tuna_IO_SS"
 
 
-#'  Rougheye_Rockfish_BC_SRA OM
-#'
-#'  An object of class OM (built using StochasticSRA)
-#'  DLMtool generated
-#' 
-"Rougheye_Rockfish_BC_SRA"
-
-
 #'  Swordfish_OM OM
 #'
 #'  An object of class OM
@@ -460,12 +452,5 @@
 #'  No source provided. Author: No author provided.
 #' 
 "Arrowtooth_Flounder_BC_DFO_iSCAM"
-
-
-#'  testMSE MSE
-#'
-#'  An object of class MSE
-#'
-"testMSE"
 
 

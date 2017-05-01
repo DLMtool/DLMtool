@@ -417,6 +417,7 @@ NOAA_plot <- function(MSEobj, nam = NA, type = NA, panel = T) {
     tradeoffplot3(B50, VY, "Prob. biomass above half BMSY (%)", "Prob. AAVY less than 15%", 
       MSEobj@MPs[1:MSEobj@nMPs], vl = 80, hl = 50, xlim = c(75, 105), 
       ylim = c(45, 105))
+  
   }
   
   # if(is.na(nam))mtext(deparse(substitute(MSEobj)),3,outer=T,line=0.3,font=2)
@@ -424,8 +425,8 @@ NOAA_plot <- function(MSEobj, nam = NA, type = NA, panel = T) {
   # !is.character(nam))mtext(MSEobj@Name,3,outer=T,line=0.3,font=2)
   # if(!is.na(nam) &
   # is.character(nam))mtext(nam,3,outer=T,line=0.3,font=2)
-  par(op)
   
+  if (panel) par(op)
   temp <- data.frame(PNOF, B50, LTY, VY)
   row.names(temp) <- MSEobj@MPs[1:MSEobj@nMPs]
   temp
