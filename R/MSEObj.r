@@ -1120,7 +1120,6 @@ makeTransparent <- function(someColor, alpha = 100) {
 #' @author T. Carruthers
 #' @export VOI
 VOI <- function(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA, Utnam = "Utility") {
-  op <- par()
   objnam <- deparse(substitute(MSEobj))
   nsim <- MSEobj@nsim
   
@@ -1224,7 +1223,7 @@ VOI <- function(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA, Utnam = "Util
   
   for (pp in 1:length(mbyp)) {
     
-    par(mfrow = c(length(mbyp[[pp]]), ncomp), mai = c(0.15, 0.1, 0.15, 
+    op <- par(mfrow = c(length(mbyp[[pp]]), ncomp), mai = c(0.15, 0.1, 0.15, 
       0.05), omi = c(0.1, 0.9, 0.3, 0.05))
     
     for (mm in mbyp[[pp]]) {
@@ -1273,7 +1272,7 @@ VOI <- function(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA, Utnam = "Util
       
       for (pp in 1:length(mbyp)) {
         
-        par(mfrow = c(length(mbyp[[pp]]), ncomp), mai = c(0.15, 
+        op <- par(mfrow = c(length(mbyp[[pp]]), ncomp), mai = c(0.15, 
           0.1, 0.15, 0.05), omi = c(0.1, 0.9, 0.3, 0.05))
         
         for (mm in mbyp[[pp]]) {
@@ -2043,7 +2042,7 @@ wormplot <- function(MSEobj, Bref = 0.5, LB = 0.25, UB = 0.75) {
 #' @export VOI2
 VOI2 <- function(MSEobj, ncomp = 6, nbins = 4, Ut = NA, Utnam = "yield", 
   lay = F) {
-  op <- par()
+  op <- par(no.readonly=TRUE)
   on.exit(par(op))
   objnam <- deparse(substitute(MSEobj))
   nsim <- MSEobj@nsim

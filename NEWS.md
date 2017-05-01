@@ -1,20 +1,16 @@
 ## DLMtool 
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
-### New Changes 
-
-Observation has been renamed to Obs 
-DLM_fease has been renamed to Fease 
-DLM_output has been renamed Output
-DLM_input has been renamed Input 
-DLM_data has been renamed Data 
-
-Fsd in Fleet object has been re-named Esd 
-
-
 ### DLMtool v4.1
 
 #### Major Changes
+
+- Objects names have been shortened and modified for consistency: 
+  - Observation has been renamed to Obs 
+  - DLM_fease has been renamed to Fease 
+  - DLM_output has been renamed Output
+  - DLM_input has been renamed Input 
+  - DLM_data has been renamed Data 
 
 - Implementation error and a dedicated implementation error object called 'Imp', (like Stock, Fleet and Obs)
    that can account for variability and overages/underages in both effort, catch and size limit advice (discarding
@@ -34,7 +30,7 @@ Fsd in Fleet object has been re-named Esd
 
 - Tracking of historical versus current simulated age composition in catches and population over simulations
 
-- New function 'replace' for copying parts of an operating model to another operating model (e.g. Robin Hood
+- New function 'Replace' for copying parts of an operating model to another operating model (e.g. Robin Hood
   approach,where you may want to borrow say, the fleet characteristics from another operating model)
 
 - Estimation of a new reference point 'Blow' for calculation of conservation-related performance metrics
@@ -49,6 +45,9 @@ Fsd in Fleet object has been re-named Esd
    parameters samples (from any distribution / correlation structure you wish) that are named as they appear in 
    the operating model. 
 
+#### Minor Changes 
+
+- Fsd slot in Fleet object has been re-named Esd 
 
 
 ## Previous Versions
