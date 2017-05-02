@@ -90,7 +90,7 @@ hyperdeplete beta > 1, only.
 }
 \section{Objects from the Class}{
  Objects can be created by calls of the form
-\code{new('Obs', OM)}
+\code{new('Obs')}
 }
 
 \examples{

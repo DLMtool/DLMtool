@@ -8,8 +8,8 @@ Authors@R: c(
     person("Adrian", "Hordyk", , "ar.hordyk@gmail.com", "aut"))
 Maintainer: Tom Carruthers <t.carruthers@fisheries.ubc.ca>
 Description: Development, simulation testing, and implementation of management
-    procedures for data-limited fisheries (see Carruthers et al (2014) <doi:10.1016/
-    j.fishres.2013.12.014>).
+    procedures for data-limited fisheries 
+    (see Carruthers et al (2014) <doi:10.1016/j.fishres.2013.12.014>).
 License: GPL-2
 Depends:
     R (>= 2.10.0),

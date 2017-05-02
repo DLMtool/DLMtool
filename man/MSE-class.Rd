@@ -3,7 +3,30 @@
 \docType{class}
 \name{MSE-class}
 \alias{MSE-class}
-\title{Class \code{'MSE'}}
+\title{#' Class \code{'lmmodel'}
+#'
+#' An object for storing fitted linear model objects in this case the
+#' relationship between M, age-at-maturity and the von B. K parameter.
+#'
+#'
+#' @name lmmodel-class
+#' @docType class
+#' @section Objects from the Class: Objects can be created by calls of the form
+#' \code{new('lmmodel', stock)}. %% ~~ describe objects here ~~
+#' @author T. Carruthers
+#' @keywords classes
+#' @examples
+#'
+#' newdata<-new('lmmodel','Name',new('list'))
+#'
+setClass("lmmodel",representation(Name="character",models="list"))
+# initialize lmmodel
+setMethod("initialize", "lmmodel", function(.Object,Name,models){
+  .Object@Name<-Name
+  .Object@models<-models
+  .Object
+})
+Class \code{'MSE'}}
 \description{
 A Management Strategy Evaluation object that contains information about
 simulation conditions and performance of data-limited methods
@@ -123,7 +146,7 @@ simulation conditions and performance of data-limited methods
 \section{Objects from the Class}{
  Objects can be created by calls of the form
 \code{new('MSE', Name, nyears, proyears, nMPs, MPs, nsim, OMtable, Obs,
-B_BMSYa, F_FMSYa, Ba, FMa, Ca, OFLa, Effort)}
+B_BMSYa, F_FMSYa, Ba, FMa, Ca, OFLa, Effort, PAA, CAA, CAL, CALbins)}
 }
 
 \author{

@@ -72,7 +72,7 @@ dynamics model
 
 \section{Objects from the Class}{
  Objects can be created by calls of the form
-\code{new('Stock', OM)}
+\code{new('Stock')}
 }
 
 \examples{

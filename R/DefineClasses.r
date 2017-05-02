@@ -137,7 +137,7 @@ setMethod("initialize", "Data", function(.Object, stock = "nada") {
     .Object@LFS <- as.numeric(dat[match("Length at full selection", dname), 1])
     .Object@Dep <- as.numeric(dat[match("Current stock depletion",  dname), 1])
     .Object@Abun <- as.numeric(dat[match("Current stock abundance",  dname), 1])
-	.Object@SpAbun <- as.numeric(dat[match("Current spawning stock abundance",  dname), 1])
+	  .Object@SpAbun <- as.numeric(dat[match("Current spawning stock abundance",  dname), 1])
     .Object@vbK <- as.numeric(dat[match("Von Bertalanffy K parameter", dname), 1])
     .Object@vbLinf <- as.numeric(dat[match("Von Bertalanffy Linf parameter", dname), 1])
     .Object@vbt0 <- as.numeric(dat[match("Von Bertalanffy t0 parameter", dname), 1])
@@ -152,8 +152,7 @@ setMethod("initialize", "Data", function(.Object, stock = "nada") {
     .Object@CV_Ind <- as.numeric(dat[match("CV Abundance index", dname), 1])
     .Object@CV_Mort <- as.numeric(dat[match("CV M", dname), 1])
     .Object@CV_Rec <- as.numeric(dat[match("CV Rec", dname), 1])
-    .Object@CV_FMSY_M <- as.numeric(dat[match("CV FMSY/M", dname), 
-      1])
+    .Object@CV_FMSY_M <- as.numeric(dat[match("CV FMSY/M", dname),  1])
     .Object@CV_BMSY_B0 <- as.numeric(dat[match("CV BMSY/B0", dname), 1])
     .Object@CV_Cref <- as.numeric(dat[match("CV Cref", dname), 1])
     .Object@CV_Bref <- as.numeric(dat[match("CV Bref", dname), 1])
@@ -168,8 +167,7 @@ setMethod("initialize", "Data", function(.Object, stock = "nada") {
     .Object@CV_LFS <- as.numeric(dat[match("CV Length at full selection", dname), 1])
     .Object@CV_wla <- as.numeric(dat[match("CV Length-weight parameter a", dname), 1])
     .Object@CV_wlb <- as.numeric(dat[match("CV Length-weight parameter b", dname), 1])
-    .Object@CV_steep <- as.numeric(dat[match("CV Steepness", dname), 
-      1])
+    .Object@CV_steep <- as.numeric(dat[match("CV Steepness", dname),  1])
     .Object@MaxAge <- as.numeric(dat[match("Maximum age", dname), 1])
     .Object@MPrec <- as.numeric(dat[match("MPrec", dname), 1])
     .Object@MPeff <- as.numeric(dat[match("MPeff", dname), 1])
@@ -409,7 +407,7 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
 #' @name Fleet-class
 #' @docType class
 #' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new('Fleet', OM)}
+#' \code{new('Fleet')}
 #'
 #' @slot Name Name of the Fleet object
 #' @slot nyears The number of years for the historical simulation
@@ -541,7 +539,7 @@ setMethod("initialize", "Fleet", function(.Object, file = NA) {
 #' @name initialize-methods
 #' @aliases initialize-methods initialize,Data-method
 #' initialize,Fleet-method initialize,MSE-method initialize,Obs-method
-#' initialize,OM-method initialize,Stock-method initialize,lmmodel-method
+#' initialize,OM-method initialize,Stock-method initialize
 #' initialize,Fease-method initialize,DLM_general-method
 #' @docType methods
 #' @section Methods: \describe{
@@ -564,8 +562,6 @@ setMethod("initialize", "Fleet", function(.Object, file = NA) {
 #' \item{list('signature(.Object = \'Stock\')')}{ %% ~~describe this method
 #' here~~ }
 #' 
-#' \item{list('signature(.Object = \'lmmodel\')')}{ %% ~~describe this method
-#' here~~ }
 #' 
 #' \item{list('signature(.Object = \'Fease\')')}{ %% ~~describe this method
 #' here~~ } \item{list('signature(.Object = \'DLM_general\')')}{ %% ~~describe
@@ -579,33 +575,29 @@ NULL
 
 
 
-#' Class \code{'lmmodel'}
-#' 
-#' An object for storing fitted linear model objects in this case the
-#' relationship between M, age-at-maturity and the von B. K parameter.
-#' 
-#' 
-#' @name lmmodel-class
-#' @docType class
-#' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new('lmmodel', stock)}. %% ~~ describe objects here ~~
-#' @author T. Carruthers
-#' @keywords classes
-#' @examples
-#' 
-#' newdata<-new('lmmodel','Name',new('list'))
-#' 
-setClass("lmmodel",representation(Name="character",models="list"))
-# initialize lmmodel 
-setMethod("initialize", "lmmodel", function(.Object,Name,models){
-  .Object@Name<-Name
-  .Object@models<-models
-  .Object
-})
-
-
-
-
+#' #' Class \code{'lmmodel'}
+#' #'
+#' #' An object for storing fitted linear model objects in this case the
+#' #' relationship between M, age-at-maturity and the von B. K parameter.
+#' #'
+#' #'
+#' #' @name lmmodel-class
+#' #' @docType class
+#' #' @section Objects from the Class: Objects can be created by calls of the form
+#' #' \code{new('lmmodel', stock)}. %% ~~ describe objects here ~~
+#' #' @author T. Carruthers
+#' #' @keywords classes
+#' #' @examples
+#' #'
+#' #' newdata<-new('lmmodel','Name',new('list'))
+#' #'
+#' setClass("lmmodel",representation(Name="character",models="list"))
+#' # initialize lmmodel
+#' setMethod("initialize", "lmmodel", function(.Object,Name,models){
+#'   .Object@Name<-Name
+#'   .Object@models<-models
+#'   .Object
+#' })
 
 #' Class \code{'MSE'}
 #' 
@@ -617,7 +609,7 @@ setMethod("initialize", "lmmodel", function(.Object,Name,models){
 #' @docType class
 #' @section Objects from the Class: Objects can be created by calls of the form
 #' \code{new('MSE', Name, nyears, proyears, nMPs, MPs, nsim, OMtable, Obs,
-#' B_BMSYa, F_FMSYa, Ba, FMa, Ca, OFLa, Effort)} 
+#' B_BMSYa, F_FMSYa, Ba, FMa, Ca, OFLa, Effort, PAA, CAA, CAL, CALbins)} 
 #'
 #' @slot Name Name of the MSE object
 #' @slot nyears The number of years for the historical simulation
@@ -784,7 +776,7 @@ setMethod("initialize", "MSE", function(.Object, Name, nyears, proyears,
 #' well its here and you might want to make it hyperstable beta < 1 or
 #' hyperdeplete beta > 1, only.
 #' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new('Obs', OM)} 
+#' \code{new('Obs')} 
 #' @slot Name The name of the observation model object 
 #' @slot Cobs Log-normal catch observation error expressed as a coefficient of variation (uniform distribution) 
 #' @slot Cbiascv A coefficient of variation controlling the sampling of bias in catch observations for each simulation (uniform distribution) 
@@ -1257,7 +1249,7 @@ setMethod("plot",
 #' @name Stock-class
 #' @docType class
 #' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new('Stock', OM)}
+#' \code{new('Stock')}
 #' @slot Name The name of the Stock object 
 #' @slot maxage The maximum age of individuals that is simulated (there is no 'plus group': individuals die off beyone the maximum age so there isn't a huge cost to simulating more older age classes) 
 #' @slot R0 The magnitude of unfished recruitment. This is normally fixed to some arbitrary value since it simply scales the simulated numbers) 
@@ -1469,7 +1461,7 @@ setMethod("summary",
 #' @name Imp-class
 #' @docType class
 #' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new('Imp', OM)}
+#' \code{new('Imp')}
 #' @slot Name The name of the Implementation error object 
 #' @slot TACSD lognormal standard deviation in fraction of TAC taken (uniform distribution) 
 #' @slot TACFrac Mean fraction of TAC taken (uniform distribution) (can be an improper fraction greater than 1)

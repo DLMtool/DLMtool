@@ -57,7 +57,7 @@ The component of the operating model that controls fishing dynamics
 
 \section{Objects from the Class}{
  Objects can be created by calls of the form
-\code{new('Fleet', OM)}
+\code{new('Fleet')}
 }
 
 \examples{
