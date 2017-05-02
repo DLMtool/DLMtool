@@ -9,7 +9,7 @@
 \alias{initialize,Obs-method}
 \alias{initialize,OM-method}
 \alias{initialize,Stock-method}
-\alias{initialize,lmmodel-method}
+\alias{initialize}
 \alias{initialize,Fease-method}
 \alias{initialize,DLM_general-method}
 \title{~~ Methods for Function \code{initialize} ~~}
@@ -37,8 +37,6 @@ method here~~ }
 \item{list('signature(.Object = \'Stock\')')}{ %% ~~describe this method
 here~~ }
 
-\item{list('signature(.Object = \'lmmodel\')')}{ %% ~~describe this method
-here~~ }
 
 \item{list('signature(.Object = \'Fease\')')}{ %% ~~describe this method
 here~~ } \item{list('signature(.Object = \'DLM_general\')')}{ %% ~~describe
