@@ -572,33 +572,6 @@ setMethod("initialize", "Fleet", function(.Object, file = NA) {
 NULL
 
 
-
-
-
-#' #' Class \code{'lmmodel'}
-#' #'
-#' #' An object for storing fitted linear model objects in this case the
-#' #' relationship between M, age-at-maturity and the von B. K parameter.
-#' #'
-#' #'
-#' #' @name lmmodel-class
-#' #' @docType class
-#' #' @section Objects from the Class: Objects can be created by calls of the form
-#' #' \code{new('lmmodel', stock)}. %% ~~ describe objects here ~~
-#' #' @author T. Carruthers
-#' #' @keywords classes
-#' #' @examples
-#' #'
-#' #' newdata<-new('lmmodel','Name',new('list'))
-#' #'
-#' setClass("lmmodel",representation(Name="character",models="list"))
-#' # initialize lmmodel
-#' setMethod("initialize", "lmmodel", function(.Object,Name,models){
-#'   .Object@Name<-Name
-#'   .Object@models<-models
-#'   .Object
-#' })
-
 #' Class \code{'MSE'}
 #' 
 #' A Management Strategy Evaluation object that contains information about
@@ -1532,4 +1505,26 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
   
   
   
-  
+# #' Class \code{'lmmodel'}
+# #'
+# #' An object for storing fitted linear model objects in this case the
+# #' relationship between M, age-at-maturity and the von B. K parameter.
+# #'
+# #'
+# #' @name lmmodel-class
+# #' @docType class
+# #' @section Objects from the Class: Objects can be created by calls of the form
+# #' \code{new('lmmodel', stock)}. %% ~~ describe objects here ~~
+# #' @author T. Carruthers
+# #' @keywords classes
+# #' @examples
+# #'
+# #' newdata<-new('lmmodel','Name',new('list'))
+# #'
+# setClass("lmmodel",representation(Name="character",models="list"))
+# # initialize lmmodel
+# setMethod("initialize", "lmmodel", function(.Object,Name,models){
+#   .Object@Name<-Name
+#   .Object@models<-models
+#   .Object
+# })

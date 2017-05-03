@@ -27,5 +27,9 @@ Replace <- function(OM, from, Sub=c("Stock", "Fleet", "Obs", "Imp")) {
     assign(Sub[x], SubOM(from, Sub[x]))
   }
   
-  new("OM", Stock, Fleet, Obs, Imp) 
+  outOM <- new("OM", Stock, Fleet, Obs, Imp) 
+  outOM@nsim <- OM@nsim 
+  outOM@cpars <- OM@cpars 
+  outOM@seed <- OM@seed 
+  outOM 
 } 
