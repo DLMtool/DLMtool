@@ -3752,8 +3752,7 @@ calcMSESense <- function(MP = 1, MSEobj, YVar = c("Y", "B"), Par = c("Obs",
         ind <- findInterval(qnts, m[, 1])
         m <- m[ind[1]:ind[2], ]
         rr[[xx]] <- m
-        OMSmooth[[xx]] <- loess.smooth(rr[[xx]][, 1], rr[[xx]][, 
-          2])
+        OMSmooth[[xx]] <- suppressWarnings(loess.smooth(rr[[xx]][, 1], rr[[xx]][, 2]))
         OMPoints[[xx]] <- m
       }
     }
@@ -3787,8 +3786,7 @@ calcMSESense <- function(MP = 1, MSEobj, YVar = c("Y", "B"), Par = c("Obs",
         ind <- findInterval(qnts, m[, 1])
         m <- m[ind[1]:ind[2], ]
         rr[[xx]] <- m
-        OMSmooth[[xx]] <- loess.smooth(rr[[xx]][, 1], rr[[xx]][, 
-          2])
+        OMSmooth[[xx]] <- suppressWarnings(loess.smooth(rr[[xx]][, 1], rr[[xx]][, 2]))
         OMPoints[[xx]] <- m
       }
     }
