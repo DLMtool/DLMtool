@@ -25,7 +25,7 @@
 
 
 
-<meta name="date" content="2017-05-03">
+<meta name="date" content="2017-05-04">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -144,7 +144,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="4.2.4" data-path="setupOM.html"><a href="setupOM.html#implementation-object"><i class="fa fa-check"></i><b>4.2.4</b> Implementation Object</a></li>
 </ul></li>
 <li class="chapter" data-level="4.3" data-path="setupOM.html"><a href="setupOM.html#existing-stock-fleet-obs-and-imp-objects"><i class="fa fa-check"></i><b>4.3</b> Existing Stock, Fleet, Obs, and Imp Objects</a></li>
-<li class="chapter" data-level="4.4" data-path="setupOM.html"><a href="setupOM.html#creating-the-operating-model-object"><i class="fa fa-check"></i><b>4.4</b> Creating the Operating Model Object</a></li>
+<li class="chapter" data-level="4.4" data-path="setupOM.html"><a href="setupOM.html#creating-the-operating-model-object"><i class="fa fa-check"></i><b>4.4</b> Creating the Operating Model Object</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="setupOM.html"><a href="setupOM.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i><b>4.4.1</b> Important changes - DLMtool V4.1 and greater</a></li>
+</ul></li>
 <li class="chapter" data-level="4.5" data-path="setupOM.html"><a href="setupOM.html#customizing-the-operating-model"><i class="fa fa-check"></i><b>4.5</b> Customizing the Operating Model</a><ul>
 <li class="chapter" data-level="4.5.1" data-path="setupOM.html"><a href="setupOM.html#creating-new-objects"><i class="fa fa-check"></i><b>4.5.1</b> Creating New Objects</a></li>
 <li class="chapter" data-level="4.5.2" data-path="setupOM.html"><a href="setupOM.html#importing-objects"><i class="fa fa-check"></i><b>4.5.2</b> Importing Objects</a></li>
@@ -312,25 +314,32 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>You can access the help file for the <code>runMSE</code> function by typing: <code>?runMSE</code> into the R console.</p>
 <div id="description-of-the-arguments" class="section level3">
 <h3><span class="header-section-number">6.4.1</span> Description of the Arguments</h3>
-<p>Here we briefly describe the main arguments for the <code>runMSE</code> function:</p>
+<p>Here we briefly describe the arguments for the <code>runMSE</code> function:</p>
 <ul>
 <li><code>OM</code> - An object of class <code>OM</code>. Must be specified, see Chapter <a href="setupOM.html#setupOM">4</a> for details.</li>
 <li><code>MPs</code> - A character vector specifying the Management Procedures to be included in the MSE. If not specified, the DLMtool will run the MSE for all available methods in the Toolkit.</li>
-<li><code>nsim</code> - Number of simulations</li>
-<li><code>proyears</code> - Number of projected years</li>
+<li><code>nsim</code> - Number of simulations (For backward compatibility only. <code>nsim</code> is now a slot in the <code>OM</code> object and this argument will be ignored if <code>nsim</code> is specfied in <code>OM@nsim</code>)</li>
+<li><code>proyears</code> - Number of projected years (For backward compatibility only. <code>proyears</code> is now a slot in the <code>OM</code> object and this argument will be ignored if <code>proyears</code> is specfied in <code>OM@proyears.</code>)</li>
 <li><code>interval</code> - The assessment interval - how often would you like to update the management system?</li>
 <li><code>pstar</code> - The percentile of the sample of the management recommendation for each method</li>
 <li><code>maxF</code> - Maximum instantaneous fishing mortality rate that may be simulated for any given age class</li>
 <li><code>timelimit</code> - Maximum time taken for a method to carry out 10 reps (methods are ignored that take longer)</li>
 <li><code>reps</code> - The number of samples of the management recommendation for each method. Note that when this is set to 1, the mean value of the data inputs is used</li>
 <li><code>CheckMPs</code> - A logical value to specify if the DLMtool should check if the Management Procedures can be run before running the entire MSE. Mainly used for developing and testing new methods.</li>
+<li><code>Hist</code> - Logical - Should model stop after historical simulations? Returns a list containing all data simulated for historical period</li>
+<li><code>ntrials</code> - Maximum of times depletion and recruitment deviations are resampled to optimize for depletion.</li>
+<li><code>fracD</code> - maximum allowed proportion of simulations where depletion is not close to sampled depletion from OM before model stops with error</li>
+<li><code>CalcBlow</code> - Logical - Should low biomass be calculated where this is the spawning biomass at which it takes HZN mean generation times of zero fishing to reach Bfrac fraction of SSBMSY?</li>
+<li><code>HZN</code> - The number of mean generation times required to reach Bfrac SSBMSY in the Blow calculation</li>
+<li><code>Bfrac</code> - The target fraction of SSBMSY for calculating Blow</li>
 </ul>
 </div>
 <div id="using-runmse" class="section level3">
 <h3><span class="header-section-number">6.4.2</span> Using <code>runMSE</code></h3>
 <p>Most of the arguments for the <code>runMSE</code> function have default values. The most important parameters to specify are the Operating Model object, the Management Procedures to include, the number of simulations, the number of projection years, and the interval for management.</p>
 <p>Here we will demonstrate running the blue shark operating model that we created above, for the five Management Procedures selected above. Note that in this example we have chosen to include 10 simulations (<code>nsim</code>=10) and left the other parameters at the default values.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">BSharkMSE &lt;-<span class="st"> </span><span class="kw">runMSE</span>(<span class="dt">OM=</span>OM, <span class="dt">MPs=</span>MPs, <span class="dt">nsim=</span><span class="dv">10</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM<span class="op">@</span>nsim &lt;-<span class="st"> </span><span class="dv">10</span> 
+BSharkMSE &lt;-<span class="st"> </span><span class="kw">runMSE</span>(<span class="dt">OM=</span>OM, <span class="dt">MPs=</span>MPs)</code></pre></div>
 <pre><code>## Loading operating model</code></pre>
 <pre><code>## Optimizing for user-specified movement</code></pre>
 <pre><code>## Optimizing for user-specified depletion</code></pre>
@@ -352,20 +361,30 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </div>
 <div id="robust-wrapper-function" class="section level3">
 <h3><span class="header-section-number">6.4.3</span> Robust Wrapper Function</h3>
-<p>The above example, with 10 simulations and 5 Management Procedures, should take about 48 seconds to complete. A real MSE would include many more simulations and take significantly longer.</p>
+<p>The above example, with 10 simulations and 5 Management Procedures, should take about 14 seconds to complete. A real MSE would include many more simulations and take significantly longer.</p>
 <p>The <code>runMSErobust</code> function has been designed as a more efficient way to run the MSE for a large number of simulations. The <code>runMSErobust</code> function splits the MSE into a number of individual packets.</p>
-<p>The advantages are that it is more efficient (i.e., quicker), it automatically saves the final MSE object to the hard disk, and re-starts a packet if the MSE model crashes. Furthermore, he individual packets can be saved so if the model crashes, or you suffer a power outage the work is not lost.</p>
+<p>The advantages are that it is more efficient (i.e., quicker), it automatically saves the final MSE object to the hard disk, and re-starts a packet if the MSE model crashes. Furthermore, the individual packets can be saved so if the model crashes, or you suffer a power outage the work is not lost.</p>
 <p>It is recommended to use the <code>runMSErobust</code> function if you are running a large number of simulations. However, it is always a good idea to run a small number of simulations first, to test that the MSE is running correctly, and not crashing due to mis-specified parameters or bugs in the Management Procedure code.</p>
-<p>The <code>runMSErobust</code> function is essentially a wrapper for the <code>runMSE</code> function and takes the same arguments as <code>runMSE</code>. The <code>runMSErobust</code> function has several additional arguments, including:</p>
+<p>The <code>runMSErobust</code> function is essentially a wrapper for the <code>runMSE</code> function and takes the same arguments as <code>runMSE</code>. The <code>runMSErobust</code> function has several additional arguments:</p>
 <ul>
-<li><code>maxsims</code> - The maximum number of simulations to include in each packet.</li>
-<li><code>name</code> - The file name of the MSE object that is saved to the hard disk.</li>
-<li><code>maxCrash</code> - The maximum number of consecutive crashes before the MSE stops.</li>
-<li><code>saveMSE</code> - A logical value (<code>TRUE</code>/<code>FALSE</code>) to indicate if final <code>MSE</code> object should be saved to current working directory (this is probably a good idea).</li>
-<li><code>savePack</code> - A logical value (<code>TRUE</code>/<code>FALSE</code>) to indicate if the packets should be save to current working directory.</li>
+<li><code>maxsims</code> - The maximum number of simulations to include in each packet</li>
+<li><code>name</code> - The file name of the MSE object that is saved to the hard disk</li>
+<li><code>unique</code> - Logical - Should the name be unique? Current date and time will be appended to name</li>
+<li><code>maxCrash</code> - The maximum number of consecutive crashes before the MSE stops</li>
+<li><code>saveMSE</code> - A logical value (<code>TRUE</code>/<code>FALSE</code>) to indicate if final <code>MSE</code> object should be saved to current working directory (this is probably a good idea)</li>
+<li><code>savePack</code> - A logical value (<code>TRUE</code>/<code>FALSE</code>) to indicate if the packets should be save to current working directory</li>
 </ul>
 <p>Here we will run the blue shark MSE with 300 simulations. Note that the output is not printed out in the User Manual.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">BSharkMSE &lt;-<span class="st"> </span><span class="kw">runMSErobust</span>(<span class="dt">OM=</span>OM, <span class="dt">MPs=</span>MPs, <span class="dt">nsim=</span><span class="dv">300</span>, <span class="dt">name=</span><span class="st">&quot;blueshark&quot;</span>)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM<span class="op">@</span>nsim &lt;-<span class="st"> </span><span class="dv">300</span>
+BSharkMSE &lt;-<span class="st"> </span><span class="kw">runMSErobust</span>(<span class="dt">OM=</span>OM, <span class="dt">MPs=</span>MPs, <span class="dt">name=</span><span class="st">&quot;bluesharkMSE&quot;</span>)</code></pre></div>
+<!-- # ```{r, runMSErobust, cache=TRUE, include=FALSE} -->
+<!-- # OM@nsim <- 300  -->
+<!-- # BSharkMSE <- runMSErobust(OM=OM, MPs=MPs, name="bluesharkMSE") -->
+<!-- # ``` -->
+<!-- #  -->
+<!-- # ```{r, include=FALSE, cache=TRUE} -->
+<!-- # saveRDS(BSharkMSE, "bluesharkMSE.rdata") -->
+<!-- # ``` -->
 <p>This run should be completed in 10 minutes or less. The MSE object was saved (using the <code>saveRDS</code> function) to the current working directory as a <code>rdata</code> object named ‘bluesharkMSE.rdata’.</p>
 <p>A saved MSE object can be loaded using the <code>readRDS</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">BSharkMSE &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;bluesharkMSE.rdata&quot;</span>)</code></pre></div>
@@ -375,23 +394,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2><span class="header-section-number">6.5</span> Checking Convergence</h2>
 <p>The MSE is now complete. We can use the <code>Converge</code> function to confirm that the number of simulations is sufficient and the MSE model has converged, by which we mean that the relative position of the Management Procedures are stable with respect to different performance metrics:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Converge</span>(BSharkMSE)</code></pre></div>
+<pre><code>## All MPs appear to have converged in 300 iterations (threshold = 2%)</code></pre>
 <p><img src="userguide_files/figure-html/unnamed-chunk-77-1.png" width="672" /></p>
-<pre><code>## Some MPs may not have converged in 48 iterations (threshold = 2%)</code></pre>
-<pre><code>## MPs are: Fratio  DCAC  Fdem</code></pre>
-<pre><code>## MPs #: 1  2  3</code></pre>
-<pre><code>##   Num     MP
-## 1   1 Fratio
-## 2   2   DCAC
-## 3   3   Fdem</code></pre>
-<p><img src="userguide_files/figure-html/unnamed-chunk-77-2.png" width="672" /></p>
 </div>
 <div id="a-quick-recap" class="section level2">
 <h2><span class="header-section-number">6.6</span> A Quick Recap</h2>
 <p>The next step is exploring the output of the MSE, and determining which Management Procedure best meets the management objectives.</p>
 <p>The information above is spread out over a number of sections and paragraphs, and may appear a little complex. In fact, other than the initial set up of the DLMtool, it only took 4 lines of code to run the MSE and check the model for convergence:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;OM&#39;</span>, Blue_shark, Generic_fleet, Imprecise_Biased)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;OM&#39;</span>, Blue_shark, Generic_fleet, Imprecise_Biased, <span class="dt">nsim=</span><span class="dv">300</span>)
 MPs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Fratio&quot;</span>, <span class="st">&quot;DCAC&quot;</span>, <span class="st">&quot;Fdem&quot;</span>, <span class="st">&quot;DD&quot;</span>, <span class="st">&quot;matlenlim&quot;</span>)
-BSharkMSE &lt;-<span class="st"> </span><span class="kw">runMSErobust</span>(<span class="dt">OM=</span>OM, <span class="dt">MPs=</span>MPs, <span class="dt">nsim=</span><span class="dv">300</span>, <span class="dt">name=</span><span class="st">&quot;blueshark&quot;</span>)
+BSharkMSE &lt;-<span class="st"> </span><span class="kw">runMSErobust</span>(<span class="dt">OM=</span>OM, <span class="dt">MPs=</span>MPs, <span class="dt">name=</span><span class="st">&quot;bluesharkMSE&quot;</span>)
 <span class="kw">Converge</span>(BSharkMSE)</code></pre></div>
 <p>In the next Chapter we will look at how to examine the output of the MSE.</p>
 

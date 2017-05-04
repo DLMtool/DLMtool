@@ -25,7 +25,7 @@
 
 
 
-<meta name="date" content="2017-05-03">
+<meta name="date" content="2017-05-04">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -144,7 +144,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="4.2.4" data-path="setupOM.html"><a href="setupOM.html#implementation-object"><i class="fa fa-check"></i><b>4.2.4</b> Implementation Object</a></li>
 </ul></li>
 <li class="chapter" data-level="4.3" data-path="setupOM.html"><a href="setupOM.html#existing-stock-fleet-obs-and-imp-objects"><i class="fa fa-check"></i><b>4.3</b> Existing Stock, Fleet, Obs, and Imp Objects</a></li>
-<li class="chapter" data-level="4.4" data-path="setupOM.html"><a href="setupOM.html#creating-the-operating-model-object"><i class="fa fa-check"></i><b>4.4</b> Creating the Operating Model Object</a></li>
+<li class="chapter" data-level="4.4" data-path="setupOM.html"><a href="setupOM.html#creating-the-operating-model-object"><i class="fa fa-check"></i><b>4.4</b> Creating the Operating Model Object</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="setupOM.html"><a href="setupOM.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i><b>4.4.1</b> Important changes - DLMtool V4.1 and greater</a></li>
+</ul></li>
 <li class="chapter" data-level="4.5" data-path="setupOM.html"><a href="setupOM.html#customizing-the-operating-model"><i class="fa fa-check"></i><b>4.5</b> Customizing the Operating Model</a><ul>
 <li class="chapter" data-level="4.5.1" data-path="setupOM.html"><a href="setupOM.html#creating-new-objects"><i class="fa fa-check"></i><b>4.5.1</b> Creating New Objects</a></li>
 <li class="chapter" data-level="4.5.2" data-path="setupOM.html"><a href="setupOM.html#importing-objects"><i class="fa fa-check"></i><b>4.5.2</b> Importing Objects</a></li>
@@ -369,11 +371,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>It follows that any MP arranged to function <code>sapply(x,MP,Data)</code> will work. For example we can get five stochastic samples of the TAC for the demographic FMSY MP paired to catch-curve analysis <code>FdemCC</code> applied to a real data-limited data object for red snapper using:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sapply</span>(<span class="dv">1</span>,Fdem_CC,Red_snapper,<span class="dt">reps=</span><span class="dv">5</span>)</code></pre></div>
 <pre><code>##           [,1]
-## [1,] 13.820556
-## [2,] 10.006488
-## [3,]  4.538188
-## [4,]  5.033561
-## [5,]  4.129557</code></pre>
+## [1,]  5.423422
+## [2,] 35.257900
+## [3,] 16.032331
+## [4,] 40.200412
+## [5,] 26.748349</code></pre>
 <p>The MSE populates a <code>Data</code> object with many simulations and uses <code>sfSapply()</code> (snowfall cluster computing equivalent) to calculate a management recommendation for each simulation. By making methods compatible with this standard the very same equations are used in both the MSE and the real management advice.</p>
 <div id="average-historical-catch-management-procedure" class="section level3">
 <h3><span class="header-section-number">5.5.1</span> Average Historical Catch Management Procedure</h3>

@@ -25,7 +25,7 @@
 
 
 
-<meta name="date" content="2017-05-03">
+<meta name="date" content="2017-05-04">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -144,7 +144,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="4.2.4" data-path="setupOM.html"><a href="setupOM.html#implementation-object"><i class="fa fa-check"></i><b>4.2.4</b> Implementation Object</a></li>
 </ul></li>
 <li class="chapter" data-level="4.3" data-path="setupOM.html"><a href="setupOM.html#existing-stock-fleet-obs-and-imp-objects"><i class="fa fa-check"></i><b>4.3</b> Existing Stock, Fleet, Obs, and Imp Objects</a></li>
-<li class="chapter" data-level="4.4" data-path="setupOM.html"><a href="setupOM.html#creating-the-operating-model-object"><i class="fa fa-check"></i><b>4.4</b> Creating the Operating Model Object</a></li>
+<li class="chapter" data-level="4.4" data-path="setupOM.html"><a href="setupOM.html#creating-the-operating-model-object"><i class="fa fa-check"></i><b>4.4</b> Creating the Operating Model Object</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="setupOM.html"><a href="setupOM.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i><b>4.4.1</b> Important changes - DLMtool V4.1 and greater</a></li>
+</ul></li>
 <li class="chapter" data-level="4.5" data-path="setupOM.html"><a href="setupOM.html#customizing-the-operating-model"><i class="fa fa-check"></i><b>4.5</b> Customizing the Operating Model</a><ul>
 <li class="chapter" data-level="4.5.1" data-path="setupOM.html"><a href="setupOM.html#creating-new-objects"><i class="fa fa-check"></i><b>4.5.1</b> Creating New Objects</a></li>
 <li class="chapter" data-level="4.5.2" data-path="setupOM.html"><a href="setupOM.html#importing-objects"><i class="fa fa-check"></i><b>4.5.2</b> Importing Objects</a></li>
@@ -325,7 +327,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## [37] &quot;B0&quot;           &quot;N0&quot;           &quot;SSB0&quot;         &quot;BMSY_B0&quot;     
 ## [41] &quot;TACSD&quot;        &quot;TACFrac&quot;      &quot;ESD&quot;          &quot;EFrac&quot;       
 ## [45] &quot;SizeLimSD&quot;    &quot;SizeLimFrac&quot;  &quot;DiscMort&quot;     &quot;Blow&quot;</code></pre>
-<p>If you use the <code>dim</code> function to report the dimensions of the <code>OM</code> data frame, you’ll notice that there are 48 columns, corresponding to the 48 parameters in the Operating Model, and 48 rows, each corresponding to a single simulation of the MSE.</p>
+<p>If you use the <code>dim</code> function to report the dimensions of the <code>OM</code> data frame, you’ll notice that there are 48 columns, corresponding to the 48 parameters in the Operating Model, and 300 rows, each corresponding to a single simulation of the MSE.</p>
 </div>
 <div id="the-obs-slot" class="section level3">
 <h3><span class="header-section-number">7.1.3</span> The <code>Obs</code> Slot</h3>
@@ -336,7 +338,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## [11] &quot;FMSY_Mbias&quot;  &quot;BMSY_B0bias&quot; &quot;lenMbias&quot;    &quot;LFCbias&quot;     &quot;LFSbias&quot;    
 ## [16] &quot;Abias&quot;       &quot;Aerr&quot;        &quot;Kbias&quot;       &quot;t0bias&quot;      &quot;Linfbias&quot;   
 ## [21] &quot;hbias&quot;       &quot;Irefbias&quot;    &quot;Crefbias&quot;    &quot;Brefbias&quot;    &quot;betas&quot;</code></pre>
-<p>The <code>Obs</code> data frame also has 48 rows, each corresponding to a single simulation.</p>
+<p>The <code>Obs</code> data frame also has 300 rows, each corresponding to a single simulation.</p>
 <p>The information contained in the <code>OM</code> and <code>Obs</code> slots can be used to examine the sensitivity of the performance of Management Procedures with respect to different operating model and observation parameters. This is discussed in more detail below.</p>
 </div>
 <div id="the-b_bmsy-and-f_fmsy-slots" class="section level3">
@@ -347,12 +349,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>## [1] &quot;array&quot;</code></pre>
 <p>Using the <code>dim</code> function we can see that it is a 3-dimensional array, with the size corresponding to the number of simulations (<code>nsim</code>), the number of Management Procedures (<code>nMPs</code>), and the number of projection years (<code>proyears</code>):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(BSharkMSE<span class="op">@</span>B_BMSY)</code></pre></div>
-<pre><code>## [1] 48  5 50</code></pre>
+<pre><code>## [1] 300   5  50</code></pre>
 <p>This information can be used to calculate statistics relating to the performance of each Management Procedure with respect to these metrics.</p>
 <p>For example, if you wish to look at the distribution of <span class="math inline">\(\frac{B}{B_{MSY}}\)</span> for the second Management Procedure (DCAC), you could use the <code>boxplot</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">boxplot</span>(BSharkMSE<span class="op">@</span>B_BMSY[,<span class="dv">2</span>,], <span class="dt">xlab=</span><span class="st">&quot;Year&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;B/BMSY&quot;</span>)</code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-88-1.png" width="672" /></p>
-<p>This plot shows that the relative biomass for the stock generally increases through the projection period when the DCAC method is used, with the median relative biomass increasing from about 0.81 in the first year to 1.84 in the final year.</p>
+<p>This plot shows that the relative biomass for the stock generally increases through the projection period when the DCAC method is used, with the median relative biomass increasing from about 0.92 in the first year to 1.49 in the final year.</p>
 <p>However, the distribution appears to have quite high variability, which suggests that although the method works well on average, the final biomass was very low in some simulations.</p>
 <p>We will look at more aspects of plotting the MSE results in the sections below.</p>
 </div>
@@ -383,7 +385,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pyear &lt;-<span class="st"> </span>BSharkMSE<span class="op">@</span>proyears
 <span class="kw">boxplot</span>(BSharkMSE<span class="op">@</span>Effort[,, pyear], <span class="dt">outline=</span><span class="ot">FALSE</span>, <span class="dt">names=</span>BSharkMSE<span class="op">@</span>MPs, <span class="dt">ylab=</span><span class="st">&quot;Relative fishing effort&quot;</span>)</code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-89-1.png" width="672" /></p>
-<p>This plot shows that the median fishing effort in the final year ranges from 0.43 to 1.02 for the first four output control methods, and is constant for the input control method (<code>matlenlim</code>).</p>
+<p>This plot shows that the median fishing effort in the final year ranges from NA to NA for the first four output control methods, and is constant for the input control method (<code>matlenlim</code>).</p>
 <p>This is because the output control method adjusts the total allowable catch, which depending on the amount of available stock, also impacts the amount of fishing activity.</p>
 <p>The input control methods assume that fishing effort is held at constant levels in the future, although the catchability is able to randomly or systematically vary between years. Furthermore, input control methods can also adjust the amount of fishing effort in each year.</p>
 </div>
@@ -440,17 +442,17 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The <code>summary</code> function provides information on the performance of the Management Procedures with respect to various metrics, including the probability of overfishing, and the probability that the biomass is below various reference levels:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(BSharkMSE)</code></pre></div>
 <pre><code>##          MP Yield stdev   POF stdev    P10 stdev   P50 stdev  P100 stdev
-## 1    Fratio 54.83 41.00 48.46  43.67 14.04 29.44 31.00 39.29 53.00 43.06
-## 2      DCAC 67.19 48.33 26.79  37.56 10.79 26.00 15.62 30.84 30.08 36.47
-## 3      Fdem 54.55 34.41 52.75  40.94 20.17 34.81 35.08 42.65 56.62 39.67
-## 4        DD 68.88 42.15 58.88  36.19 13.96 22.70 35.92 35.54 66.38 33.26
-## 5 matlenlim 86.04 37.96 55.21  40.94  0.04  0.29 12.50 28.50 32.92 36.74
+## 1    Fratio 55.28 39.70 41.63  42.20 13.49 28.52 28.46 38.73 48.84 41.70
+## 2      DCAC 57.74 41.15 29.85  40.02 12.45 26.95 20.28 33.72 35.73 38.89
+## 3      Fdem 53.57 38.73 48.45  43.30 18.45 32.36 38.27 42.21 55.25 42.38
+## 4        DD 60.27 40.67 52.75  37.84 16.78 25.86 36.23 35.29 62.95 35.69
+## 5 matlenlim 92.81 43.29 53.95  38.77  0.57  6.74  9.44 22.80 34.86 39.93
 ##    LTY  STY   VY
-## 1 57.9 59.4 33.3
-## 2 65.2 53.5 91.7
-## 3 58.3 64.0 41.7
-## 4 69.4 75.8 70.8
-## 5 84.4 72.3  2.1</code></pre>
+## 1 51.2 56.0 46.3
+## 2 56.4 59.7  NaN
+## 3 52.7 63.9 41.7
+## 4 63.4 74.4 70.0
+## 5 84.4 73.8  0.0</code></pre>
 <p>This information can be used to identify poorly performing methods, and exclude them from further, perhaps more comprehensive, runs of the MSE.</p>
 </div>
 </div>
@@ -472,11 +474,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">NOAA_plot</span>(BSharkMSE)</code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-94-1.png" width="672" /></p>
 <pre><code>##           PNOF  B50  LTY   VY
-## Fratio    51.5 69.0 52.1 52.1
-## DCAC      73.2 84.4 64.6 89.6
-## Fdem      47.2 64.9 57.5 56.2
-## DD        41.1 64.1 65.0 83.3
-## matlenlim 44.8 87.5 82.1 12.5</code></pre>
+## Fratio    58.4 71.5 51.8 65.3
+## DCAC      69.3 79.7 56.0 84.7
+## Fdem      51.6 61.7 50.7 63.0
+## DD        47.2 63.8 61.6 75.0
+## matlenlim 46.0 90.6 81.9 16.0</code></pre>
 <!-- The `TradePlot` function was developed as a generic plot that could be used to examine various trade-offs: -->
 <!-- ```{r} -->
 <!-- TradePlot(BSharkMSE) -->
@@ -509,11 +511,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The <code>barplot</code> function returns invisible output, which we have captured here by assigning the output of the function to the variable <code>out</code>. We can display this output by typing <code>out</code> into the R console:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">out </code></pre></div>
 <pre><code>##          MP B_BMSYp SSB_SSB0p  Pass MPClass
-## 1        DD      60        56 FALSE  Output
-## 2    Fratio      65        60 FALSE  Output
-## 3      Fdem      65        60 FALSE  Output
-## 4      DCAC      80        79 FALSE  Output
-## 5 matlenlim      88        84  TRUE   Input</code></pre>
+## 1        DD      53        48 FALSE  Output
+## 2      Fdem      61        57 FALSE  Output
+## 3    Fratio      70        66 FALSE  Output
+## 4      DCAC      74        72 FALSE  Output
+## 5 matlenlim      91        87  TRUE   Input</code></pre>
 <p>This data frame displays the probability with respect to the different performance metrics, as well as whether the Management Procedure passed or failed the specified level of acceptable risk.</p>
 <p>In this can, we can see that the <code>matlenlim</code> method is the only method that meets the requirement of at least 80% probability that the biomass in the last 10 years of the projection period is above <span class="math inline">\(0.5B_{MSY}\)</span> and above <span class="math inline">\(0.2B_0\)</span>.</p>
 </div>
@@ -596,7 +598,7 @@ accept &lt;-<span class="st"> </span><span class="kw">which</span>(stats<span cl
 MPs &lt;-<span class="st"> </span>stats[accept,<span class="st">&quot;MP&quot;</span>] <span class="co"># the acceptable MPs</span>
 
 subMSE &lt;-<span class="st"> </span><span class="kw">Sub</span>(BSharkMSE, <span class="dt">MPs=</span>MPs)</code></pre></div>
-<p>Here we can see that the DCAC, matlenlim methods (2 of the 5) met our specified criteria. We used the <code>Sub</code> function to create a new <code>MSE</code> object that only includes these Management Procedures.</p>
+<p>Here we can see that the Fratio, DCAC, matlenlim methods (3 of the 5) met our specified criteria. We used the <code>Sub</code> function to create a new <code>MSE</code> object that only includes these Management Procedures.</p>
 <p>We can than proceed to continue our analysis on the <code>subMSE</code> object, e.g.:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Tplot</span>(subMSE)</code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-104-1.png" width="672" /></p>
@@ -612,9 +614,9 @@ above &lt;-<span class="st"> </span>BSharkMSE<span class="op">@</span>OM<span cl
 aboveMSE &lt;-<span class="st"> </span><span class="kw">Sub</span>(BSharkMSE, <span class="dt">sims=</span>above)</code></pre></div>
 <p>You can see that the original MSE object has been split into two objects, each with half of the simulations:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">belowMSE<span class="op">@</span>nsim</code></pre></div>
-<pre><code>## [1] 24</code></pre>
+<pre><code>## [1] 150</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">aboveMSE<span class="op">@</span>nsim</code></pre></div>
-<pre><code>## [1] 24</code></pre>
+<pre><code>## [1] 150</code></pre>
 <p>We could then continue our analysis on each subset MSE and determine if the natural mortality rate is critical in determining which Management Procedure we would choose as the best option for managing the fishery.</p>
 </div>
 </div>

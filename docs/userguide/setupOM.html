@@ -25,7 +25,7 @@
 
 
 
-<meta name="date" content="2017-05-03">
+<meta name="date" content="2017-05-04">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -144,7 +144,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="4.2.4" data-path="setupOM.html"><a href="setupOM.html#implementation-object"><i class="fa fa-check"></i><b>4.2.4</b> Implementation Object</a></li>
 </ul></li>
 <li class="chapter" data-level="4.3" data-path="setupOM.html"><a href="setupOM.html#existing-stock-fleet-obs-and-imp-objects"><i class="fa fa-check"></i><b>4.3</b> Existing Stock, Fleet, Obs, and Imp Objects</a></li>
-<li class="chapter" data-level="4.4" data-path="setupOM.html"><a href="setupOM.html#creating-the-operating-model-object"><i class="fa fa-check"></i><b>4.4</b> Creating the Operating Model Object</a></li>
+<li class="chapter" data-level="4.4" data-path="setupOM.html"><a href="setupOM.html#creating-the-operating-model-object"><i class="fa fa-check"></i><b>4.4</b> Creating the Operating Model Object</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="setupOM.html"><a href="setupOM.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i><b>4.4.1</b> Important changes - DLMtool V4.1 and greater</a></li>
+</ul></li>
 <li class="chapter" data-level="4.5" data-path="setupOM.html"><a href="setupOM.html#customizing-the-operating-model"><i class="fa fa-check"></i><b>4.5</b> Customizing the Operating Model</a><ul>
 <li class="chapter" data-level="4.5.1" data-path="setupOM.html"><a href="setupOM.html#creating-new-objects"><i class="fa fa-check"></i><b>4.5.1</b> Creating New Objects</a></li>
 <li class="chapter" data-level="4.5.2" data-path="setupOM.html"><a href="setupOM.html#importing-objects"><i class="fa fa-check"></i><b>4.5.2</b> Importing Objects</a></li>
@@ -411,11 +413,22 @@ If you type <code>Albacore</code> into the R console (or into your R script and 
 <p>Here we will create a Operating Model object called <code>myOM</code>, and use the <code>Blue_shark</code> <em>Stock</em> object, the <code>Generic_fleet</code> <em>Fleet</em> object, the <code>Imprecise_Biased</code> <em>Observation</em> object, and the default <code>Perfect_Imp</code> <em>Imp</em> object:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myOM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;OM&#39;</span>, Blue_shark, Generic_fleet, Imprecise_Biased, Perfect_Imp)</code></pre></div>
 <p>If you use the <code>slotNames</code> function on the <code>myOM</code> object that was just created, you will see that it contains all of the information from the <em>Stock</em>, <em>Fleet</em>, and <em>Observation</em> objects.</p>
-<p>We have now created a <em>Operating Model</em> object and can begin the MSE. If you wish, you can jump ahead to the <a href="MSE.html#MSE">Management Strategy Evaluation</a> section (although you may wish to read the <a href="assumptions-of-dlmtool.html#management-procedures">Management Procedures</a> section first).</p>
-<p>The remainder of this section will describe how to modify the existing <em>Stock</em>, <em>Fleet</em>, <em>Obs</em>, and <em>Imp</em> objects, as well as create new objects.</p>
+<div id="important-changes---dlmtool-v4.1-and-greater" class="section level3">
+<h3><span class="header-section-number">4.4.1</span> Important changes - DLMtool V4.1 and greater</h3>
+<p>DLMtool V4.1 introduced some important changes to the Operating Model object. The number of simulations (<code>nsim</code>) and the number of projection years (<code>proyears</code>) are now slots in the <code>OM</code> object, rather than arguments to <code>runMSE</code> (see <a href="MSE.html#MSE">Management Strategy Evaluation</a>). This change was required to allow users to specify their own custom futures for parameters like <em>M</em>, growth, etc. The <code>OM</code> object also now has a new random seed slot in the operating model, which ensures that the MSE results are now exactly reproducible.</p>
+<p>You can modify the number of simulations, the number of projection years, or the value of the random seed by modifiying the relevant slots in the <code>OM</code> object:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myOM<span class="op">@</span>nsim </code></pre></div>
+<pre><code>## [1] 48</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myOM<span class="op">@</span>proyears</code></pre></div>
+<pre><code>## [1] 50</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myOM<span class="op">@</span>seed</code></pre></div>
+<pre><code>## [1] 1</code></pre>
+</div>
 </div>
 <div id="customizing-the-operating-model" class="section level2">
 <h2><span class="header-section-number">4.5</span> Customizing the Operating Model</h2>
+<p>We have now created a <em>Operating Model</em> object and can begin the MSE. If you wish, you can jump ahead to the <a href="MSE.html#MSE">Management Strategy Evaluation</a> section (although you may wish to read the <a href="assumptions-of-dlmtool.html#management-procedures">Management Procedures</a> section first).</p>
+<p>The remainder of this section will describe how to modify the existing <em>Stock</em>, <em>Fleet</em>, <em>Obs</em>, and <em>Imp</em> objects, as well as create new objects.</p>
 <p>The pre-defined <em>Stock</em>, <em>Fleet</em>, <em>Obs</em>, and <em>Imp</em> objects in DLMtool can be used for running an MSE and exploring the output. More often, however, users of the DLMtool will be interested in performing an MSE for their own particular fishery.</p>
 <p>To do this, the parameters of the <em>Operating Model</em> (or more specifically the <em>Stock</em>, <em>Fleet</em>, <em>Obs</em> and <em>Imp</em> objects from which it is built) must be specified in such a way that reflects the characteristics of the fishery.</p>
 <p>There are a number of ways of doing this.</p>
