@@ -1595,7 +1595,10 @@ joinMSE <- function(MSEobjs = NULL) {
         if (!mean(nBins) == nBins[1]) { # not all same size 
           Max <- max(nBins)
           index <- which(nBins < Max)
-          for (kk in index) templs[[kk]] <-  abind::abind(templs[[kk]], array(0, dim=c(nsims[kk], nMPs[kk])), along=3)
+          for (kk in index) {
+            dif <- Max - dim(templs[[kk]])[3]
+            templs[[kk]] <- abind::abind(templs[[kk]], array(0, dim=c(nsims[kk], nMPs[kk], dif)), along=3)
+          } 
         }
       }
       outlist[[sn]] <- abind::abind(templs, along = 1)
