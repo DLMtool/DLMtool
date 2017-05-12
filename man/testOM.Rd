@@ -4,7 +4,7 @@
 \name{testOM}
 \alias{testOM}
 \title{testOM OM}
-\format{An object of class \code{NULL} of length 0.}
+\format{An object of class \code{OM} of length 1.}
 \usage{
 testOM
 }

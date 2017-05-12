@@ -65,6 +65,8 @@ projections?}
 
 \item{yaxis}{Logical. Should y-axis labels be displayed?}
 
+\item{oneIt}{Logical. Should one iteration be plotted on the quantile plot?}
+
 \item{...}{Additional arguments to be passed to plotting functions}
 }
 \description{

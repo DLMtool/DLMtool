@@ -4,7 +4,7 @@
 \name{Perfect_Imp}
 \alias{Perfect_Imp}
 \title{Perfect_Imp Imp}
-\format{An object of class \code{NULL} of length 0.}
+\format{An object of class \code{Imp} of length 1.}
 \usage{
 Perfect_Imp
 }
