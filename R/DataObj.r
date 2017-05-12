@@ -6,31 +6,49 @@
 # used manually to apply a MP (or MPs) to a particular data object.
 
 DLMdiag <- function(Data, command = "available", reps = 5, timelimit = 1) {
+  if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
   funcs1 <- c(avail("Output"), avail("Input"))
   good <- rep(TRUE, length(funcs1))
   report <- rep("Worked fine", length(funcs1))
   test <- new("list")
   timey <- new("list")
   options(show.error.messages = FALSE)
+  on.exit(options(show.error.messages = TRUE))
   for (y in 1:length(funcs1)) {
-    if (class(match.fun(funcs1[y])) == "Output") {
-      time1 <- Sys.time()
-      suppressWarnings({
-        setTimeLimit(timelimit * 1.5)
-        test[[y]] <- try(do.call(funcs1[y], list(x = 1, Data = Data, 
-          reps = 5)), silent = T)
-        if (class(test[[y]]) == "list") 
-          test[[y]] <- test[[y]][[1]]
-        setTimeLimit(Inf)
-      })
-    } else {
-      time1 <- Sys.time()
-      suppressWarnings({
-        setTimeLimit(timelimit * 1.5)
-        test[[y]] <- try(do.call(funcs1[y], list(x = 1, Data = Data)), 
-          silent = T)
-        setTimeLimit(Inf)
-      })
+    # First check for required data slots that are not NA
+    time1 <- Sys.time() # initialise time1
+    temp <- format(match.fun(funcs1[y])) # Extract the dependencies from function 
+    temp <- paste(temp[1:(length(temp))], collapse = " ")
+    
+    slots <- slotNames(Data)
+    rr <- try(slot(Data, "Misc"), silent = TRUE)
+    if (class(rr) == "try-error") Data@Misc <- list()
+    slotnams <- paste("Data@", slotNames(Data), sep = "")
+    
+    chk <- rep(FALSE, length(slotnams))
+    for (j in 1:length(slotnams)) {
+      if (grepl(slotnams[j], temp) & NAor0(slot(Data, slots[j]))) chk[j] <- TRUE
+    }
+    if (sum(chk) > 0) {
+      test[[y]] <- "missing data" # if some required slots are NA or NULL - return error
+      class(test[[y]]) <- "try-error"
+    } else {  # continue if all slots are valid 
+      if (class(match.fun(funcs1[y])) == "Output") {
+        time1 <- Sys.time()
+        suppressWarnings({
+          setTimeLimit(timelimit * 1.5)
+          test[[y]] <- try(do.call(funcs1[y], list(x = 1, Data = Data, reps = 5)), silent = T)
+          if (class(test[[y]]) == "list") test[[y]] <- test[[y]][[1]]
+          setTimeLimit(Inf)
+        })
+      } else {
+        time1 <- Sys.time()
+        suppressWarnings({
+          setTimeLimit(timelimit * 1.5)
+          test[[y]] <- try(do.call(funcs1[y], list(x = 1, Data = Data)), silent = T)
+          setTimeLimit(Inf)
+        })
+      }      
     }
     time2 <- Sys.time()
     timey[[y]] <- time2 - time1
@@ -47,21 +65,16 @@ DLMdiag <- function(Data, command = "available", reps = 5, timelimit = 1) {
     }
   }  # end of funcs
   options(show.error.messages = TRUE)
-  if (command == "available") 
-    return(funcs1[good])
-  if (command == "not available") 
-    return(cbind(funcs1[!good], report[!good]))
-  if (command == "needed") 
-    return(needed(Data, funcs = funcs1[!good]))
+  if (command == "available") return(funcs1[good])
+  if (command == "not available") return(cbind(funcs1[!good], report[!good]))
+  if (command == "needed")  return(needed(Data, funcs = funcs1[!good]))
 }
 
 needed <- function(Data, funcs = NA) {
-  if (is.na(funcs[1])) 
-    funcs <- avail("Output")
+  if (is.na(funcs[1]))  funcs <- avail("Output")
   slots <- slotNames("Data")
   rr <- try(slot(Data, "Misc"), silent = TRUE)
-  if (class(rr) == "try-error") 
-    Data@Misc <- list()
+  if (class(rr) == "try-error") Data@Misc <- list()
   
   slotnams <- paste("Data@", slotNames(Data), sep = "")
   repp <- rep("", length(funcs))
@@ -71,11 +84,11 @@ needed <- function(Data, funcs = NA) {
     temp <- paste(temp[1:(length(temp))], collapse = " ")
     rec <- ""
     for (j in 1:length(slotnams)) {
-      if (grepl(slotnams[j], temp) & NAor0(slot(Data, slots[j]))) 
-        rec <- c(rec, slots[j])
+      if (grepl(slotnams[j], temp) & NAor0(slot(Data, slots[j]))) rec <- c(rec, slots[j])
     }
-    repp[i] <- paste(funcs[i], ": ", paste(rec[2:length(rec)], collapse = ", "), 
-      sep = "")
+    repp[i] <- paste(funcs[i], ": ", paste(rec[2:length(rec)], collapse = ", "), sep = "")
+    if (length (rec) == 1) 
+      repp[i] <- paste0(funcs[i], ": All data available. Model returns NA")
   }
   repp
 }
@@ -191,8 +204,9 @@ plotOFL <- function(Data, xlims = NA, perc = 0.5) {
 #' @param timelimit The maximum time (seconds) taken for a method to undertake
 #' 10 reps (this filters out methods that are too slow)
 #' @export Can
-Can <- function(Data, timelimit = 1) DLMdiag(Data, "available", 
-  timelimit = timelimit)
+Can <- function(Data, timelimit = 1) {
+  DLMdiag(Data, "available",  timelimit = timelimit)
+}
 
 
 #' What methods can't be applied to this DLM data object
@@ -206,9 +220,9 @@ Can <- function(Data, timelimit = 1) DLMdiag(Data, "available",
 #' @param timelimit The maximum time (seconds) taken for a method to undertake
 #' 10 reps (this filters out methods that are too slow)
 #' @export Cant
-Cant <- function(Data, timelimit = 1) DLMdiag(Data, "not available", 
-  timelimit = timelimit)
-
+Cant <- function(Data, timelimit = 1) {
+  DLMdiag(Data, "not available", timelimit = timelimit)
+}
 
 #' Data needed to get MPs running
 #' 
@@ -222,8 +236,9 @@ Cant <- function(Data, timelimit = 1) DLMdiag(Data, "not available",
 #' @param timelimit The maximum time (seconds) taken to complete 10 reps
 #' @author T. Carruthers
 #' @export Needed
-Needed <- function(Data, timelimit = 1) DLMdiag(Data, "needed", 
-  timelimit = timelimit)
+Needed <- function(Data, timelimit = 1) {
+  DLMdiag(Data, "needed", timelimit = timelimit)
+}
 
 # A function that determines the inputs for a given data-limited method
 # of class Output and then analyses the sensitivity of TAC
@@ -444,7 +459,7 @@ getTAC <- function(Data, MPs = NA, reps = 100) {
       }
     }
   } else {
-    sfExport("Data") #####
+    sfExport("Data") 
     if (nsims < 8) {
       sfExport(list = c("MPs", "reps"))
       for (ss in 1:nsims) {
@@ -668,10 +683,8 @@ boxplot.Data <- function(x, outline = FALSE, ...) {
     MPs <- MPs[ord]
     tacs <- tacs[, ord]
     cols <- rainbow(30)
-    ymax <- quantile(apply(tacs, 2, quantile, 0.99, na.rm = TRUE), 
-      0.99)
-    ymin <- quantile(apply(tacs, 2, quantile, 0.01, na.rm = TRUE), 
-      0.01)
+    ymax <- quantile(apply(tacs, 2, quantile, 0.99, na.rm = TRUE), 0.99)
+    ymin <- quantile(apply(tacs, 2, quantile, 0.01, na.rm = TRUE), 0.01)
     ylim <- c(ymin, ymax)
     Median <- round(apply(tacs, 2, median, na.rm = TRUE), 2)
     SD <- round(apply(tacs, 2, sd, na.rm = TRUE), 2)
