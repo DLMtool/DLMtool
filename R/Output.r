@@ -1,5 +1,25 @@
 # Output methods
 
+#' Check Data object is valid for a MP
+#' 
+#' Checks that all slots in Data object required by the MP contain 
+#' finite values
+#' 
+#' @param Data An object of class Data
+#' @param dependencies A string of slots in the Data object required for the MP
+#' @author A. Hordyk
+#' @export
+ChkDatNA <- function(Data, dependencies) {
+  slots <- trimws(gsub(",", "", unlist(strsplit(dependencies, "Data@"))))
+  slots <- slots[nchar(slots) > 0]
+  chk <- rep(FALSE, length(slots))
+  for (x in seq_along(slots)) {
+    chk[x] <- any(!is.finite(slot(Data, slots[x])))
+  }
+  if (any(chk)) stop("Missing data in slots -  ", paste(slots[chk], " "), call.=FALSE)
+}
+
+
 #' TAC Filter
 #' 
 #' Filters vector of TAC recommendations by replacing negatives with NA and
@@ -2191,9 +2211,6 @@ BK <- function(x, Data, reps = 100) {
   
 }  # end of BK
 class(BK) <- "Output"
-
-
-
 
 #' Beddington and Kirkwood life-history method combined with catch curve
 #' analysis
