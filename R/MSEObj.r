@@ -539,12 +539,6 @@ Pplot <- function(MSEobj, nam = NA) {
 #' A projection by projection plot of F/FMSY, B/BMSY, B/B0, and yield
 #' 
 #' 
-#' @usage Pplot2(MSEobj, YVar=c('B_BMSY', 'F_FMSY'), MPs=NA, sims=NULL,
-#' traj=c('all', 'quant'), quants=c(0.1, 0.9), incquant=TRUE,
-#' quantcol='lightgray', RefYield=c('lto', 'curr'), LastYr=TRUE, maxMP=6,
-#' alpha=60, cex.axis=1.35, cex.lab=1.4, YLab=NULL, incMP=TRUE, MPcex=1.4,
-#' incLeg=TRUE, cex.leg=1.5, legPos='topleft', yline=NULL, parOR=FALSE,
-#' xaxis=TRUE, yaxis=TRUE, ...)
 #' @param MSEobj An object of class MSE
 #' @param YVar What to plot on the y-axis? Options are: \code{c('SSB_SSB0',
 #' 'B_BMSY', 'F_FMSY', 'Yield')}

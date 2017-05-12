@@ -1,4 +1,4 @@
-#' Wrapper for histogram function to remove annoying 
+## Wrapper for histogram function to remove annoying 
 hist2 <- function(x, col, ...) {
   if (mean(x) == x[1]) {
     
@@ -178,7 +178,7 @@ plot.Stock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
   # stop()
   op <- par(mar = c(2, 1, 3, 1), oma=c(1,2,4,1), ask=FALSE, las=1)
   
-  histwrap(M, col=col, axes=FALSE, main="M", breaks=breaks)
+  hist2(M, col=col, axes=FALSE, main="M", breaks=breaks)
   axis(side=1)  
   hist2(Msd, col=col, axes=FALSE, main="Msd", breaks=breaks)
   axis(side=1) 
