@@ -1023,10 +1023,15 @@ setClass("OM", representation(Name = "character", nsim="numeric",proyears="numer
   cpars="list",seed="numeric",CurrentYr="numeric"))
 
 
-Generic_fleet<-NULL
-Generic_obs<-NULL
-Perfect_Imp<-NULL
+# This hack is neccessary to get around CRAN checks but causes problems that 
+# Generic_fleet etc objects are considered class NULL ONLY when accessed by internal functions
+# in the package - i.e., they are ok in interactive mode
+# Commented out for now but need a fix before we release the next version to CRAN. 
 
+# Generic_fleet<-NULL
+# Generic_obs<-NULL
+# Perfect_Imp<-NULL
+# testOM<-NULL
 
 
 # initialize OM
