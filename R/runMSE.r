@@ -1,5 +1,4 @@
 
-testOM<-NULL
 
 #' Run a Management Strategy Evaluation
 #' 
@@ -48,6 +47,7 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
   ) {
 
   if("seed"%in%slotNames(OM))set.seed(OM@seed)
+  ChkObj(OM) # Check that all required slots in OM object contain values 
   tiny <- 1e-15  # define tiny variable
   message("Loading operating model")
   flush.console()
