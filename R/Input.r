@@ -19,7 +19,7 @@
 #' @export matlenlim
 matlenlim <- function(x, Data, ...) {
   # Length at maturity is knife-edge vulnerability
-  dependencies = "Data@LFC, Data@LFS"
+  dependencies = "Data@L50"
   Allocate <- 1
   Effort <- 1
   Spatial <- c(1, 1)
@@ -52,7 +52,7 @@ class(matlenlim) <- "Input"
 #' @export matlenlim2
 matlenlim2 <- function(x, Data, ...) {
   # Knife-edge vulnerability slightly higher than length at maturity
-  dependencies = "Data@LFC, Data@LFS"
+  dependencies = "Data@L50"
   Allocate <- 1
   Effort <- 1
   Spatial <- c(1, 1)
@@ -87,7 +87,7 @@ class(matlenlim2) <- "Input"
 #' @export slotlim
 slotlim <- function(x, Data, ...) {
   # Example of slot limit between 0.95 and 1.25 * L50
-  dependencies = "Data@LFC, Data@LFS"
+  dependencies = "Data@L50, Data@vbLinf"
   Allocate <- 1
   Effort <- 1
   Spatial <- c(1, 1)
@@ -117,11 +117,9 @@ class(slotlim) <- "Input"
 #' @export MRreal
 MRreal <- function(x, Data, ...) {
   # A Marine reserve in area 1 with spatial reallocation of effort
-  dependencies = "Data@MaxAge"
   Allocate <- 1
   Effort <- 1
   Spatial <- c(0, 1)
-  # Vuln<-rep(NA,Data@MaxAge)
   Vuln <- rep(NA, 2)
   c(Allocate, Effort, Spatial, Vuln)
 }
@@ -144,11 +142,9 @@ class(MRreal) <- "Input"
 #' @export MRnoreal
 MRnoreal <- function(x, Data, ...) {
   # A Marine reserve in area 1 with no spatial reallocation of effort
-  dependencies = "Data@MaxAge"
   Allocate <- 0
   Effort <- 1
   Spatial <- c(0, 1)
-  # Vuln<-rep(NA,Data@MaxAge)
   Vuln <- rep(NA, 2)
   c(Allocate, Effort, Spatial, Vuln)
 }
@@ -174,11 +170,9 @@ class(MRnoreal) <- "Input"
 #' @export curE
 curE <- function(x, Data, ...) {
   # current effort
-  dependencies = "Data@MaxAge"
   Allocate <- 1
   Effort <- 1
   Spatial <- c(1, 1)
-  # Vuln<-rep(NA,Data@MaxAge)
   Vuln <- rep(NA, 2)
   c(Allocate, Effort, Spatial, Vuln)
 }
@@ -204,11 +198,9 @@ class(curE) <- "Input"
 #' @export curE75
 curE75 <- function(x, Data, ...) {
   # 75% current effort
-  dependencies = "Data@MaxAge"
   Allocate <- 1
   Effort <- 0.75
   Spatial <- c(1, 1)
-  # Vuln<-rep(NA,Data@MaxAge)
   Vuln <- rep(NA, 2)
   c(Allocate, Effort, Spatial, Vuln)
 }
@@ -268,7 +260,7 @@ DDe <- function(x, Data, reps = 100) {
   E_hist <- E_hist/mean(E_hist)
   ny_DD <- length(C_hist)
   params <- log(c(Data@Mort[x], mean(C_hist, na.rm = T), Data@Mort[x]))
-  k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  -------------
+  k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  --
   k_DD[k_DD > Data@MaxAge/2] <- ceiling(Data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
   Rho_DD <- (wa[k_DD + 2] - Winf)/(wa[k_DD + 1] - Winf)
   Alpha_DD <- Winf * (1 - Rho_DD)
@@ -350,7 +342,7 @@ DDe75 <- function(x, Data, reps = 100) {
   E_hist <- E_hist/mean(E_hist)
   ny_DD <- length(C_hist)
   params <- log(c(Data@Mort[x], mean(C_hist, na.rm = T), Data@Mort[x]))
-  k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  -------------
+  k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  --
   k_DD[k_DD > Data@MaxAge/2] <- ceiling(Data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
   Rho_DD <- (wa[k_DD + 2] - Winf)/(wa[k_DD + 1] - Winf)
   Alpha_DD <- Winf * (1 - Rho_DD)
@@ -436,7 +428,7 @@ DDes <- function(x, Data, reps = 100, LB = 0.9, UB = 1.1) {
   E_hist <- E_hist/mean(E_hist)
   ny_DD <- length(C_hist)
   params <- log(c(Data@Mort[x], mean(C_hist, na.rm = T), Data@Mort[x]))
-  k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  -------------
+  k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  --
   k_DD[k_DD > Data@MaxAge/2] <- ceiling(Data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
   Rho_DD <- (wa[k_DD + 2] - Winf)/(wa[k_DD + 1] - Winf)
   Alpha_DD <- Winf * (1 - Rho_DD)
@@ -1010,10 +1002,7 @@ minlenLopt1 <- function(x, Data, reps = 100, buffer = 0.1) {
   # set length-at-first-capture 10% below LFs
   
   dependencies = "Data@MPeff, Data@vbLinf, Data@wlb, Data@Mort, Data@vbK"
-  
-  Lopt <- Data@vbLinf[x] * Data@wlb[x]/((Data@Mort[x]/Data@vbK[x]) + 
-    Data@wlb[x])
-  
+  Lopt <- Data@vbLinf[x] * Data@wlb[x]/((Data@Mort[x]/Data@vbK[x]) +  Data@wlb[x])
   Allocate <- 1
   Spatial <- c(1, 1)
   newLFS <- Lopt * (0.7 + buffer)  # Lopt too precautionary, so set it to % below
