@@ -62,52 +62,52 @@ plot.Obs <- function(x, nsim=500, nyears=50,
   
   op <- par(mfrow=c(4,4),mai=c(0.6,0.6,0.25,0.01),omi=c(0.01,0.01,0.4,0.01))
   
-  hist(CAA_nsamp,col=col,border="white", axes=FALSE, main="No. annual catch-at-age obs (CAA_samp)", breaks=breaks,cex.main=0.9)
+  hist2(CAA_nsamp,col=col,border="white", axes=FALSE, main="No. annual catch-at-age obs (CAA_samp)", breaks=breaks,cex.main=0.9)
   axis(side=1) 
   
-  hist(CAA_ESS,col=col,border="white", axes=FALSE, main="Effective sample size CAA obs (CAA_ESS)", breaks=breaks,cex.main=0.9)
+  hist2(CAA_ESS,col=col,border="white", axes=FALSE, main="Effective sample size CAA obs (CAA_ESS)", breaks=breaks,cex.main=0.9)
   axis(side=1) 
   
-  hist(CAL_nsamp,col=col,border="white", axes=FALSE, main="No. annual catch-at-length obs (CAL_samp)", breaks=breaks,cex.main=0.9)
+  hist2(CAL_nsamp,col=col,border="white", axes=FALSE, main="No. annual catch-at-length obs (CAL_samp)", breaks=breaks,cex.main=0.9)
   axis(side=1) 
   
-  hist(CAL_ESS,col=col,border="white", axes=FALSE, main="Effective sample size CAL obs (CAL_ESS)", breaks=breaks,cex.main=0.9)
+  hist2(CAL_ESS,col=col,border="white", axes=FALSE, main="Effective sample size CAL obs (CAL_ESS)", breaks=breaks,cex.main=0.9)
   axis(side=1) 
   
-  hist(Mbias,col=col,border="white", axes=FALSE, main="Natural mortality rate bias (Mbias)", breaks=breaks,cex.main=0.9)
+  hist2(Mbias,col=col,border="white", axes=FALSE, main="Natural mortality rate bias (Mbias)", breaks=breaks,cex.main=0.9)
   axis(side=1) 
   
-  hist(FMSY_Mbias,col=col,border="white", axes=FALSE, main="FMSY/M bias (FMSY_Mbias)", breaks=breaks,cex.main=0.9)
+  hist2(FMSY_Mbias,col=col,border="white", axes=FALSE, main="FMSY/M bias (FMSY_Mbias)", breaks=breaks,cex.main=0.9)
   axis(side=1)
   
-  hist(lenMbias,col=col,border="white", axes=FALSE, main="Bias in length at maturity (lenMbias)", breaks=breaks,cex.main=0.9)
+  hist2(lenMbias,col=col,border="white", axes=FALSE, main="Bias in length at maturity (lenMbias)", breaks=breaks,cex.main=0.9)
   axis(side=1)
   
-  hist(LFCbias,col=col,border="white", axes=FALSE, main="Bias in length at first capture (LFCbias)", breaks=breaks,cex.main=0.9)
+  hist2(LFCbias,col=col,border="white", axes=FALSE, main="Bias in length at first capture (LFCbias)", breaks=breaks,cex.main=0.9)
   axis(side=1)
   
-  hist(LFSbias,col=col,border="white", axes=FALSE, main="Bias in length at full selection (LFSbias)", breaks=breaks,cex.main=0.9)
+  hist2(LFSbias,col=col,border="white", axes=FALSE, main="Bias in length at full selection (LFSbias)", breaks=breaks,cex.main=0.9)
   axis(side=1)
   
-  hist(Kbias,col=col,border="white", axes=FALSE, main="Bias in von B. K (Kbias)", breaks=breaks,cex.main=0.9)
+  hist2(Kbias,col=col,border="white", axes=FALSE, main="Bias in von B. K (Kbias)", breaks=breaks,cex.main=0.9)
   axis(side=1)
   
-  hist(t0bias,col=col,border="white", axes=FALSE, main="Bias in von B. t0 (t0bias)", breaks=breaks,cex.main=0.9)
+  hist2(t0bias,col=col,border="white", axes=FALSE, main="Bias in von B. t0 (t0bias)", breaks=breaks,cex.main=0.9)
   axis(side=1)
   
-  hist(Linfbias,col=col,border="white", axes=FALSE, main="Bias in von B. Linf (Linfbias)", breaks=breaks,cex.main=0.9)
+  hist2(Linfbias,col=col,border="white", axes=FALSE, main="Bias in von B. Linf (Linfbias)", breaks=breaks,cex.main=0.9)
   axis(side=1)
   
-  hist(Irefbias,col=col,border="white", axes=FALSE, main="Bias in index at MSY (Irefbias)", breaks=breaks,cex.main=0.9)
+  hist2(Irefbias,col=col,border="white", axes=FALSE, main="Bias in index at MSY (Irefbias)", breaks=breaks,cex.main=0.9)
   axis(side=1)
   
-  hist(Crefbias,col=col,border="white", axes=FALSE, main="Bias in MSY catch (Crefbias)", breaks=breaks,cex.main=0.9)
+  hist2(Crefbias,col=col,border="white", axes=FALSE, main="Bias in MSY catch (Crefbias)", breaks=breaks,cex.main=0.9)
   axis(side=1)
   
-  hist(Brefbias,col=col,border="white", axes=FALSE, main="Bias in MSY biomass (Brefbias)", breaks=breaks,cex.main=0.9)
+  hist2(Brefbias,col=col,border="white", axes=FALSE, main="Bias in MSY biomass (Brefbias)", breaks=breaks,cex.main=0.9)
   axis(side=1)
   
-  hist(Recsd,col=col,border="white", axes=FALSE, main="Bias in recent recruitment strength (Recsd)", breaks=breaks,cex.main=0.9)
+  hist2(Recsd,col=col,border="white", axes=FALSE, main="Bias in recent recruitment strength (Recsd)", breaks=breaks,cex.main=0.9)
   axis(side=1)
   
   mtext(paste0("Observation biases and sample sizes for observation object ",Obs@Name),3,outer=T,line= 0.7,font=2)
@@ -146,12 +146,12 @@ plot.Obs <- function(x, nsim=500, nyears=50,
   
   # --- Indices --------------
   
-  hist(betas,col=col,border="white", axes=FALSE, main="Index hyper stability (betas)", breaks=breaks,cex.main=0.95)
+  hist2(betas,col=col,border="white", axes=FALSE, main="Index hyper stability (betas)", breaks=breaks,cex.main=0.95)
   axis(side=1) 
   abline(v=1)
   abline(v=betas[its],col=makeTransparent(c("Black","Red","Green"),80),lwd=2)
   
-  hist(Isd,col=col,border="white", axes=FALSE, main="Index error (Isd)", breaks=breaks,cex.main=0.95)
+  hist2(Isd,col=col,border="white", axes=FALSE, main="Index error (Isd)", breaks=breaks,cex.main=0.95)
   abline(v=Isd[its],col=makeTransparent(c("Black","Red","Green"),80),lwd=2)
   axis(side=1)  
   
@@ -228,7 +228,7 @@ plot.Imp<-function(x,nsim=500, nyears=50,
                                         "Size Limit error (SizeLimSD)","Size limit discrepancy for three samples",
                                         "SizeLimFrac","SizeLimSD"), breaks=breaks, its=its, nsamp=nsamp, col=col)
  
-  hist(DiscMort,col=col,border="white", axes=FALSE, main="Discard Mortality rate (DiscMort)", breaks=breaks,cex.main=0.9)
+  hist2(DiscMort,col=col,border="white", axes=FALSE, main="Discard Mortality rate (DiscMort)", breaks=breaks,cex.main=0.9)
   if(sd(DiscMort)>0.01)axis(side=1)
   
    
@@ -242,11 +242,11 @@ plot.Imp<-function(x,nsim=500, nyears=50,
 
 ObsTSplot<-function(Cbias,Csd,nyears,labs, breaks, its, nsamp, col){
   
-  hist(Cbias,col=col,border="white", axes=FALSE, main=labs[1], breaks=breaks,cex.main=0.95)
+  hist2(Cbias,col=col,border="white", axes=FALSE, main=labs[1], breaks=breaks,cex.main=0.95)
   if(sd(Cbias)>0.01)axis(side=1) 
   abline(v=1)
   abline(v=Cbias[its],col=makeTransparent(c("Black","Red","Green"),80),lwd=2)
-  hist(Csd,col=col,border="white", axes=FALSE, main=labs[2], breaks=breaks,cex.main=0.95)
+  hist2(Csd,col=col,border="white", axes=FALSE, main=labs[2], breaks=breaks,cex.main=0.95)
   abline(v=Csd[its],col=makeTransparent(c("Black","Red","Green"),80),lwd=2)
   if(sd(Csd)>0.01)axis(side=1)  
   
