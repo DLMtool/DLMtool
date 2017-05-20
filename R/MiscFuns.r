@@ -32,7 +32,7 @@ ChkObj <- function(OM) {
     if (length(slotVal) == 0) Ok[sl] <- FALSE
     if (length(slotVal) > 0) {
       Ok[sl] <- class(slotVal) == class(slot(OM, slots[sl]))
-      if (class(slotVal) != "character") Ok[sl] <- all(is.finite(slotVal)) & length(slotVal) > 0
+      if (class(slotVal) != "character" & class(slotVal) != "list") Ok[sl] <- all(is.finite(slotVal)) & length(slotVal) > 0
     } 
   }
   SelSlots <- c("SelYears", "AbsSelYears", "L5Lower", "L5Upper", "LFSLower",
