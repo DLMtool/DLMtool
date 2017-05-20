@@ -111,10 +111,10 @@ runMSErobust <- function(OM = testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE", 
       tryOM@nsim <- length(simsplit[[i]]) # sub number of sims 
       if (length(cpars) > 0) { # subset cpars
         Subcpars <- cpars
+        if (ncparsim < nsim) ind <- sample(1:ncparsim, length(index), replace=TRUE)
+        if (!ncparsim < nsim) ind <- sample(index, length(index), replace=FALSE)
         for (jj in 1:length(cpars)) {
           index <- as.numeric(unlist(simsplit[i]))
-          if (ncparsim < nsim) ind <- sample(1:ncparsim, length(index), replace=TRUE)
-          if (!ncparsim < nsim) ind <- sample(index, length(index), replace=FALSE)
           its <- cpars[[jj]]
           name <- names(cpars)[jj]
           if (any(c("EffUpper", "EffLower", "EffYears", "maxage") %in% name)) {
