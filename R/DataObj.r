@@ -27,7 +27,7 @@ DLMdiag <- function(Data, command = "available", reps = 5, timelimit = 1) {
     
     chk <- rep(FALSE, length(slotnams))
     for (j in 1:length(slotnams)) {
-      if (grepl(slotnams[j], temp) & NAor0(slot(Data, slots[j]))) chk[j] <- TRUE
+      if (grepl(slotnams[j], temp) & all(is.na(slot(Data, slots[j])))) chk[j] <- TRUE
     }
     if (sum(chk) > 0) {
       test[[y]] <- "missing data" # if some required slots are NA or NULL - return error
