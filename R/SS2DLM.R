@@ -616,5 +616,235 @@ someplot<-function (replist, yrs = "all", Ftgt = NA, ylab = "Summary Fishing Mor
 
 
 
+#' Reads data Stock Synthesis file structure into an data object using package r4ss
+#'
+#' @description A function that uses the file location of a fitted SS3 model including input files to population the various slots of an data object 
+#' @param SSdir A folder with Stock Synthesis input and output files in it
+#' @param Source Reference to assessment documentation e.g. a url
+#' @param length_timestep The duration (in years) of each timestep in the model (if an quarterly model is used this is 0.25)
+#' @param Name The name of the operating model
+#' @param Author Who did the assessment
+#' @param printstats Should the r4ss function SS_output return info on data that was read in?
+#' @param verbose Should the r4ss function SS_ouput return detailed messages?
+#' @author T. Carruthers
+#' @export SS2Data
+#' @importFrom r4ss SS_output
+SS2Data<-function(SSdir,Source="No source provided",length_timestep=NA,Name="",
+                  Author="No author provided",printstats=F,verbose=T){
+  
+  message("-- Using function SS_output of package r4ss to extract data from SS file structure --")
+  
+  replist <- r4ss::SS_output(dir=SSdir, covar=F, ncols=1000, printstats=printstats, verbose=verbose)
+  #replistB <- SS_output(dir="F:/Base",covar=F,ncols=1000,printstats=printstats,verbose=verbose)
+  #replistY <- SS_output(dir="F:/Base3",covar=F,ncols=1000,printstats=printstats,verbose=verbose)
+  
+  message("-- End of r4ss operations --")
+  
+  GP <- replist$Growth_Parameters
+  
+  if(nrow(GP)>1){
+    print(paste("Warning:", nrow(GP),"different sets of growth parameters were reported they look like this:"))
+    print(GP)
+    print("Only the first row of values was used here")
+    print("")
+  }
+  
+  Data <- new("Data") 
+  
+  # The trouble is that DLMtool is an annual model so if the SS model is seasonal we need to aggregate overseasons
+  # The reason for the code immediately below (and length_timestep) is that some SS models just assume quarterly timesteps with no way of knowing this (other than maxage and M possibly)!
+  if(is.na(length_timestep)){
+    
+    if((replist$endyr-replist$startyr+1)>100){
+      nseas<-1/replist$seasduration[1] # too many  years for industrial fishing so assumes a quarterly model
+    }else{
+      nseas=1
+    }
+    
+  }else{
+    nseas<-1/length_timestep
+  }
+  
+  nyears<-(replist$endyr-replist$startyr+1)/nseas
+  Data@Year=(1:nyears)
+  
+  if(is.null(Name)){
+    Data@Name=SSdir
+  }else{
+    Data@Name=Name
+  }
+  
+  yind<-(1:nyears)*nseas
+  yind2<-rep(1:nyears,each=nseas)
+  
+  
+  
+  cat<-rep(0,length(replist$timeseries$"obs_cat:_1"))
+  for(i in 1:length(replist$timeseries)){
+    if(grepl("obs_cat",names(replist$timeseries)[i]))cat<-cat+replist$timeseries[[i]]
+    
+  }
+  if(nseas>1){
+    
+    ind<-rep(1:(length(cat)/nseas),nseas)
+    cat2<-aggregate(cat,by=list(ind),sum)
+    cat3<-cat2[1:length(yind2),2]
+    cat4<-aggregate(cat3,by=list(yind2),sum)
+  }
+  
+  Data@Cat <- matrix(cat4[,2],nrow=1)
+  SSB<-replist$recruit$spawn_bio[1:(nyears*nseas)]
+  SSB<-aggregate(SSB,by=list(yind2),mean)[,2]
+  Ind<-SSB
+  Ind<-Ind/mean(Ind)
+  Data@Ind <- matrix(Ind,nrow=1) 
+  rec<-replist$recruit$pred_recr
+  rec<-rec[1:(nyears*nseas)]
+  Recind<- aggregate(rec,by=list(yind2),mean)[,2]
+  Recind<-Recind/mean(Recind)
+  Data@Rec<-matrix(Recind,nrow=1)
+  Data@t<-nyears
+  Data@AvC<-mean(Data@Cat)
+  Data@Dt<-Data@Dep<-Ind[nyears]/Ind[1]
+  
+  growdat<-getGpars(replist)
+  growdat<-getGpars(replist)
+  Data@MaxAge<-maxage<-ceiling(length(growdat$Age)/nseas)
+  aind<-rep(1:maxage,each=nseas)[1:length(growdat$Age)]
+  M<-aggregate(growdat$M,by=list(aind),mean)$x
+  Wt<-aggregate(growdat$Wt_Mid,by=list(aind),mean)$x
+  Mat<-aggregate(growdat$Age_Mat,by=list(aind),mean)$x
+  
+  surv<-c(1,exp(cumsum(-c(M[2:maxage]))))# currently M and survival ignore age 0 fish
+  Data@Mort<-sum(M[2:maxage]*surv[2:maxage])/sum(surv[2:maxage])
+  
+  SSB0<-replist$derived_quants[replist$derived_quants$LABEL=="SSB_Unfished",2]
+  
+  Data@Bref<-replist$derived_quants[replist$derived_quants$LABEL=="SSB_MSY",2]
+  Data@Cref<-replist$derived_quants[replist$derived_quants$LABEL=="TotYield_MSY",2]
+  FMSY<-replist$derived_quants[replist$derived_quants$LABEL=="Fstd_MSY",2]*nseas
+  Data@Iref<-Data@Ind[1]*Data@Bref/SSB[1]
+  
+  Data@FMSY_M=FMSY/Data@Mort
+  Data@BMSY_B0<-Data@Bref/SSB0
+  
+  Data@Bref<-replist$derived_quants[replist$derived_quants$LABEL=="SSB_MSY",2]
+  
+  Len_age<-growdat$Len_Mid
+  Mat_age<-growdat$Age_Mat
+  
+  Data@L50<-LinInterp(Mat_age,Len_age,0.5+1E-6)
+  Data@L95<-LinInterp(Mat_age,Len_age,0.95)
+  
+  
+  ages<-growdat$Age
+  cols<-match(ages,names(replist$Z_at_age))
+  F_at_age=t(replist$Z_at_age[,cols]-replist$M_at_age[,cols])
+  F_at_age[nrow(F_at_age),]<-F_at_age[nrow(F_at_age)-1,]# ad-hoc mirroring to deal with SS missing predicitons of F in terminal age
+  Ftab<-cbind(expand.grid(1:dim(F_at_age)[1],1:dim(F_at_age)[2]),as.vector(F_at_age))
+  
+  if(nseas>1){
+    sumF<-aggregate(Ftab[,3],by=list(aind[Ftab[,1]],Ftab[,2]),mean,na.rm=T)
+    sumF<-aggregate(sumF[,3],by=list(sumF[,1],yind2[sumF[,2]]),sum,na.rm=T)
+  }else{
+    sumF<-Ftab
+  }
+  
+  sumF<-sumF[sumF[,2]<nyears,] # generic solution: delete partial observation of final F predictions in seasonal model (last season of last year is NA)
+  V <- array(NA, dim = c(maxage, nyears)) 
+  V[,1:(nyears-1)]<-sumF[,3] # for some reason SS doesn't predict F in final year
+  
+  
+  Find<-apply(V,2,max,na.rm=T) # get apical F
+  
+  ind<-as.matrix(expand.grid(1:maxage,1:nyears))
+  V[ind]<-V[ind]/Find[ind[,2]]
+  
+  # guess at length parameters # this is over ridden anyway
+  ind<-((nyears-3)*nseas)+(0:((nseas*3)-1))
+  muFage<-as.vector(apply(F_at_age[,ind],1,mean))
+  Vuln<-muFage/max(muFage,na.rm=T)
+  
+  Data@LFC<-LinInterp(Vuln,Len_age,0.05,ascending=T,zeroint=T)                            # not used if V is in cpars
+  Data@LFS<-Len_age[which.min((exp(Vuln)-exp(1.05))^2 * 1:length(Vuln))]  # not used if V is in cpars
+  
+  ages<-growdat$Age
+  cols<-match(ages,names(replist$Z_at_age))
+  
+  
+  cols<-match(ages,names(replist$catage))
+  CAA=as.matrix(replist$catage[,cols])
+  yr<-rep(replist$catage$Yr,dim(CAA)[2])
+  age<-rep(ages,each=dim(CAA)[1])
+  CAAagg<-aggregate(as.vector(CAA),by=list(yr,age),sum)
+  CAAagg<-CAAagg[CAAagg[,2]!=0,]
+  CAAagg<-CAAagg[CAAagg[,1]<=(nyears*nseas),]
+  CAAagg<-CAAagg[CAAagg[,2]<=length(aind),]
+  
+  yind3<-yind2[CAAagg[,1]]
+  aind3<-aind[CAAagg[,2]]
+  
+  CAA2<-aggregate(CAAagg[,3],by=list(yind3,aind3),sum)
+  Data@CAA<-array(0,c(1,nyears,maxage))
+  Data@CAA[as.matrix(cbind(rep(1,nrow(CAA2)),CAA2[,1:2]))]<-CAA2[,3]
+  
+  
+  
+  # CAL data
+  Data@CAL_bins<-c(0,replist$lbins)
+  
+  Binno<-match(replist$lendbase$Bin,Data@CAL_bins)
+  Yrno<-yind2[replist$lendbase$Yr]
+  CALagg<-aggregate(replist$lendbase$Obs*replist$lendbase$N,by=list(Yrno,Binno),sum)
+  Data@CAL<-array(0,c(1,nyears,length(Data@CAL_bins)))
+  Data@CAL[as.matrix(cbind(rep(1,nrow(CALagg)),CALagg[,1:2]))]<-CALagg[,3]
+  Data@CAL<-ceiling(Data@CAL)
+  
+  Data@ML<-matrix(apply(Data@CAL[1,,]*rep(Data@CAL_bins,each=nyears),1,mean),nrow=1)
+  Data@ML[Data@ML==0]<-NA
+  lcpos<-apply(Data@CAL[1,,],1,which.max)
+  Data@Lc<-matrix(Data@CAL_bins[lcpos],nrow=1)
+  Data@Lc[Data@Lc==0]<-NA
+  
+  Data@Lbar<-matrix(rep(NA,nyears),nrow=1)
+  
+  for(i in 1:nyears){
+    if(!is.na(Data@Lc[i])){
+      ind<-Data@CAL_bins>Data@Lc[i]
+      Data@Lbar[1,i]<-mean(Data@CAL[1,i,ind]*Data@CAL_bins[ind])
+    } 
+  }
+  
+  Data@Abun<-Data@SpAbun<-SSB[nyears]
+  
+  Data@vbLinf=GP$Linf[1]
+  Data@CV_vbLinf=GP$CVmax[1]
+  Data@vbK=GP$K[1]*nseas
+  Data@vbt0=GP$A_a_L0
+  Data@wla=GP$WtLen1[1]
+  Data@wlb=GP$WtLen2[1]
+  SSBpR<-SSB[1]/rec[1]  
+  hs<-mean(SRopt(100,SSB,rec,SSBpR,plot=F,type="BH"))
+  Data@steep<-hs
+  
+  Data@Units<-""
+  Data@Ref<-mean(replist$derived_quants[grepl("OFLCatch",replist$derived_quants$LABEL),2])
+  Data@Ref_type = "OFL"
+  Data@LHYear<-nyears
+  Data@MPeff<-1
+  Data@Log<-list(warning="This data was created by an alpha version of SS2Data and should not be trusted!")
+  Data@Misc<-list(warning="This data was created by an alpha version of SS2Data and should not be trusted!")
+  Data@Name<-"This data was created by an alpha version of SS2Data and should not be trusted!"
+  
+  Data@MPrec<-Data@Ref<-Data@Cat[1,nyears]
+  #Data@Ref<-mean(replist$derived_quants[grepl("OFLCatch",replist$derived_quants$LABEL),2])
+  Data@Ref_type = "Most recent annual catch"
+  Data
+  
+}
+
+
+
+
 
 
