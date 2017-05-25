@@ -459,3 +459,31 @@ COSEWIC_plot<-function(MSEobj,syear=2015){
 
 }
 
+#' Subset an OM cpars slot 
+#'
+#' Subset the custom parameters of an operating model 
+#'
+#' @param OM An object of class OM
+#' @param sims A logical vector OM@nsim long of simulations to either retain (TRUE) or remove (FALSE)
+#' @return An object of class OM
+#' @author T. Carruthers
+#' @export SubCpars
+SubCpars<-function(OM,sims){
+  
+  for(i in 1:length(OM@cpars)){
+    
+    OM@nsim<-sum(sims)
+    
+    if(class(OM@cpars[[i]])=="matrix"){
+      OM@cpars[[i]]<-OM@cpars[[i]][sims,]
+    }else if(class(OM@cpars[[i]])=="array"){
+      OM@cpars[[i]]<-OM@cpars[[i]][sims,,]
+    }else{    
+      OM@cpars[[i]]<-OM@cpars[[i]][sims]
+    }
+    
+  }
+  
+  OM
+  
+}
