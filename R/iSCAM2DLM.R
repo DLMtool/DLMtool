@@ -35,7 +35,7 @@ iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,Name=NULL,Source="No source pro
 #  print(replist$dat$to)
   if(replist$dat$num.sex>1)message("More than one sex was modelled with iSCAM, DLMtool currently does not include sex specific-parameters and will use growth etc from the first sex specified by iSCAM")
   
-  OM<-new("OM")
+  OM<-new('OM',Albacore,Generic_fleet,Generic_obs,Perfect_Imp)
   OM@nsim<-nsim
   OM@proyears<-proyears
   

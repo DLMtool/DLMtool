@@ -1,12 +1,15 @@
-## Wrapper for histogram function to remove annoying 
-hist2 <- function(x, col, ...) {
+## Wrapper for histogram function 
+hist2 <- function(x, col, axes=FALSE, main="", breaks=10,cex.main=1) {
   if (mean(x) == x[1]) {
-    
-    hist(x, col="white", border=FALSE, xlim=range(x), ...)
-    abline(v=x)
+   
+    plot(mean(x)*c(0.9,1.1),c(0,1000),col="white",axes=F,main=main,xlab="",ylab="")
+    axis(1)
+    #hist(x, border="white", xlim=range(x),xlab="", ...)
+    abline(v=mean(x),col=col,lwd=2)
     
   } else {
-    hist(x, col=col, ...)
+    col="dark grey"
+    hist(x, border='white',xlab="",col=col,axes=axes,main=main,breaks=breaks)
   }
 }
 
