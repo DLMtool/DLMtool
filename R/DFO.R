@@ -28,7 +28,7 @@ DFO_hist <- function(OM, panel= T,nsim=48) {
   
   out<-runMSE(OM,nsim=nsim,Hist=T)
   Brel<-t(out$TSdata$SSB)/out$MSYs$SSBMSY
-  Frel<-t(-log(1-out$TSdata$Catch/out$TSdata$VB))/out$MSYs$FMSY
+  Frel<-t(-log(1-out$TSdata$Catch/(out$TSdata$VB+out$TSdata$Catch)))/out$MSYs$FMSY
  
   if(panel)op<-par(mfrow=c(1,2),mai=c(0.7,0.8,0.5,0.1),omi=rep(0.01,4))
   if(!panel)opt<-par(mai=c(0.7,0.8,0.5,0.1),omi=rep(0.01,4))
@@ -79,12 +79,12 @@ DFO_proj <- function(MSEobj,maxplot=3) {
 }
 
 
-DFO_Kobe_TS<-function(Brel,Frel,labs=c("Then","Current")){
+DFO_Kobe_TS<-function(Brel,Frel,labs=c("Unfished","Current")){
   
   nsim<-nrow(Brel)
   ny<-ncol(Brel)
-  Brange<-c(0,max(Brel))
-  Frange<-c(0,max(Frel))
+  Brange<-c(0,quantile(Brel,0.99))
+  Frange<-c(0,quantile(Frel,0.99))
   
   sampcols<-c("red","blue","green")
   plot(Brange,Frange,axes=F,col="white",xlab="",ylab="")
@@ -111,7 +111,7 @@ DFO_Kobe_TS<-function(Brel,Frel,labs=c("Then","Current")){
  
   encircle(Brel[,1],Frel[,1],col=linecol,xrange=Brange+c(0,0.1),yrange=Frange+c(0,0.1),perc=0.1,lwd=1.2,labels=labs[1],lty=2)
   
-  encircle(Brel[,ny],Frel[,ny],col=linecol,xrange=Brange+c(0,0.1),yrange=Frange+c(0,0.1),perc=0.1,lwd=1.2,labels=labs[2],lty=2)
+  encircle(Brel[,ny],Frel[,ny],col=linecol,xrange=Brange+c(0,0.1),yrange=Frange+c(0,0.1),perc=0.1,lwd=2,labels=labs[2],lty=2)
   
   Bmu<-apply(Brel,2,quantile,0.5)
   Fmu<-apply(Frel,2,quantile,0.5)
@@ -126,8 +126,8 @@ DFO_Kobe_TS<-function(Brel,Frel,labs=c("Then","Current")){
   points(Bmu[1],Fmu[1],pch=3,lwd=3,col="black",cex=2)
   points(Bmu[ny],Fmu[ny],pch=19,lwd=3,col="black",cex=2)
   
-  legend("topright",legend=c("Mean trend","Sim 1","Sim 2"),bty='n',text.col=c("black","red","blue"),text.font=c(2,1,1))
-  legend("right",legend=labs,pch=c(3,19))
+  legend("topright",legend=c("Mean trend","Sim 1","Sim 2"),bty='n',text.col=c("black","red","blue"),text.font=c(2,1,1),cex=0.9)
+  legend("right",legend=labs,pch=c(3,19),cex=0.9)
   
   
 }
@@ -135,8 +135,9 @@ DFO_Kobe_TS<-function(Brel,Frel,labs=c("Then","Current")){
 
 DFO_Kobe<-function(Br,Fr){
   
-  Brange<-c(0,max(Br))
-  Frange<-c(0,max(Fr))
+  Brange<-c(0,quantile(Br,0.99))
+  Frange<-c(0,quantile(Fr,0.99))
+  
   nsim<-length(Br)
   plot(Brange,Frange,axes=F,col="white",xlab="",ylab="")
   textpos<-Frange[1]+0.85*(Frange[2]-Frange[1])
@@ -173,8 +174,8 @@ DFO_Kobe<-function(Br,Fr){
   text(0.2,fposL,paste(fracs[4],"%"),col="white",cex=0.9,font=2)
   text(0.6,fposL,paste(fracs[5],"%"),col="grey73",cex=0.9,font=2)
   text(1.1,fposL,paste(fracs[6],"%"),col="grey73",cex=0.9,font=2)
-  legend('right',legend=c("A simulation","Median"),pch=c(19,3),col=pointcol)
-  legend('topright',legend=c("50%","90%"),lty=c(1,2),col=linecol,bty='n')
+  legend('right',legend=c("A simulation","Median"),pch=c(19,3),col=pointcol,cex=0.9)
+  legend('topright',legend=c("50%","90%"),lty=c(1,2),col=linecol,bty='n',cex=0.9)
   
 }
 
@@ -182,7 +183,7 @@ DFO_Kobe<-function(Br,Fr){
 add_zones<-function(textpos){
 
   cols<-c("grey86","grey96","white",
-          "grey85","grey95","grey98")
+          "grey84","grey94","grey97")
   
   polygon(c(-0,0.4,0.4,0),c(0,0,1,1),col=cols[1],border=cols[1])
   polygon(c(0.4,0.8,0.8,0.4),c(0,0,1,1),col=cols[2],border=cols[2])
