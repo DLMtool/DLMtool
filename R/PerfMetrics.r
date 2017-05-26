@@ -1,32 +1,3 @@
-#'  Long-Term Yield Peformance Metric Function
-#'
-#'  An object of class PM
-#'
-"LTY"
-
-#'  Short-Term Yield Peformance Metric Function
-#'
-#'  An object of class PM
-#'
-"STY"
-
-#'  Spawning Biomass Relative to SBMSY
-#'
-#'  An object of class PM
-#'
-"SB_BMSY"
-
-#'  Spawning Biomass Relative to SB0
-#'
-#'  An object of class PM
-#'
-"SB_B0"
-
-#'  Fishing Mortality Relative to FMSY
-#'
-#'  An object of class PM
-#'
-"F_FMSY"
 
 
 
@@ -66,7 +37,7 @@ setClass("PM", representation(Name = "character",  Description="character",
 #' @param y2 A numeric value indicating the last year to summarize performance
 #'
 #' @return A data.frame containing y1 and y2
-#'
+#' @export
 ChkYrs <- function(MSEobj, y1=NULL, y2=NULL) {
   if (!is.numeric(y2) || is.null(y2) || is.na(y2)) y2 <- MSEobj@proyears
   if (y2 > MSEobj@proyears) {
