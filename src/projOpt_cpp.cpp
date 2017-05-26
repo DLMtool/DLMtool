@@ -154,12 +154,12 @@ NumericVector projOpt_cpp(double lnIn,
     out(0) = -sum(CB);
 	return out; 
   } else {
-	NumericVector out(5);
+	  NumericVector out(5);
     out(0) = sum(SSB);
     out(1) = sum(Biomass);
     out(2) = sum(VB);
-	out(3) = sum(SSB)/sum(SSB0);
-	out(4) = sum(Biomass)/B0;
+	  out(3) = sum(SSB)/sum(SSB0);
+	  out(4) = sum(Biomass)/B0;
 	return out; 
   } 
 }

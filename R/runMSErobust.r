@@ -105,7 +105,8 @@ runMSErobust <- function(OM = testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE", 
     error <- 1
     crash <- 0
 	  st <- Sys.time()
-    while (error == 1 & crash <= maxCrash) { 
+    while (error == 1 & crash <= maxCrash) {
+      assign("last.warning", NULL, envir = baseenv())
       tryOM <- OM
       tryOM@seed <- OM@seed + i + crash  # change seed 
       tryOM@nsim <- length(simsplit[[i]]) # sub number of sims 
@@ -116,19 +117,19 @@ runMSErobust <- function(OM = testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE", 
         for (jj in 1:length(cpars)) {
           index <- as.numeric(unlist(simsplit[i]))
           its <- cpars[[jj]]
-          name <- names(cpars)[jj]
+          cname <- names(cpars)[jj]
           if (any(c("EffUpper", "EffLower", "EffYears", "maxage") %in% name)) {
             # do nothing
           } else {
             if (class(its) == "numeric" | class(its) == "integer") {
-              Subcpars[[name]] <- its[ind]
+              Subcpars[[cname]] <- its[ind]
             }
             if (class(its) == "matrix") {
-              Subcpars[[name]] <-  its[ind,, drop=FALSE]
+              Subcpars[[cname]] <-  its[ind,, drop=FALSE]
             }
             if (class(its) == "array") {
               if (length(dim(its)) == 3) {
-                Subcpars[[name]] <- its[ind, , ,drop=FALSE]
+                Subcpars[[cname]] <- its[ind, , ,drop=FALSE]
               }
             }
           }	

@@ -74,19 +74,18 @@ getFMSY2 <- function(x, Marray, hs, Mat_age, Wt_age, R0, V, maxage, nyears,
         Vc = V[x, ,nyears], nyears = nyears, maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x],
         SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ], proyears = proyears, Control=Control)
 
-	MSY <- -opt$objective 
-	MSYs <- projOpt_cpp(lnIn = opt$minimum, 
-		Mc = Marray[x, nyears], hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , nyears], R0c = R0[x], 
-        Vc = V[x, ,nyears], nyears = nyears, maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x],
-        SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ], proyears = proyears, Control=2)
+	  MSY <- -opt$objective 
+	  MSYs <- projOpt_cpp(lnIn = opt$minimum, Mc = Marray[x, nyears], hc = hs[x], 
+	                      Mac = Mat_age[x, ], Wac = Wt_age[x, , nyears], R0c = R0[x], 
+	                      Vc = V[x, ,nyears], nyears = nyears, maxage = maxage, movc = mov[x, , ], 
+	                      Spat_targc = Spat_targ[x], SRrelc = SRrel[x], aRc = aR[x, ], 
+	                      bRc = bR[x, ], proyears = proyears, Control=2)
     SSB_MSY <- MSYs[1]				
- 
     V_BMSY <- MSYs[3]
-	
     F_MSYv <- -log(1 - (MSY/(V_BMSY+MSY))) 
-	F_MSYb <- -log(1 - (MSY/(SSB_MSY+MSY))) 
-    return(c(MSY = MSY, FMSY = F_MSYv, SSB = SSB_MSY, SSBMSY_SSB0=MSYs[4],
-	  BMSY_B0=MSYs[5], B = MSYs[2] , VB=V_BMSY, F_MSYb=F_MSYb))				
+   	F_MSYb <- -log(1 - (MSY/(SSB_MSY+MSY))) 
+    return(c(MSY = MSY, FMSY = F_MSYv, SSB = SSB_MSY, SSBMSY_SSB0=MSYs[4], BMSY_B0=MSYs[5], 
+             B = MSYs[2] , VB=V_BMSY, F_MSYb=F_MSYb))				
 }
 
 #' Internal function FMSY and related metrics 

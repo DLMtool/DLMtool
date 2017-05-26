@@ -823,8 +823,9 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
   MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
   FMSY <- MSYrefs[2, ]  # instantaneous FMSY (Vulnerable)
   SSBMSY <- MSYrefs[3, ]  # Spawning Stock Biomass at MSY  
-  SSBMSY_SSB0 <- MSYrefs[4, ] # SSBMSY relative to unfished (SSB) 
-  BMSY_B0 <- MSYrefs[5, ] # Biomass relative to unfished (B0)
+  SSBMSY_SSB0 <- SSBMSY/SSB0 # MSYrefs[4, ] # SSBMSY relative to unfished (SSB) 
+  BMSY_B0 <- MSYrefs[6, ]/B0 # Biomass relative to unfished (B0)
+  BMSY <- MSYrefs[6,] # total biomass at MSY
   
   VBMSY <- (MSY/(1 - exp(-FMSY)))  # Biomass at MSY (Vulnerable)
   FMSYb <- MSYrefs[8,]  # instantaneous FMSY (Spawning Biomass)
@@ -998,7 +999,8 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
     Linf, K, t0, hs, Linfgrad, Kgrad, Linfsd, recgrad, Ksd, ageM, L5[nyears, ], 
 	  LFS[nyears, ], Vmaxlen[nyears, ], LFC, OFLreal, Spat_targ, 
     Frac_area_1, Prob_staying, AC, L50, L95, B0, N0, SSB0, BMSY_B0,
-	  TACSD,TACFrac,ESD,EFrac,SizeLimSD,SizeLimFrac,DiscMort,Blow))  # put all the operating model parameters in one table
+	  TACSD,TACFrac,ESD,EFrac,SizeLimSD,SizeLimFrac,DiscMort,Blow,
+    BMSY, SSBMSY))  # put all the operating model parameters in one table
   
   names(Data@OM)[26:28] <- c("L5", "LFS", "Vmaxlen")  # These are missing labels in the line above
   
@@ -1633,33 +1635,32 @@ runMSE <- function(OM = testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim
       }  # not an update year
       
     }  # end of year
-       
+
     B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY  # SSB relative to SSBMSY  
     # F_FMSYa[, mm, ] <- (-log(1 - apply(CB_P, c(1, 3), sum)/(apply(CB_P, c(1, 3), sum) + 
 	                    # apply(VBiomass_P, c(1, 3), sum))))/FMSY 
     # VBiomass is calculated before catches are taken
     suppressWarnings(	# gives an error message if CB_P or VBiomass_P is NA 
-	  FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum, na.rm=TRUE)/apply(VBiomass_P, c(1, 3), sum, na.rm=TRUE))		
-	)
-	F_FMSYa[, mm, ] <- FMa[, mm, ]/FMSY
-	                    	
+	    FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum, na.rm=TRUE)/apply(VBiomass_P, c(1, 3), sum, na.rm=TRUE))		
+	  )
+	  F_FMSYa[, mm, ] <- FMa[, mm, ]/FMSY
+	                      	
     Ba[, mm, ] <- apply(Biomass_P, c(1, 3), sum, na.rm=TRUE) # biomass 
-	SSBa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE) # spawning stock biomass
-	VBa[, mm, ] <- apply(VBiomass_P, c(1, 3), sum, na.rm=TRUE) # vulnerable biomass
-    # FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum)/(apply(CB_P, c(1, 3), sum) + 
-	               # apply(VBiomass_P, c(1, 3), sum)))
-    # VBiomass is calculated before catches are taken 				   
-	
+	  SSBa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE) # spawning stock biomass
+	  VBa[, mm, ] <- apply(VBiomass_P, c(1, 3), sum, na.rm=TRUE) # vulnerable biomass
+      # FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum)/(apply(CB_P, c(1, 3), sum) + 
+	                 # apply(VBiomass_P, c(1, 3), sum)))
+      # VBiomass is calculated before catches are taken 				   
+	  
     Ca[, mm, ] <- apply(CB_P, c(1, 3), sum, na.rm=TRUE)
-	
-	# Store Pop and Catch-at-age and at-length for last projection year 
-	
-	PAAout[ , mm, ] <- apply(N_P[ , , proyears, ], c(1,2), sum) # population-at-age
-	CNtemp <- array(N_P * exp(Z_P) * (1 - exp(-Z_P)) * (FM_P/Z_P), c(nsim, maxage, proyears, nareas))
+	  
+	  # Store Pop and Catch-at-age and at-length for last projection year 
+	  PAAout[ , mm, ] <- apply(N_P[ , , proyears, ], c(1,2), sum) # population-at-age
+	  CNtemp <- array(N_P * exp(Z_P) * (1 - exp(-Z_P)) * (FM_P/Z_P), c(nsim, maxage, proyears, nareas))
     CAAout[ , mm, ] <- apply(CNtemp[,,proyears,], c(1, 2), sum) # nsim, maxage # catch-at-age
     CALout[ , mm, ] <- CAL[,max(dim(CAL)[2]),] # catch-at-length in last year
-	
-	cat("\n")
+	  
+	  cat("\n")
   }  # end of mm methods
 
   # Store MP duration
