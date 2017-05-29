@@ -78,6 +78,39 @@ DFO_proj <- function(MSEobj,maxplot=3) {
   
 }
 
+#' Deparment of Fisheries and Oceans trade-off plot
+#'
+#' A plot of mean biomass relative to BMSY and fishing mortality rate relative to FMSY 
+#' over the final 5 years of the projection
+#' http://www.dfo-mpo.gc.ca/reports-rapports/regs/sff-cpd/precaution-eng.htm
+#'
+#' @param MSEobj An MSE object of class MSE produced by DLMtool function runMSE
+#' @author T. Carruthers
+#' @export DFO_plot
+DFO_plot<-function(MSEobj){
+ 
+  par(mai=c(1,1,0.02,0.02))
+  yend <- max(MSEobj@proyears - 4, 1):MSEobj@proyears
+  POF<-apply(MSEobj@F_FMSY[,,yend],2,mean,na.rm=T)
+  
+  POFed<-apply(MSEobj@B_BMSY[,,yend] ,2,mean, na.rm = T)
+  
+  col<-makeTransparent(c("red","dark green","blue","orange","black"),99)
+  plot(POFed,POF,col="white",xlab="",ylab="",main="",axes=F)
+
+  add_zones(textpos=quantile(POF,0.95))
+  xs<-pretty(seq(min(POFed),max(POFed),length.out=8))
+  ys<-pretty(seq(min(POF),max(POF),length.out=8))
+  axis(1,xs,xs)
+  axis(2,ys,ys)
+  text(POFed,POF,MSEobj@MPs,col=col,font=2,cex=0.9)
+  
+  mtext("B/BMSY",1,line=2.5)
+  mtext("F/FMSY",2,line=2.5)
+  
+}
+
+
 
 DFO_Kobe_TS<-function(Brel,Frel,labs=c("Unfished","Current")){
   
