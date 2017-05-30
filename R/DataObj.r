@@ -685,11 +685,11 @@ boxplot.Data <- function(x, outline = FALSE, ...) {
     cols <- rainbow(30)
     ymax <- quantile(apply(tacs, 2, quantile, 0.99, na.rm = TRUE), 0.99)
     ymin <- quantile(apply(tacs, 2, quantile, 0.01, na.rm = TRUE), 0.01)
-    ylim <- c(ymin, ymax)
+    ylim <- c(0, ymax)
     Median <- round(apply(tacs, 2, median, na.rm = TRUE), 2)
     SD <- round(apply(tacs, 2, sd, na.rm = TRUE), 2)
   } else {
-    ylim <- range(tacs)
+    ylim <- c(0,max(tacs))
     Median <- median(tacs)
     SD <- sd(tacs)
     tacs <- as.numeric(tacs)

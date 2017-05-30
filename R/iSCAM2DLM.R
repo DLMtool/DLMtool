@@ -1422,3 +1422,190 @@ strip.static.params <- function(model, dat){
   dat
 }
 
+
+#' Combines indices into a single index using linear modelling
+#'
+#' @description iSCAM assessments often make use of multiple indices of abundance. 
+#' The DLMtool data object and MPs currently only make use of a single index. 
+#' combiSCAMinds is a function that creates a single index from many using
+#' linear modelling. It is a simple way of providing initial calculations of 
+#' management recommendations and it should be noted that this process 
+#' is important and in a real application would require due diligence (ie
+#' peer reviewed data workshop). 
+#' @param idata List: the indices recorded in a read from an iSCAM data folder, e.g. replist$data$indices
+#' @param Year Integer vector: the years of the DLMtool data object ie Data@Year
+#' @param fleeteffect Logical: should a fleet effect be added to the linear model?
+#' @author T. Carruthers 
+#' @export iSCAMinds
+iSCAMinds<-function(idata,Year,fleeteffect=T){
+  
+  ind<-NULL
+  for(i in 1:length(idata)){
+    
+    edat<-as.data.frame(idata[[i]])
+    index<-edat$it/mean(edat$it)
+    ind<-rbind(ind,cbind(edat$iyr,rep(i,nrow(edat)),index))
+    
+  }
+  
+  ind<-as.data.frame(ind)
+  names(ind)<-c("Y","FF","I")
+  ind$Y<-as.factor(ind$Y)
+  ind$FF<-as.factor(ind$FF)
+  
+  if(fleeteffect)lm<-lm(log(I)~Y+FF,dat=ind)
+  if(!fleeteffect)lm<-lm(log(I)~Y,dat=ind)
+  Years<-Year[Year%in%ind$Y]
+  newdat<-as.data.frame(cbind(Years,rep(1,length(Years))))
+  names(newdat)<-c("Y","FF")
+  newdat$Y<-as.factor(newdat$Y)
+  newdat$FF<-as.factor(newdat$FF)
+  pred<-predict(lm,newdat)
+  ind<-rep(NA,length(Year))
+  ind[Year%in%Years]<-exp(pred)/(mean(exp(pred)))
+  as.data.frame(cbind(Year,ind))
+  
+}
+
+#' Combines all iSCAM age composition data across fleets
+#'
+#' @description iSCAM assessments are often fitted to numerous fleets that have differing 
+#' age selectivities. iSCAMcomps is a simple way of providing the aggregate catch at age
+#' data. It should be noted that this process is important and in a real application would 
+#' require due diligence (ie peer reviewed data workshop). 
+#' @param replist S3 class object: the output from a read from an iSCAM data folder
+#' @param Year Integer vector: the years of the DLMtool data object ie Data@Year
+#' @author T. Carruthers 
+#' @export iSCAMcomps
+iSCAMcomps<-function(replist,Year){
+  
+  ny<-length(Year)
+  na<-replist$dat$end.age
+  CAA<-array(0,c(ny,na))
+  compdat<-replist$dat$age.comps
+  compN<-replist$dat$age.gears.n
+  
+  for(i in 1:length(compdat)){
+    comp<-as.data.frame(compdat[[i]])
+    cN<-as.numeric(compN[[i]])
+    ind<-match(comp$year,Year)
+    aind<-match(1:na,names(comp))
+    compind<-as.matrix(expand.grid(1:length(ind),aind))
+    CAAind<-as.matrix(expand.grid(ind,1:na))
+    cNind<-rep(1:length(ind),na)
+    CAA[CAAind]<-CAA[CAAind]+ceiling(comp[compind]*cN[cNind])
+  }
+  
+  CAA
+}
+
+LinInt<-function(x){
+  
+  nas<-is.na(x)
+  ind0<-(1:length(x))[nas]
+  ind1<-ind0-1
+  ind2<-ind0+1
+  x[ind0]<-apply(cbind(x[ind1],x[ind2]),1,mean)
+  x
+}
+
+#' Reads data from iSCAM file structure into a DLMtool Data object
+#'
+#' @description A function that uses the file location of a fitted iSCAM 
+#' model including input files to population the various slots of an 
+#' data object. iSCAM2DLM relies on several functions written by Chris 
+#' Grandin (DFO PBS).
+#' @param iSCAMdir A folder with iSCAM input and output files in it
+#' @param Name The name of the operating model
+#' @param Source Reference to assessment documentation e.g. a url
+#' @param length_timestep How long is a model time step in years 
+#' (e.g. a quarterly model is 0.25, a monthly model 1/12)
+#' @param Author Who did the assessment
+#' @author T. Carruthers 
+#' @importFrom grDevices dev.off gray jpeg png
+#' @importFrom coda mcmc
+#' @importFrom graphics arrows contour
+#' @importFrom stats acf aggregate qnorm window
+#' @export iSCAM2Data
+iSCAM2Data<-function(iSCAMdir,Name=NULL,Source="No source provided",
+                     length_timestep=1,Author="No author provided"){
+  
+  message("-- Using function of Chris Grandin (DFO PBS) to extract data from iSCAM file structure --")
+  
+  replist<-load.iscam.files(iSCAMdir)
+  
+  message("-- End of iSCAM extraction operations --")
+  
+  Data <- new("Data") 
+  if(!is.null(Name)){
+    Data@Name<-Name
+  }else{
+    Data@Name<-replist$path
+  }
+  
+  catdat<-as.data.frame(replist$dat$catch)
+  Data@Cat<-matrix(catdat$value,nrow=1)
+  Data@Year<-catdat$year
+  ny<-length(Data@Year)
+  final3y<-(-2:0)+ny
+
+  inddat<-iSCAMinds(replist$dat$indices,Data@Year,fleeteffect=F) # use linear modelling to get year effect (naive)
+  inddat$ind<-LinInt(inddat$ind) # Interpolate NAs
+  Data@Ind<-matrix(inddat$ind,nrow=1)
+  Data@t<-length(Data@Year)
+  Data@AvC<-mean(Data@Cat)
+  Data@Dt<-mean(Data@Ind[,final3y])/mean(Data@Ind[,1:3])
+  Data@Mort<-replist$mpd$m
+  UMSY<-replist$mpd$msy/(replist$mpd$msy+replist$mpd$bmsy)
+  FMSY<--log(1-UMSY)
+  BMSY<-replist$mpd$bmsy
+  MSY<-replist$mpd$msy
+  Data@FMSY_M<-FMSY/Data@Mort
+  Data@BMSY_B0<-BMSY/replist$mpd$bo
+  Data@Cref<-MSY
+  Data@Bref<-BMSY
+  SSB<-replist$mpd$sbt
+  B<-replist$mpd$bt
+  
+  SSB0<-replist$mpd$sbo
+  depletion<-SSB[length(SSB)-((ny-1):0)]/SSB0
+  mult<-mean(inddat$ind/depletion)
+  Data@Iref<-Data@BMSY_B0*mult
+  
+  Data@vbLinf=replist$dat$linf[1]
+  Data@vbK=replist$dat$k[1]
+  Data@vbt0=replist$dat$to[1]
+  Data@L50= Data@vbLinf*(1-exp(-Data@vbK*(replist$dat$age.at.50.mat-Data@vbt0)))
+  A95= -(replist$dat$sd.at.50.mat*log(1/0.95-1)-replist$dat$age.at.50.mat)
+  Data@L95=Data@vbLinf*(1-exp(-Data@vbK*(A95-Data@vbt0)))
+  
+  Data@MaxAge<-replist$dat$end.age
+  FF<-replist$mpd$F
+  sel<-FF/apply(FF,1,max)
+  selfinal<-apply(sel[final3y,],2,mean)
+  AFC<-LinInterp(x=selfinal,y=1:Data@MaxAge,0.05)
+  AFS<-LinInterp(x=selfinal,y=1:Data@MaxAge,0.95)
+  Data@LFC<-Data@vbLinf*(1-exp(-Data@vbK*(AFC-Data@vbt0)))
+  Data@LFS<-Data@vbLinf*(1-exp(-Data@vbK*(AFS-Data@vbt0)))
+  Data@CAA<-iSCAMcomps(replist,Data@Year)
+  Data@Dep<-mean(depletion[final3y])
+  Data@Abun<-mean(B[final3y])
+  Data@SpAbun<-mean(SSB[final3y])
+  Data@wla=replist$dat$lw.alpha
+  Data@wlb=replist$dat$lw.beta
+  rec<-replist$mpd$rbar *exp(replist$mpd$delta)*1E6
+  SSB<-(replist$mpd$sbt*1000)[1:length(rec)]
+  Data@steep<-mean(SRopt(100,SSB,rec,SSBpR,plot=F,type="BH")) # will create a reproducible 1 sample version
+  Data@Ref<-Data@Cat[1,ny]
+  Data@Ref_type<-"Most recent catches"
+  Data@MPrec<-Data@Cat[1,ny]
+  Data@MPeff<-1
+  Data@LHYear<-ny
+  Data@Misc<-list(WARNING="!! this dataset was created automatically using an alpha version of iSCAM2Data and should be treated with caution !!")
+  
+  Data 
+  
+}
+
+
+

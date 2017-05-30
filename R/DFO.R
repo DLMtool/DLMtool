@@ -299,10 +299,10 @@ DFO_plot2 <- function(MSEobj, nam = NA,panel = T,Bcut=50, Ycut=50) {
   LTY <- rep(NA, MSEobj@nMPs)
   yend <- max(MSEobj@proyears - 4, 1):MSEobj@proyears
 
-  refMP<-match("FMSYref",MSEobj@MPs)
-  RefYd<-apply(MSEobj@C[, refMP, yend],1,mean)
+  #refMP<-match("FMSYref",MSEobj@MPs)
+  #RefYd<-apply(MSEobj@C[, refMP, yend],1,mean)
 
- # RefYd <- MSEobj@OM$RefY
+  RefYd <- MSEobj@OM$RefY
 
   for (mm in 1:MSEobj@nMPs) {
 

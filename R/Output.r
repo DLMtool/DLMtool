@@ -121,7 +121,7 @@ class(FMSYref) <- "Output"
 #' @author T. Carruthers
 #' @export FMSYref50
 FMSYref50 <- function(x, Data, reps = 100) 
-  trlnorm(reps, Data@OM$A[x] * (1 - exp(-Data@OM$FMSY[x])) * 0.5, 0.01)
+  trlnorm(reps, Data@OM$A[x] * (1 - exp(-Data@OM$FMSY[x]*0.5)) , 0.01)
 class(FMSYref50) <- "Output"
 
 
@@ -146,7 +146,7 @@ class(FMSYref50) <- "Output"
 #' @author T. Carruthers
 #' @export FMSYref75
 FMSYref75 <- function(x, Data, reps = 100) 
-  trlnorm(reps, Data@OM$A[x] * (1 - exp(-Data@OM$FMSY[x])) * 0.75, 0.01)
+  trlnorm(reps, Data@OM$A[x] * (1 - exp(-Data@OM$FMSY[x]*0.75)) , 0.01)
 class(FMSYref75) <- "Output"
 
 

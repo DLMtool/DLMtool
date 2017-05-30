@@ -357,7 +357,7 @@ DDe75 <- function(x, Data, reps = 100) {
   U_hist <- 1 - exp(-exp(opt$par[3]) * E_hist)
   
   Allocate <- 1
-  eff <- exp(0.75 * opt$par[1])/U_hist[Data@LHYear]
+  eff <- 0.75 *exp( opt$par[1])/U_hist[Data@LHYear]
   eff[!is.finite(eff)] <- 0.01
   eff[eff > 1e+05] <- 0.01
   Effort <- max(0.01, eff)
