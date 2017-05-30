@@ -1168,7 +1168,10 @@ MPclass <- function(MPs) {
   all <- c(avail("Output"), avail("Input"))
   if (any(!MPs %in% all)) message("Some MPs not found: ", paste(MPs[!MPs %in% all], "\n"))
   MPs <- MPs[MPs %in% all]
-  cbind(MPs, Class=sapply(1:length(MPs), function(X) class(get(MPs[X]))))
+  # cbind(MPs, Class=sapply(1:length(MPs), function(X) class(get(MPs[X]))))
+  classes <- sapply(1:length(MPs), function(X) class(get(MPs[X])))
+  classes[grepl("ref", MPs)] <- "Reference"
+  classes
 }
 
 
