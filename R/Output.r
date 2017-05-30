@@ -2183,7 +2183,7 @@ class(DCAC_ML) <- "Output"
 
 #' Beddington and Kirkwood life-history MP (simple version)
 #' 
-#' Sets an OFL according to current abundance and an approximation of FMSY
+#' Sets an OFL according to current abundance and an approximation of Fmax
 #' based on length at first capture.
 #' 
 #' 
@@ -3914,6 +3914,247 @@ L95target <- function(x, Data, reps = 100, yrsmth = 5, buffer = 0) {
   TACfilter(TAC)
 }
 class(L95target) <- "Output"
+
+
+
+#' Mean index ratio MP from Jardim et al. 2015
+#' 
+#' The TAC is adjusted by the ratio alpha, where the numerator 
+#' being the mean index in the most recent two years of the time series and the denominator
+#' being the mean index in the three years prior to those in the numerator.
+#' 
+#' @param x A position in data-limited methods data object
+#' @param Data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param yrs Vector of length 2 specifying the reference years
+#' @author Coded by Q. Huynh. Developed by Jardim et al. (2015)
+#' @references Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for 
+#' data limited stocks using length-based reference points and survey biomass indices, 
+#' Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836, 
+#' https://doi.org/10.1016/j.fishres.2014.11.013
+Iratio <- function(x, Data, reps, yrs = c(2, 5)) {
+  dependencies = "Data@Ind, Data@CV_Ind, Data@Cat, Data@CV_Cat"
+  
+  ind.num <- (length(Data@Year) - yrs[1]+1):length(Data@Year)
+  ind.den <- (length(Data@Year) - yrs[2]+1):(length(Data@Year) - yrs[1])
+  
+  I.num <- trlnorm(reps * length(ind.num), Data@Ind[x, ind.num], Data@CV_Ind[x])
+  I.num <- matrix(I.num, ncol = reps)
+  
+  I.den <- trlnorm(reps * length(ind.den), Data@Ind[x, ind.den], Data@CV_Ind[x])
+  I.den <- matrix(I.den, ncol = reps)
+  
+  alpha <- apply(I.num, 2, mean, na.rm = TRUE)/apply(I.den, 2, mean, na.rm = TRUE)
+  Cat <- Data@Cat[x, length(Data@Cat[x, ])]
+  Cc <- trlnorm(reps, Cat, Data@CV_Cat[x])
+  TAC <- alpha * Cc
+  
+  TACfilter(TAC)
+}
+class(Iratio) <- "Output"
+
+
+#' Index Confidence Interval MP by Jardim et al. (2015)
+#' 
+#' The MP adjusts catch based on the value of the index in the current year relative to the 
+#' time series mean and standard error.
+#' There are two thresholds which delineates whether catch is reduced, held constant, or increased.
+#' 
+#' @param x A position in data-limited methods data object
+#' @param Data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @author Coded by Q. Huynh. Developed by Jardim et al. (2015)
+#' @references Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for 
+#' data limited stocks using length-based reference points and survey biomass indices, 
+#' Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836, 
+#' https://doi.org/10.1016/j.fishres.2014.11.013
+ICI <- function(x, Data, reps) {
+  dependencies = "Data@Ind, Data@CV_Ind, Data@Cat, Data@CV_Cat"
+  
+  Index <- Data@Ind[x, ]
+  Index <- Index[!is.na(Index)]
+  nI <- length(Index)
+  Ind.samp <- trlnorm(reps * nI, Index, Data@CV_Ind[x])
+  Ind.samp <- matrix(Ind.samp, ncol = reps)
+  
+  muI <- apply(Ind.samp, 2, mean, na.rm = TRUE)
+  sigmaI <- apply(Ind.samp, 2, sd, na.rm = TRUE)
+  
+  Ind <- Ind.samp[nI, ]
+  z.low <- qnorm(0.33)
+  z.upp <- qnorm(0.974)
+  
+  ci.low <- muI + z.low * sigmaI / sqrt(nI)
+  ci.high <- muI + z.upp * sigmaI / sqrt(nI)
+  
+  alpha <- rep(NA, reps)
+  alpha[Ind < ci.low] <- 0.75
+  alpha[Ind > ci.high] <- 1.05
+  alpha[Ind >= ci.low & Ind <= ci.high] <- 1
+  
+  Cat <- Data@Cat[x, length(Data@Cat[x, ])]
+  Cc <- trlnorm(reps, Cat, Data@CV_Cat[x])
+  
+  TAC <- alpha * Cc
+  TACfilter(TAC)
+}
+class(ICI) <- "Output"
+
+
+#' Less Precautionary Index Confidence Interval MP by Jardim et al. (2015)
+#' 
+#' The MP adjusts catch based on the value of the index in the current year relative to the 
+#' time series mean and standard error.
+#' There are two thresholds which delineates whether catch is reduced, held constant, or increased.
+#' This method is less precautionary of the two ICI MPs by allowing for a larger increase in TAC
+#' and a lower threshold of the index to decrease the TAC (see Jardim et al. 2015).
+#' 
+#' @param x A position in data-limited methods data object
+#' @param Data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @author Coded by Q. Huynh. Developed by Jardim et al. (2015)
+#' @references Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for 
+#' data limited stocks using length-based reference points and survey biomass indices, 
+#' Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836, 
+#' https://doi.org/10.1016/j.fishres.2014.11.013
+ICI2 <- function(x, Data, reps) {
+  dependencies = "Data@Ind, Data@CV_Ind, Data@Cat, Data@CV_Cat"
+  
+  Index <- Data@Ind[x, ]
+  Index <- Index[!is.na(Index)]
+  nI <- length(Index)
+  Ind.samp <- trlnorm(reps * nI, Index, Data@CV_Ind[x])
+  Ind.samp <- matrix(Ind.samp, ncol = reps)
+  
+  muI <- apply(Ind.samp, 2, mean, na.rm = TRUE)
+  sigmaI <- apply(Ind.samp, 2, sd, na.rm = TRUE)
+  
+  Ind <- Ind.samp[nI, ]
+  z.low <- qnorm(0.025)
+  z.upp <- qnorm(0.975)
+  
+  ci.low <- muI + z.low * sigmaI / sqrt(nI)
+  ci.high <- muI + z.upp * sigmaI / sqrt(nI)
+  
+  alpha <- rep(NA, reps)
+  alpha[Ind < ci.low] <- 0.75
+  alpha[Ind > ci.high] <- 1.25
+  alpha[Ind >= ci.low & Ind <= ci.high] <- 1
+  
+  Cat <- Data@Cat[x, length(Data@Cat[x, ])]
+  Cc <- trlnorm(reps, Cat, Data@CV_Cat[x])
+  
+  TAC <- alpha * Cc
+  TACfilter(TAC)
+}
+class(ICI2) <- "Output"
+
+
+#'  Mean length-based indicator MP of Jardim et al. 2015 using Beverton-Holt invariant 
+#'  M/K ratio = 1.5 and assumes FMSY = M.
+#' 
+#' The TAC is adjusted by the ratio alpha, where the numerator 
+#' is the mean length of the catch and the denominator is the mean length expected
+#' when FMSY = M and M/K = 1.5. Natural mortality M and von Bertalanffy K are not used in this MP 
+#' (see Appendix A of Jardim et al. 2015).
+#' Argument yrsmth currently takes the mean length of the most recent 3 years of data 
+#' as a smoother.
+#' 
+#' @param x A position in data-limited methods data object
+#' @param Data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param yrsmth The most recent years of data to smooth the calculation of the mean length
+#' @author Coded by Q. Huynh. Developed by Jardim et al. (2015)
+#' @references Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for 
+#' data limited stocks using length-based reference points and survey biomass indices, 
+#' Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836, 
+#' https://doi.org/10.1016/j.fishres.2014.11.013
+Lratio_BHI <- function(x, Data, reps, yrsmth = 3) {
+  dependencies = "Data@vb_Linf, Data@CV_vbLinf, Data@Cat, Data@CV_Cat, Data@CAL, Data@CAL_bins"
+  Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
+  L50c <- trlnorm(reps, Data@L50[x], Data@CV_L50[x])
+  L25c <- L50c + (-log(3)/log(19)) * (Data@L95[x] - L50c)
+  Lref <- 0.75 * L25c + 0.25 * Linfc
+  
+  Cat <- Data@Cat[x, length(Data@Cat[x, ])]
+  Cc <- trlnorm(reps, Cat, Data@CV_Cat[x])
+  
+  LYear <- dim(Data@CAL)[2]
+  nlbin <- ncol(Data@CAL[x,,])
+  mlbin <- 0.5 * (Data@CAL_bins[1:nlbin] + Data@CAL_bins[2:(nlbin + 1)])
+  
+  ind.year <- (LYear - yrsmth + 1):LYear
+  CAL <- colSums(Data@CAL[x, ind.year, ])
+  
+  LSQ <- rep(NA, reps)
+  for(i in 1:reps) {
+    lensamp <- sample(mlbin, 0.5*sum(CAL), replace = T, prob = CAL)
+    LSQ[i] <- mean(lensamp)
+  }
+  
+  TAC <- (LSQ/Lref) * Cc
+  TACfilter(TAC)
+}
+class(Lratio_BHI) <- "Output"
+
+
+#' The more general version of the mean length-based indicator MP of Jardim et al. 2015.
+#' 
+#' The TAC is adjusted by the ratio alpha, where the numerator 
+#' is the mean length of the catch and the denominator is the mean length expected
+#' when FMSY = M and M/K = 1.5. Natural mortality M and von Bertalanffy K are not used in this MP 
+#' (see Appendix A of Jardim et al. 2015).
+#' Argument yrsmth currently takes the mean length of the most recent 3 years of data 
+#' as a smoother.
+#' 
+#' @param x A position in data-limited methods data object
+#' @param Data A data-limited methods data object
+#' @param reps The number of TAC samples
+#' @param yrsmth The most recent years of data to smooth the calculation of the mean length
+#' @author Coded by Q. Huynh. Developed by Jardim et al. (2015)
+#' @references Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for 
+#' data limited stocks using length-based reference points and survey biomass indices, 
+#' Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836, 
+#' https://doi.org/10.1016/j.fishres.2014.11.013
+Lratio_BHI2 <- function(x, Data, reps, yrsmth = 3) {
+  
+  dependencies = "Data@vb_Linf, Data@CV_vbLinf, Data@L50, Data@CV_L50, Data@L95, Data@Cat, Data@CV_Cat, 
+  Data@CAL, Data@CAL_bins, Data@FMSY_M, Data@CV_FMSY_M"
+  Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
+  L50c <- trlnorm(reps, Data@L50[x], Data@CV_L50[x])
+  L25c <- L50c + (-log(3)/log(19)) * (Data@L95[x] - L50c)
+  
+  Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
+  Kvec <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
+  gamma <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
+  theta <- Kvec/Mvec
+  
+  Lref <- (theta * Linfc + L25c * (gamma + 1)) / (gamma + theta + 1)
+  
+  Cat <- Data@Cat[x, length(Data@Cat[x, ])]
+  Cc <- trlnorm(reps, Cat, Data@CV_Cat[x])
+  
+  LYear <- dim(Data@CAL)[2]
+  nlbin <- ncol(Data@CAL[x,,])
+  mlbin <- 0.5 * (Data@CAL_bins[1:nlbin] + Data@CAL_bins[2:(nlbin + 1)])
+  
+  ind.year <- (LYear - yrsmth + 1):LYear
+  CAL <- colSums(Data@CAL[x, ind.year, ])
+  
+  LSQ <- rep(NA, reps)
+  for(i in 1:reps) {
+    lensamp <- sample(mlbin, 0.5*sum(CAL), replace = T, prob = CAL)
+    LSQ[i] <- mean(lensamp)
+  }
+  
+  TAC <- (LSQ/Lref) * Cc
+  TACfilter(TAC)
+}
+class(Lratio_BHI2) <- "Output"
+
+
+
+
 
 # SCA<-function(x,Data,reps=100){ # Requires a character string
 # DLMexe (e.g. 'C:/DLMexe') that represents the

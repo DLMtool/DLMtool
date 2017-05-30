@@ -4,9 +4,9 @@
 \alias{runMSE}
 \title{Run a Management Strategy Evaluation}
 \usage{
-runMSE(OM = testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE", "matlenlim"),
-  nsim = 48, proyears = 50, interval = 4, pstar = 0.5, maxF = 0.8,
-  timelimit = 1, reps = 1, CheckMPs = FALSE, Hist = FALSE,
+runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
+  "matlenlim"), nsim = 48, proyears = 50, interval = 4, pstar = 0.5,
+  maxF = 0.8, timelimit = 1, reps = 1, CheckMPs = FALSE, Hist = FALSE,
   ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2, Bfrac = 0.5)
 }
 \arguments{
@@ -15,9 +15,11 @@ runMSE(OM = testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE", "matlenlim"),
 \item{MPs}{A vector of methods (character string) of class Output or
 Input.}
 
-\item{nsim}{Number of simulations}
+\item{nsim}{Number of simulations. Note that in DLMtool V4.1+ 'nsim is ignored 
+if OM object contains the slot 'nsim'.}
 
-\item{proyears}{Number of projected years}
+\item{proyears}{Number of projected years. Note that in DLMtool V4.1+ 'proyears is ignored 
+if OM object contains the slot 'proyears'.}
 
 \item{interval}{The assessment interval - how often would you like to update
 the management system?}

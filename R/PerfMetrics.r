@@ -1,4 +1,11 @@
-setClassUnion("label.class", c("call", "character", "function"))
+#' Label class union for performance metric objects
+#' 
+#' @description Used internally. Nothing to see here!
+#'  
+#' @export
+#' 
+setClassUnion(name="label.class", members=c("call", "character", "function"))
+
 
 #' Class \code{'PM'}
 #' 

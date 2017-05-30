@@ -14,7 +14,7 @@ BK(x, Data, reps = 100)
 \item{reps}{The number of stochastic samples of the TAC recommendation}
 }
 \description{
-Sets an OFL according to current abundance and an approximation of FMSY
+Sets an OFL according to current abundance and an approximation of Fmax
 based on length at first capture.
 }
 \note{

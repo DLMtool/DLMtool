@@ -951,7 +951,9 @@ setClass("OM", representation(Name = "character", nsim="numeric",proyears="numer
 
 
 # initialize OM
-setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=Generic_fleet, Obs=Generic_obs, Imp=Perfect_Imp, nsim=48, proyears=50) {
+setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Generic_fleet, 
+                                       Obs=DLMtool::Generic_obs, Imp=DLMtool::Perfect_Imp, 
+                                       nsim=48, proyears=50) {
   if (is.null(Stock)) {
     message("No Stock object found. Returning a blank OM object") 
     return(makePerf(.Object))
