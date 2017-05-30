@@ -1595,6 +1595,7 @@ iSCAM2Data<-function(iSCAMdir,Name=NULL,Source="No source provided",
   Data@wlb=replist$dat$lw.beta
   rec<-replist$mpd$rbar *exp(replist$mpd$delta)*1E6
   SSB<-(replist$mpd$sbt*1000)[1:length(rec)]
+  SSBpR<-SSB0/replist$mpd$rbar
   Data@steep<-mean(SRopt(100,SSB,rec,SSBpR,plot=F,type="BH")) # will create a reproducible 1 sample version
   Data@Ref<-Data@Cat[1,ny]
   Data@Ref_type<-"Most recent catches"
