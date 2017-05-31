@@ -61,13 +61,20 @@ ChkObj <- function(OM) {
 #' @author T. Carruthers
 #' @export avail
 avail <- function(classy) {
- temp <- try(class(classy), silent=TRUE)
+  temp <- try(class(classy), silent=TRUE)
   if (class(temp) == "try-error") classy <- deparse(substitute(classy))
-  temp <- unique(c(ls("package:DLMtool")[unlist(lapply(ls("package:DLMtool"), 
-    getclass, classy = classy))], ls(envir = .GlobalEnv)[unlist(lapply(ls(envir = .GlobalEnv), 
-    getclass, classy = classy))])) 
-   if (classy == "Observation") message("Class 'Observation' has been re-named 'Obs'")	
-   if (length(temp) <1) stop("No objects of class '", classy, "' found", call.=FALSE)
+  if (temp == "function") classy <- deparse(substitute(classy))
+  
+  temp <- c(ls("package:DLMtool")[unlist(lapply(ls("package:DLMtool"), getclass, classy = classy))], 
+            ls(envir = .GlobalEnv)[unlist(lapply(ls(envir = .GlobalEnv), getclass, classy = classy))])
+  pkgs <- search()
+  if ("package:DLMdata" %in% pkgs) {
+    temp <- c(temp, unique(ls("package:DLMdata")[unlist(lapply(ls("package:DLMdata"), getclass, classy = classy))]))
+  }
+  temp <- unique(temp)
+  
+  if (classy == "Observation") message("Class 'Observation' has been re-named 'Obs'")	
+  if (length(temp) <1) stop("No objects of class '", classy, "' found", call.=FALSE)
   return(temp)
 }
 

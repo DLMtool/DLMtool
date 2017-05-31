@@ -1,4 +1,4 @@
-# This file is automatically built by createObjects.r in DLMDev
+# This file is automatically built by DataObjectsforDLMtool.r in DLMDev
 # Don't edit by hand!
 # 
 
@@ -156,13 +156,6 @@
 "Generic_IncE"
 
 
-#'  IncE_Dom Fleet
-#'
-#'  An object of class Fleet
-#'
-"IncE_Dom"
-
-
 #'  IncE_HDom Fleet
 #'
 #'  An object of class Fleet
@@ -240,6 +233,20 @@
 "Precise_Unbiased"
 
 
+#'  Overages Imp
+#'
+#'  An object of class Imp
+#'
+"Overages"
+
+
+#'  Perfect_Imp Imp
+#'
+#'  An object of class Imp
+#'
+"Perfect_Imp"
+
+
 #'  Feasibility Fease
 #'
 #'  An object of class Fease
@@ -310,147 +317,10 @@
 "Simulation_1"
 
 
-#'  Perfect_Imp Imp
-#'
-#'  An object of class Imp
-#'
-"Perfect_Imp"
-
-
-#'  Red_Snapper_GOM OM
-#'
-#'  An object of class OM
-#'
-"Red_Snapper_GOM"
-
-
-#'  Rougheye_Rockfish_BC OM
-#'
-#'  An object of class OM
-#'
-"Rougheye_Rockfish_BC"
-
-
 #'  testOM OM
 #'
 #'  An object of class OM
 #'
 "testOM"
-
-
-#'  Yellowfin_Tuna_IO OM
-#'
-#'  An object of class OM
-#'
-"Yellowfin_Tuna_IO"
-
-
-#'  AJ_GOM OM
-#'
-#'  An object of class OM
-#'
-"AJ_GOM"
-
-
-#'  LS_GOM OM
-#'
-#'  An object of class OM
-#'
-"LS_GOM"
-
-
-#'  LAJ_GOM OM
-#'
-#'  An object of class OM
-#'
-"LAJ_GOM"
-
-
-#'  RD_GOM OM
-#'
-#'  An object of class OM
-#'
-"RD_GOM"
-
-
-#'  SG_GOM OM
-#'
-#'  An object of class OM
-#'
-"SG_GOM"
-
-
-#'  SH_GOM OM
-#'
-#'  An object of class OM
-#'
-"SH_GOM"
-
-
-#'  WM_GOM OM
-#'
-#'  An object of class OM
-#'
-"WM_GOM"
-
-
-#'  YM_GOM OM
-#'
-#'  An object of class OM
-#'
-"YM_GOM"
-
-
-#'  San_Francisco_Bay_herring_California OM
-#'
-#'  An object of class OM
-#'
-"San_Francisco_Bay_herring_California"
-
-
-#'  Darnley_Bay_Char_DFO OM
-#'
-#'  An object of class OM
-#'
-"Darnley_Bay_Char_DFO"
-
-
-#'  Canary_Rockfish_BC_DFO OM
-#'
-#'  An object of class OM
-#'
-"Canary_Rockfish_BC_DFO"
-
-
-#'  Red_snapper_GOM_SS OM
-#'
-#'  An object of class OM (from SS using SS2DLM)
-#'  SEDAR 31, 2014 update assessment. Author: No author provided.
-#' 
-"Red_snapper_GOM_SS"
-
-
-#'  Yellowfin_tuna_IO_SS OM
-#'
-#'  An object of class OM (from SS using SS2DLM)
-#'  SEDAR 31, 2014 update assessment. Author: No author provided.
-#' 
-"Yellowfin_tuna_IO_SS"
-
-
-#'  Swordfish_OM OM
-#'
-#'  An object of class OM
-#'  Author: Alex Hanke (DFO)  Assessment: http://iccat.org/Documents/SCRS/Manual/CH2/2_1_9_SWO_ENG.pdf
-#' 
-"Swordfish_OM"
-
-
-#'  Arrowtooth_Flounder_BC_DFO_iSCAM OM
-#'
-#'  An object of class OM (built using iSCAM2DLM)
-#'  No source provided. Author: No author provided.
-#' 
-"Arrowtooth_Flounder_BC_DFO_iSCAM"
 
 

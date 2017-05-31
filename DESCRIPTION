@@ -5,7 +5,7 @@ Version: 4.1.1
 Date: 2017-05-01
 Authors@R: c(
     person("Tom", "Carruthers",, "t.carruthers@fisheries.ubc.ca", role=c("aut", "cre")),
-    person("Adrian", "Hordyk", , "ar.hordyk@gmail.com", "aut"))
+    person("Adrian", "Hordyk", , "a.hordyk@oceans.ubc.ca", "aut"))
 Maintainer: Tom Carruthers <t.carruthers@fisheries.ubc.ca>
 Description: Development, simulation testing, and implementation of management
     procedures for data-limited fisheries 
@@ -17,6 +17,7 @@ Depends:
 Imports:
     abind,
     coda,
+    devtools,
     methods,
     LBSPR,
     grDevices,
