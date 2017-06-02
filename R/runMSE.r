@@ -1165,6 +1165,9 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       nd <- Sys.time()
       MPdur[mm] <- nd - st
       TACused <- apply(Data@TAC, 3, quantile, p = pstar, na.rm = T)
+      # if MP returns NA - TAC is set to catch from last year
+      TACused[is.na(TACused)] <- apply(CB, c(1,3), sum)[is.na(TACused), nyears]
+      
       TACa[, mm, 1] <- TACused                                               # TAC recommendation
 	    TACused<- TAC_f[,1]*TACused                                            # TAC taken after implementation error
       availB <- apply(VBiomass_P[,,1,], 1, sum) # total available biomass
@@ -1183,13 +1186,13 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       CB_P[, , 1, ] <- TACused * temp  # debug - to test distribution code make TAC = TAC2, should be identical
        
       
-      temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-Marray[SYt]/2))  # Pope's approximation	  
+      # temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-Marray[SYt]/2))  # Pope's approximation	  
+      temp <- CB_P[SAYR]/(VBiomass_P[SAYR] * exp(-Marray[SYt]/2))  # Pope's approximation
       temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF)
       FM_P[SAYR] <- -log(1 - temp)
 	    Z_P[SAYR] <- FM_P[SAYR] + Marray[SYt]
 		  
-      Effort[, mm, y] <- (-log(1 - apply(CB_P[, , y, ], 1, sum)/(apply(CB_P[, , y, ], 1, sum) + 
-	    apply(VBiomass_P[, , y, ], 1, sum))))/qs	  
+      Effort[, mm, y] <- (-log(1 - apply(CB_P[, , y, ], 1, sum)/(apply(CB_P[, , y, ], 1, sum) + apply(VBiomass_P[, , y, ], 1, sum))))/qs	  
     } else {
       # input control
       st <- Sys.time()
@@ -1209,7 +1212,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       newVmax <- inc[8, , 1] # new vulnerability at max length
       
       chngSel <- which(colSums(apply(newSel, 2, is.na)) == 0)  # selectivity pattern changed in which sims?
-	  ind <- as.matrix(expand.grid((y+nyears):(nyears+proyears), chngSel))
+	    ind <- as.matrix(expand.grid((y+nyears):(nyears+proyears), chngSel))
       if (length(chngSel) > 0) {
 	      pL5[ind] <- newSel[1, ind[,2]]	# update size of first capture for future years 
           pLFS[ind] <- newSel[2, ind[,2]] # update size of first full selection for future years 
@@ -1223,7 +1226,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       Vi <- t(sapply(1:nsim, SelectFun, pL5[y + nyears, ]*SizeLim_f[,y], pLFS[y + nyears, ]*SizeLim_f[,y], 
 	          pVmaxlen[y + nyears, ], Len_age[, maxage, nyears], Len_age[, , y + nyears])) # update vulnerability-at-age schedule with implementation error on L5 and LFS
       
-	  ind <- as.matrix(expand.grid(1:nsim, 1:length(CAL_binsmid), (y+nyears):(nyears+proyears)))
+	    ind <- as.matrix(expand.grid(1:nsim, 1:length(CAL_binsmid), (y+nyears):(nyears+proyears)))
       pSLarray[ind] <- t(sapply(1:nsim, SelectFun, SL0.05=pL5[y+nyears, ]*SizeLim_f[,y], SL1=pLFS[y+nyears, ]*SizeLim_f[,y], 
 	                             MaxSel=pVmaxlen[y+nyears, ], maxlens=maxlen, Lens=CAL_binsmid)) # update vulnerability-at-length schedule with implementation error on L5 and LFS
 								 
@@ -1276,7 +1279,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       
 	    VBiomass_P[SAYR] <- Biomass_P[SAYR] * V_P[SAYt]  # update vulnerable biomass 
 	    Z_P[SAYR] <- FM_P[SAYR] + Marray[SYt] # calculate total mortality 
-      CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))  	   
+      # CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))  	   
+      CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * VBiomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
     }  # input control  
     
   
@@ -1295,8 +1299,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       cat(".")
       flush.console()
       if (class(match.fun(MPs[mm])) == "Output")  TACa[, mm, y] <- TACa[, mm, y-1] # TAC same as last year unless changed 
-      SAYRt <- as.matrix(expand.grid(1:nsim, 1:maxage, y + nyears, 
-        1:nareas))  # Trajectory year
+      SAYRt <- as.matrix(expand.grid(1:nsim, 1:maxage, y + nyears, 1:nareas))  # Trajectory year
       SAYt <- SAYRt[, 1:3]
       SAYtMP <- cbind(SAYt, mm)
       SYt <- SAYRt[, c(1, 3)]
@@ -1310,10 +1313,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       S <- SAYR[, 1]
       SR <- SAYR[, c(1, 4)]
       SA2YR <- as.matrix(expand.grid(1:nsim, 2:maxage, y, 1:nareas))
-      SA1YR <- as.matrix(expand.grid(1:nsim, 1:(maxage - 1), y - 
-        1, 1:nareas))
-      indMov <- as.matrix(expand.grid(1:nareas, 1:nareas, y, 1:maxage, 
-        1:nsim)[5:1])
+      SA1YR <- as.matrix(expand.grid(1:nsim, 1:(maxage - 1), y -1, 1:nareas))
+      indMov <- as.matrix(expand.grid(1:nareas, 1:nareas, y, 1:maxage, 1:nsim)[5:1])
       indMov2 <- indMov[, c(1, 2, 3, 4)]
       indMov3 <- indMov[, c(1, 4, 5)]
       
@@ -1408,9 +1409,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
         # }
 
         
-        I2 <- cbind(apply(Biomass, c(1, 3), sum), apply(Biomass_P, 
-          c(1, 3), sum)[, 1:(y - 1)]) * Ierr[, 1:(nyears + (y - 
-          1))]^betas
+        I2 <- cbind(apply(Biomass, c(1, 3), sum), apply(Biomass_P, c(1, 3), sum)[, 1:(y - 1)]) * 
+          Ierr[, 1:(nyears + (y - 1))]^betas
         I2[is.na(I2)] <- tiny
         I2 <- I2/apply(I2, 1, mean)
         
@@ -1464,9 +1464,10 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
         
         if (class(match.fun(MPs[mm])) == "Output") {
           Data <- Sam(MSElist[[mm]], MPs = MPs[mm], perc = pstar, reps = reps)
-          TACused <- apply(Data@TAC, 3, quantile, p = pstar, 
-          na.rm = TRUE)  #
+          TACused <- apply(Data@TAC, 3, quantile, p = pstar, na.rm = TRUE)  #
           NAs <- which(is.na(TACused))
+          # If MP returns NA - the TAC from last year is used. 
+          TACused[is.na(TACused)] <- TACa[is.na(TACused), mm, y-1]
           if (length(NAs) > 0) {
           # robustifying TAC setting!
           TACused[NAs] <- TACa[NAs, mm, y - 1]  #
@@ -1487,9 +1488,11 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
 		  
 		      fishdist <- (apply(VBiomass_P[, , y, ], c(1, 3), sum)^Spat_targ)/apply(apply(VBiomass_P[, , y, ], c(1, 3), sum)^Spat_targ, 1, mean)  # spatial preference according to spatial biomass     
           CB_P[SAYR] <- Biomass_P[SAYR] * (1 - exp(-V_P[SAYt] *  fishdist[SR]))  # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space          
+          
           temp <- CB_P[, , y, ]/apply(CB_P[, , y, ], 1, sum)  # how catches are going to be distributed
           CB_P[, , y, ] <- TACused * temp  # debug - to test distribution code make TAC = TAC2, should be identical          
-          temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-Marray[SYt]/2))  # Pope's approximation
+          # temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-Marray[SYt]/2))  # Pope's approximation
+          temp <- CB_P[SAYR]/(VBiomass_P[SAYR] * exp(-Marray[SYt]/2))  # Pope's approximation
           temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF)
           FM_P[SAYR] <- -log(1 - temp)
           Z_P[SAYR] <- FM_P[SAYR] + Marray[SYt]
@@ -1545,15 +1548,12 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
           # specified
             if (!Vchange) {
               newVB <- apply(VBiomass_P[, , y, ], c(1, 3), sum)  # vulnerability isn't changed
-              fishdist <- (newVB^Spat_targ)/apply(newVB^Spat_targ, 
-              1, mean)  # spatial preference according to spatial biomass
+              fishdist <- (newVB^Spat_targ)/apply(newVB^Spat_targ,  1, mean)  # spatial preference according to spatial biomass
               FM_P[SAYR] <- FinF[S1] * Ei[S1] * V_P[SAYt] * fishdist[SR] * 
                             qvar[SY] * qs[S1] * (1 + qinc[S1]/100)^y  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
             } else {
-              if (y < proyears) 
-              V_P[, , (y + nyears + 1):(proyears + nyears)] <- Vi  # Update vulnerability schedule for all future years
-              newVB <- apply(VBiomass_P[, , y, ] * Vi[SA], c(1, 
-              3), sum)  # vulnerability modified
+              if (y < proyears) V_P[, , (y + nyears + 1):(proyears + nyears)] <- Vi  # Update vulnerability schedule for all future years
+              newVB <- apply(Biomass_P[, , y, ] * Vi[SA], c(1, 3), sum)  # vulnerability modified
               fishdist <- (newVB^Spat_targ)/apply(newVB^Spat_targ, 1, mean)  # spatial preference according to spatial biomass
               FM_P[SAYR] <- FinF[S1] * Ei[S1] * Vi[SA] * fishdist[SR] *  qvar[SY] * 
 			                qs[S1] * (1 + qinc[S1]/100)^y  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass         
@@ -1561,30 +1561,26 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
           } else {
           # A spatial closure if no vulnerability schedule is specified
             if (!Vchange) {
-              newVB <- apply(VBiomass_P[, , y, ], c(1, 3), sum)  # vulnerability isn't changed
+              newVB <- apply(Biomass_P[, , y, ], c(1, 3), sum)  # vulnerability isn't changed
               fishdist <- (newVB^Spat_targ)/apply(newVB^Spat_targ,1, mean)  # spatial preference according to spatial biomass
               Emult <- 1 + ((2/apply(fishdist * Si, 1, sum)) - 1) * Ai  # allocate effort to new area according to fraction allocation Ai
               FM_P[SAYR] <- FinF[S1] * Ei[S1] * V_P[SAYt] * Si[SR] * fishdist[SR] * 
 			                Emult[S1] * qvar[SY] * qs[S1] * (1 + qinc[S1]/100)^y        
             } else {
-              if (y < proyears) 
-              V_P[, , (y + nyears + 1):(proyears + nyears)] <- Vi  # Update vulnerability schedule for all future years
-              newVB <- apply(VBiomass_P[, , y, ] * Vi[SA], c(1, 
-              3), sum)  # vulnerability modified
-              fishdist <- (newVB^Spat_targ)/apply(newVB^Spat_targ, 
-              1, mean)  # spatial preference according to spatial biomass
-              Emult <- 1 + ((2/apply(fishdist * Si, 1, sum)) - 
-              1) * Ai  # allocate effort to new area according to fraction allocation Ai
-              FM_P[SAYR] <- FinF[S1] * Ei[S1] * Vi[SA] * Si[SR] * 
-              fishdist[SR] * Emult[S1] * qvar[SY] * qs[S1] * 
-              (1 + qinc[S1]/100)^y
+              if (y < proyears) V_P[, , (y + nyears + 1):(proyears + nyears)] <- Vi  # Update vulnerability schedule for all future years
+              newVB <- apply(Biomass_P[, , y, ] * Vi[SA], c(1, 3), sum)  # vulnerability modified
+              fishdist <- (newVB^Spat_targ)/apply(newVB^Spat_targ,       1, mean)  # spatial preference according to spatial biomass
+              Emult <- 1 + ((2/apply(fishdist * Si, 1, sum)) -   1) * Ai  # allocate effort to new area according to fraction allocation Ai
+              FM_P[SAYR] <- FinF[S1] * Ei[S1] * Vi[SA] * Si[SR] * fishdist[SR] * Emult[S1] * 
+                qvar[SY] * qs[S1] * (1 + qinc[S1]/100)^y
               
             }  #vuln not changed
           }  # spatial closure
           VBiomass_P[SAYR] <- Biomass_P[SAYR] * V_P[SAYt]  # update vulnerable biomass 
           Z_P[SAYR] <- FM_P[SAYR] + Marray[SYt]
           # CB_P[SAYR]<-Biomass_P[SAYR]*(1-exp(-FM_P[SAYR]))
-          CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] *   (1 - exp(-Z_P[SAYR]))		  
+          # CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] *   (1 - exp(-Z_P[SAYR]))
+          CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * VBiomass_P[SAYR] *   (1 - exp(-Z_P[SAYR]))		  
         }  # input or output control 
 
         # TACused <- apply(CB_P[, , y, ], 1, sum)  # Set last years TAC to actual catch from last year
@@ -1610,7 +1606,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
 	        # tempcatch[tempcatch > maxC] <- maxC[tempcatch > maxC] 		 
   		  
 		      CB_P[, , y, ] <- tempcatch * temp  # debug - to test distribution code make TAC = TAC2, should be identical
-          temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-Marray[SYt]/2))  # Pope's approximation
+          # temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-Marray[SYt]/2))  # Pope's approximation
+          temp <- CB_P[SAYR]/(VBiomass_P[SAYR] * exp(-Marray[SYt]/2))  # Pope's approximation
           temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF)
           FM_P[SAYR] <- -log(1 - temp)
           Effort[, mm, y] <- (-log(1 - apply(CB_P[, , y, ], 1, sum)/ (apply(CB_P[, , y, ], 1, sum) + apply(VBiomass_P[, , y, ], 1, sum))))/qs
@@ -1622,7 +1619,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
           Effort[, mm, y] <-  Ei * E_f[,y]   # Effort doesn't change in non-update year
 		      Z_P[SAYR] <- FM_P[SAYR] + Marray[SYt]
           # CB_P[SAYR]<-Biomass_P[SAYR]*(1-exp(-FM_P[SAYR]))
-          CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
+          # CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
+          CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * VBiomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
         }
       
       }  # not an update year
@@ -1636,6 +1634,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     suppressWarnings(	# gives an error message if CB_P or VBiomass_P is NA 
 	    FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum, na.rm=TRUE)/apply(VBiomass_P, c(1, 3), sum, na.rm=TRUE))		
 	  )
+
+    
 	  F_FMSYa[, mm, ] <- FMa[, mm, ]/FMSY
 	                      	
     Ba[, mm, ] <- apply(Biomass_P, c(1, 3), sum, na.rm=TRUE) # biomass 

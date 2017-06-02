@@ -14,6 +14,10 @@ hist2 <- function(x, col, axes=FALSE, main="", breaks=10,cex.main=1) {
 }
 
 
+#' @method plot Stock
+#' @export
+plot.Stock <- function(x, ...)  plotStock(x, ...)
+
 #' Plot the Stock object parameters 
 #' 
 #' A function that plots histograms of samples from the Stock object parameters,
@@ -31,11 +35,9 @@ hist2 <- function(x, col, axes=FALSE, main="", breaks=10,cex.main=1) {
 #' @param ask Ask before displaying next page?
 #' @param incVB Show the sampled von Bertalanffy growth curves on second page?
 #' @param ...  Optional additional arguments passed to \code{plot}
-#' @rdname plot-Stock
-#' @method plot Stock
 #' @author A. Hordyk
 #' @export 
-plot.Stock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28, 
+plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28, 
   col="darkgray", breaks=10, lwd=2, ask=FALSE, incVB=TRUE, ...) {
   Stock <- x 
   cpars <- NULL

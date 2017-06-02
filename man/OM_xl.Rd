@@ -27,9 +27,9 @@ with tabs named following specific convention.
 \details{
 The Excel spreadsheet must have tabs named with the following convention.
 For example if \code{stkname} is 'myFish', the Stock parameters are in a tab
-named 'myFishStock'', Fleet parameters in a tab named 'myFishFleet', and
-Observation parameters in a tab named 'myFishObs'. All three tabs (Stock,
-Fleet and Obs) must be present for a single stock. You can have multiple
+named 'myFishStock', Fleet parameters in a tab named 'myFishFleet', 
+Observation parameters in a tab named 'myFishObs', and Implementation in 'myFishImp'. 
+All tabs (Stock, Fleet, Obs, and Imp) must be present for a single stock. You can have multiple
 stocks in a single spreadsheet, provided that the stock names are different.
 }
 \examples{

@@ -1,3 +1,5 @@
+
+
 #' Plot the operating model (OM) object parameters 
 #' 
 #' A function that plots the parameters and resulting time series of an operating model.
@@ -14,10 +16,10 @@ plot.OM <-function(x, ...){
     nsim<-OM@nsim
     nyears<-OM@nyears
     
-    plot.Stock(OM)
-    plot.Fleet(OM)
-    plot.Obs(OM)
-    plot.Imp(OM)
+    plotStock(OM)
+    plotFleet(OM)
+    plotObs(OM)
+    plotImp(OM)
     
     
     # Time series

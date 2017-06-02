@@ -250,7 +250,7 @@ encircle<-function(x,y,col="red",perc=0.05,xrange=NA,yrange=NA,log=F,lty=1,lwd=1
     yrange<-log(yrange)
   }
 
-  kerneld <- kde2d(x, y, n = 100, lims = c(xrange, yrange))
+  kerneld <- MASS::kde2d(x, y, n = 100, lims = c(xrange, yrange))
 
   pp <- array()
   for (i in 1:nsim){

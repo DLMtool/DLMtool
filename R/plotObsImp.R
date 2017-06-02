@@ -1,3 +1,7 @@
+#' @method plot Obs
+#' @export
+plot.Obs <- function(x, ...)  plotObs(x, ...)
+
 #' Plot the Observation object parameters 
 #' 
 #' A function that plots histograms of samples from the observation object parameters,
@@ -11,10 +15,9 @@
 #' @param breaks Number of breaks for histograms 
 #' @param ...  Optional additional arguments passed to \code{plot}
 #' @rdname plot-Obs 
-#' @method plot Obs 
 #' @author T. Carruthers and A. Hordyk
 #' @export 
-plot.Obs <- function(x, nsim=500, nyears=50, 
+plotObs <- function(x, nsim=500, nyears=50, 
                        col="darkgray", breaks=10, ...) {
   
   Obs <- x
@@ -175,6 +178,11 @@ plot.Obs <- function(x, nsim=500, nyears=50,
   
 }
 
+
+#' @method plot Imp
+#' @export
+plot.Imp <- function(x, ...)  plotImp(x, ...)
+
 #' Plot the Implementation object parameters 
 #' 
 #' A function that plots histograms of samples from the implementation object parameters,
@@ -188,10 +196,9 @@ plot.Obs <- function(x, nsim=500, nyears=50,
 #' @param breaks Number of breaks for histograms 
 #' @param ...  Optional additional arguments passed to \code{plot}
 #' @rdname plot-Imp 
-#' @method plot Imp 
 #' @author T. Carruthers and A. Hordyk
 #' @export 
-plot.Imp<-function(x,nsim=500, nyears=50, 
+plotImp<-function(x,nsim=500, nyears=50, 
                    col="darkgray", breaks=10, ...){
   Imp <- x
   if (class(Imp) == "OM") {

@@ -4,11 +4,11 @@
 \alias{writeCSV}
 \title{Internal function to write CSVs for objects}
 \usage{
-writeCSV(inobj, tmpfile = NULL, objtype = c('Stock', 'Fleet',
-'Observation', 'Data', 'OM', 'Fease'))
+writeCSV(inobj, tmpfile = NULL, objtype = c("Stock", "Fleet", "Obs", "Imp",
+  "Data", "OM", "Fease"))
 }
 \arguments{
-\item{inobj}{A object of class Stock, Fleet, Observation, Data, OM, or
+\item{inobj}{A object of class Stock, Fleet, Obs, Imp, Data, OM, or
 Fease}
 
 \item{tmpfile}{The full file path and name for the saved CSV file}

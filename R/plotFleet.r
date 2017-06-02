@@ -1,3 +1,7 @@
+#' @method plot Fleet
+#' @export
+plot.Fleet <- function(x, ...)  plotFleet(x, ...)
+
 #' Plot the Fleet object parameters 
 #' 
 #' @param x An object of class Fleet (or of class OM)
@@ -10,10 +14,9 @@
 #' @param lwd line width 
 #' @param ...  Optional additional arguments passed to \code{plot}
 #' @rdname plot-Fleet 
-#' @method plot Fleet
 #' @author A. Hordyk
 #' @export 
-plot.Fleet <- function(x, Stock=NULL, nsamp=3, nsim=500, proyears=28, 
+plotFleet <- function(x, Stock=NULL, nsamp=3, nsim=500, proyears=28, 
   col="darkgray", breaks=10, lwd=2, ...) { 
   cpars <- NULL
   Fleet <- x 
