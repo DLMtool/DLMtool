@@ -405,7 +405,7 @@ setMethod("initialize", "Fleet", function(.Object, file = NA) {
       
       .Object@Spat_targ <- as.numeric(dat[match("Spat_targ", dname),  1:2])
       .Object@Esd <- as.numeric(dat[match("Esd", dname), 1:2])
-	  .Object@Esd <- as.numeric(dat[match("Fsd", dname), 1:2])
+	    .Object@Esd <- as.numeric(dat[match("Fsd", dname), 1:2])
       # .Object@Fgrad<-as.numeric(dat[match('Fgrad',dname),1:2])
       nEffYears <- ncol(dat[match("EffYears", dname), ])
       oldw <- getOption("warn")
@@ -1187,8 +1187,7 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
   if (!is.na(file)) {
     if (file.exists(file)) {
       Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-      dat <- read.csv(file, header = F, colClasses = "character", 
-        col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
       dname <- dat[, 1]
       dat <- dat[, 2:ncol(dat)]
       
@@ -1206,24 +1205,18 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
       .Object@Ksd <- as.numeric(dat[match("Ksd", dname), 1:2])
       .Object@Kgrad <- as.numeric(dat[match("Kgrad", dname), 1:2])
       .Object@Linfsd <- as.numeric(dat[match("Linfsd", dname), 1:2])
-      .Object@Linfgrad <- as.numeric(dat[match("Linfgrad", dname), 
-        1:2])
-      .Object@recgrad <- as.numeric(dat[match("recgrad", dname), 
-        1:2])
+      .Object@Linfgrad <- as.numeric(dat[match("Linfgrad", dname),  1:2])
+      .Object@recgrad <- as.numeric(dat[match("recgrad", dname), 1:2])
       .Object@a <- as.numeric(dat[match("a", dname), 1])
       .Object@b <- as.numeric(dat[match("b", dname), 1])
       .Object@D <- as.numeric(dat[match("D", dname), 1:2])
       .Object@Perr <- as.numeric(dat[match("Perr", dname), 1:2])
       .Object@Period <- as.numeric(dat[match("Period", dname), 1:2])
-      .Object@Amplitude <- as.numeric(dat[match("Amplitude", dname), 
-        1:2])
+      .Object@Amplitude <- as.numeric(dat[match("Amplitude", dname), 1:2])
       .Object@AC <- as.numeric(dat[match("AC", dname), 1:2])
-      .Object@Size_area_1 <- as.numeric(dat[match("Size_area_1", 
-        dname), 1:2])
-      .Object@Frac_area_1 <- as.numeric(dat[match("Frac_area_1", 
-        dname), 1:2])
-      .Object@Prob_staying <- as.numeric(dat[match("Prob_staying", 
-        dname), 1:2])
+      .Object@Size_area_1 <- as.numeric(dat[match("Size_area_1", dname), 1:2])
+      .Object@Frac_area_1 <- as.numeric(dat[match("Frac_area_1", dname), 1:2])
+      .Object@Prob_staying <- as.numeric(dat[match("Prob_staying", dname), 1:2])
       .Object@L50 <- as.numeric(dat[match("L50", dname), 1:2])
       .Object@L50_95 <- as.numeric(dat[match("L50_95", dname), 1:2])
       .Object@Source <- dat[match("Source", dname), 1]

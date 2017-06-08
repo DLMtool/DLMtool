@@ -285,11 +285,11 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
 	    name <- names(cpars)[i]
 	    if (any(c("EffUpper", "EffLower", "EffYears", "maxage") %in% name)) {
 	      assign(name, samps)
-		    usedName <- usedName + 1
+	      usedName <- usedName + 1
 	    } else {
 	      if (class(samps) == "numeric" | class(samps) == "integer") {
- 		      assign(name, samps[ind])
-		      usedName <- usedName + 1
+	        assign(name, samps[ind])
+	        usedName <- usedName + 1
 		    }
 	      if (class(samps) == "matrix") {
 		      assign(name, samps[ind,, drop=FALSE])
@@ -298,7 +298,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
 		    if (class(samps) == "array") {
 		      if (length(dim(samps)) == 3) {
 		        assign(name, samps[ind, , ,drop=FALSE])
-			      usedName <- usedName + 1 
+		        usedName <- usedName + 1 
           }
 		    }
 	    }	
@@ -324,29 +324,50 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   if (!exists("Marray", inherits=FALSE)|length(OM@cpars)==0) {
     Marray <- gettempvar(M, Msd, Mgrad, nyears + proyears, nsim, Mrand)  # M by sim and year according to gradient and inter annual variability
+  } else {
+    if (any(dim(Marray) != c(nsim, nyears + proyears))) stop("'Marray' must be array with dimensions: nsim, nyears + proyears") 
   }
   Linfarray <- gettempvar(Linf, Linfsd, Linfgrad, nyears + proyears, nsim, Linfrand)  # Linf array
   Karray <- gettempvar(K, Ksd, Kgrad, nyears + proyears, nsim, Krand)  # the K array
-  
   Agearray <- array(rep(1:maxage, each = nsim), dim = c(nsim, maxage))  # Age array
   
-  if (!exists("Len_age", inherits=FALSE)|length(OM@cpars)==0) {
+  if (!exists("Len_age", inherits=FALSE)| length(OM@cpars)==0) {
     Len_age <- array(NA, dim = c(nsim, maxage, nyears + proyears))  # Length at age array
     ind <- as.matrix(expand.grid(1:nsim, 1:maxage, 1:(nyears + proyears)))  # an index for calculating Length at age
     Len_age[ind] <- Linfarray[ind[, c(1, 3)]] * (1 - exp(-Karray[ind[, c(1, 3)]] * 
       (Agearray[ind[, 1:2]] - t0[ind[, 1]])))
+  } else { # Length-at-age in cpars
+    # Check dimensions 
+    if (any(dim(Len_age) != c(nsim, maxage, nyears + proyears))) stop("'Len_age' must be array with dimensions: nsim, maxage, nyears + proyears") 
+    
+    # Estimate vB parameters for each year and each sim 
+    vB <- function(pars, ages) pars[1] * (1-exp(-pars[2]*(ages-pars[3])))
+    fitVB <- function(pars, LatAge, ages) sum((vB(pars, ages) - LatAge)^2)
+    starts <- c(max(Len_age), 0.2, 0)
+    message("Estimating growth parameters from length-at-age array in cpars")
+    for (ss in 1:nsim) {
+      pars <- sapply(1:(nyears + proyears), function(X) optim(starts, fitVB, LatAge=Len_age[ss,,X], ages=1:maxage)$par)
+      Linfarray[ss,] <- pars[1,]
+      Karray[ss,] <- pars[2,]
+      t0[ss]<- mean(pars[3,])
+    }
+    Linf <- Linfarray[, nyears]
+    K <- Karray[, nyears]
   }
   
   if (!exists("Wt_age", inherits=FALSE)|length(OM@cpars)==0) {
     Wt_age <- array(NA, dim = c(nsim, maxage, nyears + proyears))  # Weight at age array
+    ind <- as.matrix(expand.grid(1:nsim, 1:maxage, 1:(nyears + proyears)))  # an index for calculating Weight at age 
     Wt_age[ind] <- OM@a * Len_age[ind]^OM@b  # Calculation of weight array
-  }	
-  
-  ## Add checks for dimensions 
-  # Marray 
-  # Len_age 
-  # Wt_age 
-  
+  }	else {
+    if (any(dim(Wt_age) != c(nsim, maxage, nyears + proyears))) stop("'Wt_age' must be array with dimensions: nsim, maxage, nyears + proyears") 
+    logL <- log(as.numeric(Len_age[sim,,]))
+    logW <- log(as.numeric(Wt_age[sim,,]))
+    mod  <- lm(logW ~ logL)
+    EstVar <- summary(mod)$sigma^2
+    OM@a <- exp(coef(mod)[1]) * exp((EstVar)/2)
+    OM@b <- coef(mod)[2]
+  }
   
   # Calcaluate age at maturity 
   if (!exists("ageM", inherits=FALSE) |length(OM@cpars)==0) ageM <- -((log(1 - L50/Linf))/K) + t0  # calculate ageM from L50 and growth parameters (non-time-varying)
@@ -357,9 +378,12 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   ageMsd <- sapply(1:nsim, getroot, ageM, age95)
   ageMarray <- array(ageM, dim = c(nsim, maxage))  # Age at maturity array
-  if (!exists("Mat_age", inherits=FALSE)|length(OM@cpars)==0) Mat_age <- 1/(1 + exp((ageMarray - (Agearray))/(ageMarray * ageMsd)))  # Maturity at age array
+  if (!exists("Mat_age", inherits=FALSE)|length(OM@cpars)==0) {
+    Mat_age <- 1/(1 + exp((ageMarray - (Agearray))/(ageMarray * ageMsd)))  # Maturity at age array
+  } else {
+    if (any(dim(Mat_age) != c(nsim, maxage))) stop("'Mat_age' must be array with dimensions: nsim, maxage") 
+  }
 
-  
   # Catch at Length Classes
   LatASD <- Len_age * 0.1  # SD of length-at-age - this is currently fixed to cv of 10%
  
@@ -1063,10 +1087,17 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     flush.console()  # update the console
     PosMPs <- Can(Data, timelimit = timelimit)  # list all the methods that could be applied to a DLM data object 
     if (is.na(MPs[1])) {
-      MPs <- PosMPs  # if the user does not supply an argument MPs run the MSE or all available methods
+      MPs <- PosMPs  # if the user does not supply an argument MPs run the MSE for all available methods
       message("No MPs specified: running all available")
     }
-    if (!is.na(MPs[1])) MPs <- MPs[MPs %in% PosMPs]  # otherwise run the MSE for all methods that are deemed possible
+    if (!is.na(MPs[1])) {
+      cant <- MPs[!MPs %in% PosMPs]
+      if (length(cant) > 0) {
+        message("Cannot run some MPs: ")
+        print(DLMdiag(Data, "not available", funcs1=cant, timelimit = timelimit))
+      }
+      MPs <- MPs[MPs %in% PosMPs]  # otherwise run the MSE for all methods that are deemed possible
+    }
     if (length(MPs) == 0) {
       message(Cant(Data, timelimit = timelimit))
       stop("MSE stopped: no viable methods \n\n")  # if none of the user specied methods are possible stop the run

@@ -5,9 +5,9 @@
 # These functions are used either internally in the MSE (runMSE.r) or
 # used manually to apply a MP (or MPs) to a particular data object.
 
-DLMdiag <- function(Data, command = "available", reps = 5, timelimit = 1) {
+DLMdiag <- function(Data, command = "available", reps = 5, timelimit = 1, funcs1=NA) {
   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
-  funcs1 <- c(avail("Output"), avail("Input"))
+  if (all(is.na(funcs1))) funcs1 <- c(avail("Output"), avail("Input"))
   good <- rep(TRUE, length(funcs1))
   report <- rep("Worked fine", length(funcs1))
   test <- new("list")
@@ -24,11 +24,13 @@ DLMdiag <- function(Data, command = "available", reps = 5, timelimit = 1) {
     rr <- try(slot(Data, "Misc"), silent = TRUE)
     if (class(rr) == "try-error") Data@Misc <- list()
     slotnams <- paste("Data@", slotNames(Data), sep = "")
+    # slotnams <- slotnams[!grepl("OM", slotnams)]
     
     chk <- rep(FALSE, length(slotnams))
     for (j in 1:length(slotnams)) {
       if (grepl(slotnams[j], temp) & all(is.na(slot(Data, slots[j])))) chk[j] <- TRUE
     }
+    
     if (sum(chk) > 0) {
       test[[y]] <- "missing data" # if some required slots are NA or NULL - return error
       class(test[[y]]) <- "try-error"
