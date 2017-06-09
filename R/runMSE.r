@@ -70,12 +70,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   nyears <- OM@nyears  # number of  historical years
   maxage <- OM@maxage  # maximum age (no plus group)
   
-  calcMax <- ceiling(-log(0.01)/(min(OM@M)))        # Age at which 1% of cohort survives
-  if (maxage < calcMax) {
-    message("Note: Maximum age (", maxage, ") is lower than assuming 1% of cohort survives to maximum age (", calcMax, ")")
-  }
-  # maxage <- round(max(maxage, calcMax),0)  # If maximum age is lower, increase it to calcMax
-  
   # --- Sample operating model parameters ----
   dep <- runif(nsim, OM@D[1], OM@D[2])      # sample from the range of user-specified depletion (Bcurrent/B0)
   Esd <- runif(nsim, OM@Esd[1], OM@Esd[2])  # interannual variability in fishing effort (log normal sd)
@@ -109,6 +103,11 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     stop("OM@M must be either length 2 or length maxage", call.=FALSE)
   }
   
+  calcMax <- ceiling(-log(0.01)/(min(OM@M)))        # Age at which 1% of cohort survives
+  if (maxage < calcMax) {
+    message("Note: Maximum age (", maxage, ") is lower than assuming 1% of cohort survives to maximum age (", calcMax, ")")
+  }
+  
   Msd <- runif(nsim, OM@Msd[1], OM@Msd[2])  # sample inter annual variability in M from specified range
   Mgrad <- runif(nsim, OM@Mgrad[1], OM@Mgrad[2])  # sample gradient in M (M y-1)
   if (.hasSlot(OM, "Mexp")) {
@@ -118,7 +117,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       Mexp <- rep(0, nsim) # assume constant M-at-age/size
     }
   } else Mexp <- rep(0, nsim) # assume constant M-at-age/size
-  ##### ADD A WARNING MESSAGE if Mexp is outside observed range ---- 
 
   hs <- runif(nsim, OM@h[1], OM@h[2])  # sample of recruitment compensation (steepness - fraction of unfished recruitment at 20% of unfished biomass)
  
@@ -266,7 +264,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                  "LFSs","Vmaxlens","Perr","R0","Mat_age", 
                  "Mrand","Linfrand","Krand","maxage","V","Depletion", # end of OM variables
                  "ageM", "age95", "V", "EffYears", "EffLower", "EffUpper","Mat_age", # start of runMSE derived variables
-                 "Wt_age", "Len_age", "Marray") 
+                 "Wt_age", "Len_age", "Marray", "M_at_Length") 
   
   
   # --- Sample implementation error parameters ----
@@ -296,13 +294,13 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
 	  # report found names
 	  valid <- which(Names %in% ParsNames)
 	  cpars <- cpars[valid]
-	  if (length(OM@cpars) == 0) stop("No valid names found in custompars")
+	  if (length(valid) == 0) stop("No valid names found in custompars")
 	  Names <- names(cpars)
 	  outNames <- paste(Names, "")
 	  for (i in seq(5, by=5, length.out=floor(length(outNames)/5)))
   	  outNames <- gsub(outNames[i], paste0(outNames[i], "\n"), outNames)
-	    message("valid custom parameters (OM@cpars) found: \n", outNames)
-      flush.console()
+	  message("valid custom parameters (OM@cpars) found: \n", outNames)
+    
 	  if (ncparsim < nsim) ind <- sample(1:ncparsim, nsim, replace=TRUE)
 	  if (!ncparsim < nsim) ind <- sample(1:ncparsim, nsim, replace=FALSE)
 	
@@ -328,7 +326,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
 		        usedName <- usedName + 1 
           }
 		    }
-	    }	
+	      if (class(samps) == "data.frame")  assign(name, samps)
+	    }
     }
 	  
 	  if ("EffUpper" %in% Names & !"Find" %in% Names) {
@@ -406,9 +405,25 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     if (any(dim(Mat_age) != c(nsim, maxage))) stop("'Mat_age' must be array with dimensions: nsim, maxage") 
   }
 
+  if (exists("M_at_Length", inherits=FALSE)) {  # M-at-length data.frame has been provided in cpars
+    # Sample nsim M at length 
+    
+    MatLen <- matrix(NA, nsim, nrow(M_at_Length))
+    MatLen[,1] <- runif(nsim, min(M_at_Length[1,2:3]), max(M_at_Length[1,2:3]))
+    val <- (MatLen[,1] - min(M_at_Length[1,2:3]))/ diff(t(M_at_Length[1,2:3]))
+    for (X in 2:nrow(M_at_Length)) MatLen[,X] <- min(M_at_Length[X,2:3]) + diff(t(M_at_Length[X,2:3]))*val 
+    
+    # Calculate M at age
+    Mage <- matrix(NA, nsim, maxage)
+    for (sim in 1:nsim) {
+      ind <- findInterval(Len_age[sim,,nyears], M_at_Length[,1])  
+      Mage[sim, ] <- MatLen[sim, ind]  
+    }
+  }
+  
   # M-at-age has been provided in OM 
   if (exists("Mage", inherits=FALSE)) {
-    if (exists("M", inherits=FALSE)) message("M-at-age has been provided in OM. Overiding M from OM@cpars")
+    if (exists("M", inherits=FALSE) & length(OM@cpars[["M"]])>0) message("M-at-age has been provided in OM. Overiding M from OM@cpars")
     # M is calculated as mean M of mature ages
     M <- rep(NA, nsim)
     for (sim in 1:nsim) M[sim] <- mean(Mage[sim,round(ageM[sim],0):maxage])
@@ -1165,8 +1180,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
 	  rec <- t(apply(N[, 1, , ], c(1,2), sum))
 	  
     TSdata <- list(VB=vb, SSB=ssb, Bio=b, Catch=Cc, Rec=rec, N=nout, E_f=E_f,TAC_f=TAC_f,SizeLim_f=SizeLim_f)
-    AtAge <- list(Len_age=Len_age, Wt_age=Wt_age, 
-	  Sl_age=V, Mat_age=Mat_age, Nage=apply(N, c(1:3), sum), SSBage=apply(SSB, c(1:3), sum))
+    AtAge <- list(Len_age=Len_age, Wt_age=Wt_age, Sl_age=V, Mat_age=Mat_age, 
+                  Nage=apply(N, c(1:3), sum), SSBage=apply(SSB, c(1:3), sum), M_ageArray=M_ageArray)
     MSYs <- list(MSY=MSY, FMSY=FMSY, FMSYb=FMSYb, VBMSY=VBMSY, UMSY=UMSY, 
 	               SSBMSY=SSBMSY, BMSY_B0=BMSY_B0, SSBMSY_SSB0=SSBMSY_SSB0, SSB0=SSB0, B0=B0)
 	  

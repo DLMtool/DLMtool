@@ -39,7 +39,7 @@ ChkObj <- function(OM) {
                 "LFSUpper", "VmaxLower", "VmaxUpper")
   RecSlots <-  c("Period", "Amplitude")
   # Slots ok to not contain values
-  Ignore <- c("Name", "Source", "cpars", SelSlots, RecSlots)  
+  Ignore <- c("Name", "Source", "cpars", SelSlots, RecSlots, "M2")  
   # if values present for one they need to be there for all! 
   if (any(SelSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% SelSlots] 
   if (any(RecSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% RecSlots] 
