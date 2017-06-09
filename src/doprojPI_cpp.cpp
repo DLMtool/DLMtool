@@ -5,7 +5,7 @@ using namespace Rcpp;
 //'
 //' 
 //' @param lnF internal
-//' @param Mvec internal
+//' @param Mmat internal
 //' @param Wac internal
 //' @param Mac internal
 //' @param Pc internal
@@ -30,7 +30,7 @@ using namespace Rcpp;
 //' @export
 //' @keywords internal
 // [[Rcpp::export]]
-double doprojPI_cpp(double lnF, NumericVector Mvec,  
+double doprojPI_cpp(double lnF, NumericMatrix Mmat,  
   NumericVector Wac, NumericVector Mac, NumericVector Pc, NumericMatrix N_c,
   NumericMatrix SSN_c, NumericMatrix Biomass_c, NumericMatrix VBiomass_c, 
   NumericMatrix SSB_c, NumericMatrix Vc, double hc, NumericVector R0ac, double proyears,
@@ -69,7 +69,7 @@ double doprojPI_cpp(double lnF, NumericVector Mvec,
 	  fishdist(A) = tempVec(A) / (sum(tempVec)/nareas);
 	  for (int age=0; age<maxage; age++) {
 		  FM_P(age, A) = FF * Vc(age,0) * fishdist(A);
-		  Z_P(age, A) = FM_P(age, A) + Mvec(0);  
+		  Z_P(age, A) = FM_P(age, A) + Mmat(age,0);  
       }
   }   
   
@@ -120,7 +120,7 @@ double doprojPI_cpp(double lnF, NumericVector Mvec,
 	    // if (yr==1) Rcpp::Rcout << "The value of fishdist is " << fishdist << std::endl;
 		for (int age=0; age<maxage; age++) {
 		  FM_P(age, A) = FF * Vc(age,yr) * fishdist(A);		  
-		  Z_P(age, A) = FM_P(age, A) + Mvec(yr);  
+		  Z_P(age, A) = FM_P(age, A) + Mmat(age,yr);  
 		  Cyr(age, A) = FM_P(age,A)/Z_P(age,A) * (1-exp(-Z_P(age, A))) * Biomass_P(age,A);
 		  N_Pcurr(age, A) = N_Pnext(age, A);
         }

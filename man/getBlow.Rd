@@ -4,8 +4,8 @@
 \alias{getBlow}
 \title{Blow parallel optimization function}
 \usage{
-getBlow(x, SSBMSY, MGThorizon, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V,
-  nyears, maxage, mov, Spat_targ, SRrel, aR, bR, Bfrac = 0.5, ploty = F)
+getBlow(x, SSBMSY, MGThorizon, Find, Perr, M_ageArray, hs, Mat_age, Wt_age, R0,
+  V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR, Bfrac = 0.5, ploty = F)
 }
 \arguments{
 \item{x}{position in a vector}
@@ -18,7 +18,7 @@ getBlow(x, SSBMSY, MGThorizon, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V,
 
 \item{Perr}{matrix of recruitment devitions nsim x nyears + maxage -1}
 
-\item{Marray}{matrix of natural mortality rate nsim x nyears + proyears}
+\item{M_ageArray}{array of natural mortality rate nsim x maxage x nyears + proyears}
 
 \item{hs}{vector nsim long of steepness values}
 

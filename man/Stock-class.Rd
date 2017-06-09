@@ -19,9 +19,13 @@ dynamics model
 
 \item{\code{M}}{Natural mortality rate (uniform distribution)}
 
+\item{\code{M2}}{Optional vector of M-at-age (must be length maxage)}
+
 \item{\code{Msd}}{Inter-annual variability in natural mortality rate expressed as a coefficient of variation (uniform distribution)}
 
 \item{\code{Mgrad}}{Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year (uniform distribution)}
+
+\item{\code{Mexp}}{Exponent of the Lorenzen function assuming an inverse relationship between M and weight (uniform distribution)}
 
 \item{\code{h}}{Steepness of the stock recruit relationship (uniform distribution)}
 

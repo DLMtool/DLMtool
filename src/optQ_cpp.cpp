@@ -29,7 +29,7 @@ using namespace Rcpp;
 //' @keywords internal
 // [[Rcpp::export]]
 double optQ_cpp(double lnIn, double depc, NumericVector Fc, 
-  NumericVector Perrc, NumericVector Mc, double hc, NumericVector Mac, NumericMatrix Wac, 
+  NumericVector Perrc, NumericMatrix Mc, double hc, NumericVector Mac, NumericMatrix Wac, 
   double R0c, NumericMatrix Vc, double nyears, double maxage, NumericMatrix movc, 
   double Spat_targc, double SRrelc, NumericVector aRc, NumericVector bRc) {
   
@@ -68,38 +68,41 @@ double optQ_cpp(double lnIn, double depc, NumericVector Fc,
     
   for (int i = 0; i < nareas; i++) idist[i] = 1/nareas;
   for (int X = 0; X < 300; X++) {
-	for (int A= 0; A < nareas; A++) {  
-      for (int i = 0; i < nareas; i++) {	  
-	    for (int j = 0; j < nareas; j++) { 
-         idistA(i,j) = idist(i) * movc(i,j);
-        }
+	  for (int A= 0; A < nareas; A++) {  
+        for (int i = 0; i < nareas; i++) {	  
+	      for (int j = 0; j < nareas; j++) { 
+           idistA(i,j) = idist(i) * movc(i,j);
+          }
+	    }
+        store(A) = sum(idistA.column(A));	  
 	  }
-      store(A) = sum(idistA.column(A));	  
-	}
 	for (int A= 0; A < nareas; A++) idist(A) = store(A);
   }
   
   // Equilibrium initial conditions
   for (int A=0; A < nareas; A++) {
-	for (int age=0; age < maxage; age++) {
-		Neq(age, A) = R0c * exp(-Mc(0) * age) * idist(A);
-		SSNeq(age, A) = Mac(age) * Neq(age, A); 
-		SSBeq(age, A) = SSNeq(age, A) * Wac(age, 0);	
+	  for (int age=0; age < maxage; age++) {
+	  	if (age == 0) Neq(age, A) = R0c  * idist(A);
+	  	if (age > 0) Neq(age, A) = Neq(age-1, A) * exp(-Mc(age-1, 0)) * idist(A);
+	  	SSNeq(age, A) = Mac(age) * Neq(age, A); 
+	  	SSBeq(age, A) = SSNeq(age, A) * Wac(age, 0);
+	  }
 		// B0 = sum(Biomass);
 		R0a(A) = idist(A) * R0c;
 		SSB0(A) = sum(SSBeq.column(A));
 		SSBpR(A) = SSB0(A) / R0a(A);
-	} 
   }	
+  
  
   // Non-equilibrium initial conditions
   for (int A=0; A < nareas; A++) {
-	for (int age=0; age < maxage; age++) {
-		N(age, A) = R0c * exp(-Mc(0) * age) * idist(A) * Perrc(maxage-age-1);
-		SSN(age, A) = Mac(age) * N(age, A); 
-		Biomass(age, A) = Wac(age, 0) * N(age, A);
-		SSB(age, A) = SSN(age, A) * Wac(age, 0);	
-	} 
+	  for (int age=0; age < maxage; age++) {
+	    if (age == 0) N(age, A) = R0c * idist(A) * Perrc(maxage-age-1);
+	    if (age > 0) N(age, A) = N(age-1, A) * exp(-Mc(age-1, 0)) * idist(A) * Perrc(maxage-age-1);
+	  	SSN(age, A) = Mac(age) * N(age, A); 
+	  	Biomass(age, A) = Wac(age, 0) * N(age, A);
+	  	SSB(age, A) = SSN(age, A) * Wac(age, 0);	
+	  } 
   }	
 
   // Calculate initial Fs 
@@ -111,7 +114,7 @@ double optQ_cpp(double lnIn, double depc, NumericVector Fc,
     targ(A) = tempVec(A) / (sum(tempVec)/nareas);
     for (int age=0; age < maxage; age++) {
       FMc(age, A) = qc * Fc(0) * Vc(age, 0) * targ(A);
-      Zc(age, A) = FMc(age, A) + Mc(0);
+      Zc(age, A) = FMc(age, A) + Mc(age, 0);
     }	
   }
   for (int yr=0; yr < (nyears-1); yr++) {
@@ -141,12 +144,12 @@ double optQ_cpp(double lnIn, double depc, NumericVector Fc,
 	   		  
 	  for (int age=0; age < maxage; age++) {
 		// Movement  				
-          NumericMatrix tempMat2(nareas, nareas);		
+      NumericMatrix tempMat2(nareas, nareas);		
 		  for (int AA = 0; AA < nareas; AA++) {
 		    for (int BB = 0; BB < nareas; BB++) {
-			  if (AA != BB) tempMat2(AA, BB) = (N(age, AA) * movc(AA, AA)) +
+			    if (AA != BB) tempMat2(AA, BB) = (N(age, AA) * movc(AA, AA)) +
 			                (N(age, BB) * movc(BB, AA));
-			  tempMat3(AA, BB) = tempMat2(AA, BB);				 
+			    tempMat3(AA, BB) = tempMat2(AA, BB);				 
 		    }
 		    Nstore(age, AA) = sum(tempMat2.row(AA));
 		  }	
@@ -156,11 +159,11 @@ double optQ_cpp(double lnIn, double depc, NumericVector Fc,
 		  CN(age, A) = FMc(age, A)/Zc(age,A) * N(age,A) * (1-exp(-Zc(age, A)));
 		  CB(age, A) = CN(age, A) * Wac(age, yr);
 		  SSN(age, A) = N(age, A) * Mac(age);
-          SSB(age, A) = SSN(age, A) * Wac(age, yr);
-          Biomass(age, A) = N(age, A) * Wac(age, yr);
-          VB(age, A) = N(age, A) * Wac(age, yr) * Vc(age, yr);
-	      FMc(age, A) = qc * Fc(yr+1) * Vc(age, yr) * targ(A); // 
-		  Zc(age, A) = FMc(age, A) + Mc(yr); 		  
+      SSB(age, A) = SSN(age, A) * Wac(age, yr);
+      Biomass(age, A) = N(age, A) * Wac(age, yr);
+      VB(age, A) = N(age, A) * Wac(age, yr) * Vc(age, yr);
+	    FMc(age, A) = qc * Fc(yr+1) * Vc(age, yr) * targ(A); // 
+		  Zc(age, A) = FMc(age, A) + Mc(age, yr); 		  
 		}	  
 	  }
    // if (yr==1) Rcout << "N = " << N << "\n";

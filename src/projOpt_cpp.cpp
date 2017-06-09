@@ -28,10 +28,10 @@ using namespace Rcpp;
 //' @keywords internal
 // [[Rcpp::export]]
 NumericVector projOpt_cpp(double lnIn,  
-  double Mc, double hc, NumericVector Mac, NumericVector Wac, 
-  double R0c, NumericVector Vc, double nyears, double maxage, NumericMatrix movc, 
-  double Spat_targc, double SRrelc, NumericVector aRc, NumericVector bRc, double proyears, 
-  double Control) {
+                          NumericVector Mc, double hc, NumericVector Mac, NumericVector Wac, 
+                          double R0c, NumericVector Vc, double nyears, double maxage, NumericMatrix movc,
+                          double Spat_targc, double SRrelc, NumericVector aRc, NumericVector bRc, 
+                          double proyears, double Control) {
   
   double B0 = 0; 
   double nareas = movc.nrow();
@@ -79,16 +79,17 @@ NumericVector projOpt_cpp(double lnIn,
   }
   
   for (int A=0; A < nareas; A++) {
-	for (int age=0; age < maxage; age++) {
-		N(age, A) = R0c * exp(-Mc * age) * idist(A);
-		SSN(age, A) = Mac(age) * N(age, A); 
-		Biomass(age, A) = Wac(age) * N(age, A);
-		SSB(age, A) = SSN(age, A) * Wac(age);	
-		B0 = sum(Biomass);
-		R0a(A) = idist(A) * R0c;
-		SSB0(A) = sum(SSB.column(A));
-		SSBpR(A) = SSB0(A) / R0a(A);
-	} 
+	  for (int age=0; age < maxage; age++) {
+	  	if (age==0) N(age, A) = R0c * idist(A);
+	  	if (age > 0) N(age, A) = N(age-1, A) * exp(-Mc(age)) * idist(A);
+	  	SSN(age, A) = Mac(age) * N(age, A); 
+	  	Biomass(age, A) = Wac(age) * N(age, A);
+	  	SSB(age, A) = SSN(age, A) * Wac(age);	
+	  	B0 = sum(Biomass);
+	  	R0a(A) = idist(A) * R0c;
+	  	SSB0(A) = sum(SSB.column(A));
+	  	SSBpR(A) = SSB0(A) / R0a(A);
+	  } 
   }	
 	  
   for (int yr=0; yr < (NYears-1); yr++) {
@@ -102,10 +103,8 @@ NumericVector projOpt_cpp(double lnIn,
 		SSBbyA(A) = sum(SSB.column(A));
 
 		for (int age=0; age < maxage; age++) {
-          FMc(age, A) = FMSYc * Vc(age) * targ(A); // 
-		  Zc(age, A) = FMc(age, A) + Mc;  
-
-		  
+      FMc(age, A) = FMSYc * Vc(age) * targ(A); // 
+		  Zc(age, A) = FMc(age, A) + Mc(age);  
 		  if (age > 0) Nstore(age, A) = N(age-1, A) * exp(-Zc(age-1, A));
 	      
 		  // Recruitment 

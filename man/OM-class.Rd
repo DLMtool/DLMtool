@@ -27,6 +27,8 @@ bounds of a uniform distribution from which to sample the parameter.
 
 \item{\code{M}}{Natural mortality rate (uniform distribution)}
 
+\item{\code{M2}}{Optional vector of M-at-age (must be length maxage)}
+
 \item{\code{Msd}}{Inter-annual variability in natural mortality rate expressed as a coefficient of variation (uniform distribution)}
 
 \item{\code{Mgrad}}{Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year (uniform distribution)}
@@ -211,7 +213,6 @@ bounds of a uniform distribution from which to sample the parameter.
 
 \examples{
 
-showClass('OM')
 
 }
 \author{

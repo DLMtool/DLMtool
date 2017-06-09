@@ -4,13 +4,11 @@
 \alias{getFMSY2}
 \title{Calculate FMSY and related metrics using Rcpp code}
 \usage{
-getFMSY2(x, Marray, hs, Mat_age, Wt_age, R0, V, maxage, nyears, proyears,
+getFMSY2(x, M_ageArray, hs, Mat_age, Wt_age, R0, V, maxage, nyears, proyears,
   Spat_targ, mov, SRrel, aR, bR, Control = 1)
 }
 \arguments{
 \item{x}{internal parameter}
-
-\item{Marray}{internal parameter}
 
 \item{hs}{internal parameter}
 
@@ -37,6 +35,8 @@ getFMSY2(x, Marray, hs, Mat_age, Wt_age, R0, V, maxage, nyears, proyears,
 \item{aR}{internal parameter}
 
 \item{bR}{internal parameter}
+
+\item{Marray}{internal parameter}
 }
 \description{
 Calculate FMSY and related metrics using Rcpp code

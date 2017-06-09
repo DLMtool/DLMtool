@@ -6,8 +6,8 @@
 required to get to user-specified stock depletion (current biomass /
 unfished biomass) modified for Rcpp}
 \usage{
-getq2(x, dep, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V, nyears, maxage,
-  mov, Spat_targ, SRrel, aR, bR)
+getq2(x, dep, Find, Perr, M_ageArray, hs, Mat_age, Wt_age, R0, V, nyears,
+  maxage, mov, Spat_targ, SRrel, aR, bR)
 }
 \arguments{
 \item{x}{internal parameter}
@@ -17,8 +17,6 @@ getq2(x, dep, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V, nyears, maxage,
 \item{Find}{internal parameter}
 
 \item{Perr}{internal parameter}
-
-\item{Marray}{internal parameter}
 
 \item{hs}{internal parameter}
 
@@ -45,6 +43,8 @@ getq2(x, dep, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V, nyears, maxage,
 \item{bR}{internal parameter
 
 Paired with qopt}
+
+\item{Marray}{internal parameter}
 }
 \description{
 The user specifies the level of stock depleiton. This funciton takes the
