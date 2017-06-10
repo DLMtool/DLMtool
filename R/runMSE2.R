@@ -41,7 +41,7 @@
 #' @param Bfrac The target fraction of SSBMSY for calculating Blow
 #' @return An object of class MSE
 #' @author T. Carruthers and A. Hordyk
-#' @export runMSE
+#' @export 
 runMSEdev <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim"),nsim=48,
                    proyears=50,interval=4,pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, 
                    CheckMPs = FALSE, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=FALSE, 
@@ -71,7 +71,6 @@ runMSEdev <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE
   
   ### Sampling OM parameters ###
   
-
   # --- Sample custom parameters ----
   if (length(OM@cpars) > 0) { # custom parameters exist
     SampCpars <- SampleCpars(cpars)
@@ -87,12 +86,6 @@ runMSEdev <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE
   Names <- names(StockPars)
   for (X in 1:length(Names)) assign(names(StockPars)[X], StockPars[[X]])
   
-  if (OM@maxage != maxage) {
-    message("Maximum age has been updated in cpars")
-    OM@maxage <- maxage # update OM object with maxage that is used   
-  }
-  
-
   # --- Sample Fleet Parameters ----
   FleetPars <- SampleFleetPars(OM, Stock=NULL, nsim, nyears, proyears, SampCpars)
   
@@ -100,48 +93,23 @@ runMSEdev <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE
   Names <- names(FleetPars)
   for (X in 1:length(Names)) assign(names(FleetPars)[X], FleetPars[[X]])
   
-  
   # --- Sample Obs Parameters ----
+  ObsPars <- SampleObsPars(OM, nsim)
+
+  # Assign Obs pars to function environment
+  Names <- names(ObsPars)
+  for (X in 1:length(Names)) assign(names(ObsPars)[X], ObsPars[[X]])
+
+  # --- Sample Imp Paramerers ----
+  ImpPars <- SampleImpPars(OM, nsim)
   
-
-
+  # Assign Imp pars to function environment
+  Names <- names(ImpPars)
+  for (X in 1:length(Names)) assign(names(ImpPars)[X], ImpPars[[X]])
+  
   ### End of sampling OM parameters ###
-  
 
-
-
-  
-  
-  
-  # Checks that parameters are correct dimensions - could be messed up with custompars   
-
-  
-  if(exists("V",inherits=FALSE))
-  
- 
-  
-  
-  
-
-  
-
-
-  
-  
-  # assume it is expected length at maximum age for current (nyears) year 
-  
-
-  
- 
-  
-  
-  
-  
-  
-  Asize <- cbind(Size_area_1, 1 - Size_area_1)
-  
   message("Optimizing for user-specified movement")  # Print a progress update
-  flush.console()  # refresh the console
   
   if (snowfall::sfIsRunning()) {
     # if the cluster is initiated

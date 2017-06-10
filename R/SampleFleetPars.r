@@ -1,5 +1,17 @@
 
-SampleFleetPars <- function(Fleet, Stock=NULL, nsim, nyears, proyears, cpars=NULL) {
+#' Sample Fleet Parameters
+#'
+#' @param Fleet An object of class 'Fleet' or class 'OM' 
+#' @param Stock An object of class 'Stock'. Ignored if 'Fleet' is class 'OM'
+#' @param nsim Number of simulations. Ignored if 'Fleet' is class 'OM'
+#' @param nyears Number of historical years. Ignored if 'Fleet' is class 'OM'
+#' @param proyears Number of projection years. Ignored if 'Fleet' is class 'OM'
+#' @param cpars Optional named list of custom parameters. Ignored if 'Fleet' is class 'OM'
+#'
+#' @return A named list of sampled Fleet parameters
+#' @export
+#'
+SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=NULL, cpars=NULL) {
   if (class(Fleet) != "Fleet" & class(Fleet) != "OM") 
     stop("First argument must be class 'Fleet' or 'OM'")
   
@@ -13,8 +25,10 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim, nyears, proyears, cpars=NUL
   }
   
   if (class(Fleet) == "OM") {
-   Fleet <- SubOM(OM, "Fleet")
-   Stock <- SubOM(OM, "Stock")
+    nsim <- Fleet@nsim
+    nyears <- Fleet@nyears 
+    proyears <- Fleet@proyears
+    Stock <- Fleet
   }
   
   # Sample Stock Pars - need some to calculate selectivity at age and length  
@@ -115,7 +129,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim, nyears, proyears, cpars=NUL
   }
   
   # == Calculate Selectivity at Age and Length ====
-  maxlen <- Len_age[, maxage, nyears] # reference length for Vmaxlen 
+  
   if (!exists("V", inherits=FALSE)) { # don't run if V has been passed in with custompars 
     if (Selnyears <= 1) {    
       L5 <- matrix(L5, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
@@ -209,23 +223,5 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim, nyears, proyears, cpars=NUL
   Fleetout$V <- V 
   Fleetout$SLarray <- SLarray 
   
-
-  # === Check that all cpars have been assigned correctly ====
-  if (length(cpars) > 0 ) {
-    Names <- names(cpars)
-    ind <-unlist(lapply(Names, exists))
-    chk <- rep(FALSE, length(ind))
-    for (xx in 1:length(ind)) {
-      if (all(dim(Fleetout[[Names[xx]]]) == dim(cpars[[xx]]))) 
-        chk[xx] <- all(Fleetout[[Names[xx]]] == cpars[[xx]])
-    }
-    if (any(chk) == FALSE) {
-      warning("Some cpars may not have been assigned correctly:")
-      cat(Names[chk])
-      flush.console()
-    }
-  }
-  
   Fleetout 
-
 }

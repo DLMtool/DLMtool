@@ -1,3 +1,13 @@
+
+
+
+#' Sample custom pars
+#'
+#' @param cpars A named list containing custom parameters for the OM
+#'
+#' @return A named list of sampled custom parameters
+#' @export
+#'
 SampleCpars <- function(cpars) {
  
   # Vector of valid names for custompars list or data.frame. Names not in this list will be printed out in warning and ignored #	

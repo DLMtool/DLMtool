@@ -1,7 +1,18 @@
 
-
-
-SampleStockPars <- function(Stock, nsim, nyears, proyears, cpars=NULL) {
+#' Sample Stock parameters
+#'
+#' @param Stock An object of class 'Stock' or class 'OM'
+#' @param nsim Number of simulations. Ignored if 'Stock' is class 'OM'
+#' @param nyears Number of historical years. Ignored if 'Stock' is class 'OM'
+#' @param proyears Number of projection years. Ignored if 'Stock' is class 'OM'
+#' @param cpars Optional named list of custom parameters. Ignored if 'Stock' is class 'OM'
+#'
+#' @return A named list of sampled Stock parameters
+#' @export
+#'   
+#' @examples
+#' SampleStockPars(DLMtool::Albacore, 10, 30, 20)
+SampleStockPars <- function(Stock, nsim=NULL, nyears=NULL, proyears=NULL, cpars=NULL) {
   if (class(Stock) != "Stock" & class(Stock) != "OM") 
     stop("First argument must be class 'Stock' or 'OM'")
   
@@ -11,8 +22,12 @@ SampleStockPars <- function(Stock, nsim, nyears, proyears, cpars=NULL) {
     Names <- names(cpars)
     for (X in 1:length(Names)) assign(names(cpars)[X], cpars[[X]])
   }
+  if (class(Stock) == "OM") {
+    nsim <- Stock@nsim
+    nyears <- Stock@nyears 
+    proyears <- Stock@proyears
+  }
 
-  
   StockOut <- list() 
   
   # == Maximum age ====
@@ -159,6 +174,7 @@ SampleStockPars <- function(Stock, nsim, nyears, proyears, cpars=NULL) {
   StockOut$Prob_staying <- runif(nsim, Stock@Prob_staying[1], Stock@Prob_staying[2])  # sampled probability of individuals staying in area 1 among years
   StockOut$Size_area_1 <- runif(nsim, Stock@Size_area_1[1], Stock@Size_area_1[2])  # currently redundant parameter for the habitat area size of area 1
   
+  StockOut$Asize <- cbind(StockOut$Size_area_1, 1 - StockOut$Size_area_1)
   
   # === Generate random numbers for random walk ====
   # done here so that they can be written out to SampPars 
@@ -203,6 +219,7 @@ SampleStockPars <- function(Stock, nsim, nyears, proyears, cpars=NULL) {
     K <- Karray[, nyears]
     
   }
+  StockOut$maxlen <- maxlen <- Len_age[, maxage, nyears] # reference length for Vmaxlen 
   
   # == Sample CV Length-at-age ====
   if (!exists("LenCV", inherits=FALSE)) LenCV <- runif(nsim, min(Stock@LenCV), max(Stock@LenCV))
@@ -305,9 +322,7 @@ SampleStockPars <- function(Stock, nsim, nyears, proyears, cpars=NULL) {
   }
   
   
-  
-  
-  
+  StockOut$ageM <- ageM
   StockOut$Linfarray <- Linfarray
   StockOut$Karray <- Karray
   StockOut$Agearray <- Agearray
@@ -315,9 +330,9 @@ SampleStockPars <- function(Stock, nsim, nyears, proyears, cpars=NULL) {
   StockOut$M_ageArray <- M_ageArray
   StockOut$Len_age <- Len_age
   StockOut$Linf <- Linf 
-  StockOut$Linfsd
-  StockOut$Linfgrad
-  StockOut$recgrad
+  StockOut$Linfsd <- Linfsd
+  StockOut$Linfgrad <- Linfgrad
+  StockOut$recgrad <- recgrad
   StockOut$K <- K
   StockOut$Ksd <- Ksd
   StockOut$Kgrad <- Kgrad
@@ -336,22 +351,5 @@ SampleStockPars <- function(Stock, nsim, nyears, proyears, cpars=NULL) {
   StockOut$CAL_bins <- CAL_bins
   StockOut$nCALbins <- nCALbins
   
-    
-  # === Check that all cpars have been assigned correctly ====
-  if (length(cpars) > 0 ) {
-    Names <- names(cpars)
-    ind <-unlist(lapply(Names, exists))
-    chk <- rep(FALSE, length(ind))
-    for (xx in 1:length(ind)) {
-      chk[xx] <- all(StockOut[[Names[xx]]] == cpars[[xx]])
-    }
-    if (any(chk) == FALSE) {
-      warning("Some cpars may not have been assigned correctly:")
-      cat(Names[chk])
-      flush.console()
-    }
-  }
-
   return(StockOut)
- 
 }

@@ -1,6 +1,15 @@
-SampleObsPars <- function(Obs, nsim, nyears, proyears) {
+#' Sample Observation Parameters
+#'
+#' @param Obs An object of class 'Obs' or class 'OM'
+#' @param nsim Number of simulations. Ignored if 'Stock' is class 'OM'
+#'
+#' @return A named list of sampled Observation parameters
+#' @export
+#'
+SampleObsPars <- function(Obs, nsim=NULL) {
   if (class(Obs) != "Obs" & class(Obs) != "OM") 
     stop("First argument must be class 'Obs' or 'OM'")
+  if (class(Obs) == "Obs") nsim <- Obs@nsim
   
   ObsOut <- list() 
   
