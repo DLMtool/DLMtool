@@ -78,34 +78,25 @@ runMSEdev <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE
     SampCpars <- list()
   }
   
-  
   # --- Sample Stock Parameters ----
   StockPars <- SampleStockPars(OM, nsim, nyears, proyears, SampCpars)
-  
   # Assign Stock pars to function environment
-  Names <- names(StockPars)
-  for (X in 1:length(Names)) assign(names(StockPars)[X], StockPars[[X]])
+  for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
   
   # --- Sample Fleet Parameters ----
   FleetPars <- SampleFleetPars(OM, Stock=NULL, nsim, nyears, proyears, SampCpars)
-  
   # Assign Fleet pars to function environment
-  Names <- names(FleetPars)
-  for (X in 1:length(Names)) assign(names(FleetPars)[X], FleetPars[[X]])
+  for (X in 1:length(FleetPars)) assign(names(FleetPars)[X], FleetPars[[X]])
   
   # --- Sample Obs Parameters ----
   ObsPars <- SampleObsPars(OM, nsim)
-
   # Assign Obs pars to function environment
-  Names <- names(ObsPars)
-  for (X in 1:length(Names)) assign(names(ObsPars)[X], ObsPars[[X]])
+  for (X in 1:length(ObsPars)) assign(names(ObsPars)[X], ObsPars[[X]])
 
   # --- Sample Imp Paramerers ----
   ImpPars <- SampleImpPars(OM, nsim)
-  
   # Assign Imp pars to function environment
-  Names <- names(ImpPars)
-  for (X in 1:length(Names)) assign(names(ImpPars)[X], ImpPars[[X]])
+  for (X in 1:length(ImpPars)) assign(names(ImpPars)[X], ImpPars[[X]])
   
   ### End of sampling OM parameters ###
 
@@ -116,14 +107,10 @@ runMSEdev <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE
     snowfall::sfExport(list = c("Frac_area_1", "Prob_staying"))  # export some of the new arrays and ...
     mov <- array(t(snowfall::sfSapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
                                       Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
-    # mov <- array(t(snowfall::sfSapply(1:nsim, getmov, Frac_area_1 = Frac_area_1, 
-    # Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
   } else {
     # no cluster initiated
     mov <- array(t(sapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
                           Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
-    # mov <- array(t(sapply(1:nsim, getmov, Frac_area_1 = Frac_area_1, 
-    # Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1	  
   }
   
   nareas <- 2  # default is a two area model
@@ -159,7 +146,6 @@ runMSEdev <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE
   
   
   #  -- Equilibrium calcs --
-  
   SSN[SAYR] <- Nfrac[SA] * R0[S] * initdist[SR]  # Calculate initial spawning stock numbers
   N[SAYR] <- R0[S] * surv[SA] * initdist[SR]  # Calculate initial stock numbers
   
