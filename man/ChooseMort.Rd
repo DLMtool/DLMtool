@@ -13,7 +13,7 @@ ChooseMort(OM, type = c("age", "length"), x = NULL, y = NULL)
 
 \item{x}{Optional vector for x-axis}
 
-\item{x}{Optional vector for y-axis}
+\item{y}{Optional vector for y-axis}
 }
 \description{
 Interactive plot which allows users to specify M by age or size class

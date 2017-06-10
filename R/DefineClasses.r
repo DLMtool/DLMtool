@@ -925,8 +925,6 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
 #' @slot DiscMort Discard mortality rate (uniform distribution) (can be an improper fraction greater than 1)
 #' @author T. Carruthers
 #' @keywords classes
-#' @examples
-#' 
 #' 
 setClass("OM", representation(Name = "character", nsim="numeric",proyears="numeric",
   cpars="list",seed="numeric", Source="character"), contains=c("Stock", "Fleet", "Obs", "Imp"))

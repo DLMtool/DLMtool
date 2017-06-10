@@ -10,8 +10,6 @@
 #' @return A named list of sampled Stock parameters
 #' @export
 #'   
-#' @examples
-#' SampleStockPars(DLMtool::Albacore, 10, 30, 20)
 SampleStockPars <- function(Stock, nsim=NULL, nyears=NULL, proyears=NULL, cpars=NULL) {
   if (class(Stock) != "Stock" & class(Stock) != "OM") 
     stop("First argument must be class 'Stock' or 'OM'")
@@ -124,7 +122,7 @@ SampleStockPars <- function(Stock, nsim=NULL, nyears=NULL, proyears=NULL, cpars=
     recMulti <- 1 
   }
   
-  procmu <- -0.5 * (procsd)^2  # adjusted log normal mean
+  StockOut$procmu <- procmu <- -0.5 * (procsd)^2  # adjusted log normal mean
   if (!exists("Perr", inherits=FALSE)) {
     Perr <- array(rnorm((nyears + proyears+maxage-1) * nsim, rep(procmu, nyears + 
                                                                  proyears+maxage-1), 
@@ -309,7 +307,7 @@ SampleStockPars <- function(Stock, nsim=NULL, nyears=NULL, proyears=NULL, cpars=
     ind <- as.matrix(expand.grid(1:nsim, 1:maxage, 1:(nyears+proyears)))
     M_ageArray[ind] <- temp1[ind[,1:2]] * Marray[ind[,c(1,3)]]
   } else { # M-at-age calculated from Lorenzen curve 
-    Winf <- OM@a * Linf^OM@b
+    Winf <- Stock@a * Linf^Stock@b
     ind <- as.matrix(expand.grid(1:nsim, 1:maxage, 1:(nyears+proyears)))
     M_ageArray[ind] <- Marray[ind[,c(1,3)]] * (Wt_age[ind]/Winf[ind[,1]]) ^ Mexp[ind[,1]]  
   }  

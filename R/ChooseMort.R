@@ -5,7 +5,7 @@
 #' @param OM An object of class 'OM'
 #' @param type A character string - is M to be mapped by 'age' or 'length'?
 #' @param x Optional vector for x-axis
-#' @param x Optional vector for y-axis
+#' @param y Optional vector for y-axis
 #' @author A. Hordyk
 #' @export ChooseMort
 ChooseMort <- function(OM, type=c("age", "length"), x=NULL, y=NULL) {

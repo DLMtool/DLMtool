@@ -24,6 +24,3 @@ A named list of sampled Stock parameters
 \description{
 Sample Stock parameters
 }
-\examples{
-SampleStockPars(DLMtool::Albacore, 10, 30, 20)
-}

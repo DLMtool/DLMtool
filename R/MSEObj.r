@@ -2304,6 +2304,12 @@ updateMSE <- function(MSEobj) {
       slot(MSEobj, slots[X]) <- fun(0)
     }
   }
+  if (.hasSlot(MSEobj, "LenCV")) {
+    if (length(MSEobj@LenCV) == 0) MSEobj@LenCV <- c(0.08,0.15)
+  }
+  if (.hasSlot(MSEobj, "Mexp")) {
+    if (length(MSEobj@Mexp) == 0) MSEobj@Mexp <- c(0,0)
+  }
   MSEobj
 }
 

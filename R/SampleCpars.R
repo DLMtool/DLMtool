@@ -27,6 +27,7 @@ SampleCpars <- function(cpars) {
                  "Wt_age", "Len_age", "Marray", "M_at_Length", "LenCV", "CAL_binsmid", "CAL_bins", "LatASD") 
   
   sampCpars <- list()
+  ncparsim<-cparscheck(cpars)
   Names <- names(cpars)
   # report invalid names 
   invalid <- which(!Names %in% ParsNames)
@@ -53,7 +54,7 @@ SampleCpars <- function(cpars) {
     samps <- cpars[[i]]
     name <- names(cpars)[i]
     if (any(c("EffUpper", "EffLower", "EffYears", "maxage", "M_at_Length", "CAL_binsmid", "CAL_bins") %in% name)) {
-      assign(name, samps, pos=pos)
+      sampCpars[[name]] <- samps
     } else {
       if (class(samps) == "numeric" | class(samps) == "integer") sampCpars[[name]] <- samps[ind]
       

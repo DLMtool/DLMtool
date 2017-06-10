@@ -164,7 +164,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
       L5 <- matrix(0, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
       LFS <- matrix(0, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
       Vmaxlen <- matrix(0, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
-      SelYears <- OM@SelYears
+      SelYears <- Fleet@SelYears
       
       ind <- which(LFSs/ matrix(Linf, nrow=nsim, ncol=Selnyears) > 1, arr.ind = T)
       if (length(ind) > 0) {

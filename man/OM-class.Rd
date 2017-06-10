@@ -213,10 +213,6 @@ bounds of a uniform distribution from which to sample the parameter.
 \code{new('OM', Stock, Fleet, Obs, Imp)}.
 }
 
-\examples{
-
-
-}
 \author{
 T. Carruthers
 }
