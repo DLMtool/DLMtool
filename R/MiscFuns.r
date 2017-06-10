@@ -25,6 +25,12 @@ setup <- function(cpus=parallel::detectCores()) {
 ChkObj <- function(OM) {
   if (!class(OM) %in% c("OM", "Stock", "Fleet", "Obs", "Imp"))
     stop("Argument must be of class: OM, Stock, Fleet, Obs, or Imp", call.=FALSE)
+  
+  # Add missing slots with default values 
+  OM <- updateMSE(OM)
+  if (length(OM@Mexp)==0) OM@Mexp <- c(0,0)
+  if (length(OM@LenCV)==0) OM@LenCV <- c(0.08,0.15)
+  
   slots <- slotNames(OM)
   Ok <- rep(TRUE, length(slots))
   for (sl in seq_along(slots)) {
@@ -44,10 +50,12 @@ ChkObj <- function(OM) {
   if (any(SelSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% SelSlots] 
   if (any(RecSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% RecSlots] 
   
+
+  
   probSlots <- slots[!Ok][!slots[!Ok] %in% Ignore]
   if (length(probSlots) > 0) 
     stop("Slots in Object have missing values:\n ", paste(probSlots, " "), call.=FALSE)
-  TRUE
+  OM
 }
 
 #' What objects of this class are available

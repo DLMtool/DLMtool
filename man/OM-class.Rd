@@ -43,6 +43,8 @@ bounds of a uniform distribution from which to sample the parameter.
 
 \item{\code{t0}}{von B. theoretical age at length zero (uniform distribution)}
 
+\item{\code{LenCV}}{Coefficient of variation of length-at-age (assumed constant for all age classes (uniform distribution)}
+
 \item{\code{Ksd}}{Inter-annual variability in growth parameter k (uniform distribution)}
 
 \item{\code{Kgrad}}{Mean temporal trend in growth parameter k, expressed as a percentage change in k per year (uniform distribution)}

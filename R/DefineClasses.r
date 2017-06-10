@@ -365,6 +365,7 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
 #' @slot Linf Maximum length (uniform distribution) 
 #' @slot K von B. growth parameter k (uniform distribution) 
 #' @slot t0 von B. theoretical age at length zero (uniform distribution) 
+#' @slot LenCV Coefficient of variation of length-at-age (assumed constant for all age classes (uniform distribution)
 #' @slot Ksd Inter-annual variability in growth parameter k (uniform distribution) 
 #' @slot Kgrad Mean temporal trend in growth parameter k, expressed as a percentage change in k per year (uniform distribution) 
 #' @slot Linfsd Inter-annual variability in maximum length - uniform distribution 
@@ -393,7 +394,7 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
 setClass("Stock", representation(Name = "character", maxage = "numeric", 
                                  R0 = "numeric", M = "numeric", M2 = "numeric", Msd = "numeric", Mgrad = "numeric",  Mexp="numeric",
                                  h = "numeric", SRrel = "numeric", Linf = "numeric", K = "numeric", 
-                                 t0 = "numeric", Ksd = "numeric", Kgrad = "numeric", Linfsd = "numeric", 
+                                 t0 = "numeric", LenCV="numeric", Ksd = "numeric", Kgrad = "numeric", Linfsd = "numeric", 
                                  Linfgrad = "numeric", recgrad = "numeric", a = "numeric", b = "numeric", 
                                  D = "numeric", Perr = "numeric", Period = "numeric", Amplitude = "numeric", 
                                  Size_area_1 = "numeric", Frac_area_1 = "numeric", Prob_staying = "numeric", 
@@ -424,6 +425,7 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
       .Object@Linf <- as.numeric(dat[match("Linf", dname), 1:2])
       .Object@K <- as.numeric(dat[match("K", dname), 1:2])
       .Object@t0 <- as.numeric(dat[match("t0", dname), 1:2])
+      .Object@LenCV <- as.numeric(dat[match("LenCV", dname), 1:2])
       .Object@Ksd <- as.numeric(dat[match("Ksd", dname), 1:2])
       .Object@Kgrad <- as.numeric(dat[match("Kgrad", dname), 1:2])
       .Object@Linfsd <- as.numeric(dat[match("Linfsd", dname), 1:2])
@@ -835,6 +837,7 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
 #' @slot Linf Maximum length (uniform distribution) 
 #' @slot K von B. growth parameter k (uniform distribution) 
 #' @slot t0 von B. theoretical age at length zero (uniform distribution) 
+#' @slot LenCV Coefficient of variation of length-at-age (assumed constant for all age classes (uniform distribution)
 #' @slot Ksd Inter-annual variability in growth parameter k (uniform distribution) 
 #' @slot Kgrad Mean temporal trend in growth parameter k, expressed as a percentage change in k per year (uniform distribution) 
 #' @slot Linfsd Inter-annual variability in maximum length - uniform distribution 
@@ -977,6 +980,7 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
   .Object@proyears <- proyears
   
   if(length(.Object@Mexp) < 2) .Object@Mexp <- c(0,0)
+  if(length(.Object@LenCV) < 2) .Object@LenCV <- c(0.08,0.15)
   if(length(.Object@CurrentYr)==0).Object@CurrentYr=.Object@nyears
   
   .Object@seed=1
