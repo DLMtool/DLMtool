@@ -13,6 +13,8 @@
 ForceCor<-function(OM,nsim=48,plot=T){
   
   if("nsim"%in%slotNames(OM))nsim<-OM@nsim
+  if("seed"%in%slotNames(OM))set.seed(OM@seed)
+  
   OM@nsim<-nsim
   
   colline=makeTransparent('blue',60)
