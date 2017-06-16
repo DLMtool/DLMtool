@@ -211,37 +211,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                  Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR, bounds)  # find the q that gives current stock depletion
   }
   
-
-  names(OM@cpars)
-  x<- 1 
-  R0[x] <- 1000
-  val <- 0.00000000000000001 
-  optQ_cpp(log(val), depc = dep[x], Fc = Find[x, ], 
-  Perrc = Perr[x, ], Mc = M_ageArray[x, ,], hc = hs[x], Mac = Mat_age[x, ], 
-  Wac = Wt_age[x, , ], R0c = R0[x], Vc = V[x, , ], nyears = nyears, 
-  maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x], 
-  SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ])
-  
-  
-  
-  
-  qopt(log(val), depc = dep[x], Fc = Find[x, ], 
-  Perrc = Perr[x, ], Mc = Marray[x, ], hc = hs[x], Mac = Mat_age[x, ], 
-  Wac = Wt_age[x, , ], R0c = R0[x], Vc = V[x, , ], nyears = nyears, 
-  maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x], 
-  SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ])
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   # --- Check that q optimizer has converged ---- 
   LimBound <- c(1.1, 0.9)*range(bounds)  # bounds for q (catchability). Flag if bounded optimizer hits the bounds 
   probQ <- which(qs > max(LimBound) | qs < min(LimBound))
@@ -385,15 +354,10 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   # # apply hyperstability / hyperdepletion
   
   # Check that depletion is correct
-  print(cbind(round(dep,2), round(Depletion,2)))
+  # print(cbind(round(dep,2), round(Depletion,2)))
   
   if (prod(round(dep, 2)/ round(Depletion,2) == 1) != 1) warning("Possible problem in depletion calculations")
-  stop()
   
-  
-  
-  # --- HERE ----
- 
   # --- Calculate MSY references ----  
   message("Calculating MSY reference points")  # Print a progress update
   
@@ -448,7 +412,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
   
   
-  # --- Code for deriving low biomass ---- (SSB where it takes MGThorizon x MGT to reach Bfrac of BMSY)
+  # --- Code for deriving low biomass ---- 
+  # (SSB where it takes MGThorizon x MGT to reach Bfrac of BMSY)
   
   if(CalcBlow){
     message("Calculating Blow reference points")              # Print a progress update  
@@ -566,7 +531,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   Recerr <- array(rlnorm((nyears + proyears) * nsim, mconv(1, rep(Recsd, (nyears + proyears))), 
                                 sdconv(1, rep(Recsd, nyears + proyears))), c(nsim, nyears + proyears))
   
-
   
   # --- Simulate observation error in BMSY/B0 ---- 
   ntest <- 20  # number of trials  
@@ -575,6 +539,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   test <- array(SSBMSY_SSB0 * BMSY_B0bias, dim = c(nsim, ntest))  # the simulated observed BMSY_B0 
   indy <- array(rep(1:ntest, each = nsim), c(nsim, ntest))  # index
   indy[test > 0.9] <- NA  # interval censor
+  
   BMSY_B0bias <- BMSY_B0bias[cbind(1:nsim, apply(indy, 1, min, na.rm = T))]  # sample such that BMSY_B0<90%
   ObsPars$BMSY_B0bias <- BMSY_B0bias
   
