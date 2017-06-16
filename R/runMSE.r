@@ -77,7 +77,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   OM@proyears<-proyears # number of projection years
   nyears <- OM@nyears  # number of historical years
   
-  
   ### Sampling OM parameters ###
   message("Loading operating model")
   
@@ -88,7 +87,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     ncparsim<-cparscheck(OM@cpars)   # check each list object has the same length and if not stop and error report
     SampCpars <- SampleCpars(OM@cpars, nsim) 
   }
- 
+  
   # --- Sample Stock Parameters ----
   StockPars <- SampleStockPars(OM, nsim, nyears, proyears, SampCpars)
   # Assign Stock pars to function environment
