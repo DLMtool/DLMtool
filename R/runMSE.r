@@ -760,7 +760,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   if (nsim == 1) Depletion <- sum(SSB[,,nyears,])/SSB0 #^betas
   # # apply hyperstability / hyperdepletion
   
-  print(round(cbind(dep,Depletion),4))
+  # print(round(cbind(dep,Depletion),4))
   
   
   CN <- apply(N * (1 - exp(-Z)) * (FM/Z), c(1, 3, 2), sum)  # Catch in numbers
