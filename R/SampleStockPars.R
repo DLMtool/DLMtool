@@ -135,10 +135,10 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
     StockOut$Perr <- Perr
   }
   
-  if (nsim > 1) {
-    cumlRecDev <- apply(Perr[, 1:(nyears+maxage-1)], 1, prod)
-    dep[order(cumlRecDev)] <- dep[order(dep, decreasing = F)]  # robustifies 
-  }
+  # if (nsim > 1) {
+  #   cumlRecDev <- apply(Perr[, 1:(nyears+maxage-1)], 1, prod)
+  #   dep[order(cumlRecDev)] <- dep[order(dep, decreasing = F)]  # robustifies 
+  # }
   
   # == Growth parameters ====
   if (!exists("Linf", inherits=FALSE)) Linf <- runif(nsim, Stock@Linf[1], Stock@Linf[2])  # sample of asymptotic length

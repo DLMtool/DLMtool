@@ -538,7 +538,9 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   # test <- array(BMSY_B0 * BMSY_B0bias, dim = c(nsim, ntest))  # the simulated observed BMSY_B0 
   test <- array(SSBMSY_SSB0 * BMSY_B0bias, dim = c(nsim, ntest))  # the simulated observed BMSY_B0 
   indy <- array(rep(1:ntest, each = nsim), c(nsim, ntest))  # index
-  indy[test > 0.9] <- NA  # interval censor
+  
+  # indy[test > 0.9] <- NA  # interval censor
+  indy[test > max(0.9, max(SSBMSY_SSB0))] <- NA  # interval censor
   
   BMSY_B0bias <- BMSY_B0bias[cbind(1:nsim, apply(indy, 1, min, na.rm = T))]  # sample such that BMSY_B0<90%
   ObsPars$BMSY_B0bias <- BMSY_B0bias
