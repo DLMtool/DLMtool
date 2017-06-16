@@ -67,15 +67,15 @@ getFMSY <- function(x, Marray, hs, Mat_age, Wt_age, R0, V, maxage, nyears,
 #' 
 #' @keywords internal
 #' @export getFMSY2	
-getFMSY2 <- function(x, Marray, hs, Mat_age, Wt_age, R0, V, maxage, nyears, 
+getFMSY2 <- function(x, M_ageArray, hs, Mat_age, Wt_age, R0, V, maxage, nyears, 
     proyears, Spat_targ, mov, SRrel, aR, bR, Control=1) {
     opt <- optimize(projOpt_cpp, log(c(0.001, 5)),
-		Mc = Marray[x, nyears], hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , nyears], R0c = R0[x], 
+		Mc = M_ageArray[x, ,nyears], hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , nyears], R0c = R0[x], 
         Vc = V[x, ,nyears], nyears = nyears, maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x],
         SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ], proyears = proyears, Control=Control)
 
 	  MSY <- -opt$objective 
-	  MSYs <- projOpt_cpp(lnIn = opt$minimum, Mc = Marray[x, nyears], hc = hs[x], 
+	  MSYs <- projOpt_cpp(lnIn = opt$minimum, Mc = M_ageArray[x, ,nyears], hc = hs[x], 
 	                      Mac = Mat_age[x, ], Wac = Wt_age[x, , nyears], R0c = R0[x], 
 	                      Vc = V[x, ,nyears], nyears = nyears, maxage = maxage, movc = mov[x, , ], 
 	                      Spat_targc = Spat_targ[x], SRrelc = SRrel[x], aRc = aR[x, ], 
@@ -329,7 +329,7 @@ getFref <- function(x, Marray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s,
 #' Internal Get Reference F using Rcpp 
 #' 
 #' @param x internal parameter
-#' @param Marray internal parameter
+#' @param M_ageArray internal parameter
 #' @param Wt_age internal parameter
 #' @param Mat_age internal parameter
 #' @param Perr internal parameter
@@ -355,11 +355,11 @@ getFref <- function(x, Marray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s,
 #' 
 #' @keywords internal
 #' @export getFref2
-getFref2 <- function(x, Marray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s, 
+getFref2 <- function(x, M_ageArray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s, 
     VBiomass_s, SSB_s, Vn, hs, R0a, nyears, proyears, nareas, maxage, mov, 
     SSBpR, aR, bR, SRrel, Spat_targ) {
     	
-    opt <- optimize(doprojPI_cpp, log(c(0.001, 5)), Mvec = Marray[x, (nyears + 1):(nyears + proyears)], 
+    opt <- optimize(doprojPI_cpp, log(c(0.001, 5)), Mmat = M_ageArray[x, , (nyears + 1):(nyears + proyears)], 
 	  Wac = Wt_age[x, , (nyears + 1):(nyears + proyears)], Mac = Mat_age[x, ], 
 	    Pc = Perr[x, (maxage+nyears):(maxage-1+nyears + proyears)], N_c = N_s[x, , 1,], 
 		SSN_c = SSN_s[x, , 1, ], Biomass_c = Biomass_s[x, , 1, ], 

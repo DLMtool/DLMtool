@@ -10,7 +10,7 @@
 #' @param MGThorizon vector nsim long of MGT x HZN
 #' @param Find matrix of fishing mortality rate nsim x nyears 
 #' @param Perr matrix of recruitment devitions nsim x nyears + maxage -1
-#' @param Marray matrix of natural mortality rate nsim x nyears + proyears
+#' @param M_ageArray array of natural mortality rate nsim x maxage x nyears + proyears
 #' @param hs vector nsim long of steepness values
 #' @param Mat_age matrix nsim x nages of maturity at age
 #' @param Wt_age matrix nsim x nages of weight at age
@@ -27,21 +27,21 @@
 #' @param ploty logical: should a plot be produced 
 #' @author T. Carruthers
 #' @export getBlow
-getBlow<-function(x,SSBMSY,MGThorizon,Find,Perr,Marray,hs,Mat_age,Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR,Bfrac=0.5,ploty=F){
+getBlow<-function(x,SSBMSY,MGThorizon,Find,Perr,M_ageArray,hs,Mat_age,Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR,Bfrac=0.5,ploty=F){
   
   opt<-optimize(Blow_opt,log(c(0.0075,15)),SSBMSYc=SSBMSY[x],MGThorizon=MGThorizon[x],Fc=Find[x,],Perrc=Perr[x,],
-                Mc=Marray[x,],hc=hs[x],Mac=Mat_age[x,],Wac=Wt_age[x,,],
+                Mc=M_ageArray[x,,],hc=hs[x],Mac=Mat_age[x,],Wac=Wt_age[x,,],
                 R0c=R0[x],Vc=V[x,,],nyears=nyears,maxage=maxage,movc=mov[x,,],
                 Spat_targc=Spat_targ[x],SRrelc=SRrel[x],aRc=aR[x,],bRc=bR[x,],Bfrac,mode=1)
   
   if(ploty){Blow_opt(opt$minimum,SSBMSYc=SSBMSY[x],MGThorizon=MGThorizon[x],Fc=Find[x,],Perrc=Perr[x,],
-                     Mc=Marray[x,],hc=hs[x],Mac=Mat_age[x,],Wac=Wt_age[x,,],
+                     Mc=M_ageArray[x,,],hc=hs[x],Mac=Mat_age[x,],Wac=Wt_age[x,,],
                      R0c=R0[x],Vc=V[x,,],nyears=nyears,maxage=maxage,movc=mov[x,,],
                      Spat_targc=Spat_targ[x],SRrelc=SRrel[x],aRc=aR[x,],bRc=bR[x,],Bfrac,mode=3)
   }
   
   Blow_opt(opt$minimum,SSBMSYc=SSBMSY[x],MGThorizon=MGThorizon[x],Fc=Find[x,],Perrc=Perr[x,],
-           Mc=Marray[x,],hc=hs[x],Mac=Mat_age[x,],Wac=Wt_age[x,,],
+           Mc=M_ageArray[x,,],hc=hs[x],Mac=Mat_age[x,],Wac=Wt_age[x,,],
            R0c=R0[x],Vc=V[x,,],nyears=nyears,maxage=maxage,movc=mov[x,,],
            Spat_targc=Spat_targ[x],SRrelc=SRrel[x],aRc=aR[x,],bRc=bR[x,],mode=2)
   
@@ -58,7 +58,7 @@ getBlow<-function(x,SSBMSY,MGThorizon,Find,Perr,Marray,hs,Mat_age,Wt_age,R0,V,ny
 #' @param MGThorizon number: MGT x HZN
 #' @param Fc vector nyears long of fishing mortality rate
 #' @param Perrc vector nyears+maxage-1 long of recruitment devitions 
-#' @param Mc vector nyears+proyears long of natural mortality rate
+#' @param Mc matrix maxage by nyears+proyears of natural mortality rate
 #' @param hc number: steepness values
 #' @param Mac vector nages long of maturity at age
 #' @param Wac vector nages long  of weight at age
@@ -83,7 +83,11 @@ Blow_opt<-function(lnq,SSBMSYc,MGThorizon,Fc,Perrc,Mc,hc,Mac,Wac,R0c,Vc,nyears,m
   idist<-rep(1/nareas,nareas)
   for(i in 1:300)idist<-apply(array(idist,c(2,2))*movc,2,sum)
   
-  N<-array(exp(-Mc[1]*((1:maxage)-1))*R0c,dim=c(maxage,nareas))*array(rep(idist,each=maxage),dim=c(maxage,nareas))
+  # N<-array(exp(-Mc[1]*((1:maxage)-1))*R0c,dim=c(maxage,nareas))*array(rep(idist,each=maxage),dim=c(maxage,nareas))\
+  surv <- rep(1, maxage)
+  surv[2:maxage] <-exp(-cumsum(Mc[,1]))[1:(maxage-1)]
+  N <-array(surv * R0c,dim=c(maxage,nareas))*array(rep(idist,each=maxage),dim=c(maxage,nareas))
+
   SSN<-Mac*N   # Calculate initial spawning stock numbers
   Biomass<-N*Wac[,1]
   SSB<-SSN*Wac[,1]                               # Calculate spawning stock biomass
@@ -93,7 +97,8 @@ Blow_opt<-function(lnq,SSBMSYc,MGThorizon,Fc,Perrc,Mc,hc,Mac,Wac,R0c,Vc,nyears,m
   SSB0<-apply(SSB,2,sum)
   SSBpR<-SSB0/R0a                              # Calculate spawning stock biomass per recruit
   
-  N<-Perrc[maxage:1]*array(exp(-Mc[1]*((1:maxage)-1))*R0c,dim=c(maxage,nareas))*array(rep(idist,each=maxage),dim=c(maxage,nareas))
+  # N<-Perrc[maxage:1]*array(exp(-Mc[1]*((1:maxage)-1))*R0c,dim=c(maxage,nareas))*array(rep(idist,each=maxage),dim=c(maxage,nareas))
+  N<-Perrc[maxage:1]*array(surv * R0c,dim=c(maxage,nareas))*array(rep(idist,each=maxage),dim=c(maxage,nareas))
   SSN<-Mac*N   # Calculate initial spawning stock numbers
   Biomass<-N*Wac[,1]
   SSB<-SSN*Wac[,1]                               # Calculate spawning stock biomass
@@ -105,11 +110,11 @@ Blow_opt<-function(lnq,SSBMSYc,MGThorizon,Fc,Perrc,Mc,hc,Mac,Wac,R0c,Vc,nyears,m
     if(y<=nyears){ # historical catches
       targ<-(apply(Vc[,y]*Biomass,2,sum)^Spat_targc)/mean(apply(Vc[,y]*Biomass,2,sum)^Spat_targc)
       FMc<-array(qc*Fc[y]*Vc[,y],dim=c(maxage,nareas))*array(rep(targ,each=maxage),dim=c(maxage,nareas))
-      Zc<-FMc+Mc[y]# Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
+      Zc<-FMc+Mc[,y]# Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
     }else{ # zero catches
       targ<-(apply(Vc[,nyears]*Biomass,2,sum)^Spat_targc)/mean(apply(Vc[,nyears]*Biomass,2,sum)^Spat_targc)
       FMc<-array(0,dim=c(maxage,nareas)) # zero catch
-      Zc<-FMc+Mc[nyears]
+      Zc<-FMc+Mc[,nyears]
     }
     
     N[2:maxage,]<-N[1:(maxage-1),]*exp(-Zc[1:(maxage-1),])         # Total mortality

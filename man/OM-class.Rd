@@ -27,6 +27,8 @@ bounds of a uniform distribution from which to sample the parameter.
 
 \item{\code{M}}{Natural mortality rate (uniform distribution)}
 
+\item{\code{M2}}{Optional vector of M-at-age (must be length maxage)}
+
 \item{\code{Msd}}{Inter-annual variability in natural mortality rate expressed as a coefficient of variation (uniform distribution)}
 
 \item{\code{Mgrad}}{Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year (uniform distribution)}
@@ -40,6 +42,8 @@ bounds of a uniform distribution from which to sample the parameter.
 \item{\code{K}}{von B. growth parameter k (uniform distribution)}
 
 \item{\code{t0}}{von B. theoretical age at length zero (uniform distribution)}
+
+\item{\code{LenCV}}{Coefficient of variation of length-at-age (assumed constant for all age classes (uniform distribution)}
 
 \item{\code{Ksd}}{Inter-annual variability in growth parameter k (uniform distribution)}
 
@@ -209,11 +213,6 @@ bounds of a uniform distribution from which to sample the parameter.
 \code{new('OM', Stock, Fleet, Obs, Imp)}.
 }
 
-\examples{
-
-showClass('OM')
-
-}
 \author{
 T. Carruthers
 }

@@ -25,6 +25,12 @@ setup <- function(cpus=parallel::detectCores()) {
 ChkObj <- function(OM) {
   if (!class(OM) %in% c("OM", "Stock", "Fleet", "Obs", "Imp"))
     stop("Argument must be of class: OM, Stock, Fleet, Obs, or Imp", call.=FALSE)
+  
+  # Add missing slots with default values 
+  OM <- updateMSE(OM)
+  if (length(OM@Mexp)==0) OM@Mexp <- c(0,0)
+  if (length(OM@LenCV)==0) OM@LenCV <- c(0.08,0.15)
+  
   slots <- slotNames(OM)
   Ok <- rep(TRUE, length(slots))
   for (sl in seq_along(slots)) {
@@ -39,15 +45,17 @@ ChkObj <- function(OM) {
                 "LFSUpper", "VmaxLower", "VmaxUpper")
   RecSlots <-  c("Period", "Amplitude")
   # Slots ok to not contain values
-  Ignore <- c("Name", "Source", "cpars", SelSlots, RecSlots)  
+  Ignore <- c("Name", "Source", "cpars", SelSlots, RecSlots, "M2")  
   # if values present for one they need to be there for all! 
   if (any(SelSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% SelSlots] 
   if (any(RecSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% RecSlots] 
   
+
+  
   probSlots <- slots[!Ok][!slots[!Ok] %in% Ignore]
   if (length(probSlots) > 0) 
     stop("Slots in Object have missing values:\n ", paste(probSlots, " "), call.=FALSE)
-  TRUE
+  OM
 }
 
 #' What objects of this class are available
@@ -396,23 +404,23 @@ getq <- function(x, dep, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V,
 #' @param SRrel internal parameter
 #' @param aR internal parameter
 #' @param bR internal parameter
+#' @param bounds upper and lower bounds for optimizer
 #' 
 #' Paired with qopt
 #' @keywords internal
 #' @export getq2 
 #'
 #' @author T. Carruthers
-getq2 <- function(x, dep, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V, 
-  nyears, maxage, mov, Spat_targ, SRrel, aR, bR) {
-  opt <- optimize(optQ_cpp, log(c(0.00001, 15)), depc = dep[x], Fc = Find[x, ], 
-    Perrc = Perr[x, ], Mc = Marray[x, ], hc = hs[x], Mac = Mat_age[x, ], 
+getq2 <- function(x, dep, Find, Perr, M_ageArray, hs, Mat_age, Wt_age, R0, V, 
+                  nyears, maxage, mov, Spat_targ, SRrel, aR, bR, bounds=c(0.00001, 15)) {
+  opt <- optimize(optQ_cpp, log(bounds), depc = dep[x], Fc = Find[x, ], 
+    Perrc = Perr[x, ], Mc = M_ageArray[x, ,], hc = hs[x], Mac = Mat_age[x, ], 
     Wac = Wt_age[x, , ], R0c = R0[x], Vc = V[x, , ], nyears = nyears, 
-	maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x], 
+    maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x], 
     SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ])	
   
   return(exp(opt$minimum))
 }
-
 
 
 #' Internal optimization function that find the catchability (q where F=qE)
@@ -466,10 +474,8 @@ qopt <- function(lnq, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears,
   
   for (y in 1:nyears) {
     # set up some indices for indexed calculation
-    targ <- (apply(Vc[, y] * Biomass, 2, sum)^Spat_targc)/mean(apply(Vc[, y] * 
-	  Biomass, 2, sum)^Spat_targc)
-    FMc <- array(qc * Fc[y] * Vc[, y], dim = c(maxage, nareas)) * array(rep(targ, each = maxage), 
-	  dim = c(maxage, nareas))  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
+    targ <- (apply(Vc[, y] * Biomass, 2, sum)^Spat_targc)/mean(apply(Vc[, y] * Biomass, 2, sum)^Spat_targc)
+    FMc <- array(qc * Fc[y] * Vc[, y], dim = c(maxage, nareas)) * array(rep(targ, each = maxage), dim = c(maxage, nareas))  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
     Zc <- FMc + Mc[y]
 
     N[2:maxage, ] <- N[1:(maxage - 1), ] * exp(-Zc[1:(maxage - 1), ])  # Total mortality

@@ -18,7 +18,7 @@ Blow_opt(lnq, SSBMSYc, MGThorizon, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears,
 
 \item{Perrc}{vector nyears+maxage-1 long of recruitment devitions}
 
-\item{Mc}{vector nyears+proyears long of natural mortality rate}
+\item{Mc}{matrix maxage by nyears+proyears of natural mortality rate}
 
 \item{hc}{number: steepness values}
 

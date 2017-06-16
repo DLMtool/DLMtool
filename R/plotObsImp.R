@@ -27,40 +27,15 @@ plotObs <- function(x, nsim=500, nyears=50,
     Obs <- SubOM(Obs,"Obs")
   }
   
-  nsamp=3
+  nsamp <- 3
   its <- sample(1:nsim, nsamp)
   
- 
-  # Observation model Parameters 
+  # === Sample Observation Model Parameters ====
+  ObsPars <- SampleObsPars(Obs, nsim)
+  # Assign Obs pars to function environment
+  for (X in 1:length(ObsPars)) assign(names(ObsPars)[X], ObsPars[[X]])
+  
 
-  Csd <- runif(nsim, Obs@Cobs[1], Obs@Cobs[2])  # Sampled catch observation error (lognormal sd)
-  Cbias <- rlnorm(nsim, mconv(1, Obs@Cbiascv), sdconv(1, Obs@Cbiascv))  # Sampled catch bias (log normal sd)
-  CAA_nsamp <- ceiling(runif(nsim, Obs@CAA_nsamp[1], Obs@CAA_nsamp[2]))  # Number of catch-at-age observations
-  CAA_ESS <- ceiling(runif(nsim, Obs@CAA_ESS[1], Obs@CAA_ESS[2]))  # Effective sample size
-  CAL_nsamp <- runif(nsim, Obs@CAL_nsamp[1], Obs@CAL_nsamp[2])  # Observation error standard deviation for single catch at age by area
-  CAL_ESS <- ceiling(runif(nsim, Obs@CAL_ESS[1], Obs@CAL_ESS[2]))  # Effective sample size
-  CALcv <- runif(nsim, Obs@CALcv[1], Obs@CALcv[2])  # Observation error standard deviation for single catch at age by area
-  betas <- exp(runif(nsim, log(Obs@beta[1]), log(Obs@beta[2])))  # the sampled hyperstability / hyperdepletion parameter beta>1 (hyperdepletion) beta<1 (hyperstability)
-  Isd <- runif(nsim, Obs@Iobs[1], Obs@Iobs[2])  # Abundance index observation error (log normal sd)
-  Derr <- runif(nsim, Obs@Dcv[1], Obs@Dcv[2])
-  Dbias <- rlnorm(nsim, mconv(1, Obs@Dbiascv), sdconv(1, Obs@Dbiascv))  # sample of depletion bias
-  Mbias <- rlnorm(nsim, mconv(1, Obs@Mcv), sdconv(1, Obs@Mcv))  # sample of M bias
-  FMSY_Mbias <- rlnorm(nsim, mconv(1, Obs@FMSY_Mcv), sdconv(1, Obs@FMSY_Mcv))  # sample of FMSY/M bias
-  
-  lenMbias <- rlnorm(nsim, mconv(1, Obs@LenMcv), sdconv(1, Obs@LenMcv))  # sample of length at maturity bias - assume same error as age based maturity
-  LFCbias <- rlnorm(nsim, mconv(1, Obs@LFCcv), sdconv(1, Obs@LFCcv))  # sample of length at first capture bias
-  LFSbias <- rlnorm(nsim, mconv(1, Obs@LFScv), sdconv(1, Obs@LFScv))  # sample of length at full selection bias
-  Aerr <- runif(nsim, Obs@Btcv[1], Obs@Btcv[2])
-  Abias <- exp(runif(nsim, log(Obs@Btbias[1]), log(Obs@Btbias[2])))  #rlnorm(nsim,mconv(1,Obs@Btbiascv),sdconv(1,Obs@Btbiascv))    # smaple of current abundance bias
-  Kbias <- rlnorm(nsim, mconv(1, Obs@Kcv), sdconv(1, Obs@Kcv))  # sample of von B. K parameter bias
-  t0bias <- rlnorm(nsim, mconv(1, Obs@t0cv), sdconv(1, Obs@t0cv))  # sample of von B. t0 parameter bias
-  Linfbias <- rlnorm(nsim, mconv(1, Obs@Linfcv), sdconv(1, Obs@Linfcv))  # sample of von B. maximum length bias
-  Irefbias <- rlnorm(nsim, mconv(1, Obs@Irefcv), sdconv(1, Obs@Irefcv))  # sample of bias in reference (target) abundance index
-  Crefbias <- rlnorm(nsim, mconv(1, Obs@Crefcv), sdconv(1, Obs@Crefcv))  # sample of bias in reference (target) catch index
-  Brefbias <- rlnorm(nsim, mconv(1, Obs@Brefcv), sdconv(1, Obs@Brefcv))  # sample of bias in reference (target) biObsass index
-  Recsd <- runif(nsim, Obs@Reccv[1], Obs@Reccv[2])  # Recruitment deviation 
-  
-  
   # === Non time series ==================================================================== 
   
   op <- par(mfrow=c(4,4),mai=c(0.6,0.6,0.25,0.01),omi=c(0.01,0.01,0.4,0.01))
@@ -207,6 +182,11 @@ plotImp<-function(x,nsim=500, nyears=50,
     Imp <- SubOM(Imp,"Imp")
   }
 
+  # === Sample Imp Model Parameters ====
+  ImpPars <- SampleImpPars(Imp, nsim)
+  # Assign Imp pars to function environment
+  for (X in 1:length(ImpPars)) assign(names(ImpPars)[X], ImpPars[[X]])
+  
   nsamp=3
   its <- sample(1:nsim, nsamp)
 

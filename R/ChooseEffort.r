@@ -39,8 +39,7 @@ SketchFun <- function(nyears = NULL, Years = NULL) {
         nyears <- length(Years)
         years <- Years
     }
-    if (length(Years) == 0) 
-        years <- 1:nyears
+    if (length(Years) == 0) years <- 1:nyears
     par(mfrow = c(1, 1), mar = c(5, 4, 5, 2))
     ys <- seq(from = 0, to = 1, by = 0.05)
     years1 <- seq(from = years[1], by = 2, to = max(years))
@@ -52,10 +51,10 @@ SketchFun <- function(nyears = NULL, Years = NULL) {
     Ys <- grd3[, 2]
     
     plot(grd1[, 1], grd1[, 2], col = "black", pch = 19, cex = 0.2, xlab = "Years", 
-        ylab = "Variable", cex.lab = 1.5)
+        ylab = "Relative Fishing Effort", cex.lab = 1.5)
     points(grd2[, 1], grd2[, 2], col = "darkgrey", pch = 19, cex = 0.2)
     
-    mtext(side = 3, "Right Click to Finish. Escape to Quit.", xpd = NA, 
+    mtext(side = 3, "Click 'Finish' or press 'Escape' to Finish.", xpd = NA, 
         cex = 1.25)
     line1 <- "Use mouse to select points on the grid"
     line2 <- "First and last year must be selected."
@@ -71,7 +70,7 @@ SketchFun <- function(nyears = NULL, Years = NULL) {
     message(line1, "\n", line2, "\n", line3, "\n")
     flush.console()
     
-    par()
+    
     out <- NULL
     out <- identifyPch(x = Xs, y = Ys, tolerance = 0.1)
     while (is.null(dim(out))) {
@@ -113,23 +112,27 @@ SketchFun <- function(nyears = NULL, Years = NULL) {
     return(mat)
 }
 
-
 identifyPch <- function(x, y = NULL, n = length(x), pch = 19, ...) {
-    xy <- xy.coords(x, y)
-    x <- xy$x
-    y <- xy$y
-    sel <- rep(FALSE, length(x))
-    res <- integer(0)
-    while (sum(sel) < n) {
-        ans <- identify(x[!sel], y[!sel], n = 1, plot = FALSE, ...)
-        if (!length(ans)) 
-            break
-        ans <- which(!sel)[ans]
-        points(x[ans], y[ans], pch = pch)
-        sel[ans] <- TRUE
-        res <- c(res, ans)
-    }
-    out <- cbind(x[res], y[res])
-    out <- out[order(out[, 1]), ]
-    return(out)
+  xy <- xy.coords(x, y)
+  x <- xy$x
+  y <- xy$y
+  sel <- rep(FALSE, length(x))
+  res <- integer(0)
+  while (sum(sel) < n) {
+    ans <- identify(x[!sel], y[!sel], n = 1, plot = FALSE, ...)
+    if (!length(ans)) 
+      break
+    ans <- which(!sel)[ans]
+    points(x[ans], y[ans], pch = pch)
+    sel[ans] <- TRUE
+    res <- c(res, ans)
+  }
+  out <- cbind(x[res], y[res])
+  out <- out[order(out[, 1]), ]
+  return(out)
 }
+
+
+
+
+

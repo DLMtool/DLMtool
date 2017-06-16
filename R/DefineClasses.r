@@ -1,4 +1,5 @@
 
+# ---- Data Class ----
 
 #' Class \code{'Data'}
 #' 
@@ -33,6 +34,7 @@
 #' @slot vbK The von Bertalanffy growth coefficient 
 #' @slot vbLinf Maximum length 
 #' @slot vbt0 Theoretical age at length zero 
+#' @slot LenCV Coefficient of variation of length-at-age (assumed constant for all age classes)
 #' @slot wla Weight-Length parameter alpha 
 #' @slot wlb Weight-Length parameter beta 
 #' @slot steep Steepness of the Beverton Holt stock-recruitment relationship 
@@ -95,7 +97,7 @@ setClass("Data", representation(Name = "character", Year = "vector",
   Cref = "vector", Bref = "vector", Iref = "vector", L50 = "vector", 
   L95 = "vector", LFC = "vector", LFS = "vector", CAA = "array", Dep = "vector", 
   Abun = "vector", SpAbun="vector", vbK = "vector", vbLinf = "vector", vbt0 = "vector", 
-  wla = "vector", wlb = "vector", steep = "vector", CV_Cat = "vector", 
+  LenCV="vector", wla = "vector", wlb = "vector", steep = "vector", CV_Cat = "vector", 
   CV_Dt = "vector", CV_AvC = "vector", CV_Ind = "vector", CV_Mort = "vector", 
   CV_FMSY_M = "vector", CV_BMSY_B0 = "vector", CV_Cref = "vector", CV_Bref = "vector", 
   CV_Iref = "vector", CV_Rec = "vector", CV_Dep = "vector", CV_Abun = "vector", 
@@ -140,6 +142,7 @@ setMethod("initialize", "Data", function(.Object, stock = "nada") {
     .Object@vbK <- as.numeric(dat[match("Von Bertalanffy K parameter", dname), 1])
     .Object@vbLinf <- as.numeric(dat[match("Von Bertalanffy Linf parameter", dname), 1])
     .Object@vbt0 <- as.numeric(dat[match("Von Bertalanffy t0 parameter", dname), 1])
+    .Object@LenCV <- as.numeric(dat[match("CV of length-at-age", dname), 1])
     .Object@wla <- as.numeric(dat[match("Length-weight parameter a", dname), 1])
     .Object@wlb <- as.numeric(dat[match("Length-weight parameter b", dname), 1])
     .Object@steep <- as.numeric(dat[match("Steepness", dname), 1])
@@ -207,8 +210,9 @@ setMethod("initialize", "Data", function(.Object, stock = "nada") {
       if (!is.na(stock)) print("Couldn't find specified csv file, blank DLM object created")
     }
   }
-  # Default values
-  # -------------------------------------------------------------
+  # Default value
+  if (NAor0(.Object@LenCV)) .Object@LenCV <- 0.1
+  
   if (NAor0(.Object@CV_Cat)) .Object@CV_Cat <- 0.2
   if (NAor0(.Object@CV_Dt)) .Object@CV_Dt <- 0.25
   if (NAor0(.Object@CV_AvC)) .Object@CV_AvC <- 0.2
@@ -241,12 +245,14 @@ setMethod("initialize", "Data", function(.Object, stock = "nada") {
   if (length(.Object@ML) == 0)  .Object@ML <- array(NA, c(1, 1))
   if (length(.Object@Lbar) == 0) .Object@Lbar <- array(NA, c(1, 1))
   if (length(.Object@Lc) == 0) .Object@Lc <- array(NA, c(1, 1))
+  
+  
   .Object
 })
 
 
 
-
+# ---- Fease Class ----
 #' Class \code{'Fease'}
 #' 
 #' An object for storing information about what data are available or might be
@@ -341,7 +347,118 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
   
 })
 
+# ---- Stock Class ----
+#' Class \code{'Stock'}
+#' 
+#' An operating model component that specifies the parameters of the population
+#' dynamics model
+#' 
+#' 
+#' @name Stock-class
+#' @docType class
+#' @section Objects from the Class: Objects can be created by calls of the form
+#' \code{new('Stock')}
+#' @slot Name The name of the Stock object 
+#' @slot maxage The maximum age of individuals that is simulated (there is no 'plus group': individuals die off beyone the maximum age so there isn't a huge cost to simulating more older age classes) 
+#' @slot R0 The magnitude of unfished recruitment. This is normally fixed to some arbitrary value since it simply scales the simulated numbers) 
+#' @slot M Natural mortality rate (uniform distribution) 
+#' @slot M2 Optional vector of M-at-age (must be length maxage) 
+#' @slot Msd Inter-annual variability in natural mortality rate expressed as a coefficient of variation (uniform distribution) 
+#' @slot Mgrad Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year (uniform distribution) 
+#' @slot Mexp Exponent of the Lorenzen function assuming an inverse relationship between M and weight (uniform distribution)
+#' @slot h Steepness of the stock recruit relationship (uniform distribution) 
+#' @slot SRrel Type of stock-recruit relationship (1)Beverton-Holt (2) Ricker 
+#' @slot Linf Maximum length (uniform distribution) 
+#' @slot K von B. growth parameter k (uniform distribution) 
+#' @slot t0 von B. theoretical age at length zero (uniform distribution) 
+#' @slot LenCV Coefficient of variation of length-at-age (assumed constant for all age classes (uniform distribution)
+#' @slot Ksd Inter-annual variability in growth parameter k (uniform distribution) 
+#' @slot Kgrad Mean temporal trend in growth parameter k, expressed as a percentage change in k per year (uniform distribution) 
+#' @slot Linfsd Inter-annual variability in maximum length - uniform distribution 
+#' @slot Linfgrad Mean temporal trend in maximum length, expressed as a percentage change in Linf per year (uniform distribution) 
+#' @slot recgrad Mean temporal trend in log-normal recruitment deviations (uniform distribution) 
+#' @slot AC Autocorrelation in recruitment deviations rec(t)=AC*rec(t-1)+(1-AC)*sigma(t) (uniform distribution) 
+#' @slot a Length-weight parameter alpha (uniform distribution) 
+#' @slot b Length-weight parameter beta (uniform distribution) 
+#' @slot L50 Length-at- 50 percent maturity (uniform distribution) 
+#' @slot L50_95 Length increment from 50 percent to 95 percent maturity 
+#' @slot D Current level of stock depletion (Bcurrent/Bunfished) (uniform distribution) 
+#' @slot Perr Process error, the CV of lognormal recruitment deviations  (uniform distribution) 
+#' @slot Period Period for cylical recruitment pattern in years (uniform distribution). Leave empty to ignore  
+#' @slot Amplitude Amplitude in deviation from long-term average recruitment during recruitment cycle, both positive and negative (uniform distribution). E.g., a range from 0 to 0.5 means recruitment decreases or increases by up to 50\% each cycle. Leave empty to ignore 
+#' @slot Size_area_1 The size of area 1 relative to area 2 (uniform distribution) 
+#' @slot Frac_area_1 The fraction of the unfished biomass in stock 1 (uniform distribution) 
+#' @slot Prob_staying The probability of inviduals in area 1 remaining in area 1 over the course of one year 
+#' @slot Source A reference to a website or article form which parameters were taken to define the operating model
 
+#' @author T. Carruthers
+#' @keywords classes
+#' @examples
+#' 
+#' showClass('Stock')
+#' 
+setClass("Stock", representation(Name = "character", maxage = "numeric", 
+                                 R0 = "numeric", M = "numeric", M2 = "numeric", Msd = "numeric", Mgrad = "numeric",  Mexp="numeric",
+                                 h = "numeric", SRrel = "numeric", Linf = "numeric", K = "numeric", 
+                                 t0 = "numeric", LenCV="numeric", Ksd = "numeric", Kgrad = "numeric", Linfsd = "numeric", 
+                                 Linfgrad = "numeric", recgrad = "numeric", a = "numeric", b = "numeric", 
+                                 D = "numeric", Perr = "numeric", Period = "numeric", Amplitude = "numeric", 
+                                 Size_area_1 = "numeric", Frac_area_1 = "numeric", Prob_staying = "numeric", 
+                                 AC = "numeric", L50 = "numeric", L50_95 = "numeric", Source = "character"))
+
+# initialize Stock
+setMethod("initialize", "Stock", function(.Object, file = NA) {
+  
+  if (!is.na(file)) {
+    if (file.exists(file)) {
+      Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
+      dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      dname <- dat[, 1]
+      dat <- dat[, 2:ncol(dat)]
+      
+      .Object@Name <- dat[match("Name", dname), 1]
+      .Object@maxage <- as.numeric(dat[match("maxage", dname), 1])
+      .Object@R0 <- as.numeric(dat[match("R0", dname), 1])
+      temp <- as.numeric(dat[match("M", dname), 1:Ncol])
+      .Object@M <- temp[!is.na(temp)]
+      temp <- as.numeric(dat[match("M2", dname), 1:Ncol])
+      .Object@M2 <- temp[!is.na(temp)]
+      .Object@Msd <- as.numeric(dat[match("Msd", dname), 1:2])
+      .Object@Mgrad <- as.numeric(dat[match("Mgrad", dname), 1:2])
+      .Object@Mexp <- as.numeric(dat[match("Mexp", dname), 1:2])
+      .Object@h <- as.numeric(dat[match("h", dname), 1:2])
+      .Object@SRrel <- as.numeric(dat[match("SRrel", dname), 1])
+      .Object@Linf <- as.numeric(dat[match("Linf", dname), 1:2])
+      .Object@K <- as.numeric(dat[match("K", dname), 1:2])
+      .Object@t0 <- as.numeric(dat[match("t0", dname), 1:2])
+      .Object@LenCV <- as.numeric(dat[match("LenCV", dname), 1:2])
+      .Object@Ksd <- as.numeric(dat[match("Ksd", dname), 1:2])
+      .Object@Kgrad <- as.numeric(dat[match("Kgrad", dname), 1:2])
+      .Object@Linfsd <- as.numeric(dat[match("Linfsd", dname), 1:2])
+      .Object@Linfgrad <- as.numeric(dat[match("Linfgrad", dname),  1:2])
+      .Object@recgrad <- as.numeric(dat[match("recgrad", dname), 1:2])
+      .Object@a <- as.numeric(dat[match("a", dname), 1])
+      .Object@b <- as.numeric(dat[match("b", dname), 1])
+      .Object@D <- as.numeric(dat[match("D", dname), 1:2])
+      .Object@Perr <- as.numeric(dat[match("Perr", dname), 1:2])
+      .Object@Period <- as.numeric(dat[match("Period", dname), 1:2])
+      .Object@Amplitude <- as.numeric(dat[match("Amplitude", dname), 1:2])
+      .Object@AC <- as.numeric(dat[match("AC", dname), 1:2])
+      .Object@Size_area_1 <- as.numeric(dat[match("Size_area_1", dname), 1:2])
+      .Object@Frac_area_1 <- as.numeric(dat[match("Frac_area_1", dname), 1:2])
+      .Object@Prob_staying <- as.numeric(dat[match("Prob_staying", dname), 1:2])
+      .Object@L50 <- as.numeric(dat[match("L50", dname), 1:2])
+      .Object@L50_95 <- as.numeric(dat[match("L50_95", dname), 1:2])
+      .Object@Source <- dat[match("Source", dname), 1]
+    } else {
+      message("File doesn't exist")
+    }
+  }
+  .Object
+  
+})
+
+# ---- Fleet Class -----
 #' Class \code{'Fleet'}
 #' 
 #' The component of the operating model that controls fishing dynamics
@@ -499,170 +616,7 @@ setMethod("initialize", "Fleet", function(.Object, file = NA) {
 NULL
 
 
-#' Class \code{'MSE'}
-#' 
-#' A Management Strategy Evaluation object that contains information about
-#' simulation conditions and performance of data-limited methods
-#' 
-#' 
-#' @name MSE-class
-#' @docType class
-#' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new('MSE', Name, nyears, proyears, nMPs, MPs, nsim, OMtable, Obs,
-#' B_BMSYa, F_FMSYa, Ba, FMa, Ca, OFLa, Effort, PAA, CAA, CAL, CALbins)} 
-#'
-#' @slot Name Name of the MSE object
-#' @slot nyears The number of years for the historical simulation
-#' @slot proyears The number of years for the projections - closed loop simulations
-#' @slot nMPs Number of management procedures simulation tested
-#' @slot MPs The names of the MPs that were tested
-#' @slot nsim Number of simulations
-#' @slot OM A table of nsim rows with a column for each sampled parameter of the operating model\cr
-#'   \itemize{
-#'   \item RefY: reference yield, the highest long-term yield (mean over last five years of projection) obtained from a fixed F strategy. This is a useful reference point for framing performance of MPs because it standardizes for starting point and future productivity. 
-#'   \item M: instantaneous natural mortality rate
-#'   \item Depletion: stock depletion (biomass / unfished biomass) in the final historical year (prior to projection)
-#'   \item A: abundance (biomass) updated in each management update of projection
-#'   \item BMSY_B0: most productive stock size relative to unfished
-#'   \item FMSY_M: fishing mortality rate divided by natural mortality rate
-#'   \item Mgrad: mean average percentage gradient in natural mortality rate (percentage per time step)
-#'   \item Msd: interannual variability in natural mortality rate (lognormal CV)
-#'   \item procsd: process error - CV in log-normal recruitment deviations
-#'   \item Esd: interannual variability in historical effort (fishing mortality rate)
-#'   \item dFfinal: gradient in fishing mortality rate over final five years of the historical simulation
-#'   \item MSY: Maximum Sustainable Yield
-#'   \item qinc: mean percentage increase in fishing efficiency (catchability) in projected years (input controls only)
-#'   \item qcv: interannual variability in future fishing efficiency (catchability) in projected years (input controls only)
-#'   \item CALcv: variability in lengths at age around the growth curve (normal CV)
-#'   \item FMSY: Fishing mortality rate at Maximum Sustainable Yield
-#'   \item Linf: maximum length (von Bertalanffy Linf parameter)
-#'   \item K: maximum growth rate (von Bertalanffy K parameter)
-#'   \item t0: theoretical length at age zero (von Bertalanffy t0 parameter)
-#'   \item hs: steepness of the stock recruitment relationship (the fraction of unfished recruitment at a fifth of unfished stock levels)
-#'   \item Linfgrad: mean gradient in maximum length (per cent per time step)
-#'   \item Kgrad: mean gradient in maximum growth rate (per cent per time step)
-#'   \item Linfsd: interannual variability in maximum length (log normal CV)
-#'   \item recgrad: gradient in recruitment strength (age 1 population numbers) over last 10 years of historical simulations
-#'   \item Ksd: interannual variability in maximum growth rate (log normal CV)
-#'   \item ageM: age at 50 per cent maturity
-#'   \item LFS: length at full selection (the shortest length class where fishery selectivity is 100 per cent)
-#'   \item age05: the age at 5 percent selectivity (ascending limb of selectivity curve)
-#'   \item Vmaxage: the selectivity of the oldest age class (controls dome shape of selectivity curve)
-#'   \item LFC: length at first capture, the smallest length that can be caught by the gear
-#'   \item OFLreal: the true simulated Over Fishing Limit (FMSY x biomass) updated in each management update of the projection
-#'   \item Spat_targ: spatial targetting parameter, fishing mortality rate across areas is proportional to vulnerable biomass raised to the power of this number. 
-#'   \item Frac_area_1: the fraction of unfished biomass inhabiting area 1 (can be seen as fraction of habitat in area 1 or relative size of area 1)
-#'   \item Prob_staying: the probability that individuals in area 1 remain there between time-steps
-#'   \item AC: autocorrelation in recruitment
-#'  }
-#' @slot Obs A table of nsim rows with a column for each sampled parameter of the observation model\cr
-#'   \itemize{
-#'   \item Cbias: bias in observed catches
-#'   \item Csd: observation error in observed catches (lognormal CV)
-#'   \item CAA_nsamp: the number of catch-at-age observations per time step
-#'   \item CAA_ESS: the effective sample size of multinomial catch-at-age observation model (number of independent draws)
-#'   \item CAL_nsamp: the number of catch-at-length observations per time step
-#'   \item CAL_ESS: the effective sample size of multinomial catch-at-length observation model (number of independent draws)
-#'   \item Isd: observation error in relative abundance index (lognormal CV)
-#'   \item Dbias: bias in observed stock depletion (also applies to depletion Dt for DCAC)
-#'   \item Mbias: bias in observed natural mortality rate
-#'   \item FMSY_Mbias: bias in ratio of FMSY to natural mortality rate
-#'   \item BMSY_B0bias: bias in ratio of most productive stock size relative to unfished
-#'   \item AMbias: bias in age at 50 per cent maturity
-#'   \item LFCbias: bias in length at first capture
-#'   \item LFSbias: bias in length at full selection
-#'   \item Abias: bias in observed current absolute stock biomass
-#'   \item Kbias: bias in maximum growth rate (von Bertalanffy K parameter)
-#'   \item t0bias: bias in theoretical length at age zero (von Bertalanffy t0 parameter)
-#'   \item Linfbias: bias in maximum length (von Bertalanffy Linf parameter)
-#'   \item hbias: bias in observed steepness of the stock recruitment relationship
-#'   \item Irefbias: bias in abundance index corresponding to BMSY stock levels
-#'   \item Crefbias: bias in MSY prediction (target or reference catch)
-#'   \item Brefbias: bias in BMSY stock levels (target or reference biomass levels)}
-#' @slot B_BMSY Stored biomass relative to BMSY over the projection (an array with dimensions nsim, nMPs, proyears) 
-#' @slot F_FMSY Stored fishing mortality rate relative to FMSY over the projection (an array with dimensions nsim, nMPs, proyears) 
-#' @slot B Stored stock biomass over the projection (an array with dimensions nsim, nMPs, proyears)
-#' @slot SSB Stored spawning stock biomass over the projection (an array with dimensions nsim, nMPs, proyears)
-#' @slot VB Stored vulnerable biomass over the projection (an array with dimensions nsim, nMPs, proyears) 
-#' @slot FM Stored fishing mortality rate over the projection (an array with dimensions nsim, nMPs, proyears)
-#' @slot C Stored catches (taken) over the projection (an array with dimensions nsim, nMPs, proyears) 
-#' @slot TAC Stored Total Allowable Catch (prescribed) over the projection (an array with dimensions nsim, nMPs, proyears)(note that this is NA for input controls) 
-#' @slot SSB_hist Stored historical spawning stock biomass (historical simulations - an array with dimensions nsim, nages, nyears, nareas)
-#' @slot CB_hist Stored historical catches in weight (historical simulations - an array with dimensions nsim, nages, nyears, nareas)
-#' @slot FM_hist Stored historical fishing mortality rate (historical simulations - an array with dimensions nsim, nages, nyears, nareas)
-#' @slot Effort Stored relative fishing effort in the projection years
-#' @slot PAA Population at age in last projection year (an array with dimensions nsim, nMPs, nages)
-#' @slot CAA Catch at age in last projection year (an array with dimensions nsim, nMPs, nages)
-#' @slot CAL Catch at length in last projection year (an array with dimensions nsim, nMPs, nCALbins)
-#' @slot CALbins Mid-points of the catch-at-length bins
-#'
-#' @author T. Carruthers
-#' @keywords classes
-setClass("MSE", representation(Name = "character", nyears = "numeric", 
-  proyears = "numeric", nMPs = "numeric", MPs = "character", nsim = "numeric", 
-  OM = "data.frame", Obs = "data.frame", B_BMSY = "array", F_FMSY = "array", 
-  B = "array", SSB="array", VB="array", FM = "array", C = "array", 
-  TAC = "array", SSB_hist = "array", 
-  CB_hist = "array", FM_hist = "array", Effort = "array", PAA= "array", CAA= "array", 
-  CAL= "array", CALbins="numeric"))
-
-  
-setMethod("initialize", "MSE", function(.Object, Name, nyears, proyears, 
-  nMPs, MPs, nsim, OM, Obs, B_BMSY, F_FMSY, B, SSB, VB, FM, C, TAC, 
-  SSB_hist, CB_hist, FM_hist, Effort = array(), PAA,  CAA, CAL, CALbins) {
-  .Object@Name <- Name
-  .Object@nyears <- nyears
-  .Object@proyears <- proyears
-  .Object@nMPs <- nMPs
-  .Object@MPs <- MPs
-  .Object@nsim <- nsim
-  .Object@OM <- OM
-  .Object@Obs <- Obs
-  .Object@B_BMSY <- B_BMSY
-  .Object@F_FMSY <- F_FMSY
-  .Object@B <- B
-  .Object@SSB <- SSB
-  .Object@VB <- VB
-  .Object@FM <- FM
-  .Object@C <- C  
-  .Object@TAC <- TAC
-  .Object@SSB_hist <- SSB_hist
-  .Object@CB_hist <- CB_hist
-  .Object@FM_hist <- FM_hist
-  .Object@Effort <- Effort
-  .Object@PAA <- PAA
-  .Object@CAA <- CAA
-  .Object@CAL <- CAL
-  .Object@CALbins <- CALbins
-	  
-  .Object
-})
-
-# setMethod("initialize", "MSE", function(.Object, Name, nyears, proyears, 
-  # nMPs, MPs, nsim, OMtable, Obs, B_BMSYa, F_FMSYa, Ba, FMa, Ca, TACa, 
-  # SSB_hist, CB_hist, FM_hist, Effort = array()) {
-  # .Object@Name <- Name
-  # .Object@nyears <- nyears
-  # .Object@proyears <- proyears
-  # .Object@nMPs <- nMPs
-  # .Object@MPs <- MPs
-  # .Object@nsim <- nsim
-  # .Object@OM <- OMtable
-  # .Object@Obs <- Obs
-  # .Object@B_BMSY <- B_BMSYa
-  # .Object@F_FMSY <- F_FMSYa
-  # .Object@B <- Ba
-  # .Object@FM <- FMa
-  # .Object@C <- Ca
-  # .Object@TAC <- TACa
-  # .Object@SSB_hist <- SSB_hist
-  # .Object@CB_hist <- CB_hist
-  # .Object@FM_hist <- FM_hist
-  # .Object@Effort <- Effort
-  # .Object
-# })
-
-
+# ---- Obs Class ----
 #' Class \code{'Obs'}
 #' 
 #' An operating model component that controls the observation model
@@ -684,7 +638,7 @@ setMethod("initialize", "MSE", function(.Object, Name, nyears, proyears,
 #' @slot CAA_ESS Effective sample size (independent age draws) of the multinomial catch-at-age observation error model (uniform distribution) 
 #' @slot CAL_nsamp Number of catch-at-length observation per time step (uniform distribution) 
 #' @slot CAL_ESS Effective sample size (independent length draws) of the multinomial catch-at-length observation error model (uniform distribution) 
-#' @slot CALcv Lognormal, variability in the length at age (uniform distribution) 
+#' @slot CALcv Lognormal, variability in the Cv of length-at-age (uniform distribution) 
 #' @slot Iobs Observation error in the relative abundance indices expressed as a coefficient of variation (uniform distribution) 
 #' @slot Mcv Persistent bias in the prescription of natural mortality rate sampled from a log-normal distribution with coefficient of variation (Mcv)(uniform distribution) 
 #' @slot Kcv Persistent bias in the prescription of growth parameter k sampled from a log-normal distribution with coefficient of variation (Kcv)(uniform distribution) 
@@ -785,7 +739,81 @@ setMethod("initialize", "Obs", function(.Object, file = NA) {
 
 
 
+# ---- Imp Class ----
+#' Class \code{'Imp'}
+#' 
+#' An operating model component that specifies the degree of adherence to management recommendations (Implementation error)
+#' 
+#' 
+#' @name Imp-class
+#' @docType class
+#' @section Objects from the Class: Objects can be created by calls of the form
+#' \code{new('Imp')}
+#' @slot Name The name of the Implementation error object 
+#' @slot TACSD lognormal standard deviation in fraction of TAC taken (uniform distribution) 
+#' @slot TACFrac Mean fraction of TAC taken (uniform distribution) (can be an improper fraction greater than 1)
+#' @slot ESD lognormal standard deviation in fraction of TAE taken(uniform distribution)
+#' @slot EFrac Mean fraction of recommended effort taken (uniform distribution)
+#' @slot SizeLimSD lognormal error in size limit implementation (uniform distribution)
+#' @slot SizeLimFrac Mean fraction of the size limit (uniform distribution) (can be an improper fraction greater than 1)
+#' @slot DiscMort Discard mortality rate (uniform distribution) (can be an improper fraction greater than 1)
+#' @slot Source A reference to a website or article form which parameters were taken to define the operating model
+#' @author T. Carruthers
+#' @keywords classes
+#' @examples
+#' 
+#' showClass('Imp')
+#' 
+setClass("Imp", representation(Name = "character", TACSD = "numeric", TACFrac = "numeric", 
+                               ESD = "numeric", EFrac = "numeric",
+                               SizeLimSD = "numeric", SizeLimFrac="numeric",
+                               DiscMort = "numeric", 
+                               Source = "character"))
 
+# initialize Imp
+setMethod("initialize", "Imp", function(.Object, file = NA) {
+  
+  .Object@Name <- "Perfect implementation"
+  .Object@TACSD <- c(0,0)
+  .Object@TACFrac <- c(1,1)
+  .Object@ESD <- c(0,0)
+  .Object@EFrac <-c(1,1)
+  .Object@SizeLimSD <- c(0,0)
+  .Object@SizeLimFrac<-c(1,1)
+  .Object@DiscMort <- c(0,0)
+  .Object@Source <-"DLMtool generated"
+  
+  if (!is.na(file)) {
+    if (file.exists(file)) {
+      Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
+      dat <- read.csv(file, header = F, colClasses = "character", 
+                      col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      dname <- dat[, 1]
+      dat <- dat[, 2:ncol(dat)]
+      
+      .Object@Name <- dat[match("Name", dname), 1]
+      .Object@TACSD <- as.numeric(dat[match("TACSD", dname), 1:2])
+      .Object@TACFrac <- as.numeric(dat[match("TACFrac", dname), 1:2])
+      .Object@ESD <- as.numeric(dat[match("ESD", dname), 1:2])
+      .Object@EFrac <- as.numeric(dat[match("EFrac", dname), 1:2])
+      .Object@SizeLimSD <- as.numeric(dat[match("SizeLimSD", dname), 1:2])
+      .Object@SizeLimFrac <- as.numeric(dat[match("SizeLimFrac", dname), 1:2])
+      .Object@DiscMort <- as.numeric(dat[match("DiscMort", dname), 1:2])
+      .Object@Source <- dat[match("Source", dname), 1]
+      
+    } else {
+      
+      message("File doesn't exist")
+      
+    }
+    
+    
+  }
+  .Object
+  
+})
+
+# ---- OM Class ----
 #' Class \code{'OM'}
 #' 
 #' An object containing all the parameters needed to control the MSE which can
@@ -807,6 +835,7 @@ setMethod("initialize", "Obs", function(.Object, file = NA) {
 #' @slot maxage The maximum age of individuals that is simulated (there is no 'plus group': individuals die off beyone the maximum age so there isn't a huge cost to simulating more older age classes) 
 #' @slot R0 The magnitude of unfished recruitment. This is normally fixed to some arbitrary value since it simply scales the simulated numbers) 
 #' @slot M Natural mortality rate (uniform distribution) 
+#' @slot M2 Optional vector of M-at-age (must be length maxage) 
 #' @slot Msd Inter-annual variability in natural mortality rate expressed as a coefficient of variation (uniform distribution) 
 #' @slot Mgrad Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year (uniform distribution) 
 #' @slot h Steepness of the stock recruit relationship (uniform distribution) 
@@ -814,6 +843,7 @@ setMethod("initialize", "Obs", function(.Object, file = NA) {
 #' @slot Linf Maximum length (uniform distribution) 
 #' @slot K von B. growth parameter k (uniform distribution) 
 #' @slot t0 von B. theoretical age at length zero (uniform distribution) 
+#' @slot LenCV Coefficient of variation of length-at-age (assumed constant for all age classes (uniform distribution)
 #' @slot Ksd Inter-annual variability in growth parameter k (uniform distribution) 
 #' @slot Kgrad Mean temporal trend in growth parameter k, expressed as a percentage change in k per year (uniform distribution) 
 #' @slot Linfsd Inter-annual variability in maximum length - uniform distribution 
@@ -899,55 +929,11 @@ setMethod("initialize", "Obs", function(.Object, file = NA) {
 #' @slot SizeLimSD lognormal error in size limit implementation (uniform distribution)
 #' @slot SizeLimFrac Mean fraction of the size limit (uniform distribution) (can be an improper fraction greater than 1)
 #' @slot DiscMort Discard mortality rate (uniform distribution) (can be an improper fraction greater than 1)
-#' 
 #' @author T. Carruthers
 #' @keywords classes
-#' @examples
-#' 
-#' showClass('OM')
 #' 
 setClass("OM", representation(Name = "character", nsim="numeric",proyears="numeric",
-  nyears = "numeric", maxage = "numeric", 
-  R0 = "numeric", M = "numeric", Msd = "numeric", Mgrad = "numeric", 
-  h = "numeric", SRrel = "numeric", Linf = "numeric", K = "numeric", 
-  t0 = "numeric", Ksd = "numeric", Kgrad = "numeric", Linfsd = "numeric", 
-  Linfgrad = "numeric", recgrad = "numeric", a = "numeric", b = "numeric", 
-  D = "numeric", Size_area_1 = "numeric", Frac_area_1 = "numeric", Prob_staying = "numeric", 
-  Source = "character", L50 = "numeric", L50_95 = "numeric", SelYears = "numeric", 
-  AbsSelYears = "numeric", L5 = "numeric", LFS = "numeric", Vmaxlen = "numeric", 
-  L5Lower = "numeric", L5Upper = "numeric", LFSLower = "numeric", LFSUpper = "numeric", 
-  VmaxLower = "numeric", VmaxUpper = "numeric", isRel = "character", 
-  beta = "numeric", Spat_targ = "numeric", Esd = "numeric",
-  Period = "numeric", Amplitude = "numeric", EffYears = "numeric", EffLower = "numeric", 
-  EffUpper = "numeric", qinc = "numeric", qcv = "numeric", AC = "numeric", 
-  
-  Cobs = "numeric", Cbiascv = "numeric", CAA_nsamp = "numeric", CAA_ESS = "numeric", 
-  CAL_nsamp = "numeric", CAL_ESS = "numeric", CALcv = "numeric", Iobs = "numeric", 
-  Perr = "numeric", Mcv = "numeric", Kcv = "numeric", t0cv = "numeric", 
-  Linfcv = "numeric", LFCcv = "numeric", LFScv = "numeric", B0cv = "numeric", 
-  FMSYcv = "numeric", FMSY_Mcv = "numeric", BMSY_B0cv = "numeric", LenMcv = "numeric", 
-  rcv = "numeric", Dbiascv = "numeric", Dcv = "numeric", Btbias = "numeric", 
-  Btcv = "numeric", Fcurbiascv = "numeric", Fcurcv = "numeric", hcv = "numeric", 
-  Icv = "numeric", maxagecv = "numeric", Reccv = "numeric", Irefcv = "numeric", 
-  Crefcv = "numeric", Brefcv = "numeric",
-  
-  TACSD = "numeric", TACFrac = "numeric", 
-  ESD = "numeric", EFrac = "numeric",
-  SizeLimSD = "numeric", SizeLimFrac="numeric",
-  DiscMort = "numeric", 
-  
-  cpars="list",seed="numeric",CurrentYr="numeric"))
-
-
-# This hack is neccessary to get around CRAN checks but causes problems that 
-# Generic_fleet etc objects are considered class NULL ONLY when accessed by internal functions
-# in the package - i.e., they are ok in interactive mode
-# Commented out for now but need a fix before we release the next version to CRAN. 
-
-# Generic_fleet<-NULL
-# Generic_obs<-NULL
-# Perfect_Imp<-NULL
-# testOM<-NULL
+  cpars="list",seed="numeric", Source="character"), contains=c("Stock", "Fleet", "Obs", "Imp"))
 
 
 # initialize OM
@@ -997,12 +983,178 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
   .Object@nsim <- nsim       
   .Object@proyears <- proyears
   
+  if(length(.Object@Mexp) < 2) .Object@Mexp <- c(0,0)
+  if(length(.Object@LenCV) < 2) .Object@LenCV <- c(0.08,0.15)
   if(length(.Object@CurrentYr)==0).Object@CurrentYr=.Object@nyears
   
   .Object@seed=1
   .Object
 })
 
+
+# ---- MSE Class ----
+#' Class \code{'MSE'}
+#' 
+#' A Management Strategy Evaluation object that contains information about
+#' simulation conditions and performance of data-limited methods
+#' 
+#' 
+#' @name MSE-class
+#' @docType class
+#' @section Objects from the Class: Objects can be created by calls of the form
+#' \code{new('MSE', Name, nyears, proyears, nMPs, MPs, nsim, OMtable, Obs,
+#' B_BMSYa, F_FMSYa, Ba, FMa, Ca, OFLa, Effort, PAA, CAA, CAL, CALbins)} 
+#'
+#' @slot Name Name of the MSE object
+#' @slot nyears The number of years for the historical simulation
+#' @slot proyears The number of years for the projections - closed loop simulations
+#' @slot nMPs Number of management procedures simulation tested
+#' @slot MPs The names of the MPs that were tested
+#' @slot nsim Number of simulations
+#' @slot OM A table of nsim rows with a column for each sampled parameter of the operating model\cr
+#'   \itemize{
+#'   \item RefY: reference yield, the highest long-term yield (mean over last five years of projection) obtained from a fixed F strategy. This is a useful reference point for framing performance of MPs because it standardizes for starting point and future productivity. 
+#'   \item M: instantaneous natural mortality rate
+#'   \item Depletion: stock depletion (biomass / unfished biomass) in the final historical year (prior to projection)
+#'   \item A: abundance (biomass) updated in each management update of projection
+#'   \item BMSY_B0: most productive stock size relative to unfished
+#'   \item FMSY_M: fishing mortality rate divided by natural mortality rate
+#'   \item Mgrad: mean average percentage gradient in natural mortality rate (percentage per time step)
+#'   \item Msd: interannual variability in natural mortality rate (lognormal CV)
+#'   \item procsd: process error - CV in log-normal recruitment deviations
+#'   \item Esd: interannual variability in historical effort (fishing mortality rate)
+#'   \item dFfinal: gradient in fishing mortality rate over final five years of the historical simulation
+#'   \item MSY: Maximum Sustainable Yield
+#'   \item qinc: mean percentage increase in fishing efficiency (catchability) in projected years (input controls only)
+#'   \item qcv: interannual variability in future fishing efficiency (catchability) in projected years (input controls only)
+#'   \item CALcv: variability in lengths at age around the growth curve (normal CV)
+#'   \item FMSY: Fishing mortality rate at Maximum Sustainable Yield
+#'   \item Linf: maximum length (von Bertalanffy Linf parameter)
+#'   \item K: maximum growth rate (von Bertalanffy K parameter)
+#'   \item t0: theoretical length at age zero (von Bertalanffy t0 parameter)
+#'   \item hs: steepness of the stock recruitment relationship (the fraction of unfished recruitment at a fifth of unfished stock levels)
+#'   \item Linfgrad: mean gradient in maximum length (per cent per time step)
+#'   \item Kgrad: mean gradient in maximum growth rate (per cent per time step)
+#'   \item Linfsd: interannual variability in maximum length (log normal CV)
+#'   \item recgrad: gradient in recruitment strength (age 1 population numbers) over last 10 years of historical simulations
+#'   \item Ksd: interannual variability in maximum growth rate (log normal CV)
+#'   \item ageM: age at 50 per cent maturity
+#'   \item LFS: length at full selection (the shortest length class where fishery selectivity is 100 per cent)
+#'   \item age05: the age at 5 percent selectivity (ascending limb of selectivity curve)
+#'   \item Vmaxage: the selectivity of the oldest age class (controls dome shape of selectivity curve)
+#'   \item LFC: length at first capture, the smallest length that can be caught by the gear
+#'   \item OFLreal: the true simulated Over Fishing Limit (FMSY x biomass) updated in each management update of the projection
+#'   \item Spat_targ: spatial targetting parameter, fishing mortality rate across areas is proportional to vulnerable biomass raised to the power of this number. 
+#'   \item Frac_area_1: the fraction of unfished biomass inhabiting area 1 (can be seen as fraction of habitat in area 1 or relative size of area 1)
+#'   \item Prob_staying: the probability that individuals in area 1 remain there between time-steps
+#'   \item AC: autocorrelation in recruitment
+#'  }
+#' @slot Obs A table of nsim rows with a column for each sampled parameter of the observation model\cr
+#'   \itemize{
+#'   \item Cbias: bias in observed catches
+#'   \item Csd: observation error in observed catches (lognormal CV)
+#'   \item CAA_nsamp: the number of catch-at-age observations per time step
+#'   \item CAA_ESS: the effective sample size of multinomial catch-at-age observation model (number of independent draws)
+#'   \item CAL_nsamp: the number of catch-at-length observations per time step
+#'   \item CAL_ESS: the effective sample size of multinomial catch-at-length observation model (number of independent draws)
+#'   \item Isd: observation error in relative abundance index (lognormal CV)
+#'   \item Dbias: bias in observed stock depletion (also applies to depletion Dt for DCAC)
+#'   \item Mbias: bias in observed natural mortality rate
+#'   \item FMSY_Mbias: bias in ratio of FMSY to natural mortality rate
+#'   \item BMSY_B0bias: bias in ratio of most productive stock size relative to unfished
+#'   \item AMbias: bias in age at 50 per cent maturity
+#'   \item LFCbias: bias in length at first capture
+#'   \item LFSbias: bias in length at full selection
+#'   \item Abias: bias in observed current absolute stock biomass
+#'   \item Kbias: bias in maximum growth rate (von Bertalanffy K parameter)
+#'   \item t0bias: bias in theoretical length at age zero (von Bertalanffy t0 parameter)
+#'   \item Linfbias: bias in maximum length (von Bertalanffy Linf parameter)
+#'   \item hbias: bias in observed steepness of the stock recruitment relationship
+#'   \item Irefbias: bias in abundance index corresponding to BMSY stock levels
+#'   \item Crefbias: bias in MSY prediction (target or reference catch)
+#'   \item Brefbias: bias in BMSY stock levels (target or reference biomass levels)}
+#' @slot B_BMSY Stored biomass relative to BMSY over the projection (an array with dimensions nsim, nMPs, proyears) 
+#' @slot F_FMSY Stored fishing mortality rate relative to FMSY over the projection (an array with dimensions nsim, nMPs, proyears) 
+#' @slot B Stored stock biomass over the projection (an array with dimensions nsim, nMPs, proyears)
+#' @slot SSB Stored spawning stock biomass over the projection (an array with dimensions nsim, nMPs, proyears)
+#' @slot VB Stored vulnerable biomass over the projection (an array with dimensions nsim, nMPs, proyears) 
+#' @slot FM Stored fishing mortality rate over the projection (an array with dimensions nsim, nMPs, proyears)
+#' @slot C Stored catches (taken) over the projection (an array with dimensions nsim, nMPs, proyears) 
+#' @slot TAC Stored Total Allowable Catch (prescribed) over the projection (an array with dimensions nsim, nMPs, proyears)(note that this is NA for input controls) 
+#' @slot SSB_hist Stored historical spawning stock biomass (historical simulations - an array with dimensions nsim, nages, nyears, nareas)
+#' @slot CB_hist Stored historical catches in weight (historical simulations - an array with dimensions nsim, nages, nyears, nareas)
+#' @slot FM_hist Stored historical fishing mortality rate (historical simulations - an array with dimensions nsim, nages, nyears, nareas)
+#' @slot Effort Stored relative fishing effort in the projection years
+#' @slot PAA Population at age in last projection year (an array with dimensions nsim, nMPs, nages)
+#' @slot CAA Catch at age in last projection year (an array with dimensions nsim, nMPs, nages)
+#' @slot CAL Catch at length in last projection year (an array with dimensions nsim, nMPs, nCALbins)
+#' @slot CALbins Mid-points of the catch-at-length bins
+#'
+#' @author T. Carruthers
+#' @keywords classes
+setClass("MSE", representation(Name = "character", nyears = "numeric", 
+                               proyears = "numeric", nMPs = "numeric", MPs = "character", nsim = "numeric", 
+                               OM = "data.frame", Obs = "data.frame", B_BMSY = "array", F_FMSY = "array", 
+                               B = "array", SSB="array", VB="array", FM = "array", C = "array", 
+                               TAC = "array", SSB_hist = "array", 
+                               CB_hist = "array", FM_hist = "array", Effort = "array", PAA= "array", CAA= "array", 
+                               CAL= "array", CALbins="numeric"))
+
+
+setMethod("initialize", "MSE", function(.Object, Name, nyears, proyears, 
+                                        nMPs, MPs, nsim, OM, Obs, B_BMSY, F_FMSY, B, SSB, VB, FM, C, TAC, 
+                                        SSB_hist, CB_hist, FM_hist, Effort = array(), PAA,  CAA, CAL, CALbins) {
+  .Object@Name <- Name
+  .Object@nyears <- nyears
+  .Object@proyears <- proyears
+  .Object@nMPs <- nMPs
+  .Object@MPs <- MPs
+  .Object@nsim <- nsim
+  .Object@OM <- OM
+  .Object@Obs <- Obs
+  .Object@B_BMSY <- B_BMSY
+  .Object@F_FMSY <- F_FMSY
+  .Object@B <- B
+  .Object@SSB <- SSB
+  .Object@VB <- VB
+  .Object@FM <- FM
+  .Object@C <- C  
+  .Object@TAC <- TAC
+  .Object@SSB_hist <- SSB_hist
+  .Object@CB_hist <- CB_hist
+  .Object@FM_hist <- FM_hist
+  .Object@Effort <- Effort
+  .Object@PAA <- PAA
+  .Object@CAA <- CAA
+  .Object@CAL <- CAL
+  .Object@CALbins <- CALbins
+  
+  .Object
+})
+
+# setMethod("initialize", "MSE", function(.Object, Name, nyears, proyears, 
+# nMPs, MPs, nsim, OMtable, Obs, B_BMSYa, F_FMSYa, Ba, FMa, Ca, TACa, 
+# SSB_hist, CB_hist, FM_hist, Effort = array()) {
+# .Object@Name <- Name
+# .Object@nyears <- nyears
+# .Object@proyears <- proyears
+# .Object@nMPs <- nMPs
+# .Object@MPs <- MPs
+# .Object@nsim <- nsim
+# .Object@OM <- OMtable
+# .Object@Obs <- Obs
+# .Object@B_BMSY <- B_BMSYa
+# .Object@F_FMSY <- F_FMSYa
+# .Object@B <- Ba
+# .Object@FM <- FMa
+# .Object@C <- Ca
+# .Object@TAC <- TACa
+# .Object@SSB_hist <- SSB_hist
+# .Object@CB_hist <- CB_hist
+# .Object@FM_hist <- FM_hist
+# .Object@Effort <- Effort
+# .Object
+# })
 
 
 #' Example data object
@@ -1026,7 +1178,7 @@ NULL
 
 
 
-
+# ---- Plot Data Object -----
 #' Plot Data object
 #'
 #' @rdname plot-Data 
@@ -1111,6 +1263,7 @@ setMethod("plot",
     mtext(paste("TAC calculation for ",Data@Name,sep=""),3,outer=T,line=0.5)
 })
 
+# ---- Plot MSE object ----
 #' Plot MSE object
 #'
 #' @rdname plot-MSE
@@ -1126,110 +1279,10 @@ setMethod("plot",
 })
 
 
-#' Class \code{'Stock'}
-#' 
-#' An operating model component that specifies the parameters of the population
-#' dynamics model
-#' 
-#' 
-#' @name Stock-class
-#' @docType class
-#' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new('Stock')}
-#' @slot Name The name of the Stock object 
-#' @slot maxage The maximum age of individuals that is simulated (there is no 'plus group': individuals die off beyone the maximum age so there isn't a huge cost to simulating more older age classes) 
-#' @slot R0 The magnitude of unfished recruitment. This is normally fixed to some arbitrary value since it simply scales the simulated numbers) 
-#' @slot M Natural mortality rate (uniform distribution) 
-#' @slot Msd Inter-annual variability in natural mortality rate expressed as a coefficient of variation (uniform distribution) 
-#' @slot Mgrad Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year (uniform distribution) 
-#' @slot h Steepness of the stock recruit relationship (uniform distribution) 
-#' @slot SRrel Type of stock-recruit relationship (1)Beverton-Holt (2) Ricker 
-#' @slot Linf Maximum length (uniform distribution) 
-#' @slot K von B. growth parameter k (uniform distribution) 
-#' @slot t0 von B. theoretical age at length zero (uniform distribution) 
-#' @slot Ksd Inter-annual variability in growth parameter k (uniform distribution) 
-#' @slot Kgrad Mean temporal trend in growth parameter k, expressed as a percentage change in k per year (uniform distribution) 
-#' @slot Linfsd Inter-annual variability in maximum length - uniform distribution 
-#' @slot Linfgrad Mean temporal trend in maximum length, expressed as a percentage change in Linf per year (uniform distribution) 
-#' @slot recgrad Mean temporal trend in log-normal recruitment deviations (uniform distribution) 
-#' @slot AC Autocorrelation in recruitment deviations rec(t)=AC*rec(t-1)+(1-AC)*sigma(t) (uniform distribution) 
-#' @slot a Length-weight parameter alpha (uniform distribution) 
-#' @slot b Length-weight parameter beta (uniform distribution) 
-#' @slot L50 Length-at- 50 percent maturity (uniform distribution) 
-#' @slot L50_95 Length increment from 50 percent to 95 percent maturity 
-#' @slot D Current level of stock depletion (Bcurrent/Bunfished) (uniform distribution) 
-#' @slot Perr Process error, the CV of lognormal recruitment deviations  (uniform distribution) 
-#' @slot Period Period for cylical recruitment pattern in years (uniform distribution). Leave empty to ignore  
-#' @slot Amplitude Amplitude in deviation from long-term average recruitment during recruitment cycle, both positive and negative (uniform distribution). E.g., a range from 0 to 0.5 means recruitment decreases or increases by up to 50\% each cycle. Leave empty to ignore 
-#' @slot Size_area_1 The size of area 1 relative to area 2 (uniform distribution) 
-#' @slot Frac_area_1 The fraction of the unfished biomass in stock 1 (uniform distribution) 
-#' @slot Prob_staying The probability of inviduals in area 1 remaining in area 1 over the course of one year 
-#' @slot Source A reference to a website or article form which parameters were taken to define the operating model
-
-#' @author T. Carruthers
-#' @keywords classes
-#' @examples
-#' 
-#' showClass('Stock')
-#' 
-setClass("Stock", representation(Name = "character", maxage = "numeric", 
-  R0 = "numeric", M = "numeric", Msd = "numeric", Mgrad = "numeric", 
-  h = "numeric", SRrel = "numeric", Linf = "numeric", K = "numeric", 
-  t0 = "numeric", Ksd = "numeric", Kgrad = "numeric", Linfsd = "numeric", 
-  Linfgrad = "numeric", recgrad = "numeric", a = "numeric", b = "numeric", 
-  D = "numeric", Perr = "numeric", Period = "numeric", Amplitude = "numeric", 
-  Size_area_1 = "numeric", Frac_area_1 = "numeric", Prob_staying = "numeric", 
-  AC = "numeric", L50 = "numeric", L50_95 = "numeric", Source = "character"))
-
-# initialize Stock
-setMethod("initialize", "Stock", function(.Object, file = NA) {
-  
-  if (!is.na(file)) {
-    if (file.exists(file)) {
-      Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-      dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
-      dname <- dat[, 1]
-      dat <- dat[, 2:ncol(dat)]
-      
-      .Object@Name <- dat[match("Name", dname), 1]
-      .Object@maxage <- as.numeric(dat[match("maxage", dname), 1])
-      .Object@R0 <- as.numeric(dat[match("R0", dname), 1])
-      .Object@M <- as.numeric(dat[match("M", dname), 1:2])
-      .Object@Msd <- as.numeric(dat[match("Msd", dname), 1:2])
-      .Object@Mgrad <- as.numeric(dat[match("Mgrad", dname), 1:2])
-      .Object@h <- as.numeric(dat[match("h", dname), 1:2])
-      .Object@SRrel <- as.numeric(dat[match("SRrel", dname), 1])
-      .Object@Linf <- as.numeric(dat[match("Linf", dname), 1:2])
-      .Object@K <- as.numeric(dat[match("K", dname), 1:2])
-      .Object@t0 <- as.numeric(dat[match("t0", dname), 1:2])
-      .Object@Ksd <- as.numeric(dat[match("Ksd", dname), 1:2])
-      .Object@Kgrad <- as.numeric(dat[match("Kgrad", dname), 1:2])
-      .Object@Linfsd <- as.numeric(dat[match("Linfsd", dname), 1:2])
-      .Object@Linfgrad <- as.numeric(dat[match("Linfgrad", dname),  1:2])
-      .Object@recgrad <- as.numeric(dat[match("recgrad", dname), 1:2])
-      .Object@a <- as.numeric(dat[match("a", dname), 1])
-      .Object@b <- as.numeric(dat[match("b", dname), 1])
-      .Object@D <- as.numeric(dat[match("D", dname), 1:2])
-      .Object@Perr <- as.numeric(dat[match("Perr", dname), 1:2])
-      .Object@Period <- as.numeric(dat[match("Period", dname), 1:2])
-      .Object@Amplitude <- as.numeric(dat[match("Amplitude", dname), 1:2])
-      .Object@AC <- as.numeric(dat[match("AC", dname), 1:2])
-      .Object@Size_area_1 <- as.numeric(dat[match("Size_area_1", dname), 1:2])
-      .Object@Frac_area_1 <- as.numeric(dat[match("Frac_area_1", dname), 1:2])
-      .Object@Prob_staying <- as.numeric(dat[match("Prob_staying", dname), 1:2])
-      .Object@L50 <- as.numeric(dat[match("L50", dname), 1:2])
-      .Object@L50_95 <- as.numeric(dat[match("L50_95", dname), 1:2])
-      .Object@Source <- dat[match("Source", dname), 1]
-    } else {
-      message("File doesn't exist")
-    }
-  }
-  .Object
-  
-})
 
 
 
+# ---- Summary of Data Object ----
 #' Summary of Data object
 #'
 #' @rdname summary-Data
@@ -1279,6 +1332,7 @@ setMethod("summary",
 
 })
 
+# ---- Summary of MSE object ----
 #' Summary of MSE object
 #'
 #' @param object object of class MSE
@@ -1332,78 +1386,6 @@ setMethod("summary",
 
 
 
-#' Class \code{'Imp'}
-#' 
-#' An operating model component that specifies the degree of adherence to management recommendations (Implementation error)
-#' 
-#' 
-#' @name Imp-class
-#' @docType class
-#' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new('Imp')}
-#' @slot Name The name of the Implementation error object 
-#' @slot TACSD lognormal standard deviation in fraction of TAC taken (uniform distribution) 
-#' @slot TACFrac Mean fraction of TAC taken (uniform distribution) (can be an improper fraction greater than 1)
-#' @slot ESD lognormal standard deviation in fraction of TAE taken(uniform distribution)
-#' @slot EFrac Mean fraction of recommended effort taken (uniform distribution)
-#' @slot SizeLimSD lognormal error in size limit implementation (uniform distribution)
-#' @slot SizeLimFrac Mean fraction of the size limit (uniform distribution) (can be an improper fraction greater than 1)
-#' @slot DiscMort Discard mortality rate (uniform distribution) (can be an improper fraction greater than 1)
-#' @slot Source A reference to a website or article form which parameters were taken to define the operating model
-#' @author T. Carruthers
-#' @keywords classes
-#' @examples
-#' 
-#' showClass('Imp')
-#' 
-setClass("Imp", representation(Name = "character", TACSD = "numeric", TACFrac = "numeric", 
-                               ESD = "numeric", EFrac = "numeric",
-                               SizeLimSD = "numeric", SizeLimFrac="numeric",
-                               DiscMort = "numeric", 
-                               Source = "character"))
-
-# initialize Imp
-setMethod("initialize", "Imp", function(.Object, file = NA) {
-  
-  .Object@Name <- "Perfect implementation"
-  .Object@TACSD <- c(0,0)
-  .Object@TACFrac <- c(1,1)
-  .Object@ESD <- c(0,0)
-  .Object@EFrac <-c(1,1)
-  .Object@SizeLimSD <- c(0,0)
-  .Object@SizeLimFrac<-c(1,1)
-  .Object@DiscMort <- c(0,0)
-  .Object@Source <-"DLMtool generated"
-  
-  if (!is.na(file)) {
-    if (file.exists(file)) {
-      Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-      dat <- read.csv(file, header = F, colClasses = "character", 
-                      col.names = paste0("V", 1:Ncol))  # read 1st sheet
-      dname <- dat[, 1]
-      dat <- dat[, 2:ncol(dat)]
-      
-      .Object@Name <- dat[match("Name", dname), 1]
-      .Object@TACSD <- as.numeric(dat[match("TACSD", dname), 1:2])
-      .Object@TACFrac <- as.numeric(dat[match("TACFrac", dname), 1:2])
-      .Object@ESD <- as.numeric(dat[match("ESD", dname), 1:2])
-      .Object@EFrac <- as.numeric(dat[match("EFrac", dname), 1:2])
-      .Object@SizeLimSD <- as.numeric(dat[match("SizeLimSD", dname), 1:2])
-      .Object@SizeLimFrac <- as.numeric(dat[match("SizeLimFrac", dname), 1:2])
-      .Object@DiscMort <- as.numeric(dat[match("DiscMort", dname), 1:2])
-      .Object@Source <- dat[match("Source", dname), 1]
-      
-    } else {
-      
-      message("File doesn't exist")
-      
-    }
-    
-    
-  }
-  .Object
-  
-})
 
   
 

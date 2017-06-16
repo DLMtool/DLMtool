@@ -68,9 +68,11 @@ Converge <- function(MSEobj, thresh = 2, Plot = TRUE) {
     return(mean(abs((X[L - Y] - X[L])), na.rm = TRUE) > thresh)
   }
   
-  NonCon <- sort(unique(c(which(apply(CumlYd, 1, Chk)), which(apply(CumlPOF, 
-    1, Chk)), which(apply(CumlP10, 1, Chk)), which(apply(CumlP50, 1, 
-    Chk)), which(apply(CumlP100, 1, Chk)))))
+  NonCon <- sort(unique(c(which(apply(CumlYd, 1, Chk)), 
+                          which(apply(CumlPOF, 1, Chk)), 
+                          which(apply(CumlP10, 1, Chk)), 
+                          which(apply(CumlP50, 1, Chk)), 
+                          which(apply(CumlP100, 1, Chk)))))
   
   if (length(NonCon) == 1) 
     NonCon <- rep(NonCon, 2)
@@ -96,8 +98,7 @@ Converge <- function(MSEobj, thresh = 2, Plot = TRUE) {
         bty = "n", xpd = NA, lty = 1, lwd = 2, cex = 1.25)
     }
     
-    message("Some MPs may not have converged in ", nsim, " iterations (threshold = ", 
-      thresh, "%)")
+    message("Some MPs may not have converged in ", nsim, " iterations (threshold = ", thresh, "%)")
     message("MPs are: ", paste(MSEobj@MPs[NonCon], " "))
     message("MPs #: ", paste(NonCon, " "))
     return(data.frame(Num = NonCon, MP = MSEobj@MPs[NonCon]))
@@ -2303,6 +2304,12 @@ updateMSE <- function(MSEobj) {
       fun <- get(as.character(slotTypes[X]))
       slot(MSEobj, slots[X]) <- fun(0)
     }
+  }
+  if (.hasSlot(MSEobj, "LenCV")) {
+    if (length(MSEobj@LenCV) == 0) MSEobj@LenCV <- c(0.08,0.15)
+  }
+  if (.hasSlot(MSEobj, "Mexp")) {
+    if (length(MSEobj@Mexp) == 0) MSEobj@Mexp <- c(0,0)
   }
   MSEobj
 }

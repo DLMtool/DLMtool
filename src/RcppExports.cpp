@@ -24,13 +24,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // doprojPI_cpp
-double doprojPI_cpp(double lnF, NumericVector Mvec, NumericVector Wac, NumericVector Mac, NumericVector Pc, NumericMatrix N_c, NumericMatrix SSN_c, NumericMatrix Biomass_c, NumericMatrix VBiomass_c, NumericMatrix SSB_c, NumericMatrix Vc, double hc, NumericVector R0ac, double proyears, double nareas, double maxage, NumericMatrix movc, double SSBpRc, NumericVector aRc, NumericVector bRc, double SRrelc, double Spat_targc);
-RcppExport SEXP DLMtool_doprojPI_cpp(SEXP lnFSEXP, SEXP MvecSEXP, SEXP WacSEXP, SEXP MacSEXP, SEXP PcSEXP, SEXP N_cSEXP, SEXP SSN_cSEXP, SEXP Biomass_cSEXP, SEXP VBiomass_cSEXP, SEXP SSB_cSEXP, SEXP VcSEXP, SEXP hcSEXP, SEXP R0acSEXP, SEXP proyearsSEXP, SEXP nareasSEXP, SEXP maxageSEXP, SEXP movcSEXP, SEXP SSBpRcSEXP, SEXP aRcSEXP, SEXP bRcSEXP, SEXP SRrelcSEXP, SEXP Spat_targcSEXP) {
+double doprojPI_cpp(double lnF, NumericMatrix Mmat, NumericVector Wac, NumericVector Mac, NumericVector Pc, NumericMatrix N_c, NumericMatrix SSN_c, NumericMatrix Biomass_c, NumericMatrix VBiomass_c, NumericMatrix SSB_c, NumericMatrix Vc, double hc, NumericVector R0ac, double proyears, double nareas, double maxage, NumericMatrix movc, double SSBpRc, NumericVector aRc, NumericVector bRc, double SRrelc, double Spat_targc);
+RcppExport SEXP DLMtool_doprojPI_cpp(SEXP lnFSEXP, SEXP MmatSEXP, SEXP WacSEXP, SEXP MacSEXP, SEXP PcSEXP, SEXP N_cSEXP, SEXP SSN_cSEXP, SEXP Biomass_cSEXP, SEXP VBiomass_cSEXP, SEXP SSB_cSEXP, SEXP VcSEXP, SEXP hcSEXP, SEXP R0acSEXP, SEXP proyearsSEXP, SEXP nareasSEXP, SEXP maxageSEXP, SEXP movcSEXP, SEXP SSBpRcSEXP, SEXP aRcSEXP, SEXP bRcSEXP, SEXP SRrelcSEXP, SEXP Spat_targcSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< double >::type lnF(lnFSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Mvec(MvecSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type Mmat(MmatSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type Wac(WacSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type Mac(MacSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type Pc(PcSEXP);
@@ -51,7 +51,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type bRc(bRcSEXP);
     Rcpp::traits::input_parameter< double >::type SRrelc(SRrelcSEXP);
     Rcpp::traits::input_parameter< double >::type Spat_targc(Spat_targcSEXP);
-    rcpp_result_gen = Rcpp::wrap(doprojPI_cpp(lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc));
+    rcpp_result_gen = Rcpp::wrap(doprojPI_cpp(lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -88,7 +88,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // optQ_cpp
-double optQ_cpp(double lnIn, double depc, NumericVector Fc, NumericVector Perrc, NumericVector Mc, double hc, NumericVector Mac, NumericMatrix Wac, double R0c, NumericMatrix Vc, double nyears, double maxage, NumericMatrix movc, double Spat_targc, double SRrelc, NumericVector aRc, NumericVector bRc);
+double optQ_cpp(double lnIn, double depc, NumericVector Fc, NumericVector Perrc, NumericMatrix Mc, double hc, NumericVector Mac, NumericMatrix Wac, double R0c, NumericMatrix Vc, double nyears, double maxage, NumericMatrix movc, double Spat_targc, double SRrelc, NumericVector aRc, NumericVector bRc);
 RcppExport SEXP DLMtool_optQ_cpp(SEXP lnInSEXP, SEXP depcSEXP, SEXP FcSEXP, SEXP PerrcSEXP, SEXP McSEXP, SEXP hcSEXP, SEXP MacSEXP, SEXP WacSEXP, SEXP R0cSEXP, SEXP VcSEXP, SEXP nyearsSEXP, SEXP maxageSEXP, SEXP movcSEXP, SEXP Spat_targcSEXP, SEXP SRrelcSEXP, SEXP aRcSEXP, SEXP bRcSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -97,7 +97,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type depc(depcSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type Fc(FcSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type Perrc(PerrcSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Mc(McSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type Mc(McSEXP);
     Rcpp::traits::input_parameter< double >::type hc(hcSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type Mac(MacSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type Wac(WacSEXP);
@@ -115,13 +115,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // projOpt_cpp
-NumericVector projOpt_cpp(double lnIn, double Mc, double hc, NumericVector Mac, NumericVector Wac, double R0c, NumericVector Vc, double nyears, double maxage, NumericMatrix movc, double Spat_targc, double SRrelc, NumericVector aRc, NumericVector bRc, double proyears, double Control);
+NumericVector projOpt_cpp(double lnIn, NumericVector Mc, double hc, NumericVector Mac, NumericVector Wac, double R0c, NumericVector Vc, double nyears, double maxage, NumericMatrix movc, double Spat_targc, double SRrelc, NumericVector aRc, NumericVector bRc, double proyears, double Control);
 RcppExport SEXP DLMtool_projOpt_cpp(SEXP lnInSEXP, SEXP McSEXP, SEXP hcSEXP, SEXP MacSEXP, SEXP WacSEXP, SEXP R0cSEXP, SEXP VcSEXP, SEXP nyearsSEXP, SEXP maxageSEXP, SEXP movcSEXP, SEXP Spat_targcSEXP, SEXP SRrelcSEXP, SEXP aRcSEXP, SEXP bRcSEXP, SEXP proyearsSEXP, SEXP ControlSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< double >::type lnIn(lnInSEXP);
-    Rcpp::traits::input_parameter< double >::type Mc(McSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Mc(McSEXP);
     Rcpp::traits::input_parameter< double >::type hc(hcSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type Mac(MacSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type Wac(WacSEXP);

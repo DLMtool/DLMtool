@@ -32,7 +32,8 @@ ChooseSelect <- function(Fleet, Stock, FstYr = NULL, SelYears = NULL) {
     # if (Fleet@isRel == 1) isRel <- TRUE
     # if (Fleet@isRel == 0) isRel <- FALSE
   # }
-  
+  if (class(Fleet) != "Fleet") stop("First argument must be object of class 'Fleet'", call.=FALSE)
+  if (class(Stock) != "Stock") stop("First argument must be object of class 'Stock'", call.=FALSE)
   # if ((!isRel) & is.null(Stock))  stop("Require Stock object")
   Fleet@isRel <- 'FALSE'
   isRel <- FALSE

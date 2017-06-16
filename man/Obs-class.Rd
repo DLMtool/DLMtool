@@ -24,7 +24,7 @@ An operating model component that controls the observation model
 
 \item{\code{CAL_ESS}}{Effective sample size (independent length draws) of the multinomial catch-at-length observation error model (uniform distribution)}
 
-\item{\code{CALcv}}{Lognormal, variability in the length at age (uniform distribution)}
+\item{\code{CALcv}}{Lognormal, variability in the Cv of length-at-age (uniform distribution)}
 
 \item{\code{Iobs}}{Observation error in the relative abundance indices expressed as a coefficient of variation (uniform distribution)}
 

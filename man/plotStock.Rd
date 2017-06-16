@@ -13,11 +13,11 @@ plotStock(x, nsamp = 3, nsim = 500, nyears = 50, proyears = 28,
 
 \item{nsamp}{Number of random samples for time-series plots}
 
-\item{nsim}{Number of iterations for histograms}
+\item{nsim}{Number of iterations for histograms. Ignored if x is class 'OM'}
 
-\item{nyears}{Number of historical years}
+\item{nyears}{Number of historical years. Ignored if x is class 'OM'}
 
-\item{proyears}{Number of projection years}
+\item{proyears}{Number of projection years. Ignored if x is class 'OM'}
 
 \item{col}{Color of histograms}
 

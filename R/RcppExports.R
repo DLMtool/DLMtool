@@ -9,7 +9,7 @@ bhnoneq_LL <- function(stpar, year, Lbar, ss, Linf, K, Lc, nbreaks) {
 #'
 #' 
 #' @param lnF internal
-#' @param Mvec internal
+#' @param Mmat internal
 #' @param Wac internal
 #' @param Mac internal
 #' @param Pc internal
@@ -33,8 +33,8 @@ bhnoneq_LL <- function(stpar, year, Lbar, ss, Linf, K, Lc, nbreaks) {
 #' 
 #' @export
 #' @keywords internal
-doprojPI_cpp <- function(lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc) {
-    .Call('DLMtool_doprojPI_cpp', PACKAGE = 'DLMtool', lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc)
+doprojPI_cpp <- function(lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc) {
+    .Call('DLMtool_doprojPI_cpp', PACKAGE = 'DLMtool', lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc)
 }
 
 #' Generate length composition of catch 
