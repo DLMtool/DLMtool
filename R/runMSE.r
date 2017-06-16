@@ -1293,45 +1293,45 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   MSEout 
 }
 
-#' #' Internal function of runMSE for checking that the OM slot cpars slot is formatted correctly
-#' #'
-#' #' @param cpars a list of model parameters to be sampled (single parameters are a vector nsim long, time series are matrices nsim x nyears)
-#' #' @return either an error and the length of the first dimension of the various cpars list items or passes and returns the number of simulations
-#' #' @export cparscheck
-#' #' @author T. Carruthers
-#' cparscheck<-function(cpars){
-#'   
-#'   dim1check<-function(x){
-#'     if(class(x)=="numeric")length(x)
-#'     else dim(x)[1]
-#'   }
-#'   
-#'   dims<-sapply(cpars,dim1check)
-#'   if(length(unique(dims))!=1){
-#'     print(dims)
-#'     stop("The custom parameters in your operating model @cpars have varying number of simulations. For each simulation each parameter / variable should correspond with one another")
-#'   }else{
-#'     as.integer(dims[1])  
-#'   }
-#'   
-#' }  
-#' 
-#' 
-#' cparnamecheck<-function(cpars){  
-#'   
-#'   Sampnames <- c("dep","Esd","Find","procsd","AC","M","Msd", 
-#'                  "Mgrad","hs","Linf","Linfsd","Linfgrad","recgrad",
-#'                  "K","Ksd","Kgrad","t0","L50","L50_95","Spat_targ",
-#'                  "Frac_area_1","Prob_staying","Size_area_1", 
-#'                  "Csd","Cbias","CAA_nsamp","CAA_ESS","CAL_nsamp",
-#'                  "CAL_ESS","CALcv","betas","Isd","Derr","Dbias", 
-#'                  "Mbias","FMSY_Mbias","lenMbias","LFCbias",
-#'                  "LFSbias","Aerr","Abias","Kbias","t0bias", 
-#'                  "Linfbias","Irefbias","Crefbias","Brefbias",
-#'                  "Recsd","qinc","qcv","L5","LFS","Vmaxlen","L5s", 
-#'                  "LFSs","Vmaxlens","Perr","R0","Mat_age", 
-#'                  "Mrand","Linfrand","Krand","maxage","V","Depletion", # end of OM variables
-#'                  "ageM", "age95", "V", "EffYears", "EffLower", "EffUpper","Mat_age", # start of runMSE derived variables
-#'                  "Wt_age") 
-#'   
-#' }
+#' Internal function of runMSE for checking that the OM slot cpars slot is formatted correctly
+#'
+#' @param cpars a list of model parameters to be sampled (single parameters are a vector nsim long, time series are matrices nsim x nyears)
+#' @return either an error and the length of the first dimension of the various cpars list items or passes and returns the number of simulations
+#' @export cparscheck
+#' @author T. Carruthers
+cparscheck<-function(cpars){
+
+  dim1check<-function(x){
+    if(class(x)=="numeric")length(x)
+    else dim(x)[1]
+  }
+
+  dims<-sapply(cpars,dim1check)
+  if(length(unique(dims))!=1){
+    print(dims)
+    stop("The custom parameters in your operating model @cpars have varying number of simulations. For each simulation each parameter / variable should correspond with one another")
+  }else{
+    as.integer(dims[1])
+  }
+
+}
+
+
+cparnamecheck<-function(cpars){
+
+  Sampnames <- c("dep","Esd","Find","procsd","AC","M","Msd",
+                 "Mgrad","hs","Linf","Linfsd","Linfgrad","recgrad",
+                 "K","Ksd","Kgrad","t0","L50","L50_95","Spat_targ",
+                 "Frac_area_1","Prob_staying","Size_area_1",
+                 "Csd","Cbias","CAA_nsamp","CAA_ESS","CAL_nsamp",
+                 "CAL_ESS","CALcv","betas","Isd","Derr","Dbias",
+                 "Mbias","FMSY_Mbias","lenMbias","LFCbias",
+                 "LFSbias","Aerr","Abias","Kbias","t0bias",
+                 "Linfbias","Irefbias","Crefbias","Brefbias",
+                 "Recsd","qinc","qcv","L5","LFS","Vmaxlen","L5s",
+                 "LFSs","Vmaxlens","Perr","R0","Mat_age",
+                 "Mrand","Linfrand","Krand","maxage","V","Depletion", # end of OM variables
+                 "ageM", "age95", "V", "EffYears", "EffLower", "EffUpper","Mat_age", # start of runMSE derived variables
+                 "Wt_age")
+
+}
