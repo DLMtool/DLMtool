@@ -4,7 +4,7 @@
 \alias{SampleStockPars}
 \title{Sample Stock parameters}
 \usage{
-SampleStockPars(Stock, nsim = NULL, nyears = NULL, proyears = NULL,
+SampleStockPars(Stock, nsim = 48, nyears = 80, proyears = 50,
   cpars = NULL)
 }
 \arguments{

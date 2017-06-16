@@ -1,4 +1,17 @@
-## Wrapper for histogram function 
+
+#' Wrapper for histogram function 
+#' 
+#' Produces a blank plot if all values in x are equal 
+#'
+#' @param x A vector of values
+#' @param col Colour of the histogram
+#' @param axes Logical - should axes be included?
+#' @param main Character - main title
+#' @param breaks Number of breaks. See ?hist for more details
+#' @param cex.main Text size of the main title
+#' 
+#' @export
+#'
 hist2 <- function(x, col, axes=FALSE, main="", breaks=10,cex.main=1) {
   if (mean(x) == x[1]) {
    
@@ -26,9 +39,9 @@ plot.Stock <- function(x, ...)  plotStock(x, ...)
 #' 
 #' @param x An object of class Stock (or of class OM) 
 #' @param nsamp Number of random samples for time-series plots
-#' @param nsim Number of iterations for histograms
-#' @param nyears Number of historical years
-#' @param proyears Number of projection years 
+#' @param nsim Number of iterations for histograms. Ignored if x is class 'OM'
+#' @param nyears Number of historical years. Ignored if x is class 'OM'
+#' @param proyears Number of projection years. Ignored if x is class 'OM'
 #' @param col Color of histograms 
 #' @param breaks Number of breaks for histograms 
 #' @param lwd line width 
@@ -40,213 +53,142 @@ plot.Stock <- function(x, ...)  plotStock(x, ...)
 plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28, 
   col="darkgray", breaks=10, lwd=2, ask=FALSE, incVB=TRUE, ...) {
   Stock <- x 
-  cpars <- NULL
+  SampCpars <- list() # empty list 
   if (class(Stock) == "OM") {
     if (is.finite(Stock@nyears)) nyears <- Stock@nyears
-	if (is.finite(Stock@proyears)) proyears <- Stock@proyears
-	if (is.finite(Stock@nsim)) nsim <- Stock@nsim	
-	if (length(Stock@cpars) > 0) {
-	  cpars <- Stock@cpars
-	  ncparsim <- cparscheck(cpars)
-	}
-	Stock <- SubOM(Stock)
+	  if (is.finite(Stock@proyears)) proyears <- Stock@proyears
+	  if (is.finite(Stock@nsim)) nsim <- Stock@nsim	
+	  
+	  if(length(Stock@cpars)>0){ # custom parameters exist - sample and write to list
+	    ncparsim<-cparscheck(Stock@cpars)   # check each list object has the same length and if not stop and error report
+	    SampCpars <- SampleCpars(Stock@cpars) 
+	  }
+	  Stock <- SubOM(Stock)
   }
   its <- sample(1:nsim, nsamp)
+  
+  
+  # --- Sample Stock Parameters ----
+  StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars)
+  # Assign Stock pars to function environment
+  for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
 	
-  maxage <- Stock@maxage  # maximum age (no plus group)
-  calcMax <- -log(0.01)/(min(Stock@M))        # Age at which 1% of cohort survives
-  maxage <- round(max(maxage, calcMax),0)  # If maximum age is lower, increase it to calcMax
  
-  ## Life History Parameters ##
-  procsd <- runif(nsim, Stock@Perr[1], Stock@Perr[2])  # Process error standard deviation
-  AC <- runif(nsim, Stock@AC[1], Stock@AC[2])  # auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)
-  dep <- runif(nsim, Stock@D[1], Stock@D[2])
-  M <- runif(nsim, Stock@M[1], Stock@M[2])  # natural mortality rate \t
-  Msd <- runif(nsim, Stock@Msd[1], Stock@Msd[2])  # sample inter annual variability in M frStock specified range
-  Mgrad <- runif(nsim, Stock@Mgrad[1], Stock@Mgrad[2])  # sample gradient in M (M y-1)
-  hs <- runif(nsim, Stock@h[1], Stock@h[2])  # sample of recruitment cStockpensation (steepness - fraction of unfished recruitment at 20% of unfished biStockass)
-  Linf <- runif(nsim, Stock@Linf[1], Stock@Linf[2])  # sample of asymptotic length
-  Linfsd <- runif(nsim, Stock@Linfsd[1], Stock@Linfsd[2])  # sample of interannual variability in Linf
-  Linfgrad <- runif(nsim, Stock@Linfgrad[1], Stock@Linfgrad[2])  # sample of gradient in Linf (Linf y-1)
-  recgrad <- runif(nsim, Stock@recgrad[1], Stock@recgrad[2])  # gradient in recent recruitment
-  K <- runif(nsim, Stock@K[1], Stock@K[2])  # now predicted by a log-linear model
-  Ksd <- runif(nsim, Stock@Ksd[1], Stock@Ksd[2])  #runif(nsim,Stock@Ksd[1],Stock@Ksd[2])# sd is already added in the linear model prediction
-  Kgrad <- runif(nsim, Stock@Kgrad[1], Stock@Kgrad[2])  # gradient in Von-B K parameter (K y-1)
-  t0 <- runif(nsim, Stock@t0[1], Stock@t0[2])  # a sample of theoretical age at length zero
-  L50 <- array(runif(nsim * 50, Stock@L50[1], Stock@L50[2]), c(nsim, 50))  # length at 50% maturity
-  L50_95 <- array(runif(nsim * 50, Stock@L50_95[1], Stock@L50_95[2]), c(nsim, 50))  # length at 95% maturity
-  
-  # checks for unrealistically high length at maturity 
-  L50[L50/Linf > 0.95] <- NA
-  L50 <- apply(L50, 1, function(x) x[!is.na(x)][1])
-  L50_95[(L50+L50_95)/Linf > 0.99] <- NA
-  L50_95 <- apply(L50_95, 1, function(x) x[!is.na(x)][1]) 
-  L95 <- array(L50 + L50_95) 
-  
-    # Generate randStock numbers for randStock walk 
-  Mrand <- matrix(exp(rnorm(nsim*(proyears+nyears), -0.5 * Msd^2, Msd)), nrow=nsim, ncol=proyears+nyears)
-  Linfrand <- matrix(exp(rnorm(nsim*(proyears+nyears), -0.5 * Linfsd^2, Linfsd)), nrow=nsim, ncol=proyears+nyears)
-  Krand <- matrix(exp(rnorm(nsim*(proyears+nyears), -0.5 * Ksd^2, Ksd)), nrow=nsim, ncol=proyears+nyears)
- 
-  Marray <- gettempvar(M, Msd, Mgrad, nyears + proyears, nsim, Mrand)  # M by sim and year according to gradient and inter annual variability
-  Linfarray <- gettempvar(Linf, Linfsd, Linfgrad, nyears + proyears, nsim, Linfrand)  # Linf array
-  Karray <- gettempvar(K, Ksd, Kgrad, nyears + proyears, nsim, Krand)  # the K array
-  
-  Agearray <- array(rep(1:maxage, each = nsim), dim = c(nsim, maxage))  # Age array
-  Len_age <- array(NA, dim = c(nsim, maxage, nyears + proyears))  # Length at age array
-  ind <- as.matrix(expand.grid(1:nsim, 1:maxage, 1:(nyears + proyears)))  # an index for calculating Length at age
-  Len_age[ind] <- Linfarray[ind[, c(1, 3)]] * (1 - exp(-Karray[ind[, c(1, 3)]] * 
-    (Agearray[ind[, 1:2]] - t0[ind[, 1]])))
-
-  Wt_age <- array(NA, dim = c(nsim, maxage, nyears + proyears))  # Weight at age array
-  Wt_age[ind] <- Stock@a * Len_age[ind]^Stock@b  # Calculation of weight array
-  
-  # edit for cpars slot
-  EffYears <- EffUpper <- EffUpper <- EffLower <- NULL # hack for CRAN checks
-  # Vector of valid names for custompars list or data.frame. Names not in this list will be printed out in warning and ignored #	
-  ParsNames <- c("dep","Esd","Find","procsd","AC","M","Msd", 
-                 "Mgrad","hs","Linf","Linfsd","Linfgrad","recgrad",
-                 "K","Ksd","Kgrad","t0","L50","L50_95","Spat_targ",
-                 "Frac_area_1","Prob_staying","Size_area_1", 
-                 "Csd","Cbias","CAA_nsamp","CAA_ESS","CAL_nsamp",
-                 "CAL_ESS","CALcv","betas","Isd","Derr","Dbias", 
-                 "Mbias","FMSY_Mbias","lenMbias","LFCbias",
-                 "LFSbias","Aerr","Abias","Kbias","t0bias", 
-                 "Linfbias","Irefbias","Crefbias","Brefbias",
-                 "Recsd","qinc","qcv","L5","LFS","Vmaxlen","L5s", 
-                 "LFSs","Vmaxlens","Perr","R0","Mat_age", 
-                 "Mrand","Linfrand","Krand","maxage","V","Depletion", # end of OM variables
-                 "ageM", "age95", "V", "EffYears", "EffLower", "EffUpper","Mat_age", # start of runMSE derived variables
-                 "Wt_age")   
-  
-  if (length(cpars) > 0) { # custom parameters exist     
-	  Names <- names(cpars)
-	  # report not valid names 
-	  invalid <- which(!Names %in% ParsNames)
-	  if (length(invalid) > 0) {
-	    outNames <- paste(Names[invalid], "")
-	    for (i in seq(5, by=5, length.out=floor(length(outNames)/5))) outNames <- gsub(outNames[i], paste0(outNames[i], "\n"), outNames)
-	    warning("ignoring invalid names found in custom parameters (cpars) \n", outNames)	
-	  }
-	  # report found names
-	  valid <- which(Names %in% ParsNames)
-	  cpars <- cpars[valid]
-	  if (length(cpars) == 0) stop("No valid names found in custompars")
-	  Names <- names(cpars)
-	  outNames <- paste(Names, "")
-	  for (i in seq(5, by=5, length.out=floor(length(outNames)/5)))
-  	  outNames <- gsub(outNames[i], paste0(outNames[i], "\n"), outNames)
-	    message("valid custom parameters (cpars) found: \n", outNames)
-      flush.console()
-	  if (ncparsim < nsim) ind <- sample(1:ncparsim, nsim, replace=TRUE)
-	  if (!ncparsim < nsim) ind <- sample(1:ncparsim, nsim, replace=FALSE)
-	
-	  usedName <- 0 	
-    for (i in 1:length(cpars)) {
-	    
-      samps <- cpars[[i]]
-	    name <- names(cpars)[i]
-	    if (any(c("EffUpper", "EffLower", "EffYears", "maxage") %in% name)) {
-	      assign(name, samps)
-		    usedName <- usedName + 1
-	    } else {
-	      if (class(samps) == "numeric" | class(samps) == "integer") {
- 		      assign(name, samps[ind])
-		      usedName <- usedName + 1
-		    }
-	      if (class(samps) == "matrix") {
-		      assign(name, samps[ind,, drop=FALSE])
-		      usedName <- usedName + 1
-		    }
-		    if (class(samps) == "array") {
-		      if (length(dim(samps)) == 3) {
-		        assign(name, samps[ind, , ,drop=FALSE])
-			      usedName <- usedName + 1 
-          }
-		    }
-	    }	
-    }
-
-  }
-   
   ncol <- 8
  
   m <- layout(matrix(c(c(1, 2, 3, 0, 4, 4, 4, 5),
-					   c(6, 7, 8, 0, 9, 9, 9, 14),			   
-					   c(10, 11, 12, 0, 13, 13, 13, 0),
-					   c(20, 21, 22 ,0, 23, 23, 23, 0),
-					   c(15, 16, 17, 0, 18, 18, 19, 19)				   
-					   ), ncol=ncol, byrow = TRUE),
-					   widths=c(1, 1, 1, 0.5, 1, 1, 1, 1))
+                       c(6, 7, 8, 0, 9, 10, 11, 31),
+                       c(12, 13, 14, 0, 15, 15, 15, 16),			  
+                       c(17, 18, 19, 0, 20, 20, 20, 0),
+                       c(21, 22, 23 ,0, 24, 24, 24, 25),
+                       c(26, 27, 28, 0, 29, 29, 30, 30)), 
+                     ncol=ncol, byrow = TRUE), 
+              widths=c(1, 1, 1, 0.5, 1, 1, 1, 1))
 									   
   # layout.show(m)
   # stop()
   op <- par(mar = c(2, 1, 3, 1), oma=c(1,2,4,1), ask=FALSE, las=1)
   
+  # Row 1 -- Natural Mortality ---- 
   hist2(M, col=col, axes=FALSE, main="M", breaks=breaks)
+  abline(v=M[its], col=1:nsamp, lwd=lwd)
   axis(side=1)  
   hist2(Msd, col=col, axes=FALSE, main="Msd", breaks=breaks)
+  abline(v=Msd[its], col=1:nsamp, lwd=lwd)
   axis(side=1) 
   hist2(Mgrad, col=col, axes=FALSE, main="Mgrad", breaks=breaks)
+  abline(v=Mgrad[its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
   # M traj
-  matplot(t(Marray[its,]), type="l", bty="l", main="M by Year", lwd=lwd)
+  matplot(t(Marray[its,]), type="l", lty=1, bty="l", main="M by Year", lwd=lwd)
   
   # M/K
   hist2(M/K, col=col, axes=FALSE, main="M/K", breaks=breaks)
+  abline(v=(M/K)[its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
+  #  Row 2 -- M-at-age/length ---- 
+  # M-at-length
+  lims <- range(M_ageArray[its,, ])
+  xlims <- range(Len_age[its,,])
+  matplot(t(Len_age[its,,1]), t(M_ageArray[its,,1]), type="l", lty=1, bty="l", lwd=lwd, ylim=lims, xlim=xlims)
+  mtext(side=3, "First historical year", cex=0.8, line=-1)
+  mtext(side=1, "Length", line=2, cex=0.7)
+  
+  matplot(t(Len_age[its,,nyears]), t(M_ageArray[its,,nyears]), type="l", lty=1, bty="l", main="M-at-length", lwd=lwd, ylim=lims, xlim=xlims, axes=FALSE)
+  mtext(side=3, "Last historical year", cex=0.8, line=-1)
+  axis(side=1)
+  mtext(side=1, "Length", line=2, cex=0.7)
+  matplot(t(Len_age[its,,nyears+proyears]), t(M_ageArray[its,,nyears+proyears]), type="l", lty=1, bty="l", lwd=lwd, ylim=lims, axes=FALSE, xlim=xlims)
+  mtext(side=3, "Last projected year", cex=0.8, line=-1)
+  axis(side=1)
+  mtext(side=1, "Length", line=2, cex=0.7)
+  
+  # M-at-age
+  lims <- range(M_ageArray[its,, ])
+  matplot(t(M_ageArray[its,,1]), type="l", lty=1, bty="l", lwd=lwd, ylim=lims)
+  mtext(side=3, "First historical year", cex=0.8, line=-1)
+  mtext(side=1, "Age", line=2, cex=0.7)
+
+  matplot(t(M_ageArray[its,,nyears]), type="l", lty=1, bty="l", main="M-at-age", lwd=lwd, ylim=lims, axes=FALSE)
+  mtext(side=3, "Last historical year", cex=0.8, line=-1)
+  axis(side=1)
+  mtext(side=1, "Age", line=2, cex=0.7)
+  matplot(t(M_ageArray[its,,nyears+proyears]), type="l", lty=1, bty="l", lwd=lwd, ylim=lims, axes=FALSE)
+  mtext(side=3, "Last projected year", cex=0.8, line=-1)
+  axis(side=1)
+  mtext(side=1, "Age", line=2, cex=0.7)
+  
+
+  
+  # Row 3 -- Linf ---- 
   hist2(Linf, col=col, axes=FALSE, main="Linf", breaks=breaks)
+  abline(v=Linf[its], col=1:nsamp, lwd=lwd)
   axis(side=1) 
   hist2(Linfsd, col=col, axes=FALSE, main="Linfsd", breaks=breaks)
+  abline(v=Linfsd[its], col=1:nsamp, lwd=lwd)
   axis(side=1)  
   hist2(Linfgrad, col=col, axes=FALSE, main="Linfgrad", breaks=breaks)
+  abline(v=Linfgrad[its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
   # Linf traj 
-  matplot(t(Linfarray[its,]), type="l", bty="l", main="Linf by Year", lwd=lwd)
+  matplot(t(Linfarray[its,]), type="l", bty="l", main="Linf by Year", lwd=lwd, lty=1)
   
+  hist2(t0, col=col, axes=FALSE, main="t0", breaks=breaks)
+  abline(v=t0[its], col=1:nsamp, lwd=lwd)
+  axis(side=1)
+  
+  
+  # Row 4 -- K ----
   hist2(K, col=col, axes=FALSE, main="K", breaks=breaks)
+  abline(v=K[its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   hist2(Ksd, col=col, axes=FALSE, main="Ksd", breaks=breaks)
+  abline(v=Ksd[its], col=1:nsamp, lwd=lwd)
   axis(side=1) 
   hist2(Kgrad, col=col, axes=FALSE, main="Kgrad", breaks=breaks)
+  abline(v=Kgrad[its], col=1:nsamp, lwd=lwd)
   axis(side=1)  
   
   # K traj 
-  matplot(t(Karray[its,]), type="l", bty="l", main="K by Year", lwd=lwd)
+  matplot(t(Karray[its,]), type="l", bty="l", main="K by Year", lwd=lwd, lty=1)
     
-  hist2(t0, col=col, axes=FALSE, main="t0", breaks=breaks)
-  axis(side=1)
-  
-  # Recruitment Deviations
-  procmu <- -0.5 * (procsd)^2  # adjusted log normal mean
-  Perr <- array(rnorm((nyears + proyears) * nsim, rep(procmu, nyears + 
-    proyears), rep(procsd, nyears + proyears)), c(nsim, nyears + proyears))
-  for (y in 2:(nyears + proyears)) Perr[, y] <- AC * Perr[, y - 1] + 
-    Perr[, y] * (1 - AC * AC)^0.5  #2#AC*Perr[,y-1]+(1-AC)*Perr[,y] # apply a pseudo AR1 autocorrelation to rec devs (log space)
-  Perr <- exp(Perr)  # normal space (mean 1 on average)
-  
-  # Add cycle (phase shift) to recruitment deviations - if specified
-  if (is.finite(Stock@Period[1]) & is.finite(Stock@Amplitude[1])) {
-    Shape <- "sin"  # default sine wave - alternative - 'shift' for step changes
-    recMulti <- t(sapply(1:nsim, SetRecruitCycle, Period = Stock@Period, 
-      Amplitude = Stock@Amplitude, TotYears = nyears + proyears, Shape = Shape))
-    Perr <- Perr * recMulti  # Add cyclic pattern to recruitment
-  }
-  
-  # Recruitment 
+ 
+  # Row 5 -- Recruitment ----
   hist2(hs, col=col, axes=FALSE, main="Steepness (h)", breaks=breaks)
+  abline(v=hs[its], col=1:nsamp, lwd=lwd)
   axis(side=1)  
   hist2(procsd, col=col, axes=FALSE, main="procsd", breaks=breaks)
+  abline(v=procsd[its], col=1:nsamp, lwd=lwd)
   axis(side=1) 
   hist2(AC, col=col, axes=FALSE, main="AC", breaks=breaks)
+  abline(v=AC[its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
-  matplot(t(Perr[its,]), type="l", bty="l", main="Rec Devs by Year", lwd=lwd)
+  matplot(t(Perr[its,]), type="l", bty="l", main="Rec Devs by Year", lwd=lwd, lty=1)
 	
-  SRrel <- rep(Stock@SRrel, nsim)	
   biomass <- seq(0, 1, length.out=20)
 
   bR <- matrix(log(5 * hs)/(0.8 * 2), nrow=nsim)  # Ricker SR params
@@ -261,29 +203,38 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
 	  exp(-bR[X] * biomass))
   }
   matplot(biomass, recs, type="l", bty="l", main="Stock-Recruit", 
-    ylim=c(0,1), xlim=c(0,1), axes=FALSE, lwd=lwd)
-  axis(side=1)
-  axis(side=2, labels=FALSE)
+    ylim=c(0,1), xlim=c(0,1), ylab="", xlab="", lwd=lwd, lty=1)
+
+
   
-  
-  # Depletion
-  hist2(dep,  col=col, axes=FALSE, main="Depletion", breaks=breaks)
+  # Row 6 -- Depletion and Maturity ----
+  hist2(dep, col=col, axes=FALSE, main="Depletion", breaks=breaks)
+  abline(v=dep[its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
   # Maturity 
-  
   hist2(L50, col=col, axes=FALSE, main="L50", breaks=breaks)
+  abline(v=L50[its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   hist2(L95, col=col, axes=FALSE, main="L95", breaks=breaks)
+  abline(v=L95[its], col=1:nsamp, lwd=lwd)
   axis(side=1)
-  
-  slope <- log(19)/(L50_95)
+
+  slope <- log(19)/(L95-L50)
   Ls <- seq(0, to=max(Linf), length.out=200)
  
-  Mat_len <- sapply(its, function(X) plogis(Ls, L50[X], 1/slope[X]))
-  matplot(Ls, Mat_len, type="l", bty="l", main="Maturity-at-length", lwd=lwd)
-  
+  Mat_len <- sapply(its, function(X)  plogis(Ls, L50[X], 1/slope[X]))
+  matplot(Ls, Mat_len, type="l", bty="l", main="Maturity-at-length", lwd=lwd, lty=1)
 
+  matplot(t(Mat_age[its,]), type="l", bty="l", main="Maturity-at-age", lwd=lwd, lty=1, axes=FALSE, xlim=c(0, maxage))
+  axis(side=1)
+  axis(side=2, label=FALSE)
+  
+  # Add Mexp 
+  hist2(Mexp, col=col, axes=FALSE, main="Mexp", breaks=breaks)
+  abline(v=Mexp[its], col=1:nsamp, lwd=lwd)
+  axis(side=1)
+  
 
   title(Stock@Name, outer=TRUE)
   title(paste("nyears =", nyears, "  proyears =", proyears, "  ", nsamp, "sampled iterations"), outer=TRUE, line=0)
@@ -291,16 +242,16 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
   if (incVB) {
     par(mfrow=c(1,3), ask=ask, mar=c(5,4,1,1))
     # vB   
-	cex.lab <- 2 
+	  cex.lab <- 2 
     fstYr <- Len_age[its,,1]
     curYr <- Len_age[its,,nyears]
     lstYr <- Len_age[its,,proyears+nyears]
     MaxL <- max(Len_age)
-    matplot(t(fstYr), type="l", bty="l", main="First historical year", ylim=c(0, MaxL), xlab="Age", ylab="Length", cex.lab=cex.lab, lwd=lwd)
-    matplot(t(curYr), type="l", bty="l", main="Last historical year", ylim=c(0, MaxL),  axes=FALSE, xlab="Age", ylab="", cex.lab=cex.lab, lwd=lwd)
+    matplot(t(fstYr), type="l", bty="l", main="First historical year", ylim=c(0, MaxL), xlab="Age", ylab="Length", cex.lab=cex.lab, lwd=lwd, lty=1)
+    matplot(t(curYr), type="l", bty="l", main="Last historical year", ylim=c(0, MaxL),  axes=FALSE, xlab="Age", ylab="", cex.lab=cex.lab, lwd=lwd, lty=1)
     axis(side=1)
     axis(side=2, labels=FALSE)  
-    matplot(t(lstYr), type="l", bty="l", main="Last projected year", ylim=c(0, MaxL), axes=FALSE, xlab="Age", ylab="", cex.lab=cex.lab, lwd=lwd)	
+    matplot(t(lstYr), type="l", bty="l", main="Last projected year", ylim=c(0, MaxL), axes=FALSE, xlab="Age", ylab="", cex.lab=cex.lab, lwd=lwd, lty=1)	
     axis(side=1)
     axis(side=2, labels=FALSE)  
 	title("Sampled length-at-age curves", outer=TRUE, cex.main=2)

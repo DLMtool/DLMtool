@@ -404,6 +404,7 @@ getq <- function(x, dep, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V,
 #' @param SRrel internal parameter
 #' @param aR internal parameter
 #' @param bR internal parameter
+#' @param bounds upper and lower bounds for optimizer
 #' 
 #' Paired with qopt
 #' @keywords internal
@@ -411,11 +412,11 @@ getq <- function(x, dep, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V,
 #'
 #' @author T. Carruthers
 getq2 <- function(x, dep, Find, Perr, M_ageArray, hs, Mat_age, Wt_age, R0, V, 
-  nyears, maxage, mov, Spat_targ, SRrel, aR, bR) {
-  opt <- optimize(optQ_cpp, log(c(0.00001, 15)), depc = dep[x], Fc = Find[x, ], 
+                  nyears, maxage, mov, Spat_targ, SRrel, aR, bR, bounds=c(0.00001, 15)) {
+  opt <- optimize(optQ_cpp, log(bounds), depc = dep[x], Fc = Find[x, ], 
     Perrc = Perr[x, ], Mc = M_ageArray[x, ,], hc = hs[x], Mac = Mat_age[x, ], 
     Wac = Wt_age[x, , ], R0c = R0[x], Vc = V[x, , ], nyears = nyears, 
-	maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x], 
+    maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x], 
     SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ])	
   
   return(exp(opt$minimum))
@@ -473,10 +474,8 @@ qopt <- function(lnq, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears,
   
   for (y in 1:nyears) {
     # set up some indices for indexed calculation
-    targ <- (apply(Vc[, y] * Biomass, 2, sum)^Spat_targc)/mean(apply(Vc[, y] * 
-	  Biomass, 2, sum)^Spat_targc)
-    FMc <- array(qc * Fc[y] * Vc[, y], dim = c(maxage, nareas)) * array(rep(targ, each = maxage), 
-	  dim = c(maxage, nareas))  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
+    targ <- (apply(Vc[, y] * Biomass, 2, sum)^Spat_targc)/mean(apply(Vc[, y] * Biomass, 2, sum)^Spat_targc)
+    FMc <- array(qc * Fc[y] * Vc[, y], dim = c(maxage, nareas)) * array(rep(targ, each = maxage), dim = c(maxage, nareas))  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
     Zc <- FMc + Mc[y]
 
     N[2:maxage, ] <- N[1:(maxage - 1), ] * exp(-Zc[1:(maxage - 1), ])  # Total mortality

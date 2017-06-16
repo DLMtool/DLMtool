@@ -9,7 +9,7 @@
 SampleImpPars <- function(Imp, nsim=NULL) {
   if (class(Imp) != "Imp" & class(Imp) != "OM") 
     stop("First argument must be class 'Imp' or 'OM'")
-  if (class(Imp) == "Imp") nsim <- Imp@nsim
+  if (class(Imp) == "OM") nsim <- Imp@nsim
   
   ImpOut <- list() 
   # === Sample implementation error parameters ====

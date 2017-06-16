@@ -4,10 +4,12 @@
 \alias{SampleCpars}
 \title{Sample custom pars}
 \usage{
-SampleCpars(cpars)
+SampleCpars(cpars, nsim = 48, msg = TRUE)
 }
 \arguments{
 \item{cpars}{A named list containing custom parameters for the OM}
+
+\item{nsim}{number of simulations}
 }
 \value{
 A named list of sampled custom parameters

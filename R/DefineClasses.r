@@ -34,6 +34,7 @@
 #' @slot vbK The von Bertalanffy growth coefficient 
 #' @slot vbLinf Maximum length 
 #' @slot vbt0 Theoretical age at length zero 
+#' @slot LenCV Coefficient of variation of length-at-age (assumed constant for all age classes)
 #' @slot wla Weight-Length parameter alpha 
 #' @slot wlb Weight-Length parameter beta 
 #' @slot steep Steepness of the Beverton Holt stock-recruitment relationship 
@@ -96,7 +97,7 @@ setClass("Data", representation(Name = "character", Year = "vector",
   Cref = "vector", Bref = "vector", Iref = "vector", L50 = "vector", 
   L95 = "vector", LFC = "vector", LFS = "vector", CAA = "array", Dep = "vector", 
   Abun = "vector", SpAbun="vector", vbK = "vector", vbLinf = "vector", vbt0 = "vector", 
-  wla = "vector", wlb = "vector", steep = "vector", CV_Cat = "vector", 
+  LenCV="vector", wla = "vector", wlb = "vector", steep = "vector", CV_Cat = "vector", 
   CV_Dt = "vector", CV_AvC = "vector", CV_Ind = "vector", CV_Mort = "vector", 
   CV_FMSY_M = "vector", CV_BMSY_B0 = "vector", CV_Cref = "vector", CV_Bref = "vector", 
   CV_Iref = "vector", CV_Rec = "vector", CV_Dep = "vector", CV_Abun = "vector", 
@@ -141,6 +142,7 @@ setMethod("initialize", "Data", function(.Object, stock = "nada") {
     .Object@vbK <- as.numeric(dat[match("Von Bertalanffy K parameter", dname), 1])
     .Object@vbLinf <- as.numeric(dat[match("Von Bertalanffy Linf parameter", dname), 1])
     .Object@vbt0 <- as.numeric(dat[match("Von Bertalanffy t0 parameter", dname), 1])
+    .Object@LenCV <- as.numeric(dat[match("CV of length-at-age", dname), 1])
     .Object@wla <- as.numeric(dat[match("Length-weight parameter a", dname), 1])
     .Object@wlb <- as.numeric(dat[match("Length-weight parameter b", dname), 1])
     .Object@steep <- as.numeric(dat[match("Steepness", dname), 1])
@@ -209,6 +211,8 @@ setMethod("initialize", "Data", function(.Object, stock = "nada") {
     }
   }
   # Default value
+  if (NAor0(.Object@LenCV)) .Object@LenCV <- 0.1
+  
   if (NAor0(.Object@CV_Cat)) .Object@CV_Cat <- 0.2
   if (NAor0(.Object@CV_Dt)) .Object@CV_Dt <- 0.25
   if (NAor0(.Object@CV_AvC)) .Object@CV_AvC <- 0.2
@@ -241,6 +245,8 @@ setMethod("initialize", "Data", function(.Object, stock = "nada") {
   if (length(.Object@ML) == 0)  .Object@ML <- array(NA, c(1, 1))
   if (length(.Object@Lbar) == 0) .Object@Lbar <- array(NA, c(1, 1))
   if (length(.Object@Lc) == 0) .Object@Lc <- array(NA, c(1, 1))
+  
+  
   .Object
 })
 
@@ -632,7 +638,7 @@ NULL
 #' @slot CAA_ESS Effective sample size (independent age draws) of the multinomial catch-at-age observation error model (uniform distribution) 
 #' @slot CAL_nsamp Number of catch-at-length observation per time step (uniform distribution) 
 #' @slot CAL_ESS Effective sample size (independent length draws) of the multinomial catch-at-length observation error model (uniform distribution) 
-#' @slot CALcv Lognormal, variability in the length at age (uniform distribution) 
+#' @slot CALcv Lognormal, variability in the Cv of length-at-age (uniform distribution) 
 #' @slot Iobs Observation error in the relative abundance indices expressed as a coefficient of variation (uniform distribution) 
 #' @slot Mcv Persistent bias in the prescription of natural mortality rate sampled from a log-normal distribution with coefficient of variation (Mcv)(uniform distribution) 
 #' @slot Kcv Persistent bias in the prescription of growth parameter k sampled from a log-normal distribution with coefficient of variation (Kcv)(uniform distribution) 

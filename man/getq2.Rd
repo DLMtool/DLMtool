@@ -7,7 +7,7 @@ required to get to user-specified stock depletion (current biomass /
 unfished biomass) modified for Rcpp}
 \usage{
 getq2(x, dep, Find, Perr, M_ageArray, hs, Mat_age, Wt_age, R0, V, nyears,
-  maxage, mov, Spat_targ, SRrel, aR, bR)
+  maxage, mov, Spat_targ, SRrel, aR, bR, bounds = c(1e-05, 15))
 }
 \arguments{
 \item{x}{internal parameter}
@@ -40,7 +40,9 @@ getq2(x, dep, Find, Perr, M_ageArray, hs, Mat_age, Wt_age, R0, V, nyears,
 
 \item{aR}{internal parameter}
 
-\item{bR}{internal parameter
+\item{bR}{internal parameter}
+
+\item{bounds}{upper and lower bounds for optimizer
 
 Paired with qopt}
 

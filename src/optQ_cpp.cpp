@@ -83,7 +83,7 @@ double optQ_cpp(double lnIn, double depc, NumericVector Fc,
   for (int A=0; A < nareas; A++) {
 	  for (int age=0; age < maxage; age++) {
 	  	if (age == 0) Neq(age, A) = R0c  * idist(A);
-	  	if (age > 0) Neq(age, A) = Neq(age-1, A) * exp(-Mc(age-1, 0)) * idist(A);
+	  	if (age > 0) Neq(age, A) = Neq(age-1, A) * exp(-Mc(age-1, 0));
 	  	SSNeq(age, A) = Mac(age) * Neq(age, A); 
 	  	SSBeq(age, A) = SSNeq(age, A) * Wac(age, 0);
 	  }
@@ -93,12 +93,15 @@ double optQ_cpp(double lnIn, double depc, NumericVector Fc,
 		SSBpR(A) = SSB0(A) / R0a(A);
   }	
   
+  // Rcout << Neq << "\n";
+  // Rcout << sum(SSB0) << "\n";
  
   // Non-equilibrium initial conditions
   for (int A=0; A < nareas; A++) {
 	  for (int age=0; age < maxage; age++) {
 	    if (age == 0) N(age, A) = R0c * idist(A) * Perrc(maxage-age-1);
-	    if (age > 0) N(age, A) = N(age-1, A) * exp(-Mc(age-1, 0)) * idist(A) * Perrc(maxage-age-1);
+	    // if (age > 0) N(age, A) = N(age-1, A) * exp(-Mc(age-1, 0)) * idist(A) * Perrc(maxage-age-1);
+	    if (age > 0) N(age, A) = N(age-1, A) * exp(-Mc(age-1, 0))* Perrc(maxage-age-1);
 	  	SSN(age, A) = Mac(age) * N(age, A); 
 	  	Biomass(age, A) = Wac(age, 0) * N(age, A);
 	  	SSB(age, A) = SSN(age, A) * Wac(age, 0);	
@@ -170,6 +173,12 @@ double optQ_cpp(double lnIn, double depc, NumericVector Fc,
    // Rcout << sum(N) << "\n";	 
   // Rcout << sum(SSB)/sum(SSB0) << "\n";   
   }
+  
+  Rcout << "SSB = " << sum(SSB) << "\n";
+  Rcout << "SSB0 = " << sum(SSB0) << "\n";
+  Rcout << "SB/SB0 = " << sum(SSB)/sum(SSB0) << "\n";
+  Rcout << "dep = " << depc << "\n";
+
   
   RetVal = pow(log(depc) - log(sum(SSB)/sum(SSB0)),2); // optimize q
   return RetVal; 

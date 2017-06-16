@@ -10,7 +10,7 @@ runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
   ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2, Bfrac = 0.5)
 }
 \arguments{
-\item{OM}{An operating model object (class OM)}
+\item{OM}{An operating model object (class 'OM')}
 
 \item{MPs}{A vector of methods (character string) of class Output or
 Input.}

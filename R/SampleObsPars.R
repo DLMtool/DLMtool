@@ -1,16 +1,17 @@
 #' Sample Observation Parameters
 #'
 #' @param Obs An object of class 'Obs' or class 'OM'
-#' @param nsim Number of simulations. Ignored if 'Stock' is class 'OM'
-#'
+#' @param nsim Number of simulations. Ignored if 'Obs' is class 'OM'
 #' @return A named list of sampled Observation parameters
 #' @export
 #'
-SampleObsPars <- function(Obs, nsim=NULL) {
+SampleObsPars <- function(Obs, nsim=NULL){
   if (class(Obs) != "Obs" & class(Obs) != "OM") 
     stop("First argument must be class 'Obs' or 'OM'")
-  if (class(Obs) == "Obs") nsim <- Obs@nsim
-  
+  if (class(Obs) == "OM") nsim <- Obs@nsim
+
+  Obs <- updateMSE(Obs) # update to add missing slots with default values
+
   ObsOut <- list() 
   
   # === Sample observation error model parameters ====
@@ -42,6 +43,8 @@ SampleObsPars <- function(Obs, nsim=NULL) {
   ObsOut$Crefbias <- rlnorm(nsim, mconv(1, Obs@Crefcv), sdconv(1, Obs@Crefcv))  # sample of bias in reference (target) catch index
   ObsOut$Brefbias <- rlnorm(nsim, mconv(1, Obs@Brefcv), sdconv(1, Obs@Brefcv))  # sample of bias in reference (target) biomass index
   ObsOut$Recsd <- runif(nsim, Obs@Reccv[1], Obs@Reccv[2])  # Recruitment deviation  
+  ObsOut$LenCVbias <- rlnorm(nsim, mconv(1, Obs@CALcv), sdconv(1, Obs@CALcv)) # sample of bias in assumed CV of catch-at-length
+  
   
   ObsOut
 }

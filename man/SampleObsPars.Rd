@@ -9,7 +9,7 @@ SampleObsPars(Obs, nsim = NULL)
 \arguments{
 \item{Obs}{An object of class 'Obs' or class 'OM'}
 
-\item{nsim}{Number of simulations. Ignored if 'Stock' is class 'OM'}
+\item{nsim}{Number of simulations. Ignored if 'Obs' is class 'OM'}
 }
 \value{
 A named list of sampled Observation parameters

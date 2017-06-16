@@ -4,11 +4,11 @@
 #' Sample custom pars
 #'
 #' @param cpars A named list containing custom parameters for the OM
-#'
+#' @param nsim number of simulations
 #' @return A named list of sampled custom parameters
 #' @export
 #'
-SampleCpars <- function(cpars) {
+SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
  
   # Vector of valid names for custompars list or data.frame. Names not in this list will be printed out in warning and ignored #	
   ParsNames <- c("dep","Esd","Find","procsd","AC","M","Msd", 
@@ -22,7 +22,7 @@ SampleCpars <- function(cpars) {
                  "Linfbias","Irefbias","Crefbias","Brefbias",
                  "Recsd","qinc","qcv","L5","LFS","Vmaxlen","L5s", 
                  "LFSs","Vmaxlens","Perr","R0","Mat_age", 
-                 "Mrand","Linfrand","Krand","maxage","V","Depletion", # end of OM variables
+                 "Mrand","Linfrand","Krand","maxage","V", # end of OM variables
                  "ageM", "age95", "V", "EffYears", "EffLower", "EffUpper","Mat_age", # start of runMSE derived variables
                  "Wt_age", "Len_age", "Marray", "M_at_Length", "LenCV", "CAL_binsmid", "CAL_bins", "LatASD") 
   
@@ -34,7 +34,7 @@ SampleCpars <- function(cpars) {
   if (length(invalid) > 0) {
     outNames <- paste(Names[invalid], "")
     for (i in seq(5, by=5, length.out=floor(length(outNames)/5))) outNames <- gsub(outNames[i], paste0(outNames[i], "\n"), outNames)
-    warning("ignoring invalid names found in custom parameters (OM@cpars) \n", outNames)	
+    if(msg) warning("ignoring invalid names found in custom parameters (OM@cpars) \n", outNames)	
   }
   # report found names
   valid <- which(Names %in% ParsNames)
@@ -44,7 +44,7 @@ SampleCpars <- function(cpars) {
   outNames <- paste(Names, "")
   for (i in seq(5, by=5, length.out=floor(length(outNames)/5)))
     outNames <- gsub(outNames[i], paste0(outNames[i], "\n"), outNames)
-  message("valid custom parameters (OM@cpars) found: \n", outNames)
+  if(msg) message("valid custom parameters (OM@cpars) found: \n", outNames)
   
   # Sample custom pars 
   if (ncparsim < nsim) ind <- sample(1:ncparsim, nsim, replace=TRUE)

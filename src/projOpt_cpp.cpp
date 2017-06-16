@@ -81,7 +81,7 @@ NumericVector projOpt_cpp(double lnIn,
   for (int A=0; A < nareas; A++) {
 	  for (int age=0; age < maxage; age++) {
 	  	if (age==0) N(age, A) = R0c * idist(A);
-	  	if (age > 0) N(age, A) = N(age-1, A) * exp(-Mc(age)) * idist(A);
+	  	if (age > 0) N(age, A) = N(age-1, A) * exp(-Mc(age));
 	  	SSN(age, A) = Mac(age) * N(age, A); 
 	  	Biomass(age, A) = Wac(age) * N(age, A);
 	  	SSB(age, A) = SSN(age, A) * Wac(age);	

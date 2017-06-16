@@ -2,7 +2,7 @@
 #' Sample Fleet Parameters
 #'
 #' @param Fleet An object of class 'Fleet' or class 'OM' 
-#' @param Stock An object of class 'Stock'. Ignored if 'Fleet' is class 'OM'
+#' @param Stock An object of class 'Stock' or a list of sampled Stock parameters. Ignored if 'Fleet' is class 'OM'
 #' @param nsim Number of simulations. Ignored if 'Fleet' is class 'OM'
 #' @param nyears Number of historical years. Ignored if 'Fleet' is class 'OM'
 #' @param proyears Number of projection years. Ignored if 'Fleet' is class 'OM'
@@ -15,10 +15,10 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   if (class(Fleet) != "Fleet" & class(Fleet) != "OM") 
     stop("First argument must be class 'Fleet' or 'OM'")
   
-  if (class(Fleet) != "OM" & class(Stock) != "Stock") stop("Must provide 'Stock' object", .call=FALSE)
+  if (class(Fleet) != "OM" & class(Stock) != "Stock" & class(Stock) != "list") stop("Must provide 'Stock' object", call.=FALSE)
   
   # Get custom pars if they exist
-  if (class(Fleet) == "OM" && length(Fleet@cpars) > 0 && is.null(cpars)) cpars <- SampleCpars(Fleet@cpars)  # custom parameters exist in Stock/OM object
+  if (class(Fleet) == "OM" && length(Fleet@cpars) > 0 && is.null(cpars)) cpars <- SampleCpars(Fleet@cpars, Fleet@nsim)  # custom parameters exist in Stock/OM object
   if (length(cpars) > 0) { # custom pars exist - assign to function environment 
     Names <- names(cpars)
     for (X in 1:length(Names)) assign(names(cpars)[X], cpars[[X]])
@@ -28,13 +28,20 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
     nsim <- Fleet@nsim
     nyears <- Fleet@nyears 
     proyears <- Fleet@proyears
-    Stock <- Fleet
+    StockPars <- SampleStockPars(Fleet, nsim, nyears, proyears, cpars)
+    for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
   }
   
-  # Sample Stock Pars - need some to calculate selectivity at age and length  
-  StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, cpars)
-  Names <- names(StockPars)
-  for (X in 1:length(Names)) assign(names(StockPars)[X], StockPars[[X]])
+  Fleet <- updateMSE(Fleet) # update to add missing slots with default values
+  if (class(Stock) == "Stock") {
+    Stock <- updateMSE(Stock) # update to add missing slots with default values
+    # Sample Stock Pars - need some to calculate selectivity at age and length  
+    StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, cpars)
+    for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
+  } 
+  if (class(Stock) == "list") for (X in 1:length(Stock)) assign(names(Stock)[X], Stock[[X]])
+  
+  
   
   Fleetout <- list()
   
@@ -66,9 +73,15 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   if (!exists("qinc", inherits = FALSE)) qinc <- runif(nsim, Fleet@qinc[1], Fleet@qinc[2])
   if (!exists("qcv", inherits = FALSE)) qcv <- runif(nsim, Fleet@qcv[1], Fleet@qcv[2])  # interannual variability in catchability
   
+  # === Simulate future variability in fishing efficiency ====
+  qmu <- -0.5 * qcv^2  # Mean
+  if (!exists("qvar", inherits = FALSE)) qvar <- array(exp(rnorm(proyears * nsim, rep(qmu, proyears), rep(qcv, proyears))), c(nsim, proyears))  # Variations in interannual variation
+  FinF <- Find[, nyears]  # Effort in final historical year
+  
   Fleetout$qinc <- qinc
   Fleetout$qcv <- qcv
-  
+  Fleetout$qvar <- qvar
+  Fleetout$FinF <- FinF
   
   # ==== Sample selectivity parameters ====
   Selnyears <- length(Fleet@SelYears)
@@ -104,11 +117,11 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   # == Calculate Selectivity at Length ====
   nCALbins <- length(CAL_binsmid)
   SLarray <- array(NA, dim=c(nsim, nCALbins, nyears+proyears)) # Selectivity-at-length 
-  
+
   if (exists("V", inherits=FALSE)) { # V has been passed in with custompars
     if(dim(V)[3] != proyears + nyears) V<-abind::abind(V,array(V[,,nyears],c(nsim,maxage,proyears)),along=3) # extend future Vulnerabiliy according to final historical vulnerability
     # assign L5, LFS and Vmaxlen - dodgy loop 
-    # could calculate length at 5% selectivity from vB 
+    # could calculate length at 5% selectivity from vB
     L5 <- matrix(NA, nrow = nyears + proyears, ncol = nsim)
     LFS <- matrix(NA, nrow = nyears + proyears, ncol = nsim)
     Vmaxlen <- matrix(NA, nrow = nyears + proyears, ncol = nsim)

@@ -10,20 +10,21 @@
 #' @return A named list of sampled Stock parameters
 #' @export
 #'   
-SampleStockPars <- function(Stock, nsim=NULL, nyears=NULL, proyears=NULL, cpars=NULL) {
+SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) {
   if (class(Stock) != "Stock" & class(Stock) != "OM") 
     stop("First argument must be class 'Stock' or 'OM'")
+  Stock <- updateMSE(Stock) # update to add missing slots with default values
   
-  # Get custom pars if they exist
-  if (class(Stock) == "OM" && length(Stock@cpars) > 0 && is.null(cpars)) cpars <- SampleCpars(Stock@cpars)  # custom parameters exist in Stock/OM object
-  if (length(cpars) > 0) { # custom pars exist - assign to function environment 
-    Names <- names(cpars)
-    for (X in 1:length(Names)) assign(names(cpars)[X], cpars[[X]])
-  }
   if (class(Stock) == "OM") {
     nsim <- Stock@nsim
     nyears <- Stock@nyears 
     proyears <- Stock@proyears
+  }
+  
+  # Get custom pars if they exist
+  if (class(Stock) == "OM" && length(Stock@cpars) > 0 && is.null(cpars)) cpars <- SampleCpars(Stock@cpars, nsim)  # custom parameters exist in Stock/OM object
+  if (length(cpars) > 0) { # custom pars exist - assign to function environment 
+    for (X in 1:length(cpars)) assign(names(cpars)[X], cpars[[X]])
   }
 
   StockOut <- list() 
@@ -189,11 +190,8 @@ SampleStockPars <- function(Stock, nsim=NULL, nyears=NULL, proyears=NULL, cpars=
   if (!exists("Karray", inherits=FALSE)) Karray <- gettempvar(K, Ksd, Kgrad, nyears + proyears, nsim, Krand)  # the K array
   if (!exists("Agearray", inherits=FALSE))  Agearray <- array(rep(1:maxage, each = nsim), dim = c(nsim, maxage))  # Age array
   
-  
   if (length(StockOut$maxage) > 1) StockOut$maxage <- StockOut$maxage[1] # check if maxage has been passed in custompars
 
-  
-  
   # === Create Mean Length-at-Age array ====
   if (!exists("Len_age", inherits=FALSE)) {
     Len_age <- array(NA, dim = c(nsim, maxage, nyears + proyears))  # Length at age array
@@ -203,19 +201,20 @@ SampleStockPars <- function(Stock, nsim=NULL, nyears=NULL, proyears=NULL, cpars=
   } else { # Len_age has been passed in with cpars
     if (any(dim(Len_age) != c(nsim, maxage, nyears + proyears))) stop("'Len_age' must be array with dimensions: nsim, maxage, nyears + proyears") 
     # Estimate vB parameters for each year and each sim 
-    vB <- function(pars, ages) pars[1] * (1-exp(-pars[2]*(ages-pars[3])))
-    fitVB <- function(pars, LatAge, ages) sum((vB(pars, ages) - LatAge)^2)
-    starts <- c(max(Len_age), 0.2, 0)
-    message("Estimating growth parameters from length-at-age array in cpars")
-    for (ss in 1:nsim) {
-      pars <- sapply(1:(nyears + proyears), function(X) optim(starts, fitVB, LatAge=Len_age[ss,,X], ages=1:maxage)$par)
-      Linfarray[ss,] <- pars[1,]
-      Karray[ss,] <- pars[2,]
-      t0[ss]<- mean(pars[3,])
+    if (!all(c("Linf", "K", "t0") %in% names(cpars))) { # don't calculate if Linf, K and t0 have also been passed in with cpars
+      vB <- function(pars, ages) pars[1] * (1-exp(-pars[2]*(ages-pars[3])))
+      fitVB <- function(pars, LatAge, ages) sum((vB(pars, ages) - LatAge)^2)
+      starts <- c(max(Len_age), 0.2, 0)
+      message("Estimating growth parameters from length-at-age array in cpars")
+      for (ss in 1:nsim) {
+        pars <- sapply(1:(nyears + proyears), function(X) optim(starts, fitVB, LatAge=Len_age[ss,,X], ages=1:maxage)$par)
+        Linfarray[ss,] <- pars[1,]
+        Karray[ss,] <- pars[2,]
+        t0[ss]<- mean(pars[3,])
+      }
+      Linf <- Linfarray[, nyears]
+      K <- Karray[, nyears]
     }
-    Linf <- Linfarray[, nyears]
-    K <- Karray[, nyears]
-    
   }
   StockOut$maxlen <- maxlen <- Len_age[, maxage, nyears] # reference length for Vmaxlen 
   
@@ -244,8 +243,8 @@ SampleStockPars <- function(Stock, nsim=NULL, nyears=NULL, proyears=NULL, cpars=
   }	else {
     if (any(dim(Wt_age) != c(nsim, maxage, nyears + proyears))) stop("'Wt_age' must be array with dimensions: nsim, maxage, nyears + proyears") 
     # Estimate length-weight parameters from the Wt_age data
-    logL <- log(as.numeric(Len_age[sim,,]))
-    logW <- log(as.numeric(Wt_age[sim,,]))
+    logL <- log(as.numeric(Len_age))
+    logW <- log(as.numeric(Wt_age))
     mod  <- lm(logW ~ logL)
     EstVar <- summary(mod)$sigma^2
     Wa <- exp(coef(mod)[1]) * exp((EstVar)/2)
@@ -318,7 +317,6 @@ SampleStockPars <- function(Stock, nsim=NULL, nyears=NULL, proyears=NULL, cpars=
     scale <- Marray[sim,]/ apply(tempM_ageArray[sim,ageM[sim]:maxage,], 2, mean)
     M_ageArray[sim,,] <- M_ageArray[sim,,] * matrix(scale, maxage, nyears+proyears, byrow=TRUE)
   }
-  
   
   StockOut$ageM <- ageM
   StockOut$Linfarray <- Linfarray

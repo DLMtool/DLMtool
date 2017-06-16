@@ -58,6 +58,8 @@ An object for storing data for analysis using data-limited methods
 
 \item{\code{vbt0}}{Theoretical age at length zero}
 
+\item{\code{LenCV}}{Coefficient of variation of length-at-age (assumed constant for all age classes)}
+
 \item{\code{wla}}{Weight-Length parameter alpha}
 
 \item{\code{wlb}}{Weight-Length parameter beta}
