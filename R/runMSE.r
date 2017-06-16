@@ -339,20 +339,23 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   } else { # Length-at-age in cpars
     # Check dimensions 
     if (any(dim(Len_age) != c(nsim, maxage, nyears + proyears))) stop("'Len_age' must be array with dimensions: nsim, maxage, nyears + proyears") 
-    
-    # Estimate vB parameters for each year and each sim 
-    vB <- function(pars, ages) pars[1] * (1-exp(-pars[2]*(ages-pars[3])))
-    fitVB <- function(pars, LatAge, ages) sum((vB(pars, ages) - LatAge)^2)
-    starts <- c(max(Len_age), 0.2, 0)
-    message("Estimating growth parameters from length-at-age array in cpars")
-    for (ss in 1:nsim) {
-      pars <- sapply(1:(nyears + proyears), function(X) optim(starts, fitVB, LatAge=Len_age[ss,,X], ages=1:maxage)$par)
-      Linfarray[ss,] <- pars[1,]
-      Karray[ss,] <- pars[2,]
-      t0[ss]<- mean(pars[3,])
+    if (!(all(c("Linf", "K", "t0") %in% names(cpars)))) {
+      # Estimate vB parameters for each year and each sim 
+      vB <- function(pars, ages) pars[1] * (1-exp(-pars[2]*(ages-pars[3])))
+      fitVB <- function(pars, LatAge, ages) sum((vB(pars, ages) - LatAge)^2)
+      starts <- c(max(Len_age), 0.2, 0)
+      message("Estimating growth parameters from length-at-age array in cpars")
+      for (ss in 1:nsim) {
+        pars <- sapply(1:(nyears + proyears), function(X) optim(starts, fitVB, LatAge=Len_age[ss,,X], ages=1:maxage)$par)
+        Linfarray[ss,] <- pars[1,]
+        Karray[ss,] <- pars[2,]
+        t0[ss]<- mean(pars[3,])
+      }
+      Linf <- Linfarray[, nyears]
+      K <- Karray[, nyears] 
+ 
     }
-    Linf <- Linfarray[, nyears]
-    K <- Karray[, nyears]
+ 
   }
   
   if (!exists("Wt_age", inherits=FALSE)|length(OM@cpars)==0) {
@@ -361,8 +364,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     Wt_age[ind] <- OM@a * Len_age[ind]^OM@b  # Calculation of weight array
   }	else {
     if (any(dim(Wt_age) != c(nsim, maxage, nyears + proyears))) stop("'Wt_age' must be array with dimensions: nsim, maxage, nyears + proyears") 
-    logL <- log(as.numeric(Len_age[sim,,]))
-    logW <- log(as.numeric(Wt_age[sim,,]))
+    logL <- log(as.numeric(Len_age))
+    logW <- log(as.numeric(Wt_age))
     mod  <- lm(logW ~ logL)
     EstVar <- summary(mod)$sigma^2
     OM@a <- exp(coef(mod)[1]) * exp((EstVar)/2)
@@ -757,7 +760,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   if (nsim == 1) Depletion <- sum(SSB[,,nyears,])/SSB0 #^betas
   # # apply hyperstability / hyperdepletion
   
-  # print(round(cbind(dep,Depletion),4))
+  print(round(cbind(dep,Depletion),4))
+  
   
   CN <- apply(N * (1 - exp(-Z)) * (FM/Z), c(1, 3, 2), sum)  # Catch in numbers
   CN[is.na(CN)] <- 0
