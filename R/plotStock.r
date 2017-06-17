@@ -228,7 +228,7 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
 
   matplot(t(Mat_age[its,]), type="l", bty="l", main="Maturity-at-age", lwd=lwd, lty=1, axes=FALSE, xlim=c(0, maxage))
   axis(side=1)
-  axis(side=2, label=FALSE)
+  axis(side=2, labels=FALSE)
   
   # Add Mexp 
   hist2(Mexp, col=col, axes=FALSE, main="Mexp", breaks=breaks)

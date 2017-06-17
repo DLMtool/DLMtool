@@ -10,7 +10,8 @@ Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "Mgrad", "SRrel", "hs", "procsd
            "Linfrand", "Linfsd", "M", "M_ageArray", "Mat_age", "Mbias", "Mrand", "Prob_staying", "Recsd",
            "SLarray", "SizeLimFrac", "SizeLimSD", "Size_area_1", "Spat_targ", "TACFrac", "TACSD", 
            "Vmaxlen", "Vmaxlens", "Wt_age", "ageM", "betas", "lenMbias", "nCALbins", "procmu", "qcv", "qinc",
-           "recMulti", "recgrad", "t0", "t0bias", "Abias", "Aerr")
+           "recMulti", "recgrad", "t0", "t0bias", "Abias", "Aerr", "Perr", "Esd", "qvar", "Marray",
+           "Linfarray", "Karray", "AC", "LenCV", "LenCVbias", "a", "b", "FinF")
 
 
 if(getRversion() >= "2.15.1") utils::globalVariables(Names)

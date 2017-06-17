@@ -5,6 +5,7 @@
 #'
 #' @param cpars A named list containing custom parameters for the OM
 #' @param nsim number of simulations
+#' @param msg logical - print the names of the cpars? Turn off when using the function in a loop
 #' @return A named list of sampled custom parameters
 #' @export
 #'
