@@ -14,6 +14,8 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   if (class(Stock) != "Stock" & class(Stock) != "OM") 
     stop("First argument must be class 'Stock' or 'OM'")
   Stock <- updateMSE(Stock) # update to add missing slots with default values
+  if (all(is.na(Stock@LenCV))) Stock@LenCV <- c(0.1, 0.1)
+  if (all(is.na(Stock@Mexp))) Stock@Mexp <- c(0, 0)
   
   if (class(Stock) == "OM") {
     nsim <- Stock@nsim
@@ -26,7 +28,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   if (length(cpars) > 0) { # custom pars exist - assign to function environment 
     for (X in 1:length(cpars)) assign(names(cpars)[X], cpars[[X]])
   }
-
+  
   StockOut <- list() 
   
   # == Maximum age ====
@@ -251,7 +253,6 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
     Wb <- coef(mod)[2]
   }
   
-
   
   # == Calcaluate age at maturity ==== 
   if (!exists("ageM", inherits=FALSE)) ageM <- -((log(1 - L50/Linf))/K) + t0  # calculate ageM from L50 and growth parameters (non-time-varying)
@@ -267,8 +268,11 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
     Mat_age <- 1/(1 + exp((ageMarray - (Agearray))/(ageMarray * ageMsd)))  # Maturity at age array
   } else {
     if (any(dim(Mat_age) != c(nsim, maxage))) stop("'Mat_age' must be array with dimensions: nsim, maxage") 
-    # Calculate L50, L95
- 
+    # Calculate L50, L95, ageM and age95 
+    ageM <- sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=1:maxage, 0.5))
+    age95 <- sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=1:maxage, 0.95))
+    L50 <- sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=Len_age[x, , nyears], 0.5))
+    L95 <- sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=Len_age[x, , nyears], 0.95))
   }
   
   # == Calculate M-at-Age from M-at-Length if provided ====
@@ -322,6 +326,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   }
   
   StockOut$ageM <- ageM
+  StockOut$age95 <- age95
   StockOut$Linfarray <- Linfarray
   StockOut$Karray <- Karray
   StockOut$Agearray <- Agearray

@@ -25,7 +25,7 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
                  "LFSs","Vmaxlens","Perr","R0","Mat_age", 
                  "Mrand","Linfrand","Krand","maxage","V", # end of OM variables
                  "ageM", "age95", "V", "EffYears", "EffLower", "EffUpper","Mat_age", # start of runMSE derived variables
-                 "Wt_age", "Len_age", "Marray", "M_at_Length", "LenCV", "CAL_binsmid", "CAL_bins", "LatASD") 
+                 "Wt_age", "Len_age", "Marray", "M_at_Length", "LenCV", "CAL_binsmid", "CAL_bins", "LatASD", "dFfinal") 
   
   sampCpars <- list()
   ncparsim<-cparscheck(cpars)
