@@ -56,7 +56,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
     Find <- Deriv[[1]]  # Calculate fishing effort rate
     dFfinal <- Deriv[[2]]  # Final gradient in fishing effort yr-1 
   } else {
-    dFfinal <- NA
+    dFfinal <- rep(NA, nsim)
   }
   if (any(dim(Find) != c(nsim, nyears))) stop("Find must be matrix with dimensions: nsim, nyears")
   

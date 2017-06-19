@@ -6,8 +6,17 @@
 #' @name DLMtool-package
 #' @aliases DLMtool-package DLMtool
 #' @docType package
-#' @author Tom Carruthers <t.carruthers@@fisheries.ubc.ca> Adrian Hordyk
-#' <a.hordyk@@murdoch.edu.au>
+#' @author Tom Carruthers \email{t.carruthers@@fisheries.ubc.ca} 
+#' @author Adrian Hordyk \email{a.hordyk@oceans.ubc.ca}
+#' @section Additional Information:
+#' See the \href{https://dlmtool.github.io/DLMtool/userguide/index.html}{DLMtool User Guide} for
+#' a detailed description of how to use the DLMtool package. 
+#' 
+#' The help documentation for the DLMtool package can also be accessed \href{https://dlmtool.github.io/DLMtool/}{here}.
+#' 
+#' See the \href{http://www.datalimitedtoolkit.org/}{Data-Limited Toolkit Website} for more information on the DLMtool,
+#' including an interactive demo of the main features of the toolkit, information on case studies where the toolkit has 
+#' been applied, and more about the history and development of the DLMtool.
 #' @references Carruthers, T.R., Punt, A.E., Walters, C.J., MacCall, A.,
 #' McAllister, M.K., Dick, E.J., Cope, J. 2014. Evaluating methods for setting
 #' catch limits in data-limited fisheries. Fisheries Research. 153: 48-68.

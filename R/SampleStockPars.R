@@ -251,6 +251,8 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
     Wb <- coef(mod)[2]
   }
   
+
+  
   # == Calcaluate age at maturity ==== 
   if (!exists("ageM", inherits=FALSE)) ageM <- -((log(1 - L50/Linf))/K) + t0  # calculate ageM from L50 and growth parameters (non-time-varying)
   ageM[ageM < 1] <- 1  # age at maturity must be at least 1
@@ -265,8 +267,9 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
     Mat_age <- 1/(1 + exp((ageMarray - (Agearray))/(ageMarray * ageMsd)))  # Maturity at age array
   } else {
     if (any(dim(Mat_age) != c(nsim, maxage))) stop("'Mat_age' must be array with dimensions: nsim, maxage") 
+    # Calculate L50, L95
+ 
   }
-  
   
   # == Calculate M-at-Age from M-at-Length if provided ====
   if (exists("M_at_Length", inherits=FALSE)) {  # M-at-length data.frame has been provided in cpars

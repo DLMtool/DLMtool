@@ -30,6 +30,8 @@ ChkObj <- function(OM) {
   OM <- updateMSE(OM)
   if (length(OM@Mexp)==0) OM@Mexp <- c(0,0)
   if (length(OM@LenCV)==0) OM@LenCV <- c(0.08,0.15)
+  if (all(is.na(OM@Mexp))) OM@Mexp <- c(0,0)
+  if  (all(is.na(OM@LenCV))) OM@LenCV <- c(0.08,0.15)
   
   slots <- slotNames(OM)
   Ok <- rep(TRUE, length(slots))

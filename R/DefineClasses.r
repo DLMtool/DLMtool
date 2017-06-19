@@ -415,7 +415,7 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
       dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
       dname <- dat[, 1]
       dat <- dat[, 2:ncol(dat)]
-      
+      Ncol <- ncol(dat)
       .Object@Name <- dat[match("Name", dname), 1]
       .Object@maxage <- as.numeric(dat[match("maxage", dname), 1])
       .Object@R0 <- as.numeric(dat[match("R0", dname), 1])
