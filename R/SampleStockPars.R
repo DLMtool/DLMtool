@@ -58,7 +58,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   if (length(Stock@M) != maxage & length(Stock@M) != 2) stop("slot 'M' must be either length 2 or length maxage", call.=FALSE)
   
   
-  calcMax <- ceiling(-log(0.01)/(min(Stock@M)))        # Age at which 1% of cohort survives
+  calcMax <- ceiling(-log(0.01)/(min(M)))        # Age at which 1% of cohort survives
   if (maxage < 0.8*calcMax) {
     message("Note: Maximum age (", maxage, ") is lower than assuming 1% of cohort survives to maximum age (", calcMax, ")")
   }
