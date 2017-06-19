@@ -54,9 +54,13 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   if (!exists("Find", inherits = FALSE)) {
     Deriv <- getEffhist(Esd, nyears, EffYears = EffYears, EffLower = EffLower, EffUpper = EffUpper)  # Historical fishing effort  
     Find <- Deriv[[1]]  # Calculate fishing effort rate
-    dFfinal <- Deriv[[2]]  # Final gradient in fishing effort yr-1 
-  } else {
-    dFfinal <- rep(NA, nsim)
+  }   
+  if (!exists("dFfinal", inherits = FALSE)) {
+    if (exists("Deriv", inherits = FALSE)) {
+      dFfinal <- Deriv[[2]]  # Final gradient in fishing effort yr-1 
+    } else {
+      dFfinal <- rep(NA, nsim)
+    }
   }
   if (any(dim(Find) != c(nsim, nyears))) stop("Find must be matrix with dimensions: nsim, nyears")
   
