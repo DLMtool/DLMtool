@@ -115,7 +115,12 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
     LFSs <- mapply(runif, n = nsim, min = Fleet@LFSLower, max = Fleet@LFSUpper) *  multi
     # selectivity at maximum length
     Vmaxlens <- mapply(runif, n = nsim, min = Fleet@VmaxLower, max = Fleet@VmaxUpper)
+  } else {
+    L5s <- LFSs <- Vmaxlens <- NA
   }
+  Fleetout$L5s <- L5s
+  Fleetout$LFSs <- LFSs
+  Fleetout$Vmaxlens <- Vmaxlens
   
   
   # == Calculate Selectivity at Length ====

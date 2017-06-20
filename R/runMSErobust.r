@@ -101,7 +101,6 @@ runMSErobust <- function(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref",
   
   for (i in 1:length(simsplit)) {
     message("Packet ", i, " of ", length(simsplit), " started")
-    flush.console()
     error <- 1
     crash <- 0
 	  st <- Sys.time()
@@ -110,44 +109,26 @@ runMSErobust <- function(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref",
       tryOM <- OM
       tryOM@seed <- OM@seed + i + crash  # change seed 
       tryOM@nsim <- length(simsplit[[i]]) # sub number of sims 
-      if (length(cpars) > 0) { # subset cpars
-        Subcpars <- cpars
-        if (ncparsim < nsim) ind <- sample(1:ncparsim, length(index), replace=TRUE)
-        if (!ncparsim < nsim) ind <- sample(index, length(index), replace=FALSE)
-        for (jj in 1:length(cpars)) {
-          index <- as.numeric(unlist(simsplit[i]))
-          its <- cpars[[jj]]
-          cname <- names(cpars)[jj]
-          if (any(c("EffUpper", "EffLower", "EffYears", "maxage") %in% name)) {
-            # do nothing
-          } else {
-            if (class(its) == "numeric" | class(its) == "integer") {
-              Subcpars[[cname]] <- its[ind]
-            }
-            if (class(its) == "matrix") {
-              Subcpars[[cname]] <-  its[ind,, drop=FALSE]
-            }
-            if (class(its) == "array") {
-              if (length(dim(its)) == 3) {
-                Subcpars[[cname]] <- its[ind, , ,drop=FALSE]
-              }
-            }
-          }	
-        }
-        tryOM@cpars <- Subcpars
-      }
-      
+      if (length(cpars) > 0) tryOM@cpars  <- SampleCpars(cpars, nsim=tryOM@nsim, msg=FALSE)
+
       trialMSE <- try(runMSE(OM = tryOM, MPs = MPs, interval = interval, pstar = pstar, 
         maxF = maxF, timelimit = timelimit, reps = reps, CheckMPs = CheckMPs, 
         Hist=Hist, ntrials=ntrials, fracD=fracD, CalcBlow = CalcBlow, HZN = HZN, 
         Bfrac = Bfrac))	
-      if (class(trialMSE) != "MSE") {
+      
+      if (!Hist & class(trialMSE) != "MSE") {
 	      crash <- crash + 1
 		    print(warnings())
 		    message("Packet ", i, " crashed. Trying again\n")
-	    }
+      }
+      if (Hist & class(trialMSE) != "list") {
+        crash <- crash + 1
+        print(warnings())
+        message("Packet ", i, " crashed. Trying again\n")
+      }     
       if (crash >= maxCrash) stop("\nNumber of crashes exceeded 'maxCrash'\n", call.=FALSE)
-      if (class(trialMSE) == "MSE") {
+      
+      if (class(trialMSE) == "MSE" | class(trialMSE) == "list") {
         packets[[i]] <- trialMSE
         fname <- paste0(name, "_P", i, ".rdata")
         if (savePack) {
@@ -175,7 +156,8 @@ runMSErobust <- function(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref",
   }
   if (i == 1) MSEobj <- packets[[1]]
   
-  if (i > 1) MSEobj <- joinMSE(MSEobjs = packets)
+  if (i > 1 & ! Hist) MSEobj <- joinMSE(MSEobjs = packets)
+  if (i > 1 & Hist) MSEobj <- unlist(packets,F)
   if (saveMSE) {
     fname <- paste0(name, ".rdata")
     saveRDS(MSEobj, file = fname)

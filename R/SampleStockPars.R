@@ -42,7 +42,6 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   if (length(R0) != nsim) R0 <- rep(R0, nsim*50)[1:nsim] # modified to allow for different R0 per sim 
   StockOut$R0 <- R0
   
-  
   # == Natural Mortality ====
   if (length(Stock@M) == 2 & !exists("M", inherits=FALSE)) M <- runif(nsim, Stock@M[1], Stock@M[2])  # natural mortality rate
   
@@ -168,7 +167,6 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
  
   if (!exists("L95", inherits=FALSE))   L95 <- L50 + L50_95
   
-
  
   # == Sample Spatial Parameters ====
   StockOut$Frac_area_1 <- runif(nsim, Stock@Frac_area_1[1], Stock@Frac_area_1[2])  # sampled fraction of unfished biStockass in area 1 (its a two area model by default)
@@ -274,7 +272,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
     L50 <- sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=Len_age[x, , nyears], 0.5))
     L95 <- sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=Len_age[x, , nyears], 0.95))
   }
-  
+
   # == Calculate M-at-Age from M-at-Length if provided ====
   if (exists("M_at_Length", inherits=FALSE)) {  # M-at-length data.frame has been provided in cpars
 
