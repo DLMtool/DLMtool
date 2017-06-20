@@ -285,6 +285,7 @@ LinInterp<-function(x,y,xlev,ascending=F,zeroint=F){
   close<-which.min((x[cond]-xlev)^2)
   ind<-c(close,close+(x[close]<xlev)*2-1)
   ind <- ind[ind <= length(x)]
+  if (length(ind)==1) ind <- c(ind, ind-1)
   ind<-ind[order(ind)]
   pos<-(xlev-x[ind[1]])/(x[ind[2]]-x[ind[1]])
   y[ind[1]]+pos*(y[ind[2]]-y[ind[1]])
