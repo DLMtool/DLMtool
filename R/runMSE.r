@@ -63,6 +63,25 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                    CheckMPs = FALSE, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=FALSE, 
                    HZN=2, Bfrac=0.5) {
   
+  
+   # For debugging - assign default argument values to to current workspace if they don't exist
+  if (interactive()) { 
+    DFargs <- formals(runMSE)
+    argNames <- names(DFargs)
+    for (X in seq_along(argNames)) {
+      if (!exists(argNames[X])) {
+        
+        tt <- try(as.numeric(DFargs[X]), silent=TRUE)
+        if (class(tt) != "try-error") {
+          assign(argNames[X], tt)
+        } else {
+          if (argNames[X] == "OM") OM <- DLMtool::testOM
+          if (argNames[X] == "MPs") MPs <- c("AvC","DCAC","FMSYref","curE","matlenlim")
+        }
+      }
+    }
+  }
+  
   if (class(OM) != "OM") stop("You must specify an operating model")
   
   if("seed"%in%slotNames(OM)) set.seed(OM@seed) # set seed for reproducibility 
@@ -93,7 +112,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   StockPars <- SampleStockPars(OM, nsim, nyears, proyears, SampCpars)
   # Assign Stock pars to function environment
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
-  
+
   # --- Sample Fleet Parameters ----
   FleetPars <- SampleFleetPars(SubOM(OM, "Fleet"), Stock=StockPars, nsim, nyears, proyears, SampCpars)
   # Assign Fleet pars to function environment
@@ -356,7 +375,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   # Check that depletion is correct
   # print(cbind(round(dep,2), round(Depletion,2)))
   
-  if (prod(round(dep, 2)/ round(Depletion,2) == 1) != 1) warning("Possible problem in depletion calculations")
+  # if (prod(round(dep, 2)/ round(Depletion,2)) != 1) warning("Possible problem in depletion calculations")
   
   # --- Calculate MSY references ----  
   message("Calculating MSY reference points")  # Print a progress update
@@ -488,10 +507,16 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   # assumed normally-distributed length-at-age truncated at 2 standard deviations from the mean
   CAL <- array(NA, dim=c(nsim,  nyears, nCALbins))
   LFC <- rep(NA, nsim)
+  vn <- (apply(N[,,,], c(1,2,3), sum) * V[,,1:nyears]) # vulnerable numbers at age
+  vn <- aperm(vn, c(1,3, 2))
+  
   for (i in 1:nsim) { # Rcpp code 
+    # CAL[i, , ] <-  genLenComp(CAL_bins, CAL_binsmid, SLarray[i,,], CAL_ESS[i], CAL_nsamp[i], 
+                              # CN[i,,], Len_age[i,,], LatASD[i,,], truncSD=2)
+ 
     CAL[i, , ] <-  genLenComp(CAL_bins, CAL_binsmid, SLarray[i,,], CAL_ESS[i], CAL_nsamp[i], 
-                              CN[i,,], Len_age[i,,], LatASD[i,,], truncSD=2) 
-    LFC[i] <- CAL_binsmid[min(which(round(CAL[i,nyears, ],0) > 1))] # get the smallest CAL observation	  
+                              vn[i,,], Len_age[i,,], LatASD[i,,], truncSD=2) 
+    LFC[i] <- CAL_binsmid[min(which(round(CAL[i,nyears, ],0) >= 1))] # get the smallest CAL observation	  
   }
   
   # --- Simulate index of abundance from total biomass ----
@@ -655,7 +680,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                      ESD=ESD,SizeLimFrac=SizeLimFrac,SizeLimSD=SizeLimSD,DiscMort=DiscMort) 
     
     HistData <- list(SampPars=SampPars, TSdata=TSdata, AtAge=AtAge, MSYs=MSYs, Data=Data)
-    class(HistData) <- c("list", "hist")
     return(HistData)	
   }
   
@@ -994,7 +1018,9 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
         
         CAL <- array(NA, dim = c(nsim, interval, nCALbins))  # the catch at length array
         # # a multinomial observation model for catch-at-length data
-        cn <- as.matrix(CNtemp[i,,])
+        # cn <- as.matrix(CNtemp[i,,])
+        cn <- as.matrix(V_P[i,,yind])
+        if (interval > 1) cn <- aperm(cn, c(2,1))
         if (interval == 1) cn <- t(cn) # dodgy hack to ensure matrix is correct 
         for (i in 1:nsim) { # Rcpp code 
           CAL[i, 1:interval, ] <- genLenComp(CAL_bins, CAL_binsmid, 
@@ -1002,7 +1028,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                                              CAL_ESS[i], CAL_nsamp[i], 
                                              cn, as.matrix(Len_age[i,,nyears + yind]), 
                                              as.matrix(LatASD[i,, nyears + yind]), truncSD=0) 
-          LFC[i] <- CAL_binsmid[min(which(round(CAL[i, interval, ],0) > 1))] # get the smallest CAL observation	
+          LFC[i] <- CAL_binsmid[min(which(round(CAL[i, interval, ],0) >= 1))] # get the smallest CAL observation	
         }	
         # for (i in 1:nsim) {
         # for (j in 1:interval) {
