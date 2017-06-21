@@ -2311,6 +2311,9 @@ updateMSE <- function(MSEobj) {
   if (.hasSlot(MSEobj, "Mexp")) {
     if (length(MSEobj@Mexp) == 0) MSEobj@Mexp <- c(0,0)
   }
+  if (.hasSlot(MSEobj, "FecB")) {
+    if (length(MSEobj@FecB) == 0) MSEobj@FecB <- c(3,3)
+  }
   MSEobj
 }
 

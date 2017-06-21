@@ -167,6 +167,9 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
  
   if (!exists("L95", inherits=FALSE))   L95 <- L50 + L50_95
   
+  # == Sample Fecundity-Length Exponent ===
+  # if (!exists("FecB", inherits=FALSE))   FecB <- runif(nsim, min(Stock@FecB), max(Stock@FecB))
+  
  
   # == Sample Spatial Parameters ====
   StockOut$Frac_area_1 <- runif(nsim, Stock@Frac_area_1[1], Stock@Frac_area_1[2])  # sampled fraction of unfished biStockass in area 1 (its a two area model by default)
@@ -344,6 +347,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   StockOut$Wt_age <- Wt_age
   StockOut$L50 <- L50
   StockOut$L95 <- L95
+  # StockOut$FecB <- FecB
   StockOut$Mat_age <- Mat_age
   
   StockOut$M <- M

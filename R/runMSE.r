@@ -11,7 +11,7 @@ Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "Mgrad", "SRrel", "hs", "procsd
            "SLarray", "SizeLimFrac", "SizeLimSD", "Size_area_1", "Spat_targ", "TACFrac", "TACSD", 
            "Vmaxlen", "Vmaxlens", "Wt_age", "ageM", "betas", "lenMbias", "nCALbins", "procmu", "qcv", "qinc",
            "recMulti", "recgrad", "t0", "t0bias", "Abias", "Aerr", "Perr", "Esd", "qvar", "Marray",
-           "Linfarray", "Karray", "AC", "LenCV", "LenCVbias", "a", "b", "FinF")
+           "Linfarray", "Karray", "AC", "LenCV", "LenCVbias", "a", "b", "FinF", "FecB")
 
 
 if(getRversion() >= "2.15.1") utils::globalVariables(Names)
@@ -149,6 +149,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   VBiomass <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # vulnerable biomass array
   
   SSN <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # spawning stock numbers array
+  
   SSB <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # spawning stock biomass array
   FM <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # fishing mortality rate array
   Z <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # total mortality rate array

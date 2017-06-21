@@ -382,6 +382,7 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
 #' @slot b Length-weight parameter beta (uniform distribution) 
 #' @slot L50 Length-at- 50 percent maturity (uniform distribution) 
 #' @slot L50_95 Length increment from 50 percent to 95 percent maturity 
+# @slot FecB Exponent of the length-fecundity relationship, i.e., (relative) fecundity-at-length is proportional to length^FecB (uniform distribution)
 #' @slot D Current level of stock depletion (Bcurrent/Bunfished) (uniform distribution) 
 #' @slot Perr Process error, the CV of lognormal recruitment deviations  (uniform distribution) 
 #' @slot Period Period for cylical recruitment pattern in years (uniform distribution). Leave empty to ignore  
@@ -397,6 +398,7 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
 #' 
 #' showClass('Stock')
 #' 
+# FecB = "numeric"
 setClass("Stock", representation(Name = "character", maxage = "numeric", 
                                  R0 = "numeric", M = "numeric", M2 = "numeric", Msd = "numeric", Mgrad = "numeric",  Mexp="numeric",
                                  h = "numeric", SRrel = "numeric", Linf = "numeric", K = "numeric", 
@@ -449,6 +451,7 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
       .Object@Prob_staying <- as.numeric(dat[match("Prob_staying", dname), 1:2])
       .Object@L50 <- as.numeric(dat[match("L50", dname), 1:2])
       .Object@L50_95 <- as.numeric(dat[match("L50_95", dname), 1:2])
+      .Object@FecB <- as.numeric(dat[match("FecB", dname), 1:2])
       .Object@Source <- dat[match("Source", dname), 1]
     } else {
       message("File doesn't exist")
@@ -873,6 +876,7 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
 #' @slot isRel Are the selectivity parameters relative to size-of-maturity? TRUE or FALSE 
 #' @slot L50 Length at 50 percent maturity (uniform distribution) 
 #' @slot L50_95 Length increment from 50 to 95 percent maturity (uniform distribution) 
+
 #' @slot Esd Inter-annual variability in fishing mortality rate 
 #' @slot EffYears Vector of verticies, years at which to simulate varying relative effort 
 #' @slot EffLower Lower bound on relative effort corresponding to EffYears (uniform distribution) 
@@ -986,6 +990,12 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
   if(length(.Object@Mexp) < 2) .Object@Mexp <- c(0,0)
   if(length(.Object@LenCV) < 2) .Object@LenCV <- c(0.08,0.15)
   if(length(.Object@CurrentYr)==0).Object@CurrentYr=.Object@nyears
+  if(length(.Object@FecB) < 2) .Object@FecB <- c(3,3)
+  
+  if(all(is.na(.Object@Mexp))) .Object@Mexp <- c(0,0)
+  if(all(is.na(.Object@LenCV))) .Object@LenCV <- c(0.08,0.15)
+  if(all(is.na(.Object@CurrentYr))) .Object@CurrentYr=.Object@nyears
+  # if(all(is.na(.Object@FecB))) .Object@FecB <- c(3,3)
   
   .Object@seed=1
   .Object
