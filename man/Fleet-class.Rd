@@ -30,6 +30,12 @@ The component of the operating model that controls fishing dynamics
 
 \item{\code{Vmaxlen}}{The vulnerability of the longest (oldest) fish (uniform distribution)}
 
+\item{\code{R50}}{Length at 50 percent retention}
+
+\item{\code{Rslope}}{Slope of logistic retention curve}
+
+\item{\code{Fdisc}}{Fraction of discarded fish that die}
+
 \item{\code{SelYears}}{Vector of verticies, index for years at which historical selectivity pattern changed. If left empty, historical selectivity is constant}
 
 \item{\code{AbsSelYears}}{Optional values for SelYears, used for plotting only. Must be of same length as SelYears}

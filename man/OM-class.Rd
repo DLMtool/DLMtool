@@ -79,6 +79,12 @@ bounds of a uniform distribution from which to sample the parameter.
 
 \item{\code{Vmaxlen}}{The vulnerability of the longest (oldest) fish (uniform distribution)}
 
+\item{\code{R50}}{Length at 50 percent retention}
+
+\item{\code{Rslope}}{Slope of logistic retention curve}
+
+\item{\code{Fdisc}}{Fraction of discarded fish that die}
+
 \item{\code{SelYears}}{Vector of verticies that index years where historical selectivity pattern changed. Leave empty to ignore}
 
 \item{\code{AbsSelYears}}{vector of absolute year values that correspond to year indices in SelYears. Used only for plotting}

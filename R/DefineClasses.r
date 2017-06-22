@@ -451,7 +451,7 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
       .Object@Prob_staying <- as.numeric(dat[match("Prob_staying", dname), 1:2])
       .Object@L50 <- as.numeric(dat[match("L50", dname), 1:2])
       .Object@L50_95 <- as.numeric(dat[match("L50_95", dname), 1:2])
-      .Object@FecB <- as.numeric(dat[match("FecB", dname), 1:2])
+      # .Object@FecB <- as.numeric(dat[match("FecB", dname), 1:2])
       .Object@Source <- dat[match("Source", dname), 1]
     } else {
       message("File doesn't exist")
@@ -482,6 +482,9 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
 #' @slot LFS Shortest length that is fully vulnerable to fishing (uniform distribution)
 #' @slot L5 Shortest length corresponding ot 5 percent vulnerability (uniform distribution)
 #' @slot Vmaxlen The vulnerability of the longest (oldest) fish (uniform distribution)
+#' @slot R50 Length at 50 percent retention
+#' @slot Rslope Slope of logistic retention curve 
+#' @slot Fdisc Fraction of discarded fish that die
 #' @slot SelYears Vector of verticies, index for years at which historical selectivity pattern changed. If left empty, historical selectivity is constant
 #' @slot AbsSelYears Optional values for SelYears, used for plotting only. Must be of same length as SelYears
 #' @slot L5Lower Optional vector of values of length SelYears, specifiying lower limits of L5 (use \code{ChooseSelect} function to set these)
@@ -504,8 +507,9 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
 setClass("Fleet", slots = c(Name = "character", nyears = "numeric", Spat_targ = "numeric", 
   Esd = "numeric", qinc = "numeric", qcv = "numeric", EffYears = "numeric", 
   EffLower = "numeric", EffUpper = "numeric", SelYears = "numeric", AbsSelYears = "numeric", 
-  L5 = "numeric", LFS = "numeric", Vmaxlen = "numeric", L5Lower = "numeric", 
-  L5Upper = "numeric", LFSLower = "numeric", LFSUpper = "numeric", VmaxLower = "numeric", 
+  L5 = "numeric", LFS = "numeric", Vmaxlen = "numeric", 
+  R50 = "numeric", Rslope = "numeric", Fdisc="numeric",
+  L5Lower = "numeric", L5Upper = "numeric", LFSLower = "numeric", LFSUpper = "numeric", VmaxLower = "numeric", 
   VmaxUpper = "numeric", isRel = "character",CurrentYr="numeric"))
 
 # initialize Fleet
@@ -565,6 +569,11 @@ setMethod("initialize", "Fleet", function(.Object, file = NA) {
       .Object@L5 <- as.numeric(dat[match("L5", dname), 1:2])
       .Object@LFS <- as.numeric(dat[match("LFS", dname), 1:2])
       .Object@Vmaxlen <- as.numeric(dat[match("Vmaxlen", dname), 1:2])
+      
+      .Object@R50 <- as.numeric(dat[match("R50", dname), 1:2])
+      .Object@Rslope <- as.numeric(dat[match("Rslope", dname), 1:2])
+      .Object@Fdisc <- as.numeric(dat[match("Fdisc", dname), 1:2])
+      
       .Object@isRel <- dat[match("isRel", dname), 1]  # Are selecivity parameters relative to maturity?
       if (NAor0(.Object@isRel)) .Object@isRel <- "TRUE"
     } else {
@@ -865,6 +874,11 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
 #' @slot LFS Shortest length that is fully vulnerable to fishing (uniform distribution) 
 #' @slot L5 Shortest length at 5 percent vulnerability (uniform distribution) 
 #' @slot Vmaxlen The vulnerability of the longest (oldest) fish (uniform distribution) 
+#' 
+#' @slot R50 Length at 50 percent retention
+#' @slot Rslope Slope of logistic retention curve 
+#' @slot Fdisc Fraction of discarded fish that die
+#' 
 #' @slot SelYears Vector of verticies that index years where historical selectivity pattern changed. Leave empty to ignore 
 #' @slot AbsSelYears vector of absolute year values that correspond to year indices in SelYears. Used only for plotting 
 #' @slot L5Lower Optional vector of values of length SelYears, specifiying lower limits of L5 (use \code{ChooseSelect}  function to set these. Overrides L5 above) 
@@ -990,12 +1004,23 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
   if(length(.Object@Mexp) < 2) .Object@Mexp <- c(0,0)
   if(length(.Object@LenCV) < 2) .Object@LenCV <- c(0.08,0.15)
   if(length(.Object@CurrentYr)==0).Object@CurrentYr=.Object@nyears
-  if(length(.Object@FecB) < 2) .Object@FecB <- c(3,3)
+  
+  # if(length(.Object@FecB) < 2) .Object@FecB <- c(3,3)
+  # if(all(is.na(.Object@FecB))) .Object@FecB <- c(3,3)
   
   if(all(is.na(.Object@Mexp))) .Object@Mexp <- c(0,0)
   if(all(is.na(.Object@LenCV))) .Object@LenCV <- c(0.08,0.15)
   if(all(is.na(.Object@CurrentYr))) .Object@CurrentYr=.Object@nyears
-  # if(all(is.na(.Object@FecB))) .Object@FecB <- c(3,3)
+  
+  if(length(.Object@R50) < 2) .Object@R50 <- c(0,0)
+  if(length(.Object@Rslope) < 2) .Object@Rslope <- c(0,0)
+  if(length(.Object@Fdisc) < 2) .Object@Fdisc <- c(0,0)
+  
+  if(all(is.na(.Object@R50))) .Object@R50 <- c(0,0)  
+  if(all(is.na(.Object@Rslope))) .Object@Rslope <- c(0,0)  
+  if(all(is.na(.Object@Fdisc))) .Object@Fdisc <- c(0,0)  
+  
+  
   
   .Object@seed=1
   .Object

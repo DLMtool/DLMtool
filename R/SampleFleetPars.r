@@ -237,13 +237,52 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
          dim(V)[1], " ", dim(V)[2], " ", dim(V)[3], call.=FALSE)
   
   
+  # == Sample Discard Mortality ====
+  if(!exists("Fdisc", inherits = FALSE)) Fdisc <- runif(nsim, min(Fleet@Fdisc), max(Fleet@Fdisc))
+  Fleetout$Fdisc <- Fdisc 
   
+  # == Sample Retention Parameters ====
+  if(!exists("R50", inherits = FALSE)) R50 <- runif(nsim, min(Fleet@R50), max(Fleet@R50)) * multi
+  if(!exists("Rslope", inherits = FALSE)) Rslope <- runif(nsim, min(Fleet@Rslope), max(Fleet@Rslope))
+    
+  
+  Fleetout$R50 <- R50
+  Fleetout$Rslope <- Rslope 
+  
+  # == Calculate Retention Curve ====
+
+  retA <- array(NA, dim = c(nsim, maxage, nyears + proyears)) # retention at age
+  retL <- array(NA, dim = c(nsim, nCALbins, nyears + proyears)) # retention at length
+  
+  V2 <- V3 <- V4 <- V
+  SLarray2 <- SLarray3 <- SLarray
+  for (yr in 1:(nyears+proyears)) {
+    # Calculate retention at age class
+    retA[,,yr] <- 1/(1+exp(-(Len_age[,,yr]-R50)/Rslope))
+
+    # Calculate retention at length class 
+    retL[,, yr] <- 1/(1+exp(-(matrix(CAL_binsmid, nsim, nCALbins, byrow=TRUE)-R50)/Rslope)) 
+
+    # correct retention curve - retention at age/length must <= selectivity (you can't retain fish you don't catch!)
+    retA[,,yr] <- matrix(mapply(pmin, retA[,,yr], V[,,yr]), nsim, maxage)
+    retL[,,yr] <- matrix(mapply(pmin, retL[,,yr], SLarray[,,yr]), nsim, nCALbins)
+    
+    # update vulnerablity curve with retention and discarded fish 
+    V2[,,yr] <- matrix(mapply(pmin, retA[,,yr] + (1-retA[,,yr])*Fdisc, V[,,yr]), nsim, maxage)
+    SLarray2[,,yr] <- matrix(mapply(pmin, retL[,,yr] + (1-retL[,,yr])*Fdisc, SLarray[,,yr]), nsim, nCALbins)
+
+  }
+  
+  Fleetout$retA <- retA 
+  Fleetout$retL <- retL 
   
   Fleetout$L5 <- L5  
   Fleetout$LFS <- LFS 
   Fleetout$Vmaxlen <- Vmaxlen 
-  Fleetout$V <- V 
-  Fleetout$SLarray <- SLarray 
+  Fleetout$V <- V2 
+  Fleetout$SLarray <- SLarray2
+  Fleetout$V2 <- V3 
+  Fleetout$SLarray2 <- SLarray3 # possibly delete these
   
   Fleetout 
 }
