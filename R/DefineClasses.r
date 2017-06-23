@@ -83,6 +83,7 @@
 #' @slot MPrec The previous recommendation of a management proceedure 
 #' @slot MPeff The current level of effort 
 #' @slot LHYear The last historical year of the simulation (before projection) 
+#' @slot nareas Number of fishing areas
 #' @slot Misc Optional list which is passed to MPs
 
 #' @author T. Carruthers
@@ -108,7 +109,7 @@ setClass("Data", representation(Name = "character", Year = "vector",
   PosMPs = "vector", MPs = "vector", OM = "data.frame", Obs = "data.frame", 
   TAC = "array", TACbias = "array", Sense = "array", CAL_bins = "numeric", 
   CAL = "array", MPrec = "vector", MPeff = "vector", ML = "array", Lbar = "array", 
-  Lc = "array", LHYear = "numeric", Misc = "list"))
+  Lc = "array", LHYear = "numeric", nareas = "numeric", Misc = "list"))
 
 # initialize Data
 setMethod("initialize", "Data", function(.Object, stock = "nada") {
@@ -235,6 +236,8 @@ setMethod("initialize", "Data", function(.Object, stock = "nada") {
   if (NAor0(.Object@CV_wla))  .Object@CV_wla <- 0.1
   if (NAor0(.Object@CV_wlb))  .Object@CV_wlb <- 0.1
   if (NAor0(.Object@CV_steep)) .Object@CV_steep <- 0.2
+  if (NAor0(.Object@nareas)) .Object@nareas <- 2
+  
   if (length(.Object@sigmaL) == 0) .Object@sigmaL <- 0.2
   if (length(.Object@CAA) == 0) .Object@CAA <- array(NA, c(1, 1, 1))
   if (length(.Object@CAL) == 0) .Object@CAL <- array(NA, c(1, 1, 1))
@@ -366,6 +369,7 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
 #' @slot Msd Inter-annual variability in natural mortality rate expressed as a coefficient of variation (uniform distribution) 
 #' @slot Mgrad Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year (uniform distribution) 
 #' @slot Mexp Exponent of the Lorenzen function assuming an inverse relationship between M and weight (uniform distribution)
+#' @slot Fdisc Fraction of discarded fish that die
 #' @slot h Steepness of the stock recruit relationship (uniform distribution) 
 #' @slot SRrel Type of stock-recruit relationship (1)Beverton-Holt (2) Ricker 
 #' @slot Linf Maximum length (uniform distribution) 
@@ -400,7 +404,8 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
 #' 
 # FecB = "numeric"
 setClass("Stock", representation(Name = "character", maxage = "numeric", 
-                                 R0 = "numeric", M = "numeric", M2 = "numeric", Msd = "numeric", Mgrad = "numeric",  Mexp="numeric",
+                                 R0 = "numeric", M = "numeric", M2 = "numeric", Msd = "numeric", Mgrad = "numeric",  
+                                 Mexp="numeric", Fdisc="numeric",
                                  h = "numeric", SRrel = "numeric", Linf = "numeric", K = "numeric", 
                                  t0 = "numeric", LenCV="numeric", Ksd = "numeric", Kgrad = "numeric", Linfsd = "numeric", 
                                  Linfgrad = "numeric", recgrad = "numeric", a = "numeric", b = "numeric", 
@@ -428,6 +433,7 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
       .Object@Msd <- as.numeric(dat[match("Msd", dname), 1:2])
       .Object@Mgrad <- as.numeric(dat[match("Mgrad", dname), 1:2])
       .Object@Mexp <- as.numeric(dat[match("Mexp", dname), 1:2])
+      .Object@Fdisc <- as.numeric(dat[match("Fdisc", dname), 1:2])
       .Object@h <- as.numeric(dat[match("h", dname), 1:2])
       .Object@SRrel <- as.numeric(dat[match("SRrel", dname), 1])
       .Object@Linf <- as.numeric(dat[match("Linf", dname), 1:2])
@@ -480,11 +486,14 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
 #' @slot EffLower Lower bound on relative effort corresponding to EffYears (uniform distribution)
 #' @slot EffUpper Uppper bound on relative effort corresponding to EffYears (uniform distribution)
 #' @slot LFS Shortest length that is fully vulnerable to fishing (uniform distribution)
-#' @slot L5 Shortest length corresponding ot 5 percent vulnerability (uniform distribution)
+#' @slot L5 Shortest length corresponding to 5 percent vulnerability (uniform distribution)
 #' @slot Vmaxlen The vulnerability of the longest (oldest) fish (uniform distribution)
-#' @slot R50 Length at 50 percent retention
-#' @slot Rslope Slope of logistic retention curve 
-#' @slot Fdisc Fraction of discarded fish that die
+#' 
+#' @slot LR5 Shortest length corresponding ot 5 percent retention (uniform distribution)
+#' @slot LFR Shortest length that is fully retained (uniform distribution)
+#' @slot Rmaxlen The retention of the longest (oldest) fish (uniform distribution)
+#' @slot DR Discard rate - fraction of caught fish that are discarded (must be <= 1) (uniform distribution)
+#' 
 #' @slot SelYears Vector of verticies, index for years at which historical selectivity pattern changed. If left empty, historical selectivity is constant
 #' @slot AbsSelYears Optional values for SelYears, used for plotting only. Must be of same length as SelYears
 #' @slot L5Lower Optional vector of values of length SelYears, specifiying lower limits of L5 (use \code{ChooseSelect} function to set these)
@@ -508,7 +517,7 @@ setClass("Fleet", slots = c(Name = "character", nyears = "numeric", Spat_targ = 
   Esd = "numeric", qinc = "numeric", qcv = "numeric", EffYears = "numeric", 
   EffLower = "numeric", EffUpper = "numeric", SelYears = "numeric", AbsSelYears = "numeric", 
   L5 = "numeric", LFS = "numeric", Vmaxlen = "numeric", 
-  R50 = "numeric", Rslope = "numeric", Fdisc="numeric",
+  LR5 = "numeric", LFR = "numeric", Rmaxlen = "numeric", DR = "numeric",
   L5Lower = "numeric", L5Upper = "numeric", LFSLower = "numeric", LFSUpper = "numeric", VmaxLower = "numeric", 
   VmaxUpper = "numeric", isRel = "character",CurrentYr="numeric"))
 
@@ -570,9 +579,11 @@ setMethod("initialize", "Fleet", function(.Object, file = NA) {
       .Object@LFS <- as.numeric(dat[match("LFS", dname), 1:2])
       .Object@Vmaxlen <- as.numeric(dat[match("Vmaxlen", dname), 1:2])
       
-      .Object@R50 <- as.numeric(dat[match("R50", dname), 1:2])
-      .Object@Rslope <- as.numeric(dat[match("Rslope", dname), 1:2])
-      .Object@Fdisc <- as.numeric(dat[match("Fdisc", dname), 1:2])
+      # Retention curve parameters 
+      .Object@LR5 <- as.numeric(dat[match("LR5", dname), 1:2])
+      .Object@LFR <- as.numeric(dat[match("LFR", dname), 1:2])
+      .Object@Rmaxlen <- as.numeric(dat[match("Rmaxlen", dname), 1:2])
+      .Object@DR <- as.numeric(dat[match("DR", dname), 1:2])
       
       .Object@isRel <- dat[match("isRel", dname), 1]  # Are selecivity parameters relative to maturity?
       if (NAor0(.Object@isRel)) .Object@isRel <- "TRUE"
@@ -850,6 +861,8 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
 #' @slot M2 Optional vector of M-at-age (must be length maxage) 
 #' @slot Msd Inter-annual variability in natural mortality rate expressed as a coefficient of variation (uniform distribution) 
 #' @slot Mgrad Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year (uniform distribution) 
+#' @slot Mexp Exponent of the Lorenzen function assuming an inverse relationship between M and weight (uniform distribution)
+#' @slot Fdisc Fraction of discarded fish that die
 #' @slot h Steepness of the stock recruit relationship (uniform distribution) 
 #' @slot SRrel Type of stock-recruit relationship (1)Beverton-Holt (2) Ricker 
 #' @slot Linf Maximum length (uniform distribution) 
@@ -875,9 +888,10 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
 #' @slot L5 Shortest length at 5 percent vulnerability (uniform distribution) 
 #' @slot Vmaxlen The vulnerability of the longest (oldest) fish (uniform distribution) 
 #' 
-#' @slot R50 Length at 50 percent retention
-#' @slot Rslope Slope of logistic retention curve 
-#' @slot Fdisc Fraction of discarded fish that die
+#' @slot LR5 Shortest length corresponding ot 5 percent retention (uniform distribution)
+#' @slot LFR Shortest length that is fully retained (uniform distribution)
+#' @slot Rmaxlen The retention of the longest (oldest) fish (uniform distribution)
+#' @slot DR Discard rate - fraction of caught fish that are discarded (must be <= 1) (uniform distribution)
 #' 
 #' @slot SelYears Vector of verticies that index years where historical selectivity pattern changed. Leave empty to ignore 
 #' @slot AbsSelYears vector of absolute year values that correspond to year indices in SelYears. Used only for plotting 
@@ -1012,15 +1026,15 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
   if(all(is.na(.Object@LenCV))) .Object@LenCV <- c(0.08,0.15)
   if(all(is.na(.Object@CurrentYr))) .Object@CurrentYr=.Object@nyears
   
-  if(length(.Object@R50) < 2) .Object@R50 <- c(0,0)
-  if(length(.Object@Rslope) < 2) .Object@Rslope <- c(0,0)
+  if(length(.Object@LR5) < 2) .Object@LR5 <- c(0,0)
+  if(length(.Object@LFR) < 2) .Object@LFR <- c(0,0)
+  if(length(.Object@Rmaxlen) < 2) .Object@Rmaxlen <- c(0,0)
   if(length(.Object@Fdisc) < 2) .Object@Fdisc <- c(0,0)
   
-  if(all(is.na(.Object@R50))) .Object@R50 <- c(0,0)  
-  if(all(is.na(.Object@Rslope))) .Object@Rslope <- c(0,0)  
+  if(all(is.na(.Object@LR5))) .Object@LR5 <- c(0,0)  
+  if(all(is.na(.Object@LFR))) .Object@LFR <- c(0,0)  
+  if(all(is.na(.Object@Rmaxlen))) .Object@Rmaxlen <- c(0,0)
   if(all(is.na(.Object@Fdisc))) .Object@Fdisc <- c(0,0)  
-  
-  
   
   .Object@seed=1
   .Object
@@ -1421,8 +1435,36 @@ setMethod("summary",
 
 
 
+# -- Input Control Recommendation Class ----
+#' Class \code{'InputRec'}
+#' 
+#' An object for storing the recommendation for an input control MP 
+#' 
+#' @name InputRec-class
+#' @docType class
+#' @section Objects from the Class: Objects can be created by calls of the form
+#' \code{new('InputRec')} 
 
-  
+#' @slot Effort A numeric value with the effort recommendation as a fraction of current (nyear) fishing effort
+#' @slot Spatial A boolean vector of length 'nareas' specifying if area is open (1) or closed (0) to fishing 
+#' @slot Allocate A boolean value describing if effort should be re-allocated from close to open areas
+#' @slot LR5 smallest length at 5 per cent retention
+#' @slot LFR smallest length at full retention 
+#' @slot HS upper harvest slot (no retention above this)
+#' @slot Rmaxlen retention of the largest size class
+#' @slot Misc An empty list that can be used to store information and pass on to MPs in future 
+#' @author A. Hordyk
+#' @keywords classes
+
+setClass("InputRec", representation(Effort = "numeric", 
+                                    Spatial="numeric", Allocate = "numeric", LR5 = "numeric",
+                                    LFR = "numeric", HS="numeric", Rmaxlen="numeric", Misc="list"))
+
+# # initialize InputRec
+# setMethod("initialize", "InputRec") 
+#   
+
+
 
   
   

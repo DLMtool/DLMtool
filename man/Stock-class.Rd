@@ -27,6 +27,8 @@ dynamics model
 
 \item{\code{Mexp}}{Exponent of the Lorenzen function assuming an inverse relationship between M and weight (uniform distribution)}
 
+\item{\code{Fdisc}}{Fraction of discarded fish that die}
+
 \item{\code{h}}{Steepness of the stock recruit relationship (uniform distribution)}
 
 \item{\code{SRrel}}{Type of stock-recruit relationship (1)Beverton-Holt (2) Ricker}

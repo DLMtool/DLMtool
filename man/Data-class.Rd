@@ -156,6 +156,8 @@ An object for storing data for analysis using data-limited methods
 
 \item{\code{LHYear}}{The last historical year of the simulation (before projection)}
 
+\item{\code{nareas}}{Number of fishing areas}
+
 \item{\code{Misc}}{Optional list which is passed to MPs}
 }}
 

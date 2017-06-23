@@ -19,6 +19,7 @@ bhnoneq_LL <- function(stpar, year, Lbar, ss, Linf, K, Lc, nbreaks) {
 #' @param VBiomass_c internal
 #' @param SSB_c internal
 #' @param Vc internal
+#' @param retAc internal 
 #' @param hc internal
 #' @param R0ac internal
 #' @param proyears internal
@@ -33,8 +34,8 @@ bhnoneq_LL <- function(stpar, year, Lbar, ss, Linf, K, Lc, nbreaks) {
 #' 
 #' @export
 #' @keywords internal
-doprojPI_cpp <- function(lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc) {
-    .Call('DLMtool_doprojPI_cpp', PACKAGE = 'DLMtool', lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc)
+doprojPI_cpp <- function(lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, retAc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc) {
+    .Call('DLMtool_doprojPI_cpp', PACKAGE = 'DLMtool', lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, retAc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc)
 }
 
 #' Generate length composition of catch 
@@ -124,6 +125,7 @@ optQ_cpp <- function(lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, m
 #' @param Wac internal
 #' @param R0c internal
 #' @param Vc internal
+#' @param retAc internal 
 #' @param nyears internal
 #' @param maxage internal
 #' @param movc internal
@@ -138,7 +140,7 @@ optQ_cpp <- function(lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, m
 #' 
 #' @export
 #' @keywords internal
-projOpt_cpp <- function(lnIn, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, Control) {
-    .Call('DLMtool_projOpt_cpp', PACKAGE = 'DLMtool', lnIn, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, Control)
+projOpt_cpp <- function(lnIn, Mc, hc, Mac, Wac, R0c, Vc, retAc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, Control) {
+    .Call('DLMtool_projOpt_cpp', PACKAGE = 'DLMtool', lnIn, Mc, hc, Mac, Wac, R0c, Vc, retAc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, Control)
 }
 

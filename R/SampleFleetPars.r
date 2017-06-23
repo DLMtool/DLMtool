@@ -237,52 +237,87 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
          dim(V)[1], " ", dim(V)[2], " ", dim(V)[3], call.=FALSE)
   
   
-  # == Sample Discard Mortality ====
-  if(!exists("Fdisc", inherits = FALSE)) Fdisc <- runif(nsim, min(Fleet@Fdisc), max(Fleet@Fdisc))
-  Fleetout$Fdisc <- Fdisc 
-  
   # == Sample Retention Parameters ====
-  if(!exists("R50", inherits = FALSE)) R50 <- runif(nsim, min(Fleet@R50), max(Fleet@R50)) * multi
-  if(!exists("Rslope", inherits = FALSE)) Rslope <- runif(nsim, min(Fleet@Rslope), max(Fleet@Rslope))
+  if(!exists("LR5", inherits = FALSE)) LR5 <- runif(nsim, min(Fleet@LR5), max(Fleet@LR5)) * multi
+  if(!exists("LFR", inherits = FALSE)) LFR <- runif(nsim, min(Fleet@LFR), max(Fleet@LFR)) * multi
+  if(!exists("Rmaxlen", inherits = FALSE)) Rmaxlen <- runif(nsim, min(Fleet@Rmaxlen), max(Fleet@Rmaxlen))
+  if(!exists("DR", inherits = FALSE)) DR <- runif(nsim, min(Fleet@DR), max(Fleet@DR))
     
-  
-  Fleetout$R50 <- R50
-  Fleetout$Rslope <- Rslope 
-  
+   
   # == Calculate Retention Curve ====
-
-  retA <- array(NA, dim = c(nsim, maxage, nyears + proyears)) # retention at age
-  retL <- array(NA, dim = c(nsim, nCALbins, nyears + proyears)) # retention at length
+  LR5 <- matrix(LR5, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+  LFR <- matrix(LFR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+  Rmaxlen <- matrix(Rmaxlen, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
+  DR <- matrix(DR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
   
-  V2 <- V3 <- V4 <- V
-  SLarray2 <- SLarray3 <- SLarray
-  for (yr in 1:(nyears+proyears)) {
-    # Calculate retention at age class
-    retA[,,yr] <- 1/(1+exp(-(Len_age[,,yr]-R50)/Rslope))
-
-    # Calculate retention at length class 
-    retL[,, yr] <- 1/(1+exp(-(matrix(CAL_binsmid, nsim, nCALbins, byrow=TRUE)-R50)/Rslope)) 
-
-    # correct retention curve - retention at age/length must <= selectivity (you can't retain fish you don't catch!)
-    retA[,,yr] <- matrix(mapply(pmin, retA[,,yr], V[,,yr]), nsim, maxage)
-    retL[,,yr] <- matrix(mapply(pmin, retL[,,yr], SLarray[,,yr]), nsim, nCALbins)
-    
-    # update vulnerablity curve with retention and discarded fish 
-    V2[,,yr] <- matrix(mapply(pmin, retA[,,yr] + (1-retA[,,yr])*Fdisc, V[,,yr]), nsim, maxage)
-    SLarray2[,,yr] <- matrix(mapply(pmin, retL[,,yr] + (1-retL[,,yr])*Fdisc, SLarray[,,yr]), nsim, nCALbins)
-
+  
+  s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
+                                            LFS = LFR[1, i], L0.05 = LR5[1,i])$minimum)
+  if (all(Rmaxlen >= 0.99)) s2 <- rep(1E5, nsim)
+  if (!all(Rmaxlen >= 0.99)) 
+    s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
+                                              LFS = LFR[1,i], s1=s1[i], maxlen=maxlen[i], 
+                                              MaxSel=Rmaxlen[1, i])$minimum)
+  
+  if (!exists("retA", inherits=FALSE)) {
+    retA <- array(NA, dim = c(nsim, maxage, nyears + proyears)) # retention at age
+    for (yr in 1:(nyears+proyears)) {
+      # Calculate retention at age class 
+      retA[ , , yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFR[yr,i], s1[i], s2[i], lens=Len_age[i,,yr])))
+    } 
+  } else {
+    # check dimensions 
+    if (any((dim(retA) != c(nsim, maxage, proyears+nyears)))) 
+      stop("retA must have dimensions: nsim (", nsim,") maxage (", maxage, 
+           ") proyears+nyears (", proyears+nyears, ") \nbut has ", 
+           dim(retA)[1], " ", dim(retA)[2], " ", dim(retA)[3], call.=FALSE) 
   }
   
-  Fleetout$retA <- retA 
-  Fleetout$retL <- retL 
+  # 
+  if (!exists("retL", inherits=FALSE)) {
+    retL <- array(NA, dim = c(nsim, nCALbins, nyears + proyears)) # retention at length
+    for (yr in 1:(nyears+proyears)) {
+      # Calculate retention at length class 
+      retL[,, yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFR[yr,i], s1[i], s2[i], lens=CAL_binsmid)))   
+    }
+  } else {
+    # check dimensions 
+    if (any((dim(retL) != c(nsim, nCALbins, proyears+nyears)))) 
+      stop("retL must have dimensions: nsim (", nsim,") nCALbins (", nCALbins, 
+           ") proyears+nyears (", proyears+nyears, ") \nbut has ", 
+           dim(retL)[1], " ", dim(retL)[2], " ", dim(retL)[3], call.=FALSE) 
+  }
+ 
+  
+  V2 <- V
+  SLarray2 <- SLarray
+  
+  for (yr in 1:(nyears+proyears)) {
+    # correct retention curve - retention at age/length must <= selectivity (you can't retain fish you don't catch!)
+    retA[,,yr] <- (1-DR[yr, ]) * matrix(mapply(pmin, retA[,,yr], V[,,yr]), nsim, maxage)
+    retL[,,yr] <- (1-DR[yr, ]) * matrix(mapply(pmin, retL[,,yr], SLarray[,,yr]), nsim, nCALbins)
+    
+    # update realized vulnerablity curve with retention and dead discarded fish 
+    # V[,,yr] <- matrix(mapply(pmin, retA[,,yr] + (1-retA[,,yr])*Fdisc, V2[,,yr]), nsim, maxage)
+    V[,,yr] <- matrix(mapply(pmax, retA[,,yr] + (abs(retA[,,yr]-V2[,,yr])*Fdisc), retA[,,yr]), nsim, maxage)
+    SLarray[,,yr] <- matrix(mapply(pmax, retL[,,yr] + (abs(retL[,,yr] - SLarray2[,,yr])*Fdisc), retL[,,yr]), nsim, nCALbins)
+  }	 
+  
+  Fleetout$LR5 <- LR5  
+  Fleetout$LFR <- LFR 
+  Fleetout$Rmaxlen <- Rmaxlen
+  Fleetout$DR <- DR
+  
+  Fleetout$retA <- retA  # retention-at-age array - nsim, maxage, nyears+proyears
+  Fleetout$retL <- retL  # retention-at-length array - nsim, nCALbins, nyears+proyears
   
   Fleetout$L5 <- L5  
   Fleetout$LFS <- LFS 
   Fleetout$Vmaxlen <- Vmaxlen 
-  Fleetout$V <- V2 
-  Fleetout$SLarray <- SLarray2
-  Fleetout$V2 <- V3 
-  Fleetout$SLarray2 <- SLarray3 # possibly delete these
+  Fleetout$V <- V  # realized vulnerability-at-age
+  Fleetout$SLarray <- SLarray # realized vulnerability-at-length
+  Fleetout$V2 <- V2 # original vulnerablity-at-age curve 
+  Fleetout$SLarray2 <- SLarray2 # original vulnerablity-at-length curve  - for debugging and checking
   
   Fleetout 
 }

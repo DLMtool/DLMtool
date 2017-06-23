@@ -1,10 +1,41 @@
+
+#' Check that input control recommendation object is valid 
+#'
+#' @param rec An input control recommendation object
+#' @param Data A data object 
+#'
+#' @return Nothing if all is ok, stops with an error if there is a problem with the input control
+#' recommendation object
+#'
+ChkInRec <- function(rec, Data) {
+  # add checks here for input control recommendation
+  # e.g., if (length(rec@Allocate) >0 && length(rec@Allocate) != nareas) stop
+  # check this - should allocate be length nareas or nareas-1?
+}
+
+# Input control - 
+# 
+# return a named list:
+
+# Allocate - 
+# Effort - 
+# Spatial - 
+# Retention - 
+# - length at first capture 
+# - length at full selection
+# - 
+
+# If missing - default or previous values used
+
+
+
 # Input MPs
 
-#' A data-limited method in which fishing vulnerability is set according to the
+#' A data-limited method in which fishing retention is set according to the
 #' maturity curve
 #' 
 #' An example of the implementation of input controls in the DLM toolkit, where
-#' selectivity-at-length is set equivalent to maturity-at-length
+#' retention-at-length is set equivalent to maturity-at-length
 #' 
 #' 
 #' @usage matlenlim(x, Data, ...)
@@ -12,24 +43,50 @@
 #' @param Data A data-limited methods object
 #' @param ... Optional additional arguments that are ignored. Note arguments
 #' \code{reps} or \code{...} are required for all input controls
-#' @return A vector of input control recommendations, with values for length at
-#' first capture and full selection
+#' @return A input control recommendation object 
 #' @author T. Carruthers
 #' @references Made-up for this package
-#' @export matlenlim
+#' @export 
 matlenlim <- function(x, Data, ...) {
-  # Length at maturity is knife-edge vulnerability
+  # Knife-edge vulnerability at estimated length-at-maturity  
   dependencies = "Data@L50"
-  Allocate <- 1
-  Effort <- 1
-  Spatial <- c(1, 1)
   
-  newLFC <- Data@L50[x] * 0.95
-  newLFS <- Data@L50[x]
-  Vuln <- c(newLFC, newLFS)
-  c(Allocate, Effort, Spatial, Vuln)
+  rec <- new("InputRec") # create recommendation object
+  rec@LR5 <- Data@L50[x] * 0.95 # new length at 5% retention  
+  rec@LFR <-  Data@L50[x] # new length at full retention   
+
+  # other slots aren't specified so remain unchanged
+  ChkInRec(rec) # check that recommendation slots are valid 
+  return(rec)
 }
 class(matlenlim) <- "Input"
+
+
+#' An marine reserve in area 1 with full reallocation of fishing effort
+#' 
+#' A spatial control that prevents fishing in area 1 and reallocates this
+#' fishing effort to area 2.
+#' 
+#' 
+#' @usage MRreal(x, Data, ...)
+#' @param x A position in data / simulation object DLM
+#' @param Data A data limited methods data object
+#' @param ... Optional additional arguments that are ignored. Note arguments
+#' \code{reps} or \code{...} are required for all input controls
+#' @author T. Carruthers
+#' @export MRreal
+MRreal <- function(x, Data, ...) {
+  # A Marine reserve in area 1 with spatial reallocation of effort
+  
+  rec <- new("InputRec") # create recommendation object
+  rec@Allocate <- 1
+  rec@Spatial <- c(0,1)
+  
+  # other slots aren't specified so remain unchanged
+  ChkInRec(rec) # check that recommendation slots are valid 
+  return(rec)
+}
+class(MRreal) <- "Input"
 
 
 
@@ -102,28 +159,7 @@ class(slotlim) <- "Input"
 
 
 
-#' An marine reserve in area 1 with full reallocation of fishing effort
-#' 
-#' A spatial control that prevents fishing in area 1 and reallocates this
-#' fishing effort to area 2.
-#' 
-#' 
-#' @usage MRreal(x, Data, ...)
-#' @param x A position in data / simulation object DLM
-#' @param Data A data limited methods data object
-#' @param ... Optional additional arguments that are ignored. Note arguments
-#' \code{reps} or \code{...} are required for all input controls
-#' @author T. Carruthers
-#' @export MRreal
-MRreal <- function(x, Data, ...) {
-  # A Marine reserve in area 1 with spatial reallocation of effort
-  Allocate <- 1
-  Effort <- 1
-  Spatial <- c(0, 1)
-  Vuln <- rep(NA, 2)
-  c(Allocate, Effort, Spatial, Vuln)
-}
-class(MRreal) <- "Input"
+
 
 
 
