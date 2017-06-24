@@ -73,7 +73,6 @@ getFMSY2 <- function(x, M_ageArray, hs, Mat_age, Wt_age, R0, V, maxage, nyears,
 		Mc = M_ageArray[x, ,nyears], hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , nyears], R0c = R0[x], 
         Vc = V[x, ,nyears], nyears = nyears, maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x],
         SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ], proyears = proyears, Control=Control)
-
 	  MSY <- -opt$objective 
 	  MSYs <- projOpt_cpp(lnIn = opt$minimum, Mc = M_ageArray[x, ,nyears], hc = hs[x], 
 	                      Mac = Mat_age[x, ], Wac = Wt_age[x, , nyears], R0c = R0[x], 
@@ -83,7 +82,8 @@ getFMSY2 <- function(x, M_ageArray, hs, Mat_age, Wt_age, R0, V, maxage, nyears,
     SSB_MSY <- MSYs[1]				
     V_BMSY <- MSYs[3]
     F_MSYv <- -log(1 - (MSY/(V_BMSY+MSY))) 
-   	F_MSYb <- -log(1 - (MSY/(SSB_MSY+MSY))) 
+   	F_MSYb <- -log(1 - (MSY/(SSB_MSY+MSY)))
+
     return(c(MSY = MSY, FMSY = F_MSYv, SSB = SSB_MSY, SSBMSY_SSB0=MSYs[4], BMSY_B0=MSYs[5], 
              B = MSYs[2] , VB=V_BMSY, F_MSYb=F_MSYb))				
 }
@@ -367,7 +367,7 @@ getFref2 <- function(x, M_ageArray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s
 		hc = hs[x], R0ac = R0a[x, ], proyears, nareas, maxage, movc = mov[x, , ], 
 		SSBpRc = SSBpR[x], aRc = aR[x, ], bRc = bR[x, ], SRrelc = SRrel[x], 
         Spat_targc = Spat_targ[x])
-
+    
     return(-opt$objective)
 		  
 }

@@ -119,17 +119,16 @@ NumericVector projOpt_cpp(double lnIn,
 		    }		
 		  }	
 		}
-		for (int age=0; age < maxage; age++) N(age, A) = Nstore(age, A);
+		  for (int age=0; age < maxage; age++) N(age, A) = Nstore(age, A);
 	  }	
       
 	  for (int age=0; age < maxage; age++) {
 		// Movement  				
-          NumericMatrix tempMat2(nareas, nareas);		
+      NumericMatrix tempMat2(nareas, nareas);		
 		  for (int AA = 0; AA < nareas; AA++) {
 		    for (int BB = 0; BB < nareas; BB++) {
-			  if (AA != BB) tempMat2(AA, BB) = (N(age, AA) * movc(AA, AA)) +
-			                (N(age, BB) * movc(BB, AA));
-			  tempMat3(AA, BB) = tempMat2(AA, BB);				 
+			    if (AA != BB) tempMat2(AA, BB) = (N(age, AA) * movc(AA, AA)) + (N(age, BB) * movc(BB, AA));
+			    tempMat3(AA, BB) = tempMat2(AA, BB);				 
 		    }
 		    Nstore(age, AA) = sum(tempMat2.row(AA));
 		  }	
@@ -139,9 +138,9 @@ NumericVector projOpt_cpp(double lnIn,
 		  CN(age, A) = FMc(age, A)/Zc(age,A) * N(age,A) * (1-exp(-Zc(age, A)));
 		  CB(age, A) = CN(age, A) * Wac(age);	  
 		  SSN(age, A) = N(age, A) * Mac(age);
-          SSB(age, A) = SSN(age, A) * Wac(age);
-          Biomass(age, A) = N(age, A) * Wac(age);
-          VB(age, A) = N(age, A) * Wac(age) * Vc(age);		  
+      SSB(age, A) = SSN(age, A) * Wac(age);
+      Biomass(age, A) = N(age, A) * Wac(age);
+      VB(age, A) = N(age, A) * Wac(age) * Vc(age);		  
 		}	  
 	  }
      // if (yr == 0) Rcpp::Rcout << "CB: " << CB << std::endl;	  

@@ -120,8 +120,8 @@ double optQ_cpp(double lnIn, double depc, NumericVector Fc,
 
   // Calculate initial Fs 
   for (int A=0; A < nareas; A++) {
-	for (int age=0; age < maxage; age++) tempMat(age, A) = Vc(age, 0) * Biomass(age, A);
-	tempVec(A) = pow(sum(tempMat.column(A)), Spat_targc); 
+	  for (int age=0; age < maxage; age++) tempMat(age, A) = Vc(age, 0) * Biomass(age, A);
+	  tempVec(A) = pow(sum(tempMat.column(A)), Spat_targc); 
   }
   for (int A=0; A < nareas; A++) {
     targ(A) = tempVec(A) / (sum(tempVec)/nareas);
