@@ -81,11 +81,11 @@ getFMSY2 <- function(x, M_ageArray, hs, Mat_age, Wt_age, R0, V, maxage, nyears,
 	                      bRc = bR[x, ], proyears = proyears, Control=2)
     SSB_MSY <- MSYs[1]				
     V_BMSY <- MSYs[3]
-    F_MSYv <- -log(1 - (MSY/(V_BMSY+MSY))) 
-   	F_MSYb <- -log(1 - (MSY/(SSB_MSY+MSY)))
+    F_MSYv <- -log(1 - (MSY/(V_BMSY+MSY)))  
+   	# F_MSYb <- -log(1 - (MSY/(SSB_MSY)))
 
     return(c(MSY = MSY, FMSY = F_MSYv, SSB = SSB_MSY, SSBMSY_SSB0=MSYs[4], BMSY_B0=MSYs[5], 
-             B = MSYs[2] , VB=V_BMSY, F_MSYb=F_MSYb))				
+             B = MSYs[2] , VB=V_BMSY))				
 }
 
 #' Internal function FMSY and related metrics 

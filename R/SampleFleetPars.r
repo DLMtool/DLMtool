@@ -62,7 +62,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
       dFfinal <- rep(NA, nsim)
     }
   }
-  if (any(dim(Find) != c(nsim, nyears))) stop("Find must be matrix with dimensions: nsim, nyears")
+  if (any(dim(Find) != c(nsim, nyears))) stop("Find must be matrix with dimensions: nsim (", nsim, "), nyears (", nyears, ") but is: ", paste(dim(Find), ""))
   
   Fleetout$Esd <- Esd
   Fleetout$Find <- Find

@@ -407,8 +407,9 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   } else {
     MSYrefs <- sapply(1:nsim, getFMSY2, M_ageArray, hs, Mat_age, Wt_age, 
                       R0, V = V, maxage, nyears, proyears = 200, Spat_targ, 
-                      mov, SRrel, aR, bR)  # optimize for MSY reference points	   
+                      mov, SRrel, aR, bR)  # optimize for MSY reference points
   }
+  
   
   ## Commented out MSYrefs calculations  
   # MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
@@ -427,7 +428,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   BMSY <- MSYrefs[6,] # total biomass at MSY
   
   VBMSY <- (MSY/(1 - exp(-FMSY)))  # Biomass at MSY (Vulnerable)
-  FMSYb <- MSYrefs[8,]  # instantaneous FMSY (Spawning Biomass)
+  # FMSYb <- MSYrefs[8,]  # instantaneous FMSY (Spawning Biomass)
   UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
   FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
   
@@ -478,46 +479,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                    hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas,
                    maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)
   }
-  
-
-  
-  msys <- sapply(1:nsim, getFMSY2, M_ageArray, hs, Mat_age, Wt_age, 
-                    R0, V = V, maxage, nyears, proyears = proyears, Spat_targ, 
-                    mov, SRrel, aR, bR)[1,]
-  
-  refys <- sapply(1:nsim, getFref2, M_ageArray = M_ageArray, Wt_age = Wt_age, 
-         Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, , drop=FALSE], SSN_s = SSN[, , nyears, , drop=FALSE], 
-         Biomass_s = Biomass[, , nyears, , drop=FALSE], VBiomass_s = VBiomass[, , nyears, , drop=FALSE], 
-         SSB_s = SSB[, , nyears, , drop=FALSE], Vn = V[, , (nyears + 1):(nyears + proyears), drop=FALSE], 
-         hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas,
-         maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)
-  
-  
-  
-  msys/refys
-  
-  
-  x <- 1 
-  logf <- 1
-  projOpt_cpp(lnIn = logf, Mc = M_ageArray[x, ,nyears], hc = hs[x], 
-              Mac = Mat_age[x, ], Wac = Wt_age[x, , nyears], R0c = R0[x], 
-              Vc = V[x, ,nyears], nyears = nyears, maxage = maxage, movc = mov[x, , ], 
-              Spat_targc = Spat_targ[x], SRrelc = SRrel[x], aRc = aR[x, ], 
-              bRc = bR[x, ], proyears = proyears, Control=1)
-              
-  doprojPI_cpp(logf, Mmat = M_ageArray[x, , (nyears + 1):(nyears + proyears)],
-               Wac = Wt_age[x, , (nyears + 1):(nyears + proyears)], Mac = Mat_age[x, ], 
-               Pc = Perr[x, (maxage+nyears):(maxage-1+nyears + proyears)], N_c = N[x, , 1,], 
-              SSN_c = SSN[x, , 1, ], Biomass_c = Biomass[x, , 1, ], 
-              VBiomass_c = VBiomass[x, , 1, ], SSB_c = SSB[x, , 1, ], Vc = V[x, , ], 
-              hc = hs[x], R0ac = R0a[x, ], proyears, nareas, maxage, movc = mov[x, , ], 
-              SSBpRc = SSBpR[x], aRc = aR[x, ], bRc = bR[x, ], SRrelc = SRrel[x], 
-              Spat_targc = Spat_targ[x])         
-  
-  # should be the same 
-  stop()
-  
-  
   
   # --- Calculate catch-at-age ----
   CN <- apply(N * (1 - exp(-Z)) * (FM/Z), c(1, 3, 2), sum)  # Catch in numbers
@@ -700,7 +661,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     TSdata <- list(VB=vb, SSB=ssb, Bio=b, Catch=Cc, Rec=rec, N=nout, E_f=E_f,TAC_f=TAC_f,SizeLim_f=SizeLim_f)
     AtAge <- list(Len_age=Len_age, Wt_age=Wt_age, Sl_age=V, Mat_age=Mat_age, 
                   Nage=apply(N, c(1:3), sum), SSBage=apply(SSB, c(1:3), sum), M_ageArray=M_ageArray)
-    MSYs <- list(MSY=MSY, FMSY=FMSY, FMSYb=FMSYb, VBMSY=VBMSY, UMSY=UMSY, 
+    MSYs <- list(MSY=MSY, FMSY=FMSY, VBMSY=VBMSY, UMSY=UMSY, 
                  SSBMSY=SSBMSY, BMSY_B0=BMSY_B0, SSBMSY_SSB0=SSBMSY_SSB0, SSB0=SSB0, B0=B0)
     
     # updated sampled pars
@@ -851,20 +812,21 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       notNA <- which(!is.na(TACused) & !is.na(availB)) # robustify for MPs that return NA 
       TACused[notNA][TACused[notNA] > maxC[notNA]] <- maxC[notNA][TACused[notNA] > maxC[notNA]]
       
-      
       fishdist <- (apply(VBiomass_P[, , 1, ], c(1, 3), sum)^Spat_targ)/
         apply(apply(VBiomass_P[, , 1, ], c(1, 3), sum)^Spat_targ, 1, mean)  # spatial preference according to spatial biomass
       
-      CB_P[SAYR] <- Biomass_P[SAYR] * (1 - exp(-V_P[SAYt] * fishdist[SR]))  # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space
+      # CB_P[SAYR] <- Biomass_P[SAYR] * (1 - exp(-V_P[SAYt] * fishdist[SR]))  # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space
+      CB_P[SAYR] <- Biomass_P[SAYR] * V_P[SAYt] * fishdist[SR] # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space
       
       temp <- CB_P[, , 1, ]/apply(CB_P[, , 1, ], 1, sum)  # how catches are going to be distributed
       CB_P[, , 1, ] <- TACused * temp  # debug - to test distribution code make TAC = TAC2, should be identical
       
       # temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-Marray[SYt]/2))  # Pope's approximation	  
-      # temp <- CB_P[SAYR]/(VBiomass_P[SAYR] * exp(-Marray[SYt]/2))  # Pope's approximation
       temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
+ 
       temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF)
       FM_P[SAYR] <- -log(1 - temp)
+      
       # Z_P[SAYR] <- FM_P[SAYR] + Marray[SYt]
       Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt]
       
@@ -1167,19 +1129,20 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
           # TACused[TACused > maxC] <- maxC[TACused > maxC] 	
           
           fishdist <- (apply(VBiomass_P[, , y, ], c(1, 3), sum)^Spat_targ)/apply(apply(VBiomass_P[, , y, ], c(1, 3), sum)^Spat_targ, 1, mean)  # spatial preference according to spatial biomass     
-          CB_P[SAYR] <- Biomass_P[SAYR] * (1 - exp(-V_P[SAYt] *  fishdist[SR]))  # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space          
+          # CB_P[SAYR] <- Biomass_P[SAYR] * (1 - exp(-V_P[SAYt] *  fishdist[SR]))  # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space          
+          CB_P[SAYR] <- Biomass_P[SAYR] * V_P[SAYt] * fishdist[SR]  # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space          
           
           temp <- CB_P[, , y, ]/apply(CB_P[, , y, ], 1, sum)  # how catches are going to be distributed
           CB_P[, , y, ] <- TACused * temp  # debug - to test distribution code make TAC = TAC2, should be identical          
           # temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-Marray[SYt]/2))  # Pope's approximation
           temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
-          #temp <- CB_P[SAYR]/(VBiomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
           temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF)
           FM_P[SAYR] <- -log(1 - temp)
           # Z_P[SAYR] <- FM_P[SAYR] + Marray[SYt]
           Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt]
           Effort[, mm, y] <- (-log(1 - apply(CB_P[, , y, ], 1, sum)/(apply(CB_P[, , y, ], 1, sum) + apply(VBiomass_P[, , y, ], 1, sum))))/qs
           
+      
         } else {
           MSElist[[mm]]@MPeff <- Ei
           runIn <- runInMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply input control MP
@@ -1276,7 +1239,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
         vbio <- apply(VBiomass_P[, , y, ], c(1, 3), sum)
         fishdist <- (vbio^Spat_targ)/apply(vbio^Spat_targ, 1, mean)  # calculate distribution of effort \t  
         if (class(match.fun(MPs[mm])) == "Output") {
-          CB_P[SAYR] <- Biomass_P[SAYR] * (1 - exp(-fishdist[SR] *  V_P[SAYt]))  # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space
+          # CB_P[SAYR] <- Biomass_P[SAYR] * (1 - exp(-fishdist[SR] *  V_P[SAYt]))  # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space
+          CB_P[SAYR] <- Biomass_P[SAYR] * V_P[SAYt] * fishdist[SR]  # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space                 
           temp <- CB_P[, , y, ]/apply(CB_P[, , y, ], 1, sum)  # how catches are going to be distributed
           tempcatch <- TACa[, mm, y]
           tempcatch<- TAC_f[,y]*tempcatch # after implementation error       
@@ -1291,7 +1255,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
           CB_P[, , y, ] <- tempcatch * temp  # debug - to test distribution code make TAC = TAC2, should be identical
           #temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-Marray[SYt]/2))  # Pope's approximation
           temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
-          #temp <- CB_P[SAYR]/(VBiomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
+
           temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF)
           FM_P[SAYR] <- -log(1 - temp)
           Effort[, mm, y] <- (-log(1 - apply(CB_P[, , y, ], 1, sum)/ (apply(CB_P[, , y, ], 1, sum) + apply(VBiomass_P[, , y, ], 1, sum))))/qs
@@ -1340,6 +1304,9 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     
     cat("\n")
   }  # end of mm methods 
+  
+ 
+  
   
   # Store MP duration
   attr(MPs, "duration") <- MPdur

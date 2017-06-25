@@ -85,21 +85,21 @@ NumericVector projOpt_cpp(double lnIn,
 	  	SSN(age, A) = Mac(age) * N(age, A); 
 	  	Biomass(age, A) = Wac(age) * N(age, A);
 	  	SSB(age, A) = SSN(age, A) * Wac(age);	
+	  	VB(age, A) = N(age, A) * Wac(age) * Vc(age);
 	  	B0 = sum(Biomass);
 	  	R0a(A) = idist(A) * R0c;
 	  	SSB0(A) = sum(SSB.column(A));
 	  	SSBpR(A) = SSB0(A) / R0a(A);
 	  } 
   }	
-	  
+
   for (int yr=0; yr < (NYears-1); yr++) {
 	  for (int A=0; A < nareas; A++) {
-		for (int age=0; age < maxage; age++) tempMat(age, A) = Vc(age) * Biomass(age, A);
-		tempVec(A) = pow(sum(tempMat.column(A)), Spat_targc); 
+		  tempVec(A) = pow(sum(VB.column(A)), Spat_targc); 
 	  }
-	  		
+
+	  targ = tempVec / (sum(tempVec)/nareas); // calculate spatial targetting	  		
 	  for (int A=0; A < nareas; A++) {
-	    targ(A) = tempVec(A) / (sum(tempVec)/nareas); // calculate spatial targetting
 		SSBbyA(A) = sum(SSB.column(A));
 
 		for (int age=0; age < maxage; age++) {
@@ -108,7 +108,6 @@ NumericVector projOpt_cpp(double lnIn,
 		  if (age > 0) Nstore(age, A) = N(age-1, A) * exp(-Zc(age-1, A));
 	      
 		  // Recruitment 
-		  // no process error when estimating MSY			   
 		  if (age == 0) {
 		    if (SRrelc == 1) {
  		      Nstore(0, A) = (0.8 * R0a(A) * hc * SSBbyA(A))/
@@ -123,41 +122,41 @@ NumericVector projOpt_cpp(double lnIn,
 	  }	
       
 	  for (int age=0; age < maxage; age++) {
-		// Movement  				
-      NumericMatrix tempMat2(nareas, nareas);		
-		  for (int AA = 0; AA < nareas; AA++) {
-		    for (int BB = 0; BB < nareas; BB++) {
-			    if (AA != BB) tempMat2(AA, BB) = (N(age, AA) * movc(AA, AA)) + (N(age, BB) * movc(BB, AA));
-			    tempMat3(AA, BB) = tempMat2(AA, BB);				 
-		    }
-		    Nstore(age, AA) = sum(tempMat2.row(AA));
-		  }	
-        // if (yr == 0) Rcpp::Rcout << "val: " << Nstore << std::endl;
-		for (int A =0; A < nareas; A++) {
-		  N(age, A) = Nstore(age, A);
-		  CN(age, A) = FMc(age, A)/Zc(age,A) * N(age,A) * (1-exp(-Zc(age, A)));
-		  CB(age, A) = CN(age, A) * Wac(age);	  
-		  SSN(age, A) = N(age, A) * Mac(age);
-      SSB(age, A) = SSN(age, A) * Wac(age);
-      Biomass(age, A) = N(age, A) * Wac(age);
-      VB(age, A) = N(age, A) * Wac(age) * Vc(age);		  
-		}	  
+	    // Movement  				
+	    NumericMatrix tempMat2(nareas, nareas);		
+	    for (int AA = 0; AA < nareas; AA++) {
+	      for (int BB = 0; BB < nareas; BB++) {
+	        if (AA != BB) tempMat2(AA, BB) = (N(age, AA) * movc(AA, AA)) + (N(age, BB) * movc(BB, AA));
+	        tempMat3(AA, BB) = tempMat2(AA, BB);				 
+	      }
+	      Nstore(age, AA) = sum(tempMat2.row(AA));
+	    }	
+	    // if (yr == 0) Rcpp::Rcout << "val: " << Nstore << std::endl;
+	    for (int A =0; A < nareas; A++) {
+	      N(age, A) = Nstore(age, A);
+	      CN(age, A) = FMc(age, A)/Zc(age,A) * N(age,A) * (1-exp(-Zc(age, A)));
+	      CB(age, A) = CN(age, A) * Wac(age);	  
+	      SSN(age, A) = N(age, A) * Mac(age);
+	      SSB(age, A) = SSN(age, A) * Wac(age);
+	      Biomass(age, A) = N(age, A) * Wac(age);
+	      VB(age, A) = N(age, A) * Wac(age) * Vc(age);		  
+	    }	  
 	  }
-     // if (yr == 0) Rcpp::Rcout << "CB: " << CB << std::endl;	  
-	 // Rcpp::Rcout << "N: " << sum(N) << std::endl;	 
   }
-  
+
   if (Control == 1) {
 	NumericVector out(1);
     out(0) = -sum(CB);
 	return out; 
   } else {
-	  NumericVector out(5);
+	  NumericVector out(7);
     out(0) = sum(SSB);
     out(1) = sum(Biomass);
     out(2) = sum(VB);
 	  out(3) = sum(SSB)/sum(SSB0);
 	  out(4) = sum(Biomass)/B0;
+	  out(5) = sum(N);
+	  out(6) = sum(CB);
 	return out; 
   } 
 }
