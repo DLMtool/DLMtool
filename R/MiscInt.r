@@ -356,17 +356,17 @@ getFref <- function(x, Marray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s,
 #' @keywords internal
 #' @export getFref2
 getFref2 <- function(x, M_ageArray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s, 
-    VBiomass_s, SSB_s, Vn, hs, R0a, nyears, proyears, nareas, maxage, mov, 
-    SSBpR, aR, bR, SRrel, Spat_targ) {
-    	
-    opt <- optimize(doprojPI_cpp, log(c(0.001, 5)), Mmat = M_ageArray[x, , (nyears + 1):(nyears + proyears)], 
-	  Wac = Wt_age[x, , (nyears + 1):(nyears + proyears)], Mac = Mat_age[x, ], 
-	    Pc = Perr[x, (maxage+nyears):(maxage-1+nyears + proyears)], N_c = N_s[x, , 1,], 
-		SSN_c = SSN_s[x, , 1, ], Biomass_c = Biomass_s[x, , 1, ], 
-		VBiomass_c = VBiomass_s[x, , 1, ], SSB_c = SSB_s[x, , 1, ], Vc = Vn[x, , ], 
-		hc = hs[x], R0ac = R0a[x, ], proyears, nareas, maxage, movc = mov[x, , ], 
-		SSBpRc = SSBpR[x], aRc = aR[x, ], bRc = bR[x, ], SRrelc = SRrel[x], 
-        Spat_targc = Spat_targ[x])
+                     VBiomass_s, SSB_s, Vn, hs, R0a, nyears, proyears, nareas, maxage, mov, 
+                     SSBpR, aR, bR, SRrel, Spat_targ) {
+  
+  opt <- optimize(doprojPI_cpp, log(c(0.001, 5)), Mmat = M_ageArray[x, , (nyears + 1):(nyears + proyears)], 
+                  Wac = Wt_age[x, , (nyears + 1):(nyears + proyears)], Mac = Mat_age[x, ], 
+                  Pc = Perr[x, (maxage+nyears):(maxage-1+nyears + proyears)], N_c = N_s[x, , 1,], 
+                  SSN_c = SSN_s[x, , 1, ], Biomass_c = Biomass_s[x, , 1, ], 
+                  VBiomass_c = VBiomass_s[x, , 1, ], SSB_c = SSB_s[x, , 1, ], Vc = Vn[x, , ], 
+                  hc = hs[x], R0ac = R0a[x, ], proyears, nareas, maxage, movc = mov[x, , ], 
+                  SSBpRc = SSBpR[x], aRc = aR[x, ], bRc = bR[x, ], SRrelc = SRrel[x], 
+                  Spat_targc = Spat_targ[x])
     
     return(-opt$objective)
 		  

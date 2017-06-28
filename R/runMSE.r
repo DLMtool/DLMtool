@@ -369,6 +369,34 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     
   }  # end of year
   
+  
+  # DEBUG Population dynamics model ----
+  
+  Nnext <- array(NA, dim=c(nsim, maxage, nareas))
+  SSNnext <- array(NA, dim=c(nsim, maxage, nareas))
+  Bnext <- array(NA, dim=c(nsim, maxage, nareas))
+  VBnext <- array(NA, dim=c(nsim, maxage, nareas))
+  SBnext <- array(NA, dim=c(nsim, maxage, nareas))
+  Cnext <- array(NA, dim=c(nsim, maxage, nareas))
+  CBnext <- array(NA, dim=c(nsim, maxage, nareas))
+  
+  # Recruitment 
+  
+  # Movement of fleet
+  
+  # Fishing 
+  
+  # Movement of stock 
+  
+  
+  
+  
+  
+  
+  
+  ################ -----
+  
+  
   # Depletion <- apply(Biomass[, , nyears, ], 1, sum)/apply(Biomass[, , 1, ], 1, sum)  #^betas   # apply hyperstability / hyperdepletion
   if (nsim > 1) Depletion <- apply(SSB[,,nyears,],1,sum)/SSB0#^betas
   if (nsim == 1) Depletion <- sum(SSB[,,nyears,])/SSB0 #^betas
@@ -730,7 +758,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
 
   
   # ---Begin loop over MPs ----
-  mm <- 2 # for debugging
+  mm <- 1 # for debugging
   for (mm in 1:nMP) {
     # MSE Loop over methods
     pL5 <- L5  # reset selectivity parameters for projections
@@ -1287,7 +1315,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     # FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum)/(apply(CB_P, c(1, 3), sum) + 
     # apply(VBiomass_P, c(1, 3), sum)))
     # VBiomass is calculated before catches are taken 				   
-    
+
     Ca[, mm, ] <- apply(CB_P, c(1, 3), sum, na.rm=TRUE)
     
     # Store Pop and Catch-at-age and at-length for last projection year 
