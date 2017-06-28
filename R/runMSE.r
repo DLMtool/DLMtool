@@ -727,11 +727,10 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   CALout <- array(NA, dim = c(nsim, nMP, nCALbins))  # store the population-at-length in last projection year
   
   # SPRa <- array(NA,dim=c(nsim,nMP,proyears)) # store the Spawning Potential Ratio
-  
-  MPdur <- rep(NA, nMP)
+
   
   # ---Begin loop over MPs ----
-  mm <- 1 # for debugging
+  mm <- 2 # for debugging
   for (mm in 1:nMP) {
     # MSE Loop over methods
     pL5 <- L5  # reset selectivity parameters for projections
@@ -795,10 +794,9 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     
     y <- 1 
     if (class(match.fun(MPs[mm])) == "Output") {
-      st <- Sys.time()
+
       Data <- Sam(MSElist[[mm]], MPs = MPs[mm], perc = pstar, reps = reps)
-      nd <- Sys.time()
-      MPdur[mm] <- nd - st
+
       TACused <- apply(Data@TAC, 3, quantile, p = pstar, na.rm = T)
       # if MP returns NA - TAC is set to catch from last year
       TACused[is.na(TACused)] <- apply(CB, c(1,3), sum)[is.na(TACused), nyears]
@@ -834,11 +832,9 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       
     } else {
       # input control
-      st <- Sys.time()
+  
       runIn <- runInMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply input control MP
-      nd <- Sys.time()
-      MPdur[mm] <- nd - st
-      
+   
       inc <- runIn[[1]] # input control recommendations 
       Data <- runIn[[2]] # Data object object with saved info from MP 
       
@@ -1226,7 +1222,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
           Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt]
           # CB_P[SAYR]<-Biomass_P[SAYR]*(1-exp(-FM_P[SAYR]))
           CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] *   (1 - exp(-Z_P[SAYR]))
-          #CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * VBiomass_P[SAYR] *   (1 - exp(-Z_P[SAYR]))		  
         }  # input or output control 
         
         # TACused <- apply(CB_P[, , y, ], 1, sum)  # Set last years TAC to actual catch from last year
@@ -1270,21 +1265,20 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
           Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt]
           # CB_P[SAYR]<-Biomass_P[SAYR]*(1-exp(-FM_P[SAYR]))
           CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
-          #CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * VBiomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
         }
         
       }  # not an update year
       
     }  # end of year
+ 
     
-    B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY  # SSB relative to SSBMSY  
+    B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY  # SSB relative to SSBMSY
     # F_FMSYa[, mm, ] <- (-log(1 - apply(CB_P, c(1, 3), sum)/(apply(CB_P, c(1, 3), sum) + 
     # apply(VBiomass_P, c(1, 3), sum))))/FMSY 
     # VBiomass is calculated before catches are taken
     # gives an error message if CB_P or VBiomass_P is NA 
     FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum, na.rm=TRUE)/apply(VBiomass_P, c(1, 3), sum, na.rm=TRUE))		
     
-
     F_FMSYa[, mm, ] <- FMa[, mm, ]/FMSY
     
     Ba[, mm, ] <- apply(Biomass_P, c(1, 3), sum, na.rm=TRUE) # biomass 
@@ -1306,11 +1300,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   }  # end of mm methods 
   
  
-  
-  
-  # Store MP duration
-  attr(MPs, "duration") <- MPdur
-  
   MSEout <- new("MSE", Name = OM@Name, nyears, proyears, nMPs=nMP, MPs, nsim, 
                 Data@OM, Obs=Data@Obs, B_BMSY=B_BMSYa, F_FMSY=F_FMSYa, B=Ba, 
                 SSB=SSBa, VB=VBa, FM=FMa, Ca, TAC=TACa, SSB_hist = SSB, CB_hist = CB, 
