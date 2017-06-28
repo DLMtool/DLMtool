@@ -436,12 +436,13 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   # --- Code for deriving low biomass ---- 
   # (SSB where it takes MGThorizon x MGT to reach Bfrac of BMSY)
   
+  Znow<-apply(Z[,,nyears,]*N[,,nyears,],1:2,sum)/apply(N[,,nyears,],1:2,sum)
+  MGTsurv<-t(exp(-apply(Znow,1,cumsum)))
+  MGT<-apply(Agearray*(Mat_age*MGTsurv),1,sum)/apply(Mat_age*MGTsurv,1,sum)
+  
   if(CalcBlow){
     message("Calculating Blow reference points")              # Print a progress update  
     
-    Znow<-apply(Z[,,nyears,]*N[,,nyears,],1:2,sum)/apply(N[,,nyears,],1:2,sum)
-    MGTsurv<-t(exp(-apply(Znow,1,cumsum)))
-    MGT<-apply(Agearray*(Mat_age*MGTsurv),1,sum)/apply(Mat_age*MGTsurv,1,sum)
     MGThorizon<-floor(HZN*MGT)
     SSBMSY<-MSYrefs[3,]
     
@@ -638,7 +639,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
              MSY, qinc, qcv, FMSY, Linf, K, t0, hs, Linfgrad, Kgrad, Linfsd, recgrad, Ksd, 
              ageM, L5=L5[nyears, ], LFS=LFS[nyears, ], Vmaxlen=Vmaxlen[nyears, ], LFC, OFLreal, 
              Spat_targ, Frac_area_1, Prob_staying, AC, L50, L95, B0, N0, SSB0, BMSY_B0,
-             TACSD,TACFrac,ESD,EFrac,SizeLimSD,SizeLimFrac,DiscMort,Blow,
+             TACSD,TACFrac,ESD,EFrac,SizeLimSD,SizeLimFrac,DiscMort,Blow,MGT,
              BMSY, SSBMSY, Mexp) # put all the operating model parameters in one table
   
   Data@Obs <- as.data.frame(ObsPars) # put all the observation error model parameters in one table
