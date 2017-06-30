@@ -180,7 +180,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   #  --- Equilibrium calcs ----
   SSN[SAYR] <- Nfrac[SA] * R0[S] * initdist[SR]  # Calculate initial spawning stock numbers
   N[SAYR] <- R0[S] * surv[SA] * initdist[SR]  # Calculate initial stock numbers
-  
+  Neq <- N
   Biomass[SAYR] <- N[SAYR] * Wt_age[SAY]  # Calculate initial stock biomass
   SSB[SAYR] <- SSN[SAYR] * Wt_age[SAY]    # Calculate spawning stock biomass
   VBiomass[SAYR] <- Biomass[SAYR] * V[SAY]  # Calculate vunerable biomass
@@ -205,9 +205,17 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   bR <- matrix(log(5 * hs)/(0.8 * SSB0a), nrow=nsim)  # Ricker SR params
   aR <- matrix(exp(bR * SSB0a)/SSBpR, nrow=nsim)  # Ricker SR params
   
-  message("Optimizing for user-specified depletion")  # Print a progress update
-
+  
+  #  --- Non-equilibrium calcs ----
+  SSN[SAYR] <- Nfrac[SA] * R0[S] * initdist[SR]*Perr[Sa]  # Calculate initial spawning stock numbers
+  N[SAYR] <- R0[S] * surv[SA] * initdist[SR]*Perr[Sa]  # Calculate initial stock numbers
+  
+  Biomass[SAYR] <- N[SAYR] * Wt_age[SAY]  # Calculate initial stock biomass
+  SSB[SAYR] <- SSN[SAYR] * Wt_age[SAY]    # Calculate spawning stock biomass
+  VBiomass[SAYR] <- Biomass[SAYR] * V[SAY]  # Calculate vunerable biomass
+  
   # --- Optimize catchability (q) to fit depletion ---- 
+  message("Optimizing for user-specified depletion")  # Print a progress update
   # if (snowfall::sfIsRunning()) {
   #   snowfall::sfExport(list = c("dep", "Find", "Perr", "Marray", "hs", "Mat_age", 
   #     "Wt_age", "R0", "V", "nyears", "maxage", "SRrel", "aR", "bR"))
@@ -232,11 +240,16 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                  Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR, bounds)  # find the q that gives current stock depletion
   }
   
+  qsTest <- sapply(1:nsim, getq3, dep, SSB0, nareas, maxage, N, pyears=nyears, FM, M_ageArray, Mat_age, Wt_age,
+                   V, Ret, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, Qs, 
+                   bounds)
+  
   # --- Check that q optimizer has converged ---- 
   LimBound <- c(1.1, 0.9)*range(bounds)  # bounds for q (catchability). Flag if bounded optimizer hits the bounds 
   probQ <- which(qs > max(LimBound) | qs < min(LimBound))
   Nprob <- length(probQ)
 
+  
   # If q has hit bound, re-sample depletion and try again. Tries 'ntrials' times
   # and then alerts user
   if (length(probQ) > 0) {
@@ -305,15 +318,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     }
   }
   
-  #  --- Non-equilibrium calcs ----
-  
-  SSN[SAYR] <- Nfrac[SA] * R0[S] * initdist[SR]*Perr[Sa]  # Calculate initial spawning stock numbers
-  N[SAYR] <- R0[S] * surv[SA] * initdist[SR]*Perr[Sa]  # Calculate initial stock numbers
-  
-  Biomass[SAYR] <- N[SAYR] * Wt_age[SAY]  # Calculate initial stock biomass
-  SSB[SAYR] <- SSN[SAYR] * Wt_age[SAY]    # Calculate spawning stock biomass
-  VBiomass[SAYR] <- Biomass[SAYR] * V[SAY]  # Calculate vunerable biomass
-  
   message("Calculating historical stock and fishing dynamics")  # Print a progress update
 
   # Distribute fishing effort
@@ -368,34 +372,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     SSB[SAY1R] <- SSN[SAY1R] * Wt_age[SAY]  # Calculate spawning stock biomass
     
   }  # end of year
-  
-  
-  # DEBUG Population dynamics model ----
-  
-  Nnext <- array(NA, dim=c(nsim, maxage, nareas))
-  SSNnext <- array(NA, dim=c(nsim, maxage, nareas))
-  Bnext <- array(NA, dim=c(nsim, maxage, nareas))
-  VBnext <- array(NA, dim=c(nsim, maxage, nareas))
-  SBnext <- array(NA, dim=c(nsim, maxage, nareas))
-  Cnext <- array(NA, dim=c(nsim, maxage, nareas))
-  CBnext <- array(NA, dim=c(nsim, maxage, nareas))
-  
-  # Recruitment 
-  
-  # Movement of fleet
-  
-  # Fishing 
-  
-  # Movement of stock 
-  
-  
-  
-  
-  
-  
-  
-  ################ -----
-  
   
   # Depletion <- apply(Biomass[, , nyears, ], 1, sum)/apply(Biomass[, , 1, ], 1, sum)  #^betas   # apply hyperstability / hyperdepletion
   if (nsim > 1) Depletion <- apply(SSB[,,nyears,],1,sum)/SSB0#^betas
