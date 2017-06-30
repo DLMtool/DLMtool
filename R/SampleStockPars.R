@@ -326,6 +326,10 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
     M_ageArray[sim,,] <- M_ageArray[sim,,] * matrix(scale, maxage, nyears+proyears, byrow=TRUE)
   }
   
+  # == Sample Discard Mortality ====
+  if(!exists("Fdisc", inherits = FALSE)) Fdisc <- runif(nsim, min(Stock@Fdisc), max(Stock@Fdisc))
+  StockOut$Fdisc <- Fdisc 
+  
   StockOut$ageM <- ageM
   StockOut$age95 <- age95
   StockOut$Linfarray <- Linfarray
@@ -347,6 +351,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   StockOut$Wt_age <- Wt_age
   StockOut$L50 <- L50
   StockOut$L95 <- L95
+  StockOut$L50_95 <- L50_95
   # StockOut$FecB <- FecB
   StockOut$Mat_age <- Mat_age
   

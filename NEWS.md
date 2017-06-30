@@ -1,6 +1,14 @@
 ## DLMtool 
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
+## DLMtool v4.3 - changes 
+
+- Added age/size dependant M 
+- input controls have been changed - see user guide for more information
+- added discard mortality and retention curve
+
+
+
 ### DLMtool v4.1
 
 #### Major Changes

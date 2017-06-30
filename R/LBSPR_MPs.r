@@ -221,7 +221,7 @@ LBSPR_ItSel <- function(x, Data, yrsmth=1, reps=5, ...) {
 
  dependencies="Data@CAL, Data@CAL_bins, Data@vbLinf, 
 	Data@vbK, Data@Mort, Data@vbK, Data@L50, Data@L95, 
-	Data@wlb"
+	Data@wlb, Data@LenCV"
   MiscList <- LBSPR(x, Data, yrsmth=yrsmth,reps=reps)
   if(all(is.na(MiscList[[1]]))) return(rep(NA, 6))
   if(all(is.na(MiscList[[1]][,2,]))) return(rep(NA, 6))
@@ -238,34 +238,28 @@ LBSPR_ItSel <- function(x, Data, yrsmth=1, reps=5, ...) {
   h <- Steep
   SPRLim <- -(2*(h-1))/(3*h+1) # SPR that results in 0.5 R0
  
-  Allocate <- 1
-  Effort <- 1
-  Spatial <- c(1,1)
+  
+  rec <- new("InputRec") # create recommendation object
 
   if (EstSPR < TgSPR) {
-    newLFC <- Data@L50[x] * 1.05
-    newLFS <- Data@L50[x] * 1.1
-    Vuln <-c(newLFC, newLFS)
+    rec@LR5 <- Data@L50[x] * 1.05
+    rec@LFR <- Data@L50[x] * 1.1
   }
   if (EstSPR < SPRLim) {
-    newLFC <- Data@L50[x] * 1.2
-    newLFS <- Data@L50[x] * 1.25
-    Vuln <-c(newLFC, newLFS)  
+    rec@LR5 <- Data@L50[x] * 1.2
+    rec@LFR <- Data@L50[x] * 1.25
+ 
   }
   if (EstSPR >= TgSPR) {
-    newLFC <- Data@L50[x] * 0.85
-    newLFS <- Data@L50[x] * 0.9
-    Vuln <-c(newLFC, newLFS)  
+    rec@LR5 <- Data@L50[x] * 0.85
+    rec@LFR <- Data@L50[x] * 0.9
+
   }
    
+
+  rec@Misc <- MiscList
  
-  out <- c(Allocate, Effort, Spatial, Vuln)
-   
-  Out <- list()
-  Out[[1]] <- out 
-  Out[[2]] <- MiscList
- 
-  return(Out) 
+  return(rec) 
 }
 class(LBSPR_ItSel)<-"Input"
 
@@ -354,7 +348,7 @@ LBSPR <- function(x, Data, yrsmth=1, reps=1, lstyrs=10) {
 
     LBpars@MK <- (trlnorm(reps,Data@Mort[x],Data@CV_Mort[x])/trlnorm(reps,Data@vbK[x],Data@CV_vbK[x]))[X] 
     LBpars@Linf <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])[X]
-    LBpars@CVLinf <- 0.1 # NEED TO ADD THIS TO INPUT VARIABLES
+    LBpars@CVLinf <- rep(Data@LenCV[x], reps)
     LBpars@L50 <- trlnorm(reps, Data@L50[x],  Data@CV_L50[x])[X]
     LBpars@L95 <- trlnorm(reps, Data@L95[x],  Data@CV_L50[x])[X]
     LBpars@FecB <- trlnorm(reps, Wb, WbCV)[X]

@@ -24,8 +24,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // doprojPI_cpp
-double doprojPI_cpp(double lnF, NumericMatrix Mmat, NumericVector Wac, NumericVector Mac, NumericVector Pc, NumericMatrix N_c, NumericMatrix SSN_c, NumericMatrix Biomass_c, NumericMatrix VBiomass_c, NumericMatrix SSB_c, NumericMatrix Vc, double hc, NumericVector R0ac, double proyears, double nareas, double maxage, NumericMatrix movc, double SSBpRc, NumericVector aRc, NumericVector bRc, double SRrelc, double Spat_targc);
-RcppExport SEXP DLMtool_doprojPI_cpp(SEXP lnFSEXP, SEXP MmatSEXP, SEXP WacSEXP, SEXP MacSEXP, SEXP PcSEXP, SEXP N_cSEXP, SEXP SSN_cSEXP, SEXP Biomass_cSEXP, SEXP VBiomass_cSEXP, SEXP SSB_cSEXP, SEXP VcSEXP, SEXP hcSEXP, SEXP R0acSEXP, SEXP proyearsSEXP, SEXP nareasSEXP, SEXP maxageSEXP, SEXP movcSEXP, SEXP SSBpRcSEXP, SEXP aRcSEXP, SEXP bRcSEXP, SEXP SRrelcSEXP, SEXP Spat_targcSEXP) {
+double doprojPI_cpp(double lnF, NumericMatrix Mmat, NumericVector Wac, NumericVector Mac, NumericVector Pc, NumericMatrix N_c, NumericMatrix SSN_c, NumericMatrix Biomass_c, NumericMatrix VBiomass_c, NumericMatrix SSB_c, NumericMatrix Vc, NumericMatrix retAc, double hc, NumericVector R0ac, double proyears, double nareas, double maxage, NumericMatrix movc, double SSBpRc, NumericVector aRc, NumericVector bRc, double SRrelc, double Spat_targc);
+RcppExport SEXP DLMtool_doprojPI_cpp(SEXP lnFSEXP, SEXP MmatSEXP, SEXP WacSEXP, SEXP MacSEXP, SEXP PcSEXP, SEXP N_cSEXP, SEXP SSN_cSEXP, SEXP Biomass_cSEXP, SEXP VBiomass_cSEXP, SEXP SSB_cSEXP, SEXP VcSEXP, SEXP retAcSEXP, SEXP hcSEXP, SEXP R0acSEXP, SEXP proyearsSEXP, SEXP nareasSEXP, SEXP maxageSEXP, SEXP movcSEXP, SEXP SSBpRcSEXP, SEXP aRcSEXP, SEXP bRcSEXP, SEXP SRrelcSEXP, SEXP Spat_targcSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -40,6 +40,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericMatrix >::type VBiomass_c(VBiomass_cSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type SSB_c(SSB_cSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type Vc(VcSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type retAc(retAcSEXP);
     Rcpp::traits::input_parameter< double >::type hc(hcSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type R0ac(R0acSEXP);
     Rcpp::traits::input_parameter< double >::type proyears(proyearsSEXP);
@@ -51,7 +52,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type bRc(bRcSEXP);
     Rcpp::traits::input_parameter< double >::type SRrelc(SRrelcSEXP);
     Rcpp::traits::input_parameter< double >::type Spat_targc(Spat_targcSEXP);
-    rcpp_result_gen = Rcpp::wrap(doprojPI_cpp(lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc));
+    rcpp_result_gen = Rcpp::wrap(doprojPI_cpp(lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, retAc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -115,8 +116,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // projOpt_cpp
-NumericVector projOpt_cpp(double lnIn, NumericVector Mc, double hc, NumericVector Mac, NumericVector Wac, double R0c, NumericVector Vc, double nyears, double maxage, NumericMatrix movc, double Spat_targc, double SRrelc, NumericVector aRc, NumericVector bRc, double proyears, double Control);
-RcppExport SEXP DLMtool_projOpt_cpp(SEXP lnInSEXP, SEXP McSEXP, SEXP hcSEXP, SEXP MacSEXP, SEXP WacSEXP, SEXP R0cSEXP, SEXP VcSEXP, SEXP nyearsSEXP, SEXP maxageSEXP, SEXP movcSEXP, SEXP Spat_targcSEXP, SEXP SRrelcSEXP, SEXP aRcSEXP, SEXP bRcSEXP, SEXP proyearsSEXP, SEXP ControlSEXP) {
+NumericVector projOpt_cpp(double lnIn, NumericVector Mc, double hc, NumericVector Mac, NumericVector Wac, double R0c, NumericVector Vc, NumericVector retAc, double nyears, double maxage, NumericMatrix movc, double Spat_targc, double SRrelc, NumericVector aRc, NumericVector bRc, double proyears, double Control);
+RcppExport SEXP DLMtool_projOpt_cpp(SEXP lnInSEXP, SEXP McSEXP, SEXP hcSEXP, SEXP MacSEXP, SEXP WacSEXP, SEXP R0cSEXP, SEXP VcSEXP, SEXP retAcSEXP, SEXP nyearsSEXP, SEXP maxageSEXP, SEXP movcSEXP, SEXP Spat_targcSEXP, SEXP SRrelcSEXP, SEXP aRcSEXP, SEXP bRcSEXP, SEXP proyearsSEXP, SEXP ControlSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -127,6 +128,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type Wac(WacSEXP);
     Rcpp::traits::input_parameter< double >::type R0c(R0cSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type Vc(VcSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type retAc(retAcSEXP);
     Rcpp::traits::input_parameter< double >::type nyears(nyearsSEXP);
     Rcpp::traits::input_parameter< double >::type maxage(maxageSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type movc(movcSEXP);
@@ -136,7 +138,22 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type bRc(bRcSEXP);
     Rcpp::traits::input_parameter< double >::type proyears(proyearsSEXP);
     Rcpp::traits::input_parameter< double >::type Control(ControlSEXP);
-    rcpp_result_gen = Rcpp::wrap(projOpt_cpp(lnIn, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, Control));
+    rcpp_result_gen = Rcpp::wrap(projOpt_cpp(lnIn, Mc, hc, Mac, Wac, R0c, Vc, retAc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, Control));
     return rcpp_result_gen;
 END_RCPP
+}
+
+static const R_CallMethodDef CallEntries[] = {
+    {"DLMtool_bhnoneq_LL", (DL_FUNC) &DLMtool_bhnoneq_LL, 8},
+    {"DLMtool_doprojPI_cpp", (DL_FUNC) &DLMtool_doprojPI_cpp, 23},
+    {"DLMtool_genLenComp", (DL_FUNC) &DLMtool_genLenComp, 9},
+    {"DLMtool_movfit_Rcpp", (DL_FUNC) &DLMtool_movfit_Rcpp, 3},
+    {"DLMtool_optQ_cpp", (DL_FUNC) &DLMtool_optQ_cpp, 17},
+    {"DLMtool_projOpt_cpp", (DL_FUNC) &DLMtool_projOpt_cpp, 17},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_DLMtool(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }

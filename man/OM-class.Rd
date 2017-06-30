@@ -33,6 +33,10 @@ bounds of a uniform distribution from which to sample the parameter.
 
 \item{\code{Mgrad}}{Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year (uniform distribution)}
 
+\item{\code{Mexp}}{Exponent of the Lorenzen function assuming an inverse relationship between M and weight (uniform distribution)}
+
+\item{\code{Fdisc}}{Fraction of discarded fish that die}
+
 \item{\code{h}}{Steepness of the stock recruit relationship (uniform distribution)}
 
 \item{\code{SRrel}}{Type of stock-recruit relationship (1)Beverton-Holt (2) Ricker}
@@ -78,6 +82,14 @@ bounds of a uniform distribution from which to sample the parameter.
 \item{\code{L5}}{Shortest length at 5 percent vulnerability (uniform distribution)}
 
 \item{\code{Vmaxlen}}{The vulnerability of the longest (oldest) fish (uniform distribution)}
+
+\item{\code{LR5}}{Shortest length corresponding ot 5 percent retention (uniform distribution)}
+
+\item{\code{LFR}}{Shortest length that is fully retained (uniform distribution)}
+
+\item{\code{Rmaxlen}}{The retention of the longest (oldest) fish (uniform distribution)}
+
+\item{\code{DR}}{Discard rate - fraction of caught fish that are discarded (must be <= 1) (uniform distribution)}
 
 \item{\code{SelYears}}{Vector of verticies that index years where historical selectivity pattern changed. Leave empty to ignore}
 

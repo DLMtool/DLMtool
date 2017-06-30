@@ -4,8 +4,8 @@
 \alias{projOpt_cpp}
 \title{Rcpp version of the Projection Optimizer}
 \usage{
-projOpt_cpp(lnIn, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc,
-  SRrelc, aRc, bRc, proyears, Control)
+projOpt_cpp(lnIn, Mc, hc, Mac, Wac, R0c, Vc, retAc, nyears, maxage, movc,
+  Spat_targc, SRrelc, aRc, bRc, proyears, Control)
 }
 \arguments{
 \item{lnIn}{internal}
@@ -21,6 +21,8 @@ projOpt_cpp(lnIn, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc,
 \item{R0c}{internal}
 
 \item{Vc}{internal}
+
+\item{retAc}{internal}
 
 \item{nyears}{internal}
 

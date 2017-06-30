@@ -15,6 +15,7 @@ using namespace Rcpp;
 //' @param VBiomass_c internal
 //' @param SSB_c internal
 //' @param Vc internal
+//' @param retAc internal 
 //' @param hc internal
 //' @param R0ac internal
 //' @param proyears internal
@@ -33,8 +34,8 @@ using namespace Rcpp;
 double doprojPI_cpp(double lnF, NumericMatrix Mmat,  
   NumericVector Wac, NumericVector Mac, NumericVector Pc, NumericMatrix N_c,
   NumericMatrix SSN_c, NumericMatrix Biomass_c, NumericMatrix VBiomass_c, 
-  NumericMatrix SSB_c, NumericMatrix Vc, double hc, NumericVector R0ac, double proyears,
-  double nareas, double maxage, NumericMatrix movc, double SSBpRc,   
+  NumericMatrix SSB_c, NumericMatrix Vc, NumericMatrix retAc, double hc, NumericVector R0ac, 
+  double proyears, double nareas, double maxage, NumericMatrix movc, double SSBpRc,   
   NumericVector aRc, NumericVector bRc, double SRrelc, double Spat_targc)  {
   
   double FF = exp(lnF);
@@ -50,13 +51,17 @@ double doprojPI_cpp(double lnF, NumericMatrix Mmat,
   NumericMatrix VBiomass_Pnext(maxage, nareas);   
   NumericMatrix SSB_Pnext(maxage, nareas);    
   NumericMatrix FM_P(maxage, nareas); 
+  NumericMatrix FM_ret(maxage, nareas); 
+  
   NumericMatrix Z_P(maxage, nareas);  
   NumericMatrix Cyr(maxage, nareas);  
+  NumericMatrix Cyr_ret(maxage, nareas);  
+  
   NumericMatrix Nstore(maxage, nareas); 
   NumericMatrix tempMat(maxage, nareas); 
   NumericMatrix tempMat3(maxage, nareas); 
   NumericVector tempVec(nareas);
-  NumericVector C_P(proyears);
+  NumericVector C_Pret(proyears); // total retained catch
   NumericVector fishdist(nareas);
   NumericVector SSBbyA(nareas);
   
@@ -69,6 +74,7 @@ double doprojPI_cpp(double lnF, NumericMatrix Mmat,
 	  fishdist(A) = tempVec(A) / (sum(tempVec)/nareas);
 	  for (int age=0; age<maxage; age++) {
 		  FM_P(age, A) = FF * Vc(age,0) * fishdist(A);
+	    FM_ret(age, A) = FF * retAc(age,0) * fishdist(A);
 		  Z_P(age, A) = FM_P(age, A) + Mmat(age,0);  
       }
   }   
@@ -107,8 +113,7 @@ double doprojPI_cpp(double lnF, NumericMatrix Mmat,
 		    SSB_P(age, A) = SSN_P(age, A) * Wac(age,yr);	    
 		}		  
 	  }
-	   // if (yr==1) Rcpp::Rcout << Biomass_P << std::endl;
-	   
+
 	  // move fishing effort 
       for (int A=0; A < nareas; A++) {
 	    for (int age=0; age < maxage; age++) tempMat(age, A) = VBiomass_P(age, A);
@@ -119,16 +124,17 @@ double doprojPI_cpp(double lnF, NumericMatrix Mmat,
 	    fishdist(A) = tempVec(A) / (sum(tempVec)/nareas);
 	    // if (yr==1) Rcpp::Rcout << "The value of fishdist is " << fishdist << std::endl;
 		for (int age=0; age<maxage; age++) {
-		  FM_P(age, A) = FF * Vc(age,yr) * fishdist(A);		  
+		  FM_P(age, A) = FF * Vc(age,yr) * fishdist(A);
+		  FM_ret(age, A) = FF * retAc(age,yr) * fishdist(A);
 		  Z_P(age, A) = FM_P(age, A) + Mmat(age,yr);  
 		  Cyr(age, A) = FM_P(age,A)/Z_P(age,A) * (1-exp(-Z_P(age, A))) * Biomass_P(age,A);
-		  // Cyr(age, A) = FM_P(age,A)/Z_P(age,A) * (1-exp(-Z_P(age, A))) * VBiomass_P(age,A);
+		  Cyr_ret(age, A) = FM_ret(age,A)/Z_P(age,A) * (1-exp(-Z_P(age, A))) * Biomass_P(age,A);
+
 		  N_Pcurr(age, A) = N_Pnext(age, A);
         }
       }
-       // if (yr==1) Rcpp::Rcout << fishdist << std::endl;	  
-	  
-    C_P(yr) = sum(Cyr); 
+    
+	  C_Pret(yr) = sum(Cyr_ret); 
   }
   
   double RetVal = 0; 
@@ -140,12 +146,11 @@ double doprojPI_cpp(double lnF, NumericMatrix Mmat,
   // Rcpp::Rcout << Store <<  std::endl;
   int XX = 0;
   for (int i=temp2; i<proyears; i++) {
-	  Store(XX) = C_P(i);
+	  Store(XX) = C_Pret(i);
       XX = XX + 1;	  
   }
   RetVal = sum(Store)/(temp+1);
  
-  
   return -RetVal;
 }
 

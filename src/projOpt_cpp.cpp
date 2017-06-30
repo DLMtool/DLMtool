@@ -12,6 +12,7 @@ using namespace Rcpp;
 //' @param Wac internal
 //' @param R0c internal
 //' @param Vc internal
+//' @param retAc internal 
 //' @param nyears internal
 //' @param maxage internal
 //' @param movc internal
@@ -29,9 +30,9 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 NumericVector projOpt_cpp(double lnIn,  
                           NumericVector Mc, double hc, NumericVector Mac, NumericVector Wac, 
-                          double R0c, NumericVector Vc, double nyears, double maxage, NumericMatrix movc,
-                          double Spat_targc, double SRrelc, NumericVector aRc, NumericVector bRc, 
-                          double proyears, double Control) {
+                          double R0c, NumericVector Vc, NumericVector retAc, double nyears, 
+                          double maxage, NumericMatrix movc, double Spat_targc, double SRrelc, 
+                          NumericVector aRc, NumericVector bRc, double proyears, double Control) {
   
   double B0 = 0; 
   double nareas = movc.nrow();
@@ -44,12 +45,17 @@ NumericVector projOpt_cpp(double lnIn,
   NumericMatrix N(maxage, nareas); 
   NumericMatrix CB(maxage, nareas); 
   NumericMatrix CN(maxage, nareas); 
+  
+  NumericMatrix CBret(maxage, nareas); 
+  NumericMatrix CNret(maxage, nareas);
+  
   NumericMatrix Nstore(maxage, nareas); 
   NumericMatrix SSN(maxage, nareas); 
   NumericMatrix Biomass(maxage, nareas); 
   NumericMatrix VB(maxage, nareas);  
   NumericMatrix SSB(maxage, nareas);  
   NumericMatrix FMc(maxage, nareas); 
+  NumericMatrix FMret(maxage, nareas); 
   NumericMatrix Zc(maxage, nareas); 
   
   NumericMatrix tempMat(maxage, nareas);
@@ -104,6 +110,7 @@ NumericVector projOpt_cpp(double lnIn,
 
 		for (int age=0; age < maxage; age++) {
       FMc(age, A) = FMSYc * Vc(age) * targ(A); // 
+		  FMret(age, A) = FMSYc * retAc(age) * targ(A); // 
 		  Zc(age, A) = FMc(age, A) + Mc(age);  
 		  if (age > 0) Nstore(age, A) = N(age-1, A) * exp(-Zc(age-1, A));
 	      
@@ -122,31 +129,34 @@ NumericVector projOpt_cpp(double lnIn,
 	  }	
       
 	  for (int age=0; age < maxage; age++) {
-	    // Movement  				
-	    NumericMatrix tempMat2(nareas, nareas);		
-	    for (int AA = 0; AA < nareas; AA++) {
-	      for (int BB = 0; BB < nareas; BB++) {
-	        if (AA != BB) tempMat2(AA, BB) = (N(age, AA) * movc(AA, AA)) + (N(age, BB) * movc(BB, AA));
-	        tempMat3(AA, BB) = tempMat2(AA, BB);				 
-	      }
-	      Nstore(age, AA) = sum(tempMat2.row(AA));
-	    }	
-	    // if (yr == 0) Rcpp::Rcout << "val: " << Nstore << std::endl;
-	    for (int A =0; A < nareas; A++) {
-	      N(age, A) = Nstore(age, A);
-	      CN(age, A) = FMc(age, A)/Zc(age,A) * N(age,A) * (1-exp(-Zc(age, A)));
-	      CB(age, A) = CN(age, A) * Wac(age);	  
-	      SSN(age, A) = N(age, A) * Mac(age);
-	      SSB(age, A) = SSN(age, A) * Wac(age);
-	      Biomass(age, A) = N(age, A) * Wac(age);
-	      VB(age, A) = N(age, A) * Wac(age) * Vc(age);		  
-	    }	  
+		// Movement  				
+          NumericMatrix tempMat2(nareas, nareas);		
+		  for (int AA = 0; AA < nareas; AA++) {
+		    for (int BB = 0; BB < nareas; BB++) {
+			  if (AA != BB) tempMat2(AA, BB) = (N(age, AA) * movc(AA, AA)) +
+			                (N(age, BB) * movc(BB, AA));
+			  tempMat3(AA, BB) = tempMat2(AA, BB);				 
+		    }
+		    Nstore(age, AA) = sum(tempMat2.row(AA));
+		  }	
+        // if (yr == 0) Rcpp::Rcout << "val: " << Nstore << std::endl;
+		for (int A =0; A < nareas; A++) {
+		  N(age, A) = Nstore(age, A);
+		  CN(age, A) = FMc(age, A)/Zc(age,A) * N(age,A) * (1-exp(-Zc(age, A)));
+		  CB(age, A) = CN(age, A) * Wac(age);
+		  CNret(age, A) = FMret(age, A)/Zc(age,A) * N(age,A) * (1-exp(-Zc(age, A)));
+		  CBret(age, A) = CNret(age, A) * Wac(age);	  
+		  SSN(age, A) = N(age, A) * Mac(age);
+          SSB(age, A) = SSN(age, A) * Wac(age);
+          Biomass(age, A) = N(age, A) * Wac(age);
+          VB(age, A) = N(age, A) * Wac(age) * Vc(age);		  
+		}	  
 	  }
   }
 
   if (Control == 1) {
 	NumericVector out(1);
-    out(0) = -sum(CB);
+    out(0) = -sum(CBret); // retained catch 
 	return out; 
   } else {
 	  NumericVector out(7);
