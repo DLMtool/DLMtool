@@ -451,7 +451,7 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
       .Object@Prob_staying <- as.numeric(dat[match("Prob_staying", dname), 1:2])
       .Object@L50 <- as.numeric(dat[match("L50", dname), 1:2])
       .Object@L50_95 <- as.numeric(dat[match("L50_95", dname), 1:2])
-      .Object@FecB <- as.numeric(dat[match("FecB", dname), 1:2])
+      #.Object@FecB <- as.numeric(dat[match("FecB", dname), 1:2])
       .Object@Source <- dat[match("Source", dname), 1]
     } else {
       message("File doesn't exist")
