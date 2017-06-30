@@ -3,22 +3,6 @@
 using namespace Rcpp;
 //[[Rcpp::export]]
 
-List O(
-
-){
-  
-
-  
-  
-  
-  
-  List to_return(1);
-  to_return[0] = new_double;
-  return to_return;
-}
-
-
-
 Rcpp::NumericVector popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcurr,
                                 Rcpp::NumericMatrix Ncurr,  Rcpp::NumericMatrix Zcurr, double PerrYr,
                                 double hs,  Rcpp::NumericVector R0a,  Rcpp::NumericVector SSBpR,

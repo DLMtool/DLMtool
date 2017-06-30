@@ -114,6 +114,10 @@ optQ_cpp <- function(lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, m
     .Call('DLMtool_optQ_cpp', PACKAGE = 'DLMtool', lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc)
 }
 
+popdynOneTScpp <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel) {
+    .Call('DLMtool_popdynOneTScpp', PACKAGE = 'DLMtool', nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel)
+}
+
 #' Rcpp version of the Projection Optimizer
 #'
 #' Optimize for MSY and calculate MSY reference points 

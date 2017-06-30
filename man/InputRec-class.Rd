@@ -16,7 +16,7 @@ An object for storing the recommendation for an input control MP
 
 \item{\code{Allocate}}{A boolean value describing if effort should be re-allocated from close to open areas}
 
-\item{\code{R5}}{smallest length at 5 per cent retention}
+\item{\code{LR5}}{smallest length at 5 per cent retention}
 
 \item{\code{LFR}}{smallest length at full retention}
 

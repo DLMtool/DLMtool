@@ -242,10 +242,11 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                  Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR, bounds)  # find the q that gives current stock depletion
   }
   
+  # TEST qs pop dyn  ----
   qsTest <- sapply(1:nsim, getq3, dep, SSB0, nareas, maxage, N, pyears=nyears, FM, M_ageArray, Mat_age, Wt_age,
-                   V, Ret, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, Qs, 
+                   V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, Qs, 
                    bounds)
-  
+  qs <- qsTest 
   # --- Check that q optimizer has converged ---- 
   LimBound <- c(1.1, 0.9)*range(bounds)  # bounds for q (catchability). Flag if bounded optimizer hits the bounds 
   probQ <- which(qs > max(LimBound) | qs < min(LimBound))
@@ -378,6 +379,21 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     
   }  # end of year
   
+  
+  
+  
+  # TEST historical years pop dyn  ----
+  histYrs <- sapply(1:nsim, simYears, nareas, maxage, N, pyears=nyears, FM, M_ageArray, 
+                    Mat_age, Wt_age, V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, 
+                    SSBpR, aR, bR, qs)
+  
+  N2 <- aperm(array(as.numeric(unlist(histYrs[1,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
+  Biomass2 <- aperm(array(as.numeric(unlist(histYrs[2,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
+  SSN2 <- aperm(array(as.numeric(unlist(histYrs[3,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
+  SSB2 <- aperm(array(as.numeric(unlist(histYrs[4,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
+  VBiomass2 <- aperm(array(as.numeric(unlist(histYrs[5,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
+  
+
   # Depletion <- apply(Biomass[, , nyears, ], 1, sum)/apply(Biomass[, , 1, ], 1, sum)  #^betas   # apply hyperstability / hyperdepletion
   if (nsim > 1) Depletion <- apply(SSB[,,nyears,],1,sum)/SSB0#^betas
   if (nsim == 1) Depletion <- sum(SSB[,,nyears,])/SSB0 #^betas
@@ -419,6 +435,22 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                       mov, SRrel, aR, bR)  # optimize for MSY reference points	   
   }
   
+  # TEST MSY calcs ----
+  # MSY projection years
+  MSYyr <- 200 
+  # Make arrays assuming current conditions
+  M_ageArrayp <- array(M_ageArray[,,nyears], dim=c(dim(M_ageArray)[1:2], MSYyr))
+  Wt_agep <- array(Wt_age[,,nyears], dim=c(dim(Wt_age)[1:2], MSYyr))
+  Vp <- array(V[,,nyears], dim=c(dim(V)[1:2], MSYyr))
+  retAp <- array(retA[,,nyears], dim=c(dim(retA)[1:2], MSYyr))
+  Perrp <- array(1, dim=c(dim(Perr)[1], MSYyr+maxage))
+  
+  MSYref2 <- sapply(1:nsim, getFMSY3, nareas, maxage, N, pyears=MSYyr, FM=NA, 
+                    M_ageArray=M_ageArrayp, Mat_age, Wt_age=Wt_agep, V=Vp, retA=retAp, 
+                    Perr=Perrp, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, SSB0, B0)  # optimize for MSY reference points
+
+  
+
   ## Commented out MSYrefs calculations  
   # MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
   # FMSY <- MSYrefs[2, ]  # instantaneous apical FMSY  (Vulnerable)
@@ -489,6 +521,12 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                    hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas,
                    maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)
   }
+  
+  # TEST RefY ----
+  RefY2 <- sapply(1:nsim, getFref3, nareas, maxage, N, pyears=nyears+proyears, FM, 
+                  M_ageArray, Mat_age, Wt_age, V, retA, Perr, mov, SRrel, Find, 
+                  Spat_targ, hs, R0a, SSBpR, aR, bR)
+  
   
   # --- Calculate catch-at-age ----
   CN <- apply(N * (1 - exp(-Z)) * (FM/Z), c(1, 3, 2), sum)  # Catch in numbers (removed from population)
@@ -564,7 +602,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   if (nsim == 1) Asp <- sum(SSB[, , nyears, ])  # SSB Abundance  
   
   OFLreal <- A * FMSY  # the true simulated Over Fishing Limit
-  
 
   # --- Simulate observed values in reference SBMSY/SB0 ----
   I3 <- apply(Biomass, c(1, 3), sum)^betas  # apply hyperstability / hyperdepletion
@@ -713,6 +750,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                      Depletion=Depletion,qs=qs, TACFrac=TACFrac,TACSD=TACSD,EFrac=EFrac,
                      ESD=ESD,SizeLimFrac=SizeLimFrac,SizeLimSD=SizeLimSD,DiscMort=DiscMort) 
     
+    Data@Misc <- list()
     HistData <- list(SampPars=SampPars, TSdata=TSdata, AtAge=AtAge, MSYs=MSYs, Data=Data)
     return(HistData)	
   }
@@ -795,6 +833,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     CB_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
     CB_Pret <- array(NA, dim = c(nsim, maxage, proyears, nareas)) # retained catch 
     
+
     # indexes
     SAYRL <- as.matrix(expand.grid(1:nsim, 1:maxage, nyears, 1:nareas))  # Final historical year
     SAYRt <- as.matrix(expand.grid(1:nsim, 1:maxage, 1 + nyears, 1:nareas))  # Trajectory year
@@ -832,6 +871,22 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     SSN_P[SAYR] <- N_P[SAYR] * Mat_age[SA1]  # Calculate spawning stock numbers
     SSB_P[SAYR] <- SSN_P[SAYR] * Wt_age[SAY1]
     FML <- apply(FM[, , nyears, ], c(1, 3), max)
+    
+    
+    # TEST first projection year ----
+    NextYrN <- lapply(1:nsim, function(x) 
+      popdynOneTS(nareas, maxage, SSBcurr=colSums(SSB[x,,nyears, ]), Ncurr=N[x,,nyears,], 
+                  Zcurr=Z[x,,nyears,], PerrYr=Perr[x, nyears+maxage-1], hc=hs[x], 
+                  R0c=R0a[x,], SSBpRc=SSBpR[x,], aRc=ar[x], bRc=bR[x], 
+                  movc=mov[x,,], SRrelc=SRrel[x]))
+    
+  
+    Ntest <- aperm(array(unlist(NextYrN), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2))
+    
+    
+    Ntest[2,,1,]/ N_P[2,, 1,]
+    
+    
     
     # -- apply MP in initial projection year ----
     y <- 1 

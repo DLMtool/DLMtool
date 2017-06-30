@@ -3,35 +3,46 @@
 
 
 popdyn <- function(nareas, maxage, Ncurr, pyears, FMc, M_age, 
-                   MatAge, WtAge, Vuln, Ret, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
-                   R0c, SSBpRc, aRc, bRc, Qc) {
+                   MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
+                   R0c, SSBpRc, aRc, bRc, Qc, Fapic=NULL, control=0) {
   Narray <- array(NA, dim=c(maxage, pyears, nareas))
+  Barray <- array(NA, dim=c(maxage, pyears, nareas))
   SSNarray <- array(NA, dim=c(maxage, pyears, nareas))
   SBarray <- array(NA, dim=c(maxage, pyears, nareas))
   VBarray <- array(NA, dim=c(maxage, pyears, nareas))
   Marray <- array(NA, dim=c(maxage, pyears, nareas))
   FMarray <- array(NA, dim=c(maxage, pyears, nareas))
+  FMretarray <- array(NA, dim=c(maxage, pyears, nareas))
   Zarray <- array(NA, dim=c(maxage, pyears, nareas))
   
   Narray[,1,] <- Ncurr
+  Barray[,1,] <- Narray[,1,] * WtAge[,1]
   SSNarray[,1,] <- Ncurr * MatAge # spawning stock numbers
   SBarray[,1,] <- Narray[,1,] * WtAge[,1] * MatAge # spawning biomass
   VBarray[,1,] <- Narray[,1,] * WtAge[,1] * Vuln[,1] # vulnerable biomass
   Marray[,1,] <- M_age[,1] # M-at-age
-  FMarray[,1,] <- FMc[,1,] # Fishing mortality at age and area
+  
   SAYR <- as.matrix(expand.grid(1:maxage, 1, 1:nareas))  # Set up some array indexes age (A) year (Y) region/area (R)
-  if (all(is.na(FMarray[,1,]))) {
-    FMarray[SAYR] <- Effind[SAYR[,2]] * Qc * Vuln[SAYR[,1:2]] * fishdist[SAYR[,3]]
+  
+  # Distribution of fishing effort 
+  VBa <- colSums(VBarray[,1,]) # total vuln biomass in each area 
+  fishdist <- VBa^Spat_targc/mean(VBa^Spat_targc)
+  if (control == 0) FMarray <- FMc # Fishing mortality at age and area
+  if (control == 1) FMarray[SAYR] <- Effind[SAYR[,2]] * Qc * Vuln[SAYR[,1:2]] * fishdist[SAYR[,3]]
+  if (control == 2) {
+    FMarray[SAYR] <- Fapic * Vuln[SAYR[,1:2]] * fishdist[SAYR[,3]]
+    FMretarray[SAYR] <- Fapic * Retc[SAYR[,1:2]] * fishdist[SAYR[,3]]
   }
   Zarray[,1,] <- Marray[,1,] + FMarray[,1,]
 
   for (y in 1:(pyears-1)) {
     
-    NextYrN <- popdynOneTS(nareas, maxage, SSBcurr=colSums(SBarray[,y,]), Ncurr= Narray[,y,], 
-                           Zcurr=Zarray[,y,], PerrYr=Prec[y], hc, R0c, SSBpRc, aRc, bRc, 
+    NextYrN <- popdynOneTS(nareas, maxage, SSBcurr=colSums(SBarray[,y,]), Ncurr=Narray[,y,], 
+                           Zcurr=Zarray[,y,], PerrYr=Prec[y+maxage-1], hc, R0c, SSBpRc, aRc, bRc, 
                            movc, SRrelc)
     
     Narray[,y+1,] <- NextYrN
+    Barray[,y+1,] <- Narray[,y+1,] * WtAge[,y+1]
     SSNarray[,y+1,] <- Narray[,y+1,] * MatAge # spawning stock numbers
     SBarray[,y+1,] <- Narray[,y+1,] * WtAge[,y+1] * MatAge # spawning biomass
     VBarray[,y+1,] <- Narray[,y+1,] * WtAge[,y+1] * Vuln[,y+1] # vulnerable biomass
@@ -41,29 +52,32 @@ popdyn <- function(nareas, maxage, Ncurr, pyears, FMc, M_age,
     VBa <- colSums(VBarray[,y+1,]) # total vuln biomass in each area 
     fishdist <- VBa^Spat_targc/mean(VBa^Spat_targc)
     
-    FMarray[,y+1,] <- FMc[,y+1,] # Fishing mortality at age and area
-    
     SAYR <- as.matrix(expand.grid(1:maxage, y+1, 1:nareas))  # Set up some array indexes age (A) year (Y) region/area (R)
-    if (all(is.na(FMarray[,y+1,]))) {
-      FMarray[SAYR] <- Effind[SAYR[,2]] * Qc * Vuln[SAYR[,1:2]] * fishdist[SAYR[,3]]
-    }
+    if (control ==1) FMarray[SAYR] <- Effind[SAYR[,2]] * Qc * Vuln[SAYR[,1:2]] * fishdist[SAYR[,3]]
+    if (control ==2) {
+      FMarray[SAYR] <- Fapic * Vuln[SAYR[,1:2]] * fishdist[SAYR[,3]]
+      FMretarray[SAYR] <- Fapic * Retc[SAYR[,1:2]] * fishdist[SAYR[,3]]
+    }   
+
     Zarray[,y+1,] <- Marray[,y+1,] + FMarray[,y+1,]
     
   }
   
   out <- list()
   out$Narray <- Narray
+  out$Barray <- Barray
   out$SSNarray <- SSNarray
   out$SBarray <- SBarray
   out$VBarray <- VBarray
   out$FMarray <- FMarray
+  out$FMretarray <- FMretarray
   out$Zarray <- Zarray
   out
 }
 
 
 popdynOneTS <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr, 
-                   PerrYr, hc, R0c, SSBpRc, aRc, bRc, movc, SRrel)  {
+                   PerrYr, hc, R0c, SSBpRc, aRc, bRc, movc, SRrelc)  {
   
   # set up some indices for indexed calculation
 
@@ -74,7 +88,7 @@ popdynOneTS <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr,
   Nnext <- array(NA, dim=c(maxage, nareas))
 
   # Recruitment assuming regional R0 and stock wide steepness
-  if (SRrel[1] == 1) {
+  if (SRrelc[1] == 1) {
     Nnext[1,  ] <- PerrYr *  (4 * R0c * hc * SSBcurr)/(SSBpRc * R0c * (1-hc) + (5*hc-1)*SSBcurr)                                                                                          
   } else {
     # most transpaRcent form of the Ricker uses alpha and beta paRcams
@@ -96,13 +110,14 @@ popdynOneTS <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr,
   
 
 getq3 <- function(x, dep, SSB0, nareas, maxage, N, pyears, FM, M_ageArray, Mat_age, Wt_age,
-                  V, Ret, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, Qs, 
+                  V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, Qs, 
                   bounds = c(1e-05, 15)) {
   
   
-  opt <- optimize(optQ, log(bounds), depc=dep[x], SSB0c=SSB0[x], nareas, maxage, Ncurr=N[x,,1,], pyears, FMc, 
+  opt <- optimize(optQ, log(bounds), depc=dep[x], SSB0c=SSB0[x], nareas, maxage, Ncurr=N[x,,1,], 
+                  pyears, FMc=FM[x,,,], 
                   M_age=M_ageArray[x,,], MatAge=Mat_age[x,], WtAge=Wt_age[x,,],
-                  Vuln=V[x,,], Ret, Prec=Perr[x,], movc=mov[x,,], SRrelc=SRrel[x], 
+                  Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=mov[x,,], SRrelc=SRrel[x], 
                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
                   SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x])
   return(exp(opt$minimum))
@@ -110,29 +125,92 @@ getq3 <- function(x, dep, SSB0, nareas, maxage, N, pyears, FM, M_ageArray, Mat_a
 
 
 optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, FMc, M_age, 
-                 MatAge, WtAge, Vuln, Ret, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
+                 MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
                  R0c, SSBpRc, aRc, bRc) {
   simpop <- popdyn(nareas, maxage, Ncurr, pyears, FMc, M_age, 
-                   MatAge, WtAge, Vuln, Ret, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
-                   R0c, SSBpRc, aRc, bRc, Qc=exp(logQ))
+                   MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
+                   R0c, SSBpRc, aRc, bRc, Qc=exp(logQ), control=1)
   
   
   ssb <- sum(simpop$SBarray[,pyears,])
+  
   (log(depc) - log(ssb/SSB0c))^2
   
 }
 
 
 simYears <- function(x, nareas, maxage, N, pyears, FM, M_ageArray, Mat_age, Wt_age,
-                     V, Ret, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, Qs) {
-  popdyn(nareas, maxage, Ncurr=N[x,,1,], pyears, FMc, 
+                     V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, Qs) {
+  popdyn(nareas, maxage, Ncurr=N[x,,1,], pyears, FMc=FM[x,,,], 
          M_age=M_ageArray[x,,], MatAge=Mat_age[x,], WtAge=Wt_age[x,,],
-         Vuln=V[x,,], Ret, Prec=Perr[x,], movc=mov[x,,], SRrelc=SRrel[x], 
+         Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=mov[x,,], SRrelc=SRrel[x], 
          Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
          SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], Qc=Qs[x])
   
 }
 
+getFMSY3 <- function(x, nareas, maxage, N, pyears, FM, M_ageArray, Mat_age, Wt_age,
+                     V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, SSB0, B0) {
+  
+  opt <- optimize(optMSY, log(c(0.001, 5)), nareas, maxage, Ncurr=N[x,,1,], 
+                  pyears, FMc=FM[x,,,], M_age=M_ageArray[x,,], MatAge=Mat_age[x,], 
+                  WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
+                  movc=mov[x,,], SRrelc=SRrel[x], 
+                  Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+                  SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x])
+                  
+  MSY <- -opt$objective 
+  simpop <- popdyn(nareas, maxage, Ncurr=N[x,,1,], 
+                   pyears, FMc=FM[x,,,], M_age=M_ageArray[x,,], MatAge=Mat_age[x,], 
+                   WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
+                   movc=mov[x,,], SRrelc=SRrel[x], 
+                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+                   SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], Fapic=exp(opt$minimum), control=2)
+  SSB_MSY <- sum(simpop$SBarray[,pyears,])
+  V_BMSY <- sum(simpop$VBarray[,pyears,])
+  F_MSYv <- -log(1 - (MSY/(V_BMSY+MSY)))
+  
+  SSBMSY_SSB0 <- sum(simpop$SBarray[,pyears,])/SSB0[x]
+  B <- sum(simpop$Barray[,pyears,])
+  BMSY_B0 <- sum(simpop$Barray[,pyears,])/B0[x]
+  
+  return(c(MSY = MSY, FMSY = F_MSYv, SSB = SSB_MSY,
+           SSBMSY_SSB0=SSBMSY_SSB0, BMSY_B0=BMSY_B0, 
+           B = B, VB=V_BMSY))
+  
+}
+
+optMSY <- function(logFa, nareas, maxage, Ncurr, pyears, FMc, M_age, 
+                 MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
+                 R0c, SSBpRc, aRc, bRc, Qc) {
+  
+  FMSYc <- exp(logFa)
+
+  simpop <- popdyn(nareas, maxage, Ncurr, pyears, FMc, M_age, 
+                   MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
+                   R0c, SSBpRc, aRc, bRc, Qc, Fapic=FMSYc, control=2)
+  
+  
+  # Yield 
+  Cn <- simpop$FMretarray/simpop$Zarray * simpop$Narray * (1-exp(-simpop$Zarray))
+  Cb <- Cn[,pyears,] * WtAge[,pyears]
+  -sum(Cb)
+}
+
+
+getFref3 <- function(x, nareas, maxage, N, pyears, FM, M_ageArray, Mat_age, Wt_age,
+                     V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR) {
+  
+  opt <- optimize(optMSY, log(c(0.001, 5)), nareas, maxage, Ncurr=N[x,,1,], 
+                  pyears, FMc=FM[x,,,], M_age=M_ageArray[x,,], MatAge=Mat_age[x,], 
+                  WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
+                  movc=mov[x,,], SRrelc=SRrel[x], 
+                  Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+                  SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x])
+  
+  -opt$objective
+  
+}
  
   
   
