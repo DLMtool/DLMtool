@@ -990,7 +990,7 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
   if(length(.Object@Mexp) < 2) .Object@Mexp <- c(0,0)
   if(length(.Object@LenCV) < 2) .Object@LenCV <- c(0.08,0.15)
   if(length(.Object@CurrentYr)==0).Object@CurrentYr=.Object@nyears
-  if(length(.Object@FecB) < 2) .Object@FecB <- c(3,3)
+  # if(length(.Object@FecB) < 2) .Object@FecB <- c(3,3)
   
   if(all(is.na(.Object@Mexp))) .Object@Mexp <- c(0,0)
   if(all(is.na(.Object@LenCV))) .Object@LenCV <- c(0.08,0.15)

@@ -76,9 +76,9 @@ MSCplot<-function(MSEobj,LTL=FALSE,zoom=NA,plot=T) {
     print(paste("Projected number of years:",MSEobj@proyears))
     print("Required time horizon for projection for each simulation:")
     print(HZN)
-    cond<-HZN>MSE@proyears
+    cond<-HZN>MSEobj@proyears
     print(paste(sum(cond),"simulations had rebuilding time artificially set to the last projection year"))
-    HZN[cond]<-MSE@proyears
+    HZN[cond]<-MSEobj@proyears
   }
   
   HZN1<-ceiling(MGT)
