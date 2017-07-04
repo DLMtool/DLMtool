@@ -270,10 +270,11 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   } else {
     if (any(dim(Mat_age) != c(nsim, maxage))) stop("'Mat_age' must be array with dimensions: nsim, maxage") 
     # Calculate L50, L95, ageM and age95 
-    ageM <- sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=1:maxage, 0.5))
-    age95 <- sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=1:maxage, 0.95))
-    L50 <- sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=Len_age[x, , nyears], 0.5))
-    L95 <- sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=Len_age[x, , nyears], 0.95))
+    test <- sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=1:maxage, 0.5))
+    ageM <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=1:maxage, 0.5)))
+    age95 <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=1:maxage, 0.95)))
+    L50 <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=Len_age[x, , nyears], 0.5)))
+    L95 <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=Len_age[x, , nyears], 0.95)))
   }
 
   # == Calculate M-at-Age from M-at-Length if provided ====
@@ -291,6 +292,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
       Mage[sim, ] <- MatLen[sim, ind]  
     }
   }
+
   
   # == M-at-age has been provided in OM ====
   if (exists("Mage", inherits=FALSE)) {
@@ -321,6 +323,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   
   # == Scale M at age so that mean M of mature ages is equal to sampled M ====
   tempM_ageArray <- M_ageArray
+
   for (sim in 1:nsim) {
     scale <- Marray[sim,]/ apply(tempM_ageArray[sim,ageM[sim]:maxage,], 2, mean)
     M_ageArray[sim,,] <- M_ageArray[sim,,] * matrix(scale, maxage, nyears+proyears, byrow=TRUE)

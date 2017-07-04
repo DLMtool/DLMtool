@@ -983,24 +983,27 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       if (y %in% upyrs) {
         # rewrite the DLM object and run the TAC function
         yind <- upyrs[match(y, upyrs) - 1]:(upyrs[match(y, upyrs)] - 1)
-        CNtemp <- array(N_P[, , yind, ] * exp(Z_P[, , yind, ]) * 
-                          (1 - exp(-Z_P[, , yind, ])) * (FM_P[, , yind, ]/Z_P[, , yind, ]), c(nsim, maxage, interval, nareas))
-        CBtemp <- array(Biomass_P[, , yind, ] * exp(Z_P[, , yind, ]) * 
-                          (1 - exp(-Z_P[, , yind, ])) * (FM_P[, , yind, ]/Z_P[, , yind, ]), c(nsim, maxage, interval, nareas))
+        
+        # CNtemp <- array(N_P[, , yind, ] * exp(Z_P[, , yind, ]) *
+                          # (1 - exp(-Z_P[, , yind, ])) * (FM_P[, , yind, ]/Z_P[, , yind, ]), c(nsim, maxage, interval, nareas))
+        # CBtemp <- array(Biomass_P[, , yind, ] * exp(Z_P[, , yind, ]) * 
+        #                   (1 - exp(-Z_P[, , yind, ])) * (FM_P[, , yind, ]/Z_P[, , yind, ]), c(nsim, maxage, interval, nareas))
+        # 
+        CBtemp <- CB_P[,,yind,, drop=FALSE]
+        CNtemp <- FM_P[,,yind,, drop=FALSE]/Z_P[,,yind,, drop=FALSE] * N_P[,,yind,, drop=FALSE] * (1-exp(-Z_P[,,yind,, drop=FALSE]))
+        
         CNtemp[is.na(CNtemp)] <- tiny
         CBtemp[is.na(CBtemp)] <- tiny
         CNtemp[!is.finite(CNtemp)] <- tiny
         CBtemp[!is.finite(CBtemp)] <- tiny
         CNtemp <- apply(CNtemp, c(1, 3, 2), sum, na.rm = T)
         
-        Cobs <- Cbiasa[, nyears + yind] * Cerr[, nyears + yind] * 
-          apply(CBtemp, c(1, 3), sum, na.rm = T)
+        Cobs <- Cbiasa[, nyears + yind] * Cerr[, nyears + yind] * apply(CBtemp, c(1, 3), sum, na.rm = T)
         Cobs[is.na(Cobs)] <- tiny
         Recobs <- Recerr[, nyears + yind] * apply(array(N_P[, 1, yind, ], c(nsim, interval, nareas)), c(1, 2), sum)
         
         cond <- apply(CNtemp, 1:2, sum, na.rm = T) < 1  # this is a fix for low sample sizes. If CN is zero across the board a single fish is caught in age class of model selectivity (dumb I know)
-        fixind <- as.matrix(cbind(expand.grid(1:nsim, 1:interval), 
-                                  rep(floor(maxage/3), interval)))  # more fix
+        fixind <- as.matrix(cbind(expand.grid(1:nsim, 1:interval), rep(floor(maxage/3), interval)))  # more fix
         
         # assign('fixind',fixind,envir=.GlobalEnv) # for debugging fun
         # assign('CNtemp',CNtemp,envir=.GlobalEnv) # for debugging fun
@@ -1060,7 +1063,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
         # Depletion <- apply(Biomass_P[, , y, ], 1, sum)/apply(Biomass[, , 1, ], 1, sum)
         Depletion <- apply(SSB_P[, , y, ], 1, sum)/SSB0 # apply(SSB[, , 1, ], 1, sum)
         Depletion[Depletion < tiny] <- tiny
-        A <- apply(VBiomass_P[, , y, ], 1, sum)
+        # A <- apply(VBiomass_P[, , y, ], 1, sum)
+        A <- apply(VBiomass_P[, , y-1, ]+CB_P[,,y-1,], 1, sum)
         A[is.na(A)] <- tiny
         Asp <- apply(SSB_P[, , y, ], 1, sum)  # SSB Abundance
         Asp[is.na(Asp)] <- tiny
@@ -1280,9 +1284,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY  # SSB relative to SSBMSY
     # F_FMSYa[, mm, ] <- (-log(1 - apply(CB_P, c(1, 3), sum)/(apply(CB_P, c(1, 3), sum) + 
     # apply(VBiomass_P, c(1, 3), sum))))/FMSY 
-    # VBiomass is calculated before catches are taken
-    # gives an error message if CB_P or VBiomass_P is NA 
-    FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum, na.rm=TRUE)/apply(VBiomass_P, c(1, 3), sum, na.rm=TRUE))		
+  
+    FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum, na.rm=TRUE)/apply(VBiomass_P+CB_P, c(1, 3), sum, na.rm=TRUE))		
     
     F_FMSYa[, mm, ] <- FMa[, mm, ]/FMSY
     
@@ -1320,6 +1323,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   attr(MSEout, "R.version") <- R.version	
   MSEout 
 }
+
 
 #' Internal function of runMSE for checking that the OM slot cpars slot is formatted correctly
 #'
