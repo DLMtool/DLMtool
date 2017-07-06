@@ -114,8 +114,69 @@ optQ_cpp <- function(lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, m
     .Call('DLMtool_optQ_cpp', PACKAGE = 'DLMtool', lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc)
 }
 
+#' Population dynamics model for one annual time-step
+#'
+#' Project population forward one time-step given current numbers-at-age and total mortality
+#'
+#' @param nareas The number of spatial areas
+#' @param maxage The maximum age 
+#' @param SSBcurr A numeric vector of length nareas with the current spawning biomass in each area
+#' @param Ncurr A numeric matrix (maxage, nareas) with current numbers-at-age in each area
+#' @param Zcurr A numeric matrix (maxage, nareas) with total mortality-at-age in each area
+#' @param PerrYr A numeric value with recruitment deviation for current year 
+#' @param hs Steepness of SRR
+#' @param R0a Numeric vector with unfished recruitment by area
+#' @param SSBpR Numeric vector with unfished spawning stock per recruit by area 
+#' @param aR Numeric vector with Ricker SRR a parameter by area
+#' @param bR Numeric vector with Ricker SRR b parameter by area
+#' @param mov Numeric matrix (nareas by nareas) with the movement matrix
+#' @param SRrel Integer indicating the stock-recruitment relationship to use (1 for Beverton-Holt, 2 for Ricker)
+#' 
+#' @author A. Hordyk
+#' 
+#' @export
+#' @keywords internal
 popdynOneTScpp <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel) {
     .Call('DLMtool_popdynOneTScpp', PACKAGE = 'DLMtool', nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel)
+}
+
+#' Population dynamics model in CPP
+#'
+#' Project population forward pyears given current numbers-at-age and total mortality, etc 
+#' for the future years
+#'
+#' @param nareas The number of spatial areas
+#' @param maxage The maximum age 
+#' @param SSBcurr A numeric vector of length nareas with the current spawning biomass in each area
+#' @param Ncurr A numeric matrix (maxage, nareas) with current numbers-at-age in each area
+#' @param pyears The number of years to project the population forward
+#' @param M_age Numeric matrix (maxage, pyears) with natural mortality by age and year
+#' @param MatAge Numeric vector with proportion mature by age
+#' @param WtAge Numeric matrix (maxage, pyears) with weight by age and year
+#' @param Vuln Numeric matrix (maxage, pyears) with vulnerability by age and year
+#' @param Retc Numeric matrix (maxage, pyears) with retention by age and year
+#' @param Prec Numeric vector (pyears) with recruitment error
+#' @param mov Numeric matrix (nareas by nareas) with the movement matrix
+#' @param SRrelc Integer indicating the stock-recruitment relationship to use (1 for Beverton-Holt, 2 for Ricker)
+#' @param Effind Numeric vector (length pyears) with the fishing effort by year
+#' @param Spat_targc Integer. Spatial targetting
+#' @param hc Numeric. Steepness of stock-recruit relationship
+#' @param R0c Numeric vector of length nareas with unfished recruitment by area
+#' @param SSBpRc Numeric vector of length nareas with unfished spawning per recruit by area
+#' @param aRc Numeric. Ricker SRR a value
+#' @param bRc Numeric. Ricker SRR b value
+#' @param Qc Numeric. Catchability coefficient
+#' @param Fapic Numeric. Apical F value
+#' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
+#' @param control Integer. 1 to use q and effort to calculate F, 2 to use Fapic (apical F) and 
+#' vulnerablity to calculate F.
+#' 
+#' @author A. Hordyk
+#' 
+#' @export
+#' @keywords internal
+popdynCPP <- function(nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc, Fapic, maxF, control) {
+    .Call('DLMtool_popdynCPP', PACKAGE = 'DLMtool', nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc, Fapic, maxF, control)
 }
 
 #' Rcpp version of the Projection Optimizer

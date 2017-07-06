@@ -482,15 +482,11 @@ doprojPI <- function(lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c,
 		# if (y==2) print(fishdist)
 		
         Z_P[AYR] <- FM_P[AYR] + Mvec[Y]
-        CNtemp <- N_P[, y, ] * exp(Z_P[, y, ]) * (1 - exp(-Z_P[, y, ])) * 
-            (FM_P[, y, ]/Z_P[, y, ])
-        CB_P[y] <- sum(Biomass_P[, y, ] * exp(Z_P[, y, ]) * (1 - exp(-Z_P[, 
-            y, ])) * (FM_P[, y, ]/Z_P[, y, ]))
+        CNtemp <- N_P[, y, ] * exp(Z_P[, y, ]) * (1 - exp(-Z_P[, y, ])) * (FM_P[, y, ]/Z_P[, y, ])
+        CB_P[y] <- sum(Biomass_P[, y, ] * exp(Z_P[, y, ]) * (1 - exp(-Z_P[, y, ])) * (FM_P[, y, ]/Z_P[, y, ]))
         
-        CNtemp <- (FM_P[, y, ]/Z_P[, y, ] * N_P[, y, ] * (1 - exp(-Z_P[, 
-            y, ])))
-        CB_P[y] <- sum(FM_P[, y, ]/Z_P[, y, ] * Biomass_P[, y, ] * (1 - 
-            exp(-Z_P[, y, ])))
+        CNtemp <- (FM_P[, y, ]/Z_P[, y, ] * N_P[, y, ] * (1 - exp(-Z_P[, y, ])))
+        CB_P[y] <- sum(FM_P[, y, ]/Z_P[, y, ] * Biomass_P[, y, ] * (1 - exp(-Z_P[, y, ])))
         
         # temp <- sum(CNtemp*Wac[AY]) print(c(CB_P[y], temp))
         

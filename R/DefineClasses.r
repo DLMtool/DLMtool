@@ -1028,12 +1028,12 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
   
   if(length(.Object@LR5) < 2) .Object@LR5 <- c(0,0)
   if(length(.Object@LFR) < 2) .Object@LFR <- c(0,0)
-  if(length(.Object@Rmaxlen) < 2) .Object@Rmaxlen <- c(0,0)
+  if(length(.Object@Rmaxlen) < 2) .Object@Rmaxlen <- c(1,1)
   if(length(.Object@Fdisc) < 2) .Object@Fdisc <- c(0,0)
   
   if(all(is.na(.Object@LR5))) .Object@LR5 <- c(0,0)  
   if(all(is.na(.Object@LFR))) .Object@LFR <- c(0,0)  
-  if(all(is.na(.Object@Rmaxlen))) .Object@Rmaxlen <- c(0,0)
+  if(all(is.na(.Object@Rmaxlen))) .Object@Rmaxlen <- c(1,1)
   if(all(is.na(.Object@Fdisc))) .Object@Fdisc <- c(0,0)  
   
   .Object@seed=1

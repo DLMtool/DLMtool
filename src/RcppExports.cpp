@@ -117,7 +117,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // popdynOneTScpp
-Rcpp::NumericVector popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcurr, Rcpp::NumericMatrix Ncurr, Rcpp::NumericMatrix Zcurr, double PerrYr, double hs, Rcpp::NumericVector R0a, Rcpp::NumericVector SSBpR, Rcpp::NumericVector aR, Rcpp::NumericVector bR, Rcpp::NumericMatrix mov, double SRrel);
+Rcpp::NumericMatrix popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcurr, Rcpp::NumericMatrix Ncurr, Rcpp::NumericMatrix Zcurr, double PerrYr, double hs, Rcpp::NumericVector R0a, Rcpp::NumericVector SSBpR, Rcpp::NumericVector aR, Rcpp::NumericVector bR, Rcpp::NumericMatrix mov, double SRrel);
 RcppExport SEXP DLMtool_popdynOneTScpp(SEXP nareasSEXP, SEXP maxageSEXP, SEXP SSBcurrSEXP, SEXP NcurrSEXP, SEXP ZcurrSEXP, SEXP PerrYrSEXP, SEXP hsSEXP, SEXP R0aSEXP, SEXP SSBpRSEXP, SEXP aRSEXP, SEXP bRSEXP, SEXP movSEXP, SEXP SRrelSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -136,6 +136,39 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type mov(movSEXP);
     Rcpp::traits::input_parameter< double >::type SRrel(SRrelSEXP);
     rcpp_result_gen = Rcpp::wrap(popdynOneTScpp(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel));
+    return rcpp_result_gen;
+END_RCPP
+}
+// popdynCPP
+List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears, arma::mat M_age, arma::vec MatAge, arma::mat WtAge, arma::mat Vuln, arma::mat Retc, arma::vec Prec, NumericMatrix movc, double SRrelc, arma::vec Effind, double Spat_targc, double hc, NumericVector R0c, NumericVector SSBpRc, double aRc, double bRc, double Qc, double Fapic, double maxF, int control);
+RcppExport SEXP DLMtool_popdynCPP(SEXP nareasSEXP, SEXP maxageSEXP, SEXP NcurrSEXP, SEXP pyearsSEXP, SEXP M_ageSEXP, SEXP MatAgeSEXP, SEXP WtAgeSEXP, SEXP VulnSEXP, SEXP RetcSEXP, SEXP PrecSEXP, SEXP movcSEXP, SEXP SRrelcSEXP, SEXP EffindSEXP, SEXP Spat_targcSEXP, SEXP hcSEXP, SEXP R0cSEXP, SEXP SSBpRcSEXP, SEXP aRcSEXP, SEXP bRcSEXP, SEXP QcSEXP, SEXP FapicSEXP, SEXP maxFSEXP, SEXP controlSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type nareas(nareasSEXP);
+    Rcpp::traits::input_parameter< double >::type maxage(maxageSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Ncurr(NcurrSEXP);
+    Rcpp::traits::input_parameter< double >::type pyears(pyearsSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type M_age(M_ageSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type MatAge(MatAgeSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type WtAge(WtAgeSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Vuln(VulnSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Retc(RetcSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Prec(PrecSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type movc(movcSEXP);
+    Rcpp::traits::input_parameter< double >::type SRrelc(SRrelcSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Effind(EffindSEXP);
+    Rcpp::traits::input_parameter< double >::type Spat_targc(Spat_targcSEXP);
+    Rcpp::traits::input_parameter< double >::type hc(hcSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type R0c(R0cSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type SSBpRc(SSBpRcSEXP);
+    Rcpp::traits::input_parameter< double >::type aRc(aRcSEXP);
+    Rcpp::traits::input_parameter< double >::type bRc(bRcSEXP);
+    Rcpp::traits::input_parameter< double >::type Qc(QcSEXP);
+    Rcpp::traits::input_parameter< double >::type Fapic(FapicSEXP);
+    Rcpp::traits::input_parameter< double >::type maxF(maxFSEXP);
+    Rcpp::traits::input_parameter< int >::type control(controlSEXP);
+    rcpp_result_gen = Rcpp::wrap(popdynCPP(nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc, Fapic, maxF, control));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -174,6 +207,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"DLMtool_movfit_Rcpp", (DL_FUNC) &DLMtool_movfit_Rcpp, 3},
     {"DLMtool_optQ_cpp", (DL_FUNC) &DLMtool_optQ_cpp, 17},
     {"DLMtool_popdynOneTScpp", (DL_FUNC) &DLMtool_popdynOneTScpp, 13},
+    {"DLMtool_popdynCPP", (DL_FUNC) &DLMtool_popdynCPP, 23},
     {"DLMtool_projOpt_cpp", (DL_FUNC) &DLMtool_projOpt_cpp, 17},
     {NULL, NULL, 0}
 };

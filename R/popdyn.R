@@ -1,8 +1,138 @@
+#' optimize for catchability (q)
+#' 
+#' Function optimizes catchability (q, where F=qE) required to get to user-specified stock
+#' depletion
+#'
+#' @param x Integer, the simulation number
+#' @param dep A numeric vector nsim long of sampled depletion
+#' @param SSB0 A numeric vector nsim long of total unfished spawning biomass
+#' @param nareas The number of spatial areas
+#' @param maxage The maximum age
+#' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas. 
+#' Only values from the first year (i.e N[,,1,]) are used, which is the current N-at-age.
+#' @param pyears The number of years to project forward. Equal to 'nyears' for optimizing for q.
+#' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year 
+#' @param Mat_age A matrix (dimensions nsim, maxage) with the proportion mature for each age-class
+#' @param Wt_age An array (dimensions nsim, maxage, nyears+proyears) with the weight-at-age and year 
+#' @param V An array (dimensions nsim, maxage, nyears+proyears) with the vulnerability-at-age and year
+#' @param retA An array (dimensions nsim, maxage, nyears+proyears) with the probability retained-at-age and year
+#' @param Perr A matrix (dimensions nsim, nyears+proyears) with the recruitment deviations
+#' @param mov An array (dimensions nsim, nareas, nareas) with the movement matrix
+#' @param SRrel A numeric vector nsim long specifying the recruitment curve to use
+#' @param Find A matrix (dimensions nsim, nyears) with the historical fishing effort 
+#' @param Spat_targ A numeric vector nsim long with the spatial targeting
+#' @param hs A numeric vector nsim long with the steepness values for each simulation
+#' @param R0a A matrix (dimensions nsim, nareas) with the unfished recruitment by area
+#' @param SSBpR A matrix (dimensions nsim, nareas) with the unfished spawning-per-recruit by area
+#' @param aR A numeric vector nsim long with the Ricker SRR a values
+#' @param bR A numeric vector nsim long with the Ricker SRR b values
+#' @param bounds A numeric vector of length 2 with bounds for the optimizer
+#' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
+#' @param useCPP logical - use the CPP code? For testing purposes only
+#'
+#' @author A. Hordyk
+#' @export
+#'
+getq3 <- function(x, dep, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
+                  V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, 
+                  bounds = c(1e-05, 15), maxF, useCPP=TRUE) {
+  
+  opt <- optimize(optQ, log(bounds), depc=dep[x], SSB0c=SSB0[x], nareas, maxage, Ncurr=N[x,,1,], 
+                  pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,], WtAge=Wt_age[x,,],
+                  Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=mov[x,,], SRrelc=SRrel[x], 
+                  Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+                  SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], maxF, useCPP=useCPP)
+  return(exp(opt$minimum))
+}
 
 
-popdyn <- function(nareas, maxage, Ncurr, pyears, FMc, M_age, 
+#' Optimize q for a single simulation 
+#'
+#' @param logQ log q
+#' @param depc Depletion value
+#' @param SSB0c Unfished spawning biomass
+#' @param nareas Number of areas
+#' @param maxage Maximum age
+#' @param Ncurr Current N-at-age
+#' @param pyears Number of years to project population dynamics
+#' @param M_age M-at-age
+#' @param MatAge Maturity-at-age
+#' @param WtAge Weight-at-age
+#' @param Vuln Vulnerability-at-age
+#' @param Retc Retention-at-age
+#' @param Prec Recruitment error by year
+#' @param movc movement matrix
+#' @param SRrelc SR parameter
+#' @param Effind Historical fishing effort
+#' @param Spat_targc Spatial targetting
+#' @param hc Steepness
+#' @param R0c Unfished recruitment by area
+#' @param SSBpRc Unfished spawning biomass per recruit by area
+#' @param aRc Ricker aR
+#' @param bRc Ricker bR
+#' @param maxF maximum F
+#' @param useCPP Logical. Use the CPP code?
+#'
+#' @author A. Hordyk
+#' @export
+
+optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, 
+                 MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
+                 R0c, SSBpRc, aRc, bRc, maxF, useCPP) {
+  if (!useCPP) {
+    simpop <- popdyn(nareas, maxage, Ncurr, pyears, M_age, 
+                     MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
+                     R0c, SSBpRc, aRc, bRc, Qc=exp(logQ), maxF=maxF, control=1) 
+    ssb <- sum(simpop$SBarray[,pyears,])
+  } else {
+    simpop <- popdynCPP(nareas, maxage, Ncurr, pyears, M_age, 
+                        MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
+                        R0c, SSBpRc, aRc, bRc, Qc=exp(logQ), Fapic=0, maxF=maxF, control=1) 
+    ssb <- sum(simpop[[4]][,pyears,])
+  }
+  
+  (log(depc) - log(ssb/SSB0c))^2
+  
+}
+
+
+#' Population dynamics model
+#'
+#' @param nareas Integer. The number of spatial areas
+#' @param maxage Integer. The maximum age
+#' @param Ncurr Numeric matrix (dimensions maxage, nareas) with the current N-at-age
+#' @param pyears Integer. Number of years to project the model forward
+#' @param M_age Numeric matrix (dimensions maxage, pyears) with natural mortality at age
+#' @param MatAge Numeric vector (length maxage) with proportion mature for each age-class
+#' @param WtAge Numeric matrix (dimensions maxage, pyears) with weight-at-age 
+#' @param Vuln Numeric matrix (dimensions maxage, pyears) with proportion vulnerable-at-age
+#' @param Retc Numeric matrix (dimensions maxage, pyears) with proportion retained-at-age
+#' @param Prec Numeric vector (length pyears) with recruitment error
+#' @param movc Numeric matrix (dimensions nareas, nareas) with movement matrix
+#' @param SRrelc Integer. Stock-recruitment curve
+#' @param Effind Numeric vector (length pyears) with the fishing effort by year
+#' @param Spat_targc Integer. Value of spatial targetting
+#' @param hc Numeric. Steepness of stock-recruit relationship
+#' @param R0c Numeric vector of length nareas with unfished recruitment by area
+#' @param SSBpRc Numeric vector of length nareas with unfished spawning per recruit by area
+#' @param aRc Numeric. Ricker SRR a value
+#' @param bRc Numeric. Ricker SRR b value
+#' @param Qc Numeric. Catchability coefficient
+#' @param Fapic Numeric. Apical F value
+#' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
+#' @param control Integer. 1 to use q and effort to calculate F, 2 to use Fapic (apical F) and 
+#' vulnerablity to calculate F.
+#' 
+#' @author A. Hordyk
+#'
+#' @return A named list of length 8 containing with arrays (dimensions: maxage, pyears, nareas)
+#' containing numbers-at-age, biomass-at-age, spawning stock numbers, spawning biomass, 
+#' vulnerable biomass, fishing mortality, retained fishing mortality, and total mortality
+#' @export
+#'
+popdyn <- function(nareas, maxage, Ncurr, pyears, M_age, 
                    MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
-                   R0c, SSBpRc, aRc, bRc, Qc, Fapic=NULL, maxF, control=0) {
+                   R0c, SSBpRc, aRc, bRc, Qc, Fapic=NULL, maxF, control=1) {
   Narray <- array(NA, dim=c(maxage, pyears, nareas))
   Barray <- array(NA, dim=c(maxage, pyears, nareas))
   SSNarray <- array(NA, dim=c(maxage, pyears, nareas))
@@ -26,7 +156,6 @@ popdyn <- function(nareas, maxage, Ncurr, pyears, FMc, M_age,
   VBa <- colSums(VBarray[,1,]) # total vuln biomass in each area 
   fishdist <- VBa^Spat_targc/mean(VBa^Spat_targc)
 
-  if (control == 0) FMarray <- FMc # Fishing mortality at age and area
   if (control == 1) {
     FMarray[SAYR] <- Effind[SAYR[,2]] * Qc * Vuln[SAYR[,1:2]] * fishdist[SAYR[,3]]
     FMretarray[SAYR] <- Effind[SAYR[,2]] * Qc * Retc[SAYR[,1:2]] * fishdist[SAYR[,3]]
@@ -36,17 +165,17 @@ popdyn <- function(nareas, maxage, Ncurr, pyears, FMc, M_age,
     FMretarray[SAYR] <- Fapic * Retc[SAYR[,1:2]] * fishdist[SAYR[,3]]
   }
   
-  # FMarray[,1,][FMarray[,1,] > (1 - exp(-maxF))] <- 1 - exp(-maxF)
-  # FMretarray[,1,][FMretarray[,1,] > (1 - exp(-maxF))] <- 1 - exp(-maxF)
+  FMarray[,1,][FMarray[,1,] > (1 - exp(-maxF))] <- 1 - exp(-maxF)
+  FMretarray[,1,][FMretarray[,1,] > (1 - exp(-maxF))] <- 1 - exp(-maxF)
  
   Zarray[,1,] <- Marray[,1,] + FMarray[,1,]
 
   for (y in 1:(pyears-1)) {
     
     NextYrN <- popdynOneTS(nareas, maxage, SSBcurr=colSums(SBarray[,y,]), Ncurr=Narray[,y,], 
-                           Zcurr=Zarray[,y,], PerrYr=Prec[y+maxage-1], hc, R0c, SSBpRc, aRc, bRc, 
+                           Zcurr=Zarray[,y,], PerrYr=Prec[y+maxage+1], hc, R0c, SSBpRc, aRc, bRc, 
                            movc, SRrelc)
-  
+    
     Narray[,y+1,] <- NextYrN
     Barray[,y+1,] <- Narray[,y+1,] * WtAge[,y+1]
     SSNarray[,y+1,] <- Narray[,y+1,] * MatAge # spawning stock numbers
@@ -67,8 +196,8 @@ popdyn <- function(nareas, maxage, Ncurr, pyears, FMc, M_age,
       FMarray[SAYR] <- Fapic * Vuln[SAYR[,1:2]] * fishdist[SAYR[,3]]
       FMretarray[SAYR] <- Fapic * Retc[SAYR[,1:2]] * fishdist[SAYR[,3]]
     }   
-    # FMarray[SAYR][FMarray[SAYR] > (1 - exp(-maxF))] <- 1 - exp(-maxF)
-    # FMretarray[SAYR][FMretarray[SAYR] > (1 - exp(-maxF))] <- 1 - exp(-maxF)
+    FMarray[SAYR][FMarray[SAYR] > (1 - exp(-maxF))] <- 1 - exp(-maxF)
+    FMretarray[SAYR][FMretarray[SAYR] > (1 - exp(-maxF))] <- 1 - exp(-maxF)
     Zarray[,y+1,] <- Marray[,y+1,] + FMarray[,y+1,]
     
   }
@@ -87,6 +216,27 @@ popdyn <- function(nareas, maxage, Ncurr, pyears, FMc, M_age,
 }
 
 
+#' Population dynamics model for one annual time-step
+#'
+#' Project population forward one time-step given current numbers-at-age and total mortality
+#'
+#' @param nareas The number of spatial areas
+#' @param maxage The maximum age 
+#' @param SSBcurr A numeric vector of length nareas with the current spawning biomass in each area
+#' @param Ncurr A numeric matrix (maxage, nareas) with current numbers-at-age in each area
+#' @param Zcurr A numeric matrix (maxage, nareas) with total mortality-at-age in each area
+#' @param PerrYr A numeric value with recruitment deviation for current year 
+#' @param hs Steepness of SRR
+#' @param R0a Numeric vector with unfished recruitment by area
+#' @param SSBpR Numeric vector with unfished spawning stock per recruit by area 
+#' @param aR Numeric vector with Ricker SRR a parameter by area
+#' @param bR Numeric vector with Ricker SRR b parameter by area
+#' @param mov Numeric matrix (nareas by nareas) with the movement matrix
+#' @param SRrel Integer indicating the stock-recruitment relationship to use (1 for Beverton-Holt, 2 for Ricker)
+#' @author A. Hordyk
+#' 
+#' @export
+#' @keywords internal
 popdynOneTS <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr, 
                    PerrYr, hc, R0c, SSBpRc, aRc, bRc, movc, SRrelc)  {
   
@@ -102,7 +252,7 @@ popdynOneTS <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr,
   if (SRrelc[1] == 1) {
     Nnext[1,  ] <- PerrYr *  (4 * R0c * hc * SSBcurr)/(SSBpRc * R0c * (1-hc) + (5*hc-1)*SSBcurr)                                                                                          
   } else {
-    # most transpaRcent form of the Ricker uses alpha and beta paRcams
+    # most transparent form of the Ricker uses alpha and beta params
     Nnext[1,  ] <- PerrYr * aRc * SSBcurr * exp(-bRc * SSBcurr)
   } 
   
@@ -118,112 +268,231 @@ popdynOneTS <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr,
 
 }
 
-  
 
-getq3 <- function(x, dep, SSB0, nareas, maxage, N, pyears, FM, M_ageArray, Mat_age, Wt_age,
-                  V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, qs, 
-                  bounds = c(1e-05, 15), maxF) {
+#' Simulate population dynamics for historical years
+#'
+#' @param x Integer, the simulation number 
+#' @param nareas The number of spatial areas
+#' @param maxage The maximum age
+#' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas. 
+#' Only values from the first year (i.e N[,,1,]) are used, which is the current N-at-age.
+#' @param pyears The number of years to project forward. Equal to 'nyears' for optimizing for q.
+#' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year 
+#' @param Mat_age A matrix (dimensions nsim, maxage) with the proportion mature for each age-class
+#' @param Wt_age An array (dimensions nsim, maxage, nyears+proyears) with the weight-at-age and year 
+#' @param V An array (dimensions nsim, maxage, nyears+proyears) with the vulnerability-at-age and year
+#' @param retA An array (dimensions nsim, maxage, nyears+proyears) with the probability retained-at-age and year
+#' @param Perr A matrix (dimensions nsim, nyears+proyears) with the recruitment deviations
+#' @param mov An array (dimensions nsim, nareas, nareas) with the movement matrix
+#' @param SRrel A numeric vector nsim long specifying the recruitment curve to use
+#' @param Find A matrix (dimensions nsim, nyears) with the historical fishing effort 
+#' @param Spat_targ A numeric vector nsim long with the spatial targeting
+#' @param hs A numeric vector nsim long with the steepness values for each simulation
+#' @param R0a A matrix (dimensions nsim, nareas) with the unfished recruitment by area
+#' @param SSBpR A matrix (dimensions nsim, nareas) with the unfished spawning-per-recruit by area
+#' @param aR A numeric vector nsim long with the Ricker SRR a values
+#' @param bR A numeric vector nsim long with the Ricker SRR b values
+#' @param bounds A numeric vector of length 2 with bounds for the optimizer
+#' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
+#' @param useCPP logical - use the CPP code? For testing purposes only 
+#' 
+#' @author A. Hordyk
+#' 
+#' 
+#' @export
+simYears <- function(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
+                     V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, qs, 
+                     maxF, useCPP=TRUE) {
+  if(!useCPP) {
+    popdyn(nareas, maxage, Ncurr=N[x,,1,], pyears,  
+           M_age=M_ageArray[x,,], MatAge=Mat_age[x,], WtAge=Wt_age[x,,],
+           Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=mov[x,,], SRrelc=SRrel[x], 
+           Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+           SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], Qc=qs[x], maxF=maxF, control=1)
+  } else {
+    popdynCPP(nareas, maxage, Ncurr=N[x,,1,], pyears,  
+           M_age=M_ageArray[x,,], MatAge=Mat_age[x,], WtAge=Wt_age[x,,],
+           Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=mov[x,,], SRrelc=SRrel[x], 
+           Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+           SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], Qc=qs[x], Fapic=0, maxF=maxF, control=1)
+  }
   
-  
-  opt <- optimize(optQ, log(bounds), depc=dep[x], SSB0c=SSB0[x], nareas, maxage, Ncurr=N[x,,1,], 
-                  pyears, FMc=FM[x,,,], 
-                  M_age=M_ageArray[x,,], MatAge=Mat_age[x,], WtAge=Wt_age[x,,],
-                  Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=mov[x,,], SRrelc=SRrel[x], 
-                  Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-                  SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], maxF)
-  return(exp(opt$minimum))
 }
 
 
-optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, FMc, M_age, 
-                 MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
-                 R0c, SSBpRc, aRc, bRc, maxF) {
-  simpop <- popdyn(nareas, maxage, Ncurr, pyears, FMc, M_age, 
-                   MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
-                   R0c, SSBpRc, aRc, bRc, Qc=exp(logQ), maxF=maxF, control=1)
-  
-  
-  ssb <- sum(simpop$SBarray[,pyears,])
-  
-  (log(depc) - log(ssb/SSB0c))^2
-  
-}
 
-
-simYears <- function(x, nareas, maxage, N, pyears, FM, M_ageArray, Mat_age, Wt_age,
-                     V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, qs, maxF) {
-  popdyn(nareas, maxage, Ncurr=N[x,,1,], pyears, FMc=FM[x,,,], 
-         M_age=M_ageArray[x,,], MatAge=Mat_age[x,], WtAge=Wt_age[x,,],
-         Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=mov[x,,], SRrelc=SRrel[x], 
-         Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-         SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], Qc=qs[x], maxF=maxF, control=1)
-  
-}
-
-getFMSY3 <- function(x, nareas, maxage, N, pyears, FM, M_ageArray, Mat_age, Wt_age,
-                     V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, SSB0, B0, maxF) {
+#' Calculate FMSY and related metrics using Rcpp code
+#'
+#' @param x Integer, the simulation number
+#' @param nareas The number of spatial areas
+#' @param maxage The maximum age
+#' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas. 
+#' Only values from the first year (i.e N[,,1,]) are used, which is the current N-at-age.
+#' @param pyears The number of years to project forward. Equal to 'nyears' for optimizing for q.
+#' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year 
+#' @param Mat_age A matrix (dimensions nsim, maxage) with the proportion mature for each age-class
+#' @param Wt_age An array (dimensions nsim, maxage, nyears+proyears) with the weight-at-age and year 
+#' @param V An array (dimensions nsim, maxage, nyears+proyears) with the vulnerability-at-age and year
+#' @param retA An array (dimensions nsim, maxage, nyears+proyears) with the probability retained-at-age and year
+#' @param Perr A matrix (dimensions nsim, nyears+proyears) with the recruitment deviations
+#' @param mov An array (dimensions nsim, nareas, nareas) with the movement matrix
+#' @param SRrel A numeric vector nsim long specifying the recruitment curve to use
+#' @param Find A matrix (dimensions nsim, nyears) with the historical fishing effort 
+#' @param Spat_targ A numeric vector nsim long with the spatial targeting
+#' @param hs A numeric vector nsim long with the steepness values for each simulation
+#' @param R0a A matrix (dimensions nsim, nareas) with the unfished recruitment by area
+#' @param SSBpR A matrix (dimensions nsim, nareas) with the unfished spawning-per-recruit by area
+#' @param aR A numeric vector nsim long with the Ricker SRR a values
+#' @param bR A numeric vector nsim long with the Ricker SRR b values
+#' @param SSB0 Unfished spawning biomass
+#' @param B0 Unfished total biomass
+#' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
+#' @param useCPP logical - use the CPP code? For testing purposes only
+#'
+#' @author A. Hordyk
+#' @export
+#'
+getFMSY3 <- function(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
+                     V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, 
+                     SSB0, B0, maxF, useCPP=TRUE) {
   
   opt <- optimize(optMSY, log(c(0.001, 10)), nareas, maxage, Ncurr=N[x,,1,], 
-                  pyears, FMc=FM[x,,,], M_age=M_ageArray[x,,], MatAge=Mat_age[x,], 
+                  pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,], 
                   WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
                   movc=mov[x,,], SRrelc=SRrel[x], 
                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-                  SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], maxF=maxF)
+                  SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], maxF=maxF, useCPP=useCPP)
                   
   MSY <- -opt$objective 
   
-  simpop <<- popdyn(nareas, maxage, Ncurr=N[x,,1,], 
-                   pyears, FMc=FM[x,,,], M_age=M_ageArray[x,,], MatAge=Mat_age[x,], 
-                   WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
-                   movc=mov[x,,], SRrelc=SRrel[x], 
-                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-                   SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], Fapic=exp(opt$minimum), maxF=maxF, control=2)
-  
+  if (!useCPP) {
+    simpop <- popdyn(nareas, maxage, Ncurr=N[x,,1,], 
+                     pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,], 
+                     WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
+                     movc=mov[x,,], SRrelc=SRrel[x], 
+                     Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+                     SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], Fapic=exp(opt$minimum), maxF=maxF, control=2) 
+  } else {
+    simpop <- popdynCPP(nareas, maxage, Ncurr=N[x,,1,], 
+                     pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,], 
+                     WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
+                     movc=mov[x,,], SRrelc=SRrel[x], 
+                     Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+                     SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], Qc=0, Fapic=exp(opt$minimum), maxF=maxF, control=2)
+  }
 
-  Cn <- simpop$FMretarray/simpop$Zarray * simpop$Narray * (1-exp(-simpop$Zarray))
+  Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]]))
   Cb <- Cn[,pyears,] * Wt_age[x,,pyears]
-  B <- sum(simpop$Barray[,pyears,] + Cb)
+  B <- sum(simpop[[2]][,pyears,] + Cb)
   
-#  SSB_MSY <- sum((simpop$Barray[,pyears,] + (Cn[,pyears,] * Wt_age[x,,pyears])) * Mat_age[x,])
-  SSB_MSY <- sum(simpop$SBarray[,pyears,])
+  SSB_MSY <- sum(simpop[[4]][,pyears,])
   
-  V_BMSY <- sum(simpop$VBarray[,pyears,])
+  V_BMSY <- sum(simpop[[5]][,pyears,])
   F_MSYv <- -log(1 - (MSY/(V_BMSY+MSY)))
   
-  SSBMSY_SSB0 <- sum(simpop$SBarray[,pyears,])/SSB0[x]
+  SSBMSY_SSB0 <- sum(simpop[[4]][,pyears,])/SSB0[x]
   
-  BMSY_B0 <- sum(simpop$Barray[,pyears,])/B0[x]
+  BMSY_B0 <- sum(simpop[[2]][,pyears,])/B0[x]
   return(c(MSY = MSY, FMSY = F_MSYv, SSB = SSB_MSY, SSBMSY_SSB0=SSBMSY_SSB0, 
            BMSY_B0=BMSY_B0, B = B, VB=V_BMSY+MSY))
   
 }
 
-optMSY <- function(logFa, nareas, maxage, Ncurr, pyears, FMc, M_age, 
+
+#' Optimize yield for a single simulation
+#' 
+#' @param logFa log apical fishing mortality
+#' @param nareas Number of area
+#' @param maxage Maximum age
+#' @param Ncurr Current N-at-age
+#' @param pyears Number of projection years
+#' @param M_age M-at-age
+#' @param MatAge Maturity-at-age
+#' @param WtAge Weight-at-age
+#' @param Vuln Vulnerablity-at-age
+#' @param Retc Retention-at-age
+#' @param Prec Recruitment error
+#' @param movc Movement matrix
+#' @param SRrelc SR Relationship
+#' @param Effind Historical effort
+#' @param Spat_targc Spatial targeting
+#' @param hc Steepness
+#' @param R0c Unfished recruitment by area
+#' @param SSBpRc Unfished spawning stock per recruit by area
+#' @param aRc Ricker aR
+#' @param bRc Ricker bR
+#' @param Qc Catchability 
+#' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
+#' @param useCPP logical - use the CPP code? For testing purposes only
+#'
+#' @export
+#'
+#' @author A. Hordyk
+#' 
+optMSY <- function(logFa, nareas, maxage, Ncurr, pyears, M_age, 
                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
-                 R0c, SSBpRc, aRc, bRc, Qc, maxF) {
+                 R0c, SSBpRc, aRc, bRc, Qc, maxF, useCPP=TRUE) {
   
   FMSYc <- exp(logFa)
+  if(!useCPP) {
+    simpop <- popdyn(nareas, maxage, Ncurr, pyears, M_age, 
+                     MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
+                     R0c, SSBpRc, aRc, bRc, Qc, Fapic=FMSYc, maxF, control=2)
+  } else {
+    simpop <- popdynCPP(nareas, maxage, Ncurr, pyears, M_age, 
+                     MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
+                     R0c, SSBpRc, aRc, bRc, Qc=0, Fapic=FMSYc, maxF, control=2)
+  }
 
-  simpop <- popdyn(nareas, maxage, Ncurr, pyears, FMc, M_age, 
-                   MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
-                   R0c, SSBpRc, aRc, bRc, Qc, Fapic=FMSYc, maxF, control=2)
-  
   # Yield 
-  Cn <- simpop$FMretarray/simpop$Zarray * simpop$Narray * (1-exp(-simpop$Zarray))
+  Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]]))
   Cb <- Cn[,pyears,] * WtAge[,pyears]
   -sum(Cb)
 }
 
 
-getFref3 <- function(x, nareas, maxage, N, pyears, FM, M_ageArray, Mat_age, Wt_age,
-                     V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, maxF) {
+
+#' Calculate Reference Yield 
+#'
+#' @param x Integer, the simulation number
+#' @param nareas The number of spatial areas
+#' @param maxage The maximum age
+#' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas. 
+#' Only values from the first year (i.e N[,,1,]) are used, which is the current N-at-age.
+#' @param pyears The number of years to project forward. Equal to 'nyears' for optimizing for q.
+#' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year 
+#' @param Mat_age A matrix (dimensions nsim, maxage) with the proportion mature for each age-class
+#' @param Wt_age An array (dimensions nsim, maxage, nyears+proyears) with the weight-at-age and year 
+#' @param V An array (dimensions nsim, maxage, nyears+proyears) with the vulnerability-at-age and year
+#' @param retA An array (dimensions nsim, maxage, nyears+proyears) with the probability retained-at-age and year
+#' @param Perr A matrix (dimensions nsim, nyears+proyears) with the recruitment deviations
+#' @param mov An array (dimensions nsim, nareas, nareas) with the movement matrix
+#' @param SRrel A numeric vector nsim long specifying the recruitment curve to use
+#' @param Find A matrix (dimensions nsim, nyears) with the historical fishing effort 
+#' @param Spat_targ A numeric vector nsim long with the spatial targeting
+#' @param hs A numeric vector nsim long with the steepness values for each simulation
+#' @param R0a A matrix (dimensions nsim, nareas) with the unfished recruitment by area
+#' @param SSBpR A matrix (dimensions nsim, nareas) with the unfished spawning-per-recruit by area
+#' @param aR A numeric vector nsim long with the Ricker SRR a values
+#' @param bR A numeric vector nsim long with the Ricker SRR b values
+#' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
+#' @param useCPP logical - use the CPP code? For testing purposes only
+#'
+#' @author A. Hordyk
+#' @export
+#'
+#' @author A. Hordyk
+#' 
+getFref3 <- function(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
+                     V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, 
+                     maxF, useCPP=TRUE) {
   
   opt <- optimize(optMSY, log(c(0.001, 10)), nareas, maxage, Ncurr=N[x,,1,], 
-                  pyears, FMc=FM[x,,,], M_age=M_ageArray[x,,], MatAge=Mat_age[x,], 
+                  pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,], 
                   WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
                   movc=mov[x,,], SRrelc=SRrel[x], 
                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-                  SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], maxF=maxF)
+                  SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], maxF=maxF, useCPP=useCPP)
   
   -opt$objective
   
@@ -231,6 +500,35 @@ getFref3 <- function(x, nareas, maxage, N, pyears, FM, M_ageArray, Mat_age, Wt_a
  
   
   
+#' Apply output control recommendations and calculate population dynamics  
+#'
+#' @param y Projection year
+#' @param TAC TAC recommendation
+#' @param TAC_f Implementation error on TAC
+#' @param lastCatch Catch from last year
+#' @param availB Total available biomass
+#' @param maxF Maximum fishing mortality
+#' @param Biomass_P Numeric array (nsim, maxage, proyears, nareas) with Biomass at age
+#' @param VBiomass_P Numeric array (nsim, maxage, proyears, nareas) with Vulnerable Biomass at age
+#' @param CB_P Numeric array (nsim, maxage, proyears, nareas) with Catch Biomass at age
+#' @param CB_Pret Numeric array (nsim, maxage, proyears, nareas) with Retained catch biomass at age
+#' @param FM_P Numeric array (nsim, maxage, proyears, nareas) with fishing mortality at age
+#' @param Z_P Numeric array (nsim, maxage, proyears, nareas) with total mortality at age
+#' @param Spat_targ Spatial targetting
+#' @param V_P Numeric array(nsim, maxage, nyears+proyears) with vulnerability at age
+#' @param retA_P Numeric array(nsim, maxage, nyears+proyears) with retention at age
+#' @param M_ageArray Numeric array (nsim, maxage, nyears+proyears) Natural mortality at age
+#' @param qs Catchability coefficient
+#' @param nyears Number of historical years
+#' @param nsim Number of simulations 
+#' @param maxage Maximum age
+#' @param nareas Number of areas
+#'
+#' @return
+#' @export
+#'
+#' @author A. Hordyk
+#' 
 CalcOutput <- function(y, TAC, TAC_f, lastCatch, availB, maxF, Biomass_P, VBiomass_P, CB_P, CB_Pret,
                        FM_P, Z_P, Spat_targ, V_P, retA_P, M_ageArray, qs, nyears, nsim, maxage, nareas) {
   SAYRL <- as.matrix(expand.grid(1:nsim, 1:maxage, nyears, 1:nareas))  # Final historical year
@@ -254,8 +552,8 @@ CalcOutput <- function(y, TAC, TAC_f, lastCatch, availB, maxF, Biomass_P, VBioma
   TACrec <- TAC             # TAC recommendation
   TACused<- TAC_f[,y]*TAC   # TAC taken after implementation error
   
-  # maxC <- (1 - exp(-maxF)) * availB # maximum catch given maxF
-  # TACused[TACused > maxC] <- maxC[TACused > maxC] # apply maxF limit - catch can't be higher than maxF * vulnerable biomass 
+  maxC <- (1 - exp(-maxF)) * availB # maximum catch given maxF
+  TACused[TACused > maxC] <- maxC[TACused > maxC] # apply maxF limit - catch can't be higher than maxF * vulnerable biomass
   
   fishdist <- (apply(VBiomass_P[, , y, ], c(1, 3), sum)^Spat_targ)/
     apply(apply(VBiomass_P[, , y, ], c(1, 3), sum)^Spat_targ, 1, mean)  # spatial preference according to spatial biomass
@@ -280,17 +578,14 @@ CalcOutput <- function(y, TAC, TAC_f, lastCatch, availB, maxF, Biomass_P, VBioma
 
   # temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
   # temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF)
-  # FM_P[SAYR] <- # -log(1 - temp)
-  
-  
-  # temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
   # FM_P[SAYR] <- -log(1 - temp)
-  
-  calcFs <- lapply(1:nsim, getFs, y=y, Vuln=V_P, CB=CB_P, Bio=Biomass_P, Mage=M_ageArray, Fdist=fishdist,
-         maxage=maxage, nareas=nareas, nyears=nyears)
-  
-  FM_P[,,y,] <- aperm(array(unlist(calcFs, use.names=FALSE), dim=c(maxage, nareas, nsim)), c(3, 1, 2))
 
+  calcFs <- lapply(1:nsim, getFs, y=y, Vuln=V_P, CB=CB_P, Bio=Biomass_P, Mage=M_ageArray, Fdist=fishdist,
+         maxage=maxage, nareas=nareas, nyears=nyears) # numerically calculate Fs
+
+  FM_P[,,y,] <- aperm(array(unlist(calcFs, use.names=FALSE), dim=c(maxage, nareas, nsim)), c(3, 1, 2))
+  FM_P[,,y,][FM_P[,,y,] > (1-exp(-maxF))]  <- 1 - exp(-maxF)
+  
   Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt]
   
   Effort <- (-log(1 - apply(CB_P[, , y, ], 1, sum)/(apply(CB_P[, , y, ], 1, sum) + 
@@ -306,9 +601,28 @@ CalcOutput <- function(y, TAC, TAC_f, lastCatch, availB, maxF, Biomass_P, VBioma
   out 
 }
 
+
+#' Internal function to calculate F-at-age given catch and biomass
+#'
+#' @param x Simulation
+#' @param y year
+#' @param Vuln Vulnerabilty
+#' @param CB Catch biomass
+#' @param Bio Biomass
+#' @param Mage M-at-age
+#' @param Fdist Fishing distribution
+#' @param maxage Maximum age
+#' @param nareas Number of areas
+#' @param nyears Number of historical years
+#' @keywords internal 
+#'
+#' @return
+#' @export
+#'
+#' @author A. Hordyk
 getFs <- function(x, y, Vuln, CB, Bio, Mage, Fdist, maxage, nareas, nyears) {
   
-  doopt <- optimize(optF, interval=log(c(0.01, 10)), Vuln[x,,y], CB[x,,y,],
+  doopt <- optimize(optF, interval=log(c(0.01, 10)), Vuln[x,,nyears+y], CB[x,,y,],
                     Bio[x,,y,], Mage[x,,y+nyears], Fdist[x,], maxage,nareas)
     
   ind <- as.matrix(expand.grid(x, 1:maxage, 1:nareas))                
@@ -318,20 +632,84 @@ getFs <- function(x, y, Vuln, CB, Bio, Mage, Fdist, maxage, nareas, nyears) {
   FM
 }
 
+
+#' Internal function to optimize for F
+#'
+#' @param fapic Apical fishing mortality
+#' @param vuln Vulnerability
+#' @param catch Catch
+#' @param bio Biomass
+#' @param mort Natural mortality
+#' @param fdist Fishing distribution
+#' @param maxage Maximum age
+#' @param nareas Number of areas
+#'
+#' @return
+#' @export
+#'
+#' @author A. Hordyk
 optF <- function(fapic, vuln, catch, bio, mort, fdist, maxage, nareas) {
   FM <- array(NA, dim=c(maxage, nareas))
   ind <- as.matrix(expand.grid(1:maxage, 1:nareas))
   FM[ind] <- exp(fapic) * vuln[ind[,1]] * fdist[ind[,2]]
   Z <- FM + mort 
  
-  pCatch <- sum(FM/Z * bio* (1-exp(-Z)))
-  
-  (log(pCatch) - log(sum(catch)))^2
-  
+  pCatch <- FM/Z * bio* (1-exp(-Z))
+
+  (log(sum(pCatch)) - log(sum(catch)))^2
+
 }
 
 
 
+#' Apply input control recommendations and calculate population dynamics  
+#'
+#' Internal function
+#' 
+#' @param y Simulation year
+#' @param nyears Number of historical 
+#' @param proyears Number of projection years
+#' @param InputRecs Input control recommendations
+#' @param nsim Number of simulations
+#' @param nareas Number of areas
+#' @param LR5_P Length at 5 percent retention
+#' @param LFR_P Length at full retention
+#' @param Rmaxlen_P Retention of maximum length
+#' @param maxage Maximum age
+#' @param retA_P Retention at age
+#' @param retL_P Retention at length
+#' @param V_P Realized vulnerability at age
+#' @param V2 Gear vulnerability at age
+#' @param pSLarray Realized vulnerability at length
+#' @param SLarray2 Gear vulnerability at length
+#' @param DR Discard ratio
+#' @param maxlen maximum length
+#' @param Len_age Length-at-age
+#' @param CAL_binsmid Length-bin mid-points
+#' @param Fdisc Fraction of discarded fish that die
+#' @param nCALbins Number of length bins
+#' @param E_f Implementation error on effort recommendation
+#' @param SizeLim_f Implementation error on size limit
+#' @param VBiomass_P Vulnerable biomass-at-age
+#' @param Biomass_P Biomass-at-age
+#' @param Spat_targ Spatial targetting
+#' @param FinF Final fishing effort
+#' @param qvar Annual ariability in catchability
+#' @param qs Catchability
+#' @param qinc Numeric vector (nsim) increased
+#' @param CB_P Numeric array (nsim, maxage, proyears, nareas) Catch biomass at age
+#' @param CB_Pret Numeric array (nsim, maxage, proyears, nareas) Retained catch biomass at age
+#' @param FM_P Numeric array (nsim, maxage, proyears, nareas) Fishing mortality at age
+#' @param FM_retain Numeric array (nsim, maxage, proyears, nareas) Retained fishing mortality at age
+#' @param Z_P Numeric array (nsim, maxage, proyears, nareas) Total mortality at age
+#' @param M_ageArray Numeric array (nsim, maxage, nyears+proyears) Natural mortality at age
+#'
+#' @keywords internal
+#' @return
+#' @export
+#'
+#' @author A. Hordyk
+#' 
 CalcInput <- function(y, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P, Rmaxlen_P, maxage,
                       retA_P, retL_P, V_P, V2, pSLarray, SLarray2, DR, maxlen, Len_age, CAL_binsmid, Fdisc, nCALbins, E_f, SizeLim_f,
                       VBiomass_P, Biomass_P, Spat_targ, FinF, qvar, qs, qinc, CB_P, CB_Pret, FM_P, FM_retain, Z_P, M_ageArray) {
@@ -468,6 +846,7 @@ CalcInput <- function(y, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P
   out <- list() 
   out$Z_P <- Z_P 
   out$FM_P <- FM_P 
+  out$FM_retain <- FM_retain
   out$CB_P <- CB_P
   out$CB_Pret <- CB_Pret
   out$Effort <- Ei 
