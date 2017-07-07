@@ -248,7 +248,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   probQ <- which(qs > max(LimBound) | qs < min(LimBound))
   Nprob <- length(probQ)
   
-  
   # If q has hit bound, re-sample depletion and try again. Tries 'ntrials' times
   # and then alerts user
   if (length(probQ) > 0) {
@@ -327,10 +326,9 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   if (nsim == 1)  fishdist <- (matrix(apply(VBiomass[,,1,], 2, sum), nrow=nsim)^Spat_targ)/
     mean((matrix(apply(VBiomass[,,1,], 2, sum), nrow=nsim)^Spat_targ))
   
-  
   # --- Simulate historical years ----
   if (snowfall::sfIsRunning()) {
-    histYrs <- snowfall::sfApply(1:nsim, simYears, nareas, maxage, N, pyears=nyears, M_ageArray, 
+    histYrs <- snowfall::sfSapply(1:nsim, simYears, nareas, maxage, N, pyears=nyears, M_ageArray, 
                                  Mat_age, Wt_age, V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, 
                                  SSBpR, aR, bR, qs, maxF)
   } else {
@@ -837,8 +835,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                               VBiomass_P, Biomass_P, Spat_targ, FinF, qvar, qs, qinc, CB_P, CB_Pret, FM_P, FM_retain, Z_P, M_ageArray)
       
       Effort[, mm, y] <- inputcalcs$Effort #  
-      CB_P <- outputcalcs$CB_P # removals
-      CB_Pret <- outputcalcs$CB_Pret # retained catch 
+      CB_P <- inputcalcs$CB_P # removals
+      CB_Pret <- inputcalcs$CB_Pret # retained catch 
       FM_P <- inputcalcs$FM_P # fishing mortality 
       Z_P <- inputcalcs$Z_P # total mortality
       retA_P <- inputcalcs$retA_P # retained-at-age
@@ -1058,7 +1056,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
           # # add fishing efficiency changes and variability
           FM_P[SAYR] <- FM_P[SAY1R] * qvar[SY] * (1 + qinc[S1]/100)  # add fishing efficiency changes and variability
           FM_retain[SAYR] <- FM_retain[SAY1R] * qvar[SY] * (1 + qinc[S1]/100)  # add fishing efficiency changes and variability
-          Effort[, mm, y] <-  Ei * E_f[,y]   # Effort doesn't change in non-update year
+          Effort[, mm, y] <-  Effort[, mm, y-1] / E_f[,y-1]  * E_f[,y]   # Effort doesn't change in non-update year
           
           Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt]
           

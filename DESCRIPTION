@@ -32,7 +32,8 @@ LazyData: yes
 LazyLoad: yes
 Suggests:
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.0.1
 BugReports: https://github.com/DLMtool/DLMtool/issues

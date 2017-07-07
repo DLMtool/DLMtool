@@ -524,7 +524,6 @@ getFref3 <- function(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
 #' @param maxage Maximum age
 #' @param nareas Number of areas
 #'
-#' @return
 #' @export
 #'
 #' @author A. Hordyk
@@ -616,7 +615,6 @@ CalcOutput <- function(y, TAC, TAC_f, lastCatch, availB, maxF, Biomass_P, VBioma
 #' @param nyears Number of historical years
 #' @keywords internal 
 #'
-#' @return
 #' @export
 #'
 #' @author A. Hordyk
@@ -644,7 +642,6 @@ getFs <- function(x, y, Vuln, CB, Bio, Mage, Fdist, maxage, nareas, nyears) {
 #' @param maxage Maximum age
 #' @param nareas Number of areas
 #'
-#' @return
 #' @export
 #'
 #' @author A. Hordyk
@@ -705,7 +702,6 @@ optF <- function(fapic, vuln, catch, bio, mort, fdist, maxage, nareas) {
 #' @param M_ageArray Numeric array (nsim, maxage, nyears+proyears) Natural mortality at age
 #'
 #' @keywords internal
-#' @return
 #' @export
 #'
 #' @author A. Hordyk
@@ -740,7 +736,7 @@ CalcInput <- function(y, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P
   }
   
   # Spatial 
-  if(all(is.na(InputRecs$Spatial))) { # no spatial recommendation 
+  if(length(InputRecs$Spatial)==0) { # no spatial recommendation 
     Si <- matrix(1, nsim, nareas) # spatial is unchanged - modify this if spatial closure in historical years  
   } else if (any(is.na(InputRecs$Spatial))) {
     stop("Spatial recommmendation has some NAs.\n Does MP return Spatial recommendation under all conditions?")

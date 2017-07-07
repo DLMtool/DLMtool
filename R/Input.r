@@ -62,6 +62,37 @@ matlenlim <- function(x, Data, ...) {
 class(matlenlim) <- "Input"
 
 
+#' A data-limited method in which fishing vulnerability is set slightly higher
+#' than the maturity curve
+#' 
+#' An example of the implementation of input controls in the DLM toolkit, where
+#' selectivity-at-length is set slightly higher than the maturity-at-length
+#' 
+#' 
+#' @usage matlenlim2(x, Data, ...)
+#' @param x A position in a data-limited methods object
+#' @param Data A data-limited methods object
+#' @param ... Optional additional arguments that are ignored. Note arguments
+#' \code{reps} or \code{...} are required for all input controls
+#' @return A vector of input control recommendations, with values for length at
+#' first capture and full selection
+#' @author A. Hordyk
+#' @references Made-up for this package
+#' @export matlenlim2
+matlenlim2 <- function(x, Data, ...) {
+  # Knife-edge vulnerability slightly higher than length at maturity
+  dependencies = "Data@L50"
+
+  rec <- new("InputRec") # create recommendation object
+  rec@LFR <-  1.1 * Data@L50[x]  # new length at full retention   
+  rec@LR5 <-  0.95 * rec@LFR # new length at 5% retention
+  # other slots aren't specified so remain unchanged
+  return(rec)
+}
+class(matlenlim2) <- "Input"
+
+
+
 #' An marine reserve in area 1 with full reallocation of fishing effort
 #' 
 #' A spatial control that prevents fishing in area 1 and reallocates this
@@ -90,35 +121,7 @@ class(MRreal) <- "Input"
 
 
 
-#' A data-limited method in which fishing vulnerability is set slightly higher
-#' than the maturity curve
-#' 
-#' An example of the implementation of input controls in the DLM toolkit, where
-#' selectivity-at-length is set slightly higher than the maturity-at-length
-#' 
-#' 
-#' @usage matlenlim2(x, Data, ...)
-#' @param x A position in a data-limited methods object
-#' @param Data A data-limited methods object
-#' @param ... Optional additional arguments that are ignored. Note arguments
-#' \code{reps} or \code{...} are required for all input controls
-#' @return A vector of input control recommendations, with values for length at
-#' first capture and full selection
-#' @author A. Hordyk
-#' @references Made-up for this package
-#' @export matlenlim2
-matlenlim2 <- function(x, Data, ...) {
-  # Knife-edge vulnerability slightly higher than length at maturity
-  dependencies = "Data@L50"
-  Allocate <- 1
-  Effort <- 1
-  Spatial <- c(1, 1)
-  newLFS <- 1.1 * Data@L50[x]
-  newLFC <- 0.95 * newLFS
-  Vuln <- c(newLFC, newLFS)
-  c(Allocate, Effort, Spatial, Vuln)
-}
-class(matlenlim2) <- "Input"
+
 
 
 

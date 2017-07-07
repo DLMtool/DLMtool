@@ -59,7 +59,7 @@ runInMP <- function(Data, MPs = NA, reps = 100) {
         }
         
         recList[[X]] <- rec
-        for (x in 1:nsims) Data@Misc[[x]] <- recList$Misc[,x]
+        for (x in 1:nsims) Data@Misc[[x]] <- recList$Misc[[x]]
         recList$Misc <- NULL
       }
       returnList[[ff]] <- recList
