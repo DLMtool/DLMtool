@@ -50,11 +50,11 @@ Only values from the first year (i.e N[,,1,]) are used, which is the current N-a
 
 \item{bR}{A numeric vector nsim long with the Ricker SRR b values}
 
+\item{qs}{A numeric vector nsim long with catchability coefficients}
+
 \item{maxF}{A numeric value specifying the maximum fishing mortality for any single age class}
 
 \item{useCPP}{logical - use the CPP code? For testing purposes only}
-
-\item{bounds}{A numeric vector of length 2 with bounds for the optimizer}
 }
 \description{
 Simulate population dynamics for historical years

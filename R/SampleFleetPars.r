@@ -289,18 +289,20 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   
   V2 <- V
   SLarray2 <- SLarray
-  
+
   for (yr in 1:(nyears+proyears)) {
     # correct retention curve - retention at age/length must <= selectivity (you can't retain fish you don't catch!)
     retA[,,yr] <- (1-DR[yr, ]) * matrix(mapply(pmin, retA[,,yr], V[,,yr]), nsim, maxage)
     retL[,,yr] <- (1-DR[yr, ]) * matrix(mapply(pmin, retL[,,yr], SLarray[,,yr]), nsim, nCALbins)
-    
+  }
+  
+  for (yr in 1:(nyears+proyears)) {
     # update realized vulnerablity curve with retention and dead discarded fish 
-    # V[,,yr] <- matrix(mapply(pmin, retA[,,yr] + (1-retA[,,yr])*Fdisc, V2[,,yr]), nsim, maxage)
     V[,,yr] <- matrix(mapply(pmax, retA[,,yr] + (abs(retA[,,yr]-V2[,,yr])*Fdisc), retA[,,yr]), nsim, maxage)
     SLarray[,,yr] <- matrix(mapply(pmax, retL[,,yr] + (abs(retL[,,yr] - SLarray2[,,yr])*Fdisc), retL[,,yr]), nsim, nCALbins)
   }	 
   
+
   Fleetout$LR5 <- LR5  
   Fleetout$LFR <- LFR 
   Fleetout$Rmaxlen <- Rmaxlen

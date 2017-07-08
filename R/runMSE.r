@@ -12,7 +12,8 @@ Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "Mgrad", "SRrel", "hs", "procsd
            "Vmaxlen", "Vmaxlens", "Wt_age", "ageM", "betas", "lenMbias", "nCALbins", "procmu", "qcv", "qinc",
            "recMulti", "recgrad", "t0", "t0bias", "Abias", "Aerr", "Perr", "Esd", "qvar", "Marray",
            "Linfarray", "Karray", "AC", "LenCV", "LenCVbias", "a", "b", "FinF", 
-           "Fdisc", "R50", "Rslope")
+           "Fdisc", "R50", "Rslope", "retA", "retL", "LR5", "LFR", "Rmaxlen",
+           "V2", "SLarray2", "DR")
 
 
 if(getRversion() >= "2.15.1") utils::globalVariables(Names)
@@ -115,7 +116,9 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
   
   # --- Sample Fleet Parameters ----
-  FleetPars <- SampleFleetPars(SubOM(OM, "Fleet"), Stock=StockPars, nsim, nyears, proyears, SampCpars)
+  
+  FleetPars <- SampleFleetPars(SubOM(OM, "Fleet"), Stock=StockPars, nsim, nyears, proyears, 
+                               cpars=SampCpars)
   # Assign Fleet pars to function environment
   for (X in 1:length(FleetPars)) assign(names(FleetPars)[X], FleetPars[[X]])
   
@@ -791,7 +794,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     NextYrN <- lapply(1:nsim, function(x) 
       popdynOneTS(nareas, maxage, SSBcurr=colSums(SSB[x,,nyears, ]), Ncurr=N[x,,nyears,], 
                   Zcurr=Z[x,,nyears,], PerrYr=Perr[x, nyears+maxage-1], hc=hs[x], 
-                  R0c=R0a[x,], SSBpRc=SSBpR[x,], aRc=ar[x], bRc=bR[x], 
+                  R0c=R0a[x,], SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], 
                   movc=mov[x,,], SRrelc=SRrel[x]))
     
     N_P[,,1,] <- aperm(array(unlist(NextYrN), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2))
@@ -877,7 +880,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       NextYrN <- lapply(1:nsim, function(x) 
         popdynOneTS(nareas, maxage, SSBcurr=colSums(SSB_P[x,,y-1, ]), Ncurr=N_P[x,,y-1,], 
                     Zcurr=Z_P[x,,y-1,], PerrYr=Perr[x, y+nyears+maxage-1], hc=hs[x], 
-                    R0c=R0a[x,], SSBpRc=SSBpR[x,], aRc=ar[x], bRc=bR[x], 
+                    R0c=R0a[x,], SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], 
                     movc=mov[x,,], SRrelc=SRrel[x]))
       
       N_P[,,y,] <- aperm(array(unlist(NextYrN), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2)) 
@@ -933,21 +936,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
         
         Depletion <- apply(SSB_P[, , y, ], 1, sum)/SSB0 # apply(SSB[, , 1, ], 1, sum)
         Depletion[Depletion < tiny] <- tiny
-        
-        
-        # Zcurr <- array(M_ageArray[,,nyears+y-1], dim=c(nsim, maxage,  nareas))
-        # AgeandRecruit <- lapply(1:nsim, function(x) 
-        #   popdynOneTS(nareas, maxage, SSBcurr=colSums(SSB_P[x,,y-1, ]), Ncurr=N_P[x,,y-1,], 
-        #               Zcurr=Zcurr[x,,], PerrYr=Perr[x, y+nyears+maxage-1], hc=hs[x], 
-        #               R0c=R0a[x,], SSBpRc=SSBpR[x,], aRc=ar[x], bRc=bR[x], 
-        #               movc=mov[x,,], SRrelc=SRrel[x]))
-        # 
-        # Ns <- aperm(array(unlist(AgeandRecruit), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2)) 
-        # Bs <- Ns * Wt_age[SAYt]  # Calculate biomass
-        # VBs <- Bs * V_P[SAYt]  # Calculate vulnerable biomass just before fishing
-        # 
-        # A <- apply(VBs[, , 1, ], 1, sum) # avail biomass after recruitment, aging and movement but before fishing
-        A <- apply(VBiomass_P[, , y, ] + CB_P[, , y-1, ], 1, sum) # avail biomass 
+      
+        A <- apply(VBiomass_P[, , y, ] + CB_P[, , y-1, ], 1, sum) # avail biomass before fishing
         
         A[is.na(A)] <- tiny
         Asp <- apply(SSB_P[, , y, ], 1, sum)  # SSB Abundance

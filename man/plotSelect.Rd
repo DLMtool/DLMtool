@@ -12,3 +12,6 @@ plotSelect(OM)
 \description{
 Plot the vulnerability and retention curves
 }
+\author{
+A. Hordyk
+}

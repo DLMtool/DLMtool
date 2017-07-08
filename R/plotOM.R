@@ -13,6 +13,7 @@
 plot.OM <-function(x, ...){  
     OM <- updateMSE(x) # update and add missing slots with default values
     out<-runMSE(OM,Hist=T)
+
     nsim<-OM@nsim
     nyears<-OM@nyears
     

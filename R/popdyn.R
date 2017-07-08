@@ -292,7 +292,7 @@ popdynOneTS <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr,
 #' @param SSBpR A matrix (dimensions nsim, nareas) with the unfished spawning-per-recruit by area
 #' @param aR A numeric vector nsim long with the Ricker SRR a values
 #' @param bR A numeric vector nsim long with the Ricker SRR b values
-#' @param bounds A numeric vector of length 2 with bounds for the optimizer
+#' @param qs A numeric vector nsim long with catchability coefficients
 #' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
 #' @param useCPP logical - use the CPP code? For testing purposes only 
 #' 
@@ -736,7 +736,7 @@ CalcInput <- function(y, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P
   }
   
   # Spatial 
-  if(length(InputRecs$Spatial)==0) { # no spatial recommendation 
+  if (all(is.na(InputRecs$Spatial))) { # no spatial recommendation 
     Si <- matrix(1, nsim, nareas) # spatial is unchanged - modify this if spatial closure in historical years  
   } else if (any(is.na(InputRecs$Spatial))) {
     stop("Spatial recommmendation has some NAs.\n Does MP return Spatial recommendation under all conditions?")
@@ -782,9 +782,10 @@ CalcInput <- function(y, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P
     RetentFlag <- TRUE
   }
   # HS - harvest slot 
+
   if (length(InputRecs$HS) == 0) { # no  recommendation
     HS <- rep(1E5, nsim) # no harvest slot 
-  } else if (length(HS) != nsim) {
+  } else if (length(InputRecs$HS) != nsim) {
     stop("HS recommmendation is not 'nsim' long.\n Does MP return HS recommendation under all conditions?")
   } else {
     HS <- InputRecs$HS  * SizeLim_f[,y] # recommendation

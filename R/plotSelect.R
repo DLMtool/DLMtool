@@ -1,7 +1,7 @@
 #' Plot the vulnerability and retention curves 
 #'
 #' @param OM An object of class 'OM' 
-#' 
+#' @author A. Hordyk
 #' @export
 #'
 plotSelect <- function(OM) {
@@ -13,7 +13,7 @@ plotSelect <- function(OM) {
   FleetPars <- SampleFleetPars(OM, Stock=StockPars)
   
   sim <- sample(1:nsim, 1)
-  message("Plotting selection and retention curve for a random simulation")
+  message("Plotting selection and retention curve for a single (random) simulation")
   op <- par(mfcol=c(2,4), bty="l", las=1, mar=c(3,3,2,0), oma=c(3,3,1,1), xpd=NA)
   
   for (yr in yr.vert) {
@@ -35,7 +35,10 @@ plotSelect <- function(OM) {
     lines(1:StockPars$maxage, FleetPars$retA[sim,, yr], col=4, lwd=2, lty=3)
     
     if (yr == yr.vert[1]) {
-      legend("bottomleft", legend = c("Vulnerability", "Realized Selection", "Retention"),
+      minval <- min(c(FleetPars$V[sim,StockPars$maxage, yr],  FleetPars$retA[sim,StockPars$maxage, yr]))
+      if (minval >= 0.5) loc <- "bottomright"
+      if (minval < 0.5) loc <- "topright"
+      legend(loc, legend = c("Vulnerability", "Realized Selection", "Retention"),
              lwd=2, col=c(1, 2, 4), bty="n", lty=c(1,2,3))
     }
     
