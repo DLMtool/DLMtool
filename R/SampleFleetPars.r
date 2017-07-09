@@ -2,7 +2,8 @@
 #' Sample Fleet Parameters
 #'
 #' @param Fleet An object of class 'Fleet' or class 'OM' 
-#' @param Stock An object of class 'Stock' or a list of sampled Stock parameters. Ignored if 'Fleet' is class 'OM'
+#' @param Stock An object of class 'Stock' or a list of sampled Stock parameters. 
+#' Ignored if 'Fleet' is class 'OM'
 #' @param nsim Number of simulations. Ignored if 'Fleet' is class 'OM'
 #' @param nyears Number of historical years. Ignored if 'Fleet' is class 'OM'
 #' @param proyears Number of projection years. Ignored if 'Fleet' is class 'OM'
@@ -15,10 +16,12 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   if (class(Fleet) != "Fleet" & class(Fleet) != "OM") 
     stop("First argument must be class 'Fleet' or 'OM'")
   
-  if (class(Fleet) != "OM" & class(Stock) != "Stock" & class(Stock) != "list") stop("Must provide 'Stock' object", call.=FALSE)
+  if (class(Fleet) != "OM" & class(Stock) != "Stock" & class(Stock) != "list") 
+    stop("Must provide 'Stock' object", call.=FALSE)
   
   # Get custom pars if they exist
-  if (class(Fleet) == "OM" && length(Fleet@cpars) > 0 && is.null(cpars)) cpars <- SampleCpars(Fleet@cpars, Fleet@nsim)  # custom parameters exist in Stock/OM object
+  if (class(Fleet) == "OM" && length(Fleet@cpars) > 0 && is.null(cpars)) 
+    cpars <- SampleCpars(Fleet@cpars, Fleet@nsim)  # custom parameters exist in Stock/OM object
   if (length(cpars) > 0) { # custom pars exist - assign to function environment 
     Names <- names(cpars)
     for (X in 1:length(Names)) assign(names(cpars)[X], cpars[[X]])
@@ -289,18 +292,27 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   
   V2 <- V
   SLarray2 <- SLarray
+ 
 
-  for (yr in 1:(nyears+proyears)) {
-    # correct retention curve - retention at age/length must <= selectivity (you can't retain fish you don't catch!)
-    retA[,,yr] <- (1-DR[yr, ]) * matrix(mapply(pmin, retA[,,yr], V[,,yr]), nsim, maxage)
-    retL[,,yr] <- (1-DR[yr, ]) * matrix(mapply(pmin, retL[,,yr], SLarray[,,yr]), nsim, nCALbins)
-  }
+  # correct retention curve - retention at age/length must <= selectivity (you can't retain fish you don't catch!)
+  dr <- aperm(array(DR, dim=c(nyears+proyears, nsim, maxage)), c(2,3,1))
+  retA <- (1-dr) * array(mapply(pmin, retA, V), dim=c(nsim, maxage, nyears+proyears))
+  dr <- aperm(array(DR, dim=c(nyears+proyears, nsim, nCALbins)), c(2,3,1))
+  retL <- (1-dr) * array(mapply(pmin, retL, SLarray), dim=c(nsim, nCALbins, nyears+proyears))
   
-  for (yr in 1:(nyears+proyears)) {
-    # update realized vulnerablity curve with retention and dead discarded fish 
-    V[,,yr] <- matrix(mapply(pmax, retA[,,yr] + (abs(retA[,,yr]-V2[,,yr])*Fdisc), retA[,,yr]), nsim, maxage)
-    SLarray[,,yr] <- matrix(mapply(pmax, retL[,,yr] + (abs(retL[,,yr] - SLarray2[,,yr])*Fdisc), retL[,,yr]), nsim, nCALbins)
-  }	 
+  # for (yr in 1:(nyears+proyears)) { # dev loop for testing
+  #   retA[,,yr] <- (1-DR[yr, ]) * matrix(mapply(pmin, retA[,,yr], V[,,yr]), nsim, maxage)
+  #   retL[,,yr] <- (1-DR[yr, ]) * matrix(mapply(pmin, retL[,,yr], SLarray[,,yr]), nsim, nCALbins)
+  # }
+  
+  # update realized vulnerablity curve with retention and dead discarded fish 
+  V <- array(mapply(pmax, retA + (abs(retA-V2)*Fdisc), retA), dim=c(nsim, maxage, nyears+proyears))
+  SLarray <- array(mapply(pmax, retL + (abs(retL-SLarray2)*Fdisc), retL), dim=c(nsim, nCALbins, nyears+proyears))
+ 
+  # for (yr in 1:(nyears+proyears)) { # dev loop for testing
+  #   V[,,yr] <- matrix(mapply(pmax, retA[,,yr] + (abs(retA[,,yr]-V2[,,yr])*Fdisc), retA[,,yr]), nsim, maxage)
+  #   SLarray[,,yr] <- matrix(mapply(pmax, retL[,,yr] + (abs(retL[,,yr] - SLarray2[,,yr])*Fdisc), retL[,,yr]), nsim, nCALbins)
+  # }	 
   
 
   Fleetout$LR5 <- LR5  
