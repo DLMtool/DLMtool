@@ -293,11 +293,10 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   V2 <- V
   SLarray2 <- SLarray
  
-
   # correct retention curve - retention at age/length must <= selectivity (you can't retain fish you don't catch!)
-  dr <- aperm(array(DR, dim=c(nyears+proyears, nsim, maxage)), c(2,3,1))
+  dr <- aperm(abind::abind(rep(list(DR), maxage), along=3), c(2,3,1))
   retA <- (1-dr) * array(mapply(pmin, retA, V), dim=c(nsim, maxage, nyears+proyears))
-  dr <- aperm(array(DR, dim=c(nyears+proyears, nsim, nCALbins)), c(2,3,1))
+  dr <- aperm(abind::abind(rep(list(DR), nCALbins), along=3), c(2,3,1))
   retL <- (1-dr) * array(mapply(pmin, retL, SLarray), dim=c(nsim, nCALbins, nyears+proyears))
   
   # for (yr in 1:(nyears+proyears)) { # dev loop for testing
@@ -306,15 +305,17 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   # }
   
   # update realized vulnerablity curve with retention and dead discarded fish 
-  V <- array(mapply(pmax, retA + (abs(retA-V2)*Fdisc), retA), dim=c(nsim, maxage, nyears+proyears))
-  SLarray <- array(mapply(pmax, retL + (abs(retL-SLarray2)*Fdisc), retL), dim=c(nsim, nCALbins, nyears+proyears))
+  Fdisc2 <- array(Fdisc, dim=c(nsim, maxage, nyears+proyears))
+  V <- array(mapply(pmax, retA + (abs(retA-V2)*Fdisc2), retA), dim=c(nsim, maxage, nyears+proyears))
+  Fdisc2 <- array(Fdisc, dim=c(nsim, nCALbins, nyears+proyears))
+  SLarray <- array(mapply(pmax, retL + (abs(retL-SLarray2)*Fdisc2), retL), dim=c(nsim, nCALbins, nyears+proyears))
  
   # for (yr in 1:(nyears+proyears)) { # dev loop for testing
   #   V[,,yr] <- matrix(mapply(pmax, retA[,,yr] + (abs(retA[,,yr]-V2[,,yr])*Fdisc), retA[,,yr]), nsim, maxage)
   #   SLarray[,,yr] <- matrix(mapply(pmax, retL[,,yr] + (abs(retL[,,yr] - SLarray2[,,yr])*Fdisc), retL[,,yr]), nsim, nCALbins)
   # }	 
   
-
+  Fleetout$Fdisc <- Fdisc
   Fleetout$LR5 <- LR5  
   Fleetout$LFR <- LFR 
   Fleetout$Rmaxlen <- Rmaxlen

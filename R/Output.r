@@ -1492,7 +1492,7 @@ DD <- function(x, Data, reps = 100) {
   E_hist <- E_hist/mean(E_hist)
   ny_DD <- length(C_hist)
   params <- log(c(Data@Mort[x], mean(C_hist, na.rm = T), Data@Mort[x]))
-  k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  -------------
+  k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  
   k_DD[k_DD > Data@MaxAge/2] <- ceiling(Data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
   Rho_DD <- (wa[k_DD + 2] - Winf)/(wa[k_DD + 1] - Winf)
   Alpha_DD <- Winf * (1 - Rho_DD)

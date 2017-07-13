@@ -381,7 +381,8 @@ getFMSY3 <- function(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
                      SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], Qc=0, Fapic=exp(opt$minimum), maxF=maxF, control=2)
   }
 
-  Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]]))
+  Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # retained catch 
+  # Cn <- simpop[[6]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # removals
   Cb <- Cn[,pyears,] * Wt_age[x,,pyears]
   B <- sum(simpop[[2]][,pyears,] + Cb)
   
@@ -445,7 +446,8 @@ optMSY <- function(logFa, nareas, maxage, Ncurr, pyears, M_age,
   }
 
   # Yield 
-  Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]]))
+  Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # retained catch
+  # Cn <- simpop[[6]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # removals
   Cb <- Cn[,pyears,] * WtAge[,pyears]
   -sum(Cb)
 }
@@ -503,7 +505,7 @@ getFref3 <- function(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
 #' Apply output control recommendations and calculate population dynamics  
 #'
 #' @param y Projection year
-#' @param TAC TAC recommendation
+#' @param TACused TAC recommendation
 #' @param TAC_f Implementation error on TAC
 #' @param lastCatch Catch from last year
 #' @param availB Total available biomass
@@ -528,7 +530,7 @@ getFref3 <- function(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
 #'
 #' @author A. Hordyk
 #' 
-CalcOutput <- function(y, TAC, TAC_f, lastCatch, availB, maxF, Biomass_P, VBiomass_P, CB_P, CB_Pret,
+CalcOutput <- function(y, TACused, TAC_f, lastCatch, availB, maxF, Biomass_P, VBiomass_P, CB_P, CB_Pret,
                        FM_P, Z_P, Spat_targ, V_P, retA_P, M_ageArray, qs, nyears, nsim, maxage, nareas) {
   SAYRL <- as.matrix(expand.grid(1:nsim, 1:maxage, nyears, 1:nareas))  # Final historical year
   SAYRt <- as.matrix(expand.grid(1:nsim, 1:maxage, y + nyears, 1:nareas))  # Trajectory year
@@ -546,13 +548,13 @@ CalcOutput <- function(y, TAC, TAC_f, lastCatch, availB, maxF, Biomass_P, VBioma
   SAY <- SYA[, c(1, 3, 2)]
   S <- SYA[, 1]
   
-  TAC[is.na(TAC)] <- lastCatch[is.na(TAC)] # if MP returns NA - TAC is set to catch from last year
+  TACused[is.na(TACused)] <- lastCatch[is.na(TACused)] # if MP returns NA - TAC is set to catch from last year
   
-  TACrec <- TAC             # TAC recommendation
-  TACused<- TAC_f[,y]*TAC   # TAC taken after implementation error
+  TACrec <- TACused             # TAC recommendation
+  TACusedE<- TAC_f[,y]*TACused   # TAC taken after implementation error
   
   maxC <- (1 - exp(-maxF)) * availB # maximum catch given maxF
-  TACused[TACused > maxC] <- maxC[TACused > maxC] # apply maxF limit - catch can't be higher than maxF * vulnerable biomass
+  TACusedE[TACusedE > maxC] <- maxC[TACusedE > maxC] # apply maxF limit - catch can't be higher than maxF * vulnerable biomass
   
   fishdist <- (apply(VBiomass_P[, , y, ], c(1, 3), sum)^Spat_targ)/
     apply(apply(VBiomass_P[, , y, ], c(1, 3), sum)^Spat_targ, 1, mean)  # spatial preference according to spatial biomass
@@ -567,13 +569,12 @@ CalcOutput <- function(y, TAC, TAC_f, lastCatch, availB, maxF, Biomass_P, VBioma
   actualremovals <- apply(CB_P[,,y,], 1, sum)
   
   ratio <- actualremovals/retained # ratio of actual removals to retained catch 
-  
+
   temp <- CB_Pret[, , y, ]/apply(CB_Pret[, , y, ], 1, sum) # distribution of retained fish
-  CB_Pret[, , y, ] <- TACused * temp  # retained catch 
+  CB_Pret[, , y, ] <- TACusedE * temp  # retained catch 
   
   temp <- CB_P[, , y, ]/apply(CB_P[, , y, ], 1, sum) # distribution of removals
-
-  CB_P[,,y,] <- TACused *  ratio * temp # scale up total removals 
+  CB_P[,,y,] <- TACusedE *  ratio * temp # scale up total removals 
 
   # temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
   # temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF)
@@ -650,9 +651,8 @@ optF <- function(fapic, vuln, catch, bio, mort, fdist, maxage, nareas) {
   ind <- as.matrix(expand.grid(1:maxage, 1:nareas))
   FM[ind] <- exp(fapic) * vuln[ind[,1]] * fdist[ind[,2]]
   Z <- FM + mort 
- 
-  pCatch <- FM/Z * bio* (1-exp(-Z))
 
+  pCatch <- FM/Z * bio* (1-exp(-Z))
   (log(sum(pCatch)) - log(sum(catch)))^2
 
 }
@@ -782,7 +782,7 @@ CalcInput <- function(y, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P
     RetentFlag <- TRUE
   }
   # HS - harvest slot 
-
+ 
   if (length(InputRecs$HS) == 0) { # no  recommendation
     HS <- rep(1E5, nsim) # no harvest slot 
   } else if (length(InputRecs$HS) != nsim) {
@@ -793,37 +793,45 @@ CalcInput <- function(y, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P
   }
   # Change in retention - update vulnerability and retention curves 
   if (RetentFlag) {
+    yr <- y+nyears 
+    allyrs <- (y+nyears):(nyears+proyears)  # update vulnerabilty for all future years
     s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
-                                              LFS = LFR_P[y+nyears,i], 
-                                              L0.05 = LR5_P[y + nyears,i])$minimum)
+                                              LFS = LFR_P[yr,i], 
+                                              L0.05 = LR5_P[yr,i])$minimum)
     s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
-                                              LFS = LFR_P[y+nyears,i], s1=s1[i], 
+                                              LFS = LFR_P[yr,i], s1=s1[i], 
                                               maxlen=maxlen[i], 
-                                              MaxSel= Rmaxlen_P[y + nyears,i])$minimum)
+                                              MaxSel= Rmaxlen_P[yr,i])$minimum)
+    
     # calculate new retention at age curve 
-    retA_P[ , , y+nyears] <- t(sapply(1:nsim, function(i) 
-      TwoSidedFun(LFR_P[y+nyears,i], s1[i], s2[i], lens=Len_age[i,,y+nyears])))
+    retA_P[ , , allyrs] <- t(sapply(1:nsim, function(i) 
+      TwoSidedFun(LFR_P[yr,i], s1[i], s2[i], lens=Len_age[i,,yr])))
     # calculate new retention at length curve 
-    retL_P[,, y+nyears] <- t(sapply(1:nsim, function(i) 
-      TwoSidedFun(LFR_P[y+nyears,i], s1[i], s2[i], lens=CAL_binsmid))) 
+    retL_P[,, allyrs] <- t(sapply(1:nsim, function(i) 
+      TwoSidedFun(LFR_P[yr,i], s1[i], s2[i], lens=CAL_binsmid))) 
     
     # upper harvest slot 
-    retA_P[Len_age[, , (y + nyears)] >= HS] <- 0
+    retA_P[Len_age[, , allyrs] >= HS] <- 0
     for (ss in 1:nsim) {
       index <- which(CAL_binsmid >= HS[ss])
-      retL_P[ss, index, (y+nyears):(nyears+proyears)] <- 0 
+      retL_P[ss, index, allyrs] <- 0 
     }	
     
     # correct retention curve - retention at age/length must <= selectivity (you can't retain fish you don't catch!)
-    retA_P[,,y+nyears] <- (1-DR[y+nyears, ]) * matrix(mapply(pmin, retA_P[,,y+nyears], V_P[,,y+nyears]), nsim, maxage)
-    retL_P[,,y+nyears] <- (1-DR[y+nyears, ]) * matrix(mapply(pmin, retL_P[,,y+nyears], pSLarray[,,y+nyears]), nsim, nCALbins)
+    dr <- aperm(abind::abind(rep(list(DR), maxage), along=3), c(2,3,1))
+    retA_P[,,allyrs] <- (1-dr[,,yr]) * matrix(mapply(pmin, retA_P[,,yr], V_P[,,yr]), nsim, maxage)
+    dr <- aperm(abind::abind(rep(list(DR), nCALbins), along=3), c(2,3,1))
+    retL_P[,,allyrs] <- (1-dr[,,yr]) * matrix(mapply(pmin, retL_P[,,yr], pSLarray[,,yr]), nsim, nCALbins)
+    
     
     # update realized vulnerablity curve with retention and dead discarded fish 
-    V_P[,,y+nyears] <- matrix(mapply(pmax, retA_P[,,y+nyears] + 
-                                       (abs(retA_P[,,y+nyears]-V2[,,y+nyears])*Fdisc), retA_P[,,y+nyears]), nsim, maxage)
-    pSLarray[,,y+nyears] <- matrix(mapply(pmax, retL_P[,,y+nyears] + 
-                                            (abs(retL_P[,,y+nyears] - SLarray2[,,y+nyears])*Fdisc), retL_P[,,y+nyears]), nsim, nCALbins)
-    
+    Fdisc2 <- array(Fdisc, dim=c(nsim, maxage))
+    V_P[,,allyrs] <- matrix(mapply(pmax, retA_P[,,yr] + 
+                                 (abs(retA_P[,,yr]-V2[,,yr])*Fdisc2), retA_P[,,yr]), nsim, maxage)
+    Fdisc2 <- array(Fdisc, dim=c(nsim, nCALbins))
+    pSLarray[,,allyrs] <- matrix(mapply(pmax, retL_P[,,yr] + 
+                                      (abs(retL_P[,,yr] - SLarray2[,,yr])*Fdisc2), retL_P[,,yr]), nsim, nCALbins)
+  
   }
   
   newVB <- apply(Biomass_P[, , y, ] * V_P[SAYt], c(1, 3), sum)  # calculate total vuln biomass by area 

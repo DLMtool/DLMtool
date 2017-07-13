@@ -93,7 +93,7 @@ minlenLopt1 <- function(x, Data, reps = 100, buffer = 0.1) {
   
   rec <- new("InputRec") # create recommendation object
   rec@LFR <- Lopt * (0.7 + buffer) # Lopt too precautionary, so set it to % below
-  rec$LR5 <- rec@LFR * 0.9
+  rec@LR5 <- rec@LFR * 0.9
   rec
   
 }
@@ -394,7 +394,7 @@ DDes <- function(x, Data, reps = 100, LB = 0.9, UB = 1.1) {
   if (fac > UB) 
     fac <- UB
   
-  rec <- new("Effort")
+  rec <- new("InputRec")
   rec@Effort <- max(0.01, Data@MPeff[x] * fac)
   rec
   
@@ -506,7 +506,7 @@ DTe40 <- function(x, Data, reps = 100, alpha = 0.4, LB = 0.9, UB = 1.1) {
   if (fac > UB) 
     fac <- UB
   
-  rec <- new("Effort")
+  rec <- new("InputRec")
   rec@Effort <- max(0.01, Data@MPeff[x] * fac)
   rec
   
@@ -539,7 +539,7 @@ DTe50 <- function(x, Data, reps = 100, alpha = 0.5, LB = 0.9, UB = 1.1) {
   if (fac > UB) 
     fac <- UB
   
-  rec <- new("Effort")
+  rec <- new("InputRec")
   rec@Effort <- max(0.01, Data@MPeff[x] * fac)
   rec
   
