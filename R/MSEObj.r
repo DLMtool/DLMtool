@@ -2314,6 +2314,22 @@ updateMSE <- function(MSEobj) {
   if (.hasSlot(MSEobj, "FecB")) {
     if (length(MSEobj@FecB) == 0) MSEobj@FecB <- c(3,3)
   }
+  if (.hasSlot(MSEobj, "LR5")) {
+    if (length(MSEobj@LR5) == 0) MSEobj@LR5 <- c(0,0)
+  }
+  if (.hasSlot(MSEobj, "LFR")) {
+    if (length(MSEobj@LFR) == 0) MSEobj@LFR <- c(0,0)  
+  }
+  if (.hasSlot(MSEobj, "Rmaxlen")) {
+    if (length(MSEobj@Rmaxlen) == 0) MSEobj@Rmaxlen <- c(1,1)  
+  }  
+  if (.hasSlot(MSEobj, "DR")) {
+    if (length(MSEobj@DR) == 0) MSEobj@DR <- c(0,0)  
+  }     
+  if (.hasSlot(MSEobj, "Fdisc")) {
+    if (length(MSEobj@Fdisc) == 0) MSEobj@Fdisc <- c(0,0)  
+  }   
+    
   MSEobj
 }
 

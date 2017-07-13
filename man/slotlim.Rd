@@ -15,9 +15,7 @@ slotlim(x, Data, ...)
 \code{reps} or \code{...} are required for all input controls}
 }
 \value{
-A vector of input control recommendations, with values for length at
-first capture, full selection, and maximum size limit in the 5th, 6th, and
-7th elements of the vector
+An object of class 'InputRec'
 }
 \description{
 An example of the implementation of input controls in the DLM toolkit, where

@@ -32,7 +32,21 @@ ChkObj <- function(OM) {
   if (length(OM@LenCV)==0) OM@LenCV <- c(0.08,0.15)
   
   if (all(is.na(OM@Mexp))) OM@Mexp <- c(0,0)
-  if  (all(is.na(OM@LenCV))) OM@LenCV <- c(0.08,0.15)
+  if (all(is.na(OM@LenCV))) OM@LenCV <- c(0.08,0.15)
+  
+  
+  if (length(OM@LR5)==0) OM@LR5 <- c(0,0)
+  if (length(OM@LFR)==0) OM@LFR <- c(0,0)
+  if (length(OM@Rmaxlen)==0) OM@Rmaxlen <- c(1,1)
+  if (length(OM@DR)==0) OM@DR <- c(0,0)
+  if (length(OM@Fdisc)==0) OM@Fdisc <- c(0,0)
+  
+  if (all(is.na(OM@LR5))) OM@LR5 <- c(0,0)
+  if (all(is.na(OM@LFR))) OM@LFR <- c(0,0)
+  if (all(is.na(OM@Rmaxlen))) OM@Rmaxlen <- c(1,1)
+  if (all(is.na(OM@DR))) OM@DR <- c(0,0)
+  if (all(is.na(OM@Fdisc))) OM@Fdisc <- c(0,0)
+  
   # if (length(OM@FecB)==0) OM@FecB <- c(3,3)
   # if  (all(is.na(OM@FecB))) OM@FecB <- c(3,3)
   
@@ -102,7 +116,7 @@ avail <- function(classy) {
 #' @author T. Carruthers
 #' @return TRUE or FALSE
 #' @export getclass
-getclass <- function(x, classy) inherits(get(x), classy)
+getclass <- function(x, classy) class(get(x)) == classy # inherits(get(x), classy) - this gives a problem since we now inherit Stock etc in OM
 
 #' What methods need what data
 #' 
@@ -1115,6 +1129,14 @@ getEffhist <- function(Esd, nyears, EffYears, EffLower, EffUpper) {
         nsim <- length(Esd)  # get nsim 
         refYear <- floor(range01(EffYears + 0.5) * nyears) + 1  # standardize years 
         refYear[length(refYear)] <- nyears  # first year is year 1 
+        if (any(EffLower > EffUpper)) {
+          ind <- which(EffLower > EffUpper)
+          message("Some values in 'EffLower' are higher than 'EffUpper': Years ", paste(ind, ""),
+                  "\nSetting 'EffLower' to the lower of the two values.")
+          tt <- cbind(EffLower, EffUpper)
+          EffLower <- apply(tt, 1, min)
+          EffUpper <- apply(tt, 1, max)
+        }
         Effs <- mapply(runif, n = nsim, min = EffLower, max = EffUpper)  # sample Effort
         if (nsim > 1) {
             effort <- t(sapply(1:nsim, function(x) approx(x = refYear, 

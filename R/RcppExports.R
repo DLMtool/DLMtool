@@ -19,6 +19,7 @@ bhnoneq_LL <- function(stpar, year, Lbar, ss, Linf, K, Lc, nbreaks) {
 #' @param VBiomass_c internal
 #' @param SSB_c internal
 #' @param Vc internal
+#' @param retAc internal 
 #' @param hc internal
 #' @param R0ac internal
 #' @param proyears internal
@@ -33,8 +34,8 @@ bhnoneq_LL <- function(stpar, year, Lbar, ss, Linf, K, Lc, nbreaks) {
 #' 
 #' @export
 #' @keywords internal
-doprojPI_cpp <- function(lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc) {
-    .Call('DLMtool_doprojPI_cpp', PACKAGE = 'DLMtool', lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc)
+doprojPI_cpp <- function(lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, retAc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc) {
+    .Call('DLMtool_doprojPI_cpp', PACKAGE = 'DLMtool', lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, retAc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc)
 }
 
 #' Generate length composition of catch 
@@ -58,6 +59,58 @@ doprojPI_cpp <- function(lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomas
 #' @export
 genLenComp <- function(CAL_bins, CAL_binsmid, SL, CAL_ESS, CAL_nsamp, CN, LaA, LaASD, truncSD) {
     .Call('DLMtool_genLenComp', PACKAGE = 'DLMtool', CAL_bins, CAL_binsmid, SL, CAL_ESS, CAL_nsamp, CN, LaA, LaASD, truncSD)
+}
+
+#' Internal estimation function for LSRA and LSRA2 functions
+#'
+#' Rcpp version of R code 
+#' @param param a numeric value representing log(R0)
+#' @param FF_a numeric value, recent fishign mortality rate (apical F)
+#' @param Chist a vector of historical catch observations [nyears]
+#' @param M_a numeric value, natural mortality rate
+#' @param Mat_age_a a vector of maturity at age [nage]
+#' @param Wt_age_a a vector of weight at age [nage]
+#' @param sel_a a vector of selectivity at age [nage]
+#' @param Recdevs_a a vector of recruitment deviations [nyears]
+#' @param h_a a numeric value of steepness values of the Bev-Holt Stock-Recruitment relationship
+#' @param Umax maximum harvest rate per year
+#' @author T. Carruthers with an amateur attempt at converting to Rcpp by A. Hordyk (but it works!)
+#' @useDynLib DLMtool
+#' @keywords internal
+#' @export
+LSRA_opt_cpp <- function(param, FF_a, Chist, M_a, Mat_age_a, Wt_age_a, sel_a, Recdevs_a, h_a, Umax) {
+    .Call('DLMtool_LSRA_opt_cpp', PACKAGE = 'DLMtool', param, FF_a, Chist, M_a, Mat_age_a, Wt_age_a, sel_a, Recdevs_a, h_a, Umax)
+}
+
+#' Internal SRA MCMC CPP code
+#'
+#' Rcpp version of R code 
+#' @param nits number of iterations
+#' @param pars vector of parameters
+#' @param JumpCV jump cv vector
+#' @param adapt adapt vector
+#' @param parLB lower bounds
+#' @param parUB upper bounds
+#' @param R0ind index for R0
+#' @param inflind index for inflection
+#' @param slpind index for slope
+#' @param RDind index for recruitment deviations
+#' @param nyears number of projection years
+#' @param maxage maximum age
+#' @param M Natural mortality
+#' @param Mat_age A vector of maturity at age 
+#' @param Wt_age A vector of weight at age 
+#' @param Chist_a A vector of historical catch observations (nyears long) going back to unfished conditions
+#' @param Umax A numeric value representing the maximum harvest rate for any age class (rejection of sims where this occurs)
+#' @param h steepness of SRR
+#' @param CAA A matrix nyears (rows) by nages (columns) of catch at age (age 1 to maxage in length)
+#' @param CAAadj internal parameter
+#' @param sigmaR A numeric value representing the prior standard deviation of log space recruitment deviations
+#' 
+#' @author A. Hordyk
+#' @export
+LSRA_MCMC_sim <- function(nits, pars, JumpCV, adapt, parLB, parUB, R0ind, inflind, slpind, RDind, nyears, maxage, M, Mat_age, Wt_age, Chist_a, Umax, h, CAA, CAAadj, sigmaR) {
+    .Call('DLMtool_LSRA_MCMC_sim', PACKAGE = 'DLMtool', nits, pars, JumpCV, adapt, parLB, parUB, R0ind, inflind, slpind, RDind, nyears, maxage, M, Mat_age, Wt_age, Chist_a, Umax, h, CAA, CAAadj, sigmaR)
 }
 
 #' Rcpp version of the Optimization function that returns the squared difference between user
@@ -113,6 +166,71 @@ optQ_cpp <- function(lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, m
     .Call('DLMtool_optQ_cpp', PACKAGE = 'DLMtool', lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc)
 }
 
+#' Population dynamics model for one annual time-step
+#'
+#' Project population forward one time-step given current numbers-at-age and total mortality
+#'
+#' @param nareas The number of spatial areas
+#' @param maxage The maximum age 
+#' @param SSBcurr A numeric vector of length nareas with the current spawning biomass in each area
+#' @param Ncurr A numeric matrix (maxage, nareas) with current numbers-at-age in each area
+#' @param Zcurr A numeric matrix (maxage, nareas) with total mortality-at-age in each area
+#' @param PerrYr A numeric value with recruitment deviation for current year 
+#' @param hs Steepness of SRR
+#' @param R0a Numeric vector with unfished recruitment by area
+#' @param SSBpR Numeric vector with unfished spawning stock per recruit by area 
+#' @param aR Numeric vector with Ricker SRR a parameter by area
+#' @param bR Numeric vector with Ricker SRR b parameter by area
+#' @param mov Numeric matrix (nareas by nareas) with the movement matrix
+#' @param SRrel Integer indicating the stock-recruitment relationship to use (1 for Beverton-Holt, 2 for Ricker)
+#' 
+#' @author A. Hordyk
+#' 
+#' @export
+#' @keywords internal
+popdynOneTScpp <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel) {
+    .Call('DLMtool_popdynOneTScpp', PACKAGE = 'DLMtool', nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel)
+}
+
+#' Population dynamics model in CPP
+#'
+#' Project population forward pyears given current numbers-at-age and total mortality, etc 
+#' for the future years
+#'
+#' @param nareas The number of spatial areas
+#' @param maxage The maximum age 
+#' @param SSBcurr A numeric vector of length nareas with the current spawning biomass in each area
+#' @param Ncurr A numeric matrix (maxage, nareas) with current numbers-at-age in each area
+#' @param pyears The number of years to project the population forward
+#' @param M_age Numeric matrix (maxage, pyears) with natural mortality by age and year
+#' @param MatAge Numeric vector with proportion mature by age
+#' @param WtAge Numeric matrix (maxage, pyears) with weight by age and year
+#' @param Vuln Numeric matrix (maxage, pyears) with vulnerability by age and year
+#' @param Retc Numeric matrix (maxage, pyears) with retention by age and year
+#' @param Prec Numeric vector (pyears) with recruitment error
+#' @param mov Numeric matrix (nareas by nareas) with the movement matrix
+#' @param SRrelc Integer indicating the stock-recruitment relationship to use (1 for Beverton-Holt, 2 for Ricker)
+#' @param Effind Numeric vector (length pyears) with the fishing effort by year
+#' @param Spat_targc Integer. Spatial targetting
+#' @param hc Numeric. Steepness of stock-recruit relationship
+#' @param R0c Numeric vector of length nareas with unfished recruitment by area
+#' @param SSBpRc Numeric vector of length nareas with unfished spawning per recruit by area
+#' @param aRc Numeric. Ricker SRR a value
+#' @param bRc Numeric. Ricker SRR b value
+#' @param Qc Numeric. Catchability coefficient
+#' @param Fapic Numeric. Apical F value
+#' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
+#' @param control Integer. 1 to use q and effort to calculate F, 2 to use Fapic (apical F) and 
+#' vulnerablity to calculate F.
+#' 
+#' @author A. Hordyk
+#' 
+#' @export
+#' @keywords internal
+popdynCPP <- function(nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc, Fapic, maxF, control) {
+    .Call('DLMtool_popdynCPP', PACKAGE = 'DLMtool', nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc, Fapic, maxF, control)
+}
+
 #' Rcpp version of the Projection Optimizer
 #'
 #' Optimize for MSY and calculate MSY reference points 
@@ -124,6 +242,7 @@ optQ_cpp <- function(lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, m
 #' @param Wac internal
 #' @param R0c internal
 #' @param Vc internal
+#' @param retAc internal 
 #' @param nyears internal
 #' @param maxage internal
 #' @param movc internal
@@ -138,7 +257,7 @@ optQ_cpp <- function(lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, m
 #' 
 #' @export
 #' @keywords internal
-projOpt_cpp <- function(lnIn, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, Control) {
-    .Call('DLMtool_projOpt_cpp', PACKAGE = 'DLMtool', lnIn, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, Control)
+projOpt_cpp <- function(lnIn, Mc, hc, Mac, Wac, R0c, Vc, retAc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, Control) {
+    .Call('DLMtool_projOpt_cpp', PACKAGE = 'DLMtool', lnIn, Mc, hc, Mac, Wac, R0c, Vc, retAc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, Control)
 }
 

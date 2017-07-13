@@ -26,9 +26,17 @@ The component of the operating model that controls fishing dynamics
 
 \item{\code{LFS}}{Shortest length that is fully vulnerable to fishing (uniform distribution)}
 
-\item{\code{L5}}{Shortest length corresponding ot 5 percent vulnerability (uniform distribution)}
+\item{\code{L5}}{Shortest length corresponding to 5 percent vulnerability (uniform distribution)}
 
 \item{\code{Vmaxlen}}{The vulnerability of the longest (oldest) fish (uniform distribution)}
+
+\item{\code{LR5}}{Shortest length corresponding ot 5 percent retention (uniform distribution)}
+
+\item{\code{LFR}}{Shortest length that is fully retained (uniform distribution)}
+
+\item{\code{Rmaxlen}}{The retention of the longest (oldest) fish (uniform distribution)}
+
+\item{\code{DR}}{Discard rate - fraction of caught fish that are discarded (must be <= 1) (uniform distribution)}
 
 \item{\code{SelYears}}{Vector of verticies, index for years at which historical selectivity pattern changed. If left empty, historical selectivity is constant}
 

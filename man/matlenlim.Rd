@@ -2,7 +2,7 @@
 % Please edit documentation in R/Input.r
 \name{matlenlim}
 \alias{matlenlim}
-\title{A data-limited method in which fishing vulnerability is set according to the
+\title{A data-limited method in which fishing retention is set according to the
 maturity curve}
 \usage{
 matlenlim(x, Data, ...)
@@ -16,12 +16,11 @@ matlenlim(x, Data, ...)
 \code{reps} or \code{...} are required for all input controls}
 }
 \value{
-A vector of input control recommendations, with values for length at
-first capture and full selection
+A input control recommendation object
 }
 \description{
 An example of the implementation of input controls in the DLM toolkit, where
-selectivity-at-length is set equivalent to maturity-at-length
+retention-at-length is set equivalent to maturity-at-length
 }
 \references{
 Made-up for this package

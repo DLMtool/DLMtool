@@ -35,7 +35,7 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   if (length(invalid) > 0) {
     outNames <- paste(Names[invalid], "")
     for (i in seq(5, by=5, length.out=floor(length(outNames)/5))) outNames <- gsub(outNames[i], paste0(outNames[i], "\n"), outNames)
-    if(msg) warning("ignoring invalid names found in custom parameters (OM@cpars) \n", outNames)	
+    if(msg) message("ignoring invalid names found in custom parameters (OM@cpars) \n", outNames)	
   }
   # report found names
   valid <- which(Names %in% ParsNames)

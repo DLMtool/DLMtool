@@ -187,19 +187,10 @@ LBSPR_ItEff <- function(x, Data, yrsmth=1, reps=5, ...) {
   Mod[Mod < MaxDw] <- MaxDw
   Mod <- Mod + 1 
   
-  Allocate <- 1
-  if (is.na(Data@MPeff[x])) Data@MPeff[x] <- 1 
-  Effort <- Data@MPeff[x] * Mod
-  MiscList[[2]] <- append(MiscList[[2]], Effort)
-  Spatial <- c(1,1)
-  Vuln <- rep(NA,2)
-  out <- c(Allocate, Effort, Spatial, Vuln)
-   
-  Out <- list()
-  Out[[1]] <- out 
-  Out[[2]] <- MiscList
- 
-  return(Out) 
+  rec <- new("InputRec")
+  rec@Effort <- Data@MPeff[x] * Mod
+  rec@Misc <- MiscList
+  rec
 }
 class(LBSPR_ItEff)<-"Input"
 
@@ -221,7 +212,7 @@ LBSPR_ItSel <- function(x, Data, yrsmth=1, reps=5, ...) {
 
  dependencies="Data@CAL, Data@CAL_bins, Data@vbLinf, 
 	Data@vbK, Data@Mort, Data@vbK, Data@L50, Data@L95, 
-	Data@wlb"
+	Data@wlb, Data@LenCV"
   MiscList <- LBSPR(x, Data, yrsmth=yrsmth,reps=reps)
   if(all(is.na(MiscList[[1]]))) return(rep(NA, 6))
   if(all(is.na(MiscList[[1]][,2,]))) return(rep(NA, 6))
@@ -238,34 +229,27 @@ LBSPR_ItSel <- function(x, Data, yrsmth=1, reps=5, ...) {
   h <- Steep
   SPRLim <- -(2*(h-1))/(3*h+1) # SPR that results in 0.5 R0
  
-  Allocate <- 1
-  Effort <- 1
-  Spatial <- c(1,1)
+  
+  rec <- new("InputRec") # create recommendation object
 
   if (EstSPR < TgSPR) {
-    newLFC <- Data@L50[x] * 1.05
-    newLFS <- Data@L50[x] * 1.1
-    Vuln <-c(newLFC, newLFS)
+    rec@LR5 <- Data@L50[x] * 1.05
+    rec@LFR <- Data@L50[x] * 1.1
   }
   if (EstSPR < SPRLim) {
-    newLFC <- Data@L50[x] * 1.2
-    newLFS <- Data@L50[x] * 1.25
-    Vuln <-c(newLFC, newLFS)  
+    rec@LR5 <- Data@L50[x] * 1.2
+    rec@LFR <- Data@L50[x] * 1.25
+ 
   }
   if (EstSPR >= TgSPR) {
-    newLFC <- Data@L50[x] * 0.85
-    newLFS <- Data@L50[x] * 0.9
-    Vuln <-c(newLFC, newLFS)  
+    rec@LR5 <- Data@L50[x] * 0.85
+    rec@LFR <- Data@L50[x] * 0.9
+
   }
    
- 
-  out <- c(Allocate, Effort, Spatial, Vuln)
-   
-  Out <- list()
-  Out[[1]] <- out 
-  Out[[2]] <- MiscList
- 
-  return(Out) 
+
+  rec@Misc <- MiscList
+  rec
 }
 class(LBSPR_ItSel)<-"Input"
 
@@ -308,8 +292,7 @@ LBSPR <- function(x, Data, yrsmth=1, reps=1, lstyrs=10) {
 	# Create Empty Object
     MiscList <- rep(list(0), 2) # Create empty list
 	MiscList[[1]] <- array(NA, dim=c(TotYears, 4, reps))
-	colnames(MiscList[[1]]) <- c("Raw Est SPR", "Smooth Est SPR", 
-	"Raw Est F/M", "Smooth Est F/M")
+	colnames(MiscList[[1]]) <- c("Raw Est SPR", "Smooth Est SPR", "Raw Est F/M", "Smooth Est F/M")
 	MiscList[[2]] <- list()
   }
   if (length(Data@Misc[[x]]) != 0) MiscList <- Data@Misc[[x]]
@@ -340,8 +323,8 @@ LBSPR <- function(x, Data, yrsmth=1, reps=1, lstyrs=10) {
   if (CurrYear == LHYear) {
     ll <- length(IsEmpty)
     LenMatrix <- LenMatrix[,c(1, (ll-lstyrs+2):(ll+1))] 
-	IsEmpty <- (ll-lstyrs+1):(ll)
-	MiscList[[1]][1:(min(IsEmpty)-1),1,] <- 0 
+    IsEmpty <- (ll-lstyrs+1):(ll)
+    MiscList[[1]][1:(min(IsEmpty)-1),1,] <- 0 
     MiscList[[1]][1:(min(IsEmpty)-1),3,] <- 0 
   }
  
@@ -349,28 +332,31 @@ LBSPR <- function(x, Data, yrsmth=1, reps=1, lstyrs=10) {
   if (is.na(Wb)) Wb <- 3
   WbCV <- Data@CV_wlb[x]
   if (is.na(WbCV)) WbCV <- 0.1 
+  options(warn=-1)
   out <- sapply(1:reps, function(X) {
     LBpars <- new("LB_pars", verbose=FALSE)
-
-    LBpars@MK <- (trlnorm(reps,Data@Mort[x],Data@CV_Mort[x])/trlnorm(reps,Data@vbK[x],Data@CV_vbK[x]))[X] 
-    LBpars@Linf <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])[X]
-    LBpars@CVLinf <- 0.1 # NEED TO ADD THIS TO INPUT VARIABLES
-    LBpars@L50 <- trlnorm(reps, Data@L50[x],  Data@CV_L50[x])[X]
-    LBpars@L95 <- trlnorm(reps, Data@L95[x],  Data@CV_L50[x])[X]
-    LBpars@FecB <- trlnorm(reps, Wb, WbCV)[X]
+    LBpars@MK <- (trlnorm(1,Data@Mort[x],Data@CV_Mort[x])/trlnorm(1,Data@vbK[x],Data@CV_vbK[x]))
+    LBpars@Linf <- trlnorm(1, Data@vbLinf[x], Data@CV_vbLinf[x])
+    LBpars@CVLinf <- rep(Data@LenCV[x], 1)
+    LBpars@L50 <- trlnorm(1, Data@L50[x],  Data@CV_L50[x])
+    LBpars@L95 <- trlnorm(1, Data@L95[x],  Data@CV_L50[x])
+    LBpars@FecB <- trlnorm(1, Wb, WbCV)
     
-	if (LBpars@L50 >= LBpars@Linf) LBpars@L50 <- 0.9 * LBpars@Linf
-	if (LBpars@L95 >= LBpars@Linf) LBpars@L95 <- 0.95 * LBpars@Linf
-	if (LBpars@L50 >= LBpars@L95) LBpars@L95 <- 1.05 * LBpars@L50
-	
-
+    if (LBpars@L50 >= LBpars@Linf) LBpars@L50 <- 0.9 * LBpars@Linf
+    if (LBpars@L95 >= LBpars@Linf) LBpars@L95 <- 0.95 * LBpars@Linf
+    if (LBpars@L50 >= LBpars@L95) LBpars@L95 <- 1.05 * LBpars@L50
+    
+    # matplot(LenDat@LMids, LenDat@LData, type="l")
+    # matplot(LenDat@LMids, LBfit@pLCatch * apply(LenDat@LData, 2, sum), type="l", add=TRUE, lwd=2)
+    
     LenDat <- new("LB_lengths", LenMatrix, LBpars, dataType="freq")
     LenDat@Years <- 1:length(LenDat@Years)
+  
     LBfit <- LBSPR::LBSPRfit(LBpars, LenDat, verbose=FALSE)
-	# LBfit <- LBSPR::LBSPRfit(LBpars, LenDat, verbose=FALSE, Control=list(modtype="absel"))
-	
-	data.frame(rawSPR=LBfit@SPR, rawFM=LBfit@FM)
+    # LBfit <- LBSPR::LBSPRfit(LBpars, LenDat, verbose=FALSE, Control=list(modtype="absel"))
+    data.frame(rawSPR=LBfit@SPR, rawFM=LBfit@FM)
   })
+  options(warn=0)
 	
   # Raw estimates 
   MiscList[[1]][IsEmpty,1,] <- matrix(unlist(out[1,]), nrow=length(IsEmpty), ncol=reps)

@@ -4,7 +4,10 @@
 \alias{GetMoreData}
 \title{Load more data from DLMdata package}
 \usage{
-GetMoreData()
+GetMoreData(silent = FALSE)
+}
+\arguments{
+\item{silent}{Logical. Should messages to printed?}
 }
 \description{
 Downloads the DLMdata package from GitHub
