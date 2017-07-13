@@ -202,7 +202,6 @@ plotImp<-function(x,nsim=500, nyears=50,
   SizeLimSD<-runif(nsim,Imp@SizeLimSD[1],Imp@SizeLimSD[2])
   SizeLimFrac<-runif(nsim,Imp@SizeLimFrac[1],Imp@SizeLimFrac[2])
   
-  DiscMort<-runif(nsim,Imp@DiscMort[1],Imp@DiscMort[2])
   
   ObsTSplot(TACFrac,TACSD,nyears,labs=c("Fraction of TAC (TACFrac)",
                                      "TAC error (TACSD)","TAC discrepancy for three samples",
@@ -216,10 +215,6 @@ plotImp<-function(x,nsim=500, nyears=50,
                                         "Size Limit error (SizeLimSD)","Size limit discrepancy for three samples",
                                         "SizeLimFrac","SizeLimSD"), breaks=breaks, its=its, nsamp=nsamp, col=col)
  
-  hist2(DiscMort,col=col, axes=FALSE, main="Discard Mortality rate (DiscMort)", breaks=breaks,cex.main=0.9)
-  if(sd(DiscMort)>0.01)axis(side=1)
-  
-   
   mtext(paste0("Implementation error time series plots for implementation object ",Imp@Name),3,outer=T,line= 0.7,font=2)
   
   on.exit(par(op))

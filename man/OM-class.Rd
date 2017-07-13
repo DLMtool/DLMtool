@@ -216,8 +216,6 @@ bounds of a uniform distribution from which to sample the parameter.
 \item{\code{SizeLimSD}}{lognormal error in size limit implementation (uniform distribution)}
 
 \item{\code{SizeLimFrac}}{Mean fraction of the size limit (uniform distribution) (can be an improper fraction greater than 1)}
-
-\item{\code{DiscMort}}{Discard mortality rate (uniform distribution) (can be an improper fraction greater than 1)}
 }}
 
 \section{Objects from the Class}{

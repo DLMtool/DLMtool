@@ -17,7 +17,12 @@
 runInMP <- function(Data, MPs = NA, reps = 100) {
   
   nsims <- length(Data@Mort)
-  nareas <- Data@nareas 
+  if (.hasSlot(Data, "narea")) {
+    nareas <- Data@nareas   
+  } else {
+    nareas <- 2 
+  }
+  
   nMPs <- length(MPs)
   
   returnList <- list() # a list nMPs long containing MPs recommendations
@@ -59,7 +64,7 @@ runInMP <- function(Data, MPs = NA, reps = 100) {
         }
         
         recList[[X]] <- rec
-        for (x in 1:nsims) Data@Misc[[x]] <- recList$Misc[,x]
+        for (x in 1:nsims) Data@Misc[[x]] <- recList$Misc[[x]]
         recList$Misc <- NULL
       }
       returnList[[ff]] <- recList

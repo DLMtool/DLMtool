@@ -22,7 +22,5 @@ SampleImpPars <- function(Imp, nsim=NULL) {
   ImpOut$SizeLimSD<-runif(nsim,Imp@SizeLimSD[1],Imp@SizeLimSD[2])
   ImpOut$SizeLimFrac<-runif(nsim,Imp@SizeLimFrac[1],Imp@SizeLimFrac[2])
   
-  ImpOut$DiscMort<-runif(nsim,Imp@DiscMort[1],Imp@DiscMort[2])
-  
   ImpOut
 }

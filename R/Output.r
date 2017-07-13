@@ -54,6 +54,7 @@ getn <- function(BMSY_K) {
 
 gety <- function(n) (n^(n/(n - 1)))/(n - 1)  # More DBSRA code: get the y parameter for n
 
+
 #' Average Catch
 #' 
 #' A simple average catch MP that is included to demonstrate a 'status quo' management option
@@ -74,8 +75,9 @@ gety <- function(n) (n^(n/(n - 1)))/(n - 1)  # More DBSRA code: get the y parame
 #' median nlm optim optimise optimize plogis pnorm predict qlnorm quantile rbeta 
 #' rlnorm rmultinom rnorm runif sd uniroot   
 #' @importFrom utils packageVersion lsf.str read.csv
-AvC <- function(x, Data, reps = 100) 
+AvC <- function(x, Data, reps = 100) {
   rlnorm(reps, log(mean(Data@Cat[x, ], na.rm = T)), 0.2)
+}
 class(AvC) <- "Output"
 
 
@@ -95,8 +97,9 @@ class(AvC) <- "Output"
 #' @param reps The number of TAC samples
 #' @author T. Carruthers
 #' @export FMSYref
-FMSYref <- function(x, Data, reps = 100) 
+FMSYref <- function(x, Data, reps = 100) {
   trlnorm(reps, Data@OM$A[x] * (1 - exp(-Data@OM$FMSY[x])), 0.01)
+}
 class(FMSYref) <- "Output"
 
 
@@ -1489,7 +1492,7 @@ DD <- function(x, Data, reps = 100) {
   E_hist <- E_hist/mean(E_hist)
   ny_DD <- length(C_hist)
   params <- log(c(Data@Mort[x], mean(C_hist, na.rm = T), Data@Mort[x]))
-  k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  -------------
+  k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  
   k_DD[k_DD > Data@MaxAge/2] <- ceiling(Data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
   Rho_DD <- (wa[k_DD + 2] - Winf)/(wa[k_DD + 1] - Winf)
   Alpha_DD <- Winf * (1 - Rho_DD)

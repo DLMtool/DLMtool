@@ -95,6 +95,369 @@ SRAsim<-function(OM,qmult=0.5,patchy=0.2,nCAA=100,sigmaE=0.25){
 }
 
 
+# helper functions 
+LSRA_cppWrapper <- function(param, FF_a, Chist, M_a, Mat_age_a, Wt_age_a,  sel_a, 
+                            Recdevs_a, h_a, Umax=0.5, mode=1) {
+  LSRA_opt_cpp(param, FF_a, Chist, M_a, Mat_age_a, Wt_age_a,  sel_a, 
+               Recdevs_a, h_a, Umax)[[mode]]
+}
+
+
+LSRA_cpp <-function(x,FF,Chist_arr,M,Mat_age,Wt_age,sel,Recdevs,h){
+  
+  maxage<-ncol(Mat_age)
+  
+  SSB0guess<-sum(Chist_arr[x,])*c(0.05,100)
+  SSBpR<-sum(exp(-M[x]*(0:(maxage-1)))*Mat_age[x,]*Wt_age[x,])
+  R0range=SSB0guess/SSBpR
+  
+  # Modes 1:obj  2:Fpred  3:depletion  4:R0   5:Ffit
+  opt<-optimize(LSRA_cppWrapper,interval=log(R0range),
+                FF_a=FF[x],
+                Chist=Chist_arr[x,],
+                M_a=M[x],
+                Mat_age_a=Mat_age[x,],
+                Wt_age_a=Wt_age[x,],
+                sel_a=sel[x,],
+                Recdevs_a=Recdevs[x,],
+                h_a=h[x], mode=1)
+  
+  opt$minimum
+}
+
+
+#' Stochastic SRA construction of operating models
+#'
+#' @description Specify an operating model, using catch composition data and a historical catch series.
+#'  Returns and operating model with depletion (D), selectivity parameters (L5, LFS) and effort trajectory (Effyears, EffLower, EffUpper) filled.
+#'  Modified version using cpp code.
+#' @param OM An operating model object with M, growth, stock-recruitment and maturity parameters specified.
+#' @param CAA A matrix nyears (rows) by nages (columns) of catch at age (age 1 to maxage in length)
+#' @param Chist A vector of historical catch observations (nyears long) going back to unfished conditions
+#' @param Cobs A numeric value representing catch observation error as a log normal sd
+#' @param sigmaR A numeric value representing the prior standard deviation of log space recruitment deviations
+#' @param Umax A numeric value representing the maximum harvest rate for any age class (rejection of sims where this occurs)
+#' @param nsim The number desired draws of parameters / effort trajectories
+#' @param proyears The number of projected MSE years
+#' @param Jump_fac A multiplier of the jumping distribution variance to increase acceptance (lower Jump_fac) or decrease acceptance rate (higher Jump_fac)
+#' @param nits The number of MCMC iterations
+#' @param burnin The number of initial MCMC iterations to discard
+#' @param thin The interval over which MCMC samples are extracted for use in graphing / statistics
+#' @param ESS Effective sample size - the weighting of the catch at age data
+#' @param ploty Do you want to see diagnostics plotted?
+#' @param nplot how many MCMC samples should be plotted in convergence plots?
+#' @param SRAdir A directory where the SRA diagnostics / fit are stored
+#' @return A list with three positions. Position 1 is the filled OM object, position 2 is the custompars data.frame that may be submitted as an argument to runMSE() and position 3 is the matrix of effort histories [nyears x nsim] vector of objects of class\code{classy}
+#' @author T. Carruthers (Canadian DFO grant)
+#' @references Walters, C.J., Martell, S.J.D., Korman, J. 2006. A stochastic approach to stock reduction analysis. Can. J. Fish. Aqua. Sci. 63:212-213.
+#' @export StochasticSRA
+#' @examples
+#' \dontrun{
+#' setup()
+#' sim<-SRAsim(testOM,patchy=0.8)
+#' CAA<-sim$CAA
+#' Chist<-sim$Chist
+#' testOM<-StochasticSRA(testOM,CAA,Chist,nsim=30,nits=1000)
+#' runMSE(testOM)
+#' }
+StochasticSRA <-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proyears=50,
+                          Jump_fac=1,nits=20000,
+                          burnin=1000,thin=50,ESS=300,ploty=T,nplot=6,SRAdir=NA){
+  
+  
+  OM <- ChkObj(OM) # Check that all required slots in OM object contain values 
+  nyears<-length(Chist)
+  if(class(Chist)=="matrix")nyears<-nrow(Chist)
+  maxage<-OM@maxage
+  
+  if (burnin < 0.05*nits) burnin <- 0.05 * nits
+  
+  if("nsim"%in%slotNames(OM))nsim<-OM@nsim
+  if("proyears"%in%slotNames(OM))proyears<-OM@proyears
+  OM@nsim<-nsim
+  OM@proyears<-proyears
+  
+  
+  # Sample custom parameters
+  SampCpars <- list() # empty list 
+  # custom parameters exist - sample and write to list
+  if(length(OM@cpars)>0){
+    ncparsim<-cparscheck(OM@cpars)   # check each list object has the same length and if not stop and error report
+    SampCpars <- SampleCpars(OM@cpars, nsim) 
+  }
+  
+  
+  # Sample Stock Parameters 
+  StockPars <- SampleStockPars(OM, nsim, nyears, proyears, SampCpars)
+  # Assign Stock pars to function environment
+  for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
+  agearr<-array(rep(1:maxage,each=nsim),c(nsim,maxage))
+  Wt_age <- Wt_age[,,nyears] # no time-varying growth
+  
+  
+  # Sample Fleet Parameters 
+  FleetPars <- SampleFleetPars(SubOM(OM, "Fleet"), Stock=StockPars, nsim, nyears, proyears, 
+                               cpars=SampCpars)
+  # Assign Fleet pars to function environment
+  for (X in 1:length(FleetPars)) assign(names(FleetPars)[X], FleetPars[[X]])
+  
+  # Sample historical catch 
+  Chist_a<-array(trlnorm(nyears*nsim,1,Cobs)*rep(Chist,each=nsim),c(nsim,nyears)) # Historical catch
+  
+  # set up mcmc
+  lnR0<-lninfl<-lnslp<-array(NA,c(nsim,nits))
+  lnRD<-array(0,c(nsim,nyears+maxage,nits))
+  
+  LHD<-array(NA,c(nsim,nits))
+  
+  
+  if(sfIsRunning()){
+    R0LB<-sfSapply(1:nsim,LSRA_cpp,FF=M*4,Chist_arr=Chist_a,M=M,Mat_age=Mat_age,Wt_age=Wt_age,
+                   sel=Mat_age,Recdevs=array(1,c(nsim,nyears+maxage)),h=hs)
+    
+    R0UB<-sfSapply(1:nsim,LSRA_cpp,FF=M/10,Chist_arr=Chist_a,M=M,Mat_age=Mat_age,Wt_age=Wt_age,
+                   sel=Mat_age,Recdevs=array(1,c(nsim,nyears+maxage)),h=hs)
+  }else{
+    
+    R0LB <- sapply(1:nsim,LSRA_cpp,FF=M*4,Chist_arr=Chist_a,M=M,Mat_age=Mat_age,Wt_age=Wt_age,
+                   sel=Mat_age,Recdevs=array(1,c(nsim,nyears+maxage)),h=hs)
+    
+    R0UB <- sapply(1:nsim,LSRA_cpp,FF=M/10,Chist_arr=Chist_a,M=M,Mat_age=Mat_age,Wt_age=Wt_age,
+                   sel=Mat_age,Recdevs=array(1,c(nsim,nyears+maxage)),h=hs)
+  }
+  
+  R0b <- cbind(R0LB-1,R0UB+1)
+  inflb<-log(c(0.5,maxage*0.5))
+  slpb<-log(exp(inflb)*c(0.1,2))#c(-3,3)
+  RDb<-c(-2,2)
+  
+  # initial guesses
+  lnR0[,1]<-R0UB#log(apply(Chist_a,1,mean))
+  lninfl[,1]<-log(maxage/4)
+  lnslp[,1]<-log(exp(lninfl[,1])*0.2)
+  lnRD[,,1]<-0
+  
+  # parameters
+  pars <- cbind(lnR0[,1], lninfl[,1], lnslp[,1], lnRD[,,1])
+  npars<-ncol(pars)
+  
+  # parameter store
+  LHstr<-array(NA,c(nsim,nits))
+  parstr<-array(NA,c(nsim, npars,nits))
+  
+  # parameter indexes
+  R0ind <-1
+  inflind <- 2
+  slpind <- 3
+  RDind <- 4:npars
+  
+  # Parameter jumping
+  JumpCV<-rep(0.05,npars) # R0
+  JumpCV[inflind]<-0.05
+  JumpCV[slpind]<-0.05
+  JumpCV[RDind]<-0.1*sigmaR # a function of sigmaR to provide reasonable acceptance rate
+  JumpCV<-JumpCV*Jump_fac
+  
+  # parameter censorship
+  parLB<-parUB<-matrix(NA, nsim, npars)
+  
+  parLB[,1]<-R0b[,1]
+  parLB[,2]<-inflb[1]
+  parLB[,3]<-slpb[1]
+  parLB[,4:npars]<-RDb[1]
+  
+  parUB[,1]<-R0b[,2]
+  parUB[,2]<-inflb[2]
+  parUB[,3]<-slpb[2]
+  parUB[,4:npars]<-RDb[2]
+  
+  CAAadj=sum(CAA,na.rm=T)/ESS # ESS adjustment to low sample sizes
+  
+  # update<-(1:50)*(nits/50)
+  adapt<-c(rep(5,100),rep(2.5,100),rep(1,nits-200))
+  
+  if (snowfall::sfIsRunning()) {
+    mcmc <- snowfall::sfSapply(1:nsim, function(sim) {
+      cat(".")
+      LSRA_MCMC_sim(nits=nits, pars[sim,], JumpCV, adapt, parLB[sim,], parUB[sim,], R0ind-1, 
+                    inflind-1, slpind-1, RDind-1, nyears, maxage, M[sim], Mat_age[sim,], 
+                    Wt_age[sim,], Chist_a[sim,], Umax, hs[sim], CAA, CAAadj, sigmaR)
+    })
+  }else {
+    mcmc <- sapply(1:nsim, function(sim) {
+      cat(".")
+      LSRA_MCMC_sim(nits=nits, pars[sim,], JumpCV, adapt, parLB[sim,], parUB[sim,], R0ind-1, 
+                    inflind-1, slpind-1, RDind-1, nyears, maxage, M[sim], Mat_age[sim,], 
+                    Wt_age[sim,], Chist_a[sim,], Umax, hs[sim], CAA, CAAadj, sigmaR)
+    })
+  }  
+  
+  parstr <- aperm(array(unlist(mcmc[1,]), dim=c(npars, nits, nsim)), c(3,1,2))
+  CAA_pred <- aperm(array(unlist(mcmc[2,]), dim=c(nyears, maxage, nsim)), c(3,1,2))
+  SSB <- aperm(array(unlist(mcmc[3,]), dim=c(nyears, nsim)), c(2,1))
+  SSB0 <- unlist(mcmc[4,])
+  RD <- aperm(array(unlist(mcmc[5,]), dim=c(nyears+maxage, nsim)), c(2,1))
+  PredF <- aperm(array(unlist(mcmc[6,]), dim=c(nyears, nsim)), c(2,1))
+  sel <- aperm(array(unlist(mcmc[7,]), dim=c(maxage, nsim)), c(2,1))
+  
+  if(!is.na(SRAdir))jpeg(paste0(SRAdir,"/SRA_convergence.jpg"),width=7,height=9,units='in',res=400)
+  
+  if(ploty){
+    
+    col<-rep(c("blue","red","green","orange","grey","brown","pink","yellow","dark red","dark blue","dark green"),100)
+    
+    par(mfcol=c(5,2),mai=c(0.7,0.6,0.05,0.1))
+    pind<-(1:(nits/thin))*thin
+    matplot(pind,t(parstr[1:nplot,1,pind]),type='l',ylab="log R0",xlab="Iteration")
+    abline(v=burnin,lty=2)
+    matplot(pind,t(parstr[(1:nplot),2, pind]),type='l',ylab="log infl (sel)",xlab="Iteration")
+    abline(v=burnin,lty=2)
+    matplot(pind,t(parstr[(1:nplot),3,pind]),type='l',ylab="log slp (sel)",xlab="Iteration")
+    abline(v=burnin,lty=2)
+    matplot(pind,t(parstr[(1:nplot),4, pind]),type='l',ylab="recdev1",xlab="Iteration")
+    abline(v=burnin,lty=2)
+    matplot(pind,t(parstr[(1:nplot), npars, pind]),type='l',ylab="recdev2",xlab="Iteration")
+    abline(v=burnin,lty=2)
+    
+    burn<-burnin:nits
+    plot(density(parstr[, 1,burn],adj=0.7),xlab="log(R0)",main="")
+    plot(density(parstr[, 2,burn],adj=0.7),xlab="inflection selectivity",main="")
+    plot(density(parstr[, 3,burn],adj=0.7),xlab="slope selectivity",main="")
+    plot(density(parstr[, 4, burn],adj=0.7),xlab="recdev1",main="")
+    plot(density(parstr[, npars, burn],adj=0.7),xlab="recdev2",main="")
+    
+    
+  }
+  if(!is.na(SRAdir))dev.off()
+  
+  if(!is.na(SRAdir))jpeg(paste0(SRAdir,"/SRA predictions.jpg"),width=7,height=11,units='in',res=400)
+  if(ploty){
+    
+    par(mfrow=c(6,2),mai=c(0.65,0.6,0.02,0.1))
+    qq<-apply(SSB,2,quantile,p=c(0.05,0.25,0.5,0.75,0.95))
+    ylim<-c(0,max(qq))
+    
+    matplot(t(SSB[1:nplot,]),ylim=ylim,type="l",xlab="Year",ylab="SSB")
+    xs<-dim(SSB)[2]
+    plot(qq[3,],ylim=ylim,type='l',xlab="Year",ylab="SSB")
+    polygon(c(1:xs,xs:1),c(qq[1,],qq[5,xs:1]),border=NA,col='light grey')
+    polygon(c(1:xs,xs:1),c(qq[2,],qq[4,xs:1]),border=NA,col='dark grey')
+    lines(qq[3,],lwd=1,col="white")
+    
+    D<-SSB/SSB0
+    
+    qq<-apply(D,2,quantile,p=c(0.05,0.25,0.5,0.75,0.95))
+    ylim<-c(0,max(qq))
+    
+    matplot(t(D[1:nplot,]),ylim=ylim,type="l",xlab="Year",ylab="Depletion")
+    plot(qq[3,],ylim=ylim,type='l',xlab="Year",ylab="Depletion")
+    polygon(c(1:xs,xs:1),c(qq[1,],qq[5,xs:1]),border=NA,col='light grey')
+    polygon(c(1:xs,xs:1),c(qq[2,],qq[4,xs:1]),border=NA,col='dark grey')
+    lines(qq[3,],lwd=1,col="white")
+    
+    qq<-apply(PredF,2,quantile,p=c(0.05,0.25,0.5,0.75,0.95))
+    ylim<-c(0,max(qq))
+    
+    matplot(t(PredF[1:nplot,]),ylim=ylim,type="l",xlab="Year",ylab="Fish. Mort.")
+    plot(qq[3,],ylim=ylim,type='l',xlab="Year",ylab="Fish. Mort.")
+    polygon(c(1:xs,xs:1),c(qq[1,],qq[5,xs:1]),border=NA,col='light grey')
+    polygon(c(1:xs,xs:1),c(qq[2,],qq[4,xs:1]),border=NA,col='dark grey')
+    lines(qq[3,],lwd=1,col="white")
+    
+    nyears<-dim(CAA)[1]
+    nages<-dim(CAA)[2]
+    
+    qq<-apply(sel,2,quantile,p=c(0.05,0.25,0.5,0.75,0.95))
+    ylim<-c(0,max(qq))
+    xs<-maxage
+    matplot(t(sel[1:nplot,]),ylim=ylim,type="l",xlab="Age",ylab="Selectivity")
+    plot(qq[3,],ylim=ylim,type='l',xlab="Age",ylab="Selectivity")
+    polygon(c(1:xs,xs:1),c(qq[1,],qq[5,xs:1]),border=NA,col='light grey')
+    polygon(c(1:xs,xs:1),c(qq[2,],qq[4,xs:1]),border=NA,col='dark grey')
+    lines(qq[3,],lwd=1,col="white")
+    
+    
+    RDx<-(-maxage+1):nyears
+    
+    qq<-apply(RD,2,quantile,p=c(0.05,0.25,0.5,0.75,0.95))
+    ylim<-c(0,max(qq))
+    xs<-dim(RD)[2]
+    matplot(RDx,t(RD[1:nplot,]),ylim=ylim,type="l",xlab="Year",ylab="Rec. Dev.")
+    plot(RDx,qq[3,],ylim=ylim,type='l',xlab="Year",ylab="Rec. Dev.")
+    polygon(c(RDx,RDx[xs:1]),c(qq[1,],qq[5,xs:1]),border=NA,col='light grey')
+    polygon(c(RDx,RDx[xs:1]),c(qq[2,],qq[4,xs:1]),border=NA,col='dark grey')
+    lines(RDx,qq[3,],lwd=1,col="white")
+    
+    
+    plot(c(1,nyears),c(1,nages),col='white',xlab="Year",ylab="Age")
+    legend("top",legend="Observed composition data",bty='n')
+    points(rep(1:nyears,nages),rep(1:nages,each=nyears),cex=CAA^0.5/max(CAA^0.5,na.rm=T)*1.5,pch=19,col=makeTransparent("dark grey",60))
+    
+    CAA_pred1<-CAA_pred
+    CAA_pred1[CAA_pred1<0.002]<-NA
+    plot(c(1,dim(CAA)[1]),c(1,dim(CAA)[2]),col='white',xlab="Year",ylab="Age")
+    legend("top",legend="Predicted composition data (1 sim)",bty='n')
+    points(rep(1:nyears,nages),rep(1:nages,each=nyears),cex=CAA_pred1[1,,]^0.5/max(CAA_pred1[1,,]^0.5,na.rm=T)*1.5,pch=19,col=makeTransparent("dark grey",60))
+    
+    
+  }
+  if(!is.na(SRAdir))dev.off()
+  
+  
+  dep<-SSB[,nyears]/SSB0
+  procsd<-apply(RD,1,sd,na.rm=T)
+  procmu <- -0.5 * (procsd)^2  # adjusted log normal mean
+  OM@D<-quantile(dep,c(0.05,0.95))
+  OM@Perr<-quantile(procsd,c(0.025,0.975))
+  
+  getAC<-function(recdev)acf(recdev,plot=F)$acf[2,1,1]
+  AC<-apply(RD,1,getAC)
+  OM@AC<-quantile(AC,c(0.05,0.95))
+  
+  R0 <- exp(parstr[,1,nits])
+  slp <- exp(parstr[,3,nits])
+  infl <-  exp(parstr[,2,nits])
+  
+  A5<--(slp*log(1/0.05-1)-infl)
+  A5[A5 < 0] <- 0 
+  A95<--(slp*log(1/0.95-1)-infl)
+  L5<-Linf*(1-exp(-K*(A5-t0)))
+  L95<-Linf*(1-exp(-K*(A95-t0)))
+  
+  OM@L5<-quantile(L5,c(0.05,0.95))
+  OM@LFS<-quantile(L95,c(0.05,0.95))
+  OM@nyears<-nyears
+  OM@EffYears<-1:OM@nyears
+  
+  OM@EffLower<-apply(PredF,2,quantile,p=0.05)
+  OM@EffUpper<-apply(PredF,2,quantile,p=0.95)
+  OM@nyears<-nyears
+  
+  Perr<-array(NA,c(nsim,maxage+nyears+proyears-1))
+  Perr[,1:(nyears+maxage-1)]<-log(RD[,2:(maxage+nyears)]) 
+  Perr[,(nyears+maxage):(nyears+maxage+proyears-1)]<-matrix(rnorm(nsim*(proyears),rep(procmu,proyears),rep(procsd,proyears)),nrow=nsim)
+  
+  
+  for (y in (maxage+nyears):(nyears + proyears+maxage-1)) Perr[, y] <- AC * Perr[, y - 1] +   Perr[, y] * (1 - AC * AC)^0.5  
+  Perr<-exp(Perr)
+  
+  PredF<-PredF/apply(PredF,1,mean) # Find should be mean 1 so qs optimizers are standardized
+  
+  Wt_age <- array(Wt_age, dim=c(dim=c(nsim, maxage, nyears+proyears)))
+  Len_age <- array(Len_age, dim=c(nsim, maxage, nyears+proyears))
+  Marray <- matrix(M, nrow=nsim, ncol=proyears+nyears)
+  OM@cpars<-list(dep=dep,M=M,procsd=procsd,AC=AC,hs=hs,Linf=Linf, 
+                 Wt_age=Wt_age, Len_age=Len_age, Marray=Marray, 
+                 K=K,t0=t0,L50=L50,
+                 L5=L5,LFS=L95,Find=PredF,
+                 V=array(sel,c(nsim,maxage,nyears)),Perr=Perr,R0=R0,
+                 SSB=SSB,SSB0=SSB0,RD=RD) # not valid for runMSE code but required
+  
+  OM
+  
+}
+
+
 #' Stochastic SRA construction of operating models
 #'
 #' @description Specify an operating model, using catch composition data and a historical catch series. Returns and operating model with depletion (D), selectivity parameters (L5, LFS) and effort trajectory (Effyears, EffLower, EffUpper) filled.
@@ -127,7 +490,7 @@ SRAsim<-function(OM,qmult=0.5,patchy=0.2,nCAA=100,sigmaE=0.25){
 #' testOM<-StochasticSRA(testOM,CAA,Chist,nsim=30,nits=1000)
 #' runMSE(testOM)
 #' }
-StochasticSRA<-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proyears=50,
+StochasticSRA2<-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proyears=50,
                         Jump_fac=1,nits=4000,
                         burnin=500,thin=10,ESS=300,ploty=T,nplot=6,SRAdir=NA){
 

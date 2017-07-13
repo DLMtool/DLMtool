@@ -61,7 +61,7 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
 	  
 	  if(length(Stock@cpars)>0){ # custom parameters exist - sample and write to list
 	    ncparsim<-cparscheck(Stock@cpars)   # check each list object has the same length and if not stop and error report
-	    SampCpars <- SampleCpars(Stock@cpars) 
+	    SampCpars <- SampleCpars(Stock@cpars, nsim) 
 	  }
 	  Stock <- SubOM(Stock)
   }

@@ -2,16 +2,17 @@
 #' Load more data from DLMdata package
 #'
 #' Downloads the DLMdata package from GitHub 
+#' @param silent Logical. Should messages to printed?
 #' @export
 #'
 #' @importFrom devtools install_github
-GetMoreData <- function() {
-  message("Downloading 'DLMdata' from GitHub")
+GetMoreData <- function(silent=FALSE) {
+  if (!silent) message("\nDownloading 'DLMdata' from GitHub")
   tt <- devtools::install_github("DLMtool/DLMdata", quiet=TRUE)
   if (tt) {
-    message("Use 'library(DLMdata)' to load additional data into workspace")
+    if (!silent) message("Use 'library(DLMdata)' to load additional data into workspace")
   } else {
-    message("Package 'DLMdata' already up to date\n Use 'library(DLMdata)' to load additional data into workspace")
+    if (!silent) message("Package 'DLMdata' already up to date\n Use 'library(DLMdata)' to load additional data into workspace")
   }
   # d <- data(package = "DLMdata")
   # DataObjs <- d$results[,3]

@@ -161,12 +161,18 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   if (!exists("L50_95", inherits=FALSE)) {
     L50_95 <- array(runif(nsim * 50, Stock@L50_95[1], Stock@L50_95[2]), c(nsim, 50))  # length at 95% maturity
     if (!exists("sL50", inherits=FALSE)) sL50 <- matrix(L50, nsim, 50)
-    L50_95[(sL50+L50_95)/Linf > 0.99] <- NA
+    L50_95[((sL50+L50_95)/matrix(Linf, nsim, 50)) > 0.99] <- NA
     L50_95 <- apply(L50_95, 1, function(x) x[!is.na(x)][1]) 
   }
  
   if (!exists("L95", inherits=FALSE))   L95 <- L50 + L50_95
   
+  if (any(L95> Linf)) {
+    message("Note: Some samples of L95 are above Linf. Defaulting to 0.99*Linf")
+    L95[L95> Linf] <- 0.99* Linf[L95> Linf]
+  }
+
+
   # == Sample Fecundity-Length Exponent ===
   # if (!exists("FecB", inherits=FALSE))   FecB <- runif(nsim, min(Stock@FecB), max(Stock@FecB))
   
@@ -202,7 +208,8 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
     Len_age[ind] <- Linfarray[ind[, c(1, 3)]] * (1 - exp(-Karray[ind[, c(1, 3)]] * 
                                                            (Agearray[ind[, 1:2]] - t0[ind[, 1]])))
   } else { # Len_age has been passed in with cpars
-    if (any(dim(Len_age) != c(nsim, maxage, nyears + proyears))) stop("'Len_age' must be array with dimensions: nsim, maxage, nyears + proyears") 
+    if (any(dim(Len_age) != c(nsim, maxage, nyears + proyears))) 
+      stop("'Len_age' must be array with dimensions: nsim, maxage, nyears + proyears") 
     # Estimate vB parameters for each year and each sim 
     if (!all(c("Linf", "K", "t0") %in% names(cpars))) { # don't calculate if Linf, K and t0 have also been passed in with cpars
       vB <- function(pars, ages) pars[1] * (1-exp(-pars[2]*(ages-pars[3])))
@@ -244,7 +251,8 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
     Wa <- Stock@a
     Wb <- Stock@b 
   }	else {
-    if (any(dim(Wt_age) != c(nsim, maxage, nyears + proyears))) stop("'Wt_age' must be array with dimensions: nsim, maxage, nyears + proyears") 
+    if (any(dim(Wt_age) != c(nsim, maxage, nyears + proyears))) 
+      stop("'Wt_age' must be array with dimensions: nsim, maxage, nyears + proyears (", paste(c(nsim, maxage, nyears + proyears), ""), ") but has ", paste(dim(Wt_age), "")) 
     # Estimate length-weight parameters from the Wt_age data
     logL <- log(as.numeric(Len_age))
     logW <- log(as.numeric(Wt_age))
@@ -261,9 +269,19 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   if (!exists("age95", inherits=FALSE)) age95 <- -((log(1 - L95/Linf))/K) + t0
   age95[age95 < 1] <- 1.5  # must be greater than 0 and ageM
   
+  if (any(ageM >= maxage-1)) {
+    message("Note: Some samples of age of maturity are above 'maxage'. Defaulting to maxage-1")
+    ageM[ageM >= maxage] <- maxage - 1 
+  }
+  if (any(ageM >= maxage)) {
+    message("Note: Some samples of age of maturity are above 'maxage'. Defaulting to maxage")
+    age95[age95 >= maxage] <- maxage  
+  }
+  
   ageMsd <- sapply(1:nsim, getroot, ageM, age95)
   ageMarray <- array(ageM, dim = c(nsim, maxage))  # Age at maturity array
   
+
   # == Generate Maturity-at-Age array ====
   if (!exists("Mat_age", inherits=FALSE)) {
     Mat_age <- 1/(1 + exp((ageMarray - (Agearray))/(ageMarray * ageMsd)))  # Maturity at age array
@@ -319,10 +337,16 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
     M_ageArray[ind] <- Marray[ind[,c(1,3)]] * (Wt_age[ind]/Winf[ind[,1]]) ^ Mexp[ind[,1]]  
   }  
   
+
   # == Scale M at age so that mean M of mature ages is equal to sampled M ====
   tempM_ageArray <- M_ageArray
   for (sim in 1:nsim) {
-    scale <- Marray[sim,]/ apply(tempM_ageArray[sim,ageM[sim]:maxage,], 2, mean)
+    if (ageM[sim] < (maxage-1)) {
+      scale <- Marray[sim,]/ apply(tempM_ageArray[sim,ageM[sim]:maxage,], 2, mean)  
+    } else {
+      scale <- Marray[sim,]/ mean(tempM_ageArray[sim,ageM[sim]:maxage,])  
+    }
+    
     M_ageArray[sim,,] <- M_ageArray[sim,,] * matrix(scale, maxage, nyears+proyears, byrow=TRUE)
   }
   

@@ -24,8 +24,6 @@ An operating model component that specifies the degree of adherence to managemen
 
 \item{\code{SizeLimFrac}}{Mean fraction of the size limit (uniform distribution) (can be an improper fraction greater than 1)}
 
-\item{\code{DiscMort}}{Discard mortality rate (uniform distribution) (can be an improper fraction greater than 1)}
-
 \item{\code{Source}}{A reference to a website or article form which parameters were taken to define the operating model}
 }}
 

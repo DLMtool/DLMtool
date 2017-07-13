@@ -27,7 +27,7 @@ plotFleet <- function(x, Stock=NULL, nsamp=3, nsim=500, proyears=28, col="darkgr
 	  if (is.finite(Fleet@nsim)) nsim <- Fleet@nsim	
 	  if (length(Fleet@cpars) > 0) {
 	    ncparsim <-cparscheck(Fleet@cpars)   # check each list object has the same length and if not stop and error report
-	    SampCpars <- SampleCpars(Fleet@cpars) 
+	    SampCpars <- SampleCpars(Fleet@cpars, nsim) 
 	  }
 	  Stock <- SubOM(Fleet, "Stock")
 	  Fleet <- SubOM(Fleet, "Fleet")

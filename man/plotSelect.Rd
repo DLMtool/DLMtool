@@ -4,11 +4,20 @@
 \alias{plotSelect}
 \title{Plot the vulnerability and retention curves}
 \usage{
-plotSelect(OM)
+plotSelect(OM, pyears = 4, sim = 1, type = "l")
 }
 \arguments{
 \item{OM}{An object of class 'OM'}
+
+\item{pyears}{number of years to plot}
+
+\item{sim}{the simulation to plot. default is 1. Set to NA to plot a random simulation}
+
+\item{type}{plot type - line "l", point "p", or both "b"}
 }
 \description{
 Plot the vulnerability and retention curves
+}
+\author{
+A. Hordyk
 }

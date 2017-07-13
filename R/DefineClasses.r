@@ -779,7 +779,6 @@ setMethod("initialize", "Obs", function(.Object, file = NA) {
 #' @slot EFrac Mean fraction of recommended effort taken (uniform distribution)
 #' @slot SizeLimSD lognormal error in size limit implementation (uniform distribution)
 #' @slot SizeLimFrac Mean fraction of the size limit (uniform distribution) (can be an improper fraction greater than 1)
-#' @slot DiscMort Discard mortality rate (uniform distribution) (can be an improper fraction greater than 1)
 #' @slot Source A reference to a website or article form which parameters were taken to define the operating model
 #' @author T. Carruthers
 #' @keywords classes
@@ -790,7 +789,6 @@ setMethod("initialize", "Obs", function(.Object, file = NA) {
 setClass("Imp", representation(Name = "character", TACSD = "numeric", TACFrac = "numeric", 
                                ESD = "numeric", EFrac = "numeric",
                                SizeLimSD = "numeric", SizeLimFrac="numeric",
-                               DiscMort = "numeric", 
                                Source = "character"))
 
 # initialize Imp
@@ -803,7 +801,6 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
   .Object@EFrac <-c(1,1)
   .Object@SizeLimSD <- c(0,0)
   .Object@SizeLimFrac<-c(1,1)
-  .Object@DiscMort <- c(0,0)
   .Object@Source <-"DLMtool generated"
   
   if (!is.na(file)) {
@@ -821,7 +818,6 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
       .Object@EFrac <- as.numeric(dat[match("EFrac", dname), 1:2])
       .Object@SizeLimSD <- as.numeric(dat[match("SizeLimSD", dname), 1:2])
       .Object@SizeLimFrac <- as.numeric(dat[match("SizeLimFrac", dname), 1:2])
-      .Object@DiscMort <- as.numeric(dat[match("DiscMort", dname), 1:2])
       .Object@Source <- dat[match("Source", dname), 1]
       
     } else {
@@ -960,7 +956,6 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
 #' @slot EFrac Mean fraction of recommended effort taken (uniform distribution)
 #' @slot SizeLimSD lognormal error in size limit implementation (uniform distribution)
 #' @slot SizeLimFrac Mean fraction of the size limit (uniform distribution) (can be an improper fraction greater than 1)
-#' @slot DiscMort Discard mortality rate (uniform distribution) (can be an improper fraction greater than 1)
 #' @author T. Carruthers
 #' @keywords classes
 #' 
@@ -1028,12 +1023,12 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
   
   if(length(.Object@LR5) < 2) .Object@LR5 <- c(0,0)
   if(length(.Object@LFR) < 2) .Object@LFR <- c(0,0)
-  if(length(.Object@Rmaxlen) < 2) .Object@Rmaxlen <- c(0,0)
+  if(length(.Object@Rmaxlen) < 2) .Object@Rmaxlen <- c(1,1)
   if(length(.Object@Fdisc) < 2) .Object@Fdisc <- c(0,0)
   
   if(all(is.na(.Object@LR5))) .Object@LR5 <- c(0,0)  
   if(all(is.na(.Object@LFR))) .Object@LFR <- c(0,0)  
-  if(all(is.na(.Object@Rmaxlen))) .Object@Rmaxlen <- c(0,0)
+  if(all(is.na(.Object@Rmaxlen))) .Object@Rmaxlen <- c(1,1)
   if(all(is.na(.Object@Fdisc))) .Object@Fdisc <- c(0,0)  
   
   .Object@seed=1
