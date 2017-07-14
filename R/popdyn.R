@@ -24,8 +24,8 @@
 #' @param hs A numeric vector nsim long with the steepness values for each simulation
 #' @param R0a A matrix (dimensions nsim, nareas) with the unfished recruitment by area
 #' @param SSBpR A matrix (dimensions nsim, nareas) with the unfished spawning-per-recruit by area
-#' @param aR A numeric vector nsim long with the Ricker SRR a values
-#' @param bR A numeric vector nsim long with the Ricker SRR b values
+#' @param aR A numeric vector nareas long with the Ricker SRR a values
+#' @param bR A numeric vector nareas long with the Ricker SRR b values
 #' @param bounds A numeric vector of length 2 with bounds for the optimizer
 #' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
 #' @param useCPP logical - use the CPP code? For testing purposes only
@@ -41,7 +41,7 @@ getq3 <- function(x, dep, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, 
                   pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,], WtAge=Wt_age[x,,],
                   Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=mov[x,,], SRrelc=SRrel[x], 
                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-                  SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], maxF, useCPP=useCPP)
+                  SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], maxF, useCPP=useCPP)
   return(exp(opt$minimum))
 }
 
@@ -82,12 +82,13 @@ optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age,
   if (!useCPP) {
     simpop <- popdyn(nareas, maxage, Ncurr, pyears, M_age, 
                      MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
-                     R0c, SSBpRc, aRc, bRc, Qc=exp(logQ), maxF=maxF, control=1) 
+                     R0c=R0c, SSBpRc=SSBpRc, aRc=aRc, bRc=bRc, Qc=exp(logQ), maxF=maxF, control=1) 
     ssb <- sum(simpop$SBarray[,pyears,])
   } else {
     simpop <- popdynCPP(nareas, maxage, Ncurr, pyears, M_age, 
                         MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
-                        R0c, SSBpRc, aRc, bRc, Qc=exp(logQ), Fapic=0, maxF=maxF, control=1) 
+                        R0c=R0c, SSBpRc=SSBpRc, aRc=aRc, bRc=bRc, Qc=exp(logQ), Fapic=0, 
+                        maxF=maxF, control=1) 
     ssb <- sum(simpop[[4]][,pyears,])
   }
   
@@ -308,13 +309,13 @@ simYears <- function(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
            M_age=M_ageArray[x,,], MatAge=Mat_age[x,], WtAge=Wt_age[x,,],
            Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=mov[x,,], SRrelc=SRrel[x], 
            Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-           SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], Qc=qs[x], maxF=maxF, control=1)
+           SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=qs[x], maxF=maxF, control=1)
   } else {
     popdynCPP(nareas, maxage, Ncurr=N[x,,1,], pyears,  
            M_age=M_ageArray[x,,], MatAge=Mat_age[x,], WtAge=Wt_age[x,,],
            Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=mov[x,,], SRrelc=SRrel[x], 
            Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-           SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], Qc=qs[x], Fapic=0, maxF=maxF, control=1)
+           SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=qs[x], Fapic=0, maxF=maxF, control=1)
   }
   
 }
@@ -361,7 +362,7 @@ getFMSY3 <- function(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
                   WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
                   movc=mov[x,,], SRrelc=SRrel[x], 
                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-                  SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], maxF=maxF, useCPP=useCPP)
+                  SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], maxF=maxF, useCPP=useCPP)
                   
   MSY <- -opt$objective 
   
@@ -371,14 +372,14 @@ getFMSY3 <- function(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
                      WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
                      movc=mov[x,,], SRrelc=SRrel[x], 
                      Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-                     SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], Fapic=exp(opt$minimum), maxF=maxF, control=2) 
+                     SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Fapic=exp(opt$minimum), maxF=maxF, control=2) 
   } else {
     simpop <- popdynCPP(nareas, maxage, Ncurr=N[x,,1,], 
                      pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,], 
                      WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
                      movc=mov[x,,], SRrelc=SRrel[x], 
                      Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-                     SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], Qc=0, Fapic=exp(opt$minimum), maxF=maxF, control=2)
+                     SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=0, Fapic=exp(opt$minimum), maxF=maxF, control=2)
   }
 
   Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # retained catch 
@@ -475,8 +476,8 @@ optMSY <- function(logFa, nareas, maxage, Ncurr, pyears, M_age,
 #' @param hs A numeric vector nsim long with the steepness values for each simulation
 #' @param R0a A matrix (dimensions nsim, nareas) with the unfished recruitment by area
 #' @param SSBpR A matrix (dimensions nsim, nareas) with the unfished spawning-per-recruit by area
-#' @param aR A numeric vector nsim long with the Ricker SRR a values
-#' @param bR A numeric vector nsim long with the Ricker SRR b values
+#' @param aR A numeric vector nareas long with the Ricker SRR a values
+#' @param bR A numeric vector nareas long with the Ricker SRR b values
 #' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
 #' @param useCPP logical - use the CPP code? For testing purposes only
 #'
@@ -494,7 +495,7 @@ getFref3 <- function(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
                   WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
                   movc=mov[x,,], SRrelc=SRrel[x], 
                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-                  SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x], maxF=maxF, useCPP=useCPP)
+                  SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], maxF=maxF, useCPP=useCPP)
   
   -opt$objective
   

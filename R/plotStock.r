@@ -189,21 +189,21 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
   
   matplot(t(Perr[its,]), type="l", bty="l", main="Rec Devs by Year", lwd=lwd, lty=1)
 	
-  biomass <- seq(0, 1, length.out=20)
+  biomass <- seq(0, 1.5, by=0.05)
 
-  bR <- matrix(log(5 * hs)/(0.8 * 2), nrow=nsim)  # Ricker SR params
-  aR <- matrix(exp(bR * 2), nrow=nsim)  # Ricker SR params
+  SSB0a <- 1
+  SSBpR <- 1 
+  bR <- matrix(log(5 * hs)/(0.8 * SSB0a), nrow=nsim)  # Ricker SR params
+  aR <- matrix(exp(bR * SSB0a)/SSBpR, nrow=nsim)  # Ricker SR params
 
   if (SRrel[1] == 1) {
-    recs <- sapply(its, function(X) (0.8  * hs[X] * biomass)/(0.2 * (1 - hs[X]) + 
-               (hs[X] - 0.2) * biomass)) # BH SRR            
+    recs <- sapply(its, function(X) (0.8  * hs[X] * biomass)/(0.2 * (1 - hs[X]) + (hs[X] - 0.2) * biomass)) # BH SRR 
   } else {
     # most transparent form of the Ricker uses alpha and beta params
-    recs <- sapply(its, function(X) aR[X] * biomass * 
-	  exp(-bR[X] * biomass))
+    recs <- sapply(its, function(X) aR[X] * biomass * exp(-bR[X] * biomass))
   }
   matplot(biomass, recs, type="l", bty="l", main="Stock-Recruit", 
-    ylim=c(0,1), xlim=c(0,1), ylab="", xlab="", lwd=lwd, lty=1)
+    ylim=c(0,max(1, max(recs))), xlim=c(0,max(biomass)), ylab="", xlab="", lwd=lwd, lty=1)
 
 
   

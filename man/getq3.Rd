@@ -50,9 +50,9 @@ Only values from the first year (i.e N[,,1,]) are used, which is the current N-a
 
 \item{SSBpR}{A matrix (dimensions nsim, nareas) with the unfished spawning-per-recruit by area}
 
-\item{aR}{A numeric vector nsim long with the Ricker SRR a values}
+\item{aR}{A numeric vector nareas long with the Ricker SRR a values}
 
-\item{bR}{A numeric vector nsim long with the Ricker SRR b values}
+\item{bR}{A numeric vector nareas long with the Ricker SRR b values}
 
 \item{bounds}{A numeric vector of length 2 with bounds for the optimizer}
 

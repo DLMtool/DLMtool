@@ -41,9 +41,9 @@ popdynCPP(nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc, Prec,
 
 \item{SSBpRc}{Numeric vector of length nareas with unfished spawning per recruit by area}
 
-\item{aRc}{Numeric. Ricker SRR a value}
+\item{aRc}{Numeric. Ricker SRR a value by area}
 
-\item{bRc}{Numeric. Ricker SRR b value}
+\item{bRc}{Numeric. Ricker SRR b value by area}
 
 \item{Qc}{Numeric. Catchability coefficient}
 

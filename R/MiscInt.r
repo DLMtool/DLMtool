@@ -661,8 +661,10 @@ SelectFun <- function(i, SL0.05, SL1, MaxSel, maxlens, Lens) {
 #' @param age95 age at 95 percent maturity
 #' @keywords internal
 #' @export getroot
-getroot <- function(X, ageM, age95) 
-  uniroot(getSlopeFun, interval = c(1e-04, 5), age50 = ageM[X], age95 = age95[X])$root
+getroot <- function(X, ageM, age95) {
+  uniroot(getSlopeFun, interval = c(1e-08, 8), age50 = ageM[X], age95 = age95[X])$root
+}
+  
   
 #' Internal function to calculate slope
 #'

@@ -70,19 +70,17 @@ nMPs<-length(MPs)
 test1<-runMSEnomsg(OM,MPs)
 
 OM@SizeLimFrac<-c(1.2,1.2)
-
 test2<-runMSEnomsg(OM,MPs)
 
 test_that("Prob Not Overfishing should be higher when size limit is positively biased", {
   expect_true(sum(NOAA_plot(test2)$PNOF>NOAA_plot(test1)$PNOF)==nMPs, info=info)
 })
 
-OM@SizeLimFrac<-c(0.8,0.8)
-
-test2<-runMSEnomsg(OM,MPs)
+OM@SizeLimFrac<-c(0.3,0.5)
+test3<-runMSEnomsg(OM,MPs)
 
 test_that("Prob Not Overfishing should be lower when size limit is negatively biased", {
-  expect_true(sum(NOAA_plot(test2)$PNOF<NOAA_plot(test1)$PNOF)==nMPs, info=info)
+  expect_true(sum(NOAA_plot(test3)$PNOF<NOAA_plot(test1)$PNOF)==nMPs, info=info)
 })
 
 
@@ -92,7 +90,7 @@ OM<-new('OM',Albacore)
 OM@seed<-ceiling(runif(1, 1, 1000))
 OM@nsim <- nsim
 info <- paste("seed=", OM@seed)
-MPs<-c("matlenlim","matlenlim2")
+MPs<-c("ItargetE1","LtargetE1")
 nMPs<-length(MPs)
 
 test1<-runMSEnomsg(OM,MPs)
@@ -105,9 +103,9 @@ test_that("Prob Not Overfishing should be lower when Effort implementation is po
 })
 
 OM@EFrac <- c(0.6, 0.8)
-test2<-runMSEnomsg(OM,MPs)
-test_that("Prob Not Overfishing should be higher when size limit is negatively biased", {
-  expect_true(sum(NOAA_plot(test2)$PNOF>NOAA_plot(test1)$PNOF)==nMPs, info=info)
+test3<-runMSEnomsg(OM,MPs)
+test_that("Prob Not Overfishing should be higher when Effort implementation is negatively biased", {
+  expect_true(sum(NOAA_plot(test3)$PNOF>NOAA_plot(test1)$PNOF)==nMPs, info=info)
 })
 
 

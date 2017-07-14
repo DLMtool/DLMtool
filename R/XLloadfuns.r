@@ -31,8 +31,7 @@ OM_xl <- function(fname, stkname, fpath = "", saveCSV = FALSE) {
   infile <- paste0(fpath, fname)  # full path and name 
   shtname <- readxl::excel_sheets(infile)  # names of the sheets 
   # Stock
-  stock <- readxl::read_excel(infile, sheet = grep(paste0(stkname, "Stock"), 
-    shtname), col_names = FALSE)
+  stock <- readxl::read_excel(infile, sheet = grep(paste0(stkname, "Stock"), shtname), col_names = FALSE)
   stock <- as.data.frame(stock)
   tmpfile <- paste0(fpath, stkname, "Stock.csv")
   if (file.exists(tmpfile)) unlink(tmpfile)

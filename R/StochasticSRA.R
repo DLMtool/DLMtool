@@ -169,6 +169,14 @@ StochasticSRA <-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proye
   nyears<-length(Chist)
   if(class(Chist)=="matrix")nyears<-nrow(Chist)
   maxage<-OM@maxage
+  if (OM@nyears != nyears) {
+    message("OM@nyears being updated to length Chist: ", nyears)
+    OM@nyears <- nyears
+  }
+    
+  
+  if (dim(CAA)[2] != OM@maxage) stop("Number of CAA columns (", dim(CAA)[2], ") does not equal OM@maxage (",  OM@maxage, ")")
+  if (dim(CAA)[1] != nyears) stop("Number of CAA rows (", dim(CAA)[1], ") does not equal nyears (", nyears, "). NAs are acceptable")
   
   if (burnin < 0.05*nits) burnin <- 0.05 * nits
   
@@ -291,7 +299,7 @@ StochasticSRA <-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proye
                     Wt_age[sim,], Chist_a[sim,], Umax, hs[sim], CAA, CAAadj, sigmaR)
     })
   }  
-  
+
   parstr <- aperm(array(unlist(mcmc[1,]), dim=c(npars, nits, nsim)), c(3,1,2))
   CAA_pred <- aperm(array(unlist(mcmc[2,]), dim=c(nyears, maxage, nsim)), c(3,1,2))
   SSB <- aperm(array(unlist(mcmc[3,]), dim=c(nyears, nsim)), c(2,1))

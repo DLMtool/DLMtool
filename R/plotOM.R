@@ -17,7 +17,9 @@ plot.OM <-function(x, ...){
     nsim<-OM@nsim
     nyears<-OM@nyears
     
+    
     plotStock(OM)
+    
     plotFleet(OM)
     plotObs(OM)
     plotImp(OM)

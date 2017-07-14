@@ -35,7 +35,7 @@ Rcpp::NumericMatrix popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVe
   Rcpp::NumericMatrix tempMat2(nareas, nareas);	
   Rcpp::NumericMatrix tempMat3(nareas, nareas);
   Rcpp::NumericMatrix Nstore(maxage, nareas); 
-  
+
   // Recruitment assuming regional R0 and stock wide steepness
   for (int A=0; A < nareas; A++) {
     if (SRrel == 1) {
@@ -44,6 +44,7 @@ Rcpp::NumericMatrix popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVe
     }	
     if (SRrel == 2) {
       // most transparent form of the Ricker uses alpha and beta params
+      
       Nnext(0, A) = PerrYr * aR(A) * SSBcurr(A) * exp(-bR(A) * SSBcurr(A));
     }
     
@@ -52,7 +53,7 @@ Rcpp::NumericMatrix popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVe
       Nnext(age, A) = Ncurr(age-1, A) * exp(-Zcurr(age-1, A)); // Total mortality
     }
   }
-  
+
   // Move stock
   for (int age=0; age<maxage; age++) {
     for (int AA = 0; AA < nareas; AA++) {
@@ -92,8 +93,8 @@ Rcpp::NumericMatrix popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVe
 //' @param hc Numeric. Steepness of stock-recruit relationship
 //' @param R0c Numeric vector of length nareas with unfished recruitment by area
 //' @param SSBpRc Numeric vector of length nareas with unfished spawning per recruit by area
-//' @param aRc Numeric. Ricker SRR a value
-//' @param bRc Numeric. Ricker SRR b value
+//' @param aRc Numeric. Ricker SRR a value by area
+//' @param bRc Numeric. Ricker SRR b value by area
 //' @param Qc Numeric. Catchability coefficient
 //' @param Fapic Numeric. Apical F value
 //' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
@@ -110,7 +111,7 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
                arma::mat Vuln, arma::mat Retc, arma::vec Prec,
                NumericMatrix movc, double SRrelc, arma::vec Effind,
                double Spat_targc, double hc, NumericVector R0c, NumericVector SSBpRc,
-               double aRc, double bRc, double Qc, double Fapic, double maxF, int control) {
+               NumericVector aRc, NumericVector bRc, double Qc, double Fapic, double maxF, int control) {
   
   arma::cube Narray(maxage, pyears, nareas, arma::fill::zeros);
   arma::cube Barray(maxage, pyears, nareas, arma::fill::zeros);
@@ -162,16 +163,16 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
   
   
   for (int yr=0; yr<(pyears-1); yr++) {
+    
     arma::vec SB(nareas);
+    
     for (int A=0; A<nareas; A++) SB(A) = accu(SBarray.subcube(0, yr, A, maxage-1, yr, A));
-    // Rcout << yr << "\n\n";
     arma::mat Ncurr = Narray.subcube(0, yr, 0, maxage-1, yr, nareas-1);
     arma::mat Zcurr = Zarray.subcube(0, yr, 0, maxage-1, yr, nareas-1);
     NumericMatrix NextYrNa = popdynOneTScpp(nareas, maxage, wrap(SB), wrap(Ncurr), wrap(Zcurr), 
                                        Prec(yr+1+maxage), hc, R0c, SSBpRc, aRc, bRc, movc, SRrelc); 
-    
     arma::mat NextYrN = as<arma::mat>(NextYrNa);
-      
+
     Narray.subcube(0, yr+1, 0, maxage-1, yr+1, nareas-1) = NextYrN;
     for (int A=0; A<nareas; A++) {
       Barray.subcube(0, yr+1, A, maxage-1, yr+1, A) = NextYrN.col(A) % WtAge.col(yr+1);

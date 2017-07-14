@@ -23,7 +23,7 @@ plotObs <- function(x, nsim=500, nyears=50,
   Obs <- x
   if (class(Obs) == "OM") {
     if (is.finite(Obs@nyears)) nyears <- Obs@nyears
-    if (is.finite(Obs@nsim)) nyears <- Obs@nsim	
+    if (is.finite(Obs@nsim)) nsim <- Obs@nsim	
     Obs <- SubOM(Obs,"Obs")
   }
   
@@ -178,7 +178,7 @@ plotImp<-function(x,nsim=500, nyears=50,
   Imp <- x
   if (class(Imp) == "OM") {
     if (is.finite(Imp@nyears)) nyears <- Imp@nyears
-    if (is.finite(Imp@nsim)) nyears <- Imp@nsim	
+    if (is.finite(Imp@nsim)) nsim <- Imp@nsim	
     Imp <- SubOM(Imp,"Imp")
   }
 

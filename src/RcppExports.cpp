@@ -6,6 +6,57 @@
 
 using namespace Rcpp;
 
+// LSRA_opt_cpp
+List LSRA_opt_cpp(double param, double FF_a, NumericVector Chist, double M_a, NumericVector Mat_age_a, NumericVector Wt_age_a, NumericVector sel_a, NumericVector Recdevs_a, double h_a, double Umax);
+RcppExport SEXP DLMtool_LSRA_opt_cpp(SEXP paramSEXP, SEXP FF_aSEXP, SEXP ChistSEXP, SEXP M_aSEXP, SEXP Mat_age_aSEXP, SEXP Wt_age_aSEXP, SEXP sel_aSEXP, SEXP Recdevs_aSEXP, SEXP h_aSEXP, SEXP UmaxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type param(paramSEXP);
+    Rcpp::traits::input_parameter< double >::type FF_a(FF_aSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Chist(ChistSEXP);
+    Rcpp::traits::input_parameter< double >::type M_a(M_aSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Mat_age_a(Mat_age_aSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Wt_age_a(Wt_age_aSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type sel_a(sel_aSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Recdevs_a(Recdevs_aSEXP);
+    Rcpp::traits::input_parameter< double >::type h_a(h_aSEXP);
+    Rcpp::traits::input_parameter< double >::type Umax(UmaxSEXP);
+    rcpp_result_gen = Rcpp::wrap(LSRA_opt_cpp(param, FF_a, Chist, M_a, Mat_age_a, Wt_age_a, sel_a, Recdevs_a, h_a, Umax));
+    return rcpp_result_gen;
+END_RCPP
+}
+// LSRA_MCMC_sim
+List LSRA_MCMC_sim(double nits, NumericVector pars, NumericVector JumpCV, NumericVector adapt, NumericVector parLB, NumericVector parUB, int R0ind, int inflind, int slpind, IntegerVector RDind, int nyears, int maxage, double M, NumericVector Mat_age, NumericVector Wt_age, NumericVector Chist_a, double Umax, double h, NumericMatrix CAA, double CAAadj, double sigmaR);
+RcppExport SEXP DLMtool_LSRA_MCMC_sim(SEXP nitsSEXP, SEXP parsSEXP, SEXP JumpCVSEXP, SEXP adaptSEXP, SEXP parLBSEXP, SEXP parUBSEXP, SEXP R0indSEXP, SEXP inflindSEXP, SEXP slpindSEXP, SEXP RDindSEXP, SEXP nyearsSEXP, SEXP maxageSEXP, SEXP MSEXP, SEXP Mat_ageSEXP, SEXP Wt_ageSEXP, SEXP Chist_aSEXP, SEXP UmaxSEXP, SEXP hSEXP, SEXP CAASEXP, SEXP CAAadjSEXP, SEXP sigmaRSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type nits(nitsSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type pars(parsSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type JumpCV(JumpCVSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type adapt(adaptSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type parLB(parLBSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type parUB(parUBSEXP);
+    Rcpp::traits::input_parameter< int >::type R0ind(R0indSEXP);
+    Rcpp::traits::input_parameter< int >::type inflind(inflindSEXP);
+    Rcpp::traits::input_parameter< int >::type slpind(slpindSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type RDind(RDindSEXP);
+    Rcpp::traits::input_parameter< int >::type nyears(nyearsSEXP);
+    Rcpp::traits::input_parameter< int >::type maxage(maxageSEXP);
+    Rcpp::traits::input_parameter< double >::type M(MSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Mat_age(Mat_ageSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Wt_age(Wt_ageSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Chist_a(Chist_aSEXP);
+    Rcpp::traits::input_parameter< double >::type Umax(UmaxSEXP);
+    Rcpp::traits::input_parameter< double >::type h(hSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type CAA(CAASEXP);
+    Rcpp::traits::input_parameter< double >::type CAAadj(CAAadjSEXP);
+    Rcpp::traits::input_parameter< double >::type sigmaR(sigmaRSEXP);
+    rcpp_result_gen = Rcpp::wrap(LSRA_MCMC_sim(nits, pars, JumpCV, adapt, parLB, parUB, R0ind, inflind, slpind, RDind, nyears, maxage, M, Mat_age, Wt_age, Chist_a, Umax, h, CAA, CAAadj, sigmaR));
+    return rcpp_result_gen;
+END_RCPP
+}
 // bhnoneq_LL
 double bhnoneq_LL(NumericVector stpar, NumericVector year, NumericVector Lbar, NumericVector ss, double Linf, double K, double Lc, int nbreaks);
 RcppExport SEXP DLMtool_bhnoneq_LL(SEXP stparSEXP, SEXP yearSEXP, SEXP LbarSEXP, SEXP ssSEXP, SEXP LinfSEXP, SEXP KSEXP, SEXP LcSEXP, SEXP nbreaksSEXP) {
@@ -76,57 +127,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// LSRA_opt_cpp
-List LSRA_opt_cpp(double param, double FF_a, NumericVector Chist, double M_a, NumericVector Mat_age_a, NumericVector Wt_age_a, NumericVector sel_a, NumericVector Recdevs_a, double h_a, double Umax);
-RcppExport SEXP DLMtool_LSRA_opt_cpp(SEXP paramSEXP, SEXP FF_aSEXP, SEXP ChistSEXP, SEXP M_aSEXP, SEXP Mat_age_aSEXP, SEXP Wt_age_aSEXP, SEXP sel_aSEXP, SEXP Recdevs_aSEXP, SEXP h_aSEXP, SEXP UmaxSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type param(paramSEXP);
-    Rcpp::traits::input_parameter< double >::type FF_a(FF_aSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Chist(ChistSEXP);
-    Rcpp::traits::input_parameter< double >::type M_a(M_aSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Mat_age_a(Mat_age_aSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Wt_age_a(Wt_age_aSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type sel_a(sel_aSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Recdevs_a(Recdevs_aSEXP);
-    Rcpp::traits::input_parameter< double >::type h_a(h_aSEXP);
-    Rcpp::traits::input_parameter< double >::type Umax(UmaxSEXP);
-    rcpp_result_gen = Rcpp::wrap(LSRA_opt_cpp(param, FF_a, Chist, M_a, Mat_age_a, Wt_age_a, sel_a, Recdevs_a, h_a, Umax));
-    return rcpp_result_gen;
-END_RCPP
-}
-// LSRA_MCMC_sim
-List LSRA_MCMC_sim(double nits, NumericVector pars, NumericVector JumpCV, NumericVector adapt, NumericVector parLB, NumericVector parUB, int R0ind, int inflind, int slpind, IntegerVector RDind, int nyears, int maxage, double M, NumericVector Mat_age, NumericVector Wt_age, NumericVector Chist_a, double Umax, double h, NumericMatrix CAA, double CAAadj, double sigmaR);
-RcppExport SEXP DLMtool_LSRA_MCMC_sim(SEXP nitsSEXP, SEXP parsSEXP, SEXP JumpCVSEXP, SEXP adaptSEXP, SEXP parLBSEXP, SEXP parUBSEXP, SEXP R0indSEXP, SEXP inflindSEXP, SEXP slpindSEXP, SEXP RDindSEXP, SEXP nyearsSEXP, SEXP maxageSEXP, SEXP MSEXP, SEXP Mat_ageSEXP, SEXP Wt_ageSEXP, SEXP Chist_aSEXP, SEXP UmaxSEXP, SEXP hSEXP, SEXP CAASEXP, SEXP CAAadjSEXP, SEXP sigmaRSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type nits(nitsSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type pars(parsSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type JumpCV(JumpCVSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type adapt(adaptSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type parLB(parLBSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type parUB(parUBSEXP);
-    Rcpp::traits::input_parameter< int >::type R0ind(R0indSEXP);
-    Rcpp::traits::input_parameter< int >::type inflind(inflindSEXP);
-    Rcpp::traits::input_parameter< int >::type slpind(slpindSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type RDind(RDindSEXP);
-    Rcpp::traits::input_parameter< int >::type nyears(nyearsSEXP);
-    Rcpp::traits::input_parameter< int >::type maxage(maxageSEXP);
-    Rcpp::traits::input_parameter< double >::type M(MSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Mat_age(Mat_ageSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Wt_age(Wt_ageSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Chist_a(Chist_aSEXP);
-    Rcpp::traits::input_parameter< double >::type Umax(UmaxSEXP);
-    Rcpp::traits::input_parameter< double >::type h(hSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type CAA(CAASEXP);
-    Rcpp::traits::input_parameter< double >::type CAAadj(CAAadjSEXP);
-    Rcpp::traits::input_parameter< double >::type sigmaR(sigmaRSEXP);
-    rcpp_result_gen = Rcpp::wrap(LSRA_MCMC_sim(nits, pars, JumpCV, adapt, parLB, parUB, R0ind, inflind, slpind, RDind, nyears, maxage, M, Mat_age, Wt_age, Chist_a, Umax, h, CAA, CAAadj, sigmaR));
-    return rcpp_result_gen;
-END_RCPP
-}
 // movfit_Rcpp
 double movfit_Rcpp(NumericVector par, double prb, double frac);
 RcppExport SEXP DLMtool_movfit_Rcpp(SEXP parSEXP, SEXP prbSEXP, SEXP fracSEXP) {
@@ -191,7 +191,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // popdynCPP
-List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears, arma::mat M_age, arma::vec MatAge, arma::mat WtAge, arma::mat Vuln, arma::mat Retc, arma::vec Prec, NumericMatrix movc, double SRrelc, arma::vec Effind, double Spat_targc, double hc, NumericVector R0c, NumericVector SSBpRc, double aRc, double bRc, double Qc, double Fapic, double maxF, int control);
+List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears, arma::mat M_age, arma::vec MatAge, arma::mat WtAge, arma::mat Vuln, arma::mat Retc, arma::vec Prec, NumericMatrix movc, double SRrelc, arma::vec Effind, double Spat_targc, double hc, NumericVector R0c, NumericVector SSBpRc, NumericVector aRc, NumericVector bRc, double Qc, double Fapic, double maxF, int control);
 RcppExport SEXP DLMtool_popdynCPP(SEXP nareasSEXP, SEXP maxageSEXP, SEXP NcurrSEXP, SEXP pyearsSEXP, SEXP M_ageSEXP, SEXP MatAgeSEXP, SEXP WtAgeSEXP, SEXP VulnSEXP, SEXP RetcSEXP, SEXP PrecSEXP, SEXP movcSEXP, SEXP SRrelcSEXP, SEXP EffindSEXP, SEXP Spat_targcSEXP, SEXP hcSEXP, SEXP R0cSEXP, SEXP SSBpRcSEXP, SEXP aRcSEXP, SEXP bRcSEXP, SEXP QcSEXP, SEXP FapicSEXP, SEXP maxFSEXP, SEXP controlSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -213,8 +213,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type hc(hcSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type R0c(R0cSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type SSBpRc(SSBpRcSEXP);
-    Rcpp::traits::input_parameter< double >::type aRc(aRcSEXP);
-    Rcpp::traits::input_parameter< double >::type bRc(bRcSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type aRc(aRcSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type bRc(bRcSEXP);
     Rcpp::traits::input_parameter< double >::type Qc(QcSEXP);
     Rcpp::traits::input_parameter< double >::type Fapic(FapicSEXP);
     Rcpp::traits::input_parameter< double >::type maxF(maxFSEXP);
@@ -252,11 +252,11 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"DLMtool_LSRA_opt_cpp", (DL_FUNC) &DLMtool_LSRA_opt_cpp, 10},
+    {"DLMtool_LSRA_MCMC_sim", (DL_FUNC) &DLMtool_LSRA_MCMC_sim, 21},
     {"DLMtool_bhnoneq_LL", (DL_FUNC) &DLMtool_bhnoneq_LL, 8},
     {"DLMtool_doprojPI_cpp", (DL_FUNC) &DLMtool_doprojPI_cpp, 23},
     {"DLMtool_genLenComp", (DL_FUNC) &DLMtool_genLenComp, 9},
-    {"DLMtool_LSRA_opt_cpp", (DL_FUNC) &DLMtool_LSRA_opt_cpp, 10},
-    {"DLMtool_LSRA_MCMC_sim", (DL_FUNC) &DLMtool_LSRA_MCMC_sim, 21},
     {"DLMtool_movfit_Rcpp", (DL_FUNC) &DLMtool_movfit_Rcpp, 3},
     {"DLMtool_optQ_cpp", (DL_FUNC) &DLMtool_optQ_cpp, 17},
     {"DLMtool_popdynOneTScpp", (DL_FUNC) &DLMtool_popdynOneTScpp, 13},

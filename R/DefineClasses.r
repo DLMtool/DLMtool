@@ -394,7 +394,7 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
 #' @slot Size_area_1 The size of area 1 relative to area 2 (uniform distribution) 
 #' @slot Frac_area_1 The fraction of the unfished biomass in stock 1 (uniform distribution) 
 #' @slot Prob_staying The probability of inviduals in area 1 remaining in area 1 over the course of one year 
-#' @slot Source A reference to a website or article form which parameters were taken to define the operating model
+#' @slot Source A reference to a website or article from which parameters were taken to define the operating model
 
 #' @author T. Carruthers
 #' @keywords classes
@@ -426,10 +426,12 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
       .Object@Name <- dat[match("Name", dname), 1]
       .Object@maxage <- as.numeric(dat[match("maxage", dname), 1])
       .Object@R0 <- as.numeric(dat[match("R0", dname), 1])
+      options(warn=-1)
       temp <- as.numeric(dat[match("M", dname), 1:Ncol])
       .Object@M <- temp[!is.na(temp)]
       temp <- as.numeric(dat[match("M2", dname), 1:Ncol])
       .Object@M2 <- temp[!is.na(temp)]
+      options(warn=1)
       .Object@Msd <- as.numeric(dat[match("Msd", dname), 1:2])
       .Object@Mgrad <- as.numeric(dat[match("Mgrad", dname), 1:2])
       .Object@Mexp <- as.numeric(dat[match("Mexp", dname), 1:2])
@@ -465,6 +467,8 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
       message("File doesn't exist")
     }
   }
+  if (all(is.na(.Object@LenCV))) .Object@LenCV <- c(0.08, 0.12)
+  if (all(is.na(.Object@recgrad))) .Object@recgrad <- c(0, 0) # recgrad not currently used
   .Object
   
 })
@@ -508,7 +512,7 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
 #' @slot qcv Inter-annual variability in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls)
 #' @slot isRel Are the selectivity parameters relative to size-of-maturity? TRUE or FALSE
 #' @slot CurrentYr The current calendar year (final year) of the historical simulations (e.g. 2011)
-#'
+
 #' @author T. Carruthers
 #' @keywords classes
 #' @examples
@@ -539,8 +543,12 @@ setMethod("initialize", "Fleet", function(.Object, file = NA) {
       if(is.na(.Object@CurrentYr)).Object@CurrentYr<-.Object@nyears
       
       .Object@Spat_targ <- as.numeric(dat[match("Spat_targ", dname),  1:2])
-      .Object@Esd <- as.numeric(dat[match("Esd", dname), 1:2])
-	    .Object@Esd <- as.numeric(dat[match("Fsd", dname), 1:2])
+      if (!is.na(match("Esd", dname))) {
+        .Object@Esd <- as.numeric(dat[match("Esd", dname), 1:2])  
+      } else {
+        .Object@Esd <- as.numeric(dat[match("Fsd", dname), 1:2])  
+      }
+      
       # .Object@Fgrad<-as.numeric(dat[match('Fgrad',dname),1:2])
       nEffYears <- ncol(dat[match("EffYears", dname), ])
       oldw <- getOption("warn")
@@ -1007,6 +1015,10 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
     tt <- .hasSlot(Imp, Islots[i])
     if (tt) slot(.Object, Islots[i]) <- slot(Imp, Islots[i])
   }
+  
+  # 
+  # source <- paste("Stock:", Stock@Source, "Fleet:", Fleet@Source, "Obs:", Obs@Source, "Imp:",Imp@Source)
+  slot(.Object, "Source") <- Stock@Source
   
   # Default MSE parameters
   .Object@nsim <- nsim       

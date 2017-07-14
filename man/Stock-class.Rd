@@ -75,7 +75,7 @@ dynamics model
 
 \item{\code{Prob_staying}}{The probability of inviduals in area 1 remaining in area 1 over the course of one year}
 
-\item{\code{Source}}{A reference to a website or article form which parameters were taken to define the operating model}
+\item{\code{Source}}{A reference to a website or article from which parameters were taken to define the operating model}
 }}
 
 \section{Objects from the Class}{

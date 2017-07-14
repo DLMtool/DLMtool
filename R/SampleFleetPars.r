@@ -52,6 +52,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   if (!exists("EffUpper", inherits = FALSE)) EffUpper <- Fleet@EffUpper 
   if (!exists("EffYears", inherits = FALSE)) EffYears <- Fleet@EffYears
   
+  if (max(EffYears) != nyears) stop("Maximum EffYears (", max(EffYears), ") not equal to nyears (", nyears, ")")
   if (!exists("Find", inherits = FALSE)) {
     Deriv <- getEffhist(Esd, nyears, EffYears = EffYears, EffLower = EffLower, EffUpper = EffUpper)  # Historical fishing effort  
     Find <- Deriv[[1]]  # Calculate fishing effort rate

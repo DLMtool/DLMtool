@@ -12,3 +12,7 @@ runMSEnomsg <- function(...) {
   capture.output(out <- suppressMessages(runMSE(...)))
   out
 }
+
+
+# tt <- testthat::test_file("tests/manual/test-Imp.r")
+# tt <- testthat::test_file("tests/manual/test-builtin.r")
