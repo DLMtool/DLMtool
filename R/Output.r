@@ -1068,8 +1068,7 @@ class(Itarget4) <- "Output"
 #' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
 #' doi:10.1093/icesjms/fst232
 #' @export Islope1
-Islope1 <- function(x, Data, reps = 100, yrsmth = 5, lambda = 0.4, 
-  xx = 0.2) {
+Islope1 <- function(x, Data, reps = 100, yrsmth = 5, lambda = 0.4,xx = 0.2) {
   dependencies = "Data@Year, Data@Cat, Data@CV_Cat, Data@Ind"
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)
   ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year

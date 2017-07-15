@@ -211,9 +211,12 @@ setMethod("initialize", "Data", function(.Object, stock = "nada") {
       if (!is.na(stock)) print("Couldn't find specified csv file, blank DLM object created")
     }
   }
+  
+  # Standardise Index if not already 
+  .Object@Ind <- .Object@Ind/mean(.Object@Ind, na.rm=TRUE)
+  
   # Default value
   if (NAor0(.Object@LenCV)) .Object@LenCV <- 0.1
-  
   if (NAor0(.Object@CV_Cat)) .Object@CV_Cat <- 0.2
   if (NAor0(.Object@CV_Dt)) .Object@CV_Dt <- 0.25
   if (NAor0(.Object@CV_AvC)) .Object@CV_AvC <- 0.2

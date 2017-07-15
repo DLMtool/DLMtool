@@ -57,6 +57,14 @@ DLMdiag <- function(Data, command = "available", reps = 5, timelimit = 1, funcs1
     if (class(test[[y]]) == "try-error") {
       report[[y]] <- "Insufficient data"
       good[[y]] <- FALSE
+    } else if (class(test[[y]]) == "InputRec") {
+      slts <- slotNames(test[[y]])
+      tt <- rep(FALSE, length(slts))
+      for (x in seq_along(slts)) tt[x] <- NAor0(slot(test[[y]], slts[x]))
+      if (sum(tt) < 1) {
+        report[[y]] <- "Produced all NA scores"
+        good[[y]] <- FALSE
+      }  
     } else if (sum(is.na(test[[y]])) == length(test[[y]])) {
       report[[y]] <- "Produced all NA scores"
       good[[y]] <- FALSE

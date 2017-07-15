@@ -2,12 +2,12 @@
 #'
 #' @param OM An object of class 'OM' 
 #' @param pyears number of years to plot
-#' @param sim the simulation to plot. default is 1. Set to NA to plot a random simulation
+#' @param sim the simulation to plot. default is NA to plot a random simulation
 #' @param type plot type - line "l", point "p", or both "b"
 #' @author A. Hordyk
 #' @export
 #'
-plotSelect <- function(OM, pyears=4, sim=1, type="l") {
+plotSelect <- function(OM, pyears=4, sim=NA, type="l") {
   if (class(OM) != "OM") stop("Object must be class 'OM' ")
   nsim <- OM@nsim 
   years <- OM@nyears + OM@proyears
