@@ -577,15 +577,17 @@ CalcOutput <- function(y, TACused, TAC_f, lastCatch, availB, maxF, Biomass_P, VB
   temp <- CB_P[, , y, ]/apply(CB_P[, , y, ], 1, sum) # distribution of removals
   CB_P[,,y,] <- TACusedE *  ratio * temp # scale up total removals 
 
-  # temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
-  # temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF)
-  # FM_P[SAYR] <- -log(1 - temp)
+  temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
+  temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF)
 
-  calcFs <- lapply(1:nsim, getFs, y=y, Vuln=V_P, CB=CB_P, Bio=Biomass_P, Mage=M_ageArray, Fdist=fishdist,
-         maxage=maxage, nareas=nareas, nyears=nyears) # numerically calculate Fs
-
-  FM_P[,,y,] <- aperm(array(unlist(calcFs, use.names=FALSE), dim=c(maxage, nareas, nsim)), c(3, 1, 2))
-  FM_P[,,y,][FM_P[,,y,] > (1-exp(-maxF))]  <- 1 - exp(-maxF)
+  FM_P[SAYR] <- -log(1 - temp)
+ 
+  # calcFs <- lapply(1:nsim, getFs, y=y, Vuln=V_P, CB=CB_P, Bio=Biomass_P, Mage=M_ageArray, Fdist=fishdist,
+  #        maxage=maxage, nareas=nareas, nyears=nyears) # numerically calculate Fs
+  # 
+  # 
+  # FM_P[,,y,] <- aperm(array(unlist(calcFs, use.names=FALSE), dim=c(maxage, nareas, nsim)), c(3, 1, 2))
+  # FM_P[,,y,][FM_P[,,y,] > (1-exp(-maxF))]  <- 1 - exp(-maxF)
   
   Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt]
   
