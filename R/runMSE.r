@@ -119,6 +119,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   FleetPars <- SampleFleetPars(SubOM(OM, "Fleet"), Stock=StockPars, nsim, nyears, proyears, 
                                cpars=SampCpars)
+
   # Assign Fleet pars to function environment
   for (X in 1:length(FleetPars)) assign(names(FleetPars)[X], FleetPars[[X]])
   
@@ -373,12 +374,12 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   # MSY projection years
   MSYyr <- 200 
+  # Note: MSY and refY are calculated from total removals not total catch (different when Fdisc>0 and there is discarding)
   # Make arrays for future conditions assuming current conditions
   M_ageArrayp <- array(M_ageArray[,,nyears], dim=c(dim(M_ageArray)[1:2], MSYyr))
   Wt_agep <- array(Wt_age[,,nyears], dim=c(dim(Wt_age)[1:2], MSYyr))
   retAp <- array(retA[,,nyears], dim=c(dim(retA)[1:2], MSYyr))
-  Vp <- array(retA[,,nyears], dim=c(dim(V)[1:2], MSYyr)) # assume no dead discarding for MSY calcs
-  # Vp <- array(V[,,nyears], dim=c(dim(V)[1:2], MSYyr))
+  Vp <- array(V[,,nyears], dim=c(dim(V)[1:2], MSYyr))
   Perrp <- array(1, dim=c(dim(Perr)[1], MSYyr+maxage))
 
   if (snowfall::sfIsRunning()) {
@@ -847,6 +848,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       CB_Pret <- inputcalcs$CB_Pret # retained catch 
       FM_P <- inputcalcs$FM_P # fishing mortality 
       Z_P <- inputcalcs$Z_P # total mortality
+
       retA_P <- inputcalcs$retA_P # retained-at-age
       retL_P <- inputcalcs$retL_P # retained-at-length
       V_P <- inputcalcs$V_P  # vulnerable-at-age
@@ -1029,9 +1031,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
           V_P <- inputcalcs$V_P  # vulnerable-at-age
           pSLarray <- inputcalcs$pSLarray # vulnerable-at-length 
         }  # input control 
-        
         MSElist[[mm]]@MPrec <- apply(CB_Pret[, , y, ], 1, sum) 
-        
       } else {
         # --- Not an update yr ----
         vbio <- apply(VBiomass_P[, , y, ], c(1, 3), sum)

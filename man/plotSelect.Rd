@@ -11,7 +11,8 @@ plotSelect(OM, pyears = 4, sim = NA, type = "l")
 
 \item{pyears}{number of years to plot}
 
-\item{sim}{the simulation to plot. default is NA to plot a random simulation}
+\item{sim}{the simulation to plot. default is NA to plot a random simulation.
+Set to 1 for reproducible plot}
 
 \item{type}{plot type - line "l", point "p", or both "b"}
 }

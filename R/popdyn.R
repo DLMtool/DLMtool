@@ -382,8 +382,8 @@ getFMSY3 <- function(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
                      SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=0, Fapic=exp(opt$minimum), maxF=maxF, control=2)
   }
 
-  Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # retained catch 
-  # Cn <- simpop[[6]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # removals
+  ## Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # retained catch 
+  Cn <- simpop[[6]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # removals
   Cb <- Cn[,pyears,] * Wt_age[x,,pyears]
   B <- sum(simpop[[2]][,pyears,] + Cb)
   
@@ -447,8 +447,8 @@ optMSY <- function(logFa, nareas, maxage, Ncurr, pyears, M_age,
   }
 
   # Yield 
-  Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # retained catch
-  # Cn <- simpop[[6]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # removals
+  # Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # retained catch
+  Cn <- simpop[[6]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # removals
   Cb <- Cn[,pyears,] * WtAge[,pyears]
   -sum(Cb)
 }

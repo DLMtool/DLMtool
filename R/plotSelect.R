@@ -2,21 +2,22 @@
 #'
 #' @param OM An object of class 'OM' 
 #' @param pyears number of years to plot
-#' @param sim the simulation to plot. default is NA to plot a random simulation
+#' @param sim the simulation to plot. default is NA to plot a random simulation.
+#' Set to 1 for reproducible plot
 #' @param type plot type - line "l", point "p", or both "b"
 #' @author A. Hordyk
 #' @export
 #'
 plotSelect <- function(OM, pyears=4, sim=NA, type="l") {
   if (class(OM) != "OM") stop("Object must be class 'OM' ")
-  nsim <- OM@nsim 
+  OM@nsim <- nsim <- 10 # OM@nsim 
   years <- OM@nyears + OM@proyears
   yr.vert <- round(seq(1, years, length.out=pyears),0)
   StockPars <- SampleStockPars(OM)
   FleetPars <- SampleFleetPars(OM, Stock=StockPars)
   set.seed(OM@seed)
   if (is.na(sim)) sim <- sample(1:nsim, 1)
-  message("Plotting selection and retention curve for simulation ", sim)
+  message("Plotting selection and retention curve for single simulation ")
   
   if (pyears > 1) gr <- c(2, pyears)
   if (pyears == 1) gr <- c(1, 2)
