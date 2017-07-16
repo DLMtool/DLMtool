@@ -1123,8 +1123,7 @@ VOI <- function(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA, Utnam = "Util
     RefYd <- MSEobj@OM$RefY
     
     for (mm in 1:MSEobj@nMPs) {
-      Ut[, mm] <- apply(MSEobj@C[, mm, yind], 1, mean, na.rm = T)/RefYd * 
-        100
+      Ut[, mm] <- apply(MSEobj@C[, mm, yind], 1, mean, na.rm = T)/RefYd * 100
       # POF[,mm]<-apply(MSEobj@F_FMSY[,mm,]>1,1,sum)/MSEobj@proyears
       # P10[,mm]<-apply(MSEobj@B_BMSY[,mm,]<0.1,1,sum)/MSEobj@proyears
     }
@@ -1135,28 +1134,23 @@ VOI <- function(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA, Utnam = "Util
   nMPs <- MSEobj@nMPs
   
   onlycor <- c("RefY", "A", "MSY", "Linf", "t0", "OFLreal", "Spat_targ")
-  vargood <- (apply(MSEobj@OM, 2, sd)/(apply(MSEobj@OM, 2, mean)^2)^0.5) > 
-    0.005
+  vargood <- (apply(MSEobj@OM, 2, sd)/(apply(MSEobj@OM, 2, mean)^2)^0.5) >  0.005
   # MSEobj@OM<- MSEobj@OM[,(!names(MSEobj@OM)%in%onlycor)&vargood]
   vargood[grep("qvar", names(MSEobj@OM))] <- FALSE
   MSEobj@OM <- MSEobj@OM[, which((!names(MSEobj@OM) %in% onlycor) & vargood)]
-  OMp <- apply(MSEobj@OM, 2, quantile, p = seq(0, 1, length.out = nbins + 
-    1), na.rm = TRUE)
-  Obsp <- apply(MSEobj@Obs, 2, quantile, p = seq(0, 1, length.out = nbins + 
-    1), na.rm = TRUE)
+  OMp <- apply(MSEobj@OM, 2, quantile, p = seq(0, 1, length.out = nbins + 1), na.rm = TRUE)
+  Obsp <- apply(MSEobj@Obs, 2, quantile, p = seq(0, 1, length.out = nbins + 1), na.rm = TRUE)
   OMv <- array(NA, c(nMPs, ncol(MSEobj@OM), nbins))
   Obsv <- array(NA, c(nMPs, ncol(MSEobj@Obs), nbins))
   
   for (mm in 1:nMPs) {
     for (j in 1:nbins) {
       for (i in 1:ncol(MSEobj@OM)) {
-        cond <- MSEobj@OM[, i] > OMp[j, i] & MSEobj@OM[, i] < OMp[j + 
-          1, i]
+        cond <- MSEobj@OM[, i] > OMp[j, i] & MSEobj@OM[, i] < OMp[j + 1, i]
         OMv[mm, i, j] <- mean(Ut[cond, mm], na.rm = T)
       }
       for (i in 1:ncol(MSEobj@Obs)) {
-        cond <- MSEobj@Obs[, i] > Obsp[j, i] & MSEobj@Obs[, i] < 
-          Obsp[j + 1, i]
+        cond <- MSEobj@Obs[, i] > Obsp[j, i] & MSEobj@Obs[, i] < Obsp[j + 1, i]
         Obsv[mm, i, j] <- mean(Ut[cond, mm], na.rm = T)
       }
     }
@@ -1234,22 +1228,18 @@ VOI <- function(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA, Utnam = "Util
         x2 <- (OMp[1:nbins, cind] + OMp[2:(nbins + 1), cind])/2
         y2 <- OMv[mm, cind, ]
         lines(x2, y2)
-        legend("bottomright", legend = round(OMs[mm, cind], 2), 
-          bty = "n", cex = 0.8)
-        legend("topleft", legend = OMstr[rind, 1 + cc], bty = "n", 
-          cex = 0.85)
-        if (cc == 1) 
-          {
+        legend("bottomright", legend = round(OMs[mm, cind], 2), bty = "n", cex = 0.8)
+        legend("topleft", legend = OMstr[rind, 1 + cc], bty = "n", cex = 0.85)
+        if (cc == 1)  {
           mtext(MPs[mm], 2, font = 2, outer = F, cex = 0.8, line = 2)
           ytick <- pretty(seq(ylimy[1], ylimy[2] * 1.3, length.out = 10))
           axis(2, ytick, ytick, cex.axis = 0.8)
-          }  # only first column
+        }  # only first column
       }  # parameters (columns)
     }  # MPs (rows)
     
     mtext(Utnam, 2, outer = T, cex = 0.9, line = 3.5)
-    mtext(paste("Operating model parameters: ", objnam, "@OM", sep = ""), 
-      3, outer = T, font = 2, cex = 0.9)
+    mtext(paste("Operating model parameters: ", objnam, "@OM", sep = ""), 3, outer = T, font = 2, cex = 0.9)
     
   }  # Plots
   
@@ -1273,46 +1263,35 @@ VOI <- function(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA, Utnam = "Util
           rind <- (mm - 1) * 2 + 1
           npres <- sum(Obsstr[rind + 1, ] != "")
           for (cc in 1:ncomp) {
-          if (!is.na(npres) & cc < (npres + 1)) {
-            y <- Ut[, mm]
-            cind <- match(Obsstr[rind, 1 + cc], names(MSEobj@Obs))
-            x <- MSEobj@Obs[, cind]
-            plot(x, y, col = "white", axes = F, ylim = ylimy)
-            axis(1, pretty(Obsp[, cind]), pretty(Obsp[, cind]), 
-            cex.axis = 0.8, padj = -2)
-            abline(v = Obsp[, cind], col = "#99999960")
-            points(x, y, col = colsse[coly[mm, cind]], pch = 19, 
-            cex = 0.8)
-            x2 <- (Obsp[1:nbins, cind] + Obsp[2:(nbins + 1), 
-            cind])/2
-            y2 <- Obsv[mm, cind, ]
-            lines(x2, y2)
-            legend("bottomright", legend = round(Obss[mm, cind], 
-            2), bty = "n", cex = 0.8)
-            legend("topleft", legend = Obsstr[rind, 1 + cc], 
-            bty = "n", cex = 0.75)
-            if (cc == 1) 
-            {
-              mtext(MPs[mm], 2, font = 2, outer = F, cex = 0.6, 
-              line = 2)
-              ytick <- pretty(seq(ylimy[1], ylimy[2] * 1.3, 
-              length.out = 10))
-              axis(2, ytick, ytick, cex.axis = 0.8)
-            }  # only first column
-          } else {
-            plot(0, type = "n", axes = FALSE, ann = FALSE)
-            if (cc == 1) 
-            {
-              mtext(MPs[mm], 2, font = 2, outer = F, cex = 0.6, 
-              line = 2)
-            }  # only first column
-          }
+            if (!is.na(npres) & cc < (npres + 1)) {
+              y <- Ut[, mm]
+              cind <- match(Obsstr[rind, 1 + cc], names(MSEobj@Obs))
+              x <- MSEobj@Obs[, cind]
+              plot(x, y, col = "white", axes = F, ylim = ylimy)
+              axis(1, pretty(Obsp[, cind]), pretty(Obsp[, cind]), cex.axis = 0.8, padj = -2)
+              abline(v = Obsp[, cind], col = "#99999960")
+              points(x, y, col = colsse[coly[mm, cind]], pch = 19, cex = 0.8)
+              x2 <- (Obsp[1:nbins, cind] + Obsp[2:(nbins + 1), cind])/2
+              y2 <- Obsv[mm, cind, ]
+              lines(x2, y2)
+              legend("bottomright", legend = round(Obss[mm, cind], 2), bty = "n", cex = 0.8)
+              legend("topleft", legend = Obsstr[rind, 1 + cc], bty = "n", cex = 0.75)
+              if (cc == 1)    {
+                mtext(MPs[mm], 2, font = 2, outer = F, cex = 0.6, line = 2)
+                ytick <- pretty(seq(ylimy[1], ylimy[2] * 1.3, length.out = 10))
+                axis(2, ytick, ytick, cex.axis = 0.8)
+              }  # only first column
+            } else {
+              plot(0, type = "n", axes = FALSE, ann = FALSE)
+              if (cc == 1)  {
+                mtext(MPs[mm], 2, font = 2, outer = F, cex = 0.6, line = 2)
+              }  # only first column
+            }
           }  # parameters (columns)
         }  # MPs (rows)
         
         mtext(Utnam, 2, outer = T, cex = 0.9, line = 3.5)
-        mtext(paste("Observation model parameters: ", objnam, "@Obs", 
-          sep = ""), 3, outer = T, font = 2, cex = 0.9)
+        mtext(paste("Observation model parameters: ", objnam, "@Obs", sep = ""), 3, outer = T, font = 2, cex = 0.9)
         
       }  # Plots
     }  # if there is data to plot
@@ -3493,15 +3472,11 @@ VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4, Par = c("Obs",
   Par <- match.arg(Par)  # Operating Model or Observation 
   nMPs <- MSEobj@nMPs  # Number of MPs  
   # Subset to specified MPs
-  if (any(is.na(MPs))) 
-    MPs <- MSEobj@MPs
-  if (class(MPs) == "numeric" | class(MPs) == "integer") 
-    MPs <- MSEobj@MPs[MPs]
-  if (length(MPs) < 1) 
-    stop("No MPs found")
-  nMPss <- length(MPs)
-  if (nMP > nMPs) 
-    nMP <- nMPs
+  if (any(is.na(MPs))) MPs <- MSEobj@MPs
+  if (class(MPs) == "numeric" | class(MPs) == "integer")   MPs <- MSEobj@MPs[MPs]
+  if (length(MPs) < 1)   stop("No MPs found")
+  nMPss <- length(MPs) 
+  if (nMP > nMPs)     nMP <- nMPs
   if (!all(MSEobj@MPs %in% MPs)) {
     mse <- Sub(MSEobj, MPs = MPs)
     nMPs <- mse@nMPs
@@ -3510,12 +3485,12 @@ VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4, Par = c("Obs",
   }
   
   # Calculate MSE sensitivities per MP
-  if (length(MPs) > 1) 
-    senseDat <- sapply(1:nMPs, calcMSESense, MSEobj = mse, YVar = YVar, 
-      Par = Par, simplify = FALSE, quants = quants)
-  if (length(MPs) == 1) 
-    senseDat <- calcMSESense(MP = MPs, MSEobj = mse, YVar = YVar, Par = Par, 
-      quants = quants)
+  if (length(MPs) > 1) senseDat <- sapply(1:nMPs, calcMSESense, MSEobj = mse, 
+                                          YVar = YVar, Par = Par, 
+                                          simplify = FALSE, quants = quants)
+  if (length(MPs) == 1) senseDat <- calcMSESense(MP = MPs, MSEobj = mse, 
+                                                 YVar = YVar, Par = Par,
+                                                 quants = quants)
   
   # Operating Model or Observation Statistics
   
@@ -3527,17 +3502,20 @@ VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4, Par = c("Obs",
   if (Par == "OM") {
     used <- matrix(TRUE, nrow = length(varNames), ncol = nMPs)  # all OM parameters used 
     Obsnam <- varNames
-    LnName <- c("Reference yield", "Natural mortality", "Depletion", 
-      "Abundance", "BMSY/B0", "FMSY/M", "M gradient", "Inter-annual variability M", 
+    LnName <- c("Reference yield", "Natural mortality", "Depletion", "Abundance",
+      "BMSY/B0", "FMSY/M", "M gradient", "Inter-annual variability M", 
       "Recruitment variability", "Inter-annual variability effort", 
-      "Final effort", "MSY", "Average change in catchability", "Inter-annual variabilility in catchability", 
+      "Final effort",  "MSY", "Average change in catchability", "Inter-annual variabilility in catchability", 
       "FMSY", "von Bert. Linf", "von Bert. K", "von Bert. t0", "Steepness", 
       "Linf gradient", "K gradient", "Inter-annual variability in Linf", 
       "Recruitment gradient", "Inter-annual variability in K", "Age at maturity", 
       "Length at 5% selection", "Length at full selection", "Length at first capture", 
       "True MSY", "Size Area 1", "Prob. Movement", "Auto-correlation recruitment", 
-      "Length 50% maturity", "Length 95% maturity")
-    # cbind(Obsnam, LnName)
+      "Length 50% maturity", "Length 95% maturity", "B0", "N0", "SSB0", "BMSY_B0",
+      "TACSD", "TACFrac", "ESD", "EFrac", "SizeLimSD", "SizeLimFrac", "Blow", "BMSY",
+      "SSBMSY", "Mexp", "Discard mortality", "LR5", "LFR", "DR", "Lm/SL")
+     #cbind(Obsnam, LnName)
+  
   }
   if (Par == "Obs") {
     slots <- c("Cat", "Cat", "AvC", "AvC", "CAA", "CAA", "CAL", "CAL", 
@@ -3559,7 +3537,7 @@ VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4, Par = c("Obs",
       "vB t0 bias", "vB Linf bias", "Steepness bias", "Reference index bias", 
       "Reference catch bias", "Reference biomass bias", "Mean length", 
       "Mean length")
-    # cbind(slots, Obsnam, LnName)
+    # print(cbind(slots, Obsnam, LnName))
     for (mm in 1:nMPs) {
       ids <- Obsnam[slots %in% unlist(strsplit(Required(MPs[mm])[, 
         2], split = ", "))]
@@ -3750,8 +3728,7 @@ calcMSESense <- function(MP = 1, MSEobj, YVar = c("Y", "B"), Par = c("Obs",
   MSEobj@OM$Lm_SL <- MSEobj@OM$L50/MSEobj@OM$LFS
   varnames <- names(MSEobj@OM)
   vars <- MSEobj@OM
-  vargood <- (apply(vars, 2, sd, na.rm = TRUE)/(apply(vars, 2, mean, 
-    na.rm = TRUE)^2)^0.5) > 0.005
+  vargood <- (apply(vars, 2, sd, na.rm = TRUE)/(apply(vars, 2, mean, na.rm = TRUE)^2)^0.5) > 0.005
   vargood[grep("qvar", varnames)] <- FALSE
   vargood[is.na(vargood)] <- TRUE
   varnames <- varnames[vargood]
@@ -3764,7 +3741,12 @@ calcMSESense <- function(MP = 1, MSEobj, YVar = c("Y", "B"), Par = c("Obs",
   omvals$OFLreal <- 0
   omvals$FMSY <- 0
   omvals$MSY <- 0
-  omvals$dFfinal <- 0
+  omvals$B0 <- 0
+  omvals$N0 <- 0
+  omvals$SSB0 <- 0
+  omvals$BMSY <- 0
+  omvals$SSBMSY <- 0
+  
   omvals[is.na(omvals)] <- 0
   
   OMSmooth <- OMStat <- obvals <- OBSmooth <- OMPoints <- OMNames <- NULL

@@ -759,29 +759,43 @@ CalcInput <- function(y, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P
   RetentFlag <- FALSE
   # LR5 
   if (length(InputRecs$LR5) == 0) { # no  recommendation
-    LR5_P[(y + nyears):(nyears+proyears),] <- LR5_P[y + nyears-1,] # unchanged 
+    LR5_P[(y + nyears):(nyears+proyears),] <- matrix(LR5_P[y + nyears-1,], 
+                                                     nrow=(length((y + nyears):(nyears+proyears))),
+                                                     ncol=nsim, byrow=TRUE) # unchanged 
+
   } else if (length(InputRecs$LR5) != nsim) {
     stop("LR5 recommmendation is not 'nsim' long.\n Does MP return LR5 recommendation under all conditions?")
   } else {
-    LR5_P[(y + nyears):(nyears+proyears),] <- InputRecs$LR5 * SizeLim_f[,y] # recommendation with implementation error
+    LR5_P[(y + nyears):(nyears+proyears),] <- matrix(InputRecs$LR5 * SizeLim_f[,y], 
+                                                     nrow=(length((y + nyears):(nyears+proyears))),
+                                                     ncol=nsim, byrow=TRUE) # recommendation with implementation error
     RetentFlag <- TRUE
   }
   # LFR 
   if (length(InputRecs$LFR) == 0) { # no  recommendation
-    LFR_P[(y + nyears):(nyears+proyears),] <- LFR_P[y + nyears-1,] # unchanged 
+    LFR_P[(y + nyears):(nyears+proyears),] <- matrix(LFR_P[y + nyears-1,], 
+                                                     nrow=(length((y + nyears):(nyears+proyears))),
+                                                     ncol=nsim, byrow=TRUE) # unchanged 
   } else if (length(InputRecs$LFR) != nsim) {
     stop("LFR recommmendation is not 'nsim' long.\n Does MP return LFR recommendation under all conditions?")
   } else {
-    LFR_P[(y + nyears):(nyears+proyears),] <- InputRecs$LFR * SizeLim_f[,y] # recommendation with implementation error
+    LFR_P[(y + nyears):(nyears+proyears),] <- matrix(InputRecs$LFR * SizeLim_f[,y], 
+                                                     nrow=(length((y + nyears):(nyears+proyears))),
+                                                     ncol=nsim, byrow=TRUE) # recommendation with implementation error
     RetentFlag <- TRUE
   }
   # Rmaxlen 
   if (length(InputRecs$Rmaxlen) == 0) { # no  recommendation
-    Rmaxlen_P[(y + nyears):(nyears+proyears),] <- Rmaxlen_P[y + nyears-1,] # unchanged 
+    Rmaxlen_P[(y + nyears):(nyears+proyears),] <- matrix(Rmaxlen_P[y + nyears-1,], 
+                                                         nrow=(length((y + nyears):(nyears+proyears))),
+                                                         ncol=nsim, byrow=TRUE)   # unchanged 
+  
   } else if (length(Rmaxlen) != nsim) {
     stop("Rmaxlen recommmendation is not 'nsim' long.\n Does MP return Rmaxlen recommendation under all conditions?")
   } else {
-    Rmaxlen_P[(y + nyears):(nyears+proyears),] <- InputRecs$Rmaxlen # recommendation
+    Rmaxlen_P[(y + nyears):(nyears+proyears),] <- matrix(InputRecs$Rmaxlen, 
+                                                         nrow=(length((y + nyears):(nyears+proyears))),
+                                                         ncol=nsim, byrow=TRUE) # recommendation
     RetentFlag <- TRUE
   }
   # HS - harvest slot 
@@ -801,11 +815,12 @@ CalcInput <- function(y, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P
     s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
                                               LFS = LFR_P[yr,i], 
                                               L0.05 = LR5_P[yr,i])$minimum)
+    
     s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
                                               LFS = LFR_P[yr,i], s1=s1[i], 
                                               maxlen=maxlen[i], 
                                               MaxSel= Rmaxlen_P[yr,i])$minimum)
-    
+
     # calculate new retention at age curve 
     retA_P[ , , allyrs] <- t(sapply(1:nsim, function(i) 
       TwoSidedFun(LFR_P[yr,i], s1[i], s2[i], lens=Len_age[i,,yr])))
@@ -814,10 +829,14 @@ CalcInput <- function(y, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P
       TwoSidedFun(LFR_P[yr,i], s1[i], s2[i], lens=CAL_binsmid))) 
     
     # upper harvest slot 
-    retA_P[Len_age[, , allyrs] >= HS] <- 0
+   
+    aboveHS <- Len_age[,,allyrs]>HS
+    tretA_P <- retA_P[,,allyrs]
+    tretA_P[aboveHS] <- 0
+    retA_P[,,allyrs] <- tretA_P
     for (ss in 1:nsim) {
       index <- which(CAL_binsmid >= HS[ss])
-      retL_P[ss, index, allyrs] <- 0 
+      retL_P[ss, index, allyrs] <- 0
     }	
     
     # correct retention curve - retention at age/length must <= selectivity (you can't retain fish you don't catch!)

@@ -106,12 +106,12 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   } else {
     StockOut$procsd <- procsd
   }
+  
   if (!exists("AC", inherits=FALSE)) {
     StockOut$AC <- AC <- runif(nsim, Stock@AC[1], Stock@AC[2])  # auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)  
   } else {
     StockOut$AC <- AC  # auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)
   }
-  
 
   # All recruitment Deviations
   # Add cycle (phase shift) to recruitment deviations - if specified
@@ -123,7 +123,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   } else {
     recMulti <- 1 
   }
-  
+
   StockOut$procmu <- procmu <- -0.5 * (procsd)^2  # adjusted log normal mean
   if (!exists("Perr", inherits=FALSE)) {
     Perr <- array(rnorm((nyears + proyears+maxage-1) * nsim, rep(procmu, nyears + 
@@ -355,6 +355,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   # == Sample Discard Mortality ====
   if(!exists("Fdisc", inherits = FALSE)) Fdisc <- runif(nsim, min(Stock@Fdisc), max(Stock@Fdisc))
   StockOut$Fdisc <- Fdisc 
+  
   
   StockOut$ageM <- ageM
   StockOut$age95 <- age95

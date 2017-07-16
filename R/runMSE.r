@@ -558,7 +558,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   cond <- hs > 0.6
   hsim[cond] <- 0.2 + rbeta(sum(hs > 0.6), alphaconv((hs[cond] - 0.2)/0.8, (1 - (hs[cond] - 0.2)/0.8) * OM@hcv), 
                             betaconv((hs[cond] - 0.2)/0.8,  (1 - (hs[cond] - 0.2)/0.8) * OM@hcv)) * 0.8
-  hsim[!cond] <- 0.2 + rbeta(sum(hs < 0.6), alphaconv((hs[!cond] - 0.2)/0.8,  (hs[!cond] - 0.2)/0.8 * OM@hcv), 
+  hsim[!cond] <- 0.2 + rbeta(sum(hs <= 0.6), alphaconv((hs[!cond] - 0.2)/0.8,  (hs[!cond] - 0.2)/0.8 * OM@hcv), 
                              betaconv((hs[!cond] - 0.2)/0.8, (hs[!cond] - 0.2)/0.8 * OM@hcv)) * 0.8
   hbias <- hsim/hs  # back calculate the simulated bias
   if (OM@hcv == 0) hbias <- rep(1, nsim) 
@@ -654,7 +654,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                         BMSY, SSBMSY, Mexp, Fdisc, 
                         LR5=LR5[nyears,], LFR=LFR[nyears,], Rmaxlen=Rmaxlen[nyears,], DR=DR[nyears,]) # put all the operating model parameters in one table
 
-  
+
   Data@Obs <- as.data.frame(ObsPars) # put all the observation error model parameters in one table
   
   Data@LHYear <- OM@nyears  # Last historical year is nyears (for fixed MPs)
@@ -853,7 +853,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       retL_P <- inputcalcs$retL_P # retained-at-length
       V_P <- inputcalcs$V_P  # vulnerable-at-age
       pSLarray <- inputcalcs$pSLarray # vulnerable-at-length 
-      
+
     }  # input control  
     
     # TACa[, mm, 1] <- apply(CB_P[, , 1, ], 1, sum)  # Adjust TAC to actual catch in the year 
@@ -1029,6 +1029,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
           retA_P <- inputcalcs$retA_P # retained-at-age
           retL_P <- inputcalcs$retL_P # retained-at-length
           V_P <- inputcalcs$V_P  # vulnerable-at-age
+          
           pSLarray <- inputcalcs$pSLarray # vulnerable-at-length 
         }  # input control 
         MSElist[[mm]]@MPrec <- apply(CB_Pret[, , y, ], 1, sum) 
@@ -1062,9 +1063,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
         }
         
       }  # not an update year
-      
     }  # end of year
-    
     B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY  # SSB relative to SSBMSY
  
     FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum, na.rm=TRUE)/apply(VBiomass_P+CB_P, c(1, 3), sum, na.rm=TRUE))		
@@ -1086,7 +1085,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     
     cat("\n")
   }  # end of mm methods 
-  
+ 
   MSEout <- new("MSE", Name = OM@Name, nyears, proyears, nMPs=nMP, MPs, nsim, 
                 Data@OM, Obs=Data@Obs, B_BMSY=B_BMSYa, F_FMSY=F_FMSYa, B=Ba, 
                 SSB=SSBa, VB=VBa, FM=FMa, CaRet, TAC=TACa, SSB_hist = SSB, CB_hist = CB, 
