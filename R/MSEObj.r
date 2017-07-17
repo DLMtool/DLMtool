@@ -1156,6 +1156,8 @@ VOI <- function(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA, Utnam = "Util
     }
   }
   
+  cbind(names(MSEobj@OM), OMs[mm,])
+  
   # -- Operating model variables
   OMs <- apply(OMv, 1:2, sd, na.rm = T)
   OMstr <- array("", c(nMPs * 2, ncomp + 1))
@@ -3539,8 +3541,7 @@ VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4, Par = c("Obs",
       "Mean length")
     # print(cbind(slots, Obsnam, LnName))
     for (mm in 1:nMPs) {
-      ids <- Obsnam[slots %in% unlist(strsplit(Required(MPs[mm])[, 
-        2], split = ", "))]
+      ids <- Obsnam[slots %in% unlist(strsplit(Required(MPs[mm])[, 2], split = ", "))]
       used[match(ids, varNames), mm] <- TRUE
     }
   }
@@ -3582,10 +3583,8 @@ VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4, Par = c("Obs",
     
     mat <- matrix(1:(Nrow * Ncol), nrow = Nrow, byrow = TRUE)
     op <- par(mfrow = c(Nrow, Ncol), oma = c(3, 6, 2, 0), mar = c(3, 2, 2, 1))
-    if (Par == "OM") 
-      Title <- "Operating Model Parameters"
-    if (Par == "Obs") 
-      Title <- "Observation Parameters"
+    if (Par == "OM") Title <- "Operating Model Parameters"
+    if (Par == "Obs") Title <- "Observation Parameters"
     
     # Colors and Controls
     ncols <- length(topStat)  # nrow(Stat) * ncol(Stat)
@@ -3621,10 +3620,8 @@ VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4, Par = c("Obs",
     for (mm in AllMPs) {
       # Loop along MPs Loop along variables
       for (vr in 1:Ncol) {
-        if (nMPs > 1) 
-          varind <- topStat[vr, mm]  # Variable index 
-        if (nMPs == 1) 
-          varind <- topStat[vr]
+        if (nMPs > 1)  varind <- topStat[vr, mm]  # Variable index 
+        if (nMPs == 1) varind <- topStat[vr]
         varSN <- varNames[varind]
         varLN <- LnName[match(varSN, Obsnam)]
         if (nMPs > 1) {
@@ -3636,8 +3633,7 @@ VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4, Par = c("Obs",
         }
         if (used[varSN, MPs[mm]]) {
           # variable is used
-          Col <- makeTransparent(Cols[ceiling(Stat[varind, MPs[mm]]/highest * 
-          ncols)])
+          Col <- makeTransparent(Cols[ceiling(Stat[varind, MPs[mm]]/highest * ncols)])
           ylim <- c(0, quantile(ys, 0.95, na.rm = TRUE))
           plot(xs, ys, col = Col, pch = pch, bty = "n", axes = FALSE, 
           xlab = "", ylab = "", ylim = ylim)
@@ -3709,11 +3705,9 @@ calcMSESense <- function(MP = 1, MSEobj, YVar = c("Y", "B"), Par = c("Obs",
   
   if (YVar == "Y") {
     if (length(dim(MSEobj@C)) > 2) {
-      yout <- apply(MSEobj@C[, mm, yind], 1, mean, na.rm = T)/RefYd * 
-        100
+      yout <- apply(MSEobj@C[, mm, yind], 1, mean, na.rm = T)/RefYd * 100
     } else {
-      yout <- apply(MSEobj@C[, yind], 1, mean, na.rm = T)/RefYd * 
-        100
+      yout <- apply(MSEobj@C[, yind], 1, mean, na.rm = T)/RefYd * 100
     }
   }
   if (YVar == "B") {
@@ -3809,8 +3803,7 @@ calcMSESense <- function(MP = 1, MSEobj, YVar = c("Y", "B"), Par = c("Obs",
     # Calculate stat for OM curve
     OMStat <- unlist(lapply(OMSmooth, calcStat, evalbreaks = evalbreaks))
   }
-  Out <- list(OMPoints = OMPoints, OMSmooth = OMSmooth, OMStat = OMStat, 
-    OMNames = OMNames)
+  Out <- list(OMPoints = OMPoints, OMSmooth = OMSmooth, OMStat = OMStat, OMNames = OMNames)
   Out
 }
 

@@ -7,7 +7,7 @@
 \method{plot}{OM}(x, ...)
 }
 \arguments{
-\item{x}{An object of class OM}
+\item{x}{An object of class OM or a list with historical simulation information (ie runMSE(OM, Hist=TRUE))}
 
 \item{...}{Optional additional arguments passed to \code{plot}}
 }

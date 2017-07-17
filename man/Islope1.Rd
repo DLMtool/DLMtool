@@ -14,8 +14,7 @@ Islope1(x, Data, reps = 100, yrsmth = 5, lambda=0.4,xx=0.2)
 
 \item{reps}{The number of TAC samples}
 
-\item{yrsmth}{Years over which to smooth recent estimates of surplus
-production}
+\item{yrsmth}{Years over which to smooth recent estimates of surplus production}
 
 \item{lambda}{A gain parameter controlling the speed in update in TAC.}
 

@@ -4,29 +4,31 @@
 #' 
 #' A function that plots the parameters and resulting time series of an operating model.
 #' 
-#' @param x An object of class OM 
+#' @param x An object of class OM or a list with historical simulation information (ie runMSE(OM, Hist=TRUE))
 #' @param ...  Optional additional arguments passed to \code{plot}
 #' @rdname plot-OM
 #' @method plot OM 
 #' @author T. Carruthers
 #' @export 
 plot.OM <-function(x, ...){  
-    OM <- updateMSE(x) # update and add missing slots with default values
-    out<-runMSE(OM,Hist=T)
-
-    nsim<-OM@nsim
-    nyears<-OM@nyears
-    
-    
-    plotStock(OM)
-    
-    plotFleet(OM)
-    plotObs(OM)
-    plotImp(OM)
-    
+    if (class(x) == "OM") {
+      OM <- updateMSE(x) # update and add missing slots with default values
+      out<-runMSE(OM,Hist=T)
+      nsim<-OM@nsim
+      nyears<-OM@nyears
+      plotStock(OM)
+      plotFleet(OM)
+      plotObs(OM)
+      plotImp(OM)
+      yrlab<-OM@CurrentYr-((nyears-1):0)
+    } else if (class(x) == "list") {
+      out <- x 
+      nyears <- dim(out$TSdata[[1]])[1]
+      nsim <- dim(out$TSdata[[1]])[2]
+      yrlab<-nyears-((nyears-1):0)
+    } else stop("argument must be class 'OM' or 'list' ")
     
     # Time series
-    yrlab<-OM@CurrentYr-((nyears-1):0)
     op <-par(mfrow=c(4,2),mai=c(0.7,0.7,0.05,0.05),omi=c(0.01,0.01,0.3,0.01))
     
     # SSB
@@ -64,9 +66,10 @@ plot.OM <-function(x, ...){
     mtext("Historical year", 1, line = 2.5, cex = 1)
     mtext("Age", 2, line = 2.3, cex = 1)
     
-    mtext(paste0("Time series plots for operating model ",OM@Name),3,outer=T,line= 0.2,font=2)
+    if (class(x) == 'OM') mtext(paste0("Time series plots for operating model ",OM@Name),3,outer=T,line= 0.2,font=2)
     
-    on.exit(par(op))       
+    on.exit(par(op))
+    return(invisible(out))
 }
 
 TSplot<-function(x,y,xlab=NA,ylab=NA,zeroy=T,incx=T,incy=T,type='l',mat=T){

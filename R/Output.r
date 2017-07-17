@@ -1054,8 +1054,7 @@ class(Itarget4) <- "Output"
 #' @param x A position in data-limited methods data object
 #' @param Data A data-limited methods data object
 #' @param reps The number of TAC samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
+#' @param yrsmth Years over which to smooth recent estimates of surplus production
 #' @param lambda A gain parameter controlling the speed in update in TAC.
 #' @param xx Parameter controlling the fraction of mean catch to start using in
 #' first year
