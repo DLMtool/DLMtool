@@ -16,6 +16,61 @@ setup <- function(cpus=parallel::detectCores()) {
 }
 
 
+RepmissingVal <- function(object, name, vals=NA) {
+  miss <- FALSE
+  if (!name %in% slotNames(object)) return(object)
+  if (!.hasSlot(object,name)) miss <- TRUE
+  if (!miss) {
+    if (length(slot(object, name))==0) miss <- TRUE
+    if (all(is.na(slot(object, name)))) miss <- TRUE 
+  }
+
+  if (miss) slot(object, name) <- vals
+  
+  return(object)
+}
+
+
+
+#' Update an MSE object with new slots
+#' 
+#' Updates an existing MSE object (class MSE) from a previous version of the
+#' DLMtool to include the new slots.  The slots will be empty, but avoids the
+#' 'slot doesn't exist' error that sometimes occurs. Also works with Stock, Fleet,
+#' Obs, Imp, and Data objects. 
+#' 
+#' @usage updateMSE(MSEobj)
+#' @param MSEobj A MSE object from a previous version of the DLMtool. 
+#' Also works with Stock, Fleet, Obs, Imp, and Data objects. 
+#' @return An object of class matching class(MSEobj)
+#' @author A. Hordyk
+#' @export updateMSE
+updateMSE <- function(MSEobj) {
+  slots <- slotNames(MSEobj)
+  for (X in seq_along(slots)) {
+    classDef <- getClassDef(class(MSEobj))
+    slotTypes <- classDef@slots
+    tt <- try(slot(MSEobj, slots[X]), silent = TRUE)
+    if (class(tt) == "try-error") {
+      fun <- get(as.character(slotTypes[X]))
+      if(as.character(slotTypes[X]) == "vector") {
+        slot(MSEobj, slots[X]) <- fun("numeric", length=0)
+      } else slot(MSEobj, slots[X]) <- fun(0)
+    }
+  }
+  MSEobj <- RepmissingVal(MSEobj, 'Mexp', c(0,0))
+  MSEobj <- RepmissingVal(MSEobj, 'LenCV', c(0.08,0.15))
+  MSEobj <- RepmissingVal(MSEobj, 'LR5', c(0,0))
+  MSEobj <- RepmissingVal(MSEobj, 'LFR', c(0,0))
+  MSEobj <- RepmissingVal(MSEobj, 'Rmaxlen', c(1,1))
+  MSEobj <- RepmissingVal(MSEobj, 'DR', c(0,0))
+  MSEobj <- RepmissingVal(MSEobj, 'Fdisc', c(0,0))
+  MSEobj <- RepmissingVal(MSEobj, 'nareas', 2)
+  
+  MSEobj
+}
+
+
 #' Check that a DLM object is valid 
 #' 
 #' Check that all slots in Object are valid and contain values
@@ -28,28 +83,6 @@ ChkObj <- function(OM) {
   
   # Add missing slots with default values 
   OM <- updateMSE(OM)
-  if (length(OM@Mexp)==0) OM@Mexp <- c(0,0)
-  if (length(OM@LenCV)==0) OM@LenCV <- c(0.08,0.15)
-  
-  if (all(is.na(OM@Mexp))) OM@Mexp <- c(0,0)
-  if (all(is.na(OM@LenCV))) OM@LenCV <- c(0.08,0.15)
-  
-  
-  if (length(OM@LR5)==0) OM@LR5 <- c(0,0)
-  if (length(OM@LFR)==0) OM@LFR <- c(0,0)
-  if (length(OM@Rmaxlen)==0) OM@Rmaxlen <- c(1,1)
-  if (length(OM@DR)==0) OM@DR <- c(0,0)
-  if (length(OM@Fdisc)==0) OM@Fdisc <- c(0,0)
-  
-  if (all(is.na(OM@LR5))) OM@LR5 <- c(0,0)
-  if (all(is.na(OM@LFR))) OM@LFR <- c(0,0)
-  if (all(is.na(OM@Rmaxlen))) OM@Rmaxlen <- c(1,1)
-  if (all(is.na(OM@DR))) OM@DR <- c(0,0)
-  if (all(is.na(OM@Fdisc))) OM@Fdisc <- c(0,0)
-  
-  # if (length(OM@FecB)==0) OM@FecB <- c(3,3)
-  # if  (all(is.na(OM@FecB))) OM@FecB <- c(3,3)
-  
   slots <- slotNames(OM)
   Ok <- rep(TRUE, length(slots))
   for (sl in seq_along(slots)) {
@@ -69,12 +102,11 @@ ChkObj <- function(OM) {
   if (any(SelSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% SelSlots] 
   if (any(RecSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% RecSlots] 
   
-
-  
   probSlots <- slots[!Ok][!slots[!Ok] %in% Ignore]
   if (length(probSlots) > 0) 
     stop("Slots in Object have missing values:\n ", paste(probSlots, " "), call.=FALSE)
-  OM
+  return(OM)
+
 }
 
 #' What objects of this class are available
@@ -1192,21 +1224,21 @@ getEffhist <- function(Esd, nyears, EffYears, EffLower, EffUpper) {
 #' @keywords internal
 #'  
 gettempvar <- function(targ, targsd, targgrad, nyears, nsim, rands=NULL) {
-    mutemp <- -0.5 * targsd^2
-    temp <- array(1, dim = c(nsim, nyears))
-    if (is.null(rands)) {
-	  for (i in 2:nyears) {
-        temp[, i] <- temp[, i] * exp(rnorm(nsim, mutemp, targsd))
-      }
-	}
-	if (!is.null(rands)) {
-	  for (i in 2:nyears) {
-          temp[, i] <- temp[, i] * rands[,i]
-      }
-	}
-    yarray <- array(rep((1:nyears) - 1, each = nsim), dim = c(nsim, nyears))
-    temp <- temp * (1 + targgrad/100)^yarray
-    targ * temp/apply(temp, 1, mean)
+  mutemp <- -0.5 * targsd^2
+  temp <- array(1, dim = c(nsim, nyears))
+  if (is.null(rands)) {
+    for (i in 2:nyears) {
+      temp[, i] <- temp[, i] * exp(rnorm(nsim, mutemp, targsd))
+    }
+  }
+  if (!is.null(rands)) {
+    for (i in 2:nyears) {
+      temp[, i] <- temp[, i] * rands[,i]
+    }
+  }
+  yarray <- array(rep((1:nyears) - 1, each = nsim), dim = c(nsim, nyears))
+  temp <- temp * (1 + targgrad/100)^yarray
+  targ * temp/apply(temp, 1, mean)
 }
 
 

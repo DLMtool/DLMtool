@@ -703,15 +703,21 @@ optF <- function(fapic, vuln, catch, bio, mort, fdist, maxage, nareas) {
 #' @param FM_retain Numeric array (nsim, maxage, proyears, nareas) Retained fishing mortality at age
 #' @param Z_P Numeric array (nsim, maxage, proyears, nareas) Total mortality at age
 #' @param M_ageArray Numeric array (nsim, maxage, nyears+proyears) Natural mortality at age
+#' @param LastEffort Numeric vector (nsim) with fishing effort from last year
+#' @param LastSpatial Numeric matrix (nsim, nareas) with spatial closures from last year
+#' @param LastAllocat Numeric vector (nsim) with allocation from last year
 #'
 #' @keywords internal
 #' @export
 #'
 #' @author A. Hordyk
 #' 
-CalcInput <- function(y, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P, Rmaxlen_P, maxage,
-                      retA_P, retL_P, V_P, V2, pSLarray, SLarray2, DR, maxlen, Len_age, CAL_binsmid, Fdisc, nCALbins, E_f, SizeLim_f,
-                      VBiomass_P, Biomass_P, Spat_targ, FinF, qvar, qs, qinc, CB_P, CB_Pret, FM_P, FM_retain, Z_P, M_ageArray) {
+CalcInput <- function(y, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P,
+                      Rmaxlen_P, maxage, retA_P, retL_P, V_P, V2, pSLarray,
+                      SLarray2, DR, maxlen, Len_age, CAL_binsmid, Fdisc, 
+                      nCALbins, E_f, SizeLim_f, VBiomass_P, Biomass_P, Spat_targ,
+                      FinF, qvar, qs, qinc, CB_P, CB_Pret, FM_P, FM_retain, Z_P,
+                      M_ageArray, LastEffort, LastSpatial, LastAllocat) {
   
   SAYRL <- as.matrix(expand.grid(1:nsim, 1:maxage, nyears, 1:nareas))  # Final historical year
   SAYRt <- as.matrix(expand.grid(1:nsim, 1:maxage, y + nyears, 1:nareas))  # Trajectory year
@@ -731,7 +737,7 @@ CalcInput <- function(y, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P
   
   # Change in Effort 
   if (length(InputRecs$Effort) == 0) { # no effort recommendation
-    Ei <- rep(1, nsim) # effort is unchanged 
+    Ei <- LastEffort # effort is unchanged 
   } else if (length(InputRecs$Effort) != nsim) {
     stop("Effort recommmendation is not 'nsim' long.\n Does MP return Effort recommendation under all conditions?")
   } else {
@@ -740,7 +746,7 @@ CalcInput <- function(y, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P
   
   # Spatial 
   if (all(is.na(InputRecs$Spatial))) { # no spatial recommendation 
-    Si <- matrix(1, nsim, nareas) # spatial is unchanged - modify this if spatial closure in historical years  
+    Si <- LastSpatial # matrix(1, nsim, nareas) # spatial is unchanged - modify this if spatial closure in historical years  
   } else if (any(is.na(InputRecs$Spatial))) {
     stop("Spatial recommmendation has some NAs.\n Does MP return Spatial recommendation under all conditions?")
   } else {
@@ -749,7 +755,7 @@ CalcInput <- function(y, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P
   
   # Allocation 
   if (length(InputRecs$Allocation) == 0) { # no allocation recommendation
-    Ai <- rep(0, nsim) # allocation is unchanged 
+    Ai <- LastAllocat # rep(0, nsim) # allocation is unchanged 
   } else if (length(InputRecs$Allocation) != nsim) {
     stop("Allocation recommmendation is not 'nsim' long.\n Does MP return Allocation recommendation under all conditions?")
   } else {
@@ -881,6 +887,8 @@ CalcInput <- function(y, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P
   out$retL_P <- retL_P
   out$V_P <- V_P 
   out$pSLarray <- pSLarray
+  out$Si <- Si
+  out$Ai <- Ai
   out
   
 }

@@ -841,8 +841,12 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                               Rmaxlen_P, maxage, retA_P, retL_P, V_P, V2, pSLarray, 
                               SLarray2, DR, maxlen, Len_age, CAL_binsmid, Fdisc, nCALbins, 
                               E_f, SizeLim_f, VBiomass_P, Biomass_P, Spat_targ, FinF, qvar, 
-                              qs, qinc, CB_P, CB_Pret, FM_P, FM_retain, Z_P, M_ageArray)
+                              qs, qinc, CB_P, CB_Pret, FM_P, FM_retain, Z_P, M_ageArray, 
+                              LastEffort=rep(1,nsim), LastSpatial=matrix(1, nsim, nareas), 
+                              LastAllocat=rep(0, nsim))
       
+      LastSpatial <- inputcalcs$Si
+      LastAllocat <- inputcalcs$Ai
       Effort[, mm, y] <- inputcalcs$Effort #  
       CB_P <- inputcalcs$CB_P # removals
       CB_Pret <- inputcalcs$CB_Pret # retained catch 
@@ -1016,9 +1020,18 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
           Data <- runIn[[2]] # Data object object with saved info from MP 
           InputRecs <- runIn[[1]][[1]] # input control recommendations 
           
-          inputcalcs <- CalcInput(y, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P, Rmaxlen_P, maxage,
-                                  retA_P, retL_P, V_P, V2, pSLarray, SLarray2, DR, maxlen, Len_age, CAL_binsmid, Fdisc, nCALbins, E_f, SizeLim_f,
-                                  VBiomass_P, Biomass_P, Spat_targ, FinF, qvar, qs, qinc, CB_P, CB_Pret, FM_P, FM_retain, Z_P, M_ageArray)
+          inputcalcs <- CalcInput(y, nyears, proyears, InputRecs, nsim, nareas, 
+                                  LR5_P, LFR_P, Rmaxlen_P, maxage,
+                                  retA_P, retL_P, V_P, V2, pSLarray, SLarray2, 
+                                  DR, maxlen, Len_age, CAL_binsmid, Fdisc, 
+                                  nCALbins, E_f, SizeLim_f,
+                                  VBiomass_P, Biomass_P, Spat_targ, FinF, qvar, 
+                                  qs, qinc, CB_P, CB_Pret, FM_P, FM_retain, 
+                                  Z_P, M_ageArray, Effort[, mm, y-1],
+                                  LastSpatial=LastSpatial, LastAllocat=LastAllocat)
+          
+          LastSpatial <- inputcalcs$Si
+          LastAllocat <- inputcalcs$Ai
           
           Effort[, mm, y] <- inputcalcs$Effort #  
           CB_P <- inputcalcs$CB_P # removals

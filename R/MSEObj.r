@@ -2260,59 +2260,7 @@ VOI2 <- function(MSEobj, ncomp = 6, nbins = 4, Ut = NA, Utnam = "yield",
   
 }  # VOI2
 
-# Update the MSE object
 
-
-#' Update an MSE object with new slots
-#' 
-#' Updates an existing MSE object (class MSE) from a previous version of the
-#' DLMtool to include the new slots.  The slots will be empty, but avoids the
-#' 'slot doesn't exist' error that sometimes occurs.
-#' 
-#' 
-#' @usage updateMSE(MSEobj)
-#' @param MSEobj A MSE object from a previous version of the DLMtool
-#' @return An object of class \code{MSE}
-#' @author A. Hordyk
-#' @export updateMSE
-updateMSE <- function(MSEobj) {
-  slots <- slotNames(MSEobj)
-  for (X in seq_along(slots)) {
-    classDef <- getClassDef(class(MSEobj))
-    slotTypes <- classDef@slots
-    tt <- try(slot(MSEobj, slots[X]), silent = TRUE)
-    if (class(tt) == "try-error") {
-      fun <- get(as.character(slotTypes[X]))
-      slot(MSEobj, slots[X]) <- fun(0)
-    }
-  }
-  if (.hasSlot(MSEobj, "LenCV")) {
-    if (length(MSEobj@LenCV) == 0) MSEobj@LenCV <- c(0.08,0.15)
-  }
-  if (.hasSlot(MSEobj, "Mexp")) {
-    if (length(MSEobj@Mexp) == 0) MSEobj@Mexp <- c(0,0)
-  }
-  if (.hasSlot(MSEobj, "FecB")) {
-    if (length(MSEobj@FecB) == 0) MSEobj@FecB <- c(3,3)
-  }
-  if (.hasSlot(MSEobj, "LR5")) {
-    if (length(MSEobj@LR5) == 0) MSEobj@LR5 <- c(0,0)
-  }
-  if (.hasSlot(MSEobj, "LFR")) {
-    if (length(MSEobj@LFR) == 0) MSEobj@LFR <- c(0,0)  
-  }
-  if (.hasSlot(MSEobj, "Rmaxlen")) {
-    if (length(MSEobj@Rmaxlen) == 0) MSEobj@Rmaxlen <- c(1,1)  
-  }  
-  if (.hasSlot(MSEobj, "DR")) {
-    if (length(MSEobj@DR) == 0) MSEobj@DR <- c(0,0)  
-  }     
-  if (.hasSlot(MSEobj, "Fdisc")) {
-    if (length(MSEobj@Fdisc) == 0) MSEobj@Fdisc <- c(0,0)  
-  }   
-    
-  MSEobj
-}
 
 
 #' Calculate Statistics for MP Performance
