@@ -1702,22 +1702,18 @@ DBSRA <- function(x, Data, reps = 100) {
   C_hist <- Data@Cat[x, ]
   TAC <- rep(NA, reps)
   DBSRAcount <- 1
-  if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) 
-    return(NA)
+  if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) return(NA)
   while (DBSRAcount < (reps + 1)) {
     depo <- max(0.01, min(0.99, Data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
-    Bt_K <- rbeta(100, alphaconv(depo, min(depo * Data@CV_Dep[x], 
-      (1 - depo) * Data@CV_Dep[x])), betaconv(depo, min(depo * 
-      Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
+    Bt_K <- rbeta(100, alphaconv(depo, min(depo * Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])), 
+                  betaconv(depo, min(depo * Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
     Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
     Mdb <- trlnorm(100, Data@Mort[x], Data@CV_Mort[x])
     Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
-    if (is.na(Mdb)) 
-      Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
+    if (is.na(Mdb)) Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
     FMSY_M <- trlnorm(1, Data@FMSY_M[x], Data@CV_FMSY_M[x])
-    BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
-      Data@BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
-      Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+    BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] *  Data@BMSY_B0[x]), 
+                    betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
     tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
     if (is.na(tryBMSY_K)) {
       Min <- min(BMSY_K, na.rm = TRUE)
@@ -1727,14 +1723,12 @@ DBSRA <- function(x, Data, reps = 100) {
       if (Min >= 0.95) 
         BMSY_K <- 0.95
     }
-    if (!is.na(tryBMSY_K)) 
-      BMSY_K <- tryBMSY_K
+    if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
     
-    adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
-      Data@L50[x])), 1)
-    opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist), 1000 * mean(C_hist))), 
-      C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
-      BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+    adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])), 1)
+    opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist), 1000 * mean(C_hist))), C_hist = C_hist, 
+                    nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, BMSY_K = BMSY_K, 
+                    Bt_K = Bt_K, adelay = adelay, tol = 0.01)
     # if(opt$objective<0.1){
     Kc <- exp(opt$minimum)
     BMSYc <- Kc * BMSY_K
@@ -1781,8 +1775,7 @@ DBSRA_40 <- function(x, Data, reps = 100) {
   C_hist <- Data@Cat[x, ]
   TAC <- rep(NA, reps)
   DBSRAcount <- 1
-  if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) 
-    return(NA)
+  if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x]))   return(NA)
   while (DBSRAcount < (reps + 1)) {
     depo <- 0.4
     Bt_K <- rbeta(100, alphaconv(depo, min(depo * Data@CV_Dep[x], 
@@ -1799,9 +1792,17 @@ DBSRA_40 <- function(x, Data, reps = 100) {
     BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
       Data@BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
       Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-    BMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
-    adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
-      Data@L50[x])), 1)
+    tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
+    if (is.na(tryBMSY_K)) {
+      Min <- min(BMSY_K, na.rm = TRUE)
+      Max <- max(BMSY_K, na.rm = TRUE)
+      if (Max <= 0.05) 
+        BMSY_K <- 0.05
+      if (Min >= 0.95) 
+        BMSY_K <- 0.95
+    }
+    if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
+    adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])), 1)
     opt <- optimize(DBSRAopt, log(c(0.1 * mean(C_hist), 1000 * mean(C_hist))), 
       C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
       BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
@@ -1845,16 +1846,15 @@ DBSRA_ML <- function(x, Data, reps = 100) {
   DBSRAcount <- 1
   maxIts <- 200
   nIts <- 0
-  if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) 
-    return(NA)
+  if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) return(NA)
   while (DBSRAcount < (reps + 1) & nIts < maxIts) {
     Linfc <- trlnorm(1, Data@vbLinf[x], Data@CV_vbLinf[x])
     Kc <- trlnorm(1, Data@vbK[x], Data@CV_vbK[x])
     Mdb <- trlnorm(100, Data@Mort[x], Data@CV_Mort[x])
     Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
-    if (is.na(Mdb)) 
-      Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
+    if (is.na(Mdb)) Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
     Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = 1, MLtype = "dep")
+    if (all(is.na(Z))) return(rep(NA, reps))
     FM <- Z - Mdb
     FM[FM < 0] <- 0.01
     nyears <- length(Data@Year)
@@ -1863,18 +1863,28 @@ DBSRA_ML <- function(x, Data, reps = 100) {
     # dep<-c(Ct1,Ct2)/(1-exp(-FM[,c(1,2)]))
     dep <- c(Ct1, Ct2)/(1 - exp(-FM))
     Bt_K <- dep[2]/dep[1]
-    if (Bt_K < 0.01) 
-      Bt_K <- 0.01  # interval censor / temporary hack to avoid doing multiple depletion estimates that would take far too long
-    if (Bt_K > 0.99) 
-      Bt_K <- 0.99  # interval censor / temporary hack to avoid doing multiple depletion estimates that would take far too long
+    
+    if (Bt_K < 0.01) Bt_K <- 0.01  # interval censor / temporary hack to avoid doing multiple depletion estimates that would take far too long
+    if (Bt_K > 0.99) Bt_K <- 0.99  # interval censor / temporary hack to avoid doing multiple depletion estimates that would take far too long
+    
     
     FMSY_M <- trlnorm(1, Data@FMSY_M[x], Data@CV_FMSY_M[x])
     BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
       Data@BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
       Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-    BMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
-    adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
-      Data@L50[x])), 1)
+    tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
+    
+    if (is.na(tryBMSY_K)) {
+      Min <- min(BMSY_K, na.rm = TRUE)
+      Max <- max(BMSY_K, na.rm = TRUE)
+      if (Max <= 0.05) 
+        BMSY_K <- 0.05
+      if (Min >= 0.95) 
+        BMSY_K <- 0.95
+    }
+    if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
+    if (all(is.na(BMSY_K))) return(rep(NA, reps))
+    adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])), 1)
     opt <- optimize(DBSRAopt, log(c(0.1 * mean(C_hist), 1000 * mean(C_hist))), 
       C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
       BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
@@ -1938,7 +1948,16 @@ DBSRA4010 <- function(x, Data, reps = 100) {
     BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
       Data@BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
       Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-    BMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
+    tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
+    if (is.na(tryBMSY_K)) {
+      Min <- min(BMSY_K, na.rm = TRUE)
+      Max <- max(BMSY_K, na.rm = TRUE)
+      if (Max <= 0.05) 
+        BMSY_K <- 0.05
+      if (Min >= 0.95) 
+        BMSY_K <- 0.95
+    }
+    if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
     adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
       Data@L50[x])), 1)
     opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist), 1000 * mean(C_hist))), 
@@ -2160,6 +2179,7 @@ DCAC_ML <- function(x, Data, reps = 100) {
   Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
   Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps, MLtype = "dep")
+  if (all(is.na(Z))) return(rep(NA, reps))
   FM <- Z - Mdb
   nyears <- length(Data@Year)
   Ct1 <- mean(Data@Cat[x, 1:3])
@@ -2284,6 +2304,7 @@ BK_ML <- function(x, Data, reps = 100) {
   Kc <- trlnorm(reps * 10, Data@vbK[x], Data@CV_vbK[x])
   Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])
   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
+  if (all(is.na(Z))) return(rep(NA, reps))
   FM <- Z - Mdb
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
   Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
@@ -2444,8 +2465,8 @@ Fratio_ML <- function(x, Data, reps = 100) {
   Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
   Linfc <- trlnorm(reps * 10, Data@vbLinf[x], Data@CV_vbLinf[x])
   Kc <- trlnorm(reps * 10, Data@vbK[x], Data@CV_vbK[x])
-  Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, 
-    MLtype = "F")
+  Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
+  if (all(is.na(Z))) return(rep(NA, reps))
   FM <- Z - Mdb
   Ac <- Cc/(1 - exp(-FM))
   TAC <- Ac * trlnorm(reps * 10, Data@FMSY_M[x], Data@CV_FMSY_M[x]) * 
@@ -2742,8 +2763,8 @@ SPSRA_ML <- function(x, Data, reps = 100) {
   hvec <- trlnorm(reps, Data@steep[x], Data@CV_steep[x])
   rsamp <- getr(x, Data, Mvec, Kvec, Linfvec, t0vec, hvec, maxage = Data@MaxAge, 
     r_reps = reps)
-  Z <- MLne(x, Data, Linfc = Linfvec, Kc = Kvec, ML_reps = reps, 
-    MLtype = "dep")
+  Z <- MLne(x, Data, Linfc = Linfvec, Kc = Kvec, ML_reps = reps,  MLtype = "dep")
+  if (all(is.na(Z))) return(rep(NA, reps))
   FM <- Z - Mvec
   nyears <- length(Data@Year)
   Ct1 <- mean(Data@Cat[x, 1:3])
@@ -2910,8 +2931,8 @@ YPR_ML <- function(x, Data, reps = 100) {
   b <- Data@wlb[x]
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
   Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
-  Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, 
-    MLtype = "F")
+  Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
+  if (all(is.na(Z))) return(rep(NA, reps))
   FM <- Z - Mdb
   Ac <- Cc/(1 - exp(-FM))
   FMSY <- YPRopt(Linfc, Kc, t0c, Mdb, a, b, LFS, Data@MaxAge, reps * 
@@ -3074,12 +3095,11 @@ Fdem_ML <- function(x, Data, reps = 100) {
   hvec <- trlnorm(reps * 10, Data@steep[x], Data@CV_steep[x])
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
   Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
-  Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, 
-    MLtype = "F")
+  Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
+  if (all(is.na(Z))) return(rep(NA, reps))
   FM <- Z - Mvec
   Ac <- Cc/(1 - exp(-FM))
-  FMSY <- getr(x, Data, Mvec, Kc, Linfc, t0c, hvec, maxage = Data@MaxAge, 
-    r_reps = reps * 10)/2
+  FMSY <- getr(x, Data, Mvec, Kc, Linfc, t0c, hvec, maxage = Data@MaxAge, r_reps = reps * 10)/2
   TAC <- FMSY * Ac
   TAC <- TAC[TAC > 0][1:reps]
   TACfilter(TAC)
@@ -3473,8 +3493,7 @@ MLne <- function(x, Data, Linfc, Kc, ML_reps = 100, MLtype = "dep") {
   year <- 1:dim(Data@CAL)[2]
   nlbin <- ncol(Data@CAL[x, , ])
   nlyr <- nrow(Data@CAL[x, , ])
-  mlbin <- (Data@CAL_bins[1:nlbin] + Data@CAL_bins[2:(nlbin + 
-    1)])/2
+  mlbin <- (Data@CAL_bins[1:nlbin] + Data@CAL_bins[2:(nlbin + 1)])/2
   nbreaks <- 1
   Z <- matrix(NA, nrow = ML_reps, ncol = nbreaks + 1)
   Z2 <- rep(NA, ML_reps)
@@ -3490,25 +3509,24 @@ MLne <- function(x, Data, Linfc, Kc, ML_reps = 100, MLtype = "dep") {
     ss <- ceiling(apply(Data@CAL[x, , ], 1, sum)/2)
     if (MLtype == "dep") {
       for (y in 1:length(year)) {
-        if (sum(Data@CAL[x, y, ] > 0) > 0.25 * length(Data@CAL[x, 
-          y, ])) {
-          temp2 <- sample(mlbin, ceiling(sum(Data@CAL[x, y, 
-          ])/2), replace = T, prob = Data@CAL[x, y, ])
+        if (sum(Data@CAL[x, y, ] > 0) > 0.25 * length(Data@CAL[x, y, ])) {
+          temp2 <- sample(mlbin, ceiling(sum(Data@CAL[x, y, ])/2), replace = T, prob = Data@CAL[x, y, ])
           mlen[y] <- mean(temp2[temp2 >= Lc], na.rm = TRUE)
         }
       }
-      Z[i, ] <- bhnoneq(year = year, mlen = mlen, ss = ss, K = Kc[i], 
-        Linf = Linfc[i], Lc = Lc, nbreaks = nbreaks, styrs = ceiling(length(year) * 
-          ((1:nbreaks)/(nbreaks + 1))), stZ = rep(Data@Mort[x], 
-          nbreaks + 1))
+      
+      fitmod <- bhnoneq(year = year, mlen = mlen, ss = ss, K = Kc[i], Linf = Linfc[i], 
+                        Lc = Lc, nbreaks = nbreaks, styrs = ceiling(length(year) * ((1:nbreaks)/(nbreaks + 1))), 
+                        stZ = rep(Data@Mort[x], nbreaks + 1))
+      if (all(fitmod == FALSE)) {
+        Z[i, ] <- NA
+      } else Z[i, ] <- fitmod
     } else {
       
       # ind<-(which.min(((Data@CAL_bins-Data@LFS[x])^2)^0.5)-1):(length(Data@CAL_bins)-1)
       for (y in 1:length(year)) {
-        if (sum(Data@CAL[x, y, ] > 0) > 0.25 * length(Data@CAL[x, 
-          y, ])) {
-          temp2 <- sample(mlbin, ceiling(sum(Data@CAL[x, y, 
-          ])/2), replace = T, prob = Data@CAL[x, y, ])
+        if (sum(Data@CAL[x, y, ] > 0) > 0.25 * length(Data@CAL[x, y, ])) {
+          temp2 <- sample(mlbin, ceiling(sum(Data@CAL[x, y, ])/2), replace = T, prob = Data@CAL[x, y, ])
           mlen[y] <- mean(temp2[temp2 >= Lc], na.rm = TRUE)
         }
       }
@@ -3528,16 +3546,20 @@ bheq <- function(K, Linf, Lc, Lbar) {
 }
 
 bhnoneq <- function(year, mlen, ss, K, Linf, Lc, nbreaks, styrs, stZ) {
+ 
   mlen[mlen <= 0 | is.na(mlen)] <- -99
   ss[ss <= 0 | is.na(ss) | mlen == -99] <- 0
   stpar <- c(stZ, styrs)
+  
   # results <-
   # optim(stpar,bhnoneq_LL,method='BFGS',year=year,Lbar=mlen,ss=ss,
   # nbreaks=nbreaks,K=K,Linf=Linf,Lc=Lc,control=list(maxit=1e6))
-  results <- optim(stpar, bhnoneq_LL, method = "Nelder-Mead", year = year, 
+  results <- try(optim(stpar, bhnoneq_LL, method = "Nelder-Mead", year = year, 
     Lbar = mlen, ss = ss, nbreaks = nbreaks, K = K, Linf = Linf, Lc = Lc, 
-    control = list(maxit = 1e+06), hessian = FALSE)
-  return(results$par[1:(nbreaks + 1)])
+    control = list(maxit = 1e+06), hessian = FALSE), silent=TRUE)
+  if (class(results) == "try-error") {
+    return(FALSE)
+  } else return(results$par[1:(nbreaks + 1)])
 }
 
 getdep <- function(lnFF, targ, Md, Linfd, Kd, t0d, AFSd, ad, bd, maxage, 

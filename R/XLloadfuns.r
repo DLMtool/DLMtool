@@ -31,8 +31,11 @@ OM_xl <- function(fname, stkname, fpath = "", saveCSV = FALSE) {
   infile <- paste0(fpath, fname)  # full path and name 
   shtname <- readxl::excel_sheets(infile)  # names of the sheets 
   # Stock
-  stock <- readxl::read_excel(infile, sheet = grep(paste0(stkname, "Stock"), shtname), col_names = FALSE)
-  stock <- as.data.frame(stock)
+  sheet <- grep(paste0(stkname, "Stock"), shtname)
+  if(length(sheet)<1) stop("No Stock sheet found. Looking for: ", paste0(stkname, "Stock"))
+  stock <- readxl::read_excel(infile, sheet = sheet, col_names = FALSE)
+  stock <- as.data.frame(stock) 
+  if (all(dim(stock) == 0)) stop("No data found in Stock tab")
   tmpfile <- paste0(fpath, stkname, "Stock.csv")
   if (file.exists(tmpfile)) unlink(tmpfile)
   writeCSV(inobj = stock, tmpfile, objtype = "Stock")
@@ -42,8 +45,12 @@ OM_xl <- function(fname, stkname, fpath = "", saveCSV = FALSE) {
   # Fleet
   index <- which(pmatch(shtname, paste0(stkname, "Fleet")) == 1)
   if (length(index) > 1) stop("More than one match")
+  
+  if(length(index)<1) stop("No Fleet sheet found. Looking for: ", paste0(stkname, "Fleet"))
+  
   fleet <- readxl::read_excel(infile, sheet = index, col_names = FALSE)
   fleet <- as.data.frame(fleet)
+  if (all(dim(fleet) == 0)) stop("No data found in Fleet tab")
   tmpfile <- paste0(fpath, stkname, "Fleet.csv")
   if (file.exists(tmpfile)) unlink(tmpfile)
   writeCSV(inobj = fleet, tmpfile, objtype = "Fleet")
@@ -53,8 +60,10 @@ OM_xl <- function(fname, stkname, fpath = "", saveCSV = FALSE) {
   # Observation
   index <- which(pmatch(shtname, paste0(stkname, "Obs")) == 1)
   if (length(index) > 1) stop("More than one match")
+  if(length(index)<1) stop("No Obs sheet found. Looking for: ", paste0(stkname, "Obs")) 
   obs <- readxl::read_excel(infile, sheet = index, col_names = FALSE)
   obs <- as.data.frame(obs)
+  if (all(dim(obs) == 0)) stop("No data found in Obs tab")
   tmpfile <- paste0(fpath, stkname, "Obs.csv")
   if (file.exists(tmpfile)) unlink(tmpfile)
   writeCSV(inobj = obs, tmpfile, objtype = "Obs")
@@ -64,11 +73,13 @@ OM_xl <- function(fname, stkname, fpath = "", saveCSV = FALSE) {
   # Implementation
   index <- which(pmatch(shtname, paste0(stkname, "Imp")) == 1)
   if (length(index) > 1)  stop("More than one match")
-  obs <- readxl::read_excel(infile, sheet = index, col_names = FALSE)
-  obs <- as.data.frame(obs)
+  if(length(index)<1) stop("No Imp sheet found. Looking for: ", paste0(stkname, "Imp")) 
+  imp <- readxl::read_excel(infile, sheet = index, col_names = FALSE)
+  imp <- as.data.frame(imp)
+  if (all(dim(imp) == 0)) stop("No data found in Imp tab")
   tmpfile <- paste0(fpath, stkname, "Imp.csv")
   if (file.exists(tmpfile)) unlink(tmpfile)
-  writeCSV(inobj = obs, tmpfile, objtype = "Imp")
+  writeCSV(inobj = imp, tmpfile, objtype = "Imp")
   tmpimp <- new("Imp", tmpfile)
   if (!saveCSV) unlink(tmpfile)
   

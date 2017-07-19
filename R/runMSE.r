@@ -531,7 +531,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                               vn[i,,], Len_age[i,,], LatASD[i,,], truncSD=2) 
     LFC[i] <- CAL_binsmid[min(which(round(CAL[i,nyears, ],0) >= 1))] # get the smallest CAL observation	  
   }
-  
+
   # --- Simulate index of abundance from total biomass ----
   Ierr <- array(rlnorm((nyears + proyears) * nsim, mconv(1, rep(Isd, nyears + proyears)), 
                        sdconv(1, rep(Isd, nyears + proyears))), c(nsim, nyears + proyears))

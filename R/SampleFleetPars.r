@@ -180,6 +180,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
       s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
                                                 LFS = LFS[1, i], L0.05 = L5[1,i])$minimum)	
       if (all(Vmaxlen >= 0.99)) s2 <- rep(1E5, nsim)
+      Vmaxlen[Vmaxlen ==0] <- 0.001 # fix for when Vmaxlen == 0 
       if (!all(Vmaxlen >= 0.99)) 
         s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
                                                   LFS = LFS[1,i], s1=s1[i], maxlen=maxlen[i], 
@@ -190,6 +191,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
         # Calculate selectivity at length class 
         SLarray[,, yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[1,i], s1[i], s2[i], lens=CAL_binsmid)))   
       }	 
+      
     }
     
     if (Selnyears > 1) {
@@ -260,7 +262,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   LFR <- matrix(LFR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
   Rmaxlen <- matrix(Rmaxlen, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
   DR <- matrix(DR, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
-  
+  Rmaxlen[Rmaxlen == 0] <- 0.001
   
   s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
                                             LFS = LFR[1, i], L0.05 = LR5[1,i])$minimum)
