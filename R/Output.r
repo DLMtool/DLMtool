@@ -1606,8 +1606,29 @@ DD4010 <- function(x, Data, reps = 100) {
 }
 class(DD4010) <- "Output"
 
-DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, 
-  E_hist, C_hist, UMSYprior) {
+
+
+
+#' Internal optimization function for delay-difference MPs
+#'
+#' @param params vector of length 3 with log parameters
+#' @param opty optimization option
+#' @param So_DD internal parameter
+#' @param Alpha_DD  internal parameter
+#' @param Rho_DD  internal parameter
+#' @param ny_DD  internal parameter
+#' @param k_DD  internal parameter
+#' @param wa_DD  internal parameter
+#' @param E_hist  internal parameter
+#' @param C_hist  internal parameter
+#' @param UMSYprior  internal parameter
+#'
+#' @author T. Carruthers
+#' @keywords internal
+#' @export
+#'
+DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hist, 
+                 C_hist, UMSYprior) {
   UMSY_DD = exp(params[1])
   MSY_DD = exp(params[2])
   q_DD = exp(params[3])

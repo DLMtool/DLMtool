@@ -255,6 +255,7 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
   
   OM@cpars<-list(V=V,Perr=Perr,Wt_age=Wt_age2,K=K,Linf=Linf,hs=hs,Find=Find)
   # attr(OM, "build") <- "SS2DLM"
+  OM@seed <- 1
   OM
   
 }
