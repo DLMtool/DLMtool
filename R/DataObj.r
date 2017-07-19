@@ -9,11 +9,12 @@ DLMdiag <- function(Data, command = "available", reps = 5, timelimit = 1, funcs1
   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
   Data <- updateMSE(Data)
   if (all(is.na(funcs1))) funcs1 <- c(avail("Output"), avail("Input"))
+  mpclasses <- MPclass(funcs1)
+  funcs1 <- funcs1[mpclasses %in% c("Output", "Input", "Reference")]
   good <- rep(TRUE, length(funcs1))
   report <- rep("Worked fine", length(funcs1))
   test <- new("list")
   timey <- new("list")
-  options(show.error.messages = FALSE)
   on.exit(options(show.error.messages = TRUE))
   for (y in 1:length(funcs1)) {
     # First check for required data slots that are not NA
@@ -40,7 +41,9 @@ DLMdiag <- function(Data, command = "available", reps = 5, timelimit = 1, funcs1
         time1 <- Sys.time()
         suppressWarnings({
           setTimeLimit(timelimit * 1.5)
+          options(show.error.messages = FALSE)
           test[[y]] <- try(do.call(funcs1[y], list(x = 1, Data = Data, reps = 5)), silent = T)
+          options(show.error.messages = TRUE)
           if (class(test[[y]]) == "list") test[[y]] <- test[[y]][[1]]
           setTimeLimit(Inf)
         })
@@ -48,7 +51,9 @@ DLMdiag <- function(Data, command = "available", reps = 5, timelimit = 1, funcs1
         time1 <- Sys.time()
         suppressWarnings({
           setTimeLimit(timelimit * 1.5)
+          options(show.error.messages = FALSE)
           test[[y]] <- try(do.call(funcs1[y], list(x = 1, Data = Data)), silent = T)
+          options(show.error.messages = TRUE)
           setTimeLimit(Inf)
         })
       }      

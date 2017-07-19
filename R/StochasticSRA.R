@@ -165,7 +165,7 @@ StochasticSRA <-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proye
                           burnin=1000,thin=50,ESS=300,ploty=T,nplot=6,SRAdir=NA){
   
   
-  OM <- ChkObj(OM) # Check that all required slots in OM object contain values 
+  OM <- updateMSE(OM) # Check that all required slots in OM object contain values 
   nyears<-length(Chist)
   if(class(Chist)=="matrix")nyears<-nrow(Chist)
   maxage<-OM@maxage
@@ -175,8 +175,15 @@ StochasticSRA <-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proye
   }
     
   
-  if (dim(CAA)[2] != OM@maxage) stop("Number of CAA columns (", dim(CAA)[2], ") does not equal OM@maxage (",  OM@maxage, ")")
   if (dim(CAA)[1] != nyears) stop("Number of CAA rows (", dim(CAA)[1], ") does not equal nyears (", nyears, "). NAs are acceptable")
+  if (dim(CAA)[2] != OM@maxage) {
+    message("Number of CAA columns (", dim(CAA)[2], ") does not equal OM@maxage (",  OM@maxage, ")")
+    message("Assuming no CAA for ages greater than ", dim(CAA)[2], ' and filling with 0s')
+    addages <- OM@maxage-dim(CAA)[2]
+    CAA2 <- matrix(0, nrow=nrow(CAA), ncol=addages)
+    CAA <- cbind(CAA, CAA2)
+  }
+  
   
   if (burnin < 0.05*nits) burnin <- 0.05 * nits
   
@@ -196,7 +203,9 @@ StochasticSRA <-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proye
   
   
   # Sample Stock Parameters 
+  options(warn=-1)
   StockPars <- SampleStockPars(OM, nsim, nyears, proyears, SampCpars)
+  options(warn=1)
   # Assign Stock pars to function environment
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
   agearr<-array(rep(1:maxage,each=nsim),c(nsim,maxage))
@@ -204,8 +213,10 @@ StochasticSRA <-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proye
   
   
   # Sample Fleet Parameters 
-  FleetPars <- SampleFleetPars(SubOM(OM, "Fleet"), Stock=StockPars, nsim, nyears, proyears, 
-                               cpars=SampCpars)
+  options(warn=-1)
+  FleetPars <- SampleFleetPars(SubOM(OM, "Fleet"), Stock=StockPars, nsim, 
+                               nyears, proyears, cpars=SampCpars)
+  options(warn=1)
   # Assign Fleet pars to function environment
   for (X in 1:length(FleetPars)) assign(names(FleetPars)[X], FleetPars[[X]])
   
@@ -286,7 +297,6 @@ StochasticSRA <-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proye
   
   if (snowfall::sfIsRunning()) {
     mcmc <- snowfall::sfSapply(1:nsim, function(sim) {
-      cat(".")
       LSRA_MCMC_sim(nits=nits, pars[sim,], JumpCV, adapt, parLB[sim,], parUB[sim,], R0ind-1, 
                     inflind-1, slpind-1, RDind-1, nyears, maxage, M[sim], Mat_age[sim,], 
                     Wt_age[sim,], Chist_a[sim,], Umax, hs[sim], CAA, CAAadj, sigmaR)

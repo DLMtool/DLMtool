@@ -3917,12 +3917,13 @@ L95target <- function(x, Data, reps = 100, yrsmth = 5, buffer = 0) {
 class(L95target) <- "Output"
 
 
-
 #' Mean index ratio MP from Jardim et al. 2015
 #' 
 #' The TAC is adjusted by the ratio alpha, where the numerator 
 #' being the mean index in the most recent two years of the time series and the denominator
 #' being the mean index in the three years prior to those in the numerator.
+#' 
+#' This MP is the stochastic version of Method 3.2 used by ICES for Data-Limited Stocks (ICES 2012).
 #' 
 #' @param x A position in data-limited methods data object
 #' @param Data A data-limited methods data object
@@ -3933,6 +3934,10 @@ class(L95target) <- "Output"
 #' data limited stocks using length-based reference points and survey biomass indices, 
 #' Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836, 
 #' https://doi.org/10.1016/j.fishres.2014.11.013
+#' 
+#' ICES. 2012. ICES Implementation of Advice for Data-limited Stocks in 2012 in its 2012
+#' Advice. ICES CM 2012/ACOM 68. 42 pp.
+
 Iratio <- function(x, Data, reps, yrs = c(2, 5)) {
   dependencies = "Data@Ind, Data@CV_Ind, Data@Cat, Data@CV_Cat"
   
@@ -3954,12 +3959,15 @@ Iratio <- function(x, Data, reps, yrs = c(2, 5)) {
 }
 class(Iratio) <- "Output"
 
-
-#' Index Confidence Interval MP by Jardim et al. (2015)
+#' Index Confidence Interval (ICI) MP by Jardim et al. (2015)
 #' 
 #' The MP adjusts catch based on the value of the index in the current year relative to the 
 #' time series mean and standard error.
-#' There are two thresholds which delineates whether catch is reduced, held constant, or increased.
+#'  
+#' The mean and standard error of the index time series is calculated. There are two thresholds 
+#' which delineates whether catch is reduced, held constant, or increased. The catch is reduced by 0.75
+#' if the Z-score of the current year's index is less than -0.44. The catch is increased by 1.05
+#' if the Z-score of the current year's index is greater than 1.96. Otherwise, the catch is held constant.
 #' 
 #' @param x A position in data-limited methods data object
 #' @param Data A data-limited methods data object
@@ -3982,8 +3990,8 @@ ICI <- function(x, Data, reps) {
   sigmaI <- apply(Ind.samp, 2, sd, na.rm = TRUE)
   
   Ind <- Ind.samp[nI, ]
-  z.low <- qnorm(0.33)
-  z.upp <- qnorm(0.974)
+  z.low <- -0.44 #qnorm(0.33)
+  z.upp <- 1.96 #qnorm(0.974)
   
   ci.low <- muI + z.low * sigmaI / sqrt(nI)
   ci.high <- muI + z.upp * sigmaI / sqrt(nI)
@@ -4002,14 +4010,18 @@ ICI <- function(x, Data, reps) {
 class(ICI) <- "Output"
 
 
-#' Less Precautionary Index Confidence Interval MP by Jardim et al. (2015)
+
+#' Less Precautionary Index Confidence Interval (ICI) MP by Jardim et al. (2015)
 #' 
 #' The MP adjusts catch based on the value of the index in the current year relative to the 
-#' time series mean and standard error.
-#' There are two thresholds which delineates whether catch is reduced, held constant, or increased.
-#' This method is less precautionary of the two ICI MPs by allowing for a larger increase in TAC
+#' time series mean and standard error. This method is less precautionary of the two ICI MPs by allowing for a larger increase in TAC
 #' and a lower threshold of the index to decrease the TAC (see Jardim et al. 2015).
 #' 
+#' The mean and standard error of the index time series is calculated. There are two thresholds 
+#' which delineates whether catch is reduced, held constant, or increased. The catch is reduced by 0.75
+#' if the Z-score of the current year's index is less than -1.96. The catch is increased by 1.25
+#' if the Z-score of the current year's index is greater than 1.96. Otherwise, the catch is held constant.
+#'  
 #' @param x A position in data-limited methods data object
 #' @param Data A data-limited methods data object
 #' @param reps The number of TAC samples
@@ -4031,8 +4043,8 @@ ICI2 <- function(x, Data, reps) {
   sigmaI <- apply(Ind.samp, 2, sd, na.rm = TRUE)
   
   Ind <- Ind.samp[nI, ]
-  z.low <- qnorm(0.025)
-  z.upp <- qnorm(0.975)
+  z.low <- -1.96 #qnorm(0.025)
+  z.upp <- 1.96 #qnorm(0.975)
   
   ci.low <- muI + z.low * sigmaI / sqrt(nI)
   ci.high <- muI + z.upp * sigmaI / sqrt(nI)
@@ -4051,13 +4063,16 @@ ICI2 <- function(x, Data, reps) {
 class(ICI2) <- "Output"
 
 
-#'  Mean length-based indicator MP of Jardim et al. 2015 using Beverton-Holt invariant 
-#'  M/K ratio = 1.5 and assumes FMSY = M.
+#' Mean length-based indicator MP of Jardim et al. 2015 using Beverton-Holt invariant 
+#' M/K ratio = 1.5 and assumes FMSY = M.
 #' 
 #' The TAC is adjusted by the ratio alpha, where the numerator 
-#' is the mean length of the catch and the denominator is the mean length expected
-#' when FMSY = M and M/K = 1.5. Natural mortality M and von Bertalanffy K are not used in this MP 
-#' (see Appendix A of Jardim et al. 2015).
+#' is the mean length of the catch (of lengths larger than Lc) and 
+#' the denominator is the mean length expected when FMSY = M and M/K = 1.5. 
+#' Natural mortality M and von Bertalanffy K are not used in this MP 
+#' (see Appendix A of Jardim et al. 2015). Here, Lc is the length at 
+#' full selection (LFS).
+#' 
 #' Argument yrsmth currently takes the mean length of the most recent 3 years of data 
 #' as a smoother.
 #' 
@@ -4071,11 +4086,11 @@ class(ICI2) <- "Output"
 #' Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836, 
 #' https://doi.org/10.1016/j.fishres.2014.11.013
 Lratio_BHI <- function(x, Data, reps, yrsmth = 3) {
-  dependencies = "Data@vb_Linf, Data@CV_vbLinf, Data@Cat, Data@CV_Cat, Data@CAL, Data@CAL_bins"
+  dependencies = "Data@vb_Linf, Data@CV_vbLinf, Data@Cat, Data@CV_Cat, Data@CAL, Data@CAL_bins,
+  Data@LFS, Data@CV_LFS"
   Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
-  L50c <- trlnorm(reps, Data@L50[x], Data@CV_L50[x])
-  L25c <- L50c + (-log(3)/log(19)) * (Data@L95[x] - L50c)
-  Lref <- 0.75 * L25c + 0.25 * Linfc
+  Lc <- trlnorm(reps, Data@LFS[x], Data@CV_LFS[x])
+  Lref <- 0.75 * Lc + 0.25 * Linfc
   
   Cat <- Data@Cat[x, length(Data@Cat[x, ])]
   Cc <- trlnorm(reps, Cat, Data@CV_Cat[x])
@@ -4102,9 +4117,11 @@ class(Lratio_BHI) <- "Output"
 #' The more general version of the mean length-based indicator MP of Jardim et al. 2015.
 #' 
 #' The TAC is adjusted by the ratio alpha, where the numerator 
-#' is the mean length of the catch and the denominator is the mean length expected
-#' when FMSY = M and M/K = 1.5. Natural mortality M and von Bertalanffy K are not used in this MP 
-#' (see Appendix A of Jardim et al. 2015).
+#' is the mean length of the catch (of lengths larger than Lc) 
+#' and the denominator is the mean length as a function of Linf,
+#' FMSY/M, and M/K (see Appendix A of Jardim et al. 2015). Here, 
+#' Lc is the length at full selection (LFS).
+#' 
 #' Argument yrsmth currently takes the mean length of the most recent 3 years of data 
 #' as a smoother.
 #' 
@@ -4119,18 +4136,18 @@ class(Lratio_BHI) <- "Output"
 #' https://doi.org/10.1016/j.fishres.2014.11.013
 Lratio_BHI2 <- function(x, Data, reps, yrsmth = 3) {
   
-  dependencies = "Data@vb_Linf, Data@CV_vbLinf, Data@L50, Data@CV_L50, Data@L95, Data@Cat, Data@CV_Cat, 
-  Data@CAL, Data@CAL_bins, Data@FMSY_M, Data@CV_FMSY_M"
+  dependencies = "Data@vb_Linf, Data@CV_vbLinf, Data@Cat, Data@CV_Cat, Data@Mort, Data@CV_Mort,
+  Data@vb_K, Data@CV_vbK, Data@FMSY_M, Data@CV_FMSY_M, Data@CAL, Data@CAL_bins,
+  Data@LFS, Data@CV_LFS"
   Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
-  L50c <- trlnorm(reps, Data@L50[x], Data@CV_L50[x])
-  L25c <- L50c + (-log(3)/log(19)) * (Data@L95[x] - L50c)
+  Lc <- trlnorm(reps, Data@LFS[x], Data@CV_LFS[x])
   
   Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
   Kvec <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
   gamma <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
   theta <- Kvec/Mvec
   
-  Lref <- (theta * Linfc + L25c * (gamma + 1)) / (gamma + theta + 1)
+  Lref <- (theta * Linfc + Lc * (gamma + 1)) / (gamma + theta + 1)
   
   Cat <- Data@Cat[x, length(Data@Cat[x, ])]
   Cc <- trlnorm(reps, Cat, Data@CV_Cat[x])

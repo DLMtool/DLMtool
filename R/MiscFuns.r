@@ -148,7 +148,7 @@ avail <- function(classy) {
 #' @author T. Carruthers
 #' @return TRUE or FALSE
 #' @export getclass
-getclass <- function(x, classy) class(get(x)) == classy # inherits(get(x), classy) - this gives a problem since we now inherit Stock etc in OM
+getclass <- function(x, classy) any(class(get(x)) == classy) # inherits(get(x), classy) - this gives a problem since we now inherit Stock etc in OM
 
 #' What methods need what data
 #' 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/Output.r
 \name{ICI2}
 \alias{ICI2}
-\title{Less Precautionary Index Confidence Interval MP by Jardim et al. (2015)}
+\title{Less Precautionary Index Confidence Interval (ICI) MP by Jardim et al. (2015)}
 \usage{
 ICI2(x, Data, reps)
 }
@@ -15,10 +15,14 @@ ICI2(x, Data, reps)
 }
 \description{
 The MP adjusts catch based on the value of the index in the current year relative to the 
-time series mean and standard error.
-There are two thresholds which delineates whether catch is reduced, held constant, or increased.
-This method is less precautionary of the two ICI MPs by allowing for a larger increase in TAC
+time series mean and standard error. This method is less precautionary of the two ICI MPs by allowing for a larger increase in TAC
 and a lower threshold of the index to decrease the TAC (see Jardim et al. 2015).
+}
+\details{
+The mean and standard error of the index time series is calculated. There are two thresholds 
+which delineates whether catch is reduced, held constant, or increased. The catch is reduced by 0.75
+if the Z-score of the current year's index is less than -1.96. The catch is increased by 1.25
+if the Z-score of the current year's index is greater than 1.96. Otherwise, the catch is held constant.
 }
 \references{
 Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for 

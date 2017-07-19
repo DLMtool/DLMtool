@@ -431,9 +431,17 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
       .Object@R0 <- as.numeric(dat[match("R0", dname), 1])
       options(warn=-1)
       temp <- as.numeric(dat[match("M", dname), 1:Ncol])
-      .Object@M <- temp[!is.na(temp)]
+      .Object@M <- temp
+      nas <- which(is.na(temp))
+      if (length(nas) > 0) {
+        .Object@M <- temp[1:(nas[1]-1)]
+      }
       temp <- as.numeric(dat[match("M2", dname), 1:Ncol])
-      .Object@M2 <- temp[!is.na(temp)]
+      .Object@M2 <- temp
+      nas <- which(is.na(temp))
+      if (length(nas) > 0) {
+        .Object@M2 <- temp[1:(nas[1]-1)]
+      }
       options(warn=1)
       .Object@Msd <- as.numeric(dat[match("Msd", dname), 1:2])
       .Object@Mgrad <- as.numeric(dat[match("Mgrad", dname), 1:2])
