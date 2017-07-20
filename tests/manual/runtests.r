@@ -11,4 +11,3 @@ test_file("manual/test-plotting.r")
 test_file("manual/test-builtin.r") # takes about 9 hours 
 
 # Test all OMs with all MPs 
-test_file("tests/manual/test-overnight.r") # takes a long time!

@@ -7,8 +7,8 @@
 #' @param x Optional vector for x-axis
 #' @param y Optional vector for y-axis
 #' @author A. Hordyk
-#' @export ChooseMort
-ChooseMort <- function(OM, type=c("age", "length"), x=NULL, y=NULL) {
+#' @export ChooseM
+ChooseM <- function(OM, type=c("age", "length"), x=NULL, y=NULL) {
  
   type <- match.arg(type)
   if (class(OM) != "OM") stop("First argument must be object of class 'OM'", call.=FALSE)
@@ -18,7 +18,7 @@ ChooseMort <- function(OM, type=c("age", "length"), x=NULL, y=NULL) {
   if (type == "age") {
     if (is.null(x)) x <- 1:OM@maxage
     xlab <- "Age Class"
-    runSketch <- SketchMort(x, y, xlab, ylab)  
+    runSketch <- SketchM(x, y, xlab, ylab)  
     M1 <- approx(x = runSketch[,1], y = runSketch[,2], xout=x, method = "linear")$y  # linear interpolation
     M2 <- approx(x = runSketch[,1], y = runSketch[,3], xout=x, method = "linear")$y  # linear interpolation
     OM@M <- M1 
@@ -28,7 +28,7 @@ ChooseMort <- function(OM, type=c("age", "length"), x=NULL, y=NULL) {
   if (type == "length") {
     if (is.null(x)) x <- seq(from=0, to=max(OM@Linf), 5)
     xlab <- "Length Class"
-    runSketch <- SketchMort(x, y, xlab, ylab)  
+    runSketch <- SketchM(x, y, xlab, ylab)  
     M1 <- approx(x = runSketch[,1], y = runSketch[,2], xout=x, method = "linear")$y  # linear interpolation
     M2 <- approx(x = runSketch[,1], y = runSketch[,3], xout=x, method = "linear")$y  # linear interpolation
     M_at_Length <- data.frame(Lens=x, M1, M2)
@@ -38,7 +38,7 @@ ChooseMort <- function(OM, type=c("age", "length"), x=NULL, y=NULL) {
 }
 
 
-SketchMort <- function(x, y, xlab, ylab) {
+SketchM <- function(x, y, xlab, ylab) {
   x1 <- x[seq(1, by=2, to=length(x))]
   x2 <- x[seq(2, by=2, to=length(x))]
   grd1 <- expand.grid(x1, y)
@@ -97,4 +97,74 @@ SketchMort <- function(x, y, xlab, ylab) {
   
   par(op)
   return(mat)
+}
+
+#' Plot M-at-Age and Size
+#'
+#' @param Stock An object of class 'Stock' or 'OM' 
+#' @param nsim The number of simulations to plot
+#'
+#' @author A. Hordyk
+#' @export
+#'
+#' @examples plotM(Albacore)
+plotM <- function(Stock, nsim=5) {
+  if (class(Stock) != "Stock" && class(Stock) != "OM") stop("Must supply object of class 'Stock' or 'OM'")
+  
+  nyears <- 30
+  proyears <- 30
+  SampCpars <- list() # empty list 
+  if (class(Stock) == "OM") {
+    # custom parameters exist - sample and write to list
+    if(length(Stock@cpars)>0){
+      ncparsim<-cparscheck(Stock@cpars)   # check each list object has the same length and if not stop and error report
+      SampCpars <- SampleCpars(Stock@cpars, nsim) 
+    }
+    nyears <- Stock@nyears 
+    proyears <- Stock@proyears
+    Stock@nsim <- nsim
+  }
+  
+  StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars)
+  # Assign Stock pars to function environment
+  for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
+  
+  M_at_age <- StockPars$M_ageArray
+  Len_at_age <- StockPars$Len_age
+  Wt_at_age <- StockPars$Wt_age
+  op <- par(no.readonly = TRUE)
+  on.exit(par(op))
+  
+
+  par(mfrow=c(3,3), bty="l", las=1, mar=c(3,3,2,1), oma=c(2,2,0,0))
+  ylim <- c(0, max(M_at_age))
+  lwd <- 2
+  matplot(t(M_at_age[,,1]), type="l", xlab="", ylab="", ylim=ylim, lwd=lwd)
+  mtext(side=2, "M", line=3)
+  # mtext(side=1, "Age", line=2.5)
+  matplot(t(Len_at_age[,,1]), t(M_at_age[,,1]), type="l", xlab="", ylab="", ylim=ylim, lwd=lwd)
+  # mtext(side=1, "Length", line=2.5)
+  title("First Historical Year")
+  matplot(t(Wt_at_age[,,1]), t(M_at_age[,,1]), type="l", xlab="", ylab="", ylim=ylim, lwd=lwd)
+  # mtext(side=1, "Weight", line=2.5)
+  
+  matplot(t(M_at_age[,,nyears]), type="l", xlab="", ylab="", ylim=ylim, lwd=lwd)
+  mtext(side=2, "M", line=3)
+  # mtext(side=1, "Age", line=2.5)
+  matplot(t(Len_at_age[,,nyears]), t(M_at_age[,,nyears]), type="l", xlab="", ylab="", ylim=ylim, lwd=lwd)
+  # mtext(side=1, "Length", line=2.5)
+  title("Last Historical Year")
+  matplot(t(Wt_at_age[,,nyears]), t(M_at_age[,,nyears]), type="l", xlab="", ylab="", ylim=ylim, lwd=lwd)
+  # mtext(side=1, "Weight", line=2.5)
+  
+  matplot(t(M_at_age[,,proyears]), type="l", xlab="", ylab="", ylim=ylim, lwd=lwd)
+  mtext(side=2, "M", line=3)
+  mtext(side=1, "Age", line=2.5)
+  matplot(t(Len_at_age[,,proyears]), t(M_at_age[,,proyears]), type="l", xlab="", ylab="", ylim=ylim, lwd=lwd)
+  mtext(side=1, "Length", line=2.5)
+  title("Last Projection Year")
+  matplot(t(Wt_at_age[,,proyears]), t(M_at_age[,,proyears]), type="l", xlab="", ylab="", ylim=ylim, lwd=lwd)
+  mtext(side=1, "Weight", line=2.5)
+  
+  
 }

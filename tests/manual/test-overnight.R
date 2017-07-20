@@ -1,6 +1,6 @@
 
 # Test runMSE with all OMs (in both DLMtool and DLMdata) and all MPs 
-# Takes a long-time to run!
+
 
 context("runMSE with all available OMs and all MPs")
 

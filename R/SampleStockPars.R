@@ -58,7 +58,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   } 
   if (length(Stock@M) != maxage & length(Stock@M) != 2) stop("slot 'M' must be either length 2 or length maxage", call.=FALSE)
   
-  
+  if (!exists("M", inherits=FALSE)) M <- Mage[,maxage]
   calcMax <- ceiling(-log(0.01)/(min(M)))        # Age at which 1% of cohort survives
   if (maxage < 0.8*calcMax) {
     message("Note: Maximum age (", maxage, ") is lower than assuming 1% of cohort survives to maximum age (", calcMax, ")")
@@ -185,7 +185,6 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   StockOut$Asize <- cbind(StockOut$Size_area_1, 1 - StockOut$Size_area_1)
   
   # === Generate random numbers for random walk ====
-  # done here so that they can be written out to SampPars 
   if (!exists("Mrand", inherits=FALSE)) Mrand <- matrix(exp(rnorm(nsim*(proyears+nyears), -0.5 * Msd^2, Msd)), nrow=nsim, ncol=proyears+nyears)
   if (!exists("Linfrand", inherits=FALSE)) Linfrand <- matrix(exp(rnorm(nsim*(proyears+nyears), -0.5 * Linfsd^2, Linfsd)), nrow=nsim, ncol=proyears+nyears)
   if (!exists("Krand", inherits=FALSE)) Krand <- matrix(exp(rnorm(nsim*(proyears+nyears), -0.5 * Ksd^2, Ksd)), nrow=nsim, ncol=proyears+nyears)
@@ -299,8 +298,13 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
 
     MatLen <- matrix(NA, nsim, nrow(M_at_Length))
     MatLen[,1] <- runif(nsim, min(M_at_Length[1,2:3]), max(M_at_Length[1,2:3]))
-    val <- (MatLen[,1] - min(M_at_Length[1,2:3]))/ diff(t(M_at_Length[1,2:3]))
-    for (X in 2:nrow(M_at_Length)) MatLen[,X] <- min(M_at_Length[X,2:3]) + diff(t(M_at_Length[X,2:3]))*val 
+    
+    for (k in 1:nsim) {
+      for (X in 2:nrow(M_at_Length)) {
+        val <- (MatLen[k,1] - min(M_at_Length[1,2:3]))/ diff(t(M_at_Length[1,2:3]))
+        MatLen[k,X] <- min(M_at_Length[X,2:3]) + diff(t(M_at_Length[X,2:3]))*val 
+      }
+    }
     
     # Calculate M at age
     Mage <- matrix(NA, nsim, maxage)
