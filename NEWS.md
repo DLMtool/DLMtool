@@ -1,13 +1,22 @@
 ## DLMtool 
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
-## DLMtool v4.3 - changes 
+### DLMtool v4.4   
 
-- Added age/size dependant M 
-- input controls have been changed - see user guide for more information
-- added discard mortality and retention curve
+#### Changes 
+
+- can now specify different retention and vulnerability at size curves to evaluate impact of discarding for sub-legal fish
+- can now include general discarding across all size/age classes
+- The structure of Input control MPs has been simplified. See the userguide for more details.
+- The userguide can now be directly accessed from the console with: userguide()
+- Additional operating models and other objects can be loaded from the DLMdata package, use: GetMoreData()
+- Age or size-specific M has been updated (was in previous version) with plotting functions to visualize M-at-age
+- All MPs have been thoroughly tested and modified to improve robustness and avoid crashing the model
+- plotting functions have been improved 
+- SRA has been converted to RCpp for significant speed gain 
 
 
+## Previous Versions
 
 ### DLMtool v4.1
 
@@ -56,9 +65,6 @@ The current version of the DLMtool package is available for download from [CRAN]
 #### Minor Changes 
 
 - Fsd slot in Fleet object has been re-named Esd 
-
-
-## Previous Versions
 
 ### DLMtool V3.2.3
 
