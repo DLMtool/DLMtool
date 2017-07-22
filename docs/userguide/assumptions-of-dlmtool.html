@@ -6,9 +6,8 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Data-Limited Methods Toolkit (DLMtool)</title>
-  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.3 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.4 and GitBook 2.6.7">
 
   <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool)" />
   <meta property="og:type" content="book" />
@@ -25,16 +24,15 @@
 
 
 
-<meta name="date" content="2017-05-04">
+<meta name="date" content="2017-07-22">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
-<link rel="prev" href="managing-fishery-data.html">
+<link rel="prev" href="selection-retention-and-discard-mortality.html">
 <link rel="next" href="references.html">
-
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -94,6 +92,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <body>
 
 
+
   <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
 
     <div class="book-summary">
@@ -130,11 +129,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2.5.2" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#questions-on-r-related-problems"><i class="fa fa-check"></i><b>2.5.2</b> Questions on R-related Problems</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="preq.html"><a href="preq.html"><i class="fa fa-check"></i><b>3</b> Prerequisites to Using DLMtool</a><ul>
-<li class="chapter" data-level="3.1" data-path="preq.html"><a href="preq.html#load-the-library"><i class="fa fa-check"></i><b>3.1</b> Load the Library</a></li>
-<li class="chapter" data-level="3.2" data-path="preq.html"><a href="preq.html#set-up-parallel-processing"><i class="fa fa-check"></i><b>3.2</b> Set up parallel processing</a></li>
-<li class="chapter" data-level="3.3" data-path="preq.html"><a href="preq.html#summary"><i class="fa fa-check"></i><b>3.3</b> Summary</a></li>
-</ul></li>
+<li class="chapter" data-level="3" data-path="preq.html"><a href="preq.html"><i class="fa fa-check"></i><b>3</b> Prerequisites to Using DLMtool</a></li>
 <li class="chapter" data-level="4" data-path="setupOM.html"><a href="setupOM.html"><i class="fa fa-check"></i><b>4</b> Setting up the MSE Operating Model</a><ul>
 <li class="chapter" data-level="4.1" data-path="setupOM.html"><a href="setupOM.html#overview"><i class="fa fa-check"></i><b>4.1</b> Overview</a></li>
 <li class="chapter" data-level="4.2" data-path="setupOM.html"><a href="setupOM.html#the-operating-model-object"><i class="fa fa-check"></i><b>4.2</b> The Operating Model Object</a><ul>
@@ -170,7 +165,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.4" data-path="MPs.html"><a href="MPs.html#details-of-the-methods"><i class="fa fa-check"></i><b>5.4</b> Details of the Methods</a></li>
 <li class="chapter" data-level="5.5" data-path="MPs.html"><a href="MPs.html#designing-new-methods"><i class="fa fa-check"></i><b>5.5</b> Designing New Methods</a><ul>
 <li class="chapter" data-level="5.5.1" data-path="MPs.html"><a href="MPs.html#average-historical-catch-management-procedure"><i class="fa fa-check"></i><b>5.5.1</b> Average Historical Catch Management Procedure</a></li>
-<li class="chapter" data-level="5.5.2" data-path="MPs.html"><a href="MPs.html#length-at-selection-set-equal-to-length-at-maturity"><i class="fa fa-check"></i><b>5.5.2</b> Length-at-Selection Set Equal to Length-at-Maturity</a></li>
+<li class="chapter" data-level="5.5.2" data-path="MPs.html"><a href="MPs.html#length-at-retention-set-equal-to-length-at-maturity"><i class="fa fa-check"></i><b>5.5.2</b> Length-at-Retention Set Equal to Length-at-Maturity</a></li>
 <li class="chapter" data-level="5.5.3" data-path="MPs.html"><a href="MPs.html#harvest-slot-limit"><i class="fa fa-check"></i><b>5.5.3</b> Harvest Slot Limit</a></li>
 <li class="chapter" data-level="5.5.4" data-path="MPs.html"><a href="MPs.html#reducing-fishing-rate-in-area-1-by-50"><i class="fa fa-check"></i><b>5.5.4</b> Reducing Fishing Rate in area 1 by 50%</a></li>
 </ul></li>
@@ -243,29 +238,46 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="8.5.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#output-methods"><i class="fa fa-check"></i><b>8.5.2</b> <code>Output</code> Methods</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html"><i class="fa fa-check"></i><b>9</b> Assumptions of DLMtool</a><ul>
-<li class="chapter" data-level="9.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#biology"><i class="fa fa-check"></i><b>9.1</b> Biology</a><ul>
-<li class="chapter" data-level="9.1.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#short-lived-species"><i class="fa fa-check"></i><b>9.1.1</b> Short-Lived Species</a></li>
-<li class="chapter" data-level="9.1.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#density-dependent-compensation"><i class="fa fa-check"></i><b>9.1.2</b> Density-Dependent Compensation</a></li>
-<li class="chapter" data-level="9.1.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#von-bertalanffy-growth"><i class="fa fa-check"></i><b>9.1.3</b> von Bertalanffy Growth</a></li>
-<li class="chapter" data-level="9.1.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#natural-mortality-rate-at-age"><i class="fa fa-check"></i><b>9.1.4</b> Natural Mortality Rate at Age</a></li>
+<li class="chapter" data-level="9" data-path="custom-parameters.html"><a href="custom-parameters.html"><i class="fa fa-check"></i><b>9</b> Custom Parameters</a><ul>
+<li class="chapter" data-level="9.1" data-path="custom-parameters.html"><a href="custom-parameters.html#valid-cpars-names"><i class="fa fa-check"></i><b>9.1</b> Valid cpars names</a></li>
+<li class="chapter" data-level="9.2" data-path="custom-parameters.html"><a href="custom-parameters.html#correlated-samples"><i class="fa fa-check"></i><b>9.2</b> Correlated samples</a></li>
+<li class="chapter" data-level="9.3" data-path="custom-parameters.html"><a href="custom-parameters.html#custom-time-varying-parameters"><i class="fa fa-check"></i><b>9.3</b> Custom time-varying parameters</a></li>
 </ul></li>
-<li class="chapter" data-level="9.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#mse-model-assumptions"><i class="fa fa-check"></i><b>9.2</b> MSE Model Assumptions</a><ul>
-<li class="chapter" data-level="9.2.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#idealised-observation-models-for-catch-composition-data"><i class="fa fa-check"></i><b>9.2.1</b> Idealised Observation Models for Catch Composition Data</a></li>
-<li class="chapter" data-level="9.2.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#discard-mortality"><i class="fa fa-check"></i><b>9.2.2</b> Discard Mortality</a></li>
-<li class="chapter" data-level="9.2.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#two-box-model"><i class="fa fa-check"></i><b>9.2.3</b> Two-Box Model</a></li>
-<li class="chapter" data-level="9.2.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#ontogenetic-habitat-shifts"><i class="fa fa-check"></i><b>9.2.4</b> Ontogenetic Habitat Shifts</a></li>
-<li class="chapter" data-level="9.2.5" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#closed-system"><i class="fa fa-check"></i><b>9.2.5</b> Closed System</a></li>
-<li class="chapter" data-level="9.2.6" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#marine-protected-areas-mpa"><i class="fa fa-check"></i><b>9.2.6</b> Marine Protected Areas (MPA)</a></li>
+<li class="chapter" data-level="10" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html"><i class="fa fa-check"></i><b>10</b> Size-Specific Natural Mortality</a><ul>
+<li class="chapter" data-level="10.1" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html#constant-m-at-agesize"><i class="fa fa-check"></i><b>10.1</b> Constant M at age/size</a></li>
+<li class="chapter" data-level="10.2" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html#lorenzen-function-of-weight"><i class="fa fa-check"></i><b>10.2</b> Lorenzen function of weight</a></li>
+<li class="chapter" data-level="10.3" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html#map-age-specific-m"><i class="fa fa-check"></i><b>10.3</b> Map Age-Specific M</a></li>
+<li class="chapter" data-level="10.4" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html#map-length-specific-m"><i class="fa fa-check"></i><b>10.4</b> Map Length-Specific M</a></li>
 </ul></li>
-<li class="chapter" data-level="9.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#management-procedures"><i class="fa fa-check"></i><b>9.3</b> Management Procedures</a><ul>
-<li class="chapter" data-level="9.3.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#harvest-control-rules-must-be-integrated-into-data-limited-mps"><i class="fa fa-check"></i><b>9.3.1</b> Harvest Control Rules Must be Integrated into Data-Limited MPs</a></li>
+<li class="chapter" data-level="11" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html"><i class="fa fa-check"></i><b>11</b> Selection, Retention and Discard Mortality</a><ul>
+<li class="chapter" data-level="11.1" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html#fishery-selection-curve"><i class="fa fa-check"></i><b>11.1</b> Fishery Selection Curve</a></li>
+<li class="chapter" data-level="11.2" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html#fishery-retention-curve"><i class="fa fa-check"></i><b>11.2</b> Fishery Retention Curve</a></li>
+<li class="chapter" data-level="11.3" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html#discard-mortality"><i class="fa fa-check"></i><b>11.3</b> Discard Mortality</a></li>
+<li class="chapter" data-level="11.4" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html#general-discarding"><i class="fa fa-check"></i><b>11.4</b> General Discarding</a></li>
 </ul></li>
-<li class="chapter" data-level="9.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-and-method-application"><i class="fa fa-check"></i><b>9.4</b> Data and Method Application</a><ul>
-<li class="chapter" data-level="9.4.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-assumed-to-be-representative"><i class="fa fa-check"></i><b>9.4.1</b> Data Assumed to be Representative</a></li>
+<li class="chapter" data-level="12" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html"><i class="fa fa-check"></i><b>12</b> Assumptions of DLMtool</a><ul>
+<li class="chapter" data-level="12.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#biology"><i class="fa fa-check"></i><b>12.1</b> Biology</a><ul>
+<li class="chapter" data-level="12.1.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#short-lived-species"><i class="fa fa-check"></i><b>12.1.1</b> Short-Lived Species</a></li>
+<li class="chapter" data-level="12.1.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#density-dependent-compensation"><i class="fa fa-check"></i><b>12.1.2</b> Density-Dependent Compensation</a></li>
+<li class="chapter" data-level="12.1.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#von-bertalanffy-growth"><i class="fa fa-check"></i><b>12.1.3</b> von Bertalanffy Growth</a></li>
+<li class="chapter" data-level="12.1.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#natural-mortality-rate-at-age"><i class="fa fa-check"></i><b>12.1.4</b> Natural Mortality Rate at Age</a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#mse-model-assumptions"><i class="fa fa-check"></i><b>12.2</b> MSE Model Assumptions</a><ul>
+<li class="chapter" data-level="12.2.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#idealised-observation-models-for-catch-composition-data"><i class="fa fa-check"></i><b>12.2.1</b> Idealised Observation Models for Catch Composition Data</a></li>
+<li class="chapter" data-level="12.2.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#discard-mortality-1"><i class="fa fa-check"></i><b>12.2.2</b> Discard Mortality</a></li>
+<li class="chapter" data-level="12.2.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#two-box-model"><i class="fa fa-check"></i><b>12.2.3</b> Two-Box Model</a></li>
+<li class="chapter" data-level="12.2.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#ontogenetic-habitat-shifts"><i class="fa fa-check"></i><b>12.2.4</b> Ontogenetic Habitat Shifts</a></li>
+<li class="chapter" data-level="12.2.5" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#closed-system"><i class="fa fa-check"></i><b>12.2.5</b> Closed System</a></li>
+<li class="chapter" data-level="12.2.6" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#marine-protected-areas-mpa"><i class="fa fa-check"></i><b>12.2.6</b> Marine Protected Areas (MPA)</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#management-procedures"><i class="fa fa-check"></i><b>12.3</b> Management Procedures</a><ul>
+<li class="chapter" data-level="12.3.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#harvest-control-rules-must-be-integrated-into-data-limited-mps"><i class="fa fa-check"></i><b>12.3.1</b> Harvest Control Rules Must be Integrated into Data-Limited MPs</a></li>
+</ul></li>
+<li class="chapter" data-level="12.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-and-method-application"><i class="fa fa-check"></i><b>12.4</b> Data and Method Application</a><ul>
+<li class="chapter" data-level="12.4.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-assumed-to-be-representative"><i class="fa fa-check"></i><b>12.4.1</b> Data Assumed to be Representative</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>10</b> References</a></li>
+<li class="chapter" data-level="13" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>13</b> References</a></li>
 <li class="divider"></li>
 <li><a href="http://www.datalimitedfisheries.com" target="blank">DLMtool Website</a></li>
 <li><a href="../index.html">DLMtool Documentation</a></li>
@@ -288,74 +300,74 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
             <section class="normal" id="section-">
 <div id="assumptions-of-dlmtool" class="section level1">
-<h1><span class="header-section-number">Chapter 9</span> Assumptions of DLMtool</h1>
+<h1><span class="header-section-number">Chapter 12</span> Assumptions of DLMtool</h1>
 <!-- Tips, and Additional Information -->
 <!-- FAQ list to come -->
 <p>Like all models, DLMtool is a simplication of reality. In order to approximate real fishery dynamics, DLMtool relies on a number of simplifying assumptions.</p>
 <p>Some of these assumptions are common to many fishery science models (e.g., age-structured population dynamics) and are a central to the structure of DLMtool. Other assumptions are a result of the way DLMtool was designed and developed, and may represent limitations of DLMtool for applications to particular situations. It may be possible to deal with some of these assumptions by further development of DLMtool.</p>
 <div id="biology" class="section level2">
-<h2><span class="header-section-number">9.1</span> Biology</h2>
+<h2><span class="header-section-number">12.1</span> Biology</h2>
 <div id="short-lived-species" class="section level3">
-<h3><span class="header-section-number">9.1.1</span> Short-Lived Species</h3>
+<h3><span class="header-section-number">12.1.1</span> Short-Lived Species</h3>
 <p>Due to the problems with approximating fine-scale temporal dynamics with an annual model it is not advised to use the DLMtool for very short lived stocks (i.e., species with a longevity of 5 years or less).</p>
 <p>Technically, you could just divide all temporal parameters by a subyear resolution, but the TAC would be set by sub year and the data would also be available at this fine-scale which is highly unlikely in a data-limited setting.</p>
 <p>A MSE model with monthly or weekly time-steps for the population dynamics is required for short-lived species, and may be developed in the future.</p>
 </div>
 <div id="density-dependent-compensation" class="section level3">
-<h3><span class="header-section-number">9.1.2</span> Density-Dependent Compensation</h3>
-<p>DLMtool assumes there is no density-dependent compensation in the population dynamics, and fish growth, maturity, and mortality does not change directly in response to changes in stock size.</p>
+<h3><span class="header-section-number">12.1.2</span> Density-Dependent Compensation</h3>
+<p>DLMtool assumes that, with the exception of the stock-recruitment relationship, there is no density-dependent compensation in the population dynamics, and fish growth, maturity, and mortality does not change directly in response to changes in stock size.</p>
 </div>
 <div id="von-bertalanffy-growth" class="section level3">
-<h3><span class="header-section-number">9.1.3</span> von Bertalanffy Growth</h3>
-<p>Growth model in DLMtool is modelled using the von Bertalanffy growth curve. While this is the most commonly applied model to describe fish growth, it may not be the preferred growth model for some species. The consequences of assuming the von Bertalanffy growth model should be considered when using the DLMtool for species with alternative growth patterns.</p>
+<h3><span class="header-section-number">12.1.3</span> von Bertalanffy Growth</h3>
+<p>Growth model in DLMtool is modelled using the von Bertalanffy growth curve. While this is the most commonly applied model to describe fish growth, it may not be the preferred growth model for some species. The consequences of assuming the von Bertalanffy growth model should be considered when using the DLMtool for species with alternative growth patterns. Since DLMtool V4.4 it is possible to use alternative length-at-age models by using <code>cpars</code>. See the <a href="custom-parameters.html#custom-parameters">Custom Parameters</a> chapter for more information.</p>
 </div>
 <div id="natural-mortality-rate-at-age" class="section level3">
-<h3><span class="header-section-number">9.1.4</span> Natural Mortality Rate at Age</h3>
-<p>DLMtool currently assumes that natural mortality (<em>M</em>) is constant with age. Age-specific M may be added in a future developments.</p>
+<h3><span class="header-section-number">12.1.4</span> Natural Mortality Rate at Age</h3>
+<p>By default DLMtool assumes that natural mortality (<em>M</em>) is constant with age and size. Since DLMtool V4.4 size or age-specific M can be specified. See the <a href="size-specific-natural-mortality.html#size-specific-natural-mortality">Size-Specific Natural Mortality</a> chapter for more information.</p>
 </div>
 </div>
 <div id="mse-model-assumptions" class="section level2">
-<h2><span class="header-section-number">9.2</span> MSE Model Assumptions</h2>
+<h2><span class="header-section-number">12.2</span> MSE Model Assumptions</h2>
 <div id="idealised-observation-models-for-catch-composition-data" class="section level3">
-<h3><span class="header-section-number">9.2.1</span> Idealised Observation Models for Catch Composition Data</h3>
+<h3><span class="header-section-number">12.2.1</span> Idealised Observation Models for Catch Composition Data</h3>
 <p>Currently, DLMtool simulates catch-composition data from the true simulated catch composition data via a multinomial distribution and some effective sample size. This observation model may be unrealistically well-behaved and favour those approaches that use these data. We are considering adding a growth-type-group model to improve the realism of simulated length composition data.</p>
 <!-- ### Implementation Error -->
 <!-- In this edition of DLMtool there is no implementation error. The only imperfection between a management recommendation and the simulated TAC comes in the form of the MaxF argument that limits the maximum fishing mortality rate on any given age-class in the operating model. The default is 0.8 which is high for all but the shortest living fish species. -->
 </div>
-<div id="discard-mortality" class="section level3">
-<h3><span class="header-section-number">9.2.2</span> Discard Mortality</h3>
-<p>Related to the previous point, DLMtool assumes that there is no discard mortality or fishing mortality for fish that are below the length of selectivity. This can be an important assumption, particularly when evaluating the impact of size-selectivity management methods such as a minimum legal length.</p>
+<div id="discard-mortality-1" class="section level3">
+<h3><span class="header-section-number">12.2.2</span> Discard Mortality</h3>
+<p>Since DLMtool V4.4 DLMtool can account for discarding of fish that are smaller than the size of retention by the fishery. See the <a href="selection-retention-and-discard-mortality.html#selection-retention-and-discard-mortality">Selection, Retention and Discard Mortality</a> chapter for more information.</p>
 </div>
 <div id="two-box-model" class="section level3">
-<h3><span class="header-section-number">9.2.3</span> Two-Box Model</h3>
+<h3><span class="header-section-number">12.2.3</span> Two-Box Model</h3>
 <p>DLMtool uses a two-box spatial model and assumes homogeneous fishing, and distribution of the fish stock. That is, growth and other life-history characteristics do not vary across the two spatial areas. Spatial targeting of the fishing fleet is currently being developed in the model.</p>
 </div>
 <div id="ontogenetic-habitat-shifts" class="section level3">
-<h3><span class="header-section-number">9.2.4</span> Ontogenetic Habitat Shifts</h3>
+<h3><span class="header-section-number">12.2.4</span> Ontogenetic Habitat Shifts</h3>
 <p>Since the operating model simulates two areas, it is possible to prescribe a log-linear model that moves fish from one area to the other as they grow older. This could be used to simulate the ontogenetic shift of groupers from near shore waters to offshore reefs. Currently this feature is in development.</p>
 </div>
 <div id="closed-system" class="section level3">
-<h3><span class="header-section-number">9.2.5</span> Closed System</h3>
+<h3><span class="header-section-number">12.2.5</span> Closed System</h3>
 <p>DLMtool assumes that the population being modelled is in a closed system. There is no immigration or emigration, and a unit stock is assumed to be represented in the model and impacted by the management decisions. This assumption may be violated where the stock extends across management jurisdictions. Violations of this assumption may impact the interpretation of the MSE results, and these implications should be considered when applying DLMtool.</p>
 <p>Although a unit stock is a central assumption of many modeling and assessment approaches, it may be possible to further develop DLMtool to account for stocks that cross management boundaries.</p>
 </div>
 <div id="marine-protected-areas-mpa" class="section level3">
-<h3><span class="header-section-number">9.2.6</span> Marine Protected Areas (MPA)</h3>
-<p>MPAs can be evaluated as management action in DLMtool by closing one area to fishing in the future projections. Currently, it is not possible to include MPAs in future projections alongside other management methods such as TAC or effort controls. Similarly, further development of DLMtool is required to fully incorporate existing MPA networks into the MSE simulations</p>
+<h3><span class="header-section-number">12.2.6</span> Marine Protected Areas (MPA)</h3>
+<p>MPAs can be evaluated as management action in DLMtool by closing one area to fishing in the future projections. Currently, it is not possible to include new MPAs in future projections alongside output management methods (TACs). Similarly, further development of DLMtool is required to fully incorporate existing MPA networks into the MSE simulations</p>
 </div>
 </div>
 <div id="management-procedures" class="section level2">
-<h2><span class="header-section-number">9.3</span> Management Procedures</h2>
+<h2><span class="header-section-number">12.3</span> Management Procedures</h2>
 <div id="harvest-control-rules-must-be-integrated-into-data-limited-mps" class="section level3">
-<h3><span class="header-section-number">9.3.1</span> Harvest Control Rules Must be Integrated into Data-Limited MPs</h3>
+<h3><span class="header-section-number">12.3.1</span> Harvest Control Rules Must be Integrated into Data-Limited MPs</h3>
 <p>In this version of DLMtool, harvest control rules (e.g. the 40-10 rule) must be written into a data-limited MP. There is currently no ability to do a factorial comparison of say 4 harvest controls rules against 3 MPs (the user must describe all 12 combinations). The reason for this is that it would require further subclasses.</p>
 <p>For example the 40-10 rule may be appropriate for the output of DBSRA but it would not be appropriate for some of the simple management procedures such as DynF that already incorporate throttling of TAC recommendations according to stock depletion.</p>
 </div>
 </div>
 <div id="data-and-method-application" class="section level2">
-<h2><span class="header-section-number">9.4</span> Data and Method Application</h2>
+<h2><span class="header-section-number">12.4</span> Data and Method Application</h2>
 <div id="data-assumed-to-be-representative" class="section level3">
-<h3><span class="header-section-number">9.4.1</span> Data Assumed to be Representative</h3>
+<h3><span class="header-section-number">12.4.1</span> Data Assumed to be Representative</h3>
 <p>The MSE model accounts for observation error in the simulated fishery data. However, the application of management procedures for management advice assumes that the provided fishery data is representative of the fishery and is the best available information on the stock. Processing of fishery data should take place before entering the data into the fishery data tables, and assumptions of the management procedures should be carefully evaluated when applying methods using DLMtool.</p>
 
 </div>
@@ -366,9 +378,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           </div>
         </div>
       </div>
-<a href="managing-fishery-data.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="references.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
-
+<a href="selection-retention-and-discard-mortality.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
@@ -403,7 +416,7 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(script.src))
       script.src  = script.src.replace(/^https?:/, '');
     document.getElementsByTagName("head")[0].appendChild(script);

@@ -31,8 +31,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
-<link rel="prev" href="MPs.html">
-<link rel="next" href="examining-the-mse-object.html">
+<link rel="prev" href="custom-parameters.html">
+<link rel="next" href="selection-retention-and-discard-mortality.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -299,126 +299,61 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="MSE" class="section level1">
-<h1><span class="header-section-number">Chapter 6</span> Management Strategy Evaluation</h1>
-<p>The last two chapters described how to set up an Operating Model object and to select or develop Management Procedures.</p>
-<p>This chapter will describe how to run the Management Strategy Evaluation using the DLMtool</p>
-<div id="re-cap-on-setting-up-dlmtool" class="section level2">
-<h2><span class="header-section-number">6.1</span> Re-cap on Setting up DLMtool</h2>
-<p>Chapter <a href="preq.html#preq">3</a> describes the necessary to set up the DLMtool. In brief, the following lines should appear at the top of your script whenever you are using the DLMtool to run a MSE:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(DLMtool)
-<span class="kw">setup</span>() </code></pre></div>
+<div id="size-specific-natural-mortality" class="section level1">
+<h1><span class="header-section-number">Chapter 10</span> Size-Specific Natural Mortality</h1>
+<div id="constant-m-at-agesize" class="section level2">
+<h2><span class="header-section-number">10.1</span> Constant M at age/size</h2>
+<p>By default DLMtool assumes that natural mortality (<em>M</em>) is constant across age and size classes. However, in many species <em>M</em> is known to vary by size, and is often assumed to be higher for smaller age-classes and reduces as individuals age and grow.</p>
+<p>A number of users requested the option to include age or size-specific <em>M</em> and this has now been added to DLMtool.</p>
+<p>There are a number of ways to specify age or size-specific <em>M</em> in DLMtool.</p>
 </div>
-<div id="defining-the-operating-model" class="section level2">
-<h2><span class="header-section-number">6.2</span> Defining the Operating Model</h2>
-<p>The operating model is the ‘simulated reality’: a series of known simulations for testing various data-limited Management Procedures. Operating models can either be specified in detail according to each variable (e.g. sample natural mortality rate between 0.2 and 0.3) or alternatively the user can rapidly construct an operating model based on a set of predefined <code>Stock</code>, <code>Fleet</code> and <code>Observation</code> models. See Chapter <a href="setupOM.html#setupOM">4</a> for more details on the operating model.</p>
-<p>In this case we take the latter approach and pick the <code>Blue_shark</code> stock type, a generic fleet type and an observation model that generates data that can be both imprecise and biased. We will ignore implementation error and use the default <code>Perfect_Imp</code>.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;OM&#39;</span>, Blue_shark, Generic_fleet, Imprecise_Biased, Perfect_Imp)</code></pre></div>
+<div id="lorenzen-function-of-weight" class="section level2">
+<h2><span class="header-section-number">10.2</span> Lorenzen function of weight</h2>
+<p>Natural mortality is often assumed to be a function of weight. Size-specific <em>M</em> can be included in DLMtool following the approach of Lorenzen (1996):</p>
+<p><span class="math display">\[M_w = M\left(\frac{W}{W_\infty}\right)^b\]</span> where <span class="math inline">\(M_w\)</span> is the natural mortality at weight <span class="math inline">\(W\)</span>, <span class="math inline">\(M\)</span> is the natural mortality rate of adult fish, <span class="math inline">\(W_\infty\)</span> is the asymptotic weight, and <span class="math inline">\(b\)</span> is the allometric scaling factor (<code>Stock@Mexp</code>). Lorezen (1996) found that the exponent <span class="math inline">\(b\)</span> had an average value of -0.288, with 90% confidence intervals of -0.315 – -0.261 for fish from natural systems.</p>
+<p>Because DLMtool uses an age-structured model, <em>M</em> is calculated as a function of age:</p>
+<p><span class="math display">\[M_a = M\left(\frac{W_a}{W_\infty}\right)^b\]</span> where <span class="math inline">\(M_a\)</span> is natural mortality at age <span class="math inline">\(a\)</span> and <span class="math inline">\(W_a\)</span> is the mean weight at age <span class="math inline">\(a\)</span>. <em>M</em>-at-age is then rescaled so that the mean <em>M</em> of adult age classes (mean age of maturity and greater) is equal to the natural mortality rate sampled from the stock object (<code>Stock@M</code>).</p>
+<p>The <code>plotM</code> function can be used to visually inspect samples of the <em>M</em>-at-age, -length, and -weight that are generated by the model:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Albacore@Mexp &lt;-<span class="st"> </span><span class="kw">c</span>(-<span class="fl">0.315</span>, -<span class="fl">0.261</span>)
+<span class="kw">plotM</span>(Albacore)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-126-1.png" width="672" /></p>
 </div>
-<div id="choose-management-procedures" class="section level2">
-<h2><span class="header-section-number">6.3</span> Choose Management Procedures</h2>
-<p>The MSE can be run either with all of the Management Procedures contained within DLMtool or a subset of methods, for example, only the output control class of methods. As an example, if you wanted to choose four output controls, and one input control method, you would enter the following code. See Chapter <a href="MPs.html#MPs">5</a> for more details on the Management Procedures, including how we created the <code>matlenlim</code> input control method.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MPs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Fratio&quot;</span>, <span class="st">&quot;DCAC&quot;</span>, <span class="st">&quot;Fdem&quot;</span>, <span class="st">&quot;DD&quot;</span>, <span class="st">&quot;matlenlim&quot;</span>) </code></pre></div>
+<div id="map-age-specific-m" class="section level2">
+<h2><span class="header-section-number">10.3</span> Map Age-Specific M</h2>
+<p>Usually the <code>M</code> slot contains two values, a lower and upper bound for the constant <em>M</em>-at-age. Users who wish for more control of <em>M</em>-at-age can use the <code>M</code> and <code>M2</code> slots in the <code>Stock</code> object to directly input values for <em>M</em>-at-age (<code>M</code> for lower bound and <code>M2</code> for upper bound). <code>maxage</code> values of <em>M</em> must be supplied for slots <code>M</code> and <code>M2</code>. One way to do this is to use the <code>ChooseM</code> function to map out the bounds for age-specific <em>M</em>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Blue_shark, Generic_FlatE, Generic_obs, Perfect_Imp)
+OM &lt;-<span class="st"> </span><span class="kw">ChooseM</span>(OM)</code></pre></div>
+<p><img src="images/chooseM_age.png" /><!-- --></p>
+<p>Click <a href="images/chooseM_age.png">here</a> for a larger version of the image.</p>
+<p>Alternatively, users can input the values directly into the <code>M</code> and <code>M2</code> slots (must be length <code>maxage</code>):</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Blue_shark, Generic_FlatE, Generic_obs, Perfect_Imp)
+OM@M &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.7</span>, <span class="fl">0.65</span>, <span class="fl">0.60</span>, <span class="fl">0.55</span>, <span class="fl">0.61</span>, <span class="fl">0.68</span>, <span class="fl">0.75</span>, <span class="fl">0.63</span>, <span class="fl">0.51</span>, <span class="fl">0.39</span>, <span class="fl">0.27</span>, <span class="fl">0.15</span>, <span class="fl">0.15</span>, <span class="fl">0.15</span>, <span class="fl">0.15</span>)
+OM@M2 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.85</span>, <span class="fl">0.8</span>, <span class="fl">0.75</span>, <span class="fl">0.7</span>, <span class="fl">0.76</span>, <span class="fl">0.83</span>, <span class="fl">0.9</span>, <span class="fl">0.78</span>, <span class="fl">0.66</span>, <span class="fl">0.54</span>, <span class="fl">0.42</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>)</code></pre></div>
+<p>The <code>plotM</code> function can then be used to visually display samples of the resulting <em>M</em> at age and size:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plotM</span>(OM)</code></pre></div>
+<pre><code>## Note: Maximum age (15) is lower than assuming 1% of cohort survives to maximum age (22)</code></pre>
+<p><img src="userguide_files/figure-html/unnamed-chunk-130-1.png" width="672" /></p>
 </div>
-<div id="the-runmse-function" class="section level2">
-<h2><span class="header-section-number">6.4</span> The <code>runMSE</code> Function</h2>
-<p>The MSE is run using the <code>runMSE</code> function. In addition to the <code>OM</code> (Operating Model) and <code>MPs</code> (Management Procedures) arguments, the <code>RunMSE</code> function has a number of other arguments to control the MSE.</p>
-<p>You can access the help file for the <code>runMSE</code> function by typing: <code>?runMSE</code> into the R console.</p>
-<div id="description-of-the-arguments" class="section level3">
-<h3><span class="header-section-number">6.4.1</span> Description of the Arguments</h3>
-<p>Here we briefly describe the arguments for the <code>runMSE</code> function:</p>
-<ul>
-<li><code>OM</code> - An object of class <code>OM</code>. Must be specified, see Chapter <a href="setupOM.html#setupOM">4</a> for details.</li>
-<li><code>MPs</code> - A character vector specifying the Management Procedures to be included in the MSE. If not specified, the DLMtool will run the MSE for all available methods in the Toolkit.</li>
-<li><code>nsim</code> - Number of simulations (For backward compatibility only. <code>nsim</code> is now a slot in the <code>OM</code> object and this argument will be ignored if <code>nsim</code> is specfied in <code>OM@nsim</code>)</li>
-<li><code>proyears</code> - Number of projected years (For backward compatibility only. <code>proyears</code> is now a slot in the <code>OM</code> object and this argument will be ignored if <code>proyears</code> is specfied in <code>OM@proyears.</code>)</li>
-<li><code>interval</code> - The assessment interval - how often would you like to update the management system?</li>
-<li><code>pstar</code> - The percentile of the sample of the management recommendation for each method</li>
-<li><code>maxF</code> - Maximum instantaneous fishing mortality rate that may be simulated for any given age class</li>
-<li><code>timelimit</code> - Maximum time taken for a method to carry out 10 reps (methods are ignored that take longer)</li>
-<li><code>reps</code> - The number of samples of the management recommendation for each method. Note that when this is set to 1, the mean value of the data inputs is used</li>
-<li><code>CheckMPs</code> - A logical value to specify if the DLMtool should check if the Management Procedures can be run before running the entire MSE. Mainly used for developing and testing new methods.</li>
-<li><code>Hist</code> - Logical - Should model stop after historical simulations? Returns a list containing all data simulated for historical period</li>
-<li><code>ntrials</code> - Maximum of times depletion and recruitment deviations are resampled to optimize for depletion.</li>
-<li><code>fracD</code> - maximum allowed proportion of simulations where depletion is not close to sampled depletion from OM before model stops with error</li>
-<li><code>CalcBlow</code> - Logical - Should low biomass be calculated where this is the spawning biomass at which it takes HZN mean generation times of zero fishing to reach Bfrac fraction of SSBMSY?</li>
-<li><code>HZN</code> - The number of mean generation times required to reach Bfrac SSBMSY in the Blow calculation</li>
-<li><code>Bfrac</code> - The target fraction of SSBMSY for calculating Blow</li>
-</ul>
-</div>
-<div id="using-runmse" class="section level3">
-<h3><span class="header-section-number">6.4.2</span> Using <code>runMSE</code></h3>
-<p>Most of the arguments for the <code>runMSE</code> function have default values. The most important parameters to specify are the Operating Model object, the Management Procedures to include, the number of simulations, the number of projection years, and the interval for management.</p>
-<p>Here we will demonstrate running the blue shark operating model that we created above, for the five Management Procedures selected above. Note that in this example we have chosen to include 10 simulations (<code>nsim</code>=10) and left the other parameters at the default values.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM@nsim &lt;-<span class="st"> </span><span class="dv">10</span> 
-BSharkMSE &lt;-<span class="st"> </span><span class="kw">runMSE</span>(<span class="dt">OM=</span>OM, <span class="dt">MPs=</span>MPs)</code></pre></div>
-<pre><code>## Loading operating model</code></pre>
-<pre><code>## Note: Maximum age (15) is lower than assuming 1% of cohort survives to maximum age (30)</code></pre>
-<pre><code>## Optimizing for user-specified movement</code></pre>
-<pre><code>## Optimizing for user-specified depletion</code></pre>
-<pre><code>## Calculating historical stock and fishing dynamics</code></pre>
-<pre><code>## Calculating MSY reference points</code></pre>
-<pre><code>## Calculating reference yield - best fixed F strategy</code></pre>
-<pre><code>## 1/5 Running MSE for Fratio</code></pre>
-<pre><code>## ..................................................</code></pre>
-<pre><code>## 2/5 Running MSE for DCAC</code></pre>
-<pre><code>## ..................................................</code></pre>
-<pre><code>## 3/5 Running MSE for Fdem</code></pre>
-<pre><code>## ..................................................</code></pre>
-<pre><code>## 4/5 Running MSE for DD</code></pre>
-<pre><code>## ..................................................</code></pre>
-<pre><code>## 5/5 Running MSE for matlenlim</code></pre>
-<pre><code>## ..................................................</code></pre>
-<p>Note that this is just a demonstration, in a real MSE you should use many more simulations (<code>nsim</code> more than 200), <code>reps</code> (samples per method more than 100) and perhaps a more frequent assessment interval (<code>interval</code> of 2 or 3 years).</p>
-<p>Note that when <code>reps</code> is set to 1, all stochastic MPs use the mean value of an input and do not sample from the distribution according to the specified CV (the <code>Output</code> MPs become deterministic and no longer produce samples of the TAC recommendation).</p>
-</div>
-<div id="robust-wrapper-function" class="section level3">
-<h3><span class="header-section-number">6.4.3</span> Robust Wrapper Function</h3>
-<p>The above example, with 10 simulations and 5 Management Procedures, should take about 12 seconds to complete. A real MSE would include many more simulations and take significantly longer.</p>
-<p>The <code>runMSErobust</code> function has been designed as a more efficient way to run the MSE for a large number of simulations. The <code>runMSErobust</code> function splits the MSE into a number of individual packets.</p>
-<p>The advantages are that it is more efficient (i.e., quicker), it automatically saves the final MSE object to the hard disk, and re-starts a packet if the MSE model crashes. Furthermore, the individual packets can be saved so if the model crashes, or you suffer a power outage the work is not lost.</p>
-<p>It is recommended to use the <code>runMSErobust</code> function if you are running a large number of simulations. However, it is always a good idea to run a small number of simulations first, to test that the MSE is running correctly, and not crashing due to mis-specified parameters or bugs in the Management Procedure code.</p>
-<p>The <code>runMSErobust</code> function is essentially a wrapper for the <code>runMSE</code> function and takes the same arguments as <code>runMSE</code>. The <code>runMSErobust</code> function has several additional arguments:</p>
-<ul>
-<li><code>maxsims</code> - The maximum number of simulations to include in each packet</li>
-<li><code>name</code> - The file name of the MSE object that is saved to the hard disk</li>
-<li><code>unique</code> - Logical - Should the name be unique? Current date and time will be appended to name</li>
-<li><code>maxCrash</code> - The maximum number of consecutive crashes before the MSE stops</li>
-<li><code>saveMSE</code> - A logical value (<code>TRUE</code>/<code>FALSE</code>) to indicate if final <code>MSE</code> object should be saved to current working directory (this is probably a good idea)</li>
-<li><code>savePack</code> - A logical value (<code>TRUE</code>/<code>FALSE</code>) to indicate if the packets should be save to current working directory</li>
-</ul>
-<p>Here we will run the blue shark MSE with 300 simulations. Note that the output is not printed out in the User Manual.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM@nsim &lt;-<span class="st"> </span><span class="dv">300</span>
-BSharkMSE &lt;-<span class="st"> </span><span class="kw">runMSErobust</span>(<span class="dt">OM=</span>OM, <span class="dt">MPs=</span>MPs, <span class="dt">name=</span><span class="st">&quot;bluesharkMSE&quot;</span>)</code></pre></div>
-<!-- # ```{r, runMSErobust, cache=TRUE, include=FALSE} -->
-<!-- # OM@nsim <- 300  -->
-<!-- # BSharkMSE <- runMSErobust(OM=OM, MPs=MPs, name="bluesharkMSE") -->
-<!-- # ``` -->
-<!-- #  -->
-<!-- # ```{r, include=FALSE, cache=TRUE} -->
-<!-- # saveRDS(BSharkMSE, "bluesharkMSE.rdata") -->
-<!-- # ``` -->
-<p>This run should be completed in 10 minutes or less. The MSE object was saved (using the <code>saveRDS</code> function) to the current working directory as a <code>rdata</code> object named ‘bluesharkMSE.rdata’.</p>
-<p>A saved MSE object can be loaded using the <code>readRDS</code> function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">BSharkMSE &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="st">&quot;bluesharkMSE.rdata&quot;</span>)</code></pre></div>
-</div>
-</div>
-<div id="checking-convergence" class="section level2">
-<h2><span class="header-section-number">6.5</span> Checking Convergence</h2>
-<p>The MSE is now complete. We can use the <code>Converge</code> function to confirm that the number of simulations is sufficient and the MSE model has converged, by which we mean that the relative position of the Management Procedures are stable with respect to different performance metrics:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Converge</span>(BSharkMSE)</code></pre></div>
-<pre><code>## All MPs appear to have converged in 300 iterations (threshold = 2%)</code></pre>
-<p><img src="userguide_files/figure-html/unnamed-chunk-78-1.png" width="672" /></p>
-</div>
-<div id="a-quick-recap" class="section level2">
-<h2><span class="header-section-number">6.6</span> A Quick Recap</h2>
-<p>The next step is exploring the output of the MSE, and determining which Management Procedure best meets the management objectives.</p>
-<p>The information above is spread out over a number of sections and paragraphs, and may appear a little complex. In fact, other than the initial set up of the DLMtool, it only took 4 lines of code to run the MSE and check the model for convergence:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;OM&#39;</span>, Blue_shark, Generic_fleet, Imprecise_Biased, <span class="dt">nsim=</span><span class="dv">300</span>)
-MPs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Fratio&quot;</span>, <span class="st">&quot;DCAC&quot;</span>, <span class="st">&quot;Fdem&quot;</span>, <span class="st">&quot;DD&quot;</span>, <span class="st">&quot;matlenlim&quot;</span>)
-BSharkMSE &lt;-<span class="st"> </span><span class="kw">runMSErobust</span>(<span class="dt">OM=</span>OM, <span class="dt">MPs=</span>MPs, <span class="dt">name=</span><span class="st">&quot;bluesharkMSE&quot;</span>)
-<span class="kw">Converge</span>(BSharkMSE)</code></pre></div>
-<p>In the next Chapter we will look at how to examine the output of the MSE.</p>
+<div id="map-length-specific-m" class="section level2">
+<h2><span class="header-section-number">10.4</span> Map Length-Specific M</h2>
+<p>There is also the option to map length-specific <em>M</em> using the plotting tool:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Blue_shark, Generic_FlatE, Generic_obs, Perfect_Imp)
+OM &lt;-<span class="st"> </span><span class="kw">ChooseM</span>(OM, <span class="st">&quot;length&quot;</span>)</code></pre></div>
+<p><img src="images/chooseM_length.png" /><!-- --></p>
+<p>Click <a href="images/chooseM_length.png">here</a> for a larger version of the image.</p>
+<p>This option uses the <a href="custom-parameters.html#custom-parameters">Custom Parameters</a> feature of DLMtool:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(OM@cpars)</code></pre></div>
+<pre><code>## List of 1
+##  $ M_at_Length:&#39;data.frame&#39;: 42 obs. of  3 variables:
+##   ..$ Lens: int [1:42] 0 5 10 15 20 25 30 35 40 45 ...
+##   ..$ M1  : num [1:42] 0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.725 ...
+##   ..$ M2  : num [1:42] 0.9 0.9 0.9 0.9 0.9 ...</code></pre>
+<p>Again, samples of the resulting <em>M</em> at age and size can be plotted:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plotM</span>(OM)</code></pre></div>
+<pre><code>## valid custom parameters (OM@cpars) found: 
+## M_at_Length</code></pre>
+<pre><code>## Note: Maximum age (15) is lower than assuming 1% of cohort survives to maximum age (28)</code></pre>
+<p><img src="userguide_files/figure-html/unnamed-chunk-135-1.png" width="672" /></p>
 
 </div>
 </div>
@@ -427,8 +362,8 @@ BSharkMSE &lt;-<span class="st"> </span><span class="kw">runMSErobust</span>(<sp
           </div>
         </div>
       </div>
-<a href="MPs.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="examining-the-mse-object.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="custom-parameters.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="selection-retention-and-discard-mortality.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

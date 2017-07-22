@@ -6,9 +6,8 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Data-Limited Methods Toolkit (DLMtool)</title>
-  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.3 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.4 and GitBook 2.6.7">
 
   <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool)" />
   <meta property="og:type" content="book" />
@@ -25,7 +24,7 @@
 
 
 
-<meta name="date" content="2017-05-04">
+<meta name="date" content="2017-07-22">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -34,7 +33,6 @@
   <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
 <link rel="prev" href="setupOM.html">
 <link rel="next" href="MSE.html">
-
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -94,6 +92,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <body>
 
 
+
   <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
 
     <div class="book-summary">
@@ -130,11 +129,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2.5.2" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#questions-on-r-related-problems"><i class="fa fa-check"></i><b>2.5.2</b> Questions on R-related Problems</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="preq.html"><a href="preq.html"><i class="fa fa-check"></i><b>3</b> Prerequisites to Using DLMtool</a><ul>
-<li class="chapter" data-level="3.1" data-path="preq.html"><a href="preq.html#load-the-library"><i class="fa fa-check"></i><b>3.1</b> Load the Library</a></li>
-<li class="chapter" data-level="3.2" data-path="preq.html"><a href="preq.html#set-up-parallel-processing"><i class="fa fa-check"></i><b>3.2</b> Set up parallel processing</a></li>
-<li class="chapter" data-level="3.3" data-path="preq.html"><a href="preq.html#summary"><i class="fa fa-check"></i><b>3.3</b> Summary</a></li>
-</ul></li>
+<li class="chapter" data-level="3" data-path="preq.html"><a href="preq.html"><i class="fa fa-check"></i><b>3</b> Prerequisites to Using DLMtool</a></li>
 <li class="chapter" data-level="4" data-path="setupOM.html"><a href="setupOM.html"><i class="fa fa-check"></i><b>4</b> Setting up the MSE Operating Model</a><ul>
 <li class="chapter" data-level="4.1" data-path="setupOM.html"><a href="setupOM.html#overview"><i class="fa fa-check"></i><b>4.1</b> Overview</a></li>
 <li class="chapter" data-level="4.2" data-path="setupOM.html"><a href="setupOM.html#the-operating-model-object"><i class="fa fa-check"></i><b>4.2</b> The Operating Model Object</a><ul>
@@ -170,7 +165,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.4" data-path="MPs.html"><a href="MPs.html#details-of-the-methods"><i class="fa fa-check"></i><b>5.4</b> Details of the Methods</a></li>
 <li class="chapter" data-level="5.5" data-path="MPs.html"><a href="MPs.html#designing-new-methods"><i class="fa fa-check"></i><b>5.5</b> Designing New Methods</a><ul>
 <li class="chapter" data-level="5.5.1" data-path="MPs.html"><a href="MPs.html#average-historical-catch-management-procedure"><i class="fa fa-check"></i><b>5.5.1</b> Average Historical Catch Management Procedure</a></li>
-<li class="chapter" data-level="5.5.2" data-path="MPs.html"><a href="MPs.html#length-at-selection-set-equal-to-length-at-maturity"><i class="fa fa-check"></i><b>5.5.2</b> Length-at-Selection Set Equal to Length-at-Maturity</a></li>
+<li class="chapter" data-level="5.5.2" data-path="MPs.html"><a href="MPs.html#length-at-retention-set-equal-to-length-at-maturity"><i class="fa fa-check"></i><b>5.5.2</b> Length-at-Retention Set Equal to Length-at-Maturity</a></li>
 <li class="chapter" data-level="5.5.3" data-path="MPs.html"><a href="MPs.html#harvest-slot-limit"><i class="fa fa-check"></i><b>5.5.3</b> Harvest Slot Limit</a></li>
 <li class="chapter" data-level="5.5.4" data-path="MPs.html"><a href="MPs.html#reducing-fishing-rate-in-area-1-by-50"><i class="fa fa-check"></i><b>5.5.4</b> Reducing Fishing Rate in area 1 by 50%</a></li>
 </ul></li>
@@ -243,29 +238,46 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="8.5.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#output-methods"><i class="fa fa-check"></i><b>8.5.2</b> <code>Output</code> Methods</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html"><i class="fa fa-check"></i><b>9</b> Assumptions of DLMtool</a><ul>
-<li class="chapter" data-level="9.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#biology"><i class="fa fa-check"></i><b>9.1</b> Biology</a><ul>
-<li class="chapter" data-level="9.1.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#short-lived-species"><i class="fa fa-check"></i><b>9.1.1</b> Short-Lived Species</a></li>
-<li class="chapter" data-level="9.1.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#density-dependent-compensation"><i class="fa fa-check"></i><b>9.1.2</b> Density-Dependent Compensation</a></li>
-<li class="chapter" data-level="9.1.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#von-bertalanffy-growth"><i class="fa fa-check"></i><b>9.1.3</b> von Bertalanffy Growth</a></li>
-<li class="chapter" data-level="9.1.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#natural-mortality-rate-at-age"><i class="fa fa-check"></i><b>9.1.4</b> Natural Mortality Rate at Age</a></li>
+<li class="chapter" data-level="9" data-path="custom-parameters.html"><a href="custom-parameters.html"><i class="fa fa-check"></i><b>9</b> Custom Parameters</a><ul>
+<li class="chapter" data-level="9.1" data-path="custom-parameters.html"><a href="custom-parameters.html#valid-cpars-names"><i class="fa fa-check"></i><b>9.1</b> Valid cpars names</a></li>
+<li class="chapter" data-level="9.2" data-path="custom-parameters.html"><a href="custom-parameters.html#correlated-samples"><i class="fa fa-check"></i><b>9.2</b> Correlated samples</a></li>
+<li class="chapter" data-level="9.3" data-path="custom-parameters.html"><a href="custom-parameters.html#custom-time-varying-parameters"><i class="fa fa-check"></i><b>9.3</b> Custom time-varying parameters</a></li>
 </ul></li>
-<li class="chapter" data-level="9.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#mse-model-assumptions"><i class="fa fa-check"></i><b>9.2</b> MSE Model Assumptions</a><ul>
-<li class="chapter" data-level="9.2.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#idealised-observation-models-for-catch-composition-data"><i class="fa fa-check"></i><b>9.2.1</b> Idealised Observation Models for Catch Composition Data</a></li>
-<li class="chapter" data-level="9.2.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#discard-mortality"><i class="fa fa-check"></i><b>9.2.2</b> Discard Mortality</a></li>
-<li class="chapter" data-level="9.2.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#two-box-model"><i class="fa fa-check"></i><b>9.2.3</b> Two-Box Model</a></li>
-<li class="chapter" data-level="9.2.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#ontogenetic-habitat-shifts"><i class="fa fa-check"></i><b>9.2.4</b> Ontogenetic Habitat Shifts</a></li>
-<li class="chapter" data-level="9.2.5" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#closed-system"><i class="fa fa-check"></i><b>9.2.5</b> Closed System</a></li>
-<li class="chapter" data-level="9.2.6" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#marine-protected-areas-mpa"><i class="fa fa-check"></i><b>9.2.6</b> Marine Protected Areas (MPA)</a></li>
+<li class="chapter" data-level="10" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html"><i class="fa fa-check"></i><b>10</b> Size-Specific Natural Mortality</a><ul>
+<li class="chapter" data-level="10.1" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html#constant-m-at-agesize"><i class="fa fa-check"></i><b>10.1</b> Constant M at age/size</a></li>
+<li class="chapter" data-level="10.2" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html#lorenzen-function-of-weight"><i class="fa fa-check"></i><b>10.2</b> Lorenzen function of weight</a></li>
+<li class="chapter" data-level="10.3" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html#map-age-specific-m"><i class="fa fa-check"></i><b>10.3</b> Map Age-Specific M</a></li>
+<li class="chapter" data-level="10.4" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html#map-length-specific-m"><i class="fa fa-check"></i><b>10.4</b> Map Length-Specific M</a></li>
 </ul></li>
-<li class="chapter" data-level="9.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#management-procedures"><i class="fa fa-check"></i><b>9.3</b> Management Procedures</a><ul>
-<li class="chapter" data-level="9.3.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#harvest-control-rules-must-be-integrated-into-data-limited-mps"><i class="fa fa-check"></i><b>9.3.1</b> Harvest Control Rules Must be Integrated into Data-Limited MPs</a></li>
+<li class="chapter" data-level="11" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html"><i class="fa fa-check"></i><b>11</b> Selection, Retention and Discard Mortality</a><ul>
+<li class="chapter" data-level="11.1" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html#fishery-selection-curve"><i class="fa fa-check"></i><b>11.1</b> Fishery Selection Curve</a></li>
+<li class="chapter" data-level="11.2" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html#fishery-retention-curve"><i class="fa fa-check"></i><b>11.2</b> Fishery Retention Curve</a></li>
+<li class="chapter" data-level="11.3" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html#discard-mortality"><i class="fa fa-check"></i><b>11.3</b> Discard Mortality</a></li>
+<li class="chapter" data-level="11.4" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html#general-discarding"><i class="fa fa-check"></i><b>11.4</b> General Discarding</a></li>
 </ul></li>
-<li class="chapter" data-level="9.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-and-method-application"><i class="fa fa-check"></i><b>9.4</b> Data and Method Application</a><ul>
-<li class="chapter" data-level="9.4.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-assumed-to-be-representative"><i class="fa fa-check"></i><b>9.4.1</b> Data Assumed to be Representative</a></li>
+<li class="chapter" data-level="12" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html"><i class="fa fa-check"></i><b>12</b> Assumptions of DLMtool</a><ul>
+<li class="chapter" data-level="12.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#biology"><i class="fa fa-check"></i><b>12.1</b> Biology</a><ul>
+<li class="chapter" data-level="12.1.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#short-lived-species"><i class="fa fa-check"></i><b>12.1.1</b> Short-Lived Species</a></li>
+<li class="chapter" data-level="12.1.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#density-dependent-compensation"><i class="fa fa-check"></i><b>12.1.2</b> Density-Dependent Compensation</a></li>
+<li class="chapter" data-level="12.1.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#von-bertalanffy-growth"><i class="fa fa-check"></i><b>12.1.3</b> von Bertalanffy Growth</a></li>
+<li class="chapter" data-level="12.1.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#natural-mortality-rate-at-age"><i class="fa fa-check"></i><b>12.1.4</b> Natural Mortality Rate at Age</a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#mse-model-assumptions"><i class="fa fa-check"></i><b>12.2</b> MSE Model Assumptions</a><ul>
+<li class="chapter" data-level="12.2.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#idealised-observation-models-for-catch-composition-data"><i class="fa fa-check"></i><b>12.2.1</b> Idealised Observation Models for Catch Composition Data</a></li>
+<li class="chapter" data-level="12.2.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#discard-mortality-1"><i class="fa fa-check"></i><b>12.2.2</b> Discard Mortality</a></li>
+<li class="chapter" data-level="12.2.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#two-box-model"><i class="fa fa-check"></i><b>12.2.3</b> Two-Box Model</a></li>
+<li class="chapter" data-level="12.2.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#ontogenetic-habitat-shifts"><i class="fa fa-check"></i><b>12.2.4</b> Ontogenetic Habitat Shifts</a></li>
+<li class="chapter" data-level="12.2.5" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#closed-system"><i class="fa fa-check"></i><b>12.2.5</b> Closed System</a></li>
+<li class="chapter" data-level="12.2.6" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#marine-protected-areas-mpa"><i class="fa fa-check"></i><b>12.2.6</b> Marine Protected Areas (MPA)</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#management-procedures"><i class="fa fa-check"></i><b>12.3</b> Management Procedures</a><ul>
+<li class="chapter" data-level="12.3.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#harvest-control-rules-must-be-integrated-into-data-limited-mps"><i class="fa fa-check"></i><b>12.3.1</b> Harvest Control Rules Must be Integrated into Data-Limited MPs</a></li>
+</ul></li>
+<li class="chapter" data-level="12.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-and-method-application"><i class="fa fa-check"></i><b>12.4</b> Data and Method Application</a><ul>
+<li class="chapter" data-level="12.4.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-assumed-to-be-representative"><i class="fa fa-check"></i><b>12.4.1</b> Data Assumed to be Representative</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>10</b> References</a></li>
+<li class="chapter" data-level="13" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>13</b> References</a></li>
 <li class="divider"></li>
 <li><a href="http://www.datalimitedfisheries.com" target="blank">DLMtool Website</a></li>
 <li><a href="../index.html">DLMtool Documentation</a></li>
@@ -371,18 +383,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>It follows that any MP arranged to function <code>sapply(x,MP,Data)</code> will work. For example we can get five stochastic samples of the TAC for the demographic FMSY MP paired to catch-curve analysis <code>FdemCC</code> applied to a real data-limited data object for red snapper using:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sapply</span>(<span class="dv">1</span>,Fdem_CC,Red_snapper,<span class="dt">reps=</span><span class="dv">5</span>)</code></pre></div>
 <pre><code>##           [,1]
-## [1,]  5.423422
-## [2,] 35.257900
-## [3,] 16.032331
-## [4,] 40.200412
-## [5,] 26.748349</code></pre>
+## [1,] 13.197360
+## [2,] 24.448572
+## [3,]  8.124781
+## [4,]  1.564893
+## [5,] 37.672991</code></pre>
 <p>The MSE populates a <code>Data</code> object with many simulations and uses <code>sfSapply()</code> (snowfall cluster computing equivalent) to calculate a management recommendation for each simulation. By making methods compatible with this standard the very same equations are used in both the MSE and the real management advice.</p>
 <div id="average-historical-catch-management-procedure" class="section level3">
 <h3><span class="header-section-number">5.5.1</span> Average Historical Catch Management Procedure</h3>
 <p>The average historical catch has been suggested as a starting point for setting TACs in the most data-limited situations (following Restrepo et al., 1998).</p>
 <p>Here we design such an Management Procedure:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">AvC &lt;-<span class="st"> </span><span class="cf">function</span>(x, Data, reps) {
-  <span class="kw">rlnorm</span>(reps, <span class="kw">log</span>(<span class="kw">mean</span>(Data<span class="op">@</span>Cat[x,], <span class="dt">na.rm=</span>T)), <span class="fl">0.1</span>) 
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">AvC &lt;-<span class="st"> </span>function(x, Data, reps) {
+  <span class="kw">rlnorm</span>(reps, <span class="kw">log</span>(<span class="kw">mean</span>(Data@Cat[x,], <span class="dt">na.rm=</span>T)), <span class="fl">0.1</span>) 
 }</code></pre></div>
 <p>Note that all Management Procedures have to be stochastic in this framework, which is why we sample from a log-normal distribution with a CV of roughly 10 per cent.</p>
 <p>Before the Management Procedure can be ‘seen’ by the rest of the DLMtool package we have to do three more things.</p>
@@ -391,37 +403,22 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">environment</span>(AvC) &lt;-<span class="kw">asNamespace</span>(<span class="st">&#39;DLMtool&#39;</span>)</code></pre></div>
 <p>and - if we are using parallel computing - exported to the cluster:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sfExport</span>(<span class="st">&quot;AvC&quot;</span>)</code></pre></div>
-<!--
-### Third-highest catch
-In some data-limited settings third highest historical catch has been suggested as a possible catch-limit. Here we use a similar approach to the average catch MP above (`AvC`) and take draws from a log-normal distribution with CV of 10 per cent:
-
-
-```r
-THC <- function(x,DLM_data, reps){
-  rlnorm(reps,log(DLM_data@Cat[x,order(DLM_data@Cat[x,],decreasing=T)[3]]),0.1)
-}
-class(THC)<-"DLM_output"
-environment(THC) <- asNamespace('DLMtool')
-```
-and again export to cluster (if we are using parallel computing):
-
-```r
-sfExport("THC")
-```
--->
 </div>
-<div id="length-at-selection-set-equal-to-length-at-maturity" class="section level3">
-<h3><span class="header-section-number">5.5.2</span> Length-at-Selection Set Equal to Length-at-Maturity</h3>
-<p>To simulate input controls that aim to alter the length-vulnerability to fishing it is possible to design a Management Procedure of class <code>Input</code>.</p>
-<p>In this example we set selectivity equal to the maturity curve, while the spatial and effort regulations remain constant:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">matlenlim &lt;-<span class="st"> </span><span class="cf">function</span> (x, Data, ...) {
-    Allocate &lt;-<span class="st"> </span><span class="dv">1</span>
-    Effort &lt;-<span class="st"> </span><span class="dv">1</span>
-    Spatial &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)
-    newLFC &lt;-<span class="st"> </span>Data<span class="op">@</span>L50[x] <span class="op">*</span><span class="st"> </span><span class="fl">0.95</span>
-    newLFS &lt;-<span class="st"> </span>Data<span class="op">@</span>L50[x]
-    Vuln &lt;-<span class="st"> </span><span class="kw">c</span>(newLFC, newLFS)
-    <span class="kw">c</span>(Allocate, Effort, Spatial, Vuln)
+<div id="length-at-retention-set-equal-to-length-at-maturity" class="section level3">
+<h3><span class="header-section-number">5.5.2</span> Length-at-Retention Set Equal to Length-at-Maturity</h3>
+<p><strong>Note: In DLMtool V4.4+ the structure of Input control methods has changed</strong></p>
+<p>To simulate input controls that aim to alter the length-retention to fishing it is possible to design a Management Procedure of class <code>Input</code>.</p>
+<p>In this example we set the retention equal to the maturity curve, while the spatial and effort regulations remain constant:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">matlenlim &lt;-<span class="st"> </span>function (x, Data, ...) {
+  <span class="co"># Knife-edge vulnerability at estimated length-at-maturity  </span>
+  dependencies =<span class="st"> &quot;Data@L50&quot;</span>
+  
+  rec &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;InputRec&quot;</span>) <span class="co"># create a input recommendation object</span>
+  rec@LR5 &lt;-<span class="st"> </span>Data@L50[x] *<span class="st"> </span><span class="fl">0.95</span> <span class="co"># new length at 5% retention  </span>
+  rec@LFR &lt;-<span class="st">  </span>Data@L50[x] <span class="co"># new length at full retention   </span>
+
+  <span class="co"># other slots aren&#39;t specified so remain unchanged</span>
+  <span class="kw">return</span>(rec)
 }
 <span class="kw">class</span>(matlenlim) &lt;-<span class="st"> &quot;Input&quot;</span>
 <span class="kw">environment</span>(matlenlim) &lt;-<span class="st"> </span><span class="kw">asNamespace</span>(<span class="st">&quot;DLMtool&quot;</span>)</code></pre></div>
@@ -430,16 +427,16 @@ sfExport("THC")
 </div>
 <div id="harvest-slot-limit" class="section level3">
 <h3><span class="header-section-number">5.5.3</span> Harvest Slot Limit</h3>
-<p>We can also choose to create a Management Procedure with a harvest slot limit. This example sets a minimum legal length at 1.1 times the size of maturity, and a maximum size limit at 75% of the distance between the minimum legal length and the estimate of asymptotic length recorded in the fishery data object:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">slotlim &lt;-<span class="st"> </span><span class="cf">function</span> (x, Data, ...) {
-    Allocate &lt;-<span class="st"> </span><span class="dv">1</span>
-    Effort &lt;-<span class="st"> </span><span class="dv">1</span>
-    Spatial &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)
-    newLFS &lt;-<span class="st"> </span><span class="fl">1.1</span> <span class="op">*</span><span class="st"> </span>Data<span class="op">@</span>L50[x]
-    newLFC &lt;-<span class="st"> </span><span class="fl">0.95</span> <span class="op">*</span><span class="st"> </span>newLFS
-    UppLim &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">quantile</span>(<span class="kw">c</span>(newLFS, Data<span class="op">@</span>vbLinf[x]), <span class="fl">0.75</span>))
-    Vuln &lt;-<span class="st"> </span><span class="kw">c</span>(newLFC, newLFS, UppLim)
-    <span class="kw">c</span>(Allocate, Effort, Spatial, Vuln)
+<p>We can also choose to create a Management Procedure with a harvest slot limit. This example sets a minimum legal length at 1.1 times the size of maturity, and a maximum size limit (completely arbitrarily!) at 75% of the distance between the minimum legal length and the estimate of asymptotic length recorded in the fishery data object:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">slotlim &lt;-<span class="st"> </span>function (x, Data, ...) {
+  dependencies =<span class="st"> &quot;Data@L50, Data@vbLinf&quot;</span>
+  
+  rec &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;InputRec&quot;</span>) <span class="co"># create input recommendation object</span>
+  rec@LFR &lt;-<span class="st"> </span><span class="dv">14</span> +<span class="st"> </span><span class="fl">1.1</span> *<span class="st"> </span>Data@L50[x] <span class="co"># new length at full retention   </span>
+  rec@LR5 &lt;-<span class="st"> </span><span class="fl">0.95</span> *<span class="st"> </span>rec@LFR  <span class="co"># new length at 5% retention </span>
+  rec@HS &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(<span class="kw">quantile</span>(<span class="kw">c</span>(rec@LFR , Data@vbLinf[x]), <span class="fl">0.75</span>)) <span class="co"># upper harvest slot limit</span>
+  
+  rec
 }
 <span class="kw">class</span>(slotlim) &lt;-<span class="st"> &quot;Input&quot;</span>
 <span class="kw">environment</span>(slotlim) &lt;-<span class="st"> </span><span class="kw">asNamespace</span>(<span class="st">&quot;DLMtool&quot;</span>)</code></pre></div>
@@ -450,15 +447,16 @@ sfExport("THC")
 <div id="reducing-fishing-rate-in-area-1-by-50" class="section level3">
 <h3><span class="header-section-number">5.5.4</span> Reducing Fishing Rate in area 1 by 50%</h3>
 <p>Spatial controls operate similarly to the age/size based controls: a vector of length 2 (the spatial simulator is a 2-box model) that indicates the fraction of current spatial catches. In this example we reduce effort in area 1 by 50%.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">area1_<span class="dv">50</span> &lt;-<span class="st"> </span><span class="cf">function</span>(x,Data, ...){ 
-  Allocate &lt;-<span class="st"> </span><span class="dv">0</span> <span class="co"># Fraction of effort reallocated to open area</span>
-  Effort &lt;-<span class="st"> </span><span class="dv">1</span>  <span class="co"># Fraction of effort in last historical year</span>
-  Spatial &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.5</span>,<span class="dv">1</span>) <span class="co"># Fraction of effort found in each area</span>
-  Vuln &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="ot">NA</span>,<span class="dv">2</span>) <span class="co"># Length vulnerability is not specified   </span>
-  <span class="kw">c</span>(Allocate, Effort, Spatial, Vuln) <span class="co"># Input controls stitched togther</span>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">area1_50 &lt;-<span class="st"> </span>function(x,Data, ...){ 
+  rec &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;InputRec&quot;</span>) <span class="co"># create recommendation object</span>
+  rec@Allocate &lt;-<span class="st"> </span><span class="dv">0</span> <span class="co"># Fraction of effort reallocated to open area</span>
+  rec@Spatial &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.5</span>,<span class="dv">1</span>) <span class="co"># Fraction of effort found in each area</span>
+  
+  <span class="co"># other slots aren&#39;t specified so remain unchanged</span>
+  <span class="kw">return</span>(rec)
 }
-<span class="kw">class</span>(area1_<span class="dv">50</span>)&lt;-<span class="st">&quot;Input&quot;</span>
-<span class="kw">environment</span>(area1_<span class="dv">50</span>) &lt;-<span class="st"> </span><span class="kw">asNamespace</span>(<span class="st">&#39;DLMtool&#39;</span>)</code></pre></div>
+<span class="kw">class</span>(area1_50)&lt;-<span class="st">&quot;Input&quot;</span>
+<span class="kw">environment</span>(area1_50) &lt;-<span class="st"> </span><span class="kw">asNamespace</span>(<span class="st">&#39;DLMtool&#39;</span>)</code></pre></div>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sfExport</span>(<span class="st">&quot;area1_50&quot;</span>)</code></pre></div>
 
 </div>
@@ -470,8 +468,9 @@ sfExport("THC")
         </div>
       </div>
 <a href="setupOM.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="MSE.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
-
+<a href="MSE.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
@@ -506,7 +505,7 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(script.src))
       script.src  = script.src.replace(/^https?:/, '');
     document.getElementsByTagName("head")[0].appendChild(script);
