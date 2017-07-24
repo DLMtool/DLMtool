@@ -147,8 +147,8 @@
 to reach Bfrac x SSBMSY biomass level given zero catches</p>
     
 
-    <pre class="usage"><span class='fu'>getBlow</span>(<span class='no'>x</span>, <span class='no'>SSBMSY</span>, <span class='no'>MGThorizon</span>, <span class='no'>Find</span>, <span class='no'>Perr</span>, <span class='no'>Marray</span>, <span class='no'>hs</span>, <span class='no'>Mat_age</span>, <span class='no'>Wt_age</span>, <span class='no'>R0</span>, <span class='no'>V</span>,
-  <span class='no'>nyears</span>, <span class='no'>maxage</span>, <span class='no'>mov</span>, <span class='no'>Spat_targ</span>, <span class='no'>SRrel</span>, <span class='no'>aR</span>, <span class='no'>bR</span>, <span class='kw'>Bfrac</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>ploty</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
+    <pre class="usage"><span class='fu'>getBlow</span>(<span class='no'>x</span>, <span class='no'>SSBMSY</span>, <span class='no'>MGThorizon</span>, <span class='no'>Find</span>, <span class='no'>Perr</span>, <span class='no'>M_ageArray</span>, <span class='no'>hs</span>, <span class='no'>Mat_age</span>, <span class='no'>Wt_age</span>, <span class='no'>R0</span>,
+  <span class='no'>V</span>, <span class='no'>nyears</span>, <span class='no'>maxage</span>, <span class='no'>mov</span>, <span class='no'>Spat_targ</span>, <span class='no'>SRrel</span>, <span class='no'>aR</span>, <span class='no'>bR</span>, <span class='kw'>Bfrac</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>ploty</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -174,8 +174,8 @@ to reach Bfrac x SSBMSY biomass level given zero catches</p>
       <td><p>matrix of recruitment devitions nsim x nyears + maxage -1</p></td>
     </tr>
     <tr>
-      <th>Marray</th>
-      <td><p>matrix of natural mortality rate nsim x nyears + proyears</p></td>
+      <th>M_ageArray</th>
+      <td><p>array of natural mortality rate nsim x maxage x nyears + proyears</p></td>
     </tr>
     <tr>
       <th>hs</th>

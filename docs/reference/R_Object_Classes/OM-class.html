@@ -161,13 +161,17 @@ bounds of a uniform distribution from which to sample the parameter.</p>
     <dt><code>maxage</code></dt><dd><p>The maximum age of individuals that is simulated (there is no 'plus group': individuals die off beyone the maximum age so there isn't a huge cost to simulating more older age classes)</p></dd>
     <dt><code>R0</code></dt><dd><p>The magnitude of unfished recruitment. This is normally fixed to some arbitrary value since it simply scales the simulated numbers)</p></dd>
     <dt><code>M</code></dt><dd><p>Natural mortality rate (uniform distribution)</p></dd>
+    <dt><code>M2</code></dt><dd><p>Optional vector of M-at-age (must be length maxage)</p></dd>
     <dt><code>Msd</code></dt><dd><p>Inter-annual variability in natural mortality rate expressed as a coefficient of variation (uniform distribution)</p></dd>
     <dt><code>Mgrad</code></dt><dd><p>Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year (uniform distribution)</p></dd>
+    <dt><code>Mexp</code></dt><dd><p>Exponent of the Lorenzen function assuming an inverse relationship between M and weight (uniform distribution)</p></dd>
+    <dt><code>Fdisc</code></dt><dd><p>Fraction of discarded fish that die</p></dd>
     <dt><code>h</code></dt><dd><p>Steepness of the stock recruit relationship (uniform distribution)</p></dd>
     <dt><code>SRrel</code></dt><dd><p>Type of stock-recruit relationship (1)Beverton-Holt (2) Ricker</p></dd>
     <dt><code>Linf</code></dt><dd><p>Maximum length (uniform distribution)</p></dd>
     <dt><code>K</code></dt><dd><p>von B. growth parameter k (uniform distribution)</p></dd>
     <dt><code>t0</code></dt><dd><p>von B. theoretical age at length zero (uniform distribution)</p></dd>
+    <dt><code>LenCV</code></dt><dd><p>Coefficient of variation of length-at-age (assumed constant for all age classes (uniform distribution)</p></dd>
     <dt><code>Ksd</code></dt><dd><p>Inter-annual variability in growth parameter k (uniform distribution)</p></dd>
     <dt><code>Kgrad</code></dt><dd><p>Mean temporal trend in growth parameter k, expressed as a percentage change in k per year (uniform distribution)</p></dd>
     <dt><code>Linfsd</code></dt><dd><p>Inter-annual variability in maximum length - uniform distribution</p></dd>
@@ -185,6 +189,10 @@ bounds of a uniform distribution from which to sample the parameter.</p>
     <dt><code>LFS</code></dt><dd><p>Shortest length that is fully vulnerable to fishing (uniform distribution)</p></dd>
     <dt><code>L5</code></dt><dd><p>Shortest length at 5 percent vulnerability (uniform distribution)</p></dd>
     <dt><code>Vmaxlen</code></dt><dd><p>The vulnerability of the longest (oldest) fish (uniform distribution)</p></dd>
+    <dt><code>LR5</code></dt><dd><p>Shortest length corresponding ot 5 percent retention (uniform distribution)</p></dd>
+    <dt><code>LFR</code></dt><dd><p>Shortest length that is fully retained (uniform distribution)</p></dd>
+    <dt><code>Rmaxlen</code></dt><dd><p>The retention of the longest (oldest) fish (uniform distribution)</p></dd>
+    <dt><code>DR</code></dt><dd><p>Discard rate - fraction of caught fish that are discarded (must be &lt;= 1) (uniform distribution)</p></dd>
     <dt><code>SelYears</code></dt><dd><p>Vector of verticies that index years where historical selectivity pattern changed. Leave empty to ignore</p></dd>
     <dt><code>AbsSelYears</code></dt><dd><p>vector of absolute year values that correspond to year indices in SelYears. Used only for plotting</p></dd>
     <dt><code>L5Lower</code></dt><dd><p>Optional vector of values of length SelYears, specifiying lower limits of L5 (use <code>ChooseSelect</code>  function to set these. Overrides L5 above)</p></dd>
@@ -248,7 +256,6 @@ bounds of a uniform distribution from which to sample the parameter.</p>
     <dt><code>EFrac</code></dt><dd><p>Mean fraction of recommended effort taken (uniform distribution)</p></dd>
     <dt><code>SizeLimSD</code></dt><dd><p>lognormal error in size limit implementation (uniform distribution)</p></dd>
     <dt><code>SizeLimFrac</code></dt><dd><p>Mean fraction of the size limit (uniform distribution) (can be an improper fraction greater than 1)</p></dd>
-    <dt><code>DiscMort</code></dt><dd><p>Discard mortality rate (uniform distribution) (can be an improper fraction greater than 1)</p></dd>
 </dl>
     
     <h2 class="hasAnchor" id="objects-from-the-class"><a class="anchor" href="#objects-from-the-class"></a>Objects from the Class</h2>
@@ -257,69 +264,6 @@ bounds of a uniform distribution from which to sample the parameter.</p>
 <code>new('OM', Stock, Fleet, Obs, Imp)</code>.</p>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='fu'>showClass</span>(<span class='st'>'OM'</span>)</div><div class='output co'>#&gt; Class "OM" [package "DLMtool"]
-#&gt; 
-#&gt; Slots:
-#&gt;                                                                        
-#&gt; Name:          Name         nsim     proyears       nyears       maxage
-#&gt; Class:    character      numeric      numeric      numeric      numeric
-#&gt;                                                                        
-#&gt; Name:            R0            M          Msd        Mgrad            h
-#&gt; Class:      numeric      numeric      numeric      numeric      numeric
-#&gt;                                                                        
-#&gt; Name:         SRrel         Linf            K           t0          Ksd
-#&gt; Class:      numeric      numeric      numeric      numeric      numeric
-#&gt;                                                                        
-#&gt; Name:         Kgrad       Linfsd     Linfgrad      recgrad            a
-#&gt; Class:      numeric      numeric      numeric      numeric      numeric
-#&gt;                                                                        
-#&gt; Name:             b            D  Size_area_1  Frac_area_1 Prob_staying
-#&gt; Class:      numeric      numeric      numeric      numeric      numeric
-#&gt;                                                                        
-#&gt; Name:        Source          L50       L50_95     SelYears  AbsSelYears
-#&gt; Class:    character      numeric      numeric      numeric      numeric
-#&gt;                                                                        
-#&gt; Name:            L5          LFS      Vmaxlen      L5Lower      L5Upper
-#&gt; Class:      numeric      numeric      numeric      numeric      numeric
-#&gt;                                                                        
-#&gt; Name:      LFSLower     LFSUpper    VmaxLower    VmaxUpper        isRel
-#&gt; Class:      numeric      numeric      numeric      numeric    character
-#&gt;                                                                        
-#&gt; Name:          beta    Spat_targ          Esd       Period    Amplitude
-#&gt; Class:      numeric      numeric      numeric      numeric      numeric
-#&gt;                                                                        
-#&gt; Name:      EffYears     EffLower     EffUpper         qinc          qcv
-#&gt; Class:      numeric      numeric      numeric      numeric      numeric
-#&gt;                                                                        
-#&gt; Name:            AC         Cobs      Cbiascv    CAA_nsamp      CAA_ESS
-#&gt; Class:      numeric      numeric      numeric      numeric      numeric
-#&gt;                                                                        
-#&gt; Name:     CAL_nsamp      CAL_ESS        CALcv         Iobs         Perr
-#&gt; Class:      numeric      numeric      numeric      numeric      numeric
-#&gt;                                                                        
-#&gt; Name:           Mcv          Kcv         t0cv       Linfcv        LFCcv
-#&gt; Class:      numeric      numeric      numeric      numeric      numeric
-#&gt;                                                                        
-#&gt; Name:         LFScv         B0cv       FMSYcv     FMSY_Mcv    BMSY_B0cv
-#&gt; Class:      numeric      numeric      numeric      numeric      numeric
-#&gt;                                                                        
-#&gt; Name:        LenMcv          rcv      Dbiascv          Dcv       Btbias
-#&gt; Class:      numeric      numeric      numeric      numeric      numeric
-#&gt;                                                                        
-#&gt; Name:          Btcv   Fcurbiascv       Fcurcv          hcv          Icv
-#&gt; Class:      numeric      numeric      numeric      numeric      numeric
-#&gt;                                                                        
-#&gt; Name:      maxagecv        Reccv       Irefcv       Crefcv       Brefcv
-#&gt; Class:      numeric      numeric      numeric      numeric      numeric
-#&gt;                                                                        
-#&gt; Name:         TACSD      TACFrac          ESD        EFrac    SizeLimSD
-#&gt; Class:      numeric      numeric      numeric      numeric      numeric
-#&gt;                                                                        
-#&gt; Name:   SizeLimFrac     DiscMort        cpars         seed    CurrentYr
-#&gt; Class:      numeric      numeric         list      numeric      numeric</div><div class='input'>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -328,9 +272,7 @@ bounds of a uniform distribution from which to sample the parameter.</p>
       <li><a href="#slots">Slots</a></li>
 
       <li><a href="#objects-from-the-class">Objects from the Class</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+          </ul>
 
     <h2>Author</h2>
     

@@ -147,9 +147,9 @@
 simulation) for a specified operating model</p>
     
 
-    <pre class="usage"><span class='fu'>runMSE</span>(<span class='kw'>OM</span> <span class='kw'>=</span> <span class='no'>testOM</span>, <span class='kw'>MPs</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"AvC"</span>, <span class='st'>"DCAC"</span>, <span class='st'>"FMSYref"</span>, <span class='st'>"curE"</span>, <span class='st'>"matlenlim"</span>),
-  <span class='kw'>nsim</span> <span class='kw'>=</span> <span class='fl'>48</span>, <span class='kw'>proyears</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>pstar</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>maxF</span> <span class='kw'>=</span> <span class='fl'>0.8</span>,
-  <span class='kw'>timelimit</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>CheckMPs</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>Hist</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+    <pre class="usage"><span class='fu'>runMSE</span>(<span class='kw'>OM</span> <span class='kw'>=</span> <span class='kw'>DLMtool</span><span class='kw'>::</span><span class='no'>testOM</span>, <span class='kw'>MPs</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"AvC"</span>, <span class='st'>"DCAC"</span>, <span class='st'>"FMSYref"</span>, <span class='st'>"curE"</span>,
+  <span class='st'>"matlenlim"</span>), <span class='kw'>nsim</span> <span class='kw'>=</span> <span class='fl'>48</span>, <span class='kw'>proyears</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>pstar</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
+  <span class='kw'>maxF</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>timelimit</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>CheckMPs</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>Hist</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>ntrials</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>fracD</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='kw'>CalcBlow</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>HZN</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>Bfrac</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
@@ -157,7 +157,7 @@ simulation) for a specified operating model</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>OM</th>
-      <td><p>An operating model object (class OM)</p></td>
+      <td><p>An operating model object (class 'OM')</p></td>
     </tr>
     <tr>
       <th>MPs</th>
@@ -166,11 +166,13 @@ Input.</p></td>
     </tr>
     <tr>
       <th>nsim</th>
-      <td><p>Number of simulations</p></td>
+      <td><p>Number of simulations. Note that in DLMtool V4.1+ 'nsim is ignored 
+if OM object contains the slot 'nsim'.</p></td>
     </tr>
     <tr>
       <th>proyears</th>
-      <td><p>Number of projected years</p></td>
+      <td><p>Number of projected years. Note that in DLMtool V4.1+ 'proyears is ignored 
+if OM object contains the slot 'proyears'.</p></td>
     </tr>
     <tr>
       <th>interval</th>

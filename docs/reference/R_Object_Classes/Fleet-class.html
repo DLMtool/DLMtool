@@ -159,8 +159,12 @@
     <dt><code>EffLower</code></dt><dd><p>Lower bound on relative effort corresponding to EffYears (uniform distribution)</p></dd>
     <dt><code>EffUpper</code></dt><dd><p>Uppper bound on relative effort corresponding to EffYears (uniform distribution)</p></dd>
     <dt><code>LFS</code></dt><dd><p>Shortest length that is fully vulnerable to fishing (uniform distribution)</p></dd>
-    <dt><code>L5</code></dt><dd><p>Shortest length corresponding ot 5 percent vulnerability (uniform distribution)</p></dd>
+    <dt><code>L5</code></dt><dd><p>Shortest length corresponding to 5 percent vulnerability (uniform distribution)</p></dd>
     <dt><code>Vmaxlen</code></dt><dd><p>The vulnerability of the longest (oldest) fish (uniform distribution)</p></dd>
+    <dt><code>LR5</code></dt><dd><p>Shortest length corresponding ot 5 percent retention (uniform distribution)</p></dd>
+    <dt><code>LFR</code></dt><dd><p>Shortest length that is fully retained (uniform distribution)</p></dd>
+    <dt><code>Rmaxlen</code></dt><dd><p>The retention of the longest (oldest) fish (uniform distribution)</p></dd>
+    <dt><code>DR</code></dt><dd><p>Discard rate - fraction of caught fish that are discarded (must be &lt;= 1) (uniform distribution)</p></dd>
     <dt><code>SelYears</code></dt><dd><p>Vector of verticies, index for years at which historical selectivity pattern changed. If left empty, historical selectivity is constant</p></dd>
     <dt><code>AbsSelYears</code></dt><dd><p>Optional values for SelYears, used for plotting only. Must be of same length as SelYears</p></dd>
     <dt><code>L5Lower</code></dt><dd><p>Optional vector of values of length SelYears, specifiying lower limits of L5 (use <code>ChooseSelect</code> function to set these)</p></dd>
@@ -193,11 +197,16 @@
 #&gt; Name:     EffYears    EffLower    EffUpper    SelYears AbsSelYears          L5
 #&gt; Class:     numeric     numeric     numeric     numeric     numeric     numeric
 #&gt;                                                                               
-#&gt; Name:          LFS     Vmaxlen     L5Lower     L5Upper    LFSLower    LFSUpper
+#&gt; Name:          LFS     Vmaxlen         LR5         LFR     Rmaxlen          DR
 #&gt; Class:     numeric     numeric     numeric     numeric     numeric     numeric
-#&gt;                                                       
-#&gt; Name:    VmaxLower   VmaxUpper       isRel   CurrentYr
-#&gt; Class:     numeric     numeric   character     numeric</div><div class='input'>
+#&gt;                                                                               
+#&gt; Name:      L5Lower     L5Upper    LFSLower    LFSUpper   VmaxLower   VmaxUpper
+#&gt; Class:     numeric     numeric     numeric     numeric     numeric     numeric
+#&gt;                               
+#&gt; Name:        isRel   CurrentYr
+#&gt; Class:   character     numeric
+#&gt; 
+#&gt; Known Subclasses: "OM"</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

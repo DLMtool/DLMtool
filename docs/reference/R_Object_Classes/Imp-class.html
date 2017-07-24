@@ -158,7 +158,6 @@
     <dt><code>EFrac</code></dt><dd><p>Mean fraction of recommended effort taken (uniform distribution)</p></dd>
     <dt><code>SizeLimSD</code></dt><dd><p>lognormal error in size limit implementation (uniform distribution)</p></dd>
     <dt><code>SizeLimFrac</code></dt><dd><p>Mean fraction of the size limit (uniform distribution) (can be an improper fraction greater than 1)</p></dd>
-    <dt><code>DiscMort</code></dt><dd><p>Discard mortality rate (uniform distribution) (can be an improper fraction greater than 1)</p></dd>
     <dt><code>Source</code></dt><dd><p>A reference to a website or article form which parameters were taken to define the operating model</p></dd>
 </dl>
     
@@ -176,9 +175,11 @@
 #&gt;                                                                               
 #&gt; Name:         Name       TACSD     TACFrac         ESD       EFrac   SizeLimSD
 #&gt; Class:   character     numeric     numeric     numeric     numeric     numeric
-#&gt;                                           
-#&gt; Name:  SizeLimFrac    DiscMort      Source
-#&gt; Class:     numeric     numeric   character</div><div class='input'>
+#&gt;                               
+#&gt; Name:  SizeLimFrac      Source
+#&gt; Class:     numeric   character
+#&gt; 
+#&gt; Known Subclasses: "OM"</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

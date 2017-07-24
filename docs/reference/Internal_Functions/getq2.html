@@ -152,8 +152,8 @@ derived effort trajectories and finds the catchabiltiy to get the stock
 there.</p>
     
 
-    <pre class="usage"><span class='fu'>getq2</span>(<span class='no'>x</span>, <span class='no'>dep</span>, <span class='no'>Find</span>, <span class='no'>Perr</span>, <span class='no'>Marray</span>, <span class='no'>hs</span>, <span class='no'>Mat_age</span>, <span class='no'>Wt_age</span>, <span class='no'>R0</span>, <span class='no'>V</span>, <span class='no'>nyears</span>, <span class='no'>maxage</span>,
-  <span class='no'>mov</span>, <span class='no'>Spat_targ</span>, <span class='no'>SRrel</span>, <span class='no'>aR</span>, <span class='no'>bR</span>)</pre>
+    <pre class="usage"><span class='fu'>getq2</span>(<span class='no'>x</span>, <span class='no'>dep</span>, <span class='no'>Find</span>, <span class='no'>Perr</span>, <span class='no'>M_ageArray</span>, <span class='no'>hs</span>, <span class='no'>Mat_age</span>, <span class='no'>Wt_age</span>, <span class='no'>R0</span>, <span class='no'>V</span>, <span class='no'>nyears</span>,
+  <span class='no'>maxage</span>, <span class='no'>mov</span>, <span class='no'>Spat_targ</span>, <span class='no'>SRrel</span>, <span class='no'>aR</span>, <span class='no'>bR</span>, <span class='kw'>bounds</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1e-05</span>, <span class='fl'>15</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -172,10 +172,6 @@ there.</p>
     </tr>
     <tr>
       <th>Perr</th>
-      <td><p>internal parameter</p></td>
-    </tr>
-    <tr>
-      <th>Marray</th>
       <td><p>internal parameter</p></td>
     </tr>
     <tr>
@@ -224,8 +220,16 @@ there.</p>
     </tr>
     <tr>
       <th>bR</th>
-      <td><p>internal parameter</p>
+      <td><p>internal parameter</p></td>
+    </tr>
+    <tr>
+      <th>bounds</th>
+      <td><p>upper and lower bounds for optimizer</p>
 <p>Paired with qopt</p></td>
+    </tr>
+    <tr>
+      <th>Marray</th>
+      <td><p>internal parameter</p></td>
     </tr>
     </table>
     

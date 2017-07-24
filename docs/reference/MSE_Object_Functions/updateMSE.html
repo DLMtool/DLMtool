@@ -145,7 +145,8 @@
     
     <p>Updates an existing MSE object (class MSE) from a previous version of the
 DLMtool to include the new slots.  The slots will be empty, but avoids the
-'slot doesn't exist' error that sometimes occurs.</p>
+'slot doesn't exist' error that sometimes occurs. Also works with Stock, Fleet,
+Obs, Imp, and Data objects.</p>
     
 
     <pre class="usage"><span class='fu'>updateMSE</span>(<span class='no'>MSEobj</span>)</pre>
@@ -155,13 +156,14 @@ DLMtool to include the new slots.  The slots will be empty, but avoids the
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>MSEobj</th>
-      <td><p>A MSE object from a previous version of the DLMtool</p></td>
+      <td><p>A MSE object from a previous version of the DLMtool. 
+Also works with Stock, Fleet, Obs, Imp, and Data objects.</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An object of class <code>MSE</code></p>
+    <p>An object of class matching class(MSEobj)</p>
     
 
   </div>
