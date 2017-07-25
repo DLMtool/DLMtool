@@ -3413,9 +3413,10 @@ calcStat <- function(rr, evalbreaks) {
 #' @return A list of all the information included in the plot
 #' @author A. Hordyk
 #' @export VOIplot
-VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4, Par = c("Obs", 
-                                                                  "OM"), YVar = c("Y", "B"), doPlot = TRUE, incStat = FALSE, availMP = NULL, 
-                    acceptMP = NULL, incNames = TRUE, labcex = 0.8, quants = c(0.05, 0.95)) {
+VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4, 
+                    Par = c("Obs", "OM"), YVar = c("Y", "B"), doPlot = TRUE, incStat = FALSE, 
+                    availMP = NULL, acceptMP = NULL, incNames = TRUE, labcex = 0.8, 
+                    quants = c(0.05, 0.95)) {
   
   YVar <- match.arg(YVar)
   nvars <- max(nvars, 2)  # maximum number of variables 
@@ -3726,7 +3727,9 @@ calcMSESense <- function(MP = 1, MSEobj, YVar = c("Y", "B"), Par = c("Obs","OM")
     varnames <- names(MSEobj@Obs)
     vars <- MSEobj@Obs
     vargood <- (apply(vars, 2, sd, na.rm = TRUE)/(apply(vars, 2, mean, na.rm = TRUE)^2)^0.5) > 0.005
+  
     varnames <- varnames[vargood]
+    varnames <- varnames[!is.na(varnames)]
     obvals <- MSEobj@Obs[, varnames]
     
     rr <- as.list(obvals)
