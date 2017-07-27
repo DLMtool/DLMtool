@@ -301,15 +301,16 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
            dim(retL)[1], " ", dim(retL)[2], " ", dim(retL)[3], call.=FALSE) 
   }
  
-  
   V2 <- V
   SLarray2 <- SLarray
- 
+  
   # correct retention curve - retention at age/length must <= selectivity (you can't retain fish you don't catch!)
   dr <- aperm(abind::abind(rep(list(DR), maxage), along=3), c(2,3,1))
-  retA <- (1-dr) * array(mapply(pmin, retA, V), dim=c(nsim, maxage, nyears+proyears))
+  # retA <- (1-dr) * array(mapply(pmin, retA, V), dim=c(nsim, maxage, nyears+proyears))
+  retA <- (1-dr) * pmin(retA, V)
   dr <- aperm(abind::abind(rep(list(DR), nCALbins), along=3), c(2,3,1))
-  retL <- (1-dr) * array(mapply(pmin, retL, SLarray), dim=c(nsim, nCALbins, nyears+proyears))
+  # retL <- (1-dr) * array(mapply(pmin, retL, SLarray), dim=c(nsim, nCALbins, nyears+proyears))
+  retL <- (1-dr) * pmin(retL, SLarray)
   
   # for (yr in 1:(nyears+proyears)) { # dev loop for testing
   #   retA[,,yr] <- (1-DR[yr, ]) * matrix(mapply(pmin, retA[,,yr], V[,,yr]), nsim, maxage)
@@ -318,9 +319,12 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   
   # update realized vulnerablity curve with retention and dead discarded fish 
   Fdisc2 <- array(Fdisc, dim=c(nsim, maxage, nyears+proyears))
-  V <- array(mapply(pmax, retA + (abs(retA-V2)*Fdisc2), retA), dim=c(nsim, maxage, nyears+proyears))
+  # V <- array(mapply(pmax, retA + (abs(retA-V2)*Fdisc2), retA), dim=c(nsim, maxage, nyears+proyears))
+  V <- pmax(retA + (abs(retA-V2)*Fdisc2), retA)
+  
   Fdisc2 <- array(Fdisc, dim=c(nsim, nCALbins, nyears+proyears))
-  SLarray <- array(mapply(pmax, retL + (abs(retL-SLarray2)*Fdisc2), retL), dim=c(nsim, nCALbins, nyears+proyears))
+  # SLarray <- array(mapply(pmax, retL + (abs(retL-SLarray2)*Fdisc2), retL), dim=c(nsim, nCALbins, nyears+proyears))
+  SLarray <- pmax(retL + (abs(retL-SLarray2)*Fdisc2), retL)
  
   # for (yr in 1:(nyears+proyears)) { # dev loop for testing
   #   V[,,yr] <- matrix(mapply(pmax, retA[,,yr] + (abs(retA[,,yr]-V2[,,yr])*Fdisc), retA[,,yr]), nsim, maxage)
