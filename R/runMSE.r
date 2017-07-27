@@ -850,7 +850,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       Effort[, mm, y] <- inputcalcs$Effort #  
       CB_P <- inputcalcs$CB_P # removals
       CB_Pret <- inputcalcs$CB_Pret # retained catch 
-      FM_P <- inputcalcs$FM_P # fishing mortality 
+      FM_P <- inputcalcs$FM_P # fishing mortality
+      FM_retain <- inputcalcs$FM_retain # retained fishing mortality 
       Z_P <- inputcalcs$Z_P # total mortality
 
       retA_P <- inputcalcs$retA_P # retained-at-age
@@ -1036,7 +1037,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
           Effort[, mm, y] <- inputcalcs$Effort #  
           CB_P <- inputcalcs$CB_P # removals
           CB_Pret <- inputcalcs$CB_Pret # retained catch 
-          FM_P <- inputcalcs$FM_P # fishing mortality 
+          FM_P <- inputcalcs$FM_P # fishing mortality
           FM_retain <- inputcalcs$FM_retain # retained fishing mortality 
           Z_P <- inputcalcs$Z_P # total mortality
           retA_P <- inputcalcs$retA_P # retained-at-age

@@ -1171,20 +1171,20 @@ getEffhist <- function(Esd, nyears, EffYears, EffLower, EffUpper) {
         }
         
         # sample Effort
-        fmat <- rbind(EffLower, EffUpper)
+        # fmat <- rbind(EffLower, EffUpper)
        
-        nyrs <- length(EffLower)
-        Effs <- matrix(0, nsim, nyrs)
+        # nyrs <- length(EffLower)
+        # Effs <- matrix(0, nsim, nyrs)
         
-        ind <- which(diff(fmat) > 0)[1]
-        for (X in 1:ind) {
-          Effs[,X] <- runif(nsim, min(fmat[,X]), max(fmat[,X]))  
-        }
+        # ind <- which(diff(fmat) > 0)[1]
+        # for (X in 1:ind) {
+          # Effs[,X] <- runif(nsim, min(fmat[,X]), max(fmat[,X]))  
+        # }
         
-        val <- (Effs[,ind] - min(fmat[,ind]))/ diff(fmat[,ind])
-        for (X in 2:nyrs) Effs[,X] <- min(fmat[,X]) + diff(fmat[,X])*val
+        # val <- (Effs[,ind] - min(fmat[,ind]))/ diff(fmat[,ind])
+        # for (X in 2:nyrs) Effs[,X] <- min(fmat[,X]) + diff(fmat[,X])*val
         
-        # Effs <- mapply(runif, n = nsim, min = EffLower, max = EffUpper)  # sample Effort
+        Effs <- mapply(runif, n = nsim, min = EffLower, max = EffUpper)  # sample Effort
         if (nsim > 1) {
             effort <- t(sapply(1:nsim, function(x) approx(x = refYear, 
                 y = Effs[x, ], method = "linear", n = nyears)$y))  # linear interpolation
