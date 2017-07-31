@@ -1,6 +1,17 @@
 ## DLMtool 
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
+
+### DLMtool v4.4.1
+
+#### Minor Changes 
+
+- fixed a typo in V4.4 that affected effort controls
+- removed redundant code to speed up sampling of fleet parameters
+
+
+## Previous Versions
+
 ### DLMtool v4.4   
 
 #### Changes 
@@ -14,9 +25,6 @@ The current version of the DLMtool package is available for download from [CRAN]
 - All MPs have been thoroughly tested and modified to improve robustness and avoid crashing the model
 - plotting functions have been improved 
 - SRA has been converted to RCpp for significant speed gain 
-
-
-## Previous Versions
 
 ### DLMtool v4.1
 
