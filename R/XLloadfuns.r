@@ -73,15 +73,20 @@ OM_xl <- function(fname, stkname, fpath = "", saveCSV = FALSE) {
   # Implementation
   index <- which(pmatch(shtname, paste0(stkname, "Imp")) == 1)
   if (length(index) > 1)  stop("More than one match")
-  if(length(index)<1) stop("No Imp sheet found. Looking for: ", paste0(stkname, "Imp")) 
-  imp <- readxl::read_excel(infile, sheet = index, col_names = FALSE)
-  imp <- as.data.frame(imp)
-  if (all(dim(imp) == 0)) stop("No data found in Imp tab")
-  tmpfile <- paste0(fpath, stkname, "Imp.csv")
-  if (file.exists(tmpfile)) unlink(tmpfile)
-  writeCSV(inobj = imp, tmpfile, objtype = "Imp")
-  tmpimp <- new("Imp", tmpfile)
-  if (!saveCSV) unlink(tmpfile)
+  if(length(index)<1) {
+    warning("No Imp sheet found. Looking for: ", paste0(stkname, "Imp"), ". Defaulting to 'Perfect_Imp'", call.=FALSE) 
+    tmpimp <- DLMtool::Perfect_Imp
+  } else {
+    imp <- readxl::read_excel(infile, sheet = index, col_names = FALSE)
+    imp <- as.data.frame(imp)
+    if (all(dim(imp) == 0)) stop("No data found in Imp tab")
+    tmpfile <- paste0(fpath, stkname, "Imp.csv")
+    if (file.exists(tmpfile)) unlink(tmpfile)
+    writeCSV(inobj = imp, tmpfile, objtype = "Imp")
+    tmpimp <- new("Imp", tmpfile)
+    if (!saveCSV) unlink(tmpfile)
+  }
+
   
   # Operating Model
   OM <- new("OM", Stock = tmpstock, Fleet = tmpfleet, Obs = tmpobs, Imp=tmpimp)

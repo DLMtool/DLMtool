@@ -93,11 +93,12 @@ ChkObj <- function(OM) {
       if (class(slotVal) != "character" & class(slotVal) != "list") Ok[sl] <- all(is.finite(slotVal)) & length(slotVal) > 0
     } 
   }
-  SelSlots <- c("SelYears", "AbsSelYears", "L5Lower", "L5Upper", "LFSLower",
+  SelSlots <- c("SelYears", "L5Lower", "L5Upper", "LFSLower",
                 "LFSUpper", "VmaxLower", "VmaxUpper")
   RecSlots <-  c("Period", "Amplitude")
+  
   # Slots ok to not contain values
-  Ignore <- c("Name", "Source", "cpars", SelSlots, RecSlots, "M2")  
+  Ignore <- c("Name", "Source", "cpars", "AbsSelYears", SelSlots, RecSlots, "M2")  
   # if values present for one they need to be there for all! 
   if (any(SelSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% SelSlots] 
   if (any(RecSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% RecSlots] 

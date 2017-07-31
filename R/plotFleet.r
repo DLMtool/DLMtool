@@ -147,5 +147,8 @@ plotFleet <- function(x, Stock=NULL, nsamp=3, nsim=500, proyears=28, col="darkgr
   title(paste("Fleet:", Fleet@Name, "Stock:", Stock@Name), outer=TRUE)
   title(paste("nyears =", nyears, "  proyears =", proyears, "  ", nsamp, "sampled iterations"), outer=TRUE, line=0)
     
+  # om <- new("OM", Stock, Fleet, Perfect_Info, Perfect_Imp)
+  # plotSelect(om)
+  
   on.exit(par(op))	  
 }

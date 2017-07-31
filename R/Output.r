@@ -421,7 +421,8 @@ Rcontrol <- function(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5,
   }
   t0vec[!is.finite(t0vec)] <- 0
   
-  hvec <- trlnorm(reps, Data@steep[x], Data@CV_steep[x])
+  # hvec <- trlnorm(reps, Data@steep[x], Data@CV_steep[x])
+  hvec <- sample_steepness2(reps, Data@steep[x], Data@CV_steep[x])
   rsamp <- getr(x, Data, Mvec, Kvec, Linfvec, t0vec, hvec, maxage = Data@MaxAge, 
     r_reps = reps)
   
@@ -500,7 +501,8 @@ Rcontrol2 <- function(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5,
     t0vec <- rep(Data@vbt0[x], reps)
   }
   t0vec[!is.finite(t0vec)] <- 0
-  hvec <- trlnorm(reps, Data@steep[x], Data@CV_steep[x])
+  # hvec <- trlnorm(reps, Data@steep[x], Data@CV_steep[x])
+  hvec <- sample_steepness2(reps, Data@steep[x], Data@CV_steep[x])
   rsamp <- getr(x, Data, Mvec, Kvec, Linfvec, t0vec, hvec, maxage = Data@MaxAge, 
     r_reps = reps)
   
@@ -1080,10 +1082,13 @@ Islope1 <- function(x, Data, reps = 100, yrsmth = 5, lambda = 0.4,xx = 0.2) {
   
   I_hist <- Data@Ind[x, ind]
   yind <- 1:yrsmth
-  slppar <- summary(lm(I_hist ~ yind))$coefficients[2, 1:2]
+  # slppar <- summary(lm(I_hist ~ yind))$coefficients[2, 1:2]
+  slppar <- summary(lm(log(I_hist) ~ yind))$coefficients[2, 1:2]
   Islp <- rnorm(reps, slppar[1], slppar[2])
   TAC <- TACstar * (1 + lambda * Islp)
+ 
   TACfilter(TAC)
+  
 }
 class(Islope1) <- "Output"
 
@@ -1128,7 +1133,8 @@ Islope4 <- function(x, Data, reps = 100, yrsmth = 5, lambda = 0.2,
   }
   I_hist <- Data@Ind[x, ind]
   yind <- 1:yrsmth
-  slppar <- summary(lm(I_hist ~ yind))$coefficients[2, 1:2]
+  # slppar <- summary(lm(I_hist ~ yind))$coefficients[2, 1:2]
+  slppar <- summary(lm(log(I_hist) ~ yind))$coefficients[2, 1:2]
   Islp <- rnorm(reps, slppar[1], slppar[2])
   TAC <- TACstar * (1 + lambda * Islp)
   TACfilter(TAC)
@@ -1373,8 +1379,7 @@ class(SPslope) <- "Output"
 #' @author T. Carruthers
 #' @references http://www.ccsbt.org/site/recent_assessment.php
 #' @export SBT1
-SBT1 <- function(x, Data, reps = 100, yrsmth = 10, k1 = 1.5, k2 = 3, 
-  gamma = 1) {
+SBT1 <- function(x, Data, reps = 100, yrsmth = 10, k1 = 1.5, k2 = 3, gamma = 1) {
   dependencies = "Data@Cat, Data@Year, Data@Ind"
   Cr <- length(Data@Cat[x, ])
   cct <- trlnorm(reps, Data@Cat[x, Cr], Data@CV_Cat)
@@ -1382,9 +1387,12 @@ SBT1 <- function(x, Data, reps = 100, yrsmth = 10, k1 = 1.5, k2 = 3,
   I_hist <- Data@Ind[x, ind]
   test <- summary(lm(I_hist ~ ind))$coefficients[2, 1:2]
   lambda <- rnorm(reps, test[1], test[2])
-  TAC <- cct * 1 + k2 * lambda
+  # TAC <- cct * 1 + k2 * lambda
+  # see https://github.com/DLMtool/DLMtool/issues/17
+  TAC <- cct * (1 + k2 * lambda)
   cond <- lambda < 0
-  TAC[cond] <- cct[cond] * 1 - k1 * -lambda[cond]^gamma
+  # TAC[cond] <- cct[cond] * 1 - k1 * -lambda[cond]^gamma
+  TAC[cond] <- cct[cond] * (1 - k1 * -lambda[cond]^gamma)
   TACfilter(TAC)
 }
 class(SBT1) <- "Output"
@@ -1417,23 +1425,20 @@ class(SBT1) <- "Output"
 #' @references http://www.ccsbt.org/site/recent_assessment.php
 #' @export SBT2
 SBT2 <- function(x, Data, reps = 100, epsB = 0.25, epsR = 0.75, tauR = 5, 
-  tauB = 7, gamma = 1) {
+                 tauB = 7, gamma = 1) {
   dependencies = "Data@Cref, Data@Rec, Data@Cat"
   # Bnow<-trlnorm(reps,Data@Abun[x],Data@CV_Abun)
   # testrat<-Bnow/Data@Bref Ctarg<-rep(NA,reps)
   # Ctarg[testrat>1]<-delta*testrat[testrat>1]^(1-epsB)
   # Ctarg[testrat<1]<-detla*testrat[testrat<1]^(1+epsB)
   Ctarg <- trlnorm(reps, Data@Cref[x], Data@CV_Cref)
-  muR <- mean(Data@Rec[x, (length(Data@Rec[x, ]) - tauR + 1):length(Data@Rec[x, 
-    ])])
-  phi <- mean(Data@Rec[x, (length(Data@Rec[x, ]) - 9):length(Data@Rec[x, 
-    ])])
+  muR <- mean(Data@Rec[x, (length(Data@Rec[x, ]) - tauR + 1):length(Data@Rec[x, ])])
+  phi <- mean(Data@Rec[x, (length(Data@Rec[x, ]) - 9):length(Data@Rec[x,])])
   Rrat <- muR/phi
   deltaR <- rep(NA, reps)
   deltaR[Rrat > 1] <- Rrat[Rrat > 1]^(1 - epsR)
   deltaR[Rrat < 1] <- Rrat[Rrat < 1]^(1 + epsR)
-  TAC <- 0.5 * (Data@Cat[x, length(Data@Cat[x, ])] + Ctarg * 
-    deltaR)
+  TAC <- 0.5 * (Data@Cat[x, length(Data@Cat[x, ])] + Ctarg *  deltaR)
   TACfilter(TAC)
 }
 class(SBT2) <- "Output"
@@ -1480,11 +1485,9 @@ DD <- function(x, Data, reps = 100) {
   age <- 1:Data@MaxAge
   la <- Data@vbLinf[x] * (1 - exp(-Data@vbK[x] * ((age - Data@vbt0[x]))))
   wa <- Data@wla[x] * la^Data@wlb[x]
-  a50V <- iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
-    Data@L50[x])
+  a50V <- iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])
   a50V <- max(a50V, 1)
-  yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x, 
-    ])]
+  yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x,   ])]
   C_hist <- Data@Cat[x, yind]
   E_hist <- C_hist/Data@Ind[x, yind]
   E_hist <- E_hist/mean(E_hist)
@@ -2559,17 +2562,12 @@ SPMSY <- function(x, Data, reps = 100) {
     rule[3] <- 3
   }
   
-  if (mean(rule) < 1.5) 
-    rsamp <- runif(nsamp, 0.6, 1.5)
-  if (mean(rule) > 1.5 & mean(rule) < 2.5) 
-    rsamp <- runif(nsamp, 0.2, 1)
-  if (mean(rule) > 2.5 & mean(rule) < 3.5) 
-    rsamp <- runif(nsamp, 0.05, 0.5)
-  if (mean(rule) > 3.5) 
-    rsamp <- runif(nsamp, 0.015, 0.1)
+  if (mean(rule) < 1.5)   rsamp <- runif(nsamp, 0.6, 1.5)
+  if (mean(rule) > 1.5 & mean(rule) < 2.5)   rsamp <- runif(nsamp, 0.2, 1)
+  if (mean(rule) > 2.5 & mean(rule) < 3.5)  rsamp <- runif(nsamp, 0.05, 0.5)
+  if (mean(rule) > 3.5) rsamp <- runif(nsamp, 0.015, 0.1)
   
-  Ksamp <- runif(nsamp, mean(Data@Cat[x, ])/rsamp, (10 * mean(Data@Cat[x, 
-    ]))/rsamp)
+  Ksamp <- runif(nsamp, mean(Data@Cat[x, ])/rsamp, (10 * mean(Data@Cat[x, ]))/rsamp)
   nyears <- length(Data@Cat[x, ])
   B <- array(NA, dim = c(nsamp, nyears))
   
@@ -2728,7 +2726,8 @@ SPSRA <- function(x, Data, reps = 100) {
   t0vec[!is.finite(t0vec)] <- 0
   if (all(is.nan(t0vec))) 
     t0vec <- rep(0, reps)
-  hvec <- trlnorm(reps, Data@steep[x], Data@CV_steep[x])
+  # hvec <- trlnorm(reps, Data@steep[x], Data@CV_steep[x])
+  hvec <- sample_steepness2(reps, Data@steep[x], Data@CV_steep[x])
   if (all(!is.finite(hvec))) 
     return(NA)
   rsamp <- getr(x, Data, Mvec, Kvec, Linfvec, t0vec, hvec, maxage = Data@MaxAge, 
@@ -2781,7 +2780,8 @@ SPSRA_ML <- function(x, Data, reps = 100) {
     t0vec <- rep(Data@vbt0[x], reps)
   }
   t0vec[!is.finite(t0vec)] <- 0
-  hvec <- trlnorm(reps, Data@steep[x], Data@CV_steep[x])
+  # hvec <- trlnorm(reps, Data@steep[x], Data@CV_steep[x])
+  hvec <- sample_steepness2(reps, Data@steep[x], Data@CV_steep[x])
   rsamp <- getr(x, Data, Mvec, Kvec, Linfvec, t0vec, hvec, maxage = Data@MaxAge, 
     r_reps = reps)
   Z <- MLne(x, Data, Linfc = Linfvec, Kc = Kvec, ML_reps = reps,  MLtype = "dep")
@@ -2999,7 +2999,9 @@ Fdem <- function(x, Data, reps = 100) {
     t0c <- rep(Data@vbt0[x], reps)
   }
   t0c[!is.finite(t0c)] <- 0
-  hvec <- trlnorm(reps, Data@steep[x], Data@CV_steep[x])
+  # hvec <- trlnorm(reps, Data@steep[x], Data@CV_steep[x])
+  hvec <- sample_steepness2(reps, Data@steep[x], Data@CV_steep[x])
+  
   Ac <- trlnorm(reps, Data@Abun[x], Data@CV_Abun[x])
   FMSY <- getr(x, Data, Mvec, Kc, Linfc, t0c, hvec, maxage = Data@MaxAge, 
     r_reps = reps)/2
@@ -3039,7 +3041,8 @@ Fdem_CC <- function(x, Data, reps = 100, Fmin = 0.005) {
     t0c <- rep(Data@vbt0[x], reps)
   }
   t0c[!is.finite(t0c)] <- 0
-  hvec <- trlnorm(reps, Data@steep[x], Data@CV_steep[x])
+  # hvec <- trlnorm(reps, Data@steep[x], Data@CV_steep[x])
+  hvec <- sample_steepness2(reps, Data@steep[x], Data@CV_steep[x])
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
   Cc <- trlnorm(reps, MuC, Data@CV_Cat[x])
   Zdb <- CC(x, Data, reps = reps * 10)
@@ -3053,8 +3056,7 @@ Fdem_CC <- function(x, Data, reps = 100, Fmin = 0.005) {
   }
   
   Ac <- Cc/(1 - exp(-Fdb))
-  FMSY <- getr(x, Data, Mvec, Kc, Linfc, t0c, hvec, maxage = Data@MaxAge, 
-    r_reps = reps)/2
+  FMSY <- getr(x, Data, Mvec, Kc, Linfc, t0c, hvec, maxage = Data@MaxAge, r_reps = reps)/2
   TAC <- FMSY * Ac
   
   TACfilter(TAC)
@@ -3113,14 +3115,18 @@ Fdem_ML <- function(x, Data, reps = 100) {
   Linfc = trlnorm(reps * 10, Data@vbLinf[x], Data@CV_vbLinf[x])
   t0c <- -trlnorm(reps * 10, -Data@vbt0[x], Data@CV_vbt0[x])
   t0c[!is.finite(t0c)] <- 0
-  hvec <- trlnorm(reps * 10, Data@steep[x], Data@CV_steep[x])
+  # hvec <- trlnorm(reps * 10, Data@steep[x], Data@CV_steep[x])
+  hvec <- sample_steepness2(reps*10, Data@steep[x], Data@CV_steep[x])
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
   Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
+
   if (all(is.na(Z))) return(rep(NA, reps))
-  FM <- Z - Mvec
-  Ac <- Cc/(1 - exp(-FM))
-  FMSY <- getr(x, Data, Mvec, Kc, Linfc, t0c, hvec, maxage = Data@MaxAge, r_reps = reps * 10)/2
+  ind <- !is.na(Z)
+  FM <- Z[ind] - Mvec[ind]
+  Ac <- Cc[ind]/(1 - exp(-FM))
+  FMSY <- getr(x, Data, Mvec[ind], Kc[ind], Linfc[ind], t0c[ind], hvec[ind], 
+               maxage = Data@MaxAge, r_reps = sum(ind))/2
   TAC <- FMSY * Ac
   TAC <- TAC[TAC > 0][1:reps]
   TACfilter(TAC)
@@ -3154,7 +3160,8 @@ CompSRA <- function(x, Data, reps = 100) {
   TAC <- rep(NA, reps)
   for (i in 1:reps) {
     Mc <- trlnorm(1, Data@Mort[x], Data@CV_Mort)
-    hc <- trlnorm(1, Data@steep[x], Data@CV_steep[x])
+    # hc <- trlnorm(1, Data@steep[x], Data@CV_steep[x])
+    hc <- sample_steepness2(1, Data@steep[x], Data@CV_steep[x])
     Linfc <- trlnorm(1, Data@vbLinf[x], Data@CV_vbLinf[x])
     Kc <- trlnorm(1, Data@vbK[x], Data@CV_vbK[x])
     if (Data@vbt0[x] != 0 & Data@CV_vbt0[x] != tiny) {
@@ -3235,7 +3242,8 @@ CompSRA4010 <- function(x, Data, reps = 100) {
   TAC <- Bt_K <- rep(NA, reps)
   for (i in 1:reps) {
     Mc <- trlnorm(1, Data@Mort[x], Data@CV_Mort)
-    hc <- trlnorm(1, Data@steep[x], Data@CV_steep[x])
+    # hc <- trlnorm(1, Data@steep[x], Data@CV_steep[x])
+    hc <- sample_steepness2(1, Data@steep[x], Data@CV_steep[x])
     Linfc <- trlnorm(1, Data@vbLinf[x], Data@CV_vbLinf[x])
     Kc <- trlnorm(1, Data@vbK[x], Data@CV_vbK[x])
     if (Data@vbt0[x] != 0 & Data@CV_vbt0[x] != tiny) {
@@ -3553,13 +3561,15 @@ MLne <- function(x, Data, Linfc, Kc, ML_reps = 100, MLtype = "dep") {
       }
       mlen <- mean(mlen[(length(mlen) - 2):length(mlen)], na.rm = TRUE)
       Z2[i] <- bheq(K = Kc[i], Linf = Linfc[i], Lc = Lc, Lbar = mlen)
+      
     }
   }
   # Z <- Z[,ncol(Z)] # last estimate of Z? Z needs to be vector reps long
-  if (MLtype == "F") 
+  if (MLtype == "F") {
+    Z2[Z2<0] <- NA
     return(Z2)
-  if (MLtype == "dep") 
-    return(Z)
+  }
+  if (MLtype == "dep") return(Z)
 }
 
 bheq <- function(K, Linf, Lc, Lbar) {
@@ -3718,7 +3728,8 @@ VPA <- function(x, Data, reps = reps) {
   for (i in 1:reps) {
     
     Mc <- trlnorm(1, Data@Mort[x], Data@CV_Mort[x])
-    hc <- trlnorm(1, Data@steep[x], Data@CV_steep[x])
+    # hc <- trlnorm(1, Data@steep[x], Data@CV_steep[x])
+    hc <- sample_steepness2(1, Data@steep[x], Data@CV_steep[x])
     Linfc <- trlnorm(1, Data@vbLinf[x], Data@CV_vbLinf[x])
     Kc <- trlnorm(1, Data@vbK[x], Data@CV_vbK[x])
     t0c <- -trlnorm(1, -Data@vbt0[x], Data@CV_vbt0[x])

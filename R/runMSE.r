@@ -539,8 +539,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   II <- II/apply(II, 1, mean)  # normalize
   
   # --- Calculate vulnerable and spawning biomass abundance ----
-  if (nsim > 1) A <- apply(VBiomass[, , nyears, ], 1, sum)  #+ apply(CB[, , nyears, ], 1, sum) # Abundance before fishing
-  if (nsim == 1) A <- sum(VBiomass[, , nyears, ]) #+  sum(CB[,,nyears,]) # Abundance before fishing
+  if (nsim > 1) A <- apply(VBiomass[, , nyears, ], 1, sum)  + apply(CB[, , nyears, ], 1, sum) # Abundance before fishing
+  if (nsim == 1) A <- sum(VBiomass[, , nyears, ]) +  sum(CB[,,nyears,]) # Abundance before fishing
   if (nsim > 1) Asp <- apply(SSB[, , nyears, ], 1, sum)  # SSB Abundance
   if (nsim == 1) Asp <- sum(SSB[, , nyears, ])  # SSB Abundance  
   
@@ -646,13 +646,14 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   Data@wlb <- rep(b, nsim)
   Data@nareas <- nareas
   
+  # put all the operating model parameters in one table
   Data@OM <- data.frame(RefY, M, Depletion, A, SSBMSY_SSB0, FMSY_M, Mgrad, Msd, procsd, Esd, dFfinal, 
                         MSY, qinc, qcv, FMSY, Linf, K, t0, hs, Linfgrad, Kgrad, Linfsd, recgrad, Ksd, 
                         ageM, L5=L5[nyears, ], LFS=LFS[nyears, ], Vmaxlen=Vmaxlen[nyears, ], LFC, OFLreal, 
                         Spat_targ, Frac_area_1, Prob_staying, AC, L50, L95, B0, N0, SSB0, BMSY_B0,
                         TACSD,TACFrac,ESD,EFrac,SizeLimSD,SizeLimFrac,Blow,
                         BMSY, SSBMSY, Mexp, Fdisc, 
-                        LR5=LR5[nyears,], LFR=LFR[nyears,], Rmaxlen=Rmaxlen[nyears,], DR=DR[nyears,]) # put all the operating model parameters in one table
+                        LR5=LR5[nyears,], LFR=LFR[nyears,], Rmaxlen=Rmaxlen[nyears,], DR=DR[nyears,]) 
 
 
   Data@Obs <- as.data.frame(ObsPars) # put all the observation error model parameters in one table
@@ -829,6 +830,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       CB_Pret <- outputcalcs$CB_Pret # retained catch 
       FM_P <- outputcalcs$FM_P # fishing mortality 
       Z_P <- outputcalcs$Z_P # total mortality 
+
     } else {
       # -- input control ----
       
@@ -950,13 +952,32 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
         Depletion <- apply(SSB_P[, , y, ], 1, sum)/SSB0 # apply(SSB[, , 1, ], 1, sum)
         Depletion[Depletion < tiny] <- tiny
 
-        A <- apply(VBiomass_P[, , y, ], 1, sum) # + CB_P[, , y-1, ], 1, sum) # avail biomass before fishing
+        
+        # A <- apply(VBiomass_P[, , y, ], 1, sum)
+        
+    
+        # Calculate abundance after recruitment and movement - project forward with no F
+        NextYrNtemp <- lapply(1:nsim, function(x) 
+          popdynOneTS(nareas, maxage, SSBcurr=colSums(SSB_P[x,,y, ]), Ncurr=N_P[x,,y,], 
+                      Zcurr=matrix(M_ageArray[x,,y+nyears], nrow=maxage, ncol=nareas, byrow=TRUE), 
+                      PerrYr=Perr[x, y+nyears+maxage-1], hc=hs[x], 
+                      R0c=R0a[x,], SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], 
+                      movc=mov[x,,], SRrelc=SRrel[x]))
+        
+        N_PNext <- aperm(array(unlist(NextYrNtemp), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2)) 
+        VBiomassNext <- VBiomass_P
+        VBiomassNext[SAYR] <- N_PNext * Wt_age[SAYt] * V_P[SAYt]  # Calculate vulnerable for abundance
+        
+        A <- apply(VBiomassNext[, , y, ], 1, sum) 
+        
+
         
         A[is.na(A)] <- tiny
         Asp <- apply(SSB_P[, , y, ], 1, sum)  # SSB Abundance
         Asp[is.na(Asp)] <- tiny
         OFLreal <- A * FMSY
         
+        # - update data object ---- 
         # assign all the new data
         MSElist[[mm]]@OM$A <- A
         MSElist[[mm]]@Year <- 1:(nyears + y - 1)
