@@ -269,8 +269,8 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   age95[age95 < 1] <- 1.5  # must be greater than 0 and ageM
   
   if (any(ageM >= maxage-1)) {
-    message("Note: Some samples of age of maturity are above 'maxage'. Defaulting to maxage-1")
-    ageM[ageM >= maxage] <- maxage - 1 
+    message("Note: Some samples of age of maturity are above 'maxage'-1. Defaulting to maxage-1")
+    ageM[ageM >= (maxage-1)] <- maxage - 1 
   }
   if (any(ageM >= maxage)) {
     message("Note: Some samples of age of maturity are above 'maxage'. Defaulting to maxage")
