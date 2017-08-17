@@ -163,10 +163,12 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
     if (!exists("sL50", inherits=FALSE)) sL50 <- matrix(L50, nsim, 50)
     L50_95[((sL50+L50_95)/matrix(Linf, nsim, 50)) > 0.99] <- NA
     L50_95 <- apply(L50_95, 1, function(x) x[!is.na(x)][1]) 
+    L50_95[is.na(L50_95)] <- 2
   }
  
   if (!exists("L95", inherits=FALSE))   L95 <- L50 + L50_95
   
+
   if (any(L95> Linf)) {
     message("Note: Some samples of L95 are above Linf. Defaulting to 0.99*Linf")
     L95[L95> Linf] <- 0.99* Linf[L95> Linf]
