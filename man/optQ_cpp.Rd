@@ -48,4 +48,3 @@ optQ_cpp(lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc,
 Optimize for catchability coefficient
 }
 \keyword{internal}
-

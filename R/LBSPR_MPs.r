@@ -4,26 +4,26 @@
 #' Iteratively adjusts TAC based on distance between estimated and target SPR
 #' (40\%), and slope of recent SPR estimates.
 #' 
-#' @usage LBSPR_ItTAC(x, DLM_data, yrsmth=1,reps=5, ...)
+#' @usage LBSPR_ItTAC(x, Data, yrsmth=1,reps=5, ...)
 #' @param x Simulation number
-#' @param DLM_data DLM_data object
+#' @param Data Data object
 #' @param yrsmth Number of years to smooth length data - not currently used
 #' @param reps Number of repetitions
 #' @param ... ignored
 #' @author A. Hordyk
 #' @export LBSPR_ItTAC
-LBSPR_ItTAC <- function(x, DLM_data, yrsmth=1,reps=5, ...) {
+LBSPR_ItTAC <- function(x, Data, yrsmth=1,reps=5, ...) {
  
- dependencies="DLM_data@CAL, DLM_data@CAL_bins, DLM_data@vbLinf, DLM_data@vbK, DLM_data@Mort, LM_data@vbK, 
-   DLM_data@L50, DLM_data@L95, DLM_data@wlb, DLM_data@MPrec" 
+ dependencies="Data@CAL, Data@CAL_bins, Data@vbLinf, Data@vbK, Data@Mort, LM_data@vbK, 
+   Data@L50, Data@L95, Data@wlb, Data@MPrec" 
   
-  if (is.na(DLM_data@MPrec[x])) {
-    message("No previous TAC recommendation")
+  if (is.na(Data@MPrec[x])) {
+    # message("No previous TAC recommendation")
 	return(NA) # 
   }
   
   # Run the LBSPR model 
-  MiscList <- LBSPR(x, DLM_data, yrsmth=yrsmth,reps=reps, ...)
+  MiscList <- LBSPR(x, Data, yrsmth=yrsmth,reps=reps, ...)
   
   if(all(is.na(MiscList[[1]]))) return(NA)
   if(all(is.na(MiscList[[1]][,2,]))) return(NA)
@@ -35,9 +35,9 @@ LBSPR_ItTAC <- function(x, DLM_data, yrsmth=1,reps=5, ...) {
   if (reps > 1) EstSPR <- YY[nrow(YY),]
   
   TgSPR <- 0.4
-  Steep <- DLM_data@steep[x]
+  Steep <- Data@steep[x]
   if (is.na(Steep)) Steep <- 0.6
-  h <- trlnorm(reps, Steep, DLM_data@CV_steep[x])
+  h <- trlnorm(reps, Steep, Data@CV_steep[x])
   SPRLim <- -(2*(h-1))/(3*h+1) # SPR that results in 0.5 R0
   
   phi1 <- 6
@@ -97,7 +97,7 @@ LBSPR_ItTAC <- function(x, DLM_data, yrsmth=1,reps=5, ...) {
   Mod[Mod < MaxDw] <- MaxDw
   Mod <- Mod + 1 
  
-  TAC <- DLM_data@MPrec[x] * Mod
+  TAC <- Data@MPrec[x] * Mod
   TAC <- TACfilter(TAC)
  
   Out <- list()
@@ -106,7 +106,7 @@ LBSPR_ItTAC <- function(x, DLM_data, yrsmth=1,reps=5, ...) {
  
   return(Out) 
 }
-class(LBSPR_ItTAC)<-"DLM_output"
+class(LBSPR_ItTAC)<-"Output"
 
 #' Length-based SPR model with HCR that iteratively adjusts Effort
 #' 
@@ -114,20 +114,20 @@ class(LBSPR_ItTAC)<-"DLM_output"
 #' SPR (40\%), and slope of recent SPR estimates.
 #' 
 #' 
-#' @usage LBSPR_ItEff(x, DLM_data, yrsmth=1,reps=5, ...)
+#' @usage LBSPR_ItEff(x, Data, yrsmth=1,reps=5, ...)
 #' @param x Simulation number
-#' @param DLM_data DLM_data object
+#' @param Data Data object
 #' @param yrsmth Number of years to smooth length data - not currently used
 #' @param reps Number of repetitions. Not currently used 
 #' @param ... ignored
 #' @author A. Hordyk
 #' @importClassesFrom LBSPR LB_pars LB_lengths
 #' @export LBSPR_ItEff
-LBSPR_ItEff <- function(x, DLM_data, yrsmth=1, reps=5, ...) {
- dependencies="DLM_data@CAL, DLM_data@CAL_bins, DLM_data@vbLinf, 
-	DLM_data@vbK, DLM_data@Mort, DLM_data@vbK, DLM_data@L50, DLM_data@L95, 
-	DLM_data@wlb"
-  MiscList <- LBSPR(x, DLM_data, yrsmth=yrsmth,reps=reps, ...)
+LBSPR_ItEff <- function(x, Data, yrsmth=1, reps=5, ...) {
+ dependencies="Data@CAL, Data@CAL_bins, Data@vbLinf, 
+	Data@vbK, Data@Mort, Data@vbK, Data@L50, Data@L95, 
+	Data@wlb"
+  MiscList <- LBSPR(x, Data, yrsmth=yrsmth,reps=reps, ...)
   if(all(is.na(MiscList[[1]]))) return(rep(NA, 6))
   if(all(is.na(MiscList[[1]][,2,]))) return(rep(NA, 6))
   
@@ -139,7 +139,7 @@ LBSPR_ItEff <- function(x, DLM_data, yrsmth=1, reps=5, ...) {
   if (reps > 1) EstSPR <- YY[nrow(YY),]
   
   TgSPR <- 0.4
-  Steep <- DLM_data@steep[x]
+  Steep <- Data@steep[x]
   if (is.na(Steep)) Steep <- 0.6
   h <- Steep
   SPRLim <- -(2*(h-1))/(3*h+1) # SPR that results in 0.5 R0
@@ -187,21 +187,12 @@ LBSPR_ItEff <- function(x, DLM_data, yrsmth=1, reps=5, ...) {
   Mod[Mod < MaxDw] <- MaxDw
   Mod <- Mod + 1 
   
-  Allocate <- 1
-  if (is.na(DLM_data@MPeff[x])) DLM_data@MPeff[x] <- 1 
-  Effort <- DLM_data@MPeff[x] * Mod
-  MiscList[[2]] <- append(MiscList[[2]], Effort)
-  Spatial <- c(1,1)
-  Vuln <- rep(NA,2)
-  out <- c(Allocate, Effort, Spatial, Vuln)
-   
-  Out <- list()
-  Out[[1]] <- out 
-  Out[[2]] <- MiscList
- 
-  return(Out) 
+  rec <- new("InputRec")
+  rec@Effort <- Data@MPeff[x] * Mod
+  rec@Misc <- MiscList
+  rec
 }
-class(LBSPR_ItEff)<-"DLM_input"
+class(LBSPR_ItEff)<-"Input"
 
 #' Length-based SPR model with HCR that iteratively adjusts Selectivity
 #' 
@@ -209,20 +200,20 @@ class(LBSPR_ItEff)<-"DLM_input"
 #' Entirely untested, and included at to demonstrate MPs of this type.
 #' 
 #' 
-#' @usage LBSPR_ItSel(x, DLM_data, yrsmth=1,reps=5, ...)
+#' @usage LBSPR_ItSel(x, Data, yrsmth=1,reps=5, ...)
 #' @param x Simulation number
-#' @param DLM_data DLM_data object
+#' @param Data Data object
 #' @param yrsmth Number of years to smooth length data - not currently used
 #' @param reps Number of repetitions. Not currently used 
 #' @param ... ignored
 #' @author A. Hordyk
 #' @export LBSPR_ItSel
-LBSPR_ItSel <- function(x, DLM_data, yrsmth=1, reps=5, ...) {
+LBSPR_ItSel <- function(x, Data, yrsmth=1, reps=5, ...) {
 
- dependencies="DLM_data@CAL, DLM_data@CAL_bins, DLM_data@vbLinf, 
-	DLM_data@vbK, DLM_data@Mort, DLM_data@vbK, DLM_data@L50, DLM_data@L95, 
-	DLM_data@wlb"
-  MiscList <- LBSPR(x, DLM_data, yrsmth=yrsmth,reps=reps)
+ dependencies="Data@CAL, Data@CAL_bins, Data@vbLinf, 
+	Data@vbK, Data@Mort, Data@vbK, Data@L50, Data@L95, 
+	Data@wlb, Data@LenCV"
+  MiscList <- LBSPR(x, Data, yrsmth=yrsmth,reps=reps)
   if(all(is.na(MiscList[[1]]))) return(rep(NA, 6))
   if(all(is.na(MiscList[[1]][,2,]))) return(rep(NA, 6))
   XX <- 1:4 
@@ -233,90 +224,82 @@ LBSPR_ItSel <- function(x, DLM_data, yrsmth=1, reps=5, ...) {
   if (reps > 1) EstSPR <- YY[nrow(YY),]
   
   TgSPR <- 0.4
-  Steep <- DLM_data@steep[x]
+  Steep <- Data@steep[x]
   if (is.na(Steep)) Steep <- 0.6
   h <- Steep
   SPRLim <- -(2*(h-1))/(3*h+1) # SPR that results in 0.5 R0
  
-  Allocate <- 1
-  Effort <- 1
-  Spatial <- c(1,1)
+  
+  rec <- new("InputRec") # create recommendation object
 
   if (EstSPR < TgSPR) {
-    newLFC <- DLM_data@L50[x] * 1.05
-    newLFS <- DLM_data@L50[x] * 1.1
-    Vuln <-c(newLFC, newLFS)
+    rec@LR5 <- Data@L50[x] * 1.05
+    rec@LFR <- Data@L50[x] * 1.1
   }
   if (EstSPR < SPRLim) {
-    newLFC <- DLM_data@L50[x] * 1.2
-    newLFS <- DLM_data@L50[x] * 1.25
-    Vuln <-c(newLFC, newLFS)  
+    rec@LR5 <- Data@L50[x] * 1.2
+    rec@LFR <- Data@L50[x] * 1.25
+ 
   }
   if (EstSPR >= TgSPR) {
-    newLFC <- DLM_data@L50[x] * 0.85
-    newLFS <- DLM_data@L50[x] * 0.9
-    Vuln <-c(newLFC, newLFS)  
+    rec@LR5 <- Data@L50[x] * 0.85
+    rec@LFR <- Data@L50[x] * 0.9
+
   }
    
- 
-  out <- c(Allocate, Effort, Spatial, Vuln)
-   
-  Out <- list()
-  Out[[1]] <- out 
-  Out[[2]] <- MiscList
- 
-  return(Out) 
+
+  rec@Misc <- MiscList
+  rec
 }
-class(LBSPR_ItSel)<-"DLM_input"
+class(LBSPR_ItSel)<-"Input"
 
 #' Apply the Length-based SPR model to DLMtool Data Object
 #' 
 #' 
 #' @param x Simulation number
-#' @param DLM_data DLM_data object
+#' @param Data Data object
 #' @param yrsmth Number of years to smooth length data - not currently used
 #' @param reps Number of repetitions
 #' @param lstyrs Last number of years to run model
 #' @author A. Hordyk
 #' @export LBSPR
-LBSPR <- function(x, DLM_data, yrsmth=1, reps=1, lstyrs=10) {
-  if (length(DLM_data@LHYear)<1) stop("LHYear must be set to last year of data", call.=FALSE)
-  if (DLM_data@LHYear <1) stop("LHYear must be set to last year of data", call.=FALSE)
-  if (all(is.na(DLM_data@CAL))) stop("No length data", call.=FALSE)
-  if (length(DLM_data@Misc) == 0) DLM_data@Misc <- vector("list", 1)
+LBSPR <- function(x, Data, yrsmth=1, reps=1, lstyrs=10) {
+  if (length(Data@LHYear)<1) stop("LHYear must be set to last year of data", call.=FALSE)
+  if (Data@LHYear <1) stop("LHYear must be set to last year of data", call.=FALSE)
+  if (all(is.na(Data@CAL))) stop("No length data", call.=FALSE)
+  if (length(Data@Misc) == 0) Data@Misc <- vector("list", 1)
   
-  TotYears <- nrow(DLM_data@CAL[1,,]) # How many years of length data exist
+  TotYears <- nrow(Data@CAL[1,,]) # How many years of length data exist
  
-  if (is.null(TotYears)) TotYears <- length(DLM_data@CAL[1,,])
-  if(is.null(dim(DLM_data@CAL[1,,]))) TotYears <- 1
+  if (is.null(TotYears)) TotYears <- length(Data@CAL[1,,])
+  if(is.null(dim(Data@CAL[1,,]))) TotYears <- 1
 
   # if (lstyrs > TotYears) lstyrs <- TotYears
   # # Only apply model to lstyrs of data - only applies to the first time the model is run in MSE 
-  years <- seq_along(DLM_data@Year)
-  LHYear <- which(DLM_data@Year == DLM_data@LHYear)
-  CurrYear <- years[length(DLM_data@Year)]
+  years <- seq_along(Data@Year)
+  LHYear <- which(Data@Year == Data@LHYear)
+  CurrYear <- years[length(Data@Year)]
   
   #index <- NULL
   # if (!is.null(lstyrs)) {
-    # DD <- dim(DLM_data@CAL)
- 	# TotYears <- nrow(DLM_data@CAL[1,(DD[2]-lstyrs+1):DD[2],]) # How many years of length data exist
-    # if (is.null(TotYears)) TotYears <- length(DLM_data@CAL[1,(DD[2]-lstyrs+1):DD[2],]) 
+    # DD <- dim(Data@CAL)
+ 	# TotYears <- nrow(Data@CAL[1,(DD[2]-lstyrs+1):DD[2],]) # How many years of length data exist
+    # if (is.null(TotYears)) TotYears <- length(Data@CAL[1,(DD[2]-lstyrs+1):DD[2],]) 
 	# index <- (DD[2]-lstyrs+1):DD[2]
   # }
   
-  if (length(DLM_data@Misc[[x]]) == 0) { # Misc List is empty
+  if (length(Data@Misc[[x]]) == 0) { # Misc List is empty
 	# Create Empty Object
     MiscList <- rep(list(0), 2) # Create empty list
 	MiscList[[1]] <- array(NA, dim=c(TotYears, 4, reps))
-	colnames(MiscList[[1]]) <- c("Raw Est SPR", "Smooth Est SPR", 
-	"Raw Est F/M", "Smooth Est F/M")
+	colnames(MiscList[[1]]) <- c("Raw Est SPR", "Smooth Est SPR", "Raw Est F/M", "Smooth Est F/M")
 	MiscList[[2]] <- list()
   }
-  if (length(DLM_data@Misc[[x]]) != 0) MiscList <- DLM_data@Misc[[x]]
+  if (length(Data@Misc[[x]]) != 0) MiscList <- Data@Misc[[x]]
   
   # Add Extra Row when needed 
   if (nrow(MiscList[[1]][,1,1, drop=FALSE]) < TotYears) {
-    Diff <- TotYears - nrow(DLM_data@Misc[[x]][[1]])	
+    Diff <- TotYears - nrow(Data@Misc[[x]][[1]])	
 	newmat <- array(NA, dim=c(Diff, 4, reps))
 	colnames(newmat) <- colnames(MiscList[[1]]) 
 	MiscList[[1]] <- abind::abind(MiscList[[1]], newmat, along=1) 
@@ -327,50 +310,53 @@ LBSPR <- function(x, DLM_data, yrsmth=1, reps=1, lstyrs=10) {
    
   # yrsmth not implemented here - TO BE ADDED 
   if (length(IsEmpty) > 1) {
-    LenMatrix <- t(DLM_data@CAL[x, IsEmpty, ])
+    LenMatrix <- t(Data@CAL[x, IsEmpty, ])
   } else { 
-    LenMatrix <- (DLM_data@CAL[x, IsEmpty, ])
+    LenMatrix <- (Data@CAL[x, IsEmpty, ])
   }
   
   if (TotYears == 1) LenMatrix <- (as.matrix(LenMatrix))
-  binWidth <- DLM_data@CAL_bins[2] - DLM_data@CAL_bins[1]
-  CAL_binsmid <- seq(from=DLM_data@CAL_bins[1]+0.5*binWidth, by=binWidth, length=length(DLM_data@CAL_bins)-1) 
+  binWidth <- Data@CAL_bins[2] - Data@CAL_bins[1]
+  CAL_binsmid <- seq(from=Data@CAL_bins[1]+0.5*binWidth, by=binWidth, length=length(Data@CAL_bins)-1) 
   LenMatrix <- cbind(CAL_binsmid, LenMatrix)
   
   if (CurrYear == LHYear) {
     ll <- length(IsEmpty)
     LenMatrix <- LenMatrix[,c(1, (ll-lstyrs+2):(ll+1))] 
-	IsEmpty <- (ll-lstyrs+1):(ll)
-	MiscList[[1]][1:(min(IsEmpty)-1),1,] <- 0 
+    IsEmpty <- (ll-lstyrs+1):(ll)
+    MiscList[[1]][1:(min(IsEmpty)-1),1,] <- 0 
     MiscList[[1]][1:(min(IsEmpty)-1),3,] <- 0 
   }
  
-  Wb <- DLM_data@wlb[x]
+  Wb <- Data@wlb[x]
   if (is.na(Wb)) Wb <- 3
-  WbCV <- DLM_data@CV_wlb[x]
+  WbCV <- Data@CV_wlb[x]
   if (is.na(WbCV)) WbCV <- 0.1 
+  options(warn=-1)
   out <- sapply(1:reps, function(X) {
     LBpars <- new("LB_pars", verbose=FALSE)
-
-    LBpars@MK <- (trlnorm(reps,DLM_data@Mort[x],DLM_data@CV_Mort[x])/trlnorm(reps,DLM_data@vbK[x],DLM_data@CV_vbK[x]))[X] 
-    LBpars@Linf <- trlnorm(reps, DLM_data@vbLinf[x], DLM_data@CV_vbLinf[x])[X]
-    LBpars@CVLinf <- 0.1 # NEED TO ADD THIS TO INPUT VARIABLES
-    LBpars@L50 <- trlnorm(reps, DLM_data@L50[x],  DLM_data@CV_L50[x])[X]
-    LBpars@L95 <- trlnorm(reps, DLM_data@L95[x],  DLM_data@CV_L50[x])[X]
-    LBpars@FecB <- trlnorm(reps, Wb, WbCV)[X]
+    LBpars@MK <- (trlnorm(1,Data@Mort[x],Data@CV_Mort[x])/trlnorm(1,Data@vbK[x],Data@CV_vbK[x]))
+    LBpars@Linf <- trlnorm(1, Data@vbLinf[x], Data@CV_vbLinf[x])
+    LBpars@CVLinf <- rep(Data@LenCV[x], 1)
+    LBpars@L50 <- trlnorm(1, Data@L50[x],  Data@CV_L50[x])
+    LBpars@L95 <- trlnorm(1, Data@L95[x],  Data@CV_L50[x])
+    LBpars@FecB <- trlnorm(1, Wb, WbCV)
     
-	if (LBpars@L50 >= LBpars@Linf) LBpars@L50 <- 0.9 * LBpars@Linf
-	if (LBpars@L95 >= LBpars@Linf) LBpars@L95 <- 0.95 * LBpars@Linf
-	if (LBpars@L50 >= LBpars@L95) LBpars@L95 <- 1.05 * LBpars@L50
-	
-
+    if (LBpars@L50 >= LBpars@Linf) LBpars@L50 <- 0.9 * LBpars@Linf
+    if (LBpars@L95 >= LBpars@Linf) LBpars@L95 <- 0.95 * LBpars@Linf
+    if (LBpars@L50 >= LBpars@L95) LBpars@L95 <- 1.05 * LBpars@L50
+    
+    # matplot(LenDat@LMids, LenDat@LData, type="l")
+    # matplot(LenDat@LMids, LBfit@pLCatch * apply(LenDat@LData, 2, sum), type="l", add=TRUE, lwd=2)
+    
     LenDat <- new("LB_lengths", LenMatrix, LBpars, dataType="freq")
     LenDat@Years <- 1:length(LenDat@Years)
+  
     LBfit <- LBSPR::LBSPRfit(LBpars, LenDat, verbose=FALSE)
-	# LBfit <- LBSPR::LBSPRfit(LBpars, LenDat, verbose=FALSE, Control=list(modtype="absel"))
-	
-	data.frame(rawSPR=LBfit@SPR, rawFM=LBfit@FM)
+    # LBfit <- LBSPR::LBSPRfit(LBpars, LenDat, verbose=FALSE, Control=list(modtype="absel"))
+    data.frame(rawSPR=LBfit@SPR, rawFM=LBfit@FM)
   })
+  options(warn=0)
 	
   # Raw estimates 
   MiscList[[1]][IsEmpty,1,] <- matrix(unlist(out[1,]), nrow=length(IsEmpty), ncol=reps)

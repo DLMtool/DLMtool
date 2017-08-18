@@ -34,4 +34,3 @@ pattern from within these ranges. Default is a sine wave.
 \author{
 A. Hordyk
 }
-

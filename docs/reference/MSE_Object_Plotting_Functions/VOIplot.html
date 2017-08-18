@@ -11,8 +11,8 @@
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/yeti/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -25,12 +25,14 @@
 <script src="../../pkgdown.js"></script>
 
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -101,6 +103,9 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../../reference/R_Object_Classes/index.html">DLMtool Object Classes</a>
+</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Other
@@ -113,9 +118,6 @@
     </li>
     <li>
       <a href="../../reference/Other_Functions/index.html">Other Functions</a>
-    </li>
-    <li>
-      <a href="../../reference/R_Object_Classes/index.html">R Object Classes</a>
     </li>
     <li>
       <a href="../../reference/Internal_Functions/index.html">Internal Functions</a>
@@ -141,69 +143,74 @@
     </div>
 
     
-    <p>A function that relates parameters of the observation model and the operating model parameters  
-to yield.</p>
+    <p>A function that relates parameters of the observation model and the
+operating model parameters to yield.</p>
     
 
-    <pre><span class='fu'>VOIplot</span>(<span class='no'>MSEobj</span>, <span class='kw'>MPs</span><span class='kw'>=</span><span class='fl'>NA</span>, <span class='kw'>nvars</span><span class='kw'>=</span><span class='fl'>5</span>, <span class='kw'>nMP</span><span class='kw'>=</span><span class='fl'>4</span>, <span class='kw'>Par</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"Obs"</span>, <span class='st'>"OM"</span>),
-  <span class='kw'>YVar</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>"Y"</span>, <span class='st'>"B"</span>), <span class='kw'>doPlot</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>incStat</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='kw'>availMP</span><span class='kw'>=</span><span class='kw'>NULL</span>,
-  <span class='kw'>acceptMP</span><span class='kw'>=</span><span class='kw'>NULL</span>, <span class='kw'>incNames</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>labcex</span><span class='kw'>=</span><span class='fl'>0.8</span>, <span class='kw'>quants</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>0.05</span>, <span class='fl'>0.95</span>))</pre>
+    <pre class="usage"><span class='fu'>VOIplot</span>(<span class='no'>MSEobj</span>, <span class='kw'>MPs</span><span class='kw'>=</span><span class='fl'>NA</span>, <span class='kw'>nvars</span><span class='kw'>=</span><span class='fl'>5</span>, <span class='kw'>nMP</span><span class='kw'>=</span><span class='fl'>4</span>, <span class='kw'>Par</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>'Obs'</span>, <span class='st'>'OM'</span>),
+<span class='kw'>YVar</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='st'>'Y'</span>, <span class='st'>'B'</span>), <span class='kw'>doPlot</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>incStat</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='kw'>availMP</span><span class='kw'>=</span><span class='kw'>NULL</span>, <span class='kw'>acceptMP</span><span class='kw'>=</span><span class='kw'>NULL</span>,
+<span class='kw'>incNames</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>labcex</span><span class='kw'>=</span><span class='fl'>0.8</span>, <span class='kw'>quants</span><span class='kw'>=</span><span class='fu'>c</span>(<span class='fl'>0.05</span>, <span class='fl'>0.95</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>MSEobj</dt>
-      <dd>
-An object of class MSE
-</dd>
-      <dt>MPs</dt>
-      <dd>
-The MPs to plot. If NA it will plot the first nMP from MSEobj
-</dd>
-      <dt>nvars</dt>
-      <dd>
-The number of observation or operating model parameters to plot (number of columns)
-</dd>
-      <dt>nMP</dt>
-      <dd>
-The maximum number of MPs to plot (number of rows)
-</dd>
-      <dt>Par</dt>
-      <dd>
-Plot Operating Model (OM) or Observation (Obs) parameters?
-</dd>
-      <dt>YVar</dt>
-      <dd>
-Variable for Y-Axis: Yield (Y) or Biomass (B) (relative to BMSY) 
-</dd>
-      <dt>doPlot</dt>
-      <dd>
-Output the plot?
-</dd>
-      <dt>incStat</dt>
-      <dd>
-Include a print out of statistic describing the curviness of the line?
-</dd>
-      <dt>availMP</dt>
-      <dd>
-Optional character string of MPs that are available. These names are colored black
-</dd>
-      <dt>acceptMP</dt>
-      <dd>
-Optional character string of MPs that are acceptable. These names are colored green if they are also in availMP
-</dd>
-      <dt>incNames</dt>
-      <dd>
-Include the names?
-</dd>
-      <dt>labcex</dt>
-      <dd>
-Character size of the label
-</dd>
-      <dt>quants</dt>
-      <dd>
-Quantiles to calculate
-</dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>MSEobj</th>
+      <td><p>An object of class MSE</p></td>
+    </tr>
+    <tr>
+      <th>MPs</th>
+      <td><p>The MPs to plot. If NA it will plot the first nMP from MSEobj</p></td>
+    </tr>
+    <tr>
+      <th>nvars</th>
+      <td><p>The number of observation or operating model parameters to plot
+(number of columns)</p></td>
+    </tr>
+    <tr>
+      <th>nMP</th>
+      <td><p>The maximum number of MPs to plot (number of rows)</p></td>
+    </tr>
+    <tr>
+      <th>Par</th>
+      <td><p>Plot Operating Model (OM) or Observation (Obs) parameters?</p></td>
+    </tr>
+    <tr>
+      <th>YVar</th>
+      <td><p>Variable for Y-Axis: Yield (Y) or Biomass (B) (relative to BMSY)</p></td>
+    </tr>
+    <tr>
+      <th>doPlot</th>
+      <td><p>Output the plot?</p></td>
+    </tr>
+    <tr>
+      <th>incStat</th>
+      <td><p>Include a print out of statistic describing the curviness of
+the line?</p></td>
+    </tr>
+    <tr>
+      <th>availMP</th>
+      <td><p>Optional character string of MPs that are available. These
+names are colored black</p></td>
+    </tr>
+    <tr>
+      <th>acceptMP</th>
+      <td><p>Optional character string of MPs that are acceptable. These
+names are colored green if they are also in availMP</p></td>
+    </tr>
+    <tr>
+      <th>incNames</th>
+      <td><p>Include the names?</p></td>
+    </tr>
+    <tr>
+      <th>labcex</th>
+      <td><p>Character size of the label</p></td>
+    </tr>
+    <tr>
+      <th>quants</th>
+      <td><p>Quantiles to calculate</p></td>
+    </tr>
+    </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 

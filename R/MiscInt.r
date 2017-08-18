@@ -56,6 +56,7 @@ getFMSY <- function(x, Marray, hs, Mat_age, Wt_age, R0, V, maxage, nyears,
 #' @param Wt_age internal parameter
 #' @param R0 internal parameter
 #' @param V internal parameter
+#' @param retA internal parameter
 #' @param maxage internal parameter
 #' @param nyears internal parameter
 #' @param proyears internal parameter
@@ -67,25 +68,27 @@ getFMSY <- function(x, Marray, hs, Mat_age, Wt_age, R0, V, maxage, nyears,
 #' 
 #' @keywords internal
 #' @export getFMSY2	
-getFMSY2 <- function(x, Marray, hs, Mat_age, Wt_age, R0, V, maxage, nyears, 
+getFMSY2 <- function(x, M_ageArray, hs, Mat_age, Wt_age, R0, V, retA, maxage, nyears, 
     proyears, Spat_targ, mov, SRrel, aR, bR, Control=1) {
-    opt <- optimize(projOpt_cpp, log(c(0.001, 8)),
-		Mc = Marray[x, nyears], hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , nyears], R0c = R0[x], 
-        Vc = V[x, ,nyears], nyears = nyears, maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x],
-        SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ], proyears = proyears, Control=Control)
-
-	MSY <- -opt$objective 
-	MSYs <- projOpt_cpp(lnIn = opt$minimum, 
-		Mc = Marray[x, nyears], hc = hs[x], Mac = Mat_age[x, ], Wac = Wt_age[x, , nyears], R0c = R0[x], 
-        Vc = V[x, ,nyears], nyears = nyears, maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x],
-        SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ], proyears = proyears, Control=2)
+    opt <- optimize(projOpt_cpp, log(c(0.001, 5)), Mc = M_ageArray[x, ,nyears], hc = hs[x], 
+                    Mac = Mat_age[x, ], Wac = Wt_age[x, , nyears], R0c = R0[x], 
+                    Vc = V[x, ,nyears], retAc=retA[x,,nyears], nyears = nyears, 
+                    maxage = maxage, movc = mov[x, , ], 
+                    Spat_targc = Spat_targ[x],  SRrelc = SRrel[x], 
+                    aRc = aR[x, ], bRc = bR[x, ], proyears = proyears, Control=Control)
+	  MSY <- -opt$objective 
+	  MSYs <- projOpt_cpp(lnIn = opt$minimum, Mc = M_ageArray[x, ,nyears], hc = hs[x], 
+	                      Mac = Mat_age[x, ], Wac = Wt_age[x, , nyears], R0c = R0[x], 
+	                      Vc = V[x, ,nyears], retAc=retA[x,,nyears], nyears = nyears, maxage = maxage, movc = mov[x, , ], 
+	                      Spat_targc = Spat_targ[x], SRrelc = SRrel[x], aRc = aR[x, ], 
+	                      bRc = bR[x, ], proyears = proyears, Control=2)
     SSB_MSY <- MSYs[1]				
-    B_MSY <- MSYs[2] 
     V_BMSY <- MSYs[3]
-		
-    F_MSYv <- -log(1 - (MSY/(V_BMSY+MSY))) 
-	F_MSYb <- -log(1 - (MSY/(SSB_MSY+MSY))) 
-    return(c(MSY = MSY, FMSY = F_MSYv, SSB = SSB_MSY, B = B_MSY, VB=V_BMSY, F_MSYb=F_MSYb))				
+    F_MSYv <- -log(1 - (MSY/(V_BMSY+MSY)))  
+   	# F_MSYb <- -log(1 - (MSY/(SSB_MSY)))
+
+    return(c(MSY = MSY, FMSY = F_MSYv, SSB = SSB_MSY, SSBMSY_SSB0=MSYs[4], BMSY_B0=MSYs[5], 
+             B = MSYs[2] , VB=V_BMSY))				
 }
 
 #' Internal function FMSY and related metrics 
@@ -129,39 +132,45 @@ FMSYopt <- function(lnF, Mc, hc, Mac, Wac, R0c, Vc, maxage, nyears, proyears,
     VB0 <- sum(VBiomass)
     R0a <- idist * R0c
     SSB0 <- apply(SSB, 2, sum)
+	# print(sum(SSB0)) 7920.754
     SSBpR <- SSB0/R0a
     
-    N <- N/2  # Calculate spawning stock biomass per recruit
+    # N <- N/2  # Calculate spawning stock biomass per recruit
     SSN <- Mac * N  # Calculate initial spawning stock numbers
     Biomass <- N * Wac
     SSB <- SSN * Wac  # Calculate spawning stock biomass
-    
-    for (y in 1:nyears) {
-        # set up some indices for indexed calculation
-        dis <- apply(Vc * Biomass, 2, sum)/sum(Vc * Biomass)
-        targ <- (dis^Spat_targc)/mean(dis^Spat_targc)
-        FMc <- array(FMSYc * Vc, dim = c(maxage, nareas)) * array(rep(targ, 
-            each = maxage), dim = c(maxage, nareas))  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
-        Zc <- FMc + Mc
-        CN <- N * (1 - exp(-Zc)) * (FMc/Zc)
-        CB <- CN * Wac
-        
-        N[2:maxage, ] <- N[1:(maxage - 1), ] * exp(-Zc[1:(maxage - 1), 
-            ])  # Total mortality
-        if (SRrelc == 1) {
-            N[1, ] <- (0.8 * R0a * hc * apply(SSB, 2, sum))/(0.2 * SSBpR * 
-                R0a * (1 - hc) + (hc - 0.2) * apply(SSB, 2, sum))  # Recruitment assuming regional R0 and stock wide steepness
-        } else {
-            N[1, ] <- aRc * apply(SSB, 2, sum) * exp(-bRc * apply(SSB, 
-                2, sum))
-        }
-        # print(N[1])
-        N[1, ] <- apply(array(N[1, ], c(2, 2)) * movc, 2, sum)
-        SSN <- N * Mac
-        SSB <- SSN * Wac
-        Biomass <- N * Wac
-        VBiomass <- Biomass * Vc
-        # print(sum(Biomass))
+   
+    # for (y in 1:nyears) {
+	for (y in 1:(nyears+proyears)) {
+	 
+ 	  dis <- apply(Vc * Biomass, 2, sum)/sum(Vc * Biomass) # spatial targeting 
+      targ <- (dis^Spat_targc)/mean(dis^Spat_targc)
+      FMc <- array(FMSYc * Vc, dim = c(maxage, nareas)) * array(rep(targ, each = maxage), 
+  	       dim = c(maxage, nareas))  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
+      Zc <- FMc + Mc	
+	  N[2:maxage, ] <- N[1:(maxage - 1), ] * exp(-Zc[1:(maxage - 1),])  # Total mortality
+	  
+      # Recruitment 
+      if (SRrelc == 1) {
+        N[1, ] <- (0.8 * R0a * hc * apply(SSB, 2, sum))/(0.2 * SSBpR * 
+          R0a * (1 - hc) + (hc - 0.2) * apply(SSB, 2, sum))  # Recruitment assuming regional R0 and stock wide steepness
+      } else {
+        N[1, ] <- aRc * apply(SSB, 2, sum) * exp(-bRc * apply(SSB, 2, sum))
+      }     	  
+	  
+	  # Move individuals 
+	  indMov <- as.matrix(expand.grid(1:nareas, 1:nareas, y, 1:maxage)[4:1])
+      indMov2 <- indMov[, c(1, 3)]
+      indMov3 <- indMov[, c(3, 4)]
+	  temp <- array(N[indMov2] * movc[indMov3], dim = c(nareas, nareas,  maxage))  # Move individuals		
+      N <- apply(temp, c(3, 1), sum)
+          
+      CN <- N * (1 - exp(-Zc)) * (FMc/Zc)
+      CB <- CN * Wac
+      SSN <- N * Mac
+      SSB <- SSN * Wac
+      Biomass <- N * Wac
+      VBiomass <- Biomass * Vc
     }  # end of year
     
     CBc <- sum(CB)
@@ -174,6 +183,71 @@ FMSYopt <- function(lnF, Mc, hc, Mac, Wac, R0c, Vc, maxage, nyears, proyears,
     }
 }
 
+# # Made some edits above - think order was different than runMSE 
+# FMSYopt <- function(lnF, Mc, hc, Mac, Wac, R0c, Vc, maxage, nyears, proyears, 
+    # Spat_targc, movc, SRrelc, aRc, bRc, Opt = T) {
+    
+    # FMSYc <- exp(lnF)
+    # nareas <- nrow(movc)
+    # # areasize<-c(asizec,1-asizec)
+    # idist <- rep(1/nareas, nareas)
+    # for (i in 1:300) idist <- apply(array(idist, c(2, 2)) * movc, 2, sum)
+    
+    # N <- array(exp(-Mc * ((1:maxage) - 1)) * R0c, dim = c(maxage, nareas)) * 
+        # array(rep(idist, each = maxage), dim = c(maxage, nareas))
+    # SSN <- Mac * N  # Calculate initial spawning stock numbers
+    # Biomass <- N * Wac
+    # VBiomass <- Biomass * Vc
+    # SSB <- SSN * Wac  # Calculate spawning stock biomass
+    
+    # B0 <- sum(Biomass)
+    # VB0 <- sum(VBiomass)
+    # R0a <- idist * R0c
+    # SSB0 <- apply(SSB, 2, sum)
+    # SSBpR <- SSB0/R0a
+    
+    # N <- N/2  # Calculate spawning stock biomass per recruit
+    # SSN <- Mac * N  # Calculate initial spawning stock numbers
+    # Biomass <- N * Wac
+    # SSB <- SSN * Wac  # Calculate spawning stock biomass
+    
+    # for (y in 1:nyears) {
+        # # set up some indices for indexed calculation
+        # dis <- apply(Vc * Biomass, 2, sum)/sum(Vc * Biomass)
+        # targ <- (dis^Spat_targc)/mean(dis^Spat_targc)
+        # FMc <- array(FMSYc * Vc, dim = c(maxage, nareas)) * array(rep(targ, 
+            # each = maxage), dim = c(maxage, nareas))  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
+        # Zc <- FMc + Mc
+        # CN <- N * (1 - exp(-Zc)) * (FMc/Zc)
+        # CB <- CN * Wac
+        
+        # N[2:maxage, ] <- N[1:(maxage - 1), ] * exp(-Zc[1:(maxage - 1), 
+            # ])  # Total mortality
+        # if (SRrelc == 1) {
+            # N[1, ] <- (0.8 * R0a * hc * apply(SSB, 2, sum))/(0.2 * SSBpR * 
+                # R0a * (1 - hc) + (hc - 0.2) * apply(SSB, 2, sum))  # Recruitment assuming regional R0 and stock wide steepness
+        # } else {
+            # N[1, ] <- aRc * apply(SSB, 2, sum) * exp(-bRc * apply(SSB, 
+                # 2, sum))
+        # }
+        # # print(N[1])
+        # N[1, ] <- apply(array(N[1, ], c(2, 2)) * movc, 2, sum)
+        # SSN <- N * Mac
+        # SSB <- SSN * Wac
+        # Biomass <- N * Wac
+        # VBiomass <- Biomass * Vc
+        # # print(sum(Biomass))
+    # }  # end of year
+    
+    # CBc <- sum(CB)
+    # if (Opt) {
+        # return(-CBc)
+    # } else {
+        # return(c(MSY = CBc, FMSY = -log(1 - (CBc/(sum(VBiomass) + CBc))), 
+            # SSB = sum(SSB), SSB_SSB0 = sum(SSB)/sum(SSB0), B = sum(N * 
+                # Wac), B_B0 = sum(N * Wac)/B0))
+    # }
+# }
 
 
 getFhist <- function(nsim, Esd, nyears, dFmin, dFmax, bb) {
@@ -241,7 +315,7 @@ getFref <- function(x, Marray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s,
     VBiomass_s, SSB_s, Vn, hs, R0a, nyears, proyears, nareas, maxage, mov, 
     SSBpR, aR, bR, SRrel, Spat_targ) {
     
-    opt <- optimize(doprojPI, log(c(0.001, 10)), Mvec = Marray[x, (nyears + 1):(nyears + proyears)], 
+    opt <- optimize(doprojPI, log(c(0.001, 5)), Mvec = Marray[x, (nyears + 1):(nyears + proyears)], 
 	  Wac = Wt_age[x, , (nyears + 1):(nyears + proyears)], Mac = Mat_age[x, ], 
 	    Pc = Perr[x, (nyears + 1):(nyears + proyears)], N_c = N_s[x, , ], 
 		SSN_c = SSN_s[x, , ], Biomass_c = Biomass_s[x, , ], 
@@ -249,16 +323,16 @@ getFref <- function(x, Marray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s,
 		hc = hs[x], R0ac = R0a[x, ], proyears, nareas, maxage, movc = mov[x, , ], 
 		SSBpRc = SSBpR[x], aRc = aR[x, ], bRc = bR[x, ], SRrelc = SRrel[x], 
         spat_targ = Spat_targ[x])
-    # print(exp(opt$minimum))
+   	
     return(-opt$objective)
-    
+ 
 }
 
 
 #' Internal Get Reference F using Rcpp 
 #' 
 #' @param x internal parameter
-#' @param Marray internal parameter
+#' @param M_ageArray internal parameter
 #' @param Wt_age internal parameter
 #' @param Mat_age internal parameter
 #' @param Perr internal parameter
@@ -269,6 +343,7 @@ getFref <- function(x, Marray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s,
 #' @param VBiomass_s internal parameter
 #' @param SSB_s internal parameter
 #' @param Vn internal parameter
+#' @param retAn internal parameter
 #' @param hs internal parameter
 #' @param R0a internal parameter
 #' @param nyears internal parameter
@@ -284,21 +359,21 @@ getFref <- function(x, Marray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s,
 #' 
 #' @keywords internal
 #' @export getFref2
-getFref2 <- function(x, Marray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s, 
-    VBiomass_s, SSB_s, Vn, hs, R0a, nyears, proyears, nareas, maxage, mov, 
-    SSBpR, aR, bR, SRrel, Spat_targ) {
-    
-    opt <- optimize(doprojPI_cpp, log(c(0.001, 10)), Mvec = Marray[x, (nyears + 1):(nyears + proyears)], 
-	  Wac = Wt_age[x, , (nyears + 1):(nyears + proyears)], Mac = Mat_age[x, ], 
-	    Pc = Perr[x, (nyears + 1):(nyears + proyears)], N_c = N_s[x, , 1,], 
-		SSN_c = SSN_s[x, , 1, ], Biomass_c = Biomass_s[x, , 1, ], 
-		VBiomass_c = VBiomass_s[x, , 1, ], SSB_c = SSB_s[x, , 1, ], Vc = Vn[x, , ], 
-		hc = hs[x], R0ac = R0a[x, ], proyears, nareas, maxage, movc = mov[x, , ], 
-		SSBpRc = SSBpR[x], aRc = aR[x, ], bRc = bR[x, ], SRrelc = SRrel[x], 
-        Spat_targc = Spat_targ[x])
-    # print(exp(opt$minimum))
+getFref2 <- function(x, M_ageArray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s, 
+                     VBiomass_s, SSB_s, Vn, retAn, hs, R0a, nyears, proyears, nareas, maxage, mov, 
+                     SSBpR, aR, bR, SRrel, Spat_targ) {
+  
+  opt <- optimize(doprojPI_cpp, log(c(0.001, 5)), Mmat = M_ageArray[x, , (nyears + 1):(nyears + proyears)], 
+                  Wac = Wt_age[x, , (nyears + 1):(nyears + proyears)], Mac = Mat_age[x, ], 
+                  Pc = Perr[x, (maxage+nyears):(maxage-1+nyears + proyears)], N_c = N_s[x, , 1,], 
+                  SSN_c = SSN_s[x, , 1, ], Biomass_c = Biomass_s[x, , 1, ], 
+                  VBiomass_c = VBiomass_s[x, , 1, ], SSB_c = SSB_s[x, , 1, ], Vc = Vn[x, , ], 
+                  retAc=retAn[x,,], hc = hs[x], R0ac = R0a[x, ], proyears, nareas, maxage, movc = mov[x, , ], 
+                  SSBpRc = SSBpR[x], aRc = aR[x, ], bRc = bR[x, ], SRrelc = SRrel[x], 
+                  Spat_targc = Spat_targ[x])
+   
     return(-opt$objective)
-    
+		  
 }
 
 			
@@ -363,7 +438,7 @@ doprojPI <- function(lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c,
     FM_P[AYR] <- FF * Vc[AY] * fishdist[R]
     # FM_P[AYR]<-FF*Vc[A]
     Z_P[AYR] <- FM_P[AYR] + Mvec[Y]
-    
+
     for (y in 2:proyears) {
         AY1R <- as.matrix(expand.grid(1:maxage, y - 1, 1:nareas))
         AYR <- as.matrix(expand.grid(1:maxage, y, 1:nareas))
@@ -380,6 +455,7 @@ doprojPI <- function(lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c,
         indMov3 <- indMov[, c(3, 4)]
         
         N_P[A2YR] <- N_P[A1YR] * exp(-Z_P[A1YR])  # Total mortality
+		
         if (SRrelc == 1) {
             N_P[1, y, ] <- Pc[y] * (0.8 * R0ac * hc * apply(SSB_P[, y - 1, ], 2, sum))/
 			  (0.2 * SSBpRc * R0ac * (1 - hc) + (hc - 0.2) * apply(SSB_P[, y - 1, ], 2, sum))  # Recruitment assuming regional R0 and stock wide steepness
@@ -390,27 +466,27 @@ doprojPI <- function(lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c,
         
         temp <- array(N_P[indMov2] * movc[indMov3], dim = c(nareas, nareas,  maxage))  # Move individuals		
         N_P[, y, ] <- apply(temp, c(3, 1), sum)
-        
+        		
         Biomass_P[AYR] <- N_P[AYR] * Wac[AY]  # Calculate biomass
         VBiomass_P[AYR] <- Biomass_P[AYR] * Vc[AY]  # Calculate vulnerable biomass
         SSN_P[AYR] <- N_P[AYR] * Mac[A]  # Calculate spawning stock numbers
         SSB_P[AYR] <- SSN_P[AYR] * Wac[AY]  # Calculate spawning stock biomass
         
+		# if (y==2) print(Biomass_P[, y, ])
+		
         fishdist <- (apply(VBiomass_P[, y, ], 2, sum)^spat_targ)/mean(apply(VBiomass_P[, 
             y, ], 2, sum)^spat_targ)  # spatial preference according to spatial biomass
         FM_P[AYR] <- FF * Vc[AY] * fishdist[R]
         # FM_P[AYR]<-FF*Vc[A]
         
+		# if (y==2) print(fishdist)
+		
         Z_P[AYR] <- FM_P[AYR] + Mvec[Y]
-        CNtemp <- N_P[, y, ] * exp(Z_P[, y, ]) * (1 - exp(-Z_P[, y, ])) * 
-            (FM_P[, y, ]/Z_P[, y, ])
-        CB_P[y] <- sum(Biomass_P[, y, ] * exp(Z_P[, y, ]) * (1 - exp(-Z_P[, 
-            y, ])) * (FM_P[, y, ]/Z_P[, y, ]))
+        CNtemp <- N_P[, y, ] * exp(Z_P[, y, ]) * (1 - exp(-Z_P[, y, ])) * (FM_P[, y, ]/Z_P[, y, ])
+        CB_P[y] <- sum(Biomass_P[, y, ] * exp(Z_P[, y, ]) * (1 - exp(-Z_P[, y, ])) * (FM_P[, y, ]/Z_P[, y, ]))
         
-        CNtemp <- (FM_P[, y, ]/Z_P[, y, ] * N_P[, y, ] * (1 - exp(-Z_P[, 
-            y, ])))
-        CB_P[y] <- sum(FM_P[, y, ]/Z_P[, y, ] * Biomass_P[, y, ] * (1 - 
-            exp(-Z_P[, y, ])))
+        CNtemp <- (FM_P[, y, ]/Z_P[, y, ] * N_P[, y, ] * (1 - exp(-Z_P[, y, ])))
+        CB_P[y] <- sum(FM_P[, y, ]/Z_P[, y, ] * Biomass_P[, y, ] * (1 - exp(-Z_P[, y, ])))
         
         # temp <- sum(CNtemp*Wac[AY]) print(c(CB_P[y], temp))
         
@@ -419,7 +495,7 @@ doprojPI <- function(lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c,
     
     # plot(CB_P, type='l', ylim=c(0, max(CB_P, na.rm=TRUE))) Biomass_P[,1,]
     # apply(N_P[,1:6,1:2], c(1,2), sum)
-    
+    print(c(FF, -mean(CB_P[(proyears - min(4, (proyears - 1))):proyears], na.rm = T)))
     return(-mean(CB_P[(proyears - min(4, (proyears - 1))):proyears], na.rm = T))  
 }
 
@@ -585,8 +661,10 @@ SelectFun <- function(i, SL0.05, SL1, MaxSel, maxlens, Lens) {
 #' @param age95 age at 95 percent maturity
 #' @keywords internal
 #' @export getroot
-getroot <- function(X, ageM, age95) 
-  uniroot(getSlopeFun, interval = c(1e-04, 5), age50 = ageM[X], age95 = age95[X])$root
+getroot <- function(X, ageM, age95) {
+  uniroot(getSlopeFun, interval = c(1e-08, 8), age50 = ageM[X], age95 = age95[X])$root
+}
+  
   
 #' Internal function to calculate slope
 #'

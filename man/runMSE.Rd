@@ -4,19 +4,22 @@
 \alias{runMSE}
 \title{Run a Management Strategy Evaluation}
 \usage{
-runMSE(OM = "1", MPs = NA, nsim = 48, proyears = 28, interval = 4,
-  pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, custompars = NULL,
-  CheckMPs = TRUE, Hist = FALSE, ntrials = 50, fracD = 0.05)
+runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
+  "matlenlim"), nsim = 48, proyears = 50, interval = 4, pstar = 0.5,
+  maxF = 0.8, timelimit = 1, reps = 1, CheckMPs = FALSE, Hist = FALSE,
+  ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2, Bfrac = 0.5)
 }
 \arguments{
-\item{OM}{An operating model object (class OM)}
+\item{OM}{An operating model object (class 'OM')}
 
-\item{MPs}{A vector of methods (character string) of class DLM_output or
-DLM_input.}
+\item{MPs}{A vector of methods (character string) of class Output or
+Input.}
 
-\item{nsim}{Number of simulations}
+\item{nsim}{Number of simulations. Note that in DLMtool V4.1+ 'nsim is ignored 
+if OM object contains the slot 'nsim'.}
 
-\item{proyears}{Number of projected years}
+\item{proyears}{Number of projected years. Note that in DLMtool V4.1+ 'proyears is ignored 
+if OM object contains the slot 'proyears'.}
 
 \item{interval}{The assessment interval - how often would you like to update
 the management system?}
@@ -34,12 +37,6 @@ simulated for any given age class}
 method. Note that when this is set to 1, the mean value of the data inputs
 is used.}
 
-\item{custompars}{A data.table with nsim rows and nparameter columns. The
-column names must respond to variables of the operating model or observation
-model see the OM and Obs slots of the MSE class for correct names and
-interpretation. This allows users to prescribe correlated parameters or
-estimates from stock assessments.}
-
 \item{CheckMPs}{Logical to indicate if Can function should be used to check
 if MPs can be run.}
 
@@ -52,6 +49,15 @@ percent of simulations are not close to the required depletion}
 
 \item{fracD}{maximum allowed proportion of simulations where depletion is not 
 close to sampled depletion from OM before model stops with error}
+
+\item{CalcBlow}{Should low biomass be calculated where this is the spawning
+biomass at which it takes HZN mean generation times of zero fishing to reach 
+Bfrac fraction of SSBMSY}
+
+\item{HZN}{The number of mean generation times required to reach Bfrac SSBMSY
+in the Blow calculation}
+
+\item{Bfrac}{The target fraction of SSBMSY for calculating Blow}
 }
 \value{
 An object of class MSE
@@ -61,6 +67,5 @@ A function that runs a Management Strategy Evaluation (closed-loop
 simulation) for a specified operating model
 }
 \author{
-T. Carruthers
+T. Carruthers and A. Hordyk
 }
-

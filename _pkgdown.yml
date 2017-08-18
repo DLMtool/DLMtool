@@ -37,14 +37,14 @@ navbar:
         href: reference/Apply_Management_Procedures/index.html 
       - text: "Fishery Data Plotting Functions"
         href: reference/Fishery_Data_Plotting_Functions/index.html 
+    - text: "DLMtool Object Classes"
+      href: reference/R_Object_Classes/index.html 
     - text: "Other"
       menu: 
       - text: "Estimation Functions"
         href: reference/Estimation_Functions/index.html    
       - text: "Other Functions"
-        href: reference/Other_Functions/index.html   
-      - text: "R Object Classes"
-        href: reference/R_Object_Classes/index.html          
+        href: reference/Other_Functions/index.html          
       - text: "Internal Functions"
         href: reference/Internal_Functions/index.html      
 

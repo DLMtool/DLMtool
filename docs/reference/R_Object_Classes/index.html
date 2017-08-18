@@ -11,8 +11,8 @@
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/yeti/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -25,12 +25,14 @@
 <script src="../../pkgdown.js"></script>
 
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -101,6 +103,9 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../../reference/R_Object_Classes/index.html">DLMtool Object Classes</a>
+</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Other
@@ -113,9 +118,6 @@
     </li>
     <li>
       <a href="../../reference/Other_Functions/index.html">Other Functions</a>
-    </li>
-    <li>
-      <a href="../../reference/R_Object_Classes/index.html">R Object Classes</a>
     </li>
     <li>
       <a href="../../reference/Internal_Functions/index.html">Internal Functions</a>
@@ -137,60 +139,84 @@
       <div class="row">
   <div class="col-md-9">
     <div class="page-header">
-      <h1>Function reference</h1>
-      <h4>version&nbsp;3.2.2</h4>
+      <h1>
+        Reference
+        <small>version&nbsp;4.4</small>
+      </h1>
     </div>
 
     <div class="contents">
-      <h2 id="section-r-object-classes" class="hasAnchor"><a href="#section-r-object-classes" class="anchor"></a>R Object Classes</h2>
-      <p class="section-desc"></p>
+      <table class="ref-index">
 
-      
-      <p><a href="DLM_data-class.html">Class </a></p>
-      <ul>
-        <li><code><a href="DLM_data-class.html">DLM_data-class</a></code></li>
-      </ul>
-      
-      <p><a href="DLM_fease-class.html">Class </a></p>
-      <ul>
-        <li><code><a href="DLM_fease-class.html">DLM_fease-class</a></code></li>
-      </ul>
-      
-      <p><a href="DLM_general-class.html">Class </a></p>
-      <ul>
-        <li><code><a href="DLM_general-class.html">DLM_general-class</a></code></li>
-      </ul>
-      
-      <p><a href="Fleet-class.html">Class </a></p>
-      <ul>
-        <li><code><a href="Fleet-class.html">Fleet-class</a></code></li>
-      </ul>
-      
-      <p><a href="lmmodel-class.html">Class </a></p>
-      <ul>
-        <li><code><a href="lmmodel-class.html">lmmodel-class</a></code></li>
-      </ul>
-      
-      <p><a href="MSE-class.html">Class </a></p>
-      <ul>
-        <li><code><a href="MSE-class.html">MSE-class</a></code></li>
-      </ul>
-      
-      <p><a href="Observation-class.html">Class </a></p>
-      <ul>
-        <li><code><a href="Observation-class.html">Observation-class</a></code></li>
-      </ul>
-      
-      <p><a href="OM-class.html">Class </a></p>
-      <ul>
-        <li><code><a href="OM-class.html">OM-class</a></code></li>
-      </ul>
-      
-      <p><a href="Stock-class.html">Class </a></p>
-      <ul>
-        <li><code><a href="Stock-class.html">Stock-class</a></code></li>
-      </ul>
-    
+      <colgroup>
+        <col class="alias" />
+        <col class="title" />
+      </colgroup>
+
+      <tbody>
+        <tr>
+          <th colspan="2">
+            <h2 id="section-r-object-classes" class="hasAnchor"><a href="#section-r-object-classes" class="anchor"></a>R Object Classes</h2>
+            <p class="section-desc"></p>
+          </th>
+        </tr>
+        <tr>
+          <!--  -->
+          <td>
+            <p><code><a href="Data-class.html">Data-class</a></code> </p>
+          </td>
+          <td><p>Class <code>'Data'</code></p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="Fease-class.html">Fease-class</a></code> </p>
+          </td>
+          <td><p>Class <code>'Fease'</code></p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="Fleet-class.html">Fleet-class</a></code> </p>
+          </td>
+          <td><p>Class <code>'Fleet'</code></p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="Imp-class.html">Imp-class</a></code> </p>
+          </td>
+          <td><p>Class <code>'Imp'</code></p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="InputRec-class.html">InputRec-class</a></code> </p>
+          </td>
+          <td><p>Class <code>'InputRec'</code></p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="MSE-class.html">MSE-class</a></code> </p>
+          </td>
+          <td><p>Class <code>'MSE'</code></p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="Obs-class.html">Obs-class</a></code> </p>
+          </td>
+          <td><p>Class <code>'Obs'</code></p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="OM-class.html">OM-class</a></code> </p>
+          </td>
+          <td><p>Class <code>'OM'</code></p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="Stock-class.html">Stock-class</a></code> </p>
+          </td>
+          <td><p>Class <code>'Stock'</code></p></td>
+        </tr>
+      </tbody>
+      </table>
     </div>
   </div>
 

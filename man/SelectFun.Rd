@@ -23,4 +23,3 @@ SelectFun(i, SL0.05, SL1, MaxSel, maxlens, Lens)
 Selectivity at length function
 }
 \keyword{internal}
-

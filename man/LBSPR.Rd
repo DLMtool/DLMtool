@@ -4,12 +4,12 @@
 \alias{LBSPR}
 \title{Apply the Length-based SPR model to DLMtool Data Object}
 \usage{
-LBSPR(x, DLM_data, yrsmth = 1, reps = 1, lstyrs = 10)
+LBSPR(x, Data, yrsmth = 1, reps = 1, lstyrs = 10)
 }
 \arguments{
 \item{x}{Simulation number}
 
-\item{DLM_data}{DLM_data object}
+\item{Data}{Data object}
 
 \item{yrsmth}{Number of years to smooth length data - not currently used}
 
@@ -23,4 +23,3 @@ Apply the Length-based SPR model to DLMtool Data Object
 \author{
 A. Hordyk
 }
-

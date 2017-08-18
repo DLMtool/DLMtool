@@ -111,15 +111,22 @@ simulation conditions and performance of data-limited methods
 
 \item{\code{Effort}}{Stored relative fishing effort in the projection years}
 
-\item{\code{Extra}}{A list for additional information}
+\item{\code{PAA}}{Population at age in last projection year (an array with dimensions nsim, nMPs, nages)}
+
+\item{\code{CAA}}{Catch at age in last projection year (an array with dimensions nsim, nMPs, nages)}
+
+\item{\code{CAL}}{Catch at length in last projection year (an array with dimensions nsim, nMPs, nCALbins)}
+
+\item{\code{CALbins}}{Mid-points of the catch-at-length bins}
 }}
+
 \section{Objects from the Class}{
  Objects can be created by calls of the form
 \code{new('MSE', Name, nyears, proyears, nMPs, MPs, nsim, OMtable, Obs,
-B_BMSYa, F_FMSYa, Ba, FMa, Ca, OFLa, Effort)}
+B_BMSYa, F_FMSYa, Ba, FMa, Ca, OFLa, Effort, PAA, CAA, CAL, CALbins)}
 }
+
 \author{
 T. Carruthers
 }
 \keyword{classes}
-

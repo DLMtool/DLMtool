@@ -5,12 +5,109 @@
 #' Setup parallel processing
 #'
 #' Sets up parallel processing using the snowfall package
-#' @importFrom snowfall sfExport sfIsRunning sfSapply
-#' @importFrom snow setDefaultClusterOptions
+#'
+#' @param cpus number of CPUs 
+#' @importFrom snowfall sfInit sfExportAll sfIsRunning sfExport sfSapply
+#' @importFrom parallel detectCores
 #' @export 
-setup <- function() {
-  snowfall::sfInit(parallel=TRUE,cpus=parallel::detectCores())  
-  if (length(ls()) > 0) snowfall::sfExportAll() 
+setup <- function(cpus=parallel::detectCores()) {
+  if(snowfall::sfIsRunning()) snowfall::sfStop()
+  snowfall::sfInit(parallel=TRUE,cpus=cpus)  
+}
+
+
+RepmissingVal <- function(object, name, vals=NA) {
+  miss <- FALSE
+  if (!name %in% slotNames(object)) return(object)
+  if (!.hasSlot(object,name)) miss <- TRUE
+  if (!miss) {
+    if (length(slot(object, name))==0) miss <- TRUE
+    if (all(is.na(slot(object, name)))) miss <- TRUE 
+  }
+
+  if (miss) slot(object, name) <- vals
+  
+  return(object)
+}
+
+
+
+#' Update an MSE object with new slots
+#' 
+#' Updates an existing MSE object (class MSE) from a previous version of the
+#' DLMtool to include the new slots.  The slots will be empty, but avoids the
+#' 'slot doesn't exist' error that sometimes occurs. Also works with Stock, Fleet,
+#' Obs, Imp, and Data objects. 
+#' 
+#' @usage updateMSE(MSEobj)
+#' @param MSEobj A MSE object from a previous version of the DLMtool. 
+#' Also works with Stock, Fleet, Obs, Imp, and Data objects. 
+#' @return An object of class matching class(MSEobj)
+#' @author A. Hordyk
+#' @export updateMSE
+updateMSE <- function(MSEobj) {
+  slots <- slotNames(MSEobj)
+  for (X in seq_along(slots)) {
+    classDef <- getClassDef(class(MSEobj))
+    slotTypes <- classDef@slots
+    tt <- try(slot(MSEobj, slots[X]), silent = TRUE)
+    if (class(tt) == "try-error") {
+      fun <- get(as.character(slotTypes[X]))
+      if(as.character(slotTypes[X]) == "vector") {
+        slot(MSEobj, slots[X]) <- fun("numeric", length=0)
+      } else slot(MSEobj, slots[X]) <- fun(0)
+    }
+  }
+  MSEobj <- RepmissingVal(MSEobj, 'Mexp', c(0,0))
+  MSEobj <- RepmissingVal(MSEobj, 'LenCV', c(0.08,0.15))
+  MSEobj <- RepmissingVal(MSEobj, 'LR5', c(0,0))
+  MSEobj <- RepmissingVal(MSEobj, 'LFR', c(0,0))
+  MSEobj <- RepmissingVal(MSEobj, 'Rmaxlen', c(1,1))
+  MSEobj <- RepmissingVal(MSEobj, 'DR', c(0,0))
+  MSEobj <- RepmissingVal(MSEobj, 'Fdisc', c(0,0))
+  MSEobj <- RepmissingVal(MSEobj, 'nareas', 2)
+  
+  MSEobj
+}
+
+
+#' Check that a DLM object is valid 
+#' 
+#' Check that all slots in Object are valid and contain values
+#' 
+#' @param OM An object of class OM, Stock, Fleet, Obs, or Imp
+#' @export
+ChkObj <- function(OM) {
+  if (!class(OM) %in% c("OM", "Stock", "Fleet", "Obs", "Imp"))
+    stop("Argument must be of class: OM, Stock, Fleet, Obs, or Imp", call.=FALSE)
+  
+  # Add missing slots with default values 
+  OM <- updateMSE(OM)
+  slots <- slotNames(OM)
+  Ok <- rep(TRUE, length(slots))
+  for (sl in seq_along(slots)) {
+    slotVal <- slot(OM, slots[sl])
+    if (length(slotVal) == 0) Ok[sl] <- FALSE
+    if (length(slotVal) > 0) {
+      Ok[sl] <- class(slotVal) == class(slot(OM, slots[sl]))
+      if (class(slotVal) != "character" & class(slotVal) != "list") Ok[sl] <- all(is.finite(slotVal)) & length(slotVal) > 0
+    } 
+  }
+  SelSlots <- c("SelYears", "L5Lower", "L5Upper", "LFSLower",
+                "LFSUpper", "VmaxLower", "VmaxUpper")
+  RecSlots <-  c("Period", "Amplitude")
+  
+  # Slots ok to not contain values
+  Ignore <- c("Name", "Source", "cpars", "AbsSelYears", SelSlots, RecSlots, "M2")  
+  # if values present for one they need to be there for all! 
+  if (any(SelSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% SelSlots] 
+  if (any(RecSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% RecSlots] 
+  
+  probSlots <- slots[!Ok][!slots[!Ok] %in% Ignore]
+  if (length(probSlots) > 0) 
+    stop("Slots in Object have missing values:\n ", paste(probSlots, " "), call.=FALSE)
+  return(OM)
+
 }
 
 #' What objects of this class are available
@@ -20,14 +117,25 @@ setup <- function() {
 #' Finds objects of the specified class in the global environment or the
 #' package:DLMtool
 #' 
-#' @usage avail(classy)
 #' @param classy A class of object (character string, e.g. 'Fleet')
 #' @author T. Carruthers
 #' @export avail
 avail <- function(classy) {
-  return(unique(c(ls("package:DLMtool")[unlist(lapply(ls("package:DLMtool"), 
-    getclass, classy = classy))], ls(envir = .GlobalEnv)[unlist(lapply(ls(envir = .GlobalEnv), 
-    getclass, classy = classy))])))
+  temp <- try(class(classy), silent=TRUE)
+  if (class(temp) == "try-error") classy <- deparse(substitute(classy))
+  if (temp == "function") classy <- deparse(substitute(classy))
+  
+  temp <- c(ls("package:DLMtool")[unlist(lapply(ls("package:DLMtool"), getclass, classy = classy))], 
+            ls(envir = .GlobalEnv)[unlist(lapply(ls(envir = .GlobalEnv), getclass, classy = classy))])
+  pkgs <- search()
+  if ("package:DLMdata" %in% pkgs) {
+    temp <- c(temp, unique(ls("package:DLMdata")[unlist(lapply(ls("package:DLMdata"), getclass, classy = classy))]))
+  }
+  temp <- unique(temp)
+  
+  if (classy == "Observation") message("Class 'Observation' has been re-named 'Obs'")	
+  if (length(temp) <1) stop("No objects of class '", classy, "' found", call.=FALSE)
+  return(temp)
 }
 
 #' get object class
@@ -41,8 +149,7 @@ avail <- function(classy) {
 #' @author T. Carruthers
 #' @return TRUE or FALSE
 #' @export getclass
-getclass <- function(x, classy) inherits(get(x), classy)
-
+getclass <- function(x, classy) any(class(get(x)) == classy) # inherits(get(x), classy) - this gives a problem since we now inherit Stock etc in OM
 
 #' What methods need what data
 #' 
@@ -57,9 +164,9 @@ getclass <- function(x, classy) inherits(get(x), classy)
 #' @export Required
 Required <- function(funcs = NA) {
   if (is.na(funcs[1])) 
-    funcs <- c(avail("DLM_output"), avail("DLM_input"))
-  slots <- slotNames("DLM_data")
-  slotnams <- paste("DLM_data@", slotNames("DLM_data"), sep = "")
+    funcs <- c(avail("Output"), avail("Input"))
+  slots <- slotNames("Data")
+  slotnams <- paste("Data@", slotNames("Data"), sep = "")
   repp <- rep("", length(funcs))
   
   for (i in 1:length(funcs)) {
@@ -91,11 +198,9 @@ Required <- function(funcs = NA) {
 #' @export DLMDataDir
 DLMDataDir <- function(stock = NA) {
   if (is.na(stock)) {
-    return(paste(searchpaths()[match("package:DLMtool", search())], 
-      "/", sep = ""))
+    return(paste(searchpaths()[match("package:DLMtool", search())], "/", sep = ""))
   } else {
-    return(paste(searchpaths()[match("package:DLMtool", search())], 
-      "/", stock, ".csv", sep = ""))
+    return(paste(searchpaths()[match("package:DLMtool", search())], "/", stock, ".csv", sep = ""))
   }
 }
 
@@ -107,7 +212,7 @@ DLMDataDir <- function(stock = NA) {
 #' 
 #' 
 #' @usage Fease(feaseobj,outy='table')
-#' @param feaseobj An object of class 'DLM_fease'
+#' @param feaseobj An object of class 'Fease'
 #' @param outy Determines whether you would like a full table or some column of
 #' the table for a specific case of the feasibility object. When set equal to
 #' table, the full table is produced. When set equal to an integer number the
@@ -116,8 +221,8 @@ DLMDataDir <- function(stock = NA) {
 #' @export Fease
 Fease <- function(feaseobj, outy = "table") {
   
-  if (class(feaseobj) != "DLM_fease") 
-    stop("Incorrect format: you need an object of class DLM_fease")
+  if (class(feaseobj) != "Fease") 
+    stop("Incorrect format: you need an object of class Fease")
   
   sloty <- c("Cat", "Ind", "AvC", "Dt", "Rec", "CAA", "CAL", "Mort", 
     "L50", "L95", "vbK", "vbLinf", "vbt0", "wla", "wlb", "steep", "LFC", 
@@ -351,23 +456,23 @@ getq <- function(x, dep, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V,
 #' @param SRrel internal parameter
 #' @param aR internal parameter
 #' @param bR internal parameter
+#' @param bounds upper and lower bounds for optimizer
 #' 
 #' Paired with qopt
 #' @keywords internal
 #' @export getq2 
 #'
 #' @author T. Carruthers
-getq2 <- function(x, dep, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V, 
-  nyears, maxage, mov, Spat_targ, SRrel, aR, bR) {
-  opt <- optimize(optQ_cpp, log(c(0.0075, 15)), depc = dep[x], Fc = Find[x, ], 
-    Perrc = Perr[x, ], Mc = Marray[x, ], hc = hs[x], Mac = Mat_age[x, ], 
+getq2 <- function(x, dep, Find, Perr, M_ageArray, hs, Mat_age, Wt_age, R0, V, 
+                  nyears, maxage, mov, Spat_targ, SRrel, aR, bR, bounds=c(0.00001, 15)) {
+  opt <- optimize(optQ_cpp, log(bounds), depc = dep[x], Fc = Find[x, ], 
+    Perrc = Perr[x, ], Mc = M_ageArray[x, ,], hc = hs[x], Mac = Mat_age[x, ], 
     Wac = Wt_age[x, , ], R0c = R0[x], Vc = V[x, , ], nyears = nyears, 
-	maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x], 
+    maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x], 
     SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ])	
   
   return(exp(opt$minimum))
 }
-
 
 
 #' Internal optimization function that find the catchability (q where F=qE)
@@ -421,10 +526,8 @@ qopt <- function(lnq, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears,
   
   for (y in 1:nyears) {
     # set up some indices for indexed calculation
-    targ <- (apply(Vc[, y] * Biomass, 2, sum)^Spat_targc)/mean(apply(Vc[, y] * 
-	  Biomass, 2, sum)^Spat_targc)
-    FMc <- array(qc * Fc[y] * Vc[, y], dim = c(maxage, nareas)) * array(rep(targ, each = maxage), 
-	  dim = c(maxage, nareas))  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
+    targ <- (apply(Vc[, y] * Biomass, 2, sum)^Spat_targc)/mean(apply(Vc[, y] * Biomass, 2, sum)^Spat_targc)
+    FMc <- array(qc * Fc[y] * Vc[, y], dim = c(maxage, nareas)) * array(rep(targ, each = maxage), dim = c(maxage, nareas))  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
     Zc <- FMc + Mc[y]
 
     N[2:maxage, ] <- N[1:(maxage - 1), ] * exp(-Zc[1:(maxage - 1), ])  # Total mortality
@@ -476,8 +579,7 @@ return((log(depc) - log(sum(SBiomass)/sum(SSB0)))^2)
 #' @param ploty Produce a plot of depletion and F
 #' @param Dlim Limits on the depletion that is returned as a fraction of
 #' unfished biomass.
-#' @return A table of nsim rows and 2 columns (depletion, fishing mortality
-#' rate)
+#' @return An object of class 'OM' with 'D' slot populated 
 #' @author T. Carruthers
 #' @export ML2D
 ML2D <- function(OM, ML, nsim = 100, ploty = T, Dlim = c(0.05, 0.6)) {
@@ -818,8 +920,7 @@ SetRecruitCycle <- function(x = 1, Period, Amplitude, TotYears, Shape = c("sin",
 makePerf <- function(OMin, except = NULL) {
   nms <- slotNames(OMin)
   # exceptions
-  if (is.null(except)) 
-    except <- "EVERYTHING"
+  if (is.null(except)) except <- "EVERYTHING"
   exclude <- unique(grep(paste(except, collapse = "|"), nms, value = FALSE))
   
   vars <- c("grad", "cv", "sd", "inc")
@@ -827,6 +928,7 @@ makePerf <- function(OMin, except = NULL) {
   ind <- ind[(!(nms[ind] %in% exclude))]
   for (X in seq_along(ind)) {
     n <- length(slot(OMin, nms[ind[X]]))
+    if (n == 0) n <- 2
     slot(OMin, nms[ind[X]]) <- rep(0, n)
   }
   
@@ -858,10 +960,10 @@ makePerf <- function(OMin, except = NULL) {
 #' Print out plotting functions
 #' 
 #' This function prints out the available plotting functions for objects of
-#' class MSE or DLM_data
+#' class MSE or Data
 #' 
 #' 
-#' @usage plotFun(class = c('MSE', 'DLM_data'), msg=TRUE)
+#' @usage plotFun(class = c('MSE', 'Data'), msg=TRUE)
 #' @param class Character string. Prints out the plotting functions for objects
 #' of this class.
 #' @param msg Logical. Should the functions be printed to screen?
@@ -870,7 +972,7 @@ makePerf <- function(OMin, except = NULL) {
 #' functions are missed. Let us know if you find any and we will add them.
 #' @author A. Hordyk
 #' @export plotFun
-plotFun <- function(class = c("MSE", "DLM_data"), msg = TRUE) {
+plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
   class <- match.arg(class)
   tt <- lsf.str("package:DLMtool")
   p <- p2 <- rep(FALSE, length(tt))
@@ -886,12 +988,13 @@ plotFun <- function(class = c("MSE", "DLM_data"), msg = TRUE) {
     message("DLMtool functions for plotting objects of class ", class, 
       " are:")
   out <- sort(tt[which(p & p2)])
-  out <- out[-grep("plotFun", out)]
+  if (any(grepl("plotFun", out))) out <- out[-grep("plotFun", out)]
+  if (any(grepl("plot.OM", out))) out <- out[-grep("plot.OM", out)]
   if (class == "MSE") {
     out <- c(out, "barplot", "boxplot", "VOI", "VOI2")
     out <- sort(out)
   }
-  if (class == "DLM_data") {
+  if (class == "Data") {
     out <- c(out, "boxplot", "Sense")
     out <- sort(out)
   }
@@ -1059,15 +1162,39 @@ getEffhist <- function(Esd, nyears, EffYears, EffLower, EffUpper) {
         nsim <- length(Esd)  # get nsim 
         refYear <- floor(range01(EffYears + 0.5) * nyears) + 1  # standardize years 
         refYear[length(refYear)] <- nyears  # first year is year 1 
+        if (any(EffLower > EffUpper)) {
+          ind <- which(EffLower > EffUpper)
+          message("Some values in 'EffLower' are higher than 'EffUpper': Years ", paste(ind, ""),
+                  "\nSetting 'EffLower' to the lower of the two values.")
+          tt <- cbind(EffLower, EffUpper)
+          EffLower <- apply(tt, 1, min)
+          EffUpper <- apply(tt, 1, max)
+        }
+        
+        # sample Effort
+        # fmat <- rbind(EffLower, EffUpper)
+       
+        # nyrs <- length(EffLower)
+        # Effs <- matrix(0, nsim, nyrs)
+        
+        # ind <- which(diff(fmat) > 0)[1]
+        # for (X in 1:ind) {
+          # Effs[,X] <- runif(nsim, min(fmat[,X]), max(fmat[,X]))  
+        # }
+        
+        # val <- (Effs[,ind] - min(fmat[,ind]))/ diff(fmat[,ind])
+        # for (X in 2:nyrs) Effs[,X] <- min(fmat[,X]) + diff(fmat[,X])*val
+        
         Effs <- mapply(runif, n = nsim, min = EffLower, max = EffUpper)  # sample Effort
         if (nsim > 1) {
             effort <- t(sapply(1:nsim, function(x) approx(x = refYear, 
                 y = Effs[x, ], method = "linear", n = nyears)$y))  # linear interpolation
         }
+      
+        
         if (nsim == 1) {
             # Effs <- Effs/max(Effs)
-            effort <- matrix(approx(x = refYear, y = Effs, method = "linear", 
-                n = nyears)$y, nrow = 1)
+            effort <- matrix(approx(x = refYear, y = Effs, method = "linear", n = nyears)$y, nrow = 1)
         }
         
         effort <- range01(effort)
@@ -1098,23 +1225,42 @@ getEffhist <- function(Esd, nyears, EffYears, EffLower, EffUpper) {
 #' @keywords internal
 #'  
 gettempvar <- function(targ, targsd, targgrad, nyears, nsim, rands=NULL) {
-    mutemp <- -0.5 * targsd^2
-    temp <- array(1, dim = c(nsim, nyears))
-    if (is.null(rands)) {
-	  for (i in 2:nyears) {
-        temp[, i] <- temp[, i] * exp(rnorm(nsim, mutemp, targsd))
-      }
-	}
-	if (!is.null(rands)) {
-	  for (i in 2:nyears) {
-          temp[, i] <- temp[, i] * rands[,i]
-      }
-	}
-    yarray <- array(rep((1:nyears) - 1, each = nsim), dim = c(nsim, nyears))
-    temp <- temp * (1 + targgrad/100)^yarray
-    targ * temp/apply(temp, 1, mean)
+  mutemp <- -0.5 * targsd^2
+  temp <- array(1, dim = c(nsim, nyears))
+  if (is.null(rands)) {
+    for (i in 2:nyears) {
+      temp[, i] <- temp[, i] * exp(rnorm(nsim, mutemp, targsd))
+    }
+  }
+  if (!is.null(rands)) {
+    for (i in 2:nyears) {
+      temp[, i] <- temp[, i] * rands[,i]
+    }
+  }
+  yarray <- array(rep((1:nyears) - 1, each = nsim), dim = c(nsim, nyears))
+  temp <- temp * (1 + targgrad/100)^yarray
+  targ * temp/apply(temp, 1, mean)
 }
 
 
+
+#' Return class of MP from MP name
+#' 
+#' 
+#' @param MPs list or vector of MP names
+#' @keywords internal
+#' @export
+#'
+MPclass <- function(MPs) {
+  if (class(MPs) == "list") MPs <- unlist(MPs)
+  if (class(MPs) != "character") stop("MPs must be character", call.=FALSE)
+  all <- c(avail("Output"), avail("Input"))
+  if (any(!MPs %in% all)) message("Some MPs not found: ", paste(MPs[!MPs %in% all], "\n"))
+  MPs <- MPs[MPs %in% all]
+  # cbind(MPs, Class=sapply(1:length(MPs), function(X) class(get(MPs[X]))))
+  classes <- sapply(1:length(MPs), function(X) class(get(MPs[X])))
+  classes[grepl("ref", MPs)] <- "Reference"
+  classes
+}
 
 

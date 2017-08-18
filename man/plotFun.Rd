@@ -4,7 +4,7 @@
 \alias{plotFun}
 \title{Print out plotting functions}
 \usage{
-plotFun(class = c('MSE', 'DLM_data'), msg=TRUE)
+plotFun(class = c('MSE', 'Data'), msg=TRUE)
 }
 \arguments{
 \item{class}{Character string. Prints out the plotting functions for objects
@@ -14,7 +14,7 @@ of this class.}
 }
 \description{
 This function prints out the available plotting functions for objects of
-class MSE or DLM_data
+class MSE or Data
 }
 \note{
 Basically the function looks for any functions in the DLMtool that
@@ -24,4 +24,3 @@ functions are missed. Let us know if you find any and we will add them.
 \author{
 A. Hordyk
 }
-

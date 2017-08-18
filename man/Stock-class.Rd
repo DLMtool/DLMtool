@@ -19,9 +19,15 @@ dynamics model
 
 \item{\code{M}}{Natural mortality rate (uniform distribution)}
 
+\item{\code{M2}}{Optional vector of M-at-age (must be length maxage)}
+
 \item{\code{Msd}}{Inter-annual variability in natural mortality rate expressed as a coefficient of variation (uniform distribution)}
 
 \item{\code{Mgrad}}{Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year (uniform distribution)}
+
+\item{\code{Mexp}}{Exponent of the Lorenzen function assuming an inverse relationship between M and weight (uniform distribution)}
+
+\item{\code{Fdisc}}{Fraction of discarded fish that die}
 
 \item{\code{h}}{Steepness of the stock recruit relationship (uniform distribution)}
 
@@ -32,6 +38,8 @@ dynamics model
 \item{\code{K}}{von B. growth parameter k (uniform distribution)}
 
 \item{\code{t0}}{von B. theoretical age at length zero (uniform distribution)}
+
+\item{\code{LenCV}}{Coefficient of variation of length-at-age (assumed constant for all age classes (uniform distribution)}
 
 \item{\code{Ksd}}{Inter-annual variability in growth parameter k (uniform distribution)}
 
@@ -67,12 +75,14 @@ dynamics model
 
 \item{\code{Prob_staying}}{The probability of inviduals in area 1 remaining in area 1 over the course of one year}
 
-\item{\code{Source}}{A reference to a website or article form which parameters were taken to define the operating model}
+\item{\code{Source}}{A reference to a website or article from which parameters were taken to define the operating model}
 }}
+
 \section{Objects from the Class}{
  Objects can be created by calls of the form
-\code{new('Stock', OM)}
+\code{new('Stock')}
 }
+
 \examples{
 
 showClass('Stock')
@@ -82,4 +92,3 @@ showClass('Stock')
 T. Carruthers
 }
 \keyword{classes}
-

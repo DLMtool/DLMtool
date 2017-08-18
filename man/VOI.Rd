@@ -32,4 +32,3 @@ columns.
 \author{
 T. Carruthers
 }
-

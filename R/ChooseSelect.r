@@ -1,3 +1,4 @@
+
 #' Manually choose the historical selectivity pattern
 #' 
 #' Input the first historical year, and all years where selectivity pattern
@@ -9,54 +10,58 @@
 #' function replaces 'nyears' in the Fleet object with the value defined here
 #' (FstYr:current year).
 #' 
-#' 
 #' @param Fleet A fleet object.
 #' @param Stock Optional Stock object. If provided, average length-at-maturity
 #' is included on plot for reference.
 #' @param FstYr Optional value for first historical year. If empty, user must
 #' specify the year in console.
-#' @param LastYr Optional value for last historical year. If empty, it is assumed to be the current year
 #' @param SelYears Optional vector of values for each year where selectivity
 #' pattern changed. If empty, user must specify the years in console (comma
 #' separated).
 #' @author A. Hordyk
 #' @importFrom utils flush.console
 #' @export ChooseSelect
-ChooseSelect <- function(Fleet, Stock = NULL, FstYr = NULL, LastYr = NULL, SelYears = NULL) {
-  chk <- class(Fleet@isRel)
-  if (chk == "character") {
-    chkrel <- tolower(Fleet@isRel)
-    if (chkrel == "true" | Fleet@isRel == "1") isRel <- TRUE
-    if (chkrel == "false" | Fleet@isRel == "0") isRel <- FALSE
-  }
-  if (chk == "numeric") {
-    if (Fleet@isRel == 1) isRel <- TRUE
-    if (Fleet@isRel == 0) isRel <- FALSE
-  }
-  
-  if ((!isRel) & is.null(Stock))  stop("Require Stock object")
-  if (is.null(LastYr)) {
-    LastYr <- as.numeric(format(Sys.Date(), format = "%Y"))
-	message("Last historical year assumed to be ", LastYr)
-  }
+ChooseSelect <- function(Fleet, Stock, FstYr = NULL, SelYears = NULL) {
+  # chk <- class(Fleet@isRel)
+  # if (chk == "character") {
+    # chkrel <- tolower(Fleet@isRel)
+    # if (chkrel == "true" | Fleet@isRel == "1") isRel <- TRUE
+    # if (chkrel == "false" | Fleet@isRel == "0") isRel <- FALSE
+  # }
+  # if (chk == "numeric") {
+    # if (Fleet@isRel == 1) isRel <- TRUE
+    # if (Fleet@isRel == 0) isRel <- FALSE
+  # }
+  if (class(Fleet) != "Fleet") stop("First argument must be object of class 'Fleet'", call.=FALSE)
+  if (class(Stock) != "Stock") stop("First argument must be object of class 'Stock'", call.=FALSE)
+  # if ((!isRel) & is.null(Stock))  stop("Require Stock object")
+  Fleet@isRel <- 'FALSE'
+  isRel <- FALSE
   if (is.null(FstYr)) {
     message("*****************")
     message("Enter first historical year")
-    message("Note: *nyears* will be specified from this value")
     FstYr <- as.numeric(readline("First Historical Year: "))
     message("\n")
   }
+
+  message("Enter last historical year")
+  Fleet@CurrentYr <- as.numeric(readline("Last Historical Year: "))
+  message("\n")
+   
+  LastYr <- Fleet@CurrentYr 
+  if (LastYr < FstYr) stop("Last year before first year", call.=FALSE)
+  
   if (is.null(SelYears)) {
-    message("Enter each selectivity break point year, seperated by a comma")
+    message("Enter each selectivity break point year, separated by a comma")
     message("Note: break points are the years where selectivity pattern changed")
     message("Note: break points must be within year range")
-    inString <- readline("Enter each selectivity break point year, seperated by a comma: ")
+    inString <- readline("Enter each selectivity break point year, separated by a comma: ")
     options(warn = -1)
     SelYears <- as.numeric(unlist(strsplit(inString, ",")))
-    if (is.na(SelYears)) 
-      SelYears <- as.numeric(unlist(strsplit(inString, " ")))
+    if (is.na(SelYears)) SelYears <- as.numeric(unlist(strsplit(inString, " ")))
     options(warn = 0)
   }
+  
   SelYears <- sort(SelYears)
   if (SelYears[1] != FstYr)  SelYears <- c(FstYr, SelYears)
   message("Break Points Years are: ")
@@ -106,6 +111,9 @@ ChooseSelect <- function(Fleet, Stock = NULL, FstYr = NULL, LastYr = NULL, SelYe
   }
   par(set.par)
   # CheckSelect(Fleet, Stock)
+  Fleet@LFS <- rep(-9999, 2) # code for clearly non-sensical value 
+  Fleet@L5 <- rep(-9999, 2) 
+  Fleet@Vmaxlen <- rep(-9999, 2)
   Fleet@L5Lower <- tempL5[, 1]
   Fleet@L5Upper <- tempL5[, 2]
   Fleet@LFSLower <- tempLFS[, 1]
@@ -150,17 +158,19 @@ BlankSelPlot <- function(Stock = NULL, Yr = NULL, N = NULL, isRel) {
             axis(side = 1, at = 1, line = 6.5, labels = "Mean L50")
         }
     } else {
-        Max <- mean(Stock@Linf)
+        Max <- max(Stock@Linf)
         AxCex <- 1.3
         By <- 2.5
-        par(mfrow = c(1, 1), mai = c(2, 1, 0.5, 0.3), oma = c(1, 1, 1, 
-            1))
+        par(mfrow = c(1, 1), mai = c(2, 1, 0.5, 0.3), oma = c(1, 1, 1, 1))
         plot(c(0, Max), c(0, 1), type = "n", xlab = "", ylab = "", axes = FALSE)
         mtext(side = 2, line = 3, "Selectivity", cex = AxCex)
         axis(side = 2)
         Xax <- seq(from = 0, to = Max, by = 2 * By)
         axis(side = 1, at = Xax, labels = Xax)
         mtext(side = 1, line = 3.5, "Length", cex = AxCex)
+		abline(v=min(Stock@L50), lty=2)
+		abline(v=max(Stock@L50), lty=2)
+		text(mean(Stock@L50), 0.1, "L50")
     }
     if (N == 1) {
         title(paste("Choose selectivity points for Year", Yr, "(First Year)"))
@@ -169,10 +179,10 @@ BlankSelPlot <- function(Stock = NULL, Yr = NULL, N = NULL, isRel) {
     }
 }
 
-#' Internal function for mapping selectivity
-#'
-#' @author A. Hordyk
-#' @keywords internal
+# #' Internal function for mapping selectivity
+# #'
+# #' @author A. Hordyk
+# #' @keywords internal
 ChooseL5 <- function(Fleet, Stock, isRel) {
     if (isRel) {
         By <- 0.05
@@ -192,10 +202,10 @@ ChooseL5 <- function(Fleet, Stock, isRel) {
     L5out
 }
 
-#' Internal function for mapping selectivity
-#'
-#' @author A. Hordyk
-#' @keywords internal
+# #' Internal function for mapping selectivity
+# #'
+# #' @author A. Hordyk
+# #' @keywords internal
 ChooseLFS <- function(L5out, Fleet, Stock, isRel) {
     if (isRel) {
         Max <- 3
@@ -217,10 +227,10 @@ ChooseLFS <- function(L5out, Fleet, Stock, isRel) {
     LFSout
 }
 
-#' Internal function for mapping selectivity
-#'
-#' @author A. Hordyk
-#' @keywords internal
+# #' Internal function for mapping selectivity
+# #'
+# #' @author A. Hordyk
+# #' @keywords internal
 ChooseVmaxlen <- function(Fleet, Stock, isRel) {
     if (isRel) {
         Max <- 3
@@ -242,10 +252,10 @@ ChooseVmaxlen <- function(Fleet, Stock, isRel) {
     Vmaxout
 }
 
-#' Rough Plot of Historical Selectivity Patterns
-#'
-#' @author A. Hordyk
-#' @keywords internal
+# #' Rough Plot of Historical Selectivity Patterns
+# #'
+# #' @author A. Hordyk
+# #' @keywords internal
 CheckSelect <- function(Fleet, Stock = NULL) {
     # NEEDS TO BE FIXED
     if (length(Fleet@SelYears) < 1) 

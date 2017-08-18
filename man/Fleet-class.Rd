@@ -16,7 +16,7 @@ The component of the operating model that controls fishing dynamics
 
 \item{\code{Spat_targ}}{Distribution of fishing in relation to spatial biomass: F is proportional to B^Spat_targ (uniform distribution)}
 
-\item{\code{Fsd}}{Inter-annual variability in fishing mortality rate}
+\item{\code{Esd}}{Inter-annual variability in fishing mortality rate}
 
 \item{\code{EffYears}}{Vector of verticies, years at which to simulate varying relative effort}
 
@@ -26,9 +26,17 @@ The component of the operating model that controls fishing dynamics
 
 \item{\code{LFS}}{Shortest length that is fully vulnerable to fishing (uniform distribution)}
 
-\item{\code{L5}}{Shortest length corresponding ot 5 percent vulnerability (uniform distribution)}
+\item{\code{L5}}{Shortest length corresponding to 5 percent vulnerability (uniform distribution)}
 
 \item{\code{Vmaxlen}}{The vulnerability of the longest (oldest) fish (uniform distribution)}
+
+\item{\code{LR5}}{Shortest length corresponding ot 5 percent retention (uniform distribution)}
+
+\item{\code{LFR}}{Shortest length that is fully retained (uniform distribution)}
+
+\item{\code{Rmaxlen}}{The retention of the longest (oldest) fish (uniform distribution)}
+
+\item{\code{DR}}{Discard rate - fraction of caught fish that are discarded (must be <= 1) (uniform distribution)}
 
 \item{\code{SelYears}}{Vector of verticies, index for years at which historical selectivity pattern changed. If left empty, historical selectivity is constant}
 
@@ -51,11 +59,15 @@ The component of the operating model that controls fishing dynamics
 \item{\code{qcv}}{Inter-annual variability in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls)}
 
 \item{\code{isRel}}{Are the selectivity parameters relative to size-of-maturity? TRUE or FALSE}
+
+\item{\code{CurrentYr}}{The current calendar year (final year) of the historical simulations (e.g. 2011)}
 }}
+
 \section{Objects from the Class}{
  Objects can be created by calls of the form
-\code{new('Fleet', OM)}
+\code{new('Fleet')}
 }
+
 \examples{
 
 showClass('Fleet')
@@ -65,4 +77,3 @@ showClass('Fleet')
 T. Carruthers
 }
 \keyword{classes}
-

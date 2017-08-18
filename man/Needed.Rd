@@ -4,10 +4,10 @@
 \alias{Needed}
 \title{Data needed to get MPs running}
 \usage{
-Needed(DLM_data, timelimit=1)
+Needed(Data, timelimit=1)
 }
 \arguments{
-\item{DLM_data}{A data-limited methods data object}
+\item{Data}{A data-limited methods data object}
 
 \item{timelimit}{The maximum time (seconds) taken to complete 10 reps}
 }
@@ -19,4 +19,3 @@ object
 \author{
 T. Carruthers
 }
-

@@ -19,8 +19,7 @@ ML2D(OM,ML,nsim=100,ploty=T,Dlim=c(0.05,0.6))
 unfished biomass.}
 }
 \value{
-A table of nsim rows and 2 columns (depletion, fishing mortality
-rate)
+An object of class 'OM' with 'D' slot populated
 }
 \description{
 A highly dubious means of getting very uncertain estimates of current stock
@@ -30,4 +29,3 @@ mortality rate, recruitment and fishing selectivity.
 \author{
 T. Carruthers
 }
-

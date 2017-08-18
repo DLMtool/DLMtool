@@ -4,10 +4,10 @@
 \alias{Cant}
 \title{What methods can't be applied to this DLM data object}
 \usage{
-Cant(DLM_data, timelimit = 1)
+Cant(Data, timelimit = 1)
 }
 \arguments{
-\item{DLM_data}{A data-limited methods data object (class DLM_data)}
+\item{Data}{A data-limited methods data object (class Data)}
 
 \item{timelimit}{The maximum time (seconds) taken for a method to undertake
 10 reps (this filters out methods that are too slow)}
@@ -16,4 +16,3 @@ Cant(DLM_data, timelimit = 1)
 The methods that don't have sufficient data, lead to errors or don't run in
 time along with a list of their data requirments.
 }
-

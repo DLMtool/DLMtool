@@ -6,9 +6,8 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Data-Limited Methods Toolkit (DLMtool)</title>
-  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.1 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.4 and GitBook 2.6.7">
 
   <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool)" />
   <meta property="og:type" content="book" />
@@ -24,13 +23,8 @@
   
 
 
-<meta name="date" content="2016-11-28">
 
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  TeX: { equationNumbers: { autoNumber: "AMS" } }
-});
-</script>
+<meta name="date" content="2017-07-22">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -38,8 +32,7 @@ MathJax.Hub.Config({
   
   <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
 <link rel="prev" href="examining-the-mse-object.html">
-<link rel="next" href="assumptions-of-dlmtool.html">
-
+<link rel="next" href="custom-parameters.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -99,6 +92,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <body>
 
 
+
   <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
 
     <div class="book-summary">
@@ -115,17 +109,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#overview-of-the-user-guide"><i class="fa fa-check"></i><b>1.4</b> Overview of the User Guide</a></li>
 <li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#acknowledgements"><i class="fa fa-check"></i><b>1.5</b> Acknowledgements</a></li>
 <li class="chapter" data-level="1.6" data-path="index.html"><a href="index.html#bug-reports"><i class="fa fa-check"></i><b>1.6</b> Bug Reports</a></li>
-<li class="chapter" data-level="1.7" data-path="index.html"><a href="index.html#version-notes"><i class="fa fa-check"></i><b>1.7</b> Version Notes</a><ul>
-<li class="chapter" data-level="1.7.1" data-path="index.html"><a href="index.html#new-additions-to-version-3.2.2"><i class="fa fa-check"></i><b>1.7.1</b> New Additions to Version 3.2.2</a></li>
-<li class="chapter" data-level="1.7.2" data-path="index.html"><a href="index.html#new-additions-to-version-3.2.1"><i class="fa fa-check"></i><b>1.7.2</b> New Additions to Version 3.2.1</a></li>
-<li class="chapter" data-level="1.7.3" data-path="index.html"><a href="index.html#new-additions-to-version-3.2"><i class="fa fa-check"></i><b>1.7.3</b> New Additions to Version 3.2</a></li>
-<li class="chapter" data-level="1.7.4" data-path="index.html"><a href="index.html#notes-from-version-3.1"><i class="fa fa-check"></i><b>1.7.4</b> Notes from Version 3.1</a></li>
-<li class="chapter" data-level="1.7.5" data-path="index.html"><a href="index.html#a-note-on-version-2.11"><i class="fa fa-check"></i><b>1.7.5</b> A Note on Version 2.11</a></li>
-<li class="chapter" data-level="1.7.6" data-path="index.html"><a href="index.html#a-note-on-bug-fixes-in-2.1.1-and-2.1.2"><i class="fa fa-check"></i><b>1.7.6</b> A Note on Bug Fixes in 2.1.1 and 2.1.2</a></li>
-<li class="chapter" data-level="1.7.7" data-path="index.html"><a href="index.html#a-note-on-version-2.1"><i class="fa fa-check"></i><b>1.7.7</b> A Note on Version 2.1</a></li>
-<li class="chapter" data-level="1.7.8" data-path="index.html"><a href="index.html#new-to-version-2.1"><i class="fa fa-check"></i><b>1.7.8</b> New to Version 2.1</a></li>
-<li class="chapter" data-level="1.7.9" data-path="index.html"><a href="index.html#new-to-version-2.0"><i class="fa fa-check"></i><b>1.7.9</b> New to Version 2.0</a></li>
-</ul></li>
+<li class="chapter" data-level="1.7" data-path="index.html"><a href="index.html#version-notes"><i class="fa fa-check"></i><b>1.7</b> Version Notes</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html"><i class="fa fa-check"></i><b>2</b> First Time Working With R?</a><ul>
 <li class="chapter" data-level="2.1" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#r-and-rstudio"><i class="fa fa-check"></i><b>2.1</b> R and RStudio</a><ul>
@@ -145,23 +129,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2.5.2" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#questions-on-r-related-problems"><i class="fa fa-check"></i><b>2.5.2</b> Questions on R-related Problems</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="preq.html"><a href="preq.html"><i class="fa fa-check"></i><b>3</b> Prerequisites to Using DLMtool</a><ul>
-<li class="chapter" data-level="3.1" data-path="preq.html"><a href="preq.html#load-the-library"><i class="fa fa-check"></i><b>3.1</b> Load the Library</a></li>
-<li class="chapter" data-level="3.2" data-path="preq.html"><a href="preq.html#unpack-the-data"><i class="fa fa-check"></i><b>3.2</b> Unpack the Data</a></li>
-<li class="chapter" data-level="3.3" data-path="preq.html"><a href="preq.html#initiate-the-cluster"><i class="fa fa-check"></i><b>3.3</b> Initiate the Cluster</a></li>
-<li class="chapter" data-level="3.4" data-path="preq.html"><a href="preq.html#export-all-data-and-objects-to-the-cluster"><i class="fa fa-check"></i><b>3.4</b> Export all Data and Objects to the Cluster</a></li>
-<li class="chapter" data-level="3.5" data-path="preq.html"><a href="preq.html#set-a-random-seed"><i class="fa fa-check"></i><b>3.5</b> Set a Random Seed</a></li>
-<li class="chapter" data-level="3.6" data-path="preq.html"><a href="preq.html#summary"><i class="fa fa-check"></i><b>3.6</b> Summary</a></li>
-</ul></li>
+<li class="chapter" data-level="3" data-path="preq.html"><a href="preq.html"><i class="fa fa-check"></i><b>3</b> Prerequisites to Using DLMtool</a></li>
 <li class="chapter" data-level="4" data-path="setupOM.html"><a href="setupOM.html"><i class="fa fa-check"></i><b>4</b> Setting up the MSE Operating Model</a><ul>
 <li class="chapter" data-level="4.1" data-path="setupOM.html"><a href="setupOM.html#overview"><i class="fa fa-check"></i><b>4.1</b> Overview</a></li>
 <li class="chapter" data-level="4.2" data-path="setupOM.html"><a href="setupOM.html#the-operating-model-object"><i class="fa fa-check"></i><b>4.2</b> The Operating Model Object</a><ul>
 <li class="chapter" data-level="4.2.1" data-path="setupOM.html"><a href="setupOM.html#stock-object"><i class="fa fa-check"></i><b>4.2.1</b> Stock Object</a></li>
 <li class="chapter" data-level="4.2.2" data-path="setupOM.html"><a href="setupOM.html#fleet-object"><i class="fa fa-check"></i><b>4.2.2</b> Fleet Object</a></li>
 <li class="chapter" data-level="4.2.3" data-path="setupOM.html"><a href="setupOM.html#observation-object"><i class="fa fa-check"></i><b>4.2.3</b> Observation Object</a></li>
+<li class="chapter" data-level="4.2.4" data-path="setupOM.html"><a href="setupOM.html#implementation-object"><i class="fa fa-check"></i><b>4.2.4</b> Implementation Object</a></li>
 </ul></li>
-<li class="chapter" data-level="4.3" data-path="setupOM.html"><a href="setupOM.html#existing-stock-fleet-and-observation-objects"><i class="fa fa-check"></i><b>4.3</b> Existing Stock, Fleet, and Observation Objects</a></li>
-<li class="chapter" data-level="4.4" data-path="setupOM.html"><a href="setupOM.html#creating-the-operating-model-object"><i class="fa fa-check"></i><b>4.4</b> Creating the Operating Model Object</a></li>
+<li class="chapter" data-level="4.3" data-path="setupOM.html"><a href="setupOM.html#existing-stock-fleet-obs-and-imp-objects"><i class="fa fa-check"></i><b>4.3</b> Existing Stock, Fleet, Obs, and Imp Objects</a></li>
+<li class="chapter" data-level="4.4" data-path="setupOM.html"><a href="setupOM.html#creating-the-operating-model-object"><i class="fa fa-check"></i><b>4.4</b> Creating the Operating Model Object</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="setupOM.html"><a href="setupOM.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i><b>4.4.1</b> Important changes - DLMtool V4.1 and greater</a></li>
+</ul></li>
 <li class="chapter" data-level="4.5" data-path="setupOM.html"><a href="setupOM.html#customizing-the-operating-model"><i class="fa fa-check"></i><b>4.5</b> Customizing the Operating Model</a><ul>
 <li class="chapter" data-level="4.5.1" data-path="setupOM.html"><a href="setupOM.html#creating-new-objects"><i class="fa fa-check"></i><b>4.5.1</b> Creating New Objects</a></li>
 <li class="chapter" data-level="4.5.2" data-path="setupOM.html"><a href="setupOM.html#importing-objects"><i class="fa fa-check"></i><b>4.5.2</b> Importing Objects</a></li>
@@ -185,7 +165,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.4" data-path="MPs.html"><a href="MPs.html#details-of-the-methods"><i class="fa fa-check"></i><b>5.4</b> Details of the Methods</a></li>
 <li class="chapter" data-level="5.5" data-path="MPs.html"><a href="MPs.html#designing-new-methods"><i class="fa fa-check"></i><b>5.5</b> Designing New Methods</a><ul>
 <li class="chapter" data-level="5.5.1" data-path="MPs.html"><a href="MPs.html#average-historical-catch-management-procedure"><i class="fa fa-check"></i><b>5.5.1</b> Average Historical Catch Management Procedure</a></li>
-<li class="chapter" data-level="5.5.2" data-path="MPs.html"><a href="MPs.html#length-at-selection-set-equal-to-length-at-maturity"><i class="fa fa-check"></i><b>5.5.2</b> Length-at-Selection Set Equal to Length-at-Maturity</a></li>
+<li class="chapter" data-level="5.5.2" data-path="MPs.html"><a href="MPs.html#length-at-retention-set-equal-to-length-at-maturity"><i class="fa fa-check"></i><b>5.5.2</b> Length-at-Retention Set Equal to Length-at-Maturity</a></li>
 <li class="chapter" data-level="5.5.3" data-path="MPs.html"><a href="MPs.html#harvest-slot-limit"><i class="fa fa-check"></i><b>5.5.3</b> Harvest Slot Limit</a></li>
 <li class="chapter" data-level="5.5.4" data-path="MPs.html"><a href="MPs.html#reducing-fishing-rate-in-area-1-by-50"><i class="fa fa-check"></i><b>5.5.4</b> Reducing Fishing Rate in area 1 by 50%</a></li>
 </ul></li>
@@ -243,45 +223,61 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html"><i class="fa fa-check"></i><b>8</b> Managing Fishery Data</a><ul>
-<li class="chapter" data-level="8.1" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#the-fishery-data-object-dlm_data"><i class="fa fa-check"></i><b>8.1</b> The Fishery Data Object (<code>DLM_data</code>)</a><ul>
+<li class="chapter" data-level="8.1" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#the-fishery-data-object-data"><i class="fa fa-check"></i><b>8.1</b> The Fishery Data Object (<code>Data</code>)</a><ul>
 <li class="chapter" data-level="8.1.1" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#in-the-mse"><i class="fa fa-check"></i><b>8.1.1</b> In the MSE</a></li>
 <li class="chapter" data-level="8.1.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#application-of-management-procedures-using-real-fisheries-data"><i class="fa fa-check"></i><b>8.1.2</b> Application of Management Procedures Using Real Fisheries Data</a></li>
 </ul></li>
-<li class="chapter" data-level="8.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#example-dlm_data-objects"><i class="fa fa-check"></i><b>8.2</b> Example <code>DLM_data</code> Objects</a></li>
-<li class="chapter" data-level="8.3" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#creating-your-own-dlm_data-object"><i class="fa fa-check"></i><b>8.3</b> Creating Your Own <code>DLM_data</code> Object</a><ul>
+<li class="chapter" data-level="8.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#example-data-objects"><i class="fa fa-check"></i><b>8.2</b> Example <code>Data</code> Objects</a></li>
+<li class="chapter" data-level="8.3" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#creating-your-own-data-object"><i class="fa fa-check"></i><b>8.3</b> Creating Your Own <code>Data</code> Object</a><ul>
 <li class="chapter" data-level="8.3.1" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#creating-a-csv-data-file"><i class="fa fa-check"></i><b>8.3.1</b> Creating a CSV Data File</a></li>
-<li class="chapter" data-level="8.3.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#populating-a-dlm_data-object-in-r"><i class="fa fa-check"></i><b>8.3.2</b> Populating a <code>DLM_data</code> Object in R</a></li>
+<li class="chapter" data-level="8.3.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#populating-a-data-object-in-r"><i class="fa fa-check"></i><b>8.3.2</b> Populating a <code>Data</code> Object in R</a></li>
 </ul></li>
-<li class="chapter" data-level="8.4" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#working-with-dlm_data-objects"><i class="fa fa-check"></i><b>8.4</b> Working With <code>DLM_data</code> Objects</a></li>
+<li class="chapter" data-level="8.4" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#working-with-data-objects"><i class="fa fa-check"></i><b>8.4</b> Working With <code>Data</code> Objects</a></li>
 <li class="chapter" data-level="8.5" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#applying-management-procedures"><i class="fa fa-check"></i><b>8.5</b> Applying Management Procedures</a><ul>
-<li class="chapter" data-level="8.5.1" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#dlm_input-methods"><i class="fa fa-check"></i><b>8.5.1</b> <code>DLM_input</code> Methods</a></li>
-<li class="chapter" data-level="8.5.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#dlm_output-methods"><i class="fa fa-check"></i><b>8.5.2</b> <code>DLM_output</code> Methods</a></li>
+<li class="chapter" data-level="8.5.1" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#input-methods"><i class="fa fa-check"></i><b>8.5.1</b> <code>Input</code> Methods</a></li>
+<li class="chapter" data-level="8.5.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#output-methods"><i class="fa fa-check"></i><b>8.5.2</b> <code>Output</code> Methods</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html"><i class="fa fa-check"></i><b>9</b> Assumptions of DLMtool</a><ul>
-<li class="chapter" data-level="9.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#biology"><i class="fa fa-check"></i><b>9.1</b> Biology</a><ul>
-<li class="chapter" data-level="9.1.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#short-lived-species"><i class="fa fa-check"></i><b>9.1.1</b> Short-Lived Species</a></li>
-<li class="chapter" data-level="9.1.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#density-dependent-compensation"><i class="fa fa-check"></i><b>9.1.2</b> Density-Dependent Compensation</a></li>
-<li class="chapter" data-level="9.1.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#von-bertalanffy-growth"><i class="fa fa-check"></i><b>9.1.3</b> von Bertalanffy Growth</a></li>
-<li class="chapter" data-level="9.1.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#natural-mortality-rate-at-age"><i class="fa fa-check"></i><b>9.1.4</b> Natural Mortality Rate at Age</a></li>
+<li class="chapter" data-level="9" data-path="custom-parameters.html"><a href="custom-parameters.html"><i class="fa fa-check"></i><b>9</b> Custom Parameters</a><ul>
+<li class="chapter" data-level="9.1" data-path="custom-parameters.html"><a href="custom-parameters.html#valid-cpars-names"><i class="fa fa-check"></i><b>9.1</b> Valid cpars names</a></li>
+<li class="chapter" data-level="9.2" data-path="custom-parameters.html"><a href="custom-parameters.html#correlated-samples"><i class="fa fa-check"></i><b>9.2</b> Correlated samples</a></li>
+<li class="chapter" data-level="9.3" data-path="custom-parameters.html"><a href="custom-parameters.html#custom-time-varying-parameters"><i class="fa fa-check"></i><b>9.3</b> Custom time-varying parameters</a></li>
 </ul></li>
-<li class="chapter" data-level="9.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#mse-model-assumptions"><i class="fa fa-check"></i><b>9.2</b> MSE Model Assumptions</a><ul>
-<li class="chapter" data-level="9.2.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#idealised-observation-models-for-catch-composition-data"><i class="fa fa-check"></i><b>9.2.1</b> Idealised Observation Models for Catch Composition Data</a></li>
-<li class="chapter" data-level="9.2.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#implementation-error"><i class="fa fa-check"></i><b>9.2.2</b> Implementation Error</a></li>
-<li class="chapter" data-level="9.2.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#discard-mortality"><i class="fa fa-check"></i><b>9.2.3</b> Discard Mortality</a></li>
-<li class="chapter" data-level="9.2.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#two-box-model"><i class="fa fa-check"></i><b>9.2.4</b> Two-Box Model</a></li>
-<li class="chapter" data-level="9.2.5" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#ontogenetic-habitat-shifts"><i class="fa fa-check"></i><b>9.2.5</b> Ontogenetic Habitat Shifts</a></li>
-<li class="chapter" data-level="9.2.6" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#closed-system"><i class="fa fa-check"></i><b>9.2.6</b> Closed System</a></li>
-<li class="chapter" data-level="9.2.7" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#marine-protected-areas-mpa"><i class="fa fa-check"></i><b>9.2.7</b> Marine Protected Areas (MPA)</a></li>
+<li class="chapter" data-level="10" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html"><i class="fa fa-check"></i><b>10</b> Size-Specific Natural Mortality</a><ul>
+<li class="chapter" data-level="10.1" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html#constant-m-at-agesize"><i class="fa fa-check"></i><b>10.1</b> Constant M at age/size</a></li>
+<li class="chapter" data-level="10.2" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html#lorenzen-function-of-weight"><i class="fa fa-check"></i><b>10.2</b> Lorenzen function of weight</a></li>
+<li class="chapter" data-level="10.3" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html#map-age-specific-m"><i class="fa fa-check"></i><b>10.3</b> Map Age-Specific M</a></li>
+<li class="chapter" data-level="10.4" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html#map-length-specific-m"><i class="fa fa-check"></i><b>10.4</b> Map Length-Specific M</a></li>
 </ul></li>
-<li class="chapter" data-level="9.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#management-procedures"><i class="fa fa-check"></i><b>9.3</b> Management Procedures</a><ul>
-<li class="chapter" data-level="9.3.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#harvest-control-rules-must-be-integrated-into-data-limited-mps"><i class="fa fa-check"></i><b>9.3.1</b> Harvest Control Rules Must be Integrated into Data-Limited MPs</a></li>
+<li class="chapter" data-level="11" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html"><i class="fa fa-check"></i><b>11</b> Selection, Retention and Discard Mortality</a><ul>
+<li class="chapter" data-level="11.1" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html#fishery-selection-curve"><i class="fa fa-check"></i><b>11.1</b> Fishery Selection Curve</a></li>
+<li class="chapter" data-level="11.2" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html#fishery-retention-curve"><i class="fa fa-check"></i><b>11.2</b> Fishery Retention Curve</a></li>
+<li class="chapter" data-level="11.3" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html#discard-mortality"><i class="fa fa-check"></i><b>11.3</b> Discard Mortality</a></li>
+<li class="chapter" data-level="11.4" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html#general-discarding"><i class="fa fa-check"></i><b>11.4</b> General Discarding</a></li>
 </ul></li>
-<li class="chapter" data-level="9.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-and-method-application"><i class="fa fa-check"></i><b>9.4</b> Data and Method Application</a><ul>
-<li class="chapter" data-level="9.4.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-assumed-to-be-representative"><i class="fa fa-check"></i><b>9.4.1</b> Data Assumed to be Representative</a></li>
+<li class="chapter" data-level="12" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html"><i class="fa fa-check"></i><b>12</b> Assumptions of DLMtool</a><ul>
+<li class="chapter" data-level="12.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#biology"><i class="fa fa-check"></i><b>12.1</b> Biology</a><ul>
+<li class="chapter" data-level="12.1.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#short-lived-species"><i class="fa fa-check"></i><b>12.1.1</b> Short-Lived Species</a></li>
+<li class="chapter" data-level="12.1.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#density-dependent-compensation"><i class="fa fa-check"></i><b>12.1.2</b> Density-Dependent Compensation</a></li>
+<li class="chapter" data-level="12.1.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#von-bertalanffy-growth"><i class="fa fa-check"></i><b>12.1.3</b> von Bertalanffy Growth</a></li>
+<li class="chapter" data-level="12.1.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#natural-mortality-rate-at-age"><i class="fa fa-check"></i><b>12.1.4</b> Natural Mortality Rate at Age</a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#mse-model-assumptions"><i class="fa fa-check"></i><b>12.2</b> MSE Model Assumptions</a><ul>
+<li class="chapter" data-level="12.2.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#idealised-observation-models-for-catch-composition-data"><i class="fa fa-check"></i><b>12.2.1</b> Idealised Observation Models for Catch Composition Data</a></li>
+<li class="chapter" data-level="12.2.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#discard-mortality-1"><i class="fa fa-check"></i><b>12.2.2</b> Discard Mortality</a></li>
+<li class="chapter" data-level="12.2.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#two-box-model"><i class="fa fa-check"></i><b>12.2.3</b> Two-Box Model</a></li>
+<li class="chapter" data-level="12.2.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#ontogenetic-habitat-shifts"><i class="fa fa-check"></i><b>12.2.4</b> Ontogenetic Habitat Shifts</a></li>
+<li class="chapter" data-level="12.2.5" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#closed-system"><i class="fa fa-check"></i><b>12.2.5</b> Closed System</a></li>
+<li class="chapter" data-level="12.2.6" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#marine-protected-areas-mpa"><i class="fa fa-check"></i><b>12.2.6</b> Marine Protected Areas (MPA)</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#management-procedures"><i class="fa fa-check"></i><b>12.3</b> Management Procedures</a><ul>
+<li class="chapter" data-level="12.3.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#harvest-control-rules-must-be-integrated-into-data-limited-mps"><i class="fa fa-check"></i><b>12.3.1</b> Harvest Control Rules Must be Integrated into Data-Limited MPs</a></li>
+</ul></li>
+<li class="chapter" data-level="12.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-and-method-application"><i class="fa fa-check"></i><b>12.4</b> Data and Method Application</a><ul>
+<li class="chapter" data-level="12.4.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-assumed-to-be-representative"><i class="fa fa-check"></i><b>12.4.1</b> Data Assumed to be Representative</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>10</b> References</a></li>
+<li class="chapter" data-level="13" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>13</b> References</a></li>
 <li class="divider"></li>
 <li><a href="http://www.datalimitedfisheries.com" target="blank">DLMtool Website</a></li>
 <li><a href="../index.html">DLMtool Documentation</a></li>
@@ -305,17 +301,17 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
             <section class="normal" id="section-">
 <div id="managing-fishery-data" class="section level1">
 <h1><span class="header-section-number">Chapter 8</span> Managing Fishery Data</h1>
-<div id="the-fishery-data-object-dlm_data" class="section level2">
-<h2><span class="header-section-number">8.1</span> The Fishery Data Object (<code>DLM_data</code>)</h2>
-<p>The second argument for all Management Procedures in the DLMtool is something called <code>DLM_data</code>.</p>
-<p><code>DLM_data</code> is an object class in the DLMtool that contains all of the fishery information that can be used by the Management Procedure. You find the documentation for the <code>DLM_data</code> class by typing:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">class?DLM_data</code></pre></div>
-<p>You can see from the documentation that the <code>DLM_data</code> object, or Fishery Data object, contains many slots, and a lot of information can be stored in this object, including biological parameters, fishery statistics such as time-series of catch, and past management recommendations.</p>
+<div id="the-fishery-data-object-data" class="section level2">
+<h2><span class="header-section-number">8.1</span> The Fishery Data Object (<code>Data</code>)</h2>
+<p>The second argument for all Management Procedures in the DLMtool is something called <code>Data</code>.</p>
+<p><code>Data</code> is an object class in the DLMtool that contains all of the fishery information that can be used by the Management Procedure. You find the documentation for the <code>Data</code> class by typing:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">class?Data</code></pre></div>
+<p>You can see from the documentation that the <code>Data</code> object, or Fishery Data object, contains many slots, and a lot of information can be stored in this object, including biological parameters, fishery statistics such as time-series of catch, and past management recommendations.</p>
 <div id="in-the-mse" class="section level3">
 <h3><span class="header-section-number">8.1.1</span> In the MSE</h3>
 <p>In the MSE the Fishery Data object is populated with data that is generated by the simulation model. Here the ‘true’ data generated by the model is filtered through the Observation Model (using the Observation parameters) and entered into the Fishery Data object to represent typical fisheries data.</p>
 <p>The MSE consists of many hundreds of simulations, and because the DLMtool has been designed for parallel processing, the Fishery Data object in the MSE actually consists of hundreds of ‘versions’ of the simulated fishery data.</p>
-<p>The first argument for all Management Procedure functions is <code>x</code>, which is the position in the <code>DLM_data</code> object that refers to the data corresponding that particular iteration. In the MSE, the value of <code>x</code> goes from 1 to the total number of simulations (<code>nsim</code>).</p>
+<p>The first argument for all Management Procedure functions is <code>x</code>, which is the position in the <code>Data</code> object that refers to the data corresponding that particular iteration. In the MSE, the value of <code>x</code> goes from 1 to the total number of simulations (<code>nsim</code>).</p>
 </div>
 <div id="application-of-management-procedures-using-real-fisheries-data" class="section level3">
 <h3><span class="header-section-number">8.1.2</span> Application of Management Procedures Using Real Fisheries Data</h3>
@@ -323,57 +319,57 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The Fishery Data object contains all of the fishery information that can be used by a Management Procedure. By definition, many sources of data are not available in data-limited fisheries, and the Fishery Data object may not be completely populated. The DLMtool can be used to determine which of the Management Procedures in the Toolkit are available to be used given the data in the Fishery Data object, which methods cannot be used, and what data are required to make these methods available. More information on applying Management Procedures to fishery data can be found in the [Application of Management Procedure] section.</p>
 </div>
 </div>
-<div id="example-dlm_data-objects" class="section level2">
-<h2><span class="header-section-number">8.2</span> Example <code>DLM_data</code> Objects</h2>
+<div id="example-data-objects" class="section level2">
+<h2><span class="header-section-number">8.2</span> Example <code>Data</code> Objects</h2>
 <p>The DLMtool package has a number of example Fishery Data objects. This can be listed using the <code>avail</code> function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">avail</span>(<span class="st">&quot;DLM_data&quot;</span>)</code></pre></div>
-<pre><code>## [1] &quot;ourReefFish&quot;        &quot;Atlantic_mackerel&quot;  &quot;China_rockfish&quot;    
-## [4] &quot;Cobia&quot;              &quot;Example_datafile&quot;   &quot;Gulf_blue_tilefish&quot;
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">avail</span>(<span class="st">&quot;Data&quot;</span>)</code></pre></div>
+<pre><code>## [1] &quot;Atlantic_mackerel&quot;  &quot;China_rockfish&quot;     &quot;Cobia&quot;             
+## [4] &quot;Example_datafile&quot;   &quot;Gulf_blue_tilefish&quot; &quot;ourReefFish&quot;       
 ## [7] &quot;Red_snapper&quot;        &quot;Simulation_1&quot;</code></pre>
 <p>This shows us that there is 8 example Fishery Data objects in the DLMtool.</p>
 </div>
-<div id="creating-your-own-dlm_data-object" class="section level2">
-<h2><span class="header-section-number">8.3</span> Creating Your Own <code>DLM_data</code> Object</h2>
+<div id="creating-your-own-data-object" class="section level2">
+<h2><span class="header-section-number">8.3</span> Creating Your Own <code>Data</code> Object</h2>
 <p>DLMtool has a series of functions to make importing data and applying data-limited Management Procedures relatively straightforward.</p>
 <p>There are two approaches:</p>
 <ol style="list-style-type: decimal">
-<li>Fill out a .csv data file in excel or a text editor and use a DLMtool function to create a properly formatted <code>DLM_data</code> object (class <code>DLM_data</code>), or</li>
-<li>Create a blank <code>DLM_data</code> object and populate it in R.</li>
+<li>Fill out a .csv data file in excel or a text editor and use a DLMtool function to create a properly formatted <code>Data</code> object (class <code>Data</code>), or</li>
+<li>Create a blank <code>Data</code> object and populate it in R.</li>
 </ol>
 <div id="creating-a-csv-data-file" class="section level3">
 <h3><span class="header-section-number">8.3.1</span> Creating a CSV Data File</h3>
-<p>Probably the easiest way to get your data into the DLMtool is to populate a .csv data file. These files have a line for each slot of the <code>DLM_data</code> object:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">slotNames</span>(<span class="st">&#39;DLM_data&#39;</span>)</code></pre></div>
+<p>Probably the easiest way to get your data into the DLMtool is to populate a .csv data file. These files have a line for each slot of the <code>Data</code> object:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">slotNames</span>(<span class="st">&#39;Data&#39;</span>)</code></pre></div>
 <pre><code>##  [1] &quot;Name&quot;       &quot;Year&quot;       &quot;Cat&quot;        &quot;Ind&quot;        &quot;Rec&quot;       
 ##  [6] &quot;t&quot;          &quot;AvC&quot;        &quot;Dt&quot;         &quot;Mort&quot;       &quot;FMSY_M&quot;    
 ## [11] &quot;BMSY_B0&quot;    &quot;Cref&quot;       &quot;Bref&quot;       &quot;Iref&quot;       &quot;L50&quot;       
 ## [16] &quot;L95&quot;        &quot;LFC&quot;        &quot;LFS&quot;        &quot;CAA&quot;        &quot;Dep&quot;       
-## [21] &quot;Abun&quot;       &quot;vbK&quot;        &quot;vbLinf&quot;     &quot;vbt0&quot;       &quot;wla&quot;       
-## [26] &quot;wlb&quot;        &quot;steep&quot;      &quot;CV_Cat&quot;     &quot;CV_Dt&quot;      &quot;CV_AvC&quot;    
-## [31] &quot;CV_Ind&quot;     &quot;CV_Mort&quot;    &quot;CV_FMSY_M&quot;  &quot;CV_BMSY_B0&quot; &quot;CV_Cref&quot;   
-## [36] &quot;CV_Bref&quot;    &quot;CV_Iref&quot;    &quot;CV_Rec&quot;     &quot;CV_Dep&quot;     &quot;CV_Abun&quot;   
-## [41] &quot;CV_vbK&quot;     &quot;CV_vbLinf&quot;  &quot;CV_vbt0&quot;    &quot;CV_L50&quot;     &quot;CV_LFC&quot;    
-## [46] &quot;CV_LFS&quot;     &quot;CV_wla&quot;     &quot;CV_wlb&quot;     &quot;CV_steep&quot;   &quot;sigmaL&quot;    
-## [51] &quot;MaxAge&quot;     &quot;Units&quot;      &quot;Ref&quot;        &quot;Ref_type&quot;   &quot;Log&quot;       
-## [56] &quot;params&quot;     &quot;PosMPs&quot;     &quot;MPs&quot;        &quot;OM&quot;         &quot;Obs&quot;       
-## [61] &quot;TAC&quot;        &quot;TACbias&quot;    &quot;Sense&quot;      &quot;CAL_bins&quot;   &quot;CAL&quot;       
-## [66] &quot;MPrec&quot;      &quot;MPeff&quot;      &quot;ML&quot;         &quot;Lbar&quot;       &quot;Lc&quot;        
-## [71] &quot;LHYear&quot;     &quot;Misc&quot;</code></pre>
+## [21] &quot;Abun&quot;       &quot;SpAbun&quot;     &quot;vbK&quot;        &quot;vbLinf&quot;     &quot;vbt0&quot;      
+## [26] &quot;LenCV&quot;      &quot;wla&quot;        &quot;wlb&quot;        &quot;steep&quot;      &quot;CV_Cat&quot;    
+## [31] &quot;CV_Dt&quot;      &quot;CV_AvC&quot;     &quot;CV_Ind&quot;     &quot;CV_Mort&quot;    &quot;CV_FMSY_M&quot; 
+## [36] &quot;CV_BMSY_B0&quot; &quot;CV_Cref&quot;    &quot;CV_Bref&quot;    &quot;CV_Iref&quot;    &quot;CV_Rec&quot;    
+## [41] &quot;CV_Dep&quot;     &quot;CV_Abun&quot;    &quot;CV_vbK&quot;     &quot;CV_vbLinf&quot;  &quot;CV_vbt0&quot;   
+## [46] &quot;CV_L50&quot;     &quot;CV_LFC&quot;     &quot;CV_LFS&quot;     &quot;CV_wla&quot;     &quot;CV_wlb&quot;    
+## [51] &quot;CV_steep&quot;   &quot;sigmaL&quot;     &quot;MaxAge&quot;     &quot;Units&quot;      &quot;Ref&quot;       
+## [56] &quot;Ref_type&quot;   &quot;Log&quot;        &quot;params&quot;     &quot;PosMPs&quot;     &quot;MPs&quot;       
+## [61] &quot;OM&quot;         &quot;Obs&quot;        &quot;TAC&quot;        &quot;TACbias&quot;    &quot;Sense&quot;     
+## [66] &quot;CAL_bins&quot;   &quot;CAL&quot;        &quot;MPrec&quot;      &quot;MPeff&quot;      &quot;ML&quot;        
+## [71] &quot;Lbar&quot;       &quot;Lc&quot;         &quot;LHYear&quot;     &quot;nareas&quot;     &quot;Misc&quot;</code></pre>
 <p>You do not have to enter data for every line of the data file, if data are not available simply put an ‘NA’ next to any given field.</p>
 <div id="example-fishery-data-csv-files" class="section level4">
 <h4><span class="header-section-number">8.3.1.1</span> Example Fishery Data CSV Files</h4>
 <p>There are also CSV files for these example Fishery Data objects that are included in the DLMtool package. To find the location where these files are located on your machine, use the <code>DLMDataDir</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">DLMDataDir</span>()</code></pre></div>
-<pre><code>## [1] &quot;F:/ProgramFiles/R-3.3.1/library/DLMtool/&quot;</code></pre>
+<pre><code>## [1] &quot;C:/Users/arhor/Documents/R/win-library/3.4/DLMtool/&quot;</code></pre>
 <p>We can then load one of the example CSV files using the <code>new</code> function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">China_rockfish2 &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;DLM_data&quot;</span>, <span class="kw">paste0</span>(<span class="kw">DLMDataDir</span>(),<span class="st">&quot;China_rockfish.csv&quot;</span>))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">China_rockfish2 &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Data&quot;</span>, <span class="kw">paste0</span>(<span class="kw">DLMDataDir</span>(),<span class="st">&quot;China_rockfish.csv&quot;</span>))</code></pre></div>
 <p>Alternatively, you can navigate to the data directory on your machine and examine the contents and structure of the CSV data files in MS Excel or other software.</p>
 </div>
 </div>
-<div id="populating-a-dlm_data-object-in-r" class="section level3">
-<h3><span class="header-section-number">8.3.2</span> Populating a <code>DLM_data</code> Object in R</h3>
-<p>Alternatively you can create a blank <code>DLM_data</code> object and fill the slots directly in R. For example:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Madeup &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;DLM_data&#39;</span>)                             <span class="co">#  Create a blank DLM object</span></code></pre></div>
+<div id="populating-a-data-object-in-r" class="section level3">
+<h3><span class="header-section-number">8.3.2</span> Populating a <code>Data</code> Object in R</h3>
+<p>Alternatively you can create a blank <code>Data</code> object and fill the slots directly in R. For example:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Madeup &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;Data&#39;</span>)                             <span class="co">#  Create a blank DLM object</span></code></pre></div>
 <pre><code>## [1] &quot;Couldn&#39;t find specified csv file, blank DLM object created&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Madeup@Name &lt;-<span class="st"> &#39;Test&#39;</span>                                 <span class="co">#  Name it</span>
 Madeup@Cat &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">20</span>:<span class="dv">11</span>*<span class="kw">rlnorm</span>(<span class="dv">10</span>,<span class="dv">0</span>,<span class="fl">0.2</span>),<span class="dt">nrow=</span><span class="dv">1</span>)   <span class="co">#  Generate fake catch data</span>
@@ -393,63 +389,69 @@ Madeup@L95 &lt;-<span class="st"> </span><span class="dv">120</span>            
 Madeup@BMSY_B0 &lt;-<span class="st"> </span><span class="fl">0.35</span>                                <span class="co">#  BMSY relative to unfished</span></code></pre></div>
 </div>
 </div>
-<div id="working-with-dlm_data-objects" class="section level2">
-<h2><span class="header-section-number">8.4</span> Working With <code>DLM_data</code> Objects</h2>
-<p>A generic summary function is available to visualize the data in a <code>DLM_data</code> object:</p>
+<div id="working-with-data-objects" class="section level2">
+<h2><span class="header-section-number">8.4</span> Working With <code>Data</code> Objects</h2>
+<p>A generic summary function is available to visualize the data in a <code>Data</code> object:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(Atlantic_mackerel)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-122-1.png" width="672" /></p>
+<p><img src="userguide_files/figure-html/unnamed-chunk-118-1.png" width="672" /></p>
 <p>You can see what Management Procedures can and can’t be applied given your data and also what data are needed to get them working:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Can</span>(Atlantic_mackerel)</code></pre></div>
-<pre><code>##  [1] &quot;AvC&quot;         &quot;BK&quot;          &quot;CC1&quot;         &quot;CC4&quot;         &quot;DAAC&quot;       
-##  [6] &quot;DBSRA&quot;       &quot;DBSRA_40&quot;    &quot;DBSRA4010&quot;   &quot;DCAC&quot;        &quot;DCAC_40&quot;    
-## [11] &quot;DCAC4010&quot;    &quot;DD&quot;          &quot;DD4010&quot;      &quot;DepF&quot;        &quot;DynF&quot;       
-## [16] &quot;Fadapt&quot;      &quot;Fdem&quot;        &quot;Fratio&quot;      &quot;Fratio4010&quot;  &quot;GB_slope&quot;   
-## [21] &quot;Gcontrol&quot;    &quot;HDAAC&quot;       &quot;Islope1&quot;     &quot;Islope4&quot;     &quot;Itarget1&quot;   
-## [26] &quot;Itarget4&quot;    &quot;MCD&quot;         &quot;MCD4010&quot;     &quot;NFref&quot;       &quot;Rcontrol&quot;   
-## [31] &quot;Rcontrol2&quot;   &quot;SBT1&quot;        &quot;SPmod&quot;       &quot;SPMSY&quot;       &quot;SPslope&quot;    
-## [36] &quot;SPSRA&quot;       &quot;YPR&quot;         &quot;THC&quot;         &quot;curE&quot;        &quot;curE75&quot;     
-## [41] &quot;DDe&quot;         &quot;DDe75&quot;       &quot;DTe40&quot;       &quot;DTe50&quot;       &quot;EtargetLopt&quot;
-## [46] &quot;ItargetE1&quot;   &quot;ItargetE4&quot;   &quot;matlenlim&quot;   &quot;matlenlim2&quot;  &quot;minlenLopt1&quot;
-## [51] &quot;MRnoreal&quot;    &quot;MRreal&quot;      &quot;slotlim&quot;     &quot;area1_50&quot;</code></pre>
+<pre><code>##  [1] &quot;AvC&quot;        &quot;BK&quot;         &quot;CC1&quot;        &quot;CC4&quot;        &quot;DAAC&quot;      
+##  [6] &quot;DBSRA&quot;      &quot;DBSRA_40&quot;   &quot;DBSRA4010&quot;  &quot;DCAC&quot;       &quot;DCAC_40&quot;   
+## [11] &quot;DCAC4010&quot;   &quot;DD&quot;         &quot;DD4010&quot;     &quot;DepF&quot;       &quot;DynF&quot;      
+## [16] &quot;Fadapt&quot;     &quot;Fdem&quot;       &quot;Fratio&quot;     &quot;Fratio4010&quot; &quot;GB_slope&quot;  
+## [21] &quot;Gcontrol&quot;   &quot;HDAAC&quot;      &quot;Itarget1&quot;   &quot;Itarget4&quot;   &quot;MCD&quot;       
+## [26] &quot;MCD4010&quot;    &quot;NFref&quot;      &quot;Rcontrol&quot;   &quot;Rcontrol2&quot;  &quot;SBT1&quot;      
+## [31] &quot;SPmod&quot;      &quot;SPMSY&quot;      &quot;SPslope&quot;    &quot;SPSRA&quot;      &quot;YPR&quot;       
+## [36] &quot;curE&quot;       &quot;curE75&quot;     &quot;DDe&quot;        &quot;DDe75&quot;      &quot;matlenlim&quot; 
+## [41] &quot;matlenlim2&quot; &quot;MRnoreal&quot;   &quot;MRreal&quot;     &quot;slotlim&quot;    &quot;area1_50&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Cant</span>(Atlantic_mackerel)</code></pre></div>
-<pre><code>##       [,1]          [,2]                    
-##  [1,] &quot;BK_CC&quot;       &quot;Insufficient data&quot;     
-##  [2,] &quot;BK_ML&quot;       &quot;Insufficient data&quot;     
-##  [3,] &quot;CompSRA&quot;     &quot;Insufficient data&quot;     
-##  [4,] &quot;CompSRA4010&quot; &quot;Insufficient data&quot;     
-##  [5,] &quot;DBSRA_ML&quot;    &quot;Insufficient data&quot;     
-##  [6,] &quot;DCAC_ML&quot;     &quot;Insufficient data&quot;     
-##  [7,] &quot;Fdem_CC&quot;     &quot;Insufficient data&quot;     
-##  [8,] &quot;Fdem_ML&quot;     &quot;Insufficient data&quot;     
-##  [9,] &quot;FMSYref&quot;     &quot;Insufficient data&quot;     
-## [10,] &quot;FMSYref50&quot;   &quot;Insufficient data&quot;     
-## [11,] &quot;FMSYref75&quot;   &quot;Insufficient data&quot;     
-## [12,] &quot;Fratio_CC&quot;   &quot;Insufficient data&quot;     
-## [13,] &quot;Fratio_ML&quot;   &quot;Insufficient data&quot;     
-## [14,] &quot;GB_CC&quot;       &quot;Produced all NA scores&quot;
-## [15,] &quot;GB_target&quot;   &quot;Produced all NA scores&quot;
-## [16,] &quot;IT10&quot;        &quot;Insufficient data&quot;     
-## [17,] &quot;IT5&quot;         &quot;Insufficient data&quot;     
-## [18,] &quot;ITM&quot;         &quot;Insufficient data&quot;     
-## [19,] &quot;L95target&quot;   &quot;Insufficient data&quot;     
-## [20,] &quot;LBSPR_ItTAC&quot; &quot;Produced all NA scores&quot;
-## [21,] &quot;LstepCC1&quot;    &quot;Insufficient data&quot;     
-## [22,] &quot;LstepCC4&quot;    &quot;Insufficient data&quot;     
-## [23,] &quot;Ltarget1&quot;    &quot;Insufficient data&quot;     
-## [24,] &quot;Ltarget4&quot;    &quot;Insufficient data&quot;     
-## [25,] &quot;SBT2&quot;        &quot;Produced all NA scores&quot;
-## [26,] &quot;SPSRA_ML&quot;    &quot;Insufficient data&quot;     
-## [27,] &quot;YPR_CC&quot;      &quot;Insufficient data&quot;     
-## [28,] &quot;YPR_ML&quot;      &quot;Insufficient data&quot;     
-## [29,] &quot;DDes&quot;        &quot;Insufficient data&quot;     
-## [30,] &quot;ITe10&quot;       &quot;Insufficient data&quot;     
-## [31,] &quot;ITe5&quot;        &quot;Insufficient data&quot;     
-## [32,] &quot;LBSPR_ItEff&quot; &quot;Insufficient data&quot;     
-## [33,] &quot;LBSPR_ItSel&quot; &quot;Insufficient data&quot;     
-## [34,] &quot;LstepCE1&quot;    &quot;Insufficient data&quot;     
-## [35,] &quot;LstepCE2&quot;    &quot;Insufficient data&quot;     
-## [36,] &quot;LtargetE1&quot;   &quot;Insufficient data&quot;     
-## [37,] &quot;LtargetE4&quot;   &quot;Insufficient data&quot;</code></pre>
+<pre><code>##       [,1]          [,2]               
+##  [1,] &quot;BK_CC&quot;       &quot;Insufficient data&quot;
+##  [2,] &quot;BK_ML&quot;       &quot;Insufficient data&quot;
+##  [3,] &quot;CompSRA&quot;     &quot;Insufficient data&quot;
+##  [4,] &quot;CompSRA4010&quot; &quot;Insufficient data&quot;
+##  [5,] &quot;DBSRA_ML&quot;    &quot;Insufficient data&quot;
+##  [6,] &quot;DCAC_ML&quot;     &quot;Insufficient data&quot;
+##  [7,] &quot;Fdem_CC&quot;     &quot;Insufficient data&quot;
+##  [8,] &quot;Fdem_ML&quot;     &quot;Insufficient data&quot;
+##  [9,] &quot;FMSYref&quot;     &quot;Insufficient data&quot;
+## [10,] &quot;FMSYref50&quot;   &quot;Insufficient data&quot;
+## [11,] &quot;FMSYref75&quot;   &quot;Insufficient data&quot;
+## [12,] &quot;Fratio_CC&quot;   &quot;Insufficient data&quot;
+## [13,] &quot;Fratio_ML&quot;   &quot;Insufficient data&quot;
+## [14,] &quot;GB_CC&quot;       &quot;Insufficient data&quot;
+## [15,] &quot;GB_target&quot;   &quot;Insufficient data&quot;
+## [16,] &quot;Islope1&quot;     &quot;Insufficient data&quot;
+## [17,] &quot;Islope4&quot;     &quot;Insufficient data&quot;
+## [18,] &quot;IT10&quot;        &quot;Insufficient data&quot;
+## [19,] &quot;IT5&quot;         &quot;Insufficient data&quot;
+## [20,] &quot;ITM&quot;         &quot;Insufficient data&quot;
+## [21,] &quot;L95target&quot;   &quot;Insufficient data&quot;
+## [22,] &quot;LBSPR_ItTAC&quot; &quot;Insufficient data&quot;
+## [23,] &quot;LstepCC1&quot;    &quot;Insufficient data&quot;
+## [24,] &quot;LstepCC4&quot;    &quot;Insufficient data&quot;
+## [25,] &quot;Ltarget1&quot;    &quot;Insufficient data&quot;
+## [26,] &quot;Ltarget4&quot;    &quot;Insufficient data&quot;
+## [27,] &quot;SBT2&quot;        &quot;Insufficient data&quot;
+## [28,] &quot;SPSRA_ML&quot;    &quot;Insufficient data&quot;
+## [29,] &quot;YPR_CC&quot;      &quot;Insufficient data&quot;
+## [30,] &quot;YPR_ML&quot;      &quot;Insufficient data&quot;
+## [31,] &quot;DDes&quot;        &quot;Insufficient data&quot;
+## [32,] &quot;DTe40&quot;       &quot;Insufficient data&quot;
+## [33,] &quot;DTe50&quot;       &quot;Insufficient data&quot;
+## [34,] &quot;EtargetLopt&quot; &quot;Insufficient data&quot;
+## [35,] &quot;ItargetE1&quot;   &quot;Insufficient data&quot;
+## [36,] &quot;ItargetE4&quot;   &quot;Insufficient data&quot;
+## [37,] &quot;ITe10&quot;       &quot;Insufficient data&quot;
+## [38,] &quot;ITe5&quot;        &quot;Insufficient data&quot;
+## [39,] &quot;LBSPR_ItEff&quot; &quot;Insufficient data&quot;
+## [40,] &quot;LBSPR_ItSel&quot; &quot;Insufficient data&quot;
+## [41,] &quot;LstepCE1&quot;    &quot;Insufficient data&quot;
+## [42,] &quot;LstepCE2&quot;    &quot;Insufficient data&quot;
+## [43,] &quot;LtargetE1&quot;   &quot;Insufficient data&quot;
+## [44,] &quot;LtargetE4&quot;   &quot;Insufficient data&quot;
+## [45,] &quot;minlenLopt1&quot; &quot;Insufficient data&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Needed</span>(Atlantic_mackerel)</code></pre></div>
 <pre><code>##  [1] &quot;BK_CC: CAA&quot;              &quot;BK_ML: CAL&quot;             
 ##  [3] &quot;CompSRA: CAA&quot;            &quot;CompSRA4010: CAA&quot;       
@@ -458,84 +460,85 @@ Madeup@BMSY_B0 &lt;-<span class="st"> </span><span class="fl">0.35</span>       
 ##  [9] &quot;FMSYref: OM&quot;             &quot;FMSYref50: OM&quot;          
 ## [11] &quot;FMSYref75: OM&quot;           &quot;Fratio_CC: CAA&quot;         
 ## [13] &quot;Fratio_ML: CAL&quot;          &quot;GB_CC: Cref&quot;            
-## [15] &quot;GB_target: Cref, Iref&quot;   &quot;IT10: Iref, MPrec&quot;      
-## [17] &quot;IT5: Iref, MPrec&quot;        &quot;ITM: Iref, MPrec&quot;       
-## [19] &quot;L95target: ML&quot;           &quot;LBSPR_ItTAC: CAL, MPrec&quot;
-## [21] &quot;LstepCC1: MPrec, ML&quot;     &quot;LstepCC4: MPrec, ML&quot;    
-## [23] &quot;Ltarget1: ML&quot;            &quot;Ltarget4: ML&quot;           
-## [25] &quot;SBT2: Rec, Cref&quot;         &quot;SPSRA_ML: CAL&quot;          
-## [27] &quot;YPR_CC: CAA&quot;             &quot;YPR_ML: CAL&quot;            
-## [29] &quot;DDes: MPeff&quot;             &quot;ITe10: Iref, MPeff&quot;     
-## [31] &quot;ITe5: Iref, MPeff&quot;       &quot;LBSPR_ItEff: CAL, MPeff&quot;
-## [33] &quot;LBSPR_ItSel: CAL&quot;        &quot;LstepCE1: MPeff, ML&quot;    
-## [35] &quot;LstepCE2: MPeff, ML&quot;     &quot;LtargetE1: MPeff, ML&quot;   
-## [37] &quot;LtargetE4: MPeff, ML&quot;</code></pre>
+## [15] &quot;GB_target: Cref, Iref&quot;   &quot;Islope1: MPrec&quot;         
+## [17] &quot;Islope4: MPrec&quot;          &quot;IT10: Iref, MPrec&quot;      
+## [19] &quot;IT5: Iref, MPrec&quot;        &quot;ITM: Iref, MPrec&quot;       
+## [21] &quot;L95target: ML&quot;           &quot;LBSPR_ItTAC: CAL, MPrec&quot;
+## [23] &quot;LstepCC1: MPrec, ML&quot;     &quot;LstepCC4: MPrec, ML&quot;    
+## [25] &quot;Ltarget1: ML&quot;            &quot;Ltarget4: ML&quot;           
+## [27] &quot;SBT2: Rec, Cref&quot;         &quot;SPSRA_ML: CAL&quot;          
+## [29] &quot;YPR_CC: CAA&quot;             &quot;YPR_ML: CAL&quot;            
+## [31] &quot;DDes: MPeff&quot;             &quot;DTe40: MPeff&quot;           
+## [33] &quot;DTe50: MPeff&quot;            &quot;EtargetLopt: MPeff, ML&quot; 
+## [35] &quot;ItargetE1: MPeff&quot;        &quot;ItargetE4: MPeff&quot;       
+## [37] &quot;ITe10: Iref, MPeff&quot;      &quot;ITe5: Iref, MPeff&quot;      
+## [39] &quot;LBSPR_ItEff: CAL, MPeff&quot; &quot;LBSPR_ItSel: CAL&quot;       
+## [41] &quot;LstepCE1: MPeff, ML&quot;     &quot;LstepCE2: MPeff, ML&quot;    
+## [43] &quot;LtargetE1: MPeff, ML&quot;    &quot;LtargetE4: MPeff, ML&quot;   
+## [45] &quot;minlenLopt1: MPeff&quot;</code></pre>
 </div>
 <div id="applying-management-procedures" class="section level2">
 <h2><span class="header-section-number">8.5</span> Applying Management Procedures</h2>
-<div id="dlm_input-methods" class="section level3">
-<h3><span class="header-section-number">8.5.1</span> <code>DLM_input</code> Methods</h3>
-<p>Spatial and length-vulnerability Management Procedures (class <code>DLM_input</code>) can be MSE tested but are often a management recommendation in themselves (e.g., setting a static size limit or closing a spatial area). Other input control methods are dynamic and respond to trends in different indicators in the data.</p>
+<div id="input-methods" class="section level3">
+<h3><span class="header-section-number">8.5.1</span> <code>Input</code> Methods</h3>
+<p>Spatial and length-vulnerability Management Procedures (class <code>Input</code>) can be MSE tested but are often a management recommendation in themselves (e.g., setting a static size limit or closing a spatial area). Other input control methods are dynamic and respond to trends in different indicators in the data.</p>
 <p>The <code>Input</code> function can be used to apply an input control method. For example, here we apply the <code>matlenlim</code> method to the <code>Atlantic_mackerel</code> data object:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Input</span>(Atlantic_mackerel, <span class="st">&quot;matlenlim&quot;</span>)</code></pre></div>
-<pre><code>## [1] &quot;Checking which MPs can be run&quot;
-## [1] &quot;Running 1 of 1 - matlenlim&quot;</code></pre>
-<pre><code>##           Effort Area 1 Area 2  SL50 SL95 UpperLimit
-## matlenlim      1      1      1 90.25   95         NA</code></pre>
+<pre><code>## Checking which MPs can be run</code></pre>
+<pre><code>## Running 1 of 1 - matlenlim</code></pre>
+<pre><code>##           Effort   LR5 LFR Harvest Slot Limit Area 1 Area 2
+## matlenlim     NA 90.25  95                 NA     NA     NA</code></pre>
 <p>The resulting recommendation is a size limit around 90 cm. There is no upper slot limit specified, and the fishing effort and spatial areas open to fishing remained unchanged.</p>
 </div>
-<div id="dlm_output-methods" class="section level3">
-<h3><span class="header-section-number">8.5.2</span> <code>DLM_output</code> Methods</h3>
+<div id="output-methods" class="section level3">
+<h3><span class="header-section-number">8.5.2</span> <code>Output</code> Methods</h3>
 <p>The <code>TAC</code> function can be used to calculate the recommended TAC for output controls Management Procedures. Here we apply the <code>DCAC</code> method, with 1,000 repetitions, to the <code>Atlantic_mackerel</code> data object:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Atlantic_mackerel &lt;-<span class="st"> </span><span class="kw">TAC</span>(Atlantic_mackerel, <span class="dt">MPs=</span><span class="st">&quot;DCAC&quot;</span>, <span class="dt">reps=</span><span class="dv">1000</span>)</code></pre></div>
 <p>The resulting distribution of the recommended TAC can be plotted using the <code>plot</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(Atlantic_mackerel)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-126-1.png" width="576" /></p>
+<p><img src="userguide_files/figure-html/unnamed-chunk-120-1.png" width="576" /></p>
 <p>We can also apply all the out control methods that can be run with the Fishery Data object to compare the resulting recommendations:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Atlantic_mackerel &lt;-<span class="st"> </span><span class="kw">TAC</span>(Atlantic_mackerel)
 <span class="kw">plot</span>(Atlantic_mackerel)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-127-1.png" width="672" /></p>
-<p>Alternatively, we can use <code>boxplot</code>, a generic function that calls the <code>boxplot.DLM_data</code> function, to display the distribution of recommended TACs and report the statistics (median and standard deviation):</p>
+<p><img src="userguide_files/figure-html/unnamed-chunk-121-1.png" width="672" /></p>
+<p>Alternatively, we can use <code>boxplot</code>, a generic function that calls the <code>boxplot.Data</code> function, to display the distribution of recommended TACs and report the statistics (median and standard deviation):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">boxplot</span>(Atlantic_mackerel)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-128-1.png" width="576" /></p>
+<p><img src="userguide_files/figure-html/unnamed-chunk-122-1.png" width="576" /></p>
 <pre><code>##            MP Median   SD           Units
-## 1      DD4010   0.78 0.59 thousand tonnes
-## 2  Fratio4010   0.83 0.80 thousand tonnes
-## 3    DCAC4010   1.55 1.07 thousand tonnes
-## 4       HDAAC   2.23 0.68 thousand tonnes
-## 5        DAAC   2.70 1.26 thousand tonnes
-## 6        DepF   2.92 1.77 thousand tonnes
-## 7   DBSRA4010   3.21 4.44 thousand tonnes
-## 8          DD   3.39 0.89 thousand tonnes
-## 9      Fratio   3.85 2.04 thousand tonnes
-## 10       Fdem   4.89 1.61 thousand tonnes
-## 11   Itarget4   5.03 0.43 thousand tonnes
-## 12       DynF   5.17 1.39 thousand tonnes
-## 13       DCAC   5.91 1.97 thousand tonnes
-## 14      DBSRA   6.06 4.11 thousand tonnes
-## 15      SPSRA   6.08 2.98 thousand tonnes
-## 16   Gcontrol   6.53 0.05 thousand tonnes
+## 1      DD4010   0.77 0.62 thousand tonnes
+## 2  Fratio4010   0.77 0.74 thousand tonnes
+## 3    DCAC4010   1.64 0.85 thousand tonnes
+## 4       HDAAC   2.27 0.75 thousand tonnes
+## 5   DBSRA4010   2.55 5.44 thousand tonnes
+## 6        DAAC   2.86 1.42 thousand tonnes
+## 7        DepF   3.01 1.92 thousand tonnes
+## 8          DD   3.44 0.88 thousand tonnes
+## 9      Fratio   3.56 2.53 thousand tonnes
+## 10       Fdem   4.75 1.92 thousand tonnes
+## 11   Itarget4   4.97 0.42 thousand tonnes
+## 12       DynF   5.03 1.33 thousand tonnes
+## 13      DBSRA   5.53 5.33 thousand tonnes
+## 14       DCAC   5.86 1.64 thousand tonnes
+## 15      SPSRA   6.11 3.17 thousand tonnes
+## 16   Gcontrol   6.53 0.10 thousand tonnes
 ## 17   Rcontrol   6.53 0.00 thousand tonnes
 ## 18  Rcontrol2   6.53 0.00 thousand tonnes
-## 19   Itarget1   7.05 0.56 thousand tonnes
-## 20    DCAC_40   7.22 2.17 thousand tonnes
-## 21     Fadapt   8.13 0.06 thousand tonnes
-## 22        YPR   8.25 3.58 thousand tonnes
-## 23    MCD4010   9.55 9.26 thousand tonnes
-## 24         BK  10.00 3.57 thousand tonnes
-## 25   DBSRA_40  10.36 8.95 thousand tonnes
-## 26      SPMSY  12.74 9.33 thousand tonnes
-## 27    Islope4  13.39 1.18 thousand tonnes
-## 28    SPslope  13.74 1.37 thousand tonnes
-## 29        MCD  14.21 6.60 thousand tonnes
-## 30   GB_slope  15.66 2.28 thousand tonnes
-## 31        CC4  16.24 1.36 thousand tonnes
-## 32      SPmod  16.37 3.76 thousand tonnes
-## 33    Islope1  17.86 1.69 thousand tonnes
-## 34       SBT1  19.05 4.00 thousand tonnes
-## 35        CC1  23.50 2.08 thousand tonnes
-## 36        AvC  24.01 4.28 thousand tonnes
-## 37        THC  43.71 4.32 thousand tonnes</code></pre>
+## 19    DCAC_40   6.70 2.10 thousand tonnes
+## 20   Itarget1   7.00 0.55 thousand tonnes
+## 21        YPR   7.92 3.78 thousand tonnes
+## 22     Fadapt   8.12 0.05 thousand tonnes
+## 23    MCD4010   9.41 8.10 thousand tonnes
+## 24   DBSRA_40   9.90 9.21 thousand tonnes
+## 25         BK  11.28 4.64 thousand tonnes
+## 26      SPMSY  11.62 7.17 thousand tonnes
+## 27    SPslope  13.76 1.39 thousand tonnes
+## 28        MCD  14.30 6.49 thousand tonnes
+## 29      SPmod  15.74 4.25 thousand tonnes
+## 30        CC4  16.36 1.41 thousand tonnes
+## 31   GB_slope  16.51 2.45 thousand tonnes
+## 32       SBT1  17.67 4.18 thousand tonnes
+## 33        CC1  23.15 2.00 thousand tonnes
+## 34        AvC  25.16 4.90 thousand tonnes</code></pre>
 
 </div>
 </div>
@@ -546,8 +549,9 @@ Madeup@BMSY_B0 &lt;-<span class="st"> </span><span class="fl">0.35</span>       
         </div>
       </div>
 <a href="examining-the-mse-object.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="assumptions-of-dlmtool.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
-
+<a href="custom-parameters.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
@@ -582,7 +586,7 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(script.src))
       script.src  = script.src.replace(/^https?:/, '');
     document.getElementsByTagName("head")[0].appendChild(script);

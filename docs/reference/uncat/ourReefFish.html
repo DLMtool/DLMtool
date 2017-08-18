@@ -11,8 +11,8 @@
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/yeti/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -25,12 +25,14 @@
 <script src="../../pkgdown.js"></script>
 
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -101,6 +103,9 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../../reference/R_Object_Classes/index.html">DLMtool Object Classes</a>
+</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Other
@@ -113,9 +118,6 @@
     </li>
     <li>
       <a href="../../reference/Other_Functions/index.html">Other Functions</a>
-    </li>
-    <li>
-      <a href="../../reference/R_Object_Classes/index.html">R Object Classes</a>
     </li>
     <li>
       <a href="../../reference/Internal_Functions/index.html">Internal Functions</a>
@@ -141,171 +143,27 @@
     </div>
 
     
-    <p>Example data object with a number of output control MPs run on it, and includes resulting distributions of TACs</p>
+    <p>Example data object with a number of output control MPs run on it, and
+includes resulting distributions of TACs</p>
+<p>An object of class Data</p>
     
 
-    <pre><span class='fu'>data</span>(<span class='st'>"ourReefFish"</span>)</pre>
+    <pre class="usage"><span class='fu'>data</span>(<span class='st'>'ourReefFish'</span>)
+
+<span class='no'>ourReefFish</span></pre>
         
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
-    <p>The format is:
-Formal class &#39;DLM_data&#39; [package &quot;DLMtool&quot;] with 71 slots
-  ..@ Name      : chr &quot;ourReefFish&quot;
-  ..@ Year      : num [1:55] 1954 1955 1956 1957 1958 ...
-  ..@ Cat       : num [1, 1:55] 1.33 1.46 1.66 1.56 2.23 ...
-  ..@ Ind       : num [1, 1:55] 0.163 0.138 0.148 0.157 0.146 ...
-  ..@ Rec       : num [1, 1:55] NA NA NA NA NA NA NA NA NA NA ...
-  ..@ t         : num 54
-  ..@ AvC       : num 1.84
-  ..@ Dt        : num 0.545
-  ..@ Mort      : num 0.094
-  ..@ FMSY_M    : num 0.7
-  ..@ BMSY_B0   : num 0.3
-  ..@ Cref      : num NA
-  ..@ Bref      : num NA
-  ..@ Iref      : num NA
-  ..@ L50       : num 31.6
-  ..@ L95       : num 52.5
-  ..@ LFC       : num 20
-  ..@ LFS       : num 36
-  ..@ CAA       : num [1, 1:21, 1:48] 0 0 0 0 0 0 0 0 0 0 ...
-  ..@ Dep       : num 0.2
-  ..@ Abun      : num NA
-  ..@ vbK       : num 0.192
-  ..@ vbLinf    : num 85.6
-  ..@ vbt0      : num -0.395
-  ..@ wla       : num 0.0000167
-  ..@ wlb       : num 2.95
-  ..@ steep     : num 0.99
-  ..@ CV_Cat    : num 0.2
-  ..@ CV_Dt     : num 0.25
-  ..@ CV_AvC    : num 0.2
-  ..@ CV_Ind    : num 0.2
-  ..@ CV_Mort   : num 0.2
-  ..@ CV_FMSY_M : num 0.2
-  ..@ CV_BMSY_B0: num 0.045
-  ..@ CV_Cref   : num 0.2
-  ..@ CV_Bref   : num 0.2
-  ..@ CV_Iref   : num 0.2
-  ..@ CV_Rec    : num 0.2
-  ..@ CV_Dep    : num 0.25
-  ..@ CV_Abun   : num 0.25
-  ..@ CV_vbK    : num 0.00803
-  ..@ CV_vbLinf : num 0.00325
-  ..@ CV_vbt0   : num 0.00777
-  ..@ CV_L50    : num 0.1
-  ..@ CV_LFC    : num 0.2
-  ..@ CV_LFS    : num 0.2
-  ..@ CV_wla    : num 0.1
-  ..@ CV_wlb    : num 0.1
-  ..@ CV_steep  : num 0.1
-  ..@ sigmaL    : num 0.2
-  ..@ MaxAge    : num 48
-  ..@ Units     : chr &quot;thousand tonnes&quot;
-  ..@ Ref       : num NA
-  ..@ Ref_type  : chr NA
-  ..@ Log       :List of 1
-  .. ..$ : chr &quot;Created: 2016-02-18 14:28:11&quot;
-  ..@ params    : list()
-  ..@ PosMPs    : chr [1:31] &quot;AvC&quot; &quot;BK_CC&quot; &quot;BK_ML&quot; &quot;CC1&quot; ...
-  ..@ MPs       : chr [1:31] &quot;AvC&quot; &quot;BK_CC&quot; &quot;BK_ML&quot; &quot;CC1&quot; ...
-  ..@ OM        :&#39;data.frame&#39;:	1 obs. of  1 variable:
-  .. ..$ NA.: logi NA
-  ..@ Obs       :&#39;data.frame&#39;:	1 obs. of  1 variable:
-  .. ..$ NA.: logi NA
-  ..@ TAC       : num [1:31, 1:100, 1] 1.36 15.91 1.14 3.08 1.77 ...
-  ..@ TACbias   : logi [1, 1, 1] NA
-  ..@ Sense     : logi [1, 1, 1] NA
-  ..@ CAL_bins  : num [1:44] 0 20 22 24 26 28 30 32 34 36 ...
-  ..@ CAL       : num [1, 1:28, 1:43] 0 0 2 1 0 1 0 0 0 0 ...
-  ..@ MPrec     : num NA
-  ..@ MPeff     : num NA
-  ..@ ML        : num [1, 1:55] NA NA NA NA NA NA NA NA NA NA ...
-  ..@ Lbar      : num [1, 1:55] NA NA NA NA NA NA NA NA NA NA ...
-  ..@ Lc        : num [1, 1:55] NA NA NA NA NA NA NA NA NA NA ...
-  ..@ LHYear    : num 2008
-  ..@ Misc      : list()</p>
+    <p>An object of class <code>Data</code> of length 1.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>data</span>(<span class='no'>ourReefFish</span>)
-<span class='fu'>str</span>(<span class='no'>ourReefFish</span>) ;</div><div class='output co'>#&gt; Formal class &#39;DLM_data&#39; [package &quot;DLMtool&quot;] with 72 slots
-#&gt;   ..@ Name      : chr &quot;ourReefFish&quot;
-#&gt;   ..@ Year      : num [1:55] 1954 1955 1956 1957 1958 ...
-#&gt;   ..@ Cat       : num [1, 1:55] 1.33 1.46 1.66 1.56 2.23 ...
-#&gt;   ..@ Ind       : num [1, 1:55] 0.163 0.138 0.148 0.157 0.146 ...
-#&gt;   ..@ Rec       : num [1, 1:55] NA NA NA NA NA NA NA NA NA NA ...
-#&gt;   ..@ t         : num 54
-#&gt;   ..@ AvC       : num 1.84
-#&gt;   ..@ Dt        : num 0.545
-#&gt;   ..@ Mort      : num 0.094
-#&gt;   ..@ FMSY_M    : num 0.7
-#&gt;   ..@ BMSY_B0   : num 0.3
-#&gt;   ..@ Cref      : num NA
-#&gt;   ..@ Bref      : num NA
-#&gt;   ..@ Iref      : num NA
-#&gt;   ..@ L50       : num 31.6
-#&gt;   ..@ L95       : num 52.5
-#&gt;   ..@ LFC       : num 20
-#&gt;   ..@ LFS       : num 36
-#&gt;   ..@ CAA       : num [1, 1:21, 1:48] 0 0 0 0 0 0 0 0 0 0 ...
-#&gt;   ..@ Dep       : num 0.2
-#&gt;   ..@ Abun      : num NA
-#&gt;   ..@ vbK       : num 0.192
-#&gt;   ..@ vbLinf    : num 85.6
-#&gt;   ..@ vbt0      : num -0.395
-#&gt;   ..@ wla       : num 1.67e-05
-#&gt;   ..@ wlb       : num 2.95
-#&gt;   ..@ steep     : num 0.99
-#&gt;   ..@ CV_Cat    : num 0.2
-#&gt;   ..@ CV_Dt     : num 0.25
-#&gt;   ..@ CV_AvC    : num 0.2
-#&gt;   ..@ CV_Ind    : num 0.2
-#&gt;   ..@ CV_Mort   : num 0.2
-#&gt;   ..@ CV_FMSY_M : num 0.2
-#&gt;   ..@ CV_BMSY_B0: num 0.045
-#&gt;   ..@ CV_Cref   : num 0.2
-#&gt;   ..@ CV_Bref   : num 0.2
-#&gt;   ..@ CV_Iref   : num 0.2
-#&gt;   ..@ CV_Rec    : num 0.2
-#&gt;   ..@ CV_Dep    : num 0.25
-#&gt;   ..@ CV_Abun   : num 0.25
-#&gt;   ..@ CV_vbK    : num 0.00803
-#&gt;   ..@ CV_vbLinf : num 0.00325
-#&gt;   ..@ CV_vbt0   : num 0.00777
-#&gt;   ..@ CV_L50    : num 0.1
-#&gt;   ..@ CV_LFC    : num 0.2
-#&gt;   ..@ CV_LFS    : num 0.2
-#&gt;   ..@ CV_wla    : num 0.1
-#&gt;   ..@ CV_wlb    : num 0.1
-#&gt;   ..@ CV_steep  : num 0.1
-#&gt;   ..@ sigmaL    : num 0.2
-#&gt;   ..@ MaxAge    : num 48
-#&gt;   ..@ Units     : chr &quot;thousand tonnes&quot;
-#&gt;   ..@ Ref       : num 3.12
-#&gt;   ..@ Ref_type  : chr &quot;Latest assessment&quot;
-#&gt;   ..@ Log       :List of 1
-#&gt;   .. ..$ : chr &quot;Created: 2016-05-06 15:22:46&quot;
-#&gt;   ..@ params    : list()
-#&gt;   ..@ PosMPs    : chr [1:38] &quot;AvC&quot; &quot;BK_CC&quot; &quot;BK_ML&quot; &quot;CC1&quot; ...
-#&gt;   ..@ MPs       : chr [1:38] &quot;AvC&quot; &quot;BK_CC&quot; &quot;BK_ML&quot; &quot;CC1&quot; ...
-#&gt;   ..@ OM        :&#39;data.frame&#39;:	1 obs. of  1 variable:
-#&gt;   .. ..$ NA.: logi NA
-#&gt;   ..@ Obs       :&#39;data.frame&#39;:	1 obs. of  1 variable:
-#&gt;   .. ..$ NA.: logi NA
-#&gt;   ..@ TAC       : num [1:38, 1:100, 1] 1.88 1.5 1.62 2.56 2.1 ...
-#&gt;   ..@ TACbias   : logi [1, 1, 1] NA
-#&gt;   ..@ Sense     : logi [1, 1, 1] NA
-#&gt;   ..@ CAL_bins  : num [1:44] 0 20 22 24 26 28 30 32 34 36 ...
-#&gt;   ..@ CAL       : num [1, 1:28, 1:43] 0 0 2 1 0 1 0 0 0 0 ...
-#&gt;   ..@ MPrec     : num NA
-#&gt;   ..@ MPeff     : num NA
-#&gt;   ..@ ML        : num [1, 1:55] NA NA NA NA NA NA NA NA NA NA ...
-#&gt;   ..@ Lbar      : num [1, 1:55] NA NA NA NA NA NA NA NA NA NA ...
-#&gt;   ..@ Lc        : num [1, 1:55] NA NA NA NA NA NA NA NA NA NA ...
-#&gt;   ..@ LHYear    : num 2008
-#&gt;   ..@ Misc      : list()
-#&gt; </div><div class='input'><span class='fu'>plot</span>(<span class='no'>ourReefFish</span>)</div><img src='ourReefFish-4.png' alt='' width='540' height='400' /></pre>
+    <pre class="examples"><div class='input'><span class='fu'>not_run</span>({
+
+  <span class='fu'>data</span>(<span class='no'>ourReefFish</span>)
+  <span class='fu'>str</span>(<span class='no'>ourReefFish</span>)
+  <span class='fu'>plot</span>(<span class='no'>ourReefFish</span>)
+})</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

@@ -4,10 +4,10 @@
 \alias{OneRep}
 \title{Make stochastic variables certain for only one rep}
 \usage{
-OneRep(DLM_data)
+OneRep(Data)
 }
 \arguments{
-\item{DLM_data}{An object of class DLM_data that has been run though TAC()}
+\item{Data}{An object of class Data that has been run though TAC()}
 }
 \description{
 As title.
@@ -16,4 +16,3 @@ As title.
 T. Carruthers
 }
 \keyword{internal}
-

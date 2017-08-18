@@ -4,10 +4,10 @@
 \alias{plotOFL}
 \title{A generic OFL plot for NOAA use}
 \usage{
-plotOFL(DLM_data,xlims=NA,perc=0.5)
+plotOFL(Data,xlims=NA,perc=0.5)
 }
 \arguments{
-\item{DLM_data}{An object of class DLM_data that has been run though TAC()}
+\item{Data}{An object of class Data that has been run though TAC()}
 
 \item{xlims}{x axis limits}
 
@@ -22,4 +22,3 @@ As title.
 \author{
 T. Carruthers
 }
-
