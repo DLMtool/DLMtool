@@ -11,8 +11,8 @@
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/yeti/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
@@ -25,12 +25,14 @@
 <script src="../../pkgdown.js"></script>
 
 <!-- mathjax -->
-<script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+<script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
 
 <!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
+
   </head>
 
   <body>
@@ -101,6 +103,9 @@
     </li>
   </ul>
 </li>
+<li>
+  <a href="../../reference/R_Object_Classes/index.html">DLMtool Object Classes</a>
+</li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
     Other
@@ -113,9 +118,6 @@
     </li>
     <li>
       <a href="../../reference/Other_Functions/index.html">Other Functions</a>
-    </li>
-    <li>
-      <a href="../../reference/R_Object_Classes/index.html">R Object Classes</a>
     </li>
     <li>
       <a href="../../reference/Internal_Functions/index.html">Internal Functions</a>
@@ -144,75 +146,79 @@
     <p>Boxplot of MP performance from MSE object</p>
     
 
-    <pre><span class='co'># S3 method for MSE</span>
-<span class='fu'>boxplot</span>(<span class='no'>x</span>, <span class='kw'>MPs</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>maxMP</span> <span class='kw'>=</span> <span class='fl'>8</span>,
-  <span class='kw'>PMRefs</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>B_BMSY</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>B_B0</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>F_FMSY</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>AAVY</span> <span class='kw'>=</span> <span class='fl'>30</span>, <span class='kw'>AAVE</span> <span class='kw'>=</span> <span class='fl'>30</span>),
-  <span class='kw'>lastYrs</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>cex.lab</span> <span class='kw'>=</span> <span class='fl'>1.2</span>, <span class='kw'>cex.PM</span> <span class='kw'>=</span> <span class='fl'>0.75</span>, <span class='kw'>canMPs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>outline</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>CexName</span> <span class='kw'>=</span> <span class='fl'>1.25</span>, <span class='kw'>incLine</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>incref</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>Names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='co'># S3 method for MSE</span>
+<span class='fu'>boxplot</span>(<span class='no'>x</span>, <span class='kw'>MPs</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>maxMP</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>PMRefs</span> <span class='kw'>=</span> <span class='fu'>list</span>(<span class='kw'>B_BMSY</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>SSB_SSB0</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>F_FMSY</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>AAVY</span> <span class='kw'>=</span> <span class='fl'>30</span>, <span class='kw'>AAVE</span> <span class='kw'>=</span> <span class='fl'>30</span>), <span class='kw'>lastYrs</span> <span class='kw'>=</span> <span class='fl'>10</span>,
+  <span class='kw'>cex.lab</span> <span class='kw'>=</span> <span class='fl'>1.2</span>, <span class='kw'>cex.PM</span> <span class='kw'>=</span> <span class='fl'>0.75</span>, <span class='kw'>canMPs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>cols</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>outline</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>CexName</span> <span class='kw'>=</span> <span class='fl'>1.25</span>, <span class='kw'>incLine</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>incref</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>Names</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
-    <dl class="dl-horizontal">
-      <dt>x</dt>
-      <dd>
-An object of class MSE
-</dd>
-      <dt>MPs</dt>
-      <dd>
-Optional subset MSE object by MP 
-</dd>
-      <dt>maxMP</dt>
-      <dd>
-Maximum number of MPs to plot
-</dd>
-      <dt>PMRefs</dt>
-      <dd>
-List containing the Performance Metrics reference points. Options are <code>&quot;B_B0&quot;, &quot;B_BMSY&quot;, &quot;F_FMSY&quot;, &quot;AAVE&quot;, &quot;AAVY&quot;</code>
-</dd>
-      <dt>lastYrs</dt>
-      <dd>
-Last number of years in projection to calculate statistics
-</dd>
-      <dt>cex.lab</dt>
-      <dd>
-Size of axis label text
-</dd>
-      <dt>cex.PM</dt>
-      <dd>
-Size of performacne metric text
-</dd>
-      <dt>canMPs</dt>
-      <dd>
-Optional character vector of MPs that can be applied (plotted in different colour)
-</dd>
-      <dt>cols</dt>
-      <dd>
-Optional vector of colours
-</dd>
-      <dt>outline</dt>
-      <dd>
-Logical. Include outliers in boxplot?
-</dd>
-      <dt>CexName</dt>
-      <dd>
-Size of the names
-</dd>
-      <dt>incLine</dt>
-      <dd>
-Logical. Include vertical line?
-</dd>
-      <dt>incref</dt>
-      <dd>
-Logical. Include reference methods?
-</dd>
-      <dt>Names</dt>
-      <dd>
-Logical. Include MP names in plot?
-</dd>
-      <dt>...</dt>
-      <dd>
-   Additional arguments to be passed to plotting functions
-</dd>
-    </dl>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>x</th>
+      <td><p>An object of class MSE</p></td>
+    </tr>
+    <tr>
+      <th>MPs</th>
+      <td><p>Optional subset MSE object by MP</p></td>
+    </tr>
+    <tr>
+      <th>maxMP</th>
+      <td><p>Maximum number of MPs to plot</p></td>
+    </tr>
+    <tr>
+      <th>PMRefs</th>
+      <td><p>List containing the Performance Metrics reference points.
+Options are <code>'SSB_SSB0', 'B_BMSY', 'F_FMSY', 'AAVE', 'AAVY'</code></p></td>
+    </tr>
+    <tr>
+      <th>lastYrs</th>
+      <td><p>Last number of years in projection to calculate statistics</p></td>
+    </tr>
+    <tr>
+      <th>cex.lab</th>
+      <td><p>Size of axis label text</p></td>
+    </tr>
+    <tr>
+      <th>cex.PM</th>
+      <td><p>Size of performacne metric text</p></td>
+    </tr>
+    <tr>
+      <th>canMPs</th>
+      <td><p>Optional character vector of MPs that can be applied (plotted
+in different colour)</p></td>
+    </tr>
+    <tr>
+      <th>cols</th>
+      <td><p>Optional vector of colours</p></td>
+    </tr>
+    <tr>
+      <th>outline</th>
+      <td><p>Logical. Include outliers in boxplot?</p></td>
+    </tr>
+    <tr>
+      <th>CexName</th>
+      <td><p>Size of the names</p></td>
+    </tr>
+    <tr>
+      <th>incLine</th>
+      <td><p>Logical. Include vertical line?</p></td>
+    </tr>
+    <tr>
+      <th>incref</th>
+      <td><p>Logical. Include reference methods?</p></td>
+    </tr>
+    <tr>
+      <th>Names</th>
+      <td><p>Logical. Include MP names in plot?</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Additional arguments to be passed to plotting functions</p></td>
+    </tr>
+    </table>
     
 
   </div>

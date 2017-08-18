@@ -6,9 +6,8 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Data-Limited Methods Toolkit (DLMtool)</title>
-  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.1 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.4 and GitBook 2.6.7">
 
   <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool)" />
   <meta property="og:type" content="book" />
@@ -24,13 +23,8 @@
   
 
 
-<meta name="date" content="2016-11-28">
 
-<script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-  TeX: { equationNumbers: { autoNumber: "AMS" } }
-});
-</script>
+<meta name="date" content="2017-07-22">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -39,7 +33,6 @@ MathJax.Hub.Config({
   <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
 <link rel="prev" href="preq.html">
 <link rel="next" href="MPs.html">
-
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -99,6 +92,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <body>
 
 
+
   <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
 
     <div class="book-summary">
@@ -115,17 +109,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="1.4" data-path="index.html"><a href="index.html#overview-of-the-user-guide"><i class="fa fa-check"></i><b>1.4</b> Overview of the User Guide</a></li>
 <li class="chapter" data-level="1.5" data-path="index.html"><a href="index.html#acknowledgements"><i class="fa fa-check"></i><b>1.5</b> Acknowledgements</a></li>
 <li class="chapter" data-level="1.6" data-path="index.html"><a href="index.html#bug-reports"><i class="fa fa-check"></i><b>1.6</b> Bug Reports</a></li>
-<li class="chapter" data-level="1.7" data-path="index.html"><a href="index.html#version-notes"><i class="fa fa-check"></i><b>1.7</b> Version Notes</a><ul>
-<li class="chapter" data-level="1.7.1" data-path="index.html"><a href="index.html#new-additions-to-version-3.2.2"><i class="fa fa-check"></i><b>1.7.1</b> New Additions to Version 3.2.2</a></li>
-<li class="chapter" data-level="1.7.2" data-path="index.html"><a href="index.html#new-additions-to-version-3.2.1"><i class="fa fa-check"></i><b>1.7.2</b> New Additions to Version 3.2.1</a></li>
-<li class="chapter" data-level="1.7.3" data-path="index.html"><a href="index.html#new-additions-to-version-3.2"><i class="fa fa-check"></i><b>1.7.3</b> New Additions to Version 3.2</a></li>
-<li class="chapter" data-level="1.7.4" data-path="index.html"><a href="index.html#notes-from-version-3.1"><i class="fa fa-check"></i><b>1.7.4</b> Notes from Version 3.1</a></li>
-<li class="chapter" data-level="1.7.5" data-path="index.html"><a href="index.html#a-note-on-version-2.11"><i class="fa fa-check"></i><b>1.7.5</b> A Note on Version 2.11</a></li>
-<li class="chapter" data-level="1.7.6" data-path="index.html"><a href="index.html#a-note-on-bug-fixes-in-2.1.1-and-2.1.2"><i class="fa fa-check"></i><b>1.7.6</b> A Note on Bug Fixes in 2.1.1 and 2.1.2</a></li>
-<li class="chapter" data-level="1.7.7" data-path="index.html"><a href="index.html#a-note-on-version-2.1"><i class="fa fa-check"></i><b>1.7.7</b> A Note on Version 2.1</a></li>
-<li class="chapter" data-level="1.7.8" data-path="index.html"><a href="index.html#new-to-version-2.1"><i class="fa fa-check"></i><b>1.7.8</b> New to Version 2.1</a></li>
-<li class="chapter" data-level="1.7.9" data-path="index.html"><a href="index.html#new-to-version-2.0"><i class="fa fa-check"></i><b>1.7.9</b> New to Version 2.0</a></li>
-</ul></li>
+<li class="chapter" data-level="1.7" data-path="index.html"><a href="index.html#version-notes"><i class="fa fa-check"></i><b>1.7</b> Version Notes</a></li>
 </ul></li>
 <li class="chapter" data-level="2" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html"><i class="fa fa-check"></i><b>2</b> First Time Working With R?</a><ul>
 <li class="chapter" data-level="2.1" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#r-and-rstudio"><i class="fa fa-check"></i><b>2.1</b> R and RStudio</a><ul>
@@ -145,23 +129,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="2.5.2" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html#questions-on-r-related-problems"><i class="fa fa-check"></i><b>2.5.2</b> Questions on R-related Problems</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="3" data-path="preq.html"><a href="preq.html"><i class="fa fa-check"></i><b>3</b> Prerequisites to Using DLMtool</a><ul>
-<li class="chapter" data-level="3.1" data-path="preq.html"><a href="preq.html#load-the-library"><i class="fa fa-check"></i><b>3.1</b> Load the Library</a></li>
-<li class="chapter" data-level="3.2" data-path="preq.html"><a href="preq.html#unpack-the-data"><i class="fa fa-check"></i><b>3.2</b> Unpack the Data</a></li>
-<li class="chapter" data-level="3.3" data-path="preq.html"><a href="preq.html#initiate-the-cluster"><i class="fa fa-check"></i><b>3.3</b> Initiate the Cluster</a></li>
-<li class="chapter" data-level="3.4" data-path="preq.html"><a href="preq.html#export-all-data-and-objects-to-the-cluster"><i class="fa fa-check"></i><b>3.4</b> Export all Data and Objects to the Cluster</a></li>
-<li class="chapter" data-level="3.5" data-path="preq.html"><a href="preq.html#set-a-random-seed"><i class="fa fa-check"></i><b>3.5</b> Set a Random Seed</a></li>
-<li class="chapter" data-level="3.6" data-path="preq.html"><a href="preq.html#summary"><i class="fa fa-check"></i><b>3.6</b> Summary</a></li>
-</ul></li>
+<li class="chapter" data-level="3" data-path="preq.html"><a href="preq.html"><i class="fa fa-check"></i><b>3</b> Prerequisites to Using DLMtool</a></li>
 <li class="chapter" data-level="4" data-path="setupOM.html"><a href="setupOM.html"><i class="fa fa-check"></i><b>4</b> Setting up the MSE Operating Model</a><ul>
 <li class="chapter" data-level="4.1" data-path="setupOM.html"><a href="setupOM.html#overview"><i class="fa fa-check"></i><b>4.1</b> Overview</a></li>
 <li class="chapter" data-level="4.2" data-path="setupOM.html"><a href="setupOM.html#the-operating-model-object"><i class="fa fa-check"></i><b>4.2</b> The Operating Model Object</a><ul>
 <li class="chapter" data-level="4.2.1" data-path="setupOM.html"><a href="setupOM.html#stock-object"><i class="fa fa-check"></i><b>4.2.1</b> Stock Object</a></li>
 <li class="chapter" data-level="4.2.2" data-path="setupOM.html"><a href="setupOM.html#fleet-object"><i class="fa fa-check"></i><b>4.2.2</b> Fleet Object</a></li>
 <li class="chapter" data-level="4.2.3" data-path="setupOM.html"><a href="setupOM.html#observation-object"><i class="fa fa-check"></i><b>4.2.3</b> Observation Object</a></li>
+<li class="chapter" data-level="4.2.4" data-path="setupOM.html"><a href="setupOM.html#implementation-object"><i class="fa fa-check"></i><b>4.2.4</b> Implementation Object</a></li>
 </ul></li>
-<li class="chapter" data-level="4.3" data-path="setupOM.html"><a href="setupOM.html#existing-stock-fleet-and-observation-objects"><i class="fa fa-check"></i><b>4.3</b> Existing Stock, Fleet, and Observation Objects</a></li>
-<li class="chapter" data-level="4.4" data-path="setupOM.html"><a href="setupOM.html#creating-the-operating-model-object"><i class="fa fa-check"></i><b>4.4</b> Creating the Operating Model Object</a></li>
+<li class="chapter" data-level="4.3" data-path="setupOM.html"><a href="setupOM.html#existing-stock-fleet-obs-and-imp-objects"><i class="fa fa-check"></i><b>4.3</b> Existing Stock, Fleet, Obs, and Imp Objects</a></li>
+<li class="chapter" data-level="4.4" data-path="setupOM.html"><a href="setupOM.html#creating-the-operating-model-object"><i class="fa fa-check"></i><b>4.4</b> Creating the Operating Model Object</a><ul>
+<li class="chapter" data-level="4.4.1" data-path="setupOM.html"><a href="setupOM.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i><b>4.4.1</b> Important changes - DLMtool V4.1 and greater</a></li>
+</ul></li>
 <li class="chapter" data-level="4.5" data-path="setupOM.html"><a href="setupOM.html#customizing-the-operating-model"><i class="fa fa-check"></i><b>4.5</b> Customizing the Operating Model</a><ul>
 <li class="chapter" data-level="4.5.1" data-path="setupOM.html"><a href="setupOM.html#creating-new-objects"><i class="fa fa-check"></i><b>4.5.1</b> Creating New Objects</a></li>
 <li class="chapter" data-level="4.5.2" data-path="setupOM.html"><a href="setupOM.html#importing-objects"><i class="fa fa-check"></i><b>4.5.2</b> Importing Objects</a></li>
@@ -185,7 +165,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="5.4" data-path="MPs.html"><a href="MPs.html#details-of-the-methods"><i class="fa fa-check"></i><b>5.4</b> Details of the Methods</a></li>
 <li class="chapter" data-level="5.5" data-path="MPs.html"><a href="MPs.html#designing-new-methods"><i class="fa fa-check"></i><b>5.5</b> Designing New Methods</a><ul>
 <li class="chapter" data-level="5.5.1" data-path="MPs.html"><a href="MPs.html#average-historical-catch-management-procedure"><i class="fa fa-check"></i><b>5.5.1</b> Average Historical Catch Management Procedure</a></li>
-<li class="chapter" data-level="5.5.2" data-path="MPs.html"><a href="MPs.html#length-at-selection-set-equal-to-length-at-maturity"><i class="fa fa-check"></i><b>5.5.2</b> Length-at-Selection Set Equal to Length-at-Maturity</a></li>
+<li class="chapter" data-level="5.5.2" data-path="MPs.html"><a href="MPs.html#length-at-retention-set-equal-to-length-at-maturity"><i class="fa fa-check"></i><b>5.5.2</b> Length-at-Retention Set Equal to Length-at-Maturity</a></li>
 <li class="chapter" data-level="5.5.3" data-path="MPs.html"><a href="MPs.html#harvest-slot-limit"><i class="fa fa-check"></i><b>5.5.3</b> Harvest Slot Limit</a></li>
 <li class="chapter" data-level="5.5.4" data-path="MPs.html"><a href="MPs.html#reducing-fishing-rate-in-area-1-by-50"><i class="fa fa-check"></i><b>5.5.4</b> Reducing Fishing Rate in area 1 by 50%</a></li>
 </ul></li>
@@ -243,45 +223,61 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul></li>
 </ul></li>
 <li class="chapter" data-level="8" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html"><i class="fa fa-check"></i><b>8</b> Managing Fishery Data</a><ul>
-<li class="chapter" data-level="8.1" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#the-fishery-data-object-dlm_data"><i class="fa fa-check"></i><b>8.1</b> The Fishery Data Object (<code>DLM_data</code>)</a><ul>
+<li class="chapter" data-level="8.1" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#the-fishery-data-object-data"><i class="fa fa-check"></i><b>8.1</b> The Fishery Data Object (<code>Data</code>)</a><ul>
 <li class="chapter" data-level="8.1.1" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#in-the-mse"><i class="fa fa-check"></i><b>8.1.1</b> In the MSE</a></li>
 <li class="chapter" data-level="8.1.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#application-of-management-procedures-using-real-fisheries-data"><i class="fa fa-check"></i><b>8.1.2</b> Application of Management Procedures Using Real Fisheries Data</a></li>
 </ul></li>
-<li class="chapter" data-level="8.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#example-dlm_data-objects"><i class="fa fa-check"></i><b>8.2</b> Example <code>DLM_data</code> Objects</a></li>
-<li class="chapter" data-level="8.3" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#creating-your-own-dlm_data-object"><i class="fa fa-check"></i><b>8.3</b> Creating Your Own <code>DLM_data</code> Object</a><ul>
+<li class="chapter" data-level="8.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#example-data-objects"><i class="fa fa-check"></i><b>8.2</b> Example <code>Data</code> Objects</a></li>
+<li class="chapter" data-level="8.3" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#creating-your-own-data-object"><i class="fa fa-check"></i><b>8.3</b> Creating Your Own <code>Data</code> Object</a><ul>
 <li class="chapter" data-level="8.3.1" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#creating-a-csv-data-file"><i class="fa fa-check"></i><b>8.3.1</b> Creating a CSV Data File</a></li>
-<li class="chapter" data-level="8.3.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#populating-a-dlm_data-object-in-r"><i class="fa fa-check"></i><b>8.3.2</b> Populating a <code>DLM_data</code> Object in R</a></li>
+<li class="chapter" data-level="8.3.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#populating-a-data-object-in-r"><i class="fa fa-check"></i><b>8.3.2</b> Populating a <code>Data</code> Object in R</a></li>
 </ul></li>
-<li class="chapter" data-level="8.4" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#working-with-dlm_data-objects"><i class="fa fa-check"></i><b>8.4</b> Working With <code>DLM_data</code> Objects</a></li>
+<li class="chapter" data-level="8.4" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#working-with-data-objects"><i class="fa fa-check"></i><b>8.4</b> Working With <code>Data</code> Objects</a></li>
 <li class="chapter" data-level="8.5" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#applying-management-procedures"><i class="fa fa-check"></i><b>8.5</b> Applying Management Procedures</a><ul>
-<li class="chapter" data-level="8.5.1" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#dlm_input-methods"><i class="fa fa-check"></i><b>8.5.1</b> <code>DLM_input</code> Methods</a></li>
-<li class="chapter" data-level="8.5.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#dlm_output-methods"><i class="fa fa-check"></i><b>8.5.2</b> <code>DLM_output</code> Methods</a></li>
+<li class="chapter" data-level="8.5.1" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#input-methods"><i class="fa fa-check"></i><b>8.5.1</b> <code>Input</code> Methods</a></li>
+<li class="chapter" data-level="8.5.2" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html#output-methods"><i class="fa fa-check"></i><b>8.5.2</b> <code>Output</code> Methods</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="9" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html"><i class="fa fa-check"></i><b>9</b> Assumptions of DLMtool</a><ul>
-<li class="chapter" data-level="9.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#biology"><i class="fa fa-check"></i><b>9.1</b> Biology</a><ul>
-<li class="chapter" data-level="9.1.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#short-lived-species"><i class="fa fa-check"></i><b>9.1.1</b> Short-Lived Species</a></li>
-<li class="chapter" data-level="9.1.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#density-dependent-compensation"><i class="fa fa-check"></i><b>9.1.2</b> Density-Dependent Compensation</a></li>
-<li class="chapter" data-level="9.1.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#von-bertalanffy-growth"><i class="fa fa-check"></i><b>9.1.3</b> von Bertalanffy Growth</a></li>
-<li class="chapter" data-level="9.1.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#natural-mortality-rate-at-age"><i class="fa fa-check"></i><b>9.1.4</b> Natural Mortality Rate at Age</a></li>
+<li class="chapter" data-level="9" data-path="custom-parameters.html"><a href="custom-parameters.html"><i class="fa fa-check"></i><b>9</b> Custom Parameters</a><ul>
+<li class="chapter" data-level="9.1" data-path="custom-parameters.html"><a href="custom-parameters.html#valid-cpars-names"><i class="fa fa-check"></i><b>9.1</b> Valid cpars names</a></li>
+<li class="chapter" data-level="9.2" data-path="custom-parameters.html"><a href="custom-parameters.html#correlated-samples"><i class="fa fa-check"></i><b>9.2</b> Correlated samples</a></li>
+<li class="chapter" data-level="9.3" data-path="custom-parameters.html"><a href="custom-parameters.html#custom-time-varying-parameters"><i class="fa fa-check"></i><b>9.3</b> Custom time-varying parameters</a></li>
 </ul></li>
-<li class="chapter" data-level="9.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#mse-model-assumptions"><i class="fa fa-check"></i><b>9.2</b> MSE Model Assumptions</a><ul>
-<li class="chapter" data-level="9.2.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#idealised-observation-models-for-catch-composition-data"><i class="fa fa-check"></i><b>9.2.1</b> Idealised Observation Models for Catch Composition Data</a></li>
-<li class="chapter" data-level="9.2.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#implementation-error"><i class="fa fa-check"></i><b>9.2.2</b> Implementation Error</a></li>
-<li class="chapter" data-level="9.2.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#discard-mortality"><i class="fa fa-check"></i><b>9.2.3</b> Discard Mortality</a></li>
-<li class="chapter" data-level="9.2.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#two-box-model"><i class="fa fa-check"></i><b>9.2.4</b> Two-Box Model</a></li>
-<li class="chapter" data-level="9.2.5" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#ontogenetic-habitat-shifts"><i class="fa fa-check"></i><b>9.2.5</b> Ontogenetic Habitat Shifts</a></li>
-<li class="chapter" data-level="9.2.6" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#closed-system"><i class="fa fa-check"></i><b>9.2.6</b> Closed System</a></li>
-<li class="chapter" data-level="9.2.7" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#marine-protected-areas-mpa"><i class="fa fa-check"></i><b>9.2.7</b> Marine Protected Areas (MPA)</a></li>
+<li class="chapter" data-level="10" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html"><i class="fa fa-check"></i><b>10</b> Size-Specific Natural Mortality</a><ul>
+<li class="chapter" data-level="10.1" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html#constant-m-at-agesize"><i class="fa fa-check"></i><b>10.1</b> Constant M at age/size</a></li>
+<li class="chapter" data-level="10.2" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html#lorenzen-function-of-weight"><i class="fa fa-check"></i><b>10.2</b> Lorenzen function of weight</a></li>
+<li class="chapter" data-level="10.3" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html#map-age-specific-m"><i class="fa fa-check"></i><b>10.3</b> Map Age-Specific M</a></li>
+<li class="chapter" data-level="10.4" data-path="size-specific-natural-mortality.html"><a href="size-specific-natural-mortality.html#map-length-specific-m"><i class="fa fa-check"></i><b>10.4</b> Map Length-Specific M</a></li>
 </ul></li>
-<li class="chapter" data-level="9.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#management-procedures"><i class="fa fa-check"></i><b>9.3</b> Management Procedures</a><ul>
-<li class="chapter" data-level="9.3.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#harvest-control-rules-must-be-integrated-into-data-limited-mps"><i class="fa fa-check"></i><b>9.3.1</b> Harvest Control Rules Must be Integrated into Data-Limited MPs</a></li>
+<li class="chapter" data-level="11" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html"><i class="fa fa-check"></i><b>11</b> Selection, Retention and Discard Mortality</a><ul>
+<li class="chapter" data-level="11.1" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html#fishery-selection-curve"><i class="fa fa-check"></i><b>11.1</b> Fishery Selection Curve</a></li>
+<li class="chapter" data-level="11.2" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html#fishery-retention-curve"><i class="fa fa-check"></i><b>11.2</b> Fishery Retention Curve</a></li>
+<li class="chapter" data-level="11.3" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html#discard-mortality"><i class="fa fa-check"></i><b>11.3</b> Discard Mortality</a></li>
+<li class="chapter" data-level="11.4" data-path="selection-retention-and-discard-mortality.html"><a href="selection-retention-and-discard-mortality.html#general-discarding"><i class="fa fa-check"></i><b>11.4</b> General Discarding</a></li>
 </ul></li>
-<li class="chapter" data-level="9.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-and-method-application"><i class="fa fa-check"></i><b>9.4</b> Data and Method Application</a><ul>
-<li class="chapter" data-level="9.4.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-assumed-to-be-representative"><i class="fa fa-check"></i><b>9.4.1</b> Data Assumed to be Representative</a></li>
+<li class="chapter" data-level="12" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html"><i class="fa fa-check"></i><b>12</b> Assumptions of DLMtool</a><ul>
+<li class="chapter" data-level="12.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#biology"><i class="fa fa-check"></i><b>12.1</b> Biology</a><ul>
+<li class="chapter" data-level="12.1.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#short-lived-species"><i class="fa fa-check"></i><b>12.1.1</b> Short-Lived Species</a></li>
+<li class="chapter" data-level="12.1.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#density-dependent-compensation"><i class="fa fa-check"></i><b>12.1.2</b> Density-Dependent Compensation</a></li>
+<li class="chapter" data-level="12.1.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#von-bertalanffy-growth"><i class="fa fa-check"></i><b>12.1.3</b> von Bertalanffy Growth</a></li>
+<li class="chapter" data-level="12.1.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#natural-mortality-rate-at-age"><i class="fa fa-check"></i><b>12.1.4</b> Natural Mortality Rate at Age</a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#mse-model-assumptions"><i class="fa fa-check"></i><b>12.2</b> MSE Model Assumptions</a><ul>
+<li class="chapter" data-level="12.2.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#idealised-observation-models-for-catch-composition-data"><i class="fa fa-check"></i><b>12.2.1</b> Idealised Observation Models for Catch Composition Data</a></li>
+<li class="chapter" data-level="12.2.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#discard-mortality-1"><i class="fa fa-check"></i><b>12.2.2</b> Discard Mortality</a></li>
+<li class="chapter" data-level="12.2.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#two-box-model"><i class="fa fa-check"></i><b>12.2.3</b> Two-Box Model</a></li>
+<li class="chapter" data-level="12.2.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#ontogenetic-habitat-shifts"><i class="fa fa-check"></i><b>12.2.4</b> Ontogenetic Habitat Shifts</a></li>
+<li class="chapter" data-level="12.2.5" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#closed-system"><i class="fa fa-check"></i><b>12.2.5</b> Closed System</a></li>
+<li class="chapter" data-level="12.2.6" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#marine-protected-areas-mpa"><i class="fa fa-check"></i><b>12.2.6</b> Marine Protected Areas (MPA)</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#management-procedures"><i class="fa fa-check"></i><b>12.3</b> Management Procedures</a><ul>
+<li class="chapter" data-level="12.3.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#harvest-control-rules-must-be-integrated-into-data-limited-mps"><i class="fa fa-check"></i><b>12.3.1</b> Harvest Control Rules Must be Integrated into Data-Limited MPs</a></li>
+</ul></li>
+<li class="chapter" data-level="12.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-and-method-application"><i class="fa fa-check"></i><b>12.4</b> Data and Method Application</a><ul>
+<li class="chapter" data-level="12.4.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-assumed-to-be-representative"><i class="fa fa-check"></i><b>12.4.1</b> Data Assumed to be Representative</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="10" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>10</b> References</a></li>
+<li class="chapter" data-level="13" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>13</b> References</a></li>
 <li class="divider"></li>
 <li><a href="http://www.datalimitedfisheries.com" target="blank">DLMtool Website</a></li>
 <li><a href="../index.html">DLMtool Documentation</a></li>
@@ -314,35 +310,37 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="the-operating-model-object" class="section level2">
 <h2><span class="header-section-number">4.2</span> The Operating Model Object</h2>
 <p>Objects of class <em>OM</em> contain all of the parameters required to run the MSE. Because this is a simulation, there must be values for all parameters.</p>
-<p>You can see from the help file (<code>class?OM</code>) that objects of class <em>OM</em> can be constructed by using the <code>new()</code> function, and are built from three objects:</p>
+<p>You can see from the help file (<code>class?OM</code>) that objects of class <em>OM</em> can be constructed by using the <code>new()</code> function, and are built from four objects:</p>
 <ol style="list-style-type: decimal">
 <li>Stock,</li>
-<li>Fleet, and</li>
-<li>Observation.</li>
+<li>Fleet,<br />
+</li>
+<li>Obs (Observation) and</li>
+<li>Imp (Implementation)</li>
 </ol>
-<p><strong><em>Stock</em></strong>, <strong><em>Fleet</em></strong>, and <strong><em>Observation</em></strong> are all classes in the DLMtool, and, as the names suggest, contain the parameters for the fish stock, the fishing fleet, and the observations of the data, respectively.</p>
-<p>The <em>Stock</em>, <em>Fleet</em>, and <em>Observation</em> objects are contained within separate parameter tables, which are stitched together to form the <em>Operating Model</em> parameters.</p>
+<p><strong><em>Stock</em></strong>, <strong><em>Fleet</em></strong>, <strong><em>Obs</em></strong> and <strong><em>Imp</em></strong> are all classes in the DLMtool, and, as the names suggest, contain the parameters for the fish stock, the fishing fleet, the observations of the data, and the implementation of the management recommendations respectively.</p>
+<p>The <em>Stock</em>, <em>Fleet</em>, <em>Obs</em>, and <em>Imp</em> objects are contained within separate parameter tables, which are stitched together to form the <em>Operating Model</em> parameters.</p>
 <p>You can look at the help files for each the these three classes for information on the <strong>slots</strong> for each object. Here we will briefly go through the contents of each.</p>
 <div id="stock-object" class="section level3">
 <h3><span class="header-section-number">4.2.1</span> Stock Object</h3>
 <p>First we will look at the contents of the <em>Stock</em> object. There are a number of stocks built into the DLMtool, and we will explore one of these. Later we will look at how to develop our own <em>Stock</em> objects, or modify an existing <em>Stock</em> object.</p>
 <p>One of the <em>Stock</em> objects that is built into the DLMtool is <code>Albacore</code>.<br />
 If you type <code>Albacore</code> into the R console (or into your R script and click <em>Run</em>) you will see a large amount of information printed out in the R console.</p>
-<p><strong>Note:</strong> if you get an error message that says <em>Error: object ‘Albacore’ not found</em>, it suggests you have not loaded the DLMtool data correctly. Go to <a href="preq.html#unpack-the-data">Unpack the data</a> to see how to do this.</p>
 <p>Let’s take a look at the contents of the Albacore Stock object:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">slotNames</span>(Albacore)</code></pre></div>
 <pre><code>##  [1] &quot;Name&quot;         &quot;maxage&quot;       &quot;R0&quot;           &quot;M&quot;           
-##  [5] &quot;Msd&quot;          &quot;Mgrad&quot;        &quot;h&quot;            &quot;SRrel&quot;       
-##  [9] &quot;Linf&quot;         &quot;K&quot;            &quot;t0&quot;           &quot;Ksd&quot;         
-## [13] &quot;Kgrad&quot;        &quot;Linfsd&quot;       &quot;Linfgrad&quot;     &quot;recgrad&quot;     
-## [17] &quot;a&quot;            &quot;b&quot;            &quot;D&quot;            &quot;Perr&quot;        
-## [21] &quot;Period&quot;       &quot;Amplitude&quot;    &quot;Size_area_1&quot;  &quot;Frac_area_1&quot; 
-## [25] &quot;Prob_staying&quot; &quot;AC&quot;           &quot;L50&quot;          &quot;L50_95&quot;      
-## [29] &quot;Source&quot;</code></pre>
-<p>The output tells us that there are 29 slots in the <code>Albacore</code> Stock object. Each of these slots contains information relating to stock that is used in the MSE.</p>
+##  [5] &quot;M2&quot;           &quot;Msd&quot;          &quot;Mgrad&quot;        &quot;Mexp&quot;        
+##  [9] &quot;Fdisc&quot;        &quot;h&quot;            &quot;SRrel&quot;        &quot;Linf&quot;        
+## [13] &quot;K&quot;            &quot;t0&quot;           &quot;LenCV&quot;        &quot;Ksd&quot;         
+## [17] &quot;Kgrad&quot;        &quot;Linfsd&quot;       &quot;Linfgrad&quot;     &quot;recgrad&quot;     
+## [21] &quot;a&quot;            &quot;b&quot;            &quot;D&quot;            &quot;Perr&quot;        
+## [25] &quot;Period&quot;       &quot;Amplitude&quot;    &quot;Size_area_1&quot;  &quot;Frac_area_1&quot; 
+## [29] &quot;Prob_staying&quot; &quot;AC&quot;           &quot;L50&quot;          &quot;L50_95&quot;      
+## [33] &quot;Source&quot;</code></pre>
+<p>The output tells us that there are 33 slots in the <code>Albacore</code> Stock object. Each of these slots contains information relating to stock that is used in the MSE.</p>
 <p>We can examine the information that is stored in the slots using the @ symbol. For example, the name of the species in the Stock object is:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Albacore@Name</code></pre></div>
-<pre><code>## [1] &quot;Albacore&quot;</code></pre>
+<pre><code>## [1] &quot;Abacore&quot;</code></pre>
 <p>The maximum age parameter is:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Albacore@maxage </code></pre></div>
 <pre><code>## [1] 15</code></pre>
@@ -360,12 +358,13 @@ If you type <code>Albacore</code> into the R console (or into your R script and 
 <p>While the <em>Stock</em> object contains all the information relating to the fish stock that is being modeled, the <em>Fleet</em> object is populated with information relating to the fishing fleet and historical pattern of exploitation.</p>
 <p>Like the <em>Stock</em> objects, there are a number of <em>Fleet</em> objects that are built into the DLMtool. Here we will look at the <code>Generic_fleet</code> object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">slotNames</span>(Generic_fleet)</code></pre></div>
-<pre><code>##  [1] &quot;Name&quot;        &quot;nyears&quot;      &quot;Spat_targ&quot;   &quot;Fsd&quot;         &quot;qinc&quot;       
+<pre><code>##  [1] &quot;Name&quot;        &quot;nyears&quot;      &quot;Spat_targ&quot;   &quot;Esd&quot;         &quot;qinc&quot;       
 ##  [6] &quot;qcv&quot;         &quot;EffYears&quot;    &quot;EffLower&quot;    &quot;EffUpper&quot;    &quot;SelYears&quot;   
-## [11] &quot;AbsSelYears&quot; &quot;L5&quot;          &quot;LFS&quot;         &quot;Vmaxlen&quot;     &quot;L5Lower&quot;    
-## [16] &quot;L5Upper&quot;     &quot;LFSLower&quot;    &quot;LFSUpper&quot;    &quot;VmaxLower&quot;   &quot;VmaxUpper&quot;  
-## [21] &quot;isRel&quot;</code></pre>
-<p>There are 21 slots in the <em>Fleet</em> object. The parameters in the <em>Fleet</em> object relate to the exploitation pattern of the stock.</p>
+## [11] &quot;AbsSelYears&quot; &quot;L5&quot;          &quot;LFS&quot;         &quot;Vmaxlen&quot;     &quot;LR5&quot;        
+## [16] &quot;LFR&quot;         &quot;Rmaxlen&quot;     &quot;DR&quot;          &quot;L5Lower&quot;     &quot;L5Upper&quot;    
+## [21] &quot;LFSLower&quot;    &quot;LFSUpper&quot;    &quot;VmaxLower&quot;   &quot;VmaxUpper&quot;   &quot;isRel&quot;      
+## [26] &quot;CurrentYr&quot;</code></pre>
+<p>There are 26 slots in the <em>Fleet</em> object. The parameters in the <em>Fleet</em> object relate to the exploitation pattern of the stock.</p>
 <p>For example, the number of years that the stock has been exploited is specified in the <code>nyears</code> slot:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Generic_fleet@nyears</code></pre></div>
 <pre><code>## [1] 50</code></pre>
@@ -380,11 +379,11 @@ If you type <code>Albacore</code> into the R console (or into your R script and 
 </div>
 <div id="observation-object" class="section level3">
 <h3><span class="header-section-number">4.2.3</span> Observation Object</h3>
-<p>The final component for the <em>Operating Model</em> is the <em>Observation</em> object. This object contains all the information relating to how the fishery information is generated inside the model.</p>
-<p>Why do we need a <em>Observation</em> table?</p>
+<p>The third component for the <em>Operating Model</em> is the <em>Obs</em> object. This object contains all the information relating to how the fishery information is generated inside the model.</p>
+<p>Why do we need a <em>Obs</em> table?</p>
 <p>Although the MSE may be conditioned on real data and information about the fishery, all <em>data</em> is generated inside the model. Because it is a simulation model and the data was generated by a computer, rather than some unobserved real world process, the <em>fishery data</em> is known perfectly.In the real world, however, all data sources and parameter estimates are subject to some observation error. The degree of uncertainty may vary between different data types, and between different data-limited fisheries.</p>
 <p>The advantage of the MSE process is that the performance of a management procedure using the realistically noisy simulated data can be compared to the performance under conditions of perfect knowledge. This comparison, which unfortunately is never possible in the real world, can reveal important information about the robustness (or sensitivity) of certain methods to variability and error in particular data types. This knowledge can help to prioritize research to reduce uncertainty in the parameters and data sets that are most crucial to the performance of the method.</p>
-<p>Like the other two objects, there are a number of built-in <em>Observation</em> objects in the DLMtool.</p>
+<p>Like the other two objects, there are a number of built-in <em>Obs</em> objects in the DLMtool.</p>
 <p>Let’s take a look at the <code>Imprecise_Unbiased</code> object:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">slotNames</span>(Imprecise_Unbiased)</code></pre></div>
 <pre><code>##  [1] &quot;Name&quot;       &quot;LenMcv&quot;     &quot;Cobs&quot;       &quot;Cbiascv&quot;    &quot;CAA_nsamp&quot; 
@@ -394,48 +393,67 @@ If you type <code>Albacore</code> into the R console (or into your R script and 
 ## [21] &quot;rcv&quot;        &quot;Dbiascv&quot;    &quot;Dcv&quot;        &quot;Btbias&quot;     &quot;Btcv&quot;      
 ## [26] &quot;Fcurbiascv&quot; &quot;Fcurcv&quot;     &quot;hcv&quot;        &quot;Icv&quot;        &quot;maxagecv&quot;  
 ## [31] &quot;Reccv&quot;      &quot;Irefcv&quot;     &quot;Crefcv&quot;     &quot;Brefcv&quot;     &quot;beta&quot;</code></pre>
-<p>There are 35 slots in <em>Observation</em> objects, each with information relating to the uncertainty of a data type.</p>
+<p>There are 35 slots in <em>Obs</em> objects, each with information relating to the uncertainty of a data type.</p>
 <p>For example, the <code>LenMcv</code> slot defines the uncertainty (coefficient of variability) in the length of maturity:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Imprecise_Biased@LenMcv</code></pre></div>
 <pre><code>## [1] 0.2</code></pre>
 <p>This means that the assumed length of maturity that is generated by the Operating Model, and used in the simulated application of a management procedure, is not the ‘true’ value set in the <em>Stock</em> object, but a value sampled with a 20% coefficient of variation.</p>
-<p>More information on the <em>Observation</em> object can be found by typing:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">class?Observation</code></pre></div>
+<p>More information on the <em>Obs</em> object can be found by typing:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">class?Obs</code></pre></div>
+</div>
+<div id="implementation-object" class="section level3">
+<h3><span class="header-section-number">4.2.4</span> Implementation Object</h3>
+<p>The final component for the <em>Operating Model</em> is the <em>Imp</em> object. This object contains all the information relating to how the management recommendation is actually implemented in the fishery, i.e., the implementation error. The <code>Imp</code> object includes slots for the over or under catch of TAC, implementation error in total allowable effort, and variability in size limits.</p>
+<p>The <code>Imp</code> object is a recent addition to DLMtool and may be expanded in future developments.</p>
+<p>More information on the <em>Imp</em> object can be found by typing:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">class?Imp</code></pre></div>
 </div>
 </div>
-<div id="existing-stock-fleet-and-observation-objects" class="section level2">
-<h2><span class="header-section-number">4.3</span> Existing Stock, Fleet, and Observation Objects</h2>
-<p>As mentioned earlier, there are several <em>Stock</em>, <em>Fleet</em>, and <em>Observation</em> objects that are built into the DLMtool. A list of available <em>Stock</em>, <em>Fleet</em>, and <em>Observation</em> objects can be found using the <code>avail</code> function.</p>
+<div id="existing-stock-fleet-obs-and-imp-objects" class="section level2">
+<h2><span class="header-section-number">4.3</span> Existing Stock, Fleet, Obs, and Imp Objects</h2>
+<p>As mentioned earlier, there are several <em>Stock</em>, <em>Fleet</em>, <em>Obs</em> and <em>Imp</em> objects that are built into the DLMtool. A list of available <em>Stock</em>, <em>Fleet</em>, <em>Obs</em>, and <em>Imp</em> objects can be found using the <code>avail</code> function.</p>
 <p>For example, here we will print out a list of the 12 <em>Stock</em> objects that are built into the DLMtool:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">avail</span>(<span class="st">&quot;Stock&quot;</span>)</code></pre></div>
 <pre><code>##  [1] &quot;Albacore&quot;          &quot;Blue_shark&quot;        &quot;Bluefin_tuna&quot;     
 ##  [4] &quot;Bluefin_tuna_WAtl&quot; &quot;Butterfish&quot;        &quot;Herring&quot;          
 ##  [7] &quot;Mackerel&quot;          &quot;Porgy&quot;             &quot;Rockfish&quot;         
 ## [10] &quot;Snapper&quot;           &quot;Sole&quot;              &quot;Toothfish&quot;</code></pre>
-<p>We can do the same thing for the 16 <em>Fleet</em> objects (<code>avail(&quot;Fleet&quot;)</code>) and the 6 <em>Observation</em> objects (<code>avail(&quot;Observation&quot;)</code>).</p>
+<p>We can do the same thing for the <em>Fleet</em> objects (<code>avail(&quot;Fleet&quot;)</code>), the <em>Obs</em> objects (<code>avail(&quot;Obs&quot;)</code>), and the <em>Imp</em> objects (<code>avail(&quot;Imp&quot;)</code>).</p>
 </div>
 <div id="creating-the-operating-model-object" class="section level2">
 <h2><span class="header-section-number">4.4</span> Creating the Operating Model Object</h2>
-<p>The built-in <em>Stock</em>, <em>Fleet</em>, and <em>Observation</em> objects means that it is straightforward to create an <em>Operating Model</em> and run the MSE using the DLMtool.</p>
+<p>The built-in <em>Stock</em>, <em>Fleet</em>, <em>Obs</em>, and <em>Imp</em> objects means that it is straightforward to create an <em>Operating Model</em> and run the MSE using the DLMtool.</p>
 <p>The first step is to create the Operating Model object. This is done using the <code>new</code> command, and specifying that we want to create a new object of class <code>OM</code>.</p>
-<p>Here we will create a Operating Model object called <code>myOM</code>, and use the <code>Blue_shark</code> <em>Stock</em> object, the <code>Generic_fleet</code> <em>Fleet</em> object, and the <code>Imprecise_Biased</code> <em>Observation</em> object:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myOM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;OM&#39;</span>, Blue_shark, Generic_fleet, Imprecise_Biased)</code></pre></div>
-<p>If you use the <code>slotNames</code> function on the <code>myOM</code> object that was just created, you will see that it contains all of the information from the <em>Stock</em>, <em>Fleet</em>, and <em>Observation</em> objects.</p>
-<p>We have now created a <em>Operating Model</em> object and can begin the MSE. If you wish, you can jump ahead to the <a href="MSE.html#MSE">Management Strategy Evaluation</a> section (although you may wish to read the <a href="assumptions-of-dlmtool.html#management-procedures">Management Procedures</a> section first).</p>
-<p>The remainder of this section will describe how to modify the existing <em>Stock</em>, <em>Fleet</em>, and <em>Observation</em> objects, as well as create new objects.</p>
+<p>Here we will create a Operating Model object called <code>myOM</code>, and use the <code>Blue_shark</code> <em>Stock</em> object, the <code>Generic_fleet</code> <em>Fleet</em> object, the <code>Imprecise_Biased</code> <em>Observation</em> object, and the default <code>Perfect_Imp</code> <em>Imp</em> object:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myOM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;OM&#39;</span>, Blue_shark, Generic_fleet, Imprecise_Biased, Perfect_Imp)</code></pre></div>
+<p>If you use the <code>slotNames</code> function on the <code>myOM</code> object that was just created, you will see that it contains all of the information from the <em>Stock</em>, <em>Fleet</em>, <em>Obs</em>, and <em>Imp</em> objects.</p>
+<div id="important-changes---dlmtool-v4.1-and-greater" class="section level3">
+<h3><span class="header-section-number">4.4.1</span> Important changes - DLMtool V4.1 and greater</h3>
+<p>DLMtool V4.1 introduced some important changes to the Operating Model object. The number of simulations (<code>nsim</code>) and the number of projection years (<code>proyears</code>) are now slots in the <code>OM</code> object, rather than arguments to <code>runMSE</code> (see <a href="MSE.html#MSE">Management Strategy Evaluation</a>). This change was required to allow users to specify their own custom futures for parameters like <em>M</em>, growth, etc. The <code>OM</code> object also now has a new random seed slot in the operating model, which ensures that the MSE results are now exactly reproducible.</p>
+<p>You can modify the number of simulations, the number of projection years, or the value of the random seed by modifiying the relevant slots in the <code>OM</code> object:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myOM@nsim </code></pre></div>
+<pre><code>## [1] 48</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myOM@proyears</code></pre></div>
+<pre><code>## [1] 50</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myOM@seed</code></pre></div>
+<pre><code>## [1] 1</code></pre>
+</div>
 </div>
 <div id="customizing-the-operating-model" class="section level2">
 <h2><span class="header-section-number">4.5</span> Customizing the Operating Model</h2>
-<p>The <em>Stock</em>, <em>Fleet</em>, and <em>Observation</em> objects that are built into the DLMtool can be used for running an MSE and exploring the output. More often, however, users of the DLMtool will be interested in performing an MSE for their own particular fishery.</p>
-<p>To do this, the parameters of the <em>Operating Model</em> (or more specifically the <em>Stock</em>, <em>Fleet</em>, and <em>Observation</em> objects from which it is built) must be specified in such a way that reflects the characteristics of the fishery.</p>
+<p>We have now created a <em>Operating Model</em> object and can begin the MSE. If you wish, you can jump ahead to the <a href="MSE.html#MSE">Management Strategy Evaluation</a> section (although you may wish to read the <a href="assumptions-of-dlmtool.html#management-procedures">Management Procedures</a> section first).</p>
+<p>The remainder of this section will describe how to modify the existing <em>Stock</em>, <em>Fleet</em>, <em>Obs</em>, and <em>Imp</em> objects, as well as create new objects.</p>
+<p>The pre-defined <em>Stock</em>, <em>Fleet</em>, <em>Obs</em>, and <em>Imp</em> objects in DLMtool can be used for running an MSE and exploring the output. More often, however, users of the DLMtool will be interested in performing an MSE for their own particular fishery.</p>
+<p>To do this, the parameters of the <em>Operating Model</em> (or more specifically the <em>Stock</em>, <em>Fleet</em>, <em>Obs</em> and <em>Imp</em> objects from which it is built) must be specified in such a way that reflects the characteristics of the fishery.</p>
 <p>There are a number of ways of doing this.</p>
 <div id="creating-new-objects" class="section level3">
 <h3><span class="header-section-number">4.5.1</span> Creating New Objects</h3>
-<p>One method is to create empty <em>Stock</em>, <em>Fleet</em>, and <em>Observation</em> objects and manually populate them. This can be done using the <code>new</code> command:</p>
+<p>One method is to create empty <em>Stock</em>, <em>Fleet</em>, <em>Obs</em>, and <em>Imp</em> objects and manually populate them. This can be done using the <code>new</code> command:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myStock &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Stock&quot;</span>)
 myFleet &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Fleet&quot;</span>)
-myObservation &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Observation&quot;</span>)</code></pre></div>
-<p>This code creates new <em>Stock</em>, <em>Fleet</em>, and <em>Observation</em> objects that are empty and contain no information.</p>
+myObservation &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Obs&quot;</span>)
+myImp &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Imp&quot;</span>)</code></pre></div>
+<p>This code creates new <em>Stock</em>, <em>Fleet</em>, <em>Obs</em>, and <em>Imp</em> objects that are empty and contain no information.</p>
 <p>You can check this by looking at a slot in one of the objects, for example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myStock@M</code></pre></div>
 <pre><code>## numeric(0)</code></pre>
@@ -473,24 +491,24 @@ myObservation &lt;-<span class="st"> </span><span class="kw">new</span>(<span cl
 </div>
 <div id="importing-an-observation-object-from-a-csv-file" class="section level4">
 <h4><span class="header-section-number">4.5.2.3</span> Importing an Observation Object from a CSV File</h4>
-<p>To import a <em>Observation</em> object from a CSV file you follow the same procedure:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myObs &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Observation&quot;</span>, <span class="st">&quot;CSVs/myObs.csv&quot;</span>)</code></pre></div>
-<p>Note, however, that the <em>Observation</em> object is large (35 parameters) and it is often easiest to modify an existing <em>Observation</em> object.</p>
-<p>We can now stitch the three objects together into a new Operating Model:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myOM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, myStock, myFleet, myObs)</code></pre></div>
+<p>To import a <em>Obs</em> object from a CSV file you follow the same procedure:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myObs &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Obs&quot;</span>, <span class="st">&quot;CSVs/myObs.csv&quot;</span>)</code></pre></div>
+<p>Note, however, that the <em>Obs</em> object is large (35 parameters) and it is often easiest to modify an existing <em>Obs</em> object.</p>
+<p>We can now stitch the four objects together into a new Operating Model:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myOM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, myStock, myFleet, myObs, myImp)</code></pre></div>
+<p>In this example we did not include our newly made <em>Imp</em> object. By default the <code>new(&quot;OM&quot;)</code> command includes the <code>Perfect_Imp</code> Imp object.</p>
 </div>
 <div id="creating-an-operating-model-from-an-excel-file" class="section level4">
 <h4><span class="header-section-number">4.5.2.4</span> Creating an Operating Model from an Excel File</h4>
 <p>Sometimes, especially if you are conducting MSEs on a number of species, it is easier to have all of the parameters stored in a single Excel file. This file can be imported directly as a <em>Operating Model</em> object.</p>
-<p>The <em>Stock</em>, <em>Fleet</em>, and <em>Observation</em> parameters are structured exactly the same as described above, but here they are in separate tabs of a single spreadsheet rather than separate CSV files.</p>
-<p>The naming of the tabs for the Excel file is important. The names of the three tabs relating to the <em>Stock</em>, <em>Fleet</em>, and <em>Observation</em> parameters must share a prefix followed by “Stock”, “Fleet”, or “Obs” respectively. See the image below for an example.</p>
+<p>The <em>Stock</em>, <em>Fleet</em>, <em>Obs</em>, and <em>Imp</em> parameters are structured exactly the same as described above, but here they are in separate tabs of a single spreadsheet rather than separate CSV files.</p>
+<p>The naming of the tabs for the Excel file is important. The names of the three tabs relating to the <em>Stock</em>, <em>Fleet</em>, <em>Obs</em>, “<em>Imp</em> parameters must share a prefix followed by”Stock“,”Fleet“,”Obs“,”Imp&quot; respectively. See the image below for an example.</p>
 <p><img src="images/XL2.png" /><!-- --></p>
 <p>Click <a href="images/XL.png">here</a> for a larger version of the image.</p>
 <p>In this example we have two sets of parameters, imaginatively named “Example1” and “Example2”.</p>
 <p>To create <em>Operating Model</em> objects from this file we use the following command:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Example1OM &lt;-<span class="st"> </span><span class="kw">OM_xl</span>(<span class="st">&quot;CSVs/myXL.xlsx&quot;</span>, <span class="st">&quot;Example1&quot;</span>)
 Example2OM &lt;-<span class="st"> </span><span class="kw">OM_xl</span>(<span class="st">&quot;CSVs/myXL.xlsx&quot;</span>, <span class="st">&quot;Example2&quot;</span>)</code></pre></div>
-<p>The <code>OM_xl</code> function is essentially a wrapper for the <code>new</code> function, but allow you store all operating model tables in a single spreadsheet rather than several CSVs. This is mainly useful if you are working on multiple species/stocks.</p>
 </div>
 </div>
 </div>
@@ -509,7 +527,7 @@ MyStock@L50_95 &lt;-<span class="st"> </span><span class="kw">c</span>(<span cla
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MyStock@Name &lt;-<span class="st"> &quot;Herringish&quot;</span>
 MyStock@Source &lt;-<span class="st"> &quot;None. I made this up&quot;</span></code></pre></div>
 <p>You can continue modifying the remaining parameters as required.</p>
-<p>The <em>Fleet</em> and <em>Observation</em> objects can be modified in from existing objects in a similar way. First we copy existing objects, and then modify them to suit our needs:</p>
+<p>The <em>Fleet</em> and <em>Obs</em> objects can be modified in from existing objects in a similar way. First we copy existing objects, and then modify them to suit our needs:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MyFleet &lt;-<span class="st"> </span>FlatE_Dom <span class="co"># Dome-shaped selectivity and flat effort trajectory</span>
 MyFleet@L5 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">15</span>, <span class="dv">20</span>) <span class="co"># change the selectivity pattern</span>
 MyFleet@LFS &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">30</span>)
@@ -517,8 +535,8 @@ MyFleet@isRel &lt;-<span class="st"> &quot;FALSE&quot;</span> <span class="co">#
 
 MyObs &lt;-<span class="st"> </span>Imprecise_Unbiased
 MyObs@Mcv &lt;-<span class="st"> </span><span class="fl">0.15</span> <span class="co"># increase uncertainty in M</span></code></pre></div>
-<p>Here we have modified a few parameters in the <em>Stock</em>, <em>Fleet</em>, and <em>Observation</em> objects and assumed that the rest of the values in built-in objects adequately describe our fishery. We can now create an <em>Operating Model</em> object using the same method described previously:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MyOM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, MyStock, MyFleet, MyObs)</code></pre></div>
+<p>Here we have modified a few parameters in the <em>Stock</em>, <em>Fleet</em>, and <em>Obs</em> objects and assumed that the rest of the values in built-in objects adequately describe our fishery. We can now create an <em>Operating Model</em> object using the same method described previously:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MyOM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, MyStock, MyFleet, MyObs, myImp)</code></pre></div>
 </div>
 <div id="more-on-customizing-the-operating-model" class="section level2">
 <h2><span class="header-section-number">4.7</span> More on Customizing the Operating Model</h2>
@@ -551,6 +569,8 @@ Empirical relationships for life history parameters, etc
 
 ### Empirical relationships for life history parameters
 
+## More details in Imp object to be added 
+
 -->
 
 </div>
@@ -562,8 +582,9 @@ Empirical relationships for life history parameters, etc
         </div>
       </div>
 <a href="preq.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="MPs.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
-
+<a href="MPs.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
 <script src="libs/gitbook-2.6.7/js/lunr.js"></script>
 <script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
@@ -598,7 +619,7 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(script.src))
       script.src  = script.src.replace(/^https?:/, '');
     document.getElementsByTagName("head")[0].appendChild(script);

@@ -6,7 +6,7 @@
 \title{Class \code{'OM'}}
 \description{
 An object containing all the parameters needed to control the MSE which can
-be build from component Stock, Fleet and Observation objects. Almost all of
+be build from component Stock, Fleet and Obs objects. Almost all of
 these inputs are a vector of length 2 which describes the upper and lower
 bounds of a uniform distribution from which to sample the parameter.
 }
@@ -14,6 +14,10 @@ bounds of a uniform distribution from which to sample the parameter.
 
 \describe{
 \item{\code{Name}}{Name of the operating model}
+
+\item{\code{nsim}}{The number of simulations}
+
+\item{\code{proyears}}{The number of projected years}
 
 \item{\code{nyears}}{The number of years for the historical simulation}
 
@@ -23,9 +27,15 @@ bounds of a uniform distribution from which to sample the parameter.
 
 \item{\code{M}}{Natural mortality rate (uniform distribution)}
 
+\item{\code{M2}}{Optional vector of M-at-age (must be length maxage)}
+
 \item{\code{Msd}}{Inter-annual variability in natural mortality rate expressed as a coefficient of variation (uniform distribution)}
 
 \item{\code{Mgrad}}{Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year (uniform distribution)}
+
+\item{\code{Mexp}}{Exponent of the Lorenzen function assuming an inverse relationship between M and weight (uniform distribution)}
+
+\item{\code{Fdisc}}{Fraction of discarded fish that die}
 
 \item{\code{h}}{Steepness of the stock recruit relationship (uniform distribution)}
 
@@ -36,6 +46,8 @@ bounds of a uniform distribution from which to sample the parameter.
 \item{\code{K}}{von B. growth parameter k (uniform distribution)}
 
 \item{\code{t0}}{von B. theoretical age at length zero (uniform distribution)}
+
+\item{\code{LenCV}}{Coefficient of variation of length-at-age (assumed constant for all age classes (uniform distribution)}
 
 \item{\code{Ksd}}{Inter-annual variability in growth parameter k (uniform distribution)}
 
@@ -61,8 +73,6 @@ bounds of a uniform distribution from which to sample the parameter.
 
 \item{\code{Prob_staying}}{The probability of inviduals in area 1 remaining in area 1 over the course of one year}
 
-\item{\code{Source}}{A reference to a website or article form which parameters were taken to define the operating model}
-
 \item{\code{beta}}{A parameter controlling hyperstability/hyperdepletion. I^beta therefore values below 1 lead to hyperstability (an index that decreases slower than true abundance) and values above 1 lead to hyperdepletion (an index that decreases more rapidly than true abundance)(uniform distribution)}
 
 \item{\code{Spat_targ}}{Distribution of fishing in relation to spatial biomass: F is proportional to B^Spat_targ (uniform distribution)}
@@ -72,6 +82,14 @@ bounds of a uniform distribution from which to sample the parameter.
 \item{\code{L5}}{Shortest length at 5 percent vulnerability (uniform distribution)}
 
 \item{\code{Vmaxlen}}{The vulnerability of the longest (oldest) fish (uniform distribution)}
+
+\item{\code{LR5}}{Shortest length corresponding ot 5 percent retention (uniform distribution)}
+
+\item{\code{LFR}}{Shortest length that is fully retained (uniform distribution)}
+
+\item{\code{Rmaxlen}}{The retention of the longest (oldest) fish (uniform distribution)}
+
+\item{\code{DR}}{Discard rate - fraction of caught fish that are discarded (must be <= 1) (uniform distribution)}
 
 \item{\code{SelYears}}{Vector of verticies that index years where historical selectivity pattern changed. Leave empty to ignore}
 
@@ -95,7 +113,7 @@ bounds of a uniform distribution from which to sample the parameter.
 
 \item{\code{L50_95}}{Length increment from 50 to 95 percent maturity (uniform distribution)}
 
-\item{\code{Fsd}}{Inter-annual variability in fishing mortality rate}
+\item{\code{Esd}}{Inter-annual variability in fishing mortality rate}
 
 \item{\code{EffYears}}{Vector of verticies, years at which to simulate varying relative effort}
 
@@ -106,6 +124,8 @@ bounds of a uniform distribution from which to sample the parameter.
 \item{\code{qinc}}{Average percentage change in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls)}
 
 \item{\code{qcv}}{Inter-annual variability in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls)}
+
+\item{\code{CurrentYr}}{The current calendar year (final year) of the historical simulations (e.g. 2011)}
 
 \item{\code{Cobs}}{Log-normal catch observation error expressed as a coefficient of variation (uniform distribution)}
 
@@ -178,18 +198,32 @@ bounds of a uniform distribution from which to sample the parameter.
 \item{\code{Brefcv}}{Bias in the knowledge of BMSY (uniform distribution)}
 
 \item{\code{Crefcv}}{Bias in the knowledge of MSY(uniform distribution)}
+
+\item{\code{cpars}}{A list of custom parameters (single parameters are a vector nsim long, time series are a matrix nsim rows by nyears columns)}
+
+\item{\code{seed}}{A random seed to ensure users can reproduce results exactly}
+
+\item{\code{Source}}{A reference to a website or article form which parameters were taken to define the operating model}
+
+\item{\code{TACSD}}{lognormal standard deviation in fraction of TAC taken (uniform distribution)}
+
+\item{\code{TACFrac}}{Mean fraction of TAC taken (uniform distribution) (can be an improper fraction greater than 1)}
+
+\item{\code{ESD}}{lognormal standard deviation in fraction of TAE taken(uniform distribution)}
+
+\item{\code{EFrac}}{Mean fraction of recommended effort taken (uniform distribution)}
+
+\item{\code{SizeLimSD}}{lognormal error in size limit implementation (uniform distribution)}
+
+\item{\code{SizeLimFrac}}{Mean fraction of the size limit (uniform distribution) (can be an improper fraction greater than 1)}
 }}
+
 \section{Objects from the Class}{
  Objects can be created by calls of the form
-\code{new('OM', Stock, Fleet, Observation)}.
+\code{new('OM', Stock, Fleet, Obs, Imp)}.
 }
-\examples{
 
-showClass('OM')
-
-}
 \author{
 T. Carruthers
 }
 \keyword{classes}
-

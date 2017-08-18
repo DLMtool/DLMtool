@@ -30,3 +30,5 @@ vignettes/*.pdf
 docs
 ^\index\.md$
 
+# Ignore tests 
+tests/*.*

@@ -2,12 +2,12 @@
 % Please edit documentation in R/DataObj.r
 \name{Can}
 \alias{Can}
-\title{What data-limited methods can be applied to this DLM_data object?}
+\title{What data-limited methods can be applied to this Data object?}
 \usage{
-Can(DLM_data, timelimit = 1)
+Can(Data, timelimit = 1)
 }
 \arguments{
-\item{DLM_data}{A data-limited methods data object (class DLM_data)}
+\item{Data}{A data-limited methods data object (class Data)}
 
 \item{timelimit}{The maximum time (seconds) taken for a method to undertake
 10 reps (this filters out methods that are too slow)}
@@ -19,4 +19,3 @@ have the correct data, do not produce errors and run within a time limit.
 Time limit is the maximum time taken to carry out five reps (stochastic
 samples) of a given method and is in units of seconds.
 }
-

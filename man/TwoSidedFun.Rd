@@ -19,4 +19,3 @@ TwoSidedFun(LFS, s1, s2, lens)
 Internal Two sided selectivity curve
 }
 \keyword{internal}
-

@@ -21,4 +21,3 @@ getEffhist(Esd, nyears, EffYears, EffLower, EffUpper)
 Calculate historical fishing mortality
 }
 \keyword{internal}
-

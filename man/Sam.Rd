@@ -4,10 +4,10 @@
 \alias{Sam}
 \title{Conduct stock assessment}
 \usage{
-Sam(DLM_data, MPs = NA, reps = 100, perc = 0.5)
+Sam(Data, MPs = NA, reps = 100, perc = 0.5)
 }
 \arguments{
-\item{DLM_data}{A data-limited methods data object}
+\item{Data}{A data-limited methods data object}
 
 \item{MPs}{A character vector of methods of DLM quota, DLM space or DLM size}
 
@@ -22,4 +22,3 @@ of DLM quota has been specified
 \author{
 T. Carruthers
 }
-

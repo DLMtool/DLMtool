@@ -4,14 +4,14 @@
 \alias{doprojPI_cpp}
 \title{Rcpp version of the Projection function for calculating Reference Yield}
 \usage{
-doprojPI_cpp(lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c,
-  Vc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc,
+doprojPI_cpp(lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c,
+  Vc, retAc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc,
   Spat_targc)
 }
 \arguments{
 \item{lnF}{internal}
 
-\item{Mvec}{internal}
+\item{Mmat}{internal}
 
 \item{Wac}{internal}
 
@@ -30,6 +30,8 @@ doprojPI_cpp(lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c,
 \item{SSB_c}{internal}
 
 \item{Vc}{internal}
+
+\item{retAc}{internal}
 
 \item{hc}{internal}
 
@@ -57,4 +59,3 @@ doprojPI_cpp(lnF, Mvec, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c,
 Rcpp version of the Projection function for calculating Reference Yield
 }
 \keyword{internal}
-

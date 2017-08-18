@@ -18,4 +18,3 @@ As title
 \author{
 T. Carruthers
 }
-

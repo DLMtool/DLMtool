@@ -4,14 +4,14 @@
 \alias{getFref2}
 \title{Internal Get Reference F using Rcpp}
 \usage{
-getFref2(x, Marray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s, VBiomass_s,
-  SSB_s, Vn, hs, R0a, nyears, proyears, nareas, maxage, mov, SSBpR, aR, bR,
-  SRrel, Spat_targ)
+getFref2(x, M_ageArray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s,
+  VBiomass_s, SSB_s, Vn, retAn, hs, R0a, nyears, proyears, nareas, maxage, mov,
+  SSBpR, aR, bR, SRrel, Spat_targ)
 }
 \arguments{
 \item{x}{internal parameter}
 
-\item{Marray}{internal parameter}
+\item{M_ageArray}{internal parameter}
 
 \item{Wt_age}{internal parameter}
 
@@ -30,6 +30,8 @@ getFref2(x, Marray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s, VBiomass_s,
 \item{SSB_s}{internal parameter}
 
 \item{Vn}{internal parameter}
+
+\item{retAn}{internal parameter}
 
 \item{hs}{internal parameter}
 
@@ -61,4 +63,3 @@ getFref2(x, Marray, Wt_age, Mat_age, Perr, N_s, SSN_s, Biomass_s, VBiomass_s,
 Internal Get Reference F using Rcpp
 }
 \keyword{internal}
-

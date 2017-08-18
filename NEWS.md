@@ -1,8 +1,80 @@
 ## DLMtool 
-The current version of the DLMtool package is available for download from [CRAN](https://cran.r-project.org/web/packages/DLMtool/index.html).
+The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
-### DLMtool V3.2.9005 Current Development Version
 
+### DLMtool v4.4.1
+
+#### Minor Changes 
+
+- fixed a typo in V4.4 that affected effort controls
+- removed redundant code to speed up sampling of fleet parameters
+
+
+## Previous Versions
+
+### DLMtool v4.4   
+
+#### Changes 
+
+- can now specify different retention and vulnerability at size curves to evaluate impact of discarding for sub-legal fish
+- can now include general discarding across all size/age classes
+- The structure of Input control MPs has been simplified. See the userguide for more details.
+- The userguide can now be directly accessed from the console with: userguide()
+- Additional operating models and other objects can be loaded from the DLMdata package, use: GetMoreData()
+- Age or size-specific M has been updated (was in previous version) with plotting functions to visualize M-at-age
+- All MPs have been thoroughly tested and modified to improve robustness and avoid crashing the model
+- plotting functions have been improved 
+- SRA has been converted to RCpp for significant speed gain 
+
+### DLMtool v4.1
+
+#### Major Changes
+
+- Objects names have been shortened and modified for consistency: 
+  - Observation has been renamed to Obs 
+  - DLM_fease has been renamed to Fease 
+  - DLM_output has been renamed Output
+  - DLM_input has been renamed Input 
+  - DLM_data has been renamed Data 
+
+- Implementation error and a dedicated implementation error object called 'Imp', (like Stock, Fleet and Obs)
+   that can account for variability and overages/underages in both effort, catch and size limit advice (discarding
+   rate and post release mortality rate are coming soon)
+
+- At least 10 new example operating models from real DLMtool applications in the US and Canada
+
+- Stochastic SRA operating model functions (i.e. build a full operating model accounting for correlations in
+   parameters using historical catch trends and some composition data)
+
+- Full plots of operating model conditions
+
+- Stock-synthesis assessment to DLM function for specifying operating models (currently MLE only but adding
+   MCMC and hessian options)
+
+- iSCAM assessment to DLM support for specifying operating models (MPD only but adding MCMC and hessian options soon)
+
+- Tracking of historical versus current simulated age composition in catches and population over simulations
+
+- New function 'Replace' for copying parts of an operating model to another operating model (e.g. Robin Hood
+  approach,where you may want to borrow say, the fleet characteristics from another operating model)
+
+- Estimation of a new reference point 'Blow' for calculation of conservation-related performance metrics
+   (Blow is the spawning biomass where it takes HZN number of mean generation times to reach Bfrac 
+   fraction of SSBMSY given zero catches, where the user can specify HZN and Bfrac). 
+
+- Canadian DFO performance plots (DFO_hist, DFO_proj, DFO_plot2)
+
+- Biomass recovery relative to Blow plots (COSEWIC_plot)
+
+- A dedicated custom parameters slot in the operating model object. This is a list where the user can place custom 
+   parameters samples (from any distribution / correlation structure you wish) that are named as they appear in 
+   the operating model. 
+
+#### Minor Changes 
+
+- Fsd slot in Fleet object has been re-named Esd 
+
+### DLMtool V3.2.3
 
 #### Major Changes
 - all objects previously in `DLMdat` have now been added as separate data objects. This means that it is no longer neccessary to unpack data objects at the beginning of an R session.
@@ -36,15 +108,7 @@ The current version of the DLMtool package is available for download from [CRAN]
 - fixed F calculations at end of MSE so that `FMSYref` results in exactly F/FSMY = 1 
 - `maxF` now also applies to the catch that is taken from the population
 
-#### To Do 
-- change dimensions of `SSB_hist` in MSE object from `nsim, maxage, nyears, narea` to `nsim, nyear` - others as well?
-- test and add new MPs developed by Quang
-- add Roxygen2 documentation for new MPs
-- go through issue list on GithHub
-- update User Manual and Documentation prior to new release on CRAN
 
-
-## Previous Versions
 ### New Additions to Version 3.2.2
 A number of additional plotting functions, and a few new MPs have been added in this version.  Also a few minor changes to improve performance and reliability of the model.
 

@@ -17,4 +17,3 @@ getSlope1(s1, LFS, L0.05)
 Internal function to calculate ascending slope of selectivity curve
 }
 \keyword{internal}
-

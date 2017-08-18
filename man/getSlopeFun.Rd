@@ -17,4 +17,3 @@ getSlopeFun(SD, age50, age95)
 Internal function to calculate slope
 }
 \keyword{internal}
-

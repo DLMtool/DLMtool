@@ -49,4 +49,3 @@ of historical years of fishing.
 \author{
 T. Carruthers
 }
-

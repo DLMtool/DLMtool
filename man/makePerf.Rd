@@ -23,4 +23,3 @@ MPs perform as expected under perfect conditions.
 \author{
 A. Hordyk
 }
-
