@@ -378,6 +378,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   # Make arrays for future conditions assuming current conditions
   M_ageArrayp <- array(M_ageArray[,,nyears], dim=c(dim(M_ageArray)[1:2], MSYyr))
   Wt_agep <- array(Wt_age[,,nyears], dim=c(dim(Wt_age)[1:2], MSYyr))
+ 
   retAp <- array(retA[,,nyears], dim=c(dim(retA)[1:2], MSYyr))
   Vp <- array(V[,,nyears], dim=c(dim(V)[1:2], MSYyr))
   Perrp <- array(1, dim=c(dim(Perr)[1], MSYyr+maxage))
@@ -398,15 +399,14 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
   FMSY <- MSYrefs[2, ]  # instantaneous FMSY (Vulnerable)
   SSBMSY <- MSYrefs[3, ]  # Spawning Stock Biomass at MSY  
-  SSBMSY_SSB0 <- SSBMSY/SSB0 # MSYrefs[4, ] # SSBMSY relative to unfished (SSB) 
-  BMSY_B0 <- MSYrefs[6, ]/B0 # Biomass relative to unfished (B0)
+  SSBMSY_SSB0 <- MSYrefs[4, ] # SSBMSY relative to unfished (SSB) 
+  BMSY_B0 <- MSYrefs[5, ] # Biomass relative to unfished (B0)
   BMSY <- MSYrefs[6,] # total biomass at MSY
   
   VBMSY <- (MSY/(1 - exp(-FMSY)))  # Biomass at MSY (Vulnerable)
   # FMSYb <- MSYrefs[8,]  # instantaneous FMSY (Spawning Biomass)
   UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
   FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
-  
   
   # --- Code for deriving low biomass ---- 
   # (SSB where it takes MGThorizon x MGT to reach Bfrac of BMSY)

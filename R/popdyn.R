@@ -373,6 +373,15 @@ getFMSY3 <- function(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
                      movc=mov[x,,], SRrelc=SRrel[x], 
                      Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
                      SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Fapic=exp(opt$minimum), maxF=maxF, control=2) 
+    
+    # calculate B0 and SSB0 with current conditions
+    simpopF0 <- popdyn(nareas, maxage, Ncurr=N[x,,1,], 
+                     pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,], 
+                     WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
+                     movc=mov[x,,], SRrelc=SRrel[x], 
+                     Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+                     SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Fapic=0, maxF=maxF, control=2) 
+    
   } else {
     simpop <- popdynCPP(nareas, maxage, Ncurr=N[x,,1,], 
                      pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,], 
@@ -380,6 +389,13 @@ getFMSY3 <- function(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
                      movc=mov[x,,], SRrelc=SRrel[x], 
                      Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
                      SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=0, Fapic=exp(opt$minimum), maxF=maxF, control=2)
+    # calculate B0 and SSB0 with current conditions
+    simpopF0 <- popdynCPP(nareas, maxage, Ncurr=N[x,,1,], 
+                        pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,], 
+                        WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
+                        movc=mov[x,,], SRrelc=SRrel[x], 
+                        Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+                        SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=0, Fapic=0, maxF=maxF, control=2)
   }
 
   ## Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # retained catch 
@@ -392,13 +408,21 @@ getFMSY3 <- function(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
   V_BMSY <- sum(simpop[[5]][,pyears,])
   F_MSYv <- -log(1 - (MSY/(V_BMSY+MSY)))
   
-  SSBMSY_SSB0 <- sum(simpop[[4]][,pyears,])/SSB0[x]
   
-  BMSY_B0 <- sum(simpop[[2]][,pyears,])/B0[x]
+  SSB0_curr <- sum(simpopF0[[4]][,pyears,])
+  B0_curr <- sum(simpopF0[[2]][,pyears,])
+  SSBMSY_SSB0 <- sum(simpop[[4]][,pyears,])/SSB0_curr
+  BMSY_B0 <- sum(simpop[[2]][,pyears,])/B0_curr
+  # SSBMSY_SSB0 <- sum(simpop[[4]][,pyears,])/SSB0[x]
+  # BMSY_B0 <- sum(simpop[[2]][,pyears,])/B0[x]
+  
+  
   return(c(MSY = MSY, FMSY = F_MSYv, SSB = SSB_MSY, SSBMSY_SSB0=SSBMSY_SSB0, 
            BMSY_B0=BMSY_B0, B = B, VB=V_BMSY+MSY))
   
 }
+
+
 
 
 #' Optimize yield for a single simulation
