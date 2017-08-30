@@ -13,20 +13,17 @@
 #' @export
 #'
 sample_steepness2 <- function(n, mu, cv) {
-  
-  sigma <- mu * cv
-  
-  mu.beta.dist <- (mu - 0.2)/0.8
-  sigma.beta.dist <- sigma/0.8
-  
-  beta.par <- derive_beta_par(mu.beta.dist, sigma.beta.dist)
-  
-  h.transformed <- rbeta(n, beta.par[1], beta.par[2])
-  
-  h <- 0.8 * h.transformed + 0.2
-  h[h > 0.99] <- 0.99
-  h[h < 0.2] <- 0.2
-  
+  if(n == 1) h <- mu
+  else {
+    sigma <- mu * cv
+    mu.beta.dist <- (mu - 0.2)/0.8
+    sigma.beta.dist <- sigma/0.8
+    beta.par <- derive_beta_par(mu.beta.dist, sigma.beta.dist)
+    h.transformed <- rbeta(n, beta.par[1], beta.par[2])
+    h <- 0.8 * h.transformed + 0.2
+    h[h > 0.99] <- 0.99
+    h[h < 0.2] <- 0.2
+  }
   return(h)
 }
 
