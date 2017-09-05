@@ -57,6 +57,6 @@ newdata<-new('Fease')
 
 }
 \author{
-T. Carruthers
+T. Carruthers and A. Hordyk
 }
 \keyword{classes}

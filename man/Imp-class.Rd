@@ -10,21 +10,21 @@ An operating model component that specifies the degree of adherence to managemen
 \section{Slots}{
 
 \describe{
-\item{\code{Name}}{The name of the Implementation error object}
+\item{\code{Name}}{The name of the Implementation error object. Single value. Character string.}
 
-\item{\code{TACSD}}{lognormal standard deviation in fraction of TAC taken (uniform distribution)}
+\item{\code{TACSD}}{Log-normal coefficient of variation in the fraction of Total Allowable Catch (TAC) taken. Uniform distribution lower and upper bounds. Non-negative real numbers.}
 
-\item{\code{TACFrac}}{Mean fraction of TAC taken (uniform distribution) (can be an improper fraction greater than 1)}
+\item{\code{TACFrac}}{Mean fraction of TAC taken. Uniform distribution lower and upper bounds. Positive real number.}
 
-\item{\code{ESD}}{lognormal standard deviation in fraction of TAE taken(uniform distribution)}
+\item{\code{ESD}}{Log-normal coefficient of variation in the fraction of Total Allowable Effort (TAE) taken. Uniform distribution lower and upper bounds. Non-negative real numbers.}
 
-\item{\code{EFrac}}{Mean fraction of recommended effort taken (uniform distribution)}
+\item{\code{EFrac}}{Mean fraction of TAE taken. Uniform distribution lower and upper bounds. Positive real number.}
 
-\item{\code{SizeLimSD}}{lognormal error in size limit implementation (uniform distribution)}
+\item{\code{SizeLimSD}}{Log-normal coefficient of variation controlling mismatch between a minimum size limit and the real minimum size retained. Uniform distribution lower and upper bounds. Non-negative real numbers.}
 
-\item{\code{SizeLimFrac}}{Mean fraction of the size limit (uniform distribution) (can be an improper fraction greater than 1)}
+\item{\code{SizeLimFrac}}{The real minimum size that is retained expressed as a fraction of the size. Uniform distribution lower and upper bounds. Positive real number.}
 
-\item{\code{Source}}{A reference to a website or article form which parameters were taken to define the operating model}
+\item{\code{Source}}{A reference to a website or article form which parameters were taken to define the object. Single value. Character string.}
 }}
 
 \section{Objects from the Class}{
@@ -38,6 +38,6 @@ showClass('Imp')
 
 }
 \author{
-T. Carruthers
+T. Carruthers and A. Hordyk
 }
 \keyword{classes}
