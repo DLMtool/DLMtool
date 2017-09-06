@@ -44,7 +44,7 @@ An object for storing data for analysis using data-limited methods
 
 \item{\code{LFS}}{Shortest length at full selection. Matrix of nsim rows and nyears columns. Positive real numbers}
 
-\item{\code{CAA}}{Catch at Age data. Array of dimensions nsim x nyears x MaxAge. Non-negative integers.}
+\item{\code{CAA}}{Catch at Age data. Array of dimensions nsim x nyears x MaxAge. Non-negative integers}
 
 \item{\code{Dep}}{Stock depletion SSB(current)/SSB(unfished). Vector nsim long. Fraction.}
 
@@ -64,7 +64,7 @@ An object for storing data for analysis using data-limited methods
 
 \item{\code{wlb}}{Weight-Length parameter beta. Vector nsim long. Positive real numbers}
 
-\item{\code{steep}}{Steepness of stock-recruitment relationship. Vector nsim long. Value in the range 1.5 to 1}
+\item{\code{steep}}{Steepness of stock-recruitment relationship. Vector nsim long. Value in the range of one-fifth to 1}
 
 \item{\code{CV_Cat}}{Coefficient of variation in annual catches. Vector nsim long. Positive real numbers}
 
@@ -104,59 +104,59 @@ An object for storing data for analysis using data-limited methods
 
 \item{\code{sigmaL}}{Assumed observaton error of the length composition data. Vector nsim long. Positive real numbers}
 
-\item{\code{MaxAge}}{Maximum age. Vector nsim long. Positive integer.}
+\item{\code{MaxAge}}{Maximum age. Vector nsim long. Positive integer}
 
-\item{\code{Units}}{Units of the catch/absolute abundance estimates. Single value. Character string.}
+\item{\code{Units}}{Units of the catch/absolute abundance estimates. Single value. Character string}
 
-\item{\code{Ref}}{A reference management level (eg a catch limit). Positive real number.}
+\item{\code{Ref}}{A reference management level (eg a catch limit). Single value. Positive real number}
 
-\item{\code{Ref_type}}{Type of reference management level (eg "2009 catch limit"). Single value. Character string.}
+\item{\code{Ref_type}}{Type of reference management level (eg 2009 catch limit). Single value. Character string}
 
-\item{\code{Log}}{A record of events. Single value. Character string.}
+\item{\code{Log}}{A record of events. Single value. Character string}
 
-\item{\code{params}}{A place to store estimated parameters. An object. R list.}
+\item{\code{params}}{A place to store estimated parameters. An object. R list}
 
-\item{\code{PosMPs}}{The methods that can be applied to these data. Vector. Character strings.}
+\item{\code{PosMPs}}{The methods that can be applied to these data. Vector. Character strings}
 
-\item{\code{MPs}}{The methods that were applied to these data. Vector. Character strings.}
+\item{\code{MPs}}{The methods that were applied to these data. Vector. Character strings}
 
-\item{\code{OM}}{A table of operating model conditions. An object. R table object of nsim rows.}
+\item{\code{OM}}{A table of operating model conditions. R table object of nsim rows. Real numbers}
 
-\item{\code{Obs}}{A table of observation model conditions, An object. R table object of nsim rows.}
+\item{\code{Obs}}{A table of observation model conditions. R table object of nsim rows. Real numbers}
 
-\item{\code{TAC}}{The calculated catch limits (function TAC). An array with dimensions PosMPs x replicate TAC samples x nsim. Positive real numbers.}
+\item{\code{TAC}}{The calculated catch limits (function TAC). An array with dimensions PosMPs x replicate TAC samples x nsim. Positive real numbers}
 
-\item{\code{Sense}}{The results of the sensitivity analysis (function Sense). An array with dimensions PosMPs x sensitivity increments. Positive real numbers.}
+\item{\code{Sense}}{The results of the sensitivity analysis (function Sense). An array with dimensions PosMPs x sensitivity increments. Positive real numbers}
 
-\item{\code{CAL_bins}}{The values delimiting the length bins for the catch-at-length data. Vector. Non-negative real numbers.}
+\item{\code{CAL_bins}}{The values delimiting the length bins for the catch-at-length data. Vector. Non-negative real numbers}
 
-\item{\code{CAL}}{Catch-at-length data. An array with dimensions nsim x nyears x length(CAL_bins). Non-negative integers.}
+\item{\code{CAL}}{Catch-at-length data. An array with dimensions nsim x nyears x length(CAL_bins). Non-negative integers}
 
-\item{\code{Cref}}{Reference or target catch level (eg MSY). Vector of length nsim. Positive real numbers.}
+\item{\code{Cref}}{Reference or target catch level (eg MSY). Vector of length nsim. Positive real numbers}
 
-\item{\code{Iref}}{Reference or target relative abundance index level (eg BMSY / B0). Vector of length nsim. Positive real numbers.}
+\item{\code{Iref}}{Reference or target relative abundance index level (eg BMSY / B0). Vector of length nsim. Positive real numbers}
 
-\item{\code{Bref}}{Reference or target biomass level (eg BMSY). Vector of length nsim. Positive real numbers.}
+\item{\code{Bref}}{Reference or target biomass level (eg BMSY). Vector of length nsim. Positive real numbers}
 
-\item{\code{CV_Cref}}{Log-normal CV for reference or target catch level. Vector of length nsim. Positive real numbers.}
+\item{\code{CV_Cref}}{Log-normal CV for reference or target catch level. Vector of length nsim. Positive real numbers}
 
-\item{\code{CV_Iref}}{Log-normalCV for reference or target relative abundance index level. Vector of length nsim. Positive real numbers.}
+\item{\code{CV_Iref}}{Log-normalCV for reference or target relative abundance index level. Vector of length nsim. Positive real numbers}
 
-\item{\code{CV_Bref}}{Log-normal CV for reference or target biomass level. Vector of length nsim. Positive real numbers.}
+\item{\code{CV_Bref}}{Log-normal CV for reference or target biomass level. Vector of length nsim. Positive real numbers}
 
-\item{\code{CV_Rec}}{Log-normal CV for recent recruitment strength. Vector of length nsim. Positive real numbers.}
+\item{\code{CV_Rec}}{Log-normal CV for recent recruitment strength. Vector of length nsim. Positive real numbers}
 
-\item{\code{Rec}}{Recent recruitment strength. Vector of length nsim. Positive real numbers.}
+\item{\code{Rec}}{Recent recruitment strength. Vector of length nsim. Positive real numbers}
 
-\item{\code{MPrec}}{The previous recommendation of a management procedure. Vector of length nsim. Positive real numbers.}
+\item{\code{MPrec}}{The previous recommendation of a management procedure. Vector of length nsim. Positive real numbers}
 
-\item{\code{MPeff}}{The current level of effort. Vector of length nsim. Positive real numbers.}
+\item{\code{MPeff}}{The current level of effort. Vector of length nsim. Positive real numbers}
 
-\item{\code{LHYear}}{The last historical year of the simulation (before projection). Single value. Positive integer.}
+\item{\code{LHYear}}{The last historical year of the simulation (before projection). Single value. Positive integer}
 
-\item{\code{nareas}}{Number of fishing areas. Vector of length nsim. Non-negative integer.}
+\item{\code{nareas}}{Number of fishing areas. Vector of length nsim. Non-negative integer}
 
-\item{\code{Misc}}{(optional) Other information for MPs. An object. R list.}
+\item{\code{Misc}}{Other information for MPs. An object. R list}
 }}
 
 \section{Objects from the Class}{

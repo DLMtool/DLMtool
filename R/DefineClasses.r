@@ -27,7 +27,7 @@
 #' @slot Lc Modal length of catches. Matrix of nsim rows and nyears columns. Positive real numbers  
 #' @slot LFC Length at first capture. Matrix of nsim rows and nyears columns. Positive real numbers 
 #' @slot LFS Shortest length at full selection. Matrix of nsim rows and nyears columns. Positive real numbers  
-#' @slot CAA Catch at Age data. Array of dimensions nsim x nyears x MaxAge. Non-negative integers. 
+#' @slot CAA Catch at Age data. Array of dimensions nsim x nyears x MaxAge. Non-negative integers
 #' @slot Dep Stock depletion SSB(current)/SSB(unfished). Vector nsim long. Fraction.  
 #' @slot Abun An estimate of absolute current vulnerable abundance. Vector nsim long. Positive real numbers 
 #' @slot SpAbun An estimate of absolute current spawning stock abundance. Vector nsim long. Positive real numbers 
@@ -37,7 +37,7 @@
 #' @slot LenCV Coefficient of variation of length-at-age (assumed constant for all age classes). Vector nsim long. Positive real numbers 
 #' @slot wla Weight-Length parameter alpha. Vector nsim long. Positive real numbers 
 #' @slot wlb Weight-Length parameter beta. Vector nsim long. Positive real numbers  
-#' @slot steep Steepness of stock-recruitment relationship. Vector nsim long. Value in the range 1.5 to 1 
+#' @slot steep Steepness of stock-recruitment relationship. Vector nsim long. Value in the range of one-fifth to 1 
 #' @slot CV_Cat Coefficient of variation in annual catches. Vector nsim long. Positive real numbers 
 #' @slot CV_Dt Coefficient of variation in depletion over time t. Vector nsim long. Positive real numbers  
 #' @slot CV_AvC Coefficient of variation in average catches over time t. Vector nsim long. Positive real numbers
@@ -57,33 +57,33 @@
 #' @slot CV_wlb Coefficient of variation in weight-length parameter b. Vector nsim long. Positive real numbers 
 #' @slot CV_steep Coefficient of variation in steepness. Vector nsim long. Positive real numbers   
 #' @slot sigmaL Assumed observaton error of the length composition data. Vector nsim long. Positive real numbers 
-#' @slot MaxAge Maximum age. Vector nsim long. Positive integer.  
-#' @slot Units Units of the catch/absolute abundance estimates. Single value. Character string.  
-#' @slot Ref A reference management level (eg a catch limit). Positive real number.   
-#' @slot Ref_type Type of reference management level (eg "2009 catch limit"). Single value. Character string. 
-#' @slot Log A record of events. Single value. Character string.   
-#' @slot params A place to store estimated parameters. An object. R list.    
-#' @slot PosMPs The methods that can be applied to these data. Vector. Character strings.  
-#' @slot MPs The methods that were applied to these data. Vector. Character strings.  
-#' @slot OM A table of operating model conditions. An object. R table object of nsim rows.  
-#' @slot Obs A table of observation model conditions, An object. R table object of nsim rows. 
-#' @slot TAC The calculated catch limits (function TAC). An array with dimensions PosMPs x replicate TAC samples x nsim. Positive real numbers.  
-#' @slot Sense The results of the sensitivity analysis (function Sense). An array with dimensions PosMPs x sensitivity increments. Positive real numbers. 
-#' @slot CAL_bins The values delimiting the length bins for the catch-at-length data. Vector. Non-negative real numbers. 
-#' @slot CAL Catch-at-length data. An array with dimensions nsim x nyears x length(CAL_bins). Non-negative integers. 
-#' @slot Cref Reference or target catch level (eg MSY). Vector of length nsim. Positive real numbers. 
-#' @slot Iref Reference or target relative abundance index level (eg BMSY / B0). Vector of length nsim. Positive real numbers. 
-#' @slot Bref Reference or target biomass level (eg BMSY). Vector of length nsim. Positive real numbers. 
-#' @slot CV_Cref Log-normal CV for reference or target catch level. Vector of length nsim. Positive real numbers.  
-#' @slot CV_Iref Log-normalCV for reference or target relative abundance index level. Vector of length nsim. Positive real numbers. 
-#' @slot CV_Bref Log-normal CV for reference or target biomass level. Vector of length nsim. Positive real numbers. 
-#' @slot CV_Rec Log-normal CV for recent recruitment strength. Vector of length nsim. Positive real numbers. 
-#' @slot Rec Recent recruitment strength. Vector of length nsim. Positive real numbers. 
-#' @slot MPrec The previous recommendation of a management procedure. Vector of length nsim. Positive real numbers.   
-#' @slot MPeff The current level of effort. Vector of length nsim. Positive real numbers.  
-#' @slot LHYear The last historical year of the simulation (before projection). Single value. Positive integer.  
-#' @slot nareas Number of fishing areas. Vector of length nsim. Non-negative integer. 
-#' @slot Misc (optional) Other information for MPs. An object. R list.  
+#' @slot MaxAge Maximum age. Vector nsim long. Positive integer 
+#' @slot Units Units of the catch/absolute abundance estimates. Single value. Character string
+#' @slot Ref A reference management level (eg a catch limit). Single value. Positive real number  
+#' @slot Ref_type Type of reference management level (eg 2009 catch limit). Single value. Character string 
+#' @slot Log A record of events. Single value. Character string 
+#' @slot params A place to store estimated parameters. An object. R list    
+#' @slot PosMPs The methods that can be applied to these data. Vector. Character strings  
+#' @slot MPs The methods that were applied to these data. Vector. Character strings  
+#' @slot OM A table of operating model conditions. R table object of nsim rows. Real numbers  
+#' @slot Obs A table of observation model conditions. R table object of nsim rows. Real numbers 
+#' @slot TAC The calculated catch limits (function TAC). An array with dimensions PosMPs x replicate TAC samples x nsim. Positive real numbers  
+#' @slot Sense The results of the sensitivity analysis (function Sense). An array with dimensions PosMPs x sensitivity increments. Positive real numbers 
+#' @slot CAL_bins The values delimiting the length bins for the catch-at-length data. Vector. Non-negative real numbers
+#' @slot CAL Catch-at-length data. An array with dimensions nsim x nyears x length(CAL_bins). Non-negative integers 
+#' @slot Cref Reference or target catch level (eg MSY). Vector of length nsim. Positive real numbers 
+#' @slot Iref Reference or target relative abundance index level (eg BMSY / B0). Vector of length nsim. Positive real numbers 
+#' @slot Bref Reference or target biomass level (eg BMSY). Vector of length nsim. Positive real numbers 
+#' @slot CV_Cref Log-normal CV for reference or target catch level. Vector of length nsim. Positive real numbers  
+#' @slot CV_Iref Log-normalCV for reference or target relative abundance index level. Vector of length nsim. Positive real numbers
+#' @slot CV_Bref Log-normal CV for reference or target biomass level. Vector of length nsim. Positive real numbers 
+#' @slot CV_Rec Log-normal CV for recent recruitment strength. Vector of length nsim. Positive real numbers 
+#' @slot Rec Recent recruitment strength. Vector of length nsim. Positive real numbers 
+#' @slot MPrec The previous recommendation of a management procedure. Vector of length nsim. Positive real numbers   
+#' @slot MPeff The current level of effort. Vector of length nsim. Positive real numbers  
+#' @slot LHYear The last historical year of the simulation (before projection). Single value. Positive integer  
+#' @slot nareas Number of fishing areas. Vector of length nsim. Non-negative integer 
+#' @slot Misc Other information for MPs. An object. R list  
 
 #' @author T. Carruthers and A. Hordyk
 #' @keywords classes
@@ -371,10 +371,10 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
 #' @slot Mgrad Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year. Uniform distribution lower and upper bounds. Real numbers 
 #' @slot Mexp Exponent of the Lorenzen function assuming an inverse relationship between M and weight. Uniform distribution lower and upper bounds. Non-negative real numbers 
 #' @slot Fdisc Fraction of discarded fish that die. Uniform distribution lower and upper bounds. Non-negative real numbers 
-#' @slot h Steepness of the stock recruit relationship Uniform distribution lower and upper bounds. Values from 1/5 to 1 
+#' @slot h Steepness of the stock recruit relationship. Uniform distribution lower and upper bounds. Values from 1/5 to 1 
 #' @slot SRrel Type of stock-recruit relationship. Single value, switch (1) Beverton-Holt (2) Ricker. Integer 
 #' @slot Linf Maximum length. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot K von Bertalanffy growth parameter k Uniform distribution lower and upper bounds. Positive real numbers
+#' @slot K von Bertalanffy growth parameter k. Uniform distribution lower and upper bounds. Positive real numbers
 #' @slot t0 von Bertalanffy theoretical age at length zero. Uniform distribution lower and upper bounds. Non-positive real numbers
 #' @slot LenCV Coefficient of variation of length-at-age (assumed constant for all age classes). Uniform distribution lower and upper bounds. Non-positive real numbers 
 #' @slot Ksd Inter-annual variability in growth parameter k. Uniform distribution lower and upper bounds. Non-negative real numbers 
@@ -1077,13 +1077,13 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
 #' \code{new('MSE', Name, nyears, proyears, nMPs, MPs, nsim, OMtable, Obs,
 #' B_BMSYa, F_FMSYa, Ba, FMa, Ca, OFLa, Effort, PAA, CAA, CAL, CALbins)} 
 #'
-#' @slot Name Name of the MSE object
-#' @slot nyears The number of years for the historical simulation
-#' @slot proyears The number of years for the projections - closed loop simulations
-#' @slot nMPs Number of management procedures simulation tested
-#' @slot MPs The names of the MPs that were tested
-#' @slot nsim Number of simulations
-#' @slot OM A table of nsim rows with a column for each sampled parameter of the operating model\cr
+#' @slot Name Name of the MSE object. Single value. Character string
+#' @slot nyears The number of years for the historical simulation. Single value. Positive integer
+#' @slot proyears The number of years for the projections - closed loop simulations. Single value. Positive integer
+#' @slot nMPs Number of management procedures simulation tested. Single value. Positive integer. 
+#' @slot MPs The names of the MPs that were tested. Vector of length nMPs. Character strings. 
+#' @slot nsim Number of simulations. Single value. Positive integer
+#' @slot OM A table of sampled parameter of the operating model. Table object of nsim rows. Real numbers\cr
 #'   \itemize{
 #'   \item RefY: reference yield, the highest long-term yield (mean over last five years of projection) obtained from a fixed F strategy. This is a useful reference point for framing performance of MPs because it standardizes for starting point and future productivity. 
 #'   \item M: instantaneous natural mortality rate
@@ -1121,7 +1121,7 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
 #'   \item Prob_staying: the probability that individuals in area 1 remain there between time-steps
 #'   \item AC: autocorrelation in recruitment
 #'  }
-#' @slot Obs A table of nsim rows with a column for each sampled parameter of the observation model\cr
+#' @slot Obs A table of sampled parameters of the observation model. Table of nsim rows. Real numbers\cr
 #'   \itemize{
 #'   \item Cbias: bias in observed catches
 #'   \item Csd: observation error in observed catches (lognormal CV)
@@ -1145,22 +1145,22 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
 #'   \item Irefbias: bias in abundance index corresponding to BMSY stock levels
 #'   \item Crefbias: bias in MSY prediction (target or reference catch)
 #'   \item Brefbias: bias in BMSY stock levels (target or reference biomass levels)}
-#' @slot B_BMSY Stored biomass relative to BMSY over the projection (an array with dimensions nsim, nMPs, proyears) 
-#' @slot F_FMSY Stored fishing mortality rate relative to FMSY over the projection (an array with dimensions nsim, nMPs, proyears) 
-#' @slot B Stored stock biomass over the projection (an array with dimensions nsim, nMPs, proyears)
-#' @slot SSB Stored spawning stock biomass over the projection (an array with dimensions nsim, nMPs, proyears)
-#' @slot VB Stored vulnerable biomass over the projection (an array with dimensions nsim, nMPs, proyears) 
-#' @slot FM Stored fishing mortality rate over the projection (an array with dimensions nsim, nMPs, proyears)
-#' @slot C Stored catches (taken) over the projection (an array with dimensions nsim, nMPs, proyears) 
-#' @slot TAC Stored Total Allowable Catch (prescribed) over the projection (an array with dimensions nsim, nMPs, proyears)(note that this is NA for input controls) 
-#' @slot SSB_hist Stored historical spawning stock biomass (historical simulations - an array with dimensions nsim, nages, nyears, nareas)
-#' @slot CB_hist Stored historical catches in weight (historical simulations - an array with dimensions nsim, nages, nyears, nareas)
-#' @slot FM_hist Stored historical fishing mortality rate (historical simulations - an array with dimensions nsim, nages, nyears, nareas)
-#' @slot Effort Stored relative fishing effort in the projection years
-#' @slot PAA Population at age in last projection year (an array with dimensions nsim, nMPs, nages)
-#' @slot CAA Catch at age in last projection year (an array with dimensions nsim, nMPs, nages)
-#' @slot CAL Catch at length in last projection year (an array with dimensions nsim, nMPs, nCALbins)
-#' @slot CALbins Mid-points of the catch-at-length bins
+#' @slot B_BMSY Simulated biomass relative to BMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers 
+#' @slot F_FMSY Simulated fishing mortality rate relative to FMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers
+#' @slot B Simulated stock biomass over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers 
+#' @slot SSB Simulated spawning stock biomass over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers
+#' @slot VB Simulated vulnerable biomass over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers
+#' @slot FM Simulated fishing mortality rate over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers
+#' @slot C Simulated catches (taken) over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers
+#' @slot TAC Simulated Total Allowable Catch (prescribed) over the projection (this is NA for input controls). An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers 
+#' @slot SSB_hist Simulated historical spawning stock biomass. An array with dimensions: nsim, nages, nMPs, proyears. Non-negative real numbers
+#' @slot CB_hist Simulated historical catches in weight. An array with dimensions: nsim, nages, nMPs, proyears. Non-negative real numbers
+#' @slot FM_hist Simulated historical fishing mortality rate. An array with dimensions: nsim, nages, nMPs, proyears. Non-negative real numbers
+#' @slot Effort Simulated relative fishing effort in the projection years. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers
+#' @slot PAA Population at age in last projection year. An array with dimensions: nsim, nMPs, nages. Non-negative real numbers
+#' @slot CAA Catch at age in last projection year. An array with dimensions: nsim, nMPs, nages. Non-negative real numbers
+#' @slot CAL Catch at length in last projection year. An array with dimensions: nsim, nMPs, nCALbins. Non-negative real numbers
+#' @slot CALbins Mid-points of the catch-at-length bins. Vector of length nCALbins. Positive real numbers. 
 #'
 #' @author T. Carruthers
 #' @keywords classes

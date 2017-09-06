@@ -2,7 +2,7 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 bhnoneq_LL <- function(stpar, year, Lbar, ss, Linf, K, Lc, nbreaks) {
-    .Call('DLMtool_bhnoneq_LL', PACKAGE = 'DLMtool', stpar, year, Lbar, ss, Linf, K, Lc, nbreaks)
+    .Call('_DLMtool_bhnoneq_LL', PACKAGE = 'DLMtool', stpar, year, Lbar, ss, Linf, K, Lc, nbreaks)
 }
 
 #' Rcpp version of the Projection function for calculating Reference Yield
@@ -35,7 +35,7 @@ bhnoneq_LL <- function(stpar, year, Lbar, ss, Linf, K, Lc, nbreaks) {
 #' @export
 #' @keywords internal
 doprojPI_cpp <- function(lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, retAc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc) {
-    .Call('DLMtool_doprojPI_cpp', PACKAGE = 'DLMtool', lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, retAc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc)
+    .Call('_DLMtool_doprojPI_cpp', PACKAGE = 'DLMtool', lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomass_c, SSB_c, Vc, retAc, hc, R0ac, proyears, nareas, maxage, movc, SSBpRc, aRc, bRc, SRrelc, Spat_targc)
 }
 
 #' Generate length composition of catch 
@@ -58,7 +58,7 @@ doprojPI_cpp <- function(lnF, Mmat, Wac, Mac, Pc, N_c, SSN_c, Biomass_c, VBiomas
 #' 
 #' @export
 genLenComp <- function(CAL_bins, CAL_binsmid, SL, CAL_ESS, CAL_nsamp, CN, LaA, LaASD, truncSD) {
-    .Call('DLMtool_genLenComp', PACKAGE = 'DLMtool', CAL_bins, CAL_binsmid, SL, CAL_ESS, CAL_nsamp, CN, LaA, LaASD, truncSD)
+    .Call('_DLMtool_genLenComp', PACKAGE = 'DLMtool', CAL_bins, CAL_binsmid, SL, CAL_ESS, CAL_nsamp, CN, LaA, LaASD, truncSD)
 }
 
 #' Internal estimation function for LSRA and LSRA2 functions
@@ -79,7 +79,7 @@ genLenComp <- function(CAL_bins, CAL_binsmid, SL, CAL_ESS, CAL_nsamp, CN, LaA, L
 #' @keywords internal
 #' @export
 LSRA_opt_cpp <- function(param, FF_a, Chist, M_a, Mat_age_a, Wt_age_a, sel_a, Recdevs_a, h_a, Umax) {
-    .Call('DLMtool_LSRA_opt_cpp', PACKAGE = 'DLMtool', param, FF_a, Chist, M_a, Mat_age_a, Wt_age_a, sel_a, Recdevs_a, h_a, Umax)
+    .Call('_DLMtool_LSRA_opt_cpp', PACKAGE = 'DLMtool', param, FF_a, Chist, M_a, Mat_age_a, Wt_age_a, sel_a, Recdevs_a, h_a, Umax)
 }
 
 #' Internal SRA MCMC CPP code
@@ -110,7 +110,7 @@ LSRA_opt_cpp <- function(param, FF_a, Chist, M_a, Mat_age_a, Wt_age_a, sel_a, Re
 #' @author A. Hordyk
 #' @export
 LSRA_MCMC_sim <- function(nits, pars, JumpCV, adapt, parLB, parUB, R0ind, inflind, slpind, RDind, nyears, maxage, M, Mat_age, Wt_age, Chist_a, Umax, h, CAA, CAAadj, sigmaR) {
-    .Call('DLMtool_LSRA_MCMC_sim', PACKAGE = 'DLMtool', nits, pars, JumpCV, adapt, parLB, parUB, R0ind, inflind, slpind, RDind, nyears, maxage, M, Mat_age, Wt_age, Chist_a, Umax, h, CAA, CAAadj, sigmaR)
+    .Call('_DLMtool_LSRA_MCMC_sim', PACKAGE = 'DLMtool', nits, pars, JumpCV, adapt, parLB, parUB, R0ind, inflind, slpind, RDind, nyears, maxage, M, Mat_age, Wt_age, Chist_a, Umax, h, CAA, CAAadj, sigmaR)
 }
 
 #' Rcpp version of the Optimization function that returns the squared difference between user
@@ -134,7 +134,7 @@ LSRA_MCMC_sim <- function(nits, pars, JumpCV, adapt, parLB, parUB, R0ind, inflin
 #' @useDynLib DLMtool
 #' @export
 movfit_Rcpp <- function(par, prb, frac) {
-    .Call('DLMtool_movfit_Rcpp', PACKAGE = 'DLMtool', par, prb, frac)
+    .Call('_DLMtool_movfit_Rcpp', PACKAGE = 'DLMtool', par, prb, frac)
 }
 
 #' Rcpp version of the q Optimizer
@@ -163,7 +163,7 @@ movfit_Rcpp <- function(par, prb, frac) {
 #' @export
 #' @keywords internal
 optQ_cpp <- function(lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc) {
-    .Call('DLMtool_optQ_cpp', PACKAGE = 'DLMtool', lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc)
+    .Call('_DLMtool_optQ_cpp', PACKAGE = 'DLMtool', lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc)
 }
 
 #' Population dynamics model for one annual time-step
@@ -189,7 +189,7 @@ optQ_cpp <- function(lnIn, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, m
 #' @export
 #' @keywords internal
 popdynOneTScpp <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel) {
-    .Call('DLMtool_popdynOneTScpp', PACKAGE = 'DLMtool', nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel)
+    .Call('_DLMtool_popdynOneTScpp', PACKAGE = 'DLMtool', nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel)
 }
 
 #' Population dynamics model in CPP
@@ -228,7 +228,7 @@ popdynOneTScpp <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0
 #' @export
 #' @keywords internal
 popdynCPP <- function(nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc, Fapic, maxF, control) {
-    .Call('DLMtool_popdynCPP', PACKAGE = 'DLMtool', nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc, Fapic, maxF, control)
+    .Call('_DLMtool_popdynCPP', PACKAGE = 'DLMtool', nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc, Fapic, maxF, control)
 }
 
 #' Rcpp version of the Projection Optimizer
@@ -258,6 +258,6 @@ popdynCPP <- function(nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln,
 #' @export
 #' @keywords internal
 projOpt_cpp <- function(lnIn, Mc, hc, Mac, Wac, R0c, Vc, retAc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, Control) {
-    .Call('DLMtool_projOpt_cpp', PACKAGE = 'DLMtool', lnIn, Mc, hc, Mac, Wac, R0c, Vc, retAc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, Control)
+    .Call('_DLMtool_projOpt_cpp', PACKAGE = 'DLMtool', lnIn, Mc, hc, Mac, Wac, R0c, Vc, retAc, nyears, maxage, movc, Spat_targc, SRrelc, aRc, bRc, proyears, Control)
 }
 

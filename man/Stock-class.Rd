@@ -29,13 +29,13 @@ dynamics model
 
 \item{\code{Fdisc}}{Fraction of discarded fish that die. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{h}}{Steepness of the stock recruit relationship Uniform distribution lower and upper bounds. Values from 1/5 to 1}
+\item{\code{h}}{Steepness of the stock recruit relationship. Uniform distribution lower and upper bounds. Values from 1/5 to 1}
 
 \item{\code{SRrel}}{Type of stock-recruit relationship. Single value, switch (1) Beverton-Holt (2) Ricker. Integer}
 
 \item{\code{Linf}}{Maximum length. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{K}}{von Bertalanffy growth parameter k Uniform distribution lower and upper bounds. Positive real numbers}
+\item{\code{K}}{von Bertalanffy growth parameter k. Uniform distribution lower and upper bounds. Positive real numbers}
 
 \item{\code{t0}}{von Bertalanffy theoretical age at length zero. Uniform distribution lower and upper bounds. Non-positive real numbers}
 
