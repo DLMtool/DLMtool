@@ -108,7 +108,7 @@ setClass("Data", representation(Name = "character", Year = "vector",
   PosMPs = "vector", MPs = "vector", OM = "data.frame", Obs = "data.frame", 
   TAC = "array", Sense = "array", CAL_bins = "numeric", CAL = "array", 
   MPrec = "vector", MPeff = "vector", ML = "array", Lbar = "array", 
-  Lc = "array", LHYear = "numeric", nareas = "numeric", Misc = "list"))
+  Lc = "array", LHYear = "numeric", nareas = "numeric", Misc = "list", TACbias="array"))
 
 # initialize Data
 setMethod("initialize", "Data", function(.Object, stock = "nada") {
