@@ -23,6 +23,7 @@
 #' @references Method based on equations of Carl Walters (bug him with
 #' questions and expect colourful responses)
 #' @export
+#' @importFrom TMB MakeADFun sdreport
 #' @useDynLib DD_tmb_sim
 DD_TMB <- function(x, Data, reps = 100) {
   dependencies = "Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@vbt0, Data@CV_vbt0, Data@Mort, Data@CV_Mort, Data@wla, Data@wlb"
