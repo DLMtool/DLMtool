@@ -1,7 +1,7 @@
 all: DD_tmb_sim.so 
 
 DD_tmb_sim.so: DD_tmb_sim.cpp
-	Rscript --vanilla -e "TMB::compile('DD_tmb_sim.cpp')"
+	Rscript --vanilla -e "TMB::compile('DD_tmb_sim.cpp', safebounds=FALSE, safeunload=FALSE)"
 
 clean:
 	rm -rf *o

@@ -1,8 +1,0 @@
-
-all: DD_tmb_sim.dll
-
-DD_tmb_sim.dll: DD_tmb_sim.cpp
-				Rscript --vanilla -e "TMB::compile('DD_tmb_sim.cpp')"
-
-clean:
-				rm -rf *o
