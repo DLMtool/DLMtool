@@ -13,7 +13,8 @@ Description: Development, simulation testing, and implementation of management
 License: GPL-2
 Depends:
     R (>= 2.10.0),
-    snowfall
+    snowfall,
+    TMB
 Imports:
     abind,
     coda,
@@ -34,6 +35,6 @@ Suggests:
     knitr,
     rmarkdown,
     testthat
-LinkingTo: Rcpp, RcppArmadillo
+LinkingTo: Rcpp, RcppArmadillo, RcppEigen, TMB
 RoxygenNote: 6.0.1
 BugReports: https://github.com/DLMtool/DLMtool/issues

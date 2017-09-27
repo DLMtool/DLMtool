@@ -10,7 +10,7 @@
 #'
 plotSelect <- function(OM, pyears=4, sim=NA, type="l") {
   if (class(OM) != "OM") stop("Object must be class 'OM' ")
-  OM@nsim <- nsim <- 10 # OM@nsim 
+  OM@nsim <- nsim <- max(10, sim) # OM@nsim 
   years <- OM@nyears + OM@proyears
   yr.vert <- round(seq(1, years, length.out=pyears),0)
   StockPars <- SampleStockPars(OM)
