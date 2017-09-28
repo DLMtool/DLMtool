@@ -14,7 +14,7 @@
 #' @usage OM_xl(fname, stkname, fpath = '', saveCSV = FALSE)
 #' @param fname Name of the Excel spreadsheet file. Must include file
 #' extension.
-#' @param stkname Name of the Stock.
+#' @param stkname Name of the Stock. Only required if more than one Stock in the Excel file.
 #' @param fpath Full file path, if file is not in current working directory
 #' @param saveCSV Do you also want to save the Stock, Fleet and Observation
 #' parameters to CSV files?
@@ -27,9 +27,20 @@
 #' }
 #' 
 #' @export 
-OM_xl <- function(fname, stkname, fpath = "", saveCSV = FALSE) {
+OM_xl <- function(fname, stkname=NULL, fpath = "", saveCSV = FALSE) {
   infile <- paste0(fpath, fname)  # full path and name 
   shtname <- readxl::excel_sheets(infile)  # names of the sheets 
+  
+  if (is.null(stkname)) {
+    names <- c(unlist(strsplit(shtname[grep('Stock', shtname)], "Stock")),
+               unlist(strsplit(shtname[grep('Fleet', shtname)], "Fleet")),
+               unlist(strsplit(shtname[grep('Obs', shtname)], "Obs")))
+    if (length(unique(names)) == 1) {
+      stkname <- unique(names)
+    } else stop("stkname not provided and multiple stocks found in spreadsheet.")
+  }
+
+  
   # Stock
   sheet <- grep(paste0(stkname, "Stock"), shtname)
   if(length(sheet)<1) stop("No Stock sheet found. Looking for: ", paste0(stkname, "Stock"))
