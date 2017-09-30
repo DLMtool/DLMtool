@@ -10,7 +10,7 @@ OM_xl(fname, stkname, fpath = '', saveCSV = FALSE)
 \item{fname}{Name of the Excel spreadsheet file. Must include file
 extension.}
 
-\item{stkname}{Name of the Stock.}
+\item{stkname}{Name of the Stock. Only required if more than one Stock in the Excel file.}
 
 \item{fpath}{Full file path, if file is not in current working directory}
 
