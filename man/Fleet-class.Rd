@@ -16,19 +16,25 @@ The component of the operating model that controls fishing dynamics
 
 \item{\code{Spat_targ}}{Distribution of fishing in relation to spatial biomass: fishing distribution is proportional to B^Spat_targ. Uniform distribution lower and upper bounds. Real numbers}
 
-\item{\code{Esd}}{Additional inter-annual variability in fishing mortality rate. Uniform distribution lower and upper bounds. Non-negative real numbers}
-
 \item{\code{EffYears}}{Years representing join-points (vertices) of time-varying effort. Vector. Non-negative real numbers}
 
 \item{\code{EffLower}}{Lower bound on relative effort corresponding to EffYears. Vector. Non-negative real numbers}
 
 \item{\code{EffUpper}}{Upper bound on relative effort corresponding to EffYears. Vector. Non-negative real numbers}
 
-\item{\code{LFS}}{Shortest length that is fully vulnerable to fishing. Uniform distribution lower and upper bounds. Positive real numbers}
+\item{\code{Esd}}{Additional inter-annual variability in fishing mortality rate. Uniform distribution lower and upper bounds. Non-negative real numbers}
+
+\item{\code{qinc}}{Average percentage change in fishing efficiency (applicable only to forward projection and input controls). Uniform distribution lower and upper bounds. Non-negative real numbers}
+
+\item{\code{qcv}}{Inter-annual variability in fishing efficiency (applicable only to forward projection and input controls). Uniform distribution lower and upper bounds. Non-negative real numbers}
 
 \item{\code{L5}}{Shortest length corresponding to 5 percent vulnerability. Uniform distribution lower and upper bounds. Positive real numbers}
 
+\item{\code{LFS}}{Shortest length that is fully vulnerable to fishing. Uniform distribution lower and upper bounds. Positive real numbers}
+
 \item{\code{Vmaxlen}}{The vulnerability of the longest/oldest fish. Uniform distribution lower and upper bounds. Fraction}
+
+\item{\code{isRel}}{Selectivity parameters in units of size-of-maturity (or absolute eg cm). Single value. Boolean.}
 
 \item{\code{LR5}}{Shortest length corresponding ot 5 percent retention. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
@@ -53,12 +59,6 @@ The component of the operating model that controls fishing dynamics
 \item{\code{VmaxLower}}{(Optional) Lower bound of Vmaxlen (use \code{ChooseSelect} function to set these). Vector. Fraction}
 
 \item{\code{VmaxUpper}}{(Optional) Upper bound of Vmaxlen (use \code{ChooseSelect} function to set these). Vector. Fraction}
-
-\item{\code{qinc}}{Average percentage change in fishing efficiency (applicable only to forward projection and input controls). Uniform distribution lower and upper bounds. Non-negative real numbers}
-
-\item{\code{qcv}}{Inter-annual variability in fishing efficiency (applicable only to forward projection and input controls). Uniform distribution lower and upper bounds. Non-negative real numbers}
-
-\item{\code{isRel}}{Selectivity parameters in units of size-of-maturity (or absolute eg cm). Single value. Boolean.}
 
 \item{\code{CurrentYr}}{The current calendar year (final year) of the historical simulations (eg 2011). Single value. Positive integer.}
 }}

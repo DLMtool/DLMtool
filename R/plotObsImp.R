@@ -37,55 +37,55 @@ plotObs <- function(x, nsim=500, nyears=50,
   
 
   # === Non time series ==================================================================== 
-  
+  cex.main <- 0.5
   op <- par(mfrow=c(4,4),mai=c(0.6,0.6,0.25,0.01),omi=c(0.01,0.01,0.4,0.01))
   
-  hist2(CAA_nsamp,col=col,axes=FALSE, main="No. annual catch-at-age obs (CAA_samp)", breaks=breaks,cex.main=0.9)
+  hist2(CAA_nsamp,col=col,axes=FALSE, main="No. annual catch-at-age obs (CAA_samp)", breaks=breaks,cex.main=cex.main)
   axis(side=1) 
   
-  hist2(CAA_ESS,col=col, axes=FALSE, main="Effective sample size CAA obs (CAA_ESS)", breaks=breaks,cex.main=0.9)
+  hist2(CAA_ESS,col=col, axes=FALSE, main="Effective sample size CAA obs (CAA_ESS)", breaks=breaks,cex.main=cex.main)
   axis(side=1) 
   
-  hist2(CAL_nsamp,col=col, axes=FALSE, main="No. annual catch-at-length obs (CAL_samp)", breaks=breaks,cex.main=0.9)
+  hist2(CAL_nsamp,col=col, axes=FALSE, main="No. annual catch-at-length obs (CAL_samp)", breaks=breaks,cex.main=cex.main)
   axis(side=1) 
   
-  hist2(CAL_ESS,col=col, axes=FALSE, main="Effective sample size CAL obs (CAL_ESS)", breaks=breaks,cex.main=0.9)
+  hist2(CAL_ESS,col=col, axes=FALSE, main="Effective sample size CAL obs (CAL_ESS)", breaks=breaks,cex.main=cex.main)
   axis(side=1) 
   
-  hist2(Mbias,col=col, axes=FALSE, main="Natural mortality rate bias (Mbias)", breaks=breaks,cex.main=0.9)
+  hist2(Mbias,col=col, axes=FALSE, main="Natural mortality rate bias (Mbias)", breaks=breaks,cex.main=cex.main)
   axis(side=1) 
   
-  hist2(FMSY_Mbias,col=col, axes=FALSE, main="FMSY/M bias (FMSY_Mbias)", breaks=breaks,cex.main=0.9)
+  hist2(FMSY_Mbias,col=col, axes=FALSE, main="FMSY/M bias (FMSY_Mbias)", breaks=breaks,cex.main=cex.main)
   axis(side=1)
   
-  hist2(lenMbias,col=col, axes=FALSE, main="Bias in length at maturity (lenMbias)", breaks=breaks,cex.main=0.9)
+  hist2(lenMbias,col=col, axes=FALSE, main="Bias in length at maturity (lenMbias)", breaks=breaks,cex.main=cex.main)
   axis(side=1)
   
-  hist2(LFCbias,col=col, axes=FALSE, main="Bias in length at first capture (LFCbias)", breaks=breaks,cex.main=0.9)
+  hist2(LFCbias,col=col, axes=FALSE, main="Bias in length at first capture (LFCbias)", breaks=breaks,cex.main=cex.main)
   axis(side=1)
   
-  hist2(LFSbias,col=col, axes=FALSE, main="Bias in length at full selection (LFSbias)", breaks=breaks,cex.main=0.9)
+  hist2(LFSbias,col=col, axes=FALSE, main="Bias in length at full selection (LFSbias)", breaks=breaks,cex.main=cex.main)
   axis(side=1)
   
-  hist2(Kbias,col=col, axes=FALSE, main="Bias in von B. K (Kbias)", breaks=breaks,cex.main=0.9)
+  hist2(Kbias,col=col, axes=FALSE, main="Bias in von B. K (Kbias)", breaks=breaks,cex.main=cex.main)
   axis(side=1)
   
-  hist2(t0bias,col=col, axes=FALSE, main="Bias in von B. t0 (t0bias)", breaks=breaks,cex.main=0.9)
+  hist2(t0bias,col=col, axes=FALSE, main="Bias in von B. t0 (t0bias)", breaks=breaks,cex.main=cex.main)
   axis(side=1)
   
-  hist2(Linfbias,col=col, axes=FALSE, main="Bias in von B. Linf (Linfbias)", breaks=breaks,cex.main=0.9)
+  hist2(Linfbias,col=col, axes=FALSE, main="Bias in von B. Linf (Linfbias)", breaks=breaks,cex.main=cex.main)
   axis(side=1)
   
-  hist2(Irefbias,col=col, axes=FALSE, main="Bias in index at MSY (Irefbias)", breaks=breaks,cex.main=0.9)
+  hist2(Irefbias,col=col, axes=FALSE, main="Bias in index at MSY (Irefbias)", breaks=breaks,cex.main=cex.main)
   axis(side=1)
   
-  hist2(Crefbias,col=col, axes=FALSE, main="Bias in MSY catch (Crefbias)", breaks=breaks,cex.main=0.9)
+  hist2(Crefbias,col=col, axes=FALSE, main="Bias in MSY catch (Crefbias)", breaks=breaks,cex.main=cex.main)
   axis(side=1)
   
-  hist2(Brefbias,col=col, axes=FALSE, main="Bias in MSY biomass (Brefbias)", breaks=breaks,cex.main=0.9)
+  hist2(Brefbias,col=col, axes=FALSE, main="Bias in MSY biomass (Brefbias)", breaks=breaks,cex.main=cex.main)
   axis(side=1)
   
-  hist2(Recsd,col=col, axes=FALSE, main="Bias in recent recruitment strength (Recsd)", breaks=breaks,cex.main=0.9)
+  hist2(Recsd,col=col, axes=FALSE, main="Bias in recent recruitment strength (Recsd)", breaks=breaks,cex.main=cex.main)
   axis(side=1)
   
   mtext(paste0("Observation biases and sample sizes for observation object ",Obs@Name),3,outer=T,line= 0.7,font=2)
@@ -147,7 +147,8 @@ plotObs <- function(x, nsim=500, nyears=50,
   
   # -----
   
-  mtext(paste0("Observation time series plots for observation object ",Obs@Name),3,outer=T,line= 0.7,font=2)
+  if (!is.na(Obs@Name)) mtext(paste0("Observation time series plots for observation object ",Obs@Name),3,outer=T,line= 0.7,font=2)
+  if (is.na(Obs@Name)) mtext(paste0("Observation time series plots for observation object "),3,outer=T,line= 0.7,font=2)
   
   on.exit(par(op))
   

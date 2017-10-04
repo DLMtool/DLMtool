@@ -3,6 +3,8 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 ### DLMtool v4.4.xx Development Version 
 
+- added TMB as dependency  
+
 #### Minor Changes 
 
 - BMSY/B0 now calculated from B0 assuming current conditions, i.e what would B0 be with today's productivity

@@ -22,7 +22,8 @@ A object of class OM
 }
 \description{
 A function to read in operating model parameters from an Excel spreadsheet
-with tabs named following specific convention.
+with tabs named following specific convention. Since DLMtool 4.5 this function is no
+longer recommended. Use 'OMinit' instead.
 }
 \details{
 The Excel spreadsheet must have tabs named with the following convention.

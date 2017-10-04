@@ -32,18 +32,22 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @param proyears Number of projected years. Note that in DLMtool V4.1+ 'proyears is ignored 
 #' if OM object contains the slot 'proyears'. 
 #' @param interval The assessment interval - how often would you like to update
-#' the management system?
+#' the management system? NOTE: since DLMtool V4.5 this slot is included in the 
+#' OM object which will override the value used here. This slot to be deprecated in the future.
 #' @param pstar The percentile of the sample of the management recommendation
-#' for each method
+#' for each method. NOTE: since DLMtool V4.5 this slot is included in the 
+#' OM object which will override the value used here. This slot to be deprecated in the future.
 #' @param maxF Maximum instantaneous fishing mortality rate that may be
-#' simulated for any given age class
-#' @param timelimit Maximum time taken for a method to carry out 10 reps
-#' (methods are ignored that take longer)
+#' simulated for any given age class. NOTE: since DLMtool V4.5 this slot is included in the 
+#' OM object which will override the value used here. This slot to be deprecated in the future.
 #' @param reps Number of samples of the management recommendation for each
 #' method. Note that when this is set to 1, the mean value of the data inputs
-#' is used.
+#' is used. NOTE: since DLMtool V4.5 this slot is included in the 
+#' OM object which will override the value used here. This slot to be deprecated in the future.
 #' @param CheckMPs Logical to indicate if Can function should be used to check
 #' if MPs can be run.
+#' @param timelimit Maximum time taken for a method to carry out 10 reps
+#' (methods are ignored that take longer)
 #' @param Hist Should model stop after historical simulations? Returns a list 
 #' containing all historical data
 #' @param ntrials Maximum of times depletion and recruitment deviations are 
@@ -61,8 +65,8 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @author T. Carruthers and A. Hordyk
 #' @export 
 runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim"),nsim=48,
-                      proyears=50,interval=4,pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, 
-                      CheckMPs = FALSE, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=FALSE, 
+                      proyears=50,interval=4,pstar = 0.5, maxF = 0.8,  reps = 1, 
+                      CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=FALSE, 
                       HZN=2, Bfrac=0.5) {
   
   
@@ -88,16 +92,29 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   if("seed"%in%slotNames(OM)) set.seed(OM@seed) # set seed for reproducibility 
   
-  OM <- ChkObj(OM) # Check that all required slots in OM object contain values 
+  OM <- updateMSE(OM)
   tiny <- 1e-15  # define tiny variable
   
   # Backwards compatible with DLMtool v < 4
   if("nsim"%in%slotNames(OM))nsim<-OM@nsim
   if("proyears"%in%slotNames(OM))proyears<-OM@proyears
   
+  # Backwards compatible with DLMtool v < 4.4.2
+  if(length(OM@interval)>0) interval <- OM@interval
+  if(length(OM@pstar)>0) pstar <- OM@pstar
+  if(length(OM@maxF)>0) maxF <- OM@maxF
+  if(length(OM@reps)>0) reps <- OM@reps
+
+  OM@interval <- interval 
+  OM@pstar <- pstar 
+  OM@maxF <- maxF 
+  OM@reps <- reps 
+  
   OM@nsim<-nsim # number of simulations
   OM@proyears<-proyears # number of projection years
   nyears <- OM@nyears  # number of historical years
+  
+  OM <- ChkObj(OM) # Check that all required slots in OM object contain values 
   
   ### Sampling OM parameters ###
   message("Loading operating model")
@@ -681,24 +698,30 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                  SSBMSY=SSBMSY, BMSY_B0=BMSY_B0, SSBMSY_SSB0=SSBMSY_SSB0, SSB0=SSB0, B0=B0)
     
     # updated sampled pars
-    SampPars <- list(dep=dep, Esd=Esd, Find=Find, procsd=procsd, AC=AC, M=M, Msd=Msd, 
-                     Mgrad=Mgrad, hs=hs, Linf=Linf, Linfsd=Linfsd, Linfgrad=Linfgrad, recgrad=recgrad,
-                     K=K, Ksd=Ksd, Kgrad=Kgrad, t0=t0, L50=L50, L50_95=L50_95, Spat_targ=Spat_targ,
-                     Frac_area_1=Frac_area_1, Prob_staying=Prob_staying,  
-                     Csd=Csd, Cbias=Cbias, CAA_nsamp=CAA_nsamp, CAA_ESS=CAA_ESS, CAL_nsamp=CAL_nsamp,
-                     CAL_ESS=CAL_ESS, CALcv=CALcv, betas=betas, Isd=Isd, Derr=Derr, Dbias=Dbias, 
-                     Mbias=Mbias, FMSY_Mbias=FMSY_Mbias, lenMbias=lenMbias, LFCbias=LFCbias,
-                     LFSbias=LFSbias, Aerr=Aerr, Abias=Abias, Kbias=Kbias, t0bias=t0bias, 
-                     Linfbias=Linfbias, Irefbias=Irefbias, Crefbias=Crefbias, Brefbias=Brefbias,
-                     Recsd=Recsd, qinc=qinc, qcv=qcv, L5=L5, LFS=LFS, Vmaxlen=Vmaxlen, L5s=L5s, 
-                     LFSs=LFSs, Vmaxlens=Vmaxlens, Perr=Perr, R0=R0, Mat_age=Mat_age, 
-                     Mrand=Mrand, Linfrand=Linfrand, Krand=Krand, maxage=maxage, V=V, retA=retA,
-                     retL=retL, Depletion=Depletion,qs=qs, TACFrac=TACFrac,TACSD=TACSD,EFrac=EFrac,
-                     ESD=ESD,SizeLimFrac=SizeLimFrac,SizeLimSD=SizeLimSD, Fdisc=Fdisc, DR=DR, ageM=ageM) 
+    # SampPars <- list(dep=dep, Esd=Esd, Find=Find, procsd=procsd, AC=AC, M=M, Msd=Msd, 
+    #                  Mgrad=Mgrad, hs=hs, Linf=Linf, Linfsd=Linfsd, Linfgrad=Linfgrad, recgrad=recgrad,
+    #                  K=K, Ksd=Ksd, Kgrad=Kgrad, t0=t0, L50=L50, L50_95=L50_95, Spat_targ=Spat_targ,
+    #                  Frac_area_1=Frac_area_1, Prob_staying=Prob_staying,  
+    #                  Csd=Csd, Cbias=Cbias, CAA_nsamp=CAA_nsamp, CAA_ESS=CAA_ESS, CAL_nsamp=CAL_nsamp,
+    #                  CAL_ESS=CAL_ESS, CALcv=CALcv, betas=betas, Isd=Isd, Derr=Derr, Dbias=Dbias, 
+    #                  Mbias=Mbias, FMSY_Mbias=FMSY_Mbias, lenMbias=lenMbias, LFCbias=LFCbias,
+    #                  LFSbias=LFSbias, Aerr=Aerr, Abias=Abias, Kbias=Kbias, t0bias=t0bias, 
+    #                  Linfbias=Linfbias, Irefbias=Irefbias, Crefbias=Crefbias, Brefbias=Brefbias,
+    #                  Recsd=Recsd, qinc=qinc, qcv=qcv, L5=L5, LFS=LFS, Vmaxlen=Vmaxlen, L5s=L5s, 
+    #                  LFSs=LFSs, Vmaxlens=Vmaxlens, Perr=Perr, R0=R0, Mat_age=Mat_age, 
+    #                  Mrand=Mrand, Linfrand=Linfrand, Krand=Krand, maxage=maxage, V=V, retA=retA,
+    #                  retL=retL, Depletion=Depletion,qs=qs, TACFrac=TACFrac,TACSD=TACSD,EFrac=EFrac,
+    #                  ESD=ESD,SizeLimFrac=SizeLimFrac,SizeLimSD=SizeLimSD, Fdisc=Fdisc, DR=DR, ageM=ageM) 
+    StockPars$Depletion <- Depletion 
+    FleetPars$qs <- qs
+    SampPars <- c(StockPars, FleetPars, ObsPars, ImpPars)
     Data@Misc <- list()
     HistData <- list(SampPars=SampPars, TSdata=TSdata, AtAge=AtAge, MSYs=MSYs, Data=Data)
     return(HistData)	
   }
+  
+
+  
   
   # assign('Data',Data,envir=.GlobalEnv) # for debugging fun
   

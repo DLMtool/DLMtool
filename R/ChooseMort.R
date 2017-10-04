@@ -99,6 +99,7 @@ SketchM <- function(x, y, xlab, ylab) {
   return(mat)
 }
 
+
 #' Plot M-at-Age and Size
 #'
 #' @param Stock An object of class 'Stock' or 'OM' 
@@ -135,7 +136,7 @@ plotM <- function(Stock, nsim=5) {
   op <- par(no.readonly = TRUE)
   on.exit(par(op))
   
-
+  
   par(mfrow=c(3,3), bty="l", las=1, mar=c(3,3,2,1), oma=c(2,2,0,0))
   ylim <- c(0, max(M_at_age))
   lwd <- 2

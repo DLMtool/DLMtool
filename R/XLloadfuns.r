@@ -2,7 +2,8 @@
 #' Read in operating model parameters from Excel spreadsheet
 #' 
 #' A function to read in operating model parameters from an Excel spreadsheet
-#' with tabs named following specific convention.
+#' with tabs named following specific convention. Since DLMtool 4.5 this function is no
+#' longer recommended. Use 'OMinit' instead.
 #' 
 #' The Excel spreadsheet must have tabs named with the following convention.
 #' For example if \code{stkname} is 'myFish', the Stock parameters are in a tab
@@ -28,9 +29,10 @@
 #' 
 #' @export 
 OM_xl <- function(fname, stkname=NULL, fpath = "", saveCSV = FALSE) {
+  .Deprecated('OMinit')
   infile <- paste0(fpath, fname)  # full path and name 
   shtname <- readxl::excel_sheets(infile)  # names of the sheets 
-  
+ 
   if (is.null(stkname)) {
     names <- c(unlist(strsplit(shtname[grep('Stock', shtname)], "Stock")),
                unlist(strsplit(shtname[grep('Fleet', shtname)], "Fleet")),

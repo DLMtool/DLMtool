@@ -324,3 +324,38 @@
 "testOM"
 
 
+#'  StockDescription 
+#'
+#'  A data.frame with description of slots for class Stock
+#'
+"StockDescription"
+
+
+#'  FleetDescription 
+#'
+#'  A data.frame with description of slots for class Fleet
+#'
+"FleetDescription"
+
+
+#'  ObsDescription 
+#'
+#'  A data.frame with description of slots for class Obs
+#'
+"ObsDescription"
+
+
+#'  ImpDescription 
+#'
+#'  A data.frame with description of slots for class Imp
+#'
+"ImpDescription"
+
+
+#'  DataDescription 
+#'
+#'  A data.frame with description of slots for class Data
+#'
+"DataDescription"
+
+
