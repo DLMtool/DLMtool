@@ -29,7 +29,7 @@
 #' 
 #' @export 
 OM_xl <- function(fname, stkname=NULL, fpath = "", saveCSV = FALSE) {
-  .Deprecated('OMinit')
+  .Deprecated('XL2OM')
   infile <- paste0(fpath, fname)  # full path and name 
   shtname <- readxl::excel_sheets(infile)  # names of the sheets 
  
