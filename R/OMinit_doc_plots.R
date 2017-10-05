@@ -13,19 +13,19 @@ plotText <- function(OM, slots, RMDfile) {
                       "qcv" = 1,
                       "Vmaxlen"=1,
                       "DR" = 0.75)
-    cat("```{r, echo=FALSE, fig.asp=", fig.asp, "}\n", append=TRUE, file=RMDfile, sep="")
+    cat("```{r plot.", slotstext, ", echo=FALSE, fig.asp=", fig.asp, "}\n", append=TRUE, file=RMDfile, sep="")
     cat("plotSlot(OM, Pars, slot='", slotstext, "')\n", append=TRUE, file=RMDfile, sep="")
     cat("```\n\n\n", append=TRUE, file=RMDfile, sep="")   
     
   } else if ('Obs' %in% slots) {
     cat("\n### Obs Plots\n", append=TRUE, file=RMDfile, sep="")
-    cat("```{r, echo=FALSE, fig.asp=1}\n", append=TRUE, file=RMDfile, sep="")
+    cat("```{r plot.Obs, echo=FALSE, fig.asp=1}\n", append=TRUE, file=RMDfile, sep="")
     cat("plotObs(OM)\n", append=TRUE, file=RMDfile, sep="")
     cat("```\n\n", append=TRUE, file=RMDfile, sep="")   
     
   } else if ("Imp" %in% slots) {
     cat("\n### Imp Plots\n", append=TRUE, file=RMDfile, sep="")
-    cat("```{r, echo=FALSE, fig.asp=1}\n", append=TRUE, file=RMDfile, sep="")
+    cat("```{r plot.Imp, echo=FALSE, fig.asp=1}\n", append=TRUE, file=RMDfile, sep="")
     cat("plotImp(OM)\n", append=TRUE, file=RMDfile, sep="")
     cat("```\n\n", append=TRUE, file=RMDfile, sep="") 
   } 

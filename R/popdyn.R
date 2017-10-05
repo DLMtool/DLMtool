@@ -677,6 +677,9 @@ optF <- function(fapic, vuln, catch, bio, mort, fdist, maxage, nareas) {
   FM <- array(NA, dim=c(maxage, nareas))
   ind <- as.matrix(expand.grid(1:maxage, 1:nareas))
   FM[ind] <- exp(fapic) * vuln[ind[,1]] * fdist[ind[,2]]
+  
+  # FM[ind] <- (exp(fapic) * vuln[ind[,1]] * fdist[ind[,2]]) / area_size[ind[,2]]
+  
   Z <- FM + mort 
 
   pCatch <- FM/Z * bio* (1-exp(-Z))

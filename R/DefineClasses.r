@@ -529,12 +529,13 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
 #' showClass('Fleet')
 #' 
 setClass("Fleet", slots = c(Name = "character", nyears = "numeric", Spat_targ = "numeric", 
-                            Esd = "numeric", qinc = "numeric", qcv = "numeric", EffYears = "numeric", 
-                            EffLower = "numeric", EffUpper = "numeric", SelYears = "numeric", AbsSelYears = "numeric", 
-                            L5 = "numeric", LFS = "numeric", Vmaxlen = "numeric", 
+                            EffYears = "numeric", EffLower = "numeric", EffUpper = "numeric", Esd = "numeric", 
+                            qinc = "numeric", qcv = "numeric",   
+                            L5 = "numeric", LFS = "numeric", Vmaxlen = "numeric", isRel = "character",
                             LR5 = "numeric", LFR = "numeric", Rmaxlen = "numeric", DR = "numeric",
+                            SelYears = "numeric", AbsSelYears = "numeric",
                             L5Lower = "numeric", L5Upper = "numeric", LFSLower = "numeric", LFSUpper = "numeric", VmaxLower = "numeric", 
-                            VmaxUpper = "numeric", isRel = "character",CurrentYr="numeric"))
+                            VmaxUpper = "numeric", CurrentYr="numeric"))
 
 # initialize Fleet
 setMethod("initialize", "Fleet", function(.Object, file = NA) {

@@ -4,10 +4,10 @@
 \alias{OMinit}
 \title{Initialize Operating Model}
 \usage{
-OMinit(name = "Example", templates = NULL, overwrite = FALSE)
+OMinit(name = NULL, templates = NULL, overwrite = FALSE)
 }
 \arguments{
-\item{name}{The name of the Excel and text file to be created in the working directory (character)}
+\item{name}{The name of the Excel and source.rmd file to be created in the working directory (character)}
 
 \item{templates}{An optional named list of existing DLMtool Stock, Fleet, Obs, or Imp objects
 to use as templates for the Operating Model.}
@@ -15,22 +15,22 @@ to use as templates for the Operating Model.}
 \item{overwrite}{Logical. Should files be overwritten if they already exist?}
 }
 \value{
-An xlsx and text file are created in the working directory.
+OM xlsx and source.rmd files are created in the working directory.
 }
 \description{
-Generates an Excel spreadsheet and a text file in the current working directory for 
+Generates an Excel spreadsheet and a source.rmd file in the current working directory for 
 specifying and documenting a DLMtool Operating Model.
 }
 \examples{
 \dontrun{
-# Create an Excel OM template and text file called 'myOM.xlxs' and 'myOM.txt': 
+# Create an Excel OM template and rmd file called 'myOM.xlsx' and 'myOM_source.rmd': 
 OMinit('myOM')
 
-# Create an Excel OM template and text file called 'myOM.xlxs' and 'myOM.txt', using
+# Create an Excel OM template and text file called 'myOM.rmd' and 'myOM_source.rmd', using
 the Stock object 'Herring' as a template: 
 OMinit('myOM', templates=list(Stock='Herring'))
 
-# Create an Excel OM template and text file called 'myOM.xlxs' and 'myOM.txt', using
+# Create an Excel OM template and text file called 'myOM.rmd' and 'myOM_source.rmd', using
 the Stock object 'Herring', and Obs object 'Generic_obs' as templates: 
 OMinit('myOM', templates=list(Stock='Herring', Obs='Generic_obs'), overwrite=TRUE)
 }

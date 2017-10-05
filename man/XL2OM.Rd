@@ -4,13 +4,15 @@
 \alias{XL2OM}
 \title{Load OM from Excel file}
 \usage{
-XL2OM(name = NULL, cpars = NULL)
+XL2OM(name = NULL, cpars = NULL, msg = TRUE)
 }
 \arguments{
 \item{name}{Name of the OM Excel file in the current working directory.}
 
 \item{cpars}{An optional list of custom parameters (single parameters are a vector nsim 
 long, time series are a matrix nsim rows by nyears columns)}
+
+\item{msg}{Should messages be printed?}
 }
 \value{
 An object of class OM

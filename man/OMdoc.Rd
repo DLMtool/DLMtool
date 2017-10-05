@@ -4,33 +4,23 @@
 \alias{OMdoc}
 \title{Generate OM Documentation Report}
 \usage{
-OMdoc(OM, txt.file = NULL, overwrite = FALSE, toc = TRUE,
-  color = "blue", out.file = NULL, output = "html_document",
-  theme = "flatly", inc.plot = TRUE, render = TRUE)
+OMdoc(OM = NULL, rmd.source = NULL, overwrite = FALSE, out.file = NULL,
+  inc.plot = TRUE, render = TRUE)
 }
 \arguments{
-\item{OM}{An object of class 'OM'}
+\item{OM}{An object of class 'OM' or the name of an OM xlsx file}
 
-\item{txt.file}{Optional. Name of the text file corresponding to the 'OM'. Default assumption
-is that the txt file is 'OM@Name.txt'}
+\item{rmd.source}{Optional. Name of the source.rmd file corresponding to the 'OM'. Default assumption
+is that the file is 'OM@Name_source.Rmd'}
 
 \item{overwrite}{Logical. Should existing files be overwritten?}
 
-\item{toc}{Logical. Should a Table of Contents be included?}
-
-\item{color}{Character. Color of the OM values in the text.}
-
 \item{out.file}{Optional. Character. Name of the output file. Default is the same as the text file.}
-
-\item{output}{Character. Format of the compiled output document. Default is 'html_document'. Other 
-options may require additional software and settings.}
-
-\item{theme}{Optional. Theme for the html output file.}
 
 \item{inc.plot}{Logical. Should the plots be included?}
 
-\item{render}{Logical. Should the document be compiled? May be useful if there are problems 
-with compililing the Rmd file.}
+\item{render}{Logical. Should the document be compiled? May be useful to turn off if 
+there are problems with compililing the Rmd file.}
 }
 \value{
 Creates a Rmarkdown file and compiles a HTML report file in the working directory.
