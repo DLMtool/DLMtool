@@ -142,11 +142,11 @@
 "Generic_FlatE"
 
 
-#'  Generic_fleet Fleet
+#'  Generic_Fleet Fleet
 #'
 #'  An object of class Fleet
 #'
-"Generic_fleet"
+"Generic_Fleet"
 
 
 #'  Generic_IncE Fleet
@@ -191,11 +191,11 @@
 "Targeting_Small_Fish"
 
 
-#'  Generic_obs Obs
+#'  Generic_Obs Obs
 #'
 #'  An object of class Obs
 #'
-"Generic_obs"
+"Generic_Obs"
 
 
 #'  Imprecise_Biased Obs

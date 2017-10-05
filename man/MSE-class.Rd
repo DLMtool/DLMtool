@@ -57,6 +57,7 @@ simulation conditions and performance of data-limited methods
  \item LFC: length at first capture, the smallest length that can be caught by the gear
  \item OFLreal: the true simulated Over Fishing Limit (FMSY x biomass) updated in each management update of the projection
  \item Spat_targ: spatial targetting parameter, fishing mortality rate across areas is proportional to vulnerable biomass raised to the power of this number. 
+ \item Size_area_1: The size of area 1 relative to area 2
  \item Frac_area_1: the fraction of unfished biomass inhabiting area 1 (can be seen as fraction of habitat in area 1 or relative size of area 1)
  \item Prob_staying: the probability that individuals in area 1 remain there between time-steps
  \item AC: autocorrelation in recruitment

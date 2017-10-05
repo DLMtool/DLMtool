@@ -970,7 +970,7 @@ Template <- function(type=c("Stock", "Fleet", "Obs", "Imp")) {
                "Maturity: L50, L50_95",
                "Stock depletion: D",
                "Length-weight conversion parameters: a, b",
-               "Spatial distribution and movement: Frac_area_1, Prob_staying",
+               "Spatial distribution and movement: Size_area_1, Frac_area_1, Prob_staying",
                "Discard Mortality: Fdisc "), ncol=1)
   if (type == "Fleet") mat <- 
       matrix(c(

@@ -4,8 +4,8 @@
 \alias{popdyn}
 \title{Population dynamics model}
 \usage{
-popdyn(nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc, Prec,
-  movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc,
+popdyn(nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge, Vuln, Retc,
+  Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc,
   Fapic = NULL, maxF, control = 1)
 }
 \arguments{
@@ -18,6 +18,8 @@ popdyn(nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc, Prec,
 \item{pyears}{Integer. Number of years to project the model forward}
 
 \item{M_age}{Numeric matrix (dimensions maxage, pyears) with natural mortality at age}
+
+\item{Asize_c}{Numeric vector (length nareas) with size of each area}
 
 \item{MatAge}{Numeric vector (length maxage) with proportion mature for each age-class}
 

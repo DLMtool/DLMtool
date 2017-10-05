@@ -391,6 +391,7 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
 #' @slot D Current level of stock depletion SSB(current)/SSB(unfished). Uniform distribution lower and upper bounds. Fraction
 #' @slot a Length-weight parameter alpha. Single value. Positive real number 
 #' @slot b Length-weight parameter beta. Single value. Positive real number
+#' @slot Size_area_1 The size of area 1 relative to area 2. Uniform distribution lower and upper bounds. Positive real numbers
 #' @slot Frac_area_1 The fraction of the unfished biomass in stock 1. Uniform distribution lower and upper bounds. Positive real numbers
 #' @slot Prob_staying The probability of inviduals in area 1 remaining in area 1 over the course of one year. Uniform distribution lower and upper bounds. Positive fraction.
 #' @slot Fdisc Fraction of discarded fish that die. Uniform distribution lower and upper bounds. Non-negative real numbers 
@@ -413,7 +414,8 @@ setClass("Stock", representation(Name = "character", maxage = "numeric",
                                  L50 = "numeric", L50_95 = "numeric", 
                                  D = "numeric", 
                                  a = "numeric", b = "numeric",
-                                 Frac_area_1 = "numeric", Prob_staying = "numeric", Fdisc="numeric", Source = "character"))
+                                 Size_area_1 = "numeric", Frac_area_1 = "numeric", Prob_staying = "numeric", 
+                                 Fdisc="numeric", Source = "character"))
 
 # initialize Stock
 setMethod("initialize", "Stock", function(.Object, file = NA) {
@@ -464,6 +466,7 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
       .Object@Period <- as.numeric(dat[match("Period", dname), 1:2])
       .Object@Amplitude <- as.numeric(dat[match("Amplitude", dname), 1:2])
       .Object@AC <- as.numeric(dat[match("AC", dname), 1:2])
+      .Object@Size_area_1 <- as.numeric(dat[match("Size_area_1", dname), 1:2])
       .Object@Frac_area_1 <- as.numeric(dat[match("Frac_area_1", dname), 1:2])
       .Object@Prob_staying <- as.numeric(dat[match("Prob_staying", dname), 1:2])
       .Object@L50 <- as.numeric(dat[match("L50", dname), 1:2])
@@ -478,6 +481,9 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
   }
   if (all(is.na(.Object@LenCV))) .Object@LenCV <- c(0.08, 0.12)
   if (all(is.na(.Object@recgrad))) .Object@recgrad <- c(0, 0) # recgrad not currently used
+  if (all(is.na(.Object@Size_area_1))) .Object@Size_area_1 <- .Object@Frac_area_1
+  if (length(.Object@Size_area_1) == 0) .Object@Size_area_1 <- .Object@Frac_area_1
+  
   .Object
   
 })
@@ -911,6 +917,7 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
 #' @slot D Current level of stock depletion SSB(current)/SSB(unfished). Uniform distribution lower and upper bounds. Fraction
 #' @slot a Length-weight parameter alpha. Single value. Positive real number 
 #' @slot b Length-weight parameter beta. Single value. Positive real number
+#' @slot Size_area_1 The size of area 1 relative to area 2. Uniform distribution lower and upper bounds. Positive real numbers
 #' @slot Frac_area_1 The fraction of the unfished biomass in stock 1. Uniform distribution lower and upper bounds. Positive real numbers
 #' @slot Prob_staying The probability of inviduals in area 1 remaining in area 1 over the course of one year. Uniform distribution lower and upper bounds. Positive fraction.
 #' @slot Fdisc Fraction of discarded fish that die. Uniform distribution lower and upper bounds. Non-negative real numbers 
@@ -1081,6 +1088,11 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
   if(all(is.na(.Object@Rmaxlen))) .Object@Rmaxlen <- c(1,1)
   if(all(is.na(.Object@Fdisc))) .Object@Fdisc <- c(0,0)  
   
+  if (.hasSlot(.Object, "Size_area_1")) {
+    if (length(.Object@Size_area_1)==0) .Object@Size_area_1 <- .Object@Frac_area_1
+    if (all(is.na(.Object@Size_area_1))) .Object@Size_area_1 <- .Object@Frac_area_1
+  } 
+  
   .Object@seed=1
   .Object
 })
@@ -1139,6 +1151,7 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
 #'   \item LFC: length at first capture, the smallest length that can be caught by the gear
 #'   \item OFLreal: the true simulated Over Fishing Limit (FMSY x biomass) updated in each management update of the projection
 #'   \item Spat_targ: spatial targetting parameter, fishing mortality rate across areas is proportional to vulnerable biomass raised to the power of this number. 
+#'   \item Size_area_1: The size of area 1 relative to area 2
 #'   \item Frac_area_1: the fraction of unfished biomass inhabiting area 1 (can be seen as fraction of habitat in area 1 or relative size of area 1)
 #'   \item Prob_staying: the probability that individuals in area 1 remain there between time-steps
 #'   \item AC: autocorrelation in recruitment

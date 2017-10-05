@@ -187,14 +187,14 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   # == Sample Spatial Parameters ====
   if (!exists("Frac_area_1", inherits=FALSE)) Frac_area_1 <- runif(nsim, Stock@Frac_area_1[1], Stock@Frac_area_1[2])  # sampled fraction of unfished biStockass in area 1 (its a two area model by default)
   if (!exists("Prob_staying", inherits=FALSE)) Prob_staying <- runif(nsim, Stock@Prob_staying[1], Stock@Prob_staying[2])  # sampled probability of individuals staying in area 1 among years
-  # if (!exists("Size_area_1", inherits=FALSE)) Size_area_1 <- runif(nsim, Stock@Size_area_1[1], Stock@Size_area_1[2])  # currently redundant parameter for the habitat area size of area 1
+  if (!exists("Size_area_1", inherits=FALSE)) Size_area_1 <- runif(nsim, Stock@Size_area_1[1], Stock@Size_area_1[2])  # currently redundant parameter for the habitat area size of area 1
   
   StockOut$Frac_area_1 <- Frac_area_1
   StockOut$Prob_staying <- Prob_staying
-  # StockOut$Size_area_1 <- Size_area_1
+  StockOut$Size_area_1 <- Size_area_1
   
-  # StockOut$Asize <- cbind(StockOut$Size_area_1, 1 - StockOut$Size_area_1)
-  
+  StockOut$Asize <- cbind(StockOut$Size_area_1, 1 - StockOut$Size_area_1)
+
   # === Generate random numbers for random walk ====
   if (!exists("Mrand", inherits=FALSE)) Mrand <- matrix(exp(rnorm(nsim*(proyears+nyears), -0.5 * Msd^2, Msd)), nrow=nsim, ncol=proyears+nyears)
   if (!exists("Linfrand", inherits=FALSE)) Linfrand <- matrix(exp(rnorm(nsim*(proyears+nyears), -0.5 * Linfsd^2, Linfsd)), nrow=nsim, ncol=proyears+nyears)

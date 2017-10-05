@@ -4,12 +4,14 @@
 \alias{getFMSY3}
 \title{Calculate FMSY and related metrics using Rcpp code}
 \usage{
-getFMSY3(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age, V, retA,
-  Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, SSB0, B0, maxF,
-  useCPP = TRUE)
+getFMSY3(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age, V,
+  retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, SSB0, B0,
+  maxF, useCPP = TRUE)
 }
 \arguments{
 \item{x}{Integer, the simulation number}
+
+\item{Asize}{A matrix (nsim by nareas) with size of areas}
 
 \item{nareas}{The number of spatial areas}
 

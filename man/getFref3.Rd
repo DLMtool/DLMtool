@@ -4,12 +4,14 @@
 \alias{getFref3}
 \title{Calculate Reference Yield}
 \usage{
-getFref3(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age, V, retA,
-  Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, maxF,
+getFref3(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age, V,
+  retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, maxF,
   useCPP = TRUE)
 }
 \arguments{
 \item{x}{Integer, the simulation number}
+
+\item{Asize}{A matrix (dimensions nsim by nareas) with relative size of areas}
 
 \item{nareas}{The number of spatial areas}
 

@@ -67,6 +67,8 @@ dynamics model
 
 \item{\code{b}}{Length-weight parameter beta. Single value. Positive real number}
 
+\item{\code{Size_area_1}}{The size of area 1 relative to area 2. Uniform distribution lower and upper bounds. Positive real numbers}
+
 \item{\code{Frac_area_1}}{The fraction of the unfished biomass in stock 1. Uniform distribution lower and upper bounds. Positive real numbers}
 
 \item{\code{Prob_staying}}{The probability of inviduals in area 1 remaining in area 1 over the course of one year. Uniform distribution lower and upper bounds. Positive fraction.}
