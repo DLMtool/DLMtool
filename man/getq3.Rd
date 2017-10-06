@@ -4,8 +4,8 @@
 \alias{getq3}
 \title{optimize for catchability (q)}
 \usage{
-getq3(x, dep, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age, V,
-  retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR,
+getq3(x, dep, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, Asize,
+  Wt_age, V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR,
   bounds = c(1e-05, 15), maxF, useCPP = TRUE)
 }
 \arguments{
@@ -27,6 +27,8 @@ Only values from the first year (i.e N[,,1,]) are used, which is the current N-a
 \item{M_ageArray}{An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year}
 
 \item{Mat_age}{A matrix (dimensions nsim, maxage) with the proportion mature for each age-class}
+
+\item{Asize}{A matrix (dimensions nsim, nareas) with size of each area}
 
 \item{Wt_age}{An array (dimensions nsim, maxage, nyears+proyears) with the weight-at-age and year}
 

@@ -394,11 +394,11 @@ NOAA_plot <- function(MSEobj, nam = NA, type = NA, panel = T) {
   
   for (mm in 1:MSEobj@nMPs) {
     
-    PNOF[mm] <- round(sum(MSEobj@F_FMSY[, mm, ] <= 1, na.rm = T)/prod(dim(MSEobj@F_FMSY[, mm, ]), na.rm = T) * 100, 1)
-    B50[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] >= 0.5, na.rm = T)/prod(dim(MSEobj@B_BMSY[, mm, ])) * 100, 1)
-    LTY[mm] <- round(sum(MSEobj@C[, mm, yend]/RefYd >= 0.5, na.rm = T)/(MSEobj@nsim * length(yend)), 3) * 100
+    PNOF[mm] <- round(mean(MSEobj@F_FMSY[, mm, ] <= 1, na.rm = T) * 100, 1)
+    B50[mm] <- round(mean(MSEobj@B_BMSY[, mm, ] >= 0.5, na.rm = T) * 100, 1)
+    LTY[mm] <- round(mean(MSEobj@C[, mm, yend]/RefYd >= 0.5, na.rm = T), 3) * 100
     AAVY <- apply((((MSEobj@C[, mm, y1] - MSEobj@C[, mm, y2])/MSEobj@C[, mm, y2])^2)^0.5, 1, mean, na.rm = T)
-    VY[mm] <- round(sum(AAVY <= 0.15, na.rm = T)/MSEobj@nsim, 3) * 100
+    VY[mm] <- round(mean(AAVY <= 0.15, na.rm = T), 3) * 100
     
   }
   
@@ -3758,5 +3758,104 @@ calcMSESense <- function(MP = 1, MSEobj, YVar = c("Y", "B"), Par = c("Obs","OM")
   }
   Out <- list(OMPoints = OMPoints, OMSmooth = OMSmooth, OMStat = OMStat, OMNames = OMNames)
   Out
+}
+
+
+custombar<-function(dat,MPnams,tickwd1=0.1,tickwd2=0.05,lwd1=2,lwd2=2,xlab=T,bcol="azure2",barcol='dark grey'){
+  
+  nMPer<-nrow(dat)
+  incr<-(max(dat)-min(dat))*0.05
+  plot(dat[,5],ylim=c(min(dat)-incr,max(dat)+incr),xlim=c(0.25,nMPer+0.25),col='white',axes=F,ylab="",xlab="")
+  
+  if(xlab){
+    axis(1,-1:(nMPer+1),c("","",MPnams,""),las=2,font=2,cex.axis=1.2)
+  }else{
+    axis(1,-1:(nMPer+1),rep("",nMPer+3))
+  }
+  
+  incr<-(max(dat)-min(dat))*0.2
+  yp<-pretty(seq(min(dat)-incr,max(dat)+incr,length.out=12))
+  axis(2,yp,yp,las=2)
+  big<-1E20
+  polygon(c(-big,big,big,-big),c(-big,-big,big,big),col=bcol)# grey92
+  abline(h=yp,col='white')
+  
+  for(i in 1:nMPer){
+    
+    lines(c(i,i),c(dat[i,1],dat[i,5]),lwd=lwd2) # 80%
+    lines(c(i,i),c(dat[i,2],dat[i,4]),lwd=lwd1) # 80%
+    polygon(c(i-tickwd1/2,i+tickwd1/2,i+tickwd1/2,i-tickwd1/2),c(dat[i,2],dat[i,2],dat[i,4],dat[i,4]),lwd=lwd1,col=barcol) # lower interquartile
+    #lines(c(i-tickwd1/2,i+tickwd1/2),c(dat[i,4],dat[i,4]),lwd=lwd1) # upper interquartile
+    
+    lines(c(i-tickwd2/2,i+tickwd2/2),c(dat[i,1],dat[i,1]),lwd=lwd1) # lower 80%
+    lines(c(i-tickwd2/2,i+tickwd2/2),c(dat[i,5],dat[i,5]),lwd=lwd2) # upper 80%
+    
+    
+  }
+  
+  points(dat[,3],pch=19,cex=1.1)
+  
+  
+}
+
+#' Performance Whisker Plot
+#' 
+#' A NAFO / ICCAT / SSB style MSE performance whisker plot
+#' 
+#' 
+#' @usage PWhisker(MSEobj)
+#' @param MSEobj An object of class MSE
+#' @return A box plot of performance 
+#' @author T. Carruthers
+#' @export PWhisker
+PWhisker<-function(MSEobj){#},Pnames=c("POF","C30","D30","LD","DNC","LDNC","PGK","AAVC")){
+  
+  P10 <- P50 <- PNOF <- LTY <- STY <- AAVY <- VY <- array(NA,c(MSEobj@nsim, MSEobj@nMPs))
+  Pnames<-c("B10","B50","PNOF","LTY","AAVY")
+  
+  nsim<-MSEobj@nsim
+  nMPs<-MSEobj@nMPs
+  nperf<-length(Pnames)
+
+  store<-array(NA,c(MSEobj@nMPs,nperf,5))
+  
+  y1 <- 1:(MSEobj@proyears - 1)
+  y2 <- 2:MSEobj@proyears
+  
+  yend <- max(MSEobj@proyears - 4, 1):MSEobj@proyears
+  
+  RefYd <- MSEobj@OM$RefY
+  
+  for (mm in 1:MSEobj@nMPs) {
+    
+    P10[,mm] <- round(apply(MSEobj@B_BMSY[, mm, ] <= 0.1,1,mean, na.rm = T) * 100, 1)
+    P50[,mm] <- round(apply(MSEobj@B_BMSY[, mm, ] <= 0.5,1,mean, na.rm = T) * 100, 1)
+    PNOF[,mm] <- round(apply(MSEobj@F_FMSY[, mm, ] <= 1,1,mean, na.rm = T) * 100, 1)
+    LTY[,mm] <- round(apply(MSEobj@C[, mm, yend]/RefYd >= 0.5,1,mean, na.rm = T), 3) * 100
+    AAVY[,mm] <- apply((((MSEobj@C[, mm, y1] - MSEobj@C[, mm, y2])/MSEobj@C[, mm, y2])^2)^0.5, 1, mean, na.rm = T)
+    #VY[,mm] <- round(apply(AAVY <= 0.15, na.rm = T), 3) * 100
+    
+    store[mm,1,]<-quantile(P10[,mm],c(0.05,0.25,0.5,0.72,0.95))
+    store[mm,2,]<-quantile(P50[,mm],c(0.05,0.25,0.5,0.72,0.95))
+    store[mm,3,]<-quantile(PNOF[,mm],c(0.05,0.25,0.5,0.72,0.95))
+    store[mm,4,]<-quantile(LTY[,mm],c(0.05,0.25,0.5,0.72,0.95))
+    store[mm,5,]<-quantile(AAVY[,mm],c(0.05,0.25,0.5,0.72,0.95))
+    #store[mm,6,]<-quantile(VY[,mm],c(0.05,0.25,0.5,0.72,0.95))
+    
+  }
+ 
+  par(mfrow=c(nperf,1),mai=c(0.1,0.3,0.01,0.05),omi=c(1.2,0.4,0.05,0.01))
+  
+  for(i in 1:nperf){
+   
+    xlab=F
+    if(i==nperf)xlab=T
+    custombar(dat=store[,i,],MPnams=MSEobj@MPs,xlab=xlab)
+    mtext(Pnames[i],2,line=3,font=2)
+    
+  }
+  
+  mtext("Management Procedure",1,line=6.8,font=2,outer=T)
+  
 }
 

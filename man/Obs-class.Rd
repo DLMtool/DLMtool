@@ -10,75 +10,75 @@ An operating model component that controls the observation model
 \section{Slots}{
 
 \describe{
-\item{\code{Name}}{The name of the observation model object}
+\item{\code{Name}}{The name of the observation model object. Single value. Character string.}
 
-\item{\code{Cobs}}{Log-normal catch observation error expressed as a coefficient of variation (uniform distribution)}
+\item{\code{Cobs}}{Log-normal catch observation error expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{Cbiascv}}{A coefficient of variation controlling the sampling of bias in catch observations for each simulation (uniform distribution)}
+\item{\code{Cbiascv}}{Log-normal coefficient of variation controlling the sampling of bias in catch observations for each simulation. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{CAA_nsamp}}{Number of catch-at-age observation per time step (uniform distribution)}
+\item{\code{CAA_nsamp}}{Number of catch-at-age observation per time step. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{CAA_ESS}}{Effective sample size (independent age draws) of the multinomial catch-at-age observation error model (uniform distribution)}
+\item{\code{CAA_ESS}}{Effective sample size (independent age draws) of the multinomial catch-at-age observation error model. Uniform distribution lower and upper bounds. Positive integers}
 
-\item{\code{CAL_nsamp}}{Number of catch-at-length observation per time step (uniform distribution)}
+\item{\code{CAL_nsamp}}{Number of catch-at-length observation per time step. Uniform distribution lower and upper bounds. Positive integers}
 
-\item{\code{CAL_ESS}}{Effective sample size (independent length draws) of the multinomial catch-at-length observation error model (uniform distribution)}
+\item{\code{CAL_ESS}}{Effective sample size (independent length draws) of the multinomial catch-at-length observation error model. Uniform distribution lower and upper bounds. Positive integers}
 
-\item{\code{CALcv}}{Lognormal, variability in the Cv of length-at-age (uniform distribution)}
+\item{\code{CALcv}}{Log-normal, CV of length-at-age. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Iobs}}{Observation error in the relative abundance indices expressed as a coefficient of variation (uniform distribution)}
+\item{\code{Iobs}}{Observation error in the relative abundance indices expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Mcv}}{Persistent bias in the prescription of natural mortality rate sampled from a log-normal distribution with coefficient of variation (Mcv)(uniform distribution)}
+\item{\code{Icv}}{Log-normal coefficient of variation controlling error in observations of relative abundance index. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Kcv}}{Persistent bias in the prescription of growth parameter k sampled from a log-normal distribution with coefficient of variation (Kcv)(uniform distribution)}
+\item{\code{Btcv}}{Log-normal coefficient of variation controlling error in observations of current stock biomass among years. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{t0cv}}{Persistent bias in the prescription of t0 sampled from a log-normal distribution with coefficient of variation (t0cv)(uniform distribution)}
+\item{\code{Btbias}}{Uniform-log bounds for sampling persistent bias in current stock biomass. Uniform-log distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Linfcv}}{Persistent bias in the prescription of maximum length sampled from a log-normal distribution with coefficient of variation (Linfcv)(uniform distribution)}
+\item{\code{beta}}{A parameter controlling hyperstability/hyperdepletion where values below 1 lead to hyperstability (an index that decreases slower than true abundance) and values above 1 lead to hyperdepletion (an index that decreases more rapidly than true abundance). Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{LFCcv}}{Persistent bias in the prescription of lenght at first capture sampled from a log-normal distribution with coefficient of variation (LFCcv)(uniform distribution)}
+\item{\code{LenMcv}}{Log-normal coefficient of variation for sampling persistent bias in length at 50 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{LFScv}}{Persistent bias in the prescription of length-at-fully selection sampled from a log-normal distribution with coefficient of variation (LFScv)(uniform distribution)}
+\item{\code{Mcv}}{Log-normal coefficient of variation for sampling persistent bias in observed natural mortality rate. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{B0cv}}{Persistent bias in the prescription of maximum lengthunfished biomass sampled from a log-normal distribution with coefficient of variation (B0cv)(uniform distribution)}
+\item{\code{Kcv}}{Log-normal coefficient of variation for sampling persistent bias in observed growth parameter K. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{FMSYcv}}{Persistent bias in the prescription of FMSY sampled from a log-normal distribution with coefficient of variation (FMSYcv)(uniform distribution)}
+\item{\code{t0cv}}{Log-normal coefficient of variation for sampling persistent bias in observed t0. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{FMSY_Mcv}}{Persistent bias in the prescription of FMSY/M sampled from a log-normal distribution with coefficient of variation (FMSY_cv)(uniform distribution)}
+\item{\code{Linfcv}}{Log-normal coefficient of variation for sampling persistent bias in observed maximum length. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{BMSY_B0cv}}{Persistent bias in the prescription of BMsY relative to unfished sampled from a log-normal distribution with coefficient of variation (BMSY_B0cv)(uniform distribution)}
+\item{\code{LFCcv}}{Log-normal coefficient of variation for sampling persistent bias in observed length at first capture. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{rcv}}{Persistent bias in the prescription of intrinsic rate of increase sampled from a log-normal distribution with coefficient of variation (rcv)(uniform distribution)}
+\item{\code{LFScv}}{Log-normal coefficient of variation for sampling persistent bias in length-at-full selection. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{LenMcv}}{Persistent bias in the prescription of length at 50 percent maturity sampled from a log-normal distribution with coefficient of variation (A50cv)(uniform distribution)}
+\item{\code{FMSYcv}}{Log-normal coefficient of variation for sampling persistent bias in FMSY. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Dbiascv}}{Persistent bias in the prescription of stock depletion sampled from a log-normal distribution with coefficient of variation (Linfcv)(uniform distribution)}
+\item{\code{FMSY_Mcv}}{Log-normal coefficient of variation for sampling persistent bias in FMSY/M. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Dcv}}{Imprecision in the prescription of stock depletion among years, expressed as a coefficient of variation (uniform distribution)}
+\item{\code{BMSY_B0cv}}{Log-normal coefficient of variation for sampling persistent bias in BMSY relative to unfished. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Btbias}}{Persistent bias in the prescription of current stock biomass sampled from a uniform-log distribution with range (Btbias)(uniform distribution)}
+\item{\code{Irefcv}}{Log-normal coefficient of variation for sampling persistent bias in relative abundance index at BMSY. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Btcv}}{Imprecision in the prescription of current stock biomass among years expressed as a coefficient of variation (uniform distribution)}
+\item{\code{Brefcv}}{Log-normal coefficient of variation for sampling persistent bias in BMSY. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Fcurbiascv}}{Persistent bias in the prescription of current fishing mortality rate sampled from a log-normal distribution with coefficient of variation (Fcurcv)(uniform distribution)}
+\item{\code{Crefcv}}{Log-normal coefficient of variation for sampling persistent bias in MSY. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Fcurcv}}{Imprecision in the prescription of current fishing mortality rate among years expressed as a coefficient of variation (uniform distribution)}
+\item{\code{Dbiascv}}{Log-normal coefficient of variation for sampling persistent bias in stock depletion. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{hcv}}{Persistent bias in steepness (uniform distribution)}
+\item{\code{Dcv}}{Log-normal coefficient of variation controlling error in observations of stock depletion among years. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Icv}}{Observation error in realtive abundance index expressed as a coefficient of variation (uniform distirbution)}
+\item{\code{hcv}}{Log-normal coefficient of variation for sampling persistent bias in steepness. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{maxagecv}}{Bias in the prescription of maximum age (uniform distribution)}
+\item{\code{Reccv}}{Log-normal coefficient of variation for sampling persistent bias in recent recruitment strength. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{beta}}{A parameter controlling hyperstability/hyperdepletion. I^beta therefore values below 1 lead to hyperstability (an index that decreases slower than true abundance) and values above 1 lead to hyperdepletion (an index that decreases more rapidly than true abundance)(uniform distribution)}
+\item{\code{B0cv}}{Log-normal coefficient of variation for sampling persistent bias in unfished biomass. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Reccv}}{Bias in the knowledge of recent recruitment strength (uniform distribution)}
+\item{\code{rcv}}{Log-normal coefficient of variation for sampling persistent bias in intrinsic rate of increase. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Irefcv}}{Bias in the knowledge of the relative abundance index at BMSY (uniform distribution)}
+\item{\code{Fcurbiascv}}{Log-normal coefficient of variation for sampling persistent bias in current fishing mortality rate. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Brefcv}}{Bias in the knowledge of BMSY (uniform distribution)}
+\item{\code{Fcurcv}}{Log-normal coefficient of variation controlling error in observations of current fishing mortality rate among years. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Crefcv}}{Bias in the knowledge of MSY(uniform distribution)}
+\item{\code{maxagecv}}{Log-normal coefficient of variation for sampling persistent bias in observation of maximum age. Uniform distribution lower and upper bounds. Positive real numbers}
 }}
 
 \note{
@@ -99,6 +99,6 @@ showClass('Obs')
 
 }
 \author{
-T. Carruthers
+T. Carruthers and A. Hordyk
 }
 \keyword{classes}

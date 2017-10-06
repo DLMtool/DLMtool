@@ -58,12 +58,9 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   } 
   if (length(Stock@M) != maxage & length(Stock@M) != 2) stop("slot 'M' must be either length 2 or length maxage", call.=FALSE)
   
-  if (!exists("M", inherits=FALSE)) M <- Mage[,maxage]
-  calcMax <- ceiling(-log(0.01)/(min(M)))        # Age at which 1% of cohort survives
-  if (maxage < 0.8*calcMax) {
-    message("Note: Maximum age (", maxage, ") is lower than assuming 1% of cohort survives to maximum age (", calcMax, ")")
+  if (length(Stock@M2) == maxage & !length(Stock@M) == maxage) {
+    stop("Slot M2 is used (upper bound on M-at-age) and is length 'maxage' but Slot M (lower bound on M-at-age) is not length 'maxage'.")
   }
-  
   if (!exists("Msd", inherits=FALSE)) Msd <- runif(nsim, Stock@Msd[1], Stock@Msd[2])  # sample inter annual variability in M frStock specified range
   if (!exists("Mgrad", inherits=FALSE)) Mgrad <- runif(nsim, Stock@Mgrad[1], Stock@Mgrad[2])  # sample gradient in M (M y-1)
   if (.hasSlot(Stock, "Mexp") & !exists("Mexp", inherits=FALSE)) {
@@ -73,11 +70,19 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
       Mexp <- rep(0, nsim) # assume constant M-at-age/size
     }
   } 
+  
+  if (!exists("M", inherits=FALSE)) M <- Mage[,maxage]
+  
   if (!exists("Mexp", inherits=FALSE)) Mexp <- rep(0, nsim) # assume constant M-at-age/size if it is not specified 
   
+  if (!all(Mexp == 0) & length(Stock@M2) == maxage) {
+    stop("Values in both M2 and Mexp slots. Only one can be used")
+  }
   StockOut$Mexp <- Mexp 
   StockOut$Msd <- Msd 
   StockOut$Mgrad <- Mgrad
+  
+  
   
   # == Depletion ====
   if (!exists("dep", inherits=FALSE)) {
@@ -180,12 +185,16 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   
  
   # == Sample Spatial Parameters ====
-  StockOut$Frac_area_1 <- runif(nsim, Stock@Frac_area_1[1], Stock@Frac_area_1[2])  # sampled fraction of unfished biStockass in area 1 (its a two area model by default)
-  StockOut$Prob_staying <- runif(nsim, Stock@Prob_staying[1], Stock@Prob_staying[2])  # sampled probability of individuals staying in area 1 among years
-  StockOut$Size_area_1 <- runif(nsim, Stock@Size_area_1[1], Stock@Size_area_1[2])  # currently redundant parameter for the habitat area size of area 1
+  if (!exists("Frac_area_1", inherits=FALSE)) Frac_area_1 <- runif(nsim, Stock@Frac_area_1[1], Stock@Frac_area_1[2])  # sampled fraction of unfished biStockass in area 1 (its a two area model by default)
+  if (!exists("Prob_staying", inherits=FALSE)) Prob_staying <- runif(nsim, Stock@Prob_staying[1], Stock@Prob_staying[2])  # sampled probability of individuals staying in area 1 among years
+  if (!exists("Size_area_1", inherits=FALSE)) Size_area_1 <- runif(nsim, Stock@Size_area_1[1], Stock@Size_area_1[2])  # currently redundant parameter for the habitat area size of area 1
+  
+  StockOut$Frac_area_1 <- Frac_area_1
+  StockOut$Prob_staying <- Prob_staying
+  StockOut$Size_area_1 <- Size_area_1
   
   StockOut$Asize <- cbind(StockOut$Size_area_1, 1 - StockOut$Size_area_1)
-  
+
   # === Generate random numbers for random walk ====
   if (!exists("Mrand", inherits=FALSE)) Mrand <- matrix(exp(rnorm(nsim*(proyears+nyears), -0.5 * Msd^2, Msd)), nrow=nsim, ncol=proyears+nyears)
   if (!exists("Linfrand", inherits=FALSE)) Linfrand <- matrix(exp(rnorm(nsim*(proyears+nyears), -0.5 * Linfsd^2, Linfsd)), nrow=nsim, ncol=proyears+nyears)
@@ -362,6 +371,14 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   if(!exists("Fdisc", inherits = FALSE)) Fdisc <- runif(nsim, min(Stock@Fdisc), max(Stock@Fdisc))
   StockOut$Fdisc <- Fdisc 
   
+  
+  # Check if M-at-age is constant that Maxage makes sense
+  if (all(M_ageArray[1,,1] == mean(M_ageArray[1,,1]))) { # constant M at age
+    calcMax <- ceiling(-log(0.01)/(min(M)))        # Age at which 1% of cohort survives
+    if (maxage < 0.8*calcMax) {
+      message("Note: Maximum age (", maxage, ") is lower than assuming 1% of cohort survives to maximum age (", calcMax, ")")
+    }  
+  }
   
   StockOut$ageM <- ageM
   StockOut$age95 <- age95

@@ -10,7 +10,7 @@ OM_xl(fname, stkname, fpath = '', saveCSV = FALSE)
 \item{fname}{Name of the Excel spreadsheet file. Must include file
 extension.}
 
-\item{stkname}{Name of the Stock.}
+\item{stkname}{Name of the Stock. Only required if more than one Stock in the Excel file.}
 
 \item{fpath}{Full file path, if file is not in current working directory}
 
@@ -22,7 +22,8 @@ A object of class OM
 }
 \description{
 A function to read in operating model parameters from an Excel spreadsheet
-with tabs named following specific convention.
+with tabs named following specific convention. Since DLMtool 4.5 this function is no
+longer recommended. Use 'OMinit' instead.
 }
 \details{
 The Excel spreadsheet must have tabs named with the following convention.

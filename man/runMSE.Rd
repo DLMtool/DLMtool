@@ -6,7 +6,7 @@
 \usage{
 runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
   "matlenlim"), nsim = 48, proyears = 50, interval = 4, pstar = 0.5,
-  maxF = 0.8, timelimit = 1, reps = 1, CheckMPs = FALSE, Hist = FALSE,
+  maxF = 0.8, reps = 1, CheckMPs = FALSE, timelimit = 1, Hist = FALSE,
   ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2, Bfrac = 0.5)
 }
 \arguments{
@@ -22,23 +22,27 @@ if OM object contains the slot 'nsim'.}
 if OM object contains the slot 'proyears'.}
 
 \item{interval}{The assessment interval - how often would you like to update
-the management system?}
+the management system? NOTE: since DLMtool V4.5 this slot is included in the 
+OM object which will override the value used here. This slot to be deprecated in the future.}
 
 \item{pstar}{The percentile of the sample of the management recommendation
-for each method}
+for each method. NOTE: since DLMtool V4.5 this slot is included in the 
+OM object which will override the value used here. This slot to be deprecated in the future.}
 
 \item{maxF}{Maximum instantaneous fishing mortality rate that may be
-simulated for any given age class}
-
-\item{timelimit}{Maximum time taken for a method to carry out 10 reps
-(methods are ignored that take longer)}
+simulated for any given age class. NOTE: since DLMtool V4.5 this slot is included in the 
+OM object which will override the value used here. This slot to be deprecated in the future.}
 
 \item{reps}{Number of samples of the management recommendation for each
 method. Note that when this is set to 1, the mean value of the data inputs
-is used.}
+is used. NOTE: since DLMtool V4.5 this slot is included in the 
+OM object which will override the value used here. This slot to be deprecated in the future.}
 
 \item{CheckMPs}{Logical to indicate if Can function should be used to check
 if MPs can be run.}
+
+\item{timelimit}{Maximum time taken for a method to carry out 10 reps
+(methods are ignored that take longer)}
 
 \item{Hist}{Should model stop after historical simulations? Returns a list 
 containing all historical data}

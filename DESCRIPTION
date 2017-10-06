@@ -1,7 +1,7 @@
 Package: DLMtool
 Type: Package
 Title: Data-Limited Methods Toolkit
-Version: 4.4.1
+Version: 4.4.1.9999
 Date: 2017-07-28
 Authors@R: c(
     person("Tom", "Carruthers",, "t.carruthers@fisheries.ubc.ca", role=c("aut", "cre")),
@@ -21,18 +21,19 @@ Imports:
     methods,
     LBSPR,
     grDevices,
+    knitr,
     MASS,
     mvtnorm,
+    openxlsx,
     parallel,
     r4ss,
     readxl,
+    rmarkdown,
     stats,
     utils
 LazyData: yes
 LazyLoad: yes
 Suggests:
-    knitr,
-    rmarkdown,
     testthat
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.0.1

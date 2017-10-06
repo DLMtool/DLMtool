@@ -4,12 +4,14 @@
 \alias{CalcOutput}
 \title{Apply output control recommendations and calculate population dynamics}
 \usage{
-CalcOutput(y, TACused, TAC_f, lastCatch, availB, maxF, Biomass_P, VBiomass_P,
-  CB_P, CB_Pret, FM_P, Z_P, Spat_targ, V_P, retA_P, M_ageArray, qs, nyears,
-  nsim, maxage, nareas)
+CalcOutput(y, Asize, TACused, TAC_f, lastCatch, availB, maxF, Biomass_P,
+  VBiomass_P, CB_P, CB_Pret, FM_P, Z_P, Spat_targ, V_P, retA_P, M_ageArray, qs,
+  nyears, nsim, maxage, nareas)
 }
 \arguments{
 \item{y}{Projection year}
+
+\item{Asize}{relative size of areas (matrix nsim by nareas)}
 
 \item{TACused}{TAC recommendation}
 

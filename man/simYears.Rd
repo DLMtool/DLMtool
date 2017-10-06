@@ -4,8 +4,8 @@
 \alias{simYears}
 \title{Simulate population dynamics for historical years}
 \usage{
-simYears(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age, V, retA,
-  Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, qs, maxF,
+simYears(x, nareas, maxage, N, pyears, M_ageArray, Asize, Mat_age, Wt_age, V,
+  retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, qs, maxF,
   useCPP = TRUE)
 }
 \arguments{
@@ -21,6 +21,8 @@ Only values from the first year (i.e N[,,1,]) are used, which is the current N-a
 \item{pyears}{The number of years to project forward. Equal to 'nyears' for optimizing for q.}
 
 \item{M_ageArray}{An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year}
+
+\item{Asize}{A matrix (dimensions nsim, nareas) of size of areas}
 
 \item{Mat_age}{A matrix (dimensions nsim, maxage) with the proportion mature for each age-class}
 
