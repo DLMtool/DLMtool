@@ -372,7 +372,7 @@ getFMSY3 <- function(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, W
                   movc=mov[x,,], SRrelc=SRrel[x], 
                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
                   SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], maxF=maxF, useCPP=useCPP)
-                  
+  
   MSY <- -opt$objective 
   
   if (!useCPP) {
@@ -386,31 +386,31 @@ getFMSY3 <- function(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, W
     
     # calculate B0 and SSB0 with current conditions
     simpopF0 <- popdyn(nareas, maxage, Ncurr=N[x,,1,], 
-                     pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
-                     MatAge=Mat_age[x,], 
-                     WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
-                     movc=mov[x,,], SRrelc=SRrel[x], 
-                     Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-                     SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Fapic=0, maxF=maxF, control=2) 
+                       pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
+                       MatAge=Mat_age[x,], 
+                       WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
+                       movc=mov[x,,], SRrelc=SRrel[x], 
+                       Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+                       SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Fapic=0, maxF=maxF, control=2) 
     
   } else {
     simpop <- popdynCPP(nareas, maxage, Ncurr=N[x,,1,], 
-                     pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
-                     MatAge=Mat_age[x,], 
-                     WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
-                     movc=mov[x,,], SRrelc=SRrel[x], 
-                     Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-                     SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=0, Fapic=exp(opt$minimum), maxF=maxF, control=2)
-    # calculate B0 and SSB0 with current conditions
-    simpopF0 <- popdynCPP(nareas, maxage, Ncurr=N[x,,1,], 
                         pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
                         MatAge=Mat_age[x,], 
                         WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
                         movc=mov[x,,], SRrelc=SRrel[x], 
                         Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-                        SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=0, Fapic=0, maxF=maxF, control=2)
+                        SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=0, Fapic=exp(opt$minimum), maxF=maxF, control=2)
+    # calculate B0 and SSB0 with current conditions
+    simpopF0 <- popdynCPP(nareas, maxage, Ncurr=N[x,,1,], 
+                          pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
+                          MatAge=Mat_age[x,], 
+                          WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
+                          movc=mov[x,,], SRrelc=SRrel[x], 
+                          Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+                          SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=0, Fapic=0, maxF=maxF, control=2)
   }
-
+  
   ## Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # retained catch 
   Cn <- simpop[[6]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # removals
   Cb <- Cn[,pyears,] * Wt_age[x,,pyears]

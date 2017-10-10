@@ -191,7 +191,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
         # Calculate selectivity at length class 
         SLarray[,, yr] <- t(sapply(1:nsim, function(i) TwoSidedFun(LFS[1,i], s1[i], s2[i], lens=CAL_binsmid)))   
       }	 
-      
+    
     }
     
     if (Selnyears > 1) {

@@ -117,7 +117,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   } else {
     StockOut$AC <- AC  # auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)
   }
-
+  
   # All recruitment Deviations
   # Add cycle (phase shift) to recruitment deviations - if specified
   if (is.finite(Stock@Period[1]) & is.finite(Stock@Amplitude[1])) {
@@ -128,14 +128,14 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   } else {
     recMulti <- 1 
   }
-
+  
   StockOut$procmu <- procmu <- -0.5 * (procsd)^2  # adjusted log normal mean
   if (!exists("Perr", inherits=FALSE)) {
     Perr <- array(rnorm((nyears + proyears+maxage-1) * nsim, rep(procmu, nyears + 
-                                                                 proyears+maxage-1), 
+                                                                   proyears+maxage-1), 
                         rep(procsd, nyears + proyears+maxage-1)), c(nsim, nyears + proyears+maxage-1))
     for (y in 2:(nyears + proyears+maxage-1)) Perr[, y] <- AC * Perr[, y - 1] + 
-    Perr[, y] * (1 - AC * AC)^0.5  #2#AC*Perr[,y-1]+(1-AC)*Perr[,y] # apply a pseudo AR1 autocorrelation to rec devs (log space)
+        Perr[, y] * (1 - AC * AC)^0.5  #2#AC*Perr[,y-1]+(1-AC)*Perr[,y] # apply a pseudo AR1 autocorrelation to rec devs (log space)
     StockOut$Perr <- Perr <- exp(Perr) * recMulti # normal space (mean 1 on average) 
   } else {
     StockOut$Perr <- Perr
@@ -170,31 +170,35 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
     L50_95 <- apply(L50_95, 1, function(x) x[!is.na(x)][1]) 
     L50_95[is.na(L50_95)] <- 2
   }
- 
+  
   if (!exists("L95", inherits=FALSE))   L95 <- L50 + L50_95
   
-
+  
   if (any(L95> Linf)) {
     message("Note: Some samples of L95 are above Linf. Defaulting to 0.99*Linf")
     L95[L95> Linf] <- 0.99* Linf[L95> Linf]
   }
-
-
+  
+  
   # == Sample Fecundity-Length Exponent ===
   # if (!exists("FecB", inherits=FALSE))   FecB <- runif(nsim, min(Stock@FecB), max(Stock@FecB))
   
- 
+  
   # == Sample Spatial Parameters ====
   if (!exists("Frac_area_1", inherits=FALSE)) Frac_area_1 <- runif(nsim, Stock@Frac_area_1[1], Stock@Frac_area_1[2])  # sampled fraction of unfished biStockass in area 1 (its a two area model by default)
   if (!exists("Prob_staying", inherits=FALSE)) Prob_staying <- runif(nsim, Stock@Prob_staying[1], Stock@Prob_staying[2])  # sampled probability of individuals staying in area 1 among years
   if (!exists("Size_area_1", inherits=FALSE)) Size_area_1 <- runif(nsim, Stock@Size_area_1[1], Stock@Size_area_1[2])  # currently redundant parameter for the habitat area size of area 1
+  
+  if (max(Size_area_1) == 0) stop("Size_area_1 must be > 0")
+  if (max(Frac_area_1) == 0) stop("Frac_area_1 must be > 0")
+  if (max(Prob_staying) == 0) stop("Prob_staying must be > 0")
   
   StockOut$Frac_area_1 <- Frac_area_1
   StockOut$Prob_staying <- Prob_staying
   StockOut$Size_area_1 <- Size_area_1
   
   StockOut$Asize <- cbind(StockOut$Size_area_1, 1 - StockOut$Size_area_1)
-
+  
   # === Generate random numbers for random walk ====
   if (!exists("Mrand", inherits=FALSE)) Mrand <- matrix(exp(rnorm(nsim*(proyears+nyears), -0.5 * Msd^2, Msd)), nrow=nsim, ncol=proyears+nyears)
   if (!exists("Linfrand", inherits=FALSE)) Linfrand <- matrix(exp(rnorm(nsim*(proyears+nyears), -0.5 * Linfsd^2, Linfsd)), nrow=nsim, ncol=proyears+nyears)
@@ -210,7 +214,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   if (!exists("Agearray", inherits=FALSE))  Agearray <- array(rep(1:maxage, each = nsim), dim = c(nsim, maxage))  # Age array
   
   if (length(StockOut$maxage) > 1) StockOut$maxage <- StockOut$maxage[1] # check if maxage has been passed in custompars
-
+  
   # === Create Mean Length-at-Age array ====
   if (!exists("Len_age", inherits=FALSE)) {
     Len_age <- array(NA, dim = c(nsim, maxage, nyears + proyears))  # Length at age array
@@ -240,7 +244,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   
   # == Sample CV Length-at-age ====
   if (!exists("LenCV", inherits=FALSE)) LenCV <- runif(nsim, min(Stock@LenCV), max(Stock@LenCV))
- 
+  
   # == Generate Catch at Length Classes ====
   if (!exists("LatASD", inherits=FALSE)) LatASD <- Len_age * array(LenCV, dim=dim(Len_age)) # SD of length-at-age 
   if (any(dim(LatASD) != dim(Len_age))) stop("Dimensions of 'LatASD' must match dimensions of 'Len_age'", .call=FALSE)
@@ -303,10 +307,10 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
     L50 <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=Len_age[x, , nyears], 0.5)))
     L95 <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=Len_age[x, , nyears], 0.95)))
   }
-
+  
   # == Calculate M-at-Age from M-at-Length if provided ====
   if (exists("M_at_Length", inherits=FALSE)) {  # M-at-length data.frame has been provided in cpars
-
+    
     MatLen <- matrix(NA, nsim, nrow(M_at_Length))
     MatLen[,1] <- runif(nsim, min(M_at_Length[1,2:3]), max(M_at_Length[1,2:3]))
     
@@ -324,7 +328,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
       Mage[sim, ] <- MatLen[sim, ind]  
     }
   }
-
+  
   
   # == M-at-age has been provided in OM ====
   if (exists("Mage", inherits=FALSE)) {
@@ -353,16 +357,17 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
     M_ageArray[ind] <- Marray[ind[,c(1,3)]] * (Wt_age[ind]/Winf[ind[,1]]) ^ Mexp[ind[,1]]  
   }  
   
-
+  
   # == Scale M at age so that mean M of mature ages is equal to sampled M ====
   tempM_ageArray <- M_ageArray
-
   for (sim in 1:nsim) {
-    if (ageM[sim] < (maxage-1)) {
-      scale <- Marray[sim,]/ apply(tempM_ageArray[sim,ageM[sim]:maxage,], 2, mean)  
-    } else {
-      scale <- Marray[sim,]/ mean(tempM_ageArray[sim,ageM[sim]:maxage,])  
-    }
+    matyrs <- ageM[sim]:maxage
+    if (length(matyrs) >1) {
+      # scale <- Marray[sim,]/ apply(tempM_ageArray[sim,ageM[sim]:maxage,], 2, mean) 
+      scale <- Marray[sim,]/ (apply(tempM_ageArray[sim,matyrs,], 2, sum)/length(matyrs)) # this is about 4 times faster
+    } else if (length(matyrs)==1){
+      scale <- Marray[sim,]/ tempM_ageArray[sim,ageM[sim]:maxage,]  
+    } 
     
     M_ageArray[sim,,] <- M_ageArray[sim,,] * matrix(scale, maxage, nyears+proyears, byrow=TRUE)
   }
