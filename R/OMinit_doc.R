@@ -672,6 +672,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
     if (length(fls)>1) stop('argument "OM" not provided and multiple .xlsx files in working directory', call.=FALSE)
   } else stop('OM must be class "OM" or name of OM xlsx file.', call.=FALSE)
   
+  if (is.null(OM)) stop('OM not imported. Is the name correct?', call.=FALSE)
   ## Read in Rmd.source file ####
   if (is.null(rmd.source)) {
     rmd.source <- list.files(pattern=".rmd", ignore.case=TRUE)

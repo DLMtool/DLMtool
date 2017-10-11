@@ -221,7 +221,7 @@ plotMat <- function(OM, Pars=NULL, nsim=48, nyears=50, proyears=50, nsamp=3, col
   matplot(Ls, Mat_len, type="l", bty="l", main="Maturity-at-length", lwd=lwd, lty=1, 
           ylab="Probability", xlab="Length", ylim=c(0,1), xpd=NA)
   
-  matplot(t(Pars$Mat_age[its,]), type="l", bty="l", main="Maturity-at-age", lwd=lwd, 
+  matplot(t(Pars$Mat_age[its,,nyears]), type="l", bty="l", main="Maturity-at-age", lwd=lwd, 
           lty=1, axes=FALSE, xlim=c(0, Pars$maxage), ylab="", xlab="Age", ylim=c(0,1), xpd=NA)
   axis(side=1)
   axis(side=2, labels=FALSE)
