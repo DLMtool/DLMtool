@@ -13,7 +13,8 @@ Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "Mgrad", "SRrel", "hs", "procsd
            "recMulti", "recgrad", "t0", "t0bias", "Abias", "Aerr", "Perr", "Esd", "qvar", "Marray",
            "Linfarray", "Karray", "AC", "LenCV", "LenCVbias", "a", "b", "FinF", 
            "Fdisc", "R50", "Rslope", "retA", "retL", "LR5", "LFR", "Rmaxlen",
-           "V2", "SLarray2", "DR", "Asize", "Size_area_1", "L50array", "L95array")
+           "V2", "SLarray2", "DR", "Asize", "Size_area_1", "L50array", "L95array",
+           "Fdisc_array", "Fdisc_array2")
 
 
 if(getRversion() >= "2.15.1") utils::globalVariables(Names)
@@ -403,7 +404,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   if (snowfall::sfIsRunning()) {
     snowfall::sfExport(list = c("M_ageArrayp", "Wt_agep", "Vp", "retAp", "Perrp"))  # export some newly made arrays to the cluster
     MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY3, Asize, nareas=nareas, maxage=maxage, N=N, pyears=MSYyr, 
-                                  M_ageArray=M_ageArrayp, Mat_age=Mat_age, Wt_age=Wt_agep, V=Vp, retA=retAp, 
+                                  M_ageArray=M_ageArrayp, Mat_age=Mat_agep, Wt_age=Wt_agep, V=Vp, retA=retAp, 
                                   Perr=Perrp, mov=mov, SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs, 
                                   R0a=R0a, SSBpR=SSBpR, aR=aR, bR=bR, SSB0=SSB0, B0=B0, maxF=maxF)  # optimize for MSY reference points
   } else {
@@ -1122,8 +1123,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
         } else {
           # input control FM_P[SAYR] <- FM_P[SAY1R]*qvar[SY] *(1+qinc[S1]/100)^y
           # # add fishing efficiency changes and variability
-          FM_P[SAYR] <- (FM_P[SAY1R] * qvar[SY] * (1 + qinc[S1]/100))/Asize[SR]  # add fishing efficiency changes and variability
-          FM_retain[SAYR] <- (FM_retain[SAY1R] * qvar[SY] * (1 + qinc[S1]/100))/Asize[SR]  # add fishing efficiency changes and variability
+          FM_P[SAYR] <- (FM_P[SAY1R] * qvar[SY] * (1 + qinc[S1]/100))  # add fishing efficiency changes and variability
+          FM_retain[SAYR] <- (FM_retain[SAY1R] * qvar[SY] * (1 + qinc[S1]/100))  # add fishing efficiency changes and variability
           Effort[, mm, y] <-  Effort[, mm, y-1] / E_f[,y-1]  * E_f[,y]   # Effort doesn't change in non-update year
           
           Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt]
@@ -1155,7 +1156,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     
     cat("\n")
   }  # end of mm methods 
- 
+  
+
   ## Create MSE Object #### 
   MSEout <- new("MSE", Name = OM@Name, nyears, proyears, nMPs=nMP, MPs, nsim, 
                 Data@OM, Obs=Data@Obs, B_BMSY=B_BMSYa, F_FMSY=F_FMSYa, B=Ba, 

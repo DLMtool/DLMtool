@@ -3,7 +3,16 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 ### DLMtool v4.4.xx Development Version 
 
-- added TMB as dependency  
+Since DLMtool V4.5 the following slots have been added to the OM object:
+
+- `OM@interval`
+- `OM@pstar`
+- `OM@maxF`
+- `OM@reps`
+
+This was done so that an OM object is completely self-contained and includes all information used in the MSE. 
+
+
 
 #### Minor Changes 
 

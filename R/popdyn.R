@@ -876,28 +876,17 @@ CalcInput <- function(y, Linf, Asize, nyears, proyears, InputRecs, nsim, nareas,
     sls <- (LFR_P[yr,] - LR5_P[yr,]) / ((-log(0.05,2))^0.5)
     
     CAL_binsmidMat <- matrix(CAL_binsmid, nrow=nsim, ncol=length(CAL_binsmid), byrow=TRUE)
-    selLen <- t(sapply(1:nsim, getsel, lens=CAL_binsmidMat, lfs=LFR_P[yr,], sls=sls, srs=srs))
+    relLen <- t(sapply(1:nsim, getsel, lens=CAL_binsmidMat, lfs=LFR_P[yr,], sls=sls, srs=srs))
 
-    
     for (yy in allyrs) {
       # calculate new retention at age curve 
       retA_P[ , , yy] <- t(sapply(1:nsim, getsel, lens=Len_age[,,yy], lfs=LFR_P[yy,], sls=sls, srs=srs))
       
       # calculate new retention at length curve 
-      retL_P[,, yy] <- selLen  
+      retL_P[,, yy] <- relLen  
     }
     
-
-    
-    # calculate new retention at age curve 
-    # retA_P[ , , allyrs] <- t(sapply(1:nsim, function(i) 
-    #   TwoSidedFun(LFR_P[yr,i], s1[i], s2[i], lens=Len_age[i,,yr])))
-    # # calculate new retention at length curve 
-    # retL_P[,, allyrs] <- t(sapply(1:nsim, function(i) 
-    #   TwoSidedFun(LFR_P[yr,i], s1[i], s2[i], lens=CAL_binsmid))) 
-    
     # upper harvest slot 
-   
     aboveHS <- Len_age[,,allyrs]>HS
     tretA_P <- retA_P[,,allyrs]
     tretA_P[aboveHS] <- 0
@@ -907,21 +896,23 @@ CalcInput <- function(y, Linf, Asize, nyears, proyears, InputRecs, nsim, nareas,
       retL_P[ss, index, allyrs] <- 0
     }	
     
-    # correct retention curve - retention at age/length must <= selectivity (you can't retain fish you don't catch!)
     dr <- aperm(abind::abind(rep(list(DR), maxage), along=3), c(2,3,1))
-    retA_P[,,allyrs] <- (1-dr[,,yr]) * matrix(mapply(pmin, retA_P[,,yr], V_P[,,yr]), nsim, maxage)
+    retA_P[,,allyrs] <- (1-dr[,,yr]) * retA_P[,,yr]
     dr <- aperm(abind::abind(rep(list(DR), nCALbins), along=3), c(2,3,1))
-    retL_P[,,allyrs] <- (1-dr[,,yr]) * matrix(mapply(pmin, retL_P[,,yr], pSLarray[,,yr]), nsim, nCALbins)
-    
+    retL_P[,,allyrs] <- (1-dr[,,yr]) * retL_P[,,yr]
     
     # update realized vulnerablity curve with retention and dead discarded fish 
-    Fdisc2 <- array(Fdisc, dim=c(nsim, maxage))
-    V_P[,,allyrs] <- matrix(mapply(pmax, retA_P[,,yr] + 
-                                 (abs(retA_P[,,yr]-V2[,,yr])*Fdisc2), retA_P[,,yr]), nsim, maxage)
-    Fdisc2 <- array(Fdisc, dim=c(nsim, nCALbins))
-    pSLarray[,,allyrs] <- matrix(mapply(pmax, retL_P[,,yr] + 
-                                      (abs(retL_P[,,yr] - SLarray2[,,yr])*Fdisc2), retL_P[,,yr]), nsim, nCALbins)
-  
+    Fdisc_array1 <- array(Fdisc, dim=c(nsim, maxage, length(allyrs)))
+    
+    V_P[,,allyrs] <- V2[,,allyrs] * (retA_P[,,allyrs] + (1-retA_P[,,allyrs])*Fdisc_array1)
+    
+    Fdisc_array2 <- array(Fdisc, dim=c(nsim, nCALbins, length(allyrs)))
+    pSLarray[,,allyrs]  <- SLarray2[,,allyrs] * (retL_P[,,allyrs]+ (1-retL_P[,,allyrs])*Fdisc_array2)
+    
+    # Realised Retention curves
+    retA_P[,,allyrs] <- retA_P[,,allyrs] * V_P[,,allyrs]
+    retL_P[,,allyrs] <- retL_P[,,allyrs] * pSLarray[,,allyrs] 
+     
   }
   
   newVB <- apply(Biomass_P[, , y, ] * V_P[SAYt], c(1, 3), sum)  # calculate total vuln biomass by area 
