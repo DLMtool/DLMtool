@@ -215,6 +215,15 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   
   if (length(StockOut$maxage) > 1) StockOut$maxage <- StockOut$maxage[1] # check if maxage has been passed in custompars
   
+  t0array <- matrix(t0, nrow=nsim, ncol=proyears+nyears)
+  
+  # === Generate L50 by year ====
+  relL50 <- matrix(L50/Linf, nrow=nsim, ncol=nyears + proyears, byrow=FALSE) # assume L50/Linf stays constant 
+  L50array <- relL50 * Linfarray
+  delLm <- L95 - L50 
+  L95array <- L50array + matrix(delLm, nrow=nsim, ncol=nyears + proyears, byrow=FALSE)
+  
+  
   # === Create Mean Length-at-Age array ====
   if (!exists("Len_age", inherits=FALSE)) {
     Len_age <- array(NA, dim = c(nsim, maxage, nyears + proyears))  # Length at age array
@@ -277,10 +286,17 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   }
   
   
-  # == Calcaluate age at maturity ==== 
-  if (!exists("ageM", inherits=FALSE)) ageM <- -((log(1 - L50/Linf))/K) + t0  # calculate ageM from L50 and growth parameters (non-time-varying)
+  # == Calculate age at maturity ==== 
+  if (exists('ageM', inherits=FALSE)) { # check dimensions 
+    if (!all(dim(ageM) == c(nsim, proyears+nyears))) stop('"ageM" must be dimensions: nsim, nyears+proyers')
+  }
+  if (exists('age95', inherits=FALSE)) { # check dimensions 
+    if (!all(dim(age95) == c(nsim, proyears+nyears))) stop('"age95" must be dimensions: nsim, nyears+proyers')
+  }
+  
+  if (!exists("ageM", inherits=FALSE)) ageM <- -((log(1 - L50array/Linfarray))/Karray) + t0array # calculate ageM from L50 and growth parameters (time-varying)
   ageM[ageM < 1] <- 1  # age at maturity must be at least 1
-  if (!exists("age95", inherits=FALSE)) age95 <- -((log(1 - L95/Linf))/K) + t0
+  if (!exists("age95", inherits=FALSE)) age95 <- -((log(1 - L95array/Linfarray))/Karray) + t0array
   age95[age95 < 1] <- 1.5  # must be greater than 0 and ageM
   
   if (any(ageM >= maxage-1)) {
@@ -292,22 +308,29 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
     age95[age95 >= maxage] <- maxage  
   }
   
-  ageMsd <- sapply(1:nsim, getroot, ageM, age95)
-  ageMarray <- array(ageM, dim = c(nsim, maxage))  # Age at maturity array
-  
   # == Generate Maturity-at-Age array ====
   if (!exists("Mat_age", inherits=FALSE)) {
-    Mat_age <- 1/(1 + exp((ageMarray - (Agearray))/(ageMarray * ageMsd)))  # Maturity at age array
+    Mat_age <- array(NA, dim=c(nsim, maxage, nyears+proyears))
+    ageMarray <- array(ageM, dim = c(nsim, maxage))  # Age at maturity array
+    for (XX in 1:(nyears+proyears)) {
+      ageMsd <- sapply(1:nsim, getroot, ageM[,XX], age95[,XX])
+      Mat_age[,,XX] <- 1/(1 + exp((ageMarray - (Agearray))/(ageMarray * ageMsd)))  # Maturity at age array by year
+    }
+    
   } else {
-    if (any(dim(Mat_age) != c(nsim, maxage))) stop("'Mat_age' must be array with dimensions: nsim, maxage") 
+    if (any(dim(Mat_age) != c(nsim, maxage, nyears+proyears))) stop("'Mat_age' must be array with dimensions: nsim, maxage, nyears+proyears") 
+    
     # Calculate L50, L95, ageM and age95 
-    test <- sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=1:maxage, 0.5))
-    ageM <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=1:maxage, 0.5)))
-    age95 <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=1:maxage, 0.95)))
-    L50 <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=Len_age[x, , nyears], 0.5)))
-    L95 <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=Len_age[x, , nyears], 0.95)))
+    ageM <- age95 <- L50array <- L95array <- matrix(NA, nsim, nyears+proyears)
+    for (XX in 1:(nyears+proyears)) {
+      ageM[,XX] <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,, XX], y=1:maxage, 0.5)))
+      age95[,XX] <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,, XX], y=1:maxage, 0.95)))
+      L50array[,XX] <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=Len_age[x, , nyears], 0.5)))
+      L95array[,XX]<- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=Len_age[x, , nyears], 0.95)))
+    }
   }
   
+
   # == Calculate M-at-Age from M-at-Length if provided ====
   if (exists("M_at_Length", inherits=FALSE)) {  # M-at-length data.frame has been provided in cpars
     
@@ -361,7 +384,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   # == Scale M at age so that mean M of mature ages is equal to sampled M ====
   tempM_ageArray <- M_ageArray
   for (sim in 1:nsim) {
-    matyrs <- ageM[sim]:maxage
+    matyrs <- ageM[sim, nyears]:maxage
     if (length(matyrs) >1) {
       # scale <- Marray[sim,]/ apply(tempM_ageArray[sim,ageM[sim]:maxage,], 2, mean) 
       scale <- Marray[sim,]/ (apply(tempM_ageArray[sim,matyrs,], 2, sum)/length(matyrs)) # this is about 4 times faster
@@ -405,8 +428,10 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   StockOut$b <- Wb 
   StockOut$Wt_age <- Wt_age
   StockOut$L50 <- L50
+  StockOut$L50array <- L50array
   StockOut$L95 <- L95
   StockOut$L50_95 <- L50_95
+  StockOut$L95array <- L95array
   # StockOut$FecB <- FecB
   StockOut$Mat_age <- Mat_age
   

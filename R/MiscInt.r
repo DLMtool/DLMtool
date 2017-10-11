@@ -595,65 +595,6 @@ getDNvulnS <- function(mod, age05, Vmaxage, maxage, nsim) {
 
 
 
-#' Internal Two sided selectivity curve
-#'
-#' @param LFS first length at fulll selection 
-#' @param s1 ascending slope
-#' @param s2 descending slope 
-#' @param lens vector of lengths 
-#' @keywords internal
-#' @export TwoSidedFun
-TwoSidedFun <- function(LFS, s1, s2, lens) {
-    Sl <- rep(0, length(lens))
-    Sl[lens < LFS] <- exp(-((lens[lens < LFS] - LFS)^2)/(2 * s1^2))
-    Sl[lens >= LFS] <- exp(-((lens[lens >= LFS] - LFS)^2)/(2 * s2^2))
-    return(Sl)
-}
-
-#' Internal function to calculate ascending slope of selectivity curve 
-#'
-#' @param s1 slope 1 
-#' @param LFS first length at fulll selection 
-#' @param L0.05 length at 5 percent selection 
-#' @keywords internal
-#' @export getSlope1
-getSlope1 <- function(s1, LFS, L0.05) 
-  (0.05 - TwoSidedFun(LFS, s1 = s1, s2 = 1E5, lens=L0.05))^2
-
-
-#' Internal function to calculate slope
-#'
-#' @param s2 desceding slope 
-#' @param LFS length one
-#' @param s1 ascending slope 
-#' @param maxlen length of oldest age class
-#' @param MaxSel selectivity of maxlen 
-#' @keywords internal
-#' @export getSlope2
-getSlope2 <- function(s2, LFS, s1, maxlen, MaxSel) 
-  (MaxSel - TwoSidedFun(LFS, s1, s2, maxlen))^2
-
- 
-  
-#' Selectivity at length function
-#'
-#' @param i index 
-#' @param SL0.05 length at 5 percent selection
-#' @param SL1 length at full selection
-#' @param MaxSel Maximum selectivity
-#' @param maxlens maximum length 
-#' @param Lens vector of lengths 
-#' @keywords internal
-#' @export SelectFun
-SelectFun <- function(i, SL0.05, SL1, MaxSel, maxlens, Lens) {
-  s1 <- optimise(getSlope1, interval = c(0, 1e+06), LFS = SL1[i], L0.05 = SL0.05[i])$minimum
-  s2 <- optimise(getSlope2, interval = c(0, 1e+06), LFS = SL1[i], s1 = s1, maxlen = maxlens[i], 
-    MaxSel = MaxSel[i])$minimum
-  if (is.vector(Lens)) TwoSidedFun(LFS = SL1[i], s1 = s1, s2 = s2, lens = Lens)  #nsim = 1
-  else TwoSidedFun(LFS = SL1[i], s1 = s1, s2 = s2, lens = Lens[i, ])  #nsim > 1
-}
-
-
 #' Calculate slope from ageM and age95 
 #'
 #' @param X index 
@@ -675,40 +616,42 @@ getroot <- function(X, ageM, age95) {
 #' @export getSlopeFun
 getSlopeFun <- function(SD, age50, age95) 
   0.95 - (1/(1 + exp((age50 - age95)/(age50 * SD))))
+
+
   
   
 # Selectivity at length function for GTG model
-SelectFunGTG <- function(i, SL0.05, SL1, MaxSel, Linfs, LenGTG) {
-    s1 <- optimise(getSlope1, interval = c(0, 100), L1 = SL1[i], L0.05 = SL0.05[i])$minimum
-    s2 <- optimise(getSlope2, interval = c(0, 1000), L1 = SL1[i], s1 = s1, 
-        Linf = Linfs[i], MaxSel = MaxSel[i])$minimum
-    NGTG <- dim(LenGTG)[1]
-    t(sapply(1:NGTG, function(X) TwoSidedFun(SL1[i], s1, s2, LenGTG[X, i, ])))
-}
+# SelectFunGTG <- function(i, SL0.05, SL1, MaxSel, Linfs, LenGTG) {
+#     s1 <- optimise(getSlope1, interval = c(0, 100), L1 = SL1[i], L0.05 = SL0.05[i])$minimum
+#     s2 <- optimise(getSlope2, interval = c(0, 1000), L1 = SL1[i], s1 = s1, 
+#         Linf = Linfs[i], MaxSel = MaxSel[i])$minimum
+#     NGTG <- dim(LenGTG)[1]
+#     t(sapply(1:NGTG, function(X) TwoSidedFun(SL1[i], s1, s2, LenGTG[X, i, ])))
+# }
 
 # Obj value for opt routine
-FitSelect <- function(Pars, V, Linf, Lens) {
-    SL0.05 <- (Pars[1])
-    SL1 <- (Pars[2])
-    MaxSel <- (Pars[3])
-    Lens <- t(as.matrix(Lens))
-    SS <- sum((V - SelectFun(1, SL0.05, SL1, MaxSel, Linf, Lens))^2)
-    return(SS)
-}
+# FitSelect <- function(Pars, V, Linf, Lens) {
+#     SL0.05 <- (Pars[1])
+#     SL1 <- (Pars[2])
+#     MaxSel <- (Pars[3])
+#     Lens <- t(as.matrix(Lens))
+#     SS <- sum((V - SelectFun(1, SL0.05, SL1, MaxSel, Linf, Lens))^2)
+#     return(SS)
+# }
 
 
 # Growth-Type-Group Functions (not currently used - Jan 2016)
-GenLenFun <- function(NatAGTG, LenatAgeGTG, LenBin, LenMid) {
-    Nbins <- length(LenMid)
-    SizeComp <- rep(0, Nbins)
-    for (L in 1:length(LenMid)) {
-        temp <- NatAGTG
-        ind <- LenatAgeGTG <= LenBin[L + 1] & LenatAgeGTG > LenBin[L]
-        temp[!ind] <- 0
-        SizeComp[L] <- SizeComp[L] + sum(temp)
-    }
-    return(SizeComp)
-}
+# GenLenFun <- function(NatAGTG, LenatAgeGTG, LenBin, LenMid) {
+#     Nbins <- length(LenMid)
+#     SizeComp <- rep(0, Nbins)
+#     for (L in 1:length(LenMid)) {
+#         temp <- NatAGTG
+#         ind <- LenatAgeGTG <= LenBin[L + 1] & LenatAgeGTG > LenBin[L]
+#         temp[!ind] <- 0
+#         SizeComp[L] <- SizeComp[L] + sum(temp)
+#     }
+#     return(SizeComp)
+# }
 
 
 

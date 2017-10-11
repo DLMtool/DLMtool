@@ -24,7 +24,7 @@ Only values from the first year (i.e N[,,1,]) are used, which is the current N-a
 
 \item{M_ageArray}{An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year}
 
-\item{Mat_age}{A matrix (dimensions nsim, maxage) with the proportion mature for each age-class}
+\item{Mat_age}{An array (dimensions nsim, maxage, nyears+proyears) with the proportion mature for each age-class}
 
 \item{Wt_age}{An array (dimensions nsim, maxage, nyears+proyears) with the weight-at-age and year}
 

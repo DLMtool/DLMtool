@@ -511,11 +511,11 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
 
 #' @slot L5 Shortest length corresponding to 5 percent vulnerability. Uniform distribution lower and upper bounds. Positive real numbers 
 #' @slot LFS Shortest length that is fully vulnerable to fishing. Uniform distribution lower and upper bounds. Positive real numbers
-#' @slot Vmaxlen The vulnerability of the longest/oldest fish. Uniform distribution lower and upper bounds. Fraction 
+#' @slot Vmaxlen The vulnerability of fish at Stock@Linf. Uniform distribution lower and upper bounds. Fraction 
 #' @slot isRel Selectivity parameters in units of size-of-maturity (or absolute eg cm). Single value. Boolean.
 #' @slot LR5 Shortest length corresponding ot 5 percent retention. Uniform distribution lower and upper bounds. Non-negative real numbers 
 #' @slot LFR Shortest length that is fully retained. Uniform distribution lower and upper bounds. Non-negative real numbers
-#' @slot Rmaxlen The retention of the longest (oldest) fish. Uniform distribution lower and upper bounds. Non-negative real numbers
+#' @slot Rmaxlen The retention of fish at Stock@Linf. Uniform distribution lower and upper bounds. Non-negative real numbers
 #' @slot DR Discard rate - the fraction of caught fish that are discarded. Uniform distribution lower and upper bounds. Fraction
 #' 
 #' @slot SelYears (Optional) Years representing join-points (vertices) at which historical selectivity pattern changes. Vector. Positive real numbers
@@ -934,11 +934,11 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
 
 #' @slot L5 Shortest length corresponding to 5 percent vulnerability. Uniform distribution lower and upper bounds. Positive real numbers 
 #' @slot LFS Shortest length that is fully vulnerable to fishing. Uniform distribution lower and upper bounds. Positive real numbers
-#' @slot Vmaxlen The vulnerability of the longest/oldest fish. Uniform distribution lower and upper bounds. Fraction 
+#' @slot Vmaxlen The vulnerability of fish at Stock@Linf. Uniform distribution lower and upper bounds. Fraction 
 #' @slot isRel Selectivity parameters in units of size-of-maturity (or absolute eg cm). Single value. Boolean.
 #' @slot LR5 Shortest length corresponding ot 5 percent retention. Uniform distribution lower and upper bounds. Non-negative real numbers 
 #' @slot LFR Shortest length that is fully retained. Uniform distribution lower and upper bounds. Non-negative real numbers
-#' @slot Rmaxlen The retention of the longest (oldest) fish. Uniform distribution lower and upper bounds. Non-negative real numbers
+#' @slot Rmaxlen The retention of fish at Stock@Linf. Uniform distribution lower and upper bounds. Non-negative real numbers
 #' @slot DR Discard rate - the fraction of caught fish that are discarded. Uniform distribution lower and upper bounds. Fraction
 #' 
 #' @slot SelYears (Optional) Years representing join-points (vertices) at which historical selectivity pattern changes. Vector. Positive real numbers
@@ -1011,8 +1011,8 @@ setClass("OM", representation(Name = "character", nsim="numeric", proyears="nume
 
 
 # initialize OM
-setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Generic_fleet, 
-                                       Obs=DLMtool::Generic_obs, Imp=DLMtool::Perfect_Imp, 
+setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Generic_Fleet, 
+                                       Obs=DLMtool::Generic_Obs, Imp=DLMtool::Perfect_Imp, 
                                        nsim=48, proyears=50) {
   if (is.null(Stock)) {
     message("No Stock object found. Returning a blank OM object") 

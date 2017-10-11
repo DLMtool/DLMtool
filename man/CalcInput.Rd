@@ -4,11 +4,11 @@
 \alias{CalcInput}
 \title{Apply input control recommendations and calculate population dynamics}
 \usage{
-CalcInput(y, Asize, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P,
-  Rmaxlen_P, maxage, retA_P, retL_P, V_P, V2, pSLarray, SLarray2, DR, maxlen,
-  Len_age, CAL_binsmid, Fdisc, nCALbins, E_f, SizeLim_f, VBiomass_P, Biomass_P,
-  Spat_targ, FinF, qvar, qs, qinc, CB_P, CB_Pret, FM_P, FM_retain, Z_P,
-  M_ageArray, LastEffort, LastSpatial, LastAllocat)
+CalcInput(y, Linf, Asize, nyears, proyears, InputRecs, nsim, nareas, LR5_P,
+  LFR_P, Rmaxlen_P, maxage, retA_P, retL_P, V_P, V2, pSLarray, SLarray2, DR,
+  maxlen, Len_age, CAL_binsmid, Fdisc, nCALbins, E_f, SizeLim_f, VBiomass_P,
+  Biomass_P, Spat_targ, FinF, qvar, qs, qinc, CB_P, CB_Pret, FM_P, FM_retain,
+  Z_P, M_ageArray, LastEffort, LastSpatial, LastAllocat)
 }
 \arguments{
 \item{y}{Simulation year}

@@ -32,7 +32,7 @@ The component of the operating model that controls fishing dynamics
 
 \item{\code{LFS}}{Shortest length that is fully vulnerable to fishing. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Vmaxlen}}{The vulnerability of the longest/oldest fish. Uniform distribution lower and upper bounds. Fraction}
+\item{\code{Vmaxlen}}{The vulnerability of fish at Stock@Linf. Uniform distribution lower and upper bounds. Fraction}
 
 \item{\code{isRel}}{Selectivity parameters in units of size-of-maturity (or absolute eg cm). Single value. Boolean.}
 
@@ -40,7 +40,7 @@ The component of the operating model that controls fishing dynamics
 
 \item{\code{LFR}}{Shortest length that is fully retained. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{Rmaxlen}}{The retention of the longest (oldest) fish. Uniform distribution lower and upper bounds. Non-negative real numbers}
+\item{\code{Rmaxlen}}{The retention of fish at Stock@Linf. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
 \item{\code{DR}}{Discard rate - the fraction of caught fish that are discarded. Uniform distribution lower and upper bounds. Fraction}
 

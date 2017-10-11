@@ -7,7 +7,8 @@
 OMinit(name = NULL, templates = NULL, overwrite = FALSE)
 }
 \arguments{
-\item{name}{The name of the Excel and source.rmd file to be created in the working directory (character)}
+\item{name}{The name of the Excel and source.rmd file to be created in the working directory (character). 
+Use 'example' for a populated example OM XL and documentation file.}
 
 \item{templates}{An optional named list of existing DLMtool Stock, Fleet, Obs, or Imp objects
 to use as templates for the Operating Model.}

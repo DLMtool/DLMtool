@@ -18,7 +18,8 @@ OMexample <- function() {
 #' Generates an Excel spreadsheet and a source.rmd file in the current working directory for 
 #' specifying and documenting a DLMtool Operating Model.
 #' 
-#' @param name The name of the Excel and source.rmd file to be created in the working directory (character)
+#' @param name The name of the Excel and source.rmd file to be created in the working directory (character). 
+#' Use 'example' for a populated example OM XL and documentation file.
 #' @param templates An optional named list of existing DLMtool Stock, Fleet, Obs, or Imp objects
 #' to use as templates for the Operating Model.
 #' @param overwrite Logical. Should files be overwritten if they already exist?
@@ -42,13 +43,14 @@ OMexample <- function() {
 #' }
 #' 
 OMinit <- function(name=NULL, templates=NULL, overwrite=FALSE) {
+  if (is.null(name)) stop("Require OM name", call.=FALSE)
   
-  if (is.null(name)) {
+  if (tolower(name) == 'example') {
     OMexample()
     return(message("Creating Example Files in ", getwd()))
   }
-  
   if (class(name) != 'character') stop("name must be text", call.=FALSE)
+ 
   ## Write Excel skeleton ####
   wb <- openxlsx::createWorkbook()
   
@@ -512,7 +514,7 @@ ObjTemps <- function(templates=NULL) {
 #'
 #' @examples 
 #' \dontrun{
-#' OMinit('myOM', templates=list(Stock='Herring', Fleet='Generic_fleet', Obs='Generic_obs',
+#' OMinit('myOM', templates=list(Stock='Herring', Fleet='Generic_Fleet', Obs='Generic_Obs',
 #' Imp='Perfect_Imp'), overwrite=TRUE)
 #' myOM <- XL2OM('myOM.xlsx')
 #' 
@@ -650,7 +652,7 @@ writeCSV2 <- function(inobj, tmpfile = NULL, objtype = c("Stock", "Fleet",
 #' @author A. Hordyk
 #' @examples 
 #' \dontrun{
-#' OMinit('myOM', templates=list(Stock='Herring', Fleet='Generic_fleet', Obs='Generic_obs',
+#' OMinit('myOM', templates=list(Stock='Herring', Fleet='Generic_Fleet', Obs='Generic_Obs',
 #' Imp='Perfect_Imp'), overwrite=TRUE)
 #' myOM <- XL2OM('myOM.xlsx')
 #' OMdoc(myOM)

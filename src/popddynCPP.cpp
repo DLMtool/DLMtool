@@ -108,7 +108,7 @@ Rcpp::NumericMatrix popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVe
 //' @keywords internal
 //[[Rcpp::export]]
 List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
-               arma::mat M_age, arma::vec Asize_c, arma::vec MatAge, arma::mat WtAge,
+               arma::mat M_age, arma::vec Asize_c, arma::mat MatAge, arma::mat WtAge,
                arma::mat Vuln, arma::mat Retc, arma::vec Prec,
                NumericMatrix movc, double SRrelc, arma::vec Effind,
                double Spat_targc, double hc, NumericVector R0c, NumericVector SSBpRc,
@@ -131,8 +131,8 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
   Narray.subcube(0, 0, 0, maxage-1, 0, nareas-1) = Ncurr;
   for (int A=0; A<nareas; A++) {
     Barray.subcube(0, 0, A, maxage-1, 0, A) = Ncurr.col(A) % WtAge.col(0);
-    SSNarray.subcube(0, 0, A, maxage-1, 0, A) = Ncurr.col(A) % MatAge; 
-    SBarray.subcube(0, 0, A, maxage-1, 0, A) = Ncurr.col(A) % WtAge.col(0) % MatAge;
+    SSNarray.subcube(0, 0, A, maxage-1, 0, A) = Ncurr.col(A) % MatAge.col(0); 
+    SBarray.subcube(0, 0, A, maxage-1, 0, A) = Ncurr.col(A) % WtAge.col(0) % MatAge.col(0);
     VBarray.subcube(0, 0, A, maxage-1, 0, A) = Ncurr.col(A) % WtAge.col(0) % Vuln.col(0);
     Marray.subcube(0, 0, A, maxage-1, 0, A) = M_age.col(0);
     tempVec(A) = accu(VBarray.slice(A));
@@ -177,8 +177,8 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
     Narray.subcube(0, yr+1, 0, maxage-1, yr+1, nareas-1) = NextYrN;
     for (int A=0; A<nareas; A++) {
       Barray.subcube(0, yr+1, A, maxage-1, yr+1, A) = NextYrN.col(A) % WtAge.col(yr+1);
-      SSNarray.subcube(0, yr+1, A, maxage-1, yr+1, A) = NextYrN.col(A) % MatAge;
-      SBarray.subcube(0, yr+1, A, maxage-1, yr+1, A) = NextYrN.col(A) % WtAge.col(yr+1) % MatAge;
+      SSNarray.subcube(0, yr+1, A, maxage-1, yr+1, A) = NextYrN.col(A) % MatAge.col(yr+1);
+      SBarray.subcube(0, yr+1, A, maxage-1, yr+1, A) = NextYrN.col(A) % WtAge.col(yr+1) % MatAge.col(yr+1);
       VBarray.subcube(0, yr+1, A, maxage-1, yr+1, A) = NextYrN.col(A) % WtAge.col(yr+1) % Vuln.col(yr+1);
       Marray.subcube(0, yr+1, A, maxage-1, yr+1, A) = M_age.col(yr+1);
       tempVec(A) = accu(VBarray.subcube(0, yr+1, A, maxage-1, yr+1, A));

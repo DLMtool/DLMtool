@@ -21,7 +21,7 @@ popdyn(nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge, Vuln, Retc,
 
 \item{Asize_c}{Numeric vector (length nareas) with size of each area}
 
-\item{MatAge}{Numeric vector (length maxage) with proportion mature for each age-class}
+\item{MatAge}{Numeric matrix (dimensions maxage, nyears+proyears) with proportion mature for each age-class}
 
 \item{WtAge}{Numeric matrix (dimensions maxage, pyears) with weight-at-age}
 

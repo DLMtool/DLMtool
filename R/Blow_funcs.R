@@ -12,7 +12,7 @@
 #' @param Perr matrix of recruitment devitions nsim x nyears + maxage -1
 #' @param M_ageArray array of natural mortality rate nsim x maxage x nyears + proyears
 #' @param hs vector nsim long of steepness values
-#' @param Mat_age matrix nsim x nages of maturity at age
+#' @param Mat_age array nsim x nages x nyears+proyears of maturity at age
 #' @param Wt_age matrix nsim x nages of weight at age
 #' @param R0 vector nsim long of unfished recruitment
 #' @param V array of vulnerability nsim x maxage x nyears 
@@ -30,18 +30,18 @@
 getBlow<-function(x,SSBMSY,MGThorizon,Find,Perr,M_ageArray,hs,Mat_age,Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR,Bfrac=0.5,ploty=F){
   
   opt<-optimize(Blow_opt,log(c(0.0075,15)),SSBMSYc=SSBMSY[x],MGThorizon=MGThorizon[x],Fc=Find[x,],Perrc=Perr[x,],
-                Mc=M_ageArray[x,,],hc=hs[x],Mac=Mat_age[x,],Wac=Wt_age[x,,],
+                Mc=M_ageArray[x,,],hc=hs[x],Mac=Mat_age[x,,],Wac=Wt_age[x,,],
                 R0c=R0[x],Vc=V[x,,],nyears=nyears,maxage=maxage,movc=mov[x,,],
                 Spat_targc=Spat_targ[x],SRrelc=SRrel[x],aRc=aR[x,],bRc=bR[x,],Bfrac,mode=1)
   
   if(ploty){Blow_opt(opt$minimum,SSBMSYc=SSBMSY[x],MGThorizon=MGThorizon[x],Fc=Find[x,],Perrc=Perr[x,],
-                     Mc=M_ageArray[x,,],hc=hs[x],Mac=Mat_age[x,],Wac=Wt_age[x,,],
+                     Mc=M_ageArray[x,,],hc=hs[x],Mac=Mat_age[x,,],Wac=Wt_age[x,,],
                      R0c=R0[x],Vc=V[x,,],nyears=nyears,maxage=maxage,movc=mov[x,,],
                      Spat_targc=Spat_targ[x],SRrelc=SRrel[x],aRc=aR[x,],bRc=bR[x,],Bfrac,mode=3)
   }
   
   Blow_opt(opt$minimum,SSBMSYc=SSBMSY[x],MGThorizon=MGThorizon[x],Fc=Find[x,],Perrc=Perr[x,],
-           Mc=M_ageArray[x,,],hc=hs[x],Mac=Mat_age[x,],Wac=Wt_age[x,,],
+           Mc=M_ageArray[x,,],hc=hs[x],Mac=Mat_age[x,,],Wac=Wt_age[x,,],
            R0c=R0[x],Vc=V[x,,],nyears=nyears,maxage=maxage,movc=mov[x,,],
            Spat_targc=Spat_targ[x],SRrelc=SRrel[x],aRc=aR[x,],bRc=bR[x,],mode=2)
   
@@ -60,7 +60,7 @@ getBlow<-function(x,SSBMSY,MGThorizon,Find,Perr,M_ageArray,hs,Mat_age,Wt_age,R0,
 #' @param Perrc vector nyears+maxage-1 long of recruitment devitions 
 #' @param Mc matrix maxage by nyears+proyears of natural mortality rate
 #' @param hc number: steepness values
-#' @param Mac vector nages long of maturity at age
+#' @param Mac matrix nages by nyears+proyears of maturity at age
 #' @param Wac vector nages long  of weight at age
 #' @param R0c number: unfished recruitment
 #' @param Vc matrix of vulnerability maxage x nyears 
@@ -88,7 +88,7 @@ Blow_opt<-function(lnq,SSBMSYc,MGThorizon,Fc,Perrc,Mc,hc,Mac,Wac,R0c,Vc,nyears,m
   surv[2:maxage] <-exp(-cumsum(Mc[,1]))[1:(maxage-1)]
   N <-array(surv * R0c,dim=c(maxage,nareas))*array(rep(idist,each=maxage),dim=c(maxage,nareas))
 
-  SSN<-Mac*N   # Calculate initial spawning stock numbers
+  SSN<-Mac[,1]*N   # Calculate initial spawning stock numbers
   Biomass<-N*Wac[,1]
   SSB<-SSN*Wac[,1]                               # Calculate spawning stock biomass
   
@@ -99,7 +99,7 @@ Blow_opt<-function(lnq,SSBMSYc,MGThorizon,Fc,Perrc,Mc,hc,Mac,Wac,R0c,Vc,nyears,m
   
   # N<-Perrc[maxage:1]*array(exp(-Mc[1]*((1:maxage)-1))*R0c,dim=c(maxage,nareas))*array(rep(idist,each=maxage),dim=c(maxage,nareas))
   N<-Perrc[maxage:1]*array(surv * R0c,dim=c(maxage,nareas))*array(rep(idist,each=maxage),dim=c(maxage,nareas))
-  SSN<-Mac*N   # Calculate initial spawning stock numbers
+  SSN<-Mac[,1]*N   # Calculate initial spawning stock numbers
   Biomass<-N*Wac[,1]
   SSB<-SSN*Wac[,1]                               # Calculate spawning stock biomass
   
@@ -135,7 +135,7 @@ Blow_opt<-function(lnq,SSBMSYc,MGThorizon,Fc,Perrc,Mc,hc,Mac,Wac,R0c,Vc,nyears,m
     indMov3<-indMov[,2:3]
     temp<-array(N[indMov2]*movc[indMov3],dim=c(nareas,nareas,maxage))
     N<-apply(temp,c(3,1),sum)
-    SSN<-N*Mac
+    SSN<-N*Mac[,y]
     
     if(y<=nyears){
       SSB<-SSN*Wac[,y]

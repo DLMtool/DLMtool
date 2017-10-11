@@ -30,7 +30,7 @@ Generate OM Documentation Report
 }
 \examples{
 \dontrun{
-OMinit('myOM', templates=list(Stock='Herring', Fleet='Generic_fleet', Obs='Generic_obs',
+OMinit('myOM', templates=list(Stock='Herring', Fleet='Generic_Fleet', Obs='Generic_Obs',
 Imp='Perfect_Imp'), overwrite=TRUE)
 myOM <- XL2OM('myOM.xlsx')
 OMdoc(myOM)
