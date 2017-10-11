@@ -670,7 +670,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   # put all the operating model parameters in one table
   Data@OM <- data.frame(RefY, M, Depletion, A, SSBMSY_SSB0, FMSY_M, Mgrad, Msd, procsd, Esd, dFfinal, 
                         MSY, qinc, qcv, FMSY, Linf, K, t0, hs, Linfgrad, Kgrad, Linfsd, recgrad, Ksd, 
-                        ageM, L5=L5[nyears, ], LFS=LFS[nyears, ], Vmaxlen=Vmaxlen[nyears, ], LFC, OFLreal, 
+                        ageM=ageM[,nyears], L5=L5[nyears, ], LFS=LFS[nyears, ], Vmaxlen=Vmaxlen[nyears, ], LFC, OFLreal, 
                         Spat_targ, Size_area_1, Frac_area_1, Prob_staying, AC, L50, L95, B0, N0, SSB0, BMSY_B0,
                         TACSD,TACFrac,ESD,EFrac,SizeLimSD,SizeLimFrac,Blow,
                         BMSY, SSBMSY, Mexp, Fdisc, 
