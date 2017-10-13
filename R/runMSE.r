@@ -340,11 +340,13 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   message("Calculating historical stock and fishing dynamics")  # Print a progress update
   
   # Distribute fishing effort according to vulnerable biomass
-  if (nsim > 1) fishdist <- (apply(VBiomass[, , 1, ], c(1, 3), sum)^Spat_targ)/
-    apply(apply(VBiomass[, , 1, ], c(1, 3), sum)^Spat_targ, 1, mean)  # spatial preference according to spatial biomass
-  if (nsim == 1)  fishdist <- (matrix(apply(VBiomass[,,1,], 2, sum), nrow=nsim)^Spat_targ)/
-    mean((matrix(apply(VBiomass[,,1,], 2, sum), nrow=nsim)^Spat_targ))
-  
+  # if (nsim > 1) fishdist <- (apply(VBiomass[, , 1, ], c(1, 3), sum)^Spat_targ)/
+  #   apply(apply(VBiomass[, , 1, ], c(1, 3), sum)^Spat_targ, 1, mean)  # spatial preference according to spatial biomass
+  # if (nsim == 1)  fishdist <- (matrix(apply(VBiomass[,,1,], 2, sum), nrow=nsim)^Spat_targ)/
+  #   mean((matrix(apply(VBiomass[,,1,], 2, sum), nrow=nsim)^Spat_targ))
+  # 
+  # 
+
   # --- Simulate historical years ----
   if (snowfall::sfIsRunning()) {
     histYrs <- snowfall::sfSapply(1:nsim, simYears, nareas, maxage, N, pyears=nyears, M_ageArray, Asize,
@@ -365,6 +367,13 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   FMret <- aperm(array(as.numeric(unlist(histYrs[7,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
   Z <-aperm(array(as.numeric(unlist(histYrs[8,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
 
+  
+  histYrs <- sapply(1:nsim, simYears, nareas, maxage, N, pyears=nyears, M_ageArray, Asize,
+                    Mat_age, Wt_age, V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, 
+                    SSBpR, aR, bR, qs, maxF, FALSE)
+  temp <- aperm(array(as.numeric(unlist(histYrs[6,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
+  
+  
   
   # Depletion <- apply(Biomass[, , nyears, ], 1, sum)/apply(Biomass[, , 1, ], 1, sum)  #^betas   # apply hyperstability / hyperdepletion
   if (nsim > 1) Depletion <- apply(SSB[,,nyears,],1,sum)/SSB0#^betas
@@ -1107,7 +1116,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       } else {
         # --- Not an update yr ----
         vbio <- apply(VBiomass_P[, , y, ], c(1, 3), sum)
-        fishdist <- (vbio^Spat_targ)/apply(vbio^Spat_targ, 1, mean)  # calculate distribution of effort \t  
+        # fishdist <- (vbio^Spat_targ)/apply(vbio^Spat_targ, 1, mean)  # calculate distribution of effort \t  
         if (class(match.fun(MPs[mm])) == "Output") {
           # TAC remains same as last year
           outputcalcs <- CalcOutput(y, Asize, TACa[, mm, y], TAC_f, lastCatch=apply(CB_P[,,y-1,], 1, sum), 

@@ -138,7 +138,8 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
     tempVec(A) = accu(VBarray.slice(A));
   }
   
-  fishdist = (pow(tempVec, Spat_targc))/mean((pow(tempVec, Spat_targc)));
+  // fishdist = (pow(tempVec, Spat_targc))/mean((pow(tempVec, Spat_targc)));
+  fishdist = (pow(tempVec, Spat_targc))/sum((pow(tempVec, Spat_targc)));
 
   // calculate F at age for first year
   if (control == 1) {
@@ -184,7 +185,8 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
       tempVec(A) = accu(VBarray.subcube(0, yr+1, A, maxage-1, yr+1, A));
     }
 
-    fishdist = (pow(tempVec, Spat_targc))/mean((pow(tempVec, Spat_targc)));
+    // fishdist = (pow(tempVec, Spat_targc))/mean((pow(tempVec, Spat_targc)));
+    fishdist = (pow(tempVec, Spat_targc))/sum((pow(tempVec, Spat_targc)));
 
     // calculate F at age for next year
     if (control == 1) {

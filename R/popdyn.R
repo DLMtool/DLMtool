@@ -160,10 +160,12 @@ popdyn <- function(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
   
   # Distribution of fishing effort 
   VBa <- colSums(VBarray[,1,]) # total vuln biomass in each area 
-  fishdist <- VBa^Spat_targc/mean(VBa^Spat_targc)
-
+  
+  # fishdist <- VBa^Spat_targc/mean(VBa^Spat_targc)
+  fishdist <- VBa^Spat_targc/sum(VBa^Spat_targc)
+  
   Asize_mat <- matrix(Asize_c, nrow=maxage, ncol=nareas, byrow=TRUE)
-                     
+                    
   if (control == 1) {
     FMarray[SAYR] <- (Effind[SAYR[,2]] * Qc * Vuln[SAYR[,1:2]] * fishdist[SAYR[,3]])/Asize_mat
     FMretarray[SAYR] <- (Effind[SAYR[,2]] * Qc * Retc[SAYR[,1:2]] * fishdist[SAYR[,3]])/Asize_mat
@@ -193,7 +195,8 @@ popdyn <- function(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
     
     # Distribution of fishing effort 
     VBa <- colSums(VBarray[,y+1,]) # total vuln biomass in each area 
-    fishdist <- VBa^Spat_targc/mean(VBa^Spat_targc)
+    # fishdist <- VBa^Spat_targc/mean(VBa^Spat_targc)
+    fishdist <- VBa^Spat_targc/sum(VBa^Spat_targc)
     
     SAYR <- as.matrix(expand.grid(1:maxage, y+1, 1:nareas))  # Set up some array indexes age (A) year (Y) region/area (R)
     if (control ==1) {
@@ -597,9 +600,13 @@ CalcOutput <- function(y, Asize, TACused, TAC_f, lastCatch, availB, maxF, Biomas
   maxC <- (1 - exp(-maxF)) * availB # maximum catch given maxF
   TACusedE[TACusedE > maxC] <- maxC[TACusedE > maxC] # apply maxF limit - catch can't be higher than maxF * vulnerable biomass
   
-  fishdist <- (apply(VBiomass_P[, , y, ], c(1, 3), sum)^Spat_targ)/
-    apply(apply(VBiomass_P[, , y, ], c(1, 3), sum)^Spat_targ, 1, mean)  # spatial preference according to spatial biomass
+  # fishdist <- (apply(VBiomass_P[, , y, ], c(1, 3), sum)^Spat_targ)/
+    # apply(apply(VBiomass_P[, , y, ], c(1, 3), sum)^Spat_targ, 1, mean)  # spatial preference according to spatial biomass
 
+  fishdist <- (apply(VBiomass_P[, , y, ], c(1, 3), sum)^Spat_targ)/
+    apply(apply(VBiomass_P[, , y, ], c(1, 3), sum)^Spat_targ, 1, sum)  # spatial preference according to spatial biomass
+  
+  
  
   # If there is discard mortality, actual removals are higher than TACused
   # calculate distribution of all effort
@@ -909,7 +916,8 @@ CalcInput <- function(y, Linf, Asize, nyears, proyears, InputRecs, nsim, nareas,
   }
   
   newVB <- apply(Biomass_P[, , y, ] * V_P[SAYt], c(1, 3), sum)  # calculate total vuln biomass by area 
-  fishdist <- (newVB^Spat_targ)/apply(newVB^Spat_targ, 1, mean)  # spatial preference according to spatial vulnerable biomass
+  # fishdist <- (newVB^Spat_targ)/apply(newVB^Spat_targ, 1, mean)  # spatial preference according to spatial vulnerable biomass
+  fishdist <- (newVB^Spat_targ)/apply(newVB^Spat_targ, 1, sum)  # spatial preference according to spatial vulnerable biomass
   Emult <- 1 + ((2/apply(fishdist * Si, 1, sum)) - 1) *   Ai  # allocate effort to new area according to fraction allocation Ai
  
   # fishing mortality with input control recommendation 
