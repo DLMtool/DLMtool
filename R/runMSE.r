@@ -65,7 +65,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @return An object of class MSE
 #' @author T. Carruthers and A. Hordyk
 #' @export 
-runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim"),nsim=48,
+runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"),nsim=48,
                       proyears=50,interval=4,pstar = 0.5, maxF = 0.8,  reps = 1, 
                       CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=FALSE, 
                       HZN=2, Bfrac=0.5) {

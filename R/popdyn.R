@@ -782,7 +782,8 @@ CalcInput <- function(y, Linf, Asize, nyears, proyears, InputRecs, nsim, nareas,
   
   # Change in Effort 
   if (length(InputRecs$Effort) == 0) { # no effort recommendation
-    Ei <- LastEffort # effort is unchanged 
+    if (y==1) Ei <- LastEffort  * E_f[,y] # effort is unchanged but has implementation error
+    if (y>1) Ei <- LastEffort / E_f[,y-1]  * E_f[,y] # effort is unchanged but has implementation error
   } else if (length(InputRecs$Effort) != nsim) {
     stop("Effort recommmendation is not 'nsim' long.\n Does MP return Effort recommendation under all conditions?")
   } else {
@@ -799,12 +800,12 @@ CalcInput <- function(y, Linf, Asize, nyears, proyears, InputRecs, nsim, nareas,
   }
   
   # Allocation 
-  if (length(InputRecs$Allocation) == 0) { # no allocation recommendation
+  if (length(InputRecs$Allocate) == 0) { # no allocation recommendation
     Ai <- LastAllocat # rep(0, nsim) # allocation is unchanged 
-  } else if (length(InputRecs$Allocation) != nsim) {
-    stop("Allocation recommmendation is not 'nsim' long.\n Does MP return Allocation recommendation under all conditions?")
+  } else if (length(InputRecs$Allocate) != nsim) {
+    stop("Allocate recommmendation is not 'nsim' long.\n Does MP return Allocate recommendation under all conditions?")
   } else {
-    Ai <- InputRecs$Allocation # change in spatial allocation
+    Ai <- InputRecs$Allocate # change in spatial allocation
   }
   # Retention Curve 
   RetentFlag <- FALSE
@@ -863,15 +864,7 @@ CalcInput <- function(y, Linf, Asize, nyears, proyears, InputRecs, nsim, nareas,
   if (RetentFlag) {
     yr <- y+nyears 
     allyrs <- (y+nyears):(nyears+proyears)  # update vulnerabilty for all future years
-    # s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
-    #                                           LFS = LFR_P[yr,i], 
-    #                                           L0.05 = LR5_P[yr,i])$minimum)
-    # 
-    # s2 <- sapply(1:nsim, function(i) optimize(getSlope2, interval = c(0, 1e+05), 
-    #                                           LFS = LFR_P[yr,i], s1=s1[i], 
-    #                                           maxlen=maxlen[i], 
-    #                                           MaxSel= Rmaxlen_P[yr,i])$minimum)
-
+  
     srs <- (Linf - LFR_P[yr,]) / ((-log(Rmaxlen_P[yr,],2))^0.5) # selectivity parameters are constant for all years
     sls <- (LFR_P[yr,] - LR5_P[yr,]) / ((-log(0.05,2))^0.5)
     
@@ -918,7 +911,7 @@ CalcInput <- function(y, Linf, Asize, nyears, proyears, InputRecs, nsim, nareas,
   newVB <- apply(Biomass_P[, , y, ] * V_P[SAYt], c(1, 3), sum)  # calculate total vuln biomass by area 
   fishdist <- (newVB^Spat_targ)/apply(newVB^Spat_targ, 1, mean)  # spatial preference according to spatial vulnerable biomass
   Emult <- 1 + ((2/apply(fishdist * Si, 1, sum)) - 1) *   Ai  # allocate effort to new area according to fraction allocation Ai
-  
+ 
   # fishing mortality with input control recommendation 
   FM_P[SAYR] <- (FinF[S1] * Ei[S1] * V_P[SAYt] * Si[SR] * fishdist[SR] * Emult[S1] * qvar[SY1] * (qs[S1]*(1 + qinc[S1]/100)^y))/Asize[SR]
   

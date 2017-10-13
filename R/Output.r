@@ -73,7 +73,7 @@ gety <- function(n) (n^(n/(n - 1)))/(n - 1)  # More DBSRA code: get the y parame
 #' @importFrom methods getClassDef .hasSlot new slot slot<- slotNames
 #' @importFrom stats approx coef dbeta density dnorm dlnorm lm loess loess.smooth 
 #' median nlm optim optimise optimize plogis pnorm predict qlnorm quantile rbeta 
-#' rlnorm rmultinom rnorm runif sd uniroot   
+#' rlnorm rmultinom rnorm runif sd   
 #' @importFrom utils packageVersion lsf.str read.csv
 AvC <- function(x, Data, reps = 100) {
   rlnorm(reps, log(mean(Data@Cat[x, ], na.rm = T)), 0.2)

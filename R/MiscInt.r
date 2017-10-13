@@ -594,32 +594,6 @@ getDNvulnS <- function(mod, age05, Vmaxage, maxage, nsim) {
 }
 
 
-
-#' Calculate slope from ageM and age95 
-#'
-#' @param X index 
-#' @param ageM age at maturity
-#' @param age95 age at 95 percent maturity
-#' @keywords internal
-#' @export getroot
-getroot <- function(X, ageM, age95) {
-  uniroot(getSlopeFun, interval = c(1e-08, 8), age50 = ageM[X], age95 = age95[X])$root
-}
-  
-  
-#' Internal function to calculate slope
-#'
-#' @param SD standard deviation 
-#' @param age50 age at maturity
-#' @param age95 age at 95 percent maturity
-#' @keywords internal
-#' @export getSlopeFun
-getSlopeFun <- function(SD, age50, age95) 
-  0.95 - (1/(1 + exp((age50 - age95)/(age50 * SD))))
-
-
-  
-  
 # Selectivity at length function for GTG model
 # SelectFunGTG <- function(i, SL0.05, SL1, MaxSel, Linfs, LenGTG) {
 #     s1 <- optimise(getSlope1, interval = c(0, 100), L1 = SL1[i], L0.05 = SL0.05[i])$minimum

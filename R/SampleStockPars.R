@@ -82,8 +82,6 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   StockOut$Msd <- Msd 
   StockOut$Mgrad <- Mgrad
   
-  
-  
   # == Depletion ====
   if (!exists("dep", inherits=FALSE)) {
     StockOut$dep <- dep <- runif(nsim, Stock@D[1], Stock@D[2])  # sample from the range of user-specified depletion (Bcurrent/B0)  
@@ -91,7 +89,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
     StockOut$dep <- dep 
   }
   
-  
+ 
   # == Stock-Recruitment Relationship ====
   if (!exists("SRrel", inherits=FALSE)) {
     StockOut$SRrel <- rep(Stock@SRrel, nsim)  # type of Stock-recruit relationship. 1=Beverton Holt, 2=Ricker
@@ -311,10 +309,9 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   # == Generate Maturity-at-Age array ====
   if (!exists("Mat_age", inherits=FALSE)) {
     Mat_age <- array(NA, dim=c(nsim, maxage, nyears+proyears))
-    ageMarray <- array(ageM, dim = c(nsim, maxage))  # Age at maturity array
+    
     for (XX in 1:(nyears+proyears)) {
-      ageMsd <- sapply(1:nsim, getroot, ageM[,XX], age95[,XX])
-      Mat_age[,,XX] <- 1/(1 + exp((ageMarray - (Agearray))/(ageMarray * ageMsd)))  # Maturity at age array by year
+     Mat_age[,,XX] <- 1/(1 + exp(-log(19) * ((Agearray - ageM[,XX])/(age95[,XX] - ageM[,XX])))) # Maturity at age array by year
     }
     
   } else {

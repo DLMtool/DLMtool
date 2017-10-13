@@ -20,6 +20,7 @@ OMexample <- function() {
 #' 
 #' @param name The name of the Excel and source.rmd file to be created in the working directory (character). 
 #' Use 'example' for a populated example OM XL and documentation file.
+#' @param files What files should be created: 'xlsx', 'rmd', or c('xlsx', 'rmd') (default: both)
 #' @param templates An optional named list of existing DLMtool Stock, Fleet, Obs, or Imp objects
 #' to use as templates for the Operating Model.
 #' @param overwrite Logical. Should files be overwritten if they already exist?
@@ -42,7 +43,9 @@ OMexample <- function() {
 #' OMinit('myOM', templates=list(Stock='Herring', Obs='Generic_obs'), overwrite=TRUE)
 #' }
 #' 
-OMinit <- function(name=NULL, templates=NULL, overwrite=FALSE) {
+OMinit <- function(name=NULL, files=c('xlsx', 'rmd'), templates=NULL, overwrite=FALSE) {
+  files <- match.arg(files, several.ok = TRUE)
+  
   if (is.null(name)) stop("Require OM name", call.=FALSE)
   
   if (tolower(name) == 'example') {
@@ -52,16 +55,15 @@ OMinit <- function(name=NULL, templates=NULL, overwrite=FALSE) {
   if (class(name) != 'character') stop("name must be text", call.=FALSE)
  
   ## Write Excel skeleton ####
-  wb <- openxlsx::createWorkbook()
+  if (nchar(tools::file_ext(name)) == 0) {
+    nameNoExt <- name
+    name <- paste0(name, ".xlsx")
+  } else {
+    ext <- tools::file_ext(name)
+    if (!ext %in% c("xlsx", "xls")) stop("File extension must be 'xlsx' or 'xls'", call.=FALSE)
+    nameNoExt <- tools::file_path_sans_ext(name)
+  }
   
-  openxlsx::addWorksheet(wb, sheetName = "Stock", gridLines = TRUE)
-  openxlsx::addWorksheet(wb, sheetName = "Fleet", gridLines = TRUE)
-  openxlsx::addWorksheet(wb, sheetName = "Obs", gridLines = TRUE)
-  openxlsx::addWorksheet(wb, sheetName = "Imp", gridLines = TRUE)
-  openxlsx::addWorksheet(wb, sheetName = "OM", gridLines = TRUE)
-  openxlsx::addWorksheet(wb, sheetName = "Data", gridLines = TRUE)
-  
-
   
   ObTemplates <- ObjTemps(templates)
   if (!is.null(ObTemplates) && class(ObTemplates) == 'list') {
@@ -72,383 +74,393 @@ OMinit <- function(name=NULL, templates=NULL, overwrite=FALSE) {
     }
   }
   
-  # Load the Excel File ####
-  if (nchar(tools::file_ext(name)) == 0) {
-    nameNoExt <- name
-    name <- paste0(name, ".xlsx")
-  } else {
-    ext <- tools::file_ext(name)
-    if (!ext %in% c("xlsx", "xls")) stop("File extension must be 'xlsx' or 'xls'", call.=FALSE)
-    nameNoExt <- tools::file_path_sans_ext(name)
-  }
-
-  message("Creating ", name, " in ", getwd())
   
-
-  # Stock sheet ####
-  df <- data.frame(Slot=slotNames("Stock"))
   
-  # write slots 
-  openxlsx::writeDataTable(wb, sheet = "Stock", x = df, 
-                           startCol = 1, startRow = 1,
-                           tableStyle = "none",
-                           colNames = TRUE, rowNames = FALSE, 
-                           withFilter = FALSE,
-                           bandedRows = FALSE,
-                           bandedCols = FALSE,
-                           keepNA = FALSE,
-                           firstColumn =TRUE)
-  
-  openxlsx::setColWidths(wb, sheet = "Stock", cols = 1, widths = 'auto')
-  
-  # loop through slot values if Obj template provided
-  if (!is.null(ObTemplates$StockTemp)) {
-    obj <- ObTemplates$StockTemp
-    slots <- slotNames(obj)
+  if ('xlsx' %in% files) {
+    wb <- openxlsx::createWorkbook()
     
-    for (sl in seq_along(slots)) {
-      val <- slot(obj, slotNames("Stock")[sl])
-      ln <- length(val)
-      if (ln >0 && !is.na(ln)) {
-        df <- data.frame(t(val))
-        openxlsx::writeData(wb, sheet = "Stock", x = df, 
-                            startCol = 2, startRow = sl+1,
-                            colNames = FALSE, rowNames = FALSE, 
-                            withFilter = FALSE,
-                            keepNA = FALSE)         
-      }
-    }
-  }
-  
-  
-  # Fleet sheet ####
-  df <- data.frame(Slot=slotNames("Fleet"))
-  
-  # write slots 
-  openxlsx::writeDataTable(wb, sheet = "Fleet", x = df, 
-                           startCol = 1, startRow = 1,
-                           tableStyle = "none",
-                           colNames = TRUE, rowNames = FALSE, 
-                           withFilter = FALSE,
-                           bandedRows = FALSE,
-                           bandedCols = FALSE,
-                           keepNA = FALSE,
-                           firstColumn =TRUE)
-  
-  openxlsx::setColWidths(wb, sheet = "Fleet", cols = 1, widths = 'auto')
-  
-  # loop through slot values if Obj template provided
-  if (!is.null(ObTemplates$FleetTemp)) {
-    obj <- ObTemplates$FleetTemp
-    slots <- slotNames(obj)
+    openxlsx::addWorksheet(wb, sheetName = "Stock", gridLines = TRUE)
+    openxlsx::addWorksheet(wb, sheetName = "Fleet", gridLines = TRUE)
+    openxlsx::addWorksheet(wb, sheetName = "Obs", gridLines = TRUE)
+    openxlsx::addWorksheet(wb, sheetName = "Imp", gridLines = TRUE)
+    openxlsx::addWorksheet(wb, sheetName = "OM", gridLines = TRUE)
+    openxlsx::addWorksheet(wb, sheetName = "Data", gridLines = TRUE)
     
-    for (sl in seq_along(slots)) {
-      val <- slot(obj, slotNames("Fleet")[sl])
-      ln <- length(val)
-      if (ln >0 && !is.na(ln)) {
-        df <- data.frame(t(val))
-        openxlsx::writeData(wb, sheet = "Fleet", x = df, 
-                            startCol = 2, startRow = sl+1,
-                            colNames = FALSE, rowNames = FALSE, 
-                            withFilter = FALSE,
-                            keepNA = FALSE)         
-      }
+    
+
+    # Load the Excel File ####
+    
+    
+    message("Creating ", name, " in ", getwd())
+    
+    
+    # Stock sheet ####
+    df <- data.frame(Slot=slotNames("Stock"))
+    
+    # write slots 
+    openxlsx::writeDataTable(wb, sheet = "Stock", x = df, 
+                             startCol = 1, startRow = 1,
+                             tableStyle = "none",
+                             colNames = TRUE, rowNames = FALSE, 
+                             withFilter = FALSE,
+                             bandedRows = FALSE,
+                             bandedCols = FALSE,
+                             keepNA = FALSE,
+                             firstColumn =TRUE)
+    
+    openxlsx::setColWidths(wb, sheet = "Stock", cols = 1, widths = 'auto')
+    
+    # loop through slot values if Obj template provided
+    if (!is.null(ObTemplates$StockTemp)) {
+      obj <- ObTemplates$StockTemp
+      slots <- slotNames(obj)
       
-    }
-  }
-  
-  # Obs sheet ####
-  df <- data.frame(Slot=slotNames("Obs"))
-  
-  # write slots 
-  openxlsx::writeDataTable(wb, sheet = "Obs", x = df, 
-                           startCol = 1, startRow = 1,
-                           tableStyle = "none",
-                           colNames = TRUE, rowNames = FALSE, 
-                           withFilter = FALSE,
-                           bandedRows = FALSE,
-                           bandedCols = FALSE,
-                           keepNA = FALSE,
-                           firstColumn =TRUE)
-  
-  openxlsx::setColWidths(wb, sheet = "Obs", cols = 1, widths = 'auto')
-  
-  # loop through slot values if Obj template provided
-  if (!is.null(ObTemplates$ObsTemp)) {
-    obj <- ObTemplates$ObsTemp
-    slots <- slotNames(obj)
-    
-    for (sl in seq_along(slots)) {
-      val <- slot(obj, slotNames("Obs")[sl])
-      ln <- length(val)
-      if (ln >0 && !is.na(ln)) {
-        df <- data.frame(t(val))
-        openxlsx::writeData(wb, sheet = "Obs", x = df, 
-                            startCol = 2, startRow = sl+1,
-                            colNames = FALSE, rowNames = FALSE, 
-                            withFilter = FALSE,
-                            keepNA = FALSE)         
+      for (sl in seq_along(slots)) {
+        val <- slot(obj, slotNames("Stock")[sl])
+        ln <- length(val)
+        if (ln >0 && !is.na(ln)) {
+          df <- data.frame(t(val))
+          openxlsx::writeData(wb, sheet = "Stock", x = df, 
+                              startCol = 2, startRow = sl+1,
+                              colNames = FALSE, rowNames = FALSE, 
+                              withFilter = FALSE,
+                              keepNA = FALSE)         
+        }
       }
     }
-  }
-  
-  # Imp sheet ####
-  df <- data.frame(Slot=slotNames("Imp"))
-  
-  # write slots 
-  openxlsx::writeDataTable(wb, sheet = "Imp", x = df, 
-                           startCol = 1, startRow = 1,
-                           tableStyle = "none",
-                           colNames = TRUE, rowNames = FALSE, 
-                           withFilter = FALSE,
-                           bandedRows = FALSE,
-                           bandedCols = FALSE,
-                           keepNA = FALSE,
-                           firstColumn =TRUE)
-  
-  openxlsx::setColWidths(wb, sheet = "Imp", cols = 1, widths = 'auto')
-  
-  # loop through slot values if Obj template provided
-  if (!is.null(ObTemplates$ImpTemp)) {
-    obj <- ObTemplates$ImpTemp
-    slots <- slotNames(obj)
     
-    for (sl in seq_along(slots)) {
-      val <- slot(obj, slotNames("Imp")[sl])
-      ln <- length(val)
-      if (ln >0 && !is.na(ln)) {
-        df <- data.frame(t(val))
-        openxlsx::writeData(wb, sheet = "Imp", x = df, 
-                            startCol = 2, startRow = sl+1,
-                            colNames = FALSE, rowNames = FALSE, 
-                            withFilter = FALSE,
-                            keepNA = FALSE)         
+    
+    # Fleet sheet ####
+    df <- data.frame(Slot=slotNames("Fleet"))
+    
+    # write slots 
+    openxlsx::writeDataTable(wb, sheet = "Fleet", x = df, 
+                             startCol = 1, startRow = 1,
+                             tableStyle = "none",
+                             colNames = TRUE, rowNames = FALSE, 
+                             withFilter = FALSE,
+                             bandedRows = FALSE,
+                             bandedCols = FALSE,
+                             keepNA = FALSE,
+                             firstColumn =TRUE)
+    
+    openxlsx::setColWidths(wb, sheet = "Fleet", cols = 1, widths = 'auto')
+    
+    # loop through slot values if Obj template provided
+    if (!is.null(ObTemplates$FleetTemp)) {
+      obj <- ObTemplates$FleetTemp
+      slots <- slotNames(obj)
+      
+      for (sl in seq_along(slots)) {
+        val <- slot(obj, slotNames("Fleet")[sl])
+        ln <- length(val)
+        if (ln >0 && !is.na(ln)) {
+          df <- data.frame(t(val))
+          openxlsx::writeData(wb, sheet = "Fleet", x = df, 
+                              startCol = 2, startRow = sl+1,
+                              colNames = FALSE, rowNames = FALSE, 
+                              withFilter = FALSE,
+                              keepNA = FALSE)         
+        }
+        
       }
     }
-  }
+    
+    # Obs sheet ####
+    df <- data.frame(Slot=slotNames("Obs"))
+    
+    # write slots 
+    openxlsx::writeDataTable(wb, sheet = "Obs", x = df, 
+                             startCol = 1, startRow = 1,
+                             tableStyle = "none",
+                             colNames = TRUE, rowNames = FALSE, 
+                             withFilter = FALSE,
+                             bandedRows = FALSE,
+                             bandedCols = FALSE,
+                             keepNA = FALSE,
+                             firstColumn =TRUE)
+    
+    openxlsx::setColWidths(wb, sheet = "Obs", cols = 1, widths = 'auto')
+    
+    # loop through slot values if Obj template provided
+    if (!is.null(ObTemplates$ObsTemp)) {
+      obj <- ObTemplates$ObsTemp
+      slots <- slotNames(obj)
+      
+      for (sl in seq_along(slots)) {
+        val <- slot(obj, slotNames("Obs")[sl])
+        ln <- length(val)
+        if (ln >0 && !is.na(ln)) {
+          df <- data.frame(t(val))
+          openxlsx::writeData(wb, sheet = "Obs", x = df, 
+                              startCol = 2, startRow = sl+1,
+                              colNames = FALSE, rowNames = FALSE, 
+                              withFilter = FALSE,
+                              keepNA = FALSE)         
+        }
+      }
+    }
+    
+    # Imp sheet ####
+    df <- data.frame(Slot=slotNames("Imp"))
+    
+    # write slots 
+    openxlsx::writeDataTable(wb, sheet = "Imp", x = df, 
+                             startCol = 1, startRow = 1,
+                             tableStyle = "none",
+                             colNames = TRUE, rowNames = FALSE, 
+                             withFilter = FALSE,
+                             bandedRows = FALSE,
+                             bandedCols = FALSE,
+                             keepNA = FALSE,
+                             firstColumn =TRUE)
+    
+    openxlsx::setColWidths(wb, sheet = "Imp", cols = 1, widths = 'auto')
+    
+    # loop through slot values if Obj template provided
+    if (!is.null(ObTemplates$ImpTemp)) {
+      obj <- ObTemplates$ImpTemp
+      slots <- slotNames(obj)
+      
+      for (sl in seq_along(slots)) {
+        val <- slot(obj, slotNames("Imp")[sl])
+        ln <- length(val)
+        if (ln >0 && !is.na(ln)) {
+          df <- data.frame(t(val))
+          openxlsx::writeData(wb, sheet = "Imp", x = df, 
+                              startCol = 2, startRow = sl+1,
+                              colNames = FALSE, rowNames = FALSE, 
+                              withFilter = FALSE,
+                              keepNA = FALSE)         
+        }
+      }
+    }
+    
+    
+    # OM sheet####
+    df <- data.frame(Slot=c("Name", "nsim", "proyears", "interval", "pstar", "maxF", "reps"))
+    
+    # write slots 
+    openxlsx::writeData(wb, sheet = "OM", x = df, 
+                        startCol = 1, startRow = 1,
+                        colNames = TRUE, rowNames = FALSE, 
+                        withFilter = FALSE,
+                        keepNA = FALSE) 
+    
+    
+    
+    # write slots 
+    df <- data.frame(Defaults=nameNoExt)
+    openxlsx::writeData(wb, sheet = "OM", x = df, 
+                        startCol = 2, startRow = 1,
+                        colNames = TRUE, rowNames = FALSE, 
+                        withFilter = FALSE,
+                        keepNA = FALSE) 
+    
+    df <- data.frame(Values=c( 48, 50, 4, 0.5, 0.8, 1))
+    openxlsx::writeData(wb, sheet = "OM", x = df, 
+                        startCol = 2, startRow = 3,
+                        colNames = FALSE, rowNames = FALSE, 
+                        withFilter = FALSE,
+                        keepNA = FALSE) 
+    
+    
+    # Data sheet ####
+    df <- data.frame(Slot=slotNames("Data"))
+    
+    # write slots 
+    openxlsx::writeDataTable(wb, sheet = "Data", x = df, 
+                             startCol = 1, startRow = 1,
+                             tableStyle = "none",
+                             colNames = TRUE, rowNames = FALSE, 
+                             withFilter = FALSE,
+                             bandedRows = FALSE,
+                             bandedCols = FALSE,
+                             keepNA = FALSE,
+                             firstColumn =TRUE)
+    
+    openxlsx::setColWidths(wb, sheet = "Data", cols = 1, widths = 'auto')
+    
+    
+    
+    
+    # Write Excel file ####
+    if (file.exists(name) & !overwrite) {
+      stop(name, " already exists.\n Use 'overwrite=TRUE'. \nNOTE: this will overwrite both .xlsx and source.rmd files if they exist.", call.=FALSE)
+    } else {
+      options(warn=2)
+      tryWrite <- try(openxlsx::saveWorkbook(wb, name, overwrite = overwrite), 
+                      silent=TRUE) ## save to working directory
+      options(warn=0)
+      if (tryWrite != 1) stop("Can't write to ", name, ". If the file open?", call.=FALSE)
+    }
   
-  
-  # OM sheet####
-  df <- data.frame(Slot=c("Name", "nsim", "proyears", "interval", "pstar", "maxF", "reps"))
-  
-  # write slots 
-  openxlsx::writeData(wb, sheet = "OM", x = df, 
-                      startCol = 1, startRow = 1,
-                      colNames = TRUE, rowNames = FALSE, 
-                      withFilter = FALSE,
-                      keepNA = FALSE) 
-  
-  
-  
-  # write slots 
-  df <- data.frame(Defaults=nameNoExt)
-  openxlsx::writeData(wb, sheet = "OM", x = df, 
-                      startCol = 2, startRow = 1,
-                      colNames = TRUE, rowNames = FALSE, 
-                      withFilter = FALSE,
-                      keepNA = FALSE) 
-  
-  df <- data.frame(Values=c( 48, 50, 4, 0.5, 0.8, 1))
-  openxlsx::writeData(wb, sheet = "OM", x = df, 
-                      startCol = 2, startRow = 3,
-                      colNames = FALSE, rowNames = FALSE, 
-                      withFilter = FALSE,
-                      keepNA = FALSE) 
-  
-  
-  # Data sheet ####
-  df <- data.frame(Slot=slotNames("Data"))
-  
-  # write slots 
-  openxlsx::writeDataTable(wb, sheet = "Data", x = df, 
-                           startCol = 1, startRow = 1,
-                           tableStyle = "none",
-                           colNames = TRUE, rowNames = FALSE, 
-                           withFilter = FALSE,
-                           bandedRows = FALSE,
-                           bandedCols = FALSE,
-                           keepNA = FALSE,
-                           firstColumn =TRUE)
-  
-  openxlsx::setColWidths(wb, sheet = "Data", cols = 1, widths = 'auto')
-  
-  
-  
-  
-  # Write Excel file ####
-  if (file.exists(name) & !overwrite) {
-    stop(name, " already exists.\n Use 'overwrite=TRUE'. \nNOTE: this will overwrite both .xlsx and source.rmd files if they exist.", call.=FALSE)
-  } else {
-    options(warn=2)
-    tryWrite <- try(openxlsx::saveWorkbook(wb, name, overwrite = overwrite), 
-                    silent=TRUE) ## save to working directory
-    options(warn=0)
-    if (tryWrite != 1) stop("Can't write to ", name, ". If the file open?", call.=FALSE)
-  }
-  
-  
-  
-  ## Write Rmd source skeleton ####
-  message("Creating ", nameNoExt, "_source.rmd in ", getwd())
-  RmdSource <- paste0(nameNoExt, "_source.rmd")
-  if (file.exists(RmdSource) & !overwrite) {
-    stop(RmdSource, " already exists.\n Use 'overwrite=TRUE'.", call.=FALSE)
-  } else {
-    tt <- file.create(RmdSource)
-  }
-  
-  # Title
-  cat("\n# Title\n", sep="", append=TRUE, file=RmdSource) 
-  cat("Title. One line only.\n", sep="", append=TRUE, file=RmdSource) 
-  
-  # Subtitle - optional 
-  cat("\n# Subtitle\n", sep="", append=TRUE, file=RmdSource) 
-  cat("Optional. Subtitle. One line only. Delete text and heading if not required.\n", 
-      sep="", append=TRUE, file=RmdSource) 
-  
-  
-  # Author(s) 
-  cat("\n# Author(s)\n", sep="", append=TRUE, file=RmdSource) 
-  cat("Name and contact details (e.g email, affiliation) for each author.\n", 
-      sep="", append=TRUE, file=RmdSource) 
-  cat("One line per author.\n", 
-      sep="", append=TRUE, file=RmdSource) 
-  
-  # # Affiliation/Email - optional 
-  # cat("\n# Affiliation/Email\n", sep="", append=TRUE, file=RmdSource) 
-  # cat("Affiliation and/or email for each author. One line for each author.\n", 
-  #     sep="", append=TRUE, file=RmdSource) 
-  # cat("Will be recycled for each author if more authors than affiliations.\n", 
-  #     sep="", append=TRUE, file=RmdSource) 
-  
-  # Date - optional 
-  cat("\n# Date\n", sep="", append=TRUE, file=RmdSource) 
-  cat("Optional. Date that the operating model was created. If none provided, today's date will be used.\n", 
-      sep="", append=TRUE, file=RmdSource) 
  
-  # Introduction ####
-  cat("\n# Introduction\n\n", sep="", append=TRUE, file=RmdSource)
-  
-  cat("## Completing the OM Documentation\n", sep="", append=TRUE, file=RmdSource)
-  cat("This document is used to generate a HTML OM report document.\n\n", sep="", append=TRUE, file=RmdSource)
-  cat("The document is separated into 7 sections:\n", sep="", append=TRUE, file=RmdSource)
-  cat("1. Introduction (this section)\n", sep="", append=TRUE, file=RmdSource)
-  cat("2. Custom Parameters (optional)\n", sep="", append=TRUE, file=RmdSource)
-  cat("3. Stock Parameters\n", sep="", append=TRUE, file=RmdSource)
-  cat("4. Fleet Parameters\n", sep="", append=TRUE, file=RmdSource)
-  cat("5. Obs (Observation) Parameters\n", sep="", append=TRUE, file=RmdSource)
-  cat("6. Imp (Implementation) Parameters\n", sep="", append=TRUE, file=RmdSource)
-  cat("7. References\n\n", sep="", append=TRUE, file=RmdSource)
-  
-  cat("The Introduction section is used to briefly describe the fishery and the details of the Operating Model.\n", sep="", append=TRUE, file=RmdSource)
-  cat("It should include an explanation for the OM parameters:\n ", sep="", append=TRUE, file=RmdSource)
-  cat("* nsim: the number of simulations.\n ", sep="", append=TRUE, file=RmdSource)
-  cat("* proyears: the number of projectio years.\n ", sep="", append=TRUE, file=RmdSource)
-  cat("* interval: the management interval.\n ", sep="", append=TRUE, file=RmdSource)
-  cat("* pstar: the percentile of the sample of the management recommendation for each method.\n ", sep="", append=TRUE, file=RmdSource)
-  cat("* maxF: the maximum instantaneous fishing mortality rate that may be simulated for any given age class.\n ", sep="", append=TRUE, file=RmdSource)
-  cat("* reps: the number of samples of the management recommendation for each method.\n\n", sep="", append=TRUE, file=RmdSource)
-  
-  cat("The Custom Parameters section is optional and should only be included if the cpars feature of DLMtool is used in the OM.\n", sep="", append=TRUE, file=RmdSource)
-  cat("Delete both the heading and the text in this section if `cpars` are not used.\n\n", sep="", append=TRUE, file=RmdSource)
-  
-  cat("The Stock, Fleet, Obs, and Imp sections include each slot in these components of the OM object.\n", sep="", append=TRUE, file=RmdSource)
-  cat("Provide details (including references where applicable) for the choice of values for each slot below the corresponding slot name (e.g., ## M).\n", sep="", append=TRUE, file=RmdSource)
-  cat("For example: \n", sep="", append=TRUE, file=RmdSource)
-  cat("**M**\n", sep="", append=TRUE, file=RmdSource)
-  cat("An explanation for the values of the natural mortality rate in the OM (Smith et al. 1999).\n\n", sep="", append=TRUE, file=RmdSource)
-  cat("You do not need to include the actual values from the OM. These will be included automatically in the final compiled document.\n\n", sep="", append=TRUE, file=RmdSource)
-  cat("References should be included in the 'References' section at the end of the document.\n\n", sep="", append=TRUE, file=RmdSource)
-  
-  cat("Once complete, this text file will be compiled into an OM Report Document.\n", sep="", append=TRUE, file=RmdSource)
-  cat("This text file is linked to the Excel spreadsheet that was generated with the same file name.\n", sep="", append=TRUE, file=RmdSource)
-  cat("It serves as a single documentation source for a DLMtool OM, and should be updated whenever parameter values in the OM spreadsheet are updated.\n", sep="", append=TRUE, file=RmdSource)
-  
-  cat("\n## Tips on filling this Document\n\n", sep="", append=TRUE, file=RmdSource)
-  cat("This document is uses the Markdown format. All first and second level headings have been provided, and in general you\n", sep="", append=TRUE, file=RmdSource)
-  cat("should only need to enter plain text.\n\n", sep="", append=TRUE, file=RmdSource)
-  
-  cat("You can have multiple paragraphs throughout the document.\n\n", sep="", append=TRUE, file=RmdSource)
-  
-  cat("The Introduction and Custom Parameters sections also support second and third level headings.\n\n", sep="", append=TRUE, file=RmdSource)
-  
-  cat("## An example Second level heading\n\n", sep="", append=TRUE, file=RmdSource)
-  
-  cat("### An example third level heading\n\n", sep="", append=TRUE, file=RmdSource)
-  
-  cat("### Technical Tip\n\n", sep="", append=TRUE, file=RmdSource)
-  cat("This document will be compiled into Rmarkdown, and then a HTML document using Pandoc. Equations can be included by\n\n", sep="", append=TRUE, file=RmdSource)
-  cat("using Latex (see [here](https://www.sharelatex.com/learn/Mathematical_expressions) for some examples).\n\n", sep="", append=TRUE, file=RmdSource)
+  }
+ 
+  if ('rmd' %in% files) {
+    ## Write Rmd source skeleton ####
+    message("Creating ", nameNoExt, "_source.rmd in ", getwd())
+    RmdSource <- paste0(nameNoExt, "_source.rmd")
+    if (file.exists(RmdSource) & !overwrite) {
+      stop(RmdSource, " already exists.\n Use 'overwrite=TRUE'.", call.=FALSE)
+    } else {
+      tt <- file.create(RmdSource)
+    }
+    
+    # Title
+    cat("\n# Title\n", sep="", append=TRUE, file=RmdSource) 
+    cat("Title. One line only.\n", sep="", append=TRUE, file=RmdSource) 
+    
+    # Subtitle - optional 
+    cat("\n# Subtitle\n", sep="", append=TRUE, file=RmdSource) 
+    cat("Optional. Subtitle. One line only. Delete text and heading if not required.\n", 
+        sep="", append=TRUE, file=RmdSource) 
+    
+    
+    # Author(s) 
+    cat("\n# Author(s)\n", sep="", append=TRUE, file=RmdSource) 
+    cat("Name and contact details (e.g email, affiliation) for each author.\n", 
+        sep="", append=TRUE, file=RmdSource) 
+    cat("One line per author.\n", 
+        sep="", append=TRUE, file=RmdSource) 
+    
+    # # Affiliation/Email - optional 
+    # cat("\n# Affiliation/Email\n", sep="", append=TRUE, file=RmdSource) 
+    # cat("Affiliation and/or email for each author. One line for each author.\n", 
+    #     sep="", append=TRUE, file=RmdSource) 
+    # cat("Will be recycled for each author if more authors than affiliations.\n", 
+    #     sep="", append=TRUE, file=RmdSource) 
+    
+    # Date - optional 
+    cat("\n# Date\n", sep="", append=TRUE, file=RmdSource) 
+    cat("Optional. Date that the operating model was created. If none provided, today's date will be used.\n", 
+        sep="", append=TRUE, file=RmdSource) 
+    
+    # Introduction ####
+    cat("\n# Introduction\n\n", sep="", append=TRUE, file=RmdSource)
+    
+    cat("## Completing the OM Documentation\n", sep="", append=TRUE, file=RmdSource)
+    cat("This document is used to generate a HTML OM report document.\n\n", sep="", append=TRUE, file=RmdSource)
+    cat("The document is separated into 7 sections:\n", sep="", append=TRUE, file=RmdSource)
+    cat("1. Introduction (this section)\n", sep="", append=TRUE, file=RmdSource)
+    cat("2. Custom Parameters (optional)\n", sep="", append=TRUE, file=RmdSource)
+    cat("3. Stock Parameters\n", sep="", append=TRUE, file=RmdSource)
+    cat("4. Fleet Parameters\n", sep="", append=TRUE, file=RmdSource)
+    cat("5. Obs (Observation) Parameters\n", sep="", append=TRUE, file=RmdSource)
+    cat("6. Imp (Implementation) Parameters\n", sep="", append=TRUE, file=RmdSource)
+    cat("7. References\n\n", sep="", append=TRUE, file=RmdSource)
+    
+    cat("The Introduction section is used to briefly describe the fishery and the details of the Operating Model.\n", sep="", append=TRUE, file=RmdSource)
+    cat("It should include an explanation for the OM parameters:\n ", sep="", append=TRUE, file=RmdSource)
+    cat("* nsim: the number of simulations.\n ", sep="", append=TRUE, file=RmdSource)
+    cat("* proyears: the number of projectio years.\n ", sep="", append=TRUE, file=RmdSource)
+    cat("* interval: the management interval.\n ", sep="", append=TRUE, file=RmdSource)
+    cat("* pstar: the percentile of the sample of the management recommendation for each method.\n ", sep="", append=TRUE, file=RmdSource)
+    cat("* maxF: the maximum instantaneous fishing mortality rate that may be simulated for any given age class.\n ", sep="", append=TRUE, file=RmdSource)
+    cat("* reps: the number of samples of the management recommendation for each method.\n\n", sep="", append=TRUE, file=RmdSource)
+    
+    cat("The Custom Parameters section is optional and should only be included if the cpars feature of DLMtool is used in the OM.\n", sep="", append=TRUE, file=RmdSource)
+    cat("Delete both the heading and the text in this section if `cpars` are not used.\n\n", sep="", append=TRUE, file=RmdSource)
+    
+    cat("The Stock, Fleet, Obs, and Imp sections include each slot in these components of the OM object.\n", sep="", append=TRUE, file=RmdSource)
+    cat("Provide details (including references where applicable) for the choice of values for each slot below the corresponding slot name (e.g., ## M).\n", sep="", append=TRUE, file=RmdSource)
+    cat("For example: \n", sep="", append=TRUE, file=RmdSource)
+    cat("**M**\n", sep="", append=TRUE, file=RmdSource)
+    cat("An explanation for the values of the natural mortality rate in the OM (Smith et al. 1999).\n\n", sep="", append=TRUE, file=RmdSource)
+    cat("You do not need to include the actual values from the OM. These will be included automatically in the final compiled document.\n\n", sep="", append=TRUE, file=RmdSource)
+    cat("References should be included in the 'References' section at the end of the document.\n\n", sep="", append=TRUE, file=RmdSource)
+    
+    cat("Once complete, this text file will be compiled into an OM Report Document.\n", sep="", append=TRUE, file=RmdSource)
+    cat("This text file is linked to the Excel spreadsheet that was generated with the same file name.\n", sep="", append=TRUE, file=RmdSource)
+    cat("It serves as a single documentation source for a DLMtool OM, and should be updated whenever parameter values in the OM spreadsheet are updated.\n", sep="", append=TRUE, file=RmdSource)
+    
+    cat("\n## Tips on filling this Document\n\n", sep="", append=TRUE, file=RmdSource)
+    cat("This document is uses the Markdown format. All first and second level headings have been provided, and in general you\n", sep="", append=TRUE, file=RmdSource)
+    cat("should only need to enter plain text.\n\n", sep="", append=TRUE, file=RmdSource)
+    
+    cat("You can have multiple paragraphs throughout the document.\n\n", sep="", append=TRUE, file=RmdSource)
+    
+    cat("The Introduction and Custom Parameters sections also support second and third level headings.\n\n", sep="", append=TRUE, file=RmdSource)
+    
+    cat("## An example Second level heading\n\n", sep="", append=TRUE, file=RmdSource)
+    
+    cat("### An example third level heading\n\n", sep="", append=TRUE, file=RmdSource)
+    
+    cat("### Technical Tip\n\n", sep="", append=TRUE, file=RmdSource)
+    cat("This document will be compiled into Rmarkdown, and then a HTML document using Pandoc. Equations can be included by\n\n", sep="", append=TRUE, file=RmdSource)
+    cat("using Latex (see [here](https://www.sharelatex.com/learn/Mathematical_expressions) for some examples).\n\n", sep="", append=TRUE, file=RmdSource)
+    
+    cat("## Delete all text below 'Introduction' and replace with a description of the OM.\n\n", sep="", append=TRUE, file=RmdSource)
+    
+    
+    # Cpars ####
+    cat("\n\n# Custom Parameters\n", sep="", append=TRUE, file=RmdSource)  
+    cat("Optional. Only required if the `cpars` feature is used in the OM.\n\n", sep="", append=TRUE, file=RmdSource)
+    
+    cat("Provide details for the parameters included in 'cpars' here instead of in the corresponding slot sections below.\n", sep="", append=TRUE, file=RmdSource)
+    cat("Text in the slot section below will be ignored if a parameter is included in 'cpars'.\n", sep="", append=TRUE, file=RmdSource)
+    
+    cat("Delete this section (including heading) if the `cpars` feature is not used in the OM.\n", sep="", append=TRUE, file=RmdSource)
+    
+    # Stock Parameters ####
+    cat("\n\n# Stock Parameters\n\n", sep="", append=TRUE, file=RmdSource) 
+    slots <- slotNames("Stock")
+    for (X in slots) {
+      cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
+      if (is.null(ObTemplates$StockTemp)) {
+        cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
+      } else {
+        cat("Borrowed from ", ObTemplates$StockTemp@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
+      }
+    }
+    
+    # Fleet Parameters ####
+    cat("\n\n# Fleet Parameters\n\n", sep="", append=TRUE, file=RmdSource) 
+    slots <- slotNames("Fleet")
+    for (X in slots) {
+      cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
+      if (is.null(ObTemplates$FleetTemp)) {
+        cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
+      } else {
+        cat("Borrowed from ", ObTemplates$FleetTemp@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
+      }
+    }
+    
+    
+    # Obs Parameters ####
+    cat("\n\n# Obs Parameters\n\n", sep="", append=TRUE, file=RmdSource) 
+    slots <- slotNames("Obs")
+    for (X in slots) {
+      cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
+      if (is.null(ObTemplates$ObsTemp)) {
+        cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
+      } else {
+        cat("Borrowed from ", ObTemplates$ObsTemp@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
+      }
+    }
+    
+    # Imp Parameters ####
+    cat("\n\n# Imp Parameters\n\n", sep="", append=TRUE, file=RmdSource) 
+    slots <- slotNames("Imp")
+    for (X in slots) {
+      cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
+      if (is.null(ObTemplates$ImpTemp)) {
+        cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
+      } else {
+        cat("Borrowed from ", ObTemplates$ImpTemp@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
+      }
+    }
+    
+    # References ####
+    cat("\n\n# References\n\n", sep="", append=TRUE, file=RmdSource) 
+    
+    
+    
+  } 
 
-  cat("## Delete all text below 'Introduction' and replace with a description of the OM.\n\n", sep="", append=TRUE, file=RmdSource)
-  
-  
-  # Cpars ####
-  cat("\n\n# Custom Parameters\n", sep="", append=TRUE, file=RmdSource)  
-  cat("Optional. Only required if the `cpars` feature is used in the OM.\n\n", sep="", append=TRUE, file=RmdSource)
-  
-  cat("Provide details for the parameters included in 'cpars' here instead of in the corresponding slot sections below.\n", sep="", append=TRUE, file=RmdSource)
-  cat("Text in the slot section below will be ignored if a parameter is included in 'cpars'.\n", sep="", append=TRUE, file=RmdSource)
-  
-  cat("Delete this section (including heading) if the `cpars` feature is not used in the OM.\n", sep="", append=TRUE, file=RmdSource)
-  
-  # Stock Parameters ####
-  cat("\n\n# Stock Parameters\n\n", sep="", append=TRUE, file=RmdSource) 
-  slots <- slotNames("Stock")
-  for (X in slots) {
-    cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
-    if (is.null(ObTemplates$StockTemp)) {
-      cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
-    } else {
-      cat("Borrowed from ", ObTemplates$StockTemp@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
-    }
-  }
-  
-  # Fleet Parameters ####
-  cat("\n\n# Fleet Parameters\n\n", sep="", append=TRUE, file=RmdSource) 
-  slots <- slotNames("Fleet")
-  for (X in slots) {
-    cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
-    if (is.null(ObTemplates$FleetTemp)) {
-      cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
-    } else {
-      cat("Borrowed from ", ObTemplates$FleetTemp@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
-    }
-  }
-  
-  
-  # Obs Parameters ####
-  cat("\n\n# Obs Parameters\n\n", sep="", append=TRUE, file=RmdSource) 
-  slots <- slotNames("Obs")
-  for (X in slots) {
-    cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
-    if (is.null(ObTemplates$ObsTemp)) {
-      cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
-    } else {
-      cat("Borrowed from ", ObTemplates$ObsTemp@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
-    }
-  }
-  
-  # Imp Parameters ####
-  cat("\n\n# Imp Parameters\n\n", sep="", append=TRUE, file=RmdSource) 
-  slots <- slotNames("Imp")
-  for (X in slots) {
-    cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
-    if (is.null(ObTemplates$ImpTemp)) {
-      cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
-    } else {
-      cat("Borrowed from ", ObTemplates$ImpTemp@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
-    }
-  }
-  
-  # References ####
-  cat("\n\n# References\n\n", sep="", append=TRUE, file=RmdSource) 
-  
-  
-  message("\nOM spreadsheet and source files initialized")
-  message("Populate OM parameters in ", name)
-  message("Document OM parameters in ", RmdSource)
-  
+  if ('xlsx' %in% files) message("Populate OM parameters in ", name)  
+  if ('rmd' %in% files) message("Document OM parameters in ", RmdSource)
 }
 
 
@@ -526,7 +538,7 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
   if (is.null(name)) {
     fls <- list.files(pattern=".xlsx", ignore.case = TRUE)
     if (length(fls) == 0) stop('Name not provided and no .xlsx files found.', call.=FALSE)
-    if (length(fls) > 1) stop("Name not provided and multipe .xlsx files found", call.=FALSE)
+    if (length(fls) > 1) stop("Name not provided and multiple .xlsx files found", call.=FALSE)
     name <- fls
   }
   
@@ -644,6 +656,8 @@ writeCSV2 <- function(inobj, tmpfile = NULL, objtype = c("Stock", "Fleet",
 #' @param inc.plot Logical. Should the plots be included?
 #' @param render Logical. Should the document be compiled? May be useful to turn off if 
 #' there are problems with compililing the Rmd file.
+#' @param output Character. Output file type. Default is 'html_document'. 'pdf_document' is available
+#' but may require additional software and have some formatting issues.
 #'
 #' @return Creates a Rmarkdown file and compiles a HTML report file in the working directory.
 #' @export
@@ -658,13 +672,14 @@ writeCSV2 <- function(inobj, tmpfile = NULL, objtype = c("Stock", "Fleet",
 #' OMdoc(myOM)
 #' }
 OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,  
-                  inc.plot=TRUE, render=TRUE) {
+                  inc.plot=TRUE, render=TRUE, output="html_document") {
   # markdown compile options
-  toc=TRUE; color="blue"; output="html_document"; theme="flatly"
-  
+  toc=TRUE; color="blue";  theme="flatly"
+  OMXLname <- NULL
   if (class(OM) == "OM") {
     # nothing
   } else if (class(OM) == 'character') {
+    OMXLname <- OM
     OM <- XL2OM(OM, msg=FALSE)
   } else if (is.null(OM)) {
     fls <- list.files(pattern=".xlsx", ignore.case=TRUE)
@@ -682,7 +697,8 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
       textIn <- readLines(rmd.source)
     } else {
       NoExt <- tools::file_path_sans_ext(rmd.source)
-      ind <- which(tolower(NoExt) == tolower(paste0(OM@Name, "_source")))
+      if (!is.null(OMXLname)) ind <- which(tolower(NoExt) == tolower(paste0(OMXLname, "_source")))
+      if (is.null(OMXLname)) ind <- which(tolower(NoExt) == tolower(paste0(OM@Name, "_source")))
       if (length(ind) > 0) {
         rmd.source <- rmd.source[ind]
         message("Reading ", rmd.source)
@@ -810,8 +826,11 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
     cat("   ", output, ":", "\n", append=TRUE, file=RMDfile, sep="")  
     cat("     toc: true\n", append=TRUE, file=RMDfile, sep="")  
     cat("     toc_depth: 3\n", append=TRUE, file=RMDfile, sep="")  
-    cat("     toc_float: true\n", append=TRUE, file=RMDfile, sep="")
-    cat("     theme: ", theme, "\n", append=TRUE, file=RMDfile, sep="")
+    if (output == "html_document") {
+      cat("     toc_float: true\n", append=TRUE, file=RMDfile, sep="")
+      cat("     theme: ", theme, "\n", append=TRUE, file=RMDfile, sep="")
+    }
+
     
   } else {
     cat("output: ", output, "\n", append=TRUE, file=RMDfile, sep="")
@@ -846,9 +865,14 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
     # --- Generate Historical Samples ----
     # Only required if the OM has changed #
     runSims <- FALSE
-    if (file.exists(paste0('build/', OM@Name, '.dat'))) {
+    fileName <- OM@Name
+    fileName <- gsub(" ", "", gsub("[[:punct:]]", "", fileName))
+    if (nchar(fileName)>15) fileName <-  substr(fileName, 1, 15)
+      
+    
+    if (file.exists(paste0('build/', fileName, '.dat'))) {
       # OM has been documented before - check if it has changed
-      testOM <- readRDS(paste0("build/", OM@Name, '.dat'))
+      testOM <- readRDS(paste0("build/", fileName, '.dat'))
       if (class(testOM) == 'OM') {
         # check if OM has changed 
         changed <- rep(FALSE, length(slotNames(OM)))
@@ -868,16 +892,16 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
         }
         if (sum(changed)>0) runSims <- TRUE 
         if (sum(changed) == 0) {
-          out <-  readRDS(paste0('build/', OM@Name, 'Hist.dat'))
+          out <-  readRDS(paste0('build/', fileName, 'Hist.dat'))
           Pars <- c(out$SampPars, out$TSdata, out$MSYs)  
         }
       } else {
-        file.remove(paste0('build/', OM@Name, '.dat'))
+        file.remove(paste0('build/',fileName, '.dat'))
         runSims <- TRUE
       }
      
     } else{
-      saveRDS(OM, file=paste0('build/', OM@Name, '.dat'))
+      saveRDS(OM, file=paste0('build/', fileName, '.dat'))
       runSims <- TRUE
     }
     
@@ -887,7 +911,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
       if (OM@nsim > 48) setup()
       out<- runMSE(OM,Hist=T)
       Pars <- c(out$SampPars, out$TSdata, out$MSYs)  
-      saveRDS(out, file=paste0('build/', OM@Name, 'Hist.dat'))
+      saveRDS(out, file=paste0('build/', fileName, 'Hist.dat'))
     }
   }
   
@@ -942,7 +966,8 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   ## Render Markdown ####
   if (render) {
     RMDfileout <- gsub("_compiled", "", tools::file_path_sans_ext(RMDfile))
-    RMDfileout <- paste0(unlist(strsplit(RMDfileout, "/"))[2], ".html")
+    if (output == "html_document") RMDfileout <- paste0(unlist(strsplit(RMDfileout, "/"))[2], ".html")
+    if (output == "pdf_document") RMDfileout <- paste0(unlist(strsplit(RMDfileout, "/"))[2], ".pdf")
 
     message("\n\nRendering markdown document as ", RMDfileout)
     EffYears <- seq(from=(OM@CurrentYr -  OM@nyears + 1), to=OM@CurrentYr, length.out=length(OM@EffYears))

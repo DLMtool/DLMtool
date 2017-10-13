@@ -4,11 +4,14 @@
 \alias{OMinit}
 \title{Initialize Operating Model}
 \usage{
-OMinit(name = NULL, templates = NULL, overwrite = FALSE)
+OMinit(name = NULL, files = c("xlsx", "rmd"), templates = NULL,
+  overwrite = FALSE)
 }
 \arguments{
 \item{name}{The name of the Excel and source.rmd file to be created in the working directory (character). 
 Use 'example' for a populated example OM XL and documentation file.}
+
+\item{files}{What files should be created: 'xlsx', 'rmd', or c('xlsx', 'rmd') (default: both)}
 
 \item{templates}{An optional named list of existing DLMtool Stock, Fleet, Obs, or Imp objects
 to use as templates for the Operating Model.}

@@ -5,9 +5,10 @@
 \title{Run a Management Strategy Evaluation}
 \usage{
 runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
-  "matlenlim"), nsim = 48, proyears = 50, interval = 4, pstar = 0.5,
-  maxF = 0.8, reps = 1, CheckMPs = FALSE, timelimit = 1, Hist = FALSE,
-  ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2, Bfrac = 0.5)
+  "matlenlim", "MRreal"), nsim = 48, proyears = 50, interval = 4,
+  pstar = 0.5, maxF = 0.8, reps = 1, CheckMPs = FALSE, timelimit = 1,
+  Hist = FALSE, ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2,
+  Bfrac = 0.5)
 }
 \arguments{
 \item{OM}{An operating model object (class 'OM')}

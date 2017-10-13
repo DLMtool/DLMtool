@@ -52,7 +52,7 @@
 #' @return An object of class MSE
 #' @author A. Hordyk and T. Carruthers
 #' @export runMSErobust
-runMSErobust <- function(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE", "matlenlim"), 
+runMSErobust <- function(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE", "matlenlim", "MRreal"), 
                          nsim = 256, proyears = 50, interval = 4, pstar = 0.5, 
                          maxF = 0.8, timelimit = 1, reps = 1, CheckMPs = FALSE, Hist = FALSE, 
                          ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2, Bfrac = 0.5,
