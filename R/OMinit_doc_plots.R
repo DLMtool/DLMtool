@@ -362,8 +362,8 @@ plotRec <- function(OM, Pars=NULL, nsim=48, nyears=50, proyears=50, nsamp=3, col
   
   ncol <- 3
   m <- layout(matrix(c(1, 2, 3, 
-                       4, 5, 6,
-                       7, 7, 7), ncol=ncol, byrow = TRUE))
+                       4, 5, 0,
+                       6, 6, 6), ncol=ncol, byrow = TRUE))
   
   op <- par(mar = c(3, 1, 3, 1), oma=c(3,4,2,1), las=0, no.readonly = TRUE)
   on.exit(par(op))
@@ -386,9 +386,9 @@ plotRec <- function(OM, Pars=NULL, nsim=48, nyears=50, proyears=50, nsamp=3, col
   axis(side=1)  
   
   # recgrad - not used 
-  hist2(Pars$recgrad, col=col, axes=FALSE, main="recgrad- currently not used", breaks=breaks)
-  abline(v=Pars$recgrad[its], col=1:nsamp, lwd=lwd)
-  axis(side=1)  
+  # hist2(Pars$recgrad, col=col, axes=FALSE, main="recgrad- currently not used", breaks=breaks)
+  # abline(v=Pars$recgrad[its], col=1:nsamp, lwd=lwd)
+  # axis(side=1)
   
   # Period - if used
   if (!is.null(Pars$Period)) {
@@ -396,7 +396,7 @@ plotRec <- function(OM, Pars=NULL, nsim=48, nyears=50, proyears=50, nsamp=3, col
     abline(v=Pars$Period[its], col=1:nsamp, lwd=lwd)
     axis(side=1)  
   } else {
-    plot(c(0,1), c(0,1), xlab="", ylab="", type="n", bty="n", axes=FALSE) 
+    hist2(0, col=col, axes=FALSE, main="Period", breaks=breaks)
   }
 
   # Amplitude
@@ -405,7 +405,7 @@ plotRec <- function(OM, Pars=NULL, nsim=48, nyears=50, proyears=50, nsamp=3, col
     abline(v=Pars$Amplitude[its], col=1:nsamp, lwd=lwd)
     axis(side=1)  
   } else {
-    plot(c(0,1), c(0,1), xlab="", ylab="", type="n", bty="n", axes=FALSE)  
+    hist2(0, col=col, axes=FALSE, main="Amplitude", breaks=breaks)
   }
 
   

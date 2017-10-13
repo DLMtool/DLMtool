@@ -23,27 +23,27 @@ SampleObsPars <- function(Obs, nsim=NULL){
   ObsOut$CAA_ESS <- ceiling(runif(nsim, Obs@CAA_ESS[1], Obs@CAA_ESS[2]))  # Effective sample size
   ObsOut$CAL_nsamp <- ceiling(runif(nsim, Obs@CAL_nsamp[1], Obs@CAL_nsamp[2]))  # Observation error standard deviation for single catch at age by area
   ObsOut$CAL_ESS <- ceiling(runif(nsim, Obs@CAL_ESS[1], Obs@CAL_ESS[2]))  # Effective sample size
-  ObsOut$CALcv <- runif(nsim, Obs@CALcv[1], Obs@CALcv[2])  # Observation error standard deviation for single catch at age by area
+  # ObsOut$CALcv <- runif(nsim, Obs@CALcv[1], Obs@CALcv[2])  # Observation error standard deviation for single catch at age by area
   ObsOut$betas <- exp(runif(nsim, log(Obs@beta[1]), log(Obs@beta[2])))  # the sampled hyperstability / hyperdepletion parameter beta>1 (hyperdepletion) beta<1 (hyperstability)
   ObsOut$Isd <- runif(nsim, Obs@Iobs[1], Obs@Iobs[2])  # Abundance index observation error (log normal sd)
-  ObsOut$Derr <- runif(nsim, Obs@Dcv[1], Obs@Dcv[2])
+  ObsOut$Derr <- runif(nsim, Obs@Dobs[1], Obs@Dobs[2])
   ObsOut$Dbias <- rlnorm(nsim, mconv(1, Obs@Dbiascv), sdconv(1, Obs@Dbiascv))  # sample of depletion bias
-  ObsOut$Mbias <- rlnorm(nsim, mconv(1, Obs@Mcv), sdconv(1, Obs@Mcv))  # sample of M bias
-  ObsOut$FMSY_Mbias <- rlnorm(nsim, mconv(1, Obs@FMSY_Mcv), sdconv(1, Obs@FMSY_Mcv))  # sample of FMSY/M bias
+  ObsOut$Mbias <- rlnorm(nsim, mconv(1, Obs@Mbiascv), sdconv(1, Obs@Mbiascv))  # sample of M bias
+  ObsOut$FMSY_Mbias <- rlnorm(nsim, mconv(1, Obs@FMSY_Mbiascv), sdconv(1, Obs@FMSY_Mbiascv))  # sample of FMSY/M bias
  
-  ObsOut$lenMbias <- rlnorm(nsim, mconv(1, Obs@LenMcv), sdconv(1, Obs@LenMcv))  # sample of length at maturity bias - assume same error as age based maturity
-  ObsOut$LFCbias <- rlnorm(nsim, mconv(1, Obs@LFCcv), sdconv(1, Obs@LFCcv))  # sample of length at first capture bias
-  ObsOut$LFSbias <- rlnorm(nsim, mconv(1, Obs@LFScv), sdconv(1, Obs@LFScv))  # sample of length at full selection bias
-  ObsOut$Aerr <- runif(nsim, Obs@Btcv[1], Obs@Btcv[2])
-  ObsOut$Abias <- exp(runif(nsim, log(Obs@Btbias[1]), log(Obs@Btbias[2])))  #rlnorm(nsim,mconv(1,Obs@Btbiascv),sdconv(1,Obs@Btbiascv))    # sample of current abundance bias
-  ObsOut$Kbias <- rlnorm(nsim, mconv(1, Obs@Kcv), sdconv(1, Obs@Kcv))  # sample of von B. K parameter bias
-  ObsOut$t0bias <- rlnorm(nsim, mconv(1, Obs@t0cv), sdconv(1, Obs@t0cv))  # sample of von B. t0 parameter bias
-  ObsOut$Linfbias <- rlnorm(nsim, mconv(1, Obs@Linfcv), sdconv(1, Obs@Linfcv))  # sample of von B. maximum length bias
-  ObsOut$Irefbias <- rlnorm(nsim, mconv(1, Obs@Irefcv), sdconv(1, Obs@Irefcv))  # sample of bias in reference (target) abundance index
-  ObsOut$Crefbias <- rlnorm(nsim, mconv(1, Obs@Crefcv), sdconv(1, Obs@Crefcv))  # sample of bias in reference (target) catch index
-  ObsOut$Brefbias <- rlnorm(nsim, mconv(1, Obs@Brefcv), sdconv(1, Obs@Brefcv))  # sample of bias in reference (target) biomass index
-  ObsOut$Recsd <- runif(nsim, Obs@Reccv[1], Obs@Reccv[2])  # Recruitment deviation  
-  ObsOut$LenCVbias <- rlnorm(nsim, mconv(1, Obs@CALcv), sdconv(1, Obs@CALcv)) # sample of bias in assumed CV of catch-at-length
+  ObsOut$lenMbias <- rlnorm(nsim, mconv(1, Obs@LenMbiascv), sdconv(1, Obs@LenMbiascv))  # sample of length at maturity bias - assume same error as age based maturity
+  ObsOut$LFCbias <- rlnorm(nsim, mconv(1, Obs@LFCbiascv), sdconv(1, Obs@LFCbiascv))  # sample of length at first capture bias
+  ObsOut$LFSbias <- rlnorm(nsim, mconv(1, Obs@LFSbiascv), sdconv(1, Obs@LFSbiascv))  # sample of length at full selection bias
+  ObsOut$Aerr <- runif(nsim, Obs@Btobs[1], Obs@Btobs[2])
+  ObsOut$Abias <- exp(runif(nsim, log(Obs@Btbiascv[1]), log(Obs@Btbiascv[2])))  #rlnorm(nsim,mconv(1,Obs@Btbiascv),sdconv(1,Obs@Btbiascv))    # sample of current abundance bias
+  ObsOut$Kbias <- rlnorm(nsim, mconv(1, Obs@Kbiascv), sdconv(1, Obs@Kbiascv))  # sample of von B. K parameter bias
+  ObsOut$t0bias <- rlnorm(nsim, mconv(1, Obs@t0biascv), sdconv(1, Obs@t0biascv))  # sample of von B. t0 parameter bias
+  ObsOut$Linfbias <- rlnorm(nsim, mconv(1, Obs@Linfbiascv), sdconv(1, Obs@Linfbiascv))  # sample of von B. maximum length bias
+  ObsOut$Irefbias <- rlnorm(nsim, mconv(1, Obs@Irefbiascv), sdconv(1, Obs@Irefbiascv))  # sample of bias in reference (target) abundance index
+  ObsOut$Crefbias <- rlnorm(nsim, mconv(1, Obs@Crefbiascv), sdconv(1, Obs@Crefbiascv))  # sample of bias in reference (target) catch index
+  ObsOut$Brefbias <- rlnorm(nsim, mconv(1, Obs@Brefbiascv), sdconv(1, Obs@Brefbiascv))  # sample of bias in reference (target) biomass index
+  ObsOut$Recsd <- runif(nsim, Obs@Recbiascv[1], Obs@Recbiascv[2])  # Recruitment deviation  
+  # ObsOut$LenCVbias <- rlnorm(nsim, mconv(1, Obs@CALcv), sdconv(1, Obs@CALcv)) # sample of bias in assumed CV of catch-at-length
   
   
   ObsOut

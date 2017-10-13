@@ -35,11 +35,9 @@ dynamics model
 
 \item{\code{AC}}{Autocorrelation in recruitment deviations rec(t)=AC*rec(t-1)+(1-AC)*sigma(t). Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{recgrad}}{Mean temporal trend in log-normal recruitment deviations, expressed as a percentage change per year. Uniform distribution lower and upper bounds. Real numbers}
-
 \item{\code{Period}}{(Optional) Period for cyclical recruitment pattern in years. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{Amplitude}}{(Optional) Amplitude in deviation from long-term average recruitment during recruitment cycle (eg a range from 0 to 1 means recruitment decreases or increases by up to 100\% each cycle). Uniform distribution lower and upper bounds. Non-negative real numbers}
+\item{\code{Amplitude}}{(Optional) Amplitude in deviation from long-term average recruitment during recruitment cycle (eg a range from 0 to 1 means recruitment decreases or increases by up to 100\% each cycle). Uniform distribution lower and upper bounds. 0 < Amplitutde < 1}
 
 \item{\code{Linf}}{Maximum length. Uniform distribution lower and upper bounds. Positive real numbers}
 

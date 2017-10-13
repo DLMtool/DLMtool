@@ -197,8 +197,8 @@ plotImp<-function(x,nsim=500, nyears=50,
   TACSD <- runif(nsim, Imp@TACSD[1], Imp@TACSD[2])  # Sampled TAC error (lognormal sd)
   TACFrac <- runif(nsim, Imp@TACFrac[1], Imp@TACFrac[2])  # Sampled TAC fraction (log normal sd)
   
-  ESD <- runif(nsim, Imp@ESD[1], Imp@ESD[2])  # Sampled Effort error (lognormal sd)
-  EFrac <- runif(nsim, Imp@EFrac[1], Imp@EFrac[2])  # Sampled Effort fraction (log normal sd)
+  TAESD <- runif(nsim, Imp@TAESD[1], Imp@TAESD[2])  # Sampled Effort error (lognormal sd)
+  TAEFrac <- runif(nsim, Imp@TAEFrac[1], Imp@TAEFrac[2])  # Sampled Effort fraction (log normal sd)
   
   SizeLimSD<-runif(nsim,Imp@SizeLimSD[1],Imp@SizeLimSD[2])
   SizeLimFrac<-runif(nsim,Imp@SizeLimFrac[1],Imp@SizeLimFrac[2])
@@ -208,9 +208,9 @@ plotImp<-function(x,nsim=500, nyears=50,
                                      "TAC error (TACSD)","TAC discrepancy for three samples",
                                      "TACFrac","TACSD"), breaks=breaks, its=its, nsamp=nsamp, col=col)
   
-  ObsTSplot(EFrac,ESD,nyears,labs=c("Fraction of effort (EFrac)",
-                                        "Effort error (ESD)","Effort discrepancy for three samples",
-                                        "EFrac","ESD"), breaks=breaks, its=its, nsamp=nsamp, col=col)
+  ObsTSplot(TAEFrac,TAESD,nyears,labs=c("Fraction of effort (TAEFrac)",
+                                        "Effort error (TAESD)","Effort discrepancy for three samples",
+                                        "TAEFrac","TAESD"), breaks=breaks, its=its, nsamp=nsamp, col=col)
   
   ObsTSplot(SizeLimFrac,SizeLimSD,nyears,labs=c("Fraction of Size Limit (SizeLimFrac)",
                                         "Size Limit error (SizeLimSD)","Size limit discrepancy for three samples",

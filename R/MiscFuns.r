@@ -289,41 +289,41 @@ Fease <- function(feaseobj, outy = "table") {
 
 
 
-#' Optimization function to find a movement model that matches user specified
-#' movement characteristics.
-#' 
-#' The user specifies the probability of staying in the same area and spatial
-#' heterogeneity (both in the unfished state).
-#' 
-#' This is paired with movfit to find the correct movement model.
-#' 
-#' @usage getmov(x,Prob_staying,Frac_area_1)
-#' @param x A position in vectors Prob_staying and Frac_area_1
-#' @param Prob_staying User specified probability that individuals in area 1
-#' remain in that area (unfished conditions)
-#' @param Frac_area_1 User specified fraction of individuals found in area 1
-#' (unfished conditions)
-#' @return A markov movement matrix
-#' @author T. Carruthers
-#' @examples
-#' 
-#' Prob_staying<-0.8 # probability  that individuals remain in area 1 between time-steps
-#' Frac_area_1<-0.35 # the fraction of the stock found in area 1 under equilibrium conditions
-#' markovmat<-getmov(1,Prob_staying, Frac_area_1)
-#' vec<-c(0.5,0.5) # initial guess at equilibrium distribution (2 areas)
-#' for(i in 1:300)vec<-apply(vec*markovmat,2,sum) # numerical approximation to stable distribution
-#' c(markovmat[1,1],vec[1]) # pretty close right?
-#' 
-#' 
-#' @export getmov
-getmov <- function(x, Prob_staying, Frac_area_1) {
-  test <- optim(par = c(0, 0, 0), movfit, method = "L-BFGS-B", 
-    lower = rep(-6, 3), upper = rep(6, 3), prb = Prob_staying[x], 
-	frac = Frac_area_1[x])
-  mov <- array(c(test$par[1], test$par[2], 0, test$par[3]), dim = c(2, 2))
-  mov <- exp(mov)
-  mov/array(apply(mov, 1, sum), dim = c(2, 2))
-}
+# #' Optimization function to find a movement model that matches user specified
+# #' movement characteristics.
+# #' 
+# #' The user specifies the probability of staying in the same area and spatial
+# #' heterogeneity (both in the unfished state).
+# #' 
+# #' This is paired with movfit to find the correct movement model.
+# #' 
+# #' @usage getmov(x,Prob_staying,Frac_area_1)
+# #' @param x A position in vectors Prob_staying and Frac_area_1
+# #' @param Prob_staying User specified probability that individuals in area 1
+# #' remain in that area (unfished conditions)
+# #' @param Frac_area_1 User specified fraction of individuals found in area 1
+# #' (unfished conditions)
+# #' @return A markov movement matrix
+# #' @author T. Carruthers
+# #' @examples
+# #' 
+# #' Prob_staying<-0.8 # probability  that individuals remain in area 1 between time-steps
+# #' Frac_area_1<-0.35 # the fraction of the stock found in area 1 under equilibrium conditions
+# #' markovmat<-getmov(1,Prob_staying, Frac_area_1)
+# #' vec<-c(0.5,0.5) # initial guess at equilibrium distribution (2 areas)
+# #' for(i in 1:300)vec<-apply(vec*markovmat,2,sum) # numerical approximation to stable distribution
+# #' c(markovmat[1,1],vec[1]) # pretty close right?
+# #' 
+# #' 
+# #' @export getmov
+# getmov <- function(x, Prob_staying, Frac_area_1) {
+#   test <- optim(par = c(0, 0, 0), movfit, method = "L-BFGS-B", 
+#     lower = rep(-6, 3), upper = rep(6, 3), prb = Prob_staying[x], 
+# 	frac = Frac_area_1[x])
+#   mov <- array(c(test$par[1], test$par[2], 0, test$par[3]), dim = c(2, 2))
+#   mov <- exp(mov)
+#   mov/array(apply(mov, 1, sum), dim = c(2, 2))
+# }
 
 #' Optimization function to find a movement model that matches user specified
 #' movement characteristics modified for Rcpp.
@@ -344,7 +344,7 @@ getmov <- function(x, Prob_staying, Frac_area_1) {
 #' 
 #' Prob_staying<-0.8 # probability  that individuals remain in area 1 between time-steps
 #' Frac_area_1<-0.35 # the fraction of the stock found in area 1 under equilibrium conditions
-#' markovmat<-getmov(1,Prob_staying, Frac_area_1)
+#' markovmat<-getmov2(1,Prob_staying, Frac_area_1)
 #' vec<-c(0.5,0.5) # initial guess at equilibrium distribution (2 areas)
 #' for(i in 1:300)vec<-apply(vec*markovmat,2,sum) # numerical approximation to stable distribution
 #' c(markovmat[1,1],vec[1]) # pretty close right?
@@ -368,7 +368,7 @@ getmov2 <- function(x, Prob_staying, Frac_area_1) {
 #' squared difference between these values and those produced by the three
 #' logit movement model.
 #' 
-#' This is paired with getmov to find the correct movement model.
+#' This is paired with getmov2 to find the correct movement model.
 #' 
 #' @usage movfit(par,prb,frac)
 #' @param par Three parameters in the logit space that control the four
@@ -390,170 +390,170 @@ movfit <- function(par, prb, frac) {
 }
 
 
-#' Optimization function that find the catchability (q where F=qE) value
-#' required to get to user-specified stock depletion (current biomass /
-#' unfished biomass)
-#' 
-#' The user specifies the level of stock depleiton. This funciton takes the
-#' derived effort trajectories and finds the catchabiltiy to get the stock
-#' there.
-#'
-#' @param x internal parameter
-#' @param dep internal parameter
-#' @param Find internal parameter
-#' @param Perr internal parameter
-#' @param Marray internal parameter
-#' @param hs internal parameter
-#' @param Mat_age internal parameter
-#' @param Wt_age internal parameter
-#' @param R0 internal parameter
-#' @param V internal parameter
-#' @param nyears internal parameter
-#' @param maxage internal parameter
-#' @param mov internal parameter
-#' @param Spat_targ internal parameter
-#' @param SRrel internal parameter
-#' @param aR internal parameter
-#' @param bR internal parameter
-#' 
-#' Paired with qopt
-#' @keywords internal
-#' @export getq 
-#'
-#' @author T. Carruthers
-getq <- function(x, dep, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V, 
-  nyears, maxage, mov, Spat_targ, SRrel, aR, bR) {
-  opt <- optimize(qopt, log(c(0.0075, 15)), depc = dep[x], Fc = Find[x, ], 
-    Perrc = Perr[x, ], Mc = Marray[x, ], hc = hs[x], Mac = Mat_age[x, ], 
-    Wac = Wt_age[x, , ], R0c = R0[x], Vc = V[x, , ], nyears = nyears, 
-	maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x], 
-    SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ])	
-  return(exp(opt$minimum))
-}
+# #' Optimization function that find the catchability (q where F=qE) value
+# #' required to get to user-specified stock depletion (current biomass /
+# #' unfished biomass)
+# #' 
+# #' The user specifies the level of stock depleiton. This funciton takes the
+# #' derived effort trajectories and finds the catchabiltiy to get the stock
+# #' there.
+# #'
+# #' @param x internal parameter
+# #' @param dep internal parameter
+# #' @param Find internal parameter
+# #' @param Perr internal parameter
+# #' @param Marray internal parameter
+# #' @param hs internal parameter
+# #' @param Mat_age internal parameter
+# #' @param Wt_age internal parameter
+# #' @param R0 internal parameter
+# #' @param V internal parameter
+# #' @param nyears internal parameter
+# #' @param maxage internal parameter
+# #' @param mov internal parameter
+# #' @param Spat_targ internal parameter
+# #' @param SRrel internal parameter
+# #' @param aR internal parameter
+# #' @param bR internal parameter
+# #' 
+# #' Paired with qopt
+# #' @keywords internal
+# #' @export getq 
+# #'
+# #' @author T. Carruthers
+# getq <- function(x, dep, Find, Perr, Marray, hs, Mat_age, Wt_age, R0, V, 
+#   nyears, maxage, mov, Spat_targ, SRrel, aR, bR) {
+#   opt <- optimize(qopt, log(c(0.0075, 15)), depc = dep[x], Fc = Find[x, ], 
+#     Perrc = Perr[x, ], Mc = Marray[x, ], hc = hs[x], Mac = Mat_age[x, ], 
+#     Wac = Wt_age[x, , ], R0c = R0[x], Vc = V[x, , ], nyears = nyears, 
+# 	maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x], 
+#     SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ])	
+#   return(exp(opt$minimum))
+# }
+# 
+# #' Optimization function that find the catchability (q where F=qE) value
+# #' required to get to user-specified stock depletion (current biomass /
+# #' unfished biomass) modified for Rcpp 
+# #' 
+# #' The user specifies the level of stock depleiton. This funciton takes the
+# #' derived effort trajectories and finds the catchabiltiy to get the stock
+# #' there.
+# #'
+# #' @param x internal parameter
+# #' @param dep internal parameter
+# #' @param Find internal parameter
+# #' @param Perr internal parameter
+# #' @param Marray internal parameter
+# #' @param hs internal parameter
+# #' @param Mat_age internal parameter
+# #' @param Wt_age internal parameter
+# #' @param R0 internal parameter
+# #' @param V internal parameter
+# #' @param nyears internal parameter
+# #' @param maxage internal parameter
+# #' @param mov internal parameter
+# #' @param Spat_targ internal parameter
+# #' @param SRrel internal parameter
+# #' @param aR internal parameter
+# #' @param bR internal parameter
+# #' @param bounds upper and lower bounds for optimizer
+# #' 
+# #' Paired with qopt
+# #' @keywords internal
+# #' @export getq2 
+# #'
+# #' @author T. Carruthers
+# getq2 <- function(x, dep, Find, Perr, M_ageArray, hs, Mat_age, Wt_age, R0, V, 
+#                   nyears, maxage, mov, Spat_targ, SRrel, aR, bR, bounds=c(0.00001, 15)) {
+#   opt <- optimize(optQ_cpp, log(bounds), depc = dep[x], Fc = Find[x, ], 
+#     Perrc = Perr[x, ], Mc = M_ageArray[x, ,], hc = hs[x], Mac = Mat_age[x, ], 
+#     Wac = Wt_age[x, , ], R0c = R0[x], Vc = V[x, , ], nyears = nyears, 
+#     maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x], 
+#     SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ])	
+#   
+#   return(exp(opt$minimum))
+# }
 
-#' Optimization function that find the catchability (q where F=qE) value
-#' required to get to user-specified stock depletion (current biomass /
-#' unfished biomass) modified for Rcpp 
-#' 
-#' The user specifies the level of stock depleiton. This funciton takes the
-#' derived effort trajectories and finds the catchabiltiy to get the stock
-#' there.
-#'
-#' @param x internal parameter
-#' @param dep internal parameter
-#' @param Find internal parameter
-#' @param Perr internal parameter
-#' @param Marray internal parameter
-#' @param hs internal parameter
-#' @param Mat_age internal parameter
-#' @param Wt_age internal parameter
-#' @param R0 internal parameter
-#' @param V internal parameter
-#' @param nyears internal parameter
-#' @param maxage internal parameter
-#' @param mov internal parameter
-#' @param Spat_targ internal parameter
-#' @param SRrel internal parameter
-#' @param aR internal parameter
-#' @param bR internal parameter
-#' @param bounds upper and lower bounds for optimizer
-#' 
-#' Paired with qopt
-#' @keywords internal
-#' @export getq2 
-#'
-#' @author T. Carruthers
-getq2 <- function(x, dep, Find, Perr, M_ageArray, hs, Mat_age, Wt_age, R0, V, 
-                  nyears, maxage, mov, Spat_targ, SRrel, aR, bR, bounds=c(0.00001, 15)) {
-  opt <- optimize(optQ_cpp, log(bounds), depc = dep[x], Fc = Find[x, ], 
-    Perrc = Perr[x, ], Mc = M_ageArray[x, ,], hc = hs[x], Mac = Mat_age[x, ], 
-    Wac = Wt_age[x, , ], R0c = R0[x], Vc = V[x, , ], nyears = nyears, 
-    maxage = maxage, movc = mov[x, , ], Spat_targc = Spat_targ[x], 
-    SRrelc = SRrel[x], aRc = aR[x, ], bRc = bR[x, ])	
-  
-  return(exp(opt$minimum))
-}
 
-
-#' Internal optimization function that find the catchability (q where F=qE)
-#' value required to get to user-specified stock depletion (current biomass /
-#' unfished biomass)
-#' 
-#' The user specifies the level of stock depleiton. This funciton takes the
-#' derived effort trajectories and finds the catchabiltiy to get the stock
-#' there.
-#' 
-#' @param lnq internal parameter
-#' @param depc internal parameter
-#' @param Fc internal parameter
-#' @param Perrc internal parameter
-#' @param Mc internal parameter
-#' @param hc internal parameter
-#' @param Mac internal parameter
-#' @param Wac internal parameter
-#' @param R0c internal parameter
-#' @param Vc internal parameter
-#' @param nyears internal parameter
-#' @param maxage internal parameter
-#' @param movc internal parameter
-#' @param Spat_targc internal parameter
-#' @param SRrelc internal parameter
-#' @param aRc internal parameter
-#' @param bRc internal parameter
-#' @param opt internal parameter
-#' 
-#' @export qopt 
-#' @keywords internal
-#' @author T. Carruthers 
-qopt <- function(lnq, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, 
-  maxage, movc, Spat_targc, SRrelc, aRc, bRc, opt = T) {
-  qc <- exp(lnq)
-  nareas <- nrow(movc)
-  # areasize<-c(asizec,1-asizec)
-  idist <- rep(1/nareas, nareas)
-  for (i in 1:300) idist <- apply(array(idist, c(2, 2)) * movc, 2, sum)
- 
-  N <- array(exp(-Mc[1] * ((1:maxage) - 1)) * R0c, dim = c(maxage, nareas)) * 
-    array(rep(idist, each = maxage), dim = c(maxage, nareas))
-  SSN <- Mac * N  # Calculate initial spawning stock numbers
-  Biomass <- N * Wac[, 1]
-  SSB <- SSN * Wac[, 1]  # Calculate spawning stock biomass
-  
-  B0 <- sum(Biomass)
-  R0a <- idist * R0c
-  SSB0 <- apply(SSB, 2, sum)
-  SSBpR <- SSB0/R0a  # Calculate spawning stock biomass per recruit
-  
-  for (y in 1:nyears) {
-    # set up some indices for indexed calculation
-    targ <- (apply(Vc[, y] * Biomass, 2, sum)^Spat_targc)/mean(apply(Vc[, y] * Biomass, 2, sum)^Spat_targc)
-    FMc <- array(qc * Fc[y] * Vc[, y], dim = c(maxage, nareas)) * array(rep(targ, each = maxage), dim = c(maxage, nareas))  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
-    Zc <- FMc + Mc[y]
-
-    N[2:maxage, ] <- N[1:(maxage - 1), ] * exp(-Zc[1:(maxage - 1), ])  # Total mortality
-    if (SRrelc == 1) {
-      N[1, ] <- Perrc[y] * (0.8 * R0a * hc * apply(SSB, 2, sum))/(0.2 * 
-        SSBpR * R0a * (1 - hc) + (hc - 0.2) * apply(SSB, 2, sum))  # Recruitment assuming regional R0 and stock wide steepness
-    } else {
-      N[1, ] <- aRc * apply(SSB, 2, sum) * exp(-bRc * apply(SSB, 2, sum)) # No error?
-    }
-	  
-    # print(N[1])
-    indMov <- as.matrix(expand.grid(1:nareas, 1:nareas, 1:maxage)[3:1])
-    indMov2 <- indMov[, 1:2]
-    indMov3 <- indMov[, 2:3]
-    temp <- array(N[indMov2] * movc[indMov3], dim = c(nareas, nareas, maxage))
-		
-    N <- apply(temp, c(3, 1), sum)
-    SSN <- N * Mac
-    SSB <- SSN * Wac[, y]
-    Biomass <- N * Wac[, y]
-    SBiomass <- SSN * Wac[, y]
-    # print(sum(Biomass))
-  }  # end of year
-  
-return((log(depc) - log(sum(SBiomass)/sum(SSB0)))^2)
-}
+# #' Internal optimization function that find the catchability (q where F=qE)
+# #' value required to get to user-specified stock depletion (current biomass /
+# #' unfished biomass)
+# #' 
+# #' The user specifies the level of stock depleiton. This funciton takes the
+# #' derived effort trajectories and finds the catchabiltiy to get the stock
+# #' there.
+# #' 
+# #' @param lnq internal parameter
+# #' @param depc internal parameter
+# #' @param Fc internal parameter
+# #' @param Perrc internal parameter
+# #' @param Mc internal parameter
+# #' @param hc internal parameter
+# #' @param Mac internal parameter
+# #' @param Wac internal parameter
+# #' @param R0c internal parameter
+# #' @param Vc internal parameter
+# #' @param nyears internal parameter
+# #' @param maxage internal parameter
+# #' @param movc internal parameter
+# #' @param Spat_targc internal parameter
+# #' @param SRrelc internal parameter
+# #' @param aRc internal parameter
+# #' @param bRc internal parameter
+# #' @param opt internal parameter
+# #' 
+# #' @export qopt 
+# #' @keywords internal
+# #' @author T. Carruthers 
+# qopt <- function(lnq, depc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, 
+#   maxage, movc, Spat_targc, SRrelc, aRc, bRc, opt = T) {
+#   qc <- exp(lnq)
+#   nareas <- nrow(movc)
+#   # areasize<-c(asizec,1-asizec)
+#   idist <- rep(1/nareas, nareas)
+#   for (i in 1:300) idist <- apply(array(idist, c(2, 2)) * movc, 2, sum)
+#  
+#   N <- array(exp(-Mc[1] * ((1:maxage) - 1)) * R0c, dim = c(maxage, nareas)) * 
+#     array(rep(idist, each = maxage), dim = c(maxage, nareas))
+#   SSN <- Mac * N  # Calculate initial spawning stock numbers
+#   Biomass <- N * Wac[, 1]
+#   SSB <- SSN * Wac[, 1]  # Calculate spawning stock biomass
+#   
+#   B0 <- sum(Biomass)
+#   R0a <- idist * R0c
+#   SSB0 <- apply(SSB, 2, sum)
+#   SSBpR <- SSB0/R0a  # Calculate spawning stock biomass per recruit
+#   
+#   for (y in 1:nyears) {
+#     # set up some indices for indexed calculation
+#     targ <- (apply(Vc[, y] * Biomass, 2, sum)^Spat_targc)/mean(apply(Vc[, y] * Biomass, 2, sum)^Spat_targc)
+#     FMc <- array(qc * Fc[y] * Vc[, y], dim = c(maxage, nareas)) * array(rep(targ, each = maxage), dim = c(maxage, nareas))  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
+#     Zc <- FMc + Mc[y]
+# 
+#     N[2:maxage, ] <- N[1:(maxage - 1), ] * exp(-Zc[1:(maxage - 1), ])  # Total mortality
+#     if (SRrelc == 1) {
+#       N[1, ] <- Perrc[y] * (0.8 * R0a * hc * apply(SSB, 2, sum))/(0.2 * 
+#         SSBpR * R0a * (1 - hc) + (hc - 0.2) * apply(SSB, 2, sum))  # Recruitment assuming regional R0 and stock wide steepness
+#     } else {
+#       N[1, ] <- aRc * apply(SSB, 2, sum) * exp(-bRc * apply(SSB, 2, sum)) # No error?
+#     }
+# 	  
+#     # print(N[1])
+#     indMov <- as.matrix(expand.grid(1:nareas, 1:nareas, 1:maxage)[3:1])
+#     indMov2 <- indMov[, 1:2]
+#     indMov3 <- indMov[, 2:3]
+#     temp <- array(N[indMov2] * movc[indMov3], dim = c(nareas, nareas, maxage))
+# 		
+#     N <- apply(temp, c(3, 1), sum)
+#     SSN <- N * Mac
+#     SSB <- SSN * Wac[, y]
+#     Biomass <- N * Wac[, y]
+#     SBiomass <- SSN * Wac[, y]
+#     # print(sum(Biomass))
+#   }  # end of year
+#   
+# return((log(depc) - log(sum(SBiomass)/sum(SSB0)))^2)
+# }
 
 
 
@@ -609,6 +609,7 @@ ML2D <- function(OM, ML, nsim = 100, ploty = T, Dlim = c(0.05, 0.6)) {
   
   L5 <- runif(nsim, OM@L5[1], OM@L5[2]) * mean(OM@L50)
   age05 <- L2A(t0, Linf, K, L5, maxage)
+  age05[age05<0] <- 0
   
   Vmaxage <- runif(nsim, OM@Vmaxlen[1], OM@Vmaxlen[2])  #runif(BT_fleet@Vmaxage[1],BT_fleet@Vmaxage[2]) # selectivity of oldest age class
   
@@ -620,9 +621,16 @@ ML2D <- function(OM, ML, nsim = 100, ploty = T, Dlim = c(0.05, 0.6)) {
   b <- OM@b  # length-weight parameter b
   
   mod <- AFS  # the age at modal (or youngest max) selectivity
-  deriv <- getDNvulnS(mod, age05, Vmaxage, maxage, nsim)  # The vulnerability schedule
-  vuln <- deriv[[1]]
   
+  # deriv <- getDNvulnS(mod, age05, Vmaxage, maxage, nsim)  # The vulnerability schedule
+  # vuln <- deriv[[1]]
+
+  srs <- (maxage - AFS) / ((-log(Vmaxage,2))^0.5) # selectivity parameters are constant for all years
+  sls <- (AFS - age05) /((-log(0.05,2))^0.5)
+  
+  vuln <- t(sapply(1:nsim, getsel, lens=matrix(1:maxage, nrow=nsim, ncol=maxage, byrow=TRUE), 
+                   lfs=AFS, sls=sls, srs=srs))
+
   Agearray <- array(rep(1:maxage, each = nsim), c(nsim, maxage))
   mat <- 1/(1 + exp((AM - (Agearray))/(AM * 0.1)))  # Maturity at age array
   
@@ -840,63 +848,63 @@ L2A <- function(t0c, Linfc, Kc, Len, maxage) {
 }
 
 
-#' Function to calculate cyclic recruitment pattern given user-specified values
-#' of period and amplitude.
-#' 
-#' Calculates cyclic pattern in recruitment deviations for a simulation. Ranges
-#' for Period and Amplitude are specified by user, and function produces cyclic
-#' pattern from within these ranges. Default is a sine wave.
-#' 
-#' 
-#' @usage SetRecruitCycle(x=1, Period, Amplitude, TotYears, Shape=c('sin',
-#' 'shift'))
-#' @param x Simulation number.
-#' @param Period A vector of length 2 specifying the minimum and maximum values
-#' for the period of the recruitment cycles. e.g., if Period = c(10,10), then
-#' recruitment cycle occurs every 10 years exactly.
-#' @param Amplitude A vector of length 2 specifying the minimum and maximum
-#' values for the amplitude of the recruitment cycles. e.g., if Amplitude =
-#' c(0,0.5), the average recruitment will increase (or decrease) by a factor
-#' between 0 and 0.5 each cycle.
-#' @param TotYears A numeric value specifying the total number of years (should
-#' be nyears + proyears).
-#' @param Shape Specifies whether cyclic recruitment pattern is sine wave
-#' (default) or a step-change (shift).
-#' @author A. Hordyk
-#' @export SetRecruitCycle
-SetRecruitCycle <- function(x = 1, Period, Amplitude, TotYears, Shape = c("sin", 
-  "shift")) {
-  Shape <- match.arg(Shape)
-  Npers <- ceiling(TotYears/min(Period))
-  pers <- round(runif(Npers, min(Period), max(Period)), 0)
-  amp <- runif(Npers, min(Amplitude), max(Amplitude))
-  ct <- 1
-  Dir <- sample(c(-1, 1), 1)
-  Rm <- rep(NA, Npers)
-  if (Shape == "sin") {
-    for (X in 1:length(pers)) {
-      yrper <- pers[X]
-      Period <- pi/yrper  #round(runif(1,-1, 1),0) * pi/yrper 
-      xs <- seq(from = 0, by = 1, to = pers[X])
-      Dir <- ifelse(Dir >= 0, -1, 1)  # change direction each cycle
-      Rm[ct:(ct + pers[X])] <- amp[X] * sin(xs * Period) * Dir
-      ct <- ct + pers[X]
-    }
-  }
-  if (Shape == "shift") {
-    for (X in 1:length(pers)) {
-      Dir <- ifelse(Dir >= 0, -1, 1)  # change direction each cycle
-      if (X == 1) 
-        Rm[ct:(ct + pers[X])] <- 0
-      if (X > 1) 
-        Rm[ct:(ct + pers[X])] <- amp[X] * Dir
-      Rm[ct:(ct + pers[X])] <- amp[X] * Dir
-      ct <- ct + pers[X]
-    }
-  }
-  Rm <- Rm[1:TotYears] + 1
-  return(Rm)
-}
+# #' Function to calculate cyclic recruitment pattern given user-specified values
+# #' of period and amplitude.
+# #' 
+# #' Calculates cyclic pattern in recruitment deviations for a simulation. Ranges
+# #' for Period and Amplitude are specified by user, and function produces cyclic
+# #' pattern from within these ranges. Default is a sine wave.
+# #' 
+# #' 
+# #' @usage SetRecruitCycle(x=1, Period, Amplitude, TotYears, Shape=c('sin',
+# #' 'shift'))
+# #' @param x Simulation number.
+# #' @param Period A vector of length 2 specifying the minimum and maximum values
+# #' for the period of the recruitment cycles. e.g., if Period = c(10,10), then
+# #' recruitment cycle occurs every 10 years exactly.
+# #' @param Amplitude A vector of length 2 specifying the minimum and maximum
+# #' values for the amplitude of the recruitment cycles. e.g., if Amplitude =
+# #' c(0,0.5), the average recruitment will increase (or decrease) by a factor
+# #' between 0 and 0.5 each cycle.
+# #' @param TotYears A numeric value specifying the total number of years (should
+# #' be nyears + proyears).
+# #' @param Shape Specifies whether cyclic recruitment pattern is sine wave
+# #' (default) or a step-change (shift).
+# #' @author A. Hordyk
+# #' @export SetRecruitCycle
+# SetRecruitCycle <- function(x = 1, Period, Amplitude, TotYears, Shape = c("sin", 
+#   "shift")) {
+#   Shape <- match.arg(Shape)
+#   Npers <- ceiling(TotYears/min(Period))
+#   pers <- round(runif(Npers, min(Period), max(Period)), 0)
+#   amp <- runif(Npers, min(Amplitude), max(Amplitude))
+#   ct <- 1
+#   Dir <- sample(c(-1, 1), 1)
+#   Rm <- rep(NA, Npers)
+#   if (Shape == "sin") {
+#     for (X in 1:length(pers)) {
+#       yrper <- pers[X]
+#       Period <- pi/yrper  #round(runif(1,-1, 1),0) * pi/yrper 
+#       xs <- seq(from = 0, by = 1, to = pers[X])
+#       Dir <- ifelse(Dir >= 0, -1, 1)  # change direction each cycle
+#       Rm[ct:(ct + pers[X])] <- amp[X] * sin(xs * Period) * Dir
+#       ct <- ct + pers[X]
+#     }
+#   }
+#   if (Shape == "shift") {
+#     for (X in 1:length(pers)) {
+#       Dir <- ifelse(Dir >= 0, -1, 1)  # change direction each cycle
+#       if (X == 1) 
+#         Rm[ct:(ct + pers[X])] <- 0
+#       if (X > 1) 
+#         Rm[ct:(ct + pers[X])] <- amp[X] * Dir
+#       Rm[ct:(ct + pers[X])] <- amp[X] * Dir
+#       ct <- ct + pers[X]
+#     }
+#   }
+#   Rm <- Rm[1:TotYears] + 1
+#   return(Rm)
+# }
 
 
 
@@ -940,8 +948,8 @@ makePerf <- function(OMin, except = NULL) {
     OMin@Iobs <- c(0, 0)
   if (!("AC" %in% exclude)) 
     OMin@AC <- c(0, 0)
-  if (!("Btbias" %in% exclude)) 
-    OMin@Btbias <- c(1, 1)
+  if (!("Btbiascv" %in% exclude)) 
+    OMin@Btbiascv <- c(1, 1)
   if (!("CAA_ESS" %in% exclude)) 
     OMin@CAA_ESS <- c(1000, 1000)
   if (!("CAA_nsamp" %in% exclude)) 

@@ -24,7 +24,7 @@ squared difference between these values and those produced by the three
 logit movement model.
 }
 \details{
-This is paired with getmov to find the correct movement model.
+This is paired with getmov2 to find the correct movement model.
 }
 \author{
 T. Carruthers

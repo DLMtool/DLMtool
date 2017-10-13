@@ -119,22 +119,32 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   # All recruitment Deviations
   # Add cycle (phase shift) to recruitment deviations - if specified
   if (is.finite(Stock@Period[1]) & is.finite(Stock@Amplitude[1])) {
-    Shape <- "sin"  # default sine wave - alternative - 'shift' for step changes
-    recMulti <- t(sapply(1:nsim, SetRecruitCycle, Period = Stock@Period, 
-                         Amplitude = Stock@Amplitude, TotYears = nyears + proyears+maxage-1, Shape = Shape))
+    # Shape <- "sin"  # default sine wave - alternative - 'shift' for step changes
+    Period <- runif(nsim, min(Stock@Period), max(Stock@Period))
+    if (max(Stock@Amplitude)>1) {
+      message("Stock@Amplitude > 1. Defaulting to 1")
+      Stock@Amplitude[Stock@Amplitude>1] <- 1
+    }
+    Amplitude <- runif(nsim, min(Stock@Amplitude), max(Stock@Amplitude))
+    
+    yrs <- 1:(nyears + proyears+maxage-1)
+    recMulti <- t(sapply(1:nsim, function(x) 1+sin((runif(1, 0, 1)*max(yrs) + 2*yrs*pi)/Period[x])*Amplitude[x]))
     message("Adding cyclic recruitment pattern")
+  
+    # recMulti <-  t(sapply(1:nsim, SetRecruitCycle, Period, Amplitude, TotYears=length(yrs), Shape = "sin"))
+
   } else {
     recMulti <- 1 
   }
   
   StockOut$procmu <- procmu <- -0.5 * (procsd)^2  # adjusted log normal mean
   if (!exists("Perr", inherits=FALSE)) {
-    Perr <- array(rnorm((nyears + proyears+maxage-1) * nsim, rep(procmu, nyears + 
-                                                                   proyears+maxage-1), 
+    Perr <- array(rnorm((nyears + proyears+maxage-1) * nsim, rep(procmu, nyears + proyears+maxage-1), 
                         rep(procsd, nyears + proyears+maxage-1)), c(nsim, nyears + proyears+maxage-1))
-    for (y in 2:(nyears + proyears+maxage-1)) Perr[, y] <- AC * Perr[, y - 1] + 
-        Perr[, y] * (1 - AC * AC)^0.5  #2#AC*Perr[,y-1]+(1-AC)*Perr[,y] # apply a pseudo AR1 autocorrelation to rec devs (log space)
+    for (y in 2:(nyears + proyears+maxage-1)) Perr[, y] <- AC * Perr[, y - 1] + Perr[, y] * (1 - AC * AC)^0.5  #2#AC*Perr[,y-1]+(1-AC)*Perr[,y] # apply a pseudo AR1 autocorrelation to rec devs (log space)
     StockOut$Perr <- Perr <- exp(Perr) * recMulti # normal space (mean 1 on average) 
+    
+    
   } else {
     StockOut$Perr <- Perr
   }
@@ -148,7 +158,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   if (!exists("Linf", inherits=FALSE)) Linf <- runif(nsim, Stock@Linf[1], Stock@Linf[2])  # sample of asymptotic length
   if (!exists("Linfsd", inherits=FALSE)) Linfsd <- runif(nsim, Stock@Linfsd[1], Stock@Linfsd[2])  # sample of interannual variability in Linf
   if (!exists("Linfgrad", inherits=FALSE)) Linfgrad <- runif(nsim, Stock@Linfgrad[1], Stock@Linfgrad[2])  # sample of gradient in Linf (Linf y-1)
-  if (!exists("recgrad", inherits=FALSE)) recgrad <- runif(nsim, Stock@recgrad[1], Stock@recgrad[2])  # gradient in recent recruitment
+  # if (!exists("recgrad", inherits=FALSE)) recgrad <- runif(nsim, Stock@recgrad[1], Stock@recgrad[2])  # gradient in recent recruitment
   if (!exists("K", inherits=FALSE)) K <- runif(nsim, Stock@K[1], Stock@K[2])  # now predicted by a log-linear model
   if (!exists("Ksd", inherits=FALSE)) Ksd <- runif(nsim, Stock@Ksd[1], Stock@Ksd[2])  #runif(nsim,Stock@Ksd[1],Stock@Ksd[2])# sd is already added in the linear model prediction
   if (!exists("Kgrad", inherits=FALSE)) Kgrad <- Kgrad <- runif(nsim, Stock@Kgrad[1], Stock@Kgrad[2])  # gradient in Von-B K parameter (K y-1)
@@ -416,7 +426,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   StockOut$Linf <- Linf 
   StockOut$Linfsd <- Linfsd
   StockOut$Linfgrad <- Linfgrad
-  StockOut$recgrad <- recgrad
+  # StockOut$recgrad <- recgrad
   StockOut$K <- K
   StockOut$Ksd <- Ksd
   StockOut$Kgrad <- Kgrad

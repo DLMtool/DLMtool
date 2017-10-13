@@ -374,9 +374,9 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
 #' @slot SRrel Type of stock-recruit relationship. Single value, switch (1) Beverton-Holt (2) Ricker. Integer 
 #' @slot Perr Process error, the CV of lognormal recruitment deviations. Uniform distribution lower and upper bounds. Non-negative real numbers
 #' @slot AC Autocorrelation in recruitment deviations rec(t)=AC*rec(t-1)+(1-AC)*sigma(t). Uniform distribution lower and upper bounds. Non-negative real numbers 
-#' @slot recgrad Mean temporal trend in log-normal recruitment deviations, expressed as a percentage change per year. Uniform distribution lower and upper bounds. Real numbers 
+# #' @slot recgrad Mean temporal trend in log-normal recruitment deviations, expressed as a percentage change per year. Uniform distribution lower and upper bounds. Real numbers 
 #' @slot Period (Optional) Period for cyclical recruitment pattern in years. Uniform distribution lower and upper bounds. Non-negative real numbers  
-#' @slot Amplitude (Optional) Amplitude in deviation from long-term average recruitment during recruitment cycle (eg a range from 0 to 1 means recruitment decreases or increases by up to 100\% each cycle). Uniform distribution lower and upper bounds. Non-negative real numbers 
+#' @slot Amplitude (Optional) Amplitude in deviation from long-term average recruitment during recruitment cycle (eg a range from 0 to 1 means recruitment decreases or increases by up to 100\% each cycle). Uniform distribution lower and upper bounds. 0 < Amplitutde < 1 
 #' @slot Linf Maximum length. Uniform distribution lower and upper bounds. Positive real numbers 
 #' @slot K von Bertalanffy growth parameter k. Uniform distribution lower and upper bounds. Positive real numbers
 #' @slot t0 von Bertalanffy theoretical age at length zero. Uniform distribution lower and upper bounds. Non-positive real numbers
@@ -407,7 +407,7 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
 setClass("Stock", representation(Name = "character", maxage = "numeric", 
                                  R0 = "numeric", M = "numeric", M2 = "numeric", 
                                  Mexp="numeric",  Msd = "numeric", Mgrad = "numeric",  
-                                 h = "numeric", SRrel = "numeric", Perr = "numeric", AC = "numeric", recgrad = "numeric",
+                                 h = "numeric", SRrel = "numeric", Perr = "numeric", AC = "numeric",
                                  Period = "numeric", Amplitude = "numeric",
                                  Linf = "numeric", K = "numeric", t0 = "numeric", LenCV="numeric", 
                                  Ksd = "numeric", Kgrad = "numeric", Linfsd = "numeric", Linfgrad = "numeric",
@@ -458,7 +458,7 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
       .Object@Kgrad <- as.numeric(dat[match("Kgrad", dname), 1:2])
       .Object@Linfsd <- as.numeric(dat[match("Linfsd", dname), 1:2])
       .Object@Linfgrad <- as.numeric(dat[match("Linfgrad", dname),  1:2])
-      .Object@recgrad <- as.numeric(dat[match("recgrad", dname), 1:2])
+      #.Object@recgrad <- as.numeric(dat[match("recgrad", dname), 1:2])
       .Object@a <- as.numeric(dat[match("a", dname), 1])
       .Object@b <- as.numeric(dat[match("b", dname), 1])
       .Object@D <- as.numeric(dat[match("D", dname), 1:2])
@@ -480,7 +480,7 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
     }
   }
   if (all(is.na(.Object@LenCV))) .Object@LenCV <- c(0.08, 0.12)
-  if (all(is.na(.Object@recgrad))) .Object@recgrad <- c(0, 0) # recgrad not currently used
+  # if (all(is.na(.Object@recgrad))) .Object@recgrad <- c(0, 0) # recgrad not currently used
   if (all(is.na(.Object@Size_area_1))) .Object@Size_area_1 <- .Object@Frac_area_1
   if (length(.Object@Size_area_1) == 0) .Object@Size_area_1 <- .Object@Frac_area_1
   
@@ -687,34 +687,34 @@ NULL
 #' @slot CAA_ESS Effective sample size (independent age draws) of the multinomial catch-at-age observation error model. Uniform distribution lower and upper bounds. Positive integers
 #' @slot CAL_nsamp Number of catch-at-length observation per time step. Uniform distribution lower and upper bounds. Positive integers
 #' @slot CAL_ESS Effective sample size (independent length draws) of the multinomial catch-at-length observation error model. Uniform distribution lower and upper bounds. Positive integers
-#' @slot CALcv Log-normal, CV of length-at-age. Uniform distribution lower and upper bounds. Positive real numbers 
+# #' @slot CALcv Log-normal, CV of length-at-age. Uniform distribution lower and upper bounds. Positive real numbers 
 #' @slot Iobs Observation error in the relative abundance indices expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Positive real numbers  
-#' @slot Icv Log-normal coefficient of variation controlling error in observations of relative abundance index. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Btcv Log-normal coefficient of variation controlling error in observations of current stock biomass among years. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Btbias Uniform-log bounds for sampling persistent bias in current stock biomass. Uniform-log distribution lower and upper bounds. Positive real numbers 
+#' @slot Ibiascv Log-normal coefficient of variation controlling error in observations of relative abundance index. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot Btobs Log-normal coefficient of variation controlling error in observations of current stock biomass among years. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot Btbiascv Uniform-log bounds for sampling persistent bias in current stock biomass. Uniform-log distribution lower and upper bounds. Positive real numbers 
 #' @slot beta A parameter controlling hyperstability/hyperdepletion where values below 1 lead to hyperstability (an index that decreases slower than true abundance) and values above 1 lead to hyperdepletion (an index that decreases more rapidly than true abundance). Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot LenMcv Log-normal coefficient of variation for sampling persistent bias in length at 50 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Mcv Log-normal coefficient of variation for sampling persistent bias in observed natural mortality rate. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Kcv Log-normal coefficient of variation for sampling persistent bias in observed growth parameter K. Uniform distribution lower and upper bounds. Positive real numbers  
-#' @slot t0cv Log-normal coefficient of variation for sampling persistent bias in observed t0. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Linfcv Log-normal coefficient of variation for sampling persistent bias in observed maximum length. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot LFCcv Log-normal coefficient of variation for sampling persistent bias in observed length at first capture. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot LFScv Log-normal coefficient of variation for sampling persistent bias in length-at-full selection. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot FMSYcv Log-normal coefficient of variation for sampling persistent bias in FMSY. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot FMSY_Mcv Log-normal coefficient of variation for sampling persistent bias in FMSY/M. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot BMSY_B0cv Log-normal coefficient of variation for sampling persistent bias in BMSY relative to unfished. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Irefcv Log-normal coefficient of variation for sampling persistent bias in relative abundance index at BMSY. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Brefcv Log-normal coefficient of variation for sampling persistent bias in BMSY. Uniform distribution lower and upper bounds. Positive real numbers  
-#' @slot Crefcv Log-normal coefficient of variation for sampling persistent bias in MSY. Uniform distribution lower and upper bounds. Positive real numbers  
+#' @slot LenMbiascv Log-normal coefficient of variation for sampling persistent bias in length at 50 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot Mbiascv Log-normal coefficient of variation for sampling persistent bias in observed natural mortality rate. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot Kbiascv Log-normal coefficient of variation for sampling persistent bias in observed growth parameter K. Uniform distribution lower and upper bounds. Positive real numbers  
+#' @slot t0biascv Log-normal coefficient of variation for sampling persistent bias in observed t0. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot Linfbiascv Log-normal coefficient of variation for sampling persistent bias in observed maximum length. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot LFCbiascv Log-normal coefficient of variation for sampling persistent bias in observed length at first capture. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot LFSbiascv Log-normal coefficient of variation for sampling persistent bias in length-at-full selection. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot FMSYbiascv Log-normal coefficient of variation for sampling persistent bias in FMSY. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot FMSY_Mbiascv Log-normal coefficient of variation for sampling persistent bias in FMSY/M. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot BMSY_B0biascv Log-normal coefficient of variation for sampling persistent bias in BMSY relative to unfished. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot Irefbiascv Log-normal coefficient of variation for sampling persistent bias in relative abundance index at BMSY. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot Brefbiascv Log-normal coefficient of variation for sampling persistent bias in BMSY. Uniform distribution lower and upper bounds. Positive real numbers  
+#' @slot Crefbiascv Log-normal coefficient of variation for sampling persistent bias in MSY. Uniform distribution lower and upper bounds. Positive real numbers  
 #' @slot Dbiascv Log-normal coefficient of variation for sampling persistent bias in stock depletion. Uniform distribution lower and upper bounds. Positive real numbers  
-#' @slot Dcv Log-normal coefficient of variation controlling error in observations of stock depletion among years. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot hcv Log-normal coefficient of variation for sampling persistent bias in steepness. Uniform distribution lower and upper bounds. Positive real numbers  
-#' @slot Reccv Log-normal coefficient of variation for sampling persistent bias in recent recruitment strength. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot B0cv Log-normal coefficient of variation for sampling persistent bias in unfished biomass. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot rcv Log-normal coefficient of variation for sampling persistent bias in intrinsic rate of increase. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Fcurbiascv Log-normal coefficient of variation for sampling persistent bias in current fishing mortality rate. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Fcurcv Log-normal coefficient of variation controlling error in observations of current fishing mortality rate among years. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot maxagecv Log-normal coefficient of variation for sampling persistent bias in observation of maximum age. Uniform distribution lower and upper bounds. Positive real numbers  
+#' @slot Dobs Log-normal coefficient of variation controlling error in observations of stock depletion among years. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot hbiascv Log-normal coefficient of variation for sampling persistent bias in steepness. Uniform distribution lower and upper bounds. Positive real numbers  
+#' @slot Recbiascv Log-normal coefficient of variation for sampling persistent bias in recent recruitment strength. Uniform distribution lower and upper bounds. Positive real numbers 
+# #' @slot B0cv Log-normal coefficient of variation for sampling persistent bias in unfished biomass. Uniform distribution lower and upper bounds. Positive real numbers 
+# #' @slot rcv Log-normal coefficient of variation for sampling persistent bias in intrinsic rate of increase. Uniform distribution lower and upper bounds. Positive real numbers 
+# #' @slot Fcurbiascv Log-normal coefficient of variation for sampling persistent bias in current fishing mortality rate. Uniform distribution lower and upper bounds. Positive real numbers 
+# #' @slot Fcurcv Log-normal coefficient of variation controlling error in observations of current fishing mortality rate among years. Uniform distribution lower and upper bounds. Positive real numbers 
+# #' @slot maxagecv Log-normal coefficient of variation for sampling persistent bias in observation of maximum age. Uniform distribution lower and upper bounds. Positive real numbers  
 #'     
 #' @author T. Carruthers and A. Hordyk
 #' @keywords classes
@@ -724,16 +724,14 @@ NULL
 #' 
 setClass("Obs", representation(Name = "character", 
                                Cobs = "numeric", Cbiascv = "numeric", CAA_nsamp = "numeric", CAA_ESS = "numeric", 
-                               CAL_nsamp = "numeric", CAL_ESS = "numeric", CALcv = "numeric",
-                               Iobs = "numeric",  Icv = "numeric", Btcv = "numeric", Btbias = "numeric", beta = "numeric",
-                               LenMcv = "numeric", Mcv = "numeric", Kcv = "numeric", t0cv = "numeric", Linfcv = "numeric",
-                               LFCcv = "numeric", LFScv = "numeric",
-                               FMSYcv = "numeric", FMSY_Mcv = "numeric", BMSY_B0cv = "numeric",
-                               Irefcv = "numeric", Crefcv = "numeric", Brefcv = "numeric",
-                               Dbiascv = "numeric", Dcv = "numeric",
-                               hcv = "numeric", Reccv = "numeric",
-                                B0cv = "numeric",  rcv = "numeric", Fcurbiascv = "numeric", 
-                               Fcurcv = "numeric", maxagecv = "numeric"))
+                               CAL_nsamp = "numeric", CAL_ESS = "numeric", 
+                               Iobs = "numeric",  Ibiascv = "numeric", Btobs = "numeric", Btbiascv = "numeric", beta = "numeric",
+                               LenMbiascv = "numeric", Mbiascv = "numeric", Kbiascv = "numeric",t0biascv = "numeric", Linfbiascv = "numeric",
+                               LFCbiascv = "numeric", LFSbiascv = "numeric",
+                               FMSYbiascv = "numeric", FMSY_Mbiascv = "numeric", BMSY_B0biascv = "numeric",
+                               Irefbiascv = "numeric", Crefbiascv = "numeric", Brefbiascv = "numeric",
+                               Dbiascv = "numeric", Dobs = "numeric",
+                               hbiascv = "numeric", Recbiascv = "numeric"))
 
 # initialize Obs
 setMethod("initialize", "Obs", function(.Object, file = NA) {
@@ -745,39 +743,39 @@ setMethod("initialize", "Obs", function(.Object, file = NA) {
       dname <- dat[, 1]
       dat <- dat[, 2:ncol(dat)]
       .Object@Name <- dat[match("Name", dname), 1]
-      .Object@LenMcv <- as.numeric(dat[match("LenMcv", dname), 1])
+      .Object@LenMbiascv <- as.numeric(dat[match("LenMbiascv", dname), 1])
       .Object@Cobs <- as.numeric(dat[match("Cobs", dname), 1:2])
       .Object@Cbiascv <- as.numeric(dat[match("Cbiascv", dname), 1])
       .Object@CAA_nsamp <- as.numeric(dat[match("CAA_nsamp", dname), 1:2])
       .Object@CAA_ESS <- as.numeric(dat[match("CAA_ESS", dname), 1:2])
       .Object@CAL_nsamp <- as.numeric(dat[match("CAA_nsamp", dname), 1:2])
       .Object@CAL_ESS <- as.numeric(dat[match("CAA_ESS", dname), 1:2])
-      .Object@CALcv <- as.numeric(dat[match("CALcv", dname), 1:2])
+      # .Object@CALcv <- as.numeric(dat[match("CALcv", dname), 1:2])
       .Object@Iobs <- as.numeric(dat[match("Iobs", dname), 1:2])
-      .Object@Mcv <- as.numeric(dat[match("Mcv", dname), 1])
-      .Object@Kcv <- as.numeric(dat[match("Kcv", dname), 1])
-      .Object@t0cv <- as.numeric(dat[match("t0cv", dname), 1])
-      .Object@Linfcv <- as.numeric(dat[match("Linfcv", dname), 1])
-      .Object@LFCcv <- as.numeric(dat[match("LFCcv", dname), 1])
-      .Object@LFScv <- as.numeric(dat[match("LFScv", dname), 1])
-      .Object@B0cv <- as.numeric(dat[match("B0cv", dname), 1])
-      .Object@FMSYcv <- as.numeric(dat[match("FMSYcv", dname), 1])
-      .Object@FMSY_Mcv <- as.numeric(dat[match("FMSY_Mcv", dname), 1])
-      .Object@BMSY_B0cv <- as.numeric(dat[match("BMSY_B0cv", dname), 1])
-      .Object@rcv <- as.numeric(dat[match("rcv", dname), 1])
+      .Object@Mbiascv <- as.numeric(dat[match("Mbiascv", dname), 1])
+      .Object@Kbiascv <- as.numeric(dat[match("Kbiascv", dname), 1])
+      .Object@t0biascv <- as.numeric(dat[match("t0biascv", dname), 1])
+      .Object@Linfbiascv <- as.numeric(dat[match("Linfbiascv", dname), 1])
+      .Object@LFCbiascv <- as.numeric(dat[match("LFCbiascv", dname), 1])
+      .Object@LFSbiascv <- as.numeric(dat[match("LFSbiascv", dname), 1])
+     # .Object@B0cv <- as.numeric(dat[match("B0cv", dname), 1])
+      .Object@FMSYbiascv <- as.numeric(dat[match("FMSYbiascv", dname), 1])
+      .Object@FMSY_Mbiascv <- as.numeric(dat[match("FMSY_Mbiascv", dname), 1])
+      .Object@BMSY_B0biascv <- as.numeric(dat[match("BMSY_B0biascv", dname), 1])
+     # .Object@rcv <- as.numeric(dat[match("rcv", dname), 1])
       .Object@Dbiascv <- as.numeric(dat[match("Dbiascv", dname), 1])
-      .Object@Dcv <- as.numeric(dat[match("Dcv", dname), 1:2])
-      .Object@Btbias <- as.numeric(dat[match("Btbias", dname), 1:2])
-      .Object@Btcv <- as.numeric(dat[match("Btcv", dname), 1:2])
-      .Object@Fcurbiascv <- as.numeric(dat[match("Fcurbiascv", dname), 1])
-      .Object@Fcurcv <- as.numeric(dat[match("Fcurcv", dname), 1:2])
-      .Object@hcv <- as.numeric(dat[match("hcv", dname), 1])
-      .Object@Icv <- as.numeric(dat[match("Icv", dname), 1])
-      .Object@maxagecv <- as.numeric(dat[match("maxagecv", dname), 1])
-      .Object@Reccv <- as.numeric(dat[match("Reccv", dname), 1:2])
-      .Object@Irefcv <- as.numeric(dat[match("Irefcv", dname), 1])
-      .Object@Crefcv <- as.numeric(dat[match("Crefcv", dname), 1])
-      .Object@Brefcv <- as.numeric(dat[match("Brefcv", dname), 1])
+      .Object@Dobs <- as.numeric(dat[match("Dobs", dname), 1:2])
+      .Object@Btbiascv <- as.numeric(dat[match("Btbiascv", dname), 1:2])
+      .Object@Btobs <- as.numeric(dat[match("Btobs", dname), 1:2])
+      # .Object@Fcurbiascv <- as.numeric(dat[match("Fcurbiascv", dname), 1])
+      # .Object@Fcurcv <- as.numeric(dat[match("Fcurcv", dname), 1:2])
+      .Object@hbiascv <- as.numeric(dat[match("hbiascv", dname), 1])
+      .Object@Ibiascv <- as.numeric(dat[match("Ibiascv", dname), 1])
+      # .Object@maxagecv <- as.numeric(dat[match("maxagecv", dname), 1])
+      .Object@Recbiascv <- as.numeric(dat[match("Recbiascv", dname), 1:2])
+      .Object@Irefbiascv <- as.numeric(dat[match("Irefbiascv", dname), 1])
+      .Object@Crefbiascv <- as.numeric(dat[match("Crefbiascv", dname), 1])
+      .Object@Brefbiascv <- as.numeric(dat[match("Brefbiascv", dname), 1])
       .Object@beta <- as.numeric(dat[match("beta", dname), 1:2])
     } else {
       message("File doesn't exist")
@@ -803,8 +801,8 @@ setMethod("initialize", "Obs", function(.Object, file = NA) {
 #' @slot Name The name of the Implementation error object. Single value. Character string.  
 #' @slot TACFrac Mean fraction of TAC taken. Uniform distribution lower and upper bounds. Positive real number. 
 #' @slot TACSD Log-normal coefficient of variation in the fraction of Total Allowable Catch (TAC) taken. Uniform distribution lower and upper bounds. Non-negative real numbers. 
-#' @slot EFrac Mean fraction of TAE taken. Uniform distribution lower and upper bounds. Positive real number. 
-#' @slot ESD Log-normal coefficient of variation in the fraction of Total Allowable Effort (TAE) taken. Uniform distribution lower and upper bounds. Non-negative real numbers.
+#' @slot TAEFrac Mean fraction of TAE taken. Uniform distribution lower and upper bounds. Positive real number. 
+#' @slot TAESD Log-normal coefficient of variation in the fraction of Total Allowable Effort (TAE) taken. Uniform distribution lower and upper bounds. Non-negative real numbers.
 #' @slot SizeLimFrac The real minimum size that is retained expressed as a fraction of the size. Uniform distribution lower and upper bounds. Positive real number.
 #' @slot SizeLimSD Log-normal coefficient of variation controlling mismatch between a minimum size limit and the real minimum size retained. Uniform distribution lower and upper bounds. Non-negative real numbers.
 #' @slot Source A reference to a website or article form which parameters were taken to define the object. Single value. Character string. 
@@ -815,7 +813,7 @@ setMethod("initialize", "Obs", function(.Object, file = NA) {
 #' showClass('Imp')
 #' 
 setClass("Imp", representation(Name = "character", TACSD = "numeric", TACFrac = "numeric", 
-                               ESD = "numeric", EFrac = "numeric",
+                               TAESD = "numeric", TAEFrac = "numeric",
                                SizeLimSD = "numeric", SizeLimFrac="numeric",
                                Source = "character"))
 
@@ -825,8 +823,8 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
   .Object@Name <- "Perfect implementation"
   .Object@TACSD <- c(0,0)
   .Object@TACFrac <- c(1,1)
-  .Object@ESD <- c(0,0)
-  .Object@EFrac <-c(1,1)
+  .Object@TAESD <- c(0,0)
+  .Object@TAEFrac <-c(1,1)
   .Object@SizeLimSD <- c(0,0)
   .Object@SizeLimFrac<-c(1,1)
   .Object@Source <-"DLMtool generated"
@@ -842,8 +840,8 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
       .Object@Name <- dat[match("Name", dname), 1]
       .Object@TACSD <- as.numeric(dat[match("TACSD", dname), 1:2])
       .Object@TACFrac <- as.numeric(dat[match("TACFrac", dname), 1:2])
-      .Object@ESD <- as.numeric(dat[match("ESD", dname), 1:2])
-      .Object@EFrac <- as.numeric(dat[match("EFrac", dname), 1:2])
+      .Object@TAESD <- as.numeric(dat[match("TAESD", dname), 1:2])
+      .Object@TAEFrac <- as.numeric(dat[match("TAEFrac", dname), 1:2])
       .Object@SizeLimSD <- as.numeric(dat[match("SizeLimSD", dname), 1:2])
       .Object@SizeLimFrac <- as.numeric(dat[match("SizeLimFrac", dname), 1:2])
       .Object@Source <- dat[match("Source", dname), 1]
@@ -900,9 +898,9 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
 #' @slot SRrel Type of stock-recruit relationship. Single value, switch (1) Beverton-Holt (2) Ricker. Integer 
 #' @slot Perr Process error, the CV of lognormal recruitment deviations. Uniform distribution lower and upper bounds. Non-negative real numbers
 #' @slot AC Autocorrelation in recruitment deviations rec(t)=AC*rec(t-1)+(1-AC)*sigma(t). Uniform distribution lower and upper bounds. Non-negative real numbers 
-#' @slot recgrad Mean temporal trend in log-normal recruitment deviations, expressed as a percentage change per year. Uniform distribution lower and upper bounds. Real numbers 
+# #' @slot recgrad Mean temporal trend in log-normal recruitment deviations, expressed as a percentage change per year. Uniform distribution lower and upper bounds. Real numbers 
 #' @slot Period (Optional) Period for cyclical recruitment pattern in years. Uniform distribution lower and upper bounds. Non-negative real numbers  
-#' @slot Amplitude (Optional) Amplitude in deviation from long-term average recruitment during recruitment cycle (eg a range from 0 to 1 means recruitment decreases or increases by up to 100\% each cycle). Uniform distribution lower and upper bounds. Non-negative real numbers 
+#' @slot Amplitude (Optional) Amplitude in deviation from long-term average recruitment during recruitment cycle (eg a range from 0 to 1 means recruitment decreases or increases by up to 100\% each cycle). Uniform distribution lower and upper bounds. 0 < Amplitutde < 1 
 #' @slot Linf Maximum length. Uniform distribution lower and upper bounds. Positive real numbers 
 #' @slot K von Bertalanffy growth parameter k. Uniform distribution lower and upper bounds. Positive real numbers
 #' @slot t0 von Bertalanffy theoretical age at length zero. Uniform distribution lower and upper bounds. Non-positive real numbers
@@ -959,40 +957,40 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
 #' @slot CAA_ESS Effective sample size (independent age draws) of the multinomial catch-at-age observation error model. Uniform distribution lower and upper bounds. Positive integers
 #' @slot CAL_nsamp Number of catch-at-length observation per time step. Uniform distribution lower and upper bounds. Positive integers
 #' @slot CAL_ESS Effective sample size (independent length draws) of the multinomial catch-at-length observation error model. Uniform distribution lower and upper bounds. Positive integers
-#' @slot CALcv Log-normal, CV of length-at-age. Uniform distribution lower and upper bounds. Positive real numbers 
+# #' @slot CALcv Log-normal, CV of length-at-age. Uniform distribution lower and upper bounds. Positive real numbers 
 #' @slot Iobs Observation error in the relative abundance indices expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Positive real numbers  
-#' @slot Icv Log-normal coefficient of variation controlling error in observations of relative abundance index. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Btcv Log-normal coefficient of variation controlling error in observations of current stock biomass among years. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Btbias Uniform-log bounds for sampling persistent bias in current stock biomass. Uniform-log distribution lower and upper bounds. Positive real numbers 
+#' @slot Ibiascv Log-normal coefficient of variation controlling error in observations of relative abundance index. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot Btobs Log-normal coefficient of variation controlling error in observations of current stock biomass among years. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot Btbiascv Uniform-log bounds for sampling persistent bias in current stock biomass. Uniform-log distribution lower and upper bounds. Positive real numbers 
 #' @slot beta A parameter controlling hyperstability/hyperdepletion where values below 1 lead to hyperstability (an index that decreases slower than true abundance) and values above 1 lead to hyperdepletion (an index that decreases more rapidly than true abundance). Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot LenMcv Log-normal coefficient of variation for sampling persistent bias in length at 50 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Mcv Log-normal coefficient of variation for sampling persistent bias in observed natural mortality rate. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Kcv Log-normal coefficient of variation for sampling persistent bias in observed growth parameter K. Uniform distribution lower and upper bounds. Positive real numbers  
-#' @slot t0cv Log-normal coefficient of variation for sampling persistent bias in observed t0. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Linfcv Log-normal coefficient of variation for sampling persistent bias in observed maximum length. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot LFCcv Log-normal coefficient of variation for sampling persistent bias in observed length at first capture. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot LFScv Log-normal coefficient of variation for sampling persistent bias in length-at-full selection. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot FMSYcv Log-normal coefficient of variation for sampling persistent bias in FMSY. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot FMSY_Mcv Log-normal coefficient of variation for sampling persistent bias in FMSY/M. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot BMSY_B0cv Log-normal coefficient of variation for sampling persistent bias in BMSY relative to unfished. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Irefcv Log-normal coefficient of variation for sampling persistent bias in relative abundance index at BMSY. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Brefcv Log-normal coefficient of variation for sampling persistent bias in BMSY. Uniform distribution lower and upper bounds. Positive real numbers  
-#' @slot Crefcv Log-normal coefficient of variation for sampling persistent bias in MSY. Uniform distribution lower and upper bounds. Positive real numbers  
+#' @slot LenMbiascv Log-normal coefficient of variation for sampling persistent bias in length at 50 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot Mbiascv Log-normal coefficient of variation for sampling persistent bias in observed natural mortality rate. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot Kbiascv Log-normal coefficient of variation for sampling persistent bias in observed growth parameter K. Uniform distribution lower and upper bounds. Positive real numbers  
+#' @slot t0biascv Log-normal coefficient of variation for sampling persistent bias in observed t0. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot Linfbiascv Log-normal coefficient of variation for sampling persistent bias in observed maximum length. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot LFCbiascv Log-normal coefficient of variation for sampling persistent bias in observed length at first capture. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot LFSbiascv Log-normal coefficient of variation for sampling persistent bias in length-at-full selection. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot FMSYbiascv Log-normal coefficient of variation for sampling persistent bias in FMSY. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot FMSY_Mbiascv Log-normal coefficient of variation for sampling persistent bias in FMSY/M. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot BMSY_B0biascv Log-normal coefficient of variation for sampling persistent bias in BMSY relative to unfished. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot Irefbiascv Log-normal coefficient of variation for sampling persistent bias in relative abundance index at BMSY. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot Brefbiascv Log-normal coefficient of variation for sampling persistent bias in BMSY. Uniform distribution lower and upper bounds. Positive real numbers  
+#' @slot Crefbiascv Log-normal coefficient of variation for sampling persistent bias in MSY. Uniform distribution lower and upper bounds. Positive real numbers  
 #' @slot Dbiascv Log-normal coefficient of variation for sampling persistent bias in stock depletion. Uniform distribution lower and upper bounds. Positive real numbers  
-#' @slot Dcv Log-normal coefficient of variation controlling error in observations of stock depletion among years. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot hcv Log-normal coefficient of variation for sampling persistent bias in steepness. Uniform distribution lower and upper bounds. Positive real numbers  
-#' @slot Reccv Log-normal coefficient of variation for sampling persistent bias in recent recruitment strength. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot B0cv Log-normal coefficient of variation for sampling persistent bias in unfished biomass. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot rcv Log-normal coefficient of variation for sampling persistent bias in intrinsic rate of increase. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Fcurbiascv Log-normal coefficient of variation for sampling persistent bias in current fishing mortality rate. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Fcurcv Log-normal coefficient of variation controlling error in observations of current fishing mortality rate among years. Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot maxagecv Log-normal coefficient of variation for sampling persistent bias in observation of maximum age. Uniform distribution lower and upper bounds. Positive real numbers  
+#' @slot Dobs Log-normal coefficient of variation controlling error in observations of stock depletion among years. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot hbiascv Log-normal coefficient of variation for sampling persistent bias in steepness. Uniform distribution lower and upper bounds. Positive real numbers  
+#' @slot Recbiascv Log-normal coefficient of variation for sampling persistent bias in recent recruitment strength. Uniform distribution lower and upper bounds. Positive real numbers 
+# #' @slot B0cv Log-normal coefficient of variation for sampling persistent bias in unfished biomass. Uniform distribution lower and upper bounds. Positive real numbers 
+# #' @slot rcv Log-normal coefficient of variation for sampling persistent bias in intrinsic rate of increase. Uniform distribution lower and upper bounds. Positive real numbers 
+# #' @slot Fcurbiascv Log-normal coefficient of variation for sampling persistent bias in current fishing mortality rate. Uniform distribution lower and upper bounds. Positive real numbers 
+# #' @slot Fcurcv Log-normal coefficient of variation controlling error in observations of current fishing mortality rate among years. Uniform distribution lower and upper bounds. Positive real numbers 
+# #' @slot maxagecv Log-normal coefficient of variation for sampling persistent bias in observation of maximum age. Uniform distribution lower and upper bounds. Positive real numbers  
 
 # Imp slots
 #' @slot TACFrac Mean fraction of TAC taken. Uniform distribution lower and upper bounds. Positive real number. 
 #' @slot TACSD Log-normal coefficient of variation in the fraction of Total Allowable Catch (TAC) taken. Uniform distribution lower and upper bounds. Non-negative real numbers. 
-#' @slot EFrac Mean fraction of TAE taken. Uniform distribution lower and upper bounds. Positive real number. 
-#' @slot ESD Log-normal coefficient of variation in the fraction of Total Allowable Effort (TAE) taken. Uniform distribution lower and upper bounds. Non-negative real numbers.
+#' @slot TAEFrac Mean fraction of TAE taken. Uniform distribution lower and upper bounds. Positive real number. 
+#' @slot TAESD Log-normal coefficient of variation in the fraction of Total Allowable Effort (TAE) taken. Uniform distribution lower and upper bounds. Non-negative real numbers.
 #' @slot SizeLimFrac The real minimum size that is retained expressed as a fraction of the size. Uniform distribution lower and upper bounds. Positive real number.
 #' @slot SizeLimSD Log-normal coefficient of variation controlling mismatch between a minimum size limit and the real minimum size retained. Uniform distribution lower and upper bounds. Non-negative real numbers.
 
@@ -1133,7 +1131,7 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
 #'   \item MSY: Maximum Sustainable Yield
 #'   \item qinc: mean percentage increase in fishing efficiency (catchability) in projected years (input controls only)
 #'   \item qcv: interannual variability in future fishing efficiency (catchability) in projected years (input controls only)
-#'   \item CALcv: variability in lengths at age around the growth curve (normal CV)
+# #'   \item CALcv: variability in lengths at age around the growth curve (normal CV)
 #'   \item FMSY: Fishing mortality rate at Maximum Sustainable Yield
 #'   \item Linf: maximum length (von Bertalanffy Linf parameter)
 #'   \item K: maximum growth rate (von Bertalanffy K parameter)
@@ -1142,7 +1140,7 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
 #'   \item Linfgrad: mean gradient in maximum length (per cent per time step)
 #'   \item Kgrad: mean gradient in maximum growth rate (per cent per time step)
 #'   \item Linfsd: interannual variability in maximum length (log normal CV)
-#'   \item recgrad: gradient in recruitment strength (age 1 population numbers) over last 10 years of historical simulations
+# #'   \item recgrad: gradient in recruitment strength (age 1 population numbers) over last 10 years of historical simulations
 #'   \item Ksd: interannual variability in maximum growth rate (log normal CV)
 #'   \item ageM: age at 50 per cent maturity
 #'   \item LFS: length at full selection (the shortest length class where fishery selectivity is 100 per cent)

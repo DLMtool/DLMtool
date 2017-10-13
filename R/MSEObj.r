@@ -3464,7 +3464,7 @@ VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4,
     #             "Length at 5% selection", "Length at full selection", "Dome-shaped selectivity",
     #             "Length at first capture", "Auto-correlation recruitment", 
     #             "Length 50% maturity", "Length 95% maturity", "B0", "N0", "SSB0", "BMSY_B0",
-    #             "TACSD", "TACFrac", "ESD", "EFrac", "SizeLimSD", "SizeLimFrac", "Blow", "BMSY",
+    #             "TACSD", "TACFrac", "TAESD", "TAEFrac", "SizeLimSD", "SizeLimFrac", "Blow", "BMSY",
     #             "SSBMSY", "Mexp", "Discard mortality", "LR5", "LFR", "DR", "Lm/SL")
     #  # cbind(Obsnam, LnName)
     

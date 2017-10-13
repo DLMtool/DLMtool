@@ -210,7 +210,7 @@ StochasticSRA <-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proye
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
   agearr<-array(rep(1:maxage,each=nsim),c(nsim,maxage))
   Wt_age <- Wt_age[,,nyears] # no time-varying growth
-  
+  Mat_age<- Mat_age[,,nyears]
   
   # Sample Fleet Parameters 
   options(warn=-1)
@@ -230,6 +230,7 @@ StochasticSRA <-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proye
   LHD<-array(NA,c(nsim,nits))
   
   
+
   if(sfIsRunning()){
     R0LB<-sfSapply(1:nsim,LSRA_cpp,FF=M*4,Chist_arr=Chist_a,M=M,Mat_age=Mat_age,Wt_age=Wt_age,
                    sel=Mat_age,Recdevs=array(1,c(nsim,nyears+maxage)),h=hs)

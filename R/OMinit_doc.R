@@ -992,7 +992,7 @@ Template <- function(type=c("Stock", "Fleet", "Obs", "Imp")) {
   type <- match.arg(type)
   if (type == "Stock") mat <- 
       matrix(c("Mortality and age:  maxage, R0, M, M2, Mexp, Msd, Mgrad",
-               "Recruitment: h, SRrel, Perr, AC, recgrad",
+               "Recruitment: h, SRrel, Perr, AC",
                "Non-stationarity in stock productivity: Period, Amplitude",
                "Growth: Linf, K, t0, LenCV, Ksd, Kgrad, Linfsd, Linfgrad",
                "Maturity: L50, L50_95",
@@ -1011,19 +1011,19 @@ Template <- function(type=c("Stock", "Fleet", "Obs", "Imp")) {
         "Current Year: CurrentYr"), ncol=1)
   if (type == "Obs") mat <- 
       matrix(c(
-        "Catch statistics: Cobs, Cbiascv, CAA_nsamp, CAA_ESS, CAL_nsamp, CAL_ESS, CALcv",
-        "Index imprecision, bias and hyperstability: Iobs, Icv, Btcv, Btbias, beta",
-        "Bias in maturity, natural mortality rate and growth parameters: LenMcv, Mcv, Kcv, t0cv, Linfcv",
-        "Bias in length at first capture, length at full selection: LFCcv, LFScv",
-        "Bias in fishery reference points, unfished biomass, FMSY, FMSY/M ratio, biomass at MSY relative to unfished: FMSYcv, FMSY_Mcv, BMSY_B0cv",
-        "Management targets in terms of the index (i.e., model free), the total annual catches and absolute biomass levels: Irefcv, Crefcv, Brefcv",
-        "Depletion bias and imprecision: Dbiascv, Dcv",
-        "Recruitment compensation and trend: hcv, Reccv",
-        "Currently unused observation processes - bias in unfished biomass, intrinsic rate of increase, annual increase in fishing efficiency and age at 50% vulnerability, bias and imprecision in current fishing rate, bias in maximum age: B0cv, rcv, Fcurbiascv, Fcurcv, maxagecv"), ncol=1)
+        "Catch statistics: Cobs, Cbiascv, CAA_nsamp, CAA_ESS, CAL_nsamp, CAL_ESS",
+        "Index imprecision, bias and hyperstability: Iobs, Ibiascv, Btobs, Btbiascv, beta",
+        "Bias in maturity, natural mortality rate and growth parameters: LenMbiascv, Mbiascv, Kbiascv,t0biascv, Linfbiascv",
+        "Bias in length at first capture, length at full selection: LFCbiascv, LFSbiascv",
+        "Bias in fishery reference points, unfished biomass, FMSY, FMSY/M ratio, biomass at MSY relative to unfished: FMSYbiascv, FMSY_Mbiascv, BMSY_B0biascv",
+        "Management targets in terms of the index (i.e., model free), the total annual catches and absolute biomass levels: Irefbiascv, Crefbiascv, Brefbiascv",
+        "Depletion bias and imprecision: Dbiascv, Dobs",
+        "Recruitment compensation and trend: hbiascv, Recbiascv"), ncol=1)
+        # "Currently unused observation processes - bias in unfished biomass, intrinsic rate of increase, annual increase in fishing efficiency and age at 50% vulnerability, bias and imprecision in current fishing rate, bias in maximum age: B0cv, rcv, Fcurbiascv, Fcurcv, maxagecv"), ncol=1)
   if (type == "Imp") mat <-
       matrix(c(
         "Output Control Implementation Error: TACFrac, TACSD",
-        "Effort Control Implementation Error: EFrac, ESD", 
+        "Effort Control Implementation Error: TAEFrac, TAESD", 
         "Size Limit Control Implementation Error: SizeLimFrac, SizeLimSD"), ncol=1)
   
   # Check slots 

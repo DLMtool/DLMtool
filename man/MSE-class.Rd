@@ -39,7 +39,6 @@ simulation conditions and performance of data-limited methods
  \item MSY: Maximum Sustainable Yield
  \item qinc: mean percentage increase in fishing efficiency (catchability) in projected years (input controls only)
  \item qcv: interannual variability in future fishing efficiency (catchability) in projected years (input controls only)
- \item CALcv: variability in lengths at age around the growth curve (normal CV)
  \item FMSY: Fishing mortality rate at Maximum Sustainable Yield
  \item Linf: maximum length (von Bertalanffy Linf parameter)
  \item K: maximum growth rate (von Bertalanffy K parameter)
@@ -48,7 +47,6 @@ simulation conditions and performance of data-limited methods
  \item Linfgrad: mean gradient in maximum length (per cent per time step)
  \item Kgrad: mean gradient in maximum growth rate (per cent per time step)
  \item Linfsd: interannual variability in maximum length (log normal CV)
- \item recgrad: gradient in recruitment strength (age 1 population numbers) over last 10 years of historical simulations
  \item Ksd: interannual variability in maximum growth rate (log normal CV)
  \item ageM: age at 50 per cent maturity
  \item LFS: length at full selection (the shortest length class where fishery selectivity is 100 per cent)

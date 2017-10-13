@@ -466,7 +466,7 @@ getGpars<-function(replist, seas = 1) {
   nseasons <- replist$nseasons
   growdat <- replist$endgrowth[replist$endgrowth$Seas == seas, ]
   growdat$CV_Beg <- growdat$SD_Beg/growdat$Len_Beg
-  growthCVtype <- replist$growthCVtype
+  growthbiascvtype <- replist$growthbiascvtype
   biology <- replist$biology
   startyr <- replist$startyr
   FecType <- replist$FecType
@@ -528,7 +528,7 @@ getGpars<-function(replist, seas = 1) {
                         mainmorphs[1], ]
   growdatF$Sd_Size <- growdatF$SD_Beg
   
-  if (growthCVtype == "logSD=f(A)") {
+  if (growthbiascvtype == "logSD=f(A)") {
     growdatF$high <- qlnorm(0.975, meanlog = log(growdatF$Len_Beg), 
                             sdlog = growdatF$Sd_Size)
     growdatF$low <- qlnorm(0.025, meanlog = log(growdatF$Len_Beg), 
@@ -544,7 +544,7 @@ getGpars<-function(replist, seas = 1) {
                           mainmorphs[2], ]
     xm <- growdatM$Age_Beg
     growdatM$Sd_Size <- growdatM$SD_Beg
-    if (growthCVtype == "logSD=f(A)") {
+    if (growthbiascvtype == "logSD=f(A)") {
       growdatM$high <- qlnorm(0.975, meanlog = log(growdatM$Len_Beg), 
                               sdlog = growdatM$Sd_Size)
       growdatM$low <- qlnorm(0.025, meanlog = log(growdatM$Len_Beg), 

@@ -16,9 +16,9 @@ An operating model component that specifies the degree of adherence to managemen
 
 \item{\code{TACSD}}{Log-normal coefficient of variation in the fraction of Total Allowable Catch (TAC) taken. Uniform distribution lower and upper bounds. Non-negative real numbers.}
 
-\item{\code{EFrac}}{Mean fraction of TAE taken. Uniform distribution lower and upper bounds. Positive real number.}
+\item{\code{TAEFrac}}{Mean fraction of TAE taken. Uniform distribution lower and upper bounds. Positive real number.}
 
-\item{\code{ESD}}{Log-normal coefficient of variation in the fraction of Total Allowable Effort (TAE) taken. Uniform distribution lower and upper bounds. Non-negative real numbers.}
+\item{\code{TAESD}}{Log-normal coefficient of variation in the fraction of Total Allowable Effort (TAE) taken. Uniform distribution lower and upper bounds. Non-negative real numbers.}
 
 \item{\code{SizeLimFrac}}{The real minimum size that is retained expressed as a fraction of the size. Uniform distribution lower and upper bounds. Positive real number.}
 

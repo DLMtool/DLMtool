@@ -252,20 +252,18 @@ of age and length (ie individuals are caught in age/size monospecific aggregatio
 ## CAL_ESS
 See above.
 
-## CALcv
-Assumed that catch-at-length has no obseration error. 
 
 ## Iobs
 Chile hake has a survey that can act as both an index of relative abundance (I) and an
 index of absolute abundance (Bt) (Lillo et al., 2017). Here we set the allow for the fishery independent survey to have some observation error.
 
-## Icv
+## Ibiascv
 This parameter is not used in this version of DLMtool.
 
-## Btcv
+## Btobs
 See Iobs
 
-## Btbias
+## Btbiascv
 The bias in the absolute abundance index is assumed to be low and 95% of simulated
 data sets are assumed to be within 20% of the true value.
 
@@ -273,52 +271,52 @@ data sets are assumed to be within 20% of the true value.
 Since the survey is carried out according to a systematic homogenous design (Lillo et al.,
 2017) we assume that it varies in proportion to real abundance changes (beta values less than 1 are hyperstable ? index declining slower than real abundance, beta greater than 1 are hyperdeplete ? index declining faster than real abundance).
 
-## LenMcv
+## LenMbiascv
 Some MPs use length at maturity as a reference point for setting size limits. Here we assume we could get this consistently wrong by around +/- 10%.
 
-## Mcv
+## Mbiascv
 We assume of a CV of 0.2 to reflect some uncertainty in this parameter.
 
-## Kcv
+## Kbiascv
  We assume of a CV of 0.1 to reflect some uncertainty in this parameter.
 
-## t0cv
+## t0biascv
 We choose not to simulate bias in this growth parameter and assume in all cases it is correct.
 
-## Linfcv
+## Linfbiascv
 We assume of a CV of 0.1 to reflect some uncertainty in this parameter.
 
-## LFCcv
+## LFCbiascv
  Given the reasonably extensive length sampling data, it is straightforward to estimate LFC for hake from the length frequency data and this is likely to be reasonably well known without substantial bias. 
 
-## LFScv
+## LFSbiascv
 Estimating LFS is more difficult than estimating LFC because the length frequency data are the product of both increasing vulnerability and the declining age-structure of the population given M and F. 
 
-## FMSYcv
+## FMSYbiascv
 Note that FMSY is not the same thing as the maximum sustainable rate of fishing, Fmax.
  
 Assuming surplus production dynamics, FMSY is half of Fmax. Above FMSY and below Fmax are sustainable fishing rates that lead to lower biomass than BMSY and do not provide as much yield (on average, at equilibrium) as fishing at FMSY with biomass at BMSY It has been proposed by Gulland (1978) and Walters and Martell (2003) that FMSY may be summarized as a fraction of natural mortality rate M. Gulland suggested FMSY = M, Walters and Martell though FMSY=0.5 x M. 
 
 It is not clear how biased such an estimate could be but assuming that this uncertainty reflects the possible range of prescribed values (and brackets the true ratio) and this occurs on top of bias in estimates of natural mortality, the range of possible biases must be higher than that assigned to M (0.33). This is set at 0.4 to reflect the potential for inaccurate estimates of FMSY.
 
-## FMSY_Mcv
+## FMSY_Mbiascv
 A number of MPs aim to fish at a fixed rate proportional to the estimate of M (e.g. Fratio). Other MPs use this ratio to undertake stock reduction analysis (e.g. DB-SRA). Given the references above we set this to be moderately inaccurate given a CV of 0.15.
 
 
-## BMSY_B0cv
+## BMSY_B0biascv
  We have assigned a relatively precise CV for potential accuracy at 0.05.
 
-## Irefcv
+## Irefbiascv
 Here we assume that the index and MSY (a desirable catch level) can be known more accurately than a desirable absolute biomass level (e.g. BMSY) and assign these a range
 determined by a CV of 0.2.
 
-## Crefcv
-As Irefcv.
+## Crefbiascv
+As Irefbiascv.
 
-## Brefcv
+## Brefbiascv
 Arbitrarily we make this twice as potentially biased as Iref and Cref.
  
-## Dbiascv
+## Dbiasbiascv
 These are probably the most controversial observation model quantities, after all the most valuable output of a data-rich assessment is arguably the level of stock depletion  (typically measured as spawning stock biomass today relative to unfished). If we could know this, for stocks with stationary productivity (where depletion is a very good predictor of stock productivity) we could achieve very good management performance with simple harvest control rules (in essence this is how the outputs of data-rich stock assessments are used). 
 
 Having said this, in most cases assessments are evaluated based on their fit to a fishery dependent (e.g. catch per unit effort) or fishery independent (e.g. trawl survey, acoustic survey) relative abundance index. It follows that often the depletion estimate arising from a stock assessment follows the raw data fairly well. Consequently, even anecdotal historical catch rate data may be used in a data-limited context to frame estimates of stock depletion. Similarly, if unfished densities of a species can be quantified (e.g. urchins per sq km of habitat), total estimates of habitat and current density surveys could be used to extrapolate a range of stock depletion.
@@ -328,31 +326,16 @@ Alternatively, length frequency data can provide an imprecise estimate of stock 
 
 Here we assign an arbitrary value of 0.25 which is relatively imprecise and means that assume depletion could up to double or half of the true simulated value.
 
-## Dcv
+## Dobs
 In a data-limited situation it is unlikely that radically new data would become available regarding depletion meaning that while estimates may be biased, they are likely to be relatively precise. We assign a level of imprecision consistent with observations of catch rate data among years at between 0.05- 0.1.
 
-## hcv
+## hbiascv
 The stock assessment provides very little support for particular values of recruitment
 compensation. In DLMtool this is parameterized as steepness (the fraction of unfished
 recruitment at 20% of unfished spawning biomass, a value ranging from 0.2-1). Here we assume that any MP could get this wrong by a large margin.
 
-## Reccv
+## Recbiascv
 We do not have a good idea how good the recruitment index for hake is. Here we assume it could be moderately imprecise with a CV between 0.1 and 0.2.
-
-## B0cv
-Not used in this version of DLMtool.
-
-## rcv
-Not used in this version of DLMtool.
-
-## Fcurbiascv
-Not used in this version of DLMtool.
-
-## Fcurcv
-Not used in this version of DLMtool.
-
-## maxagecv
-Not used in this version of DLMtool.
 
 
 # Imp Parameters
@@ -366,10 +349,10 @@ Borrowed from Perfect_Imp
 ## TACSD
  We assume that the bias in the actual catch is relatively consistent between years and set the range for this parameter to a low value.
 
-## EFrac
+## TAEFrac
 We have little information to inform this parameter, and set the implementation error in effort equal to the TAC implementation error.
 
-## ESD
+## TAESD
 We assume that the bias in the effort is relatively consistent between years and set the range for this parameter to a low value.
 
 ## SizeLimFrac
