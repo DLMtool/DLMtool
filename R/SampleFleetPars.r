@@ -156,9 +156,13 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
         LFS[yr, s] <- Len_age[s, ind2, yr]
         Vmaxlen[yr, s] <- V[s, maxage, yr]
         # SLarray[s,, yr] <- SelectFun(s, SL0.05=L5[yr, ], SL1=LFS[yr, ], MaxSel=Vmaxlen[yr, ], 
-                                     # maxlens=Len_age[, maxage, nyears], Lens=CAL_binsmid)
+                                     # maxlens=Len_age[, maxage, nyears], Lens=CAL_binsm
+
       }
-      SLarray[,, yr] <- t(sapply(1:nsim, getsel, lens=CAL_binsmidMat, L5[yr,], LFS[yr,], Vmaxlen[yr,], Linf) )
+	  srs <- (Linf - LFS[yr,]) / ((-log(Vmaxlen[yr,drop=FALSE],2))^0.5) # selectivity parameters are constant for all years
+      sls <- (LFS[yr,] - L5[yr, ]) /((-log(0.05,2))^0.5)
+      SLarray[,, yr] <- t(sapply(1:nsim, getsel, lens=CAL_binsmidMat, lfs=LFS[yr, ], sls=sls, srs=srs))
+	   
     }
     
   }
