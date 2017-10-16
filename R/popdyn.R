@@ -238,12 +238,12 @@ popdyn <- function(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
 #' @param Zcurr A numeric matrix (maxage, nareas) with total mortality-at-age in each area
 #' @param PerrYr A numeric value with recruitment deviation for current year 
 #' @param hs Steepness of SRR
-#' @param R0a Numeric vector with unfished recruitment by area
-#' @param SSBpR Numeric vector with unfished spawning stock per recruit by area 
-#' @param aR Numeric vector with Ricker SRR a parameter by area
-#' @param bR Numeric vector with Ricker SRR b parameter by area
-#' @param mov Numeric matrix (nareas by nareas) with the movement matrix
-#' @param SRrel Integer indicating the stock-recruitment relationship to use (1 for Beverton-Holt, 2 for Ricker)
+#' @param R0c Numeric vector with unfished recruitment by area
+#' @param SSBpRc Numeric vector with unfished spawning stock per recruit by area 
+#' @param aRc Numeric vector with Ricker SRR a parameter by area
+#' @param bRc Numeric vector with Ricker SRR b parameter by area
+#' @param movc Numeric matrix (nareas by nareas) with the movement matrix
+#' @param SRrelc Integer indicating the stock-recruitment relationship to use (1 for Beverton-Holt, 2 for Ricker)
 #' @author A. Hordyk
 #' 
 #' @export
