@@ -229,9 +229,10 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
   Ls <- seq(0, to=max(Linf), length.out=200)
  
   Mat_len <- sapply(its, function(X)  plogis(Ls, L50[X], 1/slope[X]))
-  matplot(Ls, Mat_len, type="l", bty="l", main="Maturity-at-length", lwd=lwd, lty=1)
+  matplot(Ls, Mat_len, type="l", bty="l", main="Maturity-at-length (current year)", lwd=lwd, lty=1)
 
-  matplot(t(Mat_age[its,]), type="l", bty="l", main="Maturity-at-age", lwd=lwd, lty=1, axes=FALSE, xlim=c(0, maxage))
+  if (length(dim(Mat_age)) == 2) matplot(t(Mat_age[its,]), type="l", bty="l", main="Maturity-at-age", lwd=lwd, lty=1, axes=FALSE, xlim=c(0, maxage))
+  if (length(dim(Mat_age)) == 3) matplot(t(Mat_age[its,, nyears]), type="l", bty="l", main="Maturity-at-age (current year)", lwd=lwd, lty=1, axes=FALSE, xlim=c(0, maxage))
   axis(side=1)
   axis(side=2, labels=FALSE)
   

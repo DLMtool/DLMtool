@@ -193,17 +193,7 @@ plotImp<-function(x,nsim=500, nyears=50,
 
   op <- par(mfrow=c(4,3),mai=c(0.6,0.6,0.2,0.01),omi=c(0.01,0.01,0.4,0.01))
    
-  
-  TACSD <- runif(nsim, Imp@TACSD[1], Imp@TACSD[2])  # Sampled TAC error (lognormal sd)
-  TACFrac <- runif(nsim, Imp@TACFrac[1], Imp@TACFrac[2])  # Sampled TAC fraction (log normal sd)
-  
-  TAESD <- runif(nsim, Imp@TAESD[1], Imp@TAESD[2])  # Sampled Effort error (lognormal sd)
-  TAEFrac <- runif(nsim, Imp@TAEFrac[1], Imp@TAEFrac[2])  # Sampled Effort fraction (log normal sd)
-  
-  SizeLimSD<-runif(nsim,Imp@SizeLimSD[1],Imp@SizeLimSD[2])
-  SizeLimFrac<-runif(nsim,Imp@SizeLimFrac[1],Imp@SizeLimFrac[2])
-  
-  
+
   ObsTSplot(TACFrac,TACSD,nyears,labs=c("Fraction of TAC (TACFrac)",
                                      "TAC error (TACSD)","TAC discrepancy for three samples",
                                      "TACFrac","TACSD"), breaks=breaks, its=its, nsamp=nsamp, col=col)
