@@ -3,7 +3,7 @@
 \docType{class}
 \name{prob.class-class}
 \alias{prob.class-class}
-\title{Label class union for performance metric objects}
+\title{Prob class union for performance metric objects}
 \description{
 Used internally. Nothing to see here!
 }

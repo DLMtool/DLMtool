@@ -3,22 +3,37 @@
 #' @description Used internally. Nothing to see here!
 #'  
 #' @export
-#' 
 setClassUnion(name="label.class", members=c("call", "character", "function"))
 
-#' Label class union for performance metric objects
+#' Prob class union for performance metric objects
 #' 
 #' @description Used internally. Nothing to see here!
 #'  
 #' @export
-#' 
 setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 
 
 
+#' An object for storing data for analysis using data-limited methods
+#' 
+#' Used interally
+#' 
+#' @name PMobj-class
+#' @docType class
+#' @section Objects from the Class: Objects can be created by calls of the form
+#' \code{new('PMobj')} 
+#' @slot name Name of the Performance Metric. Character 
+#' @slot caption A caption to be used in plots. Character, call, or function.
+#' @slot Stat Statistic of interest for the PM. Dimensions: nsim, nMP, yrs. Array 
+#' @slot Prob Probability (mean over years) Dimensions: nsim by MP.  Matrix, numeric or data.frame  
+#' @slot Mean Mean probability (mean over years and simulations). Numeric. Length nMPs 
+#' @slot MPs Name of MPs. Single value. Character string  
+#' @author  A. Hordyk
+#' @keywords classes
 
-setClass("PMobj", representation(MPs="character", Prob='prob.class', Mean='numeric', Stat='array', 
-                                 name = "character",  caption='label.class'))
+setClass("PMobj", representation(name = "character",  caption='label.class', 
+                                 Stat='array', Prob='prob.class', Mean='numeric',
+                                 MPs="character"))
 
 
 calcProb <- function(PM,  MSEobj) {
