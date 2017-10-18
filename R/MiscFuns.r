@@ -128,8 +128,8 @@ avail <- function(classy) {
   temp <- c(ls("package:DLMtool")[unlist(lapply(ls("package:DLMtool"), getclass, classy = classy))], 
             ls(envir = .GlobalEnv)[unlist(lapply(ls(envir = .GlobalEnv), getclass, classy = classy))])
   pkgs <- search()
-  if ("package:DLMdata" %in% pkgs) {
-    temp <- c(temp, unique(ls("package:DLMdata")[unlist(lapply(ls("package:DLMdata"), getclass, classy = classy))]))
+  if ("package:DLMextra" %in% pkgs) {
+    temp <- c(temp, unique(ls("package:DLMextra")[unlist(lapply(ls("package:DLMextra"), getclass, classy = classy))]))
   }
   temp <- unique(temp)
   

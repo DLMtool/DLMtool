@@ -1443,51 +1443,51 @@ setMethod("summary",
 #' @param object object of class MSE
 #' @rdname summary-MSE
 #' @export
-setMethod("summary",
-          signature(object = "MSE"),
-          function(object){            
-            
-            MSEobj<-object      
-            nm<-MSEobj@nMPs
-            nsim<-MSEobj@nsim
-            proyears<-MSEobj@proyears
-            
-            Yd<-P10<-P50<-P100<-POF<-LTY<-STY<-VY<-array(NA,c(nm,nsim))
-            
-            yind<-max(MSEobj@proyears-4,1):MSEobj@proyears
-            RefYd<-MSEobj@OM$RefY
-            yend<-max(MSEobj@proyears-9,1):MSEobj@proyears
-            ystart<-1:10
-            y1<-1:(MSEobj@proyears-1)
-            y2<-2:MSEobj@proyears
-            
-            for(m in 1:nm){
-              Yd[m,]<-round(apply(MSEobj@C[,m,yind],1,mean,na.rm=T)/RefYd*100,1)
-              POF[m,]<-round(apply(MSEobj@F_FMSY[,m,]>1,1,sum,na.rm=T)/proyears*100,1)
-              P10[m,]<-round(apply(MSEobj@B_BMSY[,m,]<0.1,1,sum,na.rm=T)/proyears*100,1)
-              P50[m,]<-round(apply(MSEobj@B_BMSY[,m,]<0.5,1,sum,na.rm=T)/proyears*100,1)
-              P100[m,]<-round(apply(MSEobj@B_BMSY[,m,]<1,1,sum,na.rm=T)/proyears*100,1)
-              LTY[m]<-round(sum(MSEobj@C[,m,yend]/RefYd>0.5)/(MSEobj@nsim*length(yend))*100,1)
-              STY[m]<-round(sum(MSEobj@C[,m,ystart]/RefYd>0.5)/(MSEobj@nsim*length(ystart))*100,1)
-              AAVY<-apply(((MSEobj@C[,m,y1]-MSEobj@C[,m,y2])^2)^0.5,1,mean)/apply(MSEobj@C[,m,y2],1,mean)
-              VY[m]<-round(sum(AAVY<0.1)/MSEobj@nsim*100,1)
-            }
-            nr<-2
-            out<-cbind(MSEobj@MPs,round(apply(Yd,1,mean,na.rm=T),nr),round(apply(Yd,1,sd,na.rm=T),nr),
-                       round(apply(POF,1,mean,na.rm=T),nr),round(apply(POF,1,sd,na.rm=T),nr),
-                       round(apply(P10,1,mean,na.rm=T),nr),round(apply(P10,1,sd,na.rm=T),nr),
-                       round(apply(P50,1,mean,na.rm=T),nr),round(apply(P50,1,sd,na.rm=T),nr),
-                       round(apply(P100,1,mean,na.rm=T),nr),round(apply(P100,1,sd,na.rm=T),nr),
-                       round(apply(LTY,1,mean,na.rm=T),nr),
-                       round(apply(STY,1,mean,na.rm=T),nr),
-                       round(apply(VY,1,mean,na.rm=T),nr))
-            out<-as.data.frame(out)
-            names(out)<-c("MP","Yield","stdev","POF","stdev ","P10","stdev",
-                          "P50","stdev","P100","stdev","LTY","STY","VY")
-            out[,1]<-as.character(out[,1])
-            for(i in 2:ncol(out))out[,i]<-as.numeric(as.character(out[,i]))
-            out
-          })
+# # setMethod("summary",
+# #           signature(object = "MSE"),
+# summaryold <- function(object){            
+#             
+#             MSEobj<-object      
+#             nm<-MSEobj@nMPs
+#             nsim<-MSEobj@nsim
+#             proyears<-MSEobj@proyears
+#             
+#             Yd<-P10<-P50<-P100<-POF<-LTY<-STY<-VY<-array(NA,c(nm,nsim))
+#             
+#             yind<-max(MSEobj@proyears-4,1):MSEobj@proyears
+#             RefYd<-MSEobj@OM$RefY
+#             yend<-max(MSEobj@proyears-9,1):MSEobj@proyears
+#             ystart<-1:10
+#             y1<-1:(MSEobj@proyears-1)
+#             y2<-2:MSEobj@proyears
+#             
+#             for(m in 1:nm){
+#               Yd[m,]<-round(apply(MSEobj@C[,m,yind],1,mean,na.rm=T)/RefYd*100,1)
+#               POF[m,]<-round(apply(MSEobj@F_FMSY[,m,]>1,1,sum,na.rm=T)/proyears*100,1)
+#               P10[m,]<-round(apply(MSEobj@B_BMSY[,m,]<0.1,1,sum,na.rm=T)/proyears*100,1)
+#               P50[m,]<-round(apply(MSEobj@B_BMSY[,m,]<0.5,1,sum,na.rm=T)/proyears*100,1)
+#               P100[m,]<-round(apply(MSEobj@B_BMSY[,m,]<1,1,sum,na.rm=T)/proyears*100,1)
+#               LTY[m]<-round(sum(MSEobj@C[,m,yend]/RefYd>0.5)/(MSEobj@nsim*length(yend))*100,1)
+#               STY[m]<-round(sum(MSEobj@C[,m,ystart]/RefYd>0.5)/(MSEobj@nsim*length(ystart))*100,1)
+#               AAVY<-apply(((MSEobj@C[,m,y1]-MSEobj@C[,m,y2])^2)^0.5,1,mean)/apply(MSEobj@C[,m,y2],1,mean)
+#               VY[m]<-round(sum(AAVY<0.1)/MSEobj@nsim*100,1)
+#             }
+#             nr<-2
+#             out<-cbind(MSEobj@MPs,round(apply(Yd,1,mean,na.rm=T),nr),round(apply(Yd,1,sd,na.rm=T),nr),
+#                        round(apply(POF,1,mean,na.rm=T),nr),round(apply(POF,1,sd,na.rm=T),nr),
+#                        round(apply(P10,1,mean,na.rm=T),nr),round(apply(P10,1,sd,na.rm=T),nr),
+#                        round(apply(P50,1,mean,na.rm=T),nr),round(apply(P50,1,sd,na.rm=T),nr),
+#                        round(apply(P100,1,mean,na.rm=T),nr),round(apply(P100,1,sd,na.rm=T),nr),
+#                        round(apply(LTY,1,mean,na.rm=T),nr),
+#                        round(apply(STY,1,mean,na.rm=T),nr),
+#                        round(apply(VY,1,mean,na.rm=T),nr))
+#             out<-as.data.frame(out)
+#             names(out)<-c("MP","Yield","stdev","POF","stdev ","P10","stdev",
+#                           "P50","stdev","P100","stdev","LTY","STY","VY")
+#             out[,1]<-as.character(out[,1])
+#             for(i in 2:ncol(out))out[,i]<-as.numeric(as.character(out[,i]))
+#             out
+#           }
 
 
 
