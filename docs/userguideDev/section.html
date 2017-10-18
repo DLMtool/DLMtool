@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Data-Limited Methods Toolkit (DLMtool)</title>
+  <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+  <meta name="description" content="User guide for the DLMtool R package">
+  <meta name="generator" content="bookdown 0.3 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool)" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="User guide for the DLMtool R package" />
+  <meta name="github-repo" content="DLMtool/DLMtool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool)" />
+  
+  <meta name="twitter:description" content="User guide for the DLMtool R package" />
+  
+
+
+
+<meta name="date" content="2017-05-04">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
+<link rel="prev" href="r-runmserobust-cachetrue-includefalse-omnsim-300-bsharkmse-runmserobustomom-mpsmps-namebluesharkmse.html">
+<link rel="next" href="r-includefalse-cachetrue-saverdsbsharkmse-bluesharkmse-rdata.html">
+
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./index.html">DLMtool User Guide</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Introduction</a></li>
+<li class="chapter" data-level="2" data-path="first-time-working-with-r.html"><a href="first-time-working-with-r.html"><i class="fa fa-check"></i><b>2</b> First Time Working With R?</a></li>
+<li class="chapter" data-level="3" data-path="preq.html"><a href="preq.html"><i class="fa fa-check"></i><b>3</b> Prerequisites to Using DLMtool</a></li>
+<li class="chapter" data-level="4" data-path="setupOM.html"><a href="setupOM.html"><i class="fa fa-check"></i><b>4</b> Setting up the MSE Operating Model</a></li>
+<li class="chapter" data-level="5" data-path="MPs.html"><a href="MPs.html"><i class="fa fa-check"></i><b>5</b> Management Procedures</a></li>
+<li class="chapter" data-level="6" data-path="MSE.html"><a href="MSE.html"><i class="fa fa-check"></i><b>6</b> Management Strategy Evaluation</a><ul>
+<li class="chapter" data-level="6.1" data-path="MSE.html"><a href="MSE.html#re-cap-on-setting-up-dlmtool"><i class="fa fa-check"></i><b>6.1</b> Re-cap on Setting up DLMtool</a></li>
+<li class="chapter" data-level="6.2" data-path="MSE.html"><a href="MSE.html#defining-the-operating-model"><i class="fa fa-check"></i><b>6.2</b> Defining the Operating Model</a></li>
+<li class="chapter" data-level="6.3" data-path="MSE.html"><a href="MSE.html#choose-management-procedures"><i class="fa fa-check"></i><b>6.3</b> Choose Management Procedures</a></li>
+<li class="chapter" data-level="6.4" data-path="MSE.html"><a href="MSE.html#the-runmse-function"><i class="fa fa-check"></i><b>6.4</b> The <code>runMSE</code> Function</a><ul>
+<li class="chapter" data-level="6.4.1" data-path="MSE.html"><a href="MSE.html#description-of-the-arguments"><i class="fa fa-check"></i><b>6.4.1</b> Description of the Arguments</a></li>
+<li class="chapter" data-level="6.4.2" data-path="MSE.html"><a href="MSE.html#using-runmse"><i class="fa fa-check"></i><b>6.4.2</b> Using <code>runMSE</code></a></li>
+<li class="chapter" data-level="6.4.3" data-path="MSE.html"><a href="MSE.html#robust-wrapper-function"><i class="fa fa-check"></i><b>6.4.3</b> Robust Wrapper Function</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="r-runmserobust-cachetrue-includefalse-omnsim-300-bsharkmse-runmserobustomom-mpsmps-namebluesharkmse.html"><a href="r-runmserobust-cachetrue-includefalse-omnsim-300-bsharkmse-runmserobustomom-mpsmps-namebluesharkmse.html"><i class="fa fa-check"></i><b>7</b> <code>{r, runMSErobust, cache=TRUE, include=FALSE} # OM@nsim &lt;- 300  # BSharkMSE &lt;- runMSErobust(OM=OM, MPs=MPs, name=&quot;bluesharkMSE&quot;) #</code></a></li>
+<li class="chapter" data-level="8" data-path="section.html"><a href="section.html"><i class="fa fa-check"></i><b>8</b> </a></li>
+<li class="chapter" data-level="9" data-path="r-includefalse-cachetrue-saverdsbsharkmse-bluesharkmse-rdata.html"><a href="r-includefalse-cachetrue-saverdsbsharkmse-bluesharkmse-rdata.html"><i class="fa fa-check"></i><b>9</b> <code>{r, include=FALSE, cache=TRUE} # saveRDS(BSharkMSE, &quot;bluesharkMSE.rdata&quot;) #</code></a><ul>
+<li class="chapter" data-level="9.1" data-path="r-includefalse-cachetrue-saverdsbsharkmse-bluesharkmse-rdata.html"><a href="r-includefalse-cachetrue-saverdsbsharkmse-bluesharkmse-rdata.html#checking-convergence"><i class="fa fa-check"></i><b>9.1</b> Checking Convergence</a></li>
+<li class="chapter" data-level="9.2" data-path="r-includefalse-cachetrue-saverdsbsharkmse-bluesharkmse-rdata.html"><a href="r-includefalse-cachetrue-saverdsbsharkmse-bluesharkmse-rdata.html#a-quick-recap"><i class="fa fa-check"></i><b>9.2</b> A Quick Recap</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html"><i class="fa fa-check"></i><b>10</b> Examining the MSE object</a></li>
+<li class="chapter" data-level="11" data-path="managing-fishery-data.html"><a href="managing-fishery-data.html"><i class="fa fa-check"></i><b>11</b> Managing Fishery Data</a></li>
+<li class="chapter" data-level="12" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html"><i class="fa fa-check"></i><b>12</b> Assumptions of DLMtool</a></li>
+<li class="chapter" data-level="13" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>13</b> References</a></li>
+<li class="divider"></li>
+<li><a href="http://www.datalimitedfisheries.com" target="blank">DLMtool Website</a></li>
+<li><a href="../index.html">DLMtool Documentation</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool)</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="section" class="section level1">
+<h1><span class="header-section-number">Chapter 8</span> </h1>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="r-runmserobust-cachetrue-includefalse-omnsim-300-bsharkmse-runmserobustomom-mpsmps-namebluesharkmse.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="r-includefalse-cachetrue-saverdsbsharkmse-bluesharkmse-rdata.html" class="navigation navigation-next " aria-label="Next page""><i class="fa fa-angle-right"></i></a>
+
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": null,
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": ["userguide.pdf"],
+"toc": {
+"collapse": "section"
+},
+"<!--edit": "https://github.com/DLMtool/DLMtool_UserGuide/edit/master/%s-->"
+});
+});
+</script>
+
+</body>
+
+</html>
