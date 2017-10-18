@@ -85,7 +85,7 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
   OM@K<-quantile(K,c(0.025,0.975))
   OM@Linf<-quantile(Linf,c(0.025,0.975))
   OM@t0=rep(GP$A_a_L0[1],2) # t0 is not 
-  OM@Msd<-OM@Ksd<-OM@Linfsd<-OM@Mgrad<-OM@Kgrad<-OM@Linfgrad<-OM@recgrad<-c(0,0)
+  OM@Msd<-OM@Ksd<-OM@Linfsd<-OM@Mgrad<-OM@Kgrad<-OM@Linfgrad<-c(0,0)
   L50=GP$Mat1[1]
   OM@a=GP$WtLen1[1]
   OM@b=GP$WtLen2[1]

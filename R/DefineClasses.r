@@ -1438,11 +1438,11 @@ setMethod("summary",
           })
 
 # ---- Summary of MSE object ----
-#' Summary of MSE object
-#'
-#' @param object object of class MSE
-#' @rdname summary-MSE
-#' @export
+# Summary of MSE object
+#
+# @param object object of class MSE
+# @rdname summary-MSE
+# @export
 # # setMethod("summary",
 # #           signature(object = "MSE"),
 # summaryold <- function(object){            

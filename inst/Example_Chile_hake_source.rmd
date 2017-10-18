@@ -67,8 +67,6 @@ The steepness of the stock-recruitment curve is the level of unfished recruitmen
 ## AC
  The current assessment doesn't report estimates for autocorrelation in recruitment, but the model results showed a strong autocorrelation in the residuals (see Fig 47 in Stock Assessment). 
 
-## recgrad
-
 
 ## Period
 
@@ -316,7 +314,7 @@ As Irefbiascv.
 ## Brefbiascv
 Arbitrarily we make this twice as potentially biased as Iref and Cref.
  
-## Dbiasbiascv
+## Dbiascv
 These are probably the most controversial observation model quantities, after all the most valuable output of a data-rich assessment is arguably the level of stock depletion  (typically measured as spawning stock biomass today relative to unfished). If we could know this, for stocks with stationary productivity (where depletion is a very good predictor of stock productivity) we could achieve very good management performance with simple harvest control rules (in essence this is how the outputs of data-rich stock assessments are used). 
 
 Having said this, in most cases assessments are evaluated based on their fit to a fishery dependent (e.g. catch per unit effort) or fishery independent (e.g. trawl survey, acoustic survey) relative abundance index. It follows that often the depletion estimate arising from a stock assessment follows the raw data fairly well. Consequently, even anecdotal historical catch rate data may be used in a data-limited context to frame estimates of stock depletion. Similarly, if unfished densities of a species can be quantified (e.g. urchins per sq km of habitat), total estimates of habitat and current density surveys could be used to extrapolate a range of stock depletion.
