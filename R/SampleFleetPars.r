@@ -138,7 +138,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   # == Calculate Selectivity at Length ====
   nCALbins <- length(CAL_binsmid)
   SLarray <- array(NA, dim=c(nsim, nCALbins, nyears+proyears)) # Selectivity-at-length 
-
+  CAL_binsmidMat <- matrix(CAL_binsmid, nrow=nsim, ncol=length(CAL_binsmid), byrow=TRUE)
   if (exists("V", inherits=FALSE)) { # V has been passed in with custompars
     if(dim(V)[3] != proyears + nyears) V<-abind::abind(V,array(V[,,nyears],c(nsim,maxage,proyears)),along=3) # extend future Vulnerabiliy according to final historical vulnerability
     # assign L5, LFS and Vmaxlen - dodgy loop 
@@ -169,8 +169,6 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   
   # == Calculate Selectivity at Age and Length ====
   CAL_binsmidMat <- matrix(CAL_binsmid, nrow=nsim, ncol=length(CAL_binsmid), byrow=TRUE)
-  
-  
   if (!exists("V", inherits=FALSE)) { # don't run if V has been passed in with custompars 
     if (Selnyears <= 1) {    
       L5 <- matrix(L5, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)

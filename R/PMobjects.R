@@ -166,7 +166,7 @@ class(LTY) <- "PM"
 STY <- function(MSEobj=NULL) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
-  PMobj@name <- "Average Long-Term Yield relative to Reference Yield" 
+  PMobj@name <- "Average Short-Term Yield relative to Reference Yield" 
   PMobj@caption <- 'Prob. STY > 0.5 Ref. Yield'
   
   y.st <- 1
