@@ -295,7 +295,7 @@ StochasticSRA <-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proye
   
   # update<-(1:50)*(nits/50)
   adapt<-c(rep(5,100),rep(2.5,100),rep(1,nits-200))
-  
+  message("Running MCMC (may take a while!)")
   if (snowfall::sfIsRunning()) {
     mcmc <- snowfall::sfSapply(1:nsim, function(sim) {
       LSRA_MCMC_sim(nits=nits, pars[sim,], JumpCV, adapt, parLB[sim,], parUB[sim,], R0ind-1, 

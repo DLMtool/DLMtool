@@ -10,7 +10,7 @@
 \arguments{
 \item{object}{object of class MSE}
 
-\item{...}{a list of PM methods}
+\item{...}{a list of names of PM methods}
 }
 \description{
 Summary of MSE object

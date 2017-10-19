@@ -1,3 +1,6 @@
+
+
+
 #' Label class union for performance metric objects
 #' 
 #' @description Used internally. Nothing to see here!
@@ -36,12 +39,26 @@ setClass("PMobj", representation(name = "character",  caption='label.class',
                                  MPs="character"))
 
 
+#' Calculate Probabilty
+#' 
+#' @param PM A PM method 
+#' @param MSEobj An object of class MSE
+#'
+#' @export
+#'
 calcProb <- function(PM,  MSEobj) {
   mar <- ifelse(MSEobj@nMPs>1, 2, 1) # set margins for apply
   mar <- 1:mar
   apply(PM, mar, mean)
 }
 
+#' Calculate Mean Probabilty
+#' 
+#' @param Prob Prob slot from an object of class PMobj 
+#' @param MSEobj An object of class MSE
+#'
+#' @export
+#'
 calcMean <- function(Prob, MSEobj) {
   if (class(Prob) == 'matrix') return( apply(Prob , 2, mean))
   if (class(Prob) == 'numeric') return(mean(Prob))
@@ -89,42 +106,37 @@ setMethod("show", signature = (object="PMobj"), function(object) {
 #' Summary of MSE object
 #'
 #' @param object object of class MSE
-#' @param ... a list of PM methods
+#' @param ... a list of names of PM methods
 #' @rdname summary-MSE
 #' @export
 setMethod('summary', signature="MSE", function(object, ...) {
-  cl <- try(class(...), silent=TRUE)
-  if (class(cl) == "try-error") PMlist <- list(...) 
-  if (cl == "list") PMlist <- unlist(list(...))
-  if (cl == "PM") PMlist <- list(...)
+  PMlist <- unlist(list(...))
+  
+  if(length(PMlist) == 0) PMlist <- avail("PM")
+  if (class(PMlist) != 'character') stop("Must provide names of PM methods")
   # check
-  if (any(unlist(lapply(PMlist, class)) != "PM")) {
-    stop("Arguments must be PM methods")
-  }
-  
-  if(length(PMlist) == 0) PMlist <- list(DLMtool::Yield, DLMtool::POF, DLMtool::P10, 
-                                         DLMtool::P50, DLMtool::P100, DLMtool::LTY, 
-                                         DLMtool::STY, DLMtool::AAVY)
-  
+  for (X in seq_along(PMlist)) 
+    if (!PMlist[X] %in% avail("PM")) stop(PMlist[X], " is not a valid PM method")
+
   message("Calculating Performance Metrics")
   storeMean <- vector('list', length(PMlist))
   storeName <- vector('list', length(PMlist))
-  storeCaption <- vector('list', length(PMlist))
+  storeHeading <- vector('list', length(PMlist))
   storeMP <- vector('list', length(PMlist))
   for (X in 1:length(PMlist)) {
-    flush.console()
-    runPM <- PMlist[[X]](object)
+    runPM <- eval(call(PMlist[[X]],object))
     storeMean[[X]] <- runPM@Mean
     storeName[[X]] <- runPM@name
-    storeCaption[[X]] <- runPM@caption
+    # storeHeading[[X]] <- runPM@call
     storeMP[[X]] <- runPM@MPs
   }
   
   df <- data.frame('MP'=storeMP[[1]], signif(do.call('cbind', storeMean),2))
-  caps <- do.call('rbind', storeCaption)
-  colnames(df)[2:(length(PMlist)+1)] <- 1:length(PMlist) #caps # gsub(" ", "", caps)
+  # heading <- do.call('rbind', storeHeading)
+  colnames(df)[2:(length(PMlist)+1)] <- PMlist #caps # gsub(" ", "", caps)
   print(data.frame('Performance Metrics' = do.call('rbind', storeName)))
   cat("\n")
+  cat("\nProbability:\n")
   print(df)
   invisible(df)
   
