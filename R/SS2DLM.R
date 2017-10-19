@@ -461,12 +461,12 @@ SRopt<-function(nsim,SSB,rec,SSBpR,plot=F,type="BH"){
 #' @param seas The reference season for the growth (not actually sure what this does yet) 
 #' @author T. Carruthers
 #' @export getGpars
-getGpars<-function(replist, seas = 1) {
+getGpars<-function(replist, seas = 1) { # This is a rip-off of SSPlotBiology
   
   nseasons <- replist$nseasons
   growdat <- replist$endgrowth[replist$endgrowth$Seas == seas, ]
   growdat$CV_Beg <- growdat$SD_Beg/growdat$Len_Beg
-  growthbiascvtype <- replist$growthbiascvtype
+  growthCVtype <- replist$growthCVtype
   biology <- replist$biology
   startyr <- replist$startyr
   FecType <- replist$FecType
@@ -528,7 +528,7 @@ getGpars<-function(replist, seas = 1) {
                         mainmorphs[1], ]
   growdatF$Sd_Size <- growdatF$SD_Beg
   
-  if (growthbiascvtype == "logSD=f(A)") {
+  if (growthCVtype == "logSD=f(A)") {
     growdatF$high <- qlnorm(0.975, meanlog = log(growdatF$Len_Beg), 
                             sdlog = growdatF$Sd_Size)
     growdatF$low <- qlnorm(0.025, meanlog = log(growdatF$Len_Beg), 
@@ -758,7 +758,7 @@ SS2Data<-function(SSdir,Source="No source provided",length_timestep=NA,Name="",
   }
   
   sumF<-sumF[sumF[,2]<nyears,] # generic solution: delete partial observation of final F predictions in seasonal model (last season of last year is NA)
-  V <- array(NA, dim = c(maxage, nyears)) 
+  V <- array(0, dim = c(maxage, nyears)) 
   V[,1:(nyears-1)]<-sumF[,3] # for some reason SS doesn't predict F in final year
   
   
@@ -852,6 +852,7 @@ SS2Data<-function(SSdir,Source="No source provided",length_timestep=NA,Name="",
 
 
 
+library(r4ss)
 
 
 
