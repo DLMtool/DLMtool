@@ -44,7 +44,6 @@ setClass("PMobj", representation(name = "character",  caption='label.class',
 #' @param PM A PM method 
 #' @param MSEobj An object of class MSE
 #'
-#' @return
 #' @export
 #'
 calcProb <- function(PM,  MSEobj) {
@@ -58,7 +57,6 @@ calcProb <- function(PM,  MSEobj) {
 #' @param Prob Prob slot from an object of class PMobj 
 #' @param MSEobj An object of class MSE
 #'
-#' @return
 #' @export
 #'
 calcMean <- function(Prob, MSEobj) {
@@ -113,7 +111,9 @@ setMethod("show", signature = (object="PMobj"), function(object) {
 #' @export
 setMethod('summary', signature="MSE", function(object, ...) {
   PMlist <- unlist(list(...))
+  
   if(length(PMlist) == 0) PMlist <- avail("PM")
+  if (class(PMlist) != 'character') stop("Must provide names of PM methods")
   # check
   for (X in seq_along(PMlist)) 
     if (!PMlist[X] %in% avail("PM")) stop(PMlist[X], " is not a valid PM method")
