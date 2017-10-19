@@ -1163,7 +1163,7 @@ class(Islope4) <- "Output"
 #' @export IT10
 IT10 <- function(x, Data, reps = 100, yrsmth = 5, mc = 0.1) {
   
-  dependencies = "Data@Ind, Data@Cat, DLMdata@CV_Ind, DLMdata@Iref"
+  dependencies = "Data@Ind, Data@Cat, Data@CV_Ind, Data@Iref"
   ind <- max(1, (length(Data@Year) - yrsmth + 1)):length(Data@Year)
   
   
@@ -1199,7 +1199,7 @@ class(IT10) <- "Output"
 #' @export IT5
 IT5 <- function(x, Data, reps = 100, yrsmth = 5, mc = 0.05) {
   
-  dependencies = "Data@Ind, Data@Cat, DLMdata@CV_Ind, DLMdata@Iref"
+  dependencies = "Data@Ind, Data@Cat, Data@CV_Ind, Data@Iref"
   ind <- max(1, (length(Data@Year) - yrsmth + 1)):length(Data@Year)
   deltaI <- mean(Data@Ind[x, ind])/Data@Iref[x]
   if (deltaI < (1 - mc)) 
@@ -1231,7 +1231,7 @@ class(IT5) <- "Output"
 #' @export ITM
 ITM <- function(x, Data, reps = 100) {
   
-  dependencies = "Data@Ind, Data@Cat, DLMdata@CV_Ind, DLMdata@Iref, DLMdata@Mort"
+  dependencies = "Data@Ind, Data@Cat, Data@CV_Ind, Data@Iref, Data@Mort"
   mc <- (5 + Data@Mort[x] * 25)/100
   if (mc > 0.2) 
     mc <- 0.2

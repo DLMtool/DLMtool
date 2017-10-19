@@ -230,7 +230,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   L50array <- relL50 * Linfarray
   delLm <- L95 - L50 
   L95array <- L50array + matrix(delLm, nrow=nsim, ncol=nyears + proyears, byrow=FALSE)
-  
+  L95array[L95array>Linfarray] <- 0.99 *  Linfarray[L95array>Linfarray]
   
   # === Create Mean Length-at-Age array ====
   if (!exists("Len_age", inherits=FALSE)) {

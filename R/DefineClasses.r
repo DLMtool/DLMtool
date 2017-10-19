@@ -1011,7 +1011,7 @@ setClass("OM", representation(Name = "character", nsim="numeric", proyears="nume
 # initialize OM
 setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Generic_Fleet, 
                                        Obs=DLMtool::Generic_Obs, Imp=DLMtool::Perfect_Imp, 
-                                       nsim=48, proyears=50) {
+                                       interval=4, pstar=0.5, maxF=0.8, reps=1, nsim=48, proyears=50) {
   if (is.null(Stock)) {
     message("No Stock object found. Returning a blank OM object") 
     return(makePerf(.Object))
@@ -1057,14 +1057,14 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
   slot(.Object, "Source") <- Stock@Source
   
   # Default MSE parameters
-  .Object@nsim <- nsim       
-  .Object@proyears <- proyears
+  if (.hasSlot(.Object, "nsim")) .Object@nsim <- nsim
+  if (.hasSlot(.Object, "proyears")) .Object@proyears <- proyears
   
   # interval, pstar, maxF, reps
-  if (.hasSlot(.Object, "interval")) .Object@interval <- 4
-  if (.hasSlot(.Object, "pstar")) .Object@pstar <- 0.5
-  if (.hasSlot(.Object, "maxF")) .Object@maxF <- 0.8
-  if (.hasSlot(.Object, "reps")) .Object@reps <- 1
+  if (.hasSlot(.Object, "interval")) .Object@interval <- interval
+  if (.hasSlot(.Object, "pstar")) .Object@pstar <- pstar
+  if (.hasSlot(.Object, "maxF")) .Object@maxF <- maxF
+  if (.hasSlot(.Object, "reps")) .Object@reps <- reps
   
   if(length(.Object@Mexp) < 2) .Object@Mexp <- c(0,0)
   if(length(.Object@LenCV) < 2) .Object@LenCV <- c(0.08,0.15)

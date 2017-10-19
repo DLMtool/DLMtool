@@ -598,7 +598,7 @@ class(EtargetLopt) <- "Input"
 #' @export ITe5
 ITe5 <- function(x, Data, reps = 100, yrsmth = 5, mc = 0.05) {
   
-  dependencies = "Data@Ind, Data@MPeff, DLMdata@CV_Ind, DLMdata@Iref"
+  dependencies = "Data@Ind, Data@MPeff, Data@CV_Ind, Data@Iref"
   ind <- max(1, (length(Data@Year) - yrsmth + 1)):length(Data@Year)
   deltaI <- mean(Data@Ind[x, ind])/Data@Iref[x]
   if (deltaI < (1 - mc)) 
@@ -635,7 +635,7 @@ class(ITe5) <- "Input"
 #' @export ITe10
 ITe10 <- function(x, Data, reps = 100, yrsmth = 5, mc = 0.1) {
   
-  dependencies = "Data@Ind, Data@MPeff, DLMdata@CV_Ind, DLMdata@Iref"
+  dependencies = "Data@Ind, Data@MPeff, Data@CV_Ind, Data@Iref"
   ind <- max(1, (length(Data@Year) - yrsmth + 1)):length(Data@Year)
   
   deltaI <- mean(Data@Ind[x, ind])/Data@Iref[x]
