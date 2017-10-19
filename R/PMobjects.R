@@ -11,6 +11,7 @@
 #' P10(myMSE)
 #' }
 P10 <- function(MSEobj=NULL) {
+  if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
   PMobj@name <- "Probability Biomass above 10% BMSY" 
   PMobj@caption <- 'Prob. B > 0.1 BMSY'
@@ -28,6 +29,7 @@ P10 <- function(MSEobj=NULL) {
 }
 class(P10) <- "PM"
 
+
 #' Performance Metric: Probability B > 0.5 BMSY
 #'
 #' @param MSEobj An object of class MSE
@@ -40,7 +42,7 @@ class(P10) <- "PM"
 #' P50(myMSE)
 #' }
 P50 <- function(MSEobj=NULL) {
-  
+  if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
   PMobj@name <- "Probability Not Overfished" 
   PMobj@caption <- 'Prob. SB > 0.5 SBMSY'
@@ -69,7 +71,7 @@ class(P50) <- "PM"
 #' P100(myMSE)
 #' }
 P100 <- function(MSEobj=NULL) {
-  
+  if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
   PMobj@name <- "Probability Biomass > BMSY" 
   PMobj@caption <- 'Prob. SB > SBMSY'
@@ -98,6 +100,7 @@ class(P100) <- "PM"
 #' POF(myMSE)
 #' }
 POF <- function(MSEobj=NULL) {
+  if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
   PMobj@name <- "Probability Not Overfishing" 
   PMobj@caption <- 'Prob. F < FMSY'
@@ -128,6 +131,7 @@ class(POF) <- "PM"
 #' LTY(myMSE)
 #' }
 LTY <- function(MSEobj=NULL) {
+  if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
   PMobj@name <- "Average Long-Term Yield relative to Reference Yield" 
   PMobj@caption <- 'Prob. LTY > 0.5 Ref. Yield'
@@ -160,6 +164,7 @@ class(LTY) <- "PM"
 #' STY(myMSE)
 #' }
 STY <- function(MSEobj=NULL) {
+  if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
   PMobj@name <- "Average Long-Term Yield relative to Reference Yield" 
   PMobj@caption <- 'Prob. STY > 0.5 Ref. Yield'
@@ -191,6 +196,7 @@ class(STY) <- "PM"
 #' AAVY(myMSE)
 #' }
 AAVY <- function(MSEobj=NULL) {
+  if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
   PMobj@name <- "Average Annual Variability in Yield" 
   PMobj@caption <- 'Prob. AAVY < 0.2'
@@ -226,6 +232,7 @@ class(AAVY) <- "PM"
 #' Yield(myMSE)
 #' }
 Yield <- function(MSEobj=NULL) {
+  if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
   PMobj@name <- "Yield relative to Reference Yield" 
   PMobj@caption <- 'Mean Yield'
