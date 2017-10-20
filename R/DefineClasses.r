@@ -1516,14 +1516,12 @@ setMethod("summary",
 setClass("InputRec", representation(Effort = "numeric", 
                                     Spatial="numeric", Allocate = "numeric", LR5 = "numeric",
                                     LFR = "numeric", HS="numeric", Rmaxlen="numeric", Misc="list"))
-
-# # initialize InputRec
-# setMethod("initialize", "InputRec") 
-#   
-
-
-
-
+setMethod("initialize", "InputRec", function(.Object){
+     .Object@Effort<-1
+     .Object@Allocate<-1
+     .Object@Spatial<-c(1,1)
+     .Object
+   })
 
 
 
