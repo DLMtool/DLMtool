@@ -107,9 +107,10 @@ setMethod("show", signature = (object="PMobj"), function(object) {
 #'
 #' @param object object of class MSE
 #' @param ... a list of names of PM methods
+#' @param silent Should summary be printed to console? Logical.
 #' @rdname summary-MSE
 #' @export
-setMethod('summary', signature="MSE", function(object, ...) {
+setMethod('summary', signature="MSE", function(object, ..., silent=FALSE) {
   PMlist <- unlist(list(...))
   
   if(length(PMlist) == 0) PMlist <- avail("PM")
@@ -118,7 +119,7 @@ setMethod('summary', signature="MSE", function(object, ...) {
   for (X in seq_along(PMlist)) 
     if (!PMlist[X] %in% avail("PM")) stop(PMlist[X], " is not a valid PM method")
 
-  message("Calculating Performance Metrics")
+  if (!silent) message("Calculating Performance Metrics")
   storeMean <- vector('list', length(PMlist))
   storeName <- vector('list', length(PMlist))
   storeHeading <- vector('list', length(PMlist))
@@ -134,10 +135,13 @@ setMethod('summary', signature="MSE", function(object, ...) {
   df <- data.frame('MP'=storeMP[[1]], signif(do.call('cbind', storeMean),2))
   # heading <- do.call('rbind', storeHeading)
   colnames(df)[2:(length(PMlist)+1)] <- PMlist #caps # gsub(" ", "", caps)
-  print(data.frame('Performance Metrics' = do.call('rbind', storeName)))
-  cat("\n")
-  cat("\nProbability:\n")
-  print(df)
+  if (!silent) {
+    print(data.frame('Performance Metrics' = do.call('rbind', storeName)))
+    cat("\n")
+    cat("\nProbability:\n")
+    print(df)  
+  }
+
   invisible(df)
   
 })
