@@ -68,7 +68,7 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
     nameNoExt <- tools::file_path_sans_ext(name)
   }
   
-  InTemplates <<- list(...)
+  InTemplates <- list(...)
   ObTemplates <- list()
   if (length(InTemplates) >0) {
     inclasses <- unlist(lapply(InTemplates, class))

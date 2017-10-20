@@ -41,6 +41,7 @@ grid_arrange_shared_legend <- function(plots, ncol = length(plots), nrow = 1, po
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom gridExtra arrangeGrob
 #' @importFrom grid unit.c unit grid.newpage grid.draw
+#' @importFrom utils combn
 #' @export
 #'
 #' @examples 
@@ -68,7 +69,7 @@ Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
   n.row <- ceiling(ncol(PlotList)/n.col)
 
   m <- matrix(1:(n.col*n.row), ncol=n.col, nrow=n.row, byrow=FALSE)
-
+  xmin <- xmax <- ymin <- ymax <- x <- y <- Class <- label <- fontface <- NULL
   plots <- listout <- list()
   for (pp in 1:ncol(PlotList)) {
     yPM <- PlotList[1,pp]

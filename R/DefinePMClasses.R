@@ -19,6 +19,7 @@
 #' @slot Mean Mean probability (mean over years and simulations). Numeric. Length nMPs 
 #' @slot MPs Name of MPs. Single value. Character string  
 #' @author  A. Hordyk
+#' @importFrom methods show
 #' @keywords classes
 
 setClass("PMobj", representation(name = "character",  caption='label.class', 
@@ -50,6 +51,8 @@ calcMean <- function(Prob, MSEobj) {
   if (class(Prob) == 'matrix') return( apply(Prob , 2, mean))
   if (class(Prob) == 'numeric') return(mean(Prob))
 }
+
+show <- function(object) methods::show(object)
 
 
 #' Show the output of a PM
