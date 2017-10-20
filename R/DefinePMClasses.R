@@ -1,19 +1,6 @@
 
 
 
-#' Label class union for performance metric objects
-#' 
-#' @description Used internally. Nothing to see here!
-#'  
-#' @export
-setClassUnion(name="label.class", members=c("call", "character", "function"))
-
-#' Prob class union for performance metric objects
-#' 
-#' @description Used internally. Nothing to see here!
-#'  
-#' @export
-setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 
 
 

@@ -20,12 +20,12 @@ OMexample <- function() {
 #' 
 #' @param name The name of the Excel and source.rmd file to be created in the working directory (character). 
 #' Use 'example' for a populated example OM XL and documentation file.
+#' @param ... Optional DLMtool objects to use as templates: OM, Stock, Fleet, Obs, or Imp objects
 #' @param files What files should be created: 'xlsx', 'rmd', or c('xlsx', 'rmd') (default: both)
-#' @param templates An optional named list of existing DLMtool Stock, Fleet, Obs, or Imp objects
 #' to use as templates for the Operating Model.
 #' @param overwrite Logical. Should files be overwritten if they already exist?
 #'
-#' @return OM xlsx and source.rmd files are created in the working directory.  
+#' @return name.xlsx and name_source.rmd files are created in the working directory.  
 #' @export
 #' @author A. Hordyk
 #'
@@ -35,15 +35,19 @@ OMexample <- function() {
 #' OMinit('myOM')
 #' 
 #' # Create an Excel OM template and text file called 'myOM.rmd' and 'myOM_source.rmd', using
+#' another OM as a template: 
+#' OMinit('myOM', myOM)
+#' 
+#' # Create an Excel OM template and text file called 'myOM.rmd' and 'myOM_source.rmd', using
 #' the Stock object 'Herring' as a template: 
-#' OMinit('myOM', templates=list(Stock='Herring'))
+#' OMinit('myOM', Herring)
 #' 
 #' # Create an Excel OM template and text file called 'myOM.rmd' and 'myOM_source.rmd', using
 #' the Stock object 'Herring', and Obs object 'Generic_obs' as templates: 
-#' OMinit('myOM', templates=list(Stock='Herring', Obs='Generic_obs'), overwrite=TRUE)
+#' OMinit('myOM', Herring, Generic_obs)
 #' }
 #' 
-OMinit <- function(name=NULL, files=c('xlsx', 'rmd'), templates=NULL, overwrite=FALSE) {
+OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
   files <- match.arg(files, several.ok = TRUE)
   
   if (is.null(name)) stop("Require OM name", call.=FALSE)
@@ -64,16 +68,45 @@ OMinit <- function(name=NULL, files=c('xlsx', 'rmd'), templates=NULL, overwrite=
     nameNoExt <- tools::file_path_sans_ext(name)
   }
   
-  
-  ObTemplates <- ObjTemps(templates)
-  if (!is.null(ObTemplates) && class(ObTemplates) == 'list') {
-    nm <- names(ObTemplates)  
-    message("\n\nUsing Object Templates:")
-    for (X in nm) {
-      message(ObTemplates[[X]]@Name)
+  InTemplates <<- list(...)
+  ObTemplates <- list()
+  if (length(InTemplates) >0) {
+    inclasses <- unlist(lapply(InTemplates, class))
+    for (x in seq_along(inclasses)) {
+      if (!inclasses[x] %in% c("Stock", "Fleet", "Obs", "Imp", "OM")) stop(InTemplates[[x]], " is not a valid DLMtool object")
+    }
+    isOM <- which(inclasses == "OM")
+    if (length(isOM)>0) {
+      message("\n\nUsing OM Template")
+      ObTemplates$Stock <- SubOM(InTemplates[[isOM]], "Stock")
+      if (is.na(ObTemplates$Stock@Name) || nchar(ObTemplates$Stock@Name)==0) ObTemplates$Stock@Name <- InTemplates[[isOM]]@Name
+      ObTemplates$Fleet <- SubOM(InTemplates[[isOM]], "Fleet")
+      if (is.na(ObTemplates$Fleet@Name) || nchar(ObTemplates$Fleet@Name)==0) ObTemplates$Fleet@Name <- InTemplates[[isOM]]@Name
+      ObTemplates$Obs <- SubOM(InTemplates[[isOM]], "Obs")
+      if (is.na(ObTemplates$Obs@Name) || nchar(ObTemplates$Obs@Name)==0) ObTemplates$Obs@Name <- InTemplates[[isOM]]@Name
+      ObTemplates$Imp <- SubOM(InTemplates[[isOM]], "Imp")
+      if (is.na(ObTemplates$Imp@Name) || nchar(ObTemplates$Imp@Name)==0) ObTemplates$Imp@Name <- InTemplates[[isOM]]@Name
+      ObTemplates$OM <- c(InTemplates[[isOM]]@Name,
+                          InTemplates[[isOM]]@nsim,
+                          InTemplates[[isOM]]@proyears,
+                          InTemplates[[isOM]]@interval,
+                          InTemplates[[isOM]]@pstar,
+                          InTemplates[[isOM]]@maxF,
+                          InTemplates[[isOM]]@reps)
+    } else {
+      for (x in seq_along(inclasses)) {
+        if (inclasses[x] == 'Stock') ObTemplates$Stock <- InTemplates[[x]]
+        if (inclasses[x] == 'Fleet') ObTemplates$Fleet <- InTemplates[[x]]
+        if (inclasses[x] == 'Obs') ObTemplates$Obs <- InTemplates[[x]]
+        if (inclasses[x] == 'Imp') ObTemplates$Imp <- InTemplates[[x]]
+      }
+      nm <- names(ObTemplates)  
+      message("\n\nUsing Object Templates:")
+      for (X in nm) {
+        message(ObTemplates[[X]]@Name)
+      }
     }
   }
-  
   
   
   if ('xlsx' %in% files) {
@@ -89,8 +122,6 @@ OMinit <- function(name=NULL, files=c('xlsx', 'rmd'), templates=NULL, overwrite=
     
 
     # Load the Excel File ####
-    
-    
     message("Creating ", name, " in ", getwd())
     
     
@@ -111,8 +142,8 @@ OMinit <- function(name=NULL, files=c('xlsx', 'rmd'), templates=NULL, overwrite=
     openxlsx::setColWidths(wb, sheet = "Stock", cols = 1, widths = 'auto')
     
     # loop through slot values if Obj template provided
-    if (!is.null(ObTemplates$StockTemp)) {
-      obj <- ObTemplates$StockTemp
+    if (!is.null(ObTemplates$Stock)) {
+      obj <- ObTemplates$Stock
       slots <- slotNames(obj)
       
       for (sl in seq_along(slots)) {
@@ -147,8 +178,8 @@ OMinit <- function(name=NULL, files=c('xlsx', 'rmd'), templates=NULL, overwrite=
     openxlsx::setColWidths(wb, sheet = "Fleet", cols = 1, widths = 'auto')
     
     # loop through slot values if Obj template provided
-    if (!is.null(ObTemplates$FleetTemp)) {
-      obj <- ObTemplates$FleetTemp
+    if (!is.null(ObTemplates$Fleet)) {
+      obj <- ObTemplates$Fleet
       slots <- slotNames(obj)
       
       for (sl in seq_along(slots)) {
@@ -183,8 +214,8 @@ OMinit <- function(name=NULL, files=c('xlsx', 'rmd'), templates=NULL, overwrite=
     openxlsx::setColWidths(wb, sheet = "Obs", cols = 1, widths = 'auto')
     
     # loop through slot values if Obj template provided
-    if (!is.null(ObTemplates$ObsTemp)) {
-      obj <- ObTemplates$ObsTemp
+    if (!is.null(ObTemplates$Obs)) {
+      obj <- ObTemplates$Obs
       slots <- slotNames(obj)
       
       for (sl in seq_along(slots)) {
@@ -218,8 +249,8 @@ OMinit <- function(name=NULL, files=c('xlsx', 'rmd'), templates=NULL, overwrite=
     openxlsx::setColWidths(wb, sheet = "Imp", cols = 1, widths = 'auto')
     
     # loop through slot values if Obj template provided
-    if (!is.null(ObTemplates$ImpTemp)) {
-      obj <- ObTemplates$ImpTemp
+    if (!is.null(ObTemplates$Imp)) {
+      obj <- ObTemplates$Imp
       slots <- slotNames(obj)
       
       for (sl in seq_along(slots)) {
@@ -310,11 +341,11 @@ OMinit <- function(name=NULL, files=c('xlsx', 'rmd'), templates=NULL, overwrite=
     
     # Title
     cat("\n# Title\n", sep="", append=TRUE, file=RmdSource) 
-    cat("Title. One line only.\n", sep="", append=TRUE, file=RmdSource) 
+    cat("Include name and location of the Fishery. One line only.\n", sep="", append=TRUE, file=RmdSource) 
     
-    # Subtitle - optional 
-    cat("\n# Subtitle\n", sep="", append=TRUE, file=RmdSource) 
-    cat("Optional. Subtitle. One line only. Delete text and heading if not required.\n", 
+    # Management Agency/Jurisdiction -  
+    cat("\n# Management Agency/Jurisdiction\n", sep="", append=TRUE, file=RmdSource) 
+    cat("Management Agency/Jurisdiction. One line only.\n", 
         sep="", append=TRUE, file=RmdSource) 
     
     
@@ -391,7 +422,7 @@ OMinit <- function(name=NULL, files=c('xlsx', 'rmd'), templates=NULL, overwrite=
     cat("This document will be compiled into Rmarkdown, and then a HTML document using Pandoc. Equations can be included by\n\n", sep="", append=TRUE, file=RmdSource)
     cat("using Latex (see [here](https://www.sharelatex.com/learn/Mathematical_expressions) for some examples).\n\n", sep="", append=TRUE, file=RmdSource)
     
-    cat("## Delete all text below 'Introduction' and replace with a description of the OM.\n\n", sep="", append=TRUE, file=RmdSource)
+    cat("## Replace all text below 'Introduction' new text.\n\n", sep="", append=TRUE, file=RmdSource)
     
     
     # Cpars ####
@@ -408,10 +439,10 @@ OMinit <- function(name=NULL, files=c('xlsx', 'rmd'), templates=NULL, overwrite=
     slots <- slotNames("Stock")
     for (X in slots) {
       cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
-      if (is.null(ObTemplates$StockTemp)) {
+      if (is.null(ObTemplates$Stock)) {
         cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
       } else {
-        cat("Borrowed from ", ObTemplates$StockTemp@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
+        cat("Borrowed from ", ObTemplates$Stock@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
       }
     }
     
@@ -420,10 +451,10 @@ OMinit <- function(name=NULL, files=c('xlsx', 'rmd'), templates=NULL, overwrite=
     slots <- slotNames("Fleet")
     for (X in slots) {
       cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
-      if (is.null(ObTemplates$FleetTemp)) {
+      if (is.null(ObTemplates$Fleet)) {
         cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
       } else {
-        cat("Borrowed from ", ObTemplates$FleetTemp@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
+        cat("Borrowed from ", ObTemplates$Fleet@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
       }
     }
     
@@ -433,10 +464,10 @@ OMinit <- function(name=NULL, files=c('xlsx', 'rmd'), templates=NULL, overwrite=
     slots <- slotNames("Obs")
     for (X in slots) {
       cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
-      if (is.null(ObTemplates$ObsTemp)) {
+      if (is.null(ObTemplates$Obs)) {
         cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
       } else {
-        cat("Borrowed from ", ObTemplates$ObsTemp@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
+        cat("Borrowed from ", ObTemplates$Obs@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
       }
     }
     
@@ -445,10 +476,10 @@ OMinit <- function(name=NULL, files=c('xlsx', 'rmd'), templates=NULL, overwrite=
     slots <- slotNames("Imp")
     for (X in slots) {
       cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
-      if (is.null(ObTemplates$ImpTemp)) {
+      if (is.null(ObTemplates$Imp)) {
         cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
       } else {
-        cat("Borrowed from ", ObTemplates$ImpTemp@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
+        cat("Borrowed from ", ObTemplates$Imp@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
       }
     }
     
@@ -463,47 +494,47 @@ OMinit <- function(name=NULL, files=c('xlsx', 'rmd'), templates=NULL, overwrite=
   if ('rmd' %in% files) message("Document OM parameters in ", RmdSource)
 }
 
-
-
-ObjTemps <- function(templates=NULL) {
-  StockTemp <- NULL; FleetTemp <- NULL; ObsTemp <- NULL; ImpTemp <- NULL
-  
-  if (class(templates) != "NULL" && class(templates) != "list") stop("'templates' must be a named list", call.=FALSE)
-  if (class(templates) == 'list') {
-    if (is.null(names(templates))) stop("'templates' must be a named list", call.=FALSE)
-    if (any(!names(templates) %in% c("Stock", "Fleet", "Obs", "Imp"))) 
-      stop("invalid names in list 'templates'. Must be one or all of: Stock, Fleet, Obs, Imp", call.=FALSE)
-    ind <- match("Stock", names(templates))
-    if (!is.na(ind)) {
-      StockTemp <- templates$Stock
-      if (class(StockTemp)=='character' && !StockTemp %in% avail("Stock")) stop(StockTemp, " is not an available object of class Stock", call.=FALSE)
-      if (class(StockTemp)!='character' && class(StockTemp) != 'Stock') stop(StockTemp, " is not an available object of class Stock", call.=FALSE)
-      if (class(StockTemp) == 'character') StockTemp <- get(StockTemp)
-    }
-    ind <- match("Fleet", names(templates))
-    if (!is.na(ind)) {
-      FleetTemp <- templates$Fleet
-      if (class(FleetTemp)=='character' && !FleetTemp %in% avail("Fleet")) stop(FleetTemp, " is not an available object of class Fleet", call.=FALSE)
-      if (class(FleetTemp)!='character' && class(FleetTemp) != 'Fleet') stop(FleetTemp, " is not an available object of class Fleet", call.=FALSE)
-      if (class(FleetTemp) == 'character') FleetTemp <- get(FleetTemp)
-    }
-    ind <- match("Obs", names(templates))
-    if (!is.na(ind)) {
-      ObsTemp <- templates$Obs
-      if (class(ObsTemp)=='character' && !ObsTemp %in% avail("Obs")) stop(ObsTemp, " is not an available object of class Obs", call.=FALSE)
-      if (class(ObsTemp)!='character' && class(ObsTemp) != 'Obs') stop(ObsTemp, " is not an available object of class Obs", call.=FALSE)
-      if (class(ObsTemp) == 'character') ObsTemp <- get(ObsTemp)
-    }
-    ind <- match("Imp", names(templates))
-    if (!is.na(ind)) {
-      ImpTemp <- templates$Imp
-      if (class(ImpTemp)=='character' && !ImpTemp %in% avail("Imp")) stop(ImpTemp, " is not an available object of class Imp", call.=FALSE)
-      if (class(ImpTemp)!='character' && class(ImpTemp) != 'Imp') stop(ImpTemp, " is not an available object of class Imp", call.=FALSE)
-      if (class(ImpTemp) == 'character') ImpTemp <- get(ImpTemp)
-    }
-  }
-  return(list=c(StockTemp=StockTemp, FleetTemp=FleetTemp, ObsTemp=ObsTemp, ImpTemp=ImpTemp))
-}
+# 
+# 
+# ObjTemps <- function(templates=NULL) {
+#   Stock <- NULL; Fleet <- NULL; Obs <- NULL; Imp <- NULL
+#   
+#   if (class(templates) != "NULL" && class(templates) != "list") stop("'templates' must be a named list", call.=FALSE)
+#   if (class(templates) == 'list') {
+#     if (is.null(names(templates))) stop("'templates' must be a named list", call.=FALSE)
+#     if (any(!names(templates) %in% c("Stock", "Fleet", "Obs", "Imp"))) 
+#       stop("invalid names in list 'templates'. Must be one or all of: Stock, Fleet, Obs, Imp", call.=FALSE)
+#     ind <- match("Stock", names(templates))
+#     if (!is.na(ind)) {
+#       Stock <- templates$Stock
+#       if (class(Stock)=='character' && !Stock %in% avail("Stock")) stop(Stock, " is not an available object of class Stock", call.=FALSE)
+#       if (class(Stock)!='character' && class(Stock) != 'Stock') stop(Stock, " is not an available object of class Stock", call.=FALSE)
+#       if (class(Stock) == 'character') Stock <- get(Stock)
+#     }
+#     ind <- match("Fleet", names(templates))
+#     if (!is.na(ind)) {
+#       Fleet <- templates$Fleet
+#       if (class(Fleet)=='character' && !Fleet %in% avail("Fleet")) stop(Fleet, " is not an available object of class Fleet", call.=FALSE)
+#       if (class(Fleet)!='character' && class(Fleet) != 'Fleet') stop(Fleet, " is not an available object of class Fleet", call.=FALSE)
+#       if (class(Fleet) == 'character') Fleet <- get(Fleet)
+#     }
+#     ind <- match("Obs", names(templates))
+#     if (!is.na(ind)) {
+#       Obs <- templates$Obs
+#       if (class(Obs)=='character' && !Obs %in% avail("Obs")) stop(Obs, " is not an available object of class Obs", call.=FALSE)
+#       if (class(Obs)!='character' && class(Obs) != 'Obs') stop(Obs, " is not an available object of class Obs", call.=FALSE)
+#       if (class(Obs) == 'character') Obs <- get(Obs)
+#     }
+#     ind <- match("Imp", names(templates))
+#     if (!is.na(ind)) {
+#       Imp <- templates$Imp
+#       if (class(Imp)=='character' && !Imp %in% avail("Imp")) stop(Imp, " is not an available object of class Imp", call.=FALSE)
+#       if (class(Imp)!='character' && class(Imp) != 'Imp') stop(Imp, " is not an available object of class Imp", call.=FALSE)
+#       if (class(Imp) == 'character') Imp <- get(Imp)
+#     }
+#   }
+#   return(list=c(Stock=Stock, Fleet=Fleet, Obs=Obs, Imp=Imp))
+# }
 
 
 
@@ -746,7 +777,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
     title <- paste("Operating Model:", OM@Name)
   }
   
-  ind <- grep("^# Subtitle", textIn)
+  ind <- grep("^# Management Agency/Jurisdiction", textIn)
   if (length(ind)>0) {
     subtitle <- trimws(textIn[ind+1])
     if (nchar(subtitle) == 0) subtitle <- NULL
@@ -837,20 +868,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   }
   cat("---\n\n", sep="", append=TRUE, file=RMDfile) 
   
-  
-  ## OM Details ####
-  cat("# Operating Model Details \n", append=TRUE, file=RMDfile, sep="")
-  cat("**Name**: '", OM@Name, "'\n\n", append=TRUE, file=RMDfile, sep="")
-  cat("**nsim**: ", OM@nsim, " | ", append=TRUE, file=RMDfile, sep="")
-  cat(" **proyears**: ", OM@proyears, " | ", append=TRUE, file=RMDfile, sep="")
-  cat(" **interval**: ", OM@interval, "\n\n", append=TRUE, file=RMDfile, sep="")
-  cat("**pstar**: ", OM@pstar, " | ", append=TRUE, file=RMDfile, sep="")
-  cat(" **maxF**: ", OM@maxF, " | ", append=TRUE, file=RMDfile, sep="")
-  cat(" **reps**: ", OM@reps, " \n\n", append=TRUE, file=RMDfile, sep="")
-  cat("**Source**: '",  OM@Source, "' \n\n", append=TRUE, file=RMDfile, sep="")
-  useCpars <- length(OM@cpars) > 0
-  if (useCpars) cat("**Uses cpars**: ", useCpars, " \n\n", append=TRUE, file=RMDfile, sep="")
-  
+
   ## knitr options ####
   # cat("```{r setup, include=FALSE}\n", append=TRUE, file=RMDfile, sep="")
   # cat("library(knitr)\n", append=TRUE, file=RMDfile, sep="")
@@ -934,6 +952,27 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   ## Introduction ####
   writeSection(class="Intro", OM, textIn, RMDfile, color=color, inc.plot=inc.plot)
   
+  ## OM Details ####
+  OMdesc <- DLMtool::OMDescription
+  cat("# OM Parameters \n", append=TRUE, file=RMDfile, sep="")
+  
+  cat("**Name**: ", OMdesc$Description[OMdesc$Slot =='Name'], ": ", "<span style='color:", color, "'>", " ", OM@Name, "</span>", "\n\n", append=TRUE, file=RMDfile, sep="")
+  
+  cat("**nsim**: ", OMdesc$Description[OMdesc$Slot =='nsim'], ": ", "<span style='color:", color, "'>", " ", OM@nsim, "</span>", "\n\n", "\n\n", append=TRUE, file=RMDfile, sep="")
+  
+  cat("**proyears**: ", OMdesc$Description[OMdesc$Slot =='proyears'], ": ", "<span style='color:", color, "'>", " ", OM@proyears, "</span>", "\n\n", "\n\n", "\n\n", append=TRUE, file=RMDfile, sep="")
+
+  cat("**interval**: ", OMdesc$Description[OMdesc$Slot =='interval'], " ", "<span style='color:", color, "'>", " ", OM@interval, "</span>", "\n\n",append=TRUE, file=RMDfile, sep="")
+  
+  cat("**pstar**: ", OMdesc$Description[OMdesc$Slot =='pstar'], ": ", "<span style='color:", color, "'>", " ", OM@pstar, "</span>", "\n\n",append=TRUE, file=RMDfile, sep="")
+  
+  cat("**maxF**: ", OMdesc$Description[OMdesc$Slot =='maxF'], ": ", "<span style='color:", color, "'>", " ", OM@maxF, "</span>", "\n\n", append=TRUE, file=RMDfile, sep="")
+  
+  cat("**reps**: ", OMdesc$Description[OMdesc$Slot =='reps'], " ", "<span style='color:", color, "'>", " ", OM@reps, "</span>", "\n\n", append=TRUE, file=RMDfile, sep="")
+ 
+  cat("**Source**: ", OMdesc$Description[OMdesc$Slot =='Source'], "\n", OM@Source, "\n\n", append=TRUE, file=RMDfile, sep="")
+  
+  useCpars <- length(OM@cpars) >0 
   ## Cpars ####
   if (useCpars) writeSection(class="cpars", OM, textIn, RMDfile, color=color, 
                              inc.plot=inc.plot)
@@ -1025,7 +1064,7 @@ Template <- function(type=c("Stock", "Fleet", "Obs", "Imp")) {
         "Output Control Implementation Error: TACFrac, TACSD",
         "Effort Control Implementation Error: TAEFrac, TAESD", 
         "Size Limit Control Implementation Error: SizeLimFrac, SizeLimSD"), ncol=1)
-  
+ 
   # Check slots 
   Slots <- names(methods::getSlots(type))
   for (X in Slots) {
@@ -1141,13 +1180,11 @@ writeSection <- function(class=c("Intro", "Stock", "Fleet", "Obs", "Imp", "Refer
             used <- length(val)>0 && !is.na(val) && !is.null(val) # is the slot used?
             if (used) {
               val <- gsub('"', "", paste(val, collapse="\", \""))
-              valtext <- paste0("(", trimws(val), ")")
+              valtext <- paste0("Specified Value(s): ", "<span style='color:", color, "'>", " ", trimws(val), "</span>", "\n\n")
             } else {
               valtext <- val
             }           
           }
-          
-          valtext <- paste0("<span style='color:", color, "'>", " ", valtext, "</span>\n\n")
           
           loc <- which(scLH == sl)
           if (length(loc) > 0) {
@@ -1156,15 +1193,15 @@ writeSection <- function(class=c("Intro", "Stock", "Fleet", "Obs", "Imp", "Refer
             if (is.na(end)) end <- length(Text)
             description <- Text[bg:end]
             if (!used) description <- c("Slot not used.")
-            if (used && ! sl%in% c("EffYears", "EffLower", "EffUpper")) description <- c(description, valtext)
+            if (used && ! sl%in% c("EffYears", "EffLower", "EffUpper")) description <- c(valtext, description)
 
           } else {
-            if (used & sl != "Source" & sl != "Name") description <- paste("No justification provided.", valtext)
+            if (used & sl != "Source" & sl != "Name") description <- paste(valtext, "No justification provided.")
             if (!used) description <- "Slot not used. "
           }
 
           description[nchar(description) == 0] <- "\n\n"
-          description[length(description)-1] <- "  "
+          # description[length(description)-1] <- "  "
           
           if (inc.descript) {
             des <- switch(class, 

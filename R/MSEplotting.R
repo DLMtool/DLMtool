@@ -1,30 +1,29 @@
 
-
 # modified from
 # https://github.com/tidyverse/ggplot2/wiki/share-a-legend-between-two-ggplot2-graphs
 grid_arrange_shared_legend <- function(plots, ncol = length(plots), nrow = 1, position = c("bottom", "right")) {
   
 
   position <- match.arg(position)
-  g <- ggplotGrob(plots[[1]] + theme(legend.position = position))$grobs
+  g <- ggplot2::ggplotGrob(plots[[1]] + ggplot2::theme(legend.position = position))$grobs
   legend <- g[[which(sapply(g, function(x) x$name) == "guide-box")]]
   lheight <- sum(legend$height)
   lwidth <- sum(legend$width)
-  gl <- lapply(plots, function(x) x + theme(legend.position="none"))
+  gl <- lapply(plots, function(x) x + ggplot2::theme(legend.position="none"))
   gl <- c(gl, ncol = ncol, nrow = nrow)
   
   combined <- switch(position,
-                     "bottom" = arrangeGrob(do.call(arrangeGrob, gl),
+                     "bottom" = gridExtra::arrangeGrob(do.call(gridExtra::arrangeGrob, gl),
                                             legend,
                                             ncol = 1,
-                                            heights = unit.c(unit(1, "npc") - lheight, lheight)),
-                     "right" = arrangeGrob(do.call(arrangeGrob, gl),
+                                            heights = grid::unit.c(grid::unit(1, "npc") - lheight, lheight)),
+                     "right" = gridExtra::arrangeGrob(do.call(gridExtra::arrangeGrob, gl),
                                            legend,
                                            ncol = 2,
-                                           widths = unit.c(unit(1, "npc") - lwidth, lwidth)))
+                                           widths = grid::unit.c(grid::unit(1, "npc") - lwidth, lwidth)))
   
-  grid.newpage()
-  grid.draw(combined)
+  grid::grid.newpage()
+  grid::grid.draw(combined)
   
   # return gtable invisibly
   invisible(combined)
@@ -38,13 +37,17 @@ grid_arrange_shared_legend <- function(plots, ncol = length(plots), nrow = 1, po
 #' @param lims Numeric vector of satisficing limits. Recycled to number of PM methods
 #' @return produces a plot 
 #' @author A. Hordyk
+#' @importFrom ggplot2 ggplot aes geom_rect geom_point xlim ylim xlab ylab theme theme_classic labs ggplotGrob
+#' @importFrom ggrepel geom_text_repel
+#' @importFrom gridExtra arrangeGrob
+#' @importFrom grid unit.c unit grid.newpage grid.draw
 #' @export
 #'
 #' @examples 
 #' \dontrun{
-#'  testplot{myMSE}
+#'  Tplot3{myMSE}
 #' }
-testplot <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
+Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
   PMlist <- unlist(list(...))
   if(length(PMlist) == 0) PMlist <- c("LTY", "STY", "P50", "AAVY")
   if (class(PMlist) != 'character') stop("Must provide names of PM methods")
@@ -92,24 +95,24 @@ testplot <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
     df$fontface[!df$pass] <- "italic"
     df$fontface <- factor(df$fontface)
     listout[[pp]] <- df
-    plots[[pp]] <- ggplot() + 
-      geom_rect(data=xrect, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill='gray80', alpha=0.4) +
-      geom_rect(data=yrect, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill='gray80', alpha=0.4)
+    plots[[pp]] <- ggplot2::ggplot() + 
+      ggplot2::geom_rect(data=xrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill='gray80', alpha=0.4) +
+      ggplot2::geom_rect(data=yrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill='gray80', alpha=0.4)
     
   
     
     
     # plots[[pp]] <- ggplot(df, aes(x, y, shape=Class, color=Class, label=label)) +
     plots[[pp]] <-   plots[[pp]] + 
-      geom_point(data=df, aes(x, y, shape=Class, color=Class), size=2) +
-      geom_text_repel(data=df, aes(x, y, color=Class, label=label, fontface = fontface), show.legend=FALSE) + 
-      xlab(xcap) + ylab(ycap) +
-      xlim(xlim) + ylim(ylim) +
-      theme_classic() +
-      theme(axis.title.x = element_text(size=11),
-            axis.title.y = element_text(size=11),
-            legend.text=element_text(size=12)) + 
-      labs(shape= "MP Class", color="MP Class")
+      ggplot2::geom_point(data=df, ggplot2::aes(x, y, shape=Class, color=Class), size=2) +
+      ggrepel::geom_text_repel(data=df, ggplot2::aes(x, y, color=Class, label=label, fontface = fontface), show.legend=FALSE) + 
+      ggplot2::xlab(xcap) + ggplot2::ylab(ycap) +
+      ggplot2::xlim(xlim) + ggplot2::ylim(ylim) +
+      ggplot2::theme_classic() +
+      ggplot2::theme(axis.title.x = ggplot2::element_text(size=11),
+            axis.title.y = ggplot2::element_text(size=11),
+            legend.text=ggplot2::element_text(size=12)) + 
+      ggplot2::labs(shape= "MP Class", color="MP Class")
     
   }
   out <- do.call("rbind", listout)

@@ -359,3 +359,10 @@
 "DataDescription"
 
 
+#'  OMDescription 
+#'
+#'  A data.frame with description of slots for class OM
+#'
+"OMDescription"
+
+
