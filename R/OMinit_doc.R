@@ -970,7 +970,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   
   cat("**reps**: ", OMdesc$Description[OMdesc$Slot =='reps'], " ", "<span style='color:", color, "'>", " ", OM@reps, "</span>", "\n\n", append=TRUE, file=RMDfile, sep="")
  
-  cat("**Source**: ", OMdesc$Description[OMdesc$Slot =='Source'], "\n", OM@Source, "\n\n", append=TRUE, file=RMDfile, sep="")
+  cat("**Source**: ", OMdesc$Description[OMdesc$Slot =='Source'], "\n\n", "<span style='color:", color, "'>", " ", OM@Source, "</span>", "\n\n", append=TRUE, file=RMDfile, sep="")
   
   useCpars <- length(OM@cpars) >0 
   ## Cpars ####
