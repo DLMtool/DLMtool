@@ -74,8 +74,6 @@ Converge <- function(MSEobj, thresh = 2, Plot = TRUE) {
                           which(apply(CumlP50, 1, Chk)), 
                           which(apply(CumlP100, 1, Chk)))))
   
-  if (length(NonCon) == 1) 
-    NonCon <- rep(NonCon, 2)
   if (length(NonCon) > 0) {
     if (Plot) {
       plot(c(0, 1), c(0, 1), type = "n", axes = FALSE, xlab = "", 
@@ -84,18 +82,24 @@ Converge <- function(MSEobj, thresh = 2, Plot = TRUE) {
       # ev.new()
       par(mfrow = c(2, 3), cex.axis = 1.5, cex.lab = 1.7, oma = c(1, 
         1, 0, 0), mar = c(5, 5, 1, 1), bty = "l")
-      matplot(t(CumlYd[NonCon, ]), type = "b", xlab = "Iteration", 
-        ylab = "Rel. Yield", lwd = 2)
-      matplot(t(CumlPOF[NonCon, ]), type = "b", xlab = "Iteration", 
-        ylab = "Prob. F/FMSY > 1", lwd = 2)
-      matplot(t(CumlP10[NonCon, ]), type = "b", xlab = "Iteration", 
-        ylab = "Prob. B/BMSY < 0.1", lwd = 2)
-      matplot(t(CumlP50[NonCon, ]), type = "b", xlab = "Iteration", 
-        ylab = "Prob. B/BMSY < 0.5", lwd = 2)
-      matplot(t(CumlP100[NonCon, ]), type = "b", xlab = "Iteration", 
-        ylab = "Prob. B/BMSY < 1", lwd = 2)
+      if (length(NonCon) > 1) {
+        matplot(t(CumlYd[NonCon, ]), type = "l", xlab = "Iteration",  ylab = "Rel. Yield", lwd = 2, lty=1:length(NonCon))
+      } else matplot((CumlYd[NonCon, ]), type = "l", xlab = "Iteration",  ylab = "Rel. Yield", lwd = 2, lty=1:length(NonCon))
+      if (length(NonCon) > 1) {
+        matplot(t(CumlPOF[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. F/FMSY > 1", lwd = 2, lty=1:length(NonCon))
+      } else matplot((CumlPOF[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. F/FMSY > 1", lwd = 2, lty=1:length(NonCon))  
+      if (length(NonCon) > 1) {
+        matplot(t(CumlP10[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 0.1", lwd = 2, lty=1:length(NonCon))
+      } else matplot((CumlP10[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 0.1", lwd = 2, lty=1:length(NonCon))
+      if (length(NonCon) > 1) {
+        matplot(t(CumlP50[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 0.5", lwd = 2, lty=1:length(NonCon))
+      } else matplot((CumlP50[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 0.5", lwd = 2, lty=1:length(NonCon))
+      if (length(NonCon) > 1) {
+        matplot(t(CumlP100[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 1", lwd = 2, lty=1:length(NonCon))
+      } else matplot((CumlP100[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 1", lwd = 2, lty=1:length(NonCon))
+      
       legend(nsim * 1.25, 50, legend = MSEobj@MPs[NonCon], col = 1:length(NonCon), 
-        bty = "n", xpd = NA, lty = 1, lwd = 2, cex = 1.25)
+        bty = "n", xpd = NA, lty = 1:length(NonCon), lwd = 2, cex = 1.25)
     }
     
     message("Some MPs may not have converged in ", nsim, " iterations (threshold = ", thresh, "%)")

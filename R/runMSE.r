@@ -758,6 +758,9 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       stop("MSE stopped: no viable methods \n\n")  # if none of the user specied methods are possible stop the run
     }
   }
+  chkClass <- !unlist(lapply(lapply(MPs, get), class)) %in% c("Input", "Output")
+  if (sum(chkClass) > 0) message('Dropping MPs: ', paste(MPs[chkClass], ""), " - Not class 'Input' or 'Output'")
+  MPs <- MPs[!chkClass]
   
   nMP <- length(MPs)  # the total number of methods used
   

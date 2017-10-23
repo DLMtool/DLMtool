@@ -29,6 +29,7 @@ dnormal<-function(lens,lfs,sl,sr){
 #' @export
 #'
 getsel <- function(x, lens, lfs, sls, srs) {
+  if (is.null(ncol(lens))) return(dnormal(lens, lfs[x], sls[x], srs[x]))
   dnormal(lens[x,], lfs[x], sls[x], srs[x])
 }
 

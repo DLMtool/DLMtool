@@ -186,7 +186,7 @@ setMethod("initialize", "Data", function(.Object, stock = "nada") {
     .Object@MaxAge <- as.numeric(dat[match("Maximum age", dname), 1])
     .Object@MPrec <- as.numeric(dat[match("MPrec", dname), 1])
     .Object@MPeff <- as.numeric(dat[match("MPeff", dname), 1])
-    if (is.na(.Object@MPeff) || length(.Object@MPeff)==0) .Object@MPeff <- 1 
+    
     
     if (length(grep("CAL", dname)) > 1) {
       CAL_bins <- as.numeric(dat[match("CAL_bins", dname), dat[match("CAL_bins", dname), ] != ""])
@@ -224,6 +224,8 @@ setMethod("initialize", "Data", function(.Object, stock = "nada") {
       if (!is.na(stock)) print("Couldn't find specified csv file, blank DLM object created")
     }
   }
+  
+  if (is.na(.Object@MPeff) || length(.Object@MPeff)==0) .Object@MPeff <- 1 
   
   # Standardise Index if not already 
   .Object@Ind <- .Object@Ind/mean(.Object@Ind, na.rm=TRUE)
