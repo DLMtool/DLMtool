@@ -44,7 +44,7 @@ class(P10) <- "PM"
 P50 <- function(MSEobj=NULL) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
-  PMobj@name <- "Probability Not Overfished" 
+  PMobj@name <- "Probability SB above 50% BMSY" 
   PMobj@caption <- 'Prob. SB > 0.5 SBMSY'
   
   y.st <- 1 
@@ -102,7 +102,7 @@ class(P100) <- "PM"
 POF <- function(MSEobj=NULL) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
-  PMobj@name <- "Probability Not Overfishing" 
+  PMobj@name <- "Probability F < FMSY" 
   PMobj@caption <- 'Prob. F < FMSY'
   
   y.st <- 1 
