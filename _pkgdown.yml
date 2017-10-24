@@ -21,16 +21,21 @@ navbar:
         href: reference/Reference_Methods/index.html             
     - text: "Functions" 
       menu:
+      - text: "Operating Model"
       - text: "Setup Operating Model"
         href: reference/Operating_Model_Functions/index.html
       - text: "Run MSE Functions"
         href: reference/Run_MSE_Functions/index.html         
       - text: "MSE Object"
+      - text: "Peformance Metrics"
+        href: reference/PMs/index.html 
       - text: "MSE Plotting Functions"
         href: reference/MSE_Object_Plotting_Functions/index.html  
       - text: "MSE Object Functions"
         href: reference/MSE_Object_Functions/index.html       
       - text: "Fishery Data Object"
+      - text: "Import Data"
+        href: reference/import_data/index.html 
       - text: "Available Methods and Required Data"
         href: reference/Available_Methods_and_Required_Data/index.html 
       - text: "Apply Management Procedures"

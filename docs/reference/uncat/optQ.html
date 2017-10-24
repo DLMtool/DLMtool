@@ -78,6 +78,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Operating Model</li>
     <li>
       <a href="../../reference/Operating_Model_Functions/index.html">Setup Operating Model</a>
     </li>
@@ -86,12 +87,18 @@
     </li>
     <li class="dropdown-header">MSE Object</li>
     <li>
+      <a href="../../reference/PMs/index.html">Peformance Metrics</a>
+    </li>
+    <li>
       <a href="../../reference/MSE_Object_Plotting_Functions/index.html">MSE Plotting Functions</a>
     </li>
     <li>
       <a href="../../reference/MSE_Object_Functions/index.html">MSE Object Functions</a>
     </li>
     <li class="dropdown-header">Fishery Data Object</li>
+    <li>
+      <a href="../../reference/import_data/index.html">Import Data</a>
+    </li>
     <li>
       <a href="../../reference/Available_Methods_and_Required_Data/index.html">Available Methods and Required Data</a>
     </li>
@@ -146,9 +153,9 @@
     <p>Optimize q for a single simulation</p>
     
 
-    <pre class="usage"><span class='fu'>optQ</span>(<span class='no'>logQ</span>, <span class='no'>depc</span>, <span class='no'>SSB0c</span>, <span class='no'>nareas</span>, <span class='no'>maxage</span>, <span class='no'>Ncurr</span>, <span class='no'>pyears</span>, <span class='no'>M_age</span>, <span class='no'>MatAge</span>, <span class='no'>WtAge</span>,
-  <span class='no'>Vuln</span>, <span class='no'>Retc</span>, <span class='no'>Prec</span>, <span class='no'>movc</span>, <span class='no'>SRrelc</span>, <span class='no'>Effind</span>, <span class='no'>Spat_targc</span>, <span class='no'>hc</span>, <span class='no'>R0c</span>, <span class='no'>SSBpRc</span>, <span class='no'>aRc</span>, <span class='no'>bRc</span>,
-  <span class='no'>maxF</span>, <span class='no'>useCPP</span>)</pre>
+    <pre class="usage"><span class='fu'>optQ</span>(<span class='no'>logQ</span>, <span class='no'>depc</span>, <span class='no'>SSB0c</span>, <span class='no'>nareas</span>, <span class='no'>maxage</span>, <span class='no'>Ncurr</span>, <span class='no'>pyears</span>, <span class='no'>M_age</span>, <span class='no'>Asize_c</span>, <span class='no'>MatAge</span>,
+  <span class='no'>WtAge</span>, <span class='no'>Vuln</span>, <span class='no'>Retc</span>, <span class='no'>Prec</span>, <span class='no'>movc</span>, <span class='no'>SRrelc</span>, <span class='no'>Effind</span>, <span class='no'>Spat_targc</span>, <span class='no'>hc</span>, <span class='no'>R0c</span>, <span class='no'>SSBpRc</span>,
+  <span class='no'>aRc</span>, <span class='no'>bRc</span>, <span class='no'>maxF</span>, <span class='no'>useCPP</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -184,6 +191,10 @@
     <tr>
       <th>M_age</th>
       <td><p>M-at-age</p></td>
+    </tr>
+    <tr>
+      <th>Asize_c</th>
+      <td><p>Numeric vector (length nareas) with size of each area</p></td>
     </tr>
     <tr>
       <th>MatAge</th>

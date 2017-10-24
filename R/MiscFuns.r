@@ -999,7 +999,8 @@ plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
   if (any(grepl("plotFun", out))) out <- out[-grep("plotFun", out)]
   if (any(grepl("plot.OM", out))) out <- out[-grep("plot.OM", out)]
   if (class == "MSE") {
-    out <- c(out, "barplot", "boxplot", "VOI", "VOI2")
+    out <- c(out, "barplot", "boxplot", "VOI", "VOI2", "DFO_hist", "DFO_proj",
+             "PWhisker")
     out <- sort(out)
   }
   if (class == "Data") {
