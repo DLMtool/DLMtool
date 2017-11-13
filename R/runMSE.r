@@ -896,6 +896,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       Z_P <- inputcalcs$Z_P # total mortality
 
       retA_P <- inputcalcs$retA_P # retained-at-age
+      
       retL_P <- inputcalcs$retL_P # retained-at-length
       V_P <- inputcalcs$V_P  # vulnerable-at-age
       pSLarray <- inputcalcs$pSLarray # vulnerable-at-length 
@@ -953,12 +954,14 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       
         CBtemp[is.na(CBtemp)] <- tiny
         CBtemp[!is.finite(CBtemp)] <- tiny
+        CNtemp[is.na(CNtemp)] <- tiny
+        CNtemp[!is.finite(CNtemp)] <- tiny
         
         Cobs <- Cbiasa[, nyears + yind] * Cerr[, nyears + yind] * apply(CBtemp, c(1, 3), sum, na.rm = T)
         Cobs[is.na(Cobs)] <- tiny
         Recobs <- Recerr[, nyears + yind] * apply(array(N_P[, 1, yind, ], c(nsim, interval, nareas)), c(1, 2), sum)
        
-        CAA <- array(NA, dim = c(nsim, interval, maxage))  # Catch  at age array
+        CAA <- array(0, dim = c(nsim, interval, maxage))  # Catch  at age array
         # # a multinomial observation model for catch-at-age data
         for (i in 1:nsim) {
           for (j in 1:interval) {

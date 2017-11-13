@@ -992,7 +992,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   ## OM Plots ####
   if (inc.plot) {
     cat("# OM Plots\n\n", sep="", append=TRUE, file=RMDfile) # write heading
-    cat("```{r plot.OM, echo=FALSE, fig.asp=2}\n", append=TRUE, file=RMDfile, sep="")
+    cat("```{r plotOM, echo=FALSE, fig.asp=2}\n", append=TRUE, file=RMDfile, sep="")
     cat("plot.OM(out)\n", append=TRUE, file=RMDfile, sep="")
     cat("```\n\n\n", append=TRUE, file=RMDfile, sep="")
 
@@ -1128,7 +1128,8 @@ writeSection <- function(class=c("Intro", "Stock", "Fleet", "Obs", "Imp", "Refer
       for (ll in (st+1):(end - 1)) {
         cat(textIn[ll], "\n\n", sep="", append=TRUE, file=RMDfile) # write cpars paragraphs
       }
-    }  else stop("More than one section # Custom Parameters", call.=FALSE)
+    } 
+    if (length(cparstext) > 1) stop("More than one section # Custom Parameters", call.=FALSE)
     
   } else {
     # Write class heading 

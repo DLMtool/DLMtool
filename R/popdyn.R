@@ -885,7 +885,7 @@ CalcInput <- function(y, Linf, Asize, nyears, proyears, InputRecs, nsim, nareas,
       # calculate new retention at length curve 
       retL_P[,, yy] <- relLen  
     }
-    
+   
     # upper harvest slot 
     aboveHS <- Len_age[,,allyrs]>HS
     tretA_P <- retA_P[,,allyrs]
@@ -914,6 +914,7 @@ CalcInput <- function(y, Linf, Asize, nyears, proyears, InputRecs, nsim, nareas,
     retL_P[,,allyrs] <- retL_P[,,allyrs] * pSLarray[,,allyrs] 
      
   }
+  
   
   newVB <- apply(Biomass_P[, , y, ] * V_P[SAYt], c(1, 3), sum)  # calculate total vuln biomass by area 
   # fishdist <- (newVB^Spat_targ)/apply(newVB^Spat_targ, 1, mean)  # spatial preference according to spatial vulnerable biomass
