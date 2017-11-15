@@ -132,14 +132,17 @@ List  LSRA_MCMC_sim(double nits, NumericVector pars,
                 NumericVector parUB, int R0ind, int inflind,
                 int slpind, IntegerVector RDind, int nyears, int maxage,
                 double M, NumericVector Mat_age, NumericVector Wt_age, 
-                NumericVector Chist_a, double Umax, double h, NumericMatrix CAA,
-                double CAAadj, double sigmaR) {
+                NumericVector Chist_a, NumericVector Ind, double Umax, double h, NumericMatrix CAA,
+                double CAAadj, double sigmaR, double sigmaI) {
 
   double npars = pars.length();
   NumericVector acceptpars(npars);
   NumericVector pars2(clone(pars));
   NumericVector LHstr(nits);
   NumericVector SSB(nyears);
+  NumericVector Ind_pred(nyears);
+  double Ind_tot = 0;
+  double Ind_count = 0;
   NumericVector PredF(nyears);
   NumericVector RD(nyears);
   NumericVector sel(maxage);
@@ -196,9 +199,6 @@ List  LSRA_MCMC_sim(double nits, NumericVector pars,
     NumericVector predU(maxage);
     LogicalVector cond(maxage);
     
-    
- 
-    
     SSB0 = sum(initN*Mat_age*Wt_age);
     double SSBpR = SSB0/R0;
     
@@ -236,7 +236,24 @@ List  LSRA_MCMC_sim(double nits, NumericVector pars,
       for (int a = (maxage-1); a >0; a--)  N(a) = N(a-1); // aging
       N(0) =  RD(y+maxage)*(0.8*R0*h*SSB(y))/(0.2*SSBpR*R0*(1-h)+(h-0.2)*SSB(y));
      
-    }   
+    }  
+    
+    for (int y=1; y<nyears; y++) { // get mean SSB over observed index years
+      if(Ind(y)>0){
+        Ind_count+=1;
+        Ind_tot+=SSB(y); // add up SSB if index observation is present
+      } 
+    } 
+    
+    double IndLH=0; 
+    for (int y=1; y<nyears; y++) {
+      if(Ind(y)>0){
+        double Iresid = log(Ind(y)/(SSB(y)/(Ind_tot/Ind_count))); // index is relative to mean over observed time range
+        
+        IndLH += dnorm(Iresid,-(pow(sigmaI,2))/2, sigmaI, true);
+      } 
+    }  
+      
     // Rcout << "here" << "\n\n";
     double CAALH = 0;
     for (int y=0; y<nyears; y++) {
@@ -249,7 +266,7 @@ List  LSRA_MCMC_sim(double nits, NumericVector pars,
     
     double RDLH = sum(dnorm(log(recdevs),-(pow(sigmaR,2))/2, sigmaR, true));
     // Rcout << RDLH << "\n\n";
-    double LH = CAALH + RDLH;
+    double LH = CAALH + RDLH + IndLH;
   
     NumericVector rand = runif(1);
     if (i > 0) {

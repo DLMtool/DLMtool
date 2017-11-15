@@ -5,13 +5,14 @@
 #' @param qmult Fraction of natural mortality rate that is mean fishing mortality (Fishing catchability multiplier)
 #' @param patchy The fraction of years that have catch at age data
 #' @param nCAA The number of independent annual catch at age observations (same among all years)
-#' @param sigmaE Level of simulated interannual variability in effort (F) expressed as a lognorma SD
+#' @param sigmaE Level of simulated interannual variability in effort (F) expressed as a lognormal SD
+#' @param sigmaI Observation error in relative abundance indices expressed as a lognormal SD
 #' @return A list: Chist = historical catch series,Recdevs = historical recruitment deviations (mean = 1), CAA = catch at age matrix, N = numbers at age matrix, SSB = annual spawning biomass, FM = Fishing mortality rate at age matrix, M = natural mortality rate \code{classy}
 #' @author T. Carruthers (Canadian DFO grant)
 #' @export SRAsim
 #' @examples
 #' out<-SRAsim(testOM)
-SRAsim<-function(OM,qmult=0.5,patchy=0.2,nCAA=100,sigmaE=0.25){
+SRAsim<-function(OM,qmult=0.5,patchy=0.2,nCAA=100,sigmaE=0.25,sigmaI=0.1){
 
   maxage<-OM@maxage
   nyears<-OM@nyears
@@ -89,8 +90,12 @@ SRAsim<-function(OM,qmult=0.5,patchy=0.2,nCAA=100,sigmaE=0.25){
   plot(c(1,nyears),c(1,maxage),col='white',xlab="Year",ylab="Age")
   legend("top",legend="Catch composition data",bty='n')
   points(rep(1:nyears,maxage),rep(1:maxage,each=nyears),cex=CAA^0.5/max(CAA^0.5,na.rm=T)*2.5)
-
-  return(list(Chist=Chist,Recdevs=Recdevs,CAA=CAA,N=N,SSB=SSB,FM=FM,M=M,SSB0=SSB0,sel=sel))
+  Ind<-trlnorm(nyears,1,sigmaI)*(SSB/SSB[1])
+  Ind[sample(1:nyears,size=nyears*(1-patchy),replace=F)]<-NA
+  Ind<-Ind/mean(Ind,na.rm=T)
+  Ind[is.na(Ind)]<-0
+  
+  return(list(Chist=Chist,Recdevs=Recdevs,CAA=CAA,Ind=Ind,N=N,SSB=SSB,FM=FM,M=M,SSB0=SSB0,sel=sel))
 
 }
 
@@ -134,7 +139,9 @@ LSRA_cpp <-function(x,FF,Chist_arr,M,Mat_age,Wt_age,sel,Recdevs,h){
 #' @param OM An operating model object with M, growth, stock-recruitment and maturity parameters specified.
 #' @param CAA A matrix nyears (rows) by nages (columns) of catch at age (age 1 to maxage in length)
 #' @param Chist A vector of historical catch observations (nyears long) going back to unfished conditions
+#' @param Ind A vector of historical index observations (nyears long, may be patchy with NAs) going back to unfished conditions. 
 #' @param Cobs A numeric value representing catch observation error as a log normal sd
+#' @param Ind A numeric value representing relative abundance index observation error as a log normal sd
 #' @param sigmaR A numeric value representing the prior standard deviation of log space recruitment deviations
 #' @param Umax A numeric value representing the maximum harvest rate for any age class (rejection of sims where this occurs)
 #' @param nsim The number desired draws of parameters / effort trajectories
@@ -160,7 +167,7 @@ LSRA_cpp <-function(x,FF,Chist_arr,M,Mat_age,Wt_age,sel,Recdevs,h){
 #' testOM<-StochasticSRA(testOM,CAA,Chist,nsim=30,nits=1000)
 #' runMSE(testOM)
 #' }
-StochasticSRA <-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proyears=50,
+StochasticSRA <-function(OM,CAA,Chist,Ind,Cobs=0.1,sigmaI=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proyears=50,
                           Jump_fac=1,nits=20000,
                           burnin=1000,thin=50,ESS=300,ploty=T,nplot=6,SRAdir=NA){
   
@@ -300,14 +307,14 @@ StochasticSRA <-function(OM,CAA,Chist,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proye
     mcmc <- snowfall::sfSapply(1:nsim, function(sim) {
       LSRA_MCMC_sim(nits=nits, pars[sim,], JumpCV, adapt, parLB[sim,], parUB[sim,], R0ind-1, 
                     inflind-1, slpind-1, RDind-1, nyears, maxage, M[sim], Mat_age[sim,], 
-                    Wt_age[sim,], Chist_a[sim,], Umax, hs[sim], CAA, CAAadj, sigmaR)
+                    Wt_age[sim,], Chist_a[sim,], Ind, Umax, hs[sim], CAA, CAAadj, sigmaR, sigmaI)
     })
   }else {
     mcmc <- sapply(1:nsim, function(sim) {
       cat(".")
       LSRA_MCMC_sim(nits=nits, pars[sim,], JumpCV, adapt, parLB[sim,], parUB[sim,], R0ind-1, 
                     inflind-1, slpind-1, RDind-1, nyears, maxage, M[sim], Mat_age[sim,], 
-                    Wt_age[sim,], Chist_a[sim,], Umax, hs[sim], CAA, CAAadj, sigmaR)
+                    Wt_age[sim,], Chist_a[sim,], Ind, Umax, hs[sim], CAA, CAAadj, sigmaR, sigmaI)
     })
   }  
 
