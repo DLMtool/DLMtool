@@ -248,9 +248,9 @@ List  LSRA_MCMC_sim(double nits, NumericVector pars,
     double IndLH=0; 
     for (int y=1; y<nyears; y++) {
       if(Ind(y)>0){
-        double Iresid = log(Ind(y)/(SSB(y)/(Ind_tot/Ind_count))); // index is relative to mean over observed time range
+        NumericVector Iresid = log(Ind(y)/(SSB(y)/(Ind_tot/Ind_count))); // index is relative to mean over observed time range
         
-        IndLH += dnorm(Iresid,-(pow(sigmaI,2))/2, sigmaI, true);
+        IndLH += sum(dnorm(Iresid,-(pow(sigmaI,2))/2, sigmaI, true));
       } 
     }  
       
