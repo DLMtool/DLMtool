@@ -16,9 +16,8 @@ This is an example OM documentation file. It is based on a recent case study of 
 recent DLMtool workshop in Valparaiso, Chile, organized by Oceana Chile and funded by a joint project between 
 Oceana, WWF, and EDF.
 
-### Technical Tip
-This document will be compiled into Rmarkdown and then a HTML document using Pandoc. Equations can be included using Latex notation See 'maxage' section for example and [here](https://www.sharelatex.com/learn/Mathematical_expressions) for more information on equations in Latex.
-
+<!-- ### Technical Tip -->
+<!-- This document will be compiled into Rmarkdown and then a HTML document using Pandoc. Equations can be included using Latex notation See 'maxage' section for example and [here](https://www.sharelatex.com/learn/Mathematical_expressions) for more information on equations in Latex. -->
 
 # Stock Parameters
 

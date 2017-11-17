@@ -4,9 +4,10 @@
 \alias{StochasticSRA}
 \title{Stochastic SRA construction of operating models}
 \usage{
-StochasticSRA(OM, CAA, Chist, Cobs = 0.1, sigmaR = 0.5, Umax = 0.9,
-  nsim = 48, proyears = 50, Jump_fac = 1, nits = 20000, burnin = 1000,
-  thin = 50, ESS = 300, ploty = T, nplot = 6, SRAdir = NA)
+StochasticSRA(OM, CAA, Chist, Ind, Cobs = 0.1, sigmaI = 0.1, sigmaR = 0.5,
+  Umax = 0.9, nsim = 48, proyears = 50, Jump_fac = 1, nits = 20000,
+  burnin = 1000, thin = 50, ESS = 300, ploty = T, nplot = 6,
+  SRAdir = NA)
 }
 \arguments{
 \item{OM}{An operating model object with M, growth, stock-recruitment and maturity parameters specified.}
@@ -14,6 +15,8 @@ StochasticSRA(OM, CAA, Chist, Cobs = 0.1, sigmaR = 0.5, Umax = 0.9,
 \item{CAA}{A matrix nyears (rows) by nages (columns) of catch at age (age 1 to maxage in length)}
 
 \item{Chist}{A vector of historical catch observations (nyears long) going back to unfished conditions}
+
+\item{Ind}{A vector of historical index observations (nyears long, may be patchy with NAs) going back to unfished conditions.}
 
 \item{Cobs}{A numeric value representing catch observation error as a log normal sd}
 
@@ -40,6 +43,8 @@ StochasticSRA(OM, CAA, Chist, Cobs = 0.1, sigmaR = 0.5, Umax = 0.9,
 \item{nplot}{how many MCMC samples should be plotted in convergence plots?}
 
 \item{SRAdir}{A directory where the SRA diagnostics / fit are stored}
+
+\item{Ind}{A numeric value representing relative abundance index observation error as a log normal sd}
 }
 \value{
 A list with three positions. Position 1 is the filled OM object, position 2 is the custompars data.frame that may be submitted as an argument to runMSE() and position 3 is the matrix of effort histories [nyears x nsim] vector of objects of class\code{classy}

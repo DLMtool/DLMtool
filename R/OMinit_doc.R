@@ -629,8 +629,9 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
     for (xx in 1:nrow(dat)) {
       val <- dat[xx, 2]
       if (length(val)) {
-        if (dat[xx,1] != "Name") slot(OM, dat[xx, 1]) <- as.numeric(val)
-        if (dat[xx,1] == "Name") slot(OM, dat[xx, 1]) <- val
+        if (!dat[xx,1] %in% c("Name", "Agency", "Region")) {
+          slot(OM, dat[xx, 1]) <- as.numeric(val)
+        } else  slot(OM, dat[xx, 1]) <- val
       } else{
         message("No value found for OM slot ", dat[xx,1], ". Using default: ", slot(OM, dat[xx, 1]))
       }
@@ -714,6 +715,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
     OM <- XL2OM(OM, msg=FALSE)
   } else if (is.null(OM)) {
     fls <- list.files(pattern=".xlsx", ignore.case=TRUE)
+    fls <- fls[!grepl('~', fls)]
     if (length(fls)==1) OM <- XL2OM(fls, msg=FALSE)
     if (length(fls)>1) stop('argument "OM" not provided and multiple .xlsx files in working directory', call.=FALSE)
   } else stop('OM must be class "OM" or name of OM xlsx file.', call.=FALSE)
@@ -752,6 +754,10 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   if (!dir.exists('build')) {
     dir.create('build')
     tt <- file.create('build/readme.txt')
+    if(dir.exists("images")) {
+      dir.create('build/images')
+      cpy <- file.copy('images', 'build', overwrite=TRUE, recursive = TRUE)
+    }
     cat("This directory was created by DLMtool function OMdoc\n\n", sep="", append=TRUE, file='build/readme.txt') 
     cat("Files in this directory are used to generate the OM report.\n\n", sep="", append=TRUE, file='build/readme.txt') 
   } 
@@ -948,14 +954,52 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
     textIn <- textIn[ind:length(textIn)]
   }
   
-  
+
   ## Introduction ####
   writeSection(class="Intro", OM, textIn, RMDfile, color=color, inc.plot=inc.plot)
   
   ## OM Details ####
   OMdesc <- DLMtool::OMDescription
-  cat("# OM Parameters \n", append=TRUE, file=RMDfile, sep="")
+  cat("# Operating Model \n", append=TRUE, file=RMDfile, sep="")
+
+  # Taxonomic Info and Location ####
+  if (.hasSlot(OM, 'Species')) {
+    taxo <- try(getTaxo(OM@Species), silent=TRUE)
+    if (!is.null(taxo)) {
+      if (class(taxo) == 'classification') {
+        cat("## Taxonomy \n", append=TRUE, file=RMDfile, sep="")
+        phylum <- taxo[[1]]$name[taxo[[1]]$rank == "Phylum"]
+        class <- taxo[[1]]$name[taxo[[1]]$rank == "Class"]
+        order <- taxo[[1]]$name[taxo[[1]]$rank == "Order"]
+        family <- taxo[[1]]$name[taxo[[1]]$rank == "Family"]
+        genus <- taxo[[1]]$name[taxo[[1]]$rank == "Genus"]
+        species <- taxo[[1]]$name[taxo[[1]]$rank == "Species"]
+        subspecies <- taxo[[1]]$name[taxo[[1]]$rank == "Subspecies"]
+        
+        if (length(phylum) >0) cat("**Phylum**: ", phylum, "\n\n", append=TRUE, file=RMDfile, sep="")
+        if (length(phylum) >0) cat("**Class**: ", class, "\n\n", append=TRUE, file=RMDfile, sep="")
+        if (length(phylum) >0) cat("**Order**: ", order, "\n\n", append=TRUE, file=RMDfile, sep="")
+        if (length(phylum) >0) cat("**Family**: ", family, "\n\n", append=TRUE, file=RMDfile, sep="")
+        if (length(phylum) >0) cat("**Genus**: ", genus, "\n\n", append=TRUE, file=RMDfile, sep="")
+        if (length(phylum) >0) cat("**Species**: ", species, "\n\n", append=TRUE, file=RMDfile, sep="")
+        if (length(phylum) >0) cat("**Subspecies**: ", subspecies, "\n\n", append=TRUE, file=RMDfile, sep="")
+      } else {
+        message("Species not found")
+      }
+      
+    }
+    
+    if (length(OM@Latitude)>0) {
+      cat("## Management Agency and Region \n\n", append=TRUE, file=RMDfile, sep="")
+      cat("**Management Agency**: ", OM@Agency, "\n\n", append=TRUE, file=RMDfile, sep="")
+      cat("**Region**: ", OM@Region, "\n\n", append=TRUE, file=RMDfile, sep="")
+      cat("**Latitude**: ", OM@Latitude, "\n\n", append=TRUE, file=RMDfile, sep="")
+      cat("**Longitude**: ", OM@Longitude, "\n\n", append=TRUE, file=RMDfile, sep="")
+    }
+    
+  }
   
+  cat("## OM Parameters \n", append=TRUE, file=RMDfile, sep="")
   cat("**Name**: ", OMdesc$Description[OMdesc$Slot =='Name'], ": ", "<span style='color:", color, "'>", " ", OM@Name, "</span>", "\n\n", append=TRUE, file=RMDfile, sep="")
   
   cat("**nsim**: ", OMdesc$Description[OMdesc$Slot =='nsim'], ": ", "<span style='color:", color, "'>", " ", OM@nsim, "</span>", "\n\n", "\n\n", append=TRUE, file=RMDfile, sep="")
@@ -971,6 +1015,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   cat("**reps**: ", OMdesc$Description[OMdesc$Slot =='reps'], " ", "<span style='color:", color, "'>", " ", OM@reps, "</span>", "\n\n", append=TRUE, file=RMDfile, sep="")
  
   cat("**Source**: ", OMdesc$Description[OMdesc$Slot =='Source'], "\n\n", "<span style='color:", color, "'>", " ", OM@Source, "</span>", "\n\n", append=TRUE, file=RMDfile, sep="")
+  
   
   useCpars <- length(OM@cpars) >0 
   ## Cpars ####
@@ -1069,7 +1114,7 @@ Template <- function(type=c("Stock", "Fleet", "Obs", "Imp")) {
   Slots <- names(methods::getSlots(type))
   for (X in Slots) {
     tt <- grep(paste0("\\<", X, "\\>"), mat) 
-    if (X != "Name" && X != "Source") {
+    if (X != "Name" && X != "Source" && X!="Species" && X!="Latitude" && X!='Longitude') {
       if (length(tt) < 1) stop("slot ", X, " not found in ", type, " template", call.=FALSE)
       if (length(tt) > 1) stop("slot ", X, " found multiple times in ", type, " template", call.=FALSE)    
     }

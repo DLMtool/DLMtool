@@ -380,6 +380,7 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
 #' @section Objects from the Class: Objects can be created by calls of the form
 #' \code{new('Stock')}
 #' @slot Name The name of the Stock object. Single value. Character string 
+#' @slot Species Scientific name of the species. Genus and species name. Character string
 #' @slot maxage The maximum age of individuals that is simulated (there is no 'plus group'). Single value. Positive integer
 #' @slot R0 The magnitude of unfished recruitment. Single value. Positive real number
 #' @slot M Natural mortality rate. Uniform distribution lower and upper bounds. Positive real number 
@@ -421,7 +422,8 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
 #' showClass('Stock')
 #' 
 # FecB = "numeric"
-setClass("Stock", representation(Name = "character", maxage = "numeric", 
+setClass("Stock", representation(Name = "character", Species="character",
+                                 maxage = "numeric", 
                                  R0 = "numeric", M = "numeric", M2 = "numeric", 
                                  Mexp="numeric",  Msd = "numeric", Mgrad = "numeric",  
                                  h = "numeric", SRrel = "numeric", Perr = "numeric", AC = "numeric",
@@ -445,6 +447,7 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
       dat <- dat[, 2:ncol(dat)]
       Ncol <- ncol(dat)
       .Object@Name <- dat[match("Name", dname), 1]
+      .Object@Species <- dat[match("Species", dname), 1]
       .Object@maxage <- as.numeric(dat[match("maxage", dname), 1])
       .Object@R0 <- as.numeric(dat[match("R0", dname), 1])
       options(warn=-1)
@@ -890,6 +893,11 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
 #' \code{new('OM', Stock, Fleet, Obs, Imp)}. 
 
 #' @slot Name Name of the operating model
+#' @slot Agency Name of the agency responsible for the management of the fishery. Character string
+#' @slot Region Name of the general geographic region of the fishery. Character string
+#' @slot Latitude Latitude (decimal degrees). Negative values represent the South of the Equator. Numeric. Single value 
+#' @slot Longitude Longitude (decimal degrees). Negative values represent the West of the Prime Meridian. Numeric. Single value 
+
 #' @slot nsim The number of simulations
 #' @slot proyears The number of projected years
 #' @slot interval The assessment interval - how often would you like to update
@@ -904,6 +912,7 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
 
 
 # Stock slots
+#' @slot Species Scientific name of the species. Genus and species name. Character string
 #' @slot maxage The maximum age of individuals that is simulated (there is no 'plus group'). Single value. Positive integer
 #' @slot R0 The magnitude of unfished recruitment. Single value. Positive real number
 #' @slot M Natural mortality rate. Uniform distribution lower and upper bounds. Positive real number 
@@ -1020,7 +1029,9 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
 #' @author T. Carruthers and A. Hordyk
 #' @keywords classes
 #' 
-setClass("OM", representation(Name = "character", nsim="numeric", proyears="numeric", 
+setClass("OM", representation(Name = "character", Agency="character",
+                              Region="character", Latitude="numeric", Longitude="numeric",
+                              nsim="numeric", proyears="numeric", 
                               interval='numeric', pstar='numeric', maxF='numeric', reps='numeric',
                               cpars="list",seed="numeric", Source="character"), contains=c("Stock", "Fleet", "Obs", "Imp"))
 

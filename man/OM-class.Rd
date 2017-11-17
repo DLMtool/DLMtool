@@ -15,6 +15,14 @@ bounds of a uniform distribution from which to sample the parameter.
 \describe{
 \item{\code{Name}}{Name of the operating model}
 
+\item{\code{Agency}}{Name of the agency responsible for the management of the fishery. Character string}
+
+\item{\code{Region}}{Name of the general geographic region of the fishery. Character string}
+
+\item{\code{Latitude}}{Latitude (decimal degrees). Negative values represent the South of the Equator. Numeric. Single value}
+
+\item{\code{Longitude}}{Longitude (decimal degrees). Negative values represent the West of the Prime Meridian. Numeric. Single value}
+
 \item{\code{nsim}}{The number of simulations}
 
 \item{\code{proyears}}{The number of projected years}
@@ -31,6 +39,8 @@ simulated for any given age class}
 \item{\code{reps}}{Number of samples of the management recommendation for each
 method. Note that when this is set to 1, the mean value of the data inputs
 is used.}
+
+\item{\code{Species}}{Scientific name of the species. Genus and species name. Character string}
 
 \item{\code{maxage}}{The maximum age of individuals that is simulated (there is no 'plus group'). Single value. Positive integer}
 

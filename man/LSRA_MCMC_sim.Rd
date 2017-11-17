@@ -5,8 +5,8 @@
 \title{Internal SRA MCMC CPP code}
 \usage{
 LSRA_MCMC_sim(nits, pars, JumpCV, adapt, parLB, parUB, R0ind, inflind, slpind,
-  RDind, nyears, maxage, M, Mat_age, Wt_age, Chist_a, Umax, h, CAA, CAAadj,
-  sigmaR)
+  RDind, nyears, maxage, M, Mat_age, Wt_age, Chist_a, Ind, Umax, h, CAA, CAAadj,
+  sigmaR, sigmaI)
 }
 \arguments{
 \item{nits}{number of iterations}
