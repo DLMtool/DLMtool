@@ -58,11 +58,10 @@ Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
     if (!PMlist[X] %in% avail("PM")) stop(PMlist[X], " is not a valid PM method")
   if (length(PMlist)<2) stop("Must provided more than 1 PM method")
   
-  # PMlist <<- PMlist
   runPM <- vector("list", length(PMlist))
   for (X in 1:length(PMlist)) runPM[[X]] <- eval(call(PMlist[X], MSEobj))
 
-  PlotList <- combn(unique(PMlist), 2 )
+  PlotList <- combn(unique(PMlist), 2)
   lims <- rep(lims, 100)[1:length(PMlist)]
 
   n.col <- ceiling(sqrt(ncol(PlotList)))

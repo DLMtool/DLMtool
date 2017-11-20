@@ -13,8 +13,8 @@
 P10 <- function(MSEobj=NULL) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
-  PMobj@name <- "Probability Biomass above 10% BMSY" 
-  PMobj@caption <- 'Prob. B > 0.1 BMSY'
+  PMobj@name <- "Probability Spawning Biomass above 10% BMSY" 
+  PMobj@caption <- 'Prob. SB > 0.1 SBMSY'
   
   y.st <- 1 
   y.end <- MSEobj@proyears
@@ -44,7 +44,7 @@ class(P10) <- "PM"
 P50 <- function(MSEobj=NULL) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
-  PMobj@name <- "Probability SB above 50% BMSY" 
+  PMobj@name <- "Probability Spawning Biomass above 50% BMSY" 
   PMobj@caption <- 'Prob. SB > 0.5 SBMSY'
   
   y.st <- 1 
@@ -73,7 +73,7 @@ class(P50) <- "PM"
 P100 <- function(MSEobj=NULL) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
-  PMobj@name <- "Probability Biomass > BMSY" 
+  PMobj@name <- "Probability Spawning Biomass > BMSY" 
   PMobj@caption <- 'Prob. SB > SBMSY'
   
   y.st <- 1 

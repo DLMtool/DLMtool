@@ -7,7 +7,7 @@
 #' OMexample()
 #' }
 OMexample <- function() {
-  fromRMD <- system.file("Example_Chile_hake_source.Rmd", package="DLMtool")
+  fromRMD <- system.file("Example_Chile_Hake.Rmd", package="DLMtool")
   tt <- file.copy(fromRMD, getwd(), overwrite = TRUE)
   fromXL <- system.file("Example_Chile_hake.xlsx", package="DLMtool")
   tt <- file.copy(fromXL, getwd(), overwrite = TRUE)
@@ -25,24 +25,24 @@ OMexample <- function() {
 #' to use as templates for the Operating Model.
 #' @param overwrite Logical. Should files be overwritten if they already exist?
 #'
-#' @return name.xlsx and name_source.rmd files are created in the working directory.  
+#' @return name.xlsx and name.rmd files are created in the working directory.  
 #' @export
 #' @author A. Hordyk
 #'
 #' @examples
 #' \dontrun{
-#' # Create an Excel OM template and rmd file called 'myOM.xlsx' and 'myOM_source.rmd': 
+#' # Create an Excel OM template and rmd file called 'myOM.xlsx' and 'myOM.rmd': 
 #' OMinit('myOM')
 #' 
-#' # Create an Excel OM template and text file called 'myOM.rmd' and 'myOM_source.rmd', using
+#' # Create an Excel OM template and text file called 'myOM.rmd' and 'myOM.rmd', using
 #' another OM as a template: 
 #' OMinit('myOM', myOM)
 #' 
-#' # Create an Excel OM template and text file called 'myOM.rmd' and 'myOM_source.rmd', using
+#' # Create an Excel OM template and text file called 'myOM.rmd' and 'myOM.rmd', using
 #' the Stock object 'Herring' as a template: 
 #' OMinit('myOM', Herring)
 #' 
-#' # Create an Excel OM template and text file called 'myOM.rmd' and 'myOM_source.rmd', using
+#' # Create an Excel OM template and text file called 'myOM.rmd' and 'myOM.rmd', using
 #' the Stock object 'Herring', and Obs object 'Generic_obs' as templates: 
 #' OMinit('myOM', Herring, Generic_obs)
 #' }
@@ -269,7 +269,8 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
     
     
     # OM sheet####
-    df <- data.frame(Slot=c("Name", "nsim", "proyears", "interval", "pstar", "maxF", "reps"))
+    df <- data.frame(Slot=c("Name", "Agency", "Region", "Latitude", "Longitude",
+                            "nsim", "proyears", "interval", "pstar", "maxF", "reps"))
     
     # write slots 
     openxlsx::writeData(wb, sheet = "OM", x = df, 
@@ -290,7 +291,7 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
     
     df <- data.frame(Values=c( 48, 50, 4, 0.5, 0.8, 1))
     openxlsx::writeData(wb, sheet = "OM", x = df, 
-                        startCol = 2, startRow = 3,
+                        startCol = 2, startRow = 7,
                         colNames = FALSE, rowNames = FALSE, 
                         withFilter = FALSE,
                         keepNA = FALSE) 
@@ -331,8 +332,8 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
  
   if ('rmd' %in% files) {
     ## Write Rmd source skeleton ####
-    message("Creating ", nameNoExt, "_source.rmd in ", getwd())
-    RmdSource <- paste0(nameNoExt, "_source.rmd")
+    message("Creating ", nameNoExt, ".rmd in ", getwd())
+    RmdSource <- paste0(nameNoExt, ".rmd")
     if (file.exists(RmdSource) & !overwrite) {
       stop(RmdSource, " already exists.\n Use 'overwrite=TRUE'.", call.=FALSE)
     } else {
@@ -568,6 +569,7 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
   # Load the Excel File ####
   if (is.null(name)) {
     fls <- list.files(pattern=".xlsx", ignore.case = TRUE)
+    fls <- fls[!grepl('~', fls)]
     if (length(fls) == 0) stop('Name not provided and no .xlsx files found.', call.=FALSE)
     if (length(fls) > 1) stop("Name not provided and multiple .xlsx files found", call.=FALSE)
     name <- fls
@@ -620,18 +622,26 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
   
   # Read in the OM sheet
   sht <- as.data.frame(readxl::read_excel(name, sheet = "OM", col_names = FALSE))
-  dat <- sht[,1:2] 
+  dat <- sht # sht[,1:2] 
   dat <- dat[which(dat[,1] != "Slot"),]
   # if (ncol(sht)>2) warning("More than two columns found in Sheet OM. Values in columns C+ are ignored")
   if (ncol(sht)<2) {
     message("No values found for OM slots in Sheet OM. Using defaults")
   } else {
     for (xx in 1:nrow(dat)) {
-      val <- dat[xx, 2]
+      val <- dat[xx, 2:ncol(dat)]
       if (length(val)) {
         if (!dat[xx,1] %in% c("Name", "Agency", "Region")) {
-          slot(OM, dat[xx, 1]) <- as.numeric(val)
-        } else  slot(OM, dat[xx, 1]) <- val
+          options(warn=-1)
+          val <- as.numeric(val)
+          options(warn=1)
+          val <- val[!is.na(val)]
+          if (.hasSlot(OM, dat[xx,1])) slot(OM, dat[xx, 1]) <- val
+        } else  {
+          val <- val[!is.na(val)]
+          if (.hasSlot(OM, dat[xx,1])) slot(OM, dat[xx, 1]) <- val
+        }
+        
       } else{
         message("No value found for OM slot ", dat[xx,1], ". Using default: ", slot(OM, dat[xx, 1]))
       }
@@ -648,7 +658,7 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
   ChkObj(OM)
   if (msg) {
     message('OM successfully imported\n')
-    message("Document OM slots in source.rmd file (probably ", tools::file_path_sans_ext(name), "_source.rmd),
+    message("Document OM slots in .rmd file (probably ", tools::file_path_sans_ext(name), ".rmd),
   and run 'OMdoc' if OM parameter values have changed." )
   }
 
@@ -682,7 +692,7 @@ writeCSV2 <- function(inobj, tmpfile = NULL, objtype = c("Stock", "Fleet",
 #'
 #' @param OM An object of class 'OM' or the name of an OM xlsx file 
 #' @param rmd.source Optional. Name of the source.rmd file corresponding to the 'OM'. Default assumption
-#' is that the file is 'OM@Name_source.Rmd'
+#' is that the file is 'OM@Name.Rmd'
 #' @param overwrite Logical. Should existing files be overwritten?
 #' @param out.file Optional. Character. Name of the output file. Default is the same as the text file.
 #' @param inc.plot Logical. Should the plots be included?
@@ -763,7 +773,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   } 
 
   if (is.null(out.file)) out.file <- tools::file_path_sans_ext(rmd.source)
-  out.file <- gsub("_source", "_compiled", out.file)
+  # out.file <- gsub("_source", "_compiled", out.file)
   
   RMDfile <- paste0("build/", out.file, ".Rmd")
   # if (file.exists(RMDfile) & !overwrite) {
@@ -961,46 +971,18 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   ## OM Details ####
   OMdesc <- DLMtool::OMDescription
   cat("# Operating Model \n", append=TRUE, file=RMDfile, sep="")
-
   # Taxonomic Info and Location ####
-  if (.hasSlot(OM, 'Species')) {
-    taxo <- try(getTaxo(OM@Species), silent=TRUE)
-    if (!is.null(taxo)) {
-      if (class(taxo) == 'classification') {
-        cat("## Taxonomy \n", append=TRUE, file=RMDfile, sep="")
-        phylum <- taxo[[1]]$name[taxo[[1]]$rank == "Phylum"]
-        class <- taxo[[1]]$name[taxo[[1]]$rank == "Class"]
-        order <- taxo[[1]]$name[taxo[[1]]$rank == "Order"]
-        family <- taxo[[1]]$name[taxo[[1]]$rank == "Family"]
-        genus <- taxo[[1]]$name[taxo[[1]]$rank == "Genus"]
-        species <- taxo[[1]]$name[taxo[[1]]$rank == "Species"]
-        subspecies <- taxo[[1]]$name[taxo[[1]]$rank == "Subspecies"]
-        
-        if (length(phylum) >0) cat("**Phylum**: ", phylum, "\n\n", append=TRUE, file=RMDfile, sep="")
-        if (length(phylum) >0) cat("**Class**: ", class, "\n\n", append=TRUE, file=RMDfile, sep="")
-        if (length(phylum) >0) cat("**Order**: ", order, "\n\n", append=TRUE, file=RMDfile, sep="")
-        if (length(phylum) >0) cat("**Family**: ", family, "\n\n", append=TRUE, file=RMDfile, sep="")
-        if (length(phylum) >0) cat("**Genus**: ", genus, "\n\n", append=TRUE, file=RMDfile, sep="")
-        if (length(phylum) >0) cat("**Species**: ", species, "\n\n", append=TRUE, file=RMDfile, sep="")
-        if (length(phylum) >0) cat("**Subspecies**: ", subspecies, "\n\n", append=TRUE, file=RMDfile, sep="")
-      } else {
-        message("Species not found")
-      }
-      
-    }
-    
-    if (length(OM@Latitude)>0) {
-      cat("## Management Agency and Region \n\n", append=TRUE, file=RMDfile, sep="")
-      cat("**Management Agency**: ", OM@Agency, "\n\n", append=TRUE, file=RMDfile, sep="")
-      cat("**Region**: ", OM@Region, "\n\n", append=TRUE, file=RMDfile, sep="")
-      cat("**Latitude**: ", OM@Latitude, "\n\n", append=TRUE, file=RMDfile, sep="")
-      cat("**Longitude**: ", OM@Longitude, "\n\n", append=TRUE, file=RMDfile, sep="")
-    }
-    
+  if (.hasSlot(OM, 'Species') && !is.na(OM@Species)) {
+    cat("## Species Information \n\n", append=TRUE, file=RMDfile, sep="")
+    cat("**Species**: ", OM@Species, "\n\n", append=TRUE, file=RMDfile, sep="")
+    cat("**Management Agency**: ", OM@Agency, "\n\n", append=TRUE, file=RMDfile, sep="")
+    cat("**Region**: ", OM@Region, "\n\n", append=TRUE, file=RMDfile, sep="")
+    cat("**Latitude**: ", OM@Latitude, "\n\n", append=TRUE, file=RMDfile, sep="")
+    cat("**Longitude**: ", OM@Longitude, "\n\n", append=TRUE, file=RMDfile, sep="")
   }
   
   cat("## OM Parameters \n", append=TRUE, file=RMDfile, sep="")
-  cat("**Name**: ", OMdesc$Description[OMdesc$Slot =='Name'], ": ", "<span style='color:", color, "'>", " ", OM@Name, "</span>", "\n\n", append=TRUE, file=RMDfile, sep="")
+  cat("**OM Name**: ", OMdesc$Description[OMdesc$Slot =='Name'], ": ", "<span style='color:", color, "'>", " ", OM@Name, "</span>", "\n\n", append=TRUE, file=RMDfile, sep="")
   
   cat("**nsim**: ", OMdesc$Description[OMdesc$Slot =='nsim'], ": ", "<span style='color:", color, "'>", " ", OM@nsim, "</span>", "\n\n", "\n\n", append=TRUE, file=RMDfile, sep="")
   

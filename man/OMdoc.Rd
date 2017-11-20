@@ -11,7 +11,7 @@ OMdoc(OM = NULL, rmd.source = NULL, overwrite = FALSE, out.file = NULL,
 \item{OM}{An object of class 'OM' or the name of an OM xlsx file}
 
 \item{rmd.source}{Optional. Name of the source.rmd file corresponding to the 'OM'. Default assumption
-is that the file is 'OM@Name_source.Rmd'}
+is that the file is 'OM@Name.Rmd'}
 
 \item{overwrite}{Logical. Should existing files be overwritten?}
 
