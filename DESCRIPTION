@@ -33,7 +33,6 @@ Imports:
     readxl,
     rmarkdown,
     stats,
-    taxize,
     utils
 LazyData: yes
 LazyLoad: yes
