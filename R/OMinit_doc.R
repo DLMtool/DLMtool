@@ -25,24 +25,24 @@ OMexample <- function() {
 #' to use as templates for the Operating Model.
 #' @param overwrite Logical. Should files be overwritten if they already exist?
 #'
-#' @return name.xlsx and name_source.rmd files are created in the working directory.  
+#' @return name.xlsx and name.rmd files are created in the working directory.  
 #' @export
 #' @author A. Hordyk
 #'
 #' @examples
 #' \dontrun{
-#' # Create an Excel OM template and rmd file called 'myOM.xlsx' and 'myOM_source.rmd': 
+#' # Create an Excel OM template and rmd file called 'myOM.xlsx' and 'myOM.rmd': 
 #' OMinit('myOM')
 #' 
-#' # Create an Excel OM template and text file called 'myOM.rmd' and 'myOM_source.rmd', using
+#' # Create an Excel OM template and text file called 'myOM.rmd' and 'myOM.rmd', using
 #' another OM as a template: 
 #' OMinit('myOM', myOM)
 #' 
-#' # Create an Excel OM template and text file called 'myOM.rmd' and 'myOM_source.rmd', using
+#' # Create an Excel OM template and text file called 'myOM.rmd' and 'myOM.rmd', using
 #' the Stock object 'Herring' as a template: 
 #' OMinit('myOM', Herring)
 #' 
-#' # Create an Excel OM template and text file called 'myOM.rmd' and 'myOM_source.rmd', using
+#' # Create an Excel OM template and text file called 'myOM.rmd' and 'myOM.rmd', using
 #' the Stock object 'Herring', and Obs object 'Generic_obs' as templates: 
 #' OMinit('myOM', Herring, Generic_obs)
 #' }
@@ -269,7 +269,8 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
     
     
     # OM sheet####
-    df <- data.frame(Slot=c("Name", "nsim", "proyears", "interval", "pstar", "maxF", "reps"))
+    df <- data.frame(Slot=c("Name", "Agency", "Region", "Latitude", "Longitude",
+                            "nsim", "proyears", "interval", "pstar", "maxF", "reps"))
     
     # write slots 
     openxlsx::writeData(wb, sheet = "OM", x = df, 
@@ -290,7 +291,7 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
     
     df <- data.frame(Values=c( 48, 50, 4, 0.5, 0.8, 1))
     openxlsx::writeData(wb, sheet = "OM", x = df, 
-                        startCol = 2, startRow = 3,
+                        startCol = 2, startRow = 7,
                         colNames = FALSE, rowNames = FALSE, 
                         withFilter = FALSE,
                         keepNA = FALSE) 
@@ -331,8 +332,8 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
  
   if ('rmd' %in% files) {
     ## Write Rmd source skeleton ####
-    message("Creating ", nameNoExt, "_source.rmd in ", getwd())
-    RmdSource <- paste0(nameNoExt, "_source.rmd")
+    message("Creating ", nameNoExt, ".rmd in ", getwd())
+    RmdSource <- paste0(nameNoExt, ".rmd")
     if (file.exists(RmdSource) & !overwrite) {
       stop(RmdSource, " already exists.\n Use 'overwrite=TRUE'.", call.=FALSE)
     } else {
@@ -648,7 +649,7 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
   ChkObj(OM)
   if (msg) {
     message('OM successfully imported\n')
-    message("Document OM slots in source.rmd file (probably ", tools::file_path_sans_ext(name), "_source.rmd),
+    message("Document OM slots in .rmd file (probably ", tools::file_path_sans_ext(name), ".rmd),
   and run 'OMdoc' if OM parameter values have changed." )
   }
 
@@ -682,7 +683,7 @@ writeCSV2 <- function(inobj, tmpfile = NULL, objtype = c("Stock", "Fleet",
 #'
 #' @param OM An object of class 'OM' or the name of an OM xlsx file 
 #' @param rmd.source Optional. Name of the source.rmd file corresponding to the 'OM'. Default assumption
-#' is that the file is 'OM@Name_source.Rmd'
+#' is that the file is 'OM@Name.Rmd'
 #' @param overwrite Logical. Should existing files be overwritten?
 #' @param out.file Optional. Character. Name of the output file. Default is the same as the text file.
 #' @param inc.plot Logical. Should the plots be included?
@@ -763,7 +764,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   } 
 
   if (is.null(out.file)) out.file <- tools::file_path_sans_ext(rmd.source)
-  out.file <- gsub("_source", "_compiled", out.file)
+  # out.file <- gsub("_source", "_compiled", out.file)
   
   RMDfile <- paste0("build/", out.file, ".Rmd")
   # if (file.exists(RMDfile) & !overwrite) {

@@ -18,7 +18,7 @@ to use as templates for the Operating Model.}
 \item{overwrite}{Logical. Should files be overwritten if they already exist?}
 }
 \value{
-name.xlsx and name_source.rmd files are created in the working directory.
+name.xlsx and name.rmd files are created in the working directory.
 }
 \description{
 Generates an Excel spreadsheet and a source.rmd file in the current working directory for 
@@ -26,18 +26,18 @@ specifying and documenting a DLMtool Operating Model.
 }
 \examples{
 \dontrun{
-# Create an Excel OM template and rmd file called 'myOM.xlsx' and 'myOM_source.rmd': 
+# Create an Excel OM template and rmd file called 'myOM.xlsx' and 'myOM.rmd': 
 OMinit('myOM')
 
-# Create an Excel OM template and text file called 'myOM.rmd' and 'myOM_source.rmd', using
+# Create an Excel OM template and text file called 'myOM.rmd' and 'myOM.rmd', using
 another OM as a template: 
 OMinit('myOM', myOM)
 
-# Create an Excel OM template and text file called 'myOM.rmd' and 'myOM_source.rmd', using
+# Create an Excel OM template and text file called 'myOM.rmd' and 'myOM.rmd', using
 the Stock object 'Herring' as a template: 
 OMinit('myOM', Herring)
 
-# Create an Excel OM template and text file called 'myOM.rmd' and 'myOM_source.rmd', using
+# Create an Excel OM template and text file called 'myOM.rmd' and 'myOM.rmd', using
 the Stock object 'Herring', and Obs object 'Generic_obs' as templates: 
 OMinit('myOM', Herring, Generic_obs)
 }
