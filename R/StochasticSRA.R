@@ -179,7 +179,7 @@ LSRA_cpp <-function(x,FF,Chist_arr,M,Mat_age,Wt_age,sel,Recdevs,h){
 #' testOM<-StochasticSRA(testOM,CAA,Chist,nsim=30,nits=1000)
 #' runMSE(testOM)
 #' }
-StochasticSRAcpp <-function(OM,CAA,Chist,Ind,Cobs=0.1,sigmaI=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proyears=50,
+StochasticSRAcpp <-function(OM,CAA,Chist,Ind,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proyears=50,
                           Jump_fac=1,nits=20000,
                           burnin=1000,thin=50,ESS=300,ploty=T,nplot=6,SRAdir=NA){
   
