@@ -924,6 +924,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
         # check if OM has changed 
         changed <- rep(FALSE, length(slotNames(OM)))
         for (sl in seq_along(slotNames(OM))) {
+      
           oldOM <- slot(OM, slotNames(OM)[sl])
           newOM <- slot(testOM, slotNames(OM)[sl])
           if (class(oldOM) !='character') {
@@ -932,8 +933,14 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
               if (length(newOM)<1 || !is.finite(newOM)) newOM <- 0
               if (any(oldOM != newOM)) changed[sl] <- TRUE
             } else {
-              if (length(oldOM) != length(newOM)) changed[sl] <- TRUE
-              if (length(setdiff(oldOM, newOM)) > 0) changed[sl] <- TRUE
+              if (length(oldOM) != length(newOM)) {
+                changed[sl] <- TRUE
+              } else if (length(oldOM)>0){
+                for (xx in 1:length(oldOM)) {
+                  if(any(oldOM[[xx]] != newOM[[xx]]))changed[sl] <- TRUE
+                  
+                }
+              }
             }
           }
         }
@@ -990,8 +997,14 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
     cat("**Species**: ", OM@Species, "\n\n", append=TRUE, file=RMDfile, sep="")
     cat("**Management Agency**: ", OM@Agency, "\n\n", append=TRUE, file=RMDfile, sep="")
     cat("**Region**: ", OM@Region, "\n\n", append=TRUE, file=RMDfile, sep="")
-    cat("**Latitude**: ", OM@Latitude, "\n\n", append=TRUE, file=RMDfile, sep="")
-    cat("**Longitude**: ", OM@Longitude, "\n\n", append=TRUE, file=RMDfile, sep="")
+    if (length(OM@Latitude)>0) {
+      lat <- paste0(OM@Latitude, sep="", collapse=", ")
+      cat("**Latitude**: ", lat, "\n\n", append=TRUE, file=RMDfile, sep="")
+    }
+    if (length(OM@Longitude)>0) {
+      long <- paste0(OM@Longitude, sep="", collapse=", ")
+      cat("**Longitude**: ", long, "\n\n", append=TRUE, file=RMDfile, sep="")
+    }
   }
   
   cat("## OM Parameters \n", append=TRUE, file=RMDfile, sep="")
