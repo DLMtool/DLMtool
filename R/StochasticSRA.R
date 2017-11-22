@@ -534,14 +534,20 @@ StochasticSRAcpp <-function(OM,CAA,Chist,Ind,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=4
 #' testOM<-StochasticSRA(testOM,CAA,Chist,nsim=30,nits=1000)
 #' runMSE(testOM)
 #' }
-StochasticSRA<-function(OM,CAA,Chist,Ind,ML,wts=c(1,1,0.5,0.1),
+StochasticSRA<-function(OM,CAA,Chist,Ind=NA,ML=NA,wts=c(1,1,0.5,0.1),
                         Jump_fac=1,nits=4000, burnin=500,thin=10,ESS=300,MLsd=0.1,
                         ploty=T,nplot=6,SRAdir=NA){
+  
+  
   
   OM <- updateMSE(OM) # Check that all required slots in OM object contain values 
   nyears<-length(Chist)
   if(class(Chist)=="matrix")nyears<-nrow(Chist)
   maxage<-OM@maxage
+  
+  if(length(Ind)==1)Ind<-rep(NA,nyears)
+  if(length(ML)==1)ML<-rep(NA,nyears)
+  
  
   Umax<-1-exp(-OM@maxF) # get SRA umax from OM
   Imiss<-is.na(Ind)     # which SSB index observations are missing?
