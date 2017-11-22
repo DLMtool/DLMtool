@@ -439,11 +439,13 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
     cat("\n\n# Stock Parameters\n\n", sep="", append=TRUE, file=RmdSource) 
     slots <- slotNames("Stock")
     for (X in slots) {
-      cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
-      if (is.null(ObTemplates$Stock)) {
-        cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
-      } else {
-        cat("Borrowed from ", ObTemplates$Stock@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
+      if (! X %in% c("Name", "Species")) {
+        cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
+        if (is.null(ObTemplates$Stock)) {
+          cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
+        } else {
+          cat("Borrowed from ", ObTemplates$Stock@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
+        }
       }
     }
     
@@ -451,12 +453,15 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
     cat("\n\n# Fleet Parameters\n\n", sep="", append=TRUE, file=RmdSource) 
     slots <- slotNames("Fleet")
     for (X in slots) {
-      cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
-      if (is.null(ObTemplates$Fleet)) {
-        cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
-      } else {
-        cat("Borrowed from ", ObTemplates$Fleet@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
+      if (! X %in% c("Name")) {
+        cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
+        if (is.null(ObTemplates$Fleet)) {
+          cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
+        } else {
+          cat("Borrowed from ", ObTemplates$Fleet@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
+        }
       }
+    
     }
     
     
@@ -464,24 +469,31 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
     cat("\n\n# Obs Parameters\n\n", sep="", append=TRUE, file=RmdSource) 
     slots <- slotNames("Obs")
     for (X in slots) {
-      cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
-      if (is.null(ObTemplates$Obs)) {
-        cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
-      } else {
-        cat("Borrowed from ", ObTemplates$Obs@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
+      if (! X %in% c("Name")) {
+        cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
+        if (is.null(ObTemplates$Obs)) {
+          cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
+        } else {
+          cat("Borrowed from ", ObTemplates$Obs@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
+        }
       }
+      
+
     }
     
     # Imp Parameters ####
     cat("\n\n# Imp Parameters\n\n", sep="", append=TRUE, file=RmdSource) 
     slots <- slotNames("Imp")
     for (X in slots) {
-      cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
-      if (is.null(ObTemplates$Imp)) {
-        cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
-      } else {
-        cat("Borrowed from ", ObTemplates$Imp@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
+      if (! X %in% c("Name")) {
+        cat("## ", X, "\n", sep="", append=TRUE, file=RmdSource)
+        if (is.null(ObTemplates$Imp)) {
+          cat("No justification provided. \n\n", sep="", append=TRUE, file=RmdSource)  
+        } else {
+          cat("Borrowed from ", ObTemplates$Imp@Name, "\n\n", sep="", append=TRUE, file=RmdSource)
+        }
       }
+    
     }
     
     # References ####
@@ -1180,6 +1192,13 @@ writeSection <- function(class=c("Intro", "Stock", "Fleet", "Obs", "Imp", "Refer
       invalid <- scLH[!scLH %in% Slots]
       stop("Invalid second level headings (must match slots in class ", class, "): ", paste(invalid, ""), call.=FALSE)
     }
+    
+    # check for text after class heading 
+    preText <- textIn[bg:(bg+scLHloc[1]-2)]
+    if (any(nchar(preText)>0)) {
+      cat(preText, "\n\n", append=TRUE, file=RMDfile, sep="")
+    }
+  
     
     # Get template for class section 
     ClTemp <- Template(class)
