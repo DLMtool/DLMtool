@@ -755,9 +755,14 @@ StochasticSRA<-function(OM,CAA,Chist,Ind,ML,wts=c(1,1,0.5,0.1),
     Ipred[matrix(rep(Imiss,each=nsim),nrow=nsim)]<-NA
     Ipred<-Ipred/apply(Ipred,1,mean,na.rm=T)
     Ires<-Ipred/matrix(rep(Ind,each=nsim),nrow=nsim)
-    
     MLres<-MLpred/matrix(rep(ML,each=nsim),nrow=nsim)
     
+    Ires[Ires<(-1E10)]<-(-1E10)
+    Ires[Ires>1E10]<-1E10
+    MLres[MLres<(-1E10)]<-(-1E10)
+    MLres[MLres>1E10]<-1E10
+    
+    CAA_pred[CAA_pred<1E-15]<-1E-15
     #CAAwt<-sin(3.2+3*(1:nyears)/nyears)+1
     #CAAwt<-CAAwt^3
     #CAAwt<-CAAwt/mean(CAAwt)
@@ -767,8 +772,8 @@ StochasticSRA<-function(OM,CAA,Chist,Ind,ML,wts=c(1,1,0.5,0.1),
                  1,sum,na.rm=T)
     
     RDLH<-apply(matrix(dnorm(nupars[RDind],-(procsd^2)/2,procsd,log=T),nrow=nsim),1,sum)
-    ILH<-apply(dnorm(Ires,-(Iobs^2)/2,Iobs,log=T),1,sum,na.rm=T)
-    MLLH<-apply(dnorm(MLres,-(MLsd^2)/2,MLsd,log=T),1,sum,na.rm=T)
+    ILH<-apply(dnorm(log(Ires),-(Iobs^2)/2,Iobs,log=T),1,sum,na.rm=T)
+    MLLH<-apply(dnorm(log(MLres),-(MLsd^2)/2,MLsd,log=T),1,sum,na.rm=T)
       
     LH<-wts[1]*CAALH+wts[2]*RDLH+wts[3]*ILH+wts[4]*MLLH
     
