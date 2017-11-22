@@ -1217,11 +1217,10 @@ writeSection <- function(class=c("Intro", "Stock", "Fleet", "Obs", "Imp", "Refer
           # get slot value if not in cpars 
           if (useCpars && sl %in% names(OM@cpars)) {
             val <- range(OM@cpars[[sl]])
+            val <- round(val,2)
             used <- TRUE
             val <- gsub('"', "", paste(val, collapse="\", \""))
-            valtext <- paste0("(", trimws(val), ")")
-            # currently not used. Manually describe in the custom parameters section
-            
+            valtext <- paste0("Specified in cpars: ", "<span style='color:", color, "'>", " ", trimws(val), "</span>", "\n\n")
           } else {
             val <- slot(OM, sl)
             if (is.numeric(val)) val <- round(val,2)
