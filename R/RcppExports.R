@@ -109,8 +109,8 @@ LSRA_opt_cpp <- function(param, FF_a, Chist, M_a, Mat_age_a, Wt_age_a, sel_a, Re
 #' 
 #' @author A. Hordyk
 #' @export
-LSRA_MCMC_sim <- function(nits, pars, JumpCV, adapt, parLB, parUB, R0ind, inflind, slpind, RDind, nyears, maxage, M, Mat_age, Wt_age, Chist_a, Ind, Umax, h, CAA, CAAadj, sigmaR, sigmaI) {
-    .Call('_DLMtool_LSRA_MCMC_sim', PACKAGE = 'DLMtool', nits, pars, JumpCV, adapt, parLB, parUB, R0ind, inflind, slpind, RDind, nyears, maxage, M, Mat_age, Wt_age, Chist_a, Ind, Umax, h, CAA, CAAadj, sigmaR, sigmaI)
+LSRA_MCMC_sim <- function(nits, pars, JumpCV, adapt, parLB, parUB, R0ind, inflind, slpind, RDind, nyears, maxage, M, Mat_age, Wt_age, Chist_a, Umax, h, CAA, CAAadj, sigmaR) {
+    .Call('_DLMtool_LSRA_MCMC_sim', PACKAGE = 'DLMtool', nits, pars, JumpCV, adapt, parLB, parUB, R0ind, inflind, slpind, RDind, nyears, maxage, M, Mat_age, Wt_age, Chist_a, Umax, h, CAA, CAAadj, sigmaR)
 }
 
 #' Rcpp version of the Optimization function that returns the squared difference between user
