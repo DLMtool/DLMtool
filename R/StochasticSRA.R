@@ -154,7 +154,6 @@ LSRA_cpp <-function(x,FF,Chist_arr,M,Mat_age,Wt_age,sel,Recdevs,h){
 #' @param Chist A vector of historical catch observations (nyears long) going back to unfished conditions
 #' @param Ind A vector of historical index observations (nyears long, may be patchy with NAs) going back to unfished conditions. 
 #' @param Cobs A numeric value representing catch observation error as a log normal sd
-#' @param Ind A numeric value representing relative abundance index observation error as a log normal sd
 #' @param sigmaR A numeric value representing the prior standard deviation of log space recruitment deviations
 #' @param Umax A numeric value representing the maximum harvest rate for any age class (rejection of sims where this occurs)
 #' @param nsim The number desired draws of parameters / effort trajectories
