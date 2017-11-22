@@ -781,7 +781,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   } 
   
   if(dir.exists("images")) {
-    dir.create('build/images')
+    dir.create('build/images', showWarnings = FALSE)
     cpy <- file.copy('images', 'build', overwrite=TRUE, recursive = TRUE)
   }
 
