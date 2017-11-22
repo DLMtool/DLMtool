@@ -776,13 +776,14 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   if (!dir.exists('build')) {
     dir.create('build')
     tt <- file.create('build/readme.txt')
-    if(dir.exists("images")) {
-      dir.create('build/images')
-      cpy <- file.copy('images', 'build', overwrite=TRUE, recursive = TRUE)
-    }
     cat("This directory was created by DLMtool function OMdoc\n\n", sep="", append=TRUE, file='build/readme.txt') 
     cat("Files in this directory are used to generate the OM report.\n\n", sep="", append=TRUE, file='build/readme.txt') 
   } 
+  
+  if(dir.exists("images")) {
+    dir.create('build/images')
+    cpy <- file.copy('images', 'build', overwrite=TRUE, recursive = TRUE)
+  }
 
   if (is.null(out.file)) out.file <- tools::file_path_sans_ext(rmd.source)
   # out.file <- gsub("_source", "_compiled", out.file)
