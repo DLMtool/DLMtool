@@ -4,10 +4,10 @@
 \alias{StochasticSRAcpp}
 \title{Stochastic SRA construction of operating models}
 \usage{
-StochasticSRAcpp(OM, CAA, Chist, Ind, Cobs = 0.1, sigmaI = 0.1,
-  sigmaR = 0.5, Umax = 0.9, nsim = 48, proyears = 50, Jump_fac = 1,
-  nits = 20000, burnin = 1000, thin = 50, ESS = 300, ploty = T,
-  nplot = 6, SRAdir = NA)
+StochasticSRAcpp(OM, CAA, Chist, Ind, Cobs = 0.1, sigmaR = 0.5,
+  Umax = 0.9, nsim = 48, proyears = 50, Jump_fac = 1, nits = 20000,
+  burnin = 1000, thin = 50, ESS = 300, ploty = T, nplot = 6,
+  SRAdir = NA)
 }
 \arguments{
 \item{OM}{An operating model object with M, growth, stock-recruitment and maturity parameters specified.}
