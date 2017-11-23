@@ -994,7 +994,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   # Taxonomic Info and Location ####
   if (.hasSlot(OM, 'Species') && !is.na(OM@Species)) {
     cat("## Species Information \n\n", append=TRUE, file=RMDfile, sep="")
-    cat("**Species**: ", OM@Species, "\n\n", append=TRUE, file=RMDfile, sep="")
+    cat("**Species**: *", OM@Species, "*\n\n", append=TRUE, file=RMDfile, sep="")
     cat("**Management Agency**: ", OM@Agency, "\n\n", append=TRUE, file=RMDfile, sep="")
     cat("**Region**: ", OM@Region, "\n\n", append=TRUE, file=RMDfile, sep="")
     if (length(OM@Latitude)>0) {
@@ -1230,13 +1230,13 @@ writeSection <- function(class=c("Intro", "Stock", "Fleet", "Obs", "Imp", "Refer
           # get slot value if not in cpars 
           if (useCpars && sl %in% names(OM@cpars)) {
             val <- range(OM@cpars[[sl]])
-            val <- round(val,2)
+            val <- signif(val,3)
             used <- TRUE
             val <- gsub('"', "", paste(val, collapse="\", \""))
             valtext <- paste0("Specified in cpars: ", "<span style='color:", color, "'>", " ", trimws(val), "</span>", "\n\n")
           } else {
             val <- slot(OM, sl)
-            if (is.numeric(val)) val <- round(val,2)
+            if (is.numeric(val)) val <- signif(val,3)
             used <- length(val)>0 && !is.na(val) && !is.null(val) # is the slot used?
             if (used) {
               val <- gsub('"', "", paste(val, collapse="\", \""))
