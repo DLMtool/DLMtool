@@ -7,7 +7,7 @@
 #' @export
 #'
 validcpars <- function(print=TRUE) {
-  vnames <- sort(c("dep","Esd","Find","procsd","AC","M","Msd", 
+  vnames <- sort(c("D","Esd","Find","procsd","AC","M","Msd", 
                    "Mgrad","hs","Linf","Linfsd","Linfgrad",
                    "K","Ksd","Kgrad","t0","L50", "L95", "L50_95","Spat_targ",
                    "Frac_area_1","Prob_staying","Size_area_1", 

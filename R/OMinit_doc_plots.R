@@ -172,8 +172,8 @@ plotDep <- function(OM, Pars=NULL, nsim=48, nyears=50, proyears=50, nsamp=3, col
   matplot(dep[, its],  type="l", bty="l", ylab="", xlab="", add=TRUE, lwd=4, col=1:nsamp, 
           lty=1, ylim=ylim)
   
-  hist2(Pars$dep, col=col, axes=FALSE, main="Depletion (SB/SB0)", breaks=breaks)
-  abline(v=Pars$dep[its], col=1:nsamp, lwd=lwd)
+  hist2(Pars$D, col=col, axes=FALSE, main="Depletion (SB/SB0)", breaks=breaks)
+  abline(v=Pars$D[its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
 

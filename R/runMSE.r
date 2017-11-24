@@ -1,5 +1,5 @@
 
-Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "Mgrad", "SRrel", "hs", "procsd",
+Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "D", "Mgrad", "SRrel", "hs", "procsd",
            "L50", "L95", "L50_95", "CAL_binsmid", "Len_age", "maxlen", "Linf", 
            "M_at_Length", "Frac_area_1", "Prob_staying", "M_ageArray", "Mat_age",
            "Wt_age", "V", "Spat_targ", "procmu", "recMulti", "Linfrand", "Krand",
@@ -241,21 +241,21 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   bounds <- c(0.0001, 15) # q bounds for optimizer
   if (snowfall::sfIsRunning()) {
-    # snowfall::sfExport(list = c("dep", "Find", "Perr", "M_ageArray", "hs", "Mat_age",
+    # snowfall::sfExport(list = c("D", "Find", "Perr", "M_ageArray", "hs", "Mat_age",
     # "Wt_age", "R0", "V", "nyears", "maxage", "SRrel", "aR", "bR"))
-    # qs <- snowfall::sfSapply(1:nsim, getq2, dep, Find, Perr, M_ageArray, hs, Mat_age,
+    # qs <- snowfall::sfSapply(1:nsim, getq2, D, Find, Perr, M_ageArray, hs, Mat_age,
     # Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR, bounds)  # find the q that gives current stock depletion
     
-    snowfall::sfExport(list = c("dep", "SSB0", "nareas", "maxage", "N", "nyears", 
+    snowfall::sfExport(list = c("D", "SSB0", "nareas", "maxage", "N", "nyears", 
                                 "M_ageArray", "Mat_age", "Asize", "Wt_age", "V", "retA", 'Perr', "mov", "SRrel", "Find", 
                                 "Spat_targ", "hs", "R0a", "SSBpR", "aR", 'bR', "bounds", "maxF"))
-    qs <- snowfall::sfSapply(1:nsim, getq3, dep, SSB0, nareas, maxage, N, pyears=nyears, 
+    qs <- snowfall::sfSapply(1:nsim, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
                              M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr, mov, SRrel, Find, 
                              Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, maxF=maxF) # find the q that gives current stock depletion
   } else {
-    # qs <- sapply(1:nsim, getq2, dep, Find, Perr, M_ageArray, hs, Mat_age,
+    # qs <- sapply(1:nsim, getq2, D, Find, Perr, M_ageArray, hs, Mat_age,
     #              Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR, bounds)  # find the q that gives current stock depletion
-    qs <- sapply(1:nsim, getq3, dep, SSB0, nareas, maxage, N, pyears=nyears, 
+    qs <- sapply(1:nsim, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
                  M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr, mov, SRrel, Find, 
                  Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, maxF=maxF) # find the q that gives current stock depletion
   }
@@ -281,12 +281,12 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       SampCpars2 <- list()
       if (length(OM2@cpars)>0) SampCpars2 <- SampleCpars(OM2@cpars, OM2@nsim, msg=FALSE) 
      
-      ResampStockPars <- SampleStockPars(OM2, cpars=SampCpars2)  
+      ResampStockPars <- SampleStockPars(OM2, cpars=SampCpars2, Msg=FALSE)  
       ResampStockPars$CAL_bins <- StockPars$CAL_bins
       ResampStockPars$CAL_binsmid <- StockPars$CAL_binsmid 
     
       # Re-sample depletion 
-      dep[probQ] <- ResampStockPars$dep 
+      D[probQ] <- ResampStockPars$D 
       
       # Re-sample recruitment deviations
       procsd[probQ] <- ResampStockPars$procsd 
@@ -304,14 +304,14 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       # Optimize for q 
       if (snowfall::sfIsRunning()) {
         
-        snowfall::sfExport(list = c("dep", "SSB0", "nareas", "maxage", "N", "nyears", 
+        snowfall::sfExport(list = c("D", "SSB0", "nareas", "maxage", "N", "nyears", 
                                     "M_ageArray", "Mat_age", "Wt_age", "V", "retA", 'Perr', "mov", "SRrel", "Find", 
                                     "Spat_targ", "hs", "R0a", "SSBpR", "aR", 'bR', "bounds", "maxF"))
-        qs[probQ] <- snowfall::sfSapply(probQ, getq3, dep, SSB0, nareas, maxage, N, pyears=nyears, 
+        qs[probQ] <- snowfall::sfSapply(probQ, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
                                         M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr, mov, SRrel, Find, 
                                         Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, maxF=maxF) # find the q that gives current stock depletion
       } else {
-        qs[probQ] <- sapply(probQ, getq3, dep, SSB0, nareas, maxage, N, pyears=nyears, 
+        qs[probQ] <- sapply(probQ, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
                             M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr, mov, SRrel, Find, 
                             Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, maxF=maxF) # find the q that gives current stock depletion
       }
@@ -381,8 +381,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   # # apply hyperstability / hyperdepletion
   
   # Check that depletion is correct
-  # print(cbind(round(dep,4), round(Depletion,4)))
-  # if (prod(round(dep, 2)/ round(Depletion,2)) != 1) warning("Possible problem in depletion calculations")
+  # print(cbind(round(D,4), round(Depletion,4)))
+  # if (prod(round(D, 2)/ round(Depletion,2)) != 1) warning("Possible problem in depletion calculations")
   
   # --- Calculate MSY references ----  
   message("Calculating MSY reference points")  # Print a progress update
@@ -1217,7 +1217,7 @@ cparscheck<-function(cpars){
 
 cparnamecheck<-function(cpars){
 
-  Sampnames <- c("dep","Esd","Find","procsd","AC","M","Msd",
+  Sampnames <- c("D","Esd","Find","procsd","AC","M","Msd",
                  "Mgrad","hs","Linf","Linfsd","Linfgrad",
                  "K","Ksd","Kgrad","t0","L50","L50_95","Spat_targ",
                  "Frac_area_1","Prob_staying",

@@ -6,11 +6,12 @@
 #' @param nyears Number of historical years. Ignored if 'Stock' is class 'OM'
 #' @param proyears Number of projection years. Ignored if 'Stock' is class 'OM'
 #' @param cpars Optional named list of custom parameters. Ignored if 'Stock' is class 'OM'
+#' @param Msg logical. Warning message for M values?
 #'
 #' @return A named list of sampled Stock parameters
 #' @export
 #'   
-SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) {
+SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, Msg=TRUE) {
   if (class(Stock) != "Stock" & class(Stock) != "OM") 
     stop("First argument must be class 'Stock' or 'OM'")
   Stock <- updateMSE(Stock) # update to add missing slots with default values
@@ -83,10 +84,10 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   StockOut$Mgrad <- Mgrad
   
   # == Depletion ====
-  if (!exists("dep", inherits=FALSE)) {
-    StockOut$dep <- dep <- runif(nsim, Stock@D[1], Stock@D[2])  # sample from the range of user-specified depletion (Bcurrent/B0)  
+  if (!exists("D", inherits=FALSE)) {
+    StockOut$D <- D <- runif(nsim, Stock@D[1], Stock@D[2])  # sample from the range of user-specified depletion (Bcurrent/B0)  
   } else {
-    StockOut$dep <- dep 
+    StockOut$D <- D 
   }
   
  
@@ -410,7 +411,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL) 
   # Check if M-at-age is constant that Maxage makes sense
   if (all(M_ageArray[1,,1] == mean(M_ageArray[1,,1]))) { # constant M at age
     calcMax <- ceiling(-log(0.01)/(min(M)))        # Age at which 1% of cohort survives
-    if (maxage < 0.8*calcMax) {
+    if (maxage < 0.8*calcMax && Msg) {
       message("Note: Maximum age (", maxage, ") is lower than assuming 1% of cohort survives to maximum age (", calcMax, ")")
     }  
   }
