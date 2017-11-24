@@ -4,9 +4,10 @@
 \alias{StochasticSRA}
 \title{Stochastic SRA construction of operating models}
 \usage{
-StochasticSRA(OM, CAA, Chist, Ind = NA, ML = NA, wts = c(1, 1, 0.5, 0.1),
-  Jump_fac = 1, nits = 4000, burnin = 500, thin = 10, ESS = 300,
-  MLsd = 0.1, ploty = T, nplot = 6, SRAdir = NA)
+StochasticSRA(OM, CAA, Chist, Ind = NA, ML = NA, CAL = NA, mulen = NA,
+  wts = c(1, 1, 0.5, 0.1, 1), Jump_fac = 1, nits = 4000, burnin = 500,
+  thin = 10, ESS = 300, MLsd = 0.1, ploty = T, nplot = 6,
+  SRAdir = NA)
 }
 \arguments{
 \item{OM}{An operating model object with M, growth, stock-recruitment and maturity parameters specified.}
@@ -19,7 +20,11 @@ StochasticSRA(OM, CAA, Chist, Ind = NA, ML = NA, wts = c(1, 1, 0.5, 0.1),
 
 \item{ML}{A vector of historical mean length (in catch) observations}
 
-\item{wts}{A vector of relative weights for the likelihood functions of CAA, Chist, Ind and ML}
+\item{CAL}{A matrix of nyears (row) by n length bins (columns) of catch at length samples}
+
+\item{mulen}{A vector mean length by length bin, a vector the same as the number of columns of CAL}
+
+\item{wts}{A vector of relative weights for the likelihood functions of CAA, Chist, Ind, ML and CAL}
 
 \item{Jump_fac}{A multiplier of the jumping distribution variance to increase acceptance (lower Jump_fac) or decrease acceptance rate (higher Jump_fac)}
 

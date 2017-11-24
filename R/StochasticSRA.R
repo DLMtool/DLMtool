@@ -593,6 +593,7 @@ StochasticSRA<-function(OM,CAA,Chist,Ind=NA,ML=NA,CAL=NA,mulen=NA,wts=c(1,1,0.5,
     if (dim(CAL)[2] != length(mulen)) {
       stop("The argument mulen (the mean length of each length bin) should be of the same length as the number of columns of the CAL data")
     }
+    CALyrs<-(1:nrow(CAL))[apply(CAL,1,function(x)sum(is.na(x)))<ncol(CAL)]
     CALswitch=T
   }
   
@@ -784,7 +785,7 @@ StochasticSRA<-function(OM,CAA,Chist,Ind=NA,ML=NA,CAL=NA,mulen=NA,wts=c(1,1,0.5,
       PredVN<-PredN*sel
       CAA_pred[,y,]<-PredVN/apply(PredVN,1,sum)
       
-      if(CALswitch){ 
+      if(CALswitch & y%in%CALyrs){ 
         CAAind[,2]<-y 
         CALtemp[ind]<-iALK[ind]*CAA_pred[CAAind]
         CAL_pred[,y,]<-CAL_pred[,y,]+apply(CALtemp,c(1,3),sum)
@@ -833,8 +834,8 @@ StochasticSRA<-function(OM,CAA,Chist,Ind=NA,ML=NA,CAL=NA,mulen=NA,wts=c(1,1,0.5,
                  1,sum,na.rm=T)
     
     if(CALswitch){ 
-      CALLH<-apply(log(CAL_pred)*
-                     array(rep(CAL,each=nsim)/CALadj,c(nsim,nyears,nlen)),
+      CALLH<-apply(log(CAL_pred[,CALyrs,])*
+                     array(rep(CAL[CALyrs,],each=nsim)/CALadj,c(nsim,length(CALyrs),nlen)),
                    1,sum,na.rm=T)
     }
 
