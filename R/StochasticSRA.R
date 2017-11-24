@@ -511,7 +511,9 @@ StochasticSRAcpp <-function(OM,CAA,Chist,Ind,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=4
 #' @param Chist A vector of historical catch observations (nyears long) going back to unfished conditions
 #' @param Ind A vector of historical abundance index observations (assumed proportional to SSB)
 #' @param ML A vector of historical mean length (in catch) observations
-#' @param wts A vector of relative weights for the likelihood functions of CAA, Chist, Ind and ML
+#' @param CAL A matrix of nyears (row) by n length bins (columns) of catch at length samples
+#' @param mulen A vector mean length by length bin, a vector the same as the number of columns of CAL
+#' @param wts A vector of relative weights for the likelihood functions of CAA, Chist, Ind, ML and CAL
 #' @param Jump_fac A multiplier of the jumping distribution variance to increase acceptance (lower Jump_fac) or decrease acceptance rate (higher Jump_fac)
 #' @param nits The number of MCMC iterations
 #' @param burnin The number of initial MCMC iterations to discard
@@ -534,11 +536,9 @@ StochasticSRAcpp <-function(OM,CAA,Chist,Ind,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=4
 #' testOM<-StochasticSRA(testOM,CAA,Chist,nsim=30,nits=1000)
 #' runMSE(testOM)
 #' }
-StochasticSRA<-function(OM,CAA,Chist,Ind=NA,ML=NA,wts=c(1,1,0.5,0.1),
+StochasticSRA<-function(OM,CAA,Chist,Ind=NA,ML=NA,CAL=NA,mulen=NA,wts=c(1,1,0.5,0.1,1),
                         Jump_fac=1,nits=4000, burnin=500,thin=10,ESS=300,MLsd=0.1,
                         ploty=T,nplot=6,SRAdir=NA){
-  
-  
   
   OM <- updateMSE(OM) # Check that all required slots in OM object contain values 
   nyears<-length(Chist)
@@ -580,7 +580,25 @@ StochasticSRA<-function(OM,CAA,Chist,Ind=NA,ML=NA,wts=c(1,1,0.5,0.1),
     CAA2 <- matrix(0, nrow=nrow(CAA), ncol=addages)
     CAA <- cbind(CAA, CAA2)
   }
-
+  
+  if(length(as.vector(CAL))==1){
+    CALswitch=F # don't do CAL calcs
+    CALLH<-0 # likelihood contribution is nil
+    
+  }else{
+    if (dim(CAL)[1] != nyears) stop("Number of CAL rows (", dim(CAL)[1], ") does not equal nyears (", nyears, "). NAs are acceptable")
+    
+    if(is.na(mulen[1])) stop("You must specify the argument mulen, which is the mean length of each length bin (columns) of the CAL data")
+    
+    if (dim(CAL)[2] != length(mulen)) {
+      stop("The argument mulen (the mean length of each length bin) should be of the same length as the number of columns of the CAL data")
+    }
+    CALswitch=T
+  }
+  
+  
+  nlen<-length(mulen)
+  
   if (burnin < 0.05*nits) burnin <- 0.05 * nits
   
   if("nsim"%in%slotNames(OM))nsim<-OM@nsim
@@ -607,7 +625,20 @@ StochasticSRA<-function(OM,CAA,Chist,Ind=NA,ML=NA,wts=c(1,1,0.5,0.1),
   Wt_age <- Wt_age[,,nyears] # no time-varying growth
   Mat_age<- Mat_age[,,nyears]
   Len_age<-Len_age[,,nyears]
- 
+  
+  
+  # iALK script =================================================
+  if(CALswitch){
+    lvar<-runif(nsim,OM@LenCV[1],OM@LenCV[2])
+    iALK<-array(NA,c(nsim,maxage,nlen))
+    ind<-as.matrix(expand.grid(1:nsim,1:maxage,1:nlen))
+    Lind<-ind[,c(1,2)]
+    iALK[ind]<-dnorm(mulen[ind[,3]],Len_age[Lind],lvar[ind[,1]]*Len_age[Lind])
+    sums<-apply(iALK,1:2,sum)
+    sind<-ind[,1:2]
+    iALK<-iALK/sums[sind]
+  #contour(x=1:maxage,y=1:nlen,iALK[3,,],nlevels=10)
+  }
   # Sample Fleet Parameters 
   options(warn=-1)
   FleetPars <- SampleFleetPars(SubOM(OM, "Fleet"), Stock=StockPars, nsim, 
@@ -689,10 +720,21 @@ StochasticSRA<-function(OM,CAA,Chist,Ind=NA,ML=NA,wts=c(1,1,0.5,0.1),
   parUB[RDind]<-RDb[2]
   
   CAAadj=sum(CAA,na.rm=T)/ESS # ESS adjustment to low sample sizes
+  CALadj=sum(CAL,na.rm=T)/ESS # ESS adjustment to low sample sizes
   
   update<-(1:50)*(nits/50)
   adapt<-c(rep(5,100),rep(2.5,100),rep(1,nits-200))
   
+  CAA_pred<-array(NA,c(nsim,nyears,maxage))
+  
+  if(CALswitch){
+    CAL_pred<-array(NA,c(nsim,nyears,nlen))
+    CALtemp<-array(NA,c(nsim,maxage,nlen))
+    CAAind<-cbind(ind[,1],rep(1,nsim*maxage),ind[,2]) # sim, year, age
+  }
+
+  PredF<-MLpred<-SSB<-array(NA,c(nsim,nyears))
+ 
   for(i in 1:nits){
     
     if(i %in% update){
@@ -725,9 +767,13 @@ StochasticSRA<-function(OM,CAA,Chist,Ind=NA,ML=NA,wts=c(1,1,0.5,0.1),
     SSB0<-apply(N*Mat_age*Wt_age,1,sum)
     SSBpR<-SSB0/R0
     
-    CAA_pred<-array(NA,c(nsim,nyears,maxage))
-    PredF<-MLpred<-SSB<-array(NA,c(nsim,nyears))
+    CAA_pred[]<-NA
+    if(CALswitch)CAL_pred[]<-0
     
+    PredF[]<-NA
+    MLpred[]<-NA
+    SSB[]<-NA
+      
     for(y in 1:nyears){  # M - F - aging / recruitment
       
       if(y==1)N<-N*RD[,maxage:1]
@@ -737,6 +783,13 @@ StochasticSRA<-function(OM,CAA,Chist,Ind=NA,ML=NA,wts=c(1,1,0.5,0.1),
       PredN<-N*exp(-M/2)
       PredVN<-PredN*sel
       CAA_pred[,y,]<-PredVN/apply(PredVN,1,sum)
+      
+      if(CALswitch){ 
+        CAAind[,2]<-y 
+        CALtemp[ind]<-iALK[ind]*CAA_pred[CAAind]
+        CAL_pred[,y,]<-CAL_pred[,y,]+apply(CALtemp,c(1,3),sum)
+      }
+    
       MLpred[,y]<-apply(CAA_pred[,y,]*Len_age,1,sum)/apply(CAA_pred[,y,],1,sum)
       
       PredVW<-PredVN*Wt_age                   # Predicted vulnerable weight
@@ -768,20 +821,29 @@ StochasticSRA<-function(OM,CAA,Chist,Ind=NA,ML=NA,wts=c(1,1,0.5,0.1),
     MLres[MLres>1E10]<-1E10
     
     CAA_pred[CAA_pred<1E-15]<-1E-15
-    #CAAwt<-sin(3.2+3*(1:nyears)/nyears)+1
-    #CAAwt<-CAAwt^3
-    #CAAwt<-CAAwt/mean(CAAwt)
-    #array(rep(CAA/CAAadj,each=nsim),c(nsim,nyears,maxage)),
+    
+    if(CALswitch){ 
+      CAL_pred<-CAL_pred/array(apply(CAL_pred,1:2,sum),dim(CAL_pred))
+      CAL_pred[CAL_pred<1E-15]<-1E-15
+    }
+    
+
     CAALH<-apply(log(CAA_pred)*
                    array(rep(CAA,each=nsim)/CAAadj,c(nsim,nyears,maxage)),
                  1,sum,na.rm=T)
     
+    if(CALswitch){ 
+      CALLH<-apply(log(CAL_pred)*
+                     array(rep(CAL,each=nsim)/CALadj,c(nsim,nyears,nlen)),
+                   1,sum,na.rm=T)
+    }
+
     RDLH<-apply(matrix(dnorm(nupars[RDind],-(procsd^2)/2,procsd,log=T),nrow=nsim),1,sum)
     
     ILH<-apply(dnorm(log(Ires),-(Iobs^2)/2,Iobs,log=T),1,sum,na.rm=T)
     MLLH<-apply(dnorm(log(MLres),-(MLsd^2)/2,MLsd,log=T),1,sum,na.rm=T)
       
-    LH<-wts[1]*CAALH+wts[2]*RDLH+wts[3]*ILH+wts[4]*MLLH
+    LH<-wts[1]*CAALH+wts[2]*RDLH+wts[3]*ILH+wts[4]*MLLH+wts[5]*CALLH
     
     # Reject / accept (cond)
     if(i > 1){
@@ -942,7 +1004,7 @@ StochasticSRA<-function(OM,CAA,Chist,Ind=NA,ML=NA,wts=c(1,1,0.5,0.1),
   Wt_age <- array(Wt_age, dim=c(dim=c(nsim, maxage, nyears+proyears)))
   Len_age <- array(Len_age, dim=c(nsim, maxage, nyears+proyears))
   Marray <- matrix(M, nrow=nsim, ncol=proyears+nyears)
-  OM@cpars<-list(dep=dep,M=M,procsd=procsd,AC=AC,hs=hs,Linf=Linf, 
+  OM@cpars<-list(D=dep,M=M,procsd=procsd,AC=AC,hs=hs,Linf=Linf, 
                  Wt_age=Wt_age, Len_age=Len_age, Marray=Marray, 
                  K=K,t0=t0,L50=L50,
                  L5=L5,LFS=L95,Find=PredF,
