@@ -11,6 +11,7 @@
 #' @param nsim The number of simulations to take for parameters with 
 #' uncertainty (for OM@cpars custom parameters)
 #' @param proyears The number of MSE projection years
+#' @param mcmc Whether to use mcmc samples to create custom parameters cpars
 #' @param Name The name of the operating model
 #' @param Source Reference to assessment documentation e.g. a url
 #' @param length_timestep How long is a model time step in years 
@@ -22,7 +23,7 @@
 #' @importFrom graphics arrows contour
 #' @importFrom stats acf aggregate qnorm window
 #' @export iSCAM2DLM
-iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,Name=NULL,Source="No source provided",
+iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,mcmc=F,Name=NULL,Source="No source provided",
                  length_timestep=1,Author="No author provided"){
   
   message("-- Using function of Chris Grandin (DFO PBS) to extract data from iSCAM file structure --")
@@ -215,7 +216,7 @@ iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,Name=NULL,Source="No source pro
   Perr<-exp(Perr)
   
   
-  # -- Fishing mortality rate index ----------------------------
+  # --- Fishing mortality rate index ---------------------------
   
   Find<-Find[,1:nyears] # is only historical years
   Find<-Find/apply(Find,1,mean,na.rm=T)
@@ -226,6 +227,7 @@ iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,Name=NULL,Source="No source pro
   # SO FAR cpars:  Wt_age, K Linf hs, Perr, Find
   
  
+  
   #plot(replist$cpue$Obs,replist$cpue$Exp)
    
   OM@Spat_targ<-rep(1,2)
@@ -270,7 +272,76 @@ iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,Name=NULL,Source="No source pro
   Wt_age2[,,1:nyears]<-Wt_age
   Wt_age2[,,nyears+1:proyears]<-rep(Wt_age[,,nyears],proyears)
   
-  OM@cpars<-list(V=V,Perr=Perr,Wt_age=Wt_age2,K=K,Linf=Linf,hs=hs,Find=Find)
+  
+  
+  
+  # --- mcmc functionality ------------------------------------
+  
+  if(mcmc){
+    
+    message("Attempting to read mcmc file to assign posterior samples to custom parameters")
+    
+    model.dir=paste0(iSCAMdir,"/mcmc")
+    
+    if(!file.exists(model.dir))stop(paste("Could not find the mcmc subfolder:",model.dir))
+    
+    tmp<-read.mcmc(model.dir)
+    nmcmc<-nrow(tmp$params)
+    
+    if(nsim<nmcmc){
+      samp<-sample(1:nmcmc,size=nsim)
+    }else{
+      message("You requested a greater number of simulations than the number of mcmc samples that are available - sampling with replacement")
+      samp<-sample(1:nmcmc,size=nsim,replace=T)
+    }
+    
+    #@nyears<-nyears<-ncol(tmp$sbt[[1]])
+    M<-tmp$params$m_gs1[samp]
+    OM@M<-quantile(M,c(0.05,0.95))
+    hs<-tmp$params$h_gr1[samp]
+    OM@h<-quantile(hs,c(0.05,0.95))
+    R0<-(1E6)*tmp$params$ro_gr1[samp]
+    OM@R0<-quantile(R0, c(0.05,0.95))
+    
+    ssb_r <-replist$mpd$bo/replist$mpd$sbo
+    D<-tmp$sbt[[1]][samp,nyears]/tmp$params$bo[samp]*ssb_r
+    OM@D<-quantile(D,c(0.05,0.95))
+    
+    recdevs<-tmp$rdev[[1]]
+   
+    procsd<-apply(recdevs[samp,],1,sd)
+    OM@Perr<-quantile(procsd,c(0.05,0.95))
+    
+    #recs<-replist$mpd$rbar *exp(replist$mpd$delta)*1E6
+    nrecs<-ncol(recdevs)
+    AC<-apply(recdevs[samp,],1,function(x)acf(x)$acf[2,1,1])
+    OM@AC<-quantile(AC,c(0.05,0.95))
+    
+    procmu <- -0.5 * (procsd)^2  # adjusted log normal mean
+    
+    Perr<-matrix(rnorm(nsim*(maxage+nyears+proyears-1),rep(procmu,maxage+nyears+proyears-1),rep(procsd,maxage+nyears+proyears-1)),nrow=nsim)
+    Perr[,maxage:(maxage+nyears-1)]<-as.matrix(recdevs[samp,]) # there is one less year of estimated recruitment
+  
+    for (y in c(2:(maxage-1),(-1:(proyears-1))+(maxage+nyears))) Perr[, y] <- AC * Perr[, y - 1] +   Perr[, y] * (1 - AC * AC)^0.5  
+    Perr<-exp(Perr)
+    
+    nfleet<-length(tmp$ft[[1]])
+    FM<-tmp$ft[[1]][[1]][samp,1:nyears]
+    for(ff in 2:nfleet)FM<-FM+tmp$ft[[1]][[ff]][samp,1:nyears]
+    Find<-as.matrix(FM/apply(FM,1,mean))
+    
+    
+    OM@cpars<-list(V=V,Perr=Perr,Wt_age=Wt_age2,K=K,Linf=Linf,hs=hs,Find=Find,D=D,M=M,R0=R0,AC=AC)
+  
+  }else{
+    
+    OM@cpars<-list(R0=rep(R0,nsim),V=V,Perr=Perr,Wt_age=Wt_age2,K=K,Linf=Linf,hs=hs,Find=Find)
+    
+  }
+  
+  
+  
+ 
   OM
  
 }
