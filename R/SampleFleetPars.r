@@ -196,6 +196,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
       srs <- (Linf - LFS[1,]) / ((-log(Vmaxlen[1,drop=FALSE],2))^0.5) # selectivity parameters are constant for all years
       sls <- (LFS[1,] - L5[1, ]) /((-log(0.05,2))^0.5)
       
+      
       # Calculate selectivity at length class 
       
       if (nsim>1) SelLength <- t(sapply(1:nsim, getsel, lens=CAL_binsmidMat, lfs=LFS[1, ], sls=sls, srs=srs))
@@ -234,9 +235,16 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
       
       for (X in 1:(Selnyears - 1)) {	
         bkyears <- SelYears[X]:SelYears[X + 1]
-        L5[bkyears, ] <- matrix(rep((L5s[, X]), length(bkyears)), ncol = nsim, byrow = TRUE)
-        LFS[bkyears, ] <- matrix(rep((LFSs[, X]), length(bkyears)), ncol = nsim, byrow = TRUE)
-        Vmaxlen[bkyears, ] <- matrix(rep((Vmaxlens[, X]), length(bkyears)), ncol = nsim, byrow = TRUE)
+        if (nsim>1) {
+          LFS[bkyears, ] <- matrix(rep((LFSs[, X]), length(bkyears)), ncol = nsim, byrow = TRUE)
+          Vmaxlen[bkyears, ] <- matrix(rep((Vmaxlens[, X]), length(bkyears)), ncol = nsim, byrow = TRUE)
+          L5[bkyears, ] <- matrix(rep((L5s[, X]), length(bkyears)), ncol = nsim, byrow = TRUE)
+        } else {
+          LFS[bkyears, ] <- matrix(rep((LFSs[X]), length(bkyears)), ncol = nsim, byrow = TRUE)
+          Vmaxlen[bkyears, ] <- matrix(rep((Vmaxlens[X]), length(bkyears)), ncol = nsim, byrow = TRUE)
+          L5[bkyears, ] <- matrix(rep((L5s[X]), length(bkyears)), ncol = nsim, byrow = TRUE)
+
+        }
         
         srs <- (Linf - LFS[bkyears[1],]) / ((-log(Vmaxlen[bkyears[1],],2))^0.5) #
         sls <- (LFS[bkyears[1],] - L5[bkyears[1], ]) /((-log(0.05,2))^0.5)
@@ -259,9 +267,16 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
       }
       
       restYears <- max(SelYears):(nyears + proyears)
-      L5[restYears, ] <- matrix(rep((L5s[, Selnyears]), length(restYears)), ncol = nsim, byrow = TRUE)
-      LFS[restYears, ] <- matrix(rep((LFSs[, Selnyears]), length(restYears)), ncol = nsim, byrow = TRUE)
-      Vmaxlen[restYears, ] <- matrix(rep((Vmaxlens[, Selnyears]), length(restYears)), ncol = nsim, byrow = TRUE)
+      if (nsim>1) {
+        L5[restYears, ] <- matrix(rep((L5s[, Selnyears]), length(restYears)), ncol = nsim, byrow = TRUE)
+        LFS[restYears, ] <- matrix(rep((LFSs[, Selnyears]), length(restYears)), ncol = nsim, byrow = TRUE)
+        Vmaxlen[restYears, ] <- matrix(rep((Vmaxlens[, Selnyears]), length(restYears)), ncol = nsim, byrow = TRUE)
+      } else {
+        L5[restYears, ] <- matrix(rep((L5s[Selnyears]), length(restYears)), ncol = nsim, byrow = TRUE)
+        LFS[restYears, ] <- matrix(rep((LFSs[Selnyears]), length(restYears)), ncol = nsim, byrow = TRUE)
+        Vmaxlen[restYears, ] <- matrix(rep((Vmaxlens[Selnyears]), length(restYears)), ncol = nsim, byrow = TRUE)
+      }
+     
       
       # s1 <- sapply(1:nsim, function(i) optimize(getSlope1, interval = c(0, 1e+05), 
       #                                           LFS = LFSs[i, Selnyears], L0.05 = L5s[i, Selnyears])$minimum)

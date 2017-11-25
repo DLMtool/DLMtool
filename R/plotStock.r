@@ -60,6 +60,7 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
   Stock <- x 
   SampCpars <- list() # empty list 
   if (class(Stock) == "OM") {
+    Stock <- updateMSE(x) 
     if (is.finite(Stock@nyears)) nyears <- Stock@nyears
 	  if (is.finite(Stock@proyears)) proyears <- Stock@proyears
 	  if (is.finite(Stock@nsim)) nsim <- Stock@nsim	

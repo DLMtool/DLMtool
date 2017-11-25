@@ -57,9 +57,19 @@ plot.OM <-function(x, ...){
     
     # Age vulnerability
     maxage<-dim(out$SampPars$V)[2]
-    contour(x=yrlab,y=1:maxage,z=t(out$SampPars$V[1,,1:nyears]),levels=c(0.25,0.75),col='green',drawlabels=F,lwd=c(1,2))
-    contour(x=yrlab,y=1:maxage,z=t(out$SampPars$V[2,,1:nyears]),levels=c(0.25,0.75),col='blue',drawlabels=F,add=T,lwd=c(1,2))
-    contour(x=yrlab,y=1:maxage,z=t(out$SampPars$V[3,,1:nyears]),levels=c(0.25,0.75),col='grey45',drawlabels=F,add=T,lwd=c(1,2))
+    colors <- c("green","blue","grey45")
+    for (x in 1:3) {
+      Zvals <- t(out$SampPars$V[x,,1:nyears])
+      if(sd(Zvals, na.rm=TRUE) != 0) {
+        if (x==1)contour(x=yrlab,y=1:maxage,z=Zvals,levels=c(0.25,0.75),col=colors[x],drawlabels=F,lwd=c(1,2))
+        if (x!=1)contour(x=yrlab,y=1:maxage,z=Zvals,levels=c(0.25,0.75),col=colors[x],drawlabels=F, add=T,lwd=c(1,2))
+      }
+        
+    }
+
+    # contour(x=yrlab,y=1:maxage,z=t(out$SampPars$V[2,,1:nyears]),levels=c(0.25,0.75),col='blue',drawlabels=F,add=T,lwd=c(1,2))
+    # contour(x=yrlab,y=1:maxage,z=t(out$SampPars$V[3,,1:nyears]),levels=c(0.25,0.75),col='grey45',drawlabels=F,add=T,lwd=c(1,2))
+    
     legend('topright',legend=c(paste("Simulation",1:3)),text.col=c("green","blue","grey45"),bty='n')
     legend('topleft',legend="Age vulnerability (0.25, 0.75)",bty='n')
     
