@@ -1236,7 +1236,7 @@ writeSection <- function(class=c("Intro", "Stock", "Fleet", "Obs", "Imp", "Refer
             valtext <- paste0("Specified in cpars: ", "<span style='color:", color, "'>", " ", trimws(val), "</span>", "\n\n")
           } else {
             val <- slot(OM, sl)
-            # if (is.numeric(val)) val <- signif(val,3)
+            if (is.numeric(val)) val <- round(val,2)
             used <- length(val)>0 && !is.na(val) && !is.null(val) # is the slot used?
             if (used) {
               val <- gsub('"', "", paste(val, collapse="\", \""))
