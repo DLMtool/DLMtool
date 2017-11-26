@@ -39,7 +39,7 @@ iSCAM2DLM<-function(iSCAMdir,nsim=48,proyears=50,mcmc=F,Name=NULL,Source="No sou
   OM<-new('OM',DLMtool::Albacore, DLMtool::Generic_Fleet, DLMtool::Generic_Obs, DLMtool::Perfect_Imp)
   OM@nsim<-nsim
   OM@proyears<-proyears
-  
+  set.seed(OM@seed)
   # The trouble is that DLMtool is an annual model so if the SS model is seasonal we need to aggregate overseasons
   # The reason for the code immediately below (and length_timestep) is that some SS models just assume quarterly timesteps with no way of knowing this (other than maxage and M possibly)!
   #if(is.na(length_timestep)){
