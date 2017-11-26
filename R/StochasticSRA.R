@@ -545,7 +545,11 @@ StochasticSRA<-function(OM,CAA,Chist,Ind=NA,ML=NA,CAL=NA,mulen=NA,wts=c(1,1,0.5,
   if(class(Chist)=="matrix")nyears<-nrow(Chist)
   maxage<-OM@maxage
   
-  if(length(Ind)==1)Ind<-rep(NA,nyears)
+  if(length(Ind)==1){
+    Ind<-rep(NA,nyears)
+  }else{
+    if(sum(is.na(Ind))<nyears)Ind<-Ind/mean(Ind,na.rm=T) # normalize Ind to mean 1
+  }  
   if(length(ML)==1)ML<-rep(NA,nyears)
   
  

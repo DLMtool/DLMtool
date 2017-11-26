@@ -448,10 +448,26 @@ NOAA_plot <- function(MSEobj, nam = NA, type = NA, panel = T) {
 #' @usage Pplot(MSEobj, nam=NA)
 #' @param MSEobj An object of class MSE
 #' @param nam Title of plot
+#' @param maxMP The maximum number of MPs to plot (defaults to the first 10)
+#' @param MPs A character vector of MPs to plot
+#' @param maxsims Integer, the maximum number of simulations to plot
 #' @author T. Carruthers 
 #' @export Pplot
-Pplot <- function(MSEobj, nam = NA) {
+Pplot <- function(MSEobj, nam = NA,maxMP = 10,MPs=NA,maxsims=20) {
 
+  if(!is.na(MPs)){
+    
+    maxMP<-length(MPs)
+    MSEobj<-Sub(MSEobj,MPs=MPs)
+    
+  }else{
+    
+    if(MSEobj@nMPs>maxMP)MSEobj<-Sub(MSEobj,MPs=MSEobj@MPs[1:maxMP])
+    
+  }
+  
+  MSEobj<-Sub(MSEobj,sims=1:maxsims)
+    
   FMSYr <- quantile(MSEobj@F_FMSY, c(0.001, 0.9), na.rm = T)
   BMSYr <- quantile(MSEobj@B_BMSY, c(0.001, 0.975), na.rm = T)
   
@@ -889,9 +905,9 @@ Kplot <- function(MSEobj, maxsim = 60, MPs = NA, sims = NULL, maxMP = 9,
   pmat <- t(pmat)
   
   for (mm in 1:MSEobj@nMPs) {
-    plot(c(MSEobj@B_BMSY[1, mm, 1], MSEobj@B_BMSY[1, mm, 2]), c(MSEobj@F_FMSY[1, 
-      mm, 1], MSEobj@F_FMSY[1, mm, 2]), xlim = XLim, ylim = YLim, 
-      col = colsse[1], type = "l", bty = "n", axes = FALSE)
+    plot(MSEobj@B_BMSY[1, mm, 1], MSEobj@F_FMSY[1, 
+      mm, 1], xlim = XLim, ylim = YLim, 
+      col = colsse[1],  bty = "n", axes = FALSE)
     
     if (nrow(pmat) > 1) {
       if (mm %in% pmat[, 1]) {
@@ -935,12 +951,12 @@ Kplot <- function(MSEobj, maxsim = 60, MPs = NA, sims = NULL, maxMP = 9,
     abline(v = 1, col = "grey", lwd = 3)
     # abline(v=c(0.1,0.5),col='grey',lwd=2)
     y <- 1:(MSEobj@proyears - 1)
-    y1 <- y + 1
-    x0 <- as.vector(MSEobj@B_BMSY[, mm, y])
-    x1 <- as.vector(MSEobj@B_BMSY[, mm, y1])
-    y0 <- as.vector(MSEobj@F_FMSY[, mm, y])
-    y1 <- as.vector(MSEobj@F_FMSY[, mm, y1])
-    segments(x0, y0, x1, y1, col = rep(colsse,each=nsim))
+    #y1 <- y + 1
+    #x0 <- as.vector(MSEobj@B_BMSY[, mm, y])
+    #x1 <- as.vector(MSEobj@B_BMSY[, mm, y1])
+  #  y0 <- as.vector(MSEobj@F_FMSY[, mm, y])
+   # y1 <- as.vector(MSEobj@F_FMSY[, mm, y1])
+    #segments(x0, y0, x1, y1, col = rep(colsse,each=nsim))
     
     rng <- 1:min(maxsim, MSEobj@nsim)
     points(MSEobj@B_BMSY[rng, mm, 1], MSEobj@F_FMSY[rng, mm, 1], pch = 19, 
