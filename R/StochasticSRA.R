@@ -789,11 +789,14 @@ StochasticSRA<-function(OM,CAA,Chist,Ind=NA,ML=NA,CAL=NA,mulen=NA,wts=c(1,1,0.5,
       PredVN<-PredN*sel
       CAA_pred[,y,]<-PredVN/apply(PredVN,1,sum)
       
-      if(CALswitch & y%in%CALyrs){ 
-        CAAind[,2]<-y 
-        CALtemp[ind]<-iALK[ind]*CAA_pred[CAAind]
-        CAL_pred[,y,]<-CAL_pred[,y,]+apply(CALtemp,c(1,3),sum)
+      if(CALswitch){
+        if(y%in%CALyrs){ 
+          CAAind[,2]<-y 
+          CALtemp[ind]<-iALK[ind]*CAA_pred[CAAind]
+          CAL_pred[,y,]<-CAL_pred[,y,]+apply(CALtemp,c(1,3),sum)
+        }
       }
+      
     
       MLpred[,y]<-apply(CAA_pred[,y,]*Len_age,1,sum)/apply(CAA_pred[,y,],1,sum)
       
