@@ -10,6 +10,12 @@ Pplot(MSEobj, nam=NA)
 \item{MSEobj}{An object of class MSE}
 
 \item{nam}{Title of plot}
+
+\item{maxMP}{The maximum number of MPs to plot (defaults to the first 10)}
+
+\item{MPs}{A character vector of MPs to plot}
+
+\item{maxsims}{Integer, the maximum number of simulations to plot}
 }
 \description{
 A shorter version of the plot method for MSEs that just shows the projected
