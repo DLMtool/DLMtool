@@ -5,7 +5,8 @@
 \title{Generate OM Documentation Report}
 \usage{
 OMdoc(OM = NULL, rmd.source = NULL, overwrite = FALSE, out.file = NULL,
-  inc.plot = TRUE, render = TRUE, output = "html_document")
+  inc.plot = TRUE, render = TRUE, output = "html_document",
+  openFile = TRUE)
 }
 \arguments{
 \item{OM}{An object of class 'OM' or the name of an OM xlsx file}
@@ -24,6 +25,8 @@ there are problems with compililing the Rmd file.}
 
 \item{output}{Character. Output file type. Default is 'html_document'. 'pdf_document' is available
 but may require additional software and have some formatting issues.}
+
+\item{openFile}{Logical. Should the compiled file be opened in web browser?}
 }
 \value{
 Creates a Rmarkdown file and compiles a HTML report file in the working directory.
