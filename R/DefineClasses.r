@@ -895,6 +895,7 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
 #' @slot Name Name of the operating model
 #' @slot Agency Name of the agency responsible for the management of the fishery. Character string
 #' @slot Region Name of the general geographic region of the fishery. Character string
+#' @slot Sponsor Name of the organization who sponsored the OM. Character string
 #' @slot Latitude Latitude (decimal degrees). Negative values represent the South of the Equator. Numeric. Single value 
 #' @slot Longitude Longitude (decimal degrees). Negative values represent the West of the Prime Meridian. Numeric. Single value 
 
@@ -1030,7 +1031,8 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
 #' @keywords classes
 #' 
 setClass("OM", representation(Name = "character", Agency="character",
-                              Region="character", Latitude="numeric", Longitude="numeric",
+                              Region="character", Sponsor="character",
+                              Latitude="numeric", Longitude="numeric",
                               nsim="numeric", proyears="numeric", 
                               interval='numeric', pstar='numeric', maxF='numeric', reps='numeric',
                               cpars="list",seed="numeric", Source="character"), contains=c("Stock", "Fleet", "Obs", "Imp"))

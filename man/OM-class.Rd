@@ -19,6 +19,8 @@ bounds of a uniform distribution from which to sample the parameter.
 
 \item{\code{Region}}{Name of the general geographic region of the fishery. Character string}
 
+\item{\code{Sponsor}}{Name of the organization who sponsored the OM. Character string}
+
 \item{\code{Latitude}}{Latitude (decimal degrees). Negative values represent the South of the Equator. Numeric. Single value}
 
 \item{\code{Longitude}}{Longitude (decimal degrees). Negative values represent the West of the Prime Meridian. Numeric. Single value}
