@@ -93,13 +93,13 @@ ChkObj <- function(OM) {
       if (class(slotVal) != "character" & class(slotVal) != "list") Ok[sl] <- all(is.finite(slotVal)) & length(slotVal) > 0
     } 
   }
-  SelSlots <- c("SelYears", "L5Lower", "L5Upper", "LFSLower",
-                "LFSUpper", "VmaxLower", "VmaxUpper")
-  RecSlots <-  c("Period", "Amplitude")
+  optslots <- OptionalSlots()
+  SelSlots <- optslots$SelSlots
+  RecSlots <-  optslots$RecSlots
   
   # Slots ok to not contain values
-  Ignore <- c("Name", "Source", "cpars", "AbsSelYears", SelSlots, RecSlots, "M2",
-              "Agency", "Region", "Latitude", "Longitude", "Species")  
+  Ignore <- optslots$Ignore
+  
   # if values present for one they need to be there for all! 
   if (any(SelSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% SelSlots] 
   if (any(RecSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% RecSlots] 
@@ -110,6 +110,26 @@ ChkObj <- function(OM) {
   return(OM)
 
 }
+
+OptionalSlots <- function() {
+  SelSlots <- c("SelYears", "L5Lower", "L5Upper", "LFSLower",
+                "LFSUpper", "VmaxLower", "VmaxUpper")
+  RecSlots <-  c("Period", "Amplitude")
+  
+  OptPars <- c("M2", "AbsSelYears")
+  
+  
+  # Slots ok to not contain values
+  Ignore <- c("Name", "Source", "cpars", SelSlots, RecSlots, OptPars,
+              "Agency", "Region", "Latitude", "Longitude", "Species", "Sponsor") 
+  out <- list(SelSlots=SelSlots,
+              RecSlots=RecSlots,
+              OptPars=c(SelSlots, RecSlots, OptPars),
+              Ignore=Ignore)
+  out
+}
+
+
 
 #' What objects of this class are available
 #' 

@@ -102,12 +102,11 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   Selnyears <- length(Fleet@SelYears)
   # are selectivity parameters relative to size at maturity?
   chk <- class(Fleet@isRel)
-  if (length(Fleet@isRel) < 1) 
-    Fleet@isRel <- "true"
+  if (length(Fleet@isRel) < 1) Fleet@isRel <- "true"
   if (chk == "character") {
-    chkRel <- tolower(Fleet@isRel)
-    if (chkRel == "true" | Fleet@isRel == "1") multi <- L50
-    if (chkRel == "false" | Fleet@isRel == "0")multi <- 1
+    chkRel <- substr(tolower(Fleet@isRel), 1,1)
+    if (chkRel == "t" | Fleet@isRel == "1") multi <- L50
+    if (chkRel == "f" | Fleet@isRel == "0") multi <- 1
   }
   if (chk == "numeric") {
     if (Fleet@isRel == 1) multi <- L50
