@@ -453,7 +453,7 @@ NOAA_plot <- function(MSEobj, nam = NA, type = NA, panel = T) {
 #' @param maxsims Integer, the maximum number of simulations to plot
 #' @author T. Carruthers 
 #' @export Pplot
-Pplot <- function(MSEobj, nam = NA,maxMP = 10,MPs=NA,maxsims=20) {
+Pplot <- function(MSEobj, nam = NA, maxMP = 10,MPs=NA,maxsims=20) {
 
   if(!is.na(MPs)){
     
@@ -465,7 +465,7 @@ Pplot <- function(MSEobj, nam = NA,maxMP = 10,MPs=NA,maxsims=20) {
     if(MSEobj@nMPs>maxMP)MSEobj<-Sub(MSEobj,MPs=MSEobj@MPs[1:maxMP])
     
   }
-  
+  maxsims <- min(maxsims, MSEobj@nsim)
   MSEobj<-Sub(MSEobj,sims=1:maxsims)
     
   FMSYr <- quantile(MSEobj@F_FMSY, c(0.001, 0.9), na.rm = T)

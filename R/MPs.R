@@ -118,7 +118,6 @@ class(curENEW) <- "MP"
 #' @export 
 FMSYrefNEW <- function(x, Data, reps = 100) {
   rec <- new("Rec") # create recommendation object
-  rec@Spatial <- c(0,1)
   rec@TAC <- trlnorm(reps, Data@OM$A[x] * (1 - exp(-Data@OM$FMSY[x])), 0.01)
   rec
   

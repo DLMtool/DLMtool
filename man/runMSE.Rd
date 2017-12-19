@@ -8,7 +8,7 @@ runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
   "matlenlim", "MRreal"), nsim = 48, proyears = 50, interval = 4,
   pstar = 0.5, maxF = 0.8, reps = 1, CheckMPs = FALSE, timelimit = 1,
   Hist = FALSE, ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2,
-  Bfrac = 0.5)
+  Bfrac = 0.5, annualMSY = TRUE)
 }
 \arguments{
 \item{OM}{An operating model object (class 'OM')}
@@ -63,6 +63,9 @@ Bfrac fraction of SSBMSY}
 in the Blow calculation}
 
 \item{Bfrac}{The target fraction of SSBMSY for calculating Blow}
+
+\item{annualMSY}{Logical. Should MSY statistics be calculated for each projection year? 
+May differ from MSY statistics from last historical year if there are changes in productivity}
 }
 \value{
 An object of class MSE
