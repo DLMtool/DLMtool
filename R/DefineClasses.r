@@ -125,10 +125,12 @@ setClass("Data", representation(Name = "character", Year = "vector",
                                 Lc = "array", LHYear = "numeric", nareas = "numeric", Misc = "list", TACbias="array"))
 
 # initialize Data
-setMethod("initialize", "Data", function(.Object, stock = "nada") {
+setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ",")) {
   # .Object }) .Object<-new('Data') run an error check here
   if (file.exists(stock)) {
-    dat <- read.csv(stock, header = F, colClasses = "character")  # read 1st sheet
+    dec <- match.arg(dec)
+    if (dec == ".") dat <- read.csv(stock, header = F, colClasses = "character")  # read 1st sheet
+    if (dec == ",") dat <- read.csv2(stock, header = F, colClasses = "character")  # read 1st sheet
     dname <- dat[, 1]
     dat <- dat[, 2:ncol(dat)]
     
@@ -317,12 +319,15 @@ setClass("Fease", representation(Name = "character", Case = "character",
                                  Abundance = "numeric"))
 
 # initialize Fease
-setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
+setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1, dec=c(".", ",")) {
   # run an error check here
   if (file.exists(file)) {
     Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-    dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 
+    dec <- match.arg(dec)
+    if (dec == ".") dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 
                                                                                    1:Ncol))  # read 1st sheet
+    if (dec == ",") dat <- read.csv2(file, header = F, colClasses = "character", col.names = paste0("V", 
+                                                                                                   1:Ncol))  # read 1st sheet
     nr <- nrow(dat)
     ncases = ncol(dat) - 1
     dname <- dat[, 1]
@@ -437,12 +442,14 @@ setClass("Stock", representation(Name = "character", Species="character",
                                  Fdisc="numeric", Source = "character"))
 
 # initialize Stock
-setMethod("initialize", "Stock", function(.Object, file = NA) {
+setMethod("initialize", "Stock", function(.Object, file = NA, dec=c(".", ",")) {
   
   if (!is.na(file)) {
     if (file.exists(file)) {
+      dec <- match.arg(dec)
       Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-      dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      if (dec == ".") dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      if (dec == ",") dat <- read.csv2(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
       dname <- dat[, 1]
       dat <- dat[, 2:ncol(dat)]
       Ncol <- ncol(dat)
@@ -564,11 +571,13 @@ setClass("Fleet", slots = c(Name = "character", nyears = "numeric", Spat_targ = 
                             VmaxUpper = "numeric", CurrentYr="numeric"))
 
 # initialize Fleet
-setMethod("initialize", "Fleet", function(.Object, file = NA) {
+setMethod("initialize", "Fleet", function(.Object, file = NA, dec=c(".", ",")) {
   if (!is.na(file)) {
     if (file.exists(file)) {
+      dec <- match.arg(dec)
       Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-      dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      if (dec == ".") dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      if (dec == ",") dat <- read.csv2(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
       dname <- dat[, 1]
       dat <- dat[, 2:ncol(dat)]
       
@@ -754,12 +763,15 @@ setClass("Obs", representation(Name = "character",
                                hbiascv = "numeric", Recbiascv = "numeric"))
 
 # initialize Obs
-setMethod("initialize", "Obs", function(.Object, file = NA) {
+setMethod("initialize", "Obs", function(.Object, file = NA, dec=c(".", ",")) {
   if (!is.na(file)) {
     if (file.exists(file)) {
+      dec <- match.arg(dec)
       Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-      dat <- read.csv(file, header = F, colClasses = "character", 
+      if (dec ==".") dat <- read.csv(file, header = F, colClasses = "character", 
                       col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      if (dec ==",") dat <- read.csv2(file, header = F, colClasses = "character", 
+                                     col.names = paste0("V", 1:Ncol))  # read 1st sheet
       dname <- dat[, 1]
       dat <- dat[, 2:ncol(dat)]
       .Object@Name <- dat[match("Name", dname), 1]
@@ -838,7 +850,7 @@ setClass("Imp", representation(Name = "character", TACSD = "numeric", TACFrac = 
                                Source = "character"))
 
 # initialize Imp
-setMethod("initialize", "Imp", function(.Object, file = NA) {
+setMethod("initialize", "Imp", function(.Object, file = NA, dec=c(".", ",")) {
   
   .Object@Name <- "Perfect implementation"
   .Object@TACSD <- c(0,0)
@@ -851,9 +863,12 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
   
   if (!is.na(file)) {
     if (file.exists(file)) {
+      dec <- match.arg(dec)
       Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-      dat <- read.csv(file, header = F, colClasses = "character", 
+      if (dec ==".") dat <- read.csv(file, header = F, colClasses = "character", 
                       col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      if (dec ==",") dat <- read.csv2(file, header = F, colClasses = "character", 
+                                     col.names = paste0("V", 1:Ncol))  # read 1st sheet
       dname <- dat[, 1]
       dat <- dat[, 2:ncol(dat)]
       
@@ -1551,6 +1566,52 @@ setMethod("initialize", "InputRec", function(.Object){
      .Object@Spatial<-c(1,1)
      .Object
    })
+
+
+# -- Management Recommendation Class ----
+#' Class \code{'Rec'}
+#' 
+#' An object for storing the MP recommendations 
+#' 
+#' @name Rec-class
+#' @docType class
+#' @section Objects from the Class: Objects can be created by calls of the form
+#' \code{new('Rec')} 
+#' @slot TAC A numeric value with the TAC recommendation 
+#' @slot Effort A numeric value with the effort recommendation as a fraction of current (nyear) fishing effort
+#' @slot Spatial A boolean vector of length 'nareas' specifying if area is open (1) or closed (0) to fishing 
+#' @slot Allocate A boolean value describing if effort should be re-allocated from close to open areas
+#' @slot LR5 smallest length at 5 per cent retention - in absolute units - i.e same units as Linf and L50
+#' @slot LFR smallest length at full retention  - in absolute units - i.e same units as Linf and L50
+#' @slot HS upper harvest slot (no retention above this)  - in absolute units - i.e same units as Linf and L50
+#' @slot Rmaxlen retention of the largest size class - fraction between 0 and 1
+#' @slot L5 smallest length at 5 per cent selection - in absolute units - i.e same units as Linf and L50
+#' @slot LFS smallest length at full selection  - in absolute units - i.e same units as Linf and L50
+#' @slot Vmaxlen selection of the largest size class - fraction between 0 and 1
+#' @slot Fdisc fraction of discarded fish that die - fraction between 0 and 1
+#' @slot Misc An empty list that can be used to store information and pass on to MPs in future 
+#' @author A. Hordyk
+#' @keywords classes
+setClass("Rec", representation(
+  TAC = "numeric",
+  Effort = "numeric", 
+  Spatial="numeric", Allocate = "numeric", 
+  LR5 = "numeric", LFR = "numeric", HS="numeric", Rmaxlen="numeric", 
+  L5 = "numeric", LFS = "numeric", Vmaxlen="numeric", 
+  Fdisc = "numeric",
+  Misc="list"))
+
+setMethod("initialize", "Rec", function(.Object){
+  # .Object@TAC <- as.numeric(NA)
+  # .Object@Effort<-1
+  # .Object@Allocate<-1
+  # .Object@Spatial<-c(1,1)
+  .Object
+})
+
+
+
+
 
 
 

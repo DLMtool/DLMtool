@@ -77,7 +77,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     argNames <- names(DFargs)
     for (X in seq_along(argNames)) {
       if (!exists(argNames[X])) {
-        
         tt <- try(as.numeric(DFargs[X]), silent=TRUE)
         if (class(tt) != "try-error") {
           assign(argNames[X], tt)
@@ -436,6 +435,110 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
   FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
   
+  
+  MatAge <- M_ageArray[,,nyears]
+  LenAge <- Len_age[,,nyears]
+  WtAge <- Wt_age[,,nyears]
+  MatureAge <- Mat_age[,,nyears]
+  VAge <- V[,,nyears]
+  urate <- rep(0.1, nsim)
+    
+  MSYCalcs <- function(x, urate, MatAge, LenAge, WtAge, MatureAge, VAge, maxage, nsim, 
+                       R0, SRrel, hs) {
+    # Box 3.1 Walters & Martell 2004
+    
+    lx <- rep(1, maxage)
+    for (a in 2:maxage) lx[a] <- lx[a-1] * exp(-MatAge[x, a-1] + urate[x]*VAge[x,a-1]) 
+    
+    lx <- l0 <- matrix(1, nrow=nsim, ncol=maxage)
+    for (a in 2:maxage) {
+      l0[,a] <- l0[,a-1] * exp(-MatAge[, a-1])
+      lx[,a] <- lx[,a-1] * exp(-(MatAge[, a-1] + urate*VAge[,a-1]))
+    }
+    
+    Egg0 <- apply(l0 * WtAge * MatureAge, 1, sum) # unfished egg production (assuming fecundity proportional to weight)
+    EggF <- apply(lx * WtAge * MatureAge, 1, sum) # fished egg production (assuming fecundity proportional to weight)
+    
+    vB0 <- apply(l0 * WtAge * VAge, 1, sum)
+    vBF <- apply(lx * WtAge * VAge, 1, sum)
+    
+    SB0 <- apply(l0 * WtAge * MatureAge, 1, sum) # same as eggs atm
+    SBF <- apply(lx * WtAge * MatureAge, 1, sum)
+    
+    YPR <- urate * vBF 
+    
+    
+    hs[hs>0.999] <- 0.999
+    recK <- (4*hs)/(1-hs) # Goodyear compensation ratio
+    reca <- recK/Egg0
+    if (SRrel ==1) recb <- (reca * Egg0 - 1)/(R0*Egg0) # BH SRR 
+    if (SRrel ==2) recb <- log(reca*Egg0)/(R0*Egg0) # Ricker SRR 
+    
+    RelRec <- (reca * EggF-1)/(recb*EggF)
+    RelRec[RelRec<0] <- 0
+    
+    SRrel <- 2
+    hs <- 0.90
+    recK <- (4*hs)/(1-hs) # Goodyear compensation ratio
+    reca <- recK/Egg0
+
+    vec <- seq(0, 100, length.out=100)
+    save <- NULL
+    for (xx in 1:100) {
+      EggF <- vec[xx]
+      if (SRrel ==1) recb <- (reca * Egg0 - 1)/(R0*Egg0) # BH SRR 
+      if (SRrel ==2) recb <- log(reca*Egg0)/(R0*Egg0) # Ricker SRR
+      RelRec <- (reca * EggF-1)/(recb*EggF)
+      RelRec[RelRec<0] <- 0
+      save[xx] <- RelRec
+      
+    }
+   plot(vec/Egg0, save)
+   abline(v=0.2)
+   abline(h=hs)
+   
+   SRrel <- 2
+   hs <- 0.4
+   vec <- seq(0, 100, length.out=100)
+   save <- NULL
+   for (xx in 1:100) {
+     recK <- (4*hs)/(1-hs) # Goodyear compensation ratio
+     reca <- recK/Egg0
+     EggF <- vec[xx]
+     if (SRrel ==1) recb <- (reca * Egg0 - 1)/(R0*Egg0) # BH SRR 
+     if (SRrel ==2) recb <- log(reca*Egg0)/(R0*Egg0) # Ricker SRR
+    
+     if (SRrel ==1) save[xx] <- (reca * EggF)/(1+recb*EggF)
+     if (SRrel ==2) save[xx] <- (reca * EggF^exp(-recb*EggF))
+     
+   }
+   plot(vec/Egg0, save)
+   abline(v=0.2)
+   abline(h=hs)
+  
+   
+   
+   
+
+    Yield <- YPR * RelRec
+  
+    
+    
+    
+    
+    
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   # --- Code for deriving low biomass ---- 
   # (SSB where it takes MGThorizon x MGT to reach Bfrac of BMSY)
   
@@ -738,6 +841,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   # assign('Data',Data,envir=.GlobalEnv) # for debugging fun
   
   # --- Run projections ---- 
+  # TODO
   if (is.na(MPs[1])) CheckMPs <- TRUE
   if (CheckMPs) {
     message("Determining available methods")  # print an progress report
@@ -759,9 +863,10 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       stop("MSE stopped: no viable methods \n\n")  # if none of the user specied methods are possible stop the run
     }
   }
-  chkClass <- !unlist(lapply(lapply(MPs, get), class)) %in% c("Input", "Output")
-  if (sum(chkClass) > 0) message('Dropping MPs: ', paste(MPs[chkClass], ""), " - Not class 'Input' or 'Output'")
-  MPs <- MPs[!chkClass]
+  
+  # chkClass <- !unlist(lapply(lapply(MPs, get), class)) %in% c("Input", "Output")
+  # if (sum(chkClass) > 0) message('Dropping MPs: ', paste(MPs[chkClass], ""), " - Not class 'Input' or 'Output'")
+  # MPs <- MPs[!chkClass]
   
   nMP <- length(MPs)  # the total number of methods used
   
@@ -785,24 +890,27 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   # --- Begin loop over MPs ----
   mm <- 1 # for debugging
-  for (mm in 1:nMP) {
-    
-    # MSE Loop over methods
-    pL5 <- L5  # reset selectivity parameters for projections
-    pLFS <- LFS
-    pVmaxlen <- Vmaxlen
-    pSLarray <- SLarray # selectivity at length array
-    V_P <- V  # Reset vulnerability array for MP 
-    
-    # reset retention parameters 
-    retA_P <- retA
-    retL_P <- retL 
-    LR5_P <- LR5
-    LFR_P <- LFR
-    Rmaxlen_P <- Rmaxlen
+  for (mm in 1:nMP) {  # MSE Loop over methods
     
     message(mm, "/", nMP, " Running MSE for ", MPs[mm])  # print a progress report
     
+    # reset selectivity parameters for projections
+    L5_P <- L5  
+    LFS_P <- LFS
+    Vmaxlen_P <- Vmaxlen
+    SLarray_P <- SLarray # selectivity at length array - projections
+    V_P <- V  #  selectivity at age array - projections
+  
+    # reset retention parametersfor projections
+    LR5_P <- LR5
+    LFR_P <- LFR
+    Rmaxlen_P <- Rmaxlen
+    retA_P <- retA # retention at age array - projections
+    retL_P <- retL # retention at length array - projections
+    
+    Fdisc_P <- Fdisc # Discard mortality for projectons 
+    DR_P <- DR # Discard ratio for projections
+
     # projection arrays
     N_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
     Biomass_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
@@ -810,7 +918,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     SSN_P <-array(NA, dim = c(nsim, maxage, proyears, nareas))
     SSB_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
     FM_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
-    FM_retain <- array(NA, dim = c(nsim, maxage, proyears, nareas)) # retained F 
+    FM_Pret <- array(NA, dim = c(nsim, maxage, proyears, nareas)) # retained F 
     FM_nospace <- array(NA, dim = c(nsim, maxage, proyears, nareas))  # stores prospective F before reallocation to new areas
     FML <- array(NA, dim = c(nsim, nareas))  # last apical F
     Z_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
@@ -851,59 +959,106 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     
     # -- apply MP in initial projection year ----
     y <- 1 
-    if (class(match.fun(MPs[mm])) == "Output") {
-      
-      # -- output control ----
-      Data <- Sam(MSElist[[mm]], MPs = MPs[mm], perc = pstar, reps = reps) # apply Output control MP 
-      TACused <- apply(Data@TAC, 3, quantile, p = pstar, na.rm = T) # calculate pstar quantile of TAC recommendation dist 
-      
-      outputcalcs <- CalcOutput(y, Asize, TACused, TAC_f, lastCatch=apply(CB[,,nyears,], 1, sum), 
-                                availB=MSElist[[mm]]@OM$A, maxF, Biomass_P, VBiomass_P, CB_P, 
-                                CB_Pret, FM_P, Z_P, Spat_targ, V_P, 
-                                retA_P, M_ageArray, qs, nyears, nsim, maxage, nareas)
-      
-      
-      TACa[, mm, y] <- outputcalcs$TACrec # recommended TAC 
-      Effort[, mm, y] <- outputcalcs$Effort #  
-      CB_P <- outputcalcs$CB_P # removals
-      CB_Pret <- outputcalcs$CB_Pret # retained catch 
-      FM_P <- outputcalcs$FM_P # fishing mortality 
-      Z_P <- outputcalcs$Z_P # total mortality 
-      
-  
-    } else {
-      # -- input control ----
-      
-      runIn <- runInMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply input control MP
-      
-      Data <- runIn[[2]] # Data object object with saved info from MP 
-      InputRecs <- runIn[[1]][[1]] # input control recommendations 
-      
-      inputcalcs <- CalcInput(y, Linf, Asize, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P, 
-                              Rmaxlen_P, maxage, retA_P, retL_P, V_P, V2, pSLarray, 
-                              SLarray2, DR, maxlen, Len_age, CAL_binsmid, Fdisc, nCALbins, 
-                              E_f, SizeLim_f, VBiomass_P, Biomass_P, Spat_targ, FinF, qvar, 
-                              qs, qinc, CB_P, CB_Pret, FM_P, FM_retain, Z_P, M_ageArray, 
-                              LastEffort=rep(1,nsim), LastSpatial=matrix(1, nsim, nareas), 
-                              LastAllocat=rep(0, nsim))
-      
-      LastSpatial <- inputcalcs$Si
-      LastAllocat <- inputcalcs$Ai
-      Effort[, mm, y] <- inputcalcs$Effort #  
-      CB_P <- inputcalcs$CB_P # removals
-      CB_Pret <- inputcalcs$CB_Pret # retained catch 
-      FM_P <- inputcalcs$FM_P # fishing mortality
-      FM_retain <- inputcalcs$FM_retain # retained fishing mortality 
-      Z_P <- inputcalcs$Z_P # total mortality
-
-      retA_P <- inputcalcs$retA_P # retained-at-age
-      
-      retL_P <- inputcalcs$retL_P # retained-at-length
-      V_P <- inputcalcs$V_P  # vulnerable-at-age
-      pSLarray <- inputcalcs$pSLarray # vulnerable-at-length 
-
-    }  # input control  
     
+    # Combined MP ----
+    runMP <- applyMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply MP
+    MPRecs <- runMP[[1]][[1]] # MP recommendations
+    Data <- runMP[[2]] # Data object object with saved info from MP 
+    Data@TAC <- MPRecs$TAC
+    
+    # calculate pstar quantile of TAC recommendation dist 
+    TACused <- apply(Data@TAC, 2, quantile, p = pstar, na.rm = T) 
+    
+    LastEffort <- rep(1,nsim)
+    LastSpatial <- matrix(1, nareas, nsim) # modify this if spatial closure in historical years  
+    LastAllocat <- rep(1, nsim) # default assumption of reallocation of effort to open areas
+    LastCatch <- apply(CB[,,nyears,], 1, sum)
+
+    MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim,
+                              LastEffort, LastSpatial, LastAllocat, LastCatch,
+                              TACused, maxF,
+                              LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
+                              L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
+                              Fdisc_P, DR_P,
+                              M_ageArray, FM_P, FM_Pret, Z_P, CB_P, CB_Pret,
+                              TAC_f, E_f, SizeLim_f,
+                              VBiomass_P, Biomass_P, FinF, Spat_targ,
+                              CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
+                              qs, qvar, qinc)
+    
+    
+    TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
+    LastSpatial <- MPCalcs$Si
+    LastAllocat <- MPCalcs$Ai
+    LastEffort <- MPCalcs$Effort
+    LastCatch <- MPCalcs$TACrec
+    
+    Effort[, mm, y] <- MPCalcs$Effort #  
+    CB_P <- MPCalcs$CB_P # removals
+    CB_Pret <- MPCalcs$CB_Pret # retained catch 
+    FM_P <- MPCalcs$FM_P # fishing mortality
+    FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
+    Z_P <- MPCalcs$Z_P # total mortality
+    
+    retA_P <- MPCalcs$retA_P # retained-at-age
+    
+    retL_P <- MPCalcs$retL_P # retained-at-length
+    V_P <- MPCalcs$V_P  # vulnerable-at-age
+    SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length 
+    
+    # if (class(match.fun(MPs[mm])) == "Output") {
+    #   
+    #   # -- output control ----
+    #   Data <- Sam(MSElist[[mm]], MPs = MPs[mm], perc = pstar, reps = reps) # apply Output control MP 
+    #   TACused <- apply(Data@TAC, 3, quantile, p = pstar, na.rm = T) # calculate pstar quantile of TAC recommendation dist 
+    #   
+    #   outputcalcs <- CalcOutput(y, Asize, TACused, TAC_f, lastCatch=apply(CB[,,nyears,], 1, sum), 
+    #                             availB=MSElist[[mm]]@OM$A, maxF, Biomass_P, VBiomass_P, CB_P, 
+    #                             CB_Pret, FM_P, Z_P, Spat_targ, V_P, 
+    #                             retA_P, M_ageArray, qs, nyears, nsim, maxage, nareas)
+    #   
+    #   
+    #   TACa[, mm, y] <- outputcalcs$TACrec # recommended TAC 
+    #   Effort[, mm, y] <- outputcalcs$Effort #  
+    #   CB_P <- outputcalcs$CB_P # removals
+    #   CB_Pret <- outputcalcs$CB_Pret # retained catch 
+    #   FM_P <- outputcalcs$FM_P # fishing mortality 
+    #   Z_P <- outputcalcs$Z_P # total mortality 
+    #   
+    # 
+    # } else if (class(match.fun(MPs[mm])) == "Input") {
+    #   # -- input control ----
+    #   
+    #   runIn <- runInMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply input control MP
+    #   
+    #   Data <- runIn[[2]] # Data object object with saved info from MP 
+    #   InputRecs <- runIn[[1]][[1]] # input control recommendations 
+    #   
+    #   inputcalcs <- CalcInput(y, Linf, Asize, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P, 
+    #                           Rmaxlen_P, maxage, retA_P, retL_P, V_P, V2, SLarray_P, 
+    #                           SLarray2, DR, maxlen, Len_age, CAL_binsmid, Fdisc, nCALbins, 
+    #                           E_f, SizeLim_f, VBiomass_P, Biomass_P, Spat_targ, FinF, qvar, 
+    #                           qs, qinc, CB_P, CB_Pret, FM_P, FM_Pret, Z_P, M_ageArray, 
+    #                           LastEffort=rep(1,nsim), LastSpatial=matrix(1, nsim, nareas), 
+    #                           LastAllocat=rep(0, nsim))
+    #   
+    #   LastSpatial <- inputcalcs$Si
+    #   LastAllocat <- inputcalcs$Ai
+    #   Effort[, mm, y] <- inputcalcs$Effort #  
+    #   CB_P <- inputcalcs$CB_P # removals
+    #   CB_Pret <- inputcalcs$CB_Pret # retained catch 
+    #   FM_P <- inputcalcs$FM_P # fishing mortality
+    #   FM_Pret <- inputcalcs$FM_Pret # retained fishing mortality 
+    #   Z_P <- inputcalcs$Z_P # total mortality
+    # 
+    #   retA_P <- inputcalcs$retA_P # retained-at-age
+    #   
+    #   retL_P <- inputcalcs$retL_P # retained-at-length
+    #   V_P <- inputcalcs$V_P  # vulnerable-at-age
+    #   SLarray_P <- inputcalcs$pSLarray # vulnerable-at-length 
+    # 
+    # }  
+    # 
     # TACa[, mm, 1] <- apply(CB_P[, , 1, ], 1, sum)  # Adjust TAC to actual catch in the year 
     # To account for years where TAC is higher than catch
     
@@ -916,6 +1071,9 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       cat(".")
       flush.console()
       if (class(match.fun(MPs[mm])) == "Output")  TACa[, mm, y] <- TACa[, mm, y-1] # TAC same as last year unless changed 
+      # TODO
+      
+      
       SAYRt <- as.matrix(expand.grid(1:nsim, 1:maxage, y + nyears, 1:nareas))  # Trajectory year
       SAYt <- SAYRt[, 1:3]
       SAYtMP <- cbind(SAYt, mm)
@@ -1050,7 +1208,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
         MSElist[[mm]]@Lbar <- cbind(MSElist[[mm]]@Lbar, apply(temp,1:2, sum, na.rm=TRUE)/apply(nuCAL, 1:2, sum, na.rm=TRUE))
         
         MSElist[[mm]]@LFC <- LFC * LFCbias
-        MSElist[[mm]]@LFS <- pLFS[nyears + y,] * LFSbias 
+        MSElist[[mm]]@LFS <- LFS[nyears + y,] * LFSbias 
         
         # update growth, maturity estimates for current year
         MSElist[[mm]]@vbK <-  Karray[, nyears+y] * Kbias
@@ -1068,85 +1226,158 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
         
         # assign('Data',MSElist[[mm]],envir=.GlobalEnv) # for debugging fun
         
-        if (class(match.fun(MPs[mm])) == "Output") {
-          # output control ---- 
-          Data <- Sam(MSElist[[mm]], MPs = MPs[mm], perc = pstar, reps = reps)
-          TACused <- apply(Data@TAC, 3, quantile, p = pstar, na.rm = TRUE)  #
-          
-          TACa[, mm, y] <- TACused # recommended TAC 
-          
-          outputcalcs <- CalcOutput(y, Asize, TACused, TAC_f, lastCatch=apply(CB_P[,,y-1,], 1, sum), 
-                                    availB=MSElist[[mm]]@OM$A, maxF, Biomass_P, VBiomass_P, 
-                                    CB_P, CB_Pret, FM_P, Z_P, Spat_targ, V_P, 
-                                    retA_P, M_ageArray, qs, nyears, nsim, maxage, nareas)
-          
-          Effort[, mm, y] <- outputcalcs$Effort #  
-          CB_P <- outputcalcs$CB_P # removals
-          CB_Pret <- outputcalcs$CB_Pret # retained catch 
-          FM_P <- outputcalcs$FM_P # fishing mortality 
-          Z_P <- outputcalcs$Z_P # total mortality 
-          
-        } else {
-          # input control ----
-          runIn <- runInMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply input control MP
-          
-          Data <- runIn[[2]] # Data object object with saved info from MP 
-          InputRecs <- runIn[[1]][[1]] # input control recommendations 
-          
-          inputcalcs <- CalcInput(y, Linf, Asize, nyears, proyears, InputRecs, nsim, nareas, 
-                                  LR5_P, LFR_P, Rmaxlen_P, maxage,
-                                  retA_P, retL_P, V_P, V2, pSLarray, SLarray2, 
-                                  DR, maxlen, Len_age, CAL_binsmid, Fdisc, 
-                                  nCALbins, E_f, SizeLim_f,
-                                  VBiomass_P, Biomass_P, Spat_targ, FinF, qvar, 
-                                  qs, qinc, CB_P, CB_Pret, FM_P, FM_retain, 
-                                  Z_P, M_ageArray, Effort[, mm, y-1],
-                                  LastSpatial=LastSpatial, LastAllocat=LastAllocat)
-          
-          LastSpatial <- inputcalcs$Si
-          LastAllocat <- inputcalcs$Ai
-          
-          Effort[, mm, y] <- inputcalcs$Effort #  
-          CB_P <- inputcalcs$CB_P # removals
-          CB_Pret <- inputcalcs$CB_Pret # retained catch 
-          FM_P <- inputcalcs$FM_P # fishing mortality
-          FM_retain <- inputcalcs$FM_retain # retained fishing mortality 
-          Z_P <- inputcalcs$Z_P # total mortality
-          retA_P <- inputcalcs$retA_P # retained-at-age
-          retL_P <- inputcalcs$retL_P # retained-at-length
-          V_P <- inputcalcs$V_P  # vulnerable-at-age
-          
-          pSLarray <- inputcalcs$pSLarray # vulnerable-at-length 
-        }  # input control 
-        MSElist[[mm]]@MPrec <- apply(CB_Pret[, , y, ], 1, sum) 
+        # apply combined MP ----
+        runMP <- applyMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply MP
+        MPRecs <- runMP[[1]][[1]] # MP recommendations
+        Data <- runMP[[2]] # Data object object with saved info from MP 
+        Data@TAC <- MPRecs$TAC
+        
+        # calculate pstar quantile of TAC recommendation dist 
+        TACused <- apply(Data@TAC, 2, quantile, p = pstar, na.rm = T) 
+        
+        MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim,
+                                  LastEffort, LastSpatial, LastAllocat, LastCatch,
+                                  TACused, maxF,
+                                  LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
+                                  L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
+                                  Fdisc_P, DR_P,
+                                  M_ageArray, FM_P, FM_Pret, Z_P, CB_P, CB_Pret,
+                                  TAC_f, E_f, SizeLim_f,
+                                  VBiomass_P, Biomass_P, FinF, Spat_targ,
+                                  CAL_binsmid, Linf, Len_age, maxage, nareas, Asize,  nCALbins,
+                                  qs, qvar, qinc)
+
+        TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
+        LastSpatial <- MPCalcs$Si
+        LastAllocat <- MPCalcs$Ai
+        LastEffort <- MPCalcs$Effort
+        LastCatch <- MPCalcs$TACrec
+        Effort[, mm, y] <- MPCalcs$Effort #  
+        CB_P <- MPCalcs$CB_P # removals
+        CB_Pret <- MPCalcs$CB_Pret # retained catch 
+        FM_P <- MPCalcs$FM_P # fishing mortality
+        FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
+        Z_P <- MPCalcs$Z_P # total mortality
+        
+        retA_P <- MPCalcs$retA_P # retained-at-age
+        retL_P <- MPCalcs$retL_P # retained-at-length
+        V_P <- MPCalcs$V_P  # vulnerable-at-age
+        SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
+        
+        MSElist[[mm]]@MPrec <- apply(CB_Pret[, , y, ], 1, sum)
+        
+        # if (class(match.fun(MPs[mm])) == "Output") {
+        #   # output control ---- 
+        #   Data <- Sam(MSElist[[mm]], MPs = MPs[mm], perc = pstar, reps = reps)
+        #   TACused <- apply(Data@TAC, 3, quantile, p = pstar, na.rm = TRUE)  #
+        #   
+        #   TACa[, mm, y] <- TACused # recommended TAC 
+        #   
+        #   outputcalcs <- CalcOutput(y, Asize, TACused, TAC_f, lastCatch=apply(CB_P[,,y-1,], 1, sum), 
+        #                             availB=MSElist[[mm]]@OM$A, maxF, Biomass_P, VBiomass_P, 
+        #                             CB_P, CB_Pret, FM_P, Z_P, Spat_targ, V_P, 
+        #                             retA_P, M_ageArray, qs, nyears, nsim, maxage, nareas)
+        #   
+        #   Effort[, mm, y] <- outputcalcs$Effort #  
+        #   CB_P <- outputcalcs$CB_P # removals
+        #   CB_Pret <- outputcalcs$CB_Pret # retained catch 
+        #   FM_P <- outputcalcs$FM_P # fishing mortality 
+        #   Z_P <- outputcalcs$Z_P # total mortality 
+        #   
+        # } else {
+        #   # input control ----
+        #   runIn <- runInMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply input control MP
+        #   
+        #   Data <- runIn[[2]] # Data object object with saved info from MP 
+        #   InputRecs <- runIn[[1]][[1]] # input control recommendations 
+        #   
+        #   inputcalcs <- CalcInput(y, Linf, Asize, nyears, proyears, InputRecs, nsim, nareas, 
+        #                           LR5_P, LFR_P, Rmaxlen_P, maxage,
+        #                           retA_P, retL_P, V_P, V2, SLarray_P, SLarray2, 
+        #                           DR, maxlen, Len_age, CAL_binsmid, Fdisc, 
+        #                           nCALbins, E_f, SizeLim_f,
+        #                           VBiomass_P, Biomass_P, Spat_targ, FinF, qvar, 
+        #                           qs, qinc, CB_P, CB_Pret, FM_P, FM_Pret, 
+        #                           Z_P, M_ageArray, Effort[, mm, y-1],
+        #                           LastSpatial=LastSpatial, LastAllocat=LastAllocat)
+        #   
+        #   LastSpatial <- inputcalcs$Si
+        #   LastAllocat <- inputcalcs$Ai
+        #   
+        #   Effort[, mm, y] <- inputcalcs$Effort #  
+        #   CB_P <- inputcalcs$CB_P # removals
+        #   CB_Pret <- inputcalcs$CB_Pret # retained catch 
+        #   FM_P <- inputcalcs$FM_P # fishing mortality
+        #   FM_Pret <- inputcalcs$FM_Pret # retained fishing mortality 
+        #   Z_P <- inputcalcs$Z_P # total mortality
+        #   retA_P <- inputcalcs$retA_P # retained-at-age
+        #   retL_P <- inputcalcs$retL_P # retained-at-length
+        #   V_P <- inputcalcs$V_P  # vulnerable-at-age
+        #   
+        #   SLarray_P <- inputcalcs$pSLarray # vulnerable-at-length 
+        # }  # input control 
+        # MSElist[[mm]]@MPrec <- apply(CB_Pret[, , y, ], 1, sum) 
       } else {
         # --- Not an update yr ----
-        vbio <- apply(VBiomass_P[, , y, ], c(1, 3), sum)
-        # fishdist <- (vbio^Spat_targ)/apply(vbio^Spat_targ, 1, mean)  # calculate distribution of effort \t  
-        if (class(match.fun(MPs[mm])) == "Output") {
-          # TAC remains same as last year
-          outputcalcs <- CalcOutput(y, Asize, TACa[, mm, y], TAC_f, lastCatch=apply(CB_P[,,y-1,], 1, sum), 
-                                    availB=MSElist[[mm]]@OM$A, maxF, Biomass_P, VBiomass_P, CB_P, CB_Pret, FM_P, Z_P, Spat_targ, V_P, 
-                                    retA_P, M_ageArray, qs, nyears, nsim, maxage, nareas)
-          
-          Effort[, mm, y] <- outputcalcs$Effort #  
-          CB_P <- outputcalcs$CB_P # removals
-          CB_Pret <- outputcalcs$CB_Pret # retained catch 
-          FM_P <- outputcalcs$FM_P # fishing mortality 
-          Z_P <- outputcalcs$Z_P # total mortality 
-          
-        } else {
-          # input control FM_P[SAYR] <- FM_P[SAY1R]*qvar[SY] *(1+qinc[S1]/100)^y
-          # # add fishing efficiency changes and variability
-          FM_P[SAYR] <- (FM_P[SAY1R] * qvar[SY] * (1 + qinc[S1]/100))  # add fishing efficiency changes and variability
-          FM_retain[SAYR] <- (FM_retain[SAY1R] * qvar[SY] * (1 + qinc[S1]/100))  # add fishing efficiency changes and variability
-          Effort[, mm, y] <-  Effort[, mm, y-1] / E_f[,y-1]  * E_f[,y]   # Effort doesn't change in non-update year
-          
-          Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt]
-          
-          CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
-          CB_Pret[SAYR] <- FM_retain[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
-        }
+       
+        NoMPRecs <- MPRecs 
+        NoMPRecs[lapply(NoMPRecs, length) > 0 ] <- NULL
+        NoMPRecs$Spatial <- NA
+        
+        MPCalcs <- CalcMPDynamics(NoMPRecs, y, nyears, proyears, nsim,
+                                  LastEffort, LastSpatial, LastAllocat, LastCatch,
+                                  TACused, maxF,
+                                  LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
+                                  L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
+                                  Fdisc_P, DR_P,
+                                  M_ageArray, FM_P, FM_Pret, Z_P, CB_P, CB_Pret,
+                                  TAC_f, E_f, SizeLim_f,
+                                  VBiomass_P, Biomass_P, FinF, Spat_targ,
+                                  CAL_binsmid, Linf, Len_age, maxage, nareas, Asize,  nCALbins,
+                                  qs, qvar, qinc)
+        
+        TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
+        LastSpatial <- MPCalcs$Si
+        LastAllocat <- MPCalcs$Ai
+        LastEffort <- MPCalcs$Effort
+        LastCatch <- MPCalcs$TACrec
+        Effort[, mm, y] <- MPCalcs$Effort #  
+        CB_P <- MPCalcs$CB_P # removals
+        CB_Pret <- MPCalcs$CB_Pret # retained catch 
+        FM_P <- MPCalcs$FM_P # fishing mortality
+        FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
+        Z_P <- MPCalcs$Z_P # total mortality
+        
+        retA_P <- MPCalcs$retA_P # retained-at-age
+        retL_P <- MPCalcs$retL_P # retained-at-length
+        V_P <- MPCalcs$V_P  # vulnerable-at-age
+        SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
+        
+        
+        # if (class(match.fun(MPs[mm])) == "Output") {
+        #   # TAC remains same as last year
+        #   outputcalcs <- CalcOutput(y, Asize, TACa[, mm, y], TAC_f, lastCatch=apply(CB_P[,,y-1,], 1, sum), 
+        #                             availB=MSElist[[mm]]@OM$A, maxF, Biomass_P, VBiomass_P, CB_P, CB_Pret, FM_P, Z_P, Spat_targ, V_P, 
+        #                             retA_P, M_ageArray, qs, nyears, nsim, maxage, nareas)
+        #   
+        #   Effort[, mm, y] <- outputcalcs$Effort #  
+        #   CB_P <- outputcalcs$CB_P # removals
+        #   CB_Pret <- outputcalcs$CB_Pret # retained catch 
+        #   FM_P <- outputcalcs$FM_P # fishing mortality 
+        #   Z_P <- outputcalcs$Z_P # total mortality 
+        #   
+        # } else {
+        #   # input control FM_P[SAYR] <- FM_P[SAY1R]*qvar[SY] *(1+qinc[S1]/100)^y
+        #   # # add fishing efficiency changes and variability
+        #   FM_P[SAYR] <- (FM_P[SAY1R] * qvar[SY] * (1 + qinc[S1]/100))  # add fishing efficiency changes and variability
+        #   FM_Pret[SAYR] <- (FM_Pret[SAY1R] * qvar[SY] * (1 + qinc[S1]/100))  # add fishing efficiency changes and variability
+        #   Effort[, mm, y] <-  Effort[, mm, y-1] / E_f[,y-1]  * E_f[,y]   # Effort doesn't change in non-update year
+        #   
+        #   Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt]
+        #   
+        #   CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
+        #   CB_Pret[SAYR] <- FM_Pret[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
+        # }
         
       }  # not an update year
     }  # end of year
@@ -1180,11 +1411,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                 FM_hist = FM, Effort = Effort, PAA=PAAout, CAA=CAAout, CAL=CALout, CALbins=CAL_binsmid)
   # Store MSE info
   attr(MSEout, "version") <- packageVersion("DLMtool")
-  attr(MSEout, "interval") <- interval
-  attr(MSEout, "maxF") <- maxF
-  attr(MSEout, "timelimit") <- timelimit
-  attr(MSEout, "pstar") <- pstar
-  attr(MSEout, "reps") <- reps
   attr(MSEout, "date") <- date()
   attr(MSEout, "R.version") <- R.version	
   

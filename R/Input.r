@@ -2,30 +2,30 @@
 # Input MPs
 
 # --- Size limit MPs ---- 
-
+# 
 #' A data-limited method in which fishing retention is set according to the
 #' maturity curve
-#' 
+#'
 #' An example of the implementation of input controls in the DLM toolkit, where
 #' retention-at-length is set equivalent to maturity-at-length
-#' 
-#' 
+#'
+#'
 #' @usage matlenlim(x, Data, ...)
 #' @param x A position in a data-limited methods object
 #' @param Data A data-limited methods object
 #' @param ... Optional additional arguments that are ignored. Note arguments
 #' \code{reps} or \code{...} are required for all input controls
-#' @return A input control recommendation object 
+#' @return A input control recommendation object
 #' @author T. Carruthers
 #' @references Made-up for this package
-#' @export 
+#' @export
 matlenlim <- function(x, Data, ...) {
-  # Knife-edge vulnerability at estimated length-at-maturity  
+  # Knife-edge vulnerability at estimated length-at-maturity
   dependencies = "Data@L50"
-  
+
   rec <- new("InputRec") # create recommendation object
-  rec@LR5 <- Data@L50[x] * 0.95 # new length at 5% retention  
-  rec@LFR <-  Data@L50[x] # new length at full retention   
+  rec@LR5 <- Data@L50[x] * 0.95 # new length at 5% retention
+  rec@LFR <-  Data@L50[x] # new length at full retention
 
   # other slots aren't specified so remain unchanged
   return(rec)

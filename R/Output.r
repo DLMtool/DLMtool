@@ -56,29 +56,31 @@ gety <- function(n) (n^(n/(n - 1)))/(n - 1)  # More DBSRA code: get the y parame
 
 
 #' Average Catch
-#' 
+#'
 #' A simple average catch MP that is included to demonstrate a 'status quo' management option
-#' 
+#'
 #' @usage AvC(x, Data, reps = 100)
 #' @param x A position in a data-limited methods data object
 #' @param Data A data-limited methods data object
 #' @param reps The number of stochastic samples of the TAC recommendation
 #' @author T. Carruthers
 #' @export AvC
-#' 
+#'
 #' @importFrom abind abind
-#' @importFrom graphics abline axis barplot boxplot hist identify layout legend 
-#' lines matplot mtext par plot plot.new points polygon segments text title text 
+#' @importFrom graphics abline axis barplot boxplot hist identify layout legend
+#' lines matplot mtext par plot plot.new points polygon segments text title text
 #' @importFrom grDevices col2rgb colorRampPalette rainbow rgb xy.coords
 #' @importFrom methods getClassDef .hasSlot new slot slot<- slotNames
-#' @importFrom stats approx coef dbeta density dnorm dlnorm lm loess loess.smooth 
-#' median nlm optim optimise optimize plogis pnorm predict qlnorm quantile rbeta 
-#' rlnorm rmultinom rnorm runif sd   
+#' @importFrom stats approx coef dbeta density dnorm dlnorm lm loess loess.smooth
+#' median nlm optim optimise optimize plogis pnorm predict qlnorm quantile rbeta
+#' rlnorm rmultinom rnorm runif sd
 #' @importFrom utils packageVersion lsf.str read.csv
 AvC <- function(x, Data, reps = 100) {
+  dependencies = "Data@Cat"
   rlnorm(reps, log(mean(Data@Cat[x, ], na.rm = T)), 0.2)
 }
-class(AvC) <- "Output"
+ class(AvC) <- "Output"
+
 
 
 #' A reference FMSY method (uses perfect information about FMSY)

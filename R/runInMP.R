@@ -17,7 +17,7 @@
 runInMP <- function(Data, MPs = NA, reps = 100) {
   
   nsims <- length(Data@Mort)
-  if (.hasSlot(Data, "narea")) {
+  if (.hasSlot(Data, "nareas")) {
     nareas <- Data@nareas   
   } else {
     nareas <- 2 
