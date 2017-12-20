@@ -394,61 +394,39 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   # }
   
   # MSY projection years
-  # MSYyr <- 200 
-  # # Note: MSY and refY are calculated from total removals not total catch (different when Fdisc>0 and there is discarding)
-  # # Make arrays for future conditions assuming current conditions
-  # M_ageArrayp <- array(M_ageArray[,,nyears], dim=c(dim(M_ageArray)[1:2], MSYyr))
-  # Wt_agep <- array(Wt_age[,,nyears], dim=c(dim(Wt_age)[1:2], MSYyr))
-  # 
-  # retAp <- array(retA[,,nyears], dim=c(dim(retA)[1:2], MSYyr))
-  # Vp <- array(V[,,nyears], dim=c(dim(V)[1:2], MSYyr))
-  # Perrp <- array(1, dim=c(dim(Perr)[1], MSYyr+maxage))
-  # Mat_agep <-abind::abind(rep(list(Mat_age[,,nyears]), MSYyr), along=3)
-  # 
-  # if (snowfall::sfIsRunning()) {
-  #   snowfall::sfExport(list = c("M_ageArrayp", "Wt_agep", "Vp", "retAp", "Perrp"))  # export some newly made arrays to the cluster
-  #   MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY3, Asize, nareas=nareas, maxage=maxage, N=N, pyears=MSYyr, 
-  #                                 M_ageArray=M_ageArrayp, Mat_age=Mat_agep, Wt_age=Wt_agep, V=Vp, retA=retAp, 
-  #                                 Perr=Perrp, mov=mov, SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs, 
-  #                                 R0a=R0a, SSBpR=SSBpR, aR=aR, bR=bR, SSB0=SSB0, B0=B0, maxF=maxF)  # optimize for MSY reference points
-  # } else {
-  #   MSYrefs <- sapply(1:nsim, getFMSY3, Asize, nareas=nareas, maxage=maxage, N=N, pyears=MSYyr,
-  #                     M_ageArray=M_ageArrayp, Mat_age=Mat_agep, Wt_age=Wt_agep, V=Vp, retA=retAp,
-  #                     Perr=Perrp, mov=mov, SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs,
-  #                     R0a=R0a, SSBpR=SSBpR, aR=aR, bR=bR, SSB0=SSB0, B0=B0, maxF=maxF) # optimize for MSY reference points
-  # }
-  # 
-  # MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
-  # FMSY <- MSYrefs[2, ]  # instantaneous FMSY (Vulnerable)
-  # SSBMSY <- MSYrefs[3, ]  # Spawning Stock Biomass at MSY  
-  # SSBMSY_SSB0 <- MSYrefs[4, ] # SSBMSY relative to unfished (SSB) 
-  # BMSY_B0 <- MSYrefs[5, ] # Biomass relative to unfished (B0)
-  # BMSY <- MSYrefs[6,] # total biomass at MSY
-  # 
-  # VBMSY <- (MSY/(1 - exp(-FMSY)))  # Biomass at MSY (Vulnerable)
-  # # FMSYb <- MSYrefs[8,]  # instantaneous FMSY (Spawning Biomass)
-  # UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
-  # FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
-  
-  if (snowfall::sfIsRunning()) {
-    MSYrefs <- snowfall::sfSapply(1:nsim, getMSY, MatAge=M_ageArray[,,nyears], LenAge=Len_age[,,nyears], WtAge=Wt_age[,,nyears], 
-                                        MatureAge=Mat_age[,,nyears], VAge=V[,,nyears], maxage, R0, SRrel, hs)  # optimize for MSY reference points
+  MSYyr <- 200
+  # Note: MSY and refY are calculated from total removals not total catch (different when Fdisc>0 and there is discarding)
+  # Make arrays for future conditions assuming current conditions
+
+  M_ageArrayp <- array(M_ageArray[,,nyears], dim=c(dim(M_ageArray)[1:2], MSYyr))
+  Wt_agep <- array(Wt_age[,,nyears], dim=c(dim(Wt_age)[1:2], MSYyr))
+    retAp <- array(retA[,,nyears], dim=c(dim(retA)[1:2], MSYyr))
+  Vp <- array(V[,,nyears], dim=c(dim(V)[1:2], MSYyr))
+  Perrp <- array(1, dim=c(dim(Perr)[1], MSYyr+maxage))
+  Mat_agep <-abind::abind(rep(list(Mat_age[,,nyears]), MSYyr), along=3)
+    if (snowfall::sfIsRunning()) {
+   # snowfall::sfExport(list = c("M_ageArrayp", "Wt_agep", "Vp", "retAp", "Perrp"))  # export some newly made arrays to the cluster
+   MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY3, Asize, nareas=nareas, maxage=maxage, N=N, pyears=MSYyr,
+                                 M_ageArray=M_ageArrayp, Mat_age=Mat_agep, Wt_age=Wt_agep, V=Vp, retA=retAp,
+                                 Perr=Perrp, mov=mov, SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs,
+                                 R0a=R0a, SSBpR=SSBpR, aR=aR, bR=bR, SSB0=SSB0, B0=B0, maxF=maxF)  # optimize for MSY reference points
   } else {
-    MSYrefs <- sapply(1:nsim, getMSY, MatAge=M_ageArray[,,nyears], LenAge=Len_age[,,nyears], WtAge=Wt_age[,,nyears], 
-                      MatureAge=Mat_age[,,nyears], VAge=V[,,nyears], maxage, R0, SRrel, hs) # optimize for MSY reference points
+   MSYrefs <- sapply(1:nsim, getFMSY3, Asize, nareas=nareas, maxage=maxage, N=N, pyears=MSYyr,
+                     M_ageArray=M_ageArrayp, Mat_age=Mat_agep, Wt_age=Wt_agep, V=Vp, retA=retAp,
+                     Perr=Perrp, mov=mov, SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs,
+                     R0a=R0a, SSBpR=SSBpR, aR=aR, bR=bR, SSB0=SSB0, B0=B0, maxF=maxF) # optimize for MSY reference points
   }
-    
-  # MSY stats for last historical year
   MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
   FMSY <- MSYrefs[2, ]  # instantaneous FMSY (Vulnerable)
-  SSBMSY <- MSYrefs[3, ]  # Spawning Stock Biomass at MSY  
-  SSBMSY_SSB0 <- MSYrefs[4, ] # SSBMSY relative to unfished (SSB) 
+  SSBMSY <- MSYrefs[3, ]  # Spawning Stock Biomass at MSY
+  SSBMSY_SSB0 <- MSYrefs[4, ] # SSBMSY relative to unfished (SSB)
   BMSY_B0 <- MSYrefs[5, ] # Biomass relative to unfished (B0)
   BMSY <- MSYrefs[6,] # total biomass at MSY
   VBMSY <- (MSY/(1 - exp(-FMSY)))  # Biomass at MSY (Vulnerable)
+  # FMSYb <- MSYrefs[8,]  # instantaneous FMSY (Spawning Biomass)
   UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
   FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
-  
+
   # Create MSY matrices for projection years - here fixed at last historical value
   FMSY <- matrix(FMSY, nrow=nsim, ncol=proyears)
   SSBMSY <- matrix(SSBMSY, nrow=nsim, ncol=proyears)
@@ -856,6 +834,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     S <- SYA[, 1]
     
     # -- First projection year ----
+    y <- 1
     NextYrN <- lapply(1:nsim, function(x) 
       popdynOneTS(nareas, maxage, SSBcurr=colSums(SSB[x,,nyears, ]), Ncurr=N[x,,nyears,], 
                   Zcurr=Z[x,,nyears,], PerrYr=Perr[x, nyears+maxage-1], hc=hs[x], 
@@ -869,26 +848,32 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     SSB_P[SAYR] <- SSN_P[SAYR] * Wt_age[SAY1]
     FML <- apply(FM[, , nyears, ], c(1, 3), max)
     
-    
-    # -- apply MP in initial projection year ----
-    y <- 1 
-    if (annualMSY) { # calculate MSY stats for this year
+    # -- calculate MSY stats for this year ----
+    if (annualMSY & mm == 1) { # only need to do this for first MP in first year - selectivity hasn't changed
+      M_ageArrayp <- array(M_ageArray[,,nyears+y], dim=c(dim(M_ageArray)[1:2], MSYyr))
+      Wt_agep <- array(Wt_age[,,nyears+y], dim=c(dim(Wt_age)[1:2], MSYyr))
+      retAp <- array(retA_P[,,nyears+y], dim=c(dim(retA)[1:2], MSYyr))
+      Vp <- array(V_P[,,nyears+y], dim=c(dim(V)[1:2], MSYyr))
+      Perrp <- array(1, dim=c(dim(Perr)[1], MSYyr+maxage))
+      Mat_agep <-abind::abind(rep(list(Mat_age[,,nyears+y]), MSYyr), along=3)
       if (snowfall::sfIsRunning()) {
-        MSYrefsYr <- snowfall::sfSapply(1:nsim, getMSY, MatAge=M_ageArray[,,nyears+y], 
-                                        LenAge=Len_age[,,nyears+y], WtAge=Wt_age[,,nyears+y], 
-                                        MatureAge=Mat_age[,,nyears+y], VAge=V_P[,,nyears+y], 
-                                        maxage, R0, SRrel, hs)  # optimize for MSY reference points
+        MSYrefsYr <- snowfall::sfSapply(1:nsim, getFMSY3, Asize, nareas=nareas, maxage=maxage, N=N, pyears=MSYyr,
+                                      M_ageArray=M_ageArrayp, Mat_age=Mat_agep, Wt_age=Wt_agep, V=Vp, retA=retAp,
+                                      Perr=Perrp, mov=mov, SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs,
+                                      R0a=R0a, SSBpR=SSBpR, aR=aR, bR=bR, SSB0=SSB0, B0=B0, maxF=maxF)  # optimize for MSY reference points
       } else {
-        MSYrefsYr <- sapply(1:nsim, getMSY, MatAge=M_ageArray[,,nyears+y], LenAge=Len_age[,,nyears+y], 
-                            WtAge=Wt_age[,,nyears+y], MatureAge=Mat_age[,,nyears+y], 
-                            VAge=V_P[,,nyears+y], maxage, R0, SRrel, hs) # optimize for MSY reference points
+        MSYrefsYr <- sapply(1:nsim, getFMSY3, Asize, nareas=nareas, maxage=maxage, N=N, pyears=MSYyr,
+                          M_ageArray=M_ageArrayp, Mat_age=Mat_agep, Wt_age=Wt_agep, V=Vp, retA=retAp,
+                          Perr=Perrp, mov=mov, SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs,
+                          R0a=R0a, SSBpR=SSBpR, aR=aR, bR=bR, SSB0=SSB0, B0=B0, maxF=maxF) # optimize for MSY reference points
       }
       MSY[,y] <- MSYrefsYr[1, ]
       FMSY[,y] <- MSYrefsYr[2,]
       SSBMSY[,y] <- MSYrefsYr[3,]
-      
     }
     
+    
+    # -- apply MP in initial projection year ----
     # Combined MP ----
     runMP <- applyMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply MP
     MPRecs <- runMP[[1]][[1]] # MP recommendations
@@ -1000,21 +985,32 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       cat(".")
       flush.console()
       
-      if (annualMSY) { # calculate MSY stats for this year
+      SelectChanged <- FALSE
+      if (any(range(retA_P[,,nyears+y] / retA[,,nyears+y]) !=1)) SelectChanged <- TRUE
+      if (any(range(V_P[,,nyears+y] / V[,,nyears+y]) !=1))  SelectChanged <- TRUE
+      
+      # -- calculate MSY stats for this year ----
+      if (annualMSY & (mm == 1 | SelectChanged)) { #
+        M_ageArrayp <- array(M_ageArray[,,nyears+y], dim=c(dim(M_ageArray)[1:2], MSYyr))
+        Wt_agep <- array(Wt_age[,,nyears+y], dim=c(dim(Wt_age)[1:2], MSYyr))
+        retAp <- array(retA_P[,,nyears+y], dim=c(dim(retA)[1:2], MSYyr))
+        Vp <- array(V_P[,,nyears+y], dim=c(dim(V)[1:2], MSYyr))
+        Perrp <- array(1, dim=c(dim(Perr)[1], MSYyr+maxage))
+        Mat_agep <-abind::abind(rep(list(Mat_age[,,nyears+y]), MSYyr), along=3)
         if (snowfall::sfIsRunning()) {
-          MSYrefsYr <- snowfall::sfSapply(1:nsim, getMSY, MatAge=M_ageArray[,,nyears+y], 
-                                          LenAge=Len_age[,,nyears+y], WtAge=Wt_age[,,nyears+y], 
-                                          MatureAge=Mat_age[,,nyears+y], VAge=V_P[,,nyears+y], 
-                                          maxage, R0, SRrel, hs)  # optimize for MSY reference points
+          MSYrefsYr <- snowfall::sfSapply(1:nsim, getFMSY3, Asize, nareas=nareas, maxage=maxage, N=N, pyears=MSYyr,
+                                          M_ageArray=M_ageArrayp, Mat_age=Mat_agep, Wt_age=Wt_agep, V=Vp, retA=retAp,
+                                          Perr=Perrp, mov=mov, SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs,
+                                          R0a=R0a, SSBpR=SSBpR, aR=aR, bR=bR, SSB0=SSB0, B0=B0, maxF=maxF)  # optimize for MSY reference points
         } else {
-          MSYrefsYr <- sapply(1:nsim, getMSY, MatAge=M_ageArray[,,nyears+y], LenAge=Len_age[,,nyears+y], 
-                              WtAge=Wt_age[,,nyears+y], MatureAge=Mat_age[,,nyears+y], 
-                              VAge=V_P[,,nyears+y], maxage, R0, SRrel, hs) # optimize for MSY reference points
+          MSYrefsYr <- sapply(1:nsim, getFMSY3, Asize, nareas=nareas, maxage=maxage, N=N, pyears=MSYyr,
+                              M_ageArray=M_ageArrayp, Mat_age=Mat_agep, Wt_age=Wt_agep, V=Vp, retA=retAp,
+                              Perr=Perrp, mov=mov, SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs,
+                              R0a=R0a, SSBpR=SSBpR, aR=aR, bR=bR, SSB0=SSB0, B0=B0, maxF=maxF) # optimize for MSY reference points
         }
         MSY[,y] <- MSYrefsYr[1, ]
         FMSY[,y] <- MSYrefsYr[2,]
         SSBMSY[,y] <- MSYrefsYr[3,]
-        
       }
       
       TACa[, mm, y] <- TACa[, mm, y-1] # TAC same as last year unless changed 
@@ -1046,57 +1042,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       VBiomass_P[SAYR] <- Biomass_P[SAYR] * V_P[SAYt]  # Calculate vulnerable biomass
       SSN_P[SAYR] <- N_P[SAYR] * Mat_age[SAYt]  # Calculate spawning stock numbers
       SSB_P[SAYR] <- SSN_P[SAYR] * Wt_age[SAYt]  # Calculate spawning stock biomass
-      
-      
-      # debug ###
-      
-      # project forward from unfished fishing at FMSY and determine why SB is different from
-      # MSY calculations
-      
-      stop()
-      
-      x <-1
-      sum(N_P[x, 1, y,])
- 
     
-      MSYrefsYr <- getMSY(x, MatAge=M_ageArray[,,nyears+y], LenAge=Len_age[,,nyears+y], 
-                          WtAge=Wt_age[,,nyears+y], MatureAge=Mat_age[,,nyears+y], 
-                          VAge=V_P[,,nyears+y], maxage, R0, SRrel, hs) # optimize for MSY reference points
-      
-      
-      MSY[x,y]
-      MPRecs$TAC[x]
-      
-      MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim,
-                                LastEffort, LastSpatial, LastAllocat, LastCatch,
-                                TACused, maxF,
-                                LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
-                                L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
-                                Fdisc_P, DR_P,
-                                M_ageArray, FM_P, FM_Pret, Z_P, CB_P, CB_Pret,
-                                TAC_f, E_f, SizeLim_f,
-                                VBiomass_P, Biomass_P, FinF, Spat_targ,
-                                CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
-                                qs, qvar, qinc)
-      
-      
-      
-      cbind(MPCalcs$FM_P[sim,,y-1,], OUT)
-      
-      
-      MSYrefsYr[9]
-      
-      
-      
-
-      
-      # DEBUG #####
-      
-      
-      
-      
-      
-      
       # --- An update year ----
       if (y %in% upyrs) {
         # rewrite the DLM object and run the TAC function
@@ -1148,10 +1094,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
         Depletion <- apply(SSB_P[, , y, ], 1, sum)/SSB0 # apply(SSB[, , 1, ], 1, sum)
         Depletion[Depletion < tiny] <- tiny
 
-        
         # A <- apply(VBiomass_P[, , y, ], 1, sum)
-        
-    
+      
         # Calculate abundance after recruitment and movement - project forward with no F
         NextYrNtemp <- lapply(1:nsim, function(x)
           popdynOneTS(nareas, maxage, SSBcurr=colSums(SSB_P[x,,y, ]), Ncurr=N_P[x,,y,],
@@ -1165,7 +1109,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
         VBiomassNext[SAYR] <- N_PNext * Wt_age[SAYt] * V_P[SAYt]  # Calculate vulnerable for abundance
 
         A <- apply(VBiomassNext[, , y, ], 1, sum)
-        # A <- apply(VBiomass_P[, , y, ], 1, sum) 
+        # A <- apply(VBiomass_P[, , y, ], 1, sum)
         
         A[is.na(A)] <- tiny
         Asp <- apply(SSB_P[, , y, ], 1, sum)  # SSB Abundance
@@ -1378,8 +1322,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       }  # not an update year
     }  # end of year
     
-    
-    B_BMSYa[, mm, ] <- apply(SSB_P+CB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY  # SSB relative to SSBMSY
+    B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY  # SSB relative to SSBMSY
  
     FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum, na.rm=TRUE)/apply(VBiomass_P+CB_P, c(1, 3), sum, na.rm=TRUE))		
     F_FMSYa[, mm, ] <- FMa[, mm, ]/FMSY
@@ -1414,6 +1357,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   MSEout 
 }
+
+
 
 
 #' Internal function of runMSE for checking that the OM slot cpars slot is formatted correctly
