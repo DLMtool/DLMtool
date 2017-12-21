@@ -2664,9 +2664,7 @@ barplot.MSE <- function(height, MSEobj = NULL, PMs = list(B_BMSY = 0.5,
     MP <- rownames(Pout)
     rownames(Pout) <- NULL
   }
-  MPclass <- sapply(1:length(MP), function(X) class(get(MP[X])))
-  ind <- grep("ref", MP)
-  MPclass[ind] <- "Reference"
+  MPclass <- MPtype(funcs1)[,2]
   par(op)
   invisible(data.frame(MP = MP, Pout, Pass = Pass, MPClass = MPclass, 
     stringsAsFactors = FALSE))

@@ -11,6 +11,8 @@ Can(Data, timelimit = 1)
 
 \item{timelimit}{The maximum time (seconds) taken for a method to undertake
 10 reps (this filters out methods that are too slow)}
+
+\item{MPs}{Optional list of MP names}
 }
 \description{
 An diagnostic tool that looks up the slot requirements of each method and

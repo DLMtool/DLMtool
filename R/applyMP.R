@@ -1,12 +1,61 @@
 
+#' Title
+#'
+#' @param Data 
+#' @param MPs 
+#' @param reps 
+#' @param probs
+#' @param chkMPs
+#'
+#' @export
+#'
+runMP <- function(Data, MPs = NA, reps = 100, probs=0.5, chkMPs=TRUE) {
+  if (all(is.na(MPs))) MPs <- avail("MP")
+  if (chkMPs) {
+    cans <- Can(Data, MPs=MPs)
+    MPs <- MPs[MPs %in% cans]
+  }
+  if (length(MPs) <1) stop("No MPs possible")
+  
+  MPrecs <- applyMP(Data, MPs, reps, nsims=1)[[1]]
+
+  names <- c("TAC", "Effort", "LR5", "LFR", "HS", "Rmaxlen",
+             "L5", "LFS", 'Vmaxlen', 'Spatial')
+  mat <- matrix(0, nrow=length(MPs), ncol=length(names)+Data@nareas-1)
+  for (x in seq_along(names)) {
+    temp <- lapply(MPrecs, '[[', names[x])
+    if (names[x]!="Spatial") {
+      mat[,x] <- unlist(lapply(temp, quantile, probs=probs))
+    } else {
+      mat[,x:ncol(mat)] <- t(matrix(unlist(temp), nrow=Data@nareas, ncol=length(MPs)))
+    }
+  }
+  rownames(mat) <- MPs 
+  names[length(names)] <- "Area 1"
+  names <- c(names, paste('Area', 2:Data@nareas))
+  colnames(mat) <- names
+  
+  if (nrow(mat) > 1) {
+    allNA <- colSums(apply(mat, 2, is.na)) == length(MPs)
+    return(as.data.frame(round(mat[,!allNA], 2), stringsAsFactors = FALSE))
+  }
+  if (nrow(mat) == 1) {
+    mat <- as.data.frame(mat)
+    matout <- mat[!is.na(mat)]
+    names(matout) <- names[!is.na(mat)]
+    return(matout)
+  }
+  
+
+}
 
 
-applyMP <- function(Data, MPs = NA, reps = 100) {
+
+applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA) {
   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
   Data <- updateMSE(Data)
-  nsims <- length(Data@Mort)
+  if (is.na(nsims)) nsims <- length(Data@Mort)
   nMPs <- length(MPs)
-
   
   if (.hasSlot(Data, "nareas")) {
     nareas <- Data@nareas   
@@ -35,7 +84,6 @@ applyMP <- function(Data, MPs = NA, reps = 100) {
       }
       returnList[[mp]] <- recList
  
-      
     }
   } else {
     for (mp in 1:nMPs) {

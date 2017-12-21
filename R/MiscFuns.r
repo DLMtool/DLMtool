@@ -146,18 +146,73 @@ avail <- function(classy) {
   if (class(temp) == "try-error") classy <- deparse(substitute(classy))
   if (temp == "function") classy <- deparse(substitute(classy))
   
-  temp <- c(ls("package:DLMtool")[unlist(lapply(ls("package:DLMtool"), getclass, classy = classy))], 
-            ls(envir = .GlobalEnv)[unlist(lapply(ls(envir = .GlobalEnv), getclass, classy = classy))])
-  pkgs <- search()
-  if ("package:DLMextra" %in% pkgs) {
-    temp <- c(temp, unique(ls("package:DLMextra")[unlist(lapply(ls("package:DLMextra"), getclass, classy = classy))]))
+  if (classy %in% c('Output', 'Input', "Mixed", "Reference")) {
+    MPs <- avail('MP')
+    gettype <- MPtype(MPs)
+    temp <- gettype[gettype[,2] %in% classy,1]
+    if (length(temp) <1) stop("No MPs of type '", classy, "' found", call.=FALSE)
+    return(temp)
+    
+  } else {
+    temp <- c(ls("package:DLMtool")[unlist(lapply(ls("package:DLMtool"), getclass, classy = classy))], 
+              ls(envir = .GlobalEnv)[unlist(lapply(ls(envir = .GlobalEnv), getclass, classy = classy))])
+    pkgs <- search()
+    if ("package:DLMextra" %in% pkgs) {
+      temp <- c(temp, unique(ls("package:DLMextra")[unlist(lapply(ls("package:DLMextra"), getclass, classy = classy))]))
+    }
+    temp <- unique(temp)
+    
+    if (classy == "Observation") message("Class 'Observation' has been re-named 'Obs'")	
+    if (length(temp) <1) stop("No objects of class '", classy, "' found", call.=FALSE)
+    return(temp)
   }
-  temp <- unique(temp)
-  
-  if (classy == "Observation") message("Class 'Observation' has been re-named 'Obs'")	
-  if (length(temp) <1) stop("No objects of class '", classy, "' found", call.=FALSE)
-  return(temp)
+
 }
+
+#' Title
+#'
+#' @param MPs 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+MPtype <- function(MPs=NA) {
+  if (any(is.na(MPs))) MPs <- avail("MP")
+  
+  Data <- DLMtool::SimulatedData
+  
+  recs <- runMP(Data, MPs, reps=1, chkMPs=FALSE)
+  
+  if (length(MPs)>1) {
+    Output <- !is.na(recs[,'TAC'])
+    ind <- seq_along(names(recs))
+    temp <- grep("TAC", colnames(recs))
+    if (length(temp)>0) ind <- ind[-temp]
+    Input <- rowSums(recs[,ind], na.rm=TRUE) >0 
+  } else {
+    Output <- !is.na(recs['TAC'])
+    ind <- seq_along(names(recs))
+    temp <- grep("TAC", names(recs))
+    if (length(temp)>0) ind <- ind[-temp]
+    Input <- sum(recs[ind], na.rm=TRUE) >0 
+  }
+  Mixed <- Output & Input
+  Output[Mixed] <- FALSE
+  Input[Mixed] <- FALSE
+  
+  type <- rep("NA", length(MPs))
+  type[Output] <- 'Output'
+  type[Input] <- 'Input'
+  type[Mixed] <- 'Mixed'
+  type[grep("ref", MPs)] <- "Reference"
+  data.frame(MP=MPs, Type=type, stringsAsFactors = FALSE)
+  
+}
+
+
+
+
 
 #' get object class
 #' 
@@ -1274,23 +1329,23 @@ gettempvar <- function(targ, targsd, targgrad, nyears, nsim, rands=NULL) {
 
 
 
-#' Return class of MP from MP name
-#' 
-#' 
-#' @param MPs list or vector of MP names
-#' @keywords internal
-#' @export
-#'
-MPclass <- function(MPs) {
-  if (class(MPs) == "list") MPs <- unlist(MPs)
-  if (class(MPs) != "character") stop("MPs must be character", call.=FALSE)
-  all <- c(avail("Output"), avail("Input"))
-  if (any(!MPs %in% all)) message("Some MPs not found: ", paste(MPs[!MPs %in% all], "\n"))
-  MPs <- MPs[MPs %in% all]
-  # cbind(MPs, Class=sapply(1:length(MPs), function(X) class(get(MPs[X]))))
-  classes <- sapply(1:length(MPs), function(X) class(get(MPs[X])))
-  classes[grepl("ref", MPs)] <- "Reference"
-  classes
-}
+# #' Return class of MP from MP name
+# #' 
+# #' 
+# #' @param MPs list or vector of MP names
+# #' @keywords internal
+# #' @export
+# #'
+# MPclass <- function(MPs) {
+#'   if (class(MPs) == "list") MPs <- unlist(MPs)
+#'   if (class(MPs) != "character") stop("MPs must be character", call.=FALSE)
+#'   all <- c(avail("Output"), avail("Input"))
+#'   if (any(!MPs %in% all)) message("Some MPs not found: ", paste(MPs[!MPs %in% all], "\n"))
+#'   MPs <- MPs[MPs %in% all]
+#'   # cbind(MPs, Class=sapply(1:length(MPs), function(X) class(get(MPs[X]))))
+#'   classes <- sapply(1:length(MPs), function(X) class(get(MPs[X])))
+#'   classes[grepl("ref", MPs)] <- "Reference"
+#'   classes
+#' }
 
 

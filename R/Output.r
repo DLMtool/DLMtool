@@ -55,54 +55,54 @@ getn <- function(BMSY_K) {
 gety <- function(n) (n^(n/(n - 1)))/(n - 1)  # More DBSRA code: get the y parameter for n
 
 
-#' Average Catch
-#'
-#' A simple average catch MP that is included to demonstrate a 'status quo' management option
-#'
-#' @usage AvC(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @author T. Carruthers
-#' @export AvC
-#'
-#' @importFrom abind abind
-#' @importFrom graphics abline axis barplot boxplot hist identify layout legend
-#' lines matplot mtext par plot plot.new points polygon segments text title text
-#' @importFrom grDevices col2rgb colorRampPalette rainbow rgb xy.coords
-#' @importFrom methods getClassDef .hasSlot new slot slot<- slotNames
-#' @importFrom stats approx coef dbeta density dnorm dlnorm lm loess loess.smooth
-#' median nlm optim optimise optimize plogis pnorm predict qlnorm quantile rbeta
-#' rlnorm rmultinom rnorm runif sd
-#' @importFrom utils packageVersion lsf.str read.csv
-AvC <- function(x, Data, reps = 100) {
-  dependencies = "Data@Cat"
-  rlnorm(reps, log(mean(Data@Cat[x, ], na.rm = T)), 0.2)
-}
- class(AvC) <- "Output"
+# #' Average Catch
+# #'
+# #' A simple average catch MP that is included to demonstrate a 'status quo' management option
+# #'
+# #' @usage AvC(x, Data, reps = 100)
+# #' @param x A position in a data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of stochastic samples of the TAC recommendation
+# #' @author T. Carruthers
+# #' @export AvC
+# #'
+# #' @importFrom abind abind
+# #' @importFrom graphics abline axis barplot boxplot hist identify layout legend
+# #' lines matplot mtext par plot plot.new points polygon segments text title text
+# #' @importFrom grDevices col2rgb colorRampPalette rainbow rgb xy.coords
+# #' @importFrom methods getClassDef .hasSlot new slot slot<- slotNames
+# #' @importFrom stats approx coef dbeta density dnorm dlnorm lm loess loess.smooth
+# #' median nlm optim optimise optimize plogis pnorm predict qlnorm quantile rbeta
+# #' rlnorm rmultinom rnorm runif sd
+# #' @importFrom utils packageVersion lsf.str read.csv
+# AvC <- function(x, Data, reps = 100) {
+#   dependencies = "Data@Cat"
+#   rlnorm(reps, log(mean(Data@Cat[x, ], na.rm = T)), 0.2)
+# }
+# class(AvC) <- "Output"
 
 
 
-#' A reference FMSY method (uses perfect information about FMSY)
-#' 
-#' FMSY is taken from the operating model stored at DLM@OM$FMSY
-#' 
-#' Note that you can out-perform this MP even though it has perfect
-#' information of FMSY and current abundance. The requirment for fixed F is
-#' actually quite strict and is by no means the upper limit in terms of yield.
-#' Don't panic if your method beats this one for yield, especially for
-#' short-lived species of high temporal variability in productivity!
-#' 
-#' @usage FMSYref(x, Data, reps = 100)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @author T. Carruthers
-#' @export FMSYref
-FMSYref <- function(x, Data, reps = 100) {
-  trlnorm(reps, Data@OM$A[x] * (1 - exp(-Data@OM$FMSY[x])), 0.01)
-}
-class(FMSYref) <- "Output"
+# #' A reference FMSY method (uses perfect information about FMSY)
+# #' 
+# #' FMSY is taken from the operating model stored at DLM@OM$FMSY
+# #' 
+# #' Note that you can out-perform this MP even though it has perfect
+# #' information of FMSY and current abundance. The requirment for fixed F is
+# #' actually quite strict and is by no means the upper limit in terms of yield.
+# #' Don't panic if your method beats this one for yield, especially for
+# #' short-lived species of high temporal variability in productivity!
+# #' 
+# #' @usage FMSYref(x, Data, reps = 100)
+# #' @param x A position in data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of TAC samples
+# #' @author T. Carruthers
+# #' @export FMSYref
+# FMSYref <- function(x, Data, reps = 100) {
+#   trlnorm(reps, Data@OM$A[x] * (1 - exp(-Data@OM$FMSY[x])), 0.01)
+# }
+# class(FMSYref) <- "Output"
 
 
 
@@ -156,76 +156,76 @@ class(FMSYref75) <- "Output"
 
 
 
-#' Dynamic Fratio MP
-#' 
-#' The Fratio MP with a controller that changes the level of F according to the
-#' relationship between Surplus production and biomass. Ie lower F when dSP/dB
-#' is positive and higher F when dSP/dB is negative.
-#' 
-#' The method smoothes historical catches and biomass and then infers the
-#' relationship between surplus production and biomass (as suggested by Mark
-#' Maunder and Carl Walters). The approach then regulates a F based policy
-#' according to this gradient in which F may range between two different
-#' fractions of natural mortality rate.
-#' 
-#' The core advantage is the TAC(t) is not strongly determined by TAC(t-1) and
-#' therefore errors are not as readily propagated. The result is method that
-#' tends to perform alarmingly well and therefore requires debunking ASAP.
-#' 
-#' @usage DynF(x, Data, yrsmth=10, gg=2, reps = 100)
-#' @param x A position in a data-limited methods object
-#' @param Data A data-limited methods object
-#' @param yrsmth The number of historical recent years used for smoothing catch
-#' and biomass data
-#' @param gg A gain parameter that modifies F according to the gradient in
-#' surplus production with biomass
-#' @param reps The number samples of the TAC
-#' @return A numeric vector of TAC recommendations
-#' @author T. Carruthers
-#' @references Made-up for this package.
-#' @export DynF
-DynF <- function(x, Data, yrsmth = 10, gg = 2, reps = 100) {
-  
-  dependencies = "Data@Year, Data@Cat, Data@Ind, Data@Abun, Data@Mort, Data@FMSY_M"
-  ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)
-  
-  C_dat <- log(Data@Cat[x, ind])
-  C_dat[C_dat == -Inf] <- 0
-  B_dat <- log(Data@Ind[x, ind]/Data@Ind[x, ind[yrsmth]] * Data@Abun[x])
-  B_dat[B_dat == -Inf] <- 0
-  C_hist <- exp(predict(loess(C_dat ~ ind, degree = 1)))
-  B_hist <- exp(predict(loess(B_dat ~ ind, degree = 1)))
-  
-  ind <- 2:yrsmth
-  ind1 <- 1:(yrsmth - 1)
-  SP_hist <- B_hist[ind] - B_hist[ind1] + C_hist[ind1]
-  
-  Frat <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x]) * trlnorm(reps, 
-    Data@FMSY_M[x], Data@CV_FMSY_M[x])
-  Flim <- matrix(NA, nrow = 2, ncol = reps)
-  Flim[1, ] <- Frat * 0.5
-  Flim[2, ] <- Frat * 2
-  
-  yind <- 1:length(SP_hist)
-  SP_mu <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
-    1))
-  SP_se <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
-    1), se = T)$se.fit
-  SP_new <- rnorm(reps, SP_mu, SP_se/2)
-  Glm <- summary(lm(SP_hist ~ B_hist[ind1]))$coefficients[2, 1:2]  # plot(B_hist[ind1],SP_hist) # points(B_hist[ind1],SP_hist,col='green')
-  G_new <- rnorm(reps, Glm[1], Glm[2]/2)
-  # G_new[G_new>2*Frat]<-2*Frat[G_new<(2*Frat)]
-  # G_new[G_new<(-2*Frat)]<--2*Frat[G_new<(-2*Frat)]
-  G_new[G_new > 0] <- G_new[G_new > 0] * 3
-  newF <- Frat * exp(-G_new * gg)
-  newF[newF < Flim[1]] <- Flim[1]
-  newF[newF > Flim[2]] <- Flim[2]
-  
-  TAC <- newF * B_hist[yrsmth]
-  TACfilter(TAC)
-  
-}
-class(DynF) <- "Output"
+# #' Dynamic Fratio MP
+# #' 
+# #' The Fratio MP with a controller that changes the level of F according to the
+# #' relationship between Surplus production and biomass. Ie lower F when dSP/dB
+# #' is positive and higher F when dSP/dB is negative.
+# #' 
+# #' The method smoothes historical catches and biomass and then infers the
+# #' relationship between surplus production and biomass (as suggested by Mark
+# #' Maunder and Carl Walters). The approach then regulates a F based policy
+# #' according to this gradient in which F may range between two different
+# #' fractions of natural mortality rate.
+# #' 
+# #' The core advantage is the TAC(t) is not strongly determined by TAC(t-1) and
+# #' therefore errors are not as readily propagated. The result is method that
+# #' tends to perform alarmingly well and therefore requires debunking ASAP.
+# #' 
+# #' @usage DynF(x, Data, yrsmth=10, gg=2, reps = 100)
+# #' @param x A position in a data-limited methods object
+# #' @param Data A data-limited methods object
+# #' @param yrsmth The number of historical recent years used for smoothing catch
+# #' and biomass data
+# #' @param gg A gain parameter that modifies F according to the gradient in
+# #' surplus production with biomass
+# #' @param reps The number samples of the TAC
+# #' @return A numeric vector of TAC recommendations
+# #' @author T. Carruthers
+# #' @references Made-up for this package.
+# #' @export DynF
+# DynF <- function(x, Data, yrsmth = 10, gg = 2, reps = 100) {
+#   
+#   dependencies = "Data@Year, Data@Cat, Data@Ind, Data@Abun, Data@Mort, Data@FMSY_M"
+#   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)
+#   
+#   C_dat <- log(Data@Cat[x, ind])
+#   C_dat[C_dat == -Inf] <- 0
+#   B_dat <- log(Data@Ind[x, ind]/Data@Ind[x, ind[yrsmth]] * Data@Abun[x])
+#   B_dat[B_dat == -Inf] <- 0
+#   C_hist <- exp(predict(loess(C_dat ~ ind, degree = 1)))
+#   B_hist <- exp(predict(loess(B_dat ~ ind, degree = 1)))
+#   
+#   ind <- 2:yrsmth
+#   ind1 <- 1:(yrsmth - 1)
+#   SP_hist <- B_hist[ind] - B_hist[ind1] + C_hist[ind1]
+#   
+#   Frat <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x]) * trlnorm(reps, 
+#     Data@FMSY_M[x], Data@CV_FMSY_M[x])
+#   Flim <- matrix(NA, nrow = 2, ncol = reps)
+#   Flim[1, ] <- Frat * 0.5
+#   Flim[2, ] <- Frat * 2
+#   
+#   yind <- 1:length(SP_hist)
+#   SP_mu <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
+#     1))
+#   SP_se <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
+#     1), se = T)$se.fit
+#   SP_new <- rnorm(reps, SP_mu, SP_se/2)
+#   Glm <- summary(lm(SP_hist ~ B_hist[ind1]))$coefficients[2, 1:2]  # plot(B_hist[ind1],SP_hist) # points(B_hist[ind1],SP_hist,col='green')
+#   G_new <- rnorm(reps, Glm[1], Glm[2]/2)
+#   # G_new[G_new>2*Frat]<-2*Frat[G_new<(2*Frat)]
+#   # G_new[G_new<(-2*Frat)]<--2*Frat[G_new<(-2*Frat)]
+#   G_new[G_new > 0] <- G_new[G_new > 0] * 3
+#   newF <- Frat * exp(-G_new * gg)
+#   newF[newF < Flim[1]] <- Flim[1]
+#   newF[newF > Flim[2]] <- Flim[2]
+#   
+#   TAC <- newF * B_hist[yrsmth]
+#   TACfilter(TAC)
+#   
+# }
+# class(DynF) <- "Output"
 
 
 
@@ -659,61 +659,61 @@ class(GB_target) <- "Output"
 
 
 
-#' Constant catch management procedure of Geromont and Butterworth (2014)
-#' 
-#' The TAC is the average catch over last yrsmth years.
-#' 
-#' This is one of four constant catch rules of Geromont and Butterworth 2014.
-#' 
-#' @usage CC1(x, Data, reps = 100, yrsmth = 5, xx=0)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @param yrsmth Years over which to calculate mean catches
-#' @param xx Parameter controlling the TAC. Mean catches are multiplied by
-#' (1-xx)
-#' @return A numeric vector of TAC recommendations
-#' @author T. Carruthers
-#' @references Geromont, H.F., Butterworth, D.S. 2014. Generic management
-#' procedures for data-poor fisheries; forecasting with few data. ICES J. Mar.
-#' Sci. doi:10.1093/icesjms/fst232
-#' @export CC1
-CC1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0) {
-  dependencies = "Data@Cat, Data@CV_Cat"
-  C_dat <- Data@Cat[x, (length(Data@Year) - (yrsmth - 1)):length(Data@Year)]
-  TAC <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))  # mean catches over the interval
-  TACfilter(TAC)
-}
-class(CC1) <- "Output"
+# #' Constant catch management procedure of Geromont and Butterworth (2014)
+# #' 
+# #' The TAC is the average catch over last yrsmth years.
+# #' 
+# #' This is one of four constant catch rules of Geromont and Butterworth 2014.
+# #' 
+# #' @usage CC1(x, Data, reps = 100, yrsmth = 5, xx=0)
+# #' @param x A position in data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of TAC samples
+# #' @param yrsmth Years over which to calculate mean catches
+# #' @param xx Parameter controlling the TAC. Mean catches are multiplied by
+# #' (1-xx)
+# #' @return A numeric vector of TAC recommendations
+# #' @author T. Carruthers
+# #' @references Geromont, H.F., Butterworth, D.S. 2014. Generic management
+# #' procedures for data-poor fisheries; forecasting with few data. ICES J. Mar.
+# #' Sci. doi:10.1093/icesjms/fst232
+# #' @export CC1
+# CC1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0) {
+#   dependencies = "Data@Cat, Data@CV_Cat"
+#   C_dat <- Data@Cat[x, (length(Data@Year) - (yrsmth - 1)):length(Data@Year)]
+#   TAC <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))  # mean catches over the interval
+#   TACfilter(TAC)
+# }
+# class(CC1) <- "Output"
 
 
 
-#' Constant catch management procedure of Geromont and Butterworth (2014)
-#' 
-#' The TAC is the average catch over last yrsmth years reduced by 30%.
-#' 
-#' This is one of four constant catch MPs of Geromont and Butterworth 2014.
-#' 
-#' @usage CC4(x, Data, reps = 100, yrsmth = 5, xx=0.3)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @param yrsmth Years over which to average catches
-#' @param xx Parameter controlling the TAC. Mean catches are multiplied by
-#' (1-xx)
-#' @return A numeric vector of TAC recommendations
-#' @author T. Carruthers
-#' @references Geromont, H.F., Butterworth, D.S. 2014. Generic management
-#' procedures for data-poor fisheries; forecasting with few data. ICES J. Mar.
-#' Sci. doi:10.1093/icesjms/fst232
-#' @export CC4
-CC4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.3) {
-  dependencies = "Data@Cat, Data@CV_Cat"
-  C_dat <- Data@Cat[x, (length(Data@Year) - (yrsmth - 1)):length(Data@Year)]
-  TAC <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))  # mean catches over the interval
-  TACfilter(TAC)
-}
-class(CC4) <- "Output"
+# #' Constant catch management procedure of Geromont and Butterworth (2014)
+# #' 
+# #' The TAC is the average catch over last yrsmth years reduced by 30%.
+# #' 
+# #' This is one of four constant catch MPs of Geromont and Butterworth 2014.
+# #' 
+# #' @usage CC4(x, Data, reps = 100, yrsmth = 5, xx=0.3)
+# #' @param x A position in data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of TAC samples
+# #' @param yrsmth Years over which to average catches
+# #' @param xx Parameter controlling the TAC. Mean catches are multiplied by
+# #' (1-xx)
+# #' @return A numeric vector of TAC recommendations
+# #' @author T. Carruthers
+# #' @references Geromont, H.F., Butterworth, D.S. 2014. Generic management
+# #' procedures for data-poor fisheries; forecasting with few data. ICES J. Mar.
+# #' Sci. doi:10.1093/icesjms/fst232
+# #' @export CC4
+# CC4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.3) {
+#   dependencies = "Data@Cat, Data@CV_Cat"
+#   C_dat <- Data@Cat[x, (length(Data@Year) - (yrsmth - 1)):length(Data@Year)]
+#   TAC <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))  # mean catches over the interval
+#   TACfilter(TAC)
+# }
+# class(CC4) <- "Output"
 
 
 
@@ -1447,169 +1447,169 @@ class(SBT2) <- "Output"
 
 
 
-#' Delay - Difference Stock Assessment with UMSY and MSY leading
-#' 
-#' A simple delay-difference assessment that estimates the TAC using a
-#' time-series of catches and a relative abundance index.
-#' 
-#' 
-#' @usage DD(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @return A numeric vector of TAC recommendations
-#' @note This DD model is observation error only and has does not estimate
-#' process error (recruitment deviations). Similar to many other assessment
-#' models it depends on a whole host of dubious assumptions such as temporally
-#' stationary productivity and proportionality between the abundance index and
-#' real abundance. Unsurprisingly the extent to which these assumptions are
-#' violated tends to be the biggest driver of performance for this method.
-#' @author T. Carruthers
-#' @references Method based on equations of Carl Walters (bug him with
-#' questions and expect colourful responses)
-#' @export DD
-DD <- function(x, Data, reps = 100) {
-  # for(x in 1:nsim){
-  dependencies = "Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@vbt0, Data@CV_vbt0, Data@Mort, Data@CV_Mort, Data@wla, Data@wlb"
-  Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
-  Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
-  if (Data@vbt0[x] != 0 & Data@CV_vbt0[x] != tiny) {
-    t0c <- -trlnorm(reps, -Data@vbt0[x], Data@CV_vbt0[x])
-  } else {
-    t0c <- rep(Data@vbt0[x], reps)
-  }
-  t0c[!is.finite(t0c)] <- 0
-  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
-  a <- Data@wla[x]
-  b <- Data@wlb[x]
-  
-  Winf = Data@wla[x] * Data@vbLinf[x]^Data@wlb[x]
-  age <- 1:Data@MaxAge
-  la <- Data@vbLinf[x] * (1 - exp(-Data@vbK[x] * ((age - Data@vbt0[x]))))
-  wa <- Data@wla[x] * la^Data@wlb[x]
-  a50V <- iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])
-  a50V <- max(a50V, 1)
-  yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x,   ])]
-  C_hist <- Data@Cat[x, yind]
-  E_hist <- C_hist/Data@Ind[x, yind]
-  E_hist <- E_hist/mean(E_hist)
-  ny_DD <- length(C_hist)
-  params <- log(c(Data@Mort[x], mean(C_hist, na.rm = T), Data@Mort[x]))
-  k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  
-  k_DD[k_DD > Data@MaxAge/2] <- ceiling(Data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
-  Rho_DD <- (wa[k_DD + 2] - Winf)/(wa[k_DD + 1] - Winf)
-  Alpha_DD <- Winf * (1 - Rho_DD)
-  So_DD <- exp(-Data@Mort[x])  # get So survival rate
-  wa_DD <- wa[k_DD]
-  UMSYprior <- c(1 - exp(-Data@Mort[x] * 0.5), 0.3)
-  opt <- optim(params, DD_R, opty = 1, So_DD = So_DD, Alpha_DD = Alpha_DD, 
-    Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, wa_DD = wa_DD, E_hist = E_hist, 
-    C_hist = C_hist, UMSYprior = UMSYprior, method = "L-BFGS-B", lower = log(exp(params)/20), 
-    upper = log(exp(params) * 20), hessian = TRUE)
-  
-  # Catfit<-DD_R(opt$par,opty=3,So_DD=So_DD,Alpha_DD=Alpha_DD,Rho_DD=Rho_DD,ny_DD=ny_DD,k_DD=k_DD,wa_DD=wa_DD,E_hist=E_hist,C_hist=C_hist,UMSYprior=UMSYprior)
-  # plot(Catfit[,1],ylim=c(0,max(Catfit))) lines(Catfit[,2],col='red')
-  
-  TAC <- rep(NA, reps)
-  # samps<-rmvnorm(reps,opt$par,solve(opt$hessian)) # assuming log
-  # parameters are multivariate normal hessian approximation
-  samps <- cbind(rnorm(reps, opt$par[1], ((opt$par[1])^2)^0.5 * 0.1), 
-    rnorm(reps, opt$par[2], ((opt$par[2])^2)^0.5 * 0.1), rnorm(reps, 
-      opt$par[3], ((opt$par[3])^2)^0.5 * 0.1))
-  if (reps == 1) 
-    samps <- matrix(c(opt$par[1], opt$par[2], opt$par[3]), nrow = 1)
-  for (i in 1:reps) TAC[i] <- DD_R(samps[i, ], opty = 2, So_DD = So_DD, 
-    Alpha_DD = Alpha_DD, Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, 
-    wa_DD = wa_DD, E_hist = E_hist, C_hist = C_hist, UMSYprior = UMSYprior)
-  TACfilter(TAC)
-}
-class(DD) <- "Output"
+# #' Delay - Difference Stock Assessment with UMSY and MSY leading
+# #' 
+# #' A simple delay-difference assessment that estimates the TAC using a
+# #' time-series of catches and a relative abundance index.
+# #' 
+# #' 
+# #' @usage DD(x, Data, reps = 100)
+# #' @param x A position in a data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of stochastic samples of the TAC recommendation
+# #' @return A numeric vector of TAC recommendations
+# #' @note This DD model is observation error only and has does not estimate
+# #' process error (recruitment deviations). Similar to many other assessment
+# #' models it depends on a whole host of dubious assumptions such as temporally
+# #' stationary productivity and proportionality between the abundance index and
+# #' real abundance. Unsurprisingly the extent to which these assumptions are
+# #' violated tends to be the biggest driver of performance for this method.
+# #' @author T. Carruthers
+# #' @references Method based on equations of Carl Walters (bug him with
+# #' questions and expect colourful responses)
+# #' @export DD
+# DD <- function(x, Data, reps = 100) {
+#   # for(x in 1:nsim){
+#   dependencies = "Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@vbt0, Data@CV_vbt0, Data@Mort, Data@CV_Mort, Data@wla, Data@wlb"
+#   Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
+#   Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
+#   if (Data@vbt0[x] != 0 & Data@CV_vbt0[x] != tiny) {
+#     t0c <- -trlnorm(reps, -Data@vbt0[x], Data@CV_vbt0[x])
+#   } else {
+#     t0c <- rep(Data@vbt0[x], reps)
+#   }
+#   t0c[!is.finite(t0c)] <- 0
+#   Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
+#   a <- Data@wla[x]
+#   b <- Data@wlb[x]
+#   
+#   Winf = Data@wla[x] * Data@vbLinf[x]^Data@wlb[x]
+#   age <- 1:Data@MaxAge
+#   la <- Data@vbLinf[x] * (1 - exp(-Data@vbK[x] * ((age - Data@vbt0[x]))))
+#   wa <- Data@wla[x] * la^Data@wlb[x]
+#   a50V <- iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])
+#   a50V <- max(a50V, 1)
+#   yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x,   ])]
+#   C_hist <- Data@Cat[x, yind]
+#   E_hist <- C_hist/Data@Ind[x, yind]
+#   E_hist <- E_hist/mean(E_hist)
+#   ny_DD <- length(C_hist)
+#   params <- log(c(Data@Mort[x], mean(C_hist, na.rm = T), Data@Mort[x]))
+#   k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  
+#   k_DD[k_DD > Data@MaxAge/2] <- ceiling(Data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
+#   Rho_DD <- (wa[k_DD + 2] - Winf)/(wa[k_DD + 1] - Winf)
+#   Alpha_DD <- Winf * (1 - Rho_DD)
+#   So_DD <- exp(-Data@Mort[x])  # get So survival rate
+#   wa_DD <- wa[k_DD]
+#   UMSYprior <- c(1 - exp(-Data@Mort[x] * 0.5), 0.3)
+#   opt <- optim(params, DD_R, opty = 1, So_DD = So_DD, Alpha_DD = Alpha_DD, 
+#     Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, wa_DD = wa_DD, E_hist = E_hist, 
+#     C_hist = C_hist, UMSYprior = UMSYprior, method = "L-BFGS-B", lower = log(exp(params)/20), 
+#     upper = log(exp(params) * 20), hessian = TRUE)
+#   
+#   # Catfit<-DD_R(opt$par,opty=3,So_DD=So_DD,Alpha_DD=Alpha_DD,Rho_DD=Rho_DD,ny_DD=ny_DD,k_DD=k_DD,wa_DD=wa_DD,E_hist=E_hist,C_hist=C_hist,UMSYprior=UMSYprior)
+#   # plot(Catfit[,1],ylim=c(0,max(Catfit))) lines(Catfit[,2],col='red')
+#   
+#   TAC <- rep(NA, reps)
+#   # samps<-rmvnorm(reps,opt$par,solve(opt$hessian)) # assuming log
+#   # parameters are multivariate normal hessian approximation
+#   samps <- cbind(rnorm(reps, opt$par[1], ((opt$par[1])^2)^0.5 * 0.1), 
+#     rnorm(reps, opt$par[2], ((opt$par[2])^2)^0.5 * 0.1), rnorm(reps, 
+#       opt$par[3], ((opt$par[3])^2)^0.5 * 0.1))
+#   if (reps == 1) 
+#     samps <- matrix(c(opt$par[1], opt$par[2], opt$par[3]), nrow = 1)
+#   for (i in 1:reps) TAC[i] <- DD_R(samps[i, ], opty = 2, So_DD = So_DD, 
+#     Alpha_DD = Alpha_DD, Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, 
+#     wa_DD = wa_DD, E_hist = E_hist, C_hist = C_hist, UMSYprior = UMSYprior)
+#   TACfilter(TAC)
+# }
+# class(DD) <- "Output"
 
 
 
 
-#' Delay - Difference Stock Assessment with UMSY and MSY leading coupled with a
-#' 40-10 harvest control rule
-#' 
-#' A simple delay-difference assessment that estimates the OFL using a
-#' time-series of catches and a relative abundance index. In this version of
-#' the DD MP a 40-10 rule is imposed over the OFL recommendation.
-#' 
-#' 
-#' @usage DD4010(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @return A numeric vector of TAC recommendations
-#' @author T. Carruthers
-#' @references Method based on equations of Carl Walters
-#' @export DD4010
-DD4010 <- function(x, Data, reps = 100) {
-  dependencies = "Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@vbt0, Data@CV_vbt0, Data@Mort, Data@CV_Mort. Data@wla, Data@ wlb"
-  Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
-  Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
-  if (Data@vbt0[x] != 0 & Data@CV_vbt0[x] != tiny) {
-    t0c <- -trlnorm(reps, -Data@vbt0[x], Data@CV_vbt0[x])
-  } else {
-    t0c <- rep(Data@vbt0[x], reps)
-  }
-  t0c[!is.finite(t0c)] <- 0
-  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
-  a <- Data@wla[x]
-  b <- Data@wlb[x]
-  
-  Winf = Data@wla[x] * Data@vbLinf[x]^Data@wlb[x]
-  age <- 1:Data@MaxAge
-  la <- Data@vbLinf[x] * (1 - exp(-Data@vbK[x] * ((age - Data@vbt0[x]))))
-  wa <- Data@wla[x] * la^Data@wlb[x]
-  a50V <- iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
-    Data@L50[x])
-  a50V <- max(a50V, 1)
-  yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x, 
-    ])]
-  C_hist <- Data@Cat[x, yind]
-  E_hist <- Data@Ind[x, yind]
-  E_hist <- C_hist/E_hist
-  E_hist <- E_hist/mean(E_hist)
-  ny_DD <- length(C_hist)
-  params <- log(c(Data@Mort[x], mean(C_hist, na.rm = T), Data@Mort[x]))
-  k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  -------------
-  k_DD[k_DD > Data@MaxAge/2] <- ceiling(Data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
-  Rho_DD <- (wa[k_DD + 2] - Winf)/(wa[k_DD + 1] - Winf)
-  Alpha_DD <- Winf * (1 - Rho_DD)
-  So_DD <- exp(-Data@Mort[x])  # get So survival rate
-  wa_DD <- wa[k_DD]
-  UMSYprior <- c(1 - exp(-Data@Mort * 0.5), 0.3)
-  opt <- optim(params, DD_R, opty = 1, So_DD = So_DD, Alpha_DD = Alpha_DD, 
-    Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, wa_DD = wa_DD, E_hist = E_hist, 
-    C_hist = C_hist, UMSYprior = UMSYprior, method = "L-BFGS-B", lower = log(exp(params)/20), 
-    upper = log(exp(params) * 20), hessian = TRUE)
-  
-  # Catfit<-DD_R(opt$par,opty=3,So_DD=So_DD,Alpha_DD=Alpha_DD,Rho_DD=Rho_DD,ny_DD=ny_DD,k_DD=k_DD,wa_DD=wa_DD,E_hist=E_hist,C_hist=C_hist,UMSYprior=UMSYprior)
-  # plot(Catfit[,1],ylim=c(0,max(Catfit))) lines(Catfit[,2],col='red')
-  
-  TAC <- rep(NA, reps)
-  dep <- rep(NA, reps)
-  # samps<-rmvnorm(reps,opt$par,solve(opt$hessian)) # assuming log
-  # parameters are multivariate normal hessian approximation
-  samps <- cbind(rnorm(reps, opt$par[1], ((opt$par[1])^2)^0.5 * 0.1), 
-    rnorm(reps, opt$par[2], ((opt$par[2])^2)^0.5 * 0.1), rnorm(reps, 
-      opt$par[3], ((opt$par[3])^2)^0.5 * 0.1))
-  if (reps == 1) 
-    samps <- matrix(c(opt$par[1], opt$par[2], opt$par[3]), nrow = 1)
-  for (i in 1:reps) TAC[i] <- DD_R(samps[i, ], opty = 2, So_DD = So_DD, 
-    Alpha_DD = Alpha_DD, Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, 
-    wa_DD = wa_DD, E_hist = E_hist, C_hist = C_hist, UMSYprior = UMSYprior)
-  for (i in 1:reps) dep[i] <- DD_R(samps[i, ], opty = 3, So_DD = So_DD, 
-    Alpha_DD = Alpha_DD, Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, 
-    wa_DD = wa_DD, E_hist = E_hist, C_hist = C_hist, UMSYprior = UMSYprior)
-  cond1 <- !is.na(dep) & dep < 0.4 & dep > 0.1
-  cond2 <- !is.na(dep) & dep < 0.1
-  TAC[cond1] <- TAC[cond1] * (dep[cond1] - 0.1)/0.3
-  TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
-  TACfilter(TAC)
-}
-class(DD4010) <- "Output"
+# #' Delay - Difference Stock Assessment with UMSY and MSY leading coupled with a
+# #' 40-10 harvest control rule
+# #' 
+# #' A simple delay-difference assessment that estimates the OFL using a
+# #' time-series of catches and a relative abundance index. In this version of
+# #' the DD MP a 40-10 rule is imposed over the OFL recommendation.
+# #' 
+# #' 
+# #' @usage DD4010(x, Data, reps = 100)
+# #' @param x A position in a data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of stochastic samples of the TAC recommendation
+# #' @return A numeric vector of TAC recommendations
+# #' @author T. Carruthers
+# #' @references Method based on equations of Carl Walters
+# #' @export DD4010
+# DD4010 <- function(x, Data, reps = 100) {
+#   dependencies = "Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@vbt0, Data@CV_vbt0, Data@Mort, Data@CV_Mort. Data@wla, Data@ wlb"
+#   Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
+#   Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
+#   if (Data@vbt0[x] != 0 & Data@CV_vbt0[x] != tiny) {
+#     t0c <- -trlnorm(reps, -Data@vbt0[x], Data@CV_vbt0[x])
+#   } else {
+#     t0c <- rep(Data@vbt0[x], reps)
+#   }
+#   t0c[!is.finite(t0c)] <- 0
+#   Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
+#   a <- Data@wla[x]
+#   b <- Data@wlb[x]
+#   
+#   Winf = Data@wla[x] * Data@vbLinf[x]^Data@wlb[x]
+#   age <- 1:Data@MaxAge
+#   la <- Data@vbLinf[x] * (1 - exp(-Data@vbK[x] * ((age - Data@vbt0[x]))))
+#   wa <- Data@wla[x] * la^Data@wlb[x]
+#   a50V <- iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
+#     Data@L50[x])
+#   a50V <- max(a50V, 1)
+#   yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x, 
+#     ])]
+#   C_hist <- Data@Cat[x, yind]
+#   E_hist <- Data@Ind[x, yind]
+#   E_hist <- C_hist/E_hist
+#   E_hist <- E_hist/mean(E_hist)
+#   ny_DD <- length(C_hist)
+#   params <- log(c(Data@Mort[x], mean(C_hist, na.rm = T), Data@Mort[x]))
+#   k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  
+#   k_DD[k_DD > Data@MaxAge/2] <- ceiling(Data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
+#   Rho_DD <- (wa[k_DD + 2] - Winf)/(wa[k_DD + 1] - Winf)
+#   Alpha_DD <- Winf * (1 - Rho_DD)
+#   So_DD <- exp(-Data@Mort[x])  # get So survival rate
+#   wa_DD <- wa[k_DD]
+#   UMSYprior <- c(1 - exp(-Data@Mort * 0.5), 0.3)
+#   opt <- optim(params, DD_R, opty = 1, So_DD = So_DD, Alpha_DD = Alpha_DD, 
+#     Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, wa_DD = wa_DD, E_hist = E_hist, 
+#     C_hist = C_hist, UMSYprior = UMSYprior, method = "L-BFGS-B", lower = log(exp(params)/20), 
+#     upper = log(exp(params) * 20), hessian = TRUE)
+#   
+#   # Catfit<-DD_R(opt$par,opty=3,So_DD=So_DD,Alpha_DD=Alpha_DD,Rho_DD=Rho_DD,ny_DD=ny_DD,k_DD=k_DD,wa_DD=wa_DD,E_hist=E_hist,C_hist=C_hist,UMSYprior=UMSYprior)
+#   # plot(Catfit[,1],ylim=c(0,max(Catfit))) lines(Catfit[,2],col='red')
+#   
+#   TAC <- rep(NA, reps)
+#   dep <- rep(NA, reps)
+#   # samps<-rmvnorm(reps,opt$par,solve(opt$hessian)) # assuming log
+#   # parameters are multivariate normal hessian approximation
+#   samps <- cbind(rnorm(reps, opt$par[1], ((opt$par[1])^2)^0.5 * 0.1), 
+#     rnorm(reps, opt$par[2], ((opt$par[2])^2)^0.5 * 0.1), rnorm(reps, 
+#       opt$par[3], ((opt$par[3])^2)^0.5 * 0.1))
+#   if (reps == 1) 
+#     samps <- matrix(c(opt$par[1], opt$par[2], opt$par[3]), nrow = 1)
+#   for (i in 1:reps) TAC[i] <- DD_R(samps[i, ], opty = 2, So_DD = So_DD, 
+#     Alpha_DD = Alpha_DD, Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, 
+#     wa_DD = wa_DD, E_hist = E_hist, C_hist = C_hist, UMSYprior = UMSYprior)
+#   for (i in 1:reps) dep[i] <- DD_R(samps[i, ], opty = 3, So_DD = So_DD, 
+#     Alpha_DD = Alpha_DD, Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, 
+#     wa_DD = wa_DD, E_hist = E_hist, C_hist = C_hist, UMSYprior = UMSYprior)
+#   cond1 <- !is.na(dep) & dep < 0.4 & dep > 0.1
+#   cond2 <- !is.na(dep) & dep < 0.1
+#   TAC[cond1] <- TAC[cond1] * (dep[cond1] - 0.1)/0.3
+#   TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
+#   TACfilter(TAC)
+# }
+# class(DD4010) <- "Output"
 
 
 
@@ -1690,324 +1690,324 @@ DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hi
 }
 
 
-
-#' Depletion-Based Stock Reduction Analysis
-#' 
-#' User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the OFL
-#' by back-constructing the stock to match a user specified level of stock
-#' depletion (OFL = M * FMSY/M * depletion* B0).
-#' 
-#' You specify a range of stock depletion and, given historical catches DB-SRA
-#' calculates what unfished biomass must have been to get you here given
-#' samples for M, FMSY relative to M and also BMSY relative to Bunfished.
-#' 
-#' @usage DBSRA(x, Data, reps = 100)
-#' @param x A position in a data-limited methods object.
-#' @param Data A data-limited methods object.
-#' @param reps The number of samples of the TAC (OFL) recommendation.
-#' @return A vector of TAC (OFL) values.
-#' @note This is set up to return the OFL (FMSY * current biomass).
-#' 
-#' You may have noticed that you -the user- specify three of the factors that
-#' make the quota recommendation. So this can be quite a subjective method.
-#' 
-#' Also the DB-SRA method of this package isn't exactly the same as the
-#' original method of Dick and MacCall (2011) because it has to work for
-#' simulated depletions above BMSY/B0 and even on occasion over B0. Also it
-#' doesn't have the modification for flatfish life histories that has
-#' previously been applied by Dick and MacCall.
-#' @author T. Carruthers
-#' @references Dick, E.J., MacCall, A.D., 2011. Depletion-Based Stock Reduction
-#' Analysis: A catch-based method for determining sustainable yields for
-#' data-poor fish stocks. Fish. Res. 110, 331-341.
-#' @export DBSRA
-DBSRA <- function(x, Data, reps = 100) {
-  # returns a vector of DBSRA estimates of the TAC for a particular
-  # simulation x for(x in 1:nsim){
-  dependencies = "Data@Cat, Data@Dep, Data@CV_Dep, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M,Data@BMSY_B0, Data@CV_BMSY_B0, Data@L50"
-  C_hist <- Data@Cat[x, ]
-  TAC <- rep(NA, reps)
-  DBSRAcount <- 1
-  if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) return(NA)
-  while (DBSRAcount < (reps + 1)) {
-    depo <- max(0.01, min(0.99, Data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
-    Bt_K <- rbeta(100, alphaconv(depo, min(depo * Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])), 
-                  betaconv(depo, min(depo * Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
-    Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
-    Mdb <- trlnorm(100, Data@Mort[x], Data@CV_Mort[x])
-    Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
-    if (is.na(Mdb)) Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
-    FMSY_M <- trlnorm(1, Data@FMSY_M[x], Data@CV_FMSY_M[x])
-    BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] *  Data@BMSY_B0[x]), 
-                    betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-    tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
-    if (is.na(tryBMSY_K)) {
-      Min <- min(BMSY_K, na.rm = TRUE)
-      Max <- max(BMSY_K, na.rm = TRUE)
-      if (Max <= 0.05) 
-        BMSY_K <- 0.05
-      if (Min >= 0.95) 
-        BMSY_K <- 0.95
-    }
-    if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
-    
-    adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])), 1)
-    opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist), 1000 * mean(C_hist))), C_hist = C_hist, 
-                    nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, BMSY_K = BMSY_K, 
-                    Bt_K = Bt_K, adelay = adelay, tol = 0.01)
-    # if(opt$objective<0.1){
-    Kc <- exp(opt$minimum)
-    BMSYc <- Kc * BMSY_K
-    FMSYc <- Mdb * FMSY_M
-    UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
-    MSYc <- Kc * BMSY_K * UMSYc
-    TAC[DBSRAcount] <- UMSYc * Kc * Bt_K
-    DBSRAcount <- DBSRAcount + 1
-    # }
-    
-    # print(DBSRAcount)
-  }  # end of reps
-  TACfilter(TAC)
-  # print(x) }
-}  # end of DBSRA_apply
-class(DBSRA) <- "Output"
-
-
-
-#' Depletion-Based Stock Reduction Analysis assuming 40 per cent stock
-#' depletion
-#' 
-#' DBSRA assuming that current stock depletion is exactly 40 per cent of
-#' unfished stock levels.
-#' 
-#' 
-#' @usage DBSRA_40(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @note A 40 percent assumption for current depletion is more or less the most
-#' optimistic state for a stock (ie very close to BMSY/B0 for many stocks).
-#' @author T. Carruthers.
-#' @references Dick, E.J., MacCall, A.D., 2010. Estimates of sustainable yield
-#' for 50 data-poor stocks in the Pacific Coast groundfish fishery management
-#' plan. Technical memorandum. Southwest fisheries Science Centre, Santa Cruz,
-#' CA. National Marine Fisheries Service, National Oceanic and Atmospheric
-#' Administration of the U.S. Department of Commerce. NOAA-TM-NMFS-SWFSC-460.
-#' @export DBSRA_40
-DBSRA_40 <- function(x, Data, reps = 100) {
-  # returns a vector of DBSRA estimates of the TAC for a particular
-  # simulation x
-  dependencies = "Data@Cat, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0, Data@L50"
-  C_hist <- Data@Cat[x, ]
-  TAC <- rep(NA, reps)
-  DBSRAcount <- 1
-  if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x]))   return(NA)
-  while (DBSRAcount < (reps + 1)) {
-    depo <- 0.4
-    Bt_K <- rbeta(100, alphaconv(depo, min(depo * Data@CV_Dep[x], 
-      (1 - depo) * Data@CV_Dep[x])), betaconv(depo, min(depo * 
-      Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
-    Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
-    Mdb <- stats::rlnorm(100, mconv(Data@Mort[x], Data@CV_Mort[x] * 
-      Data@Mort[x]), sdconv(Data@Mort[x], Data@CV_Mort[x] * 
-      Data@Mort[x]))  # log space stdev 0.4 as in Dick and MacCall 2011
-    Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
-    if (is.na(Mdb)) 
-      Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
-    FMSY_M <- trlnorm(1, Data@FMSY_M[x], Data@CV_FMSY_M[x])
-    BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
-      Data@BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
-      Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-    tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
-    if (is.na(tryBMSY_K)) {
-      Min <- min(BMSY_K, na.rm = TRUE)
-      Max <- max(BMSY_K, na.rm = TRUE)
-      if (Max <= 0.05) 
-        BMSY_K <- 0.05
-      if (Min >= 0.95) 
-        BMSY_K <- 0.95
-    }
-    if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
-    adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])), 1)
-    opt <- optimize(DBSRAopt, log(c(0.1 * mean(C_hist), 1000 * mean(C_hist))), 
-      C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
-      BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
-    # if(opt$objective<0.1){
-    Kc <- exp(opt$minimum)
-    BMSYc <- Kc * BMSY_K
-    FMSYc <- Mdb * FMSY_M
-    UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
-    MSYc <- Kc * BMSY_K * UMSYc
-    TAC[DBSRAcount] <- UMSYc * Kc * Bt_K
-    DBSRAcount <- DBSRAcount + 1
-    # }
-  }  # end of reps
-  TACfilter(TAC)
-}  # end of DBSRA_apply
-class(DBSRA_40) <- "Output"
+# 
+# #' Depletion-Based Stock Reduction Analysis
+# #' 
+# #' User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the OFL
+# #' by back-constructing the stock to match a user specified level of stock
+# #' depletion (OFL = M * FMSY/M * depletion* B0).
+# #' 
+# #' You specify a range of stock depletion and, given historical catches DB-SRA
+# #' calculates what unfished biomass must have been to get you here given
+# #' samples for M, FMSY relative to M and also BMSY relative to Bunfished.
+# #' 
+# #' @usage DBSRA(x, Data, reps = 100)
+# #' @param x A position in a data-limited methods object.
+# #' @param Data A data-limited methods object.
+# #' @param reps The number of samples of the TAC (OFL) recommendation.
+# #' @return A vector of TAC (OFL) values.
+# #' @note This is set up to return the OFL (FMSY * current biomass).
+# #' 
+# #' You may have noticed that you -the user- specify three of the factors that
+# #' make the quota recommendation. So this can be quite a subjective method.
+# #' 
+# #' Also the DB-SRA method of this package isn't exactly the same as the
+# #' original method of Dick and MacCall (2011) because it has to work for
+# #' simulated depletions above BMSY/B0 and even on occasion over B0. Also it
+# #' doesn't have the modification for flatfish life histories that has
+# #' previously been applied by Dick and MacCall.
+# #' @author T. Carruthers
+# #' @references Dick, E.J., MacCall, A.D., 2011. Depletion-Based Stock Reduction
+# #' Analysis: A catch-based method for determining sustainable yields for
+# #' data-poor fish stocks. Fish. Res. 110, 331-341.
+# #' @export DBSRA
+# DBSRA <- function(x, Data, reps = 100) {
+#   # returns a vector of DBSRA estimates of the TAC for a particular
+#   # simulation x for(x in 1:nsim){
+#   dependencies = "Data@Cat, Data@Dep, Data@CV_Dep, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M,Data@BMSY_B0, Data@CV_BMSY_B0, Data@L50"
+#   C_hist <- Data@Cat[x, ]
+#   TAC <- rep(NA, reps)
+#   DBSRAcount <- 1
+#   if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) return(NA)
+#   while (DBSRAcount < (reps + 1)) {
+#     depo <- max(0.01, min(0.99, Data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
+#     Bt_K <- rbeta(100, alphaconv(depo, min(depo * Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])), 
+#                   betaconv(depo, min(depo * Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
+#     Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
+#     Mdb <- trlnorm(100, Data@Mort[x], Data@CV_Mort[x])
+#     Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
+#     if (is.na(Mdb)) Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
+#     FMSY_M <- trlnorm(1, Data@FMSY_M[x], Data@CV_FMSY_M[x])
+#     BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] *  Data@BMSY_B0[x]), 
+#                     betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+#     tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
+#     if (is.na(tryBMSY_K)) {
+#       Min <- min(BMSY_K, na.rm = TRUE)
+#       Max <- max(BMSY_K, na.rm = TRUE)
+#       if (Max <= 0.05) 
+#         BMSY_K <- 0.05
+#       if (Min >= 0.95) 
+#         BMSY_K <- 0.95
+#     }
+#     if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
+#     
+#     adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])), 1)
+#     opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist), 1000 * mean(C_hist))), C_hist = C_hist, 
+#                     nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, BMSY_K = BMSY_K, 
+#                     Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+#     # if(opt$objective<0.1){
+#     Kc <- exp(opt$minimum)
+#     BMSYc <- Kc * BMSY_K
+#     FMSYc <- Mdb * FMSY_M
+#     UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
+#     MSYc <- Kc * BMSY_K * UMSYc
+#     TAC[DBSRAcount] <- UMSYc * Kc * Bt_K
+#     DBSRAcount <- DBSRAcount + 1
+#     # }
+#     
+#     # print(DBSRAcount)
+#   }  # end of reps
+#   TACfilter(TAC)
+#   # print(x) }
+# }  # end of DBSRA_apply
+# class(DBSRA) <- "Output"
 
 
 
-#' Depletion-Based Stock Reduction Analysis using mean length estimator of
-#' stock depletion
-#' 
-#' DBSRA using the mean length estimator to calculate current stock depletion.
-#' 
-#' 
-#' @usage DBSRA_ML(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the quota recommendation
-#' @note The mean length extension was programmed by Gary Nelson as part of his
-#' excellent R package 'fishmethods'
-#' @author T. Carruthers
-#' @references Dick, E.J., MacCall, A.D., 2011. Depletion-Based Stock Reduction
-#' Analysis: A catch-based method for determining sustainable yields for
-#' data-poor fish stocks. Fish. Res. 110, 331-341.
-#' @export DBSRA_ML
-DBSRA_ML <- function(x, Data, reps = 100) {
-  dependencies = "Data@Cat, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0, Data@L50, Data@CAL, Data@Year, Data@Cat"
-  C_hist <- Data@Cat[x, ]
-  TAC <- rep(NA, reps)
-  DBSRAcount <- 1
-  maxIts <- 200
-  nIts <- 0
-  if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) return(NA)
-  while (DBSRAcount < (reps + 1) & nIts < maxIts) {
-    Linfc <- trlnorm(1, Data@vbLinf[x], Data@CV_vbLinf[x])
-    Kc <- trlnorm(1, Data@vbK[x], Data@CV_vbK[x])
-    Mdb <- trlnorm(100, Data@Mort[x], Data@CV_Mort[x])
-    Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
-    if (is.na(Mdb)) Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
-    Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = 1, MLtype = "dep")
-    if (all(is.na(Z))) return(rep(NA, reps))
-    FM <- Z - Mdb
-    FM[FM < 0] <- 0.01
-    nyears <- length(Data@Year)
-    Ct1 <- mean(Data@Cat[x, 1:3])
-    Ct2 <- mean(Data@Cat[x, (nyears - 2):nyears])
-    # dep<-c(Ct1,Ct2)/(1-exp(-FM[,c(1,2)]))
-    dep <- c(Ct1, Ct2)/(1 - exp(-FM))
-    Bt_K <- dep[2]/dep[1]
-    
-    if (Bt_K < 0.01) Bt_K <- 0.01  # interval censor / temporary hack to avoid doing multiple depletion estimates that would take far too long
-    if (Bt_K > 0.99) Bt_K <- 0.99  # interval censor / temporary hack to avoid doing multiple depletion estimates that would take far too long
-    
-    
-    FMSY_M <- trlnorm(1, Data@FMSY_M[x], Data@CV_FMSY_M[x])
-    BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
-      Data@BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
-      Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-    tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
-    
-    if (is.na(tryBMSY_K)) {
-      Min <- min(BMSY_K, na.rm = TRUE)
-      Max <- max(BMSY_K, na.rm = TRUE)
-      if (Max <= 0.05) 
-        BMSY_K <- 0.05
-      if (Min >= 0.95) 
-        BMSY_K <- 0.95
-    }
-    if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
-    if (all(is.na(BMSY_K))) return(rep(NA, reps))
-    adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])), 1)
-    opt <- optimize(DBSRAopt, log(c(0.1 * mean(C_hist), 1000 * mean(C_hist))), 
-      C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
-      BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
-    nIts <- nIts + 1
-    if (opt$objective < 0.1) {
-      Kc <- exp(opt$minimum)
-      BMSYc <- Kc * BMSY_K
-      FMSYc <- Mdb * FMSY_M
-      UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
-      MSYc <- Kc * BMSY_K * UMSYc
-      TAC[DBSRAcount] <- UMSYc * Kc * Bt_K
-      DBSRAcount <- DBSRAcount + 1
-      nIts <- 0
-    }
-  }  # end of reps
-  TACfilter(TAC)
-}
-class(DBSRA_ML) <- "Output"
+# #' Depletion-Based Stock Reduction Analysis assuming 40 per cent stock
+# #' depletion
+# #' 
+# #' DBSRA assuming that current stock depletion is exactly 40 per cent of
+# #' unfished stock levels.
+# #' 
+# #' 
+# #' @usage DBSRA_40(x, Data, reps = 100)
+# #' @param x A position in a data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of stochastic samples of the TAC recommendation
+# #' @note A 40 percent assumption for current depletion is more or less the most
+# #' optimistic state for a stock (ie very close to BMSY/B0 for many stocks).
+# #' @author T. Carruthers.
+# #' @references Dick, E.J., MacCall, A.D., 2010. Estimates of sustainable yield
+# #' for 50 data-poor stocks in the Pacific Coast groundfish fishery management
+# #' plan. Technical memorandum. Southwest fisheries Science Centre, Santa Cruz,
+# #' CA. National Marine Fisheries Service, National Oceanic and Atmospheric
+# #' Administration of the U.S. Department of Commerce. NOAA-TM-NMFS-SWFSC-460.
+# #' @export DBSRA_40
+# DBSRA_40 <- function(x, Data, reps = 100) {
+#   # returns a vector of DBSRA estimates of the TAC for a particular
+#   # simulation x
+#   dependencies = "Data@Cat, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0, Data@L50"
+#   C_hist <- Data@Cat[x, ]
+#   TAC <- rep(NA, reps)
+#   DBSRAcount <- 1
+#   if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x]))   return(NA)
+#   while (DBSRAcount < (reps + 1)) {
+#     depo <- 0.4
+#     Bt_K <- rbeta(100, alphaconv(depo, min(depo * Data@CV_Dep[x], 
+#       (1 - depo) * Data@CV_Dep[x])), betaconv(depo, min(depo * 
+#       Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
+#     Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
+#     Mdb <- stats::rlnorm(100, mconv(Data@Mort[x], Data@CV_Mort[x] * 
+#       Data@Mort[x]), sdconv(Data@Mort[x], Data@CV_Mort[x] * 
+#       Data@Mort[x]))  # log space stdev 0.4 as in Dick and MacCall 2011
+#     Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
+#     if (is.na(Mdb)) 
+#       Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
+#     FMSY_M <- trlnorm(1, Data@FMSY_M[x], Data@CV_FMSY_M[x])
+#     BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
+#       Data@BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
+#       Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+#     tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
+#     if (is.na(tryBMSY_K)) {
+#       Min <- min(BMSY_K, na.rm = TRUE)
+#       Max <- max(BMSY_K, na.rm = TRUE)
+#       if (Max <= 0.05) 
+#         BMSY_K <- 0.05
+#       if (Min >= 0.95) 
+#         BMSY_K <- 0.95
+#     }
+#     if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
+#     adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])), 1)
+#     opt <- optimize(DBSRAopt, log(c(0.1 * mean(C_hist), 1000 * mean(C_hist))), 
+#       C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
+#       BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+#     # if(opt$objective<0.1){
+#     Kc <- exp(opt$minimum)
+#     BMSYc <- Kc * BMSY_K
+#     FMSYc <- Mdb * FMSY_M
+#     UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
+#     MSYc <- Kc * BMSY_K * UMSYc
+#     TAC[DBSRAcount] <- UMSYc * Kc * Bt_K
+#     DBSRAcount <- DBSRAcount + 1
+#     # }
+#   }  # end of reps
+#   TACfilter(TAC)
+# }  # end of DBSRA_apply
+# class(DBSRA_40) <- "Output"
 
 
 
-#' Depletion-Based Stock Reduction Analysis paired with 40-10 harvest control
-#' rule
-#' 
-#' User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the OFL
-#' by back-constructing the stock to match a user specified level of stock
-#' depletion (OFL = M * FMSY/M * depletion* B0). In this method DBSRA is paried
-#' with the 40-10 rule that throttles back the OFL to zero at 10 percent of
-#' unfished biomass.
-#' 
-#' 
-#' @usage DBSRA4010(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @author T. Carruthers
-#' @references Dick, E.J., MacCall, A.D., 2011. Depletion-Based Stock Reduction
-#' Analysis: A catch-based method for determining sustainable yields for
-#' data-poor fish stocks. Fish. Res. 110, 331-341.
-#' @export DBSRA4010
-DBSRA4010 <- function(x, Data, reps = 100) {
-  # returns a vector of DBSRA estimates of the TAC for a particular
-  # simulation x for(x in 1:nsim){
-  dependencies = "Data@Cat, Data@Dep, Data@CV_Dep, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M,Data@BMSY_B0, Data@CV_BMSY_B0, Data@L50"
-  C_hist <- Data@Cat[x, ]
-  TAC <- rep(NA, reps)
-  DBSRAcount <- 1
-  if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) 
-    return(NA)
-  while (DBSRAcount < (reps + 1)) {
-    depo <- max(0.01, min(0.99, Data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
-    Bt_K <- rbeta(100, alphaconv(depo, min(depo * Data@CV_Dep[x], 
-      (1 - depo) * Data@CV_Dep[x])), betaconv(depo, min(depo * 
-      Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
-    Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
-    Mdb <- trlnorm(100, Data@Mort[x], Data@CV_Mort[x])
-    Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
-    if (is.na(Mdb)) 
-      Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
-    FMSY_M <- trlnorm(1, Data@FMSY_M[x], Data@CV_FMSY_M[x])
-    BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
-      Data@BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
-      Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-    tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
-    if (is.na(tryBMSY_K)) {
-      Min <- min(BMSY_K, na.rm = TRUE)
-      Max <- max(BMSY_K, na.rm = TRUE)
-      if (Max <= 0.05) 
-        BMSY_K <- 0.05
-      if (Min >= 0.95) 
-        BMSY_K <- 0.95
-    }
-    if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
-    adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
-      Data@L50[x])), 1)
-    opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist), 1000 * mean(C_hist))), 
-      C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
-      BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
-    # if(opt$objective<0.1){
-    Kc <- exp(opt$minimum)
-    BMSYc <- Kc * BMSY_K
-    FMSYc <- Mdb * FMSY_M
-    UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
-    MSYc <- Kc * BMSY_K * UMSYc
-    TAC[DBSRAcount] <- UMSYc * Kc * Bt_K
-    # 40-10 rule
-    if (Bt_K < 0.4 & Bt_K > 0.1) 
-      TAC[DBSRAcount] <- TAC[DBSRAcount] * (Bt_K - 0.1)/0.3
-    if (Bt_K < 0.1) 
-      TAC[DBSRAcount] <- TAC[DBSRAcount] * tiny  # this has to still be stochastic albeit very small
-    DBSRAcount <- DBSRAcount + 1
-    # }
-  }  # end of reps
-  TACfilter(TAC)
-  # }
-}  # end of DBSRA_apply
-class(DBSRA4010) <- "Output"
+# #' Depletion-Based Stock Reduction Analysis using mean length estimator of
+# #' stock depletion
+# #' 
+# #' DBSRA using the mean length estimator to calculate current stock depletion.
+# #' 
+# #' 
+# #' @usage DBSRA_ML(x, Data, reps = 100)
+# #' @param x A position in a data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of stochastic samples of the quota recommendation
+# #' @note The mean length extension was programmed by Gary Nelson as part of his
+# #' excellent R package 'fishmethods'
+# #' @author T. Carruthers
+# #' @references Dick, E.J., MacCall, A.D., 2011. Depletion-Based Stock Reduction
+# #' Analysis: A catch-based method for determining sustainable yields for
+# #' data-poor fish stocks. Fish. Res. 110, 331-341.
+# #' @export DBSRA_ML
+# DBSRA_ML <- function(x, Data, reps = 100) {
+#   dependencies = "Data@Cat, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0, Data@L50, Data@CAL, Data@Year, Data@Cat"
+#   C_hist <- Data@Cat[x, ]
+#   TAC <- rep(NA, reps)
+#   DBSRAcount <- 1
+#   maxIts <- 200
+#   nIts <- 0
+#   if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) return(NA)
+#   while (DBSRAcount < (reps + 1) & nIts < maxIts) {
+#     Linfc <- trlnorm(1, Data@vbLinf[x], Data@CV_vbLinf[x])
+#     Kc <- trlnorm(1, Data@vbK[x], Data@CV_vbK[x])
+#     Mdb <- trlnorm(100, Data@Mort[x], Data@CV_Mort[x])
+#     Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
+#     if (is.na(Mdb)) Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
+#     Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = 1, MLtype = "dep")
+#     if (all(is.na(Z))) return(rep(NA, reps))
+#     FM <- Z - Mdb
+#     FM[FM < 0] <- 0.01
+#     nyears <- length(Data@Year)
+#     Ct1 <- mean(Data@Cat[x, 1:3])
+#     Ct2 <- mean(Data@Cat[x, (nyears - 2):nyears])
+#     # dep<-c(Ct1,Ct2)/(1-exp(-FM[,c(1,2)]))
+#     dep <- c(Ct1, Ct2)/(1 - exp(-FM))
+#     Bt_K <- dep[2]/dep[1]
+#     
+#     if (Bt_K < 0.01) Bt_K <- 0.01  # interval censor / temporary hack to avoid doing multiple depletion estimates that would take far too long
+#     if (Bt_K > 0.99) Bt_K <- 0.99  # interval censor / temporary hack to avoid doing multiple depletion estimates that would take far too long
+#     
+#     
+#     FMSY_M <- trlnorm(1, Data@FMSY_M[x], Data@CV_FMSY_M[x])
+#     BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
+#       Data@BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
+#       Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+#     tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
+#     
+#     if (is.na(tryBMSY_K)) {
+#       Min <- min(BMSY_K, na.rm = TRUE)
+#       Max <- max(BMSY_K, na.rm = TRUE)
+#       if (Max <= 0.05) 
+#         BMSY_K <- 0.05
+#       if (Min >= 0.95) 
+#         BMSY_K <- 0.95
+#     }
+#     if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
+#     if (all(is.na(BMSY_K))) return(rep(NA, reps))
+#     adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])), 1)
+#     opt <- optimize(DBSRAopt, log(c(0.1 * mean(C_hist), 1000 * mean(C_hist))), 
+#       C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
+#       BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+#     nIts <- nIts + 1
+#     if (opt$objective < 0.1) {
+#       Kc <- exp(opt$minimum)
+#       BMSYc <- Kc * BMSY_K
+#       FMSYc <- Mdb * FMSY_M
+#       UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
+#       MSYc <- Kc * BMSY_K * UMSYc
+#       TAC[DBSRAcount] <- UMSYc * Kc * Bt_K
+#       DBSRAcount <- DBSRAcount + 1
+#       nIts <- 0
+#     }
+#   }  # end of reps
+#   TACfilter(TAC)
+# }
+# class(DBSRA_ML) <- "Output"
+
+
+
+# #' Depletion-Based Stock Reduction Analysis paired with 40-10 harvest control
+# #' rule
+# #' 
+# #' User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the OFL
+# #' by back-constructing the stock to match a user specified level of stock
+# #' depletion (OFL = M * FMSY/M * depletion* B0). In this method DBSRA is paried
+# #' with the 40-10 rule that throttles back the OFL to zero at 10 percent of
+# #' unfished biomass.
+# #' 
+# #' 
+# #' @usage DBSRA4010(x, Data, reps = 100)
+# #' @param x A position in a data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of stochastic samples of the TAC recommendation
+# #' @author T. Carruthers
+# #' @references Dick, E.J., MacCall, A.D., 2011. Depletion-Based Stock Reduction
+# #' Analysis: A catch-based method for determining sustainable yields for
+# #' data-poor fish stocks. Fish. Res. 110, 331-341.
+# #' @export DBSRA4010
+# DBSRA4010 <- function(x, Data, reps = 100) {
+#   # returns a vector of DBSRA estimates of the TAC for a particular
+#   # simulation x for(x in 1:nsim){
+#   dependencies = "Data@Cat, Data@Dep, Data@CV_Dep, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M,Data@BMSY_B0, Data@CV_BMSY_B0, Data@L50"
+#   C_hist <- Data@Cat[x, ]
+#   TAC <- rep(NA, reps)
+#   DBSRAcount <- 1
+#   if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) 
+#     return(NA)
+#   while (DBSRAcount < (reps + 1)) {
+#     depo <- max(0.01, min(0.99, Data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
+#     Bt_K <- rbeta(100, alphaconv(depo, min(depo * Data@CV_Dep[x], 
+#       (1 - depo) * Data@CV_Dep[x])), betaconv(depo, min(depo * 
+#       Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
+#     Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
+#     Mdb <- trlnorm(100, Data@Mort[x], Data@CV_Mort[x])
+#     Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
+#     if (is.na(Mdb)) 
+#       Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
+#     FMSY_M <- trlnorm(1, Data@FMSY_M[x], Data@CV_FMSY_M[x])
+#     BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
+#       Data@BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
+#       Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+#     tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
+#     if (is.na(tryBMSY_K)) {
+#       Min <- min(BMSY_K, na.rm = TRUE)
+#       Max <- max(BMSY_K, na.rm = TRUE)
+#       if (Max <= 0.05) 
+#         BMSY_K <- 0.05
+#       if (Min >= 0.95) 
+#         BMSY_K <- 0.95
+#     }
+#     if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
+#     adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
+#       Data@L50[x])), 1)
+#     opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist), 1000 * mean(C_hist))), 
+#       C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
+#       BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+#     # if(opt$objective<0.1){
+#     Kc <- exp(opt$minimum)
+#     BMSYc <- Kc * BMSY_K
+#     FMSYc <- Mdb * FMSY_M
+#     UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
+#     MSYc <- Kc * BMSY_K * UMSYc
+#     TAC[DBSRAcount] <- UMSYc * Kc * Bt_K
+#     # 40-10 rule
+#     if (Bt_K < 0.4 & Bt_K > 0.1) 
+#       TAC[DBSRAcount] <- TAC[DBSRAcount] * (Bt_K - 0.1)/0.3
+#     if (Bt_K < 0.1) 
+#       TAC[DBSRAcount] <- TAC[DBSRAcount] * tiny  # this has to still be stochastic albeit very small
+#     DBSRAcount <- DBSRAcount + 1
+#     # }
+#   }  # end of reps
+#   TACfilter(TAC)
+#   # }
+# }  # end of DBSRA_apply
+# class(DBSRA4010) <- "Output"
 
 DBSRAopt <- function(lnK, C_hist, nys, Mdb, FMSY_M, BMSY_K, Bt_K, adelay) {
   # the optimization for B0 given DBSRA assumptions
@@ -2017,7 +2017,7 @@ DBSRAopt <- function(lnK, C_hist, nys, Mdb, FMSY_M, BMSY_K, Bt_K, adelay) {
   FMSY <- FMSY_M * Mdb
   UMSY <- (FMSY/(FMSY + Mdb)) * (1 - exp(-(FMSY + Mdb)))
   MSY <- Kc * BMSY_K * UMSY
-  # Bjoin rules from Dick & MacCall 2011 ---------
+  # Bjoin rules from Dick & MacCall 2011
   Bjoin_K <- 0.5
   if (BMSY_K < 0.3) 
     Bjoin_K <- 0.5 * BMSY_K
@@ -2046,461 +2046,461 @@ DBSRAopt <- function(lnK, C_hist, nys, Mdb, FMSY_M, BMSY_K, Bt_K, adelay) {
 }  # end of DBSRA optimization function
 
 # DCAC
-# =====================================================================================================================
+
 # Variables for parallel processing of DCAC_apply function using
 # sfSapply()
 C_tot <- nyearsDCAC <- NULL
 
 
 
-#' Depletion Corrected Average Catch
-#' 
-#' A method of calculating an MSY proxy (FMSY * BMSY and therefore the OFL at
-#' most productive stock size) based on average catches accounting for the
-#' windfall catch that got the stock down to BMSY levels.
-#' 
-#' 
-#' @usage DCAC(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @note It's probably worth noting that DCAC TAC recommendations do not tend
-#' to zero as depletion tends to zero. It adjusts for depletion only in
-#' calculating historical average catch. It follows that at stock levels much
-#' below BMSY, DCAC tends to chronically overfish.
-#' @author T. Carruthers
-#' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
-#' formula for estimating sustainable yields in data-poor situations. ICES J.
-#' Mar. Sci. 66, 2267-2271.
-#' @export DCAC
-DCAC <- function(x, Data, reps = 100) {
-  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
-  C_tot <- Data@AvC[x] * Data@t[x]
-  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
-  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])  # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
-  Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
-  if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) 
-    return(NA)
-  BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-    Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-    Data@CV_BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-  TACfilter(C_tot/(Data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb))))
-}  # end of DCAC
-class(DCAC) <- "Output"
+# #' Depletion Corrected Average Catch
+# #' 
+# #' A method of calculating an MSY proxy (FMSY * BMSY and therefore the OFL at
+# #' most productive stock size) based on average catches accounting for the
+# #' windfall catch that got the stock down to BMSY levels.
+# #' 
+# #' 
+# #' @usage DCAC(x, Data, reps = 100)
+# #' @param x A position in a data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of stochastic samples of the TAC recommendation
+# #' @note It's probably worth noting that DCAC TAC recommendations do not tend
+# #' to zero as depletion tends to zero. It adjusts for depletion only in
+# #' calculating historical average catch. It follows that at stock levels much
+# #' below BMSY, DCAC tends to chronically overfish.
+# #' @author T. Carruthers
+# #' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
+# #' formula for estimating sustainable yields in data-poor situations. ICES J.
+# #' Mar. Sci. 66, 2267-2271.
+# #' @export DCAC
+# DCAC <- function(x, Data, reps = 100) {
+#   dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
+#   C_tot <- Data@AvC[x] * Data@t[x]
+#   Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
+#   FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])  # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
+#   Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
+#   if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) 
+#     return(NA)
+#   BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
+#     Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
+#     Data@CV_BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+#   TACfilter(C_tot/(Data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb))))
+# }  # end of DCAC
+# class(DCAC) <- "Output"
 
 
 
-#' Depletion Corrected Average Catch paired with the 40-10 rule
-#' 
-#' A method of calculating an MSY proxy (FMSY * BMSY and therefore the OFL at
-#' most productive stock size) based on average catches accounting for the
-#' windfall catch that got the stock down to BMSY levels. In this method DCAC
-#' is paired with the 40-10 rule that throttles back the OFL to zero at 10
-#' percent of unfished stock size (the OFL is not subject to downward
-#' adjustment above 40 percent unfished)
-#' 
-#' 
-#' @usage DCAC4010(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @note DCAC can overfish below BMSY levels. The 40-10 harvest control rule
-#' largely resolves this problem providing an MP with surprisingly good
-#' performance even at low stock levels.
-#' @author T. Carruthers
-#' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
-#' formula for estimating sustainable yields in data-poor situations. ICES J.
-#' Mar. Sci. 66, 2267-2271.
-#' @export DCAC4010
-DCAC4010 <- function(x, Data, reps = 100) {
-  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
-  C_tot <- Data@AvC[x] * Data@t[x]
-  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
-  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])  # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
-  Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
-  if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) 
-    return(NA)
-  BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-    Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-    Data@CV_BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-  TAC <- C_tot/(Data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
-  # 40-10 rule
-  cond1 <- Bt_K < 0.4 & Bt_K > 0.1
-  cond2 <- Bt_K < 0.1
-  if (length(cond1) > 0) 
-    TAC[cond1] <- TAC[cond1] * (Bt_K[cond1] - 0.1)/0.3
-  if (length(cond2) > 0) 
-    TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
-  if (length(cond1) < 1 & length(cond2) < 1) 
-    return(NA)
-  TACfilter(TAC)
-  
-}  # end of DCAC
-class(DCAC4010) <- "Output"
+# #' Depletion Corrected Average Catch paired with the 40-10 rule
+# #' 
+# #' A method of calculating an MSY proxy (FMSY * BMSY and therefore the OFL at
+# #' most productive stock size) based on average catches accounting for the
+# #' windfall catch that got the stock down to BMSY levels. In this method DCAC
+# #' is paired with the 40-10 rule that throttles back the OFL to zero at 10
+# #' percent of unfished stock size (the OFL is not subject to downward
+# #' adjustment above 40 percent unfished)
+# #' 
+# #' 
+# #' @usage DCAC4010(x, Data, reps = 100)
+# #' @param x A position in a data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of stochastic samples of the TAC recommendation
+# #' @note DCAC can overfish below BMSY levels. The 40-10 harvest control rule
+# #' largely resolves this problem providing an MP with surprisingly good
+# #' performance even at low stock levels.
+# #' @author T. Carruthers
+# #' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
+# #' formula for estimating sustainable yields in data-poor situations. ICES J.
+# #' Mar. Sci. 66, 2267-2271.
+# #' @export DCAC4010
+# DCAC4010 <- function(x, Data, reps = 100) {
+#   dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
+#   C_tot <- Data@AvC[x] * Data@t[x]
+#   Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
+#   FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])  # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
+#   Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
+#   if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) 
+#     return(NA)
+#   BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
+#     Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
+#     Data@CV_BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+#   TAC <- C_tot/(Data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
+#   # 40-10 rule
+#   cond1 <- Bt_K < 0.4 & Bt_K > 0.1
+#   cond2 <- Bt_K < 0.1
+#   if (length(cond1) > 0) 
+#     TAC[cond1] <- TAC[cond1] * (Bt_K[cond1] - 0.1)/0.3
+#   if (length(cond2) > 0) 
+#     TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
+#   if (length(cond1) < 1 & length(cond2) < 1) 
+#     return(NA)
+#   TACfilter(TAC)
+#   
+# }  # end of DCAC
+# class(DCAC4010) <- "Output"
+# 
+# 
+# 
+# #' Depletion Corrected Average Catch assuming 40 per cent stock depletion
+# #' 
+# #' DCAC assuming that current stock biomass is exactly 40 per cent of unfished
+# #' levels.
+# #' 
+# #' 
+# #' @usage DCAC_40(x, Data, reps = 100)
+# #' @param x A position in a data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of stochastic samples of the TAC recommendation
+# #' @note The 40 percent depletion assumption doesn't really affect DCAC that
+# #' much as it already makes TAC recommendations that are quite MSY-like.
+# #' @author T. Carruthers
+# #' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
+# #' formula for estimating sustainable yields in data-poor situations. ICES J.
+# #' Mar. Sci. 66, 2267-2271.
+# #' @export DCAC_40
+# DCAC_40 <- function(x, Data, reps = 100) {
+#   dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0"
+#   C_tot <- Data@AvC[x] * Data@t[x]
+#   Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
+#   FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
+#   Bt_K <- 0.4
+#   if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) 
+#     return(NA)
+#   BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
+#     Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
+#     Data@CV_BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+#   TACfilter(C_tot/(Data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb))))
+# }  # end of DCAC40
+# class(DCAC_40) <- "Output"
+# 
+# 
+# 
+# #' Depletion-Based Stock Reduction Analysis using mean-length estimator of
+# #' current depletion
+# #' 
+# #' DCAC that uses the mean length estimator to calculate current stock
+# #' depletion.
+# #' 
+# #' 
+# #' @usage DCAC_ML(x, Data, reps = 100)
+# #' @param x A position in a data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of stochastic samples of the TAC recommendation
+# #' @note The mean length extension was programmed by Gary Nelson as part of his
+# #' excellent R package 'fishmethods'
+# #' @author T. Carruthers
+# #' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
+# #' formula for estimating sustainable yields in data-poor situations. ICES J.
+# #' Mar. Sci. 66, 2267-2271.
+# #' @export DCAC_ML
+# DCAC_ML <- function(x, Data, reps = 100) {
+#   
+#   dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0, Data@Year, Data@CAL, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK"
+#   if (is.na(Data@BMSY_B0[x]) | is.na(Data@CV_BMSY_B0[x])) 
+#     return(NA)
+#   if (is.na(Data@FMSY_M[x]) | is.na(Data@CV_FMSY_M[x])) 
+#     return(NA)
+#   C_tot <- Data@AvC[x] * Data@t[x]
+#   Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # default CV of 0.5 as in MacCall 2009
+#   FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])  # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
+#   Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
+#   Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
+#   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps, MLtype = "dep")
+#   if (all(is.na(Z))) return(rep(NA, reps))
+#   FM <- Z - Mdb
+#   nyears <- length(Data@Year)
+#   Ct1 <- mean(Data@Cat[x, 1:3])
+#   Ct2 <- mean(Data@Cat[x, (nyears - 2):nyears])
+#   dep <- rep(c(Ct1, Ct2), each = reps)/(1 - exp(-FM))
+#   if (reps == 1) 
+#     Bt_K <- dep[2]/dep[1]
+#   if (reps > 1) 
+#     Bt_K <- dep[, 2]/dep[, 1]
+#   if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) 
+#     return(NA)
+#   BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
+#     Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
+#     Data@CV_BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+#   TAC <- C_tot/(Data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
+#   
+#   TACfilter(TAC)
+# }  # end of DCAC_ML
+# class(DCAC_ML) <- "Output"
+# 
+
+
+# #' Beddington and Kirkwood life-history MP (simple version)
+# #' 
+# #' Sets an OFL according to current abundance and an approximation of Fmax
+# #' based on length at first capture.
+# #' 
+# #' 
+# #' @usage BK(x, Data, reps = 100)
+# #' @param x A position in a data-limited methods data object.
+# #' @param Data A data-limited methods data object.
+# #' @param reps The number of stochastic samples of the TAC recommendation
+# #' @note This is the simple version of the BK MP. The paper has a more complex
+# #' approach that might work better.
+# #' @author T. Carruthers.
+# #' @references Beddington, J.R., Kirkwood, G.P., 2005. The estimation of
+# #' potential yield and stock status using life history parameters. Philos.
+# #' Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.
+# #' @export BK
+# BK <- function(x, Data, reps = 100) {
+#   # Beddington and Kirkwood life-history analysis
+#   # ==============================================
+#   dependencies = "Data@LFC, Data@vbLinf, Data@CV_vbLinf, Data@Abun, Data@CV_Abun, Data@vbK, Data@CV_vbK"
+#   Lc <- trlnorm(reps * 10, Data@LFC[x], 0.2)
+#   Linfc <- trlnorm(reps * 10, Data@vbLinf[x], Data@CV_vbLinf[x])
+#   Ac <- trlnorm(reps * 10, Data@Abun[x], Data@CV_Abun[x])
+#   Kc <- trlnorm(reps * 10, Data@vbK[x], Data@CV_vbK[x])
+#   TAC <- Ac * (0.6 * Kc)/(0.67 - (Lc/Linfc))  # robustifying for use in MSE
+#   TACfilter(TAC[TAC > 0][1:reps])  # Interval censor only those positive catch recommendations
+#   
+# }  # end of BK
+# class(BK) <- "Output"
+# 
+# #' Beddington and Kirkwood life-history method combined with catch curve
+# #' analysis
+# #' 
+# #' Calculates an OFL using a catch curve estimate of current F and an
+# #' approximation of FMSY based on length at first capture.
+# #' 
+# #' 
+# #' @usage BK_CC(x, Data, reps = 100, Fmin=0.005)
+# #' @param x Position in a data-limited methods data object
+# #' @param Data A data-limited methods data object (class Data)
+# #' @param reps The number of samples of the TAC recommendation
+# #' @param Fmin The minimum fishing mortality rate that is derived from the
+# #' catch-curve (interval censor)
+# #' @author T. Carruthers
+# #' @references Beddington, J.R., Kirkwood, G.P., 2005. The estimation of
+# #' potential yield and stock status using life history parameters. Philos.
+# #' Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.
+# #' @export BK_CC
+# BK_CC <- function(x, Data, reps = 100, Fmin = 0.005) {
+#   dependencies = "Data@LFC, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@CAA, Data@Mort"
+#   Lc <- trlnorm(reps, Data@LFC[x], 0.2)
+#   Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
+#   Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
+#   Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])
+#   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
+#   Cc <- trlnorm(reps, MuC, Data@CV_Cat[x])
+#   Zdb <- CC(x, Data, reps = reps * 10)
+#   Fdb <- Zdb - Mdb
+#   ind <- (1:(reps * 10))[Fdb > Fmin][1:reps]
+#   Fdb <- Fdb[ind]
+#   Mdb <- Mdb[ind]
+#   SM <- sum(is.na(ind))
+#   if (SM > 0) {
+#     Mdb[is.na(ind)] <- trlnorm(SM, Data@Mort[x], Data@CV_Mort[x])
+#     Fdb[is.na(ind)] <- Fmin
+#   }
+#   
+#   Ac <- Cc/(1 - exp(-Fdb))
+#   TAC <- Ac * (0.6 * Kc)/(0.67 - (Lc/Linfc))
+#   TACfilter(TAC)
+#   
+# }  # end of BK_CC
+# class(BK_CC) <- "Output"
+# 
+
+
+# #' Beddington and Kirkwood life-history analysis with mean-length estimator of
+# #' current abundance
+# #' 
+# #' Uses an approximation to FMSY based on length at first capture and an
+# #' estimate of current abundance based on a mean-length estimator.
+# #' 
+# #' 
+# #' @usage BK_ML(x, Data, reps = 100)
+# #' @param x Position in a data-limited methods data object
+# #' @param Data A data-limited methods data object (class Data)
+# #' @param reps The number of samples of the TAC recommendation
+# #' @note The mean length extension was programmed by Gary Nelson as part of his
+# #' excellent R package 'fishmethods'
+# #' @author T. Carruthers
+# #' @references Beddington, J.R., Kirkwood, G.P., 2005. The estimation of
+# #' potential yield and stock status using life history parameters. Philos.
+# #' Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.
+# #' @export BK_ML
+# BK_ML <- function(x, Data, reps = 100) {
+#   dependencies = "Data@LFC, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@CAL, Data@Mort"
+#   Lc <- trlnorm(reps * 10, Data@LFC[x], 0.2)
+#   Linfc <- trlnorm(reps * 10, Data@vbLinf[x], Data@CV_vbLinf[x])
+#   Kc <- trlnorm(reps * 10, Data@vbK[x], Data@CV_vbK[x])
+#   Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])
+#   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
+#   if (all(is.na(Z))) return(rep(NA, reps))
+#   FM <- Z - Mdb
+#   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
+#   Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
+#   Ac <- Cc/(1 - exp(-FM))
+#   FMSY <- (0.6 * Kc)/(0.67 - (Lc/Linfc))  # robustifying for use in MSETAC<-Ac*FMSY
+#   TAC <- Ac * FMSY
+#   TAC <- TAC[TAC > 0 & TAC < (mean(TAC, na.rm = T) + 3 * stats::sd(TAC, na.rm = T))][1:reps]
+#   TACfilter(TAC)
+# }
+# class(BK_ML) <- "Output"
 
 
 
-#' Depletion Corrected Average Catch assuming 40 per cent stock depletion
-#' 
-#' DCAC assuming that current stock biomass is exactly 40 per cent of unfished
-#' levels.
-#' 
-#' 
-#' @usage DCAC_40(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @note The 40 percent depletion assumption doesn't really affect DCAC that
-#' much as it already makes TAC recommendations that are quite MSY-like.
-#' @author T. Carruthers
-#' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
-#' formula for estimating sustainable yields in data-poor situations. ICES J.
-#' Mar. Sci. 66, 2267-2271.
-#' @export DCAC_40
-DCAC_40 <- function(x, Data, reps = 100) {
-  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0"
-  C_tot <- Data@AvC[x] * Data@t[x]
-  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
-  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
-  Bt_K <- 0.4
-  if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) 
-    return(NA)
-  BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-    Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-    Data@CV_BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-  TACfilter(C_tot/(Data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb))))
-}  # end of DCAC40
-class(DCAC_40) <- "Output"
+# #' An FMSY/M ratio method
+# #' 
+# #' Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a
+# #' current estimate of abundance.
+# #' 
+# #' A simple method that tends to outperform many other approaches alarmingly
+# #' often even when current biomass is relatively poorly known. The low stock
+# #' crash potential is largely due to the quite large difference between Fmax
+# #' and FMSY for most stocks.
+# #' 
+# #' @usage Fratio(x, Data, reps = 100)
+# #' @param x A position in a data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of samples of the TAC recommendation
+# #' @return A numeric vector of TAC recommendations
+# #' @author T. Carruthers
+# #' @references Gulland, J.A., 1971. The fish resources of the ocean. Fishing
+# #' News Books, West Byfleet, UK.
+# #' 
+# #' Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
+# #' and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.
+# #' @export Fratio
+# Fratio <- function(x, Data, reps = 100) {
+#   # FMSY / M ratio method e.g. Gulland
+#   # ===============================================================================
+#   depends = "Data@Abun,Data@CV_Abun,Data@FMSY_M, Data@CV_FMSY_M,Data@Mort,Data@CV_Mort"
+#   Ac <- trlnorm(reps, Data@Abun[x], Data@CV_Abun[x])
+#   TACfilter(Ac * trlnorm(reps, Data@Mort[x], Data@CV_Mort[x]) * 
+#     trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x]))
+# }  # end of Fratio
+# class(Fratio) <- "Output"
+# 
+
+
+# #' An FMSY/M ratio method paired with the 40-10 rule
+# #' 
+# #' Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a
+# #' current estimate of abundance. In this method DBSRA is paired with the 40-10
+# #' rule that throttles back the OFL to zero at 10 percent of unfished biomass.
+# #' 
+# #' 
+# #' @usage Fratio4010(x, Data, reps = 100)
+# #' @param x A position in data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of TAC samples
+# #' @author T. Carruthers
+# #' @references Gulland, J.A., 1971. The fish resources of the ocean. Fishing
+# #' News Books, West Byfleet, UK.
+# #' 
+# #' Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
+# #' and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.
+# #' @export Fratio4010
+# Fratio4010 <- function(x, Data, reps = 100) {
+#   # FMSY / M ratio method e.g. Gulland
+#   # ===============================================================================
+#   dependencies = "Data@Abun, Data@CV_Abun, Data@FMSY_M, Data@CV_FMSY_M, Data@Mort, Data@CV_Mort, Data@Dep"
+#   Ac <- trlnorm(reps, Data@Abun[x], Data@CV_Abun[x])
+#   TAC <- Ac * trlnorm(reps, Data@Mort[x], Data@CV_Mort[x]) * 
+#     trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
+#   Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
+#   # 40-10 rule
+#   cond1 <- Bt_K < 0.4 & Bt_K > 0.1
+#   cond2 <- Bt_K < 0.1
+#   TAC[cond1] <- TAC[cond1] * (Bt_K[cond1] - 0.1)/0.3
+#   TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
+#   TACfilter(TAC)
+# }  # end of Fratio
+# class(Fratio4010) <- "Output"
+# 
+
+
+# #' A data-limited method that uses FMSY/M ratio and a naive catch-curve
+# #' estimate of recent Z
+# #' 
+# #' Calculates the OFL based on a fixed ratio of FMSY to M and a catch curve
+# #' estimate of current stock size.
+# #' 
+# #' 
+# #' @usage Fratio_CC(x, Data, reps = 100, Fmin = 0.005)
+# #' @param x A position in data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of TAC samples
+# #' @param Fmin Minimum current fishing mortality rate for the catch-curve
+# #' analysis
+# #' @author T. Carruthers
+# #' @references Gulland, J.A., 1971. The fish resources of the ocean. Fishing
+# #' News Books, West Byfleet, UK.
+# #' 
+# #' Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
+# #' and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.
+# #' @export Fratio_CC
+# Fratio_CC <- function(x, Data, reps = 100, Fmin = 0.005) {
+#   # FMSY / M ratio method using catch curve analysis to determine current
+#   # abundance ================================== for (x in 1:nsim) {
+#   dependencies = " Data@FMSY_M, Data@CV_FMSY_M, Data@Mort, Data@CV_Mort, Data@Cat, Data@CV_Cat, Data@CAA"
+#   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
+#   Cc <- trlnorm(reps, MuC, Data@CV_Cat[x])
+#   Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
+#   Zdb <- CC(x, Data, reps = reps * 10)
+#   Fdb <- Zdb - Mdb
+#   ind <- (1:(reps * 10))[Fdb > 0.005][1:reps]
+#   
+#   Fdb <- Fdb[ind]
+#   Mdb <- Mdb[ind]
+#   SM <- sum(is.na(ind))
+#   if (SM > 0) {
+#     Mdb[is.na(ind)] <- trlnorm(SM, Data@Mort[x], Data@CV_Mort[x])
+#     Fdb[is.na(ind)] <- Fmin
+#   }
+#   
+#   Ac <- Cc/(1 - exp(-Fdb))
+#   TAC <- Ac * Mdb * trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
+#   
+#   TACfilter(TAC)
+#   # }
+# }  # end of Fratio_CC
+# class(Fratio_CC) <- "Output"
+# 
 
 
 
-#' Depletion-Based Stock Reduction Analysis using mean-length estimator of
-#' current depletion
-#' 
-#' DCAC that uses the mean length estimator to calculate current stock
-#' depletion.
-#' 
-#' 
-#' @usage DCAC_ML(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @note The mean length extension was programmed by Gary Nelson as part of his
-#' excellent R package 'fishmethods'
-#' @author T. Carruthers
-#' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
-#' formula for estimating sustainable yields in data-poor situations. ICES J.
-#' Mar. Sci. 66, 2267-2271.
-#' @export DCAC_ML
-DCAC_ML <- function(x, Data, reps = 100) {
-  
-  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0, Data@Year, Data@CAL, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK"
-  if (is.na(Data@BMSY_B0[x]) | is.na(Data@CV_BMSY_B0[x])) 
-    return(NA)
-  if (is.na(Data@FMSY_M[x]) | is.na(Data@CV_FMSY_M[x])) 
-    return(NA)
-  C_tot <- Data@AvC[x] * Data@t[x]
-  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # default CV of 0.5 as in MacCall 2009
-  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])  # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
-  Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
-  Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
-  Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps, MLtype = "dep")
-  if (all(is.na(Z))) return(rep(NA, reps))
-  FM <- Z - Mdb
-  nyears <- length(Data@Year)
-  Ct1 <- mean(Data@Cat[x, 1:3])
-  Ct2 <- mean(Data@Cat[x, (nyears - 2):nyears])
-  dep <- rep(c(Ct1, Ct2), each = reps)/(1 - exp(-FM))
-  if (reps == 1) 
-    Bt_K <- dep[2]/dep[1]
-  if (reps > 1) 
-    Bt_K <- dep[, 2]/dep[, 1]
-  if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) 
-    return(NA)
-  BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-    Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-    Data@CV_BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-  TAC <- C_tot/(Data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
-  
-  TACfilter(TAC)
-}  # end of DCAC_ML
-class(DCAC_ML) <- "Output"
-
-
-
-#' Beddington and Kirkwood life-history MP (simple version)
-#' 
-#' Sets an OFL according to current abundance and an approximation of Fmax
-#' based on length at first capture.
-#' 
-#' 
-#' @usage BK(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object.
-#' @param Data A data-limited methods data object.
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @note This is the simple version of the BK MP. The paper has a more complex
-#' approach that might work better.
-#' @author T. Carruthers.
-#' @references Beddington, J.R., Kirkwood, G.P., 2005. The estimation of
-#' potential yield and stock status using life history parameters. Philos.
-#' Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.
-#' @export BK
-BK <- function(x, Data, reps = 100) {
-  # Beddington and Kirkwood life-history analysis
-  # ==============================================
-  dependencies = "Data@LFC, Data@vbLinf, Data@CV_vbLinf, Data@Abun, Data@CV_Abun, Data@vbK, Data@CV_vbK"
-  Lc <- trlnorm(reps * 10, Data@LFC[x], 0.2)
-  Linfc <- trlnorm(reps * 10, Data@vbLinf[x], Data@CV_vbLinf[x])
-  Ac <- trlnorm(reps * 10, Data@Abun[x], Data@CV_Abun[x])
-  Kc <- trlnorm(reps * 10, Data@vbK[x], Data@CV_vbK[x])
-  TAC <- Ac * (0.6 * Kc)/(0.67 - (Lc/Linfc))  # robustifying for use in MSE
-  TACfilter(TAC[TAC > 0][1:reps])  # Interval censor only those positive catch recommendations
-  
-}  # end of BK
-class(BK) <- "Output"
-
-#' Beddington and Kirkwood life-history method combined with catch curve
-#' analysis
-#' 
-#' Calculates an OFL using a catch curve estimate of current F and an
-#' approximation of FMSY based on length at first capture.
-#' 
-#' 
-#' @usage BK_CC(x, Data, reps = 100, Fmin=0.005)
-#' @param x Position in a data-limited methods data object
-#' @param Data A data-limited methods data object (class Data)
-#' @param reps The number of samples of the TAC recommendation
-#' @param Fmin The minimum fishing mortality rate that is derived from the
-#' catch-curve (interval censor)
-#' @author T. Carruthers
-#' @references Beddington, J.R., Kirkwood, G.P., 2005. The estimation of
-#' potential yield and stock status using life history parameters. Philos.
-#' Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.
-#' @export BK_CC
-BK_CC <- function(x, Data, reps = 100, Fmin = 0.005) {
-  dependencies = "Data@LFC, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@CAA, Data@Mort"
-  Lc <- trlnorm(reps, Data@LFC[x], 0.2)
-  Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
-  Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
-  Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])
-  MuC <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps, MuC, Data@CV_Cat[x])
-  Zdb <- CC(x, Data, reps = reps * 10)
-  Fdb <- Zdb - Mdb
-  ind <- (1:(reps * 10))[Fdb > Fmin][1:reps]
-  Fdb <- Fdb[ind]
-  Mdb <- Mdb[ind]
-  SM <- sum(is.na(ind))
-  if (SM > 0) {
-    Mdb[is.na(ind)] <- trlnorm(SM, Data@Mort[x], Data@CV_Mort[x])
-    Fdb[is.na(ind)] <- Fmin
-  }
-  
-  Ac <- Cc/(1 - exp(-Fdb))
-  TAC <- Ac * (0.6 * Kc)/(0.67 - (Lc/Linfc))
-  TACfilter(TAC)
-  
-}  # end of BK_CC
-class(BK_CC) <- "Output"
-
-
-
-#' Beddington and Kirkwood life-history analysis with mean-length estimator of
-#' current abundance
-#' 
-#' Uses an approximation to FMSY based on length at first capture and an
-#' estimate of current abundance based on a mean-length estimator.
-#' 
-#' 
-#' @usage BK_ML(x, Data, reps = 100)
-#' @param x Position in a data-limited methods data object
-#' @param Data A data-limited methods data object (class Data)
-#' @param reps The number of samples of the TAC recommendation
-#' @note The mean length extension was programmed by Gary Nelson as part of his
-#' excellent R package 'fishmethods'
-#' @author T. Carruthers
-#' @references Beddington, J.R., Kirkwood, G.P., 2005. The estimation of
-#' potential yield and stock status using life history parameters. Philos.
-#' Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.
-#' @export BK_ML
-BK_ML <- function(x, Data, reps = 100) {
-  dependencies = "Data@LFC, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@CAL, Data@Mort"
-  Lc <- trlnorm(reps * 10, Data@LFC[x], 0.2)
-  Linfc <- trlnorm(reps * 10, Data@vbLinf[x], Data@CV_vbLinf[x])
-  Kc <- trlnorm(reps * 10, Data@vbK[x], Data@CV_vbK[x])
-  Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])
-  Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
-  if (all(is.na(Z))) return(rep(NA, reps))
-  FM <- Z - Mdb
-  MuC <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
-  Ac <- Cc/(1 - exp(-FM))
-  FMSY <- (0.6 * Kc)/(0.67 - (Lc/Linfc))  # robustifying for use in MSETAC<-Ac*FMSY
-  TAC <- Ac * FMSY
-  TAC <- TAC[TAC > 0 & TAC < (mean(TAC, na.rm = T) + 3 * stats::sd(TAC, na.rm = T))][1:reps]
-  TACfilter(TAC)
-}
-class(BK_ML) <- "Output"
-
-
-
-#' An FMSY/M ratio method
-#' 
-#' Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a
-#' current estimate of abundance.
-#' 
-#' A simple method that tends to outperform many other approaches alarmingly
-#' often even when current biomass is relatively poorly known. The low stock
-#' crash potential is largely due to the quite large difference between Fmax
-#' and FMSY for most stocks.
-#' 
-#' @usage Fratio(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of samples of the TAC recommendation
-#' @return A numeric vector of TAC recommendations
-#' @author T. Carruthers
-#' @references Gulland, J.A., 1971. The fish resources of the ocean. Fishing
-#' News Books, West Byfleet, UK.
-#' 
-#' Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
-#' and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.
-#' @export Fratio
-Fratio <- function(x, Data, reps = 100) {
-  # FMSY / M ratio method e.g. Gulland
-  # ===============================================================================
-  depends = "Data@Abun,Data@CV_Abun,Data@FMSY_M, Data@CV_FMSY_M,Data@Mort,Data@CV_Mort"
-  Ac <- trlnorm(reps, Data@Abun[x], Data@CV_Abun[x])
-  TACfilter(Ac * trlnorm(reps, Data@Mort[x], Data@CV_Mort[x]) * 
-    trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x]))
-}  # end of Fratio
-class(Fratio) <- "Output"
-
-
-
-#' An FMSY/M ratio method paired with the 40-10 rule
-#' 
-#' Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a
-#' current estimate of abundance. In this method DBSRA is paired with the 40-10
-#' rule that throttles back the OFL to zero at 10 percent of unfished biomass.
-#' 
-#' 
-#' @usage Fratio4010(x, Data, reps = 100)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @author T. Carruthers
-#' @references Gulland, J.A., 1971. The fish resources of the ocean. Fishing
-#' News Books, West Byfleet, UK.
-#' 
-#' Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
-#' and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.
-#' @export Fratio4010
-Fratio4010 <- function(x, Data, reps = 100) {
-  # FMSY / M ratio method e.g. Gulland
-  # ===============================================================================
-  dependencies = "Data@Abun, Data@CV_Abun, Data@FMSY_M, Data@CV_FMSY_M, Data@Mort, Data@CV_Mort, Data@Dep"
-  Ac <- trlnorm(reps, Data@Abun[x], Data@CV_Abun[x])
-  TAC <- Ac * trlnorm(reps, Data@Mort[x], Data@CV_Mort[x]) * 
-    trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
-  Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
-  # 40-10 rule
-  cond1 <- Bt_K < 0.4 & Bt_K > 0.1
-  cond2 <- Bt_K < 0.1
-  TAC[cond1] <- TAC[cond1] * (Bt_K[cond1] - 0.1)/0.3
-  TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
-  TACfilter(TAC)
-}  # end of Fratio
-class(Fratio4010) <- "Output"
-
-
-
-#' A data-limited method that uses FMSY/M ratio and a naive catch-curve
-#' estimate of recent Z
-#' 
-#' Calculates the OFL based on a fixed ratio of FMSY to M and a catch curve
-#' estimate of current stock size.
-#' 
-#' 
-#' @usage Fratio_CC(x, Data, reps = 100, Fmin = 0.005)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @param Fmin Minimum current fishing mortality rate for the catch-curve
-#' analysis
-#' @author T. Carruthers
-#' @references Gulland, J.A., 1971. The fish resources of the ocean. Fishing
-#' News Books, West Byfleet, UK.
-#' 
-#' Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
-#' and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.
-#' @export Fratio_CC
-Fratio_CC <- function(x, Data, reps = 100, Fmin = 0.005) {
-  # FMSY / M ratio method using catch curve analysis to determine current
-  # abundance ================================== for (x in 1:nsim) {
-  dependencies = " Data@FMSY_M, Data@CV_FMSY_M, Data@Mort, Data@CV_Mort, Data@Cat, Data@CV_Cat, Data@CAA"
-  MuC <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps, MuC, Data@CV_Cat[x])
-  Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
-  Zdb <- CC(x, Data, reps = reps * 10)
-  Fdb <- Zdb - Mdb
-  ind <- (1:(reps * 10))[Fdb > 0.005][1:reps]
-  
-  Fdb <- Fdb[ind]
-  Mdb <- Mdb[ind]
-  SM <- sum(is.na(ind))
-  if (SM > 0) {
-    Mdb[is.na(ind)] <- trlnorm(SM, Data@Mort[x], Data@CV_Mort[x])
-    Fdb[is.na(ind)] <- Fmin
-  }
-  
-  Ac <- Cc/(1 - exp(-Fdb))
-  TAC <- Ac * Mdb * trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
-  
-  TACfilter(TAC)
-  # }
-}  # end of Fratio_CC
-class(Fratio_CC) <- "Output"
-
-
-
-
-#' An FMSY/M ratio MP that uses a mean length estimator of recent Z
-#' 
-#' Calculates the OFL based on a fixed ratio of FMSY/M and an estimate of
-#' current stock size from a mean-length estimator.
-#' 
-#' 
-#' @usage Fratio_ML(x, Data, reps = 100)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @note The mean length extension was programmed by Gary Nelson as part of his
-#' excellent R package 'fishmethods'
-#' @author T. Carruthers
-#' @references Gulland, J.A., 1971. The fish resources of the ocean. Fishing
-#' News Books, West Byfleet, UK.
-#' 
-#' Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
-#' and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.
-#' @export Fratio_ML
-Fratio_ML <- function(x, Data, reps = 100) {
-  dependencies = " Data@FMSY_M, Data@CV_FMSY_M, Data@Mort, Data@CV_Mort, Data@Cat, Data@CV_Cat, Data@CAL"
-  MuC <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
-  Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
-  Linfc <- trlnorm(reps * 10, Data@vbLinf[x], Data@CV_vbLinf[x])
-  Kc <- trlnorm(reps * 10, Data@vbK[x], Data@CV_vbK[x])
-  Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
-  if (all(is.na(Z))) return(rep(NA, reps))
-  FM <- Z - Mdb
-  Ac <- Cc/(1 - exp(-FM))
-  TAC <- Ac * trlnorm(reps * 10, Data@FMSY_M[x], Data@CV_FMSY_M[x]) * 
-    trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
-  TAC <- TAC[TAC > 0][1:reps]
-  TACfilter(TAC)
-}
-class(Fratio_ML) <- "Output"
+# #' An FMSY/M ratio MP that uses a mean length estimator of recent Z
+# #' 
+# #' Calculates the OFL based on a fixed ratio of FMSY/M and an estimate of
+# #' current stock size from a mean-length estimator.
+# #' 
+# #' 
+# #' @usage Fratio_ML(x, Data, reps = 100)
+# #' @param x A position in data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of TAC samples
+# #' @note The mean length extension was programmed by Gary Nelson as part of his
+# #' excellent R package 'fishmethods'
+# #' @author T. Carruthers
+# #' @references Gulland, J.A., 1971. The fish resources of the ocean. Fishing
+# #' News Books, West Byfleet, UK.
+# #' 
+# #' Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
+# #' and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.
+# #' @export Fratio_ML
+# Fratio_ML <- function(x, Data, reps = 100) {
+#   dependencies = " Data@FMSY_M, Data@CV_FMSY_M, Data@Mort, Data@CV_Mort, Data@Cat, Data@CV_Cat, Data@CAL"
+#   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
+#   Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
+#   Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
+#   Linfc <- trlnorm(reps * 10, Data@vbLinf[x], Data@CV_vbLinf[x])
+#   Kc <- trlnorm(reps * 10, Data@vbK[x], Data@CV_vbK[x])
+#   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
+#   if (all(is.na(Z))) return(rep(NA, reps))
+#   FM <- Z - Mdb
+#   Ac <- Cc/(1 - exp(-FM))
+#   TAC <- Ac * trlnorm(reps * 10, Data@FMSY_M[x], Data@CV_FMSY_M[x]) * 
+#     trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
+#   TAC <- TAC[TAC > 0][1:reps]
+#   TACfilter(TAC)
+# }
+# class(Fratio_ML) <- "Output"
 
 
 
@@ -2969,102 +2969,102 @@ class(YPR_ML) <- "Output"
 
 
 
-#' Demographic FMSY method
-#' 
-#' FMSY is calculated as r/2 where r is calculated from a demographic approach
-#' (inc steepness). Coupled with an estimate of current abundance that gives
-#' you the OFL.
-#' 
-#' Made up for this package. This uses Murdoch McAllister's demographic r
-#' method to derive FMSY (r/2) and then makes the quota r*current biomass / 2.
-#' Easy.
-#' 
-#' @usage Fdem(x, Data, reps = 100)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @author T. Carruthers
-#' @references McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
-#' demographic methods to construct Bayesian priors for the intrinsic rate of
-#' increase in the Schaefer model and implications for stock rebuilding. Can.
-#' J. Fish. Aquat. Sci. 58: 1871-1890.
-#' @export Fdem
-Fdem <- function(x, Data, reps = 100) {
-  # Demographic FMSY estimate (FMSY=r/2)
-  dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@MaxAge, Data@wla, Data@wlb, Data@Abun, Data@CV_Abun, Data@steep, Data@CV_steep"
-  Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
-  Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
-  Linfc = trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
-  if (Data@vbt0[x] != 0 & Data@CV_vbt0[x] != tiny) {
-    t0c <- -trlnorm(reps, -Data@vbt0[x], Data@CV_vbt0[x])
-  } else {
-    t0c <- rep(Data@vbt0[x], reps)
-  }
-  t0c[!is.finite(t0c)] <- 0
-  # hvec <- trlnorm(reps, Data@steep[x], Data@CV_steep[x])
-  hvec <- sample_steepness2(reps, Data@steep[x], Data@CV_steep[x])
-  
-  Ac <- trlnorm(reps, Data@Abun[x], Data@CV_Abun[x])
-  FMSY <- getr(x, Data, Mvec, Kc, Linfc, t0c, hvec, maxage = Data@MaxAge, 
-    r_reps = reps)/2
-  TAC <- FMSY * Ac
-  TACfilter(TAC)
-}
-class(Fdem) <- "Output"
+# #' Demographic FMSY method
+# #' 
+# #' FMSY is calculated as r/2 where r is calculated from a demographic approach
+# #' (inc steepness). Coupled with an estimate of current abundance that gives
+# #' you the OFL.
+# #' 
+# #' Made up for this package. This uses Murdoch McAllister's demographic r
+# #' method to derive FMSY (r/2) and then makes the quota r*current biomass / 2.
+# #' Easy.
+# #' 
+# #' @usage Fdem(x, Data, reps = 100)
+# #' @param x A position in data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of TAC samples
+# #' @author T. Carruthers
+# #' @references McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
+# #' demographic methods to construct Bayesian priors for the intrinsic rate of
+# #' increase in the Schaefer model and implications for stock rebuilding. Can.
+# #' J. Fish. Aquat. Sci. 58: 1871-1890.
+# #' @export Fdem
+# Fdem <- function(x, Data, reps = 100) {
+#   # Demographic FMSY estimate (FMSY=r/2)
+#   dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@MaxAge, Data@wla, Data@wlb, Data@Abun, Data@CV_Abun, Data@steep, Data@CV_steep"
+#   Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
+#   Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
+#   Linfc = trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
+#   if (Data@vbt0[x] != 0 & Data@CV_vbt0[x] != tiny) {
+#     t0c <- -trlnorm(reps, -Data@vbt0[x], Data@CV_vbt0[x])
+#   } else {
+#     t0c <- rep(Data@vbt0[x], reps)
+#   }
+#   t0c[!is.finite(t0c)] <- 0
+#   # hvec <- trlnorm(reps, Data@steep[x], Data@CV_steep[x])
+#   hvec <- sample_steepness2(reps, Data@steep[x], Data@CV_steep[x])
+#   
+#   Ac <- trlnorm(reps, Data@Abun[x], Data@CV_Abun[x])
+#   FMSY <- getr(x, Data, Mvec, Kc, Linfc, t0c, hvec, maxage = Data@MaxAge, 
+#     r_reps = reps)/2
+#   TAC <- FMSY * Ac
+#   TACfilter(TAC)
+# }
+# class(Fdem) <- "Output"
+# 
 
 
-
-#' Demographic FMSY method using catch-curve analysis to estimate recent Z
-#' 
-#' FMSY is calculated as r/2 from a demographic r prior method, current
-#' abudnance is estimated from naive catch curve analysis.
-#' 
-#' 
-#' @usage Fdem_CC(x, Data, reps = 100, Fmin=0.005)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @param Fmin The minimum fishing mortality rate derived from the catch-curve
-#' analysis
-#' @author T. Carruthers
-#' @references McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
-#' demographic methods to construct Bayesian priors for the intrinsic rate of
-#' increase in the Schaefer model and implications for stock rebuilding. Can.
-#' J. Fish. Aquat. Sci. 58: 1871-1890.
-#' @export Fdem_CC
-Fdem_CC <- function(x, Data, reps = 100, Fmin = 0.005) {
-  dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@MaxAge, Data@wla, Data@wlb, Data@CAA, Data@steep, Data@CV_steep"
-  Mvec <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])
-  Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
-  Linfc = trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
-  if (Data@vbt0[x] != 0 & Data@CV_vbt0[x] != tiny) {
-    t0c <- -trlnorm(reps, -Data@vbt0[x], Data@CV_vbt0[x])
-  } else {
-    t0c <- rep(Data@vbt0[x], reps)
-  }
-  t0c[!is.finite(t0c)] <- 0
-  # hvec <- trlnorm(reps, Data@steep[x], Data@CV_steep[x])
-  hvec <- sample_steepness2(reps, Data@steep[x], Data@CV_steep[x])
-  MuC <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps, MuC, Data@CV_Cat[x])
-  Zdb <- CC(x, Data, reps = reps * 10)
-  Fdb <- Zdb - Mvec
-  ind <- (1:(reps * 10))[Fdb > Fmin][1:reps]
-  
-  Fdb <- Fdb[ind]
-  SM <- sum(is.na(ind))
-  if (SM > 0) {
-    Fdb[is.na(ind)] <- Fmin
-  }
-  
-  Ac <- Cc/(1 - exp(-Fdb))
-  FMSY <- getr(x, Data, Mvec, Kc, Linfc, t0c, hvec, maxage = Data@MaxAge, r_reps = reps)/2
-  TAC <- FMSY * Ac
-  
-  TACfilter(TAC)
-}
-class(Fdem_CC) <- "Output"
-
+# #' Demographic FMSY method using catch-curve analysis to estimate recent Z
+# #' 
+# #' FMSY is calculated as r/2 from a demographic r prior method, current
+# #' abudnance is estimated from naive catch curve analysis.
+# #' 
+# #' 
+# #' @usage Fdem_CC(x, Data, reps = 100, Fmin=0.005)
+# #' @param x A position in data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of TAC samples
+# #' @param Fmin The minimum fishing mortality rate derived from the catch-curve
+# #' analysis
+# #' @author T. Carruthers
+# #' @references McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
+# #' demographic methods to construct Bayesian priors for the intrinsic rate of
+# #' increase in the Schaefer model and implications for stock rebuilding. Can.
+# #' J. Fish. Aquat. Sci. 58: 1871-1890.
+# #' @export Fdem_CC
+# Fdem_CC <- function(x, Data, reps = 100, Fmin = 0.005) {
+#   dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@MaxAge, Data@wla, Data@wlb, Data@CAA, Data@steep, Data@CV_steep"
+#   Mvec <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])
+#   Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
+#   Linfc = trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
+#   if (Data@vbt0[x] != 0 & Data@CV_vbt0[x] != tiny) {
+#     t0c <- -trlnorm(reps, -Data@vbt0[x], Data@CV_vbt0[x])
+#   } else {
+#     t0c <- rep(Data@vbt0[x], reps)
+#   }
+#   t0c[!is.finite(t0c)] <- 0
+#   # hvec <- trlnorm(reps, Data@steep[x], Data@CV_steep[x])
+#   hvec <- sample_steepness2(reps, Data@steep[x], Data@CV_steep[x])
+#   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
+#   Cc <- trlnorm(reps, MuC, Data@CV_Cat[x])
+#   Zdb <- CC(x, Data, reps = reps * 10)
+#   Fdb <- Zdb - Mvec
+#   ind <- (1:(reps * 10))[Fdb > Fmin][1:reps]
+#   
+#   Fdb <- Fdb[ind]
+#   SM <- sum(is.na(ind))
+#   if (SM > 0) {
+#     Fdb[is.na(ind)] <- Fmin
+#   }
+#   
+#   Ac <- Cc/(1 - exp(-Fdb))
+#   FMSY <- getr(x, Data, Mvec, Kc, Linfc, t0c, hvec, maxage = Data@MaxAge, r_reps = reps)/2
+#   TAC <- FMSY * Ac
+#   
+#   TACfilter(TAC)
+# }
+# class(Fdem_CC) <- "Output"
+# 
 # Catch curve estimate of recent F (naive)
 # ========================================================================================
 CC <- function(x, Data, reps = 100) {
@@ -3091,49 +3091,49 @@ CC <- function(x, Data, reps = 100) {
 # class(CC)<-'Output'
 
 
-
-#' Demographic FMSY method that uses mean length data to estimate recent Z
-#' 
-#' Demographic F (r/2) method using the mean length estimator to calculate
-#' current abundance.
-#' 
-#' 
-#' @usage Fdem_ML(x, Data, reps = 100)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @note The mean length extension was programmed by Gary Nelson as part of his
-#' excellent R package 'fishmethods'
-#' @author T. Carruthers
-#' @references McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
-#' demographic methods to construct Bayesian priors for the intrinsic rate of
-#' increase in the Schaefer model and implications for stock rebuilding. Can.
-#' J. Fish. Aquat. Sci. 58: 1871-1890.
-#' @export Fdem_ML
-Fdem_ML <- function(x, Data, reps = 100) {
-  dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@MaxAge, Data@wla, Data@wlb, Data@CAL, Data@steep, Data@CV_steep"
-  Mvec <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])
-  Kc <- trlnorm(reps * 10, Data@vbK[x], Data@CV_vbK[x])
-  Linfc = trlnorm(reps * 10, Data@vbLinf[x], Data@CV_vbLinf[x])
-  t0c <- -trlnorm(reps * 10, -Data@vbt0[x], Data@CV_vbt0[x])
-  t0c[!is.finite(t0c)] <- 0
-  # hvec <- trlnorm(reps * 10, Data@steep[x], Data@CV_steep[x])
-  hvec <- sample_steepness2(reps*10, Data@steep[x], Data@CV_steep[x])
-  MuC <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
-  Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
-
-  if (all(is.na(Z))) return(rep(NA, reps))
-  ind <- !is.na(Z)
-  FM <- Z[ind] - Mvec[ind]
-  Ac <- Cc[ind]/(1 - exp(-FM))
-  FMSY <- getr(x, Data, Mvec[ind], Kc[ind], Linfc[ind], t0c[ind], hvec[ind], 
-               maxage = Data@MaxAge, r_reps = sum(ind))/2
-  TAC <- FMSY * Ac
-  TAC <- TAC[TAC > 0][1:reps]
-  TACfilter(TAC)
-}
-class(Fdem_ML) <- "Output"
+# 
+# #' Demographic FMSY method that uses mean length data to estimate recent Z
+# #' 
+# #' Demographic F (r/2) method using the mean length estimator to calculate
+# #' current abundance.
+# #' 
+# #' 
+# #' @usage Fdem_ML(x, Data, reps = 100)
+# #' @param x A position in data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of TAC samples
+# #' @note The mean length extension was programmed by Gary Nelson as part of his
+# #' excellent R package 'fishmethods'
+# #' @author T. Carruthers
+# #' @references McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
+# #' demographic methods to construct Bayesian priors for the intrinsic rate of
+# #' increase in the Schaefer model and implications for stock rebuilding. Can.
+# #' J. Fish. Aquat. Sci. 58: 1871-1890.
+# #' @export Fdem_ML
+# Fdem_ML <- function(x, Data, reps = 100) {
+#   dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@MaxAge, Data@wla, Data@wlb, Data@CAL, Data@steep, Data@CV_steep"
+#   Mvec <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])
+#   Kc <- trlnorm(reps * 10, Data@vbK[x], Data@CV_vbK[x])
+#   Linfc = trlnorm(reps * 10, Data@vbLinf[x], Data@CV_vbLinf[x])
+#   t0c <- -trlnorm(reps * 10, -Data@vbt0[x], Data@CV_vbt0[x])
+#   t0c[!is.finite(t0c)] <- 0
+#   # hvec <- trlnorm(reps * 10, Data@steep[x], Data@CV_steep[x])
+#   hvec <- sample_steepness2(reps*10, Data@steep[x], Data@CV_steep[x])
+#   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
+#   Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
+#   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
+# 
+#   if (all(is.na(Z))) return(rep(NA, reps))
+#   ind <- !is.na(Z)
+#   FM <- Z[ind] - Mvec[ind]
+#   Ac <- Cc[ind]/(1 - exp(-FM))
+#   FMSY <- getr(x, Data, Mvec[ind], Kc[ind], Linfc[ind], t0c[ind], hvec[ind], 
+#                maxage = Data@MaxAge, r_reps = sum(ind))/2
+#   TAC <- FMSY * Ac
+#   TAC <- TAC[TAC > 0][1:reps]
+#   TACfilter(TAC)
+# }
+# class(Fdem_ML) <- "Output"
 
 
 
