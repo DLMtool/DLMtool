@@ -1340,77 +1340,77 @@ NULL
 #' @export
 setMethod("plot",
           signature(x = "Data"),
-          function(x,funcs=NA,maxlines=6,perc=0.5,xlims=NA){
+          function(x,...){
             
             old_par <- par(no.readonly = TRUE)
             on.exit(par(list = old_par), add = TRUE)
-            
-            Data<-x
-            if (class(Data) != "Data") stop("Must supply object of class Data")
-            if (all(is.na(Data@TAC))) stop("No TAC data found")
-            cols<-rep(c('black','red','green','blue','orange','brown','purple','dark grey','violet','dark red','pink','dark blue','grey'),4)
-            ltys<-rep(1:4,each=13)
-            
-            if(is.na(funcs[1]))funcs<-Data@MPs
-            
-            nMPs<-length(funcs)
-            nplots<-ceiling(nMPs/maxlines)
-            maxl<-ceiling(nMPs/nplots)
-            mbyp <- split(1:nMPs, ceiling(1:nMPs/maxl))   # assign methods to plots
-            
-            if(is.na(xlims[1])|length(xlims)!=2){
-              xlims<-quantile(Data@TAC,c(0.005,0.95),na.rm=T)
-              if(xlims[1]<0)xlims[1]<-0
-            }
-            if(!NAor0(Data@Ref)){
-              if(xlims[1]>Data@Ref)xlims[1]<-max(0,0.98*Data@Ref)
-              if(xlims[2]<Data@Ref)xlims[2]<-1.02*Data@Ref
-            }
-            ylims<-c(0,1)
-            
-            #for(m in 1:nMPs){
-            # if(sum(!is.na(Data@TAC[m,,1]))>2){
-            # dens<-density(Data@TAC[m,,1],na.rm=T)
-            #print(quantile(dens$y,0.99,na.rm=T))
-            #  if(quantile(dens$y,0.9,na.rm=T)>ylims[2])ylims[2]<-quantile(dens$y,0.90,na.rm=T)
-            #}
-            #}
-            
-            #dev.new2(width=10,height=0.5+7*nplots)
-            par(mfrow=c(ceiling(nplots/2),2),mai=c(0.4,0.4,0.01,0.01),omi=c(0.35,0.35,0.35,0.05))
-            
-            for(p in 1:nplots){
-              m<-mbyp[[p]][1]
-              plot(NA,NA,xlim=xlims,ylim=ylims,main="",xlab="",ylab="",col="white",lwd=3,type="l")
-              abline(h=0)
-              if(!NAor0(Data@Ref)){
-                abline(v=Data@Ref,col="light grey",lwd=2)
-                if(!NAor0(Data@Ref_type[1]))legend('right',Data@Ref_type,text.col="grey",bty='n')
-              }
-              #plot(density(DLM@TAC[m,,1],from=0,na.rm=T),xlim=xlims,ylim=ylims,main="",xlab="",ylab="",col=coly[m],lty=ltyy[m],type="l")
-              
-              if(!is.na(perc[1]))abline(v=quantile(Data@TAC[m,,1],p=perc,na.rm=T),col=cols[m],lty=ltys[m])
-              #if(length(mbyp[[p]])>0){
-              for(ll in 1:length(mbyp[[p]])){
-                m<-mbyp[[p]][ll]
-                if(sum(!is.na(Data@TAC[m,,1]))>10){  # only plot if there are sufficient non-NA TAC samples
-                  x<-density(Data@TAC[m,,1],from=0,na.rm=T)$x
-                  y<-density(Data@TAC[m,,1],from=0,na.rm=T)$y
-                  y<-y/max(y)
-                  lines(x,y,col=cols[ll])
-                }else{
-                  print(paste("Method ",funcs[m]," produced too many NA TAC values for plotting densities",sep=""))
-                }
-                if(!is.na(perc[1]))abline(v=quantile(Data@TAC[m,,1],p=perc,na.rm=T),col=cols[ll],lty=2)
-              }
-              #}
-              cind<-1:length(mbyp[[p]])
-              legend('topright',funcs[mbyp[[p]]],text.col=cols[cind],col=cols[cind],lty=1,bty='n',cex=0.75)
-            }
-            
-            mtext(paste("TAC (",Data@Units,")",sep=""),1,outer=T,line=0.5)
-            mtext(paste("Standardized relative frequency",sep=""),2,outer=T,line=0.5)
-            mtext(paste("TAC calculation for ",Data@Name,sep=""),3,outer=T,line=0.5)
+            boxplot.Data(x, ...)
+            # Data<-x
+            # if (class(Data) != "Data") stop("Must supply object of class Data")
+            # if (all(is.na(Data@TAC))) stop("No TAC data found")
+            # cols<-rep(c('black','red','green','blue','orange','brown','purple','dark grey','violet','dark red','pink','dark blue','grey'),4)
+            # ltys<-rep(1:4,each=13)
+            # 
+            # if(is.na(funcs[1]))funcs<-Data@MPs
+            # 
+            # nMPs<-length(funcs)
+            # nplots<-ceiling(nMPs/maxlines)
+            # maxl<-ceiling(nMPs/nplots)
+            # mbyp <- split(1:nMPs, ceiling(1:nMPs/maxl))   # assign methods to plots
+            # 
+            # if(is.na(xlims[1])|length(xlims)!=2){
+            #   xlims<-quantile(Data@TAC,c(0.005,0.95),na.rm=T)
+            #   if(xlims[1]<0)xlims[1]<-0
+            # }
+            # if(!NAor0(Data@Ref)){
+            #   if(xlims[1]>Data@Ref)xlims[1]<-max(0,0.98*Data@Ref)
+            #   if(xlims[2]<Data@Ref)xlims[2]<-1.02*Data@Ref
+            # }
+            # ylims<-c(0,1)
+            # 
+            # #for(m in 1:nMPs){
+            # # if(sum(!is.na(Data@TAC[m,,1]))>2){
+            # # dens<-density(Data@TAC[m,,1],na.rm=T)
+            # #print(quantile(dens$y,0.99,na.rm=T))
+            # #  if(quantile(dens$y,0.9,na.rm=T)>ylims[2])ylims[2]<-quantile(dens$y,0.90,na.rm=T)
+            # #}
+            # #}
+            # 
+            # #dev.new2(width=10,height=0.5+7*nplots)
+            # par(mfrow=c(ceiling(nplots/2),2),mai=c(0.4,0.4,0.01,0.01),omi=c(0.35,0.35,0.35,0.05))
+            # 
+            # for(p in 1:nplots){
+            #   m<-mbyp[[p]][1]
+            #   plot(NA,NA,xlim=xlims,ylim=ylims,main="",xlab="",ylab="",col="white",lwd=3,type="l")
+            #   abline(h=0)
+            #   if(!NAor0(Data@Ref)){
+            #     abline(v=Data@Ref,col="light grey",lwd=2)
+            #     if(!NAor0(Data@Ref_type[1]))legend('right',Data@Ref_type,text.col="grey",bty='n')
+            #   }
+            #   #plot(density(DLM@TAC[m,,1],from=0,na.rm=T),xlim=xlims,ylim=ylims,main="",xlab="",ylab="",col=coly[m],lty=ltyy[m],type="l")
+            #   
+            #   if(!is.na(perc[1]))abline(v=quantile(Data@TAC[m,,1],p=perc,na.rm=T),col=cols[m],lty=ltys[m])
+            #   #if(length(mbyp[[p]])>0){
+            #   for(ll in 1:length(mbyp[[p]])){
+            #     m<-mbyp[[p]][ll]
+            #     if(sum(!is.na(Data@TAC[m,,1]))>10){  # only plot if there are sufficient non-NA TAC samples
+            #       x<-density(Data@TAC[m,,1],from=0,na.rm=T)$x
+            #       y<-density(Data@TAC[m,,1],from=0,na.rm=T)$y
+            #       y<-y/max(y)
+            #       lines(x,y,col=cols[ll])
+            #     }else{
+            #       print(paste("Method ",funcs[m]," produced too many NA TAC values for plotting densities",sep=""))
+            #     }
+            #     if(!is.na(perc[1]))abline(v=quantile(Data@TAC[m,,1],p=perc,na.rm=T),col=cols[ll],lty=2)
+            #   }
+            #   #}
+            #   cind<-1:length(mbyp[[p]])
+            #   legend('topright',funcs[mbyp[[p]]],text.col=cols[cind],col=cols[cind],lty=1,bty='n',cex=0.75)
+            # }
+            # 
+            # mtext(paste("TAC (",Data@Units,")",sep=""),1,outer=T,line=0.5)
+            # mtext(paste("Standardized relative frequency",sep=""),2,outer=T,line=0.5)
+            # mtext(paste("TAC calculation for ",Data@Name,sep=""),3,outer=T,line=0.5)
           })
 
 # ---- Plot MSE object ----
@@ -1536,36 +1536,36 @@ setMethod("summary",
 
 
 
-# -- Input Control Recommendation Class ----
-#' Class \code{'InputRec'}
-#' 
-#' An object for storing the recommendation for an input control MP 
-#' 
-#' @name InputRec-class
-#' @docType class
-#' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new('InputRec')} 
-
-#' @slot Effort A numeric value with the effort recommendation as a fraction of current (nyear) fishing effort
-#' @slot Spatial A boolean vector of length 'nareas' specifying if area is open (1) or closed (0) to fishing 
-#' @slot Allocate A boolean value describing if effort should be re-allocated from close to open areas
-#' @slot LR5 smallest length at 5 per cent retention
-#' @slot LFR smallest length at full retention 
-#' @slot HS upper harvest slot (no retention above this)
-#' @slot Rmaxlen retention of the largest size class
-#' @slot Misc An empty list that can be used to store information and pass on to MPs in future 
-#' @author A. Hordyk
-#' @keywords classes
-
-setClass("InputRec", representation(Effort = "numeric", 
-                                    Spatial="numeric", Allocate = "numeric", LR5 = "numeric",
-                                    LFR = "numeric", HS="numeric", Rmaxlen="numeric", Misc="list"))
-setMethod("initialize", "InputRec", function(.Object){
-     .Object@Effort<-1
-     .Object@Allocate<-1
-     .Object@Spatial<-c(1,1)
-     .Object
-   })
+# # -- Input Control Recommendation Class -
+# #' Class \code{'InputRec'}
+# #' 
+# #' An object for storing the recommendation for an input control MP 
+# #' 
+# #' @name InputRec-class
+# #' @docType class
+# #' @section Objects from the Class: Objects can be created by calls of the form
+# #' \code{new('InputRec')} 
+# 
+# #' @slot Effort A numeric value with the effort recommendation as a fraction of current (nyear) fishing effort
+# #' @slot Spatial A boolean vector of length 'nareas' specifying if area is open (1) or closed (0) to fishing 
+# #' @slot Allocate A boolean value describing if effort should be re-allocated from close to open areas
+# #' @slot LR5 smallest length at 5 per cent retention
+# #' @slot LFR smallest length at full retention 
+# #' @slot HS upper harvest slot (no retention above this)
+# #' @slot Rmaxlen retention of the largest size class
+# #' @slot Misc An empty list that can be used to store information and pass on to MPs in future 
+# #' @author A. Hordyk
+# #' @keywords classes
+# 
+# setClass("InputRec", representation(Effort = "numeric", 
+#                                     Spatial="numeric", Allocate = "numeric", LR5 = "numeric",
+#                                     LFR = "numeric", HS="numeric", Rmaxlen="numeric", Misc="list"))
+# setMethod("initialize", "InputRec", function(.Object){
+#      .Object@Effort<-1
+#      .Object@Allocate<-1
+#      .Object@Spatial<-c(1,1)
+#      .Object
+#    })
 
 
 # -- Management Recommendation Class ----
@@ -1609,6 +1609,57 @@ setMethod("initialize", "Rec", function(.Object){
   .Object
 })
 
+#' Show the output of a single MP recommendation
+#'
+#' @param object object of class Rec
+#' @rdname show-Rec
+#' @export
+setMethod("show", signature = (object="Rec"), function(object) {
+
+ Rec <- object
+ slots <- slotNames(Rec)
+ recList <- list()
+ perc <- 0.5
+ for (X in slots) { # sequence along recommendation slots 
+   if (X == "Misc") { # convert to a list nsim by nareas
+     rec <- slot(Rec, X)
+   } else {
+     rec <- slot(Rec,X) # unlist(lapply(temp, slot, name=X))
+   }
+   if (X == "Spatial") { # convert to a matrix nsim by nareas
+     nsims <- 1
+     nareas <- max(2,length(rec))
+     rec <- matrix(rec, nareas, nsims, byrow=FALSE)   
+   }
+   recList[[X]] <- rec
+ }
+ 
+ names <- c("TAC", "Effort", "LR5", "LFR", "HS", "Rmaxlen",
+            "L5", "LFS", 'Vmaxlen', 'Spatial')
+ mat <- matrix(0, nrow=1, ncol=length(names)+nareas-1)
+ count <- 0 
+ for (x in names) {
+   temp <- recList[[x]]
+   count <- count + 1 
+   if (x!="Spatial") {
+     mat[,count] <- quantile(temp, probs=perc, na.rm=TRUE)
+   } else {
+     mat[,count:ncol(mat)] <- t(matrix(unlist(temp), nrow=nareas, ncol=1))
+   }
+ }
+ names[length(names)] <- "Area 1"
+ names <- c(names, paste('Area', 2:nareas))
+ if (perc !=0.5) names[1] <- paste0(names[1], ' (', perc, ' perc')
+ if (perc ==0.5) names[1] <- paste0(names[1], ' (median)')
+ colnames(mat) <- names
+ 
+ if (nrow(mat) == 1) {
+   mat <- as.data.frame(mat)
+   matout <- mat[!is.na(mat)]
+   names(matout) <- names[!is.na(mat)]
+   print(matout)
+ }
+})
 
 
 

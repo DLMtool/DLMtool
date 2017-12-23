@@ -2,13 +2,20 @@
 % Please edit documentation in R/MiscFuns.r
 \name{MPtype}
 \alias{MPtype}
-\title{Title}
+\title{Management Procedure Type}
 \usage{
 MPtype(MPs = NA)
 }
 \arguments{
-\item{MPs}{}
+\item{MPs}{A list of MP names}
+}
+\value{
+A data.frame with MP names and management type
 }
 \description{
-Title
+Management Procedure Type
+}
+\examples{
+MPtype(c("AvC", "curE", "matlenlim", "MRreal", "FMSYref"))
+
 }

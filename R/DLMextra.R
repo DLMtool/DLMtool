@@ -7,6 +7,11 @@
 #'
 #' @importFrom devtools install_github
 DLMextra <- function(silent=FALSE) {
+  if (!requireNamespace("devtools", quietly = TRUE)) {
+    stop("devtools is needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+  
   if (!silent) message("\nDownloading 'DLMextra' from GitHub")
   tt <- devtools::install_github("DLMtool/DLMextra", quiet=TRUE)
   if (tt) {

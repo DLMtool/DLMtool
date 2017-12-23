@@ -17,9 +17,7 @@ Depends:
 Imports:
     abind,
     coda,
-    devtools,
     methods,
-    LBSPR,
     grDevices,
     ggplot2,
     gridExtra,
@@ -37,6 +35,7 @@ Imports:
 LazyData: yes
 LazyLoad: yes
 Suggests:
+    devtools,
     testthat
 LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.0.1

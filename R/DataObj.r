@@ -595,6 +595,7 @@ boxplot.Data <- function(x, upq=0.9, lwq=0.1, outline = FALSE, ...) {
   Data <- updateMSE(x)
   if (class(Data) != "Data")  stop("Object must be of class 'Data'")
   tacs <- t(Data@TAC[, , 1])
+
   if (all(is.na(tacs))) {
     message("Nothing found in TAC slot")
     return(invisible(NULL))
@@ -604,10 +605,16 @@ boxplot.Data <- function(x, upq=0.9, lwq=0.1, outline = FALSE, ...) {
   MPs <- Data@MPs
   ind <- grep("ref", MPs)
   if (length(ind) > 0) {
-    tacs <- tacs[, -ind]
+    tacs <- tacs[, -ind, drop=FALSE]
     MPs <- MPs[-ind]
   }
-  if (nrow(tacs) > 1) {
+  
+  # exclude NAs 
+  allNAs <- colSums(apply(tacs, 2, is.na)) == nrow(tacs)
+  tacs <- tacs[,!allNAs, drop=FALSE]
+  MPs <- MPs[!allNAs]
+  
+  if (ncol(tacs) > 1) {
     ord <- order(apply(tacs, 2, median, na.rm = TRUE))
     MPs <- MPs[ord]
     tacs <- tacs[, ord]

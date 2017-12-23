@@ -2,19 +2,27 @@
 % Please edit documentation in R/applyMP.R
 \name{runMP}
 \alias{runMP}
-\title{Title}
+\title{Run a Management Procedure}
 \usage{
-runMP(Data, MPs = NA, reps = 100, probs = 0.5, chkMPs = TRUE)
+runMP(Data, MPs = NA, reps = 100, perc = 0.5, chkMPs = TRUE,
+  silent = FALSE)
 }
 \arguments{
-\item{Data}{}
+\item{Data}{A DLMtool Data object}
 
-\item{MPs}{}
+\item{MPs}{The name of the MP to run (or a vector or names)}
 
-\item{reps}{}
+\item{reps}{Number of repititions}
 
-\item{chkMPs}{}
+\item{perc}{Percentile to summarize reps (default is median)}
+
+\item{chkMPs}{Logical. Should the MPs be checked before attempting to run them?}
+
+\item{silent}{Logical. Should messages by suppressed?}
+}
+\value{
+invisibly returns the Data object
 }
 \description{
-Title
+Run a Management Procedure
 }

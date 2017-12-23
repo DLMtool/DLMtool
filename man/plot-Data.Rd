@@ -5,8 +5,7 @@
 \alias{plot,Data,ANY-method}
 \title{Plot Data object}
 \usage{
-\S4method{plot}{Data,ANY}(x, funcs = NA, maxlines = 6, perc = 0.5,
-  xlims = NA)
+\S4method{plot}{Data,ANY}(x, y, ...)
 }
 \arguments{
 \item{x}{object of class Data}

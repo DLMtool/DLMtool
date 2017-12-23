@@ -1,31 +1,38 @@
 
-#' Title
+#' Run a Management Procedure
 #'
-#' @param Data 
-#' @param MPs 
-#' @param reps 
-#' @param probs
-#' @param chkMPs
+#' @param Data A DLMtool Data object
+#' @param MPs The name of the MP to run (or a vector or names)
+#' @param reps Number of repititions
+#' @param perc Percentile to summarize reps (default is median)
+#' @param chkMPs Logical. Should the MPs be checked before attempting to run them?
+#' @param silent Logical. Should messages by suppressed?
 #'
 #' @export
+#' @return invisibly returns the Data object
 #'
-runMP <- function(Data, MPs = NA, reps = 100, probs=0.5, chkMPs=TRUE) {
-  if (all(is.na(MPs))) MPs <- avail("MP")
+runMP <- function(Data, MPs = NA, reps = 100, perc=0.5, chkMPs=TRUE, silent=FALSE) {
+  if (class(MPs) != 'character' && !all(is.na(MPs))) stop('MPs must be character string', call.=FALSE)
+  if (class(Data) != 'Data') stop("Data must be class 'Data'", call.=FALSE)
+  if (all(is.na(MPs))) {
+    MPs <- avail("MP")
+    message("running all available MPs")
+  }
   if (chkMPs) {
     cans <- Can(Data, MPs=MPs)
     MPs <- MPs[MPs %in% cans]
   }
   if (length(MPs) <1) stop("No MPs possible")
   
-  MPrecs <- applyMP(Data, MPs, reps, nsims=1)[[1]]
+  MPrecs <- applyMP(Data, MPs, reps, nsims=1, silent=silent)
 
   names <- c("TAC", "Effort", "LR5", "LFR", "HS", "Rmaxlen",
              "L5", "LFS", 'Vmaxlen', 'Spatial')
   mat <- matrix(0, nrow=length(MPs), ncol=length(names)+Data@nareas-1)
   for (x in seq_along(names)) {
-    temp <- lapply(MPrecs, '[[', names[x])
+    temp <- lapply(MPrecs[[1]], '[[', names[x])
     if (names[x]!="Spatial") {
-      mat[,x] <- unlist(lapply(temp, quantile, probs=probs))
+      mat[,x] <- unlist(lapply(temp, quantile, probs=perc, na.rm=TRUE))
     } else {
       mat[,x:ncol(mat)] <- t(matrix(unlist(temp), nrow=Data@nareas, ncol=length(MPs)))
     }
@@ -37,21 +44,25 @@ runMP <- function(Data, MPs = NA, reps = 100, probs=0.5, chkMPs=TRUE) {
   
   if (nrow(mat) > 1) {
     allNA <- colSums(apply(mat, 2, is.na)) == length(MPs)
-    return(as.data.frame(round(mat[,!allNA], 2), stringsAsFactors = FALSE))
+    matout <- data.frame(round(mat[,!allNA], 2), stringsAsFactors = FALSE)
+    names(matout) <- names[!allNA]
+    print(matout)
   }
   if (nrow(mat) == 1) {
-    mat <- as.data.frame(mat)
+    mat <- data.frame(mat)
     matout <- mat[!is.na(mat)]
-    names(matout) <- names[!is.na(mat)]
-    return(matout)
+    matout <- matrix(matout)
+    colnames(matout) <- names[!is.na(mat)]
+    rownames(matout) <- MPs
+    print(round(matout),2)
   }
-  
-
+ 
+  invisible(MPrecs[[2]])
 }
 
 
 
-applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA) {
+applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
   Data <- updateMSE(Data)
   if (is.na(nsims)) nsims <- length(Data@Mort)
@@ -64,7 +75,7 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA) {
   }
   returnList <- list() # a list nMPs long containing MPs recommendations
   recList <- list() # a list containing nsim recommendations from a single MP 
-  
+  TACout <- array(NA, dim=c(nMPs, reps, nsims))
   if (!sfIsRunning() | (nMPs < 8 & nsims < 8)) {
     for (mp in 1:nMPs) {
       temp <- sapply(1:nsims, MPs[mp], Data = Data, reps = reps)  
@@ -82,8 +93,10 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA) {
         for (x in 1:nsims) Data@Misc[[x]] <- recList$Misc[[x]]
         recList$Misc <- NULL
       }
+      if (length(recList$TAC)>0)  TACout[mp,,] <- recList$TAC 
       returnList[[mp]] <- recList
- 
+      if (!silent && sum(is.na(recList$TAC)) > 0.5 * reps)
+        message("Method ", MPs[mp], " produced greater than 50% NA values")
     }
   } else {
     for (mp in 1:nMPs) {
@@ -98,16 +111,20 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA) {
         if (X == "Spatial") { # convert to a matrix nsim by nareas
           rec <- matrix(rec, nareas, nsims, byrow=FALSE)  
         }
-        
         recList[[X]] <- rec
         for (x in 1:nsims) Data@Misc[[x]] <- recList$Misc[[x]]
         recList$Misc <- NULL
       }
+      if (length(recList$TAC)>0) TACout[mp,,] <- recList$TAC
       returnList[[mp]] <- recList
 
+      if (!silent && sum(is.na(recList$TAC)) > 0.5 * reps)
+        message("Method ", MPs[mp], " produced greater than 50% NA values")
     }
+    
   }
-  
+
+  Data@TAC <- TACout
   Data@MPs <- MPs
   
   list(returnList, Data)

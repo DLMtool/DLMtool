@@ -169,42 +169,34 @@ avail <- function(classy) {
 
 }
 
-#' Title
+#' Management Procedure Type
 #'
-#' @param MPs 
+#' @param MPs A list of MP names  
 #'
-#' @return
+#' @return A data.frame with MP names and management type
 #' @export
 #'
-#' @examples
+#' @examples 
+#' MPtype(c("AvC", "curE", "matlenlim", "MRreal", "FMSYref"))
+#' 
 MPtype <- function(MPs=NA) {
   if (any(is.na(MPs))) MPs <- avail("MP")
   
   Data <- DLMtool::SimulatedData
   
-  recs <- runMP(Data, MPs, reps=1, chkMPs=FALSE)
-  
-  if (length(MPs)>1) {
-    Output <- !is.na(recs[,'TAC'])
-    ind <- seq_along(names(recs))
-    temp <- grep("TAC", colnames(recs))
-    if (length(temp)>0) ind <- ind[-temp]
-    Input <- rowSums(recs[,ind], na.rm=TRUE) >0 
-  } else {
-    Output <- !is.na(recs['TAC'])
-    ind <- seq_along(names(recs))
-    temp <- grep("TAC", names(recs))
-    if (length(temp)>0) ind <- ind[-temp]
-    Input <- sum(recs[ind], na.rm=TRUE) >0 
-  }
-  Mixed <- Output & Input
-  Output[Mixed] <- FALSE
-  Input[Mixed] <- FALSE
-  
+  runMPs <- applyMP(Data, MPs, reps = 2, nsims=1, silent=TRUE)
+  recs <- runMPs[[1]]
+
   type <- rep("NA", length(MPs))
-  type[Output] <- 'Output'
-  type[Input] <- 'Input'
-  type[Mixed] <- 'Mixed'
+  for (mm in seq_along(recs)) {
+    output <- length(recs[[mm]]$TAC) > 0 
+    names <- names(recs[[mm]])
+    names <- names[!names %in% c("TAC", "Spatial")]
+    input <- sum(unlist(lapply(Map(function(x) recs[[mm]][[x]], names), length))) > 0
+    if (output) type[mm] <- "Output"
+    if (input) type[mm] <- "Input"
+    if (input & output) type[mm] <- "Mixed"
+  }
   type[grep("ref", MPs)] <- "Reference"
   data.frame(MP=MPs, Type=type, stringsAsFactors = FALSE)
   
