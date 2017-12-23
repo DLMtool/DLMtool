@@ -4,10 +4,10 @@
 \alias{Jplot}
 \title{Joint probability plot}
 \usage{
-Jplot(MSEobj, PLim = 0.8, YVar = c('LTY', 'STY', 'avgSSB_SSB0',
-'avgB_BMSY'), PMRefs = list(B_BMSY = 0.5, SSB_SSB0 = 0.2), UseMean = TRUE,
-lastYrs = 10, AvailMPs = NULL, XLim = NULL, ShowCols = TRUE, ShowLabs =
-FALSE, All = TRUE)
+Jplot(MSEobj, PLim = 0.8, YVar = c("LTY", "STY", "avgSSB_SSB0",
+  "avgB_BMSY"), PMRefs = list(B_BMSY = 0.5, SSB_SSB0 = 0.2), UseMean = TRUE,
+  lastYrs = 10, AvailMPs = NULL, XLim = NULL, ShowCols = TRUE,
+  ShowLabs = FALSE, All = TRUE)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}

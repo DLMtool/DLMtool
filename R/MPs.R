@@ -149,7 +149,7 @@ class(NFref) <- "MP"
 #' @importFrom stats approx coef dbeta density dnorm dlnorm lm loess loess.smooth
 #' median nlm optim optimise optimize plogis pnorm predict qlnorm quantile rbeta
 #' rlnorm rmultinom rnorm runif sd
-#' @importFrom utils packageVersion lsf.str read.csv
+#' @importFrom utils packageVersion lsf.str read.csv read.csv2
 AvC <- function(x, Data, reps = 100) {
   dependencies = "Data@Cat"
   Rec <- new("Rec")

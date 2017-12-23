@@ -4,7 +4,7 @@
 \alias{Pplot}
 \title{A projection by projection plot of F/FMSY and B/BMSY}
 \usage{
-Pplot(MSEobj, nam=NA)
+Pplot(MSEobj, nam = NA, maxMP = 10, MPs = NA, maxsims = 20)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}

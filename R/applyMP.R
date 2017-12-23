@@ -326,7 +326,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     }
     
     # upper harvest slot 
-    aboveHS <- Len_age[,,allyrs]>HS
+    aboveHS <- Len_age[,,allyrs]>array(HS, dim=c(nsim, maxage, length(allyrs)))
     tretA_P <- retA_P[,,allyrs]
     tretA_P[aboveHS] <- 0
     retA_P[,,allyrs] <- tretA_P
@@ -467,7 +467,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
         Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt] # calculate total mortality 
         
         CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
-        CB_Pret[SAYR] <- FM_retain[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
+        CB_Pret[SAYR] <- FM_Pret[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
       }
       
     }

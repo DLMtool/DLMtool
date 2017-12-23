@@ -5,7 +5,7 @@
 \title{A shorter version of the plot method for MSEs that just shows the overall
 trade-offs}
 \usage{
-Tplot2(MSEobj,nam=NA)
+Tplot2(MSEobj, nam = NA)
 }
 \arguments{
 \item{MSEobj}{An object of class 'MSE'}

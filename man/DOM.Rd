@@ -4,7 +4,7 @@
 \alias{DOM}
 \title{How dominant is an MP?}
 \usage{
-DOM(MSEobj, MPtg=NA)
+DOM(MSEobj, MPtg = NA)
 }
 \arguments{
 \item{MSEobj}{An object of class 'MSE'}

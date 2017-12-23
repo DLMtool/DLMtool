@@ -4,7 +4,7 @@
 \alias{wormplot}
 \title{Biomass wormplot}
 \usage{
-wormplot(MSEobj, Bref=0.5, LB=0.25, UB=0.75)
+wormplot(MSEobj, Bref = 0.5, LB = 0.25, UB = 0.75)
 }
 \arguments{
 \item{MSEobj}{Object of class MSE, output of the runMSE function}

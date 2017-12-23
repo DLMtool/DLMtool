@@ -4,10 +4,10 @@
 \alias{TradePlot}
 \title{Generic Trade-off Plot}
 \usage{
-TradePlot(MSEobj, XAxis=c('Overfishing', 'Biomass:BMSY'),
-YAxis=c('Long-term Yield', 'AnnualVar'), XThresh=c(30, 80), YThresh=c(0,50),
-maxVar=15, BmsyRef=0.5, B0Ref=0.2, AvailMPs=NULL, ShowLabs=FALSE,
-ShowCols=TRUE)
+TradePlot(MSEobj, XAxis = c("Overfishing", "Biomass:BMSY"),
+  YAxis = c("Long-term Yield", "AnnualVar"), XThresh = c(30, 80),
+  YThresh = c(0, 50), maxVar = 15, BmsyRef = 0.5, B0Ref = 0.2,
+  AvailMPs = NULL, ShowLabs = FALSE, ShowCols = TRUE)
 }
 \arguments{
 \item{MSEobj}{Object of class MSE, output of the runMSE function}

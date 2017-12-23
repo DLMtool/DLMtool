@@ -1333,18 +1333,19 @@ NULL
 #'
 #' @rdname plot-Data 
 #' @param x object of class Data
-#' @param funcs MPs 
-#' @param maxlines maximum number of lines
-#' @param perc percentile of TAC recommendation
-#' @param xlims limits of x-axis
+#' @param upq Upper quantile of TACs for max ylim
+#' @param lwq Lower quantile of TACs for min ylim
+#' @param outline Logical. Include outliers in plot?
+#' @param ...  Optional additional arguments passed to \code{boxplot}
 #' @export
 setMethod("plot",
           signature(x = "Data"),
-          function(x,...){
+          function(x, upq=0.9, lwq=0.1, outline = FALSE, ...){
             
             old_par <- par(no.readonly = TRUE)
             on.exit(par(list = old_par), add = TRUE)
-            boxplot.Data(x, ...)
+            boxplot.Data(x, upq, lwq, outline, ...)
+          })
             # Data<-x
             # if (class(Data) != "Data") stop("Must supply object of class Data")
             # if (all(is.na(Data@TAC))) stop("No TAC data found")
@@ -1411,7 +1412,7 @@ setMethod("plot",
             # mtext(paste("TAC (",Data@Units,")",sep=""),1,outer=T,line=0.5)
             # mtext(paste("Standardized relative frequency",sep=""),2,outer=T,line=0.5)
             # mtext(paste("TAC calculation for ",Data@Name,sep=""),3,outer=T,line=0.5)
-          })
+          # })
 
 # ---- Plot MSE object ----
 #' Plot MSE object

@@ -4,7 +4,7 @@
 \alias{Can}
 \title{What data-limited methods can be applied to this Data object?}
 \usage{
-Can(Data, timelimit = 1)
+Can(Data, timelimit = 1, MPs = NA)
 }
 \arguments{
 \item{Data}{A data-limited methods data object (class Data)}

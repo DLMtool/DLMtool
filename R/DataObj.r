@@ -228,7 +228,6 @@ plotOFL <- function(Data, xlims = NA, perc = 0.5) {
 #' samples) of a given method and is in units of seconds.
 #' 
 #' 
-#' @usage Can(Data, timelimit = 1)
 #' @param Data A data-limited methods data object (class Data)
 #' @param timelimit The maximum time (seconds) taken for a method to undertake
 #' 10 reps (this filters out methods that are too slow)
@@ -245,7 +244,6 @@ Can <- function(Data, timelimit = 1, MPs=NA) {
 #' time along with a list of their data requirments.
 #' 
 #' 
-#' @usage Cant(Data, timelimit = 1)
 #' @param Data A data-limited methods data object (class Data)
 #' @param timelimit The maximum time (seconds) taken for a method to undertake
 #' 10 reps (this filters out methods that are too slow)
