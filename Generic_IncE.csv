@@ -1,0 +1,13 @@
+Name,Generic_Increasing effort,,,
+nyears,50,,,
+Spat_targ,1,1,,
+LFS,0.75,1.1,,
+L5,0.2,0.4,,
+Vmaxlen,0,1,,
+Fsd,0.1,0.4,,
+EffYears,0,0.3,0.6,1
+EffUpper,0,0.6,0.6,1.2
+EffLower,0,0.4,0.4,0.8
+qinc,-2,2,,
+qcv,0.1,0.3,,
+MPA,30,0,1,

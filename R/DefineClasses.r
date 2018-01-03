@@ -554,6 +554,11 @@ setMethod("initialize", "Stock", function(.Object, file = NA, dec=c(".", ",")) {
 #' @slot VmaxLower (Optional) Lower bound of Vmaxlen (use \code{ChooseSelect} function to set these). Vector. Fraction 
 #' @slot VmaxUpper (Optional) Upper bound of Vmaxlen (use \code{ChooseSelect} function to set these). Vector. Fraction
 #' @slot CurrentYr The current calendar year (final year) of the historical simulations (eg 2011). Single value. Positive integer. 
+#' 
+#' @slot MPA (Optional) Matrix specifying spatial closures for historical years. Each row should contain year index (e.g 10 for 10th historical year)
+#' followed by fraction of area closed to fishing for each area. i.e. each row represents a change and the number of columns is nareas + 1. 
+#' The spatial closures are assumed to remain in place for the future projections unless changed by a MP. 
+#' Default (if left blank) is all areas are open to fishing in historical period.
 
 #' @author T. Carruthers and A. Hordyk
 #' @keywords classes
@@ -568,7 +573,7 @@ setClass("Fleet", slots = c(Name = "character", nyears = "numeric", Spat_targ = 
                             LR5 = "numeric", LFR = "numeric", Rmaxlen = "numeric", DR = "numeric",
                             SelYears = "numeric", AbsSelYears = "numeric",
                             L5Lower = "numeric", L5Upper = "numeric", LFSLower = "numeric", LFSUpper = "numeric", VmaxLower = "numeric", 
-                            VmaxUpper = "numeric", CurrentYr="numeric"))
+                            VmaxUpper = "numeric", CurrentYr="numeric", MPA='matrix'))
 
 # initialize Fleet
 setMethod("initialize", "Fleet", function(.Object, file = NA, dec=c(".", ",")) {
@@ -642,6 +647,18 @@ setMethod("initialize", "Fleet", function(.Object, file = NA, dec=c(".", ",")) {
       
       .Object@isRel <- dat[match("isRel", dname), 1]  # Are selecivity parameters relative to maturity?
       if (NAor0(.Object@isRel)) .Object@isRel <- "TRUE"
+      
+      isMPA <- grep('MPA', dname)
+      if (!is.na(isMPA)) {
+        MPA <- temp <- data.matrix(dat[isMPA:nrow(dat),])
+        valCols <- !is.na(colSums(MPA))
+        MPA <- MPA[,valCols, drop=FALSE]
+        valRows <- !is.na(rowSums(MPA))
+        MPA <- MPA[valRows, drop=FALSE]
+        MPA <- matrix(MPA, nrow=nrow(temp))
+        .Object@MPA <- MPA
+      }
+      
     } else {
       message("File doesn't exist")
     }
@@ -989,7 +1006,11 @@ setMethod("initialize", "Imp", function(.Object, file = NA, dec=c(".", ",")) {
 #' @slot LFSUpper (Optional) Upper bound of LFS (use \code{ChooseSelect} function to set these). Vector. Non-negative real numbers 
 #' @slot VmaxLower (Optional) Lower bound of Vmaxlen (use \code{ChooseSelect} function to set these). Vector. Fraction 
 #' @slot VmaxUpper (Optional) Upper bound of Vmaxlen (use \code{ChooseSelect} function to set these). Vector. Fraction
-#' @slot CurrentYr The current calendar year (final year) of the historical simulations (eg 2011). Single value. Positive integer. 
+#' @slot CurrentYr The current calendar year (final year) of the historical simulations (eg 2011). Single value. Positive integer. .
+#' @slot MPA (Optional) Matrix specifying spatial closures for historical years. Each row should contain year index (e.g 10 for 10th historical year)
+#' followed by fraction of area closed to fishing for each area. i.e. each row represents a change and the number of columns is nareas + 1. 
+#' The spatial closures are assumed to remain in place for the future projections unless changed by a MP. 
+#' Default (if left blank) is all areas are open to fishing in historical period.
 
 
 # Obs slots

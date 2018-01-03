@@ -375,7 +375,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
   VBiomass_P[,,y,] <- Biomass_P[, , y, ] * V_P[SAYt] # update vulnerable biomass
   newVB <- apply(Biomass_P[, , y, ] * V_P[SAYt], c(1, 3), sum)  # calculate total vuln biomass by area 
   fishdist <- (newVB^Spat_targ)/apply(newVB^Spat_targ, 1, sum)  # spatial preference according to spatial vulnerable biomass
-  
+
   d1 <- t(Si) * fishdist  # distribution of fishing effort
   fracE <- apply(d1, 1, sum) # fraction of current effort in open areas
   fracE2 <- d1 * (fracE + (1-fracE) * Ai)/fracE # re-distribution of fishing effort 

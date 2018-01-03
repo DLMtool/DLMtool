@@ -6,7 +6,7 @@
 \usage{
 optMSY(logFa, Asize_c, nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge,
   Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc,
-  Qc, maxF, useCPP = TRUE)
+  Qc, MPA, maxF, useCPP = TRUE)
 }
 \arguments{
 \item{logFa}{log apical fishing mortality}

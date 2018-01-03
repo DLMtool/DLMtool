@@ -116,7 +116,7 @@ OptionalSlots <- function() {
                 "LFSUpper", "VmaxLower", "VmaxUpper")
   RecSlots <-  c("Period", "Amplitude")
   
-  OptPars <- c("M2", "AbsSelYears")
+  OptPars <- c("M2", "AbsSelYears", 'MPA')
   
   
   # Slots ok to not contain values
