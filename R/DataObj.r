@@ -8,9 +8,9 @@
 DLMdiag <- function(Data, command = "available", reps = 5, timelimit = 1, funcs1=NA) {
   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
   Data <- updateMSE(Data)
-  if (all(is.na(funcs1))) funcs1 <- c(avail("Output"), avail("Input"))
-  mpclasses <- MPclass(funcs1)
-  funcs1 <- funcs1[mpclasses %in% c("Output", "Input", "Reference")]
+  if (all(is.na(funcs1))) funcs1 <- avail("MP")
+  # mpclasses <- MPtype(funcs1)[,2]
+  # funcs1 <- funcs1[mpclasses %in% c("Output", "Input", "Mixed", "Reference")]
   good <- rep(TRUE, length(funcs1))
   report <- rep("Worked fine", length(funcs1))
   test <- new("list")
@@ -37,33 +37,43 @@ DLMdiag <- function(Data, command = "available", reps = 5, timelimit = 1, funcs1
       test[[y]] <- "missing data" # if some required slots are NA or NULL - return error
       class(test[[y]]) <- "try-error"
     } else {  # continue if all slots are valid 
-      if (class(match.fun(funcs1[y])) == "Output") {
-        time1 <- Sys.time()
-        suppressWarnings({
-          setTimeLimit(timelimit * 1.5)
-          options(show.error.messages = FALSE)
-          test[[y]] <- try(do.call(funcs1[y], list(x = 1, Data = Data, reps = 5)), silent = T)
-          options(show.error.messages = TRUE)
-          if (class(test[[y]]) == "list") test[[y]] <- test[[y]][[1]]
-          setTimeLimit(Inf)
-        })
-      } else {
-        time1 <- Sys.time()
-        suppressWarnings({
-          setTimeLimit(timelimit * 1.5)
-          options(show.error.messages = FALSE)
-          test[[y]] <- try(do.call(funcs1[y], list(x = 1, Data = Data)), silent = T)
-          options(show.error.messages = TRUE)
-          setTimeLimit(Inf)
-        })
-      }      
+      time1 <- Sys.time()
+      suppressWarnings({
+        setTimeLimit(timelimit * 1.5)
+        options(show.error.messages = FALSE)
+        test[[y]] <- try(do.call(funcs1[y], list(x = 1, Data = Data, reps = 5)), silent = T)
+        options(show.error.messages = TRUE)
+        if (class(test[[y]]) == "list") test[[y]] <- test[[y]][[1]]
+        setTimeLimit(Inf)
+      })
+      
+      # if (class(match.fun(funcs1[y])) == "Output") {
+      #   time1 <- Sys.time()
+      #   suppressWarnings({
+      #     setTimeLimit(timelimit * 1.5)
+      #     options(show.error.messages = FALSE)
+      #     test[[y]] <- try(do.call(funcs1[y], list(x = 1, Data = Data, reps = 5)), silent = T)
+      #     options(show.error.messages = TRUE)
+      #     if (class(test[[y]]) == "list") test[[y]] <- test[[y]][[1]]
+      #     setTimeLimit(Inf)
+      #   })
+      # } else {
+      #   time1 <- Sys.time()
+      #   suppressWarnings({
+      #     setTimeLimit(timelimit * 1.5)
+      #     options(show.error.messages = FALSE)
+      #     test[[y]] <- try(do.call(funcs1[y], list(x = 1, Data = Data)), silent = T)
+      #     options(show.error.messages = TRUE)
+      #     setTimeLimit(Inf)
+      #   })
+      # }      
     }
     time2 <- Sys.time()
     timey[[y]] <- time2 - time1
     if (class(test[[y]]) == "try-error") {
       report[[y]] <- "Insufficient data"
       good[[y]] <- FALSE
-    } else if (class(test[[y]]) == "InputRec") {
+    } else if (class(test[[y]]) == "Rec") {
       slts <- slotNames(test[[y]])
       tt <- rep(FALSE, length(slts))
       for (x in seq_along(slts)) tt[x] <- NAor0(slot(test[[y]], slts[x]))
@@ -218,13 +228,13 @@ plotOFL <- function(Data, xlims = NA, perc = 0.5) {
 #' samples) of a given method and is in units of seconds.
 #' 
 #' 
-#' @usage Can(Data, timelimit = 1)
 #' @param Data A data-limited methods data object (class Data)
 #' @param timelimit The maximum time (seconds) taken for a method to undertake
 #' 10 reps (this filters out methods that are too slow)
+#' @param MPs Optional list of MP names
 #' @export Can
-Can <- function(Data, timelimit = 1) {
-  DLMdiag(Data, "available",  timelimit = timelimit)
+Can <- function(Data, timelimit = 1, MPs=NA) {
+  DLMdiag(Data, "available",  timelimit = timelimit, funcs1=MPs)
 }
 
 
@@ -234,7 +244,6 @@ Can <- function(Data, timelimit = 1) {
 #' time along with a list of their data requirments.
 #' 
 #' 
-#' @usage Cant(Data, timelimit = 1)
 #' @param Data A data-limited methods data object (class Data)
 #' @param timelimit The maximum time (seconds) taken for a method to undertake
 #' 10 reps (this filters out methods that are too slow)
@@ -584,6 +593,7 @@ boxplot.Data <- function(x, upq=0.9, lwq=0.1, outline = FALSE, ...) {
   Data <- updateMSE(x)
   if (class(Data) != "Data")  stop("Object must be of class 'Data'")
   tacs <- t(Data@TAC[, , 1])
+
   if (all(is.na(tacs))) {
     message("Nothing found in TAC slot")
     return(invisible(NULL))
@@ -593,10 +603,16 @@ boxplot.Data <- function(x, upq=0.9, lwq=0.1, outline = FALSE, ...) {
   MPs <- Data@MPs
   ind <- grep("ref", MPs)
   if (length(ind) > 0) {
-    tacs <- tacs[, -ind]
+    tacs <- tacs[, -ind, drop=FALSE]
     MPs <- MPs[-ind]
   }
-  if (nrow(tacs) > 1) {
+  
+  # exclude NAs 
+  allNAs <- colSums(apply(tacs, 2, is.na)) == nrow(tacs)
+  tacs <- tacs[,!allNAs, drop=FALSE]
+  MPs <- MPs[!allNAs]
+  
+  if (ncol(tacs) > 1) {
     ord <- order(apply(tacs, 2, median, na.rm = TRUE))
     MPs <- MPs[ord]
     tacs <- tacs[, ord]

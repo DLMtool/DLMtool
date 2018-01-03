@@ -727,7 +727,8 @@ Template <- function(type=c("Stock", "Fleet", "Obs", "Imp")) {
         "Fishery gear length selectivity: L5, LFS, Vmaxlen, isRel",
         "Fishery length retention: LR5, LFR, Rmaxlen, DR",
         "Time-varying selectivity: SelYears, AbsSelYears, L5Lower, L5Upper, LFSLower, LFSUpper, VmaxLower, VmaxUpper",
-        "Current Year: CurrentYr"), ncol=1)
+        "Current Year: CurrentYr",
+        "Existing Spatial Closures: MPA"), ncol=1)
   if (type == "Obs") mat <- 
       matrix(c(
         "Catch statistics: Cobs, Cbiascv, CAA_nsamp, CAA_ESS, CAL_nsamp, CAL_ESS",

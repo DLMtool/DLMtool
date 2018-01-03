@@ -89,7 +89,7 @@ Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
     xrect <- data.frame(xmin=0, xmax=xline, ymin=0, ymax=max(ylim))
     yrect <- data.frame(xmin=0, xmax=max(xlim), ymin=0, ymax=yline)
     
-    df <- data.frame(x=xvals, y=yvals, label=MSEobj@MPs, Class=MPclass(MSEobj@MPs),
+    df <- data.frame(x=xvals, y=yvals, label=MSEobj@MPs, Class=MPtype(MSEobj@MPs)[,2],
                     pass=xvals>xline & yvals>yline, fontface="plain", xPM=xPM, yPM=yPM)
     df$fontface <- as.character(df$fontface)
     df$fontface[!df$pass] <- "italic"

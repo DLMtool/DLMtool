@@ -4,7 +4,7 @@
 \alias{CheckConverg}
 \title{MSE convergence diagnostic}
 \usage{
-CheckConverg(MSEobj,thresh=2, Plot=TRUE)
+CheckConverg(MSEobj, thresh = 2, Plot = TRUE)
 }
 \arguments{
 \item{MSEobj}{An object of class 'MSE'}

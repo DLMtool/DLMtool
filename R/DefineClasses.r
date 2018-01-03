@@ -125,10 +125,12 @@ setClass("Data", representation(Name = "character", Year = "vector",
                                 Lc = "array", LHYear = "numeric", nareas = "numeric", Misc = "list", TACbias="array"))
 
 # initialize Data
-setMethod("initialize", "Data", function(.Object, stock = "nada") {
+setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ",")) {
   # .Object }) .Object<-new('Data') run an error check here
   if (file.exists(stock)) {
-    dat <- read.csv(stock, header = F, colClasses = "character")  # read 1st sheet
+    dec <- match.arg(dec)
+    if (dec == ".") dat <- read.csv(stock, header = F, colClasses = "character")  # read 1st sheet
+    if (dec == ",") dat <- read.csv2(stock, header = F, colClasses = "character")  # read 1st sheet
     dname <- dat[, 1]
     dat <- dat[, 2:ncol(dat)]
     
@@ -317,12 +319,15 @@ setClass("Fease", representation(Name = "character", Case = "character",
                                  Abundance = "numeric"))
 
 # initialize Fease
-setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1) {
+setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1, dec=c(".", ",")) {
   # run an error check here
   if (file.exists(file)) {
     Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-    dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 
+    dec <- match.arg(dec)
+    if (dec == ".") dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 
                                                                                    1:Ncol))  # read 1st sheet
+    if (dec == ",") dat <- read.csv2(file, header = F, colClasses = "character", col.names = paste0("V", 
+                                                                                                   1:Ncol))  # read 1st sheet
     nr <- nrow(dat)
     ncases = ncol(dat) - 1
     dname <- dat[, 1]
@@ -437,12 +442,14 @@ setClass("Stock", representation(Name = "character", Species="character",
                                  Fdisc="numeric", Source = "character"))
 
 # initialize Stock
-setMethod("initialize", "Stock", function(.Object, file = NA) {
+setMethod("initialize", "Stock", function(.Object, file = NA, dec=c(".", ",")) {
   
   if (!is.na(file)) {
     if (file.exists(file)) {
+      dec <- match.arg(dec)
       Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-      dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      if (dec == ".") dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      if (dec == ",") dat <- read.csv2(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
       dname <- dat[, 1]
       dat <- dat[, 2:ncol(dat)]
       Ncol <- ncol(dat)
@@ -547,6 +554,11 @@ setMethod("initialize", "Stock", function(.Object, file = NA) {
 #' @slot VmaxLower (Optional) Lower bound of Vmaxlen (use \code{ChooseSelect} function to set these). Vector. Fraction 
 #' @slot VmaxUpper (Optional) Upper bound of Vmaxlen (use \code{ChooseSelect} function to set these). Vector. Fraction
 #' @slot CurrentYr The current calendar year (final year) of the historical simulations (eg 2011). Single value. Positive integer. 
+#' 
+#' @slot MPA (Optional) Matrix specifying spatial closures for historical years. Each row should contain year index (e.g 10 for 10th historical year)
+#' followed by fraction of area closed to fishing for each area. i.e. each row represents a change and the number of columns is nareas + 1. 
+#' The spatial closures are assumed to remain in place for the future projections unless changed by a MP. 
+#' Default (if left blank) is all areas are open to fishing in historical period.
 
 #' @author T. Carruthers and A. Hordyk
 #' @keywords classes
@@ -561,14 +573,16 @@ setClass("Fleet", slots = c(Name = "character", nyears = "numeric", Spat_targ = 
                             LR5 = "numeric", LFR = "numeric", Rmaxlen = "numeric", DR = "numeric",
                             SelYears = "numeric", AbsSelYears = "numeric",
                             L5Lower = "numeric", L5Upper = "numeric", LFSLower = "numeric", LFSUpper = "numeric", VmaxLower = "numeric", 
-                            VmaxUpper = "numeric", CurrentYr="numeric"))
+                            VmaxUpper = "numeric", CurrentYr="numeric", MPA='matrix'))
 
 # initialize Fleet
-setMethod("initialize", "Fleet", function(.Object, file = NA) {
+setMethod("initialize", "Fleet", function(.Object, file = NA, dec=c(".", ",")) {
   if (!is.na(file)) {
     if (file.exists(file)) {
+      dec <- match.arg(dec)
       Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-      dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      if (dec == ".") dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      if (dec == ",") dat <- read.csv2(file, header = F, colClasses = "character", col.names = paste0("V", 1:Ncol))  # read 1st sheet
       dname <- dat[, 1]
       dat <- dat[, 2:ncol(dat)]
       
@@ -633,6 +647,18 @@ setMethod("initialize", "Fleet", function(.Object, file = NA) {
       
       .Object@isRel <- dat[match("isRel", dname), 1]  # Are selecivity parameters relative to maturity?
       if (NAor0(.Object@isRel)) .Object@isRel <- "TRUE"
+      
+      isMPA <- grep('MPA', dname)
+      if (!is.na(isMPA)) {
+        MPA <- temp <- data.matrix(dat[isMPA:nrow(dat),])
+        valCols <- !is.na(colSums(MPA))
+        MPA <- MPA[,valCols, drop=FALSE]
+        valRows <- !is.na(rowSums(MPA))
+        MPA <- MPA[valRows, drop=FALSE]
+        MPA <- matrix(MPA, nrow=nrow(temp))
+        .Object@MPA <- MPA
+      }
+      
     } else {
       message("File doesn't exist")
     }
@@ -754,12 +780,15 @@ setClass("Obs", representation(Name = "character",
                                hbiascv = "numeric", Recbiascv = "numeric"))
 
 # initialize Obs
-setMethod("initialize", "Obs", function(.Object, file = NA) {
+setMethod("initialize", "Obs", function(.Object, file = NA, dec=c(".", ",")) {
   if (!is.na(file)) {
     if (file.exists(file)) {
+      dec <- match.arg(dec)
       Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-      dat <- read.csv(file, header = F, colClasses = "character", 
+      if (dec ==".") dat <- read.csv(file, header = F, colClasses = "character", 
                       col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      if (dec ==",") dat <- read.csv2(file, header = F, colClasses = "character", 
+                                     col.names = paste0("V", 1:Ncol))  # read 1st sheet
       dname <- dat[, 1]
       dat <- dat[, 2:ncol(dat)]
       .Object@Name <- dat[match("Name", dname), 1]
@@ -838,7 +867,7 @@ setClass("Imp", representation(Name = "character", TACSD = "numeric", TACFrac = 
                                Source = "character"))
 
 # initialize Imp
-setMethod("initialize", "Imp", function(.Object, file = NA) {
+setMethod("initialize", "Imp", function(.Object, file = NA, dec=c(".", ",")) {
   
   .Object@Name <- "Perfect implementation"
   .Object@TACSD <- c(0,0)
@@ -851,9 +880,12 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
   
   if (!is.na(file)) {
     if (file.exists(file)) {
+      dec <- match.arg(dec)
       Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-      dat <- read.csv(file, header = F, colClasses = "character", 
+      if (dec ==".") dat <- read.csv(file, header = F, colClasses = "character", 
                       col.names = paste0("V", 1:Ncol))  # read 1st sheet
+      if (dec ==",") dat <- read.csv2(file, header = F, colClasses = "character", 
+                                     col.names = paste0("V", 1:Ncol))  # read 1st sheet
       dname <- dat[, 1]
       dat <- dat[, 2:ncol(dat)]
       
@@ -974,7 +1006,11 @@ setMethod("initialize", "Imp", function(.Object, file = NA) {
 #' @slot LFSUpper (Optional) Upper bound of LFS (use \code{ChooseSelect} function to set these). Vector. Non-negative real numbers 
 #' @slot VmaxLower (Optional) Lower bound of Vmaxlen (use \code{ChooseSelect} function to set these). Vector. Fraction 
 #' @slot VmaxUpper (Optional) Upper bound of Vmaxlen (use \code{ChooseSelect} function to set these). Vector. Fraction
-#' @slot CurrentYr The current calendar year (final year) of the historical simulations (eg 2011). Single value. Positive integer. 
+#' @slot CurrentYr The current calendar year (final year) of the historical simulations (eg 2011). Single value. Positive integer. .
+#' @slot MPA (Optional) Matrix specifying spatial closures for historical years. Each row should contain year index (e.g 10 for 10th historical year)
+#' followed by fraction of area closed to fishing for each area. i.e. each row represents a change and the number of columns is nareas + 1. 
+#' The spatial closures are assumed to remain in place for the future projections unless changed by a MP. 
+#' Default (if left blank) is all areas are open to fishing in historical period.
 
 
 # Obs slots
@@ -1318,85 +1354,86 @@ NULL
 #'
 #' @rdname plot-Data 
 #' @param x object of class Data
-#' @param funcs MPs 
-#' @param maxlines maximum number of lines
-#' @param perc percentile of TAC recommendation
-#' @param xlims limits of x-axis
+#' @param upq Upper quantile of TACs for max ylim
+#' @param lwq Lower quantile of TACs for min ylim
+#' @param outline Logical. Include outliers in plot?
+#' @param ...  Optional additional arguments passed to \code{boxplot}
 #' @export
 setMethod("plot",
           signature(x = "Data"),
-          function(x,funcs=NA,maxlines=6,perc=0.5,xlims=NA){
+          function(x, upq=0.9, lwq=0.1, outline = FALSE, ...){
             
             old_par <- par(no.readonly = TRUE)
             on.exit(par(list = old_par), add = TRUE)
-            
-            Data<-x
-            if (class(Data) != "Data") stop("Must supply object of class Data")
-            if (all(is.na(Data@TAC))) stop("No TAC data found")
-            cols<-rep(c('black','red','green','blue','orange','brown','purple','dark grey','violet','dark red','pink','dark blue','grey'),4)
-            ltys<-rep(1:4,each=13)
-            
-            if(is.na(funcs[1]))funcs<-Data@MPs
-            
-            nMPs<-length(funcs)
-            nplots<-ceiling(nMPs/maxlines)
-            maxl<-ceiling(nMPs/nplots)
-            mbyp <- split(1:nMPs, ceiling(1:nMPs/maxl))   # assign methods to plots
-            
-            if(is.na(xlims[1])|length(xlims)!=2){
-              xlims<-quantile(Data@TAC,c(0.005,0.95),na.rm=T)
-              if(xlims[1]<0)xlims[1]<-0
-            }
-            if(!NAor0(Data@Ref)){
-              if(xlims[1]>Data@Ref)xlims[1]<-max(0,0.98*Data@Ref)
-              if(xlims[2]<Data@Ref)xlims[2]<-1.02*Data@Ref
-            }
-            ylims<-c(0,1)
-            
-            #for(m in 1:nMPs){
-            # if(sum(!is.na(Data@TAC[m,,1]))>2){
-            # dens<-density(Data@TAC[m,,1],na.rm=T)
-            #print(quantile(dens$y,0.99,na.rm=T))
-            #  if(quantile(dens$y,0.9,na.rm=T)>ylims[2])ylims[2]<-quantile(dens$y,0.90,na.rm=T)
-            #}
-            #}
-            
-            #dev.new2(width=10,height=0.5+7*nplots)
-            par(mfrow=c(ceiling(nplots/2),2),mai=c(0.4,0.4,0.01,0.01),omi=c(0.35,0.35,0.35,0.05))
-            
-            for(p in 1:nplots){
-              m<-mbyp[[p]][1]
-              plot(NA,NA,xlim=xlims,ylim=ylims,main="",xlab="",ylab="",col="white",lwd=3,type="l")
-              abline(h=0)
-              if(!NAor0(Data@Ref)){
-                abline(v=Data@Ref,col="light grey",lwd=2)
-                if(!NAor0(Data@Ref_type[1]))legend('right',Data@Ref_type,text.col="grey",bty='n')
-              }
-              #plot(density(DLM@TAC[m,,1],from=0,na.rm=T),xlim=xlims,ylim=ylims,main="",xlab="",ylab="",col=coly[m],lty=ltyy[m],type="l")
-              
-              if(!is.na(perc[1]))abline(v=quantile(Data@TAC[m,,1],p=perc,na.rm=T),col=cols[m],lty=ltys[m])
-              #if(length(mbyp[[p]])>0){
-              for(ll in 1:length(mbyp[[p]])){
-                m<-mbyp[[p]][ll]
-                if(sum(!is.na(Data@TAC[m,,1]))>10){  # only plot if there are sufficient non-NA TAC samples
-                  x<-density(Data@TAC[m,,1],from=0,na.rm=T)$x
-                  y<-density(Data@TAC[m,,1],from=0,na.rm=T)$y
-                  y<-y/max(y)
-                  lines(x,y,col=cols[ll])
-                }else{
-                  print(paste("Method ",funcs[m]," produced too many NA TAC values for plotting densities",sep=""))
-                }
-                if(!is.na(perc[1]))abline(v=quantile(Data@TAC[m,,1],p=perc,na.rm=T),col=cols[ll],lty=2)
-              }
-              #}
-              cind<-1:length(mbyp[[p]])
-              legend('topright',funcs[mbyp[[p]]],text.col=cols[cind],col=cols[cind],lty=1,bty='n',cex=0.75)
-            }
-            
-            mtext(paste("TAC (",Data@Units,")",sep=""),1,outer=T,line=0.5)
-            mtext(paste("Standardized relative frequency",sep=""),2,outer=T,line=0.5)
-            mtext(paste("TAC calculation for ",Data@Name,sep=""),3,outer=T,line=0.5)
+            boxplot.Data(x, upq, lwq, outline, ...)
           })
+            # Data<-x
+            # if (class(Data) != "Data") stop("Must supply object of class Data")
+            # if (all(is.na(Data@TAC))) stop("No TAC data found")
+            # cols<-rep(c('black','red','green','blue','orange','brown','purple','dark grey','violet','dark red','pink','dark blue','grey'),4)
+            # ltys<-rep(1:4,each=13)
+            # 
+            # if(is.na(funcs[1]))funcs<-Data@MPs
+            # 
+            # nMPs<-length(funcs)
+            # nplots<-ceiling(nMPs/maxlines)
+            # maxl<-ceiling(nMPs/nplots)
+            # mbyp <- split(1:nMPs, ceiling(1:nMPs/maxl))   # assign methods to plots
+            # 
+            # if(is.na(xlims[1])|length(xlims)!=2){
+            #   xlims<-quantile(Data@TAC,c(0.005,0.95),na.rm=T)
+            #   if(xlims[1]<0)xlims[1]<-0
+            # }
+            # if(!NAor0(Data@Ref)){
+            #   if(xlims[1]>Data@Ref)xlims[1]<-max(0,0.98*Data@Ref)
+            #   if(xlims[2]<Data@Ref)xlims[2]<-1.02*Data@Ref
+            # }
+            # ylims<-c(0,1)
+            # 
+            # #for(m in 1:nMPs){
+            # # if(sum(!is.na(Data@TAC[m,,1]))>2){
+            # # dens<-density(Data@TAC[m,,1],na.rm=T)
+            # #print(quantile(dens$y,0.99,na.rm=T))
+            # #  if(quantile(dens$y,0.9,na.rm=T)>ylims[2])ylims[2]<-quantile(dens$y,0.90,na.rm=T)
+            # #}
+            # #}
+            # 
+            # #dev.new2(width=10,height=0.5+7*nplots)
+            # par(mfrow=c(ceiling(nplots/2),2),mai=c(0.4,0.4,0.01,0.01),omi=c(0.35,0.35,0.35,0.05))
+            # 
+            # for(p in 1:nplots){
+            #   m<-mbyp[[p]][1]
+            #   plot(NA,NA,xlim=xlims,ylim=ylims,main="",xlab="",ylab="",col="white",lwd=3,type="l")
+            #   abline(h=0)
+            #   if(!NAor0(Data@Ref)){
+            #     abline(v=Data@Ref,col="light grey",lwd=2)
+            #     if(!NAor0(Data@Ref_type[1]))legend('right',Data@Ref_type,text.col="grey",bty='n')
+            #   }
+            #   #plot(density(DLM@TAC[m,,1],from=0,na.rm=T),xlim=xlims,ylim=ylims,main="",xlab="",ylab="",col=coly[m],lty=ltyy[m],type="l")
+            #   
+            #   if(!is.na(perc[1]))abline(v=quantile(Data@TAC[m,,1],p=perc,na.rm=T),col=cols[m],lty=ltys[m])
+            #   #if(length(mbyp[[p]])>0){
+            #   for(ll in 1:length(mbyp[[p]])){
+            #     m<-mbyp[[p]][ll]
+            #     if(sum(!is.na(Data@TAC[m,,1]))>10){  # only plot if there are sufficient non-NA TAC samples
+            #       x<-density(Data@TAC[m,,1],from=0,na.rm=T)$x
+            #       y<-density(Data@TAC[m,,1],from=0,na.rm=T)$y
+            #       y<-y/max(y)
+            #       lines(x,y,col=cols[ll])
+            #     }else{
+            #       print(paste("Method ",funcs[m]," produced too many NA TAC values for plotting densities",sep=""))
+            #     }
+            #     if(!is.na(perc[1]))abline(v=quantile(Data@TAC[m,,1],p=perc,na.rm=T),col=cols[ll],lty=2)
+            #   }
+            #   #}
+            #   cind<-1:length(mbyp[[p]])
+            #   legend('topright',funcs[mbyp[[p]]],text.col=cols[cind],col=cols[cind],lty=1,bty='n',cex=0.75)
+            # }
+            # 
+            # mtext(paste("TAC (",Data@Units,")",sep=""),1,outer=T,line=0.5)
+            # mtext(paste("Standardized relative frequency",sep=""),2,outer=T,line=0.5)
+            # mtext(paste("TAC calculation for ",Data@Name,sep=""),3,outer=T,line=0.5)
+          # })
 
 # ---- Plot MSE object ----
 #' Plot MSE object
@@ -1521,36 +1558,133 @@ setMethod("summary",
 
 
 
-# -- Input Control Recommendation Class ----
-#' Class \code{'InputRec'}
+# # -- Input Control Recommendation Class -
+# #' Class \code{'InputRec'}
+# #' 
+# #' An object for storing the recommendation for an input control MP 
+# #' 
+# #' @name InputRec-class
+# #' @docType class
+# #' @section Objects from the Class: Objects can be created by calls of the form
+# #' \code{new('InputRec')} 
+# 
+# #' @slot Effort A numeric value with the effort recommendation as a fraction of current (nyear) fishing effort
+# #' @slot Spatial A boolean vector of length 'nareas' specifying if area is open (1) or closed (0) to fishing 
+# #' @slot Allocate A boolean value describing if effort should be re-allocated from close to open areas
+# #' @slot LR5 smallest length at 5 per cent retention
+# #' @slot LFR smallest length at full retention 
+# #' @slot HS upper harvest slot (no retention above this)
+# #' @slot Rmaxlen retention of the largest size class
+# #' @slot Misc An empty list that can be used to store information and pass on to MPs in future 
+# #' @author A. Hordyk
+# #' @keywords classes
+# 
+# setClass("InputRec", representation(Effort = "numeric", 
+#                                     Spatial="numeric", Allocate = "numeric", LR5 = "numeric",
+#                                     LFR = "numeric", HS="numeric", Rmaxlen="numeric", Misc="list"))
+# setMethod("initialize", "InputRec", function(.Object){
+#      .Object@Effort<-1
+#      .Object@Allocate<-1
+#      .Object@Spatial<-c(1,1)
+#      .Object
+#    })
+
+
+# -- Management Recommendation Class ----
+#' Class \code{'Rec'}
 #' 
-#' An object for storing the recommendation for an input control MP 
+#' An object for storing the MP recommendations 
 #' 
-#' @name InputRec-class
+#' @name Rec-class
 #' @docType class
 #' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new('InputRec')} 
-
+#' \code{new('Rec')} 
+#' @slot TAC A numeric value with the TAC recommendation 
 #' @slot Effort A numeric value with the effort recommendation as a fraction of current (nyear) fishing effort
 #' @slot Spatial A boolean vector of length 'nareas' specifying if area is open (1) or closed (0) to fishing 
 #' @slot Allocate A boolean value describing if effort should be re-allocated from close to open areas
-#' @slot LR5 smallest length at 5 per cent retention
-#' @slot LFR smallest length at full retention 
-#' @slot HS upper harvest slot (no retention above this)
-#' @slot Rmaxlen retention of the largest size class
+#' @slot LR5 smallest length at 5 per cent retention - in absolute units - i.e same units as Linf and L50
+#' @slot LFR smallest length at full retention  - in absolute units - i.e same units as Linf and L50
+#' @slot HS upper harvest slot (no retention above this)  - in absolute units - i.e same units as Linf and L50
+#' @slot Rmaxlen retention of the largest size class - fraction between 0 and 1
+#' @slot L5 smallest length at 5 per cent selection - in absolute units - i.e same units as Linf and L50
+#' @slot LFS smallest length at full selection  - in absolute units - i.e same units as Linf and L50
+#' @slot Vmaxlen selection of the largest size class - fraction between 0 and 1
+#' @slot Fdisc fraction of discarded fish that die - fraction between 0 and 1
 #' @slot Misc An empty list that can be used to store information and pass on to MPs in future 
 #' @author A. Hordyk
 #' @keywords classes
+setClass("Rec", representation(
+  TAC = "numeric",
+  Effort = "numeric", 
+  Spatial="numeric", Allocate = "numeric", 
+  LR5 = "numeric", LFR = "numeric", HS="numeric", Rmaxlen="numeric", 
+  L5 = "numeric", LFS = "numeric", Vmaxlen="numeric", 
+  Fdisc = "numeric",
+  Misc="list"))
 
-setClass("InputRec", representation(Effort = "numeric", 
-                                    Spatial="numeric", Allocate = "numeric", LR5 = "numeric",
-                                    LFR = "numeric", HS="numeric", Rmaxlen="numeric", Misc="list"))
-setMethod("initialize", "InputRec", function(.Object){
-     .Object@Effort<-1
-     .Object@Allocate<-1
-     .Object@Spatial<-c(1,1)
-     .Object
-   })
+setMethod("initialize", "Rec", function(.Object){
+  # .Object@TAC <- as.numeric(NA)
+  # .Object@Effort<-1
+  # .Object@Allocate<-1
+  # .Object@Spatial<-c(1,1)
+  .Object
+})
+
+#' Show the output of a single MP recommendation
+#'
+#' @param object object of class Rec
+#' @rdname show-Rec
+#' @export
+setMethod("show", signature = (object="Rec"), function(object) {
+
+ Rec <- object
+ slots <- slotNames(Rec)
+ recList <- list()
+ perc <- 0.5
+ for (X in slots) { # sequence along recommendation slots 
+   if (X == "Misc") { # convert to a list nsim by nareas
+     rec <- slot(Rec, X)
+   } else {
+     rec <- slot(Rec,X) # unlist(lapply(temp, slot, name=X))
+   }
+   if (X == "Spatial") { # convert to a matrix nsim by nareas
+     nsims <- 1
+     nareas <- max(2,length(rec))
+     rec <- matrix(rec, nareas, nsims, byrow=FALSE)   
+   }
+   recList[[X]] <- rec
+ }
+ 
+ names <- c("TAC", "Effort", "LR5", "LFR", "HS", "Rmaxlen",
+            "L5", "LFS", 'Vmaxlen', 'Spatial')
+ mat <- matrix(0, nrow=1, ncol=length(names)+nareas-1)
+ count <- 0 
+ for (x in names) {
+   temp <- recList[[x]]
+   count <- count + 1 
+   if (x!="Spatial") {
+     mat[,count] <- quantile(temp, probs=perc, na.rm=TRUE)
+   } else {
+     mat[,count:ncol(mat)] <- t(matrix(unlist(temp), nrow=nareas, ncol=1))
+   }
+ }
+ names[length(names)] <- "Area 1"
+ names <- c(names, paste('Area', 2:nareas))
+ if (perc !=0.5) names[1] <- paste0(names[1], ' (', perc, ' perc')
+ if (perc ==0.5) names[1] <- paste0(names[1], ' (median)')
+ colnames(mat) <- names
+ 
+ if (nrow(mat) == 1) {
+   mat <- as.data.frame(mat)
+   matout <- mat[!is.na(mat)]
+   names(matout) <- names[!is.na(mat)]
+   print(matout)
+ }
+})
+
+
+
 
 
 

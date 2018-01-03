@@ -19,7 +19,6 @@ Imports:
     coda,
     devtools,
     methods,
-    LBSPR,
     grDevices,
     ggplot2,
     gridExtra,

@@ -6,7 +6,7 @@
 \usage{
 popdyn(nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge, Vuln, Retc,
   Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc,
-  Fapic = NULL, maxF, control = 1)
+  Fapic = NULL, maxF, MPA, control = 1)
 }
 \arguments{
 \item{nareas}{Integer. The number of spatial areas}
@@ -54,6 +54,8 @@ popdyn(nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge, Vuln, Retc,
 \item{Fapic}{Numeric. Apical F value}
 
 \item{maxF}{A numeric value specifying the maximum fishing mortality for any single age class}
+
+\item{MPA}{A matrix of spatial closures by year}
 
 \item{control}{Integer. 1 to use q and effort to calculate F, 2 to use Fapic (apical F) and 
 vulnerablity to calculate F.}

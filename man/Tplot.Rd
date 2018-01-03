@@ -4,7 +4,7 @@
 \alias{Tplot}
 \title{A trade-off plot for an MSE object}
 \usage{
-Tplot(MSEobj,nam=NA)
+Tplot(MSEobj, nam = NA)
 }
 \arguments{
 \item{MSEobj}{An object of class 'MSE'}

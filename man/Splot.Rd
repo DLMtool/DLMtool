@@ -4,9 +4,9 @@
 \alias{Splot}
 \title{Scatter plot of B/BMSY or B/B0 and F/FMSY for lastYrs}
 \usage{
-Splot(MSEobj = NULL, MPs = NA, All = TRUE, Var = c('B_BMSY', 'SSB_SSB0'),
-lastYrs = 10, Fref = 1, BMSYref = 1, B0ref = 0.4, cex.MP = 1, Fbg = FALSE,
-Bbg = FALSE, Props = FALSE, TP = FALSE)
+Splot(MSEobj = NULL, MPs = NA, All = TRUE, Var = c("B_BMSY",
+  "SSB_SSB0"), lastYrs = 10, Fref = 1, BMSYref = 1, B0ref = 0.4,
+  cex.MP = 1, Fbg = FALSE, Bbg = FALSE, Props = FALSE, TP = FALSE)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}

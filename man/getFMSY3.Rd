@@ -6,7 +6,7 @@
 \usage{
 getFMSY3(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age, V,
   retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, SSB0, B0,
-  maxF, useCPP = TRUE)
+  MPA, maxF, useCPP = TRUE)
 }
 \arguments{
 \item{x}{Integer, the simulation number}

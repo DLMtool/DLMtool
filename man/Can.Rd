@@ -4,13 +4,15 @@
 \alias{Can}
 \title{What data-limited methods can be applied to this Data object?}
 \usage{
-Can(Data, timelimit = 1)
+Can(Data, timelimit = 1, MPs = NA)
 }
 \arguments{
 \item{Data}{A data-limited methods data object (class Data)}
 
 \item{timelimit}{The maximum time (seconds) taken for a method to undertake
 10 reps (this filters out methods that are too slow)}
+
+\item{MPs}{Optional list of MP names}
 }
 \description{
 An diagnostic tool that looks up the slot requirements of each method and

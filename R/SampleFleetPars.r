@@ -192,7 +192,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
       #                                             LFS = LFS[1,i], s1=s1[i], maxlen=maxlen[i], 
       #                                             MaxSel=Vmaxlen[1, i])$minimum)
     
-      srs <- (Linf - LFS[1,]) / ((-log(Vmaxlen[1,drop=FALSE],2))^0.5) # selectivity parameters are constant for all years
+      srs <- (Linf - LFS[1,]) / ((-log(Vmaxlen[1,],2))^0.5) # selectivity parameters are constant for all years
       sls <- (LFS[1,] - L5[1, ]) /((-log(0.05,2))^0.5)
       
       

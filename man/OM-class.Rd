@@ -152,7 +152,12 @@ is used.}
 
 \item{\code{VmaxUpper}}{(Optional) Upper bound of Vmaxlen (use \code{ChooseSelect} function to set these). Vector. Fraction}
 
-\item{\code{CurrentYr}}{The current calendar year (final year) of the historical simulations (eg 2011). Single value. Positive integer.}
+\item{\code{CurrentYr}}{The current calendar year (final year) of the historical simulations (eg 2011). Single value. Positive integer. .}
+
+\item{\code{MPA}}{(Optional) Matrix specifying spatial closures for historical years. Each row should contain year index (e.g 10 for 10th historical year)
+followed by fraction of area closed to fishing for each area. i.e. each row represents a change and the number of columns is nareas + 1. 
+The spatial closures are assumed to remain in place for the future projections unless changed by a MP. 
+Default (if left blank) is all areas are open to fishing in historical period.}
 
 \item{\code{Cobs}}{Log-normal catch observation error expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers}
 

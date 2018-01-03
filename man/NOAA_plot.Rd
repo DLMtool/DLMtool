@@ -4,7 +4,7 @@
 \alias{NOAA_plot}
 \title{National Oceanographic and Atmospheric Administration default plot 1}
 \usage{
-NOAA_plot(MSEobj,nam=NA,type=NA,panel=T)
+NOAA_plot(MSEobj, nam = NA, type = NA, panel = T)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}

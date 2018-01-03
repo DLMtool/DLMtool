@@ -5,7 +5,7 @@
 \title{Plot the median biomass and yield relative to last historical year}
 \usage{
 Cplot(MSEobj, MPs = NA, lastYrs = 5, XMin = NULL, YMin = NULL,
-ShowLabs = FALSE)
+  ShowLabs = FALSE)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}

@@ -99,12 +99,12 @@ Rcpp::NumericMatrix popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVe
 //' @param Qc Numeric. Catchability coefficient
 //' @param Fapic Numeric. Apical F value
 //' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
+//' @param MPA Spatial closure by year and area
 //' @param control Integer. 1 to use q and effort to calculate F, 2 to use Fapic (apical F) and 
 //' vulnerablity to calculate F.
 //' 
 //' @author A. Hordyk
 //' 
-//' @export
 //' @keywords internal
 //[[Rcpp::export]]
 List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
@@ -112,7 +112,8 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
                arma::mat Vuln, arma::mat Retc, arma::vec Prec,
                NumericMatrix movc, double SRrelc, arma::vec Effind,
                double Spat_targc, double hc, NumericVector R0c, NumericVector SSBpRc,
-               NumericVector aRc, NumericVector bRc, double Qc, double Fapic, double maxF, int control) {
+               NumericVector aRc, NumericVector bRc, double Qc, double Fapic, double maxF, 
+               arma::mat MPA, int control) {
   
   arma::cube Narray(maxage, pyears, nareas, arma::fill::zeros);
   arma::cube Barray(maxage, pyears, nareas, arma::fill::zeros);
@@ -187,10 +188,22 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
 
     // fishdist = (pow(tempVec, Spat_targc))/mean((pow(tempVec, Spat_targc)));
     fishdist = (pow(tempVec, Spat_targc))/sum((pow(tempVec, Spat_targc)));
+    
+    arma::vec d1(nareas);
+    for (int A=0; A<nareas; A++) {
+      d1(A) = MPA(yr,A) * fishdist(A);// historical closures
+    }
+    double fracE = sum(d1); // fraction of current effort in open areas
+    arma::vec fracE2(nareas);
+    for (int A=0; A<nareas; A++) {
+      fracE2(A) = d1(A) * (fracE + (1-fracE))/fracE;
+    }
+    fishdist = fracE2;
 
     // calculate F at age for next year
     if (control == 1) {
       for (int A=0; A<nareas; A++) {
+        
         FMarray.subcube(0,yr+1, A, maxage-1, yr+1, A) =  (Effind(yr+1) * Qc * fishdist(A) * Vuln.col(yr+1))/Asize_c(A);
         FMretarray.subcube(0,yr+1, A, maxage-1, yr+1, A) =  (Effind(yr+1) * Qc * fishdist(A) * Retc.col(yr+1))/Asize_c(A);
       }

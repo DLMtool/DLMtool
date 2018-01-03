@@ -5,19 +5,18 @@
 \alias{plot,Data,ANY-method}
 \title{Plot Data object}
 \usage{
-\S4method{plot}{Data,ANY}(x, funcs = NA, maxlines = 6, perc = 0.5,
-  xlims = NA)
+\S4method{plot}{Data,ANY}(x, upq = 0.9, lwq = 0.1, outline = FALSE, ...)
 }
 \arguments{
 \item{x}{object of class Data}
 
-\item{funcs}{MPs}
+\item{upq}{Upper quantile of TACs for max ylim}
 
-\item{maxlines}{maximum number of lines}
+\item{lwq}{Lower quantile of TACs for min ylim}
 
-\item{perc}{percentile of TAC recommendation}
+\item{outline}{Logical. Include outliers in plot?}
 
-\item{xlims}{limits of x-axis}
+\item{...}{Optional additional arguments passed to \code{boxplot}}
 }
 \description{
 Plot Data object

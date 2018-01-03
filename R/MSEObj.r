@@ -11,7 +11,6 @@
 #' (reliable) peformance metrics?
 #' 
 #' 
-#' @usage Converge(MSEobj, thresh = 2, Plot = TRUE)
 #' @param MSEobj An MSE object of class \code{'MSE'}
 #' @param thresh The convergence threshold (percentage). If mean performance
 #' metrics are within thresh percent of the second to last interation, the MSE
@@ -127,7 +126,6 @@ Converge <- function(MSEobj, thresh = 2, Plot = TRUE) {
 #' (reliable) peformance metrics?
 #' 
 #' 
-#' @usage CheckConverg(MSEobj,thresh=2, Plot=TRUE)
 #' @param MSEobj An object of class 'MSE'
 #' @param thresh The convergence threshold (percentage). If mean perforamnce
 #' metrics are within thresh percent of the second to last interation, the MSE
@@ -247,7 +245,6 @@ CheckConverg <- function(MSEobj, thresh = 2, Plot = TRUE) {
 #' trade-offs
 #' 
 #' 
-#' @usage Tplot(MSEobj,nam=NA)
 #' @param MSEobj An object of class 'MSE'
 #' @param nam Name of the plot
 #' @author T. Carruthers
@@ -323,7 +320,6 @@ Tplot <- function(MSEobj, nam = NA) {
 #' simulations in which biomass stays above 10 percent of BMSY).
 #' 
 #' 
-#' @usage Tplot2(MSEobj,nam=NA)
 #' @param MSEobj An object of class 'MSE'
 #' @param nam Name of the plot
 #' @author T. Carruthers
@@ -371,7 +367,6 @@ Tplot2 <- function(MSEobj, nam = NA) {
 #' of biomass dropping below 50 per cent BMSY
 #' 
 #' 
-#' @usage NOAA_plot(MSEobj,nam=NA,type=NA,panel=T)
 #' @param MSEobj An object of class MSE
 #' @param nam Title of plot
 #' @param type Plots full range of data if NA. Plots a subset that meet
@@ -445,7 +440,6 @@ NOAA_plot <- function(MSEobj, nam = NA, type = NA, panel = T) {
 #' trends in stock status and over exploitation
 #' 
 #' 
-#' @usage Pplot(MSEobj, nam=NA)
 #' @param MSEobj An object of class MSE
 #' @param nam Title of plot
 #' @param maxMP The maximum number of MPs to plot (defaults to the first 10)
@@ -453,7 +447,7 @@ NOAA_plot <- function(MSEobj, nam = NA, type = NA, panel = T) {
 #' @param maxsims Integer, the maximum number of simulations to plot
 #' @author T. Carruthers 
 #' @export Pplot
-Pplot <- function(MSEobj, nam = NA,maxMP = 10,MPs=NA,maxsims=20) {
+Pplot <- function(MSEobj, nam = NA, maxMP = 10,MPs=NA,maxsims=20) {
 
   if(!is.na(MPs)){
     
@@ -465,7 +459,7 @@ Pplot <- function(MSEobj, nam = NA,maxMP = 10,MPs=NA,maxsims=20) {
     if(MSEobj@nMPs>maxMP)MSEobj<-Sub(MSEobj,MPs=MSEobj@MPs[1:maxMP])
     
   }
-  
+  maxsims <- min(maxsims, MSEobj@nsim)
   MSEobj<-Sub(MSEobj,sims=1:maxsims)
     
   FMSYr <- quantile(MSEobj@F_FMSY, c(0.001, 0.9), na.rm = T)
@@ -843,8 +837,6 @@ Pplot2 <- function(MSEobj, YVar = c("SSB_SSBMSY", "F_FMSY"), MPs = NA, sims = NU
 #' methods that ended up in each quadrant.
 #' 
 #' 
-#' @usage Kplot(MSEobj,maxsim=60, MPs=NA, sims=NULL, maxMP=9, nam=NA,
-#' cex.leg=1.5)
 #' @param MSEobj An object of class MSE
 #' @param maxsim Maximum number of simulations (lines) to plot on each panel.
 #' @param MPs Optional subset MSE object by MP
@@ -1120,8 +1112,6 @@ makeTransparent <- function(someColor, alpha = 100) {
 #' columns.
 #' 
 #' 
-#' @usage VOI(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA, Utnam =
-#' 'Utility')
 #' @param MSEobj An object of class MSE
 #' @param ncomp Maximum number of variables to examine per MP
 #' @param nbins Number of percentile bins for sampled parameters of the
@@ -1356,8 +1346,6 @@ checkMSE <- function(MSEobj) {
 #' particular simulations, or a subset of the projection years (e.g., 1: <
 #' projection years).
 #' 
-#' 
-#' @usage Sub(MSEobj, MPs=NULL, sims=NULL, years=NULL)
 #' @param MSEobj A MSE object.
 #' @param MPs A vector MPs names or MP numbers to subset the MSE object.
 #' Defaults to all MPs.
@@ -1509,7 +1497,6 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
 #' number of historical years, and projection years.
 #' 
 #' 
-#' @usage joinMSE(MSEobjs = NULL)
 #' @param MSEobjs A list of MSE objects. Must all have identical operating
 #' model and MPs. MPs which don't appear in all MSE objects will be dropped.
 #' @return An object of class \code{MSE}
@@ -1638,7 +1625,6 @@ joinMSE <- function(MSEobjs = NULL) {
 #' AvC in less than half of simulations.
 #' 
 #' 
-#' @usage DOM(MSEobj, MPtg=NA)
 #' @param MSEobj An object of class 'MSE'
 #' @param MPtg A character vector of management procedures for cross
 #' examination
@@ -1722,10 +1708,6 @@ DOM <- function(MSEobj, MPtg = NA) {
 #' minimum performance metrics for each trade-off, and ranks the MPs by
 #' increasing distance from the top-right corner.
 #' 
-#' @usage TradePlot(MSEobj, XAxis=c('Overfishing', 'Biomass:BMSY'),
-#' YAxis=c('Long-term Yield', 'AnnualVar'), XThresh=c(30, 80), YThresh=c(0,50),
-#' maxVar=15, BmsyRef=0.5, B0Ref=0.2, AvailMPs=NULL, ShowLabs=FALSE,
-#' ShowCols=TRUE)
 #' @param MSEobj Object of class MSE, output of the runMSE function
 #' @param XAxis Character string describing the performance metrics for the
 #' x-axis (or x-axes if vector; max 4). Must be chosen for list of existing PMs
@@ -1946,7 +1928,6 @@ tradeoffplot4 <- function(x, y, xlab, ylab, labs, cex, vl, hl, ShowLabs = FALSE,
 #' Returns a matrix of nMPs rows and proyears columns which is the fraction of
 #' simulations for which biomass was above Bref.
 #' 
-#' @usage wormplot(MSEobj, Bref=0.5, LB=0.25, UB=0.75)
 #' @param MSEobj Object of class MSE, output of the runMSE function
 #' @param Bref The reference fraction of BMSY (to evaluate the probability of
 #' exceeding this level)
@@ -2034,8 +2015,6 @@ wormplot <- function(MSEobj, Bref = 0.5, LB = 0.25, UB = 0.75) {
 #' observation model to relative yield (yield over last 5 years of projection
 #' relative to a 'best F' scenario that maximizes yield).
 #' 
-#' 
-#' @usage VOI2(MSEobj, ncomp = 6, nbins = 4, Ut = NA, Utnam = 'yield', lay = F)
 #' @param MSEobj An object of class MSE
 #' @param ncomp Maximum number of observation variables to examine per MP
 #' @param nbins Number of bins for sampled observation variables used for
@@ -2288,9 +2267,6 @@ VOI2 <- function(MSEobj, ncomp = 6, nbins = 4, Ut = NA, Utnam = "yield",
 #' Function calculates probabilities and other statistics for a range of
 #' performance metrics
 #' 
-#' 
-#' @usage MPStats(MSEobj, PMRefs = list(B_BMSY = 0.5, SSB_SSB0 = 0.2, F_FMSY = 1,
-#' AAVY = 30, AAVE = 30), lastYrs = 10, UseMean = TRUE, msg = TRUE)
 #' @param MSEobj An object of class MSE
 #' @param PMRefs A list of reference points for the performance metrics (must
 #' be named)
@@ -2664,9 +2640,7 @@ barplot.MSE <- function(height, MSEobj = NULL, PMs = list(B_BMSY = 0.5,
     MP <- rownames(Pout)
     rownames(Pout) <- NULL
   }
-  MPclass <- sapply(1:length(MP), function(X) class(get(MP[X])))
-  ind <- grep("ref", MP)
-  MPclass[ind] <- "Reference"
+  MPclass <- MPtype(MPs)[,2]
   par(op)
   invisible(data.frame(MP = MP, Pout, Pass = Pass, MPClass = MPclass, 
     stringsAsFactors = FALSE))
@@ -2983,10 +2957,6 @@ boxplot.MSE <- function(x, MPs = NA, maxMP = 8, PMRefs = list(B_BMSY = 1,
 #' metrics simultaneously
 #' 
 #' 
-#' @usage Jplot(MSEobj, PLim = 0.8, YVar = c('LTY', 'STY', 'avgSSB_SSB0',
-#' 'avgB_BMSY'), PMRefs = list(B_BMSY = 0.5, SSB_SSB0 = 0.2), UseMean = TRUE,
-#' lastYrs = 10, AvailMPs = NULL, XLim = NULL, ShowCols = TRUE, ShowLabs =
-#' FALSE, All = TRUE)
 #' @param MSEobj An object of class MSE
 #' @param PLim Probability limit (acceptable risk threshold; e.g., 0.8 for 80
 #' percent)
@@ -3179,9 +3149,6 @@ Jplot <- function(MSEobj, PLim = 0.8, YVar = c("LTY", "STY", "avgSSB_SSB0",
 #' Scatter plot of B/BMSY or B/B0 and F/FMSY for lastYrs
 #' 
 #' 
-#' @usage Splot(MSEobj = NULL, MPs = NA, All = TRUE, Var = c('B_BMSY', 'SSB_SSB0'),
-#' lastYrs = 10, Fref = 1, BMSYref = 1, B0ref = 0.4, cex.MP = 1, Fbg = FALSE,
-#' Bbg = FALSE, Props = FALSE, TP = FALSE)
 #' @param MSEobj An object of class MSE
 #' @param MPs Optional subset by MP
 #' @param All Logical. Plot all points or just the mean?
@@ -3328,9 +3295,6 @@ Splot <- function(MSEobj = NULL, MPs = NA, All = TRUE, Var = c("B_BMSY",
 #' Compare median biomass and yield in first year and last 5 years of
 #' projection
 #' 
-#' 
-#' @usage Cplot(MSEobj, MPs = NA, lastYrs = 5, XMin = NULL, YMin = NULL,
-#' ShowLabs = FALSE)
 #' @param MSEobj An object of class MSE
 #' @param MPs Optional subset by MP
 #' @param lastYrs Last number of years of projection to calculate median
@@ -3410,9 +3374,6 @@ calcStat <- function(rr, evalbreaks) {
 #' operating model parameters to yield.
 #' 
 #' 
-#' @usage VOIplot(MSEobj, MPs=NA, nvars=5, nMP=4, Par=c('Obs', 'OM'),
-#' YVar=c('Y', 'B'), doPlot=TRUE, incStat=FALSE, availMP=NULL, acceptMP=NULL,
-#' incNames=TRUE, labcex=0.8, quants=c(0.05, 0.95))
 #' @param MSEobj An object of class MSE
 #' @param MPs The MPs to plot. If NA it will plot the first nMP from MSEobj
 #' @param nvars The number of observation or operating model parameters to plot
@@ -3823,7 +3784,6 @@ custombar<-function(dat,MPnams,tickwd1=0.1,tickwd2=0.05,lwd1=2,lwd2=2,xlab=T,bco
 #' A NAFO / ICCAT / SSB style MSE performance whisker plot
 #' 
 #' 
-#' @usage PWhisker(MSEobj)
 #' @param MSEobj An object of class MSE
 #' @return A box plot of performance 
 #' @author T. Carruthers

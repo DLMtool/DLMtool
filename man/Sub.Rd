@@ -4,7 +4,7 @@
 \alias{Sub}
 \title{Subset MSE object by management procedure (MP) or simulation.}
 \usage{
-Sub(MSEobj, MPs=NULL, sims=NULL, years=NULL)
+Sub(MSEobj, MPs = NULL, sims = NULL, years = NULL)
 }
 \arguments{
 \item{MSEobj}{A MSE object.}

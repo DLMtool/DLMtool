@@ -116,7 +116,7 @@ OptionalSlots <- function() {
                 "LFSUpper", "VmaxLower", "VmaxUpper")
   RecSlots <-  c("Period", "Amplitude")
   
-  OptPars <- c("M2", "AbsSelYears")
+  OptPars <- c("M2", "AbsSelYears", 'MPA')
   
   
   # Slots ok to not contain values
@@ -146,18 +146,65 @@ avail <- function(classy) {
   if (class(temp) == "try-error") classy <- deparse(substitute(classy))
   if (temp == "function") classy <- deparse(substitute(classy))
   
-  temp <- c(ls("package:DLMtool")[unlist(lapply(ls("package:DLMtool"), getclass, classy = classy))], 
-            ls(envir = .GlobalEnv)[unlist(lapply(ls(envir = .GlobalEnv), getclass, classy = classy))])
-  pkgs <- search()
-  if ("package:DLMextra" %in% pkgs) {
-    temp <- c(temp, unique(ls("package:DLMextra")[unlist(lapply(ls("package:DLMextra"), getclass, classy = classy))]))
+  if (classy %in% c('Output', 'Input', "Mixed", "Reference")) {
+    MPs <- avail('MP')
+    gettype <- MPtype(MPs)
+    temp <- gettype[gettype[,2] %in% classy,1]
+    if (length(temp) <1) stop("No MPs of type '", classy, "' found", call.=FALSE)
+    return(temp)
+    
+  } else {
+    temp <- c(ls("package:DLMtool")[unlist(lapply(ls("package:DLMtool"), getclass, classy = classy))], 
+              ls(envir = .GlobalEnv)[unlist(lapply(ls(envir = .GlobalEnv), getclass, classy = classy))])
+    pkgs <- search()
+    if ("package:DLMextra" %in% pkgs) {
+      temp <- c(temp, unique(ls("package:DLMextra")[unlist(lapply(ls("package:DLMextra"), getclass, classy = classy))]))
+    }
+    temp <- unique(temp)
+    
+    if (classy == "Observation") message("Class 'Observation' has been re-named 'Obs'")	
+    if (length(temp) <1) stop("No objects of class '", classy, "' found", call.=FALSE)
+    return(temp)
   }
-  temp <- unique(temp)
-  
-  if (classy == "Observation") message("Class 'Observation' has been re-named 'Obs'")	
-  if (length(temp) <1) stop("No objects of class '", classy, "' found", call.=FALSE)
-  return(temp)
+
 }
+
+#' Management Procedure Type
+#'
+#' @param MPs A list of MP names  
+#'
+#' @return A data.frame with MP names and management type
+#' @export
+#'
+#' @examples 
+#' MPtype(c("AvC", "curE", "matlenlim", "MRreal", "FMSYref"))
+#' 
+MPtype <- function(MPs=NA) {
+  if (any(is.na(MPs))) MPs <- avail("MP")
+  
+  Data <- DLMtool::SimulatedData
+  
+  runMPs <- applyMP(Data, MPs, reps = 2, nsims=1, silent=TRUE)
+  recs <- runMPs[[1]]
+
+  type <- rep("NA", length(MPs))
+  for (mm in seq_along(recs)) {
+    output <- length(recs[[mm]]$TAC) > 0 
+    names <- names(recs[[mm]])
+    names <- names[!names %in% c("TAC", "Spatial")]
+    input <- sum(unlist(lapply(Map(function(x) recs[[mm]][[x]], names), length))) > 0
+    if (output) type[mm] <- "Output"
+    if (input) type[mm] <- "Input"
+    if (input & output) type[mm] <- "Mixed"
+  }
+  type[grep("ref", MPs)] <- "Reference"
+  data.frame(MP=MPs, Type=type, stringsAsFactors = FALSE)
+  
+}
+
+
+
+
 
 #' get object class
 #' 
@@ -1274,23 +1321,23 @@ gettempvar <- function(targ, targsd, targgrad, nyears, nsim, rands=NULL) {
 
 
 
-#' Return class of MP from MP name
-#' 
-#' 
-#' @param MPs list or vector of MP names
-#' @keywords internal
-#' @export
-#'
-MPclass <- function(MPs) {
-  if (class(MPs) == "list") MPs <- unlist(MPs)
-  if (class(MPs) != "character") stop("MPs must be character", call.=FALSE)
-  all <- c(avail("Output"), avail("Input"))
-  if (any(!MPs %in% all)) message("Some MPs not found: ", paste(MPs[!MPs %in% all], "\n"))
-  MPs <- MPs[MPs %in% all]
-  # cbind(MPs, Class=sapply(1:length(MPs), function(X) class(get(MPs[X]))))
-  classes <- sapply(1:length(MPs), function(X) class(get(MPs[X])))
-  classes[grepl("ref", MPs)] <- "Reference"
-  classes
-}
+# #' Return class of MP from MP name
+# #' 
+# #' 
+# #' @param MPs list or vector of MP names
+# #' @keywords internal
+# #' @export
+# #'
+# MPclass <- function(MPs) {
+#'   if (class(MPs) == "list") MPs <- unlist(MPs)
+#'   if (class(MPs) != "character") stop("MPs must be character", call.=FALSE)
+#'   all <- c(avail("Output"), avail("Input"))
+#'   if (any(!MPs %in% all)) message("Some MPs not found: ", paste(MPs[!MPs %in% all], "\n"))
+#'   MPs <- MPs[MPs %in% all]
+#'   # cbind(MPs, Class=sapply(1:length(MPs), function(X) class(get(MPs[X]))))
+#'   classes <- sapply(1:length(MPs), function(X) class(get(MPs[X])))
+#'   classes[grepl("ref", MPs)] <- "Reference"
+#'   classes
+#' }
 
 
