@@ -56,6 +56,8 @@ Only values from the first year (i.e N[,,1,]) are used, which is the current N-a
 
 \item{B0}{Unfished total biomass}
 
+\item{MPA}{A matrix of spatial closures by year}
+
 \item{maxF}{A numeric value specifying the maximum fishing mortality for any single age class}
 
 \item{useCPP}{logical - use the CPP code? For testing purposes only}

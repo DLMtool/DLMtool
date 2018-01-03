@@ -53,6 +53,8 @@ optMSY(logFa, Asize_c, nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge,
 
 \item{Qc}{Catchability}
 
+\item{MPA}{A matrix of spatial closures by year}
+
 \item{maxF}{A numeric value specifying the maximum fishing mortality for any single age class}
 
 \item{useCPP}{logical - use the CPP code? For testing purposes only}

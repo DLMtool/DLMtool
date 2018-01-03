@@ -1,9 +1,21 @@
+# ---- Plot MSE object ----
+#' Plot MSE object
+#' @param x object of class MSE
+#' @param ... other parameters passed to plot (currently ignored)
+#' @export
+plot.MSE <- function(x, ...) {
+  Pplot(x)
+  Kplot(x)
+  Tplot(x)
+}
+     
+
 
 # modified from
 # https://github.com/tidyverse/ggplot2/wiki/share-a-legend-between-two-ggplot2-graphs
 grid_arrange_shared_legend <- function(plots, ncol = length(plots), nrow = 1, position = c("bottom", "right")) {
   
-
+  
   position <- match.arg(position)
   g <- ggplot2::ggplotGrob(plots[[1]] + ggplot2::theme(legend.position = position))$grobs
   legend <- g[[which(sapply(g, function(x) x$name) == "guide-box")]]
@@ -14,13 +26,13 @@ grid_arrange_shared_legend <- function(plots, ncol = length(plots), nrow = 1, po
   
   combined <- switch(position,
                      "bottom" = gridExtra::arrangeGrob(do.call(gridExtra::arrangeGrob, gl),
-                                            legend,
-                                            ncol = 1,
-                                            heights = grid::unit.c(grid::unit(1, "npc") - lheight, lheight)),
+                                                       legend,
+                                                       ncol = 1,
+                                                       heights = grid::unit.c(grid::unit(1, "npc") - lheight, lheight)),
                      "right" = gridExtra::arrangeGrob(do.call(gridExtra::arrangeGrob, gl),
-                                           legend,
-                                           ncol = 2,
-                                           widths = grid::unit.c(grid::unit(1, "npc") - lwidth, lwidth)))
+                                                      legend,
+                                                      ncol = 2,
+                                                      widths = grid::unit.c(grid::unit(1, "npc") - lwidth, lwidth)))
   
   grid::grid.newpage()
   grid::grid.draw(combined)
@@ -60,13 +72,13 @@ Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
   
   runPM <- vector("list", length(PMlist))
   for (X in 1:length(PMlist)) runPM[[X]] <- eval(call(PMlist[X], MSEobj))
-
+  
   PlotList <- combn(unique(PMlist), 2)
   lims <- rep(lims, 100)[1:length(PMlist)]
-
+  
   n.col <- ceiling(sqrt(ncol(PlotList)))
   n.row <- ceiling(ncol(PlotList)/n.col)
-
+  
   m <- matrix(1:(n.col*n.row), ncol=n.col, nrow=n.row, byrow=FALSE)
   xmin <- xmax <- ymin <- ymax <- x <- y <- Class <- label <- fontface <- NULL
   plots <- listout <- list()
@@ -90,7 +102,7 @@ Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
     yrect <- data.frame(xmin=0, xmax=max(xlim), ymin=0, ymax=yline)
     
     df <- data.frame(x=xvals, y=yvals, label=MSEobj@MPs, Class=MPtype(MSEobj@MPs)[,2],
-                    pass=xvals>xline & yvals>yline, fontface="plain", xPM=xPM, yPM=yPM)
+                     pass=xvals>xline & yvals>yline, fontface="plain", xPM=xPM, yPM=yPM)
     df$fontface <- as.character(df$fontface)
     df$fontface[!df$pass] <- "italic"
     df$fontface <- factor(df$fontface)
@@ -99,7 +111,7 @@ Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
       ggplot2::geom_rect(data=xrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill='gray80', alpha=0.4) +
       ggplot2::geom_rect(data=yrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill='gray80', alpha=0.4)
     
-  
+    
     
     
     # plots[[pp]] <- ggplot(df, aes(x, y, shape=Class, color=Class, label=label)) +
@@ -110,8 +122,8 @@ Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
       ggplot2::xlim(xlim) + ggplot2::ylim(ylim) +
       ggplot2::theme_classic() +
       ggplot2::theme(axis.title.x = ggplot2::element_text(size=11),
-            axis.title.y = ggplot2::element_text(size=11),
-            legend.text=ggplot2::element_text(size=12)) + 
+                     axis.title.y = ggplot2::element_text(size=11),
+                     legend.text=ggplot2::element_text(size=12)) + 
       ggplot2::labs(shape= "MP Class", color="MP Class")
     
   }

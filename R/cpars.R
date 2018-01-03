@@ -7,7 +7,8 @@
 #' @param plot Should the sampled parameters and distributions be plotted?
 #' @return An object of class OM with a populated (or appended) cpars slot
 #' @author T. Carruthers (Canadian DFO grant)
-#' @export ForceCor
+#' @importFrom mvtnorm rmvnorm
+#' @export 
 #' @examples
 #' testOM<-ForceCor(testOM)
 ForceCor<-function(OM,nsim=48,plot=T){
@@ -33,7 +34,7 @@ ForceCor<-function(OM,nsim=48,plot=T){
   
   means<-c(mean(OM@M),mean(OM@K),mean(OM@L50),mean(OM@Linf))
   
-  sim<-as.data.frame(rmvnorm(nsim,rep(0,4),sigma))
+  sim<-as.data.frame(mvtnorm::rmvnorm(nsim,rep(0,4),sigma))
   sim<-sim-rep(apply(sim,2,mean),each=nsim)#mean 0
   sim<-sim/rep(apply(sim,2,sd),each=nsim)# cv=1
   cvs<-c(OM@M[2]-OM@M[1],OM@K[2]-OM@K[1],OM@L50[2]-OM@L50[1],OM@Linf[2]-OM@Linf[1])/(1.96*2)/means
