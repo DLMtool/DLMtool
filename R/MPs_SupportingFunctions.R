@@ -27,13 +27,13 @@ getr <- function(x, Data, Mvec, Kvec, Linfvec, t0vec, hvec, maxage,
 #' Filters vector of TAC recommendations by replacing negatives with NA and
 #' and values beyond five standard deviations from the mean as NA
 #' 
-#' @usage TACfilter(TAC)
 #' @param TAC A numeric vector of TAC recommendations
 #' @author T. Carruthers
+#' @export
 TACfilter <- function(TAC) {
   TAC[TAC < 0] <- NA  # Have to robustify due to R optmization problems.. work in progress.
   TAC[TAC > (mean(TAC, na.rm = T) + 5 * stats::sd(TAC, na.rm = T))] <- NA  # remove very large TAC samples
-  return(TAC)
+  return(as.numeric(TAC))
 }
 
 ## Catch curve function ####

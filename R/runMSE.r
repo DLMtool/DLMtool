@@ -181,7 +181,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     }
   }
  
-  
   N <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # stock numbers array
   Biomass <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # stock biomass array
   VBiomass <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # vulnerable biomass array
@@ -1215,10 +1214,14 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
         LastSpatial <- MPCalcs$Si
         LastAllocat <- MPCalcs$Ai
         LastEffort <- MPCalcs$Effort
-        LastCatch <- MPCalcs$TACrec
+ 
+        
         Effort[, mm, y] <- MPCalcs$Effort #  
         CB_P <- MPCalcs$CB_P # removals
         CB_Pret <- MPCalcs$CB_Pret # retained catch 
+        
+        LastCatch <- apply(CB_Pret[,,y,], 1, sum, na.rm=TRUE) 
+      
         FM_P <- MPCalcs$FM_P # fishing mortality
         FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
         Z_P <- MPCalcs$Z_P # total mortality
@@ -1304,10 +1307,13 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
         LastSpatial <- MPCalcs$Si
         LastAllocat <- MPCalcs$Ai
         LastEffort <- MPCalcs$Effort
-        LastCatch <- MPCalcs$TACrec
+        # LastCatch <- MPCalcs$TACrec
         Effort[, mm, y] <- MPCalcs$Effort #  
         CB_P <- MPCalcs$CB_P # removals
         CB_Pret <- MPCalcs$CB_Pret # retained catch 
+        
+        LastCatch <- apply(CB_Pret[,,y,], 1, sum, na.rm=TRUE) 
+        
         FM_P <- MPCalcs$FM_P # fishing mortality
         FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
         Z_P <- MPCalcs$Z_P # total mortality
