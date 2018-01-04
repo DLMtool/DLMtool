@@ -119,16 +119,16 @@ DBSRAopt <- function(lnK, C_hist, nys, Mdb, FMSY_M, BMSY_K, Bt_K, adelay) {
 
 
 ## Delay-Difference supporting functions ####
-DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hist, 
+DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hist,
                  C_hist, UMSYprior) {
   UMSY_DD = exp(params[1])
   MSY_DD = exp(params[2])
   q_DD = exp(params[3])
   SS_DD = So_DD * (1 - UMSY_DD)  # Initialise for UMSY, MSY and q leading.
   Spr_DD = (SS_DD * Alpha_DD/(1 - SS_DD) + wa_DD)/(1 - Rho_DD * SS_DD)
-  DsprDu_DD = -So_DD * (Rho_DD/(1 - Rho_DD * SS_DD) * Spr_DD + 1/(1 - 
-                                                                    Rho_DD * SS_DD) * (Alpha_DD/(1 - SS_DD) + SS_DD * Alpha_DD/(1 - 
-                                                                                                                                  SS_DD)^2))
+  DsprDu_DD = -So_DD * (Rho_DD/(1 - Rho_DD * SS_DD) * (Spr_DD + 1)/(1 -
+                                                                      Rho_DD * SS_DD) * (Alpha_DD/(1 - SS_DD) + SS_DD * Alpha_DD/(1 -
+                                                                                                                                    SS_DD)^2))
   Arec_DD = 1/(((1 - UMSY_DD)^2) * (Spr_DD + UMSY_DD * DsprDu_DD))
   Brec_DD = UMSY_DD * (Arec_DD * Spr_DD - 1/(1 - UMSY_DD))/MSY_DD
   Spr0_DD = (So_DD * Alpha_DD/(1 - So_DD) + wa_DD)/(1 - Rho_DD * So_DD)
@@ -151,7 +151,7 @@ DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hi
     Cpred_DD[tt] = B_DD[tt] * (1 - exp(-q_DD * E_hist[tt]))
     Sp_DD = B_DD[tt] - Cpred_DD[tt]
     R_DD[tt + k_DD] = Arec_DD * Sp_DD/(1 + Brec_DD * Sp_DD)
-    B_DD[tt + 1] = Surv_DD * (Alpha_DD * N_DD[tt] + Rho_DD * B_DD[tt]) + 
+    B_DD[tt + 1] = Surv_DD * (Alpha_DD * N_DD[tt] + Rho_DD * B_DD[tt]) +
       wa_DD * R_DD[tt + 1]
     N_DD[tt + 1] = Surv_DD * N_DD[tt] + R_DD[tt + 1]
     
@@ -163,7 +163,7 @@ DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hi
     test2 <- dlnorm(UMSY_DD, log(UMSYprior[1]), UMSYprior[2], log = T)
     test[is.na(test)] <- -1000
     test[test == (-Inf)] <- -1000
-    if (is.na(test2) | test2 == -Inf | test2 == Inf) 
+    if (is.na(test2) | test2 == -Inf | test2 == Inf)
       test2 <- 1000
     return(-sum(test, test2))  # return objective function
   } else if (opty == 2) {
@@ -175,7 +175,6 @@ DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hi
     cbind(C_hist, Cpred_DD)  # return observations vs predictions
   }
 }
-
 
 ## Mean Length supporting functions ####
 
