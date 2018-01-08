@@ -58,6 +58,11 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
   }
   if (class(name) != 'character') stop("name must be text", call.=FALSE)
  
+  ## Create Folders ####
+  if(!dir.exists('data')) dir.create('data')
+  if(!dir.exists('docs')) dir.create('docs')
+  if(!dir.exists('images')) dir.create('images')
+  if(!dir.exists('robustness')) dir.create('robustness')
 
   ## Write Excel skeleton ####
   if (nchar(tools::file_ext(name)) == 0) {

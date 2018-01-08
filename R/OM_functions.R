@@ -1,4 +1,3 @@
-
 #' Forces correlation among operating model parameters for M, K, Linf and L50
 #'
 #' @description Uses typical correlations among estimated parameters to generate realistic samples for natural mortality rate (M), growth rate (K), maximum length (Linf) and length at 50% maturity (L50), these are placed in the cpars slot
@@ -28,8 +27,8 @@ ForceCor<-function(OM,nsim=48,plot=T){
   #                  M     K    F_linf    Linf
   sigma=matrix(c(1.000,  0.721, -0.568, -0.721,
                  0.721,  1.000, -0.107, -0.910,
-                -0.568, -0.107, 1.000,  0.407,
-                -0.721, -0.910, 0.407,  1.000),nrow=4)
+                 -0.568, -0.107, 1.000,  0.407,
+                 -0.721, -0.910, 0.407,  1.000),nrow=4)
   
   
   means<-c(mean(OM@M),mean(OM@K),mean(OM@L50),mean(OM@Linf))
@@ -55,7 +54,7 @@ ForceCor<-function(OM,nsim=48,plot=T){
         if(i == j){
           
           if(i==1){
-           
+            
             hist(sim[,1],main="Natural mortality rate (M)",col=histcol,border='white',xlab="",axes=F)
             axis(1)
             abline(v=OM@M,col=colline,lwd=lwdline)
@@ -112,3 +111,71 @@ ForceCor<-function(OM,nsim=48,plot=T){
 }
 
 
+
+
+#' Replace an existing Stock, Fleet, Obs, or Imp object 
+#' 
+#' A function that replaces a Stock, Fleet, Obs, or Imp object from an 
+#' OM with one from another OM. Mainly used for internal functions.
+#' 
+#' @param OM An operating model object (class OM) which will be updated with a sub-model from another OM
+#' @param from The OM object from which the sub-model is being taken
+#' @param Sub A character string specifying what object type to replace
+#' "Stock", "Fleet", "Obs" or "Imp" (default is all four which is probably not what you want to do)
+#' @return An object of class OM
+#' @author A. Hordyk
+#' @export 
+Replace <- function(OM, from, Sub=c("Stock", "Fleet", "Obs", "Imp")) {
+  if (class(OM) =="character") OM <- get(OM)
+  if (class(from) !="OM") fromOM <- get(from)
+  if (class(OM) !="OM") stop("OM must be of class OM ", call.=FALSE)
+  if (class(from) !="OM") stop("''from' must be of class OM ", call.=FALSE)
+  Sub <- match.arg(Sub, several.ok=TRUE)
+  
+  Stock <- SubOM(OM, "Stock")
+  Fleet <- SubOM(OM, "Fleet")
+  Obs <- SubOM(OM, "Obs")
+  Imp <- SubOM(OM, "Imp")
+  
+  message("Replacing sub-models:", paste0(" ", Sub))
+  for (x in 1:length(Sub)) {
+    assign(Sub[x], SubOM(from, Sub[x]))
+  }
+  
+  outOM <- new("OM", Stock, Fleet, Obs, Imp) 
+  outOM@nsim <- OM@nsim 
+  outOM@cpars <- OM@cpars 
+  outOM@seed <- OM@seed 
+  outOM 
+} 
+
+
+#' Subset a Stock, Fleet, Obs, or Imp object from an OM object
+#' 
+#' A function that strips out a Stock, Fleet, Obs, or Imp object from a 
+#' complete OM object. Mainly used for internal functions.
+#' 
+#' @param OM An operating model object (class OM)
+#' @param Sub A character string specifying what object type to strip out
+#' "Stock", "Fleet", "Obs", or "Imp"
+#' @return An object of class Stock, Fleet, Obs, or Imp
+#' @author A. Hordyk
+#' @export 
+SubOM <- function(OM, Sub=c("Stock", "Fleet", "Obs", "Imp")) {
+  if (class(OM) !="OM") stop("OM must be of class OM ", call.=FALSE)
+  Sub <- match.arg(Sub)
+  temp <- new(Sub)
+  
+  slots <- slotNames(temp)
+  for (X in seq_along(slots)) 
+    slot(temp, slots[X]) <- slot(OM, slots[X]) 
+  
+  colon <- gregexpr(":", temp@Name)
+  space <- gregexpr("  ", temp@Name)
+  ind <- switch(Sub, Stock=1, Fleet=2, Obs=3, Imp=4)
+  
+  if (ind < 4) temp@Name <- substr(temp@Name, colon[[1]][ind]+1, space[[1]][ind]-1)
+  if (ind == 4) temp@Name <- substr(temp@Name, colon[[1]][ind]+1, nchar(temp@Name))
+  
+  temp 
+}
