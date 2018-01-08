@@ -28,7 +28,6 @@ Imports:
     mvtnorm,
     openxlsx,
     parallel,
-    r4ss,
     readxl,
     rmarkdown,
     stats,
