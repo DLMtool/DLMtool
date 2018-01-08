@@ -610,12 +610,23 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   }
   
   message("Writing markdown file")
+  
+
   ## Introduction ####
   writeSection(class="Intro", OM, textIn, RMDfile, color=color, inc.plot=inc.plot)
   
   ## OM Details ####
   OMdesc <- DLMtool::OMDescription
   cat("# Operating Model \n", append=TRUE, file=RMDfile, sep="")
+  
+  ## Link to OM object ####
+  chkFile <- file.exists("OM.rdata")
+  if (chkFile) {
+    cat("The OM rdata file can be downloaded from [here](OM.rdata)\n\n", append=TRUE, file=RMDfile, sep="")
+    cat("Download and import into R using `myOM <- readRDS('OM.rdata')` \n\n", append=TRUE, file=RMDfile, sep="")
+  } 
+  
+  
   # Taxonomic Info and Location ####
   if (.hasSlot(OM, 'Species') && !is.na(OM@Species)) {
     cat("## Species Information \n\n", append=TRUE, file=RMDfile, sep="")
