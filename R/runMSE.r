@@ -64,13 +64,14 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @param Bfrac The target fraction of SSBMSY for calculating Blow
 #' @param annualMSY Logical. Should MSY statistics be calculated for each projection year? 
 #' May differ from MSY statistics from last historical year if there are changes in productivity
+#' @param silent Should messages be printed out to the console?
 #' @return An object of class MSE
 #' @author T. Carruthers and A. Hordyk
 #' @export 
 runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"),nsim=48,
                       proyears=50,interval=4,pstar = 0.5, maxF = 0.8,  reps = 1, 
                       CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=FALSE, 
-                      HZN=2, Bfrac=0.5, annualMSY=TRUE) {
+                      HZN=2, Bfrac=0.5, annualMSY=FALSE, silent=FALSE) {
   
   
   # For debugging - assign default argument values to to current workspace if they don't exist
@@ -119,7 +120,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   OM <- ChkObj(OM) # Check that all required slots in OM object contain values 
   
   ### Sampling OM parameters ###
-  message("Loading operating model")
+  if(!silent) message("Loading operating model")
   
   # --- Sample custom parameters ----
   SampCpars <- list() # empty list 
@@ -154,7 +155,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   ### End of sampling OM parameters ###
   
   # --- Calculate movement ----
-  message("Optimizing for user-specified movement")  # Print a progress update
+  if(!silent) message("Optimizing for user-specified movement")  # Print a progress update
   
   if (snowfall::sfIsRunning()) {
     # if the cluster is initiated
@@ -253,7 +254,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
 
   
   # --- Optimize catchability (q) to fit depletion ---- 
-  message("Optimizing for user-specified depletion")  # Print a progress update
+  if(!silent) message("Optimizing for user-specified depletion")  # Print a progress update
   
   bounds <- c(0.0001, 15) # q bounds for optimizer
   if (snowfall::sfIsRunning()) {
@@ -287,8 +288,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   # and then alerts user
   if (length(probQ) > 0) {
     Err <- TRUE
-    message(Nprob,' simulations have final biomass that is not close to sampled depletion') 
-    message('Re-sampling depletion, recruitment error, and fishing effort')
+    if(!silent) message(Nprob,' simulations have final biomass that is not close to sampled depletion') 
+    if(!silent) message('Re-sampling depletion, recruitment error, and fishing effort')
     
     count <- 0
     OM2 <- OM 
@@ -345,17 +346,17 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       if (prErr > fracD & length(probQ) >= 1) {
         if (length(tooLow) > 0) message(tooLow, " sims can't get down to the lower bound on depletion")
         if (length(tooHigh) > 0) message(tooHigh, " sims can't get to the upper bound on depletion")
-        message("More than ", fracD*100, "% of simulations can't get to the specified level of depletion with these Operating Model parameters")
+        if(!silent) message("More than ", fracD*100, "% of simulations can't get to the specified level of depletion with these Operating Model parameters")
         stop("Try again for a complete new sample, modify the input parameters, or increase ")
       } else {
         if (length(tooLow) > 0) message(tooLow, " sims can't get down to the lower bound on depletion")
         if (length(tooHigh) > 0) message(tooHigh, " sims can't get to the upper bound on depletion")
-        message("Less than ", fracD*100, "% simulations can't get to the sampled depletion.\nContinuing")
+        if(!silent) message("Less than ", fracD*100, "% simulations can't get to the sampled depletion.\nContinuing")
       }
     }
   }
   
-  message("Calculating historical stock and fishing dynamics")  # Print a progress update
+  if(!silent) message("Calculating historical stock and fishing dynamics")  # Print a progress update
   
   # Distribute fishing effort according to vulnerable biomass
   # if (nsim > 1) fishdist <- (apply(VBiomass[, , 1, ], c(1, 3), sum)^Spat_targ)/
@@ -396,7 +397,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   # if (prod(round(D, 2)/ round(Depletion,2)) != 1) warning("Possible problem in depletion calculations")
   
   # --- Calculate MSY references ----  
-  message("Calculating MSY reference points")  # Print a progress update
+  if(!silent) message("Calculating MSY reference points")  # Print a progress update
   
   # if (snowfall::sfIsRunning()) {
   #   snowfall::sfExport(list = c("M_ageArray", "hs", "Mat_age", "Wt_age", "R0", "V", "nyears", "maxage"))  # export some newly made arrays to the cluster
@@ -453,7 +454,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   MGT<-apply(Agearray*(Mat_age[,,nyears]*MGTsurv),1,sum)/apply(Mat_age[,,nyears]*MGTsurv,1,sum)
   
   if(CalcBlow){
-    message("Calculating Blow reference points")              # Print a progress update  
+    if(!silent) message("Calculating Blow reference points")              # Print a progress update  
     
     MGThorizon<-floor(HZN*MGT)
     
@@ -470,7 +471,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   }
   
   # --- Calculate Reference Yield ----
-  message("Calculating reference yield - best fixed F strategy")  # Print a progress update
+  if(!silent) message("Calculating reference yield - best fixed F strategy")  # Print a progress update
   # if (snowfall::sfIsRunning()) {
   #   RefY <- snowfall::sfSapply(1:nsim, getFref2, M_ageArray = M_ageArray, Wt_age = Wt_age, 
   #                              Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, , drop=FALSE], SSN_s = SSN[, , nyears, , drop=FALSE], 
@@ -703,7 +704,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   # --- Return Historical Simulations and Data from last historical year ----
   if (Hist) { # Stop the model after historical simulations are complete
-    message("Returning historical simulations")
+    if(!silent) message("Returning historical simulations")
     nout <- t(apply(N, c(1, 3), sum))
     vb <- t(apply(VBiomass, c(1, 3), sum))
     b <- t(apply(Biomass, c(1, 3), sum))
@@ -748,22 +749,22 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   # --- Run projections ---- 
   if (is.na(MPs[1])) CheckMPs <- TRUE
   if (CheckMPs) {
-    message("Determining available methods")  # print an progress report
+    if(!silent) message("Determining available methods")  # print an progress report
     PosMPs <- Can(Data, timelimit = timelimit)  # list all the methods that could be applied to a DLM data object 
     if (is.na(MPs[1])) {
       MPs <- PosMPs  # if the user does not supply an argument MPs run the MSE for all available methods
-      message("No MPs specified: running all available")
+      if(!silent) message("No MPs specified: running all available")
     }
     if (!is.na(MPs[1])) {
       cant <- MPs[!MPs %in% PosMPs]
       if (length(cant) > 0) {
-        message("Cannot run some MPs: ")
-        print(DLMdiag(Data, "not available", funcs1=cant, timelimit = timelimit))
+        if(!silent) message("Cannot run some MPs: ")
+        if(!silent) print(DLMdiag(Data, "not available", funcs1=cant, timelimit = timelimit))
       }
       MPs <- MPs[MPs %in% PosMPs]  # otherwise run the MSE for all methods that are deemed possible
     }
     if (length(MPs) == 0) {
-      message(Cant(Data, timelimit = timelimit))
+      if(!silent) message(Cant(Data, timelimit = timelimit))
       stop("MSE stopped: no viable methods \n\n")  # if none of the user specied methods are possible stop the run
     }
   }
@@ -798,10 +799,11 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   SSBMSY_P <- array(SSBMSY, dim=c(nsim, nMP, proyears)) 
   
   if (annualMSY) {
-    message("Calculating MSY reference points for each projection year")
+
+    if(!silent) message("Calculating MSY reference points for each projection year")
     for (y in 1:proyears) {
-      cat('.')
-      flush.console()
+      if(!silent) cat('.')
+      if (!silent) flush.console()
       M_ageArrayp <- array(M_ageArray[,,nyears+y], dim=c(dim(M_ageArray)[1:2], MSYyr))
       Wt_agep <- array(Wt_age[,,nyears+y], dim=c(dim(Wt_age)[1:2], MSYyr))
       retAp <- array(retA[,,nyears+y], dim=c(dim(retA)[1:2], MSYyr))
@@ -823,7 +825,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       FMSY_P[,,y] <- MSYrefsYr[2,]
       SSBMSY_P[,,y] <- MSYrefsYr[3,]
     }
-    cat("\n")
+    if(!silent) cat("\n")
   }
 
   
@@ -831,7 +833,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   mm <- 1 # for debugging
   for (mm in 1:nMP) {  # MSE Loop over methods
     
-    message(mm, "/", nMP, " Running MSE for ", MPs[mm])  # print a progress report
+    if(!silent) message(mm, "/", nMP, " Running MSE for ", MPs[mm])  # print a progress report
     
     # reset selectivity parameters for projections
     L5_P <- L5  
@@ -1000,13 +1002,13 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     # To account for years where TAC is higher than catch
     
     upyrs <- 1 + (0:(floor(proyears/interval) - 1)) * interval  # the years in which there are updates (every three years)
-    cat(".")
-    flush.console()
+    if(!silent) cat(".")
+    if(!silent) flush.console()
     
     # --- Begin projection years ----
     for (y in 2:proyears) {
-      cat(".")
-      flush.console()
+      if(!silent) cat(".")
+      if(!silent) flush.console()
       
       SelectChanged <- FALSE
       if (any(range(retA_P[,,nyears+y] / retA[,,nyears+y]) !=1)) SelectChanged <- TRUE
