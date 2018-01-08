@@ -1373,7 +1373,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     CAAout[ , mm, ] <- CNtemp[,,proyears] # nsim, maxage # catch-at-age
     CALout[ , mm, ] <- CAL[,max(dim(CAL)[2]),] # catch-at-length in last year
     
-    cat("\n")
+    if (!silent) cat("\n")
   }  # end of mm methods 
   
 

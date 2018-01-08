@@ -8,7 +8,7 @@ runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
   "matlenlim", "MRreal"), nsim = 48, proyears = 50, interval = 4,
   pstar = 0.5, maxF = 0.8, reps = 1, CheckMPs = FALSE, timelimit = 1,
   Hist = FALSE, ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2,
-  Bfrac = 0.5, annualMSY = TRUE)
+  Bfrac = 0.5, annualMSY = FALSE, silent = FALSE)
 }
 \arguments{
 \item{OM}{An operating model object (class 'OM')}
@@ -66,6 +66,8 @@ in the Blow calculation}
 
 \item{annualMSY}{Logical. Should MSY statistics be calculated for each projection year? 
 May differ from MSY statistics from last historical year if there are changes in productivity}
+
+\item{silent}{Should messages be printed out to the console?}
 }
 \value{
 An object of class MSE
