@@ -4,9 +4,9 @@
 \alias{simYears}
 \title{Simulate population dynamics for historical years}
 \usage{
-simYears(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age, V, retA,
-  Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, qs, maxF,
-  useCPP = TRUE)
+simYears(x, nareas, maxage, N, pyears, M_ageArray, Asize, Mat_age, Wt_age, V,
+  retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, qs, MPA,
+  maxF, useCPP = TRUE)
 }
 \arguments{
 \item{x}{Integer, the simulation number}
@@ -21,6 +21,8 @@ Only values from the first year (i.e N[,,1,]) are used, which is the current N-a
 \item{pyears}{The number of years to project forward. Equal to 'nyears' for optimizing for q.}
 
 \item{M_ageArray}{An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year}
+
+\item{Asize}{A matrix (dimensions nsim, nareas) of size of areas}
 
 \item{Mat_age}{A matrix (dimensions nsim, maxage) with the proportion mature for each age-class}
 
@@ -51,6 +53,8 @@ Only values from the first year (i.e N[,,1,]) are used, which is the current N-a
 \item{bR}{A numeric vector nsim long with the Ricker SRR b values}
 
 \item{qs}{A numeric vector nsim long with catchability coefficients}
+
+\item{MPA}{A matrix of spatial closures by year}
 
 \item{maxF}{A numeric value specifying the maximum fishing mortality for any single age class}
 

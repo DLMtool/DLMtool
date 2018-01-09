@@ -11,71 +11,71 @@ dynamics model
 \section{Slots}{
 
 \describe{
-\item{\code{Name}}{The name of the Stock object}
+\item{\code{Name}}{The name of the Stock object. Single value. Character string}
 
-\item{\code{maxage}}{The maximum age of individuals that is simulated (there is no 'plus group': individuals die off beyone the maximum age so there isn't a huge cost to simulating more older age classes)}
+\item{\code{Species}}{Scientific name of the species. Genus and species name. Character string}
 
-\item{\code{R0}}{The magnitude of unfished recruitment. This is normally fixed to some arbitrary value since it simply scales the simulated numbers)}
+\item{\code{maxage}}{The maximum age of individuals that is simulated (there is no 'plus group'). Single value. Positive integer}
 
-\item{\code{M}}{Natural mortality rate (uniform distribution)}
+\item{\code{R0}}{The magnitude of unfished recruitment. Single value. Positive real number}
 
-\item{\code{M2}}{Optional vector of M-at-age (must be length maxage)}
+\item{\code{M}}{Natural mortality rate. Uniform distribution lower and upper bounds. Positive real number}
 
-\item{\code{Msd}}{Inter-annual variability in natural mortality rate expressed as a coefficient of variation (uniform distribution)}
+\item{\code{M2}}{(Optional) Natural mortality rate at age. Vector of length 'maxage'. Positive real number}
 
-\item{\code{Mgrad}}{Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year (uniform distribution)}
+\item{\code{Mexp}}{Exponent of the Lorenzen function assuming an inverse relationship between M and weight. Uniform distribution lower and upper bounds. Real numbers <= 0.}
 
-\item{\code{Mexp}}{Exponent of the Lorenzen function assuming an inverse relationship between M and weight (uniform distribution)}
+\item{\code{Msd}}{Inter-annual variability in natural mortality rate expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{Fdisc}}{Fraction of discarded fish that die}
+\item{\code{Mgrad}}{Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year. Uniform distribution lower and upper bounds. Real numbers}
 
-\item{\code{h}}{Steepness of the stock recruit relationship (uniform distribution)}
+\item{\code{h}}{Steepness of the stock recruit relationship. Uniform distribution lower and upper bounds. Values from 1/5 to 1}
 
-\item{\code{SRrel}}{Type of stock-recruit relationship (1)Beverton-Holt (2) Ricker}
+\item{\code{SRrel}}{Type of stock-recruit relationship. Single value, switch (1) Beverton-Holt (2) Ricker. Integer}
 
-\item{\code{Linf}}{Maximum length (uniform distribution)}
+\item{\code{Perr}}{Process error, the CV of lognormal recruitment deviations. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{K}}{von B. growth parameter k (uniform distribution)}
+\item{\code{AC}}{Autocorrelation in recruitment deviations rec(t)=AC*rec(t-1)+(1-AC)*sigma(t). Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{t0}}{von B. theoretical age at length zero (uniform distribution)}
+\item{\code{Period}}{(Optional) Period for cyclical recruitment pattern in years. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{LenCV}}{Coefficient of variation of length-at-age (assumed constant for all age classes (uniform distribution)}
+\item{\code{Amplitude}}{(Optional) Amplitude in deviation from long-term average recruitment during recruitment cycle (eg a range from 0 to 1 means recruitment decreases or increases by up to 100\% each cycle). Uniform distribution lower and upper bounds. 0 < Amplitude < 1}
 
-\item{\code{Ksd}}{Inter-annual variability in growth parameter k (uniform distribution)}
+\item{\code{Linf}}{Maximum length. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Kgrad}}{Mean temporal trend in growth parameter k, expressed as a percentage change in k per year (uniform distribution)}
+\item{\code{K}}{von Bertalanffy growth parameter k. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Linfsd}}{Inter-annual variability in maximum length - uniform distribution}
+\item{\code{t0}}{von Bertalanffy theoretical age at length zero. Uniform distribution lower and upper bounds. Non-positive real numbers}
 
-\item{\code{Linfgrad}}{Mean temporal trend in maximum length, expressed as a percentage change in Linf per year (uniform distribution)}
+\item{\code{LenCV}}{Coefficient of variation of length-at-age (assumed constant for all age classes). Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{recgrad}}{Mean temporal trend in log-normal recruitment deviations (uniform distribution)}
+\item{\code{Ksd}}{Inter-annual variability in growth parameter k. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{AC}}{Autocorrelation in recruitment deviations rec(t)=AC*rec(t-1)+(1-AC)*sigma(t) (uniform distribution)}
+\item{\code{Kgrad}}{Mean temporal trend in growth parameter k, expressed as a percentage change in k per year. Uniform distribution lower and upper bounds. Real numbers}
 
-\item{\code{a}}{Length-weight parameter alpha (uniform distribution)}
+\item{\code{Linfsd}}{Inter-annual variability in maximum length. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{b}}{Length-weight parameter beta (uniform distribution)}
+\item{\code{Linfgrad}}{Mean temporal trend in maximum length, expressed as a percentage change in Linf per year. Uniform distribution lower and upper bounds. Real numbers}
 
-\item{\code{L50}}{Length-at- 50 percent maturity (uniform distribution)}
+\item{\code{L50}}{Length at 50 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{L50_95}}{Length increment from 50 percent to 95 percent maturity}
+\item{\code{L50_95}}{Length increment from 50 percent to 95 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{D}}{Current level of stock depletion (Bcurrent/Bunfished) (uniform distribution)}
+\item{\code{D}}{Current level of stock depletion SSB(current)/SSB(unfished). Uniform distribution lower and upper bounds. Fraction}
 
-\item{\code{Perr}}{Process error, the CV of lognormal recruitment deviations  (uniform distribution)}
+\item{\code{a}}{Length-weight parameter alpha. Single value. Positive real number}
 
-\item{\code{Period}}{Period for cylical recruitment pattern in years (uniform distribution). Leave empty to ignore}
+\item{\code{b}}{Length-weight parameter beta. Single value. Positive real number}
 
-\item{\code{Amplitude}}{Amplitude in deviation from long-term average recruitment during recruitment cycle, both positive and negative (uniform distribution). E.g., a range from 0 to 0.5 means recruitment decreases or increases by up to 50\% each cycle. Leave empty to ignore}
+\item{\code{Size_area_1}}{The size of area 1 relative to area 2. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Size_area_1}}{The size of area 1 relative to area 2 (uniform distribution)}
+\item{\code{Frac_area_1}}{The fraction of the unfished biomass in stock 1. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Frac_area_1}}{The fraction of the unfished biomass in stock 1 (uniform distribution)}
+\item{\code{Prob_staying}}{The probability of inviduals in area 1 remaining in area 1 over the course of one year. Uniform distribution lower and upper bounds. Positive fraction.}
 
-\item{\code{Prob_staying}}{The probability of inviduals in area 1 remaining in area 1 over the course of one year}
+\item{\code{Fdisc}}{Fraction of discarded fish that die. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{Source}}{A reference to a website or article from which parameters were taken to define the operating model}
+\item{\code{Source}}{A reference to a website or article from which parameters were taken to define the stock object. Single value. Character string.}
 }}
 
 \section{Objects from the Class}{
@@ -89,6 +89,6 @@ showClass('Stock')
 
 }
 \author{
-T. Carruthers
+T. Carruthers and A. Hordyk
 }
 \keyword{classes}

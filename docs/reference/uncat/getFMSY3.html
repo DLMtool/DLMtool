@@ -78,6 +78,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Operating Model</li>
     <li>
       <a href="../../reference/Operating_Model_Functions/index.html">Setup Operating Model</a>
     </li>
@@ -86,12 +87,18 @@
     </li>
     <li class="dropdown-header">MSE Object</li>
     <li>
+      <a href="../../reference/PMs/index.html">Peformance Metrics</a>
+    </li>
+    <li>
       <a href="../../reference/MSE_Object_Plotting_Functions/index.html">MSE Plotting Functions</a>
     </li>
     <li>
       <a href="../../reference/MSE_Object_Functions/index.html">MSE Object Functions</a>
     </li>
     <li class="dropdown-header">Fishery Data Object</li>
+    <li>
+      <a href="../../reference/import_data/index.html">Import Data</a>
+    </li>
     <li>
       <a href="../../reference/Available_Methods_and_Required_Data/index.html">Available Methods and Required Data</a>
     </li>
@@ -146,9 +153,9 @@
     <p>Calculate FMSY and related metrics using Rcpp code</p>
     
 
-    <pre class="usage"><span class='fu'>getFMSY3</span>(<span class='no'>x</span>, <span class='no'>nareas</span>, <span class='no'>maxage</span>, <span class='no'>N</span>, <span class='no'>pyears</span>, <span class='no'>M_ageArray</span>, <span class='no'>Mat_age</span>, <span class='no'>Wt_age</span>, <span class='no'>V</span>, <span class='no'>retA</span>,
-  <span class='no'>Perr</span>, <span class='no'>mov</span>, <span class='no'>SRrel</span>, <span class='no'>Find</span>, <span class='no'>Spat_targ</span>, <span class='no'>hs</span>, <span class='no'>R0a</span>, <span class='no'>SSBpR</span>, <span class='no'>aR</span>, <span class='no'>bR</span>, <span class='no'>SSB0</span>, <span class='no'>B0</span>, <span class='no'>maxF</span>,
-  <span class='kw'>useCPP</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>getFMSY3</span>(<span class='no'>x</span>, <span class='no'>Asize</span>, <span class='no'>nareas</span>, <span class='no'>maxage</span>, <span class='no'>N</span>, <span class='no'>pyears</span>, <span class='no'>M_ageArray</span>, <span class='no'>Mat_age</span>, <span class='no'>Wt_age</span>, <span class='no'>V</span>,
+  <span class='no'>retA</span>, <span class='no'>Perr</span>, <span class='no'>mov</span>, <span class='no'>SRrel</span>, <span class='no'>Find</span>, <span class='no'>Spat_targ</span>, <span class='no'>hs</span>, <span class='no'>R0a</span>, <span class='no'>SSBpR</span>, <span class='no'>aR</span>, <span class='no'>bR</span>, <span class='no'>SSB0</span>, <span class='no'>B0</span>,
+  <span class='no'>maxF</span>, <span class='kw'>useCPP</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -156,6 +163,10 @@
     <tr>
       <th>x</th>
       <td><p>Integer, the simulation number</p></td>
+    </tr>
+    <tr>
+      <th>Asize</th>
+      <td><p>A matrix (nsim by nareas) with size of areas</p></td>
     </tr>
     <tr>
       <th>nareas</th>

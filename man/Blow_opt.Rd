@@ -22,7 +22,7 @@ Blow_opt(lnq, SSBMSYc, MGThorizon, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears,
 
 \item{hc}{number: steepness values}
 
-\item{Mac}{vector nages long of maturity at age}
+\item{Mac}{matrix nages by nyears+proyears of maturity at age}
 
 \item{Wac}{vector nages long  of weight at age}
 

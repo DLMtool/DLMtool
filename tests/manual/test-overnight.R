@@ -4,9 +4,9 @@
 
 context("runMSE with all available OMs and all MPs")
 
-GetMoreData(TRUE)
+DLMextra(TRUE)
 library(DLMtool)
-library(DLMdata)
+library(DLMextra)
 library(testthat)
 setup()
 

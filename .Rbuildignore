@@ -31,4 +31,13 @@ docs
 ^\index\.md$
 
 # Ignore tests 
-tests/*.*
+tests\*.*
+
+# Ignore DLL
+src\*.o
+src\*.so
+src\*.dll
+
+\.o$
+\.so$
+\.dll$

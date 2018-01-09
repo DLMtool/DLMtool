@@ -79,6 +79,7 @@ movement characteristics modified for Rcpp. — getmov2 â€¢ DLMtool Documentation<
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Operating Model</li>
     <li>
       <a href="../../reference/Operating_Model_Functions/index.html">Setup Operating Model</a>
     </li>
@@ -87,12 +88,18 @@ movement characteristics modified for Rcpp. — getmov2 â€¢ DLMtool Documentation<
     </li>
     <li class="dropdown-header">MSE Object</li>
     <li>
+      <a href="../../reference/PMs/index.html">Peformance Metrics</a>
+    </li>
+    <li>
       <a href="../../reference/MSE_Object_Plotting_Functions/index.html">MSE Plotting Functions</a>
     </li>
     <li>
       <a href="../../reference/MSE_Object_Functions/index.html">MSE Object Functions</a>
     </li>
     <li class="dropdown-header">Fishery Data Object</li>
+    <li>
+      <a href="../../reference/import_data/index.html">Import Data</a>
+    </li>
     <li>
       <a href="../../reference/Available_Methods_and_Required_Data/index.html">Available Methods and Required Data</a>
     </li>
@@ -183,7 +190,7 @@ remain in that area (unfished conditions)</p></td>
     <pre class="examples"><div class='input'>
 <span class='no'>Prob_staying</span><span class='kw'>&lt;-</span><span class='fl'>0.8</span> <span class='co'># probability  that individuals remain in area 1 between time-steps</span>
 <span class='no'>Frac_area_1</span><span class='kw'>&lt;-</span><span class='fl'>0.35</span> <span class='co'># the fraction of the stock found in area 1 under equilibrium conditions</span>
-<span class='no'>markovmat</span><span class='kw'>&lt;-</span><span class='fu'><a href='getmov.html'>getmov</a></span>(<span class='fl'>1</span>,<span class='no'>Prob_staying</span>, <span class='no'>Frac_area_1</span>)
+<span class='no'>markovmat</span><span class='kw'>&lt;-</span><span class='fu'>getmov2</span>(<span class='fl'>1</span>,<span class='no'>Prob_staying</span>, <span class='no'>Frac_area_1</span>)
 <span class='no'>vec</span><span class='kw'>&lt;-</span><span class='fu'>c</span>(<span class='fl'>0.5</span>,<span class='fl'>0.5</span>) <span class='co'># initial guess at equilibrium distribution (2 areas)</span>
 <span class='kw'>for</span>(<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='fl'>300</span>)<span class='no'>vec</span><span class='kw'>&lt;-</span><span class='fu'>apply</span>(<span class='no'>vec</span>*<span class='no'>markovmat</span>,<span class='fl'>2</span>,<span class='no'>sum</span>) <span class='co'># numerical approximation to stable distribution</span>
 <span class='fu'>c</span>(<span class='no'>markovmat</span>[<span class='fl'>1</span>,<span class='fl'>1</span>],<span class='no'>vec</span>[<span class='fl'>1</span>]) <span class='co'># pretty close right?</span></div><div class='output co'>#&gt; [1] 0.7999999 0.3500000</div><div class='input'>

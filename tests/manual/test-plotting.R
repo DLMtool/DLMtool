@@ -1,7 +1,7 @@
 context("Plotting functions")
 
-GetMoreData(TRUE)
-library(DLMdata)
+DLMextra(TRUE)
+library(DLMextra)
 library(testthat)
 rm(list=ls())
 # setup()

@@ -22,6 +22,6 @@ A DLMtool User Guide and documentation for the DLMtool package are now available
 
  
 ## Bugs and Issues
-Please report any bugs or issues through [GitHub](https://github.com/DLMtool/DLMtool/issues) or the [DLMtool website](http://www.datalimitedtoolkit.org/contact).
+Please report any bugs or issues through [GitHub](https://github.com/DLMtool/DLMtool/issues) or the [DLMtool website](https://www.datalimitedtoolkit.org).
   
 

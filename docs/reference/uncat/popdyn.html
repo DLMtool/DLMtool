@@ -78,6 +78,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Operating Model</li>
     <li>
       <a href="../../reference/Operating_Model_Functions/index.html">Setup Operating Model</a>
     </li>
@@ -86,12 +87,18 @@
     </li>
     <li class="dropdown-header">MSE Object</li>
     <li>
+      <a href="../../reference/PMs/index.html">Peformance Metrics</a>
+    </li>
+    <li>
       <a href="../../reference/MSE_Object_Plotting_Functions/index.html">MSE Plotting Functions</a>
     </li>
     <li>
       <a href="../../reference/MSE_Object_Functions/index.html">MSE Object Functions</a>
     </li>
     <li class="dropdown-header">Fishery Data Object</li>
+    <li>
+      <a href="../../reference/import_data/index.html">Import Data</a>
+    </li>
     <li>
       <a href="../../reference/Available_Methods_and_Required_Data/index.html">Available Methods and Required Data</a>
     </li>
@@ -146,8 +153,8 @@
     <p>Population dynamics model</p>
     
 
-    <pre class="usage"><span class='fu'>popdyn</span>(<span class='no'>nareas</span>, <span class='no'>maxage</span>, <span class='no'>Ncurr</span>, <span class='no'>pyears</span>, <span class='no'>M_age</span>, <span class='no'>MatAge</span>, <span class='no'>WtAge</span>, <span class='no'>Vuln</span>, <span class='no'>Retc</span>, <span class='no'>Prec</span>,
-  <span class='no'>movc</span>, <span class='no'>SRrelc</span>, <span class='no'>Effind</span>, <span class='no'>Spat_targc</span>, <span class='no'>hc</span>, <span class='no'>R0c</span>, <span class='no'>SSBpRc</span>, <span class='no'>aRc</span>, <span class='no'>bRc</span>, <span class='no'>Qc</span>,
+    <pre class="usage"><span class='fu'>popdyn</span>(<span class='no'>nareas</span>, <span class='no'>maxage</span>, <span class='no'>Ncurr</span>, <span class='no'>pyears</span>, <span class='no'>M_age</span>, <span class='no'>Asize_c</span>, <span class='no'>MatAge</span>, <span class='no'>WtAge</span>, <span class='no'>Vuln</span>, <span class='no'>Retc</span>,
+  <span class='no'>Prec</span>, <span class='no'>movc</span>, <span class='no'>SRrelc</span>, <span class='no'>Effind</span>, <span class='no'>Spat_targc</span>, <span class='no'>hc</span>, <span class='no'>R0c</span>, <span class='no'>SSBpRc</span>, <span class='no'>aRc</span>, <span class='no'>bRc</span>, <span class='no'>Qc</span>,
   <span class='kw'>Fapic</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>maxF</span>, <span class='kw'>control</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
@@ -174,8 +181,12 @@
       <td><p>Numeric matrix (dimensions maxage, pyears) with natural mortality at age</p></td>
     </tr>
     <tr>
+      <th>Asize_c</th>
+      <td><p>Numeric vector (length nareas) with size of each area</p></td>
+    </tr>
+    <tr>
       <th>MatAge</th>
-      <td><p>Numeric vector (length maxage) with proportion mature for each age-class</p></td>
+      <td><p>Numeric matrix (dimensions maxage, nyears+proyears) with proportion mature for each age-class</p></td>
     </tr>
     <tr>
       <th>WtAge</th>

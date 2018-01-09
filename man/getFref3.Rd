@@ -4,12 +4,14 @@
 \alias{getFref3}
 \title{Calculate Reference Yield}
 \usage{
-getFref3(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age, V, retA,
-  Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, maxF,
+getFref3(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age, V,
+  retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, MPA, maxF,
   useCPP = TRUE)
 }
 \arguments{
 \item{x}{Integer, the simulation number}
+
+\item{Asize}{A matrix (dimensions nsim by nareas) with relative size of areas}
 
 \item{nareas}{The number of spatial areas}
 
@@ -22,7 +24,7 @@ Only values from the first year (i.e N[,,1,]) are used, which is the current N-a
 
 \item{M_ageArray}{An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year}
 
-\item{Mat_age}{A matrix (dimensions nsim, maxage) with the proportion mature for each age-class}
+\item{Mat_age}{An array (dimensions nsim, maxage, nyears+proyears) with the proportion mature for each age-class}
 
 \item{Wt_age}{An array (dimensions nsim, maxage, nyears+proyears) with the weight-at-age and year}
 
@@ -49,6 +51,8 @@ Only values from the first year (i.e N[,,1,]) are used, which is the current N-a
 \item{aR}{A numeric vector nareas long with the Ricker SRR a values}
 
 \item{bR}{A numeric vector nareas long with the Ricker SRR b values}
+
+\item{MPA}{A matrix of spatial closures by year}
 
 \item{maxF}{A numeric value specifying the maximum fishing mortality for any single age class}
 

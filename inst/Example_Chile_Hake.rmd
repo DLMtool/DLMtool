@@ -1,0 +1,396 @@
+# Title
+Chile Common Hake 
+
+# Subtitle
+A case study to evaluate MSE using DLMtool
+
+# Author(s)
+Adrian Hordyk, University of British Columbia <a.hordyk@oceans.ubc.ca>
+Roberto Licandeo, University of British Columbia <r.licandeo@oceans.ubc.ca>
+
+# Date
+August 4 2017
+
+# Introduction
+This is an example OM documentation file. It is based on a recent case study of Chile common hake from a
+recent DLMtool workshop in Valparaiso, Chile, organized by Oceana Chile and funded by a joint project between 
+Oceana, WWF, and EDF.
+
+<!-- ### Technical Tip -->
+<!-- This document will be compiled into Rmarkdown and then a HTML document using Pandoc. Equations can be included using Latex notation See 'maxage' section for example and [here](https://www.sharelatex.com/learn/Mathematical_expressions) for more information on equations in Latex. -->
+
+# Stock Parameters
+
+
+## maxage
+The only reason not to make this very large for all stocks (e.g. maxage = 100) is that the more ages, the greater the
+number of calculations and the slower the MSE will run. Let's consider a rule of thumb: if the annual survival 
+rate S to age a is calculated as $S_a = e^{-M_a}$, then the age corresponding with a 1% survival rate would be: 
+maxage = $-ln(0.01)/M$. 
+
+Based on this reasoning, the value for maxage was set based on the lower bound of the estimated range for M (see below). 
+
+
+## R0
+This is the level of unfished recruitment. Unless management options are specified in absolute
+numbers (e.g. tonnes) the MSE is scale-less (has no units) and this value simply doesn't matter
+
+## M
+The instantaneous annual natural mortality rate in the recent stock assessment was assumed to be 0.33 (Tascheri et al., 2017). In this example, we arbitrarily bracket the base case value by +/- 20% which leads to range in mean M of 0.26 ? 0.40. The bracketing is intended to represent the uncertainty in M that is typical in most fishery settings. 
+
+Even extensive mark-recapture analyses rarely produce M estimates with a CV (standard deviation / mean) of less than 10%. The +/- 20% bracketing of 0.33 is roughly equivalent to the 5%-95% probability interval of a probability distribution for M with mean 0.33 and 10% CV.
+
+## M2
+
+
+## Mexp
+Natural mortality was assumed to be constant for all age/size-classes.
+
+## Msd
+Given that M is very poorly quantified in most fishery settings, the annual variability in M is essentially unknown. All that can be concluded is that M should vary among years. To address
+this possibility in our simulations we specify inter-annual variability in M of up to 10%.
+
+## Mgrad
+Persistent underlying trends in natural mortality have been hypothesized in response to, for example, shifts in trophic dynamics (e.g., predation) and regime shifts. The current
+assessment document for common hake hypotheses an increasing trend for M due to jumbo squid (Tascheri et al., 2017). Therefore, for the purposes of this simulation, M was simulated as a time-varying parameter with a consistent increase in M between 0 and 0.25% per year.
+
+## h
+The steepness of the stock-recruitment curve is the level of unfished recruitment at 20% of unfished spawning biomass. It follows it ranges between 0.2 (linear relationship of recruitment with SSB) and 1 (average recruitment is constant and unrelated to SSB) for the Beverton and Holt stock-recruitment model. For this analysis, we specify a range of 0.50 ? 0.70 for the steepness parameter. The current assessment model doesn't estimate this parameter and assumes a value h=0.67 (Tascheri et al., 2017).
+
+## SRrel
+ This parameter specifies the model for the mean stock-recruitment relationship. DLMtool SRrel values can be 1 (Beverton Holt) or 2 (Ricker). We follow the assessment and assume a Ricker stock-recruitment relationship (2).
+
+## Perr
+ The magnitude of annual recruitment deviations was based on the stock assessment document (Tascheri et al., 2017).
+
+## AC
+ The current assessment doesn't report estimates for autocorrelation in recruitment, but the model results showed a strong autocorrelation in the residuals (see Fig 47 in Stock Assessment). 
+
+
+## Period
+
+## Amplitude
+
+
+## Linf
+Estimates of growth were taken from Aguayo and Ojeda (1987), and Tascheri et al. (2017).
+
+## K
+Estimates of growth were taken from Aguayo and Ojeda (1987), and Tascheri et al. (2017).
+
+## t0
+Estimates of growth were taken from Aguayo and Ojeda (1987), and Tascheri et al. (2017).
+
+## LenCV
+There is little information available on the variability of length-at-age for this species. We based the parameter range for this slot on values typically observed in teleosts.
+
+## Ksd
+This is some information available for this parameter across years (Cerna et al., 2013), but it is difficult to determine a long-term trend. We assume a small amount of inter-annual variability in this parameter.
+
+## Kgrad
+We assume virtually no long-term trend in this parameter.
+
+## Linfsd
+This is some information available for this parameter across years (Cerna et al., 2013), but it is difficult to determine a long-term trend. We assume a small amount of inter-annual variability in this parameter.
+
+## Linfgrad
+We assume virtually no long-term trend in this parameter.
+
+## L50
+The range for this parameter was based on the results of Alarcon and Arancibia (1993).
+
+There appears to be a shift in maturity-at-length over time (Tascheri et al., 2017). Currently, maturity-at-length is assumed to be time-invariant in DLMtool. If this is an important aspect to consider, we can modify the DLMtool model to account for time-varying maturity-at-length.
+
+## L50_95
+ Based on the same studies as used above.
+
+## D
+We set the bounds for this parameter based on the results of the recent stock assessment, which estimated depletion as 0.21 (Tascheri et al., 2017). The wider bounds were used to reflect the uncertainty estimate of stock depletion in the stock assessment.
+
+
+## a
+ Based on the empirical length-weight relationship (Cerna & Oyarzun 1998).
+
+## b
+ Based on the empirical length-weight relationship (Cerna & Oyarzun 1998).
+
+## Frac_area_1
+We simulate a fully fixed stock and assume half the stock is in area 1 and half in area 2.
+
+## Prob_staying
+We simulate a well mixed stock and assume half individuals remain in the same area among years.
+
+## Fdisc
+There was little information available on the discard mortality for this species. The range for this parameter was set based on expert knowledge of the fishery and the stock.
+
+## Source
+The OM was based on the hard work of Instituto de Fomento Pesquero scientists.
+
+
+
+# Fleet Parameters
+
+## Name
+
+
+## nyears
+The stock assessment and fishery data indicates that the fishery has been operating
+since 1940, with the latest assessment (from which the parameters in this OM are based) in 2016.
+
+## Spat_targ
+This feature is currently being developed for DLMtool. We're going to stick to the default level of 1 (targeting in proportion to density) in preparation for its implementation.
+
+## EffYears
+ This is the vertex (year) for a major change in effort (fishing mortality rate). In this case
+we use the estimates from the SSRA for each historical year and therefore we make this 1, 2, 3, ? 77 (nyears).
+
+
+## EffLower
+We use the SSRA analysis to estimate the lower bound for the historical fishing effort
+for each year. The details of the analysis should be included here, but we are lazy and have skipped this step (this is only an example!)
+
+## EffUpper
+As above.
+
+
+## Esd
+This is really variability in addition to the underlying trend described by EffLower and EffUpper. It is used only to generate historical fishing patterns. In data-limited cases a very simple (general, mean) historical trajectory in effort may be established and it may be desirable to add additional inter-annual variability to reflect changes in fishing intensity among years. In this case we're going to be using stock assessment outputs directly that have detailed annual variability information and have no need to superimpose greater variability. 
+
+## qinc
+In this example, we allow for an increasing future trends in fishing efficiency by setting up to a 2% annual increase in fishing efficiency.
+
+## qcv
+To evaluate variability in fishing efficiency among years it is necessary to compare observed catch rates with an index of abundance (or assessed biomass). For this parameter we assume that the fleet with varies in its efficiency between years.
+
+
+## L5
+We assume that the length corresponding to 5% vulnerability to the fishing gear is in the range of 15 ? 20 cm. Queirolo et al. (2012) demonstrate that mesh size is an import factor in determining the size at first capture.
+
+## LFS
+We assume that the length of full selectivity is in the range of 35 ? 40 cm (Queirolo et al., 2012).
+
+## Vmaxlen
+We assume that there is no dome-shaped selectivity because empirical studies have
+modeled the selectivity as asymptotic (Galvez & Hernan, 2005; Queirolo et al., 2008, 2012) for this hake fishery. Thus, all lengths above LFS are fully vulnerable to the fishery. 
+
+## isRel
+Selectivity parameters are in absolute numbers (not relative to size of maturity).
+
+
+## LR5
+Based on empirical selectivity studies (Queirolo et al. 2012) and the mean length-at-age
+curve described by the von Bertalanffy growth model, we set the range for the length at  5% retention to 20 ? 25 cm. Note that the legal mesh size is 100 mm and according to Queirolo et al. (2012), the 50% retention length is 30.8 cm of total length.
+
+## LFR
+Based on Queirolo et al. (2012) and the mean length-at-age curve described by the von
+Bertalanffy growth model, we set the range for the length at full retention to 40 ? 50 cm.
+
+## Rmaxlen
+ We understand that fishers value large size individuals and assume that the retention
+curve is asymptotic by setting this parameter to 1.
+
+## DR
+The general discard rate. What fraction of fish across all size and age classes are discarded? There is general discarding across all size-classes in some fisheries. We assume that this is not the case in the hake fishery.
+
+
+
+## SelYears
+These slots weren't used so we can leave the text blank.
+
+## AbsSelYears
+
+
+## L5Lower
+
+
+## L5Upper
+
+## LFSLower
+
+
+## LFSUpper
+
+
+## VmaxLower
+
+
+## VmaxUpper
+
+
+## CurrentYr
+The current year (last historical year) can be used to make the plots more
+informative. As the stock assessment which was used to parameterize the OM uses data up to 2016, we set this parameter to 2016.
+
+
+
+# Obs Parameters
+
+## Name
+
+
+## Cobs
+Here was assume that the annual catches a reported somewhat imprecisely.
+
+## Cbiascv
+We assume that it is likely that the reported catches are sometimes biased (that is,
+higher or lower than the real catches) and set the CV for this parameter to 0.1. This
+corresponds to the assumption that 95% of reported catches are between 80% and 120% of the real catches.
+
+## CAA_nsamp
+The number of samples taken per year for age and length compositions. We assume these are around 5,000 to 10,000 and 250 to 500 fish per year for the length and age compositions based on Lillo et al., (2017).
+
+## CAA_ESS
+See above.
+
+## CAL_nsamp
+Here we assume that there is some non-independence in the observations
+of age and length (ie individuals are caught in age/size monospecific aggregations. The effective sample size is hence assumed to be lower than the sample size at around 100 independent observations, 50 - 150.
+
+## CAL_ESS
+See above.
+
+
+## Iobs
+Chile hake has a survey that can act as both an index of relative abundance (I) and an
+index of absolute abundance (Bt) (Lillo et al., 2017). Here we set the allow for the fishery independent survey to have some observation error.
+
+## Ibiascv
+This parameter is not used in this version of DLMtool.
+
+## Btobs
+See Iobs
+
+## Btbiascv
+The bias in the absolute abundance index is assumed to be low and 95% of simulated
+data sets are assumed to be within 20% of the true value.
+
+## beta
+Since the survey is carried out according to a systematic homogenous design (Lillo et al.,
+2017) we assume that it varies in proportion to real abundance changes (beta values less than 1 are hyperstable ? index declining slower than real abundance, beta greater than 1 are hyperdeplete ? index declining faster than real abundance).
+
+## LenMbiascv
+Some MPs use length at maturity as a reference point for setting size limits. Here we assume we could get this consistently wrong by around +/- 10%.
+
+## Mbiascv
+We assume of a CV of 0.2 to reflect some uncertainty in this parameter.
+
+## Kbiascv
+ We assume of a CV of 0.1 to reflect some uncertainty in this parameter.
+
+## t0biascv
+We choose not to simulate bias in this growth parameter and assume in all cases it is correct.
+
+## Linfbiascv
+We assume of a CV of 0.1 to reflect some uncertainty in this parameter.
+
+## LFCbiascv
+ Given the reasonably extensive length sampling data, it is straightforward to estimate LFC for hake from the length frequency data and this is likely to be reasonably well known without substantial bias. 
+
+## LFSbiascv
+Estimating LFS is more difficult than estimating LFC because the length frequency data are the product of both increasing vulnerability and the declining age-structure of the population given M and F. 
+
+## FMSYbiascv
+Note that FMSY is not the same thing as the maximum sustainable rate of fishing, Fmax.
+ 
+Assuming surplus production dynamics, FMSY is half of Fmax. Above FMSY and below Fmax are sustainable fishing rates that lead to lower biomass than BMSY and do not provide as much yield (on average, at equilibrium) as fishing at FMSY with biomass at BMSY It has been proposed by Gulland (1978) and Walters and Martell (2003) that FMSY may be summarized as a fraction of natural mortality rate M. Gulland suggested FMSY = M, Walters and Martell though FMSY=0.5 x M. 
+
+It is not clear how biased such an estimate could be but assuming that this uncertainty reflects the possible range of prescribed values (and brackets the true ratio) and this occurs on top of bias in estimates of natural mortality, the range of possible biases must be higher than that assigned to M (0.33). This is set at 0.4 to reflect the potential for inaccurate estimates of FMSY.
+
+## FMSY_Mbiascv
+A number of MPs aim to fish at a fixed rate proportional to the estimate of M (e.g. Fratio). Other MPs use this ratio to undertake stock reduction analysis (e.g. DB-SRA). Given the references above we set this to be moderately inaccurate given a CV of 0.15.
+
+
+## BMSY_B0biascv
+ We have assigned a relatively precise CV for potential accuracy at 0.05.
+
+## Irefbiascv
+Here we assume that the index and MSY (a desirable catch level) can be known more accurately than a desirable absolute biomass level (e.g. BMSY) and assign these a range
+determined by a CV of 0.2.
+
+## Crefbiascv
+As Irefbiascv.
+
+## Brefbiascv
+Arbitrarily we make this twice as potentially biased as Iref and Cref.
+ 
+## Dbiascv
+These are probably the most controversial observation model quantities, after all the most valuable output of a data-rich assessment is arguably the level of stock depletion  (typically measured as spawning stock biomass today relative to unfished). If we could know this, for stocks with stationary productivity (where depletion is a very good predictor of stock productivity) we could achieve very good management performance with simple harvest control rules (in essence this is how the outputs of data-rich stock assessments are used). 
+
+Having said this, in most cases assessments are evaluated based on their fit to a fishery dependent (e.g. catch per unit effort) or fishery independent (e.g. trawl survey, acoustic survey) relative abundance index. It follows that often the depletion estimate arising from a stock assessment follows the raw data fairly well. Consequently, even anecdotal historical catch rate data may be used in a data-limited context to frame estimates of stock depletion. Similarly, if unfished densities of a species can be quantified (e.g. urchins per sq km of habitat), total estimates of habitat and current density surveys could be used to extrapolate a range of stock depletion.
+
+
+Alternatively, length frequency data can provide an imprecise estimate of stock  epletion when accompanied with estimates of natural mortality rate and growth (and some  assumption about the pattern of recent fishing rates).
+
+Here we assign an arbitrary value of 0.25 which is relatively imprecise and means that assume depletion could up to double or half of the true simulated value.
+
+## Dobs
+In a data-limited situation it is unlikely that radically new data would become available regarding depletion meaning that while estimates may be biased, they are likely to be relatively precise. We assign a level of imprecision consistent with observations of catch rate data among years at between 0.05- 0.1.
+
+## hbiascv
+The stock assessment provides very little support for particular values of recruitment
+compensation. In DLMtool this is parameterized as steepness (the fraction of unfished
+recruitment at 20% of unfished spawning biomass, a value ranging from 0.2-1). Here we assume that any MP could get this wrong by a large margin.
+
+## Recbiascv
+We do not have a good idea how good the recruitment index for hake is. Here we assume it could be moderately imprecise with a CV between 0.1 and 0.2.
+
+
+# Imp Parameters
+
+## Name
+Borrowed from Perfect_Imp
+
+## TACFrac
+ Here we assume that the actual catches can be up to 20% higher than the recommended TAC. 
+
+## TACSD
+ We assume that the bias in the actual catch is relatively consistent between years and set the range for this parameter to a low value.
+
+## TAEFrac
+We have little information to inform this parameter, and set the implementation error in effort equal to the TAC implementation error.
+
+## TAESD
+We assume that the bias in the effort is relatively consistent between years and set the range for this parameter to a low value.
+
+## SizeLimFrac
+We assume that, on average, a size limit would be well-implemented.
+
+## SizeLimSD
+ We assume that the implementation of the size limit is relatively consistent between years.
+
+
+
+
+# References
+Aguayo, M. & V. Ojeda 1987. Estudios de la edad y crecimiento de merluza comun (Merluccius gayi Guichenot, 1848) (Gadiformes - Merlucciidae). Invest. Pesq. (Chile) 34: 99-112. 
+
+Alarcon, R. & H. Arancibia. 1993. Talla de primera madurez sexual y fecundidad parcial en la merluza comun, Merluccius gayi gayi (Guichenot, 1848). Cienc. Tec. Mar, 16: 33-45. 
+
+Cerna J & C. Oyarzun (1998).Talla de primera madurez sexual y fecundidad parcial de la merluza comun (Merluccius gayi, Guichenot 1848) del ?rea de la pesqueria industrial de la zona de Talcahuano, Chile. Invest. Mar., Valparaiso, 26: 31-40, 19.
+
+Cerna, F., L. Cubillos & G. Plaza. 2013. Analisis historico del crecimiento somatico de merluza comun (Merluccius gayi gayi) frente a la costa de Chile. Lat. Am. J. Aquat. Res. 41(3):558-569
+
+
+Galvez, Mauricio, & Rebolledo, Hernan. (2005). Estimating codend size selectivity of bottom trawlnet in Chilean hake (Merluccius gayi gayi) fishery. Investigaciones marinas, 33(2), 151-165.
+
+Gulland, J. A. (1978). Fish population dynamycs. Wiley-Interscience Publication.
+Lillo, S., J. Delgado, J., Cayul, J. Saavebra, E. Guerrero, E. Ramos, M. Garcia, J. Aros, V.
+Valenzuela, S. Elias, S. Pastene, R. Aguayo, & J. Delgado (2017) Evaluacion directa de merluza comun. IFOP.
+
+Paya, I., C. Canales, D. Bucarey, M. Canales, F. Contreras, E. Leal, R. Tascheri, A. Yanez, M.J. Zuniga, W. Clark, M. Dorn, M. Dunn, C. Fernandez, M. Haddon, N. Klaer, M. Sissenwine y S. Zhou. 2014. Estatus y posibilidades de explotacion biologicamente sustentables de los principales recursos pesqueros nacionales ano 2014. Revision de los puntos biologicos de referencia (Rendimiento Maximo Sostenible) en las pesquerias nacionales. Instituto de Fomento Pesquero, Subsecretaria de Economia y EMT. 51 pp. + 8 anexos. DOI: 10.13140/RG.2.1.3048.0246.
+
+Queirolo, Dante, Ahumada, Mauricio, Hurtado, Carlos F, Soriguer, Milagrosa C, & Erzini, Karim. (2012). The effects of subsampling and between-haul variation on the size-selectivity estimation of Chilean hake (Merluccius gayi gayi). Latin American Journal of Aquatic Research, 40(2), 345-357
+
+Queirolo, Dante, Melo, Teofilo, Hurtado, Carlos, Montenegro, Ivonne, Gaete, Erick, Merino, Jose, Zamora, Victor, & Escobar, Roberto. (2008). Efecto del uso de paneles de escape de malla cuadrada sobre la reduccion de peces juveniles en la pesqueria de arrastre de merluza comun (Merluccius gayi gayi). Latin American Journal of Aquatic Research, 36(1), 25-35
+
+Subpesca 2016. Plan de manejo de la pesqueria de merluza comun. Subpesca 2016, pag. 56. 
+
+Subsecretaria de Pesca (SUBPESCA). 2010. Cuota global anual de captura de merluza comun (Merluccius gayi gayi), ano 2011. Inf. Tec. (R.Pesq.), 124/2010: 56 pp.
+
+Tascheri, R., P. G. Galvez & J. Sateler. 2017. Convenio de Desempeno 2015. Estatus y
+posibilidades de explotacion biologicamente sustentables de los principales recursos pesqueros nacionales al ano 2017: Merluza comun, 2017. Informe 1 de Estatus. Subsecretaria de Economia y EMT ? IFOP. 99 p
+
+Walters, C. J. & Martell, S. J. D. (2004) Fisheries ecology and management, Princeton University Press, Princeton 
+
+Walters, C.J, Martell, S. J. D. & Korman, J. 2016. A stochastic approach to stock reduction analysis. Canadian Journal of Fisheries and Aquatic Sciences, 63:212-223.
+

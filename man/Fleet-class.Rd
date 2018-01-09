@@ -10,57 +10,62 @@ The component of the operating model that controls fishing dynamics
 \section{Slots}{
 
 \describe{
-\item{\code{Name}}{Name of the Fleet object}
+\item{\code{Name}}{Name of the Fleet object. Single value. Character string.}
 
-\item{\code{nyears}}{The number of years for the historical simulation}
+\item{\code{nyears}}{The number of years for the historical 'spool-up' simulation. Single value. Positive integer}
 
-\item{\code{Spat_targ}}{Distribution of fishing in relation to spatial biomass: F is proportional to B^Spat_targ (uniform distribution)}
+\item{\code{Spat_targ}}{Distribution of fishing in relation to spatial biomass: fishing distribution is proportional to B^Spat_targ. Uniform distribution lower and upper bounds. Real numbers}
 
-\item{\code{Esd}}{Inter-annual variability in fishing mortality rate}
+\item{\code{EffYears}}{Years representing join-points (vertices) of time-varying effort. Vector. Non-negative real numbers}
 
-\item{\code{EffYears}}{Vector of verticies, years at which to simulate varying relative effort}
+\item{\code{EffLower}}{Lower bound on relative effort corresponding to EffYears. Vector. Non-negative real numbers}
 
-\item{\code{EffLower}}{Lower bound on relative effort corresponding to EffYears (uniform distribution)}
+\item{\code{EffUpper}}{Upper bound on relative effort corresponding to EffYears. Vector. Non-negative real numbers}
 
-\item{\code{EffUpper}}{Uppper bound on relative effort corresponding to EffYears (uniform distribution)}
+\item{\code{Esd}}{Additional inter-annual variability in fishing mortality rate. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{LFS}}{Shortest length that is fully vulnerable to fishing (uniform distribution)}
+\item{\code{qinc}}{Average percentage change in fishing efficiency (applicable only to forward projection and input controls). Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{L5}}{Shortest length corresponding to 5 percent vulnerability (uniform distribution)}
+\item{\code{qcv}}{Inter-annual variability in fishing efficiency (applicable only to forward projection and input controls). Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{Vmaxlen}}{The vulnerability of the longest (oldest) fish (uniform distribution)}
+\item{\code{L5}}{Shortest length corresponding to 5 percent vulnerability. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{LR5}}{Shortest length corresponding ot 5 percent retention (uniform distribution)}
+\item{\code{LFS}}{Shortest length that is fully vulnerable to fishing. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{LFR}}{Shortest length that is fully retained (uniform distribution)}
+\item{\code{Vmaxlen}}{The vulnerability of fish at Stock@Linf. Uniform distribution lower and upper bounds. Fraction}
 
-\item{\code{Rmaxlen}}{The retention of the longest (oldest) fish (uniform distribution)}
+\item{\code{isRel}}{Selectivity parameters in units of size-of-maturity (or absolute eg cm). Single value. Boolean.}
 
-\item{\code{DR}}{Discard rate - fraction of caught fish that are discarded (must be <= 1) (uniform distribution)}
+\item{\code{LR5}}{Shortest length corresponding ot 5 percent retention. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{SelYears}}{Vector of verticies, index for years at which historical selectivity pattern changed. If left empty, historical selectivity is constant}
+\item{\code{LFR}}{Shortest length that is fully retained. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{AbsSelYears}}{Optional values for SelYears, used for plotting only. Must be of same length as SelYears}
+\item{\code{Rmaxlen}}{The retention of fish at Stock@Linf. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{L5Lower}}{Optional vector of values of length SelYears, specifiying lower limits of L5 (use \code{ChooseSelect} function to set these)}
+\item{\code{DR}}{Discard rate - the fraction of caught fish that are discarded. Uniform distribution lower and upper bounds. Fraction}
 
-\item{\code{L5Upper}}{Optional vector of values of length SelYears, specifiying upper limits of L5 (use \code{ChooseSelect} function to set these)}
+\item{\code{SelYears}}{(Optional) Years representing join-points (vertices) at which historical selectivity pattern changes. Vector. Positive real numbers}
 
-\item{\code{LFSLower}}{Optional vector of values of length SelYears, specifiying lower limits of LFS (use \code{ChooseSelect} function to set these)}
+\item{\code{AbsSelYears}}{(Optional) Calendar years corresponding with SelYears (eg 1951, rather than 1), used for plotting only. Vector (of same length as SelYears). Positive real numbers}
 
-\item{\code{LFSUpper}}{Optional vector of values of length SelYears, specifiying upper limits of LFS (use \code{ChooseSelect} function to set these)}
+\item{\code{L5Lower}}{(Optional) Lower bound of L5 (use \code{ChooseSelect} function to set these). Vector. Non-negative real numbers}
 
-\item{\code{VmaxLower}}{Optional vector of values of length SelYears, specifiying lower limits of Vmaxlen (use \code{ChooseSelect} function to set these)}
+\item{\code{L5Upper}}{(Optional) Upper bound of L5 (use \code{ChooseSelect} function to set these). Vector. Non-negative real numbers}
 
-\item{\code{VmaxUpper}}{Optional vector of values of length SelYears, specifiying upper limits of Vmaxlen (use \code{ChooseSelect} function to set these)}
+\item{\code{LFSLower}}{(Optional) Lower bound of LFS (use \code{ChooseSelect} function to set these). Vector. Non-negative real numbers}
 
-\item{\code{qinc}}{Average percentage change in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls)}
+\item{\code{LFSUpper}}{(Optional) Upper bound of LFS (use \code{ChooseSelect} function to set these). Vector. Non-negative real numbers}
 
-\item{\code{qcv}}{Inter-annual variability in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls)}
+\item{\code{VmaxLower}}{(Optional) Lower bound of Vmaxlen (use \code{ChooseSelect} function to set these). Vector. Fraction}
 
-\item{\code{isRel}}{Are the selectivity parameters relative to size-of-maturity? TRUE or FALSE}
+\item{\code{VmaxUpper}}{(Optional) Upper bound of Vmaxlen (use \code{ChooseSelect} function to set these). Vector. Fraction}
 
-\item{\code{CurrentYr}}{The current calendar year (final year) of the historical simulations (e.g. 2011)}
+\item{\code{CurrentYr}}{The current calendar year (final year) of the historical simulations (eg 2011). Single value. Positive integer.}
+
+\item{\code{MPA}}{(Optional) Matrix specifying spatial closures for historical years. Each row should contain year index (e.g 10 for 10th historical year)
+followed by fraction of area closed to fishing for each area. i.e. each row represents a change and the number of columns is nareas + 1. 
+The spatial closures are assumed to remain in place for the future projections unless changed by a MP. 
+Default (if left blank) is all areas are open to fishing in historical period.}
 }}
 
 \section{Objects from the Class}{
@@ -74,6 +79,6 @@ showClass('Fleet')
 
 }
 \author{
-T. Carruthers
+T. Carruthers and A. Hordyk
 }
 \keyword{classes}

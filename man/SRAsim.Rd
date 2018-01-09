@@ -4,18 +4,29 @@
 \alias{SRAsim}
 \title{Simulates catch at age and catch history data for testing SRA methods}
 \usage{
-SRAsim(OM, qmult = 0.5, patchy = 0.2, nCAA = 100, sigmaE = 0.25)
+SRAsim(OM, qmult = 0.5, CAApatchy = 0.4, Cpatchy = 1, Ipatchy = 0.4,
+  MLpatchy = 0.4, nCAA = 100, nL = 200, sigmaE = 0.25, sigmaI = 0.1)
 }
 \arguments{
 \item{OM}{An operating model object with M, growth, stock-recruitment and maturity parameters specified.}
 
 \item{qmult}{Fraction of natural mortality rate that is mean fishing mortality (Fishing catchability multiplier)}
 
-\item{patchy}{The fraction of years that have catch at age data}
+\item{CAApatchy}{The fraction of years that have catch at age data}
+
+\item{Cpatchy}{The fraction of years that have catch data}
+
+\item{Ipatchy}{The fraction of years that have index data}
+
+\item{MLpatchy}{The fraction of years that have mean length data}
 
 \item{nCAA}{The number of independent annual catch at age observations (same among all years)}
 
-\item{sigmaE}{Level of simulated interannual variability in effort (F) expressed as a lognorma SD}
+\item{nL}{The number of independent annual catch at length observations (same among all years) for calculating mean length}
+
+\item{sigmaE}{Level of simulated interannual variability in effort (F) expressed as a lognormal SD}
+
+\item{sigmaI}{Observation error in relative abundance indices expressed as a lognormal SD}
 }
 \value{
 A list: Chist = historical catch series,Recdevs = historical recruitment deviations (mean = 1), CAA = catch at age matrix, N = numbers at age matrix, SSB = annual spawning biomass, FM = Fishing mortality rate at age matrix, M = natural mortality rate \code{classy}

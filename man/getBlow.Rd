@@ -22,7 +22,7 @@ getBlow(x, SSBMSY, MGThorizon, Find, Perr, M_ageArray, hs, Mat_age, Wt_age, R0,
 
 \item{hs}{vector nsim long of steepness values}
 
-\item{Mat_age}{matrix nsim x nages of maturity at age}
+\item{Mat_age}{array nsim x nages x nyears+proyears of maturity at age}
 
 \item{Wt_age}{matrix nsim x nages of weight at age}
 

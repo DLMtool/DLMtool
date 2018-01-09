@@ -78,6 +78,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Operating Model</li>
     <li>
       <a href="../../reference/Operating_Model_Functions/index.html">Setup Operating Model</a>
     </li>
@@ -86,12 +87,18 @@
     </li>
     <li class="dropdown-header">MSE Object</li>
     <li>
+      <a href="../../reference/PMs/index.html">Peformance Metrics</a>
+    </li>
+    <li>
       <a href="../../reference/MSE_Object_Plotting_Functions/index.html">MSE Plotting Functions</a>
     </li>
     <li>
       <a href="../../reference/MSE_Object_Functions/index.html">MSE Object Functions</a>
     </li>
     <li class="dropdown-header">Fishery Data Object</li>
+    <li>
+      <a href="../../reference/import_data/index.html">Import Data</a>
+    </li>
     <li>
       <a href="../../reference/Available_Methods_and_Required_Data/index.html">Available Methods and Required Data</a>
     </li>
@@ -157,105 +164,107 @@ bounds of a uniform distribution from which to sample the parameter.</p>
 <dt><code>Name</code></dt><dd><p>Name of the operating model</p></dd>
     <dt><code>nsim</code></dt><dd><p>The number of simulations</p></dd>
     <dt><code>proyears</code></dt><dd><p>The number of projected years</p></dd>
-    <dt><code>nyears</code></dt><dd><p>The number of years for the historical simulation</p></dd>
-    <dt><code>maxage</code></dt><dd><p>The maximum age of individuals that is simulated (there is no 'plus group': individuals die off beyone the maximum age so there isn't a huge cost to simulating more older age classes)</p></dd>
-    <dt><code>R0</code></dt><dd><p>The magnitude of unfished recruitment. This is normally fixed to some arbitrary value since it simply scales the simulated numbers)</p></dd>
-    <dt><code>M</code></dt><dd><p>Natural mortality rate (uniform distribution)</p></dd>
-    <dt><code>M2</code></dt><dd><p>Optional vector of M-at-age (must be length maxage)</p></dd>
-    <dt><code>Msd</code></dt><dd><p>Inter-annual variability in natural mortality rate expressed as a coefficient of variation (uniform distribution)</p></dd>
-    <dt><code>Mgrad</code></dt><dd><p>Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year (uniform distribution)</p></dd>
-    <dt><code>Mexp</code></dt><dd><p>Exponent of the Lorenzen function assuming an inverse relationship between M and weight (uniform distribution)</p></dd>
-    <dt><code>Fdisc</code></dt><dd><p>Fraction of discarded fish that die</p></dd>
-    <dt><code>h</code></dt><dd><p>Steepness of the stock recruit relationship (uniform distribution)</p></dd>
-    <dt><code>SRrel</code></dt><dd><p>Type of stock-recruit relationship (1)Beverton-Holt (2) Ricker</p></dd>
-    <dt><code>Linf</code></dt><dd><p>Maximum length (uniform distribution)</p></dd>
-    <dt><code>K</code></dt><dd><p>von B. growth parameter k (uniform distribution)</p></dd>
-    <dt><code>t0</code></dt><dd><p>von B. theoretical age at length zero (uniform distribution)</p></dd>
-    <dt><code>LenCV</code></dt><dd><p>Coefficient of variation of length-at-age (assumed constant for all age classes (uniform distribution)</p></dd>
-    <dt><code>Ksd</code></dt><dd><p>Inter-annual variability in growth parameter k (uniform distribution)</p></dd>
-    <dt><code>Kgrad</code></dt><dd><p>Mean temporal trend in growth parameter k, expressed as a percentage change in k per year (uniform distribution)</p></dd>
-    <dt><code>Linfsd</code></dt><dd><p>Inter-annual variability in maximum length - uniform distribution</p></dd>
-    <dt><code>Linfgrad</code></dt><dd><p>Mean temporal trend in maximum length, expressed as a percentage change in Linf per year (uniform distribution)</p></dd>
-    <dt><code>recgrad</code></dt><dd><p>Mean temporal trend in log-normal recruitment deviations (uniform distribution)</p></dd>
-    <dt><code>AC</code></dt><dd><p>Autocorrelation in recruitment deviations rec(t)=AC*rec(t-1)+(1-AC)*sigma(t) (uniform distribution)</p></dd>
-    <dt><code>a</code></dt><dd><p>Length-weight parameter alpha (uniform distribution)</p></dd>
-    <dt><code>b</code></dt><dd><p>Length-weight parameter beta (uniform distribution)</p></dd>
-    <dt><code>D</code></dt><dd><p>Current level of stock depletion (Bcurrent/Bunfished) (uniform distribution)</p></dd>
-    <dt><code>Size_area_1</code></dt><dd><p>The size of area 1 relative to area 2 (uniform distribution)</p></dd>
-    <dt><code>Frac_area_1</code></dt><dd><p>The fraction of the unfished biomass in stock 1 (uniform distribution)</p></dd>
-    <dt><code>Prob_staying</code></dt><dd><p>The probability of inviduals in area 1 remaining in area 1 over the course of one year</p></dd>
-    <dt><code>beta</code></dt><dd><p>A parameter controlling hyperstability/hyperdepletion. I^beta therefore values below 1 lead to hyperstability (an index that decreases slower than true abundance) and values above 1 lead to hyperdepletion (an index that decreases more rapidly than true abundance)(uniform distribution)</p></dd>
-    <dt><code>Spat_targ</code></dt><dd><p>Distribution of fishing in relation to spatial biomass: F is proportional to B^Spat_targ (uniform distribution)</p></dd>
-    <dt><code>LFS</code></dt><dd><p>Shortest length that is fully vulnerable to fishing (uniform distribution)</p></dd>
-    <dt><code>L5</code></dt><dd><p>Shortest length at 5 percent vulnerability (uniform distribution)</p></dd>
-    <dt><code>Vmaxlen</code></dt><dd><p>The vulnerability of the longest (oldest) fish (uniform distribution)</p></dd>
-    <dt><code>LR5</code></dt><dd><p>Shortest length corresponding ot 5 percent retention (uniform distribution)</p></dd>
-    <dt><code>LFR</code></dt><dd><p>Shortest length that is fully retained (uniform distribution)</p></dd>
-    <dt><code>Rmaxlen</code></dt><dd><p>The retention of the longest (oldest) fish (uniform distribution)</p></dd>
-    <dt><code>DR</code></dt><dd><p>Discard rate - fraction of caught fish that are discarded (must be &lt;= 1) (uniform distribution)</p></dd>
-    <dt><code>SelYears</code></dt><dd><p>Vector of verticies that index years where historical selectivity pattern changed. Leave empty to ignore</p></dd>
-    <dt><code>AbsSelYears</code></dt><dd><p>vector of absolute year values that correspond to year indices in SelYears. Used only for plotting</p></dd>
-    <dt><code>L5Lower</code></dt><dd><p>Optional vector of values of length SelYears, specifiying lower limits of L5 (use <code>ChooseSelect</code>  function to set these. Overrides L5 above)</p></dd>
-    <dt><code>L5Upper</code></dt><dd><p>Optional vector of values of length SelYears, specifiying upper limits of L5 (use <code>ChooseSelect</code>  function to set these. Overrides L5 above)</p></dd>
-    <dt><code>LFSLower</code></dt><dd><p>Optional vector of values of length SelYears, specifiying lower limits of LFS (use <code>ChooseSelect</code>  function to set these. Overrides LFS above)</p></dd>
-    <dt><code>LFSUpper</code></dt><dd><p>Optional vector of values of length SelYears, specifiying upper limits of LFS (use <code>ChooseSelect</code>  function to set these. Overrides LFS above)</p></dd>
-    <dt><code>VmaxLower</code></dt><dd><p>Optional vector of values of length SelYears, specifiying lower limits of Vmaxlen (use <code>ChooseSelect</code>  function to set these. Overrides Vmaxlen above)</p></dd>
-    <dt><code>VmaxUpper</code></dt><dd><p>Optional vector of values of length SelYears, specifiying upper limits of Vmaxlen (use <code>ChooseSelect</code>  function to set these. Overrides Vmaxlen above)</p></dd>
-    <dt><code>isRel</code></dt><dd><p>Are the selectivity parameters relative to size-of-maturity? TRUE or FALSE</p></dd>
-    <dt><code>L50</code></dt><dd><p>Length at 50 percent maturity (uniform distribution)</p></dd>
-    <dt><code>L50_95</code></dt><dd><p>Length increment from 50 to 95 percent maturity (uniform distribution)</p></dd>
-    <dt><code>Esd</code></dt><dd><p>Inter-annual variability in fishing mortality rate</p></dd>
-    <dt><code>EffYears</code></dt><dd><p>Vector of verticies, years at which to simulate varying relative effort</p></dd>
-    <dt><code>EffLower</code></dt><dd><p>Lower bound on relative effort corresponding to EffYears (uniform distribution)</p></dd>
-    <dt><code>EffUpper</code></dt><dd><p>Uppper bound on relative effort corresponding to EffYears (uniform distribution)</p></dd>
-    <dt><code>qinc</code></dt><dd><p>Average percentage change in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls)</p></dd>
-    <dt><code>qcv</code></dt><dd><p>Inter-annual variability in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls)</p></dd>
-    <dt><code>CurrentYr</code></dt><dd><p>The current calendar year (final year) of the historical simulations (e.g. 2011)</p></dd>
-    <dt><code>Cobs</code></dt><dd><p>Log-normal catch observation error expressed as a coefficient of variation (uniform distribution)</p></dd>
-    <dt><code>Cbiascv</code></dt><dd><p>A coefficient of variation controlling the sampling of bias in catch observations for each simulation (uniform distribution)</p></dd>
-    <dt><code>CAA_nsamp</code></dt><dd><p>Number of catch-at-age observation per time step (uniform distribution)</p></dd>
-    <dt><code>CAA_ESS</code></dt><dd><p>Effective sample size (independent age draws) of the multinomial catch-at-age observation error model (uniform distribution)</p></dd>
-    <dt><code>CAL_nsamp</code></dt><dd><p>Number of catch-at-length observation per time step (uniform distribution)</p></dd>
-    <dt><code>CAL_ESS</code></dt><dd><p>Effective sample size (independent length draws) of the multinomial catch-at-length observation error model (uniform distribution)</p></dd>
-    <dt><code>CALcv</code></dt><dd><p>Lognormal, variability in the length at age (uniform distribution)</p></dd>
-    <dt><code>Iobs</code></dt><dd><p>Observation error in the relative abundance indices expressed as a coefficient of variation (uniform distribution)</p></dd>
-    <dt><code>Perr</code></dt><dd><p>The extent of inter-annual log-normal recruitment variability (sigma R)(uniform distribution)</p></dd>
-    <dt><code>Period</code></dt><dd><p>Period for cylical recruitment pattern in years (uniform distribution). Leave empty to ignore</p></dd>
-    <dt><code>Amplitude</code></dt><dd><p>Amplitude in deviation from long-term average recruitment during recruitment cycle, both positive and negative (uniform distribution). E.g., a range from 0 to 0.5 means recruitment decreases or increases by up to 50% each cycle. Leave empty to ignore</p></dd>
-    <dt><code>Mcv</code></dt><dd><p>Persistent bias in the prescription of natural mortality rate sampled from a log-normal distribution with coefficient of variation (Mcv)(uniform distribution)</p></dd>
-    <dt><code>Kcv</code></dt><dd><p>Persistent bias in the prescription of growth parameter k sampled from a log-normal distribution with coefficient of variation (Kcv)(uniform distribution)</p></dd>
-    <dt><code>t0cv</code></dt><dd><p>Persistent bias in the prescription of t0 sampled from a log-normal distribution with coefficient of variation (t0cv)(uniform distribution)</p></dd>
-    <dt><code>Linfcv</code></dt><dd><p>Persistent bias in the prescription of maximum length sampled from a log-normal distribution with coefficient of variation (Linfcv)(uniform distribution)</p></dd>
-    <dt><code>LFCcv</code></dt><dd><p>Persistent bias in the prescription of lenght at first capture sampled from a log-normal distribution with coefficient of variation (LFCcv)(uniform distribution)</p></dd>
-    <dt><code>LFScv</code></dt><dd><p>Persistent bias in the prescription of length-at-fully selection sampled from a log-normal distribution with coefficient of variation (LFScv)(uniform distribution)</p></dd>
-    <dt><code>B0cv</code></dt><dd><p>Persistent bias in the prescription of maximum lengthunfished biomass sampled from a log-normal distribution with coefficient of variation (B0cv)(uniform distribution)</p></dd>
-    <dt><code>FMSYcv</code></dt><dd><p>Persistent bias in the prescription of FMSY sampled from a log-normal distribution with coefficient of variation (FMSYcv)(uniform distribution)</p></dd>
-    <dt><code>FMSY_Mcv</code></dt><dd><p>Persistent bias in the prescription of FMSY/M sampled from a log-normal distribution with coefficient of variation (FMSY_cv)(uniform distribution)</p></dd>
-    <dt><code>BMSY_B0cv</code></dt><dd><p>Persistent bias in the prescription of BMsY relative to unfished sampled from a log-normal distribution with coefficient of variation (BMSY_B0cv)(uniform distribution)</p></dd>
-    <dt><code>rcv</code></dt><dd><p>Persistent bias in the prescription of intrinsic rate of increase sampled from a log-normal distribution with coefficient of variation (rcv)(uniform distribution)</p></dd>
-    <dt><code>LenMcv</code></dt><dd><p>Persistent bias in the prescription of length at 50 percent maturity sampled from a log-normal distribution with coefficient of variation (A50cv)(uniform distribution)</p></dd>
-    <dt><code>Dbiascv</code></dt><dd><p>Persistent bias in the prescription of stock depletion sampled from a log-normal distribution with coefficient of variation (Linfcv)(uniform distribution)</p></dd>
-    <dt><code>Dcv</code></dt><dd><p>Imprecision in the prescription of stock depletion among years, expressed as a coefficient of variation (uniform distribution)</p></dd>
-    <dt><code>Btbias</code></dt><dd><p>Persistent bias in the prescription of current stock biomass sampled from a uniform-log distribution with range (Btbias)(uniform distribution)</p></dd>
-    <dt><code>Btcv</code></dt><dd><p>Imprecision in the prescription of current stock biomass among years expressed as a coefficient of variation (uniform distribution)</p></dd>
-    <dt><code>Fcurbiascv</code></dt><dd><p>Persistent bias in the prescription of current fishing mortality rate sampled from a log-normal distribution with coefficient of variation (Fcurcv)(uniform distribution)</p></dd>
-    <dt><code>Fcurcv</code></dt><dd><p>Imprecision in the prescription of current fishing mortality rate among years expressed as a coefficient of variation (uniform distribution)</p></dd>
-    <dt><code>hcv</code></dt><dd><p>Persistent bias in steepness (uniform distribution)</p></dd>
-    <dt><code>Icv</code></dt><dd><p>Observation error in realtive abundance index expressed as a coefficient of variation (uniform distirbution)</p></dd>
-    <dt><code>maxagecv</code></dt><dd><p>Bias in the prescription of maximum age (uniform distribution)</p></dd>
-    <dt><code>Reccv</code></dt><dd><p>Bias in the knowledge of recent recruitment strength (uniform distribution)</p></dd>
-    <dt><code>Irefcv</code></dt><dd><p>Bias in the knowledge of the relative abundance index at BMSY (uniform distribution)</p></dd>
-    <dt><code>Brefcv</code></dt><dd><p>Bias in the knowledge of BMSY (uniform distribution)</p></dd>
-    <dt><code>Crefcv</code></dt><dd><p>Bias in the knowledge of MSY(uniform distribution)</p></dd>
+    <dt><code>interval</code></dt><dd><p>The assessment interval - how often would you like to update
+the management system?</p></dd>
+    <dt><code>pstar</code></dt><dd><p>The percentile of the sample of the management recommendation
+for each method</p></dd>
+    <dt><code>maxF</code></dt><dd><p>Maximum instantaneous fishing mortality rate that may be
+simulated for any given age class</p></dd>
+    <dt><code>reps</code></dt><dd><p>Number of samples of the management recommendation for each
+method. Note that when this is set to 1, the mean value of the data inputs
+is used.</p></dd>
+    <dt><code>maxage</code></dt><dd><p>The maximum age of individuals that is simulated (there is no 'plus group'). Single value. Positive integer</p></dd>
+    <dt><code>R0</code></dt><dd><p>The magnitude of unfished recruitment. Single value. Positive real number</p></dd>
+    <dt><code>M</code></dt><dd><p>Natural mortality rate. Uniform distribution lower and upper bounds. Positive real number</p></dd>
+    <dt><code>M2</code></dt><dd><p>(Optional) Natural mortality rate at age. Vector of length 'maxage'. Positive real number</p></dd>
+    <dt><code>Mexp</code></dt><dd><p>Exponent of the Lorenzen function assuming an inverse relationship between M and weight. Uniform distribution lower and upper bounds. Real numbers &lt;= 0.</p></dd>
+    <dt><code>Msd</code></dt><dd><p>Inter-annual variability in natural mortality rate expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>Mgrad</code></dt><dd><p>Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year. Uniform distribution lower and upper bounds. Real numbers</p></dd>
+    <dt><code>h</code></dt><dd><p>Steepness of the stock recruit relationship. Uniform distribution lower and upper bounds. Values from 1/5 to 1</p></dd>
+    <dt><code>SRrel</code></dt><dd><p>Type of stock-recruit relationship. Single value, switch (1) Beverton-Holt (2) Ricker. Integer</p></dd>
+    <dt><code>Perr</code></dt><dd><p>Process error, the CV of lognormal recruitment deviations. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>AC</code></dt><dd><p>Autocorrelation in recruitment deviations rec(t)=AC*rec(t-1)+(1-AC)*sigma(t). Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>Period</code></dt><dd><p>(Optional) Period for cyclical recruitment pattern in years. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>Amplitude</code></dt><dd><p>(Optional) Amplitude in deviation from long-term average recruitment during recruitment cycle (eg a range from 0 to 1 means recruitment decreases or increases by up to 100% each cycle). Uniform distribution lower and upper bounds. 0 &lt; Amplitude &lt; 1</p></dd>
+    <dt><code>Linf</code></dt><dd><p>Maximum length. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>K</code></dt><dd><p>von Bertalanffy growth parameter k. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>t0</code></dt><dd><p>von Bertalanffy theoretical age at length zero. Uniform distribution lower and upper bounds. Non-positive real numbers</p></dd>
+    <dt><code>LenCV</code></dt><dd><p>Coefficient of variation of length-at-age (assumed constant for all age classes). Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Ksd</code></dt><dd><p>Inter-annual variability in growth parameter k. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>Kgrad</code></dt><dd><p>Mean temporal trend in growth parameter k, expressed as a percentage change in k per year. Uniform distribution lower and upper bounds. Real numbers</p></dd>
+    <dt><code>Linfsd</code></dt><dd><p>Inter-annual variability in maximum length. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>Linfgrad</code></dt><dd><p>Mean temporal trend in maximum length, expressed as a percentage change in Linf per year. Uniform distribution lower and upper bounds. Real numbers</p></dd>
+    <dt><code>L50</code></dt><dd><p>Length at 50 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>L50_95</code></dt><dd><p>Length increment from 50 percent to 95 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>D</code></dt><dd><p>Current level of stock depletion SSB(current)/SSB(unfished). Uniform distribution lower and upper bounds. Fraction</p></dd>
+    <dt><code>a</code></dt><dd><p>Length-weight parameter alpha. Single value. Positive real number</p></dd>
+    <dt><code>b</code></dt><dd><p>Length-weight parameter beta. Single value. Positive real number</p></dd>
+    <dt><code>Size_area_1</code></dt><dd><p>The size of area 1 relative to area 2. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Frac_area_1</code></dt><dd><p>The fraction of the unfished biomass in stock 1. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Prob_staying</code></dt><dd><p>The probability of inviduals in area 1 remaining in area 1 over the course of one year. Uniform distribution lower and upper bounds. Positive fraction.</p></dd>
+    <dt><code>Fdisc</code></dt><dd><p>Fraction of discarded fish that die. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>nyears</code></dt><dd><p>The number of years for the historical 'spool-up' simulation. Single value. Positive integer</p></dd>
+    <dt><code>Spat_targ</code></dt><dd><p>Distribution of fishing in relation to spatial biomass: fishing distribution is proportional to B^Spat_targ. Uniform distribution lower and upper bounds. Real numbers</p></dd>
+    <dt><code>EffYears</code></dt><dd><p>Years representing join-points (vertices) of time-varying effort. Vector. Non-negative real numbers</p></dd>
+    <dt><code>EffLower</code></dt><dd><p>Lower bound on relative effort corresponding to EffYears. Vector. Non-negative real numbers</p></dd>
+    <dt><code>EffUpper</code></dt><dd><p>Upper bound on relative effort corresponding to EffYears. Vector. Non-negative real numbers</p></dd>
+    <dt><code>Esd</code></dt><dd><p>Additional inter-annual variability in fishing mortality rate. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>qinc</code></dt><dd><p>Average percentage change in fishing efficiency (applicable only to forward projection and input controls). Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>qcv</code></dt><dd><p>Inter-annual variability in fishing efficiency (applicable only to forward projection and input controls). Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>L5</code></dt><dd><p>Shortest length corresponding to 5 percent vulnerability. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>LFS</code></dt><dd><p>Shortest length that is fully vulnerable to fishing. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Vmaxlen</code></dt><dd><p>The vulnerability of fish at Stock@Linf. Uniform distribution lower and upper bounds. Fraction</p></dd>
+    <dt><code>isRel</code></dt><dd><p>Selectivity parameters in units of size-of-maturity (or absolute eg cm). Single value. Boolean.</p></dd>
+    <dt><code>LR5</code></dt><dd><p>Shortest length corresponding ot 5 percent retention. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>LFR</code></dt><dd><p>Shortest length that is fully retained. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>Rmaxlen</code></dt><dd><p>The retention of fish at Stock@Linf. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>DR</code></dt><dd><p>Discard rate - the fraction of caught fish that are discarded. Uniform distribution lower and upper bounds. Fraction</p></dd>
+    <dt><code>SelYears</code></dt><dd><p>(Optional) Years representing join-points (vertices) at which historical selectivity pattern changes. Vector. Positive real numbers</p></dd>
+    <dt><code>AbsSelYears</code></dt><dd><p>(Optional) Calendar years corresponding with SelYears (eg 1951, rather than 1), used for plotting only. Vector (of same length as SelYears). Positive real numbers</p></dd>
+    <dt><code>L5Lower</code></dt><dd><p>(Optional) Lower bound of L5 (use <code>ChooseSelect</code> function to set these). Vector. Non-negative real numbers</p></dd>
+    <dt><code>L5Upper</code></dt><dd><p>(Optional) Upper bound of L5 (use <code>ChooseSelect</code> function to set these). Vector. Non-negative real numbers</p></dd>
+    <dt><code>LFSLower</code></dt><dd><p>(Optional) Lower bound of LFS (use <code>ChooseSelect</code> function to set these). Vector. Non-negative real numbers</p></dd>
+    <dt><code>LFSUpper</code></dt><dd><p>(Optional) Upper bound of LFS (use <code>ChooseSelect</code> function to set these). Vector. Non-negative real numbers</p></dd>
+    <dt><code>VmaxLower</code></dt><dd><p>(Optional) Lower bound of Vmaxlen (use <code>ChooseSelect</code> function to set these). Vector. Fraction</p></dd>
+    <dt><code>VmaxUpper</code></dt><dd><p>(Optional) Upper bound of Vmaxlen (use <code>ChooseSelect</code> function to set these). Vector. Fraction</p></dd>
+    <dt><code>CurrentYr</code></dt><dd><p>The current calendar year (final year) of the historical simulations (eg 2011). Single value. Positive integer.</p></dd>
+    <dt><code>Cobs</code></dt><dd><p>Log-normal catch observation error expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>Cbiascv</code></dt><dd><p>Log-normal coefficient of variation controlling the sampling of bias in catch observations for each simulation. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>CAA_nsamp</code></dt><dd><p>Number of catch-at-age observation per time step. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>CAA_ESS</code></dt><dd><p>Effective sample size (independent age draws) of the multinomial catch-at-age observation error model. Uniform distribution lower and upper bounds. Positive integers</p></dd>
+    <dt><code>CAL_nsamp</code></dt><dd><p>Number of catch-at-length observation per time step. Uniform distribution lower and upper bounds. Positive integers</p></dd>
+    <dt><code>CAL_ESS</code></dt><dd><p>Effective sample size (independent length draws) of the multinomial catch-at-length observation error model. Uniform distribution lower and upper bounds. Positive integers</p></dd>
+    <dt><code>Iobs</code></dt><dd><p>Observation error in the relative abundance indices expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Ibiascv</code></dt><dd><p>Log-normal coefficient of variation controlling error in observations of relative abundance index. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Btobs</code></dt><dd><p>Log-normal coefficient of variation controlling error in observations of current stock biomass among years. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Btbiascv</code></dt><dd><p>Uniform-log bounds for sampling persistent bias in current stock biomass. Uniform-log distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>beta</code></dt><dd><p>A parameter controlling hyperstability/hyperdepletion where values below 1 lead to hyperstability (an index that decreases slower than true abundance) and values above 1 lead to hyperdepletion (an index that decreases more rapidly than true abundance). Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>LenMbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in length at 50 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Mbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in observed natural mortality rate. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Kbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in observed growth parameter K. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>t0biascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in observed t0. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Linfbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in observed maximum length. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>LFCbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in observed length at first capture. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>LFSbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in length-at-full selection. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>FMSYbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in FMSY. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>FMSY_Mbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in FMSY/M. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>BMSY_B0biascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in BMSY relative to unfished. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Irefbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in relative abundance index at BMSY. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Brefbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in BMSY. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Crefbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in MSY. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Dbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in stock depletion. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Dobs</code></dt><dd><p>Log-normal coefficient of variation controlling error in observations of stock depletion among years. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>hbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in steepness. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Recbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in recent recruitment strength. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>TACFrac</code></dt><dd><p>Mean fraction of TAC taken. Uniform distribution lower and upper bounds. Positive real number.</p></dd>
+    <dt><code>TACSD</code></dt><dd><p>Log-normal coefficient of variation in the fraction of Total Allowable Catch (TAC) taken. Uniform distribution lower and upper bounds. Non-negative real numbers.</p></dd>
+    <dt><code>TAEFrac</code></dt><dd><p>Mean fraction of TAE taken. Uniform distribution lower and upper bounds. Positive real number.</p></dd>
+    <dt><code>TAESD</code></dt><dd><p>Log-normal coefficient of variation in the fraction of Total Allowable Effort (TAE) taken. Uniform distribution lower and upper bounds. Non-negative real numbers.</p></dd>
+    <dt><code>SizeLimFrac</code></dt><dd><p>The real minimum size that is retained expressed as a fraction of the size. Uniform distribution lower and upper bounds. Positive real number.</p></dd>
+    <dt><code>SizeLimSD</code></dt><dd><p>Log-normal coefficient of variation controlling mismatch between a minimum size limit and the real minimum size retained. Uniform distribution lower and upper bounds. Non-negative real numbers.</p></dd>
     <dt><code>cpars</code></dt><dd><p>A list of custom parameters (single parameters are a vector nsim long, time series are a matrix nsim rows by nyears columns)</p></dd>
     <dt><code>seed</code></dt><dd><p>A random seed to ensure users can reproduce results exactly</p></dd>
-    <dt><code>Source</code></dt><dd><p>A reference to a website or article form which parameters were taken to define the operating model</p></dd>
-    <dt><code>TACSD</code></dt><dd><p>lognormal standard deviation in fraction of TAC taken (uniform distribution)</p></dd>
-    <dt><code>TACFrac</code></dt><dd><p>Mean fraction of TAC taken (uniform distribution) (can be an improper fraction greater than 1)</p></dd>
-    <dt><code>ESD</code></dt><dd><p>lognormal standard deviation in fraction of TAE taken(uniform distribution)</p></dd>
-    <dt><code>EFrac</code></dt><dd><p>Mean fraction of recommended effort taken (uniform distribution)</p></dd>
-    <dt><code>SizeLimSD</code></dt><dd><p>lognormal error in size limit implementation (uniform distribution)</p></dd>
-    <dt><code>SizeLimFrac</code></dt><dd><p>Mean fraction of the size limit (uniform distribution) (can be an improper fraction greater than 1)</p></dd>
+    <dt><code>Source</code></dt><dd><p>A reference to a website or article from which parameters were taken to define the operating model</p></dd>
 </dl>
     
     <h2 class="hasAnchor" id="objects-from-the-class"><a class="anchor" href="#objects-from-the-class"></a>Objects from the Class</h2>
@@ -276,7 +285,7 @@ bounds of a uniform distribution from which to sample the parameter.</p>
 
     <h2>Author</h2>
     
-T. Carruthers
+T. Carruthers and A. Hordyk
 
   </div>
 </div>

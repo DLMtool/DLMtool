@@ -78,6 +78,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Operating Model</li>
     <li>
       <a href="../../reference/Operating_Model_Functions/index.html">Setup Operating Model</a>
     </li>
@@ -86,12 +87,18 @@
     </li>
     <li class="dropdown-header">MSE Object</li>
     <li>
+      <a href="../../reference/PMs/index.html">Peformance Metrics</a>
+    </li>
+    <li>
       <a href="../../reference/MSE_Object_Plotting_Functions/index.html">MSE Plotting Functions</a>
     </li>
     <li>
       <a href="../../reference/MSE_Object_Functions/index.html">MSE Object Functions</a>
     </li>
     <li class="dropdown-header">Fishery Data Object</li>
+    <li>
+      <a href="../../reference/import_data/index.html">Import Data</a>
+    </li>
     <li>
       <a href="../../reference/Available_Methods_and_Required_Data/index.html">Available Methods and Required Data</a>
     </li>
@@ -146,7 +153,7 @@
     <p>Plot the vulnerability and retention curves</p>
     
 
-    <pre class="usage"><span class='fu'>plotSelect</span>(<span class='no'>OM</span>, <span class='kw'>pyears</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>sim</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"l"</span>)</pre>
+    <pre class="usage"><span class='fu'>plotSelect</span>(<span class='no'>OM</span>, <span class='kw'>Pars</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>pyears</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>sim</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='st'>"l"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -154,6 +161,10 @@
     <tr>
       <th>OM</th>
       <td><p>An object of class 'OM'</p></td>
+    </tr>
+    <tr>
+      <th>Pars</th>
+      <td><p>Named list of sampled parameters</p></td>
     </tr>
     <tr>
       <th>pyears</th>

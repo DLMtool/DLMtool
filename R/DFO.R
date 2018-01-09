@@ -54,6 +54,9 @@ DFO_hist <- function(OM, panel= T,nsim=48) {
 #' @author T. Carruthers
 #' @export DFO_proj
 #' @importFrom MASS kde2d
+#' @importFrom graphics arrows contour
+#' @importFrom grDevices dev.off jpeg
+#' @importFrom stats acf
 DFO_proj <- function(MSEobj,maxplot=3) {
   
   nsim<-MSEobj@nsim
