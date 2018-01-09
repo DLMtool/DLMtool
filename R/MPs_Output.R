@@ -2998,6 +2998,56 @@ class(SBT2) <- "MP"
 #' 
 #' @param x A position in data-limited methods data object
 #' @param Data A data-limited methods data object
+<<<<<<< HEAD:R/Output.r
+#' @param reps The number of stochastic samples of the TAC recommendation
+#' @author W. Harford and T. Carruthers
+#' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
+#' formula for estimating sustainable yields in data-poor situations. ICES J.
+#' Mar. Sci. 66, 2267-2271. Harford W. and Carruthers, T. 2016. Testing novel
+#' catch-based fisheries management procedures.
+#' @export HDAAC
+HDAAC <- function(x, Data, reps = 100) {
+  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
+  C_tot <- Data@AvC[x] * Data@t[x]
+  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
+  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
+  Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
+  if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) 
+    return(NA)
+<<<<<<< HEAD:R/DLM_output.R
+  BMSY_K <- rbeta(reps, alphaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x] * 
+    DLM_data@CV_BMSY_B0[x]), betaconv(DLM_data@BMSY_B0[x], DLM_data@BMSY_B0[x] * DLM_data@CV_BMSY_B0[x]))
+  dcac <- C_tot/(DLM_data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
+=======
+  BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
+    Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x]))
+  dcac <- C_tot/(Data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
+>>>>>>> 9ec0b8e8f1a390e121fa96ecfe4b9df61a95e021:R/Output.r
+  ddcac <- dcac * Bt_K/BMSY_K
+  TAC <- dcac
+  TAC[Bt_K < BMSY_K] <- ddcac[Bt_K < BMSY_K]
+  TACfilter(TAC)
+}
+class(HDAAC) <- "Output"
+
+
+
+# A generic VPA (Walters and Licandeo UBC)
+VPA <- function(x, Data, reps = reps) {
+  
+  # now do optimization for FMSY
+  dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@MaxAge, Data@wla, Data@CV_wla, Data@wlb, Data@CV_wlb, Data@L50, Data@CV_L50, Data@CAA, Data@steep, Data@CV_steep, Data@LFS, Data@CV_LFS, Data@LFC, Data@CV_LFC, Data@Cat"
+  CAAind <- (Data@CAA[x, , ] == 0) * array(rep(1:Data@MaxAge, 
+    each = length(Data@CAA[x, , 1])), dim(Data@CAA[x, , ]))
+  maxage <- min(CAAind[CAAind != 0])
+  maxage <- which.min(abs(cumsum(apply(Data@CAA[x, , ], 2, sum))/sum(Data@CAA[x, 
+    , ]) - 0.75))
+  CAAv <- Data@CAA[x, , 1:maxage]
+  CAAv[, maxage] <- CAAv[, maxage] + apply(Data@CAA[x, , (maxage + 
+    1):length(Data@CAA[x, 1, ])], 1, sum)
+  
+  TAC <- Bt_K <- rep(NA, reps)
+=======
 #' @param reps The number of quota samples
 #' @param alp Condition for modifying the TAC (bounds on change in abundance)
 #' @param bet Limits for how much the TAC can change among years
@@ -3018,6 +3068,7 @@ SPmod <- function(x, Data, reps = 100, alp = c(0.8, 1.2), bet = c(0.8,
   TAC <- rep(NA, reps)
   TAC[rat < alp[1]] <- cct[rat < alp[1]] * bet[1]
   TAC[rat > alp[1] & rat < alp[2]] <- cct[rat > alp[1] & rat < alp[2]]
+>>>>>>> ea365ed713d79fd56adc15b368f7e463c7e45e60:R/MPs_Output.R
   
   cond <- rat > alp[2]
   reps2 <- sum(cond)
