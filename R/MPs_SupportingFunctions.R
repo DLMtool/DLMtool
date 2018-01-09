@@ -126,9 +126,8 @@ DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hi
   q_DD = exp(params[3])
   SS_DD = So_DD * (1 - UMSY_DD)  # Initialise for UMSY, MSY and q leading.
   Spr_DD = (SS_DD * Alpha_DD/(1 - SS_DD) + wa_DD)/(1 - Rho_DD * SS_DD)
-  DsprDu_DD = -So_DD * (Rho_DD/(1 - Rho_DD * SS_DD) * Spr_DD + 1/(1 -
-                                                                      Rho_DD * SS_DD) * (Alpha_DD/(1 - SS_DD) + SS_DD * Alpha_DD/(1 -
-                                                                                                                                    SS_DD)^2))
+  DsprDu_DD = -So_DD * (Rho_DD/(1 - Rho_DD * SS_DD) * (Spr_DD + 1)/(1 - Rho_DD * SS_DD) * 
+                          Alpha_DD/(1 - SS_DD)) + SS_DD * Alpha_DD/((1 - SS_DD)^2)
   Arec_DD = 1/(((1 - UMSY_DD)^2) * (Spr_DD + UMSY_DD * DsprDu_DD))
   Brec_DD = UMSY_DD * (Arec_DD * Spr_DD - 1/(1 - UMSY_DD))/MSY_DD
   Spr0_DD = (So_DD * Alpha_DD/(1 - So_DD) + wa_DD)/(1 - Rho_DD * So_DD)
