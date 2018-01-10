@@ -4,12 +4,14 @@
 \alias{getFMSY3}
 \title{Calculate FMSY and related metrics using Rcpp code}
 \usage{
-getFMSY3(x, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age, V, retA,
-  Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, SSB0, B0, maxF,
-  useCPP = TRUE)
+getFMSY3(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age, V,
+  retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, SSB0, B0,
+  MPA, maxF, useCPP = TRUE)
 }
 \arguments{
 \item{x}{Integer, the simulation number}
+
+\item{Asize}{A matrix (nsim by nareas) with size of areas}
 
 \item{nareas}{The number of spatial areas}
 
@@ -53,6 +55,8 @@ Only values from the first year (i.e N[,,1,]) are used, which is the current N-a
 \item{SSB0}{Unfished spawning biomass}
 
 \item{B0}{Unfished total biomass}
+
+\item{MPA}{A matrix of spatial closures by year}
 
 \item{maxF}{A numeric value specifying the maximum fishing mortality for any single age class}
 

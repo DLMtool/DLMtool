@@ -4,9 +4,9 @@
 \alias{optQ}
 \title{Optimize q for a single simulation}
 \usage{
-optQ(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge,
-  Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc,
-  maxF, useCPP)
+optQ(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge,
+  WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc,
+  aRc, bRc, maxF, MPA, useCPP)
 }
 \arguments{
 \item{logQ}{log q}
@@ -24,6 +24,8 @@ optQ(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge,
 \item{pyears}{Number of years to project population dynamics}
 
 \item{M_age}{M-at-age}
+
+\item{Asize_c}{Numeric vector (length nareas) with size of each area}
 
 \item{MatAge}{Maturity-at-age}
 
@@ -54,6 +56,8 @@ optQ(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge,
 \item{bRc}{Ricker bR}
 
 \item{maxF}{maximum F}
+
+\item{MPA}{A matrix of spatial closures by year}
 
 \item{useCPP}{Logical. Use the CPP code?}
 }

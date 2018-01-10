@@ -26,7 +26,7 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
   
   message("-- End of r4ss operations --")
   
-  OM<-new('OM',DLMtool::Albacore, DLMtool::Generic_fleet, DLMtool::Generic_obs, DLMtool::Perfect_Imp)
+  OM<-new('OM',DLMtool::Albacore, DLMtool::Generic_Fleet, DLMtool::Generic_Obs, DLMtool::Perfect_Imp)
   OM@nsim<-nsim
   OM@proyears<-proyears
   
@@ -85,7 +85,7 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
   OM@K<-quantile(K,c(0.025,0.975))
   OM@Linf<-quantile(Linf,c(0.025,0.975))
   OM@t0=rep(GP$A_a_L0[1],2) # t0 is not 
-  OM@Msd<-OM@Ksd<-OM@Linfsd<-OM@Mgrad<-OM@Kgrad<-OM@Linfgrad<-OM@recgrad<-c(0,0)
+  OM@Msd<-OM@Ksd<-OM@Linfsd<-OM@Mgrad<-OM@Kgrad<-OM@Linfgrad<-c(0,0)
   L50=GP$Mat1[1]
   OM@a=GP$WtLen1[1]
   OM@b=GP$WtLen2[1]
@@ -461,7 +461,7 @@ SRopt<-function(nsim,SSB,rec,SSBpR,plot=F,type="BH"){
 #' @param seas The reference season for the growth (not actually sure what this does yet) 
 #' @author T. Carruthers
 #' @export getGpars
-getGpars<-function(replist, seas = 1) {
+getGpars<-function(replist, seas = 1) { # This is a rip-off of SSPlotBiology
   
   nseasons <- replist$nseasons
   growdat <- replist$endgrowth[replist$endgrowth$Seas == seas, ]
@@ -758,7 +758,7 @@ SS2Data<-function(SSdir,Source="No source provided",length_timestep=NA,Name="",
   }
   
   sumF<-sumF[sumF[,2]<nyears,] # generic solution: delete partial observation of final F predictions in seasonal model (last season of last year is NA)
-  V <- array(NA, dim = c(maxage, nyears)) 
+  V <- array(0, dim = c(maxage, nyears)) 
   V[,1:(nyears-1)]<-sumF[,3] # for some reason SS doesn't predict F in final year
   
   
@@ -852,6 +852,7 @@ SS2Data<-function(SSdir,Source="No source provided",length_timestep=NA,Name="",
 
 
 
+library(r4ss)
 
 
 

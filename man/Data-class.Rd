@@ -10,155 +10,153 @@ An object for storing data for analysis using data-limited methods
 \section{Slots}{
 
 \describe{
-\item{\code{Name}}{The name of the case-study}
+\item{\code{Name}}{The name of the Data object. Single value. Character string}
 
-\item{\code{Year}}{A vector of years that correspond to catch and relative abundance data}
+\item{\code{Year}}{Years that corresponding to catch and relative abundance data. Vector nyears long. Positive integer}
 
-\item{\code{Cat}}{Total annual catches}
+\item{\code{Cat}}{Total annual catches. Matrix of nsim rows and nyears columns. Non-negative real numbers}
 
-\item{\code{Ind}}{Relative abundance index}
+\item{\code{Ind}}{Relative abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers}
 
-\item{\code{t}}{The number of years corresponding to AvC and Dt}
+\item{\code{t}}{The number of years corresponding to AvC and Dt. Single value. Positive integer}
 
-\item{\code{AvC}}{Average catch over time t}
+\item{\code{AvC}}{Average catch over time t. Vector nsim long. Positive real numbers}
 
-\item{\code{Dt}}{Depletion over time t e.g. Bnow/Bthen}
+\item{\code{Dt}}{Depletion over time t SSB(now)/SSB(now-t+1). Vector nsim long. Fraction}
 
-\item{\code{ML}}{Mean length time series}
+\item{\code{ML}}{Mean length time series. Matrix of nsim rows and nyears columns. Non-negative real numbers}
 
-\item{\code{Mort}}{Natural mortality rate}
+\item{\code{Mort}}{Natural mortality rate. Vector nsim long. Positive real numbers}
 
-\item{\code{FMSY_M}}{An assumed ratio of FMSY to M}
+\item{\code{FMSY_M}}{An assumed ratio of FMSY to M. Vector nsim long. Positive real numbers}
 
-\item{\code{BMSY_B0}}{The most productive stock size relative to unfished}
+\item{\code{BMSY_B0}}{The most productive stock size relative to unfished. Vector nsim long. Fraction}
 
-\item{\code{L50}}{Length at 50 percent maturity}
+\item{\code{L50}}{Length at 50 percent maturity. Vector nsim long. Positive real numbers}
 
-\item{\code{L95}}{Length at 95 percent maturity}
+\item{\code{L95}}{Length at 95 percent maturity. Vector nsim long. Positive real numbers}
 
-\item{\code{Lbar}}{Mean length of catches over Lc (modal length)}
+\item{\code{Lbar}}{Mean length of catches over Lc. Matrix of nsim rows and nyears columns. Positive real numbers}
 
-\item{\code{Lc}}{Modal length}
+\item{\code{Lc}}{Modal length of catches. Matrix of nsim rows and nyears columns. Positive real numbers}
 
-\item{\code{LFC}}{Length at first capture}
+\item{\code{LFC}}{Length at first capture. Matrix of nsim rows and nyears columns. Positive real numbers}
 
-\item{\code{LFS}}{smallest Length at full selection}
+\item{\code{LFS}}{Shortest length at full selection. Matrix of nsim rows and nyears columns. Positive real numbers}
 
-\item{\code{CAA}}{Catch at Age data}
+\item{\code{CAA}}{Catch at Age data. Array of dimensions nsim x nyears x MaxAge. Non-negative integers}
 
-\item{\code{Dep}}{Stock depletion Bnow/Bunfished (total stock)}
+\item{\code{Dep}}{Stock depletion SSB(current)/SSB(unfished). Vector nsim long. Fraction.}
 
-\item{\code{Abun}}{An estimate of absolute current vulnerable abundance}
+\item{\code{Abun}}{An estimate of absolute current vulnerable abundance. Vector nsim long. Positive real numbers}
 
-\item{\code{SpAbun}}{An estimate of absolute current spawning stock abundance}
+\item{\code{SpAbun}}{An estimate of absolute current spawning stock abundance. Vector nsim long. Positive real numbers}
 
-\item{\code{vbK}}{The von Bertalanffy growth coefficient}
+\item{\code{vbK}}{The von Bertalanffy growth coefficient K. Vector nsim long. Positive real numbers}
 
-\item{\code{vbLinf}}{Maximum length}
+\item{\code{vbLinf}}{Maximum length. Vector nsim long. Positive real numbers}
 
-\item{\code{vbt0}}{Theoretical age at length zero}
+\item{\code{vbt0}}{Theoretical age at length zero. Vector nsim long. Non-positive real numbers}
 
-\item{\code{LenCV}}{Coefficient of variation of length-at-age (assumed constant for all age classes)}
+\item{\code{LenCV}}{Coefficient of variation of length-at-age (assumed constant for all age classes). Vector nsim long. Positive real numbers}
 
-\item{\code{wla}}{Weight-Length parameter alpha}
+\item{\code{wla}}{Weight-Length parameter alpha. Vector nsim long. Positive real numbers}
 
-\item{\code{wlb}}{Weight-Length parameter beta}
+\item{\code{wlb}}{Weight-Length parameter beta. Vector nsim long. Positive real numbers}
 
-\item{\code{steep}}{Steepness of the Beverton Holt stock-recruitment relationship}
+\item{\code{steep}}{Steepness of stock-recruitment relationship. Vector nsim long. Value in the range of one-fifth to 1}
 
-\item{\code{CV_Cat}}{Coefficient of variation in annual catches}
+\item{\code{CV_Cat}}{Coefficient of variation in annual catches. Vector nsim long. Positive real numbers}
 
-\item{\code{CV_Dt}}{Coefficient of variation in depletion over time t}
+\item{\code{CV_Dt}}{Coefficient of variation in depletion over time t. Vector nsim long. Positive real numbers}
 
-\item{\code{CV_AvC}}{Coefficient of variation in average catches over time t}
+\item{\code{CV_AvC}}{Coefficient of variation in average catches over time t. Vector nsim long. Positive real numbers}
 
-\item{\code{CV_Ind}}{Coefficient of variation in the relative abundance index}
+\item{\code{CV_Ind}}{Coefficient of variation in the relative abundance index. Vector nsim long. Positive real numbers}
 
-\item{\code{CV_Mort}}{Coefficient of variation in natural mortality rate}
+\item{\code{CV_Mort}}{Coefficient of variation in natural mortality rate. Vector nsim long. Positive real numbers}
 
-\item{\code{CV_FMSY_M}}{Coefficient of variation in the ratio in FMSY/M}
+\item{\code{CV_FMSY_M}}{Coefficient of variation in the ratio in FMSY/M. Vector nsim long. Positive real numbers}
 
-\item{\code{CV_BMSY_B0}}{Coefficient of variation in the position of the most productive stock size relative to unfished}
+\item{\code{CV_BMSY_B0}}{Coefficient of variation in the position of the most productive stock size relative to unfished. Vector nsim long. Positive real numbers}
 
-\item{\code{CV_Dep}}{Coefficient of variation in current stock depletion}
+\item{\code{CV_Dep}}{Coefficient of variation in current stock depletion. Vector nsim long. Positive real numbers}
 
-\item{\code{CV_Abun}}{Coefficient of variation in estimate of absolute current stock size}
+\item{\code{CV_Abun}}{Coefficient of variation in estimate of absolute current stock size. Vector nsim long. Positive real numbers}
 
-\item{\code{CV_vbK}}{Coefficient of variation in the von Bert. k parameter}
+\item{\code{CV_vbK}}{Coefficient of variation in the von Bertalanffy K parameter. Vector nsim long. Positive real numbers}
 
-\item{\code{CV_vbLinf}}{Coefficient of variation in maximum length}
+\item{\code{CV_vbLinf}}{Coefficient of variation in maximum length. Vector nsim long. Positive real numbers}
 
-\item{\code{CV_vbt0}}{Coefficient of variation in age at length zero}
+\item{\code{CV_vbt0}}{Coefficient of variation in age at length zero. Vector nsim long. Positive real numbers}
 
-\item{\code{CV_L50}}{Coefficient of variation in length at 50 per cent maturity}
+\item{\code{CV_L50}}{Coefficient of variation in length at 50 per cent maturity. Vector nsim long. Positive real numbers}
 
-\item{\code{CV_LFC}}{Coefficient of variation in length at first capture}
+\item{\code{CV_LFC}}{Coefficient of variation in length at first capture. Vector nsim long. Positive real numbers}
 
-\item{\code{CV_LFS}}{Coefficient of variation in length at full selection}
+\item{\code{CV_LFS}}{Coefficient of variation in length at full selection. Vector nsim long. Positive real numbers}
 
-\item{\code{CV_wla}}{Coefficient of variation in weight-length parameter a}
+\item{\code{CV_wla}}{Coefficient of variation in weight-length parameter a. Vector nsim long. Positive real numbers}
 
-\item{\code{CV_wlb}}{Coefficient of variation in weight-length parameter b}
+\item{\code{CV_wlb}}{Coefficient of variation in weight-length parameter b. Vector nsim long. Positive real numbers}
 
-\item{\code{CV_steep}}{Coefficient of variation in steepness}
+\item{\code{CV_steep}}{Coefficient of variation in steepness. Vector nsim long. Positive real numbers}
 
-\item{\code{sigmaL}}{Assumed observaton error of the length composition data}
+\item{\code{sigmaL}}{Assumed observaton error of the length composition data. Vector nsim long. Positive real numbers}
 
-\item{\code{MaxAge}}{Maximum age}
+\item{\code{MaxAge}}{Maximum age. Vector nsim long. Positive integer}
 
-\item{\code{Units}}{Units of the catch/absolute abundance estimates}
+\item{\code{Units}}{Units of the catch/absolute abundance estimates. Single value. Character string}
 
-\item{\code{Ref}}{A reference quota level}
+\item{\code{Ref}}{A reference management level (eg a catch limit). Single value. Positive real number}
 
-\item{\code{Ref_type}}{Its type}
+\item{\code{Ref_type}}{Type of reference management level (eg 2009 catch limit). Single value. Character string}
 
-\item{\code{Log}}{A log of events}
+\item{\code{Log}}{A record of events. Single value. Character string}
 
-\item{\code{params}}{A place to store estimated parameters}
+\item{\code{params}}{A place to store estimated parameters. An object. R list}
 
-\item{\code{PosMPs}}{The methods that can be applied to these data}
+\item{\code{PosMPs}}{The methods that can be applied to these data. Vector. Character strings}
 
-\item{\code{MPs}}{The methods that were applied to these data}
+\item{\code{MPs}}{The methods that were applied to these data. Vector. Character strings}
 
-\item{\code{OM}}{A table of operating model conditions}
+\item{\code{OM}}{A table of operating model conditions. R table object of nsim rows. Real numbers}
 
-\item{\code{Obs}}{A table of observation model conditions}
+\item{\code{Obs}}{A table of observation model conditions. R table object of nsim rows. Real numbers}
 
-\item{\code{TAC}}{The calculated TAC}
+\item{\code{TAC}}{The calculated catch limits (function TAC). An array with dimensions PosMPs x replicate TAC samples x nsim. Positive real numbers}
 
-\item{\code{TACbias}}{The known bias in the calculated TAC}
+\item{\code{Sense}}{The results of the sensitivity analysis (function Sense). An array with dimensions PosMPs x sensitivity increments. Positive real numbers}
 
-\item{\code{Sense}}{The results of the sensitivity analysis}
+\item{\code{CAL_bins}}{The values delimiting the length bins for the catch-at-length data. Vector. Non-negative real numbers}
 
-\item{\code{CAL_bins}}{The length bins for the catch-at-length data}
+\item{\code{CAL}}{Catch-at-length data. An array with dimensions nsim x nyears x length(CAL_bins). Non-negative integers}
 
-\item{\code{CAL}}{Catch-at-length data}
+\item{\code{Cref}}{Reference or target catch level (eg MSY). Vector of length nsim. Positive real numbers}
 
-\item{\code{Cref}}{Reference or target catch level}
+\item{\code{Iref}}{Reference or target relative abundance index level (eg BMSY / B0). Vector of length nsim. Positive real numbers}
 
-\item{\code{Iref}}{Reference or target relative abundance index level}
+\item{\code{Bref}}{Reference or target biomass level (eg BMSY). Vector of length nsim. Positive real numbers}
 
-\item{\code{Bref}}{Reference or target biomass level}
+\item{\code{CV_Cref}}{Log-normal CV for reference or target catch level. Vector of length nsim. Positive real numbers}
 
-\item{\code{CV_Cref}}{CV for reference or target catch level}
+\item{\code{CV_Iref}}{Log-normalCV for reference or target relative abundance index level. Vector of length nsim. Positive real numbers}
 
-\item{\code{CV_Iref}}{CV for reference or target relative abundance index level}
+\item{\code{CV_Bref}}{Log-normal CV for reference or target biomass level. Vector of length nsim. Positive real numbers}
 
-\item{\code{CV_Bref}}{CV for reference or target biomass level}
+\item{\code{CV_Rec}}{Log-normal CV for recent recruitment strength. Vector of length nsim. Positive real numbers}
 
-\item{\code{CV_Rec}}{CV for recent recruitment strength}
+\item{\code{Rec}}{Recent recruitment strength. Vector of length nsim. Positive real numbers}
 
-\item{\code{Rec}}{Recent recruitment strength}
+\item{\code{MPrec}}{The previous recommendation of a management procedure. Vector of length nsim. Positive real numbers}
 
-\item{\code{MPrec}}{The previous recommendation of a management proceedure}
+\item{\code{MPeff}}{The current level of effort. Vector of length nsim. Positive real numbers}
 
-\item{\code{MPeff}}{The current level of effort}
+\item{\code{LHYear}}{The last historical year of the simulation (before projection). Single value. Positive integer}
 
-\item{\code{LHYear}}{The last historical year of the simulation (before projection)}
+\item{\code{nareas}}{Number of fishing areas. Vector of length nsim. Non-negative integer}
 
-\item{\code{nareas}}{Number of fishing areas}
-
-\item{\code{Misc}}{Optional list which is passed to MPs}
+\item{\code{Misc}}{Other information for MPs. An object. R list}
 }}
 
 \section{Objects from the Class}{
@@ -172,6 +170,6 @@ newdata<-new('Data')
 
 }
 \author{
-T. Carruthers
+T. Carruthers and A. Hordyk
 }
 \keyword{classes}

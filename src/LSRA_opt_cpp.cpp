@@ -237,15 +237,15 @@ List  LSRA_MCMC_sim(double nits, NumericVector pars,
       N(0) =  RD(y+maxage)*(0.8*R0*h*SSB(y))/(0.2*SSBpR*R0*(1-h)+(h-0.2)*SSB(y));
      
     }   
-    Rcout << "here" << "\n\n";
+    // Rcout << "here" << "\n\n";
     double CAALH = 0;
     for (int y=0; y<nyears; y++) {
-      Rcout << "y = " << y << "\n\n";
+      // Rcout << "y = " << y << "\n\n";
       NumericVector tempVec = CAA_pred(y,_);
       CAALH += sum(log(tempVec)*(CAA(y,_)/CAAadj));
     }
 
-    Rcout << "here" << "\n\n";
+    // Rcout << "here" << "\n\n";
     
     double RDLH = sum(dnorm(log(recdevs),-(pow(sigmaR,2))/2, sigmaR, true));
     // Rcout << RDLH << "\n\n";
@@ -282,5 +282,4 @@ List  LSRA_MCMC_sim(double nits, NumericVector pars,
   out[6] = sel;
   return(out);
 }
-
 

@@ -78,6 +78,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Operating Model</li>
     <li>
       <a href="../../reference/Operating_Model_Functions/index.html">Setup Operating Model</a>
     </li>
@@ -86,12 +87,18 @@
     </li>
     <li class="dropdown-header">MSE Object</li>
     <li>
+      <a href="../../reference/PMs/index.html">Peformance Metrics</a>
+    </li>
+    <li>
       <a href="../../reference/MSE_Object_Plotting_Functions/index.html">MSE Plotting Functions</a>
     </li>
     <li>
       <a href="../../reference/MSE_Object_Functions/index.html">MSE Object Functions</a>
     </li>
     <li class="dropdown-header">Fishery Data Object</li>
+    <li>
+      <a href="../../reference/import_data/index.html">Import Data</a>
+    </li>
     <li>
       <a href="../../reference/Available_Methods_and_Required_Data/index.html">Available Methods and Required Data</a>
     </li>
@@ -141,7 +148,7 @@
     <div class="page-header">
       <h1>
         Reference
-        <small>version&nbsp;4.4</small>
+        <small>version&nbsp;5.0</small>
       </h1>
     </div>
 
@@ -175,9 +182,21 @@
         </tr><tr>
           <!--  -->
           <td>
+            <p><code><a href="calcMean.html">calcMean</a></code> </p>
+          </td>
+          <td><p>Calculate Mean Probabilty</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
             <p><code><a href="CalcOutput.html">CalcOutput</a></code> </p>
           </td>
           <td><p>Apply output control recommendations and calculate population dynamics</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="calcProb.html">calcProb</a></code> </p>
+          </td>
+          <td><p>Calculate Probabilty</p></td>
         </tr><tr>
           <!--  -->
           <td>
@@ -241,21 +260,33 @@
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="DFO_hist.html">DFO_hist</a></code> </p>
+            <p><code><a href="DataDescription.html">DataDescription</a></code> </p>
           </td>
-          <td><p>Deparment of Fisheries and Oceans historical plot</p></td>
+          <td><p>DataDescription</p></td>
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="DFO_proj.html">DFO_proj</a></code> </p>
+            <p><code><a href="derive_beta_par.html">derive_beta_par</a></code> </p>
           </td>
-          <td><p>Deparment of Fisheries and Oceans projection plot</p></td>
+          <td><p>This function reduces the CV by 5 per cent until steepness values can be sampled without error</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="DLMextra.html">DLMextra</a></code> </p>
+          </td>
+          <td><p>Load more data from DLMextra package</p></td>
         </tr><tr>
           <!--  -->
           <td>
             <p><code><a href="DLMtool-package.html">DLMtool-package</a></code> </p>
           </td>
           <td><p>Data-Limited Methods Toolkit</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="dnormal.html">dnormal</a></code> </p>
+          </td>
+          <td><p>Double-normal selectivity curve</p></td>
         </tr><tr>
           <!--  -->
           <td>
@@ -280,6 +311,12 @@
             <p><code><a href="fetch.file.names.html">fetch.file.names</a></code> </p>
           </td>
           <td><p>Reads iSCAM Data, Control and Projection files</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="FleetDescription.html">FleetDescription</a></code> </p>
+          </td>
+          <td><p>FleetDescription</p></td>
         </tr><tr>
           <!--  -->
           <td>
@@ -325,15 +362,15 @@
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="GetMoreData.html">GetMoreData</a></code> </p>
-          </td>
-          <td><p>Load more data from DLMdata package</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
             <p><code><a href="getq3.html">getq3</a></code> </p>
           </td>
           <td><p>optimize for catchability (q)</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="getsel.html">getsel</a></code> </p>
+          </td>
+          <td><p>Calculate selectivity curve</p></td>
         </tr><tr>
           <!--  -->
           <td>
@@ -349,33 +386,15 @@
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="ICI.html">ICI</a></code> </p>
+            <p><code><a href="ImpDescription.html">ImpDescription</a></code> </p>
           </td>
-          <td><p>Index Confidence Interval (ICI) MP by Jardim et al. (2015)</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="ICI2.html">ICI2</a></code> </p>
-          </td>
-          <td><p>Less Precautionary Index Confidence Interval (ICI) MP by Jardim et al. (2015)</p></td>
+          <td><p>ImpDescription</p></td>
         </tr><tr>
           <!--  -->
           <td>
             <p><code><a href="initialize-methods.html">initialize-methods</a></code> </p>
           </td>
           <td><p>~~ Methods for Function <code>initialize</code> ~~</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="Iratio.html">Iratio</a></code> </p>
-          </td>
-          <td><p>Mean index ratio MP from Jardim et al. 2015</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="iSCAM2Data.html">iSCAM2Data</a></code> </p>
-          </td>
-          <td><p>Reads data from iSCAM file structure into a DLMtool Data object</p></td>
         </tr><tr>
           <!--  -->
           <td>
@@ -400,19 +419,6 @@
             <p><code><a href="load.iscam.files.html">load.iscam.files</a></code> </p>
           </td>
           <td><p>Reads iSCAM files into a hierarchical R list object</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="Lratio_BHI.html">Lratio_BHI</a></code> </p>
-          </td>
-          <td><p>Mean length-based indicator MP of Jardim et al. 2015 using Beverton-Holt invariant 
-M/K ratio = 1.5 and assumes FMSY = M.</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
-            <p><code><a href="Lratio_BHI2.html">Lratio_BHI2</a></code> </p>
-          </td>
-          <td><p>The more general version of the mean length-based indicator MP of Jardim et al. 2015.</p></td>
         </tr><tr>
           <!--  -->
           <td>
@@ -458,15 +464,33 @@ M/K ratio = 1.5 and assumes FMSY = M.</p></td>
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="optBH.html">optBH</a></code> </p>
+            <p><code><a href="ObsDescription.html">ObsDescription</a></code> </p>
           </td>
-          <td><p>Wrapper for estimating stock recruitment parameters from resampled stock-recruitment data</p></td>
+          <td><p>ObsDescription</p></td>
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="optF.html">optF</a></code> </p>
+            <p><code><a href="OM_xl.html">OM_xl</a></code> </p>
           </td>
-          <td><p>Internal function to optimize for F</p></td>
+          <td><p>Read in operating model parameters from Excel spreadsheet</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="OMDescription.html">OMDescription</a></code> </p>
+          </td>
+          <td><p>OMDescription</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="OMexample.html">OMexample</a></code> </p>
+          </td>
+          <td><p>Copy example OM XL and OM Documentation</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="optBH.html">optBH</a></code> </p>
+          </td>
+          <td><p>Wrapper for estimating stock recruitment parameters from resampled stock-recruitment data</p></td>
         </tr><tr>
           <!--  -->
           <td>
@@ -590,6 +614,12 @@ M/K ratio = 1.5 and assumes FMSY = M.</p></td>
         </tr><tr>
           <!--  -->
           <td>
+            <p><code><a href="sample_steepness2.html">sample_steepness2</a></code> </p>
+          </td>
+          <td><p>Sample steepness given mean and cv</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
             <p><code><a href="SampleCpars.html">SampleCpars</a></code> </p>
           </td>
           <td><p>Sample custom pars</p></td>
@@ -623,6 +653,12 @@ M/K ratio = 1.5 and assumes FMSY = M.</p></td>
             <p><code><a href="sampy.html">sampy</a></code> </p>
           </td>
           <td><p>Sample vector</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="show-MSE.html">show</a></code> </p>
+          </td>
+          <td><p>Show the output of a PM</p></td>
         </tr><tr>
           <!--  -->
           <td>
@@ -662,15 +698,15 @@ M/K ratio = 1.5 and assumes FMSY = M.</p></td>
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="SS2Data.html">SS2Data</a></code> </p>
-          </td>
-          <td><p>Reads data Stock Synthesis file structure into an data object using package r4ss</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
             <p><code><a href="StochasticSRA2.html">StochasticSRA2</a></code> </p>
           </td>
           <td><p>Stochastic SRA construction of operating models</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="StockDescription.html">StockDescription</a></code> </p>
+          </td>
+          <td><p>StockDescription</p></td>
         </tr><tr>
           <!--  -->
           <td>
@@ -698,15 +734,15 @@ M/K ratio = 1.5 and assumes FMSY = M.</p></td>
         </tr><tr>
           <!--  -->
           <td>
-            <p><code><a href="userguide.html">userguide</a></code> </p>
-          </td>
-          <td><p>Open the DLMtool User Guide</p></td>
-        </tr><tr>
-          <!--  -->
-          <td>
             <p><code><a href="validcpars.html">validcpars</a></code> </p>
           </td>
           <td><p>Valid custom parameters (cpars)</p></td>
+        </tr><tr>
+          <!--  -->
+          <td>
+            <p><code><a href="writeCSV.html">writeCSV</a></code> </p>
+          </td>
+          <td><p>Internal function to write CSVs for objects</p></td>
         </tr>
       </tbody>
       </table>

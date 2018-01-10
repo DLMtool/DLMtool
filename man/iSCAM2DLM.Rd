@@ -4,7 +4,7 @@
 \alias{iSCAM2DLM}
 \title{Reads MLE estimates from iSCAM file structure into an operating model}
 \usage{
-iSCAM2DLM(iSCAMdir, nsim = 48, proyears = 50, Name = NULL,
+iSCAM2DLM(iSCAMdir, nsim = 48, proyears = 50, mcmc = F, Name = NULL,
   Source = "No source provided", length_timestep = 1,
   Author = "No author provided")
 }
@@ -15,6 +15,8 @@ iSCAM2DLM(iSCAMdir, nsim = 48, proyears = 50, Name = NULL,
 uncertainty (for OM@cpars custom parameters)}
 
 \item{proyears}{The number of MSE projection years}
+
+\item{mcmc}{Whether to use mcmc samples to create custom parameters cpars}
 
 \item{Name}{The name of the operating model}
 

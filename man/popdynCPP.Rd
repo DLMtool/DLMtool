@@ -4,9 +4,9 @@
 \alias{popdynCPP}
 \title{Population dynamics model in CPP}
 \usage{
-popdynCPP(nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc, Prec,
-  movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc, Fapic, maxF,
-  control)
+popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge, Vuln,
+  Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc,
+  Fapic, maxF, MPA, control)
 }
 \arguments{
 \item{nareas}{The number of spatial areas}
@@ -18,6 +18,8 @@ popdynCPP(nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc, Prec,
 \item{pyears}{The number of years to project the population forward}
 
 \item{M_age}{Numeric matrix (maxage, pyears) with natural mortality by age and year}
+
+\item{Asize_c}{Numeric vector (length nareas) with size of each area}
 
 \item{MatAge}{Numeric vector with proportion mature by age}
 
@@ -50,6 +52,8 @@ popdynCPP(nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc, Prec,
 \item{Fapic}{Numeric. Apical F value}
 
 \item{maxF}{A numeric value specifying the maximum fishing mortality for any single age class}
+
+\item{MPA}{Spatial closure by year and area}
 
 \item{control}{Integer. 1 to use q and effort to calculate F, 2 to use Fapic (apical F) and 
 vulnerablity to calculate F.}

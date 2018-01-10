@@ -78,6 +78,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Operating Model</li>
     <li>
       <a href="../../reference/Operating_Model_Functions/index.html">Setup Operating Model</a>
     </li>
@@ -86,12 +87,18 @@
     </li>
     <li class="dropdown-header">MSE Object</li>
     <li>
+      <a href="../../reference/PMs/index.html">Peformance Metrics</a>
+    </li>
+    <li>
       <a href="../../reference/MSE_Object_Plotting_Functions/index.html">MSE Plotting Functions</a>
     </li>
     <li>
       <a href="../../reference/MSE_Object_Functions/index.html">MSE Object Functions</a>
     </li>
     <li class="dropdown-header">Fishery Data Object</li>
+    <li>
+      <a href="../../reference/import_data/index.html">Import Data</a>
+    </li>
     <li>
       <a href="../../reference/Available_Methods_and_Required_Data/index.html">Available Methods and Required Data</a>
     </li>
@@ -151,41 +158,35 @@
 
     
     <dl class='dl-horizontal'>
-<dt><code>Name</code></dt><dd><p>The name of the observation model object</p></dd>
-    <dt><code>Cobs</code></dt><dd><p>Log-normal catch observation error expressed as a coefficient of variation (uniform distribution)</p></dd>
-    <dt><code>Cbiascv</code></dt><dd><p>A coefficient of variation controlling the sampling of bias in catch observations for each simulation (uniform distribution)</p></dd>
-    <dt><code>CAA_nsamp</code></dt><dd><p>Number of catch-at-age observation per time step (uniform distribution)</p></dd>
-    <dt><code>CAA_ESS</code></dt><dd><p>Effective sample size (independent age draws) of the multinomial catch-at-age observation error model (uniform distribution)</p></dd>
-    <dt><code>CAL_nsamp</code></dt><dd><p>Number of catch-at-length observation per time step (uniform distribution)</p></dd>
-    <dt><code>CAL_ESS</code></dt><dd><p>Effective sample size (independent length draws) of the multinomial catch-at-length observation error model (uniform distribution)</p></dd>
-    <dt><code>CALcv</code></dt><dd><p>Lognormal, variability in the Cv of length-at-age (uniform distribution)</p></dd>
-    <dt><code>Iobs</code></dt><dd><p>Observation error in the relative abundance indices expressed as a coefficient of variation (uniform distribution)</p></dd>
-    <dt><code>Mcv</code></dt><dd><p>Persistent bias in the prescription of natural mortality rate sampled from a log-normal distribution with coefficient of variation (Mcv)(uniform distribution)</p></dd>
-    <dt><code>Kcv</code></dt><dd><p>Persistent bias in the prescription of growth parameter k sampled from a log-normal distribution with coefficient of variation (Kcv)(uniform distribution)</p></dd>
-    <dt><code>t0cv</code></dt><dd><p>Persistent bias in the prescription of t0 sampled from a log-normal distribution with coefficient of variation (t0cv)(uniform distribution)</p></dd>
-    <dt><code>Linfcv</code></dt><dd><p>Persistent bias in the prescription of maximum length sampled from a log-normal distribution with coefficient of variation (Linfcv)(uniform distribution)</p></dd>
-    <dt><code>LFCcv</code></dt><dd><p>Persistent bias in the prescription of lenght at first capture sampled from a log-normal distribution with coefficient of variation (LFCcv)(uniform distribution)</p></dd>
-    <dt><code>LFScv</code></dt><dd><p>Persistent bias in the prescription of length-at-fully selection sampled from a log-normal distribution with coefficient of variation (LFScv)(uniform distribution)</p></dd>
-    <dt><code>B0cv</code></dt><dd><p>Persistent bias in the prescription of maximum lengthunfished biomass sampled from a log-normal distribution with coefficient of variation (B0cv)(uniform distribution)</p></dd>
-    <dt><code>FMSYcv</code></dt><dd><p>Persistent bias in the prescription of FMSY sampled from a log-normal distribution with coefficient of variation (FMSYcv)(uniform distribution)</p></dd>
-    <dt><code>FMSY_Mcv</code></dt><dd><p>Persistent bias in the prescription of FMSY/M sampled from a log-normal distribution with coefficient of variation (FMSY_cv)(uniform distribution)</p></dd>
-    <dt><code>BMSY_B0cv</code></dt><dd><p>Persistent bias in the prescription of BMsY relative to unfished sampled from a log-normal distribution with coefficient of variation (BMSY_B0cv)(uniform distribution)</p></dd>
-    <dt><code>rcv</code></dt><dd><p>Persistent bias in the prescription of intrinsic rate of increase sampled from a log-normal distribution with coefficient of variation (rcv)(uniform distribution)</p></dd>
-    <dt><code>LenMcv</code></dt><dd><p>Persistent bias in the prescription of length at 50 percent maturity sampled from a log-normal distribution with coefficient of variation (A50cv)(uniform distribution)</p></dd>
-    <dt><code>Dbiascv</code></dt><dd><p>Persistent bias in the prescription of stock depletion sampled from a log-normal distribution with coefficient of variation (Linfcv)(uniform distribution)</p></dd>
-    <dt><code>Dcv</code></dt><dd><p>Imprecision in the prescription of stock depletion among years, expressed as a coefficient of variation (uniform distribution)</p></dd>
-    <dt><code>Btbias</code></dt><dd><p>Persistent bias in the prescription of current stock biomass sampled from a uniform-log distribution with range (Btbias)(uniform distribution)</p></dd>
-    <dt><code>Btcv</code></dt><dd><p>Imprecision in the prescription of current stock biomass among years expressed as a coefficient of variation (uniform distribution)</p></dd>
-    <dt><code>Fcurbiascv</code></dt><dd><p>Persistent bias in the prescription of current fishing mortality rate sampled from a log-normal distribution with coefficient of variation (Fcurcv)(uniform distribution)</p></dd>
-    <dt><code>Fcurcv</code></dt><dd><p>Imprecision in the prescription of current fishing mortality rate among years expressed as a coefficient of variation (uniform distribution)</p></dd>
-    <dt><code>hcv</code></dt><dd><p>Persistent bias in steepness (uniform distribution)</p></dd>
-    <dt><code>Icv</code></dt><dd><p>Observation error in realtive abundance index expressed as a coefficient of variation (uniform distirbution)</p></dd>
-    <dt><code>maxagecv</code></dt><dd><p>Bias in the prescription of maximum age (uniform distribution)</p></dd>
-    <dt><code>beta</code></dt><dd><p>A parameter controlling hyperstability/hyperdepletion. I^beta therefore values below 1 lead to hyperstability (an index that decreases slower than true abundance) and values above 1 lead to hyperdepletion (an index that decreases more rapidly than true abundance)(uniform distribution)</p></dd>
-    <dt><code>Reccv</code></dt><dd><p>Bias in the knowledge of recent recruitment strength (uniform distribution)</p></dd>
-    <dt><code>Irefcv</code></dt><dd><p>Bias in the knowledge of the relative abundance index at BMSY (uniform distribution)</p></dd>
-    <dt><code>Brefcv</code></dt><dd><p>Bias in the knowledge of BMSY (uniform distribution)</p></dd>
-    <dt><code>Crefcv</code></dt><dd><p>Bias in the knowledge of MSY(uniform distribution)</p></dd>
+<dt><code>Name</code></dt><dd><p>The name of the observation model object. Single value. Character string.</p></dd>
+    <dt><code>Cobs</code></dt><dd><p>Log-normal catch observation error expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>Cbiascv</code></dt><dd><p>Log-normal coefficient of variation controlling the sampling of bias in catch observations for each simulation. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>CAA_nsamp</code></dt><dd><p>Number of catch-at-age observation per time step. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>CAA_ESS</code></dt><dd><p>Effective sample size (independent age draws) of the multinomial catch-at-age observation error model. Uniform distribution lower and upper bounds. Positive integers</p></dd>
+    <dt><code>CAL_nsamp</code></dt><dd><p>Number of catch-at-length observation per time step. Uniform distribution lower and upper bounds. Positive integers</p></dd>
+    <dt><code>CAL_ESS</code></dt><dd><p>Effective sample size (independent length draws) of the multinomial catch-at-length observation error model. Uniform distribution lower and upper bounds. Positive integers</p></dd>
+    <dt><code>Iobs</code></dt><dd><p>Observation error in the relative abundance indices expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Ibiascv</code></dt><dd><p>Log-normal coefficient of variation controlling error in observations of relative abundance index. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Btobs</code></dt><dd><p>Log-normal coefficient of variation controlling error in observations of current stock biomass among years. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Btbiascv</code></dt><dd><p>Uniform-log bounds for sampling persistent bias in current stock biomass. Uniform-log distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>beta</code></dt><dd><p>A parameter controlling hyperstability/hyperdepletion where values below 1 lead to hyperstability (an index that decreases slower than true abundance) and values above 1 lead to hyperdepletion (an index that decreases more rapidly than true abundance). Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>LenMbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in length at 50 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Mbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in observed natural mortality rate. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Kbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in observed growth parameter K. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>t0biascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in observed t0. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Linfbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in observed maximum length. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>LFCbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in observed length at first capture. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>LFSbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in length-at-full selection. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>FMSYbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in FMSY. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>FMSY_Mbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in FMSY/M. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>BMSY_B0biascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in BMSY relative to unfished. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Irefbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in relative abundance index at BMSY. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Brefbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in BMSY. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Crefbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in MSY. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Dbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in stock depletion. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Dobs</code></dt><dd><p>Log-normal coefficient of variation controlling error in observations of stock depletion among years. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>hbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in steepness. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Recbiascv</code></dt><dd><p>Log-normal coefficient of variation for sampling persistent bias in recent recruitment strength. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
 </dl>
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
@@ -207,24 +208,24 @@ hyperdeplete beta &gt; 1, only.</p>
 <span class='fu'>showClass</span>(<span class='st'>'Obs'</span>)</div><div class='output co'>#&gt; Class "Obs" [package "DLMtool"]
 #&gt; 
 #&gt; Slots:
-#&gt;                                                                         
-#&gt; Name:        Name     LenMcv       Cobs    Cbiascv  CAA_nsamp    CAA_ESS
-#&gt; Class:  character    numeric    numeric    numeric    numeric    numeric
-#&gt;                                                                         
-#&gt; Name:   CAL_nsamp    CAL_ESS      CALcv       Iobs        Mcv        Kcv
-#&gt; Class:    numeric    numeric    numeric    numeric    numeric    numeric
-#&gt;                                                                         
-#&gt; Name:        t0cv     Linfcv      LFCcv      LFScv       B0cv     FMSYcv
-#&gt; Class:    numeric    numeric    numeric    numeric    numeric    numeric
-#&gt;                                                                         
-#&gt; Name:    FMSY_Mcv  BMSY_B0cv        rcv    Dbiascv        Dcv     Btbias
-#&gt; Class:    numeric    numeric    numeric    numeric    numeric    numeric
-#&gt;                                                                         
-#&gt; Name:        Btcv Fcurbiascv     Fcurcv        hcv        Icv   maxagecv
-#&gt; Class:    numeric    numeric    numeric    numeric    numeric    numeric
-#&gt;                                                              
-#&gt; Name:       Reccv     Irefcv     Crefcv     Brefcv       beta
-#&gt; Class:    numeric    numeric    numeric    numeric    numeric
+#&gt;                                                                             
+#&gt; Name:           Name          Cobs       Cbiascv     CAA_nsamp       CAA_ESS
+#&gt; Class:     character       numeric       numeric       numeric       numeric
+#&gt;                                                                             
+#&gt; Name:      CAL_nsamp       CAL_ESS          Iobs       Ibiascv         Btobs
+#&gt; Class:       numeric       numeric       numeric       numeric       numeric
+#&gt;                                                                             
+#&gt; Name:       Btbiascv          beta    LenMbiascv       Mbiascv       Kbiascv
+#&gt; Class:       numeric       numeric       numeric       numeric       numeric
+#&gt;                                                                             
+#&gt; Name:       t0biascv    Linfbiascv     LFCbiascv     LFSbiascv    FMSYbiascv
+#&gt; Class:       numeric       numeric       numeric       numeric       numeric
+#&gt;                                                                             
+#&gt; Name:   FMSY_Mbiascv BMSY_B0biascv    Irefbiascv    Crefbiascv    Brefbiascv
+#&gt; Class:       numeric       numeric       numeric       numeric       numeric
+#&gt;                                                               
+#&gt; Name:        Dbiascv          Dobs       hbiascv     Recbiascv
+#&gt; Class:       numeric       numeric       numeric       numeric
 #&gt; 
 #&gt; Known Subclasses: "OM"</div><div class='input'>
 </div></pre>
@@ -244,7 +245,7 @@ hyperdeplete beta &gt; 1, only.</p>
 
     <h2>Author</h2>
     
-T. Carruthers
+T. Carruthers and A. Hordyk
 
   </div>
 </div>

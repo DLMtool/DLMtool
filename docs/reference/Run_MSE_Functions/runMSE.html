@@ -78,6 +78,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Operating Model</li>
     <li>
       <a href="../../reference/Operating_Model_Functions/index.html">Setup Operating Model</a>
     </li>
@@ -86,12 +87,18 @@
     </li>
     <li class="dropdown-header">MSE Object</li>
     <li>
+      <a href="../../reference/PMs/index.html">Peformance Metrics</a>
+    </li>
+    <li>
       <a href="../../reference/MSE_Object_Plotting_Functions/index.html">MSE Plotting Functions</a>
     </li>
     <li>
       <a href="../../reference/MSE_Object_Functions/index.html">MSE Object Functions</a>
     </li>
     <li class="dropdown-header">Fishery Data Object</li>
+    <li>
+      <a href="../../reference/import_data/index.html">Import Data</a>
+    </li>
     <li>
       <a href="../../reference/Available_Methods_and_Required_Data/index.html">Available Methods and Required Data</a>
     </li>
@@ -148,9 +155,10 @@ simulation) for a specified operating model</p>
     
 
     <pre class="usage"><span class='fu'>runMSE</span>(<span class='kw'>OM</span> <span class='kw'>=</span> <span class='kw'>DLMtool</span><span class='kw'>::</span><span class='no'>testOM</span>, <span class='kw'>MPs</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"AvC"</span>, <span class='st'>"DCAC"</span>, <span class='st'>"FMSYref"</span>, <span class='st'>"curE"</span>,
-  <span class='st'>"matlenlim"</span>), <span class='kw'>nsim</span> <span class='kw'>=</span> <span class='fl'>48</span>, <span class='kw'>proyears</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>pstar</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>maxF</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>timelimit</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>CheckMPs</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>Hist</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>ntrials</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>fracD</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='kw'>CalcBlow</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>HZN</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>Bfrac</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)</pre>
+  <span class='st'>"matlenlim"</span>, <span class='st'>"MRreal"</span>), <span class='kw'>nsim</span> <span class='kw'>=</span> <span class='fl'>48</span>, <span class='kw'>proyears</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fl'>4</span>,
+  <span class='kw'>pstar</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>maxF</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>CheckMPs</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>timelimit</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>Hist</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>ntrials</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>fracD</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='kw'>CalcBlow</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>HZN</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>Bfrac</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -177,33 +185,37 @@ if OM object contains the slot 'proyears'.</p></td>
     <tr>
       <th>interval</th>
       <td><p>The assessment interval - how often would you like to update
-the management system?</p></td>
+the management system? NOTE: since DLMtool V4.5 this slot is included in the 
+OM object which will override the value used here. This slot to be deprecated in the future.</p></td>
     </tr>
     <tr>
       <th>pstar</th>
       <td><p>The percentile of the sample of the management recommendation
-for each method</p></td>
+for each method. NOTE: since DLMtool V4.5 this slot is included in the 
+OM object which will override the value used here. This slot to be deprecated in the future.</p></td>
     </tr>
     <tr>
       <th>maxF</th>
       <td><p>Maximum instantaneous fishing mortality rate that may be
-simulated for any given age class</p></td>
-    </tr>
-    <tr>
-      <th>timelimit</th>
-      <td><p>Maximum time taken for a method to carry out 10 reps
-(methods are ignored that take longer)</p></td>
+simulated for any given age class. NOTE: since DLMtool V4.5 this slot is included in the 
+OM object which will override the value used here. This slot to be deprecated in the future.</p></td>
     </tr>
     <tr>
       <th>reps</th>
       <td><p>Number of samples of the management recommendation for each
 method. Note that when this is set to 1, the mean value of the data inputs
-is used.</p></td>
+is used. NOTE: since DLMtool V4.5 this slot is included in the 
+OM object which will override the value used here. This slot to be deprecated in the future.</p></td>
     </tr>
     <tr>
       <th>CheckMPs</th>
       <td><p>Logical to indicate if Can function should be used to check
 if MPs can be run.</p></td>
+    </tr>
+    <tr>
+      <th>timelimit</th>
+      <td><p>Maximum time taken for a method to carry out 10 reps
+(methods are ignored that take longer)</p></td>
     </tr>
     <tr>
       <th>Hist</th>

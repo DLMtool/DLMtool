@@ -78,6 +78,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Operating Model</li>
     <li>
       <a href="../../reference/Operating_Model_Functions/index.html">Setup Operating Model</a>
     </li>
@@ -86,12 +87,18 @@
     </li>
     <li class="dropdown-header">MSE Object</li>
     <li>
+      <a href="../../reference/PMs/index.html">Peformance Metrics</a>
+    </li>
+    <li>
       <a href="../../reference/MSE_Object_Plotting_Functions/index.html">MSE Plotting Functions</a>
     </li>
     <li>
       <a href="../../reference/MSE_Object_Functions/index.html">MSE Object Functions</a>
     </li>
     <li class="dropdown-header">Fishery Data Object</li>
+    <li>
+      <a href="../../reference/import_data/index.html">Import Data</a>
+    </li>
     <li>
       <a href="../../reference/Available_Methods_and_Required_Data/index.html">Available Methods and Required Data</a>
     </li>
@@ -152,13 +159,13 @@ simulation conditions and performance of data-limited methods</p>
 
     
     <dl class='dl-horizontal'>
-<dt><code>Name</code></dt><dd><p>Name of the MSE object</p></dd>
-    <dt><code>nyears</code></dt><dd><p>The number of years for the historical simulation</p></dd>
-    <dt><code>proyears</code></dt><dd><p>The number of years for the projections - closed loop simulations</p></dd>
-    <dt><code>nMPs</code></dt><dd><p>Number of management procedures simulation tested</p></dd>
-    <dt><code>MPs</code></dt><dd><p>The names of the MPs that were tested</p></dd>
-    <dt><code>nsim</code></dt><dd><p>Number of simulations</p></dd>
-    <dt><code>OM</code></dt><dd><p>A table of nsim rows with a column for each sampled parameter of the operating model
+<dt><code>Name</code></dt><dd><p>Name of the MSE object. Single value. Character string</p></dd>
+    <dt><code>nyears</code></dt><dd><p>The number of years for the historical simulation. Single value. Positive integer</p></dd>
+    <dt><code>proyears</code></dt><dd><p>The number of years for the projections - closed loop simulations. Single value. Positive integer</p></dd>
+    <dt><code>nMPs</code></dt><dd><p>Number of management procedures simulation tested. Single value. Positive integer.</p></dd>
+    <dt><code>MPs</code></dt><dd><p>The names of the MPs that were tested. Vector of length nMPs. Character strings.</p></dd>
+    <dt><code>nsim</code></dt><dd><p>Number of simulations. Single value. Positive integer</p></dd>
+    <dt><code>OM</code></dt><dd><p>A table of sampled parameter of the operating model. Table object of nsim rows. Real numbers
  <ul>
 <li><p>RefY: reference yield, the highest long-term yield (mean over last five years of projection) obtained from a fixed F strategy. This is a useful reference point for framing performance of MPs because it standardizes for starting point and future productivity.</p></li>
 <li><p>M: instantaneous natural mortality rate</p></li>
@@ -174,7 +181,6 @@ simulation conditions and performance of data-limited methods</p>
 <li><p>MSY: Maximum Sustainable Yield</p></li>
 <li><p>qinc: mean percentage increase in fishing efficiency (catchability) in projected years (input controls only)</p></li>
 <li><p>qcv: interannual variability in future fishing efficiency (catchability) in projected years (input controls only)</p></li>
-<li><p>CALcv: variability in lengths at age around the growth curve (normal CV)</p></li>
 <li><p>FMSY: Fishing mortality rate at Maximum Sustainable Yield</p></li>
 <li><p>Linf: maximum length (von Bertalanffy Linf parameter)</p></li>
 <li><p>K: maximum growth rate (von Bertalanffy K parameter)</p></li>
@@ -183,7 +189,6 @@ simulation conditions and performance of data-limited methods</p>
 <li><p>Linfgrad: mean gradient in maximum length (per cent per time step)</p></li>
 <li><p>Kgrad: mean gradient in maximum growth rate (per cent per time step)</p></li>
 <li><p>Linfsd: interannual variability in maximum length (log normal CV)</p></li>
-<li><p>recgrad: gradient in recruitment strength (age 1 population numbers) over last 10 years of historical simulations</p></li>
 <li><p>Ksd: interannual variability in maximum growth rate (log normal CV)</p></li>
 <li><p>ageM: age at 50 per cent maturity</p></li>
 <li><p>LFS: length at full selection (the shortest length class where fishery selectivity is 100 per cent)</p></li>
@@ -192,11 +197,12 @@ simulation conditions and performance of data-limited methods</p>
 <li><p>LFC: length at first capture, the smallest length that can be caught by the gear</p></li>
 <li><p>OFLreal: the true simulated Over Fishing Limit (FMSY x biomass) updated in each management update of the projection</p></li>
 <li><p>Spat_targ: spatial targetting parameter, fishing mortality rate across areas is proportional to vulnerable biomass raised to the power of this number.</p></li>
+<li><p>Size_area_1: The size of area 1 relative to area 2</p></li>
 <li><p>Frac_area_1: the fraction of unfished biomass inhabiting area 1 (can be seen as fraction of habitat in area 1 or relative size of area 1)</p></li>
 <li><p>Prob_staying: the probability that individuals in area 1 remain there between time-steps</p></li>
 <li><p>AC: autocorrelation in recruitment</p></li>
 </ul></p></dd>
-    <dt><code>Obs</code></dt><dd><p>A table of nsim rows with a column for each sampled parameter of the observation model
+    <dt><code>Obs</code></dt><dd><p>A table of sampled parameters of the observation model. Table of nsim rows. Real numbers
 <ul>
 <li><p>Cbias: bias in observed catches</p></li>
 <li><p>Csd: observation error in observed catches (lognormal CV)</p></li>
@@ -221,22 +227,22 @@ simulation conditions and performance of data-limited methods</p>
 <li><p>Crefbias: bias in MSY prediction (target or reference catch)</p></li>
 <li><p>Brefbias: bias in BMSY stock levels (target or reference biomass levels)</p></li>
 </ul></p></dd>
-    <dt><code>B_BMSY</code></dt><dd><p>Stored biomass relative to BMSY over the projection (an array with dimensions nsim, nMPs, proyears)</p></dd>
-    <dt><code>F_FMSY</code></dt><dd><p>Stored fishing mortality rate relative to FMSY over the projection (an array with dimensions nsim, nMPs, proyears)</p></dd>
-    <dt><code>B</code></dt><dd><p>Stored stock biomass over the projection (an array with dimensions nsim, nMPs, proyears)</p></dd>
-    <dt><code>SSB</code></dt><dd><p>Stored spawning stock biomass over the projection (an array with dimensions nsim, nMPs, proyears)</p></dd>
-    <dt><code>VB</code></dt><dd><p>Stored vulnerable biomass over the projection (an array with dimensions nsim, nMPs, proyears)</p></dd>
-    <dt><code>FM</code></dt><dd><p>Stored fishing mortality rate over the projection (an array with dimensions nsim, nMPs, proyears)</p></dd>
-    <dt><code>C</code></dt><dd><p>Stored catches (taken) over the projection (an array with dimensions nsim, nMPs, proyears)</p></dd>
-    <dt><code>TAC</code></dt><dd><p>Stored Total Allowable Catch (prescribed) over the projection (an array with dimensions nsim, nMPs, proyears)(note that this is NA for input controls)</p></dd>
-    <dt><code>SSB_hist</code></dt><dd><p>Stored historical spawning stock biomass (historical simulations - an array with dimensions nsim, nages, nyears, nareas)</p></dd>
-    <dt><code>CB_hist</code></dt><dd><p>Stored historical catches in weight (historical simulations - an array with dimensions nsim, nages, nyears, nareas)</p></dd>
-    <dt><code>FM_hist</code></dt><dd><p>Stored historical fishing mortality rate (historical simulations - an array with dimensions nsim, nages, nyears, nareas)</p></dd>
-    <dt><code>Effort</code></dt><dd><p>Stored relative fishing effort in the projection years</p></dd>
-    <dt><code>PAA</code></dt><dd><p>Population at age in last projection year (an array with dimensions nsim, nMPs, nages)</p></dd>
-    <dt><code>CAA</code></dt><dd><p>Catch at age in last projection year (an array with dimensions nsim, nMPs, nages)</p></dd>
-    <dt><code>CAL</code></dt><dd><p>Catch at length in last projection year (an array with dimensions nsim, nMPs, nCALbins)</p></dd>
-    <dt><code>CALbins</code></dt><dd><p>Mid-points of the catch-at-length bins</p></dd>
+    <dt><code>B_BMSY</code></dt><dd><p>Simulated biomass relative to BMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
+    <dt><code>F_FMSY</code></dt><dd><p>Simulated fishing mortality rate relative to FMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
+    <dt><code>B</code></dt><dd><p>Simulated stock biomass over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
+    <dt><code>SSB</code></dt><dd><p>Simulated spawning stock biomass over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
+    <dt><code>VB</code></dt><dd><p>Simulated vulnerable biomass over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
+    <dt><code>FM</code></dt><dd><p>Simulated fishing mortality rate over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
+    <dt><code>C</code></dt><dd><p>Simulated catches (taken) over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
+    <dt><code>TAC</code></dt><dd><p>Simulated Total Allowable Catch (prescribed) over the projection (this is NA for input controls). An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
+    <dt><code>SSB_hist</code></dt><dd><p>Simulated historical spawning stock biomass. An array with dimensions: nsim, nages, nMPs, proyears. Non-negative real numbers</p></dd>
+    <dt><code>CB_hist</code></dt><dd><p>Simulated historical catches in weight. An array with dimensions: nsim, nages, nMPs, proyears. Non-negative real numbers</p></dd>
+    <dt><code>FM_hist</code></dt><dd><p>Simulated historical fishing mortality rate. An array with dimensions: nsim, nages, nMPs, proyears. Non-negative real numbers</p></dd>
+    <dt><code>Effort</code></dt><dd><p>Simulated relative fishing effort in the projection years. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
+    <dt><code>PAA</code></dt><dd><p>Population at age in last projection year. An array with dimensions: nsim, nMPs, nages. Non-negative real numbers</p></dd>
+    <dt><code>CAA</code></dt><dd><p>Catch at age in last projection year. An array with dimensions: nsim, nMPs, nages. Non-negative real numbers</p></dd>
+    <dt><code>CAL</code></dt><dd><p>Catch at length in last projection year. An array with dimensions: nsim, nMPs, nCALbins. Non-negative real numbers</p></dd>
+    <dt><code>CALbins</code></dt><dd><p>Mid-points of the catch-at-length bins. Vector of length nCALbins. Positive real numbers.</p></dd>
 </dl>
     
     <h2 class="hasAnchor" id="objects-from-the-class"><a class="anchor" href="#objects-from-the-class"></a>Objects from the Class</h2>

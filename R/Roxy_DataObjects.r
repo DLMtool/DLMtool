@@ -2,6 +2,13 @@
 # Don't edit by hand!
 # 
 
+#'  SimulatedData Data
+#'
+#'  An object of class Data
+#'
+"SimulatedData"
+
+
 #'  Albacore Stock
 #'
 #'  An object of class Stock
@@ -142,11 +149,11 @@
 "Generic_FlatE"
 
 
-#'  Generic_fleet Fleet
+#'  Generic_Fleet Fleet
 #'
 #'  An object of class Fleet
 #'
-"Generic_fleet"
+"Generic_Fleet"
 
 
 #'  Generic_IncE Fleet
@@ -191,11 +198,11 @@
 "Targeting_Small_Fish"
 
 
-#'  Generic_obs Obs
+#'  Generic_Obs Obs
 #'
 #'  An object of class Obs
 #'
-"Generic_obs"
+"Generic_Obs"
 
 
 #'  Imprecise_Biased Obs
@@ -322,5 +329,47 @@
 #'  An object of class OM
 #'
 "testOM"
+
+
+#'  StockDescription 
+#'
+#'  A data.frame with description of slots for class Stock
+#'
+"StockDescription"
+
+
+#'  FleetDescription 
+#'
+#'  A data.frame with description of slots for class Fleet
+#'
+"FleetDescription"
+
+
+#'  ObsDescription 
+#'
+#'  A data.frame with description of slots for class Obs
+#'
+"ObsDescription"
+
+
+#'  ImpDescription 
+#'
+#'  A data.frame with description of slots for class Imp
+#'
+"ImpDescription"
+
+
+#'  DataDescription 
+#'
+#'  A data.frame with description of slots for class Data
+#'
+"DataDescription"
+
+
+#'  OMDescription 
+#'
+#'  A data.frame with description of slots for class OM
+#'
+"OMDescription"
 
 

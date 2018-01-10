@@ -78,6 +78,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Operating Model</li>
     <li>
       <a href="../../reference/Operating_Model_Functions/index.html">Setup Operating Model</a>
     </li>
@@ -86,12 +87,18 @@
     </li>
     <li class="dropdown-header">MSE Object</li>
     <li>
+      <a href="../../reference/PMs/index.html">Peformance Metrics</a>
+    </li>
+    <li>
       <a href="../../reference/MSE_Object_Plotting_Functions/index.html">MSE Plotting Functions</a>
     </li>
     <li>
       <a href="../../reference/MSE_Object_Functions/index.html">MSE Object Functions</a>
     </li>
     <li class="dropdown-header">Fishery Data Object</li>
+    <li>
+      <a href="../../reference/import_data/index.html">Import Data</a>
+    </li>
     <li>
       <a href="../../reference/Available_Methods_and_Required_Data/index.html">Available Methods and Required Data</a>
     </li>
@@ -151,32 +158,32 @@
 
     
     <dl class='dl-horizontal'>
-<dt><code>Name</code></dt><dd><p>Name of the Fleet object</p></dd>
-    <dt><code>nyears</code></dt><dd><p>The number of years for the historical simulation</p></dd>
-    <dt><code>Spat_targ</code></dt><dd><p>Distribution of fishing in relation to spatial biomass: F is proportional to B^Spat_targ (uniform distribution)</p></dd>
-    <dt><code>Esd</code></dt><dd><p>Inter-annual variability in fishing mortality rate</p></dd>
-    <dt><code>EffYears</code></dt><dd><p>Vector of verticies, years at which to simulate varying relative effort</p></dd>
-    <dt><code>EffLower</code></dt><dd><p>Lower bound on relative effort corresponding to EffYears (uniform distribution)</p></dd>
-    <dt><code>EffUpper</code></dt><dd><p>Uppper bound on relative effort corresponding to EffYears (uniform distribution)</p></dd>
-    <dt><code>LFS</code></dt><dd><p>Shortest length that is fully vulnerable to fishing (uniform distribution)</p></dd>
-    <dt><code>L5</code></dt><dd><p>Shortest length corresponding to 5 percent vulnerability (uniform distribution)</p></dd>
-    <dt><code>Vmaxlen</code></dt><dd><p>The vulnerability of the longest (oldest) fish (uniform distribution)</p></dd>
-    <dt><code>LR5</code></dt><dd><p>Shortest length corresponding ot 5 percent retention (uniform distribution)</p></dd>
-    <dt><code>LFR</code></dt><dd><p>Shortest length that is fully retained (uniform distribution)</p></dd>
-    <dt><code>Rmaxlen</code></dt><dd><p>The retention of the longest (oldest) fish (uniform distribution)</p></dd>
-    <dt><code>DR</code></dt><dd><p>Discard rate - fraction of caught fish that are discarded (must be &lt;= 1) (uniform distribution)</p></dd>
-    <dt><code>SelYears</code></dt><dd><p>Vector of verticies, index for years at which historical selectivity pattern changed. If left empty, historical selectivity is constant</p></dd>
-    <dt><code>AbsSelYears</code></dt><dd><p>Optional values for SelYears, used for plotting only. Must be of same length as SelYears</p></dd>
-    <dt><code>L5Lower</code></dt><dd><p>Optional vector of values of length SelYears, specifiying lower limits of L5 (use <code>ChooseSelect</code> function to set these)</p></dd>
-    <dt><code>L5Upper</code></dt><dd><p>Optional vector of values of length SelYears, specifiying upper limits of L5 (use <code>ChooseSelect</code> function to set these)</p></dd>
-    <dt><code>LFSLower</code></dt><dd><p>Optional vector of values of length SelYears, specifiying lower limits of LFS (use <code>ChooseSelect</code> function to set these)</p></dd>
-    <dt><code>LFSUpper</code></dt><dd><p>Optional vector of values of length SelYears, specifiying upper limits of LFS (use <code>ChooseSelect</code> function to set these)</p></dd>
-    <dt><code>VmaxLower</code></dt><dd><p>Optional vector of values of length SelYears, specifiying lower limits of Vmaxlen (use <code>ChooseSelect</code> function to set these)</p></dd>
-    <dt><code>VmaxUpper</code></dt><dd><p>Optional vector of values of length SelYears, specifiying upper limits of Vmaxlen (use <code>ChooseSelect</code> function to set these)</p></dd>
-    <dt><code>qinc</code></dt><dd><p>Average percentage change in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls)</p></dd>
-    <dt><code>qcv</code></dt><dd><p>Inter-annual variability in fishing efficiency (uniform distribution)(applicable only to forward projection and input controls)</p></dd>
-    <dt><code>isRel</code></dt><dd><p>Are the selectivity parameters relative to size-of-maturity? TRUE or FALSE</p></dd>
-    <dt><code>CurrentYr</code></dt><dd><p>The current calendar year (final year) of the historical simulations (e.g. 2011)</p></dd>
+<dt><code>Name</code></dt><dd><p>Name of the Fleet object. Single value. Character string.</p></dd>
+    <dt><code>nyears</code></dt><dd><p>The number of years for the historical 'spool-up' simulation. Single value. Positive integer</p></dd>
+    <dt><code>Spat_targ</code></dt><dd><p>Distribution of fishing in relation to spatial biomass: fishing distribution is proportional to B^Spat_targ. Uniform distribution lower and upper bounds. Real numbers</p></dd>
+    <dt><code>EffYears</code></dt><dd><p>Years representing join-points (vertices) of time-varying effort. Vector. Non-negative real numbers</p></dd>
+    <dt><code>EffLower</code></dt><dd><p>Lower bound on relative effort corresponding to EffYears. Vector. Non-negative real numbers</p></dd>
+    <dt><code>EffUpper</code></dt><dd><p>Upper bound on relative effort corresponding to EffYears. Vector. Non-negative real numbers</p></dd>
+    <dt><code>Esd</code></dt><dd><p>Additional inter-annual variability in fishing mortality rate. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>qinc</code></dt><dd><p>Average percentage change in fishing efficiency (applicable only to forward projection and input controls). Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>qcv</code></dt><dd><p>Inter-annual variability in fishing efficiency (applicable only to forward projection and input controls). Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>L5</code></dt><dd><p>Shortest length corresponding to 5 percent vulnerability. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>LFS</code></dt><dd><p>Shortest length that is fully vulnerable to fishing. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Vmaxlen</code></dt><dd><p>The vulnerability of fish at Stock@Linf. Uniform distribution lower and upper bounds. Fraction</p></dd>
+    <dt><code>isRel</code></dt><dd><p>Selectivity parameters in units of size-of-maturity (or absolute eg cm). Single value. Boolean.</p></dd>
+    <dt><code>LR5</code></dt><dd><p>Shortest length corresponding ot 5 percent retention. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>LFR</code></dt><dd><p>Shortest length that is fully retained. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>Rmaxlen</code></dt><dd><p>The retention of fish at Stock@Linf. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>DR</code></dt><dd><p>Discard rate - the fraction of caught fish that are discarded. Uniform distribution lower and upper bounds. Fraction</p></dd>
+    <dt><code>SelYears</code></dt><dd><p>(Optional) Years representing join-points (vertices) at which historical selectivity pattern changes. Vector. Positive real numbers</p></dd>
+    <dt><code>AbsSelYears</code></dt><dd><p>(Optional) Calendar years corresponding with SelYears (eg 1951, rather than 1), used for plotting only. Vector (of same length as SelYears). Positive real numbers</p></dd>
+    <dt><code>L5Lower</code></dt><dd><p>(Optional) Lower bound of L5 (use <code>ChooseSelect</code> function to set these). Vector. Non-negative real numbers</p></dd>
+    <dt><code>L5Upper</code></dt><dd><p>(Optional) Upper bound of L5 (use <code>ChooseSelect</code> function to set these). Vector. Non-negative real numbers</p></dd>
+    <dt><code>LFSLower</code></dt><dd><p>(Optional) Lower bound of LFS (use <code>ChooseSelect</code> function to set these). Vector. Non-negative real numbers</p></dd>
+    <dt><code>LFSUpper</code></dt><dd><p>(Optional) Upper bound of LFS (use <code>ChooseSelect</code> function to set these). Vector. Non-negative real numbers</p></dd>
+    <dt><code>VmaxLower</code></dt><dd><p>(Optional) Lower bound of Vmaxlen (use <code>ChooseSelect</code> function to set these). Vector. Fraction</p></dd>
+    <dt><code>VmaxUpper</code></dt><dd><p>(Optional) Upper bound of Vmaxlen (use <code>ChooseSelect</code> function to set these). Vector. Fraction</p></dd>
+    <dt><code>CurrentYr</code></dt><dd><p>The current calendar year (final year) of the historical simulations (eg 2011). Single value. Positive integer.</p></dd>
 </dl>
     
     <h2 class="hasAnchor" id="objects-from-the-class"><a class="anchor" href="#objects-from-the-class"></a>Objects from the Class</h2>
@@ -191,20 +198,20 @@
 #&gt; 
 #&gt; Slots:
 #&gt;                                                                               
-#&gt; Name:         Name      nyears   Spat_targ         Esd        qinc         qcv
+#&gt; Name:         Name      nyears   Spat_targ    EffYears    EffLower    EffUpper
 #&gt; Class:   character     numeric     numeric     numeric     numeric     numeric
 #&gt;                                                                               
-#&gt; Name:     EffYears    EffLower    EffUpper    SelYears AbsSelYears          L5
+#&gt; Name:          Esd        qinc         qcv          L5         LFS     Vmaxlen
 #&gt; Class:     numeric     numeric     numeric     numeric     numeric     numeric
 #&gt;                                                                               
-#&gt; Name:          LFS     Vmaxlen         LR5         LFR     Rmaxlen          DR
-#&gt; Class:     numeric     numeric     numeric     numeric     numeric     numeric
+#&gt; Name:        isRel         LR5         LFR     Rmaxlen          DR    SelYears
+#&gt; Class:   character     numeric     numeric     numeric     numeric     numeric
 #&gt;                                                                               
-#&gt; Name:      L5Lower     L5Upper    LFSLower    LFSUpper   VmaxLower   VmaxUpper
+#&gt; Name:  AbsSelYears     L5Lower     L5Upper    LFSLower    LFSUpper   VmaxLower
 #&gt; Class:     numeric     numeric     numeric     numeric     numeric     numeric
 #&gt;                               
-#&gt; Name:        isRel   CurrentYr
-#&gt; Class:   character     numeric
+#&gt; Name:    VmaxUpper   CurrentYr
+#&gt; Class:     numeric     numeric
 #&gt; 
 #&gt; Known Subclasses: "OM"</div><div class='input'>
 </div></pre>
@@ -222,7 +229,7 @@
 
     <h2>Author</h2>
     
-T. Carruthers
+T. Carruthers and A. Hordyk
 
   </div>
 </div>

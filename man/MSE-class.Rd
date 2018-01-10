@@ -11,19 +11,19 @@ simulation conditions and performance of data-limited methods
 \section{Slots}{
 
 \describe{
-\item{\code{Name}}{Name of the MSE object}
+\item{\code{Name}}{Name of the MSE object. Single value. Character string}
 
-\item{\code{nyears}}{The number of years for the historical simulation}
+\item{\code{nyears}}{The number of years for the historical simulation. Single value. Positive integer}
 
-\item{\code{proyears}}{The number of years for the projections - closed loop simulations}
+\item{\code{proyears}}{The number of years for the projections - closed loop simulations. Single value. Positive integer}
 
-\item{\code{nMPs}}{Number of management procedures simulation tested}
+\item{\code{nMPs}}{Number of management procedures simulation tested. Single value. Positive integer.}
 
-\item{\code{MPs}}{The names of the MPs that were tested}
+\item{\code{MPs}}{The names of the MPs that were tested. Vector of length nMPs. Character strings.}
 
-\item{\code{nsim}}{Number of simulations}
+\item{\code{nsim}}{Number of simulations. Single value. Positive integer}
 
-\item{\code{OM}}{A table of nsim rows with a column for each sampled parameter of the operating model\cr
+\item{\code{OM}}{A table of sampled parameter of the operating model. Table object of nsim rows. Real numbers\cr
  \itemize{
  \item RefY: reference yield, the highest long-term yield (mean over last five years of projection) obtained from a fixed F strategy. This is a useful reference point for framing performance of MPs because it standardizes for starting point and future productivity. 
  \item M: instantaneous natural mortality rate
@@ -39,7 +39,6 @@ simulation conditions and performance of data-limited methods
  \item MSY: Maximum Sustainable Yield
  \item qinc: mean percentage increase in fishing efficiency (catchability) in projected years (input controls only)
  \item qcv: interannual variability in future fishing efficiency (catchability) in projected years (input controls only)
- \item CALcv: variability in lengths at age around the growth curve (normal CV)
  \item FMSY: Fishing mortality rate at Maximum Sustainable Yield
  \item Linf: maximum length (von Bertalanffy Linf parameter)
  \item K: maximum growth rate (von Bertalanffy K parameter)
@@ -48,7 +47,6 @@ simulation conditions and performance of data-limited methods
  \item Linfgrad: mean gradient in maximum length (per cent per time step)
  \item Kgrad: mean gradient in maximum growth rate (per cent per time step)
  \item Linfsd: interannual variability in maximum length (log normal CV)
- \item recgrad: gradient in recruitment strength (age 1 population numbers) over last 10 years of historical simulations
  \item Ksd: interannual variability in maximum growth rate (log normal CV)
  \item ageM: age at 50 per cent maturity
  \item LFS: length at full selection (the shortest length class where fishery selectivity is 100 per cent)
@@ -57,12 +55,13 @@ simulation conditions and performance of data-limited methods
  \item LFC: length at first capture, the smallest length that can be caught by the gear
  \item OFLreal: the true simulated Over Fishing Limit (FMSY x biomass) updated in each management update of the projection
  \item Spat_targ: spatial targetting parameter, fishing mortality rate across areas is proportional to vulnerable biomass raised to the power of this number. 
+ \item Size_area_1: The size of area 1 relative to area 2
  \item Frac_area_1: the fraction of unfished biomass inhabiting area 1 (can be seen as fraction of habitat in area 1 or relative size of area 1)
  \item Prob_staying: the probability that individuals in area 1 remain there between time-steps
  \item AC: autocorrelation in recruitment
 }}
 
-\item{\code{Obs}}{A table of nsim rows with a column for each sampled parameter of the observation model\cr
+\item{\code{Obs}}{A table of sampled parameters of the observation model. Table of nsim rows. Real numbers\cr
 \itemize{
 \item Cbias: bias in observed catches
 \item Csd: observation error in observed catches (lognormal CV)
@@ -87,37 +86,37 @@ simulation conditions and performance of data-limited methods
 \item Crefbias: bias in MSY prediction (target or reference catch)
 \item Brefbias: bias in BMSY stock levels (target or reference biomass levels)}}
 
-\item{\code{B_BMSY}}{Stored biomass relative to BMSY over the projection (an array with dimensions nsim, nMPs, proyears)}
+\item{\code{B_BMSY}}{Simulated biomass relative to BMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers}
 
-\item{\code{F_FMSY}}{Stored fishing mortality rate relative to FMSY over the projection (an array with dimensions nsim, nMPs, proyears)}
+\item{\code{F_FMSY}}{Simulated fishing mortality rate relative to FMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers}
 
-\item{\code{B}}{Stored stock biomass over the projection (an array with dimensions nsim, nMPs, proyears)}
+\item{\code{B}}{Simulated stock biomass over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers}
 
-\item{\code{SSB}}{Stored spawning stock biomass over the projection (an array with dimensions nsim, nMPs, proyears)}
+\item{\code{SSB}}{Simulated spawning stock biomass over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers}
 
-\item{\code{VB}}{Stored vulnerable biomass over the projection (an array with dimensions nsim, nMPs, proyears)}
+\item{\code{VB}}{Simulated vulnerable biomass over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers}
 
-\item{\code{FM}}{Stored fishing mortality rate over the projection (an array with dimensions nsim, nMPs, proyears)}
+\item{\code{FM}}{Simulated fishing mortality rate over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers}
 
-\item{\code{C}}{Stored catches (taken) over the projection (an array with dimensions nsim, nMPs, proyears)}
+\item{\code{C}}{Simulated catches (taken) over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers}
 
-\item{\code{TAC}}{Stored Total Allowable Catch (prescribed) over the projection (an array with dimensions nsim, nMPs, proyears)(note that this is NA for input controls)}
+\item{\code{TAC}}{Simulated Total Allowable Catch (prescribed) over the projection (this is NA for input controls). An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers}
 
-\item{\code{SSB_hist}}{Stored historical spawning stock biomass (historical simulations - an array with dimensions nsim, nages, nyears, nareas)}
+\item{\code{SSB_hist}}{Simulated historical spawning stock biomass. An array with dimensions: nsim, nages, nMPs, proyears. Non-negative real numbers}
 
-\item{\code{CB_hist}}{Stored historical catches in weight (historical simulations - an array with dimensions nsim, nages, nyears, nareas)}
+\item{\code{CB_hist}}{Simulated historical catches in weight. An array with dimensions: nsim, nages, nMPs, proyears. Non-negative real numbers}
 
-\item{\code{FM_hist}}{Stored historical fishing mortality rate (historical simulations - an array with dimensions nsim, nages, nyears, nareas)}
+\item{\code{FM_hist}}{Simulated historical fishing mortality rate. An array with dimensions: nsim, nages, nMPs, proyears. Non-negative real numbers}
 
-\item{\code{Effort}}{Stored relative fishing effort in the projection years}
+\item{\code{Effort}}{Simulated relative fishing effort in the projection years. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers}
 
-\item{\code{PAA}}{Population at age in last projection year (an array with dimensions nsim, nMPs, nages)}
+\item{\code{PAA}}{Population at age in last projection year. An array with dimensions: nsim, nMPs, nages. Non-negative real numbers}
 
-\item{\code{CAA}}{Catch at age in last projection year (an array with dimensions nsim, nMPs, nages)}
+\item{\code{CAA}}{Catch at age in last projection year. An array with dimensions: nsim, nMPs, nages. Non-negative real numbers}
 
-\item{\code{CAL}}{Catch at length in last projection year (an array with dimensions nsim, nMPs, nCALbins)}
+\item{\code{CAL}}{Catch at length in last projection year. An array with dimensions: nsim, nMPs, nCALbins. Non-negative real numbers}
 
-\item{\code{CALbins}}{Mid-points of the catch-at-length bins}
+\item{\code{CALbins}}{Mid-points of the catch-at-length bins. Vector of length nCALbins. Positive real numbers.}
 }}
 
 \section{Objects from the Class}{

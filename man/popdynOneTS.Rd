@@ -20,19 +20,19 @@ popdynOneTS(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hc, R0c, SSBpRc, aRc,
 
 \item{PerrYr}{A numeric value with recruitment deviation for current year}
 
+\item{R0c}{Numeric vector with unfished recruitment by area}
+
+\item{SSBpRc}{Numeric vector with unfished spawning stock per recruit by area}
+
+\item{aRc}{Numeric vector with Ricker SRR a parameter by area}
+
+\item{bRc}{Numeric vector with Ricker SRR b parameter by area}
+
+\item{movc}{Numeric matrix (nareas by nareas) with the movement matrix}
+
+\item{SRrelc}{Integer indicating the stock-recruitment relationship to use (1 for Beverton-Holt, 2 for Ricker)}
+
 \item{hs}{Steepness of SRR}
-
-\item{R0a}{Numeric vector with unfished recruitment by area}
-
-\item{SSBpR}{Numeric vector with unfished spawning stock per recruit by area}
-
-\item{aR}{Numeric vector with Ricker SRR a parameter by area}
-
-\item{bR}{Numeric vector with Ricker SRR b parameter by area}
-
-\item{mov}{Numeric matrix (nareas by nareas) with the movement matrix}
-
-\item{SRrel}{Integer indicating the stock-recruitment relationship to use (1 for Beverton-Holt, 2 for Ricker)}
 }
 \description{
 Project population forward one time-step given current numbers-at-age and total mortality

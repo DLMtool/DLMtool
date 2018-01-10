@@ -4,9 +4,9 @@
 \alias{popdyn}
 \title{Population dynamics model}
 \usage{
-popdyn(nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc, Prec,
-  movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc,
-  Fapic = NULL, maxF, control = 1)
+popdyn(nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge, Vuln, Retc,
+  Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc,
+  Fapic = NULL, maxF, MPA, control = 1)
 }
 \arguments{
 \item{nareas}{Integer. The number of spatial areas}
@@ -19,7 +19,9 @@ popdyn(nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc, Prec,
 
 \item{M_age}{Numeric matrix (dimensions maxage, pyears) with natural mortality at age}
 
-\item{MatAge}{Numeric vector (length maxage) with proportion mature for each age-class}
+\item{Asize_c}{Numeric vector (length nareas) with size of each area}
+
+\item{MatAge}{Numeric matrix (dimensions maxage, nyears+proyears) with proportion mature for each age-class}
 
 \item{WtAge}{Numeric matrix (dimensions maxage, pyears) with weight-at-age}
 
@@ -52,6 +54,8 @@ popdyn(nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc, Prec,
 \item{Fapic}{Numeric. Apical F value}
 
 \item{maxF}{A numeric value specifying the maximum fishing mortality for any single age class}
+
+\item{MPA}{A matrix of spatial closures by year}
 
 \item{control}{Integer. 1 to use q and effort to calculate F, 2 to use Fapic (apical F) and 
 vulnerablity to calculate F.}

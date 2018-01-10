@@ -78,6 +78,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Operating Model</li>
     <li>
       <a href="../../reference/Operating_Model_Functions/index.html">Setup Operating Model</a>
     </li>
@@ -86,12 +87,18 @@
     </li>
     <li class="dropdown-header">MSE Object</li>
     <li>
+      <a href="../../reference/PMs/index.html">Peformance Metrics</a>
+    </li>
+    <li>
       <a href="../../reference/MSE_Object_Plotting_Functions/index.html">MSE Plotting Functions</a>
     </li>
     <li>
       <a href="../../reference/MSE_Object_Functions/index.html">MSE Object Functions</a>
     </li>
     <li class="dropdown-header">Fishery Data Object</li>
+    <li>
+      <a href="../../reference/import_data/index.html">Import Data</a>
+    </li>
     <li>
       <a href="../../reference/Available_Methods_and_Required_Data/index.html">Available Methods and Required Data</a>
     </li>
@@ -156,11 +163,11 @@ file (to the current working directory).</p>
     
 
     <pre class="usage"><span class='fu'>runMSErobust</span>(<span class='kw'>OM</span> <span class='kw'>=</span> <span class='kw'>DLMtool</span><span class='kw'>::</span><span class='no'>testOM</span>, <span class='kw'>MPs</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"AvC"</span>, <span class='st'>"DCAC"</span>, <span class='st'>"FMSYref"</span>, <span class='st'>"curE"</span>,
-  <span class='st'>"matlenlim"</span>), <span class='kw'>nsim</span> <span class='kw'>=</span> <span class='fl'>256</span>, <span class='kw'>proyears</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>pstar</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>maxF</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>timelimit</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>CheckMPs</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>Hist</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>ntrials</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>fracD</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='kw'>CalcBlow</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>HZN</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>Bfrac</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>maxsims</span> <span class='kw'>=</span> <span class='fl'>64</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>unique</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>maxCrash</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>saveMSE</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>savePack</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+  <span class='st'>"matlenlim"</span>, <span class='st'>"MRreal"</span>), <span class='kw'>nsim</span> <span class='kw'>=</span> <span class='fl'>256</span>, <span class='kw'>proyears</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>interval</span> <span class='kw'>=</span> <span class='fl'>4</span>,
+  <span class='kw'>pstar</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>maxF</span> <span class='kw'>=</span> <span class='fl'>0.8</span>, <span class='kw'>timelimit</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>CheckMPs</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>Hist</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>ntrials</span> <span class='kw'>=</span> <span class='fl'>50</span>, <span class='kw'>fracD</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='kw'>CalcBlow</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>HZN</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>Bfrac</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>maxsims</span> <span class='kw'>=</span> <span class='fl'>64</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>unique</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>maxCrash</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>saveMSE</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>savePack</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">

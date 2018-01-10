@@ -4,12 +4,14 @@
 \alias{optMSY}
 \title{Optimize yield for a single simulation}
 \usage{
-optMSY(logFa, nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc,
-  Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc, maxF,
-  useCPP = TRUE)
+optMSY(logFa, Asize_c, nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge,
+  Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc,
+  Qc, MPA, maxF, useCPP = TRUE)
 }
 \arguments{
 \item{logFa}{log apical fishing mortality}
+
+\item{Asize_c}{A vector of length areas with relative size of areas}
 
 \item{nareas}{Number of area}
 
@@ -50,6 +52,8 @@ optMSY(logFa, nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge, Vuln, Retc,
 \item{bRc}{Ricker bR}
 
 \item{Qc}{Catchability}
+
+\item{MPA}{A matrix of spatial closures by year}
 
 \item{maxF}{A numeric value specifying the maximum fishing mortality for any single age class}
 

@@ -78,6 +78,7 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Operating Model</li>
     <li>
       <a href="../../reference/Operating_Model_Functions/index.html">Setup Operating Model</a>
     </li>
@@ -86,12 +87,18 @@
     </li>
     <li class="dropdown-header">MSE Object</li>
     <li>
+      <a href="../../reference/PMs/index.html">Peformance Metrics</a>
+    </li>
+    <li>
       <a href="../../reference/MSE_Object_Plotting_Functions/index.html">MSE Plotting Functions</a>
     </li>
     <li>
       <a href="../../reference/MSE_Object_Functions/index.html">MSE Object Functions</a>
     </li>
     <li class="dropdown-header">Fishery Data Object</li>
+    <li>
+      <a href="../../reference/import_data/index.html">Import Data</a>
+    </li>
     <li>
       <a href="../../reference/Available_Methods_and_Required_Data/index.html">Available Methods and Required Data</a>
     </li>
@@ -152,39 +159,38 @@ dynamics model</p>
 
     
     <dl class='dl-horizontal'>
-<dt><code>Name</code></dt><dd><p>The name of the Stock object</p></dd>
-    <dt><code>maxage</code></dt><dd><p>The maximum age of individuals that is simulated (there is no 'plus group': individuals die off beyone the maximum age so there isn't a huge cost to simulating more older age classes)</p></dd>
-    <dt><code>R0</code></dt><dd><p>The magnitude of unfished recruitment. This is normally fixed to some arbitrary value since it simply scales the simulated numbers)</p></dd>
-    <dt><code>M</code></dt><dd><p>Natural mortality rate (uniform distribution)</p></dd>
-    <dt><code>M2</code></dt><dd><p>Optional vector of M-at-age (must be length maxage)</p></dd>
-    <dt><code>Msd</code></dt><dd><p>Inter-annual variability in natural mortality rate expressed as a coefficient of variation (uniform distribution)</p></dd>
-    <dt><code>Mgrad</code></dt><dd><p>Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year (uniform distribution)</p></dd>
-    <dt><code>Mexp</code></dt><dd><p>Exponent of the Lorenzen function assuming an inverse relationship between M and weight (uniform distribution)</p></dd>
-    <dt><code>Fdisc</code></dt><dd><p>Fraction of discarded fish that die</p></dd>
-    <dt><code>h</code></dt><dd><p>Steepness of the stock recruit relationship (uniform distribution)</p></dd>
-    <dt><code>SRrel</code></dt><dd><p>Type of stock-recruit relationship (1)Beverton-Holt (2) Ricker</p></dd>
-    <dt><code>Linf</code></dt><dd><p>Maximum length (uniform distribution)</p></dd>
-    <dt><code>K</code></dt><dd><p>von B. growth parameter k (uniform distribution)</p></dd>
-    <dt><code>t0</code></dt><dd><p>von B. theoretical age at length zero (uniform distribution)</p></dd>
-    <dt><code>LenCV</code></dt><dd><p>Coefficient of variation of length-at-age (assumed constant for all age classes (uniform distribution)</p></dd>
-    <dt><code>Ksd</code></dt><dd><p>Inter-annual variability in growth parameter k (uniform distribution)</p></dd>
-    <dt><code>Kgrad</code></dt><dd><p>Mean temporal trend in growth parameter k, expressed as a percentage change in k per year (uniform distribution)</p></dd>
-    <dt><code>Linfsd</code></dt><dd><p>Inter-annual variability in maximum length - uniform distribution</p></dd>
-    <dt><code>Linfgrad</code></dt><dd><p>Mean temporal trend in maximum length, expressed as a percentage change in Linf per year (uniform distribution)</p></dd>
-    <dt><code>recgrad</code></dt><dd><p>Mean temporal trend in log-normal recruitment deviations (uniform distribution)</p></dd>
-    <dt><code>AC</code></dt><dd><p>Autocorrelation in recruitment deviations rec(t)=AC*rec(t-1)+(1-AC)*sigma(t) (uniform distribution)</p></dd>
-    <dt><code>a</code></dt><dd><p>Length-weight parameter alpha (uniform distribution)</p></dd>
-    <dt><code>b</code></dt><dd><p>Length-weight parameter beta (uniform distribution)</p></dd>
-    <dt><code>L50</code></dt><dd><p>Length-at- 50 percent maturity (uniform distribution)</p></dd>
-    <dt><code>L50_95</code></dt><dd><p>Length increment from 50 percent to 95 percent maturity</p></dd>
-    <dt><code>D</code></dt><dd><p>Current level of stock depletion (Bcurrent/Bunfished) (uniform distribution)</p></dd>
-    <dt><code>Perr</code></dt><dd><p>Process error, the CV of lognormal recruitment deviations  (uniform distribution)</p></dd>
-    <dt><code>Period</code></dt><dd><p>Period for cylical recruitment pattern in years (uniform distribution). Leave empty to ignore</p></dd>
-    <dt><code>Amplitude</code></dt><dd><p>Amplitude in deviation from long-term average recruitment during recruitment cycle, both positive and negative (uniform distribution). E.g., a range from 0 to 0.5 means recruitment decreases or increases by up to 50% each cycle. Leave empty to ignore</p></dd>
-    <dt><code>Size_area_1</code></dt><dd><p>The size of area 1 relative to area 2 (uniform distribution)</p></dd>
-    <dt><code>Frac_area_1</code></dt><dd><p>The fraction of the unfished biomass in stock 1 (uniform distribution)</p></dd>
-    <dt><code>Prob_staying</code></dt><dd><p>The probability of inviduals in area 1 remaining in area 1 over the course of one year</p></dd>
-    <dt><code>Source</code></dt><dd><p>A reference to a website or article from which parameters were taken to define the operating model</p></dd>
+<dt><code>Name</code></dt><dd><p>The name of the Stock object. Single value. Character string</p></dd>
+    <dt><code>maxage</code></dt><dd><p>The maximum age of individuals that is simulated (there is no 'plus group'). Single value. Positive integer</p></dd>
+    <dt><code>R0</code></dt><dd><p>The magnitude of unfished recruitment. Single value. Positive real number</p></dd>
+    <dt><code>M</code></dt><dd><p>Natural mortality rate. Uniform distribution lower and upper bounds. Positive real number</p></dd>
+    <dt><code>M2</code></dt><dd><p>(Optional) Natural mortality rate at age. Vector of length 'maxage'. Positive real number</p></dd>
+    <dt><code>Mexp</code></dt><dd><p>Exponent of the Lorenzen function assuming an inverse relationship between M and weight. Uniform distribution lower and upper bounds. Real numbers &lt;= 0.</p></dd>
+    <dt><code>Msd</code></dt><dd><p>Inter-annual variability in natural mortality rate expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>Mgrad</code></dt><dd><p>Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year. Uniform distribution lower and upper bounds. Real numbers</p></dd>
+    <dt><code>h</code></dt><dd><p>Steepness of the stock recruit relationship. Uniform distribution lower and upper bounds. Values from 1/5 to 1</p></dd>
+    <dt><code>SRrel</code></dt><dd><p>Type of stock-recruit relationship. Single value, switch (1) Beverton-Holt (2) Ricker. Integer</p></dd>
+    <dt><code>Perr</code></dt><dd><p>Process error, the CV of lognormal recruitment deviations. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>AC</code></dt><dd><p>Autocorrelation in recruitment deviations rec(t)=AC*rec(t-1)+(1-AC)*sigma(t). Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>Period</code></dt><dd><p>(Optional) Period for cyclical recruitment pattern in years. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>Amplitude</code></dt><dd><p>(Optional) Amplitude in deviation from long-term average recruitment during recruitment cycle (eg a range from 0 to 1 means recruitment decreases or increases by up to 100% each cycle). Uniform distribution lower and upper bounds. 0 &lt; Amplitude &lt; 1</p></dd>
+    <dt><code>Linf</code></dt><dd><p>Maximum length. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>K</code></dt><dd><p>von Bertalanffy growth parameter k. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>t0</code></dt><dd><p>von Bertalanffy theoretical age at length zero. Uniform distribution lower and upper bounds. Non-positive real numbers</p></dd>
+    <dt><code>LenCV</code></dt><dd><p>Coefficient of variation of length-at-age (assumed constant for all age classes). Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Ksd</code></dt><dd><p>Inter-annual variability in growth parameter k. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>Kgrad</code></dt><dd><p>Mean temporal trend in growth parameter k, expressed as a percentage change in k per year. Uniform distribution lower and upper bounds. Real numbers</p></dd>
+    <dt><code>Linfsd</code></dt><dd><p>Inter-annual variability in maximum length. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>Linfgrad</code></dt><dd><p>Mean temporal trend in maximum length, expressed as a percentage change in Linf per year. Uniform distribution lower and upper bounds. Real numbers</p></dd>
+    <dt><code>L50</code></dt><dd><p>Length at 50 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>L50_95</code></dt><dd><p>Length increment from 50 percent to 95 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>D</code></dt><dd><p>Current level of stock depletion SSB(current)/SSB(unfished). Uniform distribution lower and upper bounds. Fraction</p></dd>
+    <dt><code>a</code></dt><dd><p>Length-weight parameter alpha. Single value. Positive real number</p></dd>
+    <dt><code>b</code></dt><dd><p>Length-weight parameter beta. Single value. Positive real number</p></dd>
+    <dt><code>Size_area_1</code></dt><dd><p>The size of area 1 relative to area 2. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Frac_area_1</code></dt><dd><p>The fraction of the unfished biomass in stock 1. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+    <dt><code>Prob_staying</code></dt><dd><p>The probability of inviduals in area 1 remaining in area 1 over the course of one year. Uniform distribution lower and upper bounds. Positive fraction.</p></dd>
+    <dt><code>Fdisc</code></dt><dd><p>Fraction of discarded fish that die. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+    <dt><code>Source</code></dt><dd><p>A reference to a website or article from which parameters were taken to define the stock object. Single value. Character string.</p></dd>
 </dl>
     
     <h2 class="hasAnchor" id="objects-from-the-class"><a class="anchor" href="#objects-from-the-class"></a>Objects from the Class</h2>
@@ -202,23 +208,23 @@ dynamics model</p>
 #&gt; Name:          Name       maxage           R0            M           M2
 #&gt; Class:    character      numeric      numeric      numeric      numeric
 #&gt;                                                                        
-#&gt; Name:           Msd        Mgrad         Mexp        Fdisc            h
+#&gt; Name:          Mexp          Msd        Mgrad            h        SRrel
 #&gt; Class:      numeric      numeric      numeric      numeric      numeric
 #&gt;                                                                        
-#&gt; Name:         SRrel         Linf            K           t0        LenCV
+#&gt; Name:          Perr           AC       Period    Amplitude         Linf
 #&gt; Class:      numeric      numeric      numeric      numeric      numeric
 #&gt;                                                                        
-#&gt; Name:           Ksd        Kgrad       Linfsd     Linfgrad      recgrad
+#&gt; Name:             K           t0        LenCV          Ksd        Kgrad
 #&gt; Class:      numeric      numeric      numeric      numeric      numeric
 #&gt;                                                                        
-#&gt; Name:             a            b            D         Perr       Period
+#&gt; Name:        Linfsd     Linfgrad          L50       L50_95            D
 #&gt; Class:      numeric      numeric      numeric      numeric      numeric
 #&gt;                                                                        
-#&gt; Name:     Amplitude  Size_area_1  Frac_area_1 Prob_staying           AC
+#&gt; Name:             a            b  Size_area_1  Frac_area_1 Prob_staying
 #&gt; Class:      numeric      numeric      numeric      numeric      numeric
-#&gt;                                              
-#&gt; Name:           L50       L50_95       Source
-#&gt; Class:      numeric      numeric    character
+#&gt;                                 
+#&gt; Name:         Fdisc       Source
+#&gt; Class:      numeric    character
 #&gt; 
 #&gt; Known Subclasses: "OM"</div><div class='input'>
 </div></pre>
@@ -236,7 +242,7 @@ dynamics model</p>
 
     <h2>Author</h2>
     
-T. Carruthers
+T. Carruthers and A. Hordyk
 
   </div>
 </div>

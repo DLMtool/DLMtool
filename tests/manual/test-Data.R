@@ -2,7 +2,8 @@
 testthat::context("Test available MPs can be applied to the Data objects")
 
 library(DLMtool)
-library(DLMdata)
+DLMextra()
+library(DLMextra)
 datobjs <- avail('Data')
 input <- avail("Input")
 output <- avail("Output")
