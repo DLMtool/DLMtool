@@ -156,6 +156,7 @@ DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hi
     N_DD[tt + 1] = Surv_DD * N_DD[tt] + R_DD[tt + 1]
 
   }
+  tiny <- 1e-15
   Cpred_DD[Cpred_DD < tiny] <- tiny
 
   if (opty == 1) {
