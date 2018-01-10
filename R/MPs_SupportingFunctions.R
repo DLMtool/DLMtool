@@ -156,6 +156,7 @@ DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hi
     N_DD[tt + 1] = Surv_DD * N_DD[tt] + R_DD[tt + 1]
 
   }
+  tiny <- 1e-15
   Cpred_DD[Cpred_DD < tiny] <- tiny
 
   if (opty == 1) {
@@ -417,20 +418,24 @@ SRAFMSY <- function(lnFMc, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c,
 #'
 sample_steepness2 <- function(n, mu, cv) {
 
-  sigma <- mu * cv
-
-  mu.beta.dist <- (mu - 0.2)/0.8
-  sigma.beta.dist <- sigma/0.8
-
-  beta.par <- derive_beta_par(mu.beta.dist, sigma.beta.dist)
-
-  h.transformed <- rbeta(n, beta.par[1], beta.par[2])
-
-  h <- 0.8 * h.transformed + 0.2
-  h[h > 0.99] <- 0.99
-  h[h < 0.2] <- 0.2
-
-  return(h)
+  if(n == 1) return(mu)
+  else {
+    sigma <- mu * cv
+    
+    mu.beta.dist <- (mu - 0.2)/0.8
+    sigma.beta.dist <- sigma/0.8
+    
+    beta.par <- derive_beta_par(mu.beta.dist, sigma.beta.dist)
+    
+    h.transformed <- rbeta(n, beta.par[1], beta.par[2])
+    
+    h <- 0.8 * h.transformed + 0.2
+    h[h > 0.99] <- 0.99
+    h[h < 0.2] <- 0.2
+    
+    return(h)
+  }
+  
 }
 
 
