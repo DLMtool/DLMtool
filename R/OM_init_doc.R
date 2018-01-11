@@ -77,15 +77,18 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
   InTemplates <- list(...)
   ObTemplates <- list()
   if (length(InTemplates) >0) {
-    # check if zip application exists
-    chck <- Sys.which("zip") # requires 'zip.exe' on file path
-    if (nchar(chck) <1) {
-      message('zip application is required for templates. If a zip application is installed on your machine you may need to add it to the path. Try:')
-      message('path <- Sys.getenv("PATH")')
-      message('Sys.setenv("PATH" = paste(path, "path_to_zip.exe", sep = ";"))')
-      stop("Can't use templates without zip application. You may need to install Rtools to use templates", call.=FALSE)
+     inclasses <- unlist(lapply(InTemplates, class))
+    if (!is.null(inclasses)) {
+      # check if zip application exists
+      chck <- Sys.which("zip") # requires 'zip.exe' on file path
+      if (nchar(chck) <1) {
+        message('zip application is required for templates. If a zip application is installed on your machine you may need to add it to the path. Try:')
+        message('path <- Sys.getenv("PATH")')
+        message('Sys.setenv("PATH" = paste(path, "path_to_zip.exe", sep = ";"))')
+        stop("Can't use templates without zip application. You may need to install Rtools to use templates", call.=FALSE)
+      }
     }
-    inclasses <- unlist(lapply(InTemplates, class))
+   
     for (x in seq_along(inclasses)) {
       if (!inclasses[x] %in% c("Stock", "Fleet", "Obs", "Imp", "OM")) stop(InTemplates[[x]], " is not a valid DLMtool object")
     }
@@ -114,7 +117,7 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
       }
     }
   }
-  
+
   if ('xlsx' %in% files) {
    
     # Copy xlsx file over to working directory 
