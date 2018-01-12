@@ -76,6 +76,7 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
   
   InTemplates <- list(...)
   ObTemplates <- list()
+  useTemp <- FALSE
   if (length(InTemplates) >0) {
      inclasses <- unlist(lapply(InTemplates, class))
     if (!is.null(inclasses)) {
@@ -112,6 +113,7 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
       }
       nm <- names(ObTemplates)  
       message("\n\nUsing Object Templates:")
+      useTemp <- TRUE
       for (X in nm) {
         message(ObTemplates[[X]]@Name)
       }
@@ -137,35 +139,39 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
 
     
     # loop through slot values if Obj template provided
-    wb <- openxlsx::loadWorkbook(name)
-    names <- c("Stock", "Fleet", "Obs", "Imp")
-    for (objname in names) {
-      if (!is.null(ObTemplates[objname])) {
-        obj <- ObTemplates[objname][[1]]
-        slots <- slotNames(obj)
-        
-        for (sl in seq_along(slots)) {
-          val <- slot(obj, slotNames(objname)[sl])
-          ln <- length(val)
-          if (ln >0 && !is.na(ln)) {
-            df <- data.frame(t(val))
-            openxlsx::writeData(wb, sheet = objname, x = df, 
-                                startCol = 2, startRow = sl+1,
-                                colNames = FALSE, rowNames = FALSE, 
-                                withFilter = FALSE,
-                                keepNA = FALSE)         
-          }
+    if (useTemp) {
+      wb <- openxlsx::loadWorkbook(name)
+      names <- c("Stock", "Fleet", "Obs", "Imp")
+      for (objname in names) {
+        if (!is.null(ObTemplates[objname])) {
+          obj <- ObTemplates[objname][[1]]
+          slots <- slotNames(obj)
           
+          for (sl in seq_along(slots)) {
+            val <- slot(obj, slotNames(objname)[sl])
+            ln <- length(val)
+            if (ln >0 && !is.na(ln)) {
+              df <- data.frame(t(val))
+              openxlsx::writeData(wb, sheet = objname, x = df, 
+                                  startCol = 2, startRow = sl+1,
+                                  colNames = FALSE, rowNames = FALSE, 
+                                  withFilter = FALSE,
+                                  keepNA = FALSE)         
+            }
+            
+          }
+          openxlsx::setColWidths(wb, sheet = objname, cols = 1, widths = 'auto')
         }
-        openxlsx::setColWidths(wb, sheet = objname, cols = 1, widths = 'auto')
       }
+      
+      # OM tab not currently updated
+      openxlsx::saveWorkbook(wb, name, overwrite = TRUE)
+      
     }
     
-    # OM tab not currently updated
-    openxlsx::saveWorkbook(wb, name, overwrite = TRUE)
+      
+    }
     
-  }
-  
 
   if ('rmd' %in% files) { 
     # RMD File ####
