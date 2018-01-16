@@ -76,8 +76,20 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
   
   InTemplates <- list(...)
   ObTemplates <- list()
+  useTemp <- FALSE
   if (length(InTemplates) >0) {
-    inclasses <- unlist(lapply(InTemplates, class))
+     inclasses <- unlist(lapply(InTemplates, class))
+    if (!is.null(inclasses)) {
+      # check if zip application exists
+      chck <- Sys.which("zip") # requires 'zip.exe' on file path
+      if (nchar(chck) <1) {
+        message('zip application is required for templates. If a zip application is installed on your machine you may need to add it to the path. Try:')
+        message('path <- Sys.getenv("PATH")')
+        message('Sys.setenv("PATH" = paste(path, "path_to_zip.exe", sep = ";"))')
+        stop("Can't use templates without zip application. You may need to install Rtools to use templates", call.=FALSE)
+      }
+    }
+   
     for (x in seq_along(inclasses)) {
       if (!inclasses[x] %in% c("Stock", "Fleet", "Obs", "Imp", "OM")) stop(InTemplates[[x]], " is not a valid DLMtool object")
     }
@@ -92,18 +104,6 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
       if (is.na(ObTemplates$Obs@Name) || nchar(ObTemplates$Obs@Name)==0) ObTemplates$Obs@Name <- InTemplates[[isOM]]@Name
       ObTemplates$Imp <- SubOM(InTemplates[[isOM]], "Imp")
       if (is.na(ObTemplates$Imp@Name) || nchar(ObTemplates$Imp@Name)==0) ObTemplates$Imp@Name <- InTemplates[[isOM]]@Name
-      # ObTemplates$OM <- c(InTemplates[[isOM]]@Name,
-      #                     InTemplates[[isOM]]@Agency,
-      #                     InTemplates[[isOM]]@Region,
-      #                     InTemplates[[isOM]]@Sponsor,
-      #                     InTemplates[[isOM]]@Latitude,
-      #                     InTemplates[[isOM]]@Longitude,
-      #                     InTemplates[[isOM]]@nsim,
-      #                     InTemplates[[isOM]]@proyears,
-      #                     InTemplates[[isOM]]@interval,
-      #                     InTemplates[[isOM]]@pstar,
-      #                     InTemplates[[isOM]]@maxF,
-      #                     InTemplates[[isOM]]@reps)
     } else {
       for (x in seq_along(inclasses)) {
         if (inclasses[x] == 'Stock') ObTemplates$Stock <- InTemplates[[x]]
@@ -113,12 +113,13 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
       }
       nm <- names(ObTemplates)  
       message("\n\nUsing Object Templates:")
+      useTemp <- TRUE
       for (X in nm) {
         message(ObTemplates[[X]]@Name)
       }
     }
   }
-  
+
   if ('xlsx' %in% files) {
    
     # Copy xlsx file over to working directory 
@@ -130,50 +131,47 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
     
     # Check if file exists 
     exist <- file.exists(pathout)
-    if (exist & !overwrite) stop(name, " alread exists in working directory. Use 'overwrite=TRUE' to overwrite", 
+    if (exist & !overwrite) stop(name, " already exists in working directory. Use 'overwrite=TRUE' to overwrite", 
                                  call.=FALSE)
     copy <- file.copy(path, pathout, overwrite = overwrite)
     if (!copy) stop("Excel file not copied from ", path)
     
-    # Copy over templates - if used ####
-    chck <- Sys.which("zip") # requires 'zip.exe' on file path
-    if (nchar(chck) <1) {
-      message('zip application is required. A possible workaround is:')
-      message('path <- Sys.getenv("PATH")')
-      message('Sys.setenv("PATH" = paste(path, "path_to_zip.exe", sep = ";"))')
-      stop("Can't uses templates without zip application", call.=FALSE)
-    }
+
     
     # loop through slot values if Obj template provided
-    wb <- openxlsx::loadWorkbook(name)
-    names <- c("Stock", "Fleet", "Obs", "Imp")
-    for (objname in names) {
-      if (!is.null(ObTemplates[objname])) {
-        obj <- ObTemplates[objname][[1]]
-        slots <- slotNames(obj)
-        
-        for (sl in seq_along(slots)) {
-          val <- slot(obj, slotNames(objname)[sl])
-          ln <- length(val)
-          if (ln >0 && !is.na(ln)) {
-            df <- data.frame(t(val))
-            openxlsx::writeData(wb, sheet = objname, x = df, 
-                                startCol = 2, startRow = sl+1,
-                                colNames = FALSE, rowNames = FALSE, 
-                                withFilter = FALSE,
-                                keepNA = FALSE)         
-          }
+    if (useTemp) {
+      wb <- openxlsx::loadWorkbook(name)
+      names <- c("Stock", "Fleet", "Obs", "Imp")
+      for (objname in names) {
+        if (!is.null(ObTemplates[objname])) {
+          obj <- ObTemplates[objname][[1]]
+          slots <- slotNames(obj)
           
+          for (sl in seq_along(slots)) {
+            val <- slot(obj, slotNames(objname)[sl])
+            ln <- length(val)
+            if (ln >0 && !is.na(ln)) {
+              df <- data.frame(t(val))
+              openxlsx::writeData(wb, sheet = objname, x = df, 
+                                  startCol = 2, startRow = sl+1,
+                                  colNames = FALSE, rowNames = FALSE, 
+                                  withFilter = FALSE,
+                                  keepNA = FALSE)         
+            }
+            
+          }
+          openxlsx::setColWidths(wb, sheet = objname, cols = 1, widths = 'auto')
         }
-        openxlsx::setColWidths(wb, sheet = objname, cols = 1, widths = 'auto')
       }
+      
+      # OM tab not currently updated
+      openxlsx::saveWorkbook(wb, name, overwrite = TRUE)
+      
     }
     
-    # OM tab not currently updated
-    openxlsx::saveWorkbook(wb, name, overwrite = TRUE)
+      
+    }
     
-  }
-  
 
   if ('rmd' %in% files) { 
     # RMD File ####

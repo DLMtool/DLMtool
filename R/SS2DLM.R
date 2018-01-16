@@ -261,42 +261,42 @@ SS2DLM<-function(SSdir,nsim=48,proyears=50,length_timestep=NA,Name=NULL,Source="
 }
 
 
-#' Linear interpolation of a y value at level xlev based on a vector x and y
-#'
-#' @param x A vector of x values
-#' @param y A vector of y values (identical length to x)
-#' @param xlev A the target level of x from which to guess y
-#' @param ascending Are the the x values supposed to be ordered before interpolation
-#' @param zeroint is there a zero-zero x-y intercept?
-#' @author T. Carruthers
-#' @export LinInterp
-LinInterp<-function(x,y,xlev,ascending=F,zeroint=F){
-  
-  if(zeroint){
-    x<-c(0,x)
-    y<-c(0,y)
-  } 
-  
-  if(ascending){
-    cond<-(1:length(x))<which.max(x)
-  }else{
-    cond<-rep(TRUE,length(x))
-  }
-  
-  close<-which.min((x[cond]-xlev)^2)
-  
-  ind<-c(close,close+(x[close]<xlev)*2-1)
-  ind <- ind[ind <= length(x)]
-  if (length(ind)==1) ind <- c(ind, ind-1)
-  if (min(ind)==0) ind <- 1:2
-  ind<-ind[order(ind)]
-
-  pos<-(xlev-x[ind[1]])/(x[ind[2]]-x[ind[1]])
-  max(1,y[ind[1]]+pos*(y[ind[2]]-y[ind[1]]))
-  
-}
-
-
+# #' Linear interpolation of a y value at level xlev based on a vector x and y
+# #'
+# #' @param x A vector of x values
+# #' @param y A vector of y values (identical length to x)
+# #' @param xlev A the target level of x from which to guess y
+# #' @param ascending Are the the x values supposed to be ordered before interpolation
+# #' @param zeroint is there a zero-zero x-y intercept?
+# #' @author T. Carruthers
+# #' @export LinInterp
+# LinInterp<-function(x,y,xlev,ascending=F,zeroint=F){
+#   
+#   if(zeroint){
+#     x<-c(0,x)
+#     y<-c(0,y)
+#   } 
+#   
+#   if(ascending){
+#     cond<-(1:length(x))<which.max(x)
+#   }else{
+#     cond<-rep(TRUE,length(x))
+#   }
+#   
+#   close<-which.min((x[cond]-xlev)^2)
+#   
+#   ind<-c(close,close+(x[close]<xlev)*2-1)
+#   ind <- ind[ind <= length(x)]
+#   if (length(ind)==1) ind <- c(ind, ind-1)
+#   if (min(ind)==0) ind <- 1:2
+#   ind<-ind[order(ind)]
+# 
+#   pos<-(xlev-x[ind[1]])/(x[ind[2]]-x[ind[1]])
+#   max(1,y[ind[1]]+pos*(y[ind[2]]-y[ind[1]]))
+#   
+# }
+# 
+# 
 
 #' A function that samples multivariate normal (logspace) variables 
 #'

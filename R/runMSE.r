@@ -1011,8 +1011,10 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       if(!silent) flush.console()
       
       SelectChanged <- FALSE
-      if (any(range(retA_P[,,nyears+y] / retA[,,nyears+y]) !=1)) SelectChanged <- TRUE
-      if (any(range(V_P[,,nyears+y] / V[,,nyears+y]) !=1))  SelectChanged <- TRUE
+      if (annualMSY) {
+        if (any(range(retA_P[,,nyears+y] - retA[,,nyears+y]) !=0)) SelectChanged <- TRUE
+        if (any(range(V_P[,,nyears+y] - V[,,nyears+y]) !=0))  SelectChanged <- TRUE
+      }
       
       # -- Calculate MSY stats for this year ----
       if (annualMSY & SelectChanged) { #

@@ -165,7 +165,11 @@ BK_ML <- function(x, Data, reps = 100) {
   Kc <- trlnorm(reps * 10, Data@vbK[x], Data@CV_vbK[x])
   Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])
   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
-  if (all(is.na(Z))) return(rep(NA, reps))
+  if (all(is.na(Z))) {
+    Rec <- new("Rec")
+    Rec@TAC <- TACfilter(rep(NA, reps))
+    return(Rec)
+  } 
   FM <- Z - Mdb
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
   Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
@@ -724,7 +728,11 @@ DBSRA_ML <- function(x, Data, reps = 100) {
     Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
     if (is.na(Mdb)) Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
     Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = 1, MLtype = "dep")
-    if (all(is.na(Z))) return(rep(NA, reps))
+    if (all(is.na(Z))) {
+      Rec <- new("Rec")
+      Rec@TAC <- TACfilter(rep(NA, reps))
+      return(Rec)
+    } 
     FM <- Z - Mdb
     FM[FM < 0] <- 0.01
     nyears <- length(Data@Year)
@@ -932,7 +940,11 @@ DCAC_ML <- function(x, Data, reps = 100) {
   Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
   Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps, MLtype = "dep")
-  if (all(is.na(Z))) return(rep(NA, reps))
+  if (all(is.na(Z))) {
+    Rec <- new("Rec")
+    Rec@TAC <- TACfilter(rep(NA, reps))
+    return(Rec)
+  } 
   FM <- Z - Mdb
   nyears <- length(Data@Year)
   Ct1 <- mean(Data@Cat[x, 1:3])
@@ -1431,7 +1443,11 @@ Fdem_ML <- function(x, Data, reps = 100) {
   Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
   
-  if (all(is.na(Z))) return(rep(NA, reps))
+  if (all(is.na(Z))) {
+    Rec <- new("Rec")
+    Rec@TAC <- TACfilter(rep(NA, reps))
+    return(Rec)
+  } 
   ind <- !is.na(Z)
   FM <- Z[ind] - Mvec[ind]
   Ac <- Cc[ind]/(1 - exp(-FM))
@@ -1590,7 +1606,11 @@ Fratio_ML <- function(x, Data, reps = 100) {
   Linfc <- trlnorm(reps * 10, Data@vbLinf[x], Data@CV_vbLinf[x])
   Kc <- trlnorm(reps * 10, Data@vbK[x], Data@CV_vbK[x])
   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
-  if (all(is.na(Z))) return(rep(NA, reps))
+  if (all(is.na(Z))) {
+    Rec <- new("Rec")
+    Rec@TAC <- TACfilter(rep(NA, reps))
+    return(Rec)
+  } 
   FM <- Z - Mdb
   Ac <- Cc/(1 - exp(-FM))
   TAC <- Ac * trlnorm(reps * 10, Data@FMSY_M[x], Data@CV_FMSY_M[x]) * 
@@ -3296,7 +3316,11 @@ SPSRA_ML <- function(x, Data, reps = 100) {
   rsamp <- getr(x, Data, Mvec, Kvec, Linfvec, t0vec, hvec, maxage = Data@MaxAge, 
                 r_reps = reps)
   Z <- MLne(x, Data, Linfc = Linfvec, Kc = Kvec, ML_reps = reps,  MLtype = "dep")
-  if (all(is.na(Z))) return(rep(NA, reps))
+  if (all(is.na(Z))) {
+    Rec <- new("Rec")
+    Rec@TAC <- TACfilter(rep(NA, reps))
+    return(Rec)
+  } 
   FM <- Z - Mvec
   nyears <- length(Data@Year)
   Ct1 <- mean(Data@Cat[x, 1:3])
@@ -3521,7 +3545,11 @@ YPR_ML <- function(x, Data, reps = 100) {
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
   Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
-  if (all(is.na(Z))) return(rep(NA, reps))
+  if (all(is.na(Z))) {
+    Rec <- new("Rec")
+    Rec@TAC <- TACfilter(rep(NA, reps))
+    return(Rec)
+  } 
   FM <- Z - Mdb
   Ac <- Cc/(1 - exp(-FM))
   FMSY <- YPRopt(Linfc, Kc, t0c, Mdb, a, b, LFS, Data@MaxAge, reps * 
