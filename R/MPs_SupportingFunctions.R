@@ -121,7 +121,7 @@ DBSRAopt <- function(lnK, C_hist, nys, Mdb, FMSY_M, BMSY_K, Bt_K, adelay) {
 ## Delay-Difference supporting functions ####
 DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hist,
                  C_hist, UMSYprior) {
-  UMSY_DD = exp(params[1])
+  UMSY_DD = 1/(1 + exp(-params[1])) # Logit transform to constrain u between 0-1
   MSY_DD = exp(params[2])
   q_DD = exp(params[3])
   SS_DD = So_DD * (1 - UMSY_DD)  # Initialise for UMSY, MSY and q leading.
