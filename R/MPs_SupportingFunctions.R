@@ -167,7 +167,9 @@ DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hi
     umsy_penalty <- ifelse(Spr_DD + UMSY_DD * DsprDu_DD > 0, 0, 100)
     alpha_penalty <- ifelse(Arec_DD * Spr_DD * (1 - UMSY_DD) - 1 > 0, 0, 100)
     
-    test <- dnorm(log(Cpred_DD), log(C_hist), 0.25, log = T)
+    sigma <- sqrt(sum((log(Cpred_DD) - log(C_hist))^2)/ny_DD) # Analytical solution
+    
+    test <- dnorm(log(Cpred_DD), log(C_hist), sigma, log = T)
     test2 <- dlnorm(UMSY_DD, log(UMSYprior[1]), UMSYprior[2], log = T)
     test[is.na(test)] <- -1000
     test[test == (-Inf)] <- -1000
