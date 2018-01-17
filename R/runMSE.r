@@ -64,6 +64,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @param Bfrac The target fraction of SSBMSY for calculating Blow
 #' @param annualMSY Logical. Should MSY statistics be calculated for each projection year? 
 #' May differ from MSY statistics from last historical year if there are changes in productivity
+#' @param PPD Logical. Should posterior predicted data be included in the MSE object Misc slot?
 #' @param silent Should messages be printed out to the console?
 #' @return An object of class MSE
 #' @author T. Carruthers and A. Hordyk
@@ -71,8 +72,9 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"),nsim=48,
                       proyears=50,interval=4,pstar = 0.5, maxF = 0.8,  reps = 1, 
                       CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=FALSE, 
-                      HZN=2, Bfrac=0.5, annualMSY=FALSE, silent=FALSE) {
+                      HZN=2, Bfrac=0.5, annualMSY=FALSE, silent=FALSE, PPD=FALSE) {
   
+  Misc<-new('list') #Blank miscellaneous slot created
   
   # For debugging - assign default argument values to to current workspace if they don't exist
   if (interactive()) { 
@@ -1378,12 +1380,15 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     if (!silent) cat("\n")
   }  # end of mm methods 
   
-
+  # Miscellaneous reporting
+  if(PPD)Misc<-MSElist
+  
   ## Create MSE Object #### 
   MSEout <- new("MSE", Name = OM@Name, nyears, proyears, nMPs=nMP, MPs, nsim, 
                 Data@OM, Obs=Data@Obs, B_BMSY=B_BMSYa, F_FMSY=F_FMSYa, B=Ba, 
                 SSB=SSBa, VB=VBa, FM=FMa, CaRet, TAC=TACa, SSB_hist = SSB, CB_hist = CB, 
-                FM_hist = FM, Effort = Effort, PAA=PAAout, CAA=CAAout, CAL=CALout, CALbins=CAL_binsmid)
+                FM_hist = FM, Effort = Effort, PAA=PAAout, CAA=CAAout, CAL=CALout, CALbins=CAL_binsmid,
+                Misc = Misc)
   # Store MSE info
   attr(MSEout, "version") <- packageVersion("DLMtool")
   attr(MSEout, "date") <- date()

@@ -550,6 +550,7 @@ joinMSE <- function(MSEobjs = NULL) {
   # Join them together
   Allobjs <- mget(paste0("obj", 1:Nobjs))
   sns <- slotNames(Allobjs[[1]])
+  sns<-sns[sns!="Misc"] # ignore the Misc slot
   outlist <- vector("list", length(sns))
   for (sn in 1:length(sns)) {
     templs <- lapply(Allobjs, slot, name = sns[sn])
