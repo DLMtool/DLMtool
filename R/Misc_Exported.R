@@ -274,6 +274,7 @@ Required <- function(funcs = NA) {
 #' Sets up parallel processing using the snowfall package
 #'
 #' @param cpus number of CPUs 
+#' @param type Type of cluster. Can be 'SOCK', 'MPI', 'PVM' or 'NWS'. Default is 'SOCK'.
 #' @importFrom snowfall sfInit sfExportAll sfIsRunning sfExport sfSapply
 #' @importFrom parallel detectCores
 #' @export 

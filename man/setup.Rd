@@ -8,6 +8,8 @@ setup(cpus = parallel::detectCores(), type = "SOCK")
 }
 \arguments{
 \item{cpus}{number of CPUs}
+
+\item{type}{Type of cluster. Can be 'SOCK', 'MPI', 'PVM' or 'NWS'. Default is 'SOCK'.}
 }
 \description{
 Sets up parallel processing using the snowfall package
