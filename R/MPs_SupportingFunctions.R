@@ -177,7 +177,7 @@ DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hi
     return(-sum(test, test2) + umsy_penalty + alpha_penalty)  # return objective function
   } else if (opty == 2) {
     # return MLE TAC estimate
-    UMSY_DD * B_DD[ny_DD]
+    UMSY_DD * B_DD[ny_DD + 1]
   } else if (opty == 3) {
     B_DD[tt + 1]/Bo_DD
   } else {
