@@ -354,19 +354,16 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
   
   checkMSE(MSEobj) # check that MSE object contains all slots 
   
-  Class <- class(MPs)
-  if (Class == "NULL") 
-    subMPs <- MSEobj@MPs
-  if (Class == "integer" | Class == "numeric") 
-    subMPs <- MSEobj@MPs[as.integer(MPs)]
+  Class <- class(MPs) 
+  if (Class == "NULL") subMPs <- MSEobj@MPs
+  if (Class == "integer" | Class == "numeric") subMPs <- MSEobj@MPs[as.integer(MPs)]
   if (Class == "character") subMPs <- MPs
   if (Class == "factor") subMPs <- as.character(MPs)
   SubMPs <- match(subMPs, MSEobj@MPs)  #  which(MSEobj@MPs %in% subMPs)
   not <- (subMPs %in% MSEobj@MPs)  # Check for MPs misspelled
   ind <- which(not == FALSE)
   newMPs <- MSEobj@MPs[SubMPs]
-  if (length(SubMPs) < 1) 
-    stop("MPs not found")
+  if (length(SubMPs) < 1) stop("MPs not found")
   if (length(ind > 0)) {
     message("Warning: MPs not found - ", paste0(subMPs[ind], " "))
     message("Subsetting by MPs: ", paste0(newMPs, " "))
@@ -480,7 +477,8 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
                     TAC = SubTACa, SSB_hist = MSEobj@SSB_hist[SubIts, , , , drop = FALSE], 
                     CB_hist = MSEobj@CB_hist[SubIts, , , , drop = FALSE], 
                     FM_hist = MSEobj@FM_hist[SubIts, , , , drop = FALSE], 
-                    Effort = SubEffort, PAA=SubPAA, CAL=SubCAL, CAA=SubCAA , CALbins=CALbins)
+                    Effort = SubEffort, PAA=SubPAA, CAL=SubCAL, CAA=SubCAA , CALbins=CALbins,
+                    Misc=list())
   
   return(SubResults)
 }
@@ -603,7 +601,7 @@ joinMSE <- function(MSEobjs = NULL) {
                 outlist$B, outlist$SSB, outlist$VB,
                 outlist$FM, outlist$C, outlist$TAC, outlist$SSB_hist, 
                 outlist$CB_hist, outlist$FM_hist, outlist$Effort, outlist$PAA,
-                outlist$CAA, outlist$CAL, CALbins)
+                outlist$CAA, outlist$CAL, CALbins, Misc=list())
   
   newMSE
 }
