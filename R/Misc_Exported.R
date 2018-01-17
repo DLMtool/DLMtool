@@ -277,9 +277,9 @@ Required <- function(funcs = NA) {
 #' @importFrom snowfall sfInit sfExportAll sfIsRunning sfExport sfSapply
 #' @importFrom parallel detectCores
 #' @export 
-setup <- function(cpus=parallel::detectCores()) {
+setup <- function(cpus=parallel::detectCores(), type="SOCK") {
   if(snowfall::sfIsRunning()) snowfall::sfStop()
-  snowfall::sfInit(parallel=TRUE,cpus=cpus)  
+  snowfall::sfInit(parallel=TRUE,cpus=cpus, type=type)  
 }
 
 
