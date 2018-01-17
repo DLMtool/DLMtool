@@ -78,6 +78,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   # For debugging - assign default argument values to to current workspace if they don't exist
   if (interactive()) { 
+    devtools::load_all()
     DFargs <- formals(runMSE)
     argNames <- names(DFargs)
     for (X in seq_along(argNames)) {
@@ -158,7 +159,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   # --- Calculate movement ----
   if(!silent) message("Optimizing for user-specified movement")  # Print a progress update
-  
   if (snowfall::sfIsRunning()) {
     # if the cluster is initiated
     # snowfall::sfExport(list = c("Frac_area_1", "Prob_staying"))  # export some of the new arrays
@@ -169,7 +169,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     mov <- array(t(sapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
                           Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
   }
-  
   
   nareas <- 2  # default is a two area model
   # --- Historical Spatial closures ----
