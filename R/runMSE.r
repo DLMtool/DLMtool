@@ -747,7 +747,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   # assign('Data',Data,envir=.GlobalEnv) # for debugging fun
   
-  # --- Run projections ---- 
+  # --- Check MPs ---- 
   if (is.na(MPs[1])) CheckMPs <- TRUE
   if (CheckMPs) {
     if(!silent) message("Determining available methods")  # print an progress report
@@ -770,9 +770,19 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     }
   }
   
-  chkClass <- !unlist(lapply(lapply(MPs, get), class)) %in% "MP"
-  if (sum(chkClass) > 0) message('Dropping MPs: ', paste(MPs[chkClass], ""), " - Not class 'MP'")
-  MPs <- MPs[!chkClass]
+  ok <- rep(TRUE, length(MPs))
+  for (mm in seq_along(MPs)) {
+    test <- try(get(MPs[mm]), silent=TRUE)
+    if (!class(test) == 'MP') {
+      ok[mm] <- FALSE
+      if (class(test) == 'try-error') {
+        message('Object ', paste(MPs[mm], ""), " does not exist - Ignoring")
+      } else message('Dropping MP: ', paste(MPs[mm], ""), " - Not class 'MP'")
+    }
+    
+  }
+ 
+  MPs <- MPs[ok]
   
   nMP <- length(MPs)  # the total number of methods used
   
