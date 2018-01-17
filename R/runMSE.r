@@ -78,7 +78,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   # For debugging - assign default argument values to to current workspace if they don't exist
   if (interactive()) { 
-    devtools::load_all()
+    # devtools::load_all()
     DFargs <- formals(runMSE)
     argNames <- names(DFargs)
     for (X in seq_along(argNames)) {
@@ -770,9 +770,9 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     }
   }
   
-  # chkClass <- !unlist(lapply(lapply(MPs, get), class)) %in% c("Input", "Output")
-  # if (sum(chkClass) > 0) message('Dropping MPs: ', paste(MPs[chkClass], ""), " - Not class 'Input' or 'Output'")
-  # MPs <- MPs[!chkClass]
+  chkClass <- !unlist(lapply(lapply(MPs, get), class)) %in% "MP"
+  if (sum(chkClass) > 0) message('Dropping MPs: ', paste(MPs[chkClass], ""), " - Not class 'MP'")
+  MPs <- MPs[!chkClass]
   
   nMP <- length(MPs)  # the total number of methods used
   

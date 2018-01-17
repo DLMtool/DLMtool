@@ -4,7 +4,7 @@
 \alias{setup}
 \title{Setup parallel processing}
 \usage{
-setup(cpus = parallel::detectCores())
+setup(cpus = parallel::detectCores(), type = "SOCK")
 }
 \arguments{
 \item{cpus}{number of CPUs}
