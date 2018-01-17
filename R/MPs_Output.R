@@ -986,7 +986,6 @@ class(DCAC_ML) <- "MP"
 #' questions and expect colourful responses)
 #' @export 
 DD <- function(x, Data, reps = 100) {
-  # for(x in 1:nsim){
   dependencies = "Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@vbt0, Data@CV_vbt0, Data@Mort, Data@CV_Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind"
   Winf = Data@wla[x] * Data@vbLinf[x]^Data@wlb[x]
   age <- 1:Data@MaxAge
@@ -999,7 +998,6 @@ DD <- function(x, Data, reps = 100) {
   E_hist <- C_hist/Data@Ind[x, yind]
   E_hist <- E_hist/mean(E_hist)
   ny_DD <- length(C_hist)
-  params <- log(c(Data@Mort[x], mean(C_hist, na.rm = T), Data@Mort[x]))
   k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  
   k_DD[k_DD > Data@MaxAge/2] <- ceiling(Data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
   Rho_DD <- (wa[k_DD + 2] - Winf)/(wa[k_DD + 1] - Winf)
@@ -1007,10 +1005,10 @@ DD <- function(x, Data, reps = 100) {
   So_DD <- exp(-Data@Mort[x])  # get So survival rate
   wa_DD <- wa[k_DD]
   UMSYprior <- c(1 - exp(-Data@Mort[x] * 0.5), 0.3)
+  params <- log(c(UMSYprior[1]/(1 - UMSYprior[1]), 3*mean(C_hist, na.rm = T), Data@Mort[x]))
   opt <- optim(params, DD_R, opty = 1, So_DD = So_DD, Alpha_DD = Alpha_DD, 
                Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, wa_DD = wa_DD, E_hist = E_hist, 
-               C_hist = C_hist, UMSYprior = UMSYprior, method = "L-BFGS-B", lower = log(exp(params)/20), 
-               upper = log(exp(params) * 20), hessian = TRUE)
+               C_hist = C_hist, UMSYprior = UMSYprior, method = "BFGS", hessian = TRUE)
   
   # Catfit<-DD_R(opt$par,opty=3,So_DD=So_DD,Alpha_DD=Alpha_DD,Rho_DD=Rho_DD,ny_DD=ny_DD,k_DD=k_DD,wa_DD=wa_DD,E_hist=E_hist,C_hist=C_hist,UMSYprior=UMSYprior)
   # plot(Catfit[,1],ylim=c(0,max(Catfit))) lines(Catfit[,2],col='red')
