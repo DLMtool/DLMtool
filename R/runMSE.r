@@ -122,6 +122,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   OM <- ChkObj(OM) # Check that all required slots in OM object contain values 
   
+  if (proyears < 2) stop('OM@proyears must be > 1', call.=FALSE)
   ### Sampling OM parameters ###
   if(!silent) message("Loading operating model")
   
