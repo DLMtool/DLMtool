@@ -169,7 +169,7 @@ DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hi
     sigma <- sqrt(sum((log(C_hist) - log(Cpred_DD))^2)/ny_DD) # Analytical solution
     
     test <- dnorm(log(C_hist), log(Cpred_DD), sigma, log = T)
-    test2 <- dlnorm(UMSY_DD, log(UMSYprior[1]), UMSYprior[2], log = T)
+    test2 <- dbeta(UMSY_DD, UMSYprior[1], UMSYprior[2], log = T)
     test[is.na(test)] <- -1000
     test[test == (-Inf)] <- -1000
     if (is.na(test2) | test2 == -Inf | test2 == Inf)
