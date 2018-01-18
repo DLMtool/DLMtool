@@ -64,6 +64,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @param Bfrac The target fraction of SSBMSY for calculating Blow
 #' @param annualMSY Logical. Should MSY statistics be calculated for each projection year? 
 #' May differ from MSY statistics from last historical year if there are changes in productivity
+#' @param PPD Logical. Should posterior predicted data be included in the MSE object Misc slot?
 #' @param silent Should messages be printed out to the console?
 #' @return An object of class MSE
 #' @author T. Carruthers and A. Hordyk
@@ -71,11 +72,13 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"),nsim=48,
                       proyears=50,interval=4,pstar = 0.5, maxF = 0.8,  reps = 1, 
                       CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=FALSE, 
-                      HZN=2, Bfrac=0.5, annualMSY=FALSE, silent=FALSE) {
+                      HZN=2, Bfrac=0.5, annualMSY=FALSE, silent=FALSE, PPD=FALSE) {
   
+  Misc<-new('list') #Blank miscellaneous slot created
   
   # For debugging - assign default argument values to to current workspace if they don't exist
   if (interactive()) { 
+    # devtools::load_all()
     DFargs <- formals(runMSE)
     argNames <- names(DFargs)
     for (X in seq_along(argNames)) {
@@ -156,7 +159,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   # --- Calculate movement ----
   if(!silent) message("Optimizing for user-specified movement")  # Print a progress update
-  
   if (snowfall::sfIsRunning()) {
     # if the cluster is initiated
     # snowfall::sfExport(list = c("Frac_area_1", "Prob_staying"))  # export some of the new arrays
@@ -167,7 +169,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     mov <- array(t(sapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
                           Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
   }
-  
   
   nareas <- 2  # default is a two area model
   # --- Historical Spatial closures ----
@@ -746,7 +747,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   # assign('Data',Data,envir=.GlobalEnv) # for debugging fun
   
-  # --- Run projections ---- 
+  # --- Check MPs ---- 
   if (is.na(MPs[1])) CheckMPs <- TRUE
   if (CheckMPs) {
     if(!silent) message("Determining available methods")  # print an progress report
@@ -769,9 +770,19 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     }
   }
   
-  # chkClass <- !unlist(lapply(lapply(MPs, get), class)) %in% c("Input", "Output")
-  # if (sum(chkClass) > 0) message('Dropping MPs: ', paste(MPs[chkClass], ""), " - Not class 'Input' or 'Output'")
-  # MPs <- MPs[!chkClass]
+  ok <- rep(TRUE, length(MPs))
+  for (mm in seq_along(MPs)) {
+    test <- try(get(MPs[mm]), silent=TRUE)
+    if (!class(test) == 'MP') {
+      ok[mm] <- FALSE
+      if (class(test) == 'try-error') {
+        message('Object ', paste(MPs[mm], ""), " does not exist - Ignoring")
+      } else message('Dropping MP: ', paste(MPs[mm], ""), " - Not class 'MP'")
+    }
+    
+  }
+ 
+  MPs <- MPs[ok]
   
   nMP <- length(MPs)  # the total number of methods used
   
@@ -1378,12 +1389,15 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     if (!silent) cat("\n")
   }  # end of mm methods 
   
-
+  # Miscellaneous reporting
+  if(PPD)Misc<-MSElist
+  
   ## Create MSE Object #### 
   MSEout <- new("MSE", Name = OM@Name, nyears, proyears, nMPs=nMP, MPs, nsim, 
                 Data@OM, Obs=Data@Obs, B_BMSY=B_BMSYa, F_FMSY=F_FMSYa, B=Ba, 
                 SSB=SSBa, VB=VBa, FM=FMa, CaRet, TAC=TACa, SSB_hist = SSB, CB_hist = CB, 
-                FM_hist = FM, Effort = Effort, PAA=PAAout, CAA=CAAout, CAL=CALout, CALbins=CAL_binsmid)
+                FM_hist = FM, Effort = Effort, PAA=PAAout, CAA=CAAout, CAL=CALout, CALbins=CAL_binsmid,
+                Misc = Misc)
   # Store MSE info
   attr(MSEout, "version") <- packageVersion("DLMtool")
   attr(MSEout, "date") <- date()
