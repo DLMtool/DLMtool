@@ -8,7 +8,7 @@ runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
   "matlenlim", "MRreal"), nsim = 48, proyears = 50, interval = 4,
   pstar = 0.5, maxF = 0.8, reps = 1, CheckMPs = FALSE, timelimit = 1,
   Hist = FALSE, ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2,
-  Bfrac = 0.5, annualMSY = FALSE, silent = FALSE)
+  Bfrac = 0.5, annualMSY = FALSE, silent = FALSE, PPD = FALSE)
 }
 \arguments{
 \item{OM}{An operating model object (class 'OM')}
@@ -68,6 +68,8 @@ in the Blow calculation}
 May differ from MSY statistics from last historical year if there are changes in productivity}
 
 \item{silent}{Should messages be printed out to the console?}
+
+\item{PPD}{Logical. Should posterior predicted data be included in the MSE object Misc slot?}
 }
 \value{
 An object of class MSE

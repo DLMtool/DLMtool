@@ -1261,6 +1261,7 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
 #' @slot CAA Catch at age in last projection year. An array with dimensions: nsim, nMPs, nages. Non-negative real numbers
 #' @slot CAL Catch at length in last projection year. An array with dimensions: nsim, nMPs, nCALbins. Non-negative real numbers
 #' @slot CALbins Mid-points of the catch-at-length bins. Vector of length nCALbins. Positive real numbers. 
+#' @slot Misc Miscellanenous output such as posterior predictive data
 #'
 #' @author T. Carruthers
 #' @keywords classes
@@ -1270,12 +1271,12 @@ setClass("MSE", representation(Name = "character", nyears = "numeric",
                                B = "array", SSB="array", VB="array", FM = "array", C = "array", 
                                TAC = "array", SSB_hist = "array", 
                                CB_hist = "array", FM_hist = "array", Effort = "array", PAA= "array", CAA= "array", 
-                               CAL= "array", CALbins="numeric"))
+                               CAL= "array", CALbins="numeric", Misc="list"))
 
 
 setMethod("initialize", "MSE", function(.Object, Name, nyears, proyears, 
                                         nMPs, MPs, nsim, OM, Obs, B_BMSY, F_FMSY, B, SSB, VB, FM, C, TAC, 
-                                        SSB_hist, CB_hist, FM_hist, Effort = array(), PAA,  CAA, CAL, CALbins) {
+                                        SSB_hist, CB_hist, FM_hist, Effort = array(), PAA,  CAA, CAL, CALbins, Misc) {
   .Object@Name <- Name
   .Object@nyears <- nyears
   .Object@proyears <- proyears
@@ -1300,6 +1301,7 @@ setMethod("initialize", "MSE", function(.Object, Name, nyears, proyears,
   .Object@CAA <- CAA
   .Object@CAL <- CAL
   .Object@CALbins <- CALbins
+  .Object@Misc <- Misc
   
   .Object
 })

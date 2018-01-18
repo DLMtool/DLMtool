@@ -117,6 +117,8 @@ simulation conditions and performance of data-limited methods
 \item{\code{CAL}}{Catch at length in last projection year. An array with dimensions: nsim, nMPs, nCALbins. Non-negative real numbers}
 
 \item{\code{CALbins}}{Mid-points of the catch-at-length bins. Vector of length nCALbins. Positive real numbers.}
+
+\item{\code{Misc}}{Miscellanenous output such as posterior predictive data}
 }}
 
 \section{Objects from the Class}{
