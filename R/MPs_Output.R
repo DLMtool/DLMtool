@@ -986,20 +986,7 @@ class(DCAC_ML) <- "MP"
 #' questions and expect colourful responses)
 #' @export 
 DD <- function(x, Data, reps = 100) {
-  # for(x in 1:nsim){
-  dependencies = "Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@vbt0, Data@CV_vbt0, Data@Mort, Data@CV_Mort, Data@wla, Data@wlb"
-  Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
-  Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
-  if (Data@vbt0[x] != 0 & Data@CV_vbt0[x] != tiny) {
-    t0c <- -trlnorm(reps, -Data@vbt0[x], Data@CV_vbt0[x])
-  } else {
-    t0c <- rep(Data@vbt0[x], reps)
-  }
-  t0c[!is.finite(t0c)] <- 0
-  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
-  a <- Data@wla[x]
-  b <- Data@wlb[x]
-  
+  dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind"
   Winf = Data@wla[x] * Data@vbLinf[x]^Data@wlb[x]
   age <- 1:Data@MaxAge
   la <- Data@vbLinf[x] * (1 - exp(-Data@vbK[x] * ((age - Data@vbt0[x]))))
@@ -1011,21 +998,18 @@ DD <- function(x, Data, reps = 100) {
   E_hist <- C_hist/Data@Ind[x, yind]
   E_hist <- E_hist/mean(E_hist)
   ny_DD <- length(C_hist)
-  params <- log(c(Data@Mort[x], mean(C_hist, na.rm = T), Data@Mort[x]))
   k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  
   k_DD[k_DD > Data@MaxAge/2] <- ceiling(Data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
   Rho_DD <- (wa[k_DD + 2] - Winf)/(wa[k_DD + 1] - Winf)
   Alpha_DD <- Winf * (1 - Rho_DD)
   So_DD <- exp(-Data@Mort[x])  # get So survival rate
   wa_DD <- wa[k_DD]
-  UMSYprior <- c(1 - exp(-Data@Mort[x] * 0.5), 0.3)
+  UMSYpriorpar <- c(1 - exp(-Data@Mort[x] * 0.5), 0.3) # Prior for UMSY is that corresponding to F = 0.5 M with CV = 0.3
+  UMSYprior <- c(alphaconv(UMSYpriorpar[1], prod(UMSYpriorpar)), betaconv(UMSYpriorpar[1], prod(UMSYpriorpar))) # Convert to beta parameters
+  params <- log(c(UMSYpriorpar[1]/(1 - UMSYpriorpar[1]), 3*mean(C_hist, na.rm = T), Data@Mort[x]))
   opt <- optim(params, DD_R, opty = 1, So_DD = So_DD, Alpha_DD = Alpha_DD, 
                Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, wa_DD = wa_DD, E_hist = E_hist, 
-               C_hist = C_hist, UMSYprior = UMSYprior, method = "L-BFGS-B", lower = log(exp(params)/20), 
-               upper = log(exp(params) * 20), hessian = TRUE)
-  
-  # Catfit<-DD_R(opt$par,opty=3,So_DD=So_DD,Alpha_DD=Alpha_DD,Rho_DD=Rho_DD,ny_DD=ny_DD,k_DD=k_DD,wa_DD=wa_DD,E_hist=E_hist,C_hist=C_hist,UMSYprior=UMSYprior)
-  # plot(Catfit[,1],ylim=c(0,max(Catfit))) lines(Catfit[,2],col='red')
+               C_hist = C_hist, UMSYprior = UMSYprior, method = "BFGS", hessian = TRUE)
   
   TAC <- rep(NA, reps)
   # samps<-rmvnorm(reps,opt$par,solve(opt$hessian)) # assuming log
@@ -1062,19 +1046,7 @@ class(DD) <- "MP"
 #' @references Method based on equations of Carl Walters
 #' @export DD4010
 DD4010 <- function(x, Data, reps = 100) {
-  dependencies = "Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@vbt0, Data@CV_vbt0, Data@Mort, Data@CV_Mort. Data@wla, Data@ wlb"
-  Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
-  Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
-  if (Data@vbt0[x] != 0 & Data@CV_vbt0[x] != tiny) {
-    t0c <- -trlnorm(reps, -Data@vbt0[x], Data@CV_vbt0[x])
-  } else {
-    t0c <- rep(Data@vbt0[x], reps)
-  }
-  t0c[!is.finite(t0c)] <- 0
-  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
-  a <- Data@wla[x]
-  b <- Data@wlb[x]
-  
+  dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind"
   Winf = Data@wla[x] * Data@vbLinf[x]^Data@wlb[x]
   age <- 1:Data@MaxAge
   la <- Data@vbLinf[x] * (1 - exp(-Data@vbK[x] * ((age - Data@vbt0[x]))))
@@ -1089,21 +1061,18 @@ DD4010 <- function(x, Data, reps = 100) {
   E_hist <- C_hist/E_hist
   E_hist <- E_hist/mean(E_hist)
   ny_DD <- length(C_hist)
-  params <- log(c(Data@Mort[x], mean(C_hist, na.rm = T), Data@Mort[x]))
   k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)
   k_DD[k_DD > Data@MaxAge/2] <- ceiling(Data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
   Rho_DD <- (wa[k_DD + 2] - Winf)/(wa[k_DD + 1] - Winf)
   Alpha_DD <- Winf * (1 - Rho_DD)
   So_DD <- exp(-Data@Mort[x])  # get So survival rate
   wa_DD <- wa[k_DD]
-  UMSYprior <- c(1 - exp(-Data@Mort * 0.5), 0.3)
+  UMSYpriorpar <- c(1 - exp(-Data@Mort[x] * 0.5), 0.3) # Prior for UMSY is that corresponding to F = 0.5 M with CV = 0.3
+  UMSYprior <- c(alphaconv(UMSYpriorpar[1], prod(UMSYpriorpar)), betaconv(UMSYpriorpar[1], prod(UMSYpriorpar))) # Convert to beta parameters
+  params <- log(c(UMSYpriorpar[1]/(1 - UMSYpriorpar[1]), 3*mean(C_hist, na.rm = T), Data@Mort[x]))
   opt <- optim(params, DD_R, opty = 1, So_DD = So_DD, Alpha_DD = Alpha_DD, 
                Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, wa_DD = wa_DD, E_hist = E_hist, 
-               C_hist = C_hist, UMSYprior = UMSYprior, method = "L-BFGS-B", lower = log(exp(params)/20), 
-               upper = log(exp(params) * 20), hessian = TRUE)
-  
-  # Catfit<-DD_R(opt$par,opty=3,So_DD=So_DD,Alpha_DD=Alpha_DD,Rho_DD=Rho_DD,ny_DD=ny_DD,k_DD=k_DD,wa_DD=wa_DD,E_hist=E_hist,C_hist=C_hist,UMSYprior=UMSYprior)
-  # plot(Catfit[,1],ylim=c(0,max(Catfit))) lines(Catfit[,2],col='red')
+               C_hist = C_hist, UMSYprior = UMSYprior, method = "BFGS", hessian = TRUE)
   
   TAC <- rep(NA, reps)
   dep <- rep(NA, reps)

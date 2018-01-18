@@ -121,14 +121,13 @@ DBSRAopt <- function(lnK, C_hist, nys, Mdb, FMSY_M, BMSY_K, Bt_K, adelay) {
 ## Delay-Difference supporting functions ####
 DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hist,
                  C_hist, UMSYprior) {
-  UMSY_DD = exp(params[1])
+  UMSY_DD = 1/(1 + exp(-params[1])) # Logit transform to constrain u between 0-1
   MSY_DD = exp(params[2])
   q_DD = exp(params[3])
   SS_DD = So_DD * (1 - UMSY_DD)  # Initialise for UMSY, MSY and q leading.
   Spr_DD = (SS_DD * Alpha_DD/(1 - SS_DD) + wa_DD)/(1 - Rho_DD * SS_DD)
-  DsprDu_DD = -So_DD * (Rho_DD/(1 - Rho_DD * SS_DD) * Spr_DD + 1/(1 -
-                                                                      Rho_DD * SS_DD) * (Alpha_DD/(1 - SS_DD) + SS_DD * Alpha_DD/(1 -
-                                                                                                                                    SS_DD)^2))
+  DsprDu_DD = ((Alpha_DD + Spr_DD * (1 + Rho_DD - 2 * Rho_DD * SS_DD))/((1 - Rho_DD * SS_DD) * (1 - SS_DD)) + 
+    Alpha_DD * SS_DD/((1 - Rho_DD * SS_DD) * (1 - SS_DD)^2) - Spr_DD/(1 - SS_DD)) * -So_DD
   Arec_DD = 1/(((1 - UMSY_DD)^2) * (Spr_DD + UMSY_DD * DsprDu_DD))
   Brec_DD = UMSY_DD * (Arec_DD * Spr_DD - 1/(1 - UMSY_DD))/MSY_DD
   Spr0_DD = (So_DD * Alpha_DD/(1 - So_DD) + wa_DD)/(1 - Rho_DD * So_DD)
@@ -160,16 +159,25 @@ DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hi
   Cpred_DD[Cpred_DD < tiny] <- tiny
 
   if (opty == 1) {
-    test <- dnorm(log(Cpred_DD), log(C_hist), 0.25, log = T)
-    test2 <- dlnorm(UMSY_DD, log(UMSYprior[1]), UMSYprior[2], log = T)
+    # The following conditions must be met for positive values
+    # of Arec_DD and Brec_DD, respectively:
+    # umsy * DsprDu + Spr_DD > 0 and Arec_DD * Spr_DD * (1 - UMSY_DD) - 1 > 0
+    # Thus, create a likelihood penalty of 100 if either condition is not met
+    umsy_penalty <- ifelse(Spr_DD + UMSY_DD * DsprDu_DD > 0, 0, UMSY_DD * 100)
+    alpha_penalty <- ifelse(Arec_DD * Spr_DD * (1 - UMSY_DD) - 1 > 0, 0, UMSY_DD * 100)
+    
+    sigma <- sqrt(sum((log(C_hist) - log(Cpred_DD))^2)/ny_DD) # Analytical solution
+    
+    test <- dnorm(log(C_hist), log(Cpred_DD), sigma, log = T)
+    test2 <- dbeta(UMSY_DD, UMSYprior[1], UMSYprior[2], log = T)
     test[is.na(test)] <- -1000
     test[test == (-Inf)] <- -1000
     if (is.na(test2) | test2 == -Inf | test2 == Inf)
       test2 <- 1000
-    return(-sum(test, test2))  # return objective function
+    return(-sum(test, test2) + umsy_penalty + alpha_penalty)  # return objective function
   } else if (opty == 2) {
     # return MLE TAC estimate
-    UMSY_DD * B_DD[ny_DD]
+    UMSY_DD * B_DD[ny_DD + 1]
   } else if (opty == 3) {
     B_DD[tt + 1]/Bo_DD
   } else {
