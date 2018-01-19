@@ -2,13 +2,6 @@
 # Don't edit by hand!
 # 
 
-#'  SimulatedData Data
-#'
-#'  An object of class Data
-#'
-"SimulatedData"
-
-
 #'  Albacore Stock
 #'
 #'  An object of class Stock
