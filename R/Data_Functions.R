@@ -76,7 +76,75 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
   returnList <- list() # a list nMPs long containing MPs recommendations
   recList <- list() # a list containing nsim recommendations from a single MP 
   TACout <- array(NA, dim=c(nMPs, reps, nsims))
-  if (!sfIsRunning() | (nMPs < 8 & nsims < 8)) {
+  # if (!sfIsRunning() | (nMPs < 8 & nsims < 8)) {
+  for (mp in 1:nMPs) {
+    temp <- sapply(1:nsims, MPs[mp], Data = Data, reps = reps)  
+    slots <- slotNames(temp[[1]])
+    for (X in slots) { # sequence along recommendation slots 
+      if (X == "Misc") { # convert to a list nsim by nareas
+        rec <- lapply(temp, slot, name=X)
+      } else {
+        rec <- do.call("cbind", lapply(temp, slot, name=X)) # unlist(lapply(temp, slot, name=X))
+      }
+      if (X == "Spatial") { # convert to a matrix nsim by nareas
+        rec <- matrix(rec, nareas, nsims, byrow=FALSE)   
+      }
+      recList[[X]] <- rec
+      for (x in 1:nsims) Data@Misc[[x]] <- recList$Misc[[x]]
+      recList$Misc <- NULL
+    }
+    if (length(recList$TAC)>0)  TACout[mp,,] <- recList$TAC 
+    returnList[[mp]] <- recList
+    if (!silent && sum(is.na(recList$TAC)) > 0.5 * reps)
+      message("Method ", MPs[mp], " produced greater than 50% NA values")
+  }
+  # } else {
+  #   for (mp in 1:nMPs) {
+  #     temp <- sfSapply(1:nsims, MPs[mp], Data = Data, reps = reps)  
+  #     slots <- slotNames(temp[[1]])
+  #     for (X in slots) { # sequence along recommendation slots 
+  #       if (X == "Misc") { # convert to a list nsim by nareas
+  #         rec <- lapply(temp, slot, name=X)
+  #       } else {
+  #         rec <- do.call("cbind", lapply(temp, slot, name=X)) # unlist(lapply(temp, slot, name=X))
+  #       }
+  #       if (X == "Spatial") { # convert to a matrix nsim by nareas
+  #         rec <- matrix(rec, nareas, nsims, byrow=FALSE)  
+  #       }
+  #       recList[[X]] <- rec
+  #       for (x in 1:nsims) Data@Misc[[x]] <- recList$Misc[[x]]
+  #       recList$Misc <- NULL
+  #     }
+  #     if (length(recList$TAC)>0) TACout[mp,,] <- recList$TAC
+  #     returnList[[mp]] <- recList
+  #     
+  #     if (!silent && sum(is.na(recList$TAC)) > 0.5 * reps)
+  #       message("Method ", MPs[mp], " produced greater than 50% NA values")
+  #   }
+  #   
+  # }
+  
+  Data@TAC <- TACout
+  Data@MPs <- MPs
+  
+  list(returnList, Data)
+}
+
+applyMP2 <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
+  if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
+  Data <- updateMSE(Data)
+  if (is.na(nsims)) nsims <- length(Data@Mort)
+  nMPs <- length(MPs)
+  
+  if (.hasSlot(Data, "nareas")) {
+    nareas <- Data@nareas   
+  } else {
+    nareas <- 2 
+  }
+  returnList <- list() # a list nMPs long containing MPs recommendations
+  recList <- list() # a list containing nsim recommendations from a single MP 
+  TACout <- array(NA, dim=c(nMPs, reps, nsims))
+  # if (!sfIsRunning() | (nMPs < 8 & nsims < 8)) {
     for (mp in 1:nMPs) {
       temp <- sapply(1:nsims, MPs[mp], Data = Data, reps = reps)  
       slots <- slotNames(temp[[1]])
@@ -98,31 +166,31 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
       if (!silent && sum(is.na(recList$TAC)) > 0.5 * reps)
         message("Method ", MPs[mp], " produced greater than 50% NA values")
     }
-  } else {
-    for (mp in 1:nMPs) {
-      temp <- sfSapply(1:nsims, MPs[mp], Data = Data, reps = reps)  
-      slots <- slotNames(temp[[1]])
-      for (X in slots) { # sequence along recommendation slots 
-        if (X == "Misc") { # convert to a list nsim by nareas
-          rec <- lapply(temp, slot, name=X)
-        } else {
-          rec <- do.call("cbind", lapply(temp, slot, name=X)) # unlist(lapply(temp, slot, name=X))
-        }
-        if (X == "Spatial") { # convert to a matrix nsim by nareas
-          rec <- matrix(rec, nareas, nsims, byrow=FALSE)  
-        }
-        recList[[X]] <- rec
-        for (x in 1:nsims) Data@Misc[[x]] <- recList$Misc[[x]]
-        recList$Misc <- NULL
-      }
-      if (length(recList$TAC)>0) TACout[mp,,] <- recList$TAC
-      returnList[[mp]] <- recList
-      
-      if (!silent && sum(is.na(recList$TAC)) > 0.5 * reps)
-        message("Method ", MPs[mp], " produced greater than 50% NA values")
-    }
-    
-  }
+  # } else {
+  #   for (mp in 1:nMPs) {
+  #     temp <- sfSapply(1:nsims, MPs[mp], Data = Data, reps = reps)  
+  #     slots <- slotNames(temp[[1]])
+  #     for (X in slots) { # sequence along recommendation slots 
+  #       if (X == "Misc") { # convert to a list nsim by nareas
+  #         rec <- lapply(temp, slot, name=X)
+  #       } else {
+  #         rec <- do.call("cbind", lapply(temp, slot, name=X)) # unlist(lapply(temp, slot, name=X))
+  #       }
+  #       if (X == "Spatial") { # convert to a matrix nsim by nareas
+  #         rec <- matrix(rec, nareas, nsims, byrow=FALSE)  
+  #       }
+  #       recList[[X]] <- rec
+  #       for (x in 1:nsims) Data@Misc[[x]] <- recList$Misc[[x]]
+  #       recList$Misc <- NULL
+  #     }
+  #     if (length(recList$TAC)>0) TACout[mp,,] <- recList$TAC
+  #     returnList[[mp]] <- recList
+  #     
+  #     if (!silent && sum(is.na(recList$TAC)) > 0.5 * reps)
+  #       message("Method ", MPs[mp], " produced greater than 50% NA values")
+  #   }
+  #   
+  # }
   
   Data@TAC <- TACout
   Data@MPs <- MPs

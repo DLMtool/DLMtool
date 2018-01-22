@@ -239,8 +239,9 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
   S <- SYA[, 1]
   
   # update vulnerable biomass for selectivitity curve 
-  VBiomass_P[,,y,] <- Biomass_P[, , y, ] * V_P[SAYt] # update vulnerable biomass
-  newVB <- apply(Biomass_P[, , y, ] * V_P[SAYt], c(1, 3), sum)  # calculate total vuln biomass by area 
+  VBiomass_P[SAYR] <- Biomass_P[SAYR] * V_P[SAYt] # update vulnerable biomass
+  
+  newVB <- apply(VBiomass_P[,,y,], c(1,3), sum)  # calculate total vuln biomass by area 
   fishdist <- (newVB^Spat_targ)/apply(newVB^Spat_targ, 1, sum)  # spatial preference according to spatial vulnerable biomass
   
   d1 <- t(Si) * fishdist  # distribution of fishing effort
@@ -292,6 +293,13 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     temp <- CB_P[, , y, ]/apply(CB_P[, , y, ], 1, sum) # distribution of removals
     CB_P[,,y,] <- TACusedE *  ratio * temp # scale up total removals 
     
+    chk <- apply(CB_P[,,y,], 1, sum) > availB # total removals can't be more than available biomass
+    if (sum(chk)>0) {
+      c_temp <- apply(CB_P[chk,,y,, drop=FALSE], 1, sum)
+      ratio_temp <- availB[chk]/c_temp
+      CB_P[chk,,y,] <- CB_P[chk,,y,] * array(ratio_temp, dim=c(sum(chk), maxage, nareas))
+    }
+  
     temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
     temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF)
     
@@ -377,57 +385,71 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
 #   runMod
 # }
 # 
-# MSYCalcs <- function(logapicF, MatAge, LenAge, WtAge, MatureAge, VAge, maxage, R0, SRrel, hs, opt=1) {
-#   # Box 3.1 Walters & Martell 2004
-#   apicF <- exp(logapicF)
-#   lx <- l0 <- rep(1, maxage)
-#   for (a in 2:maxage) {
-#     l0[a] <- l0[a-1] * exp(-MatAge[a-1])
-#     lx[a] <- lx[a-1] * exp(-(MatAge[a-1] + apicF*VAge[a-1]))
-#   }
-#   Egg0 <- sum(l0 * WtAge * MatureAge) # unfished egg production (assuming fecundity proportional to weight)
-#   EggF <- sum(lx * WtAge * MatureAge) # fished egg production (assuming fecundity proportional to weight)
-#   
-#   vB0 <- sum(l0 * WtAge * VAge)
-#   vBF <- sum(lx * WtAge * VAge)
-#   
-#   SB0 <- sum(l0 * WtAge * MatureAge) # same as eggs atm
-#   SBF <- sum(lx * WtAge * MatureAge)
-#   
-#   B0 <- sum(l0 * WtAge) # same as eggs atm
-#   BF <- sum(lx * WtAge) 
-#   
-#   YPR <- (1-exp(-apicF)) * vBF 
-#   
-#   hs[hs>0.999] <- 0.999
-#   recK <- (4*hs)/(1-hs) # Goodyear compensation ratio
-#   reca <- recK/Egg0
-#   if (SRrel ==1) recb <- (reca * Egg0 - 1)/(R0*Egg0) # BH SRR 
-#   if (SRrel ==2) recb <- log(reca*Egg0)/(R0*Egg0) # Ricker SRR 
-#   
-#   RelRec <- (reca * EggF-1)/(recb*EggF)
-#   RelRec[RelRec<0] <- 0
-#   
-#   Yield <- YPR * RelRec
-#   if (opt == 1)  return(-Yield)
-#   if (opt == 2) {
-#     out <- c(Yield=Yield, 
-#              F=-log(1 - (Yield/(vBF*RelRec+Yield))),
-#              SB = SBF * RelRec,
-#              SB_SB0 = SBF/SB0,
-#              B_B0 = BF/B0,
-#              B = BF * RelRec + Yield,
-#              VB = vBF * RelRec + Yield,
-#              VB_VB0 = vBF/vB0,
-#              RelRec=RelRec,
-#              SB0 = SB0 * R0)
-#            
-#     return(out)  
-#   } 
-#   
-#   
-#   
-# }
+
+MSYCalcs <- function(logapicF, MatAge, WtAge, MatureAge, VAge, maxage, R0, SRrel, hs, opt=1) {
+  # Box 3.1 Walters & Martell 2004
+  apicF <- exp(logapicF)
+  lx <- l0 <- rep(1, maxage)
+  for (a in 2:maxage) {
+    l0[a] <- l0[a-1] * exp(-MatAge[a-1])
+    lx[a] <- lx[a-1] * exp(-(MatAge[a-1] + apicF*VAge[a-1]))
+  }
+  Egg0 <- sum(l0 * WtAge * MatureAge) # unfished egg production (assuming fecundity proportional to weight)
+  EggF <- sum(lx * WtAge * MatureAge) # fished egg production (assuming fecundity proportional to weight)
+
+  vB0 <- sum(l0 * WtAge * VAge)
+  vBF <- sum(lx * WtAge * VAge)
+
+  SB0 <- sum(l0 * WtAge * MatureAge) # same as eggs atm
+  SBF <- sum(lx * WtAge * MatureAge)
+
+  B0 <- sum(l0 * WtAge) # same as eggs atm
+  BF <- sum(lx * WtAge)
+
+  hs[hs>0.999] <- 0.999
+  recK <- (4*hs)/(1-hs) # Goodyear compensation ratio
+  reca <- recK/Egg0
+  if (SRrel ==1) recb <- (reca * Egg0 - 1)/(R0*Egg0) # BH SRR
+  if (SRrel ==2) recb <- log(reca*Egg0)/(R0*Egg0) # Ricker SRR
+
+  RelRec <- (reca * EggF-1)/(recb*EggF)
+  RelRec[RelRec<0] <- 0
+  
+  Fa <- apicF*VAge
+  Za <- Fa + MatAge
+  relyield <- Fa/Za * lx * (1-exp(-Za)) * WtAge
+  YPR <- sum(relyield)
+  Yield <- YPR * RelRec
+  
+  if (opt == 1)  return(-Yield)
+  if (opt == 2) {
+    out <- c(Yield=Yield,
+             F=-log(1 - (Yield/(vBF*RelRec+Yield))),
+             SB = SBF * RelRec,
+             SB_SB0 = SBF/SB0,
+             B_B0 = BF/B0,
+             B = BF * RelRec + Yield,
+             VB = vBF * RelRec + Yield,
+             VB_VB0 = vBF/vB0,
+             RelRec=RelRec,
+             SB0 = SB0 * R0,
+             B0=B0 * R0,
+             apicF=apicF)
+
+    return(out)
+  }
+
+
+}
+
+optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, yr=1) {
+  doopt <- optimise(MSYCalcs, log(c(0.001, 5)), MatAge=M_ageArray[x,,yr], WtAge=Wt_age[x,,yr], 
+                    MatureAge=Mat_age[x,,yr], VAge=V[x,,yr], maxage, R0=R0[x], SRrel=SRrel[x], hs=hs[x], opt=1)
+  apicFMSY <- exp(doopt$minimum)
+  MSYCalcs(log(apicFMSY), MatAge=M_ageArray[x,,yr], WtAge=Wt_age[x,,yr], 
+           MatureAge=Mat_age[x,,yr], VAge=V[x,,yr], maxage, R0=R0[x], SRrel=SRrel[x], hs=hs[x], opt=2)
+  
+}
 
 
 #' optimize for catchability (q)
@@ -779,18 +801,18 @@ simYears <- function(x, nareas, maxage, N, pyears, M_ageArray, Asize, Mat_age, W
 #' @param Asize A matrix (nsim by nareas) with size of areas
 #' @param nareas The number of spatial areas
 #' @param maxage The maximum age
-#' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas. 
+#' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas.
 #' Only values from the first year (i.e N[,,1,]) are used, which is the current N-at-age.
 #' @param pyears The number of years to project forward. Equal to 'nyears' for optimizing for q.
-#' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year 
+#' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year
 #' @param Mat_age A matrix (dimensions nsim, maxage) with the proportion mature for each age-class
-#' @param Wt_age An array (dimensions nsim, maxage, nyears+proyears) with the weight-at-age and year 
+#' @param Wt_age An array (dimensions nsim, maxage, nyears+proyears) with the weight-at-age and year
 #' @param V An array (dimensions nsim, maxage, nyears+proyears) with the vulnerability-at-age and year
 #' @param retA An array (dimensions nsim, maxage, nyears+proyears) with the probability retained-at-age and year
 #' @param Perr A matrix (dimensions nsim, nyears+proyears) with the recruitment deviations
 #' @param mov An array (dimensions nsim, nareas, nareas) with the movement matrix
 #' @param SRrel A numeric vector nsim long specifying the recruitment curve to use
-#' @param Find A matrix (dimensions nsim, nyears) with the historical fishing effort 
+#' @param Find A matrix (dimensions nsim, nyears) with the historical fishing effort
 #' @param Spat_targ A numeric vector nsim long with the spatial targeting
 #' @param hs A numeric vector nsim long with the steepness values for each simulation
 #' @param R0a A matrix (dimensions nsim, nareas) with the unfished recruitment by area
@@ -854,9 +876,11 @@ getFMSY3 <- function(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, W
                           SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=0, Fapic=0, MPA=MPA, maxF=maxF, control=2)
   }
 
+
   ## Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # retained catch
   Cn <- simpop[[6]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # removals
   Cb <- Cn[,pyears,] * Wt_age[x,,pyears]
+
   B <- sum(simpop[[2]][,pyears,] + Cb)
 
   SSB_MSY <- sum(simpop[[4]][,pyears,])

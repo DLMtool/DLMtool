@@ -324,6 +324,13 @@
 "testOM"
 
 
+#'  SimulatedData Data
+#'
+#'  An object of class Data
+#'
+"SimulatedData"
+
+
 #'  StockDescription 
 #'
 #'  A data.frame with description of slots for class Stock
