@@ -124,7 +124,7 @@ profile <- function(thresh=5, plot=TRUE) {
       
       sfInit(parallel=TRUE, cpus=n)
       st <- Sys.time()
-      tt <- runMSE_fast(save=TRUE)
+      tt <- runMSE_fast()
       time[n] <- difftime(Sys.time(), st, units='secs')
     }
   } 
