@@ -134,6 +134,7 @@ profile <- function(thresh=5, plot=TRUE) {
     plot(df, type='b', ylab="time (seconds)", xlab= "# cpus", bty="l", lwd=2)
     points(rec, df[rec,2], cex=2, pch=16, col="blue")
   }
+  return(df)
 }
 
 
