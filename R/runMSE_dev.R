@@ -122,7 +122,7 @@ profile <- function(thresh=5, plot=TRUE) {
       time[n] <- difftime(Sys.time(), st, units='secs')
     } else{
       
-      sfInit(parallel=TRUE, cpus=n, slaveOutfile="test.txt")
+      sfInit(parallel=TRUE, cpus=n)
       st <- Sys.time()
       tt <- runMSE_fast(save=TRUE)
       time[n] <- difftime(Sys.time(), st, units='secs')
