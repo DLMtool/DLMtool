@@ -4,12 +4,10 @@
 \alias{setup}
 \title{Setup parallel processing}
 \usage{
-setup(cpus = min(parallel::detectCores(), 3), slaveOutfile = "log.txt", ...)
+setup(cpus = min(parallel::detectCores(), 3), ...)
 }
 \arguments{
 \item{cpus}{number of CPUs}
-
-\item{slaveOutfile}{Write R slave output to this file.}
 
 \item{...}{other arguments passed to 'snowfall::sfInit'}
 }
