@@ -58,20 +58,30 @@ runMSE_fast <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cu
 
   ncpu <- sfCpus()
 
-  nsims <- ceiling(OM@nsim / min(OM@nsim, 48))
-  nits <- nsims/ncpu
-  if(nits<1) nits <- ncpu/nsims
-  itsim <- rep(ceiling(OM@nsim/nits), nits)
+  if (OM@nsim<48) stop("nsim must be >=48")
+  nits <- ceiling(OM@nsim/48)
   
+  itsim <- rep(48,nits)
+
+  if (nits < ncpu) {
+    nits <- ncpu
+    itsim <- rep(ceiling(OM@nsim/ncpu), ncpu)
+  }
   if(sum(itsim) != OM@nsim) {
     itsim[length(itsim)] <- OM@nsim - sum(itsim[1:(length(itsim)-1)] )
   }
-  
-  temp <- sfClusterApplyLB(1:nits, run_parallel, itsim, OM, MPs, nsim,
-                           proyears,interval,pstar, maxF,  reps, 
-                           CheckMPs, timelimit, Hist, ntrials, fracD, CalcBlow, 
-                           HZN, Bfrac, annualMSY, silent, PPD)
+  if (itsim[length(itsim)]==1) {
+    itsim[length(itsim)] <- 2
+    itsim[length(itsim)-1] <- itsim[length(itsim)-1] - 1
+  }
 
+  temp <- sfClusterApplyLB(1:nits, run_parallel, itsim=itsim, OM=OM, MPs=MPs, nsim=nsim,
+                           proyears=proyears,interval=interval,pstar=pstar, maxF=maxF,  reps=reps, 
+                           CheckMPs=CheckMPs, timelimit=timelimit, Hist=Hist, ntrials=ntrials, 
+                           fracD=fracD, CalcBlow=CalcBlow, 
+                           HZN=HZN, Bfrac=Bfrac, annualMSY=annualMSY, silent=silent, PPD=PPD)
+
+  
   if (save) saveRDS(temp, paste0('MSEList.rdata'))
   MSE1 <- joinMSE(temp) 
   sfStop()
@@ -94,11 +104,11 @@ run_parallel <- function(i, itsim, OM, MPs, nsim,
   OM@nsim <- itsim[i]
   
   OM@seed <- OM@seed + i 
-  runMSE(OM, MPs,nsim,
+  mse <- runMSE(OM, MPs,nsim,
          proyears,interval,pstar, maxF,  reps, 
          CheckMPs, timelimit, Hist, ntrials, fracD, CalcBlow, 
          HZN, Bfrac, annualMSY, silent, PPD)
-  
+  return(mse)
 }
 
 
