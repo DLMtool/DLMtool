@@ -297,7 +297,8 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     if (sum(chk)>0) {
       c_temp <- apply(CB_P[chk,,y,, drop=FALSE], 1, sum)
       ratio_temp <- availB[chk]/c_temp
-      CB_P[chk,,y,] <- CB_P[chk,,y,] * array(ratio_temp, dim=c(sum(chk), maxage, nareas))
+      if (sum(chk)>1) CB_P[chk,,y, ] <- CB_P[chk,,y,] * array(ratio_temp, dim=c(sum(chk), maxage, nareas))
+      if (sum(chk)==1) CB_P[chk,,y, ] <- CB_P[chk,,y,] * array(ratio_temp, dim=c(maxage, nareas))
     }
   
     temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
