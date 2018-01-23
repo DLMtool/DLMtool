@@ -463,7 +463,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   # FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
   
 
-  MSYrefs <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, yr=nyears)
+  MSYrefs <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, maxage, 
+                    R0, SRrel, hs, yr=nyears)
 
   MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
   FMSY <- MSYrefs[2, ]  # instantaneous FMSY (Vulnerable)

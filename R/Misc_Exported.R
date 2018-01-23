@@ -274,13 +274,14 @@ Required <- function(funcs = NA) {
 #' Sets up parallel processing using the snowfall package
 #'
 #' @param cpus number of CPUs 
-#' @param type Type of cluster. Can be 'SOCK', 'MPI', 'PVM' or 'NWS'. Default is 'SOCK'.
+#' @param slaveOutfile Write R slave output to this file.
+#' @param ... other arguments passed to 'snowfall::sfInit'
 #' @importFrom snowfall sfInit sfExportAll sfIsRunning sfExport sfSapply
 #' @importFrom parallel detectCores
 #' @export 
-setup <- function(cpus=parallel::detectCores(), type="SOCK") {
+setup <- function(cpus=min(parallel::detectCores(),3), slaveOutfile='log.txt', ...) {
   if(snowfall::sfIsRunning()) snowfall::sfStop()
-  snowfall::sfInit(parallel=TRUE,cpus=cpus, type=type)  
+  snowfall::sfInit(parallel=TRUE,cpus=cpus, slaveOutfile=slaveOutfile, ...)  
 }
 
 

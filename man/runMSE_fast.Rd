@@ -9,7 +9,7 @@ runMSE_fast(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
   pstar = 0.5, maxF = 0.8, reps = 1, CheckMPs = FALSE, timelimit = 1,
   Hist = FALSE, ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2,
   Bfrac = 0.5, annualMSY = TRUE, silent = TRUE, PPD = FALSE,
-  save = FALSE)
+  save_name = NULL)
 }
 \arguments{
 \item{OM}{An operating model object (class 'OM')}
@@ -72,7 +72,7 @@ May differ from MSY statistics from last historical year if there are changes in
 
 \item{PPD}{Logical. Should posterior predicted data be included in the MSE object Misc slot?}
 
-\item{save}{Should the MSE packets be saved?}
+\item{save_name}{Character. Optional name of the MSE packet list be saved. Not saved if NULL (default)}
 }
 \value{
 An object of class MSE

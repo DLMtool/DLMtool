@@ -45,14 +45,14 @@
 #' May differ from MSY statistics from last historical year if there are changes in productivity
 #' @param silent Should messages be printed out to the console?
 #' @param PPD Logical. Should posterior predicted data be included in the MSE object Misc slot?
-#' @param save Should the MSE packets be saved?
+#' @param save_name Character. Optional name of the MSE packet list be saved. Not saved if NULL (default)
 #' @return An object of class MSE
 #' @author T. Carruthers and A. Hordyk
 #' @export 
 runMSE_fast <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"),nsim=48,
                    proyears=50,interval=4,pstar = 0.5, maxF = 0.8,  reps = 1, 
                    CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=FALSE, 
-                   HZN=2, Bfrac=0.5, annualMSY=TRUE, silent=TRUE, PPD=FALSE, save=FALSE) {
+                   HZN=2, Bfrac=0.5, annualMSY=TRUE, silent=TRUE, PPD=FALSE, save_name=NULL) {
   
   if(!snowfall::sfIsRunning()) stop("Requires parallel. Use 'setup'", call. = FALSE)
 
@@ -82,14 +82,12 @@ runMSE_fast <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cu
                            HZN=HZN, Bfrac=Bfrac, annualMSY=annualMSY, silent=silent, PPD=PPD)
 
   
-  if (save) saveRDS(temp, paste0('MSEList.rdata'))
+  if (!is.null(save_name) && is.character(save_name)) saveRDS(temp, paste0(save_name, '.rdata'))
   MSE1 <- joinMSE(temp) 
-  sfStop()
-  closeAllConnections()
   if (class(MSE1) == "MSE") {
-    message("Completed")
+    message("MSE completed")
   } else {
-    message("There's a problem!")
+    message("MSE completed but could not join MSE objects. Re-run with `save_name ='MyName'` to debug")
   }
   
   return(MSE1)
@@ -120,7 +118,7 @@ run_parallel <- function(i, itsim, OM, MPs, nsim,
 #' @export
 #'
 #' @author A. Hordyk
-profile <- function(thresh=5, plot=TRUE) {
+optCPU <- function(thresh=5, plot=TRUE) {
   cpus=1:parallel::detectCores()
   time <- NA
   for (n in cpus) {
@@ -128,14 +126,14 @@ profile <- function(thresh=5, plot=TRUE) {
     if (n == 1) {
       sfStop()
       st <- Sys.time()
-      tt <- runMSE()
+      tt <- runMSE(silent = TRUE)
       time[n] <- difftime(Sys.time(), st, units='secs')
     } else{
-      
-      sfInit(parallel=TRUE, cpus=n)
+      setup(cpus=n)
       st <- Sys.time()
       tt <- runMSE_fast()
       time[n] <- difftime(Sys.time(), st, units='secs')
+      
     }
   } 
   df <- data.frame(ncpu=cpus, time=time)

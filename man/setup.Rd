@@ -4,12 +4,14 @@
 \alias{setup}
 \title{Setup parallel processing}
 \usage{
-setup(cpus = parallel::detectCores(), type = "SOCK")
+setup(cpus = min(parallel::detectCores(), 3), slaveOutfile = "log.txt", ...)
 }
 \arguments{
 \item{cpus}{number of CPUs}
 
-\item{type}{Type of cluster. Can be 'SOCK', 'MPI', 'PVM' or 'NWS'. Default is 'SOCK'.}
+\item{slaveOutfile}{Write R slave output to this file.}
+
+\item{...}{other arguments passed to 'snowfall::sfInit'}
 }
 \description{
 Sets up parallel processing using the snowfall package
