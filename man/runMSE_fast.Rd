@@ -8,7 +8,7 @@ runMSE_fast(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
   "matlenlim", "MRreal"), nsim = 48, proyears = 50, interval = 4,
   pstar = 0.5, maxF = 0.8, reps = 1, CheckMPs = FALSE, timelimit = 1,
   Hist = FALSE, ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2,
-  Bfrac = 0.5, annualMSY = TRUE, silent = TRUE, PPD = FALSE,
+  Bfrac = 0.5, annualMSY = FALSE, silent = TRUE, PPD = FALSE,
   save_name = NULL)
 }
 \arguments{

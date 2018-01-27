@@ -52,7 +52,7 @@
 runMSE_fast <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"),nsim=48,
                    proyears=50,interval=4,pstar = 0.5, maxF = 0.8,  reps = 1, 
                    CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=FALSE, 
-                   HZN=2, Bfrac=0.5, annualMSY=TRUE, silent=TRUE, PPD=FALSE, save_name=NULL) {
+                   HZN=2, Bfrac=0.5, annualMSY=FALSE, silent=TRUE, PPD=FALSE, save_name=NULL) {
   
   if(!snowfall::sfIsRunning()) stop("Requires parallel. Use 'setup'", call. = FALSE)
 
@@ -93,6 +93,13 @@ runMSE_fast <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cu
   return(MSE1)
   
 }
+
+# 
+# run_parallel(1, itsim=itsim, OM=OM, MPs=MPs, nsim=nsim,
+# proyears=proyears,interval=interval,pstar=pstar, maxF=maxF,  reps=reps, 
+# CheckMPs=CheckMPs, timelimit=timelimit, Hist=Hist, ntrials=ntrials, 
+# fracD=fracD, CalcBlow=CalcBlow, 
+# HZN=HZN, Bfrac=Bfrac, annualMSY=annualMSY, silent=FALSE, PPD=PPD)
 
 
 run_parallel <- function(i, itsim, OM, MPs, nsim,
