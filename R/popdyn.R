@@ -450,14 +450,30 @@ optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, 
   
   apicFMSY <- exp(doopt$minimum)
 
-  count <- 0
-  while (apicFMSY > 0.95 * max(bounds) & count < 50) {
+  count <- 0; stop <- FALSE
+  while (apicFMSY > 0.95 * max(bounds) & count < 80 & !stop) {
     count <- count + 1
     bounds <- c(0.0000001, max(bounds)-0.05)
-    doopt <- optimise(MSYCalcs, log(bounds), MatAge=M_ageArray[x,,yr], WtAge=Wt_age[x,,yr], 
-                      MatureAge=Mat_age[x,,yr], VAge=V[x,,yr], maxage, R0=R0[x], SRrel=SRrel[x], hs=hs[x], opt=1)
-    apicFMSY <- exp(doopt$minimum)
+    if (bounds[1] < bounds[2]) {
+      doopt <- optimise(MSYCalcs, log(bounds), MatAge=M_ageArray[x,,yr], WtAge=Wt_age[x,,yr], 
+                        MatureAge=Mat_age[x,,yr], VAge=V[x,,yr], maxage, R0=R0[x], SRrel=SRrel[x], hs=hs[x], opt=1)
+      apicFMSY <- exp(doopt$minimum)
+    } else {
+      stop <- TRUE
+    }
   }
+  stop <- FALSE
+  while (apicFMSY > 0.95 * max(bounds) & !stop) {
+    bounds <- c(0.0000001, max(bounds)+0.05)
+    if (bounds[2]  < 10) {
+      doopt <- optimise(MSYCalcs, log(bounds), MatAge=M_ageArray[x,,yr], WtAge=Wt_age[x,,yr], 
+                        MatureAge=Mat_age[x,,yr], VAge=V[x,,yr], maxage, R0=R0[x], SRrel=SRrel[x], hs=hs[x], opt=1)
+      apicFMSY <- exp(doopt$minimum)
+    } else {
+      stop <- TRUE
+    }
+  }
+  
   
   MSYCalcs(log(apicFMSY), MatAge=M_ageArray[x,,yr], WtAge=Wt_age[x,,yr], 
            MatureAge=Mat_age[x,,yr], VAge=V[x,,yr], maxage, R0=R0[x], SRrel=SRrel[x], hs=hs[x], opt=2)
