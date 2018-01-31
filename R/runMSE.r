@@ -19,6 +19,9 @@ Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "D", "Mgrad", "SRrel", "hs", "p
 
 if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 
+
+
+
 #' Run a Management Strategy Evaluation
 #' 
 #' A function that runs a Management Strategy Evaluation (closed-loop
@@ -28,23 +31,6 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @param OM An operating model object (class 'OM')
 #' @param MPs A vector of methods (character string) of class Output or
 #' Input.
-#' @param nsim Number of simulations. Note that in DLMtool V4.1+ 'nsim is ignored 
-#' if OM object contains the slot 'nsim'. 
-#' @param proyears Number of projected years. Note that in DLMtool V4.1+ 'proyears is ignored 
-#' if OM object contains the slot 'proyears'. 
-#' @param interval The assessment interval - how often would you like to update
-#' the management system? NOTE: since DLMtool V4.5 this slot is included in the 
-#' OM object which will override the value used here. This slot to be deprecated in the future.
-#' @param pstar The percentile of the sample of the management recommendation
-#' for each method. NOTE: since DLMtool V4.5 this slot is included in the 
-#' OM object which will override the value used here. This slot to be deprecated in the future.
-#' @param maxF Maximum instantaneous fishing mortality rate that may be
-#' simulated for any given age class. NOTE: since DLMtool V4.5 this slot is included in the 
-#' OM object which will override the value used here. This slot to be deprecated in the future.
-#' @param reps Number of samples of the management recommendation for each
-#' method. Note that when this is set to 1, the mean value of the data inputs
-#' is used. NOTE: since DLMtool V4.5 this slot is included in the 
-#' OM object which will override the value used here. This slot to be deprecated in the future.
 #' @param CheckMPs Logical to indicate if Can function should be used to check
 #' if MPs can be run.
 #' @param timelimit Maximum time taken for a method to carry out 10 reps
@@ -62,17 +48,70 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @param HZN The number of mean generation times required to reach Bfrac SSBMSY
 #' in the Blow calculation
 #' @param Bfrac The target fraction of SSBMSY for calculating Blow
-#' @param annualMSY Logical. Should MSY statistics be calculated for each projection year? 
+#' @param AnnualMSY Logical. Should MSY statistics be calculated for each projection year? 
 #' May differ from MSY statistics from last historical year if there are changes in productivity
 #' @param silent Should messages be printed out to the console?
 #' @param PPD Logical. Should posterior predicted data be included in the MSE object Misc slot?
+#' @param parallel Logical. Should the MSE be run using parallel processing?
+#' @param save_name Character. Optional name to save parallel MSE list
 #' @return An object of class MSE
 #' @author T. Carruthers and A. Hordyk
-#' @export 
-runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"),nsim=48,
-                      proyears=50,interval=4,pstar = 0.5, maxF = 0.8,  reps = 1, 
+#' @export
+#' 
+runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
+                   CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=FALSE, 
+                   HZN=2, Bfrac=0.5, AnnualMSY=FALSE, silent=FALSE, PPD=FALSE, parallel=FALSE, 
+                   save_name=NULL) {
+  if (parallel) {
+    if(!snowfall::sfIsRunning()) stop("Requires parallel. Use 'setup'", call. = FALSE)
+    
+    ncpu <- sfCpus()
+    
+    if (OM@nsim<48) stop("nsim must be >=48")
+    nits <- ceiling(OM@nsim/48)
+    
+    itsim <- rep(48,nits)
+    
+    if (nits < ncpu) {
+      nits <- ncpu
+      itsim <- rep(ceiling(OM@nsim/ncpu), ncpu)
+    }
+    if(sum(itsim) != OM@nsim) {
+      itsim[length(itsim)] <- OM@nsim - sum(itsim[1:(length(itsim)-1)] )
+    }
+    if (itsim[length(itsim)]==1) {
+      itsim[length(itsim)] <- 2
+      itsim[length(itsim)-1] <- itsim[length(itsim)-1] - 1
+    }
+    message("Running MSE in parallel on ", ncpu, ' processors')
+    temp <- sfClusterApplyLB(1:nits, run_parallel, itsim=itsim, OM=OM, MPs=MPs,  
+                             CheckMPs=CheckMPs, timelimit=timelimit, Hist=Hist, ntrials=ntrials, 
+                             fracD=fracD, CalcBlow=CalcBlow, 
+                             HZN=HZN, Bfrac=Bfrac, AnnualMSY=AnnualMSY, silent=TRUE, PPD=PPD)
+  
+    if (!is.null(save_name) && is.character(save_name)) saveRDS(temp, paste0(save_name, '.rdata'))
+    MSE1 <- joinMSE(temp) 
+    if (class(MSE1) == "MSE") {
+      message("MSE completed")
+    } else {
+      message("MSE completed but could not join MSE objects. Re-run with `save_name ='MyName'` to debug")
+    }
+  }
+ 
+  if (!parallel) {
+    if (OM@nsim > 48) message("Suggest using 'parallel = TRUE' for large number of simulations")
+    MSE1 <- runMSE_int(OM, MPs, CheckMPs, timelimit, Hist, ntrials, fracD, CalcBlow, 
+                       HZN, Bfrac, AnnualMSY, silent, PPD)
+    
+  }
+  
+  return(MSE1)
+  
+}
+
+runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
                       CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=FALSE, 
-                      HZN=2, Bfrac=0.5, annualMSY=FALSE, silent=FALSE, PPD=FALSE) {
+                      HZN=2, Bfrac=0.5, AnnualMSY=FALSE, silent=FALSE, PPD=FALSE) {
   
   Misc<-new('list') #Blank miscellaneous slot created
   
@@ -847,7 +886,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   FMSY_P <- array(FMSY, dim=c(nsim, nMP, proyears))
   SSBMSY_P <- array(SSBMSY, dim=c(nsim, nMP, proyears)) 
   
-  if (annualMSY) {
+  if (AnnualMSY) {
 
     if(!silent) message("Calculating MSY reference points for each projection year")
     for (y in 1:proyears) {
@@ -1046,16 +1085,16 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       if(!silent) flush.console()
       
       SelectChanged <- FALSE
-      if (annualMSY) {
+      if (AnnualMSY) {
         if (any(range(retA_P[,,nyears+y] - retA[,,nyears+y]) !=0)) SelectChanged <- TRUE
         if (any(range(V_P[,,nyears+y] - V[,,nyears+y]) !=0))  SelectChanged <- TRUE
       }
       
       # -- Calculate MSY stats for this year ----
-      if (annualMSY & SelectChanged) { #
+      if (AnnualMSY & SelectChanged) { #
         
         MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V_P, maxage, R0, SRrel, hs, yr=nyears+y)
-        
+    
         MSY_P[,mm,y] <- MSYrefsYr[1, ]
         FMSY_P[,mm,y] <- MSYrefsYr[2,]
         SSBMSY_P[,mm,y] <- MSYrefsYr[3,]
@@ -1527,7 +1566,7 @@ cparnamecheck<-function(cpars){
 #' @param HZN The number of mean generation times required to reach Bfrac SSBMSY
 #' in the Blow calculation
 #' @param Bfrac fraction of SSBMSY
-#' @param annualMSY Logical. Should MSY statistics be calculated for each projection year? 
+#' @param AnnualMSY Logical. Should MSY statistics be calculated for each projection year? 
 #' @param maxsims Maximum number of simulations per packet
 #' @param name Character string for name of saved MSE packets (if \code{savePack=TRUE}) 
 #' and final MSE object. If none provided, it uses the first five letters from the \code{OM} name
@@ -1542,7 +1581,7 @@ cparnamecheck<-function(cpars){
 runMSErobust <- function(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE", "matlenlim", "MRreal"), 
                          nsim = 256, proyears = 50, interval = 4, pstar = 0.5, 
                          maxF = 0.8, timelimit = 1, reps = 1, CheckMPs = FALSE, Hist = FALSE, 
-                         ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2, Bfrac = 0.5, annualMSY=TRUE,
+                         ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2, Bfrac = 0.5, AnnualMSY=TRUE,
                          maxsims = 64, name = NULL, unique=FALSE, maxCrash = 10, saveMSE = TRUE, 
                          savePack = FALSE) {
   
@@ -1601,7 +1640,7 @@ runMSErobust <- function(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref",
       trialMSE <- try(runMSE(OM = tryOM, MPs = MPs, interval = interval, pstar = pstar, 
                              maxF = maxF, timelimit = timelimit, reps = reps, CheckMPs = CheckMPs, 
                              Hist=Hist, ntrials=ntrials, fracD=fracD, CalcBlow = CalcBlow, HZN = HZN, 
-                             Bfrac = Bfrac, annualMSY=annualMSY))	
+                             Bfrac = Bfrac, AnnualMSY=AnnualMSY))	
       
       if (!Hist & class(trialMSE) != "MSE") {
         crash <- crash + 1

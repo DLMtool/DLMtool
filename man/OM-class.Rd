@@ -6,8 +6,10 @@
 \title{Class \code{'OM'}}
 \description{
 An object containing all the parameters needed to control the MSE which can
-be build from component Stock, Fleet and Obs objects. Almost all of
-these inputs are a vector of length 2 which describes the upper and lower
+be build from component Stock, Fleet, Obs, and Imp objects.
+}
+\details{
+Almost all of these inputs are a vector of length 2 which describes the upper and lower
 bounds of a uniform distribution from which to sample the parameter.
 }
 \section{Slots}{

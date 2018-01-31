@@ -702,3 +702,38 @@ L2A <- function(t0c, Linfc, Kc, Len, maxage) {
 
 
 
+#' Determine optimal number of cpus
+#'
+#' @param thresh Recommended n cpus is what percent of the fastest time?
+#' @param plot Logical. Show the plot?
+#'
+#' @export
+#'
+#' @author A. Hordyk
+optCPU <- function(thresh=5, plot=TRUE) {
+  cpus=1:parallel::detectCores()
+  time <- NA
+  for (n in cpus) {
+    message(n, ' of ', max(cpus))
+    if (n == 1) {
+      sfStop()
+      st <- Sys.time()
+      tt <- runMSE(silent = TRUE)
+      time[n] <- difftime(Sys.time(), st, units='secs')
+    } else{
+      setup(cpus=n)
+      st <- Sys.time()
+      tt <- runMSE(silent=TRUE, parallel=TRUE)
+      time[n] <- difftime(Sys.time(), st, units='secs')
+      
+    }
+  } 
+  df <- data.frame(ncpu=cpus, time=time)
+  rec <- min(which(time < min(time) * (1 + thresh/100)))
+  if (plot) {
+    plot(df, type='b', ylab="time (seconds)", xlab= "# cpus", bty="l", lwd=2)
+    points(rec, df[rec,2], cex=2, pch=16, col="blue")
+  }
+  return(df)
+}
+

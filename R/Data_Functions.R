@@ -341,11 +341,11 @@ Input <- function(Data, MPs = NA, reps = 100, timelimit = 10, CheckMPs = TRUE,
       if (msg) message("Running ", mm, " of ", length(funcs), " - ", funcs[mm])
       
       runIn <- runInMP(Data, MPs = funcs[mm], reps = reps)[[1]][[1]]
-      if (length(runIn$Effort) > 0) Out[mm, 1] <- runIn$Effort
-      if (length(runIn$LR5) > 0) Out[mm, 2] <- runIn$LR5
-      if (length(runIn$LFR) > 0) Out[mm, 3] <- runIn$LFR
-      if (length(runIn$HS) > 0) Out[mm, 4] <- runIn$HS
-      Out[mm, 5:ncol(Out)] <- runIn$Spatial
+      if (length(runIn$Effort) > 0) Out[mm, 1] <- runIn$Effort[1]
+      if (length(runIn$LR5) > 0) Out[mm, 2] <- runIn$LR5[1]
+      if (length(runIn$LFR) > 0) Out[mm, 3] <- runIn$LFR[1]
+      if (length(runIn$HS) > 0) Out[mm, 4] <- runIn$HS[1]
+      Out[mm, 5:ncol(Out)] <- runIn$Spatial[1,]
     }
   }
   round(Out,2)

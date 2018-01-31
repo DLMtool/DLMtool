@@ -8,7 +8,7 @@ runMSErobust(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
   "matlenlim", "MRreal"), nsim = 256, proyears = 50, interval = 4,
   pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, CheckMPs = FALSE,
   Hist = FALSE, ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2,
-  Bfrac = 0.5, annualMSY = TRUE, maxsims = 64, name = NULL,
+  Bfrac = 0.5, AnnualMSY = TRUE, maxsims = 64, name = NULL,
   unique = FALSE, maxCrash = 10, saveMSE = TRUE, savePack = FALSE)
 }
 \arguments{
@@ -58,7 +58,7 @@ in the Blow calculation}
 
 \item{Bfrac}{fraction of SSBMSY}
 
-\item{annualMSY}{Logical. Should MSY statistics be calculated for each projection year?}
+\item{AnnualMSY}{Logical. Should MSY statistics be calculated for each projection year?}
 
 \item{maxsims}{Maximum number of simulations per packet}
 

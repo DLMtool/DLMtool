@@ -5,39 +5,16 @@
 \title{Run a Management Strategy Evaluation}
 \usage{
 runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
-  "matlenlim", "MRreal"), nsim = 48, proyears = 50, interval = 4,
-  pstar = 0.5, maxF = 0.8, reps = 1, CheckMPs = FALSE, timelimit = 1,
-  Hist = FALSE, ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2,
-  Bfrac = 0.5, annualMSY = FALSE, silent = FALSE, PPD = FALSE)
+  "matlenlim", "MRreal"), CheckMPs = FALSE, timelimit = 1, Hist = FALSE,
+  ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2, Bfrac = 0.5,
+  AnnualMSY = FALSE, silent = FALSE, PPD = FALSE, parallel = FALSE,
+  save_name = NULL)
 }
 \arguments{
 \item{OM}{An operating model object (class 'OM')}
 
 \item{MPs}{A vector of methods (character string) of class Output or
 Input.}
-
-\item{nsim}{Number of simulations. Note that in DLMtool V4.1+ 'nsim is ignored 
-if OM object contains the slot 'nsim'.}
-
-\item{proyears}{Number of projected years. Note that in DLMtool V4.1+ 'proyears is ignored 
-if OM object contains the slot 'proyears'.}
-
-\item{interval}{The assessment interval - how often would you like to update
-the management system? NOTE: since DLMtool V4.5 this slot is included in the 
-OM object which will override the value used here. This slot to be deprecated in the future.}
-
-\item{pstar}{The percentile of the sample of the management recommendation
-for each method. NOTE: since DLMtool V4.5 this slot is included in the 
-OM object which will override the value used here. This slot to be deprecated in the future.}
-
-\item{maxF}{Maximum instantaneous fishing mortality rate that may be
-simulated for any given age class. NOTE: since DLMtool V4.5 this slot is included in the 
-OM object which will override the value used here. This slot to be deprecated in the future.}
-
-\item{reps}{Number of samples of the management recommendation for each
-method. Note that when this is set to 1, the mean value of the data inputs
-is used. NOTE: since DLMtool V4.5 this slot is included in the 
-OM object which will override the value used here. This slot to be deprecated in the future.}
 
 \item{CheckMPs}{Logical to indicate if Can function should be used to check
 if MPs can be run.}
@@ -64,12 +41,16 @@ in the Blow calculation}
 
 \item{Bfrac}{The target fraction of SSBMSY for calculating Blow}
 
-\item{annualMSY}{Logical. Should MSY statistics be calculated for each projection year? 
+\item{AnnualMSY}{Logical. Should MSY statistics be calculated for each projection year? 
 May differ from MSY statistics from last historical year if there are changes in productivity}
 
 \item{silent}{Should messages be printed out to the console?}
 
 \item{PPD}{Logical. Should posterior predicted data be included in the MSE object Misc slot?}
+
+\item{parallel}{Logical. Should the MSE be run using parallel processing?}
+
+\item{save_name}{Character. Optional name to save parallel MSE list}
 }
 \value{
 An object of class MSE
