@@ -65,7 +65,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   if (parallel) {
     if(!snowfall::sfIsRunning()) stop("Requires parallel. Use 'setup'", call. = FALSE)
     
-    ncpu <- sfCpus()
+    ncpu <- snowfall::sfCpus()
     
     if (OM@nsim<48) stop("nsim must be >=48")
     nits <- ceiling(OM@nsim/48)
@@ -84,7 +84,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       itsim[length(itsim)-1] <- itsim[length(itsim)-1] - 1
     }
     message("Running MSE in parallel on ", ncpu, ' processors')
-    temp <- sfClusterApplyLB(1:nits, run_parallel, itsim=itsim, OM=OM, MPs=MPs,  
+    temp <- snowfall::sfClusterApplyLB(1:nits, run_parallel, itsim=itsim, OM=OM, MPs=MPs,  
                              CheckMPs=CheckMPs, timelimit=timelimit, Hist=Hist, ntrials=ntrials, 
                              fracD=fracD, CalcBlow=CalcBlow, 
                              HZN=HZN, Bfrac=Bfrac, AnnualMSY=AnnualMSY, silent=TRUE, PPD=PPD)
@@ -1539,19 +1539,8 @@ cparnamecheck<-function(cpars){
 #' @param OM An operating model object (class OM)
 #' @param MPs A vector of methods (character string) of class Output or
 #' Input.
-#' @param nsim Number of simulations
-#' @param proyears Number of projected years
-#' @param interval The assessment interval - how often would you like to update
-#' the management system?
-#' @param pstar The percentile of the sample of the management recommendation
-#' for each method
-#' @param maxF Maximum instantaneous fishing mortality rate that may be
-#' simulated for any given age class
 #' @param timelimit Maximum time taken for a method to carry out 10 reps
 #' (methods are ignored that take longer)
-#' @param reps Number of samples of the management recommendation for each
-#' method. Note that when this is set to 1, the mean value of the data inputs
-#' is used.
 #' @param CheckMPs Logical to indicate if Can function should be used to check
 #' if MPs can be run.
 #' @param Hist Should model stop after historical simulations? Returns a list 
@@ -1579,8 +1568,7 @@ cparnamecheck<-function(cpars){
 #' @author A. Hordyk and T. Carruthers
 #' @export runMSErobust
 runMSErobust <- function(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE", "matlenlim", "MRreal"), 
-                         nsim = 256, proyears = 50, interval = 4, pstar = 0.5, 
-                         maxF = 0.8, timelimit = 1, reps = 1, CheckMPs = FALSE, Hist = FALSE, 
+                         timelimit = 1, CheckMPs = FALSE, Hist = FALSE, 
                          ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2, Bfrac = 0.5, AnnualMSY=TRUE,
                          maxsims = 64, name = NULL, unique=FALSE, maxCrash = 10, saveMSE = TRUE, 
                          savePack = FALSE) {
@@ -1637,10 +1625,9 @@ runMSErobust <- function(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref",
       tryOM@nsim <- length(simsplit[[i]]) # sub number of sims 
       if (length(cpars) > 0) tryOM@cpars  <- SampleCpars(cpars, nsim=tryOM@nsim, msg=FALSE)
       
-      trialMSE <- try(runMSE(OM = tryOM, MPs = MPs, interval = interval, pstar = pstar, 
-                             maxF = maxF, timelimit = timelimit, reps = reps, CheckMPs = CheckMPs, 
+      trialMSE <- try(runMSE(OM = tryOM, MPs = MPs, timelimit = timelimit, CheckMPs = CheckMPs, 
                              Hist=Hist, ntrials=ntrials, fracD=fracD, CalcBlow = CalcBlow, HZN = HZN, 
-                             Bfrac = Bfrac, AnnualMSY=AnnualMSY))	
+                             Bfrac = Bfrac, AnnualMSY=AnnualMSY, parallel=TRUE))	
       
       if (!Hist & class(trialMSE) != "MSE") {
         crash <- crash + 1

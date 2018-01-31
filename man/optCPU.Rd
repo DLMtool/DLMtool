@@ -4,7 +4,7 @@
 \alias{optCPU}
 \title{Determine optimal number of cpus}
 \usage{
-optCPU(thresh = 5, plot = TRUE)
+optCPU(thresh = 5, plot = TRUE, nsim = 48)
 }
 \arguments{
 \item{thresh}{Recommended n cpus is what percent of the fastest time?}

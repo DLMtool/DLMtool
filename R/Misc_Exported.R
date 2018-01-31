@@ -710,20 +710,22 @@ L2A <- function(t0c, Linfc, Kc, Len, maxage) {
 #' @export
 #'
 #' @author A. Hordyk
-optCPU <- function(thresh=5, plot=TRUE) {
+optCPU <- function(thresh=5, plot=TRUE, nsim=48) {
   cpus=1:parallel::detectCores()
   time <- NA
+  OM <- testOM
+  OM@nsim <- nsim
   for (n in cpus) {
     message(n, ' of ', max(cpus))
     if (n == 1) {
-      sfStop()
+      snowfall::sfStop()
       st <- Sys.time()
-      tt <- runMSE(silent = TRUE)
+      tt <- runMSE(OM, silent = TRUE)
       time[n] <- difftime(Sys.time(), st, units='secs')
     } else{
       setup(cpus=n)
       st <- Sys.time()
-      tt <- runMSE(silent=TRUE, parallel=TRUE)
+      tt <- runMSE(OM, silent=TRUE, parallel=TRUE)
       time[n] <- difftime(Sys.time(), st, units='secs')
       
     }
