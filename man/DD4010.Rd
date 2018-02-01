@@ -23,7 +23,11 @@ time-series of catches and a relative abundance index. In this version of
 the DD MP a 40-10 rule is imposed over the OFL recommendation.
 }
 \references{
-Method based on equations of Carl Walters
+Carruthers, T, Walters, C.J,, and McAllister, M.K. 2012. Evaluating methods that classify
+fisheries stock status using only fisheries catch data. Fisheries Research 119-120:66-79.
+
+Hilborn, R., and Walters, C., 1992. Quantitative Fisheries Stock Assessment: Choice,
+Dynamics and Uncertainty. Chapman and Hall, New York.
 }
 \author{
 T. Carruthers
