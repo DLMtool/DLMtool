@@ -274,13 +274,13 @@ Required <- function(funcs = NA) {
 #' Sets up parallel processing using the snowfall package
 #'
 #' @param cpus number of CPUs 
-#' @param type Type of cluster. Can be 'SOCK', 'MPI', 'PVM' or 'NWS'. Default is 'SOCK'.
+#' @param ... other arguments passed to 'snowfall::sfInit'
 #' @importFrom snowfall sfInit sfExportAll sfIsRunning sfExport sfSapply
 #' @importFrom parallel detectCores
 #' @export 
-setup <- function(cpus=parallel::detectCores(), type="SOCK") {
+setup <- function(cpus=min(parallel::detectCores(),3), ...) {
   if(snowfall::sfIsRunning()) snowfall::sfStop()
-  snowfall::sfInit(parallel=TRUE,cpus=cpus, type=type)  
+  snowfall::sfInit(parallel=TRUE,cpus=cpus, ...)  
 }
 
 
@@ -701,4 +701,41 @@ L2A <- function(t0c, Linfc, Kc, Len, maxage) {
 }
 
 
+
+#' Determine optimal number of cpus
+#'
+#' @param thresh Recommended n cpus is what percent of the fastest time?
+#' @param plot Logical. Show the plot?
+#'
+#' @export
+#'
+#' @author A. Hordyk
+optCPU <- function(thresh=5, plot=TRUE, nsim=48) {
+  cpus=1:parallel::detectCores()
+  time <- NA
+  OM <- testOM
+  OM@nsim <- nsim
+  for (n in cpus) {
+    message(n, ' of ', max(cpus))
+    if (n == 1) {
+      snowfall::sfStop()
+      st <- Sys.time()
+      tt <- runMSE(OM, silent = TRUE)
+      time[n] <- difftime(Sys.time(), st, units='secs')
+    } else{
+      setup(cpus=n)
+      st <- Sys.time()
+      tt <- runMSE(OM, silent=TRUE, parallel=TRUE)
+      time[n] <- difftime(Sys.time(), st, units='secs')
+      
+    }
+  } 
+  df <- data.frame(ncpu=cpus, time=time)
+  rec <- min(which(time < min(time) * (1 + thresh/100)))
+  if (plot) {
+    plot(df, type='b', ylab="time (seconds)", xlab= "# cpus", bty="l", lwd=2)
+    points(rec, df[rec,2], cex=2, pch=16, col="blue")
+  }
+  return(df)
+}
 

@@ -26,7 +26,7 @@ DFO_hist <- function(OM, panel= T,nsim=48) {
     OM@nsim=nsim
   }
   
-  out<-runMSE(OM,nsim=nsim,Hist=T)
+  out<-runMSE(OM,Hist=T)
   Brel<-t(out$TSdata$SSB)/out$MSYs$SSBMSY
   Frel<-t(-log(1-out$TSdata$Catch/(out$TSdata$VB+out$TSdata$Catch)))/out$MSYs$FMSY
  

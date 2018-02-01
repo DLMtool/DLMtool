@@ -2,13 +2,6 @@
 # Don't edit by hand!
 # 
 
-#'  SimulatedData Data
-#'
-#'  An object of class Data
-#'
-"SimulatedData"
-
-
 #'  Albacore Stock
 #'
 #'  An object of class Stock
@@ -329,6 +322,13 @@
 #'  An object of class OM
 #'
 "testOM"
+
+
+#'  SimulatedData Data
+#'
+#'  An object of class Data
+#'
+"SimulatedData"
 
 
 #'  StockDescription 

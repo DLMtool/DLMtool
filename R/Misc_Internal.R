@@ -48,7 +48,7 @@ OptionalSlots <- function() {
                 "LFSUpper", "VmaxLower", "VmaxUpper")
   RecSlots <-  c("Period", "Amplitude")
   
-  OptPars <- c("M2", "AbsSelYears", 'MPA')
+  OptPars <- c("M2", "Mexp", "AbsSelYears", 'MPA')
   
   
   # Slots ok to not contain values
@@ -299,6 +299,17 @@ range01 <- function(x) {
 runMSEnomsg <- function(...) {
   capture.output(out <- suppressMessages(runMSE(...)))
   out
+}
+
+
+run_parallel <- function(i, itsim, OM, MPs, CheckMPs, timelimit, Hist, ntrials, fracD, CalcBlow, 
+                         HZN, Bfrac, AnnualMSY, silent, PPD) {
+  OM@nsim <- itsim[i]
+  
+  OM@seed <- OM@seed + i 
+  mse <- runMSE_int(OM, MPs, CheckMPs, timelimit, Hist, ntrials, fracD, CalcBlow, 
+                    HZN, Bfrac, AnnualMSY, silent, PPD)
+  return(mse)
 }
 
 

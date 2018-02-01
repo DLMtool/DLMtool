@@ -104,6 +104,7 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
       if (is.na(ObTemplates$Obs@Name) || nchar(ObTemplates$Obs@Name)==0) ObTemplates$Obs@Name <- InTemplates[[isOM]]@Name
       ObTemplates$Imp <- SubOM(InTemplates[[isOM]], "Imp")
       if (is.na(ObTemplates$Imp@Name) || nchar(ObTemplates$Imp@Name)==0) ObTemplates$Imp@Name <- InTemplates[[isOM]]@Name
+      useTemp <- TRUE
     } else {
       for (x in seq_along(inclasses)) {
         if (inclasses[x] == 'Stock') ObTemplates$Stock <- InTemplates[[x]]

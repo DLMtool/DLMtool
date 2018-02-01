@@ -915,8 +915,9 @@ setMethod("initialize", "Imp", function(.Object, file = NA, dec=c(".", ",")) {
 #' Class \code{'OM'}
 #' 
 #' An object containing all the parameters needed to control the MSE which can
-#' be build from component Stock, Fleet and Obs objects. Almost all of
-#' these inputs are a vector of length 2 which describes the upper and lower
+#' be build from component Stock, Fleet, Obs, and Imp objects. 
+#' 
+#' Almost all of these inputs are a vector of length 2 which describes the upper and lower
 #' bounds of a uniform distribution from which to sample the parameter.
 #' 
 #' 

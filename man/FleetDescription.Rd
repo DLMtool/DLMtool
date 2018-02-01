@@ -4,7 +4,7 @@
 \name{FleetDescription}
 \alias{FleetDescription}
 \title{FleetDescription}
-\format{An object of class \code{data.frame} with 26 rows and 2 columns.}
+\format{An object of class \code{data.frame} with 27 rows and 2 columns.}
 \usage{
 FleetDescription
 }

@@ -5,11 +5,10 @@
 \title{Run a Management Strategy Evaluation}
 \usage{
 runMSErobust(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
-  "matlenlim", "MRreal"), nsim = 256, proyears = 50, interval = 4,
-  pstar = 0.5, maxF = 0.8, timelimit = 1, reps = 1, CheckMPs = FALSE,
-  Hist = FALSE, ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2,
-  Bfrac = 0.5, annualMSY = TRUE, maxsims = 64, name = NULL,
-  unique = FALSE, maxCrash = 10, saveMSE = TRUE, savePack = FALSE)
+  "matlenlim", "MRreal"), timelimit = 1, CheckMPs = FALSE, Hist = FALSE,
+  ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2, Bfrac = 0.5,
+  AnnualMSY = TRUE, maxsims = 64, name = NULL, unique = FALSE,
+  maxCrash = 10, saveMSE = TRUE, savePack = FALSE)
 }
 \arguments{
 \item{OM}{An operating model object (class OM)}
@@ -17,25 +16,8 @@ runMSErobust(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
 \item{MPs}{A vector of methods (character string) of class Output or
 Input.}
 
-\item{nsim}{Number of simulations}
-
-\item{proyears}{Number of projected years}
-
-\item{interval}{The assessment interval - how often would you like to update
-the management system?}
-
-\item{pstar}{The percentile of the sample of the management recommendation
-for each method}
-
-\item{maxF}{Maximum instantaneous fishing mortality rate that may be
-simulated for any given age class}
-
 \item{timelimit}{Maximum time taken for a method to carry out 10 reps
 (methods are ignored that take longer)}
-
-\item{reps}{Number of samples of the management recommendation for each
-method. Note that when this is set to 1, the mean value of the data inputs
-is used.}
 
 \item{CheckMPs}{Logical to indicate if Can function should be used to check
 if MPs can be run.}
@@ -58,7 +40,7 @@ in the Blow calculation}
 
 \item{Bfrac}{fraction of SSBMSY}
 
-\item{annualMSY}{Logical. Should MSY statistics be calculated for each projection year?}
+\item{AnnualMSY}{Logical. Should MSY statistics be calculated for each projection year?}
 
 \item{maxsims}{Maximum number of simulations per packet}
 

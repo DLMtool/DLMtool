@@ -573,7 +573,7 @@ joinMSE <- function(MSEobjs = NULL) {
           nBins <- sapply(tempVal, function(x) x[3])
           nsims <- sapply(tempVal, function(x) x[1])
           nMPs <- sapply(tempVal, function(x) x[2])
-          if (!mean(nBins) == nBins[1]) { # not all same size 
+          if (!mean(nBins) == max(nBins)) { # not all same size 
             Max <- max(nBins)
             index <- which(nBins < Max)
             for (kk in index) {
