@@ -27,8 +27,11 @@ real abundance. Unsurprisingly the extent to which these assumptions are
 violated tends to be the biggest driver of performance for this method.
 }
 \references{
-Method based on equations of Carl Walters (bug him with
-questions and expect colourful responses)
+Carruthers, T, Walters, C.J,, and McAllister, M.K. 2012. Evaluating methods that classify
+fisheries stock status using only fisheries catch data. Fisheries Research 119-120:66-79.
+
+Hilborn, R., and Walters, C., 1992. Quantitative Fisheries Stock Assessment: Choice,
+Dynamics and Uncertainty. Chapman and Hall, New York.
 }
 \author{
 T. Carruthers

@@ -982,11 +982,15 @@ class(DCAC_ML) <- "MP"
 #' real abundance. Unsurprisingly the extent to which these assumptions are
 #' violated tends to be the biggest driver of performance for this method.
 #' @author T. Carruthers
-#' @references Method based on equations of Carl Walters (bug him with
-#' questions and expect colourful responses)
+#' @references  
+#' Carruthers, T, Walters, C.J,, and McAllister, M.K. 2012. Evaluating methods that classify
+#' fisheries stock status using only fisheries catch data. Fisheries Research 119-120:66-79.
+#' 
+#' Hilborn, R., and Walters, C., 1992. Quantitative Fisheries Stock Assessment: Choice,
+#' Dynamics and Uncertainty. Chapman and Hall, New York. 
 #' @export 
 DD <- function(x, Data, reps = 100) {
-  dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind"
+  dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
   Winf = Data@wla[x] * Data@vbLinf[x]^Data@wlb[x]
   age <- 1:Data@MaxAge
   la <- Data@vbLinf[x] * (1 - exp(-Data@vbK[x] * ((age - Data@vbt0[x]))))
@@ -1043,10 +1047,15 @@ class(DD) <- "MP"
 #' @param reps The number of stochastic samples of the TAC recommendation
 #' @return A numeric vector of TAC recommendations
 #' @author T. Carruthers
-#' @references Method based on equations of Carl Walters
+#' @references  
+#' Carruthers, T, Walters, C.J,, and McAllister, M.K. 2012. Evaluating methods that classify
+#' fisheries stock status using only fisheries catch data. Fisheries Research 119-120:66-79.
+#' 
+#' Hilborn, R., and Walters, C., 1992. Quantitative Fisheries Stock Assessment: Choice,
+#' Dynamics and Uncertainty. Chapman and Hall, New York. 
 #' @export DD4010
 DD4010 <- function(x, Data, reps = 100) {
-  dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind"
+  dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
   Winf = Data@wla[x] * Data@vbLinf[x]^Data@wlb[x]
   age <- 1:Data@MaxAge
   la <- Data@vbLinf[x] * (1 - exp(-Data@vbK[x] * ((age - Data@vbt0[x]))))
