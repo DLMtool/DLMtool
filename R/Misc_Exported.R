@@ -706,6 +706,7 @@ L2A <- function(t0c, Linfc, Kc, Len, maxage) {
 #'
 #' @param thresh Recommended n cpus is what percent of the fastest time?
 #' @param plot Logical. Show the plot?
+#' @param nsim Numeric. Number of simulations.
 #'
 #' @export
 #'
@@ -713,7 +714,7 @@ L2A <- function(t0c, Linfc, Kc, Len, maxage) {
 optCPU <- function(thresh=5, plot=TRUE, nsim=48) {
   cpus=1:parallel::detectCores()
   time <- NA
-  OM <- testOM
+  OM <- DLMtool::testOM
   OM@nsim <- nsim
   for (n in cpus) {
     message(n, ' of ', max(cpus))
