@@ -10,6 +10,8 @@ optCPU(thresh = 5, plot = TRUE, nsim = 48)
 \item{thresh}{Recommended n cpus is what percent of the fastest time?}
 
 \item{plot}{Logical. Show the plot?}
+
+\item{nsim}{Numeric. Number of simulations.}
 }
 \description{
 Determine optimal number of cpus
