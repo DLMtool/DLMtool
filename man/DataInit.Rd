@@ -19,11 +19,6 @@ Nothing. Creates a data file in the working directory.
 \description{
 Initialize an empty Data workbook or CSV
 }
-\examples{
-\dontrun{
-DataInit()
-}
-}
 \author{
 A. Hordyk
 }

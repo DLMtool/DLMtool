@@ -15,11 +15,6 @@ An object of class 'Data'
 \description{
 Import a Data object from Excel file
 }
-\examples{
-\dontrun {
-Data <- XL2Data('Data.xlsx')
-}
-}
 \author{
 A. Hordyk
 }

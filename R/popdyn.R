@@ -818,113 +818,113 @@ simYears <- function(x, nareas, maxage, N, pyears, M_ageArray, Asize, Mat_age, W
 
 
 
-#' Calculate FMSY and related metrics using Rcpp code
-#'
-#' @param x Integer, the simulation number
-#' @param Asize A matrix (nsim by nareas) with size of areas
-#' @param nareas The number of spatial areas
-#' @param maxage The maximum age
-#' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas.
-#' Only values from the first year (i.e N[,,1,]) are used, which is the current N-at-age.
-#' @param pyears The number of years to project forward. Equal to 'nyears' for optimizing for q.
-#' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year
-#' @param Mat_age A matrix (dimensions nsim, maxage) with the proportion mature for each age-class
-#' @param Wt_age An array (dimensions nsim, maxage, nyears+proyears) with the weight-at-age and year
-#' @param V An array (dimensions nsim, maxage, nyears+proyears) with the vulnerability-at-age and year
-#' @param retA An array (dimensions nsim, maxage, nyears+proyears) with the probability retained-at-age and year
-#' @param Perr A matrix (dimensions nsim, nyears+proyears) with the recruitment deviations
-#' @param mov An array (dimensions nsim, nareas, nareas) with the movement matrix
-#' @param SRrel A numeric vector nsim long specifying the recruitment curve to use
-#' @param Find A matrix (dimensions nsim, nyears) with the historical fishing effort
-#' @param Spat_targ A numeric vector nsim long with the spatial targeting
-#' @param hs A numeric vector nsim long with the steepness values for each simulation
-#' @param R0a A matrix (dimensions nsim, nareas) with the unfished recruitment by area
-#' @param SSBpR A matrix (dimensions nsim, nareas) with the unfished spawning-per-recruit by area
-#' @param aR A numeric vector nsim long with the Ricker SRR a values
-#' @param bR A numeric vector nsim long with the Ricker SRR b values
-#' @param SSB0 Unfished spawning biomass
-#' @param B0 Unfished total biomass
-#' @param MPA A matrix of spatial closures by year
-#' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
-#' @param useCPP logical - use the CPP code? For testing purposes only
-#'
-#' @author A. Hordyk
-#'
-getFMSY3 <- function(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
-                     V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR,
-                     SSB0, B0, MPA, maxF, useCPP=TRUE) {
-
-  opt <- optimize(optMSY, log(c(0.001, 10)), Asize_c=Asize[x,], nareas, maxage, Ncurr=N[x,,1,],
-                  pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,,],
-                  WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
-                  movc=mov[x,,], SRrelc=SRrel[x],
-                  Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
-                  SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], MPA=MPA, maxF=maxF, useCPP=useCPP)
-
-  MSY <- -opt$objective
-
-  if (!useCPP) {
-    simpop <- popdyn(nareas, maxage, Ncurr=N[x,,1,],
-                     pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
-                     MatAge=Mat_age[x,,],
-                     WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
-                     movc=mov[x,,], SRrelc=SRrel[x],
-                     Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
-                     SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Fapic=exp(opt$minimum), MPA=MPA, maxF=maxF, control=2)
-
-    # calculate B0 and SSB0 with current conditions
-    simpopF0 <- popdyn(nareas, maxage, Ncurr=N[x,,1,],
-                       pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
-                       MatAge=Mat_age[x,,],
-                       WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
-                       movc=mov[x,,], SRrelc=SRrel[x],
-                       Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
-                       SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Fapic=0, MPA=MPA, maxF=maxF, control=2)
-
-  } else {
-    simpop <- popdynCPP(nareas, maxage, Ncurr=N[x,,1,],
-                        pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
-                        MatAge=Mat_age[x,,],
-                        WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
-                        movc=mov[x,,], SRrelc=SRrel[x],
-                        Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
-                        SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=0, Fapic=exp(opt$minimum), MPA=MPA, maxF=maxF, control=2)
-    # calculate B0 and SSB0 with current conditions
-    simpopF0 <- popdynCPP(nareas, maxage, Ncurr=N[x,,1,],
-                          pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
-                          MatAge=Mat_age[x,,],
-                          WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
-                          movc=mov[x,,], SRrelc=SRrel[x],
-                          Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
-                          SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=0, Fapic=0, MPA=MPA, maxF=maxF, control=2)
-  }
-
-
-  ## Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # retained catch
-  Cn <- simpop[[6]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # removals
-  Cb <- Cn[,pyears,] * Wt_age[x,,pyears]
-
-  B <- sum(simpop[[2]][,pyears,] + Cb)
-
-  SSB_MSY <- sum(simpop[[4]][,pyears,])
-
-  V_BMSY <- sum(simpop[[5]][,pyears,])
-  F_MSYv <- -log(1 - (MSY/(V_BMSY+MSY)))
-
-
-  SSB0_curr <- sum(simpopF0[[4]][,pyears,])
-  B0_curr <- sum(simpopF0[[2]][,pyears,])
-  SSBMSY_SSB0 <- sum(simpop[[4]][,pyears,])/SSB0_curr
-  BMSY_B0 <- sum(simpop[[2]][,pyears,])/B0_curr
-  # SSBMSY_SSB0 <- sum(simpop[[4]][,pyears,])/SSB0[x]
-  # BMSY_B0 <- sum(simpop[[2]][,pyears,])/B0[x]
-
-
-  return(c(MSY = MSY, FMSY = F_MSYv, SSB = SSB_MSY, SSBMSY_SSB0=SSBMSY_SSB0,
-           BMSY_B0=BMSY_B0, B = B, VB=V_BMSY+MSY))
-
-}
-
+# #' Calculate FMSY and related metrics using Rcpp code
+# #'
+# #' @param x Integer, the simulation number
+# #' @param Asize A matrix (nsim by nareas) with size of areas
+# #' @param nareas The number of spatial areas
+# #' @param maxage The maximum age
+# #' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas.
+# #' Only values from the first year (i.e N[,,1,]) are used, which is the current N-at-age.
+# #' @param pyears The number of years to project forward. Equal to 'nyears' for optimizing for q.
+# #' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year
+# #' @param Mat_age A matrix (dimensions nsim, maxage) with the proportion mature for each age-class
+# #' @param Wt_age An array (dimensions nsim, maxage, nyears+proyears) with the weight-at-age and year
+# #' @param V An array (dimensions nsim, maxage, nyears+proyears) with the vulnerability-at-age and year
+# #' @param retA An array (dimensions nsim, maxage, nyears+proyears) with the probability retained-at-age and year
+# #' @param Perr A matrix (dimensions nsim, nyears+proyears) with the recruitment deviations
+# #' @param mov An array (dimensions nsim, nareas, nareas) with the movement matrix
+# #' @param SRrel A numeric vector nsim long specifying the recruitment curve to use
+# #' @param Find A matrix (dimensions nsim, nyears) with the historical fishing effort
+# #' @param Spat_targ A numeric vector nsim long with the spatial targeting
+# #' @param hs A numeric vector nsim long with the steepness values for each simulation
+# #' @param R0a A matrix (dimensions nsim, nareas) with the unfished recruitment by area
+# #' @param SSBpR A matrix (dimensions nsim, nareas) with the unfished spawning-per-recruit by area
+# #' @param aR A numeric vector nsim long with the Ricker SRR a values
+# #' @param bR A numeric vector nsim long with the Ricker SRR b values
+# #' @param SSB0 Unfished spawning biomass
+# #' @param B0 Unfished total biomass
+# #' @param MPA A matrix of spatial closures by year
+# #' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
+# #' @param useCPP logical - use the CPP code? For testing purposes only
+# #'
+# #' @author A. Hordyk
+# #'
+# getFMSY3 <- function(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
+#                      V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR,
+#                      SSB0, B0, MPA, maxF, useCPP=TRUE) {
+# 
+#   opt <- optimize(optMSY, log(c(0.001, 10)), Asize_c=Asize[x,], nareas, maxage, Ncurr=N[x,,1,],
+#                   pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,,],
+#                   WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
+#                   movc=mov[x,,], SRrelc=SRrel[x],
+#                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
+#                   SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], MPA=MPA, maxF=maxF, useCPP=useCPP)
+# 
+#   MSY <- -opt$objective
+# 
+#   if (!useCPP) {
+#     simpop <- popdyn(nareas, maxage, Ncurr=N[x,,1,],
+#                      pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
+#                      MatAge=Mat_age[x,,],
+#                      WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
+#                      movc=mov[x,,], SRrelc=SRrel[x],
+#                      Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
+#                      SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Fapic=exp(opt$minimum), MPA=MPA, maxF=maxF, control=2)
+# 
+#     # calculate B0 and SSB0 with current conditions
+#     simpopF0 <- popdyn(nareas, maxage, Ncurr=N[x,,1,],
+#                        pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
+#                        MatAge=Mat_age[x,,],
+#                        WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
+#                        movc=mov[x,,], SRrelc=SRrel[x],
+#                        Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
+#                        SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Fapic=0, MPA=MPA, maxF=maxF, control=2)
+# 
+#   } else {
+#     simpop <- popdynCPP(nareas, maxage, Ncurr=N[x,,1,],
+#                         pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
+#                         MatAge=Mat_age[x,,],
+#                         WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
+#                         movc=mov[x,,], SRrelc=SRrel[x],
+#                         Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
+#                         SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=0, Fapic=exp(opt$minimum), MPA=MPA, maxF=maxF, control=2)
+#     # calculate B0 and SSB0 with current conditions
+#     simpopF0 <- popdynCPP(nareas, maxage, Ncurr=N[x,,1,],
+#                           pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
+#                           MatAge=Mat_age[x,,],
+#                           WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
+#                           movc=mov[x,,], SRrelc=SRrel[x],
+#                           Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
+#                           SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=0, Fapic=0, MPA=MPA, maxF=maxF, control=2)
+#   }
+# 
+# 
+#   ## Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # retained catch
+#   Cn <- simpop[[6]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # removals
+#   Cb <- Cn[,pyears,] * Wt_age[x,,pyears]
+# 
+#   B <- sum(simpop[[2]][,pyears,] + Cb)
+# 
+#   SSB_MSY <- sum(simpop[[4]][,pyears,])
+# 
+#   V_BMSY <- sum(simpop[[5]][,pyears,])
+#   F_MSYv <- -log(1 - (MSY/(V_BMSY+MSY)))
+# 
+# 
+#   SSB0_curr <- sum(simpopF0[[4]][,pyears,])
+#   B0_curr <- sum(simpopF0[[2]][,pyears,])
+#   SSBMSY_SSB0 <- sum(simpop[[4]][,pyears,])/SSB0_curr
+#   BMSY_B0 <- sum(simpop[[2]][,pyears,])/B0_curr
+#   # SSBMSY_SSB0 <- sum(simpop[[4]][,pyears,])/SSB0[x]
+#   # BMSY_B0 <- sum(simpop[[2]][,pyears,])/B0[x]
+# 
+# 
+#   return(c(MSY = MSY, FMSY = F_MSYv, SSB = SSB_MSY, SSBMSY_SSB0=SSBMSY_SSB0,
+#            BMSY_B0=BMSY_B0, B = B, VB=V_BMSY+MSY))
+# 
+# }
+# 
 
 
 
