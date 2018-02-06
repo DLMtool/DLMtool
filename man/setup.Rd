@@ -4,7 +4,7 @@
 \alias{setup}
 \title{Setup parallel processing}
 \usage{
-setup(cpus = min(parallel::detectCores(), 3), ...)
+setup(cpus = min(parallel::detectCores(), 4), ...)
 }
 \arguments{
 \item{cpus}{number of CPUs}

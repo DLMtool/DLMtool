@@ -10,7 +10,7 @@ Converge(MSEobj, thresh = 2, Plot = TRUE)
 \item{MSEobj}{An MSE object of class \code{'MSE'}}
 
 \item{thresh}{The convergence threshold (percentage). If mean performance
-metrics are within thresh percent of the second to last interation, the MSE
+metrics from the last 20 simulations are within thresh percent of the last interation, the MSE
 can be considered to have converged.}
 
 \item{Plot}{Should figures be plotted?}

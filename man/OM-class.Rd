@@ -31,18 +31,20 @@ bounds of a uniform distribution from which to sample the parameter.
 
 \item{\code{proyears}}{The number of projected years}
 
-\item{\code{interval}}{The assessment interval - how often would you like to update
-the management system?}
+\item{\code{interval}}{The assessment interval - how often would you like to update the management system?}
 
-\item{\code{pstar}}{The percentile of the sample of the management recommendation
-for each method}
+\item{\code{pstar}}{The percentile of the sample of the management recommendation for each method}
 
-\item{\code{maxF}}{Maximum instantaneous fishing mortality rate that may be
-simulated for any given age class}
+\item{\code{maxF}}{Maximum instantaneous fishing mortality rate that may be simulated for any given age class}
 
-\item{\code{reps}}{Number of samples of the management recommendation for each
-method. Note that when this is set to 1, the mean value of the data inputs
-is used.}
+\item{\code{reps}}{Number of samples of the management recommendation for each method. Note that when this is set to 1, the mean value of 
+the data inputs is used.}
+
+\item{\code{cpars}}{A list of custom parameters. Time series are a matrix nsim rows by nyears columns. Single parameters are a vector nsim long}
+
+\item{\code{seed}}{A random seed to ensure users can reproduce results exactly}
+
+\item{\code{Source}}{A reference to a website or article from which parameters were taken to define the operating model}
 
 \item{\code{Species}}{Scientific name of the species. Genus and species name. Character string}
 
@@ -228,12 +230,6 @@ Default (if left blank) is all areas are open to fishing in historical period.}
 \item{\code{SizeLimFrac}}{The real minimum size that is retained expressed as a fraction of the size. Uniform distribution lower and upper bounds. Positive real number.}
 
 \item{\code{SizeLimSD}}{Log-normal coefficient of variation controlling mismatch between a minimum size limit and the real minimum size retained. Uniform distribution lower and upper bounds. Non-negative real numbers.}
-
-\item{\code{cpars}}{A list of custom parameters (single parameters are a vector nsim long, time series are a matrix nsim rows by nyears columns)}
-
-\item{\code{seed}}{A random seed to ensure users can reproduce results exactly}
-
-\item{\code{Source}}{A reference to a website or article from which parameters were taken to define the operating model}
 }}
 
 \section{Objects from the Class}{
