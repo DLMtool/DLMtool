@@ -358,6 +358,7 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
 #' @param output Character. Output file type. Default is 'html_document'. 'pdf_document' is available
 #' but may require additional software and have some formatting issues.
 #' @param openFile Logical. Should the compiled file be opened in web browser?
+#' @param quiet TRUE to supress printing of the pandoc command line.
 #'
 #' @return Creates a Rmarkdown file and compiles a HTML report file in the working directory.
 #' @export
@@ -372,7 +373,7 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
 #' OMdoc(myOM)
 #' }
 OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,  
-                  inc.plot=TRUE, render=TRUE, output="html_document", openFile=TRUE ) {
+                  inc.plot=TRUE, render=TRUE, output="html_document", openFile=TRUE, quiet=FALSE) {
   # markdown compile options
   toc=TRUE; color="blue";  theme="flatly"
   OMXLname <- NULL
@@ -708,7 +709,8 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
     EffYears <- round(EffYears,0)
     Effvals <- data.frame(EffYears=EffYears, EffLower=OM@EffLower, EffUpper=OM@EffUpper)
     params <- list(OM=OM, Pars=Pars, Effvals=Effvals, out=out)
-    rmarkdown::render(input=RMDfile, output_file=RMDfileout, output_format=output, output_dir=getwd(), param=params)
+    rmarkdown::render(input=RMDfile, output_file=RMDfileout, output_format=output, 
+                      output_dir=getwd(), param=params, quiet=quiet)
     
     if (openFile) utils::browseURL(file.path(getwd(), RMDfileout))
     
