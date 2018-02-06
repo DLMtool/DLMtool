@@ -1,6 +1,95 @@
 # Functions that operate on Data Object
 
 
+#' Initialize an empty Data workbook or CSV
+#'
+#' @param name Name of the data file. Default is Data.xlsx
+#' @param ext Optional file extension. 'xlsx' (default) or 'csv'
+#' @param overwrite Logical. Overwrite existing files?
+#'
+#' @return Nothing. Creates a data file in the working directory.
+#' @export
+#' 
+#' @author A. Hordyk
+#'
+DataInit <- function(name="Data", ext=c("xlsx", "csv"), overwrite=FALSE) {
+  ext <- match.arg(ext)
+  
+  name <- paste(name, ext, sep=".")
+  # Copy xlsx file over to working directory 
+ 
+  message("Creating ", name, " in ", getwd())
+  
+  if (ext == "xlsx") {
+    path <- system.file("Data.xlsx", package = "DLMtool")
+    pathout <- gsub("Data.xlsx", name, path)
+    pathout <- gsub(dirname(pathout), getwd(), pathout)
+  } else {
+    path <- system.file("Data.csv", package = "DLMtool")
+    pathout <- gsub("Data.csv", name, path)
+    pathout <- gsub(dirname(pathout), getwd(), pathout) 
+  }
+
+  # Check if file exists 
+  exist <- file.exists(pathout)
+  if (exist & !overwrite) stop(name, " already exists in working directory. Use 'overwrite=TRUE' to overwrite", 
+                               call.=FALSE)
+  copy <- file.copy(path, pathout, overwrite = overwrite)
+  if (!copy) stop("Excel file not copied from ", path)
+
+}
+
+
+
+#' Import a Data object from Excel file
+#'
+#' @param name Name of the data file, with or without file extension.
+#'
+#' @return An object of class 'Data'
+#' @export
+#' @author A. Hordyk
+XL2Data <- function(name="Data") {
+  if (class(name) != 'character') stop("file name must be provided", call.=FALSE)
+  if (nchar(tools::file_ext(name)) == 0) {
+    xl.fname1 <- paste0(name, ".xlsx")
+    xl.fname2 <- paste0(name, ".csv")
+    fls <- file.exists(c(xl.fname1, xl.fname2))
+    if (sum(fls) == 0) stop(xl.fname1, " or ", xl.fname2, " not found")
+    if (sum(fls) > 1) stop(name, " found with multiple extensions. Specify file extension.", call.=FALSE)
+    name <- c(xl.fname1, xl.fname2)[fls]
+  }
+  
+  if (!file.exists(name)) stop(name, " not found", call.=FALSE) 
+  
+  isCSV <- grepl('.csv', name)
+  message("Reading ", name)
+  if (isCSV) {
+    Data <- new("Data", name)
+  } else {
+    sheetnames <- readxl::excel_sheets(name)  # names of the sheets
+    datasheet <- as.data.frame(readxl::read_excel(name, sheet = 1, col_names = FALSE))
+    if (datasheet[1,1]== "Slot") datasheet <- as.data.frame(readxl::read_excel(name, sheet = 1, col_names = FALSE, skip=1))
+   
+    
+    if (all(dim(datasheet) == 0)) stop("Nothing found in first sheet", call.=FALSE)
+    tmpfile <- tempfile(fileext=".csv")
+    writeCSV2(inobj = datasheet, tmpfile, objtype = "Data")
+    
+    if (ncol(datasheet)<2) {
+      unlink(tmpfile)
+      stop("No parameter values found in first worksheet ", call.=FALSE)
+    } else {
+      Data <- new("Data", tmpfile)
+      unlink(tmpfile)
+    }
+  }
+  return(Data)
+}
+
+  
+
+
+
 #' Run a Management Procedure
 #'
 #' @param Data A DLMtool Data object
@@ -18,7 +107,7 @@ runMP <- function(Data, MPs = NA, reps = 100, perc=0.5, chkMPs=TRUE, silent=FALS
   if (class(Data) != 'Data') stop("Data must be class 'Data'", call.=FALSE)
   if (all(is.na(MPs))) {
     MPs <- avail("MP")
-    message("running all available MPs")
+    if (!silent) message("running all available MPs")
   }
   if (chkMPs) {
     cans <- Can(Data, MPs=MPs)
@@ -48,7 +137,7 @@ runMP <- function(Data, MPs = NA, reps = 100, perc=0.5, chkMPs=TRUE, silent=FALS
     allNA <- colSums(apply(mat, 2, is.na)) == length(MPs)
     matout <- data.frame(round(mat[,!allNA], 2), stringsAsFactors = FALSE)
     names(matout) <- names[!allNA]
-    print(matout)
+    if (!silent) print(matout)
   }
   if (nrow(mat) == 1) {
     mat <- data.frame(mat)
@@ -56,7 +145,7 @@ runMP <- function(Data, MPs = NA, reps = 100, perc=0.5, chkMPs=TRUE, silent=FALS
     matout <- matrix(matout, nrow=nrow(mat))
     colnames(matout) <- names[!is.na(mat)]
     rownames(matout) <- MPs
-    print(round(matout),2)
+    if (!silent) print(round(matout),2)
   }
   
   invisible(MPrecs[[2]])
@@ -130,73 +219,73 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
   list(returnList, Data)
 }
 
-applyMP2 <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
-  if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
-  Data <- updateMSE(Data)
-  if (is.na(nsims)) nsims <- length(Data@Mort)
-  nMPs <- length(MPs)
-  
-  if (.hasSlot(Data, "nareas")) {
-    nareas <- Data@nareas   
-  } else {
-    nareas <- 2 
-  }
-  returnList <- list() # a list nMPs long containing MPs recommendations
-  recList <- list() # a list containing nsim recommendations from a single MP 
-  TACout <- array(NA, dim=c(nMPs, reps, nsims))
-  # if (!sfIsRunning() | (nMPs < 8 & nsims < 8)) {
-    for (mp in 1:nMPs) {
-      temp <- sapply(1:nsims, MPs[mp], Data = Data, reps = reps)  
-      slots <- slotNames(temp[[1]])
-      for (X in slots) { # sequence along recommendation slots 
-        if (X == "Misc") { # convert to a list nsim by nareas
-          rec <- lapply(temp, slot, name=X)
-        } else {
-          rec <- do.call("cbind", lapply(temp, slot, name=X)) # unlist(lapply(temp, slot, name=X))
-        }
-        if (X == "Spatial") { # convert to a matrix nsim by nareas
-          rec <- matrix(rec, nareas, nsims, byrow=FALSE)   
-        }
-        recList[[X]] <- rec
-        for (x in 1:nsims) Data@Misc[[x]] <- recList$Misc[[x]]
-        recList$Misc <- NULL
-      }
-      if (length(recList$TAC)>0)  TACout[mp,,] <- recList$TAC 
-      returnList[[mp]] <- recList
-      if (!silent && sum(is.na(recList$TAC)) > 0.5 * reps)
-        message("Method ", MPs[mp], " produced greater than 50% NA values")
-    }
-  # } else {
-  #   for (mp in 1:nMPs) {
-  #     temp <- sfSapply(1:nsims, MPs[mp], Data = Data, reps = reps)  
-  #     slots <- slotNames(temp[[1]])
-  #     for (X in slots) { # sequence along recommendation slots 
-  #       if (X == "Misc") { # convert to a list nsim by nareas
-  #         rec <- lapply(temp, slot, name=X)
-  #       } else {
-  #         rec <- do.call("cbind", lapply(temp, slot, name=X)) # unlist(lapply(temp, slot, name=X))
-  #       }
-  #       if (X == "Spatial") { # convert to a matrix nsim by nareas
-  #         rec <- matrix(rec, nareas, nsims, byrow=FALSE)  
-  #       }
-  #       recList[[X]] <- rec
-  #       for (x in 1:nsims) Data@Misc[[x]] <- recList$Misc[[x]]
-  #       recList$Misc <- NULL
-  #     }
-  #     if (length(recList$TAC)>0) TACout[mp,,] <- recList$TAC
-  #     returnList[[mp]] <- recList
-  #     
-  #     if (!silent && sum(is.na(recList$TAC)) > 0.5 * reps)
-  #       message("Method ", MPs[mp], " produced greater than 50% NA values")
-  #   }
-  #   
-  # }
-  
-  Data@TAC <- TACout
-  Data@MPs <- MPs
-  
-  list(returnList, Data)
-}
+# applyMP2 <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
+#   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
+#   Data <- updateMSE(Data)
+#   if (is.na(nsims)) nsims <- length(Data@Mort)
+#   nMPs <- length(MPs)
+#   
+#   if (.hasSlot(Data, "nareas")) {
+#     nareas <- Data@nareas   
+#   } else {
+#     nareas <- 2 
+#   }
+#   returnList <- list() # a list nMPs long containing MPs recommendations
+#   recList <- list() # a list containing nsim recommendations from a single MP 
+#   TACout <- array(NA, dim=c(nMPs, reps, nsims))
+#   # if (!sfIsRunning() | (nMPs < 8 & nsims < 8)) {
+#     for (mp in 1:nMPs) {
+#       temp <- sapply(1:nsims, MPs[mp], Data = Data, reps = reps)  
+#       slots <- slotNames(temp[[1]])
+#       for (X in slots) { # sequence along recommendation slots 
+#         if (X == "Misc") { # convert to a list nsim by nareas
+#           rec <- lapply(temp, slot, name=X)
+#         } else {
+#           rec <- do.call("cbind", lapply(temp, slot, name=X)) # unlist(lapply(temp, slot, name=X))
+#         }
+#         if (X == "Spatial") { # convert to a matrix nsim by nareas
+#           rec <- matrix(rec, nareas, nsims, byrow=FALSE)   
+#         }
+#         recList[[X]] <- rec
+#         for (x in 1:nsims) Data@Misc[[x]] <- recList$Misc[[x]]
+#         recList$Misc <- NULL
+#       }
+#       if (length(recList$TAC)>0)  TACout[mp,,] <- recList$TAC 
+#       returnList[[mp]] <- recList
+#       if (!silent && sum(is.na(recList$TAC)) > 0.5 * reps)
+#         message("Method ", MPs[mp], " produced greater than 50% NA values")
+#     }
+#   # } else {
+#   #   for (mp in 1:nMPs) {
+#   #     temp <- sfSapply(1:nsims, MPs[mp], Data = Data, reps = reps)  
+#   #     slots <- slotNames(temp[[1]])
+#   #     for (X in slots) { # sequence along recommendation slots 
+#   #       if (X == "Misc") { # convert to a list nsim by nareas
+#   #         rec <- lapply(temp, slot, name=X)
+#   #       } else {
+#   #         rec <- do.call("cbind", lapply(temp, slot, name=X)) # unlist(lapply(temp, slot, name=X))
+#   #       }
+#   #       if (X == "Spatial") { # convert to a matrix nsim by nareas
+#   #         rec <- matrix(rec, nareas, nsims, byrow=FALSE)  
+#   #       }
+#   #       recList[[X]] <- rec
+#   #       for (x in 1:nsims) Data@Misc[[x]] <- recList$Misc[[x]]
+#   #       recList$Misc <- NULL
+#   #     }
+#   #     if (length(recList$TAC)>0) TACout[mp,,] <- recList$TAC
+#   #     returnList[[mp]] <- recList
+#   #     
+#   #     if (!silent && sum(is.na(recList$TAC)) > 0.5 * reps)
+#   #       message("Method ", MPs[mp], " produced greater than 50% NA values")
+#   #   }
+#   #   
+#   # }
+#   
+#   Data@TAC <- TACout
+#   Data@MPs <- MPs
+#   
+#   list(returnList, Data)
+# }
 
 
 #' What data-limited methods can be applied to this Data object?
