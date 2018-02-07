@@ -1,4 +1,4 @@
-context("Test MSE Plotting functions")
+testthat::context("Test MSE Plotting functions")
 
 DLMextra(TRUE)
 library(DLMextra)
@@ -13,9 +13,9 @@ funs <- funs[!funs %in% c('plotFleet', 'plotStock',
                           'plotOFL')]
 
 for (ff in funs) {
-  test_that("main plot MSE functions", {
+  testthat::test_that("main plot MSE functions", {
     fun <- get(ff)
-    expect_error(fun(MSEobj), NA, info=ff)
+    testthat::expect_error(fun(MSEobj), NA, info=ff)
   })
 }
 
