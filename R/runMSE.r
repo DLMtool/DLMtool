@@ -62,6 +62,11 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                    CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=FALSE, 
                    HZN=2, Bfrac=0.5, AnnualMSY=FALSE, silent=FALSE, PPD=FALSE, parallel=FALSE, 
                    save_name=NULL) {
+  
+  if (Hist & parallel) {
+    message("Sorry! Historical simulations currently can't use parallel.")
+    parallel <- FALSE
+  }
   if (parallel) {
     if(!snowfall::sfIsRunning()) stop("Requires parallel. Use 'setup'", call. = FALSE)
     
@@ -90,6 +95,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                              HZN=HZN, Bfrac=Bfrac, AnnualMSY=AnnualMSY, silent=TRUE, PPD=PPD)
   
     if (!is.null(save_name) && is.character(save_name)) saveRDS(temp, paste0(save_name, '.rdata'))
+    
     MSE1 <- joinMSE(temp) 
     if (class(MSE1) == "MSE") {
       message("MSE completed")
@@ -97,6 +103,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       message("MSE completed but could not join MSE objects. Re-run with `save_name ='MyName'` to debug")
     }
   }
+
  
   if (!parallel) {
     if (OM@nsim > 48 & !silent) message("Suggest using 'parallel = TRUE' for large number of simulations")
