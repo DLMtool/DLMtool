@@ -151,6 +151,18 @@ runMP <- function(Data, MPs = NA, reps = 100, perc=0.5, chkMPs=TRUE, silent=FALS
   invisible(MPrecs[[2]])
 }
 
+#' Apply Management Procedures to an object of class Data
+#'
+#' @param Data An object of class Data
+#' @param MPs Name(s) of the MPs to run
+#' @param reps Number of samples
+#' @param nsims Optional. Number of simulations. 
+#' @param silent Logical. Should messages be suppressed?
+#'
+#' @return A list with the first element a list of management recommendations,
+#' and the second the updated Data object
+#' @export
+#'
 applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
   Data <- updateMSE(Data)
@@ -184,7 +196,7 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
     }
     if (length(recList$TAC)>0)  TACout[mp,,] <- recList$TAC 
     returnList[[mp]] <- recList
-    if (!silent && sum(is.na(recList$TAC)) > 0.5 * reps)
+    if (!silent && any(apply(is.na(recList$TAC), 2, sum) > rep(0.5 * reps, nsims)))
       message("Method ", MPs[mp], " produced greater than 50% NA values")
   }
   # } else {
@@ -437,7 +449,9 @@ Input <- function(Data, MPs = NA, reps = 100, timelimit = 10, CheckMPs = TRUE,
       Out[mm, 5:ncol(Out)] <- runIn$Spatial[1,]
     }
   }
-  round(Out,2)
+  Out <- round(Out,2)
+  print(Out, na.print='')
+  invisible(Out)
   
 }
 
@@ -575,6 +589,7 @@ plotOFL <- function(Data, xlims = NA, perc = 0.5) {
 #' @param Data A data-limited methods data object
 #' @param nrep The number of positions to expand the DLM object to
 #' @author T. Carruthers
+#' @export
 replic8 <- function(Data, nrep) {
   
   slotnam <- slotNames(Data)
