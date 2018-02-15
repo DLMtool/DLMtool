@@ -423,6 +423,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   StockOut$Agearray <- Agearray
   StockOut$Marray <- Marray
   StockOut$M_ageArray <- M_ageArray
+  StockOut$t0array <- t0array
   StockOut$Len_age <- Len_age
   StockOut$Linf <- Linf 
   StockOut$Linfsd <- Linfsd

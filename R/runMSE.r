@@ -106,7 +106,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
 
  
   if (!parallel) {
-    if (OM@nsim > 48 & !silent) message("Suggest using 'parallel = TRUE' for large number of simulations")
+    if (OM@nsim > 48 & !silent & !Hist) message("Suggest using 'parallel = TRUE' for large number of simulations")
     MSE1 <- runMSE_int(OM, MPs, CheckMPs, timelimit, Hist, ntrials, fracD, CalcBlow, 
                        HZN, Bfrac, AnnualMSY, silent, PPD)
     
@@ -799,25 +799,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     
     TSdata <- list(VB=vb, SSB=ssb, Bio=b, Catch=Cc, Rec=rec, N=nout, E_f=E_f,TAC_f=TAC_f,SizeLim_f=SizeLim_f)
     AtAge <- list(Len_age=Len_age, Wt_age=Wt_age, Sl_age=V, Mat_age=Mat_age, 
-                  Nage=apply(N, c(1:3), sum), SSBage=apply(SSB, c(1:3), sum), M_ageArray=M_ageArray)
+                  Nage=apply(N, c(1:3), sum), SSBage=apply(SSB, c(1:3), sum), M_ageArray=M_ageArray,
+                  Z=Z, FM=FM, FMret=FMret)
     MSYs <- list(MSY=MSY, FMSY=FMSY, VBMSY=VBMSY, UMSY=UMSY, 
                  SSBMSY=SSBMSY, BMSY_B0=BMSY_B0, SSBMSY_SSB0=SSBMSY_SSB0, SSB0=SSB0, B0=B0)
-    
-    # updated sampled pars
-    # SampPars <- list(dep=dep, Esd=Esd, Find=Find, procsd=procsd, AC=AC, M=M, Msd=Msd, 
-    #                  Mgrad=Mgrad, hs=hs, Linf=Linf, Linfsd=Linfsd, Linfgrad=Linfgrad, recgrad=recgrad,
-    #                  K=K, Ksd=Ksd, Kgrad=Kgrad, t0=t0, L50=L50, L50_95=L50_95, Spat_targ=Spat_targ,
-    #                  Frac_area_1=Frac_area_1, Prob_staying=Prob_staying,  
-    #                  Csd=Csd, Cbias=Cbias, CAA_nsamp=CAA_nsamp, CAA_ESS=CAA_ESS, CAL_nsamp=CAL_nsamp,
-    #                  CAL_ESS=CAL_ESS, CALcv=CALcv, betas=betas, Isd=Isd, Derr=Derr, Dbias=Dbias, 
-    #                  Mbias=Mbias, FMSY_Mbias=FMSY_Mbias, lenMbias=lenMbias, LFCbias=LFCbias,
-    #                  LFSbias=LFSbias, Aerr=Aerr, Abias=Abias, Kbias=Kbias, t0bias=t0bias, 
-    #                  Linfbias=Linfbias, Irefbias=Irefbias, Crefbias=Crefbias, Brefbias=Brefbias,
-    #                  Recsd=Recsd, qinc=qinc, qcv=qcv, L5=L5, LFS=LFS, Vmaxlen=Vmaxlen, L5s=L5s, 
-    #                  LFSs=LFSs, Vmaxlens=Vmaxlens, Perr=Perr, R0=R0, Mat_age=Mat_age, 
-    #                  Mrand=Mrand, Linfrand=Linfrand, Krand=Krand, maxage=maxage, V=V, retA=retA,
-    #                  retL=retL, Depletion=Depletion,qs=qs, TACFrac=TACFrac,TACSD=TACSD,TAEFrac=TAEFrac,
-    #                  TAESD=TAESD,SizeLimFrac=SizeLimFrac,SizeLimSD=SizeLimSD, Fdisc=Fdisc, DR=DR, ageM=ageM) 
+ 
     StockPars$Depletion <- Depletion 
     FleetPars$qs <- qs
     SampPars <- c(StockPars, FleetPars, ObsPars, ImpPars)
@@ -870,6 +856,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   nMP <- length(MPs)  # the total number of methods used
   
+  if (nMP < 1) stop("No valid MPs found")
   MSElist <- list(Data)[rep(1, nMP)]  # create a data object for each method (they have identical historical data and branch in projected years)
   
   B_BMSYa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected B_BMSY
@@ -1199,7 +1186,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                              as.matrix(retL_P[i,,nyears + yind]),
                                              CAL_ESS[i], CAL_nsamp[i], 
                                              vn2, as.matrix(Len_age[i,,nyears + yind]), 
-                                             as.matrix(LatASD[i,, nyears + yind]), truncSD=0) 
+                                             as.matrix(LatASD[i,, nyears + yind]), truncSD=2) 
           LFC[i] <- CAL_binsmid[min(which(round(CAL[i, interval, ],0) >= 1))] # get the smallest CAL observation	
         }	
         
