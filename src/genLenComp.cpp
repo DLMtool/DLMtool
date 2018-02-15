@@ -47,7 +47,7 @@ NumericMatrix  genLenComp(NumericVector CAL_bins, NumericVector CAL_binsmid, Num
   rmultinom(CAL_ESS, probs.begin(), k, ans.begin()); // multinom age sample with ess 
 	ans2 = ans; // convert to numeric vector
   tempCN = ans2 * (CAL_nsamp/CAL_ESS); // scale up from ess to sample size
-  ;   
+   
 	NumericVector EL(k); 
 	NumericVector SDL(k); 
 	

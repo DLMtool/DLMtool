@@ -649,11 +649,28 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   LFC <- rep(NA, nsim)
   vn <- (apply(N[,,,], c(1,2,3), sum) * retA[,,1:nyears]) # numbers at age that would be retained
   vn <- aperm(vn, c(1,3, 2))
+
+  # for (i in 1:nsim) { # Rcpp code
+  #   CAL[i, , ] <-  genLenComp(CAL_bins, CAL_binsmid, retL[i,,], CAL_ESS[i], CAL_nsamp[i],
+  #                             vn[i,,], Len_age[i,,], LatASD[i,,], truncSD=2)
+  #   LFC[i] <- CAL_binsmid[min(which(round(CAL[i,nyears, ],0) >= 1))] # get the smallest CAL observation
+  # }
+
   
-  for (i in 1:nsim) { # Rcpp code 
-    CAL[i, , ] <-  genLenComp(CAL_bins, CAL_binsmid, retL[i,,], CAL_ESS[i], CAL_nsamp[i], 
-                              vn[i,,], Len_age[i,,], LatASD[i,,], truncSD=2) 
-    LFC[i] <- CAL_binsmid[min(which(round(CAL[i,nyears, ],0) >= 1))] # get the smallest CAL observation	  
+  # Generate size comp data with variability in age
+  tempSize <- lapply(1:nsim, makeSizeCompW, nyears, maxage, Linfarray, Karray, t0array, LenCV,
+                                           CAL_bins, CAL_binsmid, retL, CAL_ESS, CAL_nsamp,
+                                           vn, truncSD=2)
+
+  CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), dim=c(nyears, length(CAL_binsmid), nsim)), c(3,1,2))
+
+  for (i in 1:nsim) {
+    ind <- round(CAL[i,nyears, ],0) >= 1
+    if (sum(ind)>0) {
+      LFC[i] <- CAL_binsmid[min(which(ind))] # get the smallest CAL observation
+    } else {
+      LFC[i] <- NA
+    }
   }
 
   # --- Simulate index of abundance from total biomass ----
@@ -1179,16 +1196,37 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         vn <- (apply(N_P[,,,], c(1,2,3), sum) * retA_P[,,(nyears+1):(nyears+proyears)]) # numbers at age that would be retained
         vn <- aperm(vn, c(1,3,2))
         
-        for (i in 1:nsim) { # Rcpp code 
-          vn2 <- as.matrix(vn[i,yind,])
-          if (interval == 1) vn2 <- t(vn2) # dodgy hack to ensure matrix is correct
-          CAL[i, 1:interval, ] <- genLenComp(CAL_bins, CAL_binsmid,
-                                             as.matrix(retL_P[i,,nyears + yind]),
-                                             CAL_ESS[i], CAL_nsamp[i], 
-                                             vn2, as.matrix(Len_age[i,,nyears + yind]), 
-                                             as.matrix(LatASD[i,, nyears + yind]), truncSD=2) 
-          LFC[i] <- CAL_binsmid[min(which(round(CAL[i, interval, ],0) >= 1))] # get the smallest CAL observation	
-        }	
+        # for (i in 1:nsim) { # Rcpp code 
+        #   vn2 <- as.matrix(vn[i,yind,])
+        #   if (interval == 1) vn2 <- t(vn2) # dodgy hack to ensure matrix is correct
+        #   CAL[i, 1:interval, ] <- genLenComp(CAL_bins, CAL_binsmid,
+        #                                      as.matrix(retL_P[i,,nyears + yind]),
+        #                                      CAL_ESS[i], CAL_nsamp[i], 
+        #                                      vn2, as.matrix(Len_age[i,,nyears + yind]), 
+        #                                      as.matrix(LatASD[i,, nyears + yind]), truncSD=2) 
+        #   LFC[i] <- CAL_binsmid[min(which(round(CAL[i, interval, ],0) >= 1))] # get the smallest CAL observation	
+        # }	
+        # 
+        nyrs <- length(yind)
+        tempSize <- lapply(1:nsim, makeSizeCompW, nyrs, maxage, Linfarray[,nyears + yind, drop=FALSE], 
+                           Karray[,nyears + yind, drop=FALSE], 
+                           t0array[,nyears + yind,drop=FALSE], 
+                           LenCV,
+                           CAL_bins, CAL_binsmid, 
+                           array(retL_P[,,nyears + yind, drop=FALSE], dim=c(nsim,length(CAL_binsmid),nyrs)), 
+                           CAL_ESS, CAL_nsamp,
+                           vn[,yind,, drop=FALSE], truncSD=2)
+        
+        CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), dim=c(nyrs, length(CAL_binsmid), nsim)), c(3,1,2))
+        
+        for (i in 1:nsim) {
+          ind <- round(CAL[i,nyrs, ],0) >= 1
+          if (sum(ind)>0) {
+            LFC[i] <- CAL_binsmid[min(which(ind))] # get the smallest CAL observation
+          } else {
+            LFC[i] <- NA
+          }
+        }
         
         I2 <- cbind(apply(Biomass, c(1, 3), sum), apply(Biomass_P, c(1, 3), sum)[, 1:(y - 1)]) * 
           Ierr[, 1:(nyears + (y - 1))]^betas
