@@ -1,11 +1,10 @@
 testthat::context("Test MSE Plotting functions")
 
-DLMextra(TRUE)
+DLMextra()
 library(DLMextra)
-library(testthat)
 rm(list=ls())
 # setup()
-MSEobj <- updateMSE(DLMdata::testMSE)
+MSEobj <- updateMSE(DLMextra::testMSE)
 
 funs <- plotFun(msg=FALSE)
 funs <- funs[!funs %in% c('plotFleet', 'plotStock', 
