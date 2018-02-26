@@ -408,7 +408,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       } else {
         if (length(tooLow) > 0) message(tooLow, " sims can't get down to the lower bound on depletion")
         if (length(tooHigh) > 0) message(tooHigh, " sims can't get to the upper bound on depletion")
-        if(!silent) message("Less than ", fracD*100, "% simulations can't get to the sampled depletion.\nContinuing")
+        if(!silent) message("More than ", 100-fracD*100, "% simulations can get to the sampled depletion.\nContinuing")
       }
     }
   }
@@ -776,7 +776,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   Data@ML <- apply(temp, 1:2, sum)/apply(CAL, 1:2, sum)
   Data@Lc <- array(MLbin[apply(CAL, 1:2, which.max)], dim = c(nsim, nyears))
   nuCAL <- CAL
-  for (i in 1:nsim) for (j in 1:nyears) nuCAL[i, j, 1:match(max(1, Data@Lc[i, j]), MLbin)] <- NA
+  for (i in 1:nsim) for (j in 1:nyears) nuCAL[i, j, 1:match(max(1, Data@Lc[i, j]), MLbin, nomatch=1)] <- NA
   temp <- nuCAL * rep(MLbin, each = nsim * nyears)
   Data@Lbar <- apply(temp, 1:2, sum, na.rm=TRUE)/apply(nuCAL, 1:2, sum, na.rm=TRUE)
   Data@MaxAge <- maxage
@@ -1284,7 +1284,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         MSElist[[mm]]@Dt <- Dbias * Depletion * rlnorm(nsim, mconv(1, Derr), sdconv(1, Derr))
         oldCAA <- MSElist[[mm]]@CAA
         MSElist[[mm]]@CAA <- array(0, dim = c(nsim, nyears + y - 1, maxage))
-        MSElist[[mm]]@CAA[, 1:(nyears + y - interval - 1), ] <- oldCAA
+        MSElist[[mm]]@CAA[, 1:(nyears + y - interval - 1), ] <- oldCAA[, 1:(nyears + y - interval - 1), ] # there is some bug here sometimes oldCAA (MSElist[[mm]]@CAA previously) has too many years of observations
         MSElist[[mm]]@CAA[, nyears + yind, ] <- CAA
         MSElist[[mm]]@Dep <- Dbias * Depletion * rlnorm(nsim, mconv(1, Derr), sdconv(1, Derr))
         MSElist[[mm]]@Abun <- A * Abias * rlnorm(nsim, mconv(1, Aerr), sdconv(1, Aerr))
@@ -1292,14 +1292,14 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         MSElist[[mm]]@CAL_bins <- CAL_bins
         oldCAL <- MSElist[[mm]]@CAL
         MSElist[[mm]]@CAL <- array(0, dim = c(nsim, nyears + y - 1, nCALbins))
-        MSElist[[mm]]@CAL[, 1:(nyears + y - interval - 1), ] <- oldCAL
+        MSElist[[mm]]@CAL[, 1:(nyears + y - interval - 1), ] <- oldCAL[, 1:(nyears + y - interval - 1), ]# there is some bug here: sometimes oldCAL (MSElist[[mm]]@CAL previously) has too many years of observations
         MSElist[[mm]]@CAL[, nyears + yind, ] <- CAL[, 1:interval, ]
         
         temp <- CAL * rep(MLbin, each = nsim * interval)
         MSElist[[mm]]@ML <- cbind(MSElist[[mm]]@ML, apply(temp, 1:2, sum)/apply(CAL, 1:2, sum))
         MSElist[[mm]]@Lc <- cbind(MSElist[[mm]]@Lc, array(MLbin[apply(CAL, 1:2, which.max)], dim = c(nsim, interval)))
         nuCAL <- CAL
-        for (i in 1:nsim) for (j in 1:interval) nuCAL[i, j, 1:match(max(1, MSElist[[mm]]@Lc[i, j]), MLbin)] <- NA 
+        for (i in 1:nsim) for (j in 1:interval) nuCAL[i, j, 1:match(max(1, MSElist[[mm]]@Lc[i, j]), MLbin,nomatch=1)] <- NA 
         temp <- nuCAL * rep(MLbin, each = nsim * interval)
         MSElist[[mm]]@Lbar <- cbind(MSElist[[mm]]@Lbar, apply(temp,1:2, sum, na.rm=TRUE)/apply(nuCAL, 1:2, sum, na.rm=TRUE))
         
@@ -1313,6 +1313,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         MSElist[[mm]]@vbLinf <- Linfarray[, nyears+y] * Linfbias
         MSElist[[mm]]@L50 <- L50array[, nyears+y] * lenMbias
         MSElist[[mm]]@L95 <- L95array[, nyears+y] * lenMbias
+        MSElist[[mm]]@L95[is.na(MSElist[[mm]]@L95)]<-MSElist[[mm]]@vbLinf # this is just to robustify 'numbers models' like Grey Seal that do not generate (and will never use) real length observations
         MSElist[[mm]]@L95[MSElist[[mm]]@L95 > 0.9 * MSElist[[mm]]@vbLinf] <- 0.9 * MSElist[[mm]]@vbLinf[MSElist[[mm]]@L95 > 0.9 * MSElist[[mm]]@vbLinf]  # Set a hard limit on ratio of L95 to Linf
         MSElist[[mm]]@L50[MSElist[[mm]]@L50 > 0.9 * MSElist[[mm]]@L95] <- 0.9 * MSElist[[mm]]@L95[MSElist[[mm]]@L50 > 0.9 * MSElist[[mm]]@L95]  # Set a hard limit on ratio of L95 to Linf
         

@@ -333,8 +333,8 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     for (XX in 1:(nyears+proyears)) {
       ageM[,XX] <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,, XX], y=1:maxage, 0.5)))
       age95[,XX] <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,, XX], y=1:maxage, 0.95)))
-      L50array[,XX] <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=Len_age[x, , nyears], 0.5)))
-      L95array[,XX]<- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,], y=Len_age[x, , nyears], 0.95)))
+      L50array[,XX] <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,,XX], y=Len_age[x, , nyears], 0.5)))
+      L95array[,XX]<- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,,XX], y=Len_age[x, , nyears], 0.95)))
     }
   }
   
@@ -377,30 +377,34 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   }
   
   # == Natural mortality by simulation, age and year ====
-  M_ageArray <- array(NA, dim=c(nsim, maxage, nyears + proyears))
-  if (exists("Mage", inherits=FALSE)) { # M-at-age has been provided
-    temp1 <- Mage/ matrix(apply(Mage, 1, mean), nsim, maxage, byrow=FALSE)
-    ind <- as.matrix(expand.grid(1:nsim, 1:maxage, 1:(nyears+proyears)))
-    M_ageArray[ind] <- temp1[ind[,1:2]] * Marray[ind[,c(1,3)]]
-  } else { # M-at-age calculated from Lorenzen curve 
-    Winf <- Stock@a * Linf^Stock@b
-    ind <- as.matrix(expand.grid(1:nsim, 1:maxage, 1:(nyears+proyears)))
-    M_ageArray[ind] <- Marray[ind[,c(1,3)]] * (Wt_age[ind]/Winf[ind[,1]]) ^ Mexp[ind[,1]]  
-  }  
-  
-  
-  # == Scale M at age so that mean M of mature ages is equal to sampled M ====
-  tempM_ageArray <- M_ageArray
-  for (sim in 1:nsim) {
-    matyrs <- ageM[sim, nyears]:maxage
-    if (length(matyrs) >1) {
-      # scale <- Marray[sim,]/ apply(tempM_ageArray[sim,ageM[sim]:maxage,], 2, mean) 
-      scale <- Marray[sim,]/ (apply(tempM_ageArray[sim,matyrs,], 2, sum)/length(matyrs)) # this is about 4 times faster
-    } else if (length(matyrs)==1){
-      scale <- Marray[sim,]/ tempM_ageArray[sim,ageM[sim]:maxage,]  
-    } 
+  if (!exists("M_ageArray", inherits=FALSE)) { # only calculate M_ageArray if it hasn't been specified in cpars
     
-    M_ageArray[sim,,] <- M_ageArray[sim,,] * matrix(scale, maxage, nyears+proyears, byrow=TRUE)
+    M_ageArray <- array(NA, dim=c(nsim, maxage, nyears + proyears))
+    if (exists("Mage", inherits=FALSE)) { # M-at-age has been provided
+      temp1 <- Mage/ matrix(apply(Mage, 1, mean), nsim, maxage, byrow=FALSE)
+      ind <- as.matrix(expand.grid(1:nsim, 1:maxage, 1:(nyears+proyears)))
+      M_ageArray[ind] <- temp1[ind[,1:2]] * Marray[ind[,c(1,3)]]
+    } else { # M-at-age calculated from Lorenzen curve 
+      Winf <- Stock@a * Linf^Stock@b
+      ind <- as.matrix(expand.grid(1:nsim, 1:maxage, 1:(nyears+proyears)))
+      M_ageArray[ind] <- Marray[ind[,c(1,3)]] * (Wt_age[ind]/Winf[ind[,1]]) ^ Mexp[ind[,1]]  
+    }  
+    
+    
+    # == Scale M at age so that mean M of mature ages is equal to sampled M ====
+    tempM_ageArray <- M_ageArray
+    for (sim in 1:nsim) {
+      matyrs <- ageM[sim, nyears]:maxage
+      if (length(matyrs) >1) {
+        # scale <- Marray[sim,]/ apply(tempM_ageArray[sim,ageM[sim]:maxage,], 2, mean) 
+        scale <- Marray[sim,]/ (apply(tempM_ageArray[sim,matyrs,], 2, sum)/length(matyrs)) # this is about 4 times faster
+      } else if (length(matyrs)==1){
+        scale <- Marray[sim,]/ tempM_ageArray[sim,ageM[sim]:maxage,]  
+      } 
+      
+      M_ageArray[sim,,] <- M_ageArray[sim,,] * matrix(scale, maxage, nyears+proyears, byrow=TRUE)
+    }
+    
   }
   
   # == Sample Discard Mortality ====
