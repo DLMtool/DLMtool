@@ -3,48 +3,41 @@
 using namespace Rcpp;
 
 
-// [[Rcpp::export]]
-NumericVector get_freq(NumericVector x, NumericVector breaks) {
-  int nbreaks = breaks.size();
-  NumericVector out(nbreaks-1);
-  for (int i=0; i<nbreaks-1; i++) {
-    LogicalVector temp = (x>breaks(i)) & (x<=breaks(i+1));
-    out[i] = sum(temp);
-  }
-
-  return(out);
-}
+// NumericVector get_freq(NumericVector x, NumericVector breaks) {
+//   int nbreaks = breaks.size();
+//   NumericVector out(nbreaks-1);
+//   for (int i=0; i<nbreaks-1; i++) {
+//     LogicalVector temp = (x>breaks(i)) & (x<=breaks(i+1));
+//     out[i] = sum(temp);
+//   }
+// 
+//   return(out);
+// }
 
 
 // https://stackoverflow.com/questions/13661065/superimpose-histogram-fits-in-one-plot-ggplot
 
-// // [[Rcpp::export]]
-// NumericVector get_freq(NumericVector x, double width, double origin = 0) {
-//   int bin, nmissing = 0;
-//   std::vector<int> out;
-//   
-//   NumericVector::iterator x_it = x.begin(), x_end;
-//   for(; x_it != x.end(); ++x_it) {
-//     double val = *x_it;
-//     if (ISNAN(val)) {
-//       ++nmissing;
-//     } else {
-//       bin = (val - origin) / width;
-//       if (bin < 0) continue;
-//       
-//       // Make sure there\'s enough space
-//       int size = out.size();
-//       if (bin >= size) {
-//         out.resize(bin + 1);
-//       }
-//       ++out[bin];
-//     }
-//   }
-//   
-//   // Put missing values in the last position
-//   //out.push_back(nmissing);
-//   return wrap(out);
-// }
+
+// [[Rcpp::export]]
+NumericVector get_freq(NumericVector x, double width, double origin = 0, 
+                       double outlen=0) {
+  int bin= 0;
+  int nmissing = 0;
+  std::vector<int> out(outlen);
+  
+  NumericVector::iterator x_it = x.begin(), x_end;
+  for(; x_it != x.end(); ++x_it) {
+    double val = *x_it;
+    if (ISNAN(val)) {
+      ++nmissing;
+    } else {
+      bin = (val - origin) / width;
+      ++out[bin];
+    }
+  }
+
+  return wrap(out);
+}
 
 
 // [[Rcpp::export]]
@@ -88,16 +81,11 @@ NumericMatrix  makeLenComp(NumericVector AgeVec, NumericVector SubAgeVec,
   NumericMatrix Prob(k, nbins); // prob dist length at age 
   double width = SubAgeVec(1) - SubAgeVec(0);
   double origin = SubAgeVec(0);
-
+  double outlen = SubAgeVec.size() - 1;
   for (int yr=0; yr < nyears; yr++) {
     NumericVector nvec = VulnN(yr,_);
-    // Rcout << "tempval" << std::endl;
     NumericVector tempval = repcpp(AgeVec, nvec) - 0.5 + runif(sum(nvec)); // add variability to ages
-    // Rcout << "get_freq" << std::endl;
-    // NumericVector tempval2 = get_freq(tempval, width, origin); 
-    // Rcout << "tempval2 size" << tempval2.size() << std::endl;
-    // CN(yr,_) = tempval2; // calculate number in each sub-year age class
-    CN(yr,_) = get_freq(tempval, SubAgeVec);
+    CN(yr,_) =  get_freq(tempval, width, origin, outlen); 
  
     // sample ages from catch
     probs = CN.row(yr)/sum(CN.row(yr));

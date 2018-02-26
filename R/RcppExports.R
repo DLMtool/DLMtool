@@ -57,8 +57,8 @@ bhnoneq_LL <- function(stpar, year, Lbar, ss, Linf, K, Lc, nbreaks) {
     .Call('_DLMtool_bhnoneq_LL', PACKAGE = 'DLMtool', stpar, year, Lbar, ss, Linf, K, Lc, nbreaks)
 }
 
-get_freq <- function(x, breaks) {
-    .Call('_DLMtool_get_freq', PACKAGE = 'DLMtool', x, breaks)
+get_freq <- function(x, width, origin = 0, outlen = 0) {
+    .Call('_DLMtool_get_freq', PACKAGE = 'DLMtool', x, width, origin, outlen)
 }
 
 repcpp <- function(x, y) {
