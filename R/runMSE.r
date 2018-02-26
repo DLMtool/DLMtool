@@ -120,9 +120,9 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                       CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=FALSE, 
                       HZN=2, Bfrac=0.5, AnnualMSY=FALSE, silent=FALSE, PPD=FALSE) {
   
-  Misc<-new('list') #Blank miscellaneous slot created
+ 
   
-  # For debugging - assign default argument values to to current workspace if they don't exist
+  # For debugging - assign default argument values to to current workspace if they don't exist ####
   if (interactive()) { 
     # devtools::load_all()
     DFargs <- formals(runMSE)
@@ -141,7 +141,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   }
   
   if (class(OM) != "OM") stop("You must specify an operating model")
-  
+  Misc<-new('list') #Blank miscellaneous slot created
   if("seed"%in%slotNames(OM)) set.seed(OM@seed) # set seed for reproducibility 
   
   OM <- updateMSE(OM)
@@ -657,19 +657,19 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # }
 
   
+  
   # Generate size comp data with variability in age
-  tempSize <- lapply(1:nsim, makeSizeCompW, nyears, maxage, Linfarray, Karray, t0array, LenCV,
-                                           CAL_bins, CAL_binsmid, retL, CAL_ESS, CAL_nsamp,
-                                           vn, truncSD=2)
-
+  tempSize <- lapply(1:nsim, makeSizeCompW, maxage, Linfarray, Karray, t0array, LenCV,
+                     CAL_bins, CAL_binsmid, retL, CAL_ESS, CAL_nsamp,
+                     vn, truncSD=2)
   CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), dim=c(nyears, length(CAL_binsmid), nsim)), c(3,1,2))
-
+ 
   for (i in 1:nsim) {
     ind <- round(CAL[i,nyears, ],0) >= 1
     if (sum(ind)>0) {
       LFC[i] <- CAL_binsmid[min(which(ind))] # get the smallest CAL observation
     } else {
-      LFC[i] <- NA
+      LFC[i] <- 0
     }
   }
 
@@ -1190,6 +1190,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           }
         }	  
         
+        ## Calculate CAL ####
         CAL <- array(NA, dim = c(nsim, interval, nCALbins))  # the catch at length array
         # # a multinomial observation model for catch-at-length data
         
@@ -1208,23 +1209,36 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         # }	
         # 
         nyrs <- length(yind)
-        tempSize <- lapply(1:nsim, makeSizeCompW, nyrs, maxage, Linfarray[,nyears + yind, drop=FALSE], 
-                           Karray[,nyears + yind, drop=FALSE], 
-                           t0array[,nyears + yind,drop=FALSE], 
+        tempSize <- lapply(1:nsim, makeSizeCompW, maxage, Linfarray[,nyears + yind, drop=FALSE],
+                           Karray[,nyears + yind, drop=FALSE],
+                           t0array[,nyears + yind,drop=FALSE],
                            LenCV,
-                           CAL_bins, CAL_binsmid, 
-                           array(retL_P[,,nyears + yind, drop=FALSE], dim=c(nsim,length(CAL_binsmid),nyrs)), 
+                           CAL_bins, CAL_binsmid,
+                           array(retL_P[,,nyears + yind, drop=FALSE], dim=c(nsim,length(CAL_binsmid),nyrs)),
                            CAL_ESS, CAL_nsamp,
                            vn[,yind,, drop=FALSE], truncSD=2)
-        
+
         CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), dim=c(nyrs, length(CAL_binsmid), nsim)), c(3,1,2))
-        
+
+        # for (sim in 1:OM@nsim) {
+        #   CAL[sim,,] <- makeSizeCompW(sim, maxage, Linfarray[,nyears + yind, drop=FALSE],
+        #                               Karray[,nyears + yind, drop=FALSE],
+        #                               t0array[,nyears + yind,drop=FALSE],
+        #                               LenCV,
+        #                               CAL_bins, CAL_binsmid,
+        #                               array(retL_P[,,nyears + yind, drop=FALSE], dim=c(nsim,length(CAL_binsmid),nyrs)),
+        #                               CAL_ESS, CAL_nsamp,
+        #                               vn[,yind,, drop=FALSE], truncSD=2)
+        #   
+        #   
+        #   
+        # }
         for (i in 1:nsim) {
           ind <- round(CAL[i,nyrs, ],0) >= 1
           if (sum(ind)>0) {
             LFC[i] <- CAL_binsmid[min(which(ind))] # get the smallest CAL observation
           } else {
-            LFC[i] <- NA
+            LFC[i] <- 0
           }
         }
         

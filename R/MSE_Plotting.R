@@ -1960,9 +1960,9 @@ TradePlot <- function(MSEobj, XAxis = c("Overfishing", "Biomass:BMSY"),
     OutList[[xx]] <- tempDF
   }
   
-  print(OutList)
+  # print(OutList)
   par(op)
-  invisible(OutList)
+  OutList
   
 }
 

@@ -77,6 +77,7 @@ testthat::test_that("plotOM works with all OMs", {
   for (i in seq_along(objs)) {
     graphics.off()
     obj <- get(objs[i])
+    obj@nsim <- 48
     seed <- runif(1, 1, 1000)
     seed <- ceiling(runif(1, 1, 1000))
     info <- paste(objs[i], seed)
@@ -87,5 +88,14 @@ testthat::test_that("plotOM works with all OMs", {
 })
 
 
-
+objs <- avail('OM')
+for (i in seq_along(objs)) {
+  obj <- get(objs[i])
+  obj@nsim <- 48
+  seed <- runif(1, 1, 1000)
+  seed <- ceiling(runif(1, 1, 1000))
+  info <- paste(objs[i], seed)
+  message(info)
+  plot(obj)
+}
 
