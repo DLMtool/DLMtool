@@ -737,7 +737,7 @@ popdynOneTS <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr,
   
   # set up some indices for indexed calculation
 
-  indMov <- as.matrix(expand.grid(1:nareas, 1:nareas, 1:maxage)[3:1])  # Movement master index
+  indMov <- as.matrix(expand.grid(1:maxage,1:nareas, 1:nareas))  # Movement master index
   indMov2 <- indMov[, c(1, 2)]  # Movement from index
   indMov3 <- indMov[, c(2, 3)]  # Movement to index
   
@@ -755,8 +755,8 @@ popdynOneTS <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr,
   Nnext[2:maxage, ] <- Ncurr[1:(maxage - 1),  ] * exp(-Zcurr[1:(maxage - 1), ])  # Total mortality
   
   # Movement of stock 
-  temp <- array(Nnext[indMov2] * movc[indMov3], dim = c(nareas, nareas, maxage))  # Move individuals
-  Nnext <- apply(temp, c(3, 1), sum)
+  temp <- array(Nnext[indMov2] * movc[indMov3], dim = c(maxage,nareas, nareas))  # Move individuals
+  Nnext <- apply(temp, c(1, 3), sum)
   
   # Numbers-at-age at beginning of next year
   return(Nnext)

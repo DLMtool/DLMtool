@@ -411,6 +411,9 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if(!exists("Fdisc", inherits = FALSE)) Fdisc <- runif(nsim, min(Stock@Fdisc), max(Stock@Fdisc))
   StockOut$Fdisc <- Fdisc 
   
+  # == 
+   
+  
   
   # Check if M-at-age is constant that Maxage makes sense
   if (all(M_ageArray[1,,1] == mean(M_ageArray[1,,1]))) { # constant M at age
@@ -420,6 +423,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     }  
   }
   
+  if(exists("mov")) StockOut$mov <- mov
   StockOut$ageM <- ageM
   StockOut$age95 <- age95
   StockOut$Linfarray <- Linfarray
@@ -961,7 +965,7 @@ validcpars <- function(print=TRUE) {
   vnames <- sort(c("D","Esd","Find","procsd","AC","M","Msd", 
                    "Mgrad","hs","Linf","Linfsd","Linfgrad",
                    "K","Ksd","Kgrad","t0","L50", "L95", "L50_95","Spat_targ",
-                   "Frac_area_1","Prob_staying","Size_area_1", 
+                   "Frac_area_1","Prob_staying","Size_area_1","mov","initdist", "Asize",
                    "Csd","Cbias","CAA_nsamp","CAA_ESS","CAL_nsamp",
                    "CAL_ESS","betas","Isd","Derr","Dbias", 
                    "Mbias","FMSY_Mbias","lenMbias","LFCbias",

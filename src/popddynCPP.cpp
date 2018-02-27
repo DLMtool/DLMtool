@@ -56,12 +56,13 @@ Rcpp::NumericMatrix popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVe
 
   // Move stock
   for (int age=0; age<maxage; age++) {
-    for (int AA = 0; AA < nareas; AA++) {
-      for (int BB = 0; BB < nareas; BB++) {
-        if (AA != BB) tempMat2(AA, BB) = (Nnext(age, AA) * mov(AA, AA)) +   (Nnext(age, BB) * mov(BB, AA));
-        tempMat3(AA, BB) = tempMat2(AA, BB);				 
+    for (int AA = 0; AA < nareas; AA++) {   // (from areas)
+      for (int BB = 0; BB < nareas; BB++) { // (to areas)
+        tempMat2(BB, AA) = Nnext(age, AA) * mov(AA, BB); // movement fractions
       }
-      Nstore(age, AA) = sum(tempMat2.row(AA));
+    }
+    for (int BB = 0; BB < nareas; BB++) { // to areas
+      Nstore(age, BB) = sum(tempMat2.row(BB));   // sums all rows (from areas) in each column (to areas)
     }
   }   
   
