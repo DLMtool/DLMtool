@@ -76,14 +76,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // get_freq
-NumericVector get_freq(NumericVector x, NumericVector breaks);
-RcppExport SEXP _DLMtool_get_freq(SEXP xSEXP, SEXP breaksSEXP) {
+NumericVector get_freq(NumericVector x, double width, double origin, double outlen);
+RcppExport SEXP _DLMtool_get_freq(SEXP xSEXP, SEXP widthSEXP, SEXP originSEXP, SEXP outlenSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type breaks(breaksSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_freq(x, breaks));
+    Rcpp::traits::input_parameter< double >::type width(widthSEXP);
+    Rcpp::traits::input_parameter< double >::type origin(originSEXP);
+    Rcpp::traits::input_parameter< double >::type outlen(outlenSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_freq(x, width, origin, outlen));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -198,7 +200,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_DLMtool_LSRA_opt_cpp", (DL_FUNC) &_DLMtool_LSRA_opt_cpp, 10},
     {"_DLMtool_LSRA_MCMC_sim", (DL_FUNC) &_DLMtool_LSRA_MCMC_sim, 21},
     {"_DLMtool_bhnoneq_LL", (DL_FUNC) &_DLMtool_bhnoneq_LL, 8},
-    {"_DLMtool_get_freq", (DL_FUNC) &_DLMtool_get_freq, 2},
+    {"_DLMtool_get_freq", (DL_FUNC) &_DLMtool_get_freq, 4},
     {"_DLMtool_repcpp", (DL_FUNC) &_DLMtool_repcpp, 2},
     {"_DLMtool_makeLenComp", (DL_FUNC) &_DLMtool_makeLenComp, 13},
     {"_DLMtool_movfit_Rcpp", (DL_FUNC) &_DLMtool_movfit_Rcpp, 3},
