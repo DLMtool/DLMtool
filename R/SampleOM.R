@@ -1045,6 +1045,7 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
       
       if (class(samps) == "array") {
         if (length(dim(samps)) == 3)  sampCpars[[name]] <- samps[ind, , ,drop=FALSE]
+        if (length(dim(samps)) == 4)  sampCpars[[name]] <- samps[ind, , , ,drop=FALSE]
       }
       if (class(samps) == "data.frame")   sampCpars[[name]] <- samps 
     }

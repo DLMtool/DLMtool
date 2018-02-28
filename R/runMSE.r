@@ -220,28 +220,33 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     # }
     # 
     nareas<-2 # default is a 2 area model
-    mov <- array(t(sapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
+    mov1 <- array(t(sapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
                           Prob_staying = Prob_staying)), dim = c(nsim, nareas, nareas))
-    initdist <- as.matrix(cbind(Frac_area_1, 1 - Frac_area_1))  # Get the initial spatial distribution of each simulated population
+    mov<-array(NA,c(nsim,maxage,nareas,nareas))
+    mind<-as.matrix(expand.grid(1:nsim,1:maxage,1:nareas,1:nareas))
+    mov[mind]<-mov1[mind[,c(1,3,4)]]
+    
+    #initdist <- array(0,c(nsim,maxage,nareas))
+    #initdist[,,1]<-Frac_area_1
+    #initdist[,,2]<- 1- Frac_area_1  
+    
   }else{
     nareas<-dim(mov)[3]
     message(paste("Custom movement matrix detected, simulating movement among",nareas,"areas"))
-    
-    if(!exists('initdist')){ # if initdist (initial distribution of numbers among areas) isn't in cpars
-      mind<-as.matrix(expand.grid(1:nsim,1:nareas,1:nareas))
-      movedarray<-array(0,c(nsim,nareas,nareas))
-      initdist<-array(1/nareas,c(nsim,nareas))
-      for(i in 1:20){ # convergence in initial distribution is assumed to occur in 20 iterations (generally overkill)
-        movedarray[mind]<-initdist[mind[,1:2]]*mov[mind] # distribution in from areas mulitplied by movement array
-        initdist<-apply(movedarray,c(1,3),sum) # add over to areas
-        #print(initdist[1:2,]) # debugging to check convergence
-      }
-    } # end of if initdist  isn't specified
-    if(dim(Asize)[2]!=nareas){
-      message(paste("Area size matrix Asize is not",nareas,"long. Equal density among areas is now assumed"))
-      Asize<-initdist#array(1/nareas,c(nsim,nareas))
-    } # if Areasize isn't specified
   }
+  
+  # !!! preliminary initidist Pinitdist, calculated from movement of youngest ages
+  mind<-as.matrix(expand.grid(1:nsim,maxage,1:nareas,1:nareas))
+  movedarray<-array(0,c(nsim,nareas,nareas))
+  Pinitdist<-array(1/nareas,c(nsim,nareas))
+  for(i in 1:20){ # convergence in initial distribution is assumed to occur in 20 iterations (generally overkill)
+    movedarray[mind]<-Pinitdist[mind[,1:2]]*mov[mind] # distribution in from areas mulitplied by movement array
+    Pinitdist<-apply(movedarray,c(1,3),sum) # add over to areas
+    #print(initdist[1:2,]) # debugging to check convergence
+  }
+  #} # end of if initdist  isn't specified
+  
+  
   
   # --- Historical Spatial closures ----
   MPA <- matrix(1, nyears+proyears, ncol=nareas)
