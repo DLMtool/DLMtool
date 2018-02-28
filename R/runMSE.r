@@ -226,40 +226,25 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     mind<-as.matrix(expand.grid(1:nsim,1:maxage,1:nareas,1:nareas))
     mov[mind]<-mov1[mind[,c(1,3,4)]]
     
-    #initdist <- array(0,c(nsim,maxage,nareas))
-    #initdist[,,1]<-Frac_area_1
-    #initdist[,,2]<- 1- Frac_area_1  
+    initdist <- array(0,c(nsim,maxage,nareas))
+    initdist[,,1]<-Frac_area_1
+    initdist[,,2]<- 1- Frac_area_1  
     
-  }else{
+  }else{ # if mov is specified need to calculate age-based spatial distribution (Pinitdist to initdist)
     nareas<-dim(mov)[3]
     message(paste("Custom movement matrix detected, simulating movement among",nareas,"areas"))
-  }
-  
-  # !!! preliminary initidist Pinitdist, calculated from movement of youngest ages
-  mind<-as.matrix(expand.grid(1:nsim,maxage,1:nareas,1:nareas))
-  movedarray<-array(0,c(nsim,nareas,nareas))
-  Pinitdist<-array(1/nareas,c(nsim,nareas))
-  for(i in 1:20){ # convergence in initial distribution is assumed to occur in 20 iterations (generally overkill)
-    movedarray[mind]<-Pinitdist[mind[,1:2]]*mov[mind] # distribution in from areas mulitplied by movement array
-    Pinitdist<-apply(movedarray,c(1,3),sum) # add over to areas
-    #print(initdist[1:2,]) # debugging to check convergence
-  }
-  #} # end of if initdist  isn't specified
-  
-  
-  
-  # --- Historical Spatial closures ----
-  MPA <- matrix(1, nyears+proyears, ncol=nareas)
-  if (all(!is.na(OM@MPA)) && sum(OM@MPA) != 0) { # historical spatial closures have been specified
-    yrindex <- OM@MPA[,1]
-    if (max(yrindex)>nyears) stop("Invalid year index for spatial closures: must be <= nyears")
-    if (min(yrindex)<1) stop("Invalid year index for spatial closures: must be > 1")
-    if (ncol(OM@MPA)-1 != nareas) stop("OM@MPA must be nareas + 1")
-    for (xx in seq_along(yrindex)) {
-      MPA[yrindex[xx]:nrow(MPA),] <- matrix(OM@MPA[xx, 2:ncol(OM@MPA)], nrow=length(yrindex[xx]:nrow(MPA)),ncol=nareas, byrow = TRUE)
+    
+    mind<-as.matrix(expand.grid(1:nsim,maxage,1:nareas,1:nareas))
+    movedarray<-array(0,c(nsim,1,nareas,nareas))
+    Pinitdist<-array(1/nareas,c(nsim,nareas))
+    for(i in 1:20){ # convergence in initial distribution is assumed to occur in 20 iterations (generally overkill)
+      movedarray[mind]<-Pinitdist[mind[,1:3]]*mov[mind] # distribution in from areas mulitplied by movement array
+      Pinitdist<-apply(movedarray,c(1,4),sum) # add over to areas
+      #print(initdist[1:2,]) # debugging to check convergence
     }
+  
   }
- 
+  
   N <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # stock numbers array
   Biomass <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # stock biomass array
   VBiomass <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # vulnerable biomass array
@@ -281,7 +266,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   Nfrac <- surv * Mat_age[,,1]  # predicted Numbers of mature ages in first year
   
-  R0a <- matrix(R0, nrow=nsim, ncol=nareas, byrow=FALSE) * initdist  # Unfished recruitment by area
   
   SAYR <- as.matrix(expand.grid(1:nareas, 1, 1:maxage, 1:nsim)[4:1])  # Set up some array indexes sim (S) age (A) year (Y) region/area (R)
   SAY <- SAYR[, 1:3]
@@ -291,9 +275,30 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   SY <- SAYR[, c(1, 3)]
   Sa[,2]<-maxage-Sa[,2]+1 # This is the process error index for initial year
   
-  #  --- Equilibrium calcs ----
-  SSN[SAYR] <- Nfrac[SA] * R0[S] * initdist[SR]  # Calculate initial spawning stock numbers
-  N[SAYR] <- R0[S] * surv[SA] * initdist[SR]  # Calculate initial stock numbers
+  
+  if(!exists(initdist)){ # initdist calculation from Pinitdist and 
+  
+    #  --- Pre Equilibrium calcs ----
+    
+    SSN[SAYR] <- Nfrac[SA] * R0[S] * Pinitdist[SR]  # Calculate initial spawning stock numbers
+    N[SAYR] <- R0[S] * surv[SA] * Pinitdist[SR]  # Calculate initial stock numbers
+    Neq <- N
+    Biomass[SAYR] <- N[SAYR] * Wt_age[SAY]  # Calculate initial stock biomass
+    SSB[SAYR] <- SSN[SAYR] * Wt_age[SAY]    # Calculate spawning stock biomass
+    VBiomass[SAYR] <- Biomass[SAYR] * V[SAY]  # Calculate vunerable biomass
+    
+    
+    # --- Equilibrium spatial / age structure (initdist by SAR)
+    
+    
+    # 
+  
+  }
+  
+  R0a <- matrix(R0, nrow=nsim, ncol=nareas, byrow=FALSE) * initdist[,1,]  # !!!! INITDIST OF AGE 1. Unfished recruitment by area
+  
+  SSN[SAYR] <- Nfrac[SA] * R0[S] * initdist[SAR]  # Calculate initial spawning stock numbers
+  N[SAYR] <- R0[S] * surv[SA] * initdist[SAR]  # Calculate initial stock numbers
   Neq <- N
   Biomass[SAYR] <- N[SAYR] * Wt_age[SAY]  # Calculate initial stock biomass
   SSB[SAYR] <- SSN[SAYR] * Wt_age[SAY]    # Calculate spawning stock biomass
@@ -321,13 +326,26 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   
   #  --- Non-equilibrium calcs ----
-  SSN[SAYR] <- Nfrac[SA] * R0[S] * initdist[SR]*Perr[Sa]  # Calculate initial spawning stock numbers
-  N[SAYR] <- R0[S] * surv[SA] * initdist[SR]*Perr[Sa]  # Calculate initial stock numbers
+  SSN[SAYR] <- Nfrac[SA] * R0[S] * initdist[SAR]*Perr[Sa]  # Calculate initial spawning stock numbers
+  N[SAYR] <- R0[S] * surv[SA] * initdist[SAR]*Perr[Sa]  # Calculate initial stock numbers
   
   Biomass[SAYR] <- N[SAYR] * Wt_age[SAY]  # Calculate initial stock biomass
   SSB[SAYR] <- SSN[SAYR] * Wt_age[SAY]    # Calculate spawning stock biomass
   VBiomass[SAYR] <- Biomass[SAYR] * V[SAY]  # Calculate vunerable biomass
 
+  
+  # --- Historical Spatial closures ----
+  MPA <- matrix(1, nyears+proyears, ncol=nareas)
+  if (all(!is.na(OM@MPA)) && sum(OM@MPA) != 0) { # historical spatial closures have been specified
+    yrindex <- OM@MPA[,1]
+    if (max(yrindex)>nyears) stop("Invalid year index for spatial closures: must be <= nyears")
+    if (min(yrindex)<1) stop("Invalid year index for spatial closures: must be > 1")
+    if (ncol(OM@MPA)-1 != nareas) stop("OM@MPA must be nareas + 1")
+    for (xx in seq_along(yrindex)) {
+      MPA[yrindex[xx]:nrow(MPA),] <- matrix(OM@MPA[xx, 2:ncol(OM@MPA)], nrow=length(yrindex[xx]:nrow(MPA)),ncol=nareas, byrow = TRUE)
+    }
+  }
+  
   
   # --- Optimize catchability (q) to fit depletion ---- 
   if(!silent) message("Optimizing for user-specified depletion")  # Print a progress update
