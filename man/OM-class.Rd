@@ -46,6 +46,8 @@ the data inputs is used.}
 
 \item{\code{Source}}{A reference to a website or article from which parameters were taken to define the operating model}
 
+\item{\code{Common_Name}}{Common name of the species. Character string}
+
 \item{\code{Species}}{Scientific name of the species. Genus and species name. Character string}
 
 \item{\code{maxage}}{The maximum age of individuals that is simulated (there is no 'plus group'). Single value. Positive integer}

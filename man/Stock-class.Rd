@@ -13,6 +13,8 @@ dynamics model
 \describe{
 \item{\code{Name}}{The name of the Stock object. Single value. Character string}
 
+\item{\code{Common_Name}}{Common name of the species. Character string}
+
 \item{\code{Species}}{Scientific name of the species. Genus and species name. Character string}
 
 \item{\code{maxage}}{The maximum age of individuals that is simulated (there is no 'plus group'). Single value. Positive integer}

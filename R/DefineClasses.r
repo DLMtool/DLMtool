@@ -397,6 +397,7 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1, de
 #' @section Objects from the Class: Objects can be created by calls of the form
 #' \code{new('Stock')}
 #' @slot Name The name of the Stock object. Single value. Character string 
+#' @slot Common_Name Common name of the species. Character string
 #' @slot Species Scientific name of the species. Genus and species name. Character string
 #' @slot maxage The maximum age of individuals that is simulated (there is no 'plus group'). Single value. Positive integer
 #' @slot R0 The magnitude of unfished recruitment. Single value. Positive real number
@@ -439,7 +440,7 @@ setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1, de
 #' showClass('Stock')
 #' 
 # FecB = "numeric"
-setClass("Stock", representation(Name = "character", Species="character",
+setClass("Stock", representation(Name = "character", Common_Name='character', Species="character",
                                  maxage = "numeric", 
                                  R0 = "numeric", M = "numeric", M2 = "numeric", 
                                  Mexp="numeric",  Msd = "numeric", Mgrad = "numeric",  
@@ -466,6 +467,15 @@ setMethod("initialize", "Stock", function(.Object, file = NA, dec=c(".", ",")) {
       dat <- dat[, 2:ncol(dat)]
       Ncol <- ncol(dat)
       .Object@Name <- dat[match("Name", dname), 1]
+      commonname <- dat[match("Common_Name", dname), 1]
+      commonname1 <- dat[match("Common Name", dname), 1]
+      if (length(commonname)>0) {
+        .Object@Common_Name <-commonname
+      } else if (length(commonname1)>0) {
+        .Object@Common_Name <-commonname1
+      } else {
+        .Object@Common_Name <- "Not specified"
+      }
       .Object@Species <- dat[match("Species", dname), 1]
       .Object@maxage <- as.numeric(dat[match("maxage", dname), 1])
       .Object@R0 <- as.numeric(dat[match("R0", dname), 1])
@@ -955,6 +965,7 @@ setMethod("initialize", "Imp", function(.Object, file = NA, dec=c(".", ",")) {
 #' @slot Source A reference to a website or article from which parameters were taken to define the operating model 
 
 # Stock slots
+#' @slot Common_Name Common name of the species. Character string
 #' @slot Species Scientific name of the species. Genus and species name. Character string
 #' @slot maxage The maximum age of individuals that is simulated (there is no 'plus group'). Single value. Positive integer
 #' @slot R0 The magnitude of unfished recruitment. Single value. Positive real number

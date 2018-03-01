@@ -8,7 +8,7 @@ runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
   "matlenlim", "MRreal"), CheckMPs = FALSE, timelimit = 1, Hist = FALSE,
   ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2, Bfrac = 0.5,
   AnnualMSY = FALSE, silent = FALSE, PPD = FALSE, parallel = FALSE,
-  save_name = NULL)
+  save_name = NULL, checks = FALSE, control = NULL)
 }
 \arguments{
 \item{OM}{An operating model object (class 'OM')}
@@ -51,6 +51,10 @@ May differ from MSY statistics from last historical year if there are changes in
 \item{parallel}{Logical. Should the MSE be run using parallel processing?}
 
 \item{save_name}{Character. Optional name to save parallel MSE list}
+
+\item{checks}{Logical. Run tests?}
+
+\item{control}{control options for testing and debugging}
 }
 \value{
 An object of class MSE

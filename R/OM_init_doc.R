@@ -137,8 +137,6 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
     copy <- file.copy(path, pathout, overwrite = overwrite)
     if (!copy) stop("Excel file not copied from ", path)
     
-
-    
     # loop through slot values if Obj template provided
     if (useTemp) {
       wb <- openxlsx::loadWorkbook(name)
@@ -634,6 +632,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   if (.hasSlot(OM, 'Species') && !is.na(OM@Species)) {
     cat("## Species Information \n\n", append=TRUE, file=RMDfile, sep="")
     cat("**Species**: *", OM@Species, "*\n\n", append=TRUE, file=RMDfile, sep="")
+    cat("**Common Name**: *", OM@Common_Name, "*\n\n", append=TRUE, file=RMDfile, sep="")
     cat("**Management Agency**: ", OM@Agency, "\n\n", append=TRUE, file=RMDfile, sep="")
     cat("**Region**: ", OM@Region, "\n\n", append=TRUE, file=RMDfile, sep="")
     if (length(OM@Sponsor)>0) cat("**Sponsor**: ", OM@Sponsor, "\n\n", append=TRUE, file=RMDfile, sep="")
@@ -771,7 +770,7 @@ Template <- function(type=c("Stock", "Fleet", "Obs", "Imp")) {
   Slots <- names(methods::getSlots(type))
   for (X in Slots) {
     tt <- grep(paste0("\\<", X, "\\>"), mat) 
-    if (X != "Name" && X != "Source" && X!="Species" && X!="Latitude" && X!='Longitude') {
+    if (X != "Name" && X != "Source" && X!="Species" && "Common_Name" && X!="Latitude" && X!='Longitude') {
       if (length(tt) < 1) stop("slot ", X, " not found in ", type, " template", call.=FALSE)
       if (length(tt) > 1) stop("slot ", X, " found multiple times in ", type, " template", call.=FALSE)    
     }
