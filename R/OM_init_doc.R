@@ -358,6 +358,7 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
 #' @param output Character. Output file type. Default is 'html_document'. 'pdf_document' is available
 #' but may require additional software and have some formatting issues.
 #' @param openFile Logical. Should the compiled file be opened in web browser?
+#' @param quiet TRUE to supress printing of the pandoc command line.
 #'
 #' @return Creates a Rmarkdown file and compiles a HTML report file in the working directory.
 #' @export
@@ -372,7 +373,7 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
 #' OMdoc(myOM)
 #' }
 OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,  
-                  inc.plot=TRUE, render=TRUE, output="html_document", openFile=TRUE ) {
+                  inc.plot=TRUE, render=TRUE, output="html_document", openFile=TRUE, quiet=FALSE) {
   # markdown compile options
   toc=TRUE; color="blue";  theme="flatly"
   OMXLname <- NULL
@@ -585,10 +586,13 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
     }
     
     if (runSims) {
-      message("\nRunning Historical Simulations\n")
-      OM <- updateMSE(OM) # update and add missing slots with default values
-      if (OM@nsim > 48) setup()
-      out<- runMSE(OM,Hist=T)
+      message("\nRunning Historical Simulations")
+      OM2 <- updateMSE(OM) # update and add missing slots with default values
+      if (OM2@nsim > 48) {
+        message("nsim too high for documentation purposes. Running here with nsim=48")
+        OM2@nsim <- 48
+      }
+      out<- runMSE(OM2,Hist=T, parallel = FALSE, silent=TRUE)
       Pars <- c(out$SampPars, out$TSdata, out$MSYs)  
       saveRDS(out, file=paste0('build/', fileName, 'Hist.dat'))
     }
@@ -663,24 +667,25 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   
   useCpars <- length(OM@cpars) >0 
   ## Cpars ####
-  cat(".")
-  if (useCpars) writeSection(class="cpars", OM, textIn, RMDfile, color=color, 
+  if (useCpars) {
+    message("writing cpars section")
+    writeSection(class="cpars", OM, textIn, RMDfile, color=color, 
                              inc.plot=inc.plot)
-
+  }
   ## Stock Parameters ####
-  cat(".")
+  message("writing Stock section")
   writeSection(class="Stock", OM, textIn, RMDfile, color=color, inc.plot=inc.plot)
   
   ## Fleet Parameters ####
-  cat(".")
+  message("writing Fleet section")
   writeSection(class="Fleet", OM, textIn, RMDfile, color=color, inc.plot=inc.plot)
   
   ## Observation Parameters ####
-  cat(".")
+  message("writing Obs section")
   writeSection(class="Obs", OM, textIn, RMDfile, color=color, inc.plot=inc.plot)
   
   ## Implementation Parameters ####
-  cat(".")
+  message("writing Imp section")
   writeSection(class="Imp", OM, textIn, RMDfile, color=color, inc.plot=inc.plot)
   
   ## OM Plots ####
@@ -694,7 +699,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   
   
   ## References ####
-  cat(".")
+  message("writing Reference section")
   writeSection(class="References", OM, textIn, RMDfile, color=color, inc.plot=inc.plot)
   
   ## Render Markdown ####
@@ -708,7 +713,8 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
     EffYears <- round(EffYears,0)
     Effvals <- data.frame(EffYears=EffYears, EffLower=OM@EffLower, EffUpper=OM@EffUpper)
     params <- list(OM=OM, Pars=Pars, Effvals=Effvals, out=out)
-    rmarkdown::render(input=RMDfile, output_file=RMDfileout, output_format=output, output_dir=getwd(), param=params)
+    rmarkdown::render(input=RMDfile, output_file=RMDfileout, output_format=output, 
+                      output_dir=getwd(), param=params, quiet=quiet)
     
     if (openFile) utils::browseURL(file.path(getwd(), RMDfileout))
     
@@ -1015,7 +1021,7 @@ plotText <- function(OM, slots, RMDfile) {
 
 
 plotSlot <- function(OM, Pars, slot) {
-  
+  if (OM@nsim > 48) OM@nsim <- 48
   if (slot == 'M') plotM2(OM, Pars) 
   if (slot == "h") plotRec(OM, Pars) 
   if (slot == "Linf") plotGrowth(OM, Pars) 

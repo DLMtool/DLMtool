@@ -157,6 +157,7 @@ MPtype <- function(MPs=NA) {
     names <- names(recs[[mm]])
     names <- names[!names %in% c("TAC", "Spatial")]
     input <- sum(unlist(lapply(Map(function(x) recs[[mm]][[x]], names), length))) > 0
+    if (all(!is.na(recs[[mm]]$Spatial))) input <- TRUE
     if (output) type[mm] <- "Output"
     if (input) type[mm] <- "Input"
     if (input & output) type[mm] <- "Mixed"
@@ -278,7 +279,7 @@ Required <- function(funcs = NA) {
 #' @importFrom snowfall sfInit sfExportAll sfIsRunning sfExport sfSapply
 #' @importFrom parallel detectCores
 #' @export 
-setup <- function(cpus=min(parallel::detectCores(),3), ...) {
+setup <- function(cpus=min(parallel::detectCores(),4), ...) {
   if(snowfall::sfIsRunning()) snowfall::sfStop()
   snowfall::sfInit(parallel=TRUE,cpus=cpus, ...)  
 }
@@ -704,19 +705,20 @@ L2A <- function(t0c, Linfc, Kc, Len, maxage) {
 
 #' Determine optimal number of cpus
 #'
+#' @param nsim Numeric. Number of simulations.
 #' @param thresh Recommended n cpus is what percent of the fastest time?
 #' @param plot Logical. Show the plot?
 #'
 #' @export
 #'
 #' @author A. Hordyk
-optCPU <- function(thresh=5, plot=TRUE, nsim=48) {
+optCPU <- function(nsim=96, thresh=5, plot=TRUE) {
   cpus=1:parallel::detectCores()
   time <- NA
-  OM <- testOM
+  OM <- DLMtool::testOM
   OM@nsim <- nsim
   for (n in cpus) {
-    message(n, ' of ', max(cpus))
+    message('Running MSE with ', nsim, ' simulations and ', n, ' of ', max(cpus), ' cpus')
     if (n == 1) {
       snowfall::sfStop()
       st <- Sys.time()

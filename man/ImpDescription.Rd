@@ -4,7 +4,7 @@
 \name{ImpDescription}
 \alias{ImpDescription}
 \title{ImpDescription}
-\format{An object of class \code{data.frame} with 8 rows and 2 columns.}
+\format{An object of class \code{data.frame} with 7 rows and 2 columns.}
 \usage{
 ImpDescription
 }

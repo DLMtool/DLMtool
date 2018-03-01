@@ -18,13 +18,13 @@ An object for storing data for analysis using data-limited methods
 
 \item{\code{Ind}}{Relative abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers}
 
+\item{\code{Rec}}{Recent recruitment strength. Vector of length nsim. Positive real numbers}
+
 \item{\code{t}}{The number of years corresponding to AvC and Dt. Single value. Positive integer}
 
 \item{\code{AvC}}{Average catch over time t. Vector nsim long. Positive real numbers}
 
 \item{\code{Dt}}{Depletion over time t SSB(now)/SSB(now-t+1). Vector nsim long. Fraction}
-
-\item{\code{ML}}{Mean length time series. Matrix of nsim rows and nyears columns. Non-negative real numbers}
 
 \item{\code{Mort}}{Natural mortality rate. Vector nsim long. Positive real numbers}
 
@@ -35,6 +35,8 @@ An object for storing data for analysis using data-limited methods
 \item{\code{L50}}{Length at 50 percent maturity. Vector nsim long. Positive real numbers}
 
 \item{\code{L95}}{Length at 95 percent maturity. Vector nsim long. Positive real numbers}
+
+\item{\code{ML}}{Mean length time series. Matrix of nsim rows and nyears columns. Non-negative real numbers}
 
 \item{\code{Lbar}}{Mean length of catches over Lc. Matrix of nsim rows and nyears columns. Positive real numbers}
 
@@ -106,6 +108,14 @@ An object for storing data for analysis using data-limited methods
 
 \item{\code{MaxAge}}{Maximum age. Vector nsim long. Positive integer}
 
+\item{\code{CAL_bins}}{The values delimiting the length bins for the catch-at-length data. Vector. Non-negative real numbers}
+
+\item{\code{CAL}}{Catch-at-length data. An array with dimensions nsim x nyears x length(CAL_bins). Non-negative integers}
+
+\item{\code{TAC}}{The calculated catch limits (function TAC). An array with dimensions PosMPs x replicate TAC samples x nsim. Positive real numbers}
+
+\item{\code{Sense}}{The results of the sensitivity analysis (function Sense). An array with dimensions PosMPs x sensitivity increments. Positive real numbers}
+
 \item{\code{Units}}{Units of the catch/absolute abundance estimates. Single value. Character string}
 
 \item{\code{Ref}}{A reference management level (eg a catch limit). Single value. Positive real number}
@@ -124,14 +134,6 @@ An object for storing data for analysis using data-limited methods
 
 \item{\code{Obs}}{A table of observation model conditions. R table object of nsim rows. Real numbers}
 
-\item{\code{TAC}}{The calculated catch limits (function TAC). An array with dimensions PosMPs x replicate TAC samples x nsim. Positive real numbers}
-
-\item{\code{Sense}}{The results of the sensitivity analysis (function Sense). An array with dimensions PosMPs x sensitivity increments. Positive real numbers}
-
-\item{\code{CAL_bins}}{The values delimiting the length bins for the catch-at-length data. Vector. Non-negative real numbers}
-
-\item{\code{CAL}}{Catch-at-length data. An array with dimensions nsim x nyears x length(CAL_bins). Non-negative integers}
-
 \item{\code{Cref}}{Reference or target catch level (eg MSY). Vector of length nsim. Positive real numbers}
 
 \item{\code{Iref}}{Reference or target relative abundance index level (eg BMSY / B0). Vector of length nsim. Positive real numbers}
@@ -145,8 +147,6 @@ An object for storing data for analysis using data-limited methods
 \item{\code{CV_Bref}}{Log-normal CV for reference or target biomass level. Vector of length nsim. Positive real numbers}
 
 \item{\code{CV_Rec}}{Log-normal CV for recent recruitment strength. Vector of length nsim. Positive real numbers}
-
-\item{\code{Rec}}{Recent recruitment strength. Vector of length nsim. Positive real numbers}
 
 \item{\code{MPrec}}{The previous recommendation of a management procedure. Vector of length nsim. Positive real numbers}
 

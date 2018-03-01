@@ -281,8 +281,10 @@ barplot.MSE <- function(height, MSEobj = NULL, PMs = list(B_BMSY = 0.5,
 #' @param ...  Additional arguments to be passed to plotting functions
 #' @author A. Hordyk
 #' @export
-boxplot.MSE <- function(x, MPs = NA, maxMP = 8, PMRefs = list(B_BMSY = 1, 
-                                                              SSB_SSB0 = 0.2, F_FMSY = 1, AAVY = 30, AAVE = 30), lastYrs = 10, cex.lab = 1.2, 
+boxplot.MSE <- function(x, MPs = NA, maxMP = 8, 
+                        PMRefs = list(B_BMSY = 1, 
+                                      SSB_SSB0 = 0.2, F_FMSY = 1, AAVY = 30, AAVE = 30), 
+                        lastYrs = 10, cex.lab = 1.2, 
                         cex.PM = 0.75, canMPs = NULL, cols = TRUE, outline = FALSE, CexName = 1.25, 
                         incLine = TRUE, incref = FALSE, Names = TRUE, ...) {
   
@@ -313,26 +315,28 @@ boxplot.MSE <- function(x, MPs = NA, maxMP = 8, PMRefs = list(B_BMSY = 1,
   Years <- paste("Years", (MSEobj@proyears - lastYrs) + 1, "-", MSEobj@proyears, 
                  "(last", lastYrs, "years)")
   
-  MPtype <- perfdat$MPtype
-  outmps <- perfdat[MPtype == "Output", ]$MP
-  inmps <- perfdat[MPtype == "Input", ]$MP
+  # MPtype <- perfdat$MPtype
+  MPtypes <- MPtype(MPs)[,2]
+  outmps <- perfdat[MPtypes == "Output", ]$MP
+  inmps <- perfdat[MPtypes == "Input", ]$MP
   nOut <- ceiling(nmp/2)
   nIn <- floor(nmp - nOut)
   if (nMPs > nmp) {
-    outDist <- perfdat[MPtype == "Output", ]$Dist
-    OutMPs <- perfdat[MPtype == "Output", ]$MP[order(outDist)[1:nOut]]
-    inDist <- perfdat[MPtype == "Input", ]$Dist
-    InMPs <- perfdat[MPtype == "Input", ]$MP[order(inDist)[1:nIn]]
+    outDist <- perfdat[MPtypes == "Output", ]$Dist
+    OutMPs <- perfdat[MPtypes == "Output", ]$MP[order(outDist)[1:nOut]]
+    inDist <- perfdat[MPtypes == "Input", ]$Dist
+    InMPs <- perfdat[MPtypes == "Input", ]$MP[order(inDist)[1:nIn]]
   } else {
-    OutMPs <- perfdat[MPtype == "Output", ]$MP
-    InMPs <- perfdat[MPtype == "Input", ]$MP
+    OutMPs <- perfdat[MPtypes == "Output", ]$MP
+    InMPs <- perfdat[MPtypes == "Input", ]$MP
   }
   
   mseobj <- Sub(MSEobj, MPs = c(OutMPs, InMPs))
   nMPs <- mseobj@nMPs
   perf <- MPStats(mseobj, msg = FALSE)
   perfdat <- perf$Perf
-  MPtype <- perfdat$MPtype
+  MPtypes <- MPtype(mseobj@MPs)[,2]
+  # MPtype <- perfdat$MPtype
   rawVals <- perf$BySim
   MPs <- perfdat$MP
   
@@ -364,10 +368,10 @@ boxplot.MSE <- function(x, MPs = NA, maxMP = 8, PMRefs = list(B_BMSY = 1,
   # apply(AAVE, 2, mean, na.rm=TRUE)
   
   # Colors - to make the plot a bit more cheerful
-  inputs <- which(MPtype == "Input")
-  outputs <- which(MPtype == "Output")
+  inputs <- which(MPtypes == "Input")
+  outputs <- which(MPtypes == "Output")
   fonts <- rep(2, nmp)
-  fonts[MPtype == "Input"] <- 4
+  fonts[MPtypes == "Input"] <- 4
   NameCol <- rep("black", nmp)
   NameCol[MPs %in% canMPs] <- "green"
   index <- grep("ref", MPs)
@@ -1956,9 +1960,9 @@ TradePlot <- function(MSEobj, XAxis = c("Overfishing", "Biomass:BMSY"),
     OutList[[xx]] <- tempDF
   }
   
-  print(OutList)
+  # print(OutList)
   par(op)
-  invisible(OutList)
+  OutList
   
 }
 
