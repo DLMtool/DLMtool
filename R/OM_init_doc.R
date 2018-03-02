@@ -770,7 +770,7 @@ Template <- function(type=c("Stock", "Fleet", "Obs", "Imp")) {
   Slots <- names(methods::getSlots(type))
   for (X in Slots) {
     tt <- grep(paste0("\\<", X, "\\>"), mat) 
-    if (X != "Name" && X != "Source" && X!="Species" && "Common_Name" && X!="Latitude" && X!='Longitude') {
+    if (X != "Name" && X != "Source" && X!="Species" && X!="Common_Name" && X!="Latitude" && X!='Longitude') {
       if (length(tt) < 1) stop("slot ", X, " not found in ", type, " template", call.=FALSE)
       if (length(tt) > 1) stop("slot ", X, " found multiple times in ", type, " template", call.=FALSE)    
     }
