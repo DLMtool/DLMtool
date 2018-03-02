@@ -188,6 +188,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # Assign Stock pars to function environment
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
   
+  if (dim(Asize)[2]!=nareas) {
+    message('Asize is not length "nareas", assuming all areas equal size')
+    Asize <- matrix(1/nareas, nrow=nsim, ncol=nareas)
+  }
+  
   # --- Sample Fleet Parameters ----
   FleetPars <- SampleFleetPars(SubOM(OM, "Fleet"), Stock=StockPars, nsim, nyears, proyears, 
                                cpars=SampCpars)
