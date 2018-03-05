@@ -188,6 +188,49 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # Assign Stock pars to function environment
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
   
+  
+  # --- Calculate movement ----
+  
+  if (!exists("mov", inherits=FALSE)) {
+    if(!silent) message("Optimizing for user-specified movement")  # Print a progress update
+    # if (snowfall::sfIsRunning()) {
+    #   # if the cluster is initiated
+    #   # snowfall::sfExport(list = c("Frac_area_1", "Prob_staying"))  # export some of the new arrays
+    #   mov <- array(t(snowfall::sfSapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
+    #                                     Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
+    # } else {
+    #   # no cluster initiated
+    #   mov <- array(t(sapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
+    #                         Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
+    # }
+    # 
+    nareas<-2 # default is a 2 area model
+    mov1 <- array(t(sapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
+                           Prob_staying = Prob_staying)), dim = c(nsim, nareas, nareas))
+    mov<-array(NA,c(nsim,maxage,nareas,nareas))
+    mind<-as.matrix(expand.grid(1:nsim,1:maxage,1:nareas,1:nareas))
+    mov[mind]<-mov1[mind[,c(1,3,4)]]
+    
+    initdist <- array(0,c(nsim,maxage,nareas))
+    initdist[,,1]<-Frac_area_1
+    initdist[,,2]<- 1- Frac_area_1  
+    
+  }else{ # if mov is specified need to calculate age-based spatial distribution (Pinitdist to initdist)
+    nareas<-dim(mov)[3]
+    message(paste("Custom movement matrix detected, simulating movement among",nareas,"areas"))
+    
+    mind<-as.matrix(expand.grid(1:nsim,maxage,1:nareas,1:nareas))
+    movedarray<-array(0,c(nsim,nareas,nareas))
+    Pinitdist<-array(1/nareas,c(nsim,nareas))
+    for(i in 1:20){ # convergence in initial distribution is assumed to occur in 20 iterations (generally overkill)
+      movedarray[mind[,c(1,3,4)]]<-Pinitdist[mind[,c(1,3)]]*mov[mind] # distribution in from areas mulitplied by movement array
+      Pinitdist<-apply(movedarray,c(1,3),sum) # add over to areas
+      #print(initdist[1:2,]) # debugging to check convergence
+    }
+    
+  }
+  
+  
   if (dim(Asize)[2]!=nareas) {
     message('Asize is not length "nareas", assuming all areas equal size')
     Asize <- matrix(1/nareas, nrow=nsim, ncol=nareas)
@@ -211,47 +254,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   for (X in 1:length(ImpPars)) assign(names(ImpPars)[X], ImpPars[[X]])
   
   ### End of sampling OM parameters ###
-  
-  # --- Calculate movement ----
-  
-  if (!exists("mov", inherits=FALSE)) {
-    if(!silent) message("Optimizing for user-specified movement")  # Print a progress update
-    # if (snowfall::sfIsRunning()) {
-    #   # if the cluster is initiated
-    #   # snowfall::sfExport(list = c("Frac_area_1", "Prob_staying"))  # export some of the new arrays
-    #   mov <- array(t(snowfall::sfSapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
-    #                                     Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
-    # } else {
-    #   # no cluster initiated
-    #   mov <- array(t(sapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
-    #                         Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
-    # }
-    # 
-    nareas<-2 # default is a 2 area model
-    mov1 <- array(t(sapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
-                          Prob_staying = Prob_staying)), dim = c(nsim, nareas, nareas))
-    mov<-array(NA,c(nsim,maxage,nareas,nareas))
-    mind<-as.matrix(expand.grid(1:nsim,1:maxage,1:nareas,1:nareas))
-    mov[mind]<-mov1[mind[,c(1,3,4)]]
-    
-    initdist <- array(0,c(nsim,maxage,nareas))
-    initdist[,,1]<-Frac_area_1
-    initdist[,,2]<- 1- Frac_area_1  
-    
-  }else{ # if mov is specified need to calculate age-based spatial distribution (Pinitdist to initdist)
-    nareas<-dim(mov)[3]
-    message(paste("Custom movement matrix detected, simulating movement among",nareas,"areas"))
-    
-    mind<-as.matrix(expand.grid(1:nsim,maxage,1:nareas,1:nareas))
-    movedarray<-array(0,c(nsim,nareas,nareas))
-    Pinitdist<-array(1/nareas,c(nsim,nareas))
-    for(i in 1:20){ # convergence in initial distribution is assumed to occur in 20 iterations (generally overkill)
-      movedarray[mind[,c(1,3,4)]]<-Pinitdist[mind[,c(1,3)]]*mov[mind] # distribution in from areas mulitplied by movement array
-      Pinitdist<-apply(movedarray,c(1,3),sum) # add over to areas
-      #print(initdist[1:2,]) # debugging to check convergence
-    }
-  
-  }
+
   
   N <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # stock numbers array
   Biomass <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # stock biomass array
