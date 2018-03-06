@@ -351,15 +351,16 @@ getsel <- function(x, lens, lfs, sls, srs) {
 # Generate size comps
 makeSizeCompW <- function(i, maxage, Linfarray, Karray, t0array, LenCV,
                           CAL_bins, CAL_binsmid, retL, CAL_ESS, CAL_nsamp, 
-                          vn, truncSD=2) {
+                          vn, truncSD=2, scaleR0=1) {
   
-  
+  if(length(scaleR0)==1) scaleR0 <- rep(scaleR0, i)
   AgeVec <- 1:maxage 
   SubAgeVec <- seq(from=0, to=maxage+1, length.out=101) # create pseudo sub-year classes
   
   Linfarray_c <- as.matrix(Linfarray[i,])
   nyrs <- nrow(Linfarray_c)
-  VulnN <- round(as.matrix(vn[i,,]),0)
+  VulnN <- as.matrix(vn[i,,]) * scaleR0[i]
+  VulnN <- round(VulnN,0)
   if (nyrs == 1) VulnN <- t(VulnN)
   # 
   # out <- list(AgeVec=AgeVec, SubAgeVec=SubAgeVec,
@@ -371,7 +372,7 @@ makeSizeCompW <- function(i, maxage, Linfarray, Karray, t0array, LenCV,
   #             CAL_nsamp=CAL_nsamp[i], VulnN=VulnN, truncSD=truncSD)
   # saveRDS(out, 'out.rdata')
  
-  makeLenComp(AgeVec, SubAgeVec,
+ makeLenComp(AgeVec, SubAgeVec,
               Linfarray_c=Linfarray_c,
               Karray_c=as.matrix(Karray[i,]),
               t0array_c=as.matrix(t0array[i,]),

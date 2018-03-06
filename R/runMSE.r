@@ -187,8 +187,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   StockPars <- SampleStockPars(OM, nsim, nyears, proyears, SampCpars)
   # Assign Stock pars to function environment
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
-  
-  
+
   # --- Calculate movement ----
   
   if (!exists("mov", inherits=FALSE)) {
@@ -259,9 +258,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   N <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # stock numbers array
   Biomass <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # stock biomass array
   VBiomass <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # vulnerable biomass array
-  
   SSN <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # spawning stock numbers array
-  
   SSB <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # spawning stock biomass array
   FM <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # fishing mortality rate array
   FMret <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # fishing mortality rate array for retained fish 
@@ -756,16 +753,18 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   vn <- (apply(N[,,,], c(1,2,3), sum) * retA[,,1:nyears]) # numbers at age that would be retained
   vn <- aperm(vn, c(1,3, 2))
 
+
   # for (i in 1:nsim) { # Rcpp code
   #   CAL[i, , ] <-  genLenComp(CAL_bins, CAL_binsmid, retL[i,,], CAL_ESS[i], CAL_nsamp[i],
   #                             vn[i,,], Len_age[i,,], LatASD[i,,], truncSD=2)
   #   LFC[i] <- CAL_binsmid[min(which(round(CAL[i,nyears, ],0) >= 1))] # get the smallest CAL observation
   # }
 
-  
+
+  scaleR0 <- (ceiling(10/surv[,maxage])) / R0 # scale numbers down to generate size comps
   
   # Generate size comp data with variability in age
-  if (!is.null(control) && control!=1) {
+  if (!is.null(control) && control==1) {
     # use r version if cpp gives problems
     tempSize <- lapply(1:nsim, makeSizeCompW2, nyears, maxage, Linfarray, Karray, t0array, LenCV,
                        CAL_bins, CAL_binsmid, retL, CAL_ESS, CAL_nsamp,
@@ -774,8 +773,14 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     # use cpp 
     tempSize <- lapply(1:nsim, makeSizeCompW, maxage, Linfarray, Karray, t0array, LenCV,
                        CAL_bins, CAL_binsmid, retL, CAL_ESS, CAL_nsamp,
-                       vn, truncSD=2)
+                       vn, truncSD=2, scaleR0 = scaleR0)
   }
+  
+
+  
+  
+  
+  
  
   CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), dim=c(nyears, length(CAL_binsmid), nsim)), c(3,1,2))
  
@@ -922,19 +927,21 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # --- Return Historical Simulations and Data from last historical year ----
   if (Hist) { # Stop the model after historical simulations are complete
     if(!silent) message("Returning historical simulations")
-    nout <- t(apply(N, c(1, 3), sum))
+  
+    nout <- t(apply(N, c(1, 3), sum)) 
     vb <- t(apply(VBiomass, c(1, 3), sum))
     b <- t(apply(Biomass, c(1, 3), sum))
     ssb <- t(apply(SSB, c(1, 3), sum))
     Cc <- t(apply(CB, c(1,3), sum))
-    rec <- t(apply(N[, 1, , ], c(1,2), sum))
+    rec <- t(apply((N)[, 1, , ], c(1,2), sum))
     
     TSdata <- list(VB=vb, SSB=ssb, Bio=b, Catch=Cc, Rec=rec, N=nout, E_f=E_f,TAC_f=TAC_f,SizeLim_f=SizeLim_f)
     AtAge <- list(Len_age=Len_age, Wt_age=Wt_age, Sl_age=V, Mat_age=Mat_age, 
                   Nage=apply(N, c(1:3), sum), SSBage=apply(SSB, c(1:3), sum), M_ageArray=M_ageArray,
                   Z=Z, FM=FM, FMret=FMret)
     MSYs <- list(MSY=MSY, FMSY=FMSY, VBMSY=VBMSY, UMSY=UMSY, 
-                 SSBMSY=SSBMSY, BMSY_B0=BMSY_B0, SSBMSY_SSB0=SSBMSY_SSB0, SSB0=SSB0, B0=B0)
+                 SSBMSY=SSBMSY, BMSY_B0=BMSY_B0, SSBMSY_SSB0=SSBMSY_SSB0, 
+                 SSB0=SSB0, B0=B0)
  
     StockPars$Depletion <- Depletion 
     FleetPars$qs <- qs
@@ -943,9 +950,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     HistData <- list(SampPars=SampPars, TSdata=TSdata, AtAge=AtAge, MSYs=MSYs, Data=Data)
     return(HistData)	
   }
-  
-
-  
   
   # assign('Data',Data,envir=.GlobalEnv) # for debugging fun
   
@@ -1324,7 +1328,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         # }	
         # 
         nyrs <- length(yind)
-        if (!is.null(control) && control!=1) {
+        if (!is.null(control) && control==1) {
           # use r version if cpp gives problems
           tempSize <- lapply(1:nsim, makeSizeCompW2, maxage, Linfarray[,nyears + yind, drop=FALSE],
                              Karray[,nyears + yind, drop=FALSE],
@@ -1343,7 +1347,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                              CAL_bins, CAL_binsmid,
                              array(retL_P[,,nyears + yind, drop=FALSE], dim=c(nsim,length(CAL_binsmid),nyrs)),
                              CAL_ESS, CAL_nsamp,
-                             vn[,yind,, drop=FALSE], truncSD=2)
+                             vn[,yind,, drop=FALSE], truncSD=2, scaleR0 = scaleR0)
         }
         
 
