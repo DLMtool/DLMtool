@@ -138,6 +138,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         } else {
           if (argNames[X] == "OM") OM <- DLMtool::testOM
           if (argNames[X] == "MPs") MPs <- c("AvC","DCAC","FMSYref","curE","matlenlim")
+          if (argNames[X] == "control") control <- NULL
         }
       }
     }
@@ -776,12 +777,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                        vn, truncSD=2, scaleR0 = scaleR0)
   }
   
-
-  
-  
-  
-  
- 
   CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), dim=c(nyears, length(CAL_binsmid), nsim)), c(3,1,2))
  
   for (i in 1:nsim) {

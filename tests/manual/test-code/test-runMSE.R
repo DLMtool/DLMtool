@@ -28,6 +28,7 @@ OM@interval <- ceiling(runif(1, 1, 5))
 info <- paste(OM@Name, "seed =", OM@seed, "interval =", OM@interval)
 message(x, info)
 
+OM@R0
 library(profvis)
 profvis({
   tt <- runMSE(OM, MPs='AvC', parallel=FALSE, silent=FALSE)
