@@ -19,7 +19,7 @@ testthat::test_file("tests/manual/test-code/test-OM_init_doc.R") # OK
 
 testthat::test_file("tests/manual/test-code/test-OM_Plotting.R") # OK
 
-testthat::test_file("tests/manual/test-code/test-runMSE.R") #
+testthat::test_file("tests/manual/test-code/test-runMSE.R") # OK
 
 testthat::test_file("tests/manual/test-code/test-slotDescription.R") #
 

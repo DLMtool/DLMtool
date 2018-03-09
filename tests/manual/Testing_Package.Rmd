@@ -18,4 +18,5 @@ library(DLMtool)
 
 ```{r run-test-code}
 testthat::test_dir('test-code')
+
 ```
