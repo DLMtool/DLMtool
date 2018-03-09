@@ -26,13 +26,13 @@ using namespace Rcpp;
 //' @keywords internal
 //[[Rcpp::export]]
 arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcurr,
-                                Rcpp::NumericMatrix Ncurr,  Rcpp::NumericMatrix Zcurr, double PerrYr,
-                                double hs,  Rcpp::NumericVector R0a,  Rcpp::NumericVector SSBpR,
-                                Rcpp::NumericVector aR,  Rcpp::NumericVector bR,  arma::cube mov,
-                                double SRrel) {
+                         NumericMatrix Ncurr,  Rcpp::NumericMatrix Zcurr, double PerrYr,
+                         double hs,  Rcpp::NumericVector R0a,  Rcpp::NumericVector SSBpR,
+                         Rcpp::NumericVector aR,  Rcpp::NumericVector bR,  arma::cube mov,
+                         double SRrel) {
   
   arma::mat Nnext(maxage, nareas);
-  arma::mat tempMat2(nareas, nareas);	
+  // arma::mat tempMat2(nareas, nareas);	
   arma::mat Nstore(maxage, nareas); 
   
   // Recruitment assuming regional R0 and stock wide steepness
@@ -46,23 +46,17 @@ arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcu
       
       Nnext(0, A) = PerrYr * aR(A) * SSBcurr(A) * exp(-bR(A) * SSBcurr(A));
     }
-    
     // Mortality
     for (int age=1; age<maxage; age++) {
       Nnext(age, A) = Ncurr(age-1, A) * exp(-Zcurr(age-1, A)); // Total mortality
     }
   }
   // 
-  // Rcpp::Rcout << "*******" << std::endl;
-  // Rcpp::Rcout << "PerrYr = " << PerrYr << std::endl;
-  // Rcpp::Rcout << "SSBcurr = " << sum(SSBcurr) << std::endl;
-  // Rcpp::Rcout << "R0a = " << sum(R0a) << std::endl;
-  // Rcpp::Rcout << "SSBpR = " << (SSBpR) << std::endl;
-  // Rcpp::Rcout << "recs" << sum(Nnext.row(0)) << std::endl;
-  // Rcpp::Rcout << "*******" << std::endl;
   
   // Move stock
   for (int age=0; age<maxage; age++) {
+  
+    arma::mat tempMat2(nareas, nareas);
     for (int AA = 0; AA < nareas; AA++) {   // (from areas)
       for (int BB = 0; BB < nareas; BB++) { // (to areas)
         arma::vec temp = mov.subcube(age, AA, BB, age, AA, BB);

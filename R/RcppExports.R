@@ -57,39 +57,20 @@ bhnoneq_LL <- function(stpar, year, Lbar, ss, Linf, K, Lc, nbreaks) {
     .Call('_DLMtool_bhnoneq_LL', PACKAGE = 'DLMtool', stpar, year, Lbar, ss, Linf, K, Lc, nbreaks)
 }
 
-get_freq <- function(x, width, origin = 0, outlen = 0) {
+combine <- function(list) {
+    .Call('_DLMtool_combine', PACKAGE = 'DLMtool', list)
+}
+
+get_freq <- function(x, width, origin = 0, outlen = 0L) {
     .Call('_DLMtool_get_freq', PACKAGE = 'DLMtool', x, width, origin, outlen)
 }
 
-repcpp <- function(x, y) {
-    .Call('_DLMtool_repcpp', PACKAGE = 'DLMtool', x, y)
+rnormSelect2 <- function(N, mi, ma) {
+    .Call('_DLMtool_rnormSelect2', PACKAGE = 'DLMtool', N, mi, ma)
 }
 
-makeLenComp <- function(AgeVec, SubAgeVec, Linfarray_c, Karray_c, t0array_c, LenCV_c, CAL_bins, CAL_binsmid, retLength, CAL_ESS, CAL_nsamp, VulnN, truncSD) {
-    .Call('_DLMtool_makeLenComp', PACKAGE = 'DLMtool', AgeVec, SubAgeVec, Linfarray_c, Karray_c, t0array_c, LenCV_c, CAL_bins, CAL_binsmid, retLength, CAL_ESS, CAL_nsamp, VulnN, truncSD)
-}
-
-#' Generate length composition of catch
-#'
-#' Generate size composition of catch given sample of catch-at-age,
-#' expected length-at-age, and standard deviation of length-at-age.
-#' Model assumes length-at-age is normally distributed, and that
-#' selectivity is size-dependant
-#'
-#' @param CAL_bins vector of catch-at-length size bins
-#' @param CAL_binsmid vector (nbins = length(CAL_bins) - 1) of mid-points for catch-at-length size bins
-#' @param SL matrix (nbins, nyears) of selectivity-at-length class for each year
-#' @param CAL_ESS effective sample size of catch-at-length data
-#' @param CAL_nsamp sample size of catch-at-length data
-#' @param CN matrix (nyears, maxage) of catch-at-age for each year
-#' @param LaA matrix (maxage, nyears) of expected length-at-age for each year
-#' @param LaASD matrix (maxage, nyears) of standard deviation of length-at-age for each year
-#' @param truncSD optional argument to truncate the length-at-age distribution at `truncSD` standard deviations
-#' e.g., a value of 2 truncates the length-at-age distribution at two standard deviations (set to 0 to ignore (default))
-#'
-#' @export
-genLenComp <- function(CAL_bins, CAL_binsmid, SL, CAL_ESS, CAL_nsamp, CN, LaA, LaASD, truncSD) {
-    .Call('_DLMtool_genLenComp', PACKAGE = 'DLMtool', CAL_bins, CAL_binsmid, SL, CAL_ESS, CAL_nsamp, CN, LaA, LaASD, truncSD)
+genSizeComp <- function(VulnN, CAL_binsmid, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD) {
+    .Call('_DLMtool_genSizeComp', PACKAGE = 'DLMtool', VulnN, CAL_binsmid, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD)
 }
 
 #' Rcpp version of the Optimization function that returns the squared difference between user

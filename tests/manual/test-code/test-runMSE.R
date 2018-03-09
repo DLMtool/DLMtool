@@ -20,20 +20,6 @@ if (is.na(Ntest)) Ntest <- nrow(all)
 
 all <- all[sample(1:nrow(all), size=Ntest),]
 
-x <- 1
-OM <- new("OM", get(all[x,1]), get(all[x,2]), get(all[x,3]), get(all[x,4]))
-OM@seed <- ceiling(runif(1, 1, 1000))
-OM@nsim <- nsim
-OM@interval <- ceiling(runif(1, 1, 5))
-info <- paste(OM@Name, "seed =", OM@seed, "interval =", OM@interval)
-message(x, info)
-
-OM@R0
-library(profvis)
-profvis({
-  tt <- runMSE(OM, MPs='AvC', parallel=FALSE, silent=FALSE)
-})
-
 
 for (x in 1:Ntest) {
   OM <- new("OM", get(all[x,1]), get(all[x,2]), get(all[x,3]), get(all[x,4]))
@@ -45,6 +31,7 @@ for (x in 1:Ntest) {
     testthat::expect_is(runMSE(OM, MPs=MPs, parallel=FALSE, silent=TRUE), 'MSE', info=info)
   })
 }
+
 
 
 
@@ -62,6 +49,7 @@ for (x in 1:Ntest) {
 }
 
 
+
 # Parallel 
 # SRrel = 2 
 for (x in 1:Ntest) {
@@ -75,7 +63,6 @@ for (x in 1:Ntest) {
     testthat::expect_is(runMSE(OM, MPs=MPs, parallel=TRUE, silent=TRUE), 'MSE', info=info)
   })
 }
-
 
 
 

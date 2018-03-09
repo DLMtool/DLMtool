@@ -709,59 +709,59 @@ popdyn <- function(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
 }
 
 
-#' Population dynamics model for one annual time-step
-#'
-#' Project population forward one time-step given current numbers-at-age and total mortality
-#'
-#' @param nareas The number of spatial areas
-#' @param maxage The maximum age 
-#' @param SSBcurr A numeric vector of length nareas with the current spawning biomass in each area
-#' @param Ncurr A numeric matrix (maxage, nareas) with current numbers-at-age in each area
-#' @param Zcurr A numeric matrix (maxage, nareas) with total mortality-at-age in each area
-#' @param PerrYr A numeric value with recruitment deviation for current year 
-#' @param hs Steepness of SRR
-#' @param R0c Numeric vector with unfished recruitment by area
-#' @param SSBpRc Numeric vector with unfished spawning stock per recruit by area 
-#' @param aRc Numeric vector with Ricker SRR a parameter by area
-#' @param bRc Numeric vector with Ricker SRR b parameter by area
-#' @param movc Numeric matrix (nareas by nareas) with the movement matrix
-#' @param SRrelc Integer indicating the stock-recruitment relationship to use (1 for Beverton-Holt, 2 for Ricker)
-#' @author A. Hordyk
-#' 
-# #' @export
-#' @keywords internal
-popdynOneTS <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr, 
-                   PerrYr, hc, R0c, SSBpRc, aRc, bRc, movc, SRrelc)  {
-  
-  # set up some indices for indexed calculation
-
-  indMov <- as.matrix(expand.grid(1:maxage,1:nareas, 1:nareas))  # Movement master index
-  indMov2 <- indMov[, c(1, 2)]  # Movement from index
-  indMov3 <- indMov[, c(2, 3)]  # Movement to index
-  
-  Nnext <- array(NA, dim=c(maxage, nareas))
-
-  # Recruitment assuming regional R0 and stock wide steepness
-  if (SRrelc[1] == 1) {
-    Nnext[1,  ] <- PerrYr *  (4 * R0c * hc * SSBcurr)/(SSBpRc * R0c * (1-hc) + (5*hc-1)*SSBcurr)                                                                                          
-  } else {
-    # most transparent form of the Ricker uses alpha and beta params
-    Nnext[1,  ] <- PerrYr * aRc * SSBcurr * exp(-bRc * SSBcurr)
-  } 
-  
-  # Mortality 
-  Nnext[2:maxage, ] <- Ncurr[1:(maxage - 1),  ] * exp(-Zcurr[1:(maxage - 1), ])  # Total mortality
-  
-  # Movement of stock 
-  temp <- array(Nnext[indMov2] * movc[indMov3], dim = c(maxage,nareas, nareas))  # Move individuals
-  Nnext <- apply(temp, c(1, 3), sum)
-  
-  # Numbers-at-age at beginning of next year
-  return(Nnext)
-
-}
-
-
+# #' Population dynamics model for one annual time-step
+# #'
+# #' Project population forward one time-step given current numbers-at-age and total mortality
+# #'
+# #' @param nareas The number of spatial areas
+# #' @param maxage The maximum age
+# #' @param SSBcurr A numeric vector of length nareas with the current spawning biomass in each area
+# #' @param Ncurr A numeric matrix (maxage, nareas) with current numbers-at-age in each area
+# #' @param Zcurr A numeric matrix (maxage, nareas) with total mortality-at-age in each area
+# #' @param PerrYr A numeric value with recruitment deviation for current year
+# #' @param hs Steepness of SRR
+# #' @param R0c Numeric vector with unfished recruitment by area
+# #' @param SSBpRc Numeric vector with unfished spawning stock per recruit by area
+# #' @param aRc Numeric vector with Ricker SRR a parameter by area
+# #' @param bRc Numeric vector with Ricker SRR b parameter by area
+# #' @param movc Numeric matrix (nareas by nareas) with the movement matrix
+# #' @param SRrelc Integer indicating the stock-recruitment relationship to use (1 for Beverton-Holt, 2 for Ricker)
+# #' @author A. Hordyk
+# #'
+# # #' @export
+# #' @keywords internal
+# popdynOneTS <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr,
+#                    PerrYr, hc, R0c, SSBpRc, aRc, bRc, movc, SRrelc)  {
+# 
+#   # set up some indices for indexed calculation
+# 
+#   indMov <- as.matrix(expand.grid(1:maxage,1:nareas, 1:nareas))  # Movement master index
+#   indMov2 <- indMov[, c(1, 2)]  # Movement from index
+#   indMov3 <- indMov[, c(2, 3)]  # Movement to index
+# 
+#   Nnext <- array(NA, dim=c(maxage, nareas))
+# 
+#   # Recruitment assuming regional R0 and stock wide steepness
+#   if (SRrelc[1] == 1) {
+#     Nnext[1,  ] <- PerrYr *  (4 * R0c * hc * SSBcurr)/(SSBpRc * R0c * (1-hc) + (5*hc-1)*SSBcurr)
+#   } else {
+#     # most transparent form of the Ricker uses alpha and beta params
+#     Nnext[1,  ] <- PerrYr * aRc * SSBcurr * exp(-bRc * SSBcurr)
+#   }
+# 
+#   # Mortality
+#   Nnext[2:maxage, ] <- Ncurr[1:(maxage - 1),  ] * exp(-Zcurr[1:(maxage - 1), ])  # Total mortality
+# 
+#   # Movement of stock
+#   temp <- array(Nnext[indMov2] * movc[indMov3], dim = c(maxage,nareas, nareas))  # Move individuals
+#   Nnext <- apply(temp, c(1, 3), sum)
+# 
+#   # Numbers-at-age at beginning of next year
+#   return(Nnext)
+# 
+# }
+# 
+# 
 #' Simulate population dynamics for historical years
 #'
 #' @param x Integer, the simulation number 

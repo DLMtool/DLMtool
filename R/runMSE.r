@@ -551,7 +551,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   FMret <- aperm(array(as.numeric(unlist(histYrs[7,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
   Z <-aperm(array(as.numeric(unlist(histYrs[8,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
 
-  
+
   # Depletion <- apply(Biomass[, , nyears, ], 1, sum)/apply(Biomass[, , 1, ], 1, sum)  #^betas   # apply hyperstability / hyperdepletion
   if (nsim > 1) Depletion <- apply(SSB[,,nyears,],1,sum)/SSB0#^betas
   if (nsim == 1) Depletion <- sum(SSB[,,nyears,])/SSB0 #^betas
@@ -754,31 +754,13 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   vn <- (apply(N[,,,], c(1,2,3), sum) * retA[,,1:nyears]) # numbers at age that would be retained
   vn <- aperm(vn, c(1,3, 2))
 
-
-  # for (i in 1:nsim) { # Rcpp code
-  #   CAL[i, , ] <-  genLenComp(CAL_bins, CAL_binsmid, retL[i,,], CAL_ESS[i], CAL_nsamp[i],
-  #                             vn[i,,], Len_age[i,,], LatASD[i,,], truncSD=2)
-  #   LFC[i] <- CAL_binsmid[min(which(round(CAL[i,nyears, ],0) >= 1))] # get the smallest CAL observation
-  # }
-
-
-  scaleR0 <- (ceiling(10/surv[,maxage])) / R0 # scale numbers down to generate size comps
-  
   # Generate size comp data with variability in age
-  if (!is.null(control) && control==1) {
-    # use r version if cpp gives problems
-    tempSize <- lapply(1:nsim, makeSizeCompW2, nyears, maxage, Linfarray, Karray, t0array, LenCV,
-                       CAL_bins, CAL_binsmid, retL, CAL_ESS, CAL_nsamp,
-                       vn, truncSD=2)
-  } else {
-    # use cpp 
-    tempSize <- lapply(1:nsim, makeSizeCompW, maxage, Linfarray, Karray, t0array, LenCV,
-                       CAL_bins, CAL_binsmid, retL, CAL_ESS, CAL_nsamp,
-                       vn, truncSD=2, scaleR0 = scaleR0)
-  }
-  
+  # message("Generating size comps")
+  tempSize <- lapply(1:nsim, genSizeCompWrap, vn, CAL_binsmid, CAL_ESS, CAL_nsamp,
+                     Linfarray, Karray, t0array, LenCV, truncSD=2)
+  # message("success!")
   CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), dim=c(nyears, length(CAL_binsmid), nsim)), c(3,1,2))
- 
+
   for (i in 1:nsim) {
     ind <- round(CAL[i,nyears, ],0) >= 1
     if (sum(ind)>0) {
@@ -1086,13 +1068,20 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     # -- First projection year ----
     y <- 1
     # 
+    # NextYrN <- lapply(1:nsim, function(x)
+    #   popdynOneTS(nareas, maxage, SSBcurr=colSums(SSB[x,,nyears, ]), Ncurr=N[x,,nyears,],
+    #               Zcurr=Z[x,,nyears,], PerrYr=Perr[x, nyears+maxage-1], hc=hs[x],
+    #               R0c=R0a[x,], SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x],
+    #               movc=mov[x,,,], SRrelc=SRrel[x]))
+    
     NextYrN <- lapply(1:nsim, function(x)
-      popdynOneTS(nareas, maxage, SSBcurr=colSums(SSB[x,,nyears, ]), Ncurr=N[x,,nyears,],
-                  Zcurr=Z[x,,nyears,], PerrYr=Perr[x, nyears+maxage-1], hc=hs[x],
-                  R0c=R0a[x,], SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x],
-                  movc=mov[x,,,], SRrelc=SRrel[x]))
-   
+      popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB[x,,nyears, ]), Ncurr=N[x,,nyears,],
+                     Zcurr=Z[x,,nyears,], PerrYr=Perr[x, nyears+maxage-1], hs=hs[x],
+                     R0=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
+                     mov=mov[x,,,], SRrel=SRrel[x]))
+    
     N_P[,,1,] <- aperm(array(unlist(NextYrN), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2))
+    
     Biomass_P[SAYR] <- N_P[SAYR] * Wt_age[SAY1]  # Calculate biomass
     VBiomass_P[SAYR] <- Biomass_P[SAYR] * V_P[SAYt]  # Calculate vulnerable biomass
     SSN_P[SAYR] <- N_P[SAYR] * Mat_age[SAY1]  # Calculate spawning stock numbers
@@ -1265,12 +1254,16 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       SA2YR <- as.matrix(expand.grid(1:nsim, 2:maxage, y, 1:nareas))
       SA1YR <- as.matrix(expand.grid(1:nsim, 1:(maxage - 1), y -1, 1:nareas))
       
+      # NextYrN <- lapply(1:nsim, function(x)
+      #   popdynOneTS(nareas, maxage, SSBcurr=colSums(SSB_P[x,,y-1, ]), Ncurr=N_P[x,,y-1,],
+      #               Zcurr=Z_P[x,,y-1,], PerrYr=Perr[x, y+nyears+maxage-1], hc=hs[x],
+      #               R0c=R0a[x,], SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,],
+      #               movc=mov[x,,,], SRrelc=SRrel[x]))
       NextYrN <- lapply(1:nsim, function(x)
-        popdynOneTS(nareas, maxage, SSBcurr=colSums(SSB_P[x,,y-1, ]), Ncurr=N_P[x,,y-1,],
-                    Zcurr=Z_P[x,,y-1,], PerrYr=Perr[x, y+nyears+maxage-1], hc=hs[x],
-                    R0c=R0a[x,], SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,],
-                    movc=mov[x,,,], SRrelc=SRrel[x]))
-      
+        popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB_P[x,,y-1, ]), Ncurr=N_P[x,,y-1,],
+                       Zcurr=Z_P[x,,y-1,], PerrYr=Perr[x, y+nyears+maxage-1], hs=hs[x],
+                       R0=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
+                       mov=mov[x,,,], SRrel=SRrel[x]))
   
       N_P[,,y,] <- aperm(array(unlist(NextYrN), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2)) 
       Biomass_P[SAYR] <- N_P[SAYR] * Wt_age[SAYt]  # Calculate biomass
@@ -1323,30 +1316,14 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         # }	
         # 
         nyrs <- length(yind)
-        if (!is.null(control) && control==1) {
-          # use r version if cpp gives problems
-          tempSize <- lapply(1:nsim, makeSizeCompW2, maxage, Linfarray[,nyears + yind, drop=FALSE],
-                             Karray[,nyears + yind, drop=FALSE],
-                             t0array[,nyears + yind,drop=FALSE],
-                             LenCV,
-                             CAL_bins, CAL_binsmid,
-                             array(retL_P[,,nyears + yind, drop=FALSE], dim=c(nsim,length(CAL_binsmid),nyrs)),
-                             CAL_ESS, CAL_nsamp,
-                             vn[,yind,, drop=FALSE], truncSD=2)
-        } else {
-          # use cpp 
-          tempSize <- lapply(1:nsim, makeSizeCompW, maxage, Linfarray[,nyears + yind, drop=FALSE],
-                             Karray[,nyears + yind, drop=FALSE],
-                             t0array[,nyears + yind,drop=FALSE],
-                             LenCV,
-                             CAL_bins, CAL_binsmid,
-                             array(retL_P[,,nyears + yind, drop=FALSE], dim=c(nsim,length(CAL_binsmid),nyrs)),
-                             CAL_ESS, CAL_nsamp,
-                             vn[,yind,, drop=FALSE], truncSD=2, scaleR0 = scaleR0)
-        }
+        # message("Generating size comps")
+        tempSize <- lapply(1:nsim, genSizeCompWrap, vn[,yind,, drop=FALSE], CAL_binsmid, CAL_ESS, CAL_nsamp,
+                           Linfarray[,nyears + yind, drop=FALSE],  
+                           Karray[,nyears + yind, drop=FALSE], 
+                           t0array[,nyears + yind,drop=FALSE], LenCV, truncSD=2)
+        # message("success")
+        CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), dim=c(length(yind), length(CAL_binsmid), nsim)), c(3,1,2))
         
-
-        CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), dim=c(nyrs, length(CAL_binsmid), nsim)), c(3,1,2))
 
         # for (sim in 1:OM@nsim) {
         #   CAL[sim,,] <- makeSizeCompW(sim, maxage, Linfarray[,nyears + yind, drop=FALSE],
@@ -1381,12 +1358,24 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         # A <- apply(VBiomass_P[, , y, ], 1, sum)
       
         # Calculate abundance after recruitment and movement - project forward with no F
+        # NextYrNtemp <- lapply(1:nsim, function(x)
+        #   popdynOneTS(nareas, maxage, SSBcurr=colSums(SSB_P[x,,y, ]), Ncurr=N_P[x,,y,],
+        #               Zcurr=matrix(M_ageArray[x,,y+nyears], nrow=maxage, ncol=nareas, byrow=TRUE),
+        #               PerrYr=Perr[x, y+nyears+maxage-1], hc=hs[x],
+        #               R0c=R0a[x,], SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,],
+        #               movc=mov[x,,,], SRrelc=SRrel[x]))
+        
+        # message("calculating NextYrNtemp")
+   
         NextYrNtemp <- lapply(1:nsim, function(x)
-          popdynOneTS(nareas, maxage, SSBcurr=colSums(SSB_P[x,,y, ]), Ncurr=N_P[x,,y,],
-                      Zcurr=matrix(M_ageArray[x,,y+nyears], nrow=maxage, ncol=nareas, byrow=TRUE),
-                      PerrYr=Perr[x, y+nyears+maxage-1], hc=hs[x],
-                      R0c=R0a[x,], SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,],
-                      movc=mov[x,,,], SRrelc=SRrel[x]))
+          popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB[x,,y, ]), Ncurr=N[x,,y,],
+                         Zcurr=matrix(M_ageArray[x,,y+nyears], ncol=nareas, nrow=maxage), 
+                         PerrYr=Perr[x, y+nyears+maxage-1], hs=hs[x],
+                         R0=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
+                         mov=mov[x,,,], SRrel=SRrel[x]))
+        
+
+        # message("success!")
 
         N_PNext <- aperm(array(unlist(NextYrNtemp), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2))
         VBiomassNext <- VBiomass_P
@@ -1461,6 +1450,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         # calculate pstar quantile of TAC recommendation dist 
         TACused <- apply(Data@TAC, 2, quantile, p = pstar, na.rm = T) 
         
+        # message("calculating CalcMPDynamics")
+        
         MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim,
                                   LastEffort, LastSpatial, LastAllocat, LastCatch,
                                   TACused, maxF,
@@ -1472,6 +1463,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                   VBiomass_P, Biomass_P, FinF, Spat_targ,
                                   CAL_binsmid, Linf, Len_age, maxage, nareas, Asize,  nCALbins,
                                   qs, qvar, qinc)
+        # message("success!")
 
         TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
         LastSpatial <- MPCalcs$Si
@@ -1554,6 +1546,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         NoMPRecs[lapply(NoMPRecs, length) > 0 ] <- NULL
         NoMPRecs$Spatial <- NA
         
+        # message("calculating CalcMPDynamics non update")
+        
         MPCalcs <- CalcMPDynamics(NoMPRecs, y, nyears, proyears, nsim,
                                   LastEffort, LastSpatial, LastAllocat, LastCatch,
                                   TACused, maxF,
@@ -1566,6 +1560,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                   CAL_binsmid, Linf, Len_age, maxage, nareas, Asize,  nCALbins,
                                   qs, qvar, qinc)
         
+        # message("success")
         TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
         LastSpatial <- MPCalcs$Si
         LastAllocat <- MPCalcs$Ai
