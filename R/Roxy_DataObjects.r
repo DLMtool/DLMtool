@@ -2,6 +2,62 @@
 # Don't edit by hand!
 # 
 
+#'  Atlantic_mackerel Data
+#'
+#'  An object of class Data
+#'
+"Atlantic_mackerel"
+
+
+#'  China_rockfish Data
+#'
+#'  An object of class Data
+#'
+"China_rockfish"
+
+
+#'  Cobia Data
+#'
+#'  An object of class Data
+#'
+"Cobia"
+
+
+#'  Example_datafile Data
+#'
+#'  An object of class Data
+#'
+"Example_datafile"
+
+
+#'  Gulf_blue_tilefish Data
+#'
+#'  An object of class Data
+#'
+"Gulf_blue_tilefish"
+
+
+#'  ourReefFish Data
+#'
+#'  An object of class Data
+#'
+"ourReefFish"
+
+
+#'  Red_snapper Data
+#'
+#'  An object of class Data
+#'
+"Red_snapper"
+
+
+#'  Simulation_1 Data
+#'
+#'  An object of class Data
+#'
+"Simulation_1"
+
+
 #'  Albacore Stock
 #'
 #'  An object of class Stock
@@ -261,67 +317,18 @@
 "Feasibility2"
 
 
-#'  Atlantic_mackerel Data
-#'
-#'  An object of class Data
-#'
-"Atlantic_mackerel"
-
-
-#'  China_rockfish Data
-#'
-#'  An object of class Data
-#'
-"China_rockfish"
-
-
-#'  Cobia Data
-#'
-#'  An object of class Data
-#'
-"Cobia"
-
-
-#'  Example_datafile Data
-#'
-#'  An object of class Data
-#'
-"Example_datafile"
-
-
-#'  Gulf_blue_tilefish Data
-#'
-#'  An object of class Data
-#'
-"Gulf_blue_tilefish"
-
-
-#'  ourReefFish Data
-#'
-#'  An object of class Data
-#'
-"ourReefFish"
-
-
-#'  Red_snapper Data
-#'
-#'  An object of class Data
-#'
-"Red_snapper"
-
-
-#'  Simulation_1 Data
-#'
-#'  An object of class Data
-#'
-"Simulation_1"
-
-
 #'  testOM OM
 #'
 #'  An object of class OM
 #'
 "testOM"
+
+
+#'  SimulatedData Data
+#'
+#'  An object of class Data
+#'
+"SimulatedData"
 
 
 #'  SimulatedData Data

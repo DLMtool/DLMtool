@@ -40,7 +40,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   
   # == Virgin Recruitment ====
   if (!exists("R0", inherits=FALSE)) R0 <- Stock@R0  # Initial recruitment
-  if (length(R0) != nsim) R0 <- rep(R0, nsim*50)[1:nsim] # modified to allow for different R0 per sim 
+  if (length(R0) != nsim) R0 <- rep(R0, nsim)[1:nsim] # modified to allow for different R0 per sim 
   StockOut$R0 <- R0
   
   # == Natural Mortality ====

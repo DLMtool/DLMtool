@@ -36,13 +36,13 @@ getBlow<-function(x,SSBMSY,MGThorizon,Find,Perr,M_ageArray,hs,Mat_age,Wt_age,R0,
   
   if(ploty){Blow_opt(opt$minimum,SSBMSYc=SSBMSY[x],MGThorizon=MGThorizon[x],Fc=Find[x,],Perrc=Perr[x,],
                      Mc=M_ageArray[x,,],hc=hs[x],Mac=Mat_age[x,,],Wac=Wt_age[x,,],
-                     R0c=R0[x],Vc=V[x,,],nyears=nyears,maxage=maxage,movc=mov[x,,],
+                     R0c=R0[x],Vc=V[x,,],nyears=nyears,maxage=maxage,movc=mov[x,,,],
                      Spat_targc=Spat_targ[x],SRrelc=SRrel[x],aRc=aR[x,],bRc=bR[x,],Bfrac,mode=3)
   }
   
   Blow_opt(opt$minimum,SSBMSYc=SSBMSY[x],MGThorizon=MGThorizon[x],Fc=Find[x,],Perrc=Perr[x,],
            Mc=M_ageArray[x,,],hc=hs[x],Mac=Mat_age[x,,],Wac=Wt_age[x,,],
-           R0c=R0[x],Vc=V[x,,],nyears=nyears,maxage=maxage,movc=mov[x,,],
+           R0c=R0[x],Vc=V[x,,],nyears=nyears,maxage=maxage,movc=mov[x,,,],
            Spat_targc=Spat_targ[x],SRrelc=SRrel[x],aRc=aR[x,],bRc=bR[x,],mode=2)
   
   

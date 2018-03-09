@@ -1,4 +1,5 @@
 
+library(DLMtool)
 DLMtool::setup()
 
 Ntest <- 12 # set to NA to run all tests 
@@ -33,6 +34,7 @@ for (x in 1:Ntest) {
 
 
 
+
 # SRrel = 2 
 for (x in 1:Ntest) {
   OM <- new("OM", get(all[x,1]), get(all[x,2]), get(all[x,3]), get(all[x,4]))
@@ -45,6 +47,7 @@ for (x in 1:Ntest) {
     testthat::expect_is(runMSE(OM, MPs=MPs, parallel=FALSE, silent=TRUE), 'MSE', info=info)
   })
 }
+
 
 
 # Parallel 
@@ -60,7 +63,6 @@ for (x in 1:Ntest) {
     testthat::expect_is(runMSE(OM, MPs=MPs, parallel=TRUE, silent=TRUE), 'MSE', info=info)
   })
 }
-
 
 
 

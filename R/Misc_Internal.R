@@ -53,7 +53,7 @@ OptionalSlots <- function() {
   
   # Slots ok to not contain values
   Ignore <- c("Name", "Source", "cpars", SelSlots, RecSlots, OptPars,
-              "Agency", "Region", "Latitude", "Longitude", "Species", "Sponsor") 
+              "Agency", "Region", "Latitude", "Longitude", "Species", "Sponsor", "Common_Name") 
   out <- list(SelSlots=SelSlots,
               RecSlots=RecSlots,
               OptPars=c(SelSlots, RecSlots, OptPars),
@@ -349,71 +349,91 @@ getsel <- function(x, lens, lfs, sls, srs) {
 
 
 # Generate size comps
-makeSizeCompW <- function(i, maxage, Linfarray, Karray, t0array, LenCV,
-                          CAL_bins, CAL_binsmid, retL, CAL_ESS, CAL_nsamp, 
-                          vn, truncSD=2) {
+genSizeCompWrap <- function(i, vn, CAL_binsmid,
+                            CAL_ESS, CAL_nsamp,
+                            Linfarray, Karray, t0array,
+                            LenCV, truncSD=2) {
   
-  
-  AgeVec <- 1:maxage 
-  SubAgeVec <- seq(from=0, to=maxage+1, length.out=101) # create pseudo sub-year classes
-  
-  Linfarray_c <- as.matrix(Linfarray[i,])
-  nyrs <- nrow(Linfarray_c)
-  VulnN <- round(as.matrix(vn[i,,]),0)
+  VulnN <- as.matrix(vn[i,,]) 
+  VulnN <- round(VulnN,0)
+  nyrs <- nrow(as.matrix(Linfarray[i,]))
   if (nyrs == 1) VulnN <- t(VulnN)
-  # 
-  # out <- list(AgeVec=AgeVec, SubAgeVec=SubAgeVec,
-  #             Linfarray_c=Linfarray_c,
-  #             Karray_c=as.matrix(Karray[i,]),
-  #             t0array_c=as.matrix(t0array[i,]),
-  #             LenCV_c=LenCV[i],
-  #             CAL_bins, CAL_binsmid, retLength=as.matrix(retL[i,, ]), CAL_ESS=CAL_ESS[i],
-  #             CAL_nsamp=CAL_nsamp[i], VulnN=VulnN, truncSD=truncSD)
-  # saveRDS(out, 'out.rdata')
- 
-  makeLenComp(AgeVec, SubAgeVec,
-              Linfarray_c=Linfarray_c,
-              Karray_c=as.matrix(Karray[i,]),
-              t0array_c=as.matrix(t0array[i,]),
-              LenCV_c=LenCV[i],
-              CAL_bins, CAL_binsmid, retLength=as.matrix(retL[i,, ]), CAL_ESS=CAL_ESS[i],
-              CAL_nsamp=CAL_nsamp[i], VulnN=VulnN, truncSD)
+  
+  
+  genSizeComp(VulnN, CAL_binsmid,
+              CAL_ESS=CAL_ESS[i], CAL_nsamp=CAL_nsamp[i],
+              Linfs=Linfarray[i,], Ks=Karray[i,], t0s=t0array[i,],
+              LenCV=LenCV[i], truncSD)
   
 }
 
-
-# makeSizeCompW <- function(i, nyrs, maxage, Linfarray, Karray, t0array, LenCV,
+# 
+# makeSizeCompW <- function(i, maxage, Linfarray, Karray, t0array, LenCV,
 #                           CAL_bins, CAL_binsmid, retL, CAL_ESS, CAL_nsamp, 
-#                           vn, truncSD=2) {
+#                           vn, truncSD=2, scaleR0=1) {
 #   
+#   if(length(scaleR0)==1) scaleR0 <- rep(scaleR0, i)
+#   AgeVec <- 1:maxage 
+#   SubAgeVec <- seq(from=0, to=maxage+1, length.out=101) # create pseudo sub-year classes
 #   
-#   makeSizeComp(nyrs, maxage, Linfarray_c=as.matrix(Linfarray[i,]), 
-#                Karray_c=as.matrix(Karray[i,]), 
-#                t0array_c=as.matrix(t0array[i,]), 
-#                LenCV_c=LenCV[i],
-#                CAL_bins, CAL_binsmid, retLength=as.matrix(retL[i,, ]), CAL_ess=CAL_ESS[i],  
-#                CAL_Nsamp=CAL_nsamp[i], VulnN=as.matrix(vn[i,,]), truncSD)
+#   Linfarray_c <- as.matrix(Linfarray[i,])
+#   nyrs <- nrow(Linfarray_c)
+#   VulnN <- as.matrix(vn[i,,]) * scaleR0[i]
+#   VulnN <- round(VulnN,0)
+#   if (nyrs == 1) VulnN <- t(VulnN)
+#   # 
+#   # out <- list(AgeVec=AgeVec, SubAgeVec=SubAgeVec,
+#   #             Linfarray_c=Linfarray_c,
+#   #             Karray_c=as.matrix(Karray[i,]),
+#   #             t0array_c=as.matrix(t0array[i,]),
+#   #             LenCV_c=LenCV[i],
+#   #             CAL_bins, CAL_binsmid, retLength=as.matrix(retL[i,, ]), CAL_ESS=CAL_ESS[i],
+#   #             CAL_nsamp=CAL_nsamp[i], VulnN=VulnN, truncSD=truncSD)
+#   # saveRDS(out, 'out.rdata')
+#  
+#  makeLenComp(AgeVec, SubAgeVec,
+#               Linfarray_c=Linfarray_c,
+#               Karray_c=as.matrix(Karray[i,]),
+#               t0array_c=as.matrix(t0array[i,]),
+#               LenCV_c=LenCV[i],
+#               CAL_bins, CAL_binsmid, retLength=as.matrix(retL[i,, ]), CAL_ESS=CAL_ESS[i],
+#               CAL_nsamp=CAL_nsamp[i], VulnN=VulnN, truncSD)
 #   
 # }
 # 
 # 
+# makeSizeCompW2 <- function(i, nyrs, maxage, Linfarray, Karray, t0array, LenCV,
+#                           CAL_bins, CAL_binsmid, retL, CAL_ESS, CAL_nsamp,
+#                           vn, truncSD=2) {
+# 
+# 
+#   makeSizeComp(nyrs, maxage, Linfarray_c=as.matrix(Linfarray[i,]),
+#                Karray_c=as.matrix(Karray[i,]),
+#                t0array_c=as.matrix(t0array[i,]),
+#                LenCV_c=LenCV[i],
+#                CAL_bins, CAL_binsmid, retLength=as.matrix(retL[i,, ]), CAL_ess=CAL_ESS[i],
+#                CAL_Nsamp=CAL_nsamp[i], VulnN=as.matrix(vn[i,,]), truncSD)
+# 
+# }
+# 
+# 
 # makeSizeComp <- function(nyrs, maxage, Linfarray_c, Karray_c, t0array_c, LenCV_c,
-#                          CAL_bins, CAL_binsmid, retLength, CAL_ess, CAL_Nsamp, 
+#                          CAL_bins, CAL_binsmid, retLength, CAL_ess, CAL_Nsamp,
 #                          VulnN, truncSD=2) {
-#   
+# 
 #   AgeVec <- seq(from=0, to=maxage+1, length.out=101) # create pseudo sub-year classes
-#   
+# 
 #   ageby <- AgeVec[2] - AgeVec[1]
 #   ages <- seq(AgeVec[2]-0.5*ageby, by=ageby, length.out=length(AgeVec)-1)
-#   
+# 
 #   VulnN2 <- matrix(NA, nrow=nyrs, ncol=length(ages))
 #   LenAge <- matrix(NA, nrow=length(ages), ncol=nyrs)
-#   
+# 
 #   tempfun <- function(x, VulnN, maxage, AgeVec) {
 #     tempval <- rep(1:maxage, VulnN[x,]) + runif(sum(VulnN[x,]), -0.5, 0.5) # add variability to ages
 #     hist(tempval, breaks=AgeVec, plot=FALSE)$counts
 #   }
-#   
+# 
 #   if (nyrs > 1) {
 #     temp <- lapply(1:nyrs, tempfun, VulnN=round(VulnN,0), maxage=maxage, AgeVec=AgeVec)
 #     VulnN2 <- do.call("rbind", temp)
@@ -427,12 +447,12 @@ makeSizeCompW <- function(i, maxage, Linfarray, Karray, t0array, LenCV,
 #   LenAge[ind] <- Linfarray_c[ind[,2]] * (1 - exp(-Karray_c[ind[, 2]] * (ages - t0array_c[ind[, 2]])))
 #   LenAge[LenAge<0] <- 0
 #   LenSD <- LenAge * LenCV_c
-#   
-#   genLenComp(CAL_bins, CAL_binsmid, retLength, CAL_ess, CAL_Nsamp, 
+# 
+#   genLenComp(CAL_bins, CAL_binsmid, retLength, CAL_ess, CAL_Nsamp,
 #              VulnN2, LenAge, LenSD, truncSD)
 # }
-
-
+# 
+# 
 
 
 
