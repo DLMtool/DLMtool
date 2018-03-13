@@ -4,15 +4,30 @@
 \alias{Blow_opt}
 \title{Blow internal parallel optimization function}
 \usage{
-Blow_opt(lnq, SSBMSYc, MGThorizon, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears,
-  maxage, movc, Spat_targc, SRrelc, aRc, bRc, Bfrac, mode = 1)
+Blow_opt(lnq, N, Asize_c, SSBMSYc, SSBpRc, MPA, SSB0c, nareas, retAc,
+  MGThorizonc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc,
+  Spat_targc, SRrelc, aRc, bRc, Bfrac, maxF, mode = 1)
 }
 \arguments{
 \item{lnq}{number: estimate of log catchability}
 
+\item{N}{marix maxage by nareas with initial numbers at age}
+
+\item{Asize_c}{vector length nareas with size of each area}
+
 \item{SSBMSYc}{number: spawning biomass at MSY}
 
-\item{MGThorizon}{number: MGT x HZN}
+\item{SSBpRc}{vector length nareas with SSBpR by area}
+
+\item{MPA}{matrix of spatial closures}
+
+\item{SSB0c}{SSB0}
+
+\item{nareas}{numeric: number of areas}
+
+\item{retAc}{matrix maxage by nyears+proyears of retention by age and year}
+
+\item{MGThorizonc}{number: MGT x HZN}
 
 \item{Fc}{vector nyears long of fishing mortality rate}
 
@@ -46,6 +61,8 @@ Blow_opt(lnq, SSBMSYc, MGThorizon, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears,
 
 \item{Bfrac}{fraction of SSBMSY that is the target}
 
+\item{maxF}{maximum apical fishing mortality}
+
 \item{mode}{1: find Blow 2:report blow  3:plot results}
 }
 \description{
@@ -53,5 +70,5 @@ Find the current biomass at which it would take HZN mean generation times
 to reach Bfrac x SSBMSY biomass level given zero catches
 }
 \author{
-T. Carruthers
+T. Carruthers with modifications by A. Hordyk
 }

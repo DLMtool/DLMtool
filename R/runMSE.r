@@ -14,7 +14,7 @@ Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "D", "Mgrad", "SRrel", "hs", "p
            "Linfarray", "Karray", "t0array", "mov",  "nareas", "AC", "LenCV", "a", "b", "FinF", 
            "Fdisc", "R50", "Rslope", "retA", "retL", "LR5", "LFR", "Rmaxlen",
            "V2", "SLarray2", "DR", "Asize", "Size_area_1", "L50array", "L95array",
-           "Fdisc_array", "Fdisc_array2")
+           "Fdisc_array", "Fdisc_array2", "Pinitdist")
 
 
 if(getRversion() >= "2.15.1") utils::globalVariables(Names)
@@ -61,7 +61,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @export
 #' 
 runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
-                   CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=FALSE, 
+                   CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=TRUE, 
                    HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=FALSE, parallel=FALSE, 
                    save_name=NULL, checks=FALSE, control=NULL) {
   
@@ -70,7 +70,10 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     parallel <- FALSE
   }
   if (parallel) {
-    if(!snowfall::sfIsRunning()) stop("Requires parallel. Use 'setup'", call. = FALSE)
+    if(!snowfall::sfIsRunning()) {
+      message("Parallel processing hasn't been initialized ('setup'). Initializing with default", call. = FALSE)
+      setup()
+    }
     
     ncpu <- snowfall::sfCpus()
     
@@ -119,7 +122,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
 }
 
 runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
-                      CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=FALSE, 
+                      CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=TRUE, 
                       HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=FALSE, checks=FALSE,
                       control=NULL) {
   
@@ -490,17 +493,13 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     
     MGThorizon<-floor(HZN*MGT)
     
-    if(snowfall::sfIsRunning()){
-      # snowfall::sfExport(list=c("SSBMSY","MGT","Find","Perr","M_ageArray","hs","Mat_age","Wt_age","R0","V","nyears","maxage","SRrel","aR","bR"))
-      Blow<-sfSapply(1:nsim,getBlow,MSYrefs[3,],MGThorizon,Find,Perr,M_ageArray,hs,Mat_age,
-                     Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR,Bfrac) 
-    }else{
-      Blow <- sapply(1:nsim,getBlow,MSYrefs[3,],MGThorizon,Find,Perr,M_ageArray,hs,Mat_age,
-                     Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR,Bfrac) 
-    }
+    Blow <- sapply(1:nsim,getBlow, N, Asize, MSYrefs[3,],SSBpR, MPA, SSB0, nareas, retA, MGThorizon,
+                   Find,Perr,M_ageArray,hs,Mat_age, Wt_age,R0a,V,nyears,maxage,mov,
+                   Spat_targ,SRrel,aR,bR,Bfrac, maxF) 
   }else{
     Blow<-rep(NA,nsim)
   }
+
   
   # --- Calculate Reference Yield ----
   if(!silent) message("Calculating reference yield - best fixed F strategy")  # Print a progress update

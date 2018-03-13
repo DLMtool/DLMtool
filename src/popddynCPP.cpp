@@ -34,6 +34,7 @@ arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcu
   arma::mat Nnext(maxage, nareas);
   // arma::mat tempMat2(nareas, nareas);	
   arma::mat Nstore(maxage, nareas); 
+
   
   // Recruitment assuming regional R0 and stock wide steepness
   for (int A=0; A < nareas; A++) {
@@ -140,9 +141,10 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
   NumericVector SSB0a(nareas);
   double R0 = sum(R0c);
 
-  
+
   // Initial year
   Narray.subcube(0, 0, 0, maxage-1, 0, nareas-1) = Ncurr;
+  
   for (int A=0; A<nareas; A++) {
     Barray.subcube(0, 0, A, maxage-1, 0, A) = Ncurr.col(A) % WtAge.col(0);
     SSNarray.subcube(0, 0, A, maxage-1, 0, A) = Ncurr.col(A) % MatAge.col(0); 
@@ -152,6 +154,7 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
     tempVec(A) = accu(VBarray.slice(A));
   }
   
+
   // fishdist = (pow(tempVec, Spat_targc))/mean((pow(tempVec, Spat_targc)));
   fishdist = (pow(tempVec, Spat_targc))/sum((pow(tempVec, Spat_targc)));
 
@@ -169,6 +172,8 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
     }
   }
   
+ 
+  
   // apply Fmax condition 
   arma::uvec tempvals = arma::find(FMarray > (1-exp(-maxF)));
   FMarray.elem(tempvals).fill(1-exp(-maxF));
@@ -177,8 +182,9 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
   
   Zarray.subcube(0,0, 0, maxage-1, 0, nareas-1) = Marray.subcube(0,0, 0, maxage-1, 0, nareas-1) + FMarray.subcube(0,0, 0, maxage-1, 0, nareas-1);
   
+
   for (int yr=0; yr<(pyears-1); yr++) {
-      
+    // Rcpp::Rcout << "yr = " << yr << std::endl;
     arma::vec SB(nareas);
     
     for (int A=0; A<nareas; A++) SB(A) = accu(SBarray.subcube(0, yr, A, maxage-1, yr, A));
@@ -187,9 +193,10 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
           
     arma::mat Ncurr2 = Narray.subcube(0, yr, 0, maxage-1, yr, nareas-1);
     arma::mat Zcurr = Zarray.subcube(0, yr, 0, maxage-1, yr, nareas-1);
- 
+    
     arma::mat NextYrN = popdynOneTScpp(nareas, maxage, wrap(SB), wrap(Ncurr2), wrap(Zcurr), 
                                        Prec(yr+1+maxage), hc, R0c2, SSBpRc, aRc2, bRc2, movc, SRrelc); 
+  
 
     Narray.subcube(0, yr+1, 0, maxage-1, yr+1, nareas-1) = NextYrN;
     for (int A=0; A<nareas; A++) {
@@ -200,7 +207,7 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
       Marray.subcube(0, yr+1, A, maxage-1, yr+1, A) = M_age.col(yr+1);
       tempVec(A) = accu(VBarray.subcube(0, yr+1, A, maxage-1, yr+1, A));
     }
-
+  
     // fishdist = (pow(tempVec, Spat_targc))/mean((pow(tempVec, Spat_targc)));
     fishdist = (pow(tempVec, Spat_targc))/sum((pow(tempVec, Spat_targc)));
     
@@ -222,6 +229,7 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
         FMretarray.subcube(0,yr+1, A, maxage-1, yr+1, A) =  (Effind(yr+1) * Qc * fishdist(A) * Retc.col(yr+1))/Asize_c(A);
       }
     }
+
     if (control == 2) {
       for (int A=0; A<nareas; A++) {
         FMarray.subcube(0,yr+1, A, maxage-1, yr+1, A) =  (Fapic * fishdist(A) * Vuln.col(yr+1))/Asize_c(A);
@@ -256,6 +264,7 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
       Zarray.subcube(0,yr+1, 0, maxage-1, yr+1, nareas-1) = Marray.subcube(0,yr+1, 0, maxage-1, yr+1, nareas-1) + FMarray.subcube(0,yr+1, 0, maxage-1, yr+1, nareas-1);
       
     }
+   
   }
 
   List out(8);
