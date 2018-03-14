@@ -91,7 +91,7 @@ BK <- function(x, Data, reps = 100) {
   Rec <- new("Rec")
   Rec@TAC <- TACfilter(TAC)
   Rec
-  
+
 }  # end of BK
 class(BK) <- "MP"
 

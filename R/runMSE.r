@@ -11,10 +11,10 @@ Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "D", "Mgrad", "SRrel", "hs", "p
            "SLarray", "SizeLimFrac", "SizeLimSD", "Spat_targ", "TACFrac", "TACSD", 
            "Vmaxlen", "Vmaxlens", "Wt_age", "ageM", "betas", "lenMbias", "nCALbins", "procmu", "qcv", "qinc",
            "recMulti",  "t0", "t0bias", "Abias", "Aerr", "Perr", "Esd", "qvar", "Marray",
-           "Linfarray", "Karray", "AC", "LenCV", "a", "b", "FinF", 
+           "Linfarray", "Karray", "t0array", "mov",  "nareas", "AC", "LenCV", "a", "b", "FinF", 
            "Fdisc", "R50", "Rslope", "retA", "retL", "LR5", "LFR", "Rmaxlen",
            "V2", "SLarray2", "DR", "Asize", "Size_area_1", "L50array", "L95array",
-           "Fdisc_array", "Fdisc_array2")
+           "Fdisc_array", "Fdisc_array2", "Pinitdist")
 
 
 if(getRversion() >= "2.15.1") utils::globalVariables(Names)
@@ -61,8 +61,8 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @export
 #' 
 runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
-                   CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=FALSE, 
-                   HZN=2, Bfrac=0.5, AnnualMSY=FALSE, silent=FALSE, PPD=FALSE, parallel=FALSE, 
+                   CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=TRUE, 
+                   HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=FALSE, parallel=FALSE, 
                    save_name=NULL, checks=FALSE, control=NULL) {
   
   if (Hist & parallel) {
@@ -70,7 +70,10 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     parallel <- FALSE
   }
   if (parallel) {
-    if(!snowfall::sfIsRunning()) stop("Requires parallel. Use 'setup'", call. = FALSE)
+    if(!snowfall::sfIsRunning()) {
+      message("Parallel processing hasn't been initialized ('setup'). Initializing with default", call. = FALSE)
+      setup()
+    }
     
     ncpu <- snowfall::sfCpus()
     
@@ -119,8 +122,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
 }
 
 runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
-                      CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=FALSE, 
-                      HZN=2, Bfrac=0.5, AnnualMSY=FALSE, silent=FALSE, PPD=FALSE, checks=FALSE,
+                      CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=TRUE, 
+                      HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=FALSE, checks=FALSE,
                       control=NULL) {
   
  
@@ -185,56 +188,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   }
   
   # --- Sample Stock Parameters ----
-  StockPars <- SampleStockPars(OM, nsim, nyears, proyears, SampCpars)
+  StockPars <- SampleStockPars(OM, nsim, nyears, proyears, SampCpars, Msg=!silent)
   # Assign Stock pars to function environment
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
 
-  # --- Calculate movement ----
-  
-  if (!exists("mov", inherits=FALSE)) {
-    if(!silent) message("Optimizing for user-specified movement")  # Print a progress update
-    # if (snowfall::sfIsRunning()) {
-    #   # if the cluster is initiated
-    #   # snowfall::sfExport(list = c("Frac_area_1", "Prob_staying"))  # export some of the new arrays
-    #   mov <- array(t(snowfall::sfSapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
-    #                                     Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
-    # } else {
-    #   # no cluster initiated
-    #   mov <- array(t(sapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
-    #                         Prob_staying = Prob_staying)), dim = c(nsim, 2, 2))  # numerically determine movement probability parameters to match Prob_staying and Frac_area_1
-    # }
-    # 
-    nareas<-2 # default is a 2 area model
-    mov1 <- array(t(sapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
-                           Prob_staying = Prob_staying)), dim = c(nsim, nareas, nareas))
-    mov<-array(NA,c(nsim,maxage,nareas,nareas))
-    mind<-as.matrix(expand.grid(1:nsim,1:maxage,1:nareas,1:nareas))
-    mov[mind]<-mov1[mind[,c(1,3,4)]]
-    
-    initdist <- array(0,c(nsim,maxage,nareas))
-    initdist[,,1]<-Frac_area_1
-    initdist[,,2]<- 1- Frac_area_1  
-    
-  }else{ # if mov is specified need to calculate age-based spatial distribution (Pinitdist to initdist)
-    nareas<-dim(mov)[3]
-    message(paste("Custom movement matrix detected, simulating movement among",nareas,"areas"))
-    
-    mind<-as.matrix(expand.grid(1:nsim,maxage,1:nareas,1:nareas))
-    movedarray<-array(0,c(nsim,nareas,nareas))
-    Pinitdist<-array(1/nareas,c(nsim,nareas))
-    for(i in 1:20){ # convergence in initial distribution is assumed to occur in 20 iterations (generally overkill)
-      movedarray[mind[,c(1,3,4)]]<-Pinitdist[mind[,c(1,3)]]*mov[mind] # distribution in from areas mulitplied by movement array
-      Pinitdist<-apply(movedarray,c(1,3),sum) # add over to areas
-      #print(initdist[1:2,]) # debugging to check convergence
-    }
-    
-  }
-  
-  
-  if (dim(Asize)[2]!=nareas) {
-    message('Asize is not length "nareas", assuming all areas equal size')
-    Asize <- matrix(1/nareas, nrow=nsim, ncol=nareas)
-  }
   
   # --- Sample Fleet Parameters ----
   FleetPars <- SampleFleetPars(SubOM(OM, "Fleet"), Stock=StockPars, nsim, nyears, proyears, 
@@ -255,7 +212,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   ### End of sampling OM parameters ###
 
-  
   N <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # stock numbers array
   Biomass <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # stock biomass array
   VBiomass <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # vulnerable biomass array
@@ -267,11 +223,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   SPR <- array(NA, dim = c(nsim, maxage, nyears)) # store the Spawning Potential Ratio
   
   Agearray <- array(rep(1:maxage, each = nsim), dim = c(nsim, maxage))  # Age array
-  # surv <- exp(-Marray[, 1])^(Agearray - 1)  # Survival array
-  
+
   # Survival array with M-at-age
   surv <- matrix(1, nsim, maxage)
-  surv[, 2:maxage] <- t(exp(-apply(M_ageArray[,,1], 1, cumsum)))[, 1:(maxage-1)]
+  surv[, 2:maxage] <- t(exp(-apply(M_ageArray[,,1], 1, cumsum)))[, 1:(maxage-1)]  # Survival array
   
   Nfrac <- surv * Mat_age[,,1]  # predicted Numbers of mature ages in first year
   
@@ -387,7 +342,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   bR <- matrix(log(5 * hs)/(0.8 * SSB0a), nrow=nsim)  # Ricker SR params
   aR <- matrix(exp(bR * SSB0a)/SSBpR, nrow=nsim)  # Ricker SR params
   
-  
   #  --- Non-equilibrium calcs ----
   SSN[SAYR] <- Nfrac[SA] * R0[S] * initdist[SAR]*Perr[Sa]  # Calculate initial spawning stock numbers
   N[SAYR] <- R0[S] * surv[SA] * initdist[SAR]*Perr[Sa]  # Calculate initial stock numbers
@@ -412,38 +366,16 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   if(!silent) message("Optimizing for user-specified depletion")  # Print a progress update
   
   bounds <- c(0.0001, 15) # q bounds for optimizer
-  # if (snowfall::sfIsRunning()) {
-  #   # snowfall::sfExport(list = c("D", "Find", "Perr", "M_ageArray", "hs", "Mat_age",
-  #   # "Wt_age", "R0", "V", "nyears", "maxage", "SRrel", "aR", "bR"))
-  #   # qs <- snowfall::sfSapply(1:nsim, getq2, D, Find, Perr, M_ageArray, hs, Mat_age,
-  #   # Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR, bounds)  # find the q that gives current stock depletion
-  #   
-  #   # snowfall::sfExport(list = c("D", "SSB0", "nareas", "maxage", "N", "nyears", 
-  #   #                             "M_ageArray", "Mat_age", "Asize", "Wt_age", "V", "retA", 'Perr', "mov", "SRrel", "Find", 
-  #   #                             "Spat_targ", "hs", "R0a", "SSBpR", "aR", 'bR', "bounds", "maxF"))
-  #   qs <- snowfall::sfSapply(1:nsim, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
-  #                            M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr, mov, SRrel, Find, 
-  #                            Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF) # find the q that gives current stock depletion
-  # } else {
-  #   # qs <- sapply(1:nsim, getq2, D, Find, Perr, M_ageArray, hs, Mat_age,
-  #   #              Wt_age, R0, V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR, bounds)  # find the q that gives current stock depletion
-  #   qs <- sapply(1:nsim, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
-  #                M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr, mov, SRrel, Find, 
-  #                Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF) # find the q that gives current stock depletion
-  # }
-  # quicker without parallel
   qs <- sapply(1:nsim, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
                M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr, mov, SRrel, Find, 
                Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF) # find the q that gives current stock depletion
 
-  
   # --- Check that q optimizer has converged ---- 
   LimBound <- c(1.1, 0.9)*range(bounds)  # bounds for q (catchability). Flag if bounded optimizer hits the bounds 
   probQ <- which(qs > max(LimBound) | qs < min(LimBound))
   Nprob <- length(probQ)
   
-  # If q has hit bound, re-sample depletion and try again. Tries 'ntrials' times
-  # and then alerts user
+  # If q has hit bound, re-sample depletion and try again. Tries 'ntrials' times and then alerts user
   if (length(probQ) > 0) {
     Err <- TRUE
     if(!silent) message(Nprob,' simulations have final biomass that is not close to sampled depletion') 
@@ -456,6 +388,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       Nprob <- length(probQ)
       OM2@nsim <- Nprob
       SampCpars2 <- list()
+
       if (length(OM2@cpars)>0) SampCpars2 <- SampleCpars(OM2@cpars, OM2@nsim, msg=FALSE) 
      
       ResampStockPars <- SampleStockPars(OM2, cpars=SampCpars2, Msg=FALSE)  
@@ -479,19 +412,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       dFfinal[probQ] <- ResampFleetPars$dFfinal
       
       # Optimize for q 
-      # if (snowfall::sfIsRunning()) {
-      #   
-      #   # snowfall::sfExport(list = c("D", "SSB0", "nareas", "maxage", "N", "nyears", 
-      #   #                             "M_ageArray", "Mat_age", "Wt_age", "V", "retA", 'Perr', "mov", "SRrel", "Find", 
-      #   #                             "Spat_targ", "hs", "R0a", "SSBpR", "aR", 'bR', "bounds", "maxF"))
-      #   qs[probQ] <- snowfall::sfSapply(probQ, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
-      #                                   M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr, mov, SRrel, Find, 
-      #                                   Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF) # find the q that gives current stock depletion
-      # } else {
-      #   qs[probQ] <- sapply(probQ, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
-      #                       M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr, mov, SRrel, Find, 
-      #                       Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF) # find the q that gives current stock depletion
-      # }
       qs[probQ] <- sapply(probQ, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
                           M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr, mov, SRrel, Find, 
                           Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF)
@@ -519,25 +439,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   if(!silent) message("Calculating historical stock and fishing dynamics")  # Print a progress update
   
-  # Distribute fishing effort according to vulnerable biomass
-  # if (nsim > 1) fishdist <- (apply(VBiomass[, , 1, ], c(1, 3), sum)^Spat_targ)/
-  #   apply(apply(VBiomass[, , 1, ], c(1, 3), sum)^Spat_targ, 1, mean)  # spatial preference according to spatial biomass
-  # if (nsim == 1)  fishdist <- (matrix(apply(VBiomass[,,1,], 2, sum), nrow=nsim)^Spat_targ)/
-  #   mean((matrix(apply(VBiomass[,,1,], 2, sum), nrow=nsim)^Spat_targ))
-  # 
-  # 
-
   # --- Simulate historical years ----
-  # if (snowfall::sfIsRunning()) {
-  #   histYrs <- snowfall::sfSapply(1:nsim, simYears, nareas, maxage, N, pyears=nyears, M_ageArray, Asize,
-  #                                Mat_age,  Wt_age, V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, 
-  #                                SSBpR, aR, bR, qs, MPA, maxF)
-  # } else {
-  #   histYrs <- sapply(1:nsim, simYears, nareas, maxage, N, pyears=nyears, M_ageArray, Asize,
-  #                     Mat_age, Wt_age, V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, 
-  #                     SSBpR, aR, bR, qs, MPA, maxF)
-  # }
-  
   histYrs <- sapply(1:nsim, simYears, nareas, maxage, N, pyears=nyears, M_ageArray, Asize,
                     Mat_age, Wt_age, V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, 
                     SSBpR, aR, bR, qs, MPA, maxF, SSB0=SSB0)
@@ -551,68 +453,21 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   FMret <- aperm(array(as.numeric(unlist(histYrs[7,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
   Z <-aperm(array(as.numeric(unlist(histYrs[8,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
 
-
-  # Depletion <- apply(Biomass[, , nyears, ], 1, sum)/apply(Biomass[, , 1, ], 1, sum)  #^betas   # apply hyperstability / hyperdepletion
   if (nsim > 1) Depletion <- apply(SSB[,,nyears,],1,sum)/SSB0#^betas
   if (nsim == 1) Depletion <- sum(SSB[,,nyears,])/SSB0 #^betas
   # # apply hyperstability / hyperdepletion
   
   # Check that depletion is correct
-  # print(cbind(round(D,4), round(Depletion,4)))
-  if (checks) if (prod(round(D, 2)/ round(Depletion,2)) != 1) warning("Possible problem in depletion calculations")
+  if (checks) {
+    if (prod(round(D, 2)/ round(Depletion,2)) != 1) {
+      print(cbind(round(D,4), round(Depletion,4)))
+      warning("Possible problem in depletion calculations")
+    } 
+  } 
   
   # --- Calculate MSY references ----  
   if(!silent) message("Calculating MSY reference points")  # Print a progress update
   
-  # if (snowfall::sfIsRunning()) {
-  #   snowfall::sfExport(list = c("M_ageArray", "hs", "Mat_age", "Wt_age", "R0", "V", "nyears", "maxage"))  # export some newly made arrays to the cluster
-  #   MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY2, M_ageArray, hs, Mat_age, Wt_age,
-  #                                 R0, V = V, retA=retA, maxage, nyears, proyears = 200, Spat_targ,
-  #                                 mov, SRrel, aR, bR)  # optimize for MSY reference points\t
-  # } else {
-  # MSYrefs <- sapply(1:nsim, getFMSY2, M_ageArray, hs, Mat_age, Wt_age,
-  #                   R0, V = V, retA=retA, maxage, nyears, proyears = 200, Spat_targ,
-  #                   mov, SRrel, aR, bR)  # optimize for MSY reference points
-  # }
-  
-  # MSY projection years
-  # MSYyr <- 200
-  # # Note: MSY and refY are calculated from total removals not total catch (different when Fdisc>0 and there is discarding)
-  # # Make arrays for future conditions assuming current conditions
-  # 
-  # M_ageArrayp <- array(M_ageArray[,,nyears], dim=c(dim(M_ageArray)[1:2], MSYyr))
-  # Wt_agep <- array(Wt_age[,,nyears], dim=c(dim(Wt_age)[1:2], MSYyr))
-  #   retAp <- array(retA[,,nyears], dim=c(dim(retA)[1:2], MSYyr))
-  # Vp <- array(V[,,nyears], dim=c(dim(V)[1:2], MSYyr))
-  # Perrp <- array(1, dim=c(dim(Perr)[1], MSYyr+maxage))
-  # noMPA <- matrix(1, nrow=MSYyr, ncol=nareas)
-  # Mat_agep <-abind::abind(rep(list(Mat_age[,,nyears]), MSYyr), along=3)
-  #   if (snowfall::sfIsRunning()) {
-  #  # snowfall::sfExport(list = c("M_ageArrayp", "Wt_agep", "Vp", "retAp", "Perrp"))  # export some newly made arrays to the cluster
-  #  MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY3, Asize, nareas=nareas, maxage=maxage, N=N, pyears=MSYyr,
-  #                                M_ageArray=M_ageArrayp, Mat_age=Mat_agep, Wt_age=Wt_agep, V=Vp, retA=retAp,
-  #                                Perr=Perrp, mov=mov, SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs,
-  #                                R0a=R0a, SSBpR=SSBpR, aR=aR, bR=bR, SSB0=SSB0, B0=B0, MPA=noMPA, maxF=maxF)  # optimize for MSY reference points
-  # } else {
-  #  MSYrefs <- sapply(1:nsim, getFMSY3, Asize, nareas=nareas, maxage=maxage, N=N, pyears=MSYyr,
-  #                    M_ageArray=M_ageArrayp, Mat_age=Mat_agep, Wt_age=Wt_agep, V=Vp, retA=retAp,
-  #                    Perr=Perrp, mov=mov, SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs,
-  #                    R0a=R0a, SSBpR=SSBpR, aR=aR, bR=bR, SSB0=SSB0, B0=B0, MPA=noMPA, maxF=maxF) # optimize for MSY reference points
-  # }
-  # 
-  # 
-  # MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
-  # FMSY <- MSYrefs[2, ]  # instantaneous FMSY (Vulnerable)
-  # SSBMSY <- MSYrefs[3, ]  # Spawning Stock Biomass at MSY
-  # SSBMSY_SSB0 <- MSYrefs[4, ] # SSBMSY relative to unfished (SSB)
-  # BMSY_B0 <- MSYrefs[5, ] # Biomass relative to unfished (B0)
-  # BMSY <- MSYrefs[6,] # total biomass at MSY
-  # VBMSY <- (MSY/(1 - exp(-FMSY)))  # Biomass at MSY (Vulnerable)
-  # # FMSYb <- MSYrefs[8,]  # instantaneous FMSY (Spawning Biomass)
-  # UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
-  # FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
-  
-
   MSYrefs <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, maxage, 
                     R0, SRrel, hs, yr=nyears)
 
@@ -626,8 +481,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
   FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
  
-  
-
   # --- Code for deriving low biomass ---- 
   # (SSB where it takes MGThorizon x MGT to reach Bfrac of BMSY)
   
@@ -640,59 +493,17 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     
     MGThorizon<-floor(HZN*MGT)
     
-    if(snowfall::sfIsRunning()){
-      # snowfall::sfExport(list=c("SSBMSY","MGT","Find","Perr","M_ageArray","hs","Mat_age","Wt_age","R0","V","nyears","maxage","SRrel","aR","bR"))
-      Blow<-sfSapply(1:nsim,getBlow,MSYrefs[3,],MGThorizon,Find,Perr,M_ageArray,hs,Mat_age,
-                     Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR,Bfrac) 
-    }else{
-      Blow <- sapply(1:nsim,getBlow,MSYrefs[3,],MGThorizon,Find,Perr,M_ageArray,hs,Mat_age,
-                     Wt_age,R0,V,nyears,maxage,mov,Spat_targ,SRrel,aR,bR,Bfrac) 
-    }
+    Blow <- sapply(1:nsim,getBlow, N, Asize, MSYrefs[3,],SSBpR, MPA, SSB0, nareas, retA, MGThorizon,
+                   Find,Perr,M_ageArray,hs,Mat_age, Wt_age,R0a,V,nyears,maxage,mov,
+                   Spat_targ,SRrel,aR,bR,Bfrac, maxF) 
   }else{
     Blow<-rep(NA,nsim)
   }
+
   
   # --- Calculate Reference Yield ----
   if(!silent) message("Calculating reference yield - best fixed F strategy")  # Print a progress update
-  # if (snowfall::sfIsRunning()) {
-  #   RefY <- snowfall::sfSapply(1:nsim, getFref2, M_ageArray = M_ageArray, Wt_age = Wt_age, 
-  #                              Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, , drop=FALSE], SSN_s = SSN[, , nyears, , drop=FALSE], 
-  #                              Biomass_s = Biomass[, , nyears, , drop=FALSE], VBiomass_s = VBiomass[, , nyears, , drop=FALSE], 
-  #                              SSB_s = SSB[, , nyears, , drop=FALSE], Vn = V[, , (nyears + 1):(nyears + proyears), drop=FALSE], 
-  #                              retAn = retA[, , (nyears + 1):(nyears + proyears), drop=FALSE],
-  #                              hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas,
-  #                              maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)
-  #   
-  # } else {
-  # RefY <- sapply(1:nsim, getFref2, M_ageArray = M_ageArray, Wt_age = Wt_age,
-  #                Mat_age = Mat_age, Perr = Perr, N_s = N[, , nyears, , drop=FALSE], SSN_s = SSN[, , nyears, , drop=FALSE],
-  #                Biomass_s = Biomass[, , nyears, , drop=FALSE], VBiomass_s = VBiomass[, , nyears, , drop=FALSE],
-  #                SSB_s = SSB[, , nyears, , drop=FALSE], Vn = V[, , (nyears + 1):(nyears + proyears), drop=FALSE],
-  #                retAn = retA[, , (nyears + 1):(nyears + proyears), drop=FALSE],
-  #                hs = hs, R0a = R0a, nyears = nyears, proyears = proyears, nareas = nareas,
-  #                maxage = maxage, mov = mov, SSBpR = SSBpR, aR = aR, bR = bR, SRrel = SRrel, Spat_targ = Spat_targ)
-  #}
-  
-  # if (snowfall::sfIsRunning()) { # using pop dyn functions - popdyn.R and popdynCPP.cpp
-  #   # assuming no dead discarding when calculating reference yield
-  #   RefY <- snowfall::sfSapply(1:nsim, getFref3, Asize, nareas, maxage, N=N[,,nyears,, drop=FALSE], pyears=proyears, 
-  #                              M_ageArray=M_ageArray[,,(nyears):(nyears+proyears)], Mat_age[,,(nyears):(nyears+proyears)], 
-  #                              Wt_age=Wt_age[,,nyears:(nyears+proyears)], 
-  #                              V=retA[, , (nyears + 1):(nyears + proyears), drop=FALSE], 
-  #                              retA=retA[, , (nyears + 1):(nyears + proyears), drop=FALSE], 
-  #                              Perr=Perr[,(nyears-1):(nyears+maxage+proyears-1)], mov, SRrel, Find, 
-  #                              Spat_targ, hs, R0a, SSBpR, aR, bR, MPA=MPA, maxF=maxF)
-  #   
-  # } else {
-  #   # assuming no dead discarding when calculating reference yield
-  #   RefY <- sapply(1:nsim, getFref3, Asize, nareas, maxage, N=N[,,nyears,, drop=FALSE], pyears=proyears, 
-  #                  M_ageArray=M_ageArray[,,(nyears):(nyears+proyears)], Mat_age[,,(nyears):(nyears+proyears)], 
-  #                  Wt_age=Wt_age[,,nyears:(nyears+proyears)], 
-  #                  V=retA[, , (nyears + 1):(nyears + proyears), drop=FALSE], 
-  #                  retA=retA[, , (nyears + 1):(nyears + proyears), drop=FALSE],  
-  #                  Perr=Perr[,(nyears):(nyears+maxage+proyears-1)], mov, SRrel, Find, 
-  #                  Spat_targ, hs, R0a, SSBpR, aR, bR, MPA=MPA, maxF=maxF)
-  # }
+
   RefY <- sapply(1:nsim, getFref3, Asize, nareas, maxage, N=N[,,nyears,, drop=FALSE], pyears=proyears, 
                  M_ageArray=M_ageArray[,,(nyears):(nyears+proyears)], Mat_age[,,(nyears):(nyears+proyears)], 
                  Wt_age=Wt_age[,,nyears:(nyears+proyears)], 
@@ -723,17 +534,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   Cobs <- Cbiasa[, 1:nyears] * Cerr[, 1:nyears] * apply(CBret, c(1, 3), sum)  # Simulated observed retained catch (biomass)
   
   # --- Simulate observed catch-at-age ----
-  # CAA <- array(NA, dim = c(nsim, nyears, maxage))  # Catch  at age array
-  # cond <- apply(CN, 1:2, sum, na.rm = T) < 1  # this is a fix for low sample sizes. If CN is zero across the board a single fish is caught in age class of model selectivity (dumb I know)
-  # fixind <- as.matrix(cbind(expand.grid(1:nsim, 1:nyears), rep(floor(maxage/3), nyears)))  # more fix
-  # CN[fixind[cond, ]] <- 1  # puts a catch in the most vulnerable age class
-  # 
-  # # a multinomial observation model for catch-at-age data
-  # for (i in 1:nsim) 
-  #   for (j in 1:nyears) 
-  #     CAA[i, j, ] <- ceiling(-0.5 + rmultinom(1, CAA_ESS[i], CN[i, j, ]) * CAA_nsamp[i]/CAA_ESS[i])  # a multinomial observation model for catch-at-age data
-  # 
-  
+
   # generate CAA from retained catch-at-age 
   CAA <- array(NA, dim = c(nsim, nyears, maxage))  # Catch  at age array
   cond <- apply(Cret, 1:2, sum, na.rm = T) < 1  # this is a fix for low sample sizes. If Cret is zero across the board a single fish is caught in age class of model selectivity (dumb I know)
@@ -745,7 +546,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     for (j in 1:nyears) 
       CAA[i, j, ] <- ceiling(-0.5 + rmultinom(1, CAA_ESS[i], Cret[i, j,]) * CAA_nsamp[i]/CAA_ESS[i]) 
   
-  
   # --- Simulate observed catch-at-length ----
   # a multinomial observation model for catch-at-length data
   # assumed normally-distributed length-at-age truncated at 2 standard deviations from the mean
@@ -755,10 +555,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   vn <- aperm(vn, c(1,3, 2))
 
   # Generate size comp data with variability in age
-  # message("Generating size comps")
   tempSize <- lapply(1:nsim, genSizeCompWrap, vn, CAL_binsmid, CAL_ESS, CAL_nsamp,
                      Linfarray, Karray, t0array, LenCV, truncSD=2)
-  # message("success!")
   CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), dim=c(nyears, length(CAL_binsmid), nsim)), c(3,1,2))
 
   for (i in 1:nsim) {
@@ -1067,17 +865,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     
     # -- First projection year ----
     y <- 1
-    # 
-    # NextYrN <- lapply(1:nsim, function(x)
-    #   popdynOneTS(nareas, maxage, SSBcurr=colSums(SSB[x,,nyears, ]), Ncurr=N[x,,nyears,],
-    #               Zcurr=Z[x,,nyears,], PerrYr=Perr[x, nyears+maxage-1], hc=hs[x],
-    #               R0c=R0a[x,], SSBpRc=SSBpR[x,], aRc=aR[x], bRc=bR[x],
-    #               movc=mov[x,,,], SRrelc=SRrel[x]))
-    
+   
     NextYrN <- lapply(1:nsim, function(x)
       popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB[x,,nyears, ]), Ncurr=N[x,,nyears,],
                      Zcurr=Z[x,,nyears,], PerrYr=Perr[x, nyears+maxage-1], hs=hs[x],
-                     R0=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
+                     R0a=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
                      mov=mov[x,,,], SRrel=SRrel[x]))
     
     N_P[,,1,] <- aperm(array(unlist(NextYrN), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2))
@@ -1133,71 +925,19 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     retL_P <- MPCalcs$retL_P # retained-at-length
     V_P <- MPCalcs$V_P  # vulnerable-at-age
     SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length 
-    
-    # if (class(match.fun(MPs[mm])) == "Output") {
-    #   
-    #   # -- output control ----
-    #   Data <- Sam(MSElist[[mm]], MPs = MPs[mm], perc = pstar, reps = reps) # apply Output control MP 
-    #   TACused <- apply(Data@TAC, 3, quantile, p = pstar, na.rm = T) # calculate pstar quantile of TAC recommendation dist 
-    #   
-    #   outputcalcs <- CalcOutput(y, Asize, TACused, TAC_f, lastCatch=apply(CB[,,nyears,], 1, sum), 
-    #                             availB=MSElist[[mm]]@OM$A, maxF, Biomass_P, VBiomass_P, CB_P, 
-    #                             CB_Pret, FM_P, Z_P, Spat_targ, V_P, 
-    #                             retA_P, M_ageArray, qs, nyears, nsim, maxage, nareas)
-    #   
-    #   
-    #   TACa[, mm, y] <- outputcalcs$TACrec # recommended TAC 
-    #   Effort[, mm, y] <- outputcalcs$Effort #  
-    #   CB_P <- outputcalcs$CB_P # removals
-    #   CB_Pret <- outputcalcs$CB_Pret # retained catch 
-    #   FM_P <- outputcalcs$FM_P # fishing mortality 
-    #   Z_P <- outputcalcs$Z_P # total mortality 
-    #   
-    # 
-    # } else if (class(match.fun(MPs[mm])) == "Input") {
-    #   # -- input control ----
-    #   
-    #   runIn <- runInMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply input control MP
-    #   
-    #   Data <- runIn[[2]] # Data object object with saved info from MP 
-    #   InputRecs <- runIn[[1]][[1]] # input control recommendations 
-    #   
-    #   inputcalcs <- CalcInput(y, Linf, Asize, nyears, proyears, InputRecs, nsim, nareas, LR5_P, LFR_P, 
-    #                           Rmaxlen_P, maxage, retA_P, retL_P, V_P, V2, SLarray_P, 
-    #                           SLarray2, DR, maxlen, Len_age, CAL_binsmid, Fdisc, nCALbins, 
-    #                           E_f, SizeLim_f, VBiomass_P, Biomass_P, Spat_targ, FinF, qvar, 
-    #                           qs, qinc, CB_P, CB_Pret, FM_P, FM_Pret, Z_P, M_ageArray, 
-    #                           LastEffort=rep(1,nsim), LastSpatial=matrix(1, nsim, nareas), 
-    #                           LastAllocat=rep(0, nsim))
-    #   
-    #   LastSpatial <- inputcalcs$Si
-    #   LastAllocat <- inputcalcs$Ai
-    #   Effort[, mm, y] <- inputcalcs$Effort #  
-    #   CB_P <- inputcalcs$CB_P # removals
-    #   CB_Pret <- inputcalcs$CB_Pret # retained catch 
-    #   FM_P <- inputcalcs$FM_P # fishing mortality
-    #   FM_Pret <- inputcalcs$FM_Pret # retained fishing mortality 
-    #   Z_P <- inputcalcs$Z_P # total mortality
-    # 
-    #   retA_P <- inputcalcs$retA_P # retained-at-age
-    #   
-    #   retL_P <- inputcalcs$retL_P # retained-at-length
-    #   V_P <- inputcalcs$V_P  # vulnerable-at-age
-    #   SLarray_P <- inputcalcs$pSLarray # vulnerable-at-length 
-    # 
-    # }  
-    # 
-    # TACa[, mm, 1] <- apply(CB_P[, , 1, ], 1, sum)  # Adjust TAC to actual catch in the year 
-    # To account for years where TAC is higher than catch
-    
+  
     upyrs <- 1 + (0:(floor(proyears/interval) - 1)) * interval  # the years in which there are updates (every three years)
-    if(!silent) cat(".")
-    if(!silent) flush.console()
+    if(!silent) {
+      cat(".")
+      flush.console()
+    }
     
     # --- Begin projection years ----
     for (y in 2:proyears) {
-      if(!silent) cat(".")
-      if(!silent) flush.console()
+      if(!silent) {
+        cat(".")
+        flush.console()
+      }
       
       SelectChanged <- FALSE
       if (AnnualMSY) {
@@ -1207,33 +947,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       
       # -- Calculate MSY stats for this year ----
       if (AnnualMSY & SelectChanged) { #
-        
         MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V_P, maxage, R0, SRrel, hs, yr=nyears+y)
-    
         MSY_P[,mm,y] <- MSYrefsYr[1, ]
         FMSY_P[,mm,y] <- MSYrefsYr[2,]
         SSBMSY_P[,mm,y] <- MSYrefsYr[3,]
-        
-        # M_ageArrayp <- array(M_ageArray[,,nyears+y], dim=c(dim(M_ageArray)[1:2], MSYyr))
-        # Wt_agep <- array(Wt_age[,,nyears+y], dim=c(dim(Wt_age)[1:2], MSYyr))
-        # retAp <- array(retA_P[,,nyears+y], dim=c(dim(retA)[1:2], MSYyr))
-        # Vp <- array(V_P[,,nyears+y], dim=c(dim(V)[1:2], MSYyr))
-        # Perrp <- array(1, dim=c(dim(Perr)[1], MSYyr+maxage))
-        # Mat_agep <-abind::abind(rep(list(Mat_age[,,nyears+y]), MSYyr), along=3)
-        # if (snowfall::sfIsRunning()) {
-        #   MSYrefsYr <- snowfall::sfSapply(1:nsim, getFMSY3, Asize, nareas=nareas, maxage=maxage, N=N, pyears=MSYyr,
-        #                                   M_ageArray=M_ageArrayp, Mat_age=Mat_agep, Wt_age=Wt_agep, V=Vp, retA=retAp,
-        #                                   Perr=Perrp, mov=mov, SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs,
-        #                                   R0a=R0a, SSBpR=SSBpR, aR=aR, bR=bR, SSB0=SSB0, B0=B0, MPA=noMPA, maxF=maxF)  # optimize for MSY reference points
-        # } else {
-        #   MSYrefsYr <- sapply(1:nsim, getFMSY3, Asize, nareas=nareas, maxage=maxage, N=N, pyears=MSYyr,
-        #                       M_ageArray=M_ageArrayp, Mat_age=Mat_agep, Wt_age=Wt_agep, V=Vp, retA=retAp,
-        #                       Perr=Perrp, mov=mov, SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs,
-        #                       R0a=R0a, SSBpR=SSBpR, aR=aR, bR=bR, SSB0=SSB0, B0=B0, MPA=noMPA, maxF=maxF) # optimize for MSY reference points
-        # }
-        # MSY_P[, mm, y] <- MSYrefsYr[1, ]
-        # FMSY_P[, mm, y] <- MSYrefsYr[2,]
-        # SSBMSY_P[, mm, y] <- MSYrefsYr[3,]
       }
       
       TACa[, mm, y] <- TACa[, mm, y-1] # TAC same as last year unless changed 
@@ -1254,15 +971,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       SA2YR <- as.matrix(expand.grid(1:nsim, 2:maxage, y, 1:nareas))
       SA1YR <- as.matrix(expand.grid(1:nsim, 1:(maxage - 1), y -1, 1:nareas))
       
-      # NextYrN <- lapply(1:nsim, function(x)
-      #   popdynOneTS(nareas, maxage, SSBcurr=colSums(SSB_P[x,,y-1, ]), Ncurr=N_P[x,,y-1,],
-      #               Zcurr=Z_P[x,,y-1,], PerrYr=Perr[x, y+nyears+maxage-1], hc=hs[x],
-      #               R0c=R0a[x,], SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,],
-      #               movc=mov[x,,,], SRrelc=SRrel[x]))
       NextYrN <- lapply(1:nsim, function(x)
         popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB_P[x,,y-1, ]), Ncurr=N_P[x,,y-1,],
                        Zcurr=Z_P[x,,y-1,], PerrYr=Perr[x, y+nyears+maxage-1], hs=hs[x],
-                       R0=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
+                       R0a=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
                        mov=mov[x,,,], SRrel=SRrel[x]))
   
       N_P[,,y,] <- aperm(array(unlist(NextYrN), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2)) 
@@ -1304,40 +1016,13 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         vn <- (apply(N_P[,,,], c(1,2,3), sum) * retA_P[,,(nyears+1):(nyears+proyears)]) # numbers at age that would be retained
         vn <- aperm(vn, c(1,3,2))
         
-        # for (i in 1:nsim) { # Rcpp code 
-        #   vn2 <- as.matrix(vn[i,yind,])
-        #   if (interval == 1) vn2 <- t(vn2) # dodgy hack to ensure matrix is correct
-        #   CAL[i, 1:interval, ] <- genLenComp(CAL_bins, CAL_binsmid,
-        #                                      as.matrix(retL_P[i,,nyears + yind]),
-        #                                      CAL_ESS[i], CAL_nsamp[i], 
-        #                                      vn2, as.matrix(Len_age[i,,nyears + yind]), 
-        #                                      as.matrix(LatASD[i,, nyears + yind]), truncSD=2) 
-        #   LFC[i] <- CAL_binsmid[min(which(round(CAL[i, interval, ],0) >= 1))] # get the smallest CAL observation	
-        # }	
-        # 
         nyrs <- length(yind)
-        # message("Generating size comps")
         tempSize <- lapply(1:nsim, genSizeCompWrap, vn[,yind,, drop=FALSE], CAL_binsmid, CAL_ESS, CAL_nsamp,
                            Linfarray[,nyears + yind, drop=FALSE],  
                            Karray[,nyears + yind, drop=FALSE], 
                            t0array[,nyears + yind,drop=FALSE], LenCV, truncSD=2)
-        # message("success")
         CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), dim=c(length(yind), length(CAL_binsmid), nsim)), c(3,1,2))
         
-
-        # for (sim in 1:OM@nsim) {
-        #   CAL[sim,,] <- makeSizeCompW(sim, maxage, Linfarray[,nyears + yind, drop=FALSE],
-        #                               Karray[,nyears + yind, drop=FALSE],
-        #                               t0array[,nyears + yind,drop=FALSE],
-        #                               LenCV,
-        #                               CAL_bins, CAL_binsmid,
-        #                               array(retL_P[,,nyears + yind, drop=FALSE], dim=c(nsim,length(CAL_binsmid),nyrs)),
-        #                               CAL_ESS, CAL_nsamp,
-        #                               vn[,yind,, drop=FALSE], truncSD=2)
-        #   
-        #   
-        #   
-        # }
         for (i in 1:nsim) {
           ind <- round(CAL[i,nyrs, ],0) >= 1
           if (sum(ind)>0) {
@@ -1346,6 +1031,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
             LFC[i] <- 0
           }
         }
+        LFC[LFC<1] <- 1
         
         I2 <- cbind(apply(Biomass, c(1, 3), sum), apply(Biomass_P, c(1, 3), sum)[, 1:(y - 1)]) * 
           Ierr[, 1:(nyears + (y - 1))]^betas
@@ -1355,27 +1041,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         Depletion <- apply(SSB_P[, , y, ], 1, sum)/SSB0 # apply(SSB[, , 1, ], 1, sum)
         Depletion[Depletion < tiny] <- tiny
 
-        # A <- apply(VBiomass_P[, , y, ], 1, sum)
-      
-        # Calculate abundance after recruitment and movement - project forward with no F
-        # NextYrNtemp <- lapply(1:nsim, function(x)
-        #   popdynOneTS(nareas, maxage, SSBcurr=colSums(SSB_P[x,,y, ]), Ncurr=N_P[x,,y,],
-        #               Zcurr=matrix(M_ageArray[x,,y+nyears], nrow=maxage, ncol=nareas, byrow=TRUE),
-        #               PerrYr=Perr[x, y+nyears+maxage-1], hc=hs[x],
-        #               R0c=R0a[x,], SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,],
-        #               movc=mov[x,,,], SRrelc=SRrel[x]))
-        
-        # message("calculating NextYrNtemp")
-   
         NextYrNtemp <- lapply(1:nsim, function(x)
           popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB[x,,y, ]), Ncurr=N[x,,y,],
                          Zcurr=matrix(M_ageArray[x,,y+nyears], ncol=nareas, nrow=maxage), 
                          PerrYr=Perr[x, y+nyears+maxage-1], hs=hs[x],
-                         R0=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
+                         R0a=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
                          mov=mov[x,,,], SRrel=SRrel[x]))
-        
-
-        # message("success!")
 
         N_PNext <- aperm(array(unlist(NextYrNtemp), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2))
         VBiomassNext <- VBiomass_P
@@ -1450,8 +1121,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         # calculate pstar quantile of TAC recommendation dist 
         TACused <- apply(Data@TAC, 2, quantile, p = pstar, na.rm = T) 
         
-        # message("calculating CalcMPDynamics")
-        
         MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim,
                                   LastEffort, LastSpatial, LastAllocat, LastCatch,
                                   TACused, maxF,
@@ -1463,14 +1132,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                   VBiomass_P, Biomass_P, FinF, Spat_targ,
                                   CAL_binsmid, Linf, Len_age, maxage, nareas, Asize,  nCALbins,
                                   qs, qvar, qinc)
-        # message("success!")
 
         TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
         LastSpatial <- MPCalcs$Si
         LastAllocat <- MPCalcs$Ai
         LastEffort <- MPCalcs$Effort
  
-        
         Effort[, mm, y] <- MPCalcs$Effort #  
         CB_P <- MPCalcs$CB_P # removals
         CB_Pret <- MPCalcs$CB_Pret # retained catch 
@@ -1488,66 +1155,13 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         
         MSElist[[mm]]@MPrec <- apply(CB_Pret[, , y, ], 1, sum)
         
-        # if (class(match.fun(MPs[mm])) == "Output") {
-        #   # output control ---- 
-        #   Data <- Sam(MSElist[[mm]], MPs = MPs[mm], perc = pstar, reps = reps)
-        #   TACused <- apply(Data@TAC, 3, quantile, p = pstar, na.rm = TRUE)  #
-        #   
-        #   TACa[, mm, y] <- TACused # recommended TAC 
-        #   
-        #   outputcalcs <- CalcOutput(y, Asize, TACused, TAC_f, lastCatch=apply(CB_P[,,y-1,], 1, sum), 
-        #                             availB=MSElist[[mm]]@OM$A, maxF, Biomass_P, VBiomass_P, 
-        #                             CB_P, CB_Pret, FM_P, Z_P, Spat_targ, V_P, 
-        #                             retA_P, M_ageArray, qs, nyears, nsim, maxage, nareas)
-        #   
-        #   Effort[, mm, y] <- outputcalcs$Effort #  
-        #   CB_P <- outputcalcs$CB_P # removals
-        #   CB_Pret <- outputcalcs$CB_Pret # retained catch 
-        #   FM_P <- outputcalcs$FM_P # fishing mortality 
-        #   Z_P <- outputcalcs$Z_P # total mortality 
-        #   
-        # } else {
-        #   # input control ----
-        #   runIn <- runInMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply input control MP
-        #   
-        #   Data <- runIn[[2]] # Data object object with saved info from MP 
-        #   InputRecs <- runIn[[1]][[1]] # input control recommendations 
-        #   
-        #   inputcalcs <- CalcInput(y, Linf, Asize, nyears, proyears, InputRecs, nsim, nareas, 
-        #                           LR5_P, LFR_P, Rmaxlen_P, maxage,
-        #                           retA_P, retL_P, V_P, V2, SLarray_P, SLarray2, 
-        #                           DR, maxlen, Len_age, CAL_binsmid, Fdisc, 
-        #                           nCALbins, E_f, SizeLim_f,
-        #                           VBiomass_P, Biomass_P, Spat_targ, FinF, qvar, 
-        #                           qs, qinc, CB_P, CB_Pret, FM_P, FM_Pret, 
-        #                           Z_P, M_ageArray, Effort[, mm, y-1],
-        #                           LastSpatial=LastSpatial, LastAllocat=LastAllocat)
-        #   
-        #   LastSpatial <- inputcalcs$Si
-        #   LastAllocat <- inputcalcs$Ai
-        #   
-        #   Effort[, mm, y] <- inputcalcs$Effort #  
-        #   CB_P <- inputcalcs$CB_P # removals
-        #   CB_Pret <- inputcalcs$CB_Pret # retained catch 
-        #   FM_P <- inputcalcs$FM_P # fishing mortality
-        #   FM_Pret <- inputcalcs$FM_Pret # retained fishing mortality 
-        #   Z_P <- inputcalcs$Z_P # total mortality
-        #   retA_P <- inputcalcs$retA_P # retained-at-age
-        #   retL_P <- inputcalcs$retL_P # retained-at-length
-        #   V_P <- inputcalcs$V_P  # vulnerable-at-age
-        #   
-        #   SLarray_P <- inputcalcs$pSLarray # vulnerable-at-length 
-        # }  # input control 
-        # MSElist[[mm]]@MPrec <- apply(CB_Pret[, , y, ], 1, sum) 
       } else {
         # --- Not an update yr ----
        
         NoMPRecs <- MPRecs 
         NoMPRecs[lapply(NoMPRecs, length) > 0 ] <- NULL
         NoMPRecs$Spatial <- NA
-        
-        # message("calculating CalcMPDynamics non update")
-        
+ 
         MPCalcs <- CalcMPDynamics(NoMPRecs, y, nyears, proyears, nsim,
                                   LastEffort, LastSpatial, LastAllocat, LastCatch,
                                   TACused, maxF,
@@ -1560,12 +1174,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                   CAL_binsmid, Linf, Len_age, maxage, nareas, Asize,  nCALbins,
                                   qs, qvar, qinc)
         
-        # message("success")
         TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
         LastSpatial <- MPCalcs$Si
         LastAllocat <- MPCalcs$Ai
         LastEffort <- MPCalcs$Effort
-        # LastCatch <- MPCalcs$TACrec
         Effort[, mm, y] <- MPCalcs$Effort #  
         CB_P <- MPCalcs$CB_P # removals
         CB_Pret <- MPCalcs$CB_Pret # retained catch 
@@ -1580,33 +1192,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         retL_P <- MPCalcs$retL_P # retained-at-length
         V_P <- MPCalcs$V_P  # vulnerable-at-age
         SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
-        
-        
-        # if (class(match.fun(MPs[mm])) == "Output") {
-        #   # TAC remains same as last year
-        #   outputcalcs <- CalcOutput(y, Asize, TACa[, mm, y], TAC_f, lastCatch=apply(CB_P[,,y-1,], 1, sum), 
-        #                             availB=MSElist[[mm]]@OM$A, maxF, Biomass_P, VBiomass_P, CB_P, CB_Pret, FM_P, Z_P, Spat_targ, V_P, 
-        #                             retA_P, M_ageArray, qs, nyears, nsim, maxage, nareas)
-        #   
-        #   Effort[, mm, y] <- outputcalcs$Effort #  
-        #   CB_P <- outputcalcs$CB_P # removals
-        #   CB_Pret <- outputcalcs$CB_Pret # retained catch 
-        #   FM_P <- outputcalcs$FM_P # fishing mortality 
-        #   Z_P <- outputcalcs$Z_P # total mortality 
-        #   
-        # } else {
-        #   # input control FM_P[SAYR] <- FM_P[SAY1R]*qvar[SY] *(1+qinc[S1]/100)^y
-        #   # # add fishing efficiency changes and variability
-        #   FM_P[SAYR] <- (FM_P[SAY1R] * qvar[SY] * (1 + qinc[S1]/100))  # add fishing efficiency changes and variability
-        #   FM_Pret[SAYR] <- (FM_Pret[SAY1R] * qvar[SY] * (1 + qinc[S1]/100))  # add fishing efficiency changes and variability
-        #   Effort[, mm, y] <-  Effort[, mm, y-1] / E_f[,y-1]  * E_f[,y]   # Effort doesn't change in non-update year
-        #   
-        #   Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt]
-        #   
-        #   CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
-        #   CB_Pret[SAYR] <- FM_Pret[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
-        # }
-        
+  
       }  # not an update year
     }  # end of year
     

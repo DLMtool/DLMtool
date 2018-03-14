@@ -614,7 +614,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   
 
   ## Introduction ####
-  writeSection(class="Intro", OM, textIn, RMDfile, color=color, inc.plot=inc.plot)
+  writeSection(class="Intro", OM, Pars, textIn, RMDfile, color=color, inc.plot=inc.plot)
   
   ## OM Details ####
   OMdesc <- DLMtool::OMDescription
@@ -663,29 +663,32 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
  
   cat("**Source**: ", OMdesc$Description[OMdesc$Slot =='Source'], "\n\n", "<span style='color:", color, "'>", " ", OM@Source, "</span>", "\n\n", append=TRUE, file=RMDfile, sep="")
   
+  ## 
+  
+
   
   useCpars <- length(OM@cpars) >0 
   ## Cpars ####
   if (useCpars) {
     message("writing cpars section")
-    writeSection(class="cpars", OM, textIn, RMDfile, color=color, 
+    writeSection(class="cpars", OM, Pars, textIn, RMDfile, color=color, 
                              inc.plot=inc.plot)
   }
   ## Stock Parameters ####
   message("writing Stock section")
-  writeSection(class="Stock", OM, textIn, RMDfile, color=color, inc.plot=inc.plot)
+  writeSection(class="Stock", OM, Pars, textIn, RMDfile, color=color, inc.plot=inc.plot)
   
   ## Fleet Parameters ####
   message("writing Fleet section")
-  writeSection(class="Fleet", OM, textIn, RMDfile, color=color, inc.plot=inc.plot)
+  writeSection(class="Fleet", OM, Pars, textIn, RMDfile, color=color, inc.plot=inc.plot)
   
   ## Observation Parameters ####
   message("writing Obs section")
-  writeSection(class="Obs", OM, textIn, RMDfile, color=color, inc.plot=inc.plot)
+  writeSection(class="Obs", OM, Pars, textIn, RMDfile, color=color, inc.plot=inc.plot)
   
   ## Implementation Parameters ####
   message("writing Imp section")
-  writeSection(class="Imp", OM, textIn, RMDfile, color=color, inc.plot=inc.plot)
+  writeSection(class="Imp", OM, Pars, textIn, RMDfile, color=color, inc.plot=inc.plot)
   
   ## OM Plots ####
   if (inc.plot) {
@@ -699,7 +702,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   
   ## References ####
   message("writing Reference section")
-  writeSection(class="References", OM, textIn, RMDfile, color=color, inc.plot=inc.plot)
+  writeSection(class="References", OM, Pars, textIn, RMDfile, color=color, inc.plot=inc.plot)
   
   ## Render Markdown ####
   if (render) {
@@ -779,7 +782,7 @@ Template <- function(type=c("Stock", "Fleet", "Obs", "Imp")) {
 }
 
 
-writeSection <- function(class=c("Intro", "Stock", "Fleet", "Obs", "Imp", "References", "cpars"), OM,
+writeSection <- function(class=c("Intro", "Stock", "Fleet", "Obs", "Imp", "References", "cpars"), OM, Pars,
                          textIn, RMDfile, color, inc.descript=TRUE, inc.plot=TRUE) {
   class <- match.arg(class)
   
@@ -877,13 +880,21 @@ writeSection <- function(class=c("Intro", "Stock", "Fleet", "Obs", "Imp", "Refer
         for (sl in slots) {
           # get slot value if not in cpars 
           if (useCpars && sl %in% names(OM@cpars)) {
-            val <- range(OM@cpars[[sl]])
+            if (length(Pars[[sl]])>0) {
+              val <- range(Pars[[sl]])
+            } else {
+              val <- range(OM@cpars[[sl]])
+            }
             val <- round(val,2)
             used <- TRUE
             val <- gsub('"', "", paste(val, collapse="\", \""))
             valtext <- paste0("Specified in cpars: ", "<span style='color:", color, "'>", " ", trimws(val), "</span>", "\n\n")
           } else {
-            val <- slot(OM, sl)
+            if (length(Pars[[sl]])>0) {
+              val <- range(Pars[[sl]])
+            } else {
+              val <- slot(OM, sl)  
+            }
             if (is.numeric(val)) val <- round(val,2)
             used <- length(val)>0 && !is.na(val) && !is.null(val) # is the slot used?
             if (used) {
@@ -1452,7 +1463,8 @@ plotM2 <- function(OM, Pars=NULL, nsim=48, nyears=50, proyears=50, nsamp=3, col=
   
   # M by year 
   ylims <- range(Pars$M_ageArray[its,, ]) * c(0.95, 1.05)
-  matplot(t(Pars$Marray[its,]), type="l", lty=1, bty="l", main="M by Year", lwd=lwd, ylab="M", ylim=ylims)
+  ylims[1] <- min(0, ylims[1] )
+  matplot(t(Pars$Marray[its,]), type="l", lty=1, bty="l", main="average adult M by Year", lwd=lwd, ylab="M", ylim=ylims)
   abline(v=nyears, col="gray", lty=2)
   text(nyears, min(Pars$Marray[its,]), "Last historical year", pos=4, col="gray")
   

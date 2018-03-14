@@ -2,7 +2,7 @@
 % Please edit documentation in R/MPs_Input.R
 \name{MRreal}
 \alias{MRreal}
-\title{An marine reserve in area 1 with full reallocation of fishing effort}
+\title{A marine reserve in area 1 with full reallocation of fishing effort}
 \usage{
 MRreal(x, Data, ...)
 }
@@ -16,7 +16,7 @@ MRreal(x, Data, ...)
 }
 \description{
 A spatial control that prevents fishing in area 1 and reallocates this
-fishing effort to area 2.
+fishing effort to area 2 (or over other areas).
 }
 \author{
 T. Carruthers

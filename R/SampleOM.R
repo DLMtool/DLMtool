@@ -79,17 +79,13 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (!all(Mexp == 0) & length(Stock@M2) == maxage) {
     stop("Values in both M2 and Mexp slots. Only one can be used")
   }
-  StockOut$Mexp <- Mexp 
-  StockOut$Msd <- Msd 
-  StockOut$Mgrad <- Mgrad
-  
+
   # == Depletion ====
   if (!exists("D", inherits=FALSE)) {
     StockOut$D <- D <- runif(nsim, Stock@D[1], Stock@D[2])  # sample from the range of user-specified depletion (Bcurrent/B0)  
   } else {
     StockOut$D <- D 
   }
-  
   
   # == Stock-Recruitment Relationship ====
   if (!exists("SRrel", inherits=FALSE)) {
@@ -182,12 +178,10 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   
   if (!exists("L95", inherits=FALSE))   L95 <- L50 + L50_95
   
-  
   if (any(L95> Linf)) {
     message("Note: Some samples of L95 are above Linf. Defaulting to 0.99*Linf")
     L95[L95> Linf] <- 0.99* Linf[L95> Linf]
   }
-  
   
   # == Sample Fecundity-Length Exponent ===
   # if (!exists("FecB", inherits=FALSE))   FecB <- runif(nsim, min(Stock@FecB), max(Stock@FecB))
@@ -206,7 +200,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   StockOut$Prob_staying <- Prob_staying
   StockOut$Size_area_1 <- Size_area_1
   
-  StockOut$Asize <- cbind(StockOut$Size_area_1, 1 - StockOut$Size_area_1)
+  if (!exists('Asize', inherits=FALSE)) Asize <- cbind(StockOut$Size_area_1, 1 - StockOut$Size_area_1)
   
   # === Generate random numbers for random walk ====
   if (!exists("Mrand", inherits=FALSE)) Mrand <- matrix(exp(rnorm(nsim*(proyears+nyears), -0.5 * Msd^2, Msd)), nrow=nsim, ncol=proyears+nyears)
@@ -247,17 +241,23 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       vB <- function(pars, ages) pars[1] * (1-exp(-pars[2]*(ages-pars[3])))
       fitVB <- function(pars, LatAge, ages) sum((vB(pars, ages) - LatAge)^2)
       starts <- c(max(Len_age), 0.2, 0)
-      message("Estimating growth parameters from length-at-age array in cpars")
+      if(Msg) message("Estimating growth parameters from length-at-age array in cpars")
       for (ss in 1:nsim) {
+        if(Msg) {
+          cat(".")
+          flush.console()
+        }
         pars <- sapply(1:(nyears + proyears), function(X) optim(starts, fitVB, LatAge=Len_age[ss,,X], ages=1:maxage)$par)
-        Linfarray[ss,] <- pars[1,]
-        Karray[ss,] <- pars[2,]
+        Linfarray[ss,] <- round(pars[1,],2)
+        Karray[ss,] <- round(pars[2,],2)
         t0[ss]<- mean(pars[3,])
       }
       Linf <- Linfarray[, nyears]
       K <- Karray[, nyears]
+      if (Msg) cat("\n")
     }
   }
+  
   StockOut$maxlen <- maxlen <- Len_age[, maxage, nyears] # reference length for Vmaxlen 
   
   # == Sample CV Length-at-age ====
@@ -370,6 +370,22 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   }
   
   # == Mean Natural mortality by simulation and year ====
+  if (exists("M_ageArray", inherits=FALSE)) {
+    if (!all(dim(M_ageArray) == c(nsim, maxage, proyears+nyears))) stop("'M_ageArray' must be array with dimensions: nsim, maxage, nyears + proyears") 
+    if(Msg) message("M_ageArray has been provided in OM@cpars. Ignoring OM@Mexp, OM@Msd, and OM@Mgrad")
+    Mexp <- Msd <- Mgrad <- rep(0, nsim)
+  }
+   
+  
+  if (!exists("Marray", inherits=FALSE) & exists("M_ageArray", inherits=FALSE)) {
+    Marray <- matrix(NA, nsim, nyears+proyears)
+    for (yr in 1:(nyears+proyears)) {
+      for (sim in 1:nsim) {
+        Marray[sim, yr] <- mean(M_ageArray[sim, ageM[sim,yr]:maxage,yr])
+      }
+    }
+  }
+  
   if (!exists("Marray", inherits=FALSE)) {
     Marray <- gettempvar(M, Msd, Mgrad, nyears + proyears, nsim, Mrand)  # M by sim and year according to gradient and inter annual variability
   } else {
@@ -423,7 +439,47 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     }  
   }
   
-  if(exists("mov")) StockOut$mov <- mov
+  # --- Calculate movement ----
+  initdist <- Pinitdist <- NULL
+  if (!exists("mov", inherits=FALSE)) {
+    if(Msg) message("Optimizing for user-specified movement")  # Print a progress update
+    nareas<-2 # default is a 2 area model
+    mov1 <- array(t(sapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
+                           Prob_staying = Prob_staying)), dim = c(nsim, nareas, nareas))
+    mov<-array(NA,c(nsim,maxage,nareas,nareas))
+    mind<-as.matrix(expand.grid(1:nsim,1:maxage,1:nareas,1:nareas))
+    mov[mind]<-mov1[mind[,c(1,3,4)]]
+    
+    initdist <- array(0,c(nsim,maxage,nareas))
+    initdist[,,1]<-Frac_area_1
+    initdist[,,2]<- 1- Frac_area_1  
+    
+  }else{ # if mov is specified need to calculate age-based spatial distribution (Pinitdist to initdist)
+    nareas<-dim(mov)[3]
+    if(Msg) message(paste("Custom movement matrix detected, simulating movement among",nareas,"areas"))
+    
+    mind<-as.matrix(expand.grid(1:nsim,maxage,1:nareas,1:nareas))
+    movedarray<-array(0,c(nsim,nareas,nareas))
+    Pinitdist<-array(1/nareas,c(nsim,nareas))
+    for(i in 1:20){ # convergence in initial distribution is assumed to occur in 20 iterations (generally overkill)
+      movedarray[mind[,c(1,3,4)]]<-Pinitdist[mind[,c(1,3)]]*mov[mind] # distribution in from areas mulitplied by movement array
+      Pinitdist<-apply(movedarray,c(1,3),sum) # add over to areas
+      #print(initdist[1:2,]) # debugging to check convergence
+    }
+    
+  }
+  
+  if (dim(Asize)[2]!=nareas) {
+    if(Msg) message('Asize is not length "nareas", assuming all areas equal size')
+    Asize <- matrix(1/nareas, nrow=nsim, ncol=nareas)
+  }
+  
+  
+  
+  StockOut$Mexp <- Mexp 
+  StockOut$Msd <- Msd 
+  StockOut$Mgrad <- Mgrad
+  
   StockOut$ageM <- ageM
   StockOut$age95 <- age95
   StockOut$Linfarray <- Linfarray
@@ -458,6 +514,12 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   StockOut$CAL_binsmid <- CAL_binsmid
   StockOut$CAL_bins <- CAL_bins
   StockOut$nCALbins <- nCALbins
+  
+  StockOut$initdist <- initdist 
+  StockOut$mov <- mov
+  StockOut$Pinitdist <- Pinitdist
+  StockOut$Asize <- Asize 
+  StockOut$nareas <- nareas 
   
   return(StockOut)
 }
@@ -565,6 +627,9 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   # ==== Sample selectivity parameters ====
   Selnyears <- length(Fleet@SelYears)
   # are selectivity parameters relative to size at maturity?
+  
+  
+  
   chk <- class(Fleet@isRel)
   if (length(Fleet@isRel) < 1) Fleet@isRel <- "true"
   if (chk == "character") {
@@ -576,6 +641,12 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
     if (Fleet@isRel == 1) multi <- L50
     if (Fleet@isRel == 0) multi <- 1
   }
+ 
+  if (exists("L5", inherits = FALSE) | exists("LFS", inherits = FALSE) | 
+      exists("Vmaxlen", inherits = FALSE) | exists("V", inherits=FALSE)) {
+    if (multi != 1) stop("Selectivity parameters provided in cpars must be absolute values. Is Fleet@isRel == 'FALSE'?")
+  }
+  
   if (!exists("L5", inherits = FALSE)) L5 <- runif(nsim, Fleet@L5[1], Fleet@L5[2]) * multi  # length at 0.05% selectivity ascending
   if (!exists("LFS", inherits = FALSE)) LFS <- runif(nsim, Fleet@LFS[1], Fleet@LFS[2]) * multi  # first length at 100% selection
   if (!exists("Vmaxlen", inherits = FALSE)) Vmaxlen <- runif(nsim, Fleet@Vmaxlen[1], Fleet@Vmaxlen[2])  # selectivity at maximum length
@@ -976,7 +1047,8 @@ validcpars <- function(print=TRUE) {
                    "ageM", "age95", "EffYears", "EffLower", "EffUpper",
                    "Wt_age", "Len_age", "Marray", "M_at_Length", "LenCV", 
                    "CAL_binsmid", "CAL_bins", "LatASD", "dFfinal",
-                   "LR5", "LFR", "Rmaxlen", "DR", "Fdisc","M_ageArray")) 
+                   "LR5", "LFR", "Rmaxlen", "DR", "Fdisc","M_ageArray",
+                   "Linfarray", "Karray")) 
   
   if (print) {
     n <- length(vnames)

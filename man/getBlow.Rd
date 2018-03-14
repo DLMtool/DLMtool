@@ -4,13 +4,28 @@
 \alias{getBlow}
 \title{Blow parallel optimization function}
 \usage{
-getBlow(x, SSBMSY, MGThorizon, Find, Perr, M_ageArray, hs, Mat_age, Wt_age, R0,
-  V, nyears, maxage, mov, Spat_targ, SRrel, aR, bR, Bfrac = 0.5, ploty = F)
+getBlow(x, N, Asize, SSBMSY, SSBpR, MPA, SSB0, nareas, retA, MGThorizon, Find,
+  Perr, M_ageArray, hs, Mat_age, Wt_age, R0a, V, nyears, maxage, mov, Spat_targ,
+  SRrel, aR, bR, Bfrac = 0.5, maxF, ploty = F)
 }
 \arguments{
 \item{x}{position in a vector}
 
+\item{N}{array of numbers at age by sim and area (dims nsim, maxage, nyears, nareas)}
+
+\item{Asize}{matrix of area size (nsim by nareas)}
+
 \item{SSBMSY}{vector nsim long of spawning biomass at MSY}
+
+\item{SSBpR}{matrix nsim by nareas with SSB per recruit}
+
+\item{MPA}{matrix nyears + proyears by nareas of spatial closures}
+
+\item{SSB0}{vector of SSB0 length nsim}
+
+\item{nareas}{numeric. number of areas}
+
+\item{retA}{array of retention nsim x maxage x nyears}
 
 \item{MGThorizon}{vector nsim long of MGT x HZN}
 
@@ -26,7 +41,7 @@ getBlow(x, SSBMSY, MGThorizon, Find, Perr, M_ageArray, hs, Mat_age, Wt_age, R0,
 
 \item{Wt_age}{matrix nsim x nages of weight at age}
 
-\item{R0}{vector nsim long of unfished recruitment}
+\item{R0a}{matrix nsim by nareas of unfished recruitment}
 
 \item{V}{array of vulnerability nsim x maxage x nyears}
 
@@ -46,6 +61,8 @@ getBlow(x, SSBMSY, MGThorizon, Find, Perr, M_ageArray, hs, Mat_age, Wt_age, R0,
 
 \item{Bfrac}{fraction of SSBMSY that is the target}
 
+\item{maxF}{maximum apical fishing mortality}
+
 \item{ploty}{logical: should a plot be produced}
 }
 \description{
@@ -53,5 +70,5 @@ Find the current biomass at which it would take HZN mean generation times
 to reach Bfrac x SSBMSY biomass level given zero catches
 }
 \author{
-T. Carruthers
+T. Carruthers with modifications by A. Hordyk
 }

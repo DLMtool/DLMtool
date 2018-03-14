@@ -132,10 +132,10 @@ class(slotlim) <- "MP"
 
 # --- Spatial Closure MPs ----
 
-#' An marine reserve in area 1 with full reallocation of fishing effort
+#' A marine reserve in area 1 with full reallocation of fishing effort
 #' 
 #' A spatial control that prevents fishing in area 1 and reallocates this
-#' fishing effort to area 2.
+#' fishing effort to area 2 (or over other areas).
 #' 
 #' 
 #' @param x A position in data / simulation object DLM
@@ -149,7 +149,7 @@ MRreal <- function(x, Data, ...) {
   
   rec <- new("Rec") # create recommendation object
   rec@Allocate <- 1
-  rec@Spatial <- c(0,1)
+  rec@Spatial <- c(0, rep(1, Data@nareas-1))
   
   # other slots aren't specified so remain unchanged
   return(rec)
@@ -175,7 +175,7 @@ MRnoreal <- function(x, Data, ...) {
   
   rec <- new("Rec") # create recommendation object
   rec@Allocate <- 0
-  rec@Spatial <- c(0,1)
+  rec@Spatial <- c(0, rep(1, Data@nareas-1))
   
   # other slots aren't specified so remain unchanged
   return(rec)

@@ -36,7 +36,7 @@ Itarget1_MPA <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5) 
   }
   Rec <- new("Rec")
   Rec@TAC <- TACfilter(TAC)
-  Rec@Spatial <- c(0,1)
+  Rec@Spatial <- c(0, rep(1, Data@nareas-1))
   Rec
 }
 class(Itarget1_MPA) <- "MP"
