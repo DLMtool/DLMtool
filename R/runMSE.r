@@ -1217,6 +1217,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     CALout[ , mm, ] <- CAL[,max(dim(CAL)[2]),] # catch-at-length in last year
     
     if (!silent) cat("\n")
+    if("progress"%in%names(control))if(control$progress)incProgress(1/nMP, detail = round(mm*100/nMP))
   }  # end of mm methods 
   
   # Miscellaneous reporting
