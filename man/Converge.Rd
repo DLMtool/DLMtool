@@ -4,20 +4,55 @@
 \alias{Converge}
 \title{Check Convergence}
 \usage{
-Converge(MSEobj, thresh = 2, Plot = TRUE)
+Converge(MSEobj, PMs = list(Yield, P10, AAVY), maxMP = 15, thresh = 2,
+  ref.it = 20, inc.leg = FALSE, all.its = FALSE, nrow = NULL,
+  ncol = NULL)
 }
 \arguments{
 \item{MSEobj}{An MSE object of class \code{'MSE'}}
 
-\item{thresh}{The convergence threshold (percentage). If mean performance
-metrics from the last 20 simulations are within thresh percent of the last interation, the MSE
-can be considered to have converged.}
+\item{PMs}{A list of PM objects}
 
-\item{Plot}{Should figures be plotted?}
+\item{maxMP}{Maximum number of MPs to include in a single plot}
+
+\item{thresh}{The convergence threshold (percentage). Maximum average difference in the 
+performance metric over the last `ref.it` iterations}
+
+\item{ref.it}{The number of iterations to calculate the convergence statistics. For example,
+a value of 20 means convergence diagnostics are calculated over last 20 simulations}
+
+\item{inc.leg}{Logical. Should the legend be displayed?}
+
+\item{all.its}{Logical. Plot all iterations? Otherwise only (nsim-ref.it):nsim}
+
+\item{nrow}{Numeric. Optional. Number of rows}
+
+\item{ncol}{Numeric. Optional. Number of columns}
 }
 \description{
 Have I undertaken enough simulations (nsim)? Has my MSE converged on stable
 (reliable) peformance metrics?
+}
+\details{
+Performance metrics are plotted against the number of simulations. Convergence diagonostics 
+are calculated over the last `ref.it` (default = 20) iterations. The convergence diagnostics are:
+\enumerate{
+  \item Is the order of the MPs stable over the last `ref.it` iterations? 
+  \item Is the average difference in performance statistic over the last `ref.it` iterations < `thresh`?
+}
+
+By default three commonly used performance metrics are used: 
+\enumerate{
+  \item Average Yield Relative to Reference Yield 
+  \item Probability Spawning Biomass is above 0.1BMSY  
+  \item Probability Average Annual Variability in Yield is < 20 per cent
+}
+Additional or alternative performance metrics objects can be supplied. Advanced users can develop their own performance metrics.
+}
+\examples{
+MSE <- runMSE()
+Converge(MSE)
+
 }
 \author{
 A. Hordyk

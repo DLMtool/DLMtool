@@ -6,34 +6,34 @@
 #' @param name Name of the data file. Default is Data.xlsx
 #' @param ext Optional file extension. 'xlsx' (default) or 'csv'
 #' @param overwrite Logical. Overwrite existing files?
+#' @param dir Optional directory path to create the Data file. Default is `getwd()``
 #'
 #' @return Nothing. Creates a data file in the working directory.
 #' @export
 #' 
 #' @author A. Hordyk
 #'
-DataInit <- function(name="Data", ext=c("xlsx", "csv"), overwrite=FALSE) {
+DataInit <- function(name="Data", ext=c("xlsx", "csv"), overwrite=FALSE, dir=NULL) {
   ext <- match.arg(ext)
-  
+  if (is.null(dir)) dir <- getwd()
   name <- paste(name, ext, sep=".")
   # Copy xlsx file over to working directory 
  
-  message("Creating ", name, " in ", getwd())
+  message("Creating ", name, " in ", dir)
   
   if (ext == "xlsx") {
     path <- system.file("Data.xlsx", package = "DLMtool")
     pathout <- gsub("Data.xlsx", name, path)
-    pathout <- gsub(dirname(pathout), getwd(), pathout)
+    pathout <- gsub(dirname(pathout), dir, pathout)
   } else {
     path <- system.file("Data.csv", package = "DLMtool")
     pathout <- gsub("Data.csv", name, path)
-    pathout <- gsub(dirname(pathout), getwd(), pathout) 
+    pathout <- gsub(dirname(pathout), dir, pathout) 
   }
 
   # Check if file exists 
   exist <- file.exists(pathout)
-  if (exist & !overwrite) stop(name, " already exists in working directory. Use 'overwrite=TRUE' to overwrite", 
-                               call.=FALSE)
+  if (exist & !overwrite) stop(name, " already exists in ", dir, ". Use 'overwrite=TRUE' to overwrite", call.=FALSE)
   copy <- file.copy(path, pathout, overwrite = overwrite)
   if (!copy) stop("Excel file not copied from ", path)
 
@@ -44,33 +44,33 @@ DataInit <- function(name="Data", ext=c("xlsx", "csv"), overwrite=FALSE) {
 #' Import a Data object from Excel file
 #'
 #' @param name Name of the data file, with or without file extension.
-#'
+#' @param dir Optional file path. Default is `getwd()`
 #' @return An object of class 'Data'
 #' @export
 #' @author A. Hordyk
-XL2Data <- function(name="Data") {
+XL2Data <- function(name="Data", dir=NULL) {
   if (class(name) != 'character') stop("file name must be provided", call.=FALSE)
+  if (is.null(dir)) dir <- getwd()
   if (nchar(tools::file_ext(name)) == 0) {
     xl.fname1 <- paste0(name, ".xlsx")
     xl.fname2 <- paste0(name, ".csv")
-    fls <- file.exists(c(xl.fname1, xl.fname2))
-    if (sum(fls) == 0) stop(xl.fname1, " or ", xl.fname2, " not found")
+    fls <- file.exists(c(file.path(dir, xl.fname1), file.path(dir,xl.fname2)))
+    if (sum(fls) == 0) stop(xl.fname1, " or ", xl.fname2, " not found in ", dir)
     if (sum(fls) > 1) stop(name, " found with multiple extensions. Specify file extension.", call.=FALSE)
     name <- c(xl.fname1, xl.fname2)[fls]
   }
   
-  if (!file.exists(name)) stop(name, " not found", call.=FALSE) 
+  if (!file.exists(file.path(dir, name))) stop(file.path(dir, name), " not found", call.=FALSE) 
   
   isCSV <- grepl('.csv', name)
   message("Reading ", name)
   if (isCSV) {
-    Data <- new("Data", name)
+    Data <- new("Data", file.path(dir,name))
   } else {
-    sheetnames <- readxl::excel_sheets(name)  # names of the sheets
-    datasheet <- as.data.frame(readxl::read_excel(name, sheet = 1, col_names = FALSE))
-    if (datasheet[1,1]== "Slot") datasheet <- as.data.frame(readxl::read_excel(name, sheet = 1, col_names = FALSE, skip=1))
+    sheetnames <- readxl::excel_sheets(file.path(dir,name))  # names of the sheets
+    datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE))
+    if (datasheet[1,1]== "Slot") datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE, skip=1))
    
-    
     if (all(dim(datasheet) == 0)) stop("Nothing found in first sheet", call.=FALSE)
     tmpfile <- tempfile(fileext=".csv")
     writeCSV2(inobj = datasheet, tmpfile, objtype = "Data")
@@ -137,7 +137,7 @@ runMP <- function(Data, MPs = NA, reps = 100, perc=0.5, chkMPs=TRUE, silent=FALS
     allNA <- colSums(apply(mat, 2, is.na)) == length(MPs)
     matout <- data.frame(round(mat[,!allNA], 2), stringsAsFactors = FALSE)
     names(matout) <- names[!allNA]
-    if (!silent) print(matout)
+    if (!silent) print(as.matrix(matout), na.print="")
   }
   if (nrow(mat) == 1) {
     mat <- data.frame(mat)
@@ -145,7 +145,7 @@ runMP <- function(Data, MPs = NA, reps = 100, perc=0.5, chkMPs=TRUE, silent=FALS
     matout <- matrix(matout, nrow=nrow(mat))
     colnames(matout) <- names[!is.na(mat)]
     rownames(matout) <- MPs
-    if (!silent) print(round(matout),2)
+    if (!silent) print(as.matrix(round(matout,2)), na.print="")
   }
   
   invisible(MPrecs[[2]])

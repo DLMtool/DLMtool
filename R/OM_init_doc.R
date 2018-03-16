@@ -1,16 +1,17 @@
 #' Copy example OM XL and OM Documentation 
 #'
+#' @param dir the file path to copy the files to 
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' OMexample()
 #' }
-OMexample <- function() {
+OMexample <- function(dir) {
   fromRMD <- system.file("Example_Chile_Hake.Rmd", package="DLMtool")
-  tt <- file.copy(fromRMD, getwd(), overwrite = TRUE)
+  tt <- file.copy(fromRMD, dir, overwrite = TRUE)
   fromXL <- system.file("Example_Chile_hake.xlsx", package="DLMtool")
-  tt <- file.copy(fromXL, getwd(), overwrite = TRUE)
+  tt <- file.copy(fromXL, dir, overwrite = TRUE)
 }
 
 #' Initialize Operating Model
@@ -23,6 +24,7 @@ OMexample <- function() {
 #' @param ... Optional DLMtool objects to use as templates: OM, Stock, Fleet, Obs, or Imp objects
 #' @param files What files should be created: 'xlsx', 'rmd', or c('xlsx', 'rmd') (default: both)
 #' to use as templates for the Operating Model.
+#' @param dir Optional file path to create the xlsx and rmd files. Default is `getwd()`
 #' @param overwrite Logical. Should files be overwritten if they already exist?
 #'
 #' @return name.xlsx and name.rmd files are created in the working directory.  
@@ -47,22 +49,24 @@ OMexample <- function() {
 #' OMinit('myOM', Herring, Generic_obs)
 #' }
 #' 
-OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
+OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), dir=NULL, overwrite=FALSE) {
   files <- match.arg(files, several.ok = TRUE)
+  
+  if(is.null(dir)) dir <- getwd()
   
   if (is.null(name)) stop("Require OM name", call.=FALSE)
   
   if (tolower(name) == 'example') {
-    OMexample()
-    return(message("Creating Example Files in ", getwd()))
+    OMexample(dir)
+    return(message("Creating Example Files in ", dir))
   }
   if (class(name) != 'character') stop("name must be text", call.=FALSE)
  
   ## Create Folders ####
-  if(!dir.exists('data')) dir.create('data')
-  if(!dir.exists('docs')) dir.create('docs')
-  if(!dir.exists('images')) dir.create('images')
-  if(!dir.exists('robustness')) dir.create('robustness')
+  if(!dir.exists(file.path(dir,'data'))) dir.create(file.path(dir,'data'))
+  if(!dir.exists(file.path(dir,'docs'))) dir.create(file.path(dir,'docs'))
+  if(!dir.exists(file.path(dir,'images'))) dir.create(file.path(dir,'images'))
+  if(!dir.exists(file.path(dir,'robustness'))) dir.create(file.path(dir,'robustness'))
 
   ## Write Excel skeleton ####
   if (nchar(tools::file_ext(name)) == 0) {
@@ -125,10 +129,10 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
    
     # Copy xlsx file over to working directory 
     # Copy the Excel File ####
-    message("Creating ", name, " in ", getwd())
+    message("Creating ", name, " in ", dir)
     path <- system.file("OM.xlsx", package = "DLMtool")
     pathout <- gsub("OM.xlsx", name, path)
-    pathout <- gsub(dirname(pathout), getwd(), pathout)
+    pathout <- gsub(dirname(pathout), dir, pathout)
     
     # Check if file exists 
     exist <- file.exists(pathout)
@@ -139,7 +143,7 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
     
     # loop through slot values if Obj template provided
     if (useTemp) {
-      wb <- openxlsx::loadWorkbook(name)
+      wb <- openxlsx::loadWorkbook(file.path(dir, name))
       names <- c("Stock", "Fleet", "Obs", "Imp")
       for (objname in names) {
         if (!is.null(ObTemplates[objname])) {
@@ -164,7 +168,7 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
       }
       
       # OM tab not currently updated
-      openxlsx::saveWorkbook(wb, name, overwrite = TRUE)
+      openxlsx::saveWorkbook(wb, file.path(dir,name), overwrite = TRUE)
       
     }
     
@@ -175,23 +179,22 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
   if ('rmd' %in% files) { 
     # RMD File ####
     rmdname <- paste0(nameNoExt, '.rmd')
-    message("Creating ", rmdname, " in ", getwd())
+    message("Creating ", rmdname, " in ", dir)
     path <- system.file("OM.rmd", package = "DLMtool")
     if (nchar(path) <1) stop("OM.rmd not found in DLMtool package")
     pathout <- gsub("OM.rmd", rmdname, path)
-    pathout <- gsub(dirname(pathout), getwd(), pathout)
+    pathout <- gsub(dirname(pathout), dir, pathout)
     
     # Check if file exists 
     exist <- file.exists(pathout)
-    if (exist & !overwrite) stop(rmdname, " alread exists in working directory. Use 'overwrite=TRUE' to overwrite", 
-                                 call.=FALSE)
+    if (exist & !overwrite) stop(rmdname, " alread exists in ", dir, ". Use 'overwrite=TRUE' to overwrite", call.=FALSE)
     copy <- file.copy(path, pathout, overwrite = overwrite)
     if (!copy) stop("Rmd file not copied from ", path)
     
     # Copy over templates - if used ####
     if (length(ObTemplates)>0) {
       names <- c("Stock", "Fleet", "Obs", "Imp")
-      textIn <- readLines(rmdname)
+      textIn <- readLines(file.path(dir,rmdname))
       for (objname in names) {
         if (!is.null(ObTemplates[objname])) {
           obj <- ObTemplates[objname][[1]]
@@ -206,7 +209,7 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), overwrite=FALSE) {
           }
         }
       }
-      writeLines(textIn, con = rmdname, sep = "\n", useBytes = FALSE)
+      writeLines(textIn, con = file.path(dir, rmdname), sep = "\n", useBytes = FALSE)
     }
   } 
   
@@ -357,7 +360,7 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
 #' but may require additional software and have some formatting issues.
 #' @param openFile Logical. Should the compiled file be opened in web browser?
 #' @param quiet TRUE to supress printing of the pandoc command line.
-#'
+#' @param dir Optional file path to read the xlsx and rmd files. Default is `getwd()`
 #' @return Creates a Rmarkdown file and compiles a HTML report file in the working directory.
 #' @export
 #' @importFrom methods getSlots
@@ -371,40 +374,42 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
 #' OMdoc(myOM)
 #' }
 OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,  
-                  inc.plot=TRUE, render=TRUE, output="html_document", openFile=TRUE, quiet=FALSE) {
+                  inc.plot=TRUE, render=TRUE, output="html_document", openFile=TRUE, quiet=FALSE,
+                  dir=NULL) {
   # markdown compile options
   toc=TRUE; color="blue";  theme="flatly"
+  if (is.null(dir)) dir <- getwd()
   OMXLname <- NULL
+  
   if (class(OM) == "OM") {
     # nothing
   } else if (class(OM) == 'character') {
     OMXLname <- OM
-    OM <- XL2OM(OM, msg=FALSE)
+    OM <- XL2OM(file.path(dir,OM), msg=FALSE)
   } else if (is.null(OM)) {
-    fls <- list.files(pattern=".xlsx", ignore.case=TRUE)
+    fls <- list.files(path=dir, pattern=".xlsx", ignore.case=TRUE)
     fls <- fls[!grepl('~', fls)]
-    if (length(fls)==1) OM <- XL2OM(fls, msg=FALSE)
-    if (length(fls)>1) stop('argument "OM" not provided and multiple .xlsx files in working directory', call.=FALSE)
+    if (length(fls)==1) OM <- XL2OM(file.path(dir,fls), msg=FALSE)
+    if (length(fls)>1) stop('argument "OM" not provided and multiple .xlsx files in ', dir, call.=FALSE)
   } else stop('OM must be class "OM" or name of OM xlsx file.', call.=FALSE)
   
   if (is.null(OM)) stop('OM not imported. Is the name correct?', call.=FALSE)
   ## Read in Rmd.source file ####
   if (is.null(rmd.source)) {
-    rmd.source <- list.files(pattern=".rmd", ignore.case=TRUE)
-    if (length(rmd.source) == 0) stop("rmd.source' not specified and no .rmd files found in working directory", call.=FALSE)
+    rmd.source <- list.files(path=dir, pattern=".rmd", ignore.case=TRUE)
+    if (length(rmd.source) == 0) stop("rmd.source' not specified and no .rmd files found in ", dir, call.=FALSE)
     if (length(rmd.source) == 1) {
-      # message("rmd.source not specified. Reading ", rmd.source, " found in working directory")
-      textIn <- readLines(rmd.source)
+      textIn <- readLines(file.path(dir,rmd.source))
     } else {
       NoExt <- tools::file_path_sans_ext(rmd.source)
       if (!is.null(OMXLname)) ind <- which(tolower(NoExt) == tolower(paste0(OMXLname, "_source")))
       if (is.null(OMXLname)) ind <- which(tolower(NoExt) == tolower(paste0(OM@Name, "_source")))
       if (length(ind) > 0) {
         rmd.source <- rmd.source[ind]
-        message("Reading ", rmd.source)
-        textIn <- readLines(rmd.source)
+        message("Reading ", file.path(dir,rmd.source))
+        textIn <- readLines(file.path(dir,rmd.source))
       } else {
-        stop("'rmd.source' not specified and multiple .rmd files found in working directory", call.=FALSE)
+        stop("'rmd.source' not specified and multiple .rmd files found in ", dir, call.=FALSE)
       }
     }
   } else {
@@ -412,28 +417,28 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
       rmd.source <- paste0(rmd.source, ".rmd")
     } else if (tools::file_ext(rmd.source) != "rmd") stop("rmd.source extension must be rmd", call.=FALSE)
     
-    if (!file.exists(rmd.source)) stop(rmd.source, " not found in working directory", call.=FALSE)
-    message("Reading ", rmd.source)
-    textIn <- readLines(rmd.source)
+    if (!file.exists(rmd.source)) stop(rmd.source, " not found in ", dir, call.=FALSE)
+    message("Reading ", file.path(dir,rmd.source))
+    textIn <- readLines(file.path(dir,rmd.source))
   }
   
   ## Create Markdown file ####
-  if (!dir.exists('build')) {
-    dir.create('build')
-    tt <- file.create('build/readme.txt')
-    cat("This directory was created by DLMtool function OMdoc\n\n", sep="", append=TRUE, file='build/readme.txt') 
-    cat("Files in this directory are used to generate the OM report.\n\n", sep="", append=TRUE, file='build/readme.txt') 
+  if (!dir.exists(file.path(dir, 'build'))) {
+    dir.create(file.path(dir, 'build'))
+    tt <- file.create(file.path(dir,'build/readme.txt'))
+    cat("This directory was created by DLMtool function OMdoc\n\n", sep="", append=TRUE, file=file.path(dir,'build/readme.txt')) 
+    cat("Files in this directory are used to generate the OM report.\n\n", sep="", append=TRUE, file=file.path(dir,'build/readme.txt')) 
   } 
   
-  if(dir.exists("images")) {
-    dir.create('build/images', showWarnings = FALSE)
-    cpy <- file.copy('images', 'build', overwrite=TRUE, recursive = TRUE)
+  if(dir.exists(file.path(dir,"images"))) {
+    dir.create(file.path(dir,'build/images'), showWarnings = FALSE)
+    cpy <- file.copy(file.path(dir,'images'), file.path(dir,'build'), overwrite=TRUE, recursive = TRUE)
   }
 
   if (is.null(out.file)) out.file <- tools::file_path_sans_ext(rmd.source)
   # out.file <- gsub("_source", "_compiled", out.file)
   
-  RMDfile <- paste0("build/", out.file, ".Rmd")
+  RMDfile <- file.path(dir, paste0("build/", out.file, ".Rmd"))
   # if (file.exists(RMDfile) & !overwrite) {
   #   stop(RMDfile, " already exists.\n Provide a different output file name ('out.file') or use 'overwrite=TRUE'")
   # } else {
@@ -541,9 +546,9 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
     fileName <- gsub(" ", "", gsub("[[:punct:]]", "", fileName))
     if (nchar(fileName)>15) fileName <-  substr(fileName, 1, 15)
       
-    if (file.exists(paste0('build/', fileName, '.dat'))) {
+    if (file.exists(paste0(file.path(dir, 'build/', fileName, '.dat')))) {
       # OM has been documented before - check if it has changed
-      testOM <- readRDS(paste0("build/", fileName, '.dat'))
+      testOM <- readRDS(file.path(dir,paste0("build/", fileName, '.dat')))
       if (class(testOM) == 'OM') {
         # check if OM has changed 
         changed <- rep(FALSE, length(slotNames(OM)))
@@ -570,16 +575,16 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
         }
         if (sum(changed)>0) runSims <- TRUE 
         if (sum(changed) == 0) {
-          out <-  readRDS(paste0('build/', fileName, 'Hist.dat'))
+          out <-  readRDS(file.path(dir,paste0('build/', fileName, 'Hist.dat')))
           Pars <- c(out$SampPars, out$TSdata, out$MSYs)  
         }
       } else {
-        file.remove(paste0('build/',fileName, '.dat'))
+        file.remove(file.path(dir,paste0('build/',fileName, '.dat')))
         runSims <- TRUE
       }
      
     } else{
-      saveRDS(OM, file=paste0('build/', fileName, '.dat'))
+      saveRDS(OM, file=file.path(dir,paste0('build/', fileName, '.dat')))
       runSims <- TRUE
     }
     
@@ -592,7 +597,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
       }
       out<- runMSE(OM2,Hist=T, parallel = FALSE, silent=TRUE)
       Pars <- c(out$SampPars, out$TSdata, out$MSYs)  
-      saveRDS(out, file=paste0('build/', fileName, 'Hist.dat'))
+      saveRDS(out, file=file.path(dir,paste0('build/', fileName, 'Hist.dat')))
     }
   }
   
@@ -610,9 +615,6 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
     textIn <- textIn[ind:length(textIn)]
   }
   
-  message("Writing markdown file")
-  
-
   ## Introduction ####
   writeSection(class="Intro", OM, Pars, textIn, RMDfile, color=color, inc.plot=inc.plot)
   
@@ -707,8 +709,9 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   ## Render Markdown ####
   if (render) {
     RMDfileout <- gsub("_compiled", "", tools::file_path_sans_ext(RMDfile))
-    if (output == "html_document") RMDfileout <- paste0(unlist(strsplit(RMDfileout, "/"))[2], ".html")
-    if (output == "pdf_document") RMDfileout <- paste0(unlist(strsplit(RMDfileout, "/"))[2], ".pdf")
+  
+    if (output == "html_document") RMDfileout <- paste0(basename(RMDfileout), ".html")
+    if (output == "pdf_document") RMDfileout <- paste0(basename(RMDfileout), ".pdf")
 
     message("\n\nRendering markdown document as ", RMDfileout)
     EffYears <- seq(from=(OM@CurrentYr -  OM@nyears + 1), to=OM@CurrentYr, length.out=length(OM@EffYears))
@@ -716,9 +719,9 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
     Effvals <- data.frame(EffYears=EffYears, EffLower=OM@EffLower, EffUpper=OM@EffUpper)
     params <- list(OM=OM, Pars=Pars, Effvals=Effvals, out=out)
     rmarkdown::render(input=RMDfile, output_file=RMDfileout, output_format=output, 
-                      output_dir=getwd(), param=params, quiet=quiet)
+                      output_dir=dir, param=params, quiet=quiet)
     
-    if (openFile) utils::browseURL(file.path(getwd(), RMDfileout))
+    if (openFile) utils::browseURL(RMDfileout)
     
   } else {
     

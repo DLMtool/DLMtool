@@ -3,115 +3,272 @@
 #' Have I undertaken enough simulations (nsim)? Has my MSE converged on stable
 #' (reliable) peformance metrics?
 #' 
+#' Performance metrics are plotted against the number of simulations. Convergence diagonostics 
+#' are calculated over the last `ref.it` (default = 20) iterations. The convergence diagnostics are:
+#' \enumerate{
+#'   \item Is the order of the MPs stable over the last `ref.it` iterations? 
+#'   \item Is the average difference in performance statistic over the last `ref.it` iterations < `thresh`?
+#' } 
 #' 
+#' By default three commonly used performance metrics are used: 
+#' \enumerate{
+#'   \item Average Yield Relative to Reference Yield 
+#'   \item Probability Spawning Biomass is above 0.1BMSY  
+#'   \item Probability Average Annual Variability in Yield is < 20 per cent
+#' }
+#' Additional or alternative performance metrics objects can be supplied. Advanced users can develop their own performance metrics.
+#'  
 #' @param MSEobj An MSE object of class \code{'MSE'}
-#' @param thresh The convergence threshold (percentage). If mean performance
-#' metrics from the last 20 simulations are within thresh percent of the last interation, the MSE
-#' can be considered to have converged.
-#' @param Plot Should figures be plotted?
+#' @param PMs A list of PM objects
+#' @param maxMP Maximum number of MPs to include in a single plot
+#' @param thresh The convergence threshold (percentage). Maximum average difference in the 
+#' performance metric over the last `ref.it` iterations
+#' @param ref.it The number of iterations to calculate the convergence statistics. For example,
+#' a value of 20 means convergence diagnostics are calculated over last 20 simulations
+#' @param inc.leg Logical. Should the legend be displayed?
+#' @param all.its Logical. Plot all iterations? Otherwise only (nsim-ref.it):nsim
+#' @param nrow Numeric. Optional. Number of rows
+#' @param ncol Numeric. Optional. Number of columns
+#' 
+#' @examples 
+#' MSE <- runMSE()
+#' Converge(MSE)
+#' 
 #' @author A. Hordyk
-#' @export Converge
-Converge <- function(MSEobj, thresh = 2, Plot = TRUE) {
-  nm <- MSEobj@nMPs
+#' @export 
+#' 
+Converge <- function(MSEobj, PMs=list(Yield, P10, AAVY), maxMP=15, thresh=2, ref.it=20,
+                     inc.leg=FALSE, all.its=FALSE, nrow=NULL, ncol=NULL) {
+  
+  
+  if(class(MSEobj) != "MSE") stop("MSEobj must be object of class 'MSE'", call.=FALSE)
+  if(MSEobj@nMPs <2) stop("Converge requires more than 1 MP in the MSE object", call.=FALSE)
+  
+  nPMs <- length(PMs)
+  if (is.null(ncol)) ncol <- floor(sqrt(nPMs))
+  if (is.null(nrow)) nrow <- ceiling(nPMs)/ncol
+  if (ncol * nrow < nPMs) stop("ncol x nrow must be > length(PMs)")
+ 
+  if (MSEobj@nMPs > maxMP) {
+    nplots <- ceiling(MSEobj@nMPs /maxMP)
+  } else{
+    nplots <- 1
+  }
+  
   nsim <- MSEobj@nsim
-  proyears <- MSEobj@proyears
-  
-  Yd <- CumlYd <- array(NA, c(nm, nsim))
-  P10 <- CumlP10 <- array(NA, c(nm, nsim))
-  P50 <- CumlP50 <- array(NA, c(nm, nsim))
-  P100 <- CumlP100 <- array(NA, c(nm, nsim))
-  POF <- CumlPOF <- array(NA, c(nm, nsim))
-  yind <- max(MSEobj@proyears - 4, 1):MSEobj@proyears
-  RefYd <- MSEobj@OM$RefY
-  
-  for (m in 1:nm) {
-    Yd[m, ] <- round(apply(MSEobj@C[, m, yind], 1, mean, na.rm = T)/RefYd *  100, 1)
-    POF[m, ] <- round(apply(MSEobj@F_FMSY[, m, ] >= 1, 1, sum, na.rm = T)/proyears * 100, 1)
-    P10[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] <= 0.1, 1, sum, na.rm = T)/proyears * 100, 1)
-    P50[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] <= 0.5, 1, sum, na.rm = T)/proyears * 100, 1)
-    P100[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] <= 1, 1, sum, na.rm = T)/proyears * 100, 1)
-    CumlYd[m, ] <- cumsum(Yd[m, ])/seq_along(Yd[m, ])  #/ mean(Yd[m,], na.rm=TRUE) 
-    CumlPOF[m, ] <- cumsum(POF[m, ])/seq_along(POF[m, ])  # / mean(POF[m,], na.rm=TRUE)
-    CumlP10[m, ] <- cumsum(P10[m, ])/seq_along(P10[m, ])  # / mean(P10[m,], na.rm=TRUE)
-    CumlP50[m, ] <- cumsum(P50[m, ])/seq_along(P50[m, ])  # / mean(P50[m,], na.rm=TRUE)
-    CumlP100[m, ] <- cumsum(P100[m, ])/seq_along(P100[m, ])  # / mean(P100[m,], na.rm=TRUE)
+  if (nsim-ref.it < 1) {
+    ref.it.new <- nsim - 1
+    message("nsim (", nsim, ") - ref.it (", ref.it,") < 1. Setting ref.it to ", ref.it.new, "\n")
+    ref.it <- ref.it.new 
   }
   
-  
-  
-  # CumlYd[is.nan(CumlYd)] <- 1 CumlPOF[is.nan(CumlPOF)] <- 1
-  # CumlP10[is.nan(CumlP10)] <- 1 CumlP50[is.nan(CumlP50)] <- 1
-  # CumlP100[is.nan(CumlP100)] <- 1
-  
-  if (Plot) {	  
-    op <- par(mfrow = c(2, 3), cex.axis = 1.5, cex.lab = 1.7, oma = c(1, 1, 0, 0), mar = c(5, 5, 1, 1), bty = "l")
-    matplot(t(CumlYd), type = "l", xlab = "Iteration", ylab = "Rel. Yield")
-    matplot(t(CumlPOF), type = "l", xlab = "Iteration", ylab = "Prob. F/FMSY > 1")
-    matplot(t(CumlP10), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 0.1")
-    matplot(t(CumlP50), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 0.5")
-    matplot(t(CumlP100), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 1")
-    
-  }
-  
-  Chk <- function(X) {
-    # checks if difference in last 20 iterations is greater than thresh
-    L <- length(X)
-    Y <- 1:min(nsim, 20)
-    
-    # return(mean(abs((X[L-1:10] - X[L]))/X[L], na.rm=TRUE) > thresh)
-    return(mean(abs((X[L - Y] - X[L])), na.rm = TRUE) > thresh)
-  }
+  message("Checking if order of MPs is changing in last ", ref.it, " iterations\n")
+  message("Checking average difference in PM over last ", ref.it, " iterations is > ", thresh, "\n")
 
-  NonCon <- sort(unique(c(which(apply(CumlYd, 1, Chk)), 
-                          which(apply(CumlPOF, 1, Chk)), 
-                          which(apply(CumlP10, 1, Chk)), 
-                          which(apply(CumlP50, 1, Chk)), 
-                          which(apply(CumlP100, 1, Chk)))))
+  SwitchOrd <- vector(mode = "list", length = nPMs)
+  NonCon <- vector(mode = "list", length = nPMs)
+  PMName <- vector("character", length=nPMs)
   
-  if (length(NonCon) > 0) {
-    if (Plot) {
-      plot(c(0, 1), c(0, 1), type = "n", axes = FALSE, xlab = "", 
-           ylab = "")
-      text(0.5, 0.5, "Some MPs have not converged", cex = 1)
-      # ev.new()
-      par(mfrow = c(2, 3), cex.axis = 1.5, cex.lab = 1.7, oma = c(1, 
-                                                                  1, 0, 0), mar = c(5, 5, 1, 1), bty = "l")
-      if (length(NonCon) > 1) {
-        matplot(t(CumlYd[NonCon, ]), type = "l", xlab = "Iteration",  ylab = "Rel. Yield", lwd = 2, lty=1:length(NonCon))
-      } else matplot((CumlYd[NonCon, ]), type = "l", xlab = "Iteration",  ylab = "Rel. Yield", lwd = 2, lty=1:length(NonCon))
-      if (length(NonCon) > 1) {
-        matplot(t(CumlPOF[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. F/FMSY > 1", lwd = 2, lty=1:length(NonCon))
-      } else matplot((CumlPOF[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. F/FMSY > 1", lwd = 2, lty=1:length(NonCon))  
-      if (length(NonCon) > 1) {
-        matplot(t(CumlP10[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 0.1", lwd = 2, lty=1:length(NonCon))
-      } else matplot((CumlP10[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 0.1", lwd = 2, lty=1:length(NonCon))
-      if (length(NonCon) > 1) {
-        matplot(t(CumlP50[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 0.5", lwd = 2, lty=1:length(NonCon))
-      } else matplot((CumlP50[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 0.5", lwd = 2, lty=1:length(NonCon))
-      if (length(NonCon) > 1) {
-        matplot(t(CumlP100[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 1", lwd = 2, lty=1:length(NonCon))
-      } else matplot((CumlP100[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 1", lwd = 2, lty=1:length(NonCon))
+  getPalette <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
+                                   "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
+  
+  st <- 1 
+  end <- min(maxMP, MSEobj@nMPs)
+  it <- MP <- NULL # cran check hacks 
+  
+  for (nplot in 1:nplots) {
+    
+    message('Plotting MPs ', st, ' - ', end)
+    subMSE <- Sub(MSEobj, MPs=MSEobj@MPs[st:end])
+    
+    nMPs <-  subMSE@nMPs
+    values <- rep(c("solid", "dashed", "dotted"),  nMPs)
+    values <- values[1:nMPs]
+    
+    plist <- list()
+    for (xx in 1:nPMs) {
+      PMval <- PMs[[xx]](subMSE)
+      PMName[xx] <- PMval@name
+      cum_mean <- apply(PMval@Prob, 2, cumsum)/apply(PMval@Prob, 2, seq_along) * 100
+      vals <- as.vector(cum_mean) 
+      mp <- rep(subMSE@MPs, each=subMSE@nsim)
       
-      legend(nsim * 1.25, 50, legend = MSEobj@MPs[NonCon], col = 1:length(NonCon), 
-             bty = "n", xpd = NA, lty = 1:length(NonCon), lwd = 2, cex = 1.25)
+      df <- data.frame(it=1:subMSE@nsim, vals, MP=mp, name=PMval@name)
+      if (!all.its) df <- subset(df, it %in% (nsim-ref.it+1):nsim)
+  
+      p <- ggplot2::ggplot(df, ggplot2::aes(x=it, y=vals, color=MP, linetype=MP)) + 
+        ggplot2::scale_linetype_manual(values = values) +
+        ggplot2::scale_color_manual(values=getPalette(nMPs)) + 
+        ggplot2::geom_line() +
+        ggplot2::theme_classic() +
+        ggplot2::labs(x="# Simulations", y=PMval@caption) +
+        ggplot2::ggtitle(PMval@name) +
+        ggplot2::geom_vline(xintercept=MSEobj@nsim-ref.it+1, color="darkgray", linetype="dashed") +
+        ggplot2::geom_vline(xintercept=MSEobj@nsim, color="darkgray", linetype="dashed") +
+        ggplot2::coord_cartesian(xlim = c(min(df$it), max(df$it) + 0.05*max(df$it))) 
+      if (!inc.leg) p <- p + ggplot2::theme(legend.position = "none")
+      
+      # check positions & convergence
+      ords <- apply(cum_mean[(MSEobj@nsim-ref.it+1):MSEobj@nsim,], 1, order, decreasing=FALSE)
+      rownames(ords) <- subMSE@MPs
+      mat <- matrix(subMSE@MPs[ords], nrow=subMSE@nMPs, ncol=ref.it)
+      tab <- table(unlist(apply(mat, 1, unique)))
+      SwitchOrd[[xx]] <- append(SwitchOrd[[xx]], rownames(tab)[which(tab > 1)])
+      NonCon[[xx]] <- append(NonCon[[xx]], subMSE@MPs[apply(cum_mean, 2, Chk, MSEobj=MSEobj, thresh=thresh, ref.it)])
+      
+      noncoverg <- unique(c(SwitchOrd[[xx]], NonCon[[xx]]))
+      if (length(noncoverg)>0) {
+        df2 <- subset(df, MP %in% noncoverg)
+        if (dim(df2)[1] > 0) {
+          p <- p + 
+            ggrepel::geom_text_repel(
+              data = subset(df2, it == max(it)),
+              ggplot2::aes(label = MP),
+              size = 4,
+              segment.color = "grey",
+              direction = "both",
+              show.legend = FALSE)
+        }
+  
+      }
+    
+      plist[[xx]] <- p
+
     }
     
-    message("Some MPs may not have converged in ", nsim, " iterations (threshold = ", thresh, "%)")
-    message("MPs are: ", paste(MSEobj@MPs[NonCon], " "))
-    message("MPs #: ", paste(NonCon, " "))
-    return(data.frame(Num = NonCon, MP = MSEobj@MPs[NonCon]))
+    if (inc.leg) grid_arrange_shared_legend(plist, nrow=nrow, ncol=ncol, position="right")
+    if (!inc.leg) gridExtra::grid.arrange(grobs=plist, nrow=nrow, ncol=ncol) 
+    
+    st <- st + maxMP 
+    end <- min(end + maxMP, MSEobj@nMPs)
+  
   }
-  if (length(NonCon) == 0) {
-    if (Plot) {
-      plot(c(0, 1), c(0, 1), type = "n", axes = FALSE, xlab = "", 
-           ylab = "")
-      text(0.5, 0.5, "All MPs converged", cex = 1)
-    }
-    message("All MPs appear to have converged in ", nsim, " iterations (threshold = ", 
-            thresh, "%)")
+  
+  ## Report Performance 
+  for (x in 1:nPMs) {
+    SwitchOrds <- SwitchOrd[[x]]
+    NonCons <- NonCon[[x]]
+    if (length(SwitchOrds)>0  | length(NonCons)>0) {
+      message("\n", PMName[x], "\n")
+      if (length(SwitchOrds)>0) {
+        message("Order over last ", ref.it, ' iterations is not consistent for:\n ', paste(SwitchOrds, ""), ' \n')
+      }
+      if (length(NonCons)>0) {
+        message("Mean difference over last ", ref.it, " iterations is > ", thresh, " for:\n",
+                paste(NonCons, ""), '\n')
+      }
+    } 
   }
-  par(op)
 }
+  
+Chk <- function(X, MSEobj, thresh, ref.it) {
+  # checks if average difference in last ref.it iterations is greater than thresh
+  L <- length(X)
+  Y <- 1:min(MSEobj@nsim, ref.it)
+  return(mean(abs((X[L - Y] - X[L])), na.rm = TRUE) > thresh)
+}
+
+  
+#   nm <- MSEobj@nMPs
+#   nsim <- MSEobj@nsim
+#   proyears <- MSEobj@proyears
+#   
+#   Yd <- CumlYd <- array(NA, c(nm, nsim))
+#   P10 <- CumlP10 <- array(NA, c(nm, nsim))
+#   P50 <- CumlP50 <- array(NA, c(nm, nsim))
+#   P100 <- CumlP100 <- array(NA, c(nm, nsim))
+#   POF <- CumlPOF <- array(NA, c(nm, nsim))
+#   yind <- max(MSEobj@proyears - 4, 1):MSEobj@proyears
+#   RefYd <- MSEobj@OM$RefY
+#   
+#   for (m in 1:nm) {
+#     Yd[m, ] <- round(apply(MSEobj@C[, m, yind], 1, mean, na.rm = T)/RefYd *  100, 1)
+#     POF[m, ] <- round(apply(MSEobj@F_FMSY[, m, ] >= 1, 1, sum, na.rm = T)/proyears * 100, 1)
+#     P10[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] <= 0.1, 1, sum, na.rm = T)/proyears * 100, 1)
+#     P50[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] <= 0.5, 1, sum, na.rm = T)/proyears * 100, 1)
+#     P100[m, ] <- round(apply(MSEobj@B_BMSY[, m, ] <= 1, 1, sum, na.rm = T)/proyears * 100, 1)
+#     CumlYd[m, ] <- cumsum(Yd[m, ])/seq_along(Yd[m, ])  #/ mean(Yd[m,], na.rm=TRUE) 
+#     CumlPOF[m, ] <- cumsum(POF[m, ])/seq_along(POF[m, ])  # / mean(POF[m,], na.rm=TRUE)
+#     CumlP10[m, ] <- cumsum(P10[m, ])/seq_along(P10[m, ])  # / mean(P10[m,], na.rm=TRUE)
+#     CumlP50[m, ] <- cumsum(P50[m, ])/seq_along(P50[m, ])  # / mean(P50[m,], na.rm=TRUE)
+#     CumlP100[m, ] <- cumsum(P100[m, ])/seq_along(P100[m, ])  # / mean(P100[m,], na.rm=TRUE)
+#   }
+#   
+#   
+#   
+#   # CumlYd[is.nan(CumlYd)] <- 1 CumlPOF[is.nan(CumlPOF)] <- 1
+#   # CumlP10[is.nan(CumlP10)] <- 1 CumlP50[is.nan(CumlP50)] <- 1
+#   # CumlP100[is.nan(CumlP100)] <- 1
+#   
+#   if (Plot) {	  
+#     op <- par(mfrow = c(2, 3), cex.axis = 1.5, cex.lab = 1.7, oma = c(1, 1, 0, 0), mar = c(5, 5, 1, 1), bty = "l")
+#     matplot(t(CumlYd), type = "l", xlab = "Iteration", ylab = "Rel. Yield")
+#     matplot(t(CumlPOF), type = "l", xlab = "Iteration", ylab = "Prob. F/FMSY > 1")
+#     matplot(t(CumlP10), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 0.1")
+#     matplot(t(CumlP50), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 0.5")
+#     matplot(t(CumlP100), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 1")
+#     
+#   }
+#   
+#   Chk <- function(X) {
+#     # checks if difference in last 20 iterations is greater than thresh
+#     L <- length(X)
+#     Y <- 1:min(nsim, 20)
+#     
+#     # return(mean(abs((X[L-1:10] - X[L]))/X[L], na.rm=TRUE) > thresh)
+#     return(mean(abs((X[L - Y] - X[L])), na.rm = TRUE) > thresh)
+#   }
+# 
+#   NonCon <- sort(unique(c(which(apply(CumlYd, 1, Chk)), 
+#                           which(apply(CumlPOF, 1, Chk)), 
+#                           which(apply(CumlP10, 1, Chk)), 
+#                           which(apply(CumlP50, 1, Chk)), 
+#                           which(apply(CumlP100, 1, Chk)))))
+#   
+#   if (length(NonCon) > 0) {
+#     if (Plot) {
+#       plot(c(0, 1), c(0, 1), type = "n", axes = FALSE, xlab = "", 
+#            ylab = "")
+#       text(0.5, 0.5, "Some MPs have not converged", cex = 1)
+#       # ev.new()
+#       par(mfrow = c(2, 3), cex.axis = 1.5, cex.lab = 1.7, oma = c(1, 
+#                                                                   1, 0, 0), mar = c(5, 5, 1, 1), bty = "l")
+#       if (length(NonCon) > 1) {
+#         matplot(t(CumlYd[NonCon, ]), type = "l", xlab = "Iteration",  ylab = "Rel. Yield", lwd = 2, lty=1:length(NonCon))
+#       } else matplot((CumlYd[NonCon, ]), type = "l", xlab = "Iteration",  ylab = "Rel. Yield", lwd = 2, lty=1:length(NonCon))
+#       if (length(NonCon) > 1) {
+#         matplot(t(CumlPOF[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. F/FMSY > 1", lwd = 2, lty=1:length(NonCon))
+#       } else matplot((CumlPOF[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. F/FMSY > 1", lwd = 2, lty=1:length(NonCon))  
+#       if (length(NonCon) > 1) {
+#         matplot(t(CumlP10[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 0.1", lwd = 2, lty=1:length(NonCon))
+#       } else matplot((CumlP10[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 0.1", lwd = 2, lty=1:length(NonCon))
+#       if (length(NonCon) > 1) {
+#         matplot(t(CumlP50[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 0.5", lwd = 2, lty=1:length(NonCon))
+#       } else matplot((CumlP50[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 0.5", lwd = 2, lty=1:length(NonCon))
+#       if (length(NonCon) > 1) {
+#         matplot(t(CumlP100[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 1", lwd = 2, lty=1:length(NonCon))
+#       } else matplot((CumlP100[NonCon, ]), type = "l", xlab = "Iteration", ylab = "Prob. B/BMSY < 1", lwd = 2, lty=1:length(NonCon))
+#       
+#       legend(nsim * 1.25, 50, legend = MSEobj@MPs[NonCon], col = 1:length(NonCon), 
+#              bty = "n", xpd = NA, lty = 1:length(NonCon), lwd = 2, cex = 1.25)
+#     }
+#     
+#     message("Some MPs may not have converged in ", nsim, " iterations (threshold = ", thresh, "%)")
+#     message("MPs are: ", paste(MSEobj@MPs[NonCon], " "))
+#     message("MPs #: ", paste(NonCon, " "))
+#     return(data.frame(Num = NonCon, MP = MSEobj@MPs[NonCon]))
+#   }
+#   if (length(NonCon) == 0) {
+#     if (Plot) {
+#       plot(c(0, 1), c(0, 1), type = "n", axes = FALSE, xlab = "", 
+#            ylab = "")
+#       text(0.5, 0.5, "All MPs converged", cex = 1)
+#     }
+#     message("All MPs appear to have converged in ", nsim, " iterations (threshold = ", 
+#             thresh, "%)")
+#   }
+#   par(op)
+# }
 
 
 

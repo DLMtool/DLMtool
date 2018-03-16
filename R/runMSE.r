@@ -65,14 +65,14 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                    HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=FALSE, parallel=FALSE, 
                    save_name=NULL, checks=FALSE, control=NULL) {
   
+  if (class(OM)!='OM') stop("OM is not class 'OM'", call. = FALSE)
   if (Hist & parallel) {
     message("Sorry! Historical simulations currently can't use parallel.")
     parallel <- FALSE
   }
   if (parallel) {
     if(!snowfall::sfIsRunning()) {
-      message("Parallel processing hasn't been initialized ('setup'). Initializing with default", call. = FALSE)
-      setup()
+      stop("Parallel processing hasn't been initialized. Use 'setup'", call. = FALSE)
     }
     
     ncpu <- snowfall::sfCpus()
@@ -811,6 +811,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # --- Begin loop over MPs ----
   mm <- 1 # for debugging
+  
   for (mm in 1:nMP) {  # MSE Loop over methods
     
     if(!silent) message(mm, "/", nMP, " Running MSE for ", MPs[mm])  # print a progress report
@@ -925,7 +926,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     retL_P <- MPCalcs$retL_P # retained-at-length
     V_P <- MPCalcs$V_P  # vulnerable-at-age
     SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length 
-  
+    
     upyrs <- 1 + (0:(floor(proyears/interval) - 1)) * interval  # the years in which there are updates (every three years)
     if(!silent) {
       cat(".")
@@ -1042,7 +1043,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         Depletion[Depletion < tiny] <- tiny
 
         NextYrNtemp <- lapply(1:nsim, function(x)
-          popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB[x,,y, ]), Ncurr=N[x,,y,],
+          popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB[x,,y, ]), Ncurr=N_P[x,,y,],
                          Zcurr=matrix(M_ageArray[x,,y+nyears], ncol=nareas, nrow=maxage), 
                          PerrYr=Perr[x, y+nyears+maxage-1], hs=hs[x],
                          R0a=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],

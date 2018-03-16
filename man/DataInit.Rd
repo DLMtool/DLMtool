@@ -4,7 +4,8 @@
 \alias{DataInit}
 \title{Initialize an empty Data workbook or CSV}
 \usage{
-DataInit(name = "Data", ext = c("xlsx", "csv"), overwrite = FALSE)
+DataInit(name = "Data", ext = c("xlsx", "csv"), overwrite = FALSE,
+  dir = NULL)
 }
 \arguments{
 \item{name}{Name of the data file. Default is Data.xlsx}
@@ -12,6 +13,8 @@ DataInit(name = "Data", ext = c("xlsx", "csv"), overwrite = FALSE)
 \item{ext}{Optional file extension. 'xlsx' (default) or 'csv'}
 
 \item{overwrite}{Logical. Overwrite existing files?}
+
+\item{dir}{Optional directory path to create the Data file. Default is `getwd()``}
 }
 \value{
 Nothing. Creates a data file in the working directory.
