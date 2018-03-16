@@ -126,7 +126,7 @@ ForceCor<-function(OM,nsim=48,plot=T){
 #' @return An object of class OM
 #' @author A. Hordyk
 #' @export 
-Replace <- function(OM, from, Sub=c("Stock", "Fleet", "Obs", "Imp"),quiet=F) {
+Replace <- function(OM, from, Sub=c("Stock", "Fleet", "Obs", "Imp"),Quiet=F) {
   if (class(OM) =="character") OM <- get(OM)
   if (class(from) !="OM") fromOM <- get(from)
   if (class(OM) !="OM") stop("OM must be of class OM ", call.=FALSE)
