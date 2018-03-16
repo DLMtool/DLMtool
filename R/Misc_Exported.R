@@ -4,12 +4,13 @@
 #' Generic class finder
 #' 
 #' Finds objects of the specified class in the global environment or the
-#' package:DLMtool
+#' DLMtool package.
 #' 
 #' @param classy A class of object (character string, e.g. 'Fleet')
 #' @example 
 #' avail("OM")
 #' @author T. Carruthers
+#' @seealso \link{Can} \link{Cant} \link{avail}
 #' @export 
 avail <- function(classy) {
   temp <- try(class(classy), silent=TRUE)
@@ -279,12 +280,13 @@ Required <- function(funcs = NA) {
 #'
 #' @param cpus number of CPUs 
 #' @param ... other arguments passed to 'snowfall::sfInit'
-#' @importFrom snowfall sfInit sfExportAll sfIsRunning sfExport sfSapply
+#' @importFrom snowfall sfInit sfExportAll sfIsRunning sfExport sfSapply sfLibrary
 #' @importFrom parallel detectCores
 #' @export 
 setup <- function(cpus=min(parallel::detectCores(),4), ...) {
   if(snowfall::sfIsRunning()) snowfall::sfStop()
   snowfall::sfInit(parallel=TRUE,cpus=cpus, ...)
+  sfLibrary("DLMtool", character.only = TRUE)
 }
 
 
