@@ -7,6 +7,8 @@
 #' package:DLMtool
 #' 
 #' @param classy A class of object (character string, e.g. 'Fleet')
+#' @example 
+#' avail("OM")
 #' @author T. Carruthers
 #' @export 
 avail <- function(classy) {
@@ -18,23 +20,22 @@ avail <- function(classy) {
     MPs <- avail('MP')
     gettype <- MPtype(MPs)
     temp <- gettype[gettype[,2] %in% classy,1]
-    if (length(temp) <1) stop("No MPs of type '", classy, "' found", call.=FALSE)
+    if (length(temp) < 1) stop("No MPs of type '", classy, "' found", call. = FALSE)
     return(temp)
     
   } else {
-    temp <- c(ls("package:DLMtool")[unlist(lapply(ls("package:DLMtool"), getclass, classy = classy))], 
-              ls(envir = .GlobalEnv)[unlist(lapply(ls(envir = .GlobalEnv), getclass, classy = classy))])
+    temp <- c(ls("package:DLMtool")[vapply(ls("package:DLMtool"), getclass, logical(1), classy = classy)], 
+              ls(envir = .GlobalEnv)[vapply(ls(envir = .GlobalEnv), getclass, logical(1), classy = classy)])
     pkgs <- search()
     if ("package:DLMextra" %in% pkgs) {
-      temp <- c(temp, unique(ls("package:DLMextra")[unlist(lapply(ls("package:DLMextra"), getclass, classy = classy))]))
+      temp_extra <- ls("package:DLMextra")[vapply(ls("package:DLMextra"), getclass, logical(1), classy = classy)]
+      temp <- c(temp, temp_extra)
     }
-    temp <- unique(temp)
     
     if (classy == "Observation") message("Class 'Observation' has been re-named 'Obs'")	
-    if (length(temp) <1) stop("No objects of class '", classy, "' found", call.=FALSE)
-    return(temp)
+    if (length(temp) < 1) stop("No objects of class '", classy, "' found", call. = FALSE)
+    return(unique(temp))
   }
-  
 }
 
 
