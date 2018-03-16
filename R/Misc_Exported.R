@@ -44,17 +44,19 @@ avail <- function(classy) {
 #' A way of locating where the package was installed so you can find example
 #' data files and code etc.
 #' 
-#' 
 #' @usage DLMDataDir(stock=NA)
 #' @param stock Character string representing the name of a .csv file e.g.
 #' 'Snapper', 'Rockfish'
 #' @author T. Carruthers
+#' @example
+#' tilefish_location <- DLMDataDir("Gulf_blue_tilefish")
+#' tilefish_Data <- new("Data", tilefish_location)
 #' @export DLMDataDir
 DLMDataDir <- function(stock = NA) {
   if (is.na(stock)) {
-    return(paste(searchpaths()[match("package:DLMtool", search())], "/", sep = ""))
+    system.file(package = "DLMtool")
   } else {
-    return(paste(searchpaths()[match("package:DLMtool", search())], "/", stock, ".csv", sep = ""))
+    system.file(paste0(stock, ".csv"), package = "DLMtool", mustWork = TRUE)
   }
 }
 
@@ -282,7 +284,7 @@ Required <- function(funcs = NA) {
 #' @export 
 setup <- function(cpus=min(parallel::detectCores(),4), ...) {
   if(snowfall::sfIsRunning()) snowfall::sfStop()
-  snowfall::sfInit(parallel=TRUE,cpus=cpus, ...)  
+  snowfall::sfInit(parallel=TRUE,cpus=cpus, ...)
 }
 
 
