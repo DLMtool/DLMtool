@@ -7,7 +7,7 @@
 #' DLMtool package.
 #' 
 #' @param classy A class of object (character string, e.g. 'Fleet')
-#' @example 
+#' @examples
 #' avail("OM")
 #' @author T. Carruthers
 #' @seealso \link{Can} \link{Cant} \link{avail}
@@ -49,9 +49,11 @@ avail <- function(classy) {
 #' @param stock Character string representing the name of a .csv file e.g.
 #' 'Snapper', 'Rockfish'
 #' @author T. Carruthers
-#' @example
+#' @examples
+#' /dontrun{
 #' tilefish_location <- DLMDataDir("Gulf_blue_tilefish")
 #' tilefish_Data <- new("Data", tilefish_location)
+#' }
 #' @export DLMDataDir
 DLMDataDir <- function(stock = NA) {
   if (is.na(stock)) {
