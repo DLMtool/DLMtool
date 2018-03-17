@@ -3003,13 +3003,11 @@ class(SBT2) <- "MP"
 #' @references
 #' http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf
 #' @export 
-SPmod <- function(x, Data, reps = 100, alp = c(0.8, 1.2), bet = c(0.8, 
-                                                                  1.2)) {
-  dependencies = "Data@Cat, Data@Ind, Data@Abun"
+SPmod <- function(x, Data, reps = 100, alp = c(0.8, 1.2), bet = c(0.8, 1.2)) {
+  dependencies = "Data@Cat, Data@Ind, Data@Abun, Data@CV_Ind, Data@CV_Cat,  Data@CV_Abun"
   Ir <- length(Data@Ind[x, ])
   Cr <- length(Data@Cat[x, ])
-  rat <- trlnorm(reps, Data@Ind[x, Ir], Data@CV_Ind)/trlnorm(reps, 
-                                                             Data@Ind[x, Ir - 1], Data@CV_Ind)
+  rat <- trlnorm(reps, Data@Ind[x, Ir], Data@CV_Ind)/trlnorm(reps, Data@Ind[x, Ir - 1], Data@CV_Ind)
   cct <- trlnorm(reps, Data@Cat[x, Cr], Data@CV_Cat)
   Abun <- trlnorm(reps, Data@Abun[x], Data@CV_Abun)
   TAC <- rep(NA, reps)
@@ -3019,7 +3017,7 @@ SPmod <- function(x, Data, reps = 100, alp = c(0.8, 1.2), bet = c(0.8,
   cond <- rat > alp[2]
   reps2 <- sum(cond)
   if (reps2 > 0) {
-    qq1 <- trlnorm(reps2, Data@Ind[x, Ir]/Abun, Data@CV_Ind)
+    qq1 <- trlnorm(reps2, Data@Ind[x, Ir]/Abun[cond], Data@CV_Ind)
     bio1 <- Data@Ind[x, Ir - 1]/qq1
     bio2 <- Data@Ind[x, Ir]/qq1
     cct1 <- trlnorm(reps2, Data@Cat[x, Cr - 1], Data@CV_Cat)

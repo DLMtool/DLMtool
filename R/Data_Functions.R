@@ -339,7 +339,7 @@ Cant <- function(Data, timelimit = 1) {
 DLMdiag <- function(Data, command = c("available", "not available", "needed"), reps = 5, timelimit = 1, funcs1=NA) {
   command <- match.arg(command)
   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
-  
+  set.seed(101)
   Data <- updateMSE(Data)
   if (all(is.na(funcs1))) funcs1 <- avail("MP")
   isMP <- vapply(funcs1, function(x) inherits(get(x), "MP"), logical(1))
@@ -359,9 +359,10 @@ DLMdiag <- function(Data, command = c("available", "not available", "needed"), r
   chk_needed <- nzchar(repp) # TRUE = has missing data
   
   if (command == "needed") {
-    repp[!chk_needed] <- "All required data are present. Test MP with Can()"
+    # repp[!chk_needed] <- "All required data are present. Test MP with Can()"
     repp[chk_needed] <- paste0("Missing data: ", repp[chk_needed]) 
-    output <- matrix(repp, ncol = 1, dimnames = list(funcs1))
+    ind <- nchar(repp)>0
+    output <- matrix(repp[ind], ncol = 1, dimnames = list(funcs1[ind]))
     return(output)
   }
   
@@ -385,8 +386,8 @@ DLMdiag <- function(Data, command = c("available", "not available", "needed"), r
         report[y] <- "MP returned an error. Check MP function and/or Data object."
         good[y] <- FALSE
       } else if (inherits(test[[y]], "Rec")) {
-        Rec_test <- vapply(slotNames("Rec"), function(x) NAor0(slot(test[[y]], x)), 
-                           logical(1))
+        # Rec_test <- vapply(slotNames("Rec"), function(x) NAor0(slot(test[[y]], x)), logical(1))
+        Rec_test <- vapply(slotNames("Rec"), function(x) all(is.na(slot(test[[y]], x))), logical(1))
         if(all(Rec_test)) { # If all NAor0
           report[y] <- "Produced all NA scores. Check MP function and/or Data object."
           good[y] <- FALSE
@@ -396,10 +397,12 @@ DLMdiag <- function(Data, command = c("available", "not available", "needed"), r
   }
   
   if (command == "available") {
-    return(matrix(report[good], ncol = 1, dimnames = list(funcs1[good])))
+    # return(matrix(report[good], ncol = 1, dimnames = list(funcs1[good])))
+    return(funcs1[good])
   }
   if (command == "not available") {
-    return(matrix(report[!good], ncol = 1, dimnames = list(funcs1[!good])))
+    # return(matrix(report[!good], ncol = 1, dimnames = list(funcs1[!good])))
+    return(matrix(c(funcs1[!good], report[!good]), ncol = 2))
   }
 }
 
@@ -685,8 +688,7 @@ Sense <- function(Data, MP, nsense = 6, reps = 100, perc = c(0.05, 0.5, 0.95), p
       }
     } else {
       cv <- attr(Data, slotsCV[i])[1]
-      attr(Data, slots[i])[ind, ] <- attr(Data, slots[i])[ind, 
-                                                          ] * qlnorm(pss, mconv(1, cv), sdconv(1, cv))
+      attr(Data, slots[i])[ind, ] <- attr(Data, slots[i])[ind, ] * qlnorm(pss, mconv(1, cv), sdconv(1, cv))
       vals[i, ] <- qlnorm(pss, mconv(1, cv), sdconv(1, cv))
     }
   }

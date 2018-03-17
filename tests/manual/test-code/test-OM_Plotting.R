@@ -1,5 +1,5 @@
 testthat::context("Test OM Plotting functions")
-
+windows()
 # DLMextra(TRUE)
 # library(DLMextra)
 library(testthat)

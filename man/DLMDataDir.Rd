@@ -15,7 +15,7 @@ A way of locating where the package was installed so you can find example
 data files and code etc.
 }
 \examples{
-/dontrun{
+\dontrun{
 tilefish_location <- DLMDataDir("Gulf_blue_tilefish")
 tilefish_Data <- new("Data", tilefish_location)
 }

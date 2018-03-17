@@ -1,5 +1,5 @@
 testthat::context("Test MSE Plotting functions")
-
+windows()
 DLMextra()
 library(DLMextra)
 rm(list=ls())

@@ -1,12 +1,49 @@
-## DLMtool 
+## DLMtool 5.1
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
-### DLMtool v5.0.1 Development Version 
+### Operating Model
 
+- Mixed MPs: it is now possible to design MPs that combine Output and Input controls. Previously, MPs in DLMtool where either class 'Input' or class 'Output'. This has changed, and all MPs are now class 'MP' and return a standard recommendation object ('Rec') that allows specification of any combination of catch limit, effort limit, spatial closure, and size-at-selection and/or size-at-retention regulations. 
+
+- MP types: For convenience, MPs can be categorised into 4 types: 'Output' (only catch limits), 'Input' (only spatial, effort, and/or size regulations), 'Mixed' (some combination of Output and Input regulations), and 'Reference' (MPs such as FMSYref or NFref which are designed to be used a references and not for actual applications). The function `MPtype` can be used to determine an MP's type, e.g `MPtype('AvC')`. 
+
+- Increased flexibility of selectivity, retention, and discard mortality controls: MPs can now modify both selectivity and retention curves, and also modify the level of discard mortality.
+
+- Historical MPAs: A new slot `MPA` has been added to the `Fleet` object. This allows users to specify the historical year and the fraction of an area that was closed. See `?plotMPA` for an example. 
+
+- Improvements to MSY reference point calculations: MSY reference points are now calculate for every year. This accounts for changes in productivity (e.g., increases in growth) that affect reference points such as BMSY and FMSY.
+
+- Increased number of areas: By default DLMtool is a 2-area model. The code has now been updated to include more areas if required.
+
+- Movement by age: It is now possible to specify movement by age, such as ontogenetic migration offshore 
+
+- Parallel processing: `runMSE` has been optimized for parallel processing. By default, parallel processing is not used if `nsim`<=48. We suggest testing your OM with a low number of simulations (e.g `nsim`=48) and then increasing the number of simulations and using parallel processing: `runMSE(OM, MPs, parallel=TRUE)`. Update messages are not displayed in parallel mode. 
+
+- Taxonomic information: New slots have been added to the `Stock` object to record common name and taxonomic details.  
+
+### MP Performance
+
+- The `Converge` function has been updated with a improved of convergence diagnostics.  
+
+- A new performance metric (`PM`) class has been added. This allows users to develop a custom set of performance metrics for their management system. A series of example `PM` objects have been created (see `avail('PM')`). Over time the summary and plotting functions will be updated to take a set of `PM` objects. See `Tplot3` for an example.
+
+### Robustness and Testing
+
+- Many improvements to functions (e.g MPs) to improve robustness and avoid model crashes due to stochastic sampling of parameters.
+
+- All code in DLMtool is now tested using the `testthat` package to ensure that the functions work as expected. Please continue to file bug reports at: https://github.com/DLMtool/DLMtool/issues
+
+
+### Documentation 
+
+- The User Manual has been completely revised and updated. Use `userguide()` to access. Please submit any typo corrections or suggestions for improvement at https://github.com/DLMtool/DLMtool_UserGuide/issues. Pull requests are welcome. 
+
+- We are developing an online library of DLMtool OMs (http://www.datalimitedtoolkit.org/fishery_library) which has the OM Report, OM Excel file, and OM R data object for each DLMtool OM. A standardized MSE report is in development. The OM library will be expanded as new OMs are developed. Please contact us if you have developed OMs and are able to make them publicly available.
+
+- A DLMtool user forum is in development and will be launched soon. The idea of the forum is to provide a platform for DLMtool users to ask questions and share experience with each other and the DLMtool team. 
 
 
 ## Previous Versions 
-
 
 ### DLMtool 5.0
 The following slots have been added to the OM object:

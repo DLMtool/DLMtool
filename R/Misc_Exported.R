@@ -50,7 +50,7 @@ avail <- function(classy) {
 #' 'Snapper', 'Rockfish'
 #' @author T. Carruthers
 #' @examples
-#' /dontrun{
+#' \dontrun{
 #' tilefish_location <- DLMDataDir("Gulf_blue_tilefish")
 #' tilefish_Data <- new("Data", tilefish_location)
 #' }
@@ -254,15 +254,36 @@ plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
 #' @author T. Carruthers
 #' @examples 
 #' Required(c("DCAC", "AvC"))
-#' @export Required
+#' @export 
 Required <- function(funcs = NA) {
-  if (all(is.na(funcs))) funcs <- avail("MP")
-  temp <- lapply(funcs, function(x) paste(format(match.fun(x)), collapse = " "))
-  repp <- vapply(temp, match_slots, character(1))
-  repp[!nzchar(repp)] <- "No data needed for this MP."
-  matrix(repp, ncol = 1, dimnames = list(funcs))
+  if (is.na(funcs[1])) 
+    funcs <- c(avail("Output"), avail("Input"))
+  slots <- slotNames("Data")
+  slotnams <- paste("Data@", slotNames("Data"), sep = "")
+  repp <- rep("", length(funcs))
+  
+  for (i in 1:length(funcs)) {
+    temp <- format(match.fun(funcs[i]))
+    temp <- paste(temp[1:(length(temp))], collapse = " ")
+    rec <- ""
+    for (j in 1:length(slotnams)) if (grepl(slotnams[j], temp)) 
+      rec <- c(rec, slots[j])
+    if (length(rec) > 1) 
+      repp[i] <- paste(rec[2:length(rec)], collapse = ", ")
+  }
+  cbind(funcs, repp, deparse.level = 0)
 }
 
+# Required2 <- function(funcs = NA) {
+#   if (all(is.na(funcs))) funcs <- avail("MP")
+#   temp <- lapply(funcs, function(x) paste(format(match.fun(x)), collapse = " "))
+#   repp <- vapply(temp, match_slots, character(1))
+#   repp[!nzchar(repp)] <- "No data needed for this MP."
+#   matrix(repp, ncol = 1, dimnames = list(funcs))
+# }
+
+# Required("DCAC")
+# Required2("DCAC")
 
 #' Setup parallel processing
 #'
@@ -292,7 +313,7 @@ setup <- function(cpus=min(parallel::detectCores(),4), ...) {
 #' userguide()
 #' }
 userguide <- function() {
-  utils::browseURL("https://dlmtool.github.io/DLMtool/userguide/index.html")
+  utils::browseURL("https://dlmtool.github.io/DLMtool/userguide/introduction.html")
 }
 
 
@@ -735,4 +756,7 @@ optCPU <- function(nsim=96, thresh=5, plot=TRUE) {
   }
   return(df)
 }
+
+
+
 

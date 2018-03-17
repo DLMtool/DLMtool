@@ -10,7 +10,7 @@ navbar:
   type: inverse
   left:
     - text: "User Guide"
-      href: userguide/index.html 
+      href: userguide/introduction.html 
     - text: "Management Procedures"
       menu:
       - text: "Output Controls"
