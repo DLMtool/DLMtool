@@ -4,10 +4,13 @@
 #' Generic class finder
 #' 
 #' Finds objects of the specified class in the global environment or the
-#' package:DLMtool
+#' DLMtool package.
 #' 
 #' @param classy A class of object (character string, e.g. 'Fleet')
+#' @examples
+#' avail("OM")
 #' @author T. Carruthers
+#' @seealso \link{Can} \link{Cant} \link{avail}
 #' @export 
 avail <- function(classy) {
   temp <- try(class(classy), silent=TRUE)
@@ -18,23 +21,22 @@ avail <- function(classy) {
     MPs <- avail('MP')
     gettype <- MPtype(MPs)
     temp <- gettype[gettype[,2] %in% classy,1]
-    if (length(temp) <1) stop("No MPs of type '", classy, "' found", call.=FALSE)
+    if (length(temp) < 1) stop("No MPs of type '", classy, "' found", call. = FALSE)
     return(temp)
     
   } else {
-    temp <- c(ls("package:DLMtool")[unlist(lapply(ls("package:DLMtool"), getclass, classy = classy))], 
-              ls(envir = .GlobalEnv)[unlist(lapply(ls(envir = .GlobalEnv), getclass, classy = classy))])
+    temp <- c(ls("package:DLMtool")[vapply(ls("package:DLMtool"), getclass, logical(1), classy = classy)], 
+              ls(envir = .GlobalEnv)[vapply(ls(envir = .GlobalEnv), getclass, logical(1), classy = classy)])
     pkgs <- search()
     if ("package:DLMextra" %in% pkgs) {
-      temp <- c(temp, unique(ls("package:DLMextra")[unlist(lapply(ls("package:DLMextra"), getclass, classy = classy))]))
+      temp_extra <- ls("package:DLMextra")[vapply(ls("package:DLMextra"), getclass, logical(1), classy = classy)]
+      temp <- c(temp, temp_extra)
     }
-    temp <- unique(temp)
     
     if (classy == "Observation") message("Class 'Observation' has been re-named 'Obs'")	
-    if (length(temp) <1) stop("No objects of class '", classy, "' found", call.=FALSE)
-    return(temp)
+    if (length(temp) < 1) stop("No objects of class '", classy, "' found", call. = FALSE)
+    return(unique(temp))
   }
-  
 }
 
 
@@ -43,17 +45,21 @@ avail <- function(classy) {
 #' A way of locating where the package was installed so you can find example
 #' data files and code etc.
 #' 
-#' 
 #' @usage DLMDataDir(stock=NA)
 #' @param stock Character string representing the name of a .csv file e.g.
 #' 'Snapper', 'Rockfish'
 #' @author T. Carruthers
+#' @examples
+#' /dontrun{
+#' tilefish_location <- DLMDataDir("Gulf_blue_tilefish")
+#' tilefish_Data <- new("Data", tilefish_location)
+#' }
 #' @export DLMDataDir
 DLMDataDir <- function(stock = NA) {
   if (is.na(stock)) {
-    return(paste(searchpaths()[match("package:DLMtool", search())], "/", sep = ""))
+    system.file(package = "DLMtool")
   } else {
-    return(paste(searchpaths()[match("package:DLMtool", search())], "/", stock, ".csv", sep = ""))
+    system.file(paste0(stock, ".csv"), package = "DLMtool", mustWork = TRUE)
   }
 }
 
@@ -239,37 +245,23 @@ plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
 }
 
 
-
-#' What methods need what data
+#' What management procedures need what data
 #' 
-#' A function that finds all methods in the environment and searches the
-#' function text for slots in the DLM data object
+#' A function that finds all the MPs and searches the
+#' function text for slots in the Data object
 #' 
-#' 
-#' @usage Required(funcs = NA)
-#' @param funcs A character vector of possible methods of class DLM quota, DLM
-#' space or DLM size
+#' @param funcs A character vector of management procedures
 #' @author T. Carruthers
+#' @examples 
+#' Required(c("DCAC", "AvC"))
 #' @export Required
 Required <- function(funcs = NA) {
-  if (is.na(funcs[1])) 
-    funcs <- c(avail("Output"), avail("Input"))
-  slots <- slotNames("Data")
-  slotnams <- paste("Data@", slotNames("Data"), sep = "")
-  repp <- rep("", length(funcs))
-  
-  for (i in 1:length(funcs)) {
-    temp <- format(match.fun(funcs[i]))
-    temp <- paste(temp[1:(length(temp))], collapse = " ")
-    rec <- ""
-    for (j in 1:length(slotnams)) if (grepl(slotnams[j], temp)) 
-      rec <- c(rec, slots[j])
-    if (length(rec) > 1) 
-      repp[i] <- paste(rec[2:length(rec)], collapse = ", ")
-  }
-  cbind(funcs, repp, deparse.level = 0)
+  if (all(is.na(funcs))) funcs <- avail("MP")
+  temp <- lapply(funcs, function(x) paste(format(match.fun(x)), collapse = " "))
+  repp <- vapply(temp, match_slots, character(1))
+  repp[!nzchar(repp)] <- "No data needed for this MP."
+  matrix(repp, ncol = 1, dimnames = list(funcs))
 }
-
 
 
 #' Setup parallel processing
@@ -278,12 +270,13 @@ Required <- function(funcs = NA) {
 #'
 #' @param cpus number of CPUs 
 #' @param ... other arguments passed to 'snowfall::sfInit'
-#' @importFrom snowfall sfInit sfExportAll sfIsRunning sfExport sfSapply
+#' @importFrom snowfall sfInit sfExportAll sfIsRunning sfExport sfSapply sfLibrary
 #' @importFrom parallel detectCores
 #' @export 
 setup <- function(cpus=min(parallel::detectCores(),4), ...) {
   if(snowfall::sfIsRunning()) snowfall::sfStop()
-  snowfall::sfInit(parallel=TRUE,cpus=cpus, ...)  
+  snowfall::sfInit(parallel=TRUE,cpus=cpus, ...)
+  sfLibrary("DLMtool", character.only = TRUE)
 }
 
 

@@ -2,17 +2,19 @@
 % Please edit documentation in R/Misc_Exported.R
 \name{Required}
 \alias{Required}
-\title{What methods need what data}
+\title{What management procedures need what data}
 \usage{
 Required(funcs = NA)
 }
 \arguments{
-\item{funcs}{A character vector of possible methods of class DLM quota, DLM
-space or DLM size}
+\item{funcs}{A character vector of management procedures}
 }
 \description{
-A function that finds all methods in the environment and searches the
-function text for slots in the DLM data object
+A function that finds all the MPs and searches the
+function text for slots in the Data object
+}
+\examples{
+Required(c("DCAC", "AvC"))
 }
 \author{
 T. Carruthers

@@ -2,7 +2,7 @@
 % Please edit documentation in R/Data_Functions.R
 \name{Cant}
 \alias{Cant}
-\title{What methods can't be applied to this DLM data object}
+\title{What management procedures can't be applied to this DLM data object}
 \usage{
 Cant(Data, timelimit = 1)
 }
@@ -13,6 +13,9 @@ Cant(Data, timelimit = 1)
 10 reps (this filters out methods that are too slow)}
 }
 \description{
-The methods that don't have sufficient data, lead to errors or don't run in
+The MPs that don't have sufficient data, lead to errors or don't run in
 time along with a list of their data requirments.
+}
+\seealso{
+\link{Can} \link{Needed} \link{avail}
 }
