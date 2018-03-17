@@ -14,13 +14,7 @@ Generic class finder
 }
 \details{
 Finds objects of the specified class in the global environment or the
-DLMtool package.
-}
-\examples{
-avail("OM")
-}
-\seealso{
-\link{Can} \link{Cant} \link{avail}
+package:DLMtool
 }
 \author{
 T. Carruthers

@@ -3185,12 +3185,12 @@ SPslope <- function(x, Data, reps = 100, yrsmth = 4, alp = c(0.9, 1.1),
   B_dat <- Data@Ind[x, ind]/Data@Ind[x, ind[yrsmth]] * Data@Abun[x]
   Pt_mu <- max(B_dat[yrsmth] - B_dat[yrsmth - 1] + C_dat[yrsmth - 1], 
                tiny)
-  Pt_1 <- trlnorm(reps, Pt_mu, Data@CV_Cat[x])
+  Pt_1 <- trlnorm(reps, Pt_mu, Data@CV_Cat)
   It <- exp(predict(lm(log(B_dat) ~ yind), newdat = list(yind = yrsmth + 
                                                            1)))
   Ilast <- B_dat[yrsmth]
   MC <- max(mean(C_dat), tiny)
-  Ct_1 <- trlnorm(reps, MC, Data@CV_Cat[x]/(yrsmth^0.5))  # mean catches over the interval
+  Ct_1 <- trlnorm(reps, MC, Data@CV_Cat/(yrsmth^0.5))  # mean catches over the interval
   
   rat <- It/Ilast
   

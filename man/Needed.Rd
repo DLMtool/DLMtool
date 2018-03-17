@@ -12,12 +12,9 @@ Needed(Data, timelimit=1)
 \item{timelimit}{The maximum time (seconds) taken to complete 10 reps}
 }
 \description{
-A funtion that lists what data are needed to run
-data-limited methods that are currently not able to run given a Data
+Wrapper function for DLMdiag that lists what data are needed to run
+data-limited methods that are current not able to run given a DLM_cdata
 object
-}
-\seealso{
-\link{Can} \link{Cant} \link{avail}
 }
 \author{
 T. Carruthers
