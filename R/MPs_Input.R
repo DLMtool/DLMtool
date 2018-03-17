@@ -331,8 +331,7 @@ DDes <- function(x, Data, reps = 100, LB = 0.9, UB = 1.1) {
   a50V <- iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
               Data@L50[x])
   a50V <- max(a50V, 1)
-  yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x, 
-                                                                    ])]
+  yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x, ])]
   C_hist <- Data@Cat[x, yind]
   E_hist <- C_hist/Data@Ind[x, yind]
   E_hist <- E_hist/mean(E_hist)
@@ -349,10 +348,10 @@ DDes <- function(x, Data, reps = 100, LB = 0.9, UB = 1.1) {
   opt <- optim(params, DD_R, opty = 1, So_DD = So_DD, Alpha_DD = Alpha_DD, 
                Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, wa_DD = wa_DD, E_hist = E_hist, 
                C_hist = C_hist, UMSYprior = UMSYprior, method = "BFGS", hessian = TRUE)
-  
+
   U_hist <- 1 - exp(-exp(opt$par[3]) * E_hist)
-  fac <- exp(opt$par[1])/U_hist[Data@LHYear]  # ratio of UMSY to reference U
-  fac <- fac * (U_hist[Data@LHYear]/U_hist[length(U_hist)])  # ratio of last U to reference U
+  UMSY <- 1/(1 + exp(-opt$par[1]))
+  fac <- UMSY/U_hist[length(U_hist)]  # ratio of UMSY to reference U
   
   if (fac < LB) 
     fac <- LB
