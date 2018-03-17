@@ -2,7 +2,7 @@
 % Please edit documentation in R/Data_Functions.R
 \name{Can}
 \alias{Can}
-\title{What management procedures can be applied to this Data object?}
+\title{What data-limited methods can be applied to this Data object?}
 \usage{
 Can(Data, timelimit = 1, MPs = NA)
 }
@@ -15,12 +15,9 @@ Can(Data, timelimit = 1, MPs = NA)
 \item{MPs}{Optional list of MP names}
 }
 \description{
-An diagnostic tool that looks up the slot requirements of each MP and
+An diagnostic tool that looks up the slot requirements of each method and
 compares this to the data available to limit the analysis to methods that
 have the correct data, do not produce errors and run within a time limit.
 Time limit is the maximum time taken to carry out five reps (stochastic
 samples) of a given method and is in units of seconds.
-}
-\seealso{
-\link{Cant} \link{Needed} \link{avail}
 }

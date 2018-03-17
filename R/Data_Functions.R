@@ -300,9 +300,9 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
 # }
 
 
-#' What management procedures can be applied to this Data object?
+#' What data-limited methods can be applied to this Data object?
 #' 
-#' An diagnostic tool that looks up the slot requirements of each MP and
+#' An diagnostic tool that looks up the slot requirements of each method and
 #' compares this to the data available to limit the analysis to methods that
 #' have the correct data, do not produce errors and run within a time limit.
 #' Time limit is the maximum time taken to carry out five reps (stochastic
@@ -313,96 +313,95 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
 #' @param timelimit The maximum time (seconds) taken for a method to undertake
 #' 10 reps (this filters out methods that are too slow)
 #' @param MPs Optional list of MP names
-#' 
-#' @seealso \link{Cant} \link{Needed} \link{avail}
 #' @export Can
 Can <- function(Data, timelimit = 1, MPs=NA) {
   DLMdiag(Data, "available",  timelimit = timelimit, funcs1=MPs)
 }
 
 
-#' What management procedures can't be applied to this DLM data object
+#' What methods can't be applied to this DLM data object
 #' 
-#' The MPs that don't have sufficient data, lead to errors or don't run in
+#' The methods that don't have sufficient data, lead to errors or don't run in
 #' time along with a list of their data requirments.
 #' 
 #' 
 #' @param Data A data-limited methods data object (class Data)
 #' @param timelimit The maximum time (seconds) taken for a method to undertake
 #' 10 reps (this filters out methods that are too slow)
-#' @seealso \link{Can} \link{Needed} \link{avail}
 #' @export Cant
 Cant <- function(Data, timelimit = 1) {
   DLMdiag(Data, "not available", timelimit = timelimit)
 }
 
-DLMdiag <- function(Data, command = c("available", "not available", "needed"), reps = 5, timelimit = 1, funcs1=NA) {
-  browser()
-  
-  command <- match.arg(command)
+DLMdiag <- function(Data, command = "available", reps = 5, timelimit = 1, funcs1=NA) {
   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
-  
   Data <- updateMSE(Data)
   if (all(is.na(funcs1))) funcs1 <- avail("MP")
-  isMP <- vapply(funcs1, function(x) inherits(get(x), "MP"), logical(1))
-  if (any(!isMP)) stop(paste0("Not an MP: ", paste(funcs1[!isMP], collapse = ", ")))
-  
+  # mpclasses <- MPtype(funcs1)[,2]
+  # funcs1 <- funcs1[mpclasses %in% c("Output", "Input", "Mixed", "Reference")]
   good <- rep(TRUE, length(funcs1))
-  report <- rep("Passed test.", length(funcs1))
-  test <- list()
-  timey <- numeric(length(funcs1))
-  
-  rr <- try(slot(Data, "Misc"), silent = TRUE)
-  if (class(rr) == "try-error") Data@Misc <- list()
-  
-  temp <- lapply(funcs1, function(x) paste(format(match.fun(x)), collapse = " "))
-  repp <- vapply(temp, match_slots, character(1), Data = Data)
-  
-  chk_needed <- nzchar(repp) # TRUE = has missing data
-  
-  if (command == "needed") {
-    repp[!chk_needed] <- "All required data are present. Test MP with Can()"
-    repp[chk_needed] <- paste0("Missing data: ", repp[chk_needed]) 
-    output <- matrix(repp, ncol = 1, dimnames = list(funcs1))
-    return(output)
-  }
-  
-  report[chk_needed] <- paste0("Missing data: ", repp[chk_needed]) 
-  good[chk_needed] <- FALSE
-  
+  report <- rep("Worked fine", length(funcs1))
+  test <- new("list")
+  timey <- new("list")
+  on.exit(options(show.error.messages = TRUE))
   for (y in 1:length(funcs1)) {
-    if(!chk_needed[y]) {
-      setTimeLimit(timelimit * 1.5)
-      time1 <- Sys.time()
-      test[[y]] <- tryCatch(do.call(funcs1[y], list(x = 1, Data = Data, reps = 5)), 
-                            error = function(e) as.character(e))
-      time2 <- Sys.time()
-      setTimeLimit(Inf)
-      timey[[y]] <- time2 - time1
-      
-      if (timey[[y]] > timelimit) {
-        report[y] <- "Exceeded the user-specified time limit."
-        good[y] <- FALSE
-      } else if (is.character(test[[y]])) { # Error message 
-        report[y] <- "MP returned an error. Check MP function and/or Data object."
-        good[y] <- FALSE
-      } else if (inherits(test[[y]], "Rec")) {
-        Rec_test <- vapply(slotNames("Rec"), function(x) NAor0(slot(test[[y]], x)), 
-                           logical(1))
-        if(all(Rec_test)) { # If all NAor0
-          report[y] <- "Produced all NA scores. Check MP function and/or Data object."
-          good[y] <- FALSE
-        }
-      }
+    # First check for required data slots that are not NA
+    time1 <- Sys.time() # initialise time1
+    temp <- format(match.fun(funcs1[y])) # Extract the dependencies from function 
+    temp <- paste(temp[1:(length(temp))], collapse = " ")
+    
+    slots <- slotNames(Data)
+    rr <- try(slot(Data, "Misc"), silent = TRUE)
+    if (class(rr) == "try-error") Data@Misc <- list()
+    slotnams <- paste("Data@", slotNames(Data), sep = "")
+    # slotnams <- slotnams[!grepl("OM", slotnams)]
+    
+    chk <- rep(FALSE, length(slotnams))
+    for (j in 1:length(slotnams)) {
+      if (grepl(slotnams[j], temp) & all(is.na(slot(Data, slots[j])))) chk[j] <- TRUE
     }
-  }
-  
-  if (command == "available") {
-    return(matrix(report[good], ncol = 1, dimnames = list(funcs1[good])))
-  }
-  if (command == "not available") {
-    return(matrix(report[!good], ncol = 1, dimnames = list(funcs1[!good])))
-  }
+    
+    if (sum(chk) > 0) {
+      test[[y]] <- "missing data" # if some required slots are NA or NULL - return error
+      class(test[[y]]) <- "try-error"
+    } else {  # continue if all slots are valid 
+      time1 <- Sys.time()
+      suppressWarnings({
+        setTimeLimit(timelimit * 1.5)
+        options(show.error.messages = FALSE)
+        test[[y]] <- try(do.call(funcs1[y], list(x = 1, Data = Data, reps = 5)), silent = T)
+        options(show.error.messages = TRUE)
+        if (class(test[[y]]) == "list") test[[y]] <- test[[y]][[1]]
+        setTimeLimit(Inf)
+      })
+      
+    }
+    time2 <- Sys.time()
+    timey[[y]] <- time2 - time1
+    if (class(test[[y]]) == "try-error") {
+      report[[y]] <- "Insufficient data"
+      good[[y]] <- FALSE
+    } else if (class(test[[y]]) == "Rec") {
+      slts <- slotNames(test[[y]])
+      tt <- rep(FALSE, length(slts))
+      for (x in seq_along(slts)) tt[x] <- NAor0(slot(test[[y]], slts[x]))
+      if (sum(tt) < 1) {
+        report[[y]] <- "Produced all NA scores"
+        good[[y]] <- FALSE
+      }  
+    } else if (sum(is.na(test[[y]])) == length(test[[y]])) {
+      report[[y]] <- "Produced all NA scores"
+      good[[y]] <- FALSE
+    }
+    if (timey[[y]] > timelimit) {
+      report[[y]] <- "Exceeded the user-specified time limit"
+      good[[y]] <- FALSE
+    }
+  }  # end of funcs
+  options(show.error.messages = TRUE)
+  if (command == "available") return(funcs1[good])
+  if (command == "not available") return(cbind(funcs1[!good], report[!good]))
+  if (command == "needed")  return(needed(Data, funcs = funcs1[!good]))
 }
 
 #' Function to run a set of input control methods
@@ -456,40 +455,33 @@ Input <- function(Data, MPs = NA, reps = 100, timelimit = 10, CheckMPs = TRUE,
   
 }
 
-needed <- function(Data, funcs) {
+needed <- function(Data, funcs = NA) {
+  if (is.na(funcs[1]))  funcs <- avail("Output")
+  slots <- slotNames("Data")
   rr <- try(slot(Data, "Misc"), silent = TRUE)
   if (class(rr) == "try-error") Data@Misc <- list()
-  Data@Misc <- list()
   
-  temp <- lapply(funcs, function(x) paste(format(match.fun(x)), collapse = " "))
-  repp <- vapply(temp, match_slots, character(1), Data = Data)
-  repp[!nzchar(repp)] <- "All data available. MP returns NA."
-  matrix(repp, ncol = 1, dimnames = list(funcs))
-}
-
-
-# Internal function for:
-## Required(): 
-## needed(): matches slotnames of Data class to those that are required in an MP func
-##           but also return NAor0 = TRUE
-match_slots <- function(func, slotnams = paste0("Data@", slotNames("Data")), 
-                        slots = slotNames("Data"), Data = NULL) {
-  # check if each slotname in Data class is required in an MP
-  ind_MP <- vapply(slotnams, grepl, numeric(1), x = func)
-  if(!is.null(Data) && inherits(Data, "Data")) { # check if Data slots return NA or zero
-    ind_NAor0 <- vapply(slots, function(x) NAor0(slot(Data, x)), logical(1))
-    repp <- slots[ind_MP & ind_NAor0] # returns slots where both tests are true
+  slotnams <- paste("Data@", slotNames(Data), sep = "")
+  repp <- rep("", length(funcs))
+  Data@Misc <- list()
+  for (i in 1:length(funcs)) {
+    temp <- format(match.fun(funcs[i]))
+    temp <- paste(temp[1:(length(temp))], collapse = " ")
+    rec <- ""
+    for (j in 1:length(slotnams)) {
+      if (grepl(slotnams[j], temp) & NAor0(slot(Data, slots[j]))) rec <- c(rec, slots[j])
+    }
+    repp[i] <- paste(funcs[i], ": ", paste(rec[2:length(rec)], collapse = ", "), sep = "")
+    if (length (rec) == 1) 
+      repp[i] <- paste0(funcs[i], ": All data available. Model returns NA")
   }
-  else {
-    repp <- slots[ind_MP]
-  }
-  return(paste(repp, collapse = ", "))
+  repp
 }
 
 #' Data needed to get MPs running
 #' 
-#' A funtion that lists what data are needed to run
-#' data-limited methods that are currently not able to run given a Data
+#' Wrapper function for DLMdiag that lists what data are needed to run
+#' data-limited methods that are current not able to run given a DLM_cdata
 #' object
 #' 
 #' 
@@ -497,7 +489,6 @@ match_slots <- function(func, slotnams = paste0("Data@", slotNames("Data")),
 #' @param Data A data-limited methods data object
 #' @param timelimit The maximum time (seconds) taken to complete 10 reps
 #' @author T. Carruthers
-#' @seealso \link{Can} \link{Cant} \link{avail}
 #' @export Needed
 Needed <- function(Data, timelimit = 1) {
   DLMdiag(Data, "needed", timelimit = timelimit)
