@@ -244,36 +244,23 @@ plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
 }
 
 
-#' What methods need what data
+#' What management procedures need what data
 #' 
-#' A function that finds all methods in the environment and searches the
-#' function text for slots in the DLM data object
+#' A function that finds all the MPs and searches the
+#' function text for slots in the Data object
 #' 
-#' 
-#' @usage Required(funcs = NA)
-#' @param funcs A character vector of possible methods of class DLM quota, DLM
-#' space or DLM size
+#' @param funcs A character vector of management procedures
 #' @author T. Carruthers
+#' @examples 
+#' Required(c("DCAC", "AvC"))
 #' @export Required
 Required <- function(funcs = NA) {
-  if (is.na(funcs[1])) 
-    funcs <- c(avail("Output"), avail("Input"))
-  slots <- slotNames("Data")
-  slotnams <- paste("Data@", slotNames("Data"), sep = "")
-  repp <- rep("", length(funcs))
-  
-  for (i in 1:length(funcs)) {
-    temp <- format(match.fun(funcs[i]))
-    temp <- paste(temp[1:(length(temp))], collapse = " ")
-    rec <- ""
-    for (j in 1:length(slotnams)) if (grepl(slotnams[j], temp)) 
-      rec <- c(rec, slots[j])
-    if (length(rec) > 1) 
-      repp[i] <- paste(rec[2:length(rec)], collapse = ", ")
-  }
-  cbind(funcs, repp, deparse.level = 0)
+  if (all(is.na(funcs))) funcs <- avail("MP")
+  temp <- lapply(funcs, function(x) paste(format(match.fun(x)), collapse = " "))
+  repp <- vapply(temp, match_slots, character(1))
+  repp[!nzchar(repp)] <- "No data needed for this MP."
+  matrix(repp, ncol = 1, dimnames = list(funcs))
 }
-
 
 
 #' Setup parallel processing
