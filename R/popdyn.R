@@ -169,7 +169,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
       SLarray_P[,, yy] <- selLen  
     }
     
-    # sim <- 2
+    # sim <- 158
     # plot(CAL_binsmid, selLen[sim,], type="b")
     # lines(c(L5_P[yr,sim], L5_P[yr,sim]), c(0, 0.05), lty=2)
     # lines(c(LFS_P[yr,sim], LFS_P[yr,sim]), c(0, 1), lty=2)
@@ -221,6 +221,11 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     retL_P[,,allyrs] <- retL_P[,,allyrs] * SLarray_P[,,allyrs] 
   }
   
+  # sim <- 158
+  # plot(CAL_binsmid, selLen[sim,], type="b")
+  # lines(c(L5_P[yr,sim], L5_P[yr,sim]), c(0, 0.05), lty=2)
+  # lines(c(LFS_P[yr,sim], LFS_P[yr,sim]), c(0, 1), lty=2)
+  # lines(c(Linf[sim], Linf[sim]), c(0, Vmaxlen_P[yr,sim]), lty=2)
   
   # indices 
   SAYRL <- as.matrix(expand.grid(1:nsim, 1:maxage, nyears, 1:nareas))  # Final historical year
@@ -297,31 +302,38 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     chk <- apply(CB_P[,,y,], 1, sum) > availB # total removals can't be more than available biomass
     if (sum(chk)>0) {
       c_temp <- apply(CB_P[chk,,y,, drop=FALSE], 1, sum)
-      ratio_temp <- availB[chk]/c_temp
+      ratio_temp <- (availB[chk]/c_temp) * 0.99
       if (sum(chk)>1) CB_P[chk,,y, ] <- CB_P[chk,,y,] * array(ratio_temp, dim=c(sum(chk), maxage, nareas))
       if (sum(chk)==1) CB_P[chk,,y, ] <- CB_P[chk,,y,] * array(ratio_temp, dim=c(maxage, nareas))
     }
   
+    # total removals
     temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
-    temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF)
-    
+    temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF) # apply maxF constraint
     FM_P[SAYR] <- -log(1 - temp)
-    
-    temp <- CB_Pret[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
-    temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF)
-    
-    FM_Pret[SAYR] <- -log(1 - temp)
-    
     Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt] # calculate total mortality 
+    # update removals with maxF constraint
+    CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR])) 
+
+    # repeated because of approximation error in Pope's approximation - an issue if CB_P ~ AvailB
+    chk <- apply(CB_P[,,y,], 1, sum) > availB # total removals can't be more than available biomass
+    if (sum(chk)>0) {
+      c_temp <- apply(CB_P[chk,,y,, drop=FALSE], 1, sum)
+      ratio_temp <- (availB[chk]/c_temp) * 0.99
+      if (sum(chk)>1) CB_P[chk,,y, ] <- CB_P[chk,,y,] * array(ratio_temp, dim=c(sum(chk), maxage, nareas))
+      if (sum(chk)==1) CB_P[chk,,y, ] <- CB_P[chk,,y,] * array(ratio_temp, dim=c(maxage, nareas))
+    }
+  
+    # retained catch
+    temp <- CB_Pret[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
+    temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF) # apply maxF constraint
+    FM_Pret[SAYR] <- -log(1 - temp)
+    # update catch with maxF constraint
+    CB_Pret[SAYR] <- FM_Pret[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR])) 
     
-    
-    # Fishing mortality
-    # Fs <- (-log(1 - apply(CB_P[, , y, ], 1, sum)/(apply(CB_P[, , y, ], 1, sum) + 
-    #                                                 apply(VBiomass_P[, , y, ], 1, sum))))
     Fs <- (-log(1 - apply(CB_P[, , y, ], 1, sum)/apply(VBiomass_P[, , y, ], 1, sum)))
-    
-    Effort <-  Fs/(qs * qvar[,y] * ((1 + qinc/100)^y))
-    
+    Effort <-  Fs/(qs * qvar[,y] * ((1 + qinc/100)^y)) 
+
     # Make sure Effort doesn't exceed regulated effort 
     if (length(MPRecs$Effort) >0 ) { # an effort regulation also exists
       aboveE <- which(Effort > Ei)

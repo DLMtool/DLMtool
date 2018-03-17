@@ -164,10 +164,11 @@ getEffhist <- function(Esd, nyears, EffYears, EffLower, EffUpper) {
 #' 
 #' @param x Character string object name
 #' @param classy A class of object (character string, e.g. 'Fleet')
-#' @author T. Carruthers
+#' @author T. Carruthers with nasty hacks from A. Hordyk
 #' @return TRUE or FALSE
-getclass <- function(x, classy) any(class(get(x)) == classy) # inherits(get(x), classy) - this gives a problem since we now inherit Stock etc in OM
-
+getclass <- function(x, classy) {
+  return(any(class(get(x)) == classy)) # inherits(get(x), classy) - this gives a problem since we now inherit Stock etc in OM
+} 
 #' Optimization function to find a movement model that matches user specified
 #' movement characteristics modified for Rcpp.
 #' 

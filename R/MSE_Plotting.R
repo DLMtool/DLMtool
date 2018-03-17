@@ -13,7 +13,7 @@ plot.MSE <- function(x, ...) {
 
 # modified from
 # https://github.com/tidyverse/ggplot2/wiki/share-a-legend-between-two-ggplot2-graphs
-grid_arrange_shared_legend <- function(plots, ncol = length(plots), nrow = 1, position = c("bottom", "right")) {
+grid_arrange_shared_legend <- function(plots, ncol = length(plots), nrow = 1, position = c("bottom", "right", "none")) {
   
   
   position <- match.arg(position)
@@ -260,314 +260,314 @@ barplot.MSE <- function(height, MSEobj = NULL, PMs = list(B_BMSY = 0.5,
 }
 
 
-#' Boxplot of MP performance from MSE object
-#' 
-#' @param x An object of class MSE
-#' @param MPs Optional subset MSE object by MP
-#' @param maxMP Maximum number of MPs to plot
-#' @param PMRefs List containing the Performance Metrics reference points.
-#' Options are \code{'SSB_SSB0', 'B_BMSY', 'F_FMSY', 'AAVE', 'AAVY'}
-#' @param lastYrs Last number of years in projection to calculate statistics
-#' @param cex.lab Size of axis label text
-#' @param cex.PM Size of performacne metric text
-#' @param canMPs Optional character vector of MPs that can be applied (plotted
-#' in different colour)
-#' @param cols Optional vector of colours
-#' @param outline Logical. Include outliers in boxplot?
-#' @param CexName Size of the names
-#' @param incLine Logical. Include vertical line?
-#' @param incref Logical. Include reference methods?
-#' @param Names Logical. Include MP names in plot?
-#' @param ...  Additional arguments to be passed to plotting functions
-#' @author A. Hordyk
-#' @export
-boxplot.MSE <- function(x, MPs = NA, maxMP = 8, 
-                        PMRefs = list(B_BMSY = 1, 
-                                      SSB_SSB0 = 0.2, F_FMSY = 1, AAVY = 30, AAVE = 30), 
-                        lastYrs = 10, cex.lab = 1.2, 
-                        cex.PM = 0.75, canMPs = NULL, cols = TRUE, outline = FALSE, CexName = 1.25, 
-                        incLine = TRUE, incref = FALSE, Names = TRUE, ...) {
-  
-  MSEobj <- x
-  if (!all(is.na(MPs))) {
-    if (!incref) {
-      ind <- grep("FMSYref", MPs)  # FMSYref methods 
-      ind <- c(ind, grep("NFref", MPs))  # No fishing reference
-      if (length(ind) > 0) 
-        MPs <- MPs[-ind]
-    }
-    MSEobj <- Sub(MSEobj, MPs = MPs)
-  }
-  nmp <- MSEobj@nMPs
-  Nyears <- MSEobj@nyears
-  Pyears <- MSEobj@proyears
-  nMPs <- MSEobj@nMPs
-  MPs <- MSEobj@MPs
-  nsim <- MSEobj@nsim
-  RefYd <- MSEobj@OM$RefY
-  nyrs <- MSEobj@proyears
-  
-  perf <- MPStats(MSEobj, lastYrs = lastYrs)
-  if (lastYrs >= MSEobj@proyears) 
-    lastYrs <- 10
-  yrs <- (nyrs - lastYrs + 1):nyrs
-  perfdat <- perf[[1]]
-  Years <- paste("Years", (MSEobj@proyears - lastYrs) + 1, "-", MSEobj@proyears, 
-                 "(last", lastYrs, "years)")
-  
-  # MPtype <- perfdat$MPtype
-  MPtypes <- MPtype(MPs)[,2]
-  outmps <- perfdat[MPtypes == "Output", ]$MP
-  inmps <- perfdat[MPtypes == "Input", ]$MP
-  nOut <- ceiling(nmp/2)
-  nIn <- floor(nmp - nOut)
-  if (nMPs > nmp) {
-    outDist <- perfdat[MPtypes == "Output", ]$Dist
-    OutMPs <- perfdat[MPtypes == "Output", ]$MP[order(outDist)[1:nOut]]
-    inDist <- perfdat[MPtypes == "Input", ]$Dist
-    InMPs <- perfdat[MPtypes == "Input", ]$MP[order(inDist)[1:nIn]]
-  } else {
-    OutMPs <- perfdat[MPtypes == "Output", ]$MP
-    InMPs <- perfdat[MPtypes == "Input", ]$MP
-  }
-  
-  mseobj <- Sub(MSEobj, MPs = c(OutMPs, InMPs))
-  nMPs <- mseobj@nMPs
-  perf <- MPStats(mseobj, msg = FALSE)
-  perfdat <- perf$Perf
-  MPtypes <- MPtype(mseobj@MPs)[,2]
-  # MPtype <- perfdat$MPtype
-  rawVals <- perf$BySim
-  MPs <- perfdat$MP
-  
-  # Reporting Distribution in last years
-  BBMSY <- rawVals$B_BMSY[, , yrs]
-  BBMSY <- aperm(BBMSY, c(1, 3, 2))
-  dim(BBMSY) <- c(nsim * lastYrs, nMPs)
-  
-  BB0 <- rawVals$SSB_SSB0[, , yrs]
-  BB0 <- aperm(BB0, c(1, 3, 2))
-  dim(BB0) <- c(nsim * lastYrs, nMPs)
-  
-  FFMSY <- rawVals$F_FMSY[, , yrs]
-  FFMSY <- aperm(FFMSY, c(1, 3, 2))
-  dim(FFMSY) <- c(nsim * lastYrs, nMPs)
-  
-  LTY <- rawVals$LTY
-  LTY <- aperm(LTY, c(1, 3, 2))
-  dim(LTY) <- c(nsim * 10, nMPs)
-  
-  AAVY <- rawVals$AAVY
-  AAVY <- aperm(AAVY, c(1, 3, 2))
-  dim(AAVY) <- c(nsim * 10, nMPs)
-  
-  AAVE <- rawVals$AAVE
-  # apply(AAVE[,,10], 2, mean, na.rm=TRUE)
-  AAVE <- aperm(AAVE, c(1, 3, 2))
-  dim(AAVE) <- c(nsim * 10, nMPs)
-  # apply(AAVE, 2, mean, na.rm=TRUE)
-  
-  # Colors - to make the plot a bit more cheerful
-  inputs <- which(MPtypes == "Input")
-  outputs <- which(MPtypes == "Output")
-  fonts <- rep(2, nmp)
-  fonts[MPtypes == "Input"] <- 4
-  NameCol <- rep("black", nmp)
-  NameCol[MPs %in% canMPs] <- "green"
-  index <- grep("ref", MPs)
-  NameCol[index] <- "darkgray"
-  
-  if (class(cols) == "character") 
-    Col <- cols
-  if (class(cols) == "logical" && !(cols)) 
-    Col <- "lightblue"
-  
-  if (class(cols) == "logical" && cols) {
-    cols1 <- rep(c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", 
-                   "#FFFF33", "#A65628", "#F781BF"), 4)  # brewer.pal(8, 'Set1')
-    cols2 <- rep(c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", 
-                   "#FFD92F", "#E5C494", "#B3B3B3"), 4)  # brewer.pal(8, 'Set2')
-    Col <- rep(cols1, length.out = nMPs)[1:nMPs]
-    if (length(inputs) > 0) 
-      Col[inputs] <- cols2[1:length(inputs)]
-  }
-  
-  Line <- 3.5
-  CexName <- 1.25
-  lncol <- "slategray"
-  topcex <- cex.PM
-  ncharmp <- max(nchar(MPs)) - 1.5
-  multi <- 1.15
-  op <- par(mfrow = c(2, 3), bty = "n", oma = c(4, ncharmp, 2, 0), mar = c(3, 
-                                                                           2, 4, 3))
-  # if (class(Title) == 'character') par(mfrow=c(2,3), bty='n',
-  # oma=c(4,ncharmp,2,0), mar=c(3,2,4,3)) if (class(Title) !=
-  # 'character') par(mfrow=c(2,3), bty='n', oma=c(4,ncharmp,0,0),
-  # mar=c(3,2,4,3)) B/B0
-  YLim <- c(0, 1)
-  tt <- boxplot(BB0, names = FALSE, las = 1, outline = outline, horizontal = TRUE, 
-                xlab = "", bty = "n", col = Col, xpd = NA, cex.names = CexName, 
-                axes = FALSE, ylim = YLim)
-  axis(side = 1, cex.axis = CexName)
-  axis(side = 2, at = outputs, labels = FALSE, las = 2)
-  axis(side = 2, at = inputs, labels = FALSE, las = 2)
-  if (Names) 
-    text(x = rep(-0.07, nmp), y = 1:nmp, labels = MPs, col = NameCol, 
-         cex = CexName, font = fonts, pos = 2, xpd = NA, srt = 0)
-  mtext(side = 1, expression(italic(B/B[0])), cex = cex.lab, line = Line)
-  mtext(side = 3, outer = TRUE, Years, line = -0.5)
-  PosPMs <- c("SSB_SSB0", "B_BMSY", "F_FMSY", "AAVE", "AAVY")
-  ind <- match(names(PMRefs), PosPMs)
-  refs <- unlist(PMRefs[ind])
-  
-  if (incLine && refs[1] > 0) {
-    ps <- round(apply(BB0 > refs[1], 2, sum, na.rm = TRUE)/(nrow(BB0)), 
-                2)
-    font <- rep(1, length(ps))
-    ps <- sprintf("%3.2f", ps)
-    if (refs[1] != 1) 
-      txt <- bquote(Prob. ~ italic(B) > ~.(refs[1]) ~ italic(B[0]))
-    if (refs[1] == 1) 
-      txt <- bquote(Prob. ~ italic(B) > ~italic(B[0]))
-    
-    text(x = YLim[2] * 1.1, y = 1:nMPs, labels = ps, xpd = NA, font = font)
-    text(x = YLim[2] * 1.2, y = nMPs * multi, txt, xpd = NA, pos = 2)
-    abline(v = refs[1], lty = 2, lwd = 2, col = lncol)
-  }
-  
-  text(-0.2, nmp * 1.25, "Input Control", font = 4, xpd = NA, cex = 1.2, 
-       pos = 4)
-  text(-0.2, nmp * 1.35, "Output Control", font = 2, xpd = NA, cex = 1.2, 
-       pos = 4)
-  if (!is.null(canMPs)) {
-    text(1, nmp * 1.25, "Available", font = 2, xpd = NA, cex = 1.2, 
-         col = "green", pos = 2)
-    text(1, nmp * 1.35, "Not Available", font = 2, xpd = NA, cex = 1.2, 
-         pos = 2)
-  }
-  
-  # B/BMSY
-  YLim <- c(0, 3)
-  tt <- boxplot(BBMSY, names = FALSE, las = 1, outline = outline, horizontal = TRUE, 
-                xlab = "", bty = "n", col = Col, xpd = NA, axes = FALSE, ylim = YLim)
-  
-  mtext(side = 1, expression(italic(B/B[MSY])), cex = cex.lab, line = Line)
-  axis(side = 1, cex.axis = CexName)
-  axis(side = 2, at = outputs, labels = FALSE)
-  axis(side = 2, at = inputs, labels = FALSE)
-  if (incLine && refs[2] > 0) {
-    ps <- round(apply(BBMSY > refs[2], 2, sum, na.rm = TRUE)/(nrow(BBMSY)), 
-                2)
-    ps <- sprintf("%3.2f", ps)
-    axis(side = 4, at = 1:nMPs, labels = ps, las = 1, tick = FALSE, 
-         line = -1, xpd = NA)
-    if (refs[2] != 1) 
-      txt <- bquote(Prob. ~ italic(B) > ~.(refs[2]) ~ italic(B[MSY]))
-    if (refs[2] == 1) 
-      txt <- bquote(Prob. ~ italic(B) > ~italic(B[MSY]))
-    # text(x=YLim[2]*1.1, y=1:nMPs, labels=ps, xpd=NA, font=font)
-    text(x = YLim[2] * 1.2, y = nMPs * multi, txt, xpd = NA, pos = 2)
-    abline(v = refs[2], lty = 2, lwd = 2, col = lncol)
-  }
-  
-  
-  # F/FMSY
-  YLim <- c(0, 2)
-  tt <- boxplot(FFMSY, names = FALSE, las = 1, outline = outline, horizontal = TRUE, 
-                xlab = "", bty = "n", col = Col, xpd = NA, axes = FALSE, ylim = YLim)
-  
-  mtext(side = 1, expression(italic(F/F[MSY])), cex = cex.lab, line = Line)
-  axis(side = 1, cex.axis = CexName)
-  axis(side = 2, at = outputs, labels = FALSE)
-  axis(side = 2, at = inputs, labels = FALSE)
-  if (incLine && refs[3] > 0) {
-    ps <- round(apply(FFMSY < refs[3], 2, sum, na.rm = TRUE)/(nrow(FFMSY)), 
-                2)
-    ps <- sprintf("%3.2f", ps)
-    axis(side = 4, at = 1:nMPs, labels = ps, las = 1, tick = FALSE, 
-         line = -1, xpd = NA)
-    abline(v = refs[3], lty = 2, lwd = 2, col = lncol)
-    if (refs[3] != 1) 
-      txt <- bquote(Prob. ~ italic(F) < ~.(refs[3]) ~ italic(F[MSY]))
-    if (refs[3] == 1) 
-      txt <- bquote(Prob. ~ italic(F) < ~italic(F[MSY]))
-    text(x = YLim[2] * 1.2, y = nMPs * multi, txt, xpd = NA, pos = 2)
-  }
-  
-  
-  # AAVY
-  if (refs[4] < 1) 
-    refs[4] <- refs[4] * 100
-  AAVY <- AAVY * 100
-  YLim <- c(0, 60)
-  tt <- boxplot(AAVY, names = FALSE, las = 1, outline = outline, horizontal = TRUE, 
-                xlab = "", bty = "n", col = Col, xpd = NA, axes = FALSE, ylim = YLim)
-  mtext(side = 1, "Average Annual\n Variation Yield (%)", cex = cex.lab, 
-        line = Line + 1)
-  axis(side = 1, cex.axis = CexName)
-  axis(side = 2, at = outputs, labels = FALSE, las = 2)
-  axis(side = 2, at = inputs, labels = FALSE, las = 2)
-  text(x = rep(-5, nmp), y = 1:nmp, labels = MPs, col = NameCol, cex = CexName, 
-       font = fonts, pos = 2, xpd = NA, srt = 0)
-  if (incLine && refs[4] > 0) {
-    ps <- round(apply(AAVY < refs[4], 2, sum, na.rm = TRUE)/(nrow(AAVY)), 
-                2)
-    ps <- sprintf("%3.2f", ps)
-    axis(side = 4, at = 1:nMPs, labels = ps, las = 1, tick = FALSE, 
-         line = -1, xpd = NA)
-    abline(v = refs[4], lty = 2, lwd = 2, col = lncol)
-    if (refs[4] != 1) 
-      txt <- bquote(Prob. ~ italic(AAVY) < ~.(refs[4]) ~ "%")
-    if (refs[4] == 1) 
-      txt <- bquote(Prob. ~ italic(AAVY) < ~"%")
-    text(x = YLim[2] * 1.2, y = nMPs * multi, txt, xpd = NA, pos = 2)
-  }
-  abline(v = refs[4], lty = 2, lwd = 2, col = lncol)
-  
-  # AAVE
-  if (refs[5] < 1) 
-    refs[5] <- refs[5] * 100
-  AAVE <- AAVE * 100
-  tt <- boxplot(AAVE, names = FALSE, las = 1, outline = outline, horizontal = TRUE, 
-                xlab = "", bty = "n", col = Col, xpd = NA, axes = FALSE, ylim = c(0, 
-                                                                                  60))
-  mtext(side = 1, "Average Annual\n Variation Effort (%)", cex = cex.lab, 
-        line = Line + 1)
-  axis(side = 1, cex.axis = CexName)
-  axis(side = 2, at = outputs, labels = FALSE)
-  axis(side = 2, at = inputs, labels = FALSE)
-  if (incLine && refs[4] > 0) {
-    ps <- round(apply(AAVE < refs[4], 2, sum, na.rm = TRUE)/(nrow(AAVE)), 
-                2)
-    ps <- sprintf("%3.2f", ps)
-    axis(side = 4, at = 1:nMPs, labels = ps, las = 1, tick = FALSE, 
-         line = -1, xpd = NA)
-    abline(v = refs[4], lty = 2, lwd = 2, col = lncol)
-    if (refs[5] != 1) 
-      txt <- bquote(Prob. ~ italic(AAVE) < ~.(refs[5]) ~ "%")
-    if (refs[5] == 1) 
-      txt <- bquote(Prob. ~ italic(AAVE) < ~"%")
-    text(x = YLim[2] * 1.2, y = nMPs * multi, txt, xpd = NA, pos = 2)
-    
-  }
-  abline(v = refs[4], lty = 2, lwd = 2, col = lncol)
-  
-  
-  # LTY
-  tt <- boxplot(LTY, names = FALSE, las = 1, outline = outline, horizontal = TRUE, 
-                xlab = "", bty = "n", col = Col, xpd = NA, axes = FALSE)
-  mtext(side = 1, "Relative Long-Term\n Yield", cex = cex.lab, line = Line + 
-          1)
-  axis(side = 1, cex.axis = CexName)
-  axis(side = 2, at = outputs, labels = FALSE)
-  axis(side = 2, at = inputs, labels = FALSE)
-  if (incLine && refs[5] > 0) 
-    abline(v = refs[4], lty = 2, lwd = 2, col = "darkgray")
-  par(op)
-  
-}
-
-
+# #' Boxplot of MP performance from MSE object
+# #' 
+# #' @param x An object of class MSE
+# #' @param MPs Optional subset MSE object by MP
+# #' @param maxMP Maximum number of MPs to plot
+# #' @param PMRefs List containing the Performance Metrics reference points.
+# #' Options are \code{'SSB_SSB0', 'B_BMSY', 'F_FMSY', 'AAVE', 'AAVY'}
+# #' @param lastYrs Last number of years in projection to calculate statistics
+# #' @param cex.lab Size of axis label text
+# #' @param cex.PM Size of performacne metric text
+# #' @param canMPs Optional character vector of MPs that can be applied (plotted
+# #' in different colour)
+# #' @param cols Optional vector of colours
+# #' @param outline Logical. Include outliers in boxplot?
+# #' @param CexName Size of the names
+# #' @param incLine Logical. Include vertical line?
+# #' @param incref Logical. Include reference methods?
+# #' @param Names Logical. Include MP names in plot?
+# #' @param ...  Additional arguments to be passed to plotting functions
+# #' @author A. Hordyk
+# #' @export
+# boxplot.MSE <- function(x, MPs = NA, maxMP = 8, 
+#                         PMRefs = list(B_BMSY = 1, 
+#                                       SSB_SSB0 = 0.2, F_FMSY = 1, AAVY = 30, AAVE = 30), 
+#                         lastYrs = 10, cex.lab = 1.2, 
+#                         cex.PM = 0.75, canMPs = NULL, cols = TRUE, outline = FALSE, CexName = 1.25, 
+#                         incLine = TRUE, incref = FALSE, Names = TRUE, ...) {
+#   
+#   MSEobj <- x
+#   if (!all(is.na(MPs))) {
+#     if (!incref) {
+#       ind <- grep("FMSYref", MPs)  # FMSYref methods 
+#       ind <- c(ind, grep("NFref", MPs))  # No fishing reference
+#       if (length(ind) > 0) 
+#         MPs <- MPs[-ind]
+#     }
+#     MSEobj <- Sub(MSEobj, MPs = MPs)
+#   }
+#   nmp <- MSEobj@nMPs
+#   Nyears <- MSEobj@nyears
+#   Pyears <- MSEobj@proyears
+#   nMPs <- MSEobj@nMPs
+#   MPs <- MSEobj@MPs
+#   nsim <- MSEobj@nsim
+#   RefYd <- MSEobj@OM$RefY
+#   nyrs <- MSEobj@proyears
+#   
+#   perf <- MPStats(MSEobj, lastYrs = lastYrs)
+#   if (lastYrs >= MSEobj@proyears) 
+#     lastYrs <- 10
+#   yrs <- (nyrs - lastYrs + 1):nyrs
+#   perfdat <- perf[[1]]
+#   Years <- paste("Years", (MSEobj@proyears - lastYrs) + 1, "-", MSEobj@proyears, 
+#                  "(last", lastYrs, "years)")
+#   
+#   # MPtype <- perfdat$MPtype
+#   MPtypes <- MPtype(MPs)[,2]
+#   outmps <- perfdat[MPtypes == "Output", ]$MP
+#   inmps <- perfdat[MPtypes == "Input", ]$MP
+#   nOut <- ceiling(nmp/2)
+#   nIn <- floor(nmp - nOut)
+#   if (nMPs > nmp) {
+#     outDist <- perfdat[MPtypes == "Output", ]$Dist
+#     OutMPs <- perfdat[MPtypes == "Output", ]$MP[order(outDist)[1:nOut]]
+#     inDist <- perfdat[MPtypes == "Input", ]$Dist
+#     InMPs <- perfdat[MPtypes == "Input", ]$MP[order(inDist)[1:nIn]]
+#   } else {
+#     OutMPs <- perfdat[MPtypes == "Output", ]$MP
+#     InMPs <- perfdat[MPtypes == "Input", ]$MP
+#   }
+#   
+#   mseobj <- Sub(MSEobj, MPs = c(OutMPs, InMPs))
+#   nMPs <- mseobj@nMPs
+#   perf <- MPStats(mseobj, msg = FALSE)
+#   perfdat <- perf$Perf
+#   MPtypes <- MPtype(mseobj@MPs)[,2]
+#   # MPtype <- perfdat$MPtype
+#   rawVals <- perf$BySim
+#   MPs <- perfdat$MP
+#   
+#   # Reporting Distribution in last years
+#   BBMSY <- rawVals$B_BMSY[, , yrs]
+#   BBMSY <- aperm(BBMSY, c(1, 3, 2))
+#   dim(BBMSY) <- c(nsim * lastYrs, nMPs)
+#   
+#   BB0 <- rawVals$SSB_SSB0[, , yrs]
+#   BB0 <- aperm(BB0, c(1, 3, 2))
+#   dim(BB0) <- c(nsim * lastYrs, nMPs)
+#   
+#   FFMSY <- rawVals$F_FMSY[, , yrs]
+#   FFMSY <- aperm(FFMSY, c(1, 3, 2))
+#   dim(FFMSY) <- c(nsim * lastYrs, nMPs)
+#   
+#   LTY <- rawVals$LTY
+#   LTY <- aperm(LTY, c(1, 3, 2))
+#   dim(LTY) <- c(nsim * 10, nMPs)
+#   
+#   AAVY <- rawVals$AAVY
+#   AAVY <- aperm(AAVY, c(1, 3, 2))
+#   dim(AAVY) <- c(nsim * 10, nMPs)
+#   
+#   AAVE <- rawVals$AAVE
+#   # apply(AAVE[,,10], 2, mean, na.rm=TRUE)
+#   AAVE <- aperm(AAVE, c(1, 3, 2))
+#   dim(AAVE) <- c(nsim * 10, nMPs)
+#   # apply(AAVE, 2, mean, na.rm=TRUE)
+#   
+#   # Colors - to make the plot a bit more cheerful
+#   inputs <- which(MPtypes == "Input")
+#   outputs <- which(MPtypes == "Output")
+#   fonts <- rep(2, nmp)
+#   fonts[MPtypes == "Input"] <- 4
+#   NameCol <- rep("black", nmp)
+#   NameCol[MPs %in% canMPs] <- "green"
+#   index <- grep("ref", MPs)
+#   NameCol[index] <- "darkgray"
+#   
+#   if (class(cols) == "character") 
+#     Col <- cols
+#   if (class(cols) == "logical" && !(cols)) 
+#     Col <- "lightblue"
+#   
+#   if (class(cols) == "logical" && cols) {
+#     cols1 <- rep(c("#E41A1C", "#377EB8", "#4DAF4A", "#984EA3", "#FF7F00", 
+#                    "#FFFF33", "#A65628", "#F781BF"), 4)  # brewer.pal(8, 'Set1')
+#     cols2 <- rep(c("#66C2A5", "#FC8D62", "#8DA0CB", "#E78AC3", "#A6D854", 
+#                    "#FFD92F", "#E5C494", "#B3B3B3"), 4)  # brewer.pal(8, 'Set2')
+#     Col <- rep(cols1, length.out = nMPs)[1:nMPs]
+#     if (length(inputs) > 0) 
+#       Col[inputs] <- cols2[1:length(inputs)]
+#   }
+#   
+#   Line <- 3.5
+#   CexName <- 1.25
+#   lncol <- "slategray"
+#   topcex <- cex.PM
+#   ncharmp <- max(nchar(MPs)) - 1.5
+#   multi <- 1.15
+#   op <- par(mfrow = c(2, 3), bty = "n", oma = c(4, ncharmp, 2, 0), mar = c(3, 
+#                                                                            2, 4, 3))
+#   # if (class(Title) == 'character') par(mfrow=c(2,3), bty='n',
+#   # oma=c(4,ncharmp,2,0), mar=c(3,2,4,3)) if (class(Title) !=
+#   # 'character') par(mfrow=c(2,3), bty='n', oma=c(4,ncharmp,0,0),
+#   # mar=c(3,2,4,3)) B/B0
+#   YLim <- c(0, 1)
+#   tt <- boxplot(BB0, names = FALSE, las = 1, outline = outline, horizontal = TRUE, 
+#                 xlab = "", bty = "n", col = Col, xpd = NA, cex.names = CexName, 
+#                 axes = FALSE, ylim = YLim)
+#   axis(side = 1, cex.axis = CexName)
+#   axis(side = 2, at = outputs, labels = FALSE, las = 2)
+#   axis(side = 2, at = inputs, labels = FALSE, las = 2)
+#   if (Names) 
+#     text(x = rep(-0.07, nmp), y = 1:nmp, labels = MPs, col = NameCol, 
+#          cex = CexName, font = fonts, pos = 2, xpd = NA, srt = 0)
+#   mtext(side = 1, expression(italic(B/B[0])), cex = cex.lab, line = Line)
+#   mtext(side = 3, outer = TRUE, Years, line = -0.5)
+#   PosPMs <- c("SSB_SSB0", "B_BMSY", "F_FMSY", "AAVE", "AAVY")
+#   ind <- match(names(PMRefs), PosPMs)
+#   refs <- unlist(PMRefs[ind])
+#   
+#   if (incLine && refs[1] > 0) {
+#     ps <- round(apply(BB0 > refs[1], 2, sum, na.rm = TRUE)/(nrow(BB0)), 
+#                 2)
+#     font <- rep(1, length(ps))
+#     ps <- sprintf("%3.2f", ps)
+#     if (refs[1] != 1) 
+#       txt <- bquote(Prob. ~ italic(B) > ~.(refs[1]) ~ italic(B[0]))
+#     if (refs[1] == 1) 
+#       txt <- bquote(Prob. ~ italic(B) > ~italic(B[0]))
+#     
+#     text(x = YLim[2] * 1.1, y = 1:nMPs, labels = ps, xpd = NA, font = font)
+#     text(x = YLim[2] * 1.2, y = nMPs * multi, txt, xpd = NA, pos = 2)
+#     abline(v = refs[1], lty = 2, lwd = 2, col = lncol)
+#   }
+#   
+#   text(-0.2, nmp * 1.25, "Input Control", font = 4, xpd = NA, cex = 1.2, 
+#        pos = 4)
+#   text(-0.2, nmp * 1.35, "Output Control", font = 2, xpd = NA, cex = 1.2, 
+#        pos = 4)
+#   if (!is.null(canMPs)) {
+#     text(1, nmp * 1.25, "Available", font = 2, xpd = NA, cex = 1.2, 
+#          col = "green", pos = 2)
+#     text(1, nmp * 1.35, "Not Available", font = 2, xpd = NA, cex = 1.2, 
+#          pos = 2)
+#   }
+#   
+#   # B/BMSY
+#   YLim <- c(0, 3)
+#   tt <- boxplot(BBMSY, names = FALSE, las = 1, outline = outline, horizontal = TRUE, 
+#                 xlab = "", bty = "n", col = Col, xpd = NA, axes = FALSE, ylim = YLim)
+#   
+#   mtext(side = 1, expression(italic(B/B[MSY])), cex = cex.lab, line = Line)
+#   axis(side = 1, cex.axis = CexName)
+#   axis(side = 2, at = outputs, labels = FALSE)
+#   axis(side = 2, at = inputs, labels = FALSE)
+#   if (incLine && refs[2] > 0) {
+#     ps <- round(apply(BBMSY > refs[2], 2, sum, na.rm = TRUE)/(nrow(BBMSY)), 
+#                 2)
+#     ps <- sprintf("%3.2f", ps)
+#     axis(side = 4, at = 1:nMPs, labels = ps, las = 1, tick = FALSE, 
+#          line = -1, xpd = NA)
+#     if (refs[2] != 1) 
+#       txt <- bquote(Prob. ~ italic(B) > ~.(refs[2]) ~ italic(B[MSY]))
+#     if (refs[2] == 1) 
+#       txt <- bquote(Prob. ~ italic(B) > ~italic(B[MSY]))
+#     # text(x=YLim[2]*1.1, y=1:nMPs, labels=ps, xpd=NA, font=font)
+#     text(x = YLim[2] * 1.2, y = nMPs * multi, txt, xpd = NA, pos = 2)
+#     abline(v = refs[2], lty = 2, lwd = 2, col = lncol)
+#   }
+#   
+#   
+#   # F/FMSY
+#   YLim <- c(0, 2)
+#   tt <- boxplot(FFMSY, names = FALSE, las = 1, outline = outline, horizontal = TRUE, 
+#                 xlab = "", bty = "n", col = Col, xpd = NA, axes = FALSE, ylim = YLim)
+#   
+#   mtext(side = 1, expression(italic(F/F[MSY])), cex = cex.lab, line = Line)
+#   axis(side = 1, cex.axis = CexName)
+#   axis(side = 2, at = outputs, labels = FALSE)
+#   axis(side = 2, at = inputs, labels = FALSE)
+#   if (incLine && refs[3] > 0) {
+#     ps <- round(apply(FFMSY < refs[3], 2, sum, na.rm = TRUE)/(nrow(FFMSY)), 
+#                 2)
+#     ps <- sprintf("%3.2f", ps)
+#     axis(side = 4, at = 1:nMPs, labels = ps, las = 1, tick = FALSE, 
+#          line = -1, xpd = NA)
+#     abline(v = refs[3], lty = 2, lwd = 2, col = lncol)
+#     if (refs[3] != 1) 
+#       txt <- bquote(Prob. ~ italic(F) < ~.(refs[3]) ~ italic(F[MSY]))
+#     if (refs[3] == 1) 
+#       txt <- bquote(Prob. ~ italic(F) < ~italic(F[MSY]))
+#     text(x = YLim[2] * 1.2, y = nMPs * multi, txt, xpd = NA, pos = 2)
+#   }
+#   
+#   
+#   # AAVY
+#   if (refs[4] < 1) 
+#     refs[4] <- refs[4] * 100
+#   AAVY <- AAVY * 100
+#   YLim <- c(0, 60)
+#   tt <- boxplot(AAVY, names = FALSE, las = 1, outline = outline, horizontal = TRUE, 
+#                 xlab = "", bty = "n", col = Col, xpd = NA, axes = FALSE, ylim = YLim)
+#   mtext(side = 1, "Average Annual\n Variation Yield (%)", cex = cex.lab, 
+#         line = Line + 1)
+#   axis(side = 1, cex.axis = CexName)
+#   axis(side = 2, at = outputs, labels = FALSE, las = 2)
+#   axis(side = 2, at = inputs, labels = FALSE, las = 2)
+#   text(x = rep(-5, nmp), y = 1:nmp, labels = MPs, col = NameCol, cex = CexName, 
+#        font = fonts, pos = 2, xpd = NA, srt = 0)
+#   if (incLine && refs[4] > 0) {
+#     ps <- round(apply(AAVY < refs[4], 2, sum, na.rm = TRUE)/(nrow(AAVY)), 
+#                 2)
+#     ps <- sprintf("%3.2f", ps)
+#     axis(side = 4, at = 1:nMPs, labels = ps, las = 1, tick = FALSE, 
+#          line = -1, xpd = NA)
+#     abline(v = refs[4], lty = 2, lwd = 2, col = lncol)
+#     if (refs[4] != 1) 
+#       txt <- bquote(Prob. ~ italic(AAVY) < ~.(refs[4]) ~ "%")
+#     if (refs[4] == 1) 
+#       txt <- bquote(Prob. ~ italic(AAVY) < ~"%")
+#     text(x = YLim[2] * 1.2, y = nMPs * multi, txt, xpd = NA, pos = 2)
+#   }
+#   abline(v = refs[4], lty = 2, lwd = 2, col = lncol)
+#   
+#   # AAVE
+#   if (refs[5] < 1) 
+#     refs[5] <- refs[5] * 100
+#   AAVE <- AAVE * 100
+#   tt <- boxplot(AAVE, names = FALSE, las = 1, outline = outline, horizontal = TRUE, 
+#                 xlab = "", bty = "n", col = Col, xpd = NA, axes = FALSE, ylim = c(0, 
+#                                                                                   60))
+#   mtext(side = 1, "Average Annual\n Variation Effort (%)", cex = cex.lab, 
+#         line = Line + 1)
+#   axis(side = 1, cex.axis = CexName)
+#   axis(side = 2, at = outputs, labels = FALSE)
+#   axis(side = 2, at = inputs, labels = FALSE)
+#   if (incLine && refs[4] > 0) {
+#     ps <- round(apply(AAVE < refs[4], 2, sum, na.rm = TRUE)/(nrow(AAVE)), 
+#                 2)
+#     ps <- sprintf("%3.2f", ps)
+#     axis(side = 4, at = 1:nMPs, labels = ps, las = 1, tick = FALSE, 
+#          line = -1, xpd = NA)
+#     abline(v = refs[4], lty = 2, lwd = 2, col = lncol)
+#     if (refs[5] != 1) 
+#       txt <- bquote(Prob. ~ italic(AAVE) < ~.(refs[5]) ~ "%")
+#     if (refs[5] == 1) 
+#       txt <- bquote(Prob. ~ italic(AAVE) < ~"%")
+#     text(x = YLim[2] * 1.2, y = nMPs * multi, txt, xpd = NA, pos = 2)
+#     
+#   }
+#   abline(v = refs[4], lty = 2, lwd = 2, col = lncol)
+#   
+#   
+#   # LTY
+#   tt <- boxplot(LTY, names = FALSE, las = 1, outline = outline, horizontal = TRUE, 
+#                 xlab = "", bty = "n", col = Col, xpd = NA, axes = FALSE)
+#   mtext(side = 1, "Relative Long-Term\n Yield", cex = cex.lab, line = Line + 
+#           1)
+#   axis(side = 1, cex.axis = CexName)
+#   axis(side = 2, at = outputs, labels = FALSE)
+#   axis(side = 2, at = inputs, labels = FALSE)
+#   if (incLine && refs[5] > 0) 
+#     abline(v = refs[4], lty = 2, lwd = 2, col = "darkgray")
+#   par(op)
+#   
+# }
+# 
+# 
 #' Plot the median biomass and yield relative to last historical year
 #' 
 #' Compare median biomass and yield in first year and last 5 years of
@@ -1462,148 +1462,148 @@ PWhisker<-function(MSEobj){#},Pnames=c("POF","C30","D30","LD","DNC","LDNC","PGK"
 }
 
 
-#' Scatter plot of B/BMSY or B/B0 and F/FMSY for lastYrs
-#' 
-#' Scatter plot of B/BMSY or B/B0 and F/FMSY for lastYrs
-#' 
-#' 
-#' @param MSEobj An object of class MSE
-#' @param MPs Optional subset by MP
-#' @param All Logical. Plot all points or just the mean?
-#' @param Var What to plot on the y-axis: \code{B_BMSY} or \code{SSB_SSB0}
-#' @param lastYrs Last number of years in projection to calculate statistics
-#' @param Fref Location of F statistic reference line
-#' @param BMSYref Location of B_MSY statistic reference line
-#' @param B0ref Location of B_0 statistic reference line
-#' @param cex.MP size of MP label
-#' @param Fbg Logical. Include background colours for F-statistic?
-#' @param Bbg Logical. Include background colours for B-statistic?
-#' @param Props Logical. Display the proportion of points in each quadrant?
-#' @param TP Logical. Use transparent colours?
-#' @author A. Hordyk
-#' @export Splot
-Splot <- function(MSEobj = NULL, MPs = NA, All = TRUE, Var = c("B_BMSY", 
-                                                               "SSB_SSB0"), lastYrs = 10, Fref = 1, BMSYref = 1, B0ref = 0.4, cex.MP = 1, 
-                  Fbg = FALSE, Bbg = FALSE, Props = FALSE, TP = FALSE) {
-  
-  Var <- match.arg(Var)
-  if (!any(is.na(MPs))) 
-    MSEobj <- Sub(MSEobj, MPs = MPs)
-  
-  nMPs <- MSEobj@nMPs
-  nyrs <- MSEobj@proyears
-  nsim <- MSEobj@nsim
-  
-  perf <- MPStats(MSEobj)
-  if (lastYrs > MSEobj@proyears) 
-    lastYrs <- 10
-  yrs <- (nyrs - lastYrs + 1):nyrs
-  
-  ord <- perf[[1]]
-  MPord <- match(ord$MP, MSEobj@MPs)
-  sims <- perf$BySim
-  Nrow <- ceiling(sqrt(nMPs))
-  Ncol <- ceiling(nMPs/Nrow)
-  Yvar <- sims[["F_FMSY"]]
-  Xvar <- sims[[Var]]
-  YLim <- c(0, 2)
-  XMax <- ceiling(min(max(apply(Xvar[, , yrs], c(1, 2), mean), na.rm = TRUE), 
-                      3)/0.5) * 0.5
-  XLim <- c(0, XMax)
-  YLab <- expression(F/F[MSY])
-  XLab <- switch(Var, SSB_SSB0 = expression(B/B[0]), B_BMSY = expression(B/B[MSY]))
-  
-  Bref <- switch(Var, SSB_SSB0 = B0ref, B_BMSY = BMSYref)
-  
-  ColVec <- colorRampPalette(c("green", "orange", "red"))(nsim)
-  op <- par(mfrow = c(Nrow, Ncol), mar = c(1, 1, 2, 0), oma = c(4, 5, 2, 1))
-  
-  pmat <- matrix(NA, nrow = Ncol, ncol = Nrow)
-  pmat[1:nMPs] <- 1:nMPs
-  pmat <- t(pmat)
-  
-  
-  for (mm in seq_along(MPord)) {
-    xx <- MPord[mm]
-    if (!All) 
-      Xs <- apply(Xvar[, xx, yrs], 1, mean)
-    if (!All) 
-      Ys <- apply(Yvar[, xx, yrs], 1, mean)
-    if (All) 
-      Xs <- as.numeric(Xvar[, xx, yrs])
-    if (All) 
-      Ys <- as.numeric(Yvar[, xx, yrs])
-    colN <- ceiling((Xs/max(XLim)) * nsim) + 1
-    colN[colN > nsim] <- nsim
-    Cols <- ColVec[colN]
-    if (TP) 
-      Cols <- makeTransparent(Cols, alpha = 95)
-    plot(Xs, Ys, xlab = "", ylab = "", bty = "n", xlim = XLim, ylim = YLim, 
-         axes = FALSE, pch = 18, col = Cols)
-    
-    if (nrow(pmat) > 1) {
-      if (mm %in% pmat[, 1]) {
-        axis(side = 2, labels = TRUE, las = 1)
-      } else axis(side = 2, labels = FALSE)
-      if (mm %in% pmat[Nrow, ]) {
-        axis(side = 1, labels = TRUE)
-      } else axis(side = 1, labels = FALSE)
-      nas <- apply(pmat, 1, sum)
-      rr <- which.max(nas)
-      nas2 <- apply(pmat, 2, sum)
-      cc <- which(is.na(nas2))
-      if (mm %in% pmat[rr, cc]) 
-        axis(side = 1, labels = TRUE)
-    } else {
-      if (mm == 1) 
-        axis(side = 2, labels = TRUE, las = 1)
-      if (mm != 1) 
-        axis(side = 2, labels = FALSE)
-      axis(side = 1, labels = TRUE)
-    }
-    
-    abline(v = Fref, lty = 1, col = makeTransparent("grey", 150))
-    abline(h = Bref, lty = 1, col = makeTransparent("grey", 150))
-    mtext(side = 3, MSEobj@MPs[xx], cex = cex.MP)
-    
-    # Background colours
-    Alpha <- 30
-    # polygons
-    OutCol <- rgb(red = 255, green = 0, blue = 0, alpha = Alpha, names = NULL, 
-                  maxColorValue = 255)
-    vl <- Fref
-    hl <- Bref
-    if (Bbg) 
-      polygon(x = c(0, max(max(Xs), XLim[2]), max(max(Xs), XLim[2]), 
-                    0), y = c(0, 0, hl, hl), col = OutCol, border = NA)
-    if (Fbg) 
-      polygon(x = c(vl, max(max(Xs), XLim[2]), max(max(Xs), XLim[2]), 
-                    vl), y = c(0, 0, max(max(Ys), YLim[2]), max(max(Ys), YLim[2])), 
-              col = OutCol, border = NA)
-    
-    if (Props) {
-      P1 <- paste0(round(sum(Xs <= Fref & Ys >= Bref)/length(Xs) * 
-                           100, 1), "%")
-      P2 <- paste0(round(sum(Xs > Fref & Ys >= Bref)/length(Xs) * 
-                           100, 1), "%")
-      P3 <- paste0(round(sum(Xs > Fref & Ys < Bref)/length(Xs) * 
-                           100, 1), "%")
-      P4 <- paste0(round(sum(Xs <= Fref & Ys < Bref)/length(Xs) * 
-                           100, 1), "%")
-      legend("topleft", P1, bty = "n", cex = 1.25)
-      legend("topright", P2, bty = "n", cex = 1.25)
-      legend("bottomright", P3, bty = "n", cex = 1.25)
-      legend("bottomleft", P4, bty = "n", cex = 1.25)
-    }
-  }
-  mtext(side = 1, outer = TRUE, XLab, cex = 1.25, line = 2.5)
-  mtext(side = 2, outer = TRUE, YLab, cex = 1.25, line = 2)
-  Years <- paste("Years", (MSEobj@proyears - lastYrs) + 1, "-", MSEobj@proyears, 
-                 "(last", lastYrs, "years)")
-  mtext(side = 3, Years, cex = 1.25, outer = TRUE)
-  par(op)
-}
-
+# #' Scatter plot of B/BMSY or B/B0 and F/FMSY for lastYrs
+# #' 
+# #' Scatter plot of B/BMSY or B/B0 and F/FMSY for lastYrs
+# #' 
+# #' 
+# #' @param MSEobj An object of class MSE
+# #' @param MPs Optional subset by MP
+# #' @param All Logical. Plot all points or just the mean?
+# #' @param Var What to plot on the y-axis: \code{B_BMSY} or \code{SSB_SSB0}
+# #' @param lastYrs Last number of years in projection to calculate statistics
+# #' @param Fref Location of F statistic reference line
+# #' @param BMSYref Location of B_MSY statistic reference line
+# #' @param B0ref Location of B_0 statistic reference line
+# #' @param cex.MP size of MP label
+# #' @param Fbg Logical. Include background colours for F-statistic?
+# #' @param Bbg Logical. Include background colours for B-statistic?
+# #' @param Props Logical. Display the proportion of points in each quadrant?
+# #' @param TP Logical. Use transparent colours?
+# #' @author A. Hordyk
+# #' @export Splot
+# Splot <- function(MSEobj = NULL, MPs = NA, All = TRUE, Var = c("B_BMSY", 
+#                                                                "SSB_SSB0"), lastYrs = 10, Fref = 1, BMSYref = 1, B0ref = 0.4, cex.MP = 1, 
+#                   Fbg = FALSE, Bbg = FALSE, Props = FALSE, TP = FALSE) {
+#   
+#   Var <- match.arg(Var)
+#   if (!any(is.na(MPs))) 
+#     MSEobj <- Sub(MSEobj, MPs = MPs)
+#   
+#   nMPs <- MSEobj@nMPs
+#   nyrs <- MSEobj@proyears
+#   nsim <- MSEobj@nsim
+#   
+#   perf <- MPStats(MSEobj)
+#   if (lastYrs > MSEobj@proyears) 
+#     lastYrs <- 10
+#   yrs <- (nyrs - lastYrs + 1):nyrs
+#   
+#   ord <- perf[[1]]
+#   MPord <- match(ord$MP, MSEobj@MPs)
+#   sims <- perf$BySim
+#   Nrow <- ceiling(sqrt(nMPs))
+#   Ncol <- ceiling(nMPs/Nrow)
+#   Yvar <- sims[["F_FMSY"]]
+#   Xvar <- sims[[Var]]
+#   YLim <- c(0, 2)
+#   XMax <- ceiling(min(max(apply(Xvar[, , yrs], c(1, 2), mean), na.rm = TRUE), 
+#                       3)/0.5) * 0.5
+#   XLim <- c(0, XMax)
+#   YLab <- expression(F/F[MSY])
+#   XLab <- switch(Var, SSB_SSB0 = expression(B/B[0]), B_BMSY = expression(B/B[MSY]))
+#   
+#   Bref <- switch(Var, SSB_SSB0 = B0ref, B_BMSY = BMSYref)
+#   
+#   ColVec <- colorRampPalette(c("green", "orange", "red"))(nsim)
+#   op <- par(mfrow = c(Nrow, Ncol), mar = c(1, 1, 2, 0), oma = c(4, 5, 2, 1))
+#   
+#   pmat <- matrix(NA, nrow = Ncol, ncol = Nrow)
+#   pmat[1:nMPs] <- 1:nMPs
+#   pmat <- t(pmat)
+#   
+#   
+#   for (mm in seq_along(MPord)) {
+#     xx <- MPord[mm]
+#     if (!All) 
+#       Xs <- apply(Xvar[, xx, yrs], 1, mean)
+#     if (!All) 
+#       Ys <- apply(Yvar[, xx, yrs], 1, mean)
+#     if (All) 
+#       Xs <- as.numeric(Xvar[, xx, yrs])
+#     if (All) 
+#       Ys <- as.numeric(Yvar[, xx, yrs])
+#     colN <- ceiling((Xs/max(XLim)) * nsim) + 1
+#     colN[colN > nsim] <- nsim
+#     Cols <- ColVec[colN]
+#     if (TP) 
+#       Cols <- makeTransparent(Cols, alpha = 95)
+#     plot(Xs, Ys, xlab = "", ylab = "", bty = "n", xlim = XLim, ylim = YLim, 
+#          axes = FALSE, pch = 18, col = Cols)
+#     
+#     if (nrow(pmat) > 1) {
+#       if (mm %in% pmat[, 1]) {
+#         axis(side = 2, labels = TRUE, las = 1)
+#       } else axis(side = 2, labels = FALSE)
+#       if (mm %in% pmat[Nrow, ]) {
+#         axis(side = 1, labels = TRUE)
+#       } else axis(side = 1, labels = FALSE)
+#       nas <- apply(pmat, 1, sum)
+#       rr <- which.max(nas)
+#       nas2 <- apply(pmat, 2, sum)
+#       cc <- which(is.na(nas2))
+#       if (mm %in% pmat[rr, cc]) 
+#         axis(side = 1, labels = TRUE)
+#     } else {
+#       if (mm == 1) 
+#         axis(side = 2, labels = TRUE, las = 1)
+#       if (mm != 1) 
+#         axis(side = 2, labels = FALSE)
+#       axis(side = 1, labels = TRUE)
+#     }
+#     
+#     abline(v = Fref, lty = 1, col = makeTransparent("grey", 150))
+#     abline(h = Bref, lty = 1, col = makeTransparent("grey", 150))
+#     mtext(side = 3, MSEobj@MPs[xx], cex = cex.MP)
+#     
+#     # Background colours
+#     Alpha <- 30
+#     # polygons
+#     OutCol <- rgb(red = 255, green = 0, blue = 0, alpha = Alpha, names = NULL, 
+#                   maxColorValue = 255)
+#     vl <- Fref
+#     hl <- Bref
+#     if (Bbg) 
+#       polygon(x = c(0, max(max(Xs), XLim[2]), max(max(Xs), XLim[2]), 
+#                     0), y = c(0, 0, hl, hl), col = OutCol, border = NA)
+#     if (Fbg) 
+#       polygon(x = c(vl, max(max(Xs), XLim[2]), max(max(Xs), XLim[2]), 
+#                     vl), y = c(0, 0, max(max(Ys), YLim[2]), max(max(Ys), YLim[2])), 
+#               col = OutCol, border = NA)
+#     
+#     if (Props) {
+#       P1 <- paste0(round(sum(Xs <= Fref & Ys >= Bref)/length(Xs) * 
+#                            100, 1), "%")
+#       P2 <- paste0(round(sum(Xs > Fref & Ys >= Bref)/length(Xs) * 
+#                            100, 1), "%")
+#       P3 <- paste0(round(sum(Xs > Fref & Ys < Bref)/length(Xs) * 
+#                            100, 1), "%")
+#       P4 <- paste0(round(sum(Xs <= Fref & Ys < Bref)/length(Xs) * 
+#                            100, 1), "%")
+#       legend("topleft", P1, bty = "n", cex = 1.25)
+#       legend("topright", P2, bty = "n", cex = 1.25)
+#       legend("bottomright", P3, bty = "n", cex = 1.25)
+#       legend("bottomleft", P4, bty = "n", cex = 1.25)
+#     }
+#   }
+#   mtext(side = 1, outer = TRUE, XLab, cex = 1.25, line = 2.5)
+#   mtext(side = 2, outer = TRUE, YLab, cex = 1.25, line = 2)
+#   Years <- paste("Years", (MSEobj@proyears - lastYrs) + 1, "-", MSEobj@proyears, 
+#                  "(last", lastYrs, "years)")
+#   mtext(side = 3, Years, cex = 1.25, outer = TRUE)
+#   par(op)
+# }
+# 
 
 #' A trade-off plot for an MSE object
 #' 
@@ -1783,7 +1783,10 @@ Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
     xrect <- data.frame(xmin=0, xmax=xline, ymin=0, ymax=max(ylim))
     yrect <- data.frame(xmin=0, xmax=max(xlim), ymin=0, ymax=yline)
     
-    df <- data.frame(x=xvals, y=yvals, label=MSEobj@MPs, Class=MPtype(MSEobj@MPs)[,2],
+    MPType <- MPtype(MSEobj@MPs)
+    Class <- MPType[match(MSEobj@MPs, MPType[,1]),2]
+    
+    df <- data.frame(x=xvals, y=yvals, label=MSEobj@MPs, Class=Class,
                      pass=xvals>xline & yvals>yline, fontface="plain", xPM=xPM, yPM=yPM)
     df$fontface <- as.character(df$fontface)
     df$fontface[!df$pass] <- "italic"
@@ -1792,9 +1795,6 @@ Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
     plots[[pp]] <- ggplot2::ggplot() + 
       ggplot2::geom_rect(data=xrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill='gray80', alpha=0.4) +
       ggplot2::geom_rect(data=yrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill='gray80', alpha=0.4)
-    
-    
-    
     
     # plots[[pp]] <- ggplot(df, aes(x, y, shape=Class, color=Class, label=label)) +
     plots[[pp]] <-   plots[[pp]] + 
@@ -1806,7 +1806,7 @@ Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
       ggplot2::theme(axis.title.x = ggplot2::element_text(size=11),
                      axis.title.y = ggplot2::element_text(size=11),
                      legend.text=ggplot2::element_text(size=12)) + 
-      ggplot2::labs(shape= "MP Class", color="MP Class")
+      ggplot2::labs(shape= "MP Type", color="MP Type")
     
   }
   out <- do.call("rbind", listout)

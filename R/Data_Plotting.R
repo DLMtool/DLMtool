@@ -40,42 +40,51 @@ boxplot.Data <- function(x, upq=0.9, lwq=0.1, outline = FALSE, ...) {
   }
   
   # exclude NAs 
-  allNAs <- colSums(apply(tacs, 2, is.na)) == nrow(tacs)
-  tacs <- tacs[,!allNAs, drop=FALSE]
-  MPs <- MPs[!allNAs]
+  nMPs <- dim(Data@TAC)[1]
   
-  if (ncol(tacs) > 1) {
+  if (nMPs>1){
+    allNAs <- colSums(apply(tacs, 2, is.na)) == nrow(tacs)
+    tacs <- tacs[,!allNAs, drop=FALSE]
+    MPs <- MPs[!allNAs]
+  }
+  
+  if (nMPs>1) {
+    cols <- rainbow(30)
     ord <- order(apply(tacs, 2, median, na.rm = TRUE))
     MPs <- MPs[ord]
     tacs <- tacs[, ord]
-    cols <- rainbow(30)
-    # ymax <- quantile(apply(tacs, 2, quantile, upq, na.rm = TRUE), upq)
     ymax <- max(apply(tacs, 2, quantile, upq, na.rm = TRUE))
-    # ymin <- quantile(apply(tacs, 2, quantile, lwq, na.rm = TRUE), lwq)
     ymin <- min(apply(tacs, 2, quantile, lwq, na.rm = TRUE))
     ylim <- c(ymin, ymax)
     Median <- round(apply(tacs, 2, median, na.rm = TRUE), 2)
     SD <- round(apply(tacs, 2, sd, na.rm = TRUE), 2)
   } else {
-    ylim <- c(quantile(tacs, lwq),quantile(tacs, upq))
+    ylim <- c(min(tacs), max(tacs))
     Median <- median(tacs)
     SD <- sd(tacs)
     tacs <- as.numeric(tacs)
-    cols <- "black"
+    cols <- "darkgray"
   }
   
   par(mfrow = c(1, 1), oma = c(2, 4, 1, 0), mar = c(3, 3, 0, 0))
-  boxplot(tacs, names = MPs, las = 1, col = cols, outline = outline, 
+  if (nMPs>1) {
+    boxplot(tacs, names = MPs, las = 1, col = cols, outline = outline, 
           frame = FALSE, ylim = ylim, horizontal = TRUE, ...)
-  
-  if (units) mtext(paste("TAC (", Data@Units, ")", sep = ""), side = 1, outer = T, 
-                   line = 0.5, cex = 1.25)
-  if (!units) mtext("TAC (no units supplied)", side = 1, outer = T, 
-                    line = 0.5, cex = 1.25)
-  mtext(side = 2, "Management Procedures", outer = TRUE, line = 3, cex = 1.25)
-  mtext(paste("TAC calculation for ", Data@Name, sep = ""), 3, outer = T, 
-        line = -0.5, cex = 1.25)
-  
+    if (units) mtext(paste("TAC (", Data@Units, ")", sep = ""), side = 1, outer = T, 
+                     line = 0.5, cex = 1.25)
+    if (!units) mtext("TAC (no units supplied)", side = 1, outer = T, 
+                      line = 0.5, cex = 1.25)
+    mtext(side = 2, "Management Procedures", outer = TRUE, line = 3, cex = 1.25)
+  } else {
+    boxplot(tacs, names = MPs, las = 1, col = cols, outline = outline, 
+            frame = FALSE, ylim = ylim, horizontal = FALSE, ...)
+    if (units) mtext(paste("TAC (", Data@Units, ")", sep = ""), side = 2, outer = T, 
+                     line = 0.5, cex = 1.25)
+    if (!units) mtext("TAC (no units supplied)", side = 2, outer = T, 
+                      line = 0.5, cex = 1.25)
+    mtext(side = 3, MPs, outer = TRUE, line=-1, cex = 1.25, xpd=NA)
+  }
+ 
   if (units) data.frame(MP = MPs, Median = Median, SD = SD, Units = Data@Units)
   if (!units) data.frame(MP = MPs, Median = Median, SD = SD)
   

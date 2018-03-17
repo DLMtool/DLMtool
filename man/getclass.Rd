@@ -18,5 +18,5 @@ TRUE or FALSE
 Internal function for determining if object is of classy
 }
 \author{
-T. Carruthers
+T. Carruthers with nasty hacks from A. Hordyk
 }

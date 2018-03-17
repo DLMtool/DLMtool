@@ -1,3 +1,76 @@
+
+
+#' Plot the Historical Spatial Closures
+#'
+#' @param OM An object of class OM
+#'
+#'
+#' @export
+#' @author A. Hordyk
+#'
+#' @examples
+#' OM <- new("OM", Albacore, Generic_Fleet, Perfect_Info, Perfect_Imp)
+#' 
+#' ## 50% of Area 1 was closed 30 years ago 
+#' cl1 <- c(OM@nyears-30, 0.5, 1)
+#' ## 80% of Area 1 was closed 15 years ago
+#' cl2 <- c(OM@nyears-15, 0.2, 1)
+#' ## 100% of Area 1 was closed last year
+#' cl3 <- c(OM@nyears-1, 0, 1)
+#' 
+#' OM@MPA <- matrix(c(cl1, cl2, cl3), ncol=3, byrow=TRUE)
+#' plotMPA(OM)
+#' 
+plotMPA <- function(OM) {
+  if (class(OM)!="OM") stop("Must supply object of class 'OM'")
+  if (class(OM)=="OM") {
+    proyears <- OM@proyears
+  } else {
+    proyears <- 0
+  }
+  nyears <- OM@nyears
+  if (all(!is.na(OM@MPA)) && sum(OM@MPA) != 0) { # historical spatial closures have been specified
+    nareas <- ncol(OM@MPA)-1
+    MPA <- matrix(1, nyears+proyears, ncol=nareas)
+    yrindex <- OM@MPA[,1]
+    if (max(yrindex)>nyears) stop("Invalid year index for spatial closures: must be <= nyears")
+    if (min(yrindex)<1) stop("Invalid year index for spatial closures: must be > 1")
+    for (xx in seq_along(yrindex)) {
+      MPA[yrindex[xx]:nrow(MPA),] <- matrix(OM@MPA[xx, 2:ncol(OM@MPA)], nrow=length(yrindex[xx]:nrow(MPA)),ncol=nareas, byrow = TRUE)
+    }
+  } else {
+    stop("No historical MPAs. MPA slot is empty")
+  }
+  
+  x <- 1:(nyears+proyears)
+  nyrs <- length(x)
+  op <- par(mfrow=c(1,1), mar=c(3,3,0,0), oma=c(0,0,1,0))
+  
+  
+  plot(c(1, nyears+proyears), c(0,nareas), type="n", bty="n", xlab="", ylab="", axes=FALSE)
+  origin <- seq(0, by=1, length.out = nareas)
+  for (aa in 1:nareas) {
+    polygon(x=c(x, rev(x)), y=c(rep(origin[aa], nyrs), origin[aa]+rev(MPA[,aa])), 
+            col='lightgray', border = TRUE)
+  }
+  
+  if (OM@CurrentYr < 1000) years <- (OM@CurrentYr - nyears+1) : (OM@CurrentYr+proyears) -OM@CurrentYr
+  if (OM@CurrentYr > 1000) years <- (OM@CurrentYr - nyears+1) : (OM@CurrentYr+proyears) 
+  
+  xp <- seq(from=min(x), to=max(x), by=5)
+  ind <- match(xp, x)
+  axis(side=1, at=x[ind], labels=years[ind])
+  
+  mtext(side=1, "Years", line=2, xpd=NA, cex=1.25)
+  
+  axis(side=2, at=seq(0.5, by=1, length.out = nareas), labels=1:nareas, las=1, col = "white", tcl = 0)
+  mtext(side=2, "Areas", line=2, xpd=NA, cex=1.25, las=3)
+  abline(v=nyears, lty=2, col="darkgray")
+  
+  title('Fraction open to fishing (grey)', outer=TRUE)
+  on.exit(par(op))
+}
+
 #' Plot the vulnerability and retention curves 
 #'
 #' @param OM An object of class 'OM' 
@@ -16,7 +89,7 @@ plotSelect <- function(OM, Pars=NULL, pyears=4, sim=NA, type="l") {
   years <- OM@nyears + OM@proyears
   yr.vert <- round(seq(1, years, length.out=pyears),0)
   if (is.null(Pars)) {
-    stckPars <- SampleStockPars(OM)
+    stckPars <- SampleStockPars(OM, Msg=FALSE)
     Pars <- c(stckPars, SampleFleetPars(OM, Stock=stckPars))
   }
   
@@ -106,7 +179,7 @@ plotM <- function(Stock, nsim=5) {
     Stock@nsim <- nsim
   }
   
-  StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars)
+  StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars, Msg=FALSE)
   # Assign Stock pars to function environment
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
   
@@ -228,7 +301,7 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
   
   
   # --- Sample Stock Parameters ----
-  StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars)
+  StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars, Msg=FALSE)
   # Assign Stock pars to function environment
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
   
@@ -462,8 +535,7 @@ plotFleet <- function(x, Stock=NULL, nsamp=3, nsim=500, proyears=28, col="darkgr
   
   its <- sample(1:nsim, nsamp)  
   
-  
-  StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars)
+  StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars, Msg=FALSE)
   # Assign Stock pars to function environment
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
   
@@ -487,7 +559,7 @@ plotFleet <- function(x, Stock=NULL, nsamp=3, nsim=500, proyears=28, col="darkgr
   heights=c(1,0.2, 1,0.3, 1, 0.3, 1, 0.3, 1))
   # layout.show(m)				   
   
-  op <- par(mar = c(2,2, 2, 1), oma=c(2,2,4,1), las=1) 
+  op <- par(mar = c(2,2, 2, 1), oma=c(2,2,4,1), las=1)  
   hist2(Esd, col=col, axes=FALSE, main="Esd", breaks=breaks)
   abline(v=Esd[its], col=1:nsamp, lwd=lwd)
   axis(side=1) 
@@ -569,7 +641,7 @@ plotFleet <- function(x, Stock=NULL, nsamp=3, nsim=500, proyears=28, col="darkgr
   matplot(t(sampV[,,nyears+proyears]), type="l", lwd=lwd, bty="l", main="Last projected\n year", xlab="Age", 
           ylim=c(0,1), lty=1)  
   
-  title(paste("Fleet:", Fleet@Name, "Stock:", Stock@Name), outer=TRUE)
+  title(paste("Fleet:", Fleet@Name, "Stock:", Stock@Name), outer=TRUE, line=1.5)
   title(paste("nyears =", nyears, "  proyears =", proyears, "  ", nsamp, "sampled iterations"), outer=TRUE, line=0)
   
   # om <- new("OM", Stock, Fleet, Perfect_Info, Perfect_Imp)

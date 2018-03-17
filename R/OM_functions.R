@@ -122,10 +122,11 @@ ForceCor<-function(OM,nsim=48,plot=T){
 #' @param from The OM object from which the sub-model is being taken
 #' @param Sub A character string specifying what object type to replace
 #' "Stock", "Fleet", "Obs" or "Imp" (default is all four which is probably not what you want to do)
+#' @param Quiet Should the function not return a text message
 #' @return An object of class OM
 #' @author A. Hordyk
 #' @export 
-Replace <- function(OM, from, Sub=c("Stock", "Fleet", "Obs", "Imp")) {
+Replace <- function(OM, from, Sub=c("Stock", "Fleet", "Obs", "Imp"),Quiet=F) {
   if (class(OM) =="character") OM <- get(OM)
   if (class(from) !="OM") fromOM <- get(from)
   if (class(OM) !="OM") stop("OM must be of class OM ", call.=FALSE)
@@ -137,7 +138,7 @@ Replace <- function(OM, from, Sub=c("Stock", "Fleet", "Obs", "Imp")) {
   Obs <- SubOM(OM, "Obs")
   Imp <- SubOM(OM, "Imp")
   
-  message("Replacing sub-models:", paste0(" ", Sub))
+  if(!Quiet)message("Replacing sub-models:", paste0(" ", Sub))
   for (x in 1:length(Sub)) {
     assign(Sub[x], SubOM(from, Sub[x]))
   }

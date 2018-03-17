@@ -4,7 +4,8 @@
 \alias{OMinit}
 \title{Initialize Operating Model}
 \usage{
-OMinit(name = NULL, ..., files = c("xlsx", "rmd"), overwrite = FALSE)
+OMinit(name = NULL, ..., files = c("xlsx", "rmd"), dir = NULL,
+  overwrite = FALSE)
 }
 \arguments{
 \item{name}{The name of the Excel and source.rmd file to be created in the working directory (character). 
@@ -14,6 +15,8 @@ Use 'example' for a populated example OM XL and documentation file.}
 
 \item{files}{What files should be created: 'xlsx', 'rmd', or c('xlsx', 'rmd') (default: both)
 to use as templates for the Operating Model.}
+
+\item{dir}{Optional file path to create the xlsx and rmd files. Default is `getwd()`}
 
 \item{overwrite}{Logical. Should files be overwritten if they already exist?}
 }

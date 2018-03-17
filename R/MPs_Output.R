@@ -697,93 +697,93 @@ class(DBSRA4010) <- "MP"
 
 
 
-#' Depletion-Based Stock Reduction Analysis using mean length estimator of
-#' stock depletion
-#' 
-#' DBSRA using the mean length estimator to calculate current stock depletion.
-#' 
-#'
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the quota recommendation
-#' @note The mean length extension was programmed by Gary Nelson as part of his
-#' excellent R package 'fishmethods'
-#' @author T. Carruthers
-#' @references Dick, E.J., MacCall, A.D., 2011. Depletion-Based Stock Reduction
-#' Analysis: A catch-based method for determining sustainable yields for
-#' data-poor fish stocks. Fish. Res. 110, 331-341.
-#' @export 
-DBSRA_ML <- function(x, Data, reps = 100) {
-  dependencies = "Data@Cat, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0, Data@L50, Data@CAL, Data@Year, Data@Cat"
-  C_hist <- Data@Cat[x, ]
-  TAC <- rep(NA, reps)
-  DBSRAcount <- 1
-  maxIts <- 200
-  nIts <- 0
-  if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) return(NA)
-  while (DBSRAcount < (reps + 1) & nIts < maxIts) {
-    Linfc <- trlnorm(1, Data@vbLinf[x], Data@CV_vbLinf[x])
-    Kc <- trlnorm(1, Data@vbK[x], Data@CV_vbK[x])
-    Mdb <- trlnorm(100, Data@Mort[x], Data@CV_Mort[x])
-    Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
-    if (is.na(Mdb)) Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
-    Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = 1, MLtype = "dep")
-    if (all(is.na(Z))) {
-      Rec <- new("Rec")
-      Rec@TAC <- TACfilter(rep(NA, reps))
-      return(Rec)
-    } 
-    FM <- Z - Mdb
-    FM[FM < 0] <- 0.01
-    nyears <- length(Data@Year)
-    Ct1 <- mean(Data@Cat[x, 1:3])
-    Ct2 <- mean(Data@Cat[x, (nyears - 2):nyears])
-    # dep<-c(Ct1,Ct2)/(1-exp(-FM[,c(1,2)]))
-    dep <- c(Ct1, Ct2)/(1 - exp(-FM))
-    Bt_K <- dep[2]/dep[1]
-    
-    if (Bt_K < 0.01) Bt_K <- 0.01  # interval censor / temporary hack to avoid doing multiple depletion estimates that would take far too long
-    if (Bt_K > 0.99) Bt_K <- 0.99  # interval censor / temporary hack to avoid doing multiple depletion estimates that would take far too long
-    
-    
-    FMSY_M <- trlnorm(1, Data@FMSY_M[x], Data@CV_FMSY_M[x])
-    BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
-                                     Data@BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
-                                                                  Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-    tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
-    
-    if (is.na(tryBMSY_K)) {
-      Min <- min(BMSY_K, na.rm = TRUE)
-      Max <- max(BMSY_K, na.rm = TRUE)
-      if (Max <= 0.05) 
-        BMSY_K <- 0.05
-      if (Min >= 0.95) 
-        BMSY_K <- 0.95
-    }
-    if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
-    if (all(is.na(BMSY_K))) return(rep(NA, reps))
-    adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])), 1)
-    opt <- optimize(DBSRAopt, log(c(0.1 * mean(C_hist), 1000 * mean(C_hist))), 
-                    C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
-                    BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
-    nIts <- nIts + 1
-    if (opt$objective < 0.1) {
-      Kc <- exp(opt$minimum)
-      BMSYc <- Kc * BMSY_K
-      FMSYc <- Mdb * FMSY_M
-      UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
-      MSYc <- Kc * BMSY_K * UMSYc
-      TAC[DBSRAcount] <- UMSYc * Kc * Bt_K
-      DBSRAcount <- DBSRAcount + 1
-      nIts <- 0
-    }
-  }  # end of reps
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
-  Rec
-}
-class(DBSRA_ML) <- "MP"
-
+# #' Depletion-Based Stock Reduction Analysis using mean length estimator of
+# #' stock depletion
+# #' 
+# #' DBSRA using the mean length estimator to calculate current stock depletion.
+# #' 
+# #'
+# #' @param x A position in a data-limited methods data object
+# #' @param Data A data-limited methods data object
+# #' @param reps The number of stochastic samples of the quota recommendation
+# #' @note The mean length extension was programmed by Gary Nelson as part of his
+# #' excellent R package 'fishmethods'
+# #' @author T. Carruthers
+# #' @references Dick, E.J., MacCall, A.D., 2011. Depletion-Based Stock Reduction
+# #' Analysis: A catch-based method for determining sustainable yields for
+# #' data-poor fish stocks. Fish. Res. 110, 331-341.
+# #' @export 
+# DBSRA_ML <- function(x, Data, reps = 100) {
+#   dependencies = "Data@Cat, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0, Data@L50, Data@CAL, Data@Year, Data@Cat"
+#   C_hist <- Data@Cat[x, ]
+#   TAC <- rep(NA, reps)
+#   DBSRAcount <- 1
+#   maxIts <- 200
+#   nIts <- 0
+#   if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) return(NA)
+#   while (DBSRAcount < (reps + 1) & nIts < maxIts) {
+#     Linfc <- trlnorm(1, Data@vbLinf[x], Data@CV_vbLinf[x])
+#     Kc <- trlnorm(1, Data@vbK[x], Data@CV_vbK[x])
+#     Mdb <- trlnorm(100, Data@Mort[x], Data@CV_Mort[x])
+#     Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
+#     if (is.na(Mdb)) Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
+#     Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = 1, MLtype = "dep")
+#     if (all(is.na(Z))) {
+#       Rec <- new("Rec")
+#       Rec@TAC <- TACfilter(rep(NA, reps))
+#       return(Rec)
+#     } 
+#     FM <- Z - Mdb
+#     FM[FM < 0] <- 0.01
+#     nyears <- length(Data@Year)
+#     Ct1 <- mean(Data@Cat[x, 1:3])
+#     Ct2 <- mean(Data@Cat[x, (nyears - 2):nyears])
+#     # dep<-c(Ct1,Ct2)/(1-exp(-FM[,c(1,2)]))
+#     dep <- c(Ct1, Ct2)/(1 - exp(-FM))
+#     Bt_K <- dep[2]/dep[1]
+#     
+#     if (Bt_K < 0.01) Bt_K <- 0.01  # interval censor / temporary hack to avoid doing multiple depletion estimates that would take far too long
+#     if (Bt_K > 0.99) Bt_K <- 0.99  # interval censor / temporary hack to avoid doing multiple depletion estimates that would take far too long
+#     
+#     
+#     FMSY_M <- trlnorm(1, Data@FMSY_M[x], Data@CV_FMSY_M[x])
+#     BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
+#                                      Data@BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
+#                                                                   Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+#     tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
+#     
+#     if (is.na(tryBMSY_K)) {
+#       Min <- min(BMSY_K, na.rm = TRUE)
+#       Max <- max(BMSY_K, na.rm = TRUE)
+#       if (Max <= 0.05) 
+#         BMSY_K <- 0.05
+#       if (Min >= 0.95) 
+#         BMSY_K <- 0.95
+#     }
+#     if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
+#     if (all(is.na(BMSY_K))) return(rep(NA, reps))
+#     adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])), 1)
+#     opt <- optimize(DBSRAopt, log(c(0.1 * mean(C_hist), 1000 * mean(C_hist))), 
+#                     C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
+#                     BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+#     nIts <- nIts + 1
+#     if (opt$objective < 0.1) {
+#       Kc <- exp(opt$minimum)
+#       BMSYc <- Kc * BMSY_K
+#       FMSYc <- Mdb * FMSY_M
+#       UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
+#       MSYc <- Kc * BMSY_K * UMSYc
+#       TAC[DBSRAcount] <- UMSYc * Kc * Bt_K
+#       DBSRAcount <- DBSRAcount + 1
+#       nIts <- 0
+#     }
+#   }  # end of reps
+#   Rec <- new("Rec")
+#   Rec@TAC <- TACfilter(TAC)
+#   Rec
+# }
+# class(DBSRA_ML) <- "MP"
+# 
 
 #' Depletion Corrected Average Catch
 #' 
