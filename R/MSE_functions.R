@@ -31,8 +31,10 @@
 #' @param ncol Numeric. Optional. Number of columns
 #' 
 #' @examples 
+#' \dontrun{
 #' MSE <- runMSE()
 #' Converge(MSE)
+#' }
 #' 
 #' @author A. Hordyk
 #' @export 

@@ -337,8 +337,6 @@ Cant <- function(Data, timelimit = 1) {
 }
 
 DLMdiag <- function(Data, command = c("available", "not available", "needed"), reps = 5, timelimit = 1, funcs1=NA) {
-  browser()
-  
   command <- match.arg(command)
   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
   
