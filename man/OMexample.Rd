@@ -4,7 +4,10 @@
 \alias{OMexample}
 \title{Copy example OM XL and OM Documentation}
 \usage{
-OMexample()
+OMexample(dir)
+}
+\arguments{
+\item{dir}{the file path to copy the files to}
 }
 \description{
 Copy example OM XL and OM Documentation

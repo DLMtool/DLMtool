@@ -2,7 +2,7 @@ testthat::context("Data_Functions")
 
 DLMextra()
 library(DLMextra)
-Dat <- avail(Data)
+Dat <- avail('Data')
 Dat <- Dat[!Dat %in% c("SimulatedData", "Simulation_1")]
 
 output <- avail('Output')
@@ -18,8 +18,7 @@ for (dat in Dat) {
     testthat::expect_true(length(avails) - nrow(cants) == length(cans))
     testthat::expect_true(length(Needed(datobj)) == nrow(cants))
     testthat::expect_error(Sense(out, out@MPs[1]), NA)
-    testthat::expect_error(TAC(datobj), NA)
-    
+    if (dat %in% cans) testthat::expect_error(TAC(datobj), NA)
   })
 }
  

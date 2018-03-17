@@ -169,7 +169,8 @@ MPtype <- function(MPs=NA) {
     if (input & output) type[mm] <- "Mixed"
   }
   type[grep("ref", MPs)] <- "Reference"
-  data.frame(MP=MPs, Type=type, stringsAsFactors = FALSE)
+  df <- data.frame(MP=MPs, Type=type, stringsAsFactors = FALSE)
+  df[order(df$Type),]
   
 }
 
@@ -209,11 +210,9 @@ plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
   p <- p2 <- rep(FALSE, length(tt))
   for (X in seq_along(tt)) {
     temp <- grep("plot", tolower(tt[[X]]))
-    if (length(temp) > 0) 
-      p[X] <- TRUE
+    if (length(temp) > 0) p[X] <- TRUE
     temp2 <- grep(class, paste(format(match.fun(tt[[X]])), collapse = " "))
-    if (length(temp2) > 0) 
-      p2[X] <- TRUE
+    if (length(temp2) > 0)  p2[X] <- TRUE
   }
   if (msg) 
     message("DLMtool functions for plotting objects of class ", class, 
@@ -221,8 +220,10 @@ plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
   out <- sort(tt[which(p & p2)])
   if (any(grepl("plotFun", out))) out <- out[-grep("plotFun", out)]
   if (any(grepl("plot.OM", out))) out <- out[-grep("plot.OM", out)]
+  if (any(grepl("plotStock", out))) out <- out[-grep("plotStock", out)]
+  if (any(grepl("plotFleet", out))) out <- out[-grep("plotFleet", out)]
   if (class == "MSE") {
-    out <- c(out, "barplot", "boxplot", "VOI", "VOI2", "DFO_hist", "DFO_proj",
+    out <- c(out, "barplot", "VOI", "VOI2", "DFO_hist", "DFO_proj",
              "PWhisker")
     out <- sort(out)
   }

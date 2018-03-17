@@ -14,7 +14,7 @@ Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "D", "Mgrad", "SRrel", "hs", "p
            "Linfarray", "Karray", "t0array", "mov",  "nareas", "AC", "LenCV", "a", "b", "FinF", 
            "Fdisc", "R50", "Rslope", "retA", "retL", "LR5", "LFR", "Rmaxlen",
            "V2", "SLarray2", "DR", "Asize", "Size_area_1", "L50array", "L95array",
-           "Fdisc_array", "Fdisc_array2", "Pinitdist")
+           "Fdisc_array", "Fdisc_array2", "Pinitdist", "incProgress")
 
 
 if(getRversion() >= "2.15.1") utils::globalVariables(Names)
@@ -65,14 +65,14 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                    HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=FALSE, parallel=FALSE, 
                    save_name=NULL, checks=FALSE, control=NULL) {
   
+  if (class(OM)!='OM') stop("OM is not class 'OM'", call. = FALSE)
   if (Hist & parallel) {
     message("Sorry! Historical simulations currently can't use parallel.")
     parallel <- FALSE
   }
   if (parallel) {
     if(!snowfall::sfIsRunning()) {
-      message("Parallel processing hasn't been initialized ('setup'). Initializing with default", call. = FALSE)
-      setup()
+      stop("Parallel processing hasn't been initialized. Use 'setup'", call. = FALSE)
     }
     
     ncpu <- snowfall::sfCpus()
@@ -811,6 +811,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # --- Begin loop over MPs ----
   mm <- 1 # for debugging
+  
   for (mm in 1:nMP) {  # MSE Loop over methods
     
     if(!silent) message(mm, "/", nMP, " Running MSE for ", MPs[mm])  # print a progress report
@@ -925,7 +926,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     retL_P <- MPCalcs$retL_P # retained-at-length
     V_P <- MPCalcs$V_P  # vulnerable-at-age
     SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length 
-  
+    
     upyrs <- 1 + (0:(floor(proyears/interval) - 1)) * interval  # the years in which there are updates (every three years)
     if(!silent) {
       cat(".")
@@ -1042,7 +1043,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         Depletion[Depletion < tiny] <- tiny
 
         NextYrNtemp <- lapply(1:nsim, function(x)
-          popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB[x,,y, ]), Ncurr=N[x,,y,],
+          popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB[x,,y, ]), Ncurr=N_P[x,,y,],
                          Zcurr=matrix(M_ageArray[x,,y+nyears], ncol=nareas, nrow=maxage), 
                          PerrYr=Perr[x, y+nyears+maxage-1], hs=hs[x],
                          R0a=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
@@ -1216,6 +1217,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     CALout[ , mm, ] <- CAL[,max(dim(CAL)[2]),] # catch-at-length in last year
     
     if (!silent) cat("\n")
+    if("progress"%in%names(control))if(control$progress)incProgress(1/nMP, detail = round(mm*100/nMP))
   }  # end of mm methods 
   
   # Miscellaneous reporting
