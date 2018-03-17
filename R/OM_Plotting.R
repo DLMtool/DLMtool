@@ -59,11 +59,11 @@ plotMPA <- function(OM) {
   
   xp <- seq(from=min(x), to=max(x), by=5)
   ind <- match(xp, x)
-  axis(side=1, at=x[ind], label=years[ind])
+  axis(side=1, at=x[ind], labels=years[ind])
   
   mtext(side=1, "Years", line=2, xpd=NA, cex=1.25)
   
-  axis(side=2, at=seq(0.5, by=1, length.out = nareas), label=1:nareas, las=1, col = "white", tcl = 0)
+  axis(side=2, at=seq(0.5, by=1, length.out = nareas), labels=1:nareas, las=1, col = "white", tcl = 0)
   mtext(side=2, "Areas", line=2, xpd=NA, cex=1.25, las=3)
   abline(v=nyears, lty=2, col="darkgray")
   
