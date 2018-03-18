@@ -481,6 +481,14 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
   FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
  
+  if (checks) {
+    #### DEBUG ####
+    Btemp <- apply(SSB, c(1,3), sum)
+    plot(Btemp[,nyears]/SSBMSY,D/SSBMSY_SSB0, xlim=c(0,2), ylim=c(0,2))
+    lines(c(-10,10),c(-10,10))
+  }
+  
+  
   # --- Code for deriving low biomass ---- 
   # (SSB where it takes MGThorizon x MGT to reach Bfrac of BMSY)
   
