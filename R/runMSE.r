@@ -482,10 +482,13 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
  
   if (checks) {
-    #### DEBUG ####
     Btemp <- apply(SSB, c(1,3), sum)
-    plot(Btemp[,nyears]/SSBMSY,D/SSBMSY_SSB0, xlim=c(0,2), ylim=c(0,2))
+    x <- Btemp[,nyears]/SSBMSY
+    y <-D/SSBMSY_SSB0
+    plot(x,y, xlim=c(0,max(x)), ylim=c(0,max(y)), xlab="SSB/SSBMSY", ylab="D/SSBMSY_SSB0")
     lines(c(-10,10),c(-10,10))
+    
+
   }
   
   
@@ -807,7 +810,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       if (!silent) flush.console()
       
       MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, yr=nyears+y)
-      
       MSY_P[,,y] <- MSYrefsYr[1, ]
       FMSY_P[,,y] <- MSYrefsYr[2,]
       SSBMSY_P[,,y] <- MSYrefsYr[3,]
@@ -865,7 +867,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     SA1 <- SAYR[, 1:2]
     S1 <- SAYR[, 1]
     SY1 <- SAYR[, c(1, 3)]
-    SAY1 <- SAYR[, 1:3]
+    SAY1 <- SAYRt[, 1:3]
     SYA <- as.matrix(expand.grid(1:nsim, 1, 1:maxage))  # Projection year
     SY <- SYA[, 1:2]
     SA <- SYA[, c(1, 3)]
