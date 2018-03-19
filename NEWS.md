@@ -1,6 +1,10 @@
-## DLMtool 5.1
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
+## DLMtool 5.1.1
+- Patch for indexing error in first projection year population dynamics. 
+
+
+## DLMtool 5.1
 ### Operating Model
 
 - Mixed MPs: it is now possible to design MPs that combine Output and Input controls. Previously, MPs in DLMtool where either class 'Input' or class 'Output'. This has changed, and all MPs are now class 'MP' and return a standard recommendation object ('Rec') that allows specification of any combination of catch limit, effort limit, spatial closure, and size-at-selection and/or size-at-retention regulations. 
