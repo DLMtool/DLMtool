@@ -19,6 +19,12 @@ TAC(Data, MPs = NA, reps = 100, timelimit = 1)
 A function that returns the stochastic TAC recommendations from a vector of
 data-limited MPs (Output) given a data-limited data object Data
 }
+\examples{
+\dontrun{
+Data <- TAC(DLMtool::Cobia)
+plot(Data)
+}
+}
 \author{
 T. Carruthers
 }

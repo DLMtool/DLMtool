@@ -125,6 +125,11 @@ ForceCor<-function(OM,nsim=48,plot=T){
 #' @param Quiet Should the function not return a text message
 #' @return An object of class OM
 #' @author A. Hordyk
+#' @examples 
+#' \dontrun{
+#' OM <- Replace(OM, fromOM, "Stock")
+#' }
+#' 
 #' @export 
 Replace <- function(OM, from, Sub=c("Stock", "Fleet", "Obs", "Imp"),Quiet=F) {
   if (class(OM) =="character") OM <- get(OM)
@@ -161,6 +166,9 @@ Replace <- function(OM, from, Sub=c("Stock", "Fleet", "Obs", "Imp"),Quiet=F) {
 #' "Stock", "Fleet", "Obs", or "Imp"
 #' @return An object of class Stock, Fleet, Obs, or Imp
 #' @author A. Hordyk
+#' @examples 
+#' Stock <- SubOM(DLMtool::testOM, "Stock")
+#' class(Stock)
 #' @export 
 SubOM <- function(OM, Sub=c("Stock", "Fleet", "Obs", "Imp")) {
   if (class(OM) !="OM") stop("OM must be of class OM ", call.=FALSE)

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html >
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Data-Limited Methods Toolkit (DLMtool 5.1)</title>
+  <meta name="description" content="User guide for the DLMtool R package">
+  <meta name="generator" content="bookdown 0.6 and GitBook 2.6.7">
+
+  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.1)" />
+  <meta property="og:type" content="book" />
+  <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
+  
+  <meta property="og:description" content="User guide for the DLMtool R package" />
+  <meta name="github-repo" content="DLMtool/DLMtool" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.1)" />
+  
+  <meta name="twitter:description" content="User guide for the DLMtool R package" />
+  
+
+<meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
+
+
+<meta name="date" content="2018-03-17">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  
+  <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
+<link rel="prev" href="getting-started.html">
+<link rel="next" href="the-operating-model.html">
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./introduction.html">DLMtool User Guide</a></li>
+
+<li class="divider"></li>
+<li class="part"><span><b>Introduction</b></span></li>
+<li class="chapter" data-level="1" data-path="introduction.html"><a href="introduction.html"><i class="fa fa-check"></i><b>1</b> Introduction</a><ul>
+<li class="chapter" data-level="1.1" data-path="introduction.html"><a href="introduction.html#data-limited-methods-toolkit"><i class="fa fa-check"></i><b>1.1</b> Data-Limited Methods Toolkit</a></li>
+<li class="chapter" data-level="1.2" data-path="introduction.html"><a href="introduction.html#management-strategy-evaluation"><i class="fa fa-check"></i><b>1.2</b> Management Strategy Evaluation</a></li>
+<li class="chapter" data-level="1.3" data-path="introduction.html"><a href="introduction.html#how-does-management-strategy-evaluation-differ-from-stock-assessment"><i class="fa fa-check"></i><b>1.3</b> How does Management Strategy Evaluation Differ from Stock Assessment?</a></li>
+<li class="chapter" data-level="1.4" data-path="introduction.html"><a href="introduction.html#assumed-knowledge"><i class="fa fa-check"></i><b>1.4</b> Assumed Knowledge</a></li>
+<li class="chapter" data-level="1.5" data-path="introduction.html"><a href="introduction.html#the-user-manual"><i class="fa fa-check"></i><b>1.5</b> The User Manual</a></li>
+<li class="chapter" data-level="1.6" data-path="introduction.html"><a href="introduction.html#dlmtool-bug-reports"><i class="fa fa-check"></i><b>1.6</b> DLMtool Bug Reports</a></li>
+<li class="chapter" data-level="1.7" data-path="introduction.html"><a href="introduction.html#version-notes"><i class="fa fa-check"></i><b>1.7</b> Version Notes</a></li>
+</ul></li>
+<li class="part"><span><b>Getting Started with DLMtool</b></span></li>
+<li class="chapter" data-level="2" data-path="getting-started.html"><a href="getting-started.html"><i class="fa fa-check"></i><b>2</b> Getting Started</a><ul>
+<li class="chapter" data-level="2.1" data-path="getting-started.html"><a href="getting-started.html#required-software"><i class="fa fa-check"></i><b>2.1</b> Required Software</a><ul>
+<li class="chapter" data-level="2.1.1" data-path="getting-started.html"><a href="getting-started.html#the-r-software"><i class="fa fa-check"></i><b>2.1.1</b> The R Software</a></li>
+<li class="chapter" data-level="2.1.2" data-path="getting-started.html"><a href="getting-started.html#rstudio"><i class="fa fa-check"></i><b>2.1.2</b> RStudio</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="getting-started.html"><a href="getting-started.html#installing-dlmtool"><i class="fa fa-check"></i><b>2.2</b> Installing DLMtool</a><ul>
+<li class="chapter" data-level="2.2.1" data-path="getting-started.html"><a href="getting-started.html#installing-dlmtool-using-r-console"><i class="fa fa-check"></i><b>2.2.1</b> Installing DLMtool using R Console</a></li>
+<li class="chapter" data-level="2.2.2" data-path="getting-started.html"><a href="getting-started.html#installing-dlmtool-in-rstudio"><i class="fa fa-check"></i><b>2.2.2</b> Installing DLMtool in RStudio</a></li>
+<li class="chapter" data-level="2.2.3" data-path="getting-started.html"><a href="getting-started.html#updating-the-dlmtool-package"><i class="fa fa-check"></i><b>2.2.3</b> Updating the DLMtool Package</a></li>
+<li class="chapter" data-level="2.2.4" data-path="getting-started.html"><a href="getting-started.html#checking-dlmtool-version"><i class="fa fa-check"></i><b>2.2.4</b> Checking DLMtool version</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="getting-started.html"><a href="getting-started.html#loading-dlmtool"><i class="fa fa-check"></i><b>2.3</b> Loading DLMtool</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="a-very-quick-demo.html"><a href="a-very-quick-demo.html"><i class="fa fa-check"></i><b>3</b> A Very Quick Demo</a></li>
+<li class="chapter" data-level="4" data-path="the-operating-model.html"><a href="the-operating-model.html"><i class="fa fa-check"></i><b>4</b> The Operating Model</a><ul>
+<li class="chapter" data-level="4.1" data-path="the-operating-model.html"><a href="the-operating-model.html#om-components"><i class="fa fa-check"></i><b>4.1</b> OM Components</a><ul>
+<li class="chapter" data-level="4.1.1" data-path="the-operating-model.html"><a href="the-operating-model.html#stock-object"><i class="fa fa-check"></i><b>4.1.1</b> Stock Object</a></li>
+<li class="chapter" data-level="4.1.2" data-path="the-operating-model.html"><a href="the-operating-model.html#fleet-object"><i class="fa fa-check"></i><b>4.1.2</b> Fleet Object</a></li>
+<li class="chapter" data-level="4.1.3" data-path="the-operating-model.html"><a href="the-operating-model.html#obs-object"><i class="fa fa-check"></i><b>4.1.3</b> Obs Object</a></li>
+<li class="chapter" data-level="4.1.4" data-path="the-operating-model.html"><a href="the-operating-model.html#imp-object"><i class="fa fa-check"></i><b>4.1.4</b> Imp Object</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="the-operating-model.html"><a href="the-operating-model.html#building-an-om-from-component-objects"><i class="fa fa-check"></i><b>4.2</b> Building an OM from Component Objects</a></li>
+<li class="chapter" data-level="4.3" data-path="the-operating-model.html"><a href="the-operating-model.html#visualizing-an-om"><i class="fa fa-check"></i><b>4.3</b> Visualizing an OM</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="management-procedures.html"><a href="management-procedures.html"><i class="fa fa-check"></i><b>5</b> Management Procedures</a><ul>
+<li class="chapter" data-level="5.1" data-path="management-procedures.html"><a href="management-procedures.html#what-is-a-management-procedure"><i class="fa fa-check"></i><b>5.1</b> What is a Management Procedure?</a></li>
+<li class="chapter" data-level="5.2" data-path="management-procedures.html"><a href="management-procedures.html#available-management-procedure"><i class="fa fa-check"></i><b>5.2</b> Available Management Procedure</a></li>
+<li class="chapter" data-level="5.3" data-path="management-procedures.html"><a href="management-procedures.html#types-of-management-procedure"><i class="fa fa-check"></i><b>5.3</b> Types of Management Procedure</a><ul>
+<li class="chapter" data-level="5.3.1" data-path="management-procedures.html"><a href="management-procedures.html#input-control-mps"><i class="fa fa-check"></i><b>5.3.1</b> Input Control MPs</a></li>
+<li class="chapter" data-level="5.3.2" data-path="management-procedures.html"><a href="management-procedures.html#output-control-mps"><i class="fa fa-check"></i><b>5.3.2</b> Output Control MPs</a></li>
+<li class="chapter" data-level="5.3.3" data-path="management-procedures.html"><a href="management-procedures.html#mixed-mps"><i class="fa fa-check"></i><b>5.3.3</b> Mixed MPs</a></li>
+<li class="chapter" data-level="5.3.4" data-path="management-procedures.html"><a href="management-procedures.html#reference-mps"><i class="fa fa-check"></i><b>5.3.4</b> Reference MPs</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="running-the-mse.html"><a href="running-the-mse.html"><i class="fa fa-check"></i><b>6</b> Running the MSE</a><ul>
+<li class="chapter" data-level="6.1" data-path="running-the-mse.html"><a href="running-the-mse.html#specify-an-operating-model"><i class="fa fa-check"></i><b>6.1</b> Specify an Operating Model</a></li>
+<li class="chapter" data-level="6.2" data-path="running-the-mse.html"><a href="running-the-mse.html#choose-the-management-procedures"><i class="fa fa-check"></i><b>6.2</b> Choose the Management Procedures</a></li>
+<li class="chapter" data-level="6.3" data-path="running-the-mse.html"><a href="running-the-mse.html#run-the-mse"><i class="fa fa-check"></i><b>6.3</b> Run the MSE</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="checking-convergence.html"><a href="checking-convergence.html"><i class="fa fa-check"></i><b>7</b> Checking Convergence</a></li>
+<li class="chapter" data-level="8" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html"><i class="fa fa-check"></i><b>8</b> Plotting the MSE Results</a><ul>
+<li class="chapter" data-level="8.1" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#trade-off-plots"><i class="fa fa-check"></i><b>8.1</b> Trade-Off Plots</a></li>
+<li class="chapter" data-level="8.2" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#wormplot"><i class="fa fa-check"></i><b>8.2</b> Wormplot</a></li>
+<li class="chapter" data-level="8.3" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#projection-plots"><i class="fa fa-check"></i><b>8.3</b> Projection Plots</a></li>
+<li class="chapter" data-level="8.4" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#kobe-plots"><i class="fa fa-check"></i><b>8.4</b> Kobe Plots</a></li>
+<li class="chapter" data-level="8.5" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#compare-to-current-conditions"><i class="fa fa-check"></i><b>8.5</b> Compare to Current Conditions</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="parallel-processing.html"><a href="parallel-processing.html"><i class="fa fa-check"></i><b>9</b> Parallel Processing</a><ul>
+<li class="chapter" data-level="9.1" data-path="parallel-processing.html"><a href="parallel-processing.html#setting-up-parallel-processing"><i class="fa fa-check"></i><b>9.1</b> Setting up Parallel Processing</a></li>
+<li class="chapter" data-level="9.2" data-path="parallel-processing.html"><a href="parallel-processing.html#running-mse-with-parallel-processing"><i class="fa fa-check"></i><b>9.2</b> Running MSE with Parallel Processing</a></li>
+<li class="chapter" data-level="9.3" data-path="parallel-processing.html"><a href="parallel-processing.html#determining-optimal-number-of-processors"><i class="fa fa-check"></i><b>9.3</b> Determining Optimal Number of Processors</a></li>
+</ul></li>
+<li class="part"><span><b>Creating an Operating Model</b></span></li>
+<li class="chapter" data-level="10" data-path="creating-a-new-operating-model.html"><a href="creating-a-new-operating-model.html"><i class="fa fa-check"></i><b>10</b> Creating a New Operating Model</a><ul>
+<li class="chapter" data-level="10.1" data-path="creating-a-new-operating-model.html"><a href="creating-a-new-operating-model.html#an-example-workflow"><i class="fa fa-check"></i><b>10.1</b> An Example WorkFlow</a></li>
+<li class="chapter" data-level="10.2" data-path="creating-a-new-operating-model.html"><a href="creating-a-new-operating-model.html#create-a-new-project"><i class="fa fa-check"></i><b>10.2</b> Create a New Project</a></li>
+<li class="chapter" data-level="10.3" data-path="creating-a-new-operating-model.html"><a href="creating-a-new-operating-model.html#initialize-a-new-om"><i class="fa fa-check"></i><b>10.3</b> Initialize a New OM</a><ul>
+<li class="chapter" data-level="10.3.1" data-path="creating-a-new-operating-model.html"><a href="creating-a-new-operating-model.html#using-templates"><i class="fa fa-check"></i><b>10.3.1</b> Using Templates</a></li>
+<li class="chapter" data-level="10.3.2" data-path="creating-a-new-operating-model.html"><a href="creating-a-new-operating-model.html#an-example"><i class="fa fa-check"></i><b>10.3.2</b> An Example</a></li>
+</ul></li>
+<li class="chapter" data-level="10.4" data-path="creating-a-new-operating-model.html"><a href="creating-a-new-operating-model.html#populate-and-document-om"><i class="fa fa-check"></i><b>10.4</b> Populate and Document OM</a></li>
+<li class="chapter" data-level="10.5" data-path="creating-a-new-operating-model.html"><a href="creating-a-new-operating-model.html#compile-the-om-report"><i class="fa fa-check"></i><b>10.5</b> Compile the OM Report</a></li>
+<li class="chapter" data-level="10.6" data-path="creating-a-new-operating-model.html"><a href="creating-a-new-operating-model.html#import-the-om-into-r"><i class="fa fa-check"></i><b>10.6</b> Import the OM into R</a></li>
+<li class="chapter" data-level="10.7" data-path="creating-a-new-operating-model.html"><a href="creating-a-new-operating-model.html#documenting-an-existing-om"><i class="fa fa-check"></i><b>10.7</b> Documenting an Existing OM</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="operating-model-library.html"><a href="operating-model-library.html"><i class="fa fa-check"></i><b>11</b> Operating Model Library</a></li>
+<li class="part"><span><b>Interpreting MSE Results</b></span></li>
+<li class="chapter" data-level="12" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html"><i class="fa fa-check"></i><b>12</b> Examining the MSE object</a><ul>
+<li class="chapter" data-level="12.1" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#run-an-mse"><i class="fa fa-check"></i><b>12.1</b> Run an MSE</a></li>
+<li class="chapter" data-level="12.2" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-mse-object"><i class="fa fa-check"></i><b>12.2</b> The MSE Object</a><ul>
+<li class="chapter" data-level="12.2.1" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-first-six-slots"><i class="fa fa-check"></i><b>12.2.1</b> The First Six Slots</a></li>
+<li class="chapter" data-level="12.2.2" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-om-slot"><i class="fa fa-check"></i><b>12.2.2</b> The <code>OM</code> Slot</a></li>
+<li class="chapter" data-level="12.2.3" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-obs-slot"><i class="fa fa-check"></i><b>12.2.3</b> The <code>Obs</code> Slot</a></li>
+<li class="chapter" data-level="12.2.4" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-b_bmsy-and-f_fmsy-slots"><i class="fa fa-check"></i><b>12.2.4</b> The <code>B_BMSY</code> and <code>F_FMSY</code> Slots</a></li>
+<li class="chapter" data-level="12.2.5" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-b-fm-c-and-tac-slots"><i class="fa fa-check"></i><b>12.2.5</b> The <code>B</code>, <code>FM</code>, <code>C</code> and <code>TAC</code> Slots</a></li>
+<li class="chapter" data-level="12.2.6" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-ssb_hist-cb_hist-and-fm_hist-slots"><i class="fa fa-check"></i><b>12.2.6</b> The <code>SSB_hist</code>, <code>CB_hist</code>, and <code>FM_hist</code> Slots</a></li>
+<li class="chapter" data-level="12.2.7" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-effort-slot"><i class="fa fa-check"></i><b>12.2.7</b> The <code>Effort</code> Slot</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="performance-metrics.html"><a href="performance-metrics.html"><i class="fa fa-check"></i><b>13</b> Performance Metrics</a><ul>
+<li class="chapter" data-level="13.1" data-path="performance-metrics.html"><a href="performance-metrics.html#the-need-for-performance-metrics"><i class="fa fa-check"></i><b>13.1</b> The Need for Performance Metrics</a></li>
+<li class="chapter" data-level="13.2" data-path="performance-metrics.html"><a href="performance-metrics.html#inevitable-trade-offs"><i class="fa fa-check"></i><b>13.2</b> Inevitable Trade-Offs</a><ul>
+<li class="chapter" data-level="13.2.1" data-path="performance-metrics.html"><a href="performance-metrics.html#operational-management-objectives"><i class="fa fa-check"></i><b>13.2.1</b> Operational Management Objectives</a></li>
+</ul></li>
+<li class="chapter" data-level="13.3" data-path="performance-metrics.html"><a href="performance-metrics.html#performance-metrics-in-the-dlmtool"><i class="fa fa-check"></i><b>13.3</b> Performance Metrics in the DLMtool</a><ul>
+<li class="chapter" data-level="13.3.1" data-path="performance-metrics.html"><a href="performance-metrics.html#fishing-mortality"><i class="fa fa-check"></i><b>13.3.1</b> Fishing Mortality</a></li>
+<li class="chapter" data-level="13.3.2" data-path="performance-metrics.html"><a href="performance-metrics.html#stock-biomass"><i class="fa fa-check"></i><b>13.3.2</b> Stock Biomass</a></li>
+<li class="chapter" data-level="13.3.3" data-path="performance-metrics.html"><a href="performance-metrics.html#developing-additional-performance-metrics"><i class="fa fa-check"></i><b>13.3.3</b> Developing Additional Performance Metrics</a></li>
+<li class="chapter" data-level="13.3.4" data-path="performance-metrics.html"><a href="performance-metrics.html#summarizing-management-procedure-performance"><i class="fa fa-check"></i><b>13.3.4</b> Summarizing Management Procedure Performance</a></li>
+<li class="chapter" data-level="13.3.5" data-path="performance-metrics.html"><a href="performance-metrics.html#plotting-mse-results"><i class="fa fa-check"></i><b>13.3.5</b> Plotting MSE Results</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="value-of-information.html"><a href="value-of-information.html"><i class="fa fa-check"></i><b>14</b> Value of Information</a></li>
+<li class="part"><span><b>Using Fishery Data</b></span></li>
+<li class="chapter" data-level="15" data-path="the-fishery-data-object-data.html"><a href="the-fishery-data-object-data.html"><i class="fa fa-check"></i><b>15</b> The Fishery Data Object (Data)</a><ul>
+<li class="chapter" data-level="15.1" data-path="the-fishery-data-object-data.html"><a href="the-fishery-data-object-data.html#in-the-mse"><i class="fa fa-check"></i><b>15.1</b> In the MSE</a></li>
+<li class="chapter" data-level="15.2" data-path="the-fishery-data-object-data.html"><a href="the-fishery-data-object-data.html#application-of-management-procedures-using-real-fisheries-data"><i class="fa fa-check"></i><b>15.2</b> Application of Management Procedures Using Real Fisheries Data</a></li>
+</ul></li>
+<li class="chapter" data-level="16" data-path="example-data-objects.html"><a href="example-data-objects.html"><i class="fa fa-check"></i><b>16</b> Example Data Objects</a></li>
+<li class="chapter" data-level="17" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html"><i class="fa fa-check"></i><b>17</b> Creating Your Own Data Object</a><ul>
+<li class="chapter" data-level="17.1" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#creating-a-data-file-in-excel"><i class="fa fa-check"></i><b>17.1</b> Creating a Data File in Excel</a></li>
+<li class="chapter" data-level="17.2" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#importing-the-data-object"><i class="fa fa-check"></i><b>17.2</b> Importing the Data object</a></li>
+<li class="chapter" data-level="17.3" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#example-fishery-data-files"><i class="fa fa-check"></i><b>17.3</b> Example Fishery Data Files</a></li>
+<li class="chapter" data-level="17.4" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#populating-a-data-object-in-r"><i class="fa fa-check"></i><b>17.4</b> Populating a Data Object in R</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="plotting-data-objects.html"><a href="plotting-data-objects.html"><i class="fa fa-check"></i><b>18</b> Plotting Data Objects</a></li>
+<li class="chapter" data-level="19" data-path="determining-which-mps-can-be-applied.html"><a href="determining-which-mps-can-be-applied.html"><i class="fa fa-check"></i><b>19</b> Determining Which MPs Can Be Applied</a></li>
+<li class="chapter" data-level="20" data-path="applying-management-procedures.html"><a href="applying-management-procedures.html"><i class="fa fa-check"></i><b>20</b> Applying Management Procedures</a></li>
+<li class="part"><span><b>Advanced DLMtool</b></span></li>
+<li class="chapter" data-level="21" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html"><i class="fa fa-check"></i><b>21</b> Customizing the Operating Model</a><ul>
+<li class="chapter" data-level="21.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#accounting-for-historical-changes-in-fishing"><i class="fa fa-check"></i><b>21.1</b> Accounting for Historical Changes in Fishing</a><ul>
+<li class="chapter" data-level="21.1.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#historical-trends-in-fishing-mortality"><i class="fa fa-check"></i><b>21.1.1</b> Historical Trends in Fishing Mortality</a></li>
+<li class="chapter" data-level="21.1.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#historical-trends-in-selectivity-pattern"><i class="fa fa-check"></i><b>21.1.2</b> Historical Trends in Selectivity Pattern</a></li>
+<li class="chapter" data-level="21.1.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#including-existing-mpas"><i class="fa fa-check"></i><b>21.1.3</b> Including Existing MPAs</a></li>
+</ul></li>
+<li class="chapter" data-level="21.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#size-specific-natural-mortality"><i class="fa fa-check"></i><b>21.2</b> Size-Specific Natural Mortality</a><ul>
+<li class="chapter" data-level="21.2.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#constant-m-at-agesize"><i class="fa fa-check"></i><b>21.2.1</b> Constant M at age/size</a></li>
+<li class="chapter" data-level="21.2.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#lorenzen-function-of-weight"><i class="fa fa-check"></i><b>21.2.2</b> Lorenzen function of weight</a></li>
+<li class="chapter" data-level="21.2.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#map-age-specific-m"><i class="fa fa-check"></i><b>21.2.3</b> Map Age-Specific M</a></li>
+<li class="chapter" data-level="21.2.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#map-length-specific-m"><i class="fa fa-check"></i><b>21.2.4</b> Map Length-Specific M</a></li>
+</ul></li>
+<li class="chapter" data-level="21.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#selection-retention-and-discard-mortality"><i class="fa fa-check"></i><b>21.3</b> Selection, Retention and Discard Mortality</a><ul>
+<li class="chapter" data-level="21.3.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#fishery-selection-curve"><i class="fa fa-check"></i><b>21.3.1</b> Fishery Selection Curve</a></li>
+<li class="chapter" data-level="21.3.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#fishery-retention-curve"><i class="fa fa-check"></i><b>21.3.2</b> Fishery Retention Curve</a></li>
+<li class="chapter" data-level="21.3.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#discard-mortality"><i class="fa fa-check"></i><b>21.3.3</b> Discard Mortality</a></li>
+<li class="chapter" data-level="21.3.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#general-discarding"><i class="fa fa-check"></i><b>21.3.4</b> General Discarding</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="22" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html"><i class="fa fa-check"></i><b>22</b> Developing Custom Management Procedures</a><ul>
+<li class="chapter" data-level="22.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#the-anatomy-of-an-mp"><i class="fa fa-check"></i><b>22.1</b> The Anatomy of an MP</a></li>
+<li class="chapter" data-level="22.2" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#a-constant-catch-mp"><i class="fa fa-check"></i><b>22.2</b> A Constant Catch MP</a></li>
+<li class="chapter" data-level="22.3" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#a-more-complex-mp"><i class="fa fa-check"></i><b>22.3</b> A More Complex MP</a></li>
+<li class="chapter" data-level="22.4" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#beyond-the-catch-limit"><i class="fa fa-check"></i><b>22.4</b> Beyond the Catch Limit</a><ul>
+<li class="chapter" data-level="22.4.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#an-example-effort-control"><i class="fa fa-check"></i><b>22.4.1</b> An Example Effort Control</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="23" data-path="custom-parameters.html"><a href="custom-parameters.html"><i class="fa fa-check"></i><b>23</b> Custom Parameters</a><ul>
+<li class="chapter" data-level="23.1" data-path="custom-parameters.html"><a href="custom-parameters.html#valid-cpars-names"><i class="fa fa-check"></i><b>23.1</b> Valid cpars names</a></li>
+<li class="chapter" data-level="23.2" data-path="custom-parameters.html"><a href="custom-parameters.html#correlated-samples"><i class="fa fa-check"></i><b>23.2</b> Correlated samples</a></li>
+<li class="chapter" data-level="23.3" data-path="custom-parameters.html"><a href="custom-parameters.html#custom-time-varying-parameters"><i class="fa fa-check"></i><b>23.3</b> Custom time-varying parameters</a></li>
+</ul></li>
+<li class="chapter" data-level="24" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html"><i class="fa fa-check"></i><b>24</b> Subsetting the MSE Object</a><ul>
+<li class="chapter" data-level="24.1" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html#subsetting-by-performance"><i class="fa fa-check"></i><b>24.1</b> Subsetting by Performance</a></li>
+<li class="chapter" data-level="24.2" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html#subsetting-by-operating-model-parameters"><i class="fa fa-check"></i><b>24.2</b> Subsetting by Operating Model Parameters</a></li>
+</ul></li>
+<li class="chapter" data-level="25" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html"><i class="fa fa-check"></i><b>25</b> Custom Performance Metrics</a><ul>
+<li class="chapter" data-level="25.1" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#the-pm-object"><i class="fa fa-check"></i><b>25.1</b> The PM Object</a></li>
+<li class="chapter" data-level="25.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#developing-custom-pms"><i class="fa fa-check"></i><b>25.2</b> Developing Custom PMs</a></li>
+</ul></li>
+<li class="appendix"><span><b>Appendix</b></span></li>
+<li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
+<li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
+<li class="chapter" data-level="C" data-path="getting-help.html"><a href="getting-help.html"><i class="fa fa-check"></i><b>C</b> Getting Help</a><ul>
+<li class="chapter" data-level="C.1" data-path="getting-help.html"><a href="getting-help.html#first-time-working-with-r"><i class="fa fa-check"></i><b>C.1</b> First Time Working With R?</a><ul>
+<li class="chapter" data-level="" data-path="getting-help.html"><a href="getting-help.html#the-r-software-1"><i class="fa fa-check"></i>The R Software</a></li>
+<li class="chapter" data-level="" data-path="getting-help.html"><a href="getting-help.html#rstudio-1"><i class="fa fa-check"></i>RStudio</a></li>
+</ul></li>
+<li class="chapter" data-level="C.2" data-path="getting-help.html"><a href="getting-help.html#loadDLM"><i class="fa fa-check"></i><b>C.2</b> Installing the DLMtool Package</a><ul>
+<li class="chapter" data-level="" data-path="getting-help.html"><a href="getting-help.html#installing-dlmtool-using-r-console-1"><i class="fa fa-check"></i>Installing DLMtool Using R Console</a></li>
+<li class="chapter" data-level="" data-path="getting-help.html"><a href="getting-help.html#installing-dlmtool-using-rstudio"><i class="fa fa-check"></i>Installing DLMtool Using RStudio</a></li>
+<li class="chapter" data-level="" data-path="getting-help.html"><a href="getting-help.html#updating-the-dlmtool-package-1"><i class="fa fa-check"></i>Updating the DLMtool Package</a></li>
+<li class="chapter" data-level="" data-path="getting-help.html"><a href="getting-help.html#loading-the-dlmtool-package"><i class="fa fa-check"></i>Loading the DLMtool Package</a></li>
+</ul></li>
+<li class="chapter" data-level="C.3" data-path="getting-help.html"><a href="getting-help.html#a-brief-note-on-s4-methods"><i class="fa fa-check"></i><b>C.3</b> A Brief Note on S4 Methods</a></li>
+<li class="chapter" data-level="C.4" data-path="getting-help.html"><a href="getting-help.html#additional-help-on-the-dlmtool"><i class="fa fa-check"></i><b>C.4</b> Additional Help on the DLMtool</a></li>
+<li class="chapter" data-level="C.5" data-path="getting-help.html"><a href="getting-help.html#questions-on-r-related-problems"><i class="fa fa-check"></i><b>C.5</b> Questions on R-related Problems</a></li>
+</ul></li>
+<li class="chapter" data-level="D" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html"><i class="fa fa-check"></i><b>D</b> Assumptions of DLMtool</a><ul>
+<li class="chapter" data-level="D.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#biology"><i class="fa fa-check"></i><b>D.1</b> Biology</a><ul>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#short-lived-species"><i class="fa fa-check"></i>Short-Lived Species</a></li>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#density-dependent-compensation"><i class="fa fa-check"></i>Density-Dependent Compensation</a></li>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#von-bertalanffy-growth"><i class="fa fa-check"></i>von Bertalanffy Growth</a></li>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#natural-mortality-rate-at-age"><i class="fa fa-check"></i>Natural Mortality Rate at Age</a></li>
+</ul></li>
+<li class="chapter" data-level="D.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#mse-model-assumptions"><i class="fa fa-check"></i><b>D.2</b> MSE Model Assumptions</a><ul>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#retention-and-selectivity"><i class="fa fa-check"></i>Retention and Selectivity</a></li>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#non-convergence-of-management-procedure"><i class="fa fa-check"></i>Non-Convergence of Management Procedure</a></li>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#idealised-observation-models-for-catch-composition-data"><i class="fa fa-check"></i>Idealised Observation Models for Catch Composition Data</a></li>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#two-box-model"><i class="fa fa-check"></i>Two-Box Model</a></li>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#ontogenetic-habitat-shifts"><i class="fa fa-check"></i>Ontogenetic Habitat Shifts</a></li>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#closed-system"><i class="fa fa-check"></i>Closed System</a></li>
+</ul></li>
+<li class="chapter" data-level="D.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#management-procedures-1"><i class="fa fa-check"></i><b>D.3</b> Management Procedures</a><ul>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#harvest-control-rules-must-be-integrated-into-data-limited-mps"><i class="fa fa-check"></i>Harvest Control Rules Must be Integrated into Data-Limited MPs</a></li>
+</ul></li>
+<li class="chapter" data-level="D.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-and-method-application"><i class="fa fa-check"></i><b>D.4</b> Data and Method Application</a><ul>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-assumed-to-be-representative"><i class="fa fa-check"></i>Data Assumed to be Representative</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
+<li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
+<li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.5-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.5 and greater</a></li>
+</ul></li>
+<li class="divider"></li>
+<li><a href="http://www.datalimitedtoolkit.com" target="blank">DLMtool Website</a></li>
+<li><a href="../index.html">DLMtool Documentation</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.1)</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="a-very-quick-demo" class="section level1">
+<h1><span class="header-section-number">Chapter 3</span> A Very Quick Demo</h1>
+<p>Running an MSE with DLMtool is quite straightforward and only requires a single line of code:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myMSE &lt;-<span class="st"> </span><span class="kw">runMSE</span>()</code></pre></div>
+<pre><code>## Loading operating model</code></pre>
+<pre><code>## Optimizing for user-specified movement</code></pre>
+<pre><code>## Optimizing for user-specified depletion</code></pre>
+<pre><code>## Calculating historical stock and fishing dynamics</code></pre>
+<pre><code>## Calculating MSY reference points</code></pre>
+<pre><code>## Calculating Blow reference points</code></pre>
+<pre><code>## Calculating reference yield - best fixed F strategy</code></pre>
+<pre><code>## Calculating MSY reference points for each projection year</code></pre>
+<pre><code>## ..................................................</code></pre>
+<pre><code>## 1/6 Running MSE for AvC</code></pre>
+<pre><code>## ..................................................</code></pre>
+<pre><code>## 2/6 Running MSE for DCAC</code></pre>
+<pre><code>## ..................................................</code></pre>
+<pre><code>## 3/6 Running MSE for FMSYref</code></pre>
+<pre><code>## ..................................................</code></pre>
+<pre><code>## 4/6 Running MSE for curE</code></pre>
+<pre><code>## ..................................................</code></pre>
+<pre><code>## 5/6 Running MSE for matlenlim</code></pre>
+<pre><code>## ..................................................</code></pre>
+<pre><code>## 6/6 Running MSE for MRreal</code></pre>
+<pre><code>## ..................................................</code></pre>
+<p>If you run this line (remember, if you haven’t already you must first run <code>library(DLMtool)</code>) and see something similiar to the output shown here, then DLMtool is successfully working on your system!</p>
+<p>If the MSE did not run successfully, repeat the previous steps, ensuring that you have the latest version of R and the DLMtool package. If still no success, please <a href="http://www.datalimitedtoolkit.org/contact">contact us</a> with a description of the problem and we will try to help.</p>
+<p>Once an MSE is run, the results can be examined visually using plotting functions, for example:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Pplot</span>(myMSE)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Or quantified in various ways, for example:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(myMSE)</code></pre></div>
+<pre><code>## Calculating Performance Metrics</code></pre>
+<pre><code>##                                    Performance.Metrics
+## 1                  Average Annual Variability in Yield
+## 2  Average Long-Term Yield relative to Reference Yield
+## 3          Probability Spawning Biomass above 10% BMSY
+## 4                  Probability Spawning Biomass &gt; BMSY
+## 5          Probability Spawning Biomass above 50% BMSY
+## 6                                 Probability F &lt; FMSY
+## 7 Average Short-Term Yield relative to Reference Yield
+## 8                    Yield relative to Reference Yield
+## 
+## 
+## Probability:
+##          MP AAVY  LTY  P10 P100  P50  POF  STY Yield
+## 1       AvC 1.00 0.49 0.80 0.67 0.75 0.68 0.76  0.67
+## 2      DCAC 1.00 0.59 0.90 0.80 0.86 0.82 0.74  0.68
+## 3   FMSYref 1.00 0.96 1.00 0.35 0.88 0.33 0.91  1.10
+## 4      curE 0.25 0.74 0.94 0.70 0.84 0.72 0.84  0.84
+## 5 matlenlim 0.25 0.63 1.00 0.93 0.98 0.96 0.44  0.65
+## 6    MRreal 0.29 0.79 1.00 0.73 0.86 0.76 0.84  0.84</code></pre>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="getting-started.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="the-operating-model.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": null,
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"download": ["userguide.pdf"],
+"toc": {
+"collapse": "section",
+"scroll_highlight": true
+},
+"<!--edit": "https://github.com/DLMtool/DLMtool_UserGuide/edit/master/%s-->"
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "";
+    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:" && /^https?:/.test(src))
+      src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

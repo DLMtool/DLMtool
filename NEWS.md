@@ -1,5 +1,8 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
+## DLMtool 5.1.2
+- Add contributors and more examples/
+
 ## DLMtool 5.1.1
 - Patch for indexing error in first projection year population dynamics. 
 

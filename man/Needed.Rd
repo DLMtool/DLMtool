@@ -16,6 +16,9 @@ A funtion that lists what data are needed to run
 data-limited methods that are currently not able to run given a Data
 object
 }
+\examples{
+Needs <- Needed(DLMtool::Cobia)
+}
 \seealso{
 \link{Can} \link{Cant} \link{avail}
 }

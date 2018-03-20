@@ -9,7 +9,7 @@
 #' @author Tom Carruthers \email{t.carruthers@@fisheries.ubc.ca} 
 #' @author Adrian Hordyk \email{a.hordyk@oceans.ubc.ca}
 #' @section Additional Information:
-#' See the \href{https://dlmtool.github.io/DLMtool/userguide/index.html}{DLMtool User Guide} for
+#' See the \href{https://dlmtool.github.io/DLMtool/userguide/introduction.html}{DLMtool User Guide} for
 #' a detailed description of how to use the DLMtool package. 
 #' 
 #' The help documentation for the DLMtool package can also be accessed \href{https://dlmtool.github.io/DLMtool/}{here}.

@@ -18,6 +18,9 @@ DLMtool package.
 }
 \examples{
 avail("OM")
+Stocks <- avail("Stock")
+Fleets <- avail("Fleet")
+MPs <- avail("MP")
 }
 \seealso{
 \link{Can} \link{Cant} \link{avail}

@@ -16,6 +16,11 @@ optCPU(nsim = 96, thresh = 5, plot = TRUE)
 \description{
 Determine optimal number of cpus
 }
+\examples{
+\dontrun{
+optCPU()
+}
+}
 \author{
 A. Hordyk
 }

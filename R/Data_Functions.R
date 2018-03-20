@@ -12,7 +12,10 @@
 #' @export
 #' 
 #' @author A. Hordyk
-#'
+#' @examples
+#' \dontrun{
+#' DataInit("MyData")
+#' }
 DataInit <- function(name="Data", ext=c("xlsx", "csv"), overwrite=FALSE, dir=NULL) {
   ext <- match.arg(ext)
   if (is.null(dir)) dir <- getwd()
@@ -48,6 +51,10 @@ DataInit <- function(name="Data", ext=c("xlsx", "csv"), overwrite=FALSE, dir=NUL
 #' @return An object of class 'Data'
 #' @export
 #' @author A. Hordyk
+#' @examples 
+#' \dontrun{
+#' MyData <- XL2Data("MyData.xlsx")
+#' }
 XL2Data <- function(name="Data", dir=NULL) {
   if (class(name) != 'character') stop("file name must be provided", call.=FALSE)
   if (is.null(dir)) dir <- getwd()
@@ -100,6 +107,8 @@ XL2Data <- function(name="Data", dir=NULL) {
 #' @param silent Logical. Should messages by suppressed?
 #'
 #' @export
+#' @examples
+#' Data_TAc <- runMP(DLMtool::Cobia)
 #' @return invisibly returns the Data object
 #'
 runMP <- function(Data, MPs = NA, reps = 100, perc=0.5, chkMPs=TRUE, silent=FALSE) {
@@ -315,7 +324,9 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
 #' @param MPs Optional list of MP names
 #' 
 #' @seealso \link{Cant} \link{Needed} \link{avail}
-#' @export Can
+#' @examples 
+#' CanMPs <- Can(DLMtool::Cobia)
+#' @export 
 Can <- function(Data, timelimit = 1, MPs=NA) {
   DLMdiag(Data, "available",  timelimit = timelimit, funcs1=MPs)
 }
@@ -331,6 +342,8 @@ Can <- function(Data, timelimit = 1, MPs=NA) {
 #' @param timelimit The maximum time (seconds) taken for a method to undertake
 #' 10 reps (this filters out methods that are too slow)
 #' @seealso \link{Can} \link{Needed} \link{avail}
+#' #' @examples 
+#' CantMPs <- Cant(DLMtool::Cobia)
 #' @export Cant
 Cant <- function(Data, timelimit = 1) {
   DLMdiag(Data, "not available", timelimit = timelimit)
@@ -417,6 +430,8 @@ DLMdiag <- function(Data, command = c("available", "not available", "needed"), r
 #' @param CheckMPs Logical, the Can function is run if this is TRUE
 #' @param msg Logical. Should messages be printed?
 #' @author A. Hordyk
+#' @examples 
+#' Input(DLMtool::Cobia)
 #' @export 
 Input <- function(Data, MPs = NA, reps = 100, timelimit = 10, CheckMPs = TRUE, 
                   msg=TRUE) {
@@ -500,6 +515,8 @@ match_slots <- function(func, slotnams = paste0("Data@", slotNames("Data")),
 #' @author T. Carruthers
 #' @seealso \link{Can} \link{Cant} \link{avail}
 #' @export Needed
+#' @examples 
+#' Needs <- Needed(DLMtool::Cobia)
 Needed <- function(Data, timelimit = 1) {
   DLMdiag(Data, "needed", timelimit = timelimit)
 }
@@ -629,8 +646,6 @@ replic8 <- function(Data, nrep) {
 #' marginal differences in each input. The range used for sensitivity is based 
 #' on the user-specified CV for that input (e.g. CV_Mort, Mort)
 #' 
-#' 
-#' @usage Sense(Data, MP, nsense = 6, reps = 100, perc = c(0.05, 0.5, 0.95), ploty = T)
 #' @param Data A data-limited methods data object
 #' @param MP A character string representing an MP applied in calculating the TAC recommendations in the DLM object
 #' @param nsense The number of points over which to calculate the TAC (resolution)
@@ -639,7 +654,11 @@ replic8 <- function(Data, nrep) {
 #' @param ploty A logical switch, (T/F, should a plot be drawn?)
 #'
 #' @author T. Carruthers
-#' @export Sense
+#' @export 
+#' @examples 
+#' \dontrun{
+#' Data <- Sense(DLMtool::Cobia, "AvC")
+#' }
 Sense <- function(Data, MP, nsense = 6, reps = 100, perc = c(0.05, 0.5, 0.95), ploty = T) {
   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
   Data <- updateMSE(Data)
@@ -749,13 +768,17 @@ Sense <- function(Data, MP, nsense = 6, reps = 100, perc = c(0.05, 0.5, 0.95), p
 #' data-limited MPs (Output) given a data-limited data object Data
 #' 
 #' 
-#' @usage TAC(Data, MPs = NA, reps = 100, timelimit = 1)
 #' @param Data A data-limited methods data object
 #' @param MPs optional vector of MP names
 #' @param reps Number of repititions
 #' @param timelimit The maximum time (seconds) taken to complete 10 reps
 #' @author T. Carruthers
-#' @export TAC
+#' @examples 
+#' \dontrun{
+#' Data <- TAC(DLMtool::Cobia)
+#' plot(Data)
+#' }
+#' @export 
 TAC <- function(Data, MPs = NA, reps = 100, timelimit = 1) {
   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
   Data <- updateMSE(Data)

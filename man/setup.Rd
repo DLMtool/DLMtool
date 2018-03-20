@@ -14,3 +14,9 @@ setup(cpus = min(parallel::detectCores(), 4), ...)
 \description{
 Sets up parallel processing using the snowfall package
 }
+\examples{
+\dontrun{
+setup() # set-up 4 processors
+setup(6) # set-up 6 processors
+}
+}

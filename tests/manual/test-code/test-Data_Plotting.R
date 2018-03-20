@@ -2,7 +2,7 @@ testthat::context("test plot Data")
 
 DLMextra(TRUE)
 library(DLMextra)
-Dat <- avail(Data)
+Dat <- avail('Data')
 Dat <- Dat[!Dat %in% c("SimulatedData", "Simulation_1")]
           
 windows()          

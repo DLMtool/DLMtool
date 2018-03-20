@@ -383,6 +383,14 @@ checkMSE <- function(MSEobj) {
 #' increase by one to some value equal or less than the total number of
 #' projection years.
 #' @author A. Hordyk
+#' @examples
+#' \dontrun{
+#' MSE <- runMSE() 
+#' MSE_1 <- Sub(MSE, MPs=1:2)
+#' MSE_1@MPs
+#' MSE_2 <- Sub(MSE, sims=1:10)
+#' MSE_2@nsim
+#' }
 #' @export Sub
 Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
   
@@ -528,6 +536,16 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
 #' @return An object of class \code{MSE}
 #' @author A. Hordyk
 #' @export joinMSE
+#' @examples 
+#' \dontrun{
+#' OM1 <- DLMtool::testOM
+#' MSE1 <- runMSE(OM1) 
+#' OM2 <- OM1 
+#' OM2@seed <- OM1@seed + 1
+#' MSE2 <- runMSE(OM2)
+#' MSE <- joinMSE(list(MSE1, MSE2))
+#' MSE@nsim
+#' }
 joinMSE <- function(MSEobjs = NULL) {
   # join two or more MSE objects
   if (class(MSEobjs) != "list") stop("MSEobjs must be a list")

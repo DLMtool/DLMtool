@@ -21,6 +21,9 @@ have the correct data, do not produce errors and run within a time limit.
 Time limit is the maximum time taken to carry out five reps (stochastic
 samples) of a given method and is in units of seconds.
 }
+\examples{
+CanMPs <- Can(DLMtool::Cobia)
+}
 \seealso{
 \link{Cant} \link{Needed} \link{avail}
 }

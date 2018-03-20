@@ -11,6 +11,10 @@
 #' avail("OM")
 #' @author T. Carruthers
 #' @seealso \link{Can} \link{Cant} \link{avail}
+#' @examples 
+#' Stocks <- avail("Stock")
+#' Fleets <- avail("Fleet")
+#' MPs <- avail("MP")
 #' @export 
 avail <- function(classy) {
   temp <- try(class(classy), silent=TRUE)
@@ -99,6 +103,8 @@ DLMextra <- function(silent=FALSE) {
 #' changed (not tested perfectly so watch out!)
 #' @return A new \code{OM} object
 #' @author A. Hordyk
+#' @examples 
+#' OM_noerror <- makePerf(DLMtool::testOM)
 #' @export 
 makePerf <- function(OMin, except = NULL) {
   nms <- slotNames(OMin)
@@ -293,6 +299,11 @@ Required <- function(funcs = NA) {
 #' @param ... other arguments passed to 'snowfall::sfInit'
 #' @importFrom snowfall sfInit sfExportAll sfIsRunning sfExport sfSapply sfLibrary
 #' @importFrom parallel detectCores
+#' @examples
+#' \dontrun{
+#' setup() # set-up 4 processors
+#' setup(6) # set-up 6 processors
+#' }
 #' @export 
 setup <- function(cpus=min(parallel::detectCores(),4), ...) {
   if(snowfall::sfIsRunning()) snowfall::sfStop()
@@ -336,12 +347,11 @@ RepmissingVal <- function(object, name, vals=NA) {
 #' 'slot doesn't exist' error that sometimes occurs. Also works with Stock, Fleet,
 #' Obs, Imp, and Data objects. 
 #' 
-#' @usage updateMSE(MSEobj)
 #' @param MSEobj A MSE object from a previous version of the DLMtool. 
 #' Also works with Stock, Fleet, Obs, Imp, and Data objects. 
 #' @return An object of class matching class(MSEobj)
 #' @author A. Hordyk
-#' @export updateMSE
+#' @export 
 updateMSE <- function(MSEobj) {
   slots <- slotNames(MSEobj)
   for (X in seq_along(slots)) {
@@ -726,7 +736,10 @@ L2A <- function(t0c, Linfc, Kc, Len, maxage) {
 #' @param plot Logical. Show the plot?
 #'
 #' @export
-#'
+#' @examples
+#' \dontrun{
+#' optCPU()
+#' }
 #' @author A. Hordyk
 optCPU <- function(nsim=96, thresh=5, plot=TRUE) {
   cpus=1:parallel::detectCores()

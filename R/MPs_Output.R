@@ -811,6 +811,7 @@ DCAC <- function(x, Data, reps = 100) {
   Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
   FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])  # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
   Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
+  Bt_K[Bt_K>1] <-1
   if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) return(NA)
   BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
                                     Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
@@ -850,6 +851,7 @@ DCAC4010 <- function(x, Data, reps = 100) {
   Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
   FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])  # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
   Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
+  Bt_K[Bt_K>1] <-1
   if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) 
     return(NA)
   BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
@@ -951,6 +953,7 @@ DCAC_ML <- function(x, Data, reps = 100) {
   dep <- rep(c(Ct1, Ct2), each = reps)/(1 - exp(-FM))
   if (reps == 1)Bt_K <- dep[2]/dep[1]
   if (reps > 1) Bt_K <- dep[, 2]/dep[, 1]
+  Bt_K[Bt_K>1] <-1
   if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) return(NA)
   BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
                                     Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
@@ -2827,8 +2830,6 @@ class(Rcontrol) <- "MP"
 #' surplus production given biomass
 #' 
 #' 
-#' @usage Rcontrol2(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5,
-#' 2))
 #' @param x A position in data-limited methods data object
 #' @param Data A data-limited methods data object
 #' @param reps The number of TAC samples
@@ -3324,71 +3325,71 @@ class(SPSRA_ML) <- "MP"
 
 
 # A generic VPA (Walters and Licandeo UBC)
-VPA <- function(x, Data, reps = reps) {
-  
-  # now do optimization for FMSY
-  dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@MaxAge, Data@wla, Data@CV_wla, Data@wlb, Data@CV_wlb, Data@L50, Data@CV_L50, Data@CAA, Data@steep, Data@CV_steep, Data@LFS, Data@CV_LFS, Data@LFC, Data@CV_LFC, Data@Cat"
-  CAAind <- (Data@CAA[x, , ] == 0) * array(rep(1:Data@MaxAge, 
-                                               each = length(Data@CAA[x, , 1])), dim(Data@CAA[x, , ]))
-  maxage <- min(CAAind[CAAind != 0])
-  maxage <- which.min(abs(cumsum(apply(Data@CAA[x, , ], 2, sum))/sum(Data@CAA[x, 
-                                                                              , ]) - 0.75))
-  CAAv <- Data@CAA[x, , 1:maxage]
-  CAAv[, maxage] <- CAAv[, maxage] + apply(Data@CAA[x, , (maxage + 
-                                                            1):length(Data@CAA[x, 1, ])], 1, sum)
-  
-  TAC <- Bt_K <- rep(NA, reps)
-  
-  for (i in 1:reps) {
-    
-    Mc <- trlnorm(1, Data@Mort[x], Data@CV_Mort[x])
-    # hc <- trlnorm(1, Data@steep[x], Data@CV_steep[x])
-    hc <- sample_steepness2(1, Data@steep[x], Data@CV_steep[x])
-    Linfc <- trlnorm(1, Data@vbLinf[x], Data@CV_vbLinf[x])
-    Kc <- trlnorm(1, Data@vbK[x], Data@CV_vbK[x])
-    t0c <- -trlnorm(1, -Data@vbt0[x], Data@CV_vbt0[x])
-    LFSc <- trlnorm(1, Data@LFS[x], Data@CV_LFS[x])
-    LFCc <- trlnorm(1, Data@LFC[x], Data@CV_LFC[x])
-    AMc <- trlnorm(1, iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
-                          Data@L50[x]), Data@CV_L50[x])
-    ac <- trlnorm(1, Data@wla[x], Data@CV_wla[x])
-    bc <- trlnorm(1, Data@wlb[x], Data@CV_wlb[x])
-    
-    pmat <- rep(1, maxage)
-    pmat[1:ceiling(AMc)] <- 0
-    age <- 1:maxage
-    la <- Data@vbLinf[x] * (1 - exp(-Data@vbK[x] * ((age - 
-                                                       Data@vbt0[x]))))
-    wa <- ac * la^bc
-    
-    Cat <- Data@Cat[x, ]
-    Cat[1] <- Cat[2]  # temporary fix until effort simulation function gets sorted
-    
-    CAAv[, maxage][CAAv[, maxage] == 0] <- 1
-    
-    opt = optim(c(-3, -2), VPAopt, Cat = CAAv, yt = Data@Ind[x, ],
-                S = exp(-Mc), maxage = maxage, wa = wa, pmat = pmat, method = "L-BFGS-B", 
-                lower = c(-5, -5), upper = c(5, 5))
-    out = VPAopt(opt$par, Cat = CAAv, yt = Data@Ind[x, ], S = exp(-Data@Mort[x]), 
-                 maxage = maxage, wa = wa, pmat = pmat, opt = F)
-    
-    fit2 <- optimize(VPAFMSY, log(c(1e-04, 3)), Mc = Mc, hc = hc, maxage = maxage, 
-                     vul = out$va, Linfc = Linfc, Kc = Kc, t0c = t0c, AMc = AMc, 
-                     ac = ac, bc = bc)
-    FMSY <- VPAFMSY(fit2$minimum, Mc = Mc, hc = hc, maxage = maxage, 
-                    vul = out$va, Linfc = Linfc, Kc = Kc, t0c = t0c, AMc = AMc, 
-                    ac = ac, bc = bc, opt = F)
-    if ((FMSY/Mc) > 3) FMSY <- 3 * Mc
-    TAC[i] <- out$bt[length(out$bt)] * FMSY
-  }
-  
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
-  Rec
-  
-}
-class(VPA) <- "MP"
-
+# VPA <- function(x, Data, reps = reps) {
+#   
+#   # now do optimization for FMSY
+#   dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@MaxAge, Data@wla, Data@CV_wla, Data@wlb, Data@CV_wlb, Data@L50, Data@CV_L50, Data@CAA, Data@steep, Data@CV_steep, Data@LFS, Data@CV_LFS, Data@LFC, Data@CV_LFC, Data@Cat"
+#   CAAind <- (Data@CAA[x, , ] == 0) * array(rep(1:Data@MaxAge, 
+#                                                each = length(Data@CAA[x, , 1])), dim(Data@CAA[x, , ]))
+#   maxage <- min(CAAind[CAAind != 0])
+#   maxage <- which.min(abs(cumsum(apply(Data@CAA[x, , ], 2, sum))/sum(Data@CAA[x, 
+#                                                                               , ]) - 0.75))
+#   CAAv <- Data@CAA[x, , 1:maxage]
+#   CAAv[, maxage] <- CAAv[, maxage] + apply(Data@CAA[x, , (maxage + 
+#                                                             1):length(Data@CAA[x, 1, ])], 1, sum)
+#   
+#   TAC <- Bt_K <- rep(NA, reps)
+#   
+#   for (i in 1:reps) {
+#     
+#     Mc <- trlnorm(1, Data@Mort[x], Data@CV_Mort[x])
+#     # hc <- trlnorm(1, Data@steep[x], Data@CV_steep[x])
+#     hc <- sample_steepness2(1, Data@steep[x], Data@CV_steep[x])
+#     Linfc <- trlnorm(1, Data@vbLinf[x], Data@CV_vbLinf[x])
+#     Kc <- trlnorm(1, Data@vbK[x], Data@CV_vbK[x])
+#     t0c <- -trlnorm(1, -Data@vbt0[x], Data@CV_vbt0[x])
+#     LFSc <- trlnorm(1, Data@LFS[x], Data@CV_LFS[x])
+#     LFCc <- trlnorm(1, Data@LFC[x], Data@CV_LFC[x])
+#     AMc <- trlnorm(1, iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
+#                           Data@L50[x]), Data@CV_L50[x])
+#     ac <- trlnorm(1, Data@wla[x], Data@CV_wla[x])
+#     bc <- trlnorm(1, Data@wlb[x], Data@CV_wlb[x])
+#     
+#     pmat <- rep(1, maxage)
+#     pmat[1:ceiling(AMc)] <- 0
+#     age <- 1:maxage
+#     la <- Data@vbLinf[x] * (1 - exp(-Data@vbK[x] * ((age - 
+#                                                        Data@vbt0[x]))))
+#     wa <- ac * la^bc
+#     
+#     Cat <- Data@Cat[x, ]
+#     Cat[1] <- Cat[2]  # temporary fix until effort simulation function gets sorted
+#     
+#     CAAv[, maxage][CAAv[, maxage] == 0] <- 1
+#     
+#     opt = optim(c(-3, -2), VPAopt, Cat = CAAv, yt = Data@Ind[x, ],
+#                 S = exp(-Mc), maxage = maxage, wa = wa, pmat = pmat, method = "L-BFGS-B", 
+#                 lower = c(-5, -5), upper = c(5, 5))
+#     out = VPAopt(opt$par, Cat = CAAv, yt = Data@Ind[x, ], S = exp(-Data@Mort[x]), 
+#                  maxage = maxage, wa = wa, pmat = pmat, opt = F)
+#     
+#     fit2 <- optimize(VPAFMSY, log(c(1e-04, 3)), Mc = Mc, hc = hc, maxage = maxage, 
+#                      vul = out$va, Linfc = Linfc, Kc = Kc, t0c = t0c, AMc = AMc, 
+#                      ac = ac, bc = bc)
+#     FMSY <- VPAFMSY(fit2$minimum, Mc = Mc, hc = hc, maxage = maxage, 
+#                     vul = out$va, Linfc = Linfc, Kc = Kc, t0c = t0c, AMc = AMc, 
+#                     ac = ac, bc = bc, opt = F)
+#     if ((FMSY/Mc) > 3) FMSY <- 3 * Mc
+#     TAC[i] <- out$bt[length(out$bt)] * FMSY
+#   }
+#   
+#   Rec <- new("Rec")
+#   Rec@TAC <- TACfilter(TAC)
+#   Rec
+#   
+# }
+# class(VPA) <- "MP"
+# 
 #' Yield Per Recruit analysis to get FMSY proxy F01
 #' 
 #' A simple yield per recruit approximation to FMSY (F01) which is the position
