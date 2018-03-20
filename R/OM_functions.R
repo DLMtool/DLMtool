@@ -149,9 +149,13 @@ Replace <- function(OM, from, Sub=c("Stock", "Fleet", "Obs", "Imp"),Quiet=F) {
   }
   
   outOM <- new("OM", Stock, Fleet, Obs, Imp) 
-  outOM@nsim <- OM@nsim 
-  outOM@cpars <- OM@cpars 
-  outOM@seed <- OM@seed 
+  
+  OMsl <- slotNames('OM')
+  allSl <- c(slotNames('Stock'), slotNames('Fleet'), slotNames('Obs'), slotNames('Imp'))
+  repsl <- OMsl[!OMsl %in% allSl]
+  for (sl in repsl) slot(outOM, sl) <- slot(OM, sl)
+  slot(outOM, 'Name') <- slot(OM, 'Name')
+  
   outOM 
 } 
 
