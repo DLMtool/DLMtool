@@ -64,6 +64,18 @@ for (x in 1:Ntest) {
   })
 }
 
+# CheckMPs works 
+OM <- new("OM", get(all[1,1]), get(all[1,2]), get(all[1,3]), get(all[1,4]))
+OM@seed <- ceiling(runif(1, 1, 1000))
+OM@nsim <- 48
+OM@interval <- ceiling(runif(1, 1, 5))
+OM@SRrel <- 2
+info <- paste(OM@Name, "seed =", OM@seed, "interval =", OM@interval)
+testthat::test_that(paste0("runMSE with MPs=NA: ",info), {
+  testthat::expect_is(runMSE(OM, MPs=NA, parallel=FALSE, silent=TRUE), 'MSE', info=info)
+})
+
+
 
 
 # # Historical MPA 

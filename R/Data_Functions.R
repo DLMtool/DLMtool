@@ -349,7 +349,8 @@ Cant <- function(Data, timelimit = 1) {
   DLMdiag(Data, "not available", timelimit = timelimit)
 }
 
-DLMdiag <- function(Data, command = c("available", "not available", "needed"), reps = 5, timelimit = 1, funcs1=NA) {
+DLMdiag <- function(Data, command = c("available", "not available", "needed"), reps = 5, 
+                    timelimit = 1, funcs1=NA) {
   command <- match.arg(command)
   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
   set.seed(101)
@@ -367,6 +368,7 @@ DLMdiag <- function(Data, command = c("available", "not available", "needed"), r
   if (class(rr) == "try-error") Data@Misc <- list()
   
   temp <- lapply(funcs1, function(x) paste(format(match.fun(x)), collapse = " "))
+  
   repp <- vapply(temp, match_slots, character(1), Data = Data)
   
   chk_needed <- nzchar(repp) # TRUE = has missing data
@@ -493,7 +495,7 @@ match_slots <- function(func, slotnams = paste0("Data@", slotNames("Data")),
   # check if each slotname in Data class is required in an MP
   ind_MP <- vapply(slotnams, grepl, numeric(1), x = func)
   if(!is.null(Data) && inherits(Data, "Data")) { # check if Data slots return NA or zero
-    ind_NAor0 <- vapply(slots, function(x) NAor0(slot(Data, x)), logical(1))
+    ind_NAor0 <- vapply(slots, function(x) all(NAor0(slot(Data, x))), logical(1))
     repp <- slots[ind_MP & ind_NAor0] # returns slots where both tests are true
   }
   else {
