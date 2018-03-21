@@ -7,7 +7,7 @@ nsim <- 3
 
 context("Test runMSE with all MPs and all built-in objects")
 
-MPs <- NA # c("AvC", "matlenlim", "slotlim", "curE", "curE75", "MRnoreal", "MRreal")
+MPs <- avail("MP") # NA # c("AvC", "matlenlim", "slotlim", "curE", "curE75", "MRnoreal", "MRreal")
 
 stocks <- avail("Stock")
 fleets <- avail("Fleet")
@@ -25,8 +25,11 @@ for (x in 1:Ntest) {
   OM@seed <- ceiling(runif(1, 1, 1000))
   OM@nsim <- nsim
   OM@interval <- ceiling(runif(1, 1, 5))
-  info <- paste(OM@Name, "seed =", OM@seed, "interval =", OM@interval)
-  testthat::test_that(paste0("runMSE: ",info), {
-    testthat::expect_is(runMSE(OM, MPs=MPs, parallel=FALSE, silent=TRUE), 'MSE', info=info)
-  })
+  for (MP in MPs) {
+    info <- paste(OM@Name, "seed =", OM@seed, "interval =", OM@interval, "MP = ", MP)
+    testthat::test_that(paste0("runMSE: ",info), {
+      testthat::expect_is(runMSE(OM, MPs=MP, parallel=FALSE, silent=TRUE), 'MSE', info=info)
+    })
+  }
+
 }
