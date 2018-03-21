@@ -428,7 +428,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         if (length(tooLow) > 0) message(tooLow, " sims can't get down to the lower bound on depletion")
         if (length(tooHigh) > 0) message(tooHigh, " sims can't get to the upper bound on depletion")
         if(!silent) message("More than ", fracD*100, "% of simulations can't get to the specified level of depletion with these Operating Model parameters")
-        stop("Try again for a complete new sample, modify the input parameters, or increase ")
+        stop("Change OM@seed and try again for a complete new sample, modify the input parameters, or increase ntrials")
       } else {
         if (length(tooLow) > 0) message(tooLow, " sims can't get down to the lower bound on depletion")
         if (length(tooHigh) > 0) message(tooHigh, " sims can't get to the upper bound on depletion")
