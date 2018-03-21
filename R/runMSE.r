@@ -500,7 +500,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   MGT<-apply(Agearray*(Mat_age[,,nyears]*MGTsurv),1,sum)/apply(Mat_age[,,nyears]*MGTsurv,1,sum)
   
   if(CalcBlow){
-    if(!silent) message("Calculating Blow reference points")              # Print a progress update  
+    if(!silent) message("Calculating B-low reference points")              # Print a progress update  
     
     MGThorizon<-floor(HZN*MGT)
     
