@@ -509,19 +509,25 @@ DBSRA <- function(x, Data, reps = 100) {
     if (is.na(tryBMSY_K)) {
       Min <- min(BMSY_K, na.rm = TRUE)
       Max <- max(BMSY_K, na.rm = TRUE)
-      if (Max <= 0.05) 
-        BMSY_K <- 0.05
-      if (Min >= 0.95) 
-        BMSY_K <- 0.95
+      if (Max <= 0.05) BMSY_K <- 0.05
+      if (Min >= 0.95) BMSY_K <- 0.95
     }
     if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
     
     adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])), 1)
-    opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist), 1000 * mean(C_hist))), C_hist = C_hist, 
-                    nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, BMSY_K = BMSY_K, 
+ 
+    # opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist), 1000 * mean(C_hist))), C_hist = C_hist, 
+                    # nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, BMSY_K = BMSY_K, 
+                    # Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+    # scale catches for optimization
+    scaler <- 1000/mean(C_hist)
+    C_hist2 <- scaler * C_hist
+    opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist2), 1000 * mean(C_hist2))), C_hist = C_hist2, 
+                    nys = length(C_hist2), Mdb = Mdb, FMSY_M = FMSY_M, BMSY_K = BMSY_K, 
                     Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+    
     # if(opt$objective<0.1){
-    Kc <- exp(opt$minimum)
+    Kc <- exp(opt$minimum) / scaler
     BMSYc <- Kc * BMSY_K
     FMSYc <- Mdb * FMSY_M
     UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
@@ -593,9 +599,16 @@ DBSRA_40 <- function(x, Data, reps = 100) {
     }
     if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
     adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])), 1)
-    opt <- optimize(DBSRAopt, log(c(0.1 * mean(C_hist), 1000 * mean(C_hist))), 
-                    C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
-                    BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+    # opt <- optimize(DBSRAopt, log(c(0.1 * mean(C_hist), 1000 * mean(C_hist))), 
+    #                 C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
+    #                 BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+    # scale catches for optimization
+    scaler <- 1000/mean(C_hist)
+    C_hist2 <- scaler * C_hist
+    opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist2), 1000 * mean(C_hist2))), C_hist = C_hist2, 
+                    nys = length(C_hist2), Mdb = Mdb, FMSY_M = FMSY_M, BMSY_K = BMSY_K, 
+                    Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+    
     # if(opt$objective<0.1){
     Kc <- exp(opt$minimum)
     BMSYc <- Kc * BMSY_K
@@ -669,9 +682,16 @@ DBSRA4010 <- function(x, Data, reps = 100) {
     if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
     adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
                             Data@L50[x])), 1)
-    opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist), 1000 * mean(C_hist))), 
-                    C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
-                    BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+    # opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist), 1000 * mean(C_hist))), 
+    #                 C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
+    #                 BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+    # scale catches for optimization
+    scaler <- 1000/mean(C_hist)
+    C_hist2 <- scaler * C_hist
+    opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist2), 1000 * mean(C_hist2))), C_hist = C_hist2, 
+                    nys = length(C_hist2), Mdb = Mdb, FMSY_M = FMSY_M, BMSY_K = BMSY_K, 
+                    Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+    
     # if(opt$objective<0.1){
     Kc <- exp(opt$minimum)
     BMSYc <- Kc * BMSY_K
