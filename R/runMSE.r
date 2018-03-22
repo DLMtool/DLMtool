@@ -70,6 +70,27 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     message("Sorry! Historical simulations currently can't use parallel.")
     parallel <- FALSE
   }
+  
+  # check if custom MP names already exist in DLMtool
+  gl.funs <- as.vector(lsf.str(envir=globalenv()))
+  if (length(gl.funs)>0) {
+    gl.clss <- unlist(lapply(lapply(gl.funs, get), class))
+    gl.MP <- gl.funs[gl.clss %in% 'MP']
+    if (length(gl.MP)>0) {
+      inc.gl <- gl.MP[gl.MP %in% MPs]
+      if (length(inc.gl)>0) {
+        pkg.funs <- as.vector(ls.str('package:DLMtool'))
+        dup.MPs <- inc.gl[inc.gl %in% pkg.funs]
+        if (length(dup.MPs)>0) {
+          stop("Custom MP names already in DLMtool: ", paste0(dup.MPs, ""), "\nRename Custom MPs")
+        }
+      }
+    }
+  }
+  
+  
+  
+  
   if (parallel) {
     if(!snowfall::sfIsRunning()) {
       stop("Parallel processing hasn't been initialized. Use 'setup'", call. = FALSE)

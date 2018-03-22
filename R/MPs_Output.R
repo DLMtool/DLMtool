@@ -38,10 +38,16 @@
 #'
 #' A simple average catch MP that is included to demonstrate a 'status quo' management option
 #'
+#' 
+#'
 #' @param x A position in a data-limited methods data object
 #' @param Data A data-limited methods data object
 #' @param reps The number of stochastic samples of the TAC recommendation
 #' @author T. Carruthers
+#' 
+#' @examples 
+#' Rec <- AvC(1, DLMtool::Cobia)
+#' hist(Rec@TAC)
 #' @export 
 #'
 #' @importFrom abind abind

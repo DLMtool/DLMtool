@@ -16,6 +16,10 @@ AvC(x, Data, reps = 100)
 \description{
 A simple average catch MP that is included to demonstrate a 'status quo' management option
 }
+\examples{
+Rec <- AvC(1, DLMtool::Cobia)
+hist(Rec@TAC)
+}
 \author{
 T. Carruthers
 }
