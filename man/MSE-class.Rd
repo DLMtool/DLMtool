@@ -24,41 +24,41 @@ simulation conditions and performance of data-limited methods
 \item{\code{nsim}}{Number of simulations. Single value. Positive integer}
 
 \item{\code{OM}}{A table of sampled parameter of the operating model. Table object of nsim rows. Real numbers\cr
- \itemize{
- \item RefY: reference yield, the highest long-term yield (mean over last five years of projection) obtained from a fixed F strategy. This is a useful reference point for framing performance of MPs because it standardizes for starting point and future productivity. 
- \item M: instantaneous natural mortality rate
- \item Depletion: stock depletion (biomass / unfished biomass) in the final historical year (prior to projection)
- \item A: abundance (biomass) updated in each management update of projection
- \item BMSY_B0: most productive stock size relative to unfished
- \item FMSY_M: fishing mortality rate divided by natural mortality rate
- \item Mgrad: mean average percentage gradient in natural mortality rate (percentage per time step)
- \item Msd: interannual variability in natural mortality rate (lognormal CV)
- \item procsd: process error - CV in log-normal recruitment deviations
- \item Esd: interannual variability in historical effort (fishing mortality rate)
- \item dFfinal: gradient in fishing mortality rate over final five years of the historical simulation
- \item MSY: Maximum Sustainable Yield
- \item qinc: mean percentage increase in fishing efficiency (catchability) in projected years (input controls only)
- \item qcv: interannual variability in future fishing efficiency (catchability) in projected years (input controls only)
- \item FMSY: Fishing mortality rate at Maximum Sustainable Yield
- \item Linf: maximum length (von Bertalanffy Linf parameter)
- \item K: maximum growth rate (von Bertalanffy K parameter)
- \item t0: theoretical length at age zero (von Bertalanffy t0 parameter)
- \item hs: steepness of the stock recruitment relationship (the fraction of unfished recruitment at a fifth of unfished stock levels)
- \item Linfgrad: mean gradient in maximum length (per cent per time step)
- \item Kgrad: mean gradient in maximum growth rate (per cent per time step)
- \item Linfsd: interannual variability in maximum length (log normal CV)
- \item Ksd: interannual variability in maximum growth rate (log normal CV)
- \item ageM: age at 50 per cent maturity
- \item LFS: length at full selection (the shortest length class where fishery selectivity is 100 per cent)
- \item age05: the age at 5 percent selectivity (ascending limb of selectivity curve)
- \item Vmaxage: the selectivity of the oldest age class (controls dome shape of selectivity curve)
- \item LFC: length at first capture, the smallest length that can be caught by the gear
- \item OFLreal: the true simulated Over Fishing Limit (FMSY x biomass) updated in each management update of the projection
- \item Spat_targ: spatial targetting parameter, fishing mortality rate across areas is proportional to vulnerable biomass raised to the power of this number. 
- \item Size_area_1: The size of area 1 relative to area 2
- \item Frac_area_1: the fraction of unfished biomass inhabiting area 1 (can be seen as fraction of habitat in area 1 or relative size of area 1)
- \item Prob_staying: the probability that individuals in area 1 remain there between time-steps
- \item AC: autocorrelation in recruitment
+\itemize{
+\item RefY: reference yield, the highest long-term yield (mean over last five years of projection) obtained from a fixed F strategy. This is a useful reference point for framing performance of MPs because it standardizes for starting point and future productivity.
+\item M: instantaneous natural mortality rate
+\item Depletion: stock depletion (biomass / unfished biomass) in the final historical year (prior to projection)
+\item A: abundance (biomass) updated in each management update of projection
+\item BMSY_B0: most productive stock size relative to unfished
+\item FMSY_M: fishing mortality rate divided by natural mortality rate
+\item Mgrad: mean average percentage gradient in natural mortality rate (percentage per time step)
+\item Msd: interannual variability in natural mortality rate (lognormal CV)
+\item procsd: process error - CV in log-normal recruitment deviations
+\item Esd: interannual variability in historical effort (fishing mortality rate)
+\item dFfinal: gradient in fishing mortality rate over final five years of the historical simulation
+\item MSY: Maximum Sustainable Yield
+\item qinc: mean percentage increase in fishing efficiency (catchability) in projected years (input controls only)
+\item qcv: interannual variability in future fishing efficiency (catchability) in projected years (input controls only)
+\item FMSY: Fishing mortality rate at Maximum Sustainable Yield
+\item Linf: maximum length (von Bertalanffy Linf parameter)
+\item K: maximum growth rate (von Bertalanffy K parameter)
+\item t0: theoretical length at age zero (von Bertalanffy t0 parameter)
+\item hs: steepness of the stock recruitment relationship (the fraction of unfished recruitment at a fifth of unfished stock levels)
+\item Linfgrad: mean gradient in maximum length (per cent per time step)
+\item Kgrad: mean gradient in maximum growth rate (per cent per time step)
+\item Linfsd: interannual variability in maximum length (log normal CV)
+\item Ksd: interannual variability in maximum growth rate (log normal CV)
+\item ageM: age at 50 per cent maturity
+\item LFS: length at full selection (the shortest length class where fishery selectivity is 100 per cent)
+\item age05: the age at 5 percent selectivity (ascending limb of selectivity curve)
+\item Vmaxage: the selectivity of the oldest age class (controls dome shape of selectivity curve)
+\item LFC: length at first capture, the smallest length that can be caught by the gear
+\item OFLreal: the true simulated Over Fishing Limit (FMSY x biomass) updated in each management update of the projection
+\item Spat_targ: spatial targetting parameter, fishing mortality rate across areas is proportional to vulnerable biomass raised to the power of this number.
+\item Size_area_1: The size of area 1 relative to area 2
+\item Frac_area_1: the fraction of unfished biomass inhabiting area 1 (can be seen as fraction of habitat in area 1 or relative size of area 1)
+\item Prob_staying: the probability that individuals in area 1 remain there between time-steps
+\item AC: autocorrelation in recruitment
 }}
 
 \item{\code{Obs}}{A table of sampled parameters of the observation model. Table of nsim rows. Real numbers\cr

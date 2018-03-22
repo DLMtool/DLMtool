@@ -10,7 +10,7 @@ SampleFleetPars(Fleet, Stock = NULL, nsim = NULL, nyears = NULL,
 \arguments{
 \item{Fleet}{An object of class 'Fleet' or class 'OM'}
 
-\item{Stock}{An object of class 'Stock' or a list of sampled Stock parameters. 
+\item{Stock}{An object of class 'Stock' or a list of sampled Stock parameters.
 Ignored if 'Fleet' is class 'OM'}
 
 \item{nsim}{Number of simulations. Ignored if 'Fleet' is class 'OM'}

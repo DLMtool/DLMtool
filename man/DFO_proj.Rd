@@ -13,7 +13,7 @@ DFO_proj(MSEobj, maxplot = 3)
 }
 \description{
 A projection plot of MP performance by simulation according to the
-stock status zones and reference points of DFO. 
+stock status zones and reference points of DFO.
 http://www.dfo-mpo.gc.ca/reports-rapports/regs/sff-cpd/precaution-eng.htm
 }
 \author{

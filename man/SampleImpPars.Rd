@@ -4,12 +4,14 @@
 \alias{SampleImpPars}
 \title{Sample Implementation Error Parameters}
 \usage{
-SampleImpPars(Imp, nsim = NULL)
+SampleImpPars(Imp, nsim = NULL, cpars = NULL)
 }
 \arguments{
 \item{Imp}{An object of class 'Imp' or class 'OM'}
 
 \item{nsim}{Number of simulations. Ignored if 'Stock' is class 'OM'}
+
+\item{cpars}{Optional named list of custom parameters. Ignored if 'OM' is class 'OM'}
 }
 \value{
 A named list of sampled Implementation Error parameters

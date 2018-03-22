@@ -58,6 +58,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @param control control options for testing and debugging
 #' @return An object of class MSE
 #' @author T. Carruthers and A. Hordyk
+#' @importFrom utils ls.str
 #' @export
 #' 
 runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
@@ -93,7 +94,9 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   if (parallel) {
     if(!snowfall::sfIsRunning()) {
-      stop("Parallel processing hasn't been initialized. Use 'setup'", call. = FALSE)
+      # stop("Parallel processing hasn't been initialized. Use 'setup'", call. = FALSE)
+      message("Parallel processing hasn't been initialized. Calling 'setup()' now")
+      setup()
     }
     
     ncpu <- snowfall::sfCpus()
@@ -222,12 +225,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   for (X in 1:length(FleetPars)) assign(names(FleetPars)[X], FleetPars[[X]])
   
   # --- Sample Obs Parameters ----
-  ObsPars <- SampleObsPars(OM, nsim)
+  ObsPars <- SampleObsPars(OM, nsim, cpars=SampCpars)
   # Assign Obs pars to function environment
   for (X in 1:length(ObsPars)) assign(names(ObsPars)[X], ObsPars[[X]])
   
   # --- Sample Imp Paramerers ----
-  ImpPars <- SampleImpPars(OM, nsim)
+  ImpPars <- SampleImpPars(OM, nsim, cpars=SampCpars)
   # Assign Imp pars to function environment
   for (X in 1:length(ImpPars)) assign(names(ImpPars)[X], ImpPars[[X]])
   

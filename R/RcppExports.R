@@ -6,12 +6,12 @@
 #' Rcpp version of R code 
 #' @param param a numeric value representing log(R0)
 #' @param FF_a numeric value, recent fishign mortality rate (apical F)
-#' @param Chist a vector of historical catch observations [nyears]
+#' @param Chist a vector of historical catch observations `[nyears]`
 #' @param M_a numeric value, natural mortality rate
-#' @param Mat_age_a a vector of maturity at age [nage]
-#' @param Wt_age_a a vector of weight at age [nage]
-#' @param sel_a a vector of selectivity at age [nage]
-#' @param Recdevs_a a vector of recruitment deviations [nyears]
+#' @param Mat_age_a a vector of maturity at age `[nage]`
+#' @param Wt_age_a a vector of weight at age `[nage]`
+#' @param sel_a a vector of selectivity at age `[nage]`
+#' @param Recdevs_a a vector of recruitment deviations `[nyears]`
 #' @param h_a a numeric value of steepness values of the Bev-Holt Stock-Recruitment relationship
 #' @param Umax maximum harvest rate per year
 #' @author T. Carruthers with an amateur attempt at converting to Rcpp by A. Hordyk (but it works!)

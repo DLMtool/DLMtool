@@ -33,7 +33,7 @@ plotStock(x, nsamp = 3, nsim = 500, nyears = 50, proyears = 28,
 }
 \description{
 A function that plots histograms of samples from the Stock object parameters,
-and time-series plots of `nsamp` samples of time-varying parameters. Used to 
+and time-series plots of \code{nsamp} samples of time-varying parameters. Used to
 visually examine the parameter values and ranges entered into the Stock object.
 }
 \author{

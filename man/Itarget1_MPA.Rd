@@ -2,7 +2,7 @@
 % Please edit documentation in R/MPs_Mixed.R
 \name{Itarget1_MPA}
 \alias{Itarget1_MPA}
-\title{A example mixed control MP that uses the Itarget1 output control MP together with a 
+\title{A example mixed control MP that uses the Itarget1 output control MP together with a
 spatial closure.}
 \usage{
 Itarget1_MPA(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5)

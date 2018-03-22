@@ -12,9 +12,9 @@ iSCAMcomps(replist, Year)
 \item{Year}{Integer vector: the years of the DLMtool data object ie Data@Year}
 }
 \description{
-iSCAM assessments are often fitted to numerous fleets that have differing 
+iSCAM assessments are often fitted to numerous fleets that have differing
 age selectivities. iSCAMcomps is a simple way of providing the aggregate catch at age
-data. It should be noted that this process is important and in a real application would 
+data. It should be noted that this process is important and in a real application would
 require due diligence (ie peer reviewed data workshop).
 }
 \author{

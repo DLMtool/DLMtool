@@ -10,7 +10,7 @@ DFO_plot(MSEobj)
 \item{MSEobj}{An MSE object of class MSE produced by DLMtool function runMSE}
 }
 \description{
-A plot of mean biomass relative to BMSY and fishing mortality rate relative to FMSY 
+A plot of mean biomass relative to BMSY and fishing mortality rate relative to FMSY
 over the final 5 years of the projection
 http://www.dfo-mpo.gc.ca/reports-rapports/regs/sff-cpd/precaution-eng.htm
 }

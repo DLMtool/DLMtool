@@ -16,20 +16,20 @@ Lratio_BHI2(x, Data, reps, yrsmth = 3)
 \item{yrsmth}{The most recent years of data to smooth the calculation of the mean length}
 }
 \description{
-The TAC is adjusted by the ratio alpha, where the numerator 
-is the mean length of the catch (of lengths larger than Lc) 
+The TAC is adjusted by the ratio alpha, where the numerator
+is the mean length of the catch (of lengths larger than Lc)
 and the denominator is the mean length as a function of Linf,
-FMSY/M, and M/K (see Appendix A of Jardim et al. 2015). Here, 
+FMSY/M, and M/K (see Appendix A of Jardim et al. 2015). Here,
 Lc is the length at full selection (LFS).
 }
 \details{
-Argument yrsmth currently takes the mean length of the most recent 3 years of data 
+Argument yrsmth currently takes the mean length of the most recent 3 years of data
 as a smoother.
 }
 \references{
-Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for 
-data limited stocks using length-based reference points and survey biomass indices, 
-Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836, 
+Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for
+data limited stocks using length-based reference points and survey biomass indices,
+Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836,
 https://doi.org/10.1016/j.fishres.2014.11.013
 }
 \author{

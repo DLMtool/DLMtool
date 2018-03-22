@@ -12,17 +12,17 @@ LSRA_opt(param, FF_a, Chist, M_a, Mat_age_a, Wt_age_a, sel_a, Recdevs_a, h_a,
 
 \item{FF_a}{numeric value, recent fishign mortality rate (apical F)}
 
-\item{Chist}{a vector of historical catch observations [nyears]}
+\item{Chist}{a vector of historical catch observations \code{[nyears]}}
 
 \item{M_a}{numeric value, natural mortality rate}
 
-\item{Mat_age_a}{a vector of maturity at age [nage]}
+\item{Mat_age_a}{a vector of maturity at age \code{[nage]}}
 
-\item{Wt_age_a}{a vector of weight at age [nage]}
+\item{Wt_age_a}{a vector of weight at age \code{[nage]}}
 
-\item{sel_a}{a vector of selectivity at age [nage]}
+\item{sel_a}{a vector of selectivity at age \code{[nage]}}
 
-\item{Recdevs_a}{a vector of recruitment deviations [nyears]}
+\item{Recdevs_a}{a vector of recruitment deviations \code{[nyears]}}
 
 \item{h_a}{a numeric value of steepness values of the Bev-Holt Stock-Recruitment relationship}
 

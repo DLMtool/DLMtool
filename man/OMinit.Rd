@@ -8,7 +8,7 @@ OMinit(name = NULL, ..., files = c("xlsx", "rmd"), dir = NULL,
   overwrite = FALSE)
 }
 \arguments{
-\item{name}{The name of the Excel and source.rmd file to be created in the working directory (character). 
+\item{name}{The name of the Excel and source.rmd file to be created in the working directory (character).
 Use 'example' for a populated example OM XL and documentation file.}
 
 \item{...}{Optional DLMtool objects to use as templates: OM, Stock, Fleet, Obs, or Imp objects}
@@ -16,7 +16,7 @@ Use 'example' for a populated example OM XL and documentation file.}
 \item{files}{What files should be created: 'xlsx', 'rmd', or c('xlsx', 'rmd') (default: both)
 to use as templates for the Operating Model.}
 
-\item{dir}{Optional file path to create the xlsx and rmd files. Default is `getwd()`}
+\item{dir}{Optional file path to create the xlsx and rmd files. Default is \code{getwd()}}
 
 \item{overwrite}{Logical. Should files be overwritten if they already exist?}
 }
@@ -24,7 +24,7 @@ to use as templates for the Operating Model.}
 name.xlsx and name.rmd files are created in the working directory.
 }
 \description{
-Generates an Excel spreadsheet and a source.rmd file in the current working directory for 
+Generates an Excel spreadsheet and a source.rmd file in the current working directory for
 specifying and documenting a DLMtool Operating Model.
 }
 \examples{

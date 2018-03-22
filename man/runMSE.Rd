@@ -22,18 +22,18 @@ if MPs can be run.}
 \item{timelimit}{Maximum time taken for a method to carry out 10 reps
 (methods are ignored that take longer)}
 
-\item{Hist}{Should model stop after historical simulations? Returns a list 
+\item{Hist}{Should model stop after historical simulations? Returns a list
 containing all historical data}
 
-\item{ntrials}{Maximum of times depletion and recruitment deviations are 
-resampled to optimize for depletion. After this the model stops if more than 
+\item{ntrials}{Maximum of times depletion and recruitment deviations are
+resampled to optimize for depletion. After this the model stops if more than
 percent of simulations are not close to the required depletion}
 
-\item{fracD}{maximum allowed proportion of simulations where depletion is not 
+\item{fracD}{maximum allowed proportion of simulations where depletion is not
 close to sampled depletion from OM before model stops with error}
 
 \item{CalcBlow}{Should low biomass be calculated where this is the spawning
-biomass at which it takes HZN mean generation times of zero fishing to reach 
+biomass at which it takes HZN mean generation times of zero fishing to reach
 Bfrac fraction of SSBMSY}
 
 \item{HZN}{The number of mean generation times required to reach Bfrac SSBMSY
@@ -41,7 +41,7 @@ in the Blow calculation}
 
 \item{Bfrac}{The target fraction of SSBMSY for calculating Blow}
 
-\item{AnnualMSY}{Logical. Should MSY statistics be calculated for each projection year? 
+\item{AnnualMSY}{Logical. Should MSY statistics be calculated for each projection year?
 May differ from MSY statistics from last historical year if there are changes in productivity}
 
 \item{silent}{Should messages be printed out to the console?}

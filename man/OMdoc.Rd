@@ -20,7 +20,7 @@ is that the file is 'OM@Name.Rmd'}
 
 \item{inc.plot}{Logical. Should the plots be included?}
 
-\item{render}{Logical. Should the document be compiled? May be useful to turn off if 
+\item{render}{Logical. Should the document be compiled? May be useful to turn off if
 there are problems with compililing the Rmd file.}
 
 \item{output}{Character. Output file type. Default is 'html_document'. 'pdf_document' is available
@@ -30,7 +30,7 @@ but may require additional software and have some formatting issues.}
 
 \item{quiet}{TRUE to supress printing of the pandoc command line.}
 
-\item{dir}{Optional file path to read the xlsx and rmd files. Default is `getwd()`}
+\item{dir}{Optional file path to read the xlsx and rmd files. Default is \code{getwd()}}
 }
 \value{
 Creates a Rmarkdown file and compiles a HTML report file in the working directory.

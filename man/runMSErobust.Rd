@@ -22,14 +22,14 @@ Input.}
 \item{CheckMPs}{Logical to indicate if Can function should be used to check
 if MPs can be run.}
 
-\item{Hist}{Should model stop after historical simulations? Returns a list 
+\item{Hist}{Should model stop after historical simulations? Returns a list
 containing all historical data}
 
-\item{ntrials}{Maximum of times depletion and recruitment deviations are 
-resampled to optimize for depletion. After this the model stops if more than 
+\item{ntrials}{Maximum of times depletion and recruitment deviations are
+resampled to optimize for depletion. After this the model stops if more than
 percent of simulations are not close to the required depletion}
 
-\item{fracD}{maximum allowed proportion of simulations where depletion is not 
+\item{fracD}{maximum allowed proportion of simulations where depletion is not
 close to sampled depletion from OM before model stops with error}
 
 \item{CalcBlow}{Should low biomass be calculated where this is the spawning
@@ -44,14 +44,14 @@ in the Blow calculation}
 
 \item{maxsims}{Maximum number of simulations per packet}
 
-\item{name}{Character string for name of saved MSE packets (if \code{savePack=TRUE}) 
+\item{name}{Character string for name of saved MSE packets (if \code{savePack=TRUE})
 and final MSE object. If none provided, it uses the first five letters from the \code{OM} name}
 
 \item{unique}{Logical. Should the name be unique? Current date and time appended to name.}
 
 \item{maxCrash}{Maximum number of consecutive crashes before the MSE stops}
 
-\item{saveMSE}{Logical to indicate if final MSE object should be saved to current 
+\item{saveMSE}{Logical to indicate if final MSE object should be saved to current
 working directory (this is probably a good idea)}
 
 \item{savePack}{Logical to indicate if packets should be save to current working directory}

@@ -14,11 +14,11 @@ iSCAMinds(idata, Year, fleeteffect = T)
 \item{fleeteffect}{Logical: should a fleet effect be added to the linear model?}
 }
 \description{
-iSCAM assessments often make use of multiple indices of abundance. 
-The DLMtool data object and MPs currently only make use of a single index. 
+iSCAM assessments often make use of multiple indices of abundance.
+The DLMtool data object and MPs currently only make use of a single index.
 combiSCAMinds is a function that creates a single index from many using
-linear modelling. It is a simple way of providing initial calculations of 
-management recommendations and it should be noted that this process 
+linear modelling. It is a simple way of providing initial calculations of
+management recommendations and it should be noted that this process
 is important and in a real application would require due diligence (ie
 peer reviewed data workshop).
 }

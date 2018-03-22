@@ -38,7 +38,6 @@
 #'
 #' A simple average catch MP that is included to demonstrate a 'status quo' management option
 #'
-#' 
 #'
 #' @param x A position in a data-limited methods data object
 #' @param Data A data-limited methods data object

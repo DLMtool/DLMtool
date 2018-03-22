@@ -11,12 +11,12 @@ DFO_hist(OM, panel = T, nsim = 48)
 
 \item{panel}{should the plots be seperate or in two panels?}
 
-\item{nsim}{how many simulations should be plotted (over-ridden 
+\item{nsim}{how many simulations should be plotted (over-ridden
 by OM@nsim where cpars is specified)}
 }
 \description{
 A plot of current and historical stock status by simulation according to the
-stock status zones and reference points of DFO. 
+stock status zones and reference points of DFO.
 http://www.dfo-mpo.gc.ca/reports-rapports/regs/sff-cpd/precaution-eng.htm
 }
 \author{

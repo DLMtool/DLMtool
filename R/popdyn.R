@@ -505,7 +505,7 @@ optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, 
 #' @param nareas The number of spatial areas
 #' @param maxage The maximum age
 #' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas. 
-#' Only values from the first year (i.e N[,,1,]) are used, which is the current N-at-age.
+#' Only values from the first year (i.e `N[,,1,]`) are used, which is the current N-at-age.
 #' @param pyears The number of years to project forward. Equal to 'nyears' for optimizing for q.
 #' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year 
 #' @param Mat_age An array (dimensions nsim, maxage, proyears+nyears) with the proportion mature for each age-class
@@ -787,7 +787,7 @@ optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_
 #' @param nareas The number of spatial areas
 #' @param maxage The maximum age
 #' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas. 
-#' Only values from the first year (i.e N[,,1,]) are used, which is the current N-at-age.
+#' Only values from the first year (i.e `N[,,1,]`) are used, which is the current N-at-age.
 #' @param pyears The number of years to project forward. Equal to 'nyears' for optimizing for q.
 #' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year
 #' @param Asize A matrix (dimensions nsim, nareas) of size of areas 
@@ -1013,7 +1013,7 @@ optMSY <- function(logFa, Asize_c, nareas, maxage, Ncurr, pyears, M_age,
 #' @param nareas The number of spatial areas
 #' @param maxage The maximum age
 #' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas. 
-#' Only values from the first year (i.e N[,,1,]) are used, which is the current N-at-age.
+#' Only values from the first year (i.e `N[,,1,]`) are used, which is the current N-at-age.
 #' @param pyears The number of years to project forward. Equal to 'nyears' for optimizing for q.
 #' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year 
 #' @param Mat_age An array (dimensions nsim, maxage, nyears+proyears) with the proportion mature for each age-class

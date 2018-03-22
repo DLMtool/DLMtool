@@ -19,8 +19,8 @@ A numeric vector of TAC recommendations
 \description{
 An index target MP where the TAC is modified according to current index
 levels (mean index over last yrsmth years) relative to a target level.
-Maximum fractional annual changes are mc.  mc=(5+M*25)/100
-yrsmth=4*(1/M)^(0.25)
+Maximum fractional annual changes are mc.  mc=(5+M\emph{25)/100
+yrsmth=4}(1/M)^(0.25)
 }
 \author{
 T. Carruthers

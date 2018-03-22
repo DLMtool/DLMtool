@@ -9,7 +9,7 @@ XL2OM(name = NULL, cpars = NULL, msg = TRUE)
 \arguments{
 \item{name}{Name of the OM Excel file in the current working directory.}
 
-\item{cpars}{An optional list of custom parameters (single parameters are a vector nsim 
+\item{cpars}{An optional list of custom parameters (single parameters are a vector nsim
 long, time series are a matrix nsim rows by nyears columns)}
 
 \item{msg}{Should messages be printed?}
@@ -19,7 +19,7 @@ An object of class OM
 }
 \description{
 Imports an OM from a correctly formatted Excel file. Create the Excel spreadsheet template
-using `OMinit` and document each slot in the corresponding text file.
+using \code{OMinit} and document each slot in the corresponding text file.
 }
 \details{
 An error message will alert if any slots are missing values, or if the Excel file is missing
