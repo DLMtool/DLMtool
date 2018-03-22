@@ -1,12 +1,10 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
-## DLMtool 5.1.9999 Development Version 
-
-### Minor edits
-
+## DLMtool 5.1.3 Development Version 
 - fix Replace function for new OM slots
 - fix indexing issue for size comps when there are only two size classes 
-- fix indexing issue for spawning biomass 
+- fix indexing issue for spawning biomass & MSY calcs for Ricker SRR
+
 
 ## DLMtool 5.1.2
 - Add contributors and more examples/

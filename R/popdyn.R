@@ -423,10 +423,16 @@ MSYCalcs <- function(logapicF, MatAge, WtAge, MatureAge, VAge, maxage, R0, SRrel
   hs[hs>0.999] <- 0.999
   recK <- (4*hs)/(1-hs) # Goodyear compensation ratio
   reca <- recK/Egg0
-  if (SRrel ==1) recb <- (reca * Egg0 - 1)/(R0*Egg0) # BH SRR
-  if (SRrel ==2) recb <- log(reca*Egg0)/(R0*Egg0) # Ricker SRR
+  if (SRrel ==1) {
+    recb <- (reca * Egg0 - 1)/(R0*Egg0) # BH SRR
+    RelRec <- (reca * EggF-1)/(recb*EggF)
+  }
+  if (SRrel ==2) {
+    recb <- log(reca*Egg0)/(R0*Egg0) # Ricker SRR
+    RelRec <- (log(reca*EggF))/(recb*EggF)
+  }
 
-  RelRec <- (reca * EggF-1)/(recb*EggF)
+  
   RelRec[RelRec<0] <- 0
   
   Fa <- apicF*VAge
