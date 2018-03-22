@@ -50,8 +50,10 @@ By default three commonly used performance metrics are used:
 Additional or alternative performance metrics objects can be supplied. Advanced users can develop their own performance metrics.
 }
 \examples{
+\dontrun{
 MSE <- runMSE()
 Converge(MSE)
+}
 
 }
 \author{

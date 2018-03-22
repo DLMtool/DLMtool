@@ -470,129 +470,129 @@ derive_beta_par <- function(mu, sigma) {
 
 
 ## VPA supporting functions ####
-VPAopt = function(theta, Cat, yt, S, maxage, wa, pmat, opt = T, usewat = F) {
-
-  Uterm <- exp(theta[1])/(1 + exp(theta[1]))
-  minagecom = 1
-  minagesel = ceiling(maxage * 0.66)
-  avg_yrsel <- max(2, (min(5, floor(dim(Cat)[1]/2))))
-
-  sig = exp(theta[2])
-  tiny = 1e-10
-  n = dim(Cat)[1]
-  A = dim(Cat)[2]
-  Nat = matrix(NA, n, A)  # Numbers-at-age matrix
-  Ut = rep(NA, length = n)
-  ai = 1:(A - 2)
-  va = c(plogis(1:(A - 4), 2, 0.2), rep(1, 4))  # Initial values at the terminal selectivy
-  Ut[n] = Uterm
-
-  for (j in 1:15) {
-    # Numerical convergence to terminal F print(Ut)
-    Nat[n, ] = Cat[n, ]/(Uterm * va)  # Initialize the terminal year
-
-    for (i in (n - 1):1) {
-      Nat[i, ai] = Nat[i + 1, ai + 1]/S + Cat[i, ai]
-      Nat[i, A - 1] = (Nat[i + 1, A]/S + Cat[i, A - 1] + Cat[i, A]) *
-        (Cat[i, A - 1]/(Cat[i, A - 1] + Cat[i, A] + tiny))
-      Nat[i, A] = (Nat[i + 1, A]/S + Cat[i, A - 1] + Cat[i, A]) *
-        (Cat[i, A]/(Cat[i, A - 1] + Cat[i, A] + tiny))
-    }
-    # modify this parameters if need it ##
-
-    # minagesel = 8
-    minagecom = 1
-
-    Ut = rowSums(Cat[, minagesel:(A - 1)])/rowSums(Nat[, minagesel:(A -
-                                                                      1)])  # Exploitation rate for fully recruited fish
-    # Ut[n] = 0.4
-    vat = Cat/Nat/Ut  # relative vulnerablility at age
-    va = colMeans(vat[(n - avg_yrsel):(n - minagecom), ])  # update terminal vul
-    va[minagesel:A] = 1
-
-  }
-
-  vat[is.na(vat)] <- 1
-  Ut[n] = Uterm
-  if (usewat == T)
-    vbt = rowSums((Nat * vat) * wa) else vbt = (Nat * vat) %*% wa
-  if (usewat == T)
-    bt = as.vector(rowSums(Nat * wa)) else bt = as.vector(Nat %*% wa)
-  fec = pmat * wa
-  zt = log(yt/vbt)
-  epsilon = zt - mean(zt)
-  if (usewat == T)
-    ssb = as.vector(rowSums(Nat * fec)) else ssb = as.vector(Nat %*% fec)
-  predcpue = exp(mean(zt)) * vbt  ### check again if bt or vbt
-  cpue_q = yt/exp(mean(zt))
-  qhat = exp(mean(epsilon))
-
-  lnl = sum(dnorm(epsilon, mean = 0, sd = sig, log = T))
-
-  if (opt) {
-    return(-lnl)
-  } else {
-    # ss = sum(epsilon^2) lnl = 0.5*n*log(ss)
-    return(list(Uterm = Uterm, va = va, rt = Nat[, 1], ssb = ssb, yt = yt,
-                vbt = vbt, cpue_q = cpue_q, Nat = Nat, vat = vat, Ut = Ut,
-                bt = bt, predcpue = predcpue, epsilon = epsilon/sig, lnl = lnl,
-                qhat = qhat, minagesel = minagesel, minagecom = minagecom,
-                avg_yrsel = avg_yrsel))
-  }
-
-
-}
-
-VPAFMSY <- function(lnFMc, Mc, hc, maxage, vul, Linfc, Kc, t0c, AMc, ac,
-                    bc, opt = T, ny = 50) {
-
-  FMc <- exp(lnFMc)
-
-  Mac <- rep(1, maxage)
-  Mac[1:max(1, floor(AMc))] <- 0
-  Lac <- Linfc * (1 - exp(-Kc * ((1:maxage) - t0c)))
-  Wac <- ac * Lac^bc
-  R0c <- 1
-  N <- exp(-Mc * ((1:maxage) - 1)) * R0c
-  SSN <- Mac * N  # Calculate initial spawning stock numbers
-  Biomass <- N * Wac
-  SSB <- SSN * Wac  # Calculate spawning stock biomass
-
-  B0 <- sum(Biomass)
-  SSB0 <- sum(SSB)
-  SSN0 <- SSN
-  SSBpR <- sum(SSB)/R0c  # Calculate spawning stock biomass per recruit
-  SSNpR <- SSN/R0c
-
-  N <- N/2
-  SSN <- Mac * N  # Calculate initial spawning stock numbers
-  Biomass <- N * Wac
-  SSB <- SSN * Wac
-
-  for (y in 1:ny) {
-    # set up some indices for indexed calculation Fishing mortality rate
-    # determined by effort, catchability, vulnerability and spatial
-    # preference according to biomass
-    Zc <- FMc * vul + Mc
-    CN <- N * (1 - exp(-Zc)) * (FMc/Zc)
-    CB <- CN * Wac
-    Biomass <- N * Wac
-    N[2:maxage] <- N[1:(maxage - 1)] * exp(-Zc[1:(maxage - 1)])  # Total mortality
-    N[1] <- (0.8 * R0c * hc * sum(SSB))/(0.2 * SSBpR * R0c * (1 - hc) +
-                                           (hc - 0.2) * sum(SSB))  # Recruitment assuming regional R0 and stock wide steepness
-    # print(N[1])
-    SSN <- N * Mac
-    SSB <- SSN * Wac
-
-  }  # end of year
-
-  if (opt) {
-    return(-sum(CB))
-  } else {
-    return(FMc)
-  }
-}
-
+# VPAopt = function(theta, Cat, yt, S, maxage, wa, pmat, opt = T, usewat = F) {
+# 
+#   Uterm <- exp(theta[1])/(1 + exp(theta[1]))
+#   minagecom = 1
+#   minagesel = ceiling(maxage * 0.66)
+#   avg_yrsel <- max(2, (min(5, floor(dim(Cat)[1]/2))))
+# 
+#   sig = exp(theta[2])
+#   tiny = 1e-10
+#   n = dim(Cat)[1]
+#   A = dim(Cat)[2]
+#   Nat = matrix(NA, n, A)  # Numbers-at-age matrix
+#   Ut = rep(NA, length = n)
+#   ai = 1:(A - 2)
+#   va = c(plogis(1:(A - 4), 2, 0.2), rep(1, 4))  # Initial values at the terminal selectivy
+#   Ut[n] = Uterm
+# 
+#   for (j in 1:15) {
+#     # Numerical convergence to terminal F print(Ut)
+#     Nat[n, ] = Cat[n, ]/(Uterm * va)  # Initialize the terminal year
+# 
+#     for (i in (n - 1):1) {
+#       Nat[i, ai] = Nat[i + 1, ai + 1]/S + Cat[i, ai]
+#       Nat[i, A - 1] = (Nat[i + 1, A]/S + Cat[i, A - 1] + Cat[i, A]) *
+#         (Cat[i, A - 1]/(Cat[i, A - 1] + Cat[i, A] + tiny))
+#       Nat[i, A] = (Nat[i + 1, A]/S + Cat[i, A - 1] + Cat[i, A]) *
+#         (Cat[i, A]/(Cat[i, A - 1] + Cat[i, A] + tiny))
+#     }
+#     # modify this parameters if need it ##
+# 
+#     # minagesel = 8
+#     minagecom = 1
+# 
+#     Ut = rowSums(Cat[, minagesel:(A - 1)])/rowSums(Nat[, minagesel:(A -
+#                                                                       1)])  # Exploitation rate for fully recruited fish
+#     # Ut[n] = 0.4
+#     vat = Cat/Nat/Ut  # relative vulnerablility at age
+#     va = colMeans(vat[(n - avg_yrsel):(n - minagecom), ])  # update terminal vul
+#     va[minagesel:A] = 1
+# 
+#   }
+# 
+#   vat[is.na(vat)] <- 1
+#   Ut[n] = Uterm
+#   if (usewat == T)
+#     vbt = rowSums((Nat * vat) * wa) else vbt = (Nat * vat) %*% wa
+#   if (usewat == T)
+#     bt = as.vector(rowSums(Nat * wa)) else bt = as.vector(Nat %*% wa)
+#   fec = pmat * wa
+#   zt = log(yt/vbt)
+#   epsilon = zt - mean(zt)
+#   if (usewat == T)
+#     ssb = as.vector(rowSums(Nat * fec)) else ssb = as.vector(Nat %*% fec)
+#   predcpue = exp(mean(zt)) * vbt  ### check again if bt or vbt
+#   cpue_q = yt/exp(mean(zt))
+#   qhat = exp(mean(epsilon))
+# 
+#   lnl = sum(dnorm(epsilon, mean = 0, sd = sig, log = T))
+# 
+#   if (opt) {
+#     return(-lnl)
+#   } else {
+#     # ss = sum(epsilon^2) lnl = 0.5*n*log(ss)
+#     return(list(Uterm = Uterm, va = va, rt = Nat[, 1], ssb = ssb, yt = yt,
+#                 vbt = vbt, cpue_q = cpue_q, Nat = Nat, vat = vat, Ut = Ut,
+#                 bt = bt, predcpue = predcpue, epsilon = epsilon/sig, lnl = lnl,
+#                 qhat = qhat, minagesel = minagesel, minagecom = minagecom,
+#                 avg_yrsel = avg_yrsel))
+#   }
+# 
+# 
+# }
+# 
+# VPAFMSY <- function(lnFMc, Mc, hc, maxage, vul, Linfc, Kc, t0c, AMc, ac,
+#                     bc, opt = T, ny = 50) {
+# 
+#   FMc <- exp(lnFMc)
+# 
+#   Mac <- rep(1, maxage)
+#   Mac[1:max(1, floor(AMc))] <- 0
+#   Lac <- Linfc * (1 - exp(-Kc * ((1:maxage) - t0c)))
+#   Wac <- ac * Lac^bc
+#   R0c <- 1
+#   N <- exp(-Mc * ((1:maxage) - 1)) * R0c
+#   SSN <- Mac * N  # Calculate initial spawning stock numbers
+#   Biomass <- N * Wac
+#   SSB <- SSN * Wac  # Calculate spawning stock biomass
+# 
+#   B0 <- sum(Biomass)
+#   SSB0 <- sum(SSB)
+#   SSN0 <- SSN
+#   SSBpR <- sum(SSB)/R0c  # Calculate spawning stock biomass per recruit
+#   SSNpR <- SSN/R0c
+# 
+#   N <- N/2
+#   SSN <- Mac * N  # Calculate initial spawning stock numbers
+#   Biomass <- N * Wac
+#   SSB <- SSN * Wac
+# 
+#   for (y in 1:ny) {
+#     # set up some indices for indexed calculation Fishing mortality rate
+#     # determined by effort, catchability, vulnerability and spatial
+#     # preference according to biomass
+#     Zc <- FMc * vul + Mc
+#     CN <- N * (1 - exp(-Zc)) * (FMc/Zc)
+#     CB <- CN * Wac
+#     Biomass <- N * Wac
+#     N[2:maxage] <- N[1:(maxage - 1)] * exp(-Zc[1:(maxage - 1)])  # Total mortality
+#     N[1] <- (0.8 * R0c * hc * sum(SSB))/(0.2 * SSBpR * R0c * (1 - hc) +
+#                                            (hc - 0.2) * sum(SSB))  # Recruitment assuming regional R0 and stock wide steepness
+#     # print(N[1])
+#     SSN <- N * Mac
+#     SSB <- SSN * Wac
+# 
+#   }  # end of year
+# 
+#   if (opt) {
+#     return(-sum(CB))
+#   } else {
+#     return(FMc)
+#   }
+# }
+# 
 
 ## YPR supporting functions ####
 # Yield per recruit estimate of FMSY Meaghan Bryan 2013

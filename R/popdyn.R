@@ -74,7 +74,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
                                                          nrow=(length((y + nyears):(nyears+proyears))),
                                                          ncol=nsim, byrow=TRUE)   # unchanged 
     
-  } else if (length(Rmaxlen) != nsim) {
+  } else if (length(MPRecs$Rmaxlen) != nsim) {
     stop("Rmaxlen recommmendation is not 'nsim' long.\n Does MP return Rmaxlen recommendation under all conditions?")
   } else {
     Rmaxlen_P[(y + nyears):(nyears+proyears),] <- matrix(MPRecs$Rmaxlen, 
@@ -440,11 +440,11 @@ MSYCalcs <- function(logapicF, MatAge, WtAge, MatureAge, VAge, maxage, R0, SRrel
     out <- c(Yield=Yield,
              F=-log(1 - (Yield/(vBF*RelRec+Yield))),
              SB = SBF * RelRec,
-             SB_SB0 = SBF/SB0,
-             B_B0 = BF/B0,
+             SB_SB0 = (SBF * RelRec)/(SB0 * R0),
+             B_B0 = (BF * RelRec + Yield)/(B0 * R0),
              B = BF * RelRec + Yield,
              VB = vBF * RelRec + Yield,
-             VB_VB0 = vBF/vB0,
+             VB_VB0 = (vBF * RelRec + Yield)/(vB0 * R0),
              RelRec=RelRec,
              SB0 = SB0 * R0,
              B0=B0 * R0,

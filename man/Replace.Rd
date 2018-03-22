@@ -23,6 +23,12 @@ An object of class OM
 A function that replaces a Stock, Fleet, Obs, or Imp object from an 
 OM with one from another OM. Mainly used for internal functions.
 }
+\examples{
+\dontrun{
+OM <- Replace(OM, fromOM, "Stock")
+}
+
+}
 \author{
 A. Hordyk
 }

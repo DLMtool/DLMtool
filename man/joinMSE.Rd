@@ -17,6 +17,17 @@ An object of class \code{MSE}
 Joins two or more MSE objects together. MSE objects must have identical
 number of historical years, and projection years.
 }
+\examples{
+\dontrun{
+OM1 <- DLMtool::testOM
+MSE1 <- runMSE(OM1) 
+OM2 <- OM1 
+OM2@seed <- OM1@seed + 1
+MSE2 <- runMSE(OM2)
+MSE <- joinMSE(list(MSE1, MSE2))
+MSE@nsim
+}
+}
 \author{
 A. Hordyk
 }

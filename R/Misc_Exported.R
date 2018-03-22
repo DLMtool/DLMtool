@@ -11,6 +11,10 @@
 #' avail("OM")
 #' @author T. Carruthers
 #' @seealso \link{Can} \link{Cant} \link{avail}
+#' @examples 
+#' Stocks <- avail("Stock")
+#' Fleets <- avail("Fleet")
+#' MPs <- avail("MP")
 #' @export 
 avail <- function(classy) {
   temp <- try(class(classy), silent=TRUE)
@@ -50,7 +54,7 @@ avail <- function(classy) {
 #' 'Snapper', 'Rockfish'
 #' @author T. Carruthers
 #' @examples
-#' /dontrun{
+#' \dontrun{
 #' tilefish_location <- DLMDataDir("Gulf_blue_tilefish")
 #' tilefish_Data <- new("Data", tilefish_location)
 #' }
@@ -99,6 +103,8 @@ DLMextra <- function(silent=FALSE) {
 #' changed (not tested perfectly so watch out!)
 #' @return A new \code{OM} object
 #' @author A. Hordyk
+#' @examples 
+#' OM_noerror <- makePerf(DLMtool::testOM)
 #' @export 
 makePerf <- function(OMin, except = NULL) {
   nms <- slotNames(OMin)
@@ -254,15 +260,36 @@ plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
 #' @author T. Carruthers
 #' @examples 
 #' Required(c("DCAC", "AvC"))
-#' @export Required
+#' @export 
 Required <- function(funcs = NA) {
-  if (all(is.na(funcs))) funcs <- avail("MP")
-  temp <- lapply(funcs, function(x) paste(format(match.fun(x)), collapse = " "))
-  repp <- vapply(temp, match_slots, character(1))
-  repp[!nzchar(repp)] <- "No data needed for this MP."
-  matrix(repp, ncol = 1, dimnames = list(funcs))
+  if (is.na(funcs[1])) 
+    funcs <- c(avail("Output"), avail("Input"))
+  slots <- slotNames("Data")
+  slotnams <- paste("Data@", slotNames("Data"), sep = "")
+  repp <- rep("", length(funcs))
+  
+  for (i in 1:length(funcs)) {
+    temp <- format(match.fun(funcs[i]))
+    temp <- paste(temp[1:(length(temp))], collapse = " ")
+    rec <- ""
+    for (j in 1:length(slotnams)) if (grepl(slotnams[j], temp)) 
+      rec <- c(rec, slots[j])
+    if (length(rec) > 1) 
+      repp[i] <- paste(rec[2:length(rec)], collapse = ", ")
+  }
+  cbind(funcs, repp, deparse.level = 0)
 }
 
+# Required2 <- function(funcs = NA) {
+#   if (all(is.na(funcs))) funcs <- avail("MP")
+#   temp <- lapply(funcs, function(x) paste(format(match.fun(x)), collapse = " "))
+#   repp <- vapply(temp, match_slots, character(1))
+#   repp[!nzchar(repp)] <- "No data needed for this MP."
+#   matrix(repp, ncol = 1, dimnames = list(funcs))
+# }
+
+# Required("DCAC")
+# Required2("DCAC")
 
 #' Setup parallel processing
 #'
@@ -272,6 +299,11 @@ Required <- function(funcs = NA) {
 #' @param ... other arguments passed to 'snowfall::sfInit'
 #' @importFrom snowfall sfInit sfExportAll sfIsRunning sfExport sfSapply sfLibrary
 #' @importFrom parallel detectCores
+#' @examples
+#' \dontrun{
+#' setup() # set-up 4 processors
+#' setup(6) # set-up 6 processors
+#' }
 #' @export 
 setup <- function(cpus=min(parallel::detectCores(),4), ...) {
   if(snowfall::sfIsRunning()) snowfall::sfStop()
@@ -292,7 +324,7 @@ setup <- function(cpus=min(parallel::detectCores(),4), ...) {
 #' userguide()
 #' }
 userguide <- function() {
-  utils::browseURL("https://dlmtool.github.io/DLMtool/userguide/index.html")
+  utils::browseURL("https://dlmtool.github.io/DLMtool/userguide/introduction.html")
 }
 
 
@@ -315,12 +347,11 @@ RepmissingVal <- function(object, name, vals=NA) {
 #' 'slot doesn't exist' error that sometimes occurs. Also works with Stock, Fleet,
 #' Obs, Imp, and Data objects. 
 #' 
-#' @usage updateMSE(MSEobj)
 #' @param MSEobj A MSE object from a previous version of the DLMtool. 
 #' Also works with Stock, Fleet, Obs, Imp, and Data objects. 
 #' @return An object of class matching class(MSEobj)
 #' @author A. Hordyk
-#' @export updateMSE
+#' @export 
 updateMSE <- function(MSEobj) {
   slots <- slotNames(MSEobj)
   for (X in seq_along(slots)) {
@@ -705,7 +736,10 @@ L2A <- function(t0c, Linfc, Kc, Len, maxage) {
 #' @param plot Logical. Show the plot?
 #'
 #' @export
-#'
+#' @examples
+#' \dontrun{
+#' optCPU()
+#' }
 #' @author A. Hordyk
 optCPU <- function(nsim=96, thresh=5, plot=TRUE) {
   cpus=1:parallel::detectCores()
@@ -735,4 +769,7 @@ optCPU <- function(nsim=96, thresh=5, plot=TRUE) {
   }
   return(df)
 }
+
+
+
 

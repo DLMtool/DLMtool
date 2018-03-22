@@ -5,8 +5,7 @@
 \title{MP using prior for intrinsic rate of increase with a quadratic approximation
 to surplus production}
 \usage{
-Rcontrol2(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5,
-2))
+Rcontrol2(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 2))
 }
 \arguments{
 \item{x}{A position in data-limited methods data object}

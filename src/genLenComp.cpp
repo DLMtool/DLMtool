@@ -81,16 +81,17 @@ NumericMatrix  genSizeComp(NumericMatrix VulnN, NumericVector CAL_binsmid,
                            double CAL_ESS, double CAL_nsamp,
                            NumericVector Linfs, NumericVector Ks, NumericVector t0s,
                            double LenCV, double truncSD) {
-  
+
   int nyears = VulnN.nrow();
   int k = VulnN.ncol();
   int nbins = CAL_binsmid.size();
   NumericMatrix CAL(nyears, nbins);
-  double width = CAL_binsmid(2) - CAL_binsmid(1);
+  double width = CAL_binsmid(1) - CAL_binsmid(0);
   double origin = CAL_binsmid(0) - 0.5* width;
   NumericVector temp(k);
   
   for (int yr=0; yr < nyears; yr++) {
+
     NumericVector probs = VulnN.row(yr)/sum(VulnN.row(yr)); // probability of each age class
     IntegerVector ageSamp1(k);
     rmultinom(CAL_ESS, probs.begin(), k, ageSamp1.begin()); // multinom age sample with ess
@@ -99,6 +100,7 @@ NumericMatrix  genSizeComp(NumericMatrix VulnN, NumericVector CAL_binsmid,
     NumericVector ageSamp1b = round(ageSamp1a,0); // round to integers at age
     List Lens(k);
 
+    
     for (int age=1; age <= k; age++) {
       if (ageSamp1b(age-1)>0) {
         int ns = ageSamp1b(age-1);

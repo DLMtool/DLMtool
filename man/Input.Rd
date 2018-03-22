@@ -23,6 +23,9 @@ Input(Data, MPs = NA, reps = 100, timelimit = 10, CheckMPs = TRUE,
 \description{
 Runs a set of input control methods are returns the output in a single table
 }
+\examples{
+Input(DLMtool::Cobia)
+}
 \author{
 A. Hordyk
 }

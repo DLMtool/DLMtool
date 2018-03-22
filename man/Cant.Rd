@@ -18,4 +18,6 @@ time along with a list of their data requirments.
 }
 \seealso{
 \link{Can} \link{Needed} \link{avail}
+#' @examples 
+CantMPs <- Cant(DLMtool::Cobia)
 }

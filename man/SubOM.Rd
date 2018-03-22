@@ -19,6 +19,10 @@ An object of class Stock, Fleet, Obs, or Imp
 A function that strips out a Stock, Fleet, Obs, or Imp object from a 
 complete OM object. Mainly used for internal functions.
 }
+\examples{
+Stock <- SubOM(DLMtool::testOM, "Stock")
+class(Stock)
+}
 \author{
 A. Hordyk
 }

@@ -24,6 +24,15 @@ Subset the MSE object by particular MPs (either MP number or name), or
 particular simulations, or a subset of the projection years (e.g., 1: <
 projection years).
 }
+\examples{
+\dontrun{
+MSE <- runMSE() 
+MSE_1 <- Sub(MSE, MPs=1:2)
+MSE_1@MPs
+MSE_2 <- Sub(MSE, sims=1:10)
+MSE_2@nsim
+}
+}
 \author{
 A. Hordyk
 }

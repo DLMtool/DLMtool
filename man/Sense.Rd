@@ -4,7 +4,8 @@
 \alias{Sense}
 \title{Sensitivity analysis}
 \usage{
-Sense(Data, MP, nsense = 6, reps = 100, perc = c(0.05, 0.5, 0.95), ploty = T)
+Sense(Data, MP, nsense = 6, reps = 100, perc = c(0.05, 0.5, 0.95),
+  ploty = T)
 }
 \arguments{
 \item{Data}{A data-limited methods data object}
@@ -24,6 +25,11 @@ A function that determines the inputs for a given data-limited method of
 class Output and then analyses the sensitivity of TAC estimates to 
 marginal differences in each input. The range used for sensitivity is based 
 on the user-specified CV for that input (e.g. CV_Mort, Mort)
+}
+\examples{
+\dontrun{
+Data <- Sense(DLMtool::Cobia, "AvC")
+}
 }
 \author{
 T. Carruthers

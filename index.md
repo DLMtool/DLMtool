@@ -8,7 +8,7 @@ The Data-Limited Methods Toolkit (DLMtool) is an R package that uses computer si
 1. Prioritizing future data collection programs 
 
 ### DLMtool User Guide
-A comprehensive user guide for DLMtool is available [here](userguide/index.html).
+A comprehensive user guide for DLMtool is available [here](https://dlmtool.github.io/DLMtool/userguide/introduction.html).
 
 ### DLMtool Website
 For more information about DLMtool, including a demonstration of the main features of the toolkit, go to the [Data-Limited Methods Toolkit Website](http://datalimitedtoolkit.org/).

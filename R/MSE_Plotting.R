@@ -634,198 +634,198 @@ Cplot <- function(MSEobj, MPs = NA, lastYrs = 5, XMin = NULL, YMin = NULL,
 
 
 
-#' Joint probability plot
-#' 
-#' Calculates and plots the joint probability of meeting all performance
-#' metrics simultaneously
-#' 
-#' 
-#' @param MSEobj An object of class MSE
-#' @param PLim Probability limit (acceptable risk threshold; e.g., 0.8 for 80
-#' percent)
-#' @param YVar What to plot of the y-axis: choose from \code{c('LTY', 'STY',
-#' 'avgSSB_SSB0', 'avgB_BMSY')}
-#' @param PMRefs List containing the reference limits for each metric
-#' @param UseMean Logical. Calculate mean (TRUE) or median (FALSE)
-#' @param lastYrs Last number of years in projection period to calculate
-#' summary statistics
-#' @param AvailMPs Optional character vector of available MPs (plotted in a
-#' different colour)
-#' @param XLim Optional limits for the x-axis
-#' @param ShowCols Logical. Show the background colours?
-#' @param ShowLabs Logical. Show the MP labels?
-#' @param All Logical. Plot all MPs (TRUE) or only those above the probability
-#' limit (\code{PLim}))?
-#' @return Invisibly returns data frame containing statistics shown in the plot
-#' @author A. Hordyk
-#' @export Jplot
-Jplot <- function(MSEobj, PLim = 0.8, YVar = c("LTY", "STY", "avgSSB_SSB0", 
-                                               "avgB_BMSY"), PMRefs = list(B_BMSY = 0.5, SSB_SSB0 = 0.2), UseMean = TRUE, 
-                  lastYrs = 10, AvailMPs = NULL, XLim = NULL, ShowCols = TRUE, ShowLabs = FALSE, 
-                  All = TRUE) {
-  
-  nsim <- MSEobj@nsim
-  nMPs <- MSEobj@nMPs
-  MPs <- MSEobj@MPs
-  
-  PMs <- names(PMRefs)
-  YVar <- match.arg(YVar, several.ok = FALSE)
-  mYVar <- YVar
-  mYVar[mYVar == "avgSSB_SSB0"] <- "SSB_SSB0m"
-  mYVar[mYVar == "avgB_BMSY"] <- "B_BMSYm"
-  
-  perf <- MPStats(MSEobj, PMRefs = PMRefs, lastYrs = lastYrs, UseMean = UseMean)
-  Probs <- perf$Probs
-  
-  if (lastYrs >= MSEobj@proyears) 
-    lastYrs <- 10
-  index <- paste0(PMs, "ref")
-  # Joint Prob above B refs and below F
-  jointP <- Probs[[index[1]]]
-  if (length(PMs) > 1) {
-    for (X in 2:length(PMs)) {
-      jointP <- jointP * Probs[[index[X]]]
-    }
-  }
-  JP <- apply(jointP, 2, sum, na.rm = TRUE)/(lastYrs * nsim)
-  
-  # Probability Thresholds
-  vl <- PLim
-  hl <- 0
-  if (vl < 1) 
-    vl <- vl * 100
-  
-  x <- JP
-  if (max(x) <= 1) 
-    x <- x * 100
-  y <- perf[[1]][, mYVar]
-  if (max(y) <= 10) 
-    y <- y * 100
-  adjj <- c(0.9, 1.1)
-  if (is.null(XLim)) 
-    XLim <- c(min(c(-10, min(x, na.rm = T) * adjj)), max(c(max(x, na.rm = T) * 
-                                                             adjj, 110)))
-  if (!All) 
-    XLim <- c(vl * 0.95, 105)
-  YLim <- c(min(c(-10, min(y, na.rm = T) * adjj)), max(c(max(y, na.rm = T) * 
-                                                           adjj, 110)))
-  
-  ## Legend
-  BmsyRef <- unique(perf[[1]]$B_BMSYRef)
-  B0Ref <- unique(perf[[1]]$SSB_SSB0Ref)
-  FRef <- unique(perf[[1]]$F_FMSYRef)
-  # legend text
-  if (FRef == 1) 
-    leg1 <- bquote(italic(F) < ~italic(F[MSY]))
-  if (FRef != 1) 
-    leg1 <- bquote(italic(F) < ~.(FRef) ~ italic(F[MSY]))
-  if (B0Ref == 1) 
-    leg2 <- bquote(italic(B) > ~italic(B[0]))
-  if (B0Ref != 1) 
-    leg2 <- bquote(italic(B) > ~.(B0Ref) ~ italic(B[0]))
-  if (BmsyRef == 1) 
-    leg3 <- bquote(italic(B) > ~~italic(B[MSY]))
-  if (BmsyRef != 1) 
-    leg3 <- bquote(italic(B) > ~.(BmsyRef) ~ italic(B[MSY]))
-  
-  legtex <- list(F_FMSY = leg1, SSB_SSB0 = leg2, B_BMSY = leg3)
-  ind <- match(PMs, names(legtex))
-  Legend <- NULL
-  Legend <- append(Legend, as.expression(legtex[ind]))
-  
-  # Plot
-  xlab <- "Probability > All Performance Limits"
-  if (UseMean) 
-    ylab <- switch(YVar, LTY = paste0("Long-Term Yield (last ", lastYrs, 
-                                      " years)"), STY = paste0("Short-Term Yield (first ", lastYrs, 
-                                                               " years)"), avgB_BMSY = paste0("Mean B/BMSY (%) (last ", lastYrs, 
-                                                                                              " years)"), avgSSB_SSB0 = paste0("Mean B/B0 (%) (last ", lastYrs, 
-                                                                                                                               " years)"))
-  if (!UseMean) 
-    ylab <- switch(YVar, LTY = paste0("Long-Term Yield (last ", lastYrs, 
-                                      " years)"), STY = paste0("Short-Term Yield (first ", lastYrs, 
-                                                               " years)"), avgB_BMSY = paste0("Median B/BMSY (%) (last ", 
-                                                                                              lastYrs, " years)"), avgSSB_SSB0 = paste0("Median B/B0 (%) (last ", 
-                                                                                                                                        lastYrs, " years)"))
-  op <- par(mfrow = c(1, 1), mar = c(4, 4, 1, 1), oma = c(1, 1, 0, 6))
-  plot(NA, xlim = XLim, ylim = YLim, xlab = xlab, ylab = ylab, bty = "l", 
-       las = 1, cex.lab = 1.25)
-  
-  abline(v = vl, col = "#99999940", lwd = 2)
-  Alpha <- 15
-  # polygons
-  LeftCol <- rgb(red = 255, green = 0, blue = 0, alpha = Alpha, names = NULL, 
-                 maxColorValue = 255)
-  RightCol <- rgb(red = 0, green = 255, blue = 0, alpha = Alpha, names = NULL, 
-                  maxColorValue = 255)
-  if (ShowCols) {
-    polygon(x = c(0, vl, vl, 0), y = c(0, 0, hl, hl), col = LeftCol, 
-            border = NA)
-    polygon(x = c(0, vl, vl, 0), y = c(0, 0, max(YLim), max(YLim)), 
-            col = LeftCol, border = NA)
-    polygon(x = c(vl, max(XLim), max(XLim), vl), y = c(0, 0, max(YLim), 
-                                                       max(YLim)), col = RightCol, border = NA)
-    polygon(x = c(vl, max(XLim), max(XLim), vl), y = c(hl, hl, max(YLim), 
-                                                       max(YLim)), col = RightCol, border = NA)
-  }
-  
-  MPs <- MSEobj@MPs
-  Pch <- rep(21, length(MPs))
-  Pch[grep("FMSY", MPs)] <- 24
-  Pch[grep("NFref", MPs)] <- 24
-  
-  # Which MPs meet minimum PMs
-  ind <- which(x >= vl & y >= hl)
-  coly <- rep("darkgray", length(MPs))
-  coly[ind] <- "black"
-  if (!is.null(AvailMPs)) 
-    coly[MPs %in% AvailMPs & !(x >= vl & y >= hl)] <- "Medium Sea Green"
-  if (!is.null(AvailMPs)) 
-    coly[MPs %in% AvailMPs & (x >= vl & y >= hl)] <- "green"
-  coly[grep("FMSY", MPs)] <- "lightgray"
-  coly[grep("NFref", MPs)] <- "lightgray"
-  
-  MPtype <- sapply(1:nMPs, function(X) class(get(MPs[X])))
-  fonts <- rep(2, nMPs)
-  fonts[MPtype == "Input"] <- 4
-  Cex <- 1.5
-  if (!ShowLabs) 
-    points(x, y, bg = coly, pch = Pch, cex = Cex, col = "black")
-  if (ShowLabs) 
-    text(x, y, MPs, font = fonts, col = coly, cex = 1)
-  
-  # Add Legend
-  text(min(XLim), max(YLim), "Performance Limits", cex = 1.25, pos = 4)
-  temp <- 0.95
-  for (XX in 1:length(Legend)) {
-    text(min(XLim), max(YLim) * temp, Legend[XX], pos = 4)
-    temp <- temp - 0.05
-  }
-  Cvec <- c("darkgray", "black", "Medium Sea Green", "green", "lightgray")
-  if (!ShowLabs) 
-    legend(100, max(YLim), pch = c(21, 21, 21, 21, 24), legend = c("Not Acceptable", 
-                                                                   "Acceptable", "Available", "Acceptable & Available", "Reference"), 
-           bty = "n", pt.bg = Cvec, pt.cex = Cex, xpd = NA)
-  
-  if (ShowLabs) 
-    legend(100, max(YLim), text.font = c(2, 4), legend = c("Output Control", 
-                                                           "Input Control", "Not Acceptable", "Acceptable", "Available", 
-                                                           "Acceptable & Available", "Reference"), bty = "n", text.col = c("black", 
-                                                                                                                           "black", Cvec), pt.cex = Cex, xpd = NA)
-  
-  Years <- paste("Years", (MSEobj@proyears - lastYrs) + 1, "-", MSEobj@proyears, 
-                 "(last", lastYrs, "years)")
-  mtext(side = 3, Years, cex = 1.25)
-  
-  if (YVar == "B_BMSYm") 
-    abline(h = 100, col = "#99999940", lwd = 2)
-  if (YVar == "SSB_SSB0m") 
-    abline(h = 50, col = "#99999940", lwd = 2)
-  par(op)
-  DF <- data.frame(MPs = MPs, Yield = y, Prob = x, Pass = x >= vl, stringsAsFactors = FALSE)
-  invisible(DF[order(DF$Prob, decreasing = TRUE), ])
-}
-
+# #' Joint probability plot
+# #' 
+# #' Calculates and plots the joint probability of meeting all performance
+# #' metrics simultaneously
+# #' 
+# #' 
+# #' @param MSEobj An object of class MSE
+# #' @param PLim Probability limit (acceptable risk threshold; e.g., 0.8 for 80
+# #' percent)
+# #' @param YVar What to plot of the y-axis: choose from \code{c('LTY', 'STY',
+# #' 'avgSSB_SSB0', 'avgB_BMSY')}
+# #' @param PMRefs List containing the reference limits for each metric
+# #' @param UseMean Logical. Calculate mean (TRUE) or median (FALSE)
+# #' @param lastYrs Last number of years in projection period to calculate
+# #' summary statistics
+# #' @param AvailMPs Optional character vector of available MPs (plotted in a
+# #' different colour)
+# #' @param XLim Optional limits for the x-axis
+# #' @param ShowCols Logical. Show the background colours?
+# #' @param ShowLabs Logical. Show the MP labels?
+# #' @param All Logical. Plot all MPs (TRUE) or only those above the probability
+# #' limit (\code{PLim}))?
+# #' @return Invisibly returns data frame containing statistics shown in the plot
+# #' @author A. Hordyk
+# #' @export Jplot
+# Jplot <- function(MSEobj, PLim = 0.8, YVar = c("LTY", "STY", "avgSSB_SSB0", 
+#                                                "avgB_BMSY"), PMRefs = list(B_BMSY = 0.5, SSB_SSB0 = 0.2), UseMean = TRUE, 
+#                   lastYrs = 10, AvailMPs = NULL, XLim = NULL, ShowCols = TRUE, ShowLabs = FALSE, 
+#                   All = TRUE) {
+#   
+#   nsim <- MSEobj@nsim
+#   nMPs <- MSEobj@nMPs
+#   MPs <- MSEobj@MPs
+#   
+#   PMs <- names(PMRefs)
+#   YVar <- match.arg(YVar, several.ok = FALSE)
+#   mYVar <- YVar
+#   mYVar[mYVar == "avgSSB_SSB0"] <- "SSB_SSB0m"
+#   mYVar[mYVar == "avgB_BMSY"] <- "B_BMSYm"
+#   
+#   perf <- MPStats(MSEobj, PMRefs = PMRefs, lastYrs = lastYrs, UseMean = UseMean)
+#   Probs <- perf$Probs
+#   
+#   if (lastYrs >= MSEobj@proyears) 
+#     lastYrs <- 10
+#   index <- paste0(PMs, "ref")
+#   # Joint Prob above B refs and below F
+#   jointP <- Probs[[index[1]]]
+#   if (length(PMs) > 1) {
+#     for (X in 2:length(PMs)) {
+#       jointP <- jointP * Probs[[index[X]]]
+#     }
+#   }
+#   JP <- apply(jointP, 2, sum, na.rm = TRUE)/(lastYrs * nsim)
+#   
+#   # Probability Thresholds
+#   vl <- PLim
+#   hl <- 0
+#   if (vl < 1) 
+#     vl <- vl * 100
+#   
+#   x <- JP
+#   if (max(x) <= 1) 
+#     x <- x * 100
+#   y <- perf[[1]][, mYVar]
+#   if (max(y) <= 10) 
+#     y <- y * 100
+#   adjj <- c(0.9, 1.1)
+#   if (is.null(XLim)) 
+#     XLim <- c(min(c(-10, min(x, na.rm = T) * adjj)), max(c(max(x, na.rm = T) * 
+#                                                              adjj, 110)))
+#   if (!All) 
+#     XLim <- c(vl * 0.95, 105)
+#   YLim <- c(min(c(-10, min(y, na.rm = T) * adjj)), max(c(max(y, na.rm = T) * 
+#                                                            adjj, 110)))
+#   
+#   ## Legend
+#   BmsyRef <- unique(perf[[1]]$B_BMSYRef)
+#   B0Ref <- unique(perf[[1]]$SSB_SSB0Ref)
+#   FRef <- unique(perf[[1]]$F_FMSYRef)
+#   # legend text
+#   if (FRef == 1) 
+#     leg1 <- bquote(italic(F) < ~italic(F[MSY]))
+#   if (FRef != 1) 
+#     leg1 <- bquote(italic(F) < ~.(FRef) ~ italic(F[MSY]))
+#   if (B0Ref == 1) 
+#     leg2 <- bquote(italic(B) > ~italic(B[0]))
+#   if (B0Ref != 1) 
+#     leg2 <- bquote(italic(B) > ~.(B0Ref) ~ italic(B[0]))
+#   if (BmsyRef == 1) 
+#     leg3 <- bquote(italic(B) > ~~italic(B[MSY]))
+#   if (BmsyRef != 1) 
+#     leg3 <- bquote(italic(B) > ~.(BmsyRef) ~ italic(B[MSY]))
+#   
+#   legtex <- list(F_FMSY = leg1, SSB_SSB0 = leg2, B_BMSY = leg3)
+#   ind <- match(PMs, names(legtex))
+#   Legend <- NULL
+#   Legend <- append(Legend, as.expression(legtex[ind]))
+#   
+#   # Plot
+#   xlab <- "Probability > All Performance Limits"
+#   if (UseMean) 
+#     ylab <- switch(YVar, LTY = paste0("Long-Term Yield (last ", lastYrs, 
+#                                       " years)"), STY = paste0("Short-Term Yield (first ", lastYrs, 
+#                                                                " years)"), avgB_BMSY = paste0("Mean B/BMSY (%) (last ", lastYrs, 
+#                                                                                               " years)"), avgSSB_SSB0 = paste0("Mean B/B0 (%) (last ", lastYrs, 
+#                                                                                                                                " years)"))
+#   if (!UseMean) 
+#     ylab <- switch(YVar, LTY = paste0("Long-Term Yield (last ", lastYrs, 
+#                                       " years)"), STY = paste0("Short-Term Yield (first ", lastYrs, 
+#                                                                " years)"), avgB_BMSY = paste0("Median B/BMSY (%) (last ", 
+#                                                                                               lastYrs, " years)"), avgSSB_SSB0 = paste0("Median B/B0 (%) (last ", 
+#                                                                                                                                         lastYrs, " years)"))
+#   op <- par(mfrow = c(1, 1), mar = c(4, 4, 1, 1), oma = c(1, 1, 0, 6))
+#   plot(NA, xlim = XLim, ylim = YLim, xlab = xlab, ylab = ylab, bty = "l", 
+#        las = 1, cex.lab = 1.25)
+#   
+#   abline(v = vl, col = "#99999940", lwd = 2)
+#   Alpha <- 15
+#   # polygons
+#   LeftCol <- rgb(red = 255, green = 0, blue = 0, alpha = Alpha, names = NULL, 
+#                  maxColorValue = 255)
+#   RightCol <- rgb(red = 0, green = 255, blue = 0, alpha = Alpha, names = NULL, 
+#                   maxColorValue = 255)
+#   if (ShowCols) {
+#     polygon(x = c(0, vl, vl, 0), y = c(0, 0, hl, hl), col = LeftCol, 
+#             border = NA)
+#     polygon(x = c(0, vl, vl, 0), y = c(0, 0, max(YLim), max(YLim)), 
+#             col = LeftCol, border = NA)
+#     polygon(x = c(vl, max(XLim), max(XLim), vl), y = c(0, 0, max(YLim), 
+#                                                        max(YLim)), col = RightCol, border = NA)
+#     polygon(x = c(vl, max(XLim), max(XLim), vl), y = c(hl, hl, max(YLim), 
+#                                                        max(YLim)), col = RightCol, border = NA)
+#   }
+#   
+#   MPs <- MSEobj@MPs
+#   Pch <- rep(21, length(MPs))
+#   Pch[grep("FMSY", MPs)] <- 24
+#   Pch[grep("NFref", MPs)] <- 24
+#   
+#   # Which MPs meet minimum PMs
+#   ind <- which(x >= vl & y >= hl)
+#   coly <- rep("darkgray", length(MPs))
+#   coly[ind] <- "black"
+#   if (!is.null(AvailMPs)) 
+#     coly[MPs %in% AvailMPs & !(x >= vl & y >= hl)] <- "Medium Sea Green"
+#   if (!is.null(AvailMPs)) 
+#     coly[MPs %in% AvailMPs & (x >= vl & y >= hl)] <- "green"
+#   coly[grep("FMSY", MPs)] <- "lightgray"
+#   coly[grep("NFref", MPs)] <- "lightgray"
+#   
+#   MPtype <- sapply(1:nMPs, function(X) class(get(MPs[X])))
+#   fonts <- rep(2, nMPs)
+#   fonts[MPtype == "Input"] <- 4
+#   Cex <- 1.5
+#   if (!ShowLabs) 
+#     points(x, y, bg = coly, pch = Pch, cex = Cex, col = "black")
+#   if (ShowLabs) 
+#     text(x, y, MPs, font = fonts, col = coly, cex = 1)
+#   
+#   # Add Legend
+#   text(min(XLim), max(YLim), "Performance Limits", cex = 1.25, pos = 4)
+#   temp <- 0.95
+#   for (XX in 1:length(Legend)) {
+#     text(min(XLim), max(YLim) * temp, Legend[XX], pos = 4)
+#     temp <- temp - 0.05
+#   }
+#   Cvec <- c("darkgray", "black", "Medium Sea Green", "green", "lightgray")
+#   if (!ShowLabs) 
+#     legend(100, max(YLim), pch = c(21, 21, 21, 21, 24), legend = c("Not Acceptable", 
+#                                                                    "Acceptable", "Available", "Acceptable & Available", "Reference"), 
+#            bty = "n", pt.bg = Cvec, pt.cex = Cex, xpd = NA)
+#   
+#   if (ShowLabs) 
+#     legend(100, max(YLim), text.font = c(2, 4), legend = c("Output Control", 
+#                                                            "Input Control", "Not Acceptable", "Acceptable", "Available", 
+#                                                            "Acceptable & Available", "Reference"), bty = "n", text.col = c("black", 
+#                                                                                                                            "black", Cvec), pt.cex = Cex, xpd = NA)
+#   
+#   Years <- paste("Years", (MSEobj@proyears - lastYrs) + 1, "-", MSEobj@proyears, 
+#                  "(last", lastYrs, "years)")
+#   mtext(side = 3, Years, cex = 1.25)
+#   
+#   if (YVar == "B_BMSYm") 
+#     abline(h = 100, col = "#99999940", lwd = 2)
+#   if (YVar == "SSB_SSB0m") 
+#     abline(h = 50, col = "#99999940", lwd = 2)
+#   par(op)
+#   DF <- data.frame(MPs = MPs, Yield = y, Prob = x, Pass = x >= vl, stringsAsFactors = FALSE)
+#   invisible(DF[order(DF$Prob, decreasing = TRUE), ])
+# }
+# 
 #' KOBE plot: a projection by projection plot of F/FMSY and B/BMSY
 #' 
 #' A standard KOBE plot by each method that also shows the percentage of

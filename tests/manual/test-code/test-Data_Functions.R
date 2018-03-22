@@ -16,13 +16,9 @@ for (dat in Dat) {
     testthat::expect_error(out <<- runMP(datobj, silent=TRUE), NA)
     testthat::expect_true(length(out@MPs) == length(cans))
     testthat::expect_true(length(avails) - nrow(cants) == length(cans))
-    testthat::expect_true(length(Needed(datobj)) == nrow(cants))
+    testthat::expect_error(Needed(datobj), NA)
     testthat::expect_error(Sense(out, out@MPs[1]), NA)
     if (dat %in% cans) testthat::expect_error(TAC(datobj), NA)
   })
 }
  
-
-  
-                    
-

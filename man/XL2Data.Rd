@@ -17,6 +17,11 @@ An object of class 'Data'
 \description{
 Import a Data object from Excel file
 }
+\examples{
+\dontrun{
+MyData <- XL2Data("MyData.xlsx")
+}
+}
 \author{
 A. Hordyk
 }
