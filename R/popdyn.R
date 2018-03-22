@@ -74,7 +74,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
                                                          nrow=(length((y + nyears):(nyears+proyears))),
                                                          ncol=nsim, byrow=TRUE)   # unchanged 
     
-  } else if (length(Rmaxlen) != nsim) {
+  } else if (length(MPRecs$Rmaxlen) != nsim) {
     stop("Rmaxlen recommmendation is not 'nsim' long.\n Does MP return Rmaxlen recommendation under all conditions?")
   } else {
     Rmaxlen_P[(y + nyears):(nyears+proyears),] <- matrix(MPRecs$Rmaxlen, 
