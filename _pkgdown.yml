@@ -1,57 +1,115 @@
 title: DLMtool Documentation
 icon: logo.png
-
 templates:
   params:
     bootswatch: yeti
-
 navbar:
-  title: "DLMtool Documentation"
+  title: DLMtool Documentation
   type: inverse
   left:
-    - text: "User Guide"
-      href: userguide/introduction.html 
-    - text: "Management Procedures"
-      menu:
-      - text: "Output Controls"
-        href: reference/Output_Controls/index.html
-      - text: "Input Controls"
-        href: reference/Input_Controls/index.html
-      - text: "Reference Methods"
-        href: reference/Reference_Methods/index.html             
-    - text: "Functions" 
-      menu:
-      - text: "Operating Model"
-      - text: "Setup Operating Model"
-        href: reference/Operating_Model_Functions/index.html
-      - text: "Run MSE Functions"
-        href: reference/Run_MSE_Functions/index.html         
-      - text: "MSE Object"
-      - text: "Peformance Metrics"
-        href: reference/PMs/index.html 
-      - text: "MSE Plotting Functions"
-        href: reference/MSE_Object_Plotting_Functions/index.html  
-      - text: "MSE Object Functions"
-        href: reference/MSE_Object_Functions/index.html       
-      - text: "Fishery Data Object"
-      - text: "Import Data"
-        href: reference/import_data/index.html 
-      - text: "Available Methods and Required Data"
-        href: reference/Available_Methods_and_Required_Data/index.html 
-      - text: "Apply Management Procedures"
-        href: reference/Apply_Management_Procedures/index.html 
-      - text: "Fishery Data Plotting Functions"
-        href: reference/Fishery_Data_Plotting_Functions/index.html 
-    - text: "DLMtool Object Classes"
-      href: reference/R_Object_Classes/index.html 
-    - text: "Other"
-      menu: 
-      - text: "Estimation Functions"
-        href: reference/Estimation_Functions/index.html    
-      - text: "Other Functions"
-        href: reference/Other_Functions/index.html          
-      - text: "Internal Functions"
-        href: reference/Internal_Functions/index.html      
+  - text: User Guide
+    href: userguide/introduction.html
+  - text: Management Procedures
+    href: reference/index.html
+reference:
+- title: Output Controls
+  desc: Management Procedures that return a total allowable catch (TAC)
+  contents:
+  - '`AvC`'
+  - '`BK`'
+  - '`BK_CC`'
+  - '`BK_ML`'
+  - '`CC1`'
+  - '`CC4`'
+  - '`CompSRA`'
+  - '`CompSRA4010`'
+  - '`DAAC`'
+  - '`DBSRA`'
+  - '`DBSRA_40`'
+  - '`DBSRA4010`'
+  - '`DCAC`'
+  - '`DCAC_40`'
+  - '`DCAC_ML`'
+  - '`DCAC4010`'
+  - '`DD`'
+  - '`DD4010`'
+  - '`DepF`'
+  - '`DynF`'
+  - '`Fadapt`'
+  - '`Fdem`'
+  - '`Fdem_CC`'
+  - '`Fdem_ML`'
+  - '`Fratio`'
+  - '`Fratio_CC`'
+  - '`Fratio_ML`'
+  - '`Fratio4010`'
+  - '`GB_CC`'
+  - '`GB_slope`'
+  - '`GB_target`'
+  - '`Gcontrol`'
+  - '`HDAAC`'
+  - '`Islope1`'
+  - '`Islope4`'
+  - '`IT10`'
+  - '`IT5`'
+  - '`Itarget1`'
+  - '`Itarget4`'
+  - '`ITM`'
+  - '`L95target`'
+  - '`LstepCC1`'
+  - '`LstepCC4`'
+  - '`Ltarget1`'
+  - '`Ltarget4`'
+  - '`MCD`'
+  - '`MCD4010`'
+  - '`Rcontrol`'
+  - '`Rcontrol2`'
+  - '`SBT1`'
+  - '`SBT2`'
+  - '`SPmod`'
+  - '`SPMSY`'
+  - '`SPslope`'
+  - '`SPSRA`'
+  - '`SPSRA_ML`'
+  - '`YPR`'
+  - '`YPR_CC`'
+  - '`YPR_ML`'
+- title: Input Controls
+  desc: Management Procedures that return a total allowable effort (TAE), spatial
+    closure, or size regulation
+  contents:
+  - '`curE`'
+  - '`curE75`'
+  - '`DDe`'
+  - '`DDe75`'
+  - '`DDes`'
+  - '`DTe40`'
+  - '`DTe50`'
+  - '`EtargetLopt`'
+  - '`ItargetE1`'
+  - '`ItargetE4`'
+  - '`ITe10`'
+  - '`ITe5`'
+  - '`LstepCE1`'
+  - '`LstepCE2`'
+  - '`LtargetE1`'
+  - '`LtargetE4`'
+  - '`matlenlim`'
+  - '`matlenlim2`'
+  - '`minlenLopt1`'
+  - '`MRnoreal`'
+  - '`MRreal`'
+  - '`slotlim`'
+- title: Mixed Controls
+  desc: Management Procedures that return a combination of Output and Input controls
+  contents:
+  - '`AvC_MLL`'
+  - '`Itarget1_MPA`'
+- title: Reference
+  desc: Management Procedures used as Performance References
+  contents:
+  - '`FMSYref`'
+  - '`FMSYref50`'
+  - '`FMSYref75`'
+  - '`NFref`'
 
-    # - text: "DLMtool Website"
-      # href: http://www.datalimitedtoolkit.org/     

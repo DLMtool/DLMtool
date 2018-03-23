@@ -21,7 +21,7 @@ Test Trade-Off Plot
 }
 \examples{
 \dontrun{
- Tplot3{myMSE}
+ Tplot3(myMSE)
 }
 }
 \author{

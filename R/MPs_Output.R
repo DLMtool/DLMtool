@@ -38,15 +38,46 @@
 #'
 #' A simple average catch MP that is included to demonstrate a 'status quo' management option
 #'
-#'
+#' More detail is included here. The detail can include code, equations and plots. See below for 
+#' examples.
+#' 
+#' Some code: 
+#' 
+#' ```
+#' a <- 1:10
+#' b <- 21:30
+#' plot(a,b)
+#' mean(c(a,b))
+#' ```
+#' An example equation:
+#' \deqn{(A,B) = (Q S Z^H, Q T Z^H)}{(A,B) = (Q*S*Z^H, Q*T*Z^H)}
+#' 
+#' An example equation:
+#' \deqn{X = \frac{xy}{z}}{X = (x*y)/z}
+#' 
+#' An example figure:
+#' 
+#' ![Caption](example-plot.jpg "Example Plot Title")
+#' 
 #' @param x A position in a data-limited methods data object
 #' @param Data A data-limited methods data object
 #' @param reps The number of stochastic samples of the TAC recommendation
 #' @author T. Carruthers
 #' 
 #' @examples 
-#' Rec <- AvC(1, DLMtool::Cobia)
-#' hist(Rec@TAC)
+#' Data <- DLMtool::Cobia
+#' # Plot the historical catches 
+#' plot(Data@Year, Data@Cat[1,], type="l", 
+#'      xlab="Year", ylab=paste0("Catch (", Data@Units, ")"), lwd=2)
+#' abline(h=mean(Data@Cat[1,]), lty=2) # plot mean catches
+#' 
+#' # Apply the AvC MP to the Data
+#' Rec <- AvC(1, Data, reps=1000) # 1,000 log-normal samples with CV = 0.2
+#' 
+#' # Distribution of TACs
+#' boxplot(Rec@TAC, add=TRUE, at=max(Data@Year), col="grey", 
+#'         width=1, outline=FALSE)
+#'         
 #' @export 
 #'
 #' @importFrom abind abind

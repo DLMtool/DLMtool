@@ -64,18 +64,28 @@ for (x in 1:Ntest) {
   })
 }
 
-# CheckMPs works 
+# CheckMPs works and run all MPs - BH SRR
 OM <- new("OM", get(all[1,1]), get(all[1,2]), get(all[1,3]), get(all[1,4]))
 OM@seed <- ceiling(runif(1, 1, 1000))
 OM@nsim <- 6
 OM@interval <- ceiling(runif(1, 1, 5))
 OM@SRrel <- 1
 info <- paste(OM@Name, "seed =", OM@seed, "interval =", OM@interval)
-testthat::test_that(paste0("runMSE with MPs=NA: ",info), {
+testthat::test_that(paste0("runMSE with all MPs and BH SRR: ",info), {
   testthat::expect_is(runMSE(OM, MPs=NA, parallel=FALSE, silent=TRUE), 'MSE', info=info)
 })
 
 
+# CheckMPs works and run all MPs - Ricker SRR
+OM <- new("OM", get(all[1,1]), get(all[1,2]), get(all[1,3]), get(all[1,4]))
+OM@seed <- ceiling(runif(1, 1, 1000))
+OM@nsim <- 6
+OM@interval <- ceiling(runif(1, 1, 5))
+OM@SRrel <- 2
+info <- paste(OM@Name, "seed =", OM@seed, "interval =", OM@interval)
+testthat::test_that(paste0("runMSE with all MPs and Ricker SRR: ",info), {
+  testthat::expect_is(runMSE(OM, MPs=NA, parallel=FALSE, silent=TRUE), 'MSE', info=info)
+})
 
 
 # # Historical MPA 
