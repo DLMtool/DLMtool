@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.1)</title>
+  <title>Data-Limited Methods Toolkit (DLMtool 5.1.3)</title>
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.6 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.1)" />
+  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.1.3)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.1)" />
+  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.1.3)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-03-17">
+<meta name="date" content="2018-03-26">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -320,7 +320,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.1)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.1.3)</a>
           </h1>
         </div>
 
@@ -350,7 +350,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## [41] &quot;L95target&quot;   &quot;LstepCC1&quot;    &quot;LstepCC4&quot;    &quot;Ltarget1&quot;    &quot;Ltarget4&quot;   
 ## [46] &quot;MCD&quot;         &quot;MCD4010&quot;     &quot;Rcontrol&quot;    &quot;Rcontrol2&quot;   &quot;SBT1&quot;       
 ## [51] &quot;SBT2&quot;        &quot;SPmod&quot;       &quot;SPMSY&quot;       &quot;SPslope&quot;     &quot;SPSRA&quot;      
-## [56] &quot;SPSRA_ML&quot;    &quot;YPR&quot;         &quot;YPR_CC&quot;      &quot;YPR_ML&quot;</code></pre>
+## [56] &quot;SPSRA_ML&quot;    &quot;YPR&quot;         &quot;YPR_CC&quot;      &quot;YPR_ML&quot;      &quot;TCPUE&quot;      
+## [61] &quot;THC&quot;</code></pre>
 <p>Since we’ve seen it used as a default MP in lots of the examples above, lets learn more about DCAC</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">?DCAC</code></pre></div>
 <p>We can even see all the code for this MP by simply typing the name of the MP into the console (this is a fantastic advantage of using R - there is complete transparency about package functions):</p>
@@ -362,6 +363,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##     Mdb &lt;- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
 ##     FMSY_M &lt;- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
 ##     Bt_K &lt;- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
+##     Bt_K[Bt_K &gt; 1] &lt;- 1
 ##     if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) 
 ##         return(NA)
 ##     BMSY_K &lt;- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
@@ -372,7 +374,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##         FMSY_M * Mdb))))
 ##     Rec
 ## }
-## &lt;bytecode: 0x000000001fd8ebd0&gt;
+## &lt;bytecode: 0x000000000f4d5b20&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
@@ -385,7 +387,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>##  [1] &quot;Atlantic_mackerel&quot;  &quot;China_rockfish&quot;     &quot;Cobia&quot;             
 ##  [4] &quot;Example_datafile&quot;   &quot;Gulf_blue_tilefish&quot; &quot;ourReefFish&quot;       
 ##  [7] &quot;Red_snapper&quot;        &quot;SimulatedData&quot;      &quot;Simulation_1&quot;      
-## [10] &quot;China_rockfish2&quot;    &quot;Madeup&quot;             &quot;Recs&quot;</code></pre>
+## [10] &quot;China_rockfish2&quot;    &quot;Data&quot;               &quot;Madeup&quot;            
+## [13] &quot;Recs&quot;</code></pre>
 <p>For simplicity lets use a Data object with just one simulation, <code>Simulation_1</code> and rename it <code>Data</code></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Data &lt;-<span class="st"> </span>Simulation_<span class="dv">1</span></code></pre></div>
 <p>Since there is only one simulation in this data set (1 position) we can now see a single value of natural mortality rate:</p>
@@ -410,10 +413,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>We could generate a single TAC recommendation from these data using DCAC by specifying position 1 (there is only 1 simulation) and by setting reps=1 (we want a single DCAC TAC recommendation)</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">DCAC</span>(<span class="dt">x=</span><span class="dv">1</span>,Data,<span class="dt">reps=</span><span class="dv">1</span>)</code></pre></div>
 <pre><code>## TAC (median) 
-##      37.5485</code></pre>
+##      37.8473</code></pre>
 <p>If we wanted a stochastic estimate of the TAC we could increase the number of reps:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hist</span>(<span class="kw">DCAC</span>(<span class="dt">x=</span><span class="dv">1</span>,Data,<span class="dt">reps=</span><span class="dv">1000</span>)<span class="op">@</span>TAC,<span class="dt">xlab=</span><span class="st">&quot;TAC&quot;</span>,<span class="dt">ylab=</span><span class="st">&quot;Freq.&quot;</span>,<span class="dt">col=</span><span class="st">&quot;blue&quot;</span>)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-125-1.png" width="672" /></p>
+<p><img src="userguide_files/figure-html/unnamed-chunk-126-1.png" width="672" /></p>
 </div>
 <div id="a-constant-catch-mp" class="section level2">
 <h2><span class="header-section-number">22.2</span> A Constant Catch MP</h2>
@@ -452,8 +455,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 }</code></pre></div>
 <p>We can quickly test our new MP for the example Data object</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">THC</span>(<span class="dt">x=</span><span class="dv">1</span>,Data,<span class="dt">reps=</span><span class="dv">10</span>)<span class="op">@</span>TAC</code></pre></div>
-<pre><code>##  [1] 80.76040 93.73530 78.57651 71.52528 86.93342 93.19337 84.81037
-##  [8] 83.08070 71.91512 82.12945</code></pre>
+<pre><code>##  [1] 71.52528 86.93342 93.19337 84.81037 83.08070 71.91512 82.12945
+##  [8] 75.41995 84.72235 85.65570</code></pre>
 <p>Now that we know it works, to make the function compatible with the DLMtool package we have to assign it the class ‘MP’ so that DLMtool recognizes the function as a management procedure</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(THC)&lt;-<span class="st">&quot;MP&quot;</span></code></pre></div>
 <p>If we want to run the MSE in parallel we need to export the newly created function to the cluster:</p>
@@ -599,10 +602,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>## Running MSE in parallel on 4 processors</code></pre>
 <pre><code>## MSE completed</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">NOAA_plot</span>(testMSE)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-140-1.png" width="672" /></p>
+<p><img src="userguide_files/figure-html/unnamed-chunk-141-1.png" width="672" /></p>
 <pre><code>##         PNOF  B50  LTY   VY
-## TCPUE   59.7 66.5 47.9 87.5
-## TCPUE_e 65.3 83.8 83.8  0.0</code></pre>
+## TCPUE   59.8 67.6 50.0 85.4
+## TCPUE_e 65.0 83.7 84.6  2.1</code></pre>
 </div>
 </div>
 </div>

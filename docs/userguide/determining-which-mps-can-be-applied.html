@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.1)</title>
+  <title>Data-Limited Methods Toolkit (DLMtool 5.1.3)</title>
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.6 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.1)" />
+  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.1.3)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.1)" />
+  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.1.3)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-03-17">
+<meta name="date" content="2018-03-26">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -320,7 +320,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.1)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.1.3)</a>
           </h1>
         </div>
 
@@ -345,7 +345,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## [37] &quot;matlenlim2&quot;   &quot;MCD&quot;          &quot;MCD4010&quot;      &quot;minlenLopt1&quot; 
 ## [41] &quot;MRnoreal&quot;     &quot;MRreal&quot;       &quot;NFref&quot;        &quot;Rcontrol&quot;    
 ## [45] &quot;Rcontrol2&quot;    &quot;SBT1&quot;         &quot;slotlim&quot;      &quot;SPmod&quot;       
-## [49] &quot;SPMSY&quot;        &quot;SPslope&quot;      &quot;SPSRA&quot;        &quot;YPR&quot;</code></pre>
+## [49] &quot;SPMSY&quot;        &quot;SPslope&quot;      &quot;SPSRA&quot;        &quot;YPR&quot;         
+## [53] &quot;TCPUE_e&quot;      &quot;THC&quot;</code></pre>
 <p>The <code>Cant</code> function displays a list of the MPs that cannot be applied to the Data object together with the reason why:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Cant</span>(Atlantic_mackerel)</code></pre></div>
 <pre><code>##       [,1]          [,2]                       
@@ -383,7 +384,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## [32,] &quot;SBT2&quot;        &quot;Missing data: Rec, Cref&quot;  
 ## [33,] &quot;SPSRA_ML&quot;    &quot;Missing data: CAL&quot;        
 ## [34,] &quot;YPR_CC&quot;      &quot;Missing data: CAA&quot;        
-## [35,] &quot;YPR_ML&quot;      &quot;Missing data: CAL&quot;</code></pre>
+## [35,] &quot;YPR_ML&quot;      &quot;Missing data: CAL&quot;        
+## [36,] &quot;TCPUE&quot;       &quot;Missing data: MPrec&quot;</code></pre>
 <p>Finally, the <code>Needed</code> function displays the additional data slots that must be populated for the unavailable MPs to work:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Needed</span>(Atlantic_mackerel)</code></pre></div>
 <pre><code>##             [,1]                       
@@ -421,7 +423,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## SBT2        &quot;Missing data: Rec, Cref&quot;  
 ## SPSRA_ML    &quot;Missing data: CAL&quot;        
 ## YPR_CC      &quot;Missing data: CAA&quot;        
-## YPR_ML      &quot;Missing data: CAL&quot;</code></pre>
+## YPR_ML      &quot;Missing data: CAL&quot;        
+## TCPUE       &quot;Missing data: MPrec&quot;</code></pre>
 </div>
             </section>
 
