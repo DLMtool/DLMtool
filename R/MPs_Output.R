@@ -38,26 +38,6 @@
 #'
 #' A simple average catch MP that is included to demonstrate a 'status quo' management option
 #'
-#' More detail is included here. The detail can include code, equations and plots. See below for 
-#' examples.
-#' 
-#' Some code: 
-#' 
-#' ```
-#' a <- 1:10
-#' b <- 21:30
-#' plot(a,b)
-#' mean(c(a,b))
-#' ```
-#' An example equation:
-#' \deqn{(A,B) = (Q S Z^H, Q T Z^H)}{(A,B) = (Q*S*Z^H, Q*T*Z^H)}
-#' 
-#' An example equation:
-#' \deqn{X = \frac{xy}{z}}{X = (x*y)/z}
-#' 
-#' An example figure:
-#' 
-#' ![Caption](example-plot.jpg "Example Plot Title")
 #' 
 #' @param x A position in a data-limited methods data object
 #' @param Data A data-limited methods data object
