@@ -74,23 +74,29 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
   # check if custom MP names already exist in DLMtool
   gl.funs <- as.vector(lsf.str(envir=globalenv()))
+  pkg.funs <- as.vector(ls.str('package:DLMtool'))
   if (length(gl.funs)>0) {
     gl.clss <- unlist(lapply(lapply(gl.funs, get), class))
     gl.MP <- gl.funs[gl.clss %in% 'MP']
     if (length(gl.MP)>0) {
       inc.gl <- gl.MP[gl.MP %in% MPs]
       if (length(inc.gl)>0) {
-        pkg.funs <- as.vector(ls.str('package:DLMtool'))
         dup.MPs <- inc.gl[inc.gl %in% pkg.funs]
         if (length(dup.MPs)>0) {
           stop("Custom MP names already in DLMtool: ", paste0(dup.MPs, ""), "\nRename Custom MPs")
         }
       }
-    }
+    } 
   }
   
-  
-  
+  # Check MPs 
+  if (!all(is.na(MPs))) {
+    for (mm in MPs) {
+      chkMP <- try(get(mm), silent=TRUE)
+      if (class(chkMP) != 'MP') stop(mm, " is not a valid MP", call.=FALSE) 
+    }
+  }
+
   
   if (parallel) {
     if(!snowfall::sfIsRunning()) {
@@ -98,6 +104,10 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       message("Parallel processing hasn't been initialized. Calling 'setup()' now")
       setup()
     }
+    
+    # Export Custom MPs # 
+    cMPs <- MPs[!MPs %in% pkg.funs]
+    if (length(cMPs)>0) snowfall::sfExport(list=cMPs)
     
     ncpu <- snowfall::sfCpus()
     
@@ -118,6 +128,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       itsim[length(itsim)-1] <- itsim[length(itsim)-1] - 1
     }
     if (!silent) message("Running MSE in parallel on ", ncpu, ' processors')
+    
     temp <- snowfall::sfClusterApplyLB(1:nits, run_parallel, itsim=itsim, OM=OM, MPs=MPs,  
                              CheckMPs=CheckMPs, timelimit=timelimit, Hist=Hist, ntrials=ntrials, 
                              fracD=fracD, CalcBlow=CalcBlow, 

@@ -3044,9 +3044,9 @@ SPmod <- function(x, Data, reps = 100, alp = c(0.8, 1.2), bet = c(0.8, 1.2)) {
   dependencies = "Data@Cat, Data@Ind, Data@Abun, Data@CV_Ind, Data@CV_Cat,  Data@CV_Abun"
   Ir <- length(Data@Ind[x, ])
   Cr <- length(Data@Cat[x, ])
-  rat <- trlnorm(reps, Data@Ind[x, Ir], Data@CV_Ind)/trlnorm(reps, Data@Ind[x, Ir - 1], Data@CV_Ind)
-  cct <- trlnorm(reps, Data@Cat[x, Cr], Data@CV_Cat)
-  Abun <- trlnorm(reps, Data@Abun[x], Data@CV_Abun)
+  rat <- trlnorm(reps, Data@Ind[x, Ir], Data@CV_Ind[x])/trlnorm(reps, Data@Ind[x, Ir - 1], Data@CV_Ind[x])
+  cct <- trlnorm(reps, Data@Cat[x, Cr], Data@CV_Cat[x])
+  Abun <- trlnorm(reps, Data@Abun[x], Data@CV_Abun[x])
   TAC <- rep(NA, reps)
   TAC[rat < alp[1]] <- cct[rat < alp[1]] * bet[1]
   TAC[rat > alp[1] & rat < alp[2]] <- cct[rat > alp[1] & rat < alp[2]]
@@ -3054,10 +3054,10 @@ SPmod <- function(x, Data, reps = 100, alp = c(0.8, 1.2), bet = c(0.8, 1.2)) {
   cond <- rat > alp[2]
   reps2 <- sum(cond)
   if (reps2 > 0) {
-    qq1 <- trlnorm(reps2, Data@Ind[x, Ir]/Abun[cond], Data@CV_Ind)
+    qq1 <- trlnorm(reps2, Data@Ind[x, Ir]/Abun[cond], Data@CV_Ind[x])
     bio1 <- Data@Ind[x, Ir - 1]/qq1
     bio2 <- Data@Ind[x, Ir]/qq1
-    cct1 <- trlnorm(reps2, Data@Cat[x, Cr - 1], Data@CV_Cat)
+    cct1 <- trlnorm(reps2, Data@Cat[x, Cr - 1], Data@CV_Cat[x])
     PP <- bio2 - bio1 + cct1
     TAC[cond] <- bet[2] * PP
   }

@@ -224,12 +224,15 @@ plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
     message("DLMtool functions for plotting objects of class ", class, 
             " are:")
   out <- sort(tt[which(p & p2)])
-  if (any(grepl("plotFun", out))) out <- out[-grep("plotFun", out)]
-  if (any(grepl("plot.OM", out))) out <- out[-grep("plot.OM", out)]
-  if (any(grepl("plotStock", out))) out <- out[-grep("plotStock", out)]
-  if (any(grepl("plotFleet", out))) out <- out[-grep("plotFleet", out)]
+  
+  out <- out[!out %in% c('plotFleet', 'plotStock', 'plotFun',
+                         "COSEWIC_plot", "DFO_hist",
+                         'plotOFL', "boxplot",
+                         'boxplot.Data','plotDep','plotM2',
+                         'plotGrowth', 'plotMat','plotRec', 'plot.OM')]
+  
   if (class == "MSE") {
-    out <- c(out, "barplot", "VOI", "VOI2", "DFO_hist", "DFO_proj",
+    out <- c(out, "barplot", "VOI", "VOI2", "DFO_proj",
              "PWhisker")
     out <- sort(out)
   }

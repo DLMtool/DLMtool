@@ -7,9 +7,6 @@ rm(list=ls())
 MSEobj <- updateMSE(DLMextra::testMSE)
 
 funs <- plotFun(msg=FALSE)
-funs <- funs[!funs %in% c('plotFleet', 'plotStock', 
-                          "COSEWIC_plot", "DFO_hist",
-                          'plotOFL')]
 
 for (ff in funs) {
   testthat::test_that("main plot MSE functions", {

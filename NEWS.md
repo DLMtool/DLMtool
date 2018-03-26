@@ -1,13 +1,15 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
-## DLMtool 5.1.3 Development Version 
+## DLMtool 5.1.3 
 - fix Replace function for new OM slots
 - fix indexing issue for size comps when there are only two size classes 
-- fix indexing issue for spawning biomass & MSY calcs for Ricker SRR
-
+- fix indexing issue for spawning biomass & MSY calcs for Ricker SRR in V5.1
+- automatically call `setup()` if `runsMSE(parallel=TRUE)` and cluster hasn't been initialized
+- automatically export custom MPs to cluster if `runsMSE(parallel=TRUE)` 
+- fix index issue in `SPmod`
 
 ## DLMtool 5.1.2
-- Add contributors and more examples/
+- Add contributors and more examples
 
 ## DLMtool 5.1.1
 - Patch for indexing error in first projection year population dynamics. 
