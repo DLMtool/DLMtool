@@ -57,23 +57,31 @@ DFO_hist <- function(OM, panel= T,nsim=48) {
 #' @importFrom graphics arrows contour
 #' @importFrom grDevices dev.off jpeg
 #' @importFrom stats acf
-DFO_proj <- function(MSEobj,maxplot=3) {
+DFO_proj <- function(MSEobj,maxplot=6) {
   
+  maxplot<-min(maxplot,MSEobj@nMPs)
   nsim<-MSEobj@nsim
   nMPs<-MSEobj@nMPs
   proyears<-MSEobj@proyears
   plotorg<-split(1:nMPs, ceiling(seq_along(1:nMPs)/maxplot))
-  op<-par(mfrow=c(maxplot,2),mai=c(0.7,0.8,0.05,0.1),omi=c(0.01,0.01,0.5,0.01))
+  ncol<-ceiling(maxplot*0.33)
+  nrow<-ceiling(maxplot/ncol)
   
-  for(i in 1:nMPs){
-  
-    DFO_Kobe(Br=MSEobj@B_BMSY[,i,proyears],Fr=MSEobj@F_FMSY[,i,proyears])
-    legend('top',MSEobj@MPs[i],text.font=2,bty='n')
-    DFO_Kobe_TS(Brel=MSEobj@B_BMSY[,i,],Frel=MSEobj@F_FMSY[,i,],labs=c("Current","Projection"))
-    legend('top',MSEobj@MPs[i],text.font=2,bty='n')
+  for(j in 1:length(plotorg)){
+    op<-par(mfrow=c(nrow,ncol),mai=c(0.3,0.3,0.05,0.1),omi=c(0.3,0.4,0.4,0.01))
     
-    if(i==max(plotorg[[ceiling(i/maxplot)]]))  mtext(c("Status at end of projection (Projected)",
-                                                       "Projected time series"),3,at=c(0.27,0.77),line=0.8,outer=T,font=2)
+    for(i in plotorg[[1]]){
+    DFO_Kobe(Br=MSEobj@B_BMSY[,i,proyears],Fr=MSEobj@F_FMSY[,i,proyears],xlab="",ylab="")
+    legend('top',MSEobj@MPs[i],text.font=2,bty='n')
+    #DFO_Kobe_TS(Brel=MSEobj@B_BMSY[,i,],Frel=MSEobj@F_FMSY[,i,],labs=c("Current","Projection"))
+    #legend('top',MSEobj@MPs[i],text.font=2,bty='n')
+    
+     
+    
+    }
+    mtext("Conditions at the end of the MSE projection", 3,line=0.8,outer=T,font=2)
+    mtext("B/BMSY",1,line=0.7,outer=T,font=2)
+    mtext("F/FMSY",2,line=0.7,outer=T,font=2)
     
   }
 
@@ -88,32 +96,85 @@ DFO_proj <- function(MSEobj,maxplot=3) {
 #' http://www.dfo-mpo.gc.ca/reports-rapports/regs/sff-cpd/precaution-eng.htm
 #'
 #' @param MSEobj An MSE object of class MSE produced by DLMtool function runMSE
+#' @param zero_origin Logical: should plots have a zero-zero origin?
 #' @author T. Carruthers
 #' @export DFO_plot
-DFO_plot<-function(MSEobj){
+DFO_plot<-function(MSEobj,zero_origin=T){
  
-  par(mai=c(1,1,0.02,0.02))
+  op<-par(mai=c(1,1,0.02,0.02))
   yend <- max(MSEobj@proyears - 4, 1):MSEobj@proyears
   POF<-apply(MSEobj@F_FMSY[,,yend],2,mean,na.rm=T)
   
   POFed<-apply(MSEobj@B_BMSY[,,yend] ,2,mean, na.rm = T)
   
+  ylim<-range(POF)
+  xlim<-range(POFed)
+  if(zero_origin)ylim[1]<-xlim[1]<-0
   col<-makeTransparent(c("red","dark green","blue","orange","black"),99)
-  plot(POFed,POF,col="white",xlab="",ylab="",main="",axes=F)
+  plot(POFed,POF,xlim=xlim,ylim=ylim,col="white",xlab="",ylab="",main="",axes=F)
 
   add_zones(textpos=quantile(POF,0.95))
-  xs<-pretty(seq(min(POFed),max(POFed),length.out=8))
-  ys<-pretty(seq(min(POF),max(POF),length.out=8))
+  xs<-pretty(seq(xlim[1],xlim[2],length.out=8))
+  ys<-pretty(seq(ylim[1],ylim[2],length.out=8))
   axis(1,xs,xs)
   axis(2,ys,ys)
   text(POFed,POF,MSEobj@MPs,col=col,font=2,cex=0.9)
   
   mtext("B/BMSY",1,line=2.5)
   mtext("F/FMSY",2,line=2.5)
+  on.exit(par(op))
   
 }
 
-
+#' Deparment of Fisheries and Oceans stock status bar plot
+#'
+#' A plot of biomass relative to BMSY over projected years
+#'
+#' @param MSEobj An MSE object of class MSE produced by DLMtool function runMSE
+#' @param yres Integer: the year interval over which to calculate B/BMSY in future years
+#' @author T. Carruthers
+#' @export DFO_bar
+DFO_bar<-function(MSEobj,yres=10){
+  
+  sections<-(0:floor(MSEobj@proyears/yres))*yres
+  nsec<-length(sections)-1
+  op<-par(mfrow=c(nsec,1),mai=c(0.05,0.7,0.02,0.02),omi=c(0.6,0.35,0.01,0.01))
+  nsim<-MSEobj@nsim
+  nMPs<-MSEobj@nMPs
+  POF<-array(NA,c(nMPs,5,nsec))
+  
+  for(i in 1:nsec){
+    yind <- (sections[i]+1):sections[i+1]
+    POF[,,i]<-t(apply(MSEobj@B_BMSY[,,yind] ,2,quantile,p=c(0.05,0.25,0.5,0.75,0.95), na.rm = T))
+  }
+ 
+  xlim<-c(0,min(2.5,max(POFed)))
+  xs<-pretty(seq(xlim[1],xlim[2],length.out=8))
+  
+  barpos<-seq(0,0.98,length.out=nMPs+2)[2:(nMPs+1)]
+  
+  for(i in 1:nsec){
+    
+    plot(xlim,c(0,1),col='white',axes=F,main="",xlab="",ylab="")
+    add_zones_bar()
+    legend('top',paste0("Projection years ",sections[i]+1,"-",sections[i+1]),bty='n')
+    points(POF[,3,i],barpos,pch=19,cex=1.5)
+    
+    for(MP in 1:nMPs){
+      lines(POF[MP,c(2,4),i],rep(barpos[MP],2),lwd=3)
+      lines(POF[MP,c(1,5),i],rep(barpos[MP],2))
+    }
+    
+    axis(2,MSEobj@MPs,at=barpos,las=2,tick=F)
+    if(i==nsec)axis(1,xs,xs)
+    if(i<nsec)axis(1,xs,rep("",length(xs)))
+    
+  }
+  
+  mtext("B/BMSY",1,line=2.5,outer=T)
+  mtext("Management Procedure",2,line=0.2,outer=T)
+  on.exit(par(op))
+}
 
 DFO_Kobe_TS<-function(Brel,Frel,labs=c("Unfished","Current")){
   
@@ -169,7 +230,10 @@ DFO_Kobe_TS<-function(Brel,Frel,labs=c("Unfished","Current")){
 }
 
 
-DFO_Kobe<-function(Br,Fr){
+DFO_Kobe<-function(Br,Fr,xlab=NA,ylab=NA){
+  
+  if(is.na(xlab))xlab="B/BMSY"
+  if(is.na(ylab))ylab="F/FMSY"
   
   Brange<-c(0,quantile(Br,0.99))
   Frange<-c(0,quantile(Fr,0.99))
@@ -185,8 +249,8 @@ DFO_Kobe<-function(Br,Fr){
   axis(1,xp,xp)
   axis(2,yp,yp)
   
-  mtext("B/BMSY",1,line=2.5)
-  mtext("F/FMSY",2,line=2.5)
+  mtext(xlab,1,line=2.5)
+  mtext(ylab,2,line=2.5)
   
   pointcol<-makeTransparent('black',80)
   linecol<-"black"#makeTransparent('black',95)
@@ -216,10 +280,40 @@ DFO_Kobe<-function(Br,Fr){
 }
 
 
+add_zones_bar<-function(){
+  
+  cols<-c("grey86","grey94","white",
+          "grey84","grey92","grey97")
+  
+  polygon(c(-0,0.4,0.4,0),c(0,0,1,1),col=cols[1],border=cols[1])
+  polygon(c(0.4,0.8,0.8,0.4),c(0,0,1,1),col=cols[2],border=cols[2])
+  polygon(c(0.8,1000,1000,0.8),c(0,0,1,1),col=cols[3],border=cols[3])
+  
+  text(0.2,0.5,"Critical",col="white",font=2,srt=270,cex=1.1)
+  text(0.6,0.5,"Cautious",col="grey73",font=2,srt=270,cex=1.1)
+  text(1.1,0.5,"Healthy",col="grey73",font=2,srt=270,cex=1.1)
+  
+}
+
+add_zones_bar_horiz<-function(textpos=0.2){
+  
+  cols<-c("grey86","grey94","white",
+          "grey84","grey92","grey97")
+  
+  polygon(c(0,0,10E10,10E10),c(0,0.4,0.4,0),,col=cols[1],border=cols[1])
+  polygon(c(0,0,10E10,10E10),c(0.4,0.8,0.8,0.4),col=cols[2],border=cols[2])
+  polygon(c(0,0,10E10,10E10),c(0.8,1000,1000,0.8),,col=cols[3],border=cols[3])
+  
+  text(textpos,0.1,"Critical",col="white",font=2,cex=1.1)
+  text(textpos,0.6,"Cautious",col="grey73",font=2,cex=1.1)
+  text(textpos,1.1,"Healthy",col="grey73",font=2,cex=1.1)
+  
+}
+
 add_zones<-function(textpos){
 
-  cols<-c("grey86","grey96","white",
-          "grey84","grey94","grey97")
+  cols<-c("grey86","grey94","white",
+          "grey84","grey92","grey97")
   
   polygon(c(-0,0.4,0.4,0),c(0,0,1,1),col=cols[1],border=cols[1])
   polygon(c(0.4,0.8,0.8,0.4),c(0,0,1,1),col=cols[2],border=cols[2])
@@ -367,6 +461,86 @@ DFO_plot2 <- function(MSEobj, nam = NA,panel = T,Bcut=50, Ycut=50) {
   on.exit(par(op))
 
 }
+
+
+#' Deparment of Fisheries and Oceans biomass quantile plot
+#'
+#' A plot of biomass relative to BMSY quantiles over projected years 
+#'
+#' @param MSEobj An MSE object of class MSE produced by DLMtool function runMSE
+#' @param maxcol Integer how many columns for panel plots?
+#' @param qcol A color, the quantile coloration
+#' @param lcol A color, the mean B/BMSY line
+#' @param curyr The current calendar year
+#' @param quants A vector 2 long for the quantiles e.g. 0.1 and 0.9 for the 10th and 90th quantiles
+#' @param addline Should two individual example simulations be added to the plot?
+#' @author T. Carruthers
+#' @export DFO_quant
+DFO_quant<-function(MSEobj,maxcol=6,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",curyr=2018,quants=c(0.1,0.9),addline=T){
+  
+  if(is.na(maxcol))maxcol=ceiling(length(MSEobj@MPs)/0.5) # defaults to portrait 1:2
+  MPs<-MSEobj@MPs
+  nMPs<-length(MPs)
+  yrs<-curyr+(1:MSEobj@proyears)
+  
+  plots<-split(1:nMPs, ceiling(seq_along(1:nMPs)/maxcol))
+  
+  nr<-length(plots)*2
+  nc<-maxcol
+  
+  mat<-array(0,c(nc,nr*1.5))
+  ind<-floor(0.5+(1:nr)*1.5)
+  mat[,ind]<-1:(nr*nc)
+  mat<-t(mat)
+  ht<-rep(0.2,nr*1.5)
+  ht[ind]<-1
+  layout(mat,heights=ht)
+  op<-par(mai=c(0.3,0.25,0.01,0.01),omi=c(0.5,0.6,0.05,0.05))
+  
+  B_BMSY<-MSEobj@B_BMSY
+  Yd<-MSEobj@C/ MSEobj@OM$RefY
+  
+  Blims <- c(0,quantile(B_BMSY,0.95))
+  Ylims<- c(0,quantile(Yd,0.95))
+  
+  plotquant<-function(x,p=c(0.1,0.9),yrs,qcol,lcol,addline=T){
+    ny<-length(yrs)
+    qs<-apply(x,2,quantile,p=p)
+    polygon(c(yrs,yrs[ny:1]),c(qs[1,],qs[2,ny:1]),border=NA,col=qcol)
+    
+    if(addline)for(i in 1:2)lines(yrs,x[i,],col=lcol,lty=i)
+    lines(yrs,apply(x,2,quantile,p=0.5),lwd=2,col="white")
+  }
+  
+  for(pp in 1:length(plots)){
+    
+    toplot<-unlist(plots[pp])
+    nt<-length(toplot)
+    
+    for(i in toplot){
+      plot(range(yrs),Blims,col="white")
+      add_zones_bar_horiz(textpos=curyr+0.3*MSEobj@proyears)
+      axis(2)
+      plotquant(B_BMSY[,i,],p=quants,yrs,qcol,lcol)
+      mtext(MSEobj@MPs[i],3,line=0.2,font=2)
+      if(i==toplot[1])mtext("B/BMSY",2,line=2.5)
+    }
+    if(nt<maxcol)for(i in 1:(maxcol-nt))plot(NULL, xlim=c(0,1), ylim=c(0,1), ylab="y label", xlab="x lablel",axes=F)
+    
+    for(i in toplot){
+      plot(range(yrs),Ylims,col="white")
+      plotquant(Yd[,i,],p=quants,yrs,qcol,lcol)
+      if(i==toplot[1])mtext("Rel. Yd.",2,line=2.3)
+    }
+    if(nt<maxcol)for(i in 1:(maxcol-nt))plot(NULL, xlim=c(0,1), ylim=c(0,1), ylab="y label", xlab="x lablel",axes=F)
+    
+  }
+  
+  mtext("Projection Year",1,line=0.7,outer=T)
+  on.exit(par(op))
+}
+
+
 
 #' COSEWIC forward projection plot
 #'
@@ -522,5 +696,31 @@ SubCpars<-function(OM,sims){
   }
   
   OM
+  
+}
+
+
+# =================== Reports =========================================================
+
+#' Create a standard DFO MSE report 
+#'
+#' Provides performacne plots typical in the assessment of Canadian fish stocks.  
+#'
+#' @param MSEobj An object of class MSE
+#' @param output_file The directory and filename you wish to use for the report e.g. "C:/temp/myMSEreport.html"
+#' @param author The person who made this report
+#' @param title The title of the report
+#' @author T. Carruthers
+#' @export DFO_report
+DFO_report<-function(MSEobj,output_file=NA,author="Author not specified",title="NA"){
+  
+  if(is.na(output_file))output_file=paste0(getwd(),"/DFO MSE report.html")
+  if(is.na(title))title=paste0("DFO Generic MSE Report for",MSEobj@Name)
+  params<-new('list')
+  params$title<-title
+  params$subtitle<-"A prototype MSE performance evaluation"
+  params$author<-author
+  params$MSEobj<-MSEobj
+  rmarkdown::render(input=system.file("DFO_generic.Rmd", package="DLMtool"), output_file=output_file,params=params)
   
 }

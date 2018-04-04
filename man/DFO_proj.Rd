@@ -4,7 +4,7 @@
 \alias{DFO_proj}
 \title{Deparment of Fisheries and Oceans projection plot}
 \usage{
-DFO_proj(MSEobj, maxplot = 3)
+DFO_proj(MSEobj, maxplot = 6)
 }
 \arguments{
 \item{MSEobj}{An operating model object of class MSE}

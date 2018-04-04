@@ -4,10 +4,12 @@
 \alias{DFO_plot}
 \title{Deparment of Fisheries and Oceans trade-off plot}
 \usage{
-DFO_plot(MSEobj)
+DFO_plot(MSEobj, zero_origin = T)
 }
 \arguments{
 \item{MSEobj}{An MSE object of class MSE produced by DLMtool function runMSE}
+
+\item{zero_origin}{Logical: should plots have a zero-zero origin?}
 }
 \description{
 A plot of mean biomass relative to BMSY and fishing mortality rate relative to FMSY
