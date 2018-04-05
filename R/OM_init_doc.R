@@ -361,6 +361,7 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
 #' @param openFile Logical. Should the compiled file be opened in web browser?
 #' @param quiet TRUE to supress printing of the pandoc command line.
 #' @param dir Optional file path to read the xlsx and rmd files. Default is `getwd()`
+#' @param ... Optional additional named arguments provided to `runMSE`
 #' @return Creates a Rmarkdown file and compiles a HTML report file in the working directory.
 #' @export
 #' @importFrom methods getSlots
@@ -375,7 +376,7 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
 #' }
 OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,  
                   inc.plot=TRUE, render=TRUE, output="html_document", openFile=TRUE, quiet=FALSE,
-                  dir=NULL) {
+                  dir=NULL, ...) {
   # markdown compile options
   toc=TRUE; color="blue";  theme="flatly"
   if (is.null(dir)) dir <- getwd()
@@ -595,7 +596,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
         message("nsim too high for documentation purposes. Running here with nsim=48")
         OM2@nsim <- 48
       }
-      out<- runMSE(OM2,Hist=T, parallel = FALSE, silent=TRUE)
+      out<- runMSE(OM2,Hist=T, parallel = FALSE, silent=TRUE, ...)
       Pars <- c(out$SampPars, out$TSdata, out$MSYs)  
       saveRDS(out, file=file.path(dir,paste0('build/', fileName, 'Hist.dat')))
     }

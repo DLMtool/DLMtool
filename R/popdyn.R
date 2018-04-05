@@ -292,12 +292,15 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     retained <- apply(CB_Pret[,,y,], 1, sum)
     actualremovals <- apply(CB_P[,,y,], 1, sum)
     ratio <- actualremovals/retained # ratio of actual removals to retained catch 
-    
+    ratio[!is.finite(ratio)] <- 0 
+    ratio[ratio>1E5] <- 1E5
     temp <- CB_Pret[, , y, ]/apply(CB_Pret[, , y, ], 1, sum) # distribution of retained fish
     CB_Pret[, , y, ] <- TACusedE * temp  # retained catch 
     
     temp <- CB_P[, , y, ]/apply(CB_P[, , y, ], 1, sum) # distribution of removals
+    
     CB_P[,,y,] <- TACusedE *  ratio * temp # scale up total removals 
+    
     
     chk <- apply(CB_P[,,y,], 1, sum) > availB # total removals can't be more than available biomass
     if (sum(chk)>0) {
@@ -308,6 +311,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     }
   
     # total removals
+  
     temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
     temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF) # apply maxF constraint
     FM_P[SAYR] <- -log(1 - temp)
@@ -315,8 +319,10 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     # update removals with maxF constraint
     CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR])) 
 
+   
     # repeated because of approximation error in Pope's approximation - an issue if CB_P ~ AvailB
     chk <- apply(CB_P[,,y,], 1, sum) > availB # total removals can't be more than available biomass
+    
     if (sum(chk)>0) {
       c_temp <- apply(CB_P[chk,,y,, drop=FALSE], 1, sum)
       ratio_temp <- (availB[chk]/c_temp) * 0.99

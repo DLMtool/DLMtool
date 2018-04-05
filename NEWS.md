@@ -1,5 +1,8 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
+## DLMtool 5.1.999 Development Version 
+- update PM methods and add to userguide - in development
+
 ## DLMtool 5.1.3 
 - fix Replace function for new OM slots
 - fix indexing issue for size comps when there are only two size classes 
