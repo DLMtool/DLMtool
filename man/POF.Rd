@@ -4,10 +4,12 @@
 \alias{POF}
 \title{Performance Metric: Probability F < FMSY}
 \usage{
-POF(MSEobj = NULL)
+POF(MSEobj = NULL, Ref = 1)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}
+
+\item{Ref}{Reference Point for fishing mortality (fraction of FMSY)}
 }
 \value{
 An object of class PMobj
