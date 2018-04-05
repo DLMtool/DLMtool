@@ -148,7 +148,7 @@ DFO_bar<-function(MSEobj,yres=10){
     POF[,,i]<-t(apply(MSEobj@B_BMSY[,,yind] ,2,quantile,p=c(0.05,0.25,0.5,0.75,0.95), na.rm = T))
   }
  
-  xlim<-c(0,min(2.5,max(POFed)))
+  xlim<-c(0,min(2.5,max(POF)))
   xs<-pretty(seq(xlim[1],xlim[2],length.out=8))
   
   barpos<-seq(0,0.98,length.out=nMPs+2)[2:(nMPs+1)]
@@ -712,7 +712,7 @@ SubCpars<-function(OM,sims){
 #' @param title The title of the report
 #' @author T. Carruthers
 #' @export DFO_report
-DFO_report<-function(MSEobj,output_file=NA,author="Author not specified",title="NA"){
+DFO_report<-function(MSEobj,output_file=NA,author="Author not specified",title=NA){
   
   if(is.na(output_file))output_file=paste0(getwd(),"/DFO MSE report.html")
   if(is.na(title))title=paste0("DFO Generic MSE Report for",MSEobj@Name)
@@ -724,3 +724,171 @@ DFO_report<-function(MSEobj,output_file=NA,author="Author not specified",title="
   rmarkdown::render(input=system.file("DFO_generic.Rmd", package="DLMtool"), output_file=output_file,params=params)
   
 }
+
+
+#' Create a standard DFO performance table 
+#'
+#' P_Cr_S is the probability of being in the critical zone in the first 10 projected years
+#' P_Ct_S is the probability of being in the cautious zone in the first 10 projected years
+#' P_H_S is the probability of being in the healthy zone in the first 10 projected years
+#' POF_S is the probability of overfishing in the first 10 projected years
+#' STY is the mean yield relative to FMSY management over the first 10 projected years
+#' P_Cr_L is the probability of being in the critical zone in the last 10 projected years
+#' P_Ct_L is the probability of being in the cautious zone in the last 10 projected years
+#' P_H_L is the probability of being in the healthy zone in the last 10 projected years
+#' POF_L is the probability of overfishing in the last 10 projected years
+#' LTY is the mean yield relative to FMSY management over the last 10 projected years
+#' AAVY is the average annual variability in yield over the whole projection phrased as a CV percentage
+#' P_Reb is the probability the stock has rebuilt to over BMSY in 2 mean generation times
+#'
+#' @param MSEobj An object of class MSE
+#' @param rnd The number of significant figures for rounding. 
+#' @author T. Carruthers
+#' @export DFO_tab
+DFO_tab<-function(MSEobj,rnd=0){
+  
+  shortterm<-1:min(10,MSEobj@proyears)
+  P_Cr_S<-round(apply(MSEobj@B_BMSY[,,shortterm]<0.4,2,mean)*100,rnd)
+  P_Ct_S<-round(apply(MSEobj@B_BMSY[,,shortterm]>0.4 & MSEobj@B_BMSY[,,shortterm]<0.8,2,mean)*100,rnd)
+  P_H_S<-round(apply(MSEobj@B_BMSY[,,shortterm]>0.8,2,mean)*100,rnd)
+  
+  longterm<-max(1,MSEobj@proyears-10):MSEobj@proyears
+  P_Cr_L<-round(apply(MSEobj@B_BMSY[,,longterm]<0.4,2,mean)*100,rnd)
+  P_Ct_L<-round(apply(MSEobj@B_BMSY[,,longterm]>0.4 & MSEobj@B_BMSY[,,longterm]<0.8 ,2,mean)*100,rnd)
+  P_H_L<-round(apply(MSEobj@B_BMSY[,,longterm]>0.8,2,mean)*100,rnd)
+  
+  refY<-MSEobj@OM$RefY
+  STY<-round(apply(MSEobj@C[,,shortterm]/refY,2,mean)*100,rnd)
+  LTY<-round(apply(MSEobj@C[,,longterm]/refY,2,mean)*100,rnd)
+  
+  POF_S<-round(apply(MSEobj@F_FMSY[,,shortterm]>1,2,mean)*100,rnd)
+  POF_L<-round(apply(MSEobj@F_FMSY[,,longterm]>1,2,mean)*100,rnd)
+  
+  MGT2<-ceiling(MSEobj@OM$MGT*2)
+  MGT2[MGT2<3]=3
+  Bind<-cbind(as.matrix(expand.grid(1:MSEobj@nsim,1:MSEobj@nMPs)),rep(MGT2,MSEobj@nMPs))
+  Bmat<-array(MSEobj@B_BMSY[Bind],c(MSEobj@nsim,MSEobj@nMPs))
+  P_Reb<-round(apply(Bmat>1,2,mean)*100,rnd)
+  
+  y1 <- 1:(MSEobj@proyears - 1)
+  y2 <- 2:MSEobj@proyears
+  AAVY <- round(apply((((MSEobj@C[, , y1] - MSEobj@C[, , y2])/MSEobj@C[, , y2])^2)^0.5, 2, mean, na.rm = T)*100,rnd)
+  
+  MP<-MSEobj@MPs
+  
+  tab<-data.frame(MP,P_Cr_S, P_Ct_S, P_H_S, POF_S, STY, P_Cr_L, P_Ct_L, P_H_L, POF_L, LTY, AAVY, P_Reb)
+  
+  tab<-tab[order(tab$LTY,decreasing=T),]
+  tab
+  
+}
+
+#' A formatted version of the standard DFO performance plot, color coded by thresholds
+#'
+#' Crit_S is the probability of being in the critical zone in the first 10 projected years
+#' Caut_S is the probability of being in the cautious zone in the first 10 projected years
+#' Health_S is the probability of being in the healthy zone in the first 10 projected years
+#' OvFish_S is the probability of overfishing in the first 10 projected years
+#' Yield_S is the mean yield relative to FMSY management over the first 10 projected years
+#' Crit is the probability of being in the critical zone in the last 10 projected years
+#' Caut is the probability of being in the cautious zone in the last 10 projected years
+#' Health is the probability of being in the healthy zone in the last 10 projected years
+#' OvFish is the probability of overfishing in the last 10 projected years
+#' Yield is the mean yield relative to FMSY management over the last 10 projected years
+#' AAVY is the average annual variability in yield over the whole projection phrased as a CV percentage
+#' Reb is the probability the stock has rebuilt to over BMSY in 2 mean generation times
+#'
+#' @param Ptab1 A DFO performance table made by DFO_tab()
+#' @param thresh A vector of thresholds for each column Health, Yield and Reb are 'greater than threshold' conditions 
+#' @author T. Carruthers
+#' @export DFO_tab_formatted
+DFO_tab_formatted<-function(Ptab1,thresh=c(10,     40,     50,    50,    50,  10,     40,     50,    50,    50,  20,   50)){
+  #                                       P_Cr_S, P_Ct_S, P_H_S, POF_S, STY, P_Cr_L, P_Ct_L, P_H_L, POF_L, LTY, AAVY, P_Reb
+  
+  # save(Ptab1,file="Ptab1")
+  MPs<-as.character(Ptab1$MP)
+  Data <- DLMtool::SimulatedData
+  runMPs <- applyMP(Data, MPs, reps = 2, nsims=1, silent=TRUE)
+  recs <- runMPs[[1]]
+  type <- matrix(0, nrow=length(MPs),ncol=4) # TAC TAE SL MPA
+  for (mm in seq_along(recs)) {
+    type[mm,1] <- as.integer(length(recs[[mm]]$TAC) > 0)
+    type[mm,2] <- as.integer(length(recs[[mm]]$Effort)>0)
+    type[mm,3] <- as.integer(length(recs[[mm]]$LR5)>0)
+    type[mm,4] <- as.integer(!is.na(recs[[mm]]$Spatial[1,1]))
+  }
+  totneeded<-apply(type,1,sum)
+  
+  MP_Type<-rep("TAC",length(MPs))
+  MP_Type[type[,2]==1]<-"TAE"
+  MP_Type[type[,3]==1]<-"SzLim"
+  MP_Type[type[,4]==1]<-"MPA"
+  MP_Type[totneeded>1]<-"Mixed"
+  
+  Ptab2<-Ptab1 #[,1:ncol(Ptab1)]
+  Ptab2<-cbind(Ptab2[,1],MP_Type,Ptab2[,2:ncol(Ptab2)])
+  names(Ptab2)<-c("MP","MP_Type","Crit_S","Caut_S","Health_S","OvFish_S","Yield_S","Crit","Caut","Health","OvFish","Yield","AAVY","Reb")
+  
+  #       P_Cr_S,               P_Ct_S,                 P_H_S,                 POF_S,                  STY,  AAVY, P_Reb
+  PIsmet<-Ptab2[,3]<thresh[1] & Ptab2[,4] < thresh[2] & Ptab2[,5] >thresh[3] & Ptab2[,6] < thresh[4] & Ptab2[,7] > thresh[5] &
+          Ptab2[,8]<thresh[6] & Ptab2[,9] < thresh[7] & Ptab2[,10]>thresh[8] & Ptab2[,11] < thresh[9]& Ptab2[,12]> thresh[10] &
+          Ptab2[,13]< thresh[11] & Ptab2[,14] > thresh[12]
+  MPcols<-rep('green',length(MPs))
+  MPcols[!PIsmet]<-'red'
+ 
+  # Rankings
+  ord<-order(Ptab2$Yield,decreasing = T)
+  Ptab2<-Ptab2[ord,]
+  MPcols<-MPcols[ord]
+  
+  Ptab2 %>%
+    mutate(
+      #MP = row.names(.),
+      MP =  cell_spec(MP, "html", color = MPcols, bold = T),
+      MP_Type =  cell_spec(MP_Type, "html", bold = T),
+      Crit_S = ifelse(Crit_S < thresh[1],
+                      cell_spec(Crit_S, "html", color = "green",italic = T),
+                      cell_spec(Crit_S, "html", color = "red", italic = T)),
+      Caut_S = ifelse(Caut_S < thresh[2],
+                      cell_spec(Caut_S, "html", color = "green", italic = T),
+                      cell_spec(Caut_S, "html", color = "red", italic = T)),
+      Health_S = ifelse(Health_S >= thresh[3],
+                     cell_spec(Health_S, "html", color = "green", italic = T),
+                     cell_spec(Health_S, "html", color = "red", italic = T)),
+      OvFish_S = ifelse(OvFish_S < thresh[4],
+                       cell_spec(OvFish_S, "html", color = "green", italic = T),
+                       cell_spec(OvFish_S, "html", color = "red", italic = T)),
+      Yield_S = ifelse(Yield_S >= thresh[5],
+                      cell_spec(Yield_S, "html", color = "green", italic = T),
+                      cell_spec(Yield_S, "html", color = "red", italic = T)),
+      Crit = ifelse(Crit < thresh[6],
+                      cell_spec(Crit, "html", color = "green", italic = T),
+                      cell_spec(Crit, "html", color = "red", italic = T)),
+      Caut = ifelse(Caut < thresh[7],
+                      cell_spec(Caut, "html", color = "green", italic = T),
+                      cell_spec(Caut, "html", color = "red", italic = T)),
+      Health = ifelse(Health > thresh[8],
+                   cell_spec(Health, "html", color = "green", italic = T),
+                   cell_spec(Health, "html", color = "red", italic = T)),
+      OvFish = ifelse(OvFish < thresh[9],
+                       cell_spec(OvFish, "html", color = "green", italic = T),
+                       cell_spec(OvFish, "html", color = "red", italic = T)),
+      Yield = ifelse(Yield >= thresh[10],
+                     cell_spec(Yield, "html", color = "green", italic = T),
+                     cell_spec(Yield, "html", color = "red", italic = T)),
+      AAVY = ifelse(AAVY < thresh[11],
+                       cell_spec(AAVY, "html", color = "green", italic = T),
+                       cell_spec(AAVY, "html", color = "red", italic = T)),
+      Reb = ifelse(Reb >= thresh[12],
+                     cell_spec(Reb, "html", color = "green", italic = T),
+                     cell_spec(Reb, "html", color = "red", italic = T))
+    )%>%
+    #select(everything())%>%
+    knitr::kable("html", escape = F,align = "c") %>%
+    kable_styling("striped", full_width = F)%>%
+    column_spec(5, width = "3cm")  %>%
+    add_header_above(c(" ", " ","First 10 years of MSE projection" = 5, "Last 10 years of MSE projection" = 5,
+                       "",""))
+  
+}
+
