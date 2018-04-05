@@ -2,7 +2,7 @@
 #' Performance Metric: Probability B > 0.1 BMSY
 #'
 #' @param MSEobj An object of class MSE
-#'
+#' @param Ref Reference Point for biomass (fraction of BMSY)
 #' @return An object of class PMobj
 #' @export
 #'
@@ -10,17 +10,22 @@
 #' \dontrun{
 #' P10(myMSE)
 #' }
-P10 <- function(MSEobj=NULL) {
+P10 <- function(MSEobj=NULL, Ref=0.1) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
-  PMobj@name <- "Probability Spawning Biomass above 10% BMSY" 
-  PMobj@caption <- 'Prob. SB > 0.1 SBMSY'
+  PMobj@Name <- "Spawning Biomass relative to SBMSY"
+  if (Ref !=1) {
+    PMobj@Caption <- paste0('Prob. SB > ', Ref, ' SBMSY')
+  } else {
+    PMobj@Caption <- 'Prob. SB > SBMSY'
+  }
   
   y.st <- 1 
   y.end <- MSEobj@proyears
   
-  PMobj@Stat <- MSEobj@B_BMSY[,,y.st:y.end] # Performance Metric statistic of interest - here BMSY/FMSY 
-  PMobj@Prob <- calcProb(PMobj@Stat > 0.1, MSEobj) # calculate probability Stat > 0.1 nsim by nMP
+  PMobj@Stat <- MSEobj@B_BMSY[,,y.st:y.end] # Performance Metric statistic of interest - here SB/SBMSY 
+  PMobj@Ref <- Ref
+  PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref, MSEobj) # calculate probability Stat > 0.1 nsim by nMP
   
   PMobj@Mean <- calcMean(PMobj@Prob, MSEobj) # calculate mean probability by MP
   PMobj@MPs <- MSEobj@MPs
@@ -30,10 +35,11 @@ P10 <- function(MSEobj=NULL) {
 class(P10) <- "PM"
 
 
+
 #' Performance Metric: Probability B > 0.5 BMSY
 #'
 #' @param MSEobj An object of class MSE
-#'
+#' @param Ref Reference Point for biomass (fraction of BMSY)
 #' @return An object of class PMobj
 #' @export
 #'
@@ -41,28 +47,15 @@ class(P10) <- "PM"
 #' \dontrun{
 #' P50(myMSE)
 #' }
-P50 <- function(MSEobj=NULL) {
-  if (class(MSEobj)!='MSE') stop('Require object of class MSE')
-  PMobj <- new("PMobj")
-  PMobj@name <- "Probability Spawning Biomass above 50% BMSY" 
-  PMobj@caption <- 'Prob. SB > 0.5 SBMSY'
-  
-  y.st <- 1 
-  y.end <- MSEobj@proyears
-  
-  PMobj@Stat <- MSEobj@B_BMSY[,,y.st:y.end] # Performance Metric statistic of interest - here B/BMSY 
-  PMobj@Prob <- calcProb(PMobj@Stat > 0.5, MSEobj) # calculate probability Stat > 0.5 nsim by nMP
-  
-  PMobj@Mean <- calcMean(PMobj@Prob, MSEobj) # calculate mean probability by MP
-  PMobj@MPs <- MSEobj@MPs
-  PMobj
-}
+P50 <- P10
+formals(P50)$Ref <- 0.5
 class(P50) <- "PM"
+
 
 #' Performance Metric: Probability B > BMSY
 #'
 #' @param MSEobj An object of class MSE
-#'
+#' @param Ref Reference Point for biomass (fraction of BMSY)
 #' @return An object of class PMobj
 #' @export
 #'
@@ -70,28 +63,17 @@ class(P50) <- "PM"
 #' \dontrun{
 #' P100(myMSE)
 #' }
-P100 <- function(MSEobj=NULL) {
-  if (class(MSEobj)!='MSE') stop('Require object of class MSE')
-  PMobj <- new("PMobj")
-  PMobj@name <- "Probability Spawning Biomass > BMSY" 
-  PMobj@caption <- 'Prob. SB > SBMSY'
-  
-  y.st <- 1 
-  y.end <- MSEobj@proyears
-  
-  PMobj@Stat <- MSEobj@B_BMSY[,,y.st:y.end] # Performance Metric statistic of interest - here B/BMSY 
-  PMobj@Prob <- calcProb(PMobj@Stat > 1, MSEobj) # calculate probability Stat > 1 nsim by nMP
-  
-  PMobj@Mean <- calcMean(PMobj@Prob, MSEobj) # calculate mean probability by MP
-  PMobj@MPs <- MSEobj@MPs
-  PMobj
-}
+P100 <- P10 
+formals(P100)$Ref <- 1
 class(P100) <- "PM"
+
+
+
 
 #' Performance Metric: Probability F < FMSY
 #'
 #' @param MSEobj An object of class MSE
-#'
+#' @param Ref Reference Point for fishing mortality (fraction of FMSY)
 #' @return An object of class PMobj
 #' @export
 #'
@@ -99,17 +81,22 @@ class(P100) <- "PM"
 #' \dontrun{
 #' POF(myMSE)
 #' }
-POF <- function(MSEobj=NULL) {
+POF <- function(MSEobj=NULL, Ref=1) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
-  PMobj@name <- "Probability F < FMSY" 
-  PMobj@caption <- 'Prob. F < FMSY'
-  
+  PMobj@Name <- "Fishing Mortality relative to FMSY"
+  if (Ref !=1) {
+    PMobj@Caption <- paste0('Prob. F < ', Ref, ' FMSY')
+  } else {
+    PMobj@Caption <- 'Prob. F < FMSY'
+  }
+
   y.st <- 1 
   y.end <- MSEobj@proyears
   
-  PMobj@Stat <- MSEobj@F_FMSY[,,y.st:y.end] # Performance Metric statistic of interest - here F/FMSY 
-  PMobj@Prob <- calcProb(PMobj@Stat < 1, MSEobj) # calculate probability Stat < 1 nsim by nMP
+  PMobj@Stat <- MSEobj@F_FMSY[,,y.st:y.end] # Performance Metric statistic of interest - here F/FMSY
+  PMobj@Ref <- Ref
+  PMobj@Prob <- calcProb(PMobj@Stat < PMobj@Ref, MSEobj) # calculate probability Stat < 1 nsim by nMP
   
   
   PMobj@Mean <- calcMean(PMobj@Prob, MSEobj) # calculate mean probability by MP
@@ -122,7 +109,7 @@ class(POF) <- "PM"
 #' Performance Metric: Probability Long-Term Yield > 0.5 Relative Yield
 #'
 #' @param MSEobj An object of class MSE
-#'
+#' @param Ref Reference Point for long-term yield (fraction of reference yield)
 #' @return An object of class PMobj
 #' @export
 #'
@@ -130,11 +117,16 @@ class(POF) <- "PM"
 #' \dontrun{
 #' LTY(myMSE)
 #' }
-LTY <- function(MSEobj=NULL) {
+LTY <- function(MSEobj=NULL, Ref=0.5) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
-  PMobj@name <- "Average Long-Term Yield relative to Reference Yield" 
-  PMobj@caption <- 'Prob. LTY > 0.5 Ref. Yield'
+  PMobj@Name <- "Average Long-Term Yield relative to Reference Yield" 
+  if (Ref != 1) {
+    PMobj@Caption <- paste0('Prob. LTY > ', Ref, ' Ref. Yield')
+  } else {
+    PMobj@Caption <- 'Prob. LTY > Ref. Yield'
+  }
+ 
   
   y.st <- max(MSEobj@proyears-9,1) 
   y.end <- MSEobj@proyears # last 10 years
@@ -142,7 +134,8 @@ LTY <- function(MSEobj=NULL) {
   RefYd <- array(MSEobj@OM$RefY, dim=dim(MSEobj@C[,,y.st:y.end]))
   
   PMobj@Stat <- MSEobj@C[,,y.st:y.end]/RefYd
-  PMobj@Prob <- calcProb(PMobj@Stat > 0.5, MSEobj)  # probability LTY > 0.5 Ref Yield
+  PMobj@Ref <- 0.5
+  PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref, MSEobj)  # probability LTY > 0.5 Ref Yield
   
   
   PMobj@Mean <- calcMean(PMobj@Prob, MSEobj) # calculate mean probability by MP
@@ -155,7 +148,7 @@ class(LTY) <- "PM"
 #' Performance Metric: Probability Short-Term Yield > 0.5 Relative Yield
 #'
 #' @param MSEobj An object of class MSE
-#'
+#' @param Ref Reference Point for short-term yield (fraction of reference yield)
 #' @return An object of class PMobj
 #' @export
 #'
@@ -166,8 +159,12 @@ class(LTY) <- "PM"
 STY <- function(MSEobj=NULL) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
-  PMobj@name <- "Average Short-Term Yield relative to Reference Yield" 
-  PMobj@caption <- 'Prob. STY > 0.5 Ref. Yield'
+  PMobj@Name <- "Average Short-Term Yield relative to Reference Yield" 
+  if (Ref != 1) {
+    PMobj@Caption <- paste0('Prob. STY > ', Ref, ' Ref. Yield')
+  } else {
+    PMobj@Caption <- 'Prob. STY > Ref. Yield'
+  }
   
   y.st <- 1
   y.end <- 10 # first 10 years
@@ -187,7 +184,7 @@ class(STY) <- "PM"
 #' Performance Metric: Probability AAVY < 0.2 
 #'
 #' @param MSEobj An object of class MSE
-#'
+#' @param Ref Reference Point for AAVY (fraction)
 #' @return An object of class PMobj
 #' @export
 #'
@@ -195,11 +192,11 @@ class(STY) <- "PM"
 #' \dontrun{
 #' AAVY(myMSE)
 #' }
-AAVY <- function(MSEobj=NULL) {
+AAVY <- function(MSEobj=NULL, Ref=0.2) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
-  PMobj@name <- "Average Annual Variability in Yield" 
-  PMobj@caption <- 'Prob. AAVY < 0.2'
+  PMobj@Name <- "Average Annual Variability in Yield" 
+  PMobj@Caption <- paste0('Prob. AAVY < ', Ref*100, "%")
   
   y1<-1:(MSEobj@proyears-1) # year index
   y2<-2:MSEobj@proyears # 
@@ -211,7 +208,8 @@ AAVY <- function(MSEobj=NULL) {
   }
   
   PMobj@Stat <- AAVY
-  PMobj@Prob <- calcProb(PMobj@Stat < 0.2, MSEobj)  # probability AAVY < 0.2 
+  PMobj@Ref <- Ref
+  PMobj@Prob <- calcProb(PMobj@Stat < Ref, MSEobj)  # probability AAVY < 0.2 
   
   PMobj@Mean <- calcMean(PMobj@Prob, MSEobj) # calculate mean probability by MP
   PMobj@MPs <- MSEobj@MPs
@@ -223,7 +221,7 @@ class(AAVY) <- "PM"
 #' Performance Metric: Average Yield
 #'
 #' @param MSEobj An object of class MSE
-#'
+#' @param Ref Reference Point for yield (fraction of reference yield)
 #' @return An object of class PMobj
 #' @export
 #'
@@ -231,11 +229,11 @@ class(AAVY) <- "PM"
 #' \dontrun{
 #' Yield(myMSE)
 #' }
-Yield <- function(MSEobj=NULL) {
+Yield <- function(MSEobj=NULL, Ref=1) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
-  PMobj@name <- "Yield relative to Reference Yield" 
-  PMobj@caption <- 'Mean Yield'
+  PMobj@Name <- "Yield relative to Reference Yield" 
+  PMobj@Caption <- 'Mean Relative Yield'
   
   y.st <- 1 
   y.end <- MSEobj@proyears 
@@ -243,6 +241,7 @@ Yield <- function(MSEobj=NULL) {
   RefYd <- array(MSEobj@OM$RefY, dim=dim(MSEobj@C[,,y.st:y.end]))
   
   PMobj@Stat <- MSEobj@C[,,y.st:y.end]/RefYd
+  PMobj@Ref <- Ref
   PMobj@Prob <- calcProb(PMobj@Stat, MSEobj) # no probability to calculate
   
   PMobj@Mean <- calcMean(PMobj@Prob, MSEobj) # calculate mean probability by MP
