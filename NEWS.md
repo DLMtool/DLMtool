@@ -2,6 +2,7 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 ## DLMtool 5.1.999 Development Version 
 - update PM methods and add to userguide - in development
+- improve convergence diagnostic in `Converge`
 
 ## DLMtool 5.1.3 
 - fix Replace function for new OM slots
