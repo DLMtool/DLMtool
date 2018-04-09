@@ -21,8 +21,7 @@
 #' @param MSEobj An MSE object of class \code{'MSE'}
 #' @param PMs A list of PM objects
 #' @param maxMP Maximum number of MPs to include in a single plot
-#' @param thresh The convergence threshold (percentage). Maximum average difference in the 
-#' performance metric over the last `ref.it` iterations
+#' @param thresh The convergence threshold. Maximum root mean square deviation over the last `ref.it` iterations
 #' @param ref.it The number of iterations to calculate the convergence statistics. For example,
 #' a value of 20 means convergence diagnostics are calculated over last 20 simulations
 #' @param inc.leg Logical. Should the legend be displayed?
@@ -39,7 +38,7 @@
 #' @author A. Hordyk
 #' @export 
 #' 
-Converge <- function(MSEobj, PMs=list(Yield, P10, AAVY), maxMP=15, thresh=2, ref.it=20,
+Converge <- function(MSEobj, PMs=list(Yield, P10, AAVY), maxMP=15, thresh=0.5, ref.it=20,
                      inc.leg=FALSE, all.its=FALSE, nrow=NULL, ncol=NULL) {
   
   
@@ -90,12 +89,12 @@ Converge <- function(MSEobj, PMs=list(Yield, P10, AAVY), maxMP=15, thresh=2, ref
     plist <- list()
     for (xx in 1:nPMs) {
       PMval <- PMs[[xx]](subMSE)
-      PMName[xx] <- PMval@name
+      PMName[xx] <- PMval@Name
       cum_mean <- apply(PMval@Prob, 2, cumsum)/apply(PMval@Prob, 2, seq_along) * 100
       vals <- as.vector(cum_mean) 
       mp <- rep(subMSE@MPs, each=subMSE@nsim)
       
-      df <- data.frame(it=1:subMSE@nsim, vals, MP=mp, name=PMval@name)
+      df <- data.frame(it=1:subMSE@nsim, vals, MP=mp, name=PMval@Name)
       if (!all.its) df <- subset(df, it %in% (nsim-ref.it+1):nsim)
   
       p <- ggplot2::ggplot(df, ggplot2::aes(x=it, y=vals, color=MP, linetype=MP)) + 
@@ -103,11 +102,11 @@ Converge <- function(MSEobj, PMs=list(Yield, P10, AAVY), maxMP=15, thresh=2, ref
         ggplot2::scale_color_manual(values=getPalette(nMPs)) + 
         ggplot2::geom_line() +
         ggplot2::theme_classic() +
-        ggplot2::labs(x="# Simulations", y=PMval@caption) +
-        ggplot2::ggtitle(PMval@name) +
+        ggplot2::labs(x="# Simulations", y=PMval@Caption) +
+        ggplot2::ggtitle(PMval@Name) +
         ggplot2::geom_vline(xintercept=MSEobj@nsim-ref.it+1, color="darkgray", linetype="dashed") +
         ggplot2::geom_vline(xintercept=MSEobj@nsim, color="darkgray", linetype="dashed") +
-        ggplot2::coord_cartesian(xlim = c(min(df$it), max(df$it) + 0.05*max(df$it))) 
+        ggplot2::coord_cartesian(xlim = c(min(df$it), max(df$it))) 
       if (!inc.leg) p <- p + ggplot2::theme(legend.position = "none")
       
       # check positions & convergence
@@ -162,12 +161,17 @@ Converge <- function(MSEobj, PMs=list(Yield, P10, AAVY), maxMP=15, thresh=2, ref
     } 
   }
 }
-  
+
+
+
+
 Chk <- function(X, MSEobj, thresh, ref.it) {
-  # checks if average difference in last ref.it iterations is greater than thresh
   L <- length(X)
-  Y <- 1:min(MSEobj@nsim, ref.it)
-  return(mean(abs((X[L - Y] - X[L])), na.rm = TRUE) > thresh)
+  Y <- min(MSEobj@nsim, ref.it) + 1 
+  x <- X[(L-Y):L]
+  
+  # root mean square deviation in last ref.it iterations is greater than thresh
+  sqrt((sum((x-mean(x))^2))/(L-1)) > thresh
 }
 
   

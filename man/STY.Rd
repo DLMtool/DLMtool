@@ -8,6 +8,8 @@ STY(MSEobj = NULL)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}
+
+\item{Ref}{Reference Point for short-term yield (fraction of reference yield)}
 }
 \value{
 An object of class PMobj

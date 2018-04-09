@@ -61,15 +61,42 @@ This is a prototype of an automatic report that describes the results of a demon
 
 <br>
 
+
+# Performance table
+
+A generic performance table is produced that provides the probability of stock status in the critical, cautious and healthy zones. Also provided are the probability of overfishing and the yield relative to FMSY fishing. These are provided for the first and last 10 years of the MSE projection in addition to the average annual variability in yield over all projected years and the probability of rebuilding to over BMSY after two mean generation times. 
+
+
+```{r table,echo=F,warning=F,error=F,message=F}
+ tab<-DFO_tab(params$MSEobj)
+ DFO_tab_formatted(tab)
+
+```
+
+* Crit_S is the probability of being in the critical zone in the first 10 projected years
+* Caut_S is the probability of being in the cautious zone in the first 10 projected years
+* Health_S is the probability of being in the healthy zone in the first 10 projected years
+* OvFish_S is the probability of overfishing in the first 10 projected years
+* Yield_S is the mean yield relative to FMSY management over the first 10 projected years
+* Crit is the probability of being in the critical zone in the last 10 projected years
+* Caut is the probability of being in the cautious zone in the last 10 projected years
+* Health is the probability of being in the healthy zone in the last 10 projected years
+* OvFish is the probability of overfishing in the last 10 projected years
+* Yield is the mean yield relative to FMSY management over the last 10 projected years
+* AAVY is the average annual variability in yield over the whole projection phrased as a CV percentage
+* Reb is the probability the stoc
+
+<br>
+
 # Quantile plot
 
 The quantile worm plots show the central 80% probability interval of future projections (blue shaded area) and the mean among all simulations (solid white line). 
 
 Superimposed on each plot are two individual simulations (the solid and dashed blue lines). For each management procedure (panel columns) the biomass relative to BMSY and the yield relative to FMSY yield (Rel. Yd.) are plotted. 
 
-```{r Quantile plot,echo=F,warning=F,error=F,message=F,fig.width=8,fig.height=6}
+```{r Quantile plot,echo=F,warning=F,error=F,message=F,fig.width=8,fig.height=8}
 
- DFO_quant(params$MSEobj,maxcol=4)
+ DFO_quant(params$MSEobj,maxcol=3)
 
 ```
 

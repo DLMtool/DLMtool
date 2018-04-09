@@ -1378,9 +1378,10 @@ NULL
 #' @docType class
 #' @section Objects from the Class: Objects can be created by calls of the form
 #' \code{new('PMobj')} 
-#' @slot name Name of the Performance Metric. Character 
-#' @slot caption A caption to be used in plots. Character, call, or function.
+#' @slot Name Name of the Performance Metric. Character 
+#' @slot Caption A caption to be used in plots. Character, call, or function.
 #' @slot Stat Statistic of interest for the PM. Dimensions: nsim, nMP, yrs. Array 
+#' @slot Ref Reference value to calculate probability for statistic. Numeric.
 #' @slot Prob Probability (mean over years) Dimensions: nsim by MP.  Matrix, numeric or data.frame  
 #' @slot Mean Mean probability (mean over years and simulations). Numeric. Length nMPs 
 #' @slot MPs Name of MPs. Single value. Character string  
@@ -1388,8 +1389,8 @@ NULL
 #' @importFrom methods show
 #' @keywords classes
 
-setClass("PMobj", representation(name = "character",  caption='label.class', 
-                                 Stat='array', Prob='prob.class', Mean='numeric',
+setClass("PMobj", representation(Name = "character",  Caption='label.class', 
+                                 Stat='array', Ref='numeric', Prob='prob.class', Mean='numeric',
                                  MPs="character"))
 
 
@@ -1427,8 +1428,8 @@ show <- function(object) methods::show(object)
 #' @rdname show-MSE
 #' @export
 setMethod("show", signature = (object="PMobj"), function(object) {
-  cat(object@name)
-  cat("\n", object@caption)
+  cat(object@Name)
+  cat("\n", object@Caption)
   cat("\n")
   
   nMP <- length(object@MPs)
