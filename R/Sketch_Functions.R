@@ -1,28 +1,63 @@
+##### ChooseEffort, ChooseM, and ChooseSelect use one help file: Choose.Rd
 
-#' Manually map the historical relative fishing effort trajectory.
+#' Manually map parameters for the historical period of operating model
 #' 
-#' Interactive plot which allows users to specify the relative trajectory and
-#' variability in the historical fishing effort and populates Fleet object.
+#' Interactive plots to specify trends and variability in 
+#' fishing effort, fleet selectivity, and natural mortality for the
+#' operating model.
 #' 
-#' 
-#' @usage ChooseEffort(FleetObj, Years=NULL)
-#' @param FleetObj A fleet object.
+#' @name Choose 
+#' @param Fleet A fleet object.
 #' @param Years An optional vector of years. Should be nyears long.
+#' @param OM An object of class 'OM'
+#' @param type A character string - is M to be mapped by 'age' or 'length'?
+#' @param x Optional vector for x-axis
+#' @param y Optional vector for y-axis
+#' @param Stock Optional Stock object. If provided, average length-at-maturity
+#' is included on plot for reference.
+#' @param FstYr Optional value for first historical year. If empty, user must
+#' specify the year in console.
+#' @param SelYears Optional vector of values for each year where selectivity
+#' pattern changed. If empty, user must specify the years in console (comma
+#' separated).
+#' @details 
+#' \tabular{ll}{
+#' \code{ChooseEffort} \tab Interactive plot which allows users to specify the 
+#' relative trajectory and variability in the historical fishing effort and 
+#' populates Fleet object. \cr
+#' \code{ChooseM} \tab Interactive plot which allows users to specify M by age 
+#' or size class \cr
+#' \code{ChooseSelect} \tab Input the first historical year, and all years where 
+#' selectivity pattern
+#' changed (separated by comma).  Interactive plot which allows users to
+#' specify a range for the length at 5\% and full selection (LFS), as well as
+#' selectivity at maximum length for each year.  Produces a simple plot which
+#' shows the range in selectivity pattern for each break-point year.
+#' Selectivity-at-length is fixed in between break-point years.  Note that this
+#' function replaces 'nyears' in the Fleet object with the value defined here
+#' (FstYr:current year). \cr
+#' }
+#' @return \code{ChooseEffort} and \code{ChooseSelect} return a Fleet object while
+#' \code{ChooseM} returns an OM object.
 #' @author A. Hordyk
+NULL
+
+
+#' @rdname Choose
 #' @export ChooseEffort
-ChooseEffort <- function(FleetObj, Years = NULL) {
-  nyears <- FleetObj@nyears
+ChooseEffort <- function(Fleet, Years = NULL) {
+  nyears <- Fleet@nyears
   runSketch <- SketchFun(nyears, Years)
-  if (!is.null(Years)) FleetObj@nyears <- length(Years)
-  FleetObj@EffYears <- runSketch[, 1]
-  FleetObj@EffLower <- runSketch[, 2]
-  FleetObj@EffUpper <- runSketch[, 3]
-  return(FleetObj)
+  if (!is.null(Years)) Fleet@nyears <- length(Years)
+  Fleet@EffYears <- runSketch[, 1]
+  Fleet@EffLower <- runSketch[, 2]
+  Fleet@EffUpper <- runSketch[, 3]
+  return(Fleet)
 }
 
 #' Manually map the historical relative fishing effort trajectory.
 #' 
-#' Internal function for innteractive plot which allows users to specify the relative trajectory and
+#' Internal function for interactive plot which allows users to specify the relative trajectory and
 #' variability in the historical fishing effort.
 #' 
 #' 
@@ -134,15 +169,7 @@ identifyPch <- function(x, y = NULL, n = length(x), pch = 19, ...) {
 
 
 
-#' Manually map natural mortality at age or size.
-#' 
-#' Interactive plot which allows users to specify M by age or size class
-#' 
-#' @param OM An object of class 'OM'
-#' @param type A character string - is M to be mapped by 'age' or 'length'?
-#' @param x Optional vector for x-axis
-#' @param y Optional vector for y-axis
-#' @author A. Hordyk
+#' @rdname Choose
 #' @export ChooseM
 ChooseM <- function(OM, type=c("age", "length"), x=NULL, y=NULL) {
   
@@ -236,32 +263,7 @@ SketchM <- function(x, y, xlab, ylab) {
 }
 
 
-
-
-
-
-
-
-#' Manually choose the historical selectivity pattern
-#' 
-#' Input the first historical year, and all years where selectivity pattern
-#' changed (separated by comma).  Interactive plot which allows users to
-#' specify a range for the length at 5\% and full selection (LFS), as well as
-#' selectivity at maximum length for each year.  Produces a simple plot which
-#' shows the range in selectivity pattern for each break-point year.
-#' Selectivity-at-length is fixed in between break-point years.  Note that this
-#' function replaces 'nyears' in the Fleet object with the value defined here
-#' (FstYr:current year).
-#' 
-#' @param Fleet A fleet object.
-#' @param Stock Optional Stock object. If provided, average length-at-maturity
-#' is included on plot for reference.
-#' @param FstYr Optional value for first historical year. If empty, user must
-#' specify the year in console.
-#' @param SelYears Optional vector of values for each year where selectivity
-#' pattern changed. If empty, user must specify the years in console (comma
-#' separated).
-#' @author A. Hordyk
+#' @rdname Choose
 #' @importFrom utils flush.console
 #' @export ChooseSelect
 ChooseSelect <- function(Fleet, Stock, FstYr = NULL, SelYears = NULL) {
