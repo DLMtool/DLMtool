@@ -78,18 +78,20 @@ AvC <- function(x, Data, reps = 100) {
 class(AvC) <- "MP"
 
 
-#' Beddington and Kirkwood life-history MP (simple version)
+#' Beddington and Kirkwood life-history MP
 #' 
-#' Sets an OFL according to current abundance and an approximation of Fmax
-#' based on length at first capture.
+#' Family of management procedures that sets the TAC by approximation of FMSY
+#' based on the length at first capture.
 #' 
-#' 
-#' @usage BK(x, Data, reps = 100)
 #' @param x A position in a data-limited methods data object.
 #' @param Data A data-limited methods data object.
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @note This is the simple version of the BK MP. The paper has a more complex
-#' approach that might work better.
+#' @param reps The number of stochastic samples of the TAC recommendation.
+#' @param Fmin The minimum fishing mortality rate that is derived from the
+#' catch-curve (interval censor).
+#' @note The mean length extension was programmed by Gary Nelson as part of his
+#' excellent R package 'fishmethods'
+#' @describeIn BK This is the simple version of the BK MP which requires an estimate
+#' of abundance. The paper has a more complex approach that might work better.
 #' @author T. Carruthers.
 #' @references Beddington, J.R., Kirkwood, G.P., 2005. The estimation of
 #' potential yield and stock status using life history parameters. Philos.
@@ -111,23 +113,8 @@ BK <- function(x, Data, reps = 100) {
 }  # end of BK
 class(BK) <- "MP"
 
-#' Beddington and Kirkwood life-history method combined with catch curve
-#' analysis
-#' 
-#' Calculates an OFL using a catch curve estimate of current F and an
-#' approximation of FMSY based on length at first capture.
-#' 
-#' 
-#' @usage BK_CC(x, Data, reps = 100, Fmin=0.005)
-#' @param x Position in a data-limited methods data object
-#' @param Data A data-limited methods data object (class Data)
-#' @param reps The number of samples of the TAC recommendation
-#' @param Fmin The minimum fishing mortality rate that is derived from the
-#' catch-curve (interval censor)
-#' @author T. Carruthers
-#' @references Beddington, J.R., Kirkwood, G.P., 2005. The estimation of
-#' potential yield and stock status using life history parameters. Philos.
-#' Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.
+#' @describeIn BK Calculates an OFL using an approximation of FMSY based 
+#' on length at first capture and a catch curve estimate of current F.
 #' @export BK_CC
 BK_CC <- function(x, Data, reps = 100, Fmin = 0.005) {
   dependencies = "Data@LFC, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@CAA, Data@Mort"
@@ -156,23 +143,8 @@ BK_CC <- function(x, Data, reps = 100, Fmin = 0.005) {
 }  # end of BK_CC
 class(BK_CC) <- "MP"
 
-#' Beddington and Kirkwood life-history analysis with mean-length estimator of
-#' current abundance
-#' 
-#' Uses an approximation to FMSY based on length at first capture and an
+#' @describeIn BK Uses an approximation to FMSY based on length at first capture and an
 #' estimate of current abundance based on a mean-length estimator.
-#' 
-#' 
-#' @usage BK_ML(x, Data, reps = 100)
-#' @param x Position in a data-limited methods data object
-#' @param Data A data-limited methods data object (class Data)
-#' @param reps The number of samples of the TAC recommendation
-#' @note The mean length extension was programmed by Gary Nelson as part of his
-#' excellent R package 'fishmethods'
-#' @author T. Carruthers
-#' @references Beddington, J.R., Kirkwood, G.P., 2005. The estimation of
-#' potential yield and stock status using life history parameters. Philos.
-#' Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.
 #' @export BK_ML
 BK_ML <- function(x, Data, reps = 100) {
   dependencies = "Data@LFC, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@CAL, Data@Mort"
@@ -202,8 +174,7 @@ class(BK_ML) <- "MP"
 
 #' Constant catch management procedure of Geromont and Butterworth (2014)
 #' 
-#' The TAC is the average catch over last yrsmth years.
-#' 
+#' The TAC is the average catch over the last yrsmth (by default, 5) years. 
 #' This is one of four constant catch rules of Geromont and Butterworth 2014.
 #' 
 #' @param x A position in data-limited methods data object
@@ -212,12 +183,13 @@ class(BK_ML) <- "MP"
 #' @param yrsmth Years over which to calculate mean catches
 #' @param xx Parameter controlling the TAC. Mean catches are multiplied by
 #' (1-xx)
-#' @return A numeric vector of TAC recommendations
+#' @return A Rec object containing a numeric vector of TAC recommendations
 #' @author T. Carruthers
 #' @references Geromont, H.F., Butterworth, D.S. 2014. Generic management
 #' procedures for data-poor fisheries; forecasting with few data. ICES J. Mar.
 #' Sci. doi:10.1093/icesjms/fst232
-#' @export 
+#' @describeIn CC1 The TAC is the average catch over last \code{yrsmth} years.
+#' @export
 CC1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0) {
   dependencies = "Data@Cat, Data@CV_Cat"
   C_dat <- Data@Cat[x, (length(Data@Year) - (yrsmth - 1)):length(Data@Year)]
@@ -229,23 +201,8 @@ CC1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0) {
 class(CC1) <- "MP"
 
 
-#' Constant catch management procedure of Geromont and Butterworth (2014)
-#' 
-#' The TAC is the average catch over last yrsmth years reduced by 30%.
-#' 
-#' This is one of four constant catch MPs of Geromont and Butterworth 2014.
-#' 
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @param yrsmth Years over which to average catches
-#' @param xx Parameter controlling the TAC. Mean catches are multiplied by
-#' (1-xx)
-#' @return A numeric vector of TAC recommendations
-#' @author T. Carruthers
-#' @references Geromont, H.F., Butterworth, D.S. 2014. Generic management
-#' procedures for data-poor fisheries; forecasting with few data. ICES J. Mar.
-#' Sci. doi:10.1093/icesjms/fst232
+
+#' @describeIn CC1 An additional 30\% reduction in catch is taken compared to \code{CC1}.
 #' @export 
 CC4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.3) {
   dependencies = "Data@Cat, Data@CV_Cat"
@@ -263,17 +220,16 @@ class(CC4) <- "MP"
 #' 
 #' Estimates an OFL based on a Stock Reduction analysis fitted to current
 #' age-composition data. Knife-edge vulnerability at age at maturity allows for
-#' an FMSY estimate. OFL=FMSY*F/C
+#' an FMSY estimate. 
 #' 
-#' 
-#' @usage CompSRA(x, Data, reps = 100)
 #' @param x A position in a data-limited methods data object
 #' @param Data A data-limited methods data object
 #' @param reps The number of stochastic samples of the TAC.
 #' @note Given a fixed historical F, What level of depletion gives you this
 #' length composition?
+#' @return A Rec object with a vector of TAC recommendation
+#' @describeIn CompSRA Basic control rule where OFL=FMSY*F/C
 #' @author T. Carruthers
-
 #' @export CompSRA
 CompSRA <- function(x, Data, reps = 100) {
   # optimize for fixed F to get you to current depletion C/Fcur =
@@ -343,21 +299,7 @@ class(CompSRA) <- "MP"
 
 
 
-#' Age-composition-based estimate of current stock depletion given constant Z
-#' linked to an FMSY estimate to provide OFL (with a 40-10 rule)
-#' 
-#' Estimates an OFL based on a Stock Reduction analysis fitted to current
-#' age-composition data. Knife-edge vulnerability at age at maturity allows for
-#' an FMSY estimate. OFL=FMSY*F/C
-#' 
-#' 
-#' @usage CompSRA4010(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC.
-#' @note Given a fixed historical F, What level of depletion gives you this
-#' length composition?
-#' @author T. Carruthers
+#' @describeIn CompSRA With a 40-10 control rule
 #' @export CompSRA4010
 CompSRA4010 <- function(x, Data, reps = 100) {
   # optimize for fixed F to get you to current depletion C/Fcur =
@@ -436,25 +378,12 @@ CompSRA4010 <- function(x, Data, reps = 100) {
 class(CompSRA4010) <- "MP"
 
 
-#' Depletion Adjusted Average Catch
-#' 
-#' Essentially DCAC multiplied by 2*depletion and divided by BMSY/B0 (Bpeak)
-#' 
-#' 
-#' @usage DAAC(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @author W. Harford and T. Carruthers
-#' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
-#' formula for estimating sustainable yields in data-poor situations. ICES J.
-#' Mar. Sci. 66, 2267-2271. Harford W. and Carruthers, T. 2016. Simulation
-#' testing novel catch-based fisheries management. In draft, intended for Fish.
-#' Bull.
+#' @describeIn DCAC Depletion Adjusted Average Catch: essentially DCAC multiplied 
+#' by 2*depletion and divided by BMSY/B0 (Bpeak) (Harford and Carruthers, 2017).
 #' @export DAAC
 DAAC <- function(x, Data, reps = 100) {
   # extended depletion-corrected average catch (Harford and Carruthers
-  # 2015)
+  # 2017)
   dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
   C_tot <- Data@AvC[x] * Data@t[x]
   Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
@@ -479,14 +408,11 @@ class(DAAC) <- "MP"
 #' by back-constructing the stock to match a user specified level of stock
 #' depletion (OFL = M * FMSY/M * depletion* B0).
 #' 
-#' You specify a range of stock depletion and, given historical catches DB-SRA
-#' calculates what unfished biomass must have been to get you here given
-#' samples for M, FMSY relative to M and also BMSY relative to Bunfished.
 #' 
 #' @param x A position in a data-limited methods object.
 #' @param Data A data-limited methods object.
 #' @param reps The number of samples of the TAC (OFL) recommendation.
-#' @return A vector of TAC (OFL) values.
+#' @return A Rec object with a vector of TAC (OFL) values.
 #' @note This is set up to return the OFL (FMSY * current biomass).
 #' 
 #' You may have noticed that you -the user- specify three of the factors that
@@ -498,9 +424,21 @@ class(DAAC) <- "MP"
 #' doesn't have the modification for flatfish life histories that has
 #' previously been applied by Dick and MacCall.
 #' @author T. Carruthers
-#' @references Dick, E.J., MacCall, A.D., 2011. Depletion-Based Stock Reduction
+#' @references  
+#' Dick, E.J., MacCall, A.D., 2010. Estimates of sustainable yield for 50 data-poor 
+#' stocks in the Pacific Coast groundfish fishery management plan. Technical memorandum. 
+#' Southwest fisheries Science Centre, Santa Cruz, CA. National Marine Fisheries Service, 
+#' National Oceanic and Atmospheric Administration of the U.S. Department of Commerce. 
+#' NOAA-TM-NMFS-SWFSC-460.
+#' 
+#' Dick, E.J., MacCall, A.D., 2011. Depletion-Based Stock Reduction
 #' Analysis: A catch-based method for determining sustainable yields for
 #' data-poor fish stocks. Fish. Res. 110, 331-341.
+#'
+#' @describeIn DBSRA Base version. You specify a range of stock depletion and, 
+#' given historical catches DB-SRA calculates what unfished biomass must have 
+#' been to get you here given samples for M, FMSY relative to M and also BMSY 
+#' relative to Bunfished.
 #' @export 
 DBSRA <- function(x, Data, reps = 100) {
   # returns a vector of DBSRA estimates of the TAC for a particular
@@ -562,23 +500,8 @@ DBSRA <- function(x, Data, reps = 100) {
 class(DBSRA) <- "MP"
 
 
-#' Depletion-Based Stock Reduction Analysis assuming 40 per cent stock
-#' depletion
-#' 
-#' DBSRA assuming that current stock depletion is exactly 40 per cent of
-#' unfished stock levels.
-#' 
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @note A 40 percent assumption for current depletion is more or less the most
-#' optimistic state for a stock (ie very close to BMSY/B0 for many stocks).
-#' @author T. Carruthers.
-#' @references Dick, E.J., MacCall, A.D., 2010. Estimates of sustainable yield
-#' for 50 data-poor stocks in the Pacific Coast groundfish fishery management
-#' plan. Technical memorandum. Southwest fisheries Science Centre, Santa Cruz,
-#' CA. National Marine Fisheries Service, National Oceanic and Atmospheric
-#' Administration of the U.S. Department of Commerce. NOAA-TM-NMFS-SWFSC-460.
+#' @describeIn DBSRA Assumes 40 percent current depletion (Bcurrent/B0 = 0.4), which is 
+#' more or less the most optimistic state for a stock (ie very close to BMSY/B0 for many stocks).
 #' @export 
 DBSRA_40 <- function(x, Data, reps = 100) {
   # returns a vector of DBSRA estimates of the TAC for a particular
@@ -644,24 +567,8 @@ class(DBSRA_40) <- "MP"
 
 
 
-#' Depletion-Based Stock Reduction Analysis paired with 40-10 harvest control
-#' rule
-#' 
-#' User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the OFL
-#' by back-constructing the stock to match a user specified level of stock
-#' depletion (OFL = M * FMSY/M * depletion* B0). In this method DBSRA is paried
-#' with the 40-10 rule that throttles back the OFL to zero at 10 percent of
-#' unfished biomass.
-#' 
-#' 
-#' @usage DBSRA4010(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @author T. Carruthers
-#' @references Dick, E.J., MacCall, A.D., 2011. Depletion-Based Stock Reduction
-#' Analysis: A catch-based method for determining sustainable yields for
-#' data-poor fish stocks. Fish. Res. 110, 331-341.
+#' @describeIn DBSRA Base version paired with the 40-10 rule that throttles
+#' back the OFL to zero at 10 percent of unfished biomass.
 #' @export DBSRA4010
 DBSRA4010 <- function(x, Data, reps = 100) {
   # returns a vector of DBSRA estimates of the TAC for a particular
@@ -837,9 +744,13 @@ class(DBSRA4010) <- "MP"
 #' calculating historical average catch. It follows that at stock levels much
 #' below BMSY, DCAC tends to chronically overfish.
 #' @author T. Carruthers
-#' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
+#' @references 
+#' MacCall, A.D., 2009. Depletion-corrected average catch: a simple
 #' formula for estimating sustainable yields in data-poor situations. ICES J.
 #' Mar. Sci. 66, 2267-2271.
+#' 
+#' Harford W. and Carruthers, T. 2017. Interim and long-term performance of 
+#' static and adaptive management procedures. Fish. Res. 190, 84-94.
 #' @export DCAC
 DCAC <- function(x, Data, reps = 100) {
   dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
@@ -859,27 +770,11 @@ DCAC <- function(x, Data, reps = 100) {
 class(DCAC) <- "MP"
 
 
-#' Depletion Corrected Average Catch paired with the 40-10 rule
-#' 
-#' A method of calculating an MSY proxy (FMSY * BMSY and therefore the OFL at
-#' most productive stock size) based on average catches accounting for the
-#' windfall catch that got the stock down to BMSY levels. In this method DCAC
-#' is paired with the 40-10 rule that throttles back the OFL to zero at 10
-#' percent of unfished stock size (the OFL is not subject to downward
-#' adjustment above 40 percent unfished)
-#' 
-#' 
-#' @usage DCAC4010(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @note DCAC can overfish below BMSY levels. The 40-10 harvest control rule
-#' largely resolves this problem providing an MP with surprisingly good
+#' @describeIn DCAC In this method, DCAC is paired with the 40-10 rule that throttles 
+#' back the OFL to zero at 10 percent of unfished stock size (the OFL is not subject to downward
+#' adjustment above 40 percent unfished). DCAC can overfish below BMSY levels. The 40-10 
+#' harvest control rule largely resolves this problem providing an MP with surprisingly good
 #' performance even at low stock levels.
-#' @author T. Carruthers
-#' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
-#' formula for estimating sustainable yields in data-poor situations. ICES J.
-#' Mar. Sci. 66, 2267-2271.
 #' @export DCAC4010
 DCAC4010 <- function(x, Data, reps = 100) {
   dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
@@ -912,22 +807,10 @@ class(DCAC4010) <- "MP"
 
 
 
-#' Depletion Corrected Average Catch assuming 40 per cent stock depletion
-#' 
-#' DCAC assuming that current stock biomass is exactly 40 per cent of unfished
-#' levels.
-#' 
-#' 
-#' @usage DCAC_40(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @note The 40 percent depletion assumption doesn't really affect DCAC that
-#' much as it already makes TAC recommendations that are quite MSY-like.
-#' @author T. Carruthers
-#' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
-#' formula for estimating sustainable yields in data-poor situations. ICES J.
-#' Mar. Sci. 66, 2267-2271.
+#' @describeIn DCAC This variant assumes that current stock biomass is exactly 
+#' 40 per cent of unfished levels. The 40 percent depletion assumption may not 
+#' really affect DCAC that much as it already makes TAC recommendations that are 
+#' quite MSY-like.
 #' @export DCAC_40
 DCAC_40 <- function(x, Data, reps = 100) {
   dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0"
@@ -949,23 +832,9 @@ class(DCAC_40) <- "MP"
 
 
 
-#' Depletion-Based Stock Reduction Analysis using mean-length estimator of
-#' current depletion
-#' 
-#' DCAC that uses the mean length estimator to calculate current stock
-#' depletion.
-#' 
-#' 
-#' @usage DCAC_ML(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @note The mean length extension was programmed by Gary Nelson as part of his
-#' excellent R package 'fishmethods'
-#' @author T. Carruthers
-#' @references MacCall, A.D., 2009. Depletion-corrected average catch: a simple
-#' formula for estimating sustainable yields in data-poor situations. ICES J.
-#' Mar. Sci. 66, 2267-2271.
+#' @describeIn DCAC This variant uses the mean length estimator to calculate current stock
+#' depletion. The mean length extension was programmed by Gary Nelson as part of his
+#' excellent R package 'fishmethods'.
 #' @export DCAC_ML
 DCAC_ML <- function(x, Data, reps = 100) {
   dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0, Data@Year, Data@CAL, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK"
@@ -1003,16 +872,18 @@ DCAC_ML <- function(x, Data, reps = 100) {
 class(DCAC_ML) <- "MP"
 
 
-#' Delay - Difference Stock Assessment with UMSY and MSY leading
+#' Delay - Difference Stock Assessment with UMSY and MSY as leading parameters
 #' 
 #' A simple delay-difference assessment that estimates the TAC using a
-#' time-series of catches and a relative abundance index.
+#' time-series of catches and a relative abundance index. Conditioned on effort.
 #' 
 #' 
 #' @param x A position in a data-limited methods data object
 #' @param Data A data-limited methods data object
 #' @param reps The number of stochastic samples of the TAC recommendation
-#' @return A numeric vector of TAC recommendations
+#' @param LB The lowest permitted factor of previous fishing effort
+#' @param UB The highest permitted factor of previous fishing effort
+#' @return A Rec object of either TAC or effort recommendations
 #' @note This DD model is observation error only and has does not estimate
 #' process error (recruitment deviations). Similar to many other assessment
 #' models it depends on a whole host of dubious assumptions such as temporally
@@ -1024,8 +895,9 @@ class(DCAC_ML) <- "MP"
 #' Carruthers, T, Walters, C.J,, and McAllister, M.K. 2012. Evaluating methods that classify
 #' fisheries stock status using only fisheries catch data. Fisheries Research 119-120:66-79.
 #' 
-#' Hilborn, R., and Walters, C., 1992. Quantitative Fisheries Stock Assessment: Choice,
+#' Hilborn, R., and Walters, C. 1992. Quantitative Fisheries Stock Assessment: Choice,
 #' Dynamics and Uncertainty. Chapman and Hall, New York. 
+#' @describeIn DD Base version where the TAC = UMSY * Current Biomass.
 #' @export 
 DD <- function(x, Data, reps = 100) {
   dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
@@ -1071,26 +943,7 @@ DD <- function(x, Data, reps = 100) {
 class(DD) <- "MP"
 
 
-#' Delay - Difference Stock Assessment with UMSY and MSY leading coupled with a
-#' 40-10 harvest control rule
-#' 
-#' A simple delay-difference assessment that estimates the OFL using a
-#' time-series of catches and a relative abundance index. In this version of
-#' the DD MP a 40-10 rule is imposed over the OFL recommendation.
-#' 
-#' 
-#' @usage DD4010(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @return A numeric vector of TAC recommendations
-#' @author T. Carruthers
-#' @references  
-#' Carruthers, T, Walters, C.J,, and McAllister, M.K. 2012. Evaluating methods that classify
-#' fisheries stock status using only fisheries catch data. Fisheries Research 119-120:66-79.
-#' 
-#' Hilborn, R., and Walters, C., 1992. Quantitative Fisheries Stock Assessment: Choice,
-#' Dynamics and Uncertainty. Chapman and Hall, New York. 
+#' @describeIn DD In this version, a 40-10 rule is imposed over the TAC recommendation.
 #' @export DD4010
 DD4010 <- function(x, Data, reps = 100) {
   dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"

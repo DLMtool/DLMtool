@@ -2,9 +2,12 @@
 % Please edit documentation in R/MPs_Output.R
 \name{CC1}
 \alias{CC1}
+\alias{CC4}
 \title{Constant catch management procedure of Geromont and Butterworth (2014)}
 \usage{
 CC1(x, Data, reps = 100, yrsmth = 5, xx = 0)
+
+CC4(x, Data, reps = 100, yrsmth = 5, xx = 0.3)
 }
 \arguments{
 \item{x}{A position in data-limited methods data object}
@@ -19,14 +22,19 @@ CC1(x, Data, reps = 100, yrsmth = 5, xx = 0)
 (1-xx)}
 }
 \value{
-A numeric vector of TAC recommendations
+A Rec object containing a numeric vector of TAC recommendations
 }
 \description{
-The TAC is the average catch over last yrsmth years.
-}
-\details{
+The TAC is the average catch over the last yrsmth (by default, 5) years.
 This is one of four constant catch rules of Geromont and Butterworth 2014.
 }
+\section{Functions}{
+\itemize{
+\item \code{CC1}: The TAC is the average catch over last \code{yrsmth} years.
+
+\item \code{CC4}: An additional 30\% reduction in catch is taken compared to \code{CC1}.
+}}
+
 \references{
 Geromont, H.F., Butterworth, D.S. 2014. Generic management
 procedures for data-poor fisheries; forecasting with few data. ICES J. Mar.

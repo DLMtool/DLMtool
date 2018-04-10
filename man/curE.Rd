@@ -2,17 +2,19 @@
 % Please edit documentation in R/MPs_Input.R
 \name{curE}
 \alias{curE}
+\alias{curE75}
 \title{Fishing at current effort levels}
 \usage{
 curE(x, Data, ...)
+
+curE75(x, Data, ...)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object.}
 
 \item{Data}{A data-limited methods data object.}
 
-\item{...}{Optional additional arguments that are ignored. Note arguments
-\code{reps} or \code{...} are required for all input controls}
+\item{...}{Optional additional arguments (currently not used).}
 }
 \description{
 Constant fishing effort set at final year of historical simulations subject
@@ -20,6 +22,13 @@ to changes in catchability determined by OM@qinc and interannual variability
 in catchability determined by OM@qcv. This MP is intended to represent a
 'status quo' management approach.
 }
+\section{Functions}{
+\itemize{
+\item \code{curE}: Set effort to 100\% of that in final year of historical simulations.
+
+\item \code{curE75}: Set effort to 75\% of that in final year.
+}}
+
 \note{
 Made up for this package.
 }
