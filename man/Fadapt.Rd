@@ -33,7 +33,9 @@ Tested in Carruthers et al. 2015.
 }
 \references{
 Carruthers et al. 2015. Performance evaluation of simple
-management procedures. Fish and Fisheries. In press.  Maunder. 2014.
+management procedures. ICES J. Mar Sci. 73, 464-482.
+
+Maunder, M. 2014.
 http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf
 }
 \author{
