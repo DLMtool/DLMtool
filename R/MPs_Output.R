@@ -1002,17 +1002,9 @@ class(DD4010) <- "MP"
 
 #' Depletion Corrected Fratio
 #' 
-#' The Fratio MP with a harvest control rule that reduces F according to the
-#' production curve given an estimate of current stock depletion.
-#' 
-#' 
-#' @usage DepF(x, Data, reps = 100)
-#' @param x A position in data-limited methods data object DLM
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @return A numeric vector of TAC recommendations
-#' @author T. Carruthers
-#' @references Made-up for this package.
+#' @describeIn Fratio Depletion Corrected Fratio: the Fratio MP with a harvest control 
+#' rule that reduces F according to the production curve given an estimate of current 
+#' stock depletion (made-up for this package).
 #' @export DepF
 DepF <- function(x, Data, reps = 100) {
   dependencies = "Data@Year, Data@Dep, Data@Mort, Data@FMSY_M, Data@BMSY_B0"
@@ -1061,6 +1053,7 @@ class(DepF) <- "MP"
 #' @return A numeric vector of TAC recommendations
 #' @author T. Carruthers
 #' @references Made-up for this package.
+#' @seealso \link{Fratio}
 #' @export DynF
 DynF <- function(x, Data, yrsmth = 10, gg = 2, reps = 100) {
   
@@ -1335,21 +1328,25 @@ class(Fdem_ML) <- "MP"
 #' 
 #' Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a
 #' current estimate of abundance.
-#' 
-#' A simple method that tends to outperform many other approaches alarmingly
-#' often even when current biomass is relatively poorly known. The low stock
-#' crash potential is largely due to the quite large difference between Fmax
-#' and FMSY for most stocks.
+#'  
 #' @param x A position in a data-limited methods data object
 #' @param Data A data-limited methods data object
 #' @param reps The number of samples of the TAC recommendation
-#' @return A numeric vector of TAC recommendations
+#' @param Fmin Minimum current fishing mortality rate for the catch-curve
+#' analysis
+#' @return A Rec object with TAC recommendations
 #' @author T. Carruthers
 #' @references Gulland, J.A., 1971. The fish resources of the ocean. Fishing
 #' News Books, West Byfleet, UK.
 #' 
 #' Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
 #' and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.
+#' 
+#' @describeIn Fratio A simple method that tends to outperform many other approaches alarmingly
+#' often even when current biomass is relatively poorly known. The low stock
+#' crash potential is largely due to the quite large difference between Fmax
+#' and FMSY for most stocks.
+#' @seealso \link{DynF}
 #' @export Fratio
 Fratio <- function(x, Data, reps = 100) {
   # FMSY / M ratio method e.g. Gulland
@@ -1363,23 +1360,8 @@ Fratio <- function(x, Data, reps = 100) {
 }  # end of Fratio
 class(Fratio) <- "MP"
 
-#' An FMSY/M ratio method paired with the 40-10 rule
-#' 
-#' Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a
-#' current estimate of abundance. In this method DBSRA is paired with the 40-10
+#' @describeIn Fratio Paired with the 40-10
 #' rule that throttles back the OFL to zero at 10 percent of unfished biomass.
-#' 
-#' 
-#' @usage Fratio4010(x, Data, reps = 100)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @author T. Carruthers
-#' @references Gulland, J.A., 1971. The fish resources of the ocean. Fishing
-#' News Books, West Byfleet, UK.
-#' 
-#' Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
-#' and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.
 #' @export Fratio4010
 Fratio4010 <- function(x, Data, reps = 100) {
   # FMSY / M ratio method e.g. Gulland
@@ -1399,25 +1381,7 @@ Fratio4010 <- function(x, Data, reps = 100) {
 }  # end of Fratio
 class(Fratio4010) <- "MP"
 
-#' A data-limited method that uses FMSY/M ratio and a naive catch-curve
-#' estimate of recent Z
-#' 
-#' Calculates the OFL based on a fixed ratio of FMSY to M and a catch curve
-#' estimate of current stock size.
-#' 
-#' 
-#' @usage Fratio_CC(x, Data, reps = 100, Fmin = 0.005)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @param Fmin Minimum current fishing mortality rate for the catch-curve
-#' analysis
-#' @author T. Carruthers
-#' @references Gulland, J.A., 1971. The fish resources of the ocean. Fishing
-#' News Books, West Byfleet, UK.
-#' 
-#' Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
-#' and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.
+#' @describeIn Fratio Pairs with a catch curve estimate of current stock size.
 #' @export Fratio_CC
 Fratio_CC <- function(x, Data, reps = 100, Fmin = 0.005) {
   # FMSY / M ratio method using catch curve analysis to determine current
@@ -1448,24 +1412,8 @@ Fratio_CC <- function(x, Data, reps = 100, Fmin = 0.005) {
 }  # end of Fratio_CC
 class(Fratio_CC) <- "MP"
 
-#' An FMSY/M ratio MP that uses a mean length estimator of recent Z
-#' 
-#' Calculates the OFL based on a fixed ratio of FMSY/M and an estimate of
+#' @describeIn Fratio Pairs with an estimate of
 #' current stock size from a mean-length estimator.
-#' 
-#' 
-#' @usage Fratio_ML(x, Data, reps = 100)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @note The mean length extension was programmed by Gary Nelson as part of his
-#' excellent R package 'fishmethods'
-#' @author T. Carruthers
-#' @references Gulland, J.A., 1971. The fish resources of the ocean. Fishing
-#' News Books, West Byfleet, UK.
-#' 
-#' Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
-#' and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.
 #' @export Fratio_ML
 Fratio_ML <- function(x, Data, reps = 100) {
   dependencies = " Data@FMSY_M, Data@CV_FMSY_M, Data@Mort, Data@CV_Mort, Data@Cat, Data@CV_Cat, Data@CAL"
