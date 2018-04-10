@@ -6,7 +6,7 @@
 \alias{Fratio4010}
 \alias{Fratio_CC}
 \alias{Fratio_ML}
-\title{Depletion Corrected Fratio}
+\title{An FMSY/M ratio method}
 \usage{
 DepF(x, Data, reps = 100)
 
@@ -32,8 +32,6 @@ analysis}
 A Rec object with TAC recommendations
 }
 \description{
-Depletion Corrected Fratio
-
 Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a
 current estimate of abundance.
 }

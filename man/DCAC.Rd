@@ -6,6 +6,7 @@
 \alias{DCAC4010}
 \alias{DCAC_40}
 \alias{DCAC_ML}
+\alias{HDAAC}
 \title{Depletion Corrected Average Catch}
 \usage{
 DAAC(x, Data, reps = 100)
@@ -17,6 +18,8 @@ DCAC4010(x, Data, reps = 100)
 DCAC_40(x, Data, reps = 100)
 
 DCAC_ML(x, Data, reps = 100)
+
+HDAAC(x, Data, reps = 100)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -49,6 +52,10 @@ quite MSY-like.
 \item \code{DCAC_ML}: This variant uses the mean length estimator to calculate current stock
 depletion. The mean length extension was programmed by Gary Nelson as part of his
 excellent R package 'fishmethods'.
+
+\item \code{HDAAC}: Hybrid Depletion Adjusted Average Catch: essentially DCAC
+multiplied by 2*depletion and divided by BMSY/B0 (Bpeak) when below BMSY,
+and DCAC above BMSY (Harford and Carruthers 2017).
 }}
 
 \note{
