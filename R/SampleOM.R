@@ -282,7 +282,8 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       L95array[,XX]<- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,,XX], y=Len_age[x, , nyears], 0.95)))
     }
     L50 <- L50array[,nyears]
-    L50_95 <- L95array[,nyears] - L50array[,nyears]
+    L95 <- L95array[,nyears]
+    L50_95 <- L95 - L50
   } else {
     if (!exists("L50", inherits=FALSE)) {
       sL50 <- array(runif(nsim * 50, Stock@L50[1], Stock@L50[2]), c(nsim, 50))  # length at 50% maturity  
