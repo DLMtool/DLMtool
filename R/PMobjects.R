@@ -1,15 +1,50 @@
+# All performance metric functions share a single help file: PerformanceMetric.Rd
 
-#' Performance Metric: Probability B > 0.1 BMSY
-#'
+#' Performance Metrics
+#' 
+#' Performance metrics (PMs) for your management strategy evaluation.
+#' 
+#' @name PerformanceMetric
 #' @param MSEobj An object of class MSE
-#' @param Ref Reference Point for biomass (fraction of BMSY)
+#' @param Ref Reference point for calculating the performance metric. See details.
+#' @details Performance Metric definitions:
+#' 
+#' \tabular{ll}{
+#' \code{P10} \tab Probability B > 0.1 BMSY \cr
+#' \code{P50} \tab Probability B > 0.5 BMSY \cr
+#' \code{P100} \tab Probability B > BMSY \cr
+#' \code{POF} \tab Probability F < FMSY \cr
+#' \code{LTY} \tab Probability Long-Term Yield > 0.5 Relative Yield \cr
+#' \code{STY} \tab Probability Short-Term Yield > 0.5 Relative Yield \cr
+#' \code{AAVY} \tab Probability AAVY < 0.2 (Average Annual Variability in Yield) \cr
+#' \code{Yield} \tab Average Yield (relative to Reference Yield) \cr
+#' }
+#' 
+#' Argument \code{Ref} provides the ratio relative to the reference point for calculating
+#' the performance metric. For biomass-based PMs (P10, P50, P100), this is the fraction of 
+#' BMSY. For POF, the fraction of FMSY. For Yield (and LTY/STY), the fraction of the 
+#' Reference Yield.
+#' 
+#' Long-Term Yield is the Yield in the last ten years of the projection period in the MSE.
+#' Short-Term Yield is that in the first 10 years of the projection period
 #' @return An object of class PMobj
-#' @export
-#'
 #' @examples 
 #' \dontrun{
 #' P10(myMSE)
+#' P50(myMSE)
+#' P100(myMSE)
+#' POF(myMSE)
+#' LTY(myMSE)
+#' STY(myMSE)
+#' AAVY(myMSE)
+#' Yield(myMSE)
 #' }
+NULL
+
+
+
+#' @rdname PerformanceMetric 
+#' @export
 P10 <- function(MSEobj=NULL, Ref=0.1) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
@@ -36,33 +71,15 @@ class(P10) <- "PM"
 
 
 
-#' Performance Metric: Probability B > 0.5 BMSY
-#'
-#' @param MSEobj An object of class MSE
-#' @param Ref Reference Point for biomass (fraction of BMSY)
-#' @return An object of class PMobj
+#' @rdname PerformanceMetric 
 #' @export
-#'
-#' @examples 
-#' \dontrun{
-#' P50(myMSE)
-#' }
 P50 <- P10
 formals(P50)$Ref <- 0.5
 class(P50) <- "PM"
 
 
-#' Performance Metric: Probability B > BMSY
-#'
-#' @param MSEobj An object of class MSE
-#' @param Ref Reference Point for biomass (fraction of BMSY)
-#' @return An object of class PMobj
+#' @rdname PerformanceMetric 
 #' @export
-#'
-#' @examples 
-#' \dontrun{
-#' P100(myMSE)
-#' }
 P100 <- P10 
 formals(P100)$Ref <- 1
 class(P100) <- "PM"
@@ -70,17 +87,8 @@ class(P100) <- "PM"
 
 
 
-#' Performance Metric: Probability F < FMSY
-#'
-#' @param MSEobj An object of class MSE
-#' @param Ref Reference Point for fishing mortality (fraction of FMSY)
-#' @return An object of class PMobj
+#' @rdname PerformanceMetric 
 #' @export
-#'
-#' @examples 
-#' \dontrun{
-#' POF(myMSE)
-#' }
 POF <- function(MSEobj=NULL, Ref=1) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
@@ -106,17 +114,8 @@ POF <- function(MSEobj=NULL, Ref=1) {
 }
 class(POF) <- "PM"
 
-#' Performance Metric: Probability Long-Term Yield > 0.5 Relative Yield
-#'
-#' @param MSEobj An object of class MSE
-#' @param Ref Reference Point for long-term yield (fraction of reference yield)
-#' @return An object of class PMobj
+#' @rdname PerformanceMetric 
 #' @export
-#'
-#' @examples 
-#' \dontrun{
-#' LTY(myMSE)
-#' }
 LTY <- function(MSEobj=NULL, Ref=0.5) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
@@ -145,17 +144,8 @@ LTY <- function(MSEobj=NULL, Ref=0.5) {
 }
 class(LTY) <- "PM"
 
-#' Performance Metric: Probability Short-Term Yield > 0.5 Relative Yield
-#'
-#' @param MSEobj An object of class MSE
-#' @param Ref Reference Point for short-term yield (fraction of reference yield)
-#' @return An object of class PMobj
+#' @rdname PerformanceMetric 
 #' @export
-#'
-#' @examples 
-#' \dontrun{
-#' STY(myMSE)
-#' }
 STY <- function(MSEobj=NULL) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
@@ -181,17 +171,8 @@ STY <- function(MSEobj=NULL) {
 }
 class(STY) <- "PM"
 
-#' Performance Metric: Probability AAVY < 0.2 
-#'
-#' @param MSEobj An object of class MSE
-#' @param Ref Reference Point for AAVY (fraction)
-#' @return An object of class PMobj
+#' @rdname PerformanceMetric 
 #' @export
-#'
-#' @examples 
-#' \dontrun{
-#' AAVY(myMSE)
-#' }
 AAVY <- function(MSEobj=NULL, Ref=0.2) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
@@ -218,17 +199,8 @@ AAVY <- function(MSEobj=NULL, Ref=0.2) {
 }
 class(AAVY) <- "PM"
 
-#' Performance Metric: Average Yield
-#'
-#' @param MSEobj An object of class MSE
-#' @param Ref Reference Point for yield (fraction of reference yield)
-#' @return An object of class PMobj
+#' @rdname PerformanceMetric 
 #' @export
-#'
-#' @examples 
-#' \dontrun{
-#' Yield(myMSE)
-#' }
 Yield <- function(MSEobj=NULL, Ref=1) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
