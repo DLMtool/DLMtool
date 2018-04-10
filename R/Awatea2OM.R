@@ -20,8 +20,8 @@ Awatea2OM<-function(AwateaDir,nsim=48,proyears=50,Name=NULL,Source="No source pr
 
   load(paste0(AwateaDir,"/",bmcmc_file))
   load(paste0(AwateaDir,"/currentMCMC.rda"))
-  load(paste0(AwateaDir,"/currentMSY.rda"))
-  load(paste0(AwateaDir,"/currentProj.rda"))
+  #load(paste0(AwateaDir,"/currentMSY.rda"))
+  #load(paste0(AwateaDir,"/currentProj.rda"))
   load(paste0(AwateaDir,"/currentRes.rda"))
 
   bmcmc<-Bmcmc[[1]][[1]] # Second tier list is the outputs
