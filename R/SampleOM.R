@@ -309,11 +309,11 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   age95[age95 < 1] <- 1.5  # must be greater than 0 and ageM
   
   if (any(ageM >= maxage-1)) {
-    message("Note: Some samples of age of maturity are above 'maxage'-1. Defaulting to maxage-1")
+    if (Msg) message("Note: Some samples of age of maturity are above 'maxage'-1. Defaulting to maxage-1")
     ageM[ageM >= (maxage-1)] <- maxage - 1 
   }
-  if (any(ageM >= maxage)) {
-    message("Note: Some samples of age of maturity are above 'maxage'. Defaulting to maxage")
+  if (any(age95 >= maxage)) {
+    if (Msg) message("Note: Some samples of age of 95 per cent maturity are above 'maxage'. Defaulting to maxage")
     age95[age95 >= maxage] <- maxage  
   }
   
@@ -628,8 +628,6 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   Selnyears <- length(Fleet@SelYears)
   # are selectivity parameters relative to size at maturity?
   
-  
-  
   chk <- class(Fleet@isRel)
   if (length(Fleet@isRel) < 1) Fleet@isRel <- "true"
   if (chk == "character") {
@@ -667,7 +665,6 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   Fleetout$L5s <- L5s
   Fleetout$LFSs <- LFSs
   Fleetout$Vmaxlens <- Vmaxlens
-  
   
   # == Calculate Selectivity at Length ====
   nCALbins <- length(CAL_binsmid)
@@ -834,6 +831,11 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
       }	 
     }
   } # end of 'if V exists'
+  
+  # Check LFS is greater than L5 
+  chk <- sum(apply(L5 > LFS, 2, prod) != 0)
+  if (chk > 0) stop("L5 is greater than LFS in ", chk, ' simulations')
+  
   
   if (any((dim(V) != c(nsim, maxage, proyears+nyears)))) 
     stop("V must have dimensions: nsim (", nsim,") maxage (", maxage, 

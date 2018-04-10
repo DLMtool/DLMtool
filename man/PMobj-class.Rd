@@ -10,11 +10,13 @@ Used interally
 \section{Slots}{
 
 \describe{
-\item{\code{name}}{Name of the Performance Metric. Character}
+\item{\code{Name}}{Name of the Performance Metric. Character}
 
-\item{\code{caption}}{A caption to be used in plots. Character, call, or function.}
+\item{\code{Caption}}{A caption to be used in plots. Character, call, or function.}
 
 \item{\code{Stat}}{Statistic of interest for the PM. Dimensions: nsim, nMP, yrs. Array}
+
+\item{\code{Ref}}{Reference value to calculate probability for statistic. Numeric.}
 
 \item{\code{Prob}}{Probability (mean over years) Dimensions: nsim by MP.  Matrix, numeric or data.frame}
 

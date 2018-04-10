@@ -4,10 +4,12 @@
 \alias{P10}
 \title{Performance Metric: Probability B > 0.1 BMSY}
 \usage{
-P10(MSEobj = NULL)
+P10(MSEobj = NULL, Ref = 0.1)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}
+
+\item{Ref}{Reference Point for biomass (fraction of BMSY)}
 }
 \value{
 An object of class PMobj

@@ -4,7 +4,7 @@
 \alias{Converge}
 \title{Check Convergence}
 \usage{
-Converge(MSEobj, PMs = list(Yield, P10, AAVY), maxMP = 15, thresh = 2,
+Converge(MSEobj, PMs = list(Yield, P10, AAVY), maxMP = 15, thresh = 0.5,
   ref.it = 20, inc.leg = FALSE, all.its = FALSE, nrow = NULL,
   ncol = NULL)
 }
@@ -15,8 +15,7 @@ Converge(MSEobj, PMs = list(Yield, P10, AAVY), maxMP = 15, thresh = 2,
 
 \item{maxMP}{Maximum number of MPs to include in a single plot}
 
-\item{thresh}{The convergence threshold (percentage). Maximum average difference in the
-performance metric over the last \code{ref.it} iterations}
+\item{thresh}{The convergence threshold. Maximum root mean square deviation over the last \code{ref.it} iterations}
 
 \item{ref.it}{The number of iterations to calculate the convergence statistics. For example,
 a value of 20 means convergence diagnostics are calculated over last 20 simulations}

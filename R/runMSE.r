@@ -1048,9 +1048,13 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         Recobs <- Recerr[, nyears + yind] * apply(array(N_P[, 1, yind, ], c(nsim, interval, nareas)), c(1, 2), sum)
        
         CAA <- array(0, dim = c(nsim, interval, maxage))  # Catch  at age array
+        
         # # a multinomial observation model for catch-at-age data
         for (i in 1:nsim) {
           for (j in 1:interval) {
+            if (all(CNtemp[i, , j]<1)) { # this is a fix for low sample sizes. If CAA is zero across the board a single fish is caught in age class of model selectivity (dumb I know)
+              CNtemp[i, floor(maxage/3), j] <- 1
+            }
             CAA[i, j, ] <- ceiling(-0.5 + rmultinom(1, CAA_ESS[i], CNtemp[i, , j]) * CAA_nsamp[i]/CAA_ESS[i])   # a multinomial observation model for catch-at-age data
           }
         }	  

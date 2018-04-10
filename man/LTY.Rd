@@ -4,10 +4,12 @@
 \alias{LTY}
 \title{Performance Metric: Probability Long-Term Yield > 0.5 Relative Yield}
 \usage{
-LTY(MSEobj = NULL)
+LTY(MSEobj = NULL, Ref = 0.5)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}
+
+\item{Ref}{Reference Point for long-term yield (fraction of reference yield)}
 }
 \value{
 An object of class PMobj

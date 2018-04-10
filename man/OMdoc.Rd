@@ -6,7 +6,7 @@
 \usage{
 OMdoc(OM = NULL, rmd.source = NULL, overwrite = FALSE, out.file = NULL,
   inc.plot = TRUE, render = TRUE, output = "html_document",
-  openFile = TRUE, quiet = FALSE, dir = NULL)
+  openFile = TRUE, quiet = FALSE, dir = NULL, ...)
 }
 \arguments{
 \item{OM}{An object of class 'OM' or the name of an OM xlsx file}
@@ -31,6 +31,8 @@ but may require additional software and have some formatting issues.}
 \item{quiet}{TRUE to supress printing of the pandoc command line.}
 
 \item{dir}{Optional file path to read the xlsx and rmd files. Default is \code{getwd()}}
+
+\item{...}{Optional additional named arguments provided to \code{runMSE}}
 }
 \value{
 Creates a Rmarkdown file and compiles a HTML report file in the working directory.
