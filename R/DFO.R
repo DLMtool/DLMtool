@@ -57,23 +57,31 @@ DFO_hist <- function(OM, panel= T,nsim=48) {
 #' @importFrom graphics arrows contour
 #' @importFrom grDevices dev.off jpeg
 #' @importFrom stats acf
-DFO_proj <- function(MSEobj,maxplot=3) {
+DFO_proj <- function(MSEobj,maxplot=6) {
   
+  maxplot<-min(maxplot,MSEobj@nMPs)
   nsim<-MSEobj@nsim
   nMPs<-MSEobj@nMPs
   proyears<-MSEobj@proyears
   plotorg<-split(1:nMPs, ceiling(seq_along(1:nMPs)/maxplot))
-  op<-par(mfrow=c(maxplot,2),mai=c(0.7,0.8,0.05,0.1),omi=c(0.01,0.01,0.5,0.01))
+  ncol<-ceiling(maxplot*0.33)
+  nrow<-ceiling(maxplot/ncol)
   
-  for(i in 1:nMPs){
-  
-    DFO_Kobe(Br=MSEobj@B_BMSY[,i,proyears],Fr=MSEobj@F_FMSY[,i,proyears])
-    legend('top',MSEobj@MPs[i],text.font=2,bty='n')
-    DFO_Kobe_TS(Brel=MSEobj@B_BMSY[,i,],Frel=MSEobj@F_FMSY[,i,],labs=c("Current","Projection"))
-    legend('top',MSEobj@MPs[i],text.font=2,bty='n')
+  for(j in 1:length(plotorg)){
+    op<-par(mfrow=c(nrow,ncol),mai=c(0.3,0.3,0.05,0.1),omi=c(0.3,0.4,0.4,0.01))
     
-    if(i==max(plotorg[[ceiling(i/maxplot)]]))  mtext(c("Status at end of projection (Projected)",
-                                                       "Projected time series"),3,at=c(0.27,0.77),line=0.8,outer=T,font=2)
+    for(i in plotorg[[1]]){
+    DFO_Kobe(Br=MSEobj@B_BMSY[,i,proyears],Fr=MSEobj@F_FMSY[,i,proyears],xlab="",ylab="")
+    legend('top',MSEobj@MPs[i],text.font=2,bty='n')
+    #DFO_Kobe_TS(Brel=MSEobj@B_BMSY[,i,],Frel=MSEobj@F_FMSY[,i,],labs=c("Current","Projection"))
+    #legend('top',MSEobj@MPs[i],text.font=2,bty='n')
+    
+     
+    
+    }
+    mtext("Conditions at the end of the MSE projection", 3,line=0.8,outer=T,font=2)
+    mtext("B/BMSY",1,line=0.7,outer=T,font=2)
+    mtext("F/FMSY",2,line=0.7,outer=T,font=2)
     
   }
 
@@ -88,32 +96,85 @@ DFO_proj <- function(MSEobj,maxplot=3) {
 #' http://www.dfo-mpo.gc.ca/reports-rapports/regs/sff-cpd/precaution-eng.htm
 #'
 #' @param MSEobj An MSE object of class MSE produced by DLMtool function runMSE
+#' @param zero_origin Logical: should plots have a zero-zero origin?
 #' @author T. Carruthers
 #' @export DFO_plot
-DFO_plot<-function(MSEobj){
+DFO_plot<-function(MSEobj,zero_origin=T){
  
-  par(mai=c(1,1,0.02,0.02))
+  op<-par(mai=c(1,1,0.02,0.02))
   yend <- max(MSEobj@proyears - 4, 1):MSEobj@proyears
   POF<-apply(MSEobj@F_FMSY[,,yend],2,mean,na.rm=T)
   
   POFed<-apply(MSEobj@B_BMSY[,,yend] ,2,mean, na.rm = T)
   
+  ylim<-range(POF)
+  xlim<-range(POFed)
+  if(zero_origin)ylim[1]<-xlim[1]<-0
   col<-makeTransparent(c("red","dark green","blue","orange","black"),99)
-  plot(POFed,POF,col="white",xlab="",ylab="",main="",axes=F)
+  plot(POFed,POF,xlim=xlim,ylim=ylim,col="white",xlab="",ylab="",main="",axes=F)
 
   add_zones(textpos=quantile(POF,0.95))
-  xs<-pretty(seq(min(POFed),max(POFed),length.out=8))
-  ys<-pretty(seq(min(POF),max(POF),length.out=8))
+  xs<-pretty(seq(xlim[1],xlim[2],length.out=8))
+  ys<-pretty(seq(ylim[1],ylim[2],length.out=8))
   axis(1,xs,xs)
   axis(2,ys,ys)
   text(POFed,POF,MSEobj@MPs,col=col,font=2,cex=0.9)
   
   mtext("B/BMSY",1,line=2.5)
   mtext("F/FMSY",2,line=2.5)
+  on.exit(par(op))
   
 }
 
-
+#' Deparment of Fisheries and Oceans stock status bar plot
+#'
+#' A plot of biomass relative to BMSY over projected years
+#'
+#' @param MSEobj An MSE object of class MSE produced by DLMtool function runMSE
+#' @param yres Integer: the year interval over which to calculate B/BMSY in future years
+#' @author T. Carruthers
+#' @export DFO_bar
+DFO_bar<-function(MSEobj,yres=10){
+  
+  sections<-(0:floor(MSEobj@proyears/yres))*yres
+  nsec<-length(sections)-1
+  op<-par(mfrow=c(nsec,1),mai=c(0.05,0.7,0.02,0.02),omi=c(0.6,0.35,0.01,0.01))
+  nsim<-MSEobj@nsim
+  nMPs<-MSEobj@nMPs
+  POF<-array(NA,c(nMPs,5,nsec))
+  
+  for(i in 1:nsec){
+    yind <- (sections[i]+1):sections[i+1]
+    POF[,,i]<-t(apply(MSEobj@B_BMSY[,,yind] ,2,quantile,p=c(0.05,0.25,0.5,0.75,0.95), na.rm = T))
+  }
+ 
+  xlim<-c(0,min(2.5,max(POF)))
+  xs<-pretty(seq(xlim[1],xlim[2],length.out=8))
+  
+  barpos<-seq(0,0.98,length.out=nMPs+2)[2:(nMPs+1)]
+  
+  for(i in 1:nsec){
+    
+    plot(xlim,c(0,1),col='white',axes=F,main="",xlab="",ylab="")
+    add_zones_bar()
+    legend('top',paste0("Projection years ",sections[i]+1,"-",sections[i+1]),bty='n')
+    points(POF[,3,i],barpos,pch=19,cex=1.5)
+    
+    for(MP in 1:nMPs){
+      lines(POF[MP,c(2,4),i],rep(barpos[MP],2),lwd=3)
+      lines(POF[MP,c(1,5),i],rep(barpos[MP],2))
+    }
+    
+    axis(2,MSEobj@MPs,at=barpos,las=2,tick=F)
+    if(i==nsec)axis(1,xs,xs)
+    if(i<nsec)axis(1,xs,rep("",length(xs)))
+    
+  }
+  
+  mtext("B/BMSY",1,line=2.5,outer=T)
+  mtext("Management Procedure",2,line=0.2,outer=T)
+  on.exit(par(op))
+}
 
 DFO_Kobe_TS<-function(Brel,Frel,labs=c("Unfished","Current")){
   
@@ -169,7 +230,10 @@ DFO_Kobe_TS<-function(Brel,Frel,labs=c("Unfished","Current")){
 }
 
 
-DFO_Kobe<-function(Br,Fr){
+DFO_Kobe<-function(Br,Fr,xlab=NA,ylab=NA){
+  
+  if(is.na(xlab))xlab="B/BMSY"
+  if(is.na(ylab))ylab="F/FMSY"
   
   Brange<-c(0,quantile(Br,0.99))
   Frange<-c(0,quantile(Fr,0.99))
@@ -185,8 +249,8 @@ DFO_Kobe<-function(Br,Fr){
   axis(1,xp,xp)
   axis(2,yp,yp)
   
-  mtext("B/BMSY",1,line=2.5)
-  mtext("F/FMSY",2,line=2.5)
+  mtext(xlab,1,line=2.5)
+  mtext(ylab,2,line=2.5)
   
   pointcol<-makeTransparent('black',80)
   linecol<-"black"#makeTransparent('black',95)
@@ -216,10 +280,40 @@ DFO_Kobe<-function(Br,Fr){
 }
 
 
+add_zones_bar<-function(){
+  
+  cols<-c("grey86","grey94","white",
+          "grey84","grey92","grey97")
+  
+  polygon(c(-0,0.4,0.4,0),c(0,0,1,1),col=cols[1],border=cols[1])
+  polygon(c(0.4,0.8,0.8,0.4),c(0,0,1,1),col=cols[2],border=cols[2])
+  polygon(c(0.8,1000,1000,0.8),c(0,0,1,1),col=cols[3],border=cols[3])
+  
+  text(0.2,0.5,"Critical",col="white",font=2,srt=270,cex=1.1)
+  text(0.6,0.5,"Cautious",col="grey73",font=2,srt=270,cex=1.1)
+  text(1.1,0.5,"Healthy",col="grey73",font=2,srt=270,cex=1.1)
+  
+}
+
+add_zones_bar_horiz<-function(textpos=0.2){
+  
+  cols<-c("grey86","grey94","white",
+          "grey84","grey92","grey97")
+  
+  polygon(c(0,0,10E10,10E10),c(0,0.4,0.4,0),,col=cols[1],border=cols[1])
+  polygon(c(0,0,10E10,10E10),c(0.4,0.8,0.8,0.4),col=cols[2],border=cols[2])
+  polygon(c(0,0,10E10,10E10),c(0.8,1000,1000,0.8),,col=cols[3],border=cols[3])
+  
+  text(textpos,0.1,"Critical",col="white",font=2,cex=1.1)
+  text(textpos,0.6,"Cautious",col="grey73",font=2,cex=1.1)
+  text(textpos,1.1,"Healthy",col="grey73",font=2,cex=1.1)
+  
+}
+
 add_zones<-function(textpos){
 
-  cols<-c("grey86","grey96","white",
-          "grey84","grey94","grey97")
+  cols<-c("grey86","grey94","white",
+          "grey84","grey92","grey97")
   
   polygon(c(-0,0.4,0.4,0),c(0,0,1,1),col=cols[1],border=cols[1])
   polygon(c(0.4,0.8,0.8,0.4),c(0,0,1,1),col=cols[2],border=cols[2])
@@ -367,6 +461,86 @@ DFO_plot2 <- function(MSEobj, nam = NA,panel = T,Bcut=50, Ycut=50) {
   on.exit(par(op))
 
 }
+
+
+#' Deparment of Fisheries and Oceans biomass quantile plot
+#'
+#' A plot of biomass relative to BMSY quantiles over projected years 
+#'
+#' @param MSEobj An MSE object of class MSE produced by DLMtool function runMSE
+#' @param maxcol Integer how many columns for panel plots?
+#' @param qcol A color, the quantile coloration
+#' @param lcol A color, the mean B/BMSY line
+#' @param curyr The current calendar year
+#' @param quants A vector 2 long for the quantiles e.g. 0.1 and 0.9 for the 10th and 90th quantiles
+#' @param addline Should two individual example simulations be added to the plot?
+#' @author T. Carruthers
+#' @export DFO_quant
+DFO_quant<-function(MSEobj,maxcol=6,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",curyr=2018,quants=c(0.1,0.9),addline=T){
+  
+  if(is.na(maxcol))maxcol=ceiling(length(MSEobj@MPs)/0.5) # defaults to portrait 1:2
+  MPs<-MSEobj@MPs
+  nMPs<-length(MPs)
+  yrs<-curyr+(1:MSEobj@proyears)
+  
+  plots<-split(1:nMPs, ceiling(seq_along(1:nMPs)/maxcol))
+  
+  nr<-length(plots)*2
+  nc<-maxcol
+  
+  mat<-array(0,c(nc,nr*1.5))
+  ind<-floor(0.5+(1:nr)*1.5)
+  mat[,ind]<-1:(nr*nc)
+  mat<-t(mat)
+  ht<-rep(0.2,nr*1.5)
+  ht[ind]<-1
+  layout(mat,heights=ht)
+  op<-par(mai=c(0.3,0.25,0.01,0.01),omi=c(0.5,0.6,0.05,0.05))
+  
+  B_BMSY<-MSEobj@B_BMSY
+  Yd<-MSEobj@C/ MSEobj@OM$RefY
+  
+  Blims <- c(0,quantile(B_BMSY,0.95))
+  Ylims<- c(0,quantile(Yd,0.95))
+  
+  plotquant<-function(x,p=c(0.1,0.9),yrs,qcol,lcol,addline=T){
+    ny<-length(yrs)
+    qs<-apply(x,2,quantile,p=p)
+    polygon(c(yrs,yrs[ny:1]),c(qs[1,],qs[2,ny:1]),border=NA,col=qcol)
+    
+    if(addline)for(i in 1:2)lines(yrs,x[i,],col=lcol,lty=i)
+    lines(yrs,apply(x,2,quantile,p=0.5),lwd=2,col="white")
+  }
+  
+  for(pp in 1:length(plots)){
+    
+    toplot<-unlist(plots[pp])
+    nt<-length(toplot)
+    
+    for(i in toplot){
+      plot(range(yrs),Blims,col="white")
+      add_zones_bar_horiz(textpos=curyr+0.3*MSEobj@proyears)
+      axis(2)
+      plotquant(B_BMSY[,i,],p=quants,yrs,qcol,lcol)
+      mtext(MSEobj@MPs[i],3,line=0.2,font=2)
+      if(i==toplot[1])mtext("B/BMSY",2,line=2.5)
+    }
+    if(nt<maxcol)for(i in 1:(maxcol-nt))plot(NULL, xlim=c(0,1), ylim=c(0,1), ylab="y label", xlab="x lablel",axes=F)
+    
+    for(i in toplot){
+      plot(range(yrs),Ylims,col="white")
+      plotquant(Yd[,i,],p=quants,yrs,qcol,lcol)
+      if(i==toplot[1])mtext("Rel. Yd.",2,line=2.3)
+    }
+    if(nt<maxcol)for(i in 1:(maxcol-nt))plot(NULL, xlim=c(0,1), ylim=c(0,1), ylab="y label", xlab="x lablel",axes=F)
+    
+  }
+  
+  mtext("Projection Year",1,line=0.7,outer=T)
+  on.exit(par(op))
+}
+
+
 
 #' COSEWIC forward projection plot
 #'
@@ -524,3 +698,197 @@ SubCpars<-function(OM,sims){
   OM
   
 }
+
+
+# =================== Reports =========================================================
+
+#' Create a standard DFO MSE report 
+#'
+#' Provides performacne plots typical in the assessment of Canadian fish stocks.  
+#'
+#' @param MSEobj An object of class MSE
+#' @param output_file The directory and filename you wish to use for the report e.g. "C:/temp/myMSEreport.html"
+#' @param author The person who made this report
+#' @param title The title of the report
+#' @author T. Carruthers
+#' @export DFO_report
+DFO_report<-function(MSEobj,output_file=NA,author="Author not specified",title=NA){
+  
+  if(is.na(output_file))output_file=paste0(getwd(),"/DFO MSE report.html")
+  if(is.na(title))title=paste0("DFO Generic MSE Report for",MSEobj@Name)
+  params<-new('list')
+  params$title<-title
+  params$subtitle<-"A prototype MSE performance evaluation"
+  params$author<-author
+  params$MSEobj<-MSEobj
+  rmarkdown::render(input=system.file("DFO_generic.Rmd", package="DLMtool"), output_file=output_file,params=params)
+  
+}
+
+
+#' Create a standard DFO performance table 
+#'
+#' P_Cr_S is the probability of being in the critical zone in the first 10 projected years
+#' P_Ct_S is the probability of being in the cautious zone in the first 10 projected years
+#' P_H_S is the probability of being in the healthy zone in the first 10 projected years
+#' POF_S is the probability of overfishing in the first 10 projected years
+#' STY is the mean yield relative to FMSY management over the first 10 projected years
+#' P_Cr_L is the probability of being in the critical zone in the last 10 projected years
+#' P_Ct_L is the probability of being in the cautious zone in the last 10 projected years
+#' P_H_L is the probability of being in the healthy zone in the last 10 projected years
+#' POF_L is the probability of overfishing in the last 10 projected years
+#' LTY is the mean yield relative to FMSY management over the last 10 projected years
+#' AAVY is the average annual variability in yield over the whole projection phrased as a CV percentage
+#' P_Reb is the probability the stock has rebuilt to over BMSY in 2 mean generation times
+#'
+#' @param MSEobj An object of class MSE
+#' @param rnd The number of significant figures for rounding. 
+#' @author T. Carruthers
+#' @export DFO_tab
+DFO_tab<-function(MSEobj,rnd=0){
+  
+  shortterm<-1:min(10,MSEobj@proyears)
+  P_Cr_S<-round(apply(MSEobj@B_BMSY[,,shortterm]<0.4,2,mean)*100,rnd)
+  P_Ct_S<-round(apply(MSEobj@B_BMSY[,,shortterm]>0.4 & MSEobj@B_BMSY[,,shortterm]<0.8,2,mean)*100,rnd)
+  P_H_S<-round(apply(MSEobj@B_BMSY[,,shortterm]>0.8,2,mean)*100,rnd)
+  
+  longterm<-max(1,MSEobj@proyears-10):MSEobj@proyears
+  P_Cr_L<-round(apply(MSEobj@B_BMSY[,,longterm]<0.4,2,mean)*100,rnd)
+  P_Ct_L<-round(apply(MSEobj@B_BMSY[,,longterm]>0.4 & MSEobj@B_BMSY[,,longterm]<0.8 ,2,mean)*100,rnd)
+  P_H_L<-round(apply(MSEobj@B_BMSY[,,longterm]>0.8,2,mean)*100,rnd)
+  
+  refY<-MSEobj@OM$RefY
+  STY<-round(apply(MSEobj@C[,,shortterm]/refY,2,mean)*100,rnd)
+  LTY<-round(apply(MSEobj@C[,,longterm]/refY,2,mean)*100,rnd)
+  
+  POF_S<-round(apply(MSEobj@F_FMSY[,,shortterm]>1,2,mean)*100,rnd)
+  POF_L<-round(apply(MSEobj@F_FMSY[,,longterm]>1,2,mean)*100,rnd)
+  
+  MGT2<-ceiling(MSEobj@OM$MGT*2)
+  MGT2[MGT2<3]=3
+  Bind<-cbind(as.matrix(expand.grid(1:MSEobj@nsim,1:MSEobj@nMPs)),rep(MGT2,MSEobj@nMPs))
+  Bmat<-array(MSEobj@B_BMSY[Bind],c(MSEobj@nsim,MSEobj@nMPs))
+  P_Reb<-round(apply(Bmat>1,2,mean)*100,rnd)
+  
+  y1 <- 1:(MSEobj@proyears - 1)
+  y2 <- 2:MSEobj@proyears
+  AAVY <- round(apply((((MSEobj@C[, , y1] - MSEobj@C[, , y2])/MSEobj@C[, , y2])^2)^0.5, 2, mean, na.rm = T)*100,rnd)
+  
+  MP<-MSEobj@MPs
+  
+  tab<-data.frame(MP,P_Cr_S, P_Ct_S, P_H_S, POF_S, STY, P_Cr_L, P_Ct_L, P_H_L, POF_L, LTY, AAVY, P_Reb)
+  
+  tab<-tab[order(tab$LTY,decreasing=T),]
+  tab
+  
+}
+
+#' A formatted version of the standard DFO performance plot, color coded by thresholds
+#'
+#' Crit_S is the probability of being in the critical zone in the first 10 projected years
+#' Caut_S is the probability of being in the cautious zone in the first 10 projected years
+#' Health_S is the probability of being in the healthy zone in the first 10 projected years
+#' OvFish_S is the probability of overfishing in the first 10 projected years
+#' Yield_S is the mean yield relative to FMSY management over the first 10 projected years
+#' Crit is the probability of being in the critical zone in the last 10 projected years
+#' Caut is the probability of being in the cautious zone in the last 10 projected years
+#' Health is the probability of being in the healthy zone in the last 10 projected years
+#' OvFish is the probability of overfishing in the last 10 projected years
+#' Yield is the mean yield relative to FMSY management over the last 10 projected years
+#' AAVY is the average annual variability in yield over the whole projection phrased as a CV percentage
+#' Reb is the probability the stock has rebuilt to over BMSY in 2 mean generation times
+#'
+#' @param Ptab1 A DFO performance table made by DFO_tab()
+#' @param thresh A vector of thresholds for each column Health, Yield and Reb are 'greater than threshold' conditions 
+#' @author T. Carruthers
+#' @export DFO_tab_formatted
+DFO_tab_formatted<-function(Ptab1,thresh=c(10,     40,     50,    50,    50,  10,     40,     50,    50,    50,  20,   50)){
+  #                                       P_Cr_S, P_Ct_S, P_H_S, POF_S, STY, P_Cr_L, P_Ct_L, P_H_L, POF_L, LTY, AAVY, P_Reb
+  
+  # save(Ptab1,file="Ptab1")
+  MPs<-as.character(Ptab1$MP)
+  Data <- DLMtool::SimulatedData
+  runMPs <- applyMP(Data, MPs, reps = 2, nsims=1, silent=TRUE)
+  recs <- runMPs[[1]]
+  type <- matrix(0, nrow=length(MPs),ncol=4) # TAC TAE SL MPA
+  for (mm in seq_along(recs)) {
+    type[mm,1] <- as.integer(length(recs[[mm]]$TAC) > 0)
+    type[mm,2] <- as.integer(length(recs[[mm]]$Effort)>0)
+    type[mm,3] <- as.integer(length(recs[[mm]]$LR5)>0)
+    type[mm,4] <- as.integer(!is.na(recs[[mm]]$Spatial[1,1]))
+  }
+  totneeded<-apply(type,1,sum)
+  
+  MP_Type<-rep("TAC",length(MPs))
+  MP_Type[type[,2]==1]<-"TAE"
+  MP_Type[type[,3]==1]<-"SzLim"
+  MP_Type[type[,4]==1]<-"MPA"
+  MP_Type[totneeded>1]<-"Mixed"
+  
+  Ptab2<-Ptab1 #[,1:ncol(Ptab1)]
+  Ptab2<-cbind(Ptab2[,1],MP_Type,Ptab2[,2:ncol(Ptab2)])
+  names(Ptab2)<-c("MP","MP_Type","Crit_S","Caut_S","Health_S","OvFish_S","Yield_S","Crit","Caut","Health","OvFish","Yield","AAVY","Reb")
+  
+  #       P_Cr_S,               P_Ct_S,                 P_H_S,                 POF_S,                  STY,  AAVY, P_Reb
+  PIsmet<-Ptab2[,3]<thresh[1] & Ptab2[,4] < thresh[2] & Ptab2[,5] >thresh[3] & Ptab2[,6] < thresh[4] & Ptab2[,7] > thresh[5] &
+          Ptab2[,8]<thresh[6] & Ptab2[,9] < thresh[7] & Ptab2[,10]>thresh[8] & Ptab2[,11] < thresh[9]& Ptab2[,12]> thresh[10] &
+          Ptab2[,13]< thresh[11] & Ptab2[,14] > thresh[12]
+  MPcols<-rep('green',length(MPs))
+  MPcols[!PIsmet]<-'red'
+ 
+  # Rankings
+  ord<-order(Ptab2$Yield,decreasing = T)
+  Ptab2<-Ptab2[ord,]
+  MPcols<-MPcols[ord]
+  
+  Ptab2 %>%
+    mutate(
+      #MP = row.names(.),
+      MP =  cell_spec(MP, "html", color = MPcols, bold = T),
+      MP_Type =  cell_spec(MP_Type, "html", bold = T),
+      Crit_S = ifelse(Crit_S < thresh[1],
+                      cell_spec(Crit_S, "html", color = "green",italic = T),
+                      cell_spec(Crit_S, "html", color = "red", italic = T)),
+      Caut_S = ifelse(Caut_S < thresh[2],
+                      cell_spec(Caut_S, "html", color = "green", italic = T),
+                      cell_spec(Caut_S, "html", color = "red", italic = T)),
+      Health_S = ifelse(Health_S >= thresh[3],
+                     cell_spec(Health_S, "html", color = "green", italic = T),
+                     cell_spec(Health_S, "html", color = "red", italic = T)),
+      OvFish_S = ifelse(OvFish_S < thresh[4],
+                       cell_spec(OvFish_S, "html", color = "green", italic = T),
+                       cell_spec(OvFish_S, "html", color = "red", italic = T)),
+      Yield_S = ifelse(Yield_S >= thresh[5],
+                      cell_spec(Yield_S, "html", color = "green", italic = T),
+                      cell_spec(Yield_S, "html", color = "red", italic = T)),
+      Crit = ifelse(Crit < thresh[6],
+                      cell_spec(Crit, "html", color = "green", italic = T),
+                      cell_spec(Crit, "html", color = "red", italic = T)),
+      Caut = ifelse(Caut < thresh[7],
+                      cell_spec(Caut, "html", color = "green", italic = T),
+                      cell_spec(Caut, "html", color = "red", italic = T)),
+      Health = ifelse(Health > thresh[8],
+                   cell_spec(Health, "html", color = "green", italic = T),
+                   cell_spec(Health, "html", color = "red", italic = T)),
+      OvFish = ifelse(OvFish < thresh[9],
+                       cell_spec(OvFish, "html", color = "green", italic = T),
+                       cell_spec(OvFish, "html", color = "red", italic = T)),
+      Yield = ifelse(Yield >= thresh[10],
+                     cell_spec(Yield, "html", color = "green", italic = T),
+                     cell_spec(Yield, "html", color = "red", italic = T)),
+      AAVY = ifelse(AAVY < thresh[11],
+                       cell_spec(AAVY, "html", color = "green", italic = T),
+                       cell_spec(AAVY, "html", color = "red", italic = T)),
+      Reb = ifelse(Reb >= thresh[12],
+                     cell_spec(Reb, "html", color = "green", italic = T),
+                     cell_spec(Reb, "html", color = "red", italic = T))
+    )%>%
+    #select(everything())%>%
+    knitr::kable("html", escape = F,align = "c") %>%
+    kable_styling("striped", full_width = F)%>%
+    column_spec(5, width = "3cm")  %>%
+    add_header_above(c(" ", " ","First 10 years of MSE projection" = 5, "Last 10 years of MSE projection" = 5,
+                       "",""))
+  
+}
+

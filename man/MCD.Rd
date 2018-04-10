@@ -18,7 +18,7 @@ A numeric vector of TAC recommendations
 }
 \description{
 A simple average catch-depletion MP that was included to demonstrate just
-how informative an estimate of current stock depletion can be. TAC=2*D*AvC
+how informative an estimate of current stock depletion can be. TAC=2\emph{D}AvC
 }
 \author{
 T. Carruthers

@@ -292,12 +292,15 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     retained <- apply(CB_Pret[,,y,], 1, sum)
     actualremovals <- apply(CB_P[,,y,], 1, sum)
     ratio <- actualremovals/retained # ratio of actual removals to retained catch 
-    
+    ratio[!is.finite(ratio)] <- 0 
+    ratio[ratio>1E5] <- 1E5
     temp <- CB_Pret[, , y, ]/apply(CB_Pret[, , y, ], 1, sum) # distribution of retained fish
     CB_Pret[, , y, ] <- TACusedE * temp  # retained catch 
     
     temp <- CB_P[, , y, ]/apply(CB_P[, , y, ], 1, sum) # distribution of removals
+    
     CB_P[,,y,] <- TACusedE *  ratio * temp # scale up total removals 
+    
     
     chk <- apply(CB_P[,,y,], 1, sum) > availB # total removals can't be more than available biomass
     if (sum(chk)>0) {
@@ -308,6 +311,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     }
   
     # total removals
+  
     temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
     temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF) # apply maxF constraint
     FM_P[SAYR] <- -log(1 - temp)
@@ -315,8 +319,10 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     # update removals with maxF constraint
     CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR])) 
 
+   
     # repeated because of approximation error in Pope's approximation - an issue if CB_P ~ AvailB
     chk <- apply(CB_P[,,y,], 1, sum) > availB # total removals can't be more than available biomass
+    
     if (sum(chk)>0) {
       c_temp <- apply(CB_P[chk,,y,, drop=FALSE], 1, sum)
       ratio_temp <- (availB[chk]/c_temp) * 0.99
@@ -423,10 +429,16 @@ MSYCalcs <- function(logapicF, MatAge, WtAge, MatureAge, VAge, maxage, R0, SRrel
   hs[hs>0.999] <- 0.999
   recK <- (4*hs)/(1-hs) # Goodyear compensation ratio
   reca <- recK/Egg0
-  if (SRrel ==1) recb <- (reca * Egg0 - 1)/(R0*Egg0) # BH SRR
-  if (SRrel ==2) recb <- log(reca*Egg0)/(R0*Egg0) # Ricker SRR
+  if (SRrel ==1) {
+    recb <- (reca * Egg0 - 1)/(R0*Egg0) # BH SRR
+    RelRec <- (reca * EggF-1)/(recb*EggF)
+  }
+  if (SRrel ==2) {
+    recb <- log(reca*Egg0)/(R0*Egg0) # Ricker SRR
+    RelRec <- (log(reca*EggF))/(recb*EggF)
+  }
 
-  RelRec <- (reca * EggF-1)/(recb*EggF)
+  
   RelRec[RelRec<0] <- 0
   
   Fa <- apicF*VAge
@@ -499,7 +511,7 @@ optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, 
 #' @param nareas The number of spatial areas
 #' @param maxage The maximum age
 #' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas. 
-#' Only values from the first year (i.e N[,,1,]) are used, which is the current N-at-age.
+#' Only values from the first year (i.e `N[,,1,]`) are used, which is the current N-at-age.
 #' @param pyears The number of years to project forward. Equal to 'nyears' for optimizing for q.
 #' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year 
 #' @param Mat_age An array (dimensions nsim, maxage, proyears+nyears) with the proportion mature for each age-class
@@ -781,7 +793,7 @@ optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_
 #' @param nareas The number of spatial areas
 #' @param maxage The maximum age
 #' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas. 
-#' Only values from the first year (i.e N[,,1,]) are used, which is the current N-at-age.
+#' Only values from the first year (i.e `N[,,1,]`) are used, which is the current N-at-age.
 #' @param pyears The number of years to project forward. Equal to 'nyears' for optimizing for q.
 #' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year
 #' @param Asize A matrix (dimensions nsim, nareas) of size of areas 
@@ -1007,7 +1019,7 @@ optMSY <- function(logFa, Asize_c, nareas, maxage, Ncurr, pyears, M_age,
 #' @param nareas The number of spatial areas
 #' @param maxage The maximum age
 #' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas. 
-#' Only values from the first year (i.e N[,,1,]) are used, which is the current N-at-age.
+#' Only values from the first year (i.e `N[,,1,]`) are used, which is the current N-at-age.
 #' @param pyears The number of years to project forward. Equal to 'nyears' for optimizing for q.
 #' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year 
 #' @param Mat_age An array (dimensions nsim, maxage, nyears+proyears) with the proportion mature for each age-class

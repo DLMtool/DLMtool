@@ -1,0 +1,135 @@
+---
+title: "`r params$title`"
+subtitle: "`r params$subtitle`"
+author: "`r params$author`"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true    
+runtime: shiny   
+---
+
+
+<style type="text/css">
+
+body{ /* Normal  */
+   font-size: 16px;
+}
+td {  /* Table  */
+   font-size: 16px;
+}
+title { /* title */
+ font-size: 26px;
+}
+h1 { /* Header 1 */
+ font-size: 24px;
+ color: DarkBlue;
+}
+h2 { /* Header 2 */
+ font-size: 21px;
+ color: DarkBlue;
+}
+h3 { /* Header 3 */
+ font-size: 19px;
+ color: DarkBlue;
+}
+code.r{ /* Code block */
+  font-size: 16px;
+}
+pre { /* Code block */
+  font-size: 16px
+}
+</style>
+
+
+
+
+```{r set options, echo = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+knitr::opts_chunk$set(dpi=85)
+#options(width = 650)
+```
+
+<br>
+
+
+# About this document
+
+This is a prototype of an automatic report that describes the results of a demonstration MSE analysis for the Canadian Department of Fisheries and Oceans. 
+
+<br>
+
+
+# Performance table
+
+A generic performance table is produced that provides the probability of stock status in the critical, cautious and healthy zones. Also provided are the probability of overfishing and the yield relative to FMSY fishing. These are provided for the first and last 10 years of the MSE projection in addition to the average annual variability in yield over all projected years and the probability of rebuilding to over BMSY after two mean generation times. 
+
+
+```{r table,echo=F,warning=F,error=F,message=F}
+ tab<-DFO_tab(params$MSEobj)
+ DFO_tab_formatted(tab)
+
+```
+
+* Crit_S is the probability of being in the critical zone in the first 10 projected years
+* Caut_S is the probability of being in the cautious zone in the first 10 projected years
+* Health_S is the probability of being in the healthy zone in the first 10 projected years
+* OvFish_S is the probability of overfishing in the first 10 projected years
+* Yield_S is the mean yield relative to FMSY management over the first 10 projected years
+* Crit is the probability of being in the critical zone in the last 10 projected years
+* Caut is the probability of being in the cautious zone in the last 10 projected years
+* Health is the probability of being in the healthy zone in the last 10 projected years
+* OvFish is the probability of overfishing in the last 10 projected years
+* Yield is the mean yield relative to FMSY management over the last 10 projected years
+* AAVY is the average annual variability in yield over the whole projection phrased as a CV percentage
+* Reb is the probability the stoc
+
+<br>
+
+# Quantile plot
+
+The quantile worm plots show the central 80% probability interval of future projections (blue shaded area) and the mean among all simulations (solid white line). 
+
+Superimposed on each plot are two individual simulations (the solid and dashed blue lines). For each management procedure (panel columns) the biomass relative to BMSY and the yield relative to FMSY yield (Rel. Yd.) are plotted. 
+
+```{r Quantile plot,echo=F,warning=F,error=F,message=F,fig.width=8,fig.height=8}
+
+ DFO_quant(params$MSEobj,maxcol=3)
+
+```
+
+<br>
+
+
+# Bar plot 
+
+The bar plots is similar to the quantile plot above and shows the biomass relative to BMSY over projected time periord. Each panel represents a different 10 year period of the MSE projection. The bars present the 90% and the 50% (solid line) probability intervals. The dots are the median biomass / BMSY. 
+
+```{r bar,echo=F,warning=F,error=F,message=F,fig.height=10,fig.width=7}
+ DFO_bar(params$MSEobj)
+
+```
+
+<br>
+
+
+# Tradeoff plot
+
+A traditional KOBE plot is provided that shows stock status (B/BMSY) and exploitation rate (F/FMSY) at the end of the projected time period. The dots represent individual simulations, the solid line is the 50% probability interval and the dashed line is the 95% probability interval. 
+
+
+```{r TO,echo=F,warning=F,error=F,message=F,fig.height=10,fig.width=6}
+ DFO_proj(params$MSEobj,maxplot=9)
+
+```
+
+
+<br>
+
+
+# Version Notes
+
+This report is subject to ongoing testing. If you find a bug or a problem please send a report to <t.carruthers@oceans.ubc.ca> so that it can be fixed or report an issue at www.github.com/DLMtool/DLMtool/issues.  
+

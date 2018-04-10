@@ -16,6 +16,21 @@ AvC(x, Data, reps = 100)
 \description{
 A simple average catch MP that is included to demonstrate a 'status quo' management option
 }
+\examples{
+Data <- DLMtool::Cobia
+# Plot the historical catches 
+plot(Data@Year, Data@Cat[1,], type="l", 
+     xlab="Year", ylab=paste0("Catch (", Data@Units, ")"), lwd=2)
+abline(h=mean(Data@Cat[1,]), lty=2) # plot mean catches
+
+# Apply the AvC MP to the Data
+Rec <- AvC(1, Data, reps=1000) # 1,000 log-normal samples with CV = 0.2
+
+# Distribution of TACs
+boxplot(Rec@TAC, add=TRUE, at=max(Data@Year), col="grey", 
+        width=1, outline=FALSE)
+        
+}
 \author{
 T. Carruthers
 }

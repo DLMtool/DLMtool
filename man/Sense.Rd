@@ -22,8 +22,8 @@ Sense(Data, MP, nsense = 6, reps = 100, perc = c(0.05, 0.5, 0.95),
 }
 \description{
 A function that determines the inputs for a given data-limited method of
-class Output and then analyses the sensitivity of TAC estimates to 
-marginal differences in each input. The range used for sensitivity is based 
+class Output and then analyses the sensitivity of TAC estimates to
+marginal differences in each input. The range used for sensitivity is based
 on the user-specified CV for that input (e.g. CV_Mort, Mort)
 }
 \examples{

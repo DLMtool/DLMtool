@@ -14,18 +14,18 @@ ICI(x, Data, reps)
 \item{reps}{The number of TAC samples}
 }
 \description{
-The MP adjusts catch based on the value of the index in the current year relative to the 
+The MP adjusts catch based on the value of the index in the current year relative to the
 time series mean and standard error.
- 
-The mean and standard error of the index time series is calculated. There are two thresholds 
+
+The mean and standard error of the index time series is calculated. There are two thresholds
 which delineates whether catch is reduced, held constant, or increased. The catch is reduced by 0.75
 if the Z-score of the current year's index is less than -0.44. The catch is increased by 1.05
 if the Z-score of the current year's index is greater than 1.96. Otherwise, the catch is held constant.
 }
 \references{
-Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for 
-data limited stocks using length-based reference points and survey biomass indices, 
-Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836, 
+Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for
+data limited stocks using length-based reference points and survey biomass indices,
+Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836,
 https://doi.org/10.1016/j.fishres.2014.11.013
 }
 \author{

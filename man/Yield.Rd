@@ -4,10 +4,12 @@
 \alias{Yield}
 \title{Performance Metric: Average Yield}
 \usage{
-Yield(MSEobj = NULL)
+Yield(MSEobj = NULL, Ref = 1)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}
+
+\item{Ref}{Reference Point for yield (fraction of reference yield)}
 }
 \value{
 An object of class PMobj

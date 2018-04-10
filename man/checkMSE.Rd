@@ -11,7 +11,7 @@ checkMSE(MSEobj)
 }
 \description{
 Check that an MSE object includes all slots in the latest version of DLMtool
-Use `updateMSE` to update the MSE object
+Use \code{updateMSE} to update the MSE object
 }
 \author{
 A. Hordyk

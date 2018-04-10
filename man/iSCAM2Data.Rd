@@ -14,15 +14,15 @@ iSCAM2Data(iSCAMdir, Name = NULL, Source = "No source provided",
 
 \item{Source}{Reference to assessment documentation e.g. a url}
 
-\item{length_timestep}{How long is a model time step in years 
+\item{length_timestep}{How long is a model time step in years
 (e.g. a quarterly model is 0.25, a monthly model 1/12)}
 
 \item{Author}{Who did the assessment}
 }
 \description{
-A function that uses the file location of a fitted iSCAM 
-model including input files to population the various slots of an 
-data object. iSCAM2DLM relies on several functions written by Chris 
+A function that uses the file location of a fitted iSCAM
+model including input files to population the various slots of an
+data object. iSCAM2DLM relies on several functions written by Chris
 Grandin (DFO PBS).
 }
 \author{

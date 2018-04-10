@@ -1740,7 +1740,7 @@ Tplot2 <- function(MSEobj, nam = NA) {
 #'
 #' @examples 
 #' \dontrun{
-#'  Tplot3{myMSE}
+#'  Tplot3(myMSE)
 #' }
 Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
   PMlist <- unlist(list(...))

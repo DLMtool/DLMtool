@@ -21,7 +21,7 @@ plotImp(x, nsim = 500, nyears = 50, col = "darkgray", breaks = 10, ...)
 }
 \description{
 A function that plots histograms of samples from the implementation object parameters,
-and time-series plots of `nsamp` samples of time-series examples. Used to 
+and time-series plots of \code{nsamp} samples of time-series examples. Used to
 visually examine the parameter values and ranges entered into the Obs object.
 }
 \author{

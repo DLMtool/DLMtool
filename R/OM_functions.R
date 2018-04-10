@@ -110,6 +110,237 @@ ForceCor<-function(OM,nsim=48,plot=T){
   
 }
 
+#' Impute correlated life-history parameters
+#' 
+#' Impute correlated life-history parameters by imputing K and L50 values from M and Linf
+#'
+#' @param OM An object of class 'OM'
+#' @param samp.m Numeric. A multiple of `OM@sim`. The number of initial samples to generate 
+#' before filtering to ensure predicted values are within ranges specified in OM (e.g., `OM@M`)
+#' @param plot Logical. Should the plot be produced?
+#' @param ign.bounds Logical. Should the OM bounds be ignored if it is not possible to generate
+#' enough predicted values within the specified bounds
+#'
+#' @return An OM with `OM@cpars` populated with `OM@nsim` samples of M, K, Linf and L50
+#' @author A. Hordyk
+#' @export
+#' @examples 
+#' testOM<-ImputeLH(testOM)
+#' 
+#' @importFrom Amelia amelia
+#' @importFrom dplyr bind_rows
+#'
+ImputeLH <- function(OM, samp.m=100, plot=TRUE, ign.bounds=TRUE) {
+  set.seed(OM@seed)
+  DBdata <- DLMtool::LHdata
+  if (class(OM) != "OM") stop('Object must be class "OM"', call. = FALSE)
+  
+  inM <- inK <- inLinf <- inL50 <- NULL
+  
+  for (nm in c("M", "K", "Linf", "L50")) {
+    if (length(OM@cpars[[nm]])>0) {
+      tempval <- OM@cpars[[nm]]
+    } else {
+      tempval <- slot(OM, nm)
+    }
+    assign(paste0('in', nm), tempval)
+  }
+  
+  parlist <- list(M=inM, K=inK, Linf=inLinf, L50=inL50)
+  means <- lapply(parlist, mean)
+  
+  Ms <- Ks <- Linfs <- L50s <- NULL
+  # Generate samples of known parameters - keep cpars
+  nsamp <- OM@nsim * samp.m
+  
+  ncpars <- max(unlist(lapply(parlist, length)))
+  if (ncpars < nsamp) {
+    sampRows <- sample(1:ncpars, nsamp, replace=TRUE)  
+  } else {
+    sampRows <- sample(1:ncpars, nsamp, replace=FALSE) 
+  }
+  
+  incpars <- data.frame(M=TRUE, K=TRUE, Linf=TRUE, L50=TRUE)
+  for (nm in c("M", "K", "Linf", "L50")) {
+    if (length(parlist[[nm]]) == 2) {
+      varsd <- (max(parlist[[nm]]) - mean(parlist[[nm]]))/2
+      varmean <- mean(parlist[[nm]])
+      var <- rnorm(nsamp, varmean, varsd)
+      assign(paste0(nm, "s"), var)
+      incpars[nm] <- FALSE
+    } else {
+      var <- as.numeric(unlist((OM@cpars[nm])))[sampRows]
+      assign(paste0(nm, "s"), var)
+      incpars[nm] <- TRUE
+    }
+  }
+  
+  if (rowSums(incpars) == 4) stop("M, K, Linf, and L50 all in OM@cpars. Nothing to impute!", call.=FALSE)
+  indata_all <- indata <- data.frame(M=Ms, K=Ks, Linf=Linfs, L50=L50s)
+  
+  ind <- apply(indata, 2, mean) == 0
+  indata[,ind] <- NA # drop any unknown parameters (e.g OM@Linf = c(0,0)= unknown)
+  
+  if (!all(is.na(indata$M)) & !incpars$K) indata$K <- NA # if M is present, impute K 
+  if (!all(is.na(indata$K)) & !incpars$M) indata$M <- NA # if K is present, impute M 
+  if (!all(is.na(indata$Linf)) & !incpars$L50) indata$L50 <- NA # if Linf is present, impute L50 
+  if (!all(is.na(indata$L50)) & !incpars$Linf) indata$Linf <- NA # if L50 is present, impute Linf
+  
+  ind <- colSums(apply(indata, 2, is.na)) == 0
+  indata <- indata[,ind]
+  if (ncol(indata) < 2) stop("At least two parameters but be provided - M or K and Linf or L50", call.=FALSE)
+  
+  # Transform to approximate multivariate normal
+  tpow <- 1/3
+  tdata <- as.data.frame(DBdata^tpow)
+  # result <- MVN::mvn(data = tdata, mvnTest = "mardia", univariatePlot = "histogram")
+  
+  logs <- NULL
+  bounds <- matrix(c(1, 0.025, 0.8, # bounds for M
+                     2, 0.025, 1.5, # bounds for K 
+                     3, 30, 2000, # bounds for Linf - probably wrong
+                     4, 15, 1800, # bound for L50 - probably wrong
+                     5, 0.2, 0.8, #  bounds for L50/Linf
+                     6, 0.2, 4), # bounds for M/K
+                   nrow=ncol(DBdata), ncol=3, byrow=TRUE)
+  if (!is.null(logs)) bounds[logs, 2:3] <- log(bounds[logs, 2:3] )
+  bounds[,2:3] <- bounds[,2:3]^tpow # transform bounds
+  
+  tindata <- as.data.frame(indata^tpow)
+  alldata <- bind_rows(tdata, tindata)
+  
+  # impute missing values
+  sink("temp")
+  mod <- Amelia::amelia(alldata, bounds=bounds, logs=logs, max.resample=5000, verbose=FALSE) 
+  sink()
+  unlink("temp")
+  
+  tMeanEsts <- Reduce("+", mod$imputations) / length(mod$imputations)
+  tMeanEsts <- tMeanEsts[(nrow(DBdata)+1):nrow(alldata),]
+  MeanEsts <- as.data.frame(tMeanEsts^(1/tpow))
+  
+  if (is.null(indata$K)) MeanEsts$K <- MeanEsts$M / MeanEsts$MK
+  if (is.null(indata$M)) MeanEsts$M <- MeanEsts$MK * MeanEsts$K 
+  if (is.null(indata$Linf)) MeanEsts$Linf <- MeanEsts$L50/MeanEsts$relL 
+  if (is.null(indata$L50)) MeanEsts$L50 <- MeanEsts$relL * MeanEsts$Linf
+  
+  # filter to satisfy all bounds
+  ok <- array(TRUE, dim=dim(MeanEsts[,1:4]))
+  cols <- 1:4
+  for (xx in cols) {
+    rng <- range(parlist[[xx]])
+    ok[,xx] <- MeanEsts[,xx] >= rng[1] & MeanEsts[,xx] <= rng[2]
+  }
+  chk <- sum(apply(ok, 1, prod)==1)
+  
+  if (ign.bounds) {
+    while (chk < OM@nsim) {
+      oksamps <- as.data.frame(t(apply(ok, 2, sum)))  
+      ind <- which.min(oksamps)
+      cols2 <- cols[!cols %in% ind]
+      ok <- array(TRUE, dim=dim(MeanEsts[,1:4]))
+      for (xx in cols2) {
+        rng <- range(parlist[[xx]])
+        ok[,xx] <- MeanEsts[,xx] >= rng[1] & MeanEsts[,xx] <= rng[2]
+      }
+      warning('Could not generate sufficient predicted samples within specified bounds for ', names(parlist)[ind], 
+              ".\nTry increase 'samp.m' and re-run. \nIgnoring bounds for this parameter and continuing.")
+      chk <- sum(apply(ok, 1, prod)==1)
+    }
+  } else {
+    while (chk < OM@nsim) {
+      oksamps <- as.data.frame(t(apply(ok, 2, sum)))  
+      ind <- which.min(oksamps)
+      MeanEsts[,ind] <- indata_all[,ind]
+      cols2 <- cols[!cols %in% ind]
+      ok <- array(TRUE, dim=dim(MeanEsts[,1:4]))
+      for (xx in cols2) {
+        rng <- range(parlist[[xx]])
+        ok[,xx] <- MeanEsts[,xx] >= rng[1] & MeanEsts[,xx] <= rng[2]
+      }
+      warning('Could not generate sufficient predicted samples within specified bounds for ', names(parlist)[ind], 
+              ".\nTry increase 'samp.m' and re-run. \nIgnoring predicted values for this parameter and using specified bounds")
+      chk <- sum(apply(ok, 1, prod)==1)
+    }
+  }
+  
+  Out <- MeanEsts[apply(ok, 1, prod)==1,]
+  Out <- Out[1:OM@nsim,]
+  
+  if(plot){ 
+    par(mfrow=c(4,4),mai=c(0.3,0.3,0.4,0.05),omi=c(0.02,0.02,0.3,0.02))
+    
+    colline=makeTransparent('blue',60)
+    lwdline=4
+    histcol='black'
+    labs<-c("M","K","Linf","L50")
+    bounds<-matrix(unlist(lapply(parlist, range)),nrow=2)
+    
+    for(i in 1:4){
+      rng <- range(parlist[[i]])
+      rng2 <- range(Out[,i])
+      rng2[1] <- min(c(min(rng), min(rng2)))
+      rng2[2] <- max(c(max(rng), max(rng2)))
+      for(j in 1:4){
+        
+        if(i == j){
+          
+          if(i==1){
+            
+            hist(Out[,1],main="Natural mortality rate (M)",col=histcol,border='white',xlab="",axes=F, xlim=rng2)
+            axis(1)
+            abline(v=rng,col=colline,lwd=lwdline)
+            
+          }else if(i==2){
+            
+            hist(Out[,2],main="Growth rate (K)",col=histcol,border='white',xlab="",axes=F, xlim=rng2)
+            axis(1)
+            abline(v=rng,col=colline,lwd=lwdline)
+            
+            
+          }else if(i==3){
+            
+            hist(Out[,3],main="Asymptotic length (Linf)",col=histcol,border='white',xlab="",axes=F, xlim=rng2)
+            axis(1)
+            abline(v=rng,col=colline,lwd=lwdline)
+            
+            
+          }else{
+            
+            hist(Out[,4],main="Length at 50% maturity (L50)",col=histcol,border='white',xlab="",axes=F, xlim=rng2)
+            axis(1)
+            abline(v=rng,col=colline,lwd=lwdline)
+            
+          }
+          
+        }else{ # not positive diagonal
+          
+          plot(Out[,j],Out[,i],axes=F,col="white")
+          polygon(bounds[c(1,1,2,2),j],bounds[c(1,2,2,1),i],col=colline,border="white")
+          points(Out[,j],Out[,i],pch=19)
+          
+          axis(1)
+          axis(2)
+          
+        }
+        
+      }
+    }
+  }
+  
+  OM@cpars$M <- Out$M 
+  OM@cpars$K <- Out$K
+  OM@cpars$Linf <- Out$Linf
+  OM@cpars$L50 <- Out$L50
+  
+  OM@M <- c(0,0)
+  OM@K <- c(0,0)
+  OM@Linf <- c(0,0)
+  OM@L50 <- c(0,0)
+  OM
+  
+}
+
 
 
 

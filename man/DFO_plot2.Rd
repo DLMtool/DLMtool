@@ -22,7 +22,7 @@ A table of performance metrics.
 }
 \description{
 A preliminary plot for returning trade-offs plots and performance table for
-probability of obtaining half reference (FMSY) yield and probability of biomass 
+probability of obtaining half reference (FMSY) yield and probability of biomass
 dropping below 50 per cent BMSY
 }
 \author{

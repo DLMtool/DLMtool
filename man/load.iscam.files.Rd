@@ -11,13 +11,13 @@ load.iscam.files(model.dir, burnin = 1000, thin = 1, verbose = FALSE)
 
 \item{burnin}{The initial mcmc samples to be discarded}
 
-\item{thin}{The degree of chain thinning 1 in every thin 
+\item{thin}{The degree of chain thinning 1 in every thin
 iterations is kept}
 
 \item{verbose}{Should detailed outputs be provided.}
 }
 \description{
-A function for reading iSCAM input and output files 
+A function for reading iSCAM input and output files
 into R
 }
 \author{

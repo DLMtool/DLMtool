@@ -380,3 +380,10 @@
 "OMDescription"
 
 
+#'  LHdata data.frame
+#'
+#'  An object of class data.frame
+#'
+"LHdata"
+
+

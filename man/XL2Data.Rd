@@ -9,7 +9,7 @@ XL2Data(name = "Data", dir = NULL)
 \arguments{
 \item{name}{Name of the data file, with or without file extension.}
 
-\item{dir}{Optional file path. Default is `getwd()`}
+\item{dir}{Optional file path. Default is \code{getwd()}}
 }
 \value{
 An object of class 'Data'

@@ -309,11 +309,11 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   age95[age95 < 1] <- 1.5  # must be greater than 0 and ageM
   
   if (any(ageM >= maxage-1)) {
-    message("Note: Some samples of age of maturity are above 'maxage'-1. Defaulting to maxage-1")
+    if (Msg) message("Note: Some samples of age of maturity are above 'maxage'-1. Defaulting to maxage-1")
     ageM[ageM >= (maxage-1)] <- maxage - 1 
   }
-  if (any(ageM >= maxage)) {
-    message("Note: Some samples of age of maturity are above 'maxage'. Defaulting to maxage")
+  if (any(age95 >= maxage)) {
+    if (Msg) message("Note: Some samples of age of 95 per cent maturity are above 'maxage'. Defaulting to maxage")
     age95[age95 >= maxage] <- maxage  
   }
   
@@ -628,8 +628,6 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   Selnyears <- length(Fleet@SelYears)
   # are selectivity parameters relative to size at maturity?
   
-  
-  
   chk <- class(Fleet@isRel)
   if (length(Fleet@isRel) < 1) Fleet@isRel <- "true"
   if (chk == "character") {
@@ -667,7 +665,6 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   Fleetout$L5s <- L5s
   Fleetout$LFSs <- LFSs
   Fleetout$Vmaxlens <- Vmaxlens
-  
   
   # == Calculate Selectivity at Length ====
   nCALbins <- length(CAL_binsmid)
@@ -835,6 +832,11 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
     }
   } # end of 'if V exists'
   
+  # Check LFS is greater than L5 
+  chk <- sum(apply(L5 > LFS, 2, prod) != 0)
+  if (chk > 0) stop("L5 is greater than LFS in ", chk, ' simulations')
+  
+  
   if (any((dim(V) != c(nsim, maxage, proyears+nyears)))) 
     stop("V must have dimensions: nsim (", nsim,") maxage (", maxage, 
          ") proyears+nyears (", proyears+nyears, ") \nbut has ", 
@@ -950,13 +952,23 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
 #'
 #' @param Obs An object of class 'Obs' or class 'OM'
 #' @param nsim Number of simulations. Ignored if 'Obs' is class 'OM'
+#' @param cpars Optional named list of custom parameters. Ignored if 'OM' is class 'OM'
 #' @return A named list of sampled Observation parameters
 #' @export
 #'
-SampleObsPars <- function(Obs, nsim=NULL){
+SampleObsPars <- function(Obs, nsim=NULL, cpars=NULL){
   if (class(Obs) != "Obs" & class(Obs) != "OM") 
     stop("First argument must be class 'Obs' or 'OM'")
   if (class(Obs) == "OM") nsim <- Obs@nsim
+  
+  # Get custom pars if they exist
+  if (class(Obs) == "OM" && length(Obs@cpars) > 0 && is.null(cpars)) 
+    cpars <- SampleCpars(Obs@cpars, Obs@nsim)  # custom parameters exist in OM object
+  if (length(cpars) > 0) { # custom pars exist - assign to function environment 
+    Names <- names(cpars)
+    for (X in 1:length(Names)) assign(names(cpars)[X], cpars[[X]])
+  }
+  
   
   Obs <- updateMSE(Obs) # update to add missing slots with default values
   
@@ -965,32 +977,130 @@ SampleObsPars <- function(Obs, nsim=NULL){
   # === Sample observation error model parameters ====
   
   # fix some naming issues?
-  ObsOut$Csd <- runif(nsim, Obs@Cobs[1], Obs@Cobs[2])  # Sampled catch observation error (lognormal sd)
-  ObsOut$Cbias <- rlnorm(nsim, mconv(1, Obs@Cbiascv), sdconv(1, Obs@Cbiascv))  # Sampled catch bias (log normal sd)
-  ObsOut$CAA_nsamp <- ceiling(runif(nsim, Obs@CAA_nsamp[1], Obs@CAA_nsamp[2]))  # Number of catch-at-age observations
-  ObsOut$CAA_ESS <- ceiling(runif(nsim, Obs@CAA_ESS[1], Obs@CAA_ESS[2]))  # Effective sample size
-  ObsOut$CAL_nsamp <- ceiling(runif(nsim, Obs@CAL_nsamp[1], Obs@CAL_nsamp[2]))  # Observation error standard deviation for single catch at age by area
-  ObsOut$CAL_ESS <- ceiling(runif(nsim, Obs@CAL_ESS[1], Obs@CAL_ESS[2]))  # Effective sample size
-  # ObsOut$CALcv <- runif(nsim, Obs@CALcv[1], Obs@CALcv[2])  # Observation error standard deviation for single catch at age by area
-  ObsOut$betas <- exp(runif(nsim, log(Obs@beta[1]), log(Obs@beta[2])))  # the sampled hyperstability / hyperdepletion parameter beta>1 (hyperdepletion) beta<1 (hyperstability)
-  ObsOut$Isd <- runif(nsim, Obs@Iobs[1], Obs@Iobs[2])  # Abundance index observation error (log normal sd)
-  ObsOut$Derr <- runif(nsim, Obs@Dobs[1], Obs@Dobs[2])
-  ObsOut$Dbias <- rlnorm(nsim, mconv(1, Obs@Dbiascv), sdconv(1, Obs@Dbiascv))  # sample of depletion bias
-  ObsOut$Mbias <- rlnorm(nsim, mconv(1, Obs@Mbiascv), sdconv(1, Obs@Mbiascv))  # sample of M bias
-  ObsOut$FMSY_Mbias <- rlnorm(nsim, mconv(1, Obs@FMSY_Mbiascv), sdconv(1, Obs@FMSY_Mbiascv))  # sample of FMSY/M bias
   
-  ObsOut$lenMbias <- rlnorm(nsim, mconv(1, Obs@LenMbiascv), sdconv(1, Obs@LenMbiascv))  # sample of length at maturity bias - assume same error as age based maturity
-  ObsOut$LFCbias <- rlnorm(nsim, mconv(1, Obs@LFCbiascv), sdconv(1, Obs@LFCbiascv))  # sample of length at first capture bias
-  ObsOut$LFSbias <- rlnorm(nsim, mconv(1, Obs@LFSbiascv), sdconv(1, Obs@LFSbiascv))  # sample of length at full selection bias
-  ObsOut$Aerr <- runif(nsim, Obs@Btobs[1], Obs@Btobs[2])
-  ObsOut$Abias <- exp(runif(nsim, log(Obs@Btbiascv[1]), log(Obs@Btbiascv[2])))  #rlnorm(nsim,mconv(1,Obs@Btbiascv),sdconv(1,Obs@Btbiascv))    # sample of current abundance bias
-  ObsOut$Kbias <- rlnorm(nsim, mconv(1, Obs@Kbiascv), sdconv(1, Obs@Kbiascv))  # sample of von B. K parameter bias
-  ObsOut$t0bias <- rlnorm(nsim, mconv(1, Obs@t0biascv), sdconv(1, Obs@t0biascv))  # sample of von B. t0 parameter bias
-  ObsOut$Linfbias <- rlnorm(nsim, mconv(1, Obs@Linfbiascv), sdconv(1, Obs@Linfbiascv))  # sample of von B. maximum length bias
-  ObsOut$Irefbias <- rlnorm(nsim, mconv(1, Obs@Irefbiascv), sdconv(1, Obs@Irefbiascv))  # sample of bias in reference (target) abundance index
-  ObsOut$Crefbias <- rlnorm(nsim, mconv(1, Obs@Crefbiascv), sdconv(1, Obs@Crefbiascv))  # sample of bias in reference (target) catch index
-  ObsOut$Brefbias <- rlnorm(nsim, mconv(1, Obs@Brefbiascv), sdconv(1, Obs@Brefbiascv))  # sample of bias in reference (target) biomass index
-  ObsOut$Recsd <- runif(nsim, Obs@Recbiascv[1], Obs@Recbiascv[2])  # Recruitment deviation  
+  if (!exists("Csd", inherits=FALSE)) {
+    ObsOut$Csd <- runif(nsim, Obs@Cobs[1], Obs@Cobs[2])  # Sampled catch observation error (lognormal sd)
+  } else {
+    ObsOut$Csd <- Csd
+  }
+  if (!exists("Cbias", inherits=FALSE)) {
+    ObsOut$Cbias <- rlnorm(nsim, mconv(1, Obs@Cbiascv), sdconv(1, Obs@Cbiascv))  # Sampled catch bias (log normal sd)
+  } else {
+    ObsOut$Cbias <- Cbias
+  }
+  if (!exists("CAA_nsamp", inherits=FALSE)) {
+    ObsOut$CAA_nsamp <- ceiling(runif(nsim, Obs@CAA_nsamp[1], Obs@CAA_nsamp[2]))  # Number of catch-at-age observations
+  } else {
+    ObsOut$CAA_nsamp <- CAA_nsamp
+  } 
+  if (!exists("CAA_ESS", inherits=FALSE)) {
+    ObsOut$CAA_ESS <- ceiling(runif(nsim, Obs@CAA_ESS[1], Obs@CAA_ESS[2]))  # Effective sample size
+  } else {
+    ObsOut$CAA_ESS <- CAA_ESS
+  } 
+  if (!exists("CAL_nsamp", inherits=FALSE)) {
+    ObsOut$CAL_nsamp <- ceiling(runif(nsim, Obs@CAL_nsamp[1], Obs@CAL_nsamp[2]))  # Observation error standard deviation for single catch at age by area
+  } else {
+    ObsOut$CAL_nsamp <- CAL_nsamp
+  }  
+  if (!exists("CAL_ESS", inherits=FALSE)) {
+    ObsOut$CAL_ESS <- ceiling(runif(nsim, Obs@CAL_ESS[1], Obs@CAL_ESS[2]))  # Effective sample size
+  } else {
+    ObsOut$CAL_ESS <- CAL_ESS
+  }  
+  if (!exists("betas", inherits=FALSE)) {
+    ObsOut$betas <- exp(runif(nsim, log(Obs@beta[1]), log(Obs@beta[2])))  # the sampled hyperstability / hyperdepletion parameter beta>1 (hyperdepletion) beta<1 (hyperstability)
+  } else {
+    ObsOut$betas <- betas
+  }  
+  if (!exists("Isd", inherits=FALSE)) {
+    ObsOut$Isd <- runif(nsim, Obs@Iobs[1], Obs@Iobs[2])  # Abundance index observation error (log normal sd)
+  } else {
+    ObsOut$Isd <- Isd
+  } 
+  if (!exists("Derr", inherits=FALSE)) {
+    ObsOut$Derr <- runif(nsim, Obs@Dobs[1], Obs@Dobs[2])
+  } else {
+    ObsOut$Derr <- Derr
+  }  
+  if (!exists("Dbias", inherits=FALSE)) {
+    ObsOut$Dbias <- rlnorm(nsim, mconv(1, Obs@Dbiascv), sdconv(1, Obs@Dbiascv))  # sample of depletion bias
+  } else {
+    ObsOut$Dbias <- Dbias
+  }  
+  if (!exists("Mbias", inherits=FALSE)) {
+    ObsOut$Mbias <- rlnorm(nsim, mconv(1, Obs@Mbiascv), sdconv(1, Obs@Mbiascv))  # sample of M bias
+  } else {
+    ObsOut$Mbias <- Mbias
+  }  
+  if (!exists("FMSY_Mbias", inherits=FALSE)) {
+    ObsOut$FMSY_Mbias <- rlnorm(nsim, mconv(1, Obs@FMSY_Mbiascv), sdconv(1, Obs@FMSY_Mbiascv))  # sample of FMSY/M bias
+  } else {
+    ObsOut$FMSY_Mbias <- FMSY_Mbias
+  }  
+  if (!exists("lenMbias", inherits=FALSE)) {
+    ObsOut$lenMbias <- rlnorm(nsim, mconv(1, Obs@LenMbiascv), sdconv(1, Obs@LenMbiascv))  # sample of length at maturity bias - assume same error as age based maturity
+  } else {
+    ObsOut$lenMbias <- lenMbias
+  } 
+  if (!exists("LFCbias", inherits=FALSE)) {
+    ObsOut$LFCbias <- rlnorm(nsim, mconv(1, Obs@LFCbiascv), sdconv(1, Obs@LFCbiascv))  # sample of length at first capture bias
+  } else {
+    ObsOut$LFCbias <- LFCbias
+  } 
+  if (!exists("LFSbias", inherits=FALSE)) {
+    ObsOut$LFSbias <- rlnorm(nsim, mconv(1, Obs@LFSbiascv), sdconv(1, Obs@LFSbiascv))  # sample of length at full selection bias
+  } else {
+    ObsOut$LFSbias <- LFSbias
+  }
+  if (!exists("Aerr", inherits=FALSE)) {
+    ObsOut$Aerr <- runif(nsim, Obs@Btobs[1], Obs@Btobs[2])
+  } else {
+    ObsOut$Aerr <- Aerr
+  }
+  if (!exists("Abias", inherits=FALSE)) {
+    ObsOut$Abias <- exp(runif(nsim, log(Obs@Btbiascv[1]), log(Obs@Btbiascv[2])))  #rlnorm(nsim,mconv(1,Obs@Btbiascv),sdconv(1,Obs@Btbiascv))    # sample of current abundance bias
+  } else {
+    ObsOut$Abias <- Abias
+  }
+  if (!exists("Kbias", inherits=FALSE)) {
+    ObsOut$Kbias <- rlnorm(nsim, mconv(1, Obs@Kbiascv), sdconv(1, Obs@Kbiascv))  # sample of von B. K parameter bias
+  } else {
+    ObsOut$Kbias <- Kbias
+  }
+  if (!exists("t0bias", inherits=FALSE)) {
+    ObsOut$t0bias <- rlnorm(nsim, mconv(1, Obs@t0biascv), sdconv(1, Obs@t0biascv))  # sample of von B. t0 parameter bias
+  } else {
+    ObsOut$t0bias <- t0bias
+  } 
+  if (!exists("Linfbias", inherits=FALSE)) {
+    ObsOut$Linfbias <- rlnorm(nsim, mconv(1, Obs@Linfbiascv), sdconv(1, Obs@Linfbiascv))  # sample of von B. maximum length bias
+  } else {
+    ObsOut$Linfbias <- Linfbias
+  } 
+  if (!exists("Irefbias", inherits=FALSE)) {
+    ObsOut$Irefbias <- rlnorm(nsim, mconv(1, Obs@Irefbiascv), sdconv(1, Obs@Irefbiascv))  # sample of bias in reference (target) abundance index
+  } else {
+    ObsOut$Irefbias <- Irefbias
+  } 
+  if (!exists("Crefbias", inherits=FALSE)) {
+    ObsOut$Crefbias <- rlnorm(nsim, mconv(1, Obs@Crefbiascv), sdconv(1, Obs@Crefbiascv))  # sample of bias in reference (target) catch index
+  } else {
+    ObsOut$Crefbias <- Crefbias
+  }
+  if (!exists("Brefbias", inherits=FALSE)) {
+    ObsOut$Brefbias <- rlnorm(nsim, mconv(1, Obs@Brefbiascv), sdconv(1, Obs@Brefbiascv))  # sample of bias in reference (target) biomass index
+  } else {
+    ObsOut$Brefbias <- Brefbias
+  }
+  if (!exists("Recsd", inherits=FALSE)) {
+    ObsOut$Recsd <- runif(nsim, Obs@Recbiascv[1], Obs@Recbiascv[2])  # Recruitment deviation  
+  } else {
+    ObsOut$Recsd <- Recsd
+  }  
+  
+
+  # ObsOut$CALcv <- runif(nsim, Obs@CALcv[1], Obs@CALcv[2])  # Observation error standard deviation for single catch at age by area
   # ObsOut$LenCVbias <- rlnorm(nsim, mconv(1, Obs@CALcv), sdconv(1, Obs@CALcv)) # sample of bias in assumed CV of catch-at-length
   
   
@@ -1001,25 +1111,57 @@ SampleObsPars <- function(Obs, nsim=NULL){
 #'
 #' @param Imp An object of class 'Imp' or class 'OM'
 #' @param nsim Number of simulations. Ignored if 'Stock' is class 'OM'
-#'
+#' @param cpars Optional named list of custom parameters. Ignored if 'OM' is class 'OM'
 #' @return A named list of sampled Implementation Error parameters
 #' @export
 #'
-SampleImpPars <- function(Imp, nsim=NULL) {
+SampleImpPars <- function(Imp, nsim=NULL, cpars=NULL) {
   if (class(Imp) != "Imp" & class(Imp) != "OM") 
     stop("First argument must be class 'Imp' or 'OM'")
   if (class(Imp) == "OM") nsim <- Imp@nsim
   
+  # Get custom pars if they exist
+  if (class(Imp) == "OM" && length(Imp@cpars) > 0 && is.null(cpars)) 
+    cpars <- SampleCpars(Imp@cpars, Imp@nsim)  # custom parameters exist in OM object
+  if (length(cpars) > 0) { # custom pars exist - assign to function environment 
+    Names <- names(cpars)
+    for (X in 1:length(Names)) assign(names(cpars)[X], cpars[[X]])
+  }
+  
+  
   ImpOut <- list() 
   # === Sample implementation error parameters ====
-  ImpOut$TACSD <- runif(nsim, Imp@TACSD[1], Imp@TACSD[2])  # Sampled TAC error (lognormal sd)
-  ImpOut$TACFrac <- runif(nsim, Imp@TACFrac[1], Imp@TACFrac[2])  # Sampled TAC fraction (log normal sd)
+  if (!exists("TACSD", inherits = FALSE)) {
+    ImpOut$TACSD <- runif(nsim, Imp@TACSD[1], Imp@TACSD[2])  # Sampled TAC error (lognormal sd)
+  } else {
+    ImpOut$TACSD <- TACSD
+  }
+  if (!exists("TACFrac", inherits = FALSE)) {
+    ImpOut$TACFrac <- runif(nsim, Imp@TACFrac[1], Imp@TACFrac[2])  # Sampled TAC fraction (log normal sd)
+  } else {
+    ImpOut$TACFrac <- TACFrac
+  }
+  if (!exists("TAESD", inherits = FALSE)) {
+    ImpOut$TAESD <- runif(nsim, Imp@TAESD[1], Imp@TAESD[2])  # Sampled Effort error (lognormal sd)
+  } else {
+    ImpOut$TAESD <- TAESD
+  }
+  if (!exists("TAEFrac", inherits = FALSE)) {
+    ImpOut$TAEFrac <- runif(nsim, Imp@TAEFrac[1], Imp@TAEFrac[2])  # Sampled Effort fraction (log normal sd)
+  } else {
+    ImpOut$TAEFrac <- TAEFrac
+  }
+  if (!exists("SizeLimSD", inherits = FALSE)) {
+    ImpOut$SizeLimSD<-runif(nsim,Imp@SizeLimSD[1],Imp@SizeLimSD[2])
+  } else {
+    ImpOut$SizeLimSD <- SizeLimSD
+  }
+  if (!exists("SizeLimFrac", inherits = FALSE)) {
+    ImpOut$SizeLimFrac<-runif(nsim,Imp@SizeLimFrac[1],Imp@SizeLimFrac[2])
+  } else {
+    ImpOut$SizeLimFrac <- SizeLimFrac
+  }
   
-  ImpOut$TAESD <- runif(nsim, Imp@TAESD[1], Imp@TAESD[2])  # Sampled Effort error (lognormal sd)
-  ImpOut$TAEFrac <- runif(nsim, Imp@TAEFrac[1], Imp@TAEFrac[2])  # Sampled Effort fraction (log normal sd)
-  
-  ImpOut$SizeLimSD<-runif(nsim,Imp@SizeLimSD[1],Imp@SizeLimSD[2])
-  ImpOut$SizeLimFrac<-runif(nsim,Imp@SizeLimFrac[1],Imp@SizeLimFrac[2])
   
   ImpOut
 }

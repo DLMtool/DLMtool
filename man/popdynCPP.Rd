@@ -55,7 +55,7 @@ popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge, Vuln,
 
 \item{MPA}{Spatial closure by year and area}
 
-\item{control}{Integer. 1 to use q and effort to calculate F, 2 to use Fapic (apical F) and 
+\item{control}{Integer. 1 to use q and effort to calculate F, 2 to use Fapic (apical F) and
 vulnerablity to calculate F.}
 
 \item{SSBcurr}{A numeric vector of length nareas with the current spawning biomass in each area}
@@ -63,7 +63,7 @@ vulnerablity to calculate F.}
 \item{mov}{Numeric matrix (nareas by nareas) with the movement matrix}
 }
 \description{
-Project population forward pyears given current numbers-at-age and total mortality, etc 
+Project population forward pyears given current numbers-at-age and total mortality, etc
 for the future years
 }
 \author{

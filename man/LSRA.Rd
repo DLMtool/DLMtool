@@ -11,17 +11,17 @@ LSRA(x, FF, Chist_arr, M, Mat_age, Wt_age, sel, Recdevs, h)
 
 \item{FF}{a vector of recent fishign mortality rates (apical Fs)}
 
-\item{Chist_arr}{a vector of historical catch observations [nyears]}
+\item{Chist_arr}{a vector of historical catch observations \code{[nyears]}}
 
-\item{M}{a vector of natural mortality rates [nsim]}
+\item{M}{a vector of natural mortality rates \code{[nsim]}}
 
-\item{Mat_age}{a matrix of maturity at age [nsim x nage]}
+\item{Mat_age}{a matrix of maturity at age \code{[nsim x nage]}}
 
-\item{Wt_age}{a matrix of weight at age [nsim x nage]}
+\item{Wt_age}{a matrix of weight at age \code{[nsim x nage]}}
 
-\item{sel}{a matrix of selectivity at age [nsim x nage]}
+\item{sel}{a matrix of selectivity at age \code{[nsim x nage]}}
 
-\item{Recdevs}{a matrix of recruitment deviations [nsim x nyears]}
+\item{Recdevs}{a matrix of recruitment deviations \code{[nsim x nyears]}}
 
 \item{h}{a vector of steepness values of the Bev-Holt Stock-Recruitment relationship}
 }

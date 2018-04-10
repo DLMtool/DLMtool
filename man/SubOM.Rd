@@ -16,7 +16,7 @@ SubOM(OM, Sub = c("Stock", "Fleet", "Obs", "Imp"))
 An object of class Stock, Fleet, Obs, or Imp
 }
 \description{
-A function that strips out a Stock, Fleet, Obs, or Imp object from a 
+A function that strips out a Stock, Fleet, Obs, or Imp object from a
 complete OM object. Mainly used for internal functions.
 }
 \examples{

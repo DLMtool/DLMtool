@@ -4,10 +4,12 @@
 \alias{AAVY}
 \title{Performance Metric: Probability AAVY < 0.2}
 \usage{
-AAVY(MSEobj = NULL)
+AAVY(MSEobj = NULL, Ref = 0.2)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}
+
+\item{Ref}{Reference Point for AAVY (fraction)}
 }
 \value{
 An object of class PMobj

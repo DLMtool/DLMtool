@@ -1,8 +1,8 @@
 Package: DLMtool
 Type: Package
 Title: Data-Limited Methods Toolkit
-Version: 5.1.9999
-Date: 2018-03-17
+Version: 5.1.999
+Date: 2018-03-26
 Authors@R: c(
     person("Tom", "Carruthers",, "t.carruthers@fisheries.ubc.ca", role=c("aut", "cre")),
     person("Adrian", "Hordyk", , "a.hordyk@oceans.ubc.ca", "aut"),
@@ -22,8 +22,10 @@ Depends:
     snowfall
 Imports:
     abind,
+    Amelia,
     coda,
     devtools,
+    dplyr,
     methods,
     grDevices,
     ggplot2,
@@ -47,3 +49,4 @@ LinkingTo: Rcpp, RcppArmadillo
 RoxygenNote: 6.0.1
 URL: http://www.datalimitedtoolkit.org/
 BugReports: https://github.com/DLMtool/DLMtool/issues
+Roxygen: list(markdown = TRUE)

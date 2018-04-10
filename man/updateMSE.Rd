@@ -7,7 +7,7 @@
 updateMSE(MSEobj)
 }
 \arguments{
-\item{MSEobj}{A MSE object from a previous version of the DLMtool. 
+\item{MSEobj}{A MSE object from a previous version of the DLMtool.
 Also works with Stock, Fleet, Obs, Imp, and Data objects.}
 }
 \value{

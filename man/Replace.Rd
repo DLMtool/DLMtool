@@ -20,7 +20,7 @@ Replace(OM, from, Sub = c("Stock", "Fleet", "Obs", "Imp"), Quiet = F)
 An object of class OM
 }
 \description{
-A function that replaces a Stock, Fleet, Obs, or Imp object from an 
+A function that replaces a Stock, Fleet, Obs, or Imp object from an
 OM with one from another OM. Mainly used for internal functions.
 }
 \examples{

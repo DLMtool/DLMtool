@@ -37,7 +37,7 @@ bounds of a uniform distribution from which to sample the parameter.
 
 \item{\code{maxF}}{Maximum instantaneous fishing mortality rate that may be simulated for any given age class}
 
-\item{\code{reps}}{Number of samples of the management recommendation for each method. Note that when this is set to 1, the mean value of 
+\item{\code{reps}}{Number of samples of the management recommendation for each method. Note that when this is set to 1, the mean value of
 the data inputs is used.}
 
 \item{\code{cpars}}{A list of custom parameters. Time series are a matrix nsim rows by nyears columns. Single parameters are a vector nsim long}
@@ -161,8 +161,8 @@ the data inputs is used.}
 \item{\code{CurrentYr}}{The current calendar year (final year) of the historical simulations (eg 2011). Single value. Positive integer. .}
 
 \item{\code{MPA}}{(Optional) Matrix specifying spatial closures for historical years. Each row should contain year index (e.g 10 for 10th historical year)
-followed by fraction of area closed to fishing for each area. i.e. each row represents a change and the number of columns is nareas + 1. 
-The spatial closures are assumed to remain in place for the future projections unless changed by a MP. 
+followed by fraction of area closed to fishing for each area. i.e. each row represents a change and the number of columns is nareas + 1.
+The spatial closures are assumed to remain in place for the future projections unless changed by a MP.
 Default (if left blank) is all areas are open to fishing in historical period.}
 
 \item{\code{Cobs}}{Log-normal catch observation error expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers}

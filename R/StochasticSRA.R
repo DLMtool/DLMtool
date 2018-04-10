@@ -166,7 +166,7 @@ LSRA_cpp <-function(x,FF,Chist_arr,M,Mat_age,Wt_age,sel,Recdevs,h){
 #' @param ploty Do you want to see diagnostics plotted?
 #' @param nplot how many MCMC samples should be plotted in convergence plots?
 #' @param SRAdir A directory where the SRA diagnostics / fit are stored
-#' @return A list with three positions. Position 1 is the filled OM object, position 2 is the custompars data.frame that may be submitted as an argument to runMSE() and position 3 is the matrix of effort histories [nyears x nsim] vector of objects of class\code{classy}
+#' @return A list with three positions. Position 1 is the filled OM object, position 2 is the custompars data.frame that may be submitted as an argument to runMSE() and position 3 is the matrix of effort histories `[nyears x nsim]` vector of objects of class\code{classy}
 #' @author T. Carruthers (Canadian DFO grant)
 #' @references Walters, C.J., Martell, S.J.D., Korman, J. 2006. A stochastic approach to stock reduction analysis. Can. J. Fish. Aqua. Sci. 63:212-213.
 #' @examples
@@ -523,7 +523,7 @@ StochasticSRAcpp <-function(OM,CAA,Chist,Ind,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=4
 #' @param ploty Do you want to see diagnostics plotted?
 #' @param nplot how many MCMC samples should be plotted in convergence plots?
 #' @param SRAdir A directory where the SRA diagnostics / fit are stored
-#' @return A list with three positions. Position 1 is the filled OM object, position 2 is the custompars data.frame that may be submitted as an argument to runMSE() and position 3 is the matrix of effort histories [nyears x nsim] vector of objects of class\code{classy}
+#' @return A list with three positions. Position 1 is the filled OM object, position 2 is the custompars data.frame that may be submitted as an argument to runMSE() and position 3 is the matrix of effort histories `[nyears x nsim]` vector of objects of class\code{classy}
 #' @author T. Carruthers (Canadian DFO grant)
 #' @references Walters, C.J., Martell, S.J.D., Korman, J. 2006. A stochastic approach to stock reduction analysis. Can. J. Fish. Aqua. Sci. 63:212-213.
 #' @export StochasticSRA
@@ -1128,12 +1128,12 @@ SRAcomp<-function(sim,OM,outfile=NA,maxplot=10){
 #'
 #' @param x a position in the various arrays and vectors that corresponds with a simulation (for use with sapply)
 #' @param FF a vector of recent fishign mortality rates (apical Fs)
-#' @param Chist_arr a vector of historical catch observations [nyears]
-#' @param M a vector of natural mortality rates [nsim]
-#' @param Mat_age a matrix of maturity at age [nsim x nage]
-#' @param Wt_age a matrix of weight at age [nsim x nage]
-#' @param sel a matrix of selectivity at age [nsim x nage]
-#' @param Recdevs a matrix of recruitment deviations [nsim x nyears]
+#' @param Chist_arr a vector of historical catch observations `[nyears]`
+#' @param M a vector of natural mortality rates `[nsim]`
+#' @param Mat_age a matrix of maturity at age `[nsim x nage]`
+#' @param Wt_age a matrix of weight at age `[nsim x nage]`
+#' @param sel a matrix of selectivity at age `[nsim x nage]`
+#' @param Recdevs a matrix of recruitment deviations `[nsim x nyears]`
 #' @param h a vector of steepness values of the Bev-Holt Stock-Recruitment relationship
 #' @return all package data objects are placed in the global namespace \code{dir}
 #' @export LSRA
@@ -1166,12 +1166,12 @@ LSRA<-function(x,FF,Chist_arr,M,Mat_age,Wt_age,sel,Recdevs,h){
 #' @param x a position in the various arrays and vectors that corresponds with a simulation (for use with sapply)
 #' @param lnR0s a vector nsim long that are estimated R0 values
 #' @param FF a vector of recent fishign mortality rates (apical Fs)
-#' @param Chist a vector of historical catch observations [nyears]
-#' @param M a vector of natural mortality rates [nsim]
-#' @param Mat_age a matrix of maturity at age [nsim x nage]
-#' @param Wt_age a matrix of weight at age [nsim x nage]
-#' @param sel a matrix of selectivity at age [nsim x nage]
-#' @param Recdevs a matrix of recruitment deviations [nsim x nyears]
+#' @param Chist a vector of historical catch observations `[nyears]`
+#' @param M a vector of natural mortality rates `[nsim]`
+#' @param Mat_age a matrix of maturity at age `[nsim x nage]`
+#' @param Wt_age a matrix of weight at age `[nsim x nage]`
+#' @param sel a matrix of selectivity at age `[nsim x nage]`
+#' @param Recdevs a matrix of recruitment deviations `[nsim x nyears]`
 #' @param h a vector of steepness values of the Bev-Holt Stock-Recruitment relationship
 #' @param mode optimization or plotting
 #' @return all package data objects are placed in the global namespace \code{dir}
@@ -1190,12 +1190,12 @@ LSRA2<-function(x,lnR0s,FF,Chist,M,Mat_age,Wt_age,sel,Recdevs,h,mode=2){
 #'
 #' @param param a numeric value representing log(R0)
 #' @param FF_a numeric value, recent fishign mortality rate (apical F)
-#' @param Chist a vector of historical catch observations [nyears]
+#' @param Chist a vector of historical catch observations `[nyears]`
 #' @param M_a numeric value, natural mortality rate
-#' @param Mat_age_a a vector of maturity at age [nage]
-#' @param Wt_age_a a vector of weight at age [nage]
-#' @param sel_a a vector of selectivity at age [nage]
-#' @param Recdevs_a a vector of recruitment deviations [nyears]
+#' @param Mat_age_a a vector of maturity at age `[nage]`
+#' @param Wt_age_a a vector of weight at age `[nage]`
+#' @param sel_a a vector of selectivity at age `[nage]`
+#' @param Recdevs_a a vector of recruitment deviations `[nyears]`
 #' @param h_a a numeric value of steepness values of the Bev-Holt Stock-Recruitment relationship
 #' @param Umax maximum harvest rate per year
 #' @param mode 1-5 see below

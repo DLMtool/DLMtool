@@ -12,7 +12,7 @@ fetch.file.names(path, filename)
 \item{filename}{The filename}
 }
 \description{
-A function for returning the three types of 
+A function for returning the three types of
 iSCAM input and output files
 }
 \author{

@@ -16,7 +16,7 @@ Iratio(x, Data, reps, yrs = c(2, 5))
 \item{yrs}{Vector of length 2 specifying the reference years}
 }
 \description{
-The TAC is adjusted by the ratio alpha, where the numerator 
+The TAC is adjusted by the ratio alpha, where the numerator
 being the mean index in the most recent two years of the time series and the denominator
 being the mean index in the three years prior to those in the numerator.
 }
@@ -24,9 +24,9 @@ being the mean index in the three years prior to those in the numerator.
 This MP is the stochastic version of Method 3.2 used by ICES for Data-Limited Stocks (ICES 2012).
 }
 \references{
-Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for 
-data limited stocks using length-based reference points and survey biomass indices, 
-Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836, 
+Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for
+data limited stocks using length-based reference points and survey biomass indices,
+Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836,
 https://doi.org/10.1016/j.fishres.2014.11.013
 
 ICES. 2012. ICES Implementation of Advice for Data-limited Stocks in 2012 in its 2012

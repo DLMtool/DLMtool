@@ -4,7 +4,7 @@
 \alias{DFO_proj}
 \title{Deparment of Fisheries and Oceans projection plot}
 \usage{
-DFO_proj(MSEobj, maxplot = 3)
+DFO_proj(MSEobj, maxplot = 6)
 }
 \arguments{
 \item{MSEobj}{An operating model object of class MSE}
@@ -13,7 +13,7 @@ DFO_proj(MSEobj, maxplot = 3)
 }
 \description{
 A projection plot of MP performance by simulation according to the
-stock status zones and reference points of DFO. 
+stock status zones and reference points of DFO.
 http://www.dfo-mpo.gc.ca/reports-rapports/regs/sff-cpd/precaution-eng.htm
 }
 \author{

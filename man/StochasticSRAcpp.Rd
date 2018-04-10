@@ -45,12 +45,12 @@ StochasticSRAcpp(OM, CAA, Chist, Ind, Cobs = 0.1, sigmaR = 0.5,
 \item{SRAdir}{A directory where the SRA diagnostics / fit are stored}
 }
 \value{
-A list with three positions. Position 1 is the filled OM object, position 2 is the custompars data.frame that may be submitted as an argument to runMSE() and position 3 is the matrix of effort histories [nyears x nsim] vector of objects of class\code{classy}
+A list with three positions. Position 1 is the filled OM object, position 2 is the custompars data.frame that may be submitted as an argument to runMSE() and position 3 is the matrix of effort histories \code{[nyears x nsim]} vector of objects of class\code{classy}
 }
 \description{
 Specify an operating model, using catch composition data and a historical catch series.
- Returns and operating model with depletion (D), selectivity parameters (L5, LFS) and effort trajectory (Effyears, EffLower, EffUpper) filled.
- Modified version using cpp code.
+Returns and operating model with depletion (D), selectivity parameters (L5, LFS) and effort trajectory (Effyears, EffLower, EffUpper) filled.
+Modified version using cpp code.
 }
 \examples{
 \dontrun{

@@ -32,7 +32,7 @@ y-axes (must be same length as YAxis)}
 
 \item{B0Ref}{Reference level of B0, in proportion, i.e., 0.2 = 0.2B0}
 
-\item{AvailMPs}{vector of MPs that *could* be applied to the fishery, i.e.,
+\item{AvailMPs}{vector of MPs that \emph{could} be applied to the fishery, i.e.,
 sufficient data exists. These a plotted with different symbol}
 
 \item{ShowLabs}{Logical to specify if MP labels are shown}

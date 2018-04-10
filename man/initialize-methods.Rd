@@ -19,27 +19,26 @@
 \section{Methods}{
  \describe{
 
-\item{list('signature(.Object = \'DLM\')')}{ %% ~~describe this method
+\item{list('signature(.Object = 'DLM')')}{ %% ~~describe this method
 here~~ }
 
-\item{list('signature(.Object = \'Fleet\')')}{ %% ~~describe this method
+\item{list('signature(.Object = 'Fleet')')}{ %% ~~describe this method
 here~~ }
 
-\item{list('signature(.Object = \'MSE\')')}{ %% ~~describe this method
+\item{list('signature(.Object = 'MSE')')}{ %% ~~describe this method
 here~~ }
 
-\item{list('signature(.Object = \'Obs\')')}{ %% ~~describe this
+\item{list('signature(.Object = 'Obs')')}{ %% ~~describe this
 method here~~ }
 
-\item{list('signature(.Object = \'OM\')')}{ %% ~~describe this method here~~
+\item{list('signature(.Object = 'OM')')}{ %% ~~describe this method here~~
 }
 
-\item{list('signature(.Object = \'Stock\')')}{ %% ~~describe this method
+\item{list('signature(.Object = 'Stock')')}{ %% ~~describe this method
 here~~ }
 
-
-\item{list('signature(.Object = \'Fease\')')}{ %% ~~describe this method
-here~~ } \item{list('signature(.Object = \'DLM_general\')')}{ %% ~~describe
+\item{list('signature(.Object = 'Fease')')}{ %% ~~describe this method
+here~~ } \item{list('signature(.Object = 'DLM_general')')}{ %% ~~describe
 this method here~~ }
 
 }

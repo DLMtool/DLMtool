@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.1)</title>
+  <title>Data-Limited Methods Toolkit (DLMtool 5.1.3)</title>
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.6 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.1)" />
+  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.1.3)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.1)" />
+  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.1.3)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-03-17">
+<meta name="date" content="2018-03-26">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -320,7 +320,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.1)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.1.3)</a>
           </h1>
         </div>
 
@@ -334,43 +334,42 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Here we demonstrate a few of the plotting function. You can see a list of all the plotting functions in the DLMtool for <code>MSE</code> objects using the <code>plotFun</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plotFun</span>()</code></pre></div>
 <pre><code>## DLMtool functions for plotting objects of class MSE are:</code></pre>
-<pre><code>## barplot COSEWIC_plot Cplot DFO_hist DFO_plot
-## DFO_plot2 DFO_proj IOTC_plot Kplot NOAA_plot
-## plotOFL Pplot Pplot2 PWhisker Tplot
-## Tplot2 Tplot3 TradePlot VOI VOI2
-## VOIplot wormplot</code></pre>
+<pre><code>## barplot Cplot DFO_plot DFO_plot2 DFO_proj
+## IOTC_plot Kplot NOAA_plot Pplot Pplot2
+## PWhisker Tplot Tplot2 Tplot3 TradePlot
+## VOI VOI2 VOIplot wormplot</code></pre>
 <div id="trade-off-plots" class="section level2">
 <h2><span class="header-section-number">8.1</span> Trade-Off Plots</h2>
 <p>The <code>Tplot</code> function creates four plots that show the trade-off between the expected relative yield and the probability of overfishing and the probability of the biomass being below three different reference points:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Tplot</span>(myMSE_<span class="dv">200</span>)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
+<p><img src="userguide_files/figure-html/unnamed-chunk-41-1.png" width="672" /></p>
 <p>The <code>Tplot2</code> function shows the trade-off between long-term and short-term yield, and the trade-off between biomass being above <span class="math inline">\(0.1B_{MSY}\)</span> and the expected variability in the yield:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Tplot2</span>(myMSE_<span class="dv">200</span>)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-41-1.png" width="672" /></p>
+<p><img src="userguide_files/figure-html/unnamed-chunk-42-1.png" width="672" /></p>
 <p>The <code>NOAA_plot</code> function was developed from applications of the DLMtool to fisheries in the Caribbean. This plot shows the trade-offs between the probability of not overfishing and long-term yield, and the probability of not being in an overfished state versus the probability of the annual variation in yield being less than 15%:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">NOAA_plot</span>(myMSE_<span class="dv">200</span>)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-42-1.png" width="672" /></p>
+<p><img src="userguide_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
 <pre><code>##               PNOF  B50  LTY    VY
-## AvC           42.8 52.7 35.8  66.0
-## Itarget1      83.7 91.8 76.9  76.0
-## matlenlim     93.8 98.0 63.5   1.0
-## ITe10         68.4 87.1 82.0   3.5
-## AvC_MLL       79.5 89.3 84.3  49.5
-## Itarget1_MPA  82.7 91.9 75.3  79.0
-## FMSYref       10.7 66.6 82.4  85.0
-## NFref        100.0 99.5  0.0 100.0</code></pre>
+## AvC           44.8 55.5 37.7  66.0
+## Itarget1      83.7 91.7 74.2  69.5
+## matlenlim     93.8 97.6 66.3   0.0
+## ITe10         67.5 86.5 82.0   2.0
+## AvC_MLL       79.2 89.3 86.8  49.5
+## Itarget1_MPA  83.2 91.9 75.7  76.5
+## FMSYref       11.7 72.5 93.9  90.5
+## NFref        100.0 99.6  0.0 100.0</code></pre>
 <p>The <code>Tplot3</code> function has been designed to take a list of Performance Metrics objects, plot the performance metric against each other, and report if an MP has met the minimum conditions for all performance metrics:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Tplot3</span>(myMSE_<span class="dv">200</span>)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
-<pre><code>##             MP  LTY  STY  P50 AAVY Satisificed
-## 1          AvC 0.38 0.84 0.53 0.94       FALSE
-## 2     Itarget1 0.77 0.58 0.92 0.98        TRUE
-## 3    matlenlim 0.64 0.48 0.98 0.10       FALSE
-## 4        ITe10 0.82 0.79 0.87 0.26       FALSE
-## 5      AvC_MLL 0.83 0.78 0.89 0.86        TRUE
-## 6 Itarget1_MPA 0.77 0.58 0.92 0.99        TRUE
-## 7      FMSYref 0.84 0.91 0.67 0.99       FALSE
-## 8        NFref 0.00 0.00 1.00 1.00       FALSE</code></pre>
+<p><img src="userguide_files/figure-html/unnamed-chunk-44-1.png" width="672" /></p>
+<pre><code>##             MP  LTY  STY  P50  AAVY Satisificed
+## 1          AvC 0.39 0.83 0.56 0.930       FALSE
+## 2     Itarget1 0.75 0.59 0.92 0.980        TRUE
+## 3    matlenlim 0.64 0.46 0.98 0.095       FALSE
+## 4        ITe10 0.82 0.81 0.86 0.280       FALSE
+## 5      AvC_MLL 0.85 0.80 0.89 0.900        TRUE
+## 6 Itarget1_MPA 0.76 0.59 0.92 1.000        TRUE
+## 7      FMSYref 0.95 0.93 0.73 1.000       FALSE
+## 8        NFref 0.00 0.00 1.00 1.000       FALSE</code></pre>
 <!-- ## Joint Probability Plot -->
 <!-- The previous plots calculate the probability of that Management Procedure will meet individual performance criteria.   -->
 <!-- An alternative is to calculate the probability that a Management Procedure will simultaneously meet all of the performance criteria. The `Jplot` function has been designed to calculate and display the joint probability of meeting multiple criteria.   -->
@@ -384,7 +383,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2><span class="header-section-number">8.2</span> Wormplot</h2>
 <p>The <code>wormplot</code> function plots the likelihood of meeting biomass targets in future years:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">wormplot</span>(myMSE_<span class="dv">200</span>)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-44-1.png" width="672" /></p>
+<p><img src="userguide_files/figure-html/unnamed-chunk-45-1.png" width="672" /></p>
 <p>The arguments to the <code>wormplot</code> function allow you to choose the reference level for the biomass relative to <span class="math inline">\(B_{MSY}\)</span>, as well as the upper and lower bounds of the colored bands.</p>
 </div>
 <div id="projection-plots" class="section level2">
@@ -414,7 +413,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The <code>Cplot</code> shows a scatter plot of the median biomass and median yield over the last five years of the projection relative to the current conditions (the last year in the historical period):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Cplot</span>(myMSE_<span class="dv">200</span>, <span class="dt">ShowLabs=</span><span class="ot">TRUE</span>)</code></pre></div>
 <pre><code>## Calculating MP Performance for last 5 years</code></pre>
-<p><img src="userguide_files/figure-html/unnamed-chunk-45-1.png" width="672" /></p>
+<p><img src="userguide_files/figure-html/unnamed-chunk-46-1.png" width="672" /></p>
 </div>
 </div>
             </section>

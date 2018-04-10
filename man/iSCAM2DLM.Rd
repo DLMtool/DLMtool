@@ -11,7 +11,7 @@ iSCAM2DLM(iSCAMdir, nsim = 48, proyears = 50, mcmc = F, Name = NULL,
 \arguments{
 \item{iSCAMdir}{A folder with iSCAM input and output files in it}
 
-\item{nsim}{The number of simulations to take for parameters with 
+\item{nsim}{The number of simulations to take for parameters with
 uncertainty (for OM@cpars custom parameters)}
 
 \item{proyears}{The number of MSE projection years}
@@ -22,15 +22,15 @@ uncertainty (for OM@cpars custom parameters)}
 
 \item{Source}{Reference to assessment documentation e.g. a url}
 
-\item{length_timestep}{How long is a model time step in years 
+\item{length_timestep}{How long is a model time step in years
 (e.g. a quarterly model is 0.25, a monthly model 1/12)}
 
 \item{Author}{Who did the assessment}
 }
 \description{
-A function that uses the file location of a fitted iSCAM 
-model including input files to population the various slots of an 
-operating model parameter estimates. iSCAM2DLM relies on several 
+A function that uses the file location of a fitted iSCAM
+model including input files to population the various slots of an
+operating model parameter estimates. iSCAM2DLM relies on several
 functions written by Chris Grandin (DFO PBS).
 }
 \author{
