@@ -39,6 +39,9 @@ this approach.
 \references{
 http://www.ccsbt.org/site/recent_assessment.php
 }
+\seealso{
+\link{SBT1}
+}
 \author{
 T. Carruthers
 }

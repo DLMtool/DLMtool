@@ -2,9 +2,15 @@
 % Please edit documentation in R/MPs_Output.R
 \name{YPR}
 \alias{YPR}
+\alias{YPR_CC}
+\alias{YPR_ML}
 \title{Yield Per Recruit analysis to get FMSY proxy F01}
 \usage{
 YPR(x, Data, reps = 100)
+
+YPR_CC(x, Data, reps = 100, Fmin = 0.005)
+
+YPR_ML(x, Data, reps = 100)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -12,6 +18,9 @@ YPR(x, Data, reps = 100)
 \item{Data}{A data-limited methods data object}
 
 \item{reps}{The number of samples of the TAC}
+
+\item{Fmin}{The minimum fishing mortality rate inferred from the catch-curve
+analysis}
 }
 \value{
 A numeric vector of TAC samples
@@ -20,6 +29,18 @@ A numeric vector of TAC samples
 A simple yield per recruit approximation to FMSY (F01) which is the position
 of the ascending YPR curve for which dYPR/dF = 0.1(dYPR/d0)
 }
+\section{Functions}{
+\itemize{
+\item \code{YPR}: Requires an external estimate of abundance.
+
+\item \code{YPR_CC}: A catch-curve analysis is used to determine recent Z which given M (Mort)
+gives F and thus abundance = Ct/(1-exp(-F))
+
+\item \code{YPR_ML}: A mean-length estimate of recent Z is used to infer current
+abundance. The mean length extension was programmed by Gary Nelson as part of his
+excellent R package 'fishmethods'
+}}
+
 \note{
 Based on the code of Meaghan Bryan
 }

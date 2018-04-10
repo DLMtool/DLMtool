@@ -1180,19 +1180,19 @@ class(Fadapt) <- "MP"
 #' (inc steepness). Coupled with an estimate of current abundance that gives
 #' you the OFL.
 #' 
-#' Made up for this package. This uses Murdoch McAllister's demographic r
-#' method to derive FMSY (r/2) and then makes the quota r*current biomass / 2.
-#' Easy.
-#' 
-#' @usage Fdem(x, Data, reps = 100)
 #' @param x A position in data-limited methods data object
 #' @param Data A data-limited methods data object
 #' @param reps The number of TAC samples
+#' @param Fmin The minimum fishing mortality rate derived from the catch-curve
+#' analysis
 #' @author T. Carruthers
 #' @references McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
 #' demographic methods to construct Bayesian priors for the intrinsic rate of
 #' increase in the Schaefer model and implications for stock rebuilding. Can.
 #' J. Fish. Aquat. Sci. 58: 1871-1890.
+#' @describeIn Fdem This uses Murdoch McAllister's demographic r
+#' method to derive FMSY (r/2) and then makes the quota r*current biomass / 2.
+#' Easy.
 #' @export Fdem
 Fdem <- function(x, Data, reps = 100) {
   # Demographic FMSY estimate (FMSY=r/2)
@@ -1221,23 +1221,8 @@ class(Fdem) <- "MP"
 
 
 
-#' Demographic FMSY method using catch-curve analysis to estimate recent Z
-#' 
-#' FMSY is calculated as r/2 from a demographic r prior method, current
-#' abudnance is estimated from naive catch curve analysis.
-#' 
-#' 
-#' @usage Fdem_CC(x, Data, reps = 100, Fmin=0.005)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @param Fmin The minimum fishing mortality rate derived from the catch-curve
-#' analysis
-#' @author T. Carruthers
-#' @references McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
-#' demographic methods to construct Bayesian priors for the intrinsic rate of
-#' increase in the Schaefer model and implications for stock rebuilding. Can.
-#' J. Fish. Aquat. Sci. 58: 1871-1890.
+#' @describeIn Fdem FMSY is calculated as r/2 from a demographic r prior method, current
+#' abundance is estimated from catch curve analysis.
 #' @export Fdem_CC
 Fdem_CC <- function(x, Data, reps = 100, Fmin = 0.005) {
   dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@MaxAge, Data@wla, Data@wlb, Data@CAA, Data@steep, Data@CV_steep"
@@ -1274,23 +1259,8 @@ Fdem_CC <- function(x, Data, reps = 100, Fmin = 0.005) {
 }
 class(Fdem_CC) <- "MP"
 
-#' Demographic FMSY method that uses mean length data to estimate recent Z
-#' 
-#' Demographic F (r/2) method using the mean length estimator to calculate
+#' @describeIn Fdem Demographic F (r/2) method using the mean length estimator to calculate
 #' current abundance.
-#' 
-#' 
-#' @usage Fdem_ML(x, Data, reps = 100)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @note The mean length extension was programmed by Gary Nelson as part of his
-#' excellent R package 'fishmethods'
-#' @author T. Carruthers
-#' @references McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
-#' demographic methods to construct Bayesian priors for the intrinsic rate of
-#' increase in the Schaefer model and implications for stock rebuilding. Can.
-#' J. Fish. Aquat. Sci. 58: 1871-1890.
 #' @export 
 Fdem_ML <- function(x, Data, reps = 100) {
   dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@MaxAge, Data@wla, Data@wlb, Data@CAL, Data@steep, Data@CV_steep"
@@ -2494,14 +2464,13 @@ class(Ltarget4) <- "MP"
 #' Mean Catch Depletion
 #' 
 #' A simple average catch-depletion MP that was included to demonstrate just
-#' how informative an estimate of current stock depletion can be. TAC=2*D*AvC
-#' 
-#' 
-#' @usage MCD(x, Data, reps = 100)
+#' how informative an estimate of current stock depletion can be. 
+#'
 #' @param x A position in a data-limited methods data object
 #' @param Data A data-limited methods data object
 #' @param reps The number of stochastic samples of the quota recommendation
-#' @return A numeric vector of TAC recommendations
+#' @return A Rec object with TAC recommendations
+#' @describeIn MCD The calculated TAC = 2 \* depletion \* AvC
 #' @author T. Carruthers
 #' @export MCD
 MCD <- function(x, Data, reps = 100) {
@@ -2525,18 +2494,7 @@ class(MCD) <- "MP"
 
 
 
-#' Mean Catch Depletion
-#' 
-#' A simple average catch-depletion MP linked to a 40-10 harvest controle rule
-#' that was included to demonstrate just how informative an estimate of current
-#' stock depletion can be. TAC=d(1-d)AvC
-#' 
-#' 
-#' @usage MCD4010(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the quota recommendation
-#' @return A numeric vector of TAC recommendations
+#' @describeIn MCD Linked to a 40-10 harvest control rule
 #' @author T. Carruthers
 #' @export MCD4010
 MCD4010 <- function(x, Data, reps = 100) {
@@ -2647,24 +2605,9 @@ class(Rcontrol) <- "MP"
 
 
 
-#' MP using prior for intrinsic rate of increase with a quadratic approximation
-#' to surplus production
-#' 
-#' An MP proposed by Carl Walters that modifies quotas according to trends in
-#' apparent surplus production that includes information from a demographically
-#' derived prior for intrinsic rate of increase. This is different from
+#' @describeIn Rcontrol This is different from
 #' Rcontrol because it includes a quadratic approximation of recent trend in
 #' surplus production given biomass
-#' 
-#' 
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @param yrsmth The number of years for smoothing catch and biomass data
-#' @param gg A gain parameters
-#' @param glim Limits for the change in TAC among years
-#' @author C. Walters and T. Carruthers
-#' @references Made-up for this package.
 #' @export Rcontrol2
 Rcontrol2 <- function(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 
                                                                          2)) {
@@ -2743,6 +2686,7 @@ class(Rcontrol2) <- "MP"
 #' @param gamma Control parameter
 #' @author T. Carruthers
 #' @references http://www.ccsbt.org/site/recent_assessment.php
+#' @seealso \link{SBT2}
 #' @export SBT1
 SBT1 <- function(x, Data, reps = 100, yrsmth = 10, k1 = 1.5, k2 = 3, gamma = 1) {
   dependencies = "Data@Cat, Data@Year, Data@Ind"
@@ -2790,6 +2734,7 @@ class(SBT1) <- "MP"
 #' @param gamma Control parameter
 #' @author T. Carruthers
 #' @references http://www.ccsbt.org/site/recent_assessment.php
+#' @seealso \link{SBT1}
 #' @export SBT2
 SBT2 <- function(x, Data, reps = 100, epsB = 0.25, epsR = 0.75, tauR = 5, 
                  tauB = 7, gamma = 1) {
@@ -2830,6 +2775,7 @@ class(SBT2) <- "MP"
 #' @author T. Carruthers
 #' @references
 #' http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf
+#' @seealso \link{SPslope}
 #' @export 
 SPmod <- function(x, Data, reps = 100, alp = c(0.8, 1.2), bet = c(0.8, 1.2)) {
   dependencies = "Data@Cat, Data@Ind, Data@Abun, Data@CV_Ind, Data@CV_Cat,  Data@CV_Abun"
@@ -2866,7 +2812,7 @@ class(SPmod) <- "MP"
 #' on catches and a rule for intrinsic rate of increase it also returns
 #' depletion. Given their surplus production model predicts K, r and depletion
 #' it is straighforward to calculate the OFL based on the Schaefer productivity
-#' curve. OFL = dep x (1-dep) x r x K x 2
+#' curve. OFL = dep \* (1-dep) \* r \* K \* 2
 #' 
 #' Requires the assumption that catch is proportional to abundance.
 #' Occasionally the rule that limits r and K ranges does not allow r-K pairs to
@@ -2998,6 +2944,7 @@ class(SPMSY) <- "MP"
 #' @param bet Limits for how much the Data can change among years
 #' @return A numeric vector of Data recommendations
 #' @author T. Carruthers
+#' @seealso \link{SPmod}
 #' @references
 #' http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf
 #' @export 
@@ -3222,15 +3169,16 @@ class(SPSRA_ML) <- "MP"
 #' A simple yield per recruit approximation to FMSY (F01) which is the position
 #' of the ascending YPR curve for which dYPR/dF = 0.1(dYPR/d0)
 #' 
-#' 
-#' @usage YPR(x, Data, reps = 100)
 #' @param x A position in a data-limited methods data object
 #' @param Data A data-limited methods data object
 #' @param reps The number of samples of the TAC
+#' @param Fmin The minimum fishing mortality rate inferred from the catch-curve
+#' analysis
 #' @return A numeric vector of TAC samples
 #' @note Based on the code of Meaghan Bryan
 #' @author Meaghan Bryan and Tom Carruthers
 #' @references Beverton and Holt. 1954.
+#' @describeIn YPR Requires an external estimate of abundance.
 #' @export YPR
 YPR <- function(x, Data, reps = 100) {
   # Yield per recruit analysis F01 - Meaghan Bryan for(x in 1:10){
@@ -3259,22 +3207,8 @@ class(YPR) <- "MP"
 
 
 
-#' Yield Per Recruit analysis to get FMSY proxy F01 paired to a naive catch
-#' curve estimate of recent Z
-#' 
-#' A simple yield per recruit approximation to FMSY (F01) which is the position
-#' of the ascending YPR curve for which dYPR/dF = 0.1(dYPR/d0) A naive
-#' catch-curve analysis is used to determine recent Z which given M (Mort)
+#' @describeIn YPR A catch-curve analysis is used to determine recent Z which given M (Mort)
 #' gives F and thus abundance = Ct/(1-exp(-F))
-#' 
-#' 
-#' @usage YPR_CC(x, Data, reps = 100, Fmin=0.005)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object (class DLM)
-#' @param reps The number of samples of the TAC
-#' @param Fmin The minimum fishing mortality rate inferred from the catch-curve
-#' analysis
-#' @author Meaghan Bryan and T. Carruthers
 #' @export YPR_CC
 YPR_CC <- function(x, Data, reps = 100, Fmin = 0.005) {
   # for(x in 1:16){
@@ -3318,21 +3252,9 @@ class(YPR_CC) <- "MP"
 
 
 
-#' Yield Per Recruit analysis to get FMSY proxy F01 paired with a mean-length
-#' estimate of current stock size
-#' 
-#' A simple yield per recruit approximation to FMSY (F01) which is the position
-#' of the ascending YPR curve for which dYPR/dF = 0.1(dYPR/d0) A mean-length
-#' estimate of recent Z is used to infer current abundance
-#' 
-#' 
-#' @usage YPR_ML(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of samples of the TAC
-#' @note The mean length extension was programmed by Gary Nelson as part of his
+#' @describeIn YPR A mean-length estimate of recent Z is used to infer current 
+#' abundance. The mean length extension was programmed by Gary Nelson as part of his
 #' excellent R package 'fishmethods'
-#' @author Meaghan Bryan and T. Carruthers
 #' @export YPR_ML
 YPR_ML <- function(x, Data, reps = 100) {
   dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@MaxAge, Data@wla, Data@wlb, Data@CAL, Data@Cat"

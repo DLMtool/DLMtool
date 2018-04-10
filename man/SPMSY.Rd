@@ -19,7 +19,7 @@ determine the OFL. Since their approach estimates stock trajectories based
 on catches and a rule for intrinsic rate of increase it also returns
 depletion. Given their surplus production model predicts K, r and depletion
 it is straighforward to calculate the OFL based on the Schaefer productivity
-curve. OFL = dep x (1-dep) x r x K x 2
+curve. OFL = dep * (1-dep) * r * K * 2
 }
 \details{
 Requires the assumption that catch is proportional to abundance.
