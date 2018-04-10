@@ -161,27 +161,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (!exists("Kgrad", inherits=FALSE)) Kgrad <- Kgrad <- runif(nsim, Stock@Kgrad[1], Stock@Kgrad[2])  # gradient in Von-B K parameter (K y-1)
   if (!exists("t0", inherits=FALSE)) t0 <- runif(nsim, Stock@t0[1], Stock@t0[2])  # a sample of theoretical age at length zero
   
-  # == Sample Maturity Parameters ====
-  if (!exists("L50", inherits=FALSE)) {
-    sL50 <- array(runif(nsim * 50, Stock@L50[1], Stock@L50[2]), c(nsim, 50))  # length at 50% maturity  
-    # checks for unrealistically high length at maturity
-    sL50[sL50/Linf > 0.95] <- NA
-    L50 <- apply(sL50, 1, function(x) x[!is.na(x)][1])
-  }
-  if (!exists("L50_95", inherits=FALSE)) {
-    L50_95 <- array(runif(nsim * 50, Stock@L50_95[1], Stock@L50_95[2]), c(nsim, 50))  # length at 95% maturity
-    if (!exists("sL50", inherits=FALSE)) sL50 <- matrix(L50, nsim, 50)
-    L50_95[((sL50+L50_95)/matrix(Linf, nsim, 50)) > 0.99] <- NA
-    L50_95 <- apply(L50_95, 1, function(x) x[!is.na(x)][1]) 
-    L50_95[is.na(L50_95)] <- 2
-  }
-  
-  if (!exists("L95", inherits=FALSE))   L95 <- L50 + L50_95
-  
-  if (any(L95> Linf)) {
-    message("Note: Some samples of L95 are above Linf. Defaulting to 0.99*Linf")
-    L95[L95> Linf] <- 0.99* Linf[L95> Linf]
-  }
+
   
   # == Sample Fecundity-Length Exponent ===
   # if (!exists("FecB", inherits=FALSE))   FecB <- runif(nsim, min(Stock@FecB), max(Stock@FecB))
@@ -220,12 +200,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   
   t0array <- matrix(t0, nrow=nsim, ncol=proyears+nyears)
   
-  # === Generate L50 by year ====
-  relL50 <- matrix(L50/Linf, nrow=nsim, ncol=nyears + proyears, byrow=FALSE) # assume L50/Linf stays constant 
-  L50array <- relL50 * Linfarray
-  delLm <- L95 - L50 
-  L95array <- L50array + matrix(delLm, nrow=nsim, ncol=nyears + proyears, byrow=FALSE)
-  L95array[L95array>Linfarray] <- 0.99 *  Linfarray[L95array>Linfarray]
+  
   
   # === Create Mean Length-at-Age array ====
   if (!exists("Len_age", inherits=FALSE)) {
@@ -294,6 +269,51 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     Wb <- coef(mod)[2]
   }
   
+  # == Sample Maturity Parameters ====
+  if (exists("Mat_age", inherits=FALSE)){
+    if (any(dim(Mat_age) != c(nsim, maxage, nyears+proyears))) stop("'Mat_age' must be array with dimensions: nsim, maxage, nyears+proyears") 
+    
+    # Calculate L50, L95, ageM and age95 
+    ageM <- age95 <- L50array <- L95array <- matrix(NA, nsim, nyears+proyears)
+    for (XX in 1:(nyears+proyears)) {
+      ageM[,XX] <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,, XX], y=1:maxage, 0.5)))
+      age95[,XX] <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,, XX], y=1:maxage, 0.95)))
+      L50array[,XX] <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,,XX], y=Len_age[x, , nyears], 0.5)))
+      L95array[,XX]<- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,,XX], y=Len_age[x, , nyears], 0.95)))
+    }
+    L50 <- L50array[,nyears]
+    L50_95 <- L95array[,nyears] - L50array[,nyears]
+  } else {
+    if (!exists("L50", inherits=FALSE)) {
+      sL50 <- array(runif(nsim * 50, Stock@L50[1], Stock@L50[2]), c(nsim, 50))  # length at 50% maturity  
+      # checks for unrealistically high length at maturity
+      sL50[sL50/Linf > 0.95] <- NA
+      L50 <- apply(sL50, 1, function(x) x[!is.na(x)][1])
+    }
+    if (!exists("L50_95", inherits=FALSE)) {
+      L50_95 <- array(runif(nsim * 50, Stock@L50_95[1], Stock@L50_95[2]), c(nsim, 50))  # length at 95% maturity
+      if (!exists("sL50", inherits=FALSE)) sL50 <- matrix(L50, nsim, 50)
+      L50_95[((sL50+L50_95)/matrix(Linf, nsim, 50)) > 0.99] <- NA
+      L50_95 <- apply(L50_95, 1, function(x) x[!is.na(x)][1]) 
+      L50_95[is.na(L50_95)] <- 2
+    }
+    
+    if (!exists("L95", inherits=FALSE))   L95 <- L50 + L50_95
+    
+    if (any(L95> Linf)) {
+      message("Note: Some samples of L95 are above Linf. Defaulting to 0.99*Linf")
+      L95[L95> Linf] <- 0.99* Linf[L95> Linf]
+    }
+    
+    # === Generate L50 by year ====
+    relL50 <- matrix(L50/Linf, nrow=nsim, ncol=nyears + proyears, byrow=FALSE) # assume L50/Linf stays constant 
+    L50array <- relL50 * Linfarray
+    delLm <- L95 - L50 
+    L95array <- L50array + matrix(delLm, nrow=nsim, ncol=nyears + proyears, byrow=FALSE)
+    L95array[L95array>Linfarray] <- 0.99 *  Linfarray[L95array>Linfarray]
+  }
+  
+  
   
   # == Calculate age at maturity ==== 
   if (exists('ageM', inherits=FALSE)) { # check dimensions 
@@ -325,18 +345,8 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       Mat_age[,,XX] <- 1/(1 + exp(-log(19) * ((Agearray - ageM[,XX])/(age95[,XX] - ageM[,XX])))) # Maturity at age array by year
     }
     
-  } else {
-    if (any(dim(Mat_age) != c(nsim, maxage, nyears+proyears))) stop("'Mat_age' must be array with dimensions: nsim, maxage, nyears+proyears") 
-    
-    # Calculate L50, L95, ageM and age95 
-    ageM <- age95 <- L50array <- L95array <- matrix(NA, nsim, nyears+proyears)
-    for (XX in 1:(nyears+proyears)) {
-      ageM[,XX] <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,, XX], y=1:maxage, 0.5)))
-      age95[,XX] <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,, XX], y=1:maxage, 0.95)))
-      L50array[,XX] <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,,XX], y=Len_age[x, , nyears], 0.5)))
-      L95array[,XX]<- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,,XX], y=Len_age[x, , nyears], 0.95)))
-    }
-  }
+  } 
+ 
   
   
   # == Calculate M-at-Age from M-at-Length if provided ====
@@ -625,6 +635,11 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   Fleetout$FinF <- FinF
   
   # ==== Sample selectivity parameters ====
+  if (exists("V", inherits=FALSE) | exists("retA", inherits=FALSE)) {
+    Fleet@isRel <- 'FALSE'
+  }
+  
+  
   Selnyears <- length(Fleet@SelYears)
   # are selectivity parameters relative to size at maturity?
   
@@ -642,7 +657,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
  
   if (exists("L5", inherits = FALSE) | exists("LFS", inherits = FALSE) | 
       exists("Vmaxlen", inherits = FALSE) | exists("V", inherits=FALSE)) {
-    if (multi != 1) stop("Selectivity parameters provided in cpars must be absolute values. Is Fleet@isRel == 'FALSE'?")
+    if (all(multi != 1)) stop("Selectivity parameters provided in cpars must be absolute values. Is Fleet@isRel == 'FALSE'?")
   }
   
   if (!exists("L5", inherits = FALSE)) L5 <- runif(nsim, Fleet@L5[1], Fleet@L5[2]) * multi  # length at 0.05% selectivity ascending
