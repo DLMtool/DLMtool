@@ -18,10 +18,8 @@ Iratio(x, Data, reps, yrs = c(2, 5))
 \description{
 The TAC is adjusted by the ratio alpha, where the numerator
 being the mean index in the most recent two years of the time series and the denominator
-being the mean index in the three years prior to those in the numerator.
-}
-\details{
-This MP is the stochastic version of Method 3.2 used by ICES for Data-Limited Stocks (ICES 2012).
+being the mean index in the three years prior to those in the numerator. This MP is the
+stochastic version of Method 3.2 used by ICES for Data-Limited Stocks (ICES 2012).
 }
 \references{
 Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for

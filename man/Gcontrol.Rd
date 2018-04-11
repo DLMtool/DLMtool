@@ -28,8 +28,8 @@ inferred surplus production to make upward/downward adjustments to TAC
 recommendations
 }
 \references{
-Made-up for this package. Carruthers et al. 2015. Performance of
-Simple Management Procedures.
+Carruthers et al. 2015. Performance evaluation of simple
+management procedures. ICES J. Mar Sci. 73, 464-482.
 }
 \author{
 C. Walters and T. Carruthers
