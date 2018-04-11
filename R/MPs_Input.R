@@ -1,18 +1,25 @@
 ## Size limit MPs ####
 
-#' A data-limited method in which fishing retention is set according to the
-#' maturity curve NEW
+#' Size limit management procedures
 #' 
-#' An example of the implementation of input controls in the DLM toolkit, where
-#' retention-at-length is set equivalent to maturity-at-length
+#' Examples of the implementation of input controls in the DLM toolkit. See details below.
+#' 
 #' 
 #' @param x A position in a data-limited methods object
 #' @param Data A data-limited methods object
+#' @param buffer Parameter controlling the fraction of Lopt to set the minimum
+#' length of fish caught: minlen=Lopt*(0.7+buffer).
 #' @param ... Optional additional arguments that are ignored. Note arguments
 #' \code{reps} or \code{...} are required for all input controls
-#' @return A input control recommendation object 
-#' @author T. Carruthers
-#' @references Made-up for this package
+#' @return A Rec object with input control recommendations 
+#' @author T. Carruthers & A. Hordyk
+#' @references
+#' Hordyk, A., Ono, K., Sainsbury, K., Loneragan, N., and J.
+#' Prince. 2014. Some explorations of the life history ratios to describe
+#' length composition, spawning-per-recruit, and the spawning potential ratio
+#' ICES Journal of Marine Science, doi:10.1093/icesjms/fst235.
+#' @describeIn matlenlim A data-limited method in which fishing retention-at-length
+#' is set equivalent to the maturity curve.
 #' @export 
 matlenlim <- function(x, Data, ...) {
   # Knife-edge vulnerability at estimated length-at-maturity  
@@ -28,22 +35,8 @@ matlenlim <- function(x, Data, ...) {
 class(matlenlim) <- "MP"
 
 
-#' A data-limited method in which fishing vulnerability is set slightly higher
-#' than the maturity curve
-#' 
-#' An example of the implementation of input controls in the DLM toolkit, where
-#' selectivity-at-length is set slightly higher than the maturity-at-length
-#' 
-#' 
-#' @usage matlenlim2(x, Data, ...)
-#' @param x A position in a data-limited methods object
-#' @param Data A data-limited methods object
-#' @param ... Optional additional arguments that are ignored. Note arguments
-#' \code{reps} or \code{...} are required for all input controls
-#' @return A vector of input control recommendations, with values for length at
-#' first capture and full selection
-#' @author A. Hordyk
-#' @references Made-up for this package
+#' @describeIn matlenlim Selectivity-at-length is set slightly higher (110%) 
+#' than the maturity-at-length.
 #' @export matlenlim2
 matlenlim2 <- function(x, Data, ...) {
   # Knife-edge vulnerability slightly higher than length at maturity
@@ -59,28 +52,13 @@ class(matlenlim2) <- "MP"
 
 
 
-#' This input control sets the minimum length of fish caught to a fraction of
-#' the length that maximises the biomass, Lopt.
-#' 
-#' This aim of this simple MP is restrict the catch of small fish to rebuild
+#' @describeIn matlenlim This input control sets the minimum length of fish 
+#' caught to a fraction of the length that maximises the biomass, Lopt. The aim 
+#' of this simple MP is restrict the catch of small fish to rebuild
 #' the stock biomass towards the optimal length, Lopt, expressed in terms of
-#' the growth parameters Lopt=b/(M/k+b) (Hordyk et al. (2014)
-#' 
-#' 
-#' @usage minlenLopt1(x, Data, reps = 100, buffer = 0.1)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @param buffer Parameter controlling the fraction of Lopt to set the minimum
-#' length of fish caught: minlen=Lopt*(0.7+buffer).
-#' @return The length at first caprture, LFC, and length at full selectivity
-#' @author HF Geromont
-#' @references Hordyk, A., Ono, K., Sainsbury, K., Loneragan, N., and J.
-#' Prince. 2014. Some explorations of the life history ratios to describe
-#' length composition, spawning-per-recruit, and the spawning potential ratio
-#' ICES Journal of Marine Science, doi:10.1093/icesjms/fst235.
+#' the growth parameters Lopt=b/(M/k+b) (Hordyk et al. 2014) (Author: HF Geromont)
 #' @export minlenLopt1
-minlenLopt1 <- function(x, Data, reps = 100, buffer = 0.1) {
+minlenLopt1 <- function(x, Data, buffer = 0.1, ...) {
   
   # Minimum length MPs: Fix length-at-full-selectivity to 0.8*Lopt and
   # set length-at-first-capture 10% below LFs
@@ -97,23 +75,10 @@ minlenLopt1 <- function(x, Data, reps = 100, buffer = 0.1) {
 class(minlenLopt1) <- "MP"
 
 
-#' An data-limited method which sets a slot limit
-#' 
-#' An example of the implementation of input controls in the DLM toolkit, where
-#' selectivity-at-length is set using a slot limit; that is, a minimum and
+#' @describeIn matlenlim Selectivity-at-length is set using a slot limit; that is, a minimum and
 #' maximum legal length.  The maximum limit is set here, quite arbitrarily, as
 #' the 75th percentile between the new minimum legal length and the estimated
-#' asymptotic length.
-#' 
-#' 
-#' @usage slotlim(x, Data, ...)
-#' @param x A position in a data-limited methods object
-#' @param Data A data-limited methods object
-#' @param ... Optional additional arguments that are ignored. Note arguments
-#' \code{reps} or \code{...} are required for all input controls
-#' @return An object of class 'Rec'
-#' @author A. Hordyk
-#' @references Made-up for this package
+#' asymptotic length Linf.
 #' @export slotlim
 slotlim <- function(x, Data, ...) {
   # Example of slot limit between 0.95 and 1.25 * L50
@@ -132,9 +97,12 @@ class(slotlim) <- "MP"
 
 # --- Spatial Closure MPs ----
 
-#' A marine reserve in area 1 with full reallocation of fishing effort
+#' Spatial closure and allocation management procedures
 #' 
-#' A spatial control that prevents fishing in area 1 and reallocates this
+#' Management procedures which can close areas to fishing and reallocate 
+#' fishing effort spatially.
+#' 
+#' @describeIn MRreal A spatial control that prevents fishing in area 1 and reallocates this
 #' fishing effort to area 2 (or over other areas).
 #' 
 #' 
@@ -157,18 +125,8 @@ MRreal <- function(x, Data, ...) {
 class(MRreal) <- "MP"
 
 
-#' An marine reserve in area 1 with no spatial reallocation of fishing effort
-#' 
-#' A spatial control that prevents fishing in area 1 and does not reallocate
-#' this fishing effort to area 2.
-#' 
-#' 
-#' @usage MRnoreal(x, Data, ...)
-#' @param x A position in data / simulation object DLM
-#' @param Data A data limited methods data object
-#' @param ... Optional additional arguments that are ignored. Note arguments
-#' \code{reps} or \code{...} are required for all input controls
-#' @author T. Carruthers
+#' @describeIn MRreal A spatial control that prevents fishing in area 1 
+#' (e.g., An marine reserve) and does not reallocate this fishing effort to area 2.
 #' @export MRnoreal
 MRnoreal <- function(x, Data, ...) {
   # A Marine reserve in area 1 with no spatial reallocation of effort

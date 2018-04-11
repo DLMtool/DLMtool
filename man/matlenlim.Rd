@@ -2,10 +2,18 @@
 % Please edit documentation in R/MPs_Input.R
 \name{matlenlim}
 \alias{matlenlim}
-\title{A data-limited method in which fishing retention is set according to the
-maturity curve NEW}
+\alias{matlenlim2}
+\alias{minlenLopt1}
+\alias{slotlim}
+\title{Size limit management procedures}
 \usage{
 matlenlim(x, Data, ...)
+
+matlenlim2(x, Data, ...)
+
+minlenLopt1(x, Data, buffer = 0.1, ...)
+
+slotlim(x, Data, ...)
 }
 \arguments{
 \item{x}{A position in a data-limited methods object}
@@ -14,17 +22,42 @@ matlenlim(x, Data, ...)
 
 \item{...}{Optional additional arguments that are ignored. Note arguments
 \code{reps} or \code{...} are required for all input controls}
+
+\item{buffer}{Parameter controlling the fraction of Lopt to set the minimum
+length of fish caught: minlen=Lopt*(0.7+buffer).}
 }
 \value{
-A input control recommendation object
+A Rec object with input control recommendations
 }
 \description{
-An example of the implementation of input controls in the DLM toolkit, where
-retention-at-length is set equivalent to maturity-at-length
+Examples of the implementation of input controls in the DLM toolkit. See details below.
 }
+\section{Functions}{
+\itemize{
+\item \code{matlenlim}: A data-limited method in which fishing retention-at-length
+is set equivalent to the maturity curve.
+
+\item \code{matlenlim2}: Selectivity-at-length is set slightly higher (110%)
+than the maturity-at-length.
+
+\item \code{minlenLopt1}: This input control sets the minimum length of fish
+caught to a fraction of the length that maximises the biomass, Lopt. The aim
+of this simple MP is restrict the catch of small fish to rebuild
+the stock biomass towards the optimal length, Lopt, expressed in terms of
+the growth parameters Lopt=b/(M/k+b) (Hordyk et al. 2014) (Author: HF Geromont)
+
+\item \code{slotlim}: Selectivity-at-length is set using a slot limit; that is, a minimum and
+maximum legal length.  The maximum limit is set here, quite arbitrarily, as
+the 75th percentile between the new minimum legal length and the estimated
+asymptotic length Linf.
+}}
+
 \references{
-Made-up for this package
+Hordyk, A., Ono, K., Sainsbury, K., Loneragan, N., and J.
+Prince. 2014. Some explorations of the life history ratios to describe
+length composition, spawning-per-recruit, and the spawning potential ratio
+ICES Journal of Marine Science, doi:10.1093/icesjms/fst235.
 }
 \author{
-T. Carruthers
+T. Carruthers & A. Hordyk
 }

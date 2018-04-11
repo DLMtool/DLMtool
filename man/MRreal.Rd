@@ -2,9 +2,12 @@
 % Please edit documentation in R/MPs_Input.R
 \name{MRreal}
 \alias{MRreal}
-\title{A marine reserve in area 1 with full reallocation of fishing effort}
+\alias{MRnoreal}
+\title{Spatial closure and allocation management procedures}
 \usage{
 MRreal(x, Data, ...)
+
+MRnoreal(x, Data, ...)
 }
 \arguments{
 \item{x}{A position in data / simulation object DLM}
@@ -15,9 +18,18 @@ MRreal(x, Data, ...)
 \code{reps} or \code{...} are required for all input controls}
 }
 \description{
-A spatial control that prevents fishing in area 1 and reallocates this
-fishing effort to area 2 (or over other areas).
+Management procedures which can close areas to fishing and reallocate
+fishing effort spatially.
 }
+\section{Functions}{
+\itemize{
+\item \code{MRreal}: A spatial control that prevents fishing in area 1 and reallocates this
+fishing effort to area 2 (or over other areas).
+
+\item \code{MRnoreal}: A spatial control that prevents fishing in area 1
+(e.g., An marine reserve) and does not reallocate this fishing effort to area 2.
+}}
+
 \author{
 T. Carruthers
 }
