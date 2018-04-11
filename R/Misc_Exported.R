@@ -261,35 +261,37 @@ plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
 #' 
 #' @param funcs A character vector of management procedures
 #' @author T. Carruthers
+#' @return A matrix of MPs and their required data in terms of Data slotnames
 #' @examples 
 #' Required(c("DCAC", "AvC"))
+#' Required() # For all MPs
+#' @seealso \link{Can} \link{Cant} \link{Needed} \linkS4class{Data}
 #' @export 
 Required <- function(funcs = NA) {
-  if (is.na(funcs[1])) 
-    funcs <- c(avail("Output"), avail("Input"))
-  slots <- slotNames("Data")
-  slotnams <- paste("Data@", slotNames("Data"), sep = "")
-  repp <- rep("", length(funcs))
-  
-  for (i in 1:length(funcs)) {
-    temp <- format(match.fun(funcs[i]))
-    temp <- paste(temp[1:(length(temp))], collapse = " ")
-    rec <- ""
-    for (j in 1:length(slotnams)) if (grepl(slotnams[j], temp)) 
-      rec <- c(rec, slots[j])
-    if (length(rec) > 1) 
-      repp[i] <- paste(rec[2:length(rec)], collapse = ", ")
-  }
-  cbind(funcs, repp, deparse.level = 0)
+#  if (is.na(funcs[1])) 
+#    funcs <- c(avail("Output"), avail("Input"))
+#  slots <- slotNames("Data")
+#  slotnams <- paste("Data@", slotNames("Data"), sep = "")
+#  repp <- rep("", length(funcs))
+#  
+#  for (i in 1:length(funcs)) {
+#    temp <- format(match.fun(funcs[i]))
+#    temp <- paste(temp[1:(length(temp))], collapse = " ")
+#    rec <- ""
+#    for (j in 1:length(slotnams)) if (grepl(slotnams[j], temp)) 
+#      rec <- c(rec, slots[j])
+#    if (length(rec) > 1) 
+#      repp[i] <- paste(rec[2:length(rec)], collapse = ", ")
+#  }
+#  cbind(funcs, repp, deparse.level = 0)
+#  
+  if (all(is.na(funcs))) funcs <- avail("MP")
+  temp <- lapply(funcs, function(x) paste(format(match.fun(x)), collapse = " "))
+  repp <- vapply(temp, match_slots, character(1))
+  #repp[!nzchar(repp)] <- "No data needed for this MP."
+  matrix(c(funcs, repp), ncol = 2)
 }
 
-# Required2 <- function(funcs = NA) {
-#   if (all(is.na(funcs))) funcs <- avail("MP")
-#   temp <- lapply(funcs, function(x) paste(format(match.fun(x)), collapse = " "))
-#   repp <- vapply(temp, match_slots, character(1))
-#   repp[!nzchar(repp)] <- "No data needed for this MP."
-#   matrix(repp, ncol = 1, dimnames = list(funcs))
-# }
 
 # Required("DCAC")
 # Required2("DCAC")

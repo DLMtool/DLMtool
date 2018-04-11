@@ -9,12 +9,19 @@ Required(funcs = NA)
 \arguments{
 \item{funcs}{A character vector of management procedures}
 }
+\value{
+A matrix of MPs and their required data in terms of Data slotnames
+}
 \description{
 A function that finds all the MPs and searches the
 function text for slots in the Data object
 }
 \examples{
 Required(c("DCAC", "AvC"))
+Required() # For all MPs
+}
+\seealso{
+\link{Can} \link{Cant} \link{Needed} \linkS4class{Data}
 }
 \author{
 T. Carruthers

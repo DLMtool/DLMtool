@@ -492,8 +492,8 @@ needed <- function(Data, funcs) {
 ##           but also return NAor0 = TRUE
 match_slots <- function(func, slotnams = paste0("Data@", slotNames("Data")), 
                         slots = slotNames("Data"), Data = NULL) {
-  # check if each slotname in Data class is required in an MP
-  ind_MP <- vapply(slotnams, grepl, numeric(1), x = func)
+  # check if each slotname in Data class is required in an MP (T/F)
+  ind_MP <- vapply(slotnams, grepl, logical(1), x = func)
   if(!is.null(Data) && inherits(Data, "Data")) { # check if Data slots return NA or zero
     ind_NAor0 <- vapply(slots, function(x) all(NAor0(slot(Data, x))), logical(1))
     repp <- slots[ind_MP & ind_NAor0] # returns slots where both tests are true
