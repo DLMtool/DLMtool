@@ -49,6 +49,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// which_maxC
+double which_maxC(NumericVector x);
+RcppExport SEXP _DLMtool_which_maxC(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(which_maxC(x));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rnormSelect2
 NumericVector rnormSelect2(int N, int mi, int ma);
 RcppExport SEXP _DLMtool_rnormSelect2(SEXP NSEXP, SEXP miSEXP, SEXP maSEXP) {
@@ -62,9 +73,42 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// tdnorm
+NumericVector tdnorm(NumericVector x, double mi, double ma);
+RcppExport SEXP _DLMtool_tdnorm(SEXP xSEXP, SEXP miSEXP, SEXP maSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type mi(miSEXP);
+    Rcpp::traits::input_parameter< double >::type ma(maSEXP);
+    rcpp_result_gen = Rcpp::wrap(tdnorm(x, mi, ma));
+    return rcpp_result_gen;
+END_RCPP
+}
 // genSizeComp
-NumericMatrix genSizeComp(NumericMatrix VulnN, NumericVector CAL_binsmid, double CAL_ESS, double CAL_nsamp, NumericVector Linfs, NumericVector Ks, NumericVector t0s, double LenCV, double truncSD);
-RcppExport SEXP _DLMtool_genSizeComp(SEXP VulnNSEXP, SEXP CAL_binsmidSEXP, SEXP CAL_ESSSEXP, SEXP CAL_nsampSEXP, SEXP LinfsSEXP, SEXP KsSEXP, SEXP t0sSEXP, SEXP LenCVSEXP, SEXP truncSDSEXP) {
+NumericMatrix genSizeComp(NumericMatrix VulnN, NumericVector CAL_binsmid, NumericMatrix selCurve, double CAL_ESS, double CAL_nsamp, NumericVector Linfs, NumericVector Ks, NumericVector t0s, double LenCV, double truncSD);
+RcppExport SEXP _DLMtool_genSizeComp(SEXP VulnNSEXP, SEXP CAL_binsmidSEXP, SEXP selCurveSEXP, SEXP CAL_ESSSEXP, SEXP CAL_nsampSEXP, SEXP LinfsSEXP, SEXP KsSEXP, SEXP t0sSEXP, SEXP LenCVSEXP, SEXP truncSDSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type VulnN(VulnNSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type CAL_binsmid(CAL_binsmidSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type selCurve(selCurveSEXP);
+    Rcpp::traits::input_parameter< double >::type CAL_ESS(CAL_ESSSEXP);
+    Rcpp::traits::input_parameter< double >::type CAL_nsamp(CAL_nsampSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Linfs(LinfsSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Ks(KsSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type t0s(t0sSEXP);
+    Rcpp::traits::input_parameter< double >::type LenCV(LenCVSEXP);
+    Rcpp::traits::input_parameter< double >::type truncSD(truncSDSEXP);
+    rcpp_result_gen = Rcpp::wrap(genSizeComp(VulnN, CAL_binsmid, selCurve, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD));
+    return rcpp_result_gen;
+END_RCPP
+}
+// genSizeComp2
+NumericMatrix genSizeComp2(NumericMatrix VulnN, NumericVector CAL_binsmid, double CAL_ESS, double CAL_nsamp, NumericVector Linfs, NumericVector Ks, NumericVector t0s, double LenCV, double truncSD);
+RcppExport SEXP _DLMtool_genSizeComp2(SEXP VulnNSEXP, SEXP CAL_binsmidSEXP, SEXP CAL_ESSSEXP, SEXP CAL_nsampSEXP, SEXP LinfsSEXP, SEXP KsSEXP, SEXP t0sSEXP, SEXP LenCVSEXP, SEXP truncSDSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -77,7 +121,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< NumericVector >::type t0s(t0sSEXP);
     Rcpp::traits::input_parameter< double >::type LenCV(LenCVSEXP);
     Rcpp::traits::input_parameter< double >::type truncSD(truncSDSEXP);
-    rcpp_result_gen = Rcpp::wrap(genSizeComp(VulnN, CAL_binsmid, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD));
+    rcpp_result_gen = Rcpp::wrap(genSizeComp2(VulnN, CAL_binsmid, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -209,8 +253,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_DLMtool_bhnoneq_LL", (DL_FUNC) &_DLMtool_bhnoneq_LL, 8},
     {"_DLMtool_combine", (DL_FUNC) &_DLMtool_combine, 1},
     {"_DLMtool_get_freq", (DL_FUNC) &_DLMtool_get_freq, 4},
+    {"_DLMtool_which_maxC", (DL_FUNC) &_DLMtool_which_maxC, 1},
     {"_DLMtool_rnormSelect2", (DL_FUNC) &_DLMtool_rnormSelect2, 3},
-    {"_DLMtool_genSizeComp", (DL_FUNC) &_DLMtool_genSizeComp, 9},
+    {"_DLMtool_tdnorm", (DL_FUNC) &_DLMtool_tdnorm, 3},
+    {"_DLMtool_genSizeComp", (DL_FUNC) &_DLMtool_genSizeComp, 10},
+    {"_DLMtool_genSizeComp2", (DL_FUNC) &_DLMtool_genSizeComp2, 9},
     {"_DLMtool_LSRA_opt_cpp", (DL_FUNC) &_DLMtool_LSRA_opt_cpp, 10},
     {"_DLMtool_LSRA_MCMC_sim", (DL_FUNC) &_DLMtool_LSRA_MCMC_sim, 21},
     {"_DLMtool_movfit_Rcpp", (DL_FUNC) &_DLMtool_movfit_Rcpp, 3},

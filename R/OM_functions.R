@@ -66,18 +66,16 @@ ForceCor<-function(OM,nsim=48,plot=T){
             abline(v=OM@K,col=colline,lwd=lwdline)
             
             
-          }else if(i==3){
+          }else if(i==4){
+            hist(sim[,4],main="Maximum length (Linf)",col=histcol,border='white',xlab="",axes=F)
+            axis(1)
+            abline(v=OM@Linf,col=colline,lwd=lwdline)
+
+          }else{
             
             hist(sim[,3],main="Length at 50% maturity (L50)",col=histcol,border='white',xlab="",axes=F)
             axis(1)
             abline(v=OM@L50,col=colline,lwd=lwdline)
-            
-            
-          }else{
-            
-            hist(sim[,4],main="Maximum length (Linf)",col=histcol,border='white',xlab="",axes=F)
-            axis(1)
-            abline(v=OM@Linf,col=colline,lwd=lwdline)
             
           }
           
@@ -128,11 +126,15 @@ ForceCor<-function(OM,nsim=48,plot=T){
 #' testOM<-ImputeLH(testOM)
 #' 
 #' @importFrom Amelia amelia
-#' @importFrom dplyr bind_rows
+#' @importFrom dplyr bind_rows %>%  select bind_rows
+#'
 #'
 ImputeLH <- function(OM, samp.m=100, plot=TRUE, ign.bounds=TRUE) {
   set.seed(OM@seed)
+  relL <- MK <- M <- K <- NULL
   DBdata <- DLMtool::LHdata
+  DBdata <- DBdata%>% dplyr::select(M, K, relL, MK)
+  
   if (class(OM) != "OM") stop('Object must be class "OM"', call. = FALSE)
   
   inM <- inK <- inLinf <- inL50 <- NULL
@@ -165,7 +167,8 @@ ImputeLH <- function(OM, samp.m=100, plot=TRUE, ign.bounds=TRUE) {
     if (length(parlist[[nm]]) == 2) {
       varsd <- (max(parlist[[nm]]) - mean(parlist[[nm]]))/2
       varmean <- mean(parlist[[nm]])
-      var <- rnorm(nsamp, varmean, varsd)
+      var <- rnorm(nsamp*100, varmean, varsd)
+      var <- var[var>=parlist[[nm]][1] & var<=parlist[[nm]][2]][1:nsamp]
       assign(paste0(nm, "s"), var)
       incpars[nm] <- FALSE
     } else {
@@ -174,21 +177,39 @@ ImputeLH <- function(OM, samp.m=100, plot=TRUE, ign.bounds=TRUE) {
       incpars[nm] <- TRUE
     }
   }
-  
+
   if (rowSums(incpars) == 4) stop("M, K, Linf, and L50 all in OM@cpars. Nothing to impute!", call.=FALSE)
-  indata_all <- indata <- data.frame(M=Ms, K=Ks, Linf=Linfs, L50=L50s)
+  indata_all <- data.frame(M=Ms, K=Ks, L50=L50s, Linf=Linfs)
+  if (any(indata_all$L50>indata_all$Linf)) stop("L50 is greater than Linf")
+  indata <- data.frame(M=Ms, K=Ks)
   
   ind <- apply(indata, 2, mean) == 0
   indata[,ind] <- NA # drop any unknown parameters (e.g OM@Linf = c(0,0)= unknown)
+ 
+  if (!all(is.na(indata$M)) & !incpars$K) {
+    indata$K <- NA # if M is present, impute K 
+    message("Imputing K from M")
+  }
+  if (!all(is.na(indata$K)) & !incpars$M) {
+    indata$M <- NA # if K is present, impute M 
+    message("Imputing M from K")
+  }
+  if (incpars$K & incpars$M & !(incpars$L50 | incpars$Linf)) {
+    message('M and K in cpars. Imputing L50/Linf')
+    indata$MK <- Ms/Ks
+  }
+  if ((incpars$L50 & incpars$Linf & !(incpars$K | incpars$M))) {
+    message('L50 and Linf in cpars. Imputing M/K')
+    indata$relL <- L50s/Linfs
+  }
   
-  if (!all(is.na(indata$M)) & !incpars$K) indata$K <- NA # if M is present, impute K 
-  if (!all(is.na(indata$K)) & !incpars$M) indata$M <- NA # if K is present, impute M 
-  if (!all(is.na(indata$Linf)) & !incpars$L50) indata$L50 <- NA # if Linf is present, impute L50 
-  if (!all(is.na(indata$L50)) & !incpars$Linf) indata$Linf <- NA # if L50 is present, impute Linf
+  # if (!all(is.na(indata$Linf)) & !incpars$L50) indata$L50 <- NA # if Linf is present, impute L50 
+  # if (!all(is.na(indata$L50)) & !incpars$Linf) indata$Linf <- NA # if L50 is present, impute Linf
   
   ind <- colSums(apply(indata, 2, is.na)) == 0
-  indata <- indata[,ind]
-  if (ncol(indata) < 2) stop("At least two parameters but be provided - M or K and Linf or L50", call.=FALSE)
+  indata <- indata[,ind, drop=FALSE]
+  if(length(indata$MK) > 0) message("M/K provided. Imputing L50/Linf")
+  if (ncol(indata) < 1) stop("At least one parameter but be provided - M or K", call.=FALSE)
   
   # Transform to approximate multivariate normal
   tpow <- 1/3
@@ -198,17 +219,15 @@ ImputeLH <- function(OM, samp.m=100, plot=TRUE, ign.bounds=TRUE) {
   logs <- NULL
   bounds <- matrix(c(1, 0.025, 0.8, # bounds for M
                      2, 0.025, 1.5, # bounds for K 
-                     3, 30, 2000, # bounds for Linf - probably wrong
-                     4, 15, 1800, # bound for L50 - probably wrong
-                     5, 0.2, 0.8, #  bounds for L50/Linf
-                     6, 0.2, 4), # bounds for M/K
+                     3, 0.2, 0.8, #  bounds for L50/Linf
+                     4, 0.2, 4), # bounds for M/K
                    nrow=ncol(DBdata), ncol=3, byrow=TRUE)
   if (!is.null(logs)) bounds[logs, 2:3] <- log(bounds[logs, 2:3] )
   bounds[,2:3] <- bounds[,2:3]^tpow # transform bounds
   
   tindata <- as.data.frame(indata^tpow)
-  alldata <- bind_rows(tdata, tindata)
   
+  alldata <- bind_rows(tdata, tindata)
   # impute missing values
   sink("temp")
   mod <- Amelia::amelia(alldata, bounds=bounds, logs=logs, max.resample=5000, verbose=FALSE) 
@@ -219,36 +238,44 @@ ImputeLH <- function(OM, samp.m=100, plot=TRUE, ign.bounds=TRUE) {
   tMeanEsts <- tMeanEsts[(nrow(DBdata)+1):nrow(alldata),]
   MeanEsts <- as.data.frame(tMeanEsts^(1/tpow))
   
+  
+  
   if (is.null(indata$K)) MeanEsts$K <- MeanEsts$M / MeanEsts$MK
   if (is.null(indata$M)) MeanEsts$M <- MeanEsts$MK * MeanEsts$K 
-  if (is.null(indata$Linf)) MeanEsts$Linf <- MeanEsts$L50/MeanEsts$relL 
-  if (is.null(indata$L50)) MeanEsts$L50 <- MeanEsts$relL * MeanEsts$Linf
+  MeanEsts$Linf <- indata_all$Linf # MeanEsts$relL * MeanEsts$Linf
+  MeanEsts$L50 <- indata_all$Linf * MeanEsts$relL 
+  
+  MeanEsts$relL <- NULL
+  MeanEsts$MK <- NULL
+  
+  
+  Out <- MeanEsts
+
+  if (ign.bounds) {
+    ok <- array(TRUE, dim=dim(MeanEsts[,1:4]))
+    cols <- 1:4
+    for (xx in cols) {
+      rng <- range(parlist[[xx]])
+      ok[,xx] <- MeanEsts[,xx] >= rng[1] & MeanEsts[,xx] <= rng[2]
+    }
+    chk <- apply(ok, 2, prod)
+    oksamps <- chk == 1  
+    if (sum(chk) !=4) {
+      ind <- which(!oksamps)
+      message('Some predicted samples are outside specified bounds in OM: ', paste0(names(parlist)[ind], ", "), 
+              "\nIgnoring bounds for these parameters.")
+    }
+  }
+  
+  
   
   # filter to satisfy all bounds
-  ok <- array(TRUE, dim=dim(MeanEsts[,1:4]))
-  cols <- 1:4
-  for (xx in cols) {
-    rng <- range(parlist[[xx]])
-    ok[,xx] <- MeanEsts[,xx] >= rng[1] & MeanEsts[,xx] <= rng[2]
-  }
-  chk <- sum(apply(ok, 1, prod)==1)
-  
-  if (ign.bounds) {
-    while (chk < OM@nsim) {
-      oksamps <- as.data.frame(t(apply(ok, 2, sum)))  
-      ind <- which.min(oksamps)
-      cols2 <- cols[!cols %in% ind]
-      ok <- array(TRUE, dim=dim(MeanEsts[,1:4]))
-      for (xx in cols2) {
-        rng <- range(parlist[[xx]])
-        ok[,xx] <- MeanEsts[,xx] >= rng[1] & MeanEsts[,xx] <= rng[2]
-      }
-      warning('Could not generate sufficient predicted samples within specified bounds for ', names(parlist)[ind], 
-              ".\nTry increase 'samp.m' and re-run. \nIgnoring bounds for this parameter and continuing.")
-      chk <- sum(apply(ok, 1, prod)==1)
-    }
-  } else {
-    while (chk < OM@nsim) {
+  if (!ign.bounds){
+    maxcount <- 50
+    chk <- sum(apply(ok, 1, prod)==1)
+    count <- 0
+    while (chk < OM@nsim & count < maxcount) {
+      count <- count + 1
       oksamps <- as.data.frame(t(apply(ok, 2, sum)))  
       ind <- which.min(oksamps)
       MeanEsts[,ind] <- indata_all[,ind]
@@ -256,15 +283,19 @@ ImputeLH <- function(OM, samp.m=100, plot=TRUE, ign.bounds=TRUE) {
       ok <- array(TRUE, dim=dim(MeanEsts[,1:4]))
       for (xx in cols2) {
         rng <- range(parlist[[xx]])
-        ok[,xx] <- MeanEsts[,xx] >= rng[1] & MeanEsts[,xx] <= rng[2]
+        if (mean(rng)!=0) {
+          ok[,xx] <- MeanEsts[,xx] >= rng[1] & MeanEsts[,xx] <= rng[2]  
+        }
+        
       }
       warning('Could not generate sufficient predicted samples within specified bounds for ', names(parlist)[ind], 
               ".\nTry increase 'samp.m' and re-run. \nIgnoring predicted values for this parameter and using specified bounds")
       chk <- sum(apply(ok, 1, prod)==1)
     }
+    Out <- MeanEsts[apply(ok, 1, prod)==1,]
   }
   
-  Out <- MeanEsts[apply(ok, 1, prod)==1,]
+  
   Out <- Out[1:OM@nsim,]
   
   if(plot){ 
