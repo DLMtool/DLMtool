@@ -51,3 +51,5 @@ src/*.dll
  
 DLMtool.Rproj
 *.Rproj
+src-i386
+src-x64

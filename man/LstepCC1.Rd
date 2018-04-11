@@ -2,11 +2,15 @@
 % Please edit documentation in R/MPs_Output.R
 \name{LstepCC1}
 \alias{LstepCC1}
+\alias{LstepCC4}
 \title{A management procedure that incrementally adjusts the TAC according to the
 mean length of recent catches.}
 \usage{
-LstepCC1(x, Data, reps = 100, yrsmth = 5, xx=0, stepsz=0.05,
-llim=c(0.96,0.98,1.05))
+LstepCC1(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.05,
+  llim = c(0.96, 0.98, 1.05))
+
+LstepCC4(x, Data, reps = 100, yrsmth = 5, xx = 0.3, stepsz = 0.05,
+  llim = c(0.96, 0.98, 1.05))
 }
 \arguments{
 \item{x}{A position in data-limited methods data object}
@@ -30,15 +34,20 @@ conditions for increasing, maintaining or reducing the TAC.}
 A numeric vector of TAC recommendations
 }
 \description{
-The least biologically precautionary of four adaptive length-based MPs
-proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
-}
-\details{
 Tested by Carruthers et al. 2015.
 }
+\section{Functions}{
+\itemize{
+\item \code{LstepCC1}: The least biologically precautionary of four adaptive length-based MPs
+proposed by Geromont and Butterworth 2014.
+
+\item \code{LstepCC4}: The most precautionary of four adaptive length-based MPs
+proposed by Geromont and Butterworth 2014.
+}}
+
 \references{
 Carruthers et al. 2015. Performance evaluation of simple
-management procedures. Fish and Fisheries. In press.
+management procedures. ICES J. Mar Sci. 73, 464-482.
 
 Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
 data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.

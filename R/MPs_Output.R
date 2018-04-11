@@ -1547,8 +1547,9 @@ class(GB_target) <- "MP"
 #' @param glim A constraint limiting the maximum level of change in quota
 #' recommendations
 #' @author C. Walters and T. Carruthers
-#' @references Made-up for this package. Carruthers et al. 2015. Performance of
-#' Simple Management Procedures.
+#' @references 
+#' Carruthers et al. 2015. Performance evaluation of simple
+#' management procedures. ICES J. Mar Sci. 73, 464-482.
 #' @export Gcontrol
 Gcontrol <- function(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 
                                                                         2)) {
@@ -1619,7 +1620,7 @@ class(HDAAC) <- "MP"
 #' The MP adjusts catch based on the value of the index in the current year relative to the 
 #' time series mean and standard error.
 #'  
-#' The mean and standard error of the index time series is calculated. There are two thresholds 
+#' @describeIn ICI The mean and standard error of the index time series is calculated. There are two thresholds 
 #' which delineates whether catch is reduced, held constant, or increased. The catch is reduced by 0.75
 #' if the Z-score of the current year's index is less than -0.44. The catch is increased by 1.05
 #' if the Z-score of the current year's index is greater than 1.96. Otherwise, the catch is held constant.
@@ -1668,25 +1669,11 @@ class(ICI) <- "MP"
 
 
 
-#' Less Precautionary Index Confidence Interval (ICI) MP by Jardim et al. (2015)
-#' 
-#' The MP adjusts catch based on the value of the index in the current year relative to the 
-#' time series mean and standard error. This method is less precautionary of the two ICI MPs by allowing for a larger increase in TAC
-#' and a lower threshold of the index to decrease the TAC (see Jardim et al. 2015).
-#' 
-#' The mean and standard error of the index time series is calculated. There are two thresholds 
-#' which delineates whether catch is reduced, held constant, or increased. The catch is reduced by 0.75
+#' @describeIn ICI Compared to \code{ICI}, this method is less precautionary of the two ICI MPs by allowing for a 
+#' larger increase in TAC and a lower threshold of the index to decrease the TAC. The catch is reduced by 0.75
 #' if the Z-score of the current year's index is less than -1.96. The catch is increased by 1.25
 #' if the Z-score of the current year's index is greater than 1.96. Otherwise, the catch is held constant.
-#'  
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @author Coded by Q. Huynh. Developed by Jardim et al. (2015)
-#' @references Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for 
-#' data limited stocks using length-based reference points and survey biomass indices, 
-#' Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836, 
-#' https://doi.org/10.1016/j.fishres.2014.11.013
+#' @export 
 ICI2 <- function(x, Data, reps) {
   dependencies = "Data@Ind, Data@CV_Ind, Data@Cat, Data@CV_Cat"
   
@@ -1728,9 +1715,8 @@ class(ICI2) <- "MP"
 #' 
 #' The TAC is adjusted by the ratio alpha, where the numerator 
 #' being the mean index in the most recent two years of the time series and the denominator
-#' being the mean index in the three years prior to those in the numerator.
-#' 
-#' This MP is the stochastic version of Method 3.2 used by ICES for Data-Limited Stocks (ICES 2012).
+#' being the mean index in the three years prior to those in the numerator. This MP is the 
+#' stochastic version of Method 3.2 used by ICES for Data-Limited Stocks (ICES 2012).
 #' 
 #' @param x A position in data-limited methods data object
 #' @param Data A data-limited methods data object
@@ -1744,7 +1730,7 @@ class(ICI2) <- "MP"
 #' 
 #' ICES. 2012. ICES Implementation of Advice for Data-limited Stocks in 2012 in its 2012
 #' Advice. ICES CM 2012/ACOM 68. 42 pp.
-
+#' @export
 Iratio <- function(x, Data, reps, yrs = c(2, 5)) {
   dependencies = "Data@Ind, Data@CV_Ind, Data@Cat, Data@CV_Cat"
   
@@ -1787,12 +1773,14 @@ class(Iratio) <- "MP"
 #' first year
 #' @return A numeric vector of quota recommendations
 #' @author T. Carruthers
-#' @references Carruthers et al. 2015. Performance review of simple management
-#' procedures. Fish and Fisheries. In press.
+#' @references Carruthers et al. 2015. Performance evaluation of simple
+#' management procedures. ICES J. Mar Sci. 73, 464-482.
 #' 
 #' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
 #' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
 #' doi:10.1093/icesjms/fst232
+#' @describeIn Islope1 The least biologically precautionary of two constant index / CPUE methods
+#' proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
 #' @export Islope1
 Islope1 <- function(x, Data, reps = 100, yrsmth = 5, lambda = 0.4,xx = 0.2) {
   dependencies = "Data@Year, Data@Cat, Data@CV_Cat, Data@Ind"
@@ -1821,31 +1809,8 @@ class(Islope1) <- "MP"
 
 
 
-#' A management procedure that incrementally adjusts the TAC to maintain a
-#' constant CPUE or relative abundance index
-#' 
-#' The most biologically precautionary of two constant index / CPUE methods
+#' @describeIn Islope1 The most biologically precautionary of two constant index / CPUE methods
 #' proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
-#' 
-#' Tested by Carruthers et al. 2015.
-#' 
-#' @usage Islope4(x, Data, reps = 100, yrsmth = 5, lambda=0.2,xx=0.4)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
-#' @param lambda A gain parameter controlling the speed in update in TAC.
-#' @param xx Parameter controlling the fraction of mean catch to start using in
-#' first year
-#' @return A numeric vector of quota recommendations
-#' @author T. Carruthers
-#' @references Carruthers et al. 2015. Performance evaluation of simple
-#' management procedures. Fish and Fisheries. In press.
-#' 
-#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
-#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
-#' doi:10.1093/icesjms/fst232
 #' @export Islope4
 Islope4 <- function(x, Data, reps = 100, yrsmth = 5, lambda = 0.2, 
                     xx = 0.4) {
@@ -1871,7 +1836,7 @@ Islope4 <- function(x, Data, reps = 100, yrsmth = 5, lambda = 0.2,
 class(Islope4) <- "MP"
 
 
-#' Index Target 5
+#' Index Target Management Procedure
 #' 
 #' An index target MP where the TAC is modified according to current index
 #' levels (mean index over last 5 years) relative to a target level. Maximum
@@ -1886,6 +1851,7 @@ class(Islope4) <- "MP"
 #' @param mc The maximum fractional change in the TAC among years.
 #' @return A numeric vector of TAC recommendations
 #' @author T. Carruthers
+#' @describeIn IT5 Maximum annual changes in TAC are 5 per cent.
 #' @export IT5
 IT5 <- function(x, Data, reps = 100, yrsmth = 5, mc = 0.05) {
   dependencies = "Data@Ind, Data@MPrec, Data@CV_Ind, Data@Iref"
@@ -1900,21 +1866,7 @@ IT5 <- function(x, Data, reps = 100, yrsmth = 5, mc = 0.05) {
 }
 class(IT5) <- "MP"
 
-#' Index Target 10
-#' 
-#' An index target MP where the TAC is modified according to current index
-#' levels (mean index over last 5 years) relative to a target level. Maximum
-#' annual changes are 10 per cent.
-#' 
-#' 
-#' @usage IT10(x, Data, reps = 100,yrsmth=5,mc=0.1)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the quota recommendation
-#' @param yrsmth The number of historical years over which to average the index
-#' @param mc The maximum fractional change in the TAC among years.
-#' @return A numeric vector of TAC recommendations
-#' @author T. Carruthers
+#' @describeIn IT5 Maximum annual changes are 10 per cent.
 #' @export IT10
 IT10 <- function(x, Data, reps = 100, yrsmth = 5, mc = 0.1) {
   dependencies = "Data@Ind, Data@MPrec, Data@CV_Ind, Data@Iref"
@@ -1934,10 +1886,8 @@ class(IT10) <- "MP"
 #' reference level that is a fraction of mean recent catches) to reach a target
 #' CPUE / relative abundance index
 #' 
-#' The least biologically precautionary of two index/CPUE target MPs proposed
-#' by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
-#' 
-#' Tested by Carruthers et al. 2015.
+#' Two index/CPUE target MPs proposed by Geromont and Butterworth 2014. 
+#' Tested by Carruthers et al. 2015
 #' 
 #' @usage Itarget1(x, Data, reps = 100, yrsmth = 5, xx=0, Imulti=1.5)
 #' @param x A position in data-limited methods data object
@@ -1952,11 +1902,12 @@ class(IT10) <- "MP"
 #' @return A numeric vector of TAC recommendations
 #' @author T. Carruthers
 #' @references Carruthers et al. 2015. Performance evaluation of simple
-#' management procedures. Fish and Fisheries. In press.
+#' management procedures. ICES J. Mar Sci. 73, 464-482.
 #' 
 #' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
 #' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
 #' doi:10.1093/icesjms/fst232
+#' @describeIn Itarget1 The less precautionary version.
 #' @export Itarget1
 Itarget1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5) {
   dependencies = "Data@Cat, Data@CV_Cat"
@@ -1983,33 +1934,8 @@ class(Itarget1) <- "MP"
 
 
 
-#' A management procedure that incrementally adjusts the TAC (starting from
-#' reference level that is a fraction of mean recent catches) to reach a target
-#' CPUE / relative abundance index
-#' 
-#' The most biologically precautionary of two index/CPUE target MPs proposed by
-#' Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
-#' 
-#' Tested by Carruthers et al. 2015.
-#' 
-#' @usage Itarget4(x, Data, reps = 100, yrsmth = 5, xx=0.3, Imulti=2.5)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
-#' @param xx Parameter controlling the fraction of mean catch to start using in
-#' first year
-#' @param Imulti Parameter controlling how much larger target CPUE / index is
-#' compared with recent levels.
-#' @return A numeric vector of TAC recommendations
-#' @author T. Carruthers
-#' @references Carruthers et al. 2015. Performance evaluation of simple
-#' management procedures. Fish and Fisheries. In press.
-#' 
-#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
-#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
-#' doi:10.1093/icesjms/fst232
+#' @describeIn Itarget1 The most biologically precautionary of the two index/CPUE target MPs proposed by
+#' Geromont and Butterworth 2014.
 #' @export Itarget4
 Itarget4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.3, Imulti = 2.5) {
   dependencies = "Data@Cat, Data@CV_Cat"
@@ -2118,14 +2044,11 @@ L95target <- function(x, Data, reps = 100, yrsmth = 5, buffer = 0) {
 class(L95target) <- "MP"
 
 
-#' Mean length-based indicator MP of Jardim et al. 2015 using Beverton-Holt invariant 
-#' M/K ratio = 1.5 and assumes FMSY = M.
+#' Mean length-based indicator MP of Jardim et al. 2015
 #' 
 #' The TAC is adjusted by the ratio alpha, where the numerator 
 #' is the mean length of the catch (of lengths larger than Lc) and 
-#' the denominator is the mean length expected when FMSY = M and M/K = 1.5. 
-#' Natural mortality M and von Bertalanffy K are not used in this MP 
-#' (see Appendix A of Jardim et al. 2015). Here, Lc is the length at 
+#' the denominator is the mean length expected at MSY. Here, Lc is the length at 
 #' full selection (LFS).
 #' 
 #' Argument yrsmth currently takes the mean length of the most recent 3 years of data 
@@ -2140,6 +2063,9 @@ class(L95target) <- "MP"
 #' data limited stocks using length-based reference points and survey biomass indices, 
 #' Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836, 
 #' https://doi.org/10.1016/j.fishres.2014.11.013
+#' @describeIn Lratio_BHI Assumes M/K = 1.5 and FMSY/M = 1. Natural mortality M and von Bertalanffy 
+#' K are not used in this MP (see Appendix A of Jardim et al. 2015). 
+#' @export
 Lratio_BHI <- function(x, Data, reps, yrsmth = 3) {
   dependencies = "Data@vb_Linf, Data@CV_vbLinf, Data@Cat, Data@CV_Cat, Data@CAL, Data@CAL_bins,
   Data@LFS, Data@CV_LFS"
@@ -2171,26 +2097,9 @@ Lratio_BHI <- function(x, Data, reps, yrsmth = 3) {
 class(Lratio_BHI) <- "MP"
 
 
-#' The more general version of the mean length-based indicator MP of Jardim et al. 2015.
-#' 
-#' The TAC is adjusted by the ratio alpha, where the numerator 
-#' is the mean length of the catch (of lengths larger than Lc) 
-#' and the denominator is the mean length as a function of Linf,
-#' FMSY/M, and M/K (see Appendix A of Jardim et al. 2015). Here, 
-#' Lc is the length at full selection (LFS).
-#' 
-#' Argument yrsmth currently takes the mean length of the most recent 3 years of data 
-#' as a smoother.
-#' 
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @param yrsmth The most recent years of data to smooth the calculation of the mean length
-#' @author Coded by Q. Huynh. Developed by Jardim et al. (2015)
-#' @references Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for 
-#' data limited stocks using length-based reference points and survey biomass indices, 
-#' Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836, 
-#' https://doi.org/10.1016/j.fishres.2014.11.013
+#' @describeIn Lratio_BHI More general version that calculates the reference mean length as a
+#' function of M, K, and presumed FMSY/M.
+#' @export
 Lratio_BHI2 <- function(x, Data, reps, yrsmth = 3) {
   
   dependencies = "Data@vb_Linf, Data@CV_vbLinf, Data@Cat, Data@CV_Cat, Data@Mort, Data@CV_Mort,
@@ -2233,13 +2142,8 @@ class(Lratio_BHI2) <- "MP"
 #' A management procedure that incrementally adjusts the TAC according to the
 #' mean length of recent catches.
 #' 
-#' The least biologically precautionary of four adaptive length-based MPs
-#' proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
-#' 
 #' Tested by Carruthers et al. 2015.
 #' 
-#' @usage LstepCC1(x, Data, reps = 100, yrsmth = 5, xx=0, stepsz=0.05,
-#' llim=c(0.96,0.98,1.05))
 #' @param x A position in data-limited methods data object
 #' @param Data A data-limited methods data object
 #' @param reps The number of TAC samples
@@ -2253,11 +2157,13 @@ class(Lratio_BHI2) <- "MP"
 #' @return A numeric vector of TAC recommendations
 #' @author T. Carruthers
 #' @references Carruthers et al. 2015. Performance evaluation of simple
-#' management procedures. Fish and Fisheries. In press.
+#' management procedures. ICES J. Mar Sci. 73, 464-482.
 #' 
 #' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
 #' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
 #' doi:10.1093/icesjms/fst232
+#' @describeIn LstepCC1 The least biologically precautionary of four adaptive length-based MPs
+#' proposed by Geromont and Butterworth 2014. 
 #' @export LstepCC1
 LstepCC1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.05, 
                      llim = c(0.96, 0.98, 1.05)) {
@@ -2294,34 +2200,8 @@ class(LstepCC1) <- "MP"
 
 
 
-#' A management procedure that incrementally adjusts the TAC according to the
-#' mean length of recent catches.
-#' 
-#' The most biologically precautionary of four adaptive length-based MPs
-#' proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
-#' 
-#' Tested by Carruthers et al. 2015.
-#' 
-#' @usage LstepCC4(x, Data, reps = 100, yrsmth = 5, xx=0.3, stepsz=0.05,
-#' llim=c(0.96,0.98,1.05))
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
-#' @param xx Parameter controlling the fraction of mean catch to start using in
-#' first year
-#' @param stepsz Parameter controlling the size of the TAC update increment.
-#' @param llim A vector of length reference points that determine the
-#' conditions for increasing, maintaining or reducing the TAC.
-#' @return A numeric vector of TAC recommendations
-#' @author T. Carruthers
-#' @references Carruthers et al. 2015. Performance evaluation of simple
-#' management procedures. Fish and Fisheries. In press.
-#' 
-#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
-#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
-#' doi:10.1093/icesjms/fst232
+#' @describeIn LstepCC1 The most precautionary of four adaptive length-based MPs
+#' proposed by Geromont and Butterworth 2014.
 #' @export LstepCC4
 LstepCC4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.3, stepsz = 0.05, 
                      llim = c(0.96, 0.98, 1.05)) {
@@ -2361,12 +2241,8 @@ class(LstepCC4) <- "MP"
 #' A management procedure that incrementally adjusts the TAC to reach a target
 #' mean length in catches.
 #' 
-#' The least biologically precautionary of four target length MPs proposed by
-#' Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
-#' 
 #' Tested by Carruthers et al. 2015.
 #' 
-#' @usage Ltarget1(x, Data, reps = 100, yrsmth = 5, xx=0, xL=1.05)
 #' @param x A position in data-limited methods data object
 #' @param Data A data-limited methods data object
 #' @param reps The number of TAC samples
@@ -2379,11 +2255,13 @@ class(LstepCC4) <- "MP"
 #' @return A numeric vector of TAC recommendations
 #' @author T. Carruthers
 #' @references Carruthers et al. 2015. Performance evaluation of simple
-#' management procedures. Fish and Fisheries. In press.
+#' management procedures. ICES J. Mar Sci. 73, 464-482.
 #' 
 #' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
 #' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
 #' doi:10.1093/icesjms/fst232
+#' @describeIn Ltarget1 The least biologically precautionary of four target length MPs proposed by
+#' Geromont and Butterworth 2014.
 #' @export Ltarget1
 Ltarget1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, xL = 1.05) {
   dependencies = "Data@Cat, Data@CV_Cat, Data@ML"
@@ -2410,32 +2288,8 @@ class(Ltarget1) <- "MP"
 
 
 
-#' A management procedure that incrementally adjusts the TAC to reach a target
-#' mean length in catches.
-#' 
-#' The most biologically precautionary of four target length MPs proposed by
-#' Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
-#' 
-#' Tested by Carruthers et al. 2015.
-#' 
-#' @usage Ltarget4(x, Data, reps = 100, yrsmth = 5, xx=0.2, xL=1.15)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
-#' @param xx Parameter controlling the fraction of mean catch to start using in
-#' first year
-#' @param xL Parameter controlling the magnitude of the target mean length of
-#' catches relative to average length in catches.
-#' @return A numeric vector of TAC recommendations
-#' @author T. Carruthers
-#' @references Carruthers et al. 2015. Performance evaluation of simple
-#' management procedures. Fish and Fisheries. In press.
-#' 
-#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
-#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
-#' doi:10.1093/icesjms/fst232
+#' @describeIn Ltarget1 The most biologically precautionary of four target length MPs proposed by
+#' Geromont and Butterworth 2014.
 #' @export Ltarget4
 Ltarget4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.2, xL = 1.15) {
   dependencies = "Data@Cat, Data@CV_Cat, Data@ML"

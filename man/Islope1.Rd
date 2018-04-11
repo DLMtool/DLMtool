@@ -2,10 +2,13 @@
 % Please edit documentation in R/MPs_Output.R
 \name{Islope1}
 \alias{Islope1}
+\alias{Islope4}
 \title{A management procedure that incrementally adjusts the TAC to maintain a
 constant CPUE or relative abundance index}
 \usage{
 Islope1(x, Data, reps = 100, yrsmth = 5, lambda=0.4,xx=0.2)
+
+Islope4(x, Data, reps = 100, yrsmth = 5, lambda = 0.2, xx = 0.4)
 }
 \arguments{
 \item{x}{A position in data-limited methods data object}
@@ -31,9 +34,18 @@ proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
 \details{
 Tested by Carruthers et al. 2015.
 }
+\section{Functions}{
+\itemize{
+\item \code{Islope1}: The least biologically precautionary of two constant index / CPUE methods
+proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
+
+\item \code{Islope4}: The most biologically precautionary of two constant index / CPUE methods
+proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
+}}
+
 \references{
-Carruthers et al. 2015. Performance review of simple management
-procedures. Fish and Fisheries. In press.
+Carruthers et al. 2015. Performance evaluation of simple
+management procedures. ICES J. Mar Sci. 73, 464-482.
 
 Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
 data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.

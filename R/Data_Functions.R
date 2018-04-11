@@ -309,41 +309,30 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
 # }
 
 
-#' What management procedures can be applied to this Data object?
+#' Identify management procedures (MPs) based on data availability
 #' 
-#' An diagnostic tool that looks up the slot requirements of each MP and
-#' compares this to the data available to limit the analysis to methods that
-#' have the correct data, do not produce errors and run within a time limit.
-#' Time limit is the maximum time taken to carry out five reps (stochastic
-#' samples) of a given method and is in units of seconds.
-#' 
-#' 
+#' Diagnostic tools that look up the slot requirements of each MP and
+#' compares to the data available in the Data object.
+#'  
 #' @param Data A data-limited methods data object (class Data)
-#' @param timelimit The maximum time (seconds) taken for a method to undertake
-#' 10 reps (this filters out methods that are too slow)
+#' @param timelimit The maximum time (seconds) taken for an MP to undertake
+#' 5 reps (this filters out methods that are too slow)
 #' @param MPs Optional list of MP names
-#' 
-#' @seealso \link{Cant} \link{Needed} \link{avail}
+#' @seealso \link{avail} \linkS4class{Data}
 #' @examples 
 #' CanMPs <- Can(DLMtool::Cobia)
+#' CantMPs <- Cant(DLMtool::Cobia)
+#' Needs <- Needed(DLMtool::Cobia)
+#' @describeIn Can Identifies MPs that have the correct data, do not produce errors,
+#' and run within the time limit.
 #' @export 
 Can <- function(Data, timelimit = 1, MPs=NA) {
   DLMdiag(Data, "available",  timelimit = timelimit, funcs1=MPs)
 }
 
 
-#' What management procedures can't be applied to this DLM data object
-#' 
-#' The MPs that don't have sufficient data, lead to errors or don't run in
-#' time along with a list of their data requirments.
-#' 
-#' 
-#' @param Data A data-limited methods data object (class Data)
-#' @param timelimit The maximum time (seconds) taken for a method to undertake
-#' 10 reps (this filters out methods that are too slow)
-#' @seealso \link{Can} \link{Needed} \link{avail}
-#' #' @examples 
-#' CantMPs <- Cant(DLMtool::Cobia)
+#' @describeIn Can Identifies MPs that don't have sufficient data, lead to errors, or don't run in
+#' time along with a list of their data requirements.
 #' @export Cant
 Cant <- function(Data, timelimit = 1) {
   DLMdiag(Data, "not available", timelimit = timelimit)
@@ -388,7 +377,7 @@ DLMdiag <- function(Data, command = c("available", "not available", "needed"), r
     if(!chk_needed[y]) {
       setTimeLimit(timelimit * 1.5)
       time1 <- Sys.time()
-      test[[y]] <- tryCatch(do.call(funcs1[y], list(x = 1, Data = Data, reps = 5)), 
+      test[[y]] <- tryCatch(do.call(funcs1[y], list(x = 1, Data = Data, reps = reps)), 
                             error = function(e) as.character(e))
       time2 <- Sys.time()
       setTimeLimit(Inf)
@@ -492,8 +481,8 @@ needed <- function(Data, funcs) {
 ##           but also return NAor0 = TRUE
 match_slots <- function(func, slotnams = paste0("Data@", slotNames("Data")), 
                         slots = slotNames("Data"), Data = NULL) {
-  # check if each slotname in Data class is required in an MP
-  ind_MP <- vapply(slotnams, grepl, numeric(1), x = func)
+  # check if each slotname in Data class is required in an MP (T/F)
+  ind_MP <- vapply(slotnams, grepl, logical(1), x = func)
   if(!is.null(Data) && inherits(Data, "Data")) { # check if Data slots return NA or zero
     ind_NAor0 <- vapply(slots, function(x) all(NAor0(slot(Data, x))), logical(1))
     repp <- slots[ind_MP & ind_NAor0] # returns slots where both tests are true
@@ -504,21 +493,10 @@ match_slots <- function(func, slotnams = paste0("Data@", slotNames("Data")),
   return(paste(repp, collapse = ", "))
 }
 
-#' Data needed to get MPs running
-#' 
-#' A funtion that lists what data are needed to run
-#' data-limited methods that are currently not able to run given a Data
+#' @describeIn Can Identifies what data are needed to run
+#' the MPs that are currently not able to run given a Data
 #' object
-#' 
-#' 
-#' @usage Needed(Data, timelimit=1)
-#' @param Data A data-limited methods data object
-#' @param timelimit The maximum time (seconds) taken to complete 10 reps
-#' @author T. Carruthers
-#' @seealso \link{Can} \link{Cant} \link{avail}
 #' @export Needed
-#' @examples 
-#' Needs <- Needed(DLMtool::Cobia)
 Needed <- function(Data, timelimit = 1) {
   DLMdiag(Data, "needed", timelimit = timelimit)
 }

@@ -2,11 +2,14 @@
 % Please edit documentation in R/MPs_Output.R
 \name{Itarget1}
 \alias{Itarget1}
+\alias{Itarget4}
 \title{A management procedure that incrementally adjusts the TAC (starting from
 reference level that is a fraction of mean recent catches) to reach a target
 CPUE / relative abundance index}
 \usage{
 Itarget1(x, Data, reps = 100, yrsmth = 5, xx=0, Imulti=1.5)
+
+Itarget4(x, Data, reps = 100, yrsmth = 5, xx = 0.3, Imulti = 2.5)
 }
 \arguments{
 \item{x}{A position in data-limited methods data object}
@@ -28,15 +31,20 @@ compared with recent levels.}
 A numeric vector of TAC recommendations
 }
 \description{
-The least biologically precautionary of two index/CPUE target MPs proposed
-by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
+Two index/CPUE target MPs proposed by Geromont and Butterworth 2014.
+Tested by Carruthers et al. 2015
 }
-\details{
-Tested by Carruthers et al. 2015.
-}
+\section{Functions}{
+\itemize{
+\item \code{Itarget1}: The less precautionary version.
+
+\item \code{Itarget4}: The most biologically precautionary of the two index/CPUE target MPs proposed by
+Geromont and Butterworth 2014.
+}}
+
 \references{
 Carruthers et al. 2015. Performance evaluation of simple
-management procedures. Fish and Fisheries. In press.
+management procedures. ICES J. Mar Sci. 73, 464-482.
 
 Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
 data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
