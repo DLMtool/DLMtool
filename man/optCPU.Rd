@@ -21,6 +21,9 @@ Determine optimal number of cpus
 optCPU()
 }
 }
+\seealso{
+\link{setup}
+}
 \author{
 A. Hordyk
 }

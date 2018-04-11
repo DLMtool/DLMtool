@@ -151,7 +151,7 @@ makePerf <- function(OMin, except = NULL) {
 #'
 #' @return A data.frame with MP names and management type
 #' @export
-#'
+#' @seealso \link{Required}
 #' @examples 
 #' MPtype(c("AvC", "curE", "matlenlim", "MRreal", "FMSYref"))
 #' 
@@ -265,7 +265,7 @@ plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
 #' @examples 
 #' Required(c("DCAC", "AvC"))
 #' Required() # For all MPs
-#' @seealso \link{Can} \link{Cant} \link{Needed} \linkS4class{Data}
+#' @seealso \link{Can} \link{Cant} \link{Needed} \link{MPtype} \linkS4class{Data}
 #' @export 
 Required <- function(funcs = NA) {
 #  if (is.na(funcs[1])) 
@@ -741,6 +741,7 @@ L2A <- function(t0c, Linfc, Kc, Len, maxage) {
 #' @param plot Logical. Show the plot?
 #'
 #' @export
+#' @seealso \link{setup}
 #' @examples
 #' \dontrun{
 #' optCPU()

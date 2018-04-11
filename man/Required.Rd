@@ -21,7 +21,7 @@ Required(c("DCAC", "AvC"))
 Required() # For all MPs
 }
 \seealso{
-\link{Can} \link{Cant} \link{Needed} \linkS4class{Data}
+\link{Can} \link{Cant} \link{Needed} \link{MPtype} \linkS4class{Data}
 }
 \author{
 T. Carruthers
