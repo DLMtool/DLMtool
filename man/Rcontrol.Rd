@@ -2,10 +2,13 @@
 % Please edit documentation in R/MPs_Output.R
 \name{Rcontrol}
 \alias{Rcontrol}
+\alias{Rcontrol2}
 \title{Harvest Control Rule using prior for intrinsic rate of increase}
 \usage{
 Rcontrol(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5,
 2))
+
+Rcontrol2(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 2))
 }
 \arguments{
 \item{x}{A position in data-limited methods data object}
@@ -25,6 +28,13 @@ An MP proposed by Carl Walters that modifies TACs according to trends in
 apparent surplus production that includes information from a demographically
 derived prior for intrinsic rate of increase
 }
+\section{Functions}{
+\itemize{
+\item \code{Rcontrol2}: This is different from
+Rcontrol because it includes a quadratic approximation of recent trend in
+surplus production given biomass
+}}
+
 \references{
 Made-up for this package.
 }

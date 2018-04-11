@@ -189,16 +189,16 @@ class(MRnoreal) <- "MP"
 #' Fishing at current effort levels
 #' 
 #' Constant fishing effort set at final year of historical simulations subject
-#' to changes in catchability determined by OM@qinc and interannual variability
-#' in catchability determined by OM@qcv. This MP is intended to represent a
+#' to changes in catchability determined by OM@@qinc and interannual variability
+#' in catchability determined by OM@@qcv. This MP is intended to represent a
 #' 'status quo' management approach.
 #' 
 #' @param x A position in a data-limited methods data object.
 #' @param Data A data-limited methods data object.
-#' @param ... Optional additional arguments that are ignored. Note arguments
-#' \code{reps} or \code{...} are required for all input controls
+#' @param ... Optional additional arguments (currently not used).
 #' @note Made up for this package.
 #' @author T. Carruthers.
+#' @describeIn curE Set effort to 100\% of that in final year of historical simulations.
 #' @export 
 curE <- function(x, Data, ...) {
   # current effort
@@ -209,19 +209,7 @@ curE <- function(x, Data, ...) {
 class(curE) <- "MP"
 
 
-#' Fishing at 75 per cent of current effort levels
-#' 
-#' Constant fishing effort set at 75 per cent of final year of historical
-#' simulations subject to changes in catchability determined by OM@qinc and
-#' interannual variability in catchability determined by OM@qcv. This MP is
-#' intended to represent a 'status quo' management approach.
-#' 
-#' @param x A position in a data-limited methods data object.
-#' @param Data A data-limited methods data object.
-#' @param ... Optional additional arguments that are ignored. Note arguments
-#' \code{reps} or \code{...} are required for all input controls
-#' @note Made up for this package.
-#' @author T. Carruthers.
+#' @describeIn curE Set effort to 75\% of that in final year.
 #' @export 
 curE75 <- function(x, Data, ...) {
   # 75% current effort
@@ -232,29 +220,8 @@ curE75 <- function(x, Data, ...) {
 class(curE75) <- "MP"
 
 
-#' Effort control version of DD - Delay - Difference Stock Assessment with UMSY
-#' and MSY leading
-#' 
-#' A simple delay-difference assessment that estimates and recommends FMSY
-#' using a time-series of catches and a relative abundance index.
-#' 
-#' 
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @note This DD model is observation error only and has does not estimate
-#' process error (recruitment deviations). Similar to many other assessment
-#' models it depends on a whole host of dubious assumptions such as temporally
-#' stationary productivity and proportionality between the abundance index and
-#' real abundance. Unsurprisingly the extent to which these assumptions are
-#' violated tends to be the biggest driver of performance for this method.
-#' @author T. Carruthers
-#' @references 
-#' Carruthers, T, Walters, C.J,, and McAllister, M.K. 2012. Evaluating methods that classify
-#' fisheries stock status using only fisheries catch data. Fisheries Research 119-120:66-79.
-#' 
-#' Hilborn, R., and Walters, C., 1992. Quantitative Fisheries Stock Assessment: Choice,
-#' Dynamics and Uncertainty. Chapman and Hall, New York. 
+#' @describeIn DD Effort-control version. The recommended effort is the ratio of 
+#' UMSY to current U.
 #' @export 
 DDe <- function(x, Data, reps = 100) {
   dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
@@ -296,31 +263,7 @@ DDe <- function(x, Data, reps = 100) {
 }
 class(DDe) <- "MP"
 
-#' Effort searching version of DD - Delay - Difference Stock Assessment with
-#' UMSY and MSY leading that fishes at 75 per cent of FMSY
-#' 
-#' A simple delay-difference assessment that estimates FMSY using a time-series
-#' of catches and a relative abundance index. The MP provides a change in
-#' effort in the direction of FMSY up to a maximum change of 10 percent.
-#' 
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @param LB The lowest permitted factor of previous fishing effort
-#' @param UB The highest permitted factor of previous fishing effort
-#' @note This DD model is observation error only and has does not estimate
-#' process error (recruitment deviations). Similar to many other assessment
-#' models it depends on a whole host of dubious assumptions such as temporally
-#' stationary productivity and proportionality between the abundance index and
-#' real abundance. Unsurprisingly the extent to which these assumptions are
-#' violated tends to be the biggest driver of performance for this method.
-#' @author T. Carruthers
-#' @references  
-#' Carruthers, T, Walters, C.J,, and McAllister, M.K. 2012. Evaluating methods that classify
-#' fisheries stock status using only fisheries catch data. Fisheries Research 119-120:66-79.
-#' 
-#' Hilborn, R., and Walters, C., 1992. Quantitative Fisheries Stock Assessment: Choice,
-#' Dynamics and Uncertainty. Chapman and Hall, New York. 
+#' @describeIn DD Variant of \code{DDe} that limits the maximum change in effort to 10 percent.
 #' @export DDes
 DDes <- function(x, Data, reps = 100, LB = 0.9, UB = 1.1) {
   dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
@@ -367,28 +310,8 @@ class(DDes) <- "MP"
 
 
 
-#' Effort control version of DD - Delay - Difference Stock Assessment with UMSY
-#' and MSY leading that fishes at 75 per cent of FMSY
-#' 
-#' A simple delay-difference assessment that estimates and recommends 75 per
-#' cent FMSY using a time-series of catches and a relative abundance index.
-#' 
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @note This DD model is observation error only and has does not estimate
-#' process error (recruitment deviations). Similar to many other assessment
-#' models it depends on a whole host of dubious assumptions such as temporally
-#' stationary productivity and proportionality between the abundance index and
-#' real abundance. Unsurprisingly the extent to which these assumptions are
-#' violated tends to be the biggest driver of performance for this method.
-#' @author T. Carruthers
-#' @references 
-#' Carruthers, T, Walters, C.J,, and McAllister, M.K. 2012. Evaluating methods that classify
-#' fisheries stock status using only fisheries catch data. Fisheries Research 119-120:66-79.
-#' 
-#' Hilborn, R., and Walters, C., 1992. Quantitative Fisheries Stock Assessment: Choice,
-#' Dynamics and Uncertainty. Chapman and Hall, New York. 
+#' @describeIn DD Variant of \code{DDe} where the recommended effort is 75\% 
+#' of the ratio of UMSY to current U.
 #' @export 
 DDe75 <- function(x, Data, reps = 100) {
   dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"

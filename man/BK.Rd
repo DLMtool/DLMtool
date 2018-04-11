@@ -2,24 +2,45 @@
 % Please edit documentation in R/MPs_Output.R
 \name{BK}
 \alias{BK}
-\title{Beddington and Kirkwood life-history MP (simple version)}
+\alias{BK_CC}
+\alias{BK_ML}
+\title{Beddington and Kirkwood life-history MP}
 \usage{
 BK(x, Data, reps = 100)
+
+BK_CC(x, Data, reps = 100, Fmin = 0.005)
+
+BK_ML(x, Data, reps = 100)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object.}
 
 \item{Data}{A data-limited methods data object.}
 
-\item{reps}{The number of stochastic samples of the TAC recommendation}
+\item{reps}{The number of stochastic samples of the TAC recommendation.}
+
+\item{Fmin}{The minimum fishing mortality rate that is derived from the
+catch-curve (interval censor).}
 }
 \description{
-Sets an OFL according to current abundance and an approximation of Fmax
-based on length at first capture.
+Family of management procedures that sets the TAC by approximation of FMSY
+based on the length at first capture.
 }
+\section{Functions}{
+\itemize{
+\item \code{BK}: This is the simple version of the BK MP which requires an estimate
+of abundance. The paper has a more complex approach that might work better.
+
+\item \code{BK_CC}: Calculates an OFL using an approximation of FMSY based
+on length at first capture and a catch curve estimate of current F.
+
+\item \code{BK_ML}: Uses an approximation to FMSY based on length at first capture and an
+estimate of current abundance based on a mean-length estimator.
+}}
+
 \note{
-This is the simple version of the BK MP. The paper has a more complex
-approach that might work better.
+The mean length extension was programmed by Gary Nelson as part of his
+excellent R package 'fishmethods'
 }
 \references{
 Beddington, J.R., Kirkwood, G.P., 2005. The estimation of

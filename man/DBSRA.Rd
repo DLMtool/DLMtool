@@ -2,9 +2,15 @@
 % Please edit documentation in R/MPs_Output.R
 \name{DBSRA}
 \alias{DBSRA}
+\alias{DBSRA_40}
+\alias{DBSRA4010}
 \title{Depletion-Based Stock Reduction Analysis}
 \usage{
 DBSRA(x, Data, reps = 100)
+
+DBSRA_40(x, Data, reps = 100)
+
+DBSRA4010(x, Data, reps = 100)
 }
 \arguments{
 \item{x}{A position in a data-limited methods object.}
@@ -14,18 +20,27 @@ DBSRA(x, Data, reps = 100)
 \item{reps}{The number of samples of the TAC (OFL) recommendation.}
 }
 \value{
-A vector of TAC (OFL) values.
+A Rec object with a vector of TAC (OFL) values.
 }
 \description{
 User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the OFL
 by back-constructing the stock to match a user specified level of stock
 depletion (OFL = M * FMSY/M * depletion* B0).
 }
-\details{
-You specify a range of stock depletion and, given historical catches DB-SRA
-calculates what unfished biomass must have been to get you here given
-samples for M, FMSY relative to M and also BMSY relative to Bunfished.
-}
+\section{Functions}{
+\itemize{
+\item \code{DBSRA}: Base version. You specify a range of stock depletion and,
+given historical catches DB-SRA calculates what unfished biomass must have
+been to get you here given samples for M, FMSY relative to M and also BMSY
+relative to Bunfished.
+
+\item \code{DBSRA_40}: Assumes 40 percent current depletion (Bcurrent/B0 = 0.4), which is
+more or less the most optimistic state for a stock (ie very close to BMSY/B0 for many stocks).
+
+\item \code{DBSRA4010}: Base version paired with the 40-10 rule that throttles
+back the OFL to zero at 10 percent of unfished biomass.
+}}
+
 \note{
 This is set up to return the OFL (FMSY * current biomass).
 
@@ -39,6 +54,12 @@ doesn't have the modification for flatfish life histories that has
 previously been applied by Dick and MacCall.
 }
 \references{
+Dick, E.J., MacCall, A.D., 2010. Estimates of sustainable yield for 50 data-poor
+stocks in the Pacific Coast groundfish fishery management plan. Technical memorandum.
+Southwest fisheries Science Centre, Santa Cruz, CA. National Marine Fisheries Service,
+National Oceanic and Atmospheric Administration of the U.S. Department of Commerce.
+NOAA-TM-NMFS-SWFSC-460.
+
 Dick, E.J., MacCall, A.D., 2011. Depletion-Based Stock Reduction
 Analysis: A catch-based method for determining sustainable yields for
 data-poor fish stocks. Fish. Res. 110, 331-341.

@@ -2,9 +2,12 @@
 % Please edit documentation in R/MPs_Output.R
 \name{MCD}
 \alias{MCD}
+\alias{MCD4010}
 \title{Mean Catch Depletion}
 \usage{
 MCD(x, Data, reps = 100)
+
+MCD4010(x, Data, reps = 100)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -14,12 +17,21 @@ MCD(x, Data, reps = 100)
 \item{reps}{The number of stochastic samples of the quota recommendation}
 }
 \value{
-A numeric vector of TAC recommendations
+A Rec object with TAC recommendations
 }
 \description{
 A simple average catch-depletion MP that was included to demonstrate just
-how informative an estimate of current stock depletion can be. TAC=2\emph{D}AvC
+how informative an estimate of current stock depletion can be.
 }
+\section{Functions}{
+\itemize{
+\item \code{MCD}: The calculated TAC = 2 * depletion * AvC
+
+\item \code{MCD4010}: Linked to a 40-10 harvest control rule
+}}
+
 \author{
+T. Carruthers
+
 T. Carruthers
 }

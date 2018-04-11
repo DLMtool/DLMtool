@@ -2,9 +2,15 @@
 % Please edit documentation in R/MPs_Output.R
 \name{Fdem}
 \alias{Fdem}
+\alias{Fdem_CC}
+\alias{Fdem_ML}
 \title{Demographic FMSY method}
 \usage{
 Fdem(x, Data, reps = 100)
+
+Fdem_CC(x, Data, reps = 100, Fmin = 0.005)
+
+Fdem_ML(x, Data, reps = 100)
 }
 \arguments{
 \item{x}{A position in data-limited methods data object}
@@ -12,17 +18,28 @@ Fdem(x, Data, reps = 100)
 \item{Data}{A data-limited methods data object}
 
 \item{reps}{The number of TAC samples}
+
+\item{Fmin}{The minimum fishing mortality rate derived from the catch-curve
+analysis}
 }
 \description{
 FMSY is calculated as r/2 where r is calculated from a demographic approach
 (inc steepness). Coupled with an estimate of current abundance that gives
 you the OFL.
 }
-\details{
-Made up for this package. This uses Murdoch McAllister's demographic r
+\section{Functions}{
+\itemize{
+\item \code{Fdem}: This uses Murdoch McAllister's demographic r
 method to derive FMSY (r/2) and then makes the quota r*current biomass / 2.
 Easy.
-}
+
+\item \code{Fdem_CC}: FMSY is calculated as r/2 from a demographic r prior method, current
+abundance is estimated from catch curve analysis.
+
+\item \code{Fdem_ML}: Demographic F (r/2) method using the mean length estimator to calculate
+current abundance.
+}}
+
 \references{
 McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
 demographic methods to construct Bayesian priors for the intrinsic rate of

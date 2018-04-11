@@ -37,6 +37,9 @@ stochastic in this implementation.
 \references{
 http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf
 }
+\seealso{
+\link{SPmod}
+}
 \author{
 T. Carruthers
 }

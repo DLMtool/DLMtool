@@ -2,10 +2,13 @@
 % Please edit documentation in R/MPs_Output.R
 \name{CompSRA}
 \alias{CompSRA}
+\alias{CompSRA4010}
 \title{Age-composition-based estimate of current stock depletion given constant Z
 linked to an FMSY estimate to provide OFL}
 \usage{
 CompSRA(x, Data, reps = 100)
+
+CompSRA4010(x, Data, reps = 100)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -14,11 +17,21 @@ CompSRA(x, Data, reps = 100)
 
 \item{reps}{The number of stochastic samples of the TAC.}
 }
+\value{
+A Rec object with a vector of TAC recommendation
+}
 \description{
 Estimates an OFL based on a Stock Reduction analysis fitted to current
 age-composition data. Knife-edge vulnerability at age at maturity allows for
-an FMSY estimate. OFL=FMSY*F/C
+an FMSY estimate.
 }
+\section{Functions}{
+\itemize{
+\item \code{CompSRA}: Basic control rule where OFL=FMSY*F/C
+
+\item \code{CompSRA4010}: With a 40-10 control rule
+}}
+
 \note{
 Given a fixed historical F, What level of depletion gives you this
 length composition?

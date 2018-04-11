@@ -41,6 +41,9 @@ tends to perform alarmingly well and therefore requires debunking ASAP.
 \references{
 Made-up for this package.
 }
+\seealso{
+\link{Fratio}
+}
 \author{
 T. Carruthers
 }

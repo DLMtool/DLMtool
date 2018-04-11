@@ -12,7 +12,7 @@ SketchFun(nyears, Years=NULL)
 \item{Years}{An optional vector of years. Should be nyears long.}
 }
 \description{
-Internal function for innteractive plot which allows users to specify the relative trajectory and
+Internal function for interactive plot which allows users to specify the relative trajectory and
 variability in the historical fishing effort.
 }
 \author{
