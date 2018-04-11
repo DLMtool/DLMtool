@@ -126,12 +126,15 @@ ForceCor<-function(OM,nsim=48,plot=T){
 #' testOM<-ImputeLH(testOM)
 #' 
 #' @importFrom Amelia amelia
-#' @importFrom dplyr bind_rows %>%
+#' @importFrom dplyr bind_rows %>%  select bind_rows
 #'
 #'
 ImputeLH <- function(OM, samp.m=100, plot=TRUE, ign.bounds=TRUE) {
   set.seed(OM@seed)
-  DBdata <- DLMtool::LHdata %>% select(M, K, relL, MK)
+  relL <- MK <- M <- K <- NULL
+  DBdata <- DLMtool::LHdata
+  DBdata <- DBdata%>% dplyr::select(M, K, relL, MK)
+  
   if (class(OM) != "OM") stop('Object must be class "OM"', call. = FALSE)
   
   inM <- inK <- inLinf <- inL50 <- NULL
@@ -224,6 +227,7 @@ ImputeLH <- function(OM, samp.m=100, plot=TRUE, ign.bounds=TRUE) {
   
   tindata <- as.data.frame(indata^tpow)
   
+  alldata <- bind_rows(tdata, tindata)
   # impute missing values
   sink("temp")
   mod <- Amelia::amelia(alldata, bounds=bounds, logs=logs, max.resample=5000, verbose=FALSE) 

@@ -15,6 +15,7 @@
 Awatea2OM<-function(AwateaDir,nsim=48,proyears=50,Name=NULL,Source="No source provided",
                  Author="No author provided",verbose=T){
 
+  currentRes <- Bmcmc <- currentMCMC <- NULL # hacks for CRAN checks (objects must be seen to exist)
   bmcmc_file<-list.files(AwateaDir)[grep("Bmcmc",list.files(AwateaDir))]
   Awateatxt<-paste0(AwateaDir,"/",list.files(AwateaDir)[grep(".txt",list.files(AwateaDir))])
 
