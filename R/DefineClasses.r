@@ -1484,7 +1484,7 @@ setMethod('summary', signature="MSE", function(object, ..., silent=FALSE) {
   for (X in 1:length(PMlist)) {
     runPM <- eval(call(PMlist[[X]],object))
     storeMean[[X]] <- runPM@Mean
-    storeName[[X]] <- runPM@name
+    storeName[[X]] <- runPM@Name
     # storeHeading[[X]] <- runPM@call
     storeMP[[X]] <- runPM@MPs
   }
