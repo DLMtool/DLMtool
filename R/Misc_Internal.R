@@ -365,6 +365,7 @@ genSizeCompWrap <- function(i, vn, CAL_binsmid, retL,
               Linfs=Linfarray[i,], Ks=Karray[i,], t0s=t0array[i,],
               LenCV=LenCV[i], truncSD)
   
+  lens[!is.finite(lens)] <- 0
   lens
   
 }
