@@ -22,7 +22,7 @@ POF(MSEobj = NULL, Ref = 1)
 
 LTY(MSEobj = NULL, Ref = 0.5)
 
-STY(MSEobj = NULL)
+STY(MSEobj = NULL, Ref = 0.5)
 
 AAVY(MSEobj = NULL, Ref = 0.2)
 
