@@ -13,12 +13,24 @@ get_freq <- function(x, width, origin = 0, outlen = 0L) {
     .Call('_DLMtool_get_freq', PACKAGE = 'DLMtool', x, width, origin, outlen)
 }
 
+which_maxC <- function(x) {
+    .Call('_DLMtool_which_maxC', PACKAGE = 'DLMtool', x)
+}
+
 rnormSelect2 <- function(N, mi, ma) {
     .Call('_DLMtool_rnormSelect2', PACKAGE = 'DLMtool', N, mi, ma)
 }
 
-genSizeComp <- function(VulnN, CAL_binsmid, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD) {
-    .Call('_DLMtool_genSizeComp', PACKAGE = 'DLMtool', VulnN, CAL_binsmid, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD)
+tdnorm <- function(x, mi, ma) {
+    .Call('_DLMtool_tdnorm', PACKAGE = 'DLMtool', x, mi, ma)
+}
+
+genSizeComp <- function(VulnN, CAL_binsmid, selCurve, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD) {
+    .Call('_DLMtool_genSizeComp', PACKAGE = 'DLMtool', VulnN, CAL_binsmid, selCurve, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD)
+}
+
+genSizeComp2 <- function(VulnN, CAL_binsmid, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD) {
+    .Call('_DLMtool_genSizeComp2', PACKAGE = 'DLMtool', VulnN, CAL_binsmid, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD)
 }
 
 #' Internal estimation function for LSRA and LSRA2 functions

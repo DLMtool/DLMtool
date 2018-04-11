@@ -163,7 +163,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
  
   
-  # For debugging - assign default argument values to to current workspace if they don't exist ####
+  # For development - assign default argument values to to current workspace if they don't exist ####
   if (interactive()) { 
     # devtools::load_all()
     DFargs <- formals(runMSE)
@@ -601,19 +601,14 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   vn <- aperm(vn, c(1,3, 2))
 
   # Generate size comp data with variability in age
-  tempSize <- lapply(1:nsim, genSizeCompWrap, vn, CAL_binsmid, CAL_ESS, CAL_nsamp,
+  tempSize <- lapply(1:nsim, genSizeCompWrap, vn, CAL_binsmid, retL, CAL_ESS, CAL_nsamp,
                      Linfarray, Karray, t0array, LenCV, truncSD=2)
+  
   CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), dim=c(nyears, length(CAL_binsmid), nsim)), c(3,1,2))
 
-  for (i in 1:nsim) {
-    ind <- round(CAL[i,nyears, ],0) >= 1
-    if (sum(ind)>0) {
-      LFC[i] <- CAL_binsmid[min(which(ind))] # get the smallest CAL observation
-    } else {
-      LFC[i] <- 0
-    }
-  }
-
+  # calculate LFC 
+  LFC <- unlist(lapply(tempSize, function(x) getfifth(x[nyears, ], CAL_binsmid)))
+    
   # --- Simulate index of abundance from total biomass ----
   Ierr <- array(rlnorm((nyears + proyears) * nsim, mconv(1, rep(Isd, nyears + proyears)), 
                        sdconv(1, rep(Isd, nyears + proyears))), c(nsim, nyears + proyears))
@@ -858,7 +853,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   mm <- 1 # for debugging
   
   for (mm in 1:nMP) {  # MSE Loop over methods
-    
     if(!silent) message(mm, "/", nMP, " Running MSE for ", MPs[mm])  # print a progress report
     
     # reset selectivity parameters for projections
@@ -1067,20 +1061,16 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         vn <- aperm(vn, c(1,3,2))
         
         nyrs <- length(yind)
-        tempSize <- lapply(1:nsim, genSizeCompWrap, vn[,yind,, drop=FALSE], CAL_binsmid, CAL_ESS, CAL_nsamp,
+        tempSize <- lapply(1:nsim, genSizeCompWrap, vn[,yind,, drop=FALSE], CAL_binsmid, retL_P, 
+                           CAL_ESS, CAL_nsamp,
                            Linfarray[,nyears + yind, drop=FALSE],  
                            Karray[,nyears + yind, drop=FALSE], 
                            t0array[,nyears + yind,drop=FALSE], LenCV, truncSD=2)
         CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), dim=c(length(yind), length(CAL_binsmid), nsim)), c(3,1,2))
         
-        for (i in 1:nsim) {
-          ind <- round(CAL[i,nyrs, ],0) >= 1
-          if (sum(ind)>0) {
-            LFC[i] <- CAL_binsmid[min(which(ind))] # get the smallest CAL observation
-          } else {
-            LFC[i] <- 0
-          }
-        }
+        # calculate LFC - approx 5th percentile 
+        LFC <- unlist(lapply(tempSize, function(x) getfifth(x[nrow(x), ], CAL_binsmid)))
+        LFC[is.na(LFC)] <- 1
         LFC[LFC<1] <- 1
         
         I2 <- cbind(apply(Biomass, c(1, 3), sum), apply(Biomass_P, c(1, 3), sum)[, 1:(y - 1)]) * 

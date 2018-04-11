@@ -350,7 +350,34 @@ getsel <- function(x, lens, lfs, sls, srs) {
 
 
 # Generate size comps
-genSizeCompWrap <- function(i, vn, CAL_binsmid,
+genSizeCompWrap <- function(i, vn, CAL_binsmid, retL,
+                            CAL_ESS, CAL_nsamp,
+                            Linfarray, Karray, t0array,
+                            LenCV, truncSD=2) {
+  
+  VulnN <- as.matrix(vn[i,,]) 
+  VulnN <- round(VulnN,0)
+  nyrs <- nrow(as.matrix(Linfarray[i,]))
+  if (nyrs == 1) VulnN <- t(VulnN)
+
+  lens <- genSizeComp(VulnN, CAL_binsmid, retL[i,,],
+              CAL_ESS=CAL_ESS[i], CAL_nsamp=CAL_nsamp[i],
+              Linfs=Linfarray[i,], Ks=Karray[i,], t0s=t0array[i,],
+              LenCV=LenCV[i], truncSD)
+  
+  lens
+  
+}
+
+getfifth <- function(lenvec, CAL_binsmid) {
+  temp <- rep(CAL_binsmid, lenvec)
+  if(sum(lenvec)==0) return(NA)
+  dens <- try(density(temp), silent=TRUE)
+  if(class(dens)!="density") return(NA)
+  dens$x[min(which(cumsum(dens$y/sum(dens$y)) >0.05))]
+}
+
+genSizeCompWrap2<- function(i, vn, CAL_binsmid, 
                             CAL_ESS, CAL_nsamp,
                             Linfarray, Karray, t0array,
                             LenCV, truncSD=2) {
@@ -361,12 +388,16 @@ genSizeCompWrap <- function(i, vn, CAL_binsmid,
   if (nyrs == 1) VulnN <- t(VulnN)
   
   
-  genSizeComp(VulnN, CAL_binsmid,
-              CAL_ESS=CAL_ESS[i], CAL_nsamp=CAL_nsamp[i],
-              Linfs=Linfarray[i,], Ks=Karray[i,], t0s=t0array[i,],
-              LenCV=LenCV[i], truncSD)
+  lens <- genSizeComp2(VulnN, CAL_binsmid, 
+                      CAL_ESS=CAL_ESS[i], CAL_nsamp=CAL_nsamp[i],
+                      Linfs=Linfarray[i,], Ks=Karray[i,], t0s=t0array[i,],
+                      LenCV=LenCV[i], truncSD)
+  
+  lens
   
 }
+
+
 
 # 
 # makeSizeCompW <- function(i, maxage, Linfarray, Karray, t0array, LenCV,

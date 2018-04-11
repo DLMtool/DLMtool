@@ -801,7 +801,10 @@ DFO_tab<-function(MSEobj,rnd=0){
 #' @param Ptab1 A DFO performance table made by DFO_tab()
 #' @param thresh A vector of thresholds for each column Health, Yield and Reb are 'greater than threshold' conditions 
 #' @author T. Carruthers
-#' @export DFO_tab_formatted
+#' @importFrom dplyr %>% mutate
+#' @importFrom kableExtra cell_spec kable_styling column_spec add_header_above
+#' 
+#' @export 
 DFO_tab_formatted<-function(Ptab1,thresh=c(10,     40,     50,    50,    50,  10,     40,     50,    50,    50,  20,   50)){
   #                                       P_Cr_S, P_Ct_S, P_H_S, POF_S, STY, P_Cr_L, P_Ct_L, P_H_L, POF_L, LTY, AAVY, P_Reb
   
@@ -827,6 +830,7 @@ DFO_tab_formatted<-function(Ptab1,thresh=c(10,     40,     50,    50,    50,  10
   
   Ptab2<-Ptab1 #[,1:ncol(Ptab1)]
   Ptab2<-cbind(Ptab2[,1],MP_Type,Ptab2[,2:ncol(Ptab2)])
+  MP <- Crit_S <- Caut_S <- Health_S <- OvFish_S <- Yield_S <- Crit <- Caut <-  Health <- OvFish <- Reb <- NULL # hack for CRAN checks
   names(Ptab2)<-c("MP","MP_Type","Crit_S","Caut_S","Health_S","OvFish_S","Yield_S","Crit","Caut","Health","OvFish","Yield","AAVY","Reb")
   
   #       P_Cr_S,               P_Ct_S,                 P_H_S,                 POF_S,                  STY,  AAVY, P_Reb
