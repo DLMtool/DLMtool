@@ -37,7 +37,7 @@ Examples of the implementation of input controls in the DLM toolkit. See details
 \item \code{matlenlim}: A data-limited method in which fishing retention-at-length
 is set equivalent to the maturity curve.
 
-\item \code{matlenlim2}: Selectivity-at-length is set slightly higher (110%)
+\item \code{matlenlim2}: Selectivity-at-length is set slightly higher (110\%)
 than the maturity-at-length.
 
 \item \code{minlenLopt1}: This input control sets the minimum length of fish

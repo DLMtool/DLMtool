@@ -35,7 +35,7 @@ matlenlim <- function(x, Data, ...) {
 class(matlenlim) <- "MP"
 
 
-#' @describeIn matlenlim Selectivity-at-length is set slightly higher (110%) 
+#' @describeIn matlenlim Selectivity-at-length is set slightly higher (110\%) 
 #' than the maturity-at-length.
 #' @export matlenlim2
 matlenlim2 <- function(x, Data, ...) {
