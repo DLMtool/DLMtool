@@ -1547,8 +1547,9 @@ class(GB_target) <- "MP"
 #' @param glim A constraint limiting the maximum level of change in quota
 #' recommendations
 #' @author C. Walters and T. Carruthers
-#' @references Made-up for this package. Carruthers et al. 2015. Performance of
-#' Simple Management Procedures.
+#' @references 
+#' Carruthers et al. 2015. Performance evaluation of simple
+#' management procedures. ICES J. Mar Sci. 73, 464-482.
 #' @export Gcontrol
 Gcontrol <- function(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 
                                                                         2)) {
@@ -1619,7 +1620,7 @@ class(HDAAC) <- "MP"
 #' The MP adjusts catch based on the value of the index in the current year relative to the 
 #' time series mean and standard error.
 #'  
-#' The mean and standard error of the index time series is calculated. There are two thresholds 
+#' @describeIn ICI The mean and standard error of the index time series is calculated. There are two thresholds 
 #' which delineates whether catch is reduced, held constant, or increased. The catch is reduced by 0.75
 #' if the Z-score of the current year's index is less than -0.44. The catch is increased by 1.05
 #' if the Z-score of the current year's index is greater than 1.96. Otherwise, the catch is held constant.
@@ -1668,25 +1669,11 @@ class(ICI) <- "MP"
 
 
 
-#' Less Precautionary Index Confidence Interval (ICI) MP by Jardim et al. (2015)
-#' 
-#' The MP adjusts catch based on the value of the index in the current year relative to the 
-#' time series mean and standard error. This method is less precautionary of the two ICI MPs by allowing for a larger increase in TAC
-#' and a lower threshold of the index to decrease the TAC (see Jardim et al. 2015).
-#' 
-#' The mean and standard error of the index time series is calculated. There are two thresholds 
-#' which delineates whether catch is reduced, held constant, or increased. The catch is reduced by 0.75
+#' @describeIn ICI Compared to \code{ICI}, this method is less precautionary of the two ICI MPs by allowing for a 
+#' larger increase in TAC and a lower threshold of the index to decrease the TAC. The catch is reduced by 0.75
 #' if the Z-score of the current year's index is less than -1.96. The catch is increased by 1.25
 #' if the Z-score of the current year's index is greater than 1.96. Otherwise, the catch is held constant.
-#'  
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @author Coded by Q. Huynh. Developed by Jardim et al. (2015)
-#' @references Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for 
-#' data limited stocks using length-based reference points and survey biomass indices, 
-#' Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836, 
-#' https://doi.org/10.1016/j.fishres.2014.11.013
+#' @export 
 ICI2 <- function(x, Data, reps) {
   dependencies = "Data@Ind, Data@CV_Ind, Data@Cat, Data@CV_Cat"
   
@@ -1728,9 +1715,8 @@ class(ICI2) <- "MP"
 #' 
 #' The TAC is adjusted by the ratio alpha, where the numerator 
 #' being the mean index in the most recent two years of the time series and the denominator
-#' being the mean index in the three years prior to those in the numerator.
-#' 
-#' This MP is the stochastic version of Method 3.2 used by ICES for Data-Limited Stocks (ICES 2012).
+#' being the mean index in the three years prior to those in the numerator. This MP is the 
+#' stochastic version of Method 3.2 used by ICES for Data-Limited Stocks (ICES 2012).
 #' 
 #' @param x A position in data-limited methods data object
 #' @param Data A data-limited methods data object
@@ -1744,7 +1730,7 @@ class(ICI2) <- "MP"
 #' 
 #' ICES. 2012. ICES Implementation of Advice for Data-limited Stocks in 2012 in its 2012
 #' Advice. ICES CM 2012/ACOM 68. 42 pp.
-
+#' @export
 Iratio <- function(x, Data, reps, yrs = c(2, 5)) {
   dependencies = "Data@Ind, Data@CV_Ind, Data@Cat, Data@CV_Cat"
   
