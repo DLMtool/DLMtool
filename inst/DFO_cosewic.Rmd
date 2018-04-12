@@ -57,71 +57,73 @@ knitr::opts_chunk$set(dpi=85)
 
 # About this document
 
-This is a prototype of an automatic report that describes the results of a demonstration MSE analysis for the Canadian Department of Fisheries and Oceans. 
+This is a prototype of an automatic report that describes the results of a demonstration COSEWIC risk analysis for the Canadian Department of Fisheries and Oceans. 
 
 <br>
 
 
 # Performance table
 
-A generic performance table is produced that provides the probability of stock status in the critical, cautious and healthy zones. Also provided are the probability of overfishing and the yield relative to FMSY fishing. These are provided for the first and last 10 years of the MSE projection in addition to the average annual variability in yield over all projected years and the probability of rebuilding to over BMSY after two mean generation times. 
+A performance table is produced that provides the probability of stock status in the critical, cautious and healthy zones. Also provided are the A1 and A2 indicators of stock trend and an additional metric determining the probability of dropping below a biomass that takes three mean generation times to recover to half BMSY given zero fishing. 
 
 
 ```{r table,echo=F,warning=F,error=F,message=F}
- tab<-DFO_tab(params$MSEobj)
- DFO_tab_formatted(tab)
+ tab<-COSEWIC_tab(params$MSEobj)
+ COSEWIC_tab_formatted(tab)
 
 ```
 
-* Crit_S is the probability of being in the critical zone in the first 10 projected years
-* Caut_S is the probability of being in the cautious zone in the first 10 projected years
-* Health_S is the probability of being in the healthy zone in the first 10 projected years
-* OvFish_S is the probability of overfishing in the first 10 projected years
-* Yield_S is the mean yield relative to FMSY management over the first 10 projected years
-* Crit is the probability of being in the critical zone in the last 10 projected years
+* P_Cr is the probability of being in the critical zone (less than 20% depletion)
+* P_Ct is the probability of being in the cautious zone (between 20% and 40% depletion)
+* P_H is the probability of being in the healthy zone (above 40% depletion)
+* P_Cr_MSY is the probability of being in the critical zone (less than 40% BMSY)
+* P_Ct_MSY is the probability of being in the cautious zone (between 40% and 80% BMSY)
+* P_H_MSY is the probability of being in the healthy zone (above 80% BMSY)
 * Caut is the probability of being in the cautious zone in the last 10 projected years
-* Health is the probability of being in the healthy zone in the last 10 projected years
-* OvFish is the probability of overfishing in the last 10 projected years
-* Yield is the mean yield relative to FMSY management over the last 10 projected years
-* AAVY is the average annual variability in yield over the whole projection phrased as a CV percentage
-* Reb is the probability the stoc
+* P_A1 is the probability of being designated threatened according to COSEWIC Indicator A1 (Spawning biomass less than 70% that three generation times previously)
+* P_A2 is the probability of being designated threatened according to COSEWIC Indicator A2 (Spawning biomass less than 50% that three generation times previously)
+* Blow is the probability that the stock is below the biomass for which it takes 3 generation times to reach 50% BMSY with zero fishing
 
 <br>
 
-# Quantile plot
+# Historical biomass trend and current status
 
-The quantile worm plots show the central 80% probability interval of future projections (blue shaded area) and the mean among all simulations (solid white line). 
 
-Superimposed on each plot are two individual simulations (the solid and dashed blue lines). For each management procedure (panel columns) the biomass relative to BMSY and the yield relative to FMSY yield (Rel. Yd.) are plotted. 
+```{r Hplot,echo=F,warning=F,error=F,message=F,fig.width=10,fig.height=8}
 
-```{r Quantile plot,echo=F,warning=F,error=F,message=F,fig.width=8,fig.height=8}
-
- DFO_quant(params$MSEobj,maxcol=3)
+ COSEWIC_Hplot(params$MSEobj)
 
 ```
 
 <br>
 
 
-# Bar plot 
+# Projection plot for zero fishing, FMSY fishing and current fishing effort
 
-The bar plots is similar to the quantile plot above and shows the biomass relative to BMSY over projected time periord. Each panel represents a different 10 year period of the MSE projection. The bars present the 90% and the 50% (solid line) probability intervals. The dots are the median biomass / BMSY. 
 
-```{r bar,echo=F,warning=F,error=F,message=F,fig.height=10,fig.width=7}
- DFO_bar(params$MSEobj)
+```{r Pplot,echo=F,warning=F,error=F,message=F,fig.height=10,fig.width=10}
+ COSEWIC_Pplot(params$MSEobj)
 
 ```
 
 <br>
 
 
-# Tradeoff plot
-
-A traditional KOBE plot is provided that shows stock status (B/BMSY) and exploitation rate (F/FMSY) at the end of the projected time period. The dots represent individual simulations, the solid line is the 50% probability interval and the dashed line is the 95% probability interval. 
+# Evaluation of trend indicators 
 
 
-```{r TO,echo=F,warning=F,error=F,message=F,fig.height=10,fig.width=6}
- DFO_proj(params$MSEobj,maxplot=9)
+```{r A1_A2,echo=F,warning=F,error=F,message=F,fig.height=10,fig.width=10}
+ COSEWIC_Dplot(params$MSEobj)
+
+```
+
+<br>
+
+# Extinction risk 
+
+
+```{r Extinction_Blow,echo=F,warning=F,error=F,message=F,fig.height=7,fig.width=9}
+ COSEWIC_Blow(params$MSEobj)
 
 ```
 

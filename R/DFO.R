@@ -4,6 +4,7 @@
 # ==========================================================================
 
 
+
 #' Deparment of Fisheries and Oceans historical plot
 #'
 #' A plot of current and historical stock status by simulation according to the
@@ -156,7 +157,7 @@ DFO_bar<-function(MSEobj,yres=10){
   for(i in 1:nsec){
     
     plot(xlim,c(0,1),col='white',axes=F,main="",xlab="",ylab="")
-    add_zones_bar()
+    add_zones_bar_D()
     legend('top',paste0("Projection years ",sections[i]+1,"-",sections[i+1]),bty='n')
     points(POF[,3,i],barpos,pch=19,cex=1.5)
     
@@ -280,20 +281,48 @@ DFO_Kobe<-function(Br,Fr,xlab=NA,ylab=NA){
 }
 
 
-add_zones_bar<-function(){
+
+add_zones_A<-function(textpos=2000){
+  
+  polygon(c(0,0,10000,10000),c(50,70,70,50),col='grey95',border='grey86')
+  text(textpos,60,"A1 Threatened",col="dark grey",font=2,cex=1)
+  polygon(c(0,0,10000,10000),c(30,50,50,30),col='grey86',border='grey86')
+  text(textpos,40,"A2 Threatened",col="white",font=2,cex=1)
+  abline(h=100,col="grey")
+}  
+
+
+
+add_zones_bar_D<-function(textpos=0.5,maxy=1){
   
   cols<-c("grey86","grey94","white",
           "grey84","grey92","grey97")
   
-  polygon(c(-0,0.4,0.4,0),c(0,0,1,1),col=cols[1],border=cols[1])
-  polygon(c(0.4,0.8,0.8,0.4),c(0,0,1,1),col=cols[2],border=cols[2])
-  polygon(c(0.8,1000,1000,0.8),c(0,0,1,1),col=cols[3],border=cols[3])
+  polygon(c(-0,0.2,0.2,0),c(0,0,maxy,maxy),col=cols[1],border=cols[1])
+  polygon(c(0.2,0.4,0.4,0.2),c(0,0,maxy,maxy),col=cols[2],border=cols[2])
+  polygon(c(0.4,1000,1000,0.4),c(0,0,maxy,maxy),col=cols[3],border=cols[3])
   
-  text(0.2,0.5,"Critical",col="white",font=2,srt=270,cex=1.1)
-  text(0.6,0.5,"Cautious",col="grey73",font=2,srt=270,cex=1.1)
-  text(1.1,0.5,"Healthy",col="grey73",font=2,srt=270,cex=1.1)
+  text(0.1,textpos*maxy,"Critical",col="white",font=2,srt=270,cex=1.1)
+  text(0.3,textpos*maxy,"Cautious",col="grey73",font=2,srt=270,cex=1.1)
+  text(0.5,textpos*maxy,"Healthy",col="grey73",font=2,srt=270,cex=1.1)
   
 }
+
+add_zones_bar<-function(textpos=0.5,maxy=1){
+  
+  cols<-c("grey86","grey94","white",
+          "grey84","grey92","grey97")
+  
+  polygon(c(-0,0.4,0.4,0),c(0,0,maxy,maxy),col=cols[1],border=cols[1])
+  polygon(c(0.4,0.8,0.8,0.4),c(0,0,maxy,maxy),col=cols[2],border=cols[2])
+  polygon(c(0.8,1000,1000,0.8),c(0,0,maxy,maxy),col=cols[3],border=cols[3])
+  
+  text(0.2,textpos*maxy,"Critical",col="white",font=2,srt=270,cex=1.1)
+  text(0.6,textpos*maxy,"Cautious",col="grey73",font=2,srt=270,cex=1.1)
+  text(1.1,textpos*maxy,"Healthy",col="grey73",font=2,srt=270,cex=1.1)
+  
+}
+
 
 add_zones_bar_horiz<-function(textpos=0.2){
   
@@ -304,9 +333,24 @@ add_zones_bar_horiz<-function(textpos=0.2){
   polygon(c(0,0,10E10,10E10),c(0.4,0.8,0.8,0.4),col=cols[2],border=cols[2])
   polygon(c(0,0,10E10,10E10),c(0.8,1000,1000,0.8),,col=cols[3],border=cols[3])
   
-  text(textpos,0.1,"Critical",col="white",font=2,cex=1.1)
+  text(textpos,0.2,"Critical",col="white",font=2,cex=1.1)
   text(textpos,0.6,"Cautious",col="grey73",font=2,cex=1.1)
   text(textpos,1.1,"Healthy",col="grey73",font=2,cex=1.1)
+  
+}
+
+add_zones_bar_horiz_D<-function(textpos=0.2){
+  
+  cols<-c("grey86","grey94","white",
+          "grey84","grey92","grey97")
+  
+  polygon(c(0,0,10E10,10E10),c(0,0.2,0.2,0),,col=cols[1],border=cols[1])
+  polygon(c(0,0,10E10,10E10),c(0.2,0.4,0.4,0.2),col=cols[2],border=cols[2])
+  polygon(c(0,0,10E10,10E10),c(0.4,1000,1000,0.4),,col=cols[3],border=cols[3])
+  
+  text(textpos,0.1,"Critical",col="white",font=2,cex=1.1)
+  text(textpos,0.3,"Cautious",col="grey73",font=2,cex=1.1)
+  text(textpos,0.5,"Healthy",col="grey73",font=2,cex=1.1)
   
 }
 
@@ -503,14 +547,6 @@ DFO_quant<-function(MSEobj,maxcol=6,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",
   Blims <- c(0,quantile(B_BMSY,0.95))
   Ylims<- c(0,quantile(Yd,0.95))
   
-  plotquant<-function(x,p=c(0.1,0.9),yrs,qcol,lcol,addline=T){
-    ny<-length(yrs)
-    qs<-apply(x,2,quantile,p=p)
-    polygon(c(yrs,yrs[ny:1]),c(qs[1,],qs[2,ny:1]),border=NA,col=qcol)
-    
-    if(addline)for(i in 1:2)lines(yrs,x[i,],col=lcol,lty=i)
-    lines(yrs,apply(x,2,quantile,p=0.5),lwd=2,col="white")
-  }
   
   for(pp in 1:length(plots)){
     
@@ -541,134 +577,318 @@ DFO_quant<-function(MSEobj,maxcol=6,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",
 }
 
 
+plotquant<-function(x,p=c(0.1,0.9),yrs,qcol,lcol,addline=T){
+  ny<-length(yrs)
+  qs<-apply(x,2,quantile,p=p)
+  polygon(c(yrs,yrs[ny:1]),c(qs[1,],qs[2,ny:1]),border=NA,col=qcol)
+  
+  if(addline)for(i in 1:2)lines(yrs,x[i,],col=lcol,lty=i)
+  lines(yrs,apply(x,2,quantile,p=0.5),lwd=2,col="white")
+}
 
-#' COSEWIC forward projection plot
+
+plotquant2<-function(x,p=c(0.1,0.9),yrs,qcol,lcol,addline=T){
+  ny<-length(yrs)
+  qs<-apply(x,2,quantile,p=p)
+  #polygon(c(yrs,yrs[ny:1]),c(qs[1,],qs[5,ny:1]),border=lcol,col=NA)
+  lines(yrs,qs[1,],lwd=1,col=lcol)
+  lines(yrs,qs[5,],lwd=1,col=lcol)
+  
+  polygon(c(yrs,yrs[ny:1]),c(qs[2,],qs[4,ny:1]),border=NA,col=qcol)
+  
+  if(addline)for(i in 1:2)lines(yrs,x[i,],col="black",lty=i+1)
+  lines(yrs,qs[3,],lwd=2,col="white")
+}
+
+
+#' COSEWIC Historical projection plot
 #'
-#' Projection of biomass under three scenarios: no catch, FMSY fishing and status quo fishing
+#' Historical spawning stock trajectories relative to unfished and MSY levels.   
+#'
+#' @param MSEobj An object of class MSE created from runMSE() with the argument MPs=c("NFref","FMSYref","curE")
+#' @param syear Starting year of the projection for graphing purposes
+#' @param qcol Color of shaded regions (bars, quantiles)
+#' @param lcol Color of lines
+#' @param quants Quantiles of the shaded regions (vector 5 long e.g. 0.1, 0.2, 0.5, 0.8, 0.9)
+#' @return A plot
+#' @author T. Carruthers
+#' @export COSEWIC_Hplot
+COSEWIC_Hplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",quants=c(0.05,0.25,0.5,0.75,0.95)){
+
+  op<-par(mai=c(0.6,0.6,0.05,0.05),omi=c(0.05,0.05,0.3,0.05))
+  layout(matrix(1:4,ncol=2),heights=c(2.5,1))
+  proyears<-dim(MSEobj@B_BMSY)[3]
+  nyears<-dim(MSEobj@SSB_hist)[3]
+  yrs<-syear-((nyears:1)-1)
+  maxage<-dim(MSEobj@CAA)[3]
+  MGT<-ceiling(MSEobj@OM$MGT)
+  if(proyears<maxage*3)message("This function requires a suitably long time horizon for projections. Please create a COSEWIC class MSE object using the function runCOSEWIC()")
+  timehorizon<-MGT*3
+  
+  #Spawning biomass extraction
+  SSB<-apply(MSEobj@SSB_hist,c(1,3),sum)
+  
+  # Depletion plot relative to B0
+  D<-SSB/MSEobj@OM$SSB0
+  Blims <- c(0,quantile(D,0.98))
+  DFO_Dplot(D,qcol,lcol,Blims,yrs,MSY=F,quants=quants)
+  mtext("Relative to unfished levels",3,line=0.8)
+  
+  DFO_cbar(D[,nyears],qcol,lcol,syear,MSY=F)
+  
+  # Depletion plot relative to BMSY
+  SSBrel<-SSB/MSEobj@OM$SSBMSY
+  Blims <- c(0,quantile(SSBrel,0.98))
+  DFO_Dplot(SSBrel,qcol,lcol,Blims,yrs,MSY=T,quants=quants)
+  mtext("Relative to MSY levels",3,line=0.8)
+  
+  DFO_cbar(SSBrel[,nyears],qcol,lcol,syear,MSY=T)
+  on.exit(par(op))
+}
+
+DFO_cbar<-function(finalD,qcol,lcol,syear=2017,quants=c(0.05,0.25,0.5,0.75,0.95),MSY=F){
+  
+  Blims<-c(0,quantile(finalD,0.995))
+  plot(Blims,c(0.5,1.5),axes=F,xlab="",ylab="",col="white")
+  
+  if(MSY==T){
+    xlab=paste0("SSB(",syear,") / SSBMSY")
+    add_zones_bar(maxy=1.5,textpos=0.66)
+  }else{
+    xlab=paste0("SSB(",syear,") / SSB0  (depletion)")
+    add_zones_bar_D(maxy=1.5,textpos=0.66)
+  }
+  
+  qs<-quantile(finalD,quants)
+  lines(qs[c(1,5)],c(1,1),col=lcol,lwd=2)
+  lines(rep(qs[1],2),c(0.95,1.05),col=lcol,lwd=2)
+  lines(rep(qs[5],2),c(0.95,1.05),col=lcol,lwd=2)
+  polygon(qs[c(2,2,4,4)],c(0.9,1.1,1.1,0.9),col=qcol,border=qcol)
+  lines(rep(qs[3],2),c(0.91,1.09),col='white',lwd=3)
+  axis(1)
+  mtext(xlab,1,line=2.5)
+  
+}
+  
+DFO_Dplot<-function(D,qcol,lcol,Blims,yrs,MSY=F,quants=c(0.05,0.95)){  
+ 
+  plot(range(yrs),Blims,col="white",ylab="",xlab="",axes=F)
+  if(!MSY){
+    add_zones_bar_horiz_D(textpos=yrs[1]+0.1*(yrs[length(yrs)]-yrs[1]))
+    yx<-seq(0,5,length.out=26)
+    ylab="SSB / SSB0 (depletion)"
+  }else{
+    add_zones_bar_horiz(textpos=yrs[1]+0.1*(yrs[length(yrs)]-yrs[1]))
+    yx<-seq(0,10,length.out=21)
+    ylab="SSB / SSBMSY"
+  }
+  axis(2,c(-10E10,10E10))
+  axis(2,yx,yx)
+  axis(1,c(-10E10,10E10))
+  axis(1)
+  plotquant2(D,p=quants,yrs,qcol,lcol)
+  mtext("Year",1,line=2.5)
+  mtext(ylab,2,line=2.6)
+  legend('topright',c( paste0(round((quants[5]-quants[1])*100,0),"% PI"),
+                       paste0(round((quants[4]-quants[2])*100,0),"% PI"),
+                       "Example sims"),bty='n',text.col=c(lcol,qcol,'black'),text.font=c(1,2,1))
+ 
+}  
+
+DFO_cosplot<-function(SSBd,qcol,lcol,Blims,yrs,quants=c(0.05,0.25,0.5,0.75,0.95)){  
+  
+  plot(range(yrs),Blims,col="white",ylab="",xlab="",axes=F)
+  
+  
+  add_zones_A(textpos=yrs[1]+0.07*(yrs[length(yrs)]-yrs[1]))
+  
+  yx<-seq(0,1000,length.out=21)
+  axis(2,c(-10E10,10E10))
+  axis(2,yx,yx)
+  axis(1,c(-10E10,10E10))
+  axis(1)
+  
+  plotquant2(SSBd,p=quants,yrs,qcol,lcol)
+  
+  mtext("Year",1,line=2.5)
+  mtext("SSB(y) / SSB(y-3MGT) (%)",2,line=2.6)
+  legend('topright',c( paste0(round((quants[5]-quants[1])*100,0),"% PI"),
+                       paste0(round((quants[4]-quants[2])*100,0),"% PI"),
+                       "Example sims"),bty='n',text.col=c(lcol,qcol,'black'),text.font=c(1,2,1))
+  
+}  
+
+
+#' COSEWIC Projection plot
+#'
+#' Projection of spawning stock biomass under three scenarios: no catch, FMSY fishing and status quo fishing effort
 #' This plot if for an MSE object created from runMSE with the argument MPs=c("NFref","FMSYref","curE")
 #'
 #' @param MSEobj An object of class MSE created from runMSE() with the argument MPs=c("NFref","FMSYref","curE")
 #' @param syear Starting year of the projection for graphing purposes
+#' @param qcol Color of shaded regions (bars, quantiles)
+#' @param lcol Color of lines
+#' @param quants Quantiles of the shaded regions (vector 5 long e.g. 0.1, 0.2, 0.5, 0.8, 0.9)
 #' @return A plot
 #' @author T. Carruthers
-#' @export COSEWIC_plot
-COSEWIC_plot<-function(MSEobj,syear=2015){
+#' @export COSEWIC_Pplot
+COSEWIC_Pplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",quants=c(0.05,0.25,0.5,0.75,0.95)){
 
-  if(sum(is.na(MSEobj@OM$Blow))>0)stop("At least one Blow calculation failed, try runMSE again with argument CalcBlow=TRUE")
-          # ZeroC  FMSYref   curE
-  cols<-c("green","orange","blue")
-
-  cols[3]<-makeTransparent(cols[3])
-
-  maxage<-dim(MSEobj@SSB_hist)[2]
+  if(class(MSEobj)!="COSEWIC")stop("The MSE object you have provided is not of class COSEWIC, 
+                                      please create a COSEWIC class MSE object using the function runCOSEWIC()")
+  if(sum(MSEobj@MPs%in%c("NFref","FMSYref","curE"))<3) stop("This function requires an MSE for three specific MPs: 
+                                                               NFref,FMSYref and curE. Please create a COSEWIC class MSE object using the function runCOSEWIC()")
+  
+  op<-par(mfrow=c(3,2),mai=c(0.6,0.6,0.05,0.05),omi=c(0.05,0.05,0.3,0.05))
+  #layout(matrix(1:4,ncol=2),heights=c(2.5,1))
+  proyears<-dim(MSEobj@B_BMSY)[3]
   nyears<-dim(MSEobj@SSB_hist)[3]
-  proyears<-dim(MSEobj@B)[3]
-  refyears<-1:proyears
-  irefyears<-proyears:1
-  yrs<-refyears+syear-1
-  hyrs<-((syear-nyears+1):syear)-1
-  nsim<-dim(MSEobj@SSB_hist)[1]
-  nMPs<-length(MSEobj@MPs)
-
-  op<- par(mfcol=c(2,2),mai=c(0.45,0.8,0.1,0.01),omi=c(0.25,0.02,0.6,0.01))
-
-  labs<-paste0("(",letters[1:4],")")
-  ylabline<-2.8
-  labline<-0.2
-
-  # temporary fix prior to adding SSB projections to the MSE object
-  SSBrat<-mean(apply(MSEobj@SSB_hist[,,nyears,],1,sum) / MSEobj@B[,2,1])
-  SSBproj<-MSEobj@B*SSBrat
-  SSBproj_rel<-SSBproj/MSEobj@OM$Blow
-
-  # --- Historical plots -----------------
-
-  SSB_hist<-apply(MSEobj@SSB_hist,c(1,3),sum)
-  SSBMSYref<- SSB_hist/(MSEobj@OM$BMSY_B0*SSB_hist[,1])
-
-  Cq<-apply(SSBMSYref,2,quantile,p=c(0.025,0.5,0.975))
-  ylim<-c(0,6)
-
-  plot(range(hyrs),range(ylim),col='white',xlab="",ylab="")
-  abline(h=0.5,lty=2,lwd=1.5)
-  abline(h=1,lwd=1.5)
-
-  polygon(c(hyrs,hyrs[nyears:1]),
-          c(Cq[1,1:nyears],Cq[3,nyears:1]),
-          col=cols[3],border=F)
-  lines(hyrs,Cq[2,1:nyears])
-
-  #mtext(MSEobjnam[i],3,line=0.7)
-
-  mtext(labs[1],3,line=labline,adj=0.02,cex=0.8)
-  mtext("Hist. SSB / SSBMSY",2,line=ylabline)
-
-  # --- Worm plots -----------------------
-
-  # Absolute
-
-  Cq<-apply(SSBproj,2:3,quantile,p=c(0.025,0.5,0.975))
-  ylims<-c(0,max(Cq))
-
-  plot(range(yrs),range(ylims),col='white',xlab="",ylab="")
-  abline(h=0,lty=2,lwd=1.5)
-
-  polygon(c(yrs,yrs[proyears:1]),
-          c(Cq[1,3,refyears],Cq[3,3,irefyears]),
-          col=cols[3],border=FALSE)
-  lines(yrs,Cq[2,3,])
-
-  for(MP in 1:2){
-    lines(yrs,c(Cq[1,MP,refyears]),col=cols[MP],lwd=1.5)
-    lines(yrs,c(Cq[3,MP,refyears]),col=cols[MP],lwd=1.5)
-  }
-
-  mtext("Proj. SSB",2,line=ylabline)
-  mtext(labs[2],3,line=labline,adj=0.02,cex=0.8)
-
-
-
-  # As a fraction of Blow -------------------------
-
-  Cq<-apply(log(SSBproj_rel),2:3,quantile,p=c(0.025,0.5,0.975))
-  ylims<-c(-2,max(Cq))
-
-  plot(range(yrs),range(ylims),col='white',xlab="",ylab="")
-  abline(h=0,lty=2,lwd=1.5)
-
-  polygon(c(yrs,yrs[proyears:1]),
-          c(Cq[1,3,refyears],Cq[3,3,irefyears]),
-          col=cols[3],border=FALSE)
-  lines(yrs,Cq[2,3,])
-
-  for(MP in 1:2){
-    lines(yrs,c(Cq[1,MP,refyears]),col=cols[MP],lwd=1.5)
-    lines(yrs,c(Cq[3,MP,refyears]),col=cols[MP],lwd=1.5)
-  }
-
-  mtext("Proj. SSB / SSBlow (log)",2,line=ylabline)
-  mtext(labs[3],3,line=labline,adj=0.02,cex=0.8)
-
-
-  # --- probability plot -----------------
-
-  Plim<-apply(SSBproj<MSEobj@OM$Blow,2:3,sum)/nsim*100
-  matplot(x=yrs,t(Plim),ylim=c(0,10),type='l',lty=1,col=cols,xlab="",ylab="")
-
-  mtext("Prob SSB < Blow",2,line=ylabline)
-  mtext(labs[4],3,line=labline,adj=0.02,cex=0.8)
-
-  legend('topleft',legend=c("No Catch","FMSY","Status quo"),bty='n',text.col=cols)
-
-  mtext("Year",1,line=0.15,outer=T)
+  yrs<-syear+((1:proyears)-1)
+  maxage<-dim(MSEobj@CAA)[3]
+  MGT<-ceiling(MSEobj@OM$MGT)
+  if(proyears<maxage*3)message("This function requires a suitably long time horizon for projections. Please create a COSEWIC class MSE object using the function runCOSEWIC()")
+  timehorizon<-MGT*3
   
-  mtext("Biomass projection plot relative to Blow for "
-             , 3, line=2, outer = T, font = 2, cex = 0.8)
+  ord<-match(MSEobj@MPs,c("NFref","FMSYref","curE"))
+  labs<-c("No fishing","FMSY fishing","Current Effort")
+  #Spawning biomass extraction
+  i<-0
+  for(MP in ord){
+    SSB<-MSEobj@SSB[,MP,]
+    i<-i+1
+    # Depletion plot relative to B0
+    D<-SSB/MSEobj@OM$SSB0
+    Blims <- c(0,quantile(D,0.98))
+    DFO_Dplot(D,qcol='#FFCB62',lcol='#FF7F0E',Blims,yrs,MSY=F,quants=quants)
+    legend('topleft',labs[i],bty='n',text.font=2)
+    if(MP==ord[1])mtext("Relative to unfished levels",3,line=0.8)
   
-  mtext(MSEobj@Name,line=0.6, 3, outer = T, font = 2, cex = 0.8)
+    # Depletion plot relative to BMSY
+    SSBrel<-SSB/MSEobj@OM$SSBMSY
+    Blims <- c(0,quantile(SSBrel,0.98))
+    DFO_Dplot(SSBrel,qcol='#FFCB62',lcol='#FF7F0E',Blims,yrs,MSY=T,quants=quants)
+    if(MP==ord[1])mtext("Relative to MSY levels",3,line=0.8)
+  }
   on.exit(par(op))
-
 }
+
+#' COSEWIC Depletion plot
+#'
+#'
+#' These plots evaluate whether significant declines have occured over three generation times in both historical 
+#' and projection years
+#'
+#' @param MSEobj An object of class MSE created from runMSE() with the argument MPs=c("NFref","FMSYref","curE")
+#' @param syear Starting year of the projection for graphing purposes
+#' @param qcol Color of shaded regions (bars, quantiles)
+#' @param lcol Color of lines
+#' @param quants Quantiles of the shaded regions (vector 5 long e.g. 0.1, 0.2, 0.5, 0.8, 0.9)
+#' @return A plot
+#' @author T. Carruthers
+#' @export COSEWIC_Dplot
+COSEWIC_Dplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",quants=c(0.05,0.25,0.5,0.75,0.95),nGT=3){
+  
+  if(class(MSEobj)!="COSEWIC")stop("The MSE object you have provided is not of class COSEWIC, 
+                                      please create a COSEWIC class MSE object using the function runCOSEWIC()")
+  if(sum(MSEobj@MPs%in%c("NFref","FMSYref","curE"))<2) stop("This function requires an MSE for three specific MPs: 
+                                                            NFref, FMSYref and curE. Please create a COSEWIC class MSE object using the function runCOSEWIC()")
+  
+  op<-par(mfrow=c(3,1),mai=c(0.6,0.8,0.05,0.05),omi=c(0.05,0.05,0.3,0.05))
+  #layout(matrix(1:4,ncol=2),heights=c(2.5,1))
+  proyears<-dim(MSEobj@B_BMSY)[3]
+  nyears<-dim(MSEobj@SSB_hist)[3]
+  nsim<-dim(MSEobj@SSB_hist)[1]
+  yrs<-syear+((-nyears+1):proyears)
+  maxage<-dim(MSEobj@CAA)[3]
+  MGT<-ceiling(MSEobj@OM$MGT)
+  mMGT<-max(MGT)
+  if(proyears<maxage*nGT)stop("This function requires a suitably long time horizon for projections. Please create a COSEWIC class MSE object using the function runCOSEWIC()")
+  timehorizon<-MGT*nGT
+  
+  ind2<-ind1<-cbind(rep((1:nsim),nyears+proyears),rep((mMGT*3)+(1:(nyears+proyears)),each=nsim))
+  ind1[,2]<-ind1[,2]-3*MGT[ind1[,1]]
+  
+  ord<-match(MSEobj@MPs,c("NFref","FMSYref","curE"))
+  labs<-c("No fishing","FMSY fishing","Current Effort")
+  #Spawning biomass extraction
+  i<-0
+  for(MP in ord){
+    i<-i+1
+    SSBh<-apply(MSEobj@SSB_hist,c(1,3),sum)
+    SSBd<-SSB<-cbind(matrix(rep(SSBh[,1],mMGT*nGT),nrow=nsim),SSBh,MSEobj@SSB[,MP,])
+    SSBd[ind2]<-SSB[ind2]/SSB[ind1] * 100
+    SSBd<-SSBd[,(mMGT*3)+(1:(nyears+proyears)-1)]
+    Blims<-quantile(SSBd,c(0.02,0.97))
+    Blims[2]<-min(Blims[2],250)
+    DFO_cosplot(SSBd,qcol='#79F48D',lcol='#49B95B',Blims,yrs,quants=quants)
+    abline(v=syear)
+    legend('topleft',labs[i],bty='n',text.font=2)
+  }
+  on.exit(par(op))
+}
+
+#' COSEWIC Blow plot
+#'
+#'
+#' These plots evaluate the likelihood of declining below Blow, by default biomass that it takes 3 generation times to reach half BMSY with zero fishing 
+#'
+#' @param MSEobj An object of class MSE created from runMSE() with the argument MPs=c("NFref","FMSYref","curE")
+#' @param syear Starting year of the projection for graphing purposes
+#' @param qcol Color of shaded regions (bars, quantiles)
+#' @param lcol Color of lines
+#' @param quants Quantiles of the shaded regions (vector 5 long e.g. 0.1, 0.2, 0.5, 0.8, 0.9)
+#' @return A plot
+#' @author T. Carruthers
+#' @export COSEWIC_Dplot
+COSEWIC_Blow<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",quants=c(0.05,0.25,0.5,0.75,0.95),nGT=3){
+  
+  if(class(MSEobj)!="COSEWIC")stop("The MSE object you have provided is not of class COSEWIC, 
+                                   please create a COSEWIC class MSE object using the function runCOSEWIC()")
+  if(sum(MSEobj@MPs%in%c("NFref","FMSYref","curE"))<2) stop("This function requires an MSE for three specific MPs: 
+                                                            NFref, FMSYref and curE. Please create a COSEWIC class MSE object using the function runCOSEWIC()")
+  
+  op<-par(mai=c(0.6,0.8,0.05,0.05),omi=c(0.05,0.05,0.3,0.05))
+  #layout(matrix(1:4,ncol=2),heights=c(2.5,1))
+  proyears<-dim(MSEobj@B_BMSY)[3]
+  nyears<-dim(MSEobj@SSB_hist)[3]
+  nsim<-dim(MSEobj@SSB_hist)[1]
+  allyrs<-syear+((-nyears+1):proyears)
+  pyrs<-syear+((1:proyears)-1)
+  hyrs<-syear-((nyears:1)-1)
+  maxage<-dim(MSEobj@CAA)[3]
+  MGT<-ceiling(MSEobj@OM$MGT)
+  mMGT<-max(MGT)
+  if(proyears<maxage*nGT)stop("This function requires a suitably long time horizon for projections. Please create a COSEWIC class MSE object using the function runCOSEWIC()")
+  timehorizon<-MGT*nGT
+  
+  ord<-match(MSEobj@MPs,c("NFref","FMSYref","curE"))
+  labs<-c("No fishing","FMSY fishing","Current Effort")
+  cols<-c('blue','green','red')
+  #Spawning biomass extraction
+  Blow=MSEobj@OM$Blow
+  
+  histSSB<-apply(apply(MSEobj@SSB_hist,c(1,3),sum)/Blow < 1,2,mean)*100
+  NFrefSSB<-apply(MSEobj@SSB[,match("NFref",MSEobj@MPs),]/Blow < 1,2,mean)*100
+  FMSYrefSSB<-apply(MSEobj@SSB[,match("FMSYref",MSEobj@MPs),]/Blow < 1,2,mean)*100
+  curESSB<-apply(MSEobj@SSB[,match("curE",MSEobj@MPs),]/Blow < 1,2,mean)*100 
+  
+  Blims<-c(0,max(c(histSSB,NFrefSSB,FMSYrefSSB,curESSB,10)))
+  plot(range(allyrs),Blims,col='white',axes=F,xlab="",ylab="")
+  lines(hyrs,histSSB)
+  lines(pyrs,NFrefSSB,col="blue")
+  lines(pyrs,FMSYrefSSB,col="green")
+  lines(pyrs,curESSB,col='red')
+  axis(1)
+  axis(2)
+  wrng<-c(-10E10,10E10)
+  axis(1,wrng,wrng)
+  axis(2,wrng,wrng)
+  mtext("Probability SSB < Blow (%)",2,line=2.5)
+  mtext("Year",1,line=2.5)
+  legend('topleft',legend=labs,text.col=c('blue','green','red'),bty='n')
+  on.exit(par(op))
+}
+
 
 #' Subset an OM cpars slot 
 #'
@@ -722,6 +942,30 @@ DFO_report<-function(MSEobj,output_file=NA,author="Author not specified",title=N
   params$author<-author
   params$MSEobj<-MSEobj
   rmarkdown::render(input=system.file("DFO_generic.Rmd", package="DLMtool"), output_file=output_file,params=params)
+  
+}
+
+
+#' Create a standard DFO COSEWIC report 
+#'
+#' Provides performance plots to inform COSEWIC processes in Canadian fish stocks.  
+#'
+#' @param MSEobj An object of class MSE
+#' @param output_file The directory and filename you wish to use for the report e.g. "C:/temp/myMSEreport.html"
+#' @param author The person who made this report
+#' @param title The title of the report
+#' @author T. Carruthers
+#' @export COSEWIC_report
+COSEWIC_report<-function(MSEobj,output_file=NA,author="Author not specified",title=NA){
+  
+  if(is.na(output_file))output_file=paste0(getwd(),"/DFO COSEWIC report.html")
+  if(is.na(title))title=paste0("DFO Generic COSEWIC Report for",MSEobj@Name)
+  params<-new('list')
+  params$title<-title
+  params$subtitle<-"A prototype COSEWIC risk assessment"
+  params$author<-author
+  params$MSEobj<-MSEobj
+  rmarkdown::render(input=system.file("DFO_cosewic.Rmd", package="DLMtool"), output_file=output_file,params=params)
   
 }
 
@@ -893,6 +1137,197 @@ DFO_tab_formatted<-function(Ptab1,thresh=c(10,     40,     50,    50,    50,  10
     column_spec(5, width = "3cm")  %>%
     add_header_above(c(" ", " ","First 10 years of MSE projection" = 5, "Last 10 years of MSE projection" = 5,
                        "",""))
+  
+}
+#' Create a standard COSEWIC performance table 
+#'
+#' P_Cr is the probability of being in the critical zone (less than 20% depletion)
+#' P_Ct is the probability of being in the cautious zone (between 20% and 40% depletion)
+#' P_H is the probability of being in the healthy zone (above 40% depletion)
+#' P_Cr_MSY is the probability of being in the critical zone (less than 40% BMSY)
+#' P_Ct_MSY is the probability of being in the cautious zone (between 40% and 80% BMSY)
+#' P_H_MSY is the probability of being in the healthy zone (above 80% BMSY)
+#' Caut is the probability of being in the cautious zone in the last 10 projected years
+#' P_A1 is the probability of being designated threatened according to COSEWIC Indicator A1 (Spawning biomass less than 70% that three generation times previously)
+#' P_A2 is the probability of being designated threatened according to COSEWIC Indicator A2 (Spawning biomass less than 50% that three generation times previously)
+#' Blow is the probability that the stock is below the biomass for which it takes 3 generation times to reach 50% BMSY with zero fishing
+#'
+#' @param MSEobj An object of class MSE
+#' @param rnd The number of significant figures for rounding.
+#' @param GTs A vector of mean generation times to evaluate performance metrics over
+#' @author T. Carruthers
+#' @export COSEWIC_tab
+COSEWIC_tab<-function(MSEobj,rnd=0,GTs=c(3,6)){
+  
+  if(class(MSEobj)!="COSEWIC")stop("The MSE object you have provided is not of class COSEWIC, 
+                                      please create a COSEWIC class MSE object using the function runCOSEWIC()")
+  if(sum(MSEobj@MPs%in%c("NFref","FMSYref","curE"))<2) stop("This function requires an MSE for three specific MPs: 
+                                                            NFref, FMSYref and curE. Please create a COSEWIC class MSE object using the function runCOSEWIC()")
+  
+  proyears<-dim(MSEobj@B_BMSY)[3]
+  nyears<-dim(MSEobj@SSB_hist)[3]
+  nsim<-dim(MSEobj@SSB_hist)[1]
+  yrs<-syear+((-nyears+1):proyears)
+  maxage<-dim(MSEobj@CAA)[3]
+  MGT<-ceiling(MSEobj@OM$MGT)
+  mMGT<-max(MGT)
+  if(proyears<maxage*nGT)stop("This function requires a suitably long time horizon for projections. Please create a COSEWIC class MSE object using the function runCOSEWIC()")
+  timehorizon<-MGT*nGT
+   
+  # --- Year 1 ---------------------------------------------------
+  P_Cr_MSY<-round(mean(MSEobj@B_BMSY[,3,1]<0.4)*100,rnd)
+  P_Ct_MSY<-round(mean(MSEobj@B_BMSY[,3,1]>0.4 & MSEobj@B_BMSY[,3,1]<0.8)*100,rnd)
+  P_H_MSY<-round(mean(MSEobj@B_BMSY[,3,1]>0.8)*100,rnd)
+  
+  SSB0<-MSEobj@OM$SSB0
+  P_Cr<-round(mean(MSEobj@SSB[,3,1]/SSB0<0.2)*100,rnd)
+  P_Ct<-round(mean(MSEobj@SSB[,3,1]/SSB0>0.2 & MSEobj@SSB[,3,1]/SSB0<0.4)*100,rnd)
+  P_H<-round(mean(MSEobj@SSB[,3,1]/SSB0>0.4)*100,rnd)
+  
+  ind2<-ind1<-cbind(rep((1:nsim),nyears+proyears),rep((mMGT*3)+(1:(nyears+proyears)),each=nsim))
+  ind1[,2]<-ind1[,2]-3*MGT[ind1[,1]]
+  
+  SSBh<-apply(MSEobj@SSB_hist,c(1,3),sum)
+  SSBd<-SSB<-cbind(matrix(rep(SSBh[,1],mMGT*nGT),nrow=nsim),SSBh,MSEobj@SSB[,1,])
+  SSBd[ind2]<-SSB[ind2]/SSB[ind1] * 100
+  SSBd<-SSBd[,(mMGT*3)+(1:(nyears+proyears)-1)]
+  P_A1<-round(mean(SSBd[,nyears]<70)*100,rnd)
+  P_A2<-round(mean(SSBd[,nyears]<50)*100,rnd)
+  Blow<-round(mean(SSBh[,nyears]<MSEobj@OM$Blow)*100,rnd)
+  
+  
+  
+  ord<-match(MSEobj@MPs,c("NFref","FMSYref","curE"))
+  labs<-c("No fishing","FMSY fishing","Current Effort")
+  #Spawning biomass extraction
+  i<-0
+  for(GT in GTs){
+    for(MP in ord){
+      
+      sind<-cbind(1:nsim,rep(MP,nsim),MGT*GT)
+      if(max(sind[,3])>OM@proyears)stop(paste("You specified a value for the number of generation times (GT = ",GT,
+                                              ") that requires a projection horizon (",max(sind[,3]),
+                                              " years) that is longer than the number of operating model projected years (",OM@proyears,")"))
+      P_Cr_MSY<-c(P_Cr_MSY,round(mean(MSEobj@B_BMSY[sind]<0.4)*100,rnd))
+      P_Ct_MSY<-c(P_Ct_MSY,round(mean(MSEobj@B_BMSY[sind]>0.4 & MSEobj@B_BMSY[sind]<0.8)*100,rnd))
+      P_H_MSY<-c(P_H_MSY,round(mean(MSEobj@B_BMSY[sind]>0.8)*100,rnd))
+      
+      SSB0<-MSEobj@OM$SSB0
+      P_Cr<-c(P_Cr,round(mean(MSEobj@SSB[sind]/SSB0<0.2)*100,rnd))
+      P_Ct<-c(P_Ct,round(mean(MSEobj@SSB[sind]/SSB0>0.2 & MSEobj@SSB[sind]/SSB0<0.4)*100,rnd))
+      P_H<-c(P_H,round(mean(MSEobj@SSB[sind]/SSB0>0.4)*100,rnd))
+      
+      
+      SSBh<-apply(MSEobj@SSB_hist,c(1,3),sum)
+      SSBd<-SSB<-cbind(matrix(rep(SSBh[,1],mMGT*nGT),nrow=nsim),SSBh,MSEobj@SSB[,MP,])
+      SSBd[ind2]<-SSB[ind2]/SSB[ind1] * 100
+      SSBd<-SSBd[,(mMGT*3)+(1:(nyears+proyears)-1)]
+      find<-cbind(1:nsim,nyears+MGT*GT)
+      P_A1<-c(P_A1,round(mean(SSBd[find]<70)*100,rnd))
+      P_A2<-c(P_A2,round(mean(SSBd[find]<50)*100,rnd))
+      Blow<-c(Blow,round(mean(SSB[find]<MSEobj@OM$Blow)*100,rnd))
+    
+      
+    }
+  }
+  
+ 
+  MP<-c("Historical",paste0(rep(labs,length(GTs))," (",rep(GTs,each=3)," GT)"))
+  tab<-data.frame(MP,P_Cr, P_Ct, P_H, P_Cr_MSY, P_Ct_MSY, P_H_MSY, P_A1, P_A2, Blow)
+  tab
+  
+}
+
+#' A formatted version of the standard COSEWIC performance plot, color coded by thresholds
+#'
+#' P_Cr is the probability of being in the critical zone (less than 20% depletion)
+#' P_Ct is the probability of being in the cautious zone (between 20% and 40% depletion)
+#' P_H is the probability of being in the healthy zone (above 40% depletion)
+#' P_Cr_MSY is the probability of being in the critical zone (less than 40% BMSY)
+#' P_Ct_MSY is the probability of being in the cautious zone (between 40% and 80% BMSY)
+#' P_H_MSY is the probability of being in the healthy zone (above 80% BMSY)
+#' Caut is the probability of being in the cautious zone in the last 10 projected years
+#' P_A1 is the probability of being designated threatened according to COSEWIC Indicator A1 (Spawning biomass less than 70% that three generation times previously)
+#' P_A2 is the probability of being designated threatened according to COSEWIC Indicator A2 (Spawning biomass less than 50% that three generation times previously)
+#' Blow is the probability that the stock is below the biomass for which it takes 3 generation times to reach 50% BMSY with zero fishing
+#'
+#' @param Ptab1 A COSEWIC performance table made by COSEWIC_tab()
+#' @param thresh A vector of thresholds for each column Health, Yield and Reb are 'greater than threshold' conditions 
+#' @author T. Carruthers
+#' @importFrom dplyr %>% mutate
+#' @importFrom kableExtra cell_spec kable_styling column_spec add_header_above
+#' 
+#' @export COSEWIC_tab_formatted
+COSEWIC_tab_formatted<-function(Ptab1,thresh=c(10,     40,     50,    10,       40,       50,      20,   20,   5)){
+  #                                            P_Cr,   P_Ct,   P_H,   P_Cr_MSY, P_Ct_MSY, P_H_MSY, P_A1, P_A2, Blow
+  
+  # save(Ptab1,file="Ptab1")
+ 
+  MPs <- P_Cr <- P_Ct <- P_H <- P_Cr_MSY <- P_Ct_MSY <- P_H_MSY <- P_A1 <- P_A2 <- Blow <- NULL # hack for CRAN checks
+  names(Ptab1)<-c("MP","P_Cr","P_Ct","P_H","P_Cr_MSY","P_Ct_MSY","P_H_MSY","P_A1","P_A2","Blow")
+  
+  #       P_Cr,                 P_Ct,                   P_H,                  P_Cr_MSY,                P_Ct_MSY
+  PIsmet<-Ptab1[,2]<thresh[1] & Ptab1[,3] < thresh[2] & Ptab1[,4] >thresh[3] & Ptab1[,5] < thresh[4] & Ptab1[,6] < thresh[5] &
+    Ptab1[,7]>thresh[6] & Ptab1[,8] < thresh[7] & Ptab1[,9]<thresh[8] & Ptab1[,10] < thresh[9]
+  MPcols<-rep('green',nrow(Ptab1))
+  MPcols[!PIsmet]<-'red'
+  
+  Ptab1 %>%
+    mutate(
+      #MP = row.names(.),
+      MP =  cell_spec(MP, "html",color=MPcols, bold = T),
+      P_Cr = ifelse(P_Cr < thresh[1],
+                      cell_spec(P_Cr, "html", color = "green",italic = T),
+                      cell_spec(P_Cr, "html", color = "red", italic = T)),
+      P_Ct = ifelse(P_Ct < thresh[2],
+                      cell_spec(P_Ct, "html", color = "green", italic = T),
+                      cell_spec(P_Ct, "html", color = "red", italic = T)),
+      P_H = ifelse(P_H >= thresh[3],
+                        cell_spec(P_H, "html", color = "green", italic = T),
+                        cell_spec(P_H, "html", color = "red", italic = T)),
+      P_Cr_MSY = ifelse(P_Cr_MSY < thresh[4],
+                        cell_spec(P_Cr_MSY, "html", color = "green", italic = T),
+                        cell_spec(P_Cr_MSY, "html", color = "red", italic = T)),
+      P_Ct_MSY = ifelse(P_Ct_MSY < thresh[5],
+                       cell_spec(P_Ct_MSY, "html", color = "green", italic = T),
+                       cell_spec(P_Ct_MSY, "html", color = "red", italic = T)),
+      P_H_MSY = ifelse(P_H_MSY > thresh[6],
+                    cell_spec(P_H_MSY, "html", color = "green", italic = T),
+                    cell_spec(P_H_MSY, "html", color = "red", italic = T)),
+      P_A1 = ifelse(P_A1 < thresh[7],
+                    cell_spec(P_A1, "html", color = "green", italic = T),
+                    cell_spec(P_A1, "html", color = "red", italic = T)),
+      P_A2 = ifelse(P_A2 < thresh[8],
+                      cell_spec(P_A2, "html", color = "green", italic = T),
+                      cell_spec(P_A2, "html", color = "red", italic = T)),
+      Blow = ifelse(Blow < thresh[9],
+                      cell_spec(Blow, "html", color = "green", italic = T),
+                      cell_spec(Blow, "html", color = "red", italic = T))
+      
+    )%>%
+    knitr::kable("html", escape = F,align = "c") %>%
+    kable_styling("striped", full_width = F)%>%
+    column_spec(5, width = "3cm")  %>%
+    add_header_above(c(" ", "Relative to unfished" = 3, "Relative to BMSY" = 3,"COSEWIC indicators"=2,"Extinction risk"))
+  
+}
+
+
+#' Dedicated COSEWIC MSE run using the correct MPs and projected time horizon
+#'
+#' Projects for 6x maximum age using NFref, FMSYref and curE
+#'
+#' @param OM An operating model object of class OM
+#' @author T. Carruthers
+#' @export runCOSEWIC
+runCOSEWIC<-function(OM){
+  
+  if(OM@nsim<100)message(paste0("Your operating model specifies only ",OM@nsim," simulations. You may wish to do 200+ simulations to ensure suitably precise probability calculations"))
+  OM@interval=2
+  #OM@proyears<-OM@maxage*5
+  MSEobj<-runMSE(OM,MPs=c("NFref","FMSYref","curE"))
+  class(MSEobj)<-"COSEWIC"
+  MSEobj
   
 }
 
