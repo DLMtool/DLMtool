@@ -5,7 +5,8 @@
 \title{Deparment of Fisheries and Oceans biomass quantile plot}
 \usage{
 DFO_quant(MSEobj, maxcol = 6, qcol = rgb(0.4, 0.8, 0.95),
-  lcol = "dodgerblue4", curyr = 2018, quants = c(0.1, 0.9), addline = T)
+  lcol = "dodgerblue4", curyr = 2018, quants = c(0.1, 0.9), addline = T,
+  forreport = T)
 }
 \arguments{
 \item{MSEobj}{An MSE object of class MSE produced by DLMtool function runMSE}
@@ -21,6 +22,8 @@ DFO_quant(MSEobj, maxcol = 6, qcol = rgb(0.4, 0.8, 0.95),
 \item{quants}{A vector 2 long for the quantiles e.g. 0.1 and 0.9 for the 10th and 90th quantiles}
 
 \item{addline}{Should two individual example simulations be added to the plot?}
+
+\item{forreport}{Logical. Is it for a report? If true, one plot of six MPs in a row will be provided one after another.}
 }
 \description{
 A plot of biomass relative to BMSY quantiles over projected years

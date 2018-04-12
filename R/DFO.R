@@ -71,14 +71,12 @@ DFO_proj <- function(MSEobj,maxplot=6) {
   for(j in 1:length(plotorg)){
     op<-par(mfrow=c(nrow,ncol),mai=c(0.3,0.3,0.05,0.1),omi=c(0.3,0.4,0.4,0.01))
     
-    for(i in plotorg[[1]]){
+    for(i in plotorg[[j]]){
     DFO_Kobe(Br=MSEobj@B_BMSY[,i,proyears],Fr=MSEobj@F_FMSY[,i,proyears],xlab="",ylab="")
     legend('top',MSEobj@MPs[i],text.font=2,bty='n')
     #DFO_Kobe_TS(Brel=MSEobj@B_BMSY[,i,],Frel=MSEobj@F_FMSY[,i,],labs=c("Current","Projection"))
     #legend('top',MSEobj@MPs[i],text.font=2,bty='n')
-    
-     
-    
+  
     }
     mtext("Conditions at the end of the MSE projection", 3,line=0.8,outer=T,font=2)
     mtext("B/BMSY",1,line=0.7,outer=T,font=2)
@@ -518,9 +516,10 @@ DFO_plot2 <- function(MSEobj, nam = NA,panel = T,Bcut=50, Ycut=50) {
 #' @param curyr The current calendar year
 #' @param quants A vector 2 long for the quantiles e.g. 0.1 and 0.9 for the 10th and 90th quantiles
 #' @param addline Should two individual example simulations be added to the plot?
+#' @param forreport Logical. Is it for a report? If true, one plot of six MPs in a row will be provided one after another.  
 #' @author T. Carruthers
 #' @export DFO_quant
-DFO_quant<-function(MSEobj,maxcol=6,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",curyr=2018,quants=c(0.1,0.9),addline=T){
+DFO_quant<-function(MSEobj,maxcol=6,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",curyr=2018,quants=c(0.1,0.9),addline=T, forreport=T){
   
   if(is.na(maxcol))maxcol=ceiling(length(MSEobj@MPs)/0.5) # defaults to portrait 1:2
   MPs<-MSEobj@MPs
@@ -532,14 +531,14 @@ DFO_quant<-function(MSEobj,maxcol=6,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",
   nr<-length(plots)*2
   nc<-maxcol
   
-  mat<-array(0,c(nc,nr*1.5))
-  ind<-floor(0.5+(1:nr)*1.5)
-  mat[,ind]<-1:(nr*nc)
-  mat<-t(mat)
-  ht<-rep(0.2,nr*1.5)
-  ht[ind]<-1
-  layout(mat,heights=ht)
-  op<-par(mai=c(0.3,0.25,0.01,0.01),omi=c(0.5,0.6,0.05,0.05))
+  if(!forreport){
+    mat<-array(0,c(nc,nr*1.5))
+    ind<-floor(0.5+(1:nr)*1.5)
+    mat[,ind]<-1:(nr*nc)
+    mat<-t(mat)
+    ht<-rep(0.2,nr*1.5)
+    ht[ind]<-1
+  }  
   
   B_BMSY<-MSEobj@B_BMSY
   Yd<-MSEobj@C/ MSEobj@OM$RefY
@@ -549,8 +548,15 @@ DFO_quant<-function(MSEobj,maxcol=6,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",
   
   
   for(pp in 1:length(plots)){
-    
-    toplot<-unlist(plots[pp])
+    if(forreport){
+      par(mfrow=c(2,maxcol),mai=c(0.3,0.25,0.1,0.01),omi=c(0.5,0.6,0.3,0.05))
+    }else{
+      par(mai=c(0.3,0.25,0.4,0.01),omi=c(0.5,0.6,0.1,0.05))
+      layout(mat,heights=ht)
+      
+    }
+      
+    toplot<-as.vector(unlist(plots[pp]))
     nt<-length(toplot)
     
     for(i in toplot){
@@ -569,11 +575,11 @@ DFO_quant<-function(MSEobj,maxcol=6,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",
       if(i==toplot[1])mtext("Rel. Yd.",2,line=2.3)
     }
     if(nt<maxcol)for(i in 1:(maxcol-nt))plot(NULL, xlim=c(0,1), ylim=c(0,1), ylab="y label", xlab="x lablel",axes=F)
-    
+    mtext("Projection Year",1,line=0.7,outer=T)
   }
   
-  mtext("Projection Year",1,line=0.7,outer=T)
-  on.exit(par(op))
+  
+  #on.exit(par(op))
 }
 
 
@@ -1155,9 +1161,11 @@ DFO_tab_formatted<-function(Ptab1,thresh=c(10,     40,     50,    50,    50,  10
 #' @param MSEobj An object of class MSE
 #' @param rnd The number of significant figures for rounding.
 #' @param GTs A vector of mean generation times to evaluate performance metrics over
+#' @param syear Current year, starting year for projections (e.g. 2017)
+#' @param nGT Number of generation times for moving window of SSB chance (metrics A1 and A2)
 #' @author T. Carruthers
 #' @export COSEWIC_tab
-COSEWIC_tab<-function(MSEobj,rnd=0,GTs=c(3,6)){
+COSEWIC_tab<-function(MSEobj,rnd=0,GTs=c(3,6),syear=2017,nGT=3){
   
   if(class(MSEobj)!="COSEWIC")stop("The MSE object you have provided is not of class COSEWIC, 
                                       please create a COSEWIC class MSE object using the function runCOSEWIC()")
@@ -1205,9 +1213,9 @@ COSEWIC_tab<-function(MSEobj,rnd=0,GTs=c(3,6)){
     for(MP in ord){
       
       sind<-cbind(1:nsim,rep(MP,nsim),MGT*GT)
-      if(max(sind[,3])>OM@proyears)stop(paste("You specified a value for the number of generation times (GT = ",GT,
+      if(max(sind[,3])>proyears)stop(paste("You specified a value for the number of generation times (GT = ",GT,
                                               ") that requires a projection horizon (",max(sind[,3]),
-                                              " years) that is longer than the number of operating model projected years (",OM@proyears,")"))
+                                              " years) that is longer than the number of operating model projected years (",proyears,")"))
       P_Cr_MSY<-c(P_Cr_MSY,round(mean(MSEobj@B_BMSY[sind]<0.4)*100,rnd))
       P_Ct_MSY<-c(P_Ct_MSY,round(mean(MSEobj@B_BMSY[sind]>0.4 & MSEobj@B_BMSY[sind]<0.8)*100,rnd))
       P_H_MSY<-c(P_H_MSY,round(mean(MSEobj@B_BMSY[sind]>0.8)*100,rnd))
@@ -1246,7 +1254,6 @@ COSEWIC_tab<-function(MSEobj,rnd=0,GTs=c(3,6)){
 #' P_Cr_MSY is the probability of being in the critical zone (less than 40% BMSY)
 #' P_Ct_MSY is the probability of being in the cautious zone (between 40% and 80% BMSY)
 #' P_H_MSY is the probability of being in the healthy zone (above 80% BMSY)
-#' Caut is the probability of being in the cautious zone in the last 10 projected years
 #' P_A1 is the probability of being designated threatened according to COSEWIC Indicator A1 (Spawning biomass less than 70% that three generation times previously)
 #' P_A2 is the probability of being designated threatened according to COSEWIC Indicator A2 (Spawning biomass less than 50% that three generation times previously)
 #' Blow is the probability that the stock is below the biomass for which it takes 3 generation times to reach 50% BMSY with zero fishing

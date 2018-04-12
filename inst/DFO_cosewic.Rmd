@@ -79,7 +79,6 @@ A performance table is produced that provides the probability of stock status in
 * P_Cr_MSY is the probability of being in the critical zone (less than 40% BMSY)
 * P_Ct_MSY is the probability of being in the cautious zone (between 40% and 80% BMSY)
 * P_H_MSY is the probability of being in the healthy zone (above 80% BMSY)
-* Caut is the probability of being in the cautious zone in the last 10 projected years
 * P_A1 is the probability of being designated threatened according to COSEWIC Indicator A1 (Spawning biomass less than 70% that three generation times previously)
 * P_A2 is the probability of being designated threatened according to COSEWIC Indicator A2 (Spawning biomass less than 50% that three generation times previously)
 * Blow is the probability that the stock is below the biomass for which it takes 3 generation times to reach 50% BMSY with zero fishing
@@ -87,6 +86,8 @@ A performance table is produced that provides the probability of stock status in
 <br>
 
 # Historical biomass trend and current status
+
+These plots show the historical trajectory of Spawning stock biomass relative to unfished levels (upper left hand panel) and relative to MSY levels (upper right hand panel). The current status (the final year of the historical trajectories) is further described in a pair of status box and whisker plots in the lower panels.  
 
 
 ```{r Hplot,echo=F,warning=F,error=F,message=F,fig.width=10,fig.height=8}
@@ -100,6 +101,7 @@ A performance table is produced that provides the probability of stock status in
 
 # Projection plot for zero fishing, FMSY fishing and current fishing effort
 
+Future projections of spawning biomass (relative to unfished and MSY levels) are illustrated For three alternarive fishing scenarios.
 
 ```{r Pplot,echo=F,warning=F,error=F,message=F,fig.height=10,fig.width=10}
  COSEWIC_Pplot(params$MSEobj)
@@ -111,6 +113,7 @@ A performance table is produced that provides the probability of stock status in
 
 # Evaluation of trend indicators 
 
+The COSEWIC indicators A1 and A2 characterize changes in spawning biomass over a moving window of three generation times. Here historical (before the vertical black line) and future spawning biomass changes are plotted for each of the three fishing scenarios.  
 
 ```{r A1_A2,echo=F,warning=F,error=F,message=F,fig.height=10,fig.width=10}
  COSEWIC_Dplot(params$MSEobj)
@@ -121,6 +124,7 @@ A performance table is produced that provides the probability of stock status in
 
 # Extinction risk 
 
+It can be difficult to describe a biomass level below which a stock can be considered quantitatively extinct (qualitative extinction being rare in exploited marine fish species). In this case we calculate a biomass Blow, for which it would take three generation times of zero fishing to reach 50% of BMSY. The plot below shows the probability of dropping below Blow over future projections for each of the fishing scenarios. 
 
 ```{r Extinction_Blow,echo=F,warning=F,error=F,message=F,fig.height=7,fig.width=9}
  COSEWIC_Blow(params$MSEobj)
