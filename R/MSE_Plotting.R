@@ -1767,14 +1767,14 @@ Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
   for (pp in 1:ncol(PlotList)) {
     yPM <- PlotList[1,pp]
     yvals <- runPM[[match(yPM, PMlist)]]@Mean
-    ycap <-  runPM[[match(yPM, PMlist)]]@caption
-    yname <-  runPM[[match(yPM, PMlist)]]@name
+    ycap <-  runPM[[match(yPM, PMlist)]]@Caption
+    yname <-  runPM[[match(yPM, PMlist)]]@Name
     yline <- lims[match(yPM, PMlist)]
     
     xPM <- PlotList[2,pp]
     xvals <- runPM[[match(xPM, PMlist)]]@Mean
-    xcap <-  runPM[[match(xPM, PMlist)]]@caption
-    xname <-  runPM[[match(xPM, PMlist)]]@name
+    xcap <-  runPM[[match(xPM, PMlist)]]@Caption
+    xname <-  runPM[[match(xPM, PMlist)]]@Name
     xline <- lims[match(xPM, PMlist)]
     
     xlim <- c(0, max(max(xvals, 1)))

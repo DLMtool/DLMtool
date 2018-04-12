@@ -2,9 +2,12 @@
 % Please edit documentation in R/MPs_Output.R
 \name{IT5}
 \alias{IT5}
-\title{Index Target 5}
+\alias{IT10}
+\title{Index Target Management Procedure}
 \usage{
 IT5(x, Data, reps = 100,yrsmth=5,mc=0.05)
+
+IT10(x, Data, reps = 100, yrsmth = 5, mc = 0.1)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -25,6 +28,13 @@ An index target MP where the TAC is modified according to current index
 levels (mean index over last 5 years) relative to a target level. Maximum
 annual changes are 5 per cent.
 }
+\section{Functions}{
+\itemize{
+\item \code{IT5}: Maximum annual changes in TAC are 5 per cent.
+
+\item \code{IT10}: Maximum annual changes are 10 per cent.
+}}
+
 \author{
 T. Carruthers
 }

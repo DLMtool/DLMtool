@@ -2,10 +2,12 @@
 % Please edit documentation in R/MPs_Output.R
 \name{Lratio_BHI}
 \alias{Lratio_BHI}
-\title{Mean length-based indicator MP of Jardim et al. 2015 using Beverton-Holt invariant
-M/K ratio = 1.5 and assumes FMSY = M.}
+\alias{Lratio_BHI2}
+\title{Mean length-based indicator MP of Jardim et al. 2015}
 \usage{
 Lratio_BHI(x, Data, reps, yrsmth = 3)
+
+Lratio_BHI2(x, Data, reps, yrsmth = 3)
 }
 \arguments{
 \item{x}{A position in data-limited methods data object}
@@ -19,15 +21,22 @@ Lratio_BHI(x, Data, reps, yrsmth = 3)
 \description{
 The TAC is adjusted by the ratio alpha, where the numerator
 is the mean length of the catch (of lengths larger than Lc) and
-the denominator is the mean length expected when FMSY = M and M/K = 1.5.
-Natural mortality M and von Bertalanffy K are not used in this MP
-(see Appendix A of Jardim et al. 2015). Here, Lc is the length at
+the denominator is the mean length expected at MSY. Here, Lc is the length at
 full selection (LFS).
 }
 \details{
 Argument yrsmth currently takes the mean length of the most recent 3 years of data
 as a smoother.
 }
+\section{Functions}{
+\itemize{
+\item \code{Lratio_BHI}: Assumes M/K = 1.5 and FMSY/M = 1. Natural mortality M and von Bertalanffy
+K are not used in this MP (see Appendix A of Jardim et al. 2015).
+
+\item \code{Lratio_BHI2}: More general version that calculates the reference mean length as a
+function of M, K, and presumed FMSY/M.
+}}
+
 \references{
 Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for
 data limited stocks using length-based reference points and survey biomass indices,

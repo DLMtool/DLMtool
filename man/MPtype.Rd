@@ -19,3 +19,6 @@ Management Procedure Type
 MPtype(c("AvC", "curE", "matlenlim", "MRreal", "FMSYref"))
 
 }
+\seealso{
+\link{Required}
+}

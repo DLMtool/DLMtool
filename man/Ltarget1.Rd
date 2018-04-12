@@ -2,10 +2,13 @@
 % Please edit documentation in R/MPs_Output.R
 \name{Ltarget1}
 \alias{Ltarget1}
+\alias{Ltarget4}
 \title{A management procedure that incrementally adjusts the TAC to reach a target
 mean length in catches.}
 \usage{
-Ltarget1(x, Data, reps = 100, yrsmth = 5, xx=0, xL=1.05)
+Ltarget1(x, Data, reps = 100, yrsmth = 5, xx = 0, xL = 1.05)
+
+Ltarget4(x, Data, reps = 100, yrsmth = 5, xx = 0.2, xL = 1.15)
 }
 \arguments{
 \item{x}{A position in data-limited methods data object}
@@ -27,15 +30,20 @@ catches relative to average length in catches.}
 A numeric vector of TAC recommendations
 }
 \description{
-The least biologically precautionary of four target length MPs proposed by
-Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
-}
-\details{
 Tested by Carruthers et al. 2015.
 }
+\section{Functions}{
+\itemize{
+\item \code{Ltarget1}: The least biologically precautionary of four target length MPs proposed by
+Geromont and Butterworth 2014.
+
+\item \code{Ltarget4}: The most biologically precautionary of four target length MPs proposed by
+Geromont and Butterworth 2014.
+}}
+
 \references{
 Carruthers et al. 2015. Performance evaluation of simple
-management procedures. Fish and Fisheries. In press.
+management procedures. ICES J. Mar Sci. 73, 464-482.
 
 Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
 data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.

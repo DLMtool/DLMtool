@@ -2,28 +2,46 @@
 % Please edit documentation in R/Data_Functions.R
 \name{Can}
 \alias{Can}
-\title{What management procedures can be applied to this Data object?}
+\alias{Cant}
+\alias{Needed}
+\title{Identify management procedures (MPs) based on data availability}
 \usage{
 Can(Data, timelimit = 1, MPs = NA)
+
+Cant(Data, timelimit = 1)
+
+Needed(Data, timelimit = 1)
 }
 \arguments{
 \item{Data}{A data-limited methods data object (class Data)}
 
-\item{timelimit}{The maximum time (seconds) taken for a method to undertake
-10 reps (this filters out methods that are too slow)}
+\item{timelimit}{The maximum time (seconds) taken for an MP to undertake
+5 reps (this filters out methods that are too slow)}
 
 \item{MPs}{Optional list of MP names}
 }
 \description{
-An diagnostic tool that looks up the slot requirements of each MP and
-compares this to the data available to limit the analysis to methods that
-have the correct data, do not produce errors and run within a time limit.
-Time limit is the maximum time taken to carry out five reps (stochastic
-samples) of a given method and is in units of seconds.
+Diagnostic tools that look up the slot requirements of each MP and
+compares to the data available in the Data object.
 }
+\section{Functions}{
+\itemize{
+\item \code{Can}: Identifies MPs that have the correct data, do not produce errors,
+and run within the time limit.
+
+\item \code{Cant}: Identifies MPs that don't have sufficient data, lead to errors, or don't run in
+time along with a list of their data requirements.
+
+\item \code{Needed}: Identifies what data are needed to run
+the MPs that are currently not able to run given a Data
+object
+}}
+
 \examples{
 CanMPs <- Can(DLMtool::Cobia)
+CantMPs <- Cant(DLMtool::Cobia)
+Needs <- Needed(DLMtool::Cobia)
 }
 \seealso{
-\link{Cant} \link{Needed} \link{avail}
+\link{avail} \linkS4class{Data}
 }

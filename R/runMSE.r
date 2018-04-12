@@ -83,7 +83,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       if (length(inc.gl)>0) {
         dup.MPs <- inc.gl[inc.gl %in% pkg.funs]
         if (length(dup.MPs)>0) {
-          stop("Custom MP names already in DLMtool: ", paste0(dup.MPs, ""), "\nRename Custom MPs")
+          stop("Custom MP names already in DLMtool: ", paste0(dup.MPs, " "), "\nRename Custom MPs")
         }
       }
     } 
@@ -227,7 +227,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # Assign Stock pars to function environment
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
 
-  
   # --- Sample Fleet Parameters ----
   FleetPars <- SampleFleetPars(SubOM(OM, "Fleet"), Stock=StockPars, nsim, nyears, proyears, 
                                cpars=SampCpars)
@@ -608,6 +607,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
 
   # calculate LFC 
   LFC <- unlist(lapply(tempSize, function(x) getfifth(x[nyears, ], CAL_binsmid)))
+  LFC[is.na(LFC)] <- 1
+  LFC[LFC<1] <- 1
     
   # --- Simulate index of abundance from total biomass ----
   Ierr <- array(rlnorm((nyears + proyears) * nsim, mconv(1, rep(Isd, nyears + proyears)), 
@@ -923,6 +924,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     # -- apply MP in initial projection year ----
     # Combined MP ----
     runMP <- applyMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply MP
+    
     MPRecs <- runMP[[1]][[1]] # MP recommendations
     Data <- runMP[[2]] # Data object object with saved info from MP 
     Data@TAC <- MPRecs$TAC
@@ -1068,6 +1070,19 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                            t0array[,nyears + yind,drop=FALSE], LenCV, truncSD=2)
         CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), dim=c(length(yind), length(CAL_binsmid), nsim)), c(3,1,2))
         
+        # check CAL 
+        chkCAL <- apply(CAL, c(1,2), sum)
+        if (any(chkCAL==0)) {
+          for (ss in 1:nrow(chkCAL)) {
+            for (yy in 1:ncol(chkCAL)) {
+              if (chkCAL[ss,yy]==0) {
+                bn <- ceiling(c(0.5*nCALbins, 0.5*nCALbins+1))
+                CAL[ss,yy,bn] <- 1 # if CAL is empty - put 1 individual in two middle bins - for robustness
+              }
+            }
+          }
+        }
+        
         # calculate LFC - approx 5th percentile 
         LFC <- unlist(lapply(tempSize, function(x) getfifth(x[nrow(x), ], CAL_binsmid)))
         LFC[is.na(LFC)] <- 1
@@ -1152,8 +1167,9 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         # assign('Data',MSElist[[mm]],envir=.GlobalEnv) # for debugging fun
         
         # apply combined MP ----
-        runMP <- applyMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply MP
         
+        runMP <- applyMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply MP
+       
         MPRecs <- runMP[[1]][[1]] # MP recommendations
         Data <- runMP[[2]] # Data object object with saved info from MP 
         Data@TAC <- MPRecs$TAC
