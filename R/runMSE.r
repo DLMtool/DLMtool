@@ -849,6 +849,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     if(!silent) cat("\n")
   }
 
+  if (length(interval) != nMP) interval <- rep(interval, nMP)[1:nMP]
+  if (!all(interval != interval[1])) {
+    message("Variable management intervals:")
+    df <- data.frame(MP=MPs,interval=interval)
+    message(paste(capture.output(print(df)), collapse = "\n"))
+  }
   
   # --- Begin loop over MPs ----
   mm <- 1 # for debugging
@@ -968,7 +974,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     V_P <- MPCalcs$V_P  # vulnerable-at-age
     SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length 
     
-    upyrs <- 1 + (0:(floor(proyears/interval) - 1)) * interval  # the years in which there are updates (every three years)
+    upyrs <- 1 + (0:(floor(proyears/interval[mm]) - 1)) * interval[mm]  # the years in which there are updates (every three years)
     if(!silent) {
       cat(".")
       flush.console()
@@ -1041,13 +1047,13 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         
         Cobs <- Cbiasa[, nyears + yind] * Cerr[, nyears + yind] * apply(CBtemp, c(1, 3), sum, na.rm = T)
         Cobs[is.na(Cobs)] <- tiny
-        Recobs <- Recerr[, nyears + yind] * apply(array(N_P[, 1, yind, ], c(nsim, interval, nareas)), c(1, 2), sum)
+        Recobs <- Recerr[, nyears + yind] * apply(array(N_P[, 1, yind, ], c(nsim, interval[mm], nareas)), c(1, 2), sum)
        
-        CAA <- array(0, dim = c(nsim, interval, maxage))  # Catch  at age array
+        CAA <- array(0, dim = c(nsim, interval[mm], maxage))  # Catch  at age array
         
         # # a multinomial observation model for catch-at-age data
         for (i in 1:nsim) {
-          for (j in 1:interval) {
+          for (j in 1:interval[mm]) {
             if (all(CNtemp[i, , j]<1)) { # this is a fix for low sample sizes. If CAA is zero across the board a single fish is caught in age class of model selectivity (dumb I know)
               CNtemp[i, floor(maxage/3), j] <- 1
             }
@@ -1056,7 +1062,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         }	  
         
         ## Calculate CAL ####
-        CAL <- array(NA, dim = c(nsim, interval, nCALbins))  # the catch at length array
+        CAL <- array(NA, dim = c(nsim, interval[mm], nCALbins))  # the catch at length array
         # # a multinomial observation model for catch-at-length data
         
         vn <- (apply(N_P[,,,], c(1,2,3), sum) * retA_P[,,(nyears+1):(nyears+proyears)]) # numbers at age that would be retained
@@ -1127,7 +1133,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         MSElist[[mm]]@Dt <- Dbias * Depletion * rlnorm(nsim, mconv(1, Derr), sdconv(1, Derr))
         oldCAA <- MSElist[[mm]]@CAA
         MSElist[[mm]]@CAA <- array(0, dim = c(nsim, nyears + y - 1, maxage))
-        MSElist[[mm]]@CAA[, 1:(nyears + y - interval - 1), ] <- oldCAA[, 1:(nyears + y - interval - 1), ] # there is some bug here sometimes oldCAA (MSElist[[mm]]@CAA previously) has too many years of observations
+        MSElist[[mm]]@CAA[, 1:(nyears + y - interval[mm] - 1), ] <- oldCAA[, 1:(nyears + y - interval[mm] - 1), ] # there is some bug here sometimes oldCAA (MSElist[[mm]]@CAA previously) has too many years of observations
         MSElist[[mm]]@CAA[, nyears + yind, ] <- CAA
         MSElist[[mm]]@Dep <- Dbias * Depletion * rlnorm(nsim, mconv(1, Derr), sdconv(1, Derr))
         MSElist[[mm]]@Abun <- A * Abias * rlnorm(nsim, mconv(1, Aerr), sdconv(1, Aerr))
@@ -1135,15 +1141,15 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         MSElist[[mm]]@CAL_bins <- CAL_bins
         oldCAL <- MSElist[[mm]]@CAL
         MSElist[[mm]]@CAL <- array(0, dim = c(nsim, nyears + y - 1, nCALbins))
-        MSElist[[mm]]@CAL[, 1:(nyears + y - interval - 1), ] <- oldCAL[, 1:(nyears + y - interval - 1), ]# there is some bug here: sometimes oldCAL (MSElist[[mm]]@CAL previously) has too many years of observations
-        MSElist[[mm]]@CAL[, nyears + yind, ] <- CAL[, 1:interval, ]
+        MSElist[[mm]]@CAL[, 1:(nyears + y - interval[mm] - 1), ] <- oldCAL[, 1:(nyears + y - interval[mm] - 1), ]# there is some bug here: sometimes oldCAL (MSElist[[mm]]@CAL previously) has too many years of observations
+        MSElist[[mm]]@CAL[, nyears + yind, ] <- CAL[, 1:interval[mm], ]
         
-        temp <- CAL * rep(MLbin, each = nsim * interval)
+        temp <- CAL * rep(MLbin, each = nsim * interval[mm])
         MSElist[[mm]]@ML <- cbind(MSElist[[mm]]@ML, apply(temp, 1:2, sum)/apply(CAL, 1:2, sum))
-        MSElist[[mm]]@Lc <- cbind(MSElist[[mm]]@Lc, array(MLbin[apply(CAL, 1:2, which.max)], dim = c(nsim, interval)))
+        MSElist[[mm]]@Lc <- cbind(MSElist[[mm]]@Lc, array(MLbin[apply(CAL, 1:2, which.max)], dim = c(nsim, interval[mm])))
         nuCAL <- CAL
-        for (i in 1:nsim) for (j in 1:interval) nuCAL[i, j, 1:match(max(1, MSElist[[mm]]@Lc[i, j]), MLbin,nomatch=1)] <- NA 
-        temp <- nuCAL * rep(MLbin, each = nsim * interval)
+        for (i in 1:nsim) for (j in 1:interval[mm]) nuCAL[i, j, 1:match(max(1, MSElist[[mm]]@Lc[i, j]), MLbin,nomatch=1)] <- NA 
+        temp <- nuCAL * rep(MLbin, each = nsim * interval[mm])
         MSElist[[mm]]@Lbar <- cbind(MSElist[[mm]]@Lbar, apply(temp,1:2, sum, na.rm=TRUE)/apply(nuCAL, 1:2, sum, na.rm=TRUE))
         
         MSElist[[mm]]@LFC <- LFC * LFCbias
