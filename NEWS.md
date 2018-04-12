@@ -3,9 +3,10 @@ The current version of the DLMtool package is available for download from [CRAN]
 ## DLMtool 5.1.999 Development Version 
 - update PM methods and add to userguide - in development
 - improve convergence diagnostic in `Converge`
-- modified CAL generation to deal for dome-shaped selectivity better 
+- modified CAL generation to deal with dome-shaped selectivity better 
 - improved help documentation for functions and MPs by combining and linking similiar functions
-- add ImputeLH - impute correlated life-history parameters
+- add ImputeLH - impute correlated life-history parameters - in development
+- option for variable management interval - to add to FAQ
 
 ## DLMtool 5.1.3 
 - fix Replace function for new OM slots
