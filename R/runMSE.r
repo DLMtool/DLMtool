@@ -1215,7 +1215,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         V_P <- MPCalcs$V_P  # vulnerable-at-age
         SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
         
-        MSElist[[mm]]@MPrec <- apply(CB_Pret[, , y, ], 1, sum)
+        MSElist[[mm]]@MPrec <- apply(CB_Pret[, , y, ], 1, sum) # last MP recommendation (minimum of catch or TAC)
+        MSElist[[mm]]@MPeff <- Effort[, mm, y] # last recommended effort
         
       } else {
         # --- Not an update yr ----
