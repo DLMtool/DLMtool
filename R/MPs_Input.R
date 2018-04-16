@@ -178,8 +178,8 @@ curE75 <- function(x, Data, ...) {
 class(curE75) <- "MP"
 
 
-#' @describeIn DD Effort-control version. The recommended effort is the ratio of 
-#' UMSY to current U.
+#' @describeIn DD Effort-control version. The recommended effort is EMSY.
+#' @importFrom stats approx 
 #' @export 
 DDe <- function(x, Data, reps = 100) {
   dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
@@ -190,10 +190,22 @@ DDe <- function(x, Data, reps = 100) {
   a50V <- iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
               Data@L50[x])
   a50V <- max(a50V, 1)
-  yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x, 
-                                                                    ])]
+  #yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x, 
+  #                                                                  ])]
+  yind <- !is.na(Data@Cat[x, ] + Data@Ind[x, ])[1] # First year with both catch and index
+  yind <- yind:length(Data@Cat[x, ])
+  Year <- Data@Year[yind]
   C_hist <- Data@Cat[x, yind]
-  E_hist <- C_hist/Data@Ind[x, yind]
+  I_hist <- Data@Ind[x, yind]
+  if(any(is.na(C_hist))) { # Linear interpolation of any missing catch
+    C.xind <- 1:length(C_hist)
+    C_hist <- approx(x = C.xind[!is.na(C_hist)], y = C_hist[!is.na(C_hist)], n = length(C.xind))$y
+  }
+  if(any(is.na(I_hist))) { # Linear interpolation of any missing index
+    I.xind <- 1:length(I_hist)
+    I_hist <- approx(x = I.xind[!is.na(I_hist)], y = I_hist[!is.na(I_hist)], n = length(I.xind))$y
+  }
+  E_hist <- C_hist/I_hist
   E_hist <- E_hist/mean(E_hist)
   ny_DD <- length(C_hist)
   k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  --
@@ -207,12 +219,15 @@ DDe <- function(x, Data, reps = 100) {
   params <- log(c(UMSYpriorpar[1]/(1 - UMSYpriorpar[1]), 3*mean(C_hist, na.rm = T), Data@Mort[x]))
   opt <- optim(params, DD_R, opty = 1, So_DD = So_DD, Alpha_DD = Alpha_DD, 
                Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, wa_DD = wa_DD, E_hist = E_hist, 
-               C_hist = C_hist, UMSYprior = UMSYprior, method = "BFGS", hessian = TRUE)
+               C_hist = C_hist, UMSYprior = UMSYprior, method = "BFGS") # hessian = FALSE
   
-  U_hist <- 1 - exp(-exp(opt$par[3]) * E_hist)
+  #U_hist <- 1 - exp(-exp(opt$par[3]) * E_hist)
+  UMSY <- 1/(1 + exp(-opt$par[1]))
+  EMSY <- -log(1 - UMSY)/exp(opt$par[3]) # q in denominator
   
   Allocate <- 1
-  eff <- exp(opt$par[1])/U_hist[Data@LHYear]
+  #eff <- exp(opt$par[1])/U_hist[Data@LHYear]
+  eff <- EMSY/E_hist[Data@LHYear - Year[1] + 1] # Effort advice is ratio of EMSY and obs. Eff in LHYear
   eff[!is.finite(eff)] <- 0.01
   eff[eff > 1e+05] <- 0.01
   rec <- new("Rec")
@@ -222,6 +237,7 @@ DDe <- function(x, Data, reps = 100) {
 class(DDe) <- "MP"
 
 #' @describeIn DD Variant of \code{DDe} that limits the maximum change in effort to 10 percent.
+#' @importFrom stats approx
 #' @export DDes
 DDes <- function(x, Data, reps = 100, LB = 0.9, UB = 1.1) {
   dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
@@ -232,9 +248,22 @@ DDes <- function(x, Data, reps = 100, LB = 0.9, UB = 1.1) {
   a50V <- iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
               Data@L50[x])
   a50V <- max(a50V, 1)
-  yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x, ])]
+  #yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x, 
+  #                                                                  ])]
+  yind <- !is.na(Data@Cat[x, ] + Data@Ind[x, ])[1] # First year with both catch and index
+  yind <- yind:length(Data@Cat[x, ])
+  Year <- Data@Year[yind]
   C_hist <- Data@Cat[x, yind]
-  E_hist <- C_hist/Data@Ind[x, yind]
+  I_hist <- Data@Ind[x, yind]
+  if(any(is.na(C_hist))) { # Linear interpolation of any missing catch
+    C.xind <- 1:length(C_hist)
+    C_hist <- approx(x = C.xind[!is.na(C_hist)], y = C_hist[!is.na(C_hist)], n = length(C.xind))$y
+  }
+  if(any(is.na(I_hist))) { # Linear interpolation of any missing index
+    I.xind <- 1:length(I_hist)
+    I_hist <- approx(x = I.xind[!is.na(I_hist)], y = I_hist[!is.na(I_hist)], n = length(I.xind))$y
+  }
+  E_hist <- C_hist/I_hist
   E_hist <- E_hist/mean(E_hist)
   ny_DD <- length(C_hist)
   k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  --
@@ -248,11 +277,13 @@ DDes <- function(x, Data, reps = 100, LB = 0.9, UB = 1.1) {
   params <- log(c(UMSYpriorpar[1]/(1 - UMSYpriorpar[1]), 3*mean(C_hist, na.rm = T), Data@Mort[x]))
   opt <- optim(params, DD_R, opty = 1, So_DD = So_DD, Alpha_DD = Alpha_DD, 
                Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, wa_DD = wa_DD, E_hist = E_hist, 
-               C_hist = C_hist, UMSYprior = UMSYprior, method = "BFGS", hessian = TRUE)
+               C_hist = C_hist, UMSYprior = UMSYprior, method = "BFGS") # hessian = FALSE
 
-  U_hist <- 1 - exp(-exp(opt$par[3]) * E_hist)
+  #U_hist <- 1 - exp(-exp(opt$par[3]) * E_hist)
   UMSY <- 1/(1 + exp(-opt$par[1]))
-  fac <- UMSY/U_hist[length(U_hist)]  # ratio of UMSY to reference U
+  EMSY <- -log(1 - UMSY)/exp(opt$par[3]) # q in denominator
+  #fac <- UMSY/U_hist[Data@LHYear]
+  fac <- EMSY/E_hist[Data@LHYear - Year[1] + 1] # Effort advice is ratio of EMSY and obs. Eff in LHYear
   
   if (fac < LB) 
     fac <- LB
@@ -268,8 +299,8 @@ class(DDes) <- "MP"
 
 
 
-#' @describeIn DD Variant of \code{DDe} where the recommended effort is 75\% 
-#' of the ratio of UMSY to current U.
+#' @describeIn DD Variant of \code{DDe} where the recommended effort is 75\% EMSY.
+#' @importFrom stats approx
 #' @export 
 DDe75 <- function(x, Data, reps = 100) {
   dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
@@ -280,10 +311,22 @@ DDe75 <- function(x, Data, reps = 100) {
   a50V <- iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
               Data@L50[x])
   a50V <- max(a50V, 1)
-  yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x, 
-                                                                    ])]
+  #yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x, 
+  #                                                                  ])]
+  yind <- !is.na(Data@Cat[x, ] + Data@Ind[x, ])[1] # First year with both catch and index
+  yind <- yind:length(Data@Cat[x, ])
+  Year <- Data@Year[yind]
   C_hist <- Data@Cat[x, yind]
-  E_hist <- C_hist/Data@Ind[x, yind]
+  I_hist <- Data@Ind[x, yind]
+  if(any(is.na(C_hist))) { # Linear interpolation of any missing catch
+    C.xind <- 1:length(C_hist)
+    C_hist <- approx(x = C.xind[!is.na(C_hist)], y = C_hist[!is.na(C_hist)], n = length(C.xind))$y
+  }
+  if(any(is.na(I_hist))) { # Linear interpolation of any missing index
+    I.xind <- 1:length(I_hist)
+    I_hist <- approx(x = I.xind[!is.na(I_hist)], y = I_hist[!is.na(I_hist)], n = length(I.xind))$y
+  }
+  E_hist <- C_hist/I_hist
   E_hist <- E_hist/mean(E_hist)
   ny_DD <- length(C_hist)
   params <- log(c(Data@Mort[x], mean(C_hist, na.rm = T), Data@Mort[x]))
@@ -298,12 +341,15 @@ DDe75 <- function(x, Data, reps = 100) {
   params <- log(c(UMSYpriorpar[1]/(1 - UMSYpriorpar[1]), 3*mean(C_hist, na.rm = T), Data@Mort[x]))
   opt <- optim(params, DD_R, opty = 1, So_DD = So_DD, Alpha_DD = Alpha_DD, 
                Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, wa_DD = wa_DD, E_hist = E_hist, 
-               C_hist = C_hist, UMSYprior = UMSYprior, method = "BFGS", hessian = TRUE)
+               C_hist = C_hist, UMSYprior = UMSYprior, method = "BFGS") #hessian = FALSE
   
-  U_hist <- 1 - exp(-exp(opt$par[3]) * E_hist)
+  #U_hist <- 1 - exp(-exp(opt$par[3]) * E_hist)
+  UMSY <- 1/(1 + exp(-opt$par[1]))
+  EMSY <- -log(1 - UMSY)/exp(opt$par[3]) # q in denominator
   
   Allocate <- 1
-  eff <- 0.75 *exp( opt$par[1])/U_hist[Data@LHYear]
+  #eff <- 0.75 *exp( opt$par[1])/U_hist[Data@LHYear]
+  eff <- 0.75 *EMSY/E_hist[Data@LHYear - Year[1] + 1] # Effort advice is ratio of EMSY and obs. Eff in LHYear
   eff[!is.finite(eff)] <- 0.01
   eff[eff > 1e+05] <- 0.01
   rec <- new("Rec")

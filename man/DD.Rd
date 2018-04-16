@@ -38,13 +38,11 @@ time-series of catches and a relative abundance index. Conditioned on effort.
 }
 \section{Functions}{
 \itemize{
-\item \code{DDe}: Effort-control version. The recommended effort is the ratio of
-UMSY to current U.
+\item \code{DDe}: Effort-control version. The recommended effort is EMSY.
 
 \item \code{DDes}: Variant of \code{DDe} that limits the maximum change in effort to 10 percent.
 
-\item \code{DDe75}: Variant of \code{DDe} where the recommended effort is 75\%
-of the ratio of UMSY to current U.
+\item \code{DDe75}: Variant of \code{DDe} where the recommended effort is 75\% EMSY.
 
 \item \code{DD}: Base version where the TAC = UMSY * Current Biomass.
 
@@ -53,11 +51,16 @@ of the ratio of UMSY to current U.
 
 \note{
 This DD model is observation error only and has does not estimate
-process error (recruitment deviations). Similar to many other assessment
+process error (recruitment deviations). Assumption is that knife-edge
+selectivity occurs at the age of 50% maturity. Similar to many other assessment
 models it depends on a whole host of dubious assumptions such as temporally
 stationary productivity and proportionality between the abundance index and
 real abundance. Unsurprisingly the extent to which these assumptions are
 violated tends to be the biggest driver of performance for this method.
+
+The method is conditioned on effort and estimates catch. The effort is calculated
+as the ratio of catch and index. Thus, to get a complete effort time series, a full
+time series of catch and index is also needed. Missing values are linearly interpolated.
 }
 \references{
 Carruthers, T, Walters, C.J,, and McAllister, M.K. 2012. Evaluating methods that classify

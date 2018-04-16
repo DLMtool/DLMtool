@@ -884,12 +884,18 @@ class(DCAC_ML) <- "MP"
 #' @param LB The lowest permitted factor of previous fishing effort
 #' @param UB The highest permitted factor of previous fishing effort
 #' @return A Rec object of either TAC or effort recommendations
-#' @note This DD model is observation error only and has does not estimate
-#' process error (recruitment deviations). Similar to many other assessment
+#' @note 
+#' This DD model is observation error only and has does not estimate
+#' process error (recruitment deviations). Assumption is that knife-edge 
+#' selectivity occurs at the age of 50% maturity. Similar to many other assessment
 #' models it depends on a whole host of dubious assumptions such as temporally
 #' stationary productivity and proportionality between the abundance index and
 #' real abundance. Unsurprisingly the extent to which these assumptions are
 #' violated tends to be the biggest driver of performance for this method.
+#' 
+#' The method is conditioned on effort and estimates catch. The effort is calculated
+#' as the ratio of catch and index. Thus, to get a complete effort time series, a full
+#' time series of catch and index is also needed. Missing values are linearly interpolated.
 #' @author T. Carruthers
 #' @references  
 #' Carruthers, T, Walters, C.J,, and McAllister, M.K. 2012. Evaluating methods that classify
@@ -898,6 +904,7 @@ class(DCAC_ML) <- "MP"
 #' Hilborn, R., and Walters, C. 1992. Quantitative Fisheries Stock Assessment: Choice,
 #' Dynamics and Uncertainty. Chapman and Hall, New York. 
 #' @describeIn DD Base version where the TAC = UMSY * Current Biomass.
+#' @importFrom stats approx
 #' @export 
 DD <- function(x, Data, reps = 100) {
   dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
@@ -907,9 +914,22 @@ DD <- function(x, Data, reps = 100) {
   wa <- Data@wla[x] * la^Data@wlb[x]
   a50V <- iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])
   a50V <- max(a50V, 1)
-  yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x,   ])]
+  #yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x, 
+  #                                                                  ])]
+  yind <- !is.na(Data@Cat[x, ] + Data@Ind[x, ])[1] # First year with both catch and index
+  yind <- yind:length(Data@Cat[x, ])
+  Year <- Data@Year[yind]
   C_hist <- Data@Cat[x, yind]
-  E_hist <- C_hist/Data@Ind[x, yind]
+  I_hist <- Data@Ind[x, yind]
+  if(any(is.na(C_hist))) { # Linear interpolation of any missing catch
+    C.xind <- 1:length(C_hist)
+    C_hist <- approx(x = C.xind[!is.na(C_hist)], y = C_hist[!is.na(C_hist)], n = length(C.xind))$y
+  }
+  if(any(is.na(I_hist))) { # Linear interpolation of any missing index
+    I.xind <- 1:length(I_hist)
+    I_hist <- approx(x = I.xind[!is.na(I_hist)], y = I_hist[!is.na(I_hist)], n = length(I.xind))$y
+  }
+  E_hist <- C_hist/I_hist
   E_hist <- E_hist/mean(E_hist)
   ny_DD <- length(C_hist)
   k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  
@@ -944,6 +964,7 @@ class(DD) <- "MP"
 
 
 #' @describeIn DD In this version, a 40-10 rule is imposed over the TAC recommendation.
+#' @importFrom stats approx
 #' @export DD4010
 DD4010 <- function(x, Data, reps = 100) {
   dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
@@ -954,11 +975,22 @@ DD4010 <- function(x, Data, reps = 100) {
   a50V <- iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
               Data@L50[x])
   a50V <- max(a50V, 1)
-  yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x, 
-                                                                    ])]
+  #yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x, 
+  #                                                                  ])]
+  yind <- !is.na(Data@Cat[x, ] + Data@Ind[x, ])[1] # First year with both catch and index
+  yind <- yind:length(Data@Cat[x, ])
+  Year <- Data@Year[yind]
   C_hist <- Data@Cat[x, yind]
-  E_hist <- Data@Ind[x, yind]
-  E_hist <- C_hist/E_hist
+  I_hist <- Data@Ind[x, yind]
+  if(any(is.na(C_hist))) { # Linear interpolation of any missing catch
+    C.xind <- 1:length(C_hist)
+    C_hist <- approx(x = C.xind[!is.na(C_hist)], y = C_hist[!is.na(C_hist)], n = length(C.xind))$y
+  }
+  if(any(is.na(I_hist))) { # Linear interpolation of any missing index
+    I.xind <- 1:length(I_hist)
+    I_hist <- approx(x = I.xind[!is.na(I_hist)], y = I_hist[!is.na(I_hist)], n = length(I.xind))$y
+  }
+  E_hist <- C_hist/I_hist
   E_hist <- E_hist/mean(E_hist)
   ny_DD <- length(C_hist)
   k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)
