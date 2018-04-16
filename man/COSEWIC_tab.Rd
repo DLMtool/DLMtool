@@ -4,7 +4,7 @@
 \alias{COSEWIC_tab}
 \title{Create a standard COSEWIC performance table}
 \usage{
-COSEWIC_tab(MSEobj, rnd = 0, GTs = c(3, 6))
+COSEWIC_tab(MSEobj, rnd = 0, GTs = c(3, 6), syear = 2017, nGT = 3)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}
@@ -12,6 +12,10 @@ COSEWIC_tab(MSEobj, rnd = 0, GTs = c(3, 6))
 \item{rnd}{The number of significant figures for rounding.}
 
 \item{GTs}{A vector of mean generation times to evaluate performance metrics over}
+
+\item{syear}{Current year, starting year for projections (e.g. 2017)}
+
+\item{nGT}{Number of generation times for moving window of SSB chance (metrics A1 and A2)}
 }
 \description{
 P_Cr is the probability of being in the critical zone (less than 20% depletion)

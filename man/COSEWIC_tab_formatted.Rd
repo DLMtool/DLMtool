@@ -18,7 +18,6 @@ P_H is the probability of being in the healthy zone (above 40% depletion)
 P_Cr_MSY is the probability of being in the critical zone (less than 40% BMSY)
 P_Ct_MSY is the probability of being in the cautious zone (between 40% and 80% BMSY)
 P_H_MSY is the probability of being in the healthy zone (above 80% BMSY)
-Caut is the probability of being in the cautious zone in the last 10 projected years
 P_A1 is the probability of being designated threatened according to COSEWIC Indicator A1 (Spawning biomass less than 70% that three generation times previously)
 P_A2 is the probability of being designated threatened according to COSEWIC Indicator A2 (Spawning biomass less than 50% that three generation times previously)
 Blow is the probability that the stock is below the biomass for which it takes 3 generation times to reach 50% BMSY with zero fishing
