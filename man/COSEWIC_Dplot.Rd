@@ -17,6 +17,8 @@ COSEWIC_Dplot(MSEobj, syear = 2017, qcol = rgb(0.4, 0.8, 0.95),
 \item{lcol}{Color of lines}
 
 \item{quants}{Quantiles of the shaded regions (vector 5 long e.g. 0.1, 0.2, 0.5, 0.8, 0.9)}
+
+\item{nGT}{Number of generations for projections. The number of projection years should be greater than \code{MaxAge * nGT}}
 }
 \value{
 A plot

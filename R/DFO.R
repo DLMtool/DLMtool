@@ -789,6 +789,7 @@ COSEWIC_Pplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerb
 #' @param qcol Color of shaded regions (bars, quantiles)
 #' @param lcol Color of lines
 #' @param quants Quantiles of the shaded regions (vector 5 long e.g. 0.1, 0.2, 0.5, 0.8, 0.9)
+#' @param nGT Number of generations for projections. The number of projection years should be greater than \code{MaxAge * nGT}
 #' @return A plot
 #' @author T. Carruthers
 #' @export COSEWIC_Dplot
@@ -843,9 +844,10 @@ COSEWIC_Dplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerb
 #' @param qcol Color of shaded regions (bars, quantiles)
 #' @param lcol Color of lines
 #' @param quants Quantiles of the shaded regions (vector 5 long e.g. 0.1, 0.2, 0.5, 0.8, 0.9)
+#' @param nGT Number of generations for projections. The number of projection years should be greater than \code{MaxAge * nGT}
 #' @return A plot
 #' @author T. Carruthers
-#' @export COSEWIC_Dplot
+#' @export 
 COSEWIC_Blow<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",quants=c(0.05,0.25,0.5,0.75,0.95),nGT=3){
   
   if(class(MSEobj)!="COSEWIC")stop("The MSE object you have provided is not of class COSEWIC, 
@@ -1262,15 +1264,15 @@ COSEWIC_tab<-function(MSEobj,rnd=0,GTs=c(3,6),syear=2017,nGT=3){
 #' @param thresh A vector of thresholds for each column Health, Yield and Reb are 'greater than threshold' conditions 
 #' @author T. Carruthers
 #' @importFrom dplyr %>% mutate
-#' @importFrom kableExtra cell_spec kable_styling column_spec add_header_above
-#' 
+#' @importFrom kableExtra cell_spec kable_styling column_spec add_header_above 
+#' @importFrom knitr kable
 #' @export COSEWIC_tab_formatted
 COSEWIC_tab_formatted<-function(Ptab1,thresh=c(10,     40,     50,    10,       40,       50,      20,   20,   5)){
   #                                            P_Cr,   P_Ct,   P_H,   P_Cr_MSY, P_Ct_MSY, P_H_MSY, P_A1, P_A2, Blow
   
   # save(Ptab1,file="Ptab1")
  
-  MPs <- P_Cr <- P_Ct <- P_H <- P_Cr_MSY <- P_Ct_MSY <- P_H_MSY <- P_A1 <- P_A2 <- Blow <- NULL # hack for CRAN checks
+  MP <- P_Cr <- P_Ct <- P_H <- P_Cr_MSY <- P_Ct_MSY <- P_H_MSY <- P_A1 <- P_A2 <- Blow <- NULL # hack for CRAN checks
   names(Ptab1)<-c("MP","P_Cr","P_Ct","P_H","P_Cr_MSY","P_Ct_MSY","P_H_MSY","P_A1","P_A2","Blow")
   
   #       P_Cr,                 P_Ct,                   P_H,                  P_Cr_MSY,                P_Ct_MSY
