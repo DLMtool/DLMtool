@@ -546,15 +546,15 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
     fileName <- OM@Name
     fileName <- gsub(" ", "", gsub("[[:punct:]]", "", fileName))
     if (nchar(fileName)>15) fileName <-  substr(fileName, 1, 15)
-      
-    if (file.exists(paste0(file.path(dir, 'build/', fileName, '.dat')))) {
+    
+    if (file.exists(paste0(file.path(dir, 'build/', paste0(fileName, '.dat'))))) {
       # OM has been documented before - check if it has changed
       testOM <- readRDS(file.path(dir,paste0("build/", fileName, '.dat')))
       if (class(testOM) == 'OM') {
         # check if OM has changed 
         changed <- rep(FALSE, length(slotNames(OM)))
         for (sl in seq_along(slotNames(OM))) {
-      
+          
           oldOM <- slot(OM, slotNames(OM)[sl])
           newOM <- slot(testOM, slotNames(OM)[sl])
           if (class(oldOM) !='character') {
@@ -583,7 +583,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
         file.remove(file.path(dir,paste0('build/',fileName, '.dat')))
         runSims <- TRUE
       }
-     
+      
     } else{
       saveRDS(OM, file=file.path(dir,paste0('build/', fileName, '.dat')))
       runSims <- TRUE
@@ -715,9 +715,16 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
     if (output == "pdf_document") RMDfileout <- paste0(basename(RMDfileout), ".pdf")
 
     message("\n\nRendering markdown document as ", RMDfileout)
+    
+    
     EffYears <- seq(from=(OM@CurrentYr -  OM@nyears + 1), to=OM@CurrentYr, length.out=length(OM@EffYears))
     EffYears <- round(EffYears,0)
-    Effvals <- data.frame(EffYears=EffYears, EffLower=OM@EffLower, EffUpper=OM@EffUpper)
+    if (length(OM@cpars$Find)>0) {
+      Effvals <- data.frame(EffYears=EffYears, EffLower=signif(apply(OM@cpars$Find, 2, min),3), EffUpper=signif(apply(OM@cpars$Find, 2, max),3))
+    } else {
+      Effvals <- data.frame(EffYears=EffYears, EffLower=signif(OM@EffLower,3), EffUpper=signif(OM@EffUpper,3))
+    }
+  
     params <- list(OM=OM, Pars=Pars, Effvals=Effvals, out=out)
     rmarkdown::render(input=RMDfile, output_file=RMDfileout, output_format=output, 
                       output_dir=dir, param=params, quiet=quiet)
@@ -873,7 +880,7 @@ writeSection <- function(class=c("Intro", "Stock", "Fleet", "Obs", "Imp", "Refer
     
     # loop through template and write section 
     for (rr in 1:nrow(ClTemp)) {
-      if(grepl("^Currently unused", ClTemp[rr,1])) {
+      if (grepl("^Currently unused", ClTemp[rr,1])) {
         temptext <- trimws(unlist(strsplit(ClTemp[rr,], "-")))
         cat("### ", temptext[1], "\n\n", append=TRUE, file=RMDfile, sep="")
         cat("*", temptext[2], "*\n\n", append=TRUE, file=RMDfile, sep="")
@@ -894,7 +901,12 @@ writeSection <- function(class=c("Intro", "Stock", "Fleet", "Obs", "Imp", "Refer
             valtext <- paste0("Specified in cpars: ", "<span style='color:", color, "'>", " ", trimws(val), "</span>", "\n\n")
           } else {
             if (length(Pars[[sl]])>0) {
-              val <- range(Pars[[sl]])
+              if (length(Pars[[sl]])==1) val <- (Pars[[sl]])
+              if (length(Pars[[sl]])>1) {
+                if (all(Pars[[sl]] == mean(Pars[[sl]]))) {
+                  val <- mean(Pars[[sl]])
+                } else  val <- range(Pars[[sl]])
+              }
             } else {
               val <- slot(OM, sl)  
             }
@@ -950,7 +962,7 @@ writeSection <- function(class=c("Intro", "Stock", "Fleet", "Obs", "Imp", "Refer
             cat("</style>\n", append=TRUE, file=RMDfile, sep="")
             
             cat("```{r, echo=FALSE, results='asis'}\n", append=TRUE, file=RMDfile, sep="")
-            cat("knitr::kable(signif(Effvals,3), format='markdown', caption='')\n", append=TRUE, file=RMDfile, sep="")
+            cat("knitr::kable(Effvals, format='markdown', caption='')\n", append=TRUE, file=RMDfile, sep="")
             cat("```\n\n", append=TRUE, file=RMDfile, sep="")
             
           }
@@ -1061,32 +1073,32 @@ plotSelHists <- function(OM, Pars, nsamp=3, col="darkgray",
   its <- sample(1:OM@nsim, nsamp)
   
   hist2(Pars$L5, col=col, axes=FALSE, main="L5", breaks=breaks)
-  abline(v=Pars$L5[,its], col=1:nsamp, lwd=lwd)
+  abline(v=Pars$L5[OM@nyears,its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
   hist2(Pars$LFS, col=col, axes=FALSE, main="LFS", breaks=breaks)
-  abline(v=Pars$LFS[,its], col=1:nsamp, lwd=lwd)
+  abline(v=Pars$LFS[OM@nyears,its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
   hist2(Pars$Vmaxlen, col=col, axes=FALSE, main="Vmaxlen", breaks=breaks)
-  abline(v=Pars$Vmaxlen[,its], col=1:nsamp, lwd=lwd)
+  abline(v=Pars$Vmaxlen[OM@nyears,its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
   
   hist2(Pars$LR5, col=col, axes=FALSE, main="LR5", breaks=breaks)
-  abline(v=Pars$LR5[,its], col=1:nsamp, lwd=lwd)
+  abline(v=Pars$LR5[OM@nyears,its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
   hist2(Pars$LFR, col=col, axes=FALSE, main="LFR", breaks=breaks)
-  abline(v=Pars$LFR[,its], col=1:nsamp, lwd=lwd)
+  abline(v=Pars$LFR[OM@nyears,its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
   hist2(Pars$Rmaxlen, col=col, axes=FALSE, main="Rmaxlen", breaks=breaks)
-  abline(v=Pars$Rmaxlen[,its], col=1:nsamp, lwd=lwd)
+  abline(v=Pars$Rmaxlen[OM@nyears,its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
   hist2(Pars$DR, col=col, axes=FALSE, main="DR", breaks=breaks)
-  abline(v=Pars$DR[,its], col=1:nsamp, lwd=lwd)
+  abline(v=Pars$DR[OM@nyears,its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
 }

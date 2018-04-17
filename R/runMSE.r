@@ -853,7 +853,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   }
 
   if (length(interval) != nMP) interval <- rep(interval, nMP)[1:nMP]
-  if (!all(interval != interval[1])) {
+  if (!all(interval == interval[1])) {
     message("Variable management intervals:")
     df <- data.frame(MP=MPs,interval=interval)
     message(paste(capture.output(print(df)), collapse = "\n"))
