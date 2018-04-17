@@ -792,7 +792,6 @@ writeSection <- function(class=c("Intro", "Stock", "Fleet", "Obs", "Imp", "Refer
   
   useCpars <- length(OM@cpars) > 0
   
-  
   fLH <- grep("^#[^##]", textIn)
   fstH <- trimws(gsub("#", "", textIn[fLH])) # first level headings
   fstHmd <- trimws(textIn[fLH]) # first level headings
@@ -951,11 +950,10 @@ writeSection <- function(class=c("Intro", "Stock", "Fleet", "Obs", "Imp", "Refer
             cat("</style>\n", append=TRUE, file=RMDfile, sep="")
             
             cat("```{r, echo=FALSE, results='asis'}\n", append=TRUE, file=RMDfile, sep="")
-            cat("knitr::kable(round(Effvals,2), format='markdown', caption='')\n", append=TRUE, file=RMDfile, sep="")
+            cat("knitr::kable(signif(Effvals,3), format='markdown', caption='')\n", append=TRUE, file=RMDfile, sep="")
             cat("```\n\n", append=TRUE, file=RMDfile, sep="")
             
           }
-          
           
           # Plots ####
           if (inc.plot) {
