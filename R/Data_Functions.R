@@ -188,7 +188,7 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
   TACout <- array(NA, dim=c(nMPs, reps, nsims))
   # if (!sfIsRunning() | (nMPs < 8 & nsims < 8)) {
   for (mp in 1:nMPs) {
-    temp <- sapply(1:nsims, MPs[mp], Data = Data, reps = reps)  
+    temp <- lapply(1:nsims, MPs[mp], Data = Data, reps = reps)  
     slots <- slotNames(temp[[1]])
     for (X in slots) { # sequence along recommendation slots 
       if (X == "Misc") { # convert to a list nsim by nareas
