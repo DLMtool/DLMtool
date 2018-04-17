@@ -72,6 +72,9 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     parallel <- FALSE
   }
   
+  # Set DLMenv to be empty. Currently updated by Assess models in MSEtool
+  rm(list = ls(DLMenv), envir = DLMenv)
+  
   # check if custom MP names already exist in DLMtool
   gl.funs <- as.vector(lsf.str(envir=globalenv()))
   pkg.funs <- as.vector(ls.str('package:DLMtool'))
