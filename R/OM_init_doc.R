@@ -880,7 +880,7 @@ writeSection <- function(class=c("Intro", "Stock", "Fleet", "Obs", "Imp", "Refer
     
     # loop through template and write section 
     for (rr in 1:nrow(ClTemp)) {
-      if(grepl("^Currently unused", ClTemp[rr,1])) {
+      if (grepl("^Currently unused", ClTemp[rr,1])) {
         temptext <- trimws(unlist(strsplit(ClTemp[rr,], "-")))
         cat("### ", temptext[1], "\n\n", append=TRUE, file=RMDfile, sep="")
         cat("*", temptext[2], "*\n\n", append=TRUE, file=RMDfile, sep="")
@@ -1073,32 +1073,32 @@ plotSelHists <- function(OM, Pars, nsamp=3, col="darkgray",
   its <- sample(1:OM@nsim, nsamp)
   
   hist2(Pars$L5, col=col, axes=FALSE, main="L5", breaks=breaks)
-  abline(v=Pars$L5[,its], col=1:nsamp, lwd=lwd)
+  abline(v=Pars$L5[OM@nyears,its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
   hist2(Pars$LFS, col=col, axes=FALSE, main="LFS", breaks=breaks)
-  abline(v=Pars$LFS[,its], col=1:nsamp, lwd=lwd)
+  abline(v=Pars$LFS[OM@nyears,its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
   hist2(Pars$Vmaxlen, col=col, axes=FALSE, main="Vmaxlen", breaks=breaks)
-  abline(v=Pars$Vmaxlen[,its], col=1:nsamp, lwd=lwd)
+  abline(v=Pars$Vmaxlen[OM@nyears,its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
   
   hist2(Pars$LR5, col=col, axes=FALSE, main="LR5", breaks=breaks)
-  abline(v=Pars$LR5[,its], col=1:nsamp, lwd=lwd)
+  abline(v=Pars$LR5[OM@nyears,its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
   hist2(Pars$LFR, col=col, axes=FALSE, main="LFR", breaks=breaks)
-  abline(v=Pars$LFR[,its], col=1:nsamp, lwd=lwd)
+  abline(v=Pars$LFR[OM@nyears,its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
   hist2(Pars$Rmaxlen, col=col, axes=FALSE, main="Rmaxlen", breaks=breaks)
-  abline(v=Pars$Rmaxlen[,its], col=1:nsamp, lwd=lwd)
+  abline(v=Pars$Rmaxlen[OM@nyears,its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
   hist2(Pars$DR, col=col, axes=FALSE, main="DR", breaks=breaks)
-  abline(v=Pars$DR[,its], col=1:nsamp, lwd=lwd)
+  abline(v=Pars$DR[OM@nyears,its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
 }
