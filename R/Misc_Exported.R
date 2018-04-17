@@ -776,6 +776,13 @@ optCPU <- function(nsim=96, thresh=5, plot=TRUE) {
   return(df)
 }
 
-
+#' DLMenv blank environment
+#' 
+#' An environment allocated for MPs to print model output during the
+#' management strategy evaluation. Is blank at the beginning of each call to \code{runMSE}.
+#' 
+#' @seealso \link{runMSE}
+#' @export
+DLMenv <- new.env()
 
 
