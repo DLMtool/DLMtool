@@ -78,7 +78,12 @@ class(AvC_MLL) <- "MP"
 #' MeanMP <- makeMeanMP(c("AvC", "DCAC"))
 #' MSE <- runMSE(DLMtool::testOM, MPs=c("AvC", "DCAC", "MeanMP"))
 #' Tplot2(MSE)
-#'
+#' 
+#' MeanMP <- makeMeanMP(c("matlenlim", "matlenlim2")) 
+#' Data <- DLMtool::SimulatedData
+#' matlenlim(1, Data)
+#' matlenlim2(1, Data)
+#' MeanMP(1, Data)
 #'
 makeMeanMP <- function(MPs) {
   if (length(MPs)<2) stop("Must provide more than one MP")
@@ -142,6 +147,8 @@ makeMeanMP <- function(MPs) {
   class(MP) <- "MP"
   MP
 }
+
+
 
 
 
