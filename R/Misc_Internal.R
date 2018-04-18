@@ -313,6 +313,21 @@ run_parallel <- function(i, itsim, OM, MPs, CheckMPs, timelimit, Hist, ntrials, 
   return(mse)
 }
 
+assign_DLMenv <- function() {
+  DLMenv_list <- sfClusterEval(mget(ls(DLMenv), envir = DLMenv)) # Grab objects from cores' DLMenv
+  clean_env <- sfClusterEval(rm(list = ls(DLMenv), envir = DLMenv)) # Remove cores' DLMenv objects
+  env_names <- unique(do.call(c, lapply(DLMenv_list, names)))
+  
+  if(length(env_names) > 0) {
+    for(i in 1:length(env_names)) {
+      temp <- lapply(DLMenv_list, getElement, env_names[i])
+      assign(env_names[i], do.call(c, temp), envir = DLMenv) # Assign objects to home DLMenv
+    }
+  }
+  
+  return(invisible(env_names))
+}
+
 
 ## Selectivity functions ####
 

@@ -1270,9 +1270,9 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
 #' @slot FM Simulated fishing mortality rate over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers
 #' @slot C Simulated catches (taken) over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers
 #' @slot TAC Simulated Total Allowable Catch (prescribed) over the projection (this is NA for input controls). An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers 
-#' @slot SSB_hist Simulated historical spawning stock biomass. An array with dimensions: nsim, nages, nMPs, proyears. Non-negative real numbers
-#' @slot CB_hist Simulated historical catches in weight. An array with dimensions: nsim, nages, nMPs, proyears. Non-negative real numbers
-#' @slot FM_hist Simulated historical fishing mortality rate. An array with dimensions: nsim, nages, nMPs, proyears. Non-negative real numbers
+#' @slot SSB_hist Simulated historical spawning stock biomass. An array with dimensions: nsim, nages, nyears, nareas. Non-negative real numbers
+#' @slot CB_hist Simulated historical catches in weight. An array with dimensions: nsim, nages, nyears, nareas. Non-negative real numbers
+#' @slot FM_hist Simulated historical fishing mortality rate. An array with dimensions: nsim, nages, nyears, nareas. Non-negative real numbers
 #' @slot Effort Simulated relative fishing effort in the projection years. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers
 #' @slot PAA Population at age in last projection year. An array with dimensions: nsim, nMPs, nages. Non-negative real numbers
 #' @slot CAA Catch at age in last projection year. An array with dimensions: nsim, nMPs, nages. Non-negative real numbers
