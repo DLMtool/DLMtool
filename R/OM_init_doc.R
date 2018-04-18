@@ -716,16 +716,18 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
 
     message("\n\nRendering markdown document as ", RMDfileout)
     
-    EffYears <- seq(from=(OM@CurrentYr -  OM@nyears + 1), to=OM@CurrentYr, by=1)
-
+    EffYears <- seq(from=(OM@CurrentYr -  OM@nyears + 1), to=OM@CurrentYr, length.out=length(OM@EffYears))
     EffYears <- round(EffYears,0)
     if (length(OM@cpars$Find)>0) {
-      Effvals <- data.frame(EffYears=EffYears, EffLower=signif(apply(OM@cpars$Find, 2, min),3), EffUpper=signif(apply(OM@cpars$Find, 2, max),3))
+      lower <- as.numeric(signif(apply(OM@cpars$Find, 2, min),3))
+      upper <- as.numeric(signif(apply(OM@cpars$Find, 2, max),3))
+      Effvals <- data.frame(EffYears=EffYears, EffLower=lower, EffUpper=upper)
     } else {
       Effvals <- data.frame(EffYears=EffYears, EffLower=signif(OM@EffLower,3), EffUpper=signif(OM@EffUpper,3))
     }
   
     params <- list(OM=OM, Pars=Pars, Effvals=Effvals, out=out)
+    knitr::knit_meta(class=NULL, clean = TRUE)
     rmarkdown::render(input=RMDfile, output_file=RMDfileout, output_format=output, 
                       output_dir=dir, param=params, quiet=quiet)
     
