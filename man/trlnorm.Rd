@@ -2,9 +2,12 @@
 % Please edit documentation in R/Misc_Exported.R
 \name{trlnorm}
 \alias{trlnorm}
-\title{Generate log-normally distributed random numbers}
+\alias{tdlnorm}
+\title{Lognormal distribution for DLMtool}
 \usage{
 trlnorm(reps, mu, cv)
+
+tdlnorm(x, mu, cv)
 }
 \arguments{
 \item{reps}{number of random numbers}
@@ -12,13 +15,22 @@ trlnorm(reps, mu, cv)
 \item{mu}{mean}
 
 \item{cv}{coefficient of variation}
+
+\item{x}{vector}
 }
 \value{
 numeric
 }
 \description{
-Generate log-normally distributed random numbers
+Variant of rlnorm which returns the mean when reps = 1.
 }
+\section{Functions}{
+\itemize{
+\item \code{trlnorm}: Generate log-normally distributed random numbers
+
+\item \code{tdlnorm}: Calculate density of log-normally distributed random numbers
+}}
+
 \author{
 T. Carruthers
 }
