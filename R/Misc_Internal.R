@@ -289,14 +289,9 @@ range01 <- function(x) {
   (x - min(x))/(max(x) - min(x)) 
 }
 
-#' runMSE with no messages - for testing 
-#'
-#' For testing purposes only 
-#' @param ... Arguments to runMSE function 
-#'
+#' @describeIn runMSE Function suppresses messages - for testing purposes only.
 #' @keywords internal
 #' @importFrom utils capture.output
-#'
 runMSEnomsg <- function(...) {
   capture.output(out <- suppressMessages(runMSE(...)))
   out
