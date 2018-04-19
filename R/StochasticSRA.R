@@ -144,7 +144,40 @@ LSRA_cpp <-function(x,FF,Chist_arr,M,Mat_age,Wt_age,sel,Recdevs,h){
 }
 
 
-#' @describeIn StochasticSRA Uses Rcpp for MCMC sampling
+#' Stochastic SRA construction of operating models
+#'
+#' @description Specify an operating model, using catch composition data and a historical catch series.
+#'  Returns and operating model with depletion (D), selectivity parameters (L5, LFS) and effort trajectory (Effyears, EffLower, EffUpper) filled.
+#'  Modified version using cpp code.
+#' @param OM An operating model object with M, growth, stock-recruitment and maturity parameters specified.
+#' @param CAA A matrix nyears (rows) by nages (columns) of catch at age (age 1 to maxage in length)
+#' @param Chist A vector of historical catch observations (nyears long) going back to unfished conditions
+#' @param Ind A vector of historical index observations (nyears long, may be patchy with NAs) going back to unfished conditions. 
+#' @param Cobs A numeric value representing catch observation error as a log normal sd
+#' @param sigmaR A numeric value representing the prior standard deviation of log space recruitment deviations
+#' @param Umax A numeric value representing the maximum harvest rate for any age class (rejection of sims where this occurs)
+#' @param nsim The number desired draws of parameters / effort trajectories
+#' @param proyears The number of projected MSE years
+#' @param Jump_fac A multiplier of the jumping distribution variance to increase acceptance (lower Jump_fac) or decrease acceptance rate (higher Jump_fac)
+#' @param nits The number of MCMC iterations
+#' @param burnin The number of initial MCMC iterations to discard
+#' @param thin The interval over which MCMC samples are extracted for use in graphing / statistics
+#' @param ESS Effective sample size - the weighting of the catch at age data
+#' @param ploty Do you want to see diagnostics plotted?
+#' @param nplot how many MCMC samples should be plotted in convergence plots?
+#' @param SRAdir A directory where the SRA diagnostics / fit are stored
+#' @return A list with three positions. Position 1 is the filled OM object, position 2 is the custompars data.frame that may be submitted as an argument to runMSE() and position 3 is the matrix of effort histories `[nyears x nsim]` vector of objects of class\code{classy}
+#' @author T. Carruthers (Canadian DFO grant)
+#' @references Walters, C.J., Martell, S.J.D., Korman, J. 2006. A stochastic approach to stock reduction analysis. Can. J. Fish. Aqua. Sci. 63:212-213.
+#' @examples
+#' \dontrun{
+#' setup()
+#' sim<-SRAsim(testOM,patchy=0.8)
+#' CAA<-sim$CAA
+#' Chist<-sim$Chist
+#' testOM<-StochasticSRA(testOM,CAA,Chist,nsim=30,nits=1000)
+#' runMSE(testOM)
+#' }
 StochasticSRAcpp <-function(OM,CAA,Chist,Ind,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=48,proyears=50,
                           Jump_fac=1,nits=20000,
                           burnin=1000,thin=50,ESS=300,ploty=T,nplot=6,SRAdir=NA){
