@@ -2,19 +2,56 @@
 % Please edit documentation in R/MSE_Plotting.R
 \name{Tplot}
 \alias{Tplot}
-\title{A trade-off plot for an MSE object}
+\alias{Tplot2}
+\alias{Tplot3}
+\title{Trade-off plots for an MSE object}
 \usage{
 Tplot(MSEobj, nam = NA)
+
+Tplot2(MSEobj, nam = NA)
+
+Tplot3(MSEobj, ..., lims = c(0.2, 0.2, 0.8, 0.8))
 }
 \arguments{
 \item{MSEobj}{An object of class 'MSE'}
 
 \item{nam}{Name of the plot}
+
+\item{...}{Names of PM methods to plot}
+
+\item{lims}{Numeric vector of satisficing limits. Recycled to number of PM methods}
 }
 \description{
-A shorter version of the plot method for MSEs that just shows the overall
-trade-offs
+Three figures showing trade-offs between fishing mortality, biomass, and yield.
+}
+\section{Functions}{
+\itemize{
+\item \code{Tplot}: Used in the plot method for MSE objects that shows trade-off between
+yield versus probability of overfishing and biomass levels (relative to BMSY).
+
+\item \code{Tplot2}: Simpler plot that compares long-term yield (LTY:
+fraction of simulations getting over half FMSY yield in the last ten years
+of the projection), short-term yield (STY: fraction of simulations getting
+over half FMSY yield in the first ten years of the projection), variability
+in yield (VY: fraction of simulations where average annual variability in
+yield is less than 10 per cent) and biomass level (B10: the fraction of
+simulations in which biomass stays above 10 percent of BMSY).
+
+\item \code{Tplot3}: By default, trade-off plots among LTY, STY, and biomass level B50
+(fraction of simulations in which biomass stays above 50 percent of BMSY), and
+Average Annual Variability in Yield (AAVY).
+}}
+
+\examples{
+\dontrun{
+ Tplot(myMSE)
+ Tplot2(myMSE)
+ Tplot3(myMSE)
+}
+}
+\seealso{
+\link{TradePlot} \link{PerformanceMetric}
 }
 \author{
-T. Carruthers
+T. Carruthers & A. Hordyk
 }
