@@ -2877,6 +2877,7 @@ class(SPslope) <- "MP"
 #' demographic methods to construct Bayesian priors for the intrinsic rate of
 #' increase in the Schaefer model and implications for stock rebuilding. Can.
 #' J. Fish. Aquat. Sci. 58: 1871-1890.
+#' @describeIn SPSRA Base version
 #' @export 
 SPSRA <- function(x, Data, reps = 100) {
   # Surplus productin stock reduction analysis T.Carruthers - basically
@@ -2916,25 +2917,9 @@ SPSRA <- function(x, Data, reps = 100) {
 }
 class(SPSRA) <- "MP"
 
-#' Surplus Production Stock Reduction Analysis using a mean-length estimate of
-#' current stock depletion
-#' 
-#' A surplus production equivalent of DB-SRA that uses a demographically
-#' derived prior for intrinsic rate of increase. A prior for depletion is
-#' calculated from a mean-length estimator
-#' 
-#' 
-#' @usage SPSRA_ML(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object (class DLM)
-#' @param reps The number of samples of the TAC taken
-#' @note The mean length extension was programmed by Gary Nelson as part of his
-#' excellent R package 'fishmethods'
-#' @author T. Carruthers
-#' @references McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
-#' demographic methods to construct Bayesian priors for the intrinsic rate of
-#' increase in the Schaefer model and implications for stock rebuilding. Can.
-#' J. Fish. Aquat. Sci. 58: 1871-1890.
+#' @describeIn SPSRA Variant that uses a mean-length mortality estimator to obtain
+#' a prior for current stock depletion. The mean length extension was programmed by 
+#' Gary Nelson as part of his excellent R package 'fishmethods'.
 #' @export SPSRA_ML
 SPSRA_ML <- function(x, Data, reps = 100) {
   dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@CAL, Data@Cat, Data@steep"
