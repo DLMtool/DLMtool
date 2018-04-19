@@ -202,7 +202,8 @@ class(CC1) <- "MP"
 
 
 
-#' @describeIn CC1 An additional 30\% reduction in catch is taken compared to \code{CC1}.
+#' @describeIn CC1 The TAC is the recent average catch reduced by 30\%. 
+#' Note that this MP is intentionally designed to reduce catch over time.
 #' @export 
 CC4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.3) {
   dependencies = "Data@Cat, Data@CV_Cat"
@@ -1915,11 +1916,11 @@ class(IT10) <- "MP"
 
 
 #' A management procedure that incrementally adjusts the TAC (starting from
-#' reference level that is a fraction of mean recent catches) to reach a target
-#' CPUE / relative abundance index
+#' reference level that is a fraction of mean recent catches) or effort (from
+#' a reference level) to reach a target CPUE / relative abundance index
 #' 
-#' Two index/CPUE target MPs proposed by Geromont and Butterworth 2014. 
-#' Tested by Carruthers et al. 2015
+#' Four index/CPUE target MPs proposed by Geromont and Butterworth 2014. 
+#' Tested by Carruthers et al. 2015.
 #' 
 #' @usage Itarget1(x, Data, reps = 100, yrsmth = 5, xx=0, Imulti=1.5)
 #' @param x A position in data-limited methods data object
@@ -1931,15 +1932,15 @@ class(IT10) <- "MP"
 #' first year
 #' @param Imulti Parameter controlling how much larger target CPUE / index is
 #' compared with recent levels.
-#' @return A numeric vector of TAC recommendations
+#' @return A Rec object
 #' @author T. Carruthers
 #' @references Carruthers et al. 2015. Performance evaluation of simple
 #' management procedures. ICES J. Mar Sci. 73, 464-482.
 #' 
 #' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
-#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
+#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci. 72, 251-261.
 #' doi:10.1093/icesjms/fst232
-#' @describeIn Itarget1 The less precautionary version.
+#' @describeIn Itarget1 The less precautionary TAC-based MP
 #' @export Itarget1
 Itarget1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5) {
   dependencies = "Data@Cat, Data@CV_Cat"
@@ -1966,8 +1967,7 @@ class(Itarget1) <- "MP"
 
 
 
-#' @describeIn Itarget1 The most biologically precautionary of the two index/CPUE target MPs proposed by
-#' Geromont and Butterworth 2014.
+#' @describeIn Itarget1 The most biologically precautionary TAC-based MP
 #' @export Itarget4
 Itarget4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.3, Imulti = 2.5) {
   dependencies = "Data@Cat, Data@CV_Cat"

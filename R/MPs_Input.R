@@ -534,33 +534,7 @@ class(ITe10) <- "MP"
 
 
 
-#' A management procedure that incrementally adjusts the effort to reach a
-#' target CPUE / relative abundance index
-#' 
-#' An effort-based version of the least biologically precautionary of two
-#' index/CPUE target MPs proposed by Geromont and Butterworth 2014. Tested by
-#' Carruthers et al. 2015
-#' 
-#' Tested by Carruthers et al. 2015.
-#' 
-#' @usage ItargetE1(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
-#' @param xx Parameter controlling the fraction of mean catch to start using in
-#' first year
-#' @param Imulti Parameter controlling how much larger target CPUE / index is
-#' compared with recent levels.
-#' @return A numeric vector of input controls
-#' @author T. Carruthers
-#' @references Carruthers et al. 2015. Performance evaluation of simple
-#' management procedures. Fish and Fisheries. In press.
-#' 
-#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
-#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
-#' doi:10.1093/icesjms/fst232
+#' @describeIn Itarget1 The less precautionary effort-based MP
 #' @export ItargetE1
 ItargetE1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5) {
   
@@ -594,32 +568,7 @@ class(ItargetE1) <- "MP"
 
 
 
-#' A management procedure that incrementally adjusts the Effort to reach a
-#' target CPUE / relative abundance index
-#' 
-#' An effort-based version of the most biologically precautionary of two
-#' index/CPUE target MPs proposed by Geromont and Butterworth 2014.
-#' 
-#' Tested by Carruthers et al. 2015.
-#' 
-#' @usage ItargetE4(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 2.5)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
-#' @param xx Parameter controlling the fraction of mean catch to start using in
-#' first year
-#' @param Imulti Parameter controlling how much larger target CPUE / index is
-#' compared with recent levels.
-#' @return A numeric vector of input controls
-#' @author T. Carruthers
-#' @references Carruthers et al. 2015. Performance evaluation of simple
-#' management procedures. Fish and Fisheries. In press.
-#' 
-#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
-#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
-#' doi:10.1093/icesjms/fst232
+#' @describeIn Itarget1 The most biologically precautionary effort-based MP
 #' @export ItargetE4
 ItargetE4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 2.5) {
   
