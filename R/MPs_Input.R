@@ -604,28 +604,7 @@ class(ItargetE4) <- "MP"
 
 
 
-#' A management procedure that incrementally adjusts the TAC according to the
-#' mean length of recent catches.
-#' 
-#' A effort-based version of least biologically precautionary of four adaptive
-#' length-based MPs proposed by Geromont and Butterworth 2014. Tested by
-#' Carruthers et al. 2015
-#' 
-#' 
-#' @usage LstepCE1(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.05,
-#' llim = c(0.96, 0.98, 1.05))
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of effort samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
-#' @param xx Parameter controlling the fraction of mean catch to start using in
-#' first year
-#' @param stepsz Parameter controlling the size of the effort update increment.
-#' @param llim A vector of length reference points that determine the
-#' conditions for increasing, maintaining or reducing the effort.
-#' @return A numeric vector of input controls
-#' @author T. Carruthers
+#' @describeIn LstepCC1 The least biologically precautionary effort-based MP.
 #' @export LstepCE1
 LstepCE1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.05, 
                      llim = c(0.96, 0.98, 1.05)) {
@@ -661,27 +640,8 @@ class(LstepCE1) <- "MP"
 
 
 
-#' A management procedure that incrementally adjusts the Effort according to
-#' the mean length of recent catches.
-#' 
-#' A effort-based version of one of the four adaptive length-based MPs proposed
-#' by Geromont and Butterworth 2014.
-#' 
-#' 
-#' @usage LstepCE2(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.1,
-#' llim = c(0.96, 0.98, 1.05))
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
-#' @param xx Parameter controlling the fraction of mean catch to start using in
-#' first year
-#' @param stepsz Parameter controlling the size of the effort update increment.
-#' @param llim A vector of length reference points that determine the
-#' conditions for increasing, maintaining or reducing the effort.
-#' @return A numeric vector of input controls
-#' @author T. Carruthers
+
+#' @describeIn LstepCC1 The most precautionary effort-based MP.
 #' @export LstepCE2
 LstepCE2 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.1, 
                      llim = c(0.96, 0.98, 1.05)) {

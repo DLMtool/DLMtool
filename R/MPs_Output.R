@@ -1922,7 +1922,6 @@ class(IT10) <- "MP"
 #' Four index/CPUE target MPs proposed by Geromont and Butterworth 2014. 
 #' Tested by Carruthers et al. 2015.
 #' 
-#' @usage Itarget1(x, Data, reps = 100, yrsmth = 5, xx=0, Imulti=1.5)
 #' @param x A position in data-limited methods data object
 #' @param Data A data-limited methods data object
 #' @param reps The number of TAC samples
@@ -2048,6 +2047,7 @@ class(ITM) <- "MP"
 #' @references Geromont, H.F., Butterworth, D.S. 2014. Generic management
 #' procedures for data-poor fisheries; forecasting with few data. ICES J. Mar.
 #' Sci. doi:10.1093/icesjms/fst232
+#' @seealso \link{Itarget1}
 #' @export L95target
 L95target <- function(x, Data, reps = 100, yrsmth = 5, buffer = 0) {
   
@@ -2171,9 +2171,10 @@ Lratio_BHI2 <- function(x, Data, reps, yrsmth = 3) {
 class(Lratio_BHI2) <- "MP"
 
 
-#' A management procedure that incrementally adjusts the TAC according to the
+#' A management procedure that incrementally adjusts the TAC or effort according to the
 #' mean length of recent catches.
 #' 
+#' Four adaptive length-based MPs proposed by Geromont and Butterworth 2014. 
 #' Tested by Carruthers et al. 2015.
 #' 
 #' @param x A position in data-limited methods data object
@@ -2183,10 +2184,10 @@ class(Lratio_BHI2) <- "MP"
 #' production
 #' @param xx Parameter controlling the fraction of mean catch to start using in
 #' first year
-#' @param stepsz Parameter controlling the size of the TAC update increment.
+#' @param stepsz Parameter controlling the size of update increment in TAC or effort.
 #' @param llim A vector of length reference points that determine the
-#' conditions for increasing, maintaining or reducing the TAC.
-#' @return A numeric vector of TAC recommendations
+#' conditions for increasing, maintaining or reducing the TAC or effort.
+#' @return A \linkS4class{Rec} object
 #' @author T. Carruthers
 #' @references Carruthers et al. 2015. Performance evaluation of simple
 #' management procedures. ICES J. Mar Sci. 73, 464-482.
@@ -2194,8 +2195,7 @@ class(Lratio_BHI2) <- "MP"
 #' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
 #' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
 #' doi:10.1093/icesjms/fst232
-#' @describeIn LstepCC1 The least biologically precautionary of four adaptive length-based MPs
-#' proposed by Geromont and Butterworth 2014. 
+#' @describeIn LstepCC1 The least biologically precautionary TAC-based MP.
 #' @export LstepCC1
 LstepCC1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.05, 
                      llim = c(0.96, 0.98, 1.05)) {
@@ -2232,8 +2232,7 @@ class(LstepCC1) <- "MP"
 
 
 
-#' @describeIn LstepCC1 The most precautionary of four adaptive length-based MPs
-#' proposed by Geromont and Butterworth 2014.
+#' @describeIn LstepCC1 The most precautionary TAC-based MP.
 #' @export LstepCC4
 LstepCC4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.3, stepsz = 0.05, 
                      llim = c(0.96, 0.98, 1.05)) {
@@ -2294,6 +2293,7 @@ class(LstepCC4) <- "MP"
 #' doi:10.1093/icesjms/fst232
 #' @describeIn Ltarget1 The least biologically precautionary of four target length MPs proposed by
 #' Geromont and Butterworth 2014.
+#' @seealso \link{L95target}
 #' @export Ltarget1
 Ltarget1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, xL = 1.05) {
   dependencies = "Data@Cat, Data@CV_Cat, Data@ML"
