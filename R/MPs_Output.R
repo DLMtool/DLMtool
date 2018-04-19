@@ -2047,7 +2047,7 @@ class(ITM) <- "MP"
 #' @references Geromont, H.F., Butterworth, D.S. 2014. Generic management
 #' procedures for data-poor fisheries; forecasting with few data. ICES J. Mar.
 #' Sci. doi:10.1093/icesjms/fst232
-#' @seealso \link{Itarget1}
+#' @seealso \link{Ltarget1}
 #' @export L95target
 L95target <- function(x, Data, reps = 100, yrsmth = 5, buffer = 0) {
   
@@ -2097,6 +2097,7 @@ class(L95target) <- "MP"
 #' https://doi.org/10.1016/j.fishres.2014.11.013
 #' @describeIn Lratio_BHI Assumes M/K = 1.5 and FMSY/M = 1. Natural mortality M and von Bertalanffy 
 #' K are not used in this MP (see Appendix A of Jardim et al. 2015). 
+#' @seealso \link{Ltarget1} \link{L95target}
 #' @export
 Lratio_BHI <- function(x, Data, reps, yrsmth = 3) {
   dependencies = "Data@vb_Linf, Data@CV_vbLinf, Data@Cat, Data@CV_Cat, Data@CAL, Data@CAL_bins,
@@ -2269,9 +2270,10 @@ class(LstepCC4) <- "MP"
 
 
 
-#' A management procedure that incrementally adjusts the TAC to reach a target
-#' mean length in catches.
+#' A management procedure that incrementally adjusts the TAC or effort to reach 
+#' a target mean length in catches.
 #' 
+#' Four target length MPs proposed by Geromont and Butterworth 2014.
 #' Tested by Carruthers et al. 2015.
 #' 
 #' @param x A position in data-limited methods data object
@@ -2283,7 +2285,7 @@ class(LstepCC4) <- "MP"
 #' first year
 #' @param xL Parameter controlling the magnitude of the target mean length of
 #' catches relative to average length in catches.
-#' @return A numeric vector of TAC recommendations
+#' @return A \linkS4class{Rec} object
 #' @author T. Carruthers
 #' @references Carruthers et al. 2015. Performance evaluation of simple
 #' management procedures. ICES J. Mar Sci. 73, 464-482.
@@ -2291,8 +2293,7 @@ class(LstepCC4) <- "MP"
 #' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
 #' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
 #' doi:10.1093/icesjms/fst232
-#' @describeIn Ltarget1 The least biologically precautionary of four target length MPs proposed by
-#' Geromont and Butterworth 2014.
+#' @describeIn Ltarget1 The least biologically precautionary TAC-based MP.
 #' @seealso \link{L95target}
 #' @export Ltarget1
 Ltarget1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, xL = 1.05) {
@@ -2320,8 +2321,7 @@ class(Ltarget1) <- "MP"
 
 
 
-#' @describeIn Ltarget1 The most biologically precautionary of four target length MPs proposed by
-#' Geromont and Butterworth 2014.
+#' @describeIn Ltarget1 The most biologically precautionary TAC-based MP.
 #' @export Ltarget4
 Ltarget4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.2, xL = 1.15) {
   dependencies = "Data@Cat, Data@CV_Cat, Data@ML"

@@ -13,7 +13,7 @@ ItargetE1(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5)
 
 ItargetE4(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 2.5)
 
-Itarget1(x, Data, reps = 100, yrsmth = 5, xx=0, Imulti=1.5)
+Itarget1(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5)
 
 Itarget4(x, Data, reps = 100, yrsmth = 5, xx = 0.3, Imulti = 2.5)
 }

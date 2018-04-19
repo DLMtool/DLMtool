@@ -673,25 +673,8 @@ class(LstepCE2) <- "MP"
 
 
 
-#' A management procedure that incrementally adjusts the Effort to reach a
-#' target mean length in catches.
-#' 
-#' A effort based version of the least biologically precautionary of four
-#' target length MPs proposed by Geromont and Butterworth 2014.
-#' 
-#' 
-#' @usage LtargetE1(x, Data, reps = 100, yrsmth = 5, xx = 0, xL = 1.05)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
-#' @param xx Parameter controlling the fraction of mean catch to start using in
-#' first year
-#' @param xL Parameter controlling the magnitude of the target mean length of
-#' catches relative to average length in catches.
-#' @return A numeric vector of input controls
-#' @author T. Carruthers
+
+#' @describeIn Ltarget1 The least biologically precautionary effort-based MP.
 #' @export LtargetE1
 LtargetE1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, xL = 1.05) {
   
@@ -725,25 +708,8 @@ class(LtargetE1) <- "MP"
 
 
 
-#' A management procedure that incrementally adjusts the Effort to reach a
-#' target mean length in catches.
-#' 
-#' A effort based version of the most biologically precautionary of four target
-#' length MPs proposed by Geromont and Butterworth 2014.
-#' 
-#' 
-#' @usage LtargetE4(x, Data, reps = 100, yrsmth = 5, xx = 0, xL = 1.15)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
-#' @param xx Parameter controlling the fraction of mean catch to start using in
-#' first year
-#' @param xL Parameter controlling the magnitude of the target mean length of
-#' catches relative to average length in catches.
-#' @return A numeric vector of input controls
-#' @author T. Carruthers
+
+#' @describeIn Ltarget1 The most biologically precautionary effort-based MP.
 #' @export LtargetE4
 LtargetE4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, xL = 1.15) {
   
