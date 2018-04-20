@@ -4,9 +4,9 @@
 #' @param ... other parameters passed to plot (currently ignored)
 #' @export
 plot.MSE <- function(x, ...) {
-  Pplot(x)
+  Pplot(x, nam = deparse(substitute(x)))
   Kplot(x)
-  Tplot(x)
+  Tplot(x, nam = deparse(substitute(x)))
 }
      
 
@@ -1070,13 +1070,12 @@ NOAA_plot <- function(MSEobj, nam = NA, type = NA, panel = T) {
 #' @author T. Carruthers 
 #' @export Pplot
 Pplot <- function(MSEobj, nam = NA, maxMP = 10,MPs=NA,maxsims=20) {
-  
+  op <- par(no.readonly = TRUE)
+  on.exit(par(op))
   if(!is.na(MPs)){
-    
     maxMP<-length(MPs)
     MSEobj<-Sub(MSEobj,MPs=MPs)
-    
-  }else{
+  } else{
     
     if(MSEobj@nMPs>maxMP)MSEobj<-Sub(MSEobj,MPs=MSEobj@MPs[1:maxMP])
     
@@ -1128,12 +1127,11 @@ Pplot <- function(MSEobj, nam = NA, maxMP = 10,MPs=NA,maxsims=20) {
   for (c in 1:nc) {
     for (r in 1:nr) {
       i <- i + 1
-      temp[(ceiling(r/2) - 1) + (1:2) + (r - 1) * 2, (1:2) + (c - 
-                                                                1) * 2] <- ((c - 1) * nr) + r
+      temp[(ceiling(r/2) - 1) + (1:2) + (r - 1) * 2, (1:2) + (c - 1) * 2] <- ((c - 1) * nr) + r
     }
   }
-  op <- par(mfcol = c(nr, nc), mai = c(0.2, 0.35, 0.3, 0.01), omi = c(0.5, 
-                                                                      0.4, 0.4, 0.05))
+  
+  par(mfcol = c(nr, nc), mar = c(2, 2, 2, 1), oma = c(3, 2, 2, 0))
   layout(temp)
   # dev.new2(width=nc*3,height=nr*3)
   lwdy <- 2.5
@@ -1167,9 +1165,11 @@ Pplot <- function(MSEobj, nam = NA, maxMP = 10,MPs=NA,maxsims=20) {
   mtext("Projection year", 1, outer = T, line = 1.2)
   if (is.na(nam)) 
     mtext(deparse(substitute(MSEobj)), 3, outer = T, line = 0.3, font = 2)
-  if (!is.na(nam)) 
+  if (!is.na(nam) & !is.character(nam)) 
     mtext(MSEobj@Name, 3, outer = T, line = 0.3, font = 2)
-  par(op)
+  if (!is.na(nam) & is.character(nam)) 
+    mtext(nam, 3, outer = T, line = 0.3, font = 2)
+  return(invisible())
 }
 
 
@@ -1209,14 +1209,16 @@ Pplot <- function(MSEobj, nam = NA, maxMP = 10,MPs=NA,maxsims=20) {
 #' @param ...  Additional arguments to be passed to plotting functions
 #' @author T. Carruthers & A.Hordyk
 #' @export Pplot2
-Pplot2 <- function(MSEobj, YVar = c("SSB_SSBMSY", "F_FMSY"), MPs = NA, sims = NULL, 
+Pplot2 <- function(MSEobj, YVar = c("F_FMSY", "SSB_SSBMSY"), MPs = NA, sims = NULL, 
                    traj = c("all", "quant"), quants = c(0.1, 0.9), incquant = TRUE, quantcol = "lightgray", 
                    RefYield = c("lto", "curr"), LastYr = TRUE, maxMP = 6, alpha = 60, 
-                   cex.axis = 1.35, cex.lab = 1.4, YLab = NULL, incMP = TRUE, MPcex = 1.4, 
+                   cex.axis = 1, cex.lab = 1, YLab = NULL, incMP = TRUE, MPcex = 1, 
                    incLeg = TRUE, cex.leg = 1.5, legPos = "topleft", yline = NULL, parOR = FALSE, 
                    xaxis = TRUE, yaxis = TRUE, oneIt=TRUE, ...) {
-  YVars <- c("SSB_SSB0", "SSB_SSBMSY", "F_FMSY", "Yield")
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(old_par))
   
+  YVars <- c("SSB_SSB0", "SSB_SSBMSY", "F_FMSY", "Yield")
   YVar <- match.arg(YVar, choices = YVars, several.ok = TRUE)
   op <- par(no.readonly=TRUE)
   if (!is.null(YLab) & length(YLab) != length(YVar)) 
