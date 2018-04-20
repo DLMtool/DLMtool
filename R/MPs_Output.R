@@ -202,7 +202,8 @@ class(CC1) <- "MP"
 
 
 
-#' @describeIn CC1 An additional 30\% reduction in catch is taken compared to \code{CC1}.
+#' @describeIn CC1 The TAC is the recent average catch reduced by 30\%. 
+#' Note that this MP is intentionally designed to reduce catch over time.
 #' @export 
 CC4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.3) {
   dependencies = "Data@Cat, Data@CV_Cat"
@@ -1915,13 +1916,12 @@ class(IT10) <- "MP"
 
 
 #' A management procedure that incrementally adjusts the TAC (starting from
-#' reference level that is a fraction of mean recent catches) to reach a target
-#' CPUE / relative abundance index
+#' reference level that is a fraction of mean recent catches) or effort (from
+#' a reference level) to reach a target CPUE / relative abundance index
 #' 
-#' Two index/CPUE target MPs proposed by Geromont and Butterworth 2014. 
-#' Tested by Carruthers et al. 2015
+#' Four index/CPUE target MPs proposed by Geromont and Butterworth 2014. 
+#' Tested by Carruthers et al. 2015.
 #' 
-#' @usage Itarget1(x, Data, reps = 100, yrsmth = 5, xx=0, Imulti=1.5)
 #' @param x A position in data-limited methods data object
 #' @param Data A data-limited methods data object
 #' @param reps The number of TAC samples
@@ -1931,15 +1931,15 @@ class(IT10) <- "MP"
 #' first year
 #' @param Imulti Parameter controlling how much larger target CPUE / index is
 #' compared with recent levels.
-#' @return A numeric vector of TAC recommendations
+#' @return A Rec object
 #' @author T. Carruthers
 #' @references Carruthers et al. 2015. Performance evaluation of simple
 #' management procedures. ICES J. Mar Sci. 73, 464-482.
 #' 
 #' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
-#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
+#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci. 72, 251-261.
 #' doi:10.1093/icesjms/fst232
-#' @describeIn Itarget1 The less precautionary version.
+#' @describeIn Itarget1 The less precautionary TAC-based MP
 #' @export Itarget1
 Itarget1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5) {
   dependencies = "Data@Cat, Data@CV_Cat"
@@ -1966,8 +1966,7 @@ class(Itarget1) <- "MP"
 
 
 
-#' @describeIn Itarget1 The most biologically precautionary of the two index/CPUE target MPs proposed by
-#' Geromont and Butterworth 2014.
+#' @describeIn Itarget1 The most biologically precautionary TAC-based MP
 #' @export Itarget4
 Itarget4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.3, Imulti = 2.5) {
   dependencies = "Data@Cat, Data@CV_Cat"
@@ -2048,6 +2047,7 @@ class(ITM) <- "MP"
 #' @references Geromont, H.F., Butterworth, D.S. 2014. Generic management
 #' procedures for data-poor fisheries; forecasting with few data. ICES J. Mar.
 #' Sci. doi:10.1093/icesjms/fst232
+#' @seealso \link{Ltarget1}
 #' @export L95target
 L95target <- function(x, Data, reps = 100, yrsmth = 5, buffer = 0) {
   
@@ -2097,6 +2097,7 @@ class(L95target) <- "MP"
 #' https://doi.org/10.1016/j.fishres.2014.11.013
 #' @describeIn Lratio_BHI Assumes M/K = 1.5 and FMSY/M = 1. Natural mortality M and von Bertalanffy 
 #' K are not used in this MP (see Appendix A of Jardim et al. 2015). 
+#' @seealso \link{Ltarget1} \link{L95target}
 #' @export
 Lratio_BHI <- function(x, Data, reps, yrsmth = 3) {
   dependencies = "Data@vb_Linf, Data@CV_vbLinf, Data@Cat, Data@CV_Cat, Data@CAL, Data@CAL_bins,
@@ -2171,9 +2172,10 @@ Lratio_BHI2 <- function(x, Data, reps, yrsmth = 3) {
 class(Lratio_BHI2) <- "MP"
 
 
-#' A management procedure that incrementally adjusts the TAC according to the
+#' A management procedure that incrementally adjusts the TAC or effort according to the
 #' mean length of recent catches.
 #' 
+#' Four adaptive length-based MPs proposed by Geromont and Butterworth 2014. 
 #' Tested by Carruthers et al. 2015.
 #' 
 #' @param x A position in data-limited methods data object
@@ -2183,10 +2185,10 @@ class(Lratio_BHI2) <- "MP"
 #' production
 #' @param xx Parameter controlling the fraction of mean catch to start using in
 #' first year
-#' @param stepsz Parameter controlling the size of the TAC update increment.
+#' @param stepsz Parameter controlling the size of update increment in TAC or effort.
 #' @param llim A vector of length reference points that determine the
-#' conditions for increasing, maintaining or reducing the TAC.
-#' @return A numeric vector of TAC recommendations
+#' conditions for increasing, maintaining or reducing the TAC or effort.
+#' @return A \linkS4class{Rec} object
 #' @author T. Carruthers
 #' @references Carruthers et al. 2015. Performance evaluation of simple
 #' management procedures. ICES J. Mar Sci. 73, 464-482.
@@ -2194,8 +2196,7 @@ class(Lratio_BHI2) <- "MP"
 #' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
 #' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
 #' doi:10.1093/icesjms/fst232
-#' @describeIn LstepCC1 The least biologically precautionary of four adaptive length-based MPs
-#' proposed by Geromont and Butterworth 2014. 
+#' @describeIn LstepCC1 The least biologically precautionary TAC-based MP.
 #' @export LstepCC1
 LstepCC1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.05, 
                      llim = c(0.96, 0.98, 1.05)) {
@@ -2232,8 +2233,7 @@ class(LstepCC1) <- "MP"
 
 
 
-#' @describeIn LstepCC1 The most precautionary of four adaptive length-based MPs
-#' proposed by Geromont and Butterworth 2014.
+#' @describeIn LstepCC1 The most precautionary TAC-based MP.
 #' @export LstepCC4
 LstepCC4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.3, stepsz = 0.05, 
                      llim = c(0.96, 0.98, 1.05)) {
@@ -2270,9 +2270,10 @@ class(LstepCC4) <- "MP"
 
 
 
-#' A management procedure that incrementally adjusts the TAC to reach a target
-#' mean length in catches.
+#' A management procedure that incrementally adjusts the TAC or effort to reach 
+#' a target mean length in catches.
 #' 
+#' Four target length MPs proposed by Geromont and Butterworth 2014.
 #' Tested by Carruthers et al. 2015.
 #' 
 #' @param x A position in data-limited methods data object
@@ -2284,7 +2285,7 @@ class(LstepCC4) <- "MP"
 #' first year
 #' @param xL Parameter controlling the magnitude of the target mean length of
 #' catches relative to average length in catches.
-#' @return A numeric vector of TAC recommendations
+#' @return A \linkS4class{Rec} object
 #' @author T. Carruthers
 #' @references Carruthers et al. 2015. Performance evaluation of simple
 #' management procedures. ICES J. Mar Sci. 73, 464-482.
@@ -2292,8 +2293,8 @@ class(LstepCC4) <- "MP"
 #' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
 #' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
 #' doi:10.1093/icesjms/fst232
-#' @describeIn Ltarget1 The least biologically precautionary of four target length MPs proposed by
-#' Geromont and Butterworth 2014.
+#' @describeIn Ltarget1 The least biologically precautionary TAC-based MP.
+#' @seealso \link{L95target}
 #' @export Ltarget1
 Ltarget1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, xL = 1.05) {
   dependencies = "Data@Cat, Data@CV_Cat, Data@ML"
@@ -2320,8 +2321,7 @@ class(Ltarget1) <- "MP"
 
 
 
-#' @describeIn Ltarget1 The most biologically precautionary of four target length MPs proposed by
-#' Geromont and Butterworth 2014.
+#' @describeIn Ltarget1 The most biologically precautionary TAC-based MP.
 #' @export Ltarget4
 Ltarget4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.2, xL = 1.15) {
   dependencies = "Data@Cat, Data@CV_Cat, Data@ML"
@@ -2877,6 +2877,7 @@ class(SPslope) <- "MP"
 #' demographic methods to construct Bayesian priors for the intrinsic rate of
 #' increase in the Schaefer model and implications for stock rebuilding. Can.
 #' J. Fish. Aquat. Sci. 58: 1871-1890.
+#' @describeIn SPSRA Base version
 #' @export 
 SPSRA <- function(x, Data, reps = 100) {
   # Surplus productin stock reduction analysis T.Carruthers - basically
@@ -2916,25 +2917,9 @@ SPSRA <- function(x, Data, reps = 100) {
 }
 class(SPSRA) <- "MP"
 
-#' Surplus Production Stock Reduction Analysis using a mean-length estimate of
-#' current stock depletion
-#' 
-#' A surplus production equivalent of DB-SRA that uses a demographically
-#' derived prior for intrinsic rate of increase. A prior for depletion is
-#' calculated from a mean-length estimator
-#' 
-#' 
-#' @usage SPSRA_ML(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object (class DLM)
-#' @param reps The number of samples of the TAC taken
-#' @note The mean length extension was programmed by Gary Nelson as part of his
-#' excellent R package 'fishmethods'
-#' @author T. Carruthers
-#' @references McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
-#' demographic methods to construct Bayesian priors for the intrinsic rate of
-#' increase in the Schaefer model and implications for stock rebuilding. Can.
-#' J. Fish. Aquat. Sci. 58: 1871-1890.
+#' @describeIn SPSRA Variant that uses a mean-length mortality estimator to obtain
+#' a prior for current stock depletion. The mean length extension was programmed by 
+#' Gary Nelson as part of his excellent R package 'fishmethods'.
 #' @export SPSRA_ML
 SPSRA_ML <- function(x, Data, reps = 100) {
   dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@CAL, Data@Cat, Data@steep"

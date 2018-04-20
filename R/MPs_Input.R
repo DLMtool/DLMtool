@@ -534,33 +534,7 @@ class(ITe10) <- "MP"
 
 
 
-#' A management procedure that incrementally adjusts the effort to reach a
-#' target CPUE / relative abundance index
-#' 
-#' An effort-based version of the least biologically precautionary of two
-#' index/CPUE target MPs proposed by Geromont and Butterworth 2014. Tested by
-#' Carruthers et al. 2015
-#' 
-#' Tested by Carruthers et al. 2015.
-#' 
-#' @usage ItargetE1(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
-#' @param xx Parameter controlling the fraction of mean catch to start using in
-#' first year
-#' @param Imulti Parameter controlling how much larger target CPUE / index is
-#' compared with recent levels.
-#' @return A numeric vector of input controls
-#' @author T. Carruthers
-#' @references Carruthers et al. 2015. Performance evaluation of simple
-#' management procedures. Fish and Fisheries. In press.
-#' 
-#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
-#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
-#' doi:10.1093/icesjms/fst232
+#' @describeIn Itarget1 The less precautionary effort-based MP
 #' @export ItargetE1
 ItargetE1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5) {
   
@@ -594,32 +568,7 @@ class(ItargetE1) <- "MP"
 
 
 
-#' A management procedure that incrementally adjusts the Effort to reach a
-#' target CPUE / relative abundance index
-#' 
-#' An effort-based version of the most biologically precautionary of two
-#' index/CPUE target MPs proposed by Geromont and Butterworth 2014.
-#' 
-#' Tested by Carruthers et al. 2015.
-#' 
-#' @usage ItargetE4(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 2.5)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
-#' @param xx Parameter controlling the fraction of mean catch to start using in
-#' first year
-#' @param Imulti Parameter controlling how much larger target CPUE / index is
-#' compared with recent levels.
-#' @return A numeric vector of input controls
-#' @author T. Carruthers
-#' @references Carruthers et al. 2015. Performance evaluation of simple
-#' management procedures. Fish and Fisheries. In press.
-#' 
-#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
-#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
-#' doi:10.1093/icesjms/fst232
+#' @describeIn Itarget1 The most biologically precautionary effort-based MP
 #' @export ItargetE4
 ItargetE4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 2.5) {
   
@@ -655,28 +604,7 @@ class(ItargetE4) <- "MP"
 
 
 
-#' A management procedure that incrementally adjusts the TAC according to the
-#' mean length of recent catches.
-#' 
-#' A effort-based version of least biologically precautionary of four adaptive
-#' length-based MPs proposed by Geromont and Butterworth 2014. Tested by
-#' Carruthers et al. 2015
-#' 
-#' 
-#' @usage LstepCE1(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.05,
-#' llim = c(0.96, 0.98, 1.05))
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of effort samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
-#' @param xx Parameter controlling the fraction of mean catch to start using in
-#' first year
-#' @param stepsz Parameter controlling the size of the effort update increment.
-#' @param llim A vector of length reference points that determine the
-#' conditions for increasing, maintaining or reducing the effort.
-#' @return A numeric vector of input controls
-#' @author T. Carruthers
+#' @describeIn LstepCC1 The least biologically precautionary effort-based MP.
 #' @export LstepCE1
 LstepCE1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.05, 
                      llim = c(0.96, 0.98, 1.05)) {
@@ -712,27 +640,8 @@ class(LstepCE1) <- "MP"
 
 
 
-#' A management procedure that incrementally adjusts the Effort according to
-#' the mean length of recent catches.
-#' 
-#' A effort-based version of one of the four adaptive length-based MPs proposed
-#' by Geromont and Butterworth 2014.
-#' 
-#' 
-#' @usage LstepCE2(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.1,
-#' llim = c(0.96, 0.98, 1.05))
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
-#' @param xx Parameter controlling the fraction of mean catch to start using in
-#' first year
-#' @param stepsz Parameter controlling the size of the effort update increment.
-#' @param llim A vector of length reference points that determine the
-#' conditions for increasing, maintaining or reducing the effort.
-#' @return A numeric vector of input controls
-#' @author T. Carruthers
+
+#' @describeIn LstepCC1 The most precautionary effort-based MP.
 #' @export LstepCE2
 LstepCE2 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.1, 
                      llim = c(0.96, 0.98, 1.05)) {
@@ -764,25 +673,8 @@ class(LstepCE2) <- "MP"
 
 
 
-#' A management procedure that incrementally adjusts the Effort to reach a
-#' target mean length in catches.
-#' 
-#' A effort based version of the least biologically precautionary of four
-#' target length MPs proposed by Geromont and Butterworth 2014.
-#' 
-#' 
-#' @usage LtargetE1(x, Data, reps = 100, yrsmth = 5, xx = 0, xL = 1.05)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
-#' @param xx Parameter controlling the fraction of mean catch to start using in
-#' first year
-#' @param xL Parameter controlling the magnitude of the target mean length of
-#' catches relative to average length in catches.
-#' @return A numeric vector of input controls
-#' @author T. Carruthers
+
+#' @describeIn Ltarget1 The least biologically precautionary effort-based MP.
 #' @export LtargetE1
 LtargetE1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, xL = 1.05) {
   
@@ -816,25 +708,8 @@ class(LtargetE1) <- "MP"
 
 
 
-#' A management procedure that incrementally adjusts the Effort to reach a
-#' target mean length in catches.
-#' 
-#' A effort based version of the most biologically precautionary of four target
-#' length MPs proposed by Geromont and Butterworth 2014.
-#' 
-#' 
-#' @usage LtargetE4(x, Data, reps = 100, yrsmth = 5, xx = 0, xL = 1.15)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
-#' @param xx Parameter controlling the fraction of mean catch to start using in
-#' first year
-#' @param xL Parameter controlling the magnitude of the target mean length of
-#' catches relative to average length in catches.
-#' @return A numeric vector of input controls
-#' @author T. Carruthers
+
+#' @describeIn Ltarget1 The most biologically precautionary effort-based MP.
 #' @export LtargetE4
 LtargetE4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, xL = 1.15) {
   

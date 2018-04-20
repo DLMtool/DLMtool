@@ -2,21 +2,33 @@
 % Please edit documentation in R/Misc_Exported.R
 \name{sdconv}
 \alias{sdconv}
-\title{Get log normal standard deviation from transformed space mean and standard deviation}
+\alias{mconv}
+\title{Get parameters of lognormal distribution from mean and standard deviation in normal
+space}
 \usage{
 sdconv(m, sd)
+
+mconv(m, sd)
 }
 \arguments{
-\item{m}{mean}
+\item{m}{mean in normal space}
 
-\item{sd}{standard deviation}
+\item{sd}{standard deviation in normal space}
 }
 \value{
 numeric
 }
 \description{
-Get log normal standard deviation from transformed space mean and standard deviation
+Get parameters of lognormal distribution from mean and standard deviation in normal
+space
 }
+\section{Functions}{
+\itemize{
+\item \code{sdconv}: Returns sigma of lognormal distribution
+
+\item \code{mconv}: Returns mu of lognormal distribution
+}}
+
 \author{
 T. Carruthers
 }

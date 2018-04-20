@@ -43,6 +43,9 @@ data limited stocks using length-based reference points and survey biomass indic
 Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836,
 https://doi.org/10.1016/j.fishres.2014.11.013
 }
+\seealso{
+\link{Ltarget1} \link{L95target}
+}
 \author{
 Coded by Q. Huynh. Developed by Jardim et al. (2015)
 }

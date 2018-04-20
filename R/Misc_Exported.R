@@ -395,48 +395,49 @@ updateMSE <- function(MSEobj) {
 cv <- function(x) sd(x)/mean(x)
 
 
-#' Get log normal standard deviation from transformed space mean and standard deviation 
+#' Get parameters of lognormal distribution from mean and standard deviation in normal
+#' space
 #' 
-#' @param m mean 
-#' @param sd standard deviation
+#' @param m mean in normal space 
+#' @param sd standard deviation in normal space
 #' @author T. Carruthers
 #' @return numeric
+#' @describeIn sdconv Returns sigma of lognormal distribution
 #' @export
 sdconv <- function(m, sd) (log(1 + ((sd^2)/(m^2))))^0.5
 
-#' Get log normal mean from transformed space mean and standard deviation
-#' 
-#' @param m mean 
-#' @param sd standard deviation
-#' @author T. Carruthers
-#' @return numeric
+
+#' @describeIn sdconv Returns mu of lognormal distribution
+#' @export
 mconv <- function(m, sd) log(m) - 0.5 * log(1 + ((sd^2)/(m^2)))
 
-#' Calculate alpha parameter for beta distribution from mean and standard deviation 
+#' Calculate parameters for beta distribution from mean and standard deviation in
+#' normal space
 #' 
 #' @param m mean 
 #' @param sd standard deviation
 #' @author T. Carruthers
 #' @return numeric
+#' @describeIn alphaconv Returns alpha of beta distribution
 #' @export
 alphaconv <- function(m, sd) m * (((m * (1 - m))/(sd^2)) - 1)
 
-#' Calculate beta parameter for beta distribution from mean and standard deviation 
-#' 
-#' @param m mean 
-#' @param sd standard deviation
-#' @author T. Carruthers
-#' @return numeric
+
+#' @describeIn alphaconv Returns beta of beta distribution
 #' @export 
 betaconv <- function(m, sd) (1 - m) * (((m * (1 - m))/(sd^2)) - 1)
 
-#'  Generate log-normally distributed random numbers 
+#' Lognormal distribution for DLMtool 
+#' 
+#' Variant of rlnorm which returns the mean when reps = 1.
 #' 
 #' @param reps number of random numbers 
 #' @param mu mean 
 #' @param cv coefficient of variation
+#' @param x vector 
 #' @author T. Carruthers
 #' @return numeric
+#' @describeIn trlnorm Generate log-normally distributed random numbers 
 #' @export 
 trlnorm <- function(reps, mu, cv) {
   if (all(is.na(mu))) return(rep(NA, reps))
@@ -446,13 +447,8 @@ trlnorm <- function(reps, mu, cv) {
 }
 
 
-#'  Calculate density of log-normally distributed random numbers 
-#' 
-#' @param x vector 
-#' @param mu mean 
-#' @param cv coefficient of variation
-#' @author T. Carruthers
-#' @return numeric
+
+#' @describeIn trlnorm Calculate density of log-normally distributed random numbers 
 #' @export 
 tdlnorm <- function(x, mu, cv) dlnorm(x, mconv(mu, mu * cv), sdconv(mu, mu * cv))
 

@@ -1605,17 +1605,29 @@ PWhisker<-function(MSEobj){#},Pnames=c("POF","C30","D30","LD","DNC","LDNC","PGK"
 # }
 # 
 
-#' A trade-off plot for an MSE object
+#' Trade-off plots for an MSE object
 #' 
-#' A shorter version of the plot method for MSEs that just shows the overall
-#' trade-offs
-#' 
+#' Three figures showing trade-offs between fishing mortality, biomass, and yield.
 #' 
 #' @param MSEobj An object of class 'MSE'
 #' @param nam Name of the plot
-#' @author T. Carruthers
-#' @export Tplot
+#' @param ... Names of PM methods to plot
+#' @param lims Numeric vector of satisficing limits. Recycled to number of PM methods
+#' @author T. Carruthers & A. Hordyk
+#' @examples 
+#' \dontrun{
+#'  Tplot(myMSE)
+#'  Tplot2(myMSE)
+#'  Tplot3(myMSE)
+#' }
+#' @seealso \link{TradePlot} \link{PerformanceMetric}
+#' @describeIn Tplot Used in the plot method for MSE objects that shows trade-off between
+#' yield versus probability of overfishing and biomass levels (relative to BMSY).
+#' @export
 Tplot <- function(MSEobj, nam = NA) {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(old_par))
+  
   FMSYr <- quantile(MSEobj@F_FMSY, c(0.001, 0.9), na.rm = T)
   BMSYr <- quantile(MSEobj@B_BMSY, c(0.001, 0.975), na.rm = T)
   
@@ -1651,8 +1663,7 @@ Tplot <- function(MSEobj, nam = NA) {
   }
   
   # dev.new2(width=7,height=7)
-  old_par <- par(mfrow = c(2, 2), mai = c(0.9, 1, 0.1, 0.1), 
-                 omi = c(0.1, 0.1, 0.4, 0))
+  par(mfrow = c(2, 2), mar = c(5, 4, 1, 1), oma = c(0, 0, 2, 0))
   
   tradeoffplot(POF, Yd, "Prob. of overfishing (%)", "Relative yield", 
                MSEobj@MPs[1:MSEobj@nMPs], vl = 50, hl = 100)
@@ -1669,28 +1680,23 @@ Tplot <- function(MSEobj, nam = NA) {
     mtext(MSEobj@Name, 3, outer = T, line = 0.3, font = 2)
   if (!is.na(nam) & is.character(nam)) 
     mtext(nam, 3, outer = T, line = 0.3, font = 2)
-  par(old_par)
+  return(invisible())
 }
 
 
 
-#' A shorter version of the plot method for MSEs that just shows the overall
-#' trade-offs
-#' 
-#' A trade-off plot for an MSE object that compares long-term yield (LTY:
+#' @describeIn Tplot Simpler plot that compares long-term yield (LTY:
 #' fraction of simulations getting over half FMSY yield in the last ten years
 #' of the projection), short-term yield (STY: fraction of simulations getting
 #' over half FMSY yield in the first ten years of the projection), variability
 #' in yield (VY: fraction of simulations where average annual variability in
 #' yield is less than 10 per cent) and biomass level (B10: the fraction of
 #' simulations in which biomass stays above 10 percent of BMSY).
-#' 
-#' 
-#' @param MSEobj An object of class 'MSE'
-#' @param nam Name of the plot
-#' @author T. Carruthers
-#' @export Tplot2
+#' @export
 Tplot2 <- function(MSEobj, nam = NA) {
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(old_par))
+  
   LTY <- rep(NA, MSEobj@nMPs)
   STY <- rep(NA, MSEobj@nMPs)
   VY <- rep(NA, MSEobj@nMPs)
@@ -1711,37 +1717,29 @@ Tplot2 <- function(MSEobj, nam = NA) {
     B10[mm] <- round(sum(MSEobj@B_BMSY[, mm, ] > 0.1, na.rm = T)/prod(dim(MSEobj@B_BMSY[, 
                                                                                         mm, ])), 3) * 100
   }
-  op <- par(mfrow = c(1, 2), mai = c(1.5, 1.5, 0.1, 0.1), omi = c(0.1, 0.1, 
-                                                                  0.4, 0))
-  tradeoffplot(STY, LTY, "P(Short term yield over half FMSY)", "P(Long term yield over half FMSY)", 
+  par(mfrow = c(1, 2), mar = c(5, 4, 1, 1), oma = c(0, 0, 2, 0))
+  browser()
+  tradeoffplot(STY, LTY, "P(Short term yield > 0.5 FMSY)", "P(Long term yield > 0.5 FMSY)", 
                MSEobj@MPs[1:MSEobj@nMPs], vl = 1, hl = 1)
-  tradeoffplot(B10, VY, "P(Biomass > 0.1 BMSY)", "P(CV in yield less than 0.1)", 
+  tradeoffplot(B10, VY, "P(Biomass > 0.1 BMSY)", "P(CV in yield < 0.1)", 
                MSEobj@MPs[1:MSEobj@nMPs], vl = 1, hl = 1)
   if (is.na(nam)) 
     mtext(deparse(substitute(MSEobj)), 3, outer = T, line = 0.3, font = 2)
   if (!is.na(nam)) 
     mtext(MSEobj@Name, 3, outer = T, line = 0.3, font = 2)
-  par(op)
+  return(invisible())
 }
 
-#' Test Trade-Off Plot
-#'
-#' @param MSEobj An object of class MSE
-#' @param ... Names of PM methods to plot
-#' @param lims Numeric vector of satisficing limits. Recycled to number of PM methods
-#' @return produces a plot 
-#' @author A. Hordyk
+
+#' @describeIn Tplot By default, trade-off plots among LTY, STY, and biomass level B50 
+#' (fraction of simulations in which biomass stays above 50 percent of BMSY), and 
+#' Average Annual Variability in Yield (AAVY).
 #' @importFrom ggplot2 ggplot aes geom_rect geom_point xlim ylim xlab ylab theme theme_classic labs ggplotGrob
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom gridExtra arrangeGrob
 #' @importFrom grid unit.c unit grid.newpage grid.draw
 #' @importFrom utils combn
 #' @export
-#'
-#' @examples 
-#' \dontrun{
-#'  Tplot3(myMSE)
-#' }
 Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
   PMlist <- unlist(list(...))
   if(length(PMlist) == 0) PMlist <- c("LTY", "STY", "P50", "AAVY")
@@ -1853,12 +1851,13 @@ Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
 #' @author A. Hordyk
 #' @export TradePlot
 TradePlot <- function(MSEobj, XAxis = c("Overfishing", "Biomass:BMSY"), 
-                      YAxis = c("Long-term Yield", "AnnualVar"), XThresh = c(30, 80), YThresh = c(0, 
-                                                                                                  50), maxVar = 15, BmsyRef = 0.5, B0Ref = 0.2, AvailMPs = NULL, 
-                      ShowLabs = FALSE, ShowCols = TRUE) {
+                      YAxis = c("Long-term Yield", "AnnualVar"), XThresh = c(30, 80), 
+                      YThresh = c(0, 50), maxVar = 15, BmsyRef = 0.5, B0Ref = 0.2, 
+                      AvailMPs = NULL, ShowLabs = FALSE, ShowCols = TRUE) {
   PMs <- c("Long-term Yield", "Short-term Yield", "Overfishing", "Biomass:BMSY", 
            "Biomass:B0", "AnnualVar")
   op <- par(no.readonly=TRUE)
+  on.exit(par(op))
   # Error Checks
   if (prod(XAxis %in% PMs) != 1) {
     message("Available Performance Metrics")
@@ -1960,8 +1959,7 @@ TradePlot <- function(MSEobj, XAxis = c("Overfishing", "Biomass:BMSY"),
     OutList[[xx]] <- tempDF
   }
   
-  # print(OutList)
-  par(op)
+  
   OutList
   
 }

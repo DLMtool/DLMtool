@@ -289,14 +289,9 @@ range01 <- function(x) {
   (x - min(x))/(max(x) - min(x)) 
 }
 
-#' runMSE with no messages - for testing 
-#'
-#' For testing purposes only 
-#' @param ... Arguments to runMSE function 
-#'
+#' @describeIn runMSE Function suppresses messages - for testing purposes only.
 #' @keywords internal
 #' @importFrom utils capture.output
-#'
 runMSEnomsg <- function(...) {
   capture.output(out <- suppressMessages(runMSE(...)))
   out
@@ -314,8 +309,8 @@ run_parallel <- function(i, itsim, OM, MPs, CheckMPs, timelimit, Hist, ntrials, 
 }
 
 assign_DLMenv <- function() {
-  DLMenv_list <- sfClusterEval(mget(ls(DLMenv), envir = DLMenv)) # Grab objects from cores' DLMenv
-  clean_env <- sfClusterEval(rm(list = ls(DLMenv), envir = DLMenv)) # Remove cores' DLMenv objects
+  DLMenv_list <- parallel::sfClusterEval(mget(ls(DLMenv), envir = DLMenv)) # Grab objects from cores' DLMenv
+  clean_env <- parallel::sfClusterEval(rm(list = ls(DLMenv), envir = DLMenv)) # Remove cores' DLMenv objects
   env_names <- unique(do.call(c, lapply(DLMenv_list, names)))
   
   if(length(env_names) > 0) {

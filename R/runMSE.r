@@ -29,9 +29,8 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' 
 #' 
 #' @param OM An operating model object (class 'OM')
-#' @param MPs A vector of methods (character string) of class Output or
-#' Input.
-#' @param CheckMPs Logical to indicate if Can function should be used to check
+#' @param MPs A vector of methods (character string) of class MP
+#' @param CheckMPs Logical to indicate if \link{Can} function should be used to check
 #' if MPs can be run.
 #' @param timelimit Maximum time taken for a method to carry out 10 reps
 #' (methods are ignored that take longer)
@@ -40,7 +39,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @param ntrials Maximum of times depletion and recruitment deviations are 
 #' resampled to optimize for depletion. After this the model stops if more than 
 #' percent of simulations are not close to the required depletion
-#' @param fracD maximum allowed proportion of simulations where depletion is not 
+#' @param fracD Maximum allowed proportion of simulations where depletion is not 
 #' close to sampled depletion from OM before model stops with error
 #' @param CalcBlow Should low biomass be calculated where this is the spawning
 #' biomass at which it takes HZN mean generation times of zero fishing to reach 
@@ -56,11 +55,20 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @param save_name Character. Optional name to save parallel MSE list
 #' @param checks Logical. Run tests?
 #' @param control control options for testing and debugging
-#' @return An object of class MSE
+#' @param maxsims Maximum number of simulations per packet
+#' @param name Character string for name of saved MSE packets (if \code{savePack=TRUE}) 
+#' and final MSE object. If none provided, it uses the first five letters from the \code{OM} name
+#' @param unique Logical. Should the name be unique? Current date and time appended to name. 
+#' @param maxCrash Maximum number of consecutive crashes before the MSE stops
+#' @param saveMSE Logical to indicate if final MSE object should be saved to current 
+#' working directory (this is probably a good idea)
+#' @param savePack Logical to indicate if packets should be save to current working directory
+#' @param ... Arguments to runMSE function 
+#' @return An object of class \linkS4class{MSE}
 #' @author T. Carruthers and A. Hordyk
 #' @importFrom utils ls.str
+#' @describeIn runMSE Default function to use.
 #' @export
-#' 
 runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
                    CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=TRUE, 
                    HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=FALSE, parallel=FALSE, 
@@ -1351,50 +1359,17 @@ cparnamecheck<-function(cpars){
 }
 
 
-#' Run a Management Strategy Evaluation
-#' 
-#' Run a Management Strategy Evaluation and save out the results to a Rdata
+#' @describeIn runMSE Save out the results to a Rdata
 #' file.  To increase speed and efficiency, particulary for runs with a large
 #' number simulations (\code{nsim}), the simulations are split into a number of
 #' packets.  The functions loops over the packets and combines the output into
 #' a single MSE object. If the MSE model crashes during a run, the MSE is run
 #' again until it is successfully completed. The MSE is stopped if the number
-#' of consecutive crashes exceeds \code{maxCrash}.  There is an ption to save
+#' of consecutive crashes exceeds \code{maxCrash}.  There is an option to save
 #' the packets as Rdata files to the current working directory (default is
 #' FALSE). By default, the functions saves the completed MSE object as a Rdata
 #' file (to the current working directory).
-#' 
-#' @param OM An operating model object (class OM)
-#' @param MPs A vector of methods (character string) of class Output or
-#' Input.
-#' @param timelimit Maximum time taken for a method to carry out 10 reps
-#' (methods are ignored that take longer)
-#' @param CheckMPs Logical to indicate if Can function should be used to check
-#' if MPs can be run.
-#' @param Hist Should model stop after historical simulations? Returns a list 
-#' containing all historical data
-#' @param ntrials Maximum of times depletion and recruitment deviations are 
-#' resampled to optimize for depletion. After this the model stops if more than 
-#' percent of simulations are not close to the required depletion
-#' @param fracD maximum allowed proportion of simulations where depletion is not 
-#' close to sampled depletion from OM before model stops with error
-#' @param CalcBlow Should low biomass be calculated where this is the spawning
-#' biomass at which it takes HZN mean generation times of zero fishing to reach 
-#' @param HZN The number of mean generation times required to reach Bfrac SSBMSY
-#' in the Blow calculation
-#' @param Bfrac fraction of SSBMSY
-#' @param AnnualMSY Logical. Should MSY statistics be calculated for each projection year? 
-#' @param maxsims Maximum number of simulations per packet
-#' @param name Character string for name of saved MSE packets (if \code{savePack=TRUE}) 
-#' and final MSE object. If none provided, it uses the first five letters from the \code{OM} name
-#' @param unique Logical. Should the name be unique? Current date and time appended to name. 
-#' @param maxCrash Maximum number of consecutive crashes before the MSE stops
-#' @param saveMSE Logical to indicate if final MSE object should be saved to current 
-#' working directory (this is probably a good idea)
-#' @param savePack Logical to indicate if packets should be save to current working directory
-#' @return An object of class MSE
-#' @author A. Hordyk and T. Carruthers
-#' @export runMSErobust
+#' @export
 runMSErobust <- function(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE", "matlenlim", "MRreal"), 
                          timelimit = 1, CheckMPs = FALSE, Hist = FALSE, 
                          ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2, Bfrac = 0.5, AnnualMSY=TRUE,

@@ -2,9 +2,12 @@
 % Please edit documentation in R/MPs_Output.R
 \name{SPSRA}
 \alias{SPSRA}
+\alias{SPSRA_ML}
 \title{Surplus Production Stock Reduction Analysis}
 \usage{
 SPSRA(x, Data, reps = 100)
+
+SPSRA_ML(x, Data, reps = 100)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -18,6 +21,15 @@ the quota}
 A surplus production equivalent of DB-SRA that uses a demographically
 derived prior for intrinsic rate of increase (McAllister method, below)
 }
+\section{Functions}{
+\itemize{
+\item \code{SPSRA}: Base version
+
+\item \code{SPSRA_ML}: Variant that uses a mean-length mortality estimator to obtain
+a prior for current stock depletion. The mean length extension was programmed by
+Gary Nelson as part of his excellent R package 'fishmethods'.
+}}
+
 \references{
 McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
 demographic methods to construct Bayesian priors for the intrinsic rate of
