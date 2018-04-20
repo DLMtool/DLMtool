@@ -131,17 +131,24 @@ getEffhist <- function(Esd, nyears, EffYears, EffLower, EffUpper) {
     
     Effs <- mapply(runif, n = nsim, min = EffLower, max = EffUpper)  # sample Effort
     if (nsim > 1) {
-      effort <- t(sapply(1:nsim, function(x) approx(x = refYear, 
-                                                    y = Effs[x, ], method = "linear", n = nyears)$y))  # linear interpolation
-    }
-    
-    
+      if (ncol(Effs) == 1) {
+        effort <- matrix(Effs, nrow=nsim, ncol=nyears)
+      } else {
+        effort <- t(sapply(1:nsim, function(x) approx(x = refYear, 
+                                                      y = Effs[x, ], method = "linear", n = nyears)$y))  # linear interpolation
+      }
+      
+    } 
     if (nsim == 1) {
-      # Effs <- Effs/max(Effs)
-      effort <- matrix(approx(x = refYear, y = Effs, method = "linear", n = nyears)$y, nrow = 1)
+      if (length(Effs) == 1) {
+        effort <- matrix(Effs, nrow=nsim, ncol=nyears)
+      } else {
+        effort <- matrix(approx(x = refYear, y = Effs, method = "linear", n = nyears)$y, nrow = 1)
+      }
     }
+  
+    if (!all(effort == mean(effort))) effort <- range01(effort)  
     
-    effort <- range01(effort)
     effort[effort == 0] <- 0.01
     
     Emu <- -0.5 * Esd^2
