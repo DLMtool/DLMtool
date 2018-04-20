@@ -68,6 +68,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @author T. Carruthers and A. Hordyk
 #' @importFrom utils ls.str
 #' @describeIn runMSE Default function to use.
+#' @seealso \link{joinMSE} \link{checkMSE} \link{updateMSE}
 #' @export
 runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
                    CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=TRUE, 

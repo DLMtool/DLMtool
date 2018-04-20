@@ -345,17 +345,11 @@ RepmissingVal <- function(object, name, vals=NA) {
   return(object)
 }
 
-#' Update an MSE object with new slots
-#' 
-#' Updates an existing MSE object (class MSE) from a previous version of the
-#' DLMtool to include the new slots.  The slots will be empty, but avoids the
-#' 'slot doesn't exist' error that sometimes occurs. Also works with Stock, Fleet,
-#' Obs, Imp, and Data objects. 
-#' 
-#' @param MSEobj A MSE object from a previous version of the DLMtool. 
-#' Also works with Stock, Fleet, Obs, Imp, and Data objects. 
-#' @return An object of class matching class(MSEobj)
-#' @author A. Hordyk
+#' @describeIn checkMSE Updates an existing MSE object (class MSE) from a previous version of the
+#' DLMtool to include slots new to the lastest version. Also works with Stock, 
+#' Fleet, Obs, Imp, and Data objects. The new slots will be empty, 
+#' but avoids the 'slot doesn't exist' error that sometimes occurs. 
+#' Returns an object of class matching class(MSEobj)
 #' @export 
 updateMSE <- function(MSEobj) {
   slots <- slotNames(MSEobj)

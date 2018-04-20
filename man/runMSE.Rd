@@ -106,6 +106,9 @@ FALSE). By default, the functions saves the completed MSE object as a Rdata
 file (to the current working directory).
 }}
 
+\seealso{
+\link{joinMSE} \link{checkMSE} \link{updateMSE}
+}
 \author{
 T. Carruthers and A. Hordyk
 }
