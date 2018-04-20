@@ -380,10 +380,15 @@
 "OMDescription"
 
 
-#'  LHdata data.frame
+#'  LHdatabase 
 #'
-#'  An object of class data.frame
+#'  Database from the FishLife package with predicted life-history parameters for all species on FishBase
+#' 
+#' @references Thorson, J. T., S. B. Munch, J. M. Cope, and J. Gao. 2017. 
+#' Predicting life history parameters for all fishes worldwide. Ecological Applications. 27(8): 2262--2276  
+#' @source \url{https://github.com/James-Thorson/FishLife/} 
 #'
-"LHdata"
+#'
+"LHdatabase"
 
 
