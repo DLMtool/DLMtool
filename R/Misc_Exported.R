@@ -303,7 +303,7 @@ Required <- function(funcs = NA) {
 #' @param cpus number of CPUs 
 #' @param ... other arguments passed to 'snowfall::sfInit'
 #' @importFrom snowfall sfInit sfExportAll sfIsRunning sfExport sfSapply sfLibrary
-#' @importFrom parallel detectCores
+#' @importFrom parallel detectCores 
 #' @examples
 #' \dontrun{
 #' setup() # set-up 4 processors

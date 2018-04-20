@@ -324,7 +324,7 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
   }
   
   # get predictions from FishLife 
-  taxa <- gettaxa(Genus, Species, Class, Order, Family)
+  taxa <- gettaxa(Class, Order, Family, Genus, Species)
   if (is.null(taxa)) return(NULL)
   if (class(db) != "list") stop("db must be database list from FishLife", call.=FALSE)
   Which <- grep(taxa, db$ParentChild_gz[,'ChildName'])
@@ -807,9 +807,8 @@ SubOM <- function(OM, Sub=c("Stock", "Fleet", "Obs", "Imp")) {
 
 # modified from FishLife::Search_species
 # https://github.com/James-Thorson/FishLife
-gettaxa <- function(Genus="predictive", Species="predictive", 
-                    Class = "predictive", Order = "predictive", 
-                    Family = "predictive",
+gettaxa <- function(Class = "predictive", Order = "predictive", 
+                    Family = "predictive", Genus="predictive", Species="predictive",
                     ParentChild_gz=DLMtool::LHdatabase$ParentChild_gz,
                     msg=TRUE) {
 
@@ -819,7 +818,7 @@ gettaxa <- function(Genus="predictive", Species="predictive",
   if (Order != "predictive") 
     Match = Match[which(tolower(rfishbase::fishbase$Order[Match]) == tolower(Order))]
   if (Family != "predictive") 
-    Match = Match[which(tolower(rfishbase::fishbase$Family[Match]) == lower(Family))]
+    Match = Match[which(tolower(rfishbase::fishbase$Family[Match]) == tolower(Family))]
   if (Genus != "predictive") 
     Match = Match[which(tolower(rfishbase::fishbase$Genus[Match]) == tolower(Genus))]
   if (Species != "predictive") 

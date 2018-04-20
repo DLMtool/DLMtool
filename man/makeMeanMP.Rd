@@ -16,7 +16,7 @@ A function of class MP
 Create an MP that averages the results of multiple MPs
 }
 \examples{
-
+\dontrun{
 MeanMP <- makeMeanMP(c("AvC", "DCAC"))
 MSE <- runMSE(DLMtool::testOM, MPs=c("AvC", "DCAC", "MeanMP"))
 Tplot2(MSE)
@@ -26,5 +26,5 @@ Data <- DLMtool::SimulatedData
 matlenlim(1, Data)
 matlenlim2(1, Data)
 MeanMP(1, Data)
-
+}
 }

@@ -74,7 +74,7 @@ class(AvC_MLL) <- "MP"
 #' @export
 #'
 #' @examples
-#' 
+#' \dontrun{
 #' MeanMP <- makeMeanMP(c("AvC", "DCAC"))
 #' MSE <- runMSE(DLMtool::testOM, MPs=c("AvC", "DCAC", "MeanMP"))
 #' Tplot2(MSE)
@@ -84,7 +84,8 @@ class(AvC_MLL) <- "MP"
 #' matlenlim(1, Data)
 #' matlenlim2(1, Data)
 #' MeanMP(1, Data)
-#'
+#' }
+
 makeMeanMP <- function(MPs) {
   if (length(MPs)<2) stop("Must provide more than one MP")
   if (class(MPs) != 'character') stop("MPs must be a character vector")
