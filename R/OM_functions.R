@@ -189,7 +189,7 @@ LH2OM <- function(OM, dist=c("unif", "norm"), filterMK=TRUE, plot=TRUE,
   
   Out <- predictLH(inpars=list(Linf=Linf, L50=L50, K=K, M=M), 
                    Genus, Species, nsamp=OM@nsim, dist=dist, 
-                   filterMK=filterMK, plot=plot, Class, Order, Family)
+                   filterMK=filterMK, plot=plot, Class=Class, Order=Order, Family=Family)
   if (is.null(Out)) {
     message('Could not complete prediction. Returning original OM')
     return(OM)
@@ -326,7 +326,7 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
   # get predictions from FishLife 
   taxa <- gettaxa(Genus, Species, Class, Order, Family)
   if (is.null(taxa)) return(NULL)
- 
+  if (class(db) != "list") stop("db must be database list from FishLife", call.=FALSE)
   Which <- grep(taxa, db$ParentChild_gz[,'ChildName'])
   mu <- db$ParHat$beta_gj[Which,]
   covar <- db$Cov_gjj[Which,,]
