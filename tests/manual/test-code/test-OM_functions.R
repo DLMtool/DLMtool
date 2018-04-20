@@ -34,6 +34,23 @@ for (type in types) {
 }
   
   
+
+library(DLMextra)
+rm(list=ls())
+OMs <- avail('OM')
+
+for (om in OMs) {
+  testthat::test_that(paste("LH2OM works with ", om), {
+    OM <- get(om)
+    testthat::expect_error(LH2OM(OM, 'norm'), NA)
+    testthat::expect_error(LH2OM(OM, 'unif'), NA)
+  })
+}
+
+
+
+
+
   
  
                     
