@@ -3,6 +3,44 @@
 # === Tools for COSEWIC designation ========================================
 # ==========================================================================
 
+#' COSEWIC MSE run using the correct MPs and projected time horizon
+#'
+#' Dedicated functions for MSE run and reporting for COSEWIC (Committee on the Status of 
+#' Endangered Wildlife in Canada). MSE projects for 6x maximum age using NFref, FMSYref and curE
+#' management procedures.
+#'
+#' @param OM An operating model object of class OM
+#' @param MSEobj An object of class MSE with `MPs = c("NFref", "FMSYref", "curE")`
+#' @param rnd The number of significant figures for rounding.
+#' @param GTs A vector of mean generation times to evaluate performance metrics over
+#' @param syear Current year, starting year for projections (e.g. 2017)
+#' @param nGT Number of generation times. For `COSEWIC_tab`, for moving window of SSB chance (metrics A1 and A2). For 
+#' `COSEWIC_Blow` and `COSEWIC_Dplot`, used for projections (the number of projection years should be greater than \code{MaxAge * nGT}).
+#' @param Ptab1 A COSEWIC performance table made by `COSEWIC_tab`
+#' @param thresh A vector of thresholds for each column Health, Yield and Reb are 'greater than threshold' conditions 
+#' @param output_file The directory and filename you wish to use for the report e.g. "C:/temp/myMSEreport.html"
+#' @param author The person who made this report
+#' @param title The title of the report
+#' @param qcol Color of shaded regions (bars, quantiles)
+#' @param lcol Color of lines
+#' @param quants Quantiles of the shaded regions (vector 5 long e.g. 0.1, 0.2, 0.5, 0.8, 0.9)
+#' @author T. Carruthers
+#' @describeIn runCOSEWIC Calls `runMSE` with number of projection years for 6x maximum age and 
+#' uses `NFref`, `FMSYref`, and `curE` MPs.
+#' @references
+#' \url{https://www.canada.ca/en/environment-climate-change/services/committee-status-endangered-wildlife.html}
+#' @export runCOSEWIC
+runCOSEWIC<-function(OM){
+  
+  if(OM@nsim<100)message(paste0("Your operating model specifies only ",OM@nsim," simulations. You may wish to do 200+ simulations to ensure suitably precise probability calculations"))
+  OM@interval=2
+  OM@proyears<-OM@maxage*6
+  MSEobj<-runMSE(OM,MPs=c("NFref","FMSYref","curE"))
+  class(MSEobj)<-"COSEWIC"
+  MSEobj
+  
+}
+
 
 
 #' Deparment of Fisheries and Oceans historical plot
@@ -607,50 +645,8 @@ plotquant2<-function(x,p=c(0.1,0.9),yrs,qcol,lcol,addline=T){
 }
 
 
-#' COSEWIC Historical projection plot
-#'
-#' Historical spawning stock trajectories relative to unfished and MSY levels.   
-#'
-#' @param MSEobj An object of class MSE created from runMSE() with the argument MPs=c("NFref","FMSYref","curE")
-#' @param syear Starting year of the projection for graphing purposes
-#' @param qcol Color of shaded regions (bars, quantiles)
-#' @param lcol Color of lines
-#' @param quants Quantiles of the shaded regions (vector 5 long e.g. 0.1, 0.2, 0.5, 0.8, 0.9)
-#' @return A plot
-#' @author T. Carruthers
-#' @export COSEWIC_Hplot
-COSEWIC_Hplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",quants=c(0.05,0.25,0.5,0.75,0.95)){
 
-  op<-par(mai=c(0.6,0.6,0.05,0.05),omi=c(0.05,0.05,0.3,0.05))
-  layout(matrix(1:4,ncol=2),heights=c(2.5,1))
-  proyears<-dim(MSEobj@B_BMSY)[3]
-  nyears<-dim(MSEobj@SSB_hist)[3]
-  yrs<-syear-((nyears:1)-1)
-  maxage<-dim(MSEobj@CAA)[3]
-  MGT<-ceiling(MSEobj@OM$MGT)
-  if(proyears<maxage*3)message("This function requires a suitably long time horizon for projections. Please create a COSEWIC class MSE object using the function runCOSEWIC()")
-  timehorizon<-MGT*3
-  
-  #Spawning biomass extraction
-  SSB<-apply(MSEobj@SSB_hist,c(1,3),sum)
-  
-  # Depletion plot relative to B0
-  D<-SSB/MSEobj@OM$SSB0
-  Blims <- c(0,quantile(D,0.98))
-  DFO_Dplot(D,qcol,lcol,Blims,yrs,MSY=F,quants=quants)
-  mtext("Relative to unfished levels",3,line=0.8)
-  
-  DFO_cbar(D[,nyears],qcol,lcol,syear,MSY=F)
-  
-  # Depletion plot relative to BMSY
-  SSBrel<-SSB/MSEobj@OM$SSBMSY
-  Blims <- c(0,quantile(SSBrel,0.98))
-  DFO_Dplot(SSBrel,qcol,lcol,Blims,yrs,MSY=T,quants=quants)
-  mtext("Relative to MSY levels",3,line=0.8)
-  
-  DFO_cbar(SSBrel[,nyears],qcol,lcol,syear,MSY=T)
-  on.exit(par(op))
-}
+
 
 DFO_cbar<-function(finalD,qcol,lcol,syear=2017,quants=c(0.05,0.25,0.5,0.75,0.95),MSY=F){
   
@@ -725,18 +721,8 @@ DFO_cosplot<-function(SSBd,qcol,lcol,Blims,yrs,quants=c(0.05,0.25,0.5,0.75,0.95)
 }  
 
 
-#' COSEWIC Projection plot
-#'
-#' Projection of spawning stock biomass under three scenarios: no catch, FMSY fishing and status quo fishing effort
-#' This plot if for an MSE object created from runMSE with the argument MPs=c("NFref","FMSYref","curE")
-#'
-#' @param MSEobj An object of class MSE created from runMSE() with the argument MPs=c("NFref","FMSYref","curE")
-#' @param syear Starting year of the projection for graphing purposes
-#' @param qcol Color of shaded regions (bars, quantiles)
-#' @param lcol Color of lines
-#' @param quants Quantiles of the shaded regions (vector 5 long e.g. 0.1, 0.2, 0.5, 0.8, 0.9)
-#' @return A plot
-#' @author T. Carruthers
+#' @describeIn runCOSEWIC Projection plots of spawning stock biomass under three scenarios: 
+#' no catch, FMSY fishing and status quo fishing effort.
 #' @export COSEWIC_Pplot
 COSEWIC_Pplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",quants=c(0.05,0.25,0.5,0.75,0.95)){
 
@@ -778,21 +764,9 @@ COSEWIC_Pplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerb
   on.exit(par(op))
 }
 
-#' COSEWIC Depletion plot
-#'
-#'
-#' These plots evaluate whether significant declines have occured over three generation times in both historical 
-#' and projection years
-#'
-#' @param MSEobj An object of class MSE created from runMSE() with the argument MPs=c("NFref","FMSYref","curE")
-#' @param syear Starting year of the projection for graphing purposes
-#' @param qcol Color of shaded regions (bars, quantiles)
-#' @param lcol Color of lines
-#' @param quants Quantiles of the shaded regions (vector 5 long e.g. 0.1, 0.2, 0.5, 0.8, 0.9)
-#' @param nGT Number of generations for projections. The number of projection years should be greater than \code{MaxAge * nGT}
-#' @return A plot
-#' @author T. Carruthers
-#' @export COSEWIC_Dplot
+#' @describeIn runCOSEWIC Depletion plots evaluate whether significant declines have 
+#' occurred over three generation times in both historical and projection years.
+#' @export
 COSEWIC_Dplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",quants=c(0.05,0.25,0.5,0.75,0.95),nGT=3){
   
   if(class(MSEobj)!="COSEWIC")stop("The MSE object you have provided is not of class COSEWIC, 
@@ -834,20 +808,9 @@ COSEWIC_Dplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerb
   on.exit(par(op))
 }
 
-#' COSEWIC Blow plot
-#'
-#'
-#' These plots evaluate the likelihood of declining below Blow, by default biomass that it takes 3 generation times to reach half BMSY with zero fishing 
-#'
-#' @param MSEobj An object of class MSE created from runMSE() with the argument MPs=c("NFref","FMSYref","curE")
-#' @param syear Starting year of the projection for graphing purposes
-#' @param qcol Color of shaded regions (bars, quantiles)
-#' @param lcol Color of lines
-#' @param quants Quantiles of the shaded regions (vector 5 long e.g. 0.1, 0.2, 0.5, 0.8, 0.9)
-#' @param nGT Number of generations for projections. The number of projection years should be greater than \code{MaxAge * nGT}
-#' @return A plot
-#' @author T. Carruthers
-#' @export 
+#' @describeIn runCOSEWIC Plots that evaluate the likelihood of declining below `Blow`, 
+#' by default, biomass that takes 3 generation times to reach half BMSY with zero fishing 
+#' @export
 COSEWIC_Blow<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",quants=c(0.05,0.25,0.5,0.75,0.95),nGT=3){
   
   if(class(MSEobj)!="COSEWIC")stop("The MSE object you have provided is not of class COSEWIC, 
@@ -897,6 +860,40 @@ COSEWIC_Blow<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerbl
   on.exit(par(op))
 }
 
+#' @describeIn runCOSEWIC Plots of historical spawning stock  relative to unfished and MSY levels.   
+#' @export
+COSEWIC_Hplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",quants=c(0.05,0.25,0.5,0.75,0.95)){
+  
+  op<-par(mai=c(0.6,0.6,0.05,0.05),omi=c(0.05,0.05,0.3,0.05))
+  layout(matrix(1:4,ncol=2),heights=c(2.5,1))
+  proyears<-dim(MSEobj@B_BMSY)[3]
+  nyears<-dim(MSEobj@SSB_hist)[3]
+  yrs<-syear-((nyears:1)-1)
+  maxage<-dim(MSEobj@CAA)[3]
+  MGT<-ceiling(MSEobj@OM$MGT)
+  if(proyears<maxage*3)message("This function requires a suitably long time horizon for projections. Please create a COSEWIC class MSE object using the function runCOSEWIC()")
+  timehorizon<-MGT*3
+  
+  #Spawning biomass extraction
+  SSB<-apply(MSEobj@SSB_hist,c(1,3),sum)
+  
+  # Depletion plot relative to B0
+  D<-SSB/MSEobj@OM$SSB0
+  Blims <- c(0,quantile(D,0.98))
+  DFO_Dplot(D,qcol,lcol,Blims,yrs,MSY=F,quants=quants)
+  mtext("Relative to unfished levels",3,line=0.8)
+  
+  DFO_cbar(D[,nyears],qcol,lcol,syear,MSY=F)
+  
+  # Depletion plot relative to BMSY
+  SSBrel<-SSB/MSEobj@OM$SSBMSY
+  Blims <- c(0,quantile(SSBrel,0.98))
+  DFO_Dplot(SSBrel,qcol,lcol,Blims,yrs,MSY=T,quants=quants)
+  mtext("Relative to MSY levels",3,line=0.8)
+  
+  DFO_cbar(SSBrel[,nyears],qcol,lcol,syear,MSY=T)
+  on.exit(par(op))
+}
 
 #' Subset an OM cpars slot 
 #'
@@ -954,15 +951,8 @@ DFO_report<-function(MSEobj,output_file=NA,author="Author not specified",title=N
 }
 
 
-#' Create a standard DFO COSEWIC report 
-#'
-#' Provides performance plots to inform COSEWIC processes in Canadian fish stocks.  
-#'
-#' @param MSEobj An object of class MSE
-#' @param output_file The directory and filename you wish to use for the report e.g. "C:/temp/myMSEreport.html"
-#' @param author The person who made this report
-#' @param title The title of the report
-#' @author T. Carruthers
+#' @describeIn runCOSEWIC Create a standard DFO COSEWIC report (provides performance plots 
+#' to inform COSEWIC processes in Canadian fish stocks).  
 #' @export COSEWIC_report
 COSEWIC_report<-function(MSEobj,output_file=NA,author="Author not specified",title=NA){
   
@@ -1147,26 +1137,21 @@ DFO_tab_formatted<-function(Ptab1,thresh=c(10,     40,     50,    50,    50,  10
                        "",""))
   
 }
-#' Create a standard COSEWIC performance table 
-#'
-#' P_Cr is the probability of being in the critical zone (less than 20% depletion)
-#' P_Ct is the probability of being in the cautious zone (between 20% and 40% depletion)
-#' P_H is the probability of being in the healthy zone (above 40% depletion)
-#' P_Cr_MSY is the probability of being in the critical zone (less than 40% BMSY)
-#' P_Ct_MSY is the probability of being in the cautious zone (between 40% and 80% BMSY)
-#' P_H_MSY is the probability of being in the healthy zone (above 80% BMSY)
-#' Caut is the probability of being in the cautious zone in the last 10 projected years
-#' P_A1 is the probability of being designated threatened according to COSEWIC Indicator A1 (Spawning biomass less than 70% that three generation times previously)
-#' P_A2 is the probability of being designated threatened according to COSEWIC Indicator A2 (Spawning biomass less than 50% that three generation times previously)
-#' Blow is the probability that the stock is below the biomass for which it takes 3 generation times to reach 50% BMSY with zero fishing
-#'
-#' @param MSEobj An object of class MSE
-#' @param rnd The number of significant figures for rounding.
-#' @param GTs A vector of mean generation times to evaluate performance metrics over
-#' @param syear Current year, starting year for projections (e.g. 2017)
-#' @param nGT Number of generation times for moving window of SSB chance (metrics A1 and A2)
-#' @author T. Carruthers
-#' @export COSEWIC_tab
+
+#' @describeIn runCOSEWIC Creates a standard COSEWIC performance table:
+#' \itemize{ 
+#' \item `P_Cr` is the probability of being in the critical zone (less than 20% depletion)
+#' \item `P_Ct` is the probability of being in the cautious zone (between 20% and 40% depletion)
+#' \item `P_H` is the probability of being in the healthy zone (above 40% depletion)
+#' \item `P_Cr_MSY` is the probability of being in the critical zone (less than 40% BMSY)
+#' \item `P_Ct_MSY` is the probability of being in the cautious zone (between 40% and 80% BMSY)
+#' \item `P_H_MSY` is the probability of being in the healthy zone (above 80% BMSY)
+#' \item `Caut` is the probability of being in the cautious zone in the last 10 projected years
+#' \item `P_A1` is the probability of being designated threatened according to COSEWIC Indicator A1 (Spawning biomass less than 70% that three generation times previously)
+#' \item `P_A2` is the probability of being designated threatened according to COSEWIC Indicator A2 (Spawning biomass less than 50% that three generation times previously)
+#' \item `Blow` is the probability that the stock is below the biomass for which it takes 3 generation times to reach 50% BMSY with zero fishing
+#' }
+#' @export
 COSEWIC_tab<-function(MSEobj,rnd=0,GTs=c(3,6),syear=2017,nGT=3){
   
   if(class(MSEobj)!="COSEWIC")stop("The MSE object you have provided is not of class COSEWIC, 
@@ -1248,25 +1233,12 @@ COSEWIC_tab<-function(MSEobj,rnd=0,GTs=c(3,6),syear=2017,nGT=3){
   
 }
 
-#' A formatted version of the standard COSEWIC performance plot, color coded by thresholds
-#'
-#' P_Cr is the probability of being in the critical zone (less than 20% depletion)
-#' P_Ct is the probability of being in the cautious zone (between 20% and 40% depletion)
-#' P_H is the probability of being in the healthy zone (above 40% depletion)
-#' P_Cr_MSY is the probability of being in the critical zone (less than 40% BMSY)
-#' P_Ct_MSY is the probability of being in the cautious zone (between 40% and 80% BMSY)
-#' P_H_MSY is the probability of being in the healthy zone (above 80% BMSY)
-#' P_A1 is the probability of being designated threatened according to COSEWIC Indicator A1 (Spawning biomass less than 70% that three generation times previously)
-#' P_A2 is the probability of being designated threatened according to COSEWIC Indicator A2 (Spawning biomass less than 50% that three generation times previously)
-#' Blow is the probability that the stock is below the biomass for which it takes 3 generation times to reach 50% BMSY with zero fishing
-#'
-#' @param Ptab1 A COSEWIC performance table made by COSEWIC_tab()
-#' @param thresh A vector of thresholds for each column Health, Yield and Reb are 'greater than threshold' conditions 
-#' @author T. Carruthers
+#' @describeIn runCOSEWIC A formatted version of the standard COSEWIC performance plot, 
+#' color coded by thresholds.
 #' @importFrom dplyr %>% mutate
 #' @importFrom kableExtra cell_spec kable_styling column_spec add_header_above 
 #' @importFrom knitr kable
-#' @export COSEWIC_tab_formatted
+#' @export
 COSEWIC_tab_formatted<-function(Ptab1,thresh=c(10,     40,     50,    10,       40,       50,      20,   20,   5)){
   #                                            P_Cr,   P_Ct,   P_H,   P_Cr_MSY, P_Ct_MSY, P_H_MSY, P_A1, P_A2, Blow
   
@@ -1322,21 +1294,4 @@ COSEWIC_tab_formatted<-function(Ptab1,thresh=c(10,     40,     50,    10,       
 }
 
 
-#' Dedicated COSEWIC MSE run using the correct MPs and projected time horizon
-#'
-#' Projects for 6x maximum age using NFref, FMSYref and curE
-#'
-#' @param OM An operating model object of class OM
-#' @author T. Carruthers
-#' @export runCOSEWIC
-runCOSEWIC<-function(OM){
-  
-  if(OM@nsim<100)message(paste0("Your operating model specifies only ",OM@nsim," simulations. You may wish to do 200+ simulations to ensure suitably precise probability calculations"))
-  OM@interval=2
-  #OM@proyears<-OM@maxage*5
-  MSEobj<-runMSE(OM,MPs=c("NFref","FMSYref","curE"))
-  class(MSEobj)<-"COSEWIC"
-  MSEobj
-  
-}
 

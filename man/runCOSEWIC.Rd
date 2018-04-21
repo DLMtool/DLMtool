@@ -2,15 +2,110 @@
 % Please edit documentation in R/DFO.R
 \name{runCOSEWIC}
 \alias{runCOSEWIC}
-\title{Dedicated COSEWIC MSE run using the correct MPs and projected time horizon}
+\alias{COSEWIC_Pplot}
+\alias{COSEWIC_Dplot}
+\alias{COSEWIC_Blow}
+\alias{COSEWIC_Hplot}
+\alias{COSEWIC_report}
+\alias{COSEWIC_tab}
+\alias{COSEWIC_tab_formatted}
+\title{COSEWIC MSE run using the correct MPs and projected time horizon}
 \usage{
 runCOSEWIC(OM)
+
+COSEWIC_Pplot(MSEobj, syear = 2017, qcol = rgb(0.4, 0.8, 0.95),
+  lcol = "dodgerblue4", quants = c(0.05, 0.25, 0.5, 0.75, 0.95))
+
+COSEWIC_Dplot(MSEobj, syear = 2017, qcol = rgb(0.4, 0.8, 0.95),
+  lcol = "dodgerblue4", quants = c(0.05, 0.25, 0.5, 0.75, 0.95), nGT = 3)
+
+COSEWIC_Blow(MSEobj, syear = 2017, qcol = rgb(0.4, 0.8, 0.95),
+  lcol = "dodgerblue4", quants = c(0.05, 0.25, 0.5, 0.75, 0.95), nGT = 3)
+
+COSEWIC_Hplot(MSEobj, syear = 2017, qcol = rgb(0.4, 0.8, 0.95),
+  lcol = "dodgerblue4", quants = c(0.05, 0.25, 0.5, 0.75, 0.95))
+
+COSEWIC_report(MSEobj, output_file = NA, author = "Author not specified",
+  title = NA)
+
+COSEWIC_tab(MSEobj, rnd = 0, GTs = c(3, 6), syear = 2017, nGT = 3)
+
+COSEWIC_tab_formatted(Ptab1, thresh = c(10, 40, 50, 10, 40, 50, 20, 20, 5))
 }
 \arguments{
 \item{OM}{An operating model object of class OM}
+
+\item{MSEobj}{An object of class MSE with \code{MPs = c("NFref", "FMSYref", "curE")}}
+
+\item{syear}{Current year, starting year for projections (e.g. 2017)}
+
+\item{qcol}{Color of shaded regions (bars, quantiles)}
+
+\item{lcol}{Color of lines}
+
+\item{quants}{Quantiles of the shaded regions (vector 5 long e.g. 0.1, 0.2, 0.5, 0.8, 0.9)}
+
+\item{nGT}{Number of generation times. For \code{COSEWIC_tab}, for moving window of SSB chance (metrics A1 and A2). For
+\code{COSEWIC_Blow} and \code{COSEWIC_Dplot}, used for projections (the number of projection years should be greater than \code{MaxAge * nGT}).}
+
+\item{output_file}{The directory and filename you wish to use for the report e.g. "C:/temp/myMSEreport.html"}
+
+\item{author}{The person who made this report}
+
+\item{title}{The title of the report}
+
+\item{rnd}{The number of significant figures for rounding.}
+
+\item{GTs}{A vector of mean generation times to evaluate performance metrics over}
+
+\item{Ptab1}{A COSEWIC performance table made by \code{COSEWIC_tab}}
+
+\item{thresh}{A vector of thresholds for each column Health, Yield and Reb are 'greater than threshold' conditions}
 }
 \description{
-Projects for 6x maximum age using NFref, FMSYref and curE
+Dedicated functions for MSE run and reporting for COSEWIC (Committee on the Status of
+Endangered Wildlife in Canada). MSE projects for 6x maximum age using NFref, FMSYref and curE
+management procedures.
+}
+\section{Functions}{
+\itemize{
+\item \code{runCOSEWIC}: Calls \code{runMSE} with number of projection years for 6x maximum age and
+uses \code{NFref}, \code{FMSYref}, and \code{curE} MPs.
+
+\item \code{COSEWIC_Pplot}: Projection plots of spawning stock biomass under three scenarios:
+no catch, FMSY fishing and status quo fishing effort.
+
+\item \code{COSEWIC_Dplot}: Depletion plots evaluate whether significant declines have
+occurred over three generation times in both historical and projection years.
+
+\item \code{COSEWIC_Blow}: Plots that evaluate the likelihood of declining below \code{Blow},
+by default, biomass that takes 3 generation times to reach half BMSY with zero fishing
+
+\item \code{COSEWIC_Hplot}: Plots of historical spawning stock  relative to unfished and MSY levels.
+
+\item \code{COSEWIC_report}: Create a standard DFO COSEWIC report (provides performance plots
+to inform COSEWIC processes in Canadian fish stocks).
+
+\item \code{COSEWIC_tab}: Creates a standard COSEWIC performance table:
+\itemize{
+\item \code{P_Cr} is the probability of being in the critical zone (less than 20% depletion)
+\item \code{P_Ct} is the probability of being in the cautious zone (between 20% and 40% depletion)
+\item \code{P_H} is the probability of being in the healthy zone (above 40% depletion)
+\item \code{P_Cr_MSY} is the probability of being in the critical zone (less than 40% BMSY)
+\item \code{P_Ct_MSY} is the probability of being in the cautious zone (between 40% and 80% BMSY)
+\item \code{P_H_MSY} is the probability of being in the healthy zone (above 80% BMSY)
+\item \code{Caut} is the probability of being in the cautious zone in the last 10 projected years
+\item \code{P_A1} is the probability of being designated threatened according to COSEWIC Indicator A1 (Spawning biomass less than 70% that three generation times previously)
+\item \code{P_A2} is the probability of being designated threatened according to COSEWIC Indicator A2 (Spawning biomass less than 50% that three generation times previously)
+\item \code{Blow} is the probability that the stock is below the biomass for which it takes 3 generation times to reach 50% BMSY with zero fishing
+}
+
+\item \code{COSEWIC_tab_formatted}: A formatted version of the standard COSEWIC performance plot,
+color coded by thresholds.
+}}
+
+\references{
+\url{https://www.canada.ca/en/environment-climate-change/services/committee-status-endangered-wildlife.html}
 }
 \author{
 T. Carruthers
