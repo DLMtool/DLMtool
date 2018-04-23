@@ -124,6 +124,7 @@ ForceCor<-function(OM,nsim=48,plot=T){
 #' @param Class Optional higher order taxonomic information
 #' @param Order Optional higher order taxonomic information
 #' @param Family Optional higher order taxonomic information
+#' @param msg Logical. Should messages be printed?
 #' 
 #' @return LH2OM: An OM with `OM@cpars` populated with `OM@nsim` samples of M, K, Linf and L50
 #' @author A. Hordyk
@@ -142,7 +143,7 @@ ForceCor<-function(OM,nsim=48,plot=T){
 #' 
 LH2OM <- function(OM, dist=c("unif", "norm"), filterMK=TRUE, plot=TRUE,
                   Class = "predictive", Order = "predictive", 
-                  Family = "predictive") {
+                  Family = "predictive", msg=TRUE) {
   if (class(OM) != 'OM') stop("OM must be class 'OM'")
   dist <- match.arg(dist)
   set.seed(OM@seed)
@@ -189,7 +190,7 @@ LH2OM <- function(OM, dist=c("unif", "norm"), filterMK=TRUE, plot=TRUE,
   
   Out <- predictLH(inpars=list(Linf=Linf, L50=L50, K=K, M=M), 
                    Genus, Species, nsamp=OM@nsim, dist=dist, 
-                   filterMK=filterMK, plot=plot, Class=Class, Order=Order, Family=Family)
+                   filterMK=filterMK, plot=plot, Class=Class, Order=Order, Family=Family, msg=msg)
   if (is.null(Out)) {
     message('Could not complete prediction. Returning original OM')
     return(OM)
@@ -247,7 +248,7 @@ LH2OM <- function(OM, dist=c("unif", "norm"), filterMK=TRUE, plot=TRUE,
 predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", nsamp=100, 
                       db=DLMtool::LHdatabase, dist=c("unif", "norm"), 
                       filterMK=TRUE, plot=TRUE, Class = "predictive", Order = "predictive", 
-                      Family = "predictive") {
+                      Family = "predictive", msg=TRUE) {
   
   dist <- match.arg(dist)
   
@@ -268,7 +269,7 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
       if (notnames[x]) {
         nm <- valnames[x]
         inpars[[nm]] <- NA
-        message("Predicting ", nm) 
+        if (msg) message("Predicting ", nm) 
       }
     } 
   }
@@ -277,12 +278,12 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
     if (lens['Linf']) {
       if (prod(valnames[1:2] %in% names)) {
         if (lens['Linf']) {
-          message("Predicting L50")  
+          if (msg) message("Predicting L50")  
           lens['L50'] <- FALSE
           inpars$L50 <- NA
         }
         if (lens['L50']) {
-          message("Predicting Linf")  
+          if (msg) message("Predicting Linf")  
           lens['Linf'] <- FALSE
           inpars$Linf <- NA
         }
@@ -291,7 +292,7 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
       inpars$L50 <- NA
     }
     if (lens['L50']) {
-      message("Predicting Linf")  
+      if (msg) message("Predicting Linf")  
       lens['Linf'] <- FALSE
       inpars$Linf <- NA
     }
@@ -299,32 +300,32 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
   
   if (prod(valnames[3:4] %in% names)) {
     if (lens['M']) {
-      message("Predicting K")  
+      if (msg) message("Predicting K")  
       lens['K'] <- FALSE
       inpars$K <- NA
     }
     if (lens['K']) {
-      message("Predicting M")  
+      if (msg) message("Predicting M")  
       lens['M'] <- FALSE
       inpars$M <- NA
     }
   }
-  multi <- 1
+  multi <- 100
   filterM <- filterK <- FALSE
-  if (prod(c("K", "M") %in% names) & filterMK) {
+  if (prod(c("K", "M") %in% names) & filterMK & !(is.na(inpars$K) || is.na(inpars$M))) {
     if (all(is.na(inpars$M))) {
       filterM <- TRUE
-      message("Filtering predicted M within bounds: ", paste0(inpars_1$M, " "))
+      if (msg) message("Filtering predicted M within bounds: ", paste0(inpars_1$M, " "))
     }
     if (all(is.na(inpars$K))) {
       filterK <- TRUE
-      message("Filtering predicted K within bounds: ", paste0(inpars_1$K, " "))
+      if (msg) message("Filtering predicted K within bounds: ", paste0(inpars_1$K, " "))
     } 
-    multi <- 100 
+    multi <- 500 
   }
   
   # get predictions from FishLife 
-  taxa <- gettaxa(Class, Order, Family, Genus, Species)
+  taxa <- gettaxa(Class, Order, Family, Genus, Species, msg=msg)
   if (is.null(taxa)) return(NULL)
   if (class(db) != "list") stop("db must be database list from FishLife", call.=FALSE)
   Which <- grep(taxa, db$ParentChild_gz[,'ChildName'])
@@ -372,6 +373,7 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
     }
   }
   
+
   # Still missing
   missing <- lapply(lapply(outpars, is.na), prod) ==1
   missnm <- names(outpars)[missing]
@@ -380,6 +382,11 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
   }
   
   Out <- as.data.frame(do.call("cbind", outpars))
+  
+  # drop any samples where L50 > 0.95 Linf 
+  ind <- Out$L50 > 0.95*Out$Linf
+  Out <- Out[!ind,]
+  
   
   if(filterK) {
     ind <- Out$K > min(inpars_1$K) & Out$K < max(inpars_1$K)
@@ -827,9 +834,10 @@ gettaxa <- function(Class = "predictive", Order = "predictive",
   full_taxonomy <- c(Class, Order, Family, Genus, Species)
   spIn <- trimws(paste(gsub("predictive", "", full_taxonomy), collapse=" "))
   if (length(Match) == 0) {
-    warning(spIn, ' not found in FishBase database.\nCheck spelling or add higher taxonomic details and set Species to "predictive"', call.=FALSE)
-    return(NULL)
+    if(msg) message(spIn, ' not found in FishBase database')
+    Class <- Order <- Family <- Genus <- Species <- "predictive"
   }
+  full_taxonomy <- c(Class, Order, Family, Genus, Species)
   
   if (!all(Species == "predictive")) {
     if (length(unique(rfishbase::fishbase[Match, "Species"])) != 1) 
@@ -877,16 +885,16 @@ gettaxa <- function(Class = "predictive", Order = "predictive",
   
   fullname <- gsub("_", " ", ParentChild_gz[Group,  "ChildName"])
   ind <- !grepl("predictive", strsplit(fullname, " ")[[1]])
-  
-  if (any(!ind)) {
+  if (all(!ind)) {
+    if (msg) message("Predicting from all species in FishBase")
+  } else if (any(!ind)) {
     if (msg) message("Closest match: ", fullname)
   } else {
     if (msg) message("Species match: ", fullname)
   }
   
 
-  match_taxonomy = unique(as.character(Add_predictive(ParentChild_gz[Group, 
-                                                                     "ChildName"])))
+  match_taxonomy = unique(as.character(Add_predictive(ParentChild_gz[Group, "ChildName"])))
   match_taxonomy
 }
 
