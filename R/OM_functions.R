@@ -143,7 +143,7 @@ ForceCor<-function(OM,nsim=48,plot=T){
 #' 
 LH2OM <- function(OM, dist=c("unif", "norm"), filterMK=TRUE, plot=TRUE,
                   Class = "predictive", Order = "predictive", 
-                  Family = "predictive", msg=TRUE) {
+                  Family = "predictive", msg=TRUE, db=DLMtool::LHdatabase) {
   if (class(OM) != 'OM') stop("OM must be class 'OM'")
   dist <- match.arg(dist)
   set.seed(OM@seed)
@@ -189,7 +189,7 @@ LH2OM <- function(OM, dist=c("unif", "norm"), filterMK=TRUE, plot=TRUE,
   if (is.na(Species) || nchar(Species)<1) Species <- "predictive"
   
   Out <- predictLH(inpars=list(Linf=Linf, L50=L50, K=K, M=M), 
-                   Genus, Species, nsamp=OM@nsim, dist=dist, 
+                   Genus, Species, nsamp=OM@nsim, db=db, dist=dist, 
                    filterMK=filterMK, plot=plot, Class=Class, Order=Order, Family=Family, msg=msg)
   if (is.null(Out)) {
     message('Could not complete prediction. Returning original OM')
