@@ -1164,7 +1164,7 @@ Pplot <- function(MSEobj, nam = NA, maxMP = 10,MPs=NA,maxsims=20) {
   }
   mtext("Projection year", 1, outer = T, line = 1.2)
   if (is.na(nam)) 
-    mtext(deparse(substitute(MSEobj)), 3, outer = T, line = 0.3, font = 2)
+    mtext(deparse(quote(MSEobj)), 3, outer = T, line = 0.3, font = 2)
   if (!is.na(nam) & !is.character(nam)) 
     mtext(MSEobj@Name, 3, outer = T, line = 0.3, font = 2)
   if (!is.na(nam) & is.character(nam)) 
