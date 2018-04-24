@@ -285,7 +285,7 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
     writeCSV2(inobj = sht, tmpfile, objtype = obj)
     if (ncol(sht)<2) {
       unlink(tmpfile)
-      warning("No parameter values found in Sheet", obj, ". Using defaults", call.=FALSE)
+      warning("No parameter values found in Sheet: ", obj, ". Using defaults", call.=FALSE)
       tempObj[[count]] <- new(obj)
     } else {
       tempObj[[count]] <- new(obj, tmpfile)  
