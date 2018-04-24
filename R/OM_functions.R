@@ -155,29 +155,16 @@ LH2OM <- function(OM, dist=c("unif", "norm"), filterMK=TRUE, plot=TRUE,
     }
   }
   
-  if(all(OM@Linf ==0) | length(OM@Linf)<1) {
-    Linf <- NA
-  } else {
-    Linf <- OM@Linf
+  sls <- c("Linf", "L50", "K", "M")
+  for (sl in sls) {
+    slval <- slot(OM, sl)
+    if(any(is.na(slval)) | all(slval==0) | length(slval)<1) {
+      assign(sl, NA)
+    } else {
+      assign(sl, slval)
+    }
   }
   
-  if(all(OM@L50 ==0) | length(OM@L50)<1) {
-    L50 <- NA
-  } else {
-    L50 <- OM@L50
-  }
-  
-  if(all(OM@K ==0) | length(OM@K)<1) {
-    K <- NA
-  } else {
-    K <- OM@K
-  }
-  
-  if(all(OM@M ==0) | length(OM@M)<1) {
-    M <- NA
-  } else {
-    M <- OM@M
-  }
   if (length(OM@M)>2) {
     message("Age-dependant M has been set in OM. (length(OM@M) > 2)\nReturning original OM")
     return(OM)
