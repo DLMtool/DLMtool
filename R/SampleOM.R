@@ -316,6 +316,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     if (any(L95> Linf)) {
       message("Note: Some samples of L95 are above Linf. Defaulting to 0.99*Linf")
       L95[L95> Linf] <- 0.99* Linf[L95> Linf]
+      L50_95 <- L95 - L50 
     }
     
     # === Generate L50 by year ====
@@ -326,8 +327,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     L95array[L95array>Linfarray] <- 0.99 *  Linfarray[L95array>Linfarray]
   }
   
-  
-  
+
   # == Calculate age at maturity ==== 
   if (exists('ageM', inherits=FALSE)) { # check dimensions 
     if (!all(dim(ageM) == c(nsim, proyears+nyears))) stop('"ageM" must be dimensions: nsim, nyears+proyers')

@@ -122,7 +122,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     if (length(cMPs)>0) snowfall::sfExport(list=cMPs)
     
     ncpu <- snowfall::sfCpus()
-    
+
     if (OM@nsim<48) stop("nsim must be >=48")
     nits <- ceiling(OM@nsim/48)
     
@@ -132,13 +132,20 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       nits <- ncpu
       itsim <- rep(ceiling(OM@nsim/ncpu), ncpu)
     }
-    if(sum(itsim) != OM@nsim) {
-      itsim[length(itsim)] <- OM@nsim - sum(itsim[1:(length(itsim)-1)] )
+    cnt <- 1
+    while(sum(itsim) != OM@nsim | any(itsim<2)) {
+      diff <-  OM@nsim - sum(itsim)
+      if (diff >0) {
+        itsim[cnt] <- itsim[cnt]+1
+      } 
+      if(diff < 0) {
+        itsim[cnt] <- itsim[cnt]-1
+      }
+      cnt <- cnt+1 
+      if (cnt > length(itsim)) cnt <- 1 
     }
-    if (itsim[length(itsim)]==1) {
-      itsim[length(itsim)] <- 2
-      itsim[length(itsim)-1] <- itsim[length(itsim)-1] - 1
-    }
+    
+   
     if (!silent) message("Running MSE in parallel on ", ncpu, ' processors')
     
     temp <- snowfall::sfClusterApplyLB(1:nits, run_parallel, itsim=itsim, OM=OM, MPs=MPs,  
