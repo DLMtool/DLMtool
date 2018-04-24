@@ -285,7 +285,8 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
     writeCSV2(inobj = sht, tmpfile, objtype = obj)
     if (ncol(sht)<2) {
       unlink(tmpfile)
-      stop("No parameter values found in Sheet ", obj, call.=FALSE)
+      warning("No parameter values found in Sheet", obj, ". Using defaults", call.=FALSE)
+      tempObj[[count]] <- new(obj)
     } else {
       tempObj[[count]] <- new(obj, tmpfile)  
     }
@@ -332,7 +333,7 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
       stop("'cpars' must be a list", call.=FALSE)
     }
   }
-  ChkObj(OM)
+  ChkObj(OM, FALSE)
   if (msg) {
     message('OM successfully imported\n')
     message("Document OM slots in .rmd file (probably ", tools::file_path_sans_ext(name), ".rmd),
