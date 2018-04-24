@@ -4,10 +4,12 @@
 \alias{ChkObj}
 \title{Check that a DLM object is valid}
 \usage{
-ChkObj(OM)
+ChkObj(OM, error = TRUE)
 }
 \arguments{
 \item{OM}{An object of class OM, Stock, Fleet, Obs, or Imp}
+
+\item{error}{Logical. Stop on missing parameter values? FALSE = warning}
 }
 \description{
 Check that all slots in Object are valid and contain values

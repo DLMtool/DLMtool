@@ -2,333 +2,218 @@
 # Don't edit by hand!
 # 
 
-#'  Atlantic_mackerel Data
-#'
-#'  An object of class Data
-#'
+#' @rdname Data-class-objects 
 "Atlantic_mackerel"
 
-
-#'  China_rockfish Data
-#'
-#'  An object of class Data
-#'
+#' @rdname Data-class-objects 
 "China_rockfish"
 
-
-#'  Cobia Data
-#'
-#'  An object of class Data
-#'
+#' @rdname Data-class-objects 
 "Cobia"
 
-
-#'  Example_datafile Data
-#'
-#'  An object of class Data
-#'
+#' @rdname Data-class-objects 
 "Example_datafile"
 
-
-#'  Gulf_blue_tilefish Data
-#'
-#'  An object of class Data
-#'
+#' @rdname Data-class-objects 
 "Gulf_blue_tilefish"
 
-
-#'  ourReefFish Data
-#'
-#'  An object of class Data
-#'
+#' @rdname Data-class-objects 
 "ourReefFish"
 
-
-#'  Red_snapper Data
-#'
-#'  An object of class Data
-#'
+#' @rdname Data-class-objects 
 "Red_snapper"
 
-
-#'  Simulation_1 Data
-#'
-#'  An object of class Data
-#'
+#' @rdname Data-class-objects 
 "Simulation_1"
 
+#' Data class objects
+#' 
+#' Example objects of class Data
+#' 
+#' @name Data-class-objects
+#' @examples
+#' data(Simulation_1)
+#' Simulation_1@Name
+#' 
+#' avail("Data")
+NULL
 
-#'  Albacore Stock
-#'
-#'  An object of class Stock
-#'
+#' @rdname Stock-class-objects 
 "Albacore"
 
-
-#'  Blue_shark Stock
-#'
-#'  An object of class Stock
-#'
+#' @rdname Stock-class-objects 
 "Blue_shark"
 
-
-#'  Bluefin_tuna Stock
-#'
-#'  An object of class Stock
-#'
+#' @rdname Stock-class-objects 
 "Bluefin_tuna"
 
-
-#'  Bluefin_tuna_WAtl Stock
-#'
-#'  An object of class Stock
-#'
+#' @rdname Stock-class-objects 
 "Bluefin_tuna_WAtl"
 
-
-#'  Butterfish Stock
-#'
-#'  An object of class Stock
-#'
+#' @rdname Stock-class-objects 
 "Butterfish"
 
-
-#'  Herring Stock
-#'
-#'  An object of class Stock
-#'
+#' @rdname Stock-class-objects 
 "Herring"
 
-
-#'  Mackerel Stock
-#'
-#'  An object of class Stock
-#'
+#' @rdname Stock-class-objects 
 "Mackerel"
 
-
-#'  Porgy Stock
-#'
-#'  An object of class Stock
-#'
+#' @rdname Stock-class-objects 
 "Porgy"
 
-
-#'  Rockfish Stock
-#'
-#'  An object of class Stock
-#'
+#' @rdname Stock-class-objects 
 "Rockfish"
 
-
-#'  Snapper Stock
-#'
-#'  An object of class Stock
-#'
+#' @rdname Stock-class-objects 
 "Snapper"
 
-
-#'  Sole Stock
-#'
-#'  An object of class Stock
-#'
+#' @rdname Stock-class-objects 
 "Sole"
 
-
-#'  Toothfish Stock
-#'
-#'  An object of class Stock
-#'
+#' @rdname Stock-class-objects 
 "Toothfish"
 
+#' Stock class objects
+#' 
+#' Example objects of class Stock
+#' 
+#' @name Stock-class-objects
+#' @examples
+#' data(Toothfish)
+#' Toothfish@Source
+#' 
+#' avail("Stock")
+NULL
 
-#'  DecE_Dom Fleet
-#'
-#'  An object of class Fleet
-#'
+#' @rdname Fleet-class-objects 
 "DecE_Dom"
 
-
-#'  DecE_HDom Fleet
-#'
-#'  An object of class Fleet
-#'
+#' @rdname Fleet-class-objects 
 "DecE_HDom"
 
-
-#'  DecE_NDom Fleet
-#'
-#'  An object of class Fleet
-#'
+#' @rdname Fleet-class-objects 
 "DecE_NDom"
 
-
-#'  FlatE_Dom Fleet
-#'
-#'  An object of class Fleet
-#'
+#' @rdname Fleet-class-objects 
 "FlatE_Dom"
 
-
-#'  FlatE_HDom Fleet
-#'
-#'  An object of class Fleet
-#'
+#' @rdname Fleet-class-objects 
 "FlatE_HDom"
 
-
-#'  FlatE_NDom Fleet
-#'
-#'  An object of class Fleet
-#'
+#' @rdname Fleet-class-objects 
 "FlatE_NDom"
 
-
-#'  Generic_DecE Fleet
-#'
-#'  An object of class Fleet
-#'
+#' @rdname Fleet-class-objects 
 "Generic_DecE"
 
-
-#'  Generic_FlatE Fleet
-#'
-#'  An object of class Fleet
-#'
+#' @rdname Fleet-class-objects 
 "Generic_FlatE"
 
-
-#'  Generic_Fleet Fleet
-#'
-#'  An object of class Fleet
-#'
+#' @rdname Fleet-class-objects 
 "Generic_Fleet"
 
-
-#'  Generic_IncE Fleet
-#'
-#'  An object of class Fleet
-#'
+#' @rdname Fleet-class-objects 
 "Generic_IncE"
 
-
-#'  IncE_HDom Fleet
-#'
-#'  An object of class Fleet
-#'
+#' @rdname Fleet-class-objects 
 "IncE_HDom"
 
-
-#'  IncE_NDom Fleet
-#'
-#'  An object of class Fleet
-#'
+#' @rdname Fleet-class-objects 
 "IncE_NDom"
 
-
-#'  Low_Effort_Non_Target Fleet
-#'
-#'  An object of class Fleet
-#'
+#' @rdname Fleet-class-objects 
 "Low_Effort_Non_Target"
 
-
-#'  Target_All_Fish Fleet
-#'
-#'  An object of class Fleet
-#'
+#' @rdname Fleet-class-objects 
 "Target_All_Fish"
 
-
-#'  Targeting_Small_Fish Fleet
-#'
-#'  An object of class Fleet
-#'
+#' @rdname Fleet-class-objects 
 "Targeting_Small_Fish"
 
+#' Fleet class objects
+#' 
+#' Example objects of class Fleet
+#' 
+#' @name Fleet-class-objects
+#' @examples
+#' data(Targeting_Small_Fish)
+#' Targeting_Small_Fish@Name
+#' 
+#' avail("Fleet")
+NULL
 
-#'  Generic_Obs Obs
-#'
-#'  An object of class Obs
-#'
+#' @rdname Obs-class-objects 
 "Generic_Obs"
 
-
-#'  Imprecise_Biased Obs
-#'
-#'  An object of class Obs
-#'
+#' @rdname Obs-class-objects 
 "Imprecise_Biased"
 
-
-#'  Imprecise_Unbiased Obs
-#'
-#'  An object of class Obs
-#'
+#' @rdname Obs-class-objects 
 "Imprecise_Unbiased"
 
-
-#'  Perfect_Info Obs
-#'
-#'  An object of class Obs
-#'
+#' @rdname Obs-class-objects 
 "Perfect_Info"
 
-
-#'  Precise_Biased Obs
-#'
-#'  An object of class Obs
-#'
+#' @rdname Obs-class-objects 
 "Precise_Biased"
 
-
-#'  Precise_Unbiased Obs
-#'
-#'  An object of class Obs
-#'
+#' @rdname Obs-class-objects 
 "Precise_Unbiased"
 
+#' Obs class objects
+#' 
+#' Example objects of class Obs
+#' 
+#' @name Obs-class-objects
+#' @examples
+#' data(Precise_Unbiased)
+#' Precise_Unbiased@Name
+#' 
+#' avail("Obs")
+NULL
 
-#'  Overages Imp
-#'
-#'  An object of class Imp
-#'
+#' @rdname Imp-class-objects 
 "Overages"
 
-
-#'  Perfect_Imp Imp
-#'
-#'  An object of class Imp
-#'
+#' @rdname Imp-class-objects 
 "Perfect_Imp"
 
+#' Imp class objects
+#' 
+#' Example objects of class Imp
+#' 
+#' @name Imp-class-objects
+#' @examples
+#' data(Perfect_Imp)
+#' 
+#' 
+#' avail("Imp")
+NULL
 
-#'  Feasibility Fease
-#'
-#'  An object of class Fease
-#'
+#' @rdname Fease-class-objects 
 "Feasibility"
 
-
-#'  Feasibility2 Fease
-#'
-#'  An object of class Fease
-#'
+#' @rdname Fease-class-objects 
 "Feasibility2"
 
+#' Fease class objects
+#' 
+#' Example objects of class Fease
+#' 
+#' @name Fease-class-objects
+#' @examples
+#' data(Feasibility2)
+#' 
+#' 
+#' avail("Fease")
+NULL
 
 #'  testOM OM
 #'
 #'  An object of class OM
 #'
 "testOM"
-
-
-#'  SimulatedData Data
-#'
-#'  An object of class Data
-#'
-"SimulatedData"
 
 
 #'  SimulatedData Data

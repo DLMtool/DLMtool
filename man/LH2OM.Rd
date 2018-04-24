@@ -9,12 +9,13 @@
 }
 \usage{
 LH2OM(OM, dist = c("unif", "norm"), filterMK = TRUE, plot = TRUE,
-  Class = "predictive", Order = "predictive", Family = "predictive")
+  Class = "predictive", Order = "predictive", Family = "predictive",
+  msg = TRUE, db = DLMtool::LHdatabase)
 
 predictLH(inpars = list(), Genus = "predictive", Species = "predictive",
   nsamp = 100, db = DLMtool::LHdatabase, dist = c("unif", "norm"),
   filterMK = TRUE, plot = TRUE, Class = "predictive",
-  Order = "predictive", Family = "predictive")
+  Order = "predictive", Family = "predictive", msg = TRUE)
 }
 \arguments{
 \item{OM}{An object of class 'OM'}
@@ -33,6 +34,10 @@ e.g. \code{OM@M} and \code{OM@K}. Empty slots or slots with all values of 0 are 
 
 \item{Family}{Optional higher order taxonomic information}
 
+\item{msg}{Logical. Should messages be printed?}
+
+\item{db}{Database from FishLife model with fitted model results}
+
 \item{inpars}{A named list with lower and upper bounds of provided parameters: \emph{Linf}, \emph{L50},
 \emph{K} and \emph{M} (must be length 2). Unknown or missing parameters should not be included. For example, an empty list assumes
 that all four life history parameters are unknown and need to be estimated. See Details below for more information.}
@@ -44,8 +49,6 @@ that all four life history parameters are unknown and need to be estimated. See 
 for the predictions.}
 
 \item{nsamp}{The number of samples to return}
-
-\item{db}{Database from FishLife model with fitted model results}
 }
 \value{
 LH2OM: An OM with \code{OM@cpars} populated with \code{OM@nsim} samples of M, K, Linf and L50
