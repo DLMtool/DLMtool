@@ -1720,7 +1720,7 @@ Tplot2 <- function(MSEobj, nam = NA) {
                                                                                         mm, ])), 3) * 100
   }
   par(mfrow = c(1, 2), mar = c(5, 4, 1, 1), oma = c(0, 0, 2, 0))
-  browser()
+
   tradeoffplot(STY, LTY, "P(Short term yield > 0.5 FMSY)", "P(Long term yield > 0.5 FMSY)", 
                MSEobj@MPs[1:MSEobj@nMPs], vl = 1, hl = 1)
   tradeoffplot(B10, VY, "P(Biomass > 0.1 BMSY)", "P(CV in yield < 0.1)", 
