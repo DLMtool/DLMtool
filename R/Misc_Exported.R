@@ -147,9 +147,10 @@ makePerf <- function(OMin, except = NULL) {
 
 #' Management Procedure Type
 #'
-#' @param MPs A list of MP names  
+#' @param MPs A vector of MP names. If none are provided function is run on all available MPs
 #'
-#' @return A data.frame with MP names and management type
+#' @return A data.frame with MP names, management type (e.g "Input", "Output") and management recommendations returned by the MP
+#' (e.g, TAC (total allowable catch), TAE (total allowable effort), SL (size-selectivity), and/or or Spatial)
 #' @export
 #' @seealso \link{Required}
 #' @examples 
@@ -164,18 +165,45 @@ MPtype <- function(MPs=NA) {
   recs <- runMPs[[1]]
   
   type <- rep("NA", length(MPs))
+  rec <- rep("", length(MPs))
+  rectypes <- c("TAE", "Spatial", "SL")
   for (mm in seq_along(recs)) {
+    Effort <- Spatial <- Selectivity <- FALSE
     output <- length(recs[[mm]]$TAC) > 0 
     names <- names(recs[[mm]])
     names <- names[!names %in% c("TAC", "Spatial")]
     input <- sum(unlist(lapply(Map(function(x) recs[[mm]][[x]], names), length))) > 0
     if (all(!is.na(recs[[mm]]$Spatial))) input <- TRUE
-    if (output) type[mm] <- "Output"
-    if (input) type[mm] <- "Input"
-    if (input & output) type[mm] <- "Mixed"
+    if (output) {
+      type[mm] <- "Output"
+      thisrec <- "TAC"
+    }
+    if (input) {
+      # what recommentations have been made?
+      if (any(is.finite(recs[[mm]]$Effort))) Effort <- TRUE
+      if (any(is.finite(recs[[mm]]$Spatial))) Spatial <- TRUE
+      if (any(is.finite(recs[[mm]]$LR5)) | any(is.finite(recs[[mm]]$LFR)) | any(is.finite(recs[[mm]]$HS)) |
+          any(is.finite(recs[[mm]]$Rmaxlen)) | any(is.finite(recs[[mm]]$L5)) | any(is.finite(recs[[mm]]$LFS)) |
+          any(is.finite(recs[[mm]]$Vmaxlen))) Selectivity <- TRUE
+      
+      dorecs <- rectypes[c(Effort, Spatial, Selectivity)]
+      thisrec <- dorecs
+      type[mm] <- "Input"
+      
+    }
+    if (input & output) {
+      type[mm] <- "Mixed"
+      thisrec <- c("TAC", thisrec)
+    }
+    if (length(thisrec)>1)  {
+      rec[mm] <- paste(thisrec, collapse=", ")
+    } else {
+      rec[mm] <- thisrec
+    }
   }
   type[grep("ref", MPs)] <- "Reference"
-  df <- data.frame(MP=MPs, Type=type, stringsAsFactors = FALSE)
+  
+  df <- data.frame(MP=MPs, Type=type, Recs=rec, stringsAsFactors = FALSE)
   df[order(df$Type),]
   
 }
