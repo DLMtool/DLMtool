@@ -786,7 +786,7 @@ optCPU <- function(nsim=96, thresh=5, plot=TRUE, msg=TRUE, maxn=NULL) {
         setup(cpus=n)
       } else {
         sink('temp')
-        suppressMessages(setup())
+        suppressMessages(setup(cpus=n))
         sink()
       }
       st <- Sys.time()
@@ -797,6 +797,7 @@ optCPU <- function(nsim=96, thresh=5, plot=TRUE, msg=TRUE, maxn=NULL) {
     }
   } 
   df <- data.frame(ncpu=cpus, time=time)
+  df$time <- round(df$time,2)
   rec <- min(which(time < min(time) * (1 + thresh/100)))
   if (plot) {
     plot(df, type='b', ylab="time (seconds)", xlab= "# cpus", bty="l", lwd=2)
