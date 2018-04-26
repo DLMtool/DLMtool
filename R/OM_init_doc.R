@@ -136,8 +136,7 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), dir=NULL, overwrite=F
     
     # Check if file exists 
     exist <- file.exists(pathout)
-    if (exist & !overwrite) stop(name, " already exists in working directory. Use 'overwrite=TRUE' to overwrite", 
-                                 call.=FALSE)
+    if (exist & !overwrite) stop(name, " already exists in working directory. Use 'overwrite=TRUE' to overwrite", call.=FALSE)
     copy <- file.copy(path, pathout, overwrite = overwrite)
     if (!copy) stop("Excel file not copied from ", path)
     
@@ -169,6 +168,7 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), dir=NULL, overwrite=F
       
       # OM tab not currently updated
       openxlsx::saveWorkbook(wb, file.path(dir,name), overwrite = TRUE)
+    
       
     }
     

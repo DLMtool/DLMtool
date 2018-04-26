@@ -158,9 +158,9 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     
     MSE1 <- joinMSE(temp) 
     if (class(MSE1) == "MSE") {
-      message("MSE completed")
+      if (!silent) message("MSE completed")
     } else {
-      message("MSE completed but could not join MSE objects. Re-run with `save_name ='MyName'` to debug")
+      warning("MSE completed but could not join MSE objects. Re-run with `save_name ='MyName'` to debug")
     }
   }
 

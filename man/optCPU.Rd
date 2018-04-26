@@ -4,7 +4,7 @@
 \alias{optCPU}
 \title{Determine optimal number of cpus}
 \usage{
-optCPU(nsim = 96, thresh = 5, plot = TRUE)
+optCPU(nsim = 96, thresh = 5, plot = TRUE, msg = TRUE, maxn = NULL)
 }
 \arguments{
 \item{nsim}{Numeric. Number of simulations.}
@@ -12,6 +12,10 @@ optCPU(nsim = 96, thresh = 5, plot = TRUE)
 \item{thresh}{Recommended n cpus is what percent of the fastest time?}
 
 \item{plot}{Logical. Show the plot?}
+
+\item{msg}{Logical. Should messages be printed to console?}
+
+\item{maxn}{Optional. Maximum number of cpus. Used for demo purposes}
 }
 \description{
 Determine optimal number of cpus

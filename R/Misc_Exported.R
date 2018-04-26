@@ -334,14 +334,14 @@ Required <- function(funcs = NA) {
 #' @importFrom parallel detectCores 
 #' @examples
 #' \dontrun{
-#' setup() # set-up 4 processors
+#' setup() # set-up half the available processors
 #' setup(6) # set-up 6 processors
 #' }
 #' @export 
-setup <- function(cpus=min(parallel::detectCores(),4), ...) {
+setup <- function(cpus=parallel::detectCores()*0.5, ...) {
   if(snowfall::sfIsRunning()) snowfall::sfStop()
   snowfall::sfInit(parallel=TRUE,cpus=cpus, ...)
-  sfLibrary("DLMtool", character.only = TRUE)
+  sfLibrary("DLMtool", character.only = TRUE, verbose=FALSE)
 }
 
 
@@ -757,6 +757,8 @@ L2A <- function(t0c, Linfc, Kc, Len, maxage) {
 #' @param nsim Numeric. Number of simulations.
 #' @param thresh Recommended n cpus is what percent of the fastest time?
 #' @param plot Logical. Show the plot?
+#' @param msg Logical. Should messages be printed to console?
+#' @param maxn Optional. Maximum number of cpus. Used for demo purposes
 #'
 #' @export
 #' @seealso \link{setup}
@@ -765,22 +767,31 @@ L2A <- function(t0c, Linfc, Kc, Len, maxage) {
 #' optCPU()
 #' }
 #' @author A. Hordyk
-optCPU <- function(nsim=96, thresh=5, plot=TRUE) {
-  cpus=1:parallel::detectCores()
+optCPU <- function(nsim=96, thresh=5, plot=TRUE, msg=TRUE, maxn=NULL) {
+  cpus <- 1:parallel::detectCores()
+  if (!is.null(maxn)) cpus <- 1:maxn
+  
   time <- NA
   OM <- DLMtool::testOM
   OM@nsim <- nsim
   for (n in cpus) {
-    message('Running MSE with ', nsim, ' simulations and ', n, ' of ', max(cpus), ' cpus')
+    if (msg) message('Running MSE with ', nsim, ' simulations and ', n, ' of ', max(cpus), ' cpus')
     if (n == 1) {
       snowfall::sfStop()
       st <- Sys.time()
       tt <- runMSE(OM, silent = TRUE)
       time[n] <- difftime(Sys.time(), st, units='secs')
     } else{
-      setup(cpus=n)
+      if (msg) {
+        setup(cpus=n)
+      } else {
+        sink('temp')
+        suppressMessages(setup())
+        sink()
+      }
       st <- Sys.time()
-      tt <- runMSE(OM, silent=TRUE, parallel=TRUE)
+      tt <- runMSE(OM, silent=TRUE, parallel=TRUE)  
+      
       time[n] <- difftime(Sys.time(), st, units='secs')
       
     }

@@ -3,8 +3,8 @@ testthat::context("Feasibility Functions")
 Data <- avail("Data")
 data <- sample(Data, 1)
 
-testthat::test_that(paste("Fease works with ", dat), {
-  data <- get(dat)
+testthat::test_that(paste("Fease works with ", data), {
+  data <- get(data)
   Grid <- expand.grid(TAC=c(TRUE, FALSE), TAE=c(TRUE, FALSE), SL=c(TRUE, FALSE), Spatial=c(TRUE, FALSE), names.only=c(TRUE, FALSE))
   
   for (rr in 1:nrow(Grid)) {
