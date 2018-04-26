@@ -84,7 +84,7 @@ A generic performance table is produced that provides the probability of stock s
 * OvFish is the probability of overfishing in the last 10 projected years
 * Yield is the mean yield relative to FMSY management over the last 10 projected years
 * AAVY is the average annual variability in yield over the whole projection phrased as a CV percentage
-* Reb is the probability the stoc
+* Reb is the probability the stock rebuilt to over BMSY in two generation times
 
 <br>
 
