@@ -191,29 +191,18 @@ NULL
 #' avail("Imp")
 NULL
 
-#' @rdname Fease-class-objects 
-"Feasibility"
-
-#' @rdname Fease-class-objects 
-"Feasibility2"
-
-#' Fease class objects
-#' 
-#' Example objects of class Fease
-#' 
-#' @name Fease-class-objects
-#' @examples
-#' data(Feasibility2)
-#' 
-#' 
-#' avail("Fease")
-NULL
-
 #'  testOM OM
 #'
 #'  An object of class OM
 #'
 "testOM"
+
+
+#'  SimulatedData Data
+#'
+#'  An object of class Data
+#'
+"SimulatedData"
 
 
 #'  SimulatedData Data
