@@ -2,9 +2,13 @@
 % Please edit documentation in R/Misc_Exported.R
 \name{alphaconv}
 \alias{alphaconv}
-\title{Calculate alpha parameter for beta distribution from mean and standard deviation}
+\alias{betaconv}
+\title{Calculate parameters for beta distribution from mean and standard deviation in
+normal space}
 \usage{
 alphaconv(m, sd)
+
+betaconv(m, sd)
 }
 \arguments{
 \item{m}{mean}
@@ -15,8 +19,16 @@ alphaconv(m, sd)
 numeric
 }
 \description{
-Calculate alpha parameter for beta distribution from mean and standard deviation
+Calculate parameters for beta distribution from mean and standard deviation in
+normal space
 }
+\section{Functions}{
+\itemize{
+\item \code{alphaconv}: Returns alpha of beta distribution
+
+\item \code{betaconv}: Returns beta of beta distribution
+}}
+
 \author{
 T. Carruthers
 }

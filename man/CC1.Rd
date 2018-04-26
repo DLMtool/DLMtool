@@ -32,7 +32,8 @@ This is one of four constant catch rules of Geromont and Butterworth 2014.
 \itemize{
 \item \code{CC1}: The TAC is the average catch over last \code{yrsmth} years.
 
-\item \code{CC4}: An additional 30\% reduction in catch is taken compared to \code{CC1}.
+\item \code{CC4}: The TAC is the recent average catch reduced by 30\%.
+Note that this MP is intentionally designed to reduce catch over time.
 }}
 
 \references{

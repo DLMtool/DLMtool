@@ -902,7 +902,9 @@ ObsTSplot<-function(Cbias,Csd,nyears,labs, breaks, its, nsamp, col){
 #' @method plot OM 
 #' @author T. Carruthers
 #' @export 
-plot.OM <-function(x, ...){  
+plot.OM <-function(x, ...){
+  op <- par(no.readonly = TRUE)
+  on.exit(par(op))
   if (class(x) == "OM") {
     OM <- updateMSE(x) # update and add missing slots with default values
     out<-runMSE(OM,Hist=T)
@@ -921,7 +923,7 @@ plot.OM <-function(x, ...){
   } else stop("argument must be class 'OM' or 'list' ")
   
   # Time series
-  op <-par(mfrow=c(4,2),mai=c(0.7,0.7,0.05,0.05),omi=c(0.01,0.01,0.3,0.01))
+  par(mfrow=c(4,2),mai=c(0.7,0.7,0.05,0.05),omi=c(0.01,0.01,0.3,0.01))
   
   # SSB
   TSplot(yrlab,out$TSdata$SSB,xlab="Historical year",ylab="Spawning biomass")
@@ -970,7 +972,6 @@ plot.OM <-function(x, ...){
   
   if (class(x) == 'OM') mtext(paste0("Time series plots for operating model ",OM@Name),3,outer=T,line= 0.2,font=2)
   
-  on.exit(par(op))
   return(invisible(out))
 }
 

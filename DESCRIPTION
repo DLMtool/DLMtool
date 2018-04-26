@@ -22,7 +22,6 @@ Depends:
     snowfall
 Imports:
     abind,
-    Amelia,
     coda,
     devtools,
     dplyr,
@@ -39,6 +38,7 @@ Imports:
     parallel,
     r4ss,
     readxl,
+    rfishbase,
     rmarkdown,
     stats,
     utils

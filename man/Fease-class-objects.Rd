@@ -3,12 +3,22 @@
 \docType{data}
 \name{Feasibility}
 \alias{Feasibility}
-\title{Feasibility Fease}
+\alias{Feasibility2}
+\alias{Fease-class-objects}
+\title{Fease class objects}
 \format{An object of class \code{Fease} of length 1.}
 \usage{
 Feasibility
+
+Feasibility2
 }
 \description{
-An object of class Fease
+Example objects of class Fease
+}
+\examples{
+data(Feasibility2)
+
+
+avail("Fease")
 }
 \keyword{datasets}

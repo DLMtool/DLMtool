@@ -41,3 +41,5 @@ src\*.dll
 \.o$
 \.so$
 \.dll$
+
+\.ini$

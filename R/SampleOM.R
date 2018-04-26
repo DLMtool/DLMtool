@@ -95,10 +95,11 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   }
   
   if (!exists("hs", inherits=FALSE)) {
-    StockOut$hs <- hs <- runif(nsim, Stock@h[1], Stock@h[2])  # sample of recruitment cStockpensation (steepness - fraction of unfished recruitment at 20% of unfished biStockass)
+    StockOut$hs <- hs <- runif(nsim, Stock@h[1], Stock@h[2])  # sample of recruitment compensation (steepness - fraction of unfished recruitment at 20% of unfished biStockass)
   } else {
     StockOut$hs <- hs
   }
+  if (any(StockOut$hs > 1 | StockOut$hs < 0.2)) stop("Steepness (OM@h) must be between 0.2 and 1", call.=FALSE)
   
   # == Recruitment Deviations ====
   if (!exists("procsd", inherits=FALSE)) {
@@ -286,11 +287,11 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     L50[!is.finite(L50)] <- 0.8*Linf[!is.finite(L50)]
     L95[!is.finite(L95)] <- 0.99*Linf[!is.finite(L95)]
     if (any(L50>= Linf)) {
-      message("Note: Some samples of L50 are above Linf. Defaulting to 0.8*Linf")
+      if (Msg) message("Note: Some samples of L50 are above Linf. Defaulting to 0.8*Linf")
       L50[L50>=Linf] <- 0.8* Linf[L50>=Linf]
     }
     if (any(L95> Linf)) {
-      message("Note: Some samples of L95 are above Linf. Defaulting to 0.99*Linf")
+      if (Msg)  message("Note: Some samples of L95 are above Linf. Defaulting to 0.99*Linf")
       L95[L95> Linf] <- 0.99* Linf[L95> Linf]
     }
     
@@ -315,6 +316,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     if (any(L95> Linf)) {
       message("Note: Some samples of L95 are above Linf. Defaulting to 0.99*Linf")
       L95[L95> Linf] <- 0.99* Linf[L95> Linf]
+      L50_95 <- L95 - L50 
     }
     
     # === Generate L50 by year ====
@@ -325,8 +327,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     L95array[L95array>Linfarray] <- 0.99 *  Linfarray[L95array>Linfarray]
   }
   
-  
-  
+
   # == Calculate age at maturity ==== 
   if (exists('ageM', inherits=FALSE)) { # check dimensions 
     if (!all(dim(ageM) == c(nsim, proyears+nyears))) stop('"ageM" must be dimensions: nsim, nyears+proyers')

@@ -347,13 +347,27 @@ Chk <- function(X, MSEobj, thresh, ref.it) {
 # object by particular MPs (either MP number or name), or particular
 # simulations
 
-#' Check that MSE object includes all slots
+#' Utility functions for MSE objects
 #' 
-#' Check that an MSE object includes all slots in the latest version of DLMtool
-#' Use `updateMSE` to update the MSE object
-#' 
-#' @param MSEobj A MSE object.
+#' @param MSEobj A MSE object. For `updateMSE`, a MSE object from a previous version of 
+#' DLMtool. Also works with Stock, Fleet, Obs, Imp, and Data objects.
+#' @param MSEobjs A list of MSE objects. Must all have identical operating
+#' model and MPs. MPs which don't appear in all MSE objects will be dropped.
+#' @return An object of class \code{MSE}
+#' @examples 
+#' # An example of joinMSE
+#' \dontrun{
+#' OM1 <- DLMtool::testOM
+#' MSE1 <- runMSE(OM1) 
+#' OM2 <- OM1 
+#' OM2@seed <- OM1@seed + 1
+#' MSE2 <- runMSE(OM2)
+#' MSE <- joinMSE(list(MSE1, MSE2))
+#' MSE@nsim
+#' }
 #' @author A. Hordyk
+#' @describeIn checkMSE Check that an MSE object includes all slots in the latest version of DLMtool
+#' Use `updateMSE` to update the MSE object
 #' @export checkMSE
 checkMSE <- function(MSEobj) {
   nms <- slotNames(MSEobj)
@@ -529,27 +543,9 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
   return(SubResults)
 }
 
-#' Join multiple MSE objects together
-#' 
-#' Joins two or more MSE objects together. MSE objects must have identical
+#' @describeIn checkMSE Joins two or more MSE objects together. MSE objects must have identical
 #' number of historical years, and projection years.
-#' 
-#' 
-#' @param MSEobjs A list of MSE objects. Must all have identical operating
-#' model and MPs. MPs which don't appear in all MSE objects will be dropped.
-#' @return An object of class \code{MSE}
-#' @author A. Hordyk
-#' @export joinMSE
-#' @examples 
-#' \dontrun{
-#' OM1 <- DLMtool::testOM
-#' MSE1 <- runMSE(OM1) 
-#' OM2 <- OM1 
-#' OM2@seed <- OM1@seed + 1
-#' MSE2 <- runMSE(OM2)
-#' MSE <- joinMSE(list(MSE1, MSE2))
-#' MSE@nsim
-#' }
+#' @export
 joinMSE <- function(MSEobjs = NULL) {
   # join two or more MSE objects
   if (class(MSEobjs) != "list") stop("MSEobjs must be a list")

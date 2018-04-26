@@ -3,12 +3,22 @@
 \docType{data}
 \name{Overages}
 \alias{Overages}
-\title{Overages Imp}
+\alias{Perfect_Imp}
+\alias{Imp-class-objects}
+\title{Imp class objects}
 \format{An object of class \code{Imp} of length 1.}
 \usage{
 Overages
+
+Perfect_Imp
 }
 \description{
-An object of class Imp
+Example objects of class Imp
+}
+\examples{
+data(Perfect_Imp)
+
+
+avail("Imp")
 }
 \keyword{datasets}

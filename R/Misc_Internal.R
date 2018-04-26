@@ -9,7 +9,8 @@ proportionMat = vector()
 #' Check that all slots in Object are valid and contain values
 #' 
 #' @param OM An object of class OM, Stock, Fleet, Obs, or Imp
-ChkObj <- function(OM) {
+#' @param error Logical. Stop on missing parameter values? FALSE = warning
+ChkObj <- function(OM, error=TRUE) {
   if (!class(OM) %in% c("OM", "Stock", "Fleet", "Obs", "Imp"))
     stop("Argument must be of class: OM, Stock, Fleet, Obs, or Imp", call.=FALSE)
   
@@ -37,8 +38,11 @@ ChkObj <- function(OM) {
   if (any(RecSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% RecSlots] 
   
   probSlots <- slots[!Ok][!slots[!Ok] %in% Ignore]
-  if (length(probSlots) > 0) 
-    stop("Slots in Object have missing values:\n ", paste(probSlots, " "), call.=FALSE)
+  if (length(probSlots) > 0) {
+    if (error) stop("Slots in Object have missing values:\n ", paste(probSlots, " "), call.=FALSE)
+    if (!error) warning("Slots in Object have missing values:\n ", paste(probSlots, " "), call.=FALSE)
+  }
+
   return(OM)
   
 }
@@ -131,17 +135,24 @@ getEffhist <- function(Esd, nyears, EffYears, EffLower, EffUpper) {
     
     Effs <- mapply(runif, n = nsim, min = EffLower, max = EffUpper)  # sample Effort
     if (nsim > 1) {
-      effort <- t(sapply(1:nsim, function(x) approx(x = refYear, 
-                                                    y = Effs[x, ], method = "linear", n = nyears)$y))  # linear interpolation
-    }
-    
-    
+      if (ncol(Effs) == 1) {
+        effort <- matrix(Effs, nrow=nsim, ncol=nyears)
+      } else {
+        effort <- t(sapply(1:nsim, function(x) approx(x = refYear, 
+                                                      y = Effs[x, ], method = "linear", n = nyears)$y))  # linear interpolation
+      }
+      
+    } 
     if (nsim == 1) {
-      # Effs <- Effs/max(Effs)
-      effort <- matrix(approx(x = refYear, y = Effs, method = "linear", n = nyears)$y, nrow = 1)
+      if (length(Effs) == 1) {
+        effort <- matrix(Effs, nrow=nsim, ncol=nyears)
+      } else {
+        effort <- matrix(approx(x = refYear, y = Effs, method = "linear", n = nyears)$y, nrow = 1)
+      }
     }
+  
+    if (!all(effort == mean(effort))) effort <- range01(effort)  
     
-    effort <- range01(effort)
     effort[effort == 0] <- 0.01
     
     Emu <- -0.5 * Esd^2
@@ -289,14 +300,10 @@ range01 <- function(x) {
   (x - min(x))/(max(x) - min(x)) 
 }
 
-#' runMSE with no messages - for testing 
-#'
-#' For testing purposes only 
-#' @param ... Arguments to runMSE function 
-#'
+#' @describeIn runMSE Function suppresses messages - for testing purposes only.
 #' @keywords internal
 #' @importFrom utils capture.output
-#'
+#' @importFrom snowfall sfClusterEval
 runMSEnomsg <- function(...) {
   capture.output(out <- suppressMessages(runMSE(...)))
   out
@@ -311,6 +318,21 @@ run_parallel <- function(i, itsim, OM, MPs, CheckMPs, timelimit, Hist, ntrials, 
   mse <- runMSE_int(OM, MPs, CheckMPs, timelimit, Hist, ntrials, fracD, CalcBlow, 
                     HZN, Bfrac, AnnualMSY, silent, PPD)
   return(mse)
+}
+
+assign_DLMenv <- function() {
+  DLMenv_list <- snowfall::sfClusterEval(mget(ls(DLMenv), envir = DLMenv)) # Grab objects from cores' DLMenv
+  clean_env <- snowfall::sfClusterEval(rm(list = ls(DLMenv), envir = DLMenv)) # Remove cores' DLMenv objects
+  env_names <- unique(do.call(c, lapply(DLMenv_list, names)))
+  
+  if(length(env_names) > 0) {
+    for(i in 1:length(env_names)) {
+      temp <- lapply(DLMenv_list, getElement, env_names[i])
+      assign(env_names[i], do.call(c, temp), envir = DLMenv) # Assign objects to home DLMenv
+    }
+  }
+  
+  return(invisible(env_names))
 }
 
 

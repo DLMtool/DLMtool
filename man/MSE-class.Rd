@@ -102,11 +102,11 @@ simulation conditions and performance of data-limited methods
 
 \item{\code{TAC}}{Simulated Total Allowable Catch (prescribed) over the projection (this is NA for input controls). An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers}
 
-\item{\code{SSB_hist}}{Simulated historical spawning stock biomass. An array with dimensions: nsim, nages, nMPs, proyears. Non-negative real numbers}
+\item{\code{SSB_hist}}{Simulated historical spawning stock biomass. An array with dimensions: nsim, nages, nyears, nareas. Non-negative real numbers}
 
-\item{\code{CB_hist}}{Simulated historical catches in weight. An array with dimensions: nsim, nages, nMPs, proyears. Non-negative real numbers}
+\item{\code{CB_hist}}{Simulated historical catches in weight. An array with dimensions: nsim, nages, nyears, nareas. Non-negative real numbers}
 
-\item{\code{FM_hist}}{Simulated historical fishing mortality rate. An array with dimensions: nsim, nages, nMPs, proyears. Non-negative real numbers}
+\item{\code{FM_hist}}{Simulated historical fishing mortality rate. An array with dimensions: nsim, nages, nyears, nareas. Non-negative real numbers}
 
 \item{\code{Effort}}{Simulated relative fishing effort in the projection years. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers}
 
