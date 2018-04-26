@@ -5,11 +5,10 @@
 \title{Internal function to write CSVs for objects}
 \usage{
 writeCSV(inobj, tmpfile = NULL, objtype = c("Stock", "Fleet", "Obs", "Imp",
-  "Data", "OM", "Fease"))
+  "Data", "OM"))
 }
 \arguments{
-\item{inobj}{A object of class Stock, Fleet, Obs, Imp, Data, OM, or
-Fease}
+\item{inobj}{A object of class Stock, Fleet, Obs, Imp, Data, or OM}
 
 \item{tmpfile}{The full file path and name for the saved CSV file}
 
