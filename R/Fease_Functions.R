@@ -18,6 +18,11 @@
 #' @return Either a vector of MP names that are feasible for the fishery (default) or a 3 column data frame (`names.only=FALSE`). 
 
 #' @author T. Carruthers & A. Hordyk
+#' @examples 
+#' Fease(TAC=FALSE)
+#' Fease(SL=FALSE, Spatial=FALSE)
+#' Data <- get(avail("Data")[1])
+#' Fease(Data, TAE=FALSE, names.only=FALSE)
 #' @export 
 Fease <- function(Data=NULL, TAC=TRUE, TAE=TRUE, SL=TRUE, Spatial=TRUE, names.only=TRUE, msg=TRUE, include.ref=FALSE) {
   if (msg) {
@@ -38,14 +43,15 @@ Fease <- function(Data=NULL, TAC=TRUE, TAE=TRUE, SL=TRUE, Spatial=TRUE, names.on
   }
   mptypes <- MPtype(MPs)
   mprecs <- mptypes[,3]
-  isfease <- rep(FALSE, length(MPs))
+  isfease <- rep(TRUE, length(MPs))
   isfease[17]
   cbind(MPs, mprecs)
   
-  if (TAC) isfease[grepl("TAC", mprecs)] <- TRUE
-  if (TAE) isfease[grepl("TAE", mprecs)] <- TRUE
-  if (SL) isfease[grepl("SL", mprecs)] <- TRUE
-  if (Spatial) isfease[grepl("Spatial", mprecs)] <- TRUE
+  if (!TAC) isfease[grepl("TAC", mprecs)] <- FALSE
+  if (!TAE) isfease[grepl("TAE", mprecs)] <- FALSE
+  if (!SL) isfease[grepl("SL", mprecs)] <- FALSE
+  if (!Spatial) isfease[grepl("Spatial", mprecs)] <- FALSE
+  
   
   df <- data.frame(MP=mptypes[,1], Can=MPs%in%canMPs, Fease=isfease, stringsAsFactors = FALSE)
   

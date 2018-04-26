@@ -33,6 +33,12 @@ Either a vector of MP names that are feasible for the fishery (default) or a 3 c
 What MPs may be run (best case scenario) for various data-availability
 scenarios and management constraints?
 }
+\examples{
+Fease(TAC=FALSE)
+Fease(SL=FALSE, Spatial=FALSE)
+Data <- get(avail("Data")[1])
+Fease(Data, TAE=FALSE, names.only=FALSE)
+}
 \author{
 T. Carruthers & A. Hordyk
 }
