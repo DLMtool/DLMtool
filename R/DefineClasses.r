@@ -1466,9 +1466,10 @@ setMethod("show", signature = (object="PMobj"), function(object) {
 #' @param object object of class MSE
 #' @param ... a list of names of PM methods
 #' @param silent Should summary be printed to console? Logical.
+#' @param Refs An optional named list (matching the PM names) with numeric values to override the default `Ref` values. See examples.
 #' @rdname summary-MSE
 #' @export
-setMethod('summary', signature="MSE", function(object, ..., silent=FALSE) {
+setMethod('summary', signature="MSE", function(object, ..., silent=FALSE, Refs=NULL) {
   PMlist <- unlist(list(...))
   
   if(length(PMlist) == 0) PMlist <- avail("PM")
@@ -1480,21 +1481,29 @@ setMethod('summary', signature="MSE", function(object, ..., silent=FALSE) {
   if (!silent) message("Calculating Performance Metrics")
   storeMean <- vector('list', length(PMlist))
   storeName <- vector('list', length(PMlist))
+  storeCap <- vector('list', length(PMlist))
   storeHeading <- vector('list', length(PMlist))
   storeMP <- vector('list', length(PMlist))
   for (X in 1:length(PMlist)) {
-    runPM <- eval(call(PMlist[[X]],object))
+    ref <- Refs[[PMlist[X]]]
+    if (is.null(ref)) {
+      runPM <- eval(call(PMlist[X], MSEobj))  
+    } else {
+      runPM <- eval(call(PMlist[X], MSEobj, Ref=ref))
+    }
     storeMean[[X]] <- runPM@Mean
     storeName[[X]] <- runPM@Name
-    # storeHeading[[X]] <- runPM@call
+    storeCap[[X]] <- runPM@Caption
     storeMP[[X]] <- runPM@MPs
   }
   
-  df <- data.frame('MP'=storeMP[[1]], signif(do.call('cbind', storeMean),2))
+  df <- data.frame('MP'=storeMP[[1]], signif(do.call('cbind', storeMean),2), stringsAsFactors = FALSE)
   # heading <- do.call('rbind', storeHeading)
   colnames(df)[2:(length(PMlist)+1)] <- PMlist #caps # gsub(" ", "", caps)
   if (!silent) {
-    print(data.frame('Performance Metrics' = do.call('rbind', storeName)))
+    dfprint <<- data.frame('Performance Metrics' = do.call('rbind', storeName), gap="", do.call('rbind', storeCap))
+    names(dfprint)[2:3] <- ''
+    print(dfprint)
     cat("\n")
     cat("\nProbability:\n")
     print(df)  

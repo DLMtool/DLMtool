@@ -13,7 +13,7 @@ plot.MSE <- function(x, ...) {
 
 # modified from
 # https://github.com/tidyverse/ggplot2/wiki/share-a-legend-between-two-ggplot2-graphs
-grid_arrange_shared_legend <- function(plots, ncol = length(plots), nrow = 1, position = c("bottom", "right", "none")) {
+grid_arrange_shared_legend <- function(plots, ncol = length(plots), nrow = 1, position = c("bottom", "right")) {
   
   
   position <- match.arg(position)
