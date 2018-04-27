@@ -10,7 +10,7 @@
 TradePlot_n(MSEobj, ..., lims = c(0.2, 0.2, 0.8, 0.8), point.size = 3,
   lab.size = 5, axis.title.size = 14, axis.text.size = 12,
   legend.title.size = 14, position = c("right", "bottom"),
-  fill = "gray80", alpha = 0.4, PMlist = NULL)
+  fill = "gray80", alpha = 0.4, PMlist = NULL, Refs = NULL)
 
 Tplot_n(MSEobj, lims = c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...)
 
@@ -42,6 +42,8 @@ Tplot3_n(MSEobj, lims = c(0.5, 0.5, 0.8, 0.5), ...)
 \item{alpha}{Numeric. Transparency of fill}
 
 \item{PMlist}{Optional list of PM names. Overrides any supplied in ... above}
+
+\item{Refs}{An optional named list (matching the PM names) with numeric values to override the default \code{Ref} values. See examples.}
 }
 \value{
 A summary table of MP performance

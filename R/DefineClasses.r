@@ -1487,9 +1487,9 @@ setMethod('summary', signature="MSE", function(object, ..., silent=FALSE, Refs=N
   for (X in 1:length(PMlist)) {
     ref <- Refs[[PMlist[X]]]
     if (is.null(ref)) {
-      runPM <- eval(call(PMlist[X], MSEobj))  
+      runPM <- eval(call(PMlist[X], object))  
     } else {
-      runPM <- eval(call(PMlist[X], MSEobj, Ref=ref))
+      runPM <- eval(call(PMlist[X], object, Ref=ref))
     }
     storeMean[[X]] <- runPM@Mean
     storeName[[X]] <- runPM@Name
