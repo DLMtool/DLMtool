@@ -162,7 +162,7 @@ STY <- function(MSEobj=NULL, Ref=0.5) {
   RefYd <- array(MSEobj@OM$RefY, dim=dim(MSEobj@C[,,y.st:y.end]))
   
   PMobj@Stat <- MSEobj@C[,,y.st:y.end]/RefYd
-  PMobj@Prob <- calcProb(PMobj@Stat > 0.5, MSEobj)  # probability STY > 0.5 Ref Yield
+  PMobj@Prob <- calcProb(PMobj@Stat > Ref, MSEobj)  # probability STY > 0.5 Ref Yield
   
   PMobj@Mean <- calcMean(PMobj@Prob, MSEobj) # calculate mean probability by MP
   PMobj@MPs <- MSEobj@MPs
