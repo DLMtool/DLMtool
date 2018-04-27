@@ -23,11 +23,11 @@
 #' @export
 #'
 TradePlot_n <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8), 
-                      point.size=3,
-                      lab.size=5,
-                      axis.title.size=14,
-                      axis.text.size=12,
-                      legend.title.size=14,
+                      point.size=2,
+                      lab.size=4,
+                      axis.title.size=12,
+                      axis.text.size=10,
+                      legend.title.size=12,
                       position = c("right", "bottom"),
                       fill="gray80",
                       alpha=0.4,

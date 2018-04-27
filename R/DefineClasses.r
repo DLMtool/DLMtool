@@ -1416,8 +1416,8 @@ calcProb <- function(PM,  MSEobj) {
 #' @export
 #'
 calcMean <- function(Prob, MSEobj) {
-  if (class(Prob) == 'matrix') return( apply(Prob , 2, mean))
-  if (class(Prob) == 'numeric') return(mean(Prob))
+  if (class(Prob) == 'matrix') return( apply(Prob , 2, mean, na.rm=TRUE))
+  if (class(Prob) == 'numeric') return(mean(Prob, na.rm=TRUE))
 }
 
 show <- function(object) methods::show(object)
@@ -1429,35 +1429,62 @@ show <- function(object) methods::show(object)
 #' @rdname show-MSE
 #' @export
 setMethod("show", signature = (object="PMobj"), function(object) {
-  cat(object@Name)
-  cat("\n", object@Caption)
-  cat("\n")
   
-  nMP <- length(object@MPs)
-  if (nMP > 1) nsim <- dim(object@Prob)[1]
-  if (nMP == 1) nsim <- length(object@Prob)
-  
-  nprint <- min(nsim, 10)
-  if (nMP > 1) df <- data.frame(object@Prob[1:nprint,])
-  if (nMP == 1) df <- data.frame(object@Prob[1:nprint])
-  if (nMP > 1) lst <- object@Prob[nprint+1,]
-  if (nMP == 1) lst <- object@Prob[nprint+1]
-  df <- signif(df,2)
-  lst <- signif(lst,2)
-  colnames(df) <- object@MPs
-  names(lst) <- object@MPs
-  if (nsim > (nprint+1)) {
-    df <- rbind(df,
-                rep(".", nMP),
-                rep(".", nMP),
-                rep(".", nMP),
-                lst)
-    rownames(df) <- c(1:(nprint+3), nsim)
+  sls <- slotNames(object)
+  df <- data.frame(Slot=sls, Value=NA, stringsAsFactors = FALSE)
+  if (any(sapply(sls, function(sl) length(slot(object, sl))) == 0)) {
+    cat("Incomplete PMobj\n")
+    for (sl in sls) {
+      r <- match(sl, sls)
+      slval <- slot(object, sl)
+      if (class(slval) == "array" & length(slval)>0) {
+        df[r,2] <- 'array'
+      } else if (class(slval) == "matrix" & length(slval)>0) {
+        df[r,2] <- 'matrix'
+      } else if (length(slval) > 0 & class(slval) != "call") {
+        df[r,2] <- slval
+      } else {
+        df[r, 2] <- 'not defined'
+      }
+      
+    }
+    print(df)
+  } else {
+    cat(object@Name)
+    cat("\n", object@Caption)
+    cat("\n")
+    
+    nMP <- length(object@MPs)
+    if (nMP > 1) nsim <- dim(object@Prob)[1]
+    if (nMP == 1) nsim <- length(object@Prob)
+    
+    nprint <- min(nsim, 10)
+    if (nMP > 1) df <- data.frame(object@Prob[1:nprint,])
+    if (nMP == 1) df <- data.frame(object@Prob[1:nprint])
+    if (nMP > 1) lst <- object@Prob[nprint+1,]
+    if (nMP == 1) lst <- object@Prob[nprint+1]
+    df <- signif(df,2)
+    lst <- signif(lst,2)
+    colnames(df) <- object@MPs
+    names(lst) <- object@MPs
+    if (nsim > (nprint+1)) {
+      df <- rbind(df,
+                  rep(".", nMP),
+                  rep(".", nMP),
+                  rep(".", nMP),
+                  lst)
+      rownames(df) <- c(1:(nprint+3), nsim)
+    }
+    print(df)
+    
+    cat("\nMean\n")
+    print(signif(object@Mean,2))  
+    
+    
   }
-  print(df)
+ 
   
-  cat("\nMean\n")
-  print(signif(object@Mean,2))
+
 })
 
 

@@ -117,6 +117,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       setup()
     }
     
+    if (all(is.na(MPs))) MPs <- avail("MP")
     # Export Custom MPs # 
     cMPs <- MPs[!MPs %in% pkg.funs]
     if (length(cMPs)>0) snowfall::sfExport(list=cMPs)

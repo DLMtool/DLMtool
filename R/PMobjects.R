@@ -45,18 +45,30 @@ NULL
 
 #' @rdname PerformanceMetric 
 #' @export
-P10 <- function(MSEobj=NULL, Ref=0.1) {
+P10 <- function(MSEobj=NULL, Ref=0.1, Yrs=NULL) {
   if (class(MSEobj)!='MSE') stop('Require object of class MSE')
   PMobj <- new("PMobj")
   PMobj@Name <- "Spawning Biomass relative to SBMSY"
-  if (Ref !=1) {
-    PMobj@Caption <- paste0('Prob. SB > ', Ref, ' SBMSY')
+  
+  
+  if (is.null(Yrs)) {
+    y.st <- 1 
+    y.end <- MSEobj@proyears
   } else {
-    PMobj@Caption <- 'Prob. SB > SBMSY'
+    if (length(Yrs)!=2) stop("Yrs must be numeric vector of length 2", call.=FALSE)
+    if (Yrs[1] > Yrs[2]) stop("Yrs[1] is > Yrs[2]", call.=FALSE)
+    if (any(Yrs < 1)) stop("Yrs must be positive", call.=FALSE)
+    if (Yrs[2] > MSEobj@proyears) Yrs[2] <- MSEobj@proyears
+    y.st <- Yrs[1] 
+    y.end <- Yrs[2]
   }
   
-  y.st <- 1 
-  y.end <- MSEobj@proyears
+  if (Ref !=1) {
+    PMobj@Caption <- paste0('Prob. SB > ', Ref, ' SBMSY (Years ', y.st, ' - ', y.end, ')')
+  } else {
+    PMobj@Caption <- paste0('Prob. SB > SBMSY (Years ', y.st, ' - ', y.end, ')')
+  }
+  
   
   PMobj@Stat <- MSEobj@B_BMSY[,,y.st:y.end] # Performance Metric statistic of interest - here SB/SBMSY 
   PMobj@Ref <- Ref
