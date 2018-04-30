@@ -53,8 +53,8 @@ Fease <- function(Data=NULL, TAC=TRUE, TAE=TRUE, SL=TRUE, Spatial=TRUE, names.on
   if (!Spatial) isfease[grepl("Spatial", mprecs)] <- FALSE
   
   
-  df <- data.frame(MP=mptypes[,1], Can=MPs%in%canMPs, Fease=isfease, stringsAsFactors = FALSE)
-  
+  df <- data.frame(MP=mptypes[,1], Can=mptypes[,1]%in%canMPs, Fease=isfease, stringsAsFactors = FALSE)
+  df <- df[order(df$MP),]
   if (!include.ref)df <- df[mptypes[,2] != "Reference",]
   
   if (names.only) {

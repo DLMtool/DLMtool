@@ -14,7 +14,7 @@ Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "D", "Mgrad", "SRrel", "hs", "p
            "Linfarray", "Karray", "t0array", "mov",  "nareas", "AC", "LenCV", "a", "b", "FinF", 
            "Fdisc", "R50", "Rslope", "retA", "retL", "LR5", "LFR", "Rmaxlen",
            "V2", "SLarray2", "DR", "Asize", "Size_area_1", "L50array", "L95array",
-           "Fdisc_array", "Fdisc_array2", "Pinitdist", "incProgress")
+           "Fdisc_array", "Fdisc_array2", "Pinitdist", "incProgress", "DataOut")
 
 
 if(getRversion() >= "2.15.1") utils::globalVariables(Names)
@@ -1194,7 +1194,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         # assign('Data',MSElist[[mm]],envir=.GlobalEnv) # for debugging fun
         
         # apply combined MP ----
-        
+        if("DataOut"%in%names(control))if(control$DataOut == y) return(MSElist)
+          
         runMP <- applyMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply MP
        
         MPRecs <- runMP[[1]][[1]] # MP recommendations
