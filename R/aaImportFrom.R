@@ -1,7 +1,7 @@
 #' @importFrom abind abind
 #' @importFrom devtools install_github
 #' @importFrom dplyr  %>%  select mutate
-#' @importFrom ggplot2 ggplot aes geom_rect geom_point xlim ylim xlab ylab theme theme_classic labs ggplotGrob
+#' @importFrom ggplot2 aes element_blank expand_limits facet_wrap geom_boxplot ggplot ggplotGrob geom_rect geom_point labs theme theme_classic xlim ylim xlab ylab   
 #' @importFrom ggrepel geom_text_repel
 #' @importFrom graphics abline arrows axis barplot boxplot contour hist identify layout legend
 #'  lines matplot mtext par plot plot.new points polygon segments text title text
