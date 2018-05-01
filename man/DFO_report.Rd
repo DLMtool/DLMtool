@@ -5,7 +5,7 @@
 \title{Create a standard DFO MSE report}
 \usage{
 DFO_report(MSEobj, output_file = NA, author = "Author not specified",
-  title = NA)
+  title = NA, maxMPs = 15)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}
