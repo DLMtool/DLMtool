@@ -557,7 +557,7 @@ DFO_plot2 <- function(MSEobj, nam = NA,panel = T,Bcut=50, Ycut=50) {
 #' @param forreport Logical. Is it for a report? If true, one plot of six MPs in a row will be provided one after another.  
 #' @author T. Carruthers
 #' @export DFO_quant
-DFO_quant<-function(MSEobj,maxcol=6,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",curyr=2018,quants=c(0.1,0.9),addline=T, forreport=T){
+DFO_quant<-function(MSEobj,maxcol=6,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",curyr=2018,quants=c(0.05,0.25,0.75,0.95),addline=T, forreport=T){
   
   if(is.na(maxcol))maxcol=ceiling(length(MSEobj@MPs)/0.5) # defaults to portrait 1:2
   MPs<-MSEobj@MPs
@@ -598,18 +598,22 @@ DFO_quant<-function(MSEobj,maxcol=6,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",
     nt<-length(toplot)
     
     for(i in toplot){
-      plot(range(yrs),Blims,col="white")
+      plot(range(yrs),Blims,col="white", yaxs="i")
       add_zones_bar_horiz(textpos=curyr+0.3*MSEobj@proyears)
       axis(2)
-      plotquant(B_BMSY[,i,],p=quants,yrs,qcol,lcol)
+      plotquant(B_BMSY[,i,],p=quants[c(1,4)],yrs,makeTransparent(qcol,70),lcol)
+      plotquant(B_BMSY[,i,],p=quants[2:3],yrs,qcol,lcol)
       mtext(MSEobj@MPs[i],3,line=0.2,font=2)
       if(i==toplot[1])mtext("B/BMSY",2,line=2.5)
     }
     if(nt<maxcol)for(i in 1:(maxcol-nt))plot(NULL, xlim=c(0,1), ylim=c(0,1), ylab="y label", xlab="x lablel",axes=F)
     
     for(i in toplot){
-      plot(range(yrs),Ylims,col="white")
-      plotquant(Yd[,i,],p=quants,yrs,qcol,lcol)
+      plot(range(yrs),Ylims,col="white",yaxs="i")
+      abline(h=(0:50)/2,col='light grey',lwd=2)
+      plotquant(Yd[,i,],p=quants[c(1,4)],yrs,makeTransparent(qcol,70),lcol)
+      plotquant(Yd[,i,],p=quants[2:3],yrs,qcol,lcol)
+      
       if(i==toplot[1])mtext("Rel. Yd.",2,line=2.3)
     }
     if(nt<maxcol)for(i in 1:(maxcol-nt))plot(NULL, xlim=c(0,1), ylim=c(0,1), ylab="y label", xlab="x lablel",axes=F)
@@ -635,8 +639,9 @@ plotquant2<-function(x,p=c(0.1,0.9),yrs,qcol,lcol,addline=T){
   ny<-length(yrs)
   qs<-apply(x,2,quantile,p=p)
   #polygon(c(yrs,yrs[ny:1]),c(qs[1,],qs[5,ny:1]),border=lcol,col=NA)
-  lines(yrs,qs[1,],lwd=1,col=lcol)
-  lines(yrs,qs[5,],lwd=1,col=lcol)
+ # lines(yrs,qs[1,],lwd=1,col=lcol)
+  #lines(yrs,qs[5,],lwd=1,col=lcol)
+  polygon(c(yrs,yrs[ny:1]),c(qs[1,],qs[5,ny:1]),border=NA,col=lcol)
   
   polygon(c(yrs,yrs[ny:1]),c(qs[2,],qs[4,ny:1]),border=NA,col=qcol)
   
@@ -662,11 +667,11 @@ DFO_cbar<-function(finalD,qcol,lcol,syear=2017,quants=c(0.05,0.25,0.5,0.75,0.95)
   }
   
   qs<-quantile(finalD,quants)
-  lines(qs[c(1,5)],c(1,1),col=lcol,lwd=2)
-  lines(rep(qs[1],2),c(0.95,1.05),col=lcol,lwd=2)
-  lines(rep(qs[5],2),c(0.95,1.05),col=lcol,lwd=2)
+  lines(qs[c(1,5)],c(1,1),col=lcol,lwd=4)
+  lines(rep(qs[1],2),c(0.95,1.05),col=lcol,lwd=4)
+  lines(rep(qs[5],2),c(0.95,1.05),col=lcol,lwd=4)
   polygon(qs[c(2,2,4,4)],c(0.9,1.1,1.1,0.9),col=qcol,border=qcol)
-  lines(rep(qs[3],2),c(0.91,1.09),col='white',lwd=3)
+  lines(rep(qs[3],2),c(0.91,1.09),col='white',lwd=4)
   axis(1)
   mtext(xlab,1,line=2.5)
   
@@ -674,7 +679,7 @@ DFO_cbar<-function(finalD,qcol,lcol,syear=2017,quants=c(0.05,0.25,0.5,0.75,0.95)
   
 DFO_Dplot<-function(D,qcol,lcol,Blims,yrs,MSY=F,quants=c(0.05,0.95)){  
  
-  plot(range(yrs),Blims,col="white",ylab="",xlab="",axes=F)
+  plot(range(yrs),Blims,col="white",ylab="",xlab="",axes=F,yaxs="i")
   if(!MSY){
     add_zones_bar_horiz_D(textpos=yrs[1]+0.1*(yrs[length(yrs)]-yrs[1]))
     yx<-seq(0,5,length.out=26)
@@ -699,7 +704,7 @@ DFO_Dplot<-function(D,qcol,lcol,Blims,yrs,MSY=F,quants=c(0.05,0.95)){
 
 DFO_cosplot<-function(SSBd,qcol,lcol,Blims,yrs,quants=c(0.05,0.25,0.5,0.75,0.95)){  
   
-  plot(range(yrs),Blims,col="white",ylab="",xlab="",axes=F)
+  plot(range(yrs),Blims,col="white",ylab="",xlab="",axes=F,yaxs="i")
   
   
   add_zones_A(textpos=yrs[1]+0.07*(yrs[length(yrs)]-yrs[1]))
@@ -724,8 +729,8 @@ DFO_cosplot<-function(SSBd,qcol,lcol,Blims,yrs,quants=c(0.05,0.25,0.5,0.75,0.95)
 #' @describeIn runCOSEWIC Projection plots of spawning stock biomass under three scenarios: 
 #' no catch, FMSY fishing and status quo fishing effort.
 #' @export COSEWIC_Pplot
-COSEWIC_Pplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",quants=c(0.05,0.25,0.5,0.75,0.95)){
-
+COSEWIC_Pplot<-function(MSEobj,syear=2017,qcol='#FFCB62', quants=c(0.05,0.25,0.5,0.75,0.95)){
+  lcol<-makeTransparent(qcol,85)
   if(class(MSEobj)!="COSEWIC")stop("The MSE object you have provided is not of class COSEWIC, 
                                       please create a COSEWIC class MSE object using the function runCOSEWIC()")
   if(sum(MSEobj@MPs%in%c("NFref","FMSYref","curE"))<3) stop("This function requires an MSE for three specific MPs: 
@@ -751,14 +756,14 @@ COSEWIC_Pplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerb
     # Depletion plot relative to B0
     D<-SSB/MSEobj@OM$SSB0
     Blims <- c(0,quantile(D,0.98))
-    DFO_Dplot(D,qcol='#FFCB62',lcol='#FF7F0E',Blims,yrs,MSY=F,quants=quants)
+    DFO_Dplot(D,qcol=qcol,lcol=lcol,Blims,yrs,MSY=F,quants=quants)
     legend('topleft',labs[i],bty='n',text.font=2)
     if(MP==ord[1])mtext("Relative to unfished levels",3,line=0.8)
   
     # Depletion plot relative to BMSY
     SSBrel<-SSB/MSEobj@OM$SSBMSY
     Blims <- c(0,quantile(SSBrel,0.98))
-    DFO_Dplot(SSBrel,qcol='#FFCB62',lcol='#FF7F0E',Blims,yrs,MSY=T,quants=quants)
+    DFO_Dplot(SSBrel,qcol=qcol,lcol=lcol,Blims,yrs,MSY=T,quants=quants)
     if(MP==ord[1])mtext("Relative to MSY levels",3,line=0.8)
   }
   on.exit(par(op))
@@ -767,8 +772,9 @@ COSEWIC_Pplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerb
 #' @describeIn runCOSEWIC Depletion plots evaluate whether significant declines have 
 #' occurred over three generation times in both historical and projection years.
 #' @export
-COSEWIC_Dplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",quants=c(0.05,0.25,0.5,0.75,0.95),nGT=3){
+COSEWIC_Dplot<-function(MSEobj,syear=2017,qcol='#79F48D', quants=c(0.05,0.25,0.5,0.75,0.95),nGT=3){
   
+  lcol<-makeTransparent(qcol,85)
   if(class(MSEobj)!="COSEWIC")stop("The MSE object you have provided is not of class COSEWIC, 
                                       please create a COSEWIC class MSE object using the function runCOSEWIC()")
   if(sum(MSEobj@MPs%in%c("NFref","FMSYref","curE"))<2) stop("This function requires an MSE for three specific MPs: 
@@ -801,7 +807,7 @@ COSEWIC_Dplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerb
     SSBd<-SSBd[,(mMGT*3)+(1:(nyears+proyears)-1)]
     Blims<-quantile(SSBd,c(0.02,0.97))
     Blims[2]<-min(Blims[2],250)
-    DFO_cosplot(SSBd,qcol='#79F48D',lcol='#49B95B',Blims,yrs,quants=quants)
+    DFO_cosplot(SSBd,qcol=qcol,lcol=lcol,Blims,yrs,quants=quants)
     abline(v=syear)
     legend('topleft',labs[i],bty='n',text.font=2)
   }
@@ -811,8 +817,9 @@ COSEWIC_Dplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerb
 #' @describeIn runCOSEWIC Plots that evaluate the likelihood of declining below `Blow`, 
 #' by default, biomass that takes 3 generation times to reach half BMSY with zero fishing 
 #' @export
-COSEWIC_Blow<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",quants=c(0.05,0.25,0.5,0.75,0.95),nGT=3){
+COSEWIC_Blow<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), quants=c(0.05,0.25,0.5,0.75,0.95),nGT=3){
   
+  lcol<-makeTransparent(qcol,85)
   if(class(MSEobj)!="COSEWIC")stop("The MSE object you have provided is not of class COSEWIC, 
                                    please create a COSEWIC class MSE object using the function runCOSEWIC()")
   if(sum(MSEobj@MPs%in%c("NFref","FMSYref","curE"))<2) stop("This function requires an MSE for three specific MPs: 
@@ -862,8 +869,9 @@ COSEWIC_Blow<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerbl
 
 #' @describeIn runCOSEWIC Plots of historical spawning stock  relative to unfished and MSY levels.   
 #' @export
-COSEWIC_Hplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), lcol= "dodgerblue4",quants=c(0.05,0.25,0.5,0.75,0.95)){
+COSEWIC_Hplot<-function(MSEobj,syear=2017,qcol=rgb(0.4,0.8,0.95), quants=c(0.05,0.25,0.5,0.75,0.95)){
   
+  lcol<-makeTransparent(qcol,85)
   op<-par(mai=c(0.6,0.6,0.05,0.05),omi=c(0.05,0.05,0.3,0.05))
   layout(matrix(1:4,ncol=2),heights=c(2.5,1))
   proyears<-dim(MSEobj@B_BMSY)[3]
@@ -937,7 +945,7 @@ SubCpars<-function(OM,sims){
 #' @param title The title of the report
 #' @author T. Carruthers
 #' @export DFO_report
-DFO_report<-function(MSEobj,output_file=NA,author="Author not specified",title=NA){
+DFO_report<-function(MSEobj,output_file=NA,author="Author not specified",title=NA,maxMPs=15){
   
   if(is.na(output_file))output_file=paste0(getwd(),"/DFO MSE report.html")
   if(is.na(title))title=paste0("DFO Generic MSE Report for",MSEobj@Name)
@@ -946,6 +954,7 @@ DFO_report<-function(MSEobj,output_file=NA,author="Author not specified",title=N
   params$subtitle<-"A prototype MSE performance evaluation"
   params$author<-author
   params$MSEobj<-MSEobj
+  params$maxMPs<-maxMPs
   rmarkdown::render(input=system.file("DFO_generic.Rmd", package="DLMtool"), output_file=output_file,params=params)
   
 }
@@ -984,10 +993,11 @@ COSEWIC_report<-function(MSEobj,output_file=NA,author="Author not specified",tit
 #' P_Reb is the probability the stock has rebuilt to over BMSY in 2 mean generation times
 #'
 #' @param MSEobj An object of class MSE
+#' @param maxMPs Integer: the maximum number of top ranking MPs to include in the table (ranked by long term yield)
 #' @param rnd The number of significant figures for rounding. 
 #' @author T. Carruthers
 #' @export DFO_tab
-DFO_tab<-function(MSEobj,rnd=0){
+DFO_tab<-function(MSEobj,maxMPs=15, rnd=0){
   
   shortterm<-1:min(10,MSEobj@proyears)
   P_Cr_S<-round(apply(MSEobj@B_BMSY[,,shortterm]<0.4,2,mean)*100,rnd)
@@ -1021,7 +1031,7 @@ DFO_tab<-function(MSEobj,rnd=0){
   tab<-data.frame(MP,P_Cr_S, P_Ct_S, P_H_S, POF_S, STY, P_Cr_L, P_Ct_L, P_H_L, POF_L, LTY, AAVY, P_Reb)
   
   tab<-tab[order(tab$LTY,decreasing=T),]
-  tab
+  tab[1:maxMPs,]
   
 }
 
@@ -1042,101 +1052,222 @@ DFO_tab<-function(MSEobj,rnd=0){
 #'
 #' @param Ptab1 A DFO performance table made by DFO_tab()
 #' @param thresh A vector of thresholds for each column Health, Yield and Reb are 'greater than threshold' conditions 
+#' @param ret_thresh Logical: if true just the threshold levels are returned
 #' @author T. Carruthers
 #' @importFrom dplyr %>% mutate
 #' @importFrom kableExtra cell_spec kable_styling column_spec add_header_above
 #' 
 #' @export 
-DFO_tab_formatted<-function(Ptab1,thresh=c(10,     40,     50,    50,    50,  10,     40,     50,    50,    50,  20,   50)){
+DFO_tab_formatted<-function(Ptab1,thresh=c(30,     50,     40,    60,    50,  20,     40,     50,    60,    50,  30,   50),ret_thresh=F){
   #                                       P_Cr_S, P_Ct_S, P_H_S, POF_S, STY, P_Cr_L, P_Ct_L, P_H_L, POF_L, LTY, AAVY, P_Reb
   
-  # save(Ptab1,file="Ptab1")
-  MPs<-as.character(Ptab1$MP)
-  Data <- DLMtool::SimulatedData
-  runMPs <- applyMP(Data, MPs, reps = 2, nsims=1, silent=TRUE)
-  recs <- runMPs[[1]]
-  type <- matrix(0, nrow=length(MPs),ncol=4) # TAC TAE SL MPA
-  for (mm in seq_along(recs)) {
-    type[mm,1] <- as.integer(length(recs[[mm]]$TAC) > 0)
-    type[mm,2] <- as.integer(length(recs[[mm]]$Effort)>0)
-    type[mm,3] <- as.integer(length(recs[[mm]]$LR5)>0)
-    type[mm,4] <- as.integer(!is.na(recs[[mm]]$Spatial[1,1]))
-  }
-  totneeded<-apply(type,1,sum)
+  if(ret_thresh){
+    
+    return(thresh)
+  }else{
+    
+    # save(Ptab1,file="Ptab1")
+    MPs<-as.character(Ptab1$MP)
+    Data <- DLMtool::SimulatedData
+    runMPs <- applyMP(Data, MPs, reps = 2, nsims=1, silent=TRUE)
+    recs <- runMPs[[1]]
+    type <- matrix(0, nrow=length(MPs),ncol=4) # TAC TAE SL MPA
+    for (mm in seq_along(recs)) {
+      type[mm,1] <- as.integer(length(recs[[mm]]$TAC) > 0)
+      type[mm,2] <- as.integer(length(recs[[mm]]$Effort)>0)
+      type[mm,3] <- as.integer(length(recs[[mm]]$LR5)>0)
+      type[mm,4] <- as.integer(!is.na(recs[[mm]]$Spatial[1,1]))
+    }
+    totneeded<-apply(type,1,sum)
+    
+    MP_Type<-rep("TAC",length(MPs))
+    MP_Type[type[,2]==1]<-"TAE"
+    MP_Type[type[,3]==1]<-"SzLim"
+    MP_Type[type[,4]==1]<-"MPA"
+    MP_Type[totneeded>1]<-"Mixed"
+    
+     
+    Ptab2<-Ptab1 #[,1:ncol(Ptab1)]
+    Ptab2<-cbind(Ptab2[,1],MP_Type,Ptab2[,2:ncol(Ptab2)])
+     
+   # Ptab2<-rbind(Ptab2,c("Thresh-","hold",thresh))
+    
+    MP <- Crit_S <- Caut_S <- Health_S <- OvFish_S <- Yield_S <- Crit <- Caut <-  Health <- OvFish <- Reb <- NULL # hack for CRAN checks
+    names(Ptab2)<-c("MP","MP_Type","Crit_S","Caut_S","Health_S","OvFish_S","Yield_S","Crit","Caut","Health","OvFish","Yield","AAVY","Reb")
+     
+    #       P_Cr_S,               P_Ct_S,                 P_H_S,                 POF_S,                  STY,  AAVY, P_Reb
+    PIsmet<-Ptab2[,3]<thresh[1] & Ptab2[,4] < thresh[2] & Ptab2[,5] >thresh[3] & Ptab2[,6] < thresh[4] & Ptab2[,7] > thresh[5] &
+            Ptab2[,8]<thresh[6] & Ptab2[,9] < thresh[7] & Ptab2[,10]>thresh[8] & Ptab2[,11] < thresh[9]& Ptab2[,12]> thresh[10] &
+            Ptab2[,13]< thresh[11] & Ptab2[,14] > thresh[12]
+    MPcols<-rep('green',length(MPs))
+    MPcols[!PIsmet]<-'red'
+   
+    # Rankings
+    ord<-order(Ptab2$Yield,decreasing = T)
+    Ptab2<-Ptab2[ord,]
+    MPcols<-MPcols[ord]
+    
+    Ptab2 %>%
+      mutate(
+        #MP = row.names(.),
+        MP =  cell_spec(MP, "html", color = MPcols, bold = T),
+        MP_Type =  cell_spec(MP_Type, "html", bold = T),
+        Crit_S = ifelse(Crit_S < thresh[1],
+                        cell_spec(Crit_S, "html", color = "green",italic = T),
+                        cell_spec(Crit_S, "html", color = "red", italic = T)),
+        Caut_S = ifelse(Caut_S < thresh[2],
+                        cell_spec(Caut_S, "html", color = "green", italic = T),
+                        cell_spec(Caut_S, "html", color = "red", italic = T)),
+        Health_S = ifelse(Health_S >= thresh[3],
+                       cell_spec(Health_S, "html", color = "green", italic = T),
+                       cell_spec(Health_S, "html", color = "red", italic = T)),
+        OvFish_S = ifelse(OvFish_S < thresh[4],
+                         cell_spec(OvFish_S, "html", color = "green", italic = T),
+                         cell_spec(OvFish_S, "html", color = "red", italic = T)),
+        Yield_S = ifelse(Yield_S >= thresh[5],
+                        cell_spec(Yield_S, "html", color = "green", italic = T),
+                        cell_spec(Yield_S, "html", color = "red", italic = T)),
+        Crit = ifelse(Crit < thresh[6],
+                        cell_spec(Crit, "html", color = "green", italic = T),
+                        cell_spec(Crit, "html", color = "red", italic = T)),
+        Caut = ifelse(Caut < thresh[7],
+                        cell_spec(Caut, "html", color = "green", italic = T),
+                        cell_spec(Caut, "html", color = "red", italic = T)),
+        Health = ifelse(Health > thresh[8],
+                     cell_spec(Health, "html", color = "green", italic = T),
+                     cell_spec(Health, "html", color = "red", italic = T)),
+        OvFish = ifelse(OvFish < thresh[9],
+                         cell_spec(OvFish, "html", color = "green", italic = T),
+                         cell_spec(OvFish, "html", color = "red", italic = T)),
+        Yield = ifelse(Yield >= thresh[10],
+                       cell_spec(Yield, "html", color = "green", italic = T),
+                       cell_spec(Yield, "html", color = "red", italic = T)),
+        AAVY = ifelse(AAVY < thresh[11],
+                         cell_spec(AAVY, "html", color = "green", italic = T),
+                         cell_spec(AAVY, "html", color = "red", italic = T)),
+        Reb = ifelse(Reb >= thresh[12],
+                       cell_spec(Reb, "html", color = "green", italic = T),
+                       cell_spec(Reb, "html", color = "red", italic = T))
+      )%>%
+      #select(everything())%>%
+      knitr::kable("html", escape = F,align = "c") %>%
+      kable_styling("striped", full_width = F)%>%
+      column_spec(5, width = "3cm")  %>%
+      add_header_above(c(" ", " ","First 10 years of MSE projection" = 5, "Last 10 years of MSE projection" = 5,
+                         "",""))
+  } #if not ret_thresh
+}
+
+#' DFO performance spider plot (top three MPs)
+#'
+#' @param MSEobj An object of class MSE produced by DLMtool::runMSE()
+#' @author T. Carruthers
+#' @importFrom fmsb radarchart
+#' 
+#' @export 
+DFO_spider<-function(MSEobj){
   
-  MP_Type<-rep("TAC",length(MPs))
-  MP_Type[type[,2]==1]<-"TAE"
-  MP_Type[type[,3]==1]<-"SzLim"
-  MP_Type[type[,4]==1]<-"MPA"
-  MP_Type[totneeded>1]<-"Mixed"
+  shortterm<-1:min(10,MSEobj@proyears)
+  P_Cr_S<-apply(MSEobj@B_BMSY[,,shortterm]<0.4,2,mean)*100
+  P_Ct_S<-apply(MSEobj@B_BMSY[,,shortterm]>0.4 & MSEobj@B_BMSY[,,shortterm]<0.8,2,mean)*100
+  P_H_S<-apply(MSEobj@B_BMSY[,,shortterm]>0.8,2,mean)*100
   
-  Ptab2<-Ptab1 #[,1:ncol(Ptab1)]
-  Ptab2<-cbind(Ptab2[,1],MP_Type,Ptab2[,2:ncol(Ptab2)])
-  MP <- Crit_S <- Caut_S <- Health_S <- OvFish_S <- Yield_S <- Crit <- Caut <-  Health <- OvFish <- Reb <- NULL # hack for CRAN checks
+  longterm<-max(1,MSEobj@proyears-10):MSEobj@proyears
+  P_Cr_L<-apply(MSEobj@B_BMSY[,,longterm]<0.4,2,mean)*100
+  P_Ct_L<-apply(MSEobj@B_BMSY[,,longterm]>0.4 & MSEobj@B_BMSY[,,longterm]<0.8 ,2,mean)*100
+  P_H_L<-apply(MSEobj@B_BMSY[,,longterm]>0.8,2,mean)*100
+  
+  refY<-MSEobj@OM$RefY
+  STY<-apply(MSEobj@C[,,shortterm]/refY,2,mean)*100
+  LTY<-apply(MSEobj@C[,,longterm]/refY,2,mean)*100
+  
+  POF_S<-apply(MSEobj@F_FMSY[,,shortterm]>1,2,mean)*100
+  POF_L<-apply(MSEobj@F_FMSY[,,longterm]>1,2,mean)*100
+  
+  MGT2<-ceiling(MSEobj@OM$MGT*2)
+  MGT2[MGT2<3]=3
+  Bind<-cbind(as.matrix(expand.grid(1:MSEobj@nsim,1:MSEobj@nMPs)),rep(MGT2,MSEobj@nMPs))
+  Bmat<-array(MSEobj@B_BMSY[Bind],c(MSEobj@nsim,MSEobj@nMPs))
+  P_Reb<-apply(Bmat>1,2,mean)*100
+  
+  y1 <- 1:(MSEobj@proyears - 1)
+  y2 <- 2:MSEobj@proyears
+  AAVY <-apply((((MSEobj@C[, , y1] - MSEobj@C[, , y2])/MSEobj@C[, , y2])^2)^0.5, 2, mean, na.rm = T)*100
+  
+  MP<-MSEobj@MPs
+  
+  tab<-data.frame(MP,P_Cr_S, P_Ct_S, P_H_S, POF_S, STY, P_Cr_L, P_Ct_L, P_H_L, POF_L, LTY, AAVY, P_Reb)
+  
+  tab<-tab[order(tab$LTY,decreasing=T),]
+  
+  tab<-tab[1:3,]
+  data<-tab[c("STY","LTY","P_H_L")]
+  colnames(data)<-c("Short-term yield","Long-term yield","Prob. healthy zone")
+  rownames(data)<-tab[,1]
+  data<-rbind(c(150,150,100),c(0,0,0),data)
+  coly<-c("red","green","blue")
+  tcoly=makeTransparent(coly,95)
+  radarchart(data,pcol=tcoly,plwd=3,plty=rep(1,3))
+  legend('topleft',legend=tab[,1],text.col=coly,bty='n')
+
+}
+
+
+
+#' Current default thresholds for DFO satificing
+#'
+#' Crit_S is the probability of being in the critical zone in the first 10 projected years
+#' Caut_S is the probability of being in the cautious zone in the first 10 projected years
+#' Health_S is the probability of being in the healthy zone in the first 10 projected years
+#' OvFish_S is the probability of overfishing in the first 10 projected years
+#' Yield_S is the mean yield relative to FMSY management over the first 10 projected years
+#' Crit is the probability of being in the critical zone in the last 10 projected years
+#' Caut is the probability of being in the cautious zone in the last 10 projected years
+#' Health is the probability of being in the healthy zone in the last 10 projected years
+#' OvFish is the probability of overfishing in the last 10 projected years
+#' Yield is the mean yield relative to FMSY management over the last 10 projected years
+#' AAVY is the average annual variability in yield over the whole projection phrased as a CV percentage
+#' Reb is the probability the stock has rebuilt to over BMSY in 2 mean generation times
+#'
+#' @param Ptab1 A DFO performance table made by DFO_tab()
+#' @author T. Carruthers
+#' @importFrom dplyr %>% mutate
+#' @importFrom kableExtra cell_spec kable_styling column_spec add_header_above
+#' 
+#' @export 
+Thresh_tab<-function(Ptab1){
+  
+  thresh<-DFO_tab_formatted(Ptab1,ret_thresh=T)
+  Ptab2<-as.data.frame(matrix(c("NANANAN     ","NA   ",thresh),nrow=1))
   names(Ptab2)<-c("MP","MP_Type","Crit_S","Caut_S","Health_S","OvFish_S","Yield_S","Crit","Caut","Health","OvFish","Yield","AAVY","Reb")
   
-  #       P_Cr_S,               P_Ct_S,                 P_H_S,                 POF_S,                  STY,  AAVY, P_Reb
-  PIsmet<-Ptab2[,3]<thresh[1] & Ptab2[,4] < thresh[2] & Ptab2[,5] >thresh[3] & Ptab2[,6] < thresh[4] & Ptab2[,7] > thresh[5] &
-          Ptab2[,8]<thresh[6] & Ptab2[,9] < thresh[7] & Ptab2[,10]>thresh[8] & Ptab2[,11] < thresh[9]& Ptab2[,12]> thresh[10] &
-          Ptab2[,13]< thresh[11] & Ptab2[,14] > thresh[12]
-  MPcols<-rep('green',length(MPs))
-  MPcols[!PIsmet]<-'red'
- 
-  # Rankings
-  ord<-order(Ptab2$Yield,decreasing = T)
-  Ptab2<-Ptab2[ord,]
-  MPcols<-MPcols[ord]
   
   Ptab2 %>%
     mutate(
       #MP = row.names(.),
-      MP =  cell_spec(MP, "html", color = MPcols, bold = T),
-      MP_Type =  cell_spec(MP_Type, "html", bold = T),
-      Crit_S = ifelse(Crit_S < thresh[1],
-                      cell_spec(Crit_S, "html", color = "green",italic = T),
-                      cell_spec(Crit_S, "html", color = "red", italic = T)),
-      Caut_S = ifelse(Caut_S < thresh[2],
-                      cell_spec(Caut_S, "html", color = "green", italic = T),
-                      cell_spec(Caut_S, "html", color = "red", italic = T)),
-      Health_S = ifelse(Health_S >= thresh[3],
-                     cell_spec(Health_S, "html", color = "green", italic = T),
-                     cell_spec(Health_S, "html", color = "red", italic = T)),
-      OvFish_S = ifelse(OvFish_S < thresh[4],
-                       cell_spec(OvFish_S, "html", color = "green", italic = T),
-                       cell_spec(OvFish_S, "html", color = "red", italic = T)),
-      Yield_S = ifelse(Yield_S >= thresh[5],
-                      cell_spec(Yield_S, "html", color = "green", italic = T),
-                      cell_spec(Yield_S, "html", color = "red", italic = T)),
-      Crit = ifelse(Crit < thresh[6],
-                      cell_spec(Crit, "html", color = "green", italic = T),
-                      cell_spec(Crit, "html", color = "red", italic = T)),
-      Caut = ifelse(Caut < thresh[7],
-                      cell_spec(Caut, "html", color = "green", italic = T),
-                      cell_spec(Caut, "html", color = "red", italic = T)),
-      Health = ifelse(Health > thresh[8],
-                   cell_spec(Health, "html", color = "green", italic = T),
-                   cell_spec(Health, "html", color = "red", italic = T)),
-      OvFish = ifelse(OvFish < thresh[9],
-                       cell_spec(OvFish, "html", color = "green", italic = T),
-                       cell_spec(OvFish, "html", color = "red", italic = T)),
-      Yield = ifelse(Yield >= thresh[10],
-                     cell_spec(Yield, "html", color = "green", italic = T),
-                     cell_spec(Yield, "html", color = "red", italic = T)),
-      AAVY = ifelse(AAVY < thresh[11],
-                       cell_spec(AAVY, "html", color = "green", italic = T),
-                       cell_spec(AAVY, "html", color = "red", italic = T)),
-      Reb = ifelse(Reb >= thresh[12],
-                     cell_spec(Reb, "html", color = "green", italic = T),
-                     cell_spec(Reb, "html", color = "red", italic = T))
+      MP =   cell_spec(MP, "html", color = "white"),
+      MP_Type =   cell_spec(MP_Type, "html", color = "white"),
+      Crit_S =   cell_spec(Crit_S, "html", color = "black"),
+      Caut_S =   cell_spec(Caut_S, "html", color = "black"),
+      Health_S = cell_spec(Health_S, "html", color = "black"),
+      OvFish_S = cell_spec(OvFish_S, "html", color = "black"),
+      Yield_S =  cell_spec(Yield_S, "html", color = "black"),
+      Crit =     cell_spec(Crit, "html", color = "black"),
+      Caut =     cell_spec(Caut, "html", color = "black"),
+      Health =   cell_spec(Health, "html", color = "black"),
+      OvFish =   cell_spec(OvFish, "html", color = "black"),
+      Yield =    cell_spec(Yield, "html", color = "black"),
+      AAVY =     cell_spec(AAVY, "html", color = "black"),
+      Reb =      cell_spec(Reb, "html", color = "black")
     )%>%
     #select(everything())%>%
     knitr::kable("html", escape = F,align = "c") %>%
     kable_styling("striped", full_width = F)%>%
     column_spec(5, width = "3cm")  %>%
-    add_header_above(c(" ", " ","First 10 years of MSE projection" = 5, "Last 10 years of MSE projection" = 5,
-                       "",""))
-  
+    add_header_above(c("","","Thresholds" = 12))
 }
+
+
 
 #' @describeIn runCOSEWIC Creates a standard COSEWIC performance table:
 #' \itemize{ 
@@ -1239,59 +1370,96 @@ COSEWIC_tab<-function(MSEobj,rnd=0,GTs=c(3,6),syear=2017,nGT=3){
 #' @importFrom kableExtra cell_spec kable_styling column_spec add_header_above 
 #' @importFrom knitr kable
 #' @export
-COSEWIC_tab_formatted<-function(Ptab1,thresh=c(10,     40,     50,    10,       40,       50,      20,   20,   5)){
+COSEWIC_tab_formatted<-function(Ptab1,thresh=c(20,     40,     40,    20,       40,       40,      40,   30,   5),ret_thresh=F){
   #                                            P_Cr,   P_Ct,   P_H,   P_Cr_MSY, P_Ct_MSY, P_H_MSY, P_A1, P_A2, Blow
   
   # save(Ptab1,file="Ptab1")
+  if(ret_thresh){
+    return(thresh)
+  }else{
+    MP <- P_Cr <- P_Ct <- P_H <- P_Cr_MSY <- P_Ct_MSY <- P_H_MSY <- P_A1 <- P_A2 <- Blow <- NULL # hack for CRAN checks
+    names(Ptab1)<-c("MP","P_Cr","P_Ct","P_H","P_Cr_MSY","P_Ct_MSY","P_H_MSY","P_A1","P_A2","Blow")
+    
+    #       P_Cr,                 P_Ct,                   P_H,                  P_Cr_MSY,                P_Ct_MSY
+    PIsmet<-Ptab1[,2]<thresh[1] & Ptab1[,3] < thresh[2] & Ptab1[,4] >thresh[3] & Ptab1[,5] < thresh[4] & Ptab1[,6] < thresh[5] &
+      Ptab1[,7]>thresh[6] & Ptab1[,8] < thresh[7] & Ptab1[,9]<thresh[8] & Ptab1[,10] < thresh[9]
+    MPcols<-rep('green',nrow(Ptab1))
+    MPcols[!PIsmet]<-'red'
+    
+    Ptab1 %>%
+      mutate(
+        #MP = row.names(.),
+        MP =  cell_spec(MP, "html",color=MPcols, bold = T),
+        P_Cr = ifelse(P_Cr < thresh[1],
+                        cell_spec(P_Cr, "html", color = "green",italic = T),
+                        cell_spec(P_Cr, "html", color = "red", italic = T)),
+        P_Ct = ifelse(P_Ct < thresh[2],
+                        cell_spec(P_Ct, "html", color = "green", italic = T),
+                        cell_spec(P_Ct, "html", color = "red", italic = T)),
+        P_H = ifelse(P_H >= thresh[3],
+                          cell_spec(P_H, "html", color = "green", italic = T),
+                          cell_spec(P_H, "html", color = "red", italic = T)),
+        P_Cr_MSY = ifelse(P_Cr_MSY < thresh[4],
+                          cell_spec(P_Cr_MSY, "html", color = "green", italic = T),
+                          cell_spec(P_Cr_MSY, "html", color = "red", italic = T)),
+        P_Ct_MSY = ifelse(P_Ct_MSY < thresh[5],
+                         cell_spec(P_Ct_MSY, "html", color = "green", italic = T),
+                         cell_spec(P_Ct_MSY, "html", color = "red", italic = T)),
+        P_H_MSY = ifelse(P_H_MSY > thresh[6],
+                      cell_spec(P_H_MSY, "html", color = "green", italic = T),
+                      cell_spec(P_H_MSY, "html", color = "red", italic = T)),
+        P_A1 = ifelse(P_A1 < thresh[7],
+                      cell_spec(P_A1, "html", color = "green", italic = T),
+                      cell_spec(P_A1, "html", color = "red", italic = T)),
+        P_A2 = ifelse(P_A2 < thresh[8],
+                        cell_spec(P_A2, "html", color = "green", italic = T),
+                        cell_spec(P_A2, "html", color = "red", italic = T)),
+        Blow = ifelse(Blow < thresh[9],
+                        cell_spec(Blow, "html", color = "green", italic = T),
+                        cell_spec(Blow, "html", color = "red", italic = T))
+        
+      )%>%
+      knitr::kable("html", escape = F,align = "c") %>%
+      kable_styling("striped", full_width = F)%>%
+      column_spec(5, width = "3cm")  %>%
+      add_header_above(c(" ", "Relative to unfished" = 3, "Relative to BMSY" = 3,"COSEWIC indicators"=2,"Extinction risk"))
+  } # if not ret_thresh
+}
+
+
+#' Current default thresholds for COSEWIC satificing
+#'
+#' @param Ptab1 A COSEWIC performance table made by COSEWIC_tab()
+#' @author T. Carruthers
+#' @importFrom dplyr %>% mutate
+#' @importFrom kableExtra cell_spec kable_styling column_spec add_header_above
+#' 
+#' @export 
+Cos_thresh_tab<-function(Ptab1){
+  
+  thresh<-COSEWIC_tab_formatted(Ptab1,ret_thresh=T)
+  Ptab2<-as.data.frame(matrix(c("NANANANANA",thresh),nrow=1))
+  names(Ptab2)<-c("MP","P_Cr","P_Ct","P_H","P_Cr_MSY","P_Ct_MSY","P_H_MSY","P_A1","P_A2","Blow")
  
-  MP <- P_Cr <- P_Ct <- P_H <- P_Cr_MSY <- P_Ct_MSY <- P_H_MSY <- P_A1 <- P_A2 <- Blow <- NULL # hack for CRAN checks
-  names(Ptab1)<-c("MP","P_Cr","P_Ct","P_H","P_Cr_MSY","P_Ct_MSY","P_H_MSY","P_A1","P_A2","Blow")
-  
-  #       P_Cr,                 P_Ct,                   P_H,                  P_Cr_MSY,                P_Ct_MSY
-  PIsmet<-Ptab1[,2]<thresh[1] & Ptab1[,3] < thresh[2] & Ptab1[,4] >thresh[3] & Ptab1[,5] < thresh[4] & Ptab1[,6] < thresh[5] &
-    Ptab1[,7]>thresh[6] & Ptab1[,8] < thresh[7] & Ptab1[,9]<thresh[8] & Ptab1[,10] < thresh[9]
-  MPcols<-rep('green',nrow(Ptab1))
-  MPcols[!PIsmet]<-'red'
-  
-  Ptab1 %>%
+  Ptab2 %>%
     mutate(
       #MP = row.names(.),
-      MP =  cell_spec(MP, "html",color=MPcols, bold = T),
-      P_Cr = ifelse(P_Cr < thresh[1],
-                      cell_spec(P_Cr, "html", color = "green",italic = T),
-                      cell_spec(P_Cr, "html", color = "red", italic = T)),
-      P_Ct = ifelse(P_Ct < thresh[2],
-                      cell_spec(P_Ct, "html", color = "green", italic = T),
-                      cell_spec(P_Ct, "html", color = "red", italic = T)),
-      P_H = ifelse(P_H >= thresh[3],
-                        cell_spec(P_H, "html", color = "green", italic = T),
-                        cell_spec(P_H, "html", color = "red", italic = T)),
-      P_Cr_MSY = ifelse(P_Cr_MSY < thresh[4],
-                        cell_spec(P_Cr_MSY, "html", color = "green", italic = T),
-                        cell_spec(P_Cr_MSY, "html", color = "red", italic = T)),
-      P_Ct_MSY = ifelse(P_Ct_MSY < thresh[5],
-                       cell_spec(P_Ct_MSY, "html", color = "green", italic = T),
-                       cell_spec(P_Ct_MSY, "html", color = "red", italic = T)),
-      P_H_MSY = ifelse(P_H_MSY > thresh[6],
-                    cell_spec(P_H_MSY, "html", color = "green", italic = T),
-                    cell_spec(P_H_MSY, "html", color = "red", italic = T)),
-      P_A1 = ifelse(P_A1 < thresh[7],
-                    cell_spec(P_A1, "html", color = "green", italic = T),
-                    cell_spec(P_A1, "html", color = "red", italic = T)),
-      P_A2 = ifelse(P_A2 < thresh[8],
-                      cell_spec(P_A2, "html", color = "green", italic = T),
-                      cell_spec(P_A2, "html", color = "red", italic = T)),
-      Blow = ifelse(Blow < thresh[9],
-                      cell_spec(Blow, "html", color = "green", italic = T),
-                      cell_spec(Blow, "html", color = "red", italic = T))
-      
+      MP =   cell_spec(MP, "html", color = "white"),
+      P_Cr =   cell_spec(P_Cr, "html", color = "black"),
+      P_Ct =   cell_spec(P_Ct, "html", color = "black"),
+      P_H = cell_spec(P_H, "html", color = "black"),
+      P_Cr_MSY = cell_spec(P_Cr_MSY, "html", color = "black"),
+      P_Ct_MSY =  cell_spec(P_Ct_MSY, "html", color = "black"),
+      P_H_MSY =     cell_spec(P_H_MSY, "html", color = "black"),
+      P_A1 =     cell_spec(P_A1, "html", color = "black"),
+      P_A2 =   cell_spec(P_A2, "html", color = "black"),
+      Blow =   cell_spec(Blow, "html", color = "black")
     )%>%
+    #select(everything())%>%
     knitr::kable("html", escape = F,align = "c") %>%
     kable_styling("striped", full_width = F)%>%
     column_spec(5, width = "3cm")  %>%
-    add_header_above(c(" ", "Relative to unfished" = 3, "Relative to BMSY" = 3,"COSEWIC indicators"=2,"Extinction risk"))
-  
+    add_header_above(c("","Thresholds" = 9))
 }
-
 
 

@@ -73,6 +73,14 @@ A performance table is produced that provides the probability of stock status in
 
 ```
 
+<br>
+
+```{r thresh,echo=F,warning=F,error=F,message=F}
+ Cos_thresh_tab(tab)
+
+```
+
+
 * P_Cr is the probability of being in the critical zone (less than 20% depletion)
 * P_Ct is the probability of being in the cautious zone (between 20% and 40% depletion)
 * P_H is the probability of being in the healthy zone (above 40% depletion)
