@@ -61,7 +61,7 @@ The TAC is constant for all future projections.
 }}
 
 \note{
-See the \href{https://dlmtool.github.io/DLMtool/docs/reference}{online documentation} for correctly rendered equations.
+See the \href{https://dlmtool.github.io/DLMtool/reference/index.html}{online documentation} for correctly rendered equations.
 }
 \examples{
 CC1(1, DLMtool::Cobia, plot=TRUE)

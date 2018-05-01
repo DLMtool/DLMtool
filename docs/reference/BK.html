@@ -145,7 +145,7 @@ catch-curve (interval censor).</p></td>
 $$\text{TAC} = A F_{\text{max}}$$
 where \(A\) is (vulnerable) stock abundance, and \(F_{\text{max}}\) is calculated as:
 $$F_{\text{max}} = \frac{0.6K}{0.67-L_c/L_\infty}$$
-where \(K\) is the von Bertalannfy growth coefficient, \(L_c\) is the
+where \(K\) is the von Bertalanffy growth coefficient, \(L_c\) is the
 length at first capture, and \(L_\infty\) is the von Bertalanffy asymptotic length</p>
 <p>Abundance (<em>A</em>) is either assumed known (<code>BK</code>) or estimated (<code>BK_CC</code> and <code>BK_ML</code>):
 $$A = \frac{\bar{C}}{\left(1-e^{-F}\right)}$$
@@ -169,9 +169,9 @@ that is, the fishing mortality that produces the maximum yield <em>assuming cons
 recruitment independent of spawning biomass</em>.</p>
 <p>Beddington and Kirkwood (2005)
 recommend estimating <em>F</em> using other methods (e.g a catch curve) and comparing the
-estimated <em>F</em> to the estimaed \(F_\text{max}\) and adjusting exploitation accordingly.
+estimated <em>F</em> to the estimated \(F_\text{max}\) and adjusting exploitation accordingly.
 These MPs have not been implemented that way.</p>
-<p>See the <a href='https://dlmtool.github.io/DLMtool/docs/reference'>online documentation</a> for correctly rendered equations.</p>
+<p>See the <a href='https://dlmtool.github.io/DLMtool/reference/index.html'>online documentation</a> for correctly rendered equations.</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -182,11 +182,14 @@ Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='no'>Data</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>
-<span class='fu'>BK</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='error'>Error in facet_wrap(~vars, scales = "free"): could not find function "facet_wrap"</span></div><div class='input'>
+<span class='fu'>BK</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='BK-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     3659.898 </div><div class='input'>
 <span class='no'>Data</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>
-<span class='fu'>BK_CC</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='error'>Error in facet_wrap(~vars, scales = "free"): could not find function "facet_wrap"</span></div><div class='input'>
+<span class='fu'>BK_CC</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='BK-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     12966.99 </div><div class='input'>
 <span class='no'>Data</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>
-<span class='fu'>BK_ML</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='error'>Error in facet_wrap(~vars, scales = "free"): could not find function "facet_wrap"</span></div><div class='input'>
+<span class='fu'>BK_ML</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='BK-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     35088.58 </div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

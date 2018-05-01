@@ -71,7 +71,7 @@ class(AvC) <- "MP"
 #' \deqn{\text{TAC} = A F_{\text{max}}}
 #' where \eqn{A} is (vulnerable) stock abundance, and \eqn{F_{\text{max}}} is calculated as:
 #' \deqn{F_{\text{max}} = \frac{0.6K}{0.67-L_c/L_\infty}}
-#' where \eqn{K} is the von Bertalannfy growth coefficient, \eqn{L_c} is the
+#' where \eqn{K} is the von Bertalanffy growth coefficient, \eqn{L_c} is the
 #' length at first capture, and \eqn{L_\infty} is the von Bertalanffy asymptotic length
 #' 
 #' 
@@ -88,7 +88,7 @@ class(AvC) <- "MP"
 #' 
 #' Beddington and Kirkwood (2005) 
 #' recommend estimating *F* using other methods (e.g a catch curve) and comparing the 
-#' estimated *F* to the estimaed \eqn{F_\text{max}} and adjusting exploitation accordingly. 
+#' estimated *F* to the estimated \eqn{F_\text{max}} and adjusting exploitation accordingly. 
 #' These MPs have not been implemented that way.
 #' 
 #' 

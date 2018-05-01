@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>A formatted version of the standard DFO performance plot, color coded by thresholds — DFO_tab_formatted • DLMtool Documentation</title>
+<title>Current default thresholds for COSEWIC satificing — Cos_thresh_tab • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,20 +28,9 @@
 
 
 
-<meta property="og:title" content="A formatted version of the standard DFO performance plot, color coded by thresholds — DFO_tab_formatted" />
+<meta property="og:title" content="Current default thresholds for COSEWIC satificing — Cos_thresh_tab" />
 
-<meta property="og:description" content="Crit_S is the probability of being in the critical zone in the first 10 projected years
-Caut_S is the probability of being in the cautious zone in the first 10 projected years
-Health_S is the probability of being in the healthy zone in the first 10 projected years
-OvFish_S is the probability of overfishing in the first 10 projected years
-Yield_S is the mean yield relative to FMSY management over the first 10 projected years
-Crit is the probability of being in the critical zone in the last 10 projected years
-Caut is the probability of being in the cautious zone in the last 10 projected years
-Health is the probability of being in the healthy zone in the last 10 projected years
-OvFish is the probability of overfishing in the last 10 projected years
-Yield is the mean yield relative to FMSY management over the last 10 projected years
-AAVY is the average annual variability in yield over the whole projection phrased as a CV percentage
-Reb is the probability the stock has rebuilt to over BMSY in 2 mean generation times" />
+<meta property="og:description" content="Current default thresholds for COSEWIC satificing" />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -99,45 +88,25 @@ Reb is the probability the stock has rebuilt to over BMSY in 2 mean generation t
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>A formatted version of the standard DFO performance plot, color coded by thresholds</h1>
+    <h1>Current default thresholds for COSEWIC satificing</h1>
     
-    <div class="hidden name"><code>DFO_tab_formatted.Rd</code></div>
+    <div class="hidden name"><code>Cos_thresh_tab.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Crit_S is the probability of being in the critical zone in the first 10 projected years
-Caut_S is the probability of being in the cautious zone in the first 10 projected years
-Health_S is the probability of being in the healthy zone in the first 10 projected years
-OvFish_S is the probability of overfishing in the first 10 projected years
-Yield_S is the mean yield relative to FMSY management over the first 10 projected years
-Crit is the probability of being in the critical zone in the last 10 projected years
-Caut is the probability of being in the cautious zone in the last 10 projected years
-Health is the probability of being in the healthy zone in the last 10 projected years
-OvFish is the probability of overfishing in the last 10 projected years
-Yield is the mean yield relative to FMSY management over the last 10 projected years
-AAVY is the average annual variability in yield over the whole projection phrased as a CV percentage
-Reb is the probability the stock has rebuilt to over BMSY in 2 mean generation times</p>
+    <p>Current default thresholds for COSEWIC satificing</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>DFO_tab_formatted</span>(<span class='no'>Ptab1</span>, <span class='kw'>thresh</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>30</span>, <span class='fl'>50</span>, <span class='fl'>40</span>, <span class='fl'>60</span>, <span class='fl'>50</span>, <span class='fl'>20</span>, <span class='fl'>40</span>, <span class='fl'>50</span>, <span class='fl'>60</span>, <span class='fl'>50</span>,
-  <span class='fl'>30</span>, <span class='fl'>50</span>), <span class='kw'>ret_thresh</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
+    <pre class="usage"><span class='fu'>Cos_thresh_tab</span>(<span class='no'>Ptab1</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>Ptab1</th>
-      <td><p>A DFO performance table made by DFO_tab()</p></td>
-    </tr>
-    <tr>
-      <th>thresh</th>
-      <td><p>A vector of thresholds for each column Health, Yield and Reb are 'greater than threshold' conditions</p></td>
-    </tr>
-    <tr>
-      <th>ret_thresh</th>
-      <td><p>Logical: if true just the threshold levels are returned</p></td>
+      <td><p>A COSEWIC performance table made by COSEWIC_tab()</p></td>
     </tr>
     </table>
     

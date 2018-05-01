@@ -5,7 +5,7 @@
 #' @param plot Logical. Show the plot?
 #' 
 #' @note 
-#' See the \href{https://dlmtool.github.io/DLMtool/docs/reference}{online documentation} for correctly rendered equations.
+#' See the \href{https://dlmtool.github.io/DLMtool/reference/index.html}{online documentation} for correctly rendered equations.
 #' 
 #' 
 

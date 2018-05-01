@@ -37,7 +37,7 @@ The TAC is calculated as:
 \deqn{\text{TAC} = A F_{\text{max}}}
 where \eqn{A} is (vulnerable) stock abundance, and \eqn{F_{\text{max}}} is calculated as:
 \deqn{F_{\text{max}} = \frac{0.6K}{0.67-L_c/L_\infty}}
-where \eqn{K} is the von Bertalannfy growth coefficient, \eqn{L_c} is the
+where \eqn{K} is the von Bertalanffy growth coefficient, \eqn{L_c} is the
 length at first capture, and \eqn{L_\infty} is the von Bertalanffy asymptotic length
 
 Abundance (\emph{A}) is either assumed known (\code{BK}) or estimated (\code{BK_CC} and \code{BK_ML}):
@@ -63,10 +63,10 @@ recruitment independent of spawning biomass}.
 
 Beddington and Kirkwood (2005)
 recommend estimating \emph{F} using other methods (e.g a catch curve) and comparing the
-estimated \emph{F} to the estimaed \eqn{F_\text{max}} and adjusting exploitation accordingly.
+estimated \emph{F} to the estimated \eqn{F_\text{max}} and adjusting exploitation accordingly.
 These MPs have not been implemented that way.
 
-See the \href{https://dlmtool.github.io/DLMtool/docs/reference}{online documentation} for correctly rendered equations.
+See the \href{https://dlmtool.github.io/DLMtool/reference/index.html}{online documentation} for correctly rendered equations.
 }
 \examples{
 Data <- DLMtool::SimulatedData

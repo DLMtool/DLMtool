@@ -121,7 +121,7 @@ P_Reb is the probability the stock has rebuilt to over BMSY in 2 mean generation
     
     </div>
 
-    <pre class="usage"><span class='fu'>DFO_tab</span>(<span class='no'>MSEobj</span>, <span class='kw'>rnd</span> <span class='kw'>=</span> <span class='fl'>0</span>)</pre>
+    <pre class="usage"><span class='fu'>DFO_tab</span>(<span class='no'>MSEobj</span>, <span class='kw'>maxMPs</span> <span class='kw'>=</span> <span class='fl'>15</span>, <span class='kw'>rnd</span> <span class='kw'>=</span> <span class='fl'>0</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -129,6 +129,10 @@ P_Reb is the probability the stock has rebuilt to over BMSY in 2 mean generation
     <tr>
       <th>MSEobj</th>
       <td><p>An object of class MSE</p></td>
+    </tr>
+    <tr>
+      <th>maxMPs</th>
+      <td><p>Integer: the maximum number of top ranking MPs to include in the table (ranked by long term yield)</p></td>
     </tr>
     <tr>
       <th>rnd</th>

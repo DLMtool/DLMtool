@@ -105,24 +105,25 @@ management procedures.</p>
 
     <pre class="usage"><span class='fu'>runCOSEWIC</span>(<span class='no'>OM</span>)
 
-<span class='fu'>COSEWIC_Pplot</span>(<span class='no'>MSEobj</span>, <span class='kw'>syear</span> <span class='kw'>=</span> <span class='fl'>2017</span>, <span class='kw'>qcol</span> <span class='kw'>=</span> <span class='fu'>rgb</span>(<span class='fl'>0.4</span>, <span class='fl'>0.8</span>, <span class='fl'>0.95</span>),
-  <span class='kw'>lcol</span> <span class='kw'>=</span> <span class='st'>"dodgerblue4"</span>, <span class='kw'>quants</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.05</span>, <span class='fl'>0.25</span>, <span class='fl'>0.5</span>, <span class='fl'>0.75</span>, <span class='fl'>0.95</span>))
+<span class='fu'>COSEWIC_Pplot</span>(<span class='no'>MSEobj</span>, <span class='kw'>syear</span> <span class='kw'>=</span> <span class='fl'>2017</span>, <span class='kw'>qcol</span> <span class='kw'>=</span> <span class='st'>"#FFCB62"</span>, <span class='kw'>quants</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.05</span>,
+  <span class='fl'>0.25</span>, <span class='fl'>0.5</span>, <span class='fl'>0.75</span>, <span class='fl'>0.95</span>))
 
-<span class='fu'>COSEWIC_Dplot</span>(<span class='no'>MSEobj</span>, <span class='kw'>syear</span> <span class='kw'>=</span> <span class='fl'>2017</span>, <span class='kw'>qcol</span> <span class='kw'>=</span> <span class='fu'>rgb</span>(<span class='fl'>0.4</span>, <span class='fl'>0.8</span>, <span class='fl'>0.95</span>),
-  <span class='kw'>lcol</span> <span class='kw'>=</span> <span class='st'>"dodgerblue4"</span>, <span class='kw'>quants</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.05</span>, <span class='fl'>0.25</span>, <span class='fl'>0.5</span>, <span class='fl'>0.75</span>, <span class='fl'>0.95</span>), <span class='kw'>nGT</span> <span class='kw'>=</span> <span class='fl'>3</span>)
+<span class='fu'>COSEWIC_Dplot</span>(<span class='no'>MSEobj</span>, <span class='kw'>syear</span> <span class='kw'>=</span> <span class='fl'>2017</span>, <span class='kw'>qcol</span> <span class='kw'>=</span> <span class='st'>"#79F48D"</span>, <span class='kw'>quants</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.05</span>,
+  <span class='fl'>0.25</span>, <span class='fl'>0.5</span>, <span class='fl'>0.75</span>, <span class='fl'>0.95</span>), <span class='kw'>nGT</span> <span class='kw'>=</span> <span class='fl'>3</span>)
 
 <span class='fu'>COSEWIC_Blow</span>(<span class='no'>MSEobj</span>, <span class='kw'>syear</span> <span class='kw'>=</span> <span class='fl'>2017</span>, <span class='kw'>qcol</span> <span class='kw'>=</span> <span class='fu'>rgb</span>(<span class='fl'>0.4</span>, <span class='fl'>0.8</span>, <span class='fl'>0.95</span>),
-  <span class='kw'>lcol</span> <span class='kw'>=</span> <span class='st'>"dodgerblue4"</span>, <span class='kw'>quants</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.05</span>, <span class='fl'>0.25</span>, <span class='fl'>0.5</span>, <span class='fl'>0.75</span>, <span class='fl'>0.95</span>), <span class='kw'>nGT</span> <span class='kw'>=</span> <span class='fl'>3</span>)
+  <span class='kw'>quants</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.05</span>, <span class='fl'>0.25</span>, <span class='fl'>0.5</span>, <span class='fl'>0.75</span>, <span class='fl'>0.95</span>), <span class='kw'>nGT</span> <span class='kw'>=</span> <span class='fl'>3</span>)
 
 <span class='fu'>COSEWIC_Hplot</span>(<span class='no'>MSEobj</span>, <span class='kw'>syear</span> <span class='kw'>=</span> <span class='fl'>2017</span>, <span class='kw'>qcol</span> <span class='kw'>=</span> <span class='fu'>rgb</span>(<span class='fl'>0.4</span>, <span class='fl'>0.8</span>, <span class='fl'>0.95</span>),
-  <span class='kw'>lcol</span> <span class='kw'>=</span> <span class='st'>"dodgerblue4"</span>, <span class='kw'>quants</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.05</span>, <span class='fl'>0.25</span>, <span class='fl'>0.5</span>, <span class='fl'>0.75</span>, <span class='fl'>0.95</span>))
+  <span class='kw'>quants</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.05</span>, <span class='fl'>0.25</span>, <span class='fl'>0.5</span>, <span class='fl'>0.75</span>, <span class='fl'>0.95</span>))
 
 <span class='fu'>COSEWIC_report</span>(<span class='no'>MSEobj</span>, <span class='kw'>output_file</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>author</span> <span class='kw'>=</span> <span class='st'>"Author not specified"</span>,
   <span class='kw'>title</span> <span class='kw'>=</span> <span class='fl'>NA</span>)
 
 <span class='fu'>COSEWIC_tab</span>(<span class='no'>MSEobj</span>, <span class='kw'>rnd</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>GTs</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>3</span>, <span class='fl'>6</span>), <span class='kw'>syear</span> <span class='kw'>=</span> <span class='fl'>2017</span>, <span class='kw'>nGT</span> <span class='kw'>=</span> <span class='fl'>3</span>)
 
-<span class='fu'>COSEWIC_tab_formatted</span>(<span class='no'>Ptab1</span>, <span class='kw'>thresh</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>10</span>, <span class='fl'>40</span>, <span class='fl'>50</span>, <span class='fl'>10</span>, <span class='fl'>40</span>, <span class='fl'>50</span>, <span class='fl'>20</span>, <span class='fl'>20</span>, <span class='fl'>5</span>))</pre>
+<span class='fu'>COSEWIC_tab_formatted</span>(<span class='no'>Ptab1</span>, <span class='kw'>thresh</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>20</span>, <span class='fl'>40</span>, <span class='fl'>40</span>, <span class='fl'>20</span>, <span class='fl'>40</span>, <span class='fl'>40</span>, <span class='fl'>40</span>, <span class='fl'>30</span>, <span class='fl'>5</span>),
+  <span class='kw'>ret_thresh</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -142,10 +143,6 @@ management procedures.</p>
     <tr>
       <th>qcol</th>
       <td><p>Color of shaded regions (bars, quantiles)</p></td>
-    </tr>
-    <tr>
-      <th>lcol</th>
-      <td><p>Color of lines</p></td>
     </tr>
     <tr>
       <th>quants</th>
@@ -183,6 +180,10 @@ management procedures.</p>
     <tr>
       <th>thresh</th>
       <td><p>A vector of thresholds for each column Health, Yield and Reb are 'greater than threshold' conditions</p></td>
+    </tr>
+    <tr>
+      <th>lcol</th>
+      <td><p>Color of lines</p></td>
     </tr>
     </table>
     

@@ -33,7 +33,7 @@ where \eqn{\text{TAC}} is the the mean catch recommendation, \eqn{n} is the numb
 \eqn{C_y}  is the catch in historical year \eqn{y}
 }
 \note{
-See the \href{https://dlmtool.github.io/DLMtool/docs/reference}{online documentation} for correctly rendered equations.
+See the \href{https://dlmtool.github.io/DLMtool/reference/index.html}{online documentation} for correctly rendered equations.
 }
 \examples{
 Data <- DLMtool::Cobia
