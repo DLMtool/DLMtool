@@ -1156,7 +1156,6 @@ DFO_tab_formatted<-function(Ptab1,thresh=c(30,     50,     40,    60,    50,  20
 #'
 #' @param MSEobj An object of class MSE produced by DLMtool::runMSE()
 #' @author T. Carruthers
-#' @importFrom fmsb radarchart
 #' 
 #' @export 
 DFO_spider<-function(MSEobj){

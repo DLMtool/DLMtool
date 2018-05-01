@@ -13,24 +13,25 @@
 \usage{
 runCOSEWIC(OM)
 
-COSEWIC_Pplot(MSEobj, syear = 2017, qcol = rgb(0.4, 0.8, 0.95),
-  lcol = "dodgerblue4", quants = c(0.05, 0.25, 0.5, 0.75, 0.95))
+COSEWIC_Pplot(MSEobj, syear = 2017, qcol = "#FFCB62", quants = c(0.05,
+  0.25, 0.5, 0.75, 0.95))
 
-COSEWIC_Dplot(MSEobj, syear = 2017, qcol = rgb(0.4, 0.8, 0.95),
-  lcol = "dodgerblue4", quants = c(0.05, 0.25, 0.5, 0.75, 0.95), nGT = 3)
+COSEWIC_Dplot(MSEobj, syear = 2017, qcol = "#79F48D", quants = c(0.05,
+  0.25, 0.5, 0.75, 0.95), nGT = 3)
 
 COSEWIC_Blow(MSEobj, syear = 2017, qcol = rgb(0.4, 0.8, 0.95),
-  lcol = "dodgerblue4", quants = c(0.05, 0.25, 0.5, 0.75, 0.95), nGT = 3)
+  quants = c(0.05, 0.25, 0.5, 0.75, 0.95), nGT = 3)
 
 COSEWIC_Hplot(MSEobj, syear = 2017, qcol = rgb(0.4, 0.8, 0.95),
-  lcol = "dodgerblue4", quants = c(0.05, 0.25, 0.5, 0.75, 0.95))
+  quants = c(0.05, 0.25, 0.5, 0.75, 0.95))
 
 COSEWIC_report(MSEobj, output_file = NA, author = "Author not specified",
   title = NA)
 
 COSEWIC_tab(MSEobj, rnd = 0, GTs = c(3, 6), syear = 2017, nGT = 3)
 
-COSEWIC_tab_formatted(Ptab1, thresh = c(10, 40, 50, 10, 40, 50, 20, 20, 5))
+COSEWIC_tab_formatted(Ptab1, thresh = c(20, 40, 40, 20, 40, 40, 40, 30, 5),
+  ret_thresh = F)
 }
 \arguments{
 \item{OM}{An operating model object of class OM}
@@ -40,8 +41,6 @@ COSEWIC_tab_formatted(Ptab1, thresh = c(10, 40, 50, 10, 40, 50, 20, 20, 5))
 \item{syear}{Current year, starting year for projections (e.g. 2017)}
 
 \item{qcol}{Color of shaded regions (bars, quantiles)}
-
-\item{lcol}{Color of lines}
 
 \item{quants}{Quantiles of the shaded regions (vector 5 long e.g. 0.1, 0.2, 0.5, 0.8, 0.9)}
 
@@ -61,6 +60,8 @@ COSEWIC_tab_formatted(Ptab1, thresh = c(10, 40, 50, 10, 40, 50, 20, 20, 5))
 \item{Ptab1}{A COSEWIC performance table made by \code{COSEWIC_tab}}
 
 \item{thresh}{A vector of thresholds for each column Health, Yield and Reb are 'greater than threshold' conditions}
+
+\item{lcol}{Color of lines}
 }
 \description{
 Dedicated functions for MSE run and reporting for COSEWIC (Committee on the Status of
