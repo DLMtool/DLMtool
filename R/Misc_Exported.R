@@ -147,9 +147,10 @@ makePerf <- function(OMin, except = NULL) {
 
 #' Management Procedure Type
 #'
-#' @param MPs A list of MP names  
+#' @param MPs A vector of MP names. If none are provided function is run on all available MPs
 #'
-#' @return A data.frame with MP names and management type
+#' @return A data.frame with MP names, management type (e.g "Input", "Output") and management recommendations returned by the MP
+#' (e.g, TAC (total allowable catch), TAE (total allowable effort), SL (size-selectivity), and/or or Spatial)
 #' @export
 #' @seealso \link{Required}
 #' @examples 
@@ -164,18 +165,45 @@ MPtype <- function(MPs=NA) {
   recs <- runMPs[[1]]
   
   type <- rep("NA", length(MPs))
+  rec <- rep("", length(MPs))
+  rectypes <- c("TAE", "Spatial", "SL")
   for (mm in seq_along(recs)) {
+    Effort <- Spatial <- Selectivity <- FALSE
     output <- length(recs[[mm]]$TAC) > 0 
     names <- names(recs[[mm]])
     names <- names[!names %in% c("TAC", "Spatial")]
     input <- sum(unlist(lapply(Map(function(x) recs[[mm]][[x]], names), length))) > 0
     if (all(!is.na(recs[[mm]]$Spatial))) input <- TRUE
-    if (output) type[mm] <- "Output"
-    if (input) type[mm] <- "Input"
-    if (input & output) type[mm] <- "Mixed"
+    if (output) {
+      type[mm] <- "Output"
+      thisrec <- "TAC"
+    }
+    if (input) {
+      # what recommentations have been made?
+      if (any(is.finite(recs[[mm]]$Effort))) Effort <- TRUE
+      if (any(is.finite(recs[[mm]]$Spatial))) Spatial <- TRUE
+      if (any(is.finite(recs[[mm]]$LR5)) | any(is.finite(recs[[mm]]$LFR)) | any(is.finite(recs[[mm]]$HS)) |
+          any(is.finite(recs[[mm]]$Rmaxlen)) | any(is.finite(recs[[mm]]$L5)) | any(is.finite(recs[[mm]]$LFS)) |
+          any(is.finite(recs[[mm]]$Vmaxlen))) Selectivity <- TRUE
+      
+      dorecs <- rectypes[c(Effort, Spatial, Selectivity)]
+      thisrec <- dorecs
+      type[mm] <- "Input"
+      
+    }
+    if (input & output) {
+      type[mm] <- "Mixed"
+      thisrec <- c("TAC", thisrec)
+    }
+    if (length(thisrec)>1)  {
+      rec[mm] <- paste(thisrec, collapse=", ")
+    } else {
+      rec[mm] <- thisrec
+    }
   }
   type[grep("ref", MPs)] <- "Reference"
-  df <- data.frame(MP=MPs, Type=type, stringsAsFactors = FALSE)
+  
+  df <- data.frame(MP=MPs, Type=type, Recs=rec, stringsAsFactors = FALSE)
   df[order(df$Type),]
   
 }
@@ -306,14 +334,14 @@ Required <- function(funcs = NA) {
 #' @importFrom parallel detectCores 
 #' @examples
 #' \dontrun{
-#' setup() # set-up 4 processors
+#' setup() # set-up half the available processors
 #' setup(6) # set-up 6 processors
 #' }
 #' @export 
-setup <- function(cpus=min(parallel::detectCores(),4), ...) {
+setup <- function(cpus=parallel::detectCores()*0.5, ...) {
   if(snowfall::sfIsRunning()) snowfall::sfStop()
   snowfall::sfInit(parallel=TRUE,cpus=cpus, ...)
-  sfLibrary("DLMtool", character.only = TRUE)
+  sfLibrary("DLMtool", character.only = TRUE, verbose=FALSE)
 }
 
 
@@ -729,6 +757,8 @@ L2A <- function(t0c, Linfc, Kc, Len, maxage) {
 #' @param nsim Numeric. Number of simulations.
 #' @param thresh Recommended n cpus is what percent of the fastest time?
 #' @param plot Logical. Show the plot?
+#' @param msg Logical. Should messages be printed to console?
+#' @param maxn Optional. Maximum number of cpus. Used for demo purposes
 #'
 #' @export
 #' @seealso \link{setup}
@@ -737,27 +767,37 @@ L2A <- function(t0c, Linfc, Kc, Len, maxage) {
 #' optCPU()
 #' }
 #' @author A. Hordyk
-optCPU <- function(nsim=96, thresh=5, plot=TRUE) {
-  cpus=1:parallel::detectCores()
+optCPU <- function(nsim=96, thresh=5, plot=TRUE, msg=TRUE, maxn=NULL) {
+  cpus <- 1:parallel::detectCores()
+  if (!is.null(maxn)) cpus <- 1:maxn
+  
   time <- NA
   OM <- DLMtool::testOM
   OM@nsim <- nsim
   for (n in cpus) {
-    message('Running MSE with ', nsim, ' simulations and ', n, ' of ', max(cpus), ' cpus')
+    if (msg) message('Running MSE with ', nsim, ' simulations and ', n, ' of ', max(cpus), ' cpus')
     if (n == 1) {
       snowfall::sfStop()
       st <- Sys.time()
       tt <- runMSE(OM, silent = TRUE)
       time[n] <- difftime(Sys.time(), st, units='secs')
     } else{
-      setup(cpus=n)
+      if (msg) {
+        setup(cpus=n)
+      } else {
+        sink('temp')
+        suppressMessages(setup(cpus=n))
+        sink()
+      }
       st <- Sys.time()
-      tt <- runMSE(OM, silent=TRUE, parallel=TRUE)
+      tt <- runMSE(OM, silent=TRUE, parallel=TRUE)  
+      
       time[n] <- difftime(Sys.time(), st, units='secs')
       
     }
   } 
   df <- data.frame(ncpu=cpus, time=time)
+  df$time <- round(df$time,2)
   rec <- min(which(time < min(time) * (1 + thresh/100)))
   if (plot) {
     plot(df, type='b', ylab="time (seconds)", xlab= "# cpus", bty="l", lwd=2)

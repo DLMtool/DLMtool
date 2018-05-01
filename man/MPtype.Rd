@@ -7,10 +7,11 @@
 MPtype(MPs = NA)
 }
 \arguments{
-\item{MPs}{A list of MP names}
+\item{MPs}{A vector of MP names. If none are provided function is run on all available MPs}
 }
 \value{
-A data.frame with MP names and management type
+A data.frame with MP names, management type (e.g "Input", "Output") and management recommendations returned by the MP
+(e.g, TAC (total allowable catch), TAE (total allowable effort), SL (size-selectivity), and/or or Spatial)
 }
 \description{
 Management Procedure Type

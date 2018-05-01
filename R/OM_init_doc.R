@@ -136,8 +136,7 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), dir=NULL, overwrite=F
     
     # Check if file exists 
     exist <- file.exists(pathout)
-    if (exist & !overwrite) stop(name, " already exists in working directory. Use 'overwrite=TRUE' to overwrite", 
-                                 call.=FALSE)
+    if (exist & !overwrite) stop(name, " already exists in working directory. Use 'overwrite=TRUE' to overwrite", call.=FALSE)
     copy <- file.copy(path, pathout, overwrite = overwrite)
     if (!copy) stop("Excel file not copied from ", path)
     
@@ -169,6 +168,7 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), dir=NULL, overwrite=F
       
       # OM tab not currently updated
       openxlsx::saveWorkbook(wb, file.path(dir,name), overwrite = TRUE)
+    
       
     }
     
@@ -991,7 +991,7 @@ writeSection <- function(class=c("Intro", "Stock", "Fleet", "Obs", "Imp", "Refer
 
 
 writeCSV2 <- function(inobj, tmpfile = NULL, objtype = c("Stock", "Fleet", 
-                                                         "Obs", "Imp", "Data", "OM", "Fease")) {
+                                                         "Obs", "Imp", "Data", "OM")) {
   objtype <- match.arg(objtype)
   
   for (X in 1:nrow(inobj)) {
@@ -1704,49 +1704,49 @@ Data_xl <- function(fname, stkname, fpath = "", saveCSV = FALSE) {
   
 }
 
-#' Read in feasibility parameters from Excel spreadsheet
-#' 
-#' A function to read in feasibility parameters from an Excel spreadsheet with
-#' tabs named following specific convention
-#' 
-#' The Excel spreadsheet must have tabs named with the following convention.
-#' For example if \code{stkname} is 'myFish', the tab must be named
-#' 'myFishFease,
-#' 
-#' @usage Fease_xl(fname, stkname, fpath = '', saveCSV = FALSE)
-#' @param fname Name of the Excel spreadsheet file. Must include file
-#' extension.
-#' @param stkname Name of the Stock.
-#' @param fpath Full file path, if file is not in current working directory
-#' @param saveCSV Do you also want to save the Stock, Fleet and Observation
-#' parameters to CSV files?
-#' @return A object of class Fease
-#' @author A. Hordyk
-#' @examples
-#' 
-#'  \dontrun{
-#'  myFease <- Fease_xl(fname='FeaseTables.xlsx', stkname='myFish')
-#' }
-#' 
-#' @export Fease_xl
-Fease_xl <- function(fname, stkname, fpath = "", saveCSV = FALSE) {
-  infile <- paste0(fpath, fname)  # full path and name 
-  shtname <- readxl::excel_sheets(infile)  # names of the sheets 
-  # Fease
-  feasedat <- readxl::read_excel(infile, sheet = grep(paste0(stkname, "Fease"), 
-                                                      shtname), col_names = FALSE)
-  feasedat <- feasedat[, 1:2]
-  tmpfile <- paste0(fpath, stkname, "Fease.csv")
-  if (file.exists(tmpfile)) 
-    unlink(tmpfile)
-  writeCSV(inobj = feasedat, tmpfile, objtype = "Fease")
-  fease <- new("Fease", tmpfile)
-  if (!saveCSV) 
-    unlink(tmpfile)
-  
-  fease
-}
-
+# #' Read in feasibility parameters from Excel spreadsheet
+# #' 
+# #' A function to read in feasibility parameters from an Excel spreadsheet with
+# #' tabs named following specific convention
+# #' 
+# #' The Excel spreadsheet must have tabs named with the following convention.
+# #' For example if \code{stkname} is 'myFish', the tab must be named
+# #' 'myFishFease,
+# #' 
+# #' @usage Fease_xl(fname, stkname, fpath = '', saveCSV = FALSE)
+# #' @param fname Name of the Excel spreadsheet file. Must include file
+# #' extension.
+# #' @param stkname Name of the Stock.
+# #' @param fpath Full file path, if file is not in current working directory
+# #' @param saveCSV Do you also want to save the Stock, Fleet and Observation
+# #' parameters to CSV files?
+# #' @return A object of class Fease
+# #' @author A. Hordyk
+# #' @examples
+# #' 
+# #'  \dontrun{
+# #'  myFease <- Fease_xl(fname='FeaseTables.xlsx', stkname='myFish')
+# #' }
+# #' 
+# #' @export Fease_xl
+# Fease_xl <- function(fname, stkname, fpath = "", saveCSV = FALSE) {
+#   infile <- paste0(fpath, fname)  # full path and name 
+#   shtname <- readxl::excel_sheets(infile)  # names of the sheets 
+#   # Fease
+#   feasedat <- readxl::read_excel(infile, sheet = grep(paste0(stkname, "Fease"), 
+#                                                       shtname), col_names = FALSE)
+#   feasedat <- feasedat[, 1:2]
+#   tmpfile <- paste0(fpath, stkname, "Fease.csv")
+#   if (file.exists(tmpfile)) 
+#     unlink(tmpfile)
+#   writeCSV(inobj = feasedat, tmpfile, objtype = "Fease")
+#   fease <- new("Fease", tmpfile)
+#   if (!saveCSV) 
+#     unlink(tmpfile)
+#   
+#   fease
+# }
+# 
 
 
 #' Internal function to write CSVs for objects
@@ -1755,13 +1755,13 @@ Fease_xl <- function(fname, stkname, fpath = "", saveCSV = FALSE) {
 #' DLMtool object
 #' 
 #' 
-#' @param inobj A object of class Stock, Fleet, Obs, Imp, Data, OM, or
-#' Fease
+#' @param inobj A object of class Stock, Fleet, Obs, Imp, Data, or OM
+#' 
 #' @param tmpfile The full file path and name for the saved CSV file
 #' @param objtype The class corresonding to the \code{inobj}
 #' @author A. Hordyk
 writeCSV <- function(inobj, tmpfile = NULL, objtype = c("Stock", "Fleet", 
-                                                        "Obs", "Imp", "Data", "OM", "Fease")) {
+                                                        "Obs", "Imp", "Data", "OM")) {
   objtype <- match.arg(objtype)
   
   for (X in 1:nrow(inobj)) {

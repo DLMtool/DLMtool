@@ -1966,6 +1966,52 @@ class(Itarget1) <- "MP"
 
 
 
+Itarget1_n <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5, plot=FALSE) {
+  dependencies = "Data@Cat, Data@CV_Cat"
+  ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
+  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
+  ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
+  ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
+  C_dat <- Data@Cat[x, ind2]
+  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
+  Irecent <- mean(Data@Ind[x, ind])
+  Iave <- mean(Data@Ind[x, ind3])
+  Itarget <- Iave * Imulti
+  I0 <- 0.8 * Iave
+  if (Irecent > I0) {
+    TAC <- 0.5 * TACstar * (1 + ((Irecent - I0)/(Itarget - I0)))
+  } else {
+    TAC <- 0.5 * TACstar * (Irecent/I0)^2
+  }
+  
+  if (plot) {
+    
+    par(mfrow=c(1,2))
+    plot(Data@Year, Data@Ind[x, ], ylim=c(0, max(c(1, I0, Itarget))), type='l') 
+    lines(Data@Year[ind], rep(Irecent, length(ind)), col="blue", lwd=3)
+
+    lines(Data@Year[ind3], rep(Iave, length(ind3)), col="red", lwd=3)
+   
+    points(max(Data@Year), Itarget, col="green", pch=16, cex=2)
+    points(max(Data@Year), I0, col="grey", pch=16, cex=2)
+    
+    
+    ylim <- range(c(C_dat,TAC))
+    plot(Data@Year[ind2], C_dat, ylim=ylim, type="l")
+    lines(Data@Year[ind2], rep(mean(C_dat), length(ind2)), col="blue", lwd=3)
+    boxplot(TAC, at=max(Data@Year[ind2]), add=TRUE, xpd=NA)
+    
+  }
+  
+  
+  Rec <- new("Rec")
+  Rec@TAC <- TACfilter(TAC)
+  Rec
+}
+class(Itarget1_n) <- "MP"
+
+
+
 #' @describeIn Itarget1 The most biologically precautionary TAC-based MP
 #' @export Itarget4
 Itarget4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.3, Imulti = 2.5) {

@@ -4,7 +4,7 @@
 \alias{setup}
 \title{Setup parallel processing}
 \usage{
-setup(cpus = min(parallel::detectCores(), 4), ...)
+setup(cpus = parallel::detectCores() * 0.5, ...)
 }
 \arguments{
 \item{cpus}{number of CPUs}
@@ -16,7 +16,7 @@ Sets up parallel processing using the snowfall package
 }
 \examples{
 \dontrun{
-setup() # set-up 4 processors
+setup() # set-up half the available processors
 setup(6) # set-up 6 processors
 }
 }
