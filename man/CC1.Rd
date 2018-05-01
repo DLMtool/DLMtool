@@ -2,44 +2,83 @@
 % Please edit documentation in R/MPs_Output.R
 \name{CC1}
 \alias{CC1}
+\alias{CC2}
+\alias{CC3}
 \alias{CC4}
-\title{Constant catch management procedure of Geromont and Butterworth (2014)}
+\alias{CC5}
+\title{Constant catch management procedures of Geromont and Butterworth (2015)}
 \usage{
-CC1(x, Data, reps = 100, yrsmth = 5, xx = 0)
+CC1(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0)
 
-CC4(x, Data, reps = 100, yrsmth = 5, xx = 0.3)
+CC2(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.1)
+
+CC3(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.2)
+
+CC4(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.3)
+
+CC5(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.4)
 }
 \arguments{
-\item{x}{A position in data-limited methods data object}
+\item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of TAC samples}
+\item{reps}{The number of stochastic samples of the TAC recommendation}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{yrsmth}{Years over which to calculate mean catches}
 
 \item{xx}{Parameter controlling the TAC. Mean catches are multiplied by
-(1-xx)}
+(1-\code{xx})}
 }
 \value{
-A Rec object containing a numeric vector of TAC recommendations
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
-The TAC is the average catch over the last yrsmth (by default, 5) years.
-This is one of four constant catch rules of Geromont and Butterworth 2014.
+The TAC is the average historical catch over the last \code{yrsmth} (default 5) years,
+multiplied by (1-\code{xx})
+}
+\details{
+The TAC is calculated as:
+\deqn{\text{TAC} = (1-x)C_{\text{ave}}}
+where \emph{x} lies between 0 and 1, and \eqn{C_{\text{ave}}} is average historical
+catch over the previous \code{yrsmth} years.
+
+The TAC is constant for all future projections.
 }
 \section{Functions}{
 \itemize{
-\item \code{CC1}: The TAC is the average catch over last \code{yrsmth} years.
+\item \code{CC1}: TAC is average historical catch from recent \code{yrsmth} years
 
-\item \code{CC4}: The TAC is the recent average catch reduced by 30\%.
-Note that this MP is intentionally designed to reduce catch over time.
+\item \code{CC2}: TAC is average historical catch from recent \code{yrsmth} years reduced by 10\%.
+
+\item \code{CC3}: TAC is average historical catch from recent \code{yrsmth} years reduced by 20\%.
+
+\item \code{CC4}: TAC is average historical catch from recent \code{yrsmth} years reduced by 30\%.
+
+\item \code{CC5}: TAC is average historical catch from recent \code{yrsmth} years reduced by 40\%.
 }}
 
+\note{
+See the \href{https://dlmtool.github.io/DLMtool/docs/reference}{online documentation} for correctly rendered equations.
+}
+\examples{
+CC1(1, DLMtool::Cobia, plot=TRUE)
+
+CC2(1, DLMtool::Cobia, plot=TRUE)
+
+CC3(1, DLMtool::Cobia, plot=TRUE)
+
+CC4(1, DLMtool::Cobia, plot=TRUE)
+
+CC5(1, DLMtool::Cobia, plot=TRUE)
+
+}
 \references{
-Geromont, H.F., Butterworth, D.S. 2014. Generic management
-procedures for data-poor fisheries; forecasting with few data. ICES J. Mar.
-Sci. doi:10.1093/icesjms/fst232
+Geromont, H. F., and D. S. Butterworth. 2015.
+Generic Management Procedures for Data-Poor Fisheries: Forecasting with Few Data.
+ICES Journal of Marine Science: Journal Du Conseil 72 (1). 251-61.
 }
 \author{
 T. Carruthers

@@ -74,7 +74,6 @@ DLMDataDir <- function(stock = NA) {
 #' @param silent Logical. Should messages to printed?
 #' @export
 #'
-#' @importFrom devtools install_github
 DLMextra <- function(silent=FALSE) {
   if (!requireNamespace("devtools", quietly = TRUE)) {
     stop("devtools is needed for this function to work. Please install it.",
@@ -330,8 +329,6 @@ Required <- function(funcs = NA) {
 #'
 #' @param cpus number of CPUs 
 #' @param ... other arguments passed to 'snowfall::sfInit'
-#' @importFrom snowfall sfInit sfExportAll sfIsRunning sfExport sfSapply sfLibrary
-#' @importFrom parallel detectCores 
 #' @examples
 #' \dontrun{
 #' setup() # set-up half the available processors
@@ -351,7 +348,6 @@ setup <- function(cpus=parallel::detectCores()*0.5, ...) {
 #' Opens the DLMtool User Guide website (requires internet connection)
 #' 
 #' @export
-#' @importFrom utils browseURL
 #' @examples
 #' \dontrun{
 #' userguide()

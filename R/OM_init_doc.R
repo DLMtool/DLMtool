@@ -365,8 +365,6 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
 #' @param ... Optional additional named arguments provided to `runMSE`
 #' @return Creates a Rmarkdown file and compiles a HTML report file in the working directory.
 #' @export
-#' @importFrom methods getSlots
-#' @importFrom knitr kable
 #' @author A. Hordyk
 #' @examples 
 #' \dontrun{

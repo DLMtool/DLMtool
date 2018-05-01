@@ -264,7 +264,6 @@ SketchM <- function(x, y, xlab, ylab) {
 
 
 #' @rdname Choose
-#' @importFrom utils flush.console
 #' @export ChooseSelect
 ChooseSelect <- function(Fleet, Stock, FstYr = NULL, SelYears = NULL) {
   # chk <- class(Fleet@isRel)

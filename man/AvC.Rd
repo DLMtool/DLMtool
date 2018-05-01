@@ -4,7 +4,7 @@
 \alias{AvC}
 \title{Average Catch}
 \usage{
-AvC(x, Data, reps = 100)
+AvC(x, Data, reps = 100, plot = FALSE)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -12,24 +12,37 @@ AvC(x, Data, reps = 100)
 \item{Data}{A data-limited methods data object}
 
 \item{reps}{The number of stochastic samples of the TAC recommendation}
+
+\item{plot}{Logical. Show the plot?}
+}
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
 A simple average catch MP that is included to demonstrate a 'status quo' management option
 }
+\details{
+The average catch method is very simple. The mean historical catch is calculated and used to set
+a constant catch limit (TAC). If \code{reps} > 1 then the \code{reps} samples are drawn from a log-normal
+distribution with mean \code{TAC} and standard deviation (in log-space) of 0.2.
+
+For completeness, the TAC is calculated by:
+
+\deqn{\text{TAC} =\frac{\sum_{y=1}^{\text{n}}{C_y}}{\text{n}}}
+where \eqn{\text{TAC}} is the the mean catch recommendation, \eqn{n} is the number of historical years, and
+\eqn{C_y}  is the catch in historical year \eqn{y}
+}
+\note{
+See the \href{https://dlmtool.github.io/DLMtool/docs/reference}{online documentation} for correctly rendered equations.
+}
 \examples{
 Data <- DLMtool::Cobia
-# Plot the historical catches 
-plot(Data@Year, Data@Cat[1,], type="l", 
-     xlab="Year", ylab=paste0("Catch (", Data@Units, ")"), lwd=2)
-abline(h=mean(Data@Cat[1,]), lty=2) # plot mean catches
-
 # Apply the AvC MP to the Data
-Rec <- AvC(1, Data, reps=1000) # 1,000 log-normal samples with CV = 0.2
-
-# Distribution of TACs
-boxplot(Rec@TAC, add=TRUE, at=max(Data@Year), col="grey", 
-        width=1, outline=FALSE)
+Rec <- AvC(1, Data, reps=1000, plot=TRUE) # 1,000 log-normal samples with CV = 0.2
         
+}
+\seealso{
+Other Average Catch MPs: \code{\link{DAAC}}
 }
 \author{
 T. Carruthers

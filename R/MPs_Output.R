@@ -1,78 +1,61 @@
 
-# #' Example name
-# #' 
-# #' A brief description of the management procedure.
-# #' 
-# #' @details more details in paragraphs
-# #' 
-# #' Second paragraph
-# #' 
-# #' italics text: \emph{italics}
-# #' bold text:  \strong{bold}
-# #' r code: \code{r_function_call(with = "arguments")}, \code{NULL}, \code{TRUE}
-# #'
-# #' @param x A position in data-limited methods data object
-# #' @param Data A data-limited methods data object
-# #' @param reps The number of TAC samples
-# #' @author MP author
-# #' @references references (can be links) to papers, etc
-# #' @family other similar functions in same family
-# #' @seealso links to other functions or urls
-# #'   \code{\link{prod}} for products, \code{\link{cumsum}} for cumulative
-# #'   sums, and \code{\link{colSums}}/\code{\link{rowSums}} marginal sums over
-# #'   high-dimensional arrays.
-# #' @examples 
-# #' @export 
-# testFunction <- function(x, Data, reps = 100) {
-#   rec <- new("Rec") # create recommendation object
-#   rec@TAC <- trlnorm(reps, Data@OM$A[x] * (1 - exp(-Data@OM$FMSY[x])), 0.01)
-#   rec
-# }
-
-
-
-
 ## Output Control MPs ####
 
 #' Average Catch
 #'
 #' A simple average catch MP that is included to demonstrate a 'status quo' management option
 #'
+#' The average catch method is very simple. The mean historical catch is calculated and used to set 
+#' a constant catch limit (TAC). If `reps` > 1 then the `reps` samples are drawn from a log-normal
+#' distribution with mean `TAC` and standard deviation (in log-space) of 0.2.    
 #' 
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
+#' For completeness, the TAC is calculated by:
+#' 
+#' \deqn{\text{TAC} =\frac{\sum_{y=1}^{\text{n}}{C_y}}{\text{n}}}
+#' where \eqn{\text{TAC}} is the the mean catch recommendation, \eqn{n} is the number of historical years, and
+#' \eqn{C_y}  is the catch in historical year \eqn{y}
+#' 
+#' 
+#' @template MPtemplate
+#' @template MPoutput
+#' @export 
 #' @author T. Carruthers
+#' 
+#' @family Average Catch MPs
 #' 
 #' @examples 
 #' Data <- DLMtool::Cobia
-#' # Plot the historical catches 
-#' plot(Data@Year, Data@Cat[1,], type="l", 
-#'      xlab="Year", ylab=paste0("Catch (", Data@Units, ")"), lwd=2)
-#' abline(h=mean(Data@Cat[1,]), lty=2) # plot mean catches
-#' 
 #' # Apply the AvC MP to the Data
-#' Rec <- AvC(1, Data, reps=1000) # 1,000 log-normal samples with CV = 0.2
-#' 
-#' # Distribution of TACs
-#' boxplot(Rec@TAC, add=TRUE, at=max(Data@Year), col="grey", 
-#'         width=1, outline=FALSE)
+#' Rec <- AvC(1, Data, reps=1000, plot=TRUE) # 1,000 log-normal samples with CV = 0.2
 #'         
-#' @export 
-#'
-#' @importFrom abind abind
-#' @importFrom graphics abline axis barplot boxplot hist identify layout legend
-#' lines matplot mtext par plot plot.new points polygon segments text title text
-#' @importFrom grDevices col2rgb colorRampPalette rainbow rgb xy.coords
-#' @importFrom methods getClassDef .hasSlot new slot slot<- slotNames
-#' @importFrom stats approx coef dbeta density dnorm dlnorm lm loess loess.smooth
-#' median nlm optim optimise optimize plogis pnorm predict qlnorm quantile rbeta
-#' rlnorm rmultinom rnorm runif sd
-#' @importFrom utils packageVersion lsf.str read.csv read.csv2
-AvC <- function(x, Data, reps = 100) {
-  dependencies = "Data@Cat"
+AvC <- function(x, Data, reps = 100, plot=FALSE) {
+  dependencies = "Data@Cat Data@LHYear"
+  yrs <- min(Data@Year):(Data@Year[Data@Year==Data@LHYear])
+  yr.ind <- match(yrs, Data@Year)
+  histCatch <- Data@Cat[x, yr.ind]
+  meanC <- mean(histCatch, na.rm = T)
+  if (reps >1) {
+    TAC <- rlnorm(reps, log(meanC), 0.2)
+  } else {
+    TAC <- meanC
+  }
   Rec <- new("Rec")
-  Rec@TAC <- rlnorm(reps, log(mean(Data@Cat[x, ], na.rm = T)), 0.2)
+  Rec@TAC <- TAC
+  
+  if (plot) {
+    lwd <- 3 
+    cex.lab <- 1.25
+    
+    plot(c(Data@Year, max(Data@Year)+1), c(histCatch,NA), type="l", 
+         xlab="Year", ylab=paste0("Catch (", Data@Units, ")"), lwd=lwd, bty="l", las=1, cex.lab=cex.lab)
+    abline(v=Data@LHYear, lty=2, col="darkgray") #
+    text(Data@LHYear, min(histCatch, na.rm=TRUE)*1.1, "Last Historical Year", pos=2, xpd=NA)
+    lines(c(min(Data@Year), Data@LHYear), rep(mean(Data@Cat[x,]),2), lty=2) #
+    text(quantile(Data@Year, 0.1), meanC*1.1, pos=4, "Average Historical Catch")
+    boxplot(Rec@TAC, add=TRUE, at=max(Data@Year)+1, col="grey", width=1, outline=FALSE, axes=FALSE)
+          
+  }
+  
   Rec
 }
 class(AvC) <- "MP"
@@ -80,43 +63,91 @@ class(AvC) <- "MP"
 
 #' Beddington and Kirkwood life-history MP
 #' 
-#' Family of management procedures that sets the TAC by approximation of FMSY
-#' based on the length at first capture.
+#' Family of management procedures that sets the TAC by approximation of Fmax
+#' based on the length at first capture relative to asymptotic length and the 
+#' von Bertalanffy growth parameter *K*.
 #' 
-#' @param x A position in a data-limited methods data object.
-#' @param Data A data-limited methods data object.
-#' @param reps The number of stochastic samples of the TAC recommendation.
-#' @param Fmin The minimum fishing mortality rate that is derived from the
-#' catch-curve (interval censor).
-#' @note The mean length extension was programmed by Gary Nelson as part of his
-#' excellent R package 'fishmethods'
-#' @describeIn BK This is the simple version of the BK MP which requires an estimate
-#' of abundance. The paper has a more complex approach that might work better.
+#' @details The TAC is calculated as:
+#' \deqn{\text{TAC} = A F_{\text{max}}}
+#' where \eqn{A} is (vulnerable) stock abundance, and \eqn{F_{\text{max}}} is calculated as:
+#' \deqn{F_{\text{max}} = \frac{0.6K}{0.67-L_c/L_\infty}}
+#' where \eqn{K} is the von Bertalannfy growth coefficient, \eqn{L_c} is the
+#' length at first capture, and \eqn{L_\infty} is the von Bertalanffy asymptotic length
+#' 
+#' 
+#' Abundance (*A*) is either assumed known (`BK`) or estimated (`BK_CC` and `BK_ML`):
+#' \deqn{A = \frac{\bar{C}}{\left(1-e^{-F}\right)}}
+#' where \eqn{\bar{C}} is the mean catch, and *F* is estimated. 
+#' See Functions section below for the estimation of *F*.
+#' 
+#' 
+#' @note 
+#' Note that the Beddington-Kirkwood method is designed to estimate \eqn{F_\text{max}},
+#' that is, the fishing mortality that produces the maximum yield *assuming constant 
+#' recruitment independent of spawning biomass*. 
+#' 
+#' Beddington and Kirkwood (2005) 
+#' recommend estimating *F* using other methods (e.g a catch curve) and comparing the 
+#' estimated *F* to the estimaed \eqn{F_\text{max}} and adjusting exploitation accordingly. 
+#' These MPs have not been implemented that way.
+#' 
+#' 
+#' @describeIn BK Assumes that abundance is known, i.e. `Data@Abun`
+#' and `Data@CV_abun` contain values
+#' 
+#' @examples 
+#' Data <- DLMtool::SimulatedData
+#' BK(1, Data, reps=1000, plot=TRUE)
+#' 
 #' @author T. Carruthers.
 #' @references Beddington, J.R., Kirkwood, G.P., 2005. The estimation of
 #' potential yield and stock status using life history parameters. Philos.
 #' Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.
-#' @export BK
-BK <- function(x, Data, reps = 100) {
+#' @template MPtemplate
+#' @template MPoutput
+#' @export 
+#' 
+#' 
+BK <- function(x, Data, reps = 100, plot=FALSE) {
   # Beddington and Kirkwood life-history analysis
   dependencies = "Data@LFC, Data@vbLinf, Data@CV_vbLinf, Data@Abun, Data@CV_Abun, Data@vbK, Data@CV_vbK"
   Lc <- trlnorm(reps * 10, Data@LFC[x], 0.2)
   Linfc <- trlnorm(reps * 10, Data@vbLinf[x], Data@CV_vbLinf[x])
   Ac <- trlnorm(reps * 10, Data@Abun[x], Data@CV_Abun[x])
   Kc <- trlnorm(reps * 10, Data@vbK[x], Data@CV_vbK[x])
-  TAC <- Ac * (0.6 * Kc)/(0.67 - (Lc/Linfc))  # robustifying for use in MSE
-  TAC <- (TAC[TAC > 0][1:reps])  # Interval censor only those positive catch recommendations
+  Fmax <- (0.6 * Kc)/(0.67 - (Lc/Linfc)) 
+  TAC <- Ac * Fmax 
+  ind <- TAC > 0 & Fmax > 0
+  TAC <- TACfilter(TAC[ind][1:reps])  # Interval censor only those positive catch recommendations
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
+  
+  if (plot) {
+    DF <- data.frame(vals=c(Lc[ind][1:reps]/Linfc[ind][1:reps], Kc[ind][1:reps], 
+                            Fmax[ind][1:reps], Ac[ind][1:reps], TAC[ind][1:reps]), 
+                     vars=rep(c('Lc/Linf', 'K', 'Fmax', 'Abundance', 'TAC'), each=reps),
+                     stringsAsFactors = FALSE)
+    DF <- DF[!is.na(DF$vals),]
+    DF$vars <- factor(DF$vars, levels=c('Lc/Linf', 'K', 'Fmax', 'Abundance', 'TAC'), ordered=TRUE)
+    plotBK(DF)
+  }
+ 
   Rec
 
-}  # end of BK
+} 
 class(BK) <- "MP"
 
-#' @describeIn BK Calculates an OFL using an approximation of FMSY based 
-#' on length at first capture and a catch curve estimate of current F.
-#' @export BK_CC
-BK_CC <- function(x, Data, reps = 100, Fmin = 0.005) {
+#' @param Fmin The minimum fishing mortality rate that is derived from the
+#' catch-curve (interval censor).
+#' @describeIn BK Abundance is estimated. An age-based catch curve is used 
+#' to estimate *Z* and *F*. 
+#' 
+#' @examples 
+#' Data <- DLMtool::SimulatedData
+#' BK_CC(1, Data, reps=1000, plot=TRUE)
+#' 
+#' @export 
+BK_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
   dependencies = "Data@LFC, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@CAA, Data@Mort"
   Lc <- trlnorm(reps, Data@LFC[x], 0.2)
   Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
@@ -126,7 +157,10 @@ BK_CC <- function(x, Data, reps = 100, Fmin = 0.005) {
   Cc <- trlnorm(reps, MuC, Data@CV_Cat[x])
   Zdb <- CC(x, Data, reps = reps * 10)
   Fdb <- Zdb - Mdb
-  ind <- (1:(reps * 10))[Fdb > Fmin][1:reps]
+  Ac <- Cc/(1 - exp(-Fdb))
+  Fmax <- (0.6 * Kc)/(0.67 - (Lc/Linfc))
+
+  ind <- (1:(reps * 10))[Fdb > Fmin][(1:reps)*5]
   Fdb <- Fdb[ind]
   Mdb <- Mdb[ind]
   SM <- sum(is.na(ind))
@@ -134,19 +168,38 @@ BK_CC <- function(x, Data, reps = 100, Fmin = 0.005) {
     Mdb[is.na(ind)] <- trlnorm(SM, Data@Mort[x], Data@CV_Mort[x])
     Fdb[is.na(ind)] <- Fmin
   }
-  
   Ac <- Cc/(1 - exp(-Fdb))
-  TAC <- Ac * (0.6 * Kc)/(0.67 - (Lc/Linfc))
+
+  TAC <- Ac * Fmax
+  ind <- TAC > 0 & Fmax > 0
+  TAC <- TACfilter(TAC[ind][1:reps])
+
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
+  
+  if (plot) {
+    DF <- data.frame(vals=c(Lc[ind][1:reps]/Linfc[ind][1:reps], Kc[ind][1:reps], 
+                            Fmax[ind][1:reps], Ac[ind][1:reps], TAC[ind][1:reps]), 
+                     vars=rep(c('Lc/Linf', 'K', 'Fmax', 'Abundance', 'TAC'), each=reps),
+                     stringsAsFactors = FALSE)
+    DF <- DF[!is.na(DF$vals),]
+
+    DF$vars <- factor(DF$vars, levels=c('Lc/Linf', 'K', 'Fmax', 'Abundance', 'TAC'), ordered=TRUE)
+    plotBK(DF)
+
+  }
   Rec
-}  # end of BK_CC
+}  
 class(BK_CC) <- "MP"
 
-#' @describeIn BK Uses an approximation to FMSY based on length at first capture and an
-#' estimate of current abundance based on a mean-length estimator.
-#' @export BK_ML
-BK_ML <- function(x, Data, reps = 100) {
+#' @describeIn BK Abundance is estimated. *Z* and *F* are estimated from mean length.
+
+#' @examples 
+#' Data <- DLMtool::SimulatedData
+#' BK_ML(1, Data, reps=1000, plot=TRUE)
+#' 
+#' @export 
+BK_ML <- function(x, Data, reps = 100, plot=FALSE) {
   dependencies = "Data@LFC, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@CAL, Data@Mort"
   Lc <- trlnorm(reps * 10, Data@LFC[x], 0.2)
   Linfc <- trlnorm(reps * 10, Data@vbLinf[x], Data@CV_vbLinf[x])
@@ -162,58 +215,125 @@ BK_ML <- function(x, Data, reps = 100) {
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
   Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
   Ac <- Cc/(1 - exp(-FM))
-  FMSY <- (0.6 * Kc)/(0.67 - (Lc/Linfc))  # robustifying for use in MSETAC<-Ac*FMSY
-  TAC <- Ac * FMSY
-  TAC <- TAC[TAC > 0 & TAC < (mean(TAC, na.rm = T) + 3 * stats::sd(TAC, na.rm = T))][1:reps]
+  Fmax <- (0.6 * Kc)/(0.67 - (Lc/Linfc))  # robustifying for use in MSE 
+  TAC <- Ac * Fmax
+  ind <- TAC > 0 & Fmax > 0
+  TAC <- TACfilter(TAC[ind][1:reps])
+  
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
+  
+  if (plot) {
+    DF <- data.frame(vals=c(Lc[ind][1:reps]/Linfc[ind][1:reps], Kc[ind][1:reps], 
+                            Fmax[ind][1:reps], Ac[ind][1:reps], TAC[ind][1:reps]), 
+                     vars=rep(c('Lc/Linf', 'K', 'Fmax', 'Abundance', 'TAC'), each=reps),
+                     stringsAsFactors = FALSE)
+    DF <- DF[!is.na(DF$vals),]
+    DF$vars <- factor(DF$vars, levels=c('Lc/Linf', 'K', 'Fmax', 'Abundance', 'TAC'), ordered=TRUE)
+    plotBK(DF)
+  }
+  
   Rec
 }
 class(BK_ML) <- "MP"
 
 
-#' Constant catch management procedure of Geromont and Butterworth (2014)
+#' Constant catch management procedures of Geromont and Butterworth (2015)
 #' 
-#' The TAC is the average catch over the last yrsmth (by default, 5) years. 
-#' This is one of four constant catch rules of Geromont and Butterworth 2014.
+#' The TAC is the average historical catch over the last `yrsmth` (default 5) years, 
+#' multiplied by (1-`xx`)
 #' 
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
+#' The TAC is calculated as:
+#' \deqn{\text{TAC} = (1-x)C_{\text{ave}}}
+#' where *x* lies between 0 and 1, and \eqn{C_{\text{ave}}} is average historical
+#' catch over the previous `yrsmth` years. 
+#' 
+#' The TAC is constant for all future projections.
+#' 
 #' @param yrsmth Years over which to calculate mean catches
 #' @param xx Parameter controlling the TAC. Mean catches are multiplied by
-#' (1-xx)
-#' @return A Rec object containing a numeric vector of TAC recommendations
-#' @author T. Carruthers
-#' @references Geromont, H.F., Butterworth, D.S. 2014. Generic management
-#' procedures for data-poor fisheries; forecasting with few data. ICES J. Mar.
-#' Sci. doi:10.1093/icesjms/fst232
-#' @describeIn CC1 The TAC is the average catch over last \code{yrsmth} years.
+#' (1-`xx`)
+#' 
+#' @template MPtemplate
+#' @template MPoutput
 #' @export
-CC1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0) {
+#' 
+#' @author T. Carruthers
+#' @references Geromont, H. F., and D. S. Butterworth. 2015. 
+#' Generic Management Procedures for Data-Poor Fisheries: Forecasting with Few Data.
+#'  ICES Journal of Marine Science: Journal Du Conseil 72 (1). 251-61.
+#'  
+#' @describeIn CC1 TAC is average historical catch from recent `yrsmth` years
+#' @examples 
+#' CC1(1, DLMtool::Cobia, plot=TRUE)
+#' 
+
+CC1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0) {
   dependencies = "Data@Cat, Data@CV_Cat"
-  C_dat <- Data@Cat[x, (length(Data@Year) - (yrsmth - 1)):length(Data@Year)]
+  
+  yrlast <- match(Data@LHYear, Data@Year)
+  yrfirst <- yrlast - yrsmth + 1
+  # C_dat <- Data@Cat[x, (length(Data@Year) - (yrsmth - 1)):length(Data@Year)]
+  C_dat <- Data@Cat[x, yrfirst:yrlast]
   TAC <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))  # mean catches over the interval
   Rec <- new("Rec")
   Rec@TAC <- TACfilter(TAC)
+  if (plot) {
+    op <- par(no.readonly = TRUE)
+    on.exit(par(op))
+    par(mfrow=c(1,1))
+    ylim <- c(0, max(c(Data@Cat[x,], TACfilter(TAC))))
+    plot(c(Data@Year, max(Data@Year)+1), c(Data@Cat[x,],NA), type="l", lwd=2, las=1, bty="l",
+         xlab="Year", ylab=paste0("Catch (", Data@Units, ")"),
+         cex.lab=1.5, cex.axis=1.25, ylim=ylim)
+    abline(v=Data@LHYear, lty=3, col="darkgray")
+    lines(Data@Year[yrfirst:yrlast], rep(mean(C_dat), yrsmth), col="blue", lwd=3)
+    boxplot(Rec@TAC, at=max(Data@Year)+1, add=TRUE, axes=FALSE)
+  }
+  
   Rec
 }
 class(CC1) <- "MP"
 
-
-
-#' @describeIn CC1 The TAC is the recent average catch reduced by 30\%. 
-#' Note that this MP is intentionally designed to reduce catch over time.
+#' @describeIn CC1 TAC is average historical catch from recent `yrsmth` years reduced by 10\%. 
+#' @examples 
+#' CC2(1, DLMtool::Cobia, plot=TRUE)
+#' 
 #' @export 
-CC4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.3) {
-  dependencies = "Data@Cat, Data@CV_Cat"
-  C_dat <- Data@Cat[x, (length(Data@Year) - (yrsmth - 1)):length(Data@Year)]
-  TAC <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))  # mean catches over the interval
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
-  Rec
-}
+CC2 <- CC1
+formals(CC2)$xx <- 0.1
+class(CC2) <- "MP"
+
+#' @describeIn CC1 TAC is average historical catch from recent `yrsmth` years reduced by 20\%. 
+#' @examples 
+#' CC3(1, DLMtool::Cobia, plot=TRUE)
+#' 
+#' @export 
+CC3 <- CC1
+formals(CC3)$xx <- 0.2
+class(CC3) <- "MP"
+
+
+#' @describeIn CC1 TAC is average historical catch from recent `yrsmth` years reduced by 30\%. 
+#' @examples 
+#' CC4(1, DLMtool::Cobia, plot=TRUE)
+#' 
+#' @export 
+CC4 <- CC1
+formals(CC4)$xx <- 0.3
 class(CC4) <- "MP"
+
+#' @describeIn CC1 TAC is average historical catch from recent `yrsmth` years reduced by 40\%. 
+#' @examples 
+#' CC5(1, DLMtool::Cobia, plot=TRUE)
+#' 
+#' @export 
+CC5 <- CC1
+formals(CC5)$xx <- 0.4
+class(CC5) <- "MP"
+
+ 
+
 
 
 #' Age-composition-based estimate of current stock depletion given constant Z
@@ -381,7 +501,7 @@ class(CompSRA4010) <- "MP"
 
 #' @describeIn DCAC Depletion Adjusted Average Catch: essentially DCAC multiplied 
 #' by 2*depletion and divided by BMSY/B0 (Bpeak) (Harford and Carruthers, 2017).
-#' @export DAAC
+#' @export 
 DAAC <- function(x, Data, reps = 100) {
   # extended depletion-corrected average catch (Harford and Carruthers
   # 2017)
@@ -745,6 +865,7 @@ class(DBSRA4010) <- "MP"
 #' calculating historical average catch. It follows that at stock levels much
 #' below BMSY, DCAC tends to chronically overfish.
 #' @author T. Carruthers
+#' @family Average Catch MPs
 #' @references 
 #' MacCall, A.D., 2009. Depletion-corrected average catch: a simple
 #' formula for estimating sustainable yields in data-poor situations. ICES J.
@@ -905,7 +1026,6 @@ class(DCAC_ML) <- "MP"
 #' Hilborn, R., and Walters, C. 1992. Quantitative Fisheries Stock Assessment: Choice,
 #' Dynamics and Uncertainty. Chapman and Hall, New York. 
 #' @describeIn DD Base version where the TAC = UMSY * Current Biomass.
-#' @importFrom stats approx
 #' @export 
 DD <- function(x, Data, reps = 100) {
   dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
@@ -965,7 +1085,7 @@ class(DD) <- "MP"
 
 
 #' @describeIn DD In this version, a 40-10 rule is imposed over the TAC recommendation.
-#' @importFrom stats approx
+
 #' @export DD4010
 DD4010 <- function(x, Data, reps = 100) {
   dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
@@ -1931,6 +2051,8 @@ class(IT10) <- "MP"
 #' first year
 #' @param Imulti Parameter controlling how much larger target CPUE / index is
 #' compared with recent levels.
+#' @param plot Logical. Show the plot?
+#' @param ... other arguments passed to plotting function
 #' @return A Rec object
 #' @author T. Carruthers
 #' @references Carruthers et al. 2015. Performance evaluation of simple
@@ -1941,7 +2063,7 @@ class(IT10) <- "MP"
 #' doi:10.1093/icesjms/fst232
 #' @describeIn Itarget1 The less precautionary TAC-based MP
 #' @export Itarget1
-Itarget1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5) {
+Itarget1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5, plot=FALSE, ...) {
   dependencies = "Data@Cat, Data@CV_Cat"
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
   ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
@@ -1958,15 +2080,25 @@ Itarget1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5) {
   } else {
     TAC <- 0.5 * TACstar * (Irecent/I0)^2
   }
+  TAC <- TACfilter(TAC)
+  
+  if (plot) {
+    environment(Itarget_p) <- environment()
+    Itarget_p(...)
+  }
+    
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(Itarget1) <- "MP"
 
 
 
-Itarget1_n <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5, plot=FALSE) {
+
+#' @describeIn Itarget1 The most biologically precautionary TAC-based MP
+#' @export Itarget4
+Itarget4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.3, Imulti = 2.5, plot=FALSE, ...) {
   dependencies = "Data@Cat, Data@CV_Cat"
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
   ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
@@ -1985,52 +2117,10 @@ Itarget1_n <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5, pl
   }
   
   if (plot) {
-    
-    par(mfrow=c(1,2))
-    plot(Data@Year, Data@Ind[x, ], ylim=c(0, max(c(1, I0, Itarget))), type='l') 
-    lines(Data@Year[ind], rep(Irecent, length(ind)), col="blue", lwd=3)
-
-    lines(Data@Year[ind3], rep(Iave, length(ind3)), col="red", lwd=3)
-   
-    points(max(Data@Year), Itarget, col="green", pch=16, cex=2)
-    points(max(Data@Year), I0, col="grey", pch=16, cex=2)
-    
-    
-    ylim <- range(c(C_dat,TAC))
-    plot(Data@Year[ind2], C_dat, ylim=ylim, type="l")
-    lines(Data@Year[ind2], rep(mean(C_dat), length(ind2)), col="blue", lwd=3)
-    boxplot(TAC, at=max(Data@Year[ind2]), add=TRUE, xpd=NA)
-    
+    environment(Itarget_p) <- environment()
+    Itarget_p(...)
   }
-  
-  
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
-  Rec
-}
-class(Itarget1_n) <- "MP"
-
-
-
-#' @describeIn Itarget1 The most biologically precautionary TAC-based MP
-#' @export Itarget4
-Itarget4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.3, Imulti = 2.5) {
-  dependencies = "Data@Cat, Data@CV_Cat"
-  ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
-  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
-  ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
-  ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
-  C_dat <- Data@Cat[x, ind2]
-  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
-  Irecent <- mean(Data@Ind[x, ind])
-  Iave <- mean(Data@Ind[x, ind3])
-  Itarget <- Iave * Imulti
-  I0 <- 0.8 * Iave
-  if (Irecent > I0) {
-    TAC <- 0.5 * TACstar * (1 + ((Irecent - I0)/(Itarget - I0)))
-  } else {
-    TAC <- 0.5 * TACstar * (Irecent/I0)^2
-  }
+    
   Rec <- new("Rec")
   Rec@TAC <- TACfilter(TAC)
   Rec
@@ -3204,3 +3294,4 @@ YPR_ML <- function(x, Data, reps = 100) {
   
 }
 class(YPR_ML) <- "MP"
+

@@ -19,7 +19,6 @@
 #'
 #' @author A. Hordyk
 #' @return A summary table of MP performance
-#' @examples
 #' @export
 #'
 TradePlot_n <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8), 
@@ -135,7 +134,7 @@ TradePlot_n <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8),
   tt$Satisificed <- FALSE
   tt$Satisificed[match(passall, tt$MP)] <- TRUE
   
-  DLMtool:::grid_arrange_shared_legend(plots, n.col, n.row,  position = position)
+  grid_arrange_shared_legend(plots, n.col, n.row,  position = position)
   tt
   
 }

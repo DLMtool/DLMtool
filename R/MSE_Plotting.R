@@ -1736,11 +1736,7 @@ Tplot2 <- function(MSEobj, nam = NA) {
 #' @describeIn Tplot By default, trade-off plots among LTY, STY, and biomass level B50 
 #' (fraction of simulations in which biomass stays above 50 percent of BMSY), and 
 #' Average Annual Variability in Yield (AAVY).
-#' @importFrom ggplot2 ggplot aes geom_rect geom_point xlim ylim xlab ylab theme theme_classic labs ggplotGrob
-#' @importFrom ggrepel geom_text_repel
-#' @importFrom gridExtra arrangeGrob
-#' @importFrom grid unit.c unit grid.newpage grid.draw
-#' @importFrom utils combn
+
 #' @export
 Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
   PMlist <- unlist(list(...))

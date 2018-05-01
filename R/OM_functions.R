@@ -6,7 +6,6 @@
 #' @param plot Should the sampled parameters and distributions be plotted?
 #' @return An object of class OM with a populated (or appended) cpars slot
 #' @author T. Carruthers (Canadian DFO grant)
-#' @importFrom mvtnorm rmvnorm
 #' @export 
 #' @examples
 #' testOM<-ForceCor(testOM)
@@ -138,8 +137,7 @@ ForceCor<-function(OM,nsim=48,plot=T){
 #' # drawing known parameters from normal distribution
 #' myOM <- LH2OM(DLMtool::testOM, dist='norm')
 #' 
-#' @importFrom dplyr  %>%  select 
-#' @importFrom MASS mvrnorm
+
 #' 
 LH2OM <- function(OM, dist=c("unif", "norm"), filterMK=TRUE, plot=TRUE,
                   Class = "predictive", Order = "predictive", 
@@ -406,6 +404,8 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
   Out <- Out %>% dplyr::select(valnames)
   
   if(plot){ 
+    op <- par(no.readonly = TRUE)
+    on.exit(par(op))
     par(mfrow=c(4,4),mai=c(0.3,0.3,0.4,0.05),omi=c(0.02,0.02,0.3,0.02))
     
     colline=DLMtool::makeTransparent('blue',60)

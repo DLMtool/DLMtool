@@ -55,7 +55,7 @@ runCOSEWIC<-function(OM){
 #' by OM@nsim where cpars is specified) 
 #' @author T. Carruthers
 #' @export DFO_hist
-#' @importFrom MASS kde2d
+
 DFO_hist <- function(OM, panel= T,nsim=48) {
   
   if(length(OM@cpars)>0){
@@ -92,10 +92,6 @@ DFO_hist <- function(OM, panel= T,nsim=48) {
 #' @param maxplot The maximum number of MPs to be plotted per figure 
 #' @author T. Carruthers
 #' @export DFO_proj
-#' @importFrom MASS kde2d
-#' @importFrom graphics arrows contour
-#' @importFrom grDevices dev.off jpeg
-#' @importFrom stats acf
 DFO_proj <- function(MSEobj,maxplot=6) {
   
   maxplot<-min(maxplot,MSEobj@nMPs)
@@ -1043,8 +1039,6 @@ DFO_tab<-function(MSEobj,rnd=0){
 #' @param Ptab1 A DFO performance table made by DFO_tab()
 #' @param thresh A vector of thresholds for each column Health, Yield and Reb are 'greater than threshold' conditions 
 #' @author T. Carruthers
-#' @importFrom dplyr %>% mutate
-#' @importFrom kableExtra cell_spec kable_styling column_spec add_header_above
 #' 
 #' @export 
 DFO_tab_formatted<-function(Ptab1,thresh=c(10,     40,     50,    50,    50,  10,     40,     50,    50,    50,  20,   50)){
@@ -1235,9 +1229,7 @@ COSEWIC_tab<-function(MSEobj,rnd=0,GTs=c(3,6),syear=2017,nGT=3){
 
 #' @describeIn runCOSEWIC A formatted version of the standard COSEWIC performance plot, 
 #' color coded by thresholds.
-#' @importFrom dplyr %>% mutate
-#' @importFrom kableExtra cell_spec kable_styling column_spec add_header_above 
-#' @importFrom knitr kable
+
 #' @export
 COSEWIC_tab_formatted<-function(Ptab1,thresh=c(10,     40,     50,    10,       40,       50,      20,   20,   5)){
   #                                            P_Cr,   P_Ct,   P_H,   P_Cr_MSY, P_Ct_MSY, P_H_MSY, P_A1, P_A2, Blow

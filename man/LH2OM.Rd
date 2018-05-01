@@ -81,6 +81,7 @@ myOM<-LH2OM(DLMtool::testOM)
 # drawing known parameters from normal distribution
 myOM <- LH2OM(DLMtool::testOM, dist='norm')
 
+
 # predict life-history parameters and return a data frame
 
 # predict all life-history parameters 

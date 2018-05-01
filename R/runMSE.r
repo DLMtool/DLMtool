@@ -66,7 +66,6 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @param ... Arguments to runMSE function 
 #' @return An object of class \linkS4class{MSE}
 #' @author T. Carruthers and A. Hordyk
-#' @importFrom utils ls.str
 #' @describeIn runMSE Default function to use.
 #' @seealso \link{joinMSE} \link{checkMSE} \link{updateMSE}
 #' @export

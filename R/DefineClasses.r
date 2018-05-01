@@ -1387,7 +1387,6 @@ setMethod("initialize", "MSE", function(.Object, Name, nyears, proyears,
 #' @slot Mean Mean probability (mean over years and simulations). Numeric. Length nMPs 
 #' @slot MPs Name of MPs. Single value. Character string  
 #' @author  A. Hordyk
-#' @importFrom methods show
 #' @keywords classes
 
 setClass("PMobj", representation(Name = "character",  Caption='label.class', 

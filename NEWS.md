@@ -12,6 +12,7 @@ The current version of the DLMtool package is available for download from [CRAN]
 - add LH2OM and  predictLH - predict correlated life-history parameters - TODO add to user guide/FAQ
 - revised Fease feature - TODO add to FAQ and userguide
 - iSCAM and SS2DLM functions have been moved from DLMtool to MSEtool
+- update help documentation for all MPs - in development
 
 ## DLMtool 5.1.3 
 - fix Replace function for new OM slots

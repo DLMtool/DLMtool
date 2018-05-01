@@ -300,10 +300,7 @@ range01 <- function(x) {
   (x - min(x))/(max(x) - min(x)) 
 }
 
-#' @describeIn runMSE Function suppresses messages - for testing purposes only.
-#' @keywords internal
-#' @importFrom utils capture.output
-#' @importFrom snowfall sfClusterEval
+
 runMSEnomsg <- function(...) {
   capture.output(out <- suppressMessages(runMSE(...)))
   out

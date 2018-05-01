@@ -72,6 +72,9 @@ Mar. Sci. 66, 2267-2271.
 Harford W. and Carruthers, T. 2017. Interim and long-term performance of
 static and adaptive management procedures. Fish. Res. 190, 84-94.
 }
+\seealso{
+Other Average Catch MPs: \code{\link{AvC}}
+}
 \author{
 T. Carruthers
 }

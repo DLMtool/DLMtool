@@ -13,9 +13,11 @@ ItargetE1(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5)
 
 ItargetE4(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 2.5)
 
-Itarget1(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5)
+Itarget1(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5,
+  plot = FALSE, ...)
 
-Itarget4(x, Data, reps = 100, yrsmth = 5, xx = 0.3, Imulti = 2.5)
+Itarget4(x, Data, reps = 100, yrsmth = 5, xx = 0.3, Imulti = 2.5,
+  plot = FALSE, ...)
 }
 \arguments{
 \item{x}{A position in data-limited methods data object}
@@ -32,6 +34,10 @@ first year}
 
 \item{Imulti}{Parameter controlling how much larger target CPUE / index is
 compared with recent levels.}
+
+\item{plot}{Logical. Show the plot?}
+
+\item{...}{other arguments passed to plotting function}
 }
 \value{
 A Rec object
