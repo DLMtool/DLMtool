@@ -4,6 +4,8 @@
 
 logo.png
 
+man-roxygen
+
 # Output files from R CMD build
 /*.tar.gz
 
