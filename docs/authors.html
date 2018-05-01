@@ -18,11 +18,21 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="pkgdown.css" rel="stylesheet">
 <script src="jquery.sticky-kit.min.js"></script>
 <script src="pkgdown.js"></script>
+
+
+
+<meta property="og:title" content="Authors" />
+
+<meta property="og:image" content="/logo.png" />
+<meta name="twitter:card" content="summary" />
+
 
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
@@ -46,96 +56,26 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">DLMtool Documentation</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="index.html">DLMtool</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.999</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="userguide/index.html">User Guide</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Management Procedures
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="reference/Output_Controls/index.html">Output Controls</a>
-    </li>
-    <li>
-      <a href="reference/Input_Controls/index.html">Input Controls</a>
-    </li>
-    <li>
-      <a href="reference/Reference_Methods/index.html">Reference Methods</a>
-    </li>
-  </ul>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Functions
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li class="dropdown-header">Operating Model</li>
-    <li>
-      <a href="reference/Operating_Model_Functions/index.html">Setup Operating Model</a>
-    </li>
-    <li>
-      <a href="reference/Run_MSE_Functions/index.html">Run MSE Functions</a>
-    </li>
-    <li class="dropdown-header">MSE Object</li>
-    <li>
-      <a href="reference/PMs/index.html">Peformance Metrics</a>
-    </li>
-    <li>
-      <a href="reference/MSE_Object_Plotting_Functions/index.html">MSE Plotting Functions</a>
-    </li>
-    <li>
-      <a href="reference/MSE_Object_Functions/index.html">MSE Object Functions</a>
-    </li>
-    <li class="dropdown-header">Fishery Data Object</li>
-    <li>
-      <a href="reference/import_data/index.html">Import Data</a>
-    </li>
-    <li>
-      <a href="reference/Available_Methods_and_Required_Data/index.html">Available Methods and Required Data</a>
-    </li>
-    <li>
-      <a href="reference/Apply_Management_Procedures/index.html">Apply Management Procedures</a>
-    </li>
-    <li>
-      <a href="reference/Fishery_Data_Plotting_Functions/index.html">Fishery Data Plotting Functions</a>
-    </li>
-  </ul>
+  <a href="userguide/introduction.html">User Guide</a>
 </li>
 <li>
-  <a href="reference/R_Object_Classes/index.html">DLMtool Object Classes</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Other
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="reference/Estimation_Functions/index.html">Estimation Functions</a>
-    </li>
-    <li>
-      <a href="reference/Other_Functions/index.html">Other Functions</a>
-    </li>
-    <li>
-      <a href="reference/Internal_Functions/index.html">Internal Functions</a>
-    </li>
-  </ul>
+  <a href="reference/index.html">Management Procedures</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -143,19 +83,43 @@
       
       </header>
 
-      <div class="row">
-  <div class="contents col-md-12">
+<div class="row">
+  <div class="contents col-md-9">
     <div class="page-header">
       <h1>Authors</h1>
     </div>
 
     <ul class="list-unstyled">
       <li>
-        <p><strong>Tom Carruthers</strong>. Author, maintainer.
+        <p><strong>Tom Carruthers</strong>. Author, maintainer. 
         </p>
       </li>
       <li>
-        <p><strong>Adrian Hordyk</strong>. Author.
+        <p><strong>Adrian Hordyk</strong>. Author. 
+        </p>
+      </li>
+      <li>
+        <p><strong>M. Bryan</strong>. Contributor. 
+        </p>
+      </li>
+      <li>
+        <p><strong>HF. Geremont</strong>. Contributor. 
+        </p>
+      </li>
+      <li>
+        <p><strong>C. Grandin</strong>. Contributor. 
+        </p>
+      </li>
+      <li>
+        <p><strong>W. Harford</strong>. Contributor. 
+        </p>
+      </li>
+      <li>
+        <p><strong>Q. Huynh</strong>. Contributor. 
+        </p>
+      </li>
+      <li>
+        <p><strong>C. Walters</strong>. Contributor. 
         </p>
       </li>
     </ul>
@@ -171,11 +135,14 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+
