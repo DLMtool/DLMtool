@@ -153,17 +153,19 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   # }
   
   # == Growth parameters ====
-  if (!exists("Linf", inherits=FALSE)) Linf <- runif(nsim, Stock@Linf[1], Stock@Linf[2])  # sample of asymptotic length
-  if (!exists("Linfsd", inherits=FALSE)) Linfsd <- runif(nsim, Stock@Linfsd[1], Stock@Linfsd[2])  # sample of interannual variability in Linf
-  if (!exists("Linfgrad", inherits=FALSE)) Linfgrad <- runif(nsim, Stock@Linfgrad[1], Stock@Linfgrad[2])  # sample of gradient in Linf (Linf y-1)
-  # if (!exists("recgrad", inherits=FALSE)) recgrad <- runif(nsim, Stock@recgrad[1], Stock@recgrad[2])  # gradient in recent recruitment
-  if (!exists("K", inherits=FALSE)) K <- runif(nsim, Stock@K[1], Stock@K[2])  # now predicted by a log-linear model
-  if (!exists("Ksd", inherits=FALSE)) Ksd <- runif(nsim, Stock@Ksd[1], Stock@Ksd[2])  #runif(nsim,Stock@Ksd[1],Stock@Ksd[2])# sd is already added in the linear model prediction
-  if (!exists("Kgrad", inherits=FALSE)) Kgrad <- Kgrad <- runif(nsim, Stock@Kgrad[1], Stock@Kgrad[2])  # gradient in Von-B K parameter (K y-1)
-  if (!exists("t0", inherits=FALSE)) t0 <- runif(nsim, Stock@t0[1], Stock@t0[2])  # a sample of theoretical age at length zero
-  
+  vars <- c("Linf", "Linfsd", "Linfgrad", "K", "Ksd", "Kgrad", "t0")
+  for (var in vars) {
+    if (!exists(var, inherits=FALSE)) {
+      if (all(is.na(slot(Stock, var)))) {
+        val <- rep(0, nsim)
+      } else {
+        val <- runif(nsim, slot(Stock, var)[1],slot(Stock, var)[2])  # sample of asymptotic length
+      }
+      assign(var, val)
+    } 
 
-  
+  }
+    
   # == Sample Fecundity-Length Exponent ===
   # if (!exists("FecB", inherits=FALSE))   FecB <- runif(nsim, min(Stock@FecB), max(Stock@FecB))
   
@@ -230,6 +232,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       }
       Linf <- Linfarray[, nyears]
       K <- Karray[, nyears]
+      t0array <- matrix(t0, nrow=nsim, ncol=proyears+nyears)
       if (Msg) cat("\n")
     }
   }
@@ -386,7 +389,8 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   
   # == M-at-age has been provided in OM ====
   if (exists("Mage", inherits=FALSE)) {
-    if (exists("M", inherits=FALSE) & length(cpars[["M"]])>0) message("M-at-age has been provided in OM. Overiding M from OM@cpars")
+    if (exists("M", inherits=FALSE) & length(cpars[["M"]])>0) 
+      if (Msg) message("M-at-age has been provided in OM. Overiding M from OM@cpars")
     # M is calculated as mean M of mature ages
     M <- rep(NA, nsim)
     for (sim in 1:nsim) M[sim] <- mean(Mage[sim,round(ageM[sim],0):maxage])
