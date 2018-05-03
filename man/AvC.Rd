@@ -42,7 +42,7 @@ Rec <- AvC(1, Data, reps=1000, plot=TRUE) # 1,000 log-normal samples with CV = 0
         
 }
 \seealso{
-Other Average Catch MPs: \code{\link{DAAC}}
+Other Average Catch MPs: \code{\link{DCAC}}
 }
 \author{
 T. Carruthers

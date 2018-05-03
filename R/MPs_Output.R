@@ -1,6 +1,8 @@
 
 ## Output Control MPs ####
 
+#### Average Catch Based Methods ####
+
 #' Average Catch
 #'
 #' A simple average catch MP that is included to demonstrate a 'status quo' management option
@@ -46,20 +48,262 @@ AvC <- function(x, Data, reps = 100, plot=FALSE) {
     lwd <- 3 
     cex.lab <- 1.25
     
-    plot(c(Data@Year, max(Data@Year)+1), c(histCatch,NA), type="l", 
+    plot(c(Data@Year[yr.ind], Data@Year[max(yr.ind)]+1), c(histCatch,NA), type="l", 
          xlab="Year", ylab=paste0("Catch (", Data@Units, ")"), lwd=lwd, bty="l", las=1, cex.lab=cex.lab)
     abline(v=Data@LHYear, lty=2, col="darkgray") #
-    text(Data@LHYear, min(histCatch, na.rm=TRUE)*1.1, "Last Historical Year", pos=2, xpd=NA)
-    lines(c(min(Data@Year), Data@LHYear), rep(mean(Data@Cat[x,]),2), lty=2) #
+    text(Data@LHYear, max(histCatch, na.rm=TRUE)*0.9, "Last Historical Year", pos=2, xpd=NA)
+    lines(c(min(Data@Year), Data@LHYear), rep(mean(Data@Cat[x,yr.ind]),2), lty=2) #
     text(quantile(Data@Year, 0.1), meanC*1.1, pos=4, "Average Historical Catch")
-    boxplot(Rec@TAC, add=TRUE, at=max(Data@Year)+1, col="grey", width=1, outline=FALSE, axes=FALSE)
-          
+    boxplot(Rec@TAC, add=TRUE, at=max(Data@Year)+1, col="grey", width=1, outline=TRUE, axes=FALSE)
+    text(max(Data@Year)+1, quantile(Rec@TAC, 0.05), "TAC", col="black", pos=2)
   }
   
   Rec
 }
 class(AvC) <- "MP"
 
+
+
+DCAC_ <- function(x, Data, reps=100, Bt_K=NULL, plot=FALSE) {
+
+  yr.lst <- match(Data@LHYear, Data@Year)
+  yrs <- 1:yr.lst
+  C_tot <- sum(Data@Cat[x,1:yr.lst] )
+  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
+  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])  # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
+  if (is.null(Bt_K)) Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
+  Bt_K[Bt_K>1] <-1
+  Bt_K[Bt_K<0] <-0
+  if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) return(NA)
+  BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * Data@CV_BMSY_B0[x]))  
+
+  dcac <- C_tot/(yr.lst + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
+  
+  if (plot) {
+
+    par(mfrow=c(1,1), oma=c(1,1,1,1), mar=c(5,4,1,4))
+    lwd <- 3 
+    cex.lab <- 1.25
+    ylim <- c(0, max(c(Data@Cat[x,1:yr.lst], dcac)))
+    plot(c(Data@Year[yrs], Data@Year[max(yrs)]+1:3), c(Data@Cat[x,1:yr.lst],NA, NA, NA), type="l", 
+         xlab="Year", ylab=paste0("Catch (", Data@Units, ")"), lwd=lwd, bty="l", las=1, cex.lab=cex.lab,
+         ylim=ylim)
+    abline(v=Data@LHYear, lty=2, col="darkgray") #
+
+    text(Data@LHYear, max(Data@Cat[x,1:yr.lst], na.rm=TRUE)*0.9, "Last Historical Year", pos=2, xpd=NA)
+    lines(c(min(Data@Year), Data@LHYear), rep(mean(Data@Cat[x,1:yr.lst]),2), lty=2) #
+    text(quantile(Data@Year, 0.1), mean(Data@Cat[x,1:yr.lst])*1.1, pos=4, "Average Historical Catch")
+  }
+  
+  return(list(dcac=dcac, Bt_K=Bt_K))
+
+}
+
+### TODO - DOCUMENT ##### 
+#' Depletion Corrected Average Catch
+#' 
+#' A method of calculating an MSY proxy (FMSY * BMSY and therefore the OFL at
+#' most productive stock size) based on average catches accounting for the
+#' windfall catch that got the stock down to BMSY levels.
+#' 
+#' 
+#' @template MPtemplate
+#' @template MPoutput
+#' @export 
+#' 
+#' 
+#' @note It's probably worth noting that DCAC TAC recommendations do not tend
+#' to zero as depletion tends to zero. It adjusts for depletion only in
+#' calculating historical average catch. It follows that at stock levels much
+#' below BMSY, DCAC tends to chronically overfish.
+#' 
+#' @author T. Carruthers
+#' @family Average Catch MPs
+#' @examples 
+#' DCAC(1, DLMtool::Atlantic_mackerel, plot=TRUE) 
+#' 
+#' @references 
+#' MacCall, A.D., 2009. Depletion-corrected average catch: a simple
+#' formula for estimating sustainable yields in data-poor situations. ICES J.
+#' Mar. Sci. 66, 2267-2271.
+#' 
+#' 
+DCAC <- function(x, Data, reps = 100, plot=FALSE) {
+  "dependenciesData@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
+  
+  rundcac <- DCAC_(x, Data, reps, plot=plot)
+  
+  TAC <- TACfilter(rundcac$dcac)
+  if (plot)  plotDCAC(TAC, Data, rundcac$Bt_K)
+  
+  Rec <- new("Rec")
+  Rec@TAC <- TAC
+  Rec
+}  
+class(DCAC) <- "MP"
+
+
+
+#' @describeIn DCAC This variant assumes that current stock biomass is exactly 
+#' 40 per cent of unfished levels. The 40 percent depletion assumption may not 
+#' really affect DCAC that much as it already makes TAC recommendations that are 
+#' quite MSY-like.
+#' @examples 
+#' DCAC_40(1, DLMtool::Atlantic_mackerel, plot=TRUE) 
+#' 
+#' @export 
+DCAC_40 <- function(x, Data, reps = 100, plot=FALSE) {
+  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0"
+  
+  rundcac <- DCAC_(x, Data, reps, Bt_K=0.4, plot=plot)
+  TAC <- TACfilter(rundcac$dcac)
+  if (plot)  plotDCAC(TAC, Data, rundcac$Bt_K)
+  
+  Rec <- new("Rec")
+  Rec@TAC <- TAC
+  Rec
+}  
+class(DCAC_40) <- "MP"
+
+
+#' @describeIn DCAC In this method, DCAC is paired with the 40-10 rule that throttles 
+#' back the OFL to zero at 10 percent of unfished stock size (the OFL is not subject to downward
+#' adjustment above 40 percent unfished). DCAC can overfish below BMSY levels. The 40-10 
+#' harvest control rule largely resolves this problem providing an MP with surprisingly good
+#' performance even at low stock levels.
+#' @examples 
+#' DCAC4010(1, DLMtool::Atlantic_mackerel, plot=TRUE) 
+#' 
+#' @export 
+DCAC4010 <- function(x, Data, reps = 100, plot=FALSE) {
+  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
+  rundcac <- DCAC_(x, Data, reps, plot=plot)
+  dcac <- rundcac$dcac 
+  Bt_K <- rundcac$Bt_K 
+  TAC <- dcac
+  
+  # 40-10 rule
+  cond1 <- Bt_K < 0.4 & Bt_K > 0.1
+  cond2 <- Bt_K < 0.1
+  if (length(cond1) > 0) TAC[cond1] <- TAC[cond1] * (Bt_K[cond1] - 0.1)/0.3
+  if (length(cond2) > 0)  TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
+  if (length(cond1) < 1 & length(cond2) < 1)  return(NA)
+  TAC <- TACfilter(TAC)
+  
+  if (plot)  plotDCAC(TAC, Data, rundcac$Bt_K)
+
+  Rec <- new("Rec")
+  Rec@TAC <- TAC 
+  Rec
+}  
+class(DCAC4010) <- "MP"
+
+
+#' @describeIn DCAC This variant uses the mean length estimator to calculate current stock
+#' depletion. The mean length extension was programmed by Gary Nelson as part of his
+#' excellent R package 'fishmethods'.
+#' @examples 
+#' DCAC_ML(1, DLMtool::SimulatedData, plot=TRUE) 
+#' 
+#' @export 
+DCAC_ML <- function(x, Data, reps = 100, plot=FALSE) {
+  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0, Data@Year, Data@CAL, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK"
+  if (is.na(Data@BMSY_B0[x]) | is.na(Data@CV_BMSY_B0[x])) return(NA)
+  if (is.na(Data@FMSY_M[x]) | is.na(Data@CV_FMSY_M[x])) return(NA)
+ 
+  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  
+  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
+  Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
+  Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
+  Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps, MLtype = "dep")
+  if (all(is.na(Z))) {
+    Rec <- new("Rec")
+    Rec@TAC <- TACfilter(rep(NA, reps))
+    return(Rec)
+  }
+  FM <- Z - Mdb
+  nyears <- length(Data@Year)
+  Ct1 <- mean(Data@Cat[x, 1:3])
+  Ct2 <- mean(Data@Cat[x, (nyears - 2):nyears])
+  dep <- rep(c(Ct1, Ct2), each = reps)/(1 - exp(-FM))
+  if (reps == 1)Bt_K <- dep[2]/dep[1]
+  if (reps > 1) Bt_K <- dep[, 2]/dep[, 1]
+  
+  rundcac <- DCAC_(x, Data, reps, Bt_K=Bt_K, plot=plot)
+  TAC <- TACfilter(rundcac$dcac)
+  
+  if (plot)  plotDCAC(TAC, Data, rundcac$Bt_K)
+
+  Rec <- new("Rec")
+  Rec@TAC <- TAC
+  Rec
+} 
+class(DCAC_ML) <- "MP"
+
+
+
+#' @describeIn DCAC Depletion Adjusted Average Catch: essentially DCAC multiplied 
+#' by 2*depletion and divided by BMSY/B0 (Bpeak) (Harford and Carruthers, 2017).
+#' @references
+#' Harford W. and Carruthers, T. 2017. Interim and long-term performance of 
+#' static and adaptive management procedures. Fish. Res. 190, 84-94.
+#' 
+#' @export 
+DAAC <- function(x, Data, reps = 100) {
+  # extended depletion-corrected average catch (Harford and Carruthers 2017)
+  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
+  C_tot <- Data@AvC[x] * Data@t[x]
+  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
+  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
+  Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
+  if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) return(NA)
+  BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
+                                    Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
+                                                                    Data@CV_BMSY_B0[x]))
+  dcac <- C_tot/(Data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
+  TAC <- dcac * Bt_K/BMSY_K
+  
+  Rec <- new("Rec")
+  Rec@TAC <- TACfilter(TAC)
+  Rec
+}
+class(DAAC) <- "MP"
+
+
+#' @describeIn DCAC Hybrid Depletion Adjusted Average Catch: essentially DCAC 
+#' multiplied by 2*depletion and divided by BMSY/B0 (Bpeak) when below BMSY, 
+#' and DCAC above BMSY (Harford and Carruthers 2017).
+#' @export 
+HDAAC <- function(x, Data, reps = 100) {
+  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
+  C_tot <- Data@AvC[x] * Data@t[x]
+  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
+  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
+  Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
+  if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) 
+    return(NA)
+  BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
+                                    Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * Data@CV_BMSY_B0[x]))
+  dcac <- C_tot/(Data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
+  ddcac <- dcac * Bt_K/BMSY_K
+  TAC <- dcac
+  TAC[Bt_K < BMSY_K] <- ddcac[Bt_K < BMSY_K]
+  Rec <- new("Rec")
+  Rec@TAC <- TACfilter(TAC)
+  Rec
+}
+class(HDAAC) <- "MP"
+
+
+
+
+
+
+
+
+
+
+#### Beddington-Kirkwood Fmax estimation ####
 
 #' Beddington and Kirkwood life-history MP
 #' 
@@ -268,6 +512,7 @@ class(BK_ML) <- "MP"
 #' CC1(1, DLMtool::Cobia, plot=TRUE)
 #' 
 
+#### Constant Catch MPs ####
 CC1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0) {
   dependencies = "Data@Cat, Data@CV_Cat"
   
@@ -343,94 +588,34 @@ class(CC5) <- "MP"
 #' age-composition data. Knife-edge vulnerability at age at maturity allows for
 #' an FMSY estimate. 
 #' 
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC.
+#' @template MPtemplate
+#' @template MPoutput
+#' @export
+#' 
 #' @note Given a fixed historical F, What level of depletion gives you this
 #' length composition?
 #' @return A Rec object with a vector of TAC recommendation
 #' @describeIn CompSRA Basic control rule where OFL=FMSY*F/C
 #' @author T. Carruthers
-#' @export CompSRA
-CompSRA <- function(x, Data, reps = 100) {
+#' @export 
+CompSRA <- function(x, Data, reps = 100, plot=FALSE) {
   # optimize for fixed F to get you to current depletion C/Fcur =
   # abundance
   dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@MaxAge, Data@wla, Data@CV_wla, Data@wlb, Data@CV_wlb, Data@L50, Data@CV_L50, Data@CAA, Data@steep, Data@CV_steep, Data@LFS, Data@CV_LFS, Data@LFC, Data@CV_LFC, Data@Cat"
-  maxage <- Data@MaxAge
-  TAC <- rep(NA, reps)
-  for (i in 1:reps) {
-    Mc <- trlnorm(1, Data@Mort[x], Data@CV_Mort)
-    # hc <- trlnorm(1, Data@steep[x], Data@CV_steep[x])
-    hc <- sample_steepness2(1, Data@steep[x], Data@CV_steep[x])
-    Linfc <- trlnorm(1, Data@vbLinf[x], Data@CV_vbLinf[x])
-    Kc <- trlnorm(1, Data@vbK[x], Data@CV_vbK[x])
-    if (Data@vbt0[x] != 0 & Data@CV_vbt0[x] != tiny) {
-      t0c <- -trlnorm(1, -Data@vbt0[x], Data@CV_vbt0[x])
-    } else {
-      t0c <- Data@vbt0[x]
-    }
-    t0c[!is.finite(t0c)] <- 0
-    LFSc <- trlnorm(1, Data@LFS[x], Data@CV_LFS[x])
-    LFCc <- trlnorm(1, Data@LFC[x], Data@CV_LFC[x])
-    AMc <- trlnorm(1, iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
-                          Data@L50[x]), Data@CV_L50[x])
-    ac <- trlnorm(1, Data@wla[x], Data@CV_wla[x])
-    bc <- trlnorm(1, Data@wlb[x], Data@CV_wlb[x])
-    Catch <- Data@Cat[x, ]
-    ny <- length(Catch)
-    nyCAA <- dim(Data@CAA)[2]
-    CAA <- Data@CAA[x, max(nyCAA - 2, 1):nyCAA, ]  # takes last two years as the sample (or last year if there is only one
-    
-    Nac <- exp(-Mc * ((1:maxage) - 1))  # put a rough range on estimate of R0 assuming a mean harvest rate of 10%
-    Lac <- Linfc * (1 - exp(-Kc * ((1:maxage) - t0c)))
-    Wac <- ac * Lac^bc
-    AFC <- log(1 - min(0.99, LFCc/Linfc))/-Kc + t0c
-    AFS <- log(1 - min(0.99, LFSc/Linfc))/-Kc + t0c
-    if (AFC >= 0.7 * maxage) 
-      AFC <- 0.7 * maxage
-    if (AFS >= 0.9 * maxage) 
-      AFS <- 0.9 * maxage
-    KES <- max(2, ceiling(mean(c(AFC, AFS))))
-    pred <- Nac * Wac
-    pred[1:(KES - 1)] <- 0
-    pred <- pred/sum(pred)
-    pred <- ((mean(Catch)/0.1) * pred/Wac)/exp(-(1:maxage) * Mc)
-    pred <- pred[pred > 0]
-    R0range <- c(mean(pred)/1000, mean(pred) * 1000)
-    
-    fit <- optimize(SRAfunc, log(R0range), Mc, hc, maxage, LFSc, LFCc, 
-                    Linfc, Kc, t0c, AMc, ac, bc, Catch, CAA)
-    Ac <- SRAfunc(fit$minimum, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, 
-                  t0c, AMc, ac, bc, Catch, CAA, opt = 2)
-    fit2 <- optimize(SRAFMSY, log(c(1e-04, 3)), Mc, hc, maxage, LFSc, 
-                     LFCc, Linfc, Kc, t0c, AMc, ac, bc)
-    # FMSY<-SRAFMSY(fit2$minimum,Mc,hc,maxage,LFSc,LFCc,Linfc,Kc,t0c,AMc,ac,bc,opt=F)
-    FMSY <- exp(fit2$minimum)
-    if ((FMSY/Mc) > 3) 
-      FMSY <- 3 * Mc
-    TAC[i] <- Ac * FMSY
-    # message(i, ' of ', reps) flush.console()
-  }
+ 
+  TAC <- CompSRA_(x, Data, reps)$TAC
+
   Rec <- new("Rec")
   Rec@TAC <- TACfilter(TAC)
   Rec
 }
 class(CompSRA) <- "MP"
 
-
-
-
-#' @describeIn CompSRA With a 40-10 control rule
-#' @export CompSRA4010
-CompSRA4010 <- function(x, Data, reps = 100) {
-  # optimize for fixed F to get you to current depletion C/Fcur =
-  # abundance for (x in 1:nsim) {
-  dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@MaxAge, Data@wla, Data@CV_wla, Data@wlb, Data@CV_wlb, Data@L50, Data@CV_L50, Data@CAA, Data@steep, Data@CV_steep, Data@LFS, Data@CV_LFS, Data@LFC, Data@CV_LFC, Data@Cat"
+CompSRA_ <- function(x, Data, reps=100) {
   maxage <- Data@MaxAge
   TAC <- Bt_K <- rep(NA, reps)
   for (i in 1:reps) {
     Mc <- trlnorm(1, Data@Mort[x], Data@CV_Mort)
-    # hc <- trlnorm(1, Data@steep[x], Data@CV_steep[x])
     hc <- sample_steepness2(1, Data@steep[x], Data@CV_steep[x])
     Linfc <- trlnorm(1, Data@vbLinf[x], Data@CV_vbLinf[x])
     Kc <- trlnorm(1, Data@vbK[x], Data@CV_vbK[x])
@@ -442,25 +627,21 @@ CompSRA4010 <- function(x, Data, reps = 100) {
     t0c[!is.finite(t0c)] <- 0
     LFSc <- trlnorm(1, Data@LFS[x], Data@CV_LFS[x])
     LFCc <- trlnorm(1, Data@LFC[x], Data@CV_LFC[x])
-    AMc <- trlnorm(1, iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
-                          Data@L50[x]), Data@CV_L50[x])
+    AMc <- trlnorm(1, iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], Data@L50[x]), Data@CV_L50[x])
     ac <- trlnorm(1, Data@wla[x], Data@CV_wla[x])
     bc <- trlnorm(1, Data@wlb[x], Data@CV_wlb[x])
     Catch <- Data@Cat[x, ]
     ny <- length(Catch)
     nyCAA <- dim(Data@CAA)[2]
-    CAA <- Data@CAA[x, max(nyCAA - 2, 1):nyCAA, ]  # takes last two years as the sample (or last year if there is only one
+    CAA <- Data@CAA[x, max(nyCAA - 2, 1):nyCAA, ]  # takes last three years as the sample (or last year if there is only one)
     
     Nac <- exp(-Mc * ((1:maxage) - 1))  # put a rough range on estimate of R0 assuming a mean harvest rate of 10%
     Lac <- Linfc * (1 - exp(-Kc * ((1:maxage) - t0c)))
     Wac <- ac * Lac^bc
-    
     AFC <- log(1 - min(0.99, LFCc/Linfc))/-Kc + t0c
     AFS <- log(1 - min(0.99, LFSc/Linfc))/-Kc + t0c
-    if (AFC >= 0.7 * maxage) 
-      AFC <- 0.7 * maxage
-    if (AFS >= 0.9 * maxage) 
-      AFS <- 0.9 * maxage
+    if (AFC >= 0.7 * maxage) AFC <- 0.7 * maxage
+    if (AFS >= 0.9 * maxage) AFS <- 0.9 * maxage
     
     KES <- max(2, ceiling(mean(c(AFC, AFS))))
     pred <- Nac * Wac
@@ -470,20 +651,30 @@ CompSRA4010 <- function(x, Data, reps = 100) {
     pred <- pred[pred > 0]
     R0range <- c(mean(pred)/1000, mean(pred) * 1000)
     
-    fit <- optimize(SRAfunc, log(R0range), Mc, hc, maxage, LFSc, LFCc, 
-                    Linfc, Kc, t0c, AMc, ac, bc, Catch, CAA)
-    Ac <- SRAfunc(fit$minimum, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, 
-                  t0c, AMc, ac, bc, Catch, CAA, opt = 2)
-    Bt_K[i] <- SRAfunc(fit$minimum, Mc, hc, maxage, LFSc, LFCc, Linfc, 
-                       Kc, t0c, AMc, ac, bc, Catch, CAA, opt = 3)
-    fit2 <- optimize(SRAFMSY, log(c(1e-04, 3)), Mc, hc, maxage, LFSc, 
-                     LFCc, Linfc, Kc, t0c, AMc, ac, bc)
-    FMSY <- SRAFMSY(fit2$minimum, Mc, hc, maxage, LFSc, LFCc, Linfc, 
-                    Kc, t0c, AMc, ac, bc, opt = F)
-    if ((FMSY/Mc) > 3) 
-      FMSY <- 3 * Mc
+    fit <- optimize(SRAfunc, log(R0range), Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c, AMc, ac, bc, Catch, CAA)
+    Ac <- SRAfunc(fit$minimum, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c, AMc, ac, bc, Catch, CAA, opt = 2)
+    Bt_K[i] <- SRAfunc(fit$minimum, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c, AMc, ac, bc, Catch, CAA, opt = 3)
+    
+    fit2 <- optimize(SRAFMSY, log(c(1e-04, 3)), Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c, AMc, ac, bc)
+    FMSY <- exp(fit2$minimum)
+    if ((FMSY/Mc) > 3) FMSY <- 3 * Mc
     TAC[i] <- Ac * FMSY
   }
+  return(list(TAC=TAC, Bt_K=Bt_K))
+  
+}
+
+
+#' @describeIn CompSRA With a 40-10 control rule
+#' @export CompSRA4010
+CompSRA4010 <- function(x, Data, reps = 100) {
+  dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@MaxAge, Data@wla, Data@CV_wla, Data@wlb, Data@CV_wlb, Data@L50, Data@CV_L50, Data@CAA, Data@steep, Data@CV_steep, Data@LFS, Data@CV_LFS, Data@LFC, Data@CV_LFC, Data@Cat"
+  
+  runCompSRA <- CompSRA_(x, Data, reps)
+  
+  TAC <- runCompSRA$TAC
+  Bt_K <- runCompSRA$Bt_K
+
   # 40-10 rule
   cond1 <- Bt_K < 0.4 & Bt_K > 0.1
   cond2 <- Bt_K < 0.1
@@ -494,34 +685,11 @@ CompSRA4010 <- function(x, Data, reps = 100) {
   Rec@TAC <- TACfilter(TAC)
   Rec
   
-  # message(x, ' of ', nsim) flush.console() }
 }
 class(CompSRA4010) <- "MP"
 
 
-#' @describeIn DCAC Depletion Adjusted Average Catch: essentially DCAC multiplied 
-#' by 2*depletion and divided by BMSY/B0 (Bpeak) (Harford and Carruthers, 2017).
-#' @export 
-DAAC <- function(x, Data, reps = 100) {
-  # extended depletion-corrected average catch (Harford and Carruthers
-  # 2017)
-  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
-  C_tot <- Data@AvC[x] * Data@t[x]
-  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
-  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
-  Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
-  if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) 
-    return(NA)
-  BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-                                    Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-                                                                    Data@CV_BMSY_B0[x]))
-  dcac <- C_tot/(Data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
-  TAC <- dcac * Bt_K/BMSY_K
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
-  Rec
-}
-class(DAAC) <- "MP"
+
 
 #' Depletion-Based Stock Reduction Analysis
 #' 
@@ -849,149 +1017,17 @@ class(DBSRA4010) <- "MP"
 # class(DBSRA_ML) <- "MP"
 # 
 
-#' Depletion Corrected Average Catch
-#' 
-#' A method of calculating an MSY proxy (FMSY * BMSY and therefore the OFL at
-#' most productive stock size) based on average catches accounting for the
-#' windfall catch that got the stock down to BMSY levels.
-#' 
-#' 
-#' @usage DCAC(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @note It's probably worth noting that DCAC TAC recommendations do not tend
-#' to zero as depletion tends to zero. It adjusts for depletion only in
-#' calculating historical average catch. It follows that at stock levels much
-#' below BMSY, DCAC tends to chronically overfish.
-#' @author T. Carruthers
-#' @family Average Catch MPs
-#' @references 
-#' MacCall, A.D., 2009. Depletion-corrected average catch: a simple
-#' formula for estimating sustainable yields in data-poor situations. ICES J.
-#' Mar. Sci. 66, 2267-2271.
-#' 
-#' Harford W. and Carruthers, T. 2017. Interim and long-term performance of 
-#' static and adaptive management procedures. Fish. Res. 190, 84-94.
-#' @export DCAC
-DCAC <- function(x, Data, reps = 100) {
-  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
-  C_tot <- Data@AvC[x] * Data@t[x]
-  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
-  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])  # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
-  Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
-  Bt_K[Bt_K>1] <-1
-  if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) return(NA)
-  BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-                                    Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-                                                                    Data@CV_BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(C_tot/(Data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb))))
-  Rec
-}  # end of DCAC
-class(DCAC) <- "MP"
-
-
-#' @describeIn DCAC In this method, DCAC is paired with the 40-10 rule that throttles 
-#' back the OFL to zero at 10 percent of unfished stock size (the OFL is not subject to downward
-#' adjustment above 40 percent unfished). DCAC can overfish below BMSY levels. The 40-10 
-#' harvest control rule largely resolves this problem providing an MP with surprisingly good
-#' performance even at low stock levels.
-#' @export DCAC4010
-DCAC4010 <- function(x, Data, reps = 100) {
-  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
-  C_tot <- Data@AvC[x] * Data@t[x]
-  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
-  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])  # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
-  Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
-  Bt_K[Bt_K>1] <-1
-  if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) 
-    return(NA)
-  BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-                                    Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-                                                                    Data@CV_BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-  TAC <- C_tot/(Data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
-  # 40-10 rule
-  cond1 <- Bt_K < 0.4 & Bt_K > 0.1
-  cond2 <- Bt_K < 0.1
-  if (length(cond1) > 0) 
-    TAC[cond1] <- TAC[cond1] * (Bt_K[cond1] - 0.1)/0.3
-  if (length(cond2) > 0) 
-    TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
-  if (length(cond1) < 1 & length(cond2) < 1) 
-    return(NA)
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
-  Rec
-  
-}  # end of DCAC
-class(DCAC4010) <- "MP"
 
 
 
-#' @describeIn DCAC This variant assumes that current stock biomass is exactly 
-#' 40 per cent of unfished levels. The 40 percent depletion assumption may not 
-#' really affect DCAC that much as it already makes TAC recommendations that are 
-#' quite MSY-like.
-#' @export DCAC_40
-DCAC_40 <- function(x, Data, reps = 100) {
-  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0"
-  C_tot <- Data@AvC[x] * Data@t[x]
-  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
-  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
-  Bt_K <- 0.4
-  if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) 
-    return(NA)
-  BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-                                    Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-                                                                    Data@CV_BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-  TAC <- (C_tot/(Data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb))))
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
-  Rec
-}  # end of DCAC40
-class(DCAC_40) <- "MP"
 
 
 
-#' @describeIn DCAC This variant uses the mean length estimator to calculate current stock
-#' depletion. The mean length extension was programmed by Gary Nelson as part of his
-#' excellent R package 'fishmethods'.
-#' @export DCAC_ML
-DCAC_ML <- function(x, Data, reps = 100) {
-  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0, Data@Year, Data@CAL, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK"
-  if (is.na(Data@BMSY_B0[x]) | is.na(Data@CV_BMSY_B0[x])) return(NA)
-  if (is.na(Data@FMSY_M[x]) | is.na(Data@CV_FMSY_M[x])) return(NA)
-  C_tot <- Data@AvC[x] * Data@t[x]
-  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # default CV of 0.5 as in MacCall 2009
-  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])  # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
-  Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
-  Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
-  Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps, MLtype = "dep")
-  if (all(is.na(Z))) {
-    Rec <- new("Rec")
-    Rec@TAC <- TACfilter(rep(NA, reps))
-    return(Rec)
-  } 
-  FM <- Z - Mdb
-  nyears <- length(Data@Year)
-  Ct1 <- mean(Data@Cat[x, 1:3])
-  Ct2 <- mean(Data@Cat[x, (nyears - 2):nyears])
-  dep <- rep(c(Ct1, Ct2), each = reps)/(1 - exp(-FM))
-  if (reps == 1)Bt_K <- dep[2]/dep[1]
-  if (reps > 1) Bt_K <- dep[, 2]/dep[, 1]
-  Bt_K[Bt_K>1] <-1
-  if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) return(NA)
-  BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-                                    Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-                                                                    Data@CV_BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-  TAC <- C_tot/(Data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
-  
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
-  Rec
-}  # end of DCAC_ML
-class(DCAC_ML) <- "MP"
+
+
+
+
+
 
 
 #' Delay - Difference Stock Assessment with UMSY and MSY as leading parameters
@@ -1742,29 +1778,7 @@ class(Gcontrol) <- "MP"
 
 
 
-#' @describeIn DCAC Hybrid Depletion Adjusted Average Catch: essentially DCAC 
-#' multiplied by 2*depletion and divided by BMSY/B0 (Bpeak) when below BMSY, 
-#' and DCAC above BMSY (Harford and Carruthers 2017).
-#' @export 
-HDAAC <- function(x, Data, reps = 100) {
-  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
-  C_tot <- Data@AvC[x] * Data@t[x]
-  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
-  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
-  Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
-  if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) 
-    return(NA)
-  BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * 
-                                    Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * Data@CV_BMSY_B0[x]))
-  dcac <- C_tot/(Data@t[x] + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
-  ddcac <- dcac * Bt_K/BMSY_K
-  TAC <- dcac
-  TAC[Bt_K < BMSY_K] <- ddcac[Bt_K < BMSY_K]
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
-  Rec
-}
-class(HDAAC) <- "MP"
+
 
 
 

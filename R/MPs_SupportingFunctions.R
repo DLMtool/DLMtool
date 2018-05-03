@@ -25,6 +25,23 @@ plotBK <- function(DF) {
 }
 
 
+plotDCAC <- function(TAC, Data, Bt_K) {
+  boxplot(TAC, add=TRUE, at=max(Data@Year)+1, col="darkgrey", width=1, outline=TRUE, axes=FALSE)
+  text(max(Data@Year)+1, quantile(TAC, 0.05), "TAC", col="black", pos=2)
+  op <- par(no.readonly = TRUE)
+  on.exit(par(op))
+  par(new = T)
+  plot(c(1, max(Data@Year)+3), c(0,1), type="n", axes=FALSE, xlab="", ylab="")
+  quants <- quantile(Bt_K, c(0.025, 0.5, 0.975))
+  points(max(Data@Year)+3, quants[2], pch=16, col="blue", cex=1.5)
+  lines(c(max(Data@Year)+3, max(Data@Year)+3), c(quants[1], quants[3]), col="blue")
+  axis(side=4, las=1, col="blue", labels=FALSE)
+  at = axTicks(4)
+  mtext(side = 4, text = at, at = at, col = "blue", line = 1, las=1)
+  mtext(side=4, "Depletion (median + 95 percentiles)", line=3, cex=1.25, col="blue")
+}
+
+
 Itarget_p <- function(...) {
  
   inlist <- list(...)

@@ -106,7 +106,7 @@ an FMSY estimate.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>CompSRA</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>)
+    <pre class="usage"><span class='fu'>CompSRA</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
 <span class='fu'>CompSRA4010</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>)</pre>
     
@@ -123,13 +123,18 @@ an FMSY estimate.</p>
     </tr>
     <tr>
       <th>reps</th>
-      <td><p>The number of stochastic samples of the TAC.</p></td>
+      <td><p>The number of stochastic samples of the TAC recommendation</p></td>
+    </tr>
+    <tr>
+      <th>plot</th>
+      <td><p>Logical. Show the plot?</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A Rec object with a vector of TAC recommendation</p>
+    <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the <code>TAC</code> slot populated with a numeric vector of length <code>reps</code></p>
+<p>A Rec object with a vector of TAC recommendation</p>
     
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
@@ -140,7 +145,8 @@ an FMSY estimate.</p>
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>Given a fixed historical F, What level of depletion gives you this
+    <p>See the <a href='https://dlmtool.github.io/DLMtool/reference/index.html'>online documentation</a> for correctly rendered equations.</p>
+<p>Given a fixed historical F, What level of depletion gives you this
 length composition?</p>
     
 
