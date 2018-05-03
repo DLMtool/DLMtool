@@ -547,41 +547,48 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
     if (nchar(fileName)>15) fileName <-  substr(fileName, 1, 15)
     
     if (file.exists(paste0(file.path(dir, 'build/', paste0(fileName, '.dat'))))) {
-      # OM has been documented before - check if it has changed
-      testOM <- readRDS(file.path(dir,paste0("build/", fileName, '.dat')))
-      if (class(testOM) == 'OM') {
-        # check if OM has changed 
-        changed <- rep(FALSE, length(slotNames(OM)))
-        for (sl in seq_along(slotNames(OM))) {
-          
-          oldOM <- slot(OM, slotNames(OM)[sl])
-          newOM <- slot(testOM, slotNames(OM)[sl])
-          if (class(oldOM) !='character') {
-            if (class(oldOM) != 'list') {
-              if (length(oldOM)<1 || !is.finite(oldOM)) oldOM <- 0
-              if (length(newOM)<1 || !is.finite(newOM)) newOM <- 0
-              if (any(oldOM != newOM)) changed[sl] <- TRUE
-            } else {
-              if (length(oldOM) != length(newOM)) {
-                changed[sl] <- TRUE
-              } else if (length(oldOM)>0){
-                for (xx in 1:length(oldOM)) {
-                  if(any(oldOM[[xx]] != newOM[[xx]]))changed[sl] <- TRUE
-                  
+      chkFile <- file.exists(paste0(file.path(dir, 'build/', paste0(fileName, 'Hist.dat'))))
+      if (chkFile) {
+        # OM has been documented before - check if it has changed
+        testOM <- readRDS(file.path(dir,paste0("build/", fileName, '.dat')))
+        if (class(testOM) == 'OM') {
+          # check if OM has changed 
+          changed <- rep(FALSE, length(slotNames(OM)))
+          for (sl in seq_along(slotNames(OM))) {
+            
+            oldOM <- slot(OM, slotNames(OM)[sl])
+            newOM <- slot(testOM, slotNames(OM)[sl])
+            if (class(oldOM) !='character') {
+              if (class(oldOM) != 'list') {
+                if (length(oldOM)<1 || !is.finite(oldOM)) oldOM <- 0
+                if (length(newOM)<1 || !is.finite(newOM)) newOM <- 0
+                if (any(oldOM != newOM)) changed[sl] <- TRUE
+              } else {
+                if (length(oldOM) != length(newOM)) {
+                  changed[sl] <- TRUE
+                } else if (length(oldOM)>0){
+                  for (xx in 1:length(oldOM)) {
+                    if(any(oldOM[[xx]] != newOM[[xx]]))changed[sl] <- TRUE
+                    
+                  }
                 }
               }
             }
           }
-        }
-        if (sum(changed)>0) runSims <- TRUE 
-        if (sum(changed) == 0) {
-          out <-  readRDS(file.path(dir,paste0('build/', fileName, 'Hist.dat')))
-          Pars <- c(out$SampPars, out$TSdata, out$MSYs)  
+          if (sum(changed)>0) runSims <- TRUE 
+          if (sum(changed) == 0) {
+            out <-  readRDS(file.path(dir,paste0('build/', fileName, 'Hist.dat')))
+            Pars <- c(out$SampPars, out$TSdata, out$MSYs)  
+          }
+        } else {
+          file.remove(file.path(dir,paste0('build/',fileName, '.dat')))
+          runSims <- TRUE
         }
       } else {
         file.remove(file.path(dir,paste0('build/',fileName, '.dat')))
         runSims <- TRUE
       }
+ 
       
     } else{
       saveRDS(OM, file=file.path(dir,paste0('build/', fileName, '.dat')))
