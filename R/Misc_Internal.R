@@ -38,6 +38,11 @@ ChkObj <- function(OM, error=TRUE) {
   if (any(RecSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% RecSlots] 
   
   probSlots <- slots[!Ok][!slots[!Ok] %in% Ignore]
+  probSlots <- probSlots[!probSlots %in% names(OM@cpars)]
+  if ('Len_age' %in% names(OM@cpars)) {
+    probSlots <- probSlots[!probSlots %in% c("Linf", "K", "t0")]
+  }
+  
   if (length(probSlots) > 0) {
     if (error) stop("Slots in Object have missing values:\n ", paste(probSlots, " "), call.=FALSE)
     if (!error) warning("Slots in Object have missing values:\n ", paste(probSlots, " "), call.=FALSE)
