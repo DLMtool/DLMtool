@@ -646,6 +646,12 @@ joinMSE <- function(MSEobjs = NULL) {
   
   names(outlist) <- sns
   
+  Misc<-list()
+  if(class(MSEobjs[[1]]@Misc[[1]])=="Data"){ #Posterior predicted data joining
+    DataList<-lapply(MSEobjs,function(x)slot(x,"Misc")[[1]])
+    Misc<-list(joinData(DataList))
+  }
+  
   newMSE <- new("MSE", Name = outlist$Name, nyears = unique(outlist$nyears), 
                 proyears = unique(outlist$proyears), nMP = unique(outlist$nMP), 
                 MPs = unique(outlist$MPs), nsim = sum(outlist$nsim), OM = outlist$OM, 
@@ -653,7 +659,7 @@ joinMSE <- function(MSEobjs = NULL) {
                 outlist$B, outlist$SSB, outlist$VB,
                 outlist$FM, outlist$C, outlist$TAC, outlist$SSB_hist, 
                 outlist$CB_hist, outlist$FM_hist, outlist$Effort, outlist$PAA,
-                outlist$CAA, outlist$CAL, CALbins, Misc=list())
+                outlist$CAA, outlist$CAL, CALbins, Misc=Misc)
   
   newMSE
 }

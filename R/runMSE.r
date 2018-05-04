@@ -152,7 +152,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                              CheckMPs=CheckMPs, timelimit=timelimit, Hist=Hist, ntrials=ntrials, 
                              fracD=fracD, CalcBlow=CalcBlow, 
                              HZN=HZN, Bfrac=Bfrac, AnnualMSY=AnnualMSY, silent=TRUE, PPD=PPD)
-    assign_DLMenv() # grabs objects from DLMenv in cores, then merges and assigns to 'home' environment
+    #assign_DLMenv() # grabs objects from DLMenv in cores, then merges and assigns to 'home' environment
   
     if (!is.null(save_name) && is.character(save_name)) saveRDS(temp, paste0(save_name, '.rdata'))
     

@@ -781,6 +781,59 @@ TAC <- function(Data, MPs = NA, reps = 100, timelimit = 1) {
 }
 
 
+#' Join Data objects present in a list 
+#' 
+#' A function that combined a list of data objects into a single data object (same dimensions but can have different numbers of simulations)
+#' 
+#' 
+#' @param DataList A list of data objects of identical dimension (except for simulation)
+#' @author T. Carruthers
+#' @export 
+joinData<-function(DataList){
+  
+  if (class(DataList) != "list") stop("DataList must be a list")
+  if (length(DataList) < 2) stop("DataList list doesn't contain multiple MSE objects")
+  
+  Data<-DataList[[1]]
+  nD<-length(DataList)
+ 
+  slots<-slotNames(Data)
+  slots <- slots[!slots%in%c("Name","Ref","OM","MaxAge","CAL_bins","Year","Units","Ref","Ref_type","Log","params","PosMPs","MPs","Obs","Misc","nareas","LHYear")]
+  
+  nslots<-length(slots)
+  getslot<-function(obj,name)slot(obj,name) # weird issue with namespace conflict and the @Cat slot
+  getslotclass<-function(obj,name)class(slot(obj,name))
+  sclass<-sapply(1:nslots,function(x,obj,slots)getslotclass(obj,slots[x]),obj=DataList[[1]],slots=slots)
+  #getdim<-function(x){
+  #  dim<-dim(x)
+  #  if(is.null(dim))dim=length(x)
+  #  dim
+  #}
+  #sdims<-sapply(1:nslots,function(x,obj,slots)getdim(getslot(obj,slots[x])),obj=DataList[[1]],slots=slots)
+  #nsims<-sapply(1:nD,function(x,DataList)length(DataList[[x]]@Dt),DataList)
+
+  for (sn in 1:nslots){
+     
+    templist<-lapply(DataList,getslot,name=slots[sn])
+     
+    if (sclass[sn] == "numeric"|sclass[sn]=="integer") {
+      attr(Data, slots[sn]) <- unlist(templist)
+    } else if (sclass[sn]== "matrix"|sclass[sn]=="array") {
+      attr(Data, slots[sn]) <- abind(templist, along=1)
+    } 
+  } 
+    
+  #checkdims<-sapply(1:nslots,function(x,obj,slots)getdim(getslot(obj,slots[x])),obj=Data,slots=slots)
+  Data  
+
+}
+
+
+
+
+
+
+
 
 
 # parallelMPs <- function(x, Data, reps, MPs, ss) sapply(ss, MPs[x], Data, reps = reps)
