@@ -1,4 +1,52 @@
 ##### MP plotting #####
+
+plotAvC <- function(x, Data, meanC, histCatch, yr.ind, lwd=3, cex.lab=1.25) {
+  op <- par(no.readonly = TRUE)
+  on.exit(op)
+  par(mfrow=c(1,1))
+  plot(c(Data@Year[yr.ind], Data@Year[max(yr.ind)]+1), c(histCatch,NA), type="l", 
+       xlab="Year", ylab=paste0("Catch (", Data@Units, ")"), lwd=lwd, bty="l", las=1, cex.lab=cex.lab)
+  abline(v=Data@LHYear, lty=2, col="darkgray") #
+  text(Data@LHYear, max(histCatch, na.rm=TRUE)*0.9, "Last Historical Year", pos=2, xpd=NA)
+  lines(c(min(Data@Year), Data@LHYear), rep(mean(Data@Cat[x,yr.ind]),2), lty=2) #
+  text(quantile(Data@Year, 0.1), meanC*1.1, pos=4, "Average Historical Catch")
+  boxplot(Rec@TAC, add=TRUE, at=max(Data@Year)+1, col="grey", width=1, outline=TRUE, axes=FALSE)
+  text(max(Data@Year)+1, quantile(Rec@TAC, 0.05), "TAC", col="black", pos=2)
+}
+
+plotDCAC <- function(x, Data, dcac, yrs, lwd=3, cex.lab=1.25) {
+  op <- par(no.readonly = TRUE)
+  on.exit(op)
+  par(mfrow=c(1,1), oma=c(1,1,1,1), mar=c(5,4,1,4))
+  yr.lst <- max(yrs)
+  ylim <- c(0, max(c(Data@Cat[x,1:yr.lst], dcac)))
+  plot(c(Data@Year[yrs], Data@Year[max(yrs)]+1:3), c(Data@Cat[x,1:yr.lst],NA, NA, NA), type="l", 
+       xlab="Year", ylab=paste0("Catch (", Data@Units, ")"), lwd=lwd, bty="l", las=1, cex.lab=cex.lab,
+       ylim=ylim)
+  abline(v=Data@LHYear, lty=2, col="darkgray") #
+  
+  text(Data@LHYear, max(Data@Cat[x,1:yr.lst], na.rm=TRUE)*0.9, "Last Historical Year", pos=2, xpd=NA)
+  lines(c(min(Data@Year), Data@LHYear), rep(mean(Data@Cat[x,1:yr.lst]),2), lty=2) #
+  text(quantile(Data@Year, 0.1), mean(Data@Cat[x,1:yr.lst])*1.1, pos=4, "Average Historical Catch")
+}
+
+plotDCACadd <- function(TAC, Data, Bt_K) {
+  boxplot(TAC, add=TRUE, at=max(Data@Year)+1, col="darkgrey", width=1, outline=TRUE, axes=FALSE)
+  text(max(Data@Year)+1, quantile(TAC, 0.05), "TAC", col="black", pos=2)
+  op <- par(no.readonly = TRUE)
+  on.exit(par(op))
+  par(new = T)
+  plot(c(1, max(Data@Year)+3), c(0,1), type="n", axes=FALSE, xlab="", ylab="")
+  quants <- quantile(Bt_K, c(0.025, 0.5, 0.975))
+  points(max(Data@Year)+3, quants[2], pch=16, col="blue", cex=1.5)
+  lines(c(max(Data@Year)+3, max(Data@Year)+3), c(quants[1], quants[3]), col="blue")
+  axis(side=4, las=1, col="blue", labels=FALSE)
+  at = axTicks(4)
+  mtext(side = 4, text = at, at = at, col = "blue", line = 1, las=1)
+  mtext(side=4, "Depletion (median + 95 percentiles)", line=3, cex=1.25, col="blue")
+}
+
+
 # default plotting options
 leg.pos <- col1 <- col2 <- col3 <- col4 <- pt.cex <- tex.cex <- cex.lab <- lwd <- leg.post <- NULL
 MP.plot <- new.env()
@@ -25,21 +73,7 @@ plotBK <- function(DF) {
 }
 
 
-plotDCAC <- function(TAC, Data, Bt_K) {
-  boxplot(TAC, add=TRUE, at=max(Data@Year)+1, col="darkgrey", width=1, outline=TRUE, axes=FALSE)
-  text(max(Data@Year)+1, quantile(TAC, 0.05), "TAC", col="black", pos=2)
-  op <- par(no.readonly = TRUE)
-  on.exit(par(op))
-  par(new = T)
-  plot(c(1, max(Data@Year)+3), c(0,1), type="n", axes=FALSE, xlab="", ylab="")
-  quants <- quantile(Bt_K, c(0.025, 0.5, 0.975))
-  points(max(Data@Year)+3, quants[2], pch=16, col="blue", cex=1.5)
-  lines(c(max(Data@Year)+3, max(Data@Year)+3), c(quants[1], quants[3]), col="blue")
-  axis(side=4, las=1, col="blue", labels=FALSE)
-  at = axTicks(4)
-  mtext(side = 4, text = at, at = at, col = "blue", line = 1, las=1)
-  mtext(side=4, "Depletion (median + 95 percentiles)", line=3, cex=1.25, col="blue")
-}
+
 
 
 Itarget_p <- function(...) {

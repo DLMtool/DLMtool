@@ -35,6 +35,11 @@ where \eqn{\text{TAC}} is the the mean catch recommendation, \eqn{n} is the numb
 \note{
 See the \href{https://dlmtool.github.io/DLMtool/reference/index.html}{online documentation} for correctly rendered equations.
 }
+\section{Required \link[=Data-class]{Data}}{
+
+\code{AvC}: Cat, LHYear, Year
+}
+
 \examples{
 Data <- DLMtool::Cobia
 # Apply the AvC MP to the Data

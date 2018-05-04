@@ -3,6 +3,8 @@
 
 #### Average Catch Based Methods ####
 
+# ** Average Catch ----
+
 #' Average Catch
 #'
 #' A simple average catch MP that is included to demonstrate a 'status quo' management option
@@ -20,6 +22,8 @@
 #' 
 #' @template MPtemplate
 #' @template MPoutput
+#' @templateVar mp AvC
+#' @template MPuses
 #' @export 
 #' @author T. Carruthers
 #' 
@@ -44,26 +48,13 @@ AvC <- function(x, Data, reps = 100, plot=FALSE) {
   Rec <- new("Rec")
   Rec@TAC <- TAC
   
-  if (plot) {
-    lwd <- 3 
-    cex.lab <- 1.25
-    
-    plot(c(Data@Year[yr.ind], Data@Year[max(yr.ind)]+1), c(histCatch,NA), type="l", 
-         xlab="Year", ylab=paste0("Catch (", Data@Units, ")"), lwd=lwd, bty="l", las=1, cex.lab=cex.lab)
-    abline(v=Data@LHYear, lty=2, col="darkgray") #
-    text(Data@LHYear, max(histCatch, na.rm=TRUE)*0.9, "Last Historical Year", pos=2, xpd=NA)
-    lines(c(min(Data@Year), Data@LHYear), rep(mean(Data@Cat[x,yr.ind]),2), lty=2) #
-    text(quantile(Data@Year, 0.1), meanC*1.1, pos=4, "Average Historical Catch")
-    boxplot(Rec@TAC, add=TRUE, at=max(Data@Year)+1, col="grey", width=1, outline=TRUE, axes=FALSE)
-    text(max(Data@Year)+1, quantile(Rec@TAC, 0.05), "TAC", col="black", pos=2)
-  }
-  
+  if (plot) plotAvC(x, Data, meanC, histCatch, yr.ind, lwd=3, cex.lab=1.25)
   Rec
 }
 class(AvC) <- "MP"
 
 
-
+# ** Depletion Corrected Average Catch MPs ####
 DCAC_ <- function(x, Data, reps=100, Bt_K=NULL, plot=FALSE) {
 
   yr.lst <- match(Data@LHYear, Data@Year)
@@ -79,27 +70,16 @@ DCAC_ <- function(x, Data, reps=100, Bt_K=NULL, plot=FALSE) {
 
   dcac <- C_tot/(yr.lst + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
   
-  if (plot) {
+  if (plot) plotDCAC(x, Data, dcac, yrs)
 
-    par(mfrow=c(1,1), oma=c(1,1,1,1), mar=c(5,4,1,4))
-    lwd <- 3 
-    cex.lab <- 1.25
-    ylim <- c(0, max(c(Data@Cat[x,1:yr.lst], dcac)))
-    plot(c(Data@Year[yrs], Data@Year[max(yrs)]+1:3), c(Data@Cat[x,1:yr.lst],NA, NA, NA), type="l", 
-         xlab="Year", ylab=paste0("Catch (", Data@Units, ")"), lwd=lwd, bty="l", las=1, cex.lab=cex.lab,
-         ylim=ylim)
-    abline(v=Data@LHYear, lty=2, col="darkgray") #
-
-    text(Data@LHYear, max(Data@Cat[x,1:yr.lst], na.rm=TRUE)*0.9, "Last Historical Year", pos=2, xpd=NA)
-    lines(c(min(Data@Year), Data@LHYear), rep(mean(Data@Cat[x,1:yr.lst]),2), lty=2) #
-    text(quantile(Data@Year, 0.1), mean(Data@Cat[x,1:yr.lst])*1.1, pos=4, "Average Historical Catch")
-  }
-  
   return(list(dcac=dcac, Bt_K=Bt_K))
 
 }
 
 ### TODO - DOCUMENT ##### 
+
+# add diferrent versions of DCAC - update and non update methods 
+
 #' Depletion Corrected Average Catch
 #' 
 #' A method of calculating an MSY proxy (FMSY * BMSY and therefore the OFL at
@@ -109,6 +89,8 @@ DCAC_ <- function(x, Data, reps=100, Bt_K=NULL, plot=FALSE) {
 #' 
 #' @template MPtemplate
 #' @template MPoutput
+#' @templateVar mp DCAC
+#' @template MPuses
 #' @export 
 #' 
 #' 
@@ -134,7 +116,7 @@ DCAC <- function(x, Data, reps = 100, plot=FALSE) {
   rundcac <- DCAC_(x, Data, reps, plot=plot)
   
   TAC <- TACfilter(rundcac$dcac)
-  if (plot)  plotDCAC(TAC, Data, rundcac$Bt_K)
+  if (plot)  plotDCACadd(TAC, Data, rundcac$Bt_K)
   
   Rec <- new("Rec")
   Rec@TAC <- TAC
@@ -148,6 +130,8 @@ class(DCAC) <- "MP"
 #' 40 per cent of unfished levels. The 40 percent depletion assumption may not 
 #' really affect DCAC that much as it already makes TAC recommendations that are 
 #' quite MSY-like.
+#' @templateVar mp DCAC_40
+#' @template MPuses
 #' @examples 
 #' DCAC_40(1, DLMtool::Atlantic_mackerel, plot=TRUE) 
 #' 
@@ -157,7 +141,7 @@ DCAC_40 <- function(x, Data, reps = 100, plot=FALSE) {
   
   rundcac <- DCAC_(x, Data, reps, Bt_K=0.4, plot=plot)
   TAC <- TACfilter(rundcac$dcac)
-  if (plot)  plotDCAC(TAC, Data, rundcac$Bt_K)
+  if (plot)  plotDCACadd(TAC, Data, rundcac$Bt_K)
   
   Rec <- new("Rec")
   Rec@TAC <- TAC
@@ -171,6 +155,8 @@ class(DCAC_40) <- "MP"
 #' adjustment above 40 percent unfished). DCAC can overfish below BMSY levels. The 40-10 
 #' harvest control rule largely resolves this problem providing an MP with surprisingly good
 #' performance even at low stock levels.
+#' @templateVar mp DCAC4010
+#' @template MPuses
 #' @examples 
 #' DCAC4010(1, DLMtool::Atlantic_mackerel, plot=TRUE) 
 #' 
@@ -190,7 +176,7 @@ DCAC4010 <- function(x, Data, reps = 100, plot=FALSE) {
   if (length(cond1) < 1 & length(cond2) < 1)  return(NA)
   TAC <- TACfilter(TAC)
   
-  if (plot)  plotDCAC(TAC, Data, rundcac$Bt_K)
+  if (plot)  plotDCACadd(TAC, Data, rundcac$Bt_K)
 
   Rec <- new("Rec")
   Rec@TAC <- TAC 
@@ -202,6 +188,8 @@ class(DCAC4010) <- "MP"
 #' @describeIn DCAC This variant uses the mean length estimator to calculate current stock
 #' depletion. The mean length extension was programmed by Gary Nelson as part of his
 #' excellent R package 'fishmethods'.
+#' @templateVar mp DCAC_ML
+#' @template MPuses
 #' @examples 
 #' DCAC_ML(1, DLMtool::SimulatedData, plot=TRUE) 
 #' 
@@ -232,7 +220,7 @@ DCAC_ML <- function(x, Data, reps = 100, plot=FALSE) {
   rundcac <- DCAC_(x, Data, reps, Bt_K=Bt_K, plot=plot)
   TAC <- TACfilter(rundcac$dcac)
   
-  if (plot)  plotDCAC(TAC, Data, rundcac$Bt_K)
+  if (plot)  plotDCACadd(TAC, Data, rundcac$Bt_K)
 
   Rec <- new("Rec")
   Rec@TAC <- TAC
@@ -241,6 +229,7 @@ DCAC_ML <- function(x, Data, reps = 100, plot=FALSE) {
 class(DCAC_ML) <- "MP"
 
 
+# ** Depletion Adjusted Average Catch ----
 
 #' @describeIn DCAC Depletion Adjusted Average Catch: essentially DCAC multiplied 
 #' by 2*depletion and divided by BMSY/B0 (Bpeak) (Harford and Carruthers, 2017).
@@ -349,6 +338,8 @@ class(HDAAC) <- "MP"
 #' Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.
 #' @template MPtemplate
 #' @template MPoutput
+#' @templateVar mp BK
+#' @template MPuses
 #' @export 
 #' 
 #' 
@@ -385,7 +376,8 @@ class(BK) <- "MP"
 #' catch-curve (interval censor).
 #' @describeIn BK Abundance is estimated. An age-based catch curve is used 
 #' to estimate *Z* and *F*. 
-#' 
+#' @templateVar mp BK_CC
+#' @template MPuses
 #' @examples 
 #' Data <- DLMtool::SimulatedData
 #' BK_CC(1, Data, reps=1000, plot=TRUE)
@@ -437,7 +429,8 @@ BK_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
 class(BK_CC) <- "MP"
 
 #' @describeIn BK Abundance is estimated. *Z* and *F* are estimated from mean length.
-
+#' @templateVar mp BK_ML
+#' @template MPuses
 #' @examples 
 #' Data <- DLMtool::SimulatedData
 #' BK_ML(1, Data, reps=1000, plot=TRUE)

@@ -287,6 +287,7 @@ plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
 #' function text for slots in the Data object
 #' 
 #' @param funcs A character vector of management procedures
+#' @param noCV Logical. Should the CV slots be left out? 
 #' @author T. Carruthers
 #' @return A matrix of MPs and their required data in terms of Data slotnames
 #' @examples 
@@ -294,7 +295,7 @@ plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
 #' Required() # For all MPs
 #' @seealso \link{Can} \link{Cant} \link{Needed} \link{MPtype} \linkS4class{Data}
 #' @export 
-Required <- function(funcs = NA) {
+Required <- function(funcs = NA, noCV=FALSE) {
 #  if (is.na(funcs[1])) 
 #    funcs <- c(avail("Output"), avail("Input"))
 #  slots <- slotNames("Data")
@@ -316,6 +317,12 @@ Required <- function(funcs = NA) {
   temp <- lapply(funcs, function(x) paste(format(match.fun(x)), collapse = " "))
   repp <- vapply(temp, match_slots, character(1))
   #repp[!nzchar(repp)] <- "No data needed for this MP."
+  if (noCV) {
+    tt <- unlist(strsplit(repp, ","))
+    tt <- tt[!grepl("CV_", tt)]
+    tt <- trimws(sort(tt))
+    repp <- paste(tt, collapse = ", ")
+  }
   matrix(c(funcs, repp), ncol = 2)
 }
 

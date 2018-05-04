@@ -4,10 +4,12 @@
 \alias{Required}
 \title{What management procedures need what data}
 \usage{
-Required(funcs = NA)
+Required(funcs = NA, noCV = FALSE)
 }
 \arguments{
 \item{funcs}{A character vector of management procedures}
+
+\item{noCV}{Logical. Should the CV slots be left out?}
 }
 \value{
 A matrix of MPs and their required data in terms of Data slotnames

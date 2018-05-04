@@ -68,6 +68,17 @@ These MPs have not been implemented that way.
 
 See the \href{https://dlmtool.github.io/DLMtool/reference/index.html}{online documentation} for correctly rendered equations.
 }
+\section{Required \link[=Data-class]{Data}}{
+
+\code{BK}: Abun, vbK, vbLinf, LFC
+
+
+\code{BK_CC}: CAA, LFC, Mort, vbK, vbLinf, Cat
+
+
+\code{BK_ML}: CAL, LFC, Mort, vbK, vbLinf, Cat
+}
+
 \examples{
 Data <- DLMtool::SimulatedData
 BK(1, Data, reps=1000, plot=TRUE)

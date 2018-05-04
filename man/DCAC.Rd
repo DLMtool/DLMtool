@@ -71,6 +71,20 @@ to zero as depletion tends to zero. It adjusts for depletion only in
 calculating historical average catch. It follows that at stock levels much
 below BMSY, DCAC tends to chronically overfish.
 }
+\section{Required \link[=Data-class]{Data}}{
+
+\code{DCAC}: AvC, BMSY_B0, Dt, FMSY_M, Mort, t
+
+
+\code{DCAC_40}: AvC, BMSY_B0, FMSY_M, Mort, t
+
+
+\code{DCAC4010}: AvC, BMSY_B0, Dt, FMSY_M, Mort, t
+
+
+\code{DCAC_ML}: AvC, BMSY_B0, CAL, Cat, FMSY_M, Mort, t, vbK, vbLinf, Year
+}
+
 \examples{
 DCAC(1, DLMtool::Atlantic_mackerel, plot=TRUE) 
 
