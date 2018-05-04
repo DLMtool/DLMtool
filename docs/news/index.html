@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>All news • DLMtool Documentation</title>
+<title>Changelog • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -18,11 +18,21 @@
 <!-- Font Awesome icons -->
 <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 
+<!-- clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
 <script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
+
+
+
+<meta property="og:title" content="Changelog" />
+
+<meta property="og:image" content="/logo.png" />
+<meta name="twitter:card" content="summary" />
+
 
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
@@ -46,96 +56,26 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="../index.html">DLMtool Documentation</a>
+      <span class="navbar-brand">
+        <a class="navbar-link" href="../index.html">DLMtool</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.999</span>
+      </span>
     </div>
+
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../userguide/index.html">User Guide</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Management Procedures
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../reference/Output_Controls/index.html">Output Controls</a>
-    </li>
-    <li>
-      <a href="../reference/Input_Controls/index.html">Input Controls</a>
-    </li>
-    <li>
-      <a href="../reference/Reference_Methods/index.html">Reference Methods</a>
-    </li>
-  </ul>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Functions
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li class="dropdown-header">Operating Model</li>
-    <li>
-      <a href="../reference/Operating_Model_Functions/index.html">Setup Operating Model</a>
-    </li>
-    <li>
-      <a href="../reference/Run_MSE_Functions/index.html">Run MSE Functions</a>
-    </li>
-    <li class="dropdown-header">MSE Object</li>
-    <li>
-      <a href="../reference/PMs/index.html">Peformance Metrics</a>
-    </li>
-    <li>
-      <a href="../reference/MSE_Object_Plotting_Functions/index.html">MSE Plotting Functions</a>
-    </li>
-    <li>
-      <a href="../reference/MSE_Object_Functions/index.html">MSE Object Functions</a>
-    </li>
-    <li class="dropdown-header">Fishery Data Object</li>
-    <li>
-      <a href="../reference/import_data/index.html">Import Data</a>
-    </li>
-    <li>
-      <a href="../reference/Available_Methods_and_Required_Data/index.html">Available Methods and Required Data</a>
-    </li>
-    <li>
-      <a href="../reference/Apply_Management_Procedures/index.html">Apply Management Procedures</a>
-    </li>
-    <li>
-      <a href="../reference/Fishery_Data_Plotting_Functions/index.html">Fishery Data Plotting Functions</a>
-    </li>
-  </ul>
+  <a href="../userguide/introduction.html">User Guide</a>
 </li>
 <li>
-  <a href="../reference/R_Object_Classes/index.html">DLMtool Object Classes</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Other
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../reference/Estimation_Functions/index.html">Estimation Functions</a>
-    </li>
-    <li>
-      <a href="../reference/Other_Functions/index.html">Other Functions</a>
-    </li>
-    <li>
-      <a href="../reference/Internal_Functions/index.html">Internal Functions</a>
-    </li>
-  </ul>
+  <a href="../reference/index.html">Management Procedures</a>
 </li>
       </ul>
       
       <ul class="nav navbar-nav navbar-right">
         
       </ul>
+      
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -143,21 +83,115 @@
       
       </header>
 
-      <div class="row">
-
-  <div class="col-md-9">
+<div class="row">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Change log <small>All releases</small></h1>
+      <h1>Changelog <small></small></h1>
+      
     </div>
 
-    <div class="contents">
-    </div>
+    <div id="dlmtool-5-1-999-development-version" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dlmtool-5-1-999-development-version" class="anchor"></a>DLMtool 5.1.999 Development Version</h2>
+<ul>
+<li>update PM methods and add to userguide - in development</li>
+<li>MSE plotting functions - all been updated - in development</li>
+<li>improve convergence diagnostic in <code>Converge</code>
+</li>
+<li>modified CAL generation to deal with dome-shaped selectivity better</li>
+<li>improved help documentation for functions and MPs by combining and linking similiar functions</li>
+<li>makeMeanMP - added - TODO add to FAQ</li>
+<li>option for variable management interval - TODO add to FAQ</li>
+<li>added LHdatabase from FishLife and functions to predict life-history parameters</li>
+<li>add LH2OM and predictLH - predict correlated life-history parameters - TODO add to user guide/FAQ</li>
+<li>revised Fease feature - TODO add to FAQ and userguide</li>
+<li>iSCAM and SS2DLM functions have been moved from DLMtool to MSEtool</li>
+<li>update help documentation for all MPs - in development</li>
+</ul>
+</div>
+    <div id="dlmtool-5-1-3" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dlmtool-5-1-3" class="anchor"></a>DLMtool 5.1.3</h2>
+<ul>
+<li>fix Replace function for new OM slots</li>
+<li>fix indexing issue for size comps when there are only two size classes</li>
+<li>fix indexing issue for spawning biomass &amp; MSY calcs for Ricker SRR in V5.1</li>
+<li>automatically call <code><a href="../reference/setup.html">setup()</a></code> if <code>runsMSE(parallel=TRUE)</code> and cluster hasn’t been initialized</li>
+<li>automatically export custom MPs to cluster if <code>runsMSE(parallel=TRUE)</code>
+</li>
+<li>fix index issue in <code>SPmod</code>
+</li>
+</ul>
+</div>
+    <div id="dlmtool-5-1-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dlmtool-5-1-2" class="anchor"></a>DLMtool 5.1.2</h2>
+<ul>
+<li>Add contributors and more examples</li>
+</ul>
+</div>
+    <div id="dlmtool-5-1-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dlmtool-5-1-1" class="anchor"></a>DLMtool 5.1.1</h2>
+<ul>
+<li>Patch for indexing error in first projection year population dynamics.</li>
+</ul>
+</div>
+    <div id="dlmtool-5-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dlmtool-5-1" class="anchor"></a>DLMtool 5.1</h2>
+<div id="operating-model" class="section level3">
+<h3 class="hasAnchor">
+<a href="#operating-model" class="anchor"></a>Operating Model</h3>
+<ul>
+<li><p>Mixed MPs: it is now possible to design MPs that combine Output and Input controls. Previously, MPs in DLMtool where either class ‘Input’ or class ‘Output’. This has changed, and all MPs are now class ‘MP’ and return a standard recommendation object (‘Rec’) that allows specification of any combination of catch limit, effort limit, spatial closure, and size-at-selection and/or size-at-retention regulations.</p></li>
+<li><p>MP types: For convenience, MPs can be categorised into 4 types: ‘Output’ (only catch limits), ‘Input’ (only spatial, effort, and/or size regulations), ‘Mixed’ (some combination of Output and Input regulations), and ‘Reference’ (MPs such as FMSYref or NFref which are designed to be used a references and not for actual applications). The function <code>MPtype</code> can be used to determine an MP’s type, e.g <code><a href="../reference/MPtype.html">MPtype('AvC')</a></code>.</p></li>
+<li><p>Increased flexibility of selectivity, retention, and discard mortality controls: MPs can now modify both selectivity and retention curves, and also modify the level of discard mortality.</p></li>
+<li><p>Historical MPAs: A new slot <code>MPA</code> has been added to the <code>Fleet</code> object. This allows users to specify the historical year and the fraction of an area that was closed. See <code><a href="../reference/plotMPA.html">?plotMPA</a></code> for an example.</p></li>
+<li><p>Improvements to MSY reference point calculations: MSY reference points are now calculate for every year. This accounts for changes in productivity (e.g., increases in growth) that affect reference points such as BMSY and FMSY.</p></li>
+<li><p>Increased number of areas: By default DLMtool is a 2-area model. The code has now been updated to include more areas if required.</p></li>
+<li><p>Movement by age: It is now possible to specify movement by age, such as ontogenetic migration offshore</p></li>
+<li><p>Parallel processing: <code>runMSE</code> has been optimized for parallel processing. By default, parallel processing is not used if <code>nsim</code>&lt;=48. We suggest testing your OM with a low number of simulations (e.g <code>nsim</code>=48) and then increasing the number of simulations and using parallel processing: <code><a href="../reference/runMSE.html">runMSE(OM, MPs, parallel=TRUE)</a></code>. Update messages are not displayed in parallel mode.</p></li>
+<li><p>Taxonomic information: New slots have been added to the <code>Stock</code> object to record common name and taxonomic details.</p></li>
+</ul>
+</div>
+<div id="mp-performance" class="section level3">
+<h3 class="hasAnchor">
+<a href="#mp-performance" class="anchor"></a>MP Performance</h3>
+<ul>
+<li><p>The <code>Converge</code> function has been updated with a improved of convergence diagnostics.</p></li>
+<li><p>A new performance metric (<code>PM</code>) class has been added. This allows users to develop a custom set of performance metrics for their management system. A series of example <code>PM</code> objects have been created (see <code><a href="../reference/avail.html">avail('PM')</a></code>). Over time the summary and plotting functions will be updated to take a set of <code>PM</code> objects. See <code>Tplot3</code> for an example.</p></li>
+</ul>
+</div>
+<div id="robustness-and-testing" class="section level3">
+<h3 class="hasAnchor">
+<a href="#robustness-and-testing" class="anchor"></a>Robustness and Testing</h3>
+<ul>
+<li><p>Many improvements to functions (e.g MPs) to improve robustness and avoid model crashes due to stochastic sampling of parameters.</p></li>
+<li><p>All code in DLMtool is now tested using the <code>testthat</code> package to ensure that the functions work as expected. Please continue to file bug reports at: <a href="https://github.com/DLMtool/DLMtool/issues" class="uri">https://github.com/DLMtool/DLMtool/issues</a></p></li>
+</ul>
+</div>
+<div id="documentation" class="section level3">
+<h3 class="hasAnchor">
+<a href="#documentation" class="anchor"></a>Documentation</h3>
+<ul>
+<li><p>The User Manual has been completely revised and updated. Use <code><a href="../reference/userguide.html">userguide()</a></code> to access. Please submit any typo corrections or suggestions for improvement at <a href="https://github.com/DLMtool/DLMtool_UserGuide/issues" class="uri">https://github.com/DLMtool/DLMtool_UserGuide/issues</a>. Pull requests are welcome.</p></li>
+<li><p>We are developing an online library of DLMtool OMs (<a href="http://www.datalimitedtoolkit.org/fishery_library" class="uri">http://www.datalimitedtoolkit.org/fishery_library</a>) which has the OM Report, OM Excel file, and OM R data object for each DLMtool OM. A standardized MSE report is in development. The OM library will be expanded as new OMs are developed. Please contact us if you have developed OMs and are able to make them publicly available.</p></li>
+<li><p>A DLMtool user forum is in development and will be launched soon. The idea of the forum is to provide a platform for DLMtool users to ask questions and share experience with each other and the DLMtool team.</p></li>
+</ul>
+</div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
+        <li><a href="#dlmtool-5-1-999-development-version">5.1.999</a></li>
+        <li><a href="#dlmtool-5-1-3">5.1.3</a></li>
+        <li><a href="#dlmtool-5-1-2">5.1.2</a></li>
+        <li><a href="#dlmtool-5-1-1">5.1.1</a></li>
+        <li><a href="#dlmtool-5-1">5.1</a></li>
       </ul>
     </div>
   </div>
@@ -170,11 +204,14 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="http://hadley.github.io/pkgdown/">pkgdown</a>.</p>
+  <p>Site built with <a href="http://pkgdown.r-lib.org/">pkgdown</a>.</p>
 </div>
 
       </footer>
    </div>
 
+  
+
   </body>
 </html>
+

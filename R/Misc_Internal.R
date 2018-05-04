@@ -9,7 +9,8 @@ proportionMat = vector()
 #' Check that all slots in Object are valid and contain values
 #' 
 #' @param OM An object of class OM, Stock, Fleet, Obs, or Imp
-ChkObj <- function(OM) {
+#' @param error Logical. Stop on missing parameter values? FALSE = warning
+ChkObj <- function(OM, error=TRUE) {
   if (!class(OM) %in% c("OM", "Stock", "Fleet", "Obs", "Imp"))
     stop("Argument must be of class: OM, Stock, Fleet, Obs, or Imp", call.=FALSE)
   
@@ -37,8 +38,16 @@ ChkObj <- function(OM) {
   if (any(RecSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% RecSlots] 
   
   probSlots <- slots[!Ok][!slots[!Ok] %in% Ignore]
-  if (length(probSlots) > 0) 
-    stop("Slots in Object have missing values:\n ", paste(probSlots, " "), call.=FALSE)
+  probSlots <- probSlots[!probSlots %in% names(OM@cpars)]
+  if ('Len_age' %in% names(OM@cpars)) {
+    probSlots <- probSlots[!probSlots %in% c("Linf", "K", "t0")]
+  }
+  
+  if (length(probSlots) > 0) {
+    if (error) stop("Slots in Object have missing values:\n ", paste(probSlots, " "), call.=FALSE)
+    if (!error) warning("Slots in Object have missing values:\n ", paste(probSlots, " "), call.=FALSE)
+  }
+
   return(OM)
   
 }
@@ -296,10 +305,7 @@ range01 <- function(x) {
   (x - min(x))/(max(x) - min(x)) 
 }
 
-#' @describeIn runMSE Function suppresses messages - for testing purposes only.
-#' @keywords internal
-#' @importFrom utils capture.output
-#' @importFrom snowfall sfClusterEval
+
 runMSEnomsg <- function(...) {
   capture.output(out <- suppressMessages(runMSE(...)))
   out

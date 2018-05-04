@@ -4,10 +4,12 @@
 \alias{DFO_tab}
 \title{Create a standard DFO performance table}
 \usage{
-DFO_tab(MSEobj, rnd = 0)
+DFO_tab(MSEobj, maxMPs = 15, rnd = 0)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}
+
+\item{maxMPs}{Integer: the maximum number of top ranking MPs to include in the table (ranked by long term yield)}
 
 \item{rnd}{The number of significant figures for rounding.}
 }

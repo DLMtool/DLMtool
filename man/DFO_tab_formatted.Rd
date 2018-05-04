@@ -4,13 +4,15 @@
 \alias{DFO_tab_formatted}
 \title{A formatted version of the standard DFO performance plot, color coded by thresholds}
 \usage{
-DFO_tab_formatted(Ptab1, thresh = c(10, 40, 50, 50, 50, 10, 40, 50, 50, 50,
-  20, 50))
+DFO_tab_formatted(Ptab1, thresh = c(30, 50, 40, 60, 50, 20, 40, 50, 60, 50,
+  30, 50), ret_thresh = F)
 }
 \arguments{
 \item{Ptab1}{A DFO performance table made by DFO_tab()}
 
 \item{thresh}{A vector of thresholds for each column Health, Yield and Reb are 'greater than threshold' conditions}
+
+\item{ret_thresh}{Logical: if true just the threshold levels are returned}
 }
 \description{
 Crit_S is the probability of being in the critical zone in the first 10 projected years

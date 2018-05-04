@@ -6,41 +6,78 @@
 \alias{BK_ML}
 \title{Beddington and Kirkwood life-history MP}
 \usage{
-BK(x, Data, reps = 100)
+BK(x, Data, reps = 100, plot = FALSE)
 
-BK_CC(x, Data, reps = 100, Fmin = 0.005)
+BK_CC(x, Data, reps = 100, plot = FALSE, Fmin = 0.005)
 
-BK_ML(x, Data, reps = 100)
+BK_ML(x, Data, reps = 100, plot = FALSE)
 }
 \arguments{
-\item{x}{A position in a data-limited methods data object.}
+\item{x}{A position in a data-limited methods data object}
 
-\item{Data}{A data-limited methods data object.}
+\item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of stochastic samples of the TAC recommendation.}
+\item{reps}{The number of stochastic samples of the TAC recommendation}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{Fmin}{The minimum fishing mortality rate that is derived from the
 catch-curve (interval censor).}
 }
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
+}
 \description{
-Family of management procedures that sets the TAC by approximation of FMSY
-based on the length at first capture.
+Family of management procedures that sets the TAC by approximation of Fmax
+based on the length at first capture relative to asymptotic length and the
+von Bertalanffy growth parameter \emph{K}.
+}
+\details{
+The TAC is calculated as:
+\deqn{\text{TAC} = A F_{\text{max}}}
+where \eqn{A} is (vulnerable) stock abundance, and \eqn{F_{\text{max}}} is calculated as:
+\deqn{F_{\text{max}} = \frac{0.6K}{0.67-L_c/L_\infty}}
+where \eqn{K} is the von Bertalanffy growth coefficient, \eqn{L_c} is the
+length at first capture, and \eqn{L_\infty} is the von Bertalanffy asymptotic length
+
+Abundance (\emph{A}) is either assumed known (\code{BK}) or estimated (\code{BK_CC} and \code{BK_ML}):
+\deqn{A = \frac{\bar{C}}{\left(1-e^{-F}\right)}}
+where \eqn{\bar{C}} is the mean catch, and \emph{F} is estimated.
+See Functions section below for the estimation of \emph{F}.
 }
 \section{Functions}{
 \itemize{
-\item \code{BK}: This is the simple version of the BK MP which requires an estimate
-of abundance. The paper has a more complex approach that might work better.
+\item \code{BK}: Assumes that abundance is known, i.e. \code{Data@Abun}
+and \code{Data@CV_abun} contain values
 
-\item \code{BK_CC}: Calculates an OFL using an approximation of FMSY based
-on length at first capture and a catch curve estimate of current F.
+\item \code{BK_CC}: Abundance is estimated. An age-based catch curve is used
+to estimate \emph{Z} and \emph{F}.
 
-\item \code{BK_ML}: Uses an approximation to FMSY based on length at first capture and an
-estimate of current abundance based on a mean-length estimator.
+\item \code{BK_ML}: Abundance is estimated. \emph{Z} and \emph{F} are estimated from mean length.
 }}
 
 \note{
-The mean length extension was programmed by Gary Nelson as part of his
-excellent R package 'fishmethods'
+Note that the Beddington-Kirkwood method is designed to estimate \eqn{F_\text{max}},
+that is, the fishing mortality that produces the maximum yield \emph{assuming constant
+recruitment independent of spawning biomass}.
+
+Beddington and Kirkwood (2005)
+recommend estimating \emph{F} using other methods (e.g a catch curve) and comparing the
+estimated \emph{F} to the estimated \eqn{F_\text{max}} and adjusting exploitation accordingly.
+These MPs have not been implemented that way.
+
+See the \href{https://dlmtool.github.io/DLMtool/reference/index.html}{online documentation} for correctly rendered equations.
+}
+\examples{
+Data <- DLMtool::SimulatedData
+BK(1, Data, reps=1000, plot=TRUE)
+
+Data <- DLMtool::SimulatedData
+BK_CC(1, Data, reps=1000, plot=TRUE)
+
+Data <- DLMtool::SimulatedData
+BK_ML(1, Data, reps=1000, plot=TRUE)
+
 }
 \references{
 Beddington, J.R., Kirkwood, G.P., 2005. The estimation of

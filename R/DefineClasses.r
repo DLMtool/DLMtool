@@ -287,103 +287,104 @@ setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ","
 
 
 
-# ---- Fease Class ----
-#' Class \code{'Fease'}
-#' 
-#' An object for storing information about what data are available or might be
-#' available
-#' 
-#' @name Fease-class
-#' @docType class
-#' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new('Fease', stock)}
-#'
-#' @slot Name The name of the data feasibility object
-#' @slot Case The names of the data feasibility cases
-#' @slot Catch Total annual catches
-#' @slot Index An index of relative abundance, catch per unit effort data or of fishing mortality rate (effort)
-#' @slot Natural_mortality_rate From Maximum age, Tagging data, early fishery catch composition data
-#' @slot Maturity_at_length From gonadal analysis, growth and natural mortality rate estimates
-#' @slot Growth Paired length and age observations, maximum length and an estimate of natural mortality rate
-#' @slot Length_weight_conversion Paired weight and length observations, equivalent data from a similar species
-#' @slot Fleet_selectivity Length composition of catches with growth curve and natural mortality rate, estimates from a similar fleet type targetting a similar species
-#' @slot Catch_at_length Length composition of catches (length samples)
-#' @slot Catch_at_age Age composition of catches (age samples)
-#' @slot Recruitment_index Spawn survey, estimates from a stock assessment, VPA analysis of catch composition data
-#' @slot Stock_recruitment_relationship Stock assessment, a stock assessment of a similar species
-#' @slot Target_catch An agreed annual catch target, MSY proxy
-#' @slot Target_biomass An agreed absolute biomass target, mean historical biomass estimate
-#' @slot Target_index An agreed catch rate target
-#' @slot Abundance Fishery independent survey, current fishing mortality rate from recent length composition, natural mortality rate, maturity at age, growth and stock recruitment relationship, habitat and relative density extrapolation
-#'
-#' @author T. Carruthers and A. Hordyk
-#' @keywords classes
-#' @examples
-#' 
-#' newdata<-new('Fease')
-#' 
-setClass("Fease", representation(Name = "character", Case = "character", 
-                                 Catch = "numeric", Index = "numeric", Natural_mortality_rate = "numeric", 
-                                 Maturity_at_length = "numeric", Growth = "numeric", Length_weight_conversion = "numeric", 
-                                 Fleet_selectivity = "numeric", Catch_at_length = "numeric", Catch_at_age = "numeric", 
-                                 Recruitment_index = "numeric", Stock_recruitment_relationship = "numeric", 
-                                 Target_catch = "numeric", Target_biomass = "numeric", Target_index = "numeric", 
-                                 Abundance = "numeric"))
-
-# initialize Fease
-setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1, dec=c(".", ",")) {
-  # run an error check here
-  if (file.exists(file)) {
-    Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
-    dec <- match.arg(dec)
-    if (dec == ".") dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 
-                                                                                   1:Ncol))  # read 1st sheet
-    if (dec == ",") dat <- read.csv2(file, header = F, colClasses = "character", col.names = paste0("V", 
-                                                                                                   1:Ncol))  # read 1st sheet
-    nr <- nrow(dat)
-    ncases = ncol(dat) - 1
-    dname <- dat[, 1]
-    if (ncases == 1) dat <- array(dat[, 2:ncol(dat)], dim = c(nr, ncases))
-    if (ncases > 1) dat <- dat[, 2:ncol(dat)]
-    .Object@Name <- dat[match("Name", dname), 1]
-    .Object@Case <- as.character(dat[match("Case", dname), 1:ncases])
-    .Object@Catch <- as.numeric(dat[match("Catch", dname), 1:ncases])
-    .Object@Index <- as.numeric(dat[match("Index", dname), 1:ncases])
-    .Object@Natural_mortality_rate <- as.numeric(dat[match("Natural_mortality_rate",  dname), 1:ncases])
-    .Object@Maturity_at_length <- as.numeric(dat[match("Maturity_at_length",  dname), 1:ncases])
-    .Object@Growth <- as.numeric(dat[match("Growth", dname), 1:ncases])
-    .Object@Length_weight_conversion <- as.numeric(dat[match("Length_weight_conversion", dname), 1:ncases])
-    .Object@Fleet_selectivity <- as.numeric(dat[match("Fleet_selectivity", dname), 1:ncases])
-    .Object@Catch_at_length <- as.numeric(dat[match("Catch_at_length", dname), 1:ncases])
-    .Object@Catch_at_age <- as.numeric(dat[match("Catch_at_age", dname), 1:ncases])
-    .Object@Recruitment_index <- as.numeric(dat[match("Recruitment_index", dname), 1:ncases])
-    .Object@Stock_recruitment_relationship <- as.numeric(dat[match("Stock_recruitment_relationship", dname), 1:ncases])
-    .Object@Target_catch <- as.numeric(dat[match("Target_catch", dname), 1:ncases])
-    .Object@Target_biomass <- as.numeric(dat[match("Target_biomass", dname), 1:ncases])
-    .Object@Target_index <- as.numeric(dat[match("Target_index", dname), 1:ncases])
-    .Object@Abundance <- as.numeric(dat[match("Abundance", dname), 1:ncases])
-  } else {
-    .Object@Name <- "Blank DLM_Fease"
-    .Object@Case <- "Case 1"
-    .Object@Catch <- 1
-    .Object@Index <- 1
-    .Object@Natural_mortality_rate <- 1
-    .Object@Maturity_at_length <- 1
-    .Object@Growth <- 1
-    .Object@Length_weight_conversion <- 1
-    .Object@Fleet_selectivity <- 1
-    .Object@Catch_at_length <- 1
-    .Object@Catch_at_age <- 1
-    .Object@Recruitment_index <- 1
-    .Object@Stock_recruitment_relationship <- 1
-    .Object@Target_catch <- 1
-    .Object@Target_biomass <- 1
-    .Object@Target_index <- 1
-    .Object@Abundance <- 1
-  }
-  .Object
-  
-})
+# # ---- Fease Class ----
+# #' Class \code{'Fease'}
+# #' 
+# #' An object for storing information about what data are available or might be
+# #' available
+# #' 
+# #' @name Fease-class
+# #' @docType class
+# #' @section Objects from the Class: Objects can be created by calls of the form
+# #' \code{new('Fease', stock)}
+# #'
+# #' @slot Name The name of the data feasibility object
+# #' @slot Case The names of the data feasibility cases
+# #' @slot Catch Total annual catches
+# #' @slot Index An index of relative abundance, catch per unit effort data or of fishing mortality rate (effort)
+# #' @slot Natural_mortality_rate From Maximum age, Tagging data, early fishery catch composition data
+# #' @slot Maturity_at_length From gonadal analysis, growth and natural mortality rate estimates
+# #' @slot Growth Paired length and age observations, maximum length and an estimate of natural mortality rate
+# #' @slot Length_weight_conversion Paired weight and length observations, equivalent data from a similar species
+# #' @slot Fleet_selectivity Length composition of catches with growth curve and natural mortality rate, estimates from a similar fleet type targetting a similar species
+# #' @slot Catch_at_length Length composition of catches (length samples)
+# #' @slot Catch_at_age Age composition of catches (age samples)
+# #' @slot Recruitment_index Spawn survey, estimates from a stock assessment, VPA analysis of catch composition data
+# #' @slot Stock_recruitment_relationship Stock assessment, a stock assessment of a similar species
+# #' @slot Target_catch An agreed annual catch target, MSY proxy
+# #' @slot Target_biomass An agreed absolute biomass target, mean historical biomass estimate
+# #' @slot Target_index An agreed catch rate target
+# #' @slot Abundance Fishery independent survey, current fishing mortality rate from recent length composition, natural mortality rate, maturity at age, growth and stock recruitment relationship, habitat and relative density extrapolation
+# #'
+# #' @author T. Carruthers and A. Hordyk
+# #' @keywords classes
+# #' @examples
+# #' 
+# #' newdata<-new('Fease')
+# #' 
+# setClass("Fease", representation(Name = "character", Case = "character", 
+#                                  Catch = "numeric", Index = "numeric", Natural_mortality_rate = "numeric", 
+#                                  Maturity_at_length = "numeric", Growth = "numeric", Length_weight_conversion = "numeric", 
+#                                  Fleet_selectivity = "numeric", Catch_at_length = "numeric", Catch_at_age = "numeric", 
+#                                  Recruitment_index = "numeric", Stock_recruitment_relationship = "numeric", 
+#                                  Target_catch = "numeric", Target_biomass = "numeric", Target_index = "numeric", 
+#                                  Abundance = "numeric"))
+# 
+# # initialize Fease
+# setMethod("initialize", "Fease", function(.Object, file = "nada", ncases = 1, dec=c(".", ",")) {
+#   # run an error check here
+#   if (file.exists(file)) {
+#     Ncol <- max(unlist(lapply(strsplit(readLines(file), ","), length)))
+#     dec <- match.arg(dec)
+#     if (dec == ".") dat <- read.csv(file, header = F, colClasses = "character", col.names = paste0("V", 
+#                                                                                    1:Ncol))  # read 1st sheet
+#     if (dec == ",") dat <- read.csv2(file, header = F, colClasses = "character", col.names = paste0("V", 
+#                                                                                                    1:Ncol))  # read 1st sheet
+#     nr <- nrow(dat)
+#     ncases = ncol(dat) - 1
+#     dname <- dat[, 1]
+#     if (ncases == 1) dat <- array(dat[, 2:ncol(dat)], dim = c(nr, ncases))
+#     if (ncases > 1) dat <- dat[, 2:ncol(dat)]
+#     .Object@Name <- dat[match("Name", dname), 1]
+#     .Object@Case <- as.character(dat[match("Case", dname), 1:ncases])
+#     .Object@Catch <- as.numeric(dat[match("Catch", dname), 1:ncases])
+#     .Object@Index <- as.numeric(dat[match("Index", dname), 1:ncases])
+#     .Object@Natural_mortality_rate <- as.numeric(dat[match("Natural_mortality_rate",  dname), 1:ncases])
+#     .Object@Maturity_at_length <- as.numeric(dat[match("Maturity_at_length",  dname), 1:ncases])
+#     .Object@Growth <- as.numeric(dat[match("Growth", dname), 1:ncases])
+#     .Object@Length_weight_conversion <- as.numeric(dat[match("Length_weight_conversion", dname), 1:ncases])
+#     .Object@Fleet_selectivity <- as.numeric(dat[match("Fleet_selectivity", dname), 1:ncases])
+#     .Object@Catch_at_length <- as.numeric(dat[match("Catch_at_length", dname), 1:ncases])
+#     .Object@Catch_at_age <- as.numeric(dat[match("Catch_at_age", dname), 1:ncases])
+#     .Object@Recruitment_index <- as.numeric(dat[match("Recruitment_index", dname), 1:ncases])
+#     .Object@Stock_recruitment_relationship <- as.numeric(dat[match("Stock_recruitment_relationship", dname), 1:ncases])
+#     .Object@Target_catch <- as.numeric(dat[match("Target_catch", dname), 1:ncases])
+#     .Object@Target_biomass <- as.numeric(dat[match("Target_biomass", dname), 1:ncases])
+#     .Object@Target_index <- as.numeric(dat[match("Target_index", dname), 1:ncases])
+#     .Object@Abundance <- as.numeric(dat[match("Abundance", dname), 1:ncases])
+#   } else {
+#     .Object@Name <- "Blank DLM_Fease"
+#     .Object@Case <- "Case 1"
+#     .Object@Catch <- 1
+#     .Object@Index <- 1
+#     .Object@Natural_mortality_rate <- 1
+#     .Object@Maturity_at_length <- 1
+#     .Object@Growth <- 1
+#     .Object@Length_weight_conversion <- 1
+#     .Object@Fleet_selectivity <- 1
+#     .Object@Catch_at_length <- 1
+#     .Object@Catch_at_age <- 1
+#     .Object@Recruitment_index <- 1
+#     .Object@Stock_recruitment_relationship <- 1
+#     .Object@Target_catch <- 1
+#     .Object@Target_biomass <- 1
+#     .Object@Target_index <- 1
+#     .Object@Abundance <- 1
+#   }
+#   .Object
+#   
+# })
+# 
 
 # ---- Stock Class ----
 #' Class \code{'Stock'}
@@ -1348,24 +1349,24 @@ setMethod("initialize", "MSE", function(.Object, Name, nyears, proyears,
 # })
 
 
-#' Example data object
-#' 
-#' Example data object with a number of output control MPs run on it, and
-#' includes resulting distributions of TACs
-#' 
-#' 
-#' @name ourReefFish
-#' @docType data
-#' @usage data('ourReefFish')
-#' @keywords datasets
-#' @examples
-#' \dontrun{ 
-#' data(ourReefFish)
-#' str(ourReefFish)  
-#' plot(ourReefFish) 
-#' }
-#'
-NULL
+# #' Example data object
+# #' 
+# #' Example data object with a number of output control MPs run on it, and
+# #' includes resulting distributions of TACs
+# #' 
+# #' 
+# #' @name ourReefFish
+# #' @docType data
+# #' @usage data('ourReefFish')
+# #' @keywords datasets
+# #' @examples
+# #' \dontrun{ 
+# #' data(ourReefFish)
+# #' str(ourReefFish)  
+# #' plot(ourReefFish) 
+# #' }
+# #'
+# NULL
 
 
 # ---- PMobj Class ----
@@ -1386,7 +1387,6 @@ NULL
 #' @slot Mean Mean probability (mean over years and simulations). Numeric. Length nMPs 
 #' @slot MPs Name of MPs. Single value. Character string  
 #' @author  A. Hordyk
-#' @importFrom methods show
 #' @keywords classes
 
 setClass("PMobj", representation(Name = "character",  Caption='label.class', 
@@ -1415,8 +1415,8 @@ calcProb <- function(PM,  MSEobj) {
 #' @export
 #'
 calcMean <- function(Prob, MSEobj) {
-  if (class(Prob) == 'matrix') return( apply(Prob , 2, mean))
-  if (class(Prob) == 'numeric') return(mean(Prob))
+  if (class(Prob) == 'matrix') return( apply(Prob , 2, mean, na.rm=TRUE))
+  if (class(Prob) == 'numeric') return(mean(Prob, na.rm=TRUE))
 }
 
 show <- function(object) methods::show(object)
@@ -1428,35 +1428,62 @@ show <- function(object) methods::show(object)
 #' @rdname show-MSE
 #' @export
 setMethod("show", signature = (object="PMobj"), function(object) {
-  cat(object@Name)
-  cat("\n", object@Caption)
-  cat("\n")
   
-  nMP <- length(object@MPs)
-  if (nMP > 1) nsim <- dim(object@Prob)[1]
-  if (nMP == 1) nsim <- length(object@Prob)
-  
-  nprint <- min(nsim, 10)
-  if (nMP > 1) df <- data.frame(object@Prob[1:nprint,])
-  if (nMP == 1) df <- data.frame(object@Prob[1:nprint])
-  if (nMP > 1) lst <- object@Prob[nprint+1,]
-  if (nMP == 1) lst <- object@Prob[nprint+1]
-  df <- signif(df,2)
-  lst <- signif(lst,2)
-  colnames(df) <- object@MPs
-  names(lst) <- object@MPs
-  if (nsim > (nprint+1)) {
-    df <- rbind(df,
-                rep(".", nMP),
-                rep(".", nMP),
-                rep(".", nMP),
-                lst)
-    rownames(df) <- c(1:(nprint+3), nsim)
+  sls <- slotNames(object)
+  df <- data.frame(Slot=sls, Value=NA, stringsAsFactors = FALSE)
+  if (any(sapply(sls, function(sl) length(slot(object, sl))) == 0)) {
+    cat("Incomplete PMobj\n")
+    for (sl in sls) {
+      r <- match(sl, sls)
+      slval <- slot(object, sl)
+      if (class(slval) == "array" & length(slval)>0) {
+        df[r,2] <- 'array'
+      } else if (class(slval) == "matrix" & length(slval)>0) {
+        df[r,2] <- 'matrix'
+      } else if (length(slval) > 0 & class(slval) != "call") {
+        df[r,2] <- slval
+      } else {
+        df[r, 2] <- 'not defined'
+      }
+      
+    }
+    print(df)
+  } else {
+    cat(object@Name)
+    cat("\n", object@Caption)
+    cat("\n")
+    
+    nMP <- length(object@MPs)
+    if (nMP > 1) nsim <- dim(object@Prob)[1]
+    if (nMP == 1) nsim <- length(object@Prob)
+    
+    nprint <- min(nsim, 10)
+    if (nMP > 1) df <- data.frame(object@Prob[1:nprint,])
+    if (nMP == 1) df <- data.frame(object@Prob[1:nprint])
+    if (nMP > 1) lst <- object@Prob[nprint+1,]
+    if (nMP == 1) lst <- object@Prob[nprint+1]
+    df <- signif(df,2)
+    lst <- signif(lst,2)
+    colnames(df) <- object@MPs
+    names(lst) <- object@MPs
+    if (nsim > (nprint+1)) {
+      df <- rbind(df,
+                  rep(".", nMP),
+                  rep(".", nMP),
+                  rep(".", nMP),
+                  lst)
+      rownames(df) <- c(1:(nprint+3), nsim)
+    }
+    print(df)
+    
+    cat("\nMean\n")
+    print(signif(object@Mean,2))  
+    
+    
   }
-  print(df)
+ 
   
-  cat("\nMean\n")
-  print(signif(object@Mean,2))
+
 })
 
 
@@ -1465,9 +1492,10 @@ setMethod("show", signature = (object="PMobj"), function(object) {
 #' @param object object of class MSE
 #' @param ... a list of names of PM methods
 #' @param silent Should summary be printed to console? Logical.
+#' @param Refs An optional named list (matching the PM names) with numeric values to override the default `Ref` values. See examples.
 #' @rdname summary-MSE
 #' @export
-setMethod('summary', signature="MSE", function(object, ..., silent=FALSE) {
+setMethod('summary', signature="MSE", function(object, ..., silent=FALSE, Refs=NULL) {
   PMlist <- unlist(list(...))
   
   if(length(PMlist) == 0) PMlist <- avail("PM")
@@ -1479,21 +1507,29 @@ setMethod('summary', signature="MSE", function(object, ..., silent=FALSE) {
   if (!silent) message("Calculating Performance Metrics")
   storeMean <- vector('list', length(PMlist))
   storeName <- vector('list', length(PMlist))
+  storeCap <- vector('list', length(PMlist))
   storeHeading <- vector('list', length(PMlist))
   storeMP <- vector('list', length(PMlist))
   for (X in 1:length(PMlist)) {
-    runPM <- eval(call(PMlist[[X]],object))
+    ref <- Refs[[PMlist[X]]]
+    if (is.null(ref)) {
+      runPM <- eval(call(PMlist[X], object))  
+    } else {
+      runPM <- eval(call(PMlist[X], object, Ref=ref))
+    }
     storeMean[[X]] <- runPM@Mean
     storeName[[X]] <- runPM@Name
-    # storeHeading[[X]] <- runPM@call
+    storeCap[[X]] <- runPM@Caption
     storeMP[[X]] <- runPM@MPs
   }
   
-  df <- data.frame('MP'=storeMP[[1]], signif(do.call('cbind', storeMean),2))
+  df <- data.frame('MP'=storeMP[[1]], signif(do.call('cbind', storeMean),2), stringsAsFactors = FALSE)
   # heading <- do.call('rbind', storeHeading)
   colnames(df)[2:(length(PMlist)+1)] <- PMlist #caps # gsub(" ", "", caps)
   if (!silent) {
-    print(data.frame('Performance Metrics' = do.call('rbind', storeName)))
+    dfprint <<- data.frame('Performance Metrics' = do.call('rbind', storeName), gap="", do.call('rbind', storeCap))
+    names(dfprint)[2:3] <- ''
+    print(dfprint)
     cat("\n")
     cat("\nProbability:\n")
     print(df)  

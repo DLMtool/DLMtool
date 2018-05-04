@@ -1,5 +1,122 @@
+##### MP plotting #####
+# default plotting options
+leg.pos <- col1 <- col2 <- col3 <- col4 <- pt.cex <- tex.cex <- cex.lab <- lwd <- leg.post <- NULL
+MP.plot <- new.env()
+MP.plot$col1 <- "#2B2E6E"
+MP.plot$col2 <- "#9F812D"
+MP.plot$col3 <- "black"
+MP.plot$col4 <- "darkgray"
+MP.plot$pt.cex <- 2
+MP.plot$tex.cex <- 1.1
+MP.plot$cex.lab <- 1.25
+MP.plot$lwd <-3
+MP.plot$leg.pos <- "topleft"
+
+plotBK <- function(DF) {
+  p <- ggplot(DF, aes(factor(1), vals, fill=vars)) + facet_wrap(~vars, scales="free") + 
+    geom_boxplot() + theme_classic() + expand_limits(y=0) +
+    labs(x="", y="value", fill="Variables") +
+    theme(
+      strip.background = element_blank(),
+      strip.text.x = element_blank(),
+      axis.text.x = element_blank()
+    ) 
+  print(p)
+}
+
+
+plotDCAC <- function(TAC, Data, Bt_K) {
+  boxplot(TAC, add=TRUE, at=max(Data@Year)+1, col="darkgrey", width=1, outline=TRUE, axes=FALSE)
+  text(max(Data@Year)+1, quantile(TAC, 0.05), "TAC", col="black", pos=2)
+  op <- par(no.readonly = TRUE)
+  on.exit(par(op))
+  par(new = T)
+  plot(c(1, max(Data@Year)+3), c(0,1), type="n", axes=FALSE, xlab="", ylab="")
+  quants <- quantile(Bt_K, c(0.025, 0.5, 0.975))
+  points(max(Data@Year)+3, quants[2], pch=16, col="blue", cex=1.5)
+  lines(c(max(Data@Year)+3, max(Data@Year)+3), c(quants[1], quants[3]), col="blue")
+  axis(side=4, las=1, col="blue", labels=FALSE)
+  at = axTicks(4)
+  mtext(side = 4, text = at, at = at, col = "blue", line = 1, las=1)
+  mtext(side=4, "Depletion (median + 95 percentiles)", line=3, cex=1.25, col="blue")
+}
+
+
+Itarget_p <- function(...) {
+ 
+  inlist <- list(...)
+
+  # default plotting options
+  for (nm in names(MP.plot)) {
+    if (!nm %in% names(inlist)) {
+      assign(nm, MP.plot[[nm]])
+    } else {
+      assign(nm, inlist[[nm]])
+    }
+  }
+
+
+  ylim <- c(0, max(c(1, I0, Itarget, Data@Ind[x, ])))
+  op <- par(no.readonly = TRUE)
+  on.exit(par(op))
+  par(mfrow=c(1,2))
+  plot(Data@Year, Data@Ind[x, ], ylim=ylim, type='l', bty="l", 
+       xlab="Year", ylab="Index of Total Abundance", las=1, cex.lab=cex.lab) 
+  abline(v=Data@LHYear, lty=3, col=col4)
+  text(Data@LHYear, min(ylim)*1.15, "Last Historical Year", col=col4, pos=2)
+  
+  lines(Data@Year[ind3], rep(Iave, length(ind3)), col=col2, lwd=lwd)
+  lines(Data@Year[ind], rep(I0, length(Data@Year[ind])), col=col2, lwd=lwd-1)
+  
+  lines(Data@Year[ind], rep(Irecent, length(ind)), col=col1, lwd=lwd)
+  points(max(Data@Year[ind]), Itarget, col=col3, cex=pt.cex, pch=16)
+  
+
+  legend(leg.pos, lty=c(1,1,1,NA), pch=c(NA, NA, NA, 16), col=c(col1, col2, col2, col3), lwd=c(lwd, lwd, lwd-1, NA),
+         legend=c(as.expression(bquote("I"[recent]~(mean~last~ .(yrsmth) ~ "years"))),
+                  as.expression(bquote("I"[average]~(mean~last~ .(yrsmth*2) ~ "historical years"))),
+                  as.expression(bquote("I"[0]~(0.8~"I"[average]))),
+                  as.expression(bquote("I"[target]~(.(Imulti)~"I"[average])))),
+         bty="n", pt.cex=pt.cex, cex=tex.cex, xpd=TRUE)
+  
+  
+  
+  ylim <- range(c(C_dat,TAC, Data@Cat[x, ]))
+
+  plot(c(Data@Year, max(Data@Year)+1), c(Data@Cat[x, ], NA), ylim=ylim, type="l", bty="l", 
+       xlab="Year", ylab="Catch", las=1, cex.lab=cex.lab)
+  lines(Data@Year[ind2], C_dat, col=col1, lwd=lwd-1)
+  
+  abline(v=Data@LHYear, lty=3, col=col4)
+  text(Data@LHYear, min(ylim)*1.1, "Last Historical Year", col=col4, pos=2)
+  lines(Data@Year[ind2], rep(mean(C_dat), length(ind2)), col=col1, lwd=lwd)
+  if ((1-xx) ==1) {
+    legend(leg.pos, lty=c(1, NA, NA), pch=c(NA, 16), lwd=lwd, col=c(col1, "black"), 
+           legend =c(as.expression(bquote("C"[average]~(last~ .(yrsmth) ~ "historical years"))),
+                     "TAC"),
+           bty="n", pt.cex=pt.cex, cex=tex.cex, xpd=TRUE) 
+  } else {
+    points(mean(Data@Year[ind2]), mean(TACstar), cex=pt.cex, pch=16, col=col1)
+    legend(leg.pos, lty=c(1, NA, NA), pch=c(NA, 16, 16), lwd=lwd, col=c(col1, col1, "black"), 
+           legend =c(as.expression(bquote("C"[average]~(last~ .(yrsmth) ~ "historical years"))),
+                     as.expression(bquote("C"[star]~(.(1-xx)~"C"[average]))),
+                     "TAC"),
+           bty="n", pt.cex=pt.cex, cex=tex.cex, xpd=TRUE) 
+  }
+  
+  points(max(Data@Year)+1, mean(TAC), cex=pt.cex, pch=16)
+  if (!all(TAC/mean(TAC) == 1)) {
+    boxplot(TAC, at=max(Data@Year)+1, add=TRUE, xpd=NA, axes=FALSE, outline = FALSE)  
+  }
+}
+
+
 
 ## General Supporting Functions ####
+
+
+
+
 
 iVB <- function(t0, K, Linf, L) {
   max(1, ((-log(1 - L/Linf))/K + t0))  # Inverse Von-B

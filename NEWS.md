@@ -2,13 +2,17 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 ## DLMtool 5.1.999 Development Version 
 - update PM methods and add to userguide - in development
+- MSE plotting functions - all been updated - in development
 - improve convergence diagnostic in `Converge`
 - modified CAL generation to deal with dome-shaped selectivity better 
 - improved help documentation for functions and MPs by combining and linking similiar functions
-- makeMeanMP - added - TODO Describe
+- makeMeanMP - added - TODO add to FAQ 
 - option for variable management interval - TODO add to FAQ
 - added LHdatabase from FishLife and functions to predict life-history parameters 
 - add LH2OM and  predictLH - predict correlated life-history parameters - TODO add to user guide/FAQ
+- revised Fease feature - TODO add to FAQ and userguide
+- iSCAM and SS2DLM functions have been moved from DLMtool to MSEtool
+- update help documentation for all MPs - in development
 
 ## DLMtool 5.1.3 
 - fix Replace function for new OM slots

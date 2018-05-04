@@ -4,20 +4,41 @@
 \alias{Fease}
 \title{MP feasibility diagnostic}
 \usage{
-Fease(feaseobj, outy = "table")
+Fease(Data = NULL, TAC = TRUE, TAE = TRUE, SL = TRUE, Spatial = TRUE,
+  names.only = TRUE, msg = TRUE, include.ref = FALSE)
 }
 \arguments{
-\item{feaseobj}{An object of class 'Fease'}
+\item{Data}{An object of class 'Data'. Optional. If Data object is included, the returned MPs are both feasible (in terms of management)
+and possible (sufficient data to run MP)}
 
-\item{outy}{Determines whether you would like a full table or some column of
-the table for a specific case of the feasibility object. When set equal to
-table, the full table is produced. When set equal to an integer number the
-names of MPs that are feasible for that case are returned.}
+\item{TAC}{Logical. Are catch limits feasible for this fishery?}
+
+\item{TAE}{Logical. Are effort controls feasible for this fishery?}
+
+\item{SL}{Logical. Are size-selectivity regulations (either gear changes or size-retention regulations) feasible for this fishery?}
+
+\item{Spatial}{Logical. Are spatial closures feasible for this fishery?}
+
+\item{names.only}{Logical. Should only the names of the feasible MPs be returned (default)? If FALSE, a data frame with MP name, and two columns
+of logical values: Can (possible given data) and Fease (feasible given management constraints) is returned}
+
+\item{msg}{Logical. Should messages be printed to the console?}
+
+\item{include.ref}{Logical. Should reference MPs (e.g. FMSYref) be included as feasible methods? Default is FALSE}
+}
+\value{
+Either a vector of MP names that are feasible for the fishery (default) or a 3 column data frame (\code{names.only=FALSE}).
 }
 \description{
 What MPs may be run (best case scenario) for various data-availability
-scenarios?
+scenarios and management constraints?
+}
+\examples{
+Fease(TAC=FALSE)
+Fease(SL=FALSE, Spatial=FALSE)
+Data <- get(avail("Data")[1])
+Fease(Data, TAE=FALSE, names.only=FALSE)
 }
 \author{
-T. Carruthers
+T. Carruthers & A. Hordyk
 }

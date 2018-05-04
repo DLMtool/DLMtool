@@ -5,7 +5,7 @@
 \alias{summary,MSE-method}
 \title{Summary of MSE object}
 \usage{
-\S4method{summary}{MSE}(object, ..., silent = FALSE)
+\S4method{summary}{MSE}(object, ..., silent = FALSE, Refs = NULL)
 }
 \arguments{
 \item{object}{object of class MSE}
@@ -13,6 +13,8 @@
 \item{...}{a list of names of PM methods}
 
 \item{silent}{Should summary be printed to console? Logical.}
+
+\item{Refs}{An optional named list (matching the PM names) with numeric values to override the default \code{Ref} values. See examples.}
 }
 \description{
 Summary of MSE object

@@ -12,11 +12,11 @@
 \alias{Yield}
 \title{Performance Metrics}
 \usage{
-P10(MSEobj = NULL, Ref = 0.1)
+P10(MSEobj = NULL, Ref = 0.1, Yrs = NULL)
 
-P50(MSEobj = NULL, Ref = 0.5)
+P50(MSEobj = NULL, Ref = 0.5, Yrs = NULL)
 
-P100(MSEobj = NULL, Ref = 1)
+P100(MSEobj = NULL, Ref = 1, Yrs = NULL)
 
 POF(MSEobj = NULL, Ref = 1)
 

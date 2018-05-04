@@ -13,7 +13,7 @@ plot.MSE <- function(x, ...) {
 
 # modified from
 # https://github.com/tidyverse/ggplot2/wiki/share-a-legend-between-two-ggplot2-graphs
-grid_arrange_shared_legend <- function(plots, ncol = length(plots), nrow = 1, position = c("bottom", "right", "none")) {
+grid_arrange_shared_legend <- function(plots, ncol = length(plots), nrow = 1, position = c("bottom", "right")) {
   
   
   position <- match.arg(position)
@@ -1164,7 +1164,7 @@ Pplot <- function(MSEobj, nam = NA, maxMP = 10,MPs=NA,maxsims=20) {
   }
   mtext("Projection year", 1, outer = T, line = 1.2)
   if (is.na(nam)) 
-    mtext(deparse(substitute(MSEobj)), 3, outer = T, line = 0.3, font = 2)
+    mtext(deparse(quote(MSEobj)), 3, outer = T, line = 0.3, font = 2)
   if (!is.na(nam) & !is.character(nam)) 
     mtext(MSEobj@Name, 3, outer = T, line = 0.3, font = 2)
   if (!is.na(nam) & is.character(nam)) 
@@ -1720,7 +1720,7 @@ Tplot2 <- function(MSEobj, nam = NA) {
                                                                                         mm, ])), 3) * 100
   }
   par(mfrow = c(1, 2), mar = c(5, 4, 1, 1), oma = c(0, 0, 2, 0))
-  browser()
+
   tradeoffplot(STY, LTY, "P(Short term yield > 0.5 FMSY)", "P(Long term yield > 0.5 FMSY)", 
                MSEobj@MPs[1:MSEobj@nMPs], vl = 1, hl = 1)
   tradeoffplot(B10, VY, "P(Biomass > 0.1 BMSY)", "P(CV in yield < 0.1)", 
@@ -1736,11 +1736,7 @@ Tplot2 <- function(MSEobj, nam = NA) {
 #' @describeIn Tplot By default, trade-off plots among LTY, STY, and biomass level B50 
 #' (fraction of simulations in which biomass stays above 50 percent of BMSY), and 
 #' Average Annual Variability in Yield (AAVY).
-#' @importFrom ggplot2 ggplot aes geom_rect geom_point xlim ylim xlab ylab theme theme_classic labs ggplotGrob
-#' @importFrom ggrepel geom_text_repel
-#' @importFrom gridExtra arrangeGrob
-#' @importFrom grid unit.c unit grid.newpage grid.draw
-#' @importFrom utils combn
+
 #' @export
 Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
   PMlist <- unlist(list(...))

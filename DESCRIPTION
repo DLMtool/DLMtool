@@ -25,6 +25,7 @@ Imports:
     coda,
     devtools,
     dplyr,
+    fmsb,
     methods,
     grDevices,
     ggplot2,

@@ -6,7 +6,7 @@
 \title{Age-composition-based estimate of current stock depletion given constant Z
 linked to an FMSY estimate to provide OFL}
 \usage{
-CompSRA(x, Data, reps = 100)
+CompSRA(x, Data, reps = 100, plot = FALSE)
 
 CompSRA4010(x, Data, reps = 100)
 }
@@ -15,9 +15,13 @@ CompSRA4010(x, Data, reps = 100)
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of stochastic samples of the TAC.}
+\item{reps}{The number of stochastic samples of the TAC recommendation}
+
+\item{plot}{Logical. Show the plot?}
 }
 \value{
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
+
 A Rec object with a vector of TAC recommendation
 }
 \description{
@@ -33,6 +37,8 @@ an FMSY estimate.
 }}
 
 \note{
+See the \href{https://dlmtool.github.io/DLMtool/reference/index.html}{online documentation} for correctly rendered equations.
+
 Given a fixed historical F, What level of depletion gives you this
 length composition?
 }

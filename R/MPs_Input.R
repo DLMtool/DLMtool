@@ -179,7 +179,6 @@ class(curE75) <- "MP"
 
 
 #' @describeIn DD Effort-control version. The recommended effort is EMSY.
-#' @importFrom stats approx 
 #' @export 
 DDe <- function(x, Data, reps = 100) {
   dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
@@ -237,7 +236,6 @@ DDe <- function(x, Data, reps = 100) {
 class(DDe) <- "MP"
 
 #' @describeIn DD Variant of \code{DDe} that limits the maximum change in effort to 10 percent.
-#' @importFrom stats approx
 #' @export DDes
 DDes <- function(x, Data, reps = 100, LB = 0.9, UB = 1.1) {
   dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
@@ -300,7 +298,6 @@ class(DDes) <- "MP"
 
 
 #' @describeIn DD Variant of \code{DDe} where the recommended effort is 75\% EMSY.
-#' @importFrom stats approx
 #' @export 
 DDe75 <- function(x, Data, reps = 100) {
   dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
