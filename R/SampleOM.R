@@ -211,6 +211,11 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     ind <- as.matrix(expand.grid(1:nsim, 1:maxage, 1:(nyears + proyears)))  # an index for calculating Length at age
     Len_age[ind] <- Linfarray[ind[, c(1, 3)]] * (1 - exp(-Karray[ind[, c(1, 3)]] * 
                                                            (Agearray[ind[, 1:2]] - t0[ind[, 1]])))
+    
+    linfs <- gettempvar(max(Stock@Linf), 0, max(Stock@Linfgrad), nyears + proyears, 
+               1, matrix(1, nrow=1, ncol=proyears+nyears))
+    MaxBin <- ceiling(max(linfs) + 3 * max(linfs) * max(Stock@LenCV)) 
+    
   } else { # Len_age has been passed in with cpars
     if (any(dim(Len_age) != c(nsim, maxage, nyears + proyears))) 
       stop("'Len_age' must be array with dimensions: nsim, maxage, nyears + proyears") 
@@ -235,6 +240,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       t0array <- matrix(t0, nrow=nsim, ncol=proyears+nyears)
       if (Msg) cat("\n")
     }
+    MaxBin <- ceiling(max(Stock@cpars$Len_age) + 3 * max(Stock@cpars$Len_age) * max(Stock@LenCV)) 
   }
   
   StockOut$maxlen <- maxlen <- Len_age[, maxage, nyears] # reference length for Vmaxlen 
@@ -246,7 +252,6 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (!exists("LatASD", inherits=FALSE)) LatASD <- Len_age * array(LenCV, dim=dim(Len_age)) # SD of length-at-age 
   if (any(dim(LatASD) != dim(Len_age))) stop("Dimensions of 'LatASD' must match dimensions of 'Len_age'", .call=FALSE)
   
-  MaxBin <- ceiling(max(Linfarray) + 3 * max(LatASD))
   binWidth <- ceiling(0.03 * MaxBin)
   if (!exists("CAL_bins", inherits=FALSE)) CAL_bins <- seq(from = 0, to = MaxBin + binWidth, by = binWidth)
   if (!exists("CAL_binsmid", inherits=FALSE)) CAL_binsmid <- seq(from = 0.5 * binWidth, by = binWidth, length = length(CAL_bins) - 1)
