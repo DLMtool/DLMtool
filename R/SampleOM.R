@@ -212,7 +212,12 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     Len_age[ind] <- Linfarray[ind[, c(1, 3)]] * (1 - exp(-Karray[ind[, c(1, 3)]] * 
                                                            (Agearray[ind[, 1:2]] - t0[ind[, 1]])))
     
-    linfs <- gettempvar(max(Stock@Linf), 0, max(Stock@Linfgrad), nyears + proyears, 
+    if (length(Stock@cpars$Linf) >0) {
+      maxLinf <- max(Stock@cpars$Linf)
+    } else {
+      maxLinf <- max(Stock@Linf)
+    }
+    linfs <- gettempvar(maxLinf, 0, max(Stock@Linfgrad), nyears + proyears, 
                1, matrix(1, nrow=1, ncol=proyears+nyears))
     MaxBin <- ceiling(max(linfs) + 3 * max(linfs) * max(Stock@LenCV)) 
     
@@ -310,6 +315,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       # checks for unrealistically high length at maturity
       sL50[sL50/Linf > 0.95] <- NA
       L50 <- apply(sL50, 1, function(x) x[!is.na(x)][1])
+      L50[is.na(L50)] <- 0.95 * Linf[is.na(L50)]
     }
     if (!exists("L50_95", inherits=FALSE)) {
       L50_95 <- array(runif(nsim * 50, Stock@L50_95[1], Stock@L50_95[2]), c(nsim, 50))  # length at 95% maturity
