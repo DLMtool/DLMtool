@@ -647,10 +647,13 @@ joinMSE <- function(MSEobjs = NULL) {
   names(outlist) <- sns
   
   Misc<-list()
-  if(class(MSEobjs[[1]]@Misc[[1]])=="Data"){ #Posterior predicted data joining
-    DataList<-lapply(MSEobjs,function(x)slot(x,"Misc")[[1]])
-    Misc<-list(joinData(DataList))
+  if (length(MSEobjs[[1]]@Misc)>0) {
+    if(class(MSEobjs[[1]]@Misc[[1]])=="Data"){ #Posterior predicted data joining
+      DataList<-lapply(MSEobjs,function(x)slot(x,"Misc")[[1]])
+      Misc<-list(joinData(DataList))
+    }
   }
+ 
   
   newMSE <- new("MSE", Name = outlist$Name, nyears = unique(outlist$nyears), 
                 proyears = unique(outlist$proyears), nMP = unique(outlist$nMP), 
