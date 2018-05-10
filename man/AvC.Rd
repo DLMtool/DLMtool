@@ -32,12 +32,17 @@ For completeness, the TAC is calculated by:
 where \eqn{\text{TAC}} is the the mean catch recommendation, \eqn{n} is the number of historical years, and
 \eqn{C_y}  is the catch in historical year \eqn{y}
 }
-\note{
-See the \href{https://dlmtool.github.io/DLMtool/reference/index.html}{online documentation} for correctly rendered equations.
-}
 \section{Required \link[=Data-class]{Data}}{
 
 \code{AvC}: Cat, LHYear, Year
+}
+
+\section{A Note on Equations}{
+ 
+Some different words
+[1] "AvC"
+[1] "AvC"
+character(0)
 }
 
 \examples{
@@ -47,7 +52,7 @@ Rec <- AvC(1, Data, reps=1000, plot=TRUE) # 1,000 log-normal samples with CV = 0
         
 }
 \seealso{
-Other Average Catch MPs: \code{\link{DCAC}}
+Other Average Catch MPs: \code{\link{DCACs}}
 }
 \author{
 T. Carruthers

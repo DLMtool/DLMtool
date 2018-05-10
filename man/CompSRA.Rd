@@ -3,12 +3,11 @@
 \name{CompSRA}
 \alias{CompSRA}
 \alias{CompSRA4010}
-\title{Age-composition-based estimate of current stock depletion given constant Z
-linked to an FMSY estimate to provide OFL}
+\title{Age-Composition Stock-Reduction Analysis}
 \usage{
 CompSRA(x, Data, reps = 100, plot = FALSE)
 
-CompSRA4010(x, Data, reps = 100)
+CompSRA4010(x, Data, reps = 100, plot = FALSE)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -21,26 +20,66 @@ CompSRA4010(x, Data, reps = 100)
 }
 \value{
 An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
-
-A Rec object with a vector of TAC recommendation
 }
 \description{
-Estimates an OFL based on a Stock Reduction analysis fitted to current
-age-composition data. Knife-edge vulnerability at age at maturity allows for
-an FMSY estimate.
+A stock reduction analysis (SRA) model is fitted to the age-composition
+from the last 3 years (or less if fewer data are available)
+}
+\details{
+A stock reduction analysis (SRA) model is fitted to the age-composition
+from the last 3 years (or less if fewer data are available) assuming a constant
+total mortality rate (\emph{Z}) and used to estimate current stock depletion (\emph{D}),
+\emph{FMSY}, and stock abundance (\emph{A}).
+
+Fishing mortality is estimated as:
+\deqn{F = -\log{left(1-\frac{C}{V}\right)}}
+where \eqn{C} and \eqn{V} are catch and vulnerable biomass of first age of full
+selection respectively.
+
+Abundance is estimated in the SRa. \eqn{F_{\text{MSY}}} is calculated assuming
+knife-edge vulnerability at the age of full selection.
+
+The TAC is calculated as \eqn{F_\text{MSY} A}. \code{CompSRA4010} uses a 40-10
+harvest control rule to reduce TAC at low biomass.
 }
 \section{Functions}{
 \itemize{
-\item \code{CompSRA}: Basic control rule where OFL=FMSY*F/C
+\item \code{CompSRA}: TAC is FMSY x Abundance
 
-\item \code{CompSRA4010}: With a 40-10 control rule
+\item \code{CompSRA4010}: With a 40-10 control rule based on estimated depletion
 }}
 
-\note{
-See the \href{https://dlmtool.github.io/DLMtool/reference/index.html}{online documentation} for correctly rendered equations.
+\section{Required \link[=Data-class]{Data}}{
 
-Given a fixed historical F, What level of depletion gives you this
-length composition?
+\code{CompSRA}: CAA, Cat, L50, LFC, LFS, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
+
+
+\code{CompSRA}: CAA, Cat, L50, LFC, LFS, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
+}
+
+\section{A Note on Equations}{
+ 
+Some different words
+[1] "CompSRA"
+[1] "CompSRA"
+character(0)
+
+ 
+Some different words
+[1] "CompSRA"
+[1] "CompSRA"
+character(0)
+}
+
+\examples{
+\dontrun{
+CompSRA(1, DLMtool::SimulatedData, plot=TRUE)
+}
+
+\dontrun{
+CompSRA4010(1, DLMtool::SimulatedData, plot=TRUE)
+}
+
 }
 \author{
 T. Carruthers

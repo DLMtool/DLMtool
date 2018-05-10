@@ -266,3 +266,11 @@ NULL
 "LHdatabase"
 
 
+#'  ReqData 
+#'
+#'  Dataframe with required data slots for built-in MPs
+#'
+#'
+"ReqData"
+
+

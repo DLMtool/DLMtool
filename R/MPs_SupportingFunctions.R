@@ -46,7 +46,47 @@ plotDCACadd <- function(TAC, Data, Bt_K) {
   mtext(side=4, "Depletion (median + 95 percentiles)", line=3, cex=1.25, col="blue")
 }
 
+plotBK <- function(DF) {
+  DF2 <- DF %>% filter(vars %in% c("Lc/Linf", "K", "Fmax"))
+  p1 <- ggplot(DF2, aes(x=vars, y=vals)) + geom_boxplot() + 
+    theme_classic() + expand_limits(y=0) + labs(x="", y='Values')
+  DF3 <- DF %>% filter(!vars %in% c("Lc/Linf", "K", "Fmax"))
+  p2 <- ggplot(DF3, aes(x=vars, y=vals)) + geom_boxplot() + 
+    theme_classic() + expand_limits(y=0) + labs(x="", y='Values')
+  
+  gridExtra::grid.arrange(p1, p2, nrow=2)
+}
 
+
+plotCompSRA <- function(runCompSRA, TAC) {
+  op <- par(no.readonly = TRUE)
+  on.exit(op)
+  
+  CAA <-runCompSRA$CAA
+  CAA <- CAA/apply(CAA, 1, sum)
+  nsamps <- nrow(CAA)
+  ages <- 1:ncol(CAA)
+  nreps <- length(runCompSRA$pred)
+  
+  nplots <- nsamps + 2 
+  
+  ncol <- ceiling(sqrt(nplots))
+  nrow <- ceiling(nplots/ncol)
+  par(mfrow=c(nrow, ncol), oma=c(2,2,3,2))
+  
+  for (x in 1:nsamps) {
+    ylim <- c(0, max(CAA[x,], max(unlist(runCompSRA$pred))))
+    plot(ages, CAA[x,], type="l", lwd=3, bty="n", xlab="Age", ylab="Frequency", ylim=ylim)
+    for (r in 1:nreps) matplot(ages, runCompSRA$pred[[r]][x,], add=TRUE, type="l")
+  }
+  mtext("Catch-at-age (+ fitted)", side=3, outer=TRUE)
+  
+  ylim <- c(0, max(c(runCompSRA$Bt_K, runCompSRA$FMSY)))
+  boxplot(runCompSRA$Bt_K, runCompSRA$FMSY, ylim=ylim, las=1, names=c("Depletion", "FMSY"))
+  
+  ylim <- c(0, max(c(runCompSRA$Ac, TAC)))
+  boxplot(runCompSRA$Ac, TAC, ylim=ylim, las=1, names=c("Abundance", "TAC"))
+}
 # default plotting options
 leg.pos <- col1 <- col2 <- col3 <- col4 <- pt.cex <- tex.cex <- cex.lab <- lwd <- leg.post <- NULL
 MP.plot <- new.env()
@@ -60,17 +100,7 @@ MP.plot$cex.lab <- 1.25
 MP.plot$lwd <-3
 MP.plot$leg.pos <- "topleft"
 
-plotBK <- function(DF) {
-  p <- ggplot(DF, aes(factor(1), vals, fill=vars)) + facet_wrap(~vars, scales="free") + 
-    geom_boxplot() + theme_classic() + expand_limits(y=0) +
-    labs(x="", y="value", fill="Variables") +
-    theme(
-      strip.background = element_blank(),
-      strip.text.x = element_blank(),
-      axis.text.x = element_blank()
-    ) 
-  print(p)
-}
+
 
 
 
@@ -438,10 +468,8 @@ SRAfunc <- function(lnR0c, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c,
   ny <- length(Catch)
   AFC <- log(1 - min(0.99, LFCc/Linfc))/-Kc + t0c
   AFS <- log(1 - min(0.99, LFSc/Linfc))/-Kc + t0c
-  if (AFC >= 0.7 * maxage)
-    AFC <- 0.7 * maxage
-  if (AFS >= 0.9 * maxage)
-    AFS <- 0.9 * maxage
+  if (AFC >= 0.7 * maxage) AFC <- 0.7 * maxage
+  if (AFS >= 0.9 * maxage) AFS <- 0.9 * maxage
   KES <- max(2, ceiling(mean(c(AFC, AFS))))
   vul <- rep(1, maxage)
   vul[1:(KES - 1)] <- 0
@@ -465,12 +493,10 @@ SRAfunc <- function(lnR0c, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c,
   HR <- rep(0, maxage)
   pen <- 0
   for (y in 1:ny) {
-    # set up some indices for indexed calculation
     VB <- Biomass[KES:maxage] * exp(-Mc)
     CB <- Catch[y] * VB/sum(VB)
     testHR <- CB[1]/VB[1]
-    if (testHR > 0.8)
-      pen <- pen + (testHR - 0.8)^2
+    if (testHR > 0.8)  pen <- pen + (testHR - 0.8)^2
     HR[KES:maxage] <- min(testHR, 0.8)
     FMc <- -log(1 - HR)  # Fishing mortality rate determined by effort, catchability, vulnerability and spatial preference according to biomass
     Zc <- FMc + Mc
@@ -479,7 +505,6 @@ SRAfunc <- function(lnR0c, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c,
     N[2:maxage] <- N[1:(maxage - 1)] * exp(-Zc[1:(maxage - 1)])  # Total mortality
     N[1] <- (0.8 * R0c * hc * sum(SSB))/(0.2 * SSBpR * R0c * (1 - hc) +
                                            (hc - 0.2) * sum(SSB))  # Recruitment assuming regional R0 and stock wide steepness
-    # print(N[1])
     Biomass <- N * Wac
     SSN <- N * Mac
     SSB <- SSN * Wac
@@ -490,16 +515,16 @@ SRAfunc <- function(lnR0c, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c,
   syear <- ny - dim(CAA)[1] + 1
   pred <- CN[syear:ny, ]
   pred <- pred/array(apply(pred, 1, sum), dim = c(dim(CAA)[1], maxage))
+  
 
   fobj <- pen - sum(log(pred + tiny) * CAA, na.rm = T)
   if (opt == 1) {
     return(fobj)
-  } else if (opt == 2) {
-    return(sum(Biomass))
-  } else if (opt == 3) {
-    sum(SSB)/sum(SSB0)
-  }
-  # CBc<-sum(CB)
+  } 
+  if (opt == 2) {
+    return(list(B=sum(Biomass), D=sum(SSB)/sum(SSB0), pred=pred))
+  } 
+ 
 }
 
 SRAFMSY <- function(lnFMc, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c,

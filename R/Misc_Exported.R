@@ -296,35 +296,62 @@ plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
 #' @seealso \link{Can} \link{Cant} \link{Needed} \link{MPtype} \linkS4class{Data}
 #' @export 
 Required <- function(funcs = NA, noCV=FALSE) {
-#  if (is.na(funcs[1])) 
-#    funcs <- c(avail("Output"), avail("Input"))
-#  slots <- slotNames("Data")
-#  slotnams <- paste("Data@", slotNames("Data"), sep = "")
-#  repp <- rep("", length(funcs))
-#  
-#  for (i in 1:length(funcs)) {
-#    temp <- format(match.fun(funcs[i]))
-#    temp <- paste(temp[1:(length(temp))], collapse = " ")
-#    rec <- ""
-#    for (j in 1:length(slotnams)) if (grepl(slotnams[j], temp)) 
-#      rec <- c(rec, slots[j])
-#    if (length(rec) > 1) 
-#      repp[i] <- paste(rec[2:length(rec)], collapse = ", ")
-#  }
-#  cbind(funcs, repp, deparse.level = 0)
-#  
+
   if (all(is.na(funcs))) funcs <- avail("MP")
-  temp <- lapply(funcs, function(x) paste(format(match.fun(x)), collapse = " "))
+  
+  builtin <- funcs[funcs %in% ReqData$MP]
+  custom <- funcs[!funcs %in% ReqData$MP]
+  
+  df <- ReqData[match(builtin, ReqData$MP),]
+  
+  funcs1 <- custom
+  
+  temp <- lapply(funcs1, function(x) paste(format(match.fun(x)), collapse = " "))
   repp <- vapply(temp, match_slots, character(1))
   #repp[!nzchar(repp)] <- "No data needed for this MP."
+  
+  df2 <- data.frame(MP=funcs1, Data=repp, stringsAsFactors = FALSE)
+  
+  dfout <- rbind(df, df2)
+
   if (noCV) {
-    tt <- unlist(strsplit(repp, ","))
-    tt <- tt[!grepl("CV_", tt)]
-    tt <- trimws(sort(tt))
-    repp <- paste(tt, collapse = ", ")
+    for (rr in 1:nrow(dfout)) {
+      tt <- unlist(strsplit(dfout$Data[rr], ","))
+      tt <- tt[!grepl("CV_", tt)]
+      tt <- sort(trimws(sort(tt)))
+      dfout$Data[rr] <- paste(tt, collapse = ", ")
+    }
   }
-  matrix(c(funcs, repp), ncol = 2)
+  
+  as.matrix(dfout)
 }
+
+
+
+getLink <- function(topic, package="DLMtool", firstOnly = FALSE) {
+  
+  paths <- find.package(package)
+  res <- character()
+  for (p in paths) {
+    if (file.exists(f <- file.path(p, "help", "aliases.rds"))) 
+      al <- readRDS(f)
+    else if (file.exists(f <- file.path(p, "help", "AnIndex"))) {
+      foo <- scan(f, what = list(a = "", b = ""), sep = "\t", 
+                  quote = "", na.strings = "", quiet = TRUE)
+      al <- structure(foo$b, names = foo$a)
+    }
+    else next
+    f <- al[topic]
+    if (is.na(f)) 
+      next
+    res <- c(res, file.path(p, "help", f))
+    if (firstOnly) 
+      break
+  }
+  basename(res)
+  
+}
+
 
 
 # Required("DCAC")

@@ -65,29 +65,50 @@ Beddington and Kirkwood (2005)
 recommend estimating \emph{F} using other methods (e.g a catch curve) and comparing the
 estimated \emph{F} to the estimated \eqn{F_\text{max}} and adjusting exploitation accordingly.
 These MPs have not been implemented that way.
-
-See the \href{https://dlmtool.github.io/DLMtool/reference/index.html}{online documentation} for correctly rendered equations.
 }
 \section{Required \link[=Data-class]{Data}}{
 
-\code{BK}: Abun, vbK, vbLinf, LFC
+\code{BK}: Abun, LFC, vbK, vbLinf
 
 
-\code{BK_CC}: CAA, LFC, Mort, vbK, vbLinf, Cat
+\code{BK_CC}: CAA, Cat, LFC, Mort, vbK, vbLinf
 
 
-\code{BK_ML}: CAL, LFC, Mort, vbK, vbLinf, Cat
+\code{BK_ML}: CAL, CAL_bins, Cat, LFC, LFS, Mort, vbK, vbLinf
+}
+
+\section{A Note on Equations}{
+ 
+Some different words
+[1] "BK"
+[1] "BK"
+character(0)
+
+ 
+Some different words
+[1] "BK_CC"
+[1] "BK_CC"
+character(0)
+
+ 
+Some different words
+[1] "BK_ML"
+[1] "BK_ML"
+character(0)
 }
 
 \examples{
-Data <- DLMtool::SimulatedData
-BK(1, Data, reps=1000, plot=TRUE)
+\dontrun{
+BK(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
+}
 
-Data <- DLMtool::SimulatedData
-BK_CC(1, Data, reps=1000, plot=TRUE)
+\dontrun{
+BK_CC(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
+}
 
-Data <- DLMtool::SimulatedData
-BK_ML(1, Data, reps=1000, plot=TRUE)
+\dontrun{
+BK_ML(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
+}
 
 }
 \references{

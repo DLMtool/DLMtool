@@ -6,7 +6,7 @@
 \alias{CC3}
 \alias{CC4}
 \alias{CC5}
-\title{Constant catch management procedures of Geromont and Butterworth (2015)}
+\title{Geromont and Butterworth (2015) Constant Catch}
 \usage{
 CC1(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0)
 
@@ -60,9 +60,19 @@ The TAC is constant for all future projections.
 \item \code{CC5}: TAC is average historical catch from recent \code{yrsmth} years reduced by 40\%.
 }}
 
-\note{
-See the \href{https://dlmtool.github.io/DLMtool/reference/index.html}{online documentation} for correctly rendered equations.
+\section{Required \link[=Data-class]{Data}}{
+
+\code{CC1}: Cat, LHYear, Year
 }
+
+\section{A Note on Equations}{
+ 
+Some different words
+[1] "CC1"
+[1] "CC1"
+character(0)
+}
+
 \examples{
 CC1(1, DLMtool::Cobia, plot=TRUE)
 
