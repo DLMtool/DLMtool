@@ -649,7 +649,7 @@ joinMSE <- function(MSEobjs = NULL) {
   Misc<-list()
   if (length(MSEobjs[[1]]@Misc)>0) {
     if(class(MSEobjs[[1]]@Misc[[1]])=="Data"){ #Posterior predicted data joining
-      for(i in 1: length(MSEobjs[[1]]@Misc))Misc[[i]]<-list(joinData(lapply(MSEobjs,function(x)slot(x,"Misc")[[i]])))
+      for(i in 1: length(MSEobjs[[1]]@Misc))Misc[[i]]<-joinData(lapply(MSEobjs,function(x)slot(x,"Misc")[[i]]))
     } 
   }
   
