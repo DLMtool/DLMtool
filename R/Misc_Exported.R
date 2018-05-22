@@ -328,9 +328,21 @@ Required <- function(funcs = NA, noCV=FALSE) {
 
 
 
-getLink <- function(topic, package="DLMtool", firstOnly = FALSE) {
+#' Get help topic URL
+#'
+#' @param topic Name of the functions
+#' @param url URL for the help documentation
+#' @param nameonly Logical. Help file name only?
+#'
+#' @return file path to help file
+#' @export
+#'
+#' @keywords internal
+getLink <- function(topic, url='https://dlmtool.github.io/DLMtool/reference/',
+                    nameonly=FALSE) {
   
-  paths <- find.package(package)
+  paths <- file.path(.libPaths()[1], "DLMtool")
+  
   res <- character()
   for (p in paths) {
     if (file.exists(f <- file.path(p, "help", "aliases.rds"))) 
@@ -345,17 +357,17 @@ getLink <- function(topic, package="DLMtool", firstOnly = FALSE) {
     if (is.na(f)) 
       next
     res <- c(res, file.path(p, "help", f))
-    if (firstOnly) 
-      break
+   
   }
-  basename(res)
+  
+  if(nameonly) {
+    return(basename(res))
+  } else{
+    return(paste0(url, basename(res), ".html"))
+  }
   
 }
 
-
-
-# Required("DCAC")
-# Required2("DCAC")
 
 #' Setup parallel processing
 #'

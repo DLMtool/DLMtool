@@ -77,24 +77,13 @@ These MPs have not been implemented that way.
 \code{BK_ML}: CAL, CAL_bins, Cat, LFC, LFS, Mort, vbK, vbLinf
 }
 
-\section{A Note on Equations}{
+\section{Rendered Equations}{
  
-Some different words
-[1] "BK"
-[1] "BK"
-character(0)
+See \href{https://dlmtool.github.io/DLMtool/reference/BK.html}{Online Documentation} for correctly rendered equations
 
- 
-Some different words
-[1] "BK_CC"
-[1] "BK_CC"
-character(0)
 
- 
-Some different words
-[1] "BK_ML"
-[1] "BK_ML"
-character(0)
+
+
 }
 
 \examples{

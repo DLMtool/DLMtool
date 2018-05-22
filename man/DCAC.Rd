@@ -116,48 +116,21 @@ below BMSY, DCAC tends to chronically overfish.
 \code{HDAAC}: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t
 }
 
-\section{A Note on Equations}{
- 
-Some different words
-[1] "DCACs"
-[1] "DCACs"
-character(0)
+\section{Rendered Equations}{
+
 
  
-Some different words
-[1] "DCAC"
-[1] "DCAC"
-character(0)
+See \href{https://dlmtool.github.io/DLMtool/reference/DCAC.html}{Online Documentation} for correctly rendered equations
 
- 
-Some different words
-[1] "DCAC_40"
-[1] "DCAC_40"
-character(0)
 
- 
-Some different words
-[1] "DCAC4010"
-[1] "DCAC4010"
-character(0)
 
- 
-Some different words
-[1] "DCAC_ML"
-[1] "DCAC_ML"
-character(0)
 
- 
-Some different words
-[1] "DAAC"
-[1] "DAAC"
-character(0)
 
- 
-Some different words
-[1] "HDAAC"
-[1] "HDAAC"
-character(0)
+
+
+
+
+
 }
 
 \examples{

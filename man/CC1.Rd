@@ -65,12 +65,9 @@ The TAC is constant for all future projections.
 \code{CC1}: Cat, LHYear, Year
 }
 
-\section{A Note on Equations}{
+\section{Rendered Equations}{
  
-Some different words
-[1] "CC1"
-[1] "CC1"
-character(0)
+See \href{https://dlmtool.github.io/DLMtool/reference/CC1.html}{Online Documentation} for correctly rendered equations
 }
 
 \examples{

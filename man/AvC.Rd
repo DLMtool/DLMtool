@@ -37,12 +37,9 @@ where \eqn{\text{TAC}} is the the mean catch recommendation, \eqn{n} is the numb
 \code{AvC}: Cat, LHYear, Year
 }
 
-\section{A Note on Equations}{
+\section{Rendered Equations}{
  
-Some different words
-[1] "AvC"
-[1] "AvC"
-character(0)
+See \href{https://dlmtool.github.io/DLMtool/reference/AvC.html}{Online Documentation} for correctly rendered equations
 }
 
 \examples{

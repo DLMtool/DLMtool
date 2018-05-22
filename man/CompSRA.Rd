@@ -57,18 +57,12 @@ harvest control rule to reduce TAC at low biomass.
 \code{CompSRA}: CAA, Cat, L50, LFC, LFS, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
 }
 
-\section{A Note on Equations}{
+\section{Rendered Equations}{
  
-Some different words
-[1] "CompSRA"
-[1] "CompSRA"
-character(0)
+See \href{https://dlmtool.github.io/DLMtool/reference/CompSRA.html}{Online Documentation} for correctly rendered equations
 
  
-Some different words
-[1] "CompSRA"
-[1] "CompSRA"
-character(0)
+See \href{https://dlmtool.github.io/DLMtool/reference/CompSRA.html}{Online Documentation} for correctly rendered equations
 }
 
 \examples{
