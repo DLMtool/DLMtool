@@ -68,6 +68,7 @@ class(AvC) <- "MP"
 #' @param updateD Logical. Should depletion be updated in projection years?
 #'
 #' @return A list with dcac, Bt_K, and BMSY_K
+#' @keywords internal
 #' @export
 #'
 DCAC_ <- function(x, Data, reps=100, Bt_K=NULL, plot=FALSE, updateD=FALSE) {
@@ -659,7 +660,7 @@ class(CC5) <- "MP"
 
  
 
-
+#### Age-Comp SRA ####
 
 #' Internal function for CompSRA MP
 #'
@@ -668,6 +669,7 @@ class(CC5) <- "MP"
 #' @param reps Number of reps
 #'
 #' @return A list
+#' @keywords internal
 #' @export
 #'
 CompSRA_ <- function(x, Data, reps=100) {
@@ -812,8 +814,138 @@ CompSRA4010 <- function(x, Data, reps = 100, plot=FALSE) {
 class(CompSRA4010) <- "MP"
 
 
+#### Depletion Based SRA ####
 
-##### UP TO HERE #####
+## ADD PLOT TO DBSRA ####
+#' Internal optimization function
+#'
+#' @param lnK log unfished biomass
+#' @param C_hist Historical catches
+#' @param nys number of years (length of C_hist)
+#' @param Mdb M 
+#' @param FMSY_M  FMSY/M
+#' @param BMSY_K BMSY/K
+#' @param Bt_K Current depletion
+#' @param adelay age of maturity
+#'
+#' @keywords internal
+#' @export
+#'
+DBSRAopt <- function(lnK, C_hist, nys, Mdb, FMSY_M, BMSY_K, Bt_K, adelay) {
+  # the optimization for B0 given DBSRA assumptions
+  Kc <- exp(lnK)
+  fn <- function(n, BMSY_K) {
+    # optimizer to find parameter n according to sampled BMSY/B0 (theta)
+    thetapred <- n^(-1/(n - 1))
+    (BMSY_K - thetapred)^2
+  }
+  n <- optimize(fn, c(0.01, 6), BMSY_K = BMSY_K)$minimum  #get the optimum getn(BMSY_K)
+  g <-  (n^(n/(n - 1)))/(n - 1)# gety(n) get the y parameter for n
+  FMSY <- FMSY_M * Mdb
+  UMSY <- (FMSY/(FMSY + Mdb)) * (1 - exp(-(FMSY + Mdb)))
+  MSY <- Kc * BMSY_K * UMSY
+  # Bjoin rules from Dick & MacCall 2011
+  Bjoin_K <- 0.5
+  if (BMSY_K < 0.3) Bjoin_K <- 0.5 * BMSY_K
+  if (BMSY_K > 0.3 & BMSY_K < 0.5) Bjoin_K <- 0.75 * BMSY_K - 0.075
+  Bjoin <- Bjoin_K * Kc
+  prodPTF <- function(depletion, n, MSY) {
+    # Pella-Tomlinson production function required for DB-SRA
+    y <- (n^(n/(n - 1)))/(n - 1)
+    MSY * y * depletion - MSY * y * depletion^n
+  }
+  PBjoin <- prodPTF(Bjoin_K, n, MSY)
+  cp <- (1 - n) * g * MSY * (Bjoin^(n - 2)) * Kc^-n
+  Bc <- rep(NA, nys)
+  Bc[1] <- Kc
+  obj <- 0
+  for (yr in 2:nys) {
+    yref <- max(1, yr - adelay)
+    if (Bc[yref] > Bjoin | BMSY_K > 0.5) {
+      Bc[yr] <- Bc[yr - 1] + g * MSY * (Bc[yref]/Kc) - g * MSY *
+        (Bc[yref]/Kc)^n - C_hist[yr - 1]
+    } else {
+      Bc[yr] <- Bc[yr - 1] + Bc[yref] * ((PBjoin/Bjoin) + cp * (Bc[yref] - Bjoin)) - C_hist[yr - 1]
+    }
+    if (Bc[yr] < 0)
+      obj <- obj + log(-Bc[yr])
+    Bc[yr] <- max(1e-06, Bc[yr])
+  }
+  obj + ((Bc[nys]/Kc) - Bt_K)^2
+  
+}  # end of DBSRA optimization function
+
+#' Depletion-based SRA internal function
+#'
+#' @template MPtemplate 
+#' @param depo Optional fixed depletion (single value)
+#' @param hcr Optional harvest control rule for throttling catch as a function of B/B0. 
+#' Numeric vector of length 2 specifying HCR break points - e.g c(0.4, 0.1) for 40-10 HCR
+#'
+#' @export
+#'
+#' @keywords internal
+#' 
+DBSRA_ <- function(x, Data, reps = 100, plot=FALSE, depo=NULL, hcr=NULL) {
+  # returns a vector of DBSRA estimates of the TAC for a particular
+  # simulation x for(x in 1:nsim){
+  C_hist <- Data@Cat[x, ]
+  TAC <- rep(NA, reps)
+  DBSRAcount <- 1
+  if (is.null(depo)) {
+    if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) return(NA)
+  } else {
+    if (is.na(Data@CV_Dep[x])) return(NA)
+  }
+    
+  while (DBSRAcount < (reps + 1)) {
+    if (is.null(depo)) depo <- max(0.01, min(0.99, Data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
+    Bt_K <- rbeta(100, alphaconv(depo, min(depo * Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])), 
+                  betaconv(depo, min(depo * Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
+    Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
+    Mdb <- trlnorm(100, Data@Mort[x], Data@CV_Mort[x])
+    Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
+    if (is.na(Mdb)) Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
+    FMSY_M <- trlnorm(1, Data@FMSY_M[x], Data@CV_FMSY_M[x])
+    BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] *  Data@BMSY_B0[x]), 
+                    betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
+    tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
+    if (is.na(tryBMSY_K)) {
+      Min <- min(BMSY_K, na.rm = TRUE)
+      Max <- max(BMSY_K, na.rm = TRUE)
+      if (Max <= 0.05) BMSY_K <- 0.05
+      if (Min >= 0.95) BMSY_K <- 0.95
+    }
+    if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
+    
+    adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])), 1)
+    
+    # scale catches for optimization
+    scaler <- 1000/mean(C_hist)
+    C_hist2 <- scaler * C_hist
+    opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist2), 1000 * mean(C_hist2))), C_hist = C_hist2, 
+                    nys = length(C_hist2), Mdb = Mdb, FMSY_M = FMSY_M, BMSY_K = BMSY_K, 
+                    Bt_K = Bt_K, adelay = adelay, tol = 0.01)
+    
+    Kc <- exp(opt$minimum) / scaler
+    BMSYc <- Kc * BMSY_K
+    FMSYc <- Mdb * FMSY_M
+    UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
+    MSYc <- Kc * BMSY_K * UMSYc
+    TAC[DBSRAcount] <- UMSYc * Kc * Bt_K
+    
+    if(!is.null(hcr)) {
+      if (length(hcr)!=2) stop("hcr must be numeric vector of length 2")
+      # 40-10 rule
+      if (Bt_K < hcr[1] & Bt_K > hcr[2])  TAC[DBSRAcount] <- TAC[DBSRAcount] * (Bt_K - hcr[2])/(hcr[1]-hcr[2])
+      if (Bt_K < hcr[2]) TAC[DBSRAcount] <- TAC[DBSRAcount] * tiny  # this has to still be a numeric value, albeit very small
+    }
+    DBSRAcount <- DBSRAcount + 1
+
+  }  # end of reps
+  TAC
+  
+}  
 
 
 #' Depletion-Based Stock Reduction Analysis
@@ -823,10 +955,11 @@ class(CompSRA4010) <- "MP"
 #' depletion (OFL = M * FMSY/M * depletion* B0).
 #' 
 #' 
-#' @param x A position in a data-limited methods object.
-#' @param Data A data-limited methods object.
-#' @param reps The number of samples of the TAC (OFL) recommendation.
-#' @return A Rec object with a vector of TAC (OFL) values.
+#' @template MPtemplate
+#' @template MPoutput
+#' @templateVar mp DBSRA
+#' @template MPuses
+#' 
 #' @note This is set up to return the OFL (FMSY * current biomass).
 #' 
 #' You may have noticed that you -the user- specify three of the factors that
@@ -854,202 +987,39 @@ class(CompSRA4010) <- "MP"
 #' been to get you here given samples for M, FMSY relative to M and also BMSY 
 #' relative to Bunfished.
 #' @export 
-DBSRA <- function(x, Data, reps = 100) {
-  # returns a vector of DBSRA estimates of the TAC for a particular
-  # simulation x for(x in 1:nsim){
-  dependencies = "Data@Cat, Data@Dep, Data@CV_Dep, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M,Data@BMSY_B0, Data@CV_BMSY_B0, Data@L50"
-  C_hist <- Data@Cat[x, ]
-  TAC <- rep(NA, reps)
-  DBSRAcount <- 1
-  if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) return(NA)
-  while (DBSRAcount < (reps + 1)) {
-    depo <- max(0.01, min(0.99, Data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
-    Bt_K <- rbeta(100, alphaconv(depo, min(depo * Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])), 
-                  betaconv(depo, min(depo * Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
-    Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
-    Mdb <- trlnorm(100, Data@Mort[x], Data@CV_Mort[x])
-    Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
-    if (is.na(Mdb)) Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
-    FMSY_M <- trlnorm(1, Data@FMSY_M[x], Data@CV_FMSY_M[x])
-    BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] *  Data@BMSY_B0[x]), 
-                    betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-    tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
-    if (is.na(tryBMSY_K)) {
-      Min <- min(BMSY_K, na.rm = TRUE)
-      Max <- max(BMSY_K, na.rm = TRUE)
-      if (Max <= 0.05) BMSY_K <- 0.05
-      if (Min >= 0.95) BMSY_K <- 0.95
-    }
-    if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
-    
-    adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])), 1)
- 
-    # opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist), 1000 * mean(C_hist))), C_hist = C_hist, 
-                    # nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, BMSY_K = BMSY_K, 
-                    # Bt_K = Bt_K, adelay = adelay, tol = 0.01)
-    # scale catches for optimization
-    scaler <- 1000/mean(C_hist)
-    C_hist2 <- scaler * C_hist
-    opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist2), 1000 * mean(C_hist2))), C_hist = C_hist2, 
-                    nys = length(C_hist2), Mdb = Mdb, FMSY_M = FMSY_M, BMSY_K = BMSY_K, 
-                    Bt_K = Bt_K, adelay = adelay, tol = 0.01)
-    
-    # if(opt$objective<0.1){
-    Kc <- exp(opt$minimum) / scaler
-    BMSYc <- Kc * BMSY_K
-    FMSYc <- Mdb * FMSY_M
-    UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
-    MSYc <- Kc * BMSY_K * UMSYc
-    TAC[DBSRAcount] <- UMSYc * Kc * Bt_K
-    DBSRAcount <- DBSRAcount + 1
-    # }
-    
-    # print(DBSRAcount)
-  }  # end of reps
+DBSRA <- function(x, Data, reps = 100, plot=FALSE) {
+  TAC <- TACfilter(DBSRA_(x,Data, reps))
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
-  
-}  # end of DBSRA_apply
+} 
 class(DBSRA) <- "MP"
 
-
+#' @templateVar mp DBSRA_40
+#' @template MPuses
 #' @describeIn DBSRA Assumes 40 percent current depletion (Bcurrent/B0 = 0.4), which is 
 #' more or less the most optimistic state for a stock (ie very close to BMSY/B0 for many stocks).
 #' @export 
-DBSRA_40 <- function(x, Data, reps = 100) {
-  # returns a vector of DBSRA estimates of the TAC for a particular
-  # simulation x
-  dependencies = "Data@Cat, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0, Data@L50"
-  C_hist <- Data@Cat[x, ]
-  TAC <- rep(NA, reps)
-  DBSRAcount <- 1
-  if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x]))   return(NA)
-  while (DBSRAcount < (reps + 1)) {
-    depo <- 0.4
-    Bt_K <- rbeta(100, alphaconv(depo, min(depo * Data@CV_Dep[x], 
-                                           (1 - depo) * Data@CV_Dep[x])), betaconv(depo, min(depo * 
-                                                                                               Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
-    Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
-    Mdb <- stats::rlnorm(100, mconv(Data@Mort[x], Data@CV_Mort[x] * 
-                                      Data@Mort[x]), sdconv(Data@Mort[x], Data@CV_Mort[x] * 
-                                                              Data@Mort[x]))  # log space stdev 0.4 as in Dick and MacCall 2011
-    Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
-    if (is.na(Mdb)) 
-      Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
-    FMSY_M <- trlnorm(1, Data@FMSY_M[x], Data@CV_FMSY_M[x])
-    BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
-                                     Data@BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
-                                                                  Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-    tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
-    if (is.na(tryBMSY_K)) {
-      Min <- min(BMSY_K, na.rm = TRUE)
-      Max <- max(BMSY_K, na.rm = TRUE)
-      if (Max <= 0.05) 
-        BMSY_K <- 0.05
-      if (Min >= 0.95) 
-        BMSY_K <- 0.95
-    }
-    if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
-    adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])), 1)
-    # opt <- optimize(DBSRAopt, log(c(0.1 * mean(C_hist), 1000 * mean(C_hist))), 
-    #                 C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
-    #                 BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
-    # scale catches for optimization
-    scaler <- 1000/mean(C_hist)
-    C_hist2 <- scaler * C_hist
-    opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist2), 1000 * mean(C_hist2))), C_hist = C_hist2, 
-                    nys = length(C_hist2), Mdb = Mdb, FMSY_M = FMSY_M, BMSY_K = BMSY_K, 
-                    Bt_K = Bt_K, adelay = adelay, tol = 0.01)
-    
-    # if(opt$objective<0.1){
-    Kc <- exp(opt$minimum)
-    BMSYc <- Kc * BMSY_K
-    FMSYc <- Mdb * FMSY_M
-    UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
-    MSYc <- Kc * BMSY_K * UMSYc
-    TAC[DBSRAcount] <- UMSYc * Kc * Bt_K
-    DBSRAcount <- DBSRAcount + 1
-    # }
-  }  # end of reps
+DBSRA_40 <- function(x, Data, reps = 100, plot=FALSE) {
+  TAC <- TACfilter(DBSRA_(x,Data, reps, depo=0.4))
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
-  
 }  # end of DBSRA_apply
 class(DBSRA_40) <- "MP"
 
 
-
+#' @templateVar mp DBSRA4010
+#' @template MPuses
 #' @describeIn DBSRA Base version paired with the 40-10 rule that throttles
-#' back the OFL to zero at 10 percent of unfished biomass.
+#' back the TAC to zero at 10 percent of unfished biomass.
 #' @export DBSRA4010
-DBSRA4010 <- function(x, Data, reps = 100) {
-  # returns a vector of DBSRA estimates of the TAC for a particular
-  # simulation x for(x in 1:nsim){
-  dependencies = "Data@Cat, Data@Dep, Data@CV_Dep, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M,Data@BMSY_B0, Data@CV_BMSY_B0, Data@L50"
-  C_hist <- Data@Cat[x, ]
-  TAC <- rep(NA, reps)
-  DBSRAcount <- 1
-  if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) 
-    return(NA)
-  while (DBSRAcount < (reps + 1)) {
-    depo <- max(0.01, min(0.99, Data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
-    Bt_K <- rbeta(100, alphaconv(depo, min(depo * Data@CV_Dep[x], 
-                                           (1 - depo) * Data@CV_Dep[x])), betaconv(depo, min(depo * 
-                                                                                               Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
-    Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
-    Mdb <- trlnorm(100, Data@Mort[x], Data@CV_Mort[x])
-    Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
-    if (is.na(Mdb)) 
-      Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
-    FMSY_M <- trlnorm(1, Data@FMSY_M[x], Data@CV_FMSY_M[x])
-    BMSY_K <- rbeta(100, alphaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
-                                     Data@BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@CV_BMSY_B0[x] * 
-                                                                  Data@BMSY_B0[x]))  #0.045 corresponds with mu=0.4 and quantile(BMSY_K,c(0.025,0.975)) =c(0.31,0.49) as in Dick and MacCall 2011
-    tryBMSY_K <- BMSY_K[BMSY_K > 0.05 & BMSY_K < 0.95][1]  # interval censor (0.05,0.95) as in Dick and MacCall, 2011
-    if (is.na(tryBMSY_K)) {
-      Min <- min(BMSY_K, na.rm = TRUE)
-      Max <- max(BMSY_K, na.rm = TRUE)
-      if (Max <= 0.05) 
-        BMSY_K <- 0.05
-      if (Min >= 0.95) 
-        BMSY_K <- 0.95
-    }
-    if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
-    adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
-                            Data@L50[x])), 1)
-    # opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist), 1000 * mean(C_hist))), 
-    #                 C_hist = C_hist, nys = length(C_hist), Mdb = Mdb, FMSY_M = FMSY_M, 
-    #                 BMSY_K = BMSY_K, Bt_K = Bt_K, adelay = adelay, tol = 0.01)
-    # scale catches for optimization
-    scaler <- 1000/mean(C_hist)
-    C_hist2 <- scaler * C_hist
-    opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist2), 1000 * mean(C_hist2))), C_hist = C_hist2, 
-                    nys = length(C_hist2), Mdb = Mdb, FMSY_M = FMSY_M, BMSY_K = BMSY_K, 
-                    Bt_K = Bt_K, adelay = adelay, tol = 0.01)
-    
-    # if(opt$objective<0.1){
-    Kc <- exp(opt$minimum)
-    BMSYc <- Kc * BMSY_K
-    FMSYc <- Mdb * FMSY_M
-    UMSYc <- (FMSYc/(FMSYc + Mdb)) * (1 - exp(-(FMSYc + Mdb)))
-    MSYc <- Kc * BMSY_K * UMSYc
-    TAC[DBSRAcount] <- UMSYc * Kc * Bt_K
-    # 40-10 rule
-    if (Bt_K < 0.4 & Bt_K > 0.1) 
-      TAC[DBSRAcount] <- TAC[DBSRAcount] * (Bt_K - 0.1)/0.3
-    if (Bt_K < 0.1) 
-      TAC[DBSRAcount] <- TAC[DBSRAcount] * tiny  # this has to still be stochastic albeit very small
-    DBSRAcount <- DBSRAcount + 1
-    # }
-  }  # end of reps
+DBSRA4010 <- function(x, Data, reps = 100, plot=FALSE) {
+  TAC <- TACfilter(DBSRA_(x,Data, reps, hcr=c(0.4, 0.1)))
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
-  
-  # }
-}  # end of DBSRA_apply
+}  
 class(DBSRA4010) <- "MP"
 
 
@@ -1154,6 +1124,7 @@ class(DBSRA4010) <- "MP"
 
 
 
+## UP TO HERE ####
 
 #' Delay - Difference Stock Assessment with UMSY and MSY as leading parameters
 #' 

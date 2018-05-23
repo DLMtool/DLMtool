@@ -338,7 +338,7 @@ Required <- function(funcs = NA, noCV=FALSE) {
 #' @export
 #'
 #' @keywords internal
-getLink <- function(topic, url='https://dlmtool.github.io/DLMtool/reference/',
+MPurl <- function(topic, url='https://dlmtool.github.io/DLMtool/reference/',
                     nameonly=FALSE) {
   
   paths <- file.path(.libPaths()[1], "DLMtool")

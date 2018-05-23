@@ -182,6 +182,15 @@ Itarget_p <- function(...) {
 
 
 
+#' Inverse von Bertalanffy 
+#'
+#' Calculate the age given length from the vB equation
+#' @param t0 Hypothetical age when length is 0
+#' @param K Growth coefficient
+#' @param Linf Asymptotic length
+#' @param L Length
+#' @export
+#' @keywords internal 
 iVB <- function(t0, K, Linf, L) {
   max(1, ((-log(1 - L/Linf))/K + t0))  # Inverse Von-B
 }
@@ -241,62 +250,6 @@ CC <- function(x, Data, reps = 100) {
 }
 
 
-## DBSRA supporting functions ####
-
-fn <- function(n, BMSY_K) {
-  # optimizer to find parameter n according to sampled BMSY/B0 (theta)
-  thetapred <- n^(-1/(n - 1))
-  (BMSY_K - thetapred)^2
-}
-
-getn <- function(BMSY_K) {
-  # wrapper for n finder
-  optimize(fn, c(0.01, 6), BMSY_K = BMSY_K)$minimum  #get the optimum
-}
-
-gety <- function(n) (n^(n/(n - 1)))/(n - 1)  # More DBSRA code: get the y parameter for n
-
-prodPTF <- function(depletion, n, MSY) {
-  # Pella-Tomlinson production function required for DB-SRA
-  y <- (n^(n/(n - 1)))/(n - 1)
-  MSY * y * depletion - MSY * y * depletion^n
-}
-
-DBSRAopt <- function(lnK, C_hist, nys, Mdb, FMSY_M, BMSY_K, Bt_K, adelay) {
-  # the optimization for B0 given DBSRA assumptions
-  Kc <- exp(lnK)
-  n <- getn(BMSY_K)
-  g <- gety(n)
-  FMSY <- FMSY_M * Mdb
-  UMSY <- (FMSY/(FMSY + Mdb)) * (1 - exp(-(FMSY + Mdb)))
-  MSY <- Kc * BMSY_K * UMSY
-  # Bjoin rules from Dick & MacCall 2011
-  Bjoin_K <- 0.5
-  if (BMSY_K < 0.3)
-    Bjoin_K <- 0.5 * BMSY_K
-  if (BMSY_K > 0.3 & BMSY_K < 0.5)
-    Bjoin_K <- 0.75 * BMSY_K - 0.075
-  Bjoin <- Bjoin_K * Kc
-  PBjoin <- prodPTF(Bjoin_K, n, MSY)
-  cp <- (1 - n) * g * MSY * (Bjoin^(n - 2)) * Kc^-n
-  Bc <- rep(NA, nys)
-  Bc[1] <- Kc
-  obj <- 0
-  for (yr in 2:nys) {
-    yref <- max(1, yr - adelay)
-    if (Bc[yref] > Bjoin | BMSY_K > 0.5) {
-      Bc[yr] <- Bc[yr - 1] + g * MSY * (Bc[yref]/Kc) - g * MSY *
-        (Bc[yref]/Kc)^n - C_hist[yr - 1]
-    } else {
-      Bc[yr] <- Bc[yr - 1] + Bc[yref] * ((PBjoin/Bjoin) + cp * (Bc[yref] -
-                                                                  Bjoin)) - C_hist[yr - 1]
-    }
-    if (Bc[yr] < 0)
-      obj <- obj + log(-Bc[yr])
-    Bc[yr] <- max(1e-06, Bc[yr])
-  }
-  obj + ((Bc[nys]/Kc) - Bt_K)^2
-}  # end of DBSRA optimization function
 
 
 ## Delay-Difference supporting functions ####

@@ -19,3 +19,4 @@ A list
 \description{
 Internal function for CompSRA MP
 }
+\keyword{internal}

@@ -6,21 +6,23 @@
 \alias{DBSRA4010}
 \title{Depletion-Based Stock Reduction Analysis}
 \usage{
-DBSRA(x, Data, reps = 100)
+DBSRA(x, Data, reps = 100, plot = FALSE)
 
-DBSRA_40(x, Data, reps = 100)
+DBSRA_40(x, Data, reps = 100, plot = FALSE)
 
-DBSRA4010(x, Data, reps = 100)
+DBSRA4010(x, Data, reps = 100, plot = FALSE)
 }
 \arguments{
-\item{x}{A position in a data-limited methods object.}
+\item{x}{A position in a data-limited methods data object}
 
-\item{Data}{A data-limited methods object.}
+\item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of samples of the TAC (OFL) recommendation.}
+\item{reps}{The number of stochastic samples of the TAC recommendation}
+
+\item{plot}{Logical. Show the plot?}
 }
 \value{
-A Rec object with a vector of TAC (OFL) values.
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
 User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the OFL
@@ -38,7 +40,7 @@ relative to Bunfished.
 more or less the most optimistic state for a stock (ie very close to BMSY/B0 for many stocks).
 
 \item \code{DBSRA4010}: Base version paired with the 40-10 rule that throttles
-back the OFL to zero at 10 percent of unfished biomass.
+back the TAC to zero at 10 percent of unfished biomass.
 }}
 
 \note{
@@ -53,6 +55,26 @@ simulated depletions above BMSY/B0 and even on occasion over B0. Also it
 doesn't have the modification for flatfish life histories that has
 previously been applied by Dick and MacCall.
 }
+\section{Required \link[=Data-class]{Data}}{
+
+\code{DBSRA}: BMSY_B0, Cat, Dep, FMSY_M, L50, Mort, vbK, vbLinf, vbt0
+
+
+\code{DBSRA_40}: BMSY_B0, Cat, Dep, FMSY_M, L50, Mort, vbK, vbLinf, vbt0
+
+
+\code{DBSRA4010}: BMSY_B0, Cat, Dep, FMSY_M, L50, Mort, vbK, vbLinf, vbt0
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/DBSRA.html}{Online Documentation} for correctly rendered equations
+
+
+
+
+}
+
 \references{
 Dick, E.J., MacCall, A.D., 2010. Estimates of sustainable yield for 50 data-poor
 stocks in the Pacific Coast groundfish fishery management plan. Technical memorandum.
