@@ -14,7 +14,7 @@ CompSRA4010(x, Data, reps = 100, plot = FALSE)
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of stochastic samples of the TAC recommendation}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
 
 \item{plot}{Logical. Show the plot?}
 }
@@ -49,7 +49,7 @@ harvest control rule to reduce TAC at low biomass.
 \item \code{CompSRA4010}: With a 40-10 control rule based on estimated depletion
 }}
 
-\section{Required \link[=Data-class]{Data}}{
+\section{Required Data}{
 
 \code{CompSRA}: CAA, Cat, L50, LFC, LFS, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
 

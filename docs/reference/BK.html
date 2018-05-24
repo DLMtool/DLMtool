@@ -122,7 +122,7 @@ von Bertalanffy growth parameter <em>K</em>.</p>
     </tr>
     <tr>
       <th>reps</th>
-      <td><p>The number of stochastic samples of the TAC recommendation</p></td>
+      <td><p>The number of stochastic samples of the MP recommendation(s)</p></td>
     </tr>
     <tr>
       <th>plot</th>
@@ -171,7 +171,18 @@ recruitment independent of spawning biomass</em>.</p>
 recommend estimating <em>F</em> using other methods (e.g a catch curve) and comparing the
 estimated <em>F</em> to the estimated \(F_\text{max}\) and adjusting exploitation accordingly.
 These MPs have not been implemented that way.</p>
-<p>See the <a href='https://dlmtool.github.io/DLMtool/reference/index.html'>online documentation</a> for correctly rendered equations.</p>
+    
+    <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
+
+    
+    <p><code>BK</code>: Abun, LFC, vbK, vbLinf</p>
+    <p><code>BK_CC</code>: CAA, Cat, LFC, Mort, vbK, vbLinf</p>
+    <p><code>BK_ML</code>: CAL, CAL_bins, Cat, LFC, LFS, Mort, vbK, vbLinf</p>
+    
+    <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
+
+    
+    <p>See <a href='https://dlmtool.github.io/DLMtool/reference/BK.html'>Online Documentation</a> for correctly rendered equations</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -181,15 +192,15 @@ Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>Data</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>
-<span class='fu'>BK</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='BK-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     3659.898 </div><div class='input'>
-<span class='no'>Data</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>
-<span class='fu'>BK_CC</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='BK-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     12966.99 </div><div class='input'>
-<span class='no'>Data</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>
-<span class='fu'>BK_ML</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='BK-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     35088.58 </div><div class='input'>
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='fu'>BK</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='co'># }</span><div class='input'>
+</div><span class='co'># NOT RUN {</span>
+<span class='fu'>BK_CC</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='co'># }</span><div class='input'>
+</div><span class='co'># NOT RUN {</span>
+<span class='fu'>BK_ML</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='co'># }</span><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -204,6 +215,10 @@ Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.</p>
       <li><a href="#functions">Functions</a></li>
 
       <li><a href="#note">Note</a></li>
+
+      <li><a href="#required-data">Required Data</a></li>
+
+      <li><a href="#rendered-equations">Rendered Equations</a></li>
 
       <li><a href="#references">References</a></li>
       

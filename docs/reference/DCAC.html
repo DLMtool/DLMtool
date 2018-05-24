@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Depletion Corrected Average Catch — DCAC • DLMtool Documentation</title>
+<title>Depletion Corrected Average Catch — DCACs • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,11 +28,11 @@
 
 
 
-<meta property="og:title" content="Depletion Corrected Average Catch — DCAC" />
+<meta property="og:title" content="Depletion Corrected Average Catch — DCACs" />
 
-<meta property="og:description" content="A method of calculating an MSY proxy (FMSY * BMSY and therefore the OFL at
-most productive stock size) based on average catches accounting for the
-windfall catch that got the stock down to BMSY levels." />
+<meta property="og:description" content="This group of MPs calculates a catch limit (dcac; intended as an MSY proxy) based on
+average historical catch while accounting for the windfall catch that got the stock down to
+its current depletion level (D)." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -97,13 +97,15 @@ windfall catch that got the stock down to BMSY levels." />
 
     <div class="ref-description">
     
-    <p>A method of calculating an MSY proxy (FMSY * BMSY and therefore the OFL at
-most productive stock size) based on average catches accounting for the
-windfall catch that got the stock down to BMSY levels.</p>
+    <p>This group of MPs calculates a catch limit (<em>dcac</em>; intended as an MSY proxy) based on
+average historical catch while accounting for the windfall catch that got the stock down to
+its current depletion level (<em>D</em>).</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>DCAC</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+    <pre class="usage"><span class='fu'>DCACs</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
+
+<span class='fu'>DCAC</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
 <span class='fu'>DCAC_40</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
@@ -111,9 +113,9 @@ windfall catch that got the stock down to BMSY levels.</p>
 
 <span class='fu'>DCAC_ML</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>DAAC</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>)
+<span class='fu'>DAAC</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>HDAAC</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>)</pre>
+<span class='fu'>HDAAC</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -128,7 +130,7 @@ windfall catch that got the stock down to BMSY levels.</p>
     </tr>
     <tr>
       <th>reps</th>
-      <td><p>The number of stochastic samples of the TAC recommendation</p></td>
+      <td><p>The number of stochastic samples of the MP recommendation(s)</p></td>
     </tr>
     <tr>
       <th>plot</th>
@@ -140,14 +142,31 @@ windfall catch that got the stock down to BMSY levels.</p>
 
     <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the <code>TAC</code> slot populated with a numeric vector of length <code>reps</code></p>
     
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The method calculates the depletion-corrected average catch (<em>dcac</em>) as:</p>
+<p>$$\text{dcac} = \frac{\sum_{y=1}^{n}{C_y}}{n+(1-D)/Y_{\text{pot}}}$$</p>
+<p>where
+$$Y_{\text{pot}} = \frac{B_{\text{MSY}}}{B_0}\frac{F_{\text{MSY}}}{M}M$$
+and \(C\) is the historical catches; i.e \(C\) does not change in the future projections in the MSE</p>
+<p>The methods differ in the assumptions of current depletion (<em>D</em>). See the <strong>Functions</strong> section below for details.</p>
+    
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     <ul>
-<li><p><code>DCAC_40</code>: This variant assumes that current stock biomass is exactly
-40 per cent of unfished levels. The 40 percent depletion assumption may not
+<li><p><code>DCACs</code>: Depletion is not updated in the future projections.
+The TAC is static and not updated in the future years. This represents
+an application of the DCAC method where a catch limit is calculated based on
+current estimate of depletion and time-series of catch from the beginning
+of the fishery, and the TAC is fixed at this level for all future projections.</p></li>
+<li><p><code>DCAC</code>: Depletion is estimated each management interval and used to
+update the catch limit recommendation based on the historical catch (which is
+not updated in the future projections).</p></li>
+<li><p><code>DCAC_40</code>: Current stock biomass is assumed to be exactly at 40 per cent
+of unfished levels. The 40 percent depletion assumption may not
 really affect DCAC that much as it already makes TAC recommendations that are
 quite MSY-like.</p></li>
-<li><p><code>DCAC4010</code>: In this method, DCAC is paired with the 40-10 rule that throttles
+<li><p><code>DCAC4010</code>: The dynamic DCAC (depletion is updated) is paired with the 40-10 rule that throttles
 back the OFL to zero at 10 percent of unfished stock size (the OFL is not subject to downward
 adjustment above 40 percent unfished). DCAC can overfish below BMSY levels. The 40-10
 harvest control rule largely resolves this problem providing an MP with surprisingly good
@@ -155,20 +174,35 @@ performance even at low stock levels.</p></li>
 <li><p><code>DCAC_ML</code>: This variant uses the mean length estimator to calculate current stock
 depletion. The mean length extension was programmed by Gary Nelson as part of his
 excellent R package 'fishmethods'.</p></li>
-<li><p><code>DAAC</code>: Depletion Adjusted Average Catch: essentially DCAC multiplied
-by 2*depletion and divided by BMSY/B0 (Bpeak) (Harford and Carruthers, 2017).</p></li>
-<li><p><code>HDAAC</code>: Hybrid Depletion Adjusted Average Catch: essentially DCAC
-multiplied by 2*depletion and divided by BMSY/B0 (Bpeak) when below BMSY,
+<li><p><code>DAAC</code>: Depletion Adjusted Average Catch: essentially DCAC (with updated Depletion)
+divided by BMSY/B0 (Bpeak) (Harford and Carruthers, 2017).</p></li>
+<li><p><code>HDAAC</code>: Hybrid Depletion Adjusted Average Catch: essentially DCAC  (with updated Depletion)
+divided by BMSY/B0 (Bpeak) when below BMSY,
 and DCAC above BMSY (Harford and Carruthers 2017).</p></li>
 </ul>
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>See the <a href='https://dlmtool.github.io/DLMtool/reference/index.html'>online documentation</a> for correctly rendered equations.</p>
-<p>It's probably worth noting that DCAC TAC recommendations do not tend
+    <p>It's probably worth noting that DCAC TAC recommendations do not tend
 to zero as depletion tends to zero. It adjusts for depletion only in
 calculating historical average catch. It follows that at stock levels much
 below BMSY, DCAC tends to chronically overfish.</p>
+    
+    <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
+
+    
+    <p><code>DCACs</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t</p>
+    <p><code>DCAC</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t</p>
+    <p><code>DCAC_40</code>: AvC, BMSY_B0, FMSY_M, LHYear, Mort, Year, t</p>
+    <p><code>DCAC4010</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t</p>
+    <p><code>DCAC_ML</code>: AvC, BMSY_B0, CAL, CAL_bins, Cat, FMSY_M, LFS, LHYear, Mort, Year, t, vbK, vbLinf</p>
+    <p><code>DAAC</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t</p>
+    <p><code>HDAAC</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t</p>
+    
+    <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
+
+    
+    <p>See <a href='https://dlmtool.github.io/DLMtool/reference/DCAC.html'>Online Documentation</a> for correctly rendered equations</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -184,14 +218,34 @@ static and adaptive management procedures. Fish. Res. 190, 84-94.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>DCAC</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DCAC-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     6.290501 </div><div class='input'>
-<span class='fu'>DCAC_40</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DCAC-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     7.129508 </div><div class='input'>
-<span class='fu'>DCAC4010</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DCAC-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     1.540525 </div><div class='input'>
-<span class='fu'>DCAC_ML</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DCAC-4.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     1346.933 </div><div class='input'>
+    <pre class="examples"><span class='co'># NOT RUN {</span>
+<span class='co'># First year</span>
+<span class='fu'>DCACs</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='co'># }</span><div class='input'>
+</div><span class='co'># NOT RUN {</span>
+<span class='fu'>DCAC</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='co'># }</span><div class='input'>
+</div><span class='co'># NOT RUN {</span>
+<span class='fu'>DCAC_40</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='co'># }</span><div class='input'>
+</div><span class='co'># NOT RUN {</span>
+<span class='no'>Data</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>
+<span class='no'>Data</span>@<span class='kw'>LHYear</span> <span class='kw'>&lt;-</span> <span class='fl'>2005</span>
+<span class='fu'>DCAC4010</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='co'># }</span><div class='input'>
+</div><span class='co'># NOT RUN {</span>
+<span class='fu'>DCAC_ML</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='co'># }</span><div class='input'>
+</div><span class='co'># NOT RUN {</span>
+<span class='no'>Data</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>
+<span class='no'>Data</span>@<span class='kw'>LHYear</span> <span class='kw'>&lt;-</span> <span class='fl'>2005</span>
+<span class='fu'>DAAC</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='co'># }</span><div class='input'>
+</div><span class='co'># NOT RUN {</span>
+<span class='no'>Data</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>
+<span class='no'>Data</span>@<span class='kw'>LHYear</span> <span class='kw'>&lt;-</span> <span class='fl'>2005</span>
+<span class='fu'>HDAAC</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
+<span class='co'># }</span><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -201,9 +255,15 @@ static and adaptive management procedures. Fish. Res. 190, 84-94.</p>
       
       <li><a href="#value">Value</a></li>
 
+      <li><a href="#details">Details</a></li>
+
       <li><a href="#functions">Functions</a></li>
 
       <li><a href="#note">Note</a></li>
+
+      <li><a href="#required-data">Required Data</a></li>
+
+      <li><a href="#rendered-equations">Rendered Equations</a></li>
 
       <li><a href="#references">References</a></li>
 

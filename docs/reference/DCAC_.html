@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Size limit management procedures — matlenlim • DLMtool Documentation</title>
+<title>Depletion Corrected Average Catch — DCAC_ • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,9 +28,9 @@
 
 
 
-<meta property="og:title" content="Size limit management procedures — matlenlim" />
+<meta property="og:title" content="Depletion Corrected Average Catch — DCAC_" />
 
-<meta property="og:description" content="Examples of the implementation of input controls in the DLM toolkit. See details below." />
+<meta property="og:description" content="Internal code to calculate dcac" />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -88,96 +88,47 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Size limit management procedures</h1>
+    <h1>Depletion Corrected Average Catch</h1>
     
-    <div class="hidden name"><code>matlenlim.Rd</code></div>
+    <div class="hidden name"><code>DCAC_.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Examples of the implementation of input controls in the DLM toolkit. See details below.</p>
+    <p>Internal code to calculate dcac</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>matlenlim</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='no'>...</span>)
-
-<span class='fu'>matlenlim2</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='no'>...</span>)
-
-<span class='fu'>minlenLopt1</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='no'>...</span>)
-
-<span class='fu'>slotlim</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>DCAC_</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>Bt_K</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>updateD</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>A position in a data-limited methods data object</p></td>
+      <td><p>Simulation number</p></td>
     </tr>
     <tr>
       <th>Data</th>
-      <td><p>A data-limited methods data object</p></td>
-    </tr>
-    <tr>
-      <th>...</th>
-      <td><p>Optional additional arguments that are ignored. Note arguments
-<code>reps</code> or <code>...</code> are required for all input controls</p></td>
-    </tr>
-    <tr>
-      <th>buffer</th>
-      <td><p>Parameter controlling the fraction of Lopt to set the minimum
-length of fish caught: minlen=Lopt*(0.7+buffer).</p></td>
+      <td><p>An object of class <code>Data</code></p></td>
     </tr>
     <tr>
       <th>reps</th>
-      <td><p>The number of stochastic samples of the MP recommendation(s)</p></td>
+      <td><p>The number of reps</p></td>
     </tr>
     <tr>
-      <th>plot</th>
-      <td><p>Logical. Show the plot?</p></td>
+      <th>Bt_K</th>
+      <td><p>Optional value of depletion (otherwise taken from Data object)</p></td>
+    </tr>
+    <tr>
+      <th>updateD</th>
+      <td><p>Logical. Should depletion be updated in projection years?</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the...</p>
-<p>A Rec object with input control recommendations</p>
-    
-    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
-
-    <ul>
-<li><p><code>matlenlim</code>: A data-limited method in which fishing retention-at-length
-is set equivalent to the maturity curve.</p></li>
-<li><p><code>matlenlim2</code>: Selectivity-at-length is set slightly higher (110%)
-than the maturity-at-length.</p></li>
-<li><p><code>minlenLopt1</code>: This input control sets the minimum length of fish
-caught to a fraction of the length that maximises the biomass, Lopt. The aim
-of this simple MP is restrict the catch of small fish to rebuild
-the stock biomass towards the optimal length, Lopt, expressed in terms of
-the growth parameters Lopt=b/(M/k+b) (Hordyk et al. 2014) (Author: HF Geromont)</p></li>
-<li><p><code>slotlim</code>: Selectivity-at-length is set using a slot limit; that is, a minimum and
-maximum legal length.  The maximum limit is set here, quite arbitrarily, as
-the 75th percentile between the new minimum legal length and the estimated
-asymptotic length Linf.</p></li>
-</ul>
-    
-    <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
-
-    
-    <p><code>matlenlim</code>: L50</p>
-    <p><code>matlenlim2</code>: L50</p>
-    
-    <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
-
-    
-    <p>See <a href='https://dlmtool.github.io/DLMtool/reference/matlenlim.html'>Online Documentation</a> for correctly rendered equations</p>
-    
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p>Hordyk, A., Ono, K., Sainsbury, K., Loneragan, N., and J.
-Prince. 2014. Some explorations of the life history ratios to describe
-length composition, spawning-per-recruit, and the spawning potential ratio
-ICES Journal of Marine Science, doi:10.1093/icesjms/fst235.</p>
+    <p>A list with dcac, Bt_K, and BMSY_K</p>
     
 
   </div>
@@ -187,19 +138,7 @@ ICES Journal of Marine Science, doi:10.1093/icesjms/fst235.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#functions">Functions</a></li>
-
-      <li><a href="#required-data">Required Data</a></li>
-
-      <li><a href="#rendered-equations">Rendered Equations</a></li>
-
-      <li><a href="#references">References</a></li>
           </ul>
-
-    <h2>Author</h2>
-    
-T. Carruthers &amp; A. Hordyk
 
   </div>
 </div>

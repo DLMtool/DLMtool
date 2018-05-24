@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Age-Composition Stock-Reduction Analysis — CompSRA • DLMtool Documentation</title>
+<title>Depletion-based SRA internal function — DBSRA_ • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,10 +28,9 @@
 
 
 
-<meta property="og:title" content="Age-Composition Stock-Reduction Analysis — CompSRA" />
+<meta property="og:title" content="Depletion-based SRA internal function — DBSRA_" />
 
-<meta property="og:description" content="A stock reduction analysis (SRA) model is fitted to the age-composition
-from the last 3 years (or less if fewer data are available)" />
+<meta property="og:description" content="Depletion-based SRA internal function" />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -89,21 +88,18 @@ from the last 3 years (or less if fewer data are available)" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Age-Composition Stock-Reduction Analysis</h1>
+    <h1>Depletion-based SRA internal function</h1>
     
-    <div class="hidden name"><code>CompSRA.Rd</code></div>
+    <div class="hidden name"><code>DBSRA_.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>A stock reduction analysis (SRA) model is fitted to the age-composition
-from the last 3 years (or less if fewer data are available)</p>
+    <p>Depletion-based SRA internal function</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>CompSRA</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
-
-<span class='fu'>CompSRA4010</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
+    <pre class="usage"><span class='fu'>DBSRA_</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>depo</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>hcr</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -121,6 +117,15 @@ from the last 3 years (or less if fewer data are available)</p>
       <td><p>The number of stochastic samples of the MP recommendation(s)</p></td>
     </tr>
     <tr>
+      <th>depo</th>
+      <td><p>Optional fixed depletion (single value)</p></td>
+    </tr>
+    <tr>
+      <th>hcr</th>
+      <td><p>Optional harvest control rule for throttling catch as a function of B/B0.
+Numeric vector of length 2 specifying HCR break points - e.g c(0.4, 0.1) for 40-10 HCR</p></td>
+    </tr>
+    <tr>
       <th>plot</th>
       <td><p>Logical. Show the plot?</p></td>
     </tr>
@@ -128,51 +133,11 @@ from the last 3 years (or less if fewer data are available)</p>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the <code>TAC</code> slot populated with a numeric vector of length <code>reps</code></p>
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>A stock reduction analysis (SRA) model is fitted to the age-composition
-from the last 3 years (or less if fewer data are available) assuming a constant
-total mortality rate (<em>Z</em>) and used to estimate current stock depletion (<em>D</em>),
-<em>FMSY</em>, and stock abundance (<em>A</em>).</p>
-<p>Fishing mortality is estimated as:
-$$F = -\log{left(1-\frac{C}{V}\right)}$$
-where \(C\) and \(V\) are catch and vulnerable biomass of first age of full
-selection respectively.</p>
-<p>Abundance is estimated in the SRa. \(F_{\text{MSY}}\) is calculated assuming
-knife-edge vulnerability at the age of full selection.</p>
-<p>The TAC is calculated as \(F_\text{MSY} A\). <code>CompSRA4010</code> uses a 40-10
-harvest control rule to reduce TAC at low biomass.</p>
-    
-    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
-
-    <ul>
-<li><p><code>CompSRA</code>: TAC is FMSY x Abundance</p></li>
-<li><p><code>CompSRA4010</code>: With a 40-10 control rule based on estimated depletion</p></li>
-</ul>
-    
-    <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
-
-    
-    <p><code>CompSRA</code>: CAA, Cat, L50, LFC, LFS, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb</p>
-    <p><code>CompSRA</code>: CAA, Cat, L50, LFC, LFS, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb</p>
-    
-    <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
-
-    
-    <p>See <a href='https://dlmtool.github.io/DLMtool/reference/CompSRA.html'>Online Documentation</a> for correctly rendered equations</p>
-    <p>See <a href='https://dlmtool.github.io/DLMtool/reference/CompSRA.html'>Online Documentation</a> for correctly rendered equations</p>
     
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'>CompSRA</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='co'># }</span><div class='input'>
-</div><span class='co'># NOT RUN {</span>
-<span class='fu'>CompSRA4010</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='co'># }</span><div class='input'>
-</div></pre>
+
+    
+
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -180,21 +145,7 @@ harvest control rule to reduce TAC at low biomass.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
-
-      <li><a href="#functions">Functions</a></li>
-
-      <li><a href="#required-data">Required Data</a></li>
-
-      <li><a href="#rendered-equations">Rendered Equations</a></li>
-      
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
-    <h2>Author</h2>
-    
-T. Carruthers
+          </ul>
 
   </div>
 </div>

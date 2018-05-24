@@ -468,7 +468,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   # == 
    
   
-  
+
   # Check if M-at-age is constant that Maxage makes sense
   if (all(M_ageArray[1,,1] == mean(M_ageArray[1,,1]))) { # constant M at age
     calcMax <- ceiling(-log(0.01)/(min(M)))        # Age at which 1% of cohort survives

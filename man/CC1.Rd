@@ -23,7 +23,7 @@ CC5(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.4)
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of stochastic samples of the TAC recommendation}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
 
 \item{plot}{Logical. Show the plot?}
 
@@ -60,7 +60,7 @@ The TAC is constant for all future projections.
 \item \code{CC5}: TAC is average historical catch from recent \code{yrsmth} years reduced by 40\%.
 }}
 
-\section{Required \link[=Data-class]{Data}}{
+\section{Required Data}{
 
 \code{CC1}: Cat, LHYear, Year
 }

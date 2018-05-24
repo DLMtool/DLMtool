@@ -4,11 +4,9 @@
 #' 
 #' Examples of the implementation of input controls in the DLM toolkit. See details below.
 #' 
-#' 
-#' @param x A position in a data-limited methods object
-#' @param Data A data-limited methods object
-#' @param buffer Parameter controlling the fraction of Lopt to set the minimum
-#' length of fish caught: minlen=Lopt*(0.7+buffer).
+#' @templateVar mp matlenlim
+#' @template MPtemplate
+#' @template MPuses
 #' @param ... Optional additional arguments that are ignored. Note arguments
 #' \code{reps} or \code{...} are required for all input controls
 #' @return A Rec object with input control recommendations 
@@ -35,6 +33,10 @@ matlenlim <- function(x, Data, ...) {
 class(matlenlim) <- "MP"
 
 
+#' @templateVar mp matlenlim2
+#' @template MPuses
+#' @param buffer Parameter controlling the fraction of Lopt to set the minimum
+#' length of fish caught: minlen=Lopt*(0.7+buffer).
 #' @describeIn matlenlim Selectivity-at-length is set slightly higher (110\%) 
 #' than the maturity-at-length.
 #' @export matlenlim2

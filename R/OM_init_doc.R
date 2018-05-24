@@ -241,8 +241,6 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), dir=NULL, overwrite=F
 #' 
 #' }
 XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
-  
-
   # Load the Excel File ####
   if (is.null(name)) {
     fls <- list.files(pattern=".xlsx", ignore.case = TRUE)

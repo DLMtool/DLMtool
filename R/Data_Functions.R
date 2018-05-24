@@ -356,9 +356,19 @@ DLMdiag <- function(Data, command = c("available", "not available", "needed"), r
   rr <- try(slot(Data, "Misc"), silent = TRUE)
   if (class(rr) == "try-error") Data@Misc <- list()
   
-  temp <- lapply(funcs1, function(x) paste(format(match.fun(x)), collapse = " "))
+  builtin <- funcs1[funcs1 %in% ReqData$MP]
+  custom <- funcs1[!funcs1 %in% ReqData$MP]
+  inMPind <- which(funcs1 %in% builtin)
+  cMPind <- which(funcs1 %in% custom)
+  repp <- rep('', length(funcs1))
+  # built in MPs (doesn't require 'dependencies' line)
+  reqdata <-  ReqData[match(builtin, ReqData$MP),2]
   
-  repp <- vapply(temp, match_slots, character(1), Data = Data)
+  repp[inMPind] <- vapply(reqdata, match_slots, character(1), Data = Data, internal=TRUE)
+
+  # custom MPs 
+  temp <- lapply(custom, function(x) paste(format(match.fun(x)), collapse = " "))
+  repp[cMPind] <- vapply(temp, match_slots, character(1), Data = Data)
   
   chk_needed <- nzchar(repp) # TRUE = has missing data
   
@@ -480,14 +490,15 @@ needed <- function(Data, funcs) {
 ## needed(): matches slotnames of Data class to those that are required in an MP func
 ##           but also return NAor0 = TRUE
 match_slots <- function(func, slotnams = paste0("Data@", slotNames("Data")), 
-                        slots = slotNames("Data"), Data = NULL) {
+                        slots = slotNames("Data"), Data = NULL, internal=FALSE) {
   # check if each slotname in Data class is required in an MP (T/F)
-  ind_MP <- vapply(slotnams, grepl, logical(1), x = func)
+  
+  if(internal) ind_MP <- vapply(slots, grepl, logical(1), x = func)
+  if(!internal) ind_MP <- vapply(slotnams, grepl, logical(1), x = func)
   if(!is.null(Data) && inherits(Data, "Data")) { # check if Data slots return NA or zero
     ind_NAor0 <- vapply(slots, function(x) all(NAor0(slot(Data, x))), logical(1))
     repp <- slots[ind_MP & ind_NAor0] # returns slots where both tests are true
-  }
-  else {
+  } else {
     repp <- slots[ind_MP]
   }
   return(paste(repp, collapse = ", "))

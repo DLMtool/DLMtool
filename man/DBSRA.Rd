@@ -17,7 +17,7 @@ DBSRA4010(x, Data, reps = 100, plot = FALSE)
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of stochastic samples of the TAC recommendation}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
 
 \item{plot}{Logical. Show the plot?}
 }
@@ -55,15 +55,15 @@ simulated depletions above BMSY/B0 and even on occasion over B0. Also it
 doesn't have the modification for flatfish life histories that has
 previously been applied by Dick and MacCall.
 }
-\section{Required \link[=Data-class]{Data}}{
+\section{Required Data}{
 
-\code{DBSRA}: BMSY_B0, Cat, Dep, FMSY_M, L50, Mort, vbK, vbLinf, vbt0
-
-
-\code{DBSRA_40}: BMSY_B0, Cat, Dep, FMSY_M, L50, Mort, vbK, vbLinf, vbt0
+\code{DBSRA}: Cat, Dep, FMSY_M, L50, vbK, vbLinf, vbt0
 
 
-\code{DBSRA4010}: BMSY_B0, Cat, Dep, FMSY_M, L50, Mort, vbK, vbLinf, vbt0
+\code{DBSRA_40}: Cat, FMSY_M, L50, vbK, vbLinf, vbt0
+
+
+\code{DBSRA4010}: Cat, Dep, FMSY_M, L50, vbK, vbLinf, vbt0
 }
 
 \section{Rendered Equations}{
@@ -75,6 +75,12 @@ See \href{https://dlmtool.github.io/DLMtool/reference/DBSRA.html}{Online Documen
 
 }
 
+\examples{
+DBSRA(1, DLMtool::ourReefFish, plot=TRUE)
+
+DBSRA_40(1, DLMtool::ourReefFish, plot=TRUE)
+DBSRA4010(1, DLMtool::ourReefFish, plot=TRUE)
+}
 \references{
 Dick, E.J., MacCall, A.D., 2010. Estimates of sustainable yield for 50 data-poor
 stocks in the Pacific Coast groundfish fishery management plan. Technical memorandum.

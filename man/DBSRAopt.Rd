@@ -4,7 +4,7 @@
 \alias{DBSRAopt}
 \title{Internal optimization function}
 \usage{
-DBSRAopt(lnK, C_hist, nys, Mdb, FMSY_M, BMSY_K, Bt_K, adelay)
+DBSRAopt(lnK, C_hist, nys, Mdb, FMSY_M, BMSY_K, Bt_K, adelay, opt = 1)
 }
 \arguments{
 \item{lnK}{log unfished biomass}
@@ -22,6 +22,8 @@ DBSRAopt(lnK, C_hist, nys, Mdb, FMSY_M, BMSY_K, Bt_K, adelay)
 \item{Bt_K}{Current depletion}
 
 \item{adelay}{age of maturity}
+
+\item{opt}{Numeric. 1 for optimization. 2 to return Biomass trend}
 }
 \description{
 Internal optimization function

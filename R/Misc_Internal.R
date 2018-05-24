@@ -4,6 +4,15 @@ proportionMat <- TL <- Wa <- SurvWeiMat <- r <- lx <- logNormDensity <- sumlogNo
 proportionMat = vector()
 
 
+CanMP <- function(MP) {
+  Data <- avail("Data")
+  log <- rep(FALSE, length(Data))
+  for (x in seq_along(Data)) {
+    log[x] <- MP %in% Can(get(Data[x]))
+  }
+  return(Data[log])
+}
+
 #' Check that a DLM object is valid 
 #' 
 #' Check that all slots in Object are valid and contain values
@@ -421,6 +430,7 @@ genSizeCompWrap2<- function(i, vn, CAL_binsmid,
   lens
   
 }
+
 
 
 

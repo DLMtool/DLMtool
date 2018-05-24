@@ -29,7 +29,7 @@ HDAAC(x, Data, reps = 100, plot = FALSE)
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of stochastic samples of the TAC recommendation}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
 
 \item{plot}{Logical. Show the plot?}
 }
@@ -93,7 +93,7 @@ to zero as depletion tends to zero. It adjusts for depletion only in
 calculating historical average catch. It follows that at stock levels much
 below BMSY, DCAC tends to chronically overfish.
 }
-\section{Required \link[=Data-class]{Data}}{
+\section{Required Data}{
 
 \code{DCACs}: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t
 

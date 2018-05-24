@@ -16,17 +16,23 @@ minlenLopt1(x, Data, buffer = 0.1, ...)
 slotlim(x, Data, ...)
 }
 \arguments{
-\item{x}{A position in a data-limited methods object}
+\item{x}{A position in a data-limited methods data object}
 
-\item{Data}{A data-limited methods object}
+\item{Data}{A data-limited methods data object}
 
 \item{...}{Optional additional arguments that are ignored. Note arguments
 \code{reps} or \code{...} are required for all input controls}
 
 \item{buffer}{Parameter controlling the fraction of Lopt to set the minimum
 length of fish caught: minlen=Lopt*(0.7+buffer).}
+
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 }
 \value{
+An object of class \code{\link[=Rec-class]{Rec}} with the...
+
 A Rec object with input control recommendations
 }
 \description{
@@ -51,6 +57,21 @@ maximum legal length.  The maximum limit is set here, quite arbitrarily, as
 the 75th percentile between the new minimum legal length and the estimated
 asymptotic length Linf.
 }}
+
+\section{Required Data}{
+
+\code{matlenlim}: L50
+
+
+\code{matlenlim2}: L50
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/matlenlim.html}{Online Documentation} for correctly rendered equations
+
+
+}
 
 \references{
 Hordyk, A., Ono, K., Sainsbury, K., Loneragan, N., and J.

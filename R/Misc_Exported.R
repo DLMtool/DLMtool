@@ -296,8 +296,15 @@ plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
 #' @seealso \link{Can} \link{Cant} \link{Needed} \link{MPtype} \linkS4class{Data}
 #' @export 
 Required <- function(funcs = NA, noCV=FALSE) {
-
+  
+  if (class(funcs) != 'logical' & class(funcs) != "character") stop("first argument must be character with MP name")
+  
   if (all(is.na(funcs))) funcs <- avail("MP")
+  for (x in 1:length(funcs)) {
+    tt <- try(get(funcs[x]))
+    if (class(tt) != "MP") stop(funcs[x], " is not class 'MP'")
+  } 
+  
   
   builtin <- funcs[funcs %in% ReqData$MP]
   custom <- funcs[!funcs %in% ReqData$MP]

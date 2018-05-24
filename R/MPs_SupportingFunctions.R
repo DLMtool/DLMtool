@@ -1,6 +1,6 @@
 ##### MP plotting #####
 
-plotAvC <- function(x, Data, meanC, histCatch, yr.ind, lwd=3, cex.lab=1.25) {
+AvC_plot <- function(x, Data, Rec, meanC, histCatch, yr.ind, lwd=3, cex.lab=1.25) {
   op <- par(no.readonly = TRUE)
   on.exit(op)
   par(mfrow=c(1,1))
@@ -14,7 +14,7 @@ plotAvC <- function(x, Data, meanC, histCatch, yr.ind, lwd=3, cex.lab=1.25) {
   text(max(Data@Year)+1, quantile(Rec@TAC, 0.05), "TAC", col="black", pos=2)
 }
 
-plotDCAC <- function(x, Data, dcac, yrs, lwd=3, cex.lab=1.25) {
+DCAC_plot <- function(x, Data, dcac, Bt_K, yrs, lwd=3, cex.lab=1.25) {
   op <- par(no.readonly = TRUE)
   on.exit(op)
   par(mfrow=c(1,1), oma=c(1,1,1,1), mar=c(5,4,1,4))
@@ -28,9 +28,7 @@ plotDCAC <- function(x, Data, dcac, yrs, lwd=3, cex.lab=1.25) {
   text(Data@LHYear, max(Data@Cat[x,1:yr.lst], na.rm=TRUE)*0.9, "Last Historical Year", pos=2, xpd=NA)
   lines(c(min(Data@Year), Data@LHYear), rep(mean(Data@Cat[x,1:yr.lst]),2), lty=2) #
   text(quantile(Data@Year, 0.1), mean(Data@Cat[x,1:yr.lst])*1.1, pos=4, "Average Historical Catch")
-}
 
-plotDCACadd <- function(TAC, Data, Bt_K) {
   boxplot(TAC, add=TRUE, at=max(Data@Year)+1, col="darkgrey", width=1, outline=TRUE, axes=FALSE)
   text(max(Data@Year)+1, quantile(TAC, 0.05), "TAC", col="black", pos=2)
   op <- par(no.readonly = TRUE)
@@ -87,6 +85,39 @@ plotCompSRA <- function(runCompSRA, TAC) {
   ylim <- c(0, max(c(runCompSRA$Ac, TAC)))
   boxplot(runCompSRA$Ac, TAC, ylim=ylim, las=1, names=c("Abundance", "TAC"))
 }
+
+
+plotDBSRA <- function(runDBSRA, Data, TAC) {
+  op <- par(no.readonly = TRUE)
+  on.exit(par(op))
+  par(mfrow=c(2,2))
+  Btrend <- t(runDBSRA$Btrend)
+  B0s <- Btrend[1,]
+  relB <- Btrend/matrix(B0s, nrow=nrow(Btrend), ncol=ncol(Btrend), byrow=TRUE)
+  Years <- Data@Year
+  matplot(Years, Btrend, type='l', ylim=c(0, max(Btrend)), bty="n", xlab="Year", ylab=paste("Biomass (", Data@Units, ")"), las=1)
+  matplot(Years, relB, type='l', ylim=c(0, max(relB)), bty="n", xlab="Year", ylab='B/B0', las=1)
+  if (!is.null(runDBSRA$hcr)) {
+    abline(h=runDBSRA$hcr[1], lty=2, col="gray")
+    abline(h=runDBSRA$hcr[2], lty=3, col="gray")
+  }
+  plot(c(Years, max(Years+1)), c(runDBSRA$C_hist, NA), type='l', lwd=2,  bty="n", 
+       xlab="Year", ylab=paste("Catch (", Data@Units, ")"), las=1, ylim=range(c(runDBSRA$C_hist, TAC)))
+  if (all(round(TAC / mean(TAC),1) ==1 )) {
+    points(max(Years)+1, mean(TAC), pch=16, cex=2, col="blue")
+    text(max(Years)+1, mean(TAC), "TAC", pos=1, col="blue")
+  } else {
+    boxplot(TAC, add=TRUE, at=max(Years)+1, col="grey", width=1, outline=TRUE, 
+            axes=FALSE)
+    text(max(Years)+1, quantile(TAC, 0.05), "TAC", pos=1, col="blue")
+  }
+  
+  df <- data.frame(B_B0=runDBSRA$Bt_Kstore, BMSY_B0=runDBSRA$BMSY_K_Mstore,
+                   FMSY_M=runDBSRA$FMSY_Mstore)
+  boxplot(df, las=1)
+}
+
+
 # default plotting options
 leg.pos <- col1 <- col2 <- col3 <- col4 <- pt.cex <- tex.cex <- cex.lab <- lwd <- leg.post <- NULL
 MP.plot <- new.env()
@@ -180,8 +211,6 @@ Itarget_p <- function(...) {
 
 
 
-
-
 #' Inverse von Bertalanffy 
 #'
 #' Calculate the age given length from the vB equation
@@ -194,6 +223,7 @@ Itarget_p <- function(...) {
 iVB <- function(t0, K, Linf, L) {
   max(1, ((-log(1 - L/Linf))/K + t0))  # Inverse Von-B
 }
+
 
 getr <- function(x, Data, Mvec, Kvec, Linfvec, t0vec, hvec, maxage,
                  r_reps = 100) {

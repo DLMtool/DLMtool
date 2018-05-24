@@ -11,7 +11,7 @@ AvC(x, Data, reps = 100, plot = FALSE)
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of stochastic samples of the TAC recommendation}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
 
 \item{plot}{Logical. Show the plot?}
 }
@@ -32,7 +32,7 @@ For completeness, the TAC is calculated by:
 where \eqn{\text{TAC}} is the the mean catch recommendation, \eqn{n} is the number of historical years, and
 \eqn{C_y}  is the catch in historical year \eqn{y}
 }
-\section{Required \link[=Data-class]{Data}}{
+\section{Required Data}{
 
 \code{AvC}: Cat, LHYear, Year
 }
@@ -43,9 +43,7 @@ See \href{https://dlmtool.github.io/DLMtool/reference/AvC.html}{Online Documenta
 }
 
 \examples{
-Data <- DLMtool::Cobia
-# Apply the AvC MP to the Data
-Rec <- AvC(1, Data, reps=1000, plot=TRUE) # 1,000 log-normal samples with CV = 0.2
+Rec <- AvC(1, DLMtool::Cobia, reps=1000, plot=TRUE) # 1,000 log-normal samples with CV = 0.2
         
 }
 \seealso{

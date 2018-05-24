@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Constant catch management procedures of Geromont and Butterworth (2015) — CC1 • DLMtool Documentation</title>
+<title>Geromont and Butterworth (2015) Constant Catch — CC1 • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,7 +28,7 @@
 
 
 
-<meta property="og:title" content="Constant catch management procedures of Geromont and Butterworth (2015) — CC1" />
+<meta property="og:title" content="Geromont and Butterworth (2015) Constant Catch — CC1" />
 
 <meta property="og:description" content="The TAC is the average historical catch over the last yrsmth (default 5) years,
 multiplied by (1-xx)" />
@@ -89,7 +89,7 @@ multiplied by (1-xx)" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Constant catch management procedures of Geromont and Butterworth (2015)</h1>
+    <h1>Geromont and Butterworth (2015) Constant Catch</h1>
     
     <div class="hidden name"><code>CC1.Rd</code></div>
     </div>
@@ -124,7 +124,7 @@ multiplied by (1-<code>xx</code>)</p>
     </tr>
     <tr>
       <th>reps</th>
-      <td><p>The number of stochastic samples of the TAC recommendation</p></td>
+      <td><p>The number of stochastic samples of the MP recommendation(s)</p></td>
     </tr>
     <tr>
       <th>plot</th>
@@ -163,9 +163,15 @@ catch over the previous <code>yrsmth</code> years.</p>
 <li><p><code>CC5</code>: TAC is average historical catch from recent <code>yrsmth</code> years reduced by 40%.</p></li>
 </ul>
     
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+    <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
 
-    <p>See the <a href='https://dlmtool.github.io/DLMtool/reference/index.html'>online documentation</a> for correctly rendered equations.</p>
+    
+    <p><code>CC1</code>: Cat, LHYear, Year</p>
+    
+    <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
+
+    
+    <p>See <a href='https://dlmtool.github.io/DLMtool/reference/CC1.html'>Online Documentation</a> for correctly rendered equations</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -176,15 +182,15 @@ ICES Journal of Marine Science: Journal Du Conseil 72 (1). 251-61.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>CC1</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Cobia</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='CC1-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     803.8438 </div><div class='input'>
+#&gt;     791.3982 </div><div class='input'>
 <span class='fu'>CC2</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Cobia</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='CC1-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     717.8972 </div><div class='input'>
+#&gt;     704.2513 </div><div class='input'>
 <span class='fu'>CC3</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Cobia</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='CC1-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     649.6126 </div><div class='input'>
+#&gt;     641.6638 </div><div class='input'>
 <span class='fu'>CC4</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Cobia</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='CC1-4.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     555.4707 </div><div class='input'>
+#&gt;     562.9651 </div><div class='input'>
 <span class='fu'>CC5</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Cobia</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='CC1-5.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     487.8189 </div><div class='input'>
+#&gt;     483.7844 </div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -198,7 +204,9 @@ ICES Journal of Marine Science: Journal Du Conseil 72 (1). 251-61.</p>
 
       <li><a href="#functions">Functions</a></li>
 
-      <li><a href="#note">Note</a></li>
+      <li><a href="#required-data">Required Data</a></li>
+
+      <li><a href="#rendered-equations">Rendered Equations</a></li>
 
       <li><a href="#references">References</a></li>
       

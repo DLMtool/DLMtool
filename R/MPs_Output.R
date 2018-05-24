@@ -19,10 +19,8 @@
 #' where \eqn{\text{TAC}} is the the mean catch recommendation, \eqn{n} is the number of historical years, and
 #' \eqn{C_y}  is the catch in historical year \eqn{y}
 #' 
-#' 
-#' @template MPtemplate
-#' @template MPoutput
 #' @templateVar mp AvC
+#' @template MPtemplate 
 #' @template MPuses
 #' @export 
 #' @author T. Carruthers
@@ -30,9 +28,7 @@
 #' @family Average Catch MPs
 #' 
 #' @examples 
-#' Data <- DLMtool::Cobia
-#' # Apply the AvC MP to the Data
-#' Rec <- AvC(1, Data, reps=1000, plot=TRUE) # 1,000 log-normal samples with CV = 0.2
+#' Rec <- AvC(1, DLMtool::Cobia, reps=1000, plot=TRUE) # 1,000 log-normal samples with CV = 0.2
 #'         
 AvC <- function(x, Data, reps = 100, plot=FALSE) {
   dependencies = "Data@Cat Data@LHYear"
@@ -48,7 +44,7 @@ AvC <- function(x, Data, reps = 100, plot=FALSE) {
   Rec <- new("Rec")
   Rec@TAC <- TAC
   
-  if (plot) plotAvC(x, Data, meanC, histCatch, yr.ind, lwd=3, cex.lab=1.25)
+  if (plot) AvC_plot(x, Data, Rec, meanC, histCatch, yr.ind, lwd=3, cex.lab=1.25)
   Rec
 }
 class(AvC) <- "MP"
@@ -64,14 +60,13 @@ class(AvC) <- "MP"
 #' @param Data An object of class `Data`
 #' @param reps The number of reps
 #' @param Bt_K Optional value of depletion (otherwise taken from Data object)
-#' @param plot Logical. Produce the plot?
 #' @param updateD Logical. Should depletion be updated in projection years?
 #'
 #' @return A list with dcac, Bt_K, and BMSY_K
 #' @keywords internal
 #' @export
 #'
-DCAC_ <- function(x, Data, reps=100, Bt_K=NULL, plot=FALSE, updateD=FALSE) {
+DCAC_ <- function(x, Data, reps=100, Bt_K=NULL, updateD=FALSE) {
 
   yr.lst <- match(Data@LHYear, Data@Year)
   yrs <- 1:yr.lst
@@ -96,8 +91,6 @@ DCAC_ <- function(x, Data, reps=100, Bt_K=NULL, plot=FALSE, updateD=FALSE) {
 
   dcac <- C_tot/(yr.lst + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
   
-  if (plot) plotDCAC(x, Data, dcac, 1:length(Data@Year))
-
   return(list(dcac=dcac, Bt_K=Bt_K, BMSY_K=BMSY_K))
 
 }
@@ -120,7 +113,6 @@ DCAC_ <- function(x, Data, reps=100, Bt_K=NULL, plot=FALSE, updateD=FALSE) {
 #' The methods differ in the assumptions of current depletion (*D*). See the **Functions** section below for details.
 #' 
 #' @template MPtemplate
-#' @template MPoutput
 #' 
 #' 
 #' @note It's probably worth noting that DCAC TAC recommendations do not tend
@@ -151,12 +143,9 @@ DCAC_ <- function(x, Data, reps=100, Bt_K=NULL, plot=FALSE, updateD=FALSE) {
 #' 
 #' @export 
 DCACs <- function(x, Data, reps = 100, plot=FALSE) {
-  "dependenciesData@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
-  
-  rundcac <- DCAC_(x, Data, reps, plot=plot)
-  
+  rundcac <- DCAC_(x, Data, reps)
   TAC <- TACfilter(rundcac$dcac)
-  if (plot)  plotDCACadd(TAC, Data, rundcac$Bt_K)
+  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
   
   Rec <- new("Rec")
   Rec@TAC <- TAC
@@ -179,10 +168,10 @@ class(DCACs) <- "MP"
 DCAC <- function(x, Data, reps = 100, plot=FALSE) {
   "dependenciesData@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
   
-  rundcac <- DCAC_(x, Data, reps, plot=plot, updateD=TRUE)
+  rundcac <- DCAC_(x, Data, reps, updateD=TRUE)
   
   TAC <- TACfilter(rundcac$dcac)
-  if (plot)  plotDCACadd(TAC, Data, rundcac$Bt_K)
+  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
   
   Rec <- new("Rec")
   Rec@TAC <- TAC
@@ -207,9 +196,9 @@ class(DCAC) <- "MP"
 DCAC_40 <- function(x, Data, reps = 100, plot=FALSE) {
   dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0"
   
-  rundcac <- DCAC_(x, Data, reps, Bt_K=0.4, plot=plot)
+  rundcac <- DCAC_(x, Data, reps, Bt_K=0.4)
   TAC <- TACfilter(rundcac$dcac)
-  if (plot)  plotDCACadd(TAC, Data, rundcac$Bt_K)
+  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
   
   Rec <- new("Rec")
   Rec@TAC <- TAC
@@ -235,7 +224,7 @@ class(DCAC_40) <- "MP"
 #' @export 
 DCAC4010 <- function(x, Data, reps = 100, plot=FALSE) {
   dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
-  rundcac <- DCAC_(x, Data, reps, plot=plot, updateD=TRUE)
+  rundcac <- DCAC_(x, Data, reps, updateD=TRUE)
   dcac <- rundcac$dcac 
   Bt_K <- rundcac$Bt_K 
   TAC <- dcac
@@ -248,7 +237,7 @@ DCAC4010 <- function(x, Data, reps = 100, plot=FALSE) {
   if (length(cond1) < 1 & length(cond2) < 1)  return(NA)
   TAC <- TACfilter(TAC)
   
-  if (plot)  plotDCACadd(TAC, Data, rundcac$Bt_K)
+  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
 
   Rec <- new("Rec")
   Rec@TAC <- TAC 
@@ -292,10 +281,10 @@ DCAC_ML <- function(x, Data, reps = 100, plot=FALSE) {
   if (reps == 1)Bt_K <- dep[2]/dep[1]
   if (reps > 1) Bt_K <- dep[, 2]/dep[, 1]
   
-  rundcac <- DCAC_(x, Data, reps, Bt_K=Bt_K, plot=plot)
+  rundcac <- DCAC_(x, Data, reps, Bt_K=Bt_K)
   TAC <- TACfilter(rundcac$dcac)
   
-  if (plot)  plotDCACadd(TAC, Data, rundcac$Bt_K)
+  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
 
   Rec <- new("Rec")
   Rec@TAC <- TAC
@@ -324,11 +313,11 @@ DAAC <- function(x, Data, reps = 100, plot=FALSE) {
   # extended depletion-corrected average catch (Harford and Carruthers 2017)
   dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
   
-  rundcac <- DCAC_(x, Data, reps, plot=plot, updateD = TRUE)
+  rundcac <- DCAC_(x, Data, reps, updateD = TRUE)
   TAC <- rundcac$dcac * rundcac$Bt_K/rundcac$BMSY_K
   
   TAC <- TACfilter(TAC)
-  if (plot)  plotDCACadd(TAC, Data, rundcac$Bt_K)
+  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
   
   Rec <- new("Rec")
   Rec@TAC <- TAC
@@ -354,14 +343,14 @@ class(DAAC) <- "MP"
 HDAAC <- function(x, Data, reps = 100, plot=FALSE) {
   dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
   
-  rundcac <- DCAC_(x, Data, reps, plot=plot, updateD = TRUE)
+  rundcac <- DCAC_(x, Data, reps, updateD = TRUE)
   TAC <- rundcac$dcac
   ddcac <- rundcac$dcac * rundcac$Bt_K/rundcac$BMSY_K
   TAC[rundcac$Bt_K < rundcac$BMSY_K] <- ddcac[rundcac$Bt_K < rundcac$BMSY_K]
   
   TAC <- TACfilter(TAC)
   
-  if (plot)  plotDCACadd(TAC, Data, rundcac$Bt_K)
+  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
   
   Rec <- new("Rec")
   Rec@TAC <- TAC
@@ -421,7 +410,6 @@ class(HDAAC) <- "MP"
 #' potential yield and stock status using life history parameters. Philos.
 #' Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.
 #' @template MPtemplate
-#' @template MPoutput
 #' @templateVar mp BK
 #' @template MPuses
 #' @export 
@@ -578,7 +566,6 @@ class(BK_ML) <- "MP"
 #' (1-`xx`)
 #' 
 #' @template MPtemplate
-#' @template MPoutput
 #' @templateVar mp CC1
 #' @template MPuses
 #' @export
@@ -751,7 +738,6 @@ CompSRA_ <- function(x, Data, reps=100) {
 #' harvest control rule to reduce TAC at low biomass.
 #' 
 #' @template MPtemplate
-#' @template MPoutput
 #' @templateVar mp CompSRA
 #' @template MPuses
 #' 
@@ -816,7 +802,6 @@ class(CompSRA4010) <- "MP"
 
 #### Depletion Based SRA ####
 
-## ADD PLOT TO DBSRA ####
 #' Internal optimization function
 #'
 #' @param lnK log unfished biomass
@@ -827,11 +812,12 @@ class(CompSRA4010) <- "MP"
 #' @param BMSY_K BMSY/K
 #' @param Bt_K Current depletion
 #' @param adelay age of maturity
+#' @param opt Numeric. 1 for optimization. 2 to return Biomass trend
 #'
 #' @keywords internal
 #' @export
 #'
-DBSRAopt <- function(lnK, C_hist, nys, Mdb, FMSY_M, BMSY_K, Bt_K, adelay) {
+DBSRAopt <- function(lnK, C_hist, nys, Mdb, FMSY_M, BMSY_K, Bt_K, adelay, opt=1) {
   # the optimization for B0 given DBSRA assumptions
   Kc <- exp(lnK)
   fn <- function(n, BMSY_K) {
@@ -871,7 +857,8 @@ DBSRAopt <- function(lnK, C_hist, nys, Mdb, FMSY_M, BMSY_K, Bt_K, adelay) {
       obj <- obj + log(-Bc[yr])
     Bc[yr] <- max(1e-06, Bc[yr])
   }
-  obj + ((Bc[nys]/Kc) - Bt_K)^2
+  if (opt ==1) return(obj + ((Bc[nys]/Kc) - Bt_K)^2)
+  if (opt ==2) return(Bc)
   
 }  # end of DBSRA optimization function
 
@@ -886,23 +873,27 @@ DBSRAopt <- function(lnK, C_hist, nys, Mdb, FMSY_M, BMSY_K, Bt_K, adelay) {
 #'
 #' @keywords internal
 #' 
-DBSRA_ <- function(x, Data, reps = 100, plot=FALSE, depo=NULL, hcr=NULL) {
+DBSRA_ <- function(x, Data, reps = 100, depo=NULL, hcr=NULL) {
   # returns a vector of DBSRA estimates of the TAC for a particular
   # simulation x for(x in 1:nsim){
   C_hist <- Data@Cat[x, ]
   TAC <- rep(NA, reps)
+  Btrend <- matrix(NA, nrow=reps, ncol=length(C_hist))
+  Bt_Kstore <- FMSY_Mstore <- BMSY_K_Mstore <- rep(NA, reps)
   DBSRAcount <- 1
   if (is.null(depo)) {
-    if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) return(NA)
+    if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) return(new("Rec"))
   } else {
-    if (is.na(Data@CV_Dep[x])) return(NA)
+    if (is.na(Data@CV_Dep[x])) return(new("Rec"))
   }
+  if (is.na(Data@BMSY_B0[x]))return(new("Rec"))
     
   while (DBSRAcount < (reps + 1)) {
     if (is.null(depo)) depo <- max(0.01, min(0.99, Data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
     Bt_K <- rbeta(100, alphaconv(depo, min(depo * Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])), 
                   betaconv(depo, min(depo * Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
     Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
+    
     Mdb <- trlnorm(100, Data@Mort[x], Data@CV_Mort[x])
     Mdb <- Mdb[Mdb < 0.9][1]  # !!!! maximum M is 0.9   interval censor
     if (is.na(Mdb)) Mdb <- 0.9  # !!!! maximum M is 0.9   absolute limit
@@ -918,6 +909,10 @@ DBSRA_ <- function(x, Data, reps = 100, plot=FALSE, depo=NULL, hcr=NULL) {
     }
     if (!is.na(tryBMSY_K))  BMSY_K <- tryBMSY_K
     
+    Bt_Kstore[DBSRAcount] <- Bt_K
+    FMSY_Mstore[DBSRAcount] <- FMSY_M
+    BMSY_K_Mstore[DBSRAcount] <- BMSY_K
+    
     adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])), 1)
     
     # scale catches for optimization
@@ -927,6 +922,11 @@ DBSRA_ <- function(x, Data, reps = 100, plot=FALSE, depo=NULL, hcr=NULL) {
                     nys = length(C_hist2), Mdb = Mdb, FMSY_M = FMSY_M, BMSY_K = BMSY_K, 
                     Bt_K = Bt_K, adelay = adelay, tol = 0.01)
     
+    Bctemp <- DBSRAopt(opt$minimum,  C_hist = C_hist2, 
+                   nys = length(C_hist2), Mdb = Mdb, FMSY_M = FMSY_M, BMSY_K = BMSY_K, 
+                   Bt_K = Bt_K, adelay = adelay, opt=2)
+   
+    Btrend[DBSRAcount,] <- Bctemp/scaler
     Kc <- exp(opt$minimum) / scaler
     BMSYc <- Kc * BMSY_K
     FMSYc <- Mdb * FMSY_M
@@ -943,7 +943,8 @@ DBSRA_ <- function(x, Data, reps = 100, plot=FALSE, depo=NULL, hcr=NULL) {
     DBSRAcount <- DBSRAcount + 1
 
   }  # end of reps
-  TAC
+  list(TAC=TAC, Btrend=Btrend, C_hist=C_hist, Bt_Kstore=Bt_Kstore, FMSY_Mstore=FMSY_Mstore, 
+       BMSY_K_Mstore=BMSY_K_Mstore, hcr=hcr)
   
 }  
 
@@ -956,7 +957,6 @@ DBSRA_ <- function(x, Data, reps = 100, plot=FALSE, depo=NULL, hcr=NULL) {
 #' 
 #' 
 #' @template MPtemplate
-#' @template MPoutput
 #' @templateVar mp DBSRA
 #' @template MPuses
 #' 
@@ -986,22 +986,37 @@ DBSRA_ <- function(x, Data, reps = 100, plot=FALSE, depo=NULL, hcr=NULL) {
 #' given historical catches DB-SRA calculates what unfished biomass must have 
 #' been to get you here given samples for M, FMSY relative to M and also BMSY 
 #' relative to Bunfished.
+#' @examples 
+#' DBSRA(1, DLMtool::ourReefFish, plot=TRUE)
+#' 
 #' @export 
 DBSRA <- function(x, Data, reps = 100, plot=FALSE) {
-  TAC <- TACfilter(DBSRA_(x,Data, reps))
+  runDBSRA <- DBSRA_(x,Data, reps)
+  TAC <- TACfilter(runDBSRA[[1]])
+  if (plot) {
+    plotDBSRA(runDBSRA, Data, TAC)
+  }
   Rec <- new("Rec")
   Rec@TAC <- TAC
   Rec
 } 
 class(DBSRA) <- "MP"
 
+
+
 #' @templateVar mp DBSRA_40
 #' @template MPuses
 #' @describeIn DBSRA Assumes 40 percent current depletion (Bcurrent/B0 = 0.4), which is 
 #' more or less the most optimistic state for a stock (ie very close to BMSY/B0 for many stocks).
+#' @examples 
+#' DBSRA_40(1, DLMtool::ourReefFish, plot=TRUE)
 #' @export 
 DBSRA_40 <- function(x, Data, reps = 100, plot=FALSE) {
-  TAC <- TACfilter(DBSRA_(x,Data, reps, depo=0.4))
+  runDBSRA <- DBSRA_(x,Data, reps, depo=0.4)
+  TAC <- TACfilter(runDBSRA[[1]])
+  if (plot) {
+    plotDBSRA(runDBSRA, Data, TAC)
+  }
   Rec <- new("Rec")
   Rec@TAC <- TAC
   Rec
@@ -1013,9 +1028,16 @@ class(DBSRA_40) <- "MP"
 #' @template MPuses
 #' @describeIn DBSRA Base version paired with the 40-10 rule that throttles
 #' back the TAC to zero at 10 percent of unfished biomass.
-#' @export DBSRA4010
+#' @examples 
+#' DBSRA4010(1, DLMtool::ourReefFish, plot=TRUE)
+#' @export 
+#' 
 DBSRA4010 <- function(x, Data, reps = 100, plot=FALSE) {
-  TAC <- TACfilter(DBSRA_(x,Data, reps, hcr=c(0.4, 0.1)))
+  runDBSRA <- DBSRA_(x,Data, reps, hcr=c(0.4, 0.1))
+  TAC <- TACfilter(runDBSRA[[1]])
+  if (plot) {
+    plotDBSRA(runDBSRA, Data, TAC)
+  }
   Rec <- new("Rec")
   Rec@TAC <- TAC
   Rec
@@ -1896,6 +1918,7 @@ class(Gcontrol) <- "MP"
 #' data limited stocks using length-based reference points and survey biomass indices, 
 #' Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836, 
 #' https://doi.org/10.1016/j.fishres.2014.11.013
+#' @export 
 ICI <- function(x, Data, reps) {
   dependencies = "Data@Ind, Data@CV_Ind, Data@Cat, Data@CV_Cat"
   

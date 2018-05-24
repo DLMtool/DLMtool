@@ -4,7 +4,7 @@
 \alias{DCAC_}
 \title{Depletion Corrected Average Catch}
 \usage{
-DCAC_(x, Data, reps = 100, Bt_K = NULL, plot = FALSE, updateD = FALSE)
+DCAC_(x, Data, reps = 100, Bt_K = NULL, updateD = FALSE)
 }
 \arguments{
 \item{x}{Simulation number}
@@ -14,8 +14,6 @@ DCAC_(x, Data, reps = 100, Bt_K = NULL, plot = FALSE, updateD = FALSE)
 \item{reps}{The number of reps}
 
 \item{Bt_K}{Optional value of depletion (otherwise taken from Data object)}
-
-\item{plot}{Logical. Produce the plot?}
 
 \item{updateD}{Logical. Should depletion be updated in projection years?}
 }
