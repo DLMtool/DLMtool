@@ -148,8 +148,8 @@ multiplied by (1-<code>xx</code>)</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The TAC is calculated as:
-$$\text{TAC} = (1-x)C_{\text{ave}}$$
-where <em>x</em> lies between 0 and 1, and \(C_{\text{ave}}\) is average historical
+$$\textrm{TAC} = (1-x)C_{\textrm{ave}}$$
+where <em>x</em> lies between 0 and 1, and \(C_{\textrm{ave}}\) is average historical
 catch over the previous <code>yrsmth</code> years.</p>
 <p>The TAC is constant for all future projections.</p>
     
@@ -166,6 +166,7 @@ catch over the previous <code>yrsmth</code> years.</p>
     <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
 
     
+    <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
     <p><code>CC1</code>: Cat, LHYear, Year</p>
     
     <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
@@ -182,15 +183,15 @@ ICES Journal of Marine Science: Journal Du Conseil 72 (1). 251-61.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>CC1</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Cobia</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='CC1-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     791.3982 </div><div class='input'>
+#&gt;     802.6977 </div><div class='input'>
 <span class='fu'>CC2</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Cobia</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='CC1-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     704.2513 </div><div class='input'>
+#&gt;       713.71 </div><div class='input'>
 <span class='fu'>CC3</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Cobia</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='CC1-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     641.6638 </div><div class='input'>
+#&gt;     641.7217 </div><div class='input'>
 <span class='fu'>CC4</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Cobia</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='CC1-4.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     562.9651 </div><div class='input'>
+#&gt;      560.476 </div><div class='input'>
 <span class='fu'>CC5</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Cobia</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='CC1-5.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     483.7844 </div><div class='input'>
+#&gt;     470.2679 </div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

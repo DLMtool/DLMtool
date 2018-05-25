@@ -7,21 +7,16 @@
 DBSRA_(x, Data, reps = 100, depo = NULL, hcr = NULL)
 }
 \arguments{
-\item{x}{A position in a data-limited methods data object}
+\item{x}{iteration number}
 
-\item{Data}{A data-limited methods data object}
+\item{Data}{object of class Data}
 
-\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+\item{reps}{number of reps}
 
 \item{depo}{Optional fixed depletion (single value)}
 
 \item{hcr}{Optional harvest control rule for throttling catch as a function of B/B0.
 Numeric vector of length 2 specifying HCR break points - e.g c(0.4, 0.1) for 40-10 HCR}
-
-\item{plot}{Logical. Show the plot?}
-}
-\value{
-
 }
 \description{
 Depletion-based SRA internal function

@@ -34,9 +34,9 @@ von Bertalanffy growth parameter \emph{K}.
 }
 \details{
 The TAC is calculated as:
-\deqn{\text{TAC} = A F_{\text{max}}}
-where \eqn{A} is (vulnerable) stock abundance, and \eqn{F_{\text{max}}} is calculated as:
-\deqn{F_{\text{max}} = \frac{0.6K}{0.67-L_c/L_\infty}}
+\deqn{\textrm{TAC} = A F_{\textrm{max}}}
+where \eqn{A} is (vulnerable) stock abundance, and \eqn{F_{\textrm{max}}} is calculated as:
+\deqn{F_{\textrm{max}} = \frac{0.6K}{0.67-L_c/L_\infty}}
 where \eqn{K} is the von Bertalanffy growth coefficient, \eqn{L_c} is the
 length at first capture, and \eqn{L_\infty} is the von Bertalanffy asymptotic length
 
@@ -57,16 +57,19 @@ to estimate \emph{Z} and \emph{F}.
 }}
 
 \note{
-Note that the Beddington-Kirkwood method is designed to estimate \eqn{F_\text{max}},
+Note that the Beddington-Kirkwood method is designed to estimate \eqn{F_\textrm{max}},
 that is, the fishing mortality that produces the maximum yield \emph{assuming constant
 recruitment independent of spawning biomass}.
 
 Beddington and Kirkwood (2005)
 recommend estimating \emph{F} using other methods (e.g a catch curve) and comparing the
-estimated \emph{F} to the estimated \eqn{F_\text{max}} and adjusting exploitation accordingly.
+estimated \emph{F} to the estimated \eqn{F_\textrm{max}} and adjusting exploitation accordingly.
 These MPs have not been implemented that way.
 }
 \section{Required Data}{
+
+See \link[=Data-class]{Data} for information on the \code{Data} object \cr
+
 
 \code{BK}: Abun, LFC, vbK, vbLinf
 
@@ -87,17 +90,11 @@ See \href{https://dlmtool.github.io/DLMtool/reference/BK.html}{Online Documentat
 }
 
 \examples{
-\dontrun{
 BK(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
-}
 
-\dontrun{
 BK_CC(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
-}
 
-\dontrun{
 BK_ML(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
-}
 
 }
 \references{

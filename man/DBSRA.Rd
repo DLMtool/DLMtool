@@ -57,6 +57,9 @@ previously been applied by Dick and MacCall.
 }
 \section{Required Data}{
 
+See \link[=Data-class]{Data} for information on the \code{Data} object \cr
+
+
 \code{DBSRA}: Cat, Dep, FMSY_M, L50, vbK, vbLinf, vbt0
 
 

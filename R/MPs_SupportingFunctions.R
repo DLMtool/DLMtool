@@ -44,11 +44,12 @@ DCAC_plot <- function(x, Data, dcac, Bt_K, yrs, lwd=3, cex.lab=1.25) {
   mtext(side=4, "Depletion (median + 95 percentiles)", line=3, cex=1.25, col="blue")
 }
 
-plotBK <- function(DF) {
-  DF2 <- DF %>% filter(vars %in% c("Lc/Linf", "K", "Fmax"))
+BK_plot <- function(DF) {
+
+  DF2 <- DF %>% dplyr::filter(vars %in% c("Lc/Linf", "K", "Fmax"))
   p1 <- ggplot(DF2, aes(x=vars, y=vals)) + geom_boxplot() + 
     theme_classic() + expand_limits(y=0) + labs(x="", y='Values')
-  DF3 <- DF %>% filter(!vars %in% c("Lc/Linf", "K", "Fmax"))
+  DF3 <- DF %>% dplyr::filter(!vars %in% c("Lc/Linf", "K", "Fmax"))
   p2 <- ggplot(DF3, aes(x=vars, y=vals)) + geom_boxplot() + 
     theme_classic() + expand_limits(y=0) + labs(x="", y='Values')
   
@@ -56,7 +57,7 @@ plotBK <- function(DF) {
 }
 
 
-plotCompSRA <- function(runCompSRA, TAC) {
+CompSRA_plot <- function(runCompSRA, TAC) {
   op <- par(no.readonly = TRUE)
   on.exit(op)
   
@@ -87,7 +88,7 @@ plotCompSRA <- function(runCompSRA, TAC) {
 }
 
 
-plotDBSRA <- function(runDBSRA, Data, TAC) {
+DBSRA_plot <- function(runDBSRA, Data, TAC) {
   op <- par(no.readonly = TRUE)
   on.exit(par(op))
   par(mfrow=c(2,2))

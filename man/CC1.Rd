@@ -41,8 +41,8 @@ multiplied by (1-\code{xx})
 }
 \details{
 The TAC is calculated as:
-\deqn{\text{TAC} = (1-x)C_{\text{ave}}}
-where \emph{x} lies between 0 and 1, and \eqn{C_{\text{ave}}} is average historical
+\deqn{\textrm{TAC} = (1-x)C_{\textrm{ave}}}
+where \emph{x} lies between 0 and 1, and \eqn{C_{\textrm{ave}}} is average historical
 catch over the previous \code{yrsmth} years.
 
 The TAC is constant for all future projections.
@@ -61,6 +61,9 @@ The TAC is constant for all future projections.
 }}
 
 \section{Required Data}{
+
+See \link[=Data-class]{Data} for information on the \code{Data} object \cr
+
 
 \code{CC1}: Cat, LHYear, Year
 }

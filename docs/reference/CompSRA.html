@@ -137,12 +137,12 @@ from the last 3 years (or less if fewer data are available) assuming a constant
 total mortality rate (<em>Z</em>) and used to estimate current stock depletion (<em>D</em>),
 <em>FMSY</em>, and stock abundance (<em>A</em>).</p>
 <p>Fishing mortality is estimated as:
-$$F = -\log{left(1-\frac{C}{V}\right)}$$
+$$F = -\log{\left(1-\frac{C}{V}\right)}$$
 where \(C\) and \(V\) are catch and vulnerable biomass of first age of full
 selection respectively.</p>
-<p>Abundance is estimated in the SRa. \(F_{\text{MSY}}\) is calculated assuming
+<p>Abundance is estimated in the SRa. \(F_{\textrm{MSY}}\) is calculated assuming
 knife-edge vulnerability at the age of full selection.</p>
-<p>The TAC is calculated as \(F_\text{MSY} A\). <code>CompSRA4010</code> uses a 40-10
+<p>The TAC is calculated as \(F_\textrm{MSY} A\). <code>CompSRA4010</code> uses a 40-10
 harvest control rule to reduce TAC at low biomass.</p>
     
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
@@ -155,6 +155,7 @@ harvest control rule to reduce TAC at low biomass.</p>
     <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
 
     
+    <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
     <p><code>CompSRA</code>: CAA, Cat, L50, LFC, LFS, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb</p>
     <p><code>CompSRA</code>: CAA, Cat, L50, LFC, LFS, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb</p>
     
@@ -166,13 +167,11 @@ harvest control rule to reduce TAC at low biomass.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'>CompSRA</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='co'># }</span><div class='input'>
-</div><span class='co'># NOT RUN {</span>
-<span class='fu'>CompSRA4010</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='co'># }</span><div class='input'>
-</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>CompSRA</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; TAC (median) 
+#&gt;     4511.655 </div><div class='input'>
+<span class='fu'>CompSRA4010</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='CompSRA-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     3583.803 </div><div class='input'>
+</div><div class='img'><img src='CompSRA-2.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

@@ -1,9 +1,9 @@
 
 ## Output Control MPs ####
 
-#### Average Catch Based Methods ####
 
-# ** Average Catch ----
+
+# ----- Average Catch ----
 
 #' Average Catch
 #'
@@ -15,8 +15,9 @@
 #' 
 #' For completeness, the TAC is calculated by:
 #' 
-#' \deqn{\text{TAC} =\frac{\sum_{y=1}^{\text{n}}{C_y}}{\text{n}}}
-#' where \eqn{\text{TAC}} is the the mean catch recommendation, \eqn{n} is the number of historical years, and
+#' \deqn{\textrm{TAC} =\frac{\sum_{y=1}^{\textrm{n}}{C_y}}{\textrm{n}}}
+#' 
+#' where \eqn{\textrm{TAC}} is the the mean catch recommendation, \eqn{n} is the number of historical years, and
 #' \eqn{C_y}  is the catch in historical year \eqn{y}
 #' 
 #' @templateVar mp AvC
@@ -49,320 +50,6 @@ AvC <- function(x, Data, reps = 100, plot=FALSE) {
 }
 class(AvC) <- "MP"
 
-
-# ** Depletion Corrected Average Catch MPs ####
-
-#' Depletion Corrected Average Catch 
-#' 
-#' Internal code to calculate dcac
-#'
-#' @param x Simulation number
-#' @param Data An object of class `Data`
-#' @param reps The number of reps
-#' @param Bt_K Optional value of depletion (otherwise taken from Data object)
-#' @param updateD Logical. Should depletion be updated in projection years?
-#'
-#' @return A list with dcac, Bt_K, and BMSY_K
-#' @keywords internal
-#' @export
-#'
-DCAC_ <- function(x, Data, reps=100, Bt_K=NULL, updateD=FALSE) {
-
-  yr.lst <- match(Data@LHYear, Data@Year)
-  yrs <- 1:yr.lst
-  C_tot <-  Data@AvC[x] * Data@t[x]
-  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
-  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])  # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
-  if (is.null(Bt_K))  Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
-  if (!updateD) {
-    if (Data@LHYear != max(Data@Year)) {
-      dcac <- rep(Data@MPrec[x], reps) # catch limit is static for future
-      return(list(dcac=dcac, Bt_K=Bt_K))
-    }
-  }
-  
-  Bt_K[Bt_K>1] <-1
-  Bt_K[Bt_K<0] <-0
-  if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) {
-    warning("Data@BMSY_B0 or Data@CV_BMSY_B0 do not contain values")
-    return(list(dcac=rep(NA, reps), Bt_K=Bt_K))
-  }
-  BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * Data@CV_BMSY_B0[x]))  
-
-  dcac <- C_tot/(yr.lst + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
-  
-  return(list(dcac=dcac, Bt_K=Bt_K, BMSY_K=BMSY_K))
-
-}
-
-
-#' Depletion Corrected Average Catch
-#' 
-#' This group of MPs calculates a catch limit (*dcac*; intended as an MSY proxy) based on 
-#' average historical catch while accounting for the windfall catch that got the stock down to
-#' its current depletion level (*D*).
-#'
-#' The method calculates the depletion-corrected average catch (*dcac*) as:
-#'
-#' \deqn{\text{dcac} = \frac{\sum_{y=1}^{n}{C_y}}{n+(1-D)/Y_{\text{pot}}}}
-#' 
-#' where
-#' \deqn{Y_{\text{pot}} = \frac{B_{\text{MSY}}}{B_0}\frac{F_{\text{MSY}}}{M}M} 
-#' and \eqn{C} is the historical catches; i.e \eqn{C} does not change in the future projections in the MSE
-#' 
-#' The methods differ in the assumptions of current depletion (*D*). See the **Functions** section below for details.
-#' 
-#' @template MPtemplate
-#' 
-#' 
-#' @note It's probably worth noting that DCAC TAC recommendations do not tend
-#' to zero as depletion tends to zero. It adjusts for depletion only in
-#' calculating historical average catch. It follows that at stock levels much
-#' below BMSY, DCAC tends to chronically overfish.
-#'
-#' @references 
-#' MacCall, A.D., 2009. Depletion-corrected average catch: a simple
-#' formula for estimating sustainable yields in data-poor situations. ICES J.
-#' Mar. Sci. 66, 2267-2271.
-#' 
-#' @author T. Carruthers
-#' @family Average Catch MPs
-#' @describeIn DCAC Depletion is not updated in the future projections. 
-#' The TAC is static and not updated in the future years. This represents 
-#' an application of the DCAC method where a catch limit is calculated based on 
-#' current estimate of depletion and time-series of catch from the beginning
-#' of the fishery, and the TAC is fixed at this level for all future projections.
-#' 
-#' @templateVar mp DCACs
-#' @template MPuses
-#' @examples 
-#' \dontrun{
-#' # First year
-#' DCACs(1, DLMtool::Atlantic_mackerel, plot=TRUE) 
-#' }
-#' 
-#' @export 
-DCACs <- function(x, Data, reps = 100, plot=FALSE) {
-  rundcac <- DCAC_(x, Data, reps)
-  TAC <- TACfilter(rundcac$dcac)
-  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
-  
-  Rec <- new("Rec")
-  Rec@TAC <- TAC
-  Rec
-}  
-class(DCACs) <- "MP"
-
-
-#' @describeIn DCAC Depletion is estimated each management interval and used to 
-#' update the catch limit recommendation based on the historical catch (which is 
-#' not updated in the future projections).
-#' @templateVar mp DCAC
-#' @template MPuses
-#' @examples 
-#' \dontrun{
-#' DCAC(1, DLMtool::Atlantic_mackerel, plot=TRUE) 
-#' }
-#' 
-#' @export 
-DCAC <- function(x, Data, reps = 100, plot=FALSE) {
-  "dependenciesData@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
-  
-  rundcac <- DCAC_(x, Data, reps, updateD=TRUE)
-  
-  TAC <- TACfilter(rundcac$dcac)
-  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
-  
-  Rec <- new("Rec")
-  Rec@TAC <- TAC
-  Rec
-}  
-class(DCAC) <- "MP"
-
-
-
-#' @describeIn DCAC Current stock biomass is assumed to be exactly at 40 per cent 
-#' of unfished levels. The 40 percent depletion assumption may not 
-#' really affect DCAC that much as it already makes TAC recommendations that are 
-#' quite MSY-like.
-#' @templateVar mp DCAC_40
-#' @template MPuses
-#' @examples 
-#' \dontrun{
-#' DCAC_40(1, DLMtool::Atlantic_mackerel, plot=TRUE) 
-#' }
-#' 
-#' @export 
-DCAC_40 <- function(x, Data, reps = 100, plot=FALSE) {
-  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0"
-  
-  rundcac <- DCAC_(x, Data, reps, Bt_K=0.4)
-  TAC <- TACfilter(rundcac$dcac)
-  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
-  
-  Rec <- new("Rec")
-  Rec@TAC <- TAC
-  Rec
-}  
-class(DCAC_40) <- "MP"
-
-
-#' @describeIn DCAC The dynamic DCAC (depletion is updated) is paired with the 40-10 rule that throttles 
-#' back the OFL to zero at 10 percent of unfished stock size (the OFL is not subject to downward
-#' adjustment above 40 percent unfished). DCAC can overfish below BMSY levels. The 40-10 
-#' harvest control rule largely resolves this problem providing an MP with surprisingly good
-#' performance even at low stock levels.
-#' @templateVar mp DCAC4010
-#' @template MPuses
-#' @examples 
-#' \dontrun{
-#' Data <- DLMtool::Atlantic_mackerel
-#' Data@LHYear <- 2005
-#' DCAC4010(1, Data, plot=TRUE) 
-#' }
-#' 
-#' @export 
-DCAC4010 <- function(x, Data, reps = 100, plot=FALSE) {
-  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
-  rundcac <- DCAC_(x, Data, reps, updateD=TRUE)
-  dcac <- rundcac$dcac 
-  Bt_K <- rundcac$Bt_K 
-  TAC <- dcac
-  
-  # 40-10 rule
-  cond1 <- Bt_K < 0.4 & Bt_K > 0.1
-  cond2 <- Bt_K < 0.1
-  if (length(cond1) > 0) TAC[cond1] <- TAC[cond1] * (Bt_K[cond1] - 0.1)/0.3
-  if (length(cond2) > 0)  TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
-  if (length(cond1) < 1 & length(cond2) < 1)  return(NA)
-  TAC <- TACfilter(TAC)
-  
-  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
-
-  Rec <- new("Rec")
-  Rec@TAC <- TAC 
-  Rec
-}  
-class(DCAC4010) <- "MP"
-
-
-
-#' @describeIn DCAC This variant uses the mean length estimator to calculate current stock
-#' depletion. The mean length extension was programmed by Gary Nelson as part of his
-#' excellent R package 'fishmethods'.
-#' @templateVar mp DCAC_ML
-#' @template MPuses
-#' @examples 
-#' \dontrun{
-#' DCAC_ML(1, DLMtool::SimulatedData, plot=TRUE) 
-#' }
-#' 
-#' @export 
-DCAC_ML <- function(x, Data, reps = 100, plot=FALSE) {
-  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0, Data@Year, Data@CAL, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK"
-  if (is.na(Data@BMSY_B0[x]) | is.na(Data@CV_BMSY_B0[x])) return(NA)
-  if (is.na(Data@FMSY_M[x]) | is.na(Data@CV_FMSY_M[x])) return(NA)
- 
-  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  
-  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
-  Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
-  Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
-  Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps, MLtype = "dep")
-  if (all(is.na(Z))) {
-    Rec <- new("Rec")
-    Rec@TAC <- TACfilter(rep(NA, reps))
-    return(Rec)
-  }
-  FM <- Z - Mdb
-  nyears <- length(Data@Year)
-  Ct1 <- mean(Data@Cat[x, 1:3])
-  Ct2 <- mean(Data@Cat[x, (nyears - 2):nyears])
-  dep <- rep(c(Ct1, Ct2), each = reps)/(1 - exp(-FM))
-  if (reps == 1)Bt_K <- dep[2]/dep[1]
-  if (reps > 1) Bt_K <- dep[, 2]/dep[, 1]
-  
-  rundcac <- DCAC_(x, Data, reps, Bt_K=Bt_K)
-  TAC <- TACfilter(rundcac$dcac)
-  
-  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
-
-  Rec <- new("Rec")
-  Rec@TAC <- TAC
-  Rec
-} 
-class(DCAC_ML) <- "MP"
-
-
-#' @describeIn DCAC Depletion Adjusted Average Catch: essentially DCAC (with updated Depletion)
-#'  divided by BMSY/B0 (Bpeak) (Harford and Carruthers, 2017).
-#' @references
-#' Harford W. and Carruthers, T. 2017. Interim and long-term performance of 
-#' static and adaptive management procedures. Fish. Res. 190, 84-94.
-#' @templateVar mp DAAC
-#' @template MPuses
-#' 
-#' @examples
-#' \dontrun{
-#' Data <- DLMtool::Atlantic_mackerel
-#' Data@LHYear <- 2005
-#' DAAC(1, Data, plot=TRUE) 
-#' }
-#' 
-#' @export 
-DAAC <- function(x, Data, reps = 100, plot=FALSE) {
-  # extended depletion-corrected average catch (Harford and Carruthers 2017)
-  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
-  
-  rundcac <- DCAC_(x, Data, reps, updateD = TRUE)
-  TAC <- rundcac$dcac * rundcac$Bt_K/rundcac$BMSY_K
-  
-  TAC <- TACfilter(TAC)
-  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
-  
-  Rec <- new("Rec")
-  Rec@TAC <- TAC
-  Rec
-}
-class(DAAC) <- "MP"
-
-
-
-#' @describeIn DCAC Hybrid Depletion Adjusted Average Catch: essentially DCAC  (with updated Depletion) 
-#' divided by BMSY/B0 (Bpeak) when below BMSY, 
-#' and DCAC above BMSY (Harford and Carruthers 2017).
-#' @templateVar mp HDAAC
-#' @template MPuses
-#' @examples
-#' \dontrun{
-#' Data <- DLMtool::Atlantic_mackerel
-#' Data@LHYear <- 2005
-#' HDAAC(1, Data, plot=TRUE) 
-#' }
-#' 
-#' @export 
-HDAAC <- function(x, Data, reps = 100, plot=FALSE) {
-  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
-  
-  rundcac <- DCAC_(x, Data, reps, updateD = TRUE)
-  TAC <- rundcac$dcac
-  ddcac <- rundcac$dcac * rundcac$Bt_K/rundcac$BMSY_K
-  TAC[rundcac$Bt_K < rundcac$BMSY_K] <- ddcac[rundcac$Bt_K < rundcac$BMSY_K]
-  
-  TAC <- TACfilter(TAC)
-  
-  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
-  
-  Rec <- new("Rec")
-  Rec@TAC <- TAC
-  Rec
-  
-}
-class(HDAAC) <- "MP"
-
-
-
-
-
 #### Beddington-Kirkwood Fmax estimation ####
 
 #' Beddington and Kirkwood life-history MP
@@ -372,9 +59,9 @@ class(HDAAC) <- "MP"
 #' von Bertalanffy growth parameter *K*.
 #' 
 #' @details The TAC is calculated as:
-#' \deqn{\text{TAC} = A F_{\text{max}}}
-#' where \eqn{A} is (vulnerable) stock abundance, and \eqn{F_{\text{max}}} is calculated as:
-#' \deqn{F_{\text{max}} = \frac{0.6K}{0.67-L_c/L_\infty}}
+#' \deqn{\textrm{TAC} = A F_{\textrm{max}}}
+#' where \eqn{A} is (vulnerable) stock abundance, and \eqn{F_{\textrm{max}}} is calculated as:
+#' \deqn{F_{\textrm{max}} = \frac{0.6K}{0.67-L_c/L_\infty}}
 #' where \eqn{K} is the von Bertalanffy growth coefficient, \eqn{L_c} is the
 #' length at first capture, and \eqn{L_\infty} is the von Bertalanffy asymptotic length
 #' 
@@ -386,13 +73,13 @@ class(HDAAC) <- "MP"
 #' 
 #' 
 #' @note 
-#' Note that the Beddington-Kirkwood method is designed to estimate \eqn{F_\text{max}},
+#' Note that the Beddington-Kirkwood method is designed to estimate \eqn{F_\textrm{max}},
 #' that is, the fishing mortality that produces the maximum yield *assuming constant 
 #' recruitment independent of spawning biomass*. 
 #' 
 #' Beddington and Kirkwood (2005) 
 #' recommend estimating *F* using other methods (e.g a catch curve) and comparing the 
-#' estimated *F* to the estimated \eqn{F_\text{max}} and adjusting exploitation accordingly. 
+#' estimated *F* to the estimated \eqn{F_\textrm{max}} and adjusting exploitation accordingly. 
 #' These MPs have not been implemented that way.
 #' 
 #' 
@@ -400,17 +87,14 @@ class(HDAAC) <- "MP"
 #' and `Data@CV_abun` contain values
 #' 
 #' @examples 
-#' \dontrun{
 #' BK(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
-#' }
-
 #' 
 #' @author T. Carruthers.
 #' @references Beddington, J.R., Kirkwood, G.P., 2005. The estimation of
 #' potential yield and stock status using life history parameters. Philos.
 #' Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.
-#' @template MPtemplate
 #' @templateVar mp BK
+#' @template MPtemplate
 #' @template MPuses
 #' @export 
 #' 
@@ -436,11 +120,11 @@ BK <- function(x, Data, reps = 100, plot=FALSE) {
                      stringsAsFactors = FALSE)
     DF <- DF[!is.na(DF$vals),]
     DF$vars <- factor(DF$vars, levels=c('Lc/Linf', 'K', 'Fmax', 'Abundance', 'TAC'), ordered=TRUE)
-    plotBK(DF)
+    BK_plot(DF)
   }
- 
+  
   Rec
-
+  
 } 
 class(BK) <- "MP"
 
@@ -451,9 +135,7 @@ class(BK) <- "MP"
 #' @templateVar mp BK_CC
 #' @template MPuses
 #' @examples 
-#' \dontrun{
 #' BK_CC(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
-#' }
 #' 
 #' @export 
 BK_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
@@ -468,7 +150,7 @@ BK_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
   Fdb <- Zdb - Mdb
   Ac <- Cc/(1 - exp(-Fdb))
   Fmax <- (0.6 * Kc)/(0.67 - (Lc/Linfc))
-
+  
   ind <- (1:(reps * 10))[Fdb > Fmin][(1:reps)*5]
   Fdb <- Fdb[ind]
   Mdb <- Mdb[ind]
@@ -478,11 +160,11 @@ BK_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
     Fdb[is.na(ind)] <- Fmin
   }
   Ac <- Cc/(1 - exp(-Fdb))
-
+  
   TAC <- Ac * Fmax
   ind <- TAC > 0 & Fmax > 0
   TAC <- TACfilter(TAC[ind][1:reps])
-
+  
   Rec <- new("Rec")
   Rec@TAC <- TAC
   
@@ -492,10 +174,10 @@ BK_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
                      vars=rep(c('Lc/Linf', 'K', 'Fmax', 'Abundance', 'TAC'), each=reps),
                      stringsAsFactors = FALSE)
     DF <- DF[!is.na(DF$vals),]
-
+    
     DF$vars <- factor(DF$vars, levels=c('Lc/Linf', 'K', 'Fmax', 'Abundance', 'TAC'), ordered=TRUE)
-    plotBK(DF)
-
+    BK_plot(DF)
+    
   }
   Rec
 }  
@@ -505,9 +187,7 @@ class(BK_CC) <- "MP"
 #' @templateVar mp BK_ML
 #' @template MPuses
 #' @examples 
-#' \dontrun{
 #' BK_ML(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
-#' }
 #' 
 #' @export 
 BK_ML <- function(x, Data, reps = 100, plot=FALSE) {
@@ -541,12 +221,18 @@ BK_ML <- function(x, Data, reps = 100, plot=FALSE) {
                      stringsAsFactors = FALSE)
     DF <- DF[!is.na(DF$vals),]
     DF$vars <- factor(DF$vars, levels=c('Lc/Linf', 'K', 'Fmax', 'Abundance', 'TAC'), ordered=TRUE)
-    plotBK(DF)
+    BK_plot(DF)
   }
   
   Rec
 }
 class(BK_ML) <- "MP"
+
+
+
+
+
+
 
 
 #' Geromont and Butterworth (2015) Constant Catch 
@@ -555,8 +241,8 @@ class(BK_ML) <- "MP"
 #' multiplied by (1-`xx`)
 #' 
 #' The TAC is calculated as:
-#' \deqn{\text{TAC} = (1-x)C_{\text{ave}}}
-#' where *x* lies between 0 and 1, and \eqn{C_{\text{ave}}} is average historical
+#' \deqn{\textrm{TAC} = (1-x)C_{\textrm{ave}}}
+#' where *x* lies between 0 and 1, and \eqn{C_{\textrm{ave}}} is average historical
 #' catch over the previous `yrsmth` years. 
 #' 
 #' The TAC is constant for all future projections.
@@ -727,27 +413,25 @@ CompSRA_ <- function(x, Data, reps=100) {
 #'  *FMSY*, and stock abundance (*A*). 
 #' 
 #' Fishing mortality is estimated as:
-#' \deqn{F = -\log{left(1-\frac{C}{V}\right)}}
+#' \deqn{F = -\log{\left(1-\frac{C}{V}\right)}}
 #' where \eqn{C} and \eqn{V} are catch and vulnerable biomass of first age of full
 #' selection respectively. 
 #' 
-#' Abundance is estimated in the SRa. \eqn{F_{\text{MSY}}} is calculated assuming 
+#' Abundance is estimated in the SRa. \eqn{F_{\textrm{MSY}}} is calculated assuming 
 #' knife-edge vulnerability at the age of full selection. 
 #'   
-#' The TAC is calculated as \eqn{F_\text{MSY} A}. `CompSRA4010` uses a 40-10 
+#' The TAC is calculated as \eqn{F_\textrm{MSY} A}. `CompSRA4010` uses a 40-10 
 #' harvest control rule to reduce TAC at low biomass.
 #' 
-#' @template MPtemplate
 #' @templateVar mp CompSRA
+#' @template MPtemplate
 #' @template MPuses
 #' 
 #' @describeIn CompSRA TAC is FMSY x Abundance
 #' @author T. Carruthers
 #' 
 #' @examples
-#' \dontrun{
 #' CompSRA(1, DLMtool::SimulatedData, plot=TRUE)
-#' }
 #' 
 #' @export 
 CompSRA <- function(x, Data, reps = 100, plot=FALSE) {
@@ -758,7 +442,7 @@ CompSRA <- function(x, Data, reps = 100, plot=FALSE) {
   runCompSRA <- CompSRA_(x, Data, reps)
   TAC <- TACfilter(runCompSRA$TAC)
 
-  if (plot) plotCompSRA(runCompSRA, TAC)
+  if (plot) CompSRA_plot(runCompSRA, TAC)
     
   Rec <- new("Rec")
   Rec@TAC <- TAC
@@ -771,9 +455,7 @@ class(CompSRA) <- "MP"
 #' @template MPuses
 #' @describeIn CompSRA With a 40-10 control rule based on estimated depletion
 #' @examples
-#' \dontrun{
 #' CompSRA4010(1, DLMtool::SimulatedData, plot=TRUE)
-#' }
 #' 
 #' @export CompSRA4010
 CompSRA4010 <- function(x, Data, reps = 100, plot=FALSE) {
@@ -790,7 +472,7 @@ CompSRA4010 <- function(x, Data, reps = 100, plot=FALSE) {
   TAC[cond1] <- TAC[cond1] * (Bt_K[cond1] - 0.1)/0.3
   TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
   
-  if (plot) plotCompSRA(runCompSRA, TAC)
+  if (plot) CompSRA_plot(runCompSRA, TAC)
   
   Rec <- new("Rec")
   Rec@TAC <- TACfilter(TAC)
@@ -798,6 +480,302 @@ CompSRA4010 <- function(x, Data, reps = 100, plot=FALSE) {
   
 }
 class(CompSRA4010) <- "MP"
+
+
+# ---- Depletion Corrected Average Catch MPs -----
+
+#' Depletion Corrected Average Catch 
+#' 
+#' Internal code to calculate dcac
+#'
+#' @param x Simulation number
+#' @param Data An object of class `Data`
+#' @param reps The number of reps
+#' @param Bt_K Optional value of depletion (otherwise taken from Data object)
+#' @param updateD Logical. Should depletion be updated in projection years?
+#'
+#' @return A list with dcac, Bt_K, and BMSY_K
+#' @keywords internal
+#' @export
+#'
+DCAC_ <- function(x, Data, reps=100, Bt_K=NULL, updateD=FALSE) {
+  
+  yr.lst <- match(Data@LHYear, Data@Year)
+  yrs <- 1:yr.lst
+  C_tot <-  Data@AvC[x] * Data@t[x]
+  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
+  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])  # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
+  if (is.null(Bt_K))  Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
+  if (!updateD) {
+    if (Data@LHYear != max(Data@Year)) {
+      dcac <- rep(Data@MPrec[x], reps) # catch limit is static for future
+      return(list(dcac=dcac, Bt_K=Bt_K))
+    }
+  }
+  
+  Bt_K[Bt_K>1] <-1
+  Bt_K[Bt_K<0] <-0
+  if (any(is.na(c(Data@BMSY_B0[x], Data@CV_BMSY_B0[x])))) {
+    warning("Data@BMSY_B0 or Data@CV_BMSY_B0 do not contain values")
+    return(list(dcac=rep(NA, reps), Bt_K=Bt_K))
+  }
+  BMSY_K <- rbeta(reps, alphaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * Data@CV_BMSY_B0[x]), betaconv(Data@BMSY_B0[x], Data@BMSY_B0[x] * Data@CV_BMSY_B0[x]))  
+  
+  dcac <- C_tot/(yr.lst + ((1 - Bt_K)/(BMSY_K * FMSY_M * Mdb)))
+  
+  return(list(dcac=dcac, Bt_K=Bt_K, BMSY_K=BMSY_K))
+  
+}
+
+
+#' Depletion Corrected Average Catch
+#' 
+#' This group of MPs calculates a catch limit (*dcac*; intended as an MSY proxy) based on 
+#' average historical catch while accounting for the windfall catch that got the stock down to
+#' its current depletion level (*D*).
+#'
+#' The method calculates the depletion-corrected average catch (*dcac*) as:
+#'
+#' \deqn{\textrm{dcac} = \frac{\sum_{y=1}^{n}{C_y}}{n+(1-D)/Y_{\textrm{pot}}}}
+#' 
+#' where
+#' \deqn{Y_{\textrm{pot}} = \frac{B_{\textrm{MSY}}}{B_0}\frac{F_{\textrm{MSY}}}{M}M} 
+#' and \eqn{C} is the historical catches; i.e \eqn{C} does not change in the future projections in the MSE
+#' 
+#' The methods differ in the assumptions of current depletion (*D*). See the **Functions** section below for details.
+#' 
+#' @templateVar mp DCAC
+#' @template MPtemplate
+#' 
+#' 
+#' @note It's probably worth noting that DCAC TAC recommendations do not tend
+#' to zero as depletion tends to zero. It adjusts for depletion only in
+#' calculating historical average catch. It follows that at stock levels much
+#' below BMSY, DCAC tends to chronically overfish.
+#'
+#' @references 
+#' MacCall, A.D., 2009. Depletion-corrected average catch: a simple
+#' formula for estimating sustainable yields in data-poor situations. ICES J.
+#' Mar. Sci. 66, 2267-2271.
+#' 
+#' @author T. Carruthers
+#' @family Average Catch MPs
+#' @describeIn DCAC Depletion is not updated in the future projections. 
+#' The TAC is static and not updated in the future years. This represents 
+#' an application of the DCAC method where a catch limit is calculated based on 
+#' current estimate of depletion and time-series of catch from the beginning
+#' of the fishery, and the TAC is fixed at this level for all future projections.
+#' 
+#' @templateVar mp DCACs
+#' @template MPuses
+#' @examples 
+#' DCACs(1, DLMtool::Atlantic_mackerel, plot=TRUE) 
+#' 
+#' @export 
+DCACs <- function(x, Data, reps = 100, plot=FALSE) {
+  rundcac <- DCAC_(x, Data, reps)
+  TAC <- TACfilter(rundcac$dcac)
+  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
+  
+  Rec <- new("Rec")
+  Rec@TAC <- TAC
+  Rec
+}  
+class(DCACs) <- "MP"
+
+
+#' @describeIn DCAC Depletion is estimated each management interval and used to 
+#' update the catch limit recommendation based on the historical catch (which is 
+#' not updated in the future projections).
+#' @templateVar mp DCAC
+#' @template MPuses
+#' @examples 
+#' DCAC(1, DLMtool::Atlantic_mackerel, plot=TRUE) 
+#' 
+#' @export 
+DCAC <- function(x, Data, reps = 100, plot=FALSE) {
+  "dependenciesData@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
+  
+  rundcac <- DCAC_(x, Data, reps, updateD=TRUE)
+  
+  TAC <- TACfilter(rundcac$dcac)
+  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
+  
+  Rec <- new("Rec")
+  Rec@TAC <- TAC
+  Rec
+}  
+class(DCAC) <- "MP"
+
+
+
+#' @describeIn DCAC Current stock biomass is assumed to be exactly at 40 per cent 
+#' of unfished levels. The 40 percent depletion assumption may not 
+#' really affect DCAC that much as it already makes TAC recommendations that are 
+#' quite MSY-like.
+#' @templateVar mp DCAC_40
+#' @template MPuses
+#' @examples 
+#' DCAC_40(1, DLMtool::Atlantic_mackerel, plot=TRUE) 
+#' 
+#' @export 
+DCAC_40 <- function(x, Data, reps = 100, plot=FALSE) {
+  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0"
+  
+  rundcac <- DCAC_(x, Data, reps, Bt_K=0.4)
+  TAC <- TACfilter(rundcac$dcac)
+  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
+  
+  Rec <- new("Rec")
+  Rec@TAC <- TAC
+  Rec
+}  
+class(DCAC_40) <- "MP"
+
+
+#' @describeIn DCAC The dynamic DCAC (depletion is updated) is paired with the 40-10 rule that throttles 
+#' back the OFL to zero at 10 percent of unfished stock size (the OFL is not subject to downward
+#' adjustment above 40 percent unfished). DCAC can overfish below BMSY levels. The 40-10 
+#' harvest control rule largely resolves this problem providing an MP with surprisingly good
+#' performance even at low stock levels.
+#' @templateVar mp DCAC4010
+#' @template MPuses
+#' @examples 
+#' Data <- DLMtool::Atlantic_mackerel
+#' Data@LHYear <- 2005
+#' DCAC4010(1, Data, plot=TRUE) 
+#' 
+#' @export 
+DCAC4010 <- function(x, Data, reps = 100, plot=FALSE) {
+  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
+  rundcac <- DCAC_(x, Data, reps, updateD=TRUE)
+  dcac <- rundcac$dcac 
+  Bt_K <- rundcac$Bt_K 
+  TAC <- dcac
+  
+  # 40-10 rule
+  cond1 <- Bt_K < 0.4 & Bt_K > 0.1
+  cond2 <- Bt_K < 0.1
+  if (length(cond1) > 0) TAC[cond1] <- TAC[cond1] * (Bt_K[cond1] - 0.1)/0.3
+  if (length(cond2) > 0)  TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
+  if (length(cond1) < 1 & length(cond2) < 1)  return(NA)
+  TAC <- TACfilter(TAC)
+  
+  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
+  
+  Rec <- new("Rec")
+  Rec@TAC <- TAC 
+  Rec
+}  
+class(DCAC4010) <- "MP"
+
+
+
+#' @describeIn DCAC This variant uses the mean length estimator to calculate current stock
+#' depletion. The mean length extension was programmed by Gary Nelson as part of his
+#' excellent R package 'fishmethods'.
+#' @templateVar mp DCAC_ML
+#' @template MPuses
+#' @examples 
+#' DCAC_ML(1, DLMtool::SimulatedData, plot=TRUE) 
+#' 
+#' @export 
+DCAC_ML <- function(x, Data, reps = 100, plot=FALSE) {
+  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@BMSY_B0, Data@CV_BMSY_B0, Data@Year, Data@CAL, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK"
+  if (is.na(Data@BMSY_B0[x]) | is.na(Data@CV_BMSY_B0[x])) return(NA)
+  if (is.na(Data@FMSY_M[x]) | is.na(Data@CV_FMSY_M[x])) return(NA)
+  
+  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  
+  FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
+  Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
+  Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
+  Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps, MLtype = "dep")
+  if (all(is.na(Z))) {
+    Rec <- new("Rec")
+    Rec@TAC <- TACfilter(rep(NA, reps))
+    return(Rec)
+  }
+  FM <- Z - Mdb
+  nyears <- length(Data@Year)
+  Ct1 <- mean(Data@Cat[x, 1:3])
+  Ct2 <- mean(Data@Cat[x, (nyears - 2):nyears])
+  dep <- rep(c(Ct1, Ct2), each = reps)/(1 - exp(-FM))
+  if (reps == 1)Bt_K <- dep[2]/dep[1]
+  if (reps > 1) Bt_K <- dep[, 2]/dep[, 1]
+  
+  rundcac <- DCAC_(x, Data, reps, Bt_K=Bt_K)
+  TAC <- TACfilter(rundcac$dcac)
+  
+  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
+  
+  Rec <- new("Rec")
+  Rec@TAC <- TAC
+  Rec
+} 
+class(DCAC_ML) <- "MP"
+
+
+#' @describeIn DCAC Depletion Adjusted Average Catch: essentially DCAC (with updated Depletion)
+#'  divided by BMSY/B0 (Bpeak) (Harford and Carruthers, 2017).
+#' @references
+#' Harford W. and Carruthers, T. 2017. Interim and long-term performance of 
+#' static and adaptive management procedures. Fish. Res. 190, 84-94.
+#' @templateVar mp DAAC
+#' @template MPuses
+#' 
+#' @examples
+#' Data <- DLMtool::Atlantic_mackerel
+#' Data@LHYear <- 2005
+#' DAAC(1, Data, plot=TRUE) 
+#' 
+#' @export 
+DAAC <- function(x, Data, reps = 100, plot=FALSE) {
+  # extended depletion-corrected average catch (Harford and Carruthers 2017)
+  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
+  
+  rundcac <- DCAC_(x, Data, reps, updateD = TRUE)
+  TAC <- rundcac$dcac * rundcac$Bt_K/rundcac$BMSY_K
+  
+  TAC <- TACfilter(TAC)
+  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
+  
+  Rec <- new("Rec")
+  Rec@TAC <- TAC
+  Rec
+}
+class(DAAC) <- "MP"
+
+
+
+#' @describeIn DCAC Hybrid Depletion Adjusted Average Catch: essentially DCAC  (with updated Depletion) 
+#' divided by BMSY/B0 (Bpeak) when below BMSY, 
+#' and DCAC above BMSY (Harford and Carruthers 2017).
+#' @templateVar mp HDAAC
+#' @template MPuses
+#' @examples
+#' Data <- DLMtool::Atlantic_mackerel
+#' Data@LHYear <- 2005
+#' HDAAC(1, Data, plot=TRUE) 
+#' 
+#' @export 
+HDAAC <- function(x, Data, reps = 100, plot=FALSE) {
+  dependencies = "Data@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
+  
+  rundcac <- DCAC_(x, Data, reps, updateD = TRUE)
+  TAC <- rundcac$dcac
+  ddcac <- rundcac$dcac * rundcac$Bt_K/rundcac$BMSY_K
+  TAC[rundcac$Bt_K < rundcac$BMSY_K] <- ddcac[rundcac$Bt_K < rundcac$BMSY_K]
+  
+  TAC <- TACfilter(TAC)
+  
+  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
+  
+  Rec <- new("Rec")
+  Rec@TAC <- TAC
+  Rec
+  
+}
+class(HDAAC) <- "MP"
 
 
 #### Depletion Based SRA ####
@@ -863,8 +841,10 @@ DBSRAopt <- function(lnK, C_hist, nys, Mdb, FMSY_M, BMSY_K, Bt_K, adelay, opt=1)
 }  # end of DBSRA optimization function
 
 #' Depletion-based SRA internal function
-#'
-#' @template MPtemplate 
+#' 
+#' @param x iteration number
+#' @param Data object of class Data 
+#' @param reps number of reps
 #' @param depo Optional fixed depletion (single value)
 #' @param hcr Optional harvest control rule for throttling catch as a function of B/B0. 
 #' Numeric vector of length 2 specifying HCR break points - e.g c(0.4, 0.1) for 40-10 HCR
@@ -949,15 +929,16 @@ DBSRA_ <- function(x, Data, reps = 100, depo=NULL, hcr=NULL) {
 }  
 
 
+######### ADD EQUATIONS HERE #####
+
 #' Depletion-Based Stock Reduction Analysis
 #' 
 #' User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the OFL
 #' by back-constructing the stock to match a user specified level of stock
 #' depletion (OFL = M * FMSY/M * depletion* B0).
 #' 
-#' 
-#' @template MPtemplate
 #' @templateVar mp DBSRA
+#' @template MPtemplate
 #' @template MPuses
 #' 
 #' @note This is set up to return the OFL (FMSY * current biomass).
@@ -993,9 +974,8 @@ DBSRA_ <- function(x, Data, reps = 100, depo=NULL, hcr=NULL) {
 DBSRA <- function(x, Data, reps = 100, plot=FALSE) {
   runDBSRA <- DBSRA_(x,Data, reps)
   TAC <- TACfilter(runDBSRA[[1]])
-  if (plot) {
-    plotDBSRA(runDBSRA, Data, TAC)
-  }
+  if (plot) DBSRA_plot(runDBSRA, Data, TAC)
+
   Rec <- new("Rec")
   Rec@TAC <- TAC
   Rec
@@ -1014,9 +994,8 @@ class(DBSRA) <- "MP"
 DBSRA_40 <- function(x, Data, reps = 100, plot=FALSE) {
   runDBSRA <- DBSRA_(x,Data, reps, depo=0.4)
   TAC <- TACfilter(runDBSRA[[1]])
-  if (plot) {
-    plotDBSRA(runDBSRA, Data, TAC)
-  }
+  if (plot)  DBSRA_plot(runDBSRA, Data, TAC)
+  
   Rec <- new("Rec")
   Rec@TAC <- TAC
   Rec
@@ -1035,9 +1014,8 @@ class(DBSRA_40) <- "MP"
 DBSRA4010 <- function(x, Data, reps = 100, plot=FALSE) {
   runDBSRA <- DBSRA_(x,Data, reps, hcr=c(0.4, 0.1))
   TAC <- TACfilter(runDBSRA[[1]])
-  if (plot) {
-    plotDBSRA(runDBSRA, Data, TAC)
-  }
+  if (plot) DBSRA_plot(runDBSRA, Data, TAC)
+
   Rec <- new("Rec")
   Rec@TAC <- TAC
   Rec

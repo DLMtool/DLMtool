@@ -28,11 +28,15 @@ distribution with mean \code{TAC} and standard deviation (in log-space) of 0.2.
 
 For completeness, the TAC is calculated by:
 
-\deqn{\text{TAC} =\frac{\sum_{y=1}^{\text{n}}{C_y}}{\text{n}}}
-where \eqn{\text{TAC}} is the the mean catch recommendation, \eqn{n} is the number of historical years, and
+\deqn{\textrm{TAC} =\frac{\sum_{y=1}^{\textrm{n}}{C_y}}{\textrm{n}}}
+
+where \eqn{\textrm{TAC}} is the the mean catch recommendation, \eqn{n} is the number of historical years, and
 \eqn{C_y}  is the catch in historical year \eqn{y}
 }
 \section{Required Data}{
+
+See \link[=Data-class]{Data} for information on the \code{Data} object \cr
+
 
 \code{AvC}: Cat, LHYear, Year
 }

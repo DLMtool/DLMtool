@@ -154,21 +154,22 @@ of logical values: Can (possible given data) and Fease (feasible given managemen
 #&gt; [11] "ITe10"       "ITe5"        "LstepCE1"    "LstepCE2"    "LtargetE1"  
 #&gt; [16] "LtargetE4"   "matlenlim"   "matlenlim2"  "minlenLopt1" "MRnoreal"   
 #&gt; [21] "MRreal"      "slotlim"    </div><div class='input'><span class='fu'>Fease</span>(<span class='kw'>SL</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='kw'>Spatial</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='message'>Feasible management: </span></div><div class='output co'>#&gt; <span class='message'>TAC - total allowable catch</span></div><div class='output co'>#&gt; <span class='message'>TAE - total allowable effort</span></div><div class='output co'>#&gt; <span class='message'>No Data object provided. Returning feasible MPs</span></div><div class='output co'>#&gt;  [1] "AvC"         "BK"          "BK_CC"       "BK_ML"       "CC1"        
-#&gt;  [6] "CC4"         "CompSRA"     "CompSRA4010" "curE"        "curE75"     
-#&gt; [11] "DAAC"        "DBSRA"       "DBSRA_40"    "DBSRA4010"   "DCAC"       
-#&gt; [16] "DCAC_40"     "DCAC_ML"     "DCAC4010"    "DD"          "DD4010"     
-#&gt; [21] "DDe"         "DDe75"       "DDes"        "DepF"        "DTe40"      
-#&gt; [26] "DTe50"       "DynF"        "EtargetLopt" "Fadapt"      "Fdem"       
-#&gt; [31] "Fdem_CC"     "Fdem_ML"     "FMSYref"     "FMSYref50"   "FMSYref75"  
-#&gt; [36] "Fratio"      "Fratio_CC"   "Fratio_ML"   "Fratio4010"  "GB_CC"      
-#&gt; [41] "GB_slope"    "GB_target"   "Gcontrol"    "HDAAC"       "ICI"        
-#&gt; [46] "ICI2"        "Iratio"      "Islope1"     "Islope4"     "IT10"       
-#&gt; [51] "IT5"         "Itarget1"    "Itarget4"    "ItargetE1"   "ItargetE4"  
-#&gt; [56] "ITe10"       "ITe5"        "ITM"         "L95target"   "Lratio_BHI" 
-#&gt; [61] "Lratio_BHI2" "LstepCC1"    "LstepCC4"    "LstepCE1"    "LstepCE2"   
-#&gt; [66] "Ltarget1"    "Ltarget4"    "LtargetE1"   "LtargetE4"   "MCD"        
-#&gt; [71] "MCD4010"     "NFref"       "Rcontrol"    "Rcontrol2"   "SBT1"       
-#&gt; [76] "SBT2"        "SPmod"       "SPMSY"       "SPslope"     "SPSRA"      </div><div class='input'><span class='no'>Data</span> <span class='kw'>&lt;-</span> <span class='fu'>get</span>(<span class='fu'><a href='avail.html'>avail</a></span>(<span class='st'>"Data"</span>)[<span class='fl'>1</span>])
+#&gt;  [6] "CC2"         "CC3"         "CC4"         "CC5"         "CompSRA"    
+#&gt; [11] "CompSRA4010" "curE"        "curE75"      "DAAC"        "DBSRA"      
+#&gt; [16] "DBSRA_40"    "DBSRA4010"   "DCAC"        "DCAC_40"     "DCAC_ML"    
+#&gt; [21] "DCAC4010"    "DCACs"       "DD"          "DD4010"      "DDe"        
+#&gt; [26] "DDe75"       "DDes"        "DepF"        "DTe40"       "DTe50"      
+#&gt; [31] "DynF"        "EtargetLopt" "Fadapt"      "Fdem"        "Fdem_CC"    
+#&gt; [36] "Fdem_ML"     "FMSYref"     "FMSYref50"   "FMSYref75"   "Fratio"     
+#&gt; [41] "Fratio_CC"   "Fratio_ML"   "Fratio4010"  "GB_CC"       "GB_slope"   
+#&gt; [46] "GB_target"   "Gcontrol"    "HDAAC"       "ICI"         "ICI2"       
+#&gt; [51] "Iratio"      "Islope1"     "Islope4"     "IT10"        "IT5"        
+#&gt; [56] "Itarget1"    "Itarget4"    "ItargetE1"   "ItargetE4"   "ITe10"      
+#&gt; [61] "ITe5"        "ITM"         "L95target"   "Lratio_BHI"  "Lratio_BHI2"
+#&gt; [66] "LstepCC1"    "LstepCC4"    "LstepCE1"    "LstepCE2"    "Ltarget1"   
+#&gt; [71] "Ltarget4"    "LtargetE1"   "LtargetE4"   "MCD"         "MCD4010"    
+#&gt; [76] "NFref"       "Rcontrol"    "Rcontrol2"   "SBT1"        "SBT2"       
+#&gt; [81] "SPmod"       "SPMSY"       "SPslope"     "SPSRA"      </div><div class='input'><span class='no'>Data</span> <span class='kw'>&lt;-</span> <span class='fu'>get</span>(<span class='fu'><a href='avail.html'>avail</a></span>(<span class='st'>"Data"</span>)[<span class='fl'>1</span>])
 <span class='fu'>Fease</span>(<span class='no'>Data</span>, <span class='kw'>TAE</span><span class='kw'>=</span><span class='fl'>FALSE</span>, <span class='kw'>names.only</span><span class='kw'>=</span><span class='fl'>FALSE</span>)</div><div class='output co'>#&gt; <span class='message'>Feasible management: </span></div><div class='output co'>#&gt; <span class='message'>TAC - total allowable catch</span></div><div class='output co'>#&gt; <span class='message'>SL - size selectivity</span></div><div class='output co'>#&gt; <span class='message'>Spatial - spatial closures</span></div><div class='output co'>#&gt; <span class='message'>Data object provided. Returning feasible and available MPs</span></div><div class='output co'>#&gt;              MP   Can Fease
 #&gt; 25          AvC  TRUE  TRUE
 #&gt; 23      AvC_MLL  TRUE  TRUE
@@ -176,88 +177,92 @@ of logical values: Can (possible given data) and Fease (feasible given managemen
 #&gt; 27        BK_CC FALSE  TRUE
 #&gt; 28        BK_ML FALSE  TRUE
 #&gt; 29          CC1  TRUE  TRUE
-#&gt; 30          CC4  TRUE  TRUE
-#&gt; 31      CompSRA FALSE  TRUE
-#&gt; 32  CompSRA4010 FALSE  TRUE
+#&gt; 30          CC2  TRUE  TRUE
+#&gt; 31          CC3  TRUE  TRUE
+#&gt; 32          CC4  TRUE  TRUE
+#&gt; 33          CC5  TRUE  TRUE
+#&gt; 34      CompSRA FALSE  TRUE
+#&gt; 35  CompSRA4010 FALSE  TRUE
 #&gt; 1          curE  TRUE FALSE
 #&gt; 2        curE75  TRUE FALSE
-#&gt; 33         DAAC  TRUE  TRUE
-#&gt; 34        DBSRA  TRUE  TRUE
-#&gt; 35     DBSRA_40  TRUE  TRUE
-#&gt; 36    DBSRA4010  TRUE  TRUE
-#&gt; 37         DCAC  TRUE  TRUE
-#&gt; 38      DCAC_40  TRUE  TRUE
-#&gt; 39      DCAC_ML FALSE  TRUE
-#&gt; 40     DCAC4010  TRUE  TRUE
-#&gt; 41           DD  TRUE  TRUE
-#&gt; 42       DD4010  TRUE  TRUE
+#&gt; 36         DAAC  TRUE  TRUE
+#&gt; 37        DBSRA  TRUE  TRUE
+#&gt; 38     DBSRA_40  TRUE  TRUE
+#&gt; 39    DBSRA4010  TRUE  TRUE
+#&gt; 40         DCAC  TRUE  TRUE
+#&gt; 41      DCAC_40  TRUE  TRUE
+#&gt; 42      DCAC_ML FALSE  TRUE
+#&gt; 43     DCAC4010  TRUE  TRUE
+#&gt; 44        DCACs  TRUE  TRUE
+#&gt; 45           DD  TRUE  TRUE
+#&gt; 46       DD4010  TRUE  TRUE
 #&gt; 3           DDe  TRUE FALSE
 #&gt; 4         DDe75  TRUE FALSE
 #&gt; 5          DDes  TRUE FALSE
-#&gt; 43         DepF  TRUE  TRUE
+#&gt; 47         DepF  TRUE  TRUE
 #&gt; 6         DTe40  TRUE FALSE
 #&gt; 7         DTe50  TRUE FALSE
-#&gt; 44         DynF  TRUE  TRUE
+#&gt; 48         DynF  TRUE  TRUE
 #&gt; 8   EtargetLopt FALSE FALSE
-#&gt; 45       Fadapt  TRUE  TRUE
-#&gt; 46         Fdem  TRUE  TRUE
-#&gt; 47      Fdem_CC FALSE  TRUE
-#&gt; 48      Fdem_ML FALSE  TRUE
-#&gt; 89      FMSYref FALSE  TRUE
-#&gt; 90    FMSYref50 FALSE  TRUE
-#&gt; 91    FMSYref75 FALSE  TRUE
-#&gt; 49       Fratio  TRUE  TRUE
-#&gt; 50    Fratio_CC FALSE  TRUE
-#&gt; 51    Fratio_ML FALSE  TRUE
-#&gt; 52   Fratio4010  TRUE  TRUE
-#&gt; 53        GB_CC FALSE  TRUE
-#&gt; 54     GB_slope  TRUE  TRUE
-#&gt; 55    GB_target FALSE  TRUE
-#&gt; 56     Gcontrol  TRUE  TRUE
-#&gt; 57        HDAAC  TRUE  TRUE
-#&gt; 58          ICI  TRUE  TRUE
-#&gt; 59         ICI2  TRUE  TRUE
-#&gt; 60       Iratio  TRUE  TRUE
-#&gt; 61      Islope1 FALSE  TRUE
-#&gt; 62      Islope4 FALSE  TRUE
-#&gt; 63         IT10 FALSE  TRUE
-#&gt; 64          IT5 FALSE  TRUE
-#&gt; 65     Itarget1  TRUE  TRUE
+#&gt; 49       Fadapt  TRUE  TRUE
+#&gt; 50         Fdem  TRUE  TRUE
+#&gt; 51      Fdem_CC FALSE  TRUE
+#&gt; 52      Fdem_ML FALSE  TRUE
+#&gt; 93      FMSYref FALSE  TRUE
+#&gt; 94    FMSYref50 FALSE  TRUE
+#&gt; 95    FMSYref75 FALSE  TRUE
+#&gt; 53       Fratio  TRUE  TRUE
+#&gt; 54    Fratio_CC FALSE  TRUE
+#&gt; 55    Fratio_ML FALSE  TRUE
+#&gt; 56   Fratio4010  TRUE  TRUE
+#&gt; 57        GB_CC FALSE  TRUE
+#&gt; 58     GB_slope  TRUE  TRUE
+#&gt; 59    GB_target FALSE  TRUE
+#&gt; 60     Gcontrol  TRUE  TRUE
+#&gt; 61        HDAAC  TRUE  TRUE
+#&gt; 62          ICI  TRUE  TRUE
+#&gt; 63         ICI2  TRUE  TRUE
+#&gt; 64       Iratio  TRUE  TRUE
+#&gt; 65      Islope1 FALSE  TRUE
+#&gt; 66      Islope4 FALSE  TRUE
+#&gt; 67         IT10 FALSE  TRUE
+#&gt; 68          IT5 FALSE  TRUE
+#&gt; 69     Itarget1  TRUE  TRUE
 #&gt; 24 Itarget1_MPA  TRUE  TRUE
-#&gt; 66     Itarget4  TRUE  TRUE
+#&gt; 70     Itarget4  TRUE  TRUE
 #&gt; 9     ItargetE1  TRUE FALSE
 #&gt; 10    ItargetE4  TRUE FALSE
 #&gt; 11        ITe10 FALSE FALSE
 #&gt; 12         ITe5 FALSE FALSE
-#&gt; 67          ITM FALSE  TRUE
-#&gt; 68    L95target FALSE  TRUE
-#&gt; 69   Lratio_BHI FALSE  TRUE
-#&gt; 70  Lratio_BHI2 FALSE  TRUE
-#&gt; 71     LstepCC1 FALSE  TRUE
-#&gt; 72     LstepCC4 FALSE  TRUE
+#&gt; 71          ITM FALSE  TRUE
+#&gt; 72    L95target FALSE  TRUE
+#&gt; 73   Lratio_BHI FALSE  TRUE
+#&gt; 74  Lratio_BHI2 FALSE  TRUE
+#&gt; 75     LstepCC1 FALSE  TRUE
+#&gt; 76     LstepCC4 FALSE  TRUE
 #&gt; 13     LstepCE1 FALSE FALSE
 #&gt; 14     LstepCE2 FALSE FALSE
-#&gt; 73     Ltarget1 FALSE  TRUE
-#&gt; 74     Ltarget4 FALSE  TRUE
+#&gt; 77     Ltarget1 FALSE  TRUE
+#&gt; 78     Ltarget4 FALSE  TRUE
 #&gt; 15    LtargetE1 FALSE FALSE
 #&gt; 16    LtargetE4 FALSE FALSE
 #&gt; 17    matlenlim  TRUE  TRUE
 #&gt; 18   matlenlim2  TRUE  TRUE
-#&gt; 75          MCD  TRUE  TRUE
-#&gt; 76      MCD4010  TRUE  TRUE
+#&gt; 79          MCD  TRUE  TRUE
+#&gt; 80      MCD4010  TRUE  TRUE
 #&gt; 19  minlenLopt1  TRUE  TRUE
 #&gt; 20     MRnoreal  TRUE  TRUE
 #&gt; 21       MRreal  TRUE  TRUE
-#&gt; 92        NFref  TRUE  TRUE
-#&gt; 77     Rcontrol  TRUE  TRUE
-#&gt; 78    Rcontrol2  TRUE  TRUE
-#&gt; 79         SBT1  TRUE  TRUE
-#&gt; 80         SBT2 FALSE  TRUE
+#&gt; 96        NFref  TRUE  TRUE
+#&gt; 81     Rcontrol  TRUE  TRUE
+#&gt; 82    Rcontrol2  TRUE  TRUE
+#&gt; 83         SBT1  TRUE  TRUE
+#&gt; 84         SBT2 FALSE  TRUE
 #&gt; 22      slotlim  TRUE  TRUE
-#&gt; 81        SPmod  TRUE  TRUE
-#&gt; 82        SPMSY  TRUE  TRUE
-#&gt; 83      SPslope  TRUE  TRUE
-#&gt; 84        SPSRA  TRUE  TRUE</div></pre>
+#&gt; 85        SPmod  TRUE  TRUE
+#&gt; 86        SPMSY  TRUE  TRUE
+#&gt; 87      SPslope  TRUE  TRUE
+#&gt; 88        SPSRA  TRUE  TRUE</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

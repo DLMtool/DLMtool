@@ -44,10 +44,10 @@ its current depletion level (\emph{D}).
 \details{
 The method calculates the depletion-corrected average catch (\emph{dcac}) as:
 
-\deqn{\text{dcac} = \frac{\sum_{y=1}^{n}{C_y}}{n+(1-D)/Y_{\text{pot}}}}
+\deqn{\textrm{dcac} = \frac{\sum_{y=1}^{n}{C_y}}{n+(1-D)/Y_{\textrm{pot}}}}
 
 where
-\deqn{Y_{\text{pot}} = \frac{B_{\text{MSY}}}{B_0}\frac{F_{\text{MSY}}}{M}M}
+\deqn{Y_{\textrm{pot}} = \frac{B_{\textrm{MSY}}}{B_0}\frac{F_{\textrm{MSY}}}{M}M}
 and \eqn{C} is the historical catches; i.e \eqn{C} does not change in the future projections in the MSE
 
 The methods differ in the assumptions of current depletion (\emph{D}). See the \strong{Functions} section below for details.
@@ -95,6 +95,9 @@ below BMSY, DCAC tends to chronically overfish.
 }
 \section{Required Data}{
 
+See \link[=Data-class]{Data} for information on the \code{Data} object \cr
+
+
 \code{DCACs}: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t
 
 
@@ -134,40 +137,25 @@ See \href{https://dlmtool.github.io/DLMtool/reference/DCAC.html}{Online Document
 }
 
 \examples{
-\dontrun{
-# First year
 DCACs(1, DLMtool::Atlantic_mackerel, plot=TRUE) 
-}
 
-\dontrun{
 DCAC(1, DLMtool::Atlantic_mackerel, plot=TRUE) 
-}
 
-\dontrun{
 DCAC_40(1, DLMtool::Atlantic_mackerel, plot=TRUE) 
-}
 
-\dontrun{
 Data <- DLMtool::Atlantic_mackerel
 Data@LHYear <- 2005
 DCAC4010(1, Data, plot=TRUE) 
-}
 
-\dontrun{
 DCAC_ML(1, DLMtool::SimulatedData, plot=TRUE) 
-}
 
-\dontrun{
 Data <- DLMtool::Atlantic_mackerel
 Data@LHYear <- 2005
 DAAC(1, Data, plot=TRUE) 
-}
 
-\dontrun{
 Data <- DLMtool::Atlantic_mackerel
 Data@LHYear <- 2005
 HDAAC(1, Data, plot=TRUE) 
-}
 
 }
 \references{

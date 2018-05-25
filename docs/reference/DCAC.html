@@ -145,9 +145,9 @@ its current depletion level (<em>D</em>).</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The method calculates the depletion-corrected average catch (<em>dcac</em>) as:</p>
-<p>$$\text{dcac} = \frac{\sum_{y=1}^{n}{C_y}}{n+(1-D)/Y_{\text{pot}}}$$</p>
+<p>$$\textrm{dcac} = \frac{\sum_{y=1}^{n}{C_y}}{n+(1-D)/Y_{\textrm{pot}}}$$</p>
 <p>where
-$$Y_{\text{pot}} = \frac{B_{\text{MSY}}}{B_0}\frac{F_{\text{MSY}}}{M}M$$
+$$Y_{\textrm{pot}} = \frac{B_{\textrm{MSY}}}{B_0}\frac{F_{\textrm{MSY}}}{M}M$$
 and \(C\) is the historical catches; i.e \(C\) does not change in the future projections in the MSE</p>
 <p>The methods differ in the assumptions of current depletion (<em>D</em>). See the <strong>Functions</strong> section below for details.</p>
     
@@ -191,6 +191,7 @@ below BMSY, DCAC tends to chronically overfish.</p>
     <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
 
     
+    <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
     <p><code>DCACs</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t</p>
     <p><code>DCAC</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t</p>
     <p><code>DCAC_40</code>: AvC, BMSY_B0, FMSY_M, LHYear, Mort, Year, t</p>
@@ -218,34 +219,19 @@ static and adaptive management procedures. Fish. Res. 190, 84-94.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='co'># First year</span>
-<span class='fu'>DCACs</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='co'># }</span><div class='input'>
-</div><span class='co'># NOT RUN {</span>
-<span class='fu'>DCAC</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='co'># }</span><div class='input'>
-</div><span class='co'># NOT RUN {</span>
-<span class='fu'>DCAC_40</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='co'># }</span><div class='input'>
-</div><span class='co'># NOT RUN {</span>
+    <pre class="examples"><div class='input'><span class='fu'>DCACs</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: is.na() applied to non-(list or vector) of type 'closure'</span></div><div class='output co'>#&gt; <span class='warning'>Warning: is.na() applied to non-(list or vector) of type 'closure'</span></div><div class='output co'>#&gt; <span class='error'>Error in sort.int(x, na.last = na.last, decreasing = decreasing, ...): 'x' must be atomic</span></div><div class='input'>
+<span class='fu'>DCAC</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: is.na() applied to non-(list or vector) of type 'closure'</span></div><div class='output co'>#&gt; <span class='warning'>Warning: is.na() applied to non-(list or vector) of type 'closure'</span></div><div class='output co'>#&gt; <span class='error'>Error in sort.int(x, na.last = na.last, decreasing = decreasing, ...): 'x' must be atomic</span></div><div class='img'><img src='DCAC-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>DCAC_40</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: is.na() applied to non-(list or vector) of type 'closure'</span></div><div class='output co'>#&gt; <span class='warning'>Warning: is.na() applied to non-(list or vector) of type 'closure'</span></div><div class='output co'>#&gt; <span class='error'>Error in sort.int(x, na.last = na.last, decreasing = decreasing, ...): 'x' must be atomic</span></div><div class='input'>
 <span class='no'>Data</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>
 <span class='no'>Data</span>@<span class='kw'>LHYear</span> <span class='kw'>&lt;-</span> <span class='fl'>2005</span>
-<span class='fu'>DCAC4010</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='co'># }</span><div class='input'>
-</div><span class='co'># NOT RUN {</span>
-<span class='fu'>DCAC_ML</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='co'># }</span><div class='input'>
-</div><span class='co'># NOT RUN {</span>
+<span class='fu'>DCAC4010</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: is.na() applied to non-(list or vector) of type 'closure'</span></div><div class='output co'>#&gt; <span class='warning'>Warning: is.na() applied to non-(list or vector) of type 'closure'</span></div><div class='output co'>#&gt; <span class='error'>Error in sort.int(x, na.last = na.last, decreasing = decreasing, ...): 'x' must be atomic</span></div><div class='img'><img src='DCAC-2.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>DCAC_ML</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: is.na() applied to non-(list or vector) of type 'closure'</span></div><div class='output co'>#&gt; <span class='warning'>Warning: is.na() applied to non-(list or vector) of type 'closure'</span></div><div class='output co'>#&gt; <span class='error'>Error in sort.int(x, na.last = na.last, decreasing = decreasing, ...): 'x' must be atomic</span></div><div class='img'><img src='DCAC-3.png' alt='' width='700' height='433' /></div><div class='input'>
 <span class='no'>Data</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>
 <span class='no'>Data</span>@<span class='kw'>LHYear</span> <span class='kw'>&lt;-</span> <span class='fl'>2005</span>
-<span class='fu'>DAAC</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='co'># }</span><div class='input'>
-</div><span class='co'># NOT RUN {</span>
+<span class='fu'>DAAC</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: is.na() applied to non-(list or vector) of type 'closure'</span></div><div class='output co'>#&gt; <span class='warning'>Warning: is.na() applied to non-(list or vector) of type 'closure'</span></div><div class='output co'>#&gt; <span class='error'>Error in sort.int(x, na.last = na.last, decreasing = decreasing, ...): 'x' must be atomic</span></div><div class='input'>
 <span class='no'>Data</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>
 <span class='no'>Data</span>@<span class='kw'>LHYear</span> <span class='kw'>&lt;-</span> <span class='fl'>2005</span>
-<span class='fu'>HDAAC</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='co'># }</span><div class='input'>
+<span class='fu'>HDAAC</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: is.na() applied to non-(list or vector) of type 'closure'</span></div><div class='output co'>#&gt; <span class='warning'>Warning: is.na() applied to non-(list or vector) of type 'closure'</span></div><div class='output co'>#&gt; <span class='error'>Error in sort.int(x, na.last = na.last, decreasing = decreasing, ...): 'x' must be atomic</span></div><div class='img'><img src='DCAC-4.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

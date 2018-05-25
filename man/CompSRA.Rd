@@ -32,14 +32,14 @@ total mortality rate (\emph{Z}) and used to estimate current stock depletion (\e
 \emph{FMSY}, and stock abundance (\emph{A}).
 
 Fishing mortality is estimated as:
-\deqn{F = -\log{left(1-\frac{C}{V}\right)}}
+\deqn{F = -\log{\left(1-\frac{C}{V}\right)}}
 where \eqn{C} and \eqn{V} are catch and vulnerable biomass of first age of full
 selection respectively.
 
-Abundance is estimated in the SRa. \eqn{F_{\text{MSY}}} is calculated assuming
+Abundance is estimated in the SRa. \eqn{F_{\textrm{MSY}}} is calculated assuming
 knife-edge vulnerability at the age of full selection.
 
-The TAC is calculated as \eqn{F_\text{MSY} A}. \code{CompSRA4010} uses a 40-10
+The TAC is calculated as \eqn{F_\textrm{MSY} A}. \code{CompSRA4010} uses a 40-10
 harvest control rule to reduce TAC at low biomass.
 }
 \section{Functions}{
@@ -50,6 +50,9 @@ harvest control rule to reduce TAC at low biomass.
 }}
 
 \section{Required Data}{
+
+See \link[=Data-class]{Data} for information on the \code{Data} object \cr
+
 
 \code{CompSRA}: CAA, Cat, L50, LFC, LFS, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
 
@@ -66,13 +69,9 @@ See \href{https://dlmtool.github.io/DLMtool/reference/CompSRA.html}{Online Docum
 }
 
 \examples{
-\dontrun{
 CompSRA(1, DLMtool::SimulatedData, plot=TRUE)
-}
 
-\dontrun{
 CompSRA4010(1, DLMtool::SimulatedData, plot=TRUE)
-}
 
 }
 \author{

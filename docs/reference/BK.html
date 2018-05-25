@@ -142,9 +142,9 @@ catch-curve (interval censor).</p></td>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>The TAC is calculated as:
-$$\text{TAC} = A F_{\text{max}}$$
-where \(A\) is (vulnerable) stock abundance, and \(F_{\text{max}}\) is calculated as:
-$$F_{\text{max}} = \frac{0.6K}{0.67-L_c/L_\infty}$$
+$$\textrm{TAC} = A F_{\textrm{max}}$$
+where \(A\) is (vulnerable) stock abundance, and \(F_{\textrm{max}}\) is calculated as:
+$$F_{\textrm{max}} = \frac{0.6K}{0.67-L_c/L_\infty}$$
 where \(K\) is the von Bertalanffy growth coefficient, \(L_c\) is the
 length at first capture, and \(L_\infty\) is the von Bertalanffy asymptotic length</p>
 <p>Abundance (<em>A</em>) is either assumed known (<code>BK</code>) or estimated (<code>BK_CC</code> and <code>BK_ML</code>):
@@ -164,17 +164,18 @@ to estimate <em>Z</em> and <em>F</em>.</p></li>
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>Note that the Beddington-Kirkwood method is designed to estimate \(F_\text{max}\),
+    <p>Note that the Beddington-Kirkwood method is designed to estimate \(F_\textrm{max}\),
 that is, the fishing mortality that produces the maximum yield <em>assuming constant
 recruitment independent of spawning biomass</em>.</p>
 <p>Beddington and Kirkwood (2005)
 recommend estimating <em>F</em> using other methods (e.g a catch curve) and comparing the
-estimated <em>F</em> to the estimated \(F_\text{max}\) and adjusting exploitation accordingly.
+estimated <em>F</em> to the estimated \(F_\textrm{max}\) and adjusting exploitation accordingly.
 These MPs have not been implemented that way.</p>
     
     <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
 
     
+    <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
     <p><code>BK</code>: Abun, LFC, vbK, vbLinf</p>
     <p><code>BK_CC</code>: CAA, Cat, LFC, Mort, vbK, vbLinf</p>
     <p><code>BK_ML</code>: CAL, CAL_bins, Cat, LFC, LFS, Mort, vbK, vbLinf</p>
@@ -192,16 +193,13 @@ Trans. R. Soc. Lond. B Biol. Sci. 360, 163-170.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='fu'>BK</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='co'># }</span><div class='input'>
-</div><span class='co'># NOT RUN {</span>
-<span class='fu'>BK_CC</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='co'># }</span><div class='input'>
-</div><span class='co'># NOT RUN {</span>
-<span class='fu'>BK_ML</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)
-<span class='co'># }</span><div class='input'>
-</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>BK</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='BK-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     3619.473 </div><div class='input'>
+<span class='fu'>BK_CC</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='BK-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     12844.91 </div><div class='input'>
+<span class='fu'>BK_ML</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; TAC (median) 
+#&gt;     10667.97 </div><div class='input'>
+</div><div class='img'><img src='BK-3.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
