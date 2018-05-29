@@ -7,11 +7,16 @@
 GB_CC(x, Data, reps = 100)
 }
 \arguments{
-\item{x}{A position in data-limited methods data object}
+\item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of TAC samples}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
+}
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
 A simple MP that aims for average historical catches (as a proxy for MSY)
@@ -22,10 +27,27 @@ Note that this is my interpretation of their MP and is now stochastic.
 Currently it is generalized and is not 'tuned' to more detailed assessment
 data which might explain why in some cases it leads to stock declines.
 }
+\section{Required Data}{
+
+See \link[=Data-class]{Data} for information on the \code{Data} object \cr
+
+
+\code{GB_CC}: Cat, Cref
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/GB_CC.html}{Online Documentation} for correctly rendered equations
+}
+
 \references{
 Geromont, H.F. and Butterworth, D.S. 2014. Complex assessment or
 simple management procedures for efficient fisheries management: a
 comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017
+}
+\seealso{
+Other Average Catch MPs: \code{\link{AvC}},
+  \code{\link{DCACs}}
 }
 \author{
 T. Carruthers

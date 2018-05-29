@@ -103,20 +103,68 @@ DBSRA_plot <- function(runDBSRA, Data, TAC) {
     abline(h=runDBSRA$hcr[2], lty=3, col="gray")
   }
   plot(c(Years, max(Years+1)), c(runDBSRA$C_hist, NA), type='l', lwd=2,  bty="n", 
-       xlab="Year", ylab=paste("Catch (", Data@Units, ")"), las=1, ylim=range(c(runDBSRA$C_hist, TAC)))
+       xlab="Year", ylab=paste("Catch (", Data@Units, ")"), las=1, ylim=c(0, max(c(runDBSRA$C_hist, TAC))))
   if (all(round(TAC / mean(TAC),1) ==1 )) {
     points(max(Years)+1, mean(TAC), pch=16, cex=2, col="blue")
     text(max(Years)+1, mean(TAC), "TAC", pos=1, col="blue")
   } else {
     boxplot(TAC, add=TRUE, at=max(Years)+1, col="grey", width=1, outline=TRUE, 
             axes=FALSE)
-    text(max(Years)+1, quantile(TAC, 0.05), "TAC", pos=1, col="blue")
+    text(max(Years)+1, quantile(TAC, 0.95), "TAC", pos=3, col="blue")
   }
   
   df <- data.frame(B_B0=runDBSRA$Bt_Kstore, BMSY_B0=runDBSRA$BMSY_K_Mstore,
                    FMSY_M=runDBSRA$FMSY_Mstore)
   boxplot(df, las=1)
 }
+
+
+
+
+DD_plot <- function(x, runDD, Data, TAC) {
+  C_hist <- runDD$C_hist 
+  I_hist <- runDD$I_hist
+  E_hist <- runDD$E_hist
+  B_DD <- runDD$B_DD
+  dep <- runDD$dep
+  Cpred_DD <- runDD$Cpredict
+  Year <- runDD$Year
+  
+  B0est <- matrix(B_DD[1,], nrow=nrow(B_DD), ncol=ncol(B_DD), byrow=TRUE)
+  relB <- B_DD/B0est
+  
+  op <- par(no.readonly = TRUE)
+  on.exit(par(op))
+  par(mfrow=c(2,2))
+  
+  Years <- c(Year, max(Year)+1)
+  
+  matplot(Years, B_DD, type='l', ylim=c(0, max(B_DD)), bty="n", xlab="Year", ylab=paste0("Estimated Biomass (", Data@Units, ")"), las=0)
+  matplot(Years, relB, type='l', ylim=c(0, max(relB)), bty="n", xlab="Year", ylab='B/B0', las=1)
+  if (!is.null(runDD$hcr)) {
+    abline(h=runDD$hcr[1], lty=2, col="gray")
+    abline(h=runDD$hcr[2], lty=3, col="gray")
+  }
+  
+  plot(Year, E_hist, bty="n", type="l", lwd=2, ylab="Standardized Index", xlab='Year')
+  lines(Year, I_hist, lwd=2, lty=2)
+  legend("topleft", bty="n", lwd=2, lty=1:2, legend=c("Effort", "Index"))
+  
+  
+  plot(Years, c(C_hist, NA), type='l', bty="n", 
+       xlab="Year", ylab=paste("Catch (", Data@Units, ")"), las=0, ylim=c(0, max(c(C_hist, TAC, Cpred_DD))), lwd=3)
+  matplot(Year, Cpred_DD, type="l", lwd=1, add=TRUE)
+  
+  if (all(round(TAC / mean(TAC),1) ==1 )) {
+    points(max(Years), mean(TAC), pch=16, cex=2, col="blue")
+    text(max(Years), mean(TAC), "TAC", pos=1, col="blue")
+  } else {
+    boxplot(TAC, add=TRUE, at=max(Years), col="grey", width=1, outline=TRUE, 
+            axes=FALSE)
+    text(max(Years), quantile(TAC, 0.95), "TAC", pos=3, col="blue")
+  }
+}
+
 
 
 # default plotting options
@@ -284,71 +332,7 @@ CC <- function(x, Data, reps = 100) {
 
 
 ## Delay-Difference supporting functions ####
-DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hist,
-                 C_hist, UMSYprior) {
-  UMSY_DD = 1/(1 + exp(-params[1])) # Logit transform to constrain u between 0-1
-  MSY_DD = exp(params[2])
-  q_DD = exp(params[3])
-  SS_DD = So_DD * (1 - UMSY_DD)  # Initialise for UMSY, MSY and q leading.
-  Spr_DD = (SS_DD * Alpha_DD/(1 - SS_DD) + wa_DD)/(1 - Rho_DD * SS_DD)
-  DsprDu_DD = ((Alpha_DD + Spr_DD * (1 + Rho_DD - 2 * Rho_DD * SS_DD))/((1 - Rho_DD * SS_DD) * (1 - SS_DD)) + 
-    Alpha_DD * SS_DD/((1 - Rho_DD * SS_DD) * (1 - SS_DD)^2) - Spr_DD/(1 - SS_DD)) * -So_DD
-  Arec_DD = 1/(((1 - UMSY_DD)^2) * (Spr_DD + UMSY_DD * DsprDu_DD))
-  Brec_DD = UMSY_DD * (Arec_DD * Spr_DD - 1/(1 - UMSY_DD))/MSY_DD
-  Spr0_DD = (So_DD * Alpha_DD/(1 - So_DD) + wa_DD)/(1 - Rho_DD * So_DD)
-  Ro_DD = (Arec_DD * Spr0_DD - 1)/(Brec_DD * Spr0_DD)
-  Bo_DD = Ro_DD * Spr0_DD
-  No_DD = Ro_DD/(1 - So_DD)
 
-  B_DD <- rep(NA, ny_DD + 1)
-  N_DD <- rep(NA, ny_DD + 1)
-  R_DD <- rep(NA, ny_DD + k_DD)
-  Cpred_DD <- rep(NA, ny_DD)
-
-  B_DD[1] = Bo_DD
-  N_DD[1] = No_DD
-  R_DD[1:k_DD] = Ro_DD
-
-  for (tt in 1:ny_DD) {
-
-    Surv_DD = So_DD * exp(-q_DD * E_hist[tt])
-    Cpred_DD[tt] = B_DD[tt] * (1 - exp(-q_DD * E_hist[tt]))
-    Sp_DD = B_DD[tt] - Cpred_DD[tt]
-    R_DD[tt + k_DD] = Arec_DD * Sp_DD/(1 + Brec_DD * Sp_DD)
-    B_DD[tt + 1] = Surv_DD * (Alpha_DD * N_DD[tt] + Rho_DD * B_DD[tt]) +
-      wa_DD * R_DD[tt + 1]
-    N_DD[tt + 1] = Surv_DD * N_DD[tt] + R_DD[tt + 1]
-
-  }
-  tiny <- 1e-15
-  Cpred_DD[Cpred_DD < tiny] <- tiny
-
-  if (opty == 1) {
-    # The following conditions must be met for positive values
-    # of Arec_DD and Brec_DD, respectively:
-    # umsy * DsprDu + Spr_DD > 0 and Arec_DD * Spr_DD * (1 - UMSY_DD) - 1 > 0
-    # Thus, create a likelihood penalty of 100 if either condition is not met
-    umsy_penalty <- ifelse(Spr_DD + UMSY_DD * DsprDu_DD > 0, 0, UMSY_DD * 100)
-    alpha_penalty <- ifelse(Arec_DD * Spr_DD * (1 - UMSY_DD) - 1 > 0, 0, UMSY_DD * 100)
-    
-    sigma <- sqrt(sum((log(C_hist) - log(Cpred_DD))^2)/ny_DD) # Analytical solution
-    
-    test <- dnorm(log(C_hist), log(Cpred_DD), sigma, log = T)
-    test2 <- dbeta(UMSY_DD, UMSYprior[1], UMSYprior[2], log = T)
-    test[is.na(test)] <- -1000
-    test[test == (-Inf)] <- -1000
-    if (is.na(test2) | test2 == -Inf | test2 == Inf)
-      test2 <- 1000
-    return(-sum(test, test2) + umsy_penalty + alpha_penalty)  # return objective function
-  } else if (opty == 2) {
-    # return MLE TAC estimate
-    UMSY_DD * B_DD[ny_DD + 1]
-  } else if (opty == 3) {
-    B_DD[tt + 1]/Bo_DD
-  } else {
-    cbind(C_hist, Cpred_DD)  # return observations vs predictions
-  }
-}
 
 ## Mean Length supporting functions ####
 

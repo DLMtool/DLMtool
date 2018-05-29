@@ -25,35 +25,47 @@ DBSRA4010(x, Data, reps = 100, plot = FALSE)
 An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
-User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the OFL
+Depletion-Based Stock Reduction Analysis (DB-SRA) is a method designed for
+determining a catch limit and management reference points for data-limited
+fisheries where catches are known from the beginning of exploitation.
+User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the a catch limit
 by back-constructing the stock to match a user specified level of stock
-depletion (OFL = M * FMSY/M * depletion* B0).
+depletion.
 }
-\section{Functions}{
-\itemize{
-\item \code{DBSRA}: Base version. You specify a range of stock depletion and,
-given historical catches DB-SRA calculates what unfished biomass must have
-been to get you here given samples for M, FMSY relative to M and also BMSY
-relative to Bunfished.
-
-\item \code{DBSRA_40}: Assumes 40 percent current depletion (Bcurrent/B0 = 0.4), which is
-more or less the most optimistic state for a stock (ie very close to BMSY/B0 for many stocks).
-
-\item \code{DBSRA4010}: Base version paired with the 40-10 rule that throttles
-back the TAC to zero at 10 percent of unfished biomass.
-}}
-
-\note{
-This is set up to return the OFL (FMSY * current biomass).
+\details{
+DB-SRA assumes that a complete time-series of catch from the beginning of
+exploitation is available. Users prescribe estimates of current depletion \eqn{(D)},
+biomass at MSY relative to unfished \eqn{\left(\frac{B_\textrm{MSY}}{B_0}\right)},
+the natural mortality rate \eqn{(M)}, and te ratio fishing mortality at
+MSY to M \eqn{\left(\frac{F_{\textrm{MSY}}}{M}\right)}.
 
 You may have noticed that you -the user- specify three of the factors that
 make the quota recommendation. So this can be quite a subjective method.
+In the MSE the MSY reference points (e.g., \eqn{\left(\frac{F_\textrm{MSY}}{M}\right)})
+are taken as the true value calculate in the MSE with added uncertainty specified
+in the Obs object (e.g \code{Obs@FMSY_Mbiascv}).
 
-Also the DB-SRA method of this package isn't exactly the same as the
+The catch limit, for the Base Version, is calculated as:
+\deqn{\textrm{TAC} = M . \frac{F_{\textrm{MSY}}}{M} . D . B_0}
+}
+\section{Functions}{
+\itemize{
+\item \code{DBSRA}: Base Version. TAC is calculated assumed MSY harvest rate
+multiplied by the estimated current abundance (estimated B0 x Depletion)
+
+\item \code{DBSRA_40}: Same as the Base Version but assumes 40 percent current depletion (Bcurrent/B0 = 0.4), which is
+more or less the most optimistic state for a stock (ie very close to BMSY/B0 for many stocks).
+
+\item \code{DBSRA4010}: Base version paired with the 40-10 rule that linearly throttles
+back the TAC when depletion is below 0.4 down to zero at 10 percent of unfished biomass.
+}}
+
+\note{
+The DB-SRA method of this package isn't exactly the same as the
 original method of Dick and MacCall (2011) because it has to work for
-simulated depletions above BMSY/B0 and even on occasion over B0. Also it
+simulated depletions above BMSY/B0 and even on occasion over B0. It also
 doesn't have the modification for flatfish life histories that has
-previously been applied by Dick and MacCall.
+previously been applied by Dick and MacCall (2011).
 }
 \section{Required Data}{
 

@@ -4,11 +4,18 @@ proportionMat <- TL <- Wa <- SurvWeiMat <- r <- lx <- logNormDensity <- sumlogNo
 proportionMat = vector()
 
 
+#' What Data objects can be used to run this MP?
+#'
+#' @param MP Name of the MP
+#'
+#' @export
+#'
+#' @keywords internal
 CanMP <- function(MP) {
-  Data <- avail("Data")
-  log <- rep(FALSE, length(Data))
-  for (x in seq_along(Data)) {
-    log[x] <- MP %in% Can(get(Data[x]))
+  avData <- avail("Data")
+  log <- rep(FALSE, length(avData))
+  for (x in seq_along(avData)) {
+    log[x] <- MP %in% Can(get(avData[x]))
   }
   return(Data[log])
 }

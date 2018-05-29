@@ -99,7 +99,7 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>matlenlim</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='no'>...</span>)
+    <pre class="usage"><span class='fu'>matlenlim</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='no'>reps</span>)
 
 <span class='fu'>matlenlim2</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='no'>...</span>)
 
@@ -119,6 +119,10 @@
       <td><p>A data-limited methods data object</p></td>
     </tr>
     <tr>
+      <th>reps</th>
+      <td><p>The number of stochastic samples of the MP recommendation(s)</p></td>
+    </tr>
+    <tr>
       <th>...</th>
       <td><p>Optional additional arguments that are ignored. Note arguments
 <code>reps</code> or <code>...</code> are required for all input controls</p></td>
@@ -127,10 +131,6 @@
       <th>buffer</th>
       <td><p>Parameter controlling the fraction of Lopt to set the minimum
 length of fish caught: minlen=Lopt*(0.7+buffer).</p></td>
-    </tr>
-    <tr>
-      <th>reps</th>
-      <td><p>The number of stochastic samples of the MP recommendation(s)</p></td>
     </tr>
     <tr>
       <th>plot</th>

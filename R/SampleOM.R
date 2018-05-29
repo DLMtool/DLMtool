@@ -1233,7 +1233,7 @@ validcpars <- function(print=TRUE) {
                    "Wt_age", "Len_age", "Marray", "M_at_Length", "LenCV", 
                    "CAL_binsmid", "CAL_bins", "LatASD", "dFfinal",
                    "LR5", "LFR", "Rmaxlen", "DR", "Fdisc","M_ageArray",
-                   "Linfarray", "Karray")) 
+                   "Linfarray", "Karray", "l_hbias")) 
   
   if (print) {
     n <- length(vnames)

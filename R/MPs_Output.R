@@ -333,6 +333,37 @@ class(CC5) <- "MP"
 
  
 
+#' Geromont and Butterworth Constant Catch Harvest Control Rule
+#' 
+#' A simple MP that aims for average historical catches (as a proxy for MSY)
+#' subject to imperfect information.
+#' 
+#' Note that this is my interpretation of their MP and is now stochastic.
+#' Currently it is generalized and is not 'tuned' to more detailed assessment
+#' data which might explain why in some cases it leads to stock declines.
+#' 
+#' @template MPtemplate
+#' @templateVar mp GB_CC
+#' @template MPuses
+#' 
+#' @author T. Carruthers
+#' @references Geromont, H.F. and Butterworth, D.S. 2014. Complex assessment or
+#' simple management procedures for efficient fisheries management: a
+#' comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017
+#' @export
+#' @family Average Catch MPs
+GB_CC <- function(x, Data, reps = 100) {
+  dependencies = "Data@Cref,Data@Cat"
+  Catrec <- Data@Cat[x, length(Data@Cat[x, ])]
+  TAC <- trlnorm(reps, Data@Cref[x], Data@CV_Cref)
+  TAC[TAC > (1.2 * Catrec)] <- 1.2 * Catrec
+  TAC[TAC < (0.8 * Catrec)] <- 0.8 * Catrec
+  Rec <- new("Rec")
+  Rec@TAC <- TACfilter(TAC)
+  Rec
+}
+class(GB_CC) <- "MP"
+
 #### Age-Comp SRA ####
 
 #' Internal function for CompSRA MP
@@ -864,7 +895,7 @@ DBSRA_ <- function(x, Data, reps = 100, depo=NULL, hcr=NULL) {
   if (is.null(depo)) {
     if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) return(new("Rec"))
   } else {
-    if (is.na(Data@CV_Dep[x])) return(new("Rec"))
+    Data@CV_Dep[x] <- tiny
   }
   if (is.na(Data@BMSY_B0[x]))return(new("Rec"))
     
@@ -929,28 +960,43 @@ DBSRA_ <- function(x, Data, reps = 100, depo=NULL, hcr=NULL) {
 }  
 
 
-######### ADD EQUATIONS HERE #####
-
-#' Depletion-Based Stock Reduction Analysis
+#' Depletion-Based Stock Reduction Analysis 
 #' 
-#' User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the OFL
+#' Depletion-Based Stock Reduction Analysis (DB-SRA) is a method designed for 
+#' determining a catch limit and management reference points for data-limited 
+#' fisheries where catches are known from the beginning of exploitation. 
+#' User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the a catch limit
 #' by back-constructing the stock to match a user specified level of stock
-#' depletion (OFL = M * FMSY/M * depletion* B0).
+#' depletion.
+#' 
+#' 
+#' DB-SRA assumes that a complete time-series of catch from the beginning of 
+#' exploitation is available. Users prescribe estimates of current depletion \eqn{(D)}, 
+#' biomass at MSY relative to unfished \eqn{\left(\frac{B_\textrm{MSY}}{B_0}\right)}, 
+#' the natural mortality rate \eqn{(M)}, and te ratio fishing mortality at 
+#' MSY to M \eqn{\left(\frac{F_{\textrm{MSY}}}{M}\right)}.
+#' 
+#' 
+#' You may have noticed that you -the user- specify three of the factors that
+#' make the quota recommendation. So this can be quite a subjective method.
+#' In the MSE the MSY reference points (e.g., \eqn{\left(\frac{F_\textrm{MSY}}{M}\right)})
+#' are taken as the true value calculate in the MSE with added uncertainty specified
+#' in the Obs object (e.g `Obs@FMSY_Mbiascv`).
+#' 
+#' The catch limit, for the Base Version, is calculated as:
+#' \deqn{\textrm{TAC} = M . \frac{F_{\textrm{MSY}}}{M} . D . B_0}
+#' 
 #' 
 #' @templateVar mp DBSRA
 #' @template MPtemplate
 #' @template MPuses
 #' 
-#' @note This is set up to return the OFL (FMSY * current biomass).
-#' 
-#' You may have noticed that you -the user- specify three of the factors that
-#' make the quota recommendation. So this can be quite a subjective method.
-#' 
-#' Also the DB-SRA method of this package isn't exactly the same as the
+#' @note The DB-SRA method of this package isn't exactly the same as the
 #' original method of Dick and MacCall (2011) because it has to work for
-#' simulated depletions above BMSY/B0 and even on occasion over B0. Also it
+#' simulated depletions above BMSY/B0 and even on occasion over B0. It also  
 #' doesn't have the modification for flatfish life histories that has
-#' previously been applied by Dick and MacCall.
+#' previously been applied by Dick and MacCall (2011).
+#' 
 #' @author T. Carruthers
 #' @references  
 #' Dick, E.J., MacCall, A.D., 2010. Estimates of sustainable yield for 50 data-poor 
@@ -963,10 +1009,8 @@ DBSRA_ <- function(x, Data, reps = 100, depo=NULL, hcr=NULL) {
 #' Analysis: A catch-based method for determining sustainable yields for
 #' data-poor fish stocks. Fish. Res. 110, 331-341.
 #'
-#' @describeIn DBSRA Base version. You specify a range of stock depletion and, 
-#' given historical catches DB-SRA calculates what unfished biomass must have 
-#' been to get you here given samples for M, FMSY relative to M and also BMSY 
-#' relative to Bunfished.
+#' @describeIn DBSRA Base Version. TAC is calculated assumed MSY harvest rate 
+#' multiplied by the estimated current abundance (estimated B0 x Depletion)
 #' @examples 
 #' DBSRA(1, DLMtool::ourReefFish, plot=TRUE)
 #' 
@@ -983,10 +1027,9 @@ DBSRA <- function(x, Data, reps = 100, plot=FALSE) {
 class(DBSRA) <- "MP"
 
 
-
 #' @templateVar mp DBSRA_40
 #' @template MPuses
-#' @describeIn DBSRA Assumes 40 percent current depletion (Bcurrent/B0 = 0.4), which is 
+#' @describeIn DBSRA Same as the Base Version but assumes 40 percent current depletion (Bcurrent/B0 = 0.4), which is 
 #' more or less the most optimistic state for a stock (ie very close to BMSY/B0 for many stocks).
 #' @examples 
 #' DBSRA_40(1, DLMtool::ourReefFish, plot=TRUE)
@@ -1005,8 +1048,8 @@ class(DBSRA_40) <- "MP"
 
 #' @templateVar mp DBSRA4010
 #' @template MPuses
-#' @describeIn DBSRA Base version paired with the 40-10 rule that throttles
-#' back the TAC to zero at 10 percent of unfished biomass.
+#' @describeIn DBSRA Base version paired with the 40-10 rule that linearly throttles
+#' back the TAC when depletion is below 0.4 down to zero at 10 percent of unfished biomass.
 #' @examples 
 #' DBSRA4010(1, DLMtool::ourReefFish, plot=TRUE)
 #' @export 
@@ -1119,12 +1162,175 @@ class(DBSRA4010) <- "MP"
 
 
 
-
-
-
-
+## Delay-Difference MP #### 
 
 ## UP TO HERE ####
+
+
+#' Delay-Difference Internal Function
+#'
+#' @param x iteration number
+#' @param Data object of class Data 
+#' @param reps number of reps
+#' @param hcr Optional harvest control rule for throttling catch as a function of B/B0. 
+#' Numeric vector of length 2 specifying HCR break points - e.g c(0.4, 0.1) for 40-10 HCR
+#' @export
+#'
+#' @keywords internal
+DD_ <- function(x, Data, reps = 100, hcr=NULL) {
+  Winf <- Data@wla[x] * Data@vbLinf[x]^Data@wlb[x]
+  age <- 1:Data@MaxAge
+  la <- Data@vbLinf[x] * (1 - exp(-Data@vbK[x] * ((age - Data@vbt0[x]))))
+  wa <- Data@wla[x] * la^Data@wlb[x]
+  a50V <- iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x]) # assume vulnerability = maturity
+  a50V <- max(a50V, 1)
+  
+  yind <- which(!is.na(Data@Cat[x, ] + Data@Ind[x, ]))[1] # First year with both catch and index
+  yind <- yind:length(Data@Cat[x, ])
+  Year <- Data@Year[yind]
+  C_hist <- Data@Cat[x, yind]
+  I_hist <- Data@Ind[x, yind]
+  if(any(is.na(C_hist))) { # Linear interpolation of any missing catch
+    C.xind <- 1:length(C_hist)
+    C_hist <- approx(x = C.xind[!is.na(C_hist)], y = C_hist[!is.na(C_hist)], n = length(C.xind))$y
+  }
+  if(any(is.na(I_hist))) { # Linear interpolation of any missing index
+    I.xind <- 1:length(I_hist)
+    I_hist <- approx(x = I.xind[!is.na(I_hist)], y = I_hist[!is.na(I_hist)], n = length(I.xind))$y
+  }
+  E_hist <- C_hist/I_hist
+  E_hist <- E_hist/mean(E_hist)
+  ny_DD <- length(C_hist)
+  k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  
+  k_DD[k_DD > Data@MaxAge/2] <- ceiling(Data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
+  Rho_DD <- (wa[k_DD + 2] - Winf)/(wa[k_DD + 1] - Winf) # Brody growth coefficient
+  Alpha_DD <- Winf * (1 - Rho_DD)
+  So_DD <- exp(-Data@Mort[x])  # get So survival rate
+  wa_DD <- wa[k_DD]
+  UMSYpriorpar <- c(1 - exp(-Data@Mort[x] * 0.5), 0.3) # Prior for UMSY is that corresponding to F = 0.5 M with CV = 0.3
+  UMSYprior <- c(alphaconv(UMSYpriorpar[1], prod(UMSYpriorpar)), betaconv(UMSYpriorpar[1], prod(UMSYpriorpar))) # Convert to beta parameters
+  params <- log(c(UMSYpriorpar[1]/(1 - UMSYpriorpar[1]), 3*mean(C_hist, na.rm = T), Data@Mort[x]))
+  opt <- optim(params, DD_R, opty = 1, So_DD = So_DD, Alpha_DD = Alpha_DD, 
+               Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, wa_DD = wa_DD, E_hist = E_hist, 
+               C_hist = C_hist, UMSYprior = UMSYprior, method = "BFGS", hessian = TRUE)
+  
+  if (reps > 1) {
+    samps <- mvtnorm::rmvnorm(reps,opt$par,solve(opt$hessian)) # assuming log  
+  } else {
+    samps <- matrix(c(opt$par[1], opt$par[2], opt$par[3]), nrow = 1)
+  }
+  
+  # parameters are multivariate normal hessian approximation
+  # samps <- cbind(rnorm(reps, opt$par[1], ((opt$par[1])^2)^0.5 * 0.1), 
+  #                rnorm(reps, opt$par[2], ((opt$par[2])^2)^0.5 * 0.1), 
+  #                rnorm(reps, opt$par[3], ((opt$par[3])^2)^0.5 * 0.1))
+ 
+  getVals <- sapply(1:reps, function(i) DD_R(params=samps[i, ], opty = 2, So_DD = So_DD, 
+                                             Alpha_DD = Alpha_DD, Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, 
+                                             wa_DD = wa_DD, E_hist = E_hist, C_hist = C_hist, UMSYprior = UMSYprior))
+  
+  TAC <- unlist(getVals[1,])
+  dep <- unlist(getVals[2,])
+  Cpredict <- do.call("cbind", getVals[3,])
+  B_DD <- do.call("cbind", getVals[4,])
+
+  if (!is.null(hcr)) {
+    cond1 <- !is.na(dep) & dep < hcr[1] & dep > hcr[2]
+    cond2 <- !is.na(dep) & dep < hcr[2]
+    TAC[cond1] <- TAC[cond1] * (dep[cond1] - hcr[2])/(hcr[1]-hcr[2])
+    TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
+  }
+  
+  
+  return(list(TAC=TAC, C_hist=C_hist, I_hist=I_hist, E_hist=E_hist, dep=dep, 
+              Cpredict=Cpredict, B_DD=B_DD, hcr=hcr, Year=Data@Year[yind]))
+}
+
+
+#' Delay-Difference Internal Function
+#'
+#' @param params xx
+#' @param opty  xx
+#' @param So_DD  xx
+#' @param Alpha_DD  xx
+#' @param Rho_DD  xx
+#' @param ny_DD  xx 
+#' @param k_DD xx
+#' @param wa_DD  xx
+#' @param E_hist  xx
+#' @param C_hist xx 
+#' @param UMSYprior xx 
+#'
+#' @export
+#'
+#' @keywords internal
+DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hist,
+                 C_hist, UMSYprior) {
+  UMSY_DD = 1/(1 + exp(-params[1])) # Logit transform to constrain u between 0-1
+  MSY_DD = exp(params[2])
+  q_DD = exp(params[3])
+  SS_DD = So_DD * (1 - UMSY_DD)  # Initialise for UMSY, MSY and q leading.
+  Spr_DD = (SS_DD * Alpha_DD/(1 - SS_DD) + wa_DD)/(1 - Rho_DD * SS_DD)
+  DsprDu_DD = ((Alpha_DD + Spr_DD * (1 + Rho_DD - 2 * Rho_DD * SS_DD))/((1 - Rho_DD * SS_DD) * (1 - SS_DD)) + 
+                 Alpha_DD * SS_DD/((1 - Rho_DD * SS_DD) * (1 - SS_DD)^2) - Spr_DD/(1 - SS_DD)) * -So_DD
+  Arec_DD = 1/(((1 - UMSY_DD)^2) * (Spr_DD + UMSY_DD * DsprDu_DD))
+  Brec_DD = UMSY_DD * (Arec_DD * Spr_DD - 1/(1 - UMSY_DD))/MSY_DD
+  Spr0_DD = (So_DD * Alpha_DD/(1 - So_DD) + wa_DD)/(1 - Rho_DD * So_DD)
+  Ro_DD = (Arec_DD * Spr0_DD - 1)/(Brec_DD * Spr0_DD)
+  Bo_DD = Ro_DD * Spr0_DD
+  No_DD = Ro_DD/(1 - So_DD)
+  
+  B_DD <- rep(NA, ny_DD + 1)
+  N_DD <- rep(NA, ny_DD + 1)
+  R_DD <- rep(NA, ny_DD + k_DD)
+  Cpred_DD <- rep(NA, ny_DD)
+  
+  B_DD[1] = Bo_DD
+  N_DD[1] = No_DD
+  R_DD[1:k_DD] = Ro_DD
+  
+  for (tt in 1:ny_DD) {
+    Surv_DD = So_DD * exp(-q_DD * E_hist[tt])
+    Cpred_DD[tt] = B_DD[tt] * (1 - exp(-q_DD * E_hist[tt]))
+    Sp_DD = B_DD[tt] - Cpred_DD[tt]
+    R_DD[tt + k_DD] = Arec_DD * Sp_DD/(1 + Brec_DD * Sp_DD)
+    B_DD[tt + 1] = Surv_DD * (Alpha_DD * N_DD[tt] + Rho_DD * B_DD[tt]) +
+      wa_DD * R_DD[tt + 1]
+    N_DD[tt + 1] = Surv_DD * N_DD[tt] + R_DD[tt + 1]
+  }
+  tiny <- 1e-15
+  Cpred_DD[Cpred_DD < tiny] <- tiny
+  
+  if (opty == 1) {
+    # The following conditions must be met for positive values
+    # of Arec_DD and Brec_DD, respectively:
+    # umsy * DsprDu + Spr_DD > 0 and Arec_DD * Spr_DD * (1 - UMSY_DD) - 1 > 0
+    # Thus, create a likelihood penalty of 100 if either condition is not met
+    umsy_penalty <- ifelse(Spr_DD + UMSY_DD * DsprDu_DD > 0, 0, UMSY_DD * 100)
+    alpha_penalty <- ifelse(Arec_DD * Spr_DD * (1 - UMSY_DD) - 1 > 0, 0, UMSY_DD * 100)
+    
+    sigma <- sqrt(sum((log(C_hist) - log(Cpred_DD))^2)/ny_DD) # Analytical solution
+    
+    test <- dnorm(log(C_hist), log(Cpred_DD), sigma, log = T)
+ 
+    test2 <- dbeta(UMSY_DD, UMSYprior[1], UMSYprior[2], log = T)
+    test[is.na(test)] <- -1000
+    test[test == (-Inf)] <- -1000
+    if (is.na(test2) | test2 == -Inf | test2 == Inf)  test2 <- 1000
+    return(-sum(test, test2) + umsy_penalty + alpha_penalty)  # return objective function
+  } else {
+    return(list(TAC= UMSY_DD * B_DD[ny_DD + 1], dep=B_DD[tt + 1]/Bo_DD, 
+                Cpred_DD=Cpred_DD,B_DD=B_DD))
+  } 
+  # } if (opty == 2) {
+  #   # return MLE TAC estimate
+  #  
+  # } else if (opty == 3) {
+  #   
+  # } else {
+  #   cbind(C_hist, Cpred_DD)  # return observations vs predictions
+  # }
+}
 
 #' Delay - Difference Stock Assessment with UMSY and MSY as leading parameters
 #' 
@@ -1132,12 +1338,10 @@ class(DBSRA4010) <- "MP"
 #' time-series of catches and a relative abundance index. Conditioned on effort.
 #' 
 #' 
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
-#' @param LB The lowest permitted factor of previous fishing effort
-#' @param UB The highest permitted factor of previous fishing effort
-#' @return A Rec object of either TAC or effort recommendations
+#' @templateVar mp DBSRA
+#' @template MPtemplate
+#' @template MPuses
+#' 
 #' @note 
 #' This DD model is observation error only and has does not estimate
 #' process error (recruitment deviations). Assumption is that knife-edge 
@@ -1158,132 +1362,51 @@ class(DBSRA4010) <- "MP"
 #' Hilborn, R., and Walters, C. 1992. Quantitative Fisheries Stock Assessment: Choice,
 #' Dynamics and Uncertainty. Chapman and Hall, New York. 
 #' @describeIn DD Base version where the TAC = UMSY * Current Biomass.
+#' 
+#' @examples 
+#' DD(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
+#' @family Delay-Difference MPs
+#' 
 #' @export 
-DD <- function(x, Data, reps = 100) {
-  dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
-  Winf = Data@wla[x] * Data@vbLinf[x]^Data@wlb[x]
-  age <- 1:Data@MaxAge
-  la <- Data@vbLinf[x] * (1 - exp(-Data@vbK[x] * ((age - Data@vbt0[x]))))
-  wa <- Data@wla[x] * la^Data@wlb[x]
-  a50V <- iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])
-  a50V <- max(a50V, 1)
-  #yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x, 
-  #                                                                  ])]
-  yind <- !is.na(Data@Cat[x, ] + Data@Ind[x, ])[1] # First year with both catch and index
-  yind <- yind:length(Data@Cat[x, ])
-  Year <- Data@Year[yind]
-  C_hist <- Data@Cat[x, yind]
-  I_hist <- Data@Ind[x, yind]
-  if(any(is.na(C_hist))) { # Linear interpolation of any missing catch
-    C.xind <- 1:length(C_hist)
-    C_hist <- approx(x = C.xind[!is.na(C_hist)], y = C_hist[!is.na(C_hist)], n = length(C.xind))$y
-  }
-  if(any(is.na(I_hist))) { # Linear interpolation of any missing index
-    I.xind <- 1:length(I_hist)
-    I_hist <- approx(x = I.xind[!is.na(I_hist)], y = I_hist[!is.na(I_hist)], n = length(I.xind))$y
-  }
-  E_hist <- C_hist/I_hist
-  E_hist <- E_hist/mean(E_hist)
-  ny_DD <- length(C_hist)
-  k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  
-  k_DD[k_DD > Data@MaxAge/2] <- ceiling(Data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
-  Rho_DD <- (wa[k_DD + 2] - Winf)/(wa[k_DD + 1] - Winf)
-  Alpha_DD <- Winf * (1 - Rho_DD)
-  So_DD <- exp(-Data@Mort[x])  # get So survival rate
-  wa_DD <- wa[k_DD]
-  UMSYpriorpar <- c(1 - exp(-Data@Mort[x] * 0.5), 0.3) # Prior for UMSY is that corresponding to F = 0.5 M with CV = 0.3
-  UMSYprior <- c(alphaconv(UMSYpriorpar[1], prod(UMSYpriorpar)), betaconv(UMSYpriorpar[1], prod(UMSYpriorpar))) # Convert to beta parameters
-  params <- log(c(UMSYpriorpar[1]/(1 - UMSYpriorpar[1]), 3*mean(C_hist, na.rm = T), Data@Mort[x]))
-  opt <- optim(params, DD_R, opty = 1, So_DD = So_DD, Alpha_DD = Alpha_DD, 
-               Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, wa_DD = wa_DD, E_hist = E_hist, 
-               C_hist = C_hist, UMSYprior = UMSYprior, method = "BFGS", hessian = TRUE)
+DD <- function(x, Data, reps = 100, plot=FALSE) {
+  runDD <- DD_(x, Data, reps)
+  TAC <- TACfilter(runDD$TAC)
   
-  TAC <- rep(NA, reps)
-  # samps<-rmvnorm(reps,opt$par,solve(opt$hessian)) # assuming log
-  # parameters are multivariate normal hessian approximation
-  samps <- cbind(rnorm(reps, opt$par[1], ((opt$par[1])^2)^0.5 * 0.1), 
-                 rnorm(reps, opt$par[2], ((opt$par[2])^2)^0.5 * 0.1), rnorm(reps, 
-                                                                            opt$par[3], ((opt$par[3])^2)^0.5 * 0.1))
-  if (reps == 1) 
-    samps <- matrix(c(opt$par[1], opt$par[2], opt$par[3]), nrow = 1)
-  for (i in 1:reps) TAC[i] <- DD_R(samps[i, ], opty = 2, So_DD = So_DD, 
-                                   Alpha_DD = Alpha_DD, Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, 
-                                   wa_DD = wa_DD, E_hist = E_hist, C_hist = C_hist, UMSYprior = UMSYprior)
+  if (plot) DD_plot(x, runDD, Data, TAC)
+  
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(DD) <- "MP"
 
 
-#' @describeIn DD In this version, a 40-10 rule is imposed over the TAC recommendation.
 
-#' @export DD4010
-DD4010 <- function(x, Data, reps = 100) {
-  dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
-  Winf = Data@wla[x] * Data@vbLinf[x]^Data@wlb[x]
-  age <- 1:Data@MaxAge
-  la <- Data@vbLinf[x] * (1 - exp(-Data@vbK[x] * ((age - Data@vbt0[x]))))
-  wa <- Data@wla[x] * la^Data@wlb[x]
-  a50V <- iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x], 
-              Data@L50[x])
-  a50V <- max(a50V, 1)
-  #yind <- (1:length(Data@Cat[x, ]))[!is.na(Data@Cat[x, ] + Data@Ind[x, 
-  #                                                                  ])]
-  yind <- !is.na(Data@Cat[x, ] + Data@Ind[x, ])[1] # First year with both catch and index
-  yind <- yind:length(Data@Cat[x, ])
-  Year <- Data@Year[yind]
-  C_hist <- Data@Cat[x, yind]
-  I_hist <- Data@Ind[x, yind]
-  if(any(is.na(C_hist))) { # Linear interpolation of any missing catch
-    C.xind <- 1:length(C_hist)
-    C_hist <- approx(x = C.xind[!is.na(C_hist)], y = C_hist[!is.na(C_hist)], n = length(C.xind))$y
-  }
-  if(any(is.na(I_hist))) { # Linear interpolation of any missing index
-    I.xind <- 1:length(I_hist)
-    I_hist <- approx(x = I.xind[!is.na(I_hist)], y = I_hist[!is.na(I_hist)], n = length(I.xind))$y
-  }
-  E_hist <- C_hist/I_hist
-  E_hist <- E_hist/mean(E_hist)
-  ny_DD <- length(C_hist)
-  k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)
-  k_DD[k_DD > Data@MaxAge/2] <- ceiling(Data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
-  Rho_DD <- (wa[k_DD + 2] - Winf)/(wa[k_DD + 1] - Winf)
-  Alpha_DD <- Winf * (1 - Rho_DD)
-  So_DD <- exp(-Data@Mort[x])  # get So survival rate
-  wa_DD <- wa[k_DD]
-  UMSYpriorpar <- c(1 - exp(-Data@Mort[x] * 0.5), 0.3) # Prior for UMSY is that corresponding to F = 0.5 M with CV = 0.3
-  UMSYprior <- c(alphaconv(UMSYpriorpar[1], prod(UMSYpriorpar)), betaconv(UMSYpriorpar[1], prod(UMSYpriorpar))) # Convert to beta parameters
-  params <- log(c(UMSYpriorpar[1]/(1 - UMSYpriorpar[1]), 3*mean(C_hist, na.rm = T), Data@Mort[x]))
-  opt <- optim(params, DD_R, opty = 1, So_DD = So_DD, Alpha_DD = Alpha_DD, 
-               Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, wa_DD = wa_DD, E_hist = E_hist, 
-               C_hist = C_hist, UMSYprior = UMSYprior, method = "BFGS", hessian = TRUE)
+
+#' @examples 
+#' DD4010(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
+#' @describeIn DD A 40-10 rule is imposed over the TAC recommendation.
+#' @export 
+DD4010 <- function(x, Data, reps = 100, plot=FALSE) {
   
-  TAC <- rep(NA, reps)
-  dep <- rep(NA, reps)
-  # samps<-rmvnorm(reps,opt$par,solve(opt$hessian)) # assuming log
-  # parameters are multivariate normal hessian approximation
-  samps <- cbind(rnorm(reps, opt$par[1], ((opt$par[1])^2)^0.5 * 0.1), 
-                 rnorm(reps, opt$par[2], ((opt$par[2])^2)^0.5 * 0.1), rnorm(reps, 
-                                                                            opt$par[3], ((opt$par[3])^2)^0.5 * 0.1))
-  if (reps == 1) 
-    samps <- matrix(c(opt$par[1], opt$par[2], opt$par[3]), nrow = 1)
-  for (i in 1:reps) TAC[i] <- DD_R(samps[i, ], opty = 2, So_DD = So_DD, 
-                                   Alpha_DD = Alpha_DD, Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, 
-                                   wa_DD = wa_DD, E_hist = E_hist, C_hist = C_hist, UMSYprior = UMSYprior)
-  for (i in 1:reps) dep[i] <- DD_R(samps[i, ], opty = 3, So_DD = So_DD, 
-                                   Alpha_DD = Alpha_DD, Rho_DD = Rho_DD, ny_DD = ny_DD, k_DD = k_DD, 
-                                   wa_DD = wa_DD, E_hist = E_hist, C_hist = C_hist, UMSYprior = UMSYprior)
-  cond1 <- !is.na(dep) & dep < 0.4 & dep > 0.1
-  cond2 <- !is.na(dep) & dep < 0.1
-  TAC[cond1] <- TAC[cond1] * (dep[cond1] - 0.1)/0.3
-  TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
+  runDD <- DD_(x, Data, reps, hcr=c(.4, .1))
+  TAC <- TACfilter(runDD$TAC)
+  
+  if (plot) DD_plot(x, runDD, Data, TAC)
+  
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(DD4010) <- "MP"
 
+
+
+
+
+
+
+## Dynamic Fratio ####
 
 #' @describeIn Fratio Depletion Corrected Fratio: the Fratio MP with a harvest control 
 #' rule that reduces F according to the production curve given an estimate of current 
@@ -1308,6 +1431,8 @@ DepF <- function(x, Data, reps = 100) {
   Rec
 }
 class(DepF) <- "MP"
+
+
 
 #' Dynamic Fratio MP
 #' 
@@ -1696,35 +1821,7 @@ class(Fratio_ML) <- "MP"
 
 
 
-#' Geromont and Butterworth Constant Catch Harvest Control Rule
-#' 
-#' A simple MP that aims for average historical catches (as a proxy for MSY)
-#' subject to imperfect information.
-#' 
-#' Note that this is my interpretation of their MP and is now stochastic.
-#' Currently it is generalized and is not 'tuned' to more detailed assessment
-#' data which might explain why in some cases it leads to stock declines.
-#' 
-#' @usage GB_CC(x, Data, reps = 100)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @author T. Carruthers
-#' @references Geromont, H.F. and Butterworth, D.S. 2014. Complex assessment or
-#' simple management procedures for efficient fisheries management: a
-#' comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017
-#' @export GB_CC
-GB_CC <- function(x, Data, reps = 100) {
-  dependencies = "Data@Cref,Data@Cat"
-  Catrec <- Data@Cat[x, length(Data@Cat[x, ])]
-  TAC <- trlnorm(reps, Data@Cref[x], Data@CV_Cref)
-  TAC[TAC > (1.2 * Catrec)] <- 1.2 * Catrec
-  TAC[TAC < (0.8 * Catrec)] <- 0.8 * Catrec
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
-  Rec
-}
-class(GB_CC) <- "MP"
+
 
 
 

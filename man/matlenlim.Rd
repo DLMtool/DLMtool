@@ -7,7 +7,7 @@
 \alias{slotlim}
 \title{Size limit management procedures}
 \usage{
-matlenlim(x, Data, ...)
+matlenlim(x, Data, reps)
 
 matlenlim2(x, Data, ...)
 
@@ -20,13 +20,13 @@ slotlim(x, Data, ...)
 
 \item{Data}{A data-limited methods data object}
 
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
 \item{...}{Optional additional arguments that are ignored. Note arguments
 \code{reps} or \code{...} are required for all input controls}
 
 \item{buffer}{Parameter controlling the fraction of Lopt to set the minimum
 length of fish caught: minlen=Lopt*(0.7+buffer).}
-
-\item{reps}{The number of stochastic samples of the MP recommendation(s)}
 
 \item{plot}{Logical. Show the plot?}
 }

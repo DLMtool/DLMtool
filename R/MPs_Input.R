@@ -19,27 +19,23 @@
 #' @describeIn matlenlim A data-limited method in which fishing retention-at-length
 #' is set equivalent to the maturity curve.
 #' @export 
-matlenlim <- function(x, Data, ...) {
+matlenlim <- function(x, Data, reps) {
   # Knife-edge vulnerability at estimated length-at-maturity  
-  dependencies = "Data@L50"
-  
   rec <- new("Rec") # create recommendation object
-  rec@LR5 <- Data@L50[x] * 0.95 # new length at 5% retention  
-  rec@LFR <-  Data@L50[x] # new length at full retention   
+  rec@LFR <- Data@L50[x] # new length at full retention   
+  rec@LR5  <- rec@LFR * 0.95 # new length at 5% retention   
   
   # other slots aren't specified so remain unchanged
   rec
 }
 class(matlenlim) <- "MP"
 
-
-#' @templateVar mp matlenlim2
-#' @template MPuses
-#' @param buffer Parameter controlling the fraction of Lopt to set the minimum
-#' length of fish caught: minlen=Lopt*(0.7+buffer).
 #' @describeIn matlenlim Selectivity-at-length is set slightly higher (110\%) 
 #' than the maturity-at-length.
-#' @export matlenlim2
+#' 
+#' @templateVar mp matlenlim2
+#' @template MPuses
+#' @export 
 matlenlim2 <- function(x, Data, ...) {
   # Knife-edge vulnerability slightly higher than length at maturity
   dependencies = "Data@L50"
@@ -53,13 +49,15 @@ matlenlim2 <- function(x, Data, ...) {
 class(matlenlim2) <- "MP"
 
 
-
+#' @param buffer Parameter controlling the fraction of Lopt to set the minimum
+#' length of fish caught: minlen=Lopt*(0.7+buffer).
+#' 
 #' @describeIn matlenlim This input control sets the minimum length of fish 
 #' caught to a fraction of the length that maximises the biomass, Lopt. The aim 
 #' of this simple MP is restrict the catch of small fish to rebuild
 #' the stock biomass towards the optimal length, Lopt, expressed in terms of
 #' the growth parameters Lopt=b/(M/k+b) (Hordyk et al. 2014) (Author: HF Geromont)
-#' @export minlenLopt1
+#' @export 
 minlenLopt1 <- function(x, Data, buffer = 0.1, ...) {
   
   # Minimum length MPs: Fix length-at-full-selectivity to 0.8*Lopt and
@@ -179,8 +177,20 @@ curE75 <- function(x, Data, ...) {
 }
 class(curE75) <- "MP"
 
+#### Delay-Difference Effort MPs ####
 
-#' @describeIn DD Effort-control version. The recommended effort is EMSY.
+#' DDe 
+#' 
+#' Description
+#' 
+#' Details
+#'
+#' @param x rr
+#' @param Data  rr
+#' @param reps  rr 
+#'
+#' @describeIn DDe Effort-control version. The recommended effort is EMSY.
+#' @family Delay-Difference MPs
 #' @export 
 DDe <- function(x, Data, reps = 100) {
   dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
@@ -237,7 +247,11 @@ DDe <- function(x, Data, reps = 100) {
 }
 class(DDe) <- "MP"
 
-#' @describeIn DD Variant of \code{DDe} that limits the maximum change in effort to 10 percent.
+
+
+#' @param LB The lowest permitted factor of previous fishing effort
+#' @param UB The highest permitted factor of previous fishing effort
+#' @describeIn DDe Variant of \code{DDe} that limits the maximum change in effort to 10 percent.
 #' @export DDes
 DDes <- function(x, Data, reps = 100, LB = 0.9, UB = 1.1) {
   dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"
@@ -299,7 +313,7 @@ class(DDes) <- "MP"
 
 
 
-#' @describeIn DD Variant of \code{DDe} where the recommended effort is 75\% EMSY.
+#' @describeIn DDe Variant of \code{DDe} where the recommended effort is 75\% EMSY.
 #' @export 
 DDe75 <- function(x, Data, reps = 100) {
   dependencies = "Data@vbLinf, Data@vbK, Data@vbt0, Data@Mort, Data@wla, Data@wlb, Data@Cat, Data@Ind, Data@L50, Data@MaxAge"

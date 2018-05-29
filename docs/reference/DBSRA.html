@@ -30,9 +30,12 @@
 
 <meta property="og:title" content="Depletion-Based Stock Reduction Analysis — DBSRA" />
 
-<meta property="og:description" content="User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the OFL
+<meta property="og:description" content="Depletion-Based Stock Reduction Analysis (DB-SRA) is a method designed for
+determining a catch limit and management reference points for data-limited
+fisheries where catches are known from the beginning of exploitation.
+User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the a catch limit
 by back-constructing the stock to match a user specified level of stock
-depletion (OFL = M * FMSY/M * depletion* B0)." />
+depletion." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -97,9 +100,12 @@ depletion (OFL = M * FMSY/M * depletion* B0)." />
 
     <div class="ref-description">
     
-    <p>User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the OFL
+    <p>Depletion-Based Stock Reduction Analysis (DB-SRA) is a method designed for
+determining a catch limit and management reference points for data-limited
+fisheries where catches are known from the beginning of exploitation.
+User prescribed BMSY/B0, M, FMSY/M are used to find B0 and therefore the a catch limit
 by back-constructing the stock to match a user specified level of stock
-depletion (OFL = M * FMSY/M * depletion* B0).</p>
+depletion.</p>
     
     </div>
 
@@ -134,29 +140,39 @@ depletion (OFL = M * FMSY/M * depletion* B0).</p>
 
     <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the <code>TAC</code> slot populated with a numeric vector of length <code>reps</code></p>
     
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>DB-SRA assumes that a complete time-series of catch from the beginning of
+exploitation is available. Users prescribe estimates of current depletion \((D)\),
+biomass at MSY relative to unfished \(\left(\frac{B_\textrm{MSY}}{B_0}\right)\),
+the natural mortality rate \((M)\), and te ratio fishing mortality at
+MSY to M \(\left(\frac{F_{\textrm{MSY}}}{M}\right)\).</p>
+<p>You may have noticed that you -the user- specify three of the factors that
+make the quota recommendation. So this can be quite a subjective method.
+In the MSE the MSY reference points (e.g., \(\left(\frac{F_\textrm{MSY}}{M}\right)\))
+are taken as the true value calculate in the MSE with added uncertainty specified
+in the Obs object (e.g <code>Obs@FMSY_Mbiascv</code>).</p>
+<p>The catch limit, for the Base Version, is calculated as:
+$$\textrm{TAC} = M . \frac{F_{\textrm{MSY}}}{M} . D . B_0$$</p>
+    
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     <ul>
-<li><p><code>DBSRA</code>: Base version. You specify a range of stock depletion and,
-given historical catches DB-SRA calculates what unfished biomass must have
-been to get you here given samples for M, FMSY relative to M and also BMSY
-relative to Bunfished.</p></li>
-<li><p><code>DBSRA_40</code>: Assumes 40 percent current depletion (Bcurrent/B0 = 0.4), which is
+<li><p><code>DBSRA</code>: Base Version. TAC is calculated assumed MSY harvest rate
+multiplied by the estimated current abundance (estimated B0 x Depletion)</p></li>
+<li><p><code>DBSRA_40</code>: Same as the Base Version but assumes 40 percent current depletion (Bcurrent/B0 = 0.4), which is
 more or less the most optimistic state for a stock (ie very close to BMSY/B0 for many stocks).</p></li>
-<li><p><code>DBSRA4010</code>: Base version paired with the 40-10 rule that throttles
-back the TAC to zero at 10 percent of unfished biomass.</p></li>
+<li><p><code>DBSRA4010</code>: Base version paired with the 40-10 rule that linearly throttles
+back the TAC when depletion is below 0.4 down to zero at 10 percent of unfished biomass.</p></li>
 </ul>
     
     <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
 
-    <p>This is set up to return the OFL (FMSY * current biomass).</p>
-<p>You may have noticed that you -the user- specify three of the factors that
-make the quota recommendation. So this can be quite a subjective method.</p>
-<p>Also the DB-SRA method of this package isn't exactly the same as the
+    <p>The DB-SRA method of this package isn't exactly the same as the
 original method of Dick and MacCall (2011) because it has to work for
-simulated depletions above BMSY/B0 and even on occasion over B0. Also it
+simulated depletions above BMSY/B0 and even on occasion over B0. It also
 doesn't have the modification for flatfish life histories that has
-previously been applied by Dick and MacCall.</p>
+previously been applied by Dick and MacCall (2011).</p>
     
     <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
 
@@ -185,10 +201,10 @@ data-poor fish stocks. Fish. Res. 110, 331-341.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>DBSRA</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>ourReefFish</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DBSRA-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;    0.7663043 </div><div class='input'>
+#&gt;    0.7467352 </div><div class='input'>
 <span class='fu'>DBSRA_40</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>ourReefFish</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DBSRA-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     1.927292 </div><div class='input'><span class='fu'>DBSRA4010</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>ourReefFish</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DBSRA-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;    0.2553896 </div></pre>
+#&gt;     2.010221 </div><div class='input'><span class='fu'>DBSRA4010</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>ourReefFish</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DBSRA-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;    0.3311421 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -196,6 +212,8 @@ data-poor fish stocks. Fish. Res. 110, 331-341.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
 
       <li><a href="#functions">Functions</a></li>
 

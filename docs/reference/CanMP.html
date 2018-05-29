@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Geromont and Butterworth Constant Catch Harvest Control Rule — GB_CC • DLMtool Documentation</title>
+<title>What Data objects can be used to run this MP? — CanMP • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,10 +28,9 @@
 
 
 
-<meta property="og:title" content="Geromont and Butterworth Constant Catch Harvest Control Rule — GB_CC" />
+<meta property="og:title" content="What Data objects can be used to run this MP? — CanMP" />
 
-<meta property="og:description" content="A simple MP that aims for average historical catches (as a proxy for MSY)
-subject to imperfect information." />
+<meta property="og:description" content="What Data objects can be used to run this MP?" />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -89,72 +88,27 @@ subject to imperfect information." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Geromont and Butterworth Constant Catch Harvest Control Rule</h1>
+    <h1>What Data objects can be used to run this MP?</h1>
     
-    <div class="hidden name"><code>GB_CC.Rd</code></div>
+    <div class="hidden name"><code>CanMP.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>A simple MP that aims for average historical catches (as a proxy for MSY)
-subject to imperfect information.</p>
+    <p>What Data objects can be used to run this MP?</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>GB_CC</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>)</pre>
+    <pre class="usage"><span class='fu'>CanMP</span>(<span class='no'>MP</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>A position in a data-limited methods data object</p></td>
-    </tr>
-    <tr>
-      <th>Data</th>
-      <td><p>A data-limited methods data object</p></td>
-    </tr>
-    <tr>
-      <th>reps</th>
-      <td><p>The number of stochastic samples of the MP recommendation(s)</p></td>
-    </tr>
-    <tr>
-      <th>plot</th>
-      <td><p>Logical. Show the plot?</p></td>
+      <th>MP</th>
+      <td><p>Name of the MP</p></td>
     </tr>
     </table>
-    
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the <code>TAC</code> slot populated with a numeric vector of length <code>reps</code></p>
-    
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>Note that this is my interpretation of their MP and is now stochastic.
-Currently it is generalized and is not 'tuned' to more detailed assessment
-data which might explain why in some cases it leads to stock declines.</p>
-    
-    <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
-
-    
-    <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
-    <p><code>GB_CC</code>: Cat, Cref</p>
-    
-    <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
-
-    
-    <p>See <a href='https://dlmtool.github.io/DLMtool/reference/GB_CC.html'>Online Documentation</a> for correctly rendered equations</p>
-    
-    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
-
-    <p>Geromont, H.F. and Butterworth, D.S. 2014. Complex assessment or
-simple management procedures for efficient fisheries management: a
-comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017</p>
-    
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>Other Average Catch MPs: <code><a href='AvC.html'>AvC</a></code>,
-  <code><a href='DCAC.html'>DCACs</a></code></p></div>
     
 
   </div>
@@ -162,23 +116,7 @@ comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017</p>
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      
-      <li><a href="#value">Value</a></li>
-
-      <li><a href="#details">Details</a></li>
-
-      <li><a href="#required-data">Required Data</a></li>
-
-      <li><a href="#rendered-equations">Rendered Equations</a></li>
-
-      <li><a href="#references">References</a></li>
-
-      <li><a href="#see-also">See also</a></li>
-          </ul>
-
-    <h2>Author</h2>
-    
-T. Carruthers
+                </ul>
 
   </div>
 </div>

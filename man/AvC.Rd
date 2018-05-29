@@ -51,7 +51,8 @@ Rec <- AvC(1, DLMtool::Cobia, reps=1000, plot=TRUE) # 1,000 log-normal samples w
         
 }
 \seealso{
-Other Average Catch MPs: \code{\link{DCACs}}
+Other Average Catch MPs: \code{\link{DCACs}},
+  \code{\link{GB_CC}}
 }
 \author{
 T. Carruthers
