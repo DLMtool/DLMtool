@@ -17,8 +17,10 @@ CanMP <- function(MP) {
   for (x in seq_along(avData)) {
     log[x] <- MP %in% Can(get(avData[x]))
   }
-  return(Data[log])
+  return(avData[log])
 }
+
+
 
 #' Check that a DLM object is valid 
 #' 
@@ -87,33 +89,8 @@ OptionalSlots <- function() {
 }
 
 
-# Demographic model
-demofn <- function(log.r, M, amat, sigma, K, Linf, to, hR, maxage, a, b) {
-  demographic2(log.r, M, amat, sigma, K, Linf, to, hR, maxage = maxage, a, b)$epsilon
-}
 
-demographic2 = function(log.r, M, amat, sigma, K, Linf, to, hR, maxage, a, b) {
-  # switch on and off to use either S or m in MC simulations
-  r = exp(log.r)
-  lx = exp(-M)^((1:maxage) - 1)  #survivorship
-  logNormDensity = (dnorm(x = log((1:maxage)), mean = log(amat), sd = sigma))/(1:maxage)  #Maturity ogive calculation
-  logNormDensity[1] = 0
-  sumlogNormDen = sum(logNormDensity)
-  NormalisedMaturity = logNormDensity/sumlogNormDen
-  proportionMat[1] = NormalisedMaturity[1]
-  for (i in 2:maxage) proportionMat[i] = proportionMat[i - 1] + NormalisedMaturity[i]
-  TL = Linf * (1 - exp(-K * ((1:maxage) - to)))  #length at age
-  Wa = a * TL^b  #wegith at age
-  SurvWeiMat = lx * Wa * proportionMat  #survivorship X weight X maturity
-  SBPR = sum(SurvWeiMat)  #Spawner biomass per recruit
-  RPS = 1/(SBPR * (1 - hR)/(4 * hR))  # Beverton Holt
-  # RPS=(5*hR)^(5/4)/SBPR # Ricker Recruitment per spawner biomass
-  RPF = Wa * proportionMat * RPS  #Recruits per female
-  Lotka = lx * RPF * exp(-(1:maxage) * r)
-  sumLotka = sum(Lotka)
-  epsilon = (1 - sumLotka)^2  #objective function
-  return(list(epsilon = epsilon, r = r))
-}
+
 
 #' Calculate historical fishing mortality
 #' 

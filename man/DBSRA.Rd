@@ -36,7 +36,7 @@ depletion.
 DB-SRA assumes that a complete time-series of catch from the beginning of
 exploitation is available. Users prescribe estimates of current depletion \eqn{(D)},
 biomass at MSY relative to unfished \eqn{\left(\frac{B_\textrm{MSY}}{B_0}\right)},
-the natural mortality rate \eqn{(M)}, and te ratio fishing mortality at
+the natural mortality rate \eqn{(M)}, and the ratio fishing mortality at
 MSY to M \eqn{\left(\frac{F_{\textrm{MSY}}}{M}\right)}.
 
 You may have noticed that you -the user- specify three of the factors that
@@ -69,7 +69,7 @@ previously been applied by Dick and MacCall (2011).
 }
 \section{Required Data}{
 
-See \link[=Data-class]{Data} for information on the \code{Data} object \cr
+See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
 \code{DBSRA}: Cat, Dep, FMSY_M, L50, vbK, vbLinf, vbt0

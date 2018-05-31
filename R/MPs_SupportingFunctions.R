@@ -11,10 +11,12 @@ AvC_plot <- function(x, Data, Rec, meanC, histCatch, yr.ind, lwd=3, cex.lab=1.25
   lines(c(min(Data@Year), Data@LHYear), rep(mean(Data@Cat[x,yr.ind]),2), lty=2) #
   text(quantile(Data@Year, 0.1), meanC*1.1, pos=4, "Average Historical Catch")
   boxplot(Rec@TAC, add=TRUE, at=max(Data@Year)+1, col="grey", width=1, outline=TRUE, axes=FALSE)
-  text(max(Data@Year)+1, quantile(Rec@TAC, 0.05), "TAC", col="black", pos=2)
+  text(max(Data@Year)+1, quantile(Rec@TAC, 0.05, na.rm=TRUE), "TAC", col="black", pos=2)
 }
 
-DCAC_plot <- function(x, Data, dcac, Bt_K, yrs, lwd=3, cex.lab=1.25) {
+
+
+DCAC_plot <- function(x, Data, dcac, TAC, Bt_K, yrs, lwd=3, cex.lab=1.25) {
   op <- par(no.readonly = TRUE)
   on.exit(op)
   par(mfrow=c(1,1), oma=c(1,1,1,1), mar=c(5,4,1,4))
@@ -30,12 +32,11 @@ DCAC_plot <- function(x, Data, dcac, Bt_K, yrs, lwd=3, cex.lab=1.25) {
   text(quantile(Data@Year, 0.1), mean(Data@Cat[x,1:yr.lst])*1.1, pos=4, "Average Historical Catch")
 
   boxplot(TAC, add=TRUE, at=max(Data@Year)+1, col="darkgrey", width=1, outline=TRUE, axes=FALSE)
-  text(max(Data@Year)+1, quantile(TAC, 0.05), "TAC", col="black", pos=2)
-  op <- par(no.readonly = TRUE)
-  on.exit(par(op))
+  text(max(Data@Year)+1, quantile(TAC, 0.95, na.rm=TRUE), "TAC", col="black", pos=3)
+
   par(new = T)
   plot(c(1, max(Data@Year)+3), c(0,1), type="n", axes=FALSE, xlab="", ylab="")
-  quants <- quantile(Bt_K, c(0.025, 0.5, 0.975))
+  quants <- quantile(Bt_K, c(0.025, 0.5, 0.975), na.rm=TRUE)
   points(max(Data@Year)+3, quants[2], pch=16, col="blue", cex=1.5)
   lines(c(max(Data@Year)+3, max(Data@Year)+3), c(quants[1], quants[3]), col="blue")
   axis(side=4, las=1, col="blue", labels=FALSE)
@@ -103,14 +104,14 @@ DBSRA_plot <- function(runDBSRA, Data, TAC) {
     abline(h=runDBSRA$hcr[2], lty=3, col="gray")
   }
   plot(c(Years, max(Years+1)), c(runDBSRA$C_hist, NA), type='l', lwd=2,  bty="n", 
-       xlab="Year", ylab=paste("Catch (", Data@Units, ")"), las=1, ylim=c(0, max(c(runDBSRA$C_hist, TAC))))
-  if (all(round(TAC / mean(TAC),1) ==1 )) {
-    points(max(Years)+1, mean(TAC), pch=16, cex=2, col="blue")
-    text(max(Years)+1, mean(TAC), "TAC", pos=1, col="blue")
+       xlab="Year", ylab=paste("Catch (", Data@Units, ")"), las=1, ylim=c(0, max(c(runDBSRA$C_hist, TAC), na.rm=TRUE)))
+  if (all(round(TAC / mean(TAC, na.rm=TRUE),1) ==1 )) {
+    points(max(Years)+1, mean(TAC, na.rm=TRUE), pch=16, cex=2, col="blue")
+    text(max(Years)+1, mean(TAC, na.rm=TRUE), "TAC", pos=1, col="blue")
   } else {
     boxplot(TAC, add=TRUE, at=max(Years)+1, col="grey", width=1, outline=TRUE, 
             axes=FALSE)
-    text(max(Years)+1, quantile(TAC, 0.95), "TAC", pos=3, col="blue")
+    text(max(Years)+1, quantile(TAC, 0.95, na.rm=TRUE), "TAC", pos=3, col="blue")
   }
   
   df <- data.frame(B_B0=runDBSRA$Bt_Kstore, BMSY_B0=runDBSRA$BMSY_K_Mstore,
@@ -161,11 +162,52 @@ DD_plot <- function(x, runDD, Data, TAC) {
   } else {
     boxplot(TAC, add=TRUE, at=max(Years), col="grey", width=1, outline=TRUE, 
             axes=FALSE)
-    text(max(Years), quantile(TAC, 0.95), "TAC", pos=3, col="blue")
+    text(max(Years), quantile(TAC, 0.95, na.rm=TRUE), "TAC", pos=3, col="blue")
   }
 }
 
 
+DynF_plot <- function(C_dat, C_hist, TAC, yrsmth, B_dat, B_hist, Data, SP_hist, 
+                      ind, ind1, G_new, Frat,newF, years) {
+  op <- par(no.readonly = TRUE)
+  on.exit(op)
+  
+  par(mfrow=c(2,2))
+  
+  
+  plot(years, exp(B_dat), pch=16, bty="n", 
+       xlab=paste0("Year (last ", yrsmth, " years)"), ylab=paste0("Abundance (", Data@Units, ")"))
+  lines(years, B_hist)
+  legend("topright", bty="n", lty=1, legend="Smoothed Abundance")
+  
+  plot(B_hist[ind1], SP_hist, type="p", pch=16, bty="n", 
+       xlab=paste0("Biomass (last ", yrsmth-1, " years)"), ylab='Surplus Production')
+  
+  ylim <- c(0, max(c(TAC,(exp(C_dat)))))
+  years <- c(years, max(years)+1)
+  plot(years, c(exp(C_dat), NA), pch=16, bty="n", ylim=ylim,
+       xlab=paste0("Year (last ", yrsmth, " years)"), ylab=paste0("Catch (", Data@Units, ")"))
+  lines(years, c(C_hist, NA))
+  legend("topright", bty="n", lty=1, legend="Smoothed Catch")
+  if (all(round(TAC / mean(TAC),1) ==1 )) {
+    points(max(years), mean(TAC), pch=16, cex=2, col="blue")
+    text(max(years), mean(TAC), "TAC", pos=1, col="blue")
+  } else {
+    boxplot(TAC, add=TRUE, at=max(years), col="blue", width=1, outline=TRUE, 
+            axes=FALSE)
+    text(max(years), quantile(TAC, 0.95, na.rm=TRUE), "TAC", pos=3, col="blue")
+  }
+  
+  boxplot(data.frame(SP_Gradient=G_new, Fmsy=Frat, updatedF=newF), bty="l")
+}
+
+Fadapt_plot <- DynF_plot
+
+
+
+YPR_plot <- function() {
+  
+}
 
 # default plotting options
 leg.pos <- col1 <- col2 <- col3 <- col4 <- pt.cex <- tex.cex <- cex.lab <- lwd <- leg.post <- NULL
@@ -274,22 +316,7 @@ iVB <- function(t0, K, Linf, L) {
 }
 
 
-getr <- function(x, Data, Mvec, Kvec, Linfvec, t0vec, hvec, maxage,
-                 r_reps = 100) {
-  r <- rep(NA, r_reps)
-  for (i in 1:r_reps) {
-    log.r = log(0.3)
 
-    opt = optimize(demofn, lower = log(1e-04), upper = log(1.4), M = Mvec[i],
-                   amat = iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],
-                              Data@L50[x]), sigma = 0.2, K = Kvec[i], Linf = Linfvec[i],
-                   to = t0vec[i], hR = hvec[i], maxage = maxage, a = Data@wla[x],
-                   b = Data@wlb[x])
-    # demographic2(opt$minimum,M[x],ageM[x],0.2,K[x],Linf,t0,steepness[x],maxage,a,b)$r
-    r[i] <- exp(opt$minimum)
-  }
-  r
-}
 
 #' TAC Filter
 #'
@@ -739,76 +766,3 @@ derive_beta_par <- function(mu, sigma) {
 # 
 
 ## YPR supporting functions ####
-# Yield per recruit estimate of FMSY Meaghan Bryan 2013
-YPRopt = function(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage, reps = 100) {
-
-  nf <- 200
-  frates <- seq(0, 3, length.out = nf)
-  Winf = a * Linfc^b
-  rat <- LFS/Linfc
-  rat[rat > 0.8] <- 0.8  # need to robustify this for occasionally very high samples of LFS
-  tc = log(1 - rat)/-Kc + t0c
-  tc = round(tc, 0)
-  tc[tc < 1] <- 1
-  tc[tc > maxage] <- maxage
-
-  vul <- array(0, dim = c(reps, maxage))
-  mat <- array(0, dim = c(reps, maxage))
-  lx <- array(NA, dim = c(reps, maxage))
-  lxo <- array(NA, dim = c(reps, maxage))
-
-  ypr <- array(NA, dim = c(reps, nf))
-  sbpr <- array(NA, dim = c(reps, nf))
-  sbpr.ratio <- array(NA, dim = c(reps, nf))
-  sbpr.dif <- array(NA, dim = c(reps, nf))
-
-  f.max <- array(NA, dim = c(reps, maxage))
-
-  # average weight at age - follow von Bertalanffy growth
-  age <- array(rep(1:maxage, each = reps), dim = c(reps, maxage))
-  la <- Linfc * (1 - exp(-Kc * ((age - t0c))))
-  wa <- a * la^b
-
-  # vulnerability schedule - assumes knife-edge vulnerability, where all
-  # individuals age tc to maxage are fully vulnerbale all individulas
-  # less than age tc are not vulnerable
-  for (i in 1:reps) {
-    if (tc[i] > 0)
-      vul[i, tc[i]:maxage] <- 1
-    if (tc[i] > 1)
-      mat[i, max(1, tc[i] - 1):maxage] <- 1
-  }
-
-  lx[, 1] <- 1
-  lxo[, 1] <- 1
-  for (k in 1:nf) {
-    for (i in 2:maxage) {
-      lx[, i] = lx[, i - 1] * exp(-(Mdb + vul[, i - 1] * frates[k]))
-      lxo[, i] = lx[, i] * exp(-Mdb)
-    }
-    phi_vb = apply(lx * wa * vul, 1, sum)
-    sbpro = apply(lxo * wa * mat, 1, sum)
-
-    ypr[, k] = (1 - exp(-frates[k])) * phi_vb
-    sbpr[, k] = apply(lx * wa * mat, 1, sum)
-    sbpr.ratio[, k] = sbpr[, k]/sbpro
-    sbpr.dif[, k] = abs(sbpr.ratio[, k] - 0.3)  #hard code comparison ratio
-  }
-
-  # frates[apply(ypr,1,which.max)] Fmaxypr
-
-  # More code that derived F0.1 in 'per recruit analysis.R' (Meaghan
-  # Bryan)
-  slope.origin = (ypr[, 2] - ypr[, 1])/(frates[2] - frates[1])
-  slope.10 = round(0.1 * slope.origin, 2)
-
-  slope = array(NA, dim = dim(ypr))  #vector(length=length(ypr))
-  slope[, 1] = slope.origin
-  for (i in 3:ncol(ypr)) {
-    slope[, i - 1] = round((ypr[, i] - ypr[, i - 1])/(frates[i] - frates[i - 1]), 2)
-  }
-  dif = abs(slope - slope.10)
-  dif[is.na(dif)] <- 1e+11
-  frates[apply(dif, 1, which.min)]  #frates[which.min(dif)]
-}
-

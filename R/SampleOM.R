@@ -1,4 +1,10 @@
 
+myrunif <- function(n, val1, val2) {
+  min <- min(c(val1, val2))
+  max <- max(c(val1, val2))
+  runif(n, min, max)
+}
+
 #' Sample Stock parameters
 #'
 #' @param Stock An object of class 'Stock' or class 'OM'
@@ -44,7 +50,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   StockOut$R0 <- R0
   
   # == Natural Mortality ====
-  if (length(Stock@M) == 2 & !exists("M", inherits=FALSE)) M <- runif(nsim, Stock@M[1], Stock@M[2])  # natural mortality rate
+  if (length(Stock@M) == 2 & !exists("M", inherits=FALSE)) M <- myrunif(nsim, Stock@M[1], Stock@M[2])  # natural mortality rate
   
   if (length(Stock@M) == maxage) { # Stock@M is vector of M-at-age 
     if (length(Stock@M2) == maxage && !exists("Mage", inherits=FALSE)) {
@@ -62,8 +68,8 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (length(Stock@M2) == maxage & !length(Stock@M) == maxage) {
     stop("Slot M2 is used (upper bound on M-at-age) and is length 'maxage' but Slot M (lower bound on M-at-age) is not length 'maxage'.")
   }
-  if (!exists("Msd", inherits=FALSE)) Msd <- runif(nsim, Stock@Msd[1], Stock@Msd[2])  # sample inter annual variability in M frStock specified range
-  if (!exists("Mgrad", inherits=FALSE)) Mgrad <- runif(nsim, Stock@Mgrad[1], Stock@Mgrad[2])  # sample gradient in M (M y-1)
+  if (!exists("Msd", inherits=FALSE)) Msd <- myrunif(nsim, Stock@Msd[1], Stock@Msd[2])  # sample inter annual variability in M frStock specified range
+  if (!exists("Mgrad", inherits=FALSE)) Mgrad <- myrunif(nsim, Stock@Mgrad[1], Stock@Mgrad[2])  # sample gradient in M (M y-1)
   if (.hasSlot(Stock, "Mexp") & !exists("Mexp", inherits=FALSE)) {
     if (all(is.numeric(Stock@Mexp) & is.finite(Stock@Mexp))) {
       Mexp <- runif(nsim, min(Stock@Mexp), max(Stock@Mexp)) # sample Lorenzen M-at-weight exponent     
@@ -82,7 +88,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
 
   # == Depletion ====
   if (!exists("D", inherits=FALSE)) {
-    StockOut$D <- D <- runif(nsim, Stock@D[1], Stock@D[2])  # sample from the range of user-specified depletion (Bcurrent/B0)  
+    StockOut$D <- D <- myrunif(nsim, Stock@D[1], Stock@D[2])  # sample from the range of user-specified depletion (Bcurrent/B0)  
   } else {
     StockOut$D <- D 
   }
@@ -95,7 +101,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   }
   
   if (!exists("hs", inherits=FALSE)) {
-    StockOut$hs <- hs <- runif(nsim, Stock@h[1], Stock@h[2])  # sample of recruitment compensation (steepness - fraction of unfished recruitment at 20% of unfished biStockass)
+    StockOut$hs <- hs <- myrunif(nsim, Stock@h[1], Stock@h[2])  # sample of recruitment compensation (steepness - fraction of unfished recruitment at 20% of unfished biStockass)
   } else {
     StockOut$hs <- hs
   }
@@ -103,13 +109,13 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   
   # == Recruitment Deviations ====
   if (!exists("procsd", inherits=FALSE)) {
-    StockOut$procsd <- procsd <- runif(nsim, Stock@Perr[1], Stock@Perr[2])  # Process error standard deviation
+    StockOut$procsd <- procsd <- myrunif(nsim, Stock@Perr[1], Stock@Perr[2])  # Process error standard deviation
   } else {
     StockOut$procsd <- procsd
   }
   
   if (!exists("AC", inherits=FALSE)) {
-    StockOut$AC <- AC <- runif(nsim, Stock@AC[1], Stock@AC[2])  # auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)  
+    StockOut$AC <- AC <- myrunif(nsim, Stock@AC[1], Stock@AC[2])  # auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)  
   } else {
     StockOut$AC <- AC  # auto correlation parameter for recruitment deviations recdev(t)<-AC*recdev(t-1)+(1-AC)*recdev_proposed(t)
   }
@@ -118,12 +124,12 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   # Add cycle (phase shift) to recruitment deviations - if specified
   if (is.finite(Stock@Period[1]) & is.finite(Stock@Amplitude[1])) {
     # Shape <- "sin"  # default sine wave - alternative - 'shift' for step changes
-    Period <- runif(nsim, min(Stock@Period), max(Stock@Period))
+    Period <- myrunif(nsim, min(Stock@Period), max(Stock@Period))
     if (max(Stock@Amplitude)>1) {
       message("Stock@Amplitude > 1. Defaulting to 1")
       Stock@Amplitude[Stock@Amplitude>1] <- 1
     }
-    Amplitude <- runif(nsim, min(Stock@Amplitude), max(Stock@Amplitude))
+    Amplitude <- myrunif(nsim, min(Stock@Amplitude), max(Stock@Amplitude))
     
     yrs <- 1:(nyears + proyears+maxage-1)
     recMulti <- t(sapply(1:nsim, function(x) 1+sin((runif(1, 0, 1)*max(yrs) + 2*yrs*pi)/Period[x])*Amplitude[x]))
@@ -159,7 +165,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       if (all(is.na(slot(Stock, var)))) {
         val <- rep(0, nsim)
       } else {
-        val <- runif(nsim, slot(Stock, var)[1],slot(Stock, var)[2])  # sample of asymptotic length
+        val <- myrunif(nsim, slot(Stock, var)[1],slot(Stock, var)[2])  # sample of asymptotic length
       }
       assign(var, val)
     } 
@@ -171,9 +177,9 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   
   
   # == Sample Spatial Parameters ====
-  if (!exists("Frac_area_1", inherits=FALSE)) Frac_area_1 <- runif(nsim, Stock@Frac_area_1[1], Stock@Frac_area_1[2])  # sampled fraction of unfished biStockass in area 1 (its a two area model by default)
-  if (!exists("Prob_staying", inherits=FALSE)) Prob_staying <- runif(nsim, Stock@Prob_staying[1], Stock@Prob_staying[2])  # sampled probability of individuals staying in area 1 among years
-  if (!exists("Size_area_1", inherits=FALSE)) Size_area_1 <- runif(nsim, Stock@Size_area_1[1], Stock@Size_area_1[2])  # currently redundant parameter for the habitat area size of area 1
+  if (!exists("Frac_area_1", inherits=FALSE)) Frac_area_1 <- myrunif(nsim, Stock@Frac_area_1[1], Stock@Frac_area_1[2])  # sampled fraction of unfished biStockass in area 1 (its a two area model by default)
+  if (!exists("Prob_staying", inherits=FALSE)) Prob_staying <- myrunif(nsim, Stock@Prob_staying[1], Stock@Prob_staying[2])  # sampled probability of individuals staying in area 1 among years
+  if (!exists("Size_area_1", inherits=FALSE)) Size_area_1 <- myrunif(nsim, Stock@Size_area_1[1], Stock@Size_area_1[2])  # currently redundant parameter for the habitat area size of area 1
   
   if (max(Size_area_1) == 0) stop("Size_area_1 must be > 0")
   if (max(Frac_area_1) == 0) stop("Frac_area_1 must be > 0")
@@ -212,7 +218,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     Len_age[ind] <- Linfarray[ind[, c(1, 3)]] * (1 - exp(-Karray[ind[, c(1, 3)]] * 
                                                            (Agearray[ind[, 1:2]] - t0[ind[, 1]])))
     
-    if (length(Stock@cpars$Linf) >0) {
+    if (class(Stock)=="OM" && length(Stock@cpars$Linf) >0) {
       maxLinf <- max(Stock@cpars$Linf)
     } else {
       maxLinf <- max(Stock@Linf)
@@ -251,7 +257,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   StockOut$maxlen <- maxlen <- Len_age[, maxage, nyears] # reference length for Vmaxlen 
   
   # == Sample CV Length-at-age ====
-  if (!exists("LenCV", inherits=FALSE)) LenCV <- runif(nsim, min(Stock@LenCV), max(Stock@LenCV))
+  if (!exists("LenCV", inherits=FALSE)) LenCV <- myrunif(nsim, min(Stock@LenCV), max(Stock@LenCV))
   
   # == Generate Catch at Length Classes ====
   if (!exists("LatASD", inherits=FALSE)) LatASD <- Len_age * array(LenCV, dim=dim(Len_age)) # SD of length-at-age 
@@ -311,14 +317,14 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     L50_95 <- L95 - L50
   } else {
     if (!exists("L50", inherits=FALSE)) {
-      sL50 <- array(runif(nsim * 50, Stock@L50[1], Stock@L50[2]), c(nsim, 50))  # length at 50% maturity  
+      sL50 <- array(myrunif(nsim * 50, Stock@L50[1], Stock@L50[2]), c(nsim, 50))  # length at 50% maturity  
       # checks for unrealistically high length at maturity
       sL50[sL50/Linf > 0.95] <- NA
       L50 <- apply(sL50, 1, function(x) x[!is.na(x)][1])
       L50[is.na(L50)] <- 0.95 * Linf[is.na(L50)]
     }
     if (!exists("L50_95", inherits=FALSE)) {
-      L50_95 <- array(runif(nsim * 50, Stock@L50_95[1], Stock@L50_95[2]), c(nsim, 50))  # length at 95% maturity
+      L50_95 <- array(myrunif(nsim * 50, Stock@L50_95[1], Stock@L50_95[2]), c(nsim, 50))  # length at 95% maturity
       if (!exists("sL50", inherits=FALSE)) sL50 <- matrix(L50, nsim, 50)
       L50_95[((sL50+L50_95)/matrix(Linf, nsim, 50)) > 0.99] <- NA
       L50_95 <- apply(L50_95, 1, function(x) x[!is.na(x)][1]) 
@@ -462,7 +468,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   }
   
   # == Sample Discard Mortality ====
-  if(!exists("Fdisc", inherits = FALSE)) Fdisc <- runif(nsim, min(Stock@Fdisc), max(Stock@Fdisc))
+  if(!exists("Fdisc", inherits = FALSE)) Fdisc <- myrunif(nsim, min(Stock@Fdisc), max(Stock@Fdisc))
   StockOut$Fdisc <- Fdisc 
   
   # == 
@@ -611,7 +617,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   Fleetout <- list()
   
   # == Sample Historical Fishing Effort =====
-  if (!exists("Esd", inherits = FALSE)) Esd <- runif(nsim, Fleet@Esd[1], Fleet@Esd[2])  # interannual variability in fishing effort (log normal sd)
+  if (!exists("Esd", inherits = FALSE)) Esd <- myrunif(nsim, Fleet@Esd[1], Fleet@Esd[2])  # interannual variability in fishing effort (log normal sd)
   if (!exists("EffLower", inherits = FALSE)) EffLower <- Fleet@EffLower
   if (!exists("EffUpper", inherits = FALSE)) EffUpper <- Fleet@EffUpper 
   if (!exists("EffYears", inherits = FALSE)) EffYears <- Fleet@EffYears
@@ -644,13 +650,13 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   Fleetout$dFfinal <- dFfinal
   
   # === Spatial Targetting ====
-  if (!exists("Spat_targ", inherits = FALSE))  Spat_targ <- runif(nsim, Fleet@Spat_targ[1], Fleet@Spat_targ[2])  # spatial targetting Ba^targetting param 
+  if (!exists("Spat_targ", inherits = FALSE))  Spat_targ <- myrunif(nsim, Fleet@Spat_targ[1], Fleet@Spat_targ[2])  # spatial targetting Ba^targetting param 
   
   Fleetout$Spat_targ <- Spat_targ
   
   # === Sample fishing efficiency parameters ====
-  if (!exists("qinc", inherits = FALSE)) qinc <- runif(nsim, Fleet@qinc[1], Fleet@qinc[2])
-  if (!exists("qcv", inherits = FALSE)) qcv <- runif(nsim, Fleet@qcv[1], Fleet@qcv[2])  # interannual variability in catchability
+  if (!exists("qinc", inherits = FALSE)) qinc <- myrunif(nsim, Fleet@qinc[1], Fleet@qinc[2])
+  if (!exists("qcv", inherits = FALSE)) qcv <- myrunif(nsim, Fleet@qcv[1], Fleet@qcv[2])  # interannual variability in catchability
   
   # === Simulate future variability in fishing efficiency ====
   qmu <- -0.5 * qcv^2  # Mean
@@ -688,9 +694,9 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
     if (all(multi != 1)) stop("Selectivity parameters provided in cpars must be absolute values. Is Fleet@isRel == 'FALSE'?")
   }
   
-  if (!exists("L5", inherits = FALSE)) L5 <- runif(nsim, Fleet@L5[1], Fleet@L5[2]) * multi  # length at 0.05% selectivity ascending
-  if (!exists("LFS", inherits = FALSE)) LFS <- runif(nsim, Fleet@LFS[1], Fleet@LFS[2]) * multi  # first length at 100% selection
-  if (!exists("Vmaxlen", inherits = FALSE)) Vmaxlen <- runif(nsim, Fleet@Vmaxlen[1], Fleet@Vmaxlen[2])  # selectivity at maximum length
+  if (!exists("L5", inherits = FALSE)) L5 <- myrunif(nsim, Fleet@L5[1], Fleet@L5[2]) * multi  # length at 0.05% selectivity ascending
+  if (!exists("LFS", inherits = FALSE)) LFS <- myrunif(nsim, Fleet@LFS[1], Fleet@LFS[2]) * multi  # first length at 100% selection
+  if (!exists("Vmaxlen", inherits = FALSE)) Vmaxlen <- myrunif(nsim, Fleet@Vmaxlen[1], Fleet@Vmaxlen[2])  # selectivity at maximum length
   
   Vmaxlen[Vmaxlen<=0] <- tiny
   L5s <- LFSs <- Vmaxlens <- NULL  # initialize 
@@ -1022,7 +1028,7 @@ SampleObsPars <- function(Obs, nsim=NULL, cpars=NULL){
   # fix some naming issues?
   
   if (!exists("Csd", inherits=FALSE)) {
-    ObsOut$Csd <- runif(nsim, Obs@Cobs[1], Obs@Cobs[2])  # Sampled catch observation error (lognormal sd)
+    ObsOut$Csd <- myrunif(nsim, Obs@Cobs[1], Obs@Cobs[2])  # Sampled catch observation error (lognormal sd)
   } else {
     ObsOut$Csd <- Csd
   }
@@ -1032,37 +1038,37 @@ SampleObsPars <- function(Obs, nsim=NULL, cpars=NULL){
     ObsOut$Cbias <- Cbias
   }
   if (!exists("CAA_nsamp", inherits=FALSE)) {
-    ObsOut$CAA_nsamp <- ceiling(runif(nsim, Obs@CAA_nsamp[1], Obs@CAA_nsamp[2]))  # Number of catch-at-age observations
+    ObsOut$CAA_nsamp <- ceiling(myrunif(nsim, Obs@CAA_nsamp[1], Obs@CAA_nsamp[2]))  # Number of catch-at-age observations
   } else {
     ObsOut$CAA_nsamp <- CAA_nsamp
   } 
   if (!exists("CAA_ESS", inherits=FALSE)) {
-    ObsOut$CAA_ESS <- ceiling(runif(nsim, Obs@CAA_ESS[1], Obs@CAA_ESS[2]))  # Effective sample size
+    ObsOut$CAA_ESS <- ceiling(myrunif(nsim, Obs@CAA_ESS[1], Obs@CAA_ESS[2]))  # Effective sample size
   } else {
     ObsOut$CAA_ESS <- CAA_ESS
   } 
   if (!exists("CAL_nsamp", inherits=FALSE)) {
-    ObsOut$CAL_nsamp <- ceiling(runif(nsim, Obs@CAL_nsamp[1], Obs@CAL_nsamp[2]))  # Observation error standard deviation for single catch at age by area
+    ObsOut$CAL_nsamp <- ceiling(myrunif(nsim, Obs@CAL_nsamp[1], Obs@CAL_nsamp[2]))  # Observation error standard deviation for single catch at age by area
   } else {
     ObsOut$CAL_nsamp <- CAL_nsamp
   }  
   if (!exists("CAL_ESS", inherits=FALSE)) {
-    ObsOut$CAL_ESS <- ceiling(runif(nsim, Obs@CAL_ESS[1], Obs@CAL_ESS[2]))  # Effective sample size
+    ObsOut$CAL_ESS <- ceiling(myrunif(nsim, Obs@CAL_ESS[1], Obs@CAL_ESS[2]))  # Effective sample size
   } else {
     ObsOut$CAL_ESS <- CAL_ESS
   }  
   if (!exists("betas", inherits=FALSE)) {
-    ObsOut$betas <- exp(runif(nsim, log(Obs@beta[1]), log(Obs@beta[2])))  # the sampled hyperstability / hyperdepletion parameter beta>1 (hyperdepletion) beta<1 (hyperstability)
+    ObsOut$betas <- exp(myrunif(nsim, log(Obs@beta[1]), log(Obs@beta[2])))  # the sampled hyperstability / hyperdepletion parameter beta>1 (hyperdepletion) beta<1 (hyperstability)
   } else {
     ObsOut$betas <- betas
   }  
   if (!exists("Isd", inherits=FALSE)) {
-    ObsOut$Isd <- runif(nsim, Obs@Iobs[1], Obs@Iobs[2])  # Abundance index observation error (log normal sd)
+    ObsOut$Isd <- myrunif(nsim, Obs@Iobs[1], Obs@Iobs[2])  # Abundance index observation error (log normal sd)
   } else {
     ObsOut$Isd <- Isd
   } 
   if (!exists("Derr", inherits=FALSE)) {
-    ObsOut$Derr <- runif(nsim, Obs@Dobs[1], Obs@Dobs[2])
+    ObsOut$Derr <- myrunif(nsim, Obs@Dobs[1], Obs@Dobs[2])
   } else {
     ObsOut$Derr <- Derr
   }  
@@ -1097,12 +1103,12 @@ SampleObsPars <- function(Obs, nsim=NULL, cpars=NULL){
     ObsOut$LFSbias <- LFSbias
   }
   if (!exists("Aerr", inherits=FALSE)) {
-    ObsOut$Aerr <- runif(nsim, Obs@Btobs[1], Obs@Btobs[2])
+    ObsOut$Aerr <- myrunif(nsim, Obs@Btobs[1], Obs@Btobs[2])
   } else {
     ObsOut$Aerr <- Aerr
   }
   if (!exists("Abias", inherits=FALSE)) {
-    ObsOut$Abias <- exp(runif(nsim, log(Obs@Btbiascv[1]), log(Obs@Btbiascv[2])))  #rlnorm(nsim,mconv(1,Obs@Btbiascv),sdconv(1,Obs@Btbiascv))    # sample of current abundance bias
+    ObsOut$Abias <- exp(myrunif(nsim, log(Obs@Btbiascv[1]), log(Obs@Btbiascv[2])))  #rlnorm(nsim,mconv(1,Obs@Btbiascv),sdconv(1,Obs@Btbiascv))    # sample of current abundance bias
   } else {
     ObsOut$Abias <- Abias
   }
@@ -1137,7 +1143,7 @@ SampleObsPars <- function(Obs, nsim=NULL, cpars=NULL){
     ObsOut$Brefbias <- Brefbias
   }
   if (!exists("Recsd", inherits=FALSE)) {
-    ObsOut$Recsd <- runif(nsim, Obs@Recbiascv[1], Obs@Recbiascv[2])  # Recruitment deviation  
+    ObsOut$Recsd <- myrunif(nsim, Obs@Recbiascv[1], Obs@Recbiascv[2])  # Recruitment deviation  
   } else {
     ObsOut$Recsd <- Recsd
   }  
@@ -1312,3 +1318,7 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   
   sampCpars
 }
+
+
+
+

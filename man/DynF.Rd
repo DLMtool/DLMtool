@@ -4,27 +4,29 @@
 \alias{DynF}
 \title{Dynamic Fratio MP}
 \usage{
-DynF(x, Data, yrsmth=10, gg=2, reps = 100)
+DynF(x, Data, reps = 100, plot = FALSE, yrsmth = 10, gg = 2)
 }
 \arguments{
-\item{x}{A position in a data-limited methods object}
+\item{x}{A position in a data-limited methods data object}
 
-\item{Data}{A data-limited methods object}
+\item{Data}{A data-limited methods data object}
+
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{yrsmth}{The number of historical recent years used for smoothing catch
 and biomass data}
 
 \item{gg}{A gain parameter that modifies F according to the gradient in
 surplus production with biomass}
-
-\item{reps}{The number samples of the TAC}
 }
 \value{
-A numeric vector of TAC recommendations
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
 The Fratio MP with a controller that changes the level of F according to the
-relationship between Surplus production and biomass. Ie lower F when dSP/dB
+estimated relationship between surplus production and biomass. Ie lower F when dSP/dB
 is positive and higher F when dSP/dB is negative.
 }
 \details{
@@ -37,12 +39,43 @@ fractions of natural mortality rate.
 The core advantage is the TAC(t) is not strongly determined by TAC(t-1) and
 therefore errors are not as readily propagated. The result is method that
 tends to perform alarmingly well and therefore requires debunking ASAP.
+
+The catch limit (TAC) is calculated as:
+\deqn{\textrm{TAC}=F * B}
+where \eqn{F} is fishing mortality and \eqn{B} is the estimated current biomass.
+
+\eqn{F} is calculated as:
+\deqn{F = F_{\textrm{MSY}} \exp{-gG}}
+where \eqn{F_{\textrm{MSY}}} is calculated from assumed values of \eqn{\frac{F_{\textrm{MSY}}}{M}} and
+\eqn{M}, \emph{g} is a gain parameter and \emph{G} is the estimated gradient in surplus
+production (\emph{SP}) as a function of biomass (\emph{B}). Surplus production for year \emph{y} is calculated as:
+\deqn{SP_y = B_{y+1} - B_y + C_y}
+Trends in historical catch (\emph{C}) and biomass (\emph{B}) are both estimated using a loess smoother, over the last \code{yrsmth} years,
+of available catch and a time-series of abundance, calculated from an index of abundance (\code{Data@Ind})
+and an estimate of abundance (\code{Data@Abun}) for the current year.
+}
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{DynF}: Abun, Cat, FMSY_M, Ind, Mort, Year
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/DynF.html}{Online Documentation} for correctly rendered equations
+}
+
+\examples{
+DynF(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
 }
 \references{
 Made-up for this package.
 }
 \seealso{
-\link{Fratio}
+Other Fmsy/M methods: \code{\link{Fadapt}},
+  \code{\link{Fratio}}
 }
 \author{
 T. Carruthers

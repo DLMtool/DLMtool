@@ -130,14 +130,7 @@ time-series of catches and a relative abundance index. Conditioned on effort.</p
 
     <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the <code>TAC</code> slot populated with a numeric vector of length <code>reps</code></p>
     
-    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
-
-    <ul>
-<li><p><code>DD</code>: Base version where the TAC = UMSY * Current Biomass.</p></li>
-<li><p><code>DD4010</code>: A 40-10 rule is imposed over the TAC recommendation.</p></li>
-</ul>
-    
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>This DD model is observation error only and has does not estimate
 process error (recruitment deviations). Assumption is that knife-edge
@@ -149,17 +142,27 @@ violated tends to be the biggest driver of performance for this method.</p>
 <p>The method is conditioned on effort and estimates catch. The effort is calculated
 as the ratio of catch and index. Thus, to get a complete effort time series, a full
 time series of catch and index is also needed. Missing values are linearly interpolated.</p>
+<p>A detailed description of the delay-difference model can be found in Chapter 9 of Hilborn
+and Walters (1992).</p>
+    
+    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
+
+    <ul>
+<li><p><code>DD</code>: Base version where the TAC = UMSY * Current Biomass.</p></li>
+<li><p><code>DD4010</code>: A 40-10 rule is imposed over the TAC recommendation.</p></li>
+</ul>
     
     <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
 
     
     <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
-    <p><code>DBSRA</code>: Cat, Dep, FMSY_M, L50, vbK, vbLinf, vbt0</p>
+    <p><code>DD</code>: Cat, Ind, L50, MaxAge, Mort, vbK, vbLinf, vbt0, wla, wlb, Year</p>
+    <p><code>DD4010</code>: Cat, Ind, L50, MaxAge, Mort, vbK, vbLinf, vbt0, wla, wlb, Year</p>
     
     <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
 
     
-    <p>See <a href='https://dlmtool.github.io/DLMtool/reference/DBSRA.html'>Online Documentation</a> for correctly rendered equations</p>
+    <p>See <a href='https://dlmtool.github.io/DLMtool/reference/DD.html'>Online Documentation</a> for correctly rendered equations</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -175,8 +178,8 @@ Dynamics and Uncertainty. Chapman and Hall, New York.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>DD</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DD-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     2.129795 </div><div class='input'><span class='fu'>DD4010</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DD-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;    0.4403233 </div></pre>
+#&gt;     1.912723 </div><div class='input'><span class='fu'>DD4010</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DD-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;    0.3970462 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -185,9 +188,9 @@ Dynamics and Uncertainty. Chapman and Hall, New York.</p>
       
       <li><a href="#value">Value</a></li>
 
-      <li><a href="#functions">Functions</a></li>
+      <li><a href="#details">Details</a></li>
 
-      <li><a href="#note">Note</a></li>
+      <li><a href="#functions">Functions</a></li>
 
       <li><a href="#required-data">Required Data</a></li>
 

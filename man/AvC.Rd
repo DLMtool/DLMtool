@@ -35,7 +35,7 @@ where \eqn{\textrm{TAC}} is the the mean catch recommendation, \eqn{n} is the nu
 }
 \section{Required Data}{
 
-See \link[=Data-class]{Data} for information on the \code{Data} object \cr
+See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
 \code{AvC}: Cat, LHYear, Year

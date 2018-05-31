@@ -8,27 +8,27 @@ DD_R(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hist, C_hist,
   UMSYprior)
 }
 \arguments{
-\item{params}{xx}
+\item{params}{internal parameter}
 
-\item{opty}{xx}
+\item{opty}{internal parameter}
 
-\item{So_DD}{xx}
+\item{So_DD}{internal parameter}
 
-\item{Alpha_DD}{xx}
+\item{Alpha_DD}{internal parameter}
 
-\item{Rho_DD}{xx}
+\item{Rho_DD}{internal parameter}
 
-\item{ny_DD}{xx}
+\item{ny_DD}{internal parameter}
 
-\item{k_DD}{xx}
+\item{k_DD}{internal parameter}
 
-\item{wa_DD}{xx}
+\item{wa_DD}{internal parameter}
 
-\item{E_hist}{xx}
+\item{E_hist}{internal parameter}
 
-\item{C_hist}{xx}
+\item{C_hist}{internal parameter}
 
-\item{UMSYprior}{xx}
+\item{UMSYprior}{internal parameter}
 }
 \description{
 Delay-Difference Internal Function

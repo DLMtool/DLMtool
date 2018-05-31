@@ -22,7 +22,6 @@ Depends:
     snowfall
 Imports:
     abind,
-    coda,
     devtools,
     dplyr,
     fmsb,
@@ -37,7 +36,6 @@ Imports:
     mvtnorm,
     openxlsx,
     parallel,
-    r4ss,
     readxl,
     rfishbase,
     rmarkdown,

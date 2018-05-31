@@ -31,7 +31,7 @@
 <meta property="og:title" content="Dynamic Fratio MP — DynF" />
 
 <meta property="og:description" content="The Fratio MP with a controller that changes the level of F according to the
-relationship between Surplus production and biomass. Ie lower F when dSP/dB
+estimated relationship between surplus production and biomass. Ie lower F when dSP/dB
 is positive and higher F when dSP/dB is negative." />
 
 <meta property="og:image" content="/logo.png" />
@@ -98,23 +98,31 @@ is positive and higher F when dSP/dB is negative." />
     <div class="ref-description">
     
     <p>The Fratio MP with a controller that changes the level of F according to the
-relationship between Surplus production and biomass. Ie lower F when dSP/dB
+estimated relationship between surplus production and biomass. Ie lower F when dSP/dB
 is positive and higher F when dSP/dB is negative.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>DynF</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>yrsmth</span><span class='kw'>=</span><span class='fl'>10</span>, <span class='kw'>gg</span><span class='kw'>=</span><span class='fl'>2</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>)</pre>
+    <pre class="usage"><span class='fu'>DynF</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>yrsmth</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>gg</span> <span class='kw'>=</span> <span class='fl'>2</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>A position in a data-limited methods object</p></td>
+      <td><p>A position in a data-limited methods data object</p></td>
     </tr>
     <tr>
       <th>Data</th>
-      <td><p>A data-limited methods object</p></td>
+      <td><p>A data-limited methods data object</p></td>
+    </tr>
+    <tr>
+      <th>reps</th>
+      <td><p>The number of stochastic samples of the MP recommendation(s)</p></td>
+    </tr>
+    <tr>
+      <th>plot</th>
+      <td><p>Logical. Show the plot?</p></td>
     </tr>
     <tr>
       <th>yrsmth</th>
@@ -126,15 +134,11 @@ and biomass data</p></td>
       <td><p>A gain parameter that modifies F according to the gradient in
 surplus production with biomass</p></td>
     </tr>
-    <tr>
-      <th>reps</th>
-      <td><p>The number samples of the TAC</p></td>
-    </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A numeric vector of TAC recommendations</p>
+    <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the <code>TAC</code> slot populated with a numeric vector of length <code>reps</code></p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
@@ -146,6 +150,29 @@ fractions of natural mortality rate.</p>
 <p>The core advantage is the TAC(t) is not strongly determined by TAC(t-1) and
 therefore errors are not as readily propagated. The result is method that
 tends to perform alarmingly well and therefore requires debunking ASAP.</p>
+<p>The catch limit (TAC) is calculated as:
+$$\textrm{TAC}=F * B$$
+where \(F\) is fishing mortality and \(B\) is the estimated current biomass.</p>
+<p>\(F\) is calculated as:
+$$F = F_{\textrm{MSY}} \exp{-gG}$$
+where \(F_{\textrm{MSY}}\) is calculated from assumed values of \(\frac{F_{\textrm{MSY}}}{M}\) and
+\(M\), <em>g</em> is a gain parameter and <em>G</em> is the estimated gradient in surplus
+production (<em>SP</em>) as a function of biomass (<em>B</em>). Surplus production for year <em>y</em> is calculated as:
+$$SP_y = B_{y+1} - B_y + C_y$$
+Trends in historical catch (<em>C</em>) and biomass (<em>B</em>) are both estimated using a loess smoother, over the last <code>yrsmth</code> years,
+of available catch and a time-series of abundance, calculated from an index of abundance (<code>Data@Ind</code>)
+and an estimate of abundance (<code>Data@Abun</code>) for the current year.</p>
+    
+    <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
+
+    
+    <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
+    <p><code>DynF</code>: Abun, Cat, FMSY_M, Ind, Mort, Year</p>
+    
+    <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
+
+    
+    <p>See <a href='https://dlmtool.github.io/DLMtool/reference/DynF.html'>Online Documentation</a> for correctly rendered equations</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -153,9 +180,13 @@ tends to perform alarmingly well and therefore requires debunking ASAP.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><a href='Fratio.html'>Fratio</a></p></div>
+    <div class='dont-index'><p>Other Fmsy/M methods: <code><a href='Fadapt.html'>Fadapt</a></code>,
+  <code><a href='Fratio.html'>Fratio</a></code></p></div>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>DynF</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DynF-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     4.872894 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -166,10 +197,16 @@ tends to perform alarmingly well and therefore requires debunking ASAP.</p>
 
       <li><a href="#details">Details</a></li>
 
+      <li><a href="#required-data">Required Data</a></li>
+
+      <li><a href="#rendered-equations">Rendered Equations</a></li>
+
       <li><a href="#references">References</a></li>
 
       <li><a href="#see-also">See also</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
     <h2>Author</h2>
     

@@ -21,7 +21,7 @@
 #' @return A summary table of MP performance
 #' @export
 #'
-TradePlot_n <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8), 
+TradePlot <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8), 
                       point.size=2,
                       lab.size=4,
                       axis.title.size=12,
@@ -149,9 +149,9 @@ TradePlot_n <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8),
 #' }
 #' 
 #' @export 
-Tplot_n <- function(MSEobj, lims=c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...) {
+Tplot <- function(MSEobj, lims=c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...) {
   if (class(lims)!="numeric") stop("Second argument must be numeric")
-  TradePlot_n(MSEobj, lims=lims, PMlist=list("POF", "LTY", "P100", "LTY", "P50", "LTY", "P10", "LTY"),  ...)
+  TradePlot(MSEobj, lims=lims, PMlist=list("POF", "LTY", "P100", "LTY", "P50", "LTY", "P10", "LTY"),  ...)
 }
 
 #' @describeIn TradePlot_n A trade-off plot showing probabilities that:
@@ -161,9 +161,9 @@ Tplot_n <- function(MSEobj, lims=c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...)
 #' }
 #' 
 #' @export
-Tplot2_n <- function(MSEobj, lims=c(0.2, 0.2, 0.8, 0.8), ...) {
+Tplot2 <- function(MSEobj, lims=c(0.2, 0.2, 0.8, 0.8), ...) {
   if (class(lims)!="numeric") stop("Second argument must be numeric")
-  TradePlot_n(MSEobj, lims=lims, PMlist=list("STY", "LTY", "P10", "AAVY"), ...)
+  TradePlot(MSEobj, lims=lims, PMlist=list("STY", "LTY", "P10", "AAVY"), ...)
 }
 
 #' @describeIn TradePlot_n A trade-off plot showing probabilities that:
@@ -173,8 +173,114 @@ Tplot2_n <- function(MSEobj, lims=c(0.2, 0.2, 0.8, 0.8), ...) {
 #' }
 #' 
 #' @export
-Tplot3_n <- function(MSEobj, lims=c(0.5, 0.5, 0.8, 0.5), ...) {
+Tplot3 <- function(MSEobj, lims=c(0.5, 0.5, 0.8, 0.5), ...) {
   if (class(lims)!="numeric") stop("Second argument must be numeric")
-  TradePlot_n(MSEobj, lims=lims, PMlist=list("POF", "LTY", "P50", "AAVY"), ...)
+  TradePlot(MSEobj, lims=lims, PMlist=list("POF", "LTY", "P50", "AAVY"), ...)
+}
+
+
+
+
+
+Cplot <- function(MSEobj, MPs = NA, lastYrs = 5, XMin = NULL, YMin = NULL, 
+                  ShowLabs = FALSE) {
+  if (!all(is.na(MPs))) MSEobj <- Sub(MSEobj, MPs = MPs)
+  nsim <- MSEobj@nsim
+  nMPs <- MSEobj@nMPs
+  MPs <- MSEobj@MPs
+  nyears <- MSEobj@nyears
+  proyears <- MSEobj@proyears
+  RefYd <- MSEobj@OM$RefY
+  
+  pastC <- apply(MSEobj@CB_hist[, , , , drop = FALSE], c(1, 3), sum, na.rm = TRUE)/RefYd # relative catch in last historical year
+  temp <- aperm( replicate(nMPs, pastC), c(1, 3, 2))
+  
+  lastYr <- temp[, , nyears, drop = FALSE]
+  Yield <- abind::abind(lastYr, MSEobj@C[, , , drop = FALSE]/RefYd, along = 3) # 
+  
+  ny <- dim(Stat$Yield)[3]
+  relYield <- Yield[, , , drop = FALSE]/Yield[, , rep(1, ny), drop = FALSE] # catch relative to last historical year
+  relYield <- relYield[,,(proyears - lastYrs + 1):proyears]
+  
+  # Biomass 
+  bio <- MSEobj@B_BMSY[,,(proyears - lastYrs + 1):proyears] # biomass in lastyrs
+  histSSB <- apply(MSEobj@SSB_hist[, , , , drop = FALSE], c(1, 3), sum, na.rm = TRUE)
+  relSSB <- histSSB[,nyears]/ MSEobj@OM$SSBMSY # SSB/SSBmsy in last historical year
+  temp <- array(replicate(nMPs, relSSB), dim=dim(bio)) # array with biomass in last projection year
+  
+  relbio <- bio/temp # biomass relative to biomass at start of projections
+  
+  dimnames(relbio) <- list(1:nsim, MPs, 1:lastYrs)
+  Bdf <- as.data.frame.table(relbio)
+  names(Bdf) <- c("sim", "mp", "yr", 'Biomass')
+
+  dimnames(relYield) <- list(1:nsim, MPs, 1:lastYrs)
+  Cdf <- as.data.frame.table(relYield)
+  names(Cdf) <- c("sim", "mp", "yr", 'Catch')
+  
+  DF <- dplyr::left_join(Cdf, Bdf,by = c("sim", "mp", "yr"))
+  DF <- DF %>% group_by(mp) %>% summarize(mC=median(Catch),
+                                    upC=quantile(Catch, 0.95),
+                                    lowC=quantile(Catch, 0.05),
+                                    mB=median(Biomass),
+                                    upB=quantile(Biomass, 0.95),
+                                    lowB=quantile(Biomass, 0.05))
+  
+  
+  ggplot2::ggplot(DF, ggplot2::aes(x=mB, y=mC)) + 
+    ggplot2::geom_point() +
+    ggplot2::expand_limits(x=0, y=0) + 
+    ggplot2::geom_vline(xintercept = 1, color="gray") +
+    ggplot2::geom_hline(yintercept = 1, color="gray") +
+    ggplot2::theme_classic() + 
+    ggrepel::geom_text_repel(ggplot2::aes(label=mp))
+  
+  tt <- Cplot(MSEobj)
+  tt
+  
+  yield <- Yield(MSEobj)
+  dim(yield@Stat)
+  
+  head(Stat$Yield)
+  
+  Alpha <- 60
+  if (nsim < 10)  Alpha <- 180
+  nMPs <- MSEobj@nMPs
+  MPs <- MSEobj@MPs
+  nyears <- MSEobj@nyears
+  proyears <- MSEobj@proyears
+  
+  Stat <- MPStats(MSEobj, lastYrs = lastYrs)$BySim
+  ny <- dim(Stat$Yield)[3]
+  Stat$Yield <- Stat$Yield[, , , drop = FALSE]/Stat$Yield[, , rep(1, ny), drop = FALSE]
+  
+  RelYield <- apply(Stat$Yield, 2, median, na.rm = TRUE)
+  
+  Bcurr <- Stat$B_BMSY[, , 1]  # Biomass at start of projections
+  Bend <- apply((Stat$B_BMSY[, , (proyears - lastYrs + 1):proyears]),       c(1, 2), median, na.rm = TRUE)  # median biomass in last years
+  RelBio <- apply(Bend/Bcurr, 2, median, na.rm = TRUE)
+  
+  XMin <- ifelse(is.null(XMin), 0, XMin)
+  YMin <- ifelse(is.null(YMin), 0, YMin)
+  XLim <- c(YMin, ceiling(max(RelBio)/0.5) * 0.5) * c(0.95, 1.05)
+  YLim <- c(XMin, ceiling(max(RelYield)/0.5) * 0.5) * c(0.95, 1.05)
+  op <- par(mfrow = c(1, 1), oma = c(3, 5, 1, 1), mar = c(2, 2, 0, 0))
+  plot(RelBio, RelYield, xlim = XLim, ylim = YLim, type = "n", bty = "l", 
+       xlab = "", ylab = "", xaxs = "i", yaxs = "i", las = 1)
+  if (ShowLabs) 
+    text(RelBio, RelYield, MSEobj@MPs)
+  if (!ShowLabs) 
+    points(RelBio, RelYield, pch = 21, cex = 2, bg = "lightgray")
+  abline(h = 1, lty = 3, col = "lightgray")
+  abline(v = 1, lty = 3, col = "lightgray")
+  mtext(side = 1, line = 3.5, paste("Median Biomass (last", lastYrs, 
+                                    "years)\n relative to current"), cex = 1.25)
+  mtext(side = 2, line = 3, paste("Median Yield (last", lastYrs, "years)\n relative to current"), 
+        cex = 1.25)
+  par(op)
+  DF <- data.frame(MP = MSEobj@MPs, Biomass = RelBio, Catch = RelYield, 
+                   stringsAsFactors = FALSE)
+  invisible(DF)
+  
 }
 

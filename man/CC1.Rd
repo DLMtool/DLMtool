@@ -62,7 +62,7 @@ The TAC is constant for all future projections.
 
 \section{Required Data}{
 
-See \link[=Data-class]{Data} for information on the \code{Data} object \cr
+See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
 \code{CC1}: Cat, LHYear, Year

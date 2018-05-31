@@ -4,7 +4,7 @@
 \alias{GB_CC}
 \title{Geromont and Butterworth Constant Catch Harvest Control Rule}
 \usage{
-GB_CC(x, Data, reps = 100)
+GB_CC(x, Data, reps = 100, plot = FALSE)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -29,7 +29,7 @@ data which might explain why in some cases it leads to stock declines.
 }
 \section{Required Data}{
 
-See \link[=Data-class]{Data} for information on the \code{Data} object \cr
+See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
 \code{GB_CC}: Cat, Cref

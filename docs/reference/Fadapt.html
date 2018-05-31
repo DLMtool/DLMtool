@@ -108,14 +108,14 @@ theory of Maunder 2014.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>Fadapt</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>yrsmth</span> <span class='kw'>=</span> <span class='fl'>7</span>, <span class='kw'>gg</span><span class='kw'>=</span><span class='fl'>1</span>)</pre>
+    <pre class="usage"><span class='fu'>Fadapt</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>yrsmth</span> <span class='kw'>=</span> <span class='fl'>7</span>, <span class='kw'>gg</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>A position in data-limited methods data object</p></td>
+      <td><p>A position in a data-limited methods data object</p></td>
     </tr>
     <tr>
       <th>Data</th>
@@ -123,7 +123,11 @@ theory of Maunder 2014.</p>
     </tr>
     <tr>
       <th>reps</th>
-      <td><p>The number of TAC samples</p></td>
+      <td><p>The number of stochastic samples of the MP recommendation(s)</p></td>
+    </tr>
+    <tr>
+      <th>plot</th>
+      <td><p>Logical. Show the plot?</p></td>
     </tr>
     <tr>
       <th>yrsmth</th>
@@ -138,11 +142,23 @@ production</p></td>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A numeric vector of quota recommendations</p>
+    <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the <code>TAC</code> slot populated with a numeric vector of length <code>reps</code></p>
+<p>A numeric vector of quota recommendations</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Tested in Carruthers et al. 2015.</p>
+    
+    <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
+
+    
+    <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
+    <p><code>Fadapt</code>: Abun, Cat, FMSY_M, Ind, Mort, Year</p>
+    
+    <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
+
+    
+    <p>See <a href='https://dlmtool.github.io/DLMtool/reference/Fadapt.html'>Online Documentation</a> for correctly rendered equations</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -151,7 +167,15 @@ management procedures. ICES J. Mar Sci. 73, 464-482.</p>
 <p>Maunder, M. 2014.
 http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf</p>
     
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
+    <div class='dont-index'><p>Other Fmsy/M methods: <code><a href='DynF.html'>DynF</a></code>,
+  <code><a href='Fratio.html'>Fratio</a></code></p></div>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>Fadapt</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Fadapt-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     8.118772 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -162,8 +186,16 @@ http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Str
 
       <li><a href="#details">Details</a></li>
 
+      <li><a href="#required-data">Required Data</a></li>
+
+      <li><a href="#rendered-equations">Rendered Equations</a></li>
+
       <li><a href="#references">References</a></li>
-          </ul>
+
+      <li><a href="#see-also">See also</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
     <h2>Author</h2>
     

@@ -18,3 +18,4 @@ Calculate CV from vector of values
 \author{
 T. Carruthers
 }
+\keyword{internal}

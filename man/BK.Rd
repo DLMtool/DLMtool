@@ -68,7 +68,7 @@ These MPs have not been implemented that way.
 }
 \section{Required Data}{
 
-See \link[=Data-class]{Data} for information on the \code{Data} object \cr
+See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
 \code{BK}: Abun, LFC, vbK, vbLinf

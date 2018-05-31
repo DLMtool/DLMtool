@@ -6,21 +6,26 @@
 \alias{Fdem_ML}
 \title{Demographic FMSY method}
 \usage{
-Fdem(x, Data, reps = 100)
+Fdem(x, Data, reps = 100, plot = FALSE)
 
-Fdem_CC(x, Data, reps = 100, Fmin = 0.005)
+Fdem_CC(x, Data, reps = 100, plot = FALSE, Fmin = 0.005)
 
-Fdem_ML(x, Data, reps = 100)
+Fdem_ML(x, Data, reps = 100, plot = FALSE, Fmin = 0.005)
 }
 \arguments{
-\item{x}{A position in data-limited methods data object}
+\item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of TAC samples}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{Fmin}{The minimum fishing mortality rate derived from the catch-curve
 analysis}
+}
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
 FMSY is calculated as r/2 where r is calculated from a demographic approach
@@ -40,6 +45,29 @@ abundance is estimated from catch curve analysis.
 current abundance.
 }}
 
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{Fdem}: Abun, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
+
+
+\code{Fdem_CC}: CAA, Cat, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/Fdem.html}{Online Documentation} for correctly rendered equations
+
+
+}
+
+\examples{
+Fdem(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+Fdem_CC(1, DLMtool::SimulatedData, plot=TRUE)
+Fdem_ML(1, DLMtool::SimulatedData, plot=TRUE)
+}
 \references{
 McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
 demographic methods to construct Bayesian priors for the intrinsic rate of

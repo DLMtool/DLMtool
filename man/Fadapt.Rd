@@ -5,14 +5,16 @@
 \title{An adaptive MP that uses trajectory in inferred suplus production and
 fishing mortality rate to update a TAC}
 \usage{
-Fadapt(x, Data, reps = 100, yrsmth = 7, gg=1)
+Fadapt(x, Data, reps = 100, plot = FALSE, yrsmth = 7, gg = 1)
 }
 \arguments{
-\item{x}{A position in data-limited methods data object}
+\item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of TAC samples}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{yrsmth}{Years over which to smooth recent estimates of surplus
 production}
@@ -20,6 +22,8 @@ production}
 \item{gg}{A gain parameter controlling the speed in update in TAC.}
 }
 \value{
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
+
 A numeric vector of quota recommendations
 }
 \description{
@@ -31,12 +35,32 @@ theory of Maunder 2014.
 \details{
 Tested in Carruthers et al. 2015.
 }
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{Fadapt}: Abun, Cat, FMSY_M, Ind, Mort, Year
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/Fadapt.html}{Online Documentation} for correctly rendered equations
+}
+
+\examples{
+Fadapt(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
+}
 \references{
 Carruthers et al. 2015. Performance evaluation of simple
 management procedures. ICES J. Mar Sci. 73, 464-482.
 
 Maunder, M. 2014.
 http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf
+}
+\seealso{
+Other Fmsy/M methods: \code{\link{DynF}},
+  \code{\link{Fratio}}
 }
 \author{
 T. Carruthers

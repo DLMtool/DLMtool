@@ -6,9 +6,9 @@
 \alias{YPR_ML}
 \title{Yield Per Recruit analysis to get FMSY proxy F01}
 \usage{
-YPR(x, Data, reps = 100)
+YPR(x, Data, reps = 100, plot = FALSE)
 
-YPR_CC(x, Data, reps = 100, Fmin = 0.005)
+YPR_CC(x, Data, reps = 100, plot = FALSE, Fmin = 0.005)
 
 YPR_ML(x, Data, reps = 100)
 }
@@ -17,13 +17,15 @@ YPR_ML(x, Data, reps = 100)
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of samples of the TAC}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{Fmin}{The minimum fishing mortality rate inferred from the catch-curve
 analysis}
 }
 \value{
-A numeric vector of TAC samples
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
 A simple yield per recruit approximation to FMSY (F01) which is the position
@@ -37,12 +39,39 @@ of the ascending YPR curve for which dYPR/dF = 0.1(dYPR/d0)
 gives F and thus abundance = Ct/(1-exp(-F))
 
 \item \code{YPR_ML}: A mean-length estimate of recent Z is used to infer current
-abundance. The mean length extension was programmed by Gary Nelson as part of his
-excellent R package 'fishmethods'
+abundance.
 }}
 
 \note{
 Based on the code of Meaghan Bryan
+}
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{YPR}: Abun, LFS, MaxAge, Mort, vbK, vbLinf, vbt0, wla, wlb
+
+
+\code{YPR_CC}: CAA, Cat, LFS, MaxAge, Mort, vbK, vbLinf, vbt0, wla, wlb
+
+
+\code{YPR_ML}: CAL, CAL_bins, Cat, LFS, MaxAge, Mort, vbK, vbLinf, vbt0, wla, wlb
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/YPR.html}{Online Documentation} for correctly rendered equations
+
+
+
+
+}
+
+\examples{
+YPR(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+YPR_CC(1, DLMtool::SimulatedData, plot=TRUE)
+YPR_ML(1, DLMtool::SimulatedData, plot=TRUE) 
 }
 \references{
 Beverton and Holt. 1954.

@@ -95,7 +95,7 @@ below BMSY, DCAC tends to chronically overfish.
 }
 \section{Required Data}{
 
-See \link[=Data-class]{Data} for information on the \code{Data} object \cr
+See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
 \code{DCACs}: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t

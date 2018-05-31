@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>An FMSY/M ratio method — DepF • DLMtool Documentation</title>
+<title>An FMSY/M ratio method — Fratio • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,7 +28,7 @@
 
 
 
-<meta property="og:title" content="An FMSY/M ratio method — DepF" />
+<meta property="og:title" content="An FMSY/M ratio method — Fratio" />
 
 <meta property="og:description" content="Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a
 current estimate of abundance." />
@@ -101,15 +101,15 @@ current estimate of abundance.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>DepF</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>)
+    <pre class="usage"><span class='fu'>Fratio</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>Fratio</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>)
+<span class='fu'>Fratio4010</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>Fratio4010</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>)
+<span class='fu'>DepF</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>Fratio_CC</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>Fmin</span> <span class='kw'>=</span> <span class='fl'>0.005</span>)
+<span class='fu'>Fratio_CC</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>Fmin</span> <span class='kw'>=</span> <span class='fl'>0.005</span>)
 
-<span class='fu'>Fratio_ML</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>)</pre>
+<span class='fu'>Fratio_ML</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -124,35 +124,51 @@ current estimate of abundance.</p>
     </tr>
     <tr>
       <th>reps</th>
-      <td><p>The number of samples of the TAC recommendation</p></td>
+      <td><p>The number of stochastic samples of the MP recommendation(s)</p></td>
+    </tr>
+    <tr>
+      <th>plot</th>
+      <td><p>Logical. Show the plot?</p></td>
     </tr>
     <tr>
       <th>Fmin</th>
-      <td><p>Minimum current fishing mortality rate for the catch-curve
-analysis</p></td>
+      <td><p>Minimum current fishing mortality rate for the catch-curve analysis</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A Rec object with TAC recommendations</p>
+    <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the <code>TAC</code> slot populated with a numeric vector of length <code>reps</code></p>
     
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     <ul>
-<li><p><code>DepF</code>: Depletion Corrected Fratio: the Fratio MP with a harvest control
-rule that reduces F according to the production curve given an estimate of current
-stock depletion (made-up for this package).</p></li>
 <li><p><code>Fratio</code>: A simple method that tends to outperform many other approaches alarmingly
 often even when current biomass is relatively poorly known. The low stock
 crash potential is largely due to the quite large difference between Fmax
 and FMSY for most stocks.</p></li>
-<li><p><code>Fratio4010</code>: Paired with the 40-10
-rule that throttles back the OFL to zero at 10 percent of unfished biomass.</p></li>
-<li><p><code>Fratio_CC</code>: Pairs with a catch curve estimate of current stock size.</p></li>
-<li><p><code>Fratio_ML</code>: Pairs with an estimate of
-current stock size from a mean-length estimator.</p></li>
+<li><p><code>Fratio4010</code>: Paired with the 40-10 rule that throttles back the OFL to zero at 10 percent of unfished biomass. Requires an estimate of current depletion.</p></li>
+<li><p><code>DepF</code>: Depletion Corrected Fratio: the Fratio MP with a harvest control
+rule that reduces F according to the production curve given an estimate of current
+stock depletion (made-up for this package).</p></li>
+<li><p><code>Fratio_CC</code>: Current abundance is estimated using average catch and estimate of F from an age-based catch curve</p></li>
+<li><p><code>Fratio_ML</code>: Current abundance is estimated using average catch and estimate of F from mean lengths</p></li>
 </ul>
+    
+    <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
+
+    
+    <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
+    <p><code>Fratio</code>: Abun, FMSY_M, Mort</p>
+    <p><code>Fratio4010</code>: Abun, Dep, Dt, FMSY_M, Mort</p>
+    <p><code>DepF</code>: Abun, BMSY_B0, Dep, FMSY_M, Mort, Year</p>
+    <p><code>Fratio_CC</code>: CAA, Cat, FMSY_M, Mort</p>
+    <p><code>Fratio_ML</code>: CAL, CAL_bins, Cat, FMSY_M, LFS, Mort, vbK, vbLinf</p>
+    
+    <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
+
+    
+    <p>See <a href='https://dlmtool.github.io/DLMtool/reference/Fratio.html'>Online Documentation</a> for correctly rendered equations</p>
     
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
@@ -163,9 +179,17 @@ and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.</p>
     
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p><a href='DynF.html'>DynF</a></p></div>
+    <div class='dont-index'><p>Other Fmsy/M methods: <code><a href='DynF.html'>DynF</a></code>,
+  <code><a href='Fadapt.html'>Fadapt</a></code></p></div>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>Fratio</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Fratio-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     3.952135 </div><div class='input'><span class='fu'>Fratio4010</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Fratio-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     2.071028 </div><div class='input'><span class='fu'>Fratio_CC</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Fratio-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     4273.347 </div><div class='input'><span class='fu'>Fratio_ML</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Fratio-4.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;      3843.04 </div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -176,10 +200,16 @@ and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.</p>
 
       <li><a href="#functions">Functions</a></li>
 
+      <li><a href="#required-data">Required Data</a></li>
+
+      <li><a href="#rendered-equations">Rendered Equations</a></li>
+
       <li><a href="#references">References</a></li>
 
       <li><a href="#see-also">See also</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
     <h2>Author</h2>
     

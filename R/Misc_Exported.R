@@ -215,6 +215,7 @@ MPtype <- function(MPs=NA) {
 #' @param x A numeric value.
 #' @return TRUE or FALSE 
 #' @author T. Carruthers
+#' @keywords internal
 #' @export
 NAor0 <- function(x) {
   if (length(x) == 0) 
@@ -462,6 +463,7 @@ updateMSE <- function(MSEobj) {
 #' @param x vector of numeric values 
 #' @author T. Carruthers
 #' @return numeric
+#' @keywords internal
 #' @export
 cv <- function(x) sd(x)/mean(x)
 
@@ -474,6 +476,7 @@ cv <- function(x) sd(x)/mean(x)
 #' @author T. Carruthers
 #' @return numeric
 #' @describeIn sdconv Returns sigma of lognormal distribution
+#' @keywords internal
 #' @export
 sdconv <- function(m, sd) (log(1 + ((sd^2)/(m^2))))^0.5
 
@@ -490,6 +493,7 @@ mconv <- function(m, sd) log(m) - 0.5 * log(1 + ((sd^2)/(m^2)))
 #' @author T. Carruthers
 #' @return numeric
 #' @describeIn alphaconv Returns alpha of beta distribution
+#' @keywords internal
 #' @export
 alphaconv <- function(m, sd) m * (((m * (1 - m))/(sd^2)) - 1)
 
@@ -508,7 +512,8 @@ betaconv <- function(m, sd) (1 - m) * (((m * (1 - m))/(sd^2)) - 1)
 #' @param x vector 
 #' @author T. Carruthers
 #' @return numeric
-#' @describeIn trlnorm Generate log-normally distributed random numbers 
+#' @describeIn trlnorm Generate log-normally distributed random numbers
+#' @keywords internal 
 #' @export 
 trlnorm <- function(reps, mu, cv) {
   if (all(is.na(mu))) return(rep(NA, reps))
@@ -647,6 +652,7 @@ ML2D <- function(OM, ML, nsim = 100, ploty = T, Dlim = c(0.05, 0.6)) {
 #' @param nyears Number of historical years of fishing
 #' @author T. Carruthers
 #' @export CSRA
+#' @keywords internal
 CSRA <- function(M, h, Linf, K, t0, AM, a, b, vuln, mat, ML, CAL, CAA, 
                  maxage, nyears) {
   nsim <- length(M)
@@ -705,7 +711,7 @@ CSRA <- function(M, h, Linf, K, t0, AM, a, b, vuln, mat, ML, CAL, CAA,
 #' @param opt Should the measure of fit be returned?
 #' @param meth Are we fitting to mean length or catch composition?
 #' @author T. Carruthers
-
+#' @keywords internal
 CSRAfunc <- function(lnF, Mc, hc, maxage, nyears, AFSc, AFCc, Linfc, Kc, 
                      t0c, AMc, ac, bc, vulnc, matc, MLc, CAL, CAA, opt = T, meth = "ML") {
   
@@ -760,7 +766,7 @@ CSRAfunc <- function(lnF, Mc, hc, maxage, nyears, AFSc, AFCc, Linfc, Kc,
 #' @param LFC A vector of length at first capture
 #' @param maxage Maximum age
 #' @author T. Carruthers
-
+#' @keywords internal
 getAFC <- function(t0c, Linfc, Kc, LFC, maxage) {
   nsim <- length(t0c)
   agev <- c(1e-04, 1:maxage)
@@ -787,6 +793,7 @@ getAFC <- function(t0c, Linfc, Kc, LFC, maxage) {
 #' @param maxage Maximum age
 #' @return An age (vector of ages, matrix of ages) corresponding with Len
 #' @author T. Carruthers
+#' @keywords internal
 L2A <- function(t0c, Linfc, Kc, Len, maxage) {
   nsim <- length(t0c)
   agev <- c(1e-04, 1:maxage)

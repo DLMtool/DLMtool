@@ -25,14 +25,7 @@ An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot popula
 A simple delay-difference assessment that estimates the TAC using a
 time-series of catches and a relative abundance index. Conditioned on effort.
 }
-\section{Functions}{
-\itemize{
-\item \code{DD}: Base version where the TAC = UMSY * Current Biomass.
-
-\item \code{DD4010}: A 40-10 rule is imposed over the TAC recommendation.
-}}
-
-\note{
+\details{
 This DD model is observation error only and has does not estimate
 process error (recruitment deviations). Assumption is that knife-edge
 selectivity occurs at the age of 50% maturity. Similar to many other assessment
@@ -44,18 +37,33 @@ violated tends to be the biggest driver of performance for this method.
 The method is conditioned on effort and estimates catch. The effort is calculated
 as the ratio of catch and index. Thus, to get a complete effort time series, a full
 time series of catch and index is also needed. Missing values are linearly interpolated.
+
+A detailed description of the delay-difference model can be found in Chapter 9 of Hilborn
+and Walters (1992).
 }
+\section{Functions}{
+\itemize{
+\item \code{DD}: Base version where the TAC = UMSY * Current Biomass.
+
+\item \code{DD4010}: A 40-10 rule is imposed over the TAC recommendation.
+}}
+
 \section{Required Data}{
 
-See \link[=Data-class]{Data} for information on the \code{Data} object \cr
+See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{DBSRA}: Cat, Dep, FMSY_M, L50, vbK, vbLinf, vbt0
+\code{DD}: Cat, Ind, L50, MaxAge, Mort, Year, vbK, vbLinf, vbt0, wla, wlb
+
+
+\code{DD4010}: Cat, Ind, L50, MaxAge, Mort, Year, vbK, vbLinf, vbt0, wla, wlb
 }
 
 \section{Rendered Equations}{
  
-See \href{https://dlmtool.github.io/DLMtool/reference/DBSRA.html}{Online Documentation} for correctly rendered equations
+See \href{https://dlmtool.github.io/DLMtool/reference/DD.html}{Online Documentation} for correctly rendered equations
+
+
 }
 
 \examples{

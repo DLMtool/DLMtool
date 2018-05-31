@@ -1626,7 +1626,7 @@ PWhisker<-function(MSEobj){#},Pnames=c("POF","C30","D30","LD","DNC","LDNC","PGK"
 #' @describeIn Tplot Used in the plot method for MSE objects that shows trade-off between
 #' yield versus probability of overfishing and biomass levels (relative to BMSY).
 #' @export
-Tplot <- function(MSEobj, nam = NA) {
+Tplot_old <- function(MSEobj, nam = NA) {
   old_par <- par(no.readonly = TRUE)
   on.exit(par(old_par))
   
@@ -1695,7 +1695,7 @@ Tplot <- function(MSEobj, nam = NA) {
 #' yield is less than 10 per cent) and biomass level (B10: the fraction of
 #' simulations in which biomass stays above 10 percent of BMSY).
 #' @export
-Tplot2 <- function(MSEobj, nam = NA) {
+Tplot2_old  <- function(MSEobj, nam = NA) {
   old_par <- par(no.readonly = TRUE)
   on.exit(par(old_par))
   
@@ -1738,7 +1738,7 @@ Tplot2 <- function(MSEobj, nam = NA) {
 #' Average Annual Variability in Yield (AAVY).
 
 #' @export
-Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
+Tplot3_old  <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
   PMlist <- unlist(list(...))
   if(length(PMlist) == 0) PMlist <- c("LTY", "STY", "P50", "AAVY")
   if (class(PMlist) != 'character') stop("Must provide names of PM methods")
@@ -1847,8 +1847,8 @@ Tplot3 <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
 #' @param ShowLabs Logical to specify if MP labels are shown
 #' @param ShowCols Logical to specify if background colors are shown
 #' @author A. Hordyk
-#' @export TradePlot
-TradePlot <- function(MSEobj, XAxis = c("Overfishing", "Biomass:BMSY"), 
+#' @export 
+TradePlot_old <- function(MSEobj, XAxis = c("Overfishing", "Biomass:BMSY"), 
                       YAxis = c("Long-term Yield", "AnnualVar"), XThresh = c(30, 80), 
                       YThresh = c(0, 50), maxVar = 15, BmsyRef = 0.5, B0Ref = 0.2, 
                       AvailMPs = NULL, ShowLabs = FALSE, ShowCols = TRUE) {

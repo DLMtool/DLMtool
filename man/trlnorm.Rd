@@ -34,3 +34,4 @@ Variant of rlnorm which returns the mean when reps = 1.
 \author{
 T. Carruthers
 }
+\keyword{internal}

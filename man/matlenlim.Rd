@@ -60,7 +60,7 @@ asymptotic length Linf.
 
 \section{Required Data}{
 
-See \link[=Data-class]{Data} for information on the \code{Data} object \cr
+See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
 \code{matlenlim}: L50

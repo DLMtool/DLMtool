@@ -34,6 +34,7 @@
 #' @param maxF maximum apical fishing mortality
 #' @param ploty logical: should a plot be produced
 #' @author T. Carruthers with modifications by A. Hordyk
+#' @keywords internal
 getBlow<-function(x, N, Asize, SSBMSY, SSBpR, MPA, SSB0, nareas, retA,MGThorizon,Find,
                   Perr,M_ageArray,hs,Mat_age,Wt_age,R0a,V,nyears,maxage,mov,Spat_targ,SRrel,
                   aR,bR,Bfrac=0.5, maxF, ploty=F){
@@ -99,6 +100,7 @@ getBlow<-function(x, N, Asize, SSBMSY, SSBpR, MPA, SSB0, nareas, retA,MGThorizon
 #' @param maxF maximum apical fishing mortality
 #' @param mode 1: find Blow 2:report blow  3:plot results
 #' @author T. Carruthers with modifications by A. Hordyk
+#' @keywords internal 
 Blow_opt<-function(lnq, N, Asize_c, SSBMSYc,SSBpRc, MPA, SSB0c, nareas, retAc,
                    MGThorizonc,Fc,Perrc,Mc,hc,Mac,Wac,R0c,Vc,nyears,maxage,movc,Spat_targc,
                    SRrelc,aRc,bRc,Bfrac,maxF, mode=1){
