@@ -524,6 +524,13 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   MSYrefs <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, maxage, 
                     R0, SRrel, hs, yr=nyears)
+  
+  # M_ageArray2 <- M_ageArray
+  # M_ageArray2 <- M_ageArray[,,rep(1, 100)]
+  # Wt_age2 <- Wt_age
+  # Wt_age2 <- Wt_age[,,rep(1, 100)]
+  # MSYrefs <- sapply(1:nsim, optMSY_eq, M_ageArray2, Wt_age2, Mat_age, V, maxage, 
+  #                   R0, SRrel, hs, yr=nyears)
 
   MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
   FMSY <- MSYrefs[2, ]  # instantaneous FMSY (Vulnerable)

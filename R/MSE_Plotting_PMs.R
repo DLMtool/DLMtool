@@ -140,7 +140,7 @@ TradePlot <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8),
 }
 
 
-#' @describeIn TradePlot_n A trade-off plot showing probabilities that:
+#' @describeIn TradePlot A trade-off plot showing probabilities that:
 #' \itemize{
 #' \item overfishing (POF) against long-term yield is > 50\% of reference yield (LTY)
 #' \item spawning biomass is below BMSY (P100) against LTY
@@ -154,7 +154,7 @@ Tplot <- function(MSEobj, lims=c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...) {
   TradePlot(MSEobj, lims=lims, PMlist=list("POF", "LTY", "P100", "LTY", "P50", "LTY", "P10", "LTY"),  ...)
 }
 
-#' @describeIn TradePlot_n A trade-off plot showing probabilities that:
+#' @describeIn TradePlot A trade-off plot showing probabilities that:
 #' \itemize{
 #' \item short-term yield is > 50% of reference yield(STY) against long-term yield is > 50\% of reference yield (LTY)
 #' \item spawning biomass is below 0.1BMSY (P10) against average annual variability in yield is < 20\% (AAVY)
@@ -166,7 +166,7 @@ Tplot2 <- function(MSEobj, lims=c(0.2, 0.2, 0.8, 0.8), ...) {
   TradePlot(MSEobj, lims=lims, PMlist=list("STY", "LTY", "P10", "AAVY"), ...)
 }
 
-#' @describeIn TradePlot_n A trade-off plot showing probabilities that:
+#' @describeIn TradePlot A trade-off plot showing probabilities that:
 #' \itemize{
 #' \item overfishing (POF) against long-term yield is > 50% of reference yield (LTY)
 #' \item spawning biomass is below 0.1BMSY (P10) against average annual variability in yield is < 20\% (AAVY)

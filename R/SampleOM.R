@@ -1294,7 +1294,12 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   
   # Sample custom pars 
   if (ncparsim < nsim) ind <- sample(1:ncparsim, nsim, replace=TRUE)
-  if (!ncparsim < nsim) ind <- sample(1:ncparsim, nsim, replace=FALSE)
+  if (ncparsim == nsim) {
+    ind <- 1:nsim
+  } else {
+    ind <- sample(1:ncparsim, nsim, replace=FALSE)
+  }
+  # if (!ncparsim < nsim) ind <- sample(1:ncparsim, nsim, replace=FALSE)
   
   for (i in 1:length(cpars)) {
     samps <- cpars[[i]]
