@@ -328,7 +328,7 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
   
   if (dist=="unif") {
     for (x in names(outpars)) {
-      if(!all(is.na(outpars[[x]]))) outpars[[x]] <- runif(nsamp*multi, min(outpars[[x]]), max(outpars[[x]]))
+      if(!all(is.na(outpars[[x]]))) outpars[[x]] <- myrunif(nsamp*multi, min(outpars[[x]]), max(outpars[[x]]))
     }
   } else {
     for (x in names(outpars)) {

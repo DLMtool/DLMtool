@@ -156,6 +156,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     allyrs <- (y+nyears):(nyears+proyears)  # update vulnerabilty for all future years
     
     srs <- (Linf - LFS_P[yr,]) / ((-log(Vmaxlen_P[yr,],2))^0.5) # descending limb
+    srs[!is.finite(srs)] <- Inf
     sls <- (LFS_P[yr,] - L5_P[yr,]) / ((-log(0.05,2))^0.5) # ascending limb
     
     CAL_binsmidMat <- matrix(CAL_binsmid, nrow=nsim, ncol=length(CAL_binsmid), byrow=TRUE)
@@ -180,6 +181,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     allyrs <- (y+nyears):(nyears+proyears)  # update vulnerabilty for all future years
     
     srs <- (Linf - LFR_P[yr,]) / ((-log(Rmaxlen_P[yr,],2))^0.5) # selectivity parameters are constant for all years
+    srs[!is.finite(srs)] <- Inf
     sls <- (LFR_P[yr,] - LR5_P[yr,]) / ((-log(0.05,2))^0.5)
     
     CAL_binsmidMat <- matrix(CAL_binsmid, nrow=nsim, ncol=length(CAL_binsmid), byrow=TRUE)

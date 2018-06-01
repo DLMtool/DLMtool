@@ -66,7 +66,27 @@ ChkObj <- function(OM, error=TRUE) {
     if (!error) warning("Slots in Object have missing values:\n ", paste(probSlots, " "), call.=FALSE)
   }
 
-  return(OM)
+  
+  ## Add variability - variability required in all values otherwise
+  # OMs are not reproducible. 
+  for (sl in slotNames(OM)) {
+    slt <- slot(OM, sl)
+    if (class(slt) == "numeric") {
+      if (length(slt) ==2) {
+        if (!all(is.na(slt)) && slt[1] == slt[2]) {
+          slt[1] <- slt[1]
+          slt[2] <- slt[2]+tiny
+        }
+       
+      }
+      if (length(slt)==1) {
+        if (!all(is.na(slt)) && slt == 0) slt <- tiny
+      }
+      slot(OM,sl) <- slt
+    }
+  }
+  OM
+  
   
 }
 

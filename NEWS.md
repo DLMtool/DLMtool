@@ -13,6 +13,7 @@ The current version of the DLMtool package is available for download from [CRAN]
 - revised Fease feature - TODO add to FAQ and userguide
 - iSCAM and SS2DLM functions have been moved from DLMtool to MSEtool
 - update help documentation for all MPs - in development
+- fixed issue where OMs were not reproducible if some slots had no variability
 
 ## DLMtool 5.1.3 
 - fix Replace function for new OM slots

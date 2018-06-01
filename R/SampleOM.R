@@ -2,8 +2,11 @@
 myrunif <- function(n, val1, val2) {
   min <- min(c(val1, val2))
   max <- max(c(val1, val2))
+  if (all(min == max)) max <- max + tiny
   runif(n, min, max)
 }
+
+
 
 #' Sample Stock parameters
 #'
@@ -57,7 +60,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       mmat <- rbind(Stock@M, Stock@M2)
       if (all(mmat[1,] < mmat[2,]) | all(mmat[1,] > mmat[2,])) {
         Mage <- matrix(NA, nsim, maxage)
-        Mage[,1] <- runif(nsim, min(mmat[,1]), max(mmat[,1]))
+        Mage[,1] <- myrunif(nsim, min(mmat[,1]), max(mmat[,1]))
         val <- (Mage[,1] - min(mmat[,1]))/ diff(mmat[,1])
         for (X in 2:maxage) Mage[,X] <- min(mmat[,X]) + diff(mmat[,X])*val  
       } else stop("All values in slot 'M' must be greater or less than corresponding values in slot 'M2'", call.=FALSE)
@@ -72,7 +75,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (!exists("Mgrad", inherits=FALSE)) Mgrad <- myrunif(nsim, Stock@Mgrad[1], Stock@Mgrad[2])  # sample gradient in M (M y-1)
   if (.hasSlot(Stock, "Mexp") & !exists("Mexp", inherits=FALSE)) {
     if (all(is.numeric(Stock@Mexp) & is.finite(Stock@Mexp))) {
-      Mexp <- runif(nsim, min(Stock@Mexp), max(Stock@Mexp)) # sample Lorenzen M-at-weight exponent     
+      Mexp <- myrunif(nsim, min(Stock@Mexp), max(Stock@Mexp)) # sample Lorenzen M-at-weight exponent     
     } else {
       Mexp <- rep(0, nsim) # assume constant M-at-age/size
     }
@@ -740,6 +743,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
         
       }
       srs <- (Linf - LFS[yr,]) / ((-log(Vmaxlen[yr,drop=FALSE],2))^0.5) # selectivity parameters are constant for all years
+      srs[!is.finite(srs)] <- Inf
       sls <- (LFS[yr,] - L5[yr, ]) /((-log(0.05,2))^0.5)
       SLarray[,, yr] <- t(sapply(1:nsim, getsel, lens=CAL_binsmidMat, lfs=LFS[yr, ], sls=sls, srs=srs))
       
@@ -898,7 +902,13 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   if(!exists("Rmaxlen", inherits = FALSE)) Rmaxlen <- runif(nsim, min(Fleet@Rmaxlen), max(Fleet@Rmaxlen))
   if(!exists("DR", inherits = FALSE)) DR <- runif(nsim, min(Fleet@DR), max(Fleet@DR))
   
-  if (any(LR5 > LFR)) stop('LR5 is greater than LFR', call.=FALSE)
+  if (any(LR5 > LFR)) {
+    if (all(LFR<0.001)) {
+      LFR <- LR5 + LFR
+    } else {
+      stop('LR5 is greater than LFR', call.=FALSE)   
+    }
+  }
   # == Calculate Retention Curve ====
   Rmaxlen[Rmaxlen<=0] <- tiny 
   LR5 <- matrix(LR5, nrow = nyears + proyears, ncol = nsim, byrow = TRUE)
@@ -917,6 +927,9 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   
   srs <- (Linf - LFR[1,]) / ((-log(Rmaxlen[1,],2))^0.5) # selectivity parameters are constant for all years
   sls <- (LFR[1,] - LR5[1,]) /((-log(0.05,2))^0.5)
+  
+  srs[!is.finite(srs)] <- Inf
+  
   
   RetLength <- t(sapply(1:nsim, getsel, lens=CAL_binsmidMat, lfs=LFR[1,], sls=sls, srs=srs))
   
@@ -1181,32 +1194,32 @@ SampleImpPars <- function(Imp, nsim=NULL, cpars=NULL) {
   ImpOut <- list() 
   # === Sample implementation error parameters ====
   if (!exists("TACSD", inherits = FALSE)) {
-    ImpOut$TACSD <- runif(nsim, Imp@TACSD[1], Imp@TACSD[2])  # Sampled TAC error (lognormal sd)
+    ImpOut$TACSD <- myrunif(nsim, Imp@TACSD[1], Imp@TACSD[2])  # Sampled TAC error (lognormal sd)
   } else {
     ImpOut$TACSD <- TACSD
   }
   if (!exists("TACFrac", inherits = FALSE)) {
-    ImpOut$TACFrac <- runif(nsim, Imp@TACFrac[1], Imp@TACFrac[2])  # Sampled TAC fraction (log normal sd)
+    ImpOut$TACFrac <- myrunif(nsim, Imp@TACFrac[1], Imp@TACFrac[2])  # Sampled TAC fraction (log normal sd)
   } else {
     ImpOut$TACFrac <- TACFrac
   }
   if (!exists("TAESD", inherits = FALSE)) {
-    ImpOut$TAESD <- runif(nsim, Imp@TAESD[1], Imp@TAESD[2])  # Sampled Effort error (lognormal sd)
+    ImpOut$TAESD <- myrunif(nsim, Imp@TAESD[1], Imp@TAESD[2])  # Sampled Effort error (lognormal sd)
   } else {
     ImpOut$TAESD <- TAESD
   }
   if (!exists("TAEFrac", inherits = FALSE)) {
-    ImpOut$TAEFrac <- runif(nsim, Imp@TAEFrac[1], Imp@TAEFrac[2])  # Sampled Effort fraction (log normal sd)
+    ImpOut$TAEFrac <- myrunif(nsim, Imp@TAEFrac[1], Imp@TAEFrac[2])  # Sampled Effort fraction (log normal sd)
   } else {
     ImpOut$TAEFrac <- TAEFrac
   }
   if (!exists("SizeLimSD", inherits = FALSE)) {
-    ImpOut$SizeLimSD<-runif(nsim,Imp@SizeLimSD[1],Imp@SizeLimSD[2])
+    ImpOut$SizeLimSD<-myrunif(nsim,Imp@SizeLimSD[1],Imp@SizeLimSD[2])
   } else {
     ImpOut$SizeLimSD <- SizeLimSD
   }
   if (!exists("SizeLimFrac", inherits = FALSE)) {
-    ImpOut$SizeLimFrac<-runif(nsim,Imp@SizeLimFrac[1],Imp@SizeLimFrac[2])
+    ImpOut$SizeLimFrac<-myrunif(nsim,Imp@SizeLimFrac[1],Imp@SizeLimFrac[2])
   } else {
     ImpOut$SizeLimFrac <- SizeLimFrac
   }
