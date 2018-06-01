@@ -205,9 +205,7 @@ Fadapt_plot <- DynF_plot
 
 
 
-YPR_plot <- function() {
-  
-}
+
 
 # default plotting options
 leg.pos <- col1 <- col2 <- col3 <- col4 <- pt.cex <- tex.cex <- cex.lab <- lwd <- leg.post <- NULL

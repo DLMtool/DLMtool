@@ -3599,6 +3599,17 @@ class(SPSRA_ML) <- "MP"
 # 
 
 #### Yield-per-recruit MPs ####
+
+#' Internal function for YPR MPs
+#'
+#' @param x Iteration number
+#' @param Data Object of class Data
+#' @param reps Number of reps
+#' @param Abun Optional numeric of length `reps` of abundance
+#'
+#' @export
+#'
+#' @keywords internal
 YPR_ <- function(x, Data, reps = 100, Abun=NULL) {
   # Yield per recruit analysis F01 - Meaghan Bryan
   Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
@@ -3613,7 +3624,7 @@ YPR_ <- function(x, Data, reps = 100, Abun=NULL) {
   LFS <- trlnorm(reps, Data@LFS[x], Data@CV_LFS[x])
   a <- Data@wla[x]
   b <- Data@wlb[x]
-  FMSY <- YPRopt(Linfc, Kc, t0c, Mdb, a, b, LFS, Data@MaxAge, reps)
+  FMSY <- YPRopt(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage=Data@MaxAge, reps)
   
   if (is.null(Abun)) Ac <- trlnorm(reps, Data@Abun[x], Data@CV_Abun[x])
   
@@ -3624,8 +3635,17 @@ YPR_ <- function(x, Data, reps = 100, Abun=NULL) {
 }
 
 
-# Yield per recruit estimate of FMSY Meaghan Bryan 2013
-YPRopt = function(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage, reps = 100) {
+
+#' @describeIn YPR_ YPR calculation function
+#' @note Yield per recruit estimate of FMSY Meaghan Bryan 2013
+#' @param Linfc von Bertalanffy  Linf 
+#' @param Kc von Bertalanffy K
+#' @param t0c von Bertalanffy t0 
+#' @param a alpha parameter of L-W relationship
+#' @param b beta parameter of L-W relationship
+#' @param LFS Length at full selection
+#' @param maxage Maximum age 
+YPRopt <- function(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage, reps = 100) {
   
   nf <- 200
   frates <- seq(0, 3, length.out = nf)
@@ -3729,6 +3749,11 @@ YPR <- function(x, Data, reps = 100, plot=FALSE) {
 class(YPR) <- "MP"
 
 
+YPR_plot <- function() {
+  
+}
+
+
 #' @templateVar mp YPR_CC
 #' @template MPuses
 #' @param Fmin The minimum fishing mortality rate inferred from the catch-curve
@@ -3798,8 +3823,6 @@ YPR_ML <- function(x, Data, reps = 100) {
   Rec
 }
 class(YPR_ML) <- "MP"
-
-
 
 
 

@@ -8,8 +8,8 @@
 \alias{POF}
 \alias{LTY}
 \alias{STY}
-\alias{AAVY}
 \alias{Yield}
+\alias{AAVY}
 \title{Performance Metrics}
 \usage{
 P10(MSEobj = NULL, Ref = 0.1, Yrs = NULL)
@@ -18,20 +18,24 @@ P50(MSEobj = NULL, Ref = 0.5, Yrs = NULL)
 
 P100(MSEobj = NULL, Ref = 1, Yrs = NULL)
 
-POF(MSEobj = NULL, Ref = 1)
+POF(MSEobj = NULL, Ref = 1, Yrs = NULL)
 
-LTY(MSEobj = NULL, Ref = 0.5)
+LTY(MSEobj = NULL, Ref = 0.5, Yrs = c(max(MSEobj@proyears - 9, 1),
+  MSEobj@proyears))
 
-STY(MSEobj = NULL, Ref = 0.5)
+STY(MSEobj = NULL, Ref = 0.5, Yrs = c(1, 10))
 
-AAVY(MSEobj = NULL, Ref = 0.2)
+Yield(MSEobj = NULL, Ref = 1, Years = NULL)
 
-Yield(MSEobj = NULL, Ref = 1)
+AAVY(MSEobj = NULL, Ref = 0.2, Yrs = NULL)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}
 
 \item{Ref}{Reference point for calculating the performance metric. See details.}
+
+\item{Yrs}{Numeric vector of length 2 with year indices to summarize performance.
+If NULL, the performance is summarized over all projection years.}
 }
 \value{
 An object of class PMobj

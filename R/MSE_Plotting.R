@@ -11,11 +11,19 @@ plot.MSE <- function(x, ...) {
      
 
 
-# modified from
-# https://github.com/tidyverse/ggplot2/wiki/share-a-legend-between-two-ggplot2-graphs
+
+#' Plot several plots with a shared legend
+#'
+#' @param plots list of plots 
+#' @param ncol Optional number of columns
+#' @param nrow Optional number of rows
+#' @param position position of the legend ("bottom" or "right")
+#'
+#' @export
+#'
+#' @keywords internal
+#' @note modified from https://github.com/tidyverse/ggplot2/wiki/share-a-legend-between-two-ggplot2-graphs
 grid_arrange_shared_legend <- function(plots, ncol = length(plots), nrow = 1, position = c("bottom", "right")) {
-  
-  
   position <- match.arg(position)
   g <- ggplot2::ggplotGrob(plots[[1]] + ggplot2::theme(legend.position = position))$grobs
   legend <- g[[which(sapply(g, function(x) x$name) == "guide-box")]]
@@ -23,7 +31,6 @@ grid_arrange_shared_legend <- function(plots, ncol = length(plots), nrow = 1, po
   lwidth <- sum(legend$width)
   gl <- lapply(plots, function(x) x + ggplot2::theme(legend.position="none"))
   gl <- c(gl, ncol = ncol, nrow = nrow)
-  
   combined <- switch(position,
                      "bottom" = gridExtra::arrangeGrob(do.call(gridExtra::arrangeGrob, gl),
                                                        legend,
@@ -33,7 +40,6 @@ grid_arrange_shared_legend <- function(plots, ncol = length(plots), nrow = 1, po
                                                       legend,
                                                       ncol = 2,
                                                       widths = grid::unit.c(grid::unit(1, "npc") - lwidth, lwidth)))
-  
   grid::grid.newpage()
   grid::grid.draw(combined)
   
@@ -568,71 +574,71 @@ barplot.MSE <- function(height, MSEobj = NULL, PMs = list(B_BMSY = 0.5,
 # }
 # 
 # 
-#' Plot the median biomass and yield relative to last historical year
-#' 
-#' Compare median biomass and yield in first year and last 5 years of
-#' projection
-#' 
-#' @param MSEobj An object of class MSE
-#' @param MPs Optional subset by MP
-#' @param lastYrs Last number of years of projection to calculate median
-#' @param XMin Optional minimum for the x-axis
-#' @param YMin Optional minimum for the y-axis
-#' @param ShowLabs Logical. Show the MP labels? Otherwise only plot points
-#' @return Invisibly returns a data frame containing information shown in the
-#' plot
-#' @author A. Hordyk
-#' @export Cplot
-Cplot <- function(MSEobj, MPs = NA, lastYrs = 5, XMin = NULL, YMin = NULL, 
-                  ShowLabs = FALSE) {
-  if (!all(is.na(MPs))) 
-    MSEobj <- Sub(MSEobj, MPs = MPs)
-  nsim <- MSEobj@nsim
-  Alpha <- 60
-  if (nsim < 10) 
-    Alpha <- 180
-  nMPs <- MSEobj@nMPs
-  MPs <- MSEobj@MPs
-  nyears <- MSEobj@nyears
-  proyears <- MSEobj@proyears
-  
-  Stat <- MPStats(MSEobj, lastYrs = lastYrs)$BySim
-  ny <- dim(Stat$Yield)[3]
-  Stat$Yield <- Stat$Yield[, , , drop = FALSE]/Stat$Yield[, , rep(1, 
-                                                                  ny), drop = FALSE]
-  
-  RelYield <- apply(Stat$Yield, 2, median, na.rm = TRUE)
-  
-  Bcurr <- Stat$B_BMSY[, , 1]  # Biomass at start of projections
-  Bend <- apply((Stat$B_BMSY[, , (proyears - lastYrs + 1):proyears]), 
-                c(1, 2), median, na.rm = TRUE)  # median biomass in last years
-  RelBio <- apply(Bend/Bcurr, 2, median, na.rm = TRUE)
-  
-  XMin <- ifelse(is.null(XMin), 0, XMin)
-  YMin <- ifelse(is.null(YMin), 0, YMin)
-  XLim <- c(YMin, ceiling(max(RelBio)/0.5) * 0.5) * c(0.95, 1.05)
-  YLim <- c(XMin, ceiling(max(RelYield)/0.5) * 0.5) * c(0.95, 1.05)
-  op <- par(mfrow = c(1, 1), oma = c(3, 5, 1, 1), mar = c(2, 2, 0, 0))
-  plot(RelBio, RelYield, xlim = XLim, ylim = YLim, type = "n", bty = "l", 
-       xlab = "", ylab = "", xaxs = "i", yaxs = "i", las = 1)
-  if (ShowLabs) 
-    text(RelBio, RelYield, MSEobj@MPs)
-  if (!ShowLabs) 
-    points(RelBio, RelYield, pch = 21, cex = 2, bg = "lightgray")
-  abline(h = 1, lty = 3, col = "lightgray")
-  abline(v = 1, lty = 3, col = "lightgray")
-  mtext(side = 1, line = 3.5, paste("Median Biomass (last", lastYrs, 
-                                    "years)\n relative to current"), cex = 1.25)
-  mtext(side = 2, line = 3, paste("Median Yield (last", lastYrs, "years)\n relative to current"), 
-        cex = 1.25)
-  par(op)
-  DF <- data.frame(MP = MSEobj@MPs, Biomass = RelBio, Catch = RelYield, 
-                   stringsAsFactors = FALSE)
-  invisible(DF)
-  
-}
-
-
+# #' Plot the median biomass and yield relative to last historical year
+# #' 
+# #' Compare median biomass and yield in first year and last 5 years of
+# #' projection
+# #' 
+# #' @param MSEobj An object of class MSE
+# #' @param MPs Optional subset by MP
+# #' @param lastYrs Last number of years of projection to calculate median
+# #' @param XMin Optional minimum for the x-axis
+# #' @param YMin Optional minimum for the y-axis
+# #' @param ShowLabs Logical. Show the MP labels? Otherwise only plot points
+# #' @return Invisibly returns a data frame containing information shown in the
+# #' plot
+# #' @author A. Hordyk
+# #' @export Cplot
+# Cplot <- function(MSEobj, MPs = NA, lastYrs = 5, XMin = NULL, YMin = NULL, 
+#                   ShowLabs = FALSE) {
+#   if (!all(is.na(MPs))) 
+#     MSEobj <- Sub(MSEobj, MPs = MPs)
+#   nsim <- MSEobj@nsim
+#   Alpha <- 60
+#   if (nsim < 10) 
+#     Alpha <- 180
+#   nMPs <- MSEobj@nMPs
+#   MPs <- MSEobj@MPs
+#   nyears <- MSEobj@nyears
+#   proyears <- MSEobj@proyears
+#   
+#   Stat <- MPStats(MSEobj, lastYrs = lastYrs)$BySim
+#   ny <- dim(Stat$Yield)[3]
+#   Stat$Yield <- Stat$Yield[, , , drop = FALSE]/Stat$Yield[, , rep(1, 
+#                                                                   ny), drop = FALSE]
+#   
+#   RelYield <- apply(Stat$Yield, 2, median, na.rm = TRUE)
+#   
+#   Bcurr <- Stat$B_BMSY[, , 1]  # Biomass at start of projections
+#   Bend <- apply((Stat$B_BMSY[, , (proyears - lastYrs + 1):proyears]), 
+#                 c(1, 2), median, na.rm = TRUE)  # median biomass in last years
+#   RelBio <- apply(Bend/Bcurr, 2, median, na.rm = TRUE)
+#   
+#   XMin <- ifelse(is.null(XMin), 0, XMin)
+#   YMin <- ifelse(is.null(YMin), 0, YMin)
+#   XLim <- c(YMin, ceiling(max(RelBio)/0.5) * 0.5) * c(0.95, 1.05)
+#   YLim <- c(XMin, ceiling(max(RelYield)/0.5) * 0.5) * c(0.95, 1.05)
+#   op <- par(mfrow = c(1, 1), oma = c(3, 5, 1, 1), mar = c(2, 2, 0, 0))
+#   plot(RelBio, RelYield, xlim = XLim, ylim = YLim, type = "n", bty = "l", 
+#        xlab = "", ylab = "", xaxs = "i", yaxs = "i", las = 1)
+#   if (ShowLabs) 
+#     text(RelBio, RelYield, MSEobj@MPs)
+#   if (!ShowLabs) 
+#     points(RelBio, RelYield, pch = 21, cex = 2, bg = "lightgray")
+#   abline(h = 1, lty = 3, col = "lightgray")
+#   abline(v = 1, lty = 3, col = "lightgray")
+#   mtext(side = 1, line = 3.5, paste("Median Biomass (last", lastYrs, 
+#                                     "years)\n relative to current"), cex = 1.25)
+#   mtext(side = 2, line = 3, paste("Median Yield (last", lastYrs, "years)\n relative to current"), 
+#         cex = 1.25)
+#   par(op)
+#   DF <- data.frame(MP = MSEobj@MPs, Biomass = RelBio, Catch = RelYield, 
+#                    stringsAsFactors = FALSE)
+#   invisible(DF)
+#   
+# }
+# 
+# 
 
 # #' Joint probability plot
 # #' 
@@ -1979,9 +1985,10 @@ TradePlot_old <- function(MSEobj, XAxis = c("Overfishing", "Biomass:BMSY"),
 #' @param Ut A matrix of user-specified utility values of nsim rows and nMPs
 #' columns
 #' @param Utnam The name of the utility measure for plotting
+#' @param plot Logical. Show the plot?
 #' @author T. Carruthers
 #' @export VOI
-VOI <- function(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA, Utnam = "Utility") {
+VOI <- function(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA, Utnam = "Utility", plot=TRUE) {
   objnam <- deparse(substitute(MSEobj))
   nsim <- MSEobj@nsim
   
@@ -2078,94 +2085,97 @@ VOI <- function(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA, Utnam = "Util
   mbyp <- split(1:nMPs, ceiling(1:nMPs/maxrow))
   ylimy = c(0, max(OMv, na.rm = T) * 1.2)
   
-  
-  for (pp in 1:length(mbyp)) {
-    
-    op <- par(mfrow = c(length(mbyp[[pp]]), ncomp), mai = c(0.15, 0.1, 0.15, 
-                                                            0.05), omi = c(0.1, 0.9, 0.3, 0.05))
-    
-    for (mm in mbyp[[pp]]) {
-      for (cc in 1:ncomp) {
-        rind <- (mm - 1) * 2 + 1
-        y <- Ut[, mm]
-        cind <- match(OMstr[rind, 1 + cc], names(MSEobj@OM))
-        x <- MSEobj@OM[, cind]
-        plot(x, y, col = "white", axes = F, ylim = ylimy)
-        axis(1, pretty(OMp[, cind]), pretty(OMp[, cind]), cex.axis = 0.8, 
-             padj = -1.5)
-        abline(v = OMp[, cind], col = "#99999960")
-        points(x, y, col = colsse[coly[mm, cind]], pch = 19, cex = 0.8)
-        x2 <- (OMp[1:nbins, cind] + OMp[2:(nbins + 1), cind])/2
-        y2 <- OMv[mm, cind, ]
-        lines(x2, y2)
-        legend("bottomright", legend = round(OMs[mm, cind], 2), bty = "n", cex = 0.8)
-        legend("topleft", legend = OMstr[rind, 1 + cc], bty = "n", cex = 0.85)
-        if (cc == 1)  {
-          mtext(MPs[mm], 2, font = 2, outer = F, cex = 0.8, line = 2)
-          ytick <- pretty(seq(ylimy[1], ylimy[2] * 1.3, length.out = 10))
-          axis(2, ytick, ytick, cex.axis = 0.8)
-        }  # only first column
-      }  # parameters (columns)
-    }  # MPs (rows)
-    
-    mtext(Utnam, 2, outer = T, cex = 0.9, line = 3.5)
-    mtext(paste("Operating model parameters: ", objnam, "@OM", sep = ""), 3, outer = T, font = 2, cex = 0.9)
-    
-  }  # Plots
-  
-  # Observation model values
-  
-  ylimy = c(0, max(Obsv, na.rm = T) * 1.2)
-  minsd <- 0
-  maxsd <- max(Obss)
-  coly <- ceiling(Obss/maxsd * ncols)
-  
-  if (sum(is.na(Obsstr) | Obsstr == "") < (ncomp + 1) * nMPs * 2 - nMPs) 
-  {
-    # only if there is data to plot
-    
+  if (plot) {
     for (pp in 1:length(mbyp)) {
       
-      op <- par(mfrow = c(length(mbyp[[pp]]), ncomp), mai = c(0.15, 
-                                                              0.1, 0.15, 0.05), omi = c(0.1, 0.9, 0.3, 0.05))
+      op <- par(mfrow = c(length(mbyp[[pp]]), ncomp), mai = c(0.15, 0.1, 0.15, 
+                                                              0.05), omi = c(0.1, 0.9, 0.3, 0.05))
       
       for (mm in mbyp[[pp]]) {
-        rind <- (mm - 1) * 2 + 1
-        npres <- sum(Obsstr[rind + 1, ] != "")
         for (cc in 1:ncomp) {
-          if (!is.na(npres) & cc < (npres + 1)) {
-            y <- Ut[, mm]
-            cind <- match(Obsstr[rind, 1 + cc], names(MSEobj@Obs))
-            x <- MSEobj@Obs[, cind]
-            plot(x, y, col = "white", axes = F, ylim = ylimy)
-            axis(1, pretty(Obsp[, cind]), pretty(Obsp[, cind]), cex.axis = 0.8, padj = -2)
-            abline(v = Obsp[, cind], col = "#99999960")
-            points(x, y, col = colsse[coly[mm, cind]], pch = 19, cex = 0.8)
-            x2 <- (Obsp[1:nbins, cind] + Obsp[2:(nbins + 1), cind])/2
-            y2 <- Obsv[mm, cind, ]
-            lines(x2, y2)
-            legend("bottomright", legend = round(Obss[mm, cind], 2), bty = "n", cex = 0.8)
-            legend("topleft", legend = Obsstr[rind, 1 + cc], bty = "n", cex = 0.75)
-            if (cc == 1)    {
-              mtext(MPs[mm], 2, font = 2, outer = F, cex = 0.6, line = 2)
-              ytick <- pretty(seq(ylimy[1], ylimy[2] * 1.3, length.out = 10))
-              axis(2, ytick, ytick, cex.axis = 0.8)
-            }  # only first column
-          } else {
-            plot(0, type = "n", axes = FALSE, ann = FALSE)
-            if (cc == 1)  {
-              mtext(MPs[mm], 2, font = 2, outer = F, cex = 0.6, line = 2)
-            }  # only first column
-          }
+          rind <- (mm - 1) * 2 + 1
+          y <- Ut[, mm]
+          cind <- match(OMstr[rind, 1 + cc], names(MSEobj@OM))
+          x <- MSEobj@OM[, cind]
+          plot(x, y, col = "white", axes = F, ylim = ylimy)
+          axis(1, pretty(OMp[, cind]), pretty(OMp[, cind]), cex.axis = 0.8, 
+               padj = -1.5)
+          abline(v = OMp[, cind], col = "#99999960")
+          points(x, y, col = colsse[coly[mm, cind]], pch = 19, cex = 0.8)
+          x2 <- (OMp[1:nbins, cind] + OMp[2:(nbins + 1), cind])/2
+          y2 <- OMv[mm, cind, ]
+          lines(x2, y2)
+          legend("bottomright", legend = round(OMs[mm, cind], 2), bty = "n", cex = 0.8)
+          legend("topleft", legend = OMstr[rind, 1 + cc], bty = "n", cex = 0.85)
+          if (cc == 1)  {
+            mtext(MPs[mm], 2, font = 2, outer = F, cex = 0.8, line = 2)
+            ytick <- pretty(seq(ylimy[1], ylimy[2] * 1.3, length.out = 10))
+            axis(2, ytick, ytick, cex.axis = 0.8)
+          }  # only first column
         }  # parameters (columns)
       }  # MPs (rows)
       
       mtext(Utnam, 2, outer = T, cex = 0.9, line = 3.5)
-      mtext(paste("Observation model parameters: ", objnam, "@Obs", sep = ""), 3, outer = T, font = 2, cex = 0.9)
+      mtext(paste("Operating model parameters: ", objnam, "@OM", sep = ""), 3, outer = T, font = 2, cex = 0.9)
       
     }  # Plots
-  }  # if there is data to plot
-  par(op)
+    
+    # Observation model values
+    
+    ylimy = c(0, max(Obsv, na.rm = T) * 1.2)
+    minsd <- 0
+    maxsd <- max(Obss)
+    coly <- ceiling(Obss/maxsd * ncols)
+    
+    if (sum(is.na(Obsstr) | Obsstr == "") < (ncomp + 1) * nMPs * 2 - nMPs) 
+    {
+      # only if there is data to plot
+      
+      for (pp in 1:length(mbyp)) {
+        
+        op <- par(mfrow = c(length(mbyp[[pp]]), ncomp), mai = c(0.15, 
+                                                                0.1, 0.15, 0.05), omi = c(0.1, 0.9, 0.3, 0.05),no.readonly=TRUE)
+        on.exit(par(op))
+        
+        for (mm in mbyp[[pp]]) {
+          rind <- (mm - 1) * 2 + 1
+          npres <- sum(Obsstr[rind + 1, ] != "")
+          for (cc in 1:ncomp) {
+            if (!is.na(npres) & cc < (npres + 1)) {
+              y <- Ut[, mm]
+              cind <- match(Obsstr[rind, 1 + cc], names(MSEobj@Obs))
+              x <- MSEobj@Obs[, cind]
+              plot(x, y, col = "white", axes = F, ylim = ylimy)
+              axis(1, pretty(Obsp[, cind]), pretty(Obsp[, cind]), cex.axis = 0.8, padj = -2)
+              abline(v = Obsp[, cind], col = "#99999960")
+              points(x, y, col = colsse[coly[mm, cind]], pch = 19, cex = 0.8)
+              x2 <- (Obsp[1:nbins, cind] + Obsp[2:(nbins + 1), cind])/2
+              y2 <- Obsv[mm, cind, ]
+              lines(x2, y2)
+              legend("bottomright", legend = round(Obss[mm, cind], 2), bty = "n", cex = 0.8)
+              legend("topleft", legend = Obsstr[rind, 1 + cc], bty = "n", cex = 0.75)
+              if (cc == 1)    {
+                mtext(MPs[mm], 2, font = 2, outer = F, cex = 0.6, line = 2)
+                ytick <- pretty(seq(ylimy[1], ylimy[2] * 1.3, length.out = 10))
+                axis(2, ytick, ytick, cex.axis = 0.8)
+              }  # only first column
+            } else {
+              plot(0, type = "n", axes = FALSE, ann = FALSE)
+              if (cc == 1)  {
+                mtext(MPs[mm], 2, font = 2, outer = F, cex = 0.6, line = 2)
+              }  # only first column
+            }
+          }  # parameters (columns)
+        }  # MPs (rows)
+        
+        mtext(Utnam, 2, outer = T, cex = 0.9, line = 3.5)
+        mtext(paste("Observation model parameters: ", objnam, "@Obs", sep = ""), 3, outer = T, font = 2, cex = 0.9)
+        
+      }  # Plots
+    }  # if there is data to plot
+    
+  }
+
   list(OMstr, Obsstr)
   
 }  # VOI

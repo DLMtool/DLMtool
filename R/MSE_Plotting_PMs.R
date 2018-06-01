@@ -4,7 +4,7 @@
 #' Generic Trade-Plot Function - IN DEVELOPMENT
 #'
 #' @param MSEobj An object of class `MSE`
-#' @param ... Names of Performance Metrics (PMs). First PM is recycled if number of PMs is not even
+#' @param ... Names of Performance Metrics (PMs), or other arguments to `TradePlot`. First PM is recycled if number of PMs is not even
 #' @param lims A numeric vector of acceptable risk/minimum probability thresholds. Recycled if not equal to number of PMs.
 #' @param point.size Numeric. Size of the MP points
 #' @param lab.size Numeric. Size of MP label
@@ -16,7 +16,7 @@
 #' @param alpha Numeric. Transparency of fill
 #' @param PMlist Optional list of PM names. Overrides any supplied in ... above
 #' @param Refs An optional named list (matching the PM names) with numeric values to override the default `Ref` values. See examples.
-#'
+#' @param Yrs An optional named list (matching the PM names) with numeric values to override the default `Yrs` values. See examples.
 #' @author A. Hordyk
 #' @return A summary table of MP performance
 #' @export
@@ -31,7 +31,8 @@ TradePlot <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8),
                       fill="gray80",
                       alpha=0.4,
                       PMlist=NULL,
-                      Refs=NULL
+                      Refs=NULL,
+                      Yrs=NULL
                       ) {
   if (is.null(PMlist)) {
     PMlist <- unlist(list(...))
@@ -64,10 +65,20 @@ TradePlot <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8),
   runPM <- vector("list", length(PMlist))
   for (X in 1:length(PMlist)) {
     ref <- Refs[[PMlist[X]]]
+    yrs <- Yrs[[PMlist[X]]]
     if (is.null(ref)) {
-      runPM[[X]] <- eval(call(PMlist[X], MSEobj))  
+      if (is.null(yrs)) {
+        runPM[[X]] <- eval(call(PMlist[X], MSEobj))    
+      } else {
+        runPM[[X]] <- eval(call(PMlist[X], MSEobj, Yrs=yrs))  
+      }
+      
     } else {
-      runPM[[X]] <- eval(call(PMlist[X], MSEobj, Ref=ref))
+      if (is.null(yrs)) {
+        runPM[[X]] <- eval(call(PMlist[X], MSEobj, Ref=ref))    
+      } else {
+        runPM[[X]] <- eval(call(PMlist[X], MSEobj, Ref=ref, Yrs=yrs))  
+      }
     }
     
   }
@@ -182,8 +193,35 @@ Tplot3 <- function(MSEobj, lims=c(0.5, 0.5, 0.8, 0.5), ...) {
 
 
 
-Cplot <- function(MSEobj, MPs = NA, lastYrs = 5, XMin = NULL, YMin = NULL, 
-                  ShowLabs = FALSE) {
+
+
+#' Plot the median biomass and yield relative to last historical year
+#' 
+#' Compare median biomass and yield in first year and last 5 years of
+#' projection
+#' 
+#' @param MSEobj An object of class MSE 
+#' @param MPs Optional vector of MPs to plot
+#' @param lastYrs Numeric. Last number of years to summarize results.
+#' @param point.size Size of the points
+#' @param lab.size Size of labels
+#' @param axis.title.size Axis title size
+#' @param axis.text.size  Axis text size
+#' @param legend.title.size Legend title size
+#'
+#' @export
+#' 
+#' @examples 
+#' \dontrun{
+#' MSE <- runMSE()
+#' Cplot(MSE)
+#' }
+Cplot <- function(MSEobj, MPs = NA, lastYrs = 5,
+                  point.size=2,
+                  lab.size=4,
+                  axis.title.size=12,
+                  axis.text.size=10,
+                  legend.title.size=12) {
   if (!all(is.na(MPs))) MSEobj <- Sub(MSEobj, MPs = MPs)
   nsim <- MSEobj@nsim
   nMPs <- MSEobj@nMPs
@@ -192,13 +230,16 @@ Cplot <- function(MSEobj, MPs = NA, lastYrs = 5, XMin = NULL, YMin = NULL,
   proyears <- MSEobj@proyears
   RefYd <- MSEobj@OM$RefY
   
+  MPType <- MPtype(MSEobj@MPs)
+  Class <- MPType[match(MSEobj@MPs, MPType[,1]),2]
+  
   pastC <- apply(MSEobj@CB_hist[, , , , drop = FALSE], c(1, 3), sum, na.rm = TRUE)/RefYd # relative catch in last historical year
   temp <- aperm( replicate(nMPs, pastC), c(1, 3, 2))
   
   lastYr <- temp[, , nyears, drop = FALSE]
   Yield <- abind::abind(lastYr, MSEobj@C[, , , drop = FALSE]/RefYd, along = 3) # 
   
-  ny <- dim(Stat$Yield)[3]
+  ny <- MSEobj@nyears + 1
   relYield <- Yield[, , , drop = FALSE]/Yield[, , rep(1, ny), drop = FALSE] # catch relative to last historical year
   relYield <- relYield[,,(proyears - lastYrs + 1):proyears]
   
@@ -219,68 +260,34 @@ Cplot <- function(MSEobj, MPs = NA, lastYrs = 5, XMin = NULL, YMin = NULL,
   names(Cdf) <- c("sim", "mp", "yr", 'Catch')
   
   DF <- dplyr::left_join(Cdf, Bdf,by = c("sim", "mp", "yr"))
-  DF <- DF %>% group_by(mp) %>% summarize(mC=median(Catch),
+  DF <- DF %>% dplyr::group_by(mp) %>% dplyr::summarize(mC=median(Catch),
                                     upC=quantile(Catch, 0.95),
                                     lowC=quantile(Catch, 0.05),
                                     mB=median(Biomass),
                                     upB=quantile(Biomass, 0.95),
                                     lowB=quantile(Biomass, 0.05))
+  DF$class <- Class
   
   
-  ggplot2::ggplot(DF, ggplot2::aes(x=mB, y=mC)) + 
+  p1 <- ggplot2::ggplot(DF, ggplot2::aes(x=mB, y=mC, color=class, shape=class)) + 
     ggplot2::geom_point() +
     ggplot2::expand_limits(x=0, y=0) + 
     ggplot2::geom_vline(xintercept = 1, color="gray") +
     ggplot2::geom_hline(yintercept = 1, color="gray") +
-    ggplot2::theme_classic() + 
-    ggrepel::geom_text_repel(ggplot2::aes(label=mp))
-  
-  tt <- Cplot(MSEobj)
-  tt
-  
-  yield <- Yield(MSEobj)
-  dim(yield@Stat)
-  
-  head(Stat$Yield)
-  
-  Alpha <- 60
-  if (nsim < 10)  Alpha <- 180
-  nMPs <- MSEobj@nMPs
-  MPs <- MSEobj@MPs
-  nyears <- MSEobj@nyears
-  proyears <- MSEobj@proyears
-  
-  Stat <- MPStats(MSEobj, lastYrs = lastYrs)$BySim
-  ny <- dim(Stat$Yield)[3]
-  Stat$Yield <- Stat$Yield[, , , drop = FALSE]/Stat$Yield[, , rep(1, ny), drop = FALSE]
-  
-  RelYield <- apply(Stat$Yield, 2, median, na.rm = TRUE)
-  
-  Bcurr <- Stat$B_BMSY[, , 1]  # Biomass at start of projections
-  Bend <- apply((Stat$B_BMSY[, , (proyears - lastYrs + 1):proyears]),       c(1, 2), median, na.rm = TRUE)  # median biomass in last years
-  RelBio <- apply(Bend/Bcurr, 2, median, na.rm = TRUE)
-  
-  XMin <- ifelse(is.null(XMin), 0, XMin)
-  YMin <- ifelse(is.null(YMin), 0, YMin)
-  XLim <- c(YMin, ceiling(max(RelBio)/0.5) * 0.5) * c(0.95, 1.05)
-  YLim <- c(XMin, ceiling(max(RelYield)/0.5) * 0.5) * c(0.95, 1.05)
-  op <- par(mfrow = c(1, 1), oma = c(3, 5, 1, 1), mar = c(2, 2, 0, 0))
-  plot(RelBio, RelYield, xlim = XLim, ylim = YLim, type = "n", bty = "l", 
-       xlab = "", ylab = "", xaxs = "i", yaxs = "i", las = 1)
-  if (ShowLabs) 
-    text(RelBio, RelYield, MSEobj@MPs)
-  if (!ShowLabs) 
-    points(RelBio, RelYield, pch = 21, cex = 2, bg = "lightgray")
-  abline(h = 1, lty = 3, col = "lightgray")
-  abline(v = 1, lty = 3, col = "lightgray")
-  mtext(side = 1, line = 3.5, paste("Median Biomass (last", lastYrs, 
-                                    "years)\n relative to current"), cex = 1.25)
-  mtext(side = 2, line = 3, paste("Median Yield (last", lastYrs, "years)\n relative to current"), 
-        cex = 1.25)
-  par(op)
-  DF <- data.frame(MP = MSEobj@MPs, Biomass = RelBio, Catch = RelYield, 
-                   stringsAsFactors = FALSE)
-  invisible(DF)
+    ggplot2::theme_classic() +
+    ggplot2::theme(axis.title = ggplot2::element_text(size=axis.title.size),
+                   axis.text = ggplot2::element_text(size=axis.text.size),
+                   legend.text=ggplot2::element_text(size=legend.title.size),
+                   legend.title = ggplot2::element_text(size=legend.title.size)) +
+    ggrepel::geom_text_repel(ggplot2::aes(label=mp), show.legend=FALSE) +
+    ggplot2::labs(x=paste("Median Biomass (last", lastYrs, 
+                 "years)\n relative to current"),
+         y=paste("Median Yield (last", lastYrs, "years)\n relative to current"),
+         shape= "MP Type", color="MP Type")
+
+  print(p1)
   
 }
+
+
 

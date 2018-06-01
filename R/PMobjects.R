@@ -7,6 +7,9 @@
 #' @name PerformanceMetric
 #' @param MSEobj An object of class MSE
 #' @param Ref Reference point for calculating the performance metric. See details.
+#' @param Yrs Numeric vector of length 2 with year indices to summarize performance. 
+#' If NULL, the performance is summarized over all projection years.
+#'  
 #' @details Performance Metric definitions:
 #' 
 #' \tabular{ll}{
@@ -41,37 +44,65 @@
 #' }
 NULL
 
+#' Check the years to summarize performance
+#'
+#' @param Yrs Numeric vector of length 2 with year indices to summarize performance. 
+#' If NULL, the performance is summarized over all projection years.
+#' @param MSEobj An object of class `MSE` 
+#'
+#' @return A numeric vector of length 2 with year indices to summarize performance
+#' @examples 
+#' \dontrun{
+#' MSE <- runMSE
+#' ChkYrs(NULL, MSE) # returns c(1, MSE@proyears)
+#' ChkYrs(c(2,5), MSE) # returns c(2,5)
+#' ChkYrs(c(70,80), MSE) # returns c(MSE@proyears-10,MSE@proyears)
+#' }
+#' 
+#' @keywords internal
+#' @export
+ChkYrs <- function(Yrs, MSEobj) {
+  if (class(MSEobj) !='MSE') stop('Require object of class MSE', call.=FALSE)
+  if (is.null(Yrs)) {
+    y.st <- 1 
+    y.end <- MSEobj@proyears
+  } else {
+    y.st <- Yrs[1]
+    y.end <- Yrs[2]
+    if (length(Yrs)!=2) stop("Yrs must be numeric vector of length 2", call.=FALSE)
+    if (Yrs[1] > Yrs[2]) stop("Yrs[1] is > Yrs[2]", call.=FALSE)
+    if (any(Yrs < 1)) stop("Yrs must be positive", call.=FALSE)
+    
+    if (Yrs[2] > MSEobj@proyears) {
+      message('Yrs[2] is greater than MSEobj@proyears. Setting Yrs[2] = MSEobj@proyears')
+      y.end <- MSEobj@proyears
+    }  
+    if (Yrs[1] > MSEobj@proyears) {
+      message('Yrs[1] is greater than MSEobj@proyears. Setting Yrs[1] = Yrs[2] - Yrs[1]')
+      y.st <- max(1,y.end - (Yrs[2] - Yrs[1]))
+    }
+  }
+  return(c(y.st, y.end))
+}
+
 
 
 #' @rdname PerformanceMetric 
 #' @export
 P10 <- function(MSEobj=NULL, Ref=0.1, Yrs=NULL) {
-  if (class(MSEobj)!='MSE') stop('Require object of class MSE')
+  Yrs <- ChkYrs(Yrs, MSEobj)
+  
   PMobj <- new("PMobj")
   PMobj@Name <- "Spawning Biomass relative to SBMSY"
-  
-  
-  if (is.null(Yrs)) {
-    y.st <- 1 
-    y.end <- MSEobj@proyears
-  } else {
-    if (length(Yrs)!=2) stop("Yrs must be numeric vector of length 2", call.=FALSE)
-    if (Yrs[1] > Yrs[2]) stop("Yrs[1] is > Yrs[2]", call.=FALSE)
-    if (any(Yrs < 1)) stop("Yrs must be positive", call.=FALSE)
-    if (Yrs[2] > MSEobj@proyears) Yrs[2] <- MSEobj@proyears
-    y.st <- Yrs[1] 
-    y.end <- Yrs[2]
-  }
-  
+ 
   if (Ref !=1) {
-    PMobj@Caption <- paste0('Prob. SB > ', Ref, ' SBMSY (Years ', y.st, ' - ', y.end, ')')
+    PMobj@Caption <- paste0('Prob. SB > ', Ref, ' SBMSY (Years ', Yrs[1], ' - ', Yrs[2], ')')
   } else {
-    PMobj@Caption <- paste0('Prob. SB > SBMSY (Years ', y.st, ' - ', y.end, ')')
+    PMobj@Caption <- paste0('Prob. SB > SBMSY (Years ', Yrs[1], ' - ', Yrs[2], ')')
   }
   
-  
-  PMobj@Stat <- MSEobj@B_BMSY[,,y.st:y.end] # Performance Metric statistic of interest - here SB/SBMSY 
   PMobj@Ref <- Ref
+  PMobj@Stat <- MSEobj@B_BMSY[,,Yrs[1]:Yrs[2]] # Performance Metric statistic of interest - here SB/SBMSY 
   PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref, MSEobj) # calculate probability Stat > 0.1 nsim by nMP
   
   PMobj@Mean <- calcMean(PMobj@Prob, MSEobj) # calculate mean probability by MP
@@ -82,13 +113,11 @@ P10 <- function(MSEobj=NULL, Ref=0.1, Yrs=NULL) {
 class(P10) <- "PM"
 
 
-
 #' @rdname PerformanceMetric 
 #' @export
 P50 <- P10
 formals(P50)$Ref <- 0.5
 class(P50) <- "PM"
-
 
 #' @rdname PerformanceMetric 
 #' @export
@@ -97,24 +126,19 @@ formals(P100)$Ref <- 1
 class(P100) <- "PM"
 
 
-
-
 #' @rdname PerformanceMetric 
 #' @export
-POF <- function(MSEobj=NULL, Ref=1) {
-  if (class(MSEobj)!='MSE') stop('Require object of class MSE')
+POF <- function(MSEobj=NULL, Ref=1, Yrs=NULL) {
+  Yrs <- ChkYrs(Yrs, MSEobj)
   PMobj <- new("PMobj")
   PMobj@Name <- "Fishing Mortality relative to FMSY"
   if (Ref !=1) {
-    PMobj@Caption <- paste0('Prob. F < ', Ref, ' FMSY')
+    PMobj@Caption <- paste0('Prob. F < ', Ref, ' FMSY (Years ', Yrs[1], ' - ', Yrs[2], ')')
   } else {
-    PMobj@Caption <- 'Prob. F < FMSY'
+    PMobj@Caption <- paste0('Prob. F < FMSY (Years ', Yrs[1], ' - ', Yrs[2], ')')
   }
 
-  y.st <- 1 
-  y.end <- MSEobj@proyears
-  
-  PMobj@Stat <- MSEobj@F_FMSY[,,y.st:y.end] # Performance Metric statistic of interest - here F/FMSY
+  PMobj@Stat <- MSEobj@F_FMSY[,,Yrs[1]:Yrs[2]] # Performance Metric statistic of interest - here F/FMSY
   PMobj@Ref <- Ref
   PMobj@Prob <- calcProb(PMobj@Stat < PMobj@Ref, MSEobj) # calculate probability Stat < 1 nsim by nMP
   
@@ -128,26 +152,21 @@ class(POF) <- "PM"
 
 #' @rdname PerformanceMetric 
 #' @export
-LTY <- function(MSEobj=NULL, Ref=0.5) {
-  if (class(MSEobj)!='MSE') stop('Require object of class MSE')
+LTY <- function(MSEobj=NULL, Ref=0.5, Yrs=c(max(MSEobj@proyears-9,1), MSEobj@proyears)) {
+  Yrs <- ChkYrs(Yrs, MSEobj)
   PMobj <- new("PMobj")
-  PMobj@Name <- "Average Long-Term Yield relative to Reference Yield" 
+  PMobj@Name <- paste0("Average Yield relative to Reference Yield (Years ", Yrs[1], "-", Yrs[2], ")") 
   if (Ref != 1) {
-    PMobj@Caption <- paste0('Prob. LTY > ', Ref, ' Ref. Yield')
+    PMobj@Caption <- paste0('Prob. Yield > ', Ref, ' Ref. Yield (Years ', Yrs[1], "-", Yrs[2], ")") 
   } else {
-    PMobj@Caption <- 'Prob. LTY > Ref. Yield'
+    PMobj@Caption <- paste0('Prob. Yield > Ref. Yield (Years ', Yrs[1], "-", Yrs[2], ")") 
   }
- 
+
+  RefYd <- array(MSEobj@OM$RefY, dim=dim(MSEobj@C[,,Yrs[1]:Yrs[2]]))
   
-  y.st <- max(MSEobj@proyears-9,1) 
-  y.end <- MSEobj@proyears # last 10 years
-  
-  RefYd <- array(MSEobj@OM$RefY, dim=dim(MSEobj@C[,,y.st:y.end]))
-  
-  PMobj@Stat <- MSEobj@C[,,y.st:y.end]/RefYd
+  PMobj@Stat <- MSEobj@C[,,Yrs[1]:Yrs[2]]/RefYd
   PMobj@Ref <- 0.5
-  PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref, MSEobj)  # probability LTY > 0.5 Ref Yield
-  
+  PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref, MSEobj)  
   
   PMobj@Mean <- calcMean(PMobj@Prob, MSEobj) # calculate mean probability by MP
   PMobj@MPs <- MSEobj@MPs
@@ -158,41 +177,43 @@ class(LTY) <- "PM"
 
 #' @rdname PerformanceMetric 
 #' @export
-STY <- function(MSEobj=NULL, Ref=0.5) {
-  if (class(MSEobj)!='MSE') stop('Require object of class MSE')
+STY <- LTY 
+formals(STY)$Yrs <- c(1,10)
+class(STY) <- "PM"
+
+
+
+#' @rdname PerformanceMetric 
+#' @export
+Yield <- function(MSEobj=NULL, Ref=1, Years=NULL) {
+  Yrs <- ChkYrs(Yrs, MSEobj)
   PMobj <- new("PMobj")
-  PMobj@Name <- "Average Short-Term Yield relative to Reference Yield" 
-  if (Ref != 1) {
-    PMobj@Caption <- paste0('Prob. STY > ', Ref, ' Ref. Yield')
-  } else {
-    PMobj@Caption <- 'Prob. STY > Ref. Yield'
-  }
+  PMobj@Name <- paste0("Yield relative to Reference Yield (Years", Yrs[1], "-", Yrs[2], ")") 
+  PMobj@Caption <- paste0("Mean Relative Yield (Years ", Yrs[1], "-", Yrs[2], ")")
   
-  y.st <- 1
-  y.end <- 10 # first 10 years
+  RefYd <- array(MSEobj@OM$RefY, dim=dim(MSEobj@C[,,Yrs[1]:Yrs[2]]))
   
-  RefYd <- array(MSEobj@OM$RefY, dim=dim(MSEobj@C[,,y.st:y.end]))
-  
-  PMobj@Stat <- MSEobj@C[,,y.st:y.end]/RefYd
-  PMobj@Prob <- calcProb(PMobj@Stat > Ref, MSEobj)  # probability STY > 0.5 Ref Yield
+  PMobj@Stat <- MSEobj@C[,,Yrs[1]:Yrs[2]]/RefYd
+  PMobj@Ref <- Ref
+  PMobj@Prob <- calcProb(PMobj@Stat, MSEobj) # no probability to calculate
   
   PMobj@Mean <- calcMean(PMobj@Prob, MSEobj) # calculate mean probability by MP
   PMobj@MPs <- MSEobj@MPs
   PMobj
   
 }
-class(STY) <- "PM"
+class(Yield) <- "PM"
 
 #' @rdname PerformanceMetric 
 #' @export
-AAVY <- function(MSEobj=NULL, Ref=0.2) {
-  if (class(MSEobj)!='MSE') stop('Require object of class MSE')
+AAVY <- function(MSEobj=NULL, Ref=0.2, Yrs=NULL) {
+  Yrs <- ChkYrs(Yrs, MSEobj)
   PMobj <- new("PMobj")
-  PMobj@Name <- "Average Annual Variability in Yield" 
-  PMobj@Caption <- paste0('Prob. AAVY < ', Ref*100, "%")
+  PMobj@Name <- paste0("Average Annual Variability in Yield (Years", Yrs[1], "-", Yrs[2], ")") 
+  PMobj@Caption <- paste0('Prob. AAVY < ', Ref*100, "% (Years ", Yrs[1], "-", Yrs[2], ")")
   
-  y1<-1:(MSEobj@proyears-1) # year index
-  y2<-2:MSEobj@proyears # 
+  y1<- Yrs[1]:(Yrs[2]-1) # year index
+  y2<-(Yrs[1]+1):Yrs[2] 
   
   if (MSEobj@nMPs > 1) {
     AAVY <- apply(((MSEobj@C[,,y1]-MSEobj@C[,,y2])^2)^0.5,c(1,2),mean)/apply(MSEobj@C[,,y2],c(1,2),mean) 
@@ -211,28 +232,5 @@ AAVY <- function(MSEobj=NULL, Ref=0.2) {
 }
 class(AAVY) <- "PM"
 
-#' @rdname PerformanceMetric 
-#' @export
-Yield <- function(MSEobj=NULL, Ref=1) {
-  if (class(MSEobj)!='MSE') stop('Require object of class MSE')
-  PMobj <- new("PMobj")
-  PMobj@Name <- "Yield relative to Reference Yield" 
-  PMobj@Caption <- 'Mean Relative Yield'
-  
-  y.st <- 1 
-  y.end <- MSEobj@proyears 
-  
-  RefYd <- array(MSEobj@OM$RefY, dim=dim(MSEobj@C[,,y.st:y.end]))
-  
-  PMobj@Stat <- MSEobj@C[,,y.st:y.end]/RefYd
-  PMobj@Ref <- Ref
-  PMobj@Prob <- calcProb(PMobj@Stat, MSEobj) # no probability to calculate
-  
-  PMobj@Mean <- calcMean(PMobj@Prob, MSEobj) # calculate mean probability by MP
-  PMobj@MPs <- MSEobj@MPs
-  PMobj
-  
-}
-class(Yield) <- "PM"
 
 

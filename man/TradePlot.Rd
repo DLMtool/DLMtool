@@ -10,7 +10,8 @@
 TradePlot(MSEobj, ..., lims = c(0.2, 0.2, 0.8, 0.8), point.size = 2,
   lab.size = 4, axis.title.size = 12, axis.text.size = 10,
   legend.title.size = 12, position = c("right", "bottom"),
-  fill = "gray80", alpha = 0.4, PMlist = NULL, Refs = NULL)
+  fill = "gray80", alpha = 0.4, PMlist = NULL, Refs = NULL,
+  Yrs = NULL)
 
 Tplot(MSEobj, lims = c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...)
 
@@ -21,7 +22,7 @@ Tplot3(MSEobj, lims = c(0.5, 0.5, 0.8, 0.5), ...)
 \arguments{
 \item{MSEobj}{An object of class \code{MSE}}
 
-\item{...}{Names of Performance Metrics (PMs). First PM is recycled if number of PMs is not even}
+\item{...}{Names of Performance Metrics (PMs), or other arguments to \code{TradePlot}. First PM is recycled if number of PMs is not even}
 
 \item{lims}{A numeric vector of acceptable risk/minimum probability thresholds. Recycled if not equal to number of PMs.}
 
@@ -44,6 +45,8 @@ Tplot3(MSEobj, lims = c(0.5, 0.5, 0.8, 0.5), ...)
 \item{PMlist}{Optional list of PM names. Overrides any supplied in ... above}
 
 \item{Refs}{An optional named list (matching the PM names) with numeric values to override the default \code{Ref} values. See examples.}
+
+\item{Yrs}{An optional named list (matching the PM names) with numeric values to override the default \code{Yrs} values. See examples.}
 }
 \value{
 A summary table of MP performance

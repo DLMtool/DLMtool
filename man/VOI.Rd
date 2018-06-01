@@ -5,7 +5,7 @@
 \title{Calculate Value Of Information}
 \usage{
 VOI(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA,
-  Utnam = "Utility")
+  Utnam = "Utility", plot = TRUE)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}
@@ -22,6 +22,8 @@ variability in utility across the sampled range of each parameter}
 columns}
 
 \item{Utnam}{The name of the utility measure for plotting}
+
+\item{plot}{Logical. Show the plot?}
 }
 \description{
 A function that relates operating model parameters and parameters of the
