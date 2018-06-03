@@ -3626,7 +3626,11 @@ YPR_ <- function(x, Data, reps = 100, Abun=NULL) {
   b <- Data@wlb[x]
   FMSY <- YPRopt(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage=Data@MaxAge, reps)
   
-  if (is.null(Abun)) Ac <- trlnorm(reps, Data@Abun[x], Data@CV_Abun[x])
+  if (is.null(Abun)){
+    Ac <- trlnorm(reps, Data@Abun[x], Data@CV_Abun[x])
+  }else{
+    Ac<-Abun
+  }
   
   TAC <- Ac * FMSY
   
