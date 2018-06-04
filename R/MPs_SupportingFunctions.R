@@ -203,6 +203,94 @@ DynF_plot <- function(C_dat, C_hist, TAC, yrsmth, B_dat, B_hist, Data, SP_hist,
 
 Fadapt_plot <- DynF_plot
 
+Fdem_plot <- function(runFdem, Data) {
+  op <- par(no.readonly = TRUE)
+  on.exit(par(op))
+  par(mfrow=c(1,2))
+  boxplot(cbind(runFdem$Ac, runFdem$TAC), names=c("Abundance", "TAC"), ylab=Data@Units)
+  if (all(round(mean(runFdem$FMSY)/runFdem$FMSY,1)==1)) {
+    fmsy <- mean(runFdem$FMSY)
+    boxplot(fmsy, ylab=expression("F"[MSY]))
+  } else {
+    boxplot(runFdem$FMSY, ylab=expression("F"[MSY]))  
+  }
+  
+}
+
+
+Fratio_plot <- function(x, Data, TAC, runFrat) {
+  op <- par(no.readonly = TRUE)
+  on.exit(par(op))
+  if ("Bt_K" %in% names(runFrat)) {
+    par(mfrow=c(1,3))
+    incBt_K <- TRUE
+  } else {
+    par(mfrow=c(1,2))  
+    incBt_K <- FALSE
+  }
+  
+  boxplot(cbind(runFrat$Abun, TAC), names=c("Abundance", "TAC"), ylab=Data@Units)
+  if (all(round(mean(runFrat$Frat)/runFrat$FMSY,1)==1)) {
+    fmsy <- mean(runFrat$Frat)
+    boxplot(fmsy, ylab=expression("F"[MSY]))
+  } else {
+    boxplot(runFrat$Frat, ylab=expression("F"[MSY]))  
+  }
+  if (incBt_K) {
+    if (all(round(mean(runFrat$Bt_K)/runFrat$Bt_K,1)==1)) {
+      Bt_K <- mean(runFrat$Bt_K)
+      boxplot(Bt_K,ylab="Depletion")  
+    } else {
+      boxplot(runFrat$Bt_K, ylab="Depletion")  
+    }
+  }
+}
+
+
+GB_CC_plot <- function(x, Catrec, TAC, Data) {
+  ylim <- range(c(TAC, Catrec))
+  tt <- boxplot(TAC, ylab=paste0("TAC (", Data@Units, ")"), ylim=ylim)
+  points(1, Data@Cref[x], pch=16, col="orange", cex=2)
+  text(1, Data@Cref[x], pch=16, col="orange", "Cref", pos=2)
+  
+  points(1, Catrec, pch=16, col="blue", cex=2)
+  text(1, Catrec, pch=16, col="blue", "Last Catch", pos=2)
+  
+}
+
+GB_slope_plot <- function(Data, ind, I_hist, MuC, TAC, Islp) {
+  op <- par(no.readonly = TRUE)
+  on.exit(par(op))
+  par(mfrow=c(1,3))
+  yrs <- Data@Year[ind]
+  plot(yrs, I_hist, xlab="Year", ylab="Index of Abundance", type="l", lwd=2, bty="l", las=1)
+  boxplot(Islp, ylab="log Index slope")
+  boxplot(cbind(MuC, TAC), names=c("Last Catch", "TAC"), ylab=Data@Units)
+}
+
+
+
+GB_target_plot <- function(Itarg, Irec, I0, Data, Catrec, TAC) {
+  
+  op <- par(no.readonly = TRUE)
+  on.exit(par(op))
+  par(mfrow=c(1,2))
+  
+  ylim <- range(c(Itarg, Irec, I0))
+  boxplot(Itarg, ylim=ylim, ylab="Index target")
+  points(1, Irec, pch=16, col="blue", cex=2)
+  text(1, Irec, "Irec", col="blue", cex=1.25, pos=2)
+  
+  points(1, I0, pch=16, col="orange", cex=2)
+  text(1, I0, "I0", col="orange", cex=1.25, pos=2)
+  
+  
+  ylim <- range(c(Catrec, TAC))
+  boxplot(cbind(Catrec, TAC), ylim=ylim, ylab=Data@Units, names=c("Last Catch", "TAC"))
+  
+  
+  
+}
 
 YPR_plot <- function(runYPR, Data) {
   frates <- runYPR$frates

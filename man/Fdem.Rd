@@ -32,17 +32,20 @@ FMSY is calculated as r/2 where r is calculated from a demographic approach
 (inc steepness). Coupled with an estimate of current abundance that gives
 you the OFL.
 }
+\details{
+The TAC is calculated as:
+\deqn{\textrm{TAC} = F_{\textrm{MSY}} A}
+where \emph{A} is an estimate of current abundance, and \eqn{F_{\textrm{MSY}}} is estimated
+as \eqn{r/2}, where \eqn{r} is the intrinsic rate of population growth, estimated
+from the life-history parameters using the methods of McAllister et al. (2001).
+}
 \section{Functions}{
 \itemize{
-\item \code{Fdem}: This uses Murdoch McAllister's demographic r
-method to derive FMSY (r/2) and then makes the quota r*current biomass / 2.
-Easy.
+\item \code{Fdem}: Current abundance is assumed to be known (i.e \code{Data@Abun})
 
-\item \code{Fdem_CC}: FMSY is calculated as r/2 from a demographic r prior method, current
-abundance is estimated from catch curve analysis.
+\item \code{Fdem_CC}: Current abundance is estimated from catch curve analysis
 
-\item \code{Fdem_ML}: Demographic F (r/2) method using the mean length estimator to calculate
-current abundance.
+\item \code{Fdem_ML}: Current abundance is estimated from mean length
 }}
 
 \section{Required Data}{
@@ -64,7 +67,7 @@ See \href{https://dlmtool.github.io/DLMtool/reference/Fdem.html}{Online Document
 }
 
 \examples{
-Fdem(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+Fdem(1, DLMtool::SimulatedData, plot=TRUE)
 Fdem_CC(1, DLMtool::SimulatedData, plot=TRUE)
 Fdem_ML(1, DLMtool::SimulatedData, plot=TRUE)
 }

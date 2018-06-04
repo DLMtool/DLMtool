@@ -65,6 +65,10 @@ Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
 data-poor fisheries; forecasting with few data. ICES J. Mar. Sci. 72, 251-261.
 doi:10.1093/icesjms/fst232
 }
+\seealso{
+Other Index methods: \code{\link{GB_slope}},
+  \code{\link{GB_target}}, \code{\link{Gcontrol}}
+}
 \author{
 T. Carruthers
 }

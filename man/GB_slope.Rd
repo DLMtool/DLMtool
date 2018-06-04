@@ -4,33 +4,70 @@
 \alias{GB_slope}
 \title{Geromont and Butterworth index slope Harvest Control Rule}
 \usage{
-GB_slope(x, Data, reps = 100, yrsmth = 5, lambda = 1)
+GB_slope(x, Data, reps = 100, plot = FALSE, yrsmth = 5, lambda = 1)
 }
 \arguments{
-\item{x}{A position in data-limited methods data object}
+\item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of TAC samples}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{yrsmth}{Number of years for evaluating slope in relative abundance
 index}
 
 \item{lambda}{A gain parameter}
 }
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
+}
 \description{
 An MP similar to SBT1 that modifies a time-series of catch recommendations
 and aims for a stable catch rates.
 }
 \details{
+The TAC is calculated as:
+\deqn{\textrm{TAC}_y= C_{y-1} \left(1+\lambda I\right)}
+where \eqn{C_{y-1}} is catch from the previous year, \eqn{\lambda} is a gain parameter, and \eqn{I} is
+the slope of the linear regression of log Index (\code{Data@Ind}) over the last
+\code{yrsmth} years.
+
+The TAC is subject to the following conditions:
+\enumerate{
+\item if next TAC > 1.2 last catch, then TAC = 1.2 last catch
+\item if next TAC < 0.8 last catch, then TAC = 0.8 last catch
+}
+
 Note that this is my interpretation of their approach and is now stochastic.
 Currently it is generalized and is not 'tuned' to more detailed assessment
 data which might explain why in some cases it leads to stock declines.
+}
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{GB_slope}: Cat, Ind, Year
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/GB_slope.html}{Online Documentation} for correctly rendered equations
+}
+
+\examples{
+GB_slope(1, DLMtool::SimulatedData, plot=TRUE)
 }
 \references{
 Geromont, H.F. and Butterworth, D.S. 2014. Complex assessment or
 simple management procedures for efficient fisheries management: a
 comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017
+}
+\seealso{
+Other Index methods: \code{\link{GB_target}},
+  \code{\link{Gcontrol}}, \code{\link{ItargetE1}}
 }
 \author{
 T. Carruthers

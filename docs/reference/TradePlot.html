@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Generic Trade-off Plot — TradePlot • DLMtool Documentation</title>
+<title>Generic Trade-Plot Function - IN DEVELOPMENT — TradePlot • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,10 +28,9 @@
 
 
 
-<meta property="og:title" content="Generic Trade-off Plot — TradePlot" />
+<meta property="og:title" content="Generic Trade-Plot Function - IN DEVELOPMENT — TradePlot" />
 
-<meta property="og:description" content="Creates a trade-off plot (up to four panels) of built-in performance
-metrics." />
+<meta property="og:description" content="Generic Trade-Plot Function - IN DEVELOPMENT" />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -89,84 +88,112 @@ metrics." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Generic Trade-off Plot</h1>
+    <h1>Generic Trade-Plot Function - IN DEVELOPMENT</h1>
     
     <div class="hidden name"><code>TradePlot.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Creates a trade-off plot (up to four panels) of built-in performance
-metrics.</p>
+    <p>Generic Trade-Plot Function - IN DEVELOPMENT</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>TradePlot</span>(<span class='no'>MSEobj</span>, <span class='kw'>XAxis</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"Overfishing"</span>, <span class='st'>"Biomass:BMSY"</span>),
-  <span class='kw'>YAxis</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"Long-term Yield"</span>, <span class='st'>"AnnualVar"</span>), <span class='kw'>XThresh</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>30</span>, <span class='fl'>80</span>),
-  <span class='kw'>YThresh</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0</span>, <span class='fl'>50</span>), <span class='kw'>maxVar</span> <span class='kw'>=</span> <span class='fl'>15</span>, <span class='kw'>BmsyRef</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>B0Ref</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
-  <span class='kw'>AvailMPs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ShowLabs</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>ShowCols</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>TradePlot</span>(<span class='no'>MSEobj</span>, <span class='no'>...</span>, <span class='kw'>lims</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.2</span>, <span class='fl'>0.2</span>, <span class='fl'>0.8</span>, <span class='fl'>0.8</span>), <span class='kw'>point.size</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>lab.size</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>axis.title.size</span> <span class='kw'>=</span> <span class='fl'>12</span>, <span class='kw'>axis.text.size</span> <span class='kw'>=</span> <span class='fl'>10</span>,
+  <span class='kw'>legend.title.size</span> <span class='kw'>=</span> <span class='fl'>12</span>, <span class='kw'>position</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"right"</span>, <span class='st'>"bottom"</span>),
+  <span class='kw'>fill</span> <span class='kw'>=</span> <span class='st'>"gray80"</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.4</span>, <span class='kw'>PMlist</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Refs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>Yrs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>Tplot</span>(<span class='no'>MSEobj</span>, <span class='kw'>lims</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0.5</span>), <span class='no'>...</span>)
+
+<span class='fu'>Tplot2</span>(<span class='no'>MSEobj</span>, <span class='kw'>lims</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.2</span>, <span class='fl'>0.2</span>, <span class='fl'>0.8</span>, <span class='fl'>0.8</span>), <span class='no'>...</span>)
+
+<span class='fu'>Tplot3</span>(<span class='no'>MSEobj</span>, <span class='kw'>lims</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.5</span>, <span class='fl'>0.5</span>, <span class='fl'>0.8</span>, <span class='fl'>0.5</span>), <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>MSEobj</th>
-      <td><p>Object of class MSE, output of the runMSE function</p></td>
+      <td><p>An object of class <code>MSE</code></p></td>
     </tr>
     <tr>
-      <th>XAxis</th>
-      <td><p>Character string describing the performance metrics for the
-x-axis (or x-axes if vector; max 4). Must be chosen for list of existing PMs
-and same length as YAxis. See <code>PMs</code></p></td>
+      <th>...</th>
+      <td><p>Names of Performance Metrics (PMs), or other arguments to <code>TradePlot</code>. First PM is recycled if number of PMs is not even</p></td>
     </tr>
     <tr>
-      <th>YAxis</th>
-      <td><p>Character string describing the performance metrics for the
-y-axis (or y-axes if vector; max 4). Must be chosen for list of existing PMs
-and same length as XAxis. See <code>PMs</code></p></td>
+      <th>lims</th>
+      <td><p>A numeric vector of acceptable risk/minimum probability thresholds. Recycled if not equal to number of PMs.</p></td>
     </tr>
     <tr>
-      <th>XThresh</th>
-      <td><p>Minimum threshold values in percent (i.e., 50 = 50%) for the
-x-axes (must be same length as XAxis)</p></td>
+      <th>point.size</th>
+      <td><p>Numeric. Size of the MP points</p></td>
     </tr>
     <tr>
-      <th>YThresh</th>
-      <td><p>Minimum threshold values in percent (i.e., 50 = 50%) for the
-y-axes (must be same length as YAxis)</p></td>
+      <th>lab.size</th>
+      <td><p>Numeric. Size of MP label</p></td>
     </tr>
     <tr>
-      <th>maxVar</th>
-      <td><p>Reference for average annual variability in yield in percent</p></td>
+      <th>axis.title.size</th>
+      <td><p>Numeric. Size of axis titles</p></td>
     </tr>
     <tr>
-      <th>BmsyRef</th>
-      <td><p>Reference level of BMSY, in proportion, i.e., 0.5 = 0.5BMSY</p></td>
+      <th>axis.text.size</th>
+      <td><p>Numeric. Size of axis text</p></td>
     </tr>
     <tr>
-      <th>B0Ref</th>
-      <td><p>Reference level of B0, in proportion, i.e., 0.2 = 0.2B0</p></td>
+      <th>legend.title.size</th>
+      <td><p>Numeric. Size of legend title text</p></td>
     </tr>
     <tr>
-      <th>AvailMPs</th>
-      <td><p>vector of MPs that <em>could</em> be applied to the fishery, i.e.,
-sufficient data exists. These a plotted with different symbol</p></td>
+      <th>position</th>
+      <td><p>Character. Position of legend - 'right' or 'bottom'</p></td>
     </tr>
     <tr>
-      <th>ShowLabs</th>
-      <td><p>Logical to specify if MP labels are shown</p></td>
+      <th>fill</th>
+      <td><p>Character. Color of the fill</p></td>
     </tr>
     <tr>
-      <th>ShowCols</th>
-      <td><p>Logical to specify if background colors are shown</p></td>
+      <th>alpha</th>
+      <td><p>Numeric. Transparency of fill</p></td>
+    </tr>
+    <tr>
+      <th>PMlist</th>
+      <td><p>Optional list of PM names. Overrides any supplied in ... above</p></td>
+    </tr>
+    <tr>
+      <th>Refs</th>
+      <td><p>An optional named list (matching the PM names) with numeric values to override the default <code>Ref</code> values. See examples.</p></td>
+    </tr>
+    <tr>
+      <th>Yrs</th>
+      <td><p>An optional named list (matching the PM names) with numeric values to override the default <code>Yrs</code> values. See examples.</p></td>
     </tr>
     </table>
     
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Returns a list containing the names of performance metrics that meet the
-minimum performance metrics for each trade-off, and ranks the MPs by
-increasing distance from the top-right corner.</p>
+    <p>A summary table of MP performance</p>
+    
+    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
+
+    <ul>
+<li><p><code>Tplot</code>: A trade-off plot showing probabilities that:</p><ul>
+<li><p>overfishing (POF) against long-term yield is &gt; 50% of reference yield (LTY)</p></li>
+<li><p>spawning biomass is below BMSY (P100) against LTY</p></li>
+<li><p>spawning biomass is below 0.5BMSY (P50) against LTY</p></li>
+<li><p>spawning biomass is below 0.1BMSY (P10) against LTY</p></li>
+</ul></li>
+<li><p><code>Tplot2</code>: A trade-off plot showing probabilities that:</p><ul>
+<li><p>short-term yield is &gt; 50<!-- % of reference yield(STY) against long-term yield is &gt; 50\% of reference yield (LTY) --></p></li>
+<li><p>spawning biomass is below 0.1BMSY (P10) against average annual variability in yield is &lt; 20% (AAVY)</p></li>
+</ul></li>
+<li><p><code>Tplot3</code>: A trade-off plot showing probabilities that:</p><ul>
+<li><p>overfishing (POF) against long-term yield is &gt; 50<!-- % of reference yield (LTY) --></p></li>
+<li><p>spawning biomass is below 0.1BMSY (P10) against average annual variability in yield is &lt; 20% (AAVY)</p></li>
+</ul></li>
+</ul>
     
 
   </div>
@@ -175,7 +202,9 @@ increasing distance from the top-right corner.</p>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
-      <li><a href="#details">Details</a></li>
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#functions">Functions</a></li>
           </ul>
 
     <h2>Author</h2>

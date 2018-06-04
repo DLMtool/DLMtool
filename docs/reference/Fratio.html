@@ -31,7 +31,11 @@
 <meta property="og:title" content="An FMSY/M ratio method — Fratio" />
 
 <meta property="og:description" content="Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a
-current estimate of abundance." />
+current estimate of abundance.
+A simple method that tends to outperform many other approaches alarmingly
+often even when current biomass is relatively poorly known. The low stock
+crash potential is largely due to the quite large difference between Fmax
+and FMSY for most stocks." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -98,6 +102,10 @@ current estimate of abundance." />
     
     <p>Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a
 current estimate of abundance.</p>
+<p>A simple method that tends to outperform many other approaches alarmingly
+often even when current biomass is relatively poorly known. The low stock
+crash potential is largely due to the quite large difference between Fmax
+and FMSY for most stocks.</p>
     
     </div>
 
@@ -109,7 +117,7 @@ current estimate of abundance.</p>
 
 <span class='fu'>Fratio_CC</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>Fmin</span> <span class='kw'>=</span> <span class='fl'>0.005</span>)
 
-<span class='fu'>Fratio_ML</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+<span class='fu'>Fratio_ML</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -140,13 +148,18 @@ current estimate of abundance.</p>
 
     <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the <code>TAC</code> slot populated with a numeric vector of length <code>reps</code></p>
     
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The TAC is calculated as:
+$$\textrm{TAC} = F_{\textrm{MSY}} A$$
+where \(F_{\textrm{MSY}}\) is calculated as \(\frac{F_\textrm{MSY}}{M} M\) and
+<em>A</em> is estimate of current abundance.</p>
+<p>The MP variants differ in the assumption of current abundance (see Functions section below)</p>
+    
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     <ul>
-<li><p><code>Fratio</code>: A simple method that tends to outperform many other approaches alarmingly
-often even when current biomass is relatively poorly known. The low stock
-crash potential is largely due to the quite large difference between Fmax
-and FMSY for most stocks.</p></li>
+<li><p><code>Fratio</code>: Requires an estimate of current abundance (i.e <code>Data@Abun</code>)</p></li>
 <li><p><code>Fratio4010</code>: Paired with the 40-10 rule that throttles back the OFL to zero at 10 percent of unfished biomass. Requires an estimate of current depletion.</p></li>
 <li><p><code>DepF</code>: Depletion Corrected Fratio: the Fratio MP with a harvest control
 rule that reduces F according to the production curve given an estimate of current
@@ -197,6 +210,8 @@ and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
 
       <li><a href="#functions">Functions</a></li>
 

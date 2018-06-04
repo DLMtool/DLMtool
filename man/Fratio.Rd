@@ -35,13 +35,23 @@ An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot popula
 \description{
 Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a
 current estimate of abundance.
-}
-\section{Functions}{
-\itemize{
-\item \code{Fratio}: A simple method that tends to outperform many other approaches alarmingly
+
+A simple method that tends to outperform many other approaches alarmingly
 often even when current biomass is relatively poorly known. The low stock
 crash potential is largely due to the quite large difference between Fmax
 and FMSY for most stocks.
+}
+\details{
+The TAC is calculated as:
+\deqn{\textrm{TAC} = F_{\textrm{MSY}} A}
+where \eqn{F_{\textrm{MSY}}} is calculated as \eqn{\frac{F_\textrm{MSY}}{M} M} and
+\emph{A} is estimate of current abundance.
+
+The MP variants differ in the assumption of current abundance (see Functions section below)
+}
+\section{Functions}{
+\itemize{
+\item \code{Fratio}: Requires an estimate of current abundance (i.e \code{Data@Abun})
 
 \item \code{Fratio4010}: Paired with the 40-10 rule that throttles back the OFL to zero at 10 percent of unfished biomass. Requires an estimate of current depletion.
 

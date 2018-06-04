@@ -4,16 +4,21 @@
 \alias{GB_target}
 \title{Geromont and Butterworth target CPUE and catch MP}
 \usage{
-GB_target(x, Data, reps = 100, w = 0.5)
+GB_target(x, Data, reps = 100, plot = FALSE, w = 0.5)
 }
 \arguments{
-\item{x}{A position in data-limited methods data object}
+\item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of quota samples}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{w}{A gain parameter}
+}
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
 An MP similar to SBT2 that modifies a time-series of catch recommendations
@@ -21,14 +26,54 @@ and aims for target catch rate and catch level based on BMSY/B0 and MSY,
 respectively.
 }
 \details{
-Note that this is my interpretation of their MP and is now stochastic.
-Currently it is generalized and is not 'tuned' to more detailed assessment
-data which might explain why in some cases it leads to stock declines.
+The TAC is calculated as:
+If  \eqn{I_\textrm{recent} \geq I_0}:
+\deqn{\textrm{TAC}= C_\textrm{ref}  \left(w + (1-w)\frac{I_\textrm{rec}-I_0}{I_\textrm{target}-I_0} \right) }
+
+else:
+\deqn{\textrm{TAC}= wC_\textrm{ref}  \frac{I_\textrm{rec}}{I_0}^2}
+
+where \eqn{C_\textrm{ref}} is a reference catch assumed to be a proxy for MSY (\code{Data@Cref}),
+\emph{w} is a gain parameter,
+\eqn{I_\textrm{rec}} is the average index over the last 4 years,
+\eqn{I_\textrm{target}} is the target Index (\code{Data@Iref}), and
+\eqn{I_0} is 0.2 x the average index ver the past 5 years.
+
+In the MSE \eqn{C_\textrm{ref}} is the calculated MSY subject to observation error
+defined in \code{Obs@CV_Cref}, and \eqn{I_\textrm{target}} is assumed to be the index at MSY subject
+to observation error (\code{Obs@CV_Iref}). Consequently, the performance of this method in the MSE
+is strongly determined by the specified uncertainty for these parameters.
+
+The TAC is subject to the following conditions:
+\enumerate{
+\item if next TAC > 1.2 last catch, then TAC = 1.2 last catch
+\item if next TAC < 0.8 last catch, then TAC = 0.8 last catch
+}
+}
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{GB_target}: Cat, Cref, Ind, Iref
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/GB_target.html}{Online Documentation} for correctly rendered equations
+}
+
+\examples{
+ GB_target(1, DLMtool::SimulatedData, plot=TRUE)
 }
 \references{
 Geromont, H.F. and Butterworth, D.S. 2014. Complex assessment or
 simple management procedures for efficient fisheries management: a
 comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017
+}
+\seealso{
+Other Index methods: \code{\link{GB_slope}},
+  \code{\link{Gcontrol}}, \code{\link{ItargetE1}}
 }
 \author{
 T. Carruthers

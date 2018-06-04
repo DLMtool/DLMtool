@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Trade-off plots for an MSE object — Tplot • DLMtool Documentation</title>
+<title>Trade-off plots for an MSE object — Tplot_old • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,7 +28,7 @@
 
 
 
-<meta property="og:title" content="Trade-off plots for an MSE object — Tplot" />
+<meta property="og:title" content="Trade-off plots for an MSE object — Tplot_old" />
 
 <meta property="og:description" content="Three figures showing trade-offs between fishing mortality, biomass, and yield." />
 
@@ -99,11 +99,11 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>Tplot</span>(<span class='no'>MSEobj</span>, <span class='kw'>nam</span> <span class='kw'>=</span> <span class='fl'>NA</span>)
+    <pre class="usage"><span class='fu'>Tplot_old</span>(<span class='no'>MSEobj</span>, <span class='kw'>nam</span> <span class='kw'>=</span> <span class='fl'>NA</span>)
 
-<span class='fu'>Tplot2</span>(<span class='no'>MSEobj</span>, <span class='kw'>nam</span> <span class='kw'>=</span> <span class='fl'>NA</span>)
+<span class='fu'>Tplot2_old</span>(<span class='no'>MSEobj</span>, <span class='kw'>nam</span> <span class='kw'>=</span> <span class='fl'>NA</span>)
 
-<span class='fu'>Tplot3</span>(<span class='no'>MSEobj</span>, <span class='no'>...</span>, <span class='kw'>lims</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.2</span>, <span class='fl'>0.2</span>, <span class='fl'>0.8</span>, <span class='fl'>0.8</span>))</pre>
+<span class='fu'>Tplot3_old</span>(<span class='no'>MSEobj</span>, <span class='no'>...</span>, <span class='kw'>lims</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.2</span>, <span class='fl'>0.2</span>, <span class='fl'>0.8</span>, <span class='fl'>0.8</span>))</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -129,16 +129,16 @@
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     <ul>
-<li><p><code>Tplot</code>: Used in the plot method for MSE objects that shows trade-off between
+<li><p><code>Tplot_old</code>: Used in the plot method for MSE objects that shows trade-off between
 yield versus probability of overfishing and biomass levels (relative to BMSY).</p></li>
-<li><p><code>Tplot2</code>: Simpler plot that compares long-term yield (LTY:
+<li><p><code>Tplot2_old</code>: Simpler plot that compares long-term yield (LTY:
 fraction of simulations getting over half FMSY yield in the last ten years
 of the projection), short-term yield (STY: fraction of simulations getting
 over half FMSY yield in the first ten years of the projection), variability
 in yield (VY: fraction of simulations where average annual variability in
 yield is less than 10 per cent) and biomass level (B10: the fraction of
 simulations in which biomass stays above 10 percent of BMSY).</p></li>
-<li><p><code>Tplot3</code>: By default, trade-off plots among LTY, STY, and biomass level B50
+<li><p><code>Tplot3_old</code>: By default, trade-off plots among LTY, STY, and biomass level B50
 (fraction of simulations in which biomass stays above 50 percent of BMSY), and
 Average Annual Variability in Yield (AAVY).</p></li>
 </ul>
@@ -150,9 +150,9 @@ Average Annual Variability in Yield (AAVY).</p></li>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
- <span class='fu'>Tplot</span>(<span class='no'>myMSE</span>)
- <span class='fu'>Tplot2</span>(<span class='no'>myMSE</span>)
- <span class='fu'>Tplot3</span>(<span class='no'>myMSE</span>)
+ <span class='fu'><a href='TradePlot.html'>Tplot</a></span>(<span class='no'>myMSE</span>)
+ <span class='fu'><a href='TradePlot.html'>Tplot2</a></span>(<span class='no'>myMSE</span>)
+ <span class='fu'><a href='TradePlot.html'>Tplot3</a></span>(<span class='no'>myMSE</span>)
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

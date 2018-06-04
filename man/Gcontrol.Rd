@@ -31,6 +31,10 @@ recommendations
 Carruthers et al. 2015. Performance evaluation of simple
 management procedures. ICES J. Mar Sci. 73, 464-482.
 }
+\seealso{
+Other Index methods: \code{\link{GB_slope}},
+  \code{\link{GB_target}}, \code{\link{ItargetE1}}
+}
 \author{
 C. Walters and T. Carruthers
 }

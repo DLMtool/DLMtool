@@ -139,16 +139,20 @@ analysis</p></td>
 
     <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the <code>TAC</code> slot populated with a numeric vector of length <code>reps</code></p>
     
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The TAC is calculated as:
+$$\textrm{TAC} = F_{\textrm{MSY}} A$$
+where <em>A</em> is an estimate of current abundance, and \(F_{\textrm{MSY}}\) is estimated
+as \(r/2\), where \(r\) is the intrinsic rate of population growth, estimated
+from the life-history parameters using the methods of McAllister et al. (2001).</p>
+    
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     <ul>
-<li><p><code>Fdem</code>: This uses Murdoch McAllister's demographic r
-method to derive FMSY (r/2) and then makes the quota r*current biomass / 2.
-Easy.</p></li>
-<li><p><code>Fdem_CC</code>: FMSY is calculated as r/2 from a demographic r prior method, current
-abundance is estimated from catch curve analysis.</p></li>
-<li><p><code>Fdem_ML</code>: Demographic F (r/2) method using the mean length estimator to calculate
-current abundance.</p></li>
+<li><p><code>Fdem</code>: Current abundance is assumed to be known (i.e <code>Data@Abun</code>)</p></li>
+<li><p><code>Fdem_CC</code>: Current abundance is estimated from catch curve analysis</p></li>
+<li><p><code>Fdem_ML</code>: Current abundance is estimated from mean length</p></li>
 </ul>
     
     <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
@@ -172,10 +176,10 @@ J. Fish. Aquat. Sci. 58: 1871-1890.</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>Fdem</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; TAC (median) 
-#&gt;      4.83554 </div><div class='input'><span class='fu'>Fdem_CC</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; TAC (median) 
-#&gt;     6849.525 </div><div class='input'><span class='fu'>Fdem_ML</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='output co'>#&gt; TAC (median) 
-#&gt;     4849.848 </div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>Fdem</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Fdem-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     1890.251 </div><div class='input'><span class='fu'>Fdem_CC</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Fdem-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     7771.329 </div><div class='input'><span class='fu'>Fdem_ML</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Fdem-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     5140.908 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -183,6 +187,8 @@ J. Fish. Aquat. Sci. 58: 1871-1890.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
 
       <li><a href="#functions">Functions</a></li>
 

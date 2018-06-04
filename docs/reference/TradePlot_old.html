@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot the median biomass and yield relative to last historical year — Cplot • DLMtool Documentation</title>
+<title>Generic Trade-off Plot — TradePlot_old • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,10 +28,10 @@
 
 
 
-<meta property="og:title" content="Plot the median biomass and yield relative to last historical year — Cplot" />
+<meta property="og:title" content="Generic Trade-off Plot — TradePlot_old" />
 
-<meta property="og:description" content="Compare median biomass and yield in first year and last 5 years of
-projection" />
+<meta property="og:description" content="Creates a trade-off plot (up to four panels) of built-in performance
+metrics." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -89,72 +89,98 @@ projection" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plot the median biomass and yield relative to last historical year</h1>
+    <h1>Generic Trade-off Plot</h1>
     
-    <div class="hidden name"><code>Cplot.Rd</code></div>
+    <div class="hidden name"><code>TradePlot_old.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Compare median biomass and yield in first year and last 5 years of
-projection</p>
+    <p>Creates a trade-off plot (up to four panels) of built-in performance
+metrics.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>Cplot</span>(<span class='no'>MSEobj</span>, <span class='kw'>MPs</span> <span class='kw'>=</span> <span class='fl'>NA</span>, <span class='kw'>lastYrs</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>point.size</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>lab.size</span> <span class='kw'>=</span> <span class='fl'>4</span>,
-  <span class='kw'>axis.title.size</span> <span class='kw'>=</span> <span class='fl'>12</span>, <span class='kw'>axis.text.size</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='kw'>legend.title.size</span> <span class='kw'>=</span> <span class='fl'>12</span>)</pre>
+    <pre class="usage"><span class='fu'>TradePlot_old</span>(<span class='no'>MSEobj</span>, <span class='kw'>XAxis</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"Overfishing"</span>, <span class='st'>"Biomass:BMSY"</span>),
+  <span class='kw'>YAxis</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"Long-term Yield"</span>, <span class='st'>"AnnualVar"</span>), <span class='kw'>XThresh</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>30</span>, <span class='fl'>80</span>),
+  <span class='kw'>YThresh</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0</span>, <span class='fl'>50</span>), <span class='kw'>maxVar</span> <span class='kw'>=</span> <span class='fl'>15</span>, <span class='kw'>BmsyRef</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>B0Ref</span> <span class='kw'>=</span> <span class='fl'>0.2</span>,
+  <span class='kw'>AvailMPs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>ShowLabs</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>ShowCols</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>MSEobj</th>
-      <td><p>An object of class MSE</p></td>
+      <td><p>Object of class MSE, output of the runMSE function</p></td>
     </tr>
     <tr>
-      <th>MPs</th>
-      <td><p>Optional vector of MPs to plot</p></td>
+      <th>XAxis</th>
+      <td><p>Character string describing the performance metrics for the
+x-axis (or x-axes if vector; max 4). Must be chosen for list of existing PMs
+and same length as YAxis. See <code>PMs</code></p></td>
     </tr>
     <tr>
-      <th>lastYrs</th>
-      <td><p>Numeric. Last number of years to summarize results.</p></td>
+      <th>YAxis</th>
+      <td><p>Character string describing the performance metrics for the
+y-axis (or y-axes if vector; max 4). Must be chosen for list of existing PMs
+and same length as XAxis. See <code>PMs</code></p></td>
     </tr>
     <tr>
-      <th>point.size</th>
-      <td><p>Size of the points</p></td>
+      <th>XThresh</th>
+      <td><p>Minimum threshold values in percent (i.e., 50 = 50%) for the
+x-axes (must be same length as XAxis)</p></td>
     </tr>
     <tr>
-      <th>lab.size</th>
-      <td><p>Size of labels</p></td>
+      <th>YThresh</th>
+      <td><p>Minimum threshold values in percent (i.e., 50 = 50%) for the
+y-axes (must be same length as YAxis)</p></td>
     </tr>
     <tr>
-      <th>axis.title.size</th>
-      <td><p>Axis title size</p></td>
+      <th>maxVar</th>
+      <td><p>Reference for average annual variability in yield in percent</p></td>
     </tr>
     <tr>
-      <th>axis.text.size</th>
-      <td><p>Axis text size</p></td>
+      <th>BmsyRef</th>
+      <td><p>Reference level of BMSY, in proportion, i.e., 0.5 = 0.5BMSY</p></td>
     </tr>
     <tr>
-      <th>legend.title.size</th>
-      <td><p>Legend title size</p></td>
+      <th>B0Ref</th>
+      <td><p>Reference level of B0, in proportion, i.e., 0.2 = 0.2B0</p></td>
+    </tr>
+    <tr>
+      <th>AvailMPs</th>
+      <td><p>vector of MPs that <em>could</em> be applied to the fishery, i.e.,
+sufficient data exists. These a plotted with different symbol</p></td>
+    </tr>
+    <tr>
+      <th>ShowLabs</th>
+      <td><p>Logical to specify if MP labels are shown</p></td>
+    </tr>
+    <tr>
+      <th>ShowCols</th>
+      <td><p>Logical to specify if background colors are shown</p></td>
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='no'>MSE</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='runMSE.html'>runMSE</a></span>()
-<span class='fu'>Cplot</span>(<span class='no'>MSE</span>)
-<span class='co'># }</span></pre>
+    <p>Returns a list containing the names of performance metrics that meet the
+minimum performance metrics for each trade-off, and ranks the MPs by
+increasing distance from the top-right corner.</p>
+    
+
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-            
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+      
+      <li><a href="#details">Details</a></li>
+          </ul>
+
+    <h2>Author</h2>
+    
+A. Hordyk
 
   </div>
 </div>

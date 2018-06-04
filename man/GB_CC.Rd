@@ -19,13 +19,25 @@ GB_CC(x, Data, reps = 100, plot = FALSE)
 An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
-A simple MP that aims for average historical catches (as a proxy for MSY)
+A simple MP that aims for a reference catch (as a proxy for MSY)
 subject to imperfect information.
 }
 \details{
 Note that this is my interpretation of their MP and is now stochastic.
 Currently it is generalized and is not 'tuned' to more detailed assessment
 data which might explain why in some cases it leads to stock declines.
+
+The TAC is calculated as:
+\deqn{\textrm{TAC} = C_\textrm{ref}}
+where \eqn{C_\textrm{ref}} is a reference catch assumed to be a proxy for MSY.
+In the MSE \eqn{C_\textrm{ref}} is the calculated MSY subject to observation error
+defined in \code{Obs@CV_Cref}.
+
+The TAC is subject to the following conditions:
+\enumerate{
+\item if next TAC > 1.2 last catch, then TAC = 1.2 last catch
+\item if next TAC < 0.8 last catch, then TAC = 0.8 last catch
+}
 }
 \section{Required Data}{
 
@@ -46,8 +58,7 @@ simple management procedures for efficient fisheries management: a
 comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017
 }
 \seealso{
-Other Average Catch MPs: \code{\link{AvC}},
-  \code{\link{DCACs}}
+Other Constant Catch MPs: \code{\link{CC1}}
 }
 \author{
 T. Carruthers

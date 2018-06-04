@@ -105,15 +105,16 @@
 
 <span class='fu'>P100</span>(<span class='kw'>MSEobj</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Ref</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>Yrs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
-<span class='fu'>POF</span>(<span class='kw'>MSEobj</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Ref</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+<span class='fu'>POF</span>(<span class='kw'>MSEobj</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Ref</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>Yrs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
-<span class='fu'>LTY</span>(<span class='kw'>MSEobj</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Ref</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)
+<span class='fu'>LTY</span>(<span class='kw'>MSEobj</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Ref</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>Yrs</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fu'>max</span>(<span class='no'>MSEobj</span>@<span class='kw'>proyears</span> - <span class='fl'>9</span>, <span class='fl'>1</span>),
+  <span class='no'>MSEobj</span>@<span class='kw'>proyears</span>))
 
-<span class='fu'>STY</span>(<span class='kw'>MSEobj</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Ref</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)
+<span class='fu'>STY</span>(<span class='kw'>MSEobj</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Ref</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>Yrs</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>1</span>, <span class='fl'>10</span>))
 
-<span class='fu'>AAVY</span>(<span class='kw'>MSEobj</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Ref</span> <span class='kw'>=</span> <span class='fl'>0.2</span>)
+<span class='fu'>Yield</span>(<span class='kw'>MSEobj</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Ref</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>Years</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
-<span class='fu'>Yield</span>(<span class='kw'>MSEobj</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Ref</span> <span class='kw'>=</span> <span class='fl'>1</span>)</pre>
+<span class='fu'>AAVY</span>(<span class='kw'>MSEobj</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Ref</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>Yrs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -125,6 +126,11 @@
     <tr>
       <th>Ref</th>
       <td><p>Reference point for calculating the performance metric. See details.</p></td>
+    </tr>
+    <tr>
+      <th>Yrs</th>
+      <td><p>Numeric vector of length 2 with year indices to summarize performance.
+If NULL, the performance is summarized over all projection years.</p></td>
     </tr>
     </table>
     
