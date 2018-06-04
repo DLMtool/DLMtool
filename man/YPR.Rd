@@ -10,7 +10,7 @@ YPR(x, Data, reps = 100, plot = FALSE)
 
 YPR_CC(x, Data, reps = 100, plot = FALSE, Fmin = 0.005)
 
-YPR_ML(x, Data, reps = 100)
+YPR_ML(x, Data, reps = 100, plot = FALSE)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -30,6 +30,18 @@ An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot popula
 \description{
 A simple yield per recruit approximation to FMSY (F01) which is the position
 of the ascending YPR curve for which dYPR/dF = 0.1(dYPR/d0)
+}
+\details{
+The TAC is calculated as:
+\deqn{\textrm{TAC} = F_{0.1} A}
+where \eqn{F_{0.1}} is the fishing mortality (\emph{F}) where the slope of the yield-per-recruit
+(YPR) curve is 10% of the slope at the origin, and \emph{A} is an estimate of current abundance.
+
+The YPR curve is calculated using an equilibrium age-structured model with life-history and
+selectivity parameters sampled from the \code{Data} object.
+
+The variants of the YPR MP differ in the method to estimate current abundance (see Functions section below).
+#'
 }
 \section{Functions}{
 \itemize{
@@ -69,7 +81,7 @@ See \href{https://dlmtool.github.io/DLMtool/reference/YPR.html}{Online Documenta
 }
 
 \examples{
-YPR(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+YPR(1, DLMtool::SimulatedData, plot=TRUE)
 YPR_CC(1, DLMtool::SimulatedData, plot=TRUE)
 YPR_ML(1, DLMtool::SimulatedData, plot=TRUE) 
 }

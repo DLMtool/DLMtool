@@ -37,6 +37,8 @@ Internal function for YPR MPs
 }
 \section{Functions}{
 \itemize{
+\item \code{YPR_}: Internal function for YPR MPs
+
 \item \code{YPRopt}: YPR calculation function
 }}
 

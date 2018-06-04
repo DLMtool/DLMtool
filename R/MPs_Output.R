@@ -199,7 +199,7 @@ BK_ML <- function(x, Data, reps = 100, plot=FALSE) {
   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
   if (all(is.na(Z))) {
     Rec <- new("Rec")
-    Rec@TAC <- TACfilter(rep(NA, reps))
+    Rec@TAC <- rep(as.numeric(NA), reps)
     return(Rec)
   } 
   FM <- Z - Mdb
@@ -255,7 +255,7 @@ class(BK_ML) <- "MP"
 #' @templateVar mp CC1
 #' @template MPuses
 #' @export
-#' 
+#' @family Constant Catch MPs
 #' @author T. Carruthers
 #' @references Geromont, H. F., and D. S. Butterworth. 2015. 
 #' Generic Management Procedures for Data-Poor Fisheries: Forecasting with Few Data.
@@ -335,12 +335,22 @@ class(CC5) <- "MP"
 
 #' Geromont and Butterworth Constant Catch Harvest Control Rule
 #' 
-#' A simple MP that aims for average historical catches (as a proxy for MSY)
+#' A simple MP that aims for a reference catch (as a proxy for MSY)
 #' subject to imperfect information.
 #' 
 #' Note that this is my interpretation of their MP and is now stochastic.
 #' Currently it is generalized and is not 'tuned' to more detailed assessment
 #' data which might explain why in some cases it leads to stock declines.
+#' 
+#' The TAC is calculated as:
+#' \deqn{\textrm{TAC} = C_\textrm{ref}} 
+#' where \eqn{C_\textrm{ref}} is a reference catch assumed to be a proxy for MSY. 
+#' In the MSE \eqn{C_\textrm{ref}} is the calculated MSY subject to observation error
+#' defined in `Obs@CV_Cref`. 
+#' 
+#' The TAC is subject to the following conditions:
+#' 1. if next TAC > 1.2 last catch, then TAC = 1.2 last catch
+#' 2. if next TAC < 0.8 last catch, then TAC = 0.8 last catch
 #' 
 #' @template MPtemplate
 #' @templateVar mp GB_CC
@@ -351,20 +361,23 @@ class(CC5) <- "MP"
 #' simple management procedures for efficient fisheries management: a
 #' comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017
 #' @export
-#' @family Average Catch MPs
+#' @family Constant Catch MPs
 GB_CC <- function(x, Data, reps = 100, plot=FALSE) {
   dependencies = "Data@Cref,Data@Cat"
   Catrec <- Data@Cat[x, length(Data@Cat[x, ])]
   TAC <- trlnorm(reps, Data@Cref[x], Data@CV_Cref)
   TAC[TAC > (1.2 * Catrec)] <- 1.2 * Catrec
   TAC[TAC < (0.8 * Catrec)] <- 0.8 * Catrec
+  TAC <- TACfilter(TAC)
+  
+  if (plot) GB_CC_plot(x, Catrec, TAC, Data)
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(GB_CC) <- "MP"
 
-## TO DO  - add plot and equations for GB_CC ####
+
 
 #### Age-Comp SRA ####
 
@@ -496,7 +509,7 @@ CompSRA4010 <- function(x, Data, reps = 100, plot=FALSE) {
   
   runCompSRA <- CompSRA_(x, Data, reps)
   
-  TAC <- runCompSRA$TAC
+  TAC <- TACfilter(runCompSRA$TAC)
   Bt_K <- runCompSRA$Bt_K
 
   # 40-10 rule
@@ -508,7 +521,7 @@ CompSRA4010 <- function(x, Data, reps = 100, plot=FALSE) {
   if (plot) CompSRA_plot(runCompSRA, TAC)
   
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
   
 }
@@ -724,7 +737,7 @@ DCAC_ML <- function(x, Data, reps = 100, plot=FALSE) {
   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps, MLtype = "dep")
   if (all(is.na(Z))) {
     Rec <- new("Rec")
-    Rec@TAC <- TACfilter(rep(NA, reps))
+    Rec@TAC <- rep(as.numeric(NA), reps)
     return(Rec)
   }
   FM <- Z - Mdb
@@ -894,11 +907,19 @@ DBSRA_ <- function(x, Data, reps = 100, depo=NULL, hcr=NULL) {
   Bt_Kstore <- FMSY_Mstore <- BMSY_K_Mstore <- rep(NA, reps)
   DBSRAcount <- 1
   if (is.null(depo)) {
-    if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) return(new("Rec"))
+    if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) {
+       out <- new("Rec")
+       out@TAC <- rep(as.numeric(NA), reps)
+       return(out)
+     }  
   } else {
     Data@CV_Dep[x] <- tiny
   }
-  if (is.na(Data@BMSY_B0[x]))return(new("Rec"))
+  if (is.na(Data@BMSY_B0[x])){
+    out <- new("Rec")
+    out@TAC <- rep(as.numeric(NA), reps)
+    return(out)
+  } 
     
   while (DBSRAcount < (reps + 1)) {
     if (is.null(depo)) depo <- max(0.01, min(0.99, Data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
@@ -1504,6 +1525,7 @@ DynF <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 10, gg = 2) {
 class(DynF) <- "MP"
 
 
+### ADD EQUATION ####
 
 #' An adaptive MP that uses trajectory in inferred suplus production and
 #' fishing mortality rate to update a TAC
@@ -1698,14 +1720,17 @@ Fdem_ <- function(x, Data, reps, Ac=NULL) {
 }
 
 
-## ADD description and equations and plot ####
-
 #' Demographic FMSY method
 #' 
 #' FMSY is calculated as r/2 where r is calculated from a demographic approach
 #' (inc steepness). Coupled with an estimate of current abundance that gives
 #' you the OFL.
 #' 
+#' The TAC is calculated as:
+#' \deqn{\textrm{TAC} = F_{\textrm{MSY}} A} 
+#' where *A* is an estimate of current abundance, and \eqn{F_{\textrm{MSY}}} is estimated 
+#' as \eqn{r/2}, where \eqn{r} is the intrinsic rate of population growth, estimated 
+#' from the life-history parameters using the methods of McAllister et al. (2001).
 #' 
 #' @templateVar mp Fdem
 #' @template MPtemplate
@@ -1716,17 +1741,15 @@ Fdem_ <- function(x, Data, reps, Ac=NULL) {
 #' demographic methods to construct Bayesian priors for the intrinsic rate of
 #' increase in the Schaefer model and implications for stock rebuilding. Can.
 #' J. Fish. Aquat. Sci. 58: 1871-1890.
-#' @describeIn Fdem This uses Murdoch McAllister's demographic r
-#' method to derive FMSY (r/2) and then makes the quota r*current biomass / 2.
-#' Easy.
+#' @describeIn Fdem Current abundance is assumed to be known (i.e `Data@Abun`)
 #' @examples 
-#' Fdem(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+#' Fdem(1, DLMtool::SimulatedData, plot=TRUE)
 #' @export 
 Fdem <- function(x, Data, reps = 100, plot=FALSE) {
   runFdem <- Fdem_(x, Data, reps)
   TAC <- TACfilter(runFdem$TAC)
   
-  if (plot) Fdem_plot()
+  if (plot) Fdem_plot(runFdem, Data)
   
   Rec <- new("Rec")
   Rec@TAC <- TAC
@@ -1734,10 +1757,8 @@ Fdem <- function(x, Data, reps = 100, plot=FALSE) {
 }
 class(Fdem) <- "MP"
 
-## TO DO - add plot ####
-Fdem_plot <- function() {
-  
-}
+
+
 
 #' @templateVar mp Fdem_CC
 #' @template MPuses
@@ -1745,8 +1766,7 @@ Fdem_plot <- function() {
 #' @param Fmin The minimum fishing mortality rate derived from the catch-curve
 #' analysis
 #' 
-#' @describeIn Fdem FMSY is calculated as r/2 from a demographic r prior method, current
-#' abundance is estimated from catch curve analysis.
+#' @describeIn Fdem Current abundance is estimated from catch curve analysis
 #' @examples 
 #' Fdem_CC(1, DLMtool::SimulatedData, plot=TRUE)
 #' @export 
@@ -1770,7 +1790,7 @@ Fdem_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
   runFdem <- Fdem_(x, Data, reps, Ac=Ac)
   TAC <- TACfilter(runFdem$TAC)
   
-  if (plot) Fdem_plot()
+  if (plot) Fdem_plot(runFdem, Data)
   
   Rec <- new("Rec")
   Rec@TAC <- TAC
@@ -1778,8 +1798,7 @@ Fdem_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
 }
 class(Fdem_CC) <- "MP"
 
-#' @describeIn Fdem Demographic F (r/2) method using the mean length estimator to calculate
-#' current abundance.
+#' @describeIn Fdem Current abundance is estimated from mean length 
 #' @examples 
 #' Fdem_ML(1, DLMtool::SimulatedData, plot=TRUE)
 #' @export 
@@ -1793,7 +1812,7 @@ Fdem_ML <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
   
   if (all(is.na(Z))) {
     Rec <- new("Rec")
-    Rec@TAC <- TACfilter(rep(NA, reps))
+    Rec@TAC <- rep(as.numeric(NA), reps)
     return(Rec)
   } 
   
@@ -1811,7 +1830,7 @@ Fdem_ML <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
   runFdem <- Fdem_(x, Data, reps, Ac=Ac)
   TAC <- TACfilter(runFdem$TAC)
   
-  if (plot) Fdem_plot()
+  if (plot) Fdem_plot(runFdem, Data)
   
   Rec <- new("Rec")
   Rec@TAC <- TAC
@@ -1821,13 +1840,45 @@ class(Fdem_ML) <- "MP"
 
 
 
-## ADD description and equations ####
+##### Fratio methods ####
+#' Fratio internal function 
+#'
+#' @param x Iteration number
+#' @param Data Object of class Data
+#' @param reps Number of reps
+#' @param Abun Optional estimate of abundance
+#' 
+#' @export
+#'
+#' @keywords internal 
+Fratio_ <- function(x, Data, reps=100, Abun=NULL) {
+  Frat <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x]) * trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x]) # estimate of Fmsy
+  if (is.null(Abun)) Abun <- trlnorm(reps, Data@Abun[x], Data@CV_Abun[x])
+  
+  TAC <- Frat * Abun 
+  
+  return(list(TAC=TAC, Abun=Abun, Frat=Frat))
+  
+}
+
 
 #' An FMSY/M ratio method
 #' 
 #' Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a
 #' current estimate of abundance.
 #'  
+#' A simple method that tends to outperform many other approaches alarmingly
+#' often even when current biomass is relatively poorly known. The low stock
+#' crash potential is largely due to the quite large difference between Fmax
+#' and FMSY for most stocks.
+#' 
+#' The TAC is calculated as:
+#' \deqn{\textrm{TAC} = F_{\textrm{MSY}} A}
+#' where \eqn{F_{\textrm{MSY}}} is calculated as \eqn{\frac{F_\textrm{MSY}}{M} M} and
+#' *A* is estimate of current abundance. 
+#' 
+#' The MP variants differ in the assumption of current abundance (see Functions section below) 
+#' 
 #' @templateVar mp Fratio
 #' @template MPtemplate
 #' @template MPuses
@@ -1839,10 +1890,7 @@ class(Fdem_ML) <- "MP"
 #' Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
 #' and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.
 #' 
-#' @describeIn Fratio A simple method that tends to outperform many other approaches alarmingly
-#' often even when current biomass is relatively poorly known. The low stock
-#' crash potential is largely due to the quite large difference between Fmax
-#' and FMSY for most stocks.
+#' @describeIn Fratio Requires an estimate of current abundance (i.e `Data@Abun`)
 #' @family Fmsy/M methods
 #' @examples 
 #' Fratio(1, DLMtool::Atlantic_mackerel, plot=TRUE)
@@ -1872,9 +1920,12 @@ Fratio4010 <- function(x, Data, reps = 100, plot=FALSE) {
   TAC <- TACfilter(runFrat$TAC)
 
   # 40-10 rule
-  # if (is.na(Data@Dt[x]) || is.na(Data@CV_Dt[x])) return(new("Rec"))
   # Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
-  if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) return(new("Rec"))
+  if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) {
+    out <- new("Rec")
+    out@TAC <- rep(as.numeric(NA), reps)
+    return(out)
+  } 
   depo <- max(0.01, min(0.99, Data@Dep[x]))  
   Bt_K <- rbeta(reps * 100, alphaconv(depo, min(depo * Data@CV_Dep[x], 
                                                 (1 - depo) * Data@CV_Dep[x])), 
@@ -1907,7 +1958,12 @@ DepF <- function(x, Data, reps = 100, plot=FALSE) {
   runFrat <- Fratio_(x, Data, reps)
   TAC <- TACfilter(runFrat$TAC)
   
-  if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) return(new("Rec"))
+  if (is.na(Data@Dep[x]) | is.na(Data@CV_Dep[x])) {
+    out <- new("Rec")
+    out@TAC <- rep(as.numeric(NA), reps)
+    return(out)
+  } 
+  
   depo <- max(0.01, min(0.99, Data@Dep[x]))  
   Bt_K <- rbeta(reps * 100, alphaconv(depo, min(depo * Data@CV_Dep[x], 
                                                 (1 - depo) * Data@CV_Dep[x])), 
@@ -1983,7 +2039,11 @@ Fratio_ML <- function(x, Data, reps = 100, plot=FALSE) {
   Linfc <- trlnorm(reps * 10, Data@vbLinf[x], Data@CV_vbLinf[x])
   Kc <- trlnorm(reps * 10, Data@vbK[x], Data@CV_vbK[x])
   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
-  if (all(is.na(Z))) return(new("Rec"))
+  if (all(is.na(Z))) {
+    out <- new("Rec")
+    out@TAC <- rep(as.numeric(NA), reps)
+    return(out)
+  } 
   
   FM <- Z - Mdb
   ind <- which(FM>0)[1:reps]
@@ -2003,59 +2063,31 @@ class(Fratio_ML) <- "MP"
 
 
 
-
-### TO DO - add Fratio plot ####
-Fratio_plot <- function(x, Data, TAc, runFrat) {
-  boxplot(runFrat)
-  
-}
-
-
-#' Fratio internal function 
-#'
-#' @param x Iteration number
-#' @param Data Object of class Data
-#' @param reps Number of reps
-#' @param Abun Optional estimate of abundance
-#' 
-#' @export
-#'
-#' @keywords internal 
-Fratio_ <- function(x, Data, reps=100, Abun=NULL) {
-  Frat <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x]) * trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x]) # estimate of Fmsy
-  if (is.null(Abun)) Abun <- trlnorm(reps, Data@Abun[x], Data@CV_Abun[x])
-  
-  TAC <- Frat * Abun 
-  
-  return(list(TAC=TAC, Abun=Abun, Frat=Frat))
-  
-}
-
-
-
-
-
-
-
-
-
-
-
-
+### Geromont and Butterworth index slope Harvest Control Rule ####
 
 #' Geromont and Butterworth index slope Harvest Control Rule
 #' 
 #' An MP similar to SBT1 that modifies a time-series of catch recommendations
 #' and aims for a stable catch rates.
 #' 
+#' The TAC is calculated as:
+#' \deqn{\textrm{TAC}_y= C_{y-1} \left(1+\lambda I\right)}
+#' where \eqn{C_{y-1}} is catch from the previous year, \eqn{\lambda} is a gain parameter, and \eqn{I} is
+#' the slope of the linear regression of log Index (`Data@Ind`) over the last
+#' `yrsmth` years.
+#' 
+#' The TAC is subject to the following conditions:
+#' 1. if next TAC > 1.2 last catch, then TAC = 1.2 last catch
+#' 2. if next TAC < 0.8 last catch, then TAC = 0.8 last catch
+#' 
 #' Note that this is my interpretation of their approach and is now stochastic.
 #' Currently it is generalized and is not 'tuned' to more detailed assessment
 #' data which might explain why in some cases it leads to stock declines.
 #' 
-#' @usage GB_slope(x, Data, reps = 100, yrsmth = 5, lambda = 1)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
+#' @templateVar mp GB_slope
+#' @template MPtemplate
+#' @template MPuses
+#' 
 #' @param yrsmth Number of years for evaluating slope in relative abundance
 #' index
 #' @param lambda A gain parameter
@@ -2063,27 +2095,43 @@ Fratio_ <- function(x, Data, reps=100, Abun=NULL) {
 #' @references Geromont, H.F. and Butterworth, D.S. 2014. Complex assessment or
 #' simple management procedures for efficient fisheries management: a
 #' comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017
-#' @export GB_slope
-GB_slope <- function(x, Data, reps = 100, yrsmth = 5, lambda = 1) {
+#' @family Index methods
+#' @examples 
+#' GB_slope(1, DLMtool::SimulatedData, plot=TRUE)
+#' @export 
+GB_slope <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, lambda = 1) {
   dependencies = "Data@Year, Data@Cat, Data@CV_Cat, Data@Ind"
   Catrec <- Data@Cat[x, length(Data@Cat[x, ])]
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)
   I_hist <- Data@Ind[x, ind]
   yind <- 1:yrsmth
-  slppar <- summary(lm(I_hist ~ yind))$coefficients[2, 1:2]
-  Islp <- rnorm(reps, slppar[1], slppar[2])
+  # slppar <- summary(lm(I_hist ~ yind))$coefficients[2, 1:2]
+  slppar <- summary(lm(log(I_hist) ~ yind))$coefficients[2, 1:2]
+  
+  if (reps >1) {
+    Islp <- rnorm(reps, slppar[1], slppar[2])  
+  } else {
+    Islp <- slppar[1]
+  }
+  
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- stats::rlnorm(reps, mconv(MuC, Data@CV_Cat[x] * MuC), sdconv(MuC, 
-                                                                     Data@CV_Cat[x] * MuC))
+  Cc <-  trlnorm(reps, MuC, Data@CV_Cat[x])
+
   TAC <- Cc * (1 + lambda * Islp)
   TAC[TAC > (1.2 * Catrec)] <- 1.2 * Catrec
   TAC[TAC < (0.8 * Catrec)] <- 0.8 * Catrec
+  
+  TAC <- TACfilter(TAC)
+  if (plot) GB_slope_plot(Data, ind, I_hist, MuC, TAC, Islp)
+  
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(GB_slope) <- "MP"
 
+
+#### UP TO HERE ####
 
 
 #' Geromont and Butterworth target CPUE and catch MP
@@ -2092,42 +2140,70 @@ class(GB_slope) <- "MP"
 #' and aims for target catch rate and catch level based on BMSY/B0 and MSY,
 #' respectively.
 #' 
-#' Note that this is my interpretation of their MP and is now stochastic.
-#' Currently it is generalized and is not 'tuned' to more detailed assessment
-#' data which might explain why in some cases it leads to stock declines.
+#' The TAC is calculated as:
+#' If  \eqn{I_\textrm{recent} \geq I_0}:
+#' \deqn{\textrm{TAC}= C_\textrm{ref}  \left(w + (1-w)\frac{I_\textrm{rec}-I_0}{I_\textrm{target}-I_0} \right) }
 #' 
-#' @usage GB_target(x, Data, reps = 100, w = 0.5)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of quota samples
+#' else:
+#' \deqn{\textrm{TAC}= wC_\textrm{ref}  \frac{I_\textrm{rec}}{I_0}^2} 
+#' 
+#' where \eqn{C_\textrm{ref}} is a reference catch assumed to be a proxy for MSY (`Data@Cref`),
+#' *w* is a gain parameter,
+#' \eqn{I_\textrm{rec}} is the average index over the last 4 years,
+#' \eqn{I_\textrm{target}} is the target Index (`Data@Iref`), and
+#' \eqn{I_0} is 0.2 x the average index over the past 5 years. 
+#' 
+#' In the MSE \eqn{C_\textrm{ref}} is the calculated MSY subject to observation error
+#' defined in `Obs@CV_Cref`, and \eqn{I_\textrm{target}} is assumed to be the index at MSY subject 
+#' to observation error (`Obs@CV_Iref`). Consequently, the performance of this method in the MSE
+#' is strongly determined by the specified uncertainty for these parameters.
+#' 
+#' The TAC is subject to the following conditions:
+#' 1. if next TAC > 1.2 last catch, then TAC = 1.2 last catch
+#' 2. if next TAC < 0.8 last catch, then TAC = 0.8 last catch
+#' 
+#' 
+#' @templateVar mp GB_target
+#' @template MPtemplate
+#' @template MPuses
+#' 
 #' @param w A gain parameter
 #' @author T. Carruthers
 #' @references Geromont, H.F. and Butterworth, D.S. 2014. Complex assessment or
 #' simple management procedures for efficient fisheries management: a
 #' comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017
-#' @export GB_target
-GB_target <- function(x, Data, reps = 100, w = 0.5) {
+#' @export 
+#' @examples 
+#'  GB_target(1, DLMtool::SimulatedData, plot=TRUE)
+#' @family Index methods
+GB_target <- function(x, Data, reps = 100, plot=FALSE, w = 0.5) {
   dependencies = "Data@Cat, Data@Cref, Data@Iref, Data@Ind"
   Catrec <- Data@Cat[x, length(Data@Cat[x, ])]
   TACtarg <- trlnorm(reps, Data@Cref[x], Data@CV_Cref)
   Itarg <- trlnorm(reps, Data@Iref[x], Data@CV_Iref)
-  Iav <- mean(Data@Ind[x, (length(Data@Ind[x, ]) - 4):length(Data@Ind[x, 
-                                                                      ])], na.rm = T)
-  Irec <- mean(Data@Ind[x, (length(Data@Ind[x, ]) - 3):length(Data@Ind[x, 
-                                                                       ])], na.rm = T)
+  Iav <- mean(Data@Ind[x, (length(Data@Ind[x, ]) - 4):length(Data@Ind[x, ])], na.rm = T)
+  Irec <- mean(Data@Ind[x, (length(Data@Ind[x, ]) - 3):length(Data@Ind[x, ])], na.rm = T)
   I0 <- 0.2 * Iav
   TAC <- rep(NA, reps)
-  if (Irec > I0) 
-    TAC <- TACtarg * (w + (1 - w) * ((Irec - I0)/(Itarg - I0)))
-  if (Irec < I0) 
-    TAC <- TACtarg * w * (Irec/I0)^2
+  if (Irec > I0) TAC <- TACtarg * (w + (1 - w) * ((Irec - I0)/(Itarg - I0)))
+  if (Irec < I0) TAC <- TACtarg * w * (Irec/I0)^2
   TAC[TAC > (1.2 * Catrec)] <- 1.2 * Catrec
   TAC[TAC < (0.8 * Catrec)] <- 0.8 * Catrec
+  TAC <- TACfilter(TAC)
+  
+  if (plot) GB_target_plot(Itarg, Irec, I0, Data, Catrec, TAC)
+  
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(GB_target) <- "MP"
+
+
+
+#### UP TO HERE #####
+
+#### G Control #####
 
 #' G-control MP
 #' 
@@ -2150,7 +2226,8 @@ class(GB_target) <- "MP"
 #' @references 
 #' Carruthers et al. 2015. Performance evaluation of simple
 #' management procedures. ICES J. Mar Sci. 73, 464-482.
-#' @export Gcontrol
+#' @export 
+#' @family Index methods
 Gcontrol <- function(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 
                                                                         2)) {
   dependencies = "Data@Year, Data@Cat, Data@Ind, Data@Abun"
@@ -2191,7 +2268,7 @@ class(Gcontrol) <- "MP"
 
 
 
-
+#### Index-Based Methods  ####
 
 #' Index Confidence Interval (ICI) MP by Jardim et al. (2015)
 #' 
@@ -2488,6 +2565,7 @@ class(IT10) <- "MP"
 #' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci. 72, 251-261.
 #' doi:10.1093/icesjms/fst232
 #' @describeIn Itarget1 The less precautionary TAC-based MP
+#' @family Index methods
 #' @export Itarget1
 Itarget1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5, plot=FALSE, ...) {
   dependencies = "Data@Cat, Data@CV_Cat"
@@ -3425,6 +3503,8 @@ SPslope <- function(x, Data, reps = 100, yrsmth = 4, alp = c(0.9, 1.1),
 }
 class(SPslope) <- "MP"
 
+#### Surplus Production Stock Reduction Analysis ####
+
 #' Surplus Production Stock Reduction Analysis
 #' 
 #' A surplus production equivalent of DB-SRA that uses a demographically
@@ -3607,7 +3687,7 @@ class(SPSRA_ML) <- "MP"
 #' @param reps Number of reps
 #' @param Abun Optional numeric of length `reps` of abundance
 #'
-#' @export#'
+#' @export
 #' @describeIn YPR_ Internal function for YPR MPs
 #'
 #' @keywords internal
@@ -3720,8 +3800,6 @@ YPRopt <- function(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage, reps = 100) {
 
 
 
-## Describe, equations, and add plot ####
-
 
 #' Yield Per Recruit analysis to get FMSY proxy F01
 #' 
@@ -3730,10 +3808,14 @@ YPRopt <- function(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage, reps = 100) {
 #' 
 #' The TAC is calculated as:
 #' \deqn{\textrm{TAC} = F_{0.1} A}
-#' where \eqn{F_{0.1}} is and 
+#' where \eqn{F_{0.1}} is the fishing mortality (*F*) where the slope of the yield-per-recruit
+#' (YPR) curve is 10% of the slope at the origin, and *A* is an estimate of current abundance.
 #' 
-#' The different 
+#' The YPR curve is calculated using an equilibrium age-structured model with life-history and 
+#' selectivity parameters sampled from the `Data` object. 
 #' 
+#' The variants of the YPR MP differ in the method to estimate current abundance (see Functions section below).
+#' #' 
 #' @templateVar mp YPR
 #' @template MPtemplate
 #' @template MPuses
@@ -3758,8 +3840,6 @@ YPR <- function(x, Data, reps = 100, plot=FALSE) {
 class(YPR) <- "MP"
 
 
-
-### FINISH DESCRIBING ####
 #' @templateVar mp YPR_CC
 #' @template MPuses
 #' @param Fmin The minimum fishing mortality rate inferred from the catch-curve
@@ -3811,8 +3891,15 @@ YPR_ML <- function(x, Data, reps = 100, plot=FALSE) {
 
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
   Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
+  Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
+  Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
+  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
-  if (all(is.na(Z)))     return(new("Rec"))
+  if (all(is.na(Z))) {
+    out <- new("Rec")
+    out@TAC <- rep(as.numeric(NA), reps)
+    return(out)
+  } 
   
   FM <- Z - Mdb
   ind <- which(FM>0)[1:reps]
