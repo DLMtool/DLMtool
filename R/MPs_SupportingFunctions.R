@@ -204,6 +204,31 @@ DynF_plot <- function(C_dat, C_hist, TAC, yrsmth, B_dat, B_hist, Data, SP_hist,
 Fadapt_plot <- DynF_plot
 
 
+YPR_plot <- function(runYPR, Data) {
+  frates <- runYPR$frates
+  ypr <- runYPR$ypr
+  dif <- runYPR$dif
+  F0.1 <- runYPR$F0.1
+  Ac <- runYPR$Ac
+  TAC <- runYPR$TAC
+  
+  op <- par(mfrow=c(1,3))
+  on.exit(par(op, no.readonly = TRUE))
+  matplot(frates, t(ypr), type="l", col=1:reps, xlab="F", ylab="Yield-per-recruit")
+  savey <- NULL
+  for (r in 1:reps) {
+    savey[r] <- ypr[r,which.min(dif[r,])]
+    points(F0.1[r], savey[r], col=r, pch=16)
+  }
+  
+  text(F0.1[which.max(savey)], ypr[ which.max(savey),which.min(dif[ which.max(savey),])], "F0.1", pos=2, col=which.max(savey))
+  text(F0.1[which.min(savey)], ypr[ which.min(savey),which.min(dif[ which.min(savey),])], "F0.1", pos=2, col=which.min(savey))
+  
+  boxplot(Ac, ylab=paste0("Abundance (", Data@Units, ")"))
+  boxplot(TAC, ylab=paste0("TAC (", Data@Units, ")"))
+}
+
+
 
 
 

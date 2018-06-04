@@ -3607,11 +3607,11 @@ class(SPSRA_ML) <- "MP"
 #' @param reps Number of reps
 #' @param Abun Optional numeric of length `reps` of abundance
 #'
-#' @export
+#' @export#'
+#' @describeIn YPR_ Internal function for YPR MPs
 #'
 #' @keywords internal
 YPR_ <- function(x, Data, reps = 100, Abun=NULL) {
-  # Yield per recruit analysis F01 - Meaghan Bryan
   Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
   Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
   if (Data@vbt0[x] != 0 & Data@CV_vbt0[x] != tiny) {
@@ -3624,13 +3624,13 @@ YPR_ <- function(x, Data, reps = 100, Abun=NULL) {
   LFS <- trlnorm(reps, Data@LFS[x], Data@CV_LFS[x])
   a <- Data@wla[x]
   b <- Data@wlb[x]
-  FMSY <- YPRopt(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage=Data@MaxAge, reps)
+  runYPR <- YPRopt(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage=Data@MaxAge, reps)
+  if (is.null(Abun)) Abun <- trlnorm(reps, Data@Abun[x], Data@CV_Abun[x])
   
-  if (is.null(Abun)) Ac <- trlnorm(reps, Data@Abun[x], Data@CV_Abun[x])
-  
-  TAC <- Ac * FMSY
-  
-  return(list(TAC=TAC))
+  TAC <- Abun * runYPR$F0.1
+  runYPR$TAC <- TAC
+  runYPR$Ac <- Abun
+  return(runYPR)
   
 }
 
@@ -3645,6 +3645,8 @@ YPR_ <- function(x, Data, reps = 100, Abun=NULL) {
 #' @param b beta parameter of L-W relationship
 #' @param LFS Length at full selection
 #' @param maxage Maximum age 
+#' 
+#' @export 
 YPRopt <- function(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage, reps = 100) {
   
   nf <- 200
@@ -3712,7 +3714,9 @@ YPRopt <- function(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage, reps = 100) {
   }
   dif = abs(slope - slope.10)
   dif[is.na(dif)] <- 1e+11
-  frates[apply(dif, 1, which.min)]  #frates[which.min(dif)]
+  F0.1 <- frates[apply(dif, 1, which.min)]  #frates[which.min(dif)]
+  
+  return(list(F0.1=F0.1, frates=frates, ypr=ypr, dif=dif))
 }
 
 
@@ -3725,6 +3729,12 @@ YPRopt <- function(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage, reps = 100) {
 #' A simple yield per recruit approximation to FMSY (F01) which is the position
 #' of the ascending YPR curve for which dYPR/dF = 0.1(dYPR/d0)
 #' 
+#' The TAC is calculated as:
+#' \deqn{\textrm{TAC} = F_{0.1} A}
+#' where \eqn{F_{0.1}} is and 
+#' 
+#' The different 
+#' 
 #' @templateVar mp YPR
 #' @template MPtemplate
 #' @template MPuses
@@ -3734,13 +3744,13 @@ YPRopt <- function(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage, reps = 100) {
 #' @references Beverton and Holt. 1954.
 #' @describeIn YPR Requires an external estimate of abundance.
 #' @examples 
-#' YPR(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+#' YPR(1, DLMtool::SimulatedData, plot=TRUE)
 #' @export 
 YPR <- function(x, Data, reps = 100, plot=FALSE) {
   runYPR <- YPR_(x, Data, reps = reps, Abun=NULL)
   TAC <- TACfilter(runYPR$TAC)
   
-  if (plot) YPR_plot()
+  if (plot) YPR_plot(runYPR, Data)
   Rec <- new("Rec")
   Rec@TAC <- TAC
   Rec
@@ -3749,11 +3759,8 @@ YPR <- function(x, Data, reps = 100, plot=FALSE) {
 class(YPR) <- "MP"
 
 
-YPR_plot <- function() {
-  
-}
 
-
+### FINISH DESCRIBING ####
 #' @templateVar mp YPR_CC
 #' @template MPuses
 #' @param Fmin The minimum fishing mortality rate inferred from the catch-curve
@@ -3786,7 +3793,7 @@ YPR_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
   runYPR <- YPR_(x, Data, reps = reps, Abun=Ac)
   TAC <- TACfilter(runYPR$TAC)
   
-  if (plot) YPR_plot()
+  if (plot) YPR_plot(runYPR, Data)
   Rec <- new("Rec")
   Rec@TAC <- TAC
   Rec
@@ -3801,13 +3808,12 @@ class(YPR_CC) <- "MP"
 #' @examples 
 #' YPR_ML(1, DLMtool::SimulatedData, plot=TRUE) 
 #' @export 
-YPR_ML <- function(x, Data, reps = 100) {
+YPR_ML <- function(x, Data, reps = 100, plot=FALSE) {
 
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
   Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
   if (all(is.na(Z)))     return(new("Rec"))
-  
   
   FM <- Z - Mdb
   ind <- which(FM>0)[1:reps]
@@ -3816,8 +3822,7 @@ YPR_ML <- function(x, Data, reps = 100) {
   runYPR <- YPR_(x, Data, reps = reps, Abun=Ac)
   TAC <- TACfilter(runYPR$TAC)
   
-  if (plot) YPR_plot()
-  
+  if (plot) YPR_plot(runYPR, Data)
   Rec <- new("Rec")
   Rec@TAC <- TAC
   Rec
