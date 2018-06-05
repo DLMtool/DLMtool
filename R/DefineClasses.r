@@ -100,6 +100,7 @@ setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 #' @slot Misc Other information for MPs. An object. R list   
 #' 
 #' @author T. Carruthers and A. Hordyk
+#' @export
 #' @keywords classes
 #' @examples
 #' 
@@ -435,6 +436,7 @@ setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ","
 #' @slot Source A reference to a website or article from which parameters were taken to define the stock object. Single value. Character string. 
 
 #' @author T. Carruthers and A. Hordyk
+#' @export
 #' @keywords classes
 #' @examples
 #' 
@@ -587,6 +589,7 @@ setMethod("initialize", "Stock", function(.Object, file = NA, dec=c(".", ",")) {
 #' @slot MPA (Optional) Matrix specifying spatial closures for historical years. 
 #' 
 #' @author T. Carruthers and A. Hordyk
+#' @export
 #' @keywords classes
 #' @examples
 #' 
@@ -790,6 +793,7 @@ NULL
 # #' @slot maxagecv Log-normal coefficient of variation for sampling persistent bias in observation of maximum age. Uniform distribution lower and upper bounds. Positive real numbers  
 #'     
 #' @author T. Carruthers and A. Hordyk
+#' @export
 #' @keywords classes
 #' @examples
 #' 
@@ -882,6 +886,7 @@ setMethod("initialize", "Obs", function(.Object, file = NA, dec=c(".", ",")) {
 #' @slot SizeLimFrac The real minimum size that is retained expressed as a fraction of the size. Uniform distribution lower and upper bounds. Positive real number.
 #' @slot SizeLimSD Log-normal coefficient of variation controlling mismatch between a minimum size limit and the real minimum size retained. Uniform distribution lower and upper bounds. Non-negative real numbers.
 #' @author T. Carruthers and A. Hordyk
+#' @export
 #' @keywords classes
 #' @examples
 #' 
@@ -1083,6 +1088,7 @@ setMethod("initialize", "Imp", function(.Object, file = NA, dec=c(".", ",")) {
 #' @slot SizeLimSD Log-normal coefficient of variation controlling mismatch between a minimum size limit and the real minimum size retained. Uniform distribution lower and upper bounds. Non-negative real numbers.
 
 #' @author T. Carruthers and A. Hordyk
+#' @export
 #' @keywords classes
 #' 
 setClass("OM", representation(Name = "character", Agency="character",
