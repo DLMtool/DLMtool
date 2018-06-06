@@ -72,13 +72,13 @@ previously been applied by Dick and MacCall (2011).
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{DBSRA}: Cat, Dep, FMSY_M, L50, vbK, vbLinf, vbt0
+\code{DBSRA}: BMSY_B0, Cat, Dep, FMSY_M, L50, t, vbK, vbLinf, vbt0
 
 
-\code{DBSRA_40}: Cat, FMSY_M, L50, vbK, vbLinf, vbt0
+\code{DBSRA_40}: BMSY_B0, Cat, Dep, FMSY_M, L50, t, vbK, vbLinf, vbt0
 
 
-\code{DBSRA4010}: Cat, Dep, FMSY_M, L50, vbK, vbLinf, vbt0
+\code{DBSRA4010}: BMSY_B0, Cat, Dep, FMSY_M, L50, t, vbK, vbLinf, vbt0
 }
 
 \section{Rendered Equations}{

@@ -153,12 +153,12 @@ DD_plot <- function(x, runDD, Data, TAC) {
   
   
   plot(Years, c(C_hist, NA), type='l', bty="n", 
-       xlab="Year", ylab=paste("Catch (", Data@Units, ")"), las=0, ylim=c(0, max(c(C_hist, TAC, Cpred_DD))), lwd=3)
+       xlab="Year", ylab=paste("Catch (", Data@Units, ")"), las=0, ylim=c(0, max(c(C_hist, TAC, Cpred_DD), na.rm=TRUE)), lwd=3)
   matplot(Year, Cpred_DD, type="l", lwd=1, add=TRUE)
   
-  if (all(round(TAC / mean(TAC),1) ==1 )) {
-    points(max(Years), mean(TAC), pch=16, cex=2, col="blue")
-    text(max(Years), mean(TAC), "TAC", pos=1, col="blue")
+  if (all(round(TAC / mean(TAC, na.rm=TRUE),1) ==1 )) {
+    points(max(Years), mean(TAC, na.rm=TRUE), pch=16, cex=2, col="blue")
+    text(max(Years), mean(TAC, na.rm=TRUE), "TAC", pos=1, col="blue")
   } else {
     boxplot(TAC, add=TRUE, at=max(Years), col="grey", width=1, outline=TRUE, 
             axes=FALSE)
@@ -183,15 +183,15 @@ DynF_plot <- function(C_dat, C_hist, TAC, yrsmth, B_dat, B_hist, Data, SP_hist,
   plot(B_hist[ind1], SP_hist, type="p", pch=16, bty="n", 
        xlab=paste0("Biomass (last ", yrsmth-1, " years)"), ylab='Surplus Production')
   
-  ylim <- c(0, max(c(TAC,(exp(C_dat)))))
+  ylim <- c(0, max(c(TAC,(exp(C_dat))), na.rm=TRUE))
   years <- c(years, max(years)+1)
   plot(years, c(exp(C_dat), NA), pch=16, bty="n", ylim=ylim,
        xlab=paste0("Year (last ", yrsmth, " years)"), ylab=paste0("Catch (", Data@Units, ")"))
   lines(years, c(C_hist, NA))
   legend("topright", bty="n", lty=1, legend="Smoothed Catch")
-  if (all(round(TAC / mean(TAC),1) ==1 )) {
-    points(max(years), mean(TAC), pch=16, cex=2, col="blue")
-    text(max(years), mean(TAC), "TAC", pos=1, col="blue")
+  if (all(round(TAC / mean(TAC, na.rm=TRUE),1) ==1 )) {
+    points(max(years), mean(TAC, na.rm=TRUE), pch=16, cex=2, col="blue")
+    text(max(years), mean(TAC, na.rm=TRUE), "TAC", pos=1, col="blue")
   } else {
     boxplot(TAC, add=TRUE, at=max(years), col="blue", width=1, outline=TRUE, 
             axes=FALSE)
@@ -288,9 +288,102 @@ GB_target_plot <- function(Itarg, Irec, I0, Data, Catrec, TAC) {
   ylim <- range(c(Catrec, TAC))
   boxplot(cbind(Catrec, TAC), ylim=ylim, ylab=Data@Units, names=c("Last Catch", "TAC"))
   
+}
+
+
+
+Gcontrol_plot <- function(years, ind1, yrsmth, SP_new, SP_hist, B_dat, B_hist, C_dat, C_hist, TAC, Data) {
+  op <- par(no.readonly = TRUE)
+  on.exit(op)
   
+  par(mfrow=c(2,2))
+  
+  plot(years, exp(B_dat), pch=16, bty="n", 
+       xlab=paste0("Year (last ", yrsmth, " years)"), ylab=paste0("Abundance (", Data@Units, ")"))
+  lines(years, B_hist)
+  legend("topright", bty="n", lty=1, legend="Smoothed Abundance")
+  
+  plot(B_hist[ind1], SP_hist, type="p", pch=16, bty="n", 
+       xlab=paste0("Biomass (last ", yrsmth-1, " years)"), ylab='Surplus Production')
+  
+  ylim <- c(0, max(c(TAC,(exp(C_dat))), na.rm=TRUE))
+  years <- c(years, max(years)+1)
+  plot(years, c(exp(C_dat), NA), pch=16, bty="n", ylim=ylim,
+       xlab=paste0("Year (last ", yrsmth, " years)"), ylab=paste0("Catch (", Data@Units, ")"))
+  lines(years, c(C_hist, NA))
+  legend("topright", bty="n", lty=1, legend="Smoothed Catch")
+  if (all(round(TAC / mean(TAC, na.rm=TRUE),1) ==1 )) {
+    points(max(years), mean(TAC, na.rm=TRUE), pch=16, cex=2, col="blue")
+    text(max(years), mean(TAC, na.rm=TRUE), "TAC", pos=1, col="blue")
+  } else {
+    boxplot(TAC, add=TRUE, at=max(years), col="blue", width=1, outline=TRUE, 
+            axes=FALSE)
+    text(max(years), quantile(TAC, 0.95, na.rm=TRUE), "TAC", pos=3, col="blue")
+  }
+  
+  boxplot(SP_new, bty="l", ylab="Predicted Surplus Production")
+}
+
+
+
+ICI_plot <- function(Years, Index, ci.low, ci.high, TAC, Cat, Data) {
+  op <- par(no.readonly = TRUE)
+  on.exit(op)
+  par(mfrow=c(1,2))
+  plot(Years, Index, type="l", bty="l", lwd=2, xlab="Years", ylab="Index")
+  
+  lines(Years, rep(mean(ci.low, na.rm=TRUE), length(Years)), lty=2)
+  text(quantile(Years,0.05), mean(ci.low, na.rm=TRUE), pos=1, "CI_low")
+  lines(Years, rep(mean(ci.high, na.rm=TRUE), length(Years)), lty=2)
+  text(quantile(Years, 0.05), mean(ci.high, na.rm=TRUE), pos=3, "CI_high")
+  
+  ylim <- range(c(TAC, Cat))
+  boxplot(TAC, col="grey", width=1, outline=TRUE, ylab=paste0("TAC (", Data@Units, ")"), ylim=ylim)
+  points(Cat, pch=16, cex=1.5, col="blue", xpd=NA)
+  text(1, Cat, "Last Catch", pos=2, col="blue")
   
 }
+
+
+
+Iratio_plot <- function(Data, I.num, ind.num, I.den, ind.den, alpha, TAC, Cat) {
+  op <- par(no.readonly = TRUE)
+  on.exit(op)
+  par(mfrow=c(1,3))
+  plot(Data@Year, Data@Ind, xlab="Year", ylab="Index", bty="l", lwd=2, type="l")
+  
+  lines(Data@Year[ind.num], rep(mean(I.num), length(ind.num)), lty=2, col='blue')
+  lines(Data@Year[ind.den], rep(mean(I.den), length(ind.den)), lty=3, col='blue')
+  
+  boxplot(alpha, ylab="alpha", col="grey")
+  
+  ylim <- range(c(TAC, Cat))
+  boxplot(TAC, col="grey", width=1, outline=TRUE, ylab=paste0("TAC (", Data@Units, ")"), ylim=ylim)
+  points(Cat, pch=16, cex=1.5, col="blue", xpd=NA)
+  text(1, Cat, "Last Catch", pos=2, col="blue")
+  
+}
+
+
+
+Islope_plot <- function(runIslope) {
+  op <- par(no.readonly = TRUE)
+  on.exit(op)
+  par(mfrow=c(1,2))
+  plot(runIslope$Years, log(runIslope$I_hist), xlab="Year", ylab="log Index", bty="l", type="l", lwd=2)
+  
+  ylim <- range(c(runIslope$C_dat, runIslope$TACstar, runIslope$TAC))
+  Years1 <- c(runIslope$Years, max(runIslope$Years)+1)
+  plot(Years1, c(runIslope$C_dat, NA), xlab="Year", ylab=paste0("Catch (", Data@Units, ")"), 
+       bty="l", type="l", lwd=2, ylim=ylim)
+  points(max(runIslope$Years), mean(runIslope$TACstar, na.rm=TRUE), col="blue", cex=2, pch=16)
+  text(max(runIslope$Years), mean(runIslope$TACstar, na.rm=TRUE), col="blue",'TAC*', pos=2, cex=1.5)
+  
+  boxplot(at=max(Years1), runIslope$TAC, add=TRUE, axes=FALSE, col="gray")
+  text(max(Years1), quantile(runIslope$TAC, 0.95), pos=3, "TAC", col="black", cex=1.5, xpd=NA)
+  
+}
+
 
 YPR_plot <- function(runYPR, Data) {
   frates <- runYPR$frates
@@ -444,7 +537,19 @@ TACfilter <- function(TAC) {
 }
 
 ## Catch curve function ####
-CC <- function(x, Data, reps = 100) {
+#' Age-based Catch Curve
+#'
+#' @param x Iteration number
+#' @param Data An object of class `Data`
+#' @param reps Number of reps 
+#' @param plot Logical. Show the plot?
+#'
+#' @return A vector of length `reps` of samples of the negative slope of the catch-curve (Z)
+#' @export
+#'
+#' @examples
+#' CC(1, DLMtool::SimulatedData, plot=TRUE)
+CC <- function(x, Data, reps = 100, plot=FALSE) {
   ny <- dim(Data@CAA)[2]
   CAA <- apply(Data@CAA[x, max(ny - 2, 1):ny, ], 2, sum)  # takes last two years as the sample (or last year if there is only one)
   maxageobs <- length(CAA)
@@ -457,11 +562,21 @@ CC <- function(x, Data, reps = 100) {
   y[y == "-Inf"] <- NA
   mod <- lm(y ~ xc)
   chk <- sum(is.na(coef(mod)))  # check if model failed
+
   if (chk) {
     return(NA)
   } else {
     coefs <- summary(mod, weights = CAA[AFS:maxageobs])$coefficients[2, 1:2]
     coefs[is.nan(coefs)] <- tiny
+    
+    if (plot) {
+      op <- par(mfrow=c(1,1), no.readonly = TRUE)
+      on.exit(par(op))
+      plot(xc, y, xlab="Age", ylab="log N", bty="n", pch=16, cex=1.2)
+      lines(xc[1:length(predict(mod))], predict(mod))
+      text(median(xc[1:length(predict(mod))]), median(predict(mod)), paste0("Z =", round(-coefs[1],2)), pos=4)
+    }
+    
     return(-rnorm(reps, coefs[1], coefs[2]))
   }
 }

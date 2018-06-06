@@ -2,24 +2,53 @@
 % Please edit documentation in R/MPs_Output.R
 \name{Iratio}
 \alias{Iratio}
-\title{Mean index ratio MP from Jardim et al. 2015}
+\title{Mean Index Ratio}
 \usage{
-Iratio(x, Data, reps, yrs = c(2, 5))
+Iratio(x, Data, reps = 100, plot = FALSE, yrs = c(2, 5))
 }
 \arguments{
-\item{x}{A position in data-limited methods data object}
+\item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of TAC samples}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{yrs}{Vector of length 2 specifying the reference years}
+}
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
 The TAC is adjusted by the ratio alpha, where the numerator
 being the mean index in the most recent two years of the time series and the denominator
 being the mean index in the three years prior to those in the numerator. This MP is the
 stochastic version of Method 3.2 used by ICES for Data-Limited Stocks (ICES 2012).
+}
+\details{
+The TAC is calculated as:
+\deqn{\textrm{TAC}_y = \alpha C_{y-1}}
+where \eqn{C_{y-1}} is the catch from the previous year, and \eqn{\alpha} is
+the ratio of the mean index in the most recent two years of the time series and the
+mean index in 3-5 years before current time (reference years are specified as
+\code{yrs} argument.
+}
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{Iratio}: Cat, Ind, t, Year
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/Iratio.html}{Online Documentation} for correctly rendered equations
+}
+
+\examples{
+Iratio(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 }
 \references{
 Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for
@@ -29,6 +58,12 @@ https://doi.org/10.1016/j.fishres.2014.11.013
 
 ICES. 2012. ICES Implementation of Advice for Data-limited Stocks in 2012 in its 2012
 Advice. ICES CM 2012/ACOM 68. 42 pp.
+}
+\seealso{
+Other Index methods: \code{\link{GB_slope}},
+  \code{\link{GB_target}}, \code{\link{Gcontrol}},
+  \code{\link{ICI}}, \code{\link{Islope}},
+  \code{\link{ItargetE1}}
 }
 \author{
 Coded by Q. Huynh. Developed by Jardim et al. (2015)

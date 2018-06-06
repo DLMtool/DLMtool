@@ -74,10 +74,10 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 \code{BK}: Abun, LFC, vbK, vbLinf
 
 
-\code{BK_CC}: CAA, Cat, LFC, Mort, vbK, vbLinf
+\code{BK_CC}: CAA, Cat, LFC, Mort, t, vbK, vbLinf
 
 
-\code{BK_ML}: CAL, CAL_bins, Cat, LFC, LFS, Mort, vbK, vbLinf
+\code{BK_ML}: CAL, CAL_bins, Cat, LFC, LFS, Mort, t, vbK, vbLinf
 }
 
 \section{Rendered Equations}{

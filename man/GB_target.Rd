@@ -37,7 +37,7 @@ where \eqn{C_\textrm{ref}} is a reference catch assumed to be a proxy for MSY (\
 \emph{w} is a gain parameter,
 \eqn{I_\textrm{rec}} is the average index over the last 4 years,
 \eqn{I_\textrm{target}} is the target Index (\code{Data@Iref}), and
-\eqn{I_0} is 0.2 x the average index ver the past 5 years.
+\eqn{I_0} is 0.2 x the average index over the past 5 years.
 
 In the MSE \eqn{C_\textrm{ref}} is the calculated MSY subject to observation error
 defined in \code{Obs@CV_Cref}, and \eqn{I_\textrm{target}} is assumed to be the index at MSY subject
@@ -55,7 +55,7 @@ The TAC is subject to the following conditions:
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{GB_target}: Cat, Cref, Ind, Iref
+\code{GB_target}: Cat, Cref, Ind, Iref, t
 }
 
 \section{Rendered Equations}{
@@ -73,7 +73,9 @@ comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017
 }
 \seealso{
 Other Index methods: \code{\link{GB_slope}},
-  \code{\link{Gcontrol}}, \code{\link{ItargetE1}}
+  \code{\link{Gcontrol}}, \code{\link{ICI}},
+  \code{\link{Iratio}}, \code{\link{Islope}},
+  \code{\link{ItargetE1}}
 }
 \author{
 T. Carruthers

@@ -53,10 +53,10 @@ from the life-history parameters using the methods of McAllister et al. (2001).
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{Fdem}: Abun, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
+\code{Fdem}: Abun, MaxAge, Mort, steep, t, vbK, vbLinf, vbt0, wla, wlb
 
 
-\code{Fdem_CC}: CAA, Cat, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
+\code{Fdem_CC}: CAA, Cat, MaxAge, Mort, steep, t, vbK, vbLinf, vbt0, wla, wlb
 }
 
 \section{Rendered Equations}{

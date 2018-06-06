@@ -4,15 +4,17 @@
 \alias{Gcontrol}
 \title{G-control MP}
 \usage{
-Gcontrol(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5,
-2))
+Gcontrol(x, Data, reps = 100, plot = FALSE, yrsmth = 10, gg = 2,
+  glim = c(0.5, 2))
 }
 \arguments{
-\item{x}{A position in data-limited methods data object}
+\item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of quota samples}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{yrsmth}{The number of years over which to smooth catch and biomass
 data}
@@ -22,10 +24,39 @@ data}
 \item{glim}{A constraint limiting the maximum level of change in quota
 recommendations}
 }
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
+}
 \description{
 A harvest control rule proposed by Carl Walters that uses trajectory in
 inferred surplus production to make upward/downward adjustments to TAC
 recommendations
+}
+\details{
+The TAC is calculated as:
+\deqn{\textrm{TAC} = \textrm{SP} \left(1-gG\right)}
+where \eqn{\textrm{SP}} is the predicted surplus production for the next year,
+\emph{g} is a gain parameter, and \emph{G} is the slope of surplus production
+as a function of biomass over the last \code{yrsmth} years.
+
+The change in TAC is bounded by the \code{glim} argument, which by default does not allow
+the TAC to decrease by more than half or increase more than twice the last annual catch.
+}
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{Gcontrol}: Abun, Cat, Ind, t, Year
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/Gcontrol.html}{Online Documentation} for correctly rendered equations
+}
+
+\examples{
+Gcontrol(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
 }
 \references{
 Carruthers et al. 2015. Performance evaluation of simple
@@ -33,7 +64,9 @@ management procedures. ICES J. Mar Sci. 73, 464-482.
 }
 \seealso{
 Other Index methods: \code{\link{GB_slope}},
-  \code{\link{GB_target}}, \code{\link{ItargetE1}}
+  \code{\link{GB_target}}, \code{\link{ICI}},
+  \code{\link{Iratio}}, \code{\link{Islope}},
+  \code{\link{ItargetE1}}
 }
 \author{
 C. Walters and T. Carruthers

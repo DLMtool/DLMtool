@@ -2131,9 +2131,6 @@ GB_slope <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, lambda = 1) {
 class(GB_slope) <- "MP"
 
 
-#### UP TO HERE ####
-
-
 #' Geromont and Butterworth target CPUE and catch MP
 #' 
 #' An MP similar to SBT2 that modifies a time-series of catch recommendations
@@ -2201,7 +2198,6 @@ class(GB_target) <- "MP"
 
 
 
-#### UP TO HERE #####
 
 #### G Control #####
 
@@ -2211,27 +2207,37 @@ class(GB_target) <- "MP"
 #' inferred surplus production to make upward/downward adjustments to TAC
 #' recommendations
 #' 
+#' The TAC is calculated as:
+#' \deqn{\textrm{TAC} = \textrm{SP} \left(1-gG\right)}
+#' where \eqn{\textrm{SP}} is the predicted surplus production for the next year,
+#' *g* is a gain parameter, and *G* is the slope of surplus production
+#' as a function of biomass over the last `yrsmth` years. 
 #' 
-#' @usage Gcontrol(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5,
-#' 2))
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of quota samples
+#' The change in TAC is bounded by the `glim` argument, which by default does not allow
+#' the TAC to decrease by more than half or increase more than twice the last annual catch.
+#' 
+#' @templateVar mp Gcontrol
+#' @template MPtemplate
+#' @template MPuses 
+#' 
 #' @param yrsmth The number of years over which to smooth catch and biomass
 #' data
 #' @param gg A gain parameter
 #' @param glim A constraint limiting the maximum level of change in quota
 #' recommendations
+#' 
 #' @author C. Walters and T. Carruthers
 #' @references 
 #' Carruthers et al. 2015. Performance evaluation of simple
 #' management procedures. ICES J. Mar Sci. 73, 464-482.
 #' @export 
+#' @examples 
+#' Gcontrol(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
 #' @family Index methods
-Gcontrol <- function(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 
-                                                                        2)) {
+Gcontrol <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 10, gg = 2, glim = c(0.5, 2)) {
   dependencies = "Data@Year, Data@Cat, Data@Ind, Data@Abun"
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)
+  years <- Data@Year[ind]
   C_dat <- log(Data@Cat[x, ind])
   C_dat[C_dat == -Inf] <- 0
   B_dat <- log(Data@Ind[x, ind]/Data@Ind[x, ind[yrsmth]] * Data@Abun[x])
@@ -2242,60 +2248,90 @@ Gcontrol <- function(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5,
   ind1 <- 1:(yrsmth - 1)
   SP_hist <- B_hist[ind] - B_hist[ind1] + C_hist[ind1]
   yind <- 1:length(SP_hist)
-  SP_mu <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
-                                                       1))
-  SP_se <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
-                                                       1), se = T)$se.fit
-  SP_new <- rnorm(reps, SP_mu, SP_se/2)
+  SP_mu <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 1))
+  SP_se <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 1), se = T)$se.fit
   Glm <- summary(lm(SP_hist ~ B_hist[ind1]))$coefficients[2, 1:2]
-  G_new <- rnorm(reps, Glm[1], Glm[2]/2)
-  
+  if (reps >1) {
+    SP_new <- rnorm(reps, SP_mu, SP_se/2)
+    G_new <- rnorm(reps, Glm[1], Glm[2]/2)
+  } else {
+    SP_new <- SP_mu
+    G_new <- Glm[1]
+  }
+ 
   TAC <- SP_new * (1 - gg * G_new)
   TAC[TAC < glim[1] * C_hist[yrsmth]] <- glim[1] * C_hist[yrsmth]
   TAC[TAC > glim[2] * C_hist[yrsmth]] <- glim[2] * C_hist[yrsmth]
+  TAC <- TACfilter(TAC)
   
+  if (plot) Gcontrol_plot(years, ind1, yrsmth, SP_new, SP_hist, B_dat, B_hist, C_dat, C_hist, TAC, Data)
   # Carr<-cbind(array(rep(Data@Cat[x,],each=reps),c(reps,length(Data@Cat[x,]))),TAC)
   # Warr<-(Data@Mort[x]*exp(-Data@Mort[x]*(1:ncol(Carr))))[ncol(Carr):1]
   # Warr<-Warr/sum(Warr)
   # TAC<-apply(t(matrix(Warr,nrow=ncol(Carr),ncol=reps))*Carr,1,sum)
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(Gcontrol) <- "MP"
 
 
 
-
-
 #### Index-Based Methods  ####
 
-#' Index Confidence Interval (ICI) MP by Jardim et al. (2015)
+#' Index Confidence Interval 
 #' 
 #' The MP adjusts catch based on the value of the index in the current year relative to the 
 #' time series mean and standard error.
+#'
+#' The TAC is calculated as:
+#' \deqn{\textrm{TAC}_y=C_{y-1} \alpha} 
+#' where \eqn{C_{y-1}} is the catch from the previous year, and \eqn{\alpha} is
+#' defined as:
+#'   \deqn{\alpha = 
+#'              \left\{\begin{array}{ll} 
+#'              d & \textrm{if } I < \textrm{CI}_L \\ 
+#'              u & \textrm{if } I > \textrm{CI}_H \\ 
+#'              1 & \textrm{if } \textrm{CI}_L \leq I \leq \textrm{CI}_H \\
+#'              \end{array}\right.
+#'            }{}
+#'  where \eqn{I} is the index in the most recent year, \eqn{d} is 0.75 for `ICI` and `ICI2`, 
+#'  \eqn{u} is 1.05 and 1.25 for`ICI` and `ICI2` respectively, and \eqn{\textrm{CI}_L} 
+#'  and \eqn{\textrm{CI}_L} are the lower and upper bound of the confidence 
+#'  interval of mean historical index. The confidence interval is 
+#'  calculated using Z-scores described in the Functions section below. 
 #'  
-#' @describeIn ICI The mean and standard error of the index time series is calculated. There are two thresholds 
-#' which delineates whether catch is reduced, held constant, or increased. The catch is reduced by 0.75
-#' if the Z-score of the current year's index is less than -0.44. The catch is increased by 1.05
-#' if the Z-score of the current year's index is greater than 1.96. Otherwise, the catch is held constant.
+#'     
+#' @templateVar mp ICI 
+#' @template MPtemplate
+#' @template MPuses
+#'  
+#' @describeIn ICI The catch is reduced by 0.75 if the Z-score of the current year's index is less than -0.44. 
+#' The catch is increased by 1.05 if the Z-score of the current year's index is greater than 1.96. Otherwise, the catch is held constant.
 #' 
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
 #' @author Coded by Q. Huynh. Developed by Jardim et al. (2015)
 #' @references Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for 
 #' data limited stocks using length-based reference points and survey biomass indices, 
 #' Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836, 
 #' https://doi.org/10.1016/j.fishres.2014.11.013
+#' @family Index methods
 #' @export 
-ICI <- function(x, Data, reps) {
+#' @examples 
+#' ICI(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
+#' 
+ICI <- function(x, Data, reps=100, plot=FALSE) {
   dependencies = "Data@Ind, Data@CV_Ind, Data@Cat, Data@CV_Cat"
   
   Index <- Data@Ind[x, ]
+  Years <- Data@Year[!is.na(Index)]
   Index <- Index[!is.na(Index)]
+  
   nI <- length(Index)
-  Ind.samp <- trlnorm(reps * nI, Index, Data@CV_Ind[x])
+  if (reps ==1) {
+    Ind.samp <-Index
+  }else {
+    Ind.samp <- trlnorm(reps * nI, Index, Data@CV_Ind[x])
+  }
   Ind.samp <- matrix(Ind.samp, ncol = reps)
   
   muI <- apply(Ind.samp, 2, mean, na.rm = TRUE)
@@ -2316,24 +2352,30 @@ ICI <- function(x, Data, reps) {
   Cat <- Data@Cat[x, length(Data@Cat[x, ])]
   Cc <- trlnorm(reps, Cat, Data@CV_Cat[x])
   
-  TAC <- alpha * Cc
+  TAC <- TACfilter(alpha * Cc)
+  if (plot) ICI_plot(Years, Index, ci.low, ci.high, TAC, Cat, Data)
+  
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(ICI) <- "MP"
 
 
-
-#' @describeIn ICI Compared to \code{ICI}, this method is less precautionary of the two ICI MPs by allowing for a 
+#' @templateVar mp ICI2
+#' @template MPuses
+#' @describeIn ICI This method is less precautionary of the two ICI MPs by allowing for a 
 #' larger increase in TAC and a lower threshold of the index to decrease the TAC. The catch is reduced by 0.75
 #' if the Z-score of the current year's index is less than -1.96. The catch is increased by 1.25
 #' if the Z-score of the current year's index is greater than 1.96. Otherwise, the catch is held constant.
 #' @export 
-ICI2 <- function(x, Data, reps) {
+#' @examples 
+#' ICI2(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
+ICI2 <- function(x, Data, reps=100, plot=FALSE) {
   dependencies = "Data@Ind, Data@CV_Ind, Data@Cat, Data@CV_Cat"
   
   Index <- Data@Ind[x, ]
+  Years <- Data@Year[!is.na(Index)]
   Index <- Index[!is.na(Index)]
   nI <- length(Index)
   Ind.samp <- trlnorm(reps * nI, Index, Data@CV_Ind[x])
@@ -2358,25 +2400,34 @@ ICI2 <- function(x, Data, reps) {
   Cc <- trlnorm(reps, Cat, Data@CV_Cat[x])
   
   TAC <- alpha * Cc
+  TAC <- TACfilter(alpha * Cc)
+  if (plot) ICI_plot(Years, Index, ci.low, ci.high, TAC, Cat, Data)
+  
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(ICI2) <- "MP"
 
 
-
-
-#' Mean index ratio MP from Jardim et al. 2015
+#' Mean Index Ratio 
 #' 
 #' The TAC is adjusted by the ratio alpha, where the numerator 
 #' being the mean index in the most recent two years of the time series and the denominator
 #' being the mean index in the three years prior to those in the numerator. This MP is the 
 #' stochastic version of Method 3.2 used by ICES for Data-Limited Stocks (ICES 2012).
 #' 
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
+#' The TAC is calculated as:
+#' \deqn{\textrm{TAC}_y = \alpha C_{y-1}}
+#' where \eqn{C_{y-1}} is the catch from the previous year, and \eqn{\alpha} is 
+#' the ratio of the mean index in the most recent two years of the time series and the
+#' mean index in 3-5 years before current time (reference years are specified as 
+#' `yrs` argument.
+#' 
+#' @templateVar mp Iratio 
+#' @template MPtemplate
+#' @template MPuses
+#' 
 #' @param yrs Vector of length 2 specifying the reference years
 #' @author Coded by Q. Huynh. Developed by Jardim et al. (2015)
 #' @references Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for 
@@ -2386,43 +2437,103 @@ class(ICI2) <- "MP"
 #' 
 #' ICES. 2012. ICES Implementation of Advice for Data-limited Stocks in 2012 in its 2012
 #' Advice. ICES CM 2012/ACOM 68. 42 pp.
+#' @family Index methods
+#' @examples 
+#' Iratio(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 #' @export
-Iratio <- function(x, Data, reps, yrs = c(2, 5)) {
+Iratio <- function(x, Data, reps=100, plot=FALSE, yrs = c(2, 5)) {
   dependencies = "Data@Ind, Data@CV_Ind, Data@Cat, Data@CV_Cat"
   
   ind.num <- (length(Data@Year) - yrs[1]+1):length(Data@Year)
   ind.den <- (length(Data@Year) - yrs[2]+1):(length(Data@Year) - yrs[1])
   
-  I.num <- trlnorm(reps * length(ind.num), Data@Ind[x, ind.num], Data@CV_Ind[x])
-  I.num <- matrix(I.num, ncol = reps)
+  if (reps ==1 ) {
+    I.num <- Data@Ind[x, ind.num]
+    I.den <-  Data@Ind[x, ind.den]
+  } else {
+    I.num <- trlnorm(reps * length(ind.num), Data@Ind[x, ind.num], Data@CV_Ind[x])
+    I.den <- trlnorm(reps * length(ind.den), Data@Ind[x, ind.den], Data@CV_Ind[x])
+  }
   
-  I.den <- trlnorm(reps * length(ind.den), Data@Ind[x, ind.den], Data@CV_Ind[x])
+  I.num <- matrix(I.num, ncol = reps)
   I.den <- matrix(I.den, ncol = reps)
   
   alpha <- apply(I.num, 2, mean, na.rm = TRUE)/apply(I.den, 2, mean, na.rm = TRUE)
   Cat <- Data@Cat[x, length(Data@Cat[x, ])]
   Cc <- trlnorm(reps, Cat, Data@CV_Cat[x])
   TAC <- alpha * Cc
+  TAC <- TACfilter(TAC)
   
+  if(plot) Iratio_plot(Data, I.num, ind.num, I.den, ind.den, alpha, TAC, Cat)
+    
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(Iratio) <- "MP"
 
 
+
+
+
+
+
+#' Index Slope Internal Function 
+#'
+#' @param x Iteration number
+#' @param Data An object of class `Data`
+#' @param reps Number of samples of the TAC
+#' @param yrsmth Years over which to smooth recent estimates of surplus production
+#' @param lambda  A gain parameter controlling the speed in update in TAC.
+#' @param xx Parameter controlling the fraction of mean catch to start using in
+#' first year
+#'
+#' @export
+#'
+#' @keywords internal
+Islope_ <- function(x, Data, reps = 100, yrsmth = 5, lambda = 0.4,xx = 0.2) {
+  
+  ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)
+  Years <- Data@Year[ind]
+  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
+  C_dat <- Data@Cat[x, ind]
+  if (is.na(Data@MPrec[x]) || length(Data@Year) == ylast + 1) {
+    TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
+  } else {
+    TACstar <- rep(Data@MPrec[x], reps)
+  }
+  
+  I_hist <- Data@Ind[x, ind]
+  yind <- 1:yrsmth
+  # slppar <- summary(lm(I_hist ~ yind))$coefficients[2, 1:2]
+  slppar <- summary(lm(log(I_hist) ~ yind))$coefficients[2, 1:2]
+  if (reps >1) {
+    Islp <- rnorm(reps, slppar[1], slppar[2])
+  } else {
+    Islp <- slppar[1]
+  }
+  TAC <- TACstar * (1 + lambda * Islp)
+  
+  list(TAC=TAC, TACstar=TACstar, I_hist=I_hist, Islp=Islp, C_dat=C_dat, Data=Data, Years=Years)
+  
+}
+
+
+#'  Index Slope Tracking MP
+#'  
 #' A management procedure that incrementally adjusts the TAC to maintain a
 #' constant CPUE or relative abundance index
 #' 
-#' The least biologically precautionary of two constant index / CPUE methods
-#' proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
+#' The TAC is calculated as:
+#' \deqn{\textrm{TAC} = \textrm{TAC}^* \left(1+\lambda I \right)}
+#' where \eqn{\textrm{TAC}^*} is \eqn{1-xx} multiplied by the mean catch from the past `yrsmth` years for the 
+#' first year and catch from the previous year in projection years,
+#' \eqn{\lamba} is a gain parameter, and \eqn{I} is the slope of log index over the past `yrsmth` years.
 #' 
-#' Tested by Carruthers et al. 2015.
+#' @name Islope
+#' @templateVar mp Islope1
+#' @template MPtemplate
 #' 
-#' @usage Islope1(x, Data, reps = 100, yrsmth = 5, lambda=0.4,xx=0.2)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
 #' @param yrsmth Years over which to smooth recent estimates of surplus production
 #' @param lambda A gain parameter controlling the speed in update in TAC.
 #' @param xx Parameter controlling the fraction of mean catch to start using in
@@ -2435,29 +2546,26 @@ class(Iratio) <- "MP"
 #' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
 #' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
 #' doi:10.1093/icesjms/fst232
-#' @describeIn Islope1 The least biologically precautionary of two constant index / CPUE methods
-#' proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
-#' @export Islope1
-Islope1 <- function(x, Data, reps = 100, yrsmth = 5, lambda = 0.4,xx = 0.2) {
-  dependencies = "Data@Year, Data@Cat, Data@CV_Cat, Data@Ind"
-  ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)
-  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
-  C_dat <- Data@Cat[x, ind]
-  if (is.na(Data@MPrec[x]) || length(Data@Year) == ylast + 1) {
-    TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
-  } else {
-    TACstar <- rep(Data@MPrec[x], reps)
-  }
+#' 
+NULL
+
+#' @templateVar mp Islope1
+#' @template MPuses
+#' @describeIn Islope The least biologically precautionary of the Islope methods
+#' @export 
+#' @examples 
+#' Islope1(1, DLMtool::SimulatedData, plot=TRUE)
+#' @family Index methods
+Islope1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, lambda = 0.4,xx = 0.2) {
   
-  I_hist <- Data@Ind[x, ind]
-  yind <- 1:yrsmth
-  # slppar <- summary(lm(I_hist ~ yind))$coefficients[2, 1:2]
-  slppar <- summary(lm(log(I_hist) ~ yind))$coefficients[2, 1:2]
-  Islp <- rnorm(reps, slppar[1], slppar[2])
-  TAC <- TACstar * (1 + lambda * Islp)
+  runIslope <- Islope_(x, Data, reps, yrsmth, lambda, xx)
+  TAC <- TACfilter(runIslope$TAC)
+  runIslope$TAC <- TAC 
+  
+  if(plot) Islope_plot(runIslope) 
   
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
   
 }
@@ -2465,31 +2573,42 @@ class(Islope1) <- "MP"
 
 
 
-#' @describeIn Islope1 The most biologically precautionary of two constant index / CPUE methods
-#' proposed by Geromont and Butterworth 2014. Tested by Carruthers et al. 2015
-#' @export Islope4
-Islope4 <- function(x, Data, reps = 100, yrsmth = 5, lambda = 0.2, 
-                    xx = 0.4) {
-  dependencies = "Data@Year, Data@Cat, Data@CV_Cat, Data@Ind"
-  ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)
-  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
-  C_dat <- Data@Cat[x, ind]
-  if (is.na(Data@MPrec[x]) || length(Data@Year) == ylast + 1) {
-    TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
-  } else {
-    TACstar <- rep(Data@MPrec[x], reps)
-  }
-  I_hist <- Data@Ind[x, ind]
-  yind <- 1:yrsmth
-  # slppar <- summary(lm(I_hist ~ yind))$coefficients[2, 1:2]
-  slppar <- summary(lm(log(I_hist) ~ yind))$coefficients[2, 1:2]
-  Islp <- rnorm(reps, slppar[1], slppar[2])
-  TAC <- TACstar * (1 + lambda * Islp)
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
-  Rec
-}
+
+#' @describeIn Islope More biologically precautionary. Reference TAC is 0.7 average catch
+#' @export 
+#' @examples 
+#' Islope2(1, DLMtool::SimulatedData, plot=TRUE)
+Islope2 <- Islope1 
+formals(Islope2)$lambda <- 0.4
+formals(Islope2)$xx <- 0.3
+class(Islope2) <- "MP"
+
+
+#' @describeIn Islope More biologically precautionary. Reference TAC is 0.6 average catch
+#' @export 
+#' @examples 
+#' Islope3(1, DLMtool::SimulatedData, plot=TRUE)
+Islope3 <- Islope1 
+formals(Islope3)$lambda <- 0.4
+formals(Islope3)$xx <- 0.4
+class(Islope2) <- "MP"
+
+
+#' @describeIn Islope The most biologically precautionary of the Islope methods. 
+#' Reference TAC is 0.6 average catch and gain parameter is 0.2
+#' @export 
+#' @examples 
+#' Islope4(1, DLMtool::SimulatedData, plot=TRUE)
+Islope4 <- Islope1 
+formals(Islope4)$lambda <- 0.2
+formals(Islope4)$xx <- 0.4
 class(Islope4) <- "MP"
+
+
+
+
+
+#### HERE #####
 
 
 #' Index Target Management Procedure

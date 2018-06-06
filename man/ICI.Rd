@@ -3,41 +3,91 @@
 \name{ICI}
 \alias{ICI}
 \alias{ICI2}
-\title{Index Confidence Interval (ICI) MP by Jardim et al. (2015)}
+\title{Index Confidence Interval}
 \usage{
-ICI(x, Data, reps)
+ICI(x, Data, reps = 100, plot = FALSE)
 
-ICI2(x, Data, reps)
+ICI2(x, Data, reps = 100, plot = FALSE)
 }
 \arguments{
-\item{x}{A position in data-limited methods data object}
+\item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of TAC samples}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
+}
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
 The MP adjusts catch based on the value of the index in the current year relative to the
 time series mean and standard error.
 }
+\details{
+The TAC is calculated as:
+\deqn{\textrm{TAC}_y=C_{y-1} \alpha}
+where \eqn{C_{y-1}} is the catch from the previous year, and \eqn{\alpha} is
+defined as:
+\deqn{\alpha = 
+             \left\{\begin{array}{ll} 
+             d & \textrm{if } I < \textrm{CI}_L \\ 
+             u & \textrm{if } I > \textrm{CI}_H \\ 
+             1 & \textrm{if } \textrm{CI}_L \leq I \leq \textrm{CI}_H \\
+             \end{array}\right.
+           }{}
+where \eqn{I} is the index in the most recent year, \eqn{d} is 0.75 for \code{ICI} and \code{ICI2},
+\eqn{u} is 1.05 and 1.25 for\code{ICI} and \code{ICI2} respectively, and \eqn{\textrm{CI}_L}
+and \eqn{\textrm{CI}_L} are the lower and upper bound of the confidence
+interval of mean historical index. The confidence interval is
+calculated using Z-scores described in the Functions section below.
+}
 \section{Functions}{
 \itemize{
-\item \code{ICI}: The mean and standard error of the index time series is calculated. There are two thresholds
-which delineates whether catch is reduced, held constant, or increased. The catch is reduced by 0.75
-if the Z-score of the current year's index is less than -0.44. The catch is increased by 1.05
-if the Z-score of the current year's index is greater than 1.96. Otherwise, the catch is held constant.
+\item \code{ICI}: The catch is reduced by 0.75 if the Z-score of the current year's index is less than -0.44.
+The catch is increased by 1.05 if the Z-score of the current year's index is greater than 1.96. Otherwise, the catch is held constant.
 
-\item \code{ICI2}: Compared to \code{ICI}, this method is less precautionary of the two ICI MPs by allowing for a
+\item \code{ICI2}: This method is less precautionary of the two ICI MPs by allowing for a
 larger increase in TAC and a lower threshold of the index to decrease the TAC. The catch is reduced by 0.75
 if the Z-score of the current year's index is less than -1.96. The catch is increased by 1.25
 if the Z-score of the current year's index is greater than 1.96. Otherwise, the catch is held constant.
 }}
 
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{ICI}: Cat, Ind, Year
+
+
+\code{ICI2}: Cat, Ind, t
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/ICI.html}{Online Documentation} for correctly rendered equations
+
+
+}
+
+\examples{
+ICI(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
+
+ICI2(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
+}
 \references{
 Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for
 data limited stocks using length-based reference points and survey biomass indices,
 Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836,
 https://doi.org/10.1016/j.fishres.2014.11.013
+}
+\seealso{
+Other Index methods: \code{\link{GB_slope}},
+  \code{\link{GB_target}}, \code{\link{Gcontrol}},
+  \code{\link{Iratio}}, \code{\link{Islope}},
+  \code{\link{ItargetE1}}
 }
 \author{
 Coded by Q. Huynh. Developed by Jardim et al. (2015)

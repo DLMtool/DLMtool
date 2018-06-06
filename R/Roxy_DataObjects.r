@@ -274,3 +274,11 @@ NULL
 "ReqData"
 
 
+#'  tiny 
+#'
+#'  A tiny value used in DLMtool to avoid zeros for numerical reasons
+#' @keywords internal
+#'
+"tiny"
+
+

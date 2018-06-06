@@ -67,7 +67,9 @@ doi:10.1093/icesjms/fst232
 }
 \seealso{
 Other Index methods: \code{\link{GB_slope}},
-  \code{\link{GB_target}}, \code{\link{Gcontrol}}
+  \code{\link{GB_target}}, \code{\link{Gcontrol}},
+  \code{\link{ICI}}, \code{\link{Iratio}},
+  \code{\link{Islope}}
 }
 \author{
 T. Carruthers
