@@ -4,23 +4,49 @@
 \alias{ITM}
 \title{Index Target based on natural mortality rate}
 \usage{
-ITM(x, Data, reps = 100)
+ITM(x, Data, reps = 100, plot = FALSE)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of stochastic samples of the quota recommendation}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 }
 \value{
-A numeric vector of TAC recommendations
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
 An index target MP where the TAC is modified according to current index
-levels (mean index over last yrsmth years) relative to a target level.
-Maximum fractional annual changes are mc.  mc=(5+M\emph{25)/100
-yrsmth=4}(1/M)^(0.25)
+levels (mean index over last number of years determined by natural mortality
+(\emph{M})) relative to a target level.
+}
+\details{
+The TAC is caluclated as:
+\deqn{\textrm{TAC}_y = \textrm{TAC}_{y-1} \delta I}
+where \eqn{\delta I} is the ratio of the  mean index over \eqn{4\frac{1}{M}^{1/4}} years
+to the reference index (\code{Data@Iref}).
+
+The maximum fractional change in TAC is determined by \eqn{mc}, defined as
+\eqn{mc = \textrm{max}\left(\frac{5 + M*25}{100}, 0,2\right)}
+}
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{ITM}: Cat, Ind, Iref, Mort, MPrec, t, Year
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/ITM.html}{Online Documentation} for correctly rendered equations
+}
+
+\examples{
+ITM(1, Data=DLMtool::SimulatedData, plot=TRUE)
 }
 \author{
 T. Carruthers

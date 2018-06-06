@@ -185,7 +185,7 @@ class(STY) <- "PM"
 
 #' @rdname PerformanceMetric 
 #' @export
-Yield <- function(MSEobj=NULL, Ref=1, Years=NULL) {
+Yield <- function(MSEobj=NULL, Ref=1, Yrs=NULL) {
   Yrs <- ChkYrs(Yrs, MSEobj)
   PMobj <- new("PMobj")
   PMobj@Name <- paste0("Yield relative to Reference Yield (Years", Yrs[1], "-", Yrs[2], ")") 

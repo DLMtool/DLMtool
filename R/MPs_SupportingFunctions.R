@@ -40,13 +40,13 @@ DCAC_plot <- function(x, Data, dcac, TAC, Bt_K, yrs, lwd=3, cex.lab=1.25) {
   points(max(Data@Year)+3, quants[2], pch=16, col="blue", cex=1.5)
   lines(c(max(Data@Year)+3, max(Data@Year)+3), c(quants[1], quants[3]), col="blue")
   axis(side=4, las=1, col="blue", labels=FALSE)
-  at = axTicks(4)
+  at = graphics::axTicks(4)
   mtext(side = 4, text = at, at = at, col = "blue", line = 1, las=1)
   mtext(side=4, "Depletion (median + 95 percentiles)", line=3, cex=1.25, col="blue")
 }
 
 BK_plot <- function(DF) {
-
+  vars <- vals <- NULL # R check hack
   DF2 <- DF %>% dplyr::filter(vars %in% c("Lc/Linf", "K", "Fmax"))
   p1 <- ggplot(DF2, aes(x=vars, y=vals)) + geom_boxplot() + 
     theme_classic() + expand_limits(y=0) + labs(x="", y='Values')
@@ -366,7 +366,7 @@ Iratio_plot <- function(Data, I.num, ind.num, I.den, ind.den, alpha, TAC, Cat) {
 
 
 
-Islope_plot <- function(runIslope) {
+Islope_plot <- function(runIslope, Data) {
   op <- par(no.readonly = TRUE)
   on.exit(op)
   par(mfrow=c(1,2))
@@ -385,7 +385,46 @@ Islope_plot <- function(runIslope) {
 }
 
 
-YPR_plot <- function(runYPR, Data) {
+Lratio_BHI_plot <- function(mlbin, CAL, LSQ, Lref, Data, x, TAC, Cc, yrsmth) {
+  op <- par(no.readonly = TRUE)
+  on.exit(op)
+  par(mfrow=c(1,2))
+  plot(mlbin, CAL, type="l", xlab="Length", ylab=paste0("Count (last ", yrsmth, " years)"),
+       bty="l", lwd=2)
+  abline(v=mean(LSQ), lty=3)
+  text(mean(LSQ), quantile(CAL, 0.75), pos=4, "Mean length")
+  
+  abline(v=mean(Lref), lty=3, col="blue")
+  text(mean(Lref), quantile(CAL, 0.95), pos=4, "Reference length", col="blue")
+  
+  
+  ylim <- range(c(Data@Cat[x,], TAC, Cc ))
+  
+  plot(c(Data@Year, max(Data@Year)+1), c(Data@Cat[x,],NA), type="l", xlab="Year", 
+       ylab=paste0("Catch (", Data@Units, ")"),
+       lwd=2,  bty="l", ylim=ylim)
+  
+  boxplot(TAC, col="blue", axes=FALSE, at=max(Data@Year)+1, add=TRUE)
+  text(max(Data@Year)+1, quantile(TAC, 0.95, na.rm=TRUE), "TAC", col="blue")
+  points(max(Data@Year), mean(Cc, na.rm=TRUE), cex=2, pch=16, col="green")
+  text(max(Data@Year), mean(Cc, na.rm=TRUE), "last Catch", col="green", pos=1, xpd=NA)
+  
+}
+
+
+
+MCD_plot <- function(Data, AvC, Bt_K, TAC) {
+  op <- par(no.readonly = TRUE)
+  on.exit(op)
+  par(mfrow=c(1,3))
+  boxplot(Bt_K, ylab=paste0("Depletion"), col="gray")
+  ylim <- range(c(AvC, TAC), na.rm=TRUE)
+  boxplot(AvC, ylab=paste0("Mean catch (", Data@Units, ")"), ylim=ylim, col="gray")
+  boxplot(TAC, ylab=paste0("TAC (", Data@Units, ")"), ylim=ylim, col="gray")
+  
+}
+
+YPR_plot <- function(runYPR, Data,reps) {
   frates <- runYPR$frates
   ypr <- runYPR$ypr
   dif <- runYPR$dif
@@ -412,93 +451,6 @@ YPR_plot <- function(runYPR, Data) {
 
 
 
-
-# default plotting options
-leg.pos <- col1 <- col2 <- col3 <- col4 <- pt.cex <- tex.cex <- cex.lab <- lwd <- leg.post <- NULL
-MP.plot <- new.env()
-MP.plot$col1 <- "#2B2E6E"
-MP.plot$col2 <- "#9F812D"
-MP.plot$col3 <- "black"
-MP.plot$col4 <- "darkgray"
-MP.plot$pt.cex <- 2
-MP.plot$tex.cex <- 1.1
-MP.plot$cex.lab <- 1.25
-MP.plot$lwd <-3
-MP.plot$leg.pos <- "topleft"
-
-
-
-
-
-
-
-Itarget_p <- function(...) {
- 
-  inlist <- list(...)
-
-  # default plotting options
-  for (nm in names(MP.plot)) {
-    if (!nm %in% names(inlist)) {
-      assign(nm, MP.plot[[nm]])
-    } else {
-      assign(nm, inlist[[nm]])
-    }
-  }
-
-
-  ylim <- c(0, max(c(1, I0, Itarget, Data@Ind[x, ])))
-  op <- par(no.readonly = TRUE)
-  on.exit(par(op))
-  par(mfrow=c(1,2))
-  plot(Data@Year, Data@Ind[x, ], ylim=ylim, type='l', bty="l", 
-       xlab="Year", ylab="Index of Total Abundance", las=1, cex.lab=cex.lab) 
-  abline(v=Data@LHYear, lty=3, col=col4)
-  text(Data@LHYear, min(ylim)*1.15, "Last Historical Year", col=col4, pos=2)
-  
-  lines(Data@Year[ind3], rep(Iave, length(ind3)), col=col2, lwd=lwd)
-  lines(Data@Year[ind], rep(I0, length(Data@Year[ind])), col=col2, lwd=lwd-1)
-  
-  lines(Data@Year[ind], rep(Irecent, length(ind)), col=col1, lwd=lwd)
-  points(max(Data@Year[ind]), Itarget, col=col3, cex=pt.cex, pch=16)
-  
-
-  legend(leg.pos, lty=c(1,1,1,NA), pch=c(NA, NA, NA, 16), col=c(col1, col2, col2, col3), lwd=c(lwd, lwd, lwd-1, NA),
-         legend=c(as.expression(bquote("I"[recent]~(mean~last~ .(yrsmth) ~ "years"))),
-                  as.expression(bquote("I"[average]~(mean~last~ .(yrsmth*2) ~ "historical years"))),
-                  as.expression(bquote("I"[0]~(0.8~"I"[average]))),
-                  as.expression(bquote("I"[target]~(.(Imulti)~"I"[average])))),
-         bty="n", pt.cex=pt.cex, cex=tex.cex, xpd=TRUE)
-  
-  
-  
-  ylim <- range(c(C_dat,TAC, Data@Cat[x, ]))
-
-  plot(c(Data@Year, max(Data@Year)+1), c(Data@Cat[x, ], NA), ylim=ylim, type="l", bty="l", 
-       xlab="Year", ylab="Catch", las=1, cex.lab=cex.lab)
-  lines(Data@Year[ind2], C_dat, col=col1, lwd=lwd-1)
-  
-  abline(v=Data@LHYear, lty=3, col=col4)
-  text(Data@LHYear, min(ylim)*1.1, "Last Historical Year", col=col4, pos=2)
-  lines(Data@Year[ind2], rep(mean(C_dat), length(ind2)), col=col1, lwd=lwd)
-  if ((1-xx) ==1) {
-    legend(leg.pos, lty=c(1, NA, NA), pch=c(NA, 16), lwd=lwd, col=c(col1, "black"), 
-           legend =c(as.expression(bquote("C"[average]~(last~ .(yrsmth) ~ "historical years"))),
-                     "TAC"),
-           bty="n", pt.cex=pt.cex, cex=tex.cex, xpd=TRUE) 
-  } else {
-    points(mean(Data@Year[ind2]), mean(TACstar), cex=pt.cex, pch=16, col=col1)
-    legend(leg.pos, lty=c(1, NA, NA), pch=c(NA, 16, 16), lwd=lwd, col=c(col1, col1, "black"), 
-           legend =c(as.expression(bquote("C"[average]~(last~ .(yrsmth) ~ "historical years"))),
-                     as.expression(bquote("C"[star]~(.(1-xx)~"C"[average]))),
-                     "TAC"),
-           bty="n", pt.cex=pt.cex, cex=tex.cex, xpd=TRUE) 
-  }
-  
-  points(max(Data@Year)+1, mean(TAC), cex=pt.cex, pch=16)
-  if (!all(TAC/mean(TAC) == 1)) {
-    boxplot(TAC, at=max(Data@Year)+1, add=TRUE, xpd=NA, axes=FALSE, outline = FALSE)  
-  }
-}
 
 
 

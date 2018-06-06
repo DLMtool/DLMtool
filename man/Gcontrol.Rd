@@ -65,7 +65,7 @@ management procedures. ICES J. Mar Sci. 73, 464-482.
 \seealso{
 Other Index methods: \code{\link{GB_slope}},
   \code{\link{GB_target}}, \code{\link{ICI}},
-  \code{\link{Iratio}}, \code{\link{Islope}},
+  \code{\link{Iratio}}, \code{\link{Islope1}},
   \code{\link{ItargetE1}}
 }
 \author{

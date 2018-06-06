@@ -62,7 +62,7 @@ Advice. ICES CM 2012/ACOM 68. 42 pp.
 \seealso{
 Other Index methods: \code{\link{GB_slope}},
   \code{\link{GB_target}}, \code{\link{Gcontrol}},
-  \code{\link{ICI}}, \code{\link{Islope}},
+  \code{\link{ICI}}, \code{\link{Islope1}},
   \code{\link{ItargetE1}}
 }
 \author{

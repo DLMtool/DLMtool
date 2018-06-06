@@ -306,7 +306,7 @@ Required <- function(funcs = NA, noCV=FALSE) {
     if (class(tt) != "MP") stop(funcs[x], " is not class 'MP'")
   } 
   
-  
+  data(ReqData)
   builtin <- funcs[funcs %in% ReqData$MP]
   custom <- funcs[!funcs %in% ReqData$MP]
   

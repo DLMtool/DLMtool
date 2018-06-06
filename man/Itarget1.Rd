@@ -4,27 +4,37 @@
 \alias{ItargetE1}
 \alias{ItargetE4}
 \alias{Itarget1}
+\alias{Itarget2}
+\alias{Itarget3}
 \alias{Itarget4}
-\title{A management procedure that incrementally adjusts the TAC (starting from
-reference level that is a fraction of mean recent catches) or effort (from
-a reference level) to reach a target CPUE / relative abundance index}
+\title{Incremental Index Target MP
+
+A management procedure that incrementally adjusts the TAC (starting from
+reference level that is a fraction of mean recent catches)
+to reach a target CPUE / relative abundance index}
 \usage{
 ItargetE1(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5)
 
 ItargetE4(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 2.5)
 
-Itarget1(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5,
-  plot = FALSE, ...)
+Itarget1(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0,
+  Imulti = 1.5)
 
-Itarget4(x, Data, reps = 100, yrsmth = 5, xx = 0.3, Imulti = 2.5,
-  plot = FALSE, ...)
+Itarget2(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0,
+  Imulti = 2)
+
+Itarget3(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0,
+  Imulti = 2.5)
+
+Itarget4(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.3,
+  Imulti = 2.5)
 }
 \arguments{
-\item{x}{A position in data-limited methods data object}
+\item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of TAC samples}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
 
 \item{yrsmth}{Years over which to smooth recent estimates of surplus
 production}
@@ -36,15 +46,28 @@ first year}
 compared with recent levels.}
 
 \item{plot}{Logical. Show the plot?}
-
-\item{...}{other arguments passed to plotting function}
 }
 \value{
-A Rec object
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
 Four index/CPUE target MPs proposed by Geromont and Butterworth 2014.
 Tested by Carruthers et al. 2015.
+}
+\details{
+The TAC is calculated as:
+If  \eqn{I_\textrm{recent} \geq I_0}:
+\deqn{\textrm{TAC}= 0.5 \textrm{TAC}^* \left[1+\left(\frac{I_\textrm{recent} - I_0}{I_\textrm{target} - I_0}\right)\right]}
+
+else:
+\deqn{\textrm{TAC}= 0.5 \textrm{TAC}^* \left[\frac{I_\textrm{recent}}{I_0}^2\right]}
+
+where \eqn{I_0} is \eqn{0.8 I_{\textrm{ave}}} (the average index over the 2 x \code{yrsmth} years prior to the projection period),
+\eqn{I_\textrm{recent}} is the average index over the past \code{yrsmth} years, and
+\eqn{I_\textrm{target}} is \code{Imulti} times \eqn{I_{\textrm{ave}}},
+and \eqn{\textrm{TAC}^*} is:
+\deqn{(1-x)C}
+where \eqn{x} is argument \code{xx} and C is the average catch over the last 5 years of the historical period.
 }
 \section{Functions}{
 \itemize{
@@ -54,9 +77,32 @@ Tested by Carruthers et al. 2015.
 
 \item \code{Itarget1}: The less precautionary TAC-based MP
 
+\item \code{Itarget2}: The most biologically precautionary TAC-based MP
+
+\item \code{Itarget3}: The most biologically precautionary TAC-based MP
+
 \item \code{Itarget4}: The most biologically precautionary TAC-based MP
 }}
 
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{Itarget1}: Cat, Ind, LHYear, t, Year
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/Itarget1.html}{Online Documentation} for correctly rendered equations
+}
+
+\examples{
+Itarget1(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+Itarget2(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+Itarget3(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+Itarget4(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+}
 \references{
 Carruthers et al. 2015. Performance evaluation of simple
 management procedures. ICES J. Mar Sci. 73, 464-482.
@@ -69,7 +115,7 @@ doi:10.1093/icesjms/fst232
 Other Index methods: \code{\link{GB_slope}},
   \code{\link{GB_target}}, \code{\link{Gcontrol}},
   \code{\link{ICI}}, \code{\link{Iratio}},
-  \code{\link{Islope}}
+  \code{\link{Islope1}}
 }
 \author{
 T. Carruthers

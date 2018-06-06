@@ -19,7 +19,7 @@
 #' @describeIn matlenlim A data-limited method in which fishing retention-at-length
 #' is set equivalent to the maturity curve.
 #' @export 
-matlenlim <- function(x, Data, reps) {
+matlenlim <- function(x, Data, reps, plot=FALSE) {
   # Knife-edge vulnerability at estimated length-at-maturity  
   rec <- new("Rec") # create recommendation object
   rec@LFR <- Data@L50[x] # new length at full retention   

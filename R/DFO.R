@@ -22,8 +22,9 @@
 #' @param author The person who made this report
 #' @param title The title of the report
 #' @param qcol Color of shaded regions (bars, quantiles)
-#' @param lcol Color of lines
 #' @param quants Quantiles of the shaded regions (vector 5 long e.g. 0.1, 0.2, 0.5, 0.8, 0.9)
+#' @param ret_thresh Logical: if true just the threshold levels are returned
+#' 
 #' @author T. Carruthers
 #' @describeIn runCOSEWIC Calls `runMSE` with number of projection years for 6x maximum age and 
 #' uses `NFref`, `FMSYref`, and `curE` MPs.
@@ -939,6 +940,7 @@ SubCpars<-function(OM,sims){
 #' @param output_file The directory and filename you wish to use for the report e.g. "C:/temp/myMSEreport.html"
 #' @param author The person who made this report
 #' @param title The title of the report
+#' @param maxMPs Maximum number of MPs to plot
 #' @author T. Carruthers
 #' @export DFO_report
 DFO_report<-function(MSEobj,output_file=NA,author="Author not specified",title=NA,maxMPs=15){
@@ -1229,8 +1231,8 @@ DFO_spider<-function(MSEobj){
 #' 
 #' @export 
 Thresh_tab<-function(Ptab1){
-  
-  thresh<-DFO_tab_formatted(Ptab1,ret_thresh=T)
+  MP <- MP_Type <- Crit_S <- Caut_S <- Health_S <- OvFish_S <- Yield_S <- Crit <- Caut <- Health <- OvFish <- Reb <- NULL # cran check hacks
+  thresh<-DFO_tab_formatted(Ptab1,ret_thresh=T) 
   Ptab2<-as.data.frame(matrix(c("NANANAN     ","NA   ",thresh),nrow=1))
   names(Ptab2)<-c("MP","MP_Type","Crit_S","Caut_S","Health_S","OvFish_S","Yield_S","Crit","Caut","Health","OvFish","Yield","AAVY","Reb")
   
@@ -1427,7 +1429,7 @@ COSEWIC_tab_formatted<-function(Ptab1,thresh=c(20,     40,     40,    20,       
 #' 
 #' @export 
 Cos_thresh_tab<-function(Ptab1){
-  
+  MP <- P_Cr <- P_Ct <- P_H <- P_Cr_MSY <- P_Ct_MSY <- P_H_MSY <- P_A1 <- P_A2 <- Blow <- NULL # cran check hacks
   thresh<-COSEWIC_tab_formatted(Ptab1,ret_thresh=T)
   Ptab2<-as.data.frame(matrix(c("NANANANANA",thresh),nrow=1))
   names(Ptab2)<-c("MP","P_Cr","P_Ct","P_H","P_Cr_MSY","P_Ct_MSY","P_H_MSY","P_A1","P_A2","Blow")

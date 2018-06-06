@@ -25,7 +25,7 @@ LTY(MSEobj = NULL, Ref = 0.5, Yrs = c(max(MSEobj@proyears - 9, 1),
 
 STY(MSEobj = NULL, Ref = 0.5, Yrs = c(1, 10))
 
-Yield(MSEobj = NULL, Ref = 1, Years = NULL)
+Yield(MSEobj = NULL, Ref = 1, Yrs = NULL)
 
 AAVY(MSEobj = NULL, Ref = 0.2, Yrs = NULL)
 }

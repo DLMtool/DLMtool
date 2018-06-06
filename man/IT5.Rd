@@ -3,30 +3,45 @@
 \name{IT5}
 \alias{IT5}
 \alias{IT10}
-\title{Index Target Management Procedure}
+\title{Iterative Index Target MP}
 \usage{
-IT5(x, Data, reps = 100,yrsmth=5,mc=0.05)
+IT5(x, Data, reps = 100, plot = FALSE, yrsmth = 5, mc = 0.05)
 
-IT10(x, Data, reps = 100, yrsmth = 5, mc = 0.1)
+IT10(x, Data, reps = 100, plot = FALSE, yrsmth = 5, mc = 0.1)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of stochastic samples of the quota recommendation}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{yrsmth}{The number of historical years over which to average the index}
 
 \item{mc}{The maximum fractional change in the TAC among years.}
 }
 \value{
-A numeric vector of TAC recommendations
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
 An index target MP where the TAC is modified according to current index
-levels (mean index over last 5 years) relative to a target level. Maximum
-annual changes are 5 per cent.
+levels (mean index over last 5 years) relative to a target level.
+}
+\details{
+The TAC is calculated as:
+\deqn{\textrm{TAC}_y = C_{y-1} I_\delta}
+where \eqn{C_{y-1}} is the catch from the previous year and \eqn{I_\delta} is
+the ratio of the mean index over the past \code{yrsmth} years to a reference index level.
+The maximum allowable change in TAC is determined by \code{mc}: e.g \code{mc=0.05}
+means that the maximum change in TAC from the previous
+catch is 5%.
+
+The reference index level (\code{Data@Iref}) is assumed to be a proxy for MSY. In the
+MSE \code{Iref} is the index at MSY subject to observation error (\code{Obs@Irefbiascv}).
+Consequently the performance of these methods in MSE is strongly determined by the
+uncertainty the in reference index.
 }
 \section{Functions}{
 \itemize{
@@ -35,6 +50,28 @@ annual changes are 5 per cent.
 \item \code{IT10}: Maximum annual changes are 10 per cent.
 }}
 
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{IT5}: Ind, Iref, MPrec, Year
+
+
+\code{IT10}: Ind, Iref, MPrec, Year
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/IT5.html}{Online Documentation} for correctly rendered equations
+
+
+}
+
+\examples{
+IT5(1, DLMtool::SimulatedData, plot=TRUE)
+IT10(1, DLMtool::SimulatedData, plot=TRUE)
+}
 \author{
 T. Carruthers
 }

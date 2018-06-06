@@ -5,28 +5,36 @@
 \alias{Lratio_BHI2}
 \title{Mean length-based indicator MP of Jardim et al. 2015}
 \usage{
-Lratio_BHI(x, Data, reps, yrsmth = 3)
+Lratio_BHI(x, Data, reps = 100, plot = FALSE, yrsmth = 3)
 
-Lratio_BHI2(x, Data, reps, yrsmth = 3)
+Lratio_BHI2(x, Data, reps = 100, plot = FALSE, yrsmth = 3)
 }
 \arguments{
-\item{x}{A position in data-limited methods data object}
+\item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of TAC samples}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{yrsmth}{The most recent years of data to smooth the calculation of the mean length}
 }
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
+}
 \description{
-The TAC is adjusted by the ratio alpha, where the numerator
-is the mean length of the catch (of lengths larger than Lc) and
+The TAC is calculated as the most recent catch, modified by the ratio alpha,
+where the numerator is the mean length of the catch (of lengths larger than Lc) and
 the denominator is the mean length expected at MSY. Here, Lc is the length at
 full selection (LFS).
 }
 \details{
-Argument yrsmth currently takes the mean length of the most recent 3 years of data
-as a smoother.
+The TAC is calculated as:
+\deqn{\textrm{TAC}_y = C_{y-1} \frac{L}{L_\textrm{ref}}}
+where \eqn{C_{y-1}} is the catch from the previous year, \eqn{L} is the mean
+length of the catch over the last \code{yrsmth} years (of lengths larger than Lc) and \eqn{L_\textrm{ref}} is the
+mean length expected at MSY. Here, Lc is the length at full selection (LFS).
 }
 \section{Functions}{
 \itemize{
@@ -37,6 +45,30 @@ K are not used in this MP (see Appendix A of Jardim et al. 2015).
 function of M, K, and presumed FMSY/M.
 }}
 
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{Lratio_BHI}: CAL, CAL_bins, Cat, LFS, t, vbLinf
+
+
+\code{Lratio_BHI2}: CAL, CAL_bins, Cat, FMSY_M, LFS, Mort, t, vbK, vbLinf
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/Lratio_BHI.html}{Online Documentation} for correctly rendered equations
+
+
+}
+
+\examples{
+Lratio_BHI(1, Data=DLMtool::SimulatedData, plot=TRUE)
+
+Lratio_BHI2(1, Data=DLMtool::SimulatedData, plot=TRUE)
+
+}
 \references{
 Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for
 data limited stocks using length-based reference points and survey biomass indices,
@@ -44,7 +76,7 @@ Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836,
 https://doi.org/10.1016/j.fishres.2014.11.013
 }
 \seealso{
-\link{Ltarget1} \link{L95target}
+Other Length target MPs: \code{\link{LtargetE1}}
 }
 \author{
 Coded by Q. Huynh. Developed by Jardim et al. (2015)

@@ -5,23 +5,33 @@
 \alias{MCD4010}
 \title{Mean Catch Depletion}
 \usage{
-MCD(x, Data, reps = 100)
+MCD(x, Data, reps = 100, plot = FALSE)
 
-MCD4010(x, Data, reps = 100)
+MCD4010(x, Data, reps = 100, plot = FALSE)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of stochastic samples of the quota recommendation}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 }
 \value{
-A Rec object with TAC recommendations
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
 A simple average catch-depletion MP that was included to demonstrate just
 how informative an estimate of current stock depletion can be.
+}
+\details{
+The TAC is calculated as:
+\deqn{\textrm{TAC} = 2 \bar{C} D }
+where \eqn{\bar{C}} is mean historical catch, and \eqn{D} is estimate of current
+depletion.
+
+The TAC is modified by a harvest control rule in \code{MCD4010}.
 }
 \section{Functions}{
 \itemize{
@@ -30,6 +40,28 @@ how informative an estimate of current stock depletion can be.
 \item \code{MCD4010}: Linked to a 40-10 harvest control rule
 }}
 
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{MCD}: Cat, Dep, t
+
+
+\code{MCD4010}: Cat, Dep, t
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/MCD.html}{Online Documentation} for correctly rendered equations
+
+
+}
+
+\examples{
+MCD(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+MCD4010(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+}
 \author{
 T. Carruthers
 

@@ -223,6 +223,7 @@ Cplot <- function(MSEobj, MPs = NA, lastYrs = 5,
                   axis.text.size=10,
                   legend.title.size=12) {
   if (!all(is.na(MPs))) MSEobj <- Sub(MSEobj, MPs = MPs)
+  mp <- Catch <- Biomass <- mB <- mC <- NULL # cran check hacks 
   nsim <- MSEobj@nsim
   nMPs <- MSEobj@nMPs
   MPs <- MSEobj@MPs

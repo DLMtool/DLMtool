@@ -87,7 +87,9 @@ class(AvC) <- "MP"
 #' and `Data@CV_abun` contain values
 #' 
 #' @examples 
+#' \dontrun{
 #' BK(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
+#' }
 #' 
 #' @author T. Carruthers.
 #' @references Beddington, J.R., Kirkwood, G.P., 2005. The estimation of
@@ -135,8 +137,9 @@ class(BK) <- "MP"
 #' @templateVar mp BK_CC
 #' @template MPuses
 #' @examples 
+#' \dontrun{
 #' BK_CC(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
-#' 
+#' }
 #' @export 
 BK_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
   dependencies = "Data@LFC, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@CAA, Data@Mort"
@@ -187,8 +190,9 @@ class(BK_CC) <- "MP"
 #' @templateVar mp BK_ML
 #' @template MPuses
 #' @examples 
+#' \dontrun{
 #' BK_ML(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
-#' 
+#' }
 #' @export 
 BK_ML <- function(x, Data, reps = 100, plot=FALSE) {
   dependencies = "Data@LFC, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@CAL, Data@Mort"
@@ -497,7 +501,7 @@ CompSRA <- function(x, Data, reps = 100, plot=FALSE) {
 class(CompSRA) <- "MP"
 
 
-#' @templateVar mp CompSRA
+#' @templateVar mp CompSRA4010
 #' @template MPuses
 #' @describeIn CompSRA With a 40-10 control rule based on estimated depletion
 #' @examples
@@ -2530,15 +2534,14 @@ Islope_ <- function(x, Data, reps = 100, yrsmth = 5, lambda = 0.4,xx = 0.2) {
 #' first year and catch from the previous year in projection years,
 #' \eqn{\lamba} is a gain parameter, and \eqn{I} is the slope of log index over the past `yrsmth` years.
 #' 
-#' @name Islope
 #' @templateVar mp Islope1
 #' @template MPtemplate
-#' 
+#' @template MPuses
 #' @param yrsmth Years over which to smooth recent estimates of surplus production
 #' @param lambda A gain parameter controlling the speed in update in TAC.
 #' @param xx Parameter controlling the fraction of mean catch to start using in
 #' first year
-#' @return A numeric vector of quota recommendations
+#' 
 #' @author T. Carruthers
 #' @references Carruthers et al. 2015. Performance evaluation of simple
 #' management procedures. ICES J. Mar Sci. 73, 464-482.
@@ -2547,11 +2550,7 @@ Islope_ <- function(x, Data, reps = 100, yrsmth = 5, lambda = 0.4,xx = 0.2) {
 #' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
 #' doi:10.1093/icesjms/fst232
 #' 
-NULL
-
-#' @templateVar mp Islope1
-#' @template MPuses
-#' @describeIn Islope The least biologically precautionary of the Islope methods
+#' @describeIn Islope1 The least biologically precautionary of the Islope methods
 #' @export 
 #' @examples 
 #' Islope1(1, DLMtool::SimulatedData, plot=TRUE)
@@ -2562,7 +2561,7 @@ Islope1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, lambda = 0.4,xx
   TAC <- TACfilter(runIslope$TAC)
   runIslope$TAC <- TAC 
   
-  if(plot) Islope_plot(runIslope) 
+  if(plot) Islope_plot(runIslope, Data) 
   
   Rec <- new("Rec")
   Rec@TAC <- TAC
@@ -2574,7 +2573,7 @@ class(Islope1) <- "MP"
 
 
 
-#' @describeIn Islope More biologically precautionary. Reference TAC is 0.7 average catch
+#' @describeIn Islope1 More biologically precautionary. Reference TAC is 0.7 average catch
 #' @export 
 #' @examples 
 #' Islope2(1, DLMtool::SimulatedData, plot=TRUE)
@@ -2584,7 +2583,7 @@ formals(Islope2)$xx <- 0.3
 class(Islope2) <- "MP"
 
 
-#' @describeIn Islope More biologically precautionary. Reference TAC is 0.6 average catch
+#' @describeIn Islope1 More biologically precautionary. Reference TAC is 0.6 average catch
 #' @export 
 #' @examples 
 #' Islope3(1, DLMtool::SimulatedData, plot=TRUE)
@@ -2594,7 +2593,7 @@ formals(Islope3)$xx <- 0.4
 class(Islope2) <- "MP"
 
 
-#' @describeIn Islope The most biologically precautionary of the Islope methods. 
+#' @describeIn Islope1 The most biologically precautionary of the Islope methods. 
 #' Reference TAC is 0.6 average catch and gain parameter is 0.2
 #' @export 
 #' @examples 
@@ -2608,92 +2607,125 @@ class(Islope4) <- "MP"
 
 
 
-#### HERE #####
 
-
-#' Index Target Management Procedure
-#' 
-#' An index target MP where the TAC is modified according to current index
-#' levels (mean index over last 5 years) relative to a target level. Maximum
-#' annual changes are 5 per cent.
-#' 
-#' 
-#' @usage IT5(x, Data, reps = 100,yrsmth=5,mc=0.05)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the quota recommendation
+#' Index Target Internal Function
+#'
+#' @param x Iteration number
+#' @param Data An object of class `Data`
+#' @param reps Number of replicates
+#' @param plot Logical. Show the plot?
 #' @param yrsmth The number of historical years over which to average the index
 #' @param mc The maximum fractional change in the TAC among years.
-#' @return A numeric vector of TAC recommendations
-#' @author T. Carruthers
-#' @describeIn IT5 Maximum annual changes in TAC are 5 per cent.
-#' @export IT5
-IT5 <- function(x, Data, reps = 100, yrsmth = 5, mc = 0.05) {
+#'
+#' @return A named list with TAC recommendations of length `reps`
+#' @export
+#'
+#' @keywords internal
+IT_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, mc = 0.05) {
+  
   dependencies = "Data@Ind, Data@MPrec, Data@CV_Ind, Data@Iref"
   ind <- max(1, (length(Data@Year) - yrsmth + 1)):length(Data@Year)
   deltaI <- mean(Data@Ind[x, ind])/Data@Iref[x]
   if (deltaI < (1 - mc)) deltaI <- 1 - mc
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
   TAC <- Data@MPrec[x] * deltaI * trlnorm(reps, 1, Data@CV_Ind[x])
+  TAC <- TACfilter(TAC) 
+  if (plot) {
+    op <- par(no.readonly = TRUE)
+    on.exit(op)
+    par(mfrow=c(1,2), oma=c(1,1,1,1), mar=c(5,4,1,4))
+    ylim <- range(c(Data@Ind[x,ind], Data@Iref[x]))
+    plot(Data@Year[ind], Data@Ind[x,ind], xlab="Year", 
+         ylab= paste0("Index (previous ", yrsmth, "years)"), bty="l", type="l",
+         lwd=2, ylim=ylim)
+    lines(Data@Year[ind], rep(mean(Data@Ind[x, ind]), length(ind)), lty=2)
+    text(quantile(Data@Year[ind],0.15), mean(Data@Ind[x, ind]), "Mean Index", pos=3)
+    lines(Data@Year[ind], rep(mean(Data@Iref[x]), length(ind)), lty=3)
+    text(quantile(Data@Year[ind],0.15), Data@Iref[x], "Reference Index", pos=3)
+    
+    boxplot(TAC, ylab=paste0("TAC (", Data@Units, ")"))
+    points(1, Data@MPrec[x], cex=2, col="blue", pch=16)
+    text(1, Data@MPrec[x], cex=1, col="blue", "Last Catch", pos=1)
+  }
+  list(TAC=TAC)
+  
+}
+
+#' Iterative Index Target MP
+#' 
+#' An index target MP where the TAC is modified according to current index
+#' levels (mean index over last 5 years) relative to a target level. 
+#' 
+#' The TAC is calculated as:
+#' \deqn{\textrm{TAC}_y = C_{y-1} I_\delta}
+#' where \eqn{C_{y-1}} is the catch from the previous year and \eqn{I_\delta} is
+#' the ratio of the mean index over the past `yrsmth` years to a reference index level. 
+#' The maximum allowable change in TAC is determined by `mc`: e.g `mc=0.05` 
+#' means that the maximum change in TAC from the previous 
+#' catch is 5%. 
+#' 
+#' The reference index level (`Data@Iref`) is assumed to be a proxy for MSY. In the
+#' MSE `Iref` is the index at MSY subject to observation error (`Obs@Irefbiascv`). 
+#' Consequently the performance of these methods in MSE is strongly determined by the
+#' uncertainty the in reference index.
+#' 
+#' @templateVar mp IT5
+#' @template MPtemplate
+#' @template MPuses
+#' 
+#' @param yrsmth The number of historical years over which to average the index
+#' @param mc The maximum fractional change in the TAC among years.
+#' 
+#' @author T. Carruthers
+#' @describeIn IT5 Maximum annual changes in TAC are 5 per cent.
+#' @export 
+#' @examples 
+#' IT5(1, DLMtool::SimulatedData, plot=TRUE)
+IT5 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, mc = 0.05) {
+  runIT <- IT_(x, Data, reps, plot, yrsmth, mc)
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- runIT$TAC
   Rec
 }
 class(IT5) <- "MP"
 
+#' @templateVar mp IT10
+#' @template MPuses
+#' 
 #' @describeIn IT5 Maximum annual changes are 10 per cent.
-#' @export IT10
-IT10 <- function(x, Data, reps = 100, yrsmth = 5, mc = 0.1) {
-  dependencies = "Data@Ind, Data@MPrec, Data@CV_Ind, Data@Iref"
-  ind <- max(1, (length(Data@Year) - yrsmth + 1)):length(Data@Year)
-  deltaI <- mean(Data@Ind[x, ind])/Data@Iref[x]
-  if (deltaI < (1 - mc)) deltaI <- 1 - mc
-  if (deltaI > (1 + mc)) deltaI <- 1 + mc
-  TAC <- Data@MPrec[x] * deltaI * trlnorm(reps, 1, Data@CV_Ind[x])
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
-  Rec
-}
+#' @export 
+#' @examples 
+#' IT10(1, DLMtool::SimulatedData, plot=TRUE)
+IT10 <- IT5
+formals(IT10)$mc <- 0.1
 class(IT10) <- "MP"
 
 
-#' A management procedure that incrementally adjusts the TAC (starting from
-#' reference level that is a fraction of mean recent catches) or effort (from
-#' a reference level) to reach a target CPUE / relative abundance index
-#' 
-#' Four index/CPUE target MPs proposed by Geromont and Butterworth 2014. 
-#' Tested by Carruthers et al. 2015.
-#' 
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
+
+#' Incremental Index Target MP Internal Function
+#'
+#' @param x Iteration number
+#' @param Data An object of class `Data`
+#' @param reps Number of replicates
+#' @param plot Logical. Show the plot?
 #' @param yrsmth Years over which to smooth recent estimates of surplus
 #' production
 #' @param xx Parameter controlling the fraction of mean catch to start using in
 #' first year
 #' @param Imulti Parameter controlling how much larger target CPUE / index is
 #' compared with recent levels.
-#' @param plot Logical. Show the plot?
-#' @param ... other arguments passed to plotting function
-#' @return A Rec object
-#' @author T. Carruthers
-#' @references Carruthers et al. 2015. Performance evaluation of simple
-#' management procedures. ICES J. Mar Sci. 73, 464-482.
-#' 
-#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
-#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci. 72, 251-261.
-#' doi:10.1093/icesjms/fst232
-#' @describeIn Itarget1 The less precautionary TAC-based MP
-#' @family Index methods
-#' @export Itarget1
-Itarget1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5, plot=FALSE, ...) {
-  dependencies = "Data@Cat, Data@CV_Cat"
+#'
+#' @return A named list with TAC of length `reps`
+#' @export
+#'
+#' @keywords internal
+Itarget_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, Imulti = 1.5) {
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
   ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
   ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
   ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
   C_dat <- Data@Cat[x, ind2]
-  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
+  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat[x]/(yrsmth^0.5))
   Irecent <- mean(Data@Ind[x, ind])
   Iave <- mean(Data@Ind[x, ind3])
   Itarget <- Iave * Imulti
@@ -2706,71 +2738,159 @@ Itarget1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5, plot
   TAC <- TACfilter(TAC)
   
   if (plot) {
-    environment(Itarget_p) <- environment()
-    Itarget_p(...)
-  }
+    op <- par(no.readonly = TRUE)
+    on.exit(op)
+    par(mfrow=c(1,2))
     
+    ylim <- range(c(Data@Ind[x, ], Itarget, I0))
+    plot(Data@Year, Data@Ind[x, ], type="l", lwd=2, bty="l",
+         xlab="Year", ylab="Index", ylim=ylim)
+    points(max(Data@Year), mean(Data@Ind[x, ind]), cex=2, pch=16,col='blue')
+    text(max(Data@Year), mean(Data@Ind[x, ind]), cex=1, 'Irecent', pos=3, col='blue', xpd=NA)
+    
+    lines(Data@Year[ind3], rep(mean(Data@Ind[x, ind3]), length(ind3)), lty=2, col="orange")
+    text(mean(Data@Year[ind3]), mean(Data@Ind[x, ind3]), "Iave", col="orange", pos=1)
+    
+    points(max(Data@Year), Itarget, cex=2, pch=16,col='green')
+    text(max(Data@Year), Itarget, cex=1, 'Itarget', pos=3, col='green', xpd=NA)
+    
+    points(max(Data@Year), I0, cex=2, pch=16,col='red')
+    text(max(Data@Year), I0, cex=1, 'I0', pos=3, col='red', xpd=NA)
+    
+    ylim <- range(c(C_dat, TACstar, TAC))
+    Years <- Data@Year[ind2]
+    if (max(Years) != max(Data@Year)) {
+      Years <- c(Years,  (max(Data@Year[ind2])+1):max(Data@Year))  
+    }
+              
+    yrs <- length(Years)-length(C_dat)
+    Cdat <- c(C_dat, rep(NA, yrs))
+    plot(c(Years, max(Years)+1), c(Cdat, NA), type="l", lwd=2, bty="l",
+         xlab="Year", ylab=paste0("Catch (",  Data@Units, ")"), ylim=ylim)
+    abline(v=max(Data@Year[ind2]), col="gray", lty=3)
+    
+    # lines(Years[(length(Years)-yrs):length(Years)], Data@Cat[x, (length(Data@Cat[x,])-yrs):length(Data@Cat[x,])])
+    
+    points(max(Data@Year[ind2]), mean(TACstar), cex=2, col="orange", pch=16)
+    text(max(Data@Year[ind2]), mean(TACstar), "mean TAC*", pos=2, xpd=NA, col="orange")
+    
+    boxplot(TAC, at=max(Years)+1, add=TRUE, col="gray", axes=FALSE)
+    
+  }
+  
+  list(TAC=TAC )
+}
+
+
+
+#' Incremental Index Target MP 
+#'  
+#' A management procedure that incrementally adjusts the TAC (starting from
+#' reference level that is a fraction of mean recent catches) 
+#' to reach a target CPUE / relative abundance index
+#' 
+#' Four index/CPUE target MPs proposed by Geromont and Butterworth 2014. 
+#' Tested by Carruthers et al. 2015.
+#' 
+#' The TAC is calculated as:
+#' If  \eqn{I_\textrm{recent} \geq I_0}:
+#' \deqn{\textrm{TAC}= 0.5 \textrm{TAC}^* \left[1+\left(\frac{I_\textrm{recent} - I_0}{I_\textrm{target} - I_0}\right)\right]}
+#' 
+#' else:
+#' \deqn{\textrm{TAC}= 0.5 \textrm{TAC}^* \left[\frac{I_\textrm{recent}}{I_0}^2\right]}
+#' 
+#' where \eqn{I_0} is \eqn{0.8 I_{\textrm{ave}}} (the average index over the 2 x `yrsmth` years prior to the projection period), 
+#' \eqn{I_\textrm{recent}} is the average index over the past `yrsmth` years, and 
+#' \eqn{I_\textrm{target}} is `Imulti` times \eqn{I_{\textrm{ave}}}, 
+#' and \eqn{\textrm{TAC}^*} is:
+#' \deqn{(1-x)C}
+#' where \eqn{x} is argument `xx` and C is the average catch over the last 5 years of the historical period.
+#' 
+#' @templateVar mp Itarget1 
+#' @template MPtemplate
+#' @template MPuses
+#' 
+#' @param yrsmth Years over which to smooth recent estimates of surplus
+#' production
+#' @param xx Parameter controlling the fraction of mean catch to start using in
+#' first year
+#' @param Imulti Parameter controlling how much larger target CPUE / index is
+#' compared with recent levels.
+
+#' @author T. Carruthers
+#' @references Carruthers et al. 2015. Performance evaluation of simple
+#' management procedures. ICES J. Mar Sci. 73, 464-482.
+#' 
+#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
+#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci. 72, 251-261.
+#' doi:10.1093/icesjms/fst232
+#' @describeIn Itarget1 The less precautionary TAC-based MP
+#' @family Index methods
+#' @export 
+#' @examples 
+#' Itarget1(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+Itarget1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, Imulti = 1.5) {
+  runItarget <- Itarget_(x, Data, reps, plot, yrsmth, xx, Imulti)
   Rec <- new("Rec")
-  Rec@TAC <- TAC
+  Rec@TAC <- runItarget$TAC
   Rec
 }
 class(Itarget1) <- "MP"
 
-
-
+#' @describeIn Itarget1 The most biologically precautionary TAC-based MP
+#' @export 
+#' @examples 
+#' Itarget2(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+Itarget2 <- Itarget1
+formals(Itarget2)$Imulti <- 2
+class(Itarget2) <- "MP"
 
 #' @describeIn Itarget1 The most biologically precautionary TAC-based MP
-#' @export Itarget4
-Itarget4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.3, Imulti = 2.5, plot=FALSE, ...) {
-  dependencies = "Data@Cat, Data@CV_Cat"
-  ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
-  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
-  ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
-  ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
-  C_dat <- Data@Cat[x, ind2]
-  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
-  Irecent <- mean(Data@Ind[x, ind])
-  Iave <- mean(Data@Ind[x, ind3])
-  Itarget <- Iave * Imulti
-  I0 <- 0.8 * Iave
-  if (Irecent > I0) {
-    TAC <- 0.5 * TACstar * (1 + ((Irecent - I0)/(Itarget - I0)))
-  } else {
-    TAC <- 0.5 * TACstar * (Irecent/I0)^2
-  }
-  
-  if (plot) {
-    environment(Itarget_p) <- environment()
-    Itarget_p(...)
-  }
-    
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
-  Rec
-}
+#' @export 
+#' @examples 
+#' Itarget3(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+Itarget3 <- Itarget1
+formals(Itarget3)$Imulti <- 2.5
+class(Itarget3) <- "MP"
+
+#' @describeIn Itarget1 The most biologically precautionary TAC-based MP
+#' @export 
+#' @examples 
+#' Itarget4(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+Itarget4 <- Itarget1
+formals(Itarget4)$xx <- 0.3 
+formals(Itarget4)$Imulti <- 2.5
 class(Itarget4) <- "MP"
+
 
 
 #' Index Target based on natural mortality rate
 #' 
 #' An index target MP where the TAC is modified according to current index
-#' levels (mean index over last yrsmth years) relative to a target level.
-#' Maximum fractional annual changes are mc.  mc=(5+M*25)/100
-#' yrsmth=4*(1/M)^(0.25)
+#' levels (mean index over last number of years determined by natural mortality 
+#' (*M*)) relative to a target level.
 #' 
+#' The TAC is caluclated as:
+#' \deqn{\textrm{TAC}_y = \textrm{TAC}_{y-1} \delta I}
+#' where \eqn{\delta I} is the ratio of the  mean index over \eqn{4\frac{1}{M}^{1/4}} years
+#' to the reference index (`Data@Iref`).
+#'
+#' The maximum fractional change in TAC is determined by \eqn{mc}, defined as
+#' \eqn{mc = \textrm{max}\left(\frac{5 + M*25}{100}, 0,2\right)}
 #' 
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the quota recommendation
-#' @return A numeric vector of TAC recommendations
+#' @templateVar mp ITM 
+#' @template MPtemplate
+#' @template MPuses
+#' 
 #' @author T. Carruthers
 #' @export 
-ITM <- function(x, Data, reps = 100) {
+#' @examples 
+#' ITM(1, Data=DLMtool::SimulatedData, plot=TRUE)
+ITM <- function(x, Data, reps = 100, plot=FALSE) {
   
   dependencies = "Data@Ind, Data@Cat, Data@CV_Ind, Data@Iref, Data@Mort"
   mc <- (5 + Data@Mort[x] * 25)/100
-  if (mc > 0.2) 
-    mc <- 0.2
+  if (mc > 0.2)   mc <- 0.2
   yrsmth <- floor(4 * (1/Data@Mort[x])^(1/4))
   ind <- max(1, (length(Data@Year) - yrsmth + 1)):length(Data@Year)
   
@@ -2779,86 +2899,230 @@ ITM <- function(x, Data, reps = 100) {
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
   
   TAC <- Data@MPrec[x] * deltaI * trlnorm(reps, 1, Data@CV_Ind[x])
+  TAC <- TACfilter(TAC)
+  
+  if (plot) {
+    op <- par(no.readonly = TRUE)
+    on.exit(op)
+    par(mfrow=c(1,2))
+    ylim <- range(c(Data@Ind[x,ind], Data@Iref[x]))
+    plot(Data@Year[ind], Data@Ind[x,ind], type="l", xlab="Year", ylab="Index", 
+         lwd=2,  bty="l", ylim=ylim)
+    lines(Data@Year[ind], rep(Data@Iref[x], length(ind)), lty=2, col="darkgray")
+    text(quantile(Data@Year[ind],0.15), Data@Iref[x], "Iref", pos=3)
+    
+    ylim <- range(c(TAC,Data@MPrec[x] ))
+    boxplot(TAC, col="gray", ylab=paste0("TAC (", Data@Units, ")"), ylim=ylim)
+    points(1, Data@MPrec[x], cex=2, pch=16, col="green")
+    text(1, Data@MPrec[x], "Last TAC", col="green", pos=1)
+  }
+  
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(ITM) <- "MP"
 
-#' A management procedure that adjusts the TAC up/down from reference (target)
-#' level (that is a fraction of mean recent premanagement catches) to reach a
-#' target mean length of fish caught.
-#' 
-#' This MP is based on Ltarget1 proposed by Geromont and Butterworth 2014, but
-#' here the target and limit mean lengths are based on the length at maturity
-#' distribution rather than an arbitrary multiplicative of the mean length.
-#' 
-#' 
-#' @usage L95target(x, Data, reps = 100, yrsmth = 5, buffer=0)
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @param yrsmth Years over which to calculate the mean historical catch
-#' @param buffer Parameter controlling the fraction of mean catch to set the
-#' reference (or target) TAC level - acts as a precautionary buffer
-#' @return A numeric vector of TAC recommendations
-#' @author HF Geromont
-#' @references Geromont, H.F., Butterworth, D.S. 2014. Generic management
-#' procedures for data-poor fisheries; forecasting with few data. ICES J. Mar.
-#' Sci. doi:10.1093/icesjms/fst232
-#' @seealso \link{Ltarget1}
-#' @export L95target
-L95target <- function(x, Data, reps = 100, yrsmth = 5, buffer = 0) {
-  
-  # Set target length to L95 and limit to 0.9L50 Alternative targets
-  # TACstar depending on buffer value
-  
-  dependencies = "Data@Cat, Data@Year, Data@LHYear, Data@ML, Data@L50, Data@L95"
-  
+
+
+### Length Target Methods #####
+Ltarget_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, xL = 1.05, 
+                     Ltarget=NULL, L0=NULL) {
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
   ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
   ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
+  ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
   C_dat <- Data@Cat[x, ind2]
-  TACstar <- (1 - buffer) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
-  Lrecent <- mean(Data@ML[ind])
-  Ltarget <- Data@L95[x]
-  L0 <- 0.9 * Data@L50[x]
-  if (Lrecent > L0) {
+  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
+  Lrecent <- mean(Data@ML[x,ind])
+  Lave <- mean(Data@ML[x,ind3])
+  if (is.null(L0)) L0 <- 0.9 * Lave
+  if (is.null(Ltarget)) Ltarget <- xL * Lave
+  if (Lrecent >= L0) {
     TAC <- 0.5 * TACstar * (1 + ((Lrecent - L0)/(Ltarget - L0)))
   } else {
     TAC <- 0.5 * TACstar * (Lrecent/L0)^2
   }
+  
+  TAC <- TACfilter(TAC)
+  
+  if (plot) {
+    op <- par(no.readonly = TRUE)
+    on.exit(op)
+    par(mfrow=c(1,2))
+    ylim <- range(c(Data@ML[x,], Lrecent, Lave, Ltarget, L0))
+    plot(Data@Year, Data@ML[x,], type="l", xlab="Year", ylab="Mean Length", 
+         lwd=2,  bty="l", ylim=ylim)
+    lines(Data@Year[ind], rep(Lrecent, length(ind)), lty=2, col="green")
+    text(quantile(Data@Year[ind],0.15),Lrecent, "Lrecent", pos=3, col='green')
+    
+    lines(Data@Year[ind3], rep(Lave, length(ind3)), lty=2, col="orange")
+    text(quantile(Data@Year[ind3],0.15),Lave, "Lave", pos=3, col='orange')
+    
+    points(max(Data@Year[ind3]), Ltarget, lty=2, col="blue", pch=16)
+    text(max(Data@Year[ind3]), Ltarget, "Ltarget", pos=3, col='blue', xpd=NA)
+    
+    points(max(Data@Year[ind3]), L0, lty=2, col="red", pch=16)
+    text(max(Data@Year[ind3]), L0, "L0", pos=3, col='red', xpd=NA)
+    
+    
+    ylim <- range(c(Data@Cat[x,], TAC, TACstar ))
+    
+    plot(c(Data@Year, max(Data@Year)+1), c(Data@Cat[x,],NA), type="l", xlab="Year", 
+    ylab=paste0("Catch (", Data@Units, ")"),
+         lwd=2,  bty="l", ylim=ylim)
+    
+    boxplot(TAC, col="blue", axes=FALSE, at=max(Data@Year)+1, add=TRUE)
+    text(max(Data@Year)+1, quantile(TAC, 0.95, na.rm=TRUE), "TAC", col="blue")
+    points(max(Data@Year[ind3]), mean(TACstar, na.rm=TRUE), cex=2, pch=16, col="green")
+    text(max(Data@Year[ind3]), mean(TACstar, na.rm=TRUE), "TAC*", col="green", pos=1)
+  }
+  
+  list(TAC=TAC)
+  
+}
+
+
+#' Length Target MP 
+#' 
+#' A management procedure that incrementally adjusts the TAC to reach 
+#' a target mean length in catches.
+#' 
+#' Four target length MPs proposed by Geromont and Butterworth 2014.
+#' Tested by Carruthers et al. 2015.
+#' 
+#' The TAC is calculated as:
+#' If \eqn{L_\textrm{recent} \geq L_0}:
+#' \deqn{\textrm{TAC} = 0.5 \textrm{TAC}^* \left[1+\left(\frac{L_\textrm{recent}-L_0}{L_\textrm{target}-L_0}\right)\right]  }
+#' 
+#' else:
+#' \deqn{\textrm{TAC} = 0.5 \textrm{TAC}^* \left[\frac{L_\textrm{recent}}{L_0}^2\right] }
+#' 
+#' where \eqn{\textrm{TAC}^*} is (1 - `xx`) mean catches from the last `yrsmth` historical years (pre-projection),
+#' \eqn{L_\textrm{recent}} is mean length in last `yrmsth` years, \eqn{L_0} is (except for `L95target`) 0.9 average catch in the last
+#' 2 x `yrsmth` historical (pre-projection years) (\eqn{L_\textrm{ave}}), and \eqn{L_\textrm{target}} is 
+#' (except for `L95target`) `xL` \eqn{L_\textrm{ave}}.
+#' 
+#' @templateVar mp Ltarget1 
+#' @template MPtemplate
+#' @template MPuses
+#' 
+#' @param yrsmth Years over which to smooth recent estimates of surplus
+#' production
+#' @param xx Parameter controlling the fraction of mean catch to start using in
+#' first year
+#' @param xL Parameter controlling the magnitude of the target mean length of
+#' catches relative to average length in catches.
+#' @return A \linkS4class{Rec} object
+#' @author T. Carruthers
+#' @references Carruthers et al. 2015. Performance evaluation of simple
+#' management procedures. ICES J. Mar Sci. 73, 464-482.
+#' 
+#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
+#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
+#' doi:10.1093/icesjms/fst232
+#' @describeIn Ltarget1 The least biologically precautionary TAC-based MP.
+#' @family Length target MPs
+#' @export 
+#' @examples 
+#' Ltarget1(1, Data=DLMtool::SimulatedData, plot=TRUE)
+Ltarget1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, xL = 1.05) {
+  runLtarget <- Ltarget_(x, Data, reps, plot, yrsmth, xx, xL)
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- runLtarget$TAC
+  Rec
+}
+class(Ltarget1) <- "MP"
+
+#' @templateVar mp Ltarget2 
+#' @template MPuses
+#' @describeIn Ltarget1 Increasingly biologically precautionary (`xL` = 1.1).
+#' @export 
+#' @examples 
+#' Ltarget2(1, Data=DLMtool::SimulatedData, plot=TRUE)
+Ltarget2 <- Ltarget1
+formals(Ltarget2)$xL <- 1.1
+class(Ltarget2) <- "MP"
+
+#' @templateVar mp Ltarget3 
+#' @template MPuses
+#' @describeIn Ltarget1 Increasingly biologically precautionary (`xL` = 1.1).
+#' @export 
+#' @examples 
+#' Ltarget3(1, Data=DLMtool::SimulatedData, plot=TRUE)
+Ltarget3 <- Ltarget1
+formals(Ltarget3)$xL <- 1.15
+class(Ltarget3) <- "MP"
+
+#' @templateVar mp Ltarget4 
+#' @template MPuses
+#' @describeIn Ltarget1 The most biologically precautionary TAC-based MP (`xL` = 1.1, `xx`=0.2).
+#' @export 
+#' @examples 
+#' Ltarget4(1, Data=DLMtool::SimulatedData, plot=TRUE)
+Ltarget4 <- Ltarget1
+formals(Ltarget4)$xx <- 0.2
+formals(Ltarget4)$xL <- 1.15
+class(Ltarget4) <- "MP"
+
+
+#' @templateVar mp L95target 
+#' @template MPuses
+#' @describeIn Ltarget1 Same as Ltarget1 but here the target and limit 
+#' mean lengths are based on the length at maturity distribution rather 
+#' than an arbitrary multiplicative of the mean length 
+#' @export 
+#' @examples 
+#' L95target(1, Data=DLMtool::SimulatedData, plot=TRUE)
+L95target <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, xL=1.05) {
+  runLtarget <- Ltarget_(x, Data, reps, plot, yrsmth, xx, xL, Ltarget = Data@L95[x],
+                         L0=0.9 * Data@L50[x])
+  Rec <- new("Rec")
+  Rec@TAC <- runLtarget$TAC
   Rec
 }
 class(L95target) <- "MP"
 
 
+
+
+
+## Mean Length-Based Indicator ####
+
 #' Mean length-based indicator MP of Jardim et al. 2015
 #' 
-#' The TAC is adjusted by the ratio alpha, where the numerator 
-#' is the mean length of the catch (of lengths larger than Lc) and 
+#' The TAC is calculated as the most recent catch, modified by the ratio alpha, 
+#' where the numerator is the mean length of the catch (of lengths larger than Lc) and 
 #' the denominator is the mean length expected at MSY. Here, Lc is the length at 
 #' full selection (LFS).
 #' 
-#' Argument yrsmth currently takes the mean length of the most recent 3 years of data 
-#' as a smoother.
+#' The TAC is calculated as:
+#' \deqn{\textrm{TAC}_y = C_{y-1} \frac{L}{L_\textrm{ref}}}
+#' where \eqn{C_{y-1}} is the catch from the previous year, \eqn{L} is the mean 
+#' length of the catch over the last `yrsmth` years (of lengths larger than Lc) and \eqn{L_\textrm{ref}} is the 
+#' mean length expected at MSY. Here, Lc is the length at full selection (LFS).
 #' 
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
+#' 
+#' @templateVar mp Lratio_BHI
+#' @template MPtemplate
+#' @template MPuses
+
+#' 
 #' @param yrsmth The most recent years of data to smooth the calculation of the mean length
 #' @author Coded by Q. Huynh. Developed by Jardim et al. (2015)
 #' @references Ernesto Jardim, Manuela Azevedo, Nuno M. Brites, Harvest control rules for 
 #' data limited stocks using length-based reference points and survey biomass indices, 
 #' Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836, 
 #' https://doi.org/10.1016/j.fishres.2014.11.013
+#' 
 #' @describeIn Lratio_BHI Assumes M/K = 1.5 and FMSY/M = 1. Natural mortality M and von Bertalanffy 
 #' K are not used in this MP (see Appendix A of Jardim et al. 2015). 
-#' @seealso \link{Ltarget1} \link{L95target}
+#' @family Length target MPs
 #' @export
-Lratio_BHI <- function(x, Data, reps, yrsmth = 3) {
+#' @examples 
+#' Lratio_BHI(1, Data=DLMtool::SimulatedData, plot=TRUE)
+#' 
+Lratio_BHI <- function(x, Data, reps=100, plot=FALSE, yrsmth = 3) {
   dependencies = "Data@vb_Linf, Data@CV_vbLinf, Data@Cat, Data@CV_Cat, Data@CAL, Data@CAL_bins,
   Data@LFS, Data@CV_LFS"
   Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
@@ -2876,23 +3140,33 @@ Lratio_BHI <- function(x, Data, reps, yrsmth = 3) {
   CAL <- colSums(Data@CAL[x, ind.year, ])
   
   LSQ <- rep(NA, reps)
+
   for(i in 1:reps) {
     lensamp <- sample(mlbin, 0.5*sum(CAL), replace = T, prob = CAL)
     LSQ[i] <- mean(lensamp)
   }
   
-  TAC <- (LSQ/Lref) * Cc
+  TAC <- TACfilter((LSQ/Lref) * Cc)
+  
+  if (plot) Lratio_BHI_plot(mlbin, CAL, LSQ, Lref, Data, x, TAC, Cc, yrsmth)
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(Lratio_BHI) <- "MP"
 
 
+
+#' @templateVar mp Lratio_BHI2
+#' @template MPuses
+#' 
 #' @describeIn Lratio_BHI More general version that calculates the reference mean length as a
 #' function of M, K, and presumed FMSY/M.
 #' @export
-Lratio_BHI2 <- function(x, Data, reps, yrsmth = 3) {
+#' @examples 
+#' Lratio_BHI2(1, Data=DLMtool::SimulatedData, plot=TRUE)
+#' 
+Lratio_BHI2 <- function(x, Data, reps=100, plot=FALSE, yrsmth = 3) {
   
   dependencies = "Data@vb_Linf, Data@CV_vbLinf, Data@Cat, Data@CV_Cat, Data@Mort, Data@CV_Mort,
   Data@vb_K, Data@CV_vbK, Data@FMSY_M, Data@CV_FMSY_M, Data@CAL, Data@CAL_bins,
@@ -2923,23 +3197,104 @@ Lratio_BHI2 <- function(x, Data, reps, yrsmth = 3) {
     LSQ[i] <- mean(lensamp)
   }
   
-  TAC <- (LSQ/Lref) * Cc
+  TAC <- TACfilter((LSQ/Lref) * Cc)
+  
+  if (plot) Lratio_BHI_plot(mlbin, CAL, LSQ, Lref, Data, x, TAC, Cc, yrsmth)
+  
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(Lratio_BHI2) <- "MP"
 
 
-#' A management procedure that incrementally adjusts the TAC or effort according to the
+
+
+
+
+#### Stepwise Constant Catch ####
+
+LstepCC_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, stepsz = 0.05, 
+                     llim = c(0.96, 0.98, 1.05)) {
+  ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
+  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
+  ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
+  ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
+  C_dat <- Data@Cat[x, ind2]
+  if (is.na(Data@MPrec[x]) || length(Data@Year) == ylast) {
+    TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
+  } else {
+    TACstar <- rep(Data@MPrec[x], reps)
+  }
+  step <- stepsz * TACstar
+  Lrecent <- mean(Data@ML[x,ind])
+  Lave <- mean(Data@ML[x,ind3])
+  rat <- Lrecent/Lave
+  if (rat < llim[1]) {
+    TAC <- TACstar - 2 * step
+  } else if (rat < llim[2]) {
+    TAC <- TACstar - step
+  } else if (rat > llim[3]) {
+    TAC <- TACstar + step
+  } else {
+    TAC <- TACstar
+  }
+  
+  TAC <- TACfilter(TAC)
+  
+  if (plot) {
+    op <- par(no.readonly = TRUE)
+    on.exit(op)
+    par(mfrow=c(1,2))
+    ylim <- range(c(Data@ML[x,]))
+    plot(Data@Year, Data@ML[x,], ylab="Mean length", xlab="Year", bty="l", lwd=2,
+         type="l", ylim=ylim)
+    lines(Data@Year[ind], rep(Lrecent, length(ind)), lty=2)
+    text(max(Data@Year[ind]), Lrecent, "Lrecent", xpd=NA, pos=3)
+    
+    lines(Data@Year[ind3], rep(Lave, length(ind3)), lty=2, col='blue')
+    text(max(Data@Year[ind3]), Lave, "Lave", xpd=NA, pos=3, col='blue')
+    
+  
+    ylim <- range(c(Data@Cat[x,], TAC, TACstar ))
+    
+    plot(c(Data@Year, max(Data@Year)+1), c(Data@Cat[x,],NA), type="l", xlab="Year", 
+         ylab=paste0("Catch (", Data@Units, ")"),
+         lwd=2,  bty="l", ylim=ylim)
+    
+    boxplot(TAC, col="blue", axes=FALSE, at=max(Data@Year)+1, add=TRUE)
+    text(max(Data@Year)+1, quantile(TAC, 0.95, na.rm=TRUE), "TAC", col="blue", pos=4, xpd=NA)
+    points(max(Data@Year), mean(TACstar, na.rm=TRUE), cex=1, pch=16, col="green")
+    text(max(Data@Year), mean(TACstar, na.rm=TRUE), "TAC*", col="green", pos=1, xpd=NA)
+  }
+  list(TAC=TAC)
+}
+
+#' Step-wise Constant Catch
+#' 
+#' A management procedure that incrementally adjusts the TAC according to the
 #' mean length of recent catches.
 #' 
-#' Four adaptive length-based MPs proposed by Geromont and Butterworth 2014. 
-#' Tested by Carruthers et al. 2015.
+#' The TAC is calculated as:
+#'   \deqn{\alpha = 
+#'              \left\{\begin{array}{ll} 
+#'              \textrm{TAC}^* - 2 S & \textrm{if } r < 0.96  \\ 
+#'              \textrm{TAC}^* - S & \textrm{if } r < 0.98 \\ 
+#'              \textrm{TAC}^* & \textrm{if } > 1.058 \\
+#'              \end{array}\right.
+#'            }{}
+#' where \eqn{\textrm{TAC}^*} is (1-`xx`) times average catch in the first year, 
+#' and previous catch in all projection years, \eqn{S} is step-size determined by `stepsz`,
+#' and \eqn{r} is the ratio of \eqn{L_\textrm{recent}} and \eqn{L_\textrm{ave}} 
+#' which are mean length over the most recent `yrsmth`  years and 2 x `yrsmth` historical
+#' years respectively. 
 #' 
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
+#' The conditions are specified in the `llim` argument to the function. 
+#'            
+#' @templateVar mp LstepCC1
+#' @template MPuses
+#' @template MPtemplate
+#' 
 #' @param yrsmth Years over which to smooth recent estimates of surplus
 #' production
 #' @param xx Parameter controlling the fraction of mean catch to start using in
@@ -2947,7 +3302,7 @@ class(Lratio_BHI2) <- "MP"
 #' @param stepsz Parameter controlling the size of update increment in TAC or effort.
 #' @param llim A vector of length reference points that determine the
 #' conditions for increasing, maintaining or reducing the TAC or effort.
-#' @return A \linkS4class{Rec} object
+#' 
 #' @author T. Carruthers
 #' @references Carruthers et al. 2015. Performance evaluation of simple
 #' management procedures. ICES J. Mar Sci. 73, 464-482.
@@ -2956,204 +3311,132 @@ class(Lratio_BHI2) <- "MP"
 #' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
 #' doi:10.1093/icesjms/fst232
 #' @describeIn LstepCC1 The least biologically precautionary TAC-based MP.
-#' @export LstepCC1
-LstepCC1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.05, 
+#' @export 
+#' @examples 
+#' LstepCC1(1, Data=DLMtool::SimulatedData, plot=TRUE)
+#' 
+LstepCC1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, stepsz = 0.05, 
                      llim = c(0.96, 0.98, 1.05)) {
-  dependencies = "Data@Cat, Data@CV_Cat, Data@ML"
-  ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
-  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
-  ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
-  ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
-  C_dat <- Data@Cat[x, ind2]
-  if (is.na(Data@MPrec[x]) || length(Data@Year) == ylast + 1) {
-    TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
-  } else {
-    TACstar <- rep(Data@MPrec[x], reps)
-  }
-  step <- stepsz * TACstar
-  Lrecent <- mean(Data@ML[ind])
-  Lave <- mean(Data@ML[ind3])
-  rat <- Lrecent/Lave
-  if (rat < llim[1]) {
-    TAC <- TACstar - 2 * step
-  } else if (rat < llim[2]) {
-    TAC <- TACstar - step
-  } else if (rat > llim[3]) {
-    TAC <- TACstar + step
-  } else {
-    TAC <- TACstar
-  }
+  runLstep <- LstepCC_(x, Data, reps, plot, yrsmth, xx, stepsz, llim)
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- runLstep$TAC
   Rec
 }
 class(LstepCC1) <- "MP"
 
 
+#' @templateVar mp LstepCC2
+#' @template MPuses
+#' @describeIn LstepCC1 More biologically precautionary than `LstepCC1` (`xx` = 0.1)
+#' @export 
+#' @examples 
+#' LstepCC2(1, Data=DLMtool::SimulatedData, plot=TRUE)
+LstepCC2 <- LstepCC1
+formals(LstepCC2)$xx <- 0.1 
+class(LstepCC2) <- "MP"
 
+#' @templateVar mp LstepCC3
+#' @template MPuses
+#' @describeIn LstepCC1 More biologically precautionary than `LstepCC2` (`xx` = 0.2)
+#' @export 
+#' @examples 
+#' LstepCC3(1, Data=DLMtool::SimulatedData, plot=TRUE)
+LstepCC3 <- LstepCC1
+formals(LstepCC3)$xx <- 0.2 
+class(LstepCC3) <- "MP"
 
+#' @templateVar mp LstepCC4
+#' @template MPuses
 #' @describeIn LstepCC1 The most precautionary TAC-based MP.
-#' @export LstepCC4
-LstepCC4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.3, stepsz = 0.05, 
-                     llim = c(0.96, 0.98, 1.05)) {
-  dependencies = "Data@Cat, Data@CV_Cat, Data@ML"
-  ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
-  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
-  ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
-  ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
-  C_dat <- Data@Cat[x, ind2]
-  if (is.na(Data@MPrec[x]) || length(Data@Year) == ylast + 1) {
-    TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
-  } else {
-    TACstar <- rep(Data@MPrec[x], reps)
-  }
-  step <- stepsz * TACstar
-  Lrecent <- mean(Data@ML[ind])
-  Lave <- mean(Data@ML[ind3])
-  rat <- Lrecent/Lave
-  if (rat < llim[1]) {
-    TAC <- TACstar - 2 * step
-  } else if (rat < llim[2]) {
-    TAC <- TACstar - step
-  } else if (rat > llim[3]) {
-    TAC <- TACstar + step
-  } else {
-    TAC <- TACstar
-  }
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
-  Rec
-}
+#' @export 
+#' @examples 
+#' LstepCC4(1, Data=DLMtool::SimulatedData, plot=TRUE)
+LstepCC4 <- LstepCC1
+formals(LstepCC4)$xx <- 0.3 
 class(LstepCC4) <- "MP"
 
 
 
-
-#' A management procedure that incrementally adjusts the TAC or effort to reach 
-#' a target mean length in catches.
-#' 
-#' Four target length MPs proposed by Geromont and Butterworth 2014.
-#' Tested by Carruthers et al. 2015.
-#' 
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
-#' @param xx Parameter controlling the fraction of mean catch to start using in
-#' first year
-#' @param xL Parameter controlling the magnitude of the target mean length of
-#' catches relative to average length in catches.
-#' @return A \linkS4class{Rec} object
-#' @author T. Carruthers
-#' @references Carruthers et al. 2015. Performance evaluation of simple
-#' management procedures. ICES J. Mar Sci. 73, 464-482.
-#' 
-#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
-#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
-#' doi:10.1093/icesjms/fst232
-#' @describeIn Ltarget1 The least biologically precautionary TAC-based MP.
-#' @seealso \link{L95target}
-#' @export Ltarget1
-Ltarget1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, xL = 1.05) {
-  dependencies = "Data@Cat, Data@CV_Cat, Data@ML"
-  ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
-  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
-  ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
-  ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
-  C_dat <- Data@Cat[x, ind2]
-  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
-  Lrecent <- mean(Data@ML[ind])
-  Lave <- mean(Data@ML[ind3])
-  L0 <- 0.9 * Lave
-  Ltarget <- xL * Lave
-  if (Lrecent > L0) {
-    TAC <- 0.5 * TACstar * (1 + ((Lrecent - L0)/(Ltarget - L0)))
-  } else {
-    TAC <- 0.5 * TACstar * (Lrecent/L0)^2
-  }
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
-  Rec
-}
-class(Ltarget1) <- "MP"
-
-
-
-#' @describeIn Ltarget1 The most biologically precautionary TAC-based MP.
-#' @export Ltarget4
-Ltarget4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0.2, xL = 1.15) {
-  dependencies = "Data@Cat, Data@CV_Cat, Data@ML"
-  ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
-  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
-  ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
-  ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
-  C_dat <- Data@Cat[x, ind2]
-  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
-  Lrecent <- mean(Data@ML[ind])
-  Lave <- mean(Data@ML[ind3])
-  L0 <- 0.9 * Lave
-  Ltarget <- xL * Lave
-  if (Lrecent > L0) {
-    TAC <- 0.5 * TACstar * (1 + ((Lrecent - L0)/(Ltarget - L0)))
-  } else {
-    TAC <- 0.5 * TACstar * (Lrecent/L0)^2
-  }
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
-  Rec
-}
-class(Ltarget4) <- "MP"
-
+## Mean Catch Depletion ####
 
 #' Mean Catch Depletion
 #' 
 #' A simple average catch-depletion MP that was included to demonstrate just
-#' how informative an estimate of current stock depletion can be. 
-#'
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the quota recommendation
-#' @return A Rec object with TAC recommendations
+#' how informative an estimate of current stock depletion can be.
+#' 
+#' The TAC is calculated as:
+#' \deqn{\textrm{TAC} = 2 \bar{C} D }
+#' where \eqn{\bar{C}} is mean historical catch, and \eqn{D} is estimate of current 
+#' depletion. 
+#' 
+#' The TAC is modified by a harvest control rule in `MCD4010`. 
+#' 
+#' @templateVar mp MCD
+#' @template MPtemplate
+#' @template MPuses
+#' 
 #' @describeIn MCD The calculated TAC = 2 \* depletion \* AvC
 #' @author T. Carruthers
-#' @export MCD
-MCD <- function(x, Data, reps = 100) {
+#' @export 
+#' @examples 
+#' MCD(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+MCD <- function(x, Data, reps = 100, plot=FALSE) {
   # Daft method to demonstrate the relative value of information of
   # current depletion
   dependencies = "Data@Dep, Data@CV_Dep, Data@Cat"
-  if (is.na(Data@Dep[x])) 
-    return(NA)
+  if (is.na(Data@Dep[x])) {
+    Rec <- new("Rec")
+    Rec@TAC <- rep(NA, reps)
+    return(Rec)
+  }
+    
   depo <- max(0.01, min(0.99, Data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
   Bt_K <- rbeta(reps * 100, alphaconv(depo, min(depo * Data@CV_Dep[x], 
                                                 (1 - depo) * Data@CV_Dep[x])), betaconv(depo, min(depo * Data@CV_Dep[x], 
                                                                                                   (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
   Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1:reps]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
-  AvC <- stats::rlnorm(reps, log(mean(Data@Cat[x, ], na.rm = T)), Data@CV_Cat[x])
-  TAC <- AvC * 2 * Bt_K
+  if (reps > 1) {
+    AvC <- stats::rlnorm(reps, log(mean(Data@Cat[x, ], na.rm = T)), Data@CV_Cat[x])
+  } else {
+    AvC <- mean(Data@Cat[x, ], na.rm = T)
+  }
+  TAC <- TACfilter(AvC * 2 * Bt_K)
+  
+  if (plot) MCD_plot(Data, AvC, Bt_K, TAC)
+  
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(MCD) <- "MP"
 
 
-
+#' @templateVar mp MCD4010
+#' @template MPuses
 #' @describeIn MCD Linked to a 40-10 harvest control rule
 #' @author T. Carruthers
-#' @export MCD4010
-MCD4010 <- function(x, Data, reps = 100) {
+#' @export 
+#' @examples 
+#' MCD4010(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+MCD4010 <- function(x, Data, reps = 100, plot=FALSE) {
   # Daft method to demonstrate the relative value of information of
   # current depletion
   dependencies = "Data@Dep, Data@CV_Dep, Data@Cat"
-  if (is.na(Data@Dep[x])) 
-    return(NA)
+  if (is.na(Data@Dep[x])) {
+    Rec <- new("Rec")
+    Rec@TAC <- rep(NA, reps)
+    return(Rec)
+  }
   depo <- max(0.01, min(0.99, Data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
   Bt_K <- rbeta(reps * 100, alphaconv(depo, min(depo * Data@CV_Dep[x], 
                                                 (1 - depo) * Data@CV_Dep[x])), betaconv(depo, min(depo * Data@CV_Dep[x], 
                                                                                                   (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
   Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1:reps]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
-  AvC <- stats::rlnorm(reps, log(mean(Data@Cat[x, ], na.rm = T)), Data@CV_Cat[x])
+  if (reps > 1) {
+    AvC <- stats::rlnorm(reps, log(mean(Data@Cat[x, ], na.rm = T)), Data@CV_Cat[x])
+  } else {
+    AvC <- mean(Data@Cat[x, ], na.rm = T)
+  }
   TAC <- AvC * 2 * Bt_K
   
   # 40-10 HCR
@@ -3161,14 +3444,24 @@ MCD4010 <- function(x, Data, reps = 100) {
   cond2 <- Bt_K < 0.1
   TAC[cond1] <- TAC[cond1] * (Bt_K[cond1] - 0.1)/0.3
   TAC[cond2] <- TAC[cond2] * tiny  # this has to still be stochastic albeit very small
+  TAC <- TACfilter(TAC)
+  
+  if (plot) MCD_plot(Data, AvC, Bt_K, TAC)
   
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(MCD4010) <- "MP"
 
 
+
+
+#### UP TO HERE ####
+
+
+
+#### Intrinsic Rate of Increase ####
 
 #' Harvest Control Rule using prior for intrinsic rate of increase
 #' 
@@ -3188,8 +3481,7 @@ class(MCD4010) <- "MP"
 #' @author C. Walters and T. Carruthers
 #' @references Made-up for this package.
 #' @export Rcontrol
-Rcontrol <- function(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 
-                                                                        2)) {
+Rcontrol <- function(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 2)) {
   dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0 Data@steep, Data@CV_steep, Data@MaxAge, Data@Dep, Data@CV_Dep, Data@Cat, Data@Ind"
   Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
   Kvec <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
@@ -3254,8 +3546,7 @@ class(Rcontrol) <- "MP"
 #' Rcontrol because it includes a quadratic approximation of recent trend in
 #' surplus production given biomass
 #' @export Rcontrol2
-Rcontrol2 <- function(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 
-                                                                         2)) {
+Rcontrol2 <- function(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 2)) {
   dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@steep, Data@CV_steep, Data@MaxAge, Data@Dep, Data@CV_Dep, Data@Cat, Data@Ind"
   Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
   Kvec <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
@@ -3308,6 +3599,8 @@ Rcontrol2 <- function(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5,
 }
 class(Rcontrol2) <- "MP"
 
+
+#### SBT ####
 
 #' SBT simple MP
 #' 
@@ -3402,6 +3695,10 @@ SBT2 <- function(x, Data, reps = 100, epsB = 0.25, epsR = 0.75, tauR = 5,
 }
 class(SBT2) <- "MP"
 
+
+
+##### Surplus Production based MP ####
+
 #' Surplus production based catch-limit modifier
 #' 
 #' An MP that makes incremental adjustments to TAC recommendations based on the
@@ -3449,6 +3746,58 @@ SPmod <- function(x, Data, reps = 100, alp = c(0.8, 1.2), bet = c(0.8, 1.2)) {
 }
 class(SPmod) <- "MP"
 
+
+#' Slope in surplus production MP
+#' 
+#' A management procedure that makes incremental adjustments to TAC
+#' recommendations based on the apparent trend in recent surplus production.
+#' Based on the theory of Mark Maunder (IATTC)
+#' 
+#' Note that this isn't exactly what Mark has previously suggested and is
+#' stochastic in this implementation.
+#' 
+#' @param x A position in data-limited methods data object
+#' @param Data A data-limited methods data object
+#' @param reps The number of quota samples
+#' @param yrsmth Years over which to smooth recent estimates of surplus
+#' production
+#' @param alp Condition for modifying the Data (bounds on change in
+#' abundance)
+#' @param bet Limits for how much the Data can change among years
+#' @return A numeric vector of Data recommendations
+#' @author T. Carruthers
+#' @seealso \link{SPmod}
+#' @references
+#' http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf
+#' @export 
+SPslope <- function(x, Data, reps = 100, yrsmth = 4, alp = c(0.9, 1.1), 
+                    bet = c(1.5, 0.9)) {
+  
+  dependencies = "Data@Year, Data@Cat, Data@Ind, Data@Abun"
+  ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)
+  yind <- 1:yrsmth
+  C_dat <- Data@Cat[x, ind]
+  B_dat <- Data@Ind[x, ind]/Data@Ind[x, ind[yrsmth]] * Data@Abun[x]
+  Pt_mu <- max(B_dat[yrsmth] - B_dat[yrsmth - 1] + C_dat[yrsmth - 1], 
+               tiny)
+  Pt_1 <- trlnorm(reps, Pt_mu, Data@CV_Cat[x])
+  It <- exp(predict(lm(log(B_dat) ~ yind), newdat = list(yind = yrsmth + 
+                                                           1)))
+  Ilast <- B_dat[yrsmth]
+  MC <- max(mean(C_dat), tiny)
+  Ct_1 <- trlnorm(reps, MC, Data@CV_Cat[x]/(yrsmth^0.5))  # mean catches over the interval
+  
+  rat <- It/Ilast
+  
+  mult <- max((1 - bet[1] * (Ilast - It)/Ilast), tiny)
+  if (rat < alp[1]) TAC <- mult * Ct_1
+  if (rat > alp[1] & rat < alp[2]) TAC <- Ct_1
+  if (rat > alp[2]) TAC <- bet[2] * Pt_1
+  Rec <- new("Rec")
+  Rec@TAC <- TACfilter(TAC)
+  Rec
+}
+class(SPslope) <- "MP"
 
 #' Catch trend Surplus Production MSY MP
 #' 
@@ -3570,57 +3919,7 @@ SPMSY <- function(x, Data, reps = 100) {
 }  # end of SPMSY
 class(SPMSY) <- "MP"
 
-#' Slope in surplus production MP
-#' 
-#' A management procedure that makes incremental adjustments to TAC
-#' recommendations based on the apparent trend in recent surplus production.
-#' Based on the theory of Mark Maunder (IATTC)
-#' 
-#' Note that this isn't exactly what Mark has previously suggested and is
-#' stochastic in this implementation.
-#' 
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of quota samples
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
-#' @param alp Condition for modifying the Data (bounds on change in
-#' abundance)
-#' @param bet Limits for how much the Data can change among years
-#' @return A numeric vector of Data recommendations
-#' @author T. Carruthers
-#' @seealso \link{SPmod}
-#' @references
-#' http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf
-#' @export 
-SPslope <- function(x, Data, reps = 100, yrsmth = 4, alp = c(0.9, 1.1), 
-                    bet = c(1.5, 0.9)) {
-  
-  dependencies = "Data@Year, Data@Cat, Data@Ind, Data@Abun"
-  ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)
-  yind <- 1:yrsmth
-  C_dat <- Data@Cat[x, ind]
-  B_dat <- Data@Ind[x, ind]/Data@Ind[x, ind[yrsmth]] * Data@Abun[x]
-  Pt_mu <- max(B_dat[yrsmth] - B_dat[yrsmth - 1] + C_dat[yrsmth - 1], 
-               tiny)
-  Pt_1 <- trlnorm(reps, Pt_mu, Data@CV_Cat[x])
-  It <- exp(predict(lm(log(B_dat) ~ yind), newdat = list(yind = yrsmth + 
-                                                           1)))
-  Ilast <- B_dat[yrsmth]
-  MC <- max(mean(C_dat), tiny)
-  Ct_1 <- trlnorm(reps, MC, Data@CV_Cat[x]/(yrsmth^0.5))  # mean catches over the interval
-  
-  rat <- It/Ilast
-  
-  mult <- max((1 - bet[1] * (Ilast - It)/Ilast), tiny)
-  if (rat < alp[1]) TAC <- mult * Ct_1
-  if (rat > alp[1] & rat < alp[2]) TAC <- Ct_1
-  if (rat > alp[2]) TAC <- bet[2] * Pt_1
-  Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
-  Rec
-}
-class(SPslope) <- "MP"
+
 
 #### Surplus Production Stock Reduction Analysis ####
 
@@ -3950,7 +4249,7 @@ YPR <- function(x, Data, reps = 100, plot=FALSE) {
   runYPR <- YPR_(x, Data, reps = reps, Abun=NULL)
   TAC <- TACfilter(runYPR$TAC)
   
-  if (plot) YPR_plot(runYPR, Data)
+  if (plot) YPR_plot(runYPR, Data, reps)
   Rec <- new("Rec")
   Rec@TAC <- TAC
   Rec
@@ -3991,7 +4290,7 @@ YPR_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
   runYPR <- YPR_(x, Data, reps = reps, Abun=Ac)
   TAC <- TACfilter(runYPR$TAC)
   
-  if (plot) YPR_plot(runYPR, Data)
+  if (plot) YPR_plot(runYPR, Data, reps)
   Rec <- new("Rec")
   Rec@TAC <- TAC
   Rec
@@ -4027,7 +4326,7 @@ YPR_ML <- function(x, Data, reps = 100, plot=FALSE) {
   runYPR <- YPR_(x, Data, reps = reps, Abun=Ac)
   TAC <- TACfilter(runYPR$TAC)
   
-  if (plot) YPR_plot(runYPR, Data)
+  if (plot) YPR_plot(runYPR, Data, reps)
   Rec <- new("Rec")
   Rec@TAC <- TAC
   Rec

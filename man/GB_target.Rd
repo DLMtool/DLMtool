@@ -74,7 +74,7 @@ comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017
 \seealso{
 Other Index methods: \code{\link{GB_slope}},
   \code{\link{Gcontrol}}, \code{\link{ICI}},
-  \code{\link{Iratio}}, \code{\link{Islope}},
+  \code{\link{Iratio}}, \code{\link{Islope1}},
   \code{\link{ItargetE1}}
 }
 \author{

@@ -4,9 +4,10 @@
 \alias{LstepCE1}
 \alias{LstepCE2}
 \alias{LstepCC1}
+\alias{LstepCC2}
+\alias{LstepCC3}
 \alias{LstepCC4}
-\title{A management procedure that incrementally adjusts the TAC or effort according to the
-mean length of recent catches.}
+\title{Step-wise Constant Catch}
 \usage{
 LstepCE1(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.05,
   llim = c(0.96, 0.98, 1.05))
@@ -14,18 +15,24 @@ LstepCE1(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.05,
 LstepCE2(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.1,
   llim = c(0.96, 0.98, 1.05))
 
-LstepCC1(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.05,
-  llim = c(0.96, 0.98, 1.05))
+LstepCC1(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0,
+  stepsz = 0.05, llim = c(0.96, 0.98, 1.05))
 
-LstepCC4(x, Data, reps = 100, yrsmth = 5, xx = 0.3, stepsz = 0.05,
-  llim = c(0.96, 0.98, 1.05))
+LstepCC2(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.1,
+  stepsz = 0.05, llim = c(0.96, 0.98, 1.05))
+
+LstepCC3(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.2,
+  stepsz = 0.05, llim = c(0.96, 0.98, 1.05))
+
+LstepCC4(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.3,
+  stepsz = 0.05, llim = c(0.96, 0.98, 1.05))
 }
 \arguments{
-\item{x}{A position in data-limited methods data object}
+\item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of TAC samples}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
 
 \item{yrsmth}{Years over which to smooth recent estimates of surplus
 production}
@@ -37,13 +44,32 @@ first year}
 
 \item{llim}{A vector of length reference points that determine the
 conditions for increasing, maintaining or reducing the TAC or effort.}
+
+\item{plot}{Logical. Show the plot?}
 }
 \value{
-A \linkS4class{Rec} object
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
-Four adaptive length-based MPs proposed by Geromont and Butterworth 2014.
-Tested by Carruthers et al. 2015.
+A management procedure that incrementally adjusts the TAC according to the
+mean length of recent catches.
+}
+\details{
+The TAC is calculated as:
+\deqn{\alpha = 
+             \left\{\begin{array}{ll} 
+             \textrm{TAC}^* - 2 S & \textrm{if } r < 0.96  \\ 
+             \textrm{TAC}^* - S & \textrm{if } r < 0.98 \\ 
+             \textrm{TAC}^* & \textrm{if } > 1.058 \\
+             \end{array}\right.
+           }{}
+where \eqn{\textrm{TAC}^*} is (1-\code{xx}) times average catch in the first year,
+and previous catch in all projection years, \eqn{S} is step-size determined by \code{stepsz},
+and \eqn{r} is the ratio of \eqn{L_\textrm{recent}} and \eqn{L_\textrm{ave}}
+which are mean length over the most recent \code{yrsmth}  years and 2 x \code{yrsmth} historical
+years respectively.
+
+The conditions are specified in the \code{llim} argument to the function.
 }
 \section{Functions}{
 \itemize{
@@ -53,9 +79,48 @@ Tested by Carruthers et al. 2015.
 
 \item \code{LstepCC1}: The least biologically precautionary TAC-based MP.
 
+\item \code{LstepCC2}: More biologically precautionary than \code{LstepCC1} (\code{xx} = 0.1)
+
+\item \code{LstepCC3}: More biologically precautionary than \code{LstepCC2} (\code{xx} = 0.2)
+
 \item \code{LstepCC4}: The most precautionary TAC-based MP.
 }}
 
+\section{Required Data}{
+
+\code{LstepCC1}: Cat, LHYear, ML, MPrec, t, Year
+
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{LstepCC2}:
+
+
+\code{LstepCC3}:
+
+
+\code{LstepCC4}: Cat, LHYear, ML, MPrec, t, Year
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/LstepCC1.html}{Online Documentation} for correctly rendered equations
+
+
+
+
+
+
+}
+
+\examples{
+LstepCC1(1, Data=DLMtool::SimulatedData, plot=TRUE)
+
+LstepCC2(1, Data=DLMtool::SimulatedData, plot=TRUE)
+LstepCC3(1, Data=DLMtool::SimulatedData, plot=TRUE)
+LstepCC4(1, Data=DLMtool::SimulatedData, plot=TRUE)
+}
 \references{
 Carruthers et al. 2015. Performance evaluation of simple
 management procedures. ICES J. Mar Sci. 73, 464-482.

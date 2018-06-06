@@ -61,7 +61,7 @@ COSEWIC_tab_formatted(Ptab1, thresh = c(20, 40, 40, 20, 40, 40, 40, 30, 5),
 
 \item{thresh}{A vector of thresholds for each column Health, Yield and Reb are 'greater than threshold' conditions}
 
-\item{lcol}{Color of lines}
+\item{ret_thresh}{Logical: if true just the threshold levels are returned}
 }
 \description{
 Dedicated functions for MSE run and reporting for COSEWIC (Committee on the Status of
