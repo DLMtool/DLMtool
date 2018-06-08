@@ -3,19 +3,22 @@
 \name{Rcontrol}
 \alias{Rcontrol}
 \alias{Rcontrol2}
-\title{Harvest Control Rule using prior for intrinsic rate of increase}
+\title{Intrinsic rate of Increase MP}
 \usage{
-Rcontrol(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5,
-2))
+Rcontrol(x, Data, reps = 100, plot = FALSE, yrsmth = 10, gg = 2,
+  glim = c(0.5, 2))
 
-Rcontrol2(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 2))
+Rcontrol2(x, Data, reps = 100, plot = FALSE, yrsmth = 10, gg = 2,
+  glim = c(0.5, 2))
 }
 \arguments{
-\item{x}{A position in data-limited methods data object}
+\item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of quota samples}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{yrsmth}{The number of years for smoothing catch and biomass data}
 
@@ -23,20 +26,64 @@ Rcontrol2(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 2))
 
 \item{glim}{Limits for the change in TAC among years}
 }
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
+}
 \description{
-An MP proposed by Carl Walters that modifies TACs according to trends in
+An MP proposed by Carl Walters that modifies the TAC according to trends in
 apparent surplus production that includes information from a demographically
 derived prior for intrinsic rate of increase
 }
+\details{
+The TAC is calculated as:
+\deqn{\textrm{TAC} = \textrm{SP} (1-gG)}
+where \eqn{g} is a gain parameter, \eqn{\textrm{SP}} is estimated surplus production,
+and \eqn{G} is:
+For \code{Rcontrol}:  \eqn{G = r (1-2D)} where \eqn{r} is the estimated intrinsic rate
+of increase, and \eqn{D} is assumed depletion.
+
+For \code{Rcontrol2}: \eqn{G = r - 2bB_\textrm{hist}} where \eqn{B_\textrm{hist}}
+is the smoothed biomass overlast \code{yrsmth} years and:
+\deqn{b = \sum{\frac{\textrm{SP}}{B_\textrm{hist}} - r} \frac{\sum{B_\textrm{hist}}}{\sum{B_\textrm{hist}^2}}   }.
+
+The TAC is subject to conditions limit the maximum change from the smoothed catch
+over the last \code{yrsmth} years by the \code{glim} argument, e.g, default values of \code{glim = c(0.5, 2)}
+means that maximum decrease in TAC is 50% of average catch and maximum increase
+is 2 x average catch.
+}
 \section{Functions}{
 \itemize{
+\item \code{Rcontrol}: Base version \code{Rcontrol}
+
 \item \code{Rcontrol2}: This is different from
-Rcontrol because it includes a quadratic approximation of recent trend in
+\code{Rcontrol} because it includes a quadratic approximation of recent trend in
 surplus production given biomass
 }}
 
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{Rcontrol}: Abun, Cat, Dep, Ind, MaxAge, Mort, steep, t, vbK, vbLinf, vbt0, Year
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/Rcontrol.html}{Online Documentation} for correctly rendered equations
+}
+
+\examples{
+Rcontrol(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
+Rcontrol2(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
+}
 \references{
 Made-up for this package.
+}
+\seealso{
+Other Surplus production MPs: \code{\link{Fadapt}},
+  \code{\link{SPMSY}}, \code{\link{SPSRA}},
+  \code{\link{SPmod}}, \code{\link{SPslope}}
 }
 \author{
 C. Walters and T. Carruthers

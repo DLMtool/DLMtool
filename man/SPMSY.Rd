@@ -4,14 +4,19 @@
 \alias{SPMSY}
 \title{Catch trend Surplus Production MSY MP}
 \usage{
-SPMSY(x, Data, reps = 100)
+SPMSY(x, Data, reps = 100, plot = FALSE)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of samples of the TAC}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
+}
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
 An MP that uses Martell and Froese (2012) method for estimating MSY to
@@ -19,18 +24,47 @@ determine the OFL. Since their approach estimates stock trajectories based
 on catches and a rule for intrinsic rate of increase it also returns
 depletion. Given their surplus production model predicts K, r and depletion
 it is straighforward to calculate the OFL based on the Schaefer productivity
-curve. OFL = dep * (1-dep) * r * K * 2
+curve.
 }
 \details{
-Requires the assumption that catch is proportional to abundance.
+The TAC is calculated as:
+\deqn{\textrm{TAC} = D K \frac{r}{2}}
+where \eqn{D} is depletion, \eqn{K} is unfished biomass, and \eqn{r} is
+intrinsic rate of increasase, all estimated internally by the method based
+on trends in the catch data and life-history information.
+
+Requires the assumption that catch is proportional to abundance, and a catch
+time-series from the beginning of exploitation.
+
 Occasionally the rule that limits r and K ranges does not allow r-K pairs to
 be found that lead to the depletion inferred by the catch trajectories. In
 this case this method widens the search.
+}
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{SPMSY}: Cat, L50, MaxAge, t, vbK, vbLinf, vbt0
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/SPMSY.html}{Online Documentation} for correctly rendered equations
+}
+
+\examples{
+SPMSY(1, Data=DLMtool::SimulatedData, plot=TRUE)
 }
 \references{
 Martell, S. and Froese, R. 2012. A simple method for estimating
 MSY from catch and resilience. Fish and Fisheries. DOI:
 10.1111/j.1467-2979.2012.00485.x
+}
+\seealso{
+Other Surplus production MPs: \code{\link{Fadapt}},
+  \code{\link{Rcontrol}}, \code{\link{SPSRA}},
+  \code{\link{SPmod}}, \code{\link{SPslope}}
 }
 \author{
 T. Carruthers

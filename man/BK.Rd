@@ -50,10 +50,11 @@ See Functions section below for the estimation of \emph{F}.
 \item \code{BK}: Assumes that abundance is known, i.e. \code{Data@Abun}
 and \code{Data@CV_abun} contain values
 
-\item \code{BK_CC}: Abundance is estimated. An age-based catch curve is used
-to estimate \emph{Z} and \emph{F}.
+\item \code{BK_CC}: Abundance is estimated using an age-based catch curve
+to estimate \emph{Z} and \emph{F}, and abundance estimated from recent catches and \emph{F}.
 
-\item \code{BK_ML}: Abundance is estimated. \emph{Z} and \emph{F} are estimated from mean length.
+\item \code{BK_ML}: Abundance is estimated using mean length
+to estimate \emph{Z} and \emph{F}, and abundance estimated from recent catches and \emph{F}.
 }}
 
 \note{
@@ -90,12 +91,16 @@ See \href{https://dlmtool.github.io/DLMtool/reference/BK.html}{Online Documentat
 }
 
 \examples{
+\dontrun{
 BK(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
+}
 
+\dontrun{
 BK_CC(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
-
+}
+\dontrun{
 BK_ML(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
-
+}
 }
 \references{
 Beddington, J.R., Kirkwood, G.P., 2005. The estimation of

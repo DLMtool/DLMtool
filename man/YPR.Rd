@@ -35,13 +35,12 @@ of the ascending YPR curve for which dYPR/dF = 0.1(dYPR/d0)
 The TAC is calculated as:
 \deqn{\textrm{TAC} = F_{0.1} A}
 where \eqn{F_{0.1}} is the fishing mortality (\emph{F}) where the slope of the yield-per-recruit
-(YPR) curve is 10% of the slope at the origin, and \emph{A} is an estimate of current abundance.
+(YPR) curve is 10\% of the slope at the origin, and \emph{A} is an estimate of current abundance.
 
 The YPR curve is calculated using an equilibrium age-structured model with life-history and
 selectivity parameters sampled from the \code{Data} object.
 
-The variants of the YPR MP differ in the method to estimate current abundance (see Functions section below).
-#'
+The variants of the YPR MP differ in the method to estimate current abundance (see Functions section below). #'
 }
 \section{Functions}{
 \itemize{

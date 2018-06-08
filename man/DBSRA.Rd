@@ -46,7 +46,7 @@ are taken as the true value calculate in the MSE with added uncertainty specifie
 in the Obs object (e.g \code{Obs@FMSY_Mbiascv}).
 
 The catch limit, for the Base Version, is calculated as:
-\deqn{\textrm{TAC} = M . \frac{F_{\textrm{MSY}}}{M} . D . B_0}
+\deqn{\textrm{TAC} = M \frac{F_{\textrm{MSY}}}{M} D B_0}
 }
 \section{Functions}{
 \itemize{

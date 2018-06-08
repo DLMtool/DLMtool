@@ -2,9 +2,12 @@
 % Please edit documentation in R/MPs_SupportingFunctions.R
 \name{sample_steepness2}
 \alias{sample_steepness2}
+\alias{derive_beta_par}
 \title{Sample steepness given mean and cv}
 \usage{
 sample_steepness2(n, mu, cv)
+
+derive_beta_par(mu, sigma)
 }
 \arguments{
 \item{n}{number of samples}
@@ -12,10 +15,24 @@ sample_steepness2(n, mu, cv)
 \item{mu}{mean h}
 
 \item{cv}{cv of h}
+
+\item{sigma}{sd of h}
+
+\item{mu}{mean h}
 }
 \description{
 Sample steepness given mean and cv
+
+This function reduces the CV by 5 per cent until steepness values can be sampled without error
 }
+\section{Functions}{
+\itemize{
+\item \code{sample_steepness2}: sample steepness values
+
+\item \code{derive_beta_par}: derive beta parameter
+}}
+
 \author{
 Q. Huynh
 }
+\keyword{internal}

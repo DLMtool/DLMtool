@@ -56,10 +56,10 @@ mean length of recent catches.
 }
 \details{
 The TAC is calculated as:
-\deqn{\alpha = 
+\deqn{\textrm{TAC} = 
              \left\{\begin{array}{ll} 
-             \textrm{TAC}^* - 2 S & \textrm{if } r < 0.96  \\ 
-             \textrm{TAC}^* - S & \textrm{if } r < 0.98 \\ 
+             \textrm{TAC}^* - 2 S\textrm{TAC}^* & \textrm{if } r < 0.96  \\ 
+             \textrm{TAC}^* - S \textrm{TAC}^* & \textrm{if } r < 0.98 \\ 
              \textrm{TAC}^* & \textrm{if } > 1.058 \\
              \end{array}\right.
            }{}
@@ -88,10 +88,10 @@ The conditions are specified in the \code{llim} argument to the function.
 
 \section{Required Data}{
 
-\code{LstepCC1}: Cat, LHYear, ML, MPrec, t, Year
-
-
 See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{LstepCC1}: Cat, LHYear, ML, MPrec, t, Year
 
 
 \code{LstepCC2}:

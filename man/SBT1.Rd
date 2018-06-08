@@ -2,16 +2,23 @@
 % Please edit documentation in R/MPs_Output.R
 \name{SBT1}
 \alias{SBT1}
+\alias{SBT2}
 \title{SBT simple MP}
 \usage{
-SBT1(x, Data, reps = 100, yrsmth=10, k1=1.5, k2=3, gamma=1)
+SBT1(x, Data, reps = 100, plot = FALSE, yrsmth = 10, k1 = 1.5, k2 = 3,
+  gamma = 1)
+
+SBT2(x, Data, reps = 100, plot = FALSE, epsR = 0.75, tauR = 5,
+  gamma = 1)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of samples of the TAC}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{yrsmth}{The number of years for evaluating trend in relative abundance
 indices}
@@ -21,23 +28,83 @@ indices}
 \item{k2}{Control parameter}
 
 \item{gamma}{Control parameter}
+
+\item{epsR}{Control parameter}
+
+\item{tauR}{Control parameter}
+}
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
 An MP that makes incremental adjustments to TAC recommendations based on the
-apparent trend in CPUE
+apparent trend in CPUE, a an MP that makes incremental adjustments to TAC
+recommendations based on index levels relative to target levels (BMSY/B0)
+and catch levels relative to target levels (MSY).
 }
 \details{
+For \code{SBT1} the TAC is calculated as:
+\deqn{\textrm{TAC}_y = 
+             \left\{\begin{array}{ll} 
+             C_{y-1} (1+K_2\lambda) & \textrm{if } \lambda \geq 0 \\ 
+              C_{y-1} (1-K_1\lambda^\gamma) & \textrm{if } \lambda < 0\\ 
+             \end{array}\right.
+           }{}
+where \eqn{\lambda} is the slope of index over the last \code{yrmsth} years, and
+\eqn{K_1}, \eqn{K_2}, and \eqn{\gamma} are arguments to the MP.
+
+For \code{SBT2} the TAC is calculated as:
+\deqn{\textrm{TAC}_y = 0.5 (C_{y-1} + C_\textrm{targ}\delta)}
+where \eqn{C_{y-1}} is catch in the previous year, \eqn{C_{\textrm{targ}}}
+is a target catch (\code{Data@Cref}), and :
+\deqn{\delta= 
+             \left\{\begin{array}{ll} 
+             R^{1-\textrm{epsR}} & \textrm{if } R \geq 1 \\ 
+             R^{1+\textrm{epsR}} & \textrm{if } R < 1 \\ 
+             \end{array}\right.
+           }{}
+where \eqn{\textrm{epsR}} is a control parameter and:
+\eqn{R = \frac{\bar{r}}{\phi}}
+where \eqn{\bar{r}} is mean recruitment over last \code{tauR} years and \eqn{\phi}
+is mean recruitment over last 10 years.
+
 This isn't exactly the same as the proposed methods and is stochastic in
 this implementation. The method doesn't tend to work too well under many
 circumstances possibly due to the lack of 'tuning' that occurs in the real
 SBT assessment environment. You could try asking Rich Hillary at CSIRO about
 this approach.
 }
+\section{Functions}{
+\itemize{
+\item \code{SBT1}: Simple SBT MP
+
+\item \code{SBT2}: Complex SBT MP
+}}
+
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{SBT1}: Cat, Ind, t, Year
+
+
+\code{SBT2}: Cat, Cref, Rec, t
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/SBT1.html}{Online Documentation} for correctly rendered equations
+
+
+}
+
+\examples{
+SBT1(1, Data=DLMtool::SimulatedData, plot=TRUE)
+SBT2(1, Data=DLMtool::SimulatedData, plot=TRUE)
+}
 \references{
 http://www.ccsbt.org/site/recent_assessment.php
-}
-\seealso{
-\link{SBT2}
 }
 \author{
 T. Carruthers

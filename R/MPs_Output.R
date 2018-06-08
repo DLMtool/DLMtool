@@ -132,8 +132,8 @@ class(BK) <- "MP"
 
 #' @param Fmin The minimum fishing mortality rate that is derived from the
 #' catch-curve (interval censor).
-#' @describeIn BK Abundance is estimated. An age-based catch curve is used 
-#' to estimate *Z* and *F*. 
+#' @describeIn BK Abundance is estimated using an age-based catch curve  
+#' to estimate *Z* and *F*, and abundance estimated from recent catches and *F*. 
 #' @templateVar mp BK_CC
 #' @template MPuses
 #' @examples 
@@ -186,7 +186,8 @@ BK_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
 }  
 class(BK_CC) <- "MP"
 
-#' @describeIn BK Abundance is estimated. *Z* and *F* are estimated from mean length.
+#' @describeIn BK Abundance is estimated using mean length 
+#' to estimate *Z* and *F*, and abundance estimated from recent catches and *F*.
 #' @templateVar mp BK_ML
 #' @template MPuses
 #' @examples 
@@ -460,14 +461,10 @@ CompSRA_ <- function(x, Data, reps=100) {
 #' A stock reduction analysis (SRA) model is fitted to the age-composition 
 #' from the last 3 years (or less if fewer data are available) assuming a constant 
 #' total mortality rate (*Z*) and used to estimate current stock depletion (*D*),
-#'  *FMSY*, and stock abundance (*A*). 
+#'  \eqn{F_\textrm{MSY}}, and stock abundance (*A*). 
 #' 
-#' Fishing mortality is estimated as:
-#' \deqn{F = -\log{\left(1-\frac{C}{V}\right)}}
-#' where \eqn{C} and \eqn{V} are catch and vulnerable biomass of first age of full
-#' selection respectively. 
 #' 
-#' Abundance is estimated in the SRa. \eqn{F_{\textrm{MSY}}} is calculated assuming 
+#' Abundance is estimated in the SRA. \eqn{F_{\textrm{MSY}}} is calculated assuming 
 #' knife-edge vulnerability at the age of full selection. 
 #'   
 #' The TAC is calculated as \eqn{F_\textrm{MSY} A}. `CompSRA4010` uses a 40-10 
@@ -649,6 +646,8 @@ DCAC <- function(x, Data, reps = 100, plot=FALSE) {
   rundcac <- DCAC_(x, Data, reps, updateD=TRUE)
   
   TAC <- TACfilter(rundcac$dcac)
+  
+  if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, TAC, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
   
   Rec <- new("Rec")
   Rec@TAC <- TAC
@@ -1010,7 +1009,7 @@ DBSRA_ <- function(x, Data, reps = 100, depo=NULL, hcr=NULL) {
 #' in the Obs object (e.g `Obs@FMSY_Mbiascv`).
 #' 
 #' The catch limit, for the Base Version, is calculated as:
-#' \deqn{\textrm{TAC} = M . \frac{F_{\textrm{MSY}}}{M} . D . B_0}
+#' \deqn{\textrm{TAC} = M \frac{F_{\textrm{MSY}}}{M} D B_0}
 #' 
 #' 
 #' @templateVar mp DBSRA
@@ -1529,8 +1528,8 @@ DynF <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 10, gg = 2) {
 class(DynF) <- "MP"
 
 
-### ADD EQUATION ####
-
+#' Adaptive Fratio
+#' 
 #' An adaptive MP that uses trajectory in inferred suplus production and
 #' fishing mortality rate to update a TAC
 #' 
@@ -1538,6 +1537,34 @@ class(DynF) <- "MP"
 #' production with biomass (aims for zero).  F is bounded by FMSY/2 and 2FMSY
 #' and walks in the logit space according to dSP/dB. This is derived from the
 #' theory of Maunder 2014.
+#' 
+#' The TAC is calculated as:
+#' \deqn{\textrm{TAC}_y= F_y B_{y-1}}
+#' where \eqn{B_{y-1}} is the most recent biomass, estimated with a loess smoother
+#' of the most recent `yrsmth` years from the index of abundance (`Data@Ind`) 
+#' and estimate of current abundance (`Data@Abun`), and 
+#' 
+#' \deqn{F_y = F_{\textrm{lim}_1} + \left(\frac{\exp^{F_{\textrm{mod}_2}}} {1 + \exp^{F_{\textrm{mod}_2}}} F_{\textrm{lim}_3} \right)   }
+#' 
+#' where \eqn{F_{\textrm{lim}_1} = 0.5 \frac{F_\textrm{MSY}}{M}M}, 
+#' \eqn{F_{\textrm{lim}_2} = 2 \frac{F_\textrm{MSY}}{M}M}, \eqn{F_{\textrm{lim}_3}} is \eqn{F_{\textrm{lim}_2} - F_{\textrm{lim}_1}},
+#' \eqn{F_{\textrm{mod}_2}} is 
+#' \deqn{F_{\textrm{mod}_1} + g -G}
+#' where \eqn{g} is gain parameter `gg`, `G` is the predicted surplus production given current abundance,
+#' and: 
+#'   \deqn{F_{\textrm{mod}_1} = 
+#'              \left\{\begin{array}{ll} 
+#'              -2 & \textrm{if } F_\textrm{old} < F_{\textrm{lim}_1} \\ 
+#'              2 & \textrm{if }  F_\textrm{old} > F_{\textrm{lim}_2} \\ 
+#'              \log{\frac{F_\textrm{frac}}{1-F_\textrm{frac}}} & \textrm{if } F_{\textrm{lim}_1} \leq F_\textrm{old} \leq F_{\textrm{lim}_2} \\
+#'              \end{array}\right.
+#'            }{}
+#' where \eqn{-F_{\textrm{frac}} = \frac{F_{\textrm{old}} - F_{\textrm{lim}_1}}{F_{\textrm{lim}_3}} },
+#' \eqn{F_\textrm{old} = \sum{\frac{C_\textrm{hist}}{B_\textrm{hist}}}/n}
+#' where \eqn{C_\textrm{hist}} and \eqn{B_\textrm{hist}} are smooth catch and biomass over last `yrsmth`, 
+#' and \eqn{n} is `yrsmth`.
+#' 
+#' 
 #' 
 #' Tested in Carruthers et al. 2015.
 #' 
@@ -1555,6 +1582,7 @@ class(DynF) <- "MP"
 #' Maunder, M. 2014.
 #' http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf
 #' @family Fmsy/M methods
+#' @family Surplus production MPs
 #' @examples 
 #' Fadapt(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
 #' @export 
@@ -1583,7 +1611,11 @@ Fadapt <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 7, gg = 1) {
   SP_se <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 1), se = T)$se.fit
   SP_new <- rnorm(reps, SP_mu, SP_se/2)
   Glm <- summary(lm(SP_hist ~ B_hist[ind1]))$coefficients[2, 1:2]  # plot(B_hist[ind1],SP_hist) # points(B_hist[ind1],SP_hist,col='green')
-  G_new <- rnorm(reps, Glm[1], Glm[2])
+  if (reps > 1) {
+    G_new <- rnorm(reps, Glm[1], Glm[2])
+  } else {
+    G_new <- Glm[1]
+  }
   
   Fold <- mean(C_hist/B_hist)
   
@@ -1997,7 +2029,7 @@ class(DepF) <- "MP"
 #' @examples 
 #' Fratio_CC(1, DLMtool::SimulatedData, plot=TRUE)
 #' @export
-Fratio_CC <- function(x, Data, reps = 100, plot=TRUE, Fmin = 0.005) {
+Fratio_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
   # estimate abundance from average catch and F
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
   Cc <- trlnorm(reps, MuC, Data@CV_Cat[x])
@@ -2523,16 +2555,17 @@ Islope_ <- function(x, Data, reps = 100, yrsmth = 5, lambda = 0.4,xx = 0.2) {
 }
 
 
-#'  Index Slope Tracking MP
-#'  
+#' Index Slope Tracking MP
+#' 
+#' 
 #' A management procedure that incrementally adjusts the TAC to maintain a
-#' constant CPUE or relative abundance index
+#' constant CPUE or relative abundance index. 
 #' 
 #' The TAC is calculated as:
 #' \deqn{\textrm{TAC} = \textrm{TAC}^* \left(1+\lambda I \right)}
 #' where \eqn{\textrm{TAC}^*} is \eqn{1-xx} multiplied by the mean catch from the past `yrsmth` years for the 
 #' first year and catch from the previous year in projection years,
-#' \eqn{\lamba} is a gain parameter, and \eqn{I} is the slope of log index over the past `yrsmth` years.
+#' \eqn{\lambda} is a gain parameter, and \eqn{I} is the slope of log index over the past `yrsmth` years.
 #' 
 #' @templateVar mp Islope1
 #' @template MPtemplate
@@ -2625,6 +2658,7 @@ IT_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, mc = 0.05) {
   
   dependencies = "Data@Ind, Data@MPrec, Data@CV_Ind, Data@Iref"
   ind <- max(1, (length(Data@Year) - yrsmth + 1)):length(Data@Year)
+  if(is.na(Data@Iref[x])) return(list(TAC=rep(as.numeric(NA), reps)))
   deltaI <- mean(Data@Ind[x, ind])/Data@Iref[x]
   if (deltaI < (1 - mc)) deltaI <- 1 - mc
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
@@ -2876,7 +2910,7 @@ class(Itarget4) <- "MP"
 #' to the reference index (`Data@Iref`).
 #'
 #' The maximum fractional change in TAC is determined by \eqn{mc}, defined as
-#' \eqn{mc = \textrm{max}\left(\frac{5 + M*25}{100}, 0,2\right)}
+#' \eqn{mc = \textrm{max}\left(\frac{5 + 25M}{100}, 0.2\right)}
 #' 
 #' @templateVar mp ITM 
 #' @template MPtemplate
@@ -2914,7 +2948,7 @@ ITM <- function(x, Data, reps = 100, plot=FALSE) {
     ylim <- range(c(TAC,Data@MPrec[x] ))
     boxplot(TAC, col="gray", ylab=paste0("TAC (", Data@Units, ")"), ylim=ylim)
     points(1, Data@MPrec[x], cex=2, pch=16, col="green")
-    text(1, Data@MPrec[x], "Last TAC", col="green", pos=1)
+    text(1, Data@MPrec[x], "Last TAC", col="green", pos=3)
   }
   
   Rec <- new("Rec")
@@ -2992,6 +3026,7 @@ Ltarget_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, xL = 1
 #' Tested by Carruthers et al. 2015.
 #' 
 #' The TAC is calculated as:
+#' 
 #' If \eqn{L_\textrm{recent} \geq L_0}:
 #' \deqn{\textrm{TAC} = 0.5 \textrm{TAC}^* \left[1+\left(\frac{L_\textrm{recent}-L_0}{L_\textrm{target}-L_0}\right)\right]  }
 #' 
@@ -3276,10 +3311,10 @@ LstepCC_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, stepsz
 #' mean length of recent catches.
 #' 
 #' The TAC is calculated as:
-#'   \deqn{\alpha = 
+#'   \deqn{\textrm{TAC} = 
 #'              \left\{\begin{array}{ll} 
-#'              \textrm{TAC}^* - 2 S & \textrm{if } r < 0.96  \\ 
-#'              \textrm{TAC}^* - S & \textrm{if } r < 0.98 \\ 
+#'              \textrm{TAC}^* - 2 S\textrm{TAC}^* & \textrm{if } r < 0.96  \\ 
+#'              \textrm{TAC}^* - S \textrm{TAC}^* & \textrm{if } r < 0.98 \\ 
 #'              \textrm{TAC}^* & \textrm{if } > 1.058 \\
 #'              \end{array}\right.
 #'            }{}
@@ -3292,8 +3327,8 @@ LstepCC_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, stepsz
 #' The conditions are specified in the `llim` argument to the function. 
 #'            
 #' @templateVar mp LstepCC1
-#' @template MPuses
 #' @template MPtemplate
+#' @template MPuses
 #' 
 #' @param yrsmth Years over which to smooth recent estimates of surplus
 #' production
@@ -3457,31 +3492,47 @@ class(MCD4010) <- "MP"
 
 
 
-#### UP TO HERE ####
-
-
-
 #### Intrinsic Rate of Increase ####
 
-#' Harvest Control Rule using prior for intrinsic rate of increase
+#' Intrinsic rate of Increase MP
 #' 
-#' An MP proposed by Carl Walters that modifies TACs according to trends in
+#' An MP proposed by Carl Walters that modifies the TAC according to trends in
 #' apparent surplus production that includes information from a demographically
 #' derived prior for intrinsic rate of increase
 #' 
+#' The TAC is calculated as:
+#' \deqn{\textrm{TAC} = \textrm{SP} (1-gG)}
+#' where \eqn{g} is a gain parameter, \eqn{\textrm{SP}} is estimated surplus production,
+#' and \eqn{G} is:
+#' For `Rcontrol`:  \eqn{G = r (1-2D)} where \eqn{r} is the estimated intrinsic rate 
+#' of increase, and \eqn{D} is assumed depletion.
 #' 
-#' @usage Rcontrol(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5,
-#' 2))
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of quota samples
+#' For `Rcontrol2`: \eqn{G = r - 2bB_\textrm{hist}} where \eqn{B_\textrm{hist}}
+#' is the smoothed biomass overlast `yrsmth` years and:
+#' \deqn{b = \sum{\frac{\textrm{SP}}{B_\textrm{hist}} - r} \frac{\sum{B_\textrm{hist}}}{\sum{B_\textrm{hist}^2}}   }.
+#' 
+#' 
+#' The TAC is subject to conditions limit the maximum change from the smoothed catch
+#' over the last `yrsmth` years by the `glim` argument, e.g, default values of `glim = c(0.5, 2)`
+#' means that maximum decrease in TAC is 50% of average catch and maximum increase
+#'  is 2 x average catch. 
+#' 
+#' @templateVar mp Rcontrol
+#' @template MPtemplate
+#' @template MPuses
+#' 
 #' @param yrsmth The number of years for smoothing catch and biomass data
 #' @param gg A gain parameters
 #' @param glim Limits for the change in TAC among years
+#' 
 #' @author C. Walters and T. Carruthers
 #' @references Made-up for this package.
-#' @export Rcontrol
-Rcontrol <- function(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 2)) {
+#' @export 
+#' @family Surplus production MPs
+#' @describeIn Rcontrol Base version `Rcontrol`
+#' @examples 
+#' Rcontrol(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
+Rcontrol <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 10, gg = 2, glim = c(0.5, 2)) {
   dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0 Data@steep, Data@CV_steep, Data@MaxAge, Data@Dep, Data@CV_Dep, Data@Cat, Data@Ind"
   Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
   Kvec <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
@@ -3499,13 +3550,20 @@ Rcontrol <- function(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 2))
                 r_reps = reps)
   
   depo <- max(0.01, min(0.99, Data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
-  if (any(is.na(c(Data@Dep[x], Data@CV_Dep[x])))) 
-    return(NA)
-  
-  Bt_K <- rbeta(100, alphaconv(depo, min(depo * Data@CV_Dep[x], 
-                                         (1 - depo) * Data@CV_Dep[x])), betaconv(depo, min(depo * Data@CV_Dep[x], 
-                                                                                           (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
-  Bt_K <- Bt_K[Bt_K > 0.01 & Bt_K < 0.99][1]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
+  if (any(is.na(c(Data@Dep[x], Data@CV_Dep[x])))) {
+    rec <- new("Rec")
+    rec@TAC <- rep(as.numeric(NA), reps)
+    return(rec)
+  }
+    
+  if (reps > 1) {
+    Bt_K <- rbeta(100, alphaconv(depo, min(depo * Data@CV_Dep[x], 
+                                           (1 - depo) * Data@CV_Dep[x])), 
+                  betaconv(depo, min(depo * Data@CV_Dep[x], (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
+  } else {
+    Bt_K <- depo
+  }
+  Bt_K <- Bt_K[Bt_K > 0.01 & Bt_K < 0.99][1:reps]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
   
   G_new <- rsamp * (1 - 2 * Bt_K)  # here is a big difference from SPHCR
   
@@ -3516,37 +3574,43 @@ Rcontrol <- function(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 2))
   B_dat[B_dat == -Inf] <- 0
   C_hist <- exp(predict(loess(C_dat ~ ind, degree = 1)))
   B_hist <- exp(predict(loess(B_dat ~ ind, degree = 1)))
-  ind <- 2:yrsmth
+  inda <- 2:yrsmth
   ind1 <- 1:(yrsmth - 1)
-  SP_hist <- B_hist[ind] - B_hist[ind1] + C_hist[ind1]
+  SP_hist <- B_hist[inda] - B_hist[ind1] + C_hist[ind1]
   yind <- 1:length(SP_hist)
-  SP_mu <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
-                                                       1))
-  SP_se <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
-                                                       1), se = T)$se.fit
-  SP_new <- rnorm(reps, SP_mu, SP_se/2)
-  
-  TAC <- SP_new * (1 - gg * G_new)
+  SP_mu <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 1))
+  SP_se <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 1), se = T)$se.fit
+  if (reps >1) {
+    SP_new <- rnorm(reps, SP_mu, SP_se/2)
+  } else {
+    SP_new <- SP_mu
+  }
+  TACa <- SP_new * (1 - gg * G_new)
+  TAC <- TACa
   TAC[TAC < glim[1] * C_hist[yrsmth]] <- glim[1] * C_hist[yrsmth]
   TAC[TAC > glim[2] * C_hist[yrsmth]] <- glim[2] * C_hist[yrsmth]
   
-  # Carr<-cbind(array(rep(Data@Cat[x,],each=reps),c(reps,length(Data@Cat[x,]))),TAC)
+  TAC <- TACfilter(TAC)
+  if (plot) Rcontrol_plot(rsamp, ind, G_new, B_hist, SP_hist, SP_mu, B_dat, Data, yind, C_hist, TAC, TACa)
+  
+    # Carr<-cbind(array(rep(Data@Cat[x,],each=reps),c(reps,length(Data@Cat[x,]))),TAC)
   # Warr<-(Data@Mort[x]*exp(-Data@Mort[x]*(1:ncol(Carr))))[ncol(Carr):1]
   # Warr<-Warr/sum(Warr)
   # TAC<-apply(t(matrix(Warr,nrow=ncol(Carr),ncol=reps))*Carr,1,sum)
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(Rcontrol) <- "MP"
 
 
-
 #' @describeIn Rcontrol This is different from
-#' Rcontrol because it includes a quadratic approximation of recent trend in
+#' `Rcontrol` because it includes a quadratic approximation of recent trend in
 #' surplus production given biomass
-#' @export Rcontrol2
-Rcontrol2 <- function(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 2)) {
+#' @export 
+#' @examples 
+#' Rcontrol2(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
+Rcontrol2 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 10, gg = 2, glim = c(0.5, 2)) {
   dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@steep, Data@CV_steep, Data@MaxAge, Data@Dep, Data@CV_Dep, Data@Cat, Data@Ind"
   Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
   Kvec <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
@@ -3569,35 +3633,42 @@ Rcontrol2 <- function(x, Data, reps = 100, yrsmth = 10, gg = 2, glim = c(0.5, 2)
   B_dat[B_dat == -Inf] <- 0
   C_hist <- exp(predict(loess(C_dat ~ ind, degree = 1)))
   B_hist <- exp(predict(loess(B_dat ~ ind, degree = 1)))
-  ind <- 2:yrsmth
+  inda <- 2:yrsmth
   ind1 <- 1:(yrsmth - 1)
-  SP_hist <- B_hist[ind] - B_hist[ind1] + C_hist[ind1]
+  SP_hist <- B_hist[inda] - B_hist[ind1] + C_hist[ind1]
   yind <- 1:length(SP_hist)
   SP_mu <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
                                                        1))
   SP_se <- predict(lm(SP_hist ~ yind), newdat = list(yind = length(SP_hist) + 
                                                        1), se = T)$se.fit
-  SP_new <- rnorm(reps, SP_mu, SP_se/2)
+  if (reps >1) {
+    SP_new <- rnorm(reps, SP_mu, SP_se/2)
+  } else {
+    SP_new <- SP_mu
+  }
   SParr <- array(rep(SP_hist, each = reps), dim = c(reps, yrsmth - 1))
-  Barr <- array(rep(B_hist[ind], each = reps), dim = c(reps, yrsmth - 
-                                                         1))
+  Barr <- array(rep(B_hist[inda], each = reps), dim = c(reps, yrsmth - 1))
   rarr <- array(rep(rsamp, yrsmth - 1), dim = c(reps, yrsmth - 1))
-  b2 <- apply(SParr/Barr - rarr, 1, sum) * apply(Barr, 1, sum)/apply(Barr^2, 
-                                                                     1, sum)
+  b2 <- apply(SParr/Barr - rarr, 1, sum) * apply(Barr, 1, sum)/apply(Barr^2, 1, sum)
   G_new <- rsamp - 2 * b2 * B_hist[yrsmth]
   
-  TAC <- SP_new * (1 - gg * G_new)
+  TACa <- SP_new * (1 - gg * G_new)
+  TAC <- TACa
   TAC[TAC < glim[1] * C_hist[yrsmth]] <- glim[1] * C_hist[yrsmth]
   TAC[TAC > glim[2] * C_hist[yrsmth]] <- glim[2] * C_hist[yrsmth]
   # Carr<-cbind(array(rep(Data@Cat[x,],each=reps),c(reps,length(Data@Cat[x,]))),TAC)
   # Warr<-(Data@Mort[x]*exp(-Data@Mort[x]*(1:ncol(Carr))))[ncol(Carr):1]
   # Warr<-Warr/sum(Warr)
   # TAC<-apply(t(matrix(Warr,nrow=ncol(Carr),ncol=reps))*Carr,1,sum)
+  TAC <- TACfilter(TAC)
+  if (plot) Rcontrol_plot(rsamp, ind, G_new, B_hist, SP_hist, SP_mu, B_dat, Data, yind, C_hist, TAC, TACa)
+  
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(Rcontrol2) <- "MP"
+
 
 
 #### SBT ####
@@ -3605,7 +3676,34 @@ class(Rcontrol2) <- "MP"
 #' SBT simple MP
 #' 
 #' An MP that makes incremental adjustments to TAC recommendations based on the
-#' apparent trend in CPUE
+#' apparent trend in CPUE, a an MP that makes incremental adjustments to TAC 
+#' recommendations based on index levels relative to target levels (BMSY/B0) 
+#' and catch levels relative to target levels (MSY).
+#' 
+#' For `SBT1` the TAC is calculated as:
+#'   \deqn{\textrm{TAC}_y = 
+#'              \left\{\begin{array}{ll} 
+#'              C_{y-1} (1+K_2\lambda) & \textrm{if } \lambda \geq 0 \\ 
+#'               C_{y-1} (1-K_1\lambda^\gamma) & \textrm{if } \lambda < 0\\ 
+#'              \end{array}\right.
+#'            }{}
+#'  where \eqn{\lambda} is the slope of index over the last `yrmsth` years, and 
+#'  \eqn{K_1}, \eqn{K_2}, and \eqn{\gamma} are arguments to the MP.       
+#' 
+#' For `SBT2` the TAC is calculated as:
+#' \deqn{\textrm{TAC}_y = 0.5 (C_{y-1} + C_\textrm{targ}\delta)}
+#' where \eqn{C_{y-1}} is catch in the previous year, \eqn{C_{\textrm{targ}}} 
+#' is a target catch (`Data@Cref`), and :
+#'   \deqn{\delta= 
+#'              \left\{\begin{array}{ll} 
+#'              R^{1-\textrm{epsR}} & \textrm{if } R \geq 1 \\ 
+#'              R^{1+\textrm{epsR}} & \textrm{if } R < 1 \\ 
+#'              \end{array}\right.
+#'            }{}
+#' where \eqn{\textrm{epsR}} is a control parameter and:
+#' \eqn{R = \frac{\bar{r}}{\phi}}
+#' where \eqn{\bar{r}} is mean recruitment over last `tauR` years and \eqn{\phi}
+#' is mean recruitment over last 10 years.
 #' 
 #' This isn't exactly the same as the proposed methods and is stochastic in
 #' this implementation. The method doesn't tend to work too well under many
@@ -3613,74 +3711,85 @@ class(Rcontrol2) <- "MP"
 #' SBT assessment environment. You could try asking Rich Hillary at CSIRO about
 #' this approach.
 #' 
-#' @usage SBT1(x, Data, reps = 100, yrsmth=10, k1=1.5, k2=3, gamma=1)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of samples of the TAC
+#' @templateVar mp SBT1
+#' @template MPtemplate
+#' @template MPuses
+#' 
 #' @param yrsmth The number of years for evaluating trend in relative abundance
 #' indices
 #' @param k1 Control parameter
 #' @param k2 Control parameter
 #' @param gamma Control parameter
+#' 
 #' @author T. Carruthers
 #' @references http://www.ccsbt.org/site/recent_assessment.php
-#' @seealso \link{SBT2}
-#' @export SBT1
-SBT1 <- function(x, Data, reps = 100, yrsmth = 10, k1 = 1.5, k2 = 3, gamma = 1) {
+#' @family SBT MPs
+#' @export
+#' @describeIn SBT1 Simple SBT MP
+#' @examples 
+#' SBT1(1, Data=DLMtool::SimulatedData, plot=TRUE)
+SBT1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 10, k1 = 1.5, k2 = 3, gamma = 1) {
   dependencies = "Data@Cat, Data@Year, Data@Ind"
   Cr <- length(Data@Cat[x, ])
   cct <- trlnorm(reps, Data@Cat[x, Cr], Data@CV_Cat)
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)
   I_hist <- Data@Ind[x, ind]
   test <- summary(lm(I_hist ~ ind))$coefficients[2, 1:2]
-  lambda <- rnorm(reps, test[1], test[2])
+  if (reps > 1) {
+    lambda <- rnorm(reps, test[1], test[2])
+  } else {
+    lambda <- test[1]
+  }
   # TAC <- cct * 1 + k2 * lambda
   # see https://github.com/DLMtool/DLMtool/issues/17
   TAC <- cct * (1 + k2 * lambda)
   cond <- lambda < 0
   # TAC[cond] <- cct[cond] * 1 - k1 * -lambda[cond]^gamma
   TAC[cond] <- cct[cond] * (1 - k1 * -lambda[cond]^gamma)
+  TAC <- TACfilter(TAC)
+  
+  if (plot) {
+    op <- par(no.readonly = TRUE)
+    on.exit(par(op))
+    par(mfrow=c(1,2))
+    plot(Data@Year[ind], I_hist, bty="l", xlab="Year", ylab="Index", type="l", lwd=2)
+    lines(Data@Year[ind], predict(lm(I_hist ~ ind)), lty=2)
+    
+    ylim <- range(c(Data@Cat[x, ind], TAC))
+    plot(c(Data@Year[ind], max(Data@Year[ind])+1), c(Data@Cat[x, ind], NA), bty="l", xlab="Year", 
+         ylab=paste0("Catch (", Data@Units, ")"), type="l", lwd=2, ylim=ylim)
+    points(max(Data@Year[ind]), Data@Cat[x, max(ind)], pch=16, cex=1.5)
+    boxplot(TAC, at=max(Data@Year[ind])+1, add=TRUE, axes=FALSE, col="blue")
+    
+  }
+  
+  
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(SBT1) <- "MP"
 
 
 
-#' SBT complex MP
+ 
+
+
+ 
+#' @templateVar mp SBT2
+#' @template MPuses
 #' 
-#' An MP that makes incremental adjustments to TAC recommendations based on
-#' index levels relative to target levels (BMSY/B0) and catch levels relative
-#' to target levels (MSY)
-#' 
-#' This isn't exactly the same as the proposed methods and is stochastic in
-#' this implementation. The method doesn't tend to work too well under many
-#' circumstances possibly due to the lack of 'tuning' that occurs in the real
-#' SBT assessment environment. You could try asking Rich Hillary at CSIRO about
-#' this approach.
-#' 
-#' @usage SBT2(x, Data, reps = 100,
-#' epsB=0.25,epsR=0.75,tauR=5,tauB=7,gamma=1)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of samples of the TAC
-#' @param epsB Control parameter
 #' @param epsR Control parameter
 #' @param tauR Control parameter
-#' @param tauB Control parameter
-#' @param gamma Control parameter
-#' @author T. Carruthers
-#' @references http://www.ccsbt.org/site/recent_assessment.php
-#' @seealso \link{SBT1}
-#' @export SBT2
-SBT2 <- function(x, Data, reps = 100, epsB = 0.25, epsR = 0.75, tauR = 5, 
-                 tauB = 7, gamma = 1) {
+#' 
+#' @export 
+#' @describeIn SBT1 Complex SBT MP
+#' @examples 
+#' SBT2(1, Data=DLMtool::SimulatedData, plot=TRUE)
+SBT2 <- function(x, Data, reps = 100, plot=FALSE, epsR = 0.75, tauR = 5, 
+                 gamma = 1) {
   dependencies = "Data@Cref, Data@Rec, Data@Cat"
-  # Bnow<-trlnorm(reps,Data@Abun[x],Data@CV_Abun)
-  # testrat<-Bnow/Data@Bref Ctarg<-rep(NA,reps)
-  # Ctarg[testrat>1]<-delta*testrat[testrat>1]^(1-epsB)
-  # Ctarg[testrat<1]<-detla*testrat[testrat<1]^(1+epsB)
+  
   Ctarg <- trlnorm(reps, Data@Cref[x], Data@CV_Cref)
   muR <- mean(Data@Rec[x, (length(Data@Rec[x, ]) - tauR + 1):length(Data@Rec[x, ])])
   phi <- mean(Data@Rec[x, (length(Data@Rec[x, ]) - 9):length(Data@Rec[x,])])
@@ -3689,11 +3798,37 @@ SBT2 <- function(x, Data, reps = 100, epsB = 0.25, epsR = 0.75, tauR = 5,
   deltaR[Rrat > 1] <- Rrat[Rrat > 1]^(1 - epsR)
   deltaR[Rrat < 1] <- Rrat[Rrat < 1]^(1 + epsR)
   TAC <- 0.5 * (Data@Cat[x, length(Data@Cat[x, ])] + Ctarg *  deltaR)
+  
+  TAC <- TACfilter(TAC)
+  
+  if (plot) {
+    op <- par(no.readonly = TRUE)
+    on.exit(par(op))
+    par(mfrow=c(1,2))
+    plot(Data@Year, Data@Rec[x,], bty="l", xlab="Year", 
+         ylab="Recruitment", type="l", lwd=2)
+    nyrs <- length(Data@Year)
+    nyrs2 <- length((nyrs - tauR + 1) : nyrs)
+    lines(Data@Year[(nyrs - tauR + 1) : nyrs], rep(muR, nyrs2), lty=2, col="blue")
+    text(mean(Data@Year[(nyrs - tauR + 1) : nyrs]), muR, col="blue", 'muR', pos=4, xpd=NA)
+    
+    nyrs2 <- length((nyrs - 9) : nyrs)
+    lines(Data@Year[(nyrs - 9 ) : nyrs], rep(phi, nyrs2), lty=2, col="red")
+    text(mean(Data@Year[(nyrs - 9) : nyrs]), phi, col="red", 'phi', pos=2, xpd=NA)
+    
+    ylim <- range(c(Data@Cat[x, ], TAC, Ctarg))
+    plot(c(Data@Year, max(Data@Year)+1), c(Data@Cat[x, ], NA), bty="l", xlab="Year", 
+         ylab=paste0("Catch (", Data@Units, ")"), type="l", lwd=2, ylim=ylim)
+    abline(h=Ctarg, lty=2, col="darkgray")
+    boxplot(TAC, at=max(Data@Year)+1, add=TRUE, axes=FALSE, col="blue")
+  }
+  
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(SBT2) <- "MP"
+
 
 
 
@@ -3708,18 +3843,37 @@ class(SBT2) <- "MP"
 #' Note that this isn't exactly what Mark has previously suggested and is
 #' stochastic in this implementation.
 #' 
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of quota samples
+#' The TAC is calculated as:
+#'   \deqn{\textrm{TAC}_y = 
+#'              \left\{\begin{array}{ll} 
+#'               C_{y-1} \textrm{bet}_1 & \textrm{if } r < \alpha_1 \\ 
+#'               C_{y-1} & \textrm{if } \alpha_1 < r < \alpha_2 \\
+#'               \textrm{bet}_2 (b_2 - b_1 + C_{y-2} )  & \textrm{if } r > \alpha_2 \\  
+#'              \end{array}\right.
+#'            }{}
+#'  where \eqn{\textrm{bet}_1} and \eqn{\textrm{bet}_2} are elements in `bet`, 
+#'  \eqn{r} is the ratio of the index in the most recent two years, \eqn{C_{y-1}}
+#'   is catch in the previous year, \eqn{b_1} and \eqn{b_2} are ratio of index 
+#'   in \eqn{y-2} and \eqn{y-1} over the estimate of catchability \eqn{\left(\frac{I}{A}\right)},
+#'   and \eqn{\alpha_1}, \eqn{\alpha_2}, and \eqn{\alpha_3} are specified in argument
+#'   `alp`.
+#'   
+#' 
+#' @templateVar mp SPmod
+#' @template MPtemplate
+#' @template MPuses
+#' 
 #' @param alp Condition for modifying the TAC (bounds on change in abundance)
 #' @param bet Limits for how much the TAC can change among years
 #' @return A numeric vector of TAC recommendations
 #' @author T. Carruthers
 #' @references
 #' http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf
-#' @seealso \link{SPslope}
+#' @family Surplus production MPs
 #' @export 
-SPmod <- function(x, Data, reps = 100, alp = c(0.8, 1.2), bet = c(0.8, 1.2)) {
+#' @examples 
+#' SPmod(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
+SPmod <- function(x, Data, reps = 100, plot=FALSE, alp = c(0.8, 1.2), bet = c(0.8, 1.2)) {
   dependencies = "Data@Cat, Data@Ind, Data@Abun, Data@CV_Ind, Data@CV_Cat,  Data@CV_Abun"
   Ir <- length(Data@Ind[x, ])
   Cr <- length(Data@Cat[x, ])
@@ -3740,11 +3894,28 @@ SPmod <- function(x, Data, reps = 100, alp = c(0.8, 1.2), bet = c(0.8, 1.2)) {
     PP <- bio2 - bio1 + cct1
     TAC[cond] <- bet[2] * PP
   }
+  TAC <- TACfilter(TAC)
+  
+  if (plot) {
+    op <- par(no.readonly = TRUE)
+    on.exit(par(op))
+    par(mfrow=c(1,2))
+    plot(Data@Year[(Ir-1):Ir], Data@Ind[x,(Ir-1):Ir], bty="l", xlab="Year", 
+         ylab="Index", type="l", lwd=2)
+   
+    ylim <- range(c(Data@Cat[x, ], TAC), na.rm=TRUE)
+    plot(c(Data@Year, max(Data@Year)+1), c(Data@Cat[x, ], NA), bty="l", xlab="Year", 
+         ylab=paste0("Catch (", Data@Units, ")"), type="l", lwd=2, ylim=ylim)
+    boxplot(TAC, at=max(Data@Year)+1, add=TRUE, axes=FALSE, col="blue")
+  }
+  
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(SPmod) <- "MP"
+
+
 
 
 #' Slope in surplus production MP
@@ -3756,21 +3927,40 @@ class(SPmod) <- "MP"
 #' Note that this isn't exactly what Mark has previously suggested and is
 #' stochastic in this implementation.
 #' 
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of quota samples
+#' The TAC is calculated as:
+#'   \deqn{\textrm{TAC}_y = 
+#'              \left\{\begin{array}{ll} 
+#'               M \bar{C}  & \textrm{if } r < \alpha_1 \\ 
+#'               \bar{C} & \textrm{if } \alpha_1 < r < \alpha_2 \\
+#'               \textrm{bet}_2 \textrm{SP}  & \textrm{if } r > \alpha_2 \\  
+#'              \end{array}\right.
+#'            }{}
+#'  where \eqn{r} is the ratio of predicted biomass in next year to biomass in 
+#'  current year \eqn{\bar{C}} is the mean catch over the last `yrmsth` years, \eqn{\alpha_1} 
+#'  and  \eqn{\alpha_2} are specified in `alp`, \eqn{\textrm{bet}_1} and \eqn{\textrm{bet}_2}
+#'  are specified in `bet`, \eqn{\textrm{SP}} is estimated surplus production in most recent year,
+#'  and:
+#'  \deqn{M = 1-\textrm{bet}_1 \frac{B_y - \tilde{B}_y}{B_y}}
+#'  where \eqn{B_y} is the most recent estimate of biomass and \eqn{\tilde{B}} 
+#'  is the predicted biomass in the next year.                    
+#' 
+#' @templateVar mp SPslope
+#' @template MPtemplate
+#' @template MPuses
+#' 
 #' @param yrsmth Years over which to smooth recent estimates of surplus
 #' production
 #' @param alp Condition for modifying the Data (bounds on change in
 #' abundance)
 #' @param bet Limits for how much the Data can change among years
-#' @return A numeric vector of Data recommendations
 #' @author T. Carruthers
-#' @seealso \link{SPmod}
+#' @family Surplus production MPs
 #' @references
 #' http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf
 #' @export 
-SPslope <- function(x, Data, reps = 100, yrsmth = 4, alp = c(0.9, 1.1), 
+#' @examples 
+#' SPslope(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
+SPslope <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 4, alp = c(0.9, 1.1), 
                     bet = c(1.5, 0.9)) {
   
   dependencies = "Data@Year, Data@Cat, Data@Ind, Data@Abun"
@@ -3778,11 +3968,9 @@ SPslope <- function(x, Data, reps = 100, yrsmth = 4, alp = c(0.9, 1.1),
   yind <- 1:yrsmth
   C_dat <- Data@Cat[x, ind]
   B_dat <- Data@Ind[x, ind]/Data@Ind[x, ind[yrsmth]] * Data@Abun[x]
-  Pt_mu <- max(B_dat[yrsmth] - B_dat[yrsmth - 1] + C_dat[yrsmth - 1], 
-               tiny)
+  Pt_mu <- max(B_dat[yrsmth] - B_dat[yrsmth - 1] + C_dat[yrsmth - 1], tiny)
   Pt_1 <- trlnorm(reps, Pt_mu, Data@CV_Cat[x])
-  It <- exp(predict(lm(log(B_dat) ~ yind), newdat = list(yind = yrsmth + 
-                                                           1)))
+  It <- exp(predict(lm(log(B_dat) ~ yind), newdat = list(yind = yrsmth + 1)))
   Ilast <- B_dat[yrsmth]
   MC <- max(mean(C_dat), tiny)
   Ct_1 <- trlnorm(reps, MC, Data@CV_Cat[x]/(yrsmth^0.5))  # mean catches over the interval
@@ -3793,11 +3981,30 @@ SPslope <- function(x, Data, reps = 100, yrsmth = 4, alp = c(0.9, 1.1),
   if (rat < alp[1]) TAC <- mult * Ct_1
   if (rat > alp[1] & rat < alp[2]) TAC <- Ct_1
   if (rat > alp[2]) TAC <- bet[2] * Pt_1
+  TAC <- TACfilter(TAC)
+  
+  if (plot) {
+    op <- par(no.readonly = TRUE)
+    on.exit(par(op))
+    par(mfrow=c(1,2))
+    ylim <- range(c(B_dat, It), na.rm=TRUE)
+    plot(c(Data@Year[ind], max(Data@Year[ind])+1), c(B_dat, NA), bty="l", xlab="Year", 
+         ylab="Estimated Biomass", type="l", lwd=2, ylim=ylim)
+    points(max(Data@Year)+1, mean(It, na.rm=TRUE), col="blue", pch=16)
+    
+    ylim <- range(c(Data@Cat[x, ], TAC), na.rm=TRUE)
+    plot(c(Data@Year, max(Data@Year)+1), c(Data@Cat[x, ], NA), bty="l", xlab="Year", 
+         ylab=paste0("Catch (", Data@Units, ")"), type="l", lwd=2, ylim=ylim)
+    boxplot(TAC, at=max(Data@Year)+1, add=TRUE, axes=FALSE, col="blue")
+  }
+  
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(SPslope) <- "MP"
+
+
 
 #' Catch trend Surplus Production MSY MP
 #' 
@@ -3806,23 +4013,34 @@ class(SPslope) <- "MP"
 #' on catches and a rule for intrinsic rate of increase it also returns
 #' depletion. Given their surplus production model predicts K, r and depletion
 #' it is straighforward to calculate the OFL based on the Schaefer productivity
-#' curve. OFL = dep \* (1-dep) \* r \* K \* 2
+#' curve. 
 #' 
-#' Requires the assumption that catch is proportional to abundance.
+#' The TAC is calculated as:
+#' \deqn{\textrm{TAC} = D K \frac{r}{2}}
+#' where \eqn{D} is depletion, \eqn{K} is unfished biomass, and \eqn{r} is 
+#' intrinsic rate of increasase, all estimated internally by the method based 
+#' on trends in the catch data and life-history information.
+#' 
+#' Requires the assumption that catch is proportional to abundance, and a catch 
+#' time-series from the beginning of exploitation.
+#' 
 #' Occasionally the rule that limits r and K ranges does not allow r-K pairs to
 #' be found that lead to the depletion inferred by the catch trajectories. In
 #' this case this method widens the search.
 #' 
-#' @usage SPMSY(x, Data, reps = 100)
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of samples of the TAC
+#' @templateVar mp SPMSY
+#' @template MPtemplate
+#' @template MPuses
+#' 
 #' @author T. Carruthers
 #' @references Martell, S. and Froese, R. 2012. A simple method for estimating
 #' MSY from catch and resilience. Fish and Fisheries. DOI:
 #' 10.1111/j.1467-2979.2012.00485.x
-#' @export SPMSY
-SPMSY <- function(x, Data, reps = 100) {
+#' @family Surplus production MPs
+#' @export 
+#' @examples 
+#' SPMSY(1, Data=DLMtool::SimulatedData, plot=TRUE)
+SPMSY <- function(x, Data, reps = 100, plot=FALSE) {
   # Martell and Froese 2012 Schaefer SP estimate of MSY given priors on
   # r, k and depletion for(x in 1:100){
   dependencies = "Data@MaxAge, Data@vbK, Data@L50, Data@Cat"
@@ -3894,6 +4112,8 @@ SPMSY <- function(x, Data, reps = 100) {
     B[B[, nyears] >= UB, nyears] <- UB
     cond <- (B[, nyears] >= LB) & (B[, nyears] <= UB)
   }
+  Best <- B[cond,]
+  Best <- Best[1:reps,]
   dep <- B[cond, nyears][1:reps]
   MSY <- rsamp[cond][1:reps] * Ksamp[cond][1:reps]/4
   Kc <- Ksamp[cond][1:reps]
@@ -3912,37 +4132,48 @@ SPMSY <- function(x, Data, reps = 100) {
     
   }
   # }
+  TAC <- TACfilter(TAC)
   
+  if (plot) {
+    op <- par(no.readonly = TRUE)
+    on.exit(op)
+    par(mfrow=c(2,3), mar=c(4,4,1,1), oma=c(1,1,1,1))
+    
+    boxplot(Kc, ylab=paste0('Unfished Biomass (', Data@Units, ')'))
+    boxplot(rc, ylab='Intrinsic rate of increase')
+    boxplot(dep, ylab='Depletion')
+    boxplot(MSY, ylab='MSY')
+    
+    matplot(Data@Year, t(Best), xlab="Year", ylab='Relative Biomass',
+         bty="l", type="l", lwd=2)
+    
+    ylim <- range(c(Data@Cat[x,], TAC), na.rm=TRUE)
+    plot(c(Data@Year, max(Data@Year)+1), c(Data@Cat[x,], NA), xlab="Year", ylab=paste0('Catch (', Data@Units, ')'),
+         bty="l", type="l", lwd=2, ylim=ylim)
+    boxplot(TAC, axes=FALSE, add=TRUE, at=max(Data@Year)+1, col="blue", width=2)
+
+  }
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
-}  # end of SPMSY
+}  
 class(SPMSY) <- "MP"
 
 
 
 #### Surplus Production Stock Reduction Analysis ####
 
-#' Surplus Production Stock Reduction Analysis
-#' 
-#' A surplus production equivalent of DB-SRA that uses a demographically
-#' derived prior for intrinsic rate of increase (McAllister method, below)
+#' Surplus Production Stock Reduction Analysis Internal Function
 #' 
 #' @param x A position in a data-limited methods data object
 #' @param Data A data-limited methods data object (class DLM)
 #' @param reps The number of samples of the TAC taken for the calculation of
 #' the quota
-#' @author T. Carruthers
-#' @references McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
-#' demographic methods to construct Bayesian priors for the intrinsic rate of
-#' increase in the Schaefer model and implications for stock rebuilding. Can.
-#' J. Fish. Aquat. Sci. 58: 1871-1890.
-#' @describeIn SPSRA Base version
-#' @export 
-SPSRA <- function(x, Data, reps = 100) {
-  # Surplus productin stock reduction analysis T.Carruthers - basically
-  # an SP version of DBSRA
-  dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@Dep, Data@CV_Dep, Data@Cat, Data@steep"
+#' @param dep Optional numeric vector of depletion
+#' @export
+#' @keywords internal
+#' @describeIn SPSRA_ internal function
+SPSRA_ <- function(x, Data, reps = 100, dep=NULL) {
   Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
   Kvec <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
   Linfvec <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
@@ -3957,31 +4188,103 @@ SPSRA <- function(x, Data, reps = 100) {
   # hvec <- trlnorm(reps, Data@steep[x], Data@CV_steep[x])
   hvec <- sample_steepness2(reps, Data@steep[x], Data@CV_steep[x])
   if (all(!is.finite(hvec))) 
-    return(NA)
+    return(list(TAC=rep(as.numeric(NA), reps), Ksamp=rep(as.numeric(NA), reps), 
+                dep=rep(as.numeric(NA), reps), rsamp=rep(as.numeric(NA), reps),
+                MSY=rep(as.numeric(NA), reps)))
+           
   rsamp <- getr(x, Data, Mvec, Kvec, Linfvec, t0vec, hvec, maxage = Data@MaxAge, 
                 r_reps = reps)
-  dep <- trlnorm(reps, Data@Dep[x], Data@CV_Dep[x])
+  if (is.null(dep)) dep <- trlnorm(reps, Data@Dep[x], Data@CV_Dep[x])
   Ct <- Data@Cat[x, ]
   Csamp <- array(rep(Ct, each = reps) * trlnorm(length(Ct) * reps, 1, 
                                                 Data@CV_Cat[x]), dim = c(reps, length(Ct)))
   Psamp <- array(trlnorm(length(Ct) * reps, 1, 0.1), dim = c(reps, length(Ct)))
   Ksamp <- rep(NA, reps)
-  for (i in 1:reps) Ksamp[i] <- exp(optimize(SPSRAopt, log(c(mean(Csamp[i, 
-                                                                        ]), 1000 * mean(Csamp[i, ]))), dep = dep[i], r = rsamp[i], Ct = Csamp[i, 
-                                                                                                                                              ], PE = Psamp[i, ])$minimum)
+  for (i in 1:reps) Ksamp[i] <- exp(optimize(SPSRAopt, log(c(mean(Csamp[i, ]), 
+                                                             1000 * mean(Csamp[i, ]))), 
+                                             dep = dep[i], r = rsamp[i], Ct = Csamp[i,],
+                                             PE = Psamp[i, ])$minimum)
   MSY <- Ksamp * rsamp/4
-  TAC <- Ksamp * dep * rsamp/2
+  TAC <- TACfilter(Ksamp * dep * rsamp/2)
+  return(list(TAC=TAC, Ksamp=Ksamp, dep=dep, rsamp=rsamp, MSY=MSY))
+}
+
+
+#' SPSRA Optimizer
+#'
+#' @param lnK internal parameter 
+#' @param dep internal parameter 
+#' @param r internal parameter 
+#' @param Ct internal parameter 
+#' @param PE internal parameter 
+#'
+#' @export
+#'
+#' @describeIn SPSRA_ internal function
+SPSRAopt <- function(lnK, dep, r, Ct, PE) {
+  nyears <- length(Ct)
+  B <- rep(NA, nyears)
+  B[1] <- exp(lnK)
+  OBJ <- 0
+  for (y in 2:nyears) {
+    if ((B[y - 1] - Ct[y - 1]) < 0)
+      OBJ <- OBJ + (B[y - 1] - Ct[y - 1])^2
+    B[y] <- max(0.01, B[y - 1] - Ct[y - 1])
+    B[y] <- B[y] + r * B[y] * (1 - B[y]/B[1]) * PE[y]
+  }
+  return(OBJ + ((B[nyears]/B[1]) - dep)^2)
+}
+
+
+#' Surplus Production Stock Reduction Analysis
+#' 
+#' A surplus production equivalent of DB-SRA that uses a demographically
+#' derived prior for intrinsic rate of increase (McAllister method, below)
+#' 
+#' The TAC is calculated as:
+#' \deqn{\textrm{TAC} = K D \frac{r}{2}}
+#' where \eqn{K} is estimated unfished biomass, \eqn{D} is depletion, and \eqn{r}
+#' is the estimated intrinsic rate of increase.
+#' 
+#' Like all SRA methods, this MP requires a time-series of catch extending from the
+#' beginning of exploitation. 
+#' 
+#' @templateVar mp SPSRA 
+#' @template MPtemplate
+#' @template MPuses 
+#' 
+#' @author T. Carruthers
+#' @references McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
+#' demographic methods to construct Bayesian priors for the intrinsic rate of
+#' increase in the Schaefer model and implications for stock rebuilding. Can.
+#' J. Fish. Aquat. Sci. 58: 1871-1890.
+#' @family Surplus production MPs
+#' @describeIn SPSRA Base version. Requires an estimate of current depletion
+#' @export 
+#' @examples 
+#' SPSRA(1, DLMtool::SimulatedData, plot=TRUE)
+SPSRA <- function(x, Data, reps = 100, plot=FALSE) {
+  # Surplus productin stock reduction analysis T.Carruthers - basically
+  # an SP version of DBSRA
+  runSPSRA <- SPSRA_(x, Data, reps)
+  TAC <- runSPSRA$TAC 
+  
+  if (plot) SPSRA_plot(runSPSRA, Data, x)
+
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(SPSRA) <- "MP"
 
+#' @templateVar mp SPSRA_ML 
+#' @template MPuses
 #' @describeIn SPSRA Variant that uses a mean-length mortality estimator to obtain
-#' a prior for current stock depletion. The mean length extension was programmed by 
-#' Gary Nelson as part of his excellent R package 'fishmethods'.
-#' @export SPSRA_ML
-SPSRA_ML <- function(x, Data, reps = 100) {
+#' a prior for current stock depletion. 
+#' @export 
+#' @examples 
+#' SPSRA_ML(1, DLMtool::SimulatedData, plot=TRUE)
+SPSRA_ML <- function(x, Data, reps = 100, plot=FALSE) {
   dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@CAL, Data@Cat, Data@steep"
   Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
   Kvec <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
@@ -4007,22 +4310,16 @@ SPSRA_ML <- function(x, Data, reps = 100) {
   Ct1 <- mean(Data@Cat[x, 1:3])
   Ct2 <- mean(Data@Cat[x, (nyears - 2):nyears])
   dep <- rep(c(Ct1, Ct2), each = reps)/(1 - exp(-FM))
-  if (reps == 1) 
-    dep <- dep[2]/dep[1]
-  if (reps > 1) 
-    dep <- dep[, 2]/dep[, 1]
-  Ksamp <- rep(NA, reps)
-  Ct <- Data@Cat[x, ]
-  Csamp <- array(rep(Ct, each = reps) * trlnorm(length(Ct) * reps, 1, 
-                                                Data@CV_Cat[x]), dim = c(reps, length(Ct)))
-  Psamp <- array(trlnorm(length(Ct) * reps, 1, 0.1), dim = c(reps, length(Ct)))
-  for (i in 1:reps) Ksamp[i] <- exp(optimize(SPSRAopt, log(c(mean(Csamp[i, 
-                                                                        ]), 1000 * mean(Csamp[i, ]))), dep = dep[i], r = rsamp[i], Ct = Csamp[i, 
-                                                                                                                                              ], PE = Psamp[i, ])$minimum)
-  MSY <- Ksamp * rsamp/4
-  TAC <- Ksamp * dep * rsamp/2
+  if (reps == 1) dep <- dep[2]/dep[1]
+  if (reps > 1) dep <- dep[, 2]/dep[, 1]
+  
+  runSPSRA <- SPSRA_(x, Data, reps, dep=dep)
+  TAC <- runSPSRA$TAC 
+  
+  if (plot) SPSRA_plot(runSPSRA, Data, x)
+
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TAC
   Rec
 }
 class(SPSRA_ML) <- "MP"
@@ -4227,13 +4524,12 @@ YPRopt <- function(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage, reps = 100) {
 #' The TAC is calculated as:
 #' \deqn{\textrm{TAC} = F_{0.1} A}
 #' where \eqn{F_{0.1}} is the fishing mortality (*F*) where the slope of the yield-per-recruit
-#' (YPR) curve is 10% of the slope at the origin, and *A* is an estimate of current abundance.
+#' (YPR) curve is 10\% of the slope at the origin, and *A* is an estimate of current abundance.
 #' 
 #' The YPR curve is calculated using an equilibrium age-structured model with life-history and 
 #' selectivity parameters sampled from the `Data` object. 
 #' 
-#' The variants of the YPR MP differ in the method to estimate current abundance (see Functions section below).
-#' #' 
+#' The variants of the YPR MP differ in the method to estimate current abundance (see Functions section below). #' 
 #' @templateVar mp YPR
 #' @template MPtemplate
 #' @template MPuses

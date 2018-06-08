@@ -21,9 +21,11 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
 
@@ -32,6 +34,7 @@
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 <!-- mathjax -->
@@ -57,7 +60,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">DLMtool</a>
+        <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
         <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.999</span>
       </span>
     </div>
@@ -92,6 +95,7 @@
     <table class="ref-index">
 
     <colgroup>
+      
       <col class="alias" />
       <col class="title" />
     </colgroup>
@@ -104,195 +108,185 @@
         </th>
       </tr>
       <tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="AvC.html">AvC()</a></code> </p>
         </td>
         <td><p>Average Catch</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="BK.html">BK()</a></code> <code><a href="BK.html">BK_CC()</a></code> <code><a href="BK.html">BK_ML()</a></code> </p>
         </td>
         <td><p>Beddington and Kirkwood life-history MP</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="CC1.html">CC1()</a></code> <code><a href="CC1.html">CC2()</a></code> <code><a href="CC1.html">CC3()</a></code> <code><a href="CC1.html">CC4()</a></code> <code><a href="CC1.html">CC5()</a></code> </p>
         </td>
         <td><p>Geromont and Butterworth (2015) Constant Catch</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="CompSRA.html">CompSRA()</a></code> <code><a href="CompSRA.html">CompSRA4010()</a></code> </p>
         </td>
         <td><p>Age-Composition Stock-Reduction Analysis</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="DCAC.html">DCACs()</a></code> <code><a href="DCAC.html">DCAC()</a></code> <code><a href="DCAC.html">DCAC_40()</a></code> <code><a href="DCAC.html">DCAC4010()</a></code> <code><a href="DCAC.html">DCAC_ML()</a></code> <code><a href="DCAC.html">DAAC()</a></code> <code><a href="DCAC.html">HDAAC()</a></code> </p>
         </td>
         <td><p>Depletion Corrected Average Catch</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="DBSRA.html">DBSRA()</a></code> <code><a href="DBSRA.html">DBSRA_40()</a></code> <code><a href="DBSRA.html">DBSRA4010()</a></code> </p>
         </td>
         <td><p>Depletion-Based Stock Reduction Analysis</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="DD.html">DD()</a></code> <code><a href="DD.html">DD4010()</a></code> </p>
         </td>
         <td><p>Delay - Difference Stock Assessment with UMSY and MSY as leading parameters</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="Fratio.html">Fratio()</a></code> <code><a href="Fratio.html">Fratio4010()</a></code> <code><a href="Fratio.html">DepF()</a></code> <code><a href="Fratio.html">Fratio_CC()</a></code> <code><a href="Fratio.html">Fratio_ML()</a></code> </p>
         </td>
         <td><p>An FMSY/M ratio method</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="DynF.html">DynF()</a></code> </p>
         </td>
         <td><p>Dynamic Fratio MP</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="Fadapt.html">Fadapt()</a></code> </p>
         </td>
-        <td><p>An adaptive MP that uses trajectory in inferred suplus production and
-fishing mortality rate to update a TAC</p></td>
+        <td><p>Adaptive Fratio</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="Fdem.html">Fdem()</a></code> <code><a href="Fdem.html">Fdem_CC()</a></code> <code><a href="Fdem.html">Fdem_ML()</a></code> </p>
         </td>
         <td><p>Demographic FMSY method</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="GB_CC.html">GB_CC()</a></code> </p>
         </td>
         <td><p>Geromont and Butterworth Constant Catch Harvest Control Rule</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="GB_slope.html">GB_slope()</a></code> </p>
         </td>
         <td><p>Geromont and Butterworth index slope Harvest Control Rule</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="GB_target.html">GB_target()</a></code> </p>
         </td>
         <td><p>Geromont and Butterworth target CPUE and catch MP</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="Gcontrol.html">Gcontrol()</a></code> </p>
         </td>
         <td><p>G-control MP</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
-          <p><code><a href="Islope1.html">Islope1()</a></code> <code><a href="Islope1.html">Islope4()</a></code> </p>
+          <p><code><a href="ICI.html">ICI()</a></code> <code><a href="ICI.html">ICI2()</a></code> </p>
         </td>
-        <td><p>A management procedure that incrementally adjusts the TAC to maintain a
-constant CPUE or relative abundance index</p></td>
+        <td><p>Index Confidence Interval</p></td>
       </tr><tr>
-        <!--  -->
+        
+        <td>
+          <p><code><a href="Islope1.html">Islope1()</a></code> <code><a href="Islope1.html">Islope2()</a></code> <code><a href="Islope1.html">Islope3()</a></code> <code><a href="Islope1.html">Islope4()</a></code> </p>
+        </td>
+        <td><p>Index Slope Tracking MP</p></td>
+      </tr><tr>
+        
         <td>
           <p><code><a href="IT5.html">IT5()</a></code> <code><a href="IT5.html">IT10()</a></code> </p>
         </td>
-        <td><p>Index Target Management Procedure</p></td>
+        <td><p>Iterative Index Target MP</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
-          <p><code><a href="Itarget1.html">ItargetE1()</a></code> <code><a href="Itarget1.html">ItargetE4()</a></code> <code><a href="Itarget1.html">Itarget1()</a></code> <code><a href="Itarget1.html">Itarget4()</a></code> </p>
+          <p><code><a href="Itarget1.html">ItargetE1()</a></code> <code><a href="Itarget1.html">ItargetE4()</a></code> <code><a href="Itarget1.html">Itarget1()</a></code> <code><a href="Itarget1.html">Itarget2()</a></code> <code><a href="Itarget1.html">Itarget3()</a></code> <code><a href="Itarget1.html">Itarget4()</a></code> </p>
         </td>
-        <td><p>A management procedure that incrementally adjusts the TAC (starting from
-reference level that is a fraction of mean recent catches) or effort (from
-a reference level) to reach a target CPUE / relative abundance index</p></td>
+        <td><p>Incremental Index Target MP
+
+A management procedure that incrementally adjusts the TAC (starting from
+reference level that is a fraction of mean recent catches)
+to reach a target CPUE / relative abundance index</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="ITM.html">ITM()</a></code> </p>
         </td>
         <td><p>Index Target based on natural mortality rate</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
-          <p><code><a href="L95target.html">L95target()</a></code> </p>
+          <p><code><a href="Ltarget1.html">LtargetE1()</a></code> <code><a href="Ltarget1.html">LtargetE4()</a></code> <code><a href="Ltarget1.html">Ltarget1()</a></code> <code><a href="Ltarget1.html">Ltarget2()</a></code> <code><a href="Ltarget1.html">Ltarget3()</a></code> <code><a href="Ltarget1.html">Ltarget4()</a></code> <code><a href="Ltarget1.html">L95target()</a></code> </p>
         </td>
-        <td><p>A management procedure that adjusts the TAC up/down from reference (target)
-level (that is a fraction of mean recent premanagement catches) to reach a
-target mean length of fish caught.</p></td>
+        <td><p>Length Target MP</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
-          <p><code><a href="LstepCC1.html">LstepCE1()</a></code> <code><a href="LstepCC1.html">LstepCE2()</a></code> <code><a href="LstepCC1.html">LstepCC1()</a></code> <code><a href="LstepCC1.html">LstepCC4()</a></code> </p>
+          <p><code><a href="LstepCC1.html">LstepCE1()</a></code> <code><a href="LstepCC1.html">LstepCE2()</a></code> <code><a href="LstepCC1.html">LstepCC1()</a></code> <code><a href="LstepCC1.html">LstepCC2()</a></code> <code><a href="LstepCC1.html">LstepCC3()</a></code> <code><a href="LstepCC1.html">LstepCC4()</a></code> </p>
         </td>
-        <td><p>A management procedure that incrementally adjusts the TAC or effort according to the
-mean length of recent catches.</p></td>
+        <td><p>Step-wise Constant Catch</p></td>
       </tr><tr>
-        <!--  -->
-        <td>
-          <p><code><a href="Ltarget1.html">LtargetE1()</a></code> <code><a href="Ltarget1.html">LtargetE4()</a></code> <code><a href="Ltarget1.html">Ltarget1()</a></code> <code><a href="Ltarget1.html">Ltarget4()</a></code> </p>
-        </td>
-        <td><p>A management procedure that incrementally adjusts the TAC or effort to reach
-a target mean length in catches.</p></td>
-      </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="MCD.html">MCD()</a></code> <code><a href="MCD.html">MCD4010()</a></code> </p>
         </td>
         <td><p>Mean Catch Depletion</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="Rcontrol.html">Rcontrol()</a></code> <code><a href="Rcontrol.html">Rcontrol2()</a></code> </p>
         </td>
-        <td><p>Harvest Control Rule using prior for intrinsic rate of increase</p></td>
+        <td><p>Intrinsic rate of Increase MP</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
-          <p><code><a href="SBT1.html">SBT1()</a></code> </p>
+          <p><code><a href="SBT1.html">SBT1()</a></code> <code><a href="SBT1.html">SBT2()</a></code> </p>
         </td>
         <td><p>SBT simple MP</p></td>
       </tr><tr>
-        <!--  -->
-        <td>
-          <p><code><a href="SBT2.html">SBT2()</a></code> </p>
-        </td>
-        <td><p>SBT complex MP</p></td>
-      </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="SPmod.html">SPmod()</a></code> </p>
         </td>
         <td><p>Surplus production based catch-limit modifier</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="SPMSY.html">SPMSY()</a></code> </p>
         </td>
         <td><p>Catch trend Surplus Production MSY MP</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="SPslope.html">SPslope()</a></code> </p>
         </td>
         <td><p>Slope in surplus production MP</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="SPSRA.html">SPSRA()</a></code> <code><a href="SPSRA.html">SPSRA_ML()</a></code> </p>
         </td>
         <td><p>Surplus Production Stock Reduction Analysis</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="YPR.html">YPR()</a></code> <code><a href="YPR.html">YPR_CC()</a></code> <code><a href="YPR.html">YPR_ML()</a></code> </p>
         </td>
@@ -306,77 +300,77 @@ a target mean length in catches.</p></td>
         </th>
       </tr>
       <tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="curE.html">curE()</a></code> <code><a href="curE.html">curE75()</a></code> </p>
         </td>
         <td><p>Fishing at current effort levels</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="DDe.html">DDe()</a></code> <code><a href="DDe.html">DDes()</a></code> <code><a href="DDe.html">DDe75()</a></code> </p>
         </td>
         <td><p>DDe</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="DTe40.html">DTe40()</a></code> </p>
         </td>
         <td><p>Effort searching MP aiming for 40 per cent stock depletion</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="DTe50.html">DTe50()</a></code> </p>
         </td>
         <td><p>Effort searching MP aiming for 50 per cent stock depletion</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="EtargetLopt.html">EtargetLopt()</a></code> </p>
         </td>
         <td><p>Effort MP: adjust effort up/down if mean length above/below Ltarget</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
-          <p><code><a href="Itarget1.html">ItargetE1()</a></code> <code><a href="Itarget1.html">ItargetE4()</a></code> <code><a href="Itarget1.html">Itarget1()</a></code> <code><a href="Itarget1.html">Itarget4()</a></code> </p>
+          <p><code><a href="Itarget1.html">ItargetE1()</a></code> <code><a href="Itarget1.html">ItargetE4()</a></code> <code><a href="Itarget1.html">Itarget1()</a></code> <code><a href="Itarget1.html">Itarget2()</a></code> <code><a href="Itarget1.html">Itarget3()</a></code> <code><a href="Itarget1.html">Itarget4()</a></code> </p>
         </td>
-        <td><p>A management procedure that incrementally adjusts the TAC (starting from
-reference level that is a fraction of mean recent catches) or effort (from
-a reference level) to reach a target CPUE / relative abundance index</p></td>
+        <td><p>Incremental Index Target MP
+
+A management procedure that incrementally adjusts the TAC (starting from
+reference level that is a fraction of mean recent catches)
+to reach a target CPUE / relative abundance index</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="ITe10.html">ITe10()</a></code> </p>
         </td>
         <td><p>Index Target Effort-Based 10</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="ITe5.html">ITe5()</a></code> </p>
         </td>
         <td><p>Index Target Effort-Based 5</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
-          <p><code><a href="LstepCC1.html">LstepCE1()</a></code> <code><a href="LstepCC1.html">LstepCE2()</a></code> <code><a href="LstepCC1.html">LstepCC1()</a></code> <code><a href="LstepCC1.html">LstepCC4()</a></code> </p>
+          <p><code><a href="LstepCC1.html">LstepCE1()</a></code> <code><a href="LstepCC1.html">LstepCE2()</a></code> <code><a href="LstepCC1.html">LstepCC1()</a></code> <code><a href="LstepCC1.html">LstepCC2()</a></code> <code><a href="LstepCC1.html">LstepCC3()</a></code> <code><a href="LstepCC1.html">LstepCC4()</a></code> </p>
         </td>
-        <td><p>A management procedure that incrementally adjusts the TAC or effort according to the
-mean length of recent catches.</p></td>
+        <td><p>Step-wise Constant Catch</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
-          <p><code><a href="Ltarget1.html">LtargetE1()</a></code> <code><a href="Ltarget1.html">LtargetE4()</a></code> <code><a href="Ltarget1.html">Ltarget1()</a></code> <code><a href="Ltarget1.html">Ltarget4()</a></code> </p>
+          <p><code><a href="Ltarget1.html">LtargetE1()</a></code> <code><a href="Ltarget1.html">LtargetE4()</a></code> <code><a href="Ltarget1.html">Ltarget1()</a></code> <code><a href="Ltarget1.html">Ltarget2()</a></code> <code><a href="Ltarget1.html">Ltarget3()</a></code> <code><a href="Ltarget1.html">Ltarget4()</a></code> <code><a href="Ltarget1.html">L95target()</a></code> </p>
         </td>
-        <td><p>A management procedure that incrementally adjusts the TAC or effort to reach
-a target mean length in catches.</p></td>
+        <td><p>Length Target MP</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="matlenlim.html">matlenlim()</a></code> <code><a href="matlenlim.html">matlenlim2()</a></code> <code><a href="matlenlim.html">minlenLopt1()</a></code> <code><a href="matlenlim.html">slotlim()</a></code> </p>
         </td>
         <td><p>Size limit management procedures</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="MRreal.html">MRreal()</a></code> <code><a href="MRreal.html">MRnoreal()</a></code> </p>
         </td>
@@ -390,13 +384,13 @@ a target mean length in catches.</p></td>
         </th>
       </tr>
       <tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="AvC_MLL.html">AvC_MLL()</a></code> </p>
         </td>
         <td><p>Average Catch with a size limit</p></td>
       </tr><tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="Itarget1_MPA.html">Itarget1_MPA()</a></code> </p>
         </td>
@@ -411,7 +405,7 @@ spatial closure.</p></td>
         </th>
       </tr>
       <tr>
-        <!--  -->
+        
         <td>
           <p><code><a href="FMSYref.html">FMSYref()</a></code> <code><a href="FMSYref.html">FMSYref50()</a></code> <code><a href="FMSYref.html">FMSYref75()</a></code> <code><a href="FMSYref.html">NFref()</a></code> </p>
         </td>

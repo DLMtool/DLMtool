@@ -4,20 +4,25 @@
 \alias{SPmod}
 \title{Surplus production based catch-limit modifier}
 \usage{
-SPmod(x, Data, reps = 100, alp = c(0.8, 1.2), bet = c(0.8, 1.2))
+SPmod(x, Data, reps = 100, plot = FALSE, alp = c(0.8, 1.2), bet = c(0.8,
+  1.2))
 }
 \arguments{
-\item{x}{A position in data-limited methods data object}
+\item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of quota samples}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{alp}{Condition for modifying the TAC (bounds on change in abundance)}
 
 \item{bet}{Limits for how much the TAC can change among years}
 }
 \value{
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
+
 A numeric vector of TAC recommendations
 }
 \description{
@@ -28,12 +33,45 @@ apparent trend in surplus production. Based on the theory of Mark Maunder
 \details{
 Note that this isn't exactly what Mark has previously suggested and is
 stochastic in this implementation.
+
+The TAC is calculated as:
+\deqn{\textrm{TAC}_y = 
+             \left\{\begin{array}{ll} 
+              C_{y-1} \textrm{bet}_1 & \textrm{if } r < \alpha_1 \\ 
+              C_{y-1} & \textrm{if } \alpha_1 < r < \alpha_2 \\
+              \textrm{bet}_2 (b_2 - b_1 + C_{y-2} )  & \textrm{if } r > \alpha_2 \\  
+             \end{array}\right.
+           }{}
+where \eqn{\textrm{bet}_1} and \eqn{\textrm{bet}_2} are elements in \code{bet},
+\eqn{r} is the ratio of the index in the most recent two years, \eqn{C_{y-1}}
+is catch in the previous year, \eqn{b_1} and \eqn{b_2} are ratio of index
+in \eqn{y-2} and \eqn{y-1} over the estimate of catchability \eqn{\left(\frac{I}{A}\right)},
+and \eqn{\alpha_1}, \eqn{\alpha_2}, and \eqn{\alpha_3} are specified in argument
+\code{alp}.
+}
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{SPmod}: Abun, Cat, Ind, t
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/SPmod.html}{Online Documentation} for correctly rendered equations
+}
+
+\examples{
+SPmod(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
 }
 \references{
 http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf
 }
 \seealso{
-\link{SPslope}
+Other Surplus production MPs: \code{\link{Fadapt}},
+  \code{\link{Rcontrol}}, \code{\link{SPMSY}},
+  \code{\link{SPSRA}}, \code{\link{SPslope}}
 }
 \author{
 T. Carruthers

@@ -30,7 +30,7 @@ where \eqn{\delta I} is the ratio of the  mean index over \eqn{4\frac{1}{M}^{1/4
 to the reference index (\code{Data@Iref}).
 
 The maximum fractional change in TAC is determined by \eqn{mc}, defined as
-\eqn{mc = \textrm{max}\left(\frac{5 + M*25}{100}, 0,2\right)}
+\eqn{mc = \textrm{max}\left(\frac{5 + 25M}{100}, 0.2\right)}
 }
 \section{Required Data}{
 

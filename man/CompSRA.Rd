@@ -29,14 +29,9 @@ from the last 3 years (or less if fewer data are available)
 A stock reduction analysis (SRA) model is fitted to the age-composition
 from the last 3 years (or less if fewer data are available) assuming a constant
 total mortality rate (\emph{Z}) and used to estimate current stock depletion (\emph{D}),
-\emph{FMSY}, and stock abundance (\emph{A}).
+\eqn{F_\textrm{MSY}}, and stock abundance (\emph{A}).
 
-Fishing mortality is estimated as:
-\deqn{F = -\log{\left(1-\frac{C}{V}\right)}}
-where \eqn{C} and \eqn{V} are catch and vulnerable biomass of first age of full
-selection respectively.
-
-Abundance is estimated in the SRa. \eqn{F_{\textrm{MSY}}} is calculated assuming
+Abundance is estimated in the SRA. \eqn{F_{\textrm{MSY}}} is calculated assuming
 knife-edge vulnerability at the age of full selection.
 
 The TAC is calculated as \eqn{F_\textrm{MSY} A}. \code{CompSRA4010} uses a 40-10

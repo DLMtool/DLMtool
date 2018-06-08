@@ -2,8 +2,7 @@
 % Please edit documentation in R/MPs_Output.R
 \name{Fadapt}
 \alias{Fadapt}
-\title{An adaptive MP that uses trajectory in inferred suplus production and
-fishing mortality rate to update a TAC}
+\title{Adaptive Fratio}
 \usage{
 Fadapt(x, Data, reps = 100, plot = FALSE, yrsmth = 7, gg = 1)
 }
@@ -27,12 +26,41 @@ An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot popula
 A numeric vector of quota recommendations
 }
 \description{
+An adaptive MP that uses trajectory in inferred suplus production and
+fishing mortality rate to update a TAC
+}
+\details{
 Fishing rate is modified each year according to the gradient of surplus
 production with biomass (aims for zero).  F is bounded by FMSY/2 and 2FMSY
 and walks in the logit space according to dSP/dB. This is derived from the
 theory of Maunder 2014.
-}
-\details{
+
+The TAC is calculated as:
+\deqn{\textrm{TAC}_y= F_y B_{y-1}}
+where \eqn{B_{y-1}} is the most recent biomass, estimated with a loess smoother
+of the most recent \code{yrsmth} years from the index of abundance (\code{Data@Ind})
+and estimate of current abundance (\code{Data@Abun}), and
+
+\deqn{F_y = F_{\textrm{lim}_1} + \left(\frac{\exp^{F_{\textrm{mod}_2}}} {1 + \exp^{F_{\textrm{mod}_2}}} F_{\textrm{lim}_3} \right)   }
+
+where \eqn{F_{\textrm{lim}_1} = 0.5 \frac{F_\textrm{MSY}}{M}M},
+\eqn{F_{\textrm{lim}_2} = 2 \frac{F_\textrm{MSY}}{M}M}, \eqn{F_{\textrm{lim}_3}} is \eqn{F_{\textrm{lim}_2} - F_{\textrm{lim}_1}},
+\eqn{F_{\textrm{mod}_2}} is
+\deqn{F_{\textrm{mod}_1} + g -G}
+where \eqn{g} is gain parameter \code{gg}, \code{G} is the predicted surplus production given current abundance,
+and:
+\deqn{F_{\textrm{mod}_1} = 
+             \left\{\begin{array}{ll} 
+             -2 & \textrm{if } F_\textrm{old} < F_{\textrm{lim}_1} \\ 
+             2 & \textrm{if }  F_\textrm{old} > F_{\textrm{lim}_2} \\ 
+             \log{\frac{F_\textrm{frac}}{1-F_\textrm{frac}}} & \textrm{if } F_{\textrm{lim}_1} \leq F_\textrm{old} \leq F_{\textrm{lim}_2} \\
+             \end{array}\right.
+           }{}
+where \eqn{-F_{\textrm{frac}} = \frac{F_{\textrm{old}} - F_{\textrm{lim}_1}}{F_{\textrm{lim}_3}} },
+\eqn{F_\textrm{old} = \sum{\frac{C_\textrm{hist}}{B_\textrm{hist}}}/n}
+where \eqn{C_\textrm{hist}} and \eqn{B_\textrm{hist}} are smooth catch and biomass over last \code{yrsmth},
+and \eqn{n} is \code{yrsmth}.
+
 Tested in Carruthers et al. 2015.
 }
 \section{Required Data}{
@@ -61,6 +89,10 @@ http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Str
 \seealso{
 Other Fmsy/M methods: \code{\link{DynF}},
   \code{\link{Fratio}}
+
+Other Surplus production MPs: \code{\link{Rcontrol}},
+  \code{\link{SPMSY}}, \code{\link{SPSRA}},
+  \code{\link{SPmod}}, \code{\link{SPslope}}
 }
 \author{
 T. Carruthers

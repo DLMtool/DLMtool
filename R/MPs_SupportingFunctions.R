@@ -424,6 +424,65 @@ MCD_plot <- function(Data, AvC, Bt_K, TAC) {
   
 }
 
+
+
+
+Rcontrol_plot <- function(rsamp, ind, G_new, B_hist, SP_hist, SP_mu, B_dat, Data, yind, C_hist, TAC, TACa) {
+  op <- par(no.readonly = TRUE)
+  on.exit(par(op))
+  par(mfrow=c(2,3))
+  
+  
+  
+  plot(Data@Year[ind], B_hist, type="l", bty="l", xlab="Year",
+       ylab="Smoothed Biomass", lwd=2)
+  points(Data@Year[ind], exp(B_dat))
+  
+  ylim <- range(c(SP_hist, SP_mu))
+  plot(c(Data@Year[yind], max(Data@Year[yind])+1), c(SP_hist, NA), type="l", 
+       bty="l", xlab="Year", ylab="Surplus Production", lwd=2, ylim=ylim)
+  points(max(Data@Year[yind])+1, mean(SP_mu), pch=16, cex=1.5, col='blue')
+  text(max(Data@Year[yind])+1, mean(SP_mu), pos=2, "predicted SP", col="blue", xpd=NA)
+  
+  
+  ylim <- range(c(C_hist, TAC, TACa))
+  plot(c(Data@Year[ind], max(Data@Year[ind])+1), c(C_hist, NA), type="l", 
+       bty="l", xlab="Year", ylab=paste0("Catch (", Data@Units, ")"), lwd=2, ylim=ylim)
+  points(max(Data@Year[ind])+1, median(TACa, na.rm=TRUE), cex=1.5, pch=16, col="red")
+  text(max(Data@Year[ind])+1, median(TACa, na.rm=TRUE), "TAC_init", col="red", pos=2)
+  boxplot(at=max(Data@Year[ind])+1, TAC, col='blue', axes=FALSE, add=TRUE)
+  text(max(Data@Year[ind])+1, quantile(TAC, 0.95, na.rm=TRUE), pos=2, "TAC_adj", col="blue", xpd=NA)
+  
+  boxplot(rsamp, ylab="intrinsic rate of increase", col="gray")
+  boxplot(G_new, ylab="G", col="gray")
+  
+}
+
+
+
+SPSRA_plot <- function(runSPSRA, Data, x) {
+  op <- par(no.readonly = TRUE)
+  on.exit(op)
+  par(mfrow=c(3,2), oma=c(1,1,1,1), mar=c(5,4,1,4))
+  
+  boxplot(runSPSRA$Ksamp, ylab=paste0("Unfished biomass (", Data@Units, ")"))
+  boxplot(runSPSRA$dep, ylab="Depletion")
+  boxplot(runSPSRA$rsamp, ylab="Intrinsic rate of increase")
+  boxplot(runSPSRA$MSY, ylab="MSY")
+  
+  TAC <- runSPSRA$TAC
+  
+  boxplot(TAC, ylab="TAC")
+  
+  ylim <- range(c(Data@Cat[x,], TAC), na.rm=TRUE)
+  plot(c(Data@Year, max(Data@Year)+1), c(Data@Cat[x,], NA), xlab="Year", ylab=paste0('Catch (', Data@Units, ')'),
+       bty="l", type="l", lwd=2, ylim=ylim)
+  boxplot(TAC, axes=FALSE, add=TRUE, at=max(Data@Year)+1, col="blue", width=2)
+  
+  
+}
+
+
 YPR_plot <- function(runYPR, Data,reps) {
   frates <- runYPR$frates
   ypr <- runYPR$ypr
@@ -619,19 +678,6 @@ MLne <- function(x, Data, Linfc, Kc, ML_reps = 100, MLtype = "dep") {
 
 
 ## SP supporting functions ####
-SPSRAopt <- function(lnK, dep, r, Ct, PE) {
-  nyears <- length(Ct)
-  B <- rep(NA, nyears)
-  B[1] <- exp(lnK)
-  OBJ <- 0
-  for (y in 2:nyears) {
-    if ((B[y - 1] - Ct[y - 1]) < 0)
-      OBJ <- OBJ + (B[y - 1] - Ct[y - 1])^2
-    B[y] <- max(0.01, B[y - 1] - Ct[y - 1])
-    B[y] <- B[y] + r * B[y] * (1 - B[y]/B[1]) * PE[y]
-  }
-  return(OBJ + ((B[nyears]/B[1]) - dep)^2)
-}
 
 
 ## SRA supporting functions ####
@@ -772,7 +818,9 @@ SRAFMSY <- function(lnFMc, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c,
 #' @param cv cv of h
 #'
 #' @author Q. Huynh
-#'
+#' @export 
+#' @keywords internal 
+#' @describeIn sample_steepness2 sample steepness values
 sample_steepness2 <- function(n, mu, cv) {
 
   if(n == 1) return(mu)
@@ -802,8 +850,8 @@ sample_steepness2 <- function(n, mu, cv) {
 #' @param mu mean h
 #' @param sigma sd of h
 #'
-#' @author Q. Huynh
-#'
+#' @describeIn sample_steepness2 derive beta parameter
+#' @export
 derive_beta_par <- function(mu, sigma) {
 
   a <- alphaconv(mu, sigma)

@@ -4,15 +4,17 @@
 \alias{SPslope}
 \title{Slope in surplus production MP}
 \usage{
-SPslope(x, Data, reps = 100, yrsmth = 4, alp = c(0.9, 1.1), bet = c(1.5,
-  0.9))
+SPslope(x, Data, reps = 100, plot = FALSE, yrsmth = 4, alp = c(0.9,
+  1.1), bet = c(1.5, 0.9))
 }
 \arguments{
-\item{x}{A position in data-limited methods data object}
+\item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of quota samples}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{yrsmth}{Years over which to smooth recent estimates of surplus
 production}
@@ -23,7 +25,7 @@ abundance)}
 \item{bet}{Limits for how much the Data can change among years}
 }
 \value{
-A numeric vector of Data recommendations
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
 A management procedure that makes incremental adjustments to TAC
@@ -33,12 +35,47 @@ Based on the theory of Mark Maunder (IATTC)
 \details{
 Note that this isn't exactly what Mark has previously suggested and is
 stochastic in this implementation.
+
+The TAC is calculated as:
+\deqn{\textrm{TAC}_y = 
+             \left\{\begin{array}{ll} 
+              M \bar{C}  & \textrm{if } r < \alpha_1 \\ 
+              \bar{C} & \textrm{if } \alpha_1 < r < \alpha_2 \\
+              \textrm{bet}_2 \textrm{SP}  & \textrm{if } r > \alpha_2 \\  
+             \end{array}\right.
+           }{}
+where \eqn{r} is the ratio of predicted biomass in next year to biomass in
+current year \eqn{\bar{C}} is the mean catch over the last \code{yrmsth} years, \eqn{\alpha_1}
+and  \eqn{\alpha_2} are specified in \code{alp}, \eqn{\textrm{bet}_1} and \eqn{\textrm{bet}_2}
+are specified in \code{bet}, \eqn{\textrm{SP}} is estimated surplus production in most recent year,
+and:
+\deqn{M = 1-\textrm{bet}_1 \frac{B_y - \tilde{B}_y}{B_y}}
+where \eqn{B_y} is the most recent estimate of biomass and \eqn{\tilde{B}}
+is the predicted biomass in the next year.
+}
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{SPslope}: Abun, Cat, Ind, t, Year
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/SPslope.html}{Online Documentation} for correctly rendered equations
+}
+
+\examples{
+SPslope(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
 }
 \references{
 http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf
 }
 \seealso{
-\link{SPmod}
+Other Surplus production MPs: \code{\link{Fadapt}},
+  \code{\link{Rcontrol}}, \code{\link{SPMSY}},
+  \code{\link{SPSRA}}, \code{\link{SPmod}}
 }
 \author{
 T. Carruthers

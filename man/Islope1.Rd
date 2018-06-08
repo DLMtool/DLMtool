@@ -5,10 +5,7 @@
 \alias{Islope2}
 \alias{Islope3}
 \alias{Islope4}
-\title{Index Slope Tracking MP
-
-A management procedure that incrementally adjusts the TAC to maintain a
-constant CPUE or relative abundance index}
+\title{Index Slope Tracking MP}
 \usage{
 Islope1(x, Data, reps = 100, plot = FALSE, yrsmth = 5, lambda = 0.4,
   xx = 0.2)
@@ -42,11 +39,15 @@ first year}
 An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
+A management procedure that incrementally adjusts the TAC to maintain a
+constant CPUE or relative abundance index.
+}
+\details{
 The TAC is calculated as:
 \deqn{\textrm{TAC} = \textrm{TAC}^* \left(1+\lambda I \right)}
 where \eqn{\textrm{TAC}^*} is \eqn{1-xx} multiplied by the mean catch from the past \code{yrsmth} years for the
 first year and catch from the previous year in projection years,
-\eqn{\lamba} is a gain parameter, and \eqn{I} is the slope of log index over the past \code{yrsmth} years.
+\eqn{\lambda} is a gain parameter, and \eqn{I} is the slope of log index over the past \code{yrsmth} years.
 }
 \section{Functions}{
 \itemize{

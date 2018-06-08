@@ -61,6 +61,7 @@ Four target length MPs proposed by Geromont and Butterworth 2014.
 Tested by Carruthers et al. 2015.
 
 The TAC is calculated as:
+
 If \eqn{L_\textrm{recent} \geq L_0}:
 \deqn{\textrm{TAC} = 0.5 \textrm{TAC}^* \left[1+\left(\frac{L_\textrm{recent}-L_0}{L_\textrm{target}-L_0}\right)\right]  }
 

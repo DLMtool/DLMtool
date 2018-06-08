@@ -14,7 +14,7 @@ Fratio4010(x, Data, reps = 100, plot = FALSE)
 
 DepF(x, Data, reps = 100, plot = FALSE)
 
-Fratio_CC(x, Data, reps = 100, plot = TRUE, Fmin = 0.005)
+Fratio_CC(x, Data, reps = 100, plot = FALSE, Fmin = 0.005)
 
 Fratio_ML(x, Data, reps = 100, plot = FALSE)
 }

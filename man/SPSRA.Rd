@@ -5,36 +5,75 @@
 \alias{SPSRA_ML}
 \title{Surplus Production Stock Reduction Analysis}
 \usage{
-SPSRA(x, Data, reps = 100)
+SPSRA(x, Data, reps = 100, plot = FALSE)
 
-SPSRA_ML(x, Data, reps = 100)
+SPSRA_ML(x, Data, reps = 100, plot = FALSE)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
 
-\item{Data}{A data-limited methods data object (class DLM)}
+\item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of samples of the TAC taken for the calculation of
-the quota}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
+}
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
 A surplus production equivalent of DB-SRA that uses a demographically
 derived prior for intrinsic rate of increase (McAllister method, below)
 }
+\details{
+The TAC is calculated as:
+\deqn{\textrm{TAC} = K D \frac{r}{2}}
+where \eqn{K} is estimated unfished biomass, \eqn{D} is depletion, and \eqn{r}
+is the estimated intrinsic rate of increase.
+
+Like all SRA methods, this MP requires a time-series of catch extending from the
+beginning of exploitation.
+}
 \section{Functions}{
 \itemize{
-\item \code{SPSRA}: Base version
+\item \code{SPSRA}: Base version. Requires an estimate of current depletion
 
 \item \code{SPSRA_ML}: Variant that uses a mean-length mortality estimator to obtain
-a prior for current stock depletion. The mean length extension was programmed by
-Gary Nelson as part of his excellent R package 'fishmethods'.
+a prior for current stock depletion.
 }}
 
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{SPSRA}: Cat, Dep, MaxAge, Mort, steep, t, vbK, vbLinf, vbt0
+
+
+\code{SPSRA_ML}: Abun, AvC, BMSY_B0, Bref, CAL, CAL_bins, Cat, Cref, Dep, Dt, FMSY_M, Ind, Iref, L50, L95, Lbar, Lc, LenCV, LFC, LFS, LHYear, MaxAge, ML, Mort, MPeff, MPrec, Rec, sigmaL, SpAbun, steep, t, vbK, vbLinf, vbt0, wla, wlb, Year
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/SPSRA.html}{Online Documentation} for correctly rendered equations
+
+
+}
+
+\examples{
+SPSRA(1, DLMtool::SimulatedData, plot=TRUE)
+SPSRA_ML(1, DLMtool::SimulatedData, plot=TRUE)
+}
 \references{
 McAllister, M.K., Pikitch, E.K., and Babcock, E.A. 2001. Using
 demographic methods to construct Bayesian priors for the intrinsic rate of
 increase in the Schaefer model and implications for stock rebuilding. Can.
 J. Fish. Aquat. Sci. 58: 1871-1890.
+}
+\seealso{
+Other Surplus production MPs: \code{\link{Fadapt}},
+  \code{\link{Rcontrol}}, \code{\link{SPMSY}},
+  \code{\link{SPmod}}, \code{\link{SPslope}}
 }
 \author{
 T. Carruthers
