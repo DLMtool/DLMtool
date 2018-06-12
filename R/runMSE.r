@@ -1351,20 +1351,25 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
 #' @export cparscheck
 #' @author T. Carruthers
 cparscheck<-function(cpars){
-
+  
   dim1check<-function(x){
     if(class(x)=="numeric")length(x)
     else dim(x)[1]
   }
-
+  
   dims<-sapply(cpars,dim1check)
-  if(length(unique(dims))!=1){
-    print(dims)
-    stop("The custom parameters in your operating model @cpars have varying number of simulations. For each simulation each parameter / variable should correspond with one another")
-  }else{
-    as.integer(dims[1])
+  
+  dims <- dims[!grepl("CAL_bins", names(dims))]  # ignore CAL_bins
+  if (length(dims) > 0) {
+    if(length(unique(dims))!=1){
+      print(dims)
+      stop("The custom parameters in your operating model @cpars have varying number of simulations. For each simulation each parameter / variable should correspond with one another")
+    }else{
+      as.integer(dims[1])
+    }
   }
 
+  
 }
 
 

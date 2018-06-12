@@ -1287,6 +1287,7 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   
   sampCpars <- list()
   ncparsim<-cparscheck(cpars)
+  if (is.null(ncparsim)) return(list())
   Names <- names(cpars)
   # report invalid names 
   invalid <- which(!Names %in% ParsNames)
@@ -1336,6 +1337,7 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   
   sampCpars
 }
+
 
 
 
