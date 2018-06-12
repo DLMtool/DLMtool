@@ -97,7 +97,7 @@ than an arbitrary multiplicative of the mean length
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{Ltarget1}: Cat, LHYear, ML, t, Year
+\code{Ltarget1}: Cat, LHYear, ML, Year, t
 
 
 \code{Ltarget2}:
@@ -106,10 +106,10 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 \code{Ltarget3}:
 
 
-\code{Ltarget4}: Cat, LHYear, ML, t, Year
+\code{Ltarget4}: Cat, LHYear, ML, Year, t
 
 
-\code{L95target}: Cat, L50, L95, LHYear, ML, t, Year
+\code{L95target}: Cat, L50, L95, LHYear, ML, Year, t
 }
 
 \section{Rendered Equations}{

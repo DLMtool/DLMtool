@@ -9,11 +9,11 @@
 \usage{
 matlenlim(x, Data, reps, plot = FALSE)
 
-matlenlim2(x, Data, ...)
+matlenlim2(x, Data, reps, plot = FALSE)
 
-minlenLopt1(x, Data, buffer = 0.1, ...)
+minlenLopt1(x, Data, reps, plot = FALSE, buffer = 0.1)
 
-slotlim(x, Data, ...)
+slotlim(x, Data, reps, plot = FALSE)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -24,16 +24,11 @@ slotlim(x, Data, ...)
 
 \item{plot}{Logical. Show the plot?}
 
-\item{...}{Optional additional arguments that are ignored. Note arguments
-\code{reps} or \code{...} are required for all input controls}
-
 \item{buffer}{Parameter controlling the fraction of Lopt to set the minimum
 length of fish caught: minlen=Lopt*(0.7+buffer).}
 }
 \value{
-An object of class \code{\link[=Rec-class]{Rec}} with the...
-
-A Rec object with input control recommendations
+An object of class \code{\link[=Rec-class]{Rec}} with the SL slot(s) populated
 }
 \description{
 Examples of the implementation of input controls in the DLM toolkit. See details below.
@@ -50,7 +45,7 @@ than the maturity-at-length.
 caught to a fraction of the length that maximises the biomass, Lopt. The aim
 of this simple MP is restrict the catch of small fish to rebuild
 the stock biomass towards the optimal length, Lopt, expressed in terms of
-the growth parameters Lopt=b/(M/k+b) (Hordyk et al. 2014) (Author: HF Geromont)
+the growth parameters Lopt=b/(M/k+b) (Hordyk et al. 2015) (Author: HF Geromont)
 
 \item \code{slotlim}: Selectivity-at-length is set using a slot limit; that is, a minimum and
 maximum legal length.  The maximum limit is set here, quite arbitrarily, as
@@ -67,6 +62,12 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
 \code{matlenlim2}: L50
+
+
+\code{minlenLopt1}: MPeff, Mort, t, vbK, vbLinf, wlb
+
+
+\code{slotlim}: L50, vbLinf
 }
 
 \section{Rendered Equations}{
@@ -74,11 +75,21 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 See \href{https://dlmtool.github.io/DLMtool/reference/matlenlim.html}{Online Documentation} for correctly rendered equations
 
 
+
+
+
+
 }
 
+\examples{
+matlenlim(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+matlenlim2(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+minlenLopt1(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+slotlim(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+}
 \references{
 Hordyk, A., Ono, K., Sainsbury, K., Loneragan, N., and J.
-Prince. 2014. Some explorations of the life history ratios to describe
+Prince. 2015. Some explorations of the life history ratios to describe
 length composition, spawning-per-recruit, and the spawning potential ratio
 ICES Journal of Marine Science, doi:10.1093/icesjms/fst235.
 }

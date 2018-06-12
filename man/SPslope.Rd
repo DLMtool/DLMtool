@@ -58,7 +58,7 @@ is the predicted biomass in the next year.
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{SPslope}: Abun, Cat, Ind, t, Year
+\code{SPslope}: Abun, Cat, Ind, Year, t
 }
 
 \section{Rendered Equations}{

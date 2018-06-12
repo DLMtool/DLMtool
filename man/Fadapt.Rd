@@ -68,7 +68,7 @@ Tested in Carruthers et al. 2015.
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{Fadapt}: Abun, Cat, FMSY_M, Ind, Mort, t, Year
+\code{Fadapt}: Abun, Cat, FMSY_M, Ind, Mort, Year, t
 }
 
 \section{Rendered Equations}{

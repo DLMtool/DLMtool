@@ -75,7 +75,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 \code{Fratio4010}: Abun, Dep, Dt, FMSY_M, Mort, t
 
 
-\code{DepF}: Abun, BMSY_B0, Dep, FMSY_M, Mort, t, Year
+\code{DepF}: Abun, BMSY_B0, Dep, FMSY_M, Mort, Year, t
 
 
 \code{Fratio_CC}: CAA, Cat, FMSY_M, Mort, t

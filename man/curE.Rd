@@ -5,16 +5,21 @@
 \alias{curE75}
 \title{Fishing at current effort levels}
 \usage{
-curE(x, Data, ...)
+curE(x, Data, reps, plot = FALSE)
 
-curE75(x, Data, ...)
+curE75(x, Data, reps, plot = FALSE)
 }
 \arguments{
-\item{x}{A position in a data-limited methods data object.}
+\item{x}{A position in a data-limited methods data object}
 
-\item{Data}{A data-limited methods data object.}
+\item{Data}{A data-limited methods data object}
 
-\item{...}{Optional additional arguments (currently not used).}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
+}
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the TAE slot(s) populated
 }
 \description{
 Constant fishing effort set at final year of historical simulations subject
@@ -29,8 +34,27 @@ in catchability determined by OM@qcv. This MP is intended to represent a
 \item \code{curE75}: Set effort to 75\% of that in final year.
 }}
 
-\note{
-Made up for this package.
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{curE}:
+
+
+\code{curE75}:
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/curE.html}{Online Documentation} for correctly rendered equations
+
+
+}
+
+\examples{
+curE(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+curE75(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 }
 \author{
 T. Carruthers.

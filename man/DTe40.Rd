@@ -2,16 +2,23 @@
 % Please edit documentation in R/MPs_Input.R
 \name{DTe40}
 \alias{DTe40}
-\title{Effort searching MP aiming for 40 per cent stock depletion}
+\alias{DTe50}
+\title{Effort searching MP aiming for a fixed stock depletion}
 \usage{
-DTe40(x, Data, reps = 100, alpha=0.4, LB=0.9, UB=1.1)
+DTe40(x, Data, reps = 100, plot = FALSE, alpha = 0.4, LB = 0.9,
+  UB = 1.1)
+
+DTe50(x, Data, reps = 100, plot = FALSE, alpha = 0.5, LB = 0.9,
+  UB = 1.1)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of stochastic samples of the TAC recommendation}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{alpha}{The target level of depletion}
 
@@ -19,8 +26,42 @@ DTe40(x, Data, reps = 100, alpha=0.4, LB=0.9, UB=1.1)
 
 \item{UB}{The highest permitted factor of previous fishing effort}
 }
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the TAE slot(s) populated
+}
 \description{
-A very simple MP that modifies effort to reach 40 percent stock depletion
+Effort is adjusted using a simple rule that aims for a specified level of depletion.
+}
+\details{
+The TAE is calculated as:
+\deqn{\textrm{TAE}_y = \frac{D}{\alpha} \textrm{TAE}_{y-1}}
+where \eqn{D} is estimated current level of depletion and \eqn{\alpha} is argument
+\code{alpha} specifying the target level of depletion.
+
+The maximum fractional change in TAE is specified with arguments \code{LB} and \code{UB}
+}
+\section{Functions}{
+\itemize{
+\item \code{DTe40}: Effort is adjusted to reach 40 percent stock depletion
+
+\item \code{DTe50}: Effort is adjusted to reach 50 percent stock depletion
+}}
+
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{DTe40}: Dep, MPeff
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/DTe40.html}{Online Documentation} for correctly rendered equations
+}
+
+\examples{
+DTe40(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 }
 \author{
 T. Carruthers

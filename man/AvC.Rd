@@ -38,7 +38,7 @@ where \eqn{\textrm{TAC}} is the the mean catch recommendation, \eqn{n} is the nu
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{AvC}: Cat, LHYear, t, Year
+\code{AvC}: Cat, LHYear, Year, t
 }
 
 \section{Rendered Equations}{
@@ -51,7 +51,8 @@ Rec <- AvC(1, DLMtool::Cobia, reps=1000, plot=TRUE) # 1,000 log-normal samples w
         
 }
 \seealso{
-Other Average Catch MPs: \code{\link{DCACs}}
+Other Average Catch MPs: \code{\link{AvC_MLL}},
+  \code{\link{DCACs}}
 }
 \author{
 T. Carruthers

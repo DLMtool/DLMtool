@@ -66,7 +66,7 @@ Reference TAC is 0.6 average catch and gain parameter is 0.2
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{Islope1}: Cat, Ind, LHYear, MPrec, t, Year
+\code{Islope1}: Cat, Ind, LHYear, MPrec, Year, t
 }
 
 \section{Rendered Equations}{
@@ -92,6 +92,7 @@ doi:10.1093/icesjms/fst232
 Other Index methods: \code{\link{GB_slope}},
   \code{\link{GB_target}}, \code{\link{Gcontrol}},
   \code{\link{ICI}}, \code{\link{Iratio}},
+  \code{\link{Itarget1_MPA}}, \code{\link{Itarget1}},
   \code{\link{ItargetE1}}
 }
 \author{

@@ -2,27 +2,58 @@
 % Please edit documentation in R/MPs_Input.R
 \name{EtargetLopt}
 \alias{EtargetLopt}
-\title{Effort MP: adjust effort up/down if mean length above/below Ltarget}
+\title{Effort Target Optimum Length}
 \usage{
-EtargetLopt(x, Data, reps = 100, yrsmth=3, buffer=0.1)
+EtargetLopt(x, Data, reps = 100, plot = FALSE, yrsmth = 3, buffer = 0.1)
 }
 \arguments{
-\item{x}{A position in data-limited methods data object}
+\item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of TAC samples}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{yrsmth}{Number of years to calculate average length}
 
-\item{buffer}{Parameter controlling the fraction of mean catch to set the
-reference (or target) TAC level - acts as a precautionary buffer}
+\item{buffer}{Parameter controlling the fraction of calculated effor - acts as a precautionary buffer}
 }
 \value{
-An adjustment for fishing effort
+An object of class \code{\link[=Rec-class]{Rec}} with the TAE slot(s) populated
 }
 \description{
+This MP adjusts effort limit based on the ratio of recent mean length (over
+last \code{yrsmth} years) and a target length defined as \eqn{L_{\textrm{opt}}}.
 Effort MP: adjust effort up/down if mean length above/below Ltarget
+}
+\details{
+The TAE is calculated as:
+\deqn{\textrm{TAE}_y = \textrm{TAE}_{y-1} \left((1-\textrm{buffer}) (w + (1-w)r) \right)}
+where \eqn{\textrm{buffer}} is specified in argument \code{buffer}, \eqn{w} is fixed at 0.5, and:
+\deqn{r = \frac{L_{\textrm{recent}}}{L_{\textrm{opt}}}}
+where \eqn{L_{\textrm{recent}}}is mean
+length over last \code{yrmsth} years, and:
+\deqn{L_{\textrm{opt}} = \frac{L_\infty W_b}{\frac{M}{K} + W_b }}
+where \eqn{L_\infty} is von Bertalanffy asymptotic length, \eqn{W_b} is
+exponent of the length-weight relationship, \eqn{M} is natural mortality, and
+\eqn{K} is von Bertalanffy growth coefficient.#'
+}
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{EtargetLopt}: L50, ML, MPeff, Mort, Year, t, vbK, vbLinf, wlb
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/EtargetLopt.html}{Online Documentation} for correctly rendered equations
+}
+
+\examples{
+EtargetLopt(1, DLMtool::SimulatedData, plot=TRUE)
 }
 \author{
 HF Geromont

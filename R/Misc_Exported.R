@@ -203,7 +203,9 @@ MPtype <- function(MPs=NA) {
   type[grep("ref", MPs)] <- "Reference"
   
   df <- data.frame(MP=MPs, Type=type, Recs=rec, stringsAsFactors = FALSE)
-  df[order(df$Type),]
+  df <- df[order(df$Type),]
+  rownames(df) <- 1:nrow(df)
+  df
   
 }
 
@@ -306,7 +308,7 @@ Required <- function(funcs = NA, noCV=FALSE) {
     if (class(tt) != "MP") stop(funcs[x], " is not class 'MP'")
   } 
   
-  data(ReqData)
+  ReqData <- DLMtool::ReqData
   builtin <- funcs[funcs %in% ReqData$MP]
   custom <- funcs[!funcs %in% ReqData$MP]
   

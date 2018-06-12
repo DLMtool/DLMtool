@@ -49,7 +49,7 @@ data which might explain why in some cases it leads to stock declines.
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{GB_slope}: Cat, Ind, t, Year
+\code{GB_slope}: Cat, Ind, Year, t
 }
 
 \section{Rendered Equations}{
@@ -69,6 +69,7 @@ comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017
 Other Index methods: \code{\link{GB_target}},
   \code{\link{Gcontrol}}, \code{\link{ICI}},
   \code{\link{Iratio}}, \code{\link{Islope1}},
+  \code{\link{Itarget1_MPA}}, \code{\link{Itarget1}},
   \code{\link{ItargetE1}}
 }
 \author{

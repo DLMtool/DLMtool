@@ -355,7 +355,7 @@ DLMdiag <- function(Data, command = c("available", "not available", "needed"), r
   
   rr <- try(slot(Data, "Misc"), silent = TRUE)
   if (class(rr) == "try-error") Data@Misc <- list()
-  data(ReqData)
+  ReqData <- DLMtool::ReqData
   builtin <- funcs1[funcs1 %in% ReqData$MP]
   custom <- funcs1[!funcs1 %in% ReqData$MP]
   inMPind <- which(funcs1 %in% builtin)

@@ -1,14 +1,17 @@
 
 ## Mixed Management MPs ####
 
+#' Itarget1 with an MPA
+#' 
 #' A example mixed control MP that uses the Itarget1 output control MP together with a 
-#' spatial closure.
+#' spatial closure. 
 #' 
-#' Included demonstration purposes of a mixed control MP
+#' This MP has been included for demonstration purposes of a mixed control MP
 #' 
-#' @param x A position in data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of TAC samples
+#' @templateVar mp Itarget1_MPA
+#' @template MPtemplate
+#' @template MPuses
+#' 
 #' @param yrsmth Years over which to smooth recent estimates of surplus
 #' production
 #' @param xx Parameter controlling the fraction of mean catch to start using in
@@ -17,25 +20,13 @@
 #' compared with recent levels.
 #' 
 #' @export 
-Itarget1_MPA <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5) {
-  dependencies = "Data@Cat, Data@CV_Cat"
-  ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
-  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
-  ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
-  ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
-  C_dat <- Data@Cat[x, ind2]
-  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
-  Irecent <- mean(Data@Ind[x, ind])
-  Iave <- mean(Data@Ind[x, ind3])
-  Itarget <- Iave * Imulti
-  I0 <- 0.8 * Iave
-  if (Irecent > I0) {
-    TAC <- 0.5 * TACstar * (1 + ((Irecent - I0)/(Itarget - I0)))
-  } else {
-    TAC <- 0.5 * TACstar * (Irecent/I0)^2
-  }
+#' @examples 
+#' Itarget1_MPA(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+#' @family Index methods
+Itarget1_MPA <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, Imulti = 1.5) {
+  runItarget <- Itarget_(x, Data, reps, plot, yrsmth, xx, Imulti)
   Rec <- new("Rec")
-  Rec@TAC <- TACfilter(TAC)
+  Rec@TAC <- TACfilter(runItarget$TAC)
   Rec@Spatial <- c(0, rep(1, Data@nareas-1))
   Rec
 }
@@ -43,18 +34,35 @@ class(Itarget1_MPA) <- "MP"
 
 
 #' Average Catch with a size limit
-#'
+#' 
+#' A example mixed control MP that uses the average catch output control MP together with a 
+#' minimul size limit set at the size of maturity. 
+#' 
+#' This MP has been included for demonstration purposes of a mixed control MP
 #' Included demonstration purposes of a mixed control MP
 #'
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
-#' @param reps The number of stochastic samples of the TAC recommendation
+#' @templateVar mp AvC_MLL
+#' @template MPtemplate
+#' @template MPuses
+#' 
 #' @export 
-#'
-AvC_MLL <- function(x, Data, reps = 100) {
-  dependencies = "Data@Cat, L50"
+#' @family Average Catch MPs
+#' 
+#' @examples 
+#' Rec <- AvC_MLL(1, DLMtool::Cobia, reps=1000, plot=TRUE) # 1,000 log-normal samples with CV = 0.2
+AvC_MLL <- function(x, Data, reps = 100, plot=FALSE) {
+  yrs <- min(Data@Year):(Data@Year[Data@Year==Data@LHYear])
+  yr.ind <- match(yrs, Data@Year)
+  histCatch <- Data@Cat[x, yr.ind]
+  meanC <- mean(histCatch, na.rm = T)
+  if (reps >1) {
+    TAC <- rlnorm(reps, log(meanC), 0.2)
+  } else {
+    TAC <- meanC
+  }
   Rec <- new("Rec")
-  Rec@TAC <- rlnorm(reps, log(mean(Data@Cat[x, ], na.rm = T)), 0.2)
+  Rec@TAC <- TAC
+  if (plot) AvC_plot(x, Data, Rec, meanC, histCatch, yr.ind, lwd=3, cex.lab=1.25)
   Rec@LR5 <- Data@L50[x] * 0.95 # new length at 5% retention  
   Rec@LFR <-  Data@L50[x] # new length at full retention 
   Rec
@@ -85,7 +93,6 @@ class(AvC_MLL) <- "MP"
 #' matlenlim2(1, Data)
 #' MeanMP(1, Data)
 #' }
-
 makeMeanMP <- function(MPs) {
   if (length(MPs)<2) stop("Must provide more than one MP")
   if (class(MPs) != 'character') stop("MPs must be a character vector")

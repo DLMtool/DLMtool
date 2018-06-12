@@ -1237,6 +1237,13 @@ DD_ <- function(x, Data, reps = 100, hcr=NULL) {
     samps <- matrix(c(opt$par[1], opt$par[2], opt$par[3]), nrow = 1)
   }
   
+  #U_hist <- 1 - exp(-exp(opt$par[3]) * E_hist)
+  UMSY <- 1/(1 + exp(-opt$par[1]))
+  EMSY <- -log(1 - UMSY)/exp(opt$par[3]) # q in denominator
+  eff <- EMSY/E_hist[Data@LHYear - Year[1] + 1] # Effort advice is ratio of EMSY and obs. Eff in LHYear
+  eff[!is.finite(eff)] <- 0.01
+  eff[eff > 1e+05] <- 0.01
+  
   # parameters are multivariate normal hessian approximation
   # samps <- cbind(rnorm(reps, opt$par[1], ((opt$par[1])^2)^0.5 * 0.1), 
   #                rnorm(reps, opt$par[2], ((opt$par[2])^2)^0.5 * 0.1), 
@@ -1260,7 +1267,7 @@ DD_ <- function(x, Data, reps = 100, hcr=NULL) {
   
   
   return(list(TAC=TAC, C_hist=C_hist, I_hist=I_hist, E_hist=E_hist, dep=dep, 
-              Cpredict=Cpredict, B_DD=B_DD, hcr=hcr, Year=Data@Year[yind]))
+              Cpredict=Cpredict, B_DD=B_DD, hcr=hcr, Year=Data@Year[yind], eff=eff))
 }
 
 
@@ -2871,7 +2878,7 @@ Itarget1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, Imulti
 }
 class(Itarget1) <- "MP"
 
-#' @describeIn Itarget1 The most biologically precautionary TAC-based MP
+#' @describeIn Itarget1 Increasing biologically precautionary TAC-based MP
 #' @export 
 #' @examples 
 #' Itarget2(1, DLMtool::Atlantic_mackerel, plot=TRUE)
@@ -2879,7 +2886,7 @@ Itarget2 <- Itarget1
 formals(Itarget2)$Imulti <- 2
 class(Itarget2) <- "MP"
 
-#' @describeIn Itarget1 The most biologically precautionary TAC-based MP
+#' @describeIn Itarget1 Increasing biologically precautionary TAC-based MP
 #' @export 
 #' @examples 
 #' Itarget3(1, DLMtool::Atlantic_mackerel, plot=TRUE)

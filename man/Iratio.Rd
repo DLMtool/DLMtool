@@ -39,7 +39,7 @@ mean index in 3-5 years before current time (reference years are specified as
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{Iratio}: Cat, Ind, t, Year
+\code{Iratio}: Cat, Ind, Year, t
 }
 
 \section{Rendered Equations}{
@@ -63,6 +63,7 @@ Advice. ICES CM 2012/ACOM 68. 42 pp.
 Other Index methods: \code{\link{GB_slope}},
   \code{\link{GB_target}}, \code{\link{Gcontrol}},
   \code{\link{ICI}}, \code{\link{Islope1}},
+  \code{\link{Itarget1_MPA}}, \code{\link{Itarget1}},
   \code{\link{ItargetE1}}
 }
 \author{

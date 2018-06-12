@@ -47,7 +47,7 @@ the TAC to decrease by more than half or increase more than twice the last annua
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{Gcontrol}: Abun, Cat, Ind, t, Year
+\code{Gcontrol}: Abun, Cat, Ind, Year, t
 }
 
 \section{Rendered Equations}{
@@ -66,6 +66,7 @@ management procedures. ICES J. Mar Sci. 73, 464-482.
 Other Index methods: \code{\link{GB_slope}},
   \code{\link{GB_target}}, \code{\link{ICI}},
   \code{\link{Iratio}}, \code{\link{Islope1}},
+  \code{\link{Itarget1_MPA}}, \code{\link{Itarget1}},
   \code{\link{ItargetE1}}
 }
 \author{

@@ -2,17 +2,19 @@
 % Please edit documentation in R/MPs_Mixed.R
 \name{Itarget1_MPA}
 \alias{Itarget1_MPA}
-\title{A example mixed control MP that uses the Itarget1 output control MP together with a
-spatial closure.}
+\title{Itarget1 with an MPA}
 \usage{
-Itarget1_MPA(x, Data, reps = 100, yrsmth = 5, xx = 0, Imulti = 1.5)
+Itarget1_MPA(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0,
+  Imulti = 1.5)
 }
 \arguments{
-\item{x}{A position in data-limited methods data object}
+\item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of TAC samples}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{yrsmth}{Years over which to smooth recent estimates of surplus
 production}
@@ -23,6 +25,36 @@ first year}
 \item{Imulti}{Parameter controlling how much larger target CPUE / index is
 compared with recent levels.}
 }
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the TAC, Spatial slot(s) populated
+}
 \description{
-Included demonstration purposes of a mixed control MP
+A example mixed control MP that uses the Itarget1 output control MP together with a
+spatial closure.
+}
+\details{
+This MP has been included for demonstration purposes of a mixed control MP
+}
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{Itarget1_MPA}: Cat, Ind, LHYear, Year, t
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/Itarget1_MPA.html}{Online Documentation} for correctly rendered equations
+}
+
+\examples{
+Itarget1_MPA(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+}
+\seealso{
+Other Index methods: \code{\link{GB_slope}},
+  \code{\link{GB_target}}, \code{\link{Gcontrol}},
+  \code{\link{ICI}}, \code{\link{Iratio}},
+  \code{\link{Islope1}}, \code{\link{Itarget1}},
+  \code{\link{ItargetE1}}
 }

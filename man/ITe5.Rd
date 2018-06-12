@@ -2,28 +2,71 @@
 % Please edit documentation in R/MPs_Input.R
 \name{ITe5}
 \alias{ITe5}
-\title{Index Target Effort-Based 5}
+\alias{ITe10}
+\title{Index Target Effort-Based}
 \usage{
-ITe5(x, Data, reps = 100, yrsmth = 5, mc = 0.05)
+ITe5(x, Data, reps = 100, plot = FALSE, yrsmth = 5, mc = 0.05)
+
+ITe10(x, Data, reps = 100, plot = FALSE, yrsmth = 5, mc = 0.1)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of stochastic samples of the quota recommendation}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{yrsmth}{The number of historical years over which to average the index}
 
 \item{mc}{The maximum fractional change in the effort among years.}
 }
 \value{
-A numeric vector of input controls
+An object of class \code{\link[=Rec-class]{Rec}} with the TAE slot(s) populated
 }
 \description{
 An index target MP where the Effort is modified according to current index
-levels (mean index over last 5 years) relative to a target level. Maximum
-annual changes are 5 per cent.
+levels (mean index over last 5 years) relative to a target level.
+
+Index Target Effort-Based
+}
+\details{
+The TAE is calculated as:
+\deqn{\textrm{TAE}_y = \textrm{TAE}_{y-1} \delta}
+where \eqn{\delta} is \eqn{\frac{I} {I_{\textrm{ref}}}} averaged over last
+\code{yrsmth} years. \eqn{I_{\textrm{ref}}} is the index target (\code{Data@Iref}).
+
+The maximum fractional change in TAE is specified in \code{mc}.
+}
+\section{Functions}{
+\itemize{
+\item \code{ITe5}: Maximum annual changes are 5 per cent.
+
+\item \code{ITe10}: Maximum annual changes are 10 per cent.
+}}
+
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{ITe5}: Ind, Iref, MPeff, Year
+
+
+\code{ITe10}: Ind, Iref, MPeff, Year
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/ITe5.html}{Online Documentation} for correctly rendered equations
+
+
+}
+
+\examples{
+ITe5(1, DLMtool::SimulatedData, plot=TRUE)
+ITe10(1, DLMtool::SimulatedData, plot=TRUE)
 }
 \author{
 T. Carruthers

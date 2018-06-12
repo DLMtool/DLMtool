@@ -4,15 +4,45 @@
 \alias{AvC_MLL}
 \title{Average Catch with a size limit}
 \usage{
-AvC_MLL(x, Data, reps = 100)
+AvC_MLL(x, Data, reps = 100, plot = FALSE)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
 
 \item{Data}{A data-limited methods data object}
 
-\item{reps}{The number of stochastic samples of the TAC recommendation}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
+}
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the TAC, SL slot(s) populated
 }
 \description{
+A example mixed control MP that uses the average catch output control MP together with a
+minimul size limit set at the size of maturity.
+}
+\details{
+This MP has been included for demonstration purposes of a mixed control MP
 Included demonstration purposes of a mixed control MP
+}
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{AvC_MLL}: Cat, L50, t
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/AvC_MLL.html}{Online Documentation} for correctly rendered equations
+}
+
+\examples{
+Rec <- AvC_MLL(1, DLMtool::Cobia, reps=1000, plot=TRUE) # 1,000 log-normal samples with CV = 0.2
+}
+\seealso{
+Other Average Catch MPs: \code{\link{AvC}},
+  \code{\link{DCACs}}
 }

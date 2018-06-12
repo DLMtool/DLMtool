@@ -4,30 +4,49 @@
 \alias{DDe}
 \alias{DDes}
 \alias{DDe75}
-\title{DDe}
+\title{Effort-based Delay - Difference Stock Assessment with UMSY and MSY as leading parameters}
 \usage{
-DDe(x, Data, reps = 100)
+DDe(x, Data, reps = 100, plot = FALSE)
 
-DDes(x, Data, reps = 100, LB = 0.9, UB = 1.1)
+DDes(x, Data, reps = 100, plot = FALSE, LB = 0.9, UB = 1.1)
 
 DDe75(x, Data, reps = 100)
 }
 \arguments{
-\item{x}{rr}
+\item{x}{A position in a data-limited methods data object}
 
-\item{Data}{rr}
+\item{Data}{A data-limited methods data object}
 
-\item{reps}{rr}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
 
 \item{LB}{The lowest permitted factor of previous fishing effort}
 
 \item{UB}{The highest permitted factor of previous fishing effort}
 }
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the TAE slot(s) populated
+}
 \description{
-Description
+A simple delay-difference assessment that estimates \eq{E_{\textrm{MSY}}} using a
+time-series of catches and a relative abundance index.
 }
 \details{
-Details
+This DD model is observation error only and has does not estimate
+process error (recruitment deviations). Assumption is that knife-edge
+selectivity occurs at the age of 50% maturity. Similar to many other assessment
+models it depends on a whole host of dubious assumptions such as temporally
+stationary productivity and proportionality between the abundance index and
+real abundance. Unsurprisingly the extent to which these assumptions are
+violated tends to be the biggest driver of performance for this method.
+
+The method is conditioned on effort and estimates catch. The effort is calculated
+as the ratio of catch and index. Thus, to get a complete effort time series, a full
+time series of catch and index is also needed. Missing values are linearly interpolated.
+
+A detailed description of the delay-difference model can be found in Chapter 9 of Hilborn
+and Walters (1992).
 }
 \section{Functions}{
 \itemize{
@@ -38,6 +57,24 @@ Details
 \item \code{DDe75}: Variant of \code{DDe} where the recommended effort is 75\% EMSY.
 }}
 
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{DDe}: Cat, Ind, L50, LHYear, MaxAge, Mort, Year, t, vbK, vbLinf, vbt0, wla, wlb
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/DDe.html}{Online Documentation} for correctly rendered equations
+}
+
+\examples{
+DDe(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
+DDes(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
+DDe75(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
+}
 \seealso{
 Other Delay-Difference MPs: \code{\link{DD}}
 }

@@ -5,20 +5,24 @@
 \alias{MRnoreal}
 \title{Spatial closure and allocation management procedures}
 \usage{
-MRreal(x, Data, ...)
+MRreal(x, Data, reps, plot = FALSE)
 
-MRnoreal(x, Data, ...)
+MRnoreal(x, Data, reps, plot = FALSE)
 }
 \arguments{
-\item{x}{A position in data / simulation object DLM}
+\item{x}{A position in a data-limited methods data object}
 
-\item{Data}{A data limited methods data object}
+\item{Data}{A data-limited methods data object}
 
-\item{...}{Optional additional arguments that are ignored. Note arguments
-\code{reps} or \code{...} are required for all input controls}
+\item{reps}{The number of stochastic samples of the MP recommendation(s)}
+
+\item{plot}{Logical. Show the plot?}
+}
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the Spatial slot(s) populated
 }
 \description{
-Management procedures which can close areas to fishing and reallocate
+Management procedures which close areas to fishing and reallocate
 fishing effort spatially.
 }
 \section{Functions}{
@@ -27,9 +31,31 @@ fishing effort spatially.
 fishing effort to area 2 (or over other areas).
 
 \item \code{MRnoreal}: A spatial control that prevents fishing in area 1
-(e.g., An marine reserve) and does not reallocate this fishing effort to area 2.
+(e.g., A marine reserve) and does not reallocate this fishing effort to area 2.
 }}
 
+\section{Required Data}{
+
+See \linkS4class{Data} for information on the \code{Data} object \cr
+
+
+\code{MRreal}:
+
+
+\code{MRnoreal}:
+}
+
+\section{Rendered Equations}{
+ 
+See \href{https://dlmtool.github.io/DLMtool/reference/MRreal.html}{Online Documentation} for correctly rendered equations
+
+
+}
+
+\examples{
+MRreal(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+MRnoreal(1, DLMtool::Atlantic_mackerel, plot=TRUE)
+}
 \author{
 T. Carruthers
 }

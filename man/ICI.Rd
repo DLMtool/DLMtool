@@ -87,6 +87,7 @@ https://doi.org/10.1016/j.fishres.2014.11.013
 Other Index methods: \code{\link{GB_slope}},
   \code{\link{GB_target}}, \code{\link{Gcontrol}},
   \code{\link{Iratio}}, \code{\link{Islope1}},
+  \code{\link{Itarget1_MPA}}, \code{\link{Itarget1}},
   \code{\link{ItargetE1}}
 }
 \author{
