@@ -239,7 +239,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # custom parameters exist - sample and write to list
   if(length(OM@cpars)>0){
     ncparsim<-cparscheck(OM@cpars)   # check each list object has the same length and if not stop and error report
-    SampCpars <- SampleCpars(OM@cpars, nsim) 
+    SampCpars <- SampleCpars(OM@cpars, nsim, msg=!silent) 
   }
   
   # --- Sample Stock Parameters ----

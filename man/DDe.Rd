@@ -29,7 +29,7 @@ DDe75(x, Data, reps = 100)
 An object of class \code{\link[=Rec-class]{Rec}} with the TAE slot(s) populated
 }
 \description{
-A simple delay-difference assessment that estimates \eq{E_{\textrm{MSY}}} using a
+A simple delay-difference assessment that estimates \eqn{E_{\textrm{MSY}}} using a
 time-series of catches and a relative abundance index.
 }
 \details{

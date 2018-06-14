@@ -28,7 +28,7 @@ setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 #' @slot Year Years that corresponding to catch and relative abundance data. Vector nyears long. Positive integer
 #' @slot Cat Total annual catches. Matrix of nsim rows and nyears columns. Non-negative real numbers 
 #' @slot Ind Relative abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers
-#' @slot Rec Recent recruitment strength. Vector of length nsim. Positive real numbers 
+#' @slot Rec Recent recruitment strength. Matrix of nsim rows and nyears columns. Non-negative real numbers 
 #' @slot t The number of years corresponding to AvC and Dt. Single value. Positive integer  
 #' @slot AvC Average catch over time t. Vector nsim long. Positive real numbers  
 #' @slot Dt Depletion over time t SSB(now)/SSB(now-t+1). Vector nsim long. Fraction  
@@ -133,7 +133,7 @@ setClass("Data", representation(Name = "character", Year = "vector",
                                 nareas = "numeric", Misc = "list"))
 
 # initialize Data
-setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ",")) {
+setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ","), silent=FALSE) {
   # .Object }) .Object<-new('Data') run an error check here
   if (file.exists(stock)) {
     dec <- match.arg(dec)
@@ -237,7 +237,7 @@ setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ","
     
   } else {
     if (stock != "MSE") {
-      if (!is.na(stock)) print("Couldn't find specified csv file, blank DLM object created")
+      if (!is.na(stock) && !silent) print("Couldn't find specified csv file, blank DLM object created")
     }
   }
   

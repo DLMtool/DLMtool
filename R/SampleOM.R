@@ -1287,7 +1287,14 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   
   sampCpars <- list()
   ncparsim<-cparscheck(cpars)
-  if (is.null(ncparsim)) return(list())
+  if ('CAL_bins' %in% names(cpars)) {
+    sampCpars$CAL_bins <- cpars$CAL_bins
+  }
+  if ('maxage' %in% names(cpars)) {
+    sampCpars$maxage <- cpars$maxage
+  }
+  if (is.null(ncparsim)) return(sampCpars)
+  
   Names <- names(cpars)
   # report invalid names 
   invalid <- which(!Names %in% ParsNames)

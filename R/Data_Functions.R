@@ -75,22 +75,148 @@ XL2Data <- function(name="Data", dir=NULL) {
     Data <- new("Data", file.path(dir,name))
   } else {
     sheetnames <- readxl::excel_sheets(file.path(dir,name))  # names of the sheets
-    datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE))
-    if (datasheet[1,1]== "Slot") datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE, skip=1))
-   
-    if (all(dim(datasheet) == 0)) stop("Nothing found in first sheet", call.=FALSE)
-    tmpfile <- tempfile(fileext=".csv")
-    writeCSV2(inobj = datasheet, tmpfile, objtype = "Data")
+    NewSheetNames <- c("Main", "Biology", "Time-Series", "Reference", "CAL", "CAA")
+    if (all(NewSheetNames %in% sheetnames)) {
+      Data <- new("Data", silent=TRUE)
+      
+      # Main Sheet 
+      datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), 
+                                                    sheet = 'Main', col_names = FALSE))
+      Data@Name <- datasheet[match("Name", datasheet[,1]),2]
+      Data@LHYear <- as.numeric(datasheet[match("Most Recent Year", datasheet[,1]),2])
+      Data@MPrec <- as.numeric(datasheet[match("Previous TAC", datasheet[,1]),2])
+      Data@MPeff <- as.numeric(datasheet[match("Previous TAE", datasheet[,1]),2])
+      Data@Units <- datasheet[match("Units", datasheet[,1]),2]
+      
+      # Biology 
+      datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), 
+                                                    sheet = 'Biology', col_names = FALSE))
+      dname <- datasheet[, 1]
+      dat  <- datasheet[, 2:ncol(datasheet), drop=FALSE]
+      Data@MaxAge <- as.numeric(dat[match("Maximum age", dname), 1])
+      Data@Mort <- as.numeric(dat[match("M", dname), 1])
+      Data@CV_Mort <- as.numeric(dat[match("CV M", dname), 1])
+      
+      Data@vbLinf <- as.numeric(dat[match("Von Bertalanffy Linf parameter", dname), 1])
+      Data@CV_vbLinf <- as.numeric(dat[match("CV von B. Linf parameter", dname), 1])
+      Data@vbK <- as.numeric(dat[match("Von Bertalanffy K parameter", dname), 1])
+      Data@CV_vbK <- as.numeric(dat[match("CV von B. K parameter", dname), 1])
+      Data@vbt0 <- as.numeric(dat[match("Von Bertalanffy t0 parameter", dname), 1])
+      Data@CV_vbt0 <- as.numeric(dat[match("CV von B. t0 parameter", dname), 1])
+      
+      Data@wla <- as.numeric(dat[match("Length-weight parameter a", dname), 1])
+      Data@wlb <- as.numeric(dat[match("Length-weight parameter b", dname), 1])
+      Data@CV_wla <- as.numeric(dat[match("CV Length-weight parameter a", dname), 1])
+      Data@CV_wlb <- as.numeric(dat[match("CV Length-weight parameter b", dname), 1])
+      
+      Data@steep <- as.numeric(dat[match("Steepness", dname), 1])
+      Data@CV_steep <- as.numeric(dat[match("CV Steepness", dname),  1])
+      
+      Data@L50 <- as.numeric(dat[match("Length at 50% maturity", dname), 1])
+      Data@L95 <- as.numeric(dat[match("Length at 95% maturity", dname), 1])
+      Data@CV_L50 <- as.numeric(dat[match("CV Length at 50% maturity", dname), 1])
+      
+      Data@LFC <- as.numeric(dat[match("Length at first capture",  dname), 1])
+      Data@LFS <- as.numeric(dat[match("Length at full selection", dname), 1])
+      Data@CV_LFC <- as.numeric(dat[match("CV Length at first capture", dname), 1])
+      Data@CV_LFS <- as.numeric(dat[match("CV Length at full selection", dname), 1])
+      
+      
+      # Time-Series 
+      datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), 
+                                                    sheet = 'Time-Series', col_names = FALSE))
+      dname <- datasheet[, 1]
+      dat  <- datasheet[, 2:ncol(datasheet), drop=FALSE]
+      yrind <- is.finite(as.numeric(dat[match("Year", dname), ]))
+      Data@Year <- as.numeric(dat[match("Year", dname), yrind])
+      Data@Cat <- matrix(as.numeric(dat[match("Catch", dname), yrind]), nrow=1)
+      Data@CV_Cat <- as.numeric(dat[match("CV Catch", dname), 1])
+      
+      Data@Ind <- matrix(as.numeric(dat[match("Abundance index", dname), yrind]), nrow=1)
+      Data@CV_Ind <- as.numeric(dat[match("CV Abundance index", dname), 1])
+      
+      Data@Rec <- matrix(as.numeric(dat[match("Recruitment index", dname), yrind]), nrow=1)
+      Data@CV_Rec <- as.numeric(dat[match("CV Recruitment index", dname), 1])
+      
+      Data@ML <- matrix(as.numeric(dat[match("Mean length", dname), yrind]), nrow=1)
+      Data@Lbar <- matrix(as.numeric(dat[match("Mean length above Lc", dname), yrind]), nrow=1)
+      Data@Lc <- matrix(as.numeric(dat[match("Modal length (Lc)", dname), yrind]), nrow=1)
+      
+      # Reference 
+      datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), 
+                                                    sheet = 'Reference', col_names = FALSE))
+      dname <- datasheet[, 1]
+      dat  <- datasheet[, 2:ncol(datasheet), drop=FALSE]
+      
+      Data@FMSY_M <- as.numeric(dat[match("FMSY/M", dname), 1])
+      Data@CV_FMSY_M <- as.numeric(dat[match("CV FMSY/M", dname), 1])
+      Data@BMSY_B0 <- as.numeric(dat[match("BMSY/B0", dname), 1])
+      Data@CV_BMSY_B0 <- as.numeric(dat[match("CV BMSY/B0", dname), 1])
+      
+      # Data@MSY <- as.numeric(dat[match("MSY", dname), 1])
+      # Data@BMSY <- as.numeric(dat[match("BMSY", dname), 1])
+      
+      Data@Dep <- as.numeric(dat[match("Current stock depletion", dname), 1])
+      Data@CV_Dep <- as.numeric(dat[match("CV current stock depletion", dname), 1])
+      
+      Data@Abun <- as.numeric(dat[match("Current stock abundance", dname), 1])
+      Data@CV_Abun <- as.numeric(dat[match("CV current stock abundance", dname), 1])
+
+      Data@Cref <- as.numeric(dat[match("Current stock abundance", dname), 1])
+      Data@CV_Abun <- as.numeric(dat[match("CV current stock abundance", dname), 1])
+      Data@Bref <- as.numeric(dat[match("Biomass Reference", dname), 1])
+      Data@CV_Bref <- as.numeric(dat[match("CV Biomass Reference", dname), 1])
+      Data@Iref <- as.numeric(dat[match("Index Reference", dname), 1])
+      Data@CV_Iref <- as.numeric(dat[match("CV Index Reference", dname), 1])
+      
+      Data@t <- as.numeric(dat[match("Duration t", dname), 1])
+      Data@AvC <- as.numeric(dat[match("Average catch over time t", dname), 1])
+      Data@CV_AvC <- as.numeric(dat[match("CV Average catch over time t", dname), 1])
+      
+      Data@Dt <- as.numeric(dat[match("Depletion over time t", dname), 1])
+      Data@CV_Dt <- as.numeric(dat[match("CV Depletion over time t", dname), 1])
+      
+      Data@Ref <- as.numeric(dat[match("Reference OFL", dname), 1])
+      Data@Ref_type <- dat[match("Reference OFL type", dname), 1]
+      
+      # CAL 
+      datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), 
+                                                    sheet = 'CAL', col_names = FALSE))
+      
+      
+      # CAA
+      
+      # loop over rows in Excel - record all data that is not stored in slots
+      
+      
+      # checks 
+      # - all data is imported correctly
+      # - CAA and CAL are correct dimensions
+      # write function and run at end of new data if imported or else here
+      # - email 
+     
     
-    if (ncol(datasheet)<2) {
-      unlink(tmpfile)
-      stop("No parameter values found in first worksheet ", call.=FALSE)
+        
     } else {
-      Data <- new("Data", tmpfile)
-      unlink(tmpfile)
+      
+      datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE))
+      if (datasheet[1,1]== "Slot") 
+        datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE, skip=1))
+      
+      if (all(dim(datasheet) == 0)) stop("Nothing found in first sheet", call.=FALSE)
+      tmpfile <- tempfile(fileext=".csv")
+      writeCSV2(inobj = datasheet, tmpfile, objtype = "Data")
+      
+      if (ncol(datasheet)<2) {
+        unlink(tmpfile)
+        stop("No parameter values found in first worksheet ", call.=FALSE)
+      } else {
+        Data <- new("Data", tmpfile)
+        unlink(tmpfile)
+      }
     }
+    return(Data)
   }
-  return(Data)
 }
 
   

@@ -201,7 +201,7 @@ class(curE75) <- "MP"
 
 #' Effort-based Delay - Difference Stock Assessment with UMSY and MSY as leading parameters
 #' 
-#' A simple delay-difference assessment that estimates \eq{E_{\textrm{MSY}}} using a
+#' A simple delay-difference assessment that estimates \eqn{E_{\textrm{MSY}}} using a
 #' time-series of catches and a relative abundance index. 
 #' 
 #' This DD model is observation error only and has does not estimate
