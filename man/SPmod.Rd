@@ -54,7 +54,7 @@ and \eqn{\alpha_1}, \eqn{\alpha_2}, and \eqn{\alpha_3} are specified in argument
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{SPmod}: Abun, Cat, Ind, t
+\code{SPmod}: Cat, Ind
 }
 
 \section{Rendered Equations}{

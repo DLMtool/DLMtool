@@ -53,10 +53,10 @@ and Walters (1992).
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{DD}: Cat, Ind, L50, MaxAge, Mort, Year, t, vbK, vbLinf, vbt0, wla, wlb
+\code{DD}: Cat, Ind, L50, MaxAge, Mort, vbK, vbLinf, vbt0, wla, wlb
 
 
-\code{DD4010}: Cat, Ind, L50, MaxAge, Mort, Year, t, vbK, vbLinf, vbt0, wla, wlb
+\code{DD4010}: Cat, Ind, L50, MaxAge, Mort, vbK, vbLinf, vbt0, wla, wlb
 }
 
 \section{Rendered Equations}{

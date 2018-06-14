@@ -764,6 +764,9 @@ class(LtargetE4) <- "MP"
 #' 
 #' @keywords internal
 LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE) {
+  if (NAor0(Data@L50[x])) stop("Data@L50 is NA")
+  if (NAor0(Data@L95[x])) stop("Data@L95 is NA")
+  if (NAor0(Data@wlb[x])) stop("Data@wlb is NA")
   
   LenBins <- Data@CAL_bins
   By <- LenBins[2] - LenBins[1]
@@ -887,7 +890,7 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE) {
 #' @examples 
 #' LBSPR(1, Data=DLMtool::SimulatedData, plot=TRUE)
 LBSPR <- function(x, Data, reps=NA, plot=FALSE, n=5, smoother=TRUE, frac=0.1) {
-  
+
   runLBSPR <- LBSPR_(x, Data, reps, n, smoother)
   
   Ests <- runLBSPR[[1]]

@@ -75,116 +75,77 @@ XL2Data <- function(name="Data", dir=NULL) {
     Data <- new("Data", file.path(dir,name))
   } else {
     sheetnames <- readxl::excel_sheets(file.path(dir,name))  # names of the sheets
-    NewSheetNames <- c("Main", "Biology", "Time-Series", "Reference", "CAL", "CAA")
+    
+    DataXLSlot <- DLMtool:::DataXLSlot # may not be neccessary
+    NewSheetNames <- names(DataXLSlot)
     if (all(NewSheetNames %in% sheetnames)) {
       Data <- new("Data", silent=TRUE)
+      BlankDat <-new("Data", silent=TRUE)
+      ignoreSheet <- NULL
+      for (sh in sheetnames) {
+        
+        datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), 
+                                                      sheet = sh, col_names = FALSE))
+        if (dim(datasheet)[2] > 1 ) {
+          dname <- datasheet[, 1]
+          dat  <- datasheet[, 2:ncol(datasheet), drop=FALSE]
+          df <- data.frame(XLRow=DataXLSlot[[sh]]$XLRow, 
+                           Slot=DataXLSlot[[sh]]$Slot, 
+                           Class=DataXLSlot[[sh]]$Class, 
+                           Ignore=DataXLSlot[[sh]]$Ignore,
+                           stringsAsFactors = FALSE)
+          df$Ignore[is.na(df$Slot)] <- TRUE
+          df$Ignore <- as.logical(df$Ignore)
+          df <- df[!df$Ignore,]
+          
+          if (sh %in% c("Main", "Biology", "Reference")) {
+            for (sl in 1:nrow(df)) {
+              temp <- dat[match(df$XLRow[sl], dname),1]
+              if (substr(df$Class[sl],start=1, stop=1) == "c") slot(Data, df$Slot[sl]) <- temp
+              if (substr(df$Class[sl],start=1, stop=1) == "n") slot(Data, df$Slot[sl]) <- as.numeric(temp)
+            }
+          } else if (sh == "Time-Series") {
+            YearInd <- match("Year", dname)
+            Year <- dat[YearInd,]
+            Year <- Year[!is.na(Year)]
+            Data@Year <- Year 
+            ncol_ts <- length(Year)
+            ncol_cv <- 1
+            for (sl in 1:nrow(df)) {
+              ncol <- ifelse(grepl("CV_", df$Slot[sl]), ncol_cv, ncol_ts)
+              temp <- dat[match(df$XLRow[sl], dname),1:ncol]
+              if (substr(df$Class[sl],start=1, stop=1) == "c") 
+                slot(Data, df$Slot[sl]) <- temp
+              if (substr(df$Class[sl],start=1, stop=1) == "n")
+                slot(Data, df$Slot[sl]) <- as.numeric(temp)
+              if (substr(df$Class[sl],start=1, stop=1) == "m")
+                slot(Data, df$Slot[sl]) <- as.matrix(temp, nrow=1)
+              if(all(is.na(slot(Data, df$Slot[sl]))))  
+                slot(Data, df$Slot[sl]) <-slot(BlankDat, df$Slot[sl]) 
+            }
+            
+          } else if (sh == "CAA") {
+            
+          } else if (sh == "CAL") {
+            
+          } else {
+            message('Ignoring sheet: ', sh )
+            ignoreSheet <- append(ignoreSheet, sh)
+          }
+          
+          notRead <- dname[!dname %in% DataXLSlot[[sh]]$XLRow]
+          notRead <- notRead[!is.na(notRead)] 
+          if (!sh %in% ignoreSheet) if (length(notRead)>0) message("Rows not imported from sheet ",  sh, ": ", paste(notRead, collapse=", "))
+          
+        }
+        
+        
+    }
+    
+     
       
-      # Main Sheet 
-      datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), 
-                                                    sheet = 'Main', col_names = FALSE))
-      Data@Name <- datasheet[match("Name", datasheet[,1]),2]
-      Data@LHYear <- as.numeric(datasheet[match("Most Recent Year", datasheet[,1]),2])
-      Data@MPrec <- as.numeric(datasheet[match("Previous TAC", datasheet[,1]),2])
-      Data@MPeff <- as.numeric(datasheet[match("Previous TAE", datasheet[,1]),2])
-      Data@Units <- datasheet[match("Units", datasheet[,1]),2]
-      
-      # Biology 
-      datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), 
-                                                    sheet = 'Biology', col_names = FALSE))
-      dname <- datasheet[, 1]
-      dat  <- datasheet[, 2:ncol(datasheet), drop=FALSE]
-      Data@MaxAge <- as.numeric(dat[match("Maximum age", dname), 1])
-      Data@Mort <- as.numeric(dat[match("M", dname), 1])
-      Data@CV_Mort <- as.numeric(dat[match("CV M", dname), 1])
-      
-      Data@vbLinf <- as.numeric(dat[match("Von Bertalanffy Linf parameter", dname), 1])
-      Data@CV_vbLinf <- as.numeric(dat[match("CV von B. Linf parameter", dname), 1])
-      Data@vbK <- as.numeric(dat[match("Von Bertalanffy K parameter", dname), 1])
-      Data@CV_vbK <- as.numeric(dat[match("CV von B. K parameter", dname), 1])
-      Data@vbt0 <- as.numeric(dat[match("Von Bertalanffy t0 parameter", dname), 1])
-      Data@CV_vbt0 <- as.numeric(dat[match("CV von B. t0 parameter", dname), 1])
-      
-      Data@wla <- as.numeric(dat[match("Length-weight parameter a", dname), 1])
-      Data@wlb <- as.numeric(dat[match("Length-weight parameter b", dname), 1])
-      Data@CV_wla <- as.numeric(dat[match("CV Length-weight parameter a", dname), 1])
-      Data@CV_wlb <- as.numeric(dat[match("CV Length-weight parameter b", dname), 1])
-      
-      Data@steep <- as.numeric(dat[match("Steepness", dname), 1])
-      Data@CV_steep <- as.numeric(dat[match("CV Steepness", dname),  1])
-      
-      Data@L50 <- as.numeric(dat[match("Length at 50% maturity", dname), 1])
-      Data@L95 <- as.numeric(dat[match("Length at 95% maturity", dname), 1])
-      Data@CV_L50 <- as.numeric(dat[match("CV Length at 50% maturity", dname), 1])
-      
-      Data@LFC <- as.numeric(dat[match("Length at first capture",  dname), 1])
-      Data@LFS <- as.numeric(dat[match("Length at full selection", dname), 1])
-      Data@CV_LFC <- as.numeric(dat[match("CV Length at first capture", dname), 1])
-      Data@CV_LFS <- as.numeric(dat[match("CV Length at full selection", dname), 1])
-      
-      
-      # Time-Series 
-      datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), 
-                                                    sheet = 'Time-Series', col_names = FALSE))
-      dname <- datasheet[, 1]
-      dat  <- datasheet[, 2:ncol(datasheet), drop=FALSE]
-      yrind <- is.finite(as.numeric(dat[match("Year", dname), ]))
-      Data@Year <- as.numeric(dat[match("Year", dname), yrind])
-      Data@Cat <- matrix(as.numeric(dat[match("Catch", dname), yrind]), nrow=1)
-      Data@CV_Cat <- as.numeric(dat[match("CV Catch", dname), 1])
-      
-      Data@Ind <- matrix(as.numeric(dat[match("Abundance index", dname), yrind]), nrow=1)
-      Data@CV_Ind <- as.numeric(dat[match("CV Abundance index", dname), 1])
-      
-      Data@Rec <- matrix(as.numeric(dat[match("Recruitment index", dname), yrind]), nrow=1)
-      Data@CV_Rec <- as.numeric(dat[match("CV Recruitment index", dname), 1])
-      
-      Data@ML <- matrix(as.numeric(dat[match("Mean length", dname), yrind]), nrow=1)
-      Data@Lbar <- matrix(as.numeric(dat[match("Mean length above Lc", dname), yrind]), nrow=1)
-      Data@Lc <- matrix(as.numeric(dat[match("Modal length (Lc)", dname), yrind]), nrow=1)
-      
-      # Reference 
-      datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), 
-                                                    sheet = 'Reference', col_names = FALSE))
-      dname <- datasheet[, 1]
-      dat  <- datasheet[, 2:ncol(datasheet), drop=FALSE]
-      
-      Data@FMSY_M <- as.numeric(dat[match("FMSY/M", dname), 1])
-      Data@CV_FMSY_M <- as.numeric(dat[match("CV FMSY/M", dname), 1])
-      Data@BMSY_B0 <- as.numeric(dat[match("BMSY/B0", dname), 1])
-      Data@CV_BMSY_B0 <- as.numeric(dat[match("CV BMSY/B0", dname), 1])
-      
-      # Data@MSY <- as.numeric(dat[match("MSY", dname), 1])
-      # Data@BMSY <- as.numeric(dat[match("BMSY", dname), 1])
-      
-      Data@Dep <- as.numeric(dat[match("Current stock depletion", dname), 1])
-      Data@CV_Dep <- as.numeric(dat[match("CV current stock depletion", dname), 1])
-      
-      Data@Abun <- as.numeric(dat[match("Current stock abundance", dname), 1])
-      Data@CV_Abun <- as.numeric(dat[match("CV current stock abundance", dname), 1])
-
-      Data@Cref <- as.numeric(dat[match("Current stock abundance", dname), 1])
-      Data@CV_Abun <- as.numeric(dat[match("CV current stock abundance", dname), 1])
-      Data@Bref <- as.numeric(dat[match("Biomass Reference", dname), 1])
-      Data@CV_Bref <- as.numeric(dat[match("CV Biomass Reference", dname), 1])
-      Data@Iref <- as.numeric(dat[match("Index Reference", dname), 1])
-      Data@CV_Iref <- as.numeric(dat[match("CV Index Reference", dname), 1])
-      
-      Data@t <- as.numeric(dat[match("Duration t", dname), 1])
-      Data@AvC <- as.numeric(dat[match("Average catch over time t", dname), 1])
-      Data@CV_AvC <- as.numeric(dat[match("CV Average catch over time t", dname), 1])
-      
-      Data@Dt <- as.numeric(dat[match("Depletion over time t", dname), 1])
-      Data@CV_Dt <- as.numeric(dat[match("CV Depletion over time t", dname), 1])
-      
-      Data@Ref <- as.numeric(dat[match("Reference OFL", dname), 1])
-      Data@Ref_type <- dat[match("Reference OFL type", dname), 1]
-      
-      # CAL 
-      datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), 
-                                                    sheet = 'CAL', col_names = FALSE))
-      
-      
-      # CAA
+  
+  
       
       # loop over rows in Excel - record all data that is not stored in slots
       
@@ -444,6 +405,7 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
 #' @param timelimit The maximum time (seconds) taken for an MP to undertake
 #' 5 reps (this filters out methods that are too slow)
 #' @param MPs Optional list of MP names
+#' @param dev Logical. Run in development mode?
 #' @seealso \link{avail} \linkS4class{Data}
 #' @examples 
 #' CanMPs <- Can(DLMtool::Cobia)
@@ -452,8 +414,8 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
 #' @describeIn Can Identifies MPs that have the correct data, do not produce errors,
 #' and run within the time limit.
 #' @export 
-Can <- function(Data, timelimit = 1, MPs=NA) {
-  DLMdiag(Data, "available",  timelimit = timelimit, funcs1=MPs)
+Can <- function(Data, timelimit = 1, MPs=NA, dev=FALSE) {
+  DLMdiag(Data, "available",  timelimit = timelimit, funcs1=MPs, dev=dev)
 }
 
 
@@ -465,7 +427,7 @@ Cant <- function(Data, timelimit = 1) {
 }
 
 DLMdiag <- function(Data, command = c("available", "not available", "needed"), reps = 5, 
-                    timelimit = 1, funcs1=NA) {
+                    timelimit = 1, funcs1=NA, dev=FALSE) {
   command <- match.arg(command)
   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
   set.seed(101)
@@ -481,22 +443,28 @@ DLMdiag <- function(Data, command = c("available", "not available", "needed"), r
   
   rr <- try(slot(Data, "Misc"), silent = TRUE)
   if (class(rr) == "try-error") Data@Misc <- list()
-  ReqData <- DLMtool::ReqData
-  builtin <- funcs1[funcs1 %in% ReqData$MP]
-  custom <- funcs1[!funcs1 %in% ReqData$MP]
-  inMPind <- which(funcs1 %in% builtin)
-  cMPind <- which(funcs1 %in% custom)
-  repp <- rep('', length(funcs1))
-  # built in MPs (doesn't require 'dependencies' line)
-  reqdata <-  ReqData[match(builtin, ReqData$MP),2]
-  
-  repp[inMPind] <- vapply(reqdata, match_slots, character(1), Data = Data, internal=TRUE)
+  if (!dev) {
+    ReqData <- DLMtool::ReqData
+    builtin <- funcs1[funcs1 %in% ReqData$MP]
+    custom <- funcs1[!funcs1 %in% ReqData$MP]
+    inMPind <- which(funcs1 %in% builtin)
+    cMPind <- which(funcs1 %in% custom)
+    repp <- rep('', length(funcs1))
+    # built in MPs (doesn't require 'dependencies' line)
+    reqdata <-  ReqData[match(builtin, ReqData$MP),2]
+    
+    repp[inMPind] <- vapply(reqdata, match_slots, character(1), Data = Data, internal=TRUE)
+    
+    # custom MPs 
+    temp <- lapply(custom, function(x) paste(format(match.fun(x)), collapse = " "))
+    repp[cMPind] <- vapply(temp, match_slots, character(1), Data = Data)
+    
+    chk_needed <- nzchar(repp) # TRUE = has missing data
+  } else {
+    repp <- rep('', length(funcs1))
+    chk_needed <- rep(FALSE, length(funcs1))
+  }
 
-  # custom MPs 
-  temp <- lapply(custom, function(x) paste(format(match.fun(x)), collapse = " "))
-  repp[cMPind] <- vapply(temp, match_slots, character(1), Data = Data)
-  
-  chk_needed <- nzchar(repp) # TRUE = has missing data
   
   if (command == "needed") {
     # repp[!chk_needed] <- "All required data are present. Test MP with Can()"

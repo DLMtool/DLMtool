@@ -40,7 +40,7 @@ This MP has been included for demonstration purposes of a mixed control MP
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{Itarget1_MPA}: Cat, Ind, LHYear, Year, t
+\code{Itarget1_MPA}: Cat, Ind, LHYear, Year
 }
 
 \section{Rendered Equations}{

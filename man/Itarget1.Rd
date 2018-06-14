@@ -79,7 +79,7 @@ where \eqn{x} is argument \code{xx} and C is the average catch over the last 5 y
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{Itarget1}: Cat, Ind, LHYear, Year, t
+\code{Itarget1}: Cat, Ind, LHYear, Year
 }
 
 \section{Rendered Equations}{

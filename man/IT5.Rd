@@ -55,10 +55,10 @@ uncertainty the in reference index.
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{IT5}: Ind, Iref, MPrec, Year
+\code{IT5}: Ind, Iref, MPrec
 
 
-\code{IT10}: Ind, Iref, MPrec, Year
+\code{IT10}: Ind, Iref, MPrec
 }
 
 \section{Rendered Equations}{

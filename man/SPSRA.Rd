@@ -47,10 +47,10 @@ a prior for current stock depletion.
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{SPSRA}: Cat, Dep, MaxAge, Mort, steep, t, vbK, vbLinf, vbt0
+\code{SPSRA}: Abun, AvC, BMSY_B0, Bref, CAA, CAL, CAL_bins, Cat, Cref, Dep, Dt, FMSY_M, Ind, Iref, L50, L95, LFC, LFS, LHYear, Lbar, Lc, LenCV, ML, MPeff, MPrec, MaxAge, Mort, Rec, SpAbun, Year, sigmaL, steep, t, vbK, vbLinf, vbt0, wla, wlb
 
 
-\code{SPSRA_ML}: Abun, AvC, BMSY_B0, Bref, CAL, CAL_bins, Cat, Cref, Dep, Dt, FMSY_M, Ind, Iref, L50, L95, LFC, LFS, LHYear, Lbar, Lc, LenCV, ML, MPeff, MPrec, MaxAge, Mort, Rec, SpAbun, Year, sigmaL, steep, t, vbK, vbLinf, vbt0, wla, wlb
+\code{SPSRA_ML}: Abun, AvC, BMSY_B0, Bref, CAA, CAL, CAL_bins, Cat, Cref, Dep, Dt, FMSY_M, Ind, Iref, L50, L95, LFC, LFS, LHYear, Lbar, Lc, LenCV, ML, MPeff, MPrec, MaxAge, Mort, Rec, SpAbun, Year, sigmaL, steep, t, vbK, vbLinf, vbt0, wla, wlb
 }
 
 \section{Rendered Equations}{

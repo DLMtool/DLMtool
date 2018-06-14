@@ -44,7 +44,7 @@ The TAC is subject to the following conditions:
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{GB_CC}: Cat, Cref, t
+\code{GB_CC}: Cref
 }
 
 \section{Rendered Equations}{

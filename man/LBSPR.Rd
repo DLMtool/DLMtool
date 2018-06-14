@@ -41,7 +41,7 @@ be adjusted using the \code{frac} argument.#'
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{LBSPR}: CAL, CAL_bins, MPeff
+\code{LBSPR}: CAL, CAL_bins, L50, L95, LHYear, Mort, Year, vbK, vbLinf, wlb
 }
 
 \section{Rendered Equations}{

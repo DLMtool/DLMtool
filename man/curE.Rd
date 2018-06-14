@@ -39,10 +39,10 @@ in catchability determined by OM@qcv. This MP is intended to represent a
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{curE}:
+\code{curE}: MPeff
 
 
-\code{curE75}:
+\code{curE75}: MPeff
 }
 
 \section{Rendered Equations}{

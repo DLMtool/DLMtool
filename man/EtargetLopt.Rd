@@ -44,7 +44,7 @@ exponent of the length-weight relationship, \eqn{M} is natural mortality, and
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{EtargetLopt}: L50, ML, MPeff, Mort, Year, t, vbK, vbLinf, wlb
+\code{EtargetLopt}: ML, MPeff, Mort, vbK, vbLinf, wlb
 }
 
 \section{Rendered Equations}{

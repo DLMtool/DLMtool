@@ -39,7 +39,7 @@ mean index in 3-5 years before current time (reference years are specified as
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{Iratio}: Cat, Ind, Year, t
+\code{Iratio}: Cat, Ind
 }
 
 \section{Rendered Equations}{

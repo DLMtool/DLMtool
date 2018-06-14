@@ -6,7 +6,7 @@
 \alias{Needed}
 \title{Identify management procedures (MPs) based on data availability}
 \usage{
-Can(Data, timelimit = 1, MPs = NA)
+Can(Data, timelimit = 1, MPs = NA, dev = FALSE)
 
 Cant(Data, timelimit = 1)
 
@@ -19,6 +19,8 @@ Needed(Data, timelimit = 1)
 5 reps (this filters out methods that are too slow)}
 
 \item{MPs}{Optional list of MP names}
+
+\item{dev}{Logical. Run in development mode?}
 }
 \description{
 Diagnostic tools that look up the slot requirements of each MP and

@@ -59,7 +59,7 @@ and an estimate of abundance (\code{Data@Abun}) for the current year.
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{DynF}: Abun, Cat, FMSY_M, Ind, Mort, Year, t
+\code{DynF}: Abun, Cat, FMSY_M, Ind, Mort, Year
 }
 
 \section{Rendered Equations}{

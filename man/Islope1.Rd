@@ -66,7 +66,7 @@ Reference TAC is 0.6 average catch and gain parameter is 0.2
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{Islope1}: Cat, Ind, LHYear, MPrec, Year, t
+\code{Islope1}: Cat, Ind, LHYear, Year
 }
 
 \section{Rendered Equations}{

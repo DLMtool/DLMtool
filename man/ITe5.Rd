@@ -51,10 +51,10 @@ The maximum fractional change in TAE is specified in \code{mc}.
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{ITe5}: Ind, Iref, MPeff, Year
+\code{ITe5}: Ind, Iref, MPeff
 
 
-\code{ITe10}: Ind, Iref, MPeff, Year
+\code{ITe10}: Ind, Iref, MPeff
 }
 
 \section{Rendered Equations}{

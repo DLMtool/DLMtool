@@ -45,10 +45,10 @@ The TAC is modified by a harvest control rule in \code{MCD4010}.
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{MCD}: Cat, Dep, t
+\code{MCD}: Cat, Dep
 
 
-\code{MCD4010}: Cat, Dep, t
+\code{MCD4010}: Cat, Dep
 }
 
 \section{Rendered Equations}{

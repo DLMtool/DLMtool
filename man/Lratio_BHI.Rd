@@ -50,10 +50,10 @@ function of M, K, and presumed FMSY/M.
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{Lratio_BHI}: CAL, CAL_bins, Cat, LFS, t, vbLinf
+\code{Lratio_BHI}: CAL, CAL_bins, Cat, LFS, vbLinf
 
 
-\code{Lratio_BHI2}: CAL, CAL_bins, Cat, FMSY_M, LFS, Mort, t, vbK, vbLinf
+\code{Lratio_BHI2}: CAL, CAL_bins, Cat, FMSY_M, LFS, Mort, vbK, vbLinf
 }
 
 \section{Rendered Equations}{

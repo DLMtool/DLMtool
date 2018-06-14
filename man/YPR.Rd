@@ -61,13 +61,13 @@ Based on the code of Meaghan Bryan
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{YPR}: Abun, LFS, MaxAge, Mort, t, vbK, vbLinf, vbt0, wla, wlb
+\code{YPR}: Abun, LFS, MaxAge, vbK, vbLinf
 
 
-\code{YPR_CC}: CAA, Cat, LFS, MaxAge, Mort, t, vbK, vbLinf, vbt0, wla, wlb
+\code{YPR_CC}: CAA, Cat, LFS, MaxAge, vbK, vbLinf
 
 
-\code{YPR_ML}: CAL, CAL_bins, Cat, LFS, MaxAge, Mort, t, vbK, vbLinf, vbt0, wla, wlb
+\code{YPR_ML}: CAL, CAL_bins, Cat, LFS, MaxAge, Mort, vbK, vbLinf
 }
 
 \section{Rendered Equations}{

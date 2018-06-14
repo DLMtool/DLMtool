@@ -86,10 +86,10 @@ this approach.
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{SBT1}: Cat, Ind, Year, t
+\code{SBT1}: Cat, Ind, Year
 
 
-\code{SBT2}: Cat, Cref, Rec, t
+\code{SBT2}: Cat, Cref, Rec
 }
 
 \section{Rendered Equations}{

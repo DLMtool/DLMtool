@@ -33,6 +33,11 @@
 #'         
 AvC <- function(x, Data, reps = 100, plot=FALSE) {
   dependencies = "Data@Cat Data@LHYear"
+  if (length(Data@Year)<1 | is.na(Data@LHYear)) {
+    Rec <- new("Rec")
+    Rec@TAC <- rep(as.numeric(NA), reps)
+    return(Rec)
+  }
   yrs <- min(Data@Year):(Data@Year[Data@Year==Data@LHYear])
   yr.ind <- match(yrs, Data@Year)
   histCatch <- Data@Cat[x, yr.ind]
@@ -274,6 +279,11 @@ class(BK_ML) <- "MP"
 #### Constant Catch MPs ####
 CC1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0) {
   dependencies = "Data@Cat, Data@CV_Cat"
+  if (length(Data@Year)<1) {
+    Rec <- new("Rec")
+    Rec@TAC <- rep(as.numeric(NA), reps)
+    return(Rec)
+  }
   
   yrlast <- match(Data@LHYear, Data@Year)
   yrfirst <- yrlast - yrsmth + 1
@@ -546,7 +556,9 @@ class(CompSRA4010) <- "MP"
 #' @export
 #'
 DCAC_ <- function(x, Data, reps=100, Bt_K=NULL, updateD=FALSE) {
-  
+  if (length(Data@Year)<1) return(list(dcac=NA, Bt_K=NA, BMSY_K=NA))
+  if (NAor0(Data@BMSY_B0[x])) stop('Data@BMSY_B0 is NA')
+  if (NAor0(Data@CV_BMSY_B0[x])) stop("Data@CV_BMSY_B0 is NA")
   yr.lst <- match(Data@LHYear, Data@Year)
   yrs <- 1:yr.lst
   C_tot <-  Data@AvC[x] * Data@t[x]
@@ -904,6 +916,7 @@ DBSRAopt <- function(lnK, C_hist, nys, Mdb, FMSY_M, BMSY_K, Bt_K, adelay, opt=1)
 DBSRA_ <- function(x, Data, reps = 100, depo=NULL, hcr=NULL) {
   # returns a vector of DBSRA estimates of the TAC for a particular
   # simulation x for(x in 1:nsim){
+  if (NAor0(Data@CV_BMSY_B0[x])) stop("Data@CV_BMSY_B0 is NA")
   C_hist <- Data@Cat[x, ]
   TAC <- rep(NA, reps)
   Btrend <- matrix(NA, nrow=reps, ncol=length(C_hist))
@@ -1739,6 +1752,17 @@ demofn <- function(log.r, M, amat, sigma, K, Linf, to, hR, maxage, a, b) {
 #' @keywords internal
 Fdem_ <- function(x, Data, reps, Ac=NULL) {
   # Demographic FMSY estimate (FMSY=r/2)
+  if (NAor0(Data@Mort[x])) stop("Data@Mort is NA")
+  if (NAor0(Data@FMSY_M[x])) stop("Data@FMSY_M is NA")
+  if (NAor0(Data@L50[x])) stop("Data@L50 is NA")
+  if (NAor0(Data@vbK[x])) stop("Data@vbK is NA")
+  if (NAor0(Data@CV_vbK[x])) stop("Data@CV_vbK is NA")
+  if (NAor0(Data@vbLinf[x])) stop("Data@vbLinf is NA")
+  if (NAor0(Data@CV_vbLinf[x])) stop("Data@CV_vbLinf is NA")
+  if (NAor0(Data@vbt0[x])) stop("Data@vbt0 is NA")
+  if (NAor0(Data@CV_Mort[x])) stop("Data@CV_Mort is NA")
+  if (NAor0(Data@wlb[x])) stop("Data@wlb is NA")
+
   Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
   Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
   Linfc = trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
@@ -3426,17 +3450,16 @@ MCD <- function(x, Data, reps = 100, plot=FALSE) {
   # Daft method to demonstrate the relative value of information of
   # current depletion
   dependencies = "Data@Dep, Data@CV_Dep, Data@Cat"
-  if (is.na(Data@Dep[x])) {
-    Rec <- new("Rec")
-    Rec@TAC <- rep(NA, reps)
-    return(Rec)
-  }
-    
+  if (all(is.na(Data@Cat[x, ]))) stop("No catch data")
+  if (NAor0(Data@CV_Cat[x])) stop("Data@CV_Cat is NA")
+  if (NAor0(Data@Dep[x])) stop("Data@Dep is NA")
+  if (NAor0(Data@CV_Dep[x])) stop("Data@CV_Dep is NA")
   depo <- max(0.01, min(0.99, Data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
   Bt_K <- rbeta(reps * 100, alphaconv(depo, min(depo * Data@CV_Dep[x], 
                                                 (1 - depo) * Data@CV_Dep[x])), betaconv(depo, min(depo * Data@CV_Dep[x], 
                                                                                                   (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
   Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1:reps]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
+
   if (reps > 1) {
     AvC <- stats::rlnorm(reps, log(mean(Data@Cat[x, ], na.rm = T)), Data@CV_Cat[x])
   } else {
@@ -3464,6 +3487,9 @@ MCD4010 <- function(x, Data, reps = 100, plot=FALSE) {
   # Daft method to demonstrate the relative value of information of
   # current depletion
   dependencies = "Data@Dep, Data@CV_Dep, Data@Cat"
+  if (all(is.na(Data@Cat[x, ]))) stop("No catch data")
+  if (NAor0(Data@CV_Cat[x])) stop("Data@CV_Cat is NA")
+  if (NAor0(Data@CV_Dep[x])) stop("Data@CV_Dep is NA")
   if (is.na(Data@Dep[x])) {
     Rec <- new("Rec")
     Rec@TAC <- rep(NA, reps)
@@ -3541,6 +3567,17 @@ class(MCD4010) <- "MP"
 #' Rcontrol(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
 Rcontrol <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 10, gg = 2, glim = c(0.5, 2)) {
   dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0 Data@steep, Data@CV_steep, Data@MaxAge, Data@Dep, Data@CV_Dep, Data@Cat, Data@Ind"
+  if (NAor0(Data@Mort[x])) stop("Data@Mort is NA")
+  if (NAor0(Data@FMSY_M[x])) stop("Data@FMSY_M is NA")
+  if (NAor0(Data@L50[x])) stop("Data@L50 is NA")
+  if (NAor0(Data@vbK[x])) stop("Data@vbK is NA")
+  if (NAor0(Data@CV_vbK[x])) stop("Data@CV_vbK is NA")
+  if (NAor0(Data@vbLinf[x])) stop("Data@vbLinf is NA")
+  if (NAor0(Data@CV_vbLinf[x])) stop("Data@CV_vbLinf is NA")
+  if (NAor0(Data@vbt0[x])) stop("Data@vbt0 is NA")
+  if (NAor0(Data@wlb[x])) stop("Data@wlb is NA")
+  if (NAor0(Data@CV_Mort[x])) stop("Data@CV_Mort is NA")
+  
   Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
   Kvec <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
   Linfvec <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
@@ -3619,6 +3656,17 @@ class(Rcontrol) <- "MP"
 #' Rcontrol2(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
 Rcontrol2 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 10, gg = 2, glim = c(0.5, 2)) {
   dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@steep, Data@CV_steep, Data@MaxAge, Data@Dep, Data@CV_Dep, Data@Cat, Data@Ind"
+  if (NAor0(Data@Mort[x])) stop("Data@Mort is NA")
+  if (NAor0(Data@FMSY_M[x])) stop("Data@FMSY_M is NA")
+  if (NAor0(Data@L50[x])) stop("Data@L50 is NA")
+  if (NAor0(Data@vbK[x])) stop("Data@vbK is NA")
+  if (NAor0(Data@CV_vbK[x])) stop("Data@CV_vbK is NA")
+  if (NAor0(Data@vbLinf[x])) stop("Data@vbLinf is NA")
+  if (NAor0(Data@CV_vbLinf[x])) stop("Data@CV_vbLinf is NA")
+  if (NAor0(Data@vbt0[x])) stop("Data@vbt0 is NA")
+  if (NAor0(Data@CV_Mort[x])) stop("Data@CV_Mort is NA")
+  if (NAor0(Data@wlb[x])) stop("Data@wlb is NA")
+  
   Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
   Kvec <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
   Linfvec <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
@@ -4051,6 +4099,7 @@ SPMSY <- function(x, Data, reps = 100, plot=FALSE) {
   # Martell and Froese 2012 Schaefer SP estimate of MSY given priors on
   # r, k and depletion for(x in 1:100){
   dependencies = "Data@MaxAge, Data@vbK, Data@L50, Data@Cat"
+  if (all(is.na(Data@Cat[x, ]))) stop("No catch data")
   maxage <- Data@MaxAge
   nsamp <- reps * 200
   
@@ -4181,6 +4230,18 @@ class(SPMSY) <- "MP"
 #' @keywords internal
 #' @describeIn SPSRA_ internal function
 SPSRA_ <- function(x, Data, reps = 100, dep=NULL) {
+  if (NAor0(Data@Mort[x])) stop("Data@Mort is NA")
+  if (NAor0(Data@FMSY_M[x])) stop("Data@FMSY_M is NA")
+  if (NAor0(Data@L50[x])) stop("Data@L50 is NA")
+  if (NAor0(Data@Dep[x])) stop("Data@Dep is NA")
+  if (NAor0(Data@vbK[x])) stop("Data@vbK is NA")
+  if (NAor0(Data@CV_vbK[x])) stop("Data@CV_vbK is NA")
+  if (NAor0(Data@vbLinf[x])) stop("Data@vbLinf is NA")
+  if (NAor0(Data@CV_vbLinf[x])) stop("Data@CV_vbLinf is NA")
+  if (NAor0(Data@vbt0[x])) stop("Data@vbt0 is NA")
+  if (NAor0(Data@CV_Mort[x])) stop("Data@CV_Mort is NA")
+  if (NAor0(Data@wlb[x])) stop("Data@wlb is NA")
+
   Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
   Kvec <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
   Linfvec <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
@@ -4293,6 +4354,17 @@ class(SPSRA) <- "MP"
 #' SPSRA_ML(1, DLMtool::SimulatedData, plot=TRUE)
 SPSRA_ML <- function(x, Data, reps = 100, plot=FALSE) {
   dependencies = "Data@Mort, Data@CV_Mort, Data@vbK, Data@CV_vbK, Data@vbLinf, Data@CV_vbLinf, Data@vbt0, Data@CV_vbt0, Data@CAL, Data@Cat, Data@steep"
+  if (NAor0(Data@Mort[x])) stop("Data@Mort is NA")
+  if (NAor0(Data@FMSY_M[x])) stop("Data@FMSY_M is NA")
+  if (NAor0(Data@L50[x])) stop("Data@L50 is NA")
+  if (NAor0(Data@vbK[x])) stop("Data@vbK is NA")
+  if (NAor0(Data@CV_vbK[x])) stop("Data@CV_vbK is NA")
+  if (NAor0(Data@vbLinf[x])) stop("Data@vbLinf is NA")
+  if (NAor0(Data@CV_vbLinf[x])) stop("Data@CV_vbLinf is NA")
+  if (NAor0(Data@vbt0[x])) stop("Data@vbt0 is NA")
+  if (NAor0(Data@CV_Mort[x])) stop("Data@CV_Mort is NA")
+  if (NAor0(Data@wlb[x])) stop("Data@wlb is NA")
+  
   Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
   Kvec <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
   Linfvec = trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])

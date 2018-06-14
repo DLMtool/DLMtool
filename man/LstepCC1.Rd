@@ -91,16 +91,16 @@ The conditions are specified in the \code{llim} argument to the function.
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{LstepCC1}: Cat, LHYear, ML, MPrec, Year, t
+\code{LstepCC1}: Cat, LHYear, ML, Year
 
 
-\code{LstepCC2}:
+\code{LstepCC2}: Cat, LHYear, ML, Year
 
 
-\code{LstepCC3}:
+\code{LstepCC3}: Cat, LHYear, ML, Year
 
 
-\code{LstepCC4}: Cat, LHYear, ML, MPrec, Year, t
+\code{LstepCC4}: Cat, LHYear, ML, Year
 }
 
 \section{Rendered Equations}{

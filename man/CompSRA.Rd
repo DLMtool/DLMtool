@@ -49,10 +49,10 @@ harvest control rule to reduce TAC at low biomass.
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{CompSRA}: CAA, Cat, L50, LFC, LFS, MaxAge, Mort, steep, t, vbK, vbLinf, vbt0, wla, wlb
+\code{CompSRA}: CAA, Cat, L50, LFC, LFS, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
 
 
-\code{CompSRA4010}: CAA, Cat, L50, LFC, LFS, MaxAge, Mort, steep, t, vbK, vbLinf, vbt0, wla, wlb
+\code{CompSRA4010}: CAA, Cat, L50, LFC, LFS, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
 }
 
 \section{Rendered Equations}{

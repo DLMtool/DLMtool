@@ -59,10 +59,10 @@ if the Z-score of the current year's index is greater than 1.96. Otherwise, the 
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{ICI}: Cat, Ind, Year
+\code{ICI}: Cat, Ind
 
 
-\code{ICI2}: Cat, Ind, t
+\code{ICI2}: Cat, Ind
 }
 
 \section{Rendered Equations}{

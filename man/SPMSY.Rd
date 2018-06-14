@@ -45,7 +45,7 @@ this case this method widens the search.
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{SPMSY}: Cat, L50, MaxAge, t, vbK, vbLinf, vbt0
+\code{SPMSY}: Cat, L50, MaxAge, vbK, vbLinf, vbt0
 }
 
 \section{Rendered Equations}{

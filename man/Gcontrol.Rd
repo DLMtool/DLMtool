@@ -47,7 +47,7 @@ the TAC to decrease by more than half or increase more than twice the last annua
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{Gcontrol}: Abun, Cat, Ind, Year, t
+\code{Gcontrol}: Abun, Cat, Ind, Year
 }
 
 \section{Rendered Equations}{

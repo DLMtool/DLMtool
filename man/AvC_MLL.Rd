@@ -31,7 +31,7 @@ Included demonstration purposes of a mixed control MP
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{AvC_MLL}: Cat, L50, t
+\code{AvC_MLL}: Cat, LHYear, Year
 }
 
 \section{Rendered Equations}{

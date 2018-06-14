@@ -55,7 +55,7 @@ The TAC is subject to the following conditions:
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{GB_target}: Cat, Cref, Ind, Iref, t
+\code{GB_target}: Cref, Ind, Iref
 }
 
 \section{Rendered Equations}{

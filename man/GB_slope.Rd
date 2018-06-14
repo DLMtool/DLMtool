@@ -49,7 +49,7 @@ data which might explain why in some cases it leads to stock declines.
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{GB_slope}: Cat, Ind, Year, t
+\code{GB_slope}: Cat, Ind, Year
 }
 
 \section{Rendered Equations}{

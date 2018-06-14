@@ -38,7 +38,7 @@ where \eqn{\textrm{TAC}} is the the mean catch recommendation, \eqn{n} is the nu
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{AvC}: Cat, LHYear, Year, t
+\code{AvC}: Cat, LHYear, Year
 }
 
 \section{Rendered Equations}{

@@ -69,19 +69,19 @@ stock depletion (made-up for this package).
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{Fratio}: Abun, FMSY_M, Mort, t
+\code{Fratio}: Abun, FMSY_M, Mort
 
 
-\code{Fratio4010}: Abun, Dep, Dt, FMSY_M, Mort, t
+\code{Fratio4010}: Abun, Dep, FMSY_M, Mort
 
 
-\code{DepF}: Abun, BMSY_B0, Dep, FMSY_M, Mort, Year, t
+\code{DepF}: Abun, Dep, FMSY_M, Mort
 
 
-\code{Fratio_CC}: CAA, Cat, FMSY_M, Mort, t
+\code{Fratio_CC}: CAA, Cat, FMSY_M, Mort
 
 
-\code{Fratio_ML}: CAL, CAL_bins, Cat, FMSY_M, LFS, Mort, t, vbK, vbLinf
+\code{Fratio_ML}: CAL, CAL_bins, Cat, FMSY_M, LFS, Mort, vbK, vbLinf
 }
 
 \section{Rendered Equations}{

@@ -64,7 +64,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 \code{matlenlim2}: L50
 
 
-\code{minlenLopt1}: MPeff, Mort, t, vbK, vbLinf, wlb
+\code{minlenLopt1}: Mort, vbK, vbLinf, wlb
 
 
 \code{slotlim}: L50, vbLinf
