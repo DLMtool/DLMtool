@@ -869,6 +869,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
       #                                           MaxSel=Vmaxlens[i, Selnyears])$minimum)	
       
       srs <- (Linf - LFS[restYears[1],]) / ((-log(Vmaxlen[restYears[1],],2))^0.5) #
+      srs[!is.finite(srs)] <- Inf
       
       sls <- (LFS[restYears[1],] - L5[restYears[1], ]) /((-log(0.05,2))^0.5)
       

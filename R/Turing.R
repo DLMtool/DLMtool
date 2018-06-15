@@ -22,7 +22,7 @@ Turing <- function(OM, Data, wait=TRUE) {
     CAL_bins <- Data@CAL_bins
     OM@cpars$CAL_bins <- CAL_bins
   }
-  
+  OM@nsim <- 15
   SimDat <- runMSE(OM, Hist=TRUE, silent = TRUE)$Data
   if(!all(SimDat@CAL_bins == Data@CAL_bins)) stop("CAL_bins not correct length")
   
@@ -77,10 +77,17 @@ plotCAAdata <- function(Ylab="Count", slot="CAA", message="Catch-at-Age Data",
   realDat <- slot(Data, slot)[1,,]
   sampDat <- slot(SimDat, slot)[samps,YrInd,]
   
-  YrInd2 <- YrInd[is.finite(realDat)] 
-  YrInd3 <- Data@Year[is.finite(realDat)]
-  realDat <- realDat[is.finite(realDat)]
-  sampDat <- slot(SimDat, slot)[samps,YrInd2]
+  if (all(is.na(realDat))) {
+    message("No ", message, " found in Data object")
+    return()
+  }
+  # plot last 4 years
+  nyr <- nrow(realDat)
+  realDat <- realDat[(nyr-3):nyr,]
+  sampDat <- sampDat[,(nyr-3):nyr,]
+  
+  # drop any without info?
+  dim(realDat)
   
   
   if (!all(is.na(realDat))) {
@@ -130,7 +137,7 @@ plotCAAdata <- function(Ylab="Count", slot="CAA", message="Catch-at-Age Data",
     realInd <- as.numeric(as.character(realInd[!is.na(realInd)] ))
 
     Years <- unique(df3$Year)
-    SampYears <- (max(Years)-4):max(Years)
+    SampYears <- (max(Years)-3):max(Years)
     
     df4 <- df3 %>% filter(Year %in% SampYears)
     
@@ -154,12 +161,15 @@ plotCAAdata <- function(Ylab="Count", slot="CAA", message="Catch-at-Age Data",
     print(P2)
     if (wait)  tt <- readline("Press any key to continue...")
   
+  } else {
+    message("No ", message, " found in Data object")
   }
   
 }
 
 
-plotTSdata <- function(Ylab, slot, message, Data, SimDat, samps, YrInd, wait=TRUE, standarise=TRUE) {
+plotTSdata <- function(Ylab, slot, message, Data, SimDat, samps, YrInd, 
+                       wait=TRUE, standarise=TRUE) {
   realDat <- slot(Data, slot)[1,]
   # remove NAs
   YrInd2 <- YrInd[is.finite(realDat)] 
