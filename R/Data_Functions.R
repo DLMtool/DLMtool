@@ -121,13 +121,50 @@ XL2Data <- function(name="Data", dir=NULL) {
               if (substr(df$Class[sl],start=1, stop=1) == "m")
                 slot(Data, df$Slot[sl]) <- as.matrix(temp, nrow=1)
               if(all(is.na(slot(Data, df$Slot[sl]))))  
-                slot(Data, df$Slot[sl]) <-slot(BlankDat, df$Slot[sl]) 
+                slot(Data, df$Slot[sl]) <- slot(BlankDat, df$Slot[sl]) 
             }
             
           } else if (sh == "CAA") {
+          
+            CAAMat <- array(NA, dim=c(1,length(Data@Year),Data@MaxAge))
+            Year <- Data@Year
+            CAAYr <-as.numeric(dname[2:length(dname)])
+            if(length(CAAYr[!CAAYr %in% Year])>0) 
+              stop("Some CAA Years not in Time-Series Year", call.=FALSE)
             
+            YrInd <- match(CAAYr, Year) # match years 
+            CAAdat <- (dat[2:nrow(dat),])
+            if (ncol(CAAdat)> Data@MaxAge) 
+              stop("Number of age-classes in CAA data > MaxAge", call.=FALSE)
+
+            CAAMat[1, YrInd, 1:ncol(CAAdat)] <- as.matrix(CAAdat)
+            Data@CAA <- CAAMat
+            ignoreSheet <- append(ignoreSheet, sh)
           } else if (sh == "CAL") {
+            CAL_bins <- as.matrix(dat[1,])
+            if(class(CAL_bins[1]) == 'character') {
+              CAL_bins <- as.numeric(gsub("[[:space:]]", "", CAL_bins))
+            } else {
+              CAL_bins <- as.numeric(CAL_bins)
+            }
+          
+            CAL_dat <- dat[2:nrow(dat), ]
+            nlendat <- sum(apply(apply(CAL_dat, 2, is.na), 2, prod) == 0)
+            if (nlendat != (length(CAL_bins)-1)) 
+              stop("Number of columns of CAL data should be one less than length of CAL_bins", call.=FALSE)
+            CAL_dat <- CAL_dat[,1:(length(CAL_bins)-1)]
+            CALMat <- array(NA, dim=c(1,length(Data@Year),(length(CAL_bins)-1)))
+            Year <- Data@Year
+            CALYr <-as.numeric(dname[2:length(dname)])
+            if(length(CALYr[!CALYr %in% Year])>0) 
+              stop("Some CAL Years not in Time-Series Year", call.=FALSE)
             
+            YrInd <- match(CALYr, Year) # match years
+            
+            CALMat[1, YrInd, 1:ncol(CAL_dat)] <- as.matrix(CAL_dat)
+            Data@CAL_bins <- CAL_bins
+            Data@CAL <- CALMat
+            ignoreSheet <- append(ignoreSheet, sh)
           } else {
             message('Ignoring sheet: ', sh )
             ignoreSheet <- append(ignoreSheet, sh)
@@ -143,10 +180,6 @@ XL2Data <- function(name="Data", dir=NULL) {
     }
     
      
-      
-  
-  
-      
       # loop over rows in Excel - record all data that is not stored in slots
       
       
