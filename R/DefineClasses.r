@@ -1655,52 +1655,206 @@ setMethod('summary', signature="MSE", function(object, ..., silent=FALSE, Refs=N
 #' Summary of Data object
 #'
 #' @rdname summary-Data
-#' @param object object of class Data
+#' @param object An object of class Data
 #' @export
 setMethod("summary",
           signature(object = "Data"),
           function(object){
+            wait <- TRUE
+            if (class(object) != "Data") stop("Object must be class `Data`", call.=FALSE)
             
-            old_par <- par(no.readonly = TRUE)
-            on.exit(par(list = old_par), add = TRUE)
-            
-            scols<-c('red','green','blue','orange','brown','purple','dark grey','violet','dark red','pink','dark blue','grey')
-            
-            #dev.new2(width=8,height=4.5)
-            par(mai=c(0.35,0.9,0.2,0.01),c(0.3,0,0,0))
-            layout(matrix(c(1,2,1,2,1,2,3,3,3,3),nrow=2))
-            plot(object@Year,object@Cat[1,],col="blue",type="l",xlab="Year",ylab=paste("Catch (",object@Units,")",sep=""),ylim=c(0,max(object@Cat[1,],na.rm=T)))
-            plot(object@Year,object@Ind[1,],col="orange",type="l",xlab="Year",ylab="Relative abundance",ylim=c(0,max(object@Ind[1,],na.rm=T)))
-            
-            slots<-c("Dep","Mort","FMSY_M","Dt","BMSY_B0","vbK")
-            namey<-c("Stock depletion", "Natural Mortality rate","Ratio of FMSY to M","Depletion over time t","BMSY relative to unfished","Von B. k parameter")
-            slotsCV<-c("CV_Dep","CV_Mort","CV_FMSY_M","CV_Dt","CV_BMSY_B0","CV_vbK")
-            
-            ind<-rep(TRUE,length(slotsCV))
-            for(i in 1:length(slotsCV))if(NAor0(attr(object,slots[i]))|NAor0(attr(object,slotsCV[i])))ind[i]<-FALSE
-            slots<-slots[ind]
-            slotsCV<-slotsCV[ind]
-            nrep<-150
-            xstore<-array(NA,c(length(slots),nrep))
-            ystore<-array(NA,c(length(slots),nrep))
-            
-            
-            for(i in 1:length(slots)){
-              mu<-attr(object,slots[i])
-              cv<-attr(object,slotsCV[i])
-              xstore[i,]<-qlnorm(seq(0,1,length.out=nrep),mconv(mu,cv),sdconv(mu,cv))
-              ystore[i,]<-dlnorm(xstore[i,],mconv(mu,cv),sdconv(mu,cv))
+            # Time-Series
+            Year <- object@Year
+            Val <- c(object@Cat[1,], object@Ind[1,], object@Rec[1,], object@ML[1,], object@Lc[1,])
+            Var <- rep(c("Catch", "Index", "Recruitment", "Mean Length", "Mean Length above Lc"), each=length(Year))
+            ts.df <- data.frame(Year=Year, Val=Val, Var=Var, stringsAsFactors = TRUE)
+            # ts.df$Year <- as.factor(ts.df$Year)
+            ts.df$Var <- factor(ts.df$Var, levels=
+                                  c("Catch", "Index", "Recruitment", "Mean Length", "Mean Length above Lc"))
+            ts.df <- subset(ts.df, !is.na(Val))
+            if (nrow(ts.df)>0) {
+              P1 <- ggplot2::ggplot(ts.df, ggplot2::aes(x=Year, y=Val, group = Var)) +
+                ggplot2::facet_wrap(~Var, scales='free_y') + ggplot2::geom_line() +
+                ggplot2::theme_classic() +  
+                ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) +
+                ggplot2::scale_x_continuous(breaks=pretty(rev(Year), length(Year)/5)) +
+                ggplot2::labs(y="")
+              
+            } else {
+              P1 <- NULL
             }
             
-            plot(xstore[1,],ystore[1,],type="l",xlim=c(0,1.2),ylim=c(0,quantile(ystore,0.97)),xlab="",ylab="Relative frequency",col=scols[1])
-            if(length(slots)>1){
-              for(i in 2:length(slots)) lines(xstore[i,],ystore[i,],col=scols[i])
+            # CAA 
+            CAA <- object@CAA[1,,]
+            nyrs <- nrow(CAA); maxage <- ncol(CAA)
+            if (NAor0(CAA)) {
+              P2 <- NULL
+            } else {
+              dimnames(CAA) <- list(1:nyrs, 1:maxage)
+              
+              df1 <- as.data.frame.table(CAA, stringsAsFactors = FALSE)
+              colnames(df1) <- c("Year", "Val", "Freq")
+              df1$Val <- factor(as.numeric(df1$Val))
+              
+              df1$Year <- as.numeric(df1$Year)
+              yrs <- rev(seq(from=Year[length(Year)], length.out = length(unique(df1$Year)), by=-1))
+              df1$Year <- factor(df1$Year)
+              levels(df1$Year) <- yrs
+              
+              yr.n <- df1 %>% dplyr::group_by(Year) %>% dplyr::summarise(n=sum(Freq))
+              yr.ind <- yr.n %>% filter(n>0) %>% dplyr::select(Year)
+              df1 <- df1 %>% dplyr::filter(Year %in% yr.ind$Year == TRUE)
+              if (nrow(df1)>0) {
+                
+                P2 <-   ggplot2::ggplot(df1, ggplot2::aes(x=Val, y=Freq, group=Year))+
+                  ggplot2::facet_wrap(~Year, scales="free_y") + ggplot2::geom_bar(stat='identity') +
+                  ggplot2::theme_classic() +  
+                  ggplot2::labs(y="Frequency", x="Age")
+              } else {
+                P2 <- NULL
+              }
             }
-            legend('topright',legend=namey[ind],text.col=scols[1:length(slots)],bty='n')
-            mtext(paste("Data summary for",deparse(substitute(Data)),sep=" "),3,font=2,line=0.25,outer=T)
+            # CAL 
+            CAL <- object@CAL[1,,]
+            if (NAor0(CAL)) {
+              P3 <- NULL
+            } else {
+              nyrs <- nrow(CAL); nbins <- length(object@CAL_bins) - 1
+              By <- object@CAL_bins[2] - object@CAL_bins[1]
+              BinsMid <- seq(object@CAL_bins[1] + 0.5*By, by=By,length.out = nbins)
+              dimnames(CAL) <- list(1:nyrs, BinsMid)
+              
+              df1 <- as.data.frame.table(CAL, stringsAsFactors = FALSE)
+              colnames(df1) <- c("Year", "Val", "Freq")
+              df1$Val <- factor(as.numeric(df1$Val))
+              
+              df1$Year <- as.numeric(df1$Year)
+              yrs <- rev(seq(from=Year[length(Year)], length.out = length(unique(df1$Year)), by=-1))
+              df1$Year <- factor(df1$Year)
+              levels(df1$Year) <- yrs
+              
+              yr.n <- df1 %>% dplyr::group_by(Year) %>% dplyr::summarise(n=sum(Freq))
+              yr.ind <- yr.n %>% filter(n>0) %>% dplyr::select(Year)
+              df1 <- df1 %>% dplyr::filter(Year %in% yr.ind$Year == TRUE)
+              
+              if (length(object@CAL_bins)> 40) {
+                by <- 5
+              } else if (length(object@CAL_bins)> 20) {
+                by <- 3
+              } else {
+                by <- 2
+              }
+              ind <- seq(from=1, by=by, length.out=length(object@CAL_bins)/by)
+              breaks <- BinsMid[ind]
+              labels <- BinsMid[ind]
+              labels <- labels[!is.na(labels)]
+              breaks <- breaks[!is.na(breaks)]
+              
+              if (nrow(df1) > 0 ) {
+                P3 <- ggplot2::ggplot(df1, ggplot2::aes(x=Val, y=Freq, group=Year))+
+                  ggplot2::facet_wrap(~Year, scales="free_y") + ggplot2::geom_bar(stat='identity') +
+                  ggplot2::theme_classic() +  
+                  ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) +
+                  ggplot2::scale_x_discrete(breaks = breaks, labels=labels) +
+                  ggplot2::labs(y="Frequency", x="Length")
+                
+              } else {
+                P3 <- NULL
+              }
+            }
+            # Biology & Depletion
+            slots<-c("Dep","Mort","FMSY_M","Dt","BMSY_B0","vbK", "vbLinf")
+            namey<-c("Stock depletion", "Natural Mortality rate","Ratio of FMSY to M",
+                     "Depletion over time t","BMSY relative to unfished",
+                     "von B. k parameter", "von B. Linf parameter")
+            slotsCV<-c("CV_Dep","CV_Mort","CV_FMSY_M","CV_Dt","CV_BMSY_B0","CV_vbK", "CV_vbLinf")
             
+            reps <- 5000
+            val <- list()
+            for (i in seq_along(slots)) {
+              mu <- slot(object, slots[i])[1]
+              cv <- slot(object, slotsCV[i])[1]
+              val[[i]] <- trlnorm(reps, mu,cv)
+            }
+            vals <- do.call("cbind", val)
+            head(vals)
+            
+            colnames(vals) <- namey
+            
+            df1 <- as.data.frame.table(vals, stringsAsFactors = TRUE)
+            df1 <- df1 %>% dplyr::filter(is.na(Freq) == FALSE)
+            if (nrow(df1) > 0 ) {
+              P4 <-   ggplot2::ggplot(df1, ggplot2::aes(x=Freq, group=Var2)) +
+                ggplot2::facet_wrap(~Var2, scales="free") + ggplot2::geom_histogram(bins=30) +
+                ggplot2::labs(y="Frequency", x="Parameter Value") +
+                ggplot2::theme_classic()
+            } else {
+              P4 <- NULL
+            }
+            
+            if (!is.null(P1)) {
+              message('Plotting Time-Series')
+              print(P1)
+            }
+            if (interactive() & wait & !is.null(P1)) 
+              invisible(readline(prompt="Press [enter] to continue..."))
+            if (!is.null(P2)) {
+              message('Plotting Catch-at-Age')
+              print(P2)
+            }
+            if (interactive() & wait & !is.null(P2)) 
+              invisible(readline(prompt="Press [enter] to continue..."))
+            if (!is.null(P3)) {
+              message('Plotting Catch-at-Length')
+              print(P3)
+            }
+            if (interactive() & wait & !is.null(P3))
+              invisible(readline(prompt="Press [enter] to continue..."))
+            if (!is.null(P4)) {
+              message('Plotting Parameter Distributions')
+              print(P4)
+            }
           })
-
+            
+            # old_par <- par(no.readonly = TRUE)
+            # on.exit(par(list = old_par), add = TRUE)
+            # 
+            # scols<-c('red','green','blue','orange','brown','purple','dark grey','violet','dark red','pink','dark blue','grey')
+            # 
+            # #dev.new2(width=8,height=4.5)
+            # par(mai=c(0.35,0.9,0.2,0.01),c(0.3,0,0,0))
+            # layout(matrix(c(1,2,1,2,1,2,3,3,3,3),nrow=2))
+            # plot(object@Year,object@Cat[1,],col="blue",type="l",xlab="Year",ylab=paste("Catch (",object@Units,")",sep=""),ylim=c(0,max(object@Cat[1,],na.rm=T)))
+            # plot(object@Year,object@Ind[1,],col="orange",type="l",xlab="Year",ylab="Relative abundance",ylim=c(0,max(object@Ind[1,],na.rm=T)))
+            # 
+            # slots<-c("Dep","Mort","FMSY_M","Dt","BMSY_B0","vbK")
+            # namey<-c("Stock depletion", "Natural Mortality rate","Ratio of FMSY to M","Depletion over time t","BMSY relative to unfished","Von B. k parameter")
+            # slotsCV<-c("CV_Dep","CV_Mort","CV_FMSY_M","CV_Dt","CV_BMSY_B0","CV_vbK")
+            # 
+            # ind<-rep(TRUE,length(slotsCV))
+            # for(i in 1:length(slotsCV))if(NAor0(attr(object,slots[i]))|NAor0(attr(object,slotsCV[i])))ind[i]<-FALSE
+            # slots<-slots[ind]
+            # slotsCV<-slotsCV[ind]
+            # nrep<-150
+            # xstore<-array(NA,c(length(slots),nrep))
+            # ystore<-array(NA,c(length(slots),nrep))
+            # 
+            # 
+            # for(i in 1:length(slots)){
+            #   mu<-attr(object,slots[i])
+            #   cv<-attr(object,slotsCV[i])
+            #   xstore[i,]<-qlnorm(seq(0,1,length.out=nrep),mconv(mu,cv),sdconv(mu,cv))
+            #   ystore[i,]<-dlnorm(xstore[i,],mconv(mu,cv),sdconv(mu,cv))
+            # }
+            # 
+            # plot(xstore[1,],ystore[1,],type="l",xlim=c(0,1.2),ylim=c(0,quantile(ystore,0.97)),xlab="",ylab="Relative frequency",col=scols[1])
+            # if(length(slots)>1){
+            #   for(i in 2:length(slots)) lines(xstore[i,],ystore[i,],col=scols[i])
+            # }
+            # legend('topright',legend=namey[ind],text.col=scols[1:length(slots)],bty='n')
+            # mtext(paste("Data summary for",deparse(substitute(Data)),sep=" "),3,font=2,line=0.25,outer=T)
+            
+          
 # ---- Summary of MSE object ----
 # Summary of MSE object
 #
