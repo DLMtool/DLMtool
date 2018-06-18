@@ -122,7 +122,7 @@ DBSRA_plot <- function(runDBSRA, Data, TAC) {
 
 
 
-DD_plot <- function(x, runDD, Data, TAC) {
+DD_plot <- function(x, runDD, Data, TAC=NULL, Eff=NULL) {
   C_hist <- runDD$C_hist 
   I_hist <- runDD$I_hist
   E_hist <- runDD$E_hist
@@ -147,23 +147,36 @@ DD_plot <- function(x, runDD, Data, TAC) {
     abline(h=runDD$hcr[2], lty=3, col="gray")
   }
   
+
   plot(Year, E_hist, bty="n", type="l", lwd=2, ylab="Standardized Index", xlab='Year')
   lines(Year, I_hist, lwd=2, lty=2)
   legend("topleft", bty="n", lwd=2, lty=1:2, legend=c("Effort", "Index"))
   
-  
-  plot(Years, c(C_hist, NA), type='l', bty="n", 
-       xlab="Year", ylab=paste("Catch (", Data@Units, ")"), las=0, ylim=c(0, max(c(C_hist, TAC, Cpred_DD), na.rm=TRUE)), lwd=3)
-  matplot(Year, Cpred_DD, type="l", lwd=1, add=TRUE)
-  
-  if (all(round(TAC / mean(TAC, na.rm=TRUE),1) ==1 )) {
-    points(max(Years), mean(TAC, na.rm=TRUE), pch=16, cex=2, col="blue")
-    text(max(Years), mean(TAC, na.rm=TRUE), "TAC", pos=1, col="blue")
+  if (!is.null(TAC)) {
+    plot(Years, c(C_hist, NA), type='l', bty="n", 
+         xlab="Year", ylab=paste("Catch (", Data@Units, ")"), las=0, ylim=c(0, max(c(C_hist, TAC, Cpred_DD), na.rm=TRUE)), lwd=3)
+    matplot(Year, Cpred_DD, type="l", lwd=1, add=TRUE)
+    
+    
+    if (all(round(TAC / mean(TAC, na.rm=TRUE),1) ==1 )) {
+      points(max(Years), mean(TAC, na.rm=TRUE), pch=16, cex=2, col="blue")
+      text(max(Years), mean(TAC, na.rm=TRUE), "TAC", pos=1, col="blue")
+    } else {
+      boxplot(TAC, add=TRUE, at=max(Years), col="grey", width=1, outline=TRUE, 
+              axes=FALSE)
+      text(max(Years), quantile(TAC, 0.95, na.rm=TRUE), "TAC", pos=3, col="blue")
+    }
   } else {
-    boxplot(TAC, add=TRUE, at=max(Years), col="grey", width=1, outline=TRUE, 
-            axes=FALSE)
-    text(max(Years), quantile(TAC, 0.95, na.rm=TRUE), "TAC", pos=3, col="blue")
+    Years <- c(Data@LHYear,Data@LHYear+1)
+    Eff <- c(Data@MPeff[x], Eff)
+    plot(Years, Eff, type="b", ylab="Effort", axes=FALSE)
+    axis(side=1, at=Years)
+    axis(side=2)
+    abline(v=Years[1], col="lightgray", lty=2)
+    text(Years[1], Eff[1], pos=4, "Previous Year")
+    text(Years[2], Eff[2], pos=2, "Next Year")
   }
+
 }
 
 
@@ -200,6 +213,32 @@ DynF_plot <- function(C_dat, C_hist, TAC, yrsmth, B_dat, B_hist, Data, SP_hist,
   
   boxplot(data.frame(SP_Gradient=G_new, Fmsy=Frat, updatedF=newF), bty="l")
 }
+
+EtargetLopt_plot <- function(x, rec, Data, ind,Lopt) {
+  op <- par(no.readonly = TRUE)
+  on.exit(par(op))
+  par(mfrow=c(1,2))
+  
+  ylim <- range(c(Data@ML[ind], Lopt))
+  plot(Data@Year[ind], Data@ML[ind], xlab="Year", ylab="Mean Length", bty="l",
+       pch=16, ylim=ylim)
+  abline(h=mean(Data@ML[ind], na.rm=TRUE), lty=2)
+  text(mean(Data@Year[ind]), mean(Data@ML[ind]), pos=3, "Mean")
+  
+  abline(h=Lopt, lty=3)
+  text(mean(Data@Year[ind]), Lopt, pos=3, "Lopt", xpd=NA)
+  
+  
+  Years <- c(Data@LHYear,Data@LHYear+1)
+  Eff <- c(Data@MPeff[x], rec@Effort)
+  plot(Years, Eff, type="b", ylab="Effort", axes=FALSE)
+  axis(side=1, at=Years)
+  axis(side=2)
+  abline(v=Years[1], col="lightgray", lty=2)
+  text(Years[1], Eff[1], pos=4, "Previous Year")
+  text(Years[2], Eff[2], pos=2, "Next Year")
+}
+
 
 Fadapt_plot <- DynF_plot
 
@@ -508,6 +547,59 @@ YPR_plot <- function(runYPR, Data,reps) {
 }
 
 
+size_lim_plot <- function(x, Data, Rec) {
+  Linf <- Data@vbLinf[x]
+  Lens <- 1:Linf
+  
+  LR5 <- Rec@LR5
+  LFR <- Rec@LFR 
+  Rmaxlen <- Rec@Rmaxlen
+  if (length(Rmaxlen)<1) Rmaxlen <-1
+  HS <- Rec@HS 
+  L5 <- Rec@L5
+  LFS <- Rec@LFS 
+  Vmaxlen <- Rec@Vmaxlen
+  if (length(Vmaxlen)<1) Vmaxlen <-1
+  
+  Ret <- Sel <- rep(NA, length(Lens))
+  if (length(LR5)>0 && length(LFR)>0) {
+    srs <- (Linf - LFR) / ((-log(Rmaxlen,2))^0.5)
+    srs[!is.finite(srs)] <- Inf
+    sls <- (LFR - LR5) /((-log(0.05,2))^0.5)
+    Ret <- getsel(1,lens=Lens, lfs=LFR, sls, srs)
+  }
+  if (length(HS)>0) Ret[Lens>=HS] <- 0 
+  
+  if (length(L5)>0 && length(LFS)>0) {
+    srs <- (Linf - LFS) / ((-log(Vmaxlen,2))^0.5)
+    srs[!is.finite(srs)] <- Inf
+    sls <- (LFS - L5) /((-log(0.05,2))^0.5)
+    Sel <- getsel(1,lens=Lens, lfs=LFS, sls, srs)
+  }
+  
+  df <- data.frame(Lens=rep(Lens,2),Val=c(Ret, Sel), 
+                   Var=rep(c("Retention", "Selectivity"), each=length(Lens)))
+  
+  p1 <- ggplot2::ggplot(data=subset(df, !is.na(Val)), ggplot2::aes(x=Lens, y=Val, color=Var)) + 
+    ggplot2::geom_line(size=1.2) +
+    ggplot2::theme_classic() +
+    ggplot2::labs(x="Length", y="Proportion", color="")
+  print(p1)
+  
+}
+
+curE_plot <- function(x, rec, Data) {
+  
+  Years <- c(Data@LHYear,Data@LHYear+1)
+  Eff <- c(Data@MPeff[x], rec@Effort)
+  plot(Years, Eff, type="b", ylab="Effort", axes=FALSE)
+  axis(side=1, at=Years)
+  axis(side=2)
+  abline(v=Years[1], col="lightgray", lty=2)
+  text(Years[1], Eff[1], pos=4, "Previous Year")
+  text(Years[2], Eff[2], pos=2, "Next Year")
+  
+}
 
 
 

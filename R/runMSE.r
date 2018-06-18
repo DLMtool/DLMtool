@@ -1360,6 +1360,7 @@ cparscheck<-function(cpars){
   dims<-sapply(cpars,dim1check)
   
   dims <- dims[!grepl("CAL_bins", names(dims))]  # ignore CAL_bins
+  dims <- dims[!grepl("maxage", names(dims))]  # ignore CAL_bins
   if (length(dims) > 0) {
     if(length(unique(dims))!=1){
       print(dims)

@@ -23,8 +23,8 @@ An object of class \code{\link[=Rec-class]{Rec}} with the TAE slot(s) populated
 }
 \description{
 Constant fishing effort set at final year of historical simulations subject
-to changes in catchability determined by OM@qinc and interannual variability
-in catchability determined by OM@qcv. This MP is intended to represent a
+to changes in catchability determined by \code{OM@qinc} and interannual variability
+in catchability determined by \code{OM@qcv}. This MP is intended to represent a
 'status quo' management approach.
 }
 \section{Functions}{

@@ -31,26 +31,41 @@ length of fish caught: minlen=Lopt*(0.7+buffer).}
 An object of class \code{\link[=Rec-class]{Rec}} with the SL slot(s) populated
 }
 \description{
-Examples of the implementation of input controls in the DLM toolkit. See details below.
+A set of size-selectivity MPs that adjust the retention curve of the fishery.
+}
+\details{
+The the \code{LF5} and \code{LFR} slots in the \code{Rec} object are modified to change the
+retention curve (length at 5 per cent and smallest length at full retention
+respectively). A upper harvest slot limit can be set using the \code{Rec@HS} slot.
+The underlying selectivity pattern of the fishing gear does
+not change, and therefore the performance of these methods depends on the
+degree of discard mortality on fish that are selected by the gear but not
+retained by the fishery (\code{Stock@Fdisc}).
+
+The level of discard mortality can be  modified using the \code{Rec@Fdisc} slot
+which over-rides the discard mortality set in the operating model.
+
+The selectivity pattern can be adjusted by creating MPs that modify the selection
+parameters (\code{Rec@L5}, \code{Rec@LFS} and \code{Rec@Vmaxlen}).
 }
 \section{Functions}{
 \itemize{
-\item \code{matlenlim}: A data-limited method in which fishing retention-at-length
-is set equivalent to the maturity curve.
+\item \code{matlenlim}: Fishing retention-at-length is set equivalent to the maturity curve.
 
-\item \code{matlenlim2}: Selectivity-at-length is set slightly higher (110\%)
-than the maturity-at-length.
+\item \code{matlenlim2}: Fishing retention-at-length is set slightly higher (110\%)
+than the length-at-maturity
 
-\item \code{minlenLopt1}: This input control sets the minimum length of fish
-caught to a fraction of the length that maximises the biomass, Lopt. The aim
+\item \code{minlenLopt1}: The minimum length of retention is set to a fraction of
+the length that maximises the biomass, Lopt. The aim
 of this simple MP is restrict the catch of small fish to rebuild
 the stock biomass towards the optimal length, Lopt, expressed in terms of
-the growth parameters Lopt=b/(M/k+b) (Hordyk et al. 2015) (Author: HF Geromont)
+the growth parameters Lopt=b/(M/k+b) (Hordyk et al. 2015)
 
-\item \code{slotlim}: Selectivity-at-length is set using a slot limit; that is, a minimum and
-maximum legal length.  The maximum limit is set here, quite arbitrarily, as
-the 75th percentile between the new minimum legal length and the estimated
-asymptotic length Linf.
+\item \code{slotlim}: Retention-at-length is set using a upper harvest slot limit;
+that is, a minimum and maximum legal length. The maximum limit is set here,
+completely arbitrarily, as the 75th percentile between the new minimum legal
+length and the estimated asymptotic length Linf. This MP has been included
+to demonstrate an upper harvest slot limit.
 }}
 
 \section{Required Data}{
@@ -95,4 +110,6 @@ ICES Journal of Marine Science, doi:10.1093/icesjms/fst235.
 }
 \author{
 T. Carruthers & A. Hordyk
+
+HF Geromont
 }

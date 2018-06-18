@@ -23,8 +23,20 @@ A example mixed control MP that uses the average catch output control MP togethe
 minimul size limit set at the size of maturity.
 }
 \details{
-This MP has been included for demonstration purposes of a mixed control MP
-Included demonstration purposes of a mixed control MP
+The average catch method is very simple. The mean historical catch is calculated and used to set
+a constant catch limit (TAC). If \code{reps} > 1 then the \code{reps} samples are drawn from a log-normal
+distribution with mean \code{TAC} and standard deviation (in log-space) of 0.2.
+
+For completeness, the TAC is calculated by:
+
+\deqn{\textrm{TAC} =\frac{\sum_{y=1}^{\textrm{n}}{C_y}}{\textrm{n}}}
+
+where \eqn{\textrm{TAC}} is the the mean catch recommendation, \eqn{n} is the number of historical years, and
+\eqn{C_y}  is the catch in historical year \eqn{y}.
+
+The size of retention is set to the length of maturity.
+
+This MP has been included for demonstration purposes of a mixed control MP.
 }
 \section{Required Data}{
 

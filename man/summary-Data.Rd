@@ -8,7 +8,7 @@
 \S4method{summary}{Data}(object)
 }
 \arguments{
-\item{object}{object of class Data}
+\item{object}{An object of class Data}
 }
 \description{
 Summary of Data object

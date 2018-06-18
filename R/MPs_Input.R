@@ -2,19 +2,27 @@
 
 #' Size limit management procedures
 #' 
-#' Examples of the implementation of input controls in the DLM toolkit. See details below.
+#' A set of size-selectivity MPs that adjust the retention curve of the fishery.
+#' 
+#' The the `LF5` and `LFR` slots in the `Rec` object are modified to change the 
+#' retention curve (length at 5 per cent and smallest length at full retention 
+#' respectively). A upper harvest slot limit can be set using the `Rec@HS` slot.
+#' The underlying selectivity pattern of the fishing gear does 
+#' not change, and therefore the performance of these methods depends on the 
+#' degree of discard mortality on fish that are selected by the gear but not 
+#' retained by the fishery (`Stock@Fdisc`). 
+#' 
+#' The level of discard mortality can be  modified using the `Rec@Fdisc` slot 
+#' which over-rides the discard mortality set in the operating model. 
+#'  
+#' The selectivity pattern can be adjusted by creating MPs that modify the selection
+#' parameters (`Rec@L5`, `Rec@LFS` and `Rec@Vmaxlen`). 
 #' 
 #' @templateVar mp matlenlim
 #' @template MPtemplate
 #' @template MPuses
 #' @author T. Carruthers & A. Hordyk
-#' @references
-#' Hordyk, A., Ono, K., Sainsbury, K., Loneragan, N., and J.
-#' Prince. 2015. Some explorations of the life history ratios to describe
-#' length composition, spawning-per-recruit, and the spawning potential ratio
-#' ICES Journal of Marine Science, doi:10.1093/icesjms/fst235.
-#' @describeIn matlenlim A data-limited method in which fishing retention-at-length
-#' is set equivalent to the maturity curve.
+#' @describeIn matlenlim Fishing retention-at-length is set equivalent to the maturity curve.
 #' @examples 
 #' matlenlim(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 #' @export 
@@ -23,14 +31,14 @@ matlenlim <- function(x, Data, reps, plot=FALSE) {
   rec <- new("Rec") # create recommendation object
   rec@LFR <- Data@L50[x] # new length at full retention   
   rec@LR5  <- rec@LFR * 0.95 # new length at 5% retention   
-  
+  if(plot) size_lim_plot(x, Data, rec)
   # other slots aren't specified so remain unchanged
   rec
 }
 class(matlenlim) <- "MP"
 
-#' @describeIn matlenlim Selectivity-at-length is set slightly higher (110\%) 
-#' than the maturity-at-length.
+#' @describeIn matlenlim Fishing retention-at-length is set slightly higher (110\%) 
+#' than the length-at-maturity
 #' 
 #' @templateVar mp matlenlim2
 #' @template MPuses
@@ -45,9 +53,11 @@ matlenlim2 <- function(x, Data, reps, plot=FALSE) {
   rec@LFR <-  1.1 * Data@L50[x]  # new length at full retention   
   rec@LR5 <-  0.95 * rec@LFR # new length at 5% retention
   # other slots aren't specified so remain unchanged
+  if(plot) size_lim_plot(x, Data, rec)
   return(rec)
 }
 class(matlenlim2) <- "MP"
+
 
 
 #' @templateVar mp minlenLopt1
@@ -55,12 +65,18 @@ class(matlenlim2) <- "MP"
 #' @param buffer Parameter controlling the fraction of Lopt to set the minimum
 #' length of fish caught: minlen=Lopt*(0.7+buffer).
 #' 
-#' @describeIn matlenlim This input control sets the minimum length of fish 
-#' caught to a fraction of the length that maximises the biomass, Lopt. The aim 
+#' @describeIn matlenlim The minimum length of retention is set to a fraction of 
+#' the length that maximises the biomass, Lopt. The aim 
 #' of this simple MP is restrict the catch of small fish to rebuild
 #' the stock biomass towards the optimal length, Lopt, expressed in terms of
-#' the growth parameters Lopt=b/(M/k+b) (Hordyk et al. 2015) (Author: HF Geromont)
+#' the growth parameters Lopt=b/(M/k+b) (Hordyk et al. 2015) 
+#' @author HF Geromont
 #' @export 
+#' @references
+#' Hordyk, A., Ono, K., Sainsbury, K., Loneragan, N., and J.
+#' Prince. 2015. Some explorations of the life history ratios to describe
+#' length composition, spawning-per-recruit, and the spawning potential ratio
+#' ICES Journal of Marine Science, doi:10.1093/icesjms/fst235.
 #' @examples 
 #' minlenLopt1(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 minlenLopt1 <- function(x, Data, reps, plot=FALSE, buffer = 0.1) {
@@ -74,6 +90,7 @@ minlenLopt1 <- function(x, Data, reps, plot=FALSE, buffer = 0.1) {
   rec <- new("Rec") # create recommendation object
   rec@LFR <- Lopt * (0.7 + buffer) # Lopt too precautionary, so set it to % below
   rec@LR5 <- rec@LFR * 0.9
+  if(plot) size_lim_plot(x, Data, rec)
   rec
   
 }
@@ -82,10 +99,11 @@ class(minlenLopt1) <- "MP"
 
 #' @templateVar mp slotlim
 #' @template MPuses
-#' @describeIn matlenlim Selectivity-at-length is set using a slot limit; that is, a minimum and
-#' maximum legal length.  The maximum limit is set here, quite arbitrarily, as
-#' the 75th percentile between the new minimum legal length and the estimated
-#' asymptotic length Linf.
+#' @describeIn matlenlim Retention-at-length is set using a upper harvest slot limit; 
+#' that is, a minimum and maximum legal length. The maximum limit is set here, 
+#' completely arbitrarily, as the 75th percentile between the new minimum legal 
+#' length and the estimated asymptotic length Linf. This MP has been included
+#' to demonstrate an upper harvest slot limit.
 #' @export 
 #' @examples 
 #' slotlim(1, DLMtool::Atlantic_mackerel, plot=TRUE)
@@ -97,7 +115,7 @@ slotlim <- function(x, Data, reps, plot=FALSE) {
   rec@LFR <- 1.1 * Data@L50[x]
   rec@LR5 <- 0.95 * rec@LFR 
   rec@HS <- as.numeric(quantile(c(rec@LFR , Data@vbLinf[x]), 0.75))
-  
+  if(plot) size_lim_plot(x, Data, rec)
   rec
 }
 class(slotlim) <- "MP"
@@ -108,7 +126,7 @@ class(slotlim) <- "MP"
 
 #' Spatial closure and allocation management procedures
 #' 
-#' Management procedures which close areas to fishing and reallocate 
+#' Management procedures that close Area 1 to fishing and reallocate 
 #' fishing effort spatially.
 #' 
 #' @describeIn MRreal A spatial control that prevents fishing in area 1 and reallocates this
@@ -129,7 +147,8 @@ MRreal <- function(x, Data, reps, plot=FALSE) {
   rec@Allocate <- 1
   rec@Spatial <- c(0, rep(1, Data@nareas-1))
   
-  # other slots aren't specified so remain unchanged
+  if (plot)   barplot(rec@Spatial, xlab="Area", ylab="Fraction Open", ylim=c(0,1),
+                      names=1:Data@nareas)
   return(rec)
 }
 class(MRreal) <- "MP"
@@ -148,10 +167,12 @@ MRnoreal <- function(x, Data, reps, plot=FALSE) {
   rec@Allocate <- 0
   rec@Spatial <- c(0, rep(1, Data@nareas-1))
   
-  # other slots aren't specified so remain unchanged
+  if (plot)   barplot(rec@Spatial, xlab="Area", ylab="Fraction Open", ylim=c(0,1),
+                      names=1:Data@nareas)
   return(rec)
 }
 class(MRnoreal) <- "MP"
+
 
 
 
@@ -160,8 +181,8 @@ class(MRnoreal) <- "MP"
 #' Fishing at current effort levels
 #' 
 #' Constant fishing effort set at final year of historical simulations subject
-#' to changes in catchability determined by OM@@qinc and interannual variability
-#' in catchability determined by OM@@qcv. This MP is intended to represent a
+#' to changes in catchability determined by `OM@qinc` and interannual variability
+#' in catchability determined by `OM@qcv`. This MP is intended to represent a
 #' 'status quo' management approach.
 #' 
 #' @templateVar mp curE 
@@ -177,6 +198,7 @@ curE <- function(x, Data, reps, plot=FALSE) {
   # current effort
   rec <- new("Rec") # create recommendation object
   rec@Effort <- 1 * Data@MPeff[x] 
+  if (plot) curE_plot(x, rec, Data)
   rec
 }
 class(curE) <- "MP"
@@ -191,10 +213,10 @@ curE75 <- function(x, Data, reps, plot=FALSE) {
   # 75% current effort
   rec <- new("Rec") # create recommendation object
   rec@Effort <- 0.75 * Data@MPeff[x]
+  if (plot) curE_plot(x, rec, Data)
   rec
 }
 class(curE75) <- "MP"
-
 
 
 #### Delay-Difference Effort MPs ####
@@ -234,6 +256,8 @@ DDe <- function(x, Data, reps = 100, plot=FALSE) {
   Eff <- runDD$eff 
   rec <- new("Rec")
   rec@Effort <- max(0.01, Data@MPeff[x] * Eff)
+  
+  if (plot) DD_plot(x, runDD, Data, Eff=rec@Effort)
   rec 
 }
 class(DDe) <- "MP"
@@ -254,6 +278,7 @@ DDes <- function(x, Data, reps = 100, plot=FALSE, LB = 0.9, UB = 1.1) {
   
   rec <- new("Rec")
   rec@Effort <- max(0.01, Data@MPeff[x] * Eff)
+  if (plot) DD_plot(x, runDD, Data, Eff=rec@Effort)
   rec
   
 }
@@ -265,11 +290,12 @@ class(DDes) <- "MP"
 #' @export 
 #' @examples 
 #' DDe75(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
-DDe75 <- function(x, Data, reps = 100) {
+DDe75 <- function(x, Data, reps = 100, plot=FALSE) {
   runDD <- DD_(x, Data, reps)
   Eff <- runDD$eff * 0.75
   rec <- new("Rec")
   rec@Effort <- max(0.01, Data@MPeff[x] * Eff)
+  if (plot) DD_plot(x, runDD, Data, Eff=rec@Effort)
   rec 
 }
 class(DDe75) <- "MP"
@@ -309,6 +335,7 @@ DTe40 <- function(x, Data, reps = 100, plot=FALSE, alpha = 0.4, LB = 0.9, UB = 1
   
   rec <- new("Rec")
   rec@Effort <- max(0.01, Data@MPeff[x] * fac)
+  if (plot) curE_plot(x, rec, Data)
   rec
   
 }
@@ -325,6 +352,7 @@ DTe50 <- function(x, Data, reps = 100, plot=FALSE, alpha = 0.5, LB = 0.9, UB = 1
   
   rec <- new("Rec")
   rec@Effort <- max(0.01, Data@MPeff[x] * fac)
+  if (plot) curE_plot(x, rec, Data)
   rec
   
 }
@@ -374,13 +402,13 @@ EtargetLopt <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 3, buffer = 0.
   w <- 0.5
   eff <- (1 - buffer) * (w + (1 - w) * ratio)
   rec@Effort <-  max(0.01, Data@MPeff[x] * eff)
+  if (plot) EtargetLopt_plot(x, rec, Data, ind, Lopt)
   rec 
 }
 class(EtargetLopt) <- "MP"
 
 
-
-
+## Add plots #####
 
 #' Index Target Effort-Based 
 #' 
@@ -421,6 +449,7 @@ ITe5 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, mc = 0.05) {
   rec 
 }
 class(ITe5) <- "MP"
+
 
 
 

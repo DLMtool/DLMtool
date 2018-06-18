@@ -22,9 +22,13 @@ Turing <- function(OM, Data, wait=TRUE) {
     CAL_bins <- Data@CAL_bins
     OM@cpars$CAL_bins <- CAL_bins
   }
-  OM@nsim <- 15
+  # make sure maxage is the same
+  OM@cpars$maxage <- Data@MaxAge
+  
+  nsamp <- 5
+  OM@nsim <- nsamp +2 
   SimDat <- runMSE(OM, Hist=TRUE, silent = TRUE)$Data
-  if(!all(SimDat@CAL_bins == Data@CAL_bins)) stop("CAL_bins not correct length")
+  # if(!all(SimDat@CAL_bins == Data@CAL_bins)) stop("CAL_bins not correct length")
   
   YrInd <- 1:OM@nyears
   
@@ -36,9 +40,7 @@ Turing <- function(OM, Data, wait=TRUE) {
   } else if (length(Data@Year) > OM@nyears) {
     stop("OM@nyears is < length(Data@Year). Should OM@nyears be increased to match Data?", call. = FALSE) 
   }
-  
-  nsamp <- 5
-  set.seed(runif(1,1, 10001))
+  set.seed(runif(1, 1, 10001))
   samps <- sample(1:OM@nsim, nsamp)
   message("Randomly sampling 5 iterations")
   
@@ -86,10 +88,13 @@ plotCAAdata <- function(Ylab="Count", slot="CAA", message="Catch-at-Age Data",
   realDat <- realDat[(nyr-3):nyr,]
   sampDat <- sampDat[,(nyr-3):nyr,]
   
-  # drop any without info?
-  dim(realDat)
-  
-  
+  zeros <- dim(sampDat)[3]-dim(realDat)[2]
+  if (zeros>0) {
+    zeromat <- matrix(0, nrow=nrow(realDat), ncol=zeros)
+    message('The number of columns in `CAA` is less than `Data@MaxAge`. Filling with 0s')
+    realDat <- cbind(realDat, zeromat)
+  }
+ 
   if (!all(is.na(realDat))) {
     message("Plotting: ", message)
    
@@ -187,11 +192,12 @@ plotTSdata <- function(Ylab, slot, message, Data, SimDat, samps, YrInd,
     rownames(CombDat) <- rep("", nrow(CombDat))
     tCombDat <- as.data.frame(t(CombDat))
     df <- tidyr::gather(tCombDat, factor_key=TRUE)
-    df$Year <- rep(YrInd3, nrow(CombDat))
+    df$Year <- factor(rep(YrInd3, nrow(CombDat)))
     
-    P1 <- ggplot2::ggplot(df, ggplot2::aes(x=Year, y=value)) + ggplot2::geom_line(size=1.2) +
+    P1 <- ggplot2::ggplot(df, ggplot2::aes(x=Year, y=value, group=1)) + ggplot2::geom_line(size=1.2) +
       ggplot2::facet_wrap(~key, nrow=2) + ggplot2::theme_classic() +
-      ggplot2::labs(x="Year", y=Ylab) + ggplot2::ggtitle(message)
+      ggplot2::labs(x="Year", y=Ylab) + ggplot2::ggtitle(message) +
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) 
     
     
     df2 <- df %>% dplyr::filter(key == paste0("V", realInd))
@@ -206,9 +212,6 @@ plotTSdata <- function(Ylab, slot, message, Data, SimDat, samps, YrInd,
   }
 }
   
-  
- 
- 
-  
+
   
   

@@ -22,7 +22,7 @@ MRnoreal(x, Data, reps, plot = FALSE)
 An object of class \code{\link[=Rec-class]{Rec}} with the Spatial slot(s) populated
 }
 \description{
-Management procedures which close areas to fishing and reallocate
+Management procedures that close Area 1 to fishing and reallocate
 fishing effort spatially.
 }
 \section{Functions}{

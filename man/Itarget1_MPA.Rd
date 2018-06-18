@@ -33,7 +33,23 @@ A example mixed control MP that uses the Itarget1 output control MP together wit
 spatial closure.
 }
 \details{
-This MP has been included for demonstration purposes of a mixed control MP
+The TAC is calculated as:
+If  \eqn{I_\textrm{recent} \geq I_0}:
+\deqn{\textrm{TAC}= 0.5 \textrm{TAC}^* \left[1+\left(\frac{I_\textrm{recent} - I_0}{I_\textrm{target} - I_0}\right)\right]}
+
+else:
+\deqn{\textrm{TAC}= 0.5 \textrm{TAC}^* \left[\frac{I_\textrm{recent}}{I_0}^2\right]}
+
+where \eqn{I_0} is \eqn{0.8 I_{\textrm{ave}}} (the average index over the 2 x \code{yrsmth} years prior to the projection period),
+\eqn{I_\textrm{recent}} is the average index over the past \code{yrsmth} years, and
+\eqn{I_\textrm{target}} is \code{Imulti} times \eqn{I_{\textrm{ave}}},
+and \eqn{\textrm{TAC}^*} is:
+\deqn{(1-x)C}
+where \eqn{x} is argument \code{xx} and C is the average catch over the last 5 years of the historical period.
+
+This mixed control MP also closes Area 1 to fishing.
+
+This MP has been included for demonstration purposes of a mixed control MP.
 }
 \section{Required Data}{
 

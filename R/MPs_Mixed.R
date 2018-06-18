@@ -6,7 +6,23 @@
 #' A example mixed control MP that uses the Itarget1 output control MP together with a 
 #' spatial closure. 
 #' 
-#' This MP has been included for demonstration purposes of a mixed control MP
+#' The TAC is calculated as:
+#' If  \eqn{I_\textrm{recent} \geq I_0}:
+#' \deqn{\textrm{TAC}= 0.5 \textrm{TAC}^* \left[1+\left(\frac{I_\textrm{recent} - I_0}{I_\textrm{target} - I_0}\right)\right]}
+#' 
+#' else:
+#' \deqn{\textrm{TAC}= 0.5 \textrm{TAC}^* \left[\frac{I_\textrm{recent}}{I_0}^2\right]}
+#' 
+#' where \eqn{I_0} is \eqn{0.8 I_{\textrm{ave}}} (the average index over the 2 x `yrsmth` years prior to the projection period), 
+#' \eqn{I_\textrm{recent}} is the average index over the past `yrsmth` years, and 
+#' \eqn{I_\textrm{target}} is `Imulti` times \eqn{I_{\textrm{ave}}}, 
+#' and \eqn{\textrm{TAC}^*} is:
+#' \deqn{(1-x)C}
+#' where \eqn{x} is argument `xx` and C is the average catch over the last 5 years of the historical period.
+#' 
+#' This mixed control MP also closes Area 1 to fishing.
+#' 
+#' This MP has been included for demonstration purposes of a mixed control MP.
 #' 
 #' @templateVar mp Itarget1_MPA
 #' @template MPtemplate
@@ -38,8 +54,20 @@ class(Itarget1_MPA) <- "MP"
 #' A example mixed control MP that uses the average catch output control MP together with a 
 #' minimul size limit set at the size of maturity. 
 #' 
-#' This MP has been included for demonstration purposes of a mixed control MP
-#' Included demonstration purposes of a mixed control MP
+#' The average catch method is very simple. The mean historical catch is calculated and used to set 
+#' a constant catch limit (TAC). If `reps` > 1 then the `reps` samples are drawn from a log-normal
+#' distribution with mean `TAC` and standard deviation (in log-space) of 0.2.    
+#' 
+#' For completeness, the TAC is calculated by:
+#' 
+#' \deqn{\textrm{TAC} =\frac{\sum_{y=1}^{\textrm{n}}{C_y}}{\textrm{n}}}
+#' 
+#' where \eqn{\textrm{TAC}} is the the mean catch recommendation, \eqn{n} is the number of historical years, and
+#' \eqn{C_y}  is the catch in historical year \eqn{y}.
+#' 
+#' The size of retention is set to the length of maturity.   
+#' 
+#' This MP has been included for demonstration purposes of a mixed control MP.
 #'
 #' @templateVar mp AvC_MLL
 #' @template MPtemplate
@@ -81,10 +109,15 @@ class(AvC_MLL) <- "MP"
 
 #' Create an MP that averages the results of multiple MPs
 #'
+#' This function takes a character string of MP names and returns 
+#' a function of class`MP` that calculates the average of the management recommendations
+#' from the individual MPs. 
+#' 
 #' @param MPs A vector of MPs names 
 #'
-#' @return A function of class MP 
+#' @return A function of class `MP` 
 #' @export
+#' @author A. Hordyk
 #'
 #' @examples
 #' \dontrun{

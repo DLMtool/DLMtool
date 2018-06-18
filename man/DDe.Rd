@@ -10,7 +10,7 @@ DDe(x, Data, reps = 100, plot = FALSE)
 
 DDes(x, Data, reps = 100, plot = FALSE, LB = 0.9, UB = 1.1)
 
-DDe75(x, Data, reps = 100)
+DDe75(x, Data, reps = 100, plot = FALSE)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}

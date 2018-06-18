@@ -10,10 +10,12 @@ makeMeanMP(MPs)
 \item{MPs}{A vector of MPs names}
 }
 \value{
-A function of class MP
+A function of class \code{MP}
 }
 \description{
-Create an MP that averages the results of multiple MPs
+This function takes a character string of MP names and returns
+a function of class\code{MP} that calculates the average of the management recommendations
+from the individual MPs.
 }
 \examples{
 \dontrun{
@@ -27,4 +29,7 @@ matlenlim(1, Data)
 matlenlim2(1, Data)
 MeanMP(1, Data)
 }
+}
+\author{
+A. Hordyk
 }
