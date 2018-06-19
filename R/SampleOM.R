@@ -80,6 +80,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       Mexp <- rep(0, nsim) # assume constant M-at-age/size
     }
   } 
+  if (all(Mexp < tiny)) Mexp <- rep(0, nsim)
   
   if (!exists("M", inherits=FALSE)) M <- Mage[,maxage]
   
