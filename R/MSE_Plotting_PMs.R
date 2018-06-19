@@ -5,7 +5,10 @@
 #'
 #' @param MSEobj An object of class `MSE`
 #' @param ... Names of Performance Metrics (PMs), or other arguments to `TradePlot`. First PM is recycled if number of PMs is not even
-#' @param lims A numeric vector of acceptable risk/minimum probability thresholds. Recycled if not equal to number of PMs.
+#' @param Lims A numeric vector of acceptable risk/minimum probability thresholds. Recycled if not equal to number of PMs.
+#' @param Title Optional title for each plot. Character vector of `length(PMs)`/2. Recycled.
+#' @param Satisficed Logical. Show only the MPs that meet minimum acceptable thresholds (specified in `Lims`)
+#' @param Show Logical. Show the Results table and plots?
 #' @param point.size Numeric. Size of the MP points
 #' @param lab.size Numeric. Size of MP label
 #' @param axis.title.size Numeric. Size of axis titles
@@ -17,11 +20,17 @@
 #' @param PMlist Optional list of PM names. Overrides any supplied in ... above
 #' @param Refs An optional named list (matching the PM names) with numeric values to override the default `Ref` values. See examples.
 #' @param Yrs An optional named list (matching the PM names) with numeric values to override the default `Yrs` values. See examples.
+
+
 #' @author A. Hordyk
-#' @return A summary table of MP performance
+#' @return Invisibily returns a list with summary table of MP performance and 
+#' the ggplot objects for the plots
 #' @export
 #'
-TradePlot <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8), 
+TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8), 
+                      Title=NULL,
+                      Satisficed=FALSE,
+                      Show=TRUE,
                       point.size=2,
                       lab.size=4,
                       axis.title.size=12,
@@ -54,12 +63,12 @@ TradePlot <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8),
     PMlist <- c(PMlist, PMlist[1])
     nPMs <- length(PMlist)
   }
-  if (length(lims) < nPMs) {
+  if (length(Lims) < nPMs) {
     message("Recycling limits")
-    lims <- rep(lims,10)[1:nPMs]
+    Lims <- rep(Lims,10)[1:nPMs]
   }
-  if (length(lims) > nPMs) {
-    lims <- lims[1:nPMs]
+  if (length(Lims) > nPMs) {
+    Lims <- Lims[1:nPMs]
   }
   
   runPM <- vector("list", length(PMlist))
@@ -93,18 +102,20 @@ TradePlot <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8),
   xInd <- seq(1, by=2, length.out=nplots)
   yInd <- xInd + 1
   
+  if (!(is.null(Title))) Title <- rep(Title, nplots)[1:nplots]
+    
   for (pp in 1:nplots) {
     yPM <- PMlist[yInd[pp]]
     yvals <- runPM[[match(yPM, PMlist)]]@Mean
     ycap <-  runPM[[match(yPM, PMlist)]]@Caption
     yname <-  runPM[[match(yPM, PMlist)]]@Name
-    yline <- lims[match(yPM, PMlist)]
+    yline <- Lims[match(yPM, PMlist)]
     
     xPM <- PMlist[xInd[pp]]
     xvals <- runPM[[match(xPM, PMlist)]]@Mean
     xcap <-  runPM[[match(xPM, PMlist)]]@Caption
     xname <-  runPM[[match(xPM, PMlist)]]@Name
-    xline <- lims[match(xPM, PMlist)]
+    xline <- Lims[match(xPM, PMlist)]
     
     xlim <- c(0, max(max(xvals, 1)))
     ylim <- c(0, max(max(yvals, 1)))
@@ -121,13 +132,22 @@ TradePlot <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8),
     df$fontface[!df$pass] <- "italic"
     df$fontface <- factor(df$fontface)
     listout[[pp]] <- df
-    plots[[pp]] <- ggplot2::ggplot() + 
-      ggplot2::geom_rect(data=xrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill=fill, alpha=alpha) +
-      ggplot2::geom_rect(data=yrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill=fill, alpha=alpha)
     
-    plots[[pp]] <-   plots[[pp]] + 
-      ggplot2::geom_point(data=df, ggplot2::aes(x, y, shape=Class, color=Class), size=point.size) +
-      ggrepel::geom_text_repel(data=df, ggplot2::aes(x, y, color=Class, label=label, fontface = fontface), show.legend=FALSE, size=lab.size) + 
+    if (Satisficed) {
+     xlim <- c(xline, 1)
+     ylim <- c(yline, 1)
+     plots[[pp]] <- ggplot2::ggplot() 
+    } else {
+      plots[[pp]] <- ggplot2::ggplot() + 
+        ggplot2::geom_rect(data=xrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill=fill, alpha=alpha) +
+        ggplot2::geom_rect(data=yrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill=fill, alpha=alpha)
+    }
+      
+    plots[[pp]] <-  plots[[pp]] + 
+      ggplot2::geom_point(data=df, ggplot2::aes(x, y, shape=Class, color=Class), size=point.size, na.rm=TRUE) +
+      ggrepel::geom_text_repel(data=df, ggplot2::aes(x, y, color=Class, label=label, 
+                                                     fontface = fontface), 
+                               show.legend=FALSE, size=lab.size, na.rm=TRUE) + 
       ggplot2::xlab(xcap) + ggplot2::ylab(ycap) +
       ggplot2::xlim(xlim) + ggplot2::ylim(ylim) +
       ggplot2::theme_classic() +
@@ -137,16 +157,26 @@ TradePlot <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8),
                      legend.title = ggplot2::element_text(size=legend.title.size)) + 
       ggplot2::labs(shape= "MP Type", color="MP Type")
     
+    if (!is.null(Title)) 
+      plots[[pp]] <-  plots[[pp]] + ggplot2::labs(title=Title[pp])
   }
+
   out <- do.call("rbind", listout)
   tab <- table(out$label, out$pass)
   passall <- rownames(tab)[tab[,ncol(tab)] == nplots]
-  tt <- summary(MSEobj, PMlist, silent=TRUE, Refs=Refs)
-  tt$Satisificed <- FALSE
-  tt$Satisificed[match(passall, tt$MP)] <- TRUE
+  Results <- summary(MSEobj, PMlist, silent=TRUE, Refs=Refs)
+  Results$Satisificed <- FALSE
+  Results$Satisificed[match(passall, Results$MP)] <- TRUE
+
   
-  grid_arrange_shared_legend(plots, n.col, n.row,  position = position)
-  tt
+  if (Show) {
+    join_plots(plots, n.col, n.row,  position = position)
+    print(Results)  
+  } 
+  
+  out <- list(Results=Results, Plots=plots)
+  
+  invisible(out)
   
 }
 
@@ -160,9 +190,9 @@ TradePlot <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8),
 #' }
 #' 
 #' @export 
-Tplot <- function(MSEobj, lims=c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...) {
-  if (class(lims)!="numeric") stop("Second argument must be numeric")
-  TradePlot(MSEobj, lims=lims, PMlist=list("POF", "LTY", "P100", "LTY", "P50", "LTY", "P10", "LTY"),  ...)
+Tplot <- function(MSEobj, Lims=c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...) {
+  if (class(Lims)!="numeric") stop("Second argument must be numeric")
+  TradePlot(MSEobj, Lims=Lims, PMlist=list("POF", "LTY", "P100", "LTY", "P50", "LTY", "P10", "LTY"),  ...)
 }
 
 #' @describeIn TradePlot A trade-off plot showing probabilities that:
@@ -172,9 +202,9 @@ Tplot <- function(MSEobj, lims=c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...) {
 #' }
 #' 
 #' @export
-Tplot2 <- function(MSEobj, lims=c(0.2, 0.2, 0.8, 0.8), ...) {
-  if (class(lims)!="numeric") stop("Second argument must be numeric")
-  TradePlot(MSEobj, lims=lims, PMlist=list("STY", "LTY", "P10", "AAVY"), ...)
+Tplot2 <- function(MSEobj, Lims=c(0.2, 0.2, 0.8, 0.8), ...) {
+  if (class(Lims)!="numeric") stop("Second argument must be numeric")
+  TradePlot(MSEobj, Lims=Lims, PMlist=list("STY", "LTY", "P10", "AAVY"), ...)
 }
 
 #' @describeIn TradePlot A trade-off plot showing probabilities that:
@@ -184,9 +214,9 @@ Tplot2 <- function(MSEobj, lims=c(0.2, 0.2, 0.8, 0.8), ...) {
 #' }
 #' 
 #' @export
-Tplot3 <- function(MSEobj, lims=c(0.5, 0.5, 0.8, 0.5), ...) {
-  if (class(lims)!="numeric") stop("Second argument must be numeric")
-  TradePlot(MSEobj, lims=lims, PMlist=list("POF", "LTY", "P50", "AAVY"), ...)
+Tplot3 <- function(MSEobj, Lims=c(0.5, 0.5, 0.8, 0.5), ...) {
+  if (class(Lims)!="numeric") stop("Second argument must be numeric")
+  TradePlot(MSEobj, Lims=Lims, PMlist=list("POF", "LTY", "P50", "AAVY"), ...)
 }
 
 

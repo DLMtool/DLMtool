@@ -58,7 +58,7 @@ runCOSEWIC<-function(OM){
 #' @export DFO_hist
 
 DFO_hist <- function(OM, panel= T,nsim=48) {
-  
+  if (class(OM) != "OM") stop("Object must be class `OM`", call.=FALSE)
   if(length(OM@cpars)>0){
     message("cpars slot is specified, OM@nsim used for historical simulations")
     nsim<-OM@nsim
@@ -94,7 +94,7 @@ DFO_hist <- function(OM, panel= T,nsim=48) {
 #' @author T. Carruthers
 #' @export DFO_proj
 DFO_proj <- function(MSEobj,maxplot=6) {
-  
+  if (class(MSEobj) != "MSE") stop("Object must be class `MSE`", call.=FALSE)
   maxplot<-min(maxplot,MSEobj@nMPs)
   nsim<-MSEobj@nsim
   nMPs<-MSEobj@nMPs
@@ -134,7 +134,7 @@ DFO_proj <- function(MSEobj,maxplot=6) {
 #' @author T. Carruthers
 #' @export DFO_plot
 DFO_plot<-function(MSEobj,zero_origin=T){
- 
+  if (class(MSEobj) != "MSE") stop("Object must be class `MSE`", call.=FALSE)
   op<-par(mai=c(1,1,0.02,0.02))
   yend <- max(MSEobj@proyears - 4, 1):MSEobj@proyears
   POF<-apply(MSEobj@F_FMSY[,,yend],2,mean,na.rm=T)
@@ -169,7 +169,7 @@ DFO_plot<-function(MSEobj,zero_origin=T){
 #' @author T. Carruthers
 #' @export DFO_bar
 DFO_bar<-function(MSEobj,yres=10){
-  
+  if (class(MSEobj) != "MSE") stop("Object must be class `MSE`", call.=FALSE)
   sections<-(0:floor(MSEobj@proyears/yres))*yres
   nsec<-length(sections)-1
   op<-par(mfrow=c(nsec,1),mai=c(0.05,0.7,0.02,0.02),omi=c(0.6,0.35,0.01,0.01))

@@ -31,7 +31,7 @@ fishing effort spatially.
 fishing effort to area 2 (or over other areas).
 
 \item \code{MRnoreal}: A spatial control that prevents fishing in area 1
-(e.g., A marine reserve) and does not reallocate this fishing effort to area 2.
+and does not reallocate this fishing effort to area 2.
 }}
 
 \section{Required Data}{

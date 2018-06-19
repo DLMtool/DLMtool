@@ -14,16 +14,15 @@ plot.MSE <- function(x, ...) {
 
 #' Plot several plots with a shared legend
 #'
-#' @param plots list of plots 
+#' @param plots list of plot objects of class `gg` or `ggplot`  
 #' @param ncol Optional number of columns
 #' @param nrow Optional number of rows
 #' @param position position of the legend ("bottom" or "right")
 #'
 #' @export
 #'
-#' @keywords internal
 #' @note modified from https://github.com/tidyverse/ggplot2/wiki/share-a-legend-between-two-ggplot2-graphs
-grid_arrange_shared_legend <- function(plots, ncol = length(plots), nrow = 1, position = c("bottom", "right")) {
+join_plots <- function(plots, ncol = length(plots), nrow = 1, position = c("right", "bottom")) {
   position <- match.arg(position)
   g <- ggplot2::ggplotGrob(plots[[1]] + ggplot2::theme(legend.position = position))$grobs
   legend <- g[[which(sapply(g, function(x) x$name) == "guide-box")]]
@@ -1818,7 +1817,7 @@ Tplot3_old  <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
   tt$Satisificed <- FALSE
   tt$Satisificed[match(passall, tt$MP)] <- TRUE
   
-  grid_arrange_shared_legend(plots, n.col, n.row)
+  join_plots(plots, n.col, n.row)
   tt
   
 }

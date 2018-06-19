@@ -7,24 +7,24 @@
 \alias{Tplot3}
 \title{Generic Trade-Plot Function - IN DEVELOPMENT}
 \usage{
-TradePlot(MSEobj, ..., lims = c(0.2, 0.2, 0.8, 0.8), point.size = 2,
+TradePlot(MSEobj, ..., Lims = c(0.2, 0.2, 0.8, 0.8), point.size = 2,
   lab.size = 4, axis.title.size = 12, axis.text.size = 10,
   legend.title.size = 12, position = c("right", "bottom"),
   fill = "gray80", alpha = 0.4, PMlist = NULL, Refs = NULL,
-  Yrs = NULL)
+  Yrs = NULL, Satisficed = FALSE, Show = TRUE)
 
-Tplot(MSEobj, lims = c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...)
+Tplot(MSEobj, Lims = c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...)
 
-Tplot2(MSEobj, lims = c(0.2, 0.2, 0.8, 0.8), ...)
+Tplot2(MSEobj, Lims = c(0.2, 0.2, 0.8, 0.8), ...)
 
-Tplot3(MSEobj, lims = c(0.5, 0.5, 0.8, 0.5), ...)
+Tplot3(MSEobj, Lims = c(0.5, 0.5, 0.8, 0.5), ...)
 }
 \arguments{
 \item{MSEobj}{An object of class \code{MSE}}
 
 \item{...}{Names of Performance Metrics (PMs), or other arguments to \code{TradePlot}. First PM is recycled if number of PMs is not even}
 
-\item{lims}{A numeric vector of acceptable risk/minimum probability thresholds. Recycled if not equal to number of PMs.}
+\item{Lims}{A numeric vector of acceptable risk/minimum probability thresholds. Recycled if not equal to number of PMs.}
 
 \item{point.size}{Numeric. Size of the MP points}
 
@@ -47,9 +47,14 @@ Tplot3(MSEobj, lims = c(0.5, 0.5, 0.8, 0.5), ...)
 \item{Refs}{An optional named list (matching the PM names) with numeric values to override the default \code{Ref} values. See examples.}
 
 \item{Yrs}{An optional named list (matching the PM names) with numeric values to override the default \code{Yrs} values. See examples.}
+
+\item{Satisficed}{Logical. Show only the MPs that meet minimum acceptable thresholds (specified in \code{Lims})}
+
+\item{Show}{Logical. Show the Results table and plots?}
 }
 \value{
-A summary table of MP performance
+Invisibily returns a list with summary table of MP performance and
+the ggplot objects for the plots
 }
 \description{
 Generic Trade-Plot Function - IN DEVELOPMENT
