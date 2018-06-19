@@ -98,9 +98,11 @@ BK(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
 \dontrun{
 BK_CC(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
 }
+
 \dontrun{
 BK_ML(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
 }
+
 }
 \references{
 Beddington, J.R., Kirkwood, G.P., 2005. The estimation of

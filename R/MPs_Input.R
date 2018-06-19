@@ -147,7 +147,7 @@ MRreal <- function(x, Data, reps, plot=FALSE) {
   rec@Allocate <- 1
   rec@Spatial <- c(0, rep(1, Data@nareas-1))
   
-  if (plot)   barplot(rec@Spatial, xlab="Area", ylab="Fraction Open", ylim=c(0,1),
+  if (plot)  barplot(rec@Spatial, xlab="Area", ylab="Fraction Open", ylim=c(0,1),
                       names=1:Data@nareas)
   return(rec)
 }
@@ -156,7 +156,7 @@ class(MRreal) <- "MP"
 #' @templateVar mp MRnoreal
 #' @template MPuses
 #' @describeIn MRreal A spatial control that prevents fishing in area 1 
-#' (e.g., A marine reserve) and does not reallocate this fishing effort to area 2.
+#' and does not reallocate this fishing effort to area 2.
 #' @export 
 #' @examples 
 #' MRnoreal(1, DLMtool::Atlantic_mackerel, plot=TRUE)
@@ -221,9 +221,10 @@ class(curE75) <- "MP"
 
 #### Delay-Difference Effort MPs ####
 
-#' Effort-based Delay - Difference Stock Assessment with UMSY and MSY as leading parameters
+#' Effort-based Delay - Difference Stock Assessment 
 #' 
-#' A simple delay-difference assessment that estimates \eqn{E_{\textrm{MSY}}} using a
+#' A simple delay-difference assessment with UMSY and MSY as leading parameters 
+#' that estimates \eqn{E_{\textrm{MSY}}} using a
 #' time-series of catches and a relative abundance index. 
 #' 
 #' This DD model is observation error only and has does not estimate
@@ -408,7 +409,7 @@ EtargetLopt <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 3, buffer = 0.
 class(EtargetLopt) <- "MP"
 
 
-## Add plots #####
+
 
 #' Index Target Effort-Based 
 #' 
@@ -446,6 +447,8 @@ ITe5 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, mc = 0.05) {
   Effort[Effort < 0.01] <- 0.01  # for simulations in case Effort goes negative
   rec <- new("Rec")
   rec@Effort <- mean(Effort) 
+  
+  if (plot) ITe_plot(x, Data, rec, yrsmth) 
   rec 
 }
 class(ITe5) <- "MP"
@@ -478,6 +481,7 @@ ITe10 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, mc = 0.1) {
   Effort[Effort < 0.01] <- 0.01  # for simulations in case Effort goes negative
   rec <- new("Rec")
   rec@Effort <- mean(Effort) 
+  if (plot) ITe_plot(x, Data, rec, yrsmth) 
   rec 
 }
 class(ITe10) <- "MP"
@@ -492,8 +496,6 @@ class(ITe10) <- "MP"
 #' @param plot Logical. Show the plot?
 #' @param yrsmth Years over which to smooth recent estimates of surplus
 #' production
-#' @param xx Parameter controlling the fraction of mean catch to start using in
-#' first year
 #' @param Imulti Parameter controlling how much larger target CPUE / index is
 #' compared with recent levels.
 #'
@@ -501,7 +503,7 @@ class(ITe10) <- "MP"
 #' @export
 #'
 #' @keywords internal
-Itargeteff_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, Imulti = 1.5) {
+Itargeteff_ <- function(x, Data, reps, plot, yrsmth, Imulti) {
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
   ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
   ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
@@ -624,18 +626,55 @@ class(ItargetE3) <- "MP"
 #' @examples 
 #' ItargetE4(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 ItargetE4 <- ItargetE1
-formals(ItargetE4)$xx <- 0.3 
 formals(ItargetE4)$Imulti <- 2.5
 class(ItargetE4) <- "MP"
 
 
-## TO DO ####
 
-
-
-#' @describeIn LstepCC1 The least biologically precautionary effort-based MP.
-#' @export LstepCE1
-LstepCE1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.05, 
+#' Step-wise Constant Effort
+#' 
+#' A management procedure that incrementally adjusts the total allowable
+#' effort (TAE) according to the mean length of recent catches.
+#' 
+#' The TAE is calculated as:
+#'   \deqn{\textrm{TAE} = 
+#'              \left\{\begin{array}{ll} 
+#'              \textrm{TAE}^* - 2 S\textrm{TAE}^* & \textrm{if } r < 0.96  \\ 
+#'              \textrm{TAE}^* - S \textrm{TAE}^* & \textrm{if } r < 0.98 \\ 
+#'              \textrm{TAE}^* & \textrm{if } > 1.058 \\
+#'              \end{array}\right.
+#'            }{}
+#' where \eqn{\textrm{TAE}^*} is effort in the previous year, \eqn{S} is 
+#' step-size determined by `stepsz`,
+#' and \eqn{r} is the ratio of \eqn{L_\textrm{recent}} and \eqn{L_\textrm{ave}} 
+#' which are mean length over the most recent `yrsmth`  years and 2 x `yrsmth` historical
+#' years respectively. 
+#' 
+#' The conditions are specified in the `llim` argument to the function. 
+#'            
+#' @templateVar mp LstepCE1
+#' @template MPtemplate
+#' @template MPuses
+#' 
+#' @param yrsmth Years over which to smooth recent estimates of surplus
+#' production
+#' @param stepsz Parameter controlling the size of update increment in effort.
+#' @param llim A vector of length reference points that determine the
+#' conditions for increasing, maintaining or reducing the effort.
+#' 
+#' @author T. Carruthers
+#' @references Carruthers et al. 2015. Performance evaluation of simple
+#' management procedures. ICES J. Mar Sci. 73, 464-482.
+#' 
+#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
+#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
+#' doi:10.1093/icesjms/fst232
+#' @export 
+#' @examples 
+#' LstepCE1(1, Data=DLMtool::SimulatedData, plot=TRUE)
+#' @seealso LstepCC1
+#' @describeIn LstepCE1 The least biologically precautionary effort-based MP.
+LstepCE1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, stepsz = 0.05, 
                      llim = c(0.96, 0.98, 1.05)) {
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
   ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
@@ -647,7 +686,7 @@ LstepCE1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.05,
   rat <- Lrecent/Lave
   
   step <- stepsz
-  
+
   if (rat < llim[1]) {
     Effort <- Data@MPeff[x] - 2 * (step * Data@MPeff[x])
   } else if (rat < llim[2]) {
@@ -662,50 +701,83 @@ LstepCE1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.05,
   Effort[Effort < 0.01] <- 0.01  # for simulations in case Effort goes negative
   rec <- new("Rec")
   rec@Effort <- mean(Effort)
+  
+  if (plot) {
+    op <- par(no.readonly = TRUE)
+    on.exit(op)
+    par(mfrow=c(1,2))
+    ylim <- range(c(Data@ML[x,]))
+    plot(Data@Year, Data@ML[x,], ylab="Mean length", xlab="Year", bty="l", lwd=2,
+         type="l", ylim=ylim)
+    lines(Data@Year[ind], rep(Lrecent, length(ind)), lty=2)
+    text(max(Data@Year[ind]), Lrecent, "Lrecent", xpd=NA, pos=3)
+    
+    lines(Data@Year[ind3], rep(Lave, length(ind3)), lty=2, col='blue')
+    text(max(Data@Year[ind3]), Lave, "Lave", xpd=NA, pos=3, col='blue')
+    
+    plot(c(max(Data@Year), max(Data@Year)+1), c(Data@MPeff[x], rec@Effort), 
+         type="b", xlab="Year", ylab="Effort", bty="l", lwd=2)
+  }
   rec
   
 }
 class(LstepCE1) <- "MP"
 
 
-
-
-#' @describeIn LstepCC1 The most precautionary effort-based MP.
-#' @export LstepCE2
-LstepCE2 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, stepsz = 0.1, 
-                     llim = c(0.96, 0.98, 1.05)) {
-  ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
-  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
-  # ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
-  ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
-  
-  Lrecent <- mean(Data@ML[ind])
-  Lave <- mean(Data@ML[ind3])
-  rat <- Lrecent/Lave
-  step <- stepsz
-  
-  if (rat < llim[1]) {
-    Effort <- Data@MPeff[x] - 2 * (step * Data@MPeff[x])
-  } else if (rat < llim[2]) {
-    Effort <- Data@MPeff[x] - (step * Data@MPeff[x])
-  } else if (rat > llim[3]) {
-    Effort <- Data@MPeff[x] + (step * Data@MPeff[x])
-  } else {
-    Effort <- Data@MPeff[x]
-  }
-  Effort[Effort < 0.01] <- 0.01  # for simulations in case Effort goes negative
-  rec <- new("Rec")
-  rec@Effort <- mean(Effort)
-  rec
-}
+#' @describeIn LstepCE1 Step size is increased to 0.1
+#' @examples 
+#' LstepCE2(1, Data=DLMtool::SimulatedData, plot=TRUE)
+#' @export 
+LstepCE2 <- LstepCE1
+formals(LstepCE2)$stepsz <- 0.1
 class(LstepCE2) <- "MP"
 
 
 
 
-#' @describeIn Ltarget1 The least biologically precautionary effort-based MP.
-#' @export LtargetE1
-LtargetE1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, xL = 1.05) {
+#' Length Target TAE MP 
+#' 
+#' A management procedure that incrementally adjusts the TAE to reach 
+#' a target mean length in catches.
+#' 
+#' Four target length MPs proposed by Geromont and Butterworth 2014.
+#' Tested by Carruthers et al. 2015.
+#' 
+#' The TAE is calculated as:
+#' 
+#' If \eqn{L_\textrm{recent} \geq L_0}:
+#' \deqn{\textrm{TAE} = 0.5 \textrm{TAE}^* \left[1+\left(\frac{L_\textrm{recent}-L_0}{L_\textrm{target}-L_0}\right)\right]  }
+#' 
+#' else:
+#' \deqn{\textrm{TAE} = 0.5 \textrm{TAE}^* \left[\frac{L_\textrm{recent}}{L_0}^2\right] }
+#' 
+#' where \eqn{\textrm{TAE}^*} is the effort in the previous year,
+#' \eqn{L_\textrm{recent}} is mean length in last `yrmsth` years, \eqn{L_0} is (except for `L95target`) 0.9 average catch in the last
+#' 2 x `yrsmth` historical (pre-projection years) (\eqn{L_\textrm{ave}}), and \eqn{L_\textrm{target}} is 
+#' (except for `L95target`) `xL` \eqn{L_\textrm{ave}}.
+#' 
+#' @templateVar mp LtargetE1 
+#' @template MPtemplate
+#' @template MPuses
+#' 
+#' @param yrsmth Years over which to smooth recent estimates of surplus
+#' production
+#' @param xL Parameter controlling the magnitude of the target mean length of
+#' catches relative to average length in catches.
+#' 
+#' @author T. Carruthers
+#' @references Carruthers et al. 2015. Performance evaluation of simple
+#' management procedures. ICES J. Mar Sci. 73, 464-482.
+#' 
+#' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
+#' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
+#' doi:10.1093/icesjms/fst232
+#' @describeIn LtargetE1 The least biologically precautionary TAE-based MP.
+#' @family Length target MPs
+#' @export 
+#' @examples 
+#' LtargetE1(1, Data=DLMtool::SimulatedData, plot=TRUE)
+LtargetE1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xL = 1.05) {
   
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
   ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
@@ -717,8 +789,7 @@ LtargetE1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, xL = 1.05) {
   L0 <- 0.9 * Lave
   Ltarget <- xL * Lave
   if (Lrecent > L0) {
-    Effort <- 0.5 * Data@MPeff[x] * (1 + ((Lrecent - L0)/(Ltarget - 
-                                                            L0)))
+    Effort <- 0.5 * Data@MPeff[x] * (1 + ((Lrecent - L0)/(Ltarget - L0)))
   } else {
     Effort <- 0.5 * Data@MPeff[x] * (Lrecent/L0)^2
   }
@@ -731,43 +802,40 @@ LtargetE1 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, xL = 1.05) {
   Effort[Effort < 0.01] <- 0.01  # for simulations in case Effort goes negative
   rec <- new("Rec")
   rec@Effort <- mean(Effort)
+  if (plot) {
+    op <- par(no.readonly = TRUE)
+    on.exit(op)
+    par(mfrow=c(1,2))
+    ylim <- range(c(Data@ML[x,], Lrecent, Lave, Ltarget, L0))
+    plot(Data@Year, Data@ML[x,], type="l", xlab="Year", ylab="Mean Length", 
+         lwd=2,  bty="l", ylim=ylim)
+    lines(Data@Year[ind], rep(Lrecent, length(ind)), lty=2, col="green")
+    text(quantile(Data@Year[ind],0.15),Lrecent, "Lrecent", pos=3, col='green')
+    
+    lines(Data@Year[ind3], rep(Lave, length(ind3)), lty=2, col="orange")
+    text(quantile(Data@Year[ind3],0.15),Lave, "Lave", pos=3, col='orange')
+    
+    points(max(Data@Year[ind3]), Ltarget, lty=2, col="blue", pch=16)
+    text(max(Data@Year[ind3]), Ltarget, "Ltarget", pos=3, col='blue', xpd=NA)
+    
+    points(max(Data@Year[ind3]), L0, lty=2, col="red", pch=16)
+    text(max(Data@Year[ind3]), L0, "L0", pos=3, col='red', xpd=NA)
+    
+    
+    plot(c(max(Data@Year), max(Data@Year)+1), c(Data@MPeff[x], rec@Effort), 
+         type="b", xlab="Year", ylab="Effort", bty="l", lwd=2)
+  }
   rec
 }
 class(LtargetE1) <- "MP"
 
 
-
-
-#' @describeIn Ltarget1 The most biologically precautionary effort-based MP.
-#' @export LtargetE4
-LtargetE4 <- function(x, Data, reps = 100, yrsmth = 5, xx = 0, xL = 1.15) {
-  
-  ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
-  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
-  ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
-  ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
-  
-  Lrecent <- mean(Data@ML[ind])
-  Lave <- mean(Data@ML[ind3])
-  L0 <- 0.9 * Lave
-  Ltarget <- xL * Lave
-  if (Lrecent > L0) {
-    Effort <- 0.5 * Data@MPeff[x] * (1 + ((Lrecent - L0)/(Ltarget - 
-                                                            L0)))
-  } else {
-    Effort <- 0.5 * Data@MPeff[x] * (Lrecent/L0)^2
-  }
-  
-  Step <- (Effort/Data@MPeff[x])  # step change in effort 
-  Step[Step < 0.8] <- 0.8
-  Step[Step > 1.2] <- 1.2
-  Allocate <- 1
-  Effort <- Step * Data@MPeff[x]
-  Effort[Effort < 0.01] <- 0.01  # for simulations in case Effort goes negative
-  rec <- new("Rec")
-  rec@Effort <- mean(Effort)
-  rec
-}
+#' @describeIn LtargetE1 The `xL` argument is increased to 1.15.
+#' @export 
+#' @examples 
+#' LtargetE4(1, Data=DLMtool::SimulatedData, plot=TRUE)
+LtargetE4 <- LtargetE1
+formals(LtargetE4)$xL <- 1.15
 class(LtargetE4) <- "MP"
 
 
@@ -784,13 +852,6 @@ class(LtargetE4) <- "MP"
 #' @param smoother Logical. Should estimates be smoothed over multiple years?
 #'
 #' @export
-#' @references  
-#' Hordyk, A., Ono, K., Valencia, S., loneragan, N., and Prince J; 
-#' A novel length-based empirical estimation method of spawning potential ratio (SPR),
-#' and tests of its performance, for small-scale, data-poor fisheries, 
-#' ICES Journal of Marine Science, 72 (1) 2015, 217–231, 
-#' https://doi.org/10.1093/icesjms/fsu004
-#' 
 #' @keywords internal
 LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE) {
   if (NAor0(Data@L50[x])) stop("Data@L50 is NA")
@@ -908,14 +969,15 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE) {
 #' 
 #' @param n Last number of years to run the model on.
 #' @param smoother Logical. Should the SPR estimates be smoothed?
+#' @param frac The fractional adjustment in effort if SPR is outside of target range 
 #' 
 #' @export
 #' @references  
 #' Hordyk, A., Ono, K., Valencia, S., loneragan, N., and Prince J; 
 #' A novel length-based empirical estimation method of spawning potential ratio (SPR),
 #' and tests of its performance, for small-scale, data-poor fisheries, 
-#' ICES Journal of Marine Science, 72 (1) 2015, 217–231, 
-#' https://doi.org/10.1093/icesjms/fsu004
+#' ICES Journal of Marine Science, 72 (1) 2015, 217-231, 
+#' 
 #' @examples 
 #' LBSPR(1, Data=DLMtool::SimulatedData, plot=TRUE)
 LBSPR <- function(x, Data, reps=NA, plot=FALSE, n=5, smoother=TRUE, frac=0.1) {

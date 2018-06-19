@@ -21,11 +21,9 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
-
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
+<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
 
@@ -36,7 +34,6 @@
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
-
 
 
 <!-- mathjax -->
@@ -62,7 +59,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
+        <a class="navbar-link" href="../index.html">DLMtool</a>
         <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.999</span>
       </span>
     </div>
@@ -111,7 +108,7 @@
     <dt><code>Year</code></dt><dd><p>Years that corresponding to catch and relative abundance data. Vector nyears long. Positive integer</p></dd>
     <dt><code>Cat</code></dt><dd><p>Total annual catches. Matrix of nsim rows and nyears columns. Non-negative real numbers</p></dd>
     <dt><code>Ind</code></dt><dd><p>Relative abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers</p></dd>
-    <dt><code>Rec</code></dt><dd><p>Recent recruitment strength. Vector of length nsim. Positive real numbers</p></dd>
+    <dt><code>Rec</code></dt><dd><p>Recent recruitment strength. Matrix of nsim rows and nyears columns. Non-negative real numbers</p></dd>
     <dt><code>t</code></dt><dd><p>The number of years corresponding to AvC and Dt. Single value. Positive integer</p></dd>
     <dt><code>AvC</code></dt><dd><p>Average catch over time t. Vector nsim long. Positive real numbers</p></dd>
     <dt><code>Dt</code></dt><dd><p>Depletion over time t SSB(now)/SSB(now-t+1). Vector nsim long. Fraction</p></dd>

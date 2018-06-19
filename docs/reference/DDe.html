@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>DDe — DDe • DLMtool Documentation</title>
+<title>Effort-based Delay - Difference Stock Assessment — DDe • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -21,22 +21,21 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
-
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
+<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
 
 
-<meta property="og:title" content="DDe — DDe" />
+<meta property="og:title" content="Effort-based Delay - Difference Stock Assessment — DDe" />
 
-<meta property="og:description" content="Description" />
+<meta property="og:description" content="A simple delay-difference assessment with UMSY and MSY as leading parameters
+that estimates \(E_{\textrm{MSY}}\) using a
+time-series of catches and a relative abundance index." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
-
 
 
 <!-- mathjax -->
@@ -62,7 +61,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
+        <a class="navbar-link" href="../index.html">DLMtool</a>
         <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.999</span>
       </span>
     </div>
@@ -91,37 +90,43 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>DDe</h1>
+    <h1>Effort-based Delay - Difference Stock Assessment</h1>
     
     <div class="hidden name"><code>DDe.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Description</p>
+    <p>A simple delay-difference assessment with UMSY and MSY as leading parameters
+that estimates \(E_{\textrm{MSY}}\) using a
+time-series of catches and a relative abundance index.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>DDe</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>)
+    <pre class="usage"><span class='fu'>DDe</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>DDes</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>LB</span> <span class='kw'>=</span> <span class='fl'>0.9</span>, <span class='kw'>UB</span> <span class='kw'>=</span> <span class='fl'>1.1</span>)
+<span class='fu'>DDes</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>LB</span> <span class='kw'>=</span> <span class='fl'>0.9</span>, <span class='kw'>UB</span> <span class='kw'>=</span> <span class='fl'>1.1</span>)
 
-<span class='fu'>DDe75</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>)</pre>
+<span class='fu'>DDe75</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>rr</p></td>
+      <td><p>A position in a data-limited methods data object</p></td>
     </tr>
     <tr>
       <th>Data</th>
-      <td><p>rr</p></td>
+      <td><p>A data-limited methods data object</p></td>
     </tr>
     <tr>
       <th>reps</th>
-      <td><p>rr</p></td>
+      <td><p>The number of stochastic samples of the MP recommendation(s)</p></td>
+    </tr>
+    <tr>
+      <th>plot</th>
+      <td><p>Logical. Show the plot?</p></td>
     </tr>
     <tr>
       <th>LB</th>
@@ -133,9 +138,24 @@
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the TAE slot(s) populated</p>
+    
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Details</p>
+    <p>This DD model is observation error only and has does not estimate
+process error (recruitment deviations). Assumption is that knife-edge
+selectivity occurs at the age of 50<!-- % maturity. Similar to many other assessment -->
+models it depends on a whole host of dubious assumptions such as temporally
+stationary productivity and proportionality between the abundance index and
+real abundance. Unsurprisingly the extent to which these assumptions are
+violated tends to be the biggest driver of performance for this method.</p>
+<p>The method is conditioned on effort and estimates catch. The effort is calculated
+as the ratio of catch and index. Thus, to get a complete effort time series, a full
+time series of catch and index is also needed. Missing values are linearly interpolated.</p>
+<p>A detailed description of the delay-difference model can be found in Chapter 9 of Hilborn
+and Walters (1992).</p>
     
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
@@ -145,23 +165,47 @@
 <li><p><code>DDe75</code>: Variant of <code>DDe</code> where the recommended effort is 75% EMSY.</p></li>
 </ul>
     
+    <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
+
+    
+    <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
+    <p><code>DDe</code>: Cat, Ind, L50, MPeff, MaxAge, Mort, vbK, vbLinf, vbt0, wla, wlb</p>
+    
+    <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
+
+    
+    <p>See <a href='https://dlmtool.github.io/DLMtool/reference/DDe.html'>Online Documentation</a> for correctly rendered equations</p>
+    
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p>Other Delay-Difference MPs: <code><a href='DD.html'>DD</a></code></p></div>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>DDe</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DDe-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt;     Effort 
+#&gt; 0.09119155 </div><div class='input'><span class='fu'>DDes</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DDe-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; Effort 
+#&gt;    0.9 </div><div class='input'><span class='fu'>DDe75</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DDe-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt;     Effort 
+#&gt; 0.06839366 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
       
+      <li><a href="#value">Value</a></li>
+
       <li><a href="#details">Details</a></li>
 
       <li><a href="#functions">Functions</a></li>
 
+      <li><a href="#required-data">Required Data</a></li>
+
+      <li><a href="#rendered-equations">Rendered Equations</a></li>
+
       <li><a href="#see-also">See also</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

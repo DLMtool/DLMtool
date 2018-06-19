@@ -145,6 +145,7 @@ class(BK) <- "MP"
 #' \dontrun{
 #' BK_CC(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
 #' }
+#' 
 #' @export 
 BK_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
   dependencies = "Data@LFC, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@CAA, Data@Mort"
@@ -199,6 +200,7 @@ class(BK_CC) <- "MP"
 #' \dontrun{
 #' BK_ML(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
 #' }
+#' 
 #' @export 
 BK_ML <- function(x, Data, reps = 100, plot=FALSE) {
   dependencies = "Data@LFC, Data@vbLinf, Data@CV_vbLinf, Data@vbK, Data@CV_vbK, Data@CAL, Data@Mort"
@@ -376,6 +378,8 @@ class(CC5) <- "MP"
 #' simple management procedures for efficient fisheries management: a
 #' comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017
 #' @export
+#' @examples 
+#' GB_CC(1, DLMtool::SimulatedData, plot=TRUE)
 #' @family Constant Catch MPs
 GB_CC <- function(x, Data, reps = 100, plot=FALSE) {
   dependencies = "Data@Cref,Data@Cat"
@@ -1369,10 +1373,10 @@ DD_R <- function(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hi
   # }
 }
 
-#' Delay - Difference Stock Assessment with UMSY and MSY as leading parameters
+#' Delay - Difference Stock Assessment 
 #' 
-#' A simple delay-difference assessment that estimates the TAC using a
-#' time-series of catches and a relative abundance index. Conditioned on effort.
+#' A simple delay-difference assessment with UMSY and MSY as leading parameters
+#' that estimates the TAC using a time-series of catches and a relative 
 #' 
 #' This DD model is observation error only and has does not estimate
 #' process error (recruitment deviations). Assumption is that knife-edge 
@@ -1470,7 +1474,7 @@ class(DD4010) <- "MP"
 #' tends to perform alarmingly well and therefore requires debunking ASAP.
 #'
 #' The catch limit (TAC) is calculated as:
-#' \deqn{\textrm{TAC}=F * B}
+#' \deqn{\textrm{TAC}=F  B}
 #' where \eqn{F} is fishing mortality and \eqn{B} is the estimated current biomass.
 #' 
 #' \eqn{F} is calculated as:
@@ -1761,6 +1765,7 @@ Fdem_ <- function(x, Data, reps, Ac=NULL) {
   if (NAor0(Data@CV_vbLinf[x])) stop("Data@CV_vbLinf is NA")
   if (NAor0(Data@vbt0[x])) stop("Data@vbt0 is NA")
   if (NAor0(Data@CV_Mort[x])) stop("Data@CV_Mort is NA")
+  if (NAor0(Data@wla[x])) stop("Data@wla is NA")
   if (NAor0(Data@wlb[x])) stop("Data@wlb is NA")
 
   Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
@@ -1780,8 +1785,7 @@ Fdem_ <- function(x, Data, reps, Ac=NULL) {
   hvec <- sample_steepness2(reps, Data@steep[x], Data@CV_steep[x])
   
   if (is.null(Ac)) Ac <- trlnorm(reps, Data@Abun[x], Data@CV_Abun[x])
-  FMSY <- getr(x, Data, Mvec, Kc, Linfc, t0c, hvec, maxage = Data@MaxAge, 
-               r_reps = reps)/2
+  FMSY <- getr(x, Data, Mvec, Kc, Linfc, t0c, hvec, maxage = Data@MaxAge, r_reps = reps)/2
   TAC <- FMSY * Ac
   return(list(TAC=TAC, Ac=Ac, FMSY=FMSY))
 }
@@ -1865,6 +1869,8 @@ Fdem_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
 }
 class(Fdem_CC) <- "MP"
 
+#' @templateVar mp Fdem_ML
+#' @template MPuses
 #' @describeIn Fdem Current abundance is estimated from mean length 
 #' @examples 
 #' Fdem_ML(1, DLMtool::SimulatedData, plot=TRUE)
@@ -1929,7 +1935,7 @@ Fratio_ <- function(x, Data, reps=100, Abun=NULL) {
 }
 
 
-#' An FMSY/M ratio method
+#' FMSY/M ratio methods
 #' 
 #' Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a
 #' current estimate of abundance.
@@ -2848,12 +2854,14 @@ Itarget_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, Imulti
 
 
 
-#' Incremental Index Target MP 
-#'  
+
+#' Incremental Index Target MP
+#'
+#'
 #' A management procedure that incrementally adjusts the TAC (starting from
 #' reference level that is a fraction of mean recent catches) 
 #' to reach a target CPUE / relative abundance index
-#' 
+#'  
 #' Four index/CPUE target MPs proposed by Geromont and Butterworth 2014. 
 #' Tested by Carruthers et al. 2015.
 #' 
@@ -3048,7 +3056,7 @@ Ltarget_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, xL = 1
 }
 
 
-#' Length Target MP 
+#' Length Target TAC MP 
 #' 
 #' A management procedure that incrementally adjusts the TAC to reach 
 #' a target mean length in catches.
@@ -3079,7 +3087,6 @@ Ltarget_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, xL = 1
 #' first year
 #' @param xL Parameter controlling the magnitude of the target mean length of
 #' catches relative to average length in catches.
-#' @return A \linkS4class{Rec} object
 #' @author T. Carruthers
 #' @references Carruthers et al. 2015. Performance evaluation of simple
 #' management procedures. ICES J. Mar Sci. 73, 464-482.
@@ -3575,6 +3582,7 @@ Rcontrol <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 10, gg = 2, glim 
   if (NAor0(Data@vbLinf[x])) stop("Data@vbLinf is NA")
   if (NAor0(Data@CV_vbLinf[x])) stop("Data@CV_vbLinf is NA")
   if (NAor0(Data@vbt0[x])) stop("Data@vbt0 is NA")
+  if (NAor0(Data@wla[x])) stop("Data@wla is NA")
   if (NAor0(Data@wlb[x])) stop("Data@wlb is NA")
   if (NAor0(Data@CV_Mort[x])) stop("Data@CV_Mort is NA")
   
@@ -3665,6 +3673,7 @@ Rcontrol2 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 10, gg = 2, glim
   if (NAor0(Data@CV_vbLinf[x])) stop("Data@CV_vbLinf is NA")
   if (NAor0(Data@vbt0[x])) stop("Data@vbt0 is NA")
   if (NAor0(Data@CV_Mort[x])) stop("Data@CV_Mort is NA")
+  if (NAor0(Data@wla[x])) stop("Data@wla is NA")
   if (NAor0(Data@wlb[x])) stop("Data@wlb is NA")
   
   Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
@@ -4240,7 +4249,9 @@ SPSRA_ <- function(x, Data, reps = 100, dep=NULL) {
   if (NAor0(Data@CV_vbLinf[x])) stop("Data@CV_vbLinf is NA")
   if (NAor0(Data@vbt0[x])) stop("Data@vbt0 is NA")
   if (NAor0(Data@CV_Mort[x])) stop("Data@CV_Mort is NA")
+  if (NAor0(Data@wla[x])) stop("Data@wla is NA")
   if (NAor0(Data@wlb[x])) stop("Data@wlb is NA")
+  if (NAor0(Data@CV_Dep[x])) stop("Data@CV_Dep is NA")
 
   Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
   Kvec <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
@@ -4363,6 +4374,7 @@ SPSRA_ML <- function(x, Data, reps = 100, plot=FALSE) {
   if (NAor0(Data@CV_vbLinf[x])) stop("Data@CV_vbLinf is NA")
   if (NAor0(Data@vbt0[x])) stop("Data@vbt0 is NA")
   if (NAor0(Data@CV_Mort[x])) stop("Data@CV_Mort is NA")
+  if (NAor0(Data@wla[x])) stop("Data@wla is NA")
   if (NAor0(Data@wlb[x])) stop("Data@wlb is NA")
   
   Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])

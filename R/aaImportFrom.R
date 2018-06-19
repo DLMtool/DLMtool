@@ -1,6 +1,6 @@
 #' @importFrom abind abind
 #' @importFrom devtools install_github
-#' @importFrom dplyr  %>%  select mutate group_by summarize
+#' @importFrom dplyr  %>%  filter group_by mutate select summarize
 #' @importFrom fmsb radarchart
 #' @importFrom ggplot2 aes element_blank expand_limits facet_wrap geom_boxplot ggplot ggplotGrob geom_rect geom_point labs theme theme_classic xlim ylim xlab ylab   
 #' @importFrom ggrepel geom_text_repel

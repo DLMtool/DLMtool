@@ -20,11 +20,4 @@ LBSPR_(x, Data, reps, n = 5, smoother = TRUE)
 \description{
 Internal Estimation Function for LBSPR MP
 }
-\references{
-Hordyk, A., Ono, K., Valencia, S., loneragan, N., and Prince J;
-A novel length-based empirical estimation method of spawning potential ratio (SPR),
-and tests of its performance, for small-scale, data-poor fisheries,
-ICES Journal of Marine Science, 72 (1) 2015, 217–231,
-https://doi.org/10.1093/icesjms/fsu004
-}
 \keyword{internal}

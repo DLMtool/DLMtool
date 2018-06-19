@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>An FMSY/M ratio method — Fratio • DLMtool Documentation</title>
+<title>FMSY/M ratio methods — Fratio • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -21,16 +21,14 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
-
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
+<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
 
 
-<meta property="og:title" content="An FMSY/M ratio method — Fratio" />
+<meta property="og:title" content="FMSY/M ratio methods — Fratio" />
 
 <meta property="og:description" content="Calculates the OFL based on a fixed ratio of FMSY to M multiplied by a
 current estimate of abundance.
@@ -41,7 +39,6 @@ and FMSY for most stocks." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
-
 
 
 <!-- mathjax -->
@@ -67,7 +64,7 @@ and FMSY for most stocks." />
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
+        <a class="navbar-link" href="../index.html">DLMtool</a>
         <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.999</span>
       </span>
     </div>
@@ -96,7 +93,7 @@ and FMSY for most stocks." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>An FMSY/M ratio method</h1>
+    <h1>FMSY/M ratio methods</h1>
     
     <div class="hidden name"><code>Fratio.Rd</code></div>
     </div>
@@ -175,11 +172,11 @@ stock depletion (made-up for this package).</p></li>
 
     
     <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
-    <p><code>Fratio</code>: Abun, FMSY_M, Mort, t</p>
-    <p><code>Fratio4010</code>: Abun, Dep, Dt, FMSY_M, Mort, t</p>
-    <p><code>DepF</code>: Abun, BMSY_B0, Dep, FMSY_M, Mort, Year, t</p>
-    <p><code>Fratio_CC</code>: CAA, Cat, FMSY_M, Mort, t</p>
-    <p><code>Fratio_ML</code>: CAL, CAL_bins, Cat, FMSY_M, LFS, Mort, t, vbK, vbLinf</p>
+    <p><code>Fratio</code>: Abun, FMSY_M, Mort</p>
+    <p><code>Fratio4010</code>: Abun, Dep, FMSY_M, Mort</p>
+    <p><code>DepF</code>: Abun, Dep, FMSY_M, Mort</p>
+    <p><code>Fratio_CC</code>: CAA, Cat, FMSY_M, Mort</p>
+    <p><code>Fratio_ML</code>: CAL, CAL_bins, Cat, FMSY_M, LFS, Mort, vbK, vbLinf</p>
     
     <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
 

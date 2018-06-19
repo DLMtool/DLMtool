@@ -53,15 +53,20 @@ from the life-history parameters using the methods of McAllister et al. (2001).
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{Fdem}: Abun, AvC, BMSY_B0, Bref, CAA, CAL, CAL_bins, Cat, Cref, Dep, Dt, FMSY_M, Ind, Iref, L50, L95, LFC, LFS, LHYear, Lbar, Lc, LenCV, ML, MPeff, MPrec, MaxAge, Mort, Rec, SpAbun, Year, sigmaL, steep, t, vbK, vbLinf, vbt0, wla, wlb
+\code{Fdem}: Abun, FMSY_M, L50, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
 
 
-\code{Fdem_CC}: Abun, AvC, BMSY_B0, Bref, CAA, CAL, CAL_bins, Cat, Cref, Dep, Dt, FMSY_M, Ind, Iref, L50, L95, LFC, LFS, LHYear, Lbar, Lc, LenCV, ML, MPeff, MPrec, MaxAge, Mort, Rec, SpAbun, Year, sigmaL, steep, t, vbK, vbLinf, vbt0, wla, wlb
+\code{Fdem_CC}: CAA, Cat, FMSY_M, L50, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
+
+
+\code{Fdem_ML}: CAL, CAL_bins, Cat, FMSY_M, L50, LFS, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
 }
 
 \section{Rendered Equations}{
  
 See \href{https://dlmtool.github.io/DLMtool/reference/Fdem.html}{Online Documentation} for correctly rendered equations
+
+
 
 
 }

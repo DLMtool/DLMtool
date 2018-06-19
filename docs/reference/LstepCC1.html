@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Step-wise Constant Catch — LstepCE1 • DLMtool Documentation</title>
+<title>Step-wise Constant Catch — LstepCC1 • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -21,23 +21,20 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
-
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
+<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
 
 
-<meta property="og:title" content="Step-wise Constant Catch — LstepCE1" />
+<meta property="og:title" content="Step-wise Constant Catch — LstepCC1" />
 
 <meta property="og:description" content="A management procedure that incrementally adjusts the TAC according to the
 mean length of recent catches." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
-
 
 
 <!-- mathjax -->
@@ -63,7 +60,7 @@ mean length of recent catches." />
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
+        <a class="navbar-link" href="../index.html">DLMtool</a>
         <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.999</span>
       </span>
     </div>
@@ -104,13 +101,7 @@ mean length of recent catches.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>LstepCE1</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>yrsmth</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>xx</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>stepsz</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
-  <span class='kw'>llim</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.96</span>, <span class='fl'>0.98</span>, <span class='fl'>1.05</span>))
-
-<span class='fu'>LstepCE2</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>yrsmth</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>xx</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>stepsz</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
-  <span class='kw'>llim</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.96</span>, <span class='fl'>0.98</span>, <span class='fl'>1.05</span>))
-
-<span class='fu'>LstepCC1</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>yrsmth</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>xx</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+    <pre class="usage"><span class='fu'>LstepCC1</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>yrsmth</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>xx</span> <span class='kw'>=</span> <span class='fl'>0</span>,
   <span class='kw'>stepsz</span> <span class='kw'>=</span> <span class='fl'>0.05</span>, <span class='kw'>llim</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.96</span>, <span class='fl'>0.98</span>, <span class='fl'>1.05</span>))
 
 <span class='fu'>LstepCC2</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>yrsmth</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>xx</span> <span class='kw'>=</span> <span class='fl'>0.1</span>,
@@ -138,6 +129,10 @@ mean length of recent catches.</p>
       <td><p>The number of stochastic samples of the MP recommendation(s)</p></td>
     </tr>
     <tr>
+      <th>plot</th>
+      <td><p>Logical. Show the plot?</p></td>
+    </tr>
+    <tr>
       <th>yrsmth</th>
       <td><p>Years over which to smooth recent estimates of surplus
 production</p></td>
@@ -155,10 +150,6 @@ first year</p></td>
       <th>llim</th>
       <td><p>A vector of length reference points that determine the
 conditions for increasing, maintaining or reducing the TAC or effort.</p></td>
-    </tr>
-    <tr>
-      <th>plot</th>
-      <td><p>Logical. Show the plot?</p></td>
     </tr>
     </table>
     
@@ -186,8 +177,6 @@ years respectively.</p>
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     <ul>
-<li><p><code>LstepCE1</code>: The least biologically precautionary effort-based MP.</p></li>
-<li><p><code>LstepCE2</code>: The most precautionary effort-based MP.</p></li>
 <li><p><code>LstepCC1</code>: The least biologically precautionary TAC-based MP.</p></li>
 <li><p><code>LstepCC2</code>: More biologically precautionary than <code>LstepCC1</code> (<code>xx</code> = 0.1)</p></li>
 <li><p><code>LstepCC3</code>: More biologically precautionary than <code>LstepCC2</code> (<code>xx</code> = 0.2)</p></li>
@@ -198,10 +187,10 @@ years respectively.</p>
 
     
     <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
-    <p><code>LstepCC1</code>: Cat, LHYear, ML, MPrec, Year, t</p>
-    <p><code>LstepCC2</code>:</p>
-    <p><code>LstepCC3</code>:</p>
-    <p><code>LstepCC4</code>: Cat, LHYear, ML, MPrec, Year, t</p>
+    <p><code>LstepCC1</code>: Cat, LHYear, ML, Year</p>
+    <p><code>LstepCC2</code>: Cat, LHYear, ML, Year</p>
+    <p><code>LstepCC3</code>: Cat, LHYear, ML, Year</p>
+    <p><code>LstepCC4</code>: Cat, LHYear, ML, Year</p>
     
     <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
 

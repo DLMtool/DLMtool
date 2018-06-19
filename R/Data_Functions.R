@@ -76,7 +76,7 @@ XL2Data <- function(name="Data", dir=NULL) {
   } else {
     sheetnames <- readxl::excel_sheets(file.path(dir,name))  # names of the sheets
     
-    DataXLSlot <- DLMtool:::DataXLSlot # may not be neccessary
+    # DataXLSlot <- DLMtool:::DataXLSlot
     NewSheetNames <- names(DataXLSlot)
     if (all(NewSheetNames %in% sheetnames)) {
       Data <- new("Data", silent=TRUE)

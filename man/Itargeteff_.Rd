@@ -4,8 +4,7 @@
 \alias{Itargeteff_}
 \title{Incremental Index Target MP Internal Function - Effort MP}
 \usage{
-Itargeteff_(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0,
-  Imulti = 1.5)
+Itargeteff_(x, Data, reps, plot, yrsmth, Imulti)
 }
 \arguments{
 \item{x}{Iteration number}
@@ -18,9 +17,6 @@ Itargeteff_(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0,
 
 \item{yrsmth}{Years over which to smooth recent estimates of surplus
 production}
-
-\item{xx}{Parameter controlling the fraction of mean catch to start using in
-first year}
 
 \item{Imulti}{Parameter controlling how much larger target CPUE / index is
 compared with recent levels.}

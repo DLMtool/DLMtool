@@ -65,7 +65,7 @@ surplus production given biomass
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{Rcontrol}: Abun, AvC, BMSY_B0, Bref, CAA, CAL, CAL_bins, Cat, Cref, Dep, Dt, FMSY_M, Ind, Iref, L50, L95, LFC, LFS, LHYear, Lbar, Lc, LenCV, ML, MPeff, MPrec, MaxAge, Mort, Rec, SpAbun, Year, sigmaL, steep, t, vbK, vbLinf, vbt0, wla, wlb
+\code{Rcontrol}: Abun, Cat, Dep, FMSY_M, Ind, L50, MaxAge, Mort, Year, steep, vbK, vbLinf, vbt0, wla, wlb
 }
 
 \section{Rendered Equations}{

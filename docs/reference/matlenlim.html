@@ -21,22 +21,19 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
-
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
+<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
 
 
 <meta property="og:title" content="Size limit management procedures — matlenlim" />
 
-<meta property="og:description" content="Examples of the implementation of input controls in the DLM toolkit. See details below." />
+<meta property="og:description" content="A set of size-selectivity MPs that adjust the retention curve of the fishery." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
-
 
 
 <!-- mathjax -->
@@ -62,7 +59,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
+        <a class="navbar-link" href="../index.html">DLMtool</a>
         <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.999</span>
       </span>
     </div>
@@ -98,17 +95,17 @@
 
     <div class="ref-description">
     
-    <p>Examples of the implementation of input controls in the DLM toolkit. See details below.</p>
+    <p>A set of size-selectivity MPs that adjust the retention curve of the fishery.</p>
     
     </div>
 
     <pre class="usage"><span class='fu'>matlenlim</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='no'>reps</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>matlenlim2</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='no'>...</span>)
+<span class='fu'>matlenlim2</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='no'>reps</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)
 
-<span class='fu'>minlenLopt1</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='no'>...</span>)
+<span class='fu'>minlenLopt1</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='no'>reps</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)
 
-<span class='fu'>slotlim</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>slotlim</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='no'>reps</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -130,11 +127,6 @@
       <td><p>Logical. Show the plot?</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>Optional additional arguments that are ignored. Note arguments
-<code>reps</code> or <code>...</code> are required for all input controls</p></td>
-    </tr>
-    <tr>
       <th>buffer</th>
       <td><p>Parameter controlling the fraction of Lopt to set the minimum
 length of fish caught: minlen=Lopt*(0.7+buffer).</p></td>
@@ -143,25 +135,38 @@ length of fish caught: minlen=Lopt*(0.7+buffer).</p></td>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the...</p>
-<p>A Rec object with input control recommendations</p>
+    <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the SL slot(s) populated</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The the <code>LF5</code> and <code>LFR</code> slots in the <code>Rec</code> object are modified to change the
+retention curve (length at 5 per cent and smallest length at full retention
+respectively). A upper harvest slot limit can be set using the <code>Rec@HS</code> slot.
+The underlying selectivity pattern of the fishing gear does
+not change, and therefore the performance of these methods depends on the
+degree of discard mortality on fish that are selected by the gear but not
+retained by the fishery (<code>Stock@Fdisc</code>).</p>
+<p>The level of discard mortality can be  modified using the <code>Rec@Fdisc</code> slot
+which over-rides the discard mortality set in the operating model.</p>
+<p>The selectivity pattern can be adjusted by creating MPs that modify the selection
+parameters (<code>Rec@L5</code>, <code>Rec@LFS</code> and <code>Rec@Vmaxlen</code>).</p>
     
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     <ul>
-<li><p><code>matlenlim</code>: A data-limited method in which fishing retention-at-length
-is set equivalent to the maturity curve.</p></li>
-<li><p><code>matlenlim2</code>: Selectivity-at-length is set slightly higher (110%)
-than the maturity-at-length.</p></li>
-<li><p><code>minlenLopt1</code>: This input control sets the minimum length of fish
-caught to a fraction of the length that maximises the biomass, Lopt. The aim
+<li><p><code>matlenlim</code>: Fishing retention-at-length is set equivalent to the maturity curve.</p></li>
+<li><p><code>matlenlim2</code>: Fishing retention-at-length is set slightly higher (110%)
+than the length-at-maturity</p></li>
+<li><p><code>minlenLopt1</code>: The minimum length of retention is set to a fraction of
+the length that maximises the biomass, Lopt. The aim
 of this simple MP is restrict the catch of small fish to rebuild
 the stock biomass towards the optimal length, Lopt, expressed in terms of
-the growth parameters Lopt=b/(M/k+b) (Hordyk et al. 2014) (Author: HF Geromont)</p></li>
-<li><p><code>slotlim</code>: Selectivity-at-length is set using a slot limit; that is, a minimum and
-maximum legal length.  The maximum limit is set here, quite arbitrarily, as
-the 75th percentile between the new minimum legal length and the estimated
-asymptotic length Linf.</p></li>
+the growth parameters Lopt=b/(M/k+b) (Hordyk et al. 2015)</p></li>
+<li><p><code>slotlim</code>: Retention-at-length is set using a upper harvest slot limit;
+that is, a minimum and maximum legal length. The maximum limit is set here,
+completely arbitrarily, as the 75th percentile between the new minimum legal
+length and the estimated asymptotic length Linf. This MP has been included
+to demonstrate an upper harvest slot limit.</p></li>
 </ul>
     
     <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
@@ -170,6 +175,8 @@ asymptotic length Linf.</p></li>
     <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
     <p><code>matlenlim</code>: L50</p>
     <p><code>matlenlim2</code>: L50</p>
+    <p><code>minlenLopt1</code>: Mort, vbK, vbLinf, wlb</p>
+    <p><code>slotlim</code>: L50, vbLinf</p>
     
     <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
 
@@ -179,11 +186,17 @@ asymptotic length Linf.</p></li>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Hordyk, A., Ono, K., Sainsbury, K., Loneragan, N., and J.
-Prince. 2014. Some explorations of the life history ratios to describe
+Prince. 2015. Some explorations of the life history ratios to describe
 length composition, spawning-per-recruit, and the spawning potential ratio
 ICES Journal of Marine Science, doi:10.1093/icesjms/fst235.</p>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>matlenlim</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='matlenlim-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt;   LR5   LFR 
+#&gt; 90.25 95.00 </div><div class='input'><span class='fu'>matlenlim2</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='matlenlim-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt;     LR5     LFR 
+#&gt;  99.275 104.500 </div><div class='input'><span class='fu'>minlenLopt1</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='matlenlim-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt;      LR5      LFR 
+#&gt; 89.74689 99.71877 </div><div class='input'><span class='fu'>slotlim</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='matlenlim-4.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt;      LR5      LFR       HS 
+#&gt;  99.2750 104.5000 142.5475 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -192,6 +205,8 @@ ICES Journal of Marine Science, doi:10.1093/icesjms/fst235.</p>
       
       <li><a href="#value">Value</a></li>
 
+      <li><a href="#details">Details</a></li>
+
       <li><a href="#functions">Functions</a></li>
 
       <li><a href="#required-data">Required Data</a></li>
@@ -199,11 +214,15 @@ ICES Journal of Marine Science, doi:10.1093/icesjms/fst235.</p>
       <li><a href="#rendered-equations">Rendered Equations</a></li>
 
       <li><a href="#references">References</a></li>
-          </ul>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
     <h2>Author</h2>
     
 T. Carruthers &amp; A. Hordyk
+
+HF Geromont
 
   </div>
 </div>

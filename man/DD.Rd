@@ -3,7 +3,7 @@
 \name{DD}
 \alias{DD}
 \alias{DD4010}
-\title{Delay - Difference Stock Assessment with UMSY and MSY as leading parameters}
+\title{Delay - Difference Stock Assessment}
 \usage{
 DD(x, Data, reps = 100, plot = FALSE)
 
@@ -22,8 +22,8 @@ DD4010(x, Data, reps = 100, plot = FALSE)
 An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
-A simple delay-difference assessment that estimates the TAC using a
-time-series of catches and a relative abundance index. Conditioned on effort.
+A simple delay-difference assessment with UMSY and MSY as leading parameters
+that estimates the TAC using a time-series of catches and a relative
 }
 \details{
 This DD model is observation error only and has does not estimate

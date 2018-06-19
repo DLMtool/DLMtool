@@ -21,22 +21,20 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
-
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
+<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
 
 
 <meta property="og:title" content="Average Catch with a size limit — AvC_MLL" />
 
-<meta property="og:description" content="Included demonstration purposes of a mixed control MP" />
+<meta property="og:description" content="A example mixed control MP that uses the average catch output control MP together with a
+minimul size limit set at the size of maturity." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
-
 
 
 <!-- mathjax -->
@@ -62,7 +60,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
+        <a class="navbar-link" href="../index.html">DLMtool</a>
         <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.999</span>
       </span>
     </div>
@@ -98,11 +96,12 @@
 
     <div class="ref-description">
     
-    <p>Included demonstration purposes of a mixed control MP</p>
+    <p>A example mixed control MP that uses the average catch output control MP together with a
+minimul size limit set at the size of maturity.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>AvC_MLL</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>)</pre>
+    <pre class="usage"><span class='fu'>AvC_MLL</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -117,17 +116,67 @@
     </tr>
     <tr>
       <th>reps</th>
-      <td><p>The number of stochastic samples of the TAC recommendation</p></td>
+      <td><p>The number of stochastic samples of the MP recommendation(s)</p></td>
+    </tr>
+    <tr>
+      <th>plot</th>
+      <td><p>Logical. Show the plot?</p></td>
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
+    <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the TAC, SL slot(s) populated</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The average catch method is very simple. The mean historical catch is calculated and used to set
+a constant catch limit (TAC). If <code>reps</code> &gt; 1 then the <code>reps</code> samples are drawn from a log-normal
+distribution with mean <code>TAC</code> and standard deviation (in log-space) of 0.2.</p>
+<p>For completeness, the TAC is calculated by:</p>
+<p>$$\textrm{TAC} =\frac{\sum_{y=1}^{\textrm{n}}{C_y}}{\textrm{n}}$$</p>
+<p>where \(\textrm{TAC}\) is the the mean catch recommendation, \(n\) is the number of historical years, and
+\(C_y\)  is the catch in historical year \(y\).</p>
+<p>The size of retention is set to the length of maturity.</p>
+<p>This MP has been included for demonstration purposes of a mixed control MP.</p>
+    
+    <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
+
+    
+    <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
+    <p><code>AvC_MLL</code>: Cat, LHYear, Year</p>
+    
+    <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
+
+    
+    <p>See <a href='https://dlmtool.github.io/DLMtool/reference/AvC_MLL.html'>Online Documentation</a> for correctly rendered equations</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>Other Average Catch MPs: <code><a href='AvC.html'>AvC</a></code>,
+  <code><a href='DCAC.html'>DCACs</a></code></p></div>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='no'>Rec</span> <span class='kw'>&lt;-</span> <span class='fu'>AvC_MLL</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Cobia</a></span>, <span class='kw'>reps</span><span class='kw'>=</span><span class='fl'>1000</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>) <span class='co'># 1,000 log-normal samples with CV = 0.2</span></div><div class='img'><img src='AvC_MLL-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#required-data">Required Data</a></li>
+
+      <li><a href="#rendered-equations">Rendered Equations</a></li>
+
+      <li><a href="#see-also">See also</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>

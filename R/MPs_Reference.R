@@ -9,7 +9,6 @@
 #'
 #' @templateVar mp FMSYref 
 #' @template MPtemplate
-#' @template MPuses
 #' 
 #' @details 
 #' Note that you can out-perform \code{FMSYref} easily. The requirement for fixed
@@ -67,3 +66,5 @@ NFref <- function(x, Data, reps = 100, plot=FALSE) {
   rec
 }
 class(NFref) <- "MP"
+
+

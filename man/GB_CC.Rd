@@ -52,6 +52,9 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 See \href{https://dlmtool.github.io/DLMtool/reference/GB_CC.html}{Online Documentation} for correctly rendered equations
 }
 
+\examples{
+GB_CC(1, DLMtool::SimulatedData, plot=TRUE)
+}
 \references{
 Geromont, H.F. and Butterworth, D.S. 2014. Complex assessment or
 simple management procedures for efficient fisheries management: a

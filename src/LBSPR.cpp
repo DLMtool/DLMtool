@@ -1,7 +1,27 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-
+//' Internal estimation function for LBSPR MP
+//'
+//' @param SL50 Length at 50 percent selectivity
+//' @param SL95 Length at 95 percent selectivity
+//' @param FM Ratio of apical fishing mortality to natural mortality
+//' @param nage Number of pseudo age-classes
+//' @param nlen Number of length bins
+//' @param CVLinf CV of length-at-age
+//' @param LenBins Vector of length bins
+//' @param LenMids Vector of mid-points of length bins
+//' @param x Vector of psuedo ages
+//' @param MK Ratio of M/K
+//' @param Linf Asymptotic length
+//' @param P Fraction of initial cohort alive at maximum age under unfished conditions
+//' @param L50 Length at 50 percent maturity
+//' @param L95 Length at 95 percent maturity
+//' @param Beta Exponent of the length-weight relationship
+//' @author A. Hordyk
+//' @useDynLib DLMtool
+//' @keywords internal
+//' @export
 // [[Rcpp::export]]
 List LBSPRgen(double SL50, double SL95, double FM, int nage, int nlen, double CVLinf, 
                        NumericVector LenBins, NumericVector LenMids, NumericVector x, double MK, double Linf, double P,

@@ -423,6 +423,26 @@ Islope_plot <- function(runIslope, Data) {
   
 }
 
+ITe_plot <- function(x, Data, rec, yrsmth) {
+  ind <- max(1, (length(Data@Year) - yrsmth + 1)):length(Data@Year)
+  deltaI <- mean(Data@Ind[x, ind])/Data@Iref[x]
+  
+  op <- par(no.readonly = TRUE)
+  on.exit(op)
+  par(mfrow=c(1,2), oma=c(1,1,1,1), mar=c(5,4,1,4))
+  
+  ylim <- range(c(Data@Ind[x, ind],Data@Iref[x]))
+  plot(Data@Year[ind], Data@Ind[x, ind], ylim=ylim, type="b", bty="l",
+       xlab="Year", ylab="Index", lwd=2)
+  abline(h= mean(Data@Ind[x, ind]), lty=2)
+  text(median(Data@Year[ind]), mean(Data@Ind[x, ind]), "Mean Index", pos=3)
+  abline(h=Data@Iref[x], lty=3)
+  text(median(Data@Year[ind]), Data@Iref[x], "Target Index", pos=3)     
+  
+  plot(c(max(Data@Year), max(Data@Year)+1), c(Data@MPeff[x], rec@Effort), 
+       type="b", xlab="Year", ylab="Effort", bty="l", lwd=2)
+  
+}
 
 Lratio_BHI_plot <- function(mlbin, CAL, LSQ, Lref, Data, x, TAC, Cc, yrsmth) {
   op <- par(no.readonly = TRUE)
@@ -504,14 +524,35 @@ SPSRA_plot <- function(runSPSRA, Data, x) {
   on.exit(op)
   par(mfrow=c(3,2), oma=c(1,1,1,1), mar=c(5,4,1,4))
   
-  boxplot(runSPSRA$Ksamp, ylab=paste0("Unfished biomass (", Data@Units, ")"))
-  boxplot(runSPSRA$dep, ylab="Depletion")
-  boxplot(runSPSRA$rsamp, ylab="Intrinsic rate of increase")
-  boxplot(runSPSRA$MSY, ylab="MSY")
+  if(all(round(runSPSRA$Ksamp/mean(runSPSRA$Ksamp),2) == 1)) {
+    boxplot(mean(runSPSRA$Ksamp), ylab="Intrinsic rate of increase")
+  } else {
+    boxplot(runSPSRA$Ksamp, ylab=paste0("Unfished biomass (", Data@Units, ")")) 
+  }
+  if(all(round(runSPSRA$dep/mean(runSPSRA$dep),2) == 1)) {
+    boxplot(mean(runSPSRA$dep), ylab="Depletion")
+  } else {
+    boxplot(runSPSRA$dep, ylab="Depletion")
+  }
+  if(all(round(runSPSRA$rsamp/mean(runSPSRA$rsamp),2) == 1)) {
+    boxplot(mean(runSPSRA$rsamp), ylab="Intrinsic rate of increase")
+  } else {
+    boxplot(runSPSRA$rsamp, ylab="Intrinsic rate of increase")  
+  }
+  if(all(round(runSPSRA$MSY/mean(runSPSRA$MSY),2) == 1)) {
+    boxplot(mean(runSPSRA$MSY), ylab="MSY")
+  } else {
+    boxplot(runSPSRA$MSY, ylab="MSY")
+  }
+ 
   
   TAC <- runSPSRA$TAC
   
-  boxplot(TAC, ylab="TAC")
+  if(all(round(TAC/mean(TAC),2) == 1)) {
+    boxplot(mean(TAC), ylab="TAC")
+  } else {
+    boxplot(TAC, ylab="TAC")
+  }
   
   ylim <- range(c(Data@Cat[x,], TAC), na.rm=TRUE)
   plot(c(Data@Year, max(Data@Year)+1), c(Data@Cat[x,], NA), xlab="Year", ylab=paste0('Catch (', Data@Units, ')'),
@@ -548,6 +589,7 @@ YPR_plot <- function(runYPR, Data,reps) {
 
 
 size_lim_plot <- function(x, Data, Rec) {
+  Val <- Var <- NULL # cran check hacks
   Linf <- Data@vbLinf[x]
   Lens <- 1:Linf
   

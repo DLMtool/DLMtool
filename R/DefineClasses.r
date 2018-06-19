@@ -1661,6 +1661,7 @@ setMethod("summary",
           signature(object = "Data"),
           function(object){
             wait <- TRUE
+            Freq <- n <- Var2 <- NULL # cran check
             if (class(object) != "Data") stop("Object must be class `Data`", call.=FALSE)
             
             # Time-Series
@@ -1702,7 +1703,7 @@ setMethod("summary",
               levels(df1$Year) <- yrs
               
               yr.n <- df1 %>% dplyr::group_by(Year) %>% dplyr::summarise(n=sum(Freq))
-              yr.ind <- yr.n %>% filter(n>0) %>% dplyr::select(Year)
+              yr.ind <- yr.n %>% dplyr::filter(n>0) %>% dplyr::select(Year)
               df1 <- df1 %>% dplyr::filter(Year %in% yr.ind$Year == TRUE)
               if (nrow(df1)>0) {
                 
@@ -1734,7 +1735,7 @@ setMethod("summary",
               levels(df1$Year) <- yrs
               
               yr.n <- df1 %>% dplyr::group_by(Year) %>% dplyr::summarise(n=sum(Freq))
-              yr.ind <- yr.n %>% filter(n>0) %>% dplyr::select(Year)
+              yr.ind <- yr.n %>% dplyr::filter(n>0) %>% dplyr::select(Year)
               df1 <- df1 %>% dplyr::filter(Year %in% yr.ind$Year == TRUE)
               
               if (length(object@CAL_bins)> 40) {
@@ -1777,8 +1778,7 @@ setMethod("summary",
               val[[i]] <- trlnorm(reps, mu,cv)
             }
             vals <- do.call("cbind", val)
-            head(vals)
-            
+      
             colnames(vals) <- namey
             
             df1 <- as.data.frame.table(vals, stringsAsFactors = TRUE)

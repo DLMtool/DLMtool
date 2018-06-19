@@ -40,6 +40,7 @@ Imports:
     rfishbase,
     rmarkdown,
     stats,
+    tidyr,
     utils
 LazyData: yes
 LazyLoad: yes

@@ -4,7 +4,7 @@
 \alias{DDe}
 \alias{DDes}
 \alias{DDe75}
-\title{Effort-based Delay - Difference Stock Assessment with UMSY and MSY as leading parameters}
+\title{Effort-based Delay - Difference Stock Assessment}
 \usage{
 DDe(x, Data, reps = 100, plot = FALSE)
 
@@ -29,7 +29,8 @@ DDe75(x, Data, reps = 100, plot = FALSE)
 An object of class \code{\link[=Rec-class]{Rec}} with the TAE slot(s) populated
 }
 \description{
-A simple delay-difference assessment that estimates \eqn{E_{\textrm{MSY}}} using a
+A simple delay-difference assessment with UMSY and MSY as leading parameters
+that estimates \eqn{E_{\textrm{MSY}}} using a
 time-series of catches and a relative abundance index.
 }
 \details{

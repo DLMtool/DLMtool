@@ -16,8 +16,7 @@ ItargetE2(x, Data, reps = 100, plot = FALSE, yrsmth = 5, Imulti = 2)
 
 ItargetE3(x, Data, reps = 100, plot = FALSE, yrsmth = 5, Imulti = 2.5)
 
-ItargetE4(x, Data, reps = 100, plot = FALSE, yrsmth = 5, Imulti = 2.5,
-  xx = 0.3)
+ItargetE4(x, Data, reps = 100, plot = FALSE, yrsmth = 5, Imulti = 2.5)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}

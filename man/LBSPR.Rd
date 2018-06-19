@@ -19,6 +19,8 @@ LBSPR(x, Data, reps = NA, plot = FALSE, n = 5, smoother = TRUE,
 \item{n}{Last number of years to run the model on.}
 
 \item{smoother}{Logical. Should the SPR estimates be smoothed?}
+
+\item{frac}{The fractional adjustment in effort if SPR is outside of target range}
 }
 \value{
 An object of class \code{\link[=Rec-class]{Rec}} with the TAE slot(s) populated
@@ -56,6 +58,5 @@ LBSPR(1, Data=DLMtool::SimulatedData, plot=TRUE)
 Hordyk, A., Ono, K., Valencia, S., loneragan, N., and Prince J;
 A novel length-based empirical estimation method of spawning potential ratio (SPR),
 and tests of its performance, for small-scale, data-poor fisheries,
-ICES Journal of Marine Science, 72 (1) 2015, 217–231,
-https://doi.org/10.1093/icesjms/fsu004
+ICES Journal of Marine Science, 72 (1) 2015, 217-231,
 }

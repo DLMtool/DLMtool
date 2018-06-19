@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Effort searching MP aiming for 40 per cent stock depletion — DTe40 • DLMtool Documentation</title>
+<title>Effort searching MP aiming for a fixed stock depletion — DTe40 • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -21,22 +21,19 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
-
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
+<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
 
 
-<meta property="og:title" content="Effort searching MP aiming for 40 per cent stock depletion — DTe40" />
+<meta property="og:title" content="Effort searching MP aiming for a fixed stock depletion — DTe40" />
 
-<meta property="og:description" content="A very simple MP that modifies effort to reach 40 percent stock depletion" />
+<meta property="og:description" content="Effort is adjusted using a simple rule that aims for a specified level of depletion." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
-
 
 
 <!-- mathjax -->
@@ -62,7 +59,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
+        <a class="navbar-link" href="../index.html">DLMtool</a>
         <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.999</span>
       </span>
     </div>
@@ -91,18 +88,22 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Effort searching MP aiming for 40 per cent stock depletion</h1>
+    <h1>Effort searching MP aiming for a fixed stock depletion</h1>
     
     <div class="hidden name"><code>DTe40.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>A very simple MP that modifies effort to reach 40 percent stock depletion</p>
+    <p>Effort is adjusted using a simple rule that aims for a specified level of depletion.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>DTe40</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>alpha</span><span class='kw'>=</span><span class='fl'>0.4</span>, <span class='kw'>LB</span><span class='kw'>=</span><span class='fl'>0.9</span>, <span class='kw'>UB</span><span class='kw'>=</span><span class='fl'>1.1</span>)</pre>
+    <pre class="usage"><span class='fu'>DTe40</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.4</span>, <span class='kw'>LB</span> <span class='kw'>=</span> <span class='fl'>0.9</span>,
+  <span class='kw'>UB</span> <span class='kw'>=</span> <span class='fl'>1.1</span>)
+
+<span class='fu'>DTe50</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>LB</span> <span class='kw'>=</span> <span class='fl'>0.9</span>,
+  <span class='kw'>UB</span> <span class='kw'>=</span> <span class='fl'>1.1</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -117,7 +118,11 @@
     </tr>
     <tr>
       <th>reps</th>
-      <td><p>The number of stochastic samples of the TAC recommendation</p></td>
+      <td><p>The number of stochastic samples of the MP recommendation(s)</p></td>
+    </tr>
+    <tr>
+      <th>plot</th>
+      <td><p>Logical. Show the plot?</p></td>
     </tr>
     <tr>
       <th>alpha</th>
@@ -133,13 +138,58 @@
     </tr>
     </table>
     
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
+    <p>An object of class <code><a href='Rec-class.html'>Rec</a></code> with the TAE slot(s) populated</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The TAE is calculated as:
+$$\textrm{TAE}_y = \frac{D}{\alpha} \textrm{TAE}_{y-1}$$
+where \(D\) is estimated current level of depletion and \(\alpha\) is argument
+<code>alpha</code> specifying the target level of depletion.</p>
+<p>The maximum fractional change in TAE is specified with arguments <code>LB</code> and <code>UB</code></p>
+    
+    <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
+
+    <ul>
+<li><p><code>DTe40</code>: Effort is adjusted to reach 40 percent stock depletion</p></li>
+<li><p><code>DTe50</code>: Effort is adjusted to reach 50 percent stock depletion</p></li>
+</ul>
+    
+    <h2 class="hasAnchor" id="required-data"><a class="anchor" href="#required-data"></a>Required Data</h2>
+
+    
+    <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
+    <p><code>DTe40</code>: Dep, MPeff</p>
+    
+    <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
+
+    
+    <p>See <a href='https://dlmtool.github.io/DLMtool/reference/DTe40.html'>Online Documentation</a> for correctly rendered equations</p>
+    
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'>DTe40</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DTe40-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; Effort 
+#&gt;    0.9 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-                </ul>
+      
+      <li><a href="#value">Value</a></li>
+
+      <li><a href="#details">Details</a></li>
+
+      <li><a href="#functions">Functions</a></li>
+
+      <li><a href="#required-data">Required Data</a></li>
+
+      <li><a href="#rendered-equations">Rendered Equations</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
     <h2>Author</h2>
     

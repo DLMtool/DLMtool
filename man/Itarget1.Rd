@@ -5,11 +5,7 @@
 \alias{Itarget2}
 \alias{Itarget3}
 \alias{Itarget4}
-\title{Incremental Index Target MP
-
-A management procedure that incrementally adjusts the TAC (starting from
-reference level that is a fraction of mean recent catches)
-to reach a target CPUE / relative abundance index}
+\title{Incremental Index Target MP}
 \usage{
 Itarget1(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0,
   Imulti = 1.5)
@@ -45,6 +41,10 @@ compared with recent levels.}
 An object of class \code{\link[=Rec-class]{Rec}} with the \code{TAC} slot populated with a numeric vector of length \code{reps}
 }
 \description{
+A management procedure that incrementally adjusts the TAC (starting from
+reference level that is a fraction of mean recent catches)
+to reach a target CPUE / relative abundance index
+
 Four index/CPUE target MPs proposed by Geromont and Butterworth 2014.
 Tested by Carruthers et al. 2015.
 }

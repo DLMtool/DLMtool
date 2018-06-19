@@ -6,11 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Incremental Index Target MP
-
-A management procedure that incrementally adjusts the TAC (starting from
-reference level that is a fraction of mean recent catches)
-to reach a target CPUE / relative abundance index — ItargetE1 • DLMtool Documentation</title>
+<title>Incremental Index Target MP — Itarget1 • DLMtool Documentation</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -25,27 +21,23 @@ to reach a target CPUE / relative abundance index — ItargetE1 • DLMtool Docu
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
-
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
+<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
 
 
-<meta property="og:title" content="Incremental Index Target MP
+<meta property="og:title" content="Incremental Index Target MP — Itarget1" />
 
-A management procedure that incrementally adjusts the TAC (starting from
+<meta property="og:description" content="A management procedure that incrementally adjusts the TAC (starting from
 reference level that is a fraction of mean recent catches)
-to reach a target CPUE / relative abundance index — ItargetE1" />
-
-<meta property="og:description" content="Four index/CPUE target MPs proposed by Geromont and Butterworth 2014.
+to reach a target CPUE / relative abundance index
+Four index/CPUE target MPs proposed by Geromont and Butterworth 2014.
 Tested by Carruthers et al. 2015." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
-
 
 
 <!-- mathjax -->
@@ -71,7 +63,7 @@ Tested by Carruthers et al. 2015." />
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
+        <a class="navbar-link" href="../index.html">DLMtool</a>
         <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.999</span>
       </span>
     </div>
@@ -100,27 +92,22 @@ Tested by Carruthers et al. 2015." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Incremental Index Target MP
-
-A management procedure that incrementally adjusts the TAC (starting from
-reference level that is a fraction of mean recent catches)
-to reach a target CPUE / relative abundance index</h1>
+    <h1>Incremental Index Target MP</h1>
     
     <div class="hidden name"><code>Itarget1.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Four index/CPUE target MPs proposed by Geromont and Butterworth 2014.
+    <p>A management procedure that incrementally adjusts the TAC (starting from
+reference level that is a fraction of mean recent catches)
+to reach a target CPUE / relative abundance index</p>
+<p>Four index/CPUE target MPs proposed by Geromont and Butterworth 2014.
 Tested by Carruthers et al. 2015.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>ItargetE1</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>yrsmth</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>xx</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>Imulti</span> <span class='kw'>=</span> <span class='fl'>1.5</span>)
-
-<span class='fu'>ItargetE4</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>yrsmth</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>xx</span> <span class='kw'>=</span> <span class='fl'>0</span>, <span class='kw'>Imulti</span> <span class='kw'>=</span> <span class='fl'>2.5</span>)
-
-<span class='fu'>Itarget1</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>yrsmth</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>xx</span> <span class='kw'>=</span> <span class='fl'>0</span>,
+    <pre class="usage"><span class='fu'>Itarget1</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>yrsmth</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>xx</span> <span class='kw'>=</span> <span class='fl'>0</span>,
   <span class='kw'>Imulti</span> <span class='kw'>=</span> <span class='fl'>1.5</span>)
 
 <span class='fu'>Itarget2</span>(<span class='no'>x</span>, <span class='no'>Data</span>, <span class='kw'>reps</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>plot</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>yrsmth</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>xx</span> <span class='kw'>=</span> <span class='fl'>0</span>,
@@ -148,6 +135,10 @@ Tested by Carruthers et al. 2015.</p>
       <td><p>The number of stochastic samples of the MP recommendation(s)</p></td>
     </tr>
     <tr>
+      <th>plot</th>
+      <td><p>Logical. Show the plot?</p></td>
+    </tr>
+    <tr>
       <th>yrsmth</th>
       <td><p>Years over which to smooth recent estimates of surplus
 production</p></td>
@@ -161,10 +152,6 @@ first year</p></td>
       <th>Imulti</th>
       <td><p>Parameter controlling how much larger target CPUE / index is
 compared with recent levels.</p></td>
-    </tr>
-    <tr>
-      <th>plot</th>
-      <td><p>Logical. Show the plot?</p></td>
     </tr>
     </table>
     
@@ -189,11 +176,9 @@ where \(x\) is argument <code>xx</code> and C is the average catch over the last
     <h2 class="hasAnchor" id="functions"><a class="anchor" href="#functions"></a>Functions</h2>
 
     <ul>
-<li><p><code>ItargetE1</code>: The less precautionary effort-based MP</p></li>
-<li><p><code>ItargetE4</code>: The most biologically precautionary effort-based MP</p></li>
 <li><p><code>Itarget1</code>: The less precautionary TAC-based MP</p></li>
-<li><p><code>Itarget2</code>: The most biologically precautionary TAC-based MP</p></li>
-<li><p><code>Itarget3</code>: The most biologically precautionary TAC-based MP</p></li>
+<li><p><code>Itarget2</code>: Increasing biologically precautionary TAC-based MP</p></li>
+<li><p><code>Itarget3</code>: Increasing biologically precautionary TAC-based MP</p></li>
 <li><p><code>Itarget4</code>: The most biologically precautionary TAC-based MP</p></li>
 </ul>
     
@@ -201,7 +186,7 @@ where \(x\) is argument <code>xx</code> and C is the average catch over the last
 
     
     <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
-    <p><code>Itarget1</code>: Cat, Ind, LHYear, Year, t</p>
+    <p><code>Itarget1</code>: Cat, Ind, LHYear, Year</p>
     
     <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
 
@@ -221,15 +206,16 @@ doi:10.1093/icesjms/fst232</p>
     <div class='dont-index'><p>Other Index methods: <code><a href='GB_slope.html'>GB_slope</a></code>,
   <code><a href='GB_target.html'>GB_target</a></code>, <code><a href='Gcontrol.html'>Gcontrol</a></code>,
   <code><a href='ICI.html'>ICI</a></code>, <code><a href='Iratio.html'>Iratio</a></code>,
-  <code><a href='Islope1.html'>Islope1</a></code></p></div>
+  <code><a href='Islope1.html'>Islope1</a></code>, <code><a href='Itarget1_MPA.html'>Itarget1_MPA</a></code>,
+  <code><a href='ItargetE1.html'>ItargetE1</a></code></p></div>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>Itarget1</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Itarget1-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     7.017778 </div><div class='input'><span class='fu'>Itarget2</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Itarget1-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     7.066003 </div><div class='input'><span class='fu'>Itarget3</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Itarget1-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     7.046927 </div><div class='input'><span class='fu'>Itarget4</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Itarget1-4.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     4.834688 </div></pre>
+#&gt;      6.98346 </div><div class='input'><span class='fu'>Itarget2</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Itarget1-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     7.059942 </div><div class='input'><span class='fu'>Itarget3</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Itarget1-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     7.079183 </div><div class='input'><span class='fu'>Itarget4</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Itarget1-4.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     4.864484 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

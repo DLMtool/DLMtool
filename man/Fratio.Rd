@@ -6,7 +6,7 @@
 \alias{DepF}
 \alias{Fratio_CC}
 \alias{Fratio_ML}
-\title{An FMSY/M ratio method}
+\title{FMSY/M ratio methods}
 \usage{
 Fratio(x, Data, reps = 100, plot = FALSE)
 

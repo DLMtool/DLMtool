@@ -76,9 +76,10 @@ Turing <- function(OM, Data, wait=TRUE) {
     
 plotCAAdata <- function(Ylab="Count", slot="CAA", message="Catch-at-Age Data", 
                         Data, SimDat, samps, YrInd, wait) {
+  Year <- Val <- Freq <- Sim <- NULL # cran check hacks
   realDat <- slot(Data, slot)[1,,]
   sampDat <- slot(SimDat, slot)[samps,YrInd,]
-  
+  nsamp <- length(samps)
   if (all(is.na(realDat))) {
     message("No ", message, " found in Data object")
     return()
@@ -144,7 +145,7 @@ plotCAAdata <- function(Ylab="Count", slot="CAA", message="Catch-at-Age Data",
     Years <- unique(df3$Year)
     SampYears <- (max(Years)-3):max(Years)
     
-    df4 <- df3 %>% filter(Year %in% SampYears)
+    df4 <- df3 %>% dplyr::filter(Year %in% SampYears)
     
     # filter empty bins
     Bcount <- df4 %>% dplyr::group_by(Val) %>% dplyr::summarize(count=sum(Freq>0))
@@ -175,6 +176,7 @@ plotCAAdata <- function(Ylab="Count", slot="CAA", message="Catch-at-Age Data",
 
 plotTSdata <- function(Ylab, slot, message, Data, SimDat, samps, YrInd, 
                        wait=TRUE, standarise=TRUE) {
+  Year <- Val <- Freq <- Sim <- value <- key <- NULL # cran check hacks
   realDat <- slot(Data, slot)[1,]
   # remove NAs
   YrInd2 <- YrInd[is.finite(realDat)] 

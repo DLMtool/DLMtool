@@ -41,7 +41,7 @@ therefore errors are not as readily propagated. The result is method that
 tends to perform alarmingly well and therefore requires debunking ASAP.
 
 The catch limit (TAC) is calculated as:
-\deqn{\textrm{TAC}=F * B}
+\deqn{\textrm{TAC}=F  B}
 where \eqn{F} is fishing mortality and \eqn{B} is the estimated current biomass.
 
 \eqn{F} is calculated as:
