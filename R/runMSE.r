@@ -765,16 +765,20 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   Data@nareas <- nareas
   
   # put all the operating model parameters in one table
-  Data@OM <- data.frame(RefY, M, Depletion, A, SSBMSY_SSB0, FMSY_M, Mgrad, Msd, procsd, Esd, dFfinal, 
+  OMtable <- data.frame(RefY, M, Depletion, A, SSBMSY_SSB0, FMSY_M, Mgrad, Msd, procsd, Esd, dFfinal, 
                         MSY=MSY, qinc, qcv, FMSY=FMSY, Linf, K, t0, hs, Linfgrad, Kgrad, Linfsd, Ksd, 
                         ageM=ageM[,nyears], L5=L5[nyears, ], LFS=LFS[nyears, ], Vmaxlen=Vmaxlen[nyears, ], LFC, OFLreal, 
                         Spat_targ, Size_area_1, Frac_area_1, Prob_staying, AC, L50, L95, B0, N0, SSB0, BMSY_B0,
                         TACSD,TACFrac,TAESD,TAEFrac,SizeLimSD,SizeLimFrac,Blow,MGT,
                         BMSY, SSBMSY=SSBMSY, Mexp, Fdisc, 
                         LR5=LR5[nyears,], LFR=LFR[nyears,], Rmaxlen=Rmaxlen[nyears,], DR=DR[nyears,]) 
+  OMtable <- OMtable[,order(names(OMtable))]
+  
+  Data@OM <- OMtable
 
-
-  Data@Obs <- as.data.frame(ObsPars) # put all the observation error model parameters in one table
+  ObsTable <- as.data.frame(ObsPars)
+  ObsTable <- ObsTable[,order(names(ObsTable))]
+  Data@Obs <- ObsTable # put all the observation error model parameters in one table
   
   Data@LHYear <- OM@nyears  # Last historical year is nyears (for fixed MPs)
   Data@MPrec <- Cobs[, nyears]

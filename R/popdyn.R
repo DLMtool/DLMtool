@@ -1008,8 +1008,13 @@ optMSY <- function(logFa, Asize_c, nareas, maxage, Ncurr, pyears, M_age,
   # Yield
   # Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # retained catch
   Cn <- simpop[[6]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # removals
-  Cb <- Cn[,pyears,] * WtAge[,pyears]
-  -sum(Cb)
+  # Cb <- Cn[,pyears,] * WtAge[,pyears]
+  # -sum(Cb)
+  Cb <- Cn[,(pyears-4):pyears,] * array(WtAge[,(pyears-4):pyears], dim=dim(Cn[,(pyears-4):pyears,]))
+ 
+  -mean( apply(Cb,2,sum))
+  
+
 }
 
 

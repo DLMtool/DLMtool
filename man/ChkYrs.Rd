@@ -20,7 +20,7 @@ Check the years to summarize performance
 }
 \examples{
 \dontrun{
-MSE <- runMSE
+MSE <- runMSE()
 ChkYrs(NULL, MSE) # returns c(1, MSE@proyears)
 ChkYrs(c(2,5), MSE) # returns c(2,5)
 ChkYrs(c(70,80), MSE) # returns c(MSE@proyears-10,MSE@proyears)

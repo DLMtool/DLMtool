@@ -25,66 +25,177 @@ simulation conditions and performance of data-limited methods
 
 \item{\code{OM}}{A table of sampled parameter of the operating model. Table object of nsim rows. Real numbers\cr
 \itemize{
-\item RefY: reference yield, the highest long-term yield (mean over last five years of projection) obtained from a fixed F strategy. This is a useful reference point for framing performance of MPs because it standardizes for starting point and future productivity.
-\item M: instantaneous natural mortality rate
-\item Depletion: stock depletion (biomass / unfished biomass) in the final historical year (prior to projection)
+
 \item A: abundance (biomass) updated in each management update of projection
-\item BMSY_B0: most productive stock size relative to unfished
-\item FMSY_M: fishing mortality rate divided by natural mortality rate
-\item Mgrad: mean average percentage gradient in natural mortality rate (percentage per time step)
-\item Msd: interannual variability in natural mortality rate (lognormal CV)
-\item procsd: process error - CV in log-normal recruitment deviations
-\item Esd: interannual variability in historical effort (fishing mortality rate)
-\item dFfinal: gradient in fishing mortality rate over final five years of the historical simulation
-\item MSY: Maximum Sustainable Yield
-\item qinc: mean percentage increase in fishing efficiency (catchability) in projected years (input controls only)
-\item qcv: interannual variability in future fishing efficiency (catchability) in projected years (input controls only)
-\item FMSY: Fishing mortality rate at Maximum Sustainable Yield
-\item Linf: maximum length (von Bertalanffy Linf parameter)
-\item K: maximum growth rate (von Bertalanffy K parameter)
-\item t0: theoretical length at age zero (von Bertalanffy t0 parameter)
-\item hs: steepness of the stock recruitment relationship (the fraction of unfished recruitment at a fifth of unfished stock levels)
-\item Linfgrad: mean gradient in maximum length (per cent per time step)
-\item Kgrad: mean gradient in maximum growth rate (per cent per time step)
-\item Linfsd: interannual variability in maximum length (log normal CV)
-\item Ksd: interannual variability in maximum growth rate (log normal CV)
-\item ageM: age at 50 per cent maturity
-\item LFS: length at full selection (the shortest length class where fishery selectivity is 100 per cent)
-\item age05: the age at 5 percent selectivity (ascending limb of selectivity curve)
-\item Vmaxage: the selectivity of the oldest age class (controls dome shape of selectivity curve)
-\item LFC: length at first capture, the smallest length that can be caught by the gear
-\item OFLreal: the true simulated Over Fishing Limit (FMSY x biomass) updated in each management update of the projection
-\item Spat_targ: spatial targetting parameter, fishing mortality rate across areas is proportional to vulnerable biomass raised to the power of this number.
-\item Size_area_1: The size of area 1 relative to area 2
-\item Frac_area_1: the fraction of unfished biomass inhabiting area 1 (can be seen as fraction of habitat in area 1 or relative size of area 1)
-\item Prob_staying: the probability that individuals in area 1 remain there between time-steps
+
 \item AC: autocorrelation in recruitment
+
+\item ageM: age at 50 per cent maturity
+
+\item B0: unfished total biomass
+
+\item Blow: SSB where it takes MGThorizon x MGT to reach Bfrac of BMSY (spawning biomass)
+
+\item BMSY: BMSY in last historical year (total biomass)
+
+\item BMSY_B0: ratio of BMSY to unfished total biomass in last historical year
+
+\item Depletion: stock depletion (spawning biomass / unfished spawing biomass) in the final historical year (prior to projection)
+
+\item dFfinal: gradient in fishing mortality rate over final five years of the historical simulation
+
+\item DR: the fraction of caught fish that are discarded
+
+\item Esd: inter-annual variability in fishing mortality rate
+
+\item Fdisc: fraction of discarded fish that die
+
+\item FMSY: fishing mortality at MSY in last historical year
+
+\item FMSY_M: ratio of FMSY to M in last historical year
+
+\item Frac_area_1: fraction of the unfished biomass in stock 1
+
+\item hs: steepness of the stock recruitment relationship (the fraction of unfished recruitment at a fifth of unfished stock levels)
+
+\item K: maximum growth rate (von Bertalanffy K parameter)
+
+\item Kgrad: mean gradient in maximum growth rate (per cent per time step)
+
+\item Ksd: interannual variability in maximum growth rate (log normal CV)
+
+\item L5: length at 5/% selectivity
+
+\item L50: length at 50/% maturity
+
+\item L95: length at 95/% maturity
+
+\item LFC: length at first capture
+
+\item LFR: first length at full retention
+
+\item LFS: first length at full selection
+
+\item Linf: asymptotic length
+
+\item Linfgrad: mean gradient in maximum length (per cent per time step)
+
+\item Linfsd: interannual variability in maximum length (log normal CV)
+
+\item LR5: first length at 5/% retention
+
+\item M: instantaneous natural mortality rate
+
+\item Mexp: exponent of Lorezen M-weight relationship
+
+\item Mgrad: mean average percentage gradient in natural mortality rate (percentage per time step)
+
+\item MGT: mean generation time
+
+\item Msd: interannual variability in natural mortality rate (lognormal CV)
+
+\item MSY: maximum sustainable yield in last historical year
+
+\item N0: equilibrium unfished total numbers
+
+\item OFLreal: A * FMSY  the true simulated Over Fishing Limit in last historical year
+
+\item Prob_staying: probability of inviduals in area 1 remaining in area 1 over the course of one year
+
+\item procsd: process error - CV in log-normal recruitment deviations
+
+\item qcv: interannual variability in future fishing efficiency (catchability) in projected years (input controls only)
+
+\item qinc: mean percentage increase in fishing efficiency (catchability) in projected years (input controls only)
+
+\item RefY: reference yield, the highest long-term yield (mean over last five years of projection) obtained from a fixed F strategy. This is a useful reference point for framing performance of MPs because it standardizes for starting point and future productivity.
+
+\item Rmaxlen: retention of fish at asymptotic length
+
+\item Size_area_1: size of Area 1 relative to Area 2
+
+\item SizeLimFrac: fraction of average implementation error of size regulations
+
+\item SizeLimSD: log-normal coefficient of variation controlling mismatch between a minimum size limit and the real minimum size retained.
+
+\item Spat_targ: distribution of fishing in relation to spatial biomass: fishing distribution is proportional to B^Spat_targ
+
+\item SSB0: unfished spawning biomass
+
+\item SSBMSY: spawning biomass MSY in last historical year
+
+\item SSBMSY_SSB0: ratio of SSB[MSY]/SSB0 in last historical year
+
+\item t0: theoretical length at age zero (von Bertalanffy t0 parameter)
+
+\item TACFrac: mean fraction of TAC taken
+
+\item TACSD: log-normal coefficient of variation in the fraction of Total Allowable Catch (TAC) taken
+
+\item TAEFrac: mean fraction of TAE taken
+
+\item TAESD: log-normal coefficient of variation in the fraction of TAE
+
+\item Vmaxlen: selection of fish at asymptotic length
+
 }}
 
 \item{\code{Obs}}{A table of sampled parameters of the observation model. Table of nsim rows. Real numbers\cr
 \itemize{
-\item Cbias: bias in observed catches
-\item Csd: observation error in observed catches (lognormal CV)
-\item CAA_nsamp: the number of catch-at-age observations per time step
-\item CAA_ESS: the effective sample size of multinomial catch-at-age observation model (number of independent draws)
-\item CAL_nsamp: the number of catch-at-length observations per time step
-\item CAL_ESS: the effective sample size of multinomial catch-at-length observation model (number of independent draws)
-\item Isd: observation error in relative abundance index (lognormal CV)
-\item Dbias: bias in observed stock depletion (also applies to depletion Dt for DCAC)
-\item Mbias: bias in observed natural mortality rate
-\item FMSY_Mbias: bias in ratio of FMSY to natural mortality rate
-\item BMSY_B0bias: bias in ratio of most productive stock size relative to unfished
-\item AMbias: bias in age at 50 per cent maturity
-\item LFCbias: bias in length at first capture
-\item LFSbias: bias in length at full selection
+
 \item Abias: bias in observed current absolute stock biomass
-\item Kbias: bias in maximum growth rate (von Bertalanffy K parameter)
-\item t0bias: bias in theoretical length at age zero (von Bertalanffy t0 parameter)
-\item Linfbias: bias in maximum length (von Bertalanffy Linf parameter)
-\item hbias: bias in observed steepness of the stock recruitment relationship
-\item Irefbias: bias in abundance index corresponding to BMSY stock levels
+
+\item Aerr: error in observed current absolute stock biomass
+
+\item betas: hyper-stability/hyper-depletion parameter
+
+\item BMSY_B0bias: bias in ratio of most productive stock size relative to unfished
+
+\item Brefbias: bias in BMSY stock levels (target or reference biomass levels)
+
+\item CAA_ESS: the effective sample size of multinomial catch-at-age observation model (number of independent draws)
+
+\item CAA_nsamp: the number of catch-at-age observations per time step
+
+\item CAL_ESS: the effective sample size of multinomial catch-at-length observation model (number of independent draws)
+
+\item CAL_nsamp: the number of catch-at-length observations per time step
+
+\item Cbias: bias in observed catches
+
 \item Crefbias: bias in MSY prediction (target or reference catch)
-\item Brefbias: bias in BMSY stock levels (target or reference biomass levels)}}
+
+\item Csd: observation error in observed catches (lognormal CV)
+
+\item Dbias: bias in observed stock depletion (also applies to depletion Dt for DCAC)
+
+\item Derr: error in observed stock depletion
+
+\item FMSY_Mbias: bias in ratio of FMSY to natural mortality rate
+
+\item hbias: bias in observed steepness of the stock recruitment relationship
+
+\item Irefbias: bias in abundance index corresponding to BMSY stock levels
+
+\item Isd: observation error in relative abundance index (lognormal CV)
+
+\item Kbias: bias in maximum growth rate (von Bertalanffy K parameter)
+
+\item lenMbias: bias in length at 50 per cent maturity
+
+\item LFCbias: bias in length at first capture
+
+\item LFSbias: bias in length at full selection
+
+\item Linfbias: bias in maximum length (von Bertalanffy Linf parameter)
+
+\item Mbias: bias in observed natural mortality rate
+
+\item Recsd: error in observed recruitment
+
+\item t0bias: bias in theoretical length at age zero (von Bertalanffy t0 parameter)
+
+}}
 
 \item{\code{B_BMSY}}{Simulated biomass relative to BMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers}
 

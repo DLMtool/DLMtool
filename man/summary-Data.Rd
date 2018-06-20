@@ -5,10 +5,18 @@
 \alias{summary,Data-method}
 \title{Summary of Data object}
 \usage{
-\S4method{summary}{Data}(object)
+\S4method{summary}{Data}(object, wait = TRUE, x = 1, plots = "all")
 }
 \arguments{
 \item{object}{An object of class Data}
+
+\item{wait}{Logical. Wait for key press before next plot?}
+
+\item{x}{iteration number for the Data object.}
+
+\item{plots}{Character. What plots to show? \code{all}, \code{TS}, \code{CAA}, \code{CAL}, \code{PD}
+for all plots, time-series, catch-at-age, catch-at-length, and
+probability distributions respectively}
 }
 \description{
 Summary of Data object

@@ -1206,69 +1206,10 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
 #' @slot nMPs Number of management procedures simulation tested. Single value. Positive integer. 
 #' @slot MPs The names of the MPs that were tested. Vector of length nMPs. Character strings. 
 #' @slot nsim Number of simulations. Single value. Positive integer
-#' @slot OM A table of sampled parameter of the operating model. Table object of nsim rows. Real numbers\cr
-#'   \itemize{
-#'   \item RefY: reference yield, the highest long-term yield (mean over last five years of projection) obtained from a fixed F strategy. This is a useful reference point for framing performance of MPs because it standardizes for starting point and future productivity. 
-#'   \item M: instantaneous natural mortality rate
-#'   \item Depletion: stock depletion (biomass / unfished biomass) in the final historical year (prior to projection)
-#'   \item A: abundance (biomass) updated in each management update of projection
-#'   \item BMSY_B0: most productive stock size relative to unfished
-#'   \item FMSY_M: fishing mortality rate divided by natural mortality rate
-#'   \item Mgrad: mean average percentage gradient in natural mortality rate (percentage per time step)
-#'   \item Msd: interannual variability in natural mortality rate (lognormal CV)
-#'   \item procsd: process error - CV in log-normal recruitment deviations
-#'   \item Esd: interannual variability in historical effort (fishing mortality rate)
-#'   \item dFfinal: gradient in fishing mortality rate over final five years of the historical simulation
-#'   \item MSY: Maximum Sustainable Yield
-#'   \item qinc: mean percentage increase in fishing efficiency (catchability) in projected years (input controls only)
-#'   \item qcv: interannual variability in future fishing efficiency (catchability) in projected years (input controls only)
-# #'   \item CALcv: variability in lengths at age around the growth curve (normal CV)
-#'   \item FMSY: Fishing mortality rate at Maximum Sustainable Yield
-#'   \item Linf: maximum length (von Bertalanffy Linf parameter)
-#'   \item K: maximum growth rate (von Bertalanffy K parameter)
-#'   \item t0: theoretical length at age zero (von Bertalanffy t0 parameter)
-#'   \item hs: steepness of the stock recruitment relationship (the fraction of unfished recruitment at a fifth of unfished stock levels)
-#'   \item Linfgrad: mean gradient in maximum length (per cent per time step)
-#'   \item Kgrad: mean gradient in maximum growth rate (per cent per time step)
-#'   \item Linfsd: interannual variability in maximum length (log normal CV)
-# #'   \item recgrad: gradient in recruitment strength (age 1 population numbers) over last 10 years of historical simulations
-#'   \item Ksd: interannual variability in maximum growth rate (log normal CV)
-#'   \item ageM: age at 50 per cent maturity
-#'   \item LFS: length at full selection (the shortest length class where fishery selectivity is 100 per cent)
-#'   \item age05: the age at 5 percent selectivity (ascending limb of selectivity curve)
-#'   \item Vmaxage: the selectivity of the oldest age class (controls dome shape of selectivity curve)
-#'   \item LFC: length at first capture, the smallest length that can be caught by the gear
-#'   \item OFLreal: the true simulated Over Fishing Limit (FMSY x biomass) updated in each management update of the projection
-#'   \item Spat_targ: spatial targetting parameter, fishing mortality rate across areas is proportional to vulnerable biomass raised to the power of this number. 
-#'   \item Size_area_1: The size of area 1 relative to area 2
-#'   \item Frac_area_1: the fraction of unfished biomass inhabiting area 1 (can be seen as fraction of habitat in area 1 or relative size of area 1)
-#'   \item Prob_staying: the probability that individuals in area 1 remain there between time-steps
-#'   \item AC: autocorrelation in recruitment
-#'  }
-#' @slot Obs A table of sampled parameters of the observation model. Table of nsim rows. Real numbers\cr
-#'   \itemize{
-#'   \item Cbias: bias in observed catches
-#'   \item Csd: observation error in observed catches (lognormal CV)
-#'   \item CAA_nsamp: the number of catch-at-age observations per time step
-#'   \item CAA_ESS: the effective sample size of multinomial catch-at-age observation model (number of independent draws)
-#'   \item CAL_nsamp: the number of catch-at-length observations per time step
-#'   \item CAL_ESS: the effective sample size of multinomial catch-at-length observation model (number of independent draws)
-#'   \item Isd: observation error in relative abundance index (lognormal CV)
-#'   \item Dbias: bias in observed stock depletion (also applies to depletion Dt for DCAC)
-#'   \item Mbias: bias in observed natural mortality rate
-#'   \item FMSY_Mbias: bias in ratio of FMSY to natural mortality rate
-#'   \item BMSY_B0bias: bias in ratio of most productive stock size relative to unfished
-#'   \item AMbias: bias in age at 50 per cent maturity
-#'   \item LFCbias: bias in length at first capture
-#'   \item LFSbias: bias in length at full selection
-#'   \item Abias: bias in observed current absolute stock biomass
-#'   \item Kbias: bias in maximum growth rate (von Bertalanffy K parameter)
-#'   \item t0bias: bias in theoretical length at age zero (von Bertalanffy t0 parameter)
-#'   \item Linfbias: bias in maximum length (von Bertalanffy Linf parameter)
-#'   \item hbias: bias in observed steepness of the stock recruitment relationship
-#'   \item Irefbias: bias in abundance index corresponding to BMSY stock levels
-#'   \item Crefbias: bias in MSY prediction (target or reference catch)
-#'   \item Brefbias: bias in BMSY stock levels (target or reference biomass levels)}
+#' 
+#' @template OM_desc 
+#' @template Obs_desc 
+#' 
 #' @slot B_BMSY Simulated biomass relative to BMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers 
 #' @slot F_FMSY Simulated fishing mortality rate relative to FMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers
 #' @slot B Simulated stock biomass over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers 
@@ -1656,24 +1597,32 @@ setMethod('summary', signature="MSE", function(object, ..., silent=FALSE, Refs=N
 #'
 #' @rdname summary-Data
 #' @param object An object of class Data
+#' @param wait Logical. Wait for key press before next plot?
+#' @param x iteration number for the Data object.
+#' @param plots Character. What plots to show? `all`, `TS`, `CAA`, `CAL`, `PD` 
+#' for all plots, time-series, catch-at-age, catch-at-length, and 
+#' probability distributions respectively
 #' @export
 setMethod("summary",
           signature(object = "Data"),
-          function(object){
-            wait <- TRUE
+          function(object, wait=TRUE, x=1, plots='all'){
+            plots <- match.arg(plots, c('all', 'TS', 'CAA', 'CAL', 'PD'), several.ok = TRUE)
+            if ('all' %in% plots) plots <- c('TS', 'CAA', 'CAL', 'PD')
+            
+            
             Freq <- n <- Var2 <- NULL # cran check
             if (class(object) != "Data") stop("Object must be class `Data`", call.=FALSE)
             
             # Time-Series
             Year <- object@Year
-            Val <- c(object@Cat[1,], object@Ind[1,], object@Rec[1,], object@ML[1,], object@Lc[1,])
+            Val <- c(object@Cat[x,], object@Ind[x,], object@Rec[x,], object@ML[x,], object@Lc[x,])
             Var <- rep(c("Catch", "Index", "Recruitment", "Mean Length", "Mean Length above Lc"), each=length(Year))
             ts.df <- data.frame(Year=Year, Val=Val, Var=Var, stringsAsFactors = TRUE)
             # ts.df$Year <- as.factor(ts.df$Year)
             ts.df$Var <- factor(ts.df$Var, levels=
                                   c("Catch", "Index", "Recruitment", "Mean Length", "Mean Length above Lc"))
             ts.df <- subset(ts.df, !is.na(Val))
-            if (nrow(ts.df)>0) {
+            if (nrow(ts.df)>0 && 'TS' %in% plots) {
               P1 <- ggplot2::ggplot(ts.df, ggplot2::aes(x=Year, y=Val, group = Var)) +
                 ggplot2::facet_wrap(~Var, scales='free_y') + ggplot2::geom_line() +
                 ggplot2::theme_classic() +  
@@ -1686,7 +1635,7 @@ setMethod("summary",
             }
             
             # CAA 
-            CAA <- object@CAA[1,,]
+            CAA <- object@CAA[x,,]
             nyrs <- nrow(CAA); maxage <- ncol(CAA)
             if (NAor0(CAA)) {
               P2 <- NULL
@@ -1705,7 +1654,7 @@ setMethod("summary",
               yr.n <- df1 %>% dplyr::group_by(Year) %>% dplyr::summarise(n=sum(Freq))
               yr.ind <- yr.n %>% dplyr::filter(n>0) %>% dplyr::select(Year)
               df1 <- df1 %>% dplyr::filter(Year %in% yr.ind$Year == TRUE)
-              if (nrow(df1)>0) {
+              if (nrow(df1)>0 && 'CAA' %in% plots) {
                 
                 P2 <-   ggplot2::ggplot(df1, ggplot2::aes(x=Val, y=Freq, group=Year))+
                   ggplot2::facet_wrap(~Year, scales="free_y") + ggplot2::geom_bar(stat='identity') +
@@ -1716,7 +1665,7 @@ setMethod("summary",
               }
             }
             # CAL 
-            CAL <- object@CAL[1,,]
+            CAL <- object@CAL[x,,]
             if (NAor0(CAL)) {
               P3 <- NULL
             } else {
@@ -1751,7 +1700,7 @@ setMethod("summary",
               labels <- labels[!is.na(labels)]
               breaks <- breaks[!is.na(breaks)]
               
-              if (nrow(df1) > 0 ) {
+              if (nrow(df1) > 0  && 'CAL' %in% plots) {
                 P3 <- ggplot2::ggplot(df1, ggplot2::aes(x=Val, y=Freq, group=Year))+
                   ggplot2::facet_wrap(~Year, scales="free_y") + ggplot2::geom_bar(stat='identity') +
                   ggplot2::theme_classic() +  
@@ -1773,8 +1722,8 @@ setMethod("summary",
             reps <- 5000
             val <- list()
             for (i in seq_along(slots)) {
-              mu <- slot(object, slots[i])[1]
-              cv <- slot(object, slotsCV[i])[1]
+              mu <- slot(object, slots[i])[x]
+              cv <- slot(object, slotsCV[i])[x]
               val[[i]] <- trlnorm(reps, mu,cv)
             }
             vals <- do.call("cbind", val)
@@ -1783,7 +1732,7 @@ setMethod("summary",
             
             df1 <- as.data.frame.table(vals, stringsAsFactors = TRUE)
             df1 <- df1 %>% dplyr::filter(is.na(Freq) == FALSE)
-            if (nrow(df1) > 0 ) {
+            if (nrow(df1) > 0  && 'PD' %in% plots) {
               P4 <-   ggplot2::ggplot(df1, ggplot2::aes(x=Freq, group=Var2)) +
                 ggplot2::facet_wrap(~Var2, scales="free") + ggplot2::geom_histogram(bins=30) +
                 ggplot2::labs(y="Frequency", x="Parameter Value") +
