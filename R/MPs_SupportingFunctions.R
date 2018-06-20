@@ -524,23 +524,23 @@ SPSRA_plot <- function(runSPSRA, Data, x) {
   on.exit(op)
   par(mfrow=c(3,2), oma=c(1,1,1,1), mar=c(5,4,1,4))
   
-  if(all(round(runSPSRA$Ksamp/mean(runSPSRA$Ksamp),2) == 1)) {
-    boxplot(mean(runSPSRA$Ksamp), ylab="Intrinsic rate of increase")
+  if(all(round(runSPSRA$Ksamp/mean(runSPSRA$Ksamp, na.rm=TRUE),2) == 1)) {
+    boxplot(mean(runSPSRA$Ksamp, na.rm=TRUE), ylab="Intrinsic rate of increase")
   } else {
     boxplot(runSPSRA$Ksamp, ylab=paste0("Unfished biomass (", Data@Units, ")")) 
   }
-  if(all(round(runSPSRA$dep/mean(runSPSRA$dep),2) == 1)) {
-    boxplot(mean(runSPSRA$dep), ylab="Depletion")
+  if(all(round(runSPSRA$dep/mean(runSPSRA$dep, na.rm=TRUE),2) == 1)) {
+    boxplot(mean(runSPSRA$dep, na.rm=TRUE), ylab="Depletion")
   } else {
     boxplot(runSPSRA$dep, ylab="Depletion")
   }
-  if(all(round(runSPSRA$rsamp/mean(runSPSRA$rsamp),2) == 1)) {
-    boxplot(mean(runSPSRA$rsamp), ylab="Intrinsic rate of increase")
+  if(all(round(runSPSRA$rsamp/mean(runSPSRA$rsamp, na.rm=TRUE),2) == 1)) {
+    boxplot(mean(runSPSRA$rsamp, na.rm=TRUE), ylab="Intrinsic rate of increase")
   } else {
     boxplot(runSPSRA$rsamp, ylab="Intrinsic rate of increase")  
   }
-  if(all(round(runSPSRA$MSY/mean(runSPSRA$MSY),2) == 1)) {
-    boxplot(mean(runSPSRA$MSY), ylab="MSY")
+  if(all(round(runSPSRA$MSY/mean(runSPSRA$MSY, na.rm=TRUE),2) == 1)) {
+    boxplot(mean(runSPSRA$MSY, na.rm=TRUE), ylab="MSY")
   } else {
     boxplot(runSPSRA$MSY, ylab="MSY")
   }
@@ -548,8 +548,8 @@ SPSRA_plot <- function(runSPSRA, Data, x) {
   
   TAC <- runSPSRA$TAC
   
-  if(all(round(TAC/mean(TAC),2) == 1)) {
-    boxplot(mean(TAC), ylab="TAC")
+  if(all(round(TAC/mean(TAC, na.rm=TRUE),2) == 1)) {
+    boxplot(mean(TAC, na.rm=TRUE), ylab="TAC")
   } else {
     boxplot(TAC, ylab="TAC")
   }
