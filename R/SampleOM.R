@@ -2,9 +2,14 @@
 myrunif <- function(n, val1, val2) {
   min <- min(c(val1, val2))
   max <- max(c(val1, val2))
-  if (all(min == max)) max <- max + tiny
-  runif(n, min, max)
+  if (all(min == max)) {
+    tt <- runif(n)
+    return(rep(min, n))
+  } else {
+    return(runif(n, min, max))
+  }
 }
+
 
 
 
@@ -80,8 +85,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       Mexp <- rep(0, nsim) # assume constant M-at-age/size
     }
   } 
-  if (all(Mexp < tiny)) Mexp <- rep(0, nsim)
-  
+ 
   if (!exists("M", inherits=FALSE)) M <- Mage[,maxage]
   
   if (!exists("Mexp", inherits=FALSE)) Mexp <- rep(0, nsim) # assume constant M-at-age/size if it is not specified 

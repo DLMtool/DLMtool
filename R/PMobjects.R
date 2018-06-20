@@ -53,7 +53,7 @@ NULL
 #' @return A numeric vector of length 2 with year indices to summarize performance
 #' @examples 
 #' \dontrun{
-#' MSE <- runMSE
+#' MSE <- runMSE()
 #' ChkYrs(NULL, MSE) # returns c(1, MSE@proyears)
 #' ChkYrs(c(2,5), MSE) # returns c(2,5)
 #' ChkYrs(c(70,80), MSE) # returns c(MSE@proyears-10,MSE@proyears)
@@ -188,7 +188,7 @@ class(STY) <- "PM"
 Yield <- function(MSEobj=NULL, Ref=1, Yrs=NULL) {
   Yrs <- ChkYrs(Yrs, MSEobj)
   PMobj <- new("PMobj")
-  PMobj@Name <- paste0("Yield relative to Reference Yield (Years", Yrs[1], "-", Yrs[2], ")") 
+  PMobj@Name <- paste0("Yield relative to Reference Yield (Years ", Yrs[1], "-", Yrs[2], ")") 
   PMobj@Caption <- paste0("Mean Relative Yield (Years ", Yrs[1], "-", Yrs[2], ")")
   
   RefYd <- array(MSEobj@OM$RefY, dim=dim(MSEobj@C[,,Yrs[1]:Yrs[2]]))
@@ -209,7 +209,7 @@ class(Yield) <- "PM"
 AAVY <- function(MSEobj=NULL, Ref=0.2, Yrs=NULL) {
   Yrs <- ChkYrs(Yrs, MSEobj)
   PMobj <- new("PMobj")
-  PMobj@Name <- paste0("Average Annual Variability in Yield (Years", Yrs[1], "-", Yrs[2], ")") 
+  PMobj@Name <- paste0("Average Annual Variability in Yield (Years ", Yrs[1], "-", Yrs[2], ")") 
   PMobj@Caption <- paste0('Prob. AAVY < ', Ref*100, "% (Years ", Yrs[1], "-", Yrs[2], ")")
   
   y1<- Yrs[1]:(Yrs[2]-1) # year index

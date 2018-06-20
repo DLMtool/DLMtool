@@ -4,11 +4,11 @@
 \alias{join_plots}
 \title{Plot several plots with a shared legend}
 \usage{
-join_plots(plots, ncol = length(plots), nrow = 1, position = c("bottom",
-  "right"))
+join_plots(plots, ncol = length(plots), nrow = 1, position = c("right",
+  "bottom"))
 }
 \arguments{
-\item{plots}{list of plots}
+\item{plots}{list of plot objects of class \code{gg} or \code{ggplot}}
 
 \item{ncol}{Optional number of columns}
 
@@ -22,4 +22,3 @@ Plot several plots with a shared legend
 \note{
 modified from https://github.com/tidyverse/ggplot2/wiki/share-a-legend-between-two-ggplot2-graphs
 }
-\keyword{internal}

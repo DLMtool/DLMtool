@@ -7,11 +7,11 @@
 \alias{Tplot3}
 \title{Generic Trade-Plot Function - IN DEVELOPMENT}
 \usage{
-TradePlot(MSEobj, ..., Lims = c(0.2, 0.2, 0.8, 0.8), point.size = 2,
-  lab.size = 4, axis.title.size = 12, axis.text.size = 10,
-  legend.title.size = 12, position = c("right", "bottom"),
-  fill = "gray80", alpha = 0.4, PMlist = NULL, Refs = NULL,
-  Yrs = NULL, Satisficed = FALSE, Show = TRUE)
+TradePlot(MSEobj, ..., Lims = c(0.2, 0.2, 0.8, 0.8), Title = NULL,
+  Satisficed = FALSE, Show = TRUE, point.size = 2, lab.size = 4,
+  axis.title.size = 12, axis.text.size = 10, legend.title.size = 12,
+  position = c("right", "bottom"), fill = "gray80", alpha = 0.4,
+  PMlist = NULL, Refs = NULL, Yrs = NULL)
 
 Tplot(MSEobj, Lims = c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...)
 
@@ -25,6 +25,12 @@ Tplot3(MSEobj, Lims = c(0.5, 0.5, 0.8, 0.5), ...)
 \item{...}{Names of Performance Metrics (PMs), or other arguments to \code{TradePlot}. First PM is recycled if number of PMs is not even}
 
 \item{Lims}{A numeric vector of acceptable risk/minimum probability thresholds. Recycled if not equal to number of PMs.}
+
+\item{Title}{Optional title for each plot. Character vector of \code{length(PMs)}/2. Recycled.}
+
+\item{Satisficed}{Logical. Show only the MPs that meet minimum acceptable thresholds (specified in \code{Lims})}
+
+\item{Show}{Logical. Show the Results table and plots?}
 
 \item{point.size}{Numeric. Size of the MP points}
 
@@ -47,10 +53,6 @@ Tplot3(MSEobj, Lims = c(0.5, 0.5, 0.8, 0.5), ...)
 \item{Refs}{An optional named list (matching the PM names) with numeric values to override the default \code{Ref} values. See examples.}
 
 \item{Yrs}{An optional named list (matching the PM names) with numeric values to override the default \code{Yrs} values. See examples.}
-
-\item{Satisficed}{Logical. Show only the MPs that meet minimum acceptable thresholds (specified in \code{Lims})}
-
-\item{Show}{Logical. Show the Results table and plots?}
 }
 \value{
 Invisibily returns a list with summary table of MP performance and
