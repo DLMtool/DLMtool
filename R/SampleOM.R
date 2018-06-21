@@ -629,7 +629,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   if (!exists("EffLower", inherits = FALSE)) EffLower <- Fleet@EffLower
   if (!exists("EffUpper", inherits = FALSE)) EffUpper <- Fleet@EffUpper 
   if (!exists("EffYears", inherits = FALSE)) EffYears <- Fleet@EffYears
-  
+
   # if (max(EffYears) != nyears && max(EffYears) != 1) stop("Maximum EffYears (", max(EffYears), ") not equal to nyears (", nyears, ")")
   
   if (!exists("Find", inherits = FALSE)) {
@@ -1299,7 +1299,7 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   if ('maxage' %in% names(cpars)) {
     sampCpars$maxage <- cpars$maxage
   }
-  if (is.null(ncparsim)) return(sampCpars)
+  # if (is.null(ncparsim)) return(sampCpars)
   
   Names <- names(cpars)
   # report invalid names 
@@ -1320,12 +1320,15 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   if(msg) message("valid custom parameters (OM@cpars) found: \n", outNames)
   
   # Sample custom pars 
-  if (ncparsim < nsim) ind <- sample(1:ncparsim, nsim, replace=TRUE)
-  if (ncparsim == nsim) {
-    ind <- 1:nsim
-  } else {
-    ind <- sample(1:ncparsim, nsim, replace=FALSE)
+  if (!is.null(ncparsim)) {
+    if (ncparsim < nsim) ind <- sample(1:ncparsim, nsim, replace=TRUE)
+    if (ncparsim == nsim) {
+      ind <- 1:nsim
+    } else {
+      ind <- sample(1:ncparsim, nsim, replace=FALSE)
+    }
   }
+  
   # if (!ncparsim < nsim) ind <- sample(1:ncparsim, nsim, replace=FALSE)
   
   for (i in 1:length(cpars)) {

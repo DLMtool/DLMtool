@@ -1357,12 +1357,26 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
 cparscheck<-function(cpars){
   
   dim1check<-function(x){
-    if(class(x)=="numeric")length(x)
+    if(class(x)=="numeric" | class(x)=="integer")length(x)
     else dim(x)[1]
   }
   
   dims<-sapply(cpars,dim1check)
   
+  # check if EffYears etc are in cpars
+  effNames <- c("EffYears", "EffLower", "EffUpper")
+  temp <- effNames %in%  names(dims)
+  # all 3?
+  if (any(temp) & !all(temp)) stop(paste(effNames[!temp], collapse=", "), " missing")
+  # can't have Find as well
+  if (any(temp & 'Find' %in% names(dims))) stop("Can't provide both Find and EffYears etc in cpars")
+  # same length 
+  if (all(temp)) {
+    if (!all(dims[effNames]==dims[effNames][1])) stop(paste(effNames, collapse=", "), " are not equal length")
+  }
+
+  # ignore 
+  if (any(effNames %in% names(dims))) dims <- dims[-match(effNames,names(dims))]  # ignore effNames
   dims <- dims[!grepl("CAL_bins", names(dims))]  # ignore CAL_bins
   dims <- dims[!grepl("maxage", names(dims))]  # ignore CAL_bins
   if (length(dims) > 0) {
@@ -1373,7 +1387,6 @@ cparscheck<-function(cpars){
       as.integer(dims[1])
     }
   }
-
   
 }
 
