@@ -20,7 +20,7 @@ and \code{Fleet} object are set to 0.}
 \item{grad}{Logical. Remove gradients? All \code{grad} slots in \code{Stock} and
 \code{qinc} in \code{Fleet} are set to 0.}
 
-\item{silent}{}
+\item{silent}{Logical. Display messages?}
 }
 \value{
 An updated object of class \code{OM}

@@ -157,6 +157,9 @@ tinyErr <- function(OM, obs=TRUE, imp=TRUE, proc=TRUE, grad=TRUE, silent=FALSE) 
 
 #' Convert a OM object to one without observation or process error
 #' 
+#' Note: This function has been replaced with `tinyErr` and will soon be removed from
+#' the package
+#' 
 #' Takes an existing OM object and converts it to one without any observation
 #' error, and very little process error.  Used for debugging and testing that
 #' MPs perform as expected under perfect conditions.
@@ -167,8 +170,6 @@ tinyErr <- function(OM, obs=TRUE, imp=TRUE, proc=TRUE, grad=TRUE, silent=FALSE) 
 #' changed (not tested perfectly so watch out!)
 #' @return A new \code{OM} object
 #' @author A. Hordyk
-#' @examples 
-#' OM_noerror <- makePerf(DLMtool::testOM)
 #' @export 
 makePerf <- function(OMin, except = NULL) {
   .Deprecated("tinyErr")
