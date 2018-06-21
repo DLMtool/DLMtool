@@ -137,7 +137,7 @@ Converge <- function(MSEobj, PMs=list(Yield, P10, AAVY), maxMP=15, thresh=0.5, r
 
     }
     
-    if (inc.leg) grid_arrange_shared_legend(plist, nrow=nrow, ncol=ncol, position="right")
+    if (inc.leg) join_plots(plist, nrow=nrow, ncol=ncol, position="right")
     if (!inc.leg) gridExtra::grid.arrange(grobs=plist, nrow=nrow, ncol=ncol) 
     
     st <- st + maxMP 

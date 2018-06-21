@@ -108,7 +108,7 @@ DLMextra <- function(silent=FALSE) {
 #' and `Fleet` object are set to 0.
 #' @param grad Logical. Remove gradients? All `grad` slots in `Stock` and 
 #' `qinc` in `Fleet` are set to 0.
-#' @param silent 
+#' @param silent Logical. Display messages?
 #'
 #' @return An updated object of class `OM`
 #' @export
@@ -117,7 +117,8 @@ DLMextra <- function(silent=FALSE) {
 #' OM_noErr <- tinyErr(DLMtool::testOM)
 tinyErr <- function(OM, obs=TRUE, imp=TRUE, proc=TRUE, grad=TRUE, silent=FALSE) {
   if (!inherits(OM, 'OM')) stop("Object must be class `OM`", call.=FALSE)
-  OMperf <- new("OM", Albacore,Generic_Fleet,Perfect_Info, Perfect_Imp)
+  OMperf <- new("OM", DLMtool::Albacore, DLMtool::Generic_Fleet,
+                DLMtool::Perfect_Info, DLMtool::Perfect_Imp)
   OMout <- OM 
   
   if (obs) {

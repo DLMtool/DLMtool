@@ -1624,7 +1624,7 @@ setMethod("summary",
             ts.df <- subset(ts.df, !is.na(Val))
             if (nrow(ts.df)>0 && 'TS' %in% plots) {
               P1 <- ggplot2::ggplot(ts.df, ggplot2::aes(x=Year, y=Val, group = Var)) +
-                ggplot2::facet_wrap(~Var, scales='free_y') + ggplot2::geom_line() +
+                ggplot2::facet_wrap(~Var, scales='free_y') + ggplot2::geom_line(size=1.25) +
                 ggplot2::theme_classic() +  
                 ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) +
                 ggplot2::scale_x_continuous(breaks=pretty(rev(Year), length(Year)/5)) +
