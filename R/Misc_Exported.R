@@ -90,6 +90,70 @@ DLMextra <- function(silent=FALSE) {
   
 }
 
+
+
+
+#' Remove observation, implementation, and process error
+#' 
+#' Takes an existing OM object and converts it to one without any observation
+#' error, implementation error, very little process error, and/or gradients in
+#' life history parameters and catchability.  
+#' 
+#' Useful for debugging and testing that MPs perform as expected under perfect conditions.
+#'
+#' @param OM An object of class `OM` 
+#' @param obs Logical. Remove observation error? `Obs` is replaced with `Perfect_Info`
+#' @param imp Logical. Remove implementation error? `Imp` is replaced with `Perfect_Imp`
+#' @param proc Logical. Remove process error? All `sd` and `cv` slots in `Stock` 
+#' and `Fleet` object are set to 0.
+#' @param grad Logical. Remove gradients? All `grad` slots in `Stock` and 
+#' `qinc` in `Fleet` are set to 0.
+#' @param silent 
+#'
+#' @return An updated object of class `OM`
+#' @export
+#'
+#' @examples
+#' OM_noErr <- tinyErr(DLMtool::testOM)
+tinyErr <- function(OM, obs=TRUE, imp=TRUE, proc=TRUE, grad=TRUE, silent=FALSE) {
+  if (!inherits(OM, 'OM')) stop("Object must be class `OM`", call.=FALSE)
+  OMperf <- new("OM", Albacore,Generic_Fleet,Perfect_Info, Perfect_Imp)
+  OMout <- OM 
+  
+  if (obs) {
+    if (!silent) message("Removing all Observation Error")
+    OMout <- Replace(OMout, OMperf, "Obs", Quiet = TRUE)
+  }
+  if (imp) {
+    if (!silent) message("Removing all Implementation Error")
+    OMout <- Replace(OMout, OMperf, "Imp", Quiet = TRUE)
+  }
+  if (proc) {
+    if (!silent) message("Removing all Process Error")
+    vars <- c("cv", "sd")
+    nms <- c(slotNames('Stock'), slotNames('Fleet'))
+    ind <- unique(grep(paste(vars, collapse = "|"), nms, value = FALSE))
+    for (X in seq_along(ind)) {
+      n <- length(slot(OMout, nms[ind[X]]))
+      if (n == 0) n <- 2
+      slot(OMout, nms[ind[X]]) <- rep(0, n)
+    }
+  }
+  if (grad) {
+    if (!silent)  message("Removing all Gradients")
+    vars <- c("grad", "inc")
+    nms <- c(slotNames('Stock'), slotNames('Fleet'))
+    ind <- unique(grep(paste(vars, collapse = "|"), nms, value = FALSE))
+    for (X in seq_along(ind)) {
+      n <- length(slot(OMout, nms[ind[X]]))
+      if (n == 0) n <- 2
+      slot(OMout, nms[ind[X]]) <- rep(0, n)
+    }
+  }
+  OMout
+}
+
+
 #' Convert a OM object to one without observation or process error
 #' 
 #' Takes an existing OM object and converts it to one without any observation
@@ -106,6 +170,7 @@ DLMextra <- function(silent=FALSE) {
 #' OM_noerror <- makePerf(DLMtool::testOM)
 #' @export 
 makePerf <- function(OMin, except = NULL) {
+  .Deprecated("tinyErr")
   nms <- slotNames(OMin)
   # exceptions
   if (is.null(except)) except <- "EVERYTHING"
