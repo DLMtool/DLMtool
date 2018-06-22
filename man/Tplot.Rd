@@ -3,14 +3,11 @@
 \name{Tplot_old}
 \alias{Tplot_old}
 \alias{Tplot2_old}
-\alias{Tplot3_old}
 \title{Trade-off plots for an MSE object}
 \usage{
 Tplot_old(MSEobj, nam = NA)
 
 Tplot2_old(MSEobj, nam = NA)
-
-Tplot3_old(MSEobj, ..., lims = c(0.2, 0.2, 0.8, 0.8))
 }
 \arguments{
 \item{MSEobj}{An object of class 'MSE'}
@@ -36,10 +33,6 @@ over half FMSY yield in the first ten years of the projection), variability
 in yield (VY: fraction of simulations where average annual variability in
 yield is less than 10 per cent) and biomass level (B10: the fraction of
 simulations in which biomass stays above 10 percent of BMSY).
-
-\item \code{Tplot3_old}: By default, trade-off plots among LTY, STY, and biomass level B50
-(fraction of simulations in which biomass stays above 50 percent of BMSY), and
-Average Annual Variability in Yield (AAVY).
 }}
 
 \examples{

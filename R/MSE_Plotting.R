@@ -1738,92 +1738,92 @@ Tplot2_old  <- function(MSEobj, nam = NA) {
 }
 
 
-#' @describeIn Tplot By default, trade-off plots among LTY, STY, and biomass level B50 
-#' (fraction of simulations in which biomass stays above 50 percent of BMSY), and 
-#' Average Annual Variability in Yield (AAVY).
-
-#' @export
-Tplot3_old  <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
-  PMlist <- unlist(list(...))
-  if(length(PMlist) == 0) PMlist <- c("LTY", "STY", "P50", "AAVY")
-  if (class(PMlist) != 'character') stop("Must provide names of PM methods")
-  # check
-  
-  for (X in seq_along(PMlist))
-    if (!PMlist[X] %in% avail("PM")) stop(PMlist[X], " is not a valid PM method")
-  if (length(PMlist)<2) stop("Must provided more than 1 PM method")
-  
-  runPM <- vector("list", length(PMlist))
-  for (X in 1:length(PMlist)) runPM[[X]] <- eval(call(PMlist[X], MSEobj))
-  
-  PlotList <- combn(unique(PMlist), 2)
-  lims <- rep(lims, 100)[1:length(PMlist)]
-  
-  n.col <- ceiling(sqrt(ncol(PlotList)))
-  n.row <- ceiling(ncol(PlotList)/n.col)
-  
-  m <- matrix(1:(n.col*n.row), ncol=n.col, nrow=n.row, byrow=FALSE)
-  xmin <- xmax <- ymin <- ymax <- x <- y <- Class <- label <- fontface <- NULL
-  plots <- listout <- list()
-  for (pp in 1:ncol(PlotList)) {
-    yPM <- PlotList[1,pp]
-    yvals <- runPM[[match(yPM, PMlist)]]@Mean
-    ycap <-  runPM[[match(yPM, PMlist)]]@Caption
-    yname <-  runPM[[match(yPM, PMlist)]]@Name
-    yline <- lims[match(yPM, PMlist)]
-    
-    xPM <- PlotList[2,pp]
-    xvals <- runPM[[match(xPM, PMlist)]]@Mean
-    xcap <-  runPM[[match(xPM, PMlist)]]@Caption
-    xname <-  runPM[[match(xPM, PMlist)]]@Name
-    xline <- lims[match(xPM, PMlist)]
-    
-    xlim <- c(0, max(max(xvals, 1)))
-    ylim <- c(0, max(max(yvals, 1)))
-    
-    xrect <- data.frame(xmin=0, xmax=xline, ymin=0, ymax=max(ylim))
-    yrect <- data.frame(xmin=0, xmax=max(xlim), ymin=0, ymax=yline)
-    
-    MPType <- MPtype(MSEobj@MPs)
-    Class <- MPType[match(MSEobj@MPs, MPType[,1]),2]
-    
-    df <- data.frame(x=xvals, y=yvals, label=MSEobj@MPs, Class=Class,
-                     pass=xvals>xline & yvals>yline, fontface="plain", xPM=xPM, yPM=yPM)
-    df$fontface <- as.character(df$fontface)
-    df$fontface[!df$pass] <- "italic"
-    df$fontface <- factor(df$fontface)
-    listout[[pp]] <- df
-    plots[[pp]] <- ggplot2::ggplot() + 
-      ggplot2::geom_rect(data=xrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill='gray80', alpha=0.4) +
-      ggplot2::geom_rect(data=yrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill='gray80', alpha=0.4)
-    
-    # plots[[pp]] <- ggplot(df, aes(x, y, shape=Class, color=Class, label=label)) +
-    plots[[pp]] <-   plots[[pp]] + 
-      ggplot2::geom_point(data=df, ggplot2::aes(x, y, shape=Class, color=Class), size=2) +
-      ggrepel::geom_text_repel(data=df, ggplot2::aes(x, y, color=Class, label=label, fontface = fontface), show.legend=FALSE) + 
-      ggplot2::xlab(xcap) + ggplot2::ylab(ycap) +
-      ggplot2::xlim(xlim) + ggplot2::ylim(ylim) +
-      ggplot2::theme_classic() +
-      ggplot2::theme(axis.title.x = ggplot2::element_text(size=11),
-                     axis.title.y = ggplot2::element_text(size=11),
-                     legend.text=ggplot2::element_text(size=12)) + 
-      ggplot2::labs(shape= "MP Type", color="MP Type")
-    
-  }
-  out <- do.call("rbind", listout)
-  tab <- table(out$label, out$pass)
-  passall <- rownames(tab)[tab[,ncol(tab)] == ncol(PlotList)]
-  tt <- summary(MSEobj, PMlist, silent=TRUE)
-  tt$Satisificed <- FALSE
-  tt$Satisificed[match(passall, tt$MP)] <- TRUE
-  
-  join_plots(plots, n.col, n.row)
-  tt
-  
-}
-
-
-
+# #' @describeIn Tplot By default, trade-off plots among LTY, STY, and biomass level B50 
+# #' (fraction of simulations in which biomass stays above 50 percent of BMSY), and 
+# #' Average Annual Variability in Yield (AAVY).
+# 
+# #' @export
+# Tplot3_old  <- function(MSEobj, ..., lims=c(0.2, 0.2, 0.8, 0.8)) {
+#   PMlist <- unlist(list(...))
+#   if(length(PMlist) == 0) PMlist <- c("LTY", "STY", "P50", "AAVY")
+#   if (class(PMlist) != 'character') stop("Must provide names of PM methods")
+#   # check
+#   
+#   for (X in seq_along(PMlist))
+#     if (!PMlist[X] %in% avail("PM")) stop(PMlist[X], " is not a valid PM method")
+#   if (length(PMlist)<2) stop("Must provided more than 1 PM method")
+#   
+#   runPM <- vector("list", length(PMlist))
+#   for (X in 1:length(PMlist)) runPM[[X]] <- eval(call(PMlist[X], MSEobj))
+#   
+#   PlotList <- combn(unique(PMlist), 2)
+#   lims <- rep(lims, 100)[1:length(PMlist)]
+#   
+#   n.col <- ceiling(sqrt(ncol(PlotList)))
+#   n.row <- ceiling(ncol(PlotList)/n.col)
+#   
+#   m <- matrix(1:(n.col*n.row), ncol=n.col, nrow=n.row, byrow=FALSE)
+#   xmin <- xmax <- ymin <- ymax <- x <- y <- Class <- label <- fontface <- NULL
+#   plots <- listout <- list()
+#   for (pp in 1:ncol(PlotList)) {
+#     yPM <- PlotList[1,pp]
+#     yvals <- runPM[[match(yPM, PMlist)]]@Mean
+#     ycap <-  runPM[[match(yPM, PMlist)]]@Caption
+#     yname <-  runPM[[match(yPM, PMlist)]]@Name
+#     yline <- lims[match(yPM, PMlist)]
+#     
+#     xPM <- PlotList[2,pp]
+#     xvals <- runPM[[match(xPM, PMlist)]]@Mean
+#     xcap <-  runPM[[match(xPM, PMlist)]]@Caption
+#     xname <-  runPM[[match(xPM, PMlist)]]@Name
+#     xline <- lims[match(xPM, PMlist)]
+#     
+#     xlim <- c(0, max(max(xvals, 1)))
+#     ylim <- c(0, max(max(yvals, 1)))
+#     
+#     xrect <- data.frame(xmin=0, xmax=xline, ymin=0, ymax=max(ylim))
+#     yrect <- data.frame(xmin=0, xmax=max(xlim), ymin=0, ymax=yline)
+#     
+#     MPType <- MPtype(MSEobj@MPs)
+#     Class <- MPType[match(MSEobj@MPs, MPType[,1]),2]
+#     
+#     df <- data.frame(x=xvals, y=yvals, label=MSEobj@MPs, Class=Class,
+#                      pass=xvals>xline & yvals>yline, fontface="plain", xPM=xPM, yPM=yPM)
+#     df$fontface <- as.character(df$fontface)
+#     df$fontface[!df$pass] <- "italic"
+#     df$fontface <- factor(df$fontface)
+#     listout[[pp]] <- df
+#     plots[[pp]] <- ggplot2::ggplot() + 
+#       ggplot2::geom_rect(data=xrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill='gray80', alpha=0.4) +
+#       ggplot2::geom_rect(data=yrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill='gray80', alpha=0.4)
+#     
+#     # plots[[pp]] <- ggplot(df, aes(x, y, shape=Class, color=Class, label=label)) +
+#     plots[[pp]] <-   plots[[pp]] + 
+#       ggplot2::geom_point(data=df, ggplot2::aes(x, y, shape=Class, color=Class), size=2) +
+#       ggrepel::geom_text_repel(data=df, ggplot2::aes(x, y, color=Class, label=label, fontface = fontface), show.legend=FALSE) + 
+#       ggplot2::xlab(xcap) + ggplot2::ylab(ycap) +
+#       ggplot2::xlim(xlim) + ggplot2::ylim(ylim) +
+#       ggplot2::theme_classic() +
+#       ggplot2::theme(axis.title.x = ggplot2::element_text(size=11),
+#                      axis.title.y = ggplot2::element_text(size=11),
+#                      legend.text=ggplot2::element_text(size=12)) + 
+#       ggplot2::labs(shape= "MP Type", color="MP Type")
+#     
+#   }
+#   out <- do.call("rbind", listout)
+#   tab <- table(out$label, out$pass)
+#   passall <- rownames(tab)[tab[,ncol(tab)] == ncol(PlotList)]
+#   tt <- summary(MSEobj, PMlist, silent=TRUE)
+#   tt$Satisificed <- FALSE
+#   tt$Satisificed[match(passall, tt$MP)] <- TRUE
+#   
+#   join_plots(plots, n.col, n.row)
+#   tt
+#   
+# }
+# 
+# 
+# 
 #' Generic Trade-off Plot
 #' 
 #' Creates a trade-off plot (up to four panels) of built-in performance

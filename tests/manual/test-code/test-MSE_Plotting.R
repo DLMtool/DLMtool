@@ -5,7 +5,7 @@ library(DLMextra)
 rm(list=ls())
 # setup()
 MSEobj <- updateMSE(DLMextra::testMSE)
-COSEWICobj <- runCOSEWIC(testOM)
+COSEWICobj <- runCOSEWIC(testOM, silent=TRUE)
 funs <- plotFun(msg=FALSE)
 
 for (ff in funs) {
@@ -14,8 +14,8 @@ for (ff in funs) {
     if (grepl("COSEWIC", ff)) {
       testthat::expect_error(fun(COSEWICobj), NA, info=ff)  
     } else {
-      if ('Show' %in%names(formals(fun))) {
-        testthat::expect_error(fun(MSEobj, Show=FALSE), NA, info=ff) 
+      if ('Show' %in%names(formals(fun)) | '...' %in%names(formals(fun))) {
+        suppressMessages(suppressWarnings(fun(MSEobj, Show=FALSE)))
       } else {
         testthat::expect_error(fun(MSEobj), NA, info=ff) 
       }
@@ -24,4 +24,6 @@ for (ff in funs) {
     
   })
 }
+
+
 

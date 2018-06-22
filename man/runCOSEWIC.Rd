@@ -11,7 +11,7 @@
 \alias{COSEWIC_tab_formatted}
 \title{COSEWIC MSE run using the correct MPs and projected time horizon}
 \usage{
-runCOSEWIC(OM)
+runCOSEWIC(OM, ...)
 
 COSEWIC_Pplot(MSEobj, syear = 2017, qcol = "#FFCB62", quants = c(0.05,
   0.25, 0.5, 0.75, 0.95))
@@ -35,6 +35,8 @@ COSEWIC_tab_formatted(Ptab1, thresh = c(20, 40, 40, 20, 40, 40, 40, 30, 5),
 }
 \arguments{
 \item{OM}{An operating model object of class OM}
+
+\item{...}{Other named arguments to pass to \code{runMSE}}
 
 \item{MSEobj}{An object of class MSE with \code{MPs = c("NFref", "FMSYref", "curE")}}
 

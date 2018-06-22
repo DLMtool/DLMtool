@@ -79,7 +79,7 @@ testthat::test_that("plotOM works with all OMs", {
     obj <- get(objs[i])
     obj@nsim <- 48
     seed <- ceiling(runif(1, 1, 1000))
-    set.seed(seed)
+    obj@seed <- seed
     info <- paste(objs[i], seed)
     testthat::expect_error(plot(obj), NA, info=info)
     # expect_warning(plot(obj), NA, info=objs[i])
