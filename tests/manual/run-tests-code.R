@@ -27,6 +27,7 @@ testthat::test_dir('tests/manual/test-code')
 # testthat::test_file("tests/manual/test-code/test-slotDescription.R") #
 
 
+# testthat::test_file("tests/manual/test-code/test-cpars.R") # Ok
 
 
 

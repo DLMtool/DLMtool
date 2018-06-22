@@ -1053,7 +1053,7 @@ setMethod("initialize", "Imp", function(.Object, file = NA, dec=c(".", ",")) {
 #' @slot CAL_ESS Effective sample size (independent length draws) of the multinomial catch-at-length observation error model. Uniform distribution lower and upper bounds. Positive integers
 # #' @slot CALcv Log-normal, CV of length-at-age. Uniform distribution lower and upper bounds. Positive real numbers 
 #' @slot Iobs Observation error in the relative abundance indices expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Positive real numbers  
-#' @slot Ibiascv Log-normal coefficient of variation controlling error in observations of relative abundance index. Uniform distribution lower and upper bounds. Positive real numbers 
+#' @slot Ibiascv NOT CURRENTLY USED Log-normal coefficient of variation controlling error in observations of relative abundance index. Uniform distribution lower and upper bounds. Positive real numbers 
 #' @slot Btobs Log-normal coefficient of variation controlling error in observations of current stock biomass among years. Uniform distribution lower and upper bounds. Positive real numbers 
 #' @slot Btbiascv Uniform-log bounds for sampling persistent bias in current stock biomass. Uniform-log distribution lower and upper bounds. Positive real numbers 
 #' @slot beta A parameter controlling hyperstability/hyperdepletion where values below 1 lead to hyperstability (an index that decreases slower than true abundance) and values above 1 lead to hyperdepletion (an index that decreases more rapidly than true abundance). Uniform distribution lower and upper bounds. Positive real numbers 

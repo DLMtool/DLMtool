@@ -179,7 +179,7 @@ Default (if left blank) is all areas are open to fishing in historical period.}
 
 \item{\code{Iobs}}{Observation error in the relative abundance indices expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Ibiascv}}{Log-normal coefficient of variation controlling error in observations of relative abundance index. Uniform distribution lower and upper bounds. Positive real numbers}
+\item{\code{Ibiascv}}{NOT CURRENTLY USED Log-normal coefficient of variation controlling error in observations of relative abundance index. Uniform distribution lower and upper bounds. Positive real numbers}
 
 \item{\code{Btobs}}{Log-normal coefficient of variation controlling error in observations of current stock biomass among years. Uniform distribution lower and upper bounds. Positive real numbers}
 

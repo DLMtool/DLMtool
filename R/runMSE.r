@@ -238,6 +238,15 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   SampCpars <- list() # empty list 
   # custom parameters exist - sample and write to list
   if(length(OM@cpars)>0){
+    
+    # check Perr 
+    #internal process error by simulation and year is now Perr_y instead of Perr 
+    if ("Perr" %in% names(OM@cpars)) {
+      if (!is.null(dim(OM@cpars[['Perr']]))) {
+        OM@cpars[['Perr_y']] <- OM@cpars[['Perr']]
+        OM@cpars[['Perr']] <- NULL
+      }
+    }
     ncparsim<-cparscheck(OM@cpars)   # check each list object has the same length and if not stop and error report
     SampCpars <- SampleCpars(OM@cpars, nsim, msg=!silent) 
   }
@@ -335,7 +344,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     M_ageArrayp <- array(M_ageArray[,,1], dim=c(dim(M_ageArray)[1:2], Nyrs))
     Wt_agep <- array(Wt_age[,,1], dim=c(dim(Wt_age)[1:2], Nyrs))
     Mat_agep <- array(Mat_age[,,1], dim=c(dim(Mat_age)[1:2], Nyrs))
-    Perrp <- array(1, dim=c(dim(Perr)[1], Nyrs+maxage)) # no process error 
+    Perr_yp <- array(1, dim=c(dim(Perr_y)[1], Nyrs+maxage)) # no process error 
     # Not used but make the arrays anyway
     retAp <- array(retA[,,1], dim=c(dim(retA)[1:2], Nyrs))
     Vp <- array(V[,,1], dim=c(dim(V)[1:2], Nyrs))
@@ -353,7 +362,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     # Project unfished for Nyrs to calculate equilibrium spatial distribution
     runProj <- lapply(1:nsim, projectEq, Asize, nareas=nareas, maxage=maxage, N=N, pyears=Nyrs,
            M_ageArray=M_ageArrayp, Mat_age=Mat_agep, Wt_age=Wt_agep, V=Vp, retA=retAp,
-           Perr=Perrp, mov=mov, SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs,
+           Perr=Perr_yp, mov=mov, SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs,
            R0a=R0a, SSBpR=SSBpR, aR=aR, bR=bR, SSB0=SSB0, B0=B0, MPA=noMPA, maxF=maxF,
            Nyrs)
     
@@ -397,8 +406,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   aR <- matrix(exp(bR * SSB0a)/SSBpR, nrow=nsim)  # Ricker SR params
   
   #  --- Non-equilibrium calcs ----
-  SSN[SAYR] <- Nfrac[SA] * R0[S] * initdist[SAR]*Perr[Sa]  # Calculate initial spawning stock numbers
-  N[SAYR] <- R0[S] * surv[SA] * initdist[SAR]*Perr[Sa]  # Calculate initial stock numbers
+  SSN[SAYR] <- Nfrac[SA] * R0[S] * initdist[SAR]*Perr_y[Sa]  # Calculate initial spawning stock numbers
+  N[SAYR] <- R0[S] * surv[SA] * initdist[SAR]*Perr_y[Sa]  # Calculate initial stock numbers
   
   Biomass[SAYR] <- N[SAYR] * Wt_age[SAY]  # Calculate initial stock biomass
   SSB[SAYR] <- SSN[SAYR] * Wt_age[SAY]    # Calculate spawning stock biomass
@@ -421,7 +430,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   bounds <- c(0.0001, 15) # q bounds for optimizer
   qs <- sapply(1:nsim, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
-               M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr, mov, SRrel, Find, 
+               M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr_y, mov, SRrel, Find, 
                Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF) # find the q that gives current stock depletion
 
   # --- Check that q optimizer has converged ---- 
@@ -455,7 +464,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       # Re-sample recruitment deviations
       procsd[probQ] <- ResampStockPars$procsd 
       AC[probQ] <- ResampStockPars$AC
-      Perr[probQ,] <- ResampStockPars$Perr
+      Perr_y[probQ,] <- ResampStockPars$Perr_y
       hs[probQ] <- ResampStockPars$hs
       
       # Re-sample historical fishing effort
@@ -467,7 +476,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       
       # Optimize for q 
       qs[probQ] <- sapply(probQ, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
-                          M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr, mov, SRrel, Find, 
+                          M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr_y, mov, SRrel, Find, 
                           Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF)
       
       probQ <- which(qs > max(LimBound) | qs < min(LimBound))
@@ -495,7 +504,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # --- Simulate historical years ----
   histYrs <- sapply(1:nsim, simYears, nareas, maxage, N, pyears=nyears, M_ageArray, Asize,
-                    Mat_age, Wt_age, V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, 
+                    Mat_age, Wt_age, V, retA, Perr_y, mov, SRrel, Find, Spat_targ, hs, R0a, 
                     SSBpR, aR, bR, qs, MPA, maxF, SSB0=SSB0)
   
   N <- aperm(array(as.numeric(unlist(histYrs[1,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
@@ -564,7 +573,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     MGThorizon<-floor(HZN*MGT)
     
     Blow <- sapply(1:nsim,getBlow, N, Asize, MSYrefs[3,],SSBpR, MPA, SSB0, nareas, retA, MGThorizon,
-                   Find,Perr,M_ageArray,hs,Mat_age, Wt_age,R0a,V,nyears,maxage,mov,
+                   Find,Perr_y,M_ageArray,hs,Mat_age, Wt_age,R0a,V,nyears,maxage,mov,
                    Spat_targ,SRrel,aR,bR,Bfrac, maxF) 
   }else{
     Blow<-rep(NA,nsim)
@@ -579,7 +588,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                  Wt_age=Wt_age[,,nyears:(nyears+proyears)], 
                  V=retA[, , (nyears + 1):(nyears + proyears), drop=FALSE], 
                  retA=retA[, , (nyears + 1):(nyears + proyears), drop=FALSE],  
-                 Perr=Perr[,(nyears):(nyears+maxage+proyears-1)], mov, SRrel, Find, 
+                 Perr=Perr_y[,(nyears):(nyears+maxage+proyears-1)], mov, SRrel, Find, 
                  Spat_targ, hs, R0a, SSBpR, aR, bR, MPA=MPA, maxF=maxF, SSB0=SSB0)
 
   # --- Calculate catch-at-age ----
@@ -657,7 +666,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   if (nsim == 1) Iref <- mean(I3[1:5]) * SSBMSY_SSB0
   
   # --- Simulate observed values in steepness ----
-  if (is.null(OM@cpars$l_hbias)) {
+  if (is.null(OM@cpars[['l_hbias']])) {
     hsim <- rep(NA, nsim)  
     cond <- hs > 0.6
     hsim[cond] <- 0.2 + rbeta(sum(hs > 0.6), alphaconv((hs[cond] - 0.2)/0.8, (1 - (hs[cond] - 0.2)/0.8) * OM@hbiascv), 
@@ -959,7 +968,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
    
     NextYrN <- lapply(1:nsim, function(x)
       popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB[x,,nyears, ]), Ncurr=N[x,,nyears,],
-                     Zcurr=Z[x,,nyears,], PerrYr=Perr[x, nyears+maxage-1], hs=hs[x],
+                     Zcurr=Z[x,,nyears,], PerrYr=Perr_y[x, nyears+maxage-1], hs=hs[x],
                      R0a=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
                      mov=mov[x,,,], SRrel=SRrel[x]))
     
@@ -1065,7 +1074,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       
       NextYrN <- lapply(1:nsim, function(x)
         popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB_P[x,,y-1, ]), Ncurr=N_P[x,,y-1,],
-                       Zcurr=Z_P[x,,y-1,], PerrYr=Perr[x, y+nyears+maxage-1], hs=hs[x],
+                       Zcurr=Z_P[x,,y-1,], PerrYr=Perr_y[x, y+nyears+maxage-1], hs=hs[x],
                        R0a=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
                        mov=mov[x,,,], SRrel=SRrel[x]))
   
@@ -1149,7 +1158,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         NextYrNtemp <- lapply(1:nsim, function(x)
           popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB_P[x,,y, ]), Ncurr=N_P[x,,y,],
                          Zcurr=matrix(M_ageArray[x,,y+nyears], ncol=nareas, nrow=maxage), 
-                         PerrYr=Perr[x, y+nyears+maxage-1], hs=hs[x],
+                         PerrYr=Perr_y[x, y+nyears+maxage-1], hs=hs[x],
                          R0a=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
                          mov=mov[x,,,], SRrel=SRrel[x]))
 
@@ -1361,8 +1370,23 @@ cparscheck<-function(cpars){
     else dim(x)[1]
   }
   
-  dims<-sapply(cpars,dim1check)
+  dims <- sapply(cpars,dim1check)
   
+  # drop invalid names 
+  dims <- dims[!unlist(lapply(dims, is.null))]
+  
+  # Check Stock names 
+  slts <- slotNames("Stock")
+  ind <- which(names(cpars) %in% slts)
+  if (length(ind)>0) {
+    chkdim <- !unlist(lapply(lapply(cpars[ind], dim), is.null))
+    if (any(chkdim)) {
+      err <- names(chkdim[chkdim])
+      stop("Incorrect dimensions in Stock parameter slots in OM@cpars:", paste(err, collapse=", "))
+    }
+  }
+  
+
   # check if EffYears etc are in cpars
   effNames <- c("EffYears", "EffLower", "EffUpper")
   temp <- effNames %in%  names(dims)
@@ -1391,24 +1415,24 @@ cparscheck<-function(cpars){
 }
 
 
-cparnamecheck<-function(cpars){
-
-  Sampnames <- c("D","Esd","Find","procsd","AC","M","Msd",
-                 "Mgrad","hs","Linf","Linfsd","Linfgrad",
-                 "K","Ksd","Kgrad","t0","L50","L50_95","Spat_targ",
-                 "Frac_area_1","Prob_staying",
-                 "Csd","Cbias","CAA_nsamp","CAA_ESS","CAL_nsamp",
-                 "CAL_ESS","betas","Isd","Derr","Dbias",
-                 "Mbias","FMSY_Mbias","lenMbias","LFCbias",
-                 "LFSbias","Aerr","Abias","Kbias","t0bias",
-                 "Linfbias","Irefbias","Crefbias","Brefbias",
-                 "Recsd","qinc","qcv","L5","LFS","Vmaxlen","L5s",
-                 "LFSs","Vmaxlens","Perr","R0","Mat_age",
-                 "Mrand","Linfrand","Krand","maxage","V","Depletion", # end of OM variables
-                 "ageM", "age95", "V", "EffYears", "EffLower", "EffUpper","Mat_age", # start of runMSE derived variables
-                 "Wt_age")
-
-}
+# cparnamecheck<-function(cpars){
+# 
+#   Sampnames <- c("D","Esd","Find","procsd","AC","M","Msd",
+#                  "Mgrad","hs","Linf","Linfsd","Linfgrad",
+#                  "K","Ksd","Kgrad","t0","L50","L50_95","Spat_targ",
+#                  "Frac_area_1","Prob_staying",
+#                  "Csd","Cbias","CAA_nsamp","CAA_ESS","CAL_nsamp",
+#                  "CAL_ESS","betas","Isd","Derr","Dbias",
+#                  "Mbias","FMSY_Mbias","lenMbias","LFCbias",
+#                  "LFSbias","Aerr","Abias","Kbias","t0bias",
+#                  "Linfbias","Irefbias","Crefbias","Brefbias",
+#                  "Recsd","qinc","qcv","L5","LFS","Vmaxlen","L5s",
+#                  "LFSs","Vmaxlens","Perr","R0","Mat_age",
+#                  "Mrand","Linfrand","Krand","maxage","V","Depletion", # end of OM variables
+#                  "ageM", "age95", "V", "EffYears", "EffLower", "EffUpper","Mat_age", # start of runMSE derived variables
+#                  "Wt_age")
+# 
+# }
 
 
 #' @describeIn runMSE Save out the results to a Rdata

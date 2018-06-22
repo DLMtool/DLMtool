@@ -108,6 +108,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     StockOut$SRrel <- SRrel 
   }
   
+  if (exists("h", inherits = FALSE)) hs <- h
   if (!exists("hs", inherits=FALSE)) {
     StockOut$hs <- hs <- myrunif(nsim, Stock@h[1], Stock@h[2])  # sample of recruitment compensation (steepness - fraction of unfished recruitment at 20% of unfished biStockass)
   } else {
@@ -116,6 +117,9 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (any(StockOut$hs > 1 | StockOut$hs < 0.2)) stop("Steepness (OM@h) must be between 0.2 and 1", call.=FALSE)
   
   # == Recruitment Deviations ====
+  if (exists("Perr", inherits = FALSE)) {
+    procsd <- Perr
+  }
   if (!exists("procsd", inherits=FALSE)) {
     StockOut$procsd <- procsd <- myrunif(nsim, Stock@Perr[1], Stock@Perr[2])  # Process error standard deviation
   } else {
@@ -150,15 +154,15 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   }
   
   StockOut$procmu <- procmu <- -0.5 * (procsd)^2  # adjusted log normal mean
-  if (!exists("Perr", inherits=FALSE)) {
-    Perr <- array(rnorm((nyears + proyears+maxage-1) * nsim, rep(procmu, nyears + proyears+maxage-1), 
+  if (!exists("Perr_y", inherits=FALSE)) {
+    Perr_y <- array(rnorm((nyears + proyears+maxage-1) * nsim, rep(procmu, nyears + proyears+maxage-1), 
                         rep(procsd, nyears + proyears+maxage-1)), c(nsim, nyears + proyears+maxage-1))
-    for (y in 2:(nyears + proyears+maxage-1)) Perr[, y] <- AC * Perr[, y - 1] + Perr[, y] * (1 - AC * AC)^0.5  #2#AC*Perr[,y-1]+(1-AC)*Perr[,y] # apply a pseudo AR1 autocorrelation to rec devs (log space)
-    StockOut$Perr <- Perr <- exp(Perr) * recMulti # normal space (mean 1 on average) 
+    for (y in 2:(nyears + proyears+maxage-1)) Perr_y[, y] <- AC * Perr_y[, y - 1] + Perr_y[, y] * (1 - AC * AC)^0.5  #2#AC*Perr[,y-1]+(1-AC)*Perr[,y] # apply a pseudo AR1 autocorrelation to rec devs (log space)
+    StockOut$Perr_y <- Perr_y <- exp(Perr_y) * recMulti # normal space (mean 1 on average) 
     
     
   } else {
-    StockOut$Perr <- Perr
+    StockOut$Perr_y <- Perr_y
   }
   
   # if (nsim > 1) {
@@ -213,6 +217,9 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (!exists("Karray", inherits=FALSE)) Karray <- gettempvar(K, Ksd, Kgrad, nyears + proyears, nsim, Krand)  # the K array
   if (!exists("Agearray", inherits=FALSE))  Agearray <- array(rep(1:maxage, each = nsim), dim = c(nsim, maxage))  # Age array
   
+  if (all(dim(Linfarray) != c(nsim, nyears+proyears))) stop("Linfarray must be dimensions: nsim, proyears+nyears (", nsim, ", ", proyears+nyears, ")")
+  if (all(dim(Karray) != c(nsim, nyears+proyears))) stop("Karray must be dimensions: nsim, proyears+nyears (", nsim, ", ", proyears+nyears, ")")
+  
   if (length(StockOut$maxage) > 1) StockOut$maxage <- StockOut$maxage[1] # check if maxage has been passed in custompars
   
   t0array <- matrix(t0, nrow=nsim, ncol=proyears+nyears)
@@ -226,7 +233,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     Len_age[ind] <- Linfarray[ind[, c(1, 3)]] * (1 - exp(-Karray[ind[, c(1, 3)]] * 
                                                            (Agearray[ind[, 1:2]] - t0[ind[, 1]])))
     
-    if (class(Stock)=="OM" && length(Stock@cpars$Linf) >0) {
+    if (class(Stock)=="OM" && length(Stock@cpars[['Linf']]) >0) {
       maxLinf <- max(Stock@cpars$Linf)
     } else {
       maxLinf <- max(Stock@Linf)
@@ -234,7 +241,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     linfs <- gettempvar(maxLinf, 0, max(Stock@Linfgrad), nyears + proyears, 
                1, matrix(1, nrow=1, ncol=proyears+nyears))
     MaxBin <- ceiling(max(linfs) + 3 * max(linfs) * max(Stock@LenCV)) 
-    
+
   } else { # Len_age has been passed in with cpars
     if (any(dim(Len_age) != c(nsim, maxage, nyears + proyears))) 
       stop("'Len_age' must be array with dimensions: nsim, maxage, nyears + proyears") 
@@ -277,7 +284,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (length(CAL_bins) != length(CAL_binsmid)+1) stop("Length of 'CAL_bins' must be length(CAL_binsmid)+1", .call=FALSE)
   
   nCALbins <- length(CAL_binsmid)
-  
+ 
   # === Create Weight-at-Age array ====
   if (!exists("Wt_age", inherits=FALSE)) {
     Wt_age <- array(NA, dim = c(nsim, maxage, nyears + proyears))  # Weight at age array
@@ -1037,20 +1044,19 @@ SampleObsPars <- function(Obs, nsim=NULL, cpars=NULL){
     for (X in 1:length(Names)) assign(names(cpars)[X], cpars[[X]])
   }
   
-  
   Obs <- updateMSE(Obs) # update to add missing slots with default values
   
   ObsOut <- list() 
   
   # === Sample observation error model parameters ====
   
-  # fix some naming issues?
-  
+  if (exists("Cobs", inherits = FALSE)) Csd <- Cobs
   if (!exists("Csd", inherits=FALSE)) {
     ObsOut$Csd <- myrunif(nsim, Obs@Cobs[1], Obs@Cobs[2])  # Sampled catch observation error (lognormal sd)
   } else {
     ObsOut$Csd <- Csd
   }
+
   if (!exists("Cbias", inherits=FALSE)) {
     ObsOut$Cbias <- rlnorm(nsim, mconv(1, Obs@Cbiascv), sdconv(1, Obs@Cbiascv))  # Sampled catch bias (log normal sd)
   } else {
@@ -1076,16 +1082,21 @@ SampleObsPars <- function(Obs, nsim=NULL, cpars=NULL){
   } else {
     ObsOut$CAL_ESS <- CAL_ESS
   }  
+  
+  if (exists("beta", inherits = FALSE)) betas <- beta
   if (!exists("betas", inherits=FALSE)) {
     ObsOut$betas <- exp(myrunif(nsim, log(Obs@beta[1]), log(Obs@beta[2])))  # the sampled hyperstability / hyperdepletion parameter beta>1 (hyperdepletion) beta<1 (hyperstability)
   } else {
     ObsOut$betas <- betas
   }  
+  
+  if (exists("Iobs", inherits = FALSE)) Isd <- Iobs
   if (!exists("Isd", inherits=FALSE)) {
     ObsOut$Isd <- myrunif(nsim, Obs@Iobs[1], Obs@Iobs[2])  # Abundance index observation error (log normal sd)
   } else {
     ObsOut$Isd <- Isd
   } 
+  if (exists("Dobs", inherits = FALSE)) Derr <- Dobs
   if (!exists("Derr", inherits=FALSE)) {
     ObsOut$Derr <- myrunif(nsim, Obs@Dobs[1], Obs@Dobs[2])
   } else {
@@ -1122,9 +1133,7 @@ SampleObsPars <- function(Obs, nsim=NULL, cpars=NULL){
     ObsOut$LFSbias <- LFSbias
   }
   
-  if (!exists("Btobs", inherits = FALSE)) {
-    Aerr <- Btobs
-  }
+  if (exists("Btobs", inherits = FALSE))  Aerr <- Btobs
   if (!exists("Aerr", inherits=FALSE)) {
     ObsOut$Aerr <- myrunif(nsim, Obs@Btobs[1], Obs@Btobs[2])
   } else {
@@ -1174,10 +1183,8 @@ SampleObsPars <- function(Obs, nsim=NULL, cpars=NULL){
     ObsOut$Recsd <- Recsd
   }  
   
-
   # ObsOut$CALcv <- runif(nsim, Obs@CALcv[1], Obs@CALcv[2])  # Observation error standard deviation for single catch at age by area
   # ObsOut$LenCVbias <- rlnorm(nsim, mconv(1, Obs@CALcv), sdconv(1, Obs@CALcv)) # sample of bias in assumed CV of catch-at-length
-  
   
   ObsOut
 }
@@ -1242,46 +1249,81 @@ SampleImpPars <- function(Imp, nsim=NULL, cpars=NULL) {
 }
 
 
-#' Valid custom parameters (cpars)
-#'
-#' @param print Print the valid names for cpars?
-#'
-#' @return invisibly returns vector of valid cpars names
-#' @export
-#'
-validcpars <- function(print=TRUE) {
-  vnames <- sort(c("D","Esd","Find","procsd","AC","M","Msd", 
-                   "Mgrad","hs","Linf","Linfsd","Linfgrad",
-                   "K","Ksd","Kgrad","t0","L50", "L95", "L50_95","Spat_targ",
-                   "Frac_area_1","Prob_staying","Size_area_1","mov","initdist", "Asize",
-                   "Csd","Cbias","CAA_nsamp","CAA_ESS","CAL_nsamp",
-                   "CAL_ESS","betas","Isd","Derr","Dbias", 
-                   "Mbias","FMSY_Mbias","lenMbias","LFCbias",
-                   "LFSbias","Aerr","Abias","Kbias","t0bias", 
-                   "Linfbias","Irefbias","Crefbias","Brefbias",
-                   "Recsd","qinc","qcv","L5","LFS","Vmaxlen","Perr","R0","Mat_age", 
-                   "Mrand","Linfrand","Krand","maxage","V",  
-                   "ageM", "age95", "EffYears", "EffLower", "EffUpper",
-                   "Wt_age", "Len_age", "Marray", "M_at_Length", "LenCV", 
-                   "CAL_binsmid", "CAL_bins", "LatASD", "dFfinal",
-                   "LR5", "LFR", "Rmaxlen", "DR", "Fdisc","M_ageArray",
-                   "Linfarray", "Karray", "l_hbias", "Btobs", "Btbiascv")) 
-  
-  if (print) {
-    n <- length(vnames)
-    vec <- 3:7
-    nc <- vec[which.min(n  %% vec)]
-    
-    options(warn=-1)
-    temp <- matrix(vnames, ncol=nc, byrow=TRUE)
-    options(warn=1)
-    temp[duplicated(as.vector(temp))] <- ""
-    print(temp)
-  }
-  invisible(vnames)
-}
 
 
+#  #' Valid custom parameters (cpars)
+#  #'
+#  #' @param print Print the valid names for cpars?
+#  #'
+#  #' @return invisibly returns vector of valid cpars names
+#  #' @export
+#  #'
+#  validcpars <- function(print=TRUE) {
+#    
+#    cpars_Stock <- openxlsx::read.xlsx("../DLMDev/DLMtool_Data/sysdata_data/cpars.xlsx", sheet="Stock")
+#    cpars_Fleet <- openxlsx::read.xlsx("../DLMDev/DLMtool_Data/sysdata_data/cpars.xlsx", sheet="Fleet")
+#    cpars_Obs <- openxlsx::read.xlsx("../DLMDev/DLMtool_Data/sysdata_data/cpars.xlsx", sheet="Obs")
+#    cpars_Imp <- openxlsx::read.xlsx("../DLMDev/DLMtool_Data/sysdata_data/cpars.xlsx", sheet="Imp")
+#    cpars_internal <- openxlsx::read.xlsx("../DLMDev/DLMtool_Data/sysdata_data/cpars.xlsx", sheet="Internal")
+#    
+#    cpars_info <- dplyr::bind_rows(cpars_Stock,cpars_Fleet,cpars_Obs,cpars_Imp,cpars_internal)
+#    
+#    
+#    cpars_info$Valid[is.na(cpars_info$Valid)] <- TRUE
+#  
+#    Vnames <- c(cpars_info$Slot[cpars_info$Valid],  cpars_info$Variable, cpars_info$Legacy)
+#    Vnames <- Vnames[!is.na(Vnames)]
+#   
+#    InvalNames <-  data.frame(cpars_info$Slot[!cpars_info$Valid], cpars_info$Description[!cpars_info$Valid])
+#  
+#    if (print) {
+#      n <- length(vnames)
+#      vec <- 3:7
+#      nc <- vec[which.min(n  %% vec)]
+#      
+#      options(warn=-1)
+#      temp <- matrix(vnames, ncol=nc, byrow=TRUE)
+#      options(warn=1)
+#      temp[duplicated(as.vector(temp))] <- ""
+#      print(temp)
+#    }
+#    invisible(vnames)
+#  
+#    
+#    
+#    
+#    # vnames <- sort(c("D","Esd","Find","procsd","AC","M","Msd", 
+#                     # "Mgrad","hs","Linf","Linfsd","Linfgrad",
+#                     # "K","Ksd","Kgrad","t0","L50", "L95", "L50_95","Spat_targ",
+#                     # "Frac_area_1","Prob_staying","Size_area_1","mov","initdist", "Asize",
+#                     # "Csd","Cbias","CAA_nsamp","CAA_ESS","CAL_nsamp",
+#                     # "CAL_ESS","betas","Isd","Derr","Dbias", 
+#                     # "Mbias","FMSY_Mbias","lenMbias","LFCbias",
+#                     # "LFSbias","Aerr","Abias","Kbias","t0bias", 
+#                     # "Linfbias","Irefbias","Crefbias","Brefbias",
+#                     # "Recsd","qinc","qcv","L5","LFS","Vmaxlen","Perr","R0","Mat_age", 
+#                     # "Mrand","Linfrand","Krand","maxage","V",  
+#                     # "ageM", "age95", "EffYears", "EffLower", "EffUpper",
+#                     # "Wt_age", "Len_age", "Marray", "M_at_Length", "LenCV", 
+#                     # "CAL_binsmid", "CAL_bins", "LatASD", "dFfinal",
+#                     # "LR5", "LFR", "Rmaxlen", "DR", "Fdisc","M_ageArray",
+#                     # "Linfarray", "Karray", "l_hbias", "Btobs", "Btbiascv")) 
+#    
+#    # if (print) {
+#    #   n <- length(vnames)
+#    #   vec <- 3:7
+#    #   nc <- vec[which.min(n  %% vec)]
+#    # 
+#    #   options(warn=-1)
+#    #   temp <- matrix(vnames, ncol=nc, byrow=TRUE)
+#    #   options(warn=1)
+#    #   temp[duplicated(as.vector(temp))] <- ""
+#    #   print(temp)
+#    # }
+#    # invisible(vnames)
+#  }
+#  
+#  
 
 
 
@@ -1296,7 +1338,9 @@ validcpars <- function(print=TRUE) {
 SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   
   # Vector of valid names for custompars list or data.frame. Names not in this list will be printed out in warning and ignored #	
-  ParsNames <- validcpars(FALSE)
+  # ParsNames <- validcpars(FALSE)
+  
+  CparsInfo <- cpars_info # get internal data from sysdata
   
   sampCpars <- list()
   ncparsim<-cparscheck(cpars)
@@ -1309,23 +1353,48 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   # if (is.null(ncparsim)) return(sampCpars)
   
   Names <- names(cpars)
+  
+  ValNames <- c(CparsInfo$Slot[CparsInfo$Valid], CparsInfo$Legacy[CparsInfo$Valid])
+  ValNames <- ValNames[!is.na(ValNames)]
+  InvalNames <- c(CparsInfo$Slot[!CparsInfo$Valid], CparsInfo$Legacy[!CparsInfo$Valid])
+  InvalNames <- unique(InvalNames[!is.na(InvalNames)])
+  
   # report invalid names 
-  invalid <- which(!Names %in% ParsNames)
-  if (length(invalid) > 0) {
-    outNames <- paste(Names[invalid], "")
-    for (i in seq(5, by=5, length.out=floor(length(outNames)/5))) outNames <- gsub(outNames[i], paste0(outNames[i], "\n"), outNames)
-    if(msg) message("ignoring invalid names found in custom parameters (OM@cpars) \n", outNames)	
+  invalid <- Names[!Names %in% ValNames]
+  if (length(invalid)>0) {
+    invdf <- data.frame(name=invalid, action='ignoring', alt="", stringsAsFactors = FALSE)
+    alt_inval <- invalid[invalid %in% InvalNames]
+    if (length(alt_inval)>0) {
+      alt <- CparsInfo$Description[match(alt_inval, CparsInfo$Slot)]
+      invdf$alt[match(alt_inval, invdf$name)] <-alt
+    }
+    if(msg) {
+      message("invalid names found in custom parameters (OM@cpars)")	
+      message(paste0(capture.output(invdf), collapse = "\n"))
+    }
   }
   # report found names
-  valid <- which(Names %in% ParsNames)
+  valid <- which(Names %in% ValNames)
   cpars <- cpars[valid]
-  if (length(valid) == 0) stop("No valid names found in custompars (OM@cpars)", call.=FALSE)
+  if (length(valid) == 0) {
+    message("No valid names found in custompars (OM@cpars). Ignoring `OM@cpars`")
+    return(list())
+  }
+  
   Names <- names(cpars)
   outNames <- paste(Names, "")
   for (i in seq(5, by=5, length.out=floor(length(outNames)/5)))
     outNames <- gsub(outNames[i], paste0(outNames[i], "\n"), outNames)
   if(msg) message("valid custom parameters (OM@cpars) found: \n", outNames)
   
+  # # report invalid names 
+  # invalid <- which(!Names %in% ParsNames)
+  # if (length(invalid) > 0) {
+  #   outNames <- paste(Names[invalid], "")
+  #   for (i in seq(5, by=5, length.out=floor(length(outNames)/5))) outNames <- gsub(outNames[i], paste0(outNames[i], "\n"), outNames)
+  #   if(msg) message("ignoring invalid names found in custom parameters (OM@cpars) \n", outNames)	
+  # }
+
   # Sample custom pars 
   if (!is.null(ncparsim)) {
     if (ncparsim < nsim) ind <- sample(1:ncparsim, nsim, replace=TRUE)
@@ -1341,7 +1410,7 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   for (i in 1:length(cpars)) {
     samps <- cpars[[i]]
     name <- names(cpars)[i]
-    if (any(c("EffUpper", "EffLower", "EffYears", "maxage", "M_at_Length", "CAL_binsmid", "CAL_bins") %in% name)) {
+    if (any(c("maxage", "M_at_Length", "CAL_binsmid", "CAL_bins") %in% name)) {
       sampCpars[[name]] <- samps
     } else {
       if (class(samps) == "numeric" | class(samps) == "integer") sampCpars[[name]] <- samps[ind]
@@ -1355,8 +1424,6 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
       if (class(samps) == "data.frame")   sampCpars[[name]] <- samps 
     }
   }
-  
-  
   
   sampCpars
 }

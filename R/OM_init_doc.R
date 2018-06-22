@@ -1429,7 +1429,7 @@ plotRec <- function(OM, Pars=NULL, nsim=48, nyears=50, proyears=50, nsamp=3, col
   
   
   # Recruitment
-  matplot(t(Pars$Perr[its,]), type="l", bty="l", main="Rec Devs by Year", lwd=lwd, lty=1, ylab="")
+  matplot(t(Pars$Perr_y[its,]), type="l", bty="l", main="Rec Devs by Year", lwd=lwd, lty=1, ylab="")
   
   
 }
