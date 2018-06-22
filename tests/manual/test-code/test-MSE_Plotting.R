@@ -15,7 +15,7 @@ for (ff in funs) {
       testthat::expect_error(fun(COSEWICobj), NA, info=ff)  
     } else {
       if ('Show' %in%names(formals(fun)) | '...' %in%names(formals(fun))) {
-        suppressMessages(suppressWarnings(fun(MSEobj, Show=FALSE)))
+        testthat::expect_error(suppressMessages(suppressWarnings(fun(MSEobj, Show=FALSE))), NA, info=ff) 
       } else {
         testthat::expect_error(fun(MSEobj), NA, info=ff) 
       }
