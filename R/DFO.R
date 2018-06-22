@@ -10,6 +10,7 @@
 #' management procedures.
 #'
 #' @param OM An operating model object of class OM
+#' @param ... Other named arguments to pass to `runMSE`
 #' @param MSEobj An object of class MSE with `MPs = c("NFref", "FMSYref", "curE")`
 #' @param rnd The number of significant figures for rounding.
 #' @param GTs A vector of mean generation times to evaluate performance metrics over
@@ -31,12 +32,12 @@
 #' @references
 #' \url{https://www.canada.ca/en/environment-climate-change/services/committee-status-endangered-wildlife.html}
 #' @export runCOSEWIC
-runCOSEWIC<-function(OM){
+runCOSEWIC<-function(OM, ...){
   
   if(OM@nsim<100)message(paste0("Your operating model specifies only ",OM@nsim," simulations. You may wish to do 200+ simulations to ensure suitably precise probability calculations"))
   OM@interval=2
   OM@proyears<-OM@maxage*6
-  MSEobj<-runMSE(OM,MPs=c("NFref","FMSYref","curE"))
+  MSEobj<-runMSE(OM,MPs=c("NFref","FMSYref","curE"), ...)
   class(MSEobj)<-"COSEWIC"
   MSEobj
   
