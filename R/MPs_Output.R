@@ -33,12 +33,12 @@
 #'         
 AvC <- function(x, Data, reps = 100, plot=FALSE) {
   dependencies = "Data@Cat Data@LHYear"
-  if (length(Data@Year)<1 | is.na(Data@LHYear)) {
+  if (length(Data@Year)<1 | is.na(Data@LHYear[1])) {
     Rec <- new("Rec")
     Rec@TAC <- rep(as.numeric(NA), reps)
     return(Rec)
   }
-  yrs <- min(Data@Year):(Data@Year[Data@Year==Data@LHYear])
+  yrs <- min(Data@Year):(Data@Year[Data@Year==Data@LHYear[1]])
   yr.ind <- match(yrs, Data@Year)
   histCatch <- Data@Cat[x, yr.ind]
   meanC <- mean(histCatch, na.rm = T)
@@ -287,7 +287,7 @@ CC1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0) {
     return(Rec)
   }
   
-  yrlast <- match(Data@LHYear, Data@Year)
+  yrlast <- match(Data@LHYear[1], Data@Year)
   yrfirst <- yrlast - yrsmth + 1
   # C_dat <- Data@Cat[x, (length(Data@Year) - (yrsmth - 1)):length(Data@Year)]
   C_dat <- Data@Cat[x, yrfirst:yrlast]
@@ -302,7 +302,7 @@ CC1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0) {
     plot(c(Data@Year, max(Data@Year)+1), c(Data@Cat[x,],NA), type="l", lwd=2, las=1, bty="l",
          xlab="Year", ylab=paste0("Catch (", Data@Units, ")"),
          cex.lab=1.5, cex.axis=1.25, ylim=ylim)
-    abline(v=Data@LHYear, lty=3, col="darkgray")
+    abline(v=Data@LHYear[1], lty=3, col="darkgray")
     lines(Data@Year[yrfirst:yrlast], rep(mean(C_dat), yrsmth), col="blue", lwd=3)
     boxplot(Rec@TAC, at=max(Data@Year)+1, add=TRUE, axes=FALSE)
   }
@@ -563,14 +563,14 @@ DCAC_ <- function(x, Data, reps=100, Bt_K=NULL, updateD=FALSE) {
   if (length(Data@Year)<1) return(list(dcac=NA, Bt_K=NA, BMSY_K=NA))
   if (NAor0(Data@BMSY_B0[x])) stop('Data@BMSY_B0 is NA')
   if (NAor0(Data@CV_BMSY_B0[x])) stop("Data@CV_BMSY_B0 is NA")
-  yr.lst <- match(Data@LHYear, Data@Year)
+  yr.lst <- match(Data@LHYear[1], Data@Year)
   yrs <- 1:yr.lst
   C_tot <-  Data@AvC[x] * Data@t[x]
   Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
   FMSY_M <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])  # standard deviation of 0.2 - referred to as 'standard error' in MacCall 2009
   if (is.null(Bt_K))  Bt_K <- trlnorm(reps, Data@Dt[x], Data@CV_Dt[x])
   if (!updateD) {
-    if (Data@LHYear != max(Data@Year)) {
+    if (Data@LHYear[1] != max(Data@Year)) {
       dcac <- rep(Data@MPrec[x], reps) # catch limit is static for future
       return(list(dcac=dcac, Bt_K=Bt_K))
     }
@@ -1257,7 +1257,7 @@ DD_ <- function(x, Data, reps = 100, hcr=NULL) {
   #U_hist <- 1 - exp(-exp(opt$par[3]) * E_hist)
   UMSY <- 1/(1 + exp(-opt$par[1]))
   EMSY <- -log(1 - UMSY)/exp(opt$par[3]) # q in denominator
-  eff <- EMSY/E_hist[Data@LHYear - Year[1] + 1] # Effort advice is ratio of EMSY and obs. Eff in LHYear
+  eff <- EMSY/E_hist[Data@LHYear[1] - Year[1] + 1] # Effort advice is ratio of EMSY and obs. Eff in LHYear
   eff[!is.finite(eff)] <- 0.01
   eff[eff > 1e+05] <- 0.01
   
@@ -2568,7 +2568,7 @@ Islope_ <- function(x, Data, reps = 100, yrsmth = 5, lambda = 0.4,xx = 0.2) {
   
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)
   Years <- Data@Year[ind]
-  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
+  ylast <- (Data@LHYear[1] - Data@Year[1]) + 1  #last historical year
   C_dat <- Data@Cat[x, ind]
   if (is.na(Data@MPrec[x]) || length(Data@Year) == ylast + 1) {
     TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
@@ -2792,7 +2792,7 @@ class(IT10) <- "MP"
 #' @keywords internal
 Itarget_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, Imulti = 1.5) {
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
-  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
+  ylast <- (Data@LHYear[1] - Data@Year[1]) + 1  #last historical year
   ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
   ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
   C_dat <- Data@Cat[x, ind2]
@@ -3002,7 +3002,7 @@ class(ITM) <- "MP"
 Ltarget_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, xL = 1.05, 
                      Ltarget=NULL, L0=NULL) {
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
-  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
+  ylast <- (Data@LHYear[1] - Data@Year[1]) + 1  #last historical year
   ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
   ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
   C_dat <- Data@Cat[x, ind2]
@@ -3290,7 +3290,7 @@ class(Lratio_BHI2) <- "MP"
 LstepCC_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, stepsz = 0.05, 
                      llim = c(0.96, 0.98, 1.05)) {
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
-  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
+  ylast <- (Data@LHYear[1] - Data@Year[1]) + 1  #last historical year
   ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
   ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
   C_dat <- Data@Cat[x, ind2]
@@ -4173,8 +4173,9 @@ SPMSY <- function(x, Data, reps = 100, plot=FALSE) {
   }
   B <- B/rep(Ksamp, nyears)
   cond <- (B[, nyears] >= LB) & (B[, nyears] <= UB)
-  if (sum(cond) < 1) {
+  if (sum(cond) <= 1) {
     B[B[, nyears] >= UB, nyears] <- UB
+    B[B[, nyears] <= LB, nyears] <- LB
     cond <- (B[, nyears] >= LB) & (B[, nyears] <= UB)
   }
   Best <- B[cond,]

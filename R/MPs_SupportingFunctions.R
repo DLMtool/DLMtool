@@ -6,9 +6,9 @@ AvC_plot <- function(x, Data, Rec, meanC, histCatch, yr.ind, lwd=3, cex.lab=1.25
   par(mfrow=c(1,1))
   plot(c(Data@Year[yr.ind], Data@Year[max(yr.ind)]+1), c(histCatch,NA), type="l", 
        xlab="Year", ylab=paste0("Catch (", Data@Units, ")"), lwd=lwd, bty="l", las=1, cex.lab=cex.lab)
-  abline(v=Data@LHYear, lty=2, col="darkgray") #
-  text(Data@LHYear, max(histCatch, na.rm=TRUE)*0.9, "Last Historical Year", pos=2, xpd=NA)
-  lines(c(min(Data@Year), Data@LHYear), rep(mean(Data@Cat[x,yr.ind]),2), lty=2) #
+  abline(v=Data@LHYear[1], lty=2, col="darkgray") #
+  text(Data@LHYear[1], max(histCatch, na.rm=TRUE)*0.9, "Last Historical Year", pos=2, xpd=NA)
+  lines(c(min(Data@Year), Data@LHYear[1]), rep(mean(Data@Cat[x,yr.ind]),2), lty=2) #
   text(quantile(Data@Year, 0.1), meanC*1.1, pos=4, "Average Historical Catch")
   boxplot(Rec@TAC, add=TRUE, at=max(Data@Year)+1, col="grey", width=1, outline=TRUE, axes=FALSE)
   text(max(Data@Year)+1, quantile(Rec@TAC, 0.05, na.rm=TRUE), "TAC", col="black", pos=2)
@@ -25,10 +25,10 @@ DCAC_plot <- function(x, Data, dcac, TAC, Bt_K, yrs, lwd=3, cex.lab=1.25) {
   plot(c(Data@Year[yrs], Data@Year[max(yrs)]+1:3), c(Data@Cat[x,1:yr.lst],NA, NA, NA), type="l", 
        xlab="Year", ylab=paste0("Catch (", Data@Units, ")"), lwd=lwd, bty="l", las=1, cex.lab=cex.lab,
        ylim=ylim)
-  abline(v=Data@LHYear, lty=2, col="darkgray") #
+  abline(v=Data@LHYear[1], lty=2, col="darkgray") #
   
-  text(Data@LHYear, max(Data@Cat[x,1:yr.lst], na.rm=TRUE)*0.9, "Last Historical Year", pos=2, xpd=NA)
-  lines(c(min(Data@Year), Data@LHYear), rep(mean(Data@Cat[x,1:yr.lst]),2), lty=2) #
+  text(Data@LHYear[1], max(Data@Cat[x,1:yr.lst], na.rm=TRUE)*0.9, "Last Historical Year", pos=2, xpd=NA)
+  lines(c(min(Data@Year), Data@LHYear[1]), rep(mean(Data@Cat[x,1:yr.lst]),2), lty=2) #
   text(quantile(Data@Year, 0.1), mean(Data@Cat[x,1:yr.lst])*1.1, pos=4, "Average Historical Catch")
 
   boxplot(TAC, add=TRUE, at=max(Data@Year)+1, col="darkgrey", width=1, outline=TRUE, axes=FALSE)
@@ -167,7 +167,7 @@ DD_plot <- function(x, runDD, Data, TAC=NULL, Eff=NULL) {
       text(max(Years), quantile(TAC, 0.95, na.rm=TRUE), "TAC", pos=3, col="blue")
     }
   } else {
-    Years <- c(Data@LHYear,Data@LHYear+1)
+    Years <- c(Data@LHYear[1],Data@LHYear+1)
     Eff <- c(Data@MPeff[x], Eff)
     plot(Years, Eff, type="b", ylab="Effort", axes=FALSE)
     axis(side=1, at=Years)
@@ -229,7 +229,7 @@ EtargetLopt_plot <- function(x, rec, Data, ind,Lopt) {
   text(mean(Data@Year[ind]), Lopt, pos=3, "Lopt", xpd=NA)
   
   
-  Years <- c(Data@LHYear,Data@LHYear+1)
+  Years <- c(Data@LHYear[1],Data@LHYear+1)
   Eff <- c(Data@MPeff[x], rec@Effort)
   plot(Years, Eff, type="b", ylab="Effort", axes=FALSE)
   axis(side=1, at=Years)
@@ -632,7 +632,7 @@ size_lim_plot <- function(x, Data, Rec) {
 
 curE_plot <- function(x, rec, Data) {
   
-  Years <- c(Data@LHYear,Data@LHYear+1)
+  Years <- c(Data@LHYear[1],Data@LHYear+1)
   Eff <- c(Data@MPeff[x], rec@Effort)
   plot(Years, Eff, type="b", ylab="Effort", axes=FALSE)
   axis(side=1, at=Years)

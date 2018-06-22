@@ -79,12 +79,12 @@ class(Itarget1_MPA) <- "MP"
 #' @examples 
 #' Rec <- AvC_MLL(1, DLMtool::Cobia, reps=1000, plot=TRUE) # 1,000 log-normal samples with CV = 0.2
 AvC_MLL <- function(x, Data, reps = 100, plot=FALSE) {
-  if (length(Data@Year)<1 | is.na(Data@LHYear)) {
+  if (length(Data@Year)<1 | is.na(Data@LHYear[1])) {
     Rec <- new("Rec")
     Rec@TAC <- rep(as.numeric(NA), reps)
     return(Rec)
   }
-  yrs <- min(Data@Year):(Data@Year[Data@Year==Data@LHYear])
+  yrs <- min(Data@Year):(Data@Year[Data@Year==Data@LHYear[1]])
   yr.ind <- match(yrs, Data@Year)
   histCatch <- Data@Cat[x, yr.ind]
   meanC <- mean(histCatch, na.rm = T)

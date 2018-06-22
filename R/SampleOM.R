@@ -259,7 +259,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       t0array <- matrix(t0, nrow=nsim, ncol=proyears+nyears)
       if (Msg) cat("\n")
     }
-    MaxBin <- ceiling(max(Stock@cpars$Len_age) + 3 * max(Stock@cpars$Len_age) * max(Stock@LenCV)) 
+    MaxBin <- ceiling(max(Len_age) + 3 * max(Len_age) * max(Stock@LenCV)) 
   }
   
   StockOut$maxlen <- maxlen <- Len_age[, maxage, nyears] # reference length for Vmaxlen 

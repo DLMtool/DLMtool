@@ -505,7 +505,7 @@ class(ITe10) <- "MP"
 #' @keywords internal
 Itargeteff_ <- function(x, Data, reps, plot, yrsmth, Imulti) {
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
-  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
+  ylast <- (Data@LHYear[1] - Data@Year[1]) + 1  #last historical year
   ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
   ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
   
@@ -677,7 +677,7 @@ class(ItargetE4) <- "MP"
 LstepCE1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, stepsz = 0.05, 
                      llim = c(0.96, 0.98, 1.05)) {
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
-  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
+  ylast <- (Data@LHYear[1] - Data@Year[1]) + 1  #last historical year
   # ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
   ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
   
@@ -780,7 +780,7 @@ class(LstepCE2) <- "MP"
 LtargetE1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xL = 1.05) {
   
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
-  ylast <- (Data@LHYear - Data@Year[1]) + 1  #last historical year
+  ylast <- (Data@LHYear[1] - Data@Year[1]) + 1  #last historical year
   ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
   ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
   
@@ -874,7 +874,7 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE) {
   if (is.null(Data@Misc[[x]]) || is.na(Data@Misc[[x]])) { # first time it's being run
     
     # run model for n most recent years 
-    yind <- match(Data@LHYear, Data@Year)
+    yind <- match(Data@LHYear[1], Data@Year)
     CALdata <- Data@CAL[x, (yind-n+1):length(Data@Year),]
     if (class(CALdata) == 'numeric')  CALdata <- matrix(CALdata, ncol=length(LenMids))
     Ests <- matrix(NA, nrow=nrow(CALdata), ncol=4)

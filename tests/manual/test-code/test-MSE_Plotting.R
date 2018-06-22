@@ -14,12 +14,14 @@ for (ff in funs) {
     if (grepl("COSEWIC", ff)) {
       testthat::expect_error(fun(COSEWICobj), NA, info=ff)  
     } else {
-      testthat::expect_error(fun(MSEobj), NA, info=ff)  
+      if ('Show' %in%names(formals(fun))) {
+        testthat::expect_error(fun(MSEobj, Show=FALSE), NA, info=ff) 
+      } else {
+        testthat::expect_error(fun(MSEobj), NA, info=ff) 
+      }
+       
     }
     
   })
 }
-
-
-
 

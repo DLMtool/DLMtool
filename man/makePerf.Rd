@@ -16,12 +16,13 @@ changed (not tested perfectly so watch out!)}
 A new \code{OM} object
 }
 \description{
+Note: This function has been replaced with \code{tinyErr} and will soon be removed from
+the package
+}
+\details{
 Takes an existing OM object and converts it to one without any observation
 error, and very little process error.  Used for debugging and testing that
 MPs perform as expected under perfect conditions.
-}
-\examples{
-OM_noerror <- makePerf(DLMtool::testOM)
 }
 \author{
 A. Hordyk

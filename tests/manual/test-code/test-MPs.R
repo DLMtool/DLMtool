@@ -3,6 +3,7 @@ testthat::context("test MPs with testOM")
 OM <- DLMtool::testOM 
 OM@nsim <- 6
 
+
 MPs <- avail("MP")
 output <- avail('Output')
 input <- avail('Input')
@@ -20,7 +21,8 @@ for (mm in MPs) {
     testthat::expect_is(runMSE(OM, MPs=mm, silent=TRUE), "MSE")
   })
 }
- 
+
+
                    
                     
 

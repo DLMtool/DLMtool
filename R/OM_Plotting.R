@@ -298,10 +298,12 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
     Stock <- SubOM(Stock)
   }
   its <- sample(1:nsim, nsamp)
-  
+ 
   
   # --- Sample Stock Parameters ----
+
   StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars, Msg=FALSE)
+ 
   # Assign Stock pars to function environment
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
   

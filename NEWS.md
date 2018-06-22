@@ -11,6 +11,7 @@ The current version of the DLMtool package is available for download from [CRAN]
 - update PM methods and add to userguide - in development
 - MSE plotting functions - all been updated - in development
 
+- added more MPs 
 - `makePerf` has been replaced with `tinyErr` - TODO add to FAQ and manual
 
 - makeMeanMP - added - TODO add to FAQ 
