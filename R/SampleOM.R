@@ -1121,10 +1121,17 @@ SampleObsPars <- function(Obs, nsim=NULL, cpars=NULL){
   } else {
     ObsOut$LFSbias <- LFSbias
   }
+  
+  if (!exists("Btobs", inherits = FALSE)) {
+    Aerr <- Btobs
+  }
   if (!exists("Aerr", inherits=FALSE)) {
     ObsOut$Aerr <- myrunif(nsim, Obs@Btobs[1], Obs@Btobs[2])
   } else {
     ObsOut$Aerr <- Aerr
+  }
+  if (exists("Btbiascv", inherits = FALSE)) {
+    Abias <- Btbiascv
   }
   if (!exists("Abias", inherits=FALSE)) {
     ObsOut$Abias <- exp(myrunif(nsim, log(Obs@Btbiascv[1]), log(Obs@Btbiascv[2])))  #rlnorm(nsim,mconv(1,Obs@Btbiascv),sdconv(1,Obs@Btbiascv))    # sample of current abundance bias
@@ -1258,7 +1265,7 @@ validcpars <- function(print=TRUE) {
                    "Wt_age", "Len_age", "Marray", "M_at_Length", "LenCV", 
                    "CAL_binsmid", "CAL_bins", "LatASD", "dFfinal",
                    "LR5", "LFR", "Rmaxlen", "DR", "Fdisc","M_ageArray",
-                   "Linfarray", "Karray", "l_hbias")) 
+                   "Linfarray", "Karray", "l_hbias", "Btobs", "Btbiascv")) 
   
   if (print) {
     n <- length(vnames)

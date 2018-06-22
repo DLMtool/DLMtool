@@ -293,7 +293,7 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
     
     if(length(Stock@cpars)>0){ # custom parameters exist - sample and write to list
       ncparsim<-cparscheck(Stock@cpars)   # check each list object has the same length and if not stop and error report
-      SampCpars <- SampleCpars(Stock@cpars, nsim) 
+      SampCpars <- SampleCpars(Stock@cpars, nsim, msg=FALSE) 
     }
     Stock <- SubOM(Stock)
   }
@@ -528,7 +528,7 @@ plotFleet <- function(x, Stock=NULL, nsamp=3, nsim=500, proyears=28, col="darkgr
     if (is.finite(Fleet@nsim)) nsim <- Fleet@nsim	
     if (length(Fleet@cpars) > 0) {
       ncparsim <-cparscheck(Fleet@cpars)   # check each list object has the same length and if not stop and error report
-      SampCpars <- SampleCpars(Fleet@cpars, nsim) 
+      SampCpars <- SampleCpars(Fleet@cpars, nsim, msg=FALSE) 
     }
     Stock <- SubOM(Fleet, "Stock")
     Fleet <- SubOM(Fleet, "Fleet")
@@ -676,17 +676,22 @@ plotObs <- function(x, nsim=500, nyears=50,
                     col="darkgray", breaks=10, ...) {
   
   Obs <- x
+  SampCpars <- list() # empty list 
   if (class(Obs) == "OM") {
     if (is.finite(Obs@nyears)) nyears <- Obs@nyears
     if (is.finite(Obs@nsim)) nsim <- Obs@nsim	
+    if (length(Obs@cpars) > 0) {
+      ncparsim <-cparscheck(Obs@cpars)   # check each list object has the same length and if not stop and error report
+      SampCpars <- SampleCpars(Obs@cpars, nsim, msg=FALSE) 
+    }
     Obs <- SubOM(Obs,"Obs")
   }
-  
+
   nsamp <- 3
   its <- sample(1:nsim, nsamp)
   
   # === Sample Observation Model Parameters ====
-  ObsPars <- SampleObsPars(Obs, nsim)
+  ObsPars <- SampleObsPars(Obs, nsim, cpars = SampCpars)
   # Assign Obs pars to function environment
   for (X in 1:length(ObsPars)) assign(names(ObsPars)[X], ObsPars[[X]])
   
