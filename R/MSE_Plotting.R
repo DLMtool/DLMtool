@@ -1618,15 +1618,7 @@ PWhisker<-function(MSEobj){#},Pnames=c("POF","C30","D30","LD","DNC","LDNC","PGK"
 #' 
 #' @param MSEobj An object of class 'MSE'
 #' @param nam Name of the plot
-#' @param ... Names of PM methods to plot
-#' @param lims Numeric vector of satisficing limits. Recycled to number of PM methods
 #' @author T. Carruthers & A. Hordyk
-#' @examples 
-#' \dontrun{
-#'  Tplot(myMSE)
-#'  Tplot2(myMSE)
-#'  Tplot3(myMSE)
-#' }
 #' @seealso \link{TradePlot} \link{PerformanceMetric}
 #' @describeIn Tplot Used in the plot method for MSE objects that shows trade-off between
 #' yield versus probability of overfishing and biomass levels (relative to BMSY).

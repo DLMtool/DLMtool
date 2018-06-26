@@ -14,7 +14,8 @@ Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "D", "Mgrad", "SRrel", "hs", "p
            "Linfarray", "Karray", "t0array", "mov",  "nareas", "AC", "LenCV", "a", "b", "FinF", 
            "Fdisc", "R50", "Rslope", "retA", "retL", "LR5", "LFR", "Rmaxlen",
            "V2", "SLarray2", "DR", "Asize", "Size_area_1", "L50array", "L95array",
-           "Fdisc_array", "Fdisc_array2", "Pinitdist", "incProgress", "DataOut")
+           "Fdisc_array", "Fdisc_array2", "Pinitdist", "incProgress", "DataOut",
+           'Perr_y', "Cobs", "Iobs", "Dobs", "Btbiascv", 'Btobs', "h")
 
 
 if(getRversion() >= "2.15.1") utils::globalVariables(Names)
