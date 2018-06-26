@@ -138,13 +138,15 @@ NumericMatrix  genSizeComp(NumericMatrix VulnN, NumericVector CAL_binsmid, Numer
         for (int subage=0; subage<=11; subage++) { // loop over 12 months
           if (subAgeVec(subage) > 0) {
             double sage = varAges(subage) + age;
+            
             double mean = Linfs(yr) * (1-exp(-Ks(yr)* (sage - t0s(yr)))); // calculate mean length at sub-age;
             if (mean < 0) mean = 0.01;
             NumericVector dist = tdnorm((CAL_binsmid-mean)/(LenCV*mean), -truncSD, truncSD); // prob density of lengths for this age
-    
-            NumericVector newdist = dist * selCurve; // probability = dist * size-selection curve
+            NumericVector newdist = dist * selCurve(_,yr); // probability = dist * size-selection curve
+            
             if (sum(newdist)!=0) {
               newdist = newdist/sum(newdist);
+              
               Lens(count) = RcppArmadillo::sample(CAL_binsmid, subAgeVec(subage), TRUE, newdist); // sample lengths for this sub-age class
             } else {
               Lens(count) = NA_INTEGER;

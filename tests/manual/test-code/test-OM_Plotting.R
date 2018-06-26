@@ -93,17 +93,4 @@ testthat::test_that("plotOM works with all OMs", {
 
 graphics.off()
 
-# options(warn=2)
-# DLMextra(TRUE)
-# library(DLMextra)
-# objs <- avail('OM')
-# for (i in seq_along(objs)) {
-#   # graphics.off()
-#   obj <- get(objs[i])
-#   obj@nsim <- 48
-#   seed <- ceiling(runif(1, 1, 1000))
-#   obj@seed <- seed
-#   OM = x = obj
-#   plot(obj, silent=TRUE)
-#  
-# }
+

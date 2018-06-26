@@ -225,6 +225,8 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   t0array <- matrix(t0, nrow=nsim, ncol=proyears+nyears)
   
   
+  # == Sample CV Length-at-age ====
+  if (!exists("LenCV", inherits=FALSE)) LenCV <- myrunif(nsim, min(Stock@LenCV), max(Stock@LenCV))
   
   # === Create Mean Length-at-Age array ====
   if (!exists("Len_age", inherits=FALSE)) {
@@ -238,9 +240,11 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     } else {
       maxLinf <- max(Stock@Linf)
     }
-    linfs <- gettempvar(maxLinf, 0, max(Stock@Linfgrad), nyears + proyears, 
-               1, matrix(1, nrow=1, ncol=proyears+nyears))
-    MaxBin <- ceiling(max(linfs) + 3 * max(linfs) * max(Stock@LenCV)) 
+    # linfs <- gettempvar(maxLinf, 0, max(Stock@Linfgrad), nyears + proyears, 
+    #            1, matrix(1, nrow=1, ncol=proyears+nyears))
+    # MaxBin <- ceiling(max(linfs) + 3 * max(linfs) * max(Stock@LenCV)) 
+    
+    MaxBin <- ceiling(max(Linfarray) + 2 * max(Linfarray) * max(LenCV))
 
   } else { # Len_age has been passed in with cpars
     if (any(dim(Len_age) != c(nsim, maxage, nyears + proyears))) 
@@ -266,13 +270,13 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       t0array <- matrix(t0, nrow=nsim, ncol=proyears+nyears)
       if (Msg) cat("\n")
     }
-    MaxBin <- ceiling(max(Len_age) + 3 * max(Len_age) * max(Stock@LenCV)) 
+    # MaxBin <- ceiling(max(Len_age) + 3 * max(Len_age) * max(Stock@LenCV)) 
+    MaxBin <- ceiling(max(Linfarray) + 2 * max(Linfarray) * max(LenCV))
   }
   
   StockOut$maxlen <- maxlen <- Len_age[, maxage, nyears] # reference length for Vmaxlen 
   
-  # == Sample CV Length-at-age ====
-  if (!exists("LenCV", inherits=FALSE)) LenCV <- myrunif(nsim, min(Stock@LenCV), max(Stock@LenCV))
+ 
   
   # == Generate Catch at Length Classes ====
   if (!exists("LatASD", inherits=FALSE)) LatASD <- Len_age * array(LenCV, dim=dim(Len_age)) # SD of length-at-age 
@@ -284,6 +288,8 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (length(CAL_bins) != length(CAL_binsmid)+1) stop("Length of 'CAL_bins' must be length(CAL_binsmid)+1", .call=FALSE)
   
   nCALbins <- length(CAL_binsmid)
+  
+  if (max(Linfarray) > max(CAL_bins)) stop("`max(CAL_bins)` must be larger than `max(Linfarray)`")
  
   # === Create Weight-at-Age array ====
   if (!exists("Wt_age", inherits=FALSE)) {
