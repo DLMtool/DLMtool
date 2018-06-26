@@ -16,7 +16,7 @@ testthat::test_dir('tests/manual/test-code')
 # 
 # testthat::test_file("tests/manual/test-code/test-MSE_Plotting.R") # OK 
 # 
-# testthat::test_file("tests/manual/test-code/test-OM_functions.R") # OK 
+# testthat::test_file("tests/manual/test-code/test-OM_functions.R") # OK
 # 
 # testthat::test_file("tests/manual/test-code/test-OM_init_doc.R") # OK
 # 

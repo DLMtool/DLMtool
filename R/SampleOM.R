@@ -1340,6 +1340,15 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   # Vector of valid names for custompars list or data.frame. Names not in this list will be printed out in warning and ignored #	
   # ParsNames <- validcpars(FALSE)
   
+  # check Perr 
+  #internal process error by simulation and year is now Perr_y instead of Perr 
+  if ("Perr" %in% names(cpars)) {
+    if (!is.null(dim(cpars[['Perr']]))) {
+      cpars[['Perr_y']] <- cpars[['Perr']]
+      cpars[['Perr']] <- NULL
+    }
+  }
+  
   CparsInfo <- cpars_info # get internal data from sysdata
   
   sampCpars <- list()

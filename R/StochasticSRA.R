@@ -215,7 +215,7 @@ StochasticSRAcpp <-function(OM,CAA,Chist,Ind,Cobs=0.1,sigmaR=0.5,Umax=0.9,nsim=4
   SampCpars <- list() # empty list 
   # custom parameters exist - sample and write to list
   if(length(OM@cpars)>0){
-    ncparsim<-cparscheck(OM@cpars)   # check each list object has the same length and if not stop and error report
+    # ncparsim<-cparscheck(OM@cpars)   # check each list object has the same length and if not stop and error report
     SampCpars <- SampleCpars(OM@cpars, nsim) 
   }
   
@@ -615,7 +615,7 @@ StochasticSRA<-function(OM,CAA,Chist,Ind=NA,ML=NA,CAL=NA,mulen=NA,wts=c(1,1,0.5,
   SampCpars <- list() # empty list 
   # custom parameters exist - sample and write to list
   if(length(OM@cpars)>0){
-    ncparsim<-cparscheck(OM@cpars)   # check each list object has the same length and if not stop and error report
+    # ncparsim<-cparscheck(OM@cpars)   # check each list object has the same length and if not stop and error report
     SampCpars <- SampleCpars(OM@cpars, nsim) 
   }
 

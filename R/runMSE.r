@@ -238,16 +238,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   SampCpars <- list() # empty list 
   # custom parameters exist - sample and write to list
   if(length(OM@cpars)>0){
-    
-    # check Perr 
-    #internal process error by simulation and year is now Perr_y instead of Perr 
-    if ("Perr" %in% names(OM@cpars)) {
-      if (!is.null(dim(OM@cpars[['Perr']]))) {
-        OM@cpars[['Perr_y']] <- OM@cpars[['Perr']]
-        OM@cpars[['Perr']] <- NULL
-      }
-    }
-    ncparsim<-cparscheck(OM@cpars)   # check each list object has the same length and if not stop and error report
+    # ncparsim<-cparscheck(OM@cpars)   # check each list object has the same length and if not stop and error report
     SampCpars <- SampleCpars(OM@cpars, nsim, msg=!silent) 
   }
   
@@ -1461,7 +1452,7 @@ runMSErobust <- function(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref",
   cpars <- NULL
   ncparsim <- nsim
   if(length(OM@cpars)>0){
-    ncparsim<-cparscheck(OM@cpars)   # check each list object has the same length and if not stop and error report
+    # ncparsim<-cparscheck(OM@cpars)   # check each list object has the same length and if not stop and error report
     cpars <- OM@cpars
   }
   

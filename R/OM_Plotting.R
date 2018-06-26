@@ -171,7 +171,7 @@ plotM <- function(Stock, nsim=5) {
   if (class(Stock) == "OM") {
     # custom parameters exist - sample and write to list
     if(length(Stock@cpars)>0){
-      ncparsim<-cparscheck(Stock@cpars)   # check each list object has the same length and if not stop and error report
+      # ncparsim<-cparscheck(Stock@cpars)   # check each list object has the same length and if not stop and error report
       SampCpars <- SampleCpars(Stock@cpars, nsim) 
     }
     nyears <- Stock@nyears 
@@ -292,7 +292,7 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
     if (is.finite(Stock@nsim)) nsim <- Stock@nsim	
     
     if(length(Stock@cpars)>0){ # custom parameters exist - sample and write to list
-      ncparsim<-cparscheck(Stock@cpars)   # check each list object has the same length and if not stop and error report
+      #ncparsim<-cparscheck(Stock@cpars)   # check each list object has the same length and if not stop and error report
       SampCpars <- SampleCpars(Stock@cpars, nsim, msg=FALSE) 
     }
     Stock <- SubOM(Stock)
@@ -421,7 +421,8 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
   abline(v=AC[its], col=1:nsamp, lwd=lwd)
   axis(side=1)
   
-  matplot(t(Perr[its,]), type="l", bty="l", main="Rec Devs by Year", lwd=lwd, lty=1)
+  # matplot(t(Perr[its,]), type="l", bty="l", main="Rec Devs by Year", lwd=lwd, lty=1)
+  matplot(t(Perr_y[its,]), type="l", bty="l", main="Rec Devs by Year", lwd=lwd, lty=1)
   
   biomass <- seq(0, 1.5, by=0.05)
   
@@ -527,7 +528,7 @@ plotFleet <- function(x, Stock=NULL, nsamp=3, nsim=500, proyears=28, col="darkgr
     if (is.finite(Fleet@proyears)) proyears <- Fleet@proyears
     if (is.finite(Fleet@nsim)) nsim <- Fleet@nsim	
     if (length(Fleet@cpars) > 0) {
-      ncparsim <-cparscheck(Fleet@cpars)   # check each list object has the same length and if not stop and error report
+      # ncparsim <-cparscheck(Fleet@cpars)   # check each list object has the same length and if not stop and error report
       SampCpars <- SampleCpars(Fleet@cpars, nsim, msg=FALSE) 
     }
     Stock <- SubOM(Fleet, "Stock")
@@ -681,7 +682,7 @@ plotObs <- function(x, nsim=500, nyears=50,
     if (is.finite(Obs@nyears)) nyears <- Obs@nyears
     if (is.finite(Obs@nsim)) nsim <- Obs@nsim	
     if (length(Obs@cpars) > 0) {
-      ncparsim <-cparscheck(Obs@cpars)   # check each list object has the same length and if not stop and error report
+      # ncparsim <-cparscheck(Obs@cpars)   # check each list object has the same length and if not stop and error report
       SampCpars <- SampleCpars(Obs@cpars, nsim, msg=FALSE) 
     }
     Obs <- SubOM(Obs,"Obs")
@@ -914,7 +915,7 @@ plot.OM <-function(x, ...){
   on.exit(par(op))
   if (class(x) == "OM") {
     OM <- updateMSE(x) # update and add missing slots with default values
-    out<-runMSE(OM,Hist=T)
+    out<-runMSE(OM,Hist=T, ...)
     nsim<-OM@nsim
     nyears<-OM@nyears
     plotStock(OM)

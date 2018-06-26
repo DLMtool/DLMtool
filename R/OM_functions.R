@@ -372,7 +372,6 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
   ind <- Out$L50 > 0.95*Out$Linf
   Out <- Out[!ind,]
   
-  
   if(filterK) {
     ind <- Out$K > min(inpars_1$K) & Out$K < max(inpars_1$K)
     if (sum(ind)<2) {
@@ -429,14 +428,15 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
       if (length(inpars_1[[valnames[i]]])>1) {
         rng <- range(inpars_1[[valnames[i]]])  
       } else {
-        rng <- c(NA, NA)
+        rng <- c(0, 0)
       }
       
       rng2 <- range(Out[,i])
-      options(warn=-1)
+      # options(warn=-1)
       rng2[1] <- min(c(min(rng, na.rm=TRUE), min(rng2, na.rm=TRUE)), na.rm=TRUE)
       rng2[2] <- max(c(max(rng, na.rm=TRUE), max(rng2, na.rm=TRUE)), na.rm=TRUE)
-      options(warn=0)
+      # options(warn=0)
+      
       for(j in 1:4){
         if(i == j){
           if(i==1){
