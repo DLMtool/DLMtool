@@ -13,10 +13,6 @@ Tplot2_old(MSEobj, nam = NA)
 \item{MSEobj}{An object of class 'MSE'}
 
 \item{nam}{Name of the plot}
-
-\item{...}{Names of PM methods to plot}
-
-\item{lims}{Numeric vector of satisficing limits. Recycled to number of PM methods}
 }
 \description{
 Three figures showing trade-offs between fishing mortality, biomass, and yield.
@@ -35,13 +31,6 @@ yield is less than 10 per cent) and biomass level (B10: the fraction of
 simulations in which biomass stays above 10 percent of BMSY).
 }}
 
-\examples{
-\dontrun{
- Tplot(myMSE)
- Tplot2(myMSE)
- Tplot3(myMSE)
-}
-}
 \seealso{
 \link{TradePlot} \link{PerformanceMetric}
 }
