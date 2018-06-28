@@ -85,21 +85,26 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   rm(list = ls(DLMenv), envir = DLMenv)
   
   # check if custom MP names already exist in DLMtool
-  gl.funs <- as.vector(lsf.str(envir=globalenv()))
-  pkg.funs <- as.vector(ls.str('package:DLMtool'))
-  if (length(gl.funs)>0) {
-    gl.clss <- unlist(lapply(lapply(gl.funs, get), class))
-    gl.MP <- gl.funs[gl.clss %in% 'MP']
-    if (length(gl.MP)>0) {
-      inc.gl <- gl.MP[gl.MP %in% MPs]
-      if (length(inc.gl)>0) {
-        dup.MPs <- inc.gl[inc.gl %in% pkg.funs]
-        if (length(dup.MPs)>0) {
-          stop("Custom MP names already in DLMtool: ", paste0(dup.MPs, " "), "\nRename Custom MPs")
+  tt <-  suppressWarnings(try(lsf.str(envir=globalenv()), silent=TRUE))
+  if (class(tt)!="try-error") {
+    gl.funs <- as.vector(tt)
+    pkg.funs <- as.vector(ls.str('package:DLMtool'))
+    if (length(gl.funs)>0) {
+      gl.clss <- unlist(lapply(lapply(gl.funs, get), class))
+      gl.MP <- gl.funs[gl.clss %in% 'MP']
+      if (length(gl.MP)>0) {
+        inc.gl <- gl.MP[gl.MP %in% MPs]
+        if (length(inc.gl)>0) {
+          dup.MPs <- inc.gl[inc.gl %in% pkg.funs]
+          if (length(dup.MPs)>0) {
+            stop("Custom MP names already in DLMtool: ", paste0(dup.MPs, " "), "\nRename Custom MPs")
+          }
         }
-      }
-    } 
+      } 
+    }
   }
+  
+
   
   # Check MPs 
   if (!all(is.na(MPs))) {

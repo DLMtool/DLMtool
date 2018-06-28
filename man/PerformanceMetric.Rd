@@ -5,7 +5,7 @@
 \alias{P10}
 \alias{P50}
 \alias{P100}
-\alias{POF}
+\alias{PNOF}
 \alias{LTY}
 \alias{STY}
 \alias{Yield}
@@ -18,7 +18,7 @@ P50(MSEobj = NULL, Ref = 0.5, Yrs = NULL)
 
 P100(MSEobj = NULL, Ref = 1, Yrs = NULL)
 
-POF(MSEobj = NULL, Ref = 1, Yrs = NULL)
+PNOF(MSEobj = NULL, Ref = 1, Yrs = NULL)
 
 LTY(MSEobj = NULL, Ref = 0.5, Yrs = c(max(MSEobj@proyears - 9, 1),
   MSEobj@proyears))
@@ -50,7 +50,7 @@ Performance Metric definitions:
 \code{P10} \tab Probability B > 0.1 BMSY \cr
 \code{P50} \tab Probability B > 0.5 BMSY \cr
 \code{P100} \tab Probability B > BMSY \cr
-\code{POF} \tab Probability F < FMSY \cr
+\code{PNOF} \tab Probability F < FMSY \cr
 \code{LTY} \tab Probability Long-Term Yield > 0.5 Relative Yield \cr
 \code{STY} \tab Probability Short-Term Yield > 0.5 Relative Yield \cr
 \code{AAVY} \tab Probability AAVY < 0.2 (Average Annual Variability in Yield) \cr
@@ -59,7 +59,7 @@ Performance Metric definitions:
 
 Argument \code{Ref} provides the ratio relative to the reference point for calculating
 the performance metric. For biomass-based PMs (P10, P50, P100), this is the fraction of
-BMSY. For POF, the fraction of FMSY. For Yield (and LTY/STY), the fraction of the
+BMSY. For PNOF, the fraction of FMSY. For Yield (and LTY/STY), the fraction of the
 Reference Yield.
 
 Long-Term Yield is the Yield in the last ten years of the projection period in the MSE.
@@ -70,7 +70,7 @@ Short-Term Yield is that in the first 10 years of the projection period
 P10(myMSE)
 P50(myMSE)
 P100(myMSE)
-POF(myMSE)
+PNOF(myMSE)
 LTY(myMSE)
 STY(myMSE)
 AAVY(myMSE)

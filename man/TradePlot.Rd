@@ -5,6 +5,7 @@
 \alias{Tplot}
 \alias{Tplot2}
 \alias{Tplot3}
+\alias{NOAA_plot2}
 \title{Generic Trade-Plot Function - IN DEVELOPMENT}
 \usage{
 TradePlot(MSEobj, ..., Lims = c(0.2, 0.2, 0.8, 0.8), Title = NULL,
@@ -18,6 +19,8 @@ Tplot(MSEobj, Lims = c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...)
 Tplot2(MSEobj, Lims = c(0.2, 0.2, 0.8, 0.8), ...)
 
 Tplot3(MSEobj, Lims = c(0.5, 0.5, 0.8, 0.5), ...)
+
+NOAA_plot2(MSEobj)
 }
 \arguments{
 \item{MSEobj}{An object of class \code{MSE}}
@@ -65,7 +68,7 @@ Generic Trade-Plot Function - IN DEVELOPMENT
 \itemize{
 \item \code{Tplot}: A trade-off plot showing probabilities that:
 \itemize{
-\item overfishing (POF) against long-term yield is > 50\% of reference yield (LTY)
+\item not overfishing (PNOF) against long-term yield is > 50\% of reference yield (LTY)
 \item spawning biomass is below BMSY (P100) against LTY
 \item spawning biomass is below 0.5BMSY (P50) against LTY
 \item spawning biomass is below 0.1BMSY (P10) against LTY
@@ -79,8 +82,14 @@ Generic Trade-Plot Function - IN DEVELOPMENT
 
 \item \code{Tplot3}: A trade-off plot showing probabilities that:
 \itemize{
-\item overfishing (POF) against long-term yield is > 50% of reference yield (LTY)
+\item not overfishing (PNOF) against long-term yield is > 50% of reference yield (LTY)
 \item spawning biomass is below 0.1BMSY (P10) against average annual variability in yield is < 20\% (AAVY)
+}
+
+\item \code{NOAA_plot2}: A trade-off plot developed for NOAA showing probabilities that:
+\itemize{
+\item not overfishing (PNOF) against long-term yield is > 50% of reference yield (LTY)
+\item spawning biomass is below 0.5BMSY (P50) against average annual variability in yield is < 15\% (AAVY)
 }
 }}
 

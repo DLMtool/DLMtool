@@ -1259,12 +1259,17 @@ SampleImpPars <- function(Imp, nsim=NULL, cpars=NULL) {
 
 #' Valid custom parameters (cpars)
 #'
-#' @param print Print the valid names for cpars?
+#' @param type What cpars to show? 'all', 'Stock', 'Fleet', 'Obs', 'Imp', or 'internal'
+#' @param valid Logical. Show valid cpars?
 #'
-#' @return invisibly returns vector of valid cpars names
+#' @return a dataframe with variable name, description and type of valid/invalid
+#' cpars
 #' @export
 #' 
 #' @examples
+#' validcpars() # all valid cpars
+#' 
+#' validcpars("Obs", FALSE) # invalid Obs cpars
 #'
 validcpars <- function(type=c("all", "Stock", "Fleet", "Obs", "Imp", "internal"),
                        valid=TRUE) {
@@ -1289,26 +1294,28 @@ validcpars <- function(type=c("all", "Stock", "Fleet", "Obs", "Imp", "internal")
   cpars_info$type[imp_ind] <- "Imp"
   cpars_info$type[int_ind] <- "internal"
   
+  dflist <- list(); count <- 0 
   for (ss in type) {
+    count <- count + 1
     df <- cpars_info %>% dplyr::filter(Valid==valid, cpars_info$type %in% ss) %>%
       dplyr::select(Slot, Dim, Description, type)
     names(df) <- c("Var.", "Dim.", "Desc.", "Type")
     if (nrow(df)> 0) {
-      if (valid) message("Valid ", ss, ' parameters:')
-      if (!valid) message("Invalid ", ss, ' parameters:')
       if (nrow(df)>1) {
-        df <- df[,as.logical(apply(!apply(df, 2, is.na), 2, prod))]
-        print(format(df, width = name.width, justify = "right"))
+        dflist[[count]] <- df[,as.logical(apply(!apply(df, 2, is.na), 2, prod))]
       } else {
-        df <- df[,!is.na(df)]
-        name.width <- max(sapply(names(df), nchar))
-        print(format(df, width = name.width, justify = "right"))
+        dflist[[count]] <- df[,!is.na(df)]
       }
-    } else {
-      if (valid) message("No valid ", ss, ' parameters.')
-      if (!valid) message("No invalid ", ss, ' parameters.')
-    }
+    } 
   }
+  
+  dfout <- do.call("rbind", dflist)
+  if (is.null(dfout)) {
+    if (valid) message("No valid  parameters")
+    if (!valid) message("No invalid parameters")
+  } 
+  return(dfout)
+ 
 }
 
 

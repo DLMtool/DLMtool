@@ -43,6 +43,7 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
                       Refs=NULL,
                       Yrs=NULL
                       ) {
+  if (class(MSEobj) != 'MSE') stop("Object must be class `MSE`", call.=FALSE)
   if (is.null(PMlist)) {
     PMlist <- unlist(list(...))
   } else {
@@ -167,6 +168,9 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
   Results <- summary(MSEobj, PMlist, silent=TRUE, Refs=Refs)
   Results$Satisificed <- FALSE
   Results$Satisificed[match(passall, Results$MP)] <- TRUE
+  
+  Results <- Results[,unique(colnames(Results))]
+  
 
   
   if (Show) {
@@ -183,7 +187,7 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
 
 #' @describeIn TradePlot A trade-off plot showing probabilities that:
 #' \itemize{
-#' \item overfishing (POF) against long-term yield is > 50\% of reference yield (LTY)
+#' \item not overfishing (PNOF) against long-term yield is > 50\% of reference yield (LTY)
 #' \item spawning biomass is below BMSY (P100) against LTY
 #' \item spawning biomass is below 0.5BMSY (P50) against LTY
 #' \item spawning biomass is below 0.1BMSY (P10) against LTY
@@ -192,7 +196,7 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
 #' @export 
 Tplot <- function(MSEobj, Lims=c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...) {
   if (class(Lims)!="numeric") stop("Second argument must be numeric")
-  TradePlot(MSEobj, Lims=Lims, PMlist=list("POF", "LTY", "P100", "LTY", "P50", "LTY", "P10", "LTY"),  ...)
+  TradePlot(MSEobj, Lims=Lims, PMlist=list("PNOF", "LTY", "P100", "LTY", "P50", "LTY", "P10", "LTY"),  ...)
 }
 
 #' @describeIn TradePlot A trade-off plot showing probabilities that:
@@ -209,19 +213,28 @@ Tplot2 <- function(MSEobj, Lims=c(0.2, 0.2, 0.8, 0.8), ...) {
 
 #' @describeIn TradePlot A trade-off plot showing probabilities that:
 #' \itemize{
-#' \item overfishing (POF) against long-term yield is > 50% of reference yield (LTY)
+#' \item not overfishing (PNOF) against long-term yield is > 50% of reference yield (LTY)
 #' \item spawning biomass is below 0.1BMSY (P10) against average annual variability in yield is < 20\% (AAVY)
 #' }
 #' 
 #' @export
 Tplot3 <- function(MSEobj, Lims=c(0.5, 0.5, 0.8, 0.5), ...) {
   if (class(Lims)!="numeric") stop("Second argument must be numeric")
-  TradePlot(MSEobj, Lims=Lims, PMlist=list("POF", "LTY", "P50", "AAVY"), ...)
+  TradePlot(MSEobj, Lims=Lims, PMlist=list("PNOF", "LTY", "P50", "AAVY"), ...)
 }
 
 
 
-
+#' @describeIn TradePlot A trade-off plot developed for NOAA showing probabilities that:
+#' \itemize{
+#' \item not overfishing (PNOF) against long-term yield is > 50% of reference yield (LTY)
+#' \item spawning biomass is below 0.5BMSY (P50) against average annual variability in yield is < 15\% (AAVY)
+#' }
+#' 
+#' @export
+NOAA_plot2 <- function(MSEobj) {
+  TradePlot(MSEobj, Lims=c(0.5, 0, 0.8, 0.5), PMlist=list("PNOF", "LTY", "P50", "AAVY"), Refs=list(AAVY=0.15))
+}
 
 
 

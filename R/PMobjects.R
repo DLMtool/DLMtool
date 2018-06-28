@@ -16,7 +16,7 @@
 #' \code{P10} \tab Probability B > 0.1 BMSY \cr
 #' \code{P50} \tab Probability B > 0.5 BMSY \cr
 #' \code{P100} \tab Probability B > BMSY \cr
-#' \code{POF} \tab Probability F < FMSY \cr
+#' \code{PNOF} \tab Probability F < FMSY \cr
 #' \code{LTY} \tab Probability Long-Term Yield > 0.5 Relative Yield \cr
 #' \code{STY} \tab Probability Short-Term Yield > 0.5 Relative Yield \cr
 #' \code{AAVY} \tab Probability AAVY < 0.2 (Average Annual Variability in Yield) \cr
@@ -25,7 +25,7 @@
 #' 
 #' Argument \code{Ref} provides the ratio relative to the reference point for calculating
 #' the performance metric. For biomass-based PMs (P10, P50, P100), this is the fraction of 
-#' BMSY. For POF, the fraction of FMSY. For Yield (and LTY/STY), the fraction of the 
+#' BMSY. For PNOF, the fraction of FMSY. For Yield (and LTY/STY), the fraction of the 
 #' Reference Yield.
 #' 
 #' Long-Term Yield is the Yield in the last ten years of the projection period in the MSE.
@@ -36,7 +36,7 @@
 #' P10(myMSE)
 #' P50(myMSE)
 #' P100(myMSE)
-#' POF(myMSE)
+#' PNOF(myMSE)
 #' LTY(myMSE)
 #' STY(myMSE)
 #' AAVY(myMSE)
@@ -128,10 +128,10 @@ class(P100) <- "PM"
 
 #' @rdname PerformanceMetric 
 #' @export
-POF <- function(MSEobj=NULL, Ref=1, Yrs=NULL) {
+PNOF <- function(MSEobj=NULL, Ref=1, Yrs=NULL) {
   Yrs <- ChkYrs(Yrs, MSEobj)
   PMobj <- new("PMobj")
-  PMobj@Name <- "Fishing Mortality relative to FMSY"
+  PMobj@Name <- "Probability of not overfishing (F<FMSY)"
   if (Ref !=1) {
     PMobj@Caption <- paste0('Prob. F < ', Ref, ' FMSY (Years ', Yrs[1], ' - ', Yrs[2], ')')
   } else {
@@ -148,7 +148,7 @@ POF <- function(MSEobj=NULL, Ref=1, Yrs=NULL) {
   PMobj
   
 }
-class(POF) <- "PM"
+class(PNOF) <- "PM"
 
 #' @rdname PerformanceMetric 
 #' @export
@@ -216,9 +216,10 @@ AAVY <- function(MSEobj=NULL, Ref=0.2, Yrs=NULL) {
   y2<-(Yrs[1]+1):Yrs[2] 
   
   if (MSEobj@nMPs > 1) {
-    AAVY <- apply(((MSEobj@C[,,y1]-MSEobj@C[,,y2])^2)^0.5,c(1,2),mean)/apply(MSEobj@C[,,y2],c(1,2),mean) 
+    AAVY <- apply(((((MSEobj@C[, , y1] - MSEobj@C[, , y2])/MSEobj@C[, , y2])^2)^0.5), c(1, 2), mean)
+    # AAVY <- apply(((MSEobj@C[,,y1]-MSEobj@C[,,y2])^2)^0.5,c(1,2),mean)/apply(MSEobj@C[,,y2],c(1,2),mean) 
   } else {
-    AAVY <- array(apply(((MSEobj@C[,1,y1]-MSEobj@C[,1,y2])^2)^0.5,c(1),mean)/apply(MSEobj@C[,1,y2],c(1),mean))
+    AAVY <- array(apply(((((MSEobj@C[,1,y1]-MSEobj@C[,1,y2])/MSEobj@C[,1,y2])^2)^0.5),c(1),mean))
   }
   
   PMobj@Stat <- AAVY

@@ -17,6 +17,10 @@ This function takes a character string of MP names and returns
 a function of class\code{MP} that calculates the average of the management recommendations
 from the individual MPs.
 }
+\note{
+See the relevant section of the DLMtool \href{https://dlmtool.github.io/DLMtool/userguide/management-procedures.html#Averaging-MPs}{User Manual}
+for more information on this function.
+}
 \examples{
 \dontrun{
 MeanMP <- makeMeanMP(c("AvC", "DCAC"))
