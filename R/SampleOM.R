@@ -1257,79 +1257,61 @@ SampleImpPars <- function(Imp, nsim=NULL, cpars=NULL) {
 
 
 
-#  #' Valid custom parameters (cpars)
-#  #'
-#  #' @param print Print the valid names for cpars?
-#  #'
-#  #' @return invisibly returns vector of valid cpars names
-#  #' @export
-#  #'
-#  validcpars <- function(print=TRUE) {
-#    
-#    cpars_Stock <- openxlsx::read.xlsx("../DLMDev/DLMtool_Data/sysdata_data/cpars.xlsx", sheet="Stock")
-#    cpars_Fleet <- openxlsx::read.xlsx("../DLMDev/DLMtool_Data/sysdata_data/cpars.xlsx", sheet="Fleet")
-#    cpars_Obs <- openxlsx::read.xlsx("../DLMDev/DLMtool_Data/sysdata_data/cpars.xlsx", sheet="Obs")
-#    cpars_Imp <- openxlsx::read.xlsx("../DLMDev/DLMtool_Data/sysdata_data/cpars.xlsx", sheet="Imp")
-#    cpars_internal <- openxlsx::read.xlsx("../DLMDev/DLMtool_Data/sysdata_data/cpars.xlsx", sheet="Internal")
-#    
-#    cpars_info <- dplyr::bind_rows(cpars_Stock,cpars_Fleet,cpars_Obs,cpars_Imp,cpars_internal)
-#    
-#    
-#    cpars_info$Valid[is.na(cpars_info$Valid)] <- TRUE
-#  
-#    Vnames <- c(cpars_info$Slot[cpars_info$Valid],  cpars_info$Variable, cpars_info$Legacy)
-#    Vnames <- Vnames[!is.na(Vnames)]
-#   
-#    InvalNames <-  data.frame(cpars_info$Slot[!cpars_info$Valid], cpars_info$Description[!cpars_info$Valid])
-#  
-#    if (print) {
-#      n <- length(vnames)
-#      vec <- 3:7
-#      nc <- vec[which.min(n  %% vec)]
-#      
-#      options(warn=-1)
-#      temp <- matrix(vnames, ncol=nc, byrow=TRUE)
-#      options(warn=1)
-#      temp[duplicated(as.vector(temp))] <- ""
-#      print(temp)
-#    }
-#    invisible(vnames)
-#  
-#    
-#    
-#    
-#    # vnames <- sort(c("D","Esd","Find","procsd","AC","M","Msd", 
-#                     # "Mgrad","hs","Linf","Linfsd","Linfgrad",
-#                     # "K","Ksd","Kgrad","t0","L50", "L95", "L50_95","Spat_targ",
-#                     # "Frac_area_1","Prob_staying","Size_area_1","mov","initdist", "Asize",
-#                     # "Csd","Cbias","CAA_nsamp","CAA_ESS","CAL_nsamp",
-#                     # "CAL_ESS","betas","Isd","Derr","Dbias", 
-#                     # "Mbias","FMSY_Mbias","lenMbias","LFCbias",
-#                     # "LFSbias","Aerr","Abias","Kbias","t0bias", 
-#                     # "Linfbias","Irefbias","Crefbias","Brefbias",
-#                     # "Recsd","qinc","qcv","L5","LFS","Vmaxlen","Perr","R0","Mat_age", 
-#                     # "Mrand","Linfrand","Krand","maxage","V",  
-#                     # "ageM", "age95", "EffYears", "EffLower", "EffUpper",
-#                     # "Wt_age", "Len_age", "Marray", "M_at_Length", "LenCV", 
-#                     # "CAL_binsmid", "CAL_bins", "LatASD", "dFfinal",
-#                     # "LR5", "LFR", "Rmaxlen", "DR", "Fdisc","M_ageArray",
-#                     # "Linfarray", "Karray", "l_hbias", "Btobs", "Btbiascv")) 
-#    
-#    # if (print) {
-#    #   n <- length(vnames)
-#    #   vec <- 3:7
-#    #   nc <- vec[which.min(n  %% vec)]
-#    # 
-#    #   options(warn=-1)
-#    #   temp <- matrix(vnames, ncol=nc, byrow=TRUE)
-#    #   options(warn=1)
-#    #   temp[duplicated(as.vector(temp))] <- ""
-#    #   print(temp)
-#    # }
-#    # invisible(vnames)
-#  }
-#  
-#  
+#' Valid custom parameters (cpars)
+#'
+#' @param print Print the valid names for cpars?
+#'
+#' @return invisibly returns vector of valid cpars names
+#' @export
+#' 
+#' @examples
+#'
+validcpars <- function(type=c("all", "Stock", "Fleet", "Obs", "Imp", "internal"),
+                       valid=TRUE) {
+  
+  type <- match.arg(type, choices=c("all", "Stock", "Fleet", "Obs", "Imp", "internal"),
+                    several.ok = TRUE )
+  if ('all' %in% type) type <- c("Stock", "Fleet", "Obs", "Imp", "internal")
+  
+  cpars_info <- cpars_info[!duplicated(cpars_info$Slot),] # remove duplicated 'Name'
+  
+  cpars_info$type <- NA
+  stock_ind <- match(slotNames("Stock"), cpars_info$Slot)
+  fleet_ind <- match(slotNames("Fleet"), cpars_info$Slot)
+  obs_ind <- match(slotNames("Obs"), cpars_info$Slot)
+  imp_ind <- match(slotNames("Imp"), cpars_info$Slot)
+  int_ind <- (1:nrow(cpars_info))[!1:nrow(cpars_info) %in% 
+                       c(stock_ind, fleet_ind, obs_ind, imp_ind)]
+  
+  cpars_info$type[stock_ind] <- "Stock"
+  cpars_info$type[fleet_ind] <- "Fleet"
+  cpars_info$type[obs_ind] <- "Obs"
+  cpars_info$type[imp_ind] <- "Imp"
+  cpars_info$type[int_ind] <- "internal"
+  
+  for (ss in type) {
+    df <- cpars_info %>% dplyr::filter(Valid==valid, cpars_info$type %in% ss) %>%
+      dplyr::select(Slot, Dim, Description, type)
+    names(df) <- c("Var.", "Dim.", "Desc.", "Type")
+    if (nrow(df)> 0) {
+      if (valid) message("Valid ", ss, ' parameters:')
+      if (!valid) message("Invalid ", ss, ' parameters:')
+      if (nrow(df)>1) {
+        df <- df[,as.logical(apply(!apply(df, 2, is.na), 2, prod))]
+        print(format(df, width = name.width, justify = "right"))
+      } else {
+        df <- df[,!is.na(df)]
+        name.width <- max(sapply(names(df), nchar))
+        print(format(df, width = name.width, justify = "right"))
+      }
+    } else {
+      if (valid) message("No valid ", ss, ' parameters.')
+      if (!valid) message("No invalid ", ss, ' parameters.')
+    }
+  }
+}
+
+
 
 
 
