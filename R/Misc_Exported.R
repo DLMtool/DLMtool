@@ -123,15 +123,15 @@ tinyErr <- function(OM, obs=TRUE, imp=TRUE, proc=TRUE, grad=TRUE, silent=FALSE) 
   
   if (obs) {
     if (!silent) message("Removing all Observation Error")
-    OMout <- Replace(OMout, OMperf, "Obs", Quiet = TRUE)
+    OMout <- Replace(OMout, OMperf, "Obs", silent = TRUE)
   }
   if (imp) {
     if (!silent) message("Removing all Implementation Error")
-    OMout <- Replace(OMout, OMperf, "Imp", Quiet = TRUE)
+    OMout <- Replace(OMout, OMperf, "Imp", silent = TRUE)
   }
   if (proc) {
     if (!silent) message("Removing all Process Error")
-    vars <- c("cv", "sd")
+    vars <- c("cv", "sd", "Perr")
     nms <- c(slotNames('Stock'), slotNames('Fleet'))
     ind <- unique(grep(paste(vars, collapse = "|"), nms, value = FALSE))
     for (X in seq_along(ind)) {

@@ -1106,7 +1106,8 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
                                        interval=4, pstar=0.5, maxF=0.8, reps=1, nsim=48, proyears=50) {
   if (is.null(Stock)) {
     message("No Stock object found. Returning a blank OM object") 
-    return(makePerf(.Object))
+    .Object@seed <- 1
+    return(.Object)
   }
   
   if (class(Stock) != "Stock") 
@@ -1435,6 +1436,8 @@ setMethod("show", signature = (object="PMobj"), function(object) {
 })
 
 
+# ---- Summary of MSE object ----
+
 #' Summary of MSE object
 #'
 #' @param object object of class MSE
@@ -1446,7 +1449,7 @@ setMethod("show", signature = (object="PMobj"), function(object) {
 setMethod('summary', signature="MSE", function(object, ..., silent=FALSE, Refs=NULL) {
   PMlist <- unlist(list(...))
   
-  if(length(PMlist) == 0) PMlist <- avail("PM")
+  if(length(PMlist) == 0) PMlist <- c("PNOF", "P50", "AAVY", "LTY")
   if (class(PMlist) != 'character') stop("Must provide names of PM methods")
   # check
   for (X in seq_along(PMlist)) 
@@ -1475,7 +1478,7 @@ setMethod('summary', signature="MSE", function(object, ..., silent=FALSE, Refs=N
   # heading <- do.call('rbind', storeHeading)
   colnames(df)[2:(length(PMlist)+1)] <- PMlist #caps # gsub(" ", "", caps)
   if (!silent) {
-    dfprint <<- data.frame('Performance Metrics' = do.call('rbind', storeName), gap="", do.call('rbind', storeCap))
+    dfprint <- data.frame('Performance Metrics' = do.call('rbind', storeName), gap="", do.call('rbind', storeCap))
     names(dfprint)[2:3] <- ''
     print(dfprint)
     cat("\n")
@@ -1805,7 +1808,7 @@ setMethod("summary",
             # mtext(paste("Data summary for",deparse(substitute(Data)),sep=" "),3,font=2,line=0.25,outer=T)
             
           
-# ---- Summary of MSE object ----
+
 # Summary of MSE object
 #
 # @param object object of class MSE

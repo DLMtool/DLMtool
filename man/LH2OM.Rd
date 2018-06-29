@@ -8,7 +8,7 @@
 \url{https://github.com/James-Thorson/FishLife/}
 }
 \usage{
-LH2OM(OM, dist = c("unif", "norm"), filterMK = TRUE, plot = TRUE,
+LH2OM(OM, dist = c("unif", "norm"), filterMK = FALSE, plot = TRUE,
   Class = "predictive", Order = "predictive", Family = "predictive",
   msg = TRUE, db = DLMtool::LHdatabase)
 

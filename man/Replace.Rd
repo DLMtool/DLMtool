@@ -4,29 +4,41 @@
 \alias{Replace}
 \title{Replace an existing Stock, Fleet, Obs, or Imp object}
 \usage{
-Replace(OM, from, Sub = c("Stock", "Fleet", "Obs", "Imp"), Quiet = F)
+Replace(OM, from, Sub = c("Stock", "Fleet", "Obs", "Imp"), Name = NULL,
+  silent = FALSE)
 }
 \arguments{
 \item{OM}{An operating model object (class OM) which will be updated with a sub-model from another OM}
 
-\item{from}{The OM object from which the sub-model is being taken}
+\item{from}{An object of class \code{OM}, \code{Stock}, \code{Fleet}, \code{Obs}, or \code{Imp} to be replace the values in \code{OM}}
 
-\item{Sub}{A character string specifying what object type to replace
+\item{Sub}{A character string specifying what object type to replace (only used if \code{from} is class \code{OM})
 "Stock", "Fleet", "Obs" or "Imp" (default is all four which is probably not what you want to do)}
 
-\item{Quiet}{Should the function not return a text message}
+\item{Name}{Character. Name for the new OM object (\code{OM@Name})}
+
+\item{silent}{Should messages be printed?}
 }
 \value{
 An object of class OM
 }
 \description{
 A function that replaces a Stock, Fleet, Obs, or Imp object from an
-OM with one from another OM. Mainly used for internal functions.
+OM with one from another object.
 }
 \examples{
-\dontrun{
-OM <- Replace(OM, fromOM, "Stock")
-}
+# Replace Stock 
+OM <- DLMtool::testOM
+OM2 <- Replace(OM, Blue_shark)
+
+# Replace Fleet 
+OM <- DLMtool::testOM
+OM2 <- Replace(OM, Generic_DecE)
+
+# Replace Fleet from another OM 
+OM1 <- new("OM", Albacore, Generic_DecE, Perfect_Info, Overages)
+OM2 <- new("OM", Blue_shark, Generic_IncE, Generic_Obs, Perfect_Imp)
+OM1a <- Replace(OM1, OM2, "Fleet")
 
 }
 \author{

@@ -139,12 +139,13 @@ ForceCor<-function(OM,nsim=48,plot=T){
 #' 
 
 #' 
-LH2OM <- function(OM, dist=c("unif", "norm"), filterMK=TRUE, plot=TRUE,
+LH2OM <- function(OM, dist=c("unif", "norm"), filterMK=FALSE, plot=TRUE,
                   Class = "predictive", Order = "predictive", 
                   Family = "predictive", msg=TRUE, db=DLMtool::LHdatabase) {
   if (class(OM) != 'OM') stop("OM must be class 'OM'")
   dist <- match.arg(dist)
   set.seed(OM@seed)
+  if (length(OM@nsim)<1) OM@nsim <- 48
   if (length(OM@cpars)>0) {
     cnames <- names(OM@cpars)
     if (any(c("Linf", "L50", "M", "K") %in% cnames)) {
@@ -246,6 +247,9 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
   
   notnames <- !valnames %in% names
   
+  chkNA <- as.logical(unlist(lapply(lapply(inpars_1, is.na), prod)))
+  notnames[chkNA] <- TRUE
+  
   inpars_1[valnames[!valnames %in% names]] <- NA
   
   # names(inpars_1) <- valnames
@@ -263,12 +267,12 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
     if (lens['Linf']) {
       if (prod(valnames[1:2] %in% names)) {
         if (lens['Linf']) {
-          if (msg) message("Predicting L50")  
+          if (msg) message("Predicting L50 from Linf")  
           lens['L50'] <- FALSE
           inpars$L50 <- NA
         }
         if (lens['L50']) {
-          if (msg) message("Predicting Linf")  
+          if (msg) message("Predicting Linf from L50")  
           lens['Linf'] <- FALSE
           inpars$Linf <- NA
         }
@@ -277,7 +281,7 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
       inpars$L50 <- NA
     }
     if (lens['L50']) {
-      if (msg) message("Predicting Linf")  
+      if (msg) message("Predicting Linf from L50")  
       lens['Linf'] <- FALSE
       inpars$Linf <- NA
     }
@@ -285,19 +289,19 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
   
   if (prod(valnames[3:4] %in% names)) {
     if (lens['M']) {
-      if (msg) message("Predicting K")  
+      if (msg) message("Predicting K from M")  
       lens['K'] <- FALSE
       inpars$K <- NA
     }
     if (lens['K']) {
-      if (msg) message("Predicting M")  
+      if (msg) message("Predicting M from K")  
       lens['M'] <- FALSE
       inpars$M <- NA
     }
   }
   multi <- 100
   filterM <- filterK <- FALSE
-  if (prod(c("K", "M") %in% names) & filterMK & !(is.na(inpars$K) || is.na(inpars$M))) {
+  if (prod(c("K", "M") %in% names) & filterMK & !(is.na(inpars_1$K) || is.na(inpars_1$M))) {
     if (all(is.na(inpars$M))) {
       filterM <- TRUE
       if (msg) message("Filtering predicted M within bounds: ", paste0(inpars_1$M, " "))
@@ -428,13 +432,16 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
       if (length(inpars_1[[valnames[i]]])>1) {
         rng <- range(inpars_1[[valnames[i]]])  
       } else {
-        rng <- c(0, 0)
+        rng <- c(NA, NA)
       }
       
       rng2 <- range(Out[,i])
       # options(warn=-1)
-      rng2[1] <- min(c(min(rng, na.rm=TRUE), min(rng2, na.rm=TRUE)), na.rm=TRUE)
-      rng2[2] <- max(c(max(rng, na.rm=TRUE), max(rng2, na.rm=TRUE)), na.rm=TRUE)
+      if (!all(is.na(rng))) {
+        rng2[1] <- min(c(min(rng, na.rm=TRUE), min(rng2, na.rm=TRUE)), na.rm=TRUE)
+        rng2[2] <- max(c(max(rng, na.rm=TRUE), max(rng2, na.rm=TRUE)), na.rm=TRUE)
+      }
+
       # options(warn=0)
       
       for(j in 1:4){
@@ -722,48 +729,75 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
 #' Replace an existing Stock, Fleet, Obs, or Imp object 
 #' 
 #' A function that replaces a Stock, Fleet, Obs, or Imp object from an 
-#' OM with one from another OM. Mainly used for internal functions.
+#' OM with one from another object.
 #' 
 #' @param OM An operating model object (class OM) which will be updated with a sub-model from another OM
-#' @param from The OM object from which the sub-model is being taken
-#' @param Sub A character string specifying what object type to replace
+#' @param from An object of class `OM`, `Stock`, `Fleet`, `Obs`, or `Imp` to be replace the values in `OM`
+#' @param Sub A character string specifying what object type to replace (only used if `from` is class `OM`)
 #' "Stock", "Fleet", "Obs" or "Imp" (default is all four which is probably not what you want to do)
-#' @param Quiet Should the function not return a text message
+#' @param Name Character. Name for the new OM object (`OM@Name`)
+#' @param silent Should messages be printed?
 #' @return An object of class OM
 #' @author A. Hordyk
 #' @examples 
-#' \dontrun{
-#' OM <- Replace(OM, fromOM, "Stock")
-#' }
+#' # Replace Stock 
+#' OM <- DLMtool::testOM
+#' OM2 <- Replace(OM, Blue_shark)
+#' 
+#' # Replace Fleet 
+#' OM <- DLMtool::testOM
+#' OM2 <- Replace(OM, Generic_DecE)
+#' 
+#' # Replace Fleet from another OM 
+#' OM1 <- new("OM", Albacore, Generic_DecE, Perfect_Info, Overages)
+#' OM2 <- new("OM", Blue_shark, Generic_IncE, Generic_Obs, Perfect_Imp)
+#' OM1a <- Replace(OM1, OM2, "Fleet")
 #' 
 #' @export 
-Replace <- function(OM, from, Sub=c("Stock", "Fleet", "Obs", "Imp"),Quiet=F) {
+Replace <- function(OM, from,Sub=c("Stock", "Fleet", "Obs", "Imp"),  Name=NULL, silent=FALSE) {
   if (class(OM) =="character") OM <- get(OM)
-  if (class(from) !="OM") fromOM <- get(from)
   if (class(OM) !="OM") stop("OM must be of class OM ", call.=FALSE)
-  if (class(from) !="OM") stop("''from' must be of class OM ", call.=FALSE)
-  Sub <- match.arg(Sub, several.ok=TRUE)
+  if (class(from) =="character") from <- get(from)
+  if (!class(from) %in% c("OM", "Stock", "Fleet", "Obs", "Imp")) 
+    stop("from must be class `OM`, `Stock`, `Fleet`, `Obs`, or `Imp`", call.=FALSE)
   
   Stock <- SubOM(OM, "Stock")
   Fleet <- SubOM(OM, "Fleet")
   Obs <- SubOM(OM, "Obs")
   Imp <- SubOM(OM, "Imp")
   
-  if(!Quiet)message("Replacing sub-models:", paste0(" ", Sub))
-  for (x in 1:length(Sub)) {
-    assign(Sub[x], SubOM(from, Sub[x]))
-  }
+  if (class(from) == "OM") {
+    Sub <- match.arg(Sub, several.ok=TRUE)
+    if (length(Sub)==4) warning("Replacing all OM components. Probably not what you want to do ...")
+    
+    if(!silent) message("Replacing sub-models:", paste0(" ", Sub))
+    for (x in 1:length(Sub)) {
+      assign(Sub[x], SubOM(from, Sub[x]))
+    }
   
+  } else {
+    if(!silent) message("Replacing sub-model: ", class(from))
+    assign(class(from), from)
+  }
   outOM <- new("OM", Stock, Fleet, Obs, Imp) 
   
+
   OMsl <- slotNames('OM')
   allSl <- c(slotNames('Stock'), slotNames('Fleet'), slotNames('Obs'), slotNames('Imp'))
   repsl <- OMsl[!OMsl %in% allSl]
   for (sl in repsl) slot(outOM, sl) <- slot(OM, sl)
-  slot(outOM, 'Name') <- slot(OM, 'Name')
+  
+  if (is.null(Name)) {
+    slot(outOM, 'Name') <- paste0('REPLACED -- ', slot(OM, 'Name'))
+  } else {
+    slot(outOM, 'Name') <- Name  
+  }
   
   outOM 
 } 
+
+
+
 
 
 #' Subset a Stock, Fleet, Obs, or Imp object from an OM object

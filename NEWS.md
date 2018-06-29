@@ -21,6 +21,7 @@ The current version of the DLMtool package is available for download from [CRAN]
 - add LH2OM and  predictLH - predict correlated life-history parameters - TODO add to user guide/FAQ
 - revised Fease feature - TODO add to FAQ and userguide
 
+- updated `Replace` function - to do - describe
 
 - fixed issue where OMs were not reproducible if some slots had no variability
 - add Turing function - TODO and to describe in manual
