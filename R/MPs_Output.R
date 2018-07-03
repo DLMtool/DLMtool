@@ -657,10 +657,7 @@ class(DCACs) <- "MP"
 #' 
 #' @export 
 DCAC <- function(x, Data, reps = 100, plot=FALSE) {
-  "dependenciesData@AvC, Data@t, Data@Mort, Data@CV_Mort, Data@FMSY_M, Data@CV_FMSY_M, Data@Dt, Data@CV_Dt, Data@BMSY_B0, Data@CV_BMSY_B0"
-  
   rundcac <- DCAC_(x, Data, reps, updateD=TRUE)
-  
   TAC <- TACfilter(rundcac$dcac)
   
   if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, TAC, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))

@@ -419,7 +419,14 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
   if (Class == "integer" | Class == "numeric") subMPs <- MSEobj@MPs[as.integer(MPs)]
   if (Class == "character") subMPs <- MPs
   if (Class == "factor") subMPs <- as.character(MPs)
+  subMPs <- subMPs[!is.na(subMPs)]
+  
   SubMPs <- match(subMPs, MSEobj@MPs)  #  which(MSEobj@MPs %in% subMPs)
+  if (any(is.na(SubMPs))) {
+    missing <- subMPs[is.na(SubMPs)]
+    stop(paste0(missing, collapse=','), ' not found in MSE object', call.=FALSE)
+  }
+  
   not <- (subMPs %in% MSEobj@MPs)  # Check for MPs misspelled
   ind <- which(not == FALSE)
   newMPs <- MSEobj@MPs[SubMPs]

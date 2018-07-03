@@ -2419,7 +2419,7 @@ VOI2 <- function(MSEobj, ncomp = 6, nbins = 4, Ut = NA, Utnam = "yield",
   mtext(paste("% Change in ", Utnam, " relative to today", sep = ""), 
         2, outer = T, line = 0.6, font = 2, cex = 0.9)
   par(op)
-  list(Obscost, Obsv, Obsval, cb, Obsname, MSEobj@MPs)
+  invisible(list(Obscost, Obsv, Obsval, cb, Obsname, MSEobj@MPs))
   
 }  # VOI2
 

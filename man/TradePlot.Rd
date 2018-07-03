@@ -6,7 +6,7 @@
 \alias{Tplot2}
 \alias{Tplot3}
 \alias{NOAA_plot2}
-\title{Generic Trade-Plot Function - IN DEVELOPMENT}
+\title{Generic Trade-Plot Function}
 \usage{
 TradePlot(MSEobj, ..., Lims = c(0.2, 0.2, 0.8, 0.8), Title = NULL,
   Satisficed = FALSE, Show = TRUE, point.size = 2, lab.size = 4,
@@ -62,7 +62,7 @@ Invisibily returns a list with summary table of MP performance and
 the ggplot objects for the plots
 }
 \description{
-Generic Trade-Plot Function - IN DEVELOPMENT
+Generic Trade-Plot Function
 }
 \section{Functions}{
 \itemize{
