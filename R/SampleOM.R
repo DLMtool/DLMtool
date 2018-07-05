@@ -1278,6 +1278,8 @@ validcpars <- function(type=c("all", "Stock", "Fleet", "Obs", "Imp", "internal")
                     several.ok = TRUE )
   if ('all' %in% type) type <- c("Stock", "Fleet", "Obs", "Imp", "internal")
   
+  Valid <- Slot <- Dim <- Description <- NULL
+  
   cpars_info <- cpars_info[!duplicated(cpars_info$Slot),] # remove duplicated 'Name'
   
   cpars_info$type <- NA

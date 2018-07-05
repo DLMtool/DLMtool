@@ -2,15 +2,14 @@
 % Please edit documentation in R/DefineClasses.r
 \name{calcMean}
 \alias{calcMean}
-\title{Calculate Mean Probabilty}
+\title{Calculate Mean Probability}
 \usage{
-calcMean(Prob, MSEobj)
+calcMean(Prob)
 }
 \arguments{
 \item{Prob}{Prob slot from an object of class PMobj}
-
-\item{MSEobj}{An object of class MSE}
 }
 \description{
-Calculate Mean Probabilty
+Calculate Mean Probability
 }
+\keyword{internal}

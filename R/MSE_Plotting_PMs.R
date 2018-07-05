@@ -373,15 +373,17 @@ VOIplot2 <- function(MSE, MP=1, type=c("Obs", "OM"), PM="Yield", n=5,
   if (class(PM) != "character") stop("PM must be character", call.=FALSE)
   if (!PM %in% avail('PM')) stop('PM is not an available `PM` function', call.=FALSE)
   
+  # cran check 
+  key <- data <- fit <- var <- .fitted <- desc <- value <- NULL
   MSEobj <- Sub(MSE, MPs=MP)
   
   type <- match.arg(type)
   
   if (type =="OM") {
-    Ptype <- DLMtool:::OM_desc
+    Ptype <- OM_desc
     Xvals <- MSEobj@OM
   } else {
-    Ptype <- DLMtool:::Obs_desc
+    Ptype <- Obs_desc
     Xvals <- MSEobj@Obs
     
     reqdat <- Required(MSEobj@MPs)[,2]

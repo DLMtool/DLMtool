@@ -8,7 +8,9 @@ ChkYrs(Yrs, MSEobj)
 }
 \arguments{
 \item{Yrs}{Numeric vector of length 2 with year indices to summarize performance.
-If NULL, the performance is summarized over all projection years.}
+If NULL, the performance is summarized over all projection years.
+\code{Yrs} can also be length one, in which case if it is positive it is the first \code{Yrs} and
+if negative the last \code{Yrs} of the projection period.}
 
 \item{MSEobj}{An object of class \code{MSE}}
 }
@@ -24,6 +26,8 @@ MSE <- runMSE()
 ChkYrs(NULL, MSE) # returns c(1, MSE@proyears)
 ChkYrs(c(2,5), MSE) # returns c(2,5)
 ChkYrs(c(70,80), MSE) # returns c(MSE@proyears-10,MSE@proyears)
+ChkYrs(5, MSE) # returns c(1,5)
+ChkYrs(-5, MSE) # returns c(46,50)
 }
 
 }

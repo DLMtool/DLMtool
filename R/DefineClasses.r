@@ -1343,27 +1343,29 @@ setClass("PMobj", representation(Name = "character",  Caption='label.class',
                                  MPs="character"))
 
 
-#' Calculate Probabilty
+#' Calculate Probability
 #' 
 #' @param PM A PM method 
-#' @param MSEobj An object of class MSE
 #'
 #' @export
+#' @keywords internal
 #'
-calcProb <- function(PM,  MSEobj) {
-  mar <- ifelse(MSEobj@nMPs>1, 2, 1) # set margins for apply
+calcProb <- function(PM) {
+  if (class(PM) == "array") mar <- 2
+  if (class(PM) == "matrix") mar <- 1
   mar <- 1:mar
   apply(PM, mar, mean)
 }
 
-#' Calculate Mean Probabilty
+
+#' Calculate Mean Probability
 #' 
 #' @param Prob Prob slot from an object of class PMobj 
-#' @param MSEobj An object of class MSE
 #'
 #' @export
+#' @keywords internal
 #'
-calcMean <- function(Prob, MSEobj) {
+calcMean <- function(Prob) {
   if (class(Prob) == 'matrix') return( apply(Prob , 2, mean, na.rm=TRUE))
   if (class(Prob) == 'numeric') return(mean(Prob, na.rm=TRUE))
 }

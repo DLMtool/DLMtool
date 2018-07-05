@@ -2,15 +2,14 @@
 % Please edit documentation in R/DefineClasses.r
 \name{calcProb}
 \alias{calcProb}
-\title{Calculate Probabilty}
+\title{Calculate Probability}
 \usage{
-calcProb(PM, MSEobj)
+calcProb(PM)
 }
 \arguments{
 \item{PM}{A PM method}
-
-\item{MSEobj}{An object of class MSE}
 }
 \description{
-Calculate Probabilty
+Calculate Probability
 }
+\keyword{internal}

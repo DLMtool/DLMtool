@@ -24,5 +24,7 @@
 NULL
 
 
-
+.onUnload <- function (libpath) {
+  library.dynam.unload("DLMtool", libpath)
+}
 

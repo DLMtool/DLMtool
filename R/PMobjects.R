@@ -47,7 +47,9 @@ NULL
 #' Check the years to summarize performance
 #'
 #' @param Yrs Numeric vector of length 2 with year indices to summarize performance. 
-#' If NULL, the performance is summarized over all projection years.
+#' If NULL, the performance is summarized over all projection years. 
+#' `Yrs` can also be length one, in which case if it is positive it is the first `Yrs` and 
+#' if negative the last `Yrs` of the projection period. 
 #' @param MSEobj An object of class `MSE` 
 #'
 #' @return A numeric vector of length 2 with year indices to summarize performance
@@ -57,6 +59,8 @@ NULL
 #' ChkYrs(NULL, MSE) # returns c(1, MSE@proyears)
 #' ChkYrs(c(2,5), MSE) # returns c(2,5)
 #' ChkYrs(c(70,80), MSE) # returns c(MSE@proyears-10,MSE@proyears)
+#' ChkYrs(5, MSE) # returns c(1,5)
+#' ChkYrs(-5, MSE) # returns c(46,50)
 #' }
 #' 
 #' @keywords internal
@@ -67,21 +71,35 @@ ChkYrs <- function(Yrs, MSEobj) {
     y.st <- 1 
     y.end <- MSEobj@proyears
   } else {
-    y.st <- Yrs[1]
-    y.end <- Yrs[2]
-    if (length(Yrs)!=2) stop("Yrs must be numeric vector of length 2", call.=FALSE)
-    if (Yrs[1] > Yrs[2]) stop("Yrs[1] is > Yrs[2]", call.=FALSE)
-    if (any(Yrs < 1)) stop("Yrs must be positive", call.=FALSE)
-    
-    if (Yrs[2] > MSEobj@proyears) {
-      message('Yrs[2] is greater than MSEobj@proyears. Setting Yrs[2] = MSEobj@proyears')
-      y.end <- MSEobj@proyears
-    }  
-    if (Yrs[1] > MSEobj@proyears) {
-      message('Yrs[1] is greater than MSEobj@proyears. Setting Yrs[1] = Yrs[2] - Yrs[1]')
-      y.st <- max(1,y.end - (Yrs[2] - Yrs[1]))
+    if (length(Yrs) == 1) {
+      if (Yrs == 0) stop("Yrs must be postive or negative", call.=FALSE)
+      if (Yrs < 0) {
+        y.st <- MSEobj@proyears + Yrs[1] + 1 
+        y.end <- MSEobj@proyears
+      } else {
+        y.st <- 1 
+        y.end <- y.st + Yrs[1] - 1 
+      }
+    } else {
+      if (length(Yrs)>2) stop("Yrs must be numeric vector of length 1 or 2", call.=FALSE)
+      
+      y.st <- Yrs[1]
+      y.end <- Yrs[2]
+      
+      if (Yrs[1] > Yrs[2]) stop("Yrs[1] is > Yrs[2]", call.=FALSE)
+      if (any(Yrs < 1)) stop("Yrs must be positive", call.=FALSE)
+      
+      if (Yrs[2] > MSEobj@proyears) {
+        message('Yrs[2] is greater than MSEobj@proyears. Setting Yrs[2] = MSEobj@proyears')
+        y.end <- MSEobj@proyears
+      }  
+      if (Yrs[1] > MSEobj@proyears) {
+        message('Yrs[1] is greater than MSEobj@proyears. Setting Yrs[1] = Yrs[2] - Yrs[1]')
+        y.st <- max(1,y.end - (Yrs[2] - Yrs[1]))
+      }
     }
   }
+  
   return(c(y.st, y.end))
 }
 
@@ -103,9 +121,9 @@ P10 <- function(MSEobj=NULL, Ref=0.1, Yrs=NULL) {
   
   PMobj@Ref <- Ref
   PMobj@Stat <- MSEobj@B_BMSY[,,Yrs[1]:Yrs[2]] # Performance Metric statistic of interest - here SB/SBMSY 
-  PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref, MSEobj) # calculate probability Stat > 0.1 nsim by nMP
+  PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref) # calculate probability Stat > 0.1 nsim by nMP
   
-  PMobj@Mean <- calcMean(PMobj@Prob, MSEobj) # calculate mean probability by MP
+  PMobj@Mean <- calcMean(PMobj@Prob) # calculate mean probability by MP
   PMobj@MPs <- MSEobj@MPs
   PMobj
   
@@ -140,10 +158,10 @@ PNOF <- function(MSEobj=NULL, Ref=1, Yrs=NULL) {
 
   PMobj@Stat <- MSEobj@F_FMSY[,,Yrs[1]:Yrs[2]] # Performance Metric statistic of interest - here F/FMSY
   PMobj@Ref <- Ref
-  PMobj@Prob <- calcProb(PMobj@Stat < PMobj@Ref, MSEobj) # calculate probability Stat < 1 nsim by nMP
+  PMobj@Prob <- calcProb(PMobj@Stat < PMobj@Ref) # calculate probability Stat < 1 nsim by nMP
   
   
-  PMobj@Mean <- calcMean(PMobj@Prob, MSEobj) # calculate mean probability by MP
+  PMobj@Mean <- calcMean(PMobj@Prob) # calculate mean probability by MP
   PMobj@MPs <- MSEobj@MPs
   PMobj
   
@@ -166,9 +184,9 @@ LTY <- function(MSEobj=NULL, Ref=0.5, Yrs=c(max(MSEobj@proyears-9,1), MSEobj@pro
   
   PMobj@Stat <- MSEobj@C[,,Yrs[1]:Yrs[2]]/RefYd
   PMobj@Ref <- 0.5
-  PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref, MSEobj)  
+  PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref)  
   
-  PMobj@Mean <- calcMean(PMobj@Prob, MSEobj) # calculate mean probability by MP
+  PMobj@Mean <- calcMean(PMobj@Prob) # calculate mean probability by MP
   PMobj@MPs <- MSEobj@MPs
   PMobj
   
@@ -195,9 +213,9 @@ Yield <- function(MSEobj=NULL, Ref=1, Yrs=NULL) {
   
   PMobj@Stat <- MSEobj@C[,,Yrs[1]:Yrs[2]]/RefYd
   PMobj@Ref <- Ref
-  PMobj@Prob <- calcProb(PMobj@Stat, MSEobj) # no probability to calculate
+  PMobj@Prob <- calcProb(PMobj@Stat) # no probability to calculate
   
-  PMobj@Mean <- calcMean(PMobj@Prob, MSEobj) # calculate mean probability by MP
+  PMobj@Mean <- calcMean(PMobj@Prob) # calculate mean probability by MP
   PMobj@MPs <- MSEobj@MPs
   PMobj
   
@@ -224,9 +242,9 @@ AAVY <- function(MSEobj=NULL, Ref=0.2, Yrs=NULL) {
   
   PMobj@Stat <- AAVY
   PMobj@Ref <- Ref
-  PMobj@Prob <- calcProb(PMobj@Stat < Ref, MSEobj)  # probability AAVY < 0.2 
+  PMobj@Prob <- calcProb(PMobj@Stat < Ref)  # probability AAVY < 0.2 
   
-  PMobj@Mean <- calcMean(PMobj@Prob, MSEobj) # calculate mean probability by MP
+  PMobj@Mean <- calcMean(PMobj@Prob) # calculate mean probability by MP
   PMobj@MPs <- MSEobj@MPs
   PMobj
   
