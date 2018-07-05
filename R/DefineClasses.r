@@ -1351,8 +1351,9 @@ setClass("PMobj", representation(Name = "character",  Caption='label.class',
 #' @keywords internal
 #'
 calcProb <- function(PM) {
-  if (class(PM) == "array") mar <- 2
-  if (class(PM) == "matrix") mar <- 1
+  if (dim(PM)[2] > 1) {
+    mar <- 2 
+  } else mar <- 1
   mar <- 1:mar
   apply(PM, mar, mean)
 }
@@ -1366,7 +1367,7 @@ calcProb <- function(PM) {
 #' @keywords internal
 #'
 calcMean <- function(Prob) {
-  if (class(Prob) == 'matrix') return( apply(Prob , 2, mean, na.rm=TRUE))
+  if (class(Prob) == 'matrix') return(apply(Prob , 2, mean, na.rm=TRUE))
   if (class(Prob) == 'numeric') return(mean(Prob, na.rm=TRUE))
 }
 
