@@ -12,6 +12,12 @@ An object for storing data for analysis using data-limited methods
 \describe{
 \item{\code{Name}}{The name of the Data object. Single value. Character string}
 
+\item{\code{Common_Name}}{Common name of the species. Character string}
+
+\item{\code{Species}}{Scientific name of the species. Genus and species name. Character string}
+
+\item{\code{Region}}{Name of the general geographic region of the fishery. Character string}
+
 \item{\code{Year}}{Years that corresponding to catch and relative abundance data. Vector nyears long. Positive integer}
 
 \item{\code{Cat}}{Total annual catches. Matrix of nsim rows and nyears columns. Non-negative real numbers}
@@ -67,6 +73,8 @@ An object for storing data for analysis using data-limited methods
 \item{\code{wlb}}{Weight-Length parameter beta. Vector nsim long. Positive real numbers}
 
 \item{\code{steep}}{Steepness of stock-recruitment relationship. Vector nsim long. Value in the range of one-fifth to 1}
+
+\item{\code{sigmaR}}{Recruitment variability. Vector nsim long. Positive real numbers}
 
 \item{\code{CV_Cat}}{Coefficient of variation in annual catches. Vector nsim long. Positive real numbers}
 
@@ -167,6 +175,8 @@ An object for storing data for analysis using data-limited methods
 \examples{
 
 newdata<-new('Data')
+
+
 
 }
 \author{

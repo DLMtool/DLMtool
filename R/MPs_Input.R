@@ -564,10 +564,10 @@ Itargeteff_ <- function(x, Data, reps, plot, yrsmth, Imulti) {
 #' 
 #' The TAE is calculated as:
 #' If  \eqn{I_\textrm{recent} \geq I_0}:
-#' \deqn{\textrm{TAE_y}= 0.5 \textrm{TAE}_{y-1} \left[1+\left(\frac{I_\textrm{recent} - I_0}{I_\textrm{target} - I_0}\right)\right]}
+#' \deqn{\textrm{TAE}_y = 0.5 \textrm{TAE}_{y-1}  \left[1+ \left( \frac{I_{\textrm{recent}} - I_0}{I_{\textrm{target}} - I_0} \right)\right]}
 #' 
 #' else:
-#' \deqn{\textrm{TAE_y}= 0.5 \textrm{TAE}_{y-1} \left[\frac{I_\textrm{recent}}{I_0}^2\right]}
+#' \deqn{\textrm{TAE}_y= 0.5 \textrm{TAE}_{y-1} \left( \frac{I_{\textrm{recent}}}{I_0}^2 \right)}
 #' 
 #' where \eqn{I_0} is \eqn{0.8 I_{\textrm{ave}}} (the average index over the 2 x `yrsmth` years prior to the projection period), 
 #' \eqn{I_\textrm{recent}} is the average index over the past `yrsmth` years, and 
@@ -956,7 +956,7 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE) {
 #' The spawning potential ratio (SPR) is estimated using the LBSPR method 
 #' and compared to a target of 0.4.
 #' 
-#' Effort is increased by 10 per cent if the ratio of \eqn{\frac{\textm{SPR}}{\textrm{SPR}_{\textrm{targ}}}} is 
+#' Effort is increased by 10 per cent if the ratio of \eqn{\frac{\textrm{SPR}}{\textrm{SPR}_{\textrm{targ}}}} is 
 #' > 1.25, reduced by 10 per cent if the ratio is < 0.75, and remains unchanged 
 #' otherwise.
 #' 

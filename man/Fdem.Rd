@@ -59,7 +59,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 \code{Fdem_CC}: CAA, Cat, FMSY_M, L50, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
 
 
-\code{Fdem_ML}: CAL, CAL_bins, Cat, FMSY_M, L50, LFS, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
+\code{Fdem_ML}: Abun, AvC, BMSY_B0, Bref, CAA, CAL, CAL_bins, Cat, Cref, Dep, Dt, FMSY_M, Ind, Iref, L50, L95, LFS, LHYear, Lbar, Lc, LenCV, ML, MPeff, MPrec, MaxAge, Mort, Rec, SpAbun, Year, sigmaL, sigmaR, steep, t, vbK, vbLinf, vbt0, wla, wlb
 }
 
 \section{Rendered Equations}{

@@ -25,6 +25,9 @@ setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 #' @section Objects from the Class: Objects can be created by calls of the form
 #' \code{new('Data', stock)} 
 #' @slot Name The name of the Data object. Single value. Character string  
+#' @slot Common_Name Common name of the species. Character string
+#' @slot Species Scientific name of the species. Genus and species name. Character string
+#' @slot Region Name of the general geographic region of the fishery. Character string
 #' @slot Year Years that corresponding to catch and relative abundance data. Vector nyears long. Positive integer
 #' @slot Cat Total annual catches. Matrix of nsim rows and nyears columns. Non-negative real numbers 
 #' @slot Ind Relative abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers
@@ -53,6 +56,7 @@ setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 #' @slot wla Weight-Length parameter alpha. Vector nsim long. Positive real numbers 
 #' @slot wlb Weight-Length parameter beta. Vector nsim long. Positive real numbers  
 #' @slot steep Steepness of stock-recruitment relationship. Vector nsim long. Value in the range of one-fifth to 1 
+#' @slot sigmaR Recruitment variability. Vector nsim long. Positive real numbers
 #' @slot CV_Cat Coefficient of variation in annual catches. Vector nsim long. Positive real numbers 
 #' @slot CV_Dt Coefficient of variation in depletion over time t. Vector nsim long. Positive real numbers  
 #' @slot CV_AvC Coefficient of variation in average catches over time t. Vector nsim long. Positive real numbers
@@ -106,7 +110,10 @@ setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 #' 
 #' newdata<-new('Data')
 #' 
-setClass("Data", representation(Name = "character", Year = "vector", 
+#' 
+#' 
+setClass("Data", representation(Name = "character", Common_Name='character', Species='character', Region='character',
+                                Year = "vector", 
                                 Cat = "matrix", Ind = "matrix", Rec = "matrix", t = "vector",
                                 AvC = "vector", Dt = "vector", Mort = "vector", FMSY_M = "vector", 
                                 BMSY_B0 = "vector", L50 = "vector", L95 = "vector", 
@@ -114,6 +121,7 @@ setClass("Data", representation(Name = "character", Year = "vector",
                                 LFC = "vector", LFS = "vector", CAA = "array", Dep = "vector", 
                                 Abun = "vector", SpAbun="vector", vbK = "vector", vbLinf = "vector", vbt0 = "vector", 
                                 LenCV="vector", wla = "vector", wlb = "vector",  steep = "vector", 
+                                sigmaR='vector',
                                 CV_Cat = "vector", CV_Dt = "vector", CV_AvC = "vector", 
                                 CV_Ind = "vector", CV_Mort = "vector", CV_FMSY_M = "vector",
                                 CV_BMSY_B0 = "vector", CV_Dep = "vector", CV_Abun = "vector",
@@ -143,6 +151,9 @@ setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ","
     dat <- dat[, 2:ncol(dat)]
     
     .Object@Name <- dat[match("Name", dname), 1]
+    .Object@Common_Name <- dat[match("Common Name", dname), 1]
+    .Object@Species <- dat[match("Species", dname), 1]
+    .Object@Region <- dat[match("Region", dname), 1]
     .Object@Year <- as.numeric(dat[match("Year", dname), dat[match("Year", dname), ] != ""])
     # .Object@Cat <- matrix(as.numeric(dat[match("Catch", dname), dat[match("Catch", dname), ] != ""]), nrow = 1)
     .Object@Cat <- matrix(as.numeric(dat[match("Catch", dname), 1:length(.Object@Year)]), nrow = 1)
@@ -177,6 +188,7 @@ setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ","
     .Object@wla <- as.numeric(dat[match("Length-weight parameter a", dname), 1])
     .Object@wlb <- as.numeric(dat[match("Length-weight parameter b", dname), 1])
     .Object@steep <- as.numeric(dat[match("Steepness", dname), 1])
+    .Object@sigmaR <- as.numeric(dat[match("sigmaR", dname), 1])
     
     .Object@CV_Cat <- as.numeric(dat[match("CV Catch", dname), 1])
     .Object@CV_Dt <- as.numeric(dat[match("CV Depletion over time t", dname), 1])

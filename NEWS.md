@@ -26,6 +26,8 @@ The current version of the DLMtool package is available for download from [CRAN]
 - fixed issue where OMs were not reproducible if some slots had no variability
 - add Turing function - TODO and to describe in manual
 
+- new slots have been added to the `Data` object: `Common_Name`, `Species`, `Region`, and for data-rich MPs in MSEtool: `sigmaR` (recruitment error)
+
 ## DLMtool 5.1.3 
 - fix Replace function for new OM slots
 - fix indexing issue for size comps when there are only two size classes 
