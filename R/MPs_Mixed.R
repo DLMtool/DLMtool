@@ -121,7 +121,10 @@ class(AvC_MLL) <- "MP"
 #' @note 
 #' See the relevant section of the DLMtool \href{https://dlmtool.github.io/DLMtool/userguide/management-procedures.html#Averaging-MPs}{User Manual} 
 #' for more information on this function. 
-#'
+#' @templateVar url averaging-mps 
+#' @templateVar ref NULL
+#' @template userguide_link
+#' 
 #' @examples
 #' \dontrun{
 #' MeanMP <- makeMeanMP(c("AvC", "DCAC"))

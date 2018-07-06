@@ -201,7 +201,7 @@ Tplot <- function(MSEobj, Lims=c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...) {
 
 #' @describeIn TradePlot A trade-off plot showing probabilities that:
 #' \itemize{
-#' \item short-term yield is > 50% of reference yield(STY) against long-term yield is > 50\% of reference yield (LTY)
+#' \item short-term yield is > 50\% of reference yield(STY) against long-term yield is > 50\% of reference yield (LTY)
 #' \item spawning biomass is below 0.1BMSY (P10) against average annual variability in yield is < 20\% (AAVY)
 #' }
 #' 
@@ -213,7 +213,7 @@ Tplot2 <- function(MSEobj, Lims=c(0.2, 0.2, 0.8, 0.8), ...) {
 
 #' @describeIn TradePlot A trade-off plot showing probabilities that:
 #' \itemize{
-#' \item not overfishing (PNOF) against long-term yield is > 50% of reference yield (LTY)
+#' \item not overfishing (PNOF) against long-term yield is > 50\% of reference yield (LTY)
 #' \item spawning biomass is below 0.1BMSY (P10) against average annual variability in yield is < 20\% (AAVY)
 #' }
 #' 
@@ -227,7 +227,7 @@ Tplot3 <- function(MSEobj, Lims=c(0.5, 0.5, 0.8, 0.5), ...) {
 
 #' @describeIn TradePlot A trade-off plot developed for NOAA showing probabilities that:
 #' \itemize{
-#' \item not overfishing (PNOF) against long-term yield is > 50% of reference yield (LTY)
+#' \item not overfishing (PNOF) against long-term yield is > 50\% of reference yield (LTY)
 #' \item spawning biomass is below 0.5BMSY (P50) against average annual variability in yield is < 15\% (AAVY)
 #' }
 #' 

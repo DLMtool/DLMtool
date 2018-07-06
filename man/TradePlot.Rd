@@ -76,19 +76,19 @@ Generic Trade-Plot Function
 
 \item \code{Tplot2}: A trade-off plot showing probabilities that:
 \itemize{
-\item short-term yield is > 50% of reference yield(STY) against long-term yield is > 50\% of reference yield (LTY)
+\item short-term yield is > 50\% of reference yield(STY) against long-term yield is > 50\% of reference yield (LTY)
 \item spawning biomass is below 0.1BMSY (P10) against average annual variability in yield is < 20\% (AAVY)
 }
 
 \item \code{Tplot3}: A trade-off plot showing probabilities that:
 \itemize{
-\item not overfishing (PNOF) against long-term yield is > 50% of reference yield (LTY)
+\item not overfishing (PNOF) against long-term yield is > 50\% of reference yield (LTY)
 \item spawning biomass is below 0.1BMSY (P10) against average annual variability in yield is < 20\% (AAVY)
 }
 
 \item \code{NOAA_plot2}: A trade-off plot developed for NOAA showing probabilities that:
 \itemize{
-\item not overfishing (PNOF) against long-term yield is > 50% of reference yield (LTY)
+\item not overfishing (PNOF) against long-term yield is > 50\% of reference yield (LTY)
 \item spawning biomass is below 0.5BMSY (P50) against average annual variability in yield is < 15\% (AAVY)
 }
 }}

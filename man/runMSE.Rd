@@ -101,6 +101,9 @@ FALSE). By default, the functions saves the completed MSE object as a Rdata
 file (to the current working directory).
 }}
 
+\note{
+See relevant section of the \href{https://dlmtool.github.io/DLMtool/userguide/running-the-mse.html}{DLMtool User Guide} for more information.
+}
 \seealso{
 \link{joinMSE} \link{checkMSE} \link{updateMSE}
 }

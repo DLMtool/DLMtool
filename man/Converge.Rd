@@ -48,6 +48,9 @@ By default three commonly used performance metrics are used:
 }
 Additional or alternative performance metrics objects can be supplied. Advanced users can develop their own performance metrics.
 }
+\note{
+See relevant section of the \href{https://dlmtool.github.io/DLMtool/userguide/checking-convergence.html}{DLMtool User Guide} for more information.
+}
 \examples{
 \dontrun{
 MSE <- runMSE()

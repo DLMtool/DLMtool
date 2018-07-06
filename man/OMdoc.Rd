@@ -40,6 +40,9 @@ Creates a Rmarkdown file and compiles a HTML report file in the working director
 \description{
 Generate OM Documentation Report
 }
+\note{
+See relevant section of the \href{https://dlmtool.github.io/DLMtool/userguide/creating-a-new-operating-model.html}{DLMtool User Guide} for more information.
+}
 \examples{
 \dontrun{
 OMinit('myOM', templates=list(Stock='Herring', Fleet='Generic_Fleet', Obs='Generic_Obs',

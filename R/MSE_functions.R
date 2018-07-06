@@ -29,6 +29,10 @@
 #' @param nrow Numeric. Optional. Number of rows
 #' @param ncol Numeric. Optional. Number of columns
 #' 
+#' @templateVar url checking-convergence
+#' @templateVar ref NULL
+#' @template userguide_link
+#' 
 #' @examples 
 #' \dontrun{
 #' MSE <- runMSE()
@@ -400,6 +404,11 @@ checkMSE <- function(MSEobj) {
 #' @param years A numeric vector of projection years. Should start at 1 and
 #' increase by one to some value equal or less than the total number of
 #' projection years.
+#' 
+#' @templateVar url subsetting-the-mse-object
+#' @templateVar ref NULL
+#' @template userguide_link
+#' 
 #' @author A. Hordyk
 #' @examples
 #' \dontrun{

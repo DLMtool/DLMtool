@@ -34,6 +34,10 @@
 #' @param Data An object of class `Data`
 #' @param wait Logical. Wait for key press before next plot?
 #'
+#' @templateVar url evaluating-om
+#' @templateVar ref NULL
+#' @template userguide_link
+#' 
 #' @note 
 #' The Turing function was suggested by Andre Punt in his review of one of our 
 #' recent projects. It is named after the Turing test, developed by Alan Turing in 

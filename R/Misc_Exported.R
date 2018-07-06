@@ -109,7 +109,11 @@ DLMextra <- function(silent=FALSE) {
 #' @param grad Logical. Remove gradients? All `grad` slots in `Stock` and 
 #' `qinc` in `Fleet` are set to 0.
 #' @param silent Logical. Display messages?
-#'
+#' 
+#' @templateVar url modifying-the-om
+#' @templateVar ref the-tinyerr-function
+#' @template userguide_link
+#' 
 #' @return An updated object of class `OM`
 #' @export
 #'
@@ -885,6 +889,10 @@ L2A <- function(t0c, Linfc, Kc, Len, maxage) {
 #' @param msg Logical. Should messages be printed to console?
 #' @param maxn Optional. Maximum number of cpus. Used for demo purposes
 #'
+#' @templateVar url determining-optimal-number-of-processors
+#' @templateVar ref NULL
+#' @template userguide_link
+#' 
 #' @export
 #' @seealso \link{setup}
 #' @examples

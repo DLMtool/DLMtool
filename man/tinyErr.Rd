@@ -33,6 +33,9 @@ life history parameters and catchability.
 \details{
 Useful for debugging and testing that MPs perform as expected under perfect conditions.
 }
+\note{
+See relevant section of the \href{https://dlmtool.github.io/DLMtool/userguide/modifying-the-om.html}{DLMtool User Guide} for more information.
+}
 \examples{
 OM_noErr <- tinyErr(DLMtool::testOM)
 }

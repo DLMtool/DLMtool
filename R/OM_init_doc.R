@@ -26,6 +26,10 @@ OMexample <- function(dir) {
 #' to use as templates for the Operating Model.
 #' @param dir Optional file path to create the xlsx and rmd files. Default is `getwd()`
 #' @param overwrite Logical. Should files be overwritten if they already exist?
+#' 
+#' @templateVar url creating-a-new-operating-model
+#' @templateVar ref initialize-a-new-om
+#' @template userguide_link
 #'
 #' @return name.xlsx and name.rmd files are created in the working directory.  
 #' @export
@@ -361,6 +365,11 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
 #' @param quiet TRUE to supress printing of the pandoc command line.
 #' @param dir Optional file path to read the xlsx and rmd files. Default is `getwd()`
 #' @param ... Optional additional named arguments provided to `runMSE`
+#' 
+#' @templateVar url creating-a-new-operating-model
+#' @templateVar ref populate-and-document-om
+#' @template userguide_link
+#' 
 #' @return Creates a Rmarkdown file and compiles a HTML report file in the working directory.
 #' @export
 #' @author A. Hordyk

@@ -32,7 +32,6 @@
 #' 
 #' @name Data-class-objects
 #' @examples
-#' data(Simulation_1)
 #' Simulation_1@Name
 #' 
 #' avail("Data")
@@ -80,7 +79,6 @@ NULL
 #' 
 #' @name Stock-class-objects
 #' @examples
-#' data(Toothfish)
 #' Toothfish@Source
 #' 
 #' avail("Stock")
@@ -137,7 +135,6 @@ NULL
 #' 
 #' @name Fleet-class-objects
 #' @examples
-#' data(Targeting_Small_Fish)
 #' Targeting_Small_Fish@Name
 #' 
 #' avail("Fleet")
@@ -167,7 +164,6 @@ NULL
 #' 
 #' @name Obs-class-objects
 #' @examples
-#' data(Precise_Unbiased)
 #' Precise_Unbiased@Name
 #' 
 #' avail("Obs")
@@ -185,7 +181,6 @@ NULL
 #' 
 #' @name Imp-class-objects
 #' @examples
-#' data(Perfect_Imp)
 #' 
 #' 
 #' avail("Imp")

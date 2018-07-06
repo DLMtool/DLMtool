@@ -24,6 +24,9 @@ Subset the MSE object by particular MPs (either MP number or name), or
 particular simulations, or a subset of the projection years (e.g., 1: <
 projection years).
 }
+\note{
+See relevant section of the \href{https://dlmtool.github.io/DLMtool/userguide/subsetting-the-mse-object.html}{DLMtool User Guide} for more information.
+}
 \examples{
 \dontrun{
 MSE <- runMSE() 

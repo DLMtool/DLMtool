@@ -23,6 +23,7 @@ myrunif <- function(n, val1, val2) {
 #' @param Msg logical. Warning message for M values?
 #'
 #' @return A named list of sampled Stock parameters
+#' @keywords internal
 #' @export
 #'   
 SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, Msg=TRUE) {
@@ -599,7 +600,9 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
 #' @param nyears Number of historical years. Ignored if 'Fleet' is class 'OM'
 #' @param proyears Number of projection years. Ignored if 'Fleet' is class 'OM'
 #' @param cpars Optional named list of custom parameters. Ignored if 'Fleet' is class 'OM'
-#'
+#' 
+#' @keywords internal
+#' 
 #' @return A named list of sampled Fleet parameters
 #' @export
 #'
@@ -1034,6 +1037,8 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
 #' @param Obs An object of class 'Obs' or class 'OM'
 #' @param nsim Number of simulations. Ignored if 'Obs' is class 'OM'
 #' @param cpars Optional named list of custom parameters. Ignored if 'OM' is class 'OM'
+#' 
+#' @keywords internal
 #' @return A named list of sampled Observation parameters
 #' @export
 #'
@@ -1201,6 +1206,7 @@ SampleObsPars <- function(Obs, nsim=NULL, cpars=NULL){
 #' @param nsim Number of simulations. Ignored if 'Stock' is class 'OM'
 #' @param cpars Optional named list of custom parameters. Ignored if 'OM' is class 'OM'
 #' @return A named list of sampled Implementation Error parameters
+#' @keywords internal
 #' @export
 #'
 SampleImpPars <- function(Imp, nsim=NULL, cpars=NULL) {
@@ -1330,6 +1336,7 @@ validcpars <- function(type=c("all", "Stock", "Fleet", "Obs", "Imp", "internal")
 #' @param nsim number of simulations
 #' @param msg logical - print the names of the cpars? Turn off when using the function in a loop
 #' @return A named list of sampled custom parameters
+#' @keywords internal
 #' @export
 #'
 SampleCpars <- function(cpars, nsim=48, msg=TRUE) {

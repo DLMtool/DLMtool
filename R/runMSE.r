@@ -65,6 +65,11 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' working directory (this is probably a good idea)
 #' @param savePack Logical to indicate if packets should be save to current working directory
 #' @param ... Arguments to runMSE function 
+#' 
+#' @templateVar url running-the-mse
+#' @templateVar ref NULL 
+#' @template userguide_link
+#' 
 #' @return An object of class \linkS4class{MSE}
 #' @author T. Carruthers and A. Hordyk
 #' @describeIn runMSE Default function to use.

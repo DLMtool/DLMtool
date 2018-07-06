@@ -34,7 +34,6 @@ Simulation_1
 Example objects of class Data
 }
 \examples{
-data(Simulation_1)
 Simulation_1@Name
 
 avail("Data")

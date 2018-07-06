@@ -75,12 +75,14 @@ or \code{OM@L50} are ignored.
 hierachical model fitted to FishBase life-history parameters
 }}
 
+\note{
+See relevant section of the \href{https://dlmtool.github.io/DLMtool/userguide/generating-correlated-life-history-parameters.html}{DLMtool User Guide} for more information.
+}
 \examples{
 myOM<-LH2OM(DLMtool::testOM)
 
 # drawing known parameters from normal distribution
 myOM <- LH2OM(DLMtool::testOM, dist='norm')
-
 
 # predict life-history parameters and return a data frame
 

@@ -16,7 +16,6 @@ Perfect_Imp
 Example objects of class Imp
 }
 \examples{
-data(Perfect_Imp)
 
 
 avail("Imp")

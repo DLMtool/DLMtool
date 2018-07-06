@@ -55,7 +55,6 @@ Targeting_Small_Fish
 Example objects of class Fleet
 }
 \examples{
-data(Targeting_Small_Fish)
 Targeting_Small_Fish@Name
 
 avail("Fleet")

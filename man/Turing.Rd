@@ -32,6 +32,8 @@ The question to ask when examining the plots produced by \code{Turing}: do the p
 of the 6 data samples look like they are all samples from the same underlying distribution?
 }
 \note{
+See relevant section of the \href{https://dlmtool.github.io/DLMtool/userguide/evaluating-om.html}{DLMtool User Guide} for more information.
+
 The Turing function was suggested by Andre Punt in his review of one of our
 recent projects. It is named after the Turing test, developed by Alan Turing in
 1950, which is designed to see if a human can detect the difference between

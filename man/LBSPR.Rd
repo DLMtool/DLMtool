@@ -31,8 +31,7 @@ and compared to a target of 0.4.
 }
 \details{
 Effort is increased by 10 per cent if the ratio of \eqn{\frac{\textrm{SPR}}{\textrm{SPR}_{\textrm{targ}}}} is
-
-1.25, reduced by 10 per cent if the ratio is < 0.75, and remains unchanged
+\eqn{\geq 1.25}, reduced by 10 per cent if the ratio is < 0.75, and remains unchanged
 otherwise.
 
 The effort HCR has not been tuned. The increase/decrease in effort can

@@ -198,7 +198,7 @@ class(BK_CC) <- "MP"
 #' @template MPuses
 #' @examples 
 #' \dontrun{
-#' BK_ML(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
+#' BK_ML(1, DLMtool::SimulatedData, reps=100, plot=TRUE)
 #' }
 #' 
 #' @export 
@@ -215,13 +215,15 @@ BK_ML <- function(x, Data, reps = 100, plot=FALSE) {
     return(Rec)
   } 
   FM <- Z - Mdb
+  
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
   Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
   Ac <- Cc/(1 - exp(-FM))
+  ind <- Ac>0
+  
   Fmax <- (0.6 * Kc)/(0.67 - (Lc/Linfc))  # robustifying for use in MSE 
-  TAC <- Ac * Fmax
-  ind <- TAC > 0 & Fmax > 0
-  TAC <- TACfilter(TAC[ind][1:reps])
+  TAC <- Ac[ind] * Fmax[ind]
+  TAC <- TACfilter(TAC[1:reps])
   
   Rec <- new("Rec")
   Rec@TAC <- TAC
@@ -4693,10 +4695,10 @@ class(YPR_CC) <- "MP"
 YPR_ML <- function(x, Data, reps = 100, plot=FALSE) {
 
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
-  Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
-  Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
-  Mdb <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
+  Cc <- trlnorm(reps*10, MuC, Data@CV_Cat[x])
+  Linfc <- trlnorm(reps*10, Data@vbLinf[x], Data@CV_vbLinf[x])
+  Kc <- trlnorm(reps*10, Data@vbK[x], Data@CV_vbK[x])
+  Mdb <- trlnorm(reps*10, Data@Mort[x], Data@CV_Mort[x])
   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
   if (all(is.na(Z))) {
     out <- new("Rec")

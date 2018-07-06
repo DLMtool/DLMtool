@@ -46,7 +46,6 @@ Toothfish
 Example objects of class Stock
 }
 \examples{
-data(Toothfish)
 Toothfish@Source
 
 avail("Stock")

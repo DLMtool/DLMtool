@@ -27,6 +27,9 @@ name.xlsx and name.rmd files are created in the working directory.
 Generates an Excel spreadsheet and a source.rmd file in the current working directory for
 specifying and documenting a DLMtool Operating Model.
 }
+\note{
+See relevant section of the \href{https://dlmtool.github.io/DLMtool/userguide/creating-a-new-operating-model.html}{DLMtool User Guide} for more information.
+}
 \examples{
 \dontrun{
 # Create an Excel OM template and rmd file called 'myOM.xlsx' and 'myOM.rmd': 

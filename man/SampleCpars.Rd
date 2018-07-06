@@ -19,3 +19,4 @@ A named list of sampled custom parameters
 \description{
 Sample custom pars
 }
+\keyword{internal}

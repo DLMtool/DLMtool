@@ -28,7 +28,6 @@ Precise_Unbiased
 Example objects of class Obs
 }
 \examples{
-data(Precise_Unbiased)
 Precise_Unbiased@Name
 
 avail("Obs")

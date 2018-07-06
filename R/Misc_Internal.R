@@ -269,6 +269,7 @@ gettempvar <- function(targ, targsd, targgrad, nyears, nsim, rands=NULL) {
 #' @param ascending Are the the x values supposed to be ordered before interpolation
 #' @param zeroint is there a zero-zero x-y intercept?
 #' @author T. Carruthers
+#' @keywords internal
 #' @export LinInterp
 LinInterp<-function(x,y,xlev,ascending=F,zeroint=F){
   
@@ -301,6 +302,7 @@ condmet <- function(vec) TRUE %in% vec
 #'  Sample vector
 #' 
 #' @param x vector of values 
+#' @keywords internal
 sampy <- function(x) sample(x, 1, prob = !is.na(x))
 
 
@@ -310,6 +312,7 @@ sampy <- function(x) sample(x, 1, prob = !is.na(x))
 #' @param x vector of values 
 #' @param Max Maximum value
 #' @param Min Minimum value 
+#' @keywords internal
 Range <- function(x, Max, Min) {
   (x - Min)/(Max - Min)  
 }

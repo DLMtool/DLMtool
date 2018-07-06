@@ -125,6 +125,10 @@ ForceCor<-function(OM,nsim=48,plot=T){
 #' @param Family Optional higher order taxonomic information
 #' @param msg Logical. Should messages be printed?
 #' 
+#' @templateVar url generating-correlated-life-history-parameters
+#' @templateVar ref NULL
+#' @template userguide_link
+#' 
 #' @return LH2OM: An OM with `OM@cpars` populated with `OM@nsim` samples of M, K, Linf and L50
 #' @author A. Hordyk
 #' @references Thorson, J. T., S. B. Munch, J. M. Cope, and J. Gao. 2017. 
@@ -136,8 +140,6 @@ ForceCor<-function(OM,nsim=48,plot=T){
 #' 
 #' # drawing known parameters from normal distribution
 #' myOM <- LH2OM(DLMtool::testOM, dist='norm')
-#' 
-
 #' 
 LH2OM <- function(OM, dist=c("unif", "norm"), filterMK=FALSE, plot=TRUE,
                   Class = "predictive", Order = "predictive", 
@@ -737,6 +739,11 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
 #' "Stock", "Fleet", "Obs" or "Imp" (default is all four which is probably not what you want to do)
 #' @param Name Character. Name for the new OM object (`OM@Name`)
 #' @param silent Should messages be printed?
+#' 
+#' @templateVar url modifying-the-om
+#' @templateVar ref the-replace-function
+#' @template userguide_link
+#' 
 #' @return An object of class OM
 #' @author A. Hordyk
 #' @examples 

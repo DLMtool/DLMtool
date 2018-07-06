@@ -20,6 +20,8 @@ from the individual MPs.
 \note{
 See the relevant section of the DLMtool \href{https://dlmtool.github.io/DLMtool/userguide/management-procedures.html#Averaging-MPs}{User Manual}
 for more information on this function.
+
+See relevant section of the \href{https://dlmtool.github.io/DLMtool/userguide/averaging-mps.html}{DLMtool User Guide} for more information.
 }
 \examples{
 \dontrun{

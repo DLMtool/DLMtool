@@ -19,3 +19,4 @@ A named list of sampled Implementation Error parameters
 \description{
 Sample Implementation Error Parameters
 }
+\keyword{internal}

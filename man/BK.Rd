@@ -100,7 +100,7 @@ BK_CC(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
 }
 
 \dontrun{
-BK_ML(1, DLMtool::SimulatedData, reps=1000, plot=TRUE)
+BK_ML(1, DLMtool::SimulatedData, reps=100, plot=TRUE)
 }
 
 }

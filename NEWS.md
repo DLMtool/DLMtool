@@ -1,32 +1,43 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
-## DLMtool 5.1.999 Development Version 
-- improve convergence diagnostic in `Converge`
-- modified CAL generation to deal with dome-shaped selectivity better 
-- improved help documentation for functions and MPs by combining and linking similiar functions
+## DLMtool 5.2
+
+### New Features
+- option for variable management interval by MP in `runMSE`. `OM@interval` can now be a vector of length `nMPs`, to specify different
+management intervals for different MPs. For example, with `OM@interval=c(1,5)` and `runMSE(OM, MPs=c('AvC', 'BK')), `AvC` is applied every
+year and `BK` is applied every 5 years. `OM@interval` is recycled if not the same length as number of MPs. 
+
+### New Functions
+- `makeMeanMP` has been added to generate a MP that averages output from a list of other MPs.
+- `Turing` has been added to compare simulated data from an OM to the real data in the fishery Data object.
+- `LH2OM` and  `predictLH` have been added to predict correlated life-history parameters from FishBase using FishLife model.
+
+
+### Updated Functions
+- improved convergence diagnostic with updated `Converge` function
+- `Replace` function has been updated to replace directly from individual Stock, Fleet, Obs, and Imp objects instead of from only OM objects
+- The plots produced by `summary(Data)` function have been improved 
+- `makePerf` has been replaced with `tinyErr` function with options to remove process error, observation error, and gradients
+- additional MPs have been added: effort-based LBSPR and variants of existing MPAs
+- `PM` (Performance Metric) methods have been updated and described in the user guide 
+- MSE trade-off functions have been updated: `Trade_Plot`, `Tplot`, `Tplot2`, and `Tplot3`
+- `Fease` has been simplified and updated. Fease object has now been removed
+
+
+### Improved Documentation 
+- similar functions and MPs have been combined into single help files
 - all MPs now have an argument `plot` and examples in the online documentation
-- iSCAM and SS2DLM functions have been moved from DLMtool to MSEtool
+- documentation for MPs has been improved, including equations for calculations of TAC, TAE and size-limits
+- custom parameters (`OM@cpars`) have been updated and now have better documentation 
+- the user guide `userguide()` has been updated and additional chapters added on new features
 
-- The plot produced by `summary(Data)` has been improved. - add to user guide
-- update PM methods and add to userguide - in development
-- MSE plotting functions - all been updated - in development
-
-- custom parameters (`OM@cpars`) have been updated and now have better documentation - TODO add to manual
-- added more MPs 
-- `makePerf` has been replaced with `tinyErr` - TODO add to FAQ and manual
-
-- makeMeanMP - added - TODO add to FAQ 
-- option for variable management interval - TODO add to FAQ
-- added LHdatabase from FishLife and functions to predict life-history parameters 
-- add LH2OM and  predictLH - predict correlated life-history parameters - TODO add to user guide/FAQ
-- revised Fease feature - TODO add to FAQ and userguide
-
-- updated `Replace` function - to do - describe
-
+### Minor Fixes and Edits
+- modified catch-at-length generation code to deal with dome-shaped selectivity better
 - fixed issue where OMs were not reproducible if some slots had no variability
-- add Turing function - TODO and to describe in manual
-
 - new slots have been added to the `Data` object: `Common_Name`, `Species`, `Region`, and for data-rich MPs in MSEtool: `sigmaR` (recruitment error)
+- iSCAM and SS2DLM functions have been moved from DLMtool to MSEtool
+- added LHdatabase from FishLife and functions to predict life-history parameters 
+
 
 ## DLMtool 5.1.3 
 - fix Replace function for new OM slots

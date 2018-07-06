@@ -20,6 +20,9 @@ optCPU(nsim = 96, thresh = 5, plot = TRUE, msg = TRUE, maxn = NULL)
 \description{
 Determine optimal number of cpus
 }
+\note{
+See relevant section of the \href{https://dlmtool.github.io/DLMtool/userguide/determining-optimal-number-of-processors.html}{DLMtool User Guide} for more information.
+}
 \examples{
 \dontrun{
 optCPU()

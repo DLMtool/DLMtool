@@ -65,6 +65,5 @@ Calculate Reference Yield
 }
 \author{
 A. Hordyk
-
-A. Hordyk
 }
+\keyword{internal}

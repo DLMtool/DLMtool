@@ -26,3 +26,4 @@ A named list of sampled Stock parameters
 \description{
 Sample Stock parameters
 }
+\keyword{internal}

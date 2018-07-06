@@ -536,7 +536,7 @@ optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, 
 #' @param MPA A matrix of spatial closures by year
 #' @param useCPP logical - use the CPP code? For testing purposes only
 #' @author A. Hordyk
-#'
+#' @keywords internal
 getq3 <- function(x, D, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, Asize, Wt_age,
                   V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, 
                   bounds = c(1e-05, 15), maxF, MPA, useCPP=TRUE) {
@@ -579,6 +579,7 @@ getq3 <- function(x, D, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, As
 #' @param MPA A matrix of spatial closures by year
 #' @param useCPP Logical. Use the CPP code?
 #' @author A. Hordyk
+#' @keywords internal
 
 optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_c,
                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
@@ -819,9 +820,8 @@ optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_
 #' @param useCPP logical - use the CPP code? For testing purposes only 
 #' @param SSB0 SSB0
 #' @author A. Hordyk
-#' 
-#' 
-# #' @export
+#' @keywords internal
+#' @export
 simYears <- function(x, nareas, maxage, N, pyears, M_ageArray, Asize, Mat_age, Wt_age,
                      V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, qs, 
                      MPA, maxF, useCPP=TRUE, SSB0) {
@@ -983,7 +983,7 @@ simYears <- function(x, nareas, maxage, N, pyears, M_ageArray, Asize, Mat_age, W
 #' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
 #' @param useCPP logical - use the CPP code? For testing purposes only
 #' @param SSB0c SSB0
-#'
+#' @keywords internal
 #'
 #' @author A. Hordyk
 #' 
@@ -1048,10 +1048,8 @@ optMSY <- function(logFa, Asize_c, nareas, maxage, Ncurr, pyears, M_age,
 #' @param useCPP logical - use the CPP code? For testing purposes only
 #' @param SSB0 SSB0
 #' @author A. Hordyk
-# #' @export
-#'
-#' @author A. Hordyk
-#' 
+#' @export
+#' @keywords internal
 getFref3 <- function(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
                      V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, 
                      MPA, maxF, useCPP=TRUE, SSB0) {
@@ -1084,7 +1082,7 @@ getFref3 <- function(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, W
 #' @param reps Number of stochastic repititions - often not used in input
 #' control MPs.
 #' @author A. Hordyk
-#' @export runInMP
+#' @export 
 runInMP <- function(Data, MPs = NA, reps = 100) {
   
   nsims <- length(Data@Mort)
