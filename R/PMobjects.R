@@ -1,8 +1,8 @@
 # All performance metric functions share a single help file: PerformanceMetric.Rd
 
-#' Performance Metrics
+#' Performance Metrics Methods
 #' 
-#' Performance metrics (PMs) for your management strategy evaluation.
+#' Performance metric (PMs) methods for your management strategy evaluation.
 #' 
 #' @name PerformanceMetric
 #' @param MSEobj An object of class MSE
@@ -23,16 +23,31 @@
 #' \code{Yield} \tab Average Yield (relative to Reference Yield) \cr
 #' }
 #' 
-#' Argument \code{Ref} provides the ratio relative to the reference point for calculating
-#' the performance metric. For biomass-based PMs (P10, P50, P100), this is the fraction of 
-#' BMSY. For PNOF, the fraction of FMSY. For Yield (and LTY/STY), the fraction of the 
-#' Reference Yield.
+#' Argument `Ref` provides the ratio relative to the reference point for calculating
+#' the performance metric. For biomass-based PMs (`P10`, `P50`, `P100`), this is the fraction of 
+#' BMSY. For `PNOF`, the fraction of FMSY. For `Yield` (and `LTY`/`STY`), the fraction of the 
+#' Reference Yield. For `AAVY` is it the maximum acceptable variability in yield (i.e, default 
+#' for `AAVY` is `Ref=0.2`)
 #' 
-#' Long-Term Yield is the Yield in the last ten years of the projection period in the MSE.
-#' Short-Term Yield is that in the first 10 years of the projection period
-#' @return An object of class PMobj
+#' The `Yrs` argument defines the number of years to calculate the performance statistic over. 
+#' A value of `NULL`, the default for `AAVY`, `P10`, `P50`, `P100`, and `PNOF`, means that the 
+#' performance metric is calculated over all projection years. A numeric vector of length two is used 
+#' to specify the first and last year, e.g, if `Yrs=c(1,10)` the performance statistic is calculated 
+#' over the first 10 projection years. A numeric vector of length one with positive or negative value 
+#' respectively can be used to specify the first *x* or last *x* years, e.g, `Yrs=10` is first 10 years,
+#' and `Yrs=-10` is the last 10 years. See \code{\link{ChkYrs}} for more details.
+#' 
+#' By default Long-Term Yield (`LTY`) is the Yield in the last ten years of the projection period in the MSE, 
+#' and Short-Term Yield (`STY`) is that in the first 10 years of the projection period.
+#'
+#' @templateVar url performance-metrics
+#' @templateVar ref NULL
+#' @template userguide_link
+#' 
+#' @return An object of class `PMobj`
 #' @examples 
 #' \dontrun{
+#' myMSE <- runMSE()
 #' P10(myMSE)
 #' P50(myMSE)
 #' P100(myMSE)
@@ -170,7 +185,7 @@ class(PNOF) <- "PM"
 
 #' @rdname PerformanceMetric 
 #' @export
-LTY <- function(MSEobj=NULL, Ref=0.5, Yrs=c(max(MSEobj@proyears-9,1), MSEobj@proyears)) {
+LTY <- function(MSEobj=NULL, Ref=0.5, Yrs=-10) {
   Yrs <- ChkYrs(Yrs, MSEobj)
   PMobj <- new("PMobj")
   PMobj@Name <- paste0("Average Yield relative to Reference Yield (Years ", Yrs[1], "-", Yrs[2], ")") 
@@ -196,7 +211,7 @@ class(LTY) <- "PM"
 #' @rdname PerformanceMetric 
 #' @export
 STY <- LTY 
-formals(STY)$Yrs <- c(1,10)
+formals(STY)$Yrs <- 10
 class(STY) <- "PM"
 
 

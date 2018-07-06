@@ -84,7 +84,7 @@ ChkObj <- function(OM, error=TRUE) {
   #     }
   #     slot(OM,sl) <- slt
   #   }
-  # }
+  # }?
   OM
   
   
@@ -436,8 +436,14 @@ genSizeCompWrap2<- function(i, vn, CAL_binsmid,
 }
 
 
+userguide_link <- function(url, ref=NULL) {
+  url <- paste0('https://dlmtool.github.io/DLMtool/userguide/', url, '.html')
+  if (!is.null(ref)) paste0(url, "#", ref)
+  paste0("See relevant section of the \\href{", url, "}{DLMtool User Guide} for more information.")
+}
 
-
+  
+  
 # 
 # makeSizeCompW <- function(i, maxage, Linfarray, Karray, t0array, LenCV,
 #                           CAL_bins, CAL_binsmid, retL, CAL_ESS, CAL_nsamp, 

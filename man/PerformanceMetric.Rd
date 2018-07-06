@@ -10,7 +10,7 @@
 \alias{STY}
 \alias{Yield}
 \alias{AAVY}
-\title{Performance Metrics}
+\title{Performance Metrics Methods}
 \usage{
 P10(MSEobj = NULL, Ref = 0.1, Yrs = NULL)
 
@@ -20,10 +20,9 @@ P100(MSEobj = NULL, Ref = 1, Yrs = NULL)
 
 PNOF(MSEobj = NULL, Ref = 1, Yrs = NULL)
 
-LTY(MSEobj = NULL, Ref = 0.5, Yrs = c(max(MSEobj@proyears - 9, 1),
-  MSEobj@proyears))
+LTY(MSEobj = NULL, Ref = 0.5, Yrs = -10)
 
-STY(MSEobj = NULL, Ref = 0.5, Yrs = c(1, 10))
+STY(MSEobj = NULL, Ref = 0.5, Yrs = 10)
 
 Yield(MSEobj = NULL, Ref = 1, Yrs = NULL)
 
@@ -38,10 +37,10 @@ AAVY(MSEobj = NULL, Ref = 0.2, Yrs = NULL)
 If NULL, the performance is summarized over all projection years.}
 }
 \value{
-An object of class PMobj
+An object of class \code{PMobj}
 }
 \description{
-Performance metrics (PMs) for your management strategy evaluation.
+Performance metric (PMs) methods for your management strategy evaluation.
 }
 \details{
 Performance Metric definitions:
@@ -58,15 +57,28 @@ Performance Metric definitions:
 }
 
 Argument \code{Ref} provides the ratio relative to the reference point for calculating
-the performance metric. For biomass-based PMs (P10, P50, P100), this is the fraction of
-BMSY. For PNOF, the fraction of FMSY. For Yield (and LTY/STY), the fraction of the
-Reference Yield.
+the performance metric. For biomass-based PMs (\code{P10}, \code{P50}, \code{P100}), this is the fraction of
+BMSY. For \code{PNOF}, the fraction of FMSY. For \code{Yield} (and \code{LTY}/\code{STY}), the fraction of the
+Reference Yield. For \code{AAVY} is it the maximum acceptable variability in yield (i.e, default
+for \code{AAVY} is \code{Ref=0.2})
 
-Long-Term Yield is the Yield in the last ten years of the projection period in the MSE.
-Short-Term Yield is that in the first 10 years of the projection period
+The \code{Yrs} argument defines the number of years to calculate the performance statistic over.
+A value of \code{NULL}, the default for \code{AAVY}, \code{P10}, \code{P50}, \code{P100}, and \code{PNOF}, means that the
+performance metric is calculated over all projection years. A numeric vector of length two is used
+to specify the first and last year, e.g, if \code{Yrs=c(1,10)} the performance statistic is calculated
+over the first 10 projection years. A numeric vector of length one with positive or negative value
+respectively can be used to specify the first \emph{x} or last \emph{x} years, e.g, \code{Yrs=10} is first 10 years,
+and \code{Yrs=-10} is the last 10 years. See \code{\link{ChkYrs}} for more details.
+
+By default Long-Term Yield (\code{LTY}) is the Yield in the last ten years of the projection period in the MSE,
+and Short-Term Yield (\code{STY}) is that in the first 10 years of the projection period.
+}
+\note{
+See relevant section of the \href{https://dlmtool.github.io/DLMtool/userguide/performance-metrics.html}{DLMtool User Guide} for more information.
 }
 \examples{
 \dontrun{
+myMSE <- runMSE()
 P10(myMSE)
 P50(myMSE)
 P100(myMSE)
