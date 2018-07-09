@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.1.3)</title>
+  <title>Data-Limited Methods Toolkit (DLMtool 5.2)</title>
   <meta name="description" content="User guide for the DLMtool R package">
   <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.1.3)" />
+  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.1.3)" />
+  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-03-26">
+<meta name="date" content="2018-07-09">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -33,7 +33,7 @@
   
   <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
 <link rel="prev" href="performance-metrics.html">
-<link rel="next" href="the-fishery-data-object-data.html">
+<link rel="next" href="the-fishery-data-object.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
@@ -135,12 +135,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="4.1.3" data-path="the-operating-model.html"><a href="the-operating-model.html#obs-object"><i class="fa fa-check"></i><b>4.1.3</b> Obs Object</a></li>
 <li class="chapter" data-level="4.1.4" data-path="the-operating-model.html"><a href="the-operating-model.html#imp-object"><i class="fa fa-check"></i><b>4.1.4</b> Imp Object</a></li>
 </ul></li>
-<li class="chapter" data-level="4.2" data-path="the-operating-model.html"><a href="the-operating-model.html#building-an-om-from-component-objects"><i class="fa fa-check"></i><b>4.2</b> Building an OM from Component Objects</a></li>
-<li class="chapter" data-level="4.3" data-path="the-operating-model.html"><a href="the-operating-model.html#visualizing-an-om"><i class="fa fa-check"></i><b>4.3</b> Visualizing an OM</a></li>
+<li class="chapter" data-level="4.2" data-path="the-operating-model.html"><a href="the-operating-model.html#plotting-om-components"><i class="fa fa-check"></i><b>4.2</b> Plotting OM Components</a></li>
+<li class="chapter" data-level="4.3" data-path="the-operating-model.html"><a href="the-operating-model.html#building-an-om-from-component-objects"><i class="fa fa-check"></i><b>4.3</b> Building an OM from Component Objects</a></li>
+<li class="chapter" data-level="4.4" data-path="the-operating-model.html"><a href="the-operating-model.html#visualizing-an-om"><i class="fa fa-check"></i><b>4.4</b> Visualizing an OM</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="management-procedures.html"><a href="management-procedures.html"><i class="fa fa-check"></i><b>5</b> Management Procedures</a><ul>
 <li class="chapter" data-level="5.1" data-path="management-procedures.html"><a href="management-procedures.html#what-is-a-management-procedure"><i class="fa fa-check"></i><b>5.1</b> What is a Management Procedure?</a></li>
-<li class="chapter" data-level="5.2" data-path="management-procedures.html"><a href="management-procedures.html#available-management-procedure"><i class="fa fa-check"></i><b>5.2</b> Available Management Procedure</a></li>
+<li class="chapter" data-level="5.2" data-path="management-procedures.html"><a href="management-procedures.html#available-management-procedures"><i class="fa fa-check"></i><b>5.2</b> Available Management Procedures</a></li>
 <li class="chapter" data-level="5.3" data-path="management-procedures.html"><a href="management-procedures.html#types-of-management-procedure"><i class="fa fa-check"></i><b>5.3</b> Types of Management Procedure</a><ul>
 <li class="chapter" data-level="5.3.1" data-path="management-procedures.html"><a href="management-procedures.html#input-control-mps"><i class="fa fa-check"></i><b>5.3.1</b> Input Control MPs</a></li>
 <li class="chapter" data-level="5.3.2" data-path="management-procedures.html"><a href="management-procedures.html#output-control-mps"><i class="fa fa-check"></i><b>5.3.2</b> Output Control MPs</a></li>
@@ -154,12 +155,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="6.3" data-path="running-the-mse.html"><a href="running-the-mse.html#run-the-mse"><i class="fa fa-check"></i><b>6.3</b> Run the MSE</a></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="checking-convergence.html"><a href="checking-convergence.html"><i class="fa fa-check"></i><b>7</b> Checking Convergence</a></li>
-<li class="chapter" data-level="8" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html"><i class="fa fa-check"></i><b>8</b> Plotting the MSE Results</a><ul>
-<li class="chapter" data-level="8.1" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#trade-off-plots"><i class="fa fa-check"></i><b>8.1</b> Trade-Off Plots</a></li>
-<li class="chapter" data-level="8.2" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#wormplot"><i class="fa fa-check"></i><b>8.2</b> Wormplot</a></li>
-<li class="chapter" data-level="8.3" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#projection-plots"><i class="fa fa-check"></i><b>8.3</b> Projection Plots</a></li>
-<li class="chapter" data-level="8.4" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#kobe-plots"><i class="fa fa-check"></i><b>8.4</b> Kobe Plots</a></li>
-<li class="chapter" data-level="8.5" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#compare-to-current-conditions"><i class="fa fa-check"></i><b>8.5</b> Compare to Current Conditions</a></li>
+<li class="chapter" data-level="8" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html"><i class="fa fa-check"></i><b>8</b> Examining the MSE Results</a><ul>
+<li class="chapter" data-level="8.1" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#introducing-performance-metrics"><i class="fa fa-check"></i><b>8.1</b> Introducing Performance Metrics</a></li>
+<li class="chapter" data-level="8.2" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#summary-table"><i class="fa fa-check"></i><b>8.2</b> Summary Table</a></li>
+<li class="chapter" data-level="8.3" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#plotting-mse-results"><i class="fa fa-check"></i><b>8.3</b> Plotting MSE Results</a><ul>
+<li class="chapter" data-level="8.3.1" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#trade-off-plots"><i class="fa fa-check"></i><b>8.3.1</b> Trade-Off Plots</a></li>
+<li class="chapter" data-level="8.3.2" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#wormplot"><i class="fa fa-check"></i><b>8.3.2</b> Wormplot</a></li>
+<li class="chapter" data-level="8.3.3" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#projection-plots"><i class="fa fa-check"></i><b>8.3.3</b> Projection Plots</a></li>
+<li class="chapter" data-level="8.3.4" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#kobe-plots"><i class="fa fa-check"></i><b>8.3.4</b> Kobe Plots</a></li>
+<li class="chapter" data-level="8.3.5" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#compare-to-current-conditions"><i class="fa fa-check"></i><b>8.3.5</b> Compare to Current Conditions</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="9" data-path="parallel-processing.html"><a href="parallel-processing.html"><i class="fa fa-check"></i><b>9</b> Parallel Processing</a><ul>
 <li class="chapter" data-level="9.1" data-path="parallel-processing.html"><a href="parallel-processing.html#setting-up-parallel-processing"><i class="fa fa-check"></i><b>9.1</b> Setting up Parallel Processing</a></li>
@@ -179,89 +184,110 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10.6" data-path="creating-a-new-operating-model.html"><a href="creating-a-new-operating-model.html#import-the-om-into-r"><i class="fa fa-check"></i><b>10.6</b> Import the OM into R</a></li>
 <li class="chapter" data-level="10.7" data-path="creating-a-new-operating-model.html"><a href="creating-a-new-operating-model.html#documenting-an-existing-om"><i class="fa fa-check"></i><b>10.7</b> Documenting an Existing OM</a></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="operating-model-library.html"><a href="operating-model-library.html"><i class="fa fa-check"></i><b>11</b> Operating Model Library</a></li>
+<li class="chapter" data-level="11" data-path="generating-correlated-life-history-parameters.html"><a href="generating-correlated-life-history-parameters.html"><i class="fa fa-check"></i><b>11</b> Generating Correlated Life-History Parameters</a><ul>
+<li class="chapter" data-level="11.1" data-path="generating-correlated-life-history-parameters.html"><a href="generating-correlated-life-history-parameters.html#predicting-all-life-history-parameters"><i class="fa fa-check"></i><b>11.1</b> Predicting all life-history parameters</a></li>
+<li class="chapter" data-level="11.2" data-path="generating-correlated-life-history-parameters.html"><a href="generating-correlated-life-history-parameters.html#predicting-some-life-history-parameters"><i class="fa fa-check"></i><b>11.2</b> Predicting some life-history parameters</a></li>
+<li class="chapter" data-level="11.3" data-path="generating-correlated-life-history-parameters.html"><a href="generating-correlated-life-history-parameters.html#predicting-correlated-parameters"><i class="fa fa-check"></i><b>11.3</b> Predicting correlated parameters</a></li>
+<li class="chapter" data-level="11.4" data-path="generating-correlated-life-history-parameters.html"><a href="generating-correlated-life-history-parameters.html#introducing-custom-parameters"><i class="fa fa-check"></i><b>11.4</b> Introducing Custom Parameters</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="modifying-the-om.html"><a href="modifying-the-om.html"><i class="fa fa-check"></i><b>12</b> Modifying the OM</a><ul>
+<li class="chapter" data-level="12.1" data-path="modifying-the-om.html"><a href="modifying-the-om.html#the-tinyerr-function"><i class="fa fa-check"></i><b>12.1</b> The <code>tinyErr</code> function</a></li>
+<li class="chapter" data-level="12.2" data-path="modifying-the-om.html"><a href="modifying-the-om.html#the-replace-function"><i class="fa fa-check"></i><b>12.2</b> The <code>Replace</code> function</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="operating-model-library.html"><a href="operating-model-library.html"><i class="fa fa-check"></i><b>13</b> Operating Model Library</a></li>
 <li class="part"><span><b>Interpreting MSE Results</b></span></li>
-<li class="chapter" data-level="12" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html"><i class="fa fa-check"></i><b>12</b> Examining the MSE object</a><ul>
-<li class="chapter" data-level="12.1" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#run-an-mse"><i class="fa fa-check"></i><b>12.1</b> Run an MSE</a></li>
-<li class="chapter" data-level="12.2" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-mse-object"><i class="fa fa-check"></i><b>12.2</b> The MSE Object</a><ul>
-<li class="chapter" data-level="12.2.1" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-first-six-slots"><i class="fa fa-check"></i><b>12.2.1</b> The First Six Slots</a></li>
-<li class="chapter" data-level="12.2.2" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-om-slot"><i class="fa fa-check"></i><b>12.2.2</b> The <code>OM</code> Slot</a></li>
-<li class="chapter" data-level="12.2.3" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-obs-slot"><i class="fa fa-check"></i><b>12.2.3</b> The <code>Obs</code> Slot</a></li>
-<li class="chapter" data-level="12.2.4" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-b_bmsy-and-f_fmsy-slots"><i class="fa fa-check"></i><b>12.2.4</b> The <code>B_BMSY</code> and <code>F_FMSY</code> Slots</a></li>
-<li class="chapter" data-level="12.2.5" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-b-fm-c-and-tac-slots"><i class="fa fa-check"></i><b>12.2.5</b> The <code>B</code>, <code>FM</code>, <code>C</code> and <code>TAC</code> Slots</a></li>
-<li class="chapter" data-level="12.2.6" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-ssb_hist-cb_hist-and-fm_hist-slots"><i class="fa fa-check"></i><b>12.2.6</b> The <code>SSB_hist</code>, <code>CB_hist</code>, and <code>FM_hist</code> Slots</a></li>
-<li class="chapter" data-level="12.2.7" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-effort-slot"><i class="fa fa-check"></i><b>12.2.7</b> The <code>Effort</code> Slot</a></li>
+<li class="chapter" data-level="14" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html"><i class="fa fa-check"></i><b>14</b> Examining the MSE object</a><ul>
+<li class="chapter" data-level="14.1" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-first-six-slots"><i class="fa fa-check"></i><b>14.1</b> The First Six Slots</a></li>
+<li class="chapter" data-level="14.2" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-om-slot"><i class="fa fa-check"></i><b>14.2</b> The <code>OM</code> Slot</a></li>
+<li class="chapter" data-level="14.3" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-obs-slot"><i class="fa fa-check"></i><b>14.3</b> The <code>Obs</code> Slot</a></li>
+<li class="chapter" data-level="14.4" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-b_bmsy-and-f_fmsy-slots"><i class="fa fa-check"></i><b>14.4</b> The <code>B_BMSY</code> and <code>F_FMSY</code> Slots</a></li>
+<li class="chapter" data-level="14.5" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-b-fm-c-and-tac-slots"><i class="fa fa-check"></i><b>14.5</b> The <code>B</code>, <code>FM</code>, <code>C</code> and <code>TAC</code> Slots</a></li>
+<li class="chapter" data-level="14.6" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-ssb_hist-cb_hist-and-fm_hist-slots"><i class="fa fa-check"></i><b>14.6</b> The <code>SSB_hist</code>, <code>CB_hist</code>, and <code>FM_hist</code> Slots</a></li>
+<li class="chapter" data-level="14.7" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-effort-slot"><i class="fa fa-check"></i><b>14.7</b> The <code>Effort</code> Slot</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="performance-metrics.html"><a href="performance-metrics.html"><i class="fa fa-check"></i><b>15</b> Performance Metrics</a><ul>
+<li class="chapter" data-level="15.1" data-path="performance-metrics.html"><a href="performance-metrics.html#the-need-for-performance-metrics"><i class="fa fa-check"></i><b>15.1</b> The Need for Performance Metrics</a></li>
+<li class="chapter" data-level="15.2" data-path="performance-metrics.html"><a href="performance-metrics.html#inevitable-trade-offs"><i class="fa fa-check"></i><b>15.2</b> Inevitable Trade-Offs</a><ul>
+<li class="chapter" data-level="15.2.1" data-path="performance-metrics.html"><a href="performance-metrics.html#operational-management-objectives"><i class="fa fa-check"></i><b>15.2.1</b> Operational Management Objectives</a></li>
+</ul></li>
+<li class="chapter" data-level="15.3" data-path="performance-metrics.html"><a href="performance-metrics.html#commonly-used-performance-metrics"><i class="fa fa-check"></i><b>15.3</b> Commonly used Performance Metrics</a><ul>
+<li class="chapter" data-level="15.3.1" data-path="performance-metrics.html"><a href="performance-metrics.html#fishing-mortality"><i class="fa fa-check"></i><b>15.3.1</b> Fishing Mortality</a></li>
+<li class="chapter" data-level="15.3.2" data-path="performance-metrics.html"><a href="performance-metrics.html#stock-biomass"><i class="fa fa-check"></i><b>15.3.2</b> Stock Biomass</a></li>
+<li class="chapter" data-level="15.3.3" data-path="performance-metrics.html"><a href="performance-metrics.html#additional-performance-metrics"><i class="fa fa-check"></i><b>15.3.3</b> Additional Performance Metrics</a></li>
+</ul></li>
+<li class="chapter" data-level="15.4" data-path="performance-metrics.html"><a href="performance-metrics.html#performance-metrics-methods"><i class="fa fa-check"></i><b>15.4</b> Performance Metrics Methods</a><ul>
+<li class="chapter" data-level="15.4.1" data-path="performance-metrics.html"><a href="performance-metrics.html#overview-of-the-pm-functions"><i class="fa fa-check"></i><b>15.4.1</b> Overview of the <code>PM</code> Functions</a></li>
+<li class="chapter" data-level="15.4.2" data-path="performance-metrics.html"><a href="performance-metrics.html#customizing-the-pm-functions"><i class="fa fa-check"></i><b>15.4.2</b> Customizing the <code>PM</code> Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="15.5" data-path="performance-metrics.html"><a href="performance-metrics.html#summarizing-management-procedure-performance"><i class="fa fa-check"></i><b>15.5</b> Summarizing Management Procedure Performance</a><ul>
+<li class="chapter" data-level="15.5.1" data-path="performance-metrics.html"><a href="performance-metrics.html#summary-table-1"><i class="fa fa-check"></i><b>15.5.1</b> <code>summary</code> Table</a></li>
+<li class="chapter" data-level="15.5.2" data-path="performance-metrics.html"><a href="performance-metrics.html#trade-off-plots-1"><i class="fa fa-check"></i><b>15.5.2</b> Trade-Off Plots</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="13" data-path="performance-metrics.html"><a href="performance-metrics.html"><i class="fa fa-check"></i><b>13</b> Performance Metrics</a><ul>
-<li class="chapter" data-level="13.1" data-path="performance-metrics.html"><a href="performance-metrics.html#the-need-for-performance-metrics"><i class="fa fa-check"></i><b>13.1</b> The Need for Performance Metrics</a></li>
-<li class="chapter" data-level="13.2" data-path="performance-metrics.html"><a href="performance-metrics.html#inevitable-trade-offs"><i class="fa fa-check"></i><b>13.2</b> Inevitable Trade-Offs</a><ul>
-<li class="chapter" data-level="13.2.1" data-path="performance-metrics.html"><a href="performance-metrics.html#operational-management-objectives"><i class="fa fa-check"></i><b>13.2.1</b> Operational Management Objectives</a></li>
-</ul></li>
-<li class="chapter" data-level="13.3" data-path="performance-metrics.html"><a href="performance-metrics.html#performance-metrics-in-the-dlmtool"><i class="fa fa-check"></i><b>13.3</b> Performance Metrics in the DLMtool</a><ul>
-<li class="chapter" data-level="13.3.1" data-path="performance-metrics.html"><a href="performance-metrics.html#fishing-mortality"><i class="fa fa-check"></i><b>13.3.1</b> Fishing Mortality</a></li>
-<li class="chapter" data-level="13.3.2" data-path="performance-metrics.html"><a href="performance-metrics.html#stock-biomass"><i class="fa fa-check"></i><b>13.3.2</b> Stock Biomass</a></li>
-<li class="chapter" data-level="13.3.3" data-path="performance-metrics.html"><a href="performance-metrics.html#developing-additional-performance-metrics"><i class="fa fa-check"></i><b>13.3.3</b> Developing Additional Performance Metrics</a></li>
-<li class="chapter" data-level="13.3.4" data-path="performance-metrics.html"><a href="performance-metrics.html#summarizing-management-procedure-performance"><i class="fa fa-check"></i><b>13.3.4</b> Summarizing Management Procedure Performance</a></li>
-<li class="chapter" data-level="13.3.5" data-path="performance-metrics.html"><a href="performance-metrics.html#plotting-mse-results"><i class="fa fa-check"></i><b>13.3.5</b> Plotting MSE Results</a></li>
-</ul></li>
-</ul></li>
-<li class="chapter" data-level="14" data-path="value-of-information.html"><a href="value-of-information.html"><i class="fa fa-check"></i><b>14</b> Value of Information</a></li>
+<li class="chapter" data-level="16" data-path="value-of-information.html"><a href="value-of-information.html"><i class="fa fa-check"></i><b>16</b> Value of Information</a></li>
 <li class="part"><span><b>Using Fishery Data</b></span></li>
-<li class="chapter" data-level="15" data-path="the-fishery-data-object-data.html"><a href="the-fishery-data-object-data.html"><i class="fa fa-check"></i><b>15</b> The Fishery Data Object (Data)</a><ul>
-<li class="chapter" data-level="15.1" data-path="the-fishery-data-object-data.html"><a href="the-fishery-data-object-data.html#in-the-mse"><i class="fa fa-check"></i><b>15.1</b> In the MSE</a></li>
-<li class="chapter" data-level="15.2" data-path="the-fishery-data-object-data.html"><a href="the-fishery-data-object-data.html#application-of-management-procedures-using-real-fisheries-data"><i class="fa fa-check"></i><b>15.2</b> Application of Management Procedures Using Real Fisheries Data</a></li>
+<li class="chapter" data-level="17" data-path="the-fishery-data-object.html"><a href="the-fishery-data-object.html"><i class="fa fa-check"></i><b>17</b> The Fishery Data Object</a><ul>
+<li class="chapter" data-level="17.1" data-path="the-fishery-data-object.html"><a href="the-fishery-data-object.html#in-the-mse"><i class="fa fa-check"></i><b>17.1</b> In the MSE</a></li>
+<li class="chapter" data-level="17.2" data-path="the-fishery-data-object.html"><a href="the-fishery-data-object.html#application-of-management-procedures-using-real-fisheries-data"><i class="fa fa-check"></i><b>17.2</b> Application of Management Procedures Using Real Fisheries Data</a></li>
 </ul></li>
-<li class="chapter" data-level="16" data-path="example-data-objects.html"><a href="example-data-objects.html"><i class="fa fa-check"></i><b>16</b> Example Data Objects</a></li>
-<li class="chapter" data-level="17" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html"><i class="fa fa-check"></i><b>17</b> Creating Your Own Data Object</a><ul>
-<li class="chapter" data-level="17.1" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#creating-a-data-file-in-excel"><i class="fa fa-check"></i><b>17.1</b> Creating a Data File in Excel</a></li>
-<li class="chapter" data-level="17.2" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#importing-the-data-object"><i class="fa fa-check"></i><b>17.2</b> Importing the Data object</a></li>
-<li class="chapter" data-level="17.3" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#example-fishery-data-files"><i class="fa fa-check"></i><b>17.3</b> Example Fishery Data Files</a></li>
-<li class="chapter" data-level="17.4" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#populating-a-data-object-in-r"><i class="fa fa-check"></i><b>17.4</b> Populating a Data Object in R</a></li>
+<li class="chapter" data-level="18" data-path="example-data-objects.html"><a href="example-data-objects.html"><i class="fa fa-check"></i><b>18</b> Example Data Objects</a></li>
+<li class="chapter" data-level="19" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html"><i class="fa fa-check"></i><b>19</b> Creating Your Own Data Object</a><ul>
+<li class="chapter" data-level="19.1" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#creating-a-data-file-in-excel"><i class="fa fa-check"></i><b>19.1</b> Creating a Data File in Excel</a></li>
+<li class="chapter" data-level="19.2" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#importing-the-data-object"><i class="fa fa-check"></i><b>19.2</b> Importing the Data object</a></li>
+<li class="chapter" data-level="19.3" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#example-fishery-data-files"><i class="fa fa-check"></i><b>19.3</b> Example Fishery Data Files</a></li>
+<li class="chapter" data-level="19.4" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#populating-a-data-object-in-r"><i class="fa fa-check"></i><b>19.4</b> Populating a Data Object in R</a></li>
 </ul></li>
-<li class="chapter" data-level="18" data-path="plotting-data-objects.html"><a href="plotting-data-objects.html"><i class="fa fa-check"></i><b>18</b> Plotting Data Objects</a></li>
-<li class="chapter" data-level="19" data-path="determining-which-mps-can-be-applied.html"><a href="determining-which-mps-can-be-applied.html"><i class="fa fa-check"></i><b>19</b> Determining Which MPs Can Be Applied</a></li>
-<li class="chapter" data-level="20" data-path="applying-management-procedures.html"><a href="applying-management-procedures.html"><i class="fa fa-check"></i><b>20</b> Applying Management Procedures</a></li>
+<li class="chapter" data-level="20" data-path="plotting-data-objects.html"><a href="plotting-data-objects.html"><i class="fa fa-check"></i><b>20</b> Plotting Data Objects</a></li>
+<li class="chapter" data-level="21" data-path="determining-feasible-and-available-management-procedures.html"><a href="determining-feasible-and-available-management-procedures.html"><i class="fa fa-check"></i><b>21</b> Determining Feasible and Available Management Procedures</a><ul>
+<li class="chapter" data-level="21.1" data-path="determining-feasible-and-available-management-procedures.html"><a href="determining-feasible-and-available-management-procedures.html#feasible-mps"><i class="fa fa-check"></i><b>21.1</b> Feasible MPs</a></li>
+<li class="chapter" data-level="21.2" data-path="determining-feasible-and-available-management-procedures.html"><a href="determining-feasible-and-available-management-procedures.html#available-mps"><i class="fa fa-check"></i><b>21.2</b> Available MPs</a></li>
+<li class="chapter" data-level="21.3" data-path="determining-feasible-and-available-management-procedures.html"><a href="determining-feasible-and-available-management-procedures.html#unavailable-mps"><i class="fa fa-check"></i><b>21.3</b> Unavailable MPs</a></li>
+</ul></li>
+<li class="chapter" data-level="22" data-path="applying-management-procedures.html"><a href="applying-management-procedures.html"><i class="fa fa-check"></i><b>22</b> Applying Management Procedures</a></li>
 <li class="part"><span><b>Advanced DLMtool</b></span></li>
-<li class="chapter" data-level="21" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html"><i class="fa fa-check"></i><b>21</b> Customizing the Operating Model</a><ul>
-<li class="chapter" data-level="21.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#accounting-for-historical-changes-in-fishing"><i class="fa fa-check"></i><b>21.1</b> Accounting for Historical Changes in Fishing</a><ul>
-<li class="chapter" data-level="21.1.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#historical-trends-in-fishing-mortality"><i class="fa fa-check"></i><b>21.1.1</b> Historical Trends in Fishing Mortality</a></li>
-<li class="chapter" data-level="21.1.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#historical-trends-in-selectivity-pattern"><i class="fa fa-check"></i><b>21.1.2</b> Historical Trends in Selectivity Pattern</a></li>
-<li class="chapter" data-level="21.1.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#including-existing-mpas"><i class="fa fa-check"></i><b>21.1.3</b> Including Existing MPAs</a></li>
+<li class="chapter" data-level="23" data-path="averaging-mps.html"><a href="averaging-mps.html"><i class="fa fa-check"></i><b>23</b> Averaging MPs</a></li>
+<li class="chapter" data-level="24" data-path="evaluating-om.html"><a href="evaluating-om.html"><i class="fa fa-check"></i><b>24</b> Evaluating OM</a></li>
+<li class="chapter" data-level="25" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html"><i class="fa fa-check"></i><b>25</b> Customizing the Operating Model</a><ul>
+<li class="chapter" data-level="25.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#accounting-for-historical-changes-in-fishing"><i class="fa fa-check"></i><b>25.1</b> Accounting for Historical Changes in Fishing</a><ul>
+<li class="chapter" data-level="25.1.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#historical-trends-in-fishing-mortality"><i class="fa fa-check"></i><b>25.1.1</b> Historical Trends in Fishing Mortality</a></li>
+<li class="chapter" data-level="25.1.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#historical-trends-in-selectivity-pattern"><i class="fa fa-check"></i><b>25.1.2</b> Historical Trends in Selectivity Pattern</a></li>
+<li class="chapter" data-level="25.1.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#including-existing-mpas"><i class="fa fa-check"></i><b>25.1.3</b> Including Existing MPAs</a></li>
 </ul></li>
-<li class="chapter" data-level="21.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#size-specific-natural-mortality"><i class="fa fa-check"></i><b>21.2</b> Size-Specific Natural Mortality</a><ul>
-<li class="chapter" data-level="21.2.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#constant-m-at-agesize"><i class="fa fa-check"></i><b>21.2.1</b> Constant M at age/size</a></li>
-<li class="chapter" data-level="21.2.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#lorenzen-function-of-weight"><i class="fa fa-check"></i><b>21.2.2</b> Lorenzen function of weight</a></li>
-<li class="chapter" data-level="21.2.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#map-age-specific-m"><i class="fa fa-check"></i><b>21.2.3</b> Map Age-Specific M</a></li>
-<li class="chapter" data-level="21.2.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#map-length-specific-m"><i class="fa fa-check"></i><b>21.2.4</b> Map Length-Specific M</a></li>
+<li class="chapter" data-level="25.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#size-specific-natural-mortality"><i class="fa fa-check"></i><b>25.2</b> Size-Specific Natural Mortality</a><ul>
+<li class="chapter" data-level="25.2.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#constant-m-at-agesize"><i class="fa fa-check"></i><b>25.2.1</b> Constant M at age/size</a></li>
+<li class="chapter" data-level="25.2.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#lorenzen-function-of-weight"><i class="fa fa-check"></i><b>25.2.2</b> Lorenzen function of weight</a></li>
+<li class="chapter" data-level="25.2.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#map-age-specific-m"><i class="fa fa-check"></i><b>25.2.3</b> Map Age-Specific M</a></li>
+<li class="chapter" data-level="25.2.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#map-length-specific-m"><i class="fa fa-check"></i><b>25.2.4</b> Map Length-Specific M</a></li>
 </ul></li>
-<li class="chapter" data-level="21.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#selection-retention-and-discard-mortality"><i class="fa fa-check"></i><b>21.3</b> Selection, Retention and Discard Mortality</a><ul>
-<li class="chapter" data-level="21.3.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#fishery-selection-curve"><i class="fa fa-check"></i><b>21.3.1</b> Fishery Selection Curve</a></li>
-<li class="chapter" data-level="21.3.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#fishery-retention-curve"><i class="fa fa-check"></i><b>21.3.2</b> Fishery Retention Curve</a></li>
-<li class="chapter" data-level="21.3.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#discard-mortality"><i class="fa fa-check"></i><b>21.3.3</b> Discard Mortality</a></li>
-<li class="chapter" data-level="21.3.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#general-discarding"><i class="fa fa-check"></i><b>21.3.4</b> General Discarding</a></li>
+<li class="chapter" data-level="25.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#selection-retention-and-discard-mortality"><i class="fa fa-check"></i><b>25.3</b> Selection, Retention and Discard Mortality</a><ul>
+<li class="chapter" data-level="25.3.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#fishery-selection-curve"><i class="fa fa-check"></i><b>25.3.1</b> Fishery Selection Curve</a></li>
+<li class="chapter" data-level="25.3.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#fishery-retention-curve"><i class="fa fa-check"></i><b>25.3.2</b> Fishery Retention Curve</a></li>
+<li class="chapter" data-level="25.3.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#discard-mortality"><i class="fa fa-check"></i><b>25.3.3</b> Discard Mortality</a></li>
+<li class="chapter" data-level="25.3.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#general-discarding"><i class="fa fa-check"></i><b>25.3.4</b> General Discarding</a></li>
+</ul></li>
+<li class="chapter" data-level="25.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#variable-management-interval"><i class="fa fa-check"></i><b>25.4</b> Variable Management Interval</a></li>
+</ul></li>
+<li class="chapter" data-level="26" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html"><i class="fa fa-check"></i><b>26</b> Developing Custom Management Procedures</a><ul>
+<li class="chapter" data-level="26.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#the-anatomy-of-an-mp"><i class="fa fa-check"></i><b>26.1</b> The Anatomy of an MP</a></li>
+<li class="chapter" data-level="26.2" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#a-constant-catch-mp"><i class="fa fa-check"></i><b>26.2</b> A Constant Catch MP</a></li>
+<li class="chapter" data-level="26.3" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#a-more-complex-mp"><i class="fa fa-check"></i><b>26.3</b> A More Complex MP</a></li>
+<li class="chapter" data-level="26.4" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#beyond-the-catch-limit"><i class="fa fa-check"></i><b>26.4</b> Beyond the Catch Limit</a><ul>
+<li class="chapter" data-level="26.4.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#an-example-effort-control"><i class="fa fa-check"></i><b>26.4.1</b> An Example Effort Control</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="22" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html"><i class="fa fa-check"></i><b>22</b> Developing Custom Management Procedures</a><ul>
-<li class="chapter" data-level="22.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#the-anatomy-of-an-mp"><i class="fa fa-check"></i><b>22.1</b> The Anatomy of an MP</a></li>
-<li class="chapter" data-level="22.2" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#a-constant-catch-mp"><i class="fa fa-check"></i><b>22.2</b> A Constant Catch MP</a></li>
-<li class="chapter" data-level="22.3" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#a-more-complex-mp"><i class="fa fa-check"></i><b>22.3</b> A More Complex MP</a></li>
-<li class="chapter" data-level="22.4" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#beyond-the-catch-limit"><i class="fa fa-check"></i><b>22.4</b> Beyond the Catch Limit</a><ul>
-<li class="chapter" data-level="22.4.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#an-example-effort-control"><i class="fa fa-check"></i><b>22.4.1</b> An Example Effort Control</a></li>
+<li class="chapter" data-level="27" data-path="custom-parameters.html"><a href="custom-parameters.html"><i class="fa fa-check"></i><b>27</b> Custom Parameters</a><ul>
+<li class="chapter" data-level="27.1" data-path="custom-parameters.html"><a href="custom-parameters.html#valid-cpars-names"><i class="fa fa-check"></i><b>27.1</b> Valid cpars names</a></li>
+<li class="chapter" data-level="27.2" data-path="custom-parameters.html"><a href="custom-parameters.html#correlated-samples"><i class="fa fa-check"></i><b>27.2</b> Correlated samples</a></li>
+<li class="chapter" data-level="27.3" data-path="custom-parameters.html"><a href="custom-parameters.html#custom-time-varying-parameters"><i class="fa fa-check"></i><b>27.3</b> Custom time-varying parameters</a></li>
 </ul></li>
+<li class="chapter" data-level="28" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html"><i class="fa fa-check"></i><b>28</b> Subsetting the MSE Object</a><ul>
+<li class="chapter" data-level="28.1" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html#subsetting-by-performance"><i class="fa fa-check"></i><b>28.1</b> Subsetting by Performance</a></li>
+<li class="chapter" data-level="28.2" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html#subsetting-by-operating-model-parameters"><i class="fa fa-check"></i><b>28.2</b> Subsetting by Operating Model Parameters</a></li>
 </ul></li>
-<li class="chapter" data-level="23" data-path="custom-parameters.html"><a href="custom-parameters.html"><i class="fa fa-check"></i><b>23</b> Custom Parameters</a><ul>
-<li class="chapter" data-level="23.1" data-path="custom-parameters.html"><a href="custom-parameters.html#valid-cpars-names"><i class="fa fa-check"></i><b>23.1</b> Valid cpars names</a></li>
-<li class="chapter" data-level="23.2" data-path="custom-parameters.html"><a href="custom-parameters.html#correlated-samples"><i class="fa fa-check"></i><b>23.2</b> Correlated samples</a></li>
-<li class="chapter" data-level="23.3" data-path="custom-parameters.html"><a href="custom-parameters.html#custom-time-varying-parameters"><i class="fa fa-check"></i><b>23.3</b> Custom time-varying parameters</a></li>
-</ul></li>
-<li class="chapter" data-level="24" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html"><i class="fa fa-check"></i><b>24</b> Subsetting the MSE Object</a><ul>
-<li class="chapter" data-level="24.1" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html#subsetting-by-performance"><i class="fa fa-check"></i><b>24.1</b> Subsetting by Performance</a></li>
-<li class="chapter" data-level="24.2" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html#subsetting-by-operating-model-parameters"><i class="fa fa-check"></i><b>24.2</b> Subsetting by Operating Model Parameters</a></li>
-</ul></li>
-<li class="chapter" data-level="25" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html"><i class="fa fa-check"></i><b>25</b> Custom Performance Metrics</a><ul>
-<li class="chapter" data-level="25.1" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#the-pm-object"><i class="fa fa-check"></i><b>25.1</b> The PM Object</a></li>
-<li class="chapter" data-level="25.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#developing-custom-pms"><i class="fa fa-check"></i><b>25.2</b> Developing Custom PMs</a></li>
+<li class="chapter" data-level="29" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html"><i class="fa fa-check"></i><b>29</b> Custom Performance Metrics</a><ul>
+<li class="chapter" data-level="29.1" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#necessity-of-complexity"><i class="fa fa-check"></i><b>29.1</b> Necessity of Complexity</a></li>
+<li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
+<li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
@@ -320,7 +346,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.1.3)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2)</a>
           </h1>
         </div>
 
@@ -329,352 +355,67 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
             <section class="normal" id="section-">
 <div id="value-of-information" class="section level1">
-<h1><span class="header-section-number">Chapter 14</span> Value of Information</h1>
+<h1><span class="header-section-number">Chapter 16</span> Value of Information</h1>
 <p>The Value of Information (VOI) functions have been designed to explore the sensitivity of the performance of the Management Procedures to variability in the observation processes and operating model parameters.</p>
 <p>There are several VOI functions in DLMtool.</p>
 <p>The <code>VOI</code> function generates two plots, one corresponding to the operating model parameters, and the other to the observation model parameters, showing the gradient in long-term yield with respect to the individual parameters:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOI</span>(BSharkMSE)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-73-1.png" width="864" /><img src="userguide_files/figure-html/unnamed-chunk-73-2.png" width="864" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOI</span>(MSE)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-104-1.png" width="864" /><img src="userguide_files/figure-html/unnamed-chunk-104-2.png" width="864" /></p>
 <pre><code>## [[1]]
-##           MP     1         2       3     4           5      6
-## 1     Fratio Mgrad         M Vmaxlen    hs    Linfgrad     B0
-## 2            11.78     11.47    11.2 11.04       10.85  10.78
-## 3       DCAC Kgrad Depletion     Esd  Blow SSBMSY_SSB0 FMSY_M
-## 4            11.45     11.26   10.66 10.38       10.34   10.3
-## 5       Fdem  BMSY    SSBMSY     L95   LFS SSBMSY_SSB0    qcv
-## 6            14.27     12.67   12.37 12.36        12.3  11.89
-## 7         DD  SSB0       LFS      B0   Esd        qinc  Mgrad
-## 8            12.06     11.61   11.54 11.05       10.45    9.9
-## 9  matlenlim  qinc Depletion    Blow  SSB0         MGT     N0
-## 10           20.29     18.77   13.09 11.86       11.52  10.38
+##           MP     1           2      3      4     5       6
+## 1        AvC     M Frac_area_1     AC   ageM    L5    qinc
+## 2            18.72       17.76  17.74  17.61 17.08   16.91
+## 3       DCAC   LFS        qinc FMSY_M procsd  SSB0      hs
+## 4             21.1       20.45  20.34  19.26 18.53   18.47
+## 5    FMSYref    B0          hs   SSB0   BMSY   qcv       K
+## 6             9.34        8.95   8.74   8.58  7.46    7.41
+## 7       curE  FMSY        ageM FMSY_M   qinc  BMSY Vmaxlen
+## 8            15.05        14.3  14.03  13.97 13.92   13.63
+## 9  matlenlim   MGT     Vmaxlen   qinc    Esd Mgrad     Msd
+## 10           23.83       20.71  20.62  19.92 19.13   19.03
+## 11    MRreal  qinc        FMSY    qcv FMSY_M  BMSY    ageM
+## 12           12.06       11.96  11.78  11.76  11.7   11.65
 ## 
 ## [[2]]
-##           MP        1          2      3     4    5          6
-## 1     Fratio    Abias FMSY_Mbias  Mbias  Aerr                
-## 2               18.14       9.84   9.71  7.23                
-## 3       DCAC    Cbias      Mbias  Dbias   Csd Derr FMSY_Mbias
-## 4               10.24      10.15    9.9  8.28 6.69       5.89
-## 5       Fdem    Abias   Linfbias  Kbias Mbias Aerr     t0bias
-## 6               26.02      11.36  10.04  9.69 7.43       4.21
-## 7         DD    Cbias   lenMbias t0bias Mbias  Csd      Kbias
-## 8                9.22       9.22   9.01  8.65 8.35       5.62
-## 9  matlenlim lenMbias                                        
-## 10                9.3</code></pre>
+##           MP        1     2     3     4     5          6
+## 1        AvC      Csd Cbias                             
+## 2               16.84 14.21                             
+## 3       DCAC     Derr Cbias   Csd Dbias Mbias FMSY_Mbias
+## 4               24.47 21.88 20.33 14.29 13.49      13.26
+## 5    FMSYref     &lt;NA&gt;                                   
+## 6                &lt;NA&gt;                                   
+## 7       curE     &lt;NA&gt;                                   
+## 8                &lt;NA&gt;                                   
+## 9  matlenlim lenMbias                                   
+## 10              15.96                                   
+## 11    MRreal     &lt;NA&gt;                                   
+## 12               &lt;NA&gt;</code></pre>
 <p>The <code>VOIplot</code> function shows something similar, but has an argument to specify either the Observation or Operating Model parameters:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Observation Parameters</span>
-<span class="kw">VOIplot</span>(BSharkMSE, <span class="dt">nMP=</span><span class="dv">5</span>)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-74-1.png" width="864" /></p>
+<span class="kw">VOIplot</span>(MSE, <span class="dt">nMP=</span><span class="dv">5</span>)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-105-1.png" width="864" /></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># OM Parameters</span>
-<span class="kw">VOIplot</span>(BSharkMSE, <span class="dt">Par=</span><span class="st">&quot;OM&quot;</span>, <span class="dt">nMP=</span><span class="dv">5</span>)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-74-2.png" width="864" /></p>
+<span class="kw">VOIplot</span>(MSE, <span class="dt">Par=</span><span class="st">&quot;OM&quot;</span>, <span class="dt">nMP=</span><span class="dv">5</span>)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-105-2.png" width="864" /></p>
 <p>By default, the <code>VOIplot</code> function only shows the four Management Procedures with the greatest sensitivity. Here we’ve made it show all five methods using the <code>nMP</code> argument.</p>
 <p>In this example we can see that the <code>Fratio</code> method is particularly sensitive to bias in the current estimate of abundance, and over-estimates of the current abundance result in very low long-term yield (probably do to collapse of the stock). The DCAC method appears most sensitive to bias in the estimated catch.</p>
 <p>We can also use the <code>VOIplot</code> function to look at the sensitivity with respect to the final biomass by specifying the <code>YVar</code> argument:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOIplot</span>(BSharkMSE, <span class="dt">Par=</span><span class="st">&quot;OM&quot;</span>, <span class="dt">nMP=</span><span class="dv">5</span>, <span class="dt">YVar=</span><span class="st">&quot;B&quot;</span>)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-75-1.png" width="864" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOIplot</span>(MSE, <span class="dt">Par=</span><span class="st">&quot;OM&quot;</span>, <span class="dt">nMP=</span><span class="dv">5</span>, <span class="dt">YVar=</span><span class="st">&quot;B&quot;</span>)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-106-1.png" width="864" /></p>
 <p>This result shows, perhaps unsurprisingly, that the final biomass is often strongly sensitive to the initial depletion, particularly for the DCAC and matlenlim methods.</p>
+<p>The <code>VOIplot2</code> function is an updated version of <code>VOIplot</code> that uses the <code>PM</code> functions and plots the Value of Information for a single MP:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOIplot2</span>(MSE)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-107-1.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOIplot2</span>(MSE, <span class="dt">type=</span><span class="st">&quot;OM&quot;</span>)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-107-2.png" width="672" /></p>
+<p>and with a different MP and performance metric:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOIplot2</span>(MSE, <span class="dt">MP=</span><span class="st">&quot;DCAC&quot;</span>, <span class="dt">PM=</span><span class="st">&quot;P100&quot;</span>)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-108-1.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOIplot2</span>(MSE, <span class="dt">MP=</span><span class="st">&quot;DCAC&quot;</span>, <span class="dt">type=</span><span class="st">&quot;OM&quot;</span>, <span class="dt">PM=</span><span class="st">&quot;P100&quot;</span>)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-108-2.png" width="672" /></p>
 <p>The <code>VOI2</code> function relates the operating model parameters and parameters of the observation model to relative yield (yield over last 5 years of projection relative to a ‘best F’ scenario that maximizes yield.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOI2</span>(BSharkMSE)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-76-1.png" width="864" /></p>
-<pre><code>## [[1]]
-## , , 1
-## 
-##        [,1]     [,2]     [,3]     [,4]   [,5]   [,6]   [,7]   [,8]   [,9]
-## [1,] 1.5625 1.562500 1.589613 1.119555     NA     NA     NA     NA     NA
-## [2,] 1.5625 1.140612 1.562500 1.171614 1.5625 1.5625     NA     NA     NA
-## [3,] 1.5625 1.589613 1.119555 1.562500 1.5625 1.5625     NA     NA     NA
-## [4,] 1.5625 1.140612 1.136572 1.487903 1.5625 1.5625 1.5625 1.5625 1.5625
-## [5,] 1.5625       NA       NA       NA     NA     NA     NA     NA     NA
-##      [,10] [,11] [,12] [,13] [,14] [,15] [,16] [,17] [,18] [,19] [,20]
-## [1,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [2,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [3,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [4,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [5,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-##      [,21] [,22] [,23] [,24] [,25]
-## [1,]    NA    NA    NA    NA    NA
-## [2,]    NA    NA    NA    NA    NA
-## [3,]    NA    NA    NA    NA    NA
-## [4,]    NA    NA    NA    NA    NA
-## [5,]    NA    NA    NA    NA    NA
-## 
-## , , 2
-## 
-##      [,1]     [,2]     [,3]     [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11]
-## [1,] 2.25 2.250000 2.308293 1.268207   NA   NA   NA   NA   NA    NA    NA
-## [2,] 2.25 1.307538 2.250000 1.398430 2.25 2.25   NA   NA   NA    NA    NA
-## [3,] 2.25 2.308293 1.268207 2.250000 2.25 2.25   NA   NA   NA    NA    NA
-## [4,] 2.25 1.307538 1.311405 2.105272 2.25 2.25 2.25 2.25 2.25    NA    NA
-## [5,] 2.25       NA       NA       NA   NA   NA   NA   NA   NA    NA    NA
-##      [,12] [,13] [,14] [,15] [,16] [,17] [,18] [,19] [,20] [,21] [,22]
-## [1,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [2,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [3,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [4,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [5,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-##      [,23] [,24] [,25]
-## [1,]    NA    NA    NA
-## [2,]    NA    NA    NA
-## [3,]    NA    NA    NA
-## [4,]    NA    NA    NA
-## [5,]    NA    NA    NA
-## 
-## , , 3
-## 
-##        [,1]     [,2]     [,3]     [,4]   [,5]   [,6]   [,7]   [,8]   [,9]
-## [1,] 3.0625 3.062500 3.499592 1.451277     NA     NA     NA     NA     NA
-## [2,] 3.0625 1.506877 3.062500 1.707539 3.0625 3.0625     NA     NA     NA
-## [3,] 3.0625 3.499592 1.451277 3.062500 3.0625 3.0625     NA     NA     NA
-## [4,] 3.0625 1.506877 1.524016 3.412822 3.0625 3.0625 3.0625 3.0625 3.0625
-## [5,] 3.0625       NA       NA       NA     NA     NA     NA     NA     NA
-##      [,10] [,11] [,12] [,13] [,14] [,15] [,16] [,17] [,18] [,19] [,20]
-## [1,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [2,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [3,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [4,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [5,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-##      [,21] [,22] [,23] [,24] [,25]
-## [1,]    NA    NA    NA    NA    NA
-## [2,]    NA    NA    NA    NA    NA
-## [3,]    NA    NA    NA    NA    NA
-## [4,]    NA    NA    NA    NA    NA
-## [5,]    NA    NA    NA    NA    NA
-## 
-## , , 4
-## 
-##      [,1]     [,2]     [,3]     [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11]
-## [1,]    4 4.000000 5.748110 1.656126   NA   NA   NA   NA   NA    NA    NA
-## [2,]    4 1.757649 4.000000 2.126836    4    4   NA   NA   NA    NA    NA
-## [3,]    4 5.748110 1.656126 4.000000    4    4   NA   NA   NA    NA    NA
-## [4,]    4 1.757649 1.774084 6.266443    4    4    4    4    4    NA    NA
-## [5,]    4       NA       NA       NA   NA   NA   NA   NA   NA    NA    NA
-##      [,12] [,13] [,14] [,15] [,16] [,17] [,18] [,19] [,20] [,21] [,22]
-## [1,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [2,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [3,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [4,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [5,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-##      [,23] [,24] [,25]
-## [1,]    NA    NA    NA
-## [2,]    NA    NA    NA
-## [3,]    NA    NA    NA
-## [4,]    NA    NA    NA
-## [5,]    NA    NA    NA
-## 
-## 
-## [[2]]
-## , , 1
-## 
-##           [,1]        [,2]       [,3]       [,4]      [,5]       [,6]
-## [1,] 0.2803113 -0.53072642  4.4921822 -0.6270554        NA         NA
-## [2,] 4.1645378  1.66326678  2.5451339  1.7512884 -2.833964 -3.8975423
-## [3,] 1.4357917  9.04690464 -0.7250698 -2.9450226 -0.113775  1.9452405
-## [4,] 2.2312485  0.06123624  2.1281556  1.4973917  1.023506  0.1106672
-## [5,] 0.6244877          NA         NA         NA        NA         NA
-##           [,7]     [,8]      [,9] [,10] [,11] [,12] [,13] [,14] [,15]
-## [1,]        NA       NA        NA    NA    NA    NA    NA    NA    NA
-## [2,]        NA       NA        NA    NA    NA    NA    NA    NA    NA
-## [3,]        NA       NA        NA    NA    NA    NA    NA    NA    NA
-## [4,] -0.603528 1.134733 0.7090015    NA    NA    NA    NA    NA    NA
-## [5,]        NA       NA        NA    NA    NA    NA    NA    NA    NA
-##      [,16] [,17] [,18] [,19] [,20] [,21] [,22] [,23] [,24] [,25]
-## [1,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [2,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [3,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [4,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [5,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## 
-## , , 2
-## 
-##           [,1]      [,2]      [,3]       [,4]       [,5]       [,6]
-## [1,] 1.4706282 -4.095902 7.1117329  0.4766219         NA         NA
-## [2,] 8.8051370 -3.156397 6.2804638  2.4129687 -4.0240507 -6.3580475
-## [3,] 1.9637761 15.872759 0.8092281 -5.0394350 -0.1425656  4.2056456
-## [4,] 2.8107547 -3.453385 2.1019817  2.9896301  1.8346601  0.4140542
-## [5,] 0.4382442        NA        NA         NA         NA         NA
-##            [,7]     [,8]      [,9] [,10] [,11] [,12] [,13] [,14] [,15]
-## [1,]         NA       NA        NA    NA    NA    NA    NA    NA    NA
-## [2,]         NA       NA        NA    NA    NA    NA    NA    NA    NA
-## [3,]         NA       NA        NA    NA    NA    NA    NA    NA    NA
-## [4,] -0.7400073 1.615397 0.6792907    NA    NA    NA    NA    NA    NA
-## [5,]         NA       NA        NA    NA    NA    NA    NA    NA    NA
-##      [,16] [,17] [,18] [,19] [,20] [,21] [,22] [,23] [,24] [,25]
-## [1,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [2,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [3,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [4,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [5,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## 
-## , , 3
-## 
-##           [,1]      [,2]      [,3]      [,4]      [,5]       [,6]
-## [1,]  1.335995 -4.409240 16.167671  3.084349        NA         NA
-## [2,] 10.586589 -1.586218  8.614287  2.594923 -4.033874 -7.1485960
-## [3,]  2.977001 22.145713  1.042331 -6.070604  1.808299  4.6690988
-## [4,]  4.241735 -3.267747  3.762403  3.764211  3.027229 -0.4342174
-## [5,]  1.938961        NA        NA        NA        NA         NA
-##           [,7]     [,8]      [,9] [,10] [,11] [,12] [,13] [,14] [,15]
-## [1,]        NA       NA        NA    NA    NA    NA    NA    NA    NA
-## [2,]        NA       NA        NA    NA    NA    NA    NA    NA    NA
-## [3,]        NA       NA        NA    NA    NA    NA    NA    NA    NA
-## [4,] -1.234136 2.380673 0.5847405    NA    NA    NA    NA    NA    NA
-## [5,]        NA       NA        NA    NA    NA    NA    NA    NA    NA
-##      [,16] [,17] [,18] [,19] [,20] [,21] [,22] [,23] [,24] [,25]
-## [1,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [2,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [3,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [4,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [5,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## 
-## , , 4
-## 
-##            [,1]       [,2]      [,3]      [,4]      [,5]      [,6]
-## [1,]  0.4805408 -4.7526623 24.527555  6.184677        NA        NA
-## [2,] 13.1844623  2.0704320  9.391470  8.519142 -4.620338 -8.155959
-## [3,]  2.9662085 30.7427749  3.813683 -7.561421  2.367476  5.847955
-## [4,]  4.9651021 -0.9444024  3.625858  6.268706  3.901076 -0.504655
-## [5,]  1.8120660         NA        NA        NA        NA        NA
-##           [,7]     [,8]     [,9] [,10] [,11] [,12] [,13] [,14] [,15] [,16]
-## [1,]        NA       NA       NA    NA    NA    NA    NA    NA    NA    NA
-## [2,]        NA       NA       NA    NA    NA    NA    NA    NA    NA    NA
-## [3,]        NA       NA       NA    NA    NA    NA    NA    NA    NA    NA
-## [4,] -1.613673 2.056165 1.186554    NA    NA    NA    NA    NA    NA    NA
-## [5,]        NA       NA       NA    NA    NA    NA    NA    NA    NA    NA
-##      [,17] [,18] [,19] [,20] [,21] [,22] [,23] [,24] [,25]
-## [1,]    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [2,]    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [3,]    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [4,]    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [5,]    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## 
-## 
-## [[3]]
-## , , 1
-## 
-##           [,1]      [,2]      [,3]      [,4]       [,5]       [,6]
-## [1,] 0.3450813 0.3985905 0.9877312 0.3295544         NA         NA
-## [2,] 0.2624556 0.3691106 0.5727031 0.1167828 0.34508128 0.39859050
-## [3,] 0.3450813 0.9877312 0.3295544 0.0778791 0.08208062 0.08589388
-## [4,] 0.2624556 0.3691106 0.3764067 0.6062044 0.34508128 0.15045590
-## [5,] 0.1504559        NA        NA        NA         NA         NA
-##           [,7]       [,8]       [,9] [,10] [,11] [,12] [,13] [,14] [,15]
-## [1,]        NA         NA         NA    NA    NA    NA    NA    NA    NA
-## [2,]        NA         NA         NA    NA    NA    NA    NA    NA    NA
-## [3,]        NA         NA         NA    NA    NA    NA    NA    NA    NA
-## [4,] 0.0778791 0.08208062 0.08589388    NA    NA    NA    NA    NA    NA
-## [5,]        NA         NA         NA    NA    NA    NA    NA    NA    NA
-##      [,16] [,17] [,18] [,19] [,20] [,21] [,22] [,23] [,24] [,25]
-## [1,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [2,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [3,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [4,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [5,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## 
-## , , 2
-## 
-##           [,1]      [,2]      [,3]       [,4]       [,5]       [,6]
-## [1,] 0.2875677 0.3321588 0.8196699 0.30963843         NA         NA
-## [2,] 0.2187130 0.3447453 0.4772526 0.10689339 0.28756774 0.33215875
-## [3,] 0.2875677 0.8196699 0.3096384 0.06489925 0.06840052 0.07157824
-## [4,] 0.2187130 0.3447453 0.3504187 0.50962684 0.28756774 0.12537991
-## [5,] 0.1253799        NA        NA         NA         NA         NA
-##            [,7]       [,8]       [,9] [,10] [,11] [,12] [,13] [,14] [,15]
-## [1,]         NA         NA         NA    NA    NA    NA    NA    NA    NA
-## [2,]         NA         NA         NA    NA    NA    NA    NA    NA    NA
-## [3,]         NA         NA         NA    NA    NA    NA    NA    NA    NA
-## [4,] 0.06489925 0.06840052 0.07157824    NA    NA    NA    NA    NA    NA
-## [5,]         NA         NA         NA    NA    NA    NA    NA    NA    NA
-##      [,16] [,17] [,18] [,19] [,20] [,21] [,22] [,23] [,24] [,25]
-## [1,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [2,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [3,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [4,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [5,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## 
-## , , 3
-## 
-##           [,1]      [,2]      [,3]       [,4]       [,5]       [,6]
-## [1,] 0.2464866 0.2847075 0.6656957 0.28945075         NA         NA
-## [2,] 0.1874683 0.3211343 0.4090737 0.09673551 0.24648663 0.28470750
-## [3,] 0.2464866 0.6656957 0.2894508 0.05562793 0.05862902 0.06135277
-## [4,] 0.1874683 0.3211343 0.3250582 0.40026678 0.24648663 0.10746850
-## [5,] 0.1074685        NA        NA         NA         NA         NA
-##            [,7]       [,8]       [,9] [,10] [,11] [,12] [,13] [,14] [,15]
-## [1,]         NA         NA         NA    NA    NA    NA    NA    NA    NA
-## [2,]         NA         NA         NA    NA    NA    NA    NA    NA    NA
-## [3,]         NA         NA         NA    NA    NA    NA    NA    NA    NA
-## [4,] 0.05562793 0.05862902 0.06135277    NA    NA    NA    NA    NA    NA
-## [5,]         NA         NA         NA    NA    NA    NA    NA    NA    NA
-##      [,16] [,17] [,18] [,19] [,20] [,21] [,22] [,23] [,24] [,25]
-## [1,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [2,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [3,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [4,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [5,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## 
-## , , 4
-## 
-##            [,1]      [,2]      [,3]       [,4]       [,5]       [,6]
-## [1,] 0.21567580 0.2491191 0.5194239 0.27095880         NA         NA
-## [2,] 0.16403475 0.2973442 0.3579395 0.08667708 0.21567580 0.24911907
-## [3,] 0.21567580 0.5194239 0.2709588 0.04867444 0.05130039 0.05368368
-## [4,] 0.16403475 0.2973442 0.3012788 0.29539003 0.21567580 0.09403493
-## [5,] 0.09403493        NA        NA         NA         NA         NA
-##            [,7]       [,8]       [,9] [,10] [,11] [,12] [,13] [,14] [,15]
-## [1,]         NA         NA         NA    NA    NA    NA    NA    NA    NA
-## [2,]         NA         NA         NA    NA    NA    NA    NA    NA    NA
-## [3,]         NA         NA         NA    NA    NA    NA    NA    NA    NA
-## [4,] 0.04867444 0.05130039 0.05368368    NA    NA    NA    NA    NA    NA
-## [5,]         NA         NA         NA    NA    NA    NA    NA    NA    NA
-##      [,16] [,17] [,18] [,19] [,20] [,21] [,22] [,23] [,24] [,25]
-## [1,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [2,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [3,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [4,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## [5,]    NA    NA    NA    NA    NA    NA    NA    NA    NA    NA
-## 
-## 
-## [[4]]
-##           [,1]     [,2]     [,3]     [,4]      [,5]     [,6] [,7]     [,8]
-## [1,] 0.2968282 0.000000 4.160927 1.896230 0.0000000 0.000000    0 0.000000
-## [2,] 3.3901579 0.000000 2.495375 2.598207 0.0000000 0.000000    0 0.000000
-## [3,] 0.8406768 5.743633 1.043116 0.000000 0.4412419 1.526423    0 0.000000
-## [4,] 1.2973722 0.000000 2.044654 1.053670 0.9306506 0.000000    0 0.636294
-## [5,] 0.4606706 0.000000 0.000000 0.000000 0.0000000 0.000000    0 0.000000
-##           [,9] [,10] [,11] [,12] [,13] [,14] [,15] [,16] [,17] [,18] [,19]
-## [1,] 0.0000000     0     0     0     0     0     0     0     0     0     0
-## [2,] 0.0000000     0     0     0     0     0     0     0     0     0     0
-## [3,] 0.0000000     0     0     0     0     0     0     0     0     0     0
-## [4,] 0.2789665     0     0     0     0     0     0     0     0     0     0
-## [5,] 0.0000000     0     0     0     0     0     0     0     0     0     0
-##      [,20] [,21] [,22] [,23] [,24] [,25]
-## [1,]     0     0     0     0     0     0
-## [2,]     0     0     0     0     0     0
-## [3,]     0     0     0     0     0     0
-## [4,]     0     0     0     0     0     0
-## [5,]     0     0     0     0     0     0
-## 
-## [[5]]
-## [[5]][[1]]
-## [1] &quot;Mbias&quot;      &quot;FMSY_Mbias&quot; &quot;Abias&quot;      &quot;Aerr&quot;      
-## 
-## [[5]][[2]]
-## [1] &quot;Cbias&quot;      &quot;Csd&quot;        &quot;Dbias&quot;      &quot;Derr&quot;       &quot;Mbias&quot;     
-## [6] &quot;FMSY_Mbias&quot;
-## 
-## [[5]][[3]]
-## [1] &quot;Mbias&quot;    &quot;Abias&quot;    &quot;Aerr&quot;     &quot;Kbias&quot;    &quot;t0bias&quot;   &quot;Linfbias&quot;
-## 
-## [[5]][[4]]
-## [1] &quot;Cbias&quot;    &quot;Csd&quot;      &quot;Isd&quot;      &quot;betas&quot;    &quot;Mbias&quot;    &quot;lenMbias&quot;
-## [7] &quot;Kbias&quot;    &quot;t0bias&quot;   &quot;Linfbias&quot;
-## 
-## [[5]][[5]]
-## [1] &quot;lenMbias&quot;
-## 
-## 
-## [[6]]
-## [1] &quot;Fratio&quot;    &quot;DCAC&quot;      &quot;Fdem&quot;      &quot;DD&quot;        &quot;matlenlim&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOI2</span>(MSE)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-109-1.png" width="864" /></p>
 <p><code>VOI2</code> assumes that relative cost for each type of improvement in data is linearly related to the number of samples (e.g. nCAAobs) or square function of improved precision and bias e.g.: relative <span class="math inline">\(\text{cost}= \frac{1}{(\text{newCV}/\text{oldCV})^2}\)</span></p>
 <p>The VOI features of DLMtool are continuing to be developed and more VOI functions will be added soon.</p>
 
@@ -688,7 +429,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
         </div>
       </div>
 <a href="performance-metrics.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="the-fishery-data-object-data.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="the-fishery-data-object.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

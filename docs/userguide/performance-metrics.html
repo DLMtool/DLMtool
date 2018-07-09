@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.1.3)</title>
+  <title>Data-Limited Methods Toolkit (DLMtool 5.2)</title>
   <meta name="description" content="User guide for the DLMtool R package">
   <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.1.3)" />
+  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.1.3)" />
+  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-03-26">
+<meta name="date" content="2018-07-09">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -135,12 +135,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="4.1.3" data-path="the-operating-model.html"><a href="the-operating-model.html#obs-object"><i class="fa fa-check"></i><b>4.1.3</b> Obs Object</a></li>
 <li class="chapter" data-level="4.1.4" data-path="the-operating-model.html"><a href="the-operating-model.html#imp-object"><i class="fa fa-check"></i><b>4.1.4</b> Imp Object</a></li>
 </ul></li>
-<li class="chapter" data-level="4.2" data-path="the-operating-model.html"><a href="the-operating-model.html#building-an-om-from-component-objects"><i class="fa fa-check"></i><b>4.2</b> Building an OM from Component Objects</a></li>
-<li class="chapter" data-level="4.3" data-path="the-operating-model.html"><a href="the-operating-model.html#visualizing-an-om"><i class="fa fa-check"></i><b>4.3</b> Visualizing an OM</a></li>
+<li class="chapter" data-level="4.2" data-path="the-operating-model.html"><a href="the-operating-model.html#plotting-om-components"><i class="fa fa-check"></i><b>4.2</b> Plotting OM Components</a></li>
+<li class="chapter" data-level="4.3" data-path="the-operating-model.html"><a href="the-operating-model.html#building-an-om-from-component-objects"><i class="fa fa-check"></i><b>4.3</b> Building an OM from Component Objects</a></li>
+<li class="chapter" data-level="4.4" data-path="the-operating-model.html"><a href="the-operating-model.html#visualizing-an-om"><i class="fa fa-check"></i><b>4.4</b> Visualizing an OM</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="management-procedures.html"><a href="management-procedures.html"><i class="fa fa-check"></i><b>5</b> Management Procedures</a><ul>
 <li class="chapter" data-level="5.1" data-path="management-procedures.html"><a href="management-procedures.html#what-is-a-management-procedure"><i class="fa fa-check"></i><b>5.1</b> What is a Management Procedure?</a></li>
-<li class="chapter" data-level="5.2" data-path="management-procedures.html"><a href="management-procedures.html#available-management-procedure"><i class="fa fa-check"></i><b>5.2</b> Available Management Procedure</a></li>
+<li class="chapter" data-level="5.2" data-path="management-procedures.html"><a href="management-procedures.html#available-management-procedures"><i class="fa fa-check"></i><b>5.2</b> Available Management Procedures</a></li>
 <li class="chapter" data-level="5.3" data-path="management-procedures.html"><a href="management-procedures.html#types-of-management-procedure"><i class="fa fa-check"></i><b>5.3</b> Types of Management Procedure</a><ul>
 <li class="chapter" data-level="5.3.1" data-path="management-procedures.html"><a href="management-procedures.html#input-control-mps"><i class="fa fa-check"></i><b>5.3.1</b> Input Control MPs</a></li>
 <li class="chapter" data-level="5.3.2" data-path="management-procedures.html"><a href="management-procedures.html#output-control-mps"><i class="fa fa-check"></i><b>5.3.2</b> Output Control MPs</a></li>
@@ -154,12 +155,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="6.3" data-path="running-the-mse.html"><a href="running-the-mse.html#run-the-mse"><i class="fa fa-check"></i><b>6.3</b> Run the MSE</a></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="checking-convergence.html"><a href="checking-convergence.html"><i class="fa fa-check"></i><b>7</b> Checking Convergence</a></li>
-<li class="chapter" data-level="8" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html"><i class="fa fa-check"></i><b>8</b> Plotting the MSE Results</a><ul>
-<li class="chapter" data-level="8.1" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#trade-off-plots"><i class="fa fa-check"></i><b>8.1</b> Trade-Off Plots</a></li>
-<li class="chapter" data-level="8.2" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#wormplot"><i class="fa fa-check"></i><b>8.2</b> Wormplot</a></li>
-<li class="chapter" data-level="8.3" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#projection-plots"><i class="fa fa-check"></i><b>8.3</b> Projection Plots</a></li>
-<li class="chapter" data-level="8.4" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#kobe-plots"><i class="fa fa-check"></i><b>8.4</b> Kobe Plots</a></li>
-<li class="chapter" data-level="8.5" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#compare-to-current-conditions"><i class="fa fa-check"></i><b>8.5</b> Compare to Current Conditions</a></li>
+<li class="chapter" data-level="8" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html"><i class="fa fa-check"></i><b>8</b> Examining the MSE Results</a><ul>
+<li class="chapter" data-level="8.1" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#introducing-performance-metrics"><i class="fa fa-check"></i><b>8.1</b> Introducing Performance Metrics</a></li>
+<li class="chapter" data-level="8.2" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#summary-table"><i class="fa fa-check"></i><b>8.2</b> Summary Table</a></li>
+<li class="chapter" data-level="8.3" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#plotting-mse-results"><i class="fa fa-check"></i><b>8.3</b> Plotting MSE Results</a><ul>
+<li class="chapter" data-level="8.3.1" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#trade-off-plots"><i class="fa fa-check"></i><b>8.3.1</b> Trade-Off Plots</a></li>
+<li class="chapter" data-level="8.3.2" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#wormplot"><i class="fa fa-check"></i><b>8.3.2</b> Wormplot</a></li>
+<li class="chapter" data-level="8.3.3" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#projection-plots"><i class="fa fa-check"></i><b>8.3.3</b> Projection Plots</a></li>
+<li class="chapter" data-level="8.3.4" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#kobe-plots"><i class="fa fa-check"></i><b>8.3.4</b> Kobe Plots</a></li>
+<li class="chapter" data-level="8.3.5" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#compare-to-current-conditions"><i class="fa fa-check"></i><b>8.3.5</b> Compare to Current Conditions</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="9" data-path="parallel-processing.html"><a href="parallel-processing.html"><i class="fa fa-check"></i><b>9</b> Parallel Processing</a><ul>
 <li class="chapter" data-level="9.1" data-path="parallel-processing.html"><a href="parallel-processing.html#setting-up-parallel-processing"><i class="fa fa-check"></i><b>9.1</b> Setting up Parallel Processing</a></li>
@@ -179,89 +184,110 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10.6" data-path="creating-a-new-operating-model.html"><a href="creating-a-new-operating-model.html#import-the-om-into-r"><i class="fa fa-check"></i><b>10.6</b> Import the OM into R</a></li>
 <li class="chapter" data-level="10.7" data-path="creating-a-new-operating-model.html"><a href="creating-a-new-operating-model.html#documenting-an-existing-om"><i class="fa fa-check"></i><b>10.7</b> Documenting an Existing OM</a></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="operating-model-library.html"><a href="operating-model-library.html"><i class="fa fa-check"></i><b>11</b> Operating Model Library</a></li>
+<li class="chapter" data-level="11" data-path="generating-correlated-life-history-parameters.html"><a href="generating-correlated-life-history-parameters.html"><i class="fa fa-check"></i><b>11</b> Generating Correlated Life-History Parameters</a><ul>
+<li class="chapter" data-level="11.1" data-path="generating-correlated-life-history-parameters.html"><a href="generating-correlated-life-history-parameters.html#predicting-all-life-history-parameters"><i class="fa fa-check"></i><b>11.1</b> Predicting all life-history parameters</a></li>
+<li class="chapter" data-level="11.2" data-path="generating-correlated-life-history-parameters.html"><a href="generating-correlated-life-history-parameters.html#predicting-some-life-history-parameters"><i class="fa fa-check"></i><b>11.2</b> Predicting some life-history parameters</a></li>
+<li class="chapter" data-level="11.3" data-path="generating-correlated-life-history-parameters.html"><a href="generating-correlated-life-history-parameters.html#predicting-correlated-parameters"><i class="fa fa-check"></i><b>11.3</b> Predicting correlated parameters</a></li>
+<li class="chapter" data-level="11.4" data-path="generating-correlated-life-history-parameters.html"><a href="generating-correlated-life-history-parameters.html#introducing-custom-parameters"><i class="fa fa-check"></i><b>11.4</b> Introducing Custom Parameters</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="modifying-the-om.html"><a href="modifying-the-om.html"><i class="fa fa-check"></i><b>12</b> Modifying the OM</a><ul>
+<li class="chapter" data-level="12.1" data-path="modifying-the-om.html"><a href="modifying-the-om.html#the-tinyerr-function"><i class="fa fa-check"></i><b>12.1</b> The <code>tinyErr</code> function</a></li>
+<li class="chapter" data-level="12.2" data-path="modifying-the-om.html"><a href="modifying-the-om.html#the-replace-function"><i class="fa fa-check"></i><b>12.2</b> The <code>Replace</code> function</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="operating-model-library.html"><a href="operating-model-library.html"><i class="fa fa-check"></i><b>13</b> Operating Model Library</a></li>
 <li class="part"><span><b>Interpreting MSE Results</b></span></li>
-<li class="chapter" data-level="12" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html"><i class="fa fa-check"></i><b>12</b> Examining the MSE object</a><ul>
-<li class="chapter" data-level="12.1" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#run-an-mse"><i class="fa fa-check"></i><b>12.1</b> Run an MSE</a></li>
-<li class="chapter" data-level="12.2" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-mse-object"><i class="fa fa-check"></i><b>12.2</b> The MSE Object</a><ul>
-<li class="chapter" data-level="12.2.1" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-first-six-slots"><i class="fa fa-check"></i><b>12.2.1</b> The First Six Slots</a></li>
-<li class="chapter" data-level="12.2.2" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-om-slot"><i class="fa fa-check"></i><b>12.2.2</b> The <code>OM</code> Slot</a></li>
-<li class="chapter" data-level="12.2.3" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-obs-slot"><i class="fa fa-check"></i><b>12.2.3</b> The <code>Obs</code> Slot</a></li>
-<li class="chapter" data-level="12.2.4" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-b_bmsy-and-f_fmsy-slots"><i class="fa fa-check"></i><b>12.2.4</b> The <code>B_BMSY</code> and <code>F_FMSY</code> Slots</a></li>
-<li class="chapter" data-level="12.2.5" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-b-fm-c-and-tac-slots"><i class="fa fa-check"></i><b>12.2.5</b> The <code>B</code>, <code>FM</code>, <code>C</code> and <code>TAC</code> Slots</a></li>
-<li class="chapter" data-level="12.2.6" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-ssb_hist-cb_hist-and-fm_hist-slots"><i class="fa fa-check"></i><b>12.2.6</b> The <code>SSB_hist</code>, <code>CB_hist</code>, and <code>FM_hist</code> Slots</a></li>
-<li class="chapter" data-level="12.2.7" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-effort-slot"><i class="fa fa-check"></i><b>12.2.7</b> The <code>Effort</code> Slot</a></li>
+<li class="chapter" data-level="14" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html"><i class="fa fa-check"></i><b>14</b> Examining the MSE object</a><ul>
+<li class="chapter" data-level="14.1" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-first-six-slots"><i class="fa fa-check"></i><b>14.1</b> The First Six Slots</a></li>
+<li class="chapter" data-level="14.2" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-om-slot"><i class="fa fa-check"></i><b>14.2</b> The <code>OM</code> Slot</a></li>
+<li class="chapter" data-level="14.3" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-obs-slot"><i class="fa fa-check"></i><b>14.3</b> The <code>Obs</code> Slot</a></li>
+<li class="chapter" data-level="14.4" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-b_bmsy-and-f_fmsy-slots"><i class="fa fa-check"></i><b>14.4</b> The <code>B_BMSY</code> and <code>F_FMSY</code> Slots</a></li>
+<li class="chapter" data-level="14.5" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-b-fm-c-and-tac-slots"><i class="fa fa-check"></i><b>14.5</b> The <code>B</code>, <code>FM</code>, <code>C</code> and <code>TAC</code> Slots</a></li>
+<li class="chapter" data-level="14.6" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-ssb_hist-cb_hist-and-fm_hist-slots"><i class="fa fa-check"></i><b>14.6</b> The <code>SSB_hist</code>, <code>CB_hist</code>, and <code>FM_hist</code> Slots</a></li>
+<li class="chapter" data-level="14.7" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-effort-slot"><i class="fa fa-check"></i><b>14.7</b> The <code>Effort</code> Slot</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="performance-metrics.html"><a href="performance-metrics.html"><i class="fa fa-check"></i><b>15</b> Performance Metrics</a><ul>
+<li class="chapter" data-level="15.1" data-path="performance-metrics.html"><a href="performance-metrics.html#the-need-for-performance-metrics"><i class="fa fa-check"></i><b>15.1</b> The Need for Performance Metrics</a></li>
+<li class="chapter" data-level="15.2" data-path="performance-metrics.html"><a href="performance-metrics.html#inevitable-trade-offs"><i class="fa fa-check"></i><b>15.2</b> Inevitable Trade-Offs</a><ul>
+<li class="chapter" data-level="15.2.1" data-path="performance-metrics.html"><a href="performance-metrics.html#operational-management-objectives"><i class="fa fa-check"></i><b>15.2.1</b> Operational Management Objectives</a></li>
+</ul></li>
+<li class="chapter" data-level="15.3" data-path="performance-metrics.html"><a href="performance-metrics.html#commonly-used-performance-metrics"><i class="fa fa-check"></i><b>15.3</b> Commonly used Performance Metrics</a><ul>
+<li class="chapter" data-level="15.3.1" data-path="performance-metrics.html"><a href="performance-metrics.html#fishing-mortality"><i class="fa fa-check"></i><b>15.3.1</b> Fishing Mortality</a></li>
+<li class="chapter" data-level="15.3.2" data-path="performance-metrics.html"><a href="performance-metrics.html#stock-biomass"><i class="fa fa-check"></i><b>15.3.2</b> Stock Biomass</a></li>
+<li class="chapter" data-level="15.3.3" data-path="performance-metrics.html"><a href="performance-metrics.html#additional-performance-metrics"><i class="fa fa-check"></i><b>15.3.3</b> Additional Performance Metrics</a></li>
+</ul></li>
+<li class="chapter" data-level="15.4" data-path="performance-metrics.html"><a href="performance-metrics.html#performance-metrics-methods"><i class="fa fa-check"></i><b>15.4</b> Performance Metrics Methods</a><ul>
+<li class="chapter" data-level="15.4.1" data-path="performance-metrics.html"><a href="performance-metrics.html#overview-of-the-pm-functions"><i class="fa fa-check"></i><b>15.4.1</b> Overview of the <code>PM</code> Functions</a></li>
+<li class="chapter" data-level="15.4.2" data-path="performance-metrics.html"><a href="performance-metrics.html#customizing-the-pm-functions"><i class="fa fa-check"></i><b>15.4.2</b> Customizing the <code>PM</code> Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="15.5" data-path="performance-metrics.html"><a href="performance-metrics.html#summarizing-management-procedure-performance"><i class="fa fa-check"></i><b>15.5</b> Summarizing Management Procedure Performance</a><ul>
+<li class="chapter" data-level="15.5.1" data-path="performance-metrics.html"><a href="performance-metrics.html#summary-table-1"><i class="fa fa-check"></i><b>15.5.1</b> <code>summary</code> Table</a></li>
+<li class="chapter" data-level="15.5.2" data-path="performance-metrics.html"><a href="performance-metrics.html#trade-off-plots-1"><i class="fa fa-check"></i><b>15.5.2</b> Trade-Off Plots</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="13" data-path="performance-metrics.html"><a href="performance-metrics.html"><i class="fa fa-check"></i><b>13</b> Performance Metrics</a><ul>
-<li class="chapter" data-level="13.1" data-path="performance-metrics.html"><a href="performance-metrics.html#the-need-for-performance-metrics"><i class="fa fa-check"></i><b>13.1</b> The Need for Performance Metrics</a></li>
-<li class="chapter" data-level="13.2" data-path="performance-metrics.html"><a href="performance-metrics.html#inevitable-trade-offs"><i class="fa fa-check"></i><b>13.2</b> Inevitable Trade-Offs</a><ul>
-<li class="chapter" data-level="13.2.1" data-path="performance-metrics.html"><a href="performance-metrics.html#operational-management-objectives"><i class="fa fa-check"></i><b>13.2.1</b> Operational Management Objectives</a></li>
-</ul></li>
-<li class="chapter" data-level="13.3" data-path="performance-metrics.html"><a href="performance-metrics.html#performance-metrics-in-the-dlmtool"><i class="fa fa-check"></i><b>13.3</b> Performance Metrics in the DLMtool</a><ul>
-<li class="chapter" data-level="13.3.1" data-path="performance-metrics.html"><a href="performance-metrics.html#fishing-mortality"><i class="fa fa-check"></i><b>13.3.1</b> Fishing Mortality</a></li>
-<li class="chapter" data-level="13.3.2" data-path="performance-metrics.html"><a href="performance-metrics.html#stock-biomass"><i class="fa fa-check"></i><b>13.3.2</b> Stock Biomass</a></li>
-<li class="chapter" data-level="13.3.3" data-path="performance-metrics.html"><a href="performance-metrics.html#developing-additional-performance-metrics"><i class="fa fa-check"></i><b>13.3.3</b> Developing Additional Performance Metrics</a></li>
-<li class="chapter" data-level="13.3.4" data-path="performance-metrics.html"><a href="performance-metrics.html#summarizing-management-procedure-performance"><i class="fa fa-check"></i><b>13.3.4</b> Summarizing Management Procedure Performance</a></li>
-<li class="chapter" data-level="13.3.5" data-path="performance-metrics.html"><a href="performance-metrics.html#plotting-mse-results"><i class="fa fa-check"></i><b>13.3.5</b> Plotting MSE Results</a></li>
-</ul></li>
-</ul></li>
-<li class="chapter" data-level="14" data-path="value-of-information.html"><a href="value-of-information.html"><i class="fa fa-check"></i><b>14</b> Value of Information</a></li>
+<li class="chapter" data-level="16" data-path="value-of-information.html"><a href="value-of-information.html"><i class="fa fa-check"></i><b>16</b> Value of Information</a></li>
 <li class="part"><span><b>Using Fishery Data</b></span></li>
-<li class="chapter" data-level="15" data-path="the-fishery-data-object-data.html"><a href="the-fishery-data-object-data.html"><i class="fa fa-check"></i><b>15</b> The Fishery Data Object (Data)</a><ul>
-<li class="chapter" data-level="15.1" data-path="the-fishery-data-object-data.html"><a href="the-fishery-data-object-data.html#in-the-mse"><i class="fa fa-check"></i><b>15.1</b> In the MSE</a></li>
-<li class="chapter" data-level="15.2" data-path="the-fishery-data-object-data.html"><a href="the-fishery-data-object-data.html#application-of-management-procedures-using-real-fisheries-data"><i class="fa fa-check"></i><b>15.2</b> Application of Management Procedures Using Real Fisheries Data</a></li>
+<li class="chapter" data-level="17" data-path="the-fishery-data-object.html"><a href="the-fishery-data-object.html"><i class="fa fa-check"></i><b>17</b> The Fishery Data Object</a><ul>
+<li class="chapter" data-level="17.1" data-path="the-fishery-data-object.html"><a href="the-fishery-data-object.html#in-the-mse"><i class="fa fa-check"></i><b>17.1</b> In the MSE</a></li>
+<li class="chapter" data-level="17.2" data-path="the-fishery-data-object.html"><a href="the-fishery-data-object.html#application-of-management-procedures-using-real-fisheries-data"><i class="fa fa-check"></i><b>17.2</b> Application of Management Procedures Using Real Fisheries Data</a></li>
 </ul></li>
-<li class="chapter" data-level="16" data-path="example-data-objects.html"><a href="example-data-objects.html"><i class="fa fa-check"></i><b>16</b> Example Data Objects</a></li>
-<li class="chapter" data-level="17" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html"><i class="fa fa-check"></i><b>17</b> Creating Your Own Data Object</a><ul>
-<li class="chapter" data-level="17.1" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#creating-a-data-file-in-excel"><i class="fa fa-check"></i><b>17.1</b> Creating a Data File in Excel</a></li>
-<li class="chapter" data-level="17.2" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#importing-the-data-object"><i class="fa fa-check"></i><b>17.2</b> Importing the Data object</a></li>
-<li class="chapter" data-level="17.3" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#example-fishery-data-files"><i class="fa fa-check"></i><b>17.3</b> Example Fishery Data Files</a></li>
-<li class="chapter" data-level="17.4" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#populating-a-data-object-in-r"><i class="fa fa-check"></i><b>17.4</b> Populating a Data Object in R</a></li>
+<li class="chapter" data-level="18" data-path="example-data-objects.html"><a href="example-data-objects.html"><i class="fa fa-check"></i><b>18</b> Example Data Objects</a></li>
+<li class="chapter" data-level="19" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html"><i class="fa fa-check"></i><b>19</b> Creating Your Own Data Object</a><ul>
+<li class="chapter" data-level="19.1" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#creating-a-data-file-in-excel"><i class="fa fa-check"></i><b>19.1</b> Creating a Data File in Excel</a></li>
+<li class="chapter" data-level="19.2" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#importing-the-data-object"><i class="fa fa-check"></i><b>19.2</b> Importing the Data object</a></li>
+<li class="chapter" data-level="19.3" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#example-fishery-data-files"><i class="fa fa-check"></i><b>19.3</b> Example Fishery Data Files</a></li>
+<li class="chapter" data-level="19.4" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#populating-a-data-object-in-r"><i class="fa fa-check"></i><b>19.4</b> Populating a Data Object in R</a></li>
 </ul></li>
-<li class="chapter" data-level="18" data-path="plotting-data-objects.html"><a href="plotting-data-objects.html"><i class="fa fa-check"></i><b>18</b> Plotting Data Objects</a></li>
-<li class="chapter" data-level="19" data-path="determining-which-mps-can-be-applied.html"><a href="determining-which-mps-can-be-applied.html"><i class="fa fa-check"></i><b>19</b> Determining Which MPs Can Be Applied</a></li>
-<li class="chapter" data-level="20" data-path="applying-management-procedures.html"><a href="applying-management-procedures.html"><i class="fa fa-check"></i><b>20</b> Applying Management Procedures</a></li>
+<li class="chapter" data-level="20" data-path="plotting-data-objects.html"><a href="plotting-data-objects.html"><i class="fa fa-check"></i><b>20</b> Plotting Data Objects</a></li>
+<li class="chapter" data-level="21" data-path="determining-feasible-and-available-management-procedures.html"><a href="determining-feasible-and-available-management-procedures.html"><i class="fa fa-check"></i><b>21</b> Determining Feasible and Available Management Procedures</a><ul>
+<li class="chapter" data-level="21.1" data-path="determining-feasible-and-available-management-procedures.html"><a href="determining-feasible-and-available-management-procedures.html#feasible-mps"><i class="fa fa-check"></i><b>21.1</b> Feasible MPs</a></li>
+<li class="chapter" data-level="21.2" data-path="determining-feasible-and-available-management-procedures.html"><a href="determining-feasible-and-available-management-procedures.html#available-mps"><i class="fa fa-check"></i><b>21.2</b> Available MPs</a></li>
+<li class="chapter" data-level="21.3" data-path="determining-feasible-and-available-management-procedures.html"><a href="determining-feasible-and-available-management-procedures.html#unavailable-mps"><i class="fa fa-check"></i><b>21.3</b> Unavailable MPs</a></li>
+</ul></li>
+<li class="chapter" data-level="22" data-path="applying-management-procedures.html"><a href="applying-management-procedures.html"><i class="fa fa-check"></i><b>22</b> Applying Management Procedures</a></li>
 <li class="part"><span><b>Advanced DLMtool</b></span></li>
-<li class="chapter" data-level="21" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html"><i class="fa fa-check"></i><b>21</b> Customizing the Operating Model</a><ul>
-<li class="chapter" data-level="21.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#accounting-for-historical-changes-in-fishing"><i class="fa fa-check"></i><b>21.1</b> Accounting for Historical Changes in Fishing</a><ul>
-<li class="chapter" data-level="21.1.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#historical-trends-in-fishing-mortality"><i class="fa fa-check"></i><b>21.1.1</b> Historical Trends in Fishing Mortality</a></li>
-<li class="chapter" data-level="21.1.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#historical-trends-in-selectivity-pattern"><i class="fa fa-check"></i><b>21.1.2</b> Historical Trends in Selectivity Pattern</a></li>
-<li class="chapter" data-level="21.1.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#including-existing-mpas"><i class="fa fa-check"></i><b>21.1.3</b> Including Existing MPAs</a></li>
+<li class="chapter" data-level="23" data-path="averaging-mps.html"><a href="averaging-mps.html"><i class="fa fa-check"></i><b>23</b> Averaging MPs</a></li>
+<li class="chapter" data-level="24" data-path="evaluating-om.html"><a href="evaluating-om.html"><i class="fa fa-check"></i><b>24</b> Evaluating OM</a></li>
+<li class="chapter" data-level="25" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html"><i class="fa fa-check"></i><b>25</b> Customizing the Operating Model</a><ul>
+<li class="chapter" data-level="25.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#accounting-for-historical-changes-in-fishing"><i class="fa fa-check"></i><b>25.1</b> Accounting for Historical Changes in Fishing</a><ul>
+<li class="chapter" data-level="25.1.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#historical-trends-in-fishing-mortality"><i class="fa fa-check"></i><b>25.1.1</b> Historical Trends in Fishing Mortality</a></li>
+<li class="chapter" data-level="25.1.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#historical-trends-in-selectivity-pattern"><i class="fa fa-check"></i><b>25.1.2</b> Historical Trends in Selectivity Pattern</a></li>
+<li class="chapter" data-level="25.1.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#including-existing-mpas"><i class="fa fa-check"></i><b>25.1.3</b> Including Existing MPAs</a></li>
 </ul></li>
-<li class="chapter" data-level="21.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#size-specific-natural-mortality"><i class="fa fa-check"></i><b>21.2</b> Size-Specific Natural Mortality</a><ul>
-<li class="chapter" data-level="21.2.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#constant-m-at-agesize"><i class="fa fa-check"></i><b>21.2.1</b> Constant M at age/size</a></li>
-<li class="chapter" data-level="21.2.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#lorenzen-function-of-weight"><i class="fa fa-check"></i><b>21.2.2</b> Lorenzen function of weight</a></li>
-<li class="chapter" data-level="21.2.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#map-age-specific-m"><i class="fa fa-check"></i><b>21.2.3</b> Map Age-Specific M</a></li>
-<li class="chapter" data-level="21.2.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#map-length-specific-m"><i class="fa fa-check"></i><b>21.2.4</b> Map Length-Specific M</a></li>
+<li class="chapter" data-level="25.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#size-specific-natural-mortality"><i class="fa fa-check"></i><b>25.2</b> Size-Specific Natural Mortality</a><ul>
+<li class="chapter" data-level="25.2.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#constant-m-at-agesize"><i class="fa fa-check"></i><b>25.2.1</b> Constant M at age/size</a></li>
+<li class="chapter" data-level="25.2.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#lorenzen-function-of-weight"><i class="fa fa-check"></i><b>25.2.2</b> Lorenzen function of weight</a></li>
+<li class="chapter" data-level="25.2.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#map-age-specific-m"><i class="fa fa-check"></i><b>25.2.3</b> Map Age-Specific M</a></li>
+<li class="chapter" data-level="25.2.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#map-length-specific-m"><i class="fa fa-check"></i><b>25.2.4</b> Map Length-Specific M</a></li>
 </ul></li>
-<li class="chapter" data-level="21.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#selection-retention-and-discard-mortality"><i class="fa fa-check"></i><b>21.3</b> Selection, Retention and Discard Mortality</a><ul>
-<li class="chapter" data-level="21.3.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#fishery-selection-curve"><i class="fa fa-check"></i><b>21.3.1</b> Fishery Selection Curve</a></li>
-<li class="chapter" data-level="21.3.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#fishery-retention-curve"><i class="fa fa-check"></i><b>21.3.2</b> Fishery Retention Curve</a></li>
-<li class="chapter" data-level="21.3.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#discard-mortality"><i class="fa fa-check"></i><b>21.3.3</b> Discard Mortality</a></li>
-<li class="chapter" data-level="21.3.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#general-discarding"><i class="fa fa-check"></i><b>21.3.4</b> General Discarding</a></li>
+<li class="chapter" data-level="25.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#selection-retention-and-discard-mortality"><i class="fa fa-check"></i><b>25.3</b> Selection, Retention and Discard Mortality</a><ul>
+<li class="chapter" data-level="25.3.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#fishery-selection-curve"><i class="fa fa-check"></i><b>25.3.1</b> Fishery Selection Curve</a></li>
+<li class="chapter" data-level="25.3.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#fishery-retention-curve"><i class="fa fa-check"></i><b>25.3.2</b> Fishery Retention Curve</a></li>
+<li class="chapter" data-level="25.3.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#discard-mortality"><i class="fa fa-check"></i><b>25.3.3</b> Discard Mortality</a></li>
+<li class="chapter" data-level="25.3.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#general-discarding"><i class="fa fa-check"></i><b>25.3.4</b> General Discarding</a></li>
+</ul></li>
+<li class="chapter" data-level="25.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#variable-management-interval"><i class="fa fa-check"></i><b>25.4</b> Variable Management Interval</a></li>
+</ul></li>
+<li class="chapter" data-level="26" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html"><i class="fa fa-check"></i><b>26</b> Developing Custom Management Procedures</a><ul>
+<li class="chapter" data-level="26.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#the-anatomy-of-an-mp"><i class="fa fa-check"></i><b>26.1</b> The Anatomy of an MP</a></li>
+<li class="chapter" data-level="26.2" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#a-constant-catch-mp"><i class="fa fa-check"></i><b>26.2</b> A Constant Catch MP</a></li>
+<li class="chapter" data-level="26.3" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#a-more-complex-mp"><i class="fa fa-check"></i><b>26.3</b> A More Complex MP</a></li>
+<li class="chapter" data-level="26.4" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#beyond-the-catch-limit"><i class="fa fa-check"></i><b>26.4</b> Beyond the Catch Limit</a><ul>
+<li class="chapter" data-level="26.4.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#an-example-effort-control"><i class="fa fa-check"></i><b>26.4.1</b> An Example Effort Control</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="22" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html"><i class="fa fa-check"></i><b>22</b> Developing Custom Management Procedures</a><ul>
-<li class="chapter" data-level="22.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#the-anatomy-of-an-mp"><i class="fa fa-check"></i><b>22.1</b> The Anatomy of an MP</a></li>
-<li class="chapter" data-level="22.2" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#a-constant-catch-mp"><i class="fa fa-check"></i><b>22.2</b> A Constant Catch MP</a></li>
-<li class="chapter" data-level="22.3" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#a-more-complex-mp"><i class="fa fa-check"></i><b>22.3</b> A More Complex MP</a></li>
-<li class="chapter" data-level="22.4" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#beyond-the-catch-limit"><i class="fa fa-check"></i><b>22.4</b> Beyond the Catch Limit</a><ul>
-<li class="chapter" data-level="22.4.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#an-example-effort-control"><i class="fa fa-check"></i><b>22.4.1</b> An Example Effort Control</a></li>
+<li class="chapter" data-level="27" data-path="custom-parameters.html"><a href="custom-parameters.html"><i class="fa fa-check"></i><b>27</b> Custom Parameters</a><ul>
+<li class="chapter" data-level="27.1" data-path="custom-parameters.html"><a href="custom-parameters.html#valid-cpars-names"><i class="fa fa-check"></i><b>27.1</b> Valid cpars names</a></li>
+<li class="chapter" data-level="27.2" data-path="custom-parameters.html"><a href="custom-parameters.html#correlated-samples"><i class="fa fa-check"></i><b>27.2</b> Correlated samples</a></li>
+<li class="chapter" data-level="27.3" data-path="custom-parameters.html"><a href="custom-parameters.html#custom-time-varying-parameters"><i class="fa fa-check"></i><b>27.3</b> Custom time-varying parameters</a></li>
 </ul></li>
+<li class="chapter" data-level="28" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html"><i class="fa fa-check"></i><b>28</b> Subsetting the MSE Object</a><ul>
+<li class="chapter" data-level="28.1" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html#subsetting-by-performance"><i class="fa fa-check"></i><b>28.1</b> Subsetting by Performance</a></li>
+<li class="chapter" data-level="28.2" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html#subsetting-by-operating-model-parameters"><i class="fa fa-check"></i><b>28.2</b> Subsetting by Operating Model Parameters</a></li>
 </ul></li>
-<li class="chapter" data-level="23" data-path="custom-parameters.html"><a href="custom-parameters.html"><i class="fa fa-check"></i><b>23</b> Custom Parameters</a><ul>
-<li class="chapter" data-level="23.1" data-path="custom-parameters.html"><a href="custom-parameters.html#valid-cpars-names"><i class="fa fa-check"></i><b>23.1</b> Valid cpars names</a></li>
-<li class="chapter" data-level="23.2" data-path="custom-parameters.html"><a href="custom-parameters.html#correlated-samples"><i class="fa fa-check"></i><b>23.2</b> Correlated samples</a></li>
-<li class="chapter" data-level="23.3" data-path="custom-parameters.html"><a href="custom-parameters.html#custom-time-varying-parameters"><i class="fa fa-check"></i><b>23.3</b> Custom time-varying parameters</a></li>
-</ul></li>
-<li class="chapter" data-level="24" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html"><i class="fa fa-check"></i><b>24</b> Subsetting the MSE Object</a><ul>
-<li class="chapter" data-level="24.1" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html#subsetting-by-performance"><i class="fa fa-check"></i><b>24.1</b> Subsetting by Performance</a></li>
-<li class="chapter" data-level="24.2" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html#subsetting-by-operating-model-parameters"><i class="fa fa-check"></i><b>24.2</b> Subsetting by Operating Model Parameters</a></li>
-</ul></li>
-<li class="chapter" data-level="25" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html"><i class="fa fa-check"></i><b>25</b> Custom Performance Metrics</a><ul>
-<li class="chapter" data-level="25.1" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#the-pm-object"><i class="fa fa-check"></i><b>25.1</b> The PM Object</a></li>
-<li class="chapter" data-level="25.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#developing-custom-pms"><i class="fa fa-check"></i><b>25.2</b> Developing Custom PMs</a></li>
+<li class="chapter" data-level="29" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html"><i class="fa fa-check"></i><b>29</b> Custom Performance Metrics</a><ul>
+<li class="chapter" data-level="29.1" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#necessity-of-complexity"><i class="fa fa-check"></i><b>29.1</b> Necessity of Complexity</a></li>
+<li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
+<li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
@@ -320,7 +346,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.1.3)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2)</a>
           </h1>
         </div>
 
@@ -329,27 +355,27 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
             <section class="normal" id="section-">
 <div id="performance-metrics" class="section level1">
-<h1><span class="header-section-number">Chapter 13</span> Performance Metrics</h1>
+<h1><span class="header-section-number">Chapter 15</span> Performance Metrics</h1>
 <p>A key use of the DLMtool is to evaluate the trade-offs in the performance of different potential Management Procedures and to assist in the decision-making process as to which Management Procedure is most likely to satisfy the various management objectives under realistic range of uncertainty and variability in the system.</p>
 <div id="the-need-for-performance-metrics" class="section level2">
-<h2><span class="header-section-number">13.1</span> The Need for Performance Metrics</h2>
+<h2><span class="header-section-number">15.1</span> The Need for Performance Metrics</h2>
 <p>In order to evaluate the relative effectiveness of different Management Procedures, it is important that decision-makers have clearly-defined management objectives. These management objectives can be incorporated into the MSE process in the form of performance metrics, which provide the yardstick with which to compare the relative performance of different management strategies.</p>
 <p>Fisheries managers are confronted with the difficult task of maximizing yield and ensuring the sustainability of the resource and the overall health of the marine environment. The principal objectives of fisheries management could be described as ensuring sustainable harvests and viable fishing communities, while maintaining healthy ecosystems. However, this simplistic view overlooks the fact that there are often conflicts in different management objectives and that there is rarely an optimal management approach that fully satisfies all management objectives (Punt, 2015). Walters and Martell (2004) explain that the task of modern fisheries management is to identify the various trade-offs among conflicting objectives and decide how to balance them in a satisfactory way.</p>
 </div>
 <div id="inevitable-trade-offs" class="section level2">
-<h2><span class="header-section-number">13.2</span> Inevitable Trade-Offs</h2>
+<h2><span class="header-section-number">15.2</span> Inevitable Trade-Offs</h2>
 <p>A typical trade-off is the abundance of the target species versus the catch. Assuming no significant system-wide natural perturbations, a fish stock may be exploited sustainability if catches are set at low levels. However, such economic under-utilization of the resource is often seen as undesirable. Alternatively, high catches may produce immediate short-term benefits, but may result in long-term degradation, or perhaps collapse, of the stock.</p>
 <p>Additionally, there is often a trade-off between stock size and fishing effort, which results in lower catch rates (and lower profit) for individual fishers when a large number of fishers are active in the fishery (Walters and Martell, 2004). Other common trade-offs include the age and size at first capture, either delaying harvest until individuals are fewer in number (due to natural mortality) but larger in size, or capturing a large number of small sized fish (Punt, 2015).</p>
 <p>When multiple objectives are considered, there is usually not a single optimum solution, and fisheries managers are faced with the difficult task of determining the most appropriate management action that satisfies the numerous management objectives and stakeholder interests (Punt, 2015).</p>
 <div id="operational-management-objectives" class="section level3">
-<h3><span class="header-section-number">13.2.1</span> Operational Management Objectives</h3>
+<h3><span class="header-section-number">15.2.1</span> Operational Management Objectives</h3>
 <p>A key strength of the MSE approach is that decision-makers are required to specify clear objectives, which can be classified as either “conceptual” or “operational” (Punt et al., 2014). Conceptual objectives are typically high-level policy goals that may be broadly defined.</p>
 <p>However, in order to be included in an MSE, conceptual objectives must be translated into operational objectives (i.e., expressed as values for performance metrics). Such operational objectives, or performance metrics, may consist of both a reference point (e.g., biomass some fraction of equilibrium unfished level) as well as a measure of the acceptable associated risk (e.g., less than 10% chance that biomass declines below this reference level).</p>
 <p>It is not unusual that some of the management objectives are in conflict. A key benefit of the MSE approach is to highlight these trade-offs among the different management objectives to guide the decision-making process. However, in order for these trade-offs to be quantified, it is critically important that the performance metrics are quantifiable and thus able to be incorporated into the MSE framework (Punt, 2015).</p>
 </div>
 </div>
-<div id="performance-metrics-in-the-dlmtool" class="section level2">
-<h2><span class="header-section-number">13.3</span> Performance Metrics in the DLMtool</h2>
+<div id="commonly-used-performance-metrics" class="section level2">
+<h2><span class="header-section-number">15.3</span> Commonly used Performance Metrics</h2>
 <p>Management strategy evaluation is a simulation exercise where the model can track the specific performance with perfect information, so it is possible to state performance objectives in specific terms that are consistent with the typical objectives of fisheries policies, such as:</p>
 <ul>
 <li>Biomass relative to unfished biomass <span class="math inline">\(\left(B_0\right)\)</span> or biomass at maximum sustainable yield <span class="math inline">\(\left(B_{MSY}\right)\)</span>.</li>
@@ -359,49 +385,565 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 <p>Because the management strategy evaluation runs many simulations of the fisheries performance under each management strategy being tested, the performance can be stated probabilistically, such as the specific probability of biomass being above or below a specific biomass threshold or target.</p>
 <div id="fishing-mortality" class="section level3">
-<h3><span class="header-section-number">13.3.1</span> Fishing Mortality</h3>
-<p>For example, the management strategies can be ranked by the likelihood of overfishing to occur, where the probability of overfishing is measured by the proportion of simulation runs where the fishing mortality rate (<em>F</em>) under a specific management strategy is higher than the <em>F</em> that is expected to produce the maximum sustainable yield.</p>
-<p>Management strategies that have a lower probability of overfishing occurring are typically preferable to those that frequently cause excessive fishing mortality rates. If there are 1,000 simulation runs for each management strategy over a 50-year projection period, then the probability of overfishing could be based on the proportion where <em>F</em> is greater than (or less than) <span class="math inline">\(F_{MSY}\)</span> over all years or any subset of years (e.g., probability of overfishing in years 41-50 of the 50-year projection period).</p>
+<h3><span class="header-section-number">15.3.1</span> Fishing Mortality</h3>
+<p>For example, the management strategies can be ranked by the likelihood of overfishing to occur, where the probability of overfishing is measured by the proportion of simulation runs where the fishing mortality rate (<em>F</em>) under a specific management strategy is higher than the <em>F</em> that is expected to produce the maximum sustainable yield.<br />
+Management strategies that have a lower probability of overfishing occurring are typically preferable to those that frequently cause excessive fishing mortality rates. If there are 1,000 simulation runs for each management strategy over a 50-year projection period, then the probability of overfishing could be based on the proportion where <em>F</em> is greater than (or less than) <span class="math inline">\(F_{MSY}\)</span> over all years or any subset of years (e.g., probability of overfishing in years 41-50 of the 50-year projection period).</p>
 </div>
 <div id="stock-biomass" class="section level3">
-<h3><span class="header-section-number">13.3.2</span> Stock Biomass</h3>
-<p>Another performance metric included in DLMtool is the probability that the stock biomass is above or below some biological reference point. For example, a minimum performance limit may be half the biomass at maximum sustainable yield (0.5 BMSY), and the performance of the management strategies can be ranked by the probability of the stock remaining above this level.</p>
+<h3><span class="header-section-number">15.3.2</span> Stock Biomass</h3>
+<p>Another common performance metric is the probability that the stock biomass is above or below some biological reference point. For example, a minimum performance limit may be half the biomass at maximum sustainable yield (0.5 BMSY), and the performance of the management strategies can be ranked by the probability of the stock remaining above this level.</p>
 <p>Management strategies that fail to maintain biomass above this limit with a high priority may be considered too risky and therefore excluded from further examination.</p>
 </div>
-<div id="developing-additional-performance-metrics" class="section level3">
-<h3><span class="header-section-number">13.3.3</span> Developing Additional Performance Metrics</h3>
+<div id="additional-performance-metrics" class="section level3">
+<h3><span class="header-section-number">15.3.3</span> Additional Performance Metrics</h3>
 <p>There may be other performance metrics that are of interest to fishery managers and stakeholders. Stakeholder participation is critical when developing performance metrics to evaluate different biological scenarios or management strategies in a MSE. Furthermore, it is important that the performance metrics, together with any acceptable risk thresholds are identified and agreed upon before the MSE is conducted.</p>
-<p>The DLMtool can be customized to track and display additional performance metrics as identified by stakeholders.</p>
 </div>
-<div id="summarizing-management-procedure-performance" class="section level3">
-<h3><span class="header-section-number">13.3.4</span> Summarizing Management Procedure Performance</h3>
-<p>The information in the <code>MSE</code> object can be summarized in a number of ways.</p>
-<p>The <code>summary</code> function provides information on the performance of the Management Procedures with respect to various metrics, including the probability of overfishing, and the probability that the biomass is below various reference levels:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(BSharkMSE)</code></pre></div>
+</div>
+<div id="performance-metrics-methods" class="section level2">
+<h2><span class="header-section-number">15.4</span> Performance Metrics Methods</h2>
+<p>DLMtool includes a set of functions, of class <code>PM</code>, for calculating Performance Metrics. The available <code>PM</code> functions (referred to as PMs) can be found using the <code>avail</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">avail</span>(<span class="st">&quot;PM&quot;</span>)</code></pre></div>
+<pre><code>## [1] &quot;AAVY&quot;  &quot;LTY&quot;   &quot;P10&quot;   &quot;P100&quot;  &quot;P50&quot;   &quot;PNOF&quot;  &quot;STY&quot;   &quot;Yield&quot;</code></pre>
+<p>The PMs are used for summarizing the performance of the management procedures and plotting the results in trade-off plots.</p>
+<p>Here we briefly describe the built-in Performance Metrics functions and demonstrate their use. Advanced DLMtool users can develop their own <code>PM</code> methods, see the <a href="custom-performance-metrics.html#custom-performance-metrics">Custom Performance Metrics</a> chapter for details.</p>
+<p>Functions of class <code>PM</code> are used on an object of class <code>MSE</code> (i.e the object returned by <code>runMSE</code>), and return an object of class <code>PMobj</code>. Most of the time the <code>PM</code> functions are used internally in the <code>summary</code> or plotting functions, and it will not be neccessary to acess the <code>PMobj</code> directly.</p>
+<p>To demonstrate the <code>PM</code> functions we first run a quick example MSE:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MSE &lt;-<span class="st"> </span><span class="kw">runMSE</span>()</code></pre></div>
+<div id="overview-of-the-pm-functions" class="section level3">
+<h3><span class="header-section-number">15.4.1</span> Overview of the <code>PM</code> Functions</h3>
+<p>We will use the <code>P50</code> function to demonstrate the <code>PM</code> methods. Help documentation on the PM methods can be accessed in the usual way: <code>?P50</code>.</p>
+<p>The <code>P50</code> PM method calculates the probability that spawning biomass is above half of the spawning biomass that results in maximum sustainable yield <span class="math inline">\(\left(\text{SB} &gt; 0.5\text{SB}_\text{MSY}\right)\)</span>.</p>
+<p>Applying the <code>P50</code> function to our <code>MSE</code> object results in the following output:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">P50</span>(MSE)</code></pre></div>
+<pre><code>## Spawning Biomass relative to SBMSY
+##  Prob. SB &gt; 0.5 SBMSY (Years 1 - 50)
+##     AvC DCAC FMSYref curE matlenlim MRreal
+## 1  0.02 0.92     0.9    0      0.96   0.06
+## 2     1  0.6       1    1         1      1
+## 3  0.94  0.8    0.94    1         1      1
+## 4     1    1       1    1         1      1
+## 5  0.96 0.96    0.54    0      0.96      0
+## 6     1    1       1    1         1      1
+## 7  0.04 0.12    0.98 0.68         1   0.82
+## 8     1    1       1    1         1      1
+## 9     1    1       1    1         1      1
+## 10 0.94 0.92    0.96 0.08      0.98   0.52
+## 11    .    .       .    .         .      .
+## 12    .    .       .    .         .      .
+## 13    .    .       .    .         .      .
+## 48    1    1       1    1         1      1
+## 
+## Mean
+## [1] 0.68 0.78 0.93 0.80 0.99 0.85</code></pre>
+<p>We can see that the <code>PM</code> function calculated, for the 6 MPs in the <code>MSE</code> object, the probability <span class="math inline">\(\text{SB} &gt; 0.5\text{SB}_\text{MSY}\)</span> for all 50 projection years.</p>
+<p>The <code>PM</code> function prints out a summary table of the performance metrics statistics for the first 10 simulations and the last simulation (48 in this case) for each MP. The final line shows the overall probability of the performance metric, i.e the average performance across all simulations.</p>
+<p>We will look into this output in a little more detail.</p>
+<p>We can see that the first MP is AvC and the performance statistics for the first and second simulations are 0.02 and 1. How have these values been calculated and what do they mean?</p>
+<p>Let’s first plot the spawning biomass relative to BMSY for the first two simulations of the <code>AvC</code> MP:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))
+<span class="kw">plot</span>(<span class="dv">1</span><span class="op">:</span>MSE<span class="op">@</span>proyears, MSE<span class="op">@</span>B_BMSY[<span class="dv">1</span>,<span class="dv">1</span>,], <span class="dt">type=</span><span class="st">&#39;l&#39;</span>, 
+     <span class="dt">xlab=</span><span class="st">&quot;Years&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;B/BMSY&quot;</span>, <span class="dt">lwd=</span><span class="dv">2</span>, <span class="dt">bty=</span><span class="st">&quot;l&quot;</span>, <span class="dt">ylim=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">2</span>),
+     <span class="dt">main=</span><span class="st">&quot;MP = &#39;AvC&#39;; Sim =  1&quot;</span>)
+<span class="kw">abline</span>(<span class="dt">h=</span><span class="fl">0.5</span>, <span class="dt">lty=</span><span class="dv">3</span>)
+
+<span class="kw">plot</span>(<span class="dv">1</span><span class="op">:</span>MSE<span class="op">@</span>proyears, MSE<span class="op">@</span>B_BMSY[<span class="dv">2</span>,<span class="dv">1</span>,], <span class="dt">type=</span><span class="st">&#39;l&#39;</span>, 
+     <span class="dt">xlab=</span><span class="st">&quot;Years&quot;</span>, <span class="dt">ylab=</span><span class="st">&#39;&#39;</span>, <span class="dt">lwd=</span><span class="dv">2</span>, <span class="dt">bty=</span><span class="st">&quot;l&quot;</span>, <span class="dt">ylim=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">2</span>),
+     <span class="dt">main=</span><span class="st">&quot;MP = &#39;AvC&#39;; Sim =  2&quot;</span>)
+<span class="kw">abline</span>(<span class="dt">h=</span><span class="fl">0.5</span>, <span class="dt">lty=</span><span class="dv">3</span>)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-80-1.png" width="672" /></p>
+<p>Now we will calculate fraction of years where spawning biomass is above 0.5 <span class="math inline">\(\text{SB}_\text{MSY}\)</span> for the first and second simulations:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(MSE<span class="op">@</span>B_BMSY[<span class="dv">1</span>,<span class="dv">1</span>,] <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.5</span>) <span class="co"># first simulation</span></code></pre></div>
+<pre><code>## [1] 0.02</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(MSE<span class="op">@</span>B_BMSY[<span class="dv">2</span>,<span class="dv">1</span>,] <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.5</span>) <span class="co"># second simulation</span></code></pre></div>
+<pre><code>## [1] 1</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># identical to: </span>
+<span class="co"># sum(MSE@B_BMSY[1,1,] &gt; 0.5)/MSE@proyears</span>
+<span class="co"># sum(MSE@B_BMSY[2,1,] &gt; 0.5)/MSE@proyears</span></code></pre></div>
+<p>Notice how the performance statistics for each simulation correspond with the plot shown above?</p>
+<p>The overall performance is then calculated by the probability over all simulations, i.e for the first MP AvC:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(MSE<span class="op">@</span>B_BMSY[,<span class="dv">1</span>,]<span class="op">&gt;</span><span class="fl">0.5</span>)</code></pre></div>
+<pre><code>## [1] 0.6829167</code></pre>
+<p>And for 6 MPs:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">round</span>(<span class="kw">apply</span>(MSE<span class="op">@</span>B_BMSY <span class="op">&gt;</span><span class="fl">0.5</span>, <span class="dv">2</span>, mean),<span class="dv">2</span>)</code></pre></div>
+<pre><code>## [1] 0.68 0.78 0.93 0.80 0.99 0.85</code></pre>
+<p>which, reassuringly, is the same as the output of the <code>P50</code> function.</p>
+</div>
+<div id="customizing-the-pm-functions" class="section level3">
+<h3><span class="header-section-number">15.4.2</span> Customizing the <code>PM</code> Functions</h3>
+<p>The <code>PM</code> functions allow for very quick calculation of performance metrics. For example, suppose that instead of calculating performance over all projection years, we are only interested in the long-term performance, say over the last 10 years. This can be easily achieved using the <code>Yrs</code> argument in the <code>PM</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">P50</span>(MSE, <span class="dt">Yrs=</span><span class="kw">c</span>(<span class="dv">41</span>,<span class="dv">50</span>))</code></pre></div>
+<pre><code>## Spawning Biomass relative to SBMSY
+##  Prob. SB &gt; 0.5 SBMSY (Years 41 - 50)
+##    AvC DCAC FMSYref curE matlenlim MRreal
+## 1    0    1       1    0         1      0
+## 2    1    0       1    1         1      1
+## 3  0.7    0     0.8    1         1      1
+## 4    1    1       1    1         1      1
+## 5    1    1     0.3    0         1      0
+## 6    1    1       1    1         1      1
+## 7    0    0       1    1         1      1
+## 8    1    1       1    1         1      1
+## 9    1    1       1    1         1      1
+## 10   1  0.7       1    0         1    0.4
+## 11   .    .       .    .         .      .
+## 12   .    .       .    .         .      .
+## 13   .    .       .    .         .      .
+## 48   1    1       1    1         1      1
+## 
+## Mean
+## [1] 0.59 0.55 0.88 0.79 1.00 0.85</code></pre>
+<p>Or the first 10 years:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">P50</span>(MSE, <span class="dt">Yrs=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">10</span>))</code></pre></div>
+<pre><code>## Spawning Biomass relative to SBMSY
+##  Prob. SB &gt; 0.5 SBMSY (Years 1 - 10)
+##    AvC DCAC FMSYref curE matlenlim MRreal
+## 1  0.1  0.6     0.5    0       0.8    0.2
+## 2    1    1       1    1         1      1
+## 3    1    1       1    1         1      1
+## 4    1    1       1    1         1      1
+## 5  0.8  0.8     0.7    0       0.8      0
+## 6    1    1       1    1         1      1
+## 7  0.2  0.6     0.9  0.4         1    0.4
+## 8    1    1       1    1         1      1
+## 9    1    1       1    1         1      1
+## 10 0.7  0.9     0.8  0.4       0.9    0.7
+## 11   .    .       .    .         .      .
+## 12   .    .       .    .         .      .
+## 13   .    .       .    .         .      .
+## 48   1    1       1    1         1      1
+## 
+## Mean
+## [1] 0.83 0.92 0.92 0.80 0.97 0.83</code></pre>
+<p>The other biomass Performance Metric functions work in the same way:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">P10</span>(MSE) <span class="co"># probability SB &gt; 0.1SB_MSY for all years</span></code></pre></div>
+<pre><code>## Spawning Biomass relative to SBMSY
+##  Prob. SB &gt; 0.1 SBMSY (Years 1 - 50)
+##     AvC DCAC FMSYref curE matlenlim MRreal
+## 1  0.24    1       1 0.42         1      1
+## 2     1 0.98       1    1         1      1
+## 3     1    1       1    1         1      1
+## 4     1    1       1    1         1      1
+## 5     1    1       1 0.38         1   0.96
+## 6     1    1       1    1         1      1
+## 7   0.2 0.32       1    1         1      1
+## 8     1    1       1    1         1      1
+## 9     1    1       1    1         1      1
+## 10    1    1       1    1         1      1
+## 11    .    .       .    .         .      .
+## 12    .    .       .    .         .      .
+## 13    .    .       .    .         .      .
+## 48    1    1       1    1         1      1
+## 
+## Mean
+## [1] 0.79 0.89 1.00 0.96 1.00 1.00</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">P100</span>(MSE) <span class="co"># probability SB &gt; SB_MSY for all years</span></code></pre></div>
+<pre><code>## Spawning Biomass relative to SBMSY
+##  Prob. SB &gt; SBMSY (Years 1 - 50)
+##     AvC DCAC FMSYref curE matlenlim MRreal
+## 1     0  0.8    0.24    0      0.62      0
+## 2  0.86 0.46    0.82    1         1      1
+## 3  0.78 0.76     0.2 0.98         1      1
+## 4  0.92 0.86    0.84 0.96         1   0.96
+## 5   0.6 0.52       0    0      0.56      0
+## 6     1    1    0.84    1         1      1
+## 7     0    0    0.04 0.02      0.84   0.06
+## 8     1    1    0.58    1         1      1
+## 9  0.86 0.92    0.72 0.96      0.98   0.96
+## 10 0.86 0.64     0.5    0      0.94      0
+## 11    .    .       .    .         .      .
+## 12    .    .       .    .         .      .
+## 13    .    .       .    .         .      .
+## 48    1    1    0.76 0.98      0.98   0.98
+## 
+## Mean
+## [1] 0.59 0.65 0.37 0.65 0.93 0.68</code></pre>
+<p>Long-term, short-term and overall average yield are calculated using <code>LTY</code>, <code>STY</code> and <code>Yield</code> respectively:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">LTY</span>(MSE)</code></pre></div>
+<pre><code>## Average Yield relative to Reference Yield (Years 41-50)
+##  Prob. Yield &gt; 0.5 Ref. Yield (Years 41-50)
+##    AvC DCAC FMSYref curE matlenlim MRreal
+## 1    0    1       1    0         1      0
+## 2    1  0.6       1  0.9       0.2    0.9
+## 3    1  0.9       1    1         1      1
+## 4    1    1       1    1         0      1
+## 5    1    1       1    0         1    0.1
+## 6    0  0.6       1  0.1       0.1    0.1
+## 7    0    0       1    1       0.5      1
+## 8    0    1       1  0.8         0    0.8
+## 9    1    1       1    1       0.2      1
+## 10   1    1       1    1         1      1
+## 11   .    .       .    .         .      .
+## 12   .    .       .    .         .      .
+## 13   .    .       .    .         .      .
+## 48   0    1       1  0.8         0    0.7
+## 
+## Mean
+## [1] 0.39 0.65 1.00 0.80 0.56 0.82</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">STY</span>(MSE)</code></pre></div>
+<pre><code>## Average Yield relative to Reference Yield (Years 1-10)
+##  Prob. Yield &gt; 0.5 Ref. Yield (Years 1-10)
+##    AvC DCAC FMSYref curE matlenlim MRreal
+## 1    1    1       1    1       0.4    0.9
+## 2    1    1       1    1       0.2      1
+## 3    1    1       1    1       0.9      1
+## 4    1    1       1  0.7         0    0.7
+## 5    1  0.6       1    1       0.7      1
+## 6    0    0       1  0.1         0    0.1
+## 7  0.8    1     0.6  0.8       0.1    0.8
+## 8    0  0.2       1  0.9       0.1    0.9
+## 9    1  0.6     0.6  0.1         0    0.1
+## 10   1  0.6       1  0.9       0.7    0.9
+## 11   .    .       .    .         .      .
+## 12   .    .       .    .         .      .
+## 13   .    .       .    .         .      .
+## 48   0    0     0.6  0.6         0    0.6
+## 
+## Mean
+## [1] 0.73 0.67 0.90 0.82 0.44 0.80</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Yield</span>(MSE)</code></pre></div>
+<pre><code>## Yield relative to Reference Yield (Years 1-50)
+##  Mean Relative Yield (Years 1-50)
+##     AvC DCAC FMSYref curE matlenlim MRreal
+## 1  0.26 0.77    0.95  0.4      0.94   0.51
+## 2  0.97 0.89       1 0.76      0.39   0.74
+## 3   1.2  1.1     1.2  1.1       0.9    1.1
+## 4  0.69 0.81    0.91 0.66      0.29   0.65
+## 5  0.78 0.77    0.95 0.44      0.92   0.62
+## 6  0.37 0.41    0.77 0.37      0.31   0.37
+## 7  0.26 0.36    0.79 0.75      0.52   0.73
+## 8  0.47 0.64    0.86 0.69      0.31   0.67
+## 9  0.64 0.79    0.87 0.73      0.35   0.71
+## 10 0.59 0.85    0.86 0.72      0.99   0.71
+## 11    .    .       .    .         .      .
+## 12    .    .       .    .         .      .
+## 13    .    .       .    .         .      .
+## 48  0.4 0.58    0.84 0.64      0.17   0.62
+## 
+## Mean
+## [1] 0.67 0.81 1.10 0.83 0.61 0.82</code></pre>
+<p>The <code>PNOF</code> PM function calculates the probability of not overfishing:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">PNOF</span>(MSE)</code></pre></div>
+<pre><code>## Probability of not overfishing (F&lt;FMSY)
+##  Prob. F &lt; FMSY (Years 1 - 50)
+##     AvC DCAC FMSYref curE matlenlim MRreal
+## 1     0 0.98    0.32    0      0.78   0.02
+## 2  0.86 0.42    0.74    1         1      1
+## 3  0.78 0.74     0.4 0.96         1   0.96
+## 4     1 0.82    0.66    1         1      1
+## 5     1 0.96    0.56    0         1   0.02
+## 6     1    1    0.36    1         1      1
+## 7     0    0    0.16  0.2         1    0.4
+## 8     1    1    0.56 0.98         1   0.98
+## 9  0.96 0.88    0.38    1         1      1
+## 10 0.92 0.58    0.12    0         1   0.02
+## 11    .    .       .    .         .      .
+## 12    .    .       .    .         .      .
+## 13    .    .       .    .         .      .
+## 48    1    1    0.34 0.98         1   0.98
+## 
+## Mean
+## [1] 0.60 0.66 0.42 0.68 0.98 0.72</code></pre>
+<p>Finally, the average annual variability in yield (AAVY) can be calculated with the <code>AAVY</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">AAVY</span>(MSE)</code></pre></div>
+<pre><code>## Average Annual Variability in Yield (Years 1-50)
+##  Prob. AAVY &lt; 20% (Years 1-50)
+##    AvC DCAC FMSYref curE matlenlim MRreal
+## 1    0    1       1    0         0      0
+## 2    1    1       1    0         0      0
+## 3    1    1       1    0         0      0
+## 4    1    1       1    0         0      0
+## 5    1    1       1    0         0      0
+## 6    1    1       1    0         0      0
+## 7    1    1       1    0         0      0
+## 8    1    1       1    0         0      0
+## 9    1    1       1    1         1      1
+## 10   1    1       1    0         0      0
+## 11   .    .       .    .         .      .
+## 12   .    .       .    .         .      .
+## 13   .    .       .    .         .      .
+## 48   1    1       1    0         0      0
+## 
+## Mean
+## [1] 0.90 0.96 1.00 0.17 0.19 0.19</code></pre>
+<p>By default the <code>AAVY</code> PM function calculates the probability that AAVY is less than 20%. This reference level can easily be modified using the <code>Ref</code> argument:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">AAVY</span>(MSE, <span class="dt">Ref=</span><span class="fl">0.15</span>) <span class="co"># prob. AAVY &lt; 15%</span></code></pre></div>
+<pre><code>## Average Annual Variability in Yield (Years 1-50)
+##  Prob. AAVY &lt; 15% (Years 1-50)
+##    AvC DCAC FMSYref curE matlenlim MRreal
+## 1    0    1       1    0         0      0
+## 2    1    1       1    0         0      0
+## 3    1    1       1    0         0      0
+## 4    1    1       1    0         0      0
+## 5    1    1       1    0         0      0
+## 6    1    1       1    0         0      0
+## 7    1    1       1    0         0      0
+## 8    1    1       1    0         0      0
+## 9    1    1       1    0         0      0
+## 10   1    1       1    0         0      0
+## 11   .    .       .    .         .      .
+## 12   .    .       .    .         .      .
+## 13   .    .       .    .         .      .
+## 48   1    1       1    0         0      0
+## 
+## Mean
+## [1] 0.830 0.960 1.000 0.062 0.083 0.062</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">AAVY</span>(MSE, <span class="dt">Ref=</span><span class="fl">0.30</span>) <span class="co"># prob. AAVY &lt; 30%</span></code></pre></div>
+<pre><code>## Average Annual Variability in Yield (Years 1-50)
+##  Prob. AAVY &lt; 30% (Years 1-50)
+##    AvC DCAC FMSYref curE matlenlim MRreal
+## 1    1    1       1    0         1      1
+## 2    1    1       1    0         0      0
+## 3    1    1       1    0         0      0
+## 4    1    1       1    0         0      0
+## 5    1    1       1    1         1      1
+## 6    1    1       1    0         0      0
+## 7    1    1       1    1         1      1
+## 8    1    1       1    1         1      1
+## 9    1    1       1    1         1      1
+## 10   1    1       1    0         1      0
+## 11   .    .       .    .         .      .
+## 12   .    .       .    .         .      .
+## 13   .    .       .    .         .      .
+## 48   1    1       1    0         0      0
+## 
+## Mean
+## [1] 0.98 1.00 1.00 0.56 0.60 0.58</code></pre>
+<p>The other <code>PM</code> functions also have the <code>Ref</code> argument which can be used in the same way. For example, you may notice that the <code>P50</code> and <code>P100</code> functions are identical except for the value of the <code>Ref</code> argument:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">args</span>(P50)</code></pre></div>
+<pre><code>## function (MSEobj = NULL, Ref = 0.5, Yrs = NULL) 
+## NULL</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">args</span>(P100)</code></pre></div>
+<pre><code>## function (MSEobj = NULL, Ref = 1, Yrs = NULL) 
+## NULL</code></pre>
+<p>It follows then that it is very simple to calculate a custom performance metric based on the built-in <code>PM</code> functions. For example, suppose we wanted to calculate the probability that spawning biomass was above 5% of BMSY. This can be achieved by using any of the biomass-based <code>PM</code> functions and modifying the <code>Ref</code> argument:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">P50</span>(MSE, <span class="dt">Ref=</span><span class="fl">0.05</span>)</code></pre></div>
+<pre><code>## Spawning Biomass relative to SBMSY
+##  Prob. SB &gt; 0.05 SBMSY (Years 1 - 50)
+##    AvC DCAC FMSYref curE matlenlim MRreal
+## 1  0.3    1       1 0.56         1      1
+## 2    1    1       1    1         1      1
+## 3    1    1       1    1         1      1
+## 4    1    1       1    1         1      1
+## 5    1    1       1 0.48         1      1
+## 6    1    1       1    1         1      1
+## 7  0.3 0.58       1    1         1      1
+## 8    1    1       1    1         1      1
+## 9    1    1       1    1         1      1
+## 10   1    1       1    1         1      1
+## 11   .    .       .    .         .      .
+## 12   .    .       .    .         .      .
+## 13   .    .       .    .         .      .
+## 48   1    1       1    1         1      1
+## 
+## Mean
+## [1] 0.84 0.93 1.00 0.97 1.00 1.00</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">P100</span>(MSE, <span class="dt">Ref=</span><span class="fl">0.05</span>)</code></pre></div>
+<pre><code>## Spawning Biomass relative to SBMSY
+##  Prob. SB &gt; 0.05 SBMSY (Years 1 - 50)
+##    AvC DCAC FMSYref curE matlenlim MRreal
+## 1  0.3    1       1 0.56         1      1
+## 2    1    1       1    1         1      1
+## 3    1    1       1    1         1      1
+## 4    1    1       1    1         1      1
+## 5    1    1       1 0.48         1      1
+## 6    1    1       1    1         1      1
+## 7  0.3 0.58       1    1         1      1
+## 8    1    1       1    1         1      1
+## 9    1    1       1    1         1      1
+## 10   1    1       1    1         1      1
+## 11   .    .       .    .         .      .
+## 12   .    .       .    .         .      .
+## 13   .    .       .    .         .      .
+## 48   1    1       1    1         1      1
+## 
+## Mean
+## [1] 0.84 0.93 1.00 0.97 1.00 1.00</code></pre>
+<p>More information on customizing <code>PM</code> functions can be found in the <a href="custom-performance-metrics.html#custom-performance-metrics">Custom Performance Metrics</a> chapter.</p>
+<p>In the next section we will demonstrate using <code>PM</code> functions in summarizing and plotting functions.</p>
+</div>
+</div>
+<div id="summarizing-management-procedure-performance" class="section level2">
+<h2><span class="header-section-number">15.5</span> Summarizing Management Procedure Performance</h2>
+<p>The <a href="examining-the-mse-results.html#examining-the-mse-results">Examining the MSE Results</a> chapter introduced the <code>summary</code> function for <code>MSE</code> objects and some of the plotting functions for visualizing the results. Here we demonstrate how the <code>PM</code> functions can be used in the <code>summary</code> function and the trade-off plots:</p>
+<div id="summary-table-1" class="section level3">
+<h3><span class="header-section-number">15.5.1</span> <code>summary</code> Table</h3>
+<p>The <code>summary</code> function provides information on the performance of the Management Procedures with respect to the performance metrics. By default, <code>summary</code> includes the <code>PNOF</code>, <code>P50</code>, <code>AAVY</code> and <code>LTY</code> performance metrics:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(MSE)</code></pre></div>
 <pre><code>## Calculating Performance Metrics</code></pre>
-<pre><code>##                                    Performance.Metrics
-## 1                  Average Annual Variability in Yield
-## 2  Average Long-Term Yield relative to Reference Yield
-## 3          Probability Spawning Biomass above 10% BMSY
-## 4                  Probability Spawning Biomass &gt; BMSY
-## 5          Probability Spawning Biomass above 50% BMSY
-## 6                                 Probability F &lt; FMSY
-## 7 Average Short-Term Yield relative to Reference Yield
-## 8                    Yield relative to Reference Yield
+<pre><code>##                                       Performance.Metrics 
+## 1                 Probability of not overfishing (F&lt;FMSY) 
+## 2                      Spawning Biomass relative to SBMSY 
+## 3        Average Annual Variability in Yield (Years 1-50) 
+## 4 Average Yield relative to Reference Yield (Years 41-50) 
+##                                             
+## 1              Prob. F &lt; FMSY (Years 1 - 50)
+## 2        Prob. SB &gt; 0.5 SBMSY (Years 1 - 50)
+## 3              Prob. AAVY &lt; 20% (Years 1-50)
+## 4 Prob. Yield &gt; 0.5 Ref. Yield (Years 41-50)
 ## 
 ## 
 ## Probability:
-##          MP AAVY  LTY  P10 P100  P50  POF  STY Yield
-## 1    Fratio 0.82 0.48 0.81 0.50 0.66 0.59 0.59  0.71
-## 2      DCAC 0.98 0.49 0.87 0.70 0.81 0.76 0.62  0.64
-## 3      Fdem 0.80 0.48 0.77 0.43 0.60 0.51 0.65  0.72
-## 4        DD 0.95 0.80 0.92 0.53 0.78 0.67 0.70  0.85
-## 5 matlenlim 0.36 0.82 0.99 0.69 0.89 0.78 0.71  0.94</code></pre>
-<p>This information can be used to identify poorly performing methods, and exclude them from further, perhaps more comprehensive, runs of the MSE.</p>
+##          MP PNOF  P50 AAVY  LTY
+## 1       AvC 0.60 0.68 0.90 0.39
+## 2      DCAC 0.66 0.78 0.96 0.65
+## 3   FMSYref 0.42 0.93 1.00 1.00
+## 4      curE 0.68 0.80 0.17 0.80
+## 5 matlenlim 0.98 0.99 0.19 0.56
+## 6    MRreal 0.72 0.85 0.19 0.82</code></pre>
+<p>It is straightforward to include other <code>PM</code> functions by adding the names of the <code>PM</code> functions, for example:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(MSE, <span class="st">&#39;P100&#39;</span>, <span class="st">&#39;Yield&#39;</span>)</code></pre></div>
+<pre><code>## Calculating Performance Metrics</code></pre>
+<pre><code>##                              Performance.Metrics 
+## 1             Spawning Biomass relative to SBMSY 
+## 2 Yield relative to Reference Yield (Years 1-50) 
+##                                   
+## 1  Prob. SB &gt; SBMSY (Years 1 - 50)
+## 2 Mean Relative Yield (Years 1-50)
+## 
+## 
+## Probability:
+##          MP P100 Yield
+## 1       AvC 0.59  0.67
+## 2      DCAC 0.65  0.81
+## 3   FMSYref 0.37  1.10
+## 4      curE 0.65  0.83
+## 5 matlenlim 0.93  0.61
+## 6    MRreal 0.68  0.82</code></pre>
+<p>or all available <code>PM</code> functions:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(MSE, <span class="kw">avail</span>(<span class="st">&#39;PM&#39;</span>))</code></pre></div>
+<pre><code>## Calculating Performance Metrics</code></pre>
+<pre><code>##                                       Performance.Metrics 
+## 1        Average Annual Variability in Yield (Years 1-50) 
+## 2 Average Yield relative to Reference Yield (Years 41-50) 
+## 3                      Spawning Biomass relative to SBMSY 
+## 4                      Spawning Biomass relative to SBMSY 
+## 5                      Spawning Biomass relative to SBMSY 
+## 6                 Probability of not overfishing (F&lt;FMSY) 
+## 7  Average Yield relative to Reference Yield (Years 1-10) 
+## 8          Yield relative to Reference Yield (Years 1-50) 
+##                                             
+## 1              Prob. AAVY &lt; 20% (Years 1-50)
+## 2 Prob. Yield &gt; 0.5 Ref. Yield (Years 41-50)
+## 3        Prob. SB &gt; 0.1 SBMSY (Years 1 - 50)
+## 4            Prob. SB &gt; SBMSY (Years 1 - 50)
+## 5        Prob. SB &gt; 0.5 SBMSY (Years 1 - 50)
+## 6              Prob. F &lt; FMSY (Years 1 - 50)
+## 7  Prob. Yield &gt; 0.5 Ref. Yield (Years 1-10)
+## 8           Mean Relative Yield (Years 1-50)
+## 
+## 
+## Probability:
+##          MP AAVY  LTY  P10 P100  P50 PNOF  STY Yield
+## 1       AvC 0.90 0.39 0.79 0.59 0.68 0.60 0.73  0.67
+## 2      DCAC 0.96 0.65 0.89 0.65 0.78 0.66 0.67  0.81
+## 3   FMSYref 1.00 1.00 1.00 0.37 0.93 0.42 0.90  1.10
+## 4      curE 0.17 0.80 0.96 0.65 0.80 0.68 0.82  0.83
+## 5 matlenlim 0.19 0.56 1.00 0.93 0.99 0.98 0.44  0.61
+## 6    MRreal 0.19 0.82 1.00 0.68 0.85 0.72 0.80  0.82</code></pre>
+<p>The <code>summary</code> function returns a data frame which can be useful for referring to the PM results elsewhere in the analysis. For example,</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Results &lt;-<span class="st"> </span><span class="kw">summary</span>(MSE, <span class="kw">avail</span>(<span class="st">&#39;PM&#39;</span>), <span class="dt">silent=</span><span class="ot">TRUE</span>) <span class="co"># silent=TRUE to hide print-out to console</span>
+Results<span class="op">$</span>Yield <span class="co"># access the PM results</span></code></pre></div>
+<pre><code>## [1] 0.67 0.81 1.10 0.83 0.61 0.82</code></pre>
 </div>
-<div id="plotting-mse-results" class="section level3">
-<h3><span class="header-section-number">13.3.5</span> Plotting MSE Results</h3>
-<p>The performance of the MPs can also be examined visually. See the <a href="plotting-the-mse-results.html#plotting-the-mse-results">Plotting the MSE Results</a> section for examples on DLMtool plotting functions for the MSE object.</p>
+<div id="trade-off-plots-1" class="section level3">
+<h3><span class="header-section-number">15.5.2</span> Trade-Off Plots</h3>
+<p>The <code>TradePlot</code> function takes an object of class <code>MSE</code> and the names of <code>PM</code> functions (at least 2) to produce a trade-off plot. For example:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TradePlot</span>(MSE) <span class="co"># default plot </span></code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-97-1.png" width="672" /></p>
+<pre><code>##          MP  STY  LTY  P10 AAVY Satisificed
+## 1       AvC 0.73 0.39 0.79 0.90       FALSE
+## 2      DCAC 0.67 0.65 0.89 0.96        TRUE
+## 3   FMSYref 0.90 1.00 1.00 1.00        TRUE
+## 4      curE 0.82 0.80 0.96 0.17       FALSE
+## 5 matlenlim 0.44 0.56 1.00 0.19       FALSE
+## 6    MRreal 0.80 0.82 1.00 0.19       FALSE</code></pre>
+<p>The order of the <code>PM</code> function names determines plotting on the x and y axes. For example:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TradePlot</span>(MSE, <span class="st">&#39;P50&#39;</span> ,<span class="st">&#39;LTY&#39;</span>)  <span class="co"># x = P50, y  = LTY</span></code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-98-1.png" width="672" /></p>
+<pre><code>##          MP  P50  LTY Satisificed
+## 1       AvC 0.68 0.39        TRUE
+## 2      DCAC 0.78 0.65        TRUE
+## 3   FMSYref 0.93 1.00        TRUE
+## 4      curE 0.80 0.80        TRUE
+## 5 matlenlim 0.99 0.56        TRUE
+## 6    MRreal 0.85 0.82        TRUE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TradePlot</span>(MSE, <span class="st">&#39;LTY&#39;</span> ,<span class="st">&#39;P50&#39;</span>)  <span class="co"># x = LTY, y = P50</span></code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-98-2.png" width="672" /></p>
+<pre><code>##          MP  LTY  P50 Satisificed
+## 1       AvC 0.39 0.68        TRUE
+## 2      DCAC 0.65 0.78        TRUE
+## 3   FMSYref 1.00 0.93        TRUE
+## 4      curE 0.80 0.80        TRUE
+## 5 matlenlim 0.56 0.99        TRUE
+## 6    MRreal 0.82 0.85        TRUE</code></pre>
+<p>The PMs are recycled if an odd number are provided:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TradePlot</span>(MSE, <span class="st">&#39;P50&#39;</span> ,<span class="st">&#39;LTY&#39;</span>, <span class="st">&#39;STY&#39;</span>) </code></pre></div>
+<pre><code>## Odd number of PMs. Recycling first PM</code></pre>
+<p><img src="userguide_files/figure-html/unnamed-chunk-99-1.png" width="672" /></p>
+<pre><code>##          MP  P50  LTY  STY Satisificed
+## 1       AvC 0.68 0.39 0.73       FALSE
+## 2      DCAC 0.78 0.65 0.67       FALSE
+## 3   FMSYref 0.93 1.00 0.90        TRUE
+## 4      curE 0.80 0.80 0.82        TRUE
+## 5 matlenlim 0.99 0.56 0.44       FALSE
+## 6    MRreal 0.85 0.82 0.80        TRUE</code></pre>
+<p>The <code>Lims</code> argument is used to set the vertical and horizontal acceptable risk thresholds and are interpreted in the same order as the names of the <code>PM</code> functions. For example:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TradePlot</span>(MSE, <span class="st">&#39;P50&#39;</span> ,<span class="st">&#39;LTY&#39;</span>, <span class="dt">Lims=</span><span class="kw">c</span>(<span class="fl">0.8</span>, <span class="dv">0</span>))  <span class="co"># 80% minimum acceptable risk for P50, no minimum for LTY</span></code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-100-1.png" width="672" /></p>
+<pre><code>##          MP  P50  LTY Satisificed
+## 1       AvC 0.68 0.39       FALSE
+## 2      DCAC 0.78 0.65       FALSE
+## 3   FMSYref 0.93 1.00        TRUE
+## 4      curE 0.80 0.80       FALSE
+## 5 matlenlim 0.99 0.56        TRUE
+## 6    MRreal 0.85 0.82        TRUE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TradePlot</span>(MSE, <span class="st">&#39;P50&#39;</span> ,<span class="st">&#39;STY&#39;</span>, <span class="st">&#39;P100&#39;</span>, <span class="st">&#39;LTY&#39;</span>, <span class="dt">Lims=</span><span class="kw">c</span>(<span class="fl">0.8</span>, <span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">0</span>))  <span class="co"># 80% minimum acceptable risk for P50, 50% for P100, no minimum for STY and LTY</span></code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-100-2.png" width="672" /></p>
+<pre><code>##          MP  P50  STY P100  LTY Satisificed
+## 1       AvC 0.68 0.73 0.59 0.39       FALSE
+## 2      DCAC 0.78 0.67 0.65 0.65       FALSE
+## 3   FMSYref 0.93 0.90 0.37 1.00       FALSE
+## 4      curE 0.80 0.82 0.65 0.80       FALSE
+## 5 matlenlim 0.99 0.44 0.93 0.56        TRUE
+## 6    MRreal 0.85 0.80 0.68 0.82        TRUE</code></pre>
+<p>The <code>TradePlot</code> function returns a data frame with the results of the performance metrics, and a column indicating if an MP has met minimum performance criteria for <strong>all</strong> performance metrics. In the previous example, 2 MPs (matlenlim, MRreal) met the minimum performance criteria for all four performance metrics.</p>
+<p>The <code>TradePlot</code> function can be used to make a variety of custom trade-off plots. For example, the <code>Tplot</code>, <code>Tplot2</code>, and <code>Tplot3</code> functions all use this function to produce different trade-off plots:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Tplot</code></pre></div>
+<pre><code>## function(MSEobj, Lims=c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...) {
+##   if (class(Lims)!=&quot;numeric&quot;) stop(&quot;Second argument must be numeric&quot;)
+##   TradePlot(MSEobj, Lims=Lims, PMlist=list(&quot;PNOF&quot;, &quot;LTY&quot;, &quot;P100&quot;, &quot;LTY&quot;, &quot;P50&quot;, &quot;LTY&quot;, &quot;P10&quot;, &quot;LTY&quot;),  ...)
+## }
+## &lt;bytecode: 0x0000000021881928&gt;
+## &lt;environment: namespace:DLMtool&gt;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Tplot</span>(MSE)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-102-1.png" width="672" /></p>
+<pre><code>##          MP PNOF  LTY P100  P50  P10 Satisificed
+## 1       AvC 0.60 0.39 0.59 0.68 0.79       FALSE
+## 2      DCAC 0.66 0.65 0.65 0.78 0.89        TRUE
+## 3   FMSYref 0.42 1.00 0.37 0.93 1.00       FALSE
+## 4      curE 0.68 0.80 0.65 0.80 0.96        TRUE
+## 5 matlenlim 0.98 0.56 0.93 0.99 1.00        TRUE
+## 6    MRreal 0.72 0.82 0.68 0.85 1.00        TRUE</code></pre>
+<p>Similarly, we can easily reproduce <code>NOAA_plot</code> using the <code>Tradeplot</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">NOAA_plot</span>(MSE)</code></pre></div>
+<pre><code>##           PNOF  B50   LTY    VY
+## AvC       60.5 68.3  37.5  83.3
+## DCAC      66.3 78.5  61.2  95.8
+## FMSYref   42.1 92.9 100.0 100.0
+## curE      68.2 79.6  80.8   6.2
+## matlenlim 97.6 99.3  56.7   8.3
+## MRreal    72.0 85.1  82.1   6.2</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TradePlot</span>(MSE, <span class="dt">Lims=</span><span class="kw">c</span>(<span class="fl">0.5</span>, <span class="dv">0</span>, <span class="fl">0.8</span>, <span class="fl">0.5</span>), 
+          <span class="dt">PMlist=</span><span class="kw">list</span>(<span class="st">&quot;PNOF&quot;</span>, <span class="st">&quot;LTY&quot;</span>, <span class="st">&quot;P50&quot;</span>, <span class="st">&quot;AAVY&quot;</span>), <span class="dt">Refs=</span><span class="kw">list</span>(<span class="dt">AAVY=</span><span class="fl">0.15</span>))</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-103-1.png" width="672" /><img src="userguide_files/figure-html/unnamed-chunk-103-2.png" width="672" /></p>
+<pre><code>##          MP PNOF  LTY  P50  AAVY Satisificed
+## 1       AvC 0.60 0.39 0.68 0.830       FALSE
+## 2      DCAC 0.66 0.65 0.78 0.960       FALSE
+## 3   FMSYref 0.42 1.00 0.93 1.000       FALSE
+## 4      curE 0.68 0.80 0.80 0.062       FALSE
+## 5 matlenlim 0.98 0.56 0.99 0.083       FALSE
+## 6    MRreal 0.72 0.82 0.85 0.062       FALSE</code></pre>
+<p>See the <a href="examining-the-mse-results.html#plotting-mse-results">Plotting MSE Results</a> section for examples on DLMtool plotting functions for the MSE object.</p>
 <p>Advanced users may wish to develop their own plotting and summary functions. See the <a href="custom-performance-metrics.html#custom-performance-metrics">Custom Performance Metrics</a> section for more details on this.</p>
 </div>
 </div>

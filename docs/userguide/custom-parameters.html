@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.1.3)</title>
+  <title>Data-Limited Methods Toolkit (DLMtool 5.2)</title>
   <meta name="description" content="User guide for the DLMtool R package">
   <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.1.3)" />
+  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.1.3)" />
+  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-03-26">
+<meta name="date" content="2018-07-09">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -135,12 +135,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="4.1.3" data-path="the-operating-model.html"><a href="the-operating-model.html#obs-object"><i class="fa fa-check"></i><b>4.1.3</b> Obs Object</a></li>
 <li class="chapter" data-level="4.1.4" data-path="the-operating-model.html"><a href="the-operating-model.html#imp-object"><i class="fa fa-check"></i><b>4.1.4</b> Imp Object</a></li>
 </ul></li>
-<li class="chapter" data-level="4.2" data-path="the-operating-model.html"><a href="the-operating-model.html#building-an-om-from-component-objects"><i class="fa fa-check"></i><b>4.2</b> Building an OM from Component Objects</a></li>
-<li class="chapter" data-level="4.3" data-path="the-operating-model.html"><a href="the-operating-model.html#visualizing-an-om"><i class="fa fa-check"></i><b>4.3</b> Visualizing an OM</a></li>
+<li class="chapter" data-level="4.2" data-path="the-operating-model.html"><a href="the-operating-model.html#plotting-om-components"><i class="fa fa-check"></i><b>4.2</b> Plotting OM Components</a></li>
+<li class="chapter" data-level="4.3" data-path="the-operating-model.html"><a href="the-operating-model.html#building-an-om-from-component-objects"><i class="fa fa-check"></i><b>4.3</b> Building an OM from Component Objects</a></li>
+<li class="chapter" data-level="4.4" data-path="the-operating-model.html"><a href="the-operating-model.html#visualizing-an-om"><i class="fa fa-check"></i><b>4.4</b> Visualizing an OM</a></li>
 </ul></li>
 <li class="chapter" data-level="5" data-path="management-procedures.html"><a href="management-procedures.html"><i class="fa fa-check"></i><b>5</b> Management Procedures</a><ul>
 <li class="chapter" data-level="5.1" data-path="management-procedures.html"><a href="management-procedures.html#what-is-a-management-procedure"><i class="fa fa-check"></i><b>5.1</b> What is a Management Procedure?</a></li>
-<li class="chapter" data-level="5.2" data-path="management-procedures.html"><a href="management-procedures.html#available-management-procedure"><i class="fa fa-check"></i><b>5.2</b> Available Management Procedure</a></li>
+<li class="chapter" data-level="5.2" data-path="management-procedures.html"><a href="management-procedures.html#available-management-procedures"><i class="fa fa-check"></i><b>5.2</b> Available Management Procedures</a></li>
 <li class="chapter" data-level="5.3" data-path="management-procedures.html"><a href="management-procedures.html#types-of-management-procedure"><i class="fa fa-check"></i><b>5.3</b> Types of Management Procedure</a><ul>
 <li class="chapter" data-level="5.3.1" data-path="management-procedures.html"><a href="management-procedures.html#input-control-mps"><i class="fa fa-check"></i><b>5.3.1</b> Input Control MPs</a></li>
 <li class="chapter" data-level="5.3.2" data-path="management-procedures.html"><a href="management-procedures.html#output-control-mps"><i class="fa fa-check"></i><b>5.3.2</b> Output Control MPs</a></li>
@@ -154,12 +155,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="6.3" data-path="running-the-mse.html"><a href="running-the-mse.html#run-the-mse"><i class="fa fa-check"></i><b>6.3</b> Run the MSE</a></li>
 </ul></li>
 <li class="chapter" data-level="7" data-path="checking-convergence.html"><a href="checking-convergence.html"><i class="fa fa-check"></i><b>7</b> Checking Convergence</a></li>
-<li class="chapter" data-level="8" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html"><i class="fa fa-check"></i><b>8</b> Plotting the MSE Results</a><ul>
-<li class="chapter" data-level="8.1" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#trade-off-plots"><i class="fa fa-check"></i><b>8.1</b> Trade-Off Plots</a></li>
-<li class="chapter" data-level="8.2" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#wormplot"><i class="fa fa-check"></i><b>8.2</b> Wormplot</a></li>
-<li class="chapter" data-level="8.3" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#projection-plots"><i class="fa fa-check"></i><b>8.3</b> Projection Plots</a></li>
-<li class="chapter" data-level="8.4" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#kobe-plots"><i class="fa fa-check"></i><b>8.4</b> Kobe Plots</a></li>
-<li class="chapter" data-level="8.5" data-path="plotting-the-mse-results.html"><a href="plotting-the-mse-results.html#compare-to-current-conditions"><i class="fa fa-check"></i><b>8.5</b> Compare to Current Conditions</a></li>
+<li class="chapter" data-level="8" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html"><i class="fa fa-check"></i><b>8</b> Examining the MSE Results</a><ul>
+<li class="chapter" data-level="8.1" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#introducing-performance-metrics"><i class="fa fa-check"></i><b>8.1</b> Introducing Performance Metrics</a></li>
+<li class="chapter" data-level="8.2" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#summary-table"><i class="fa fa-check"></i><b>8.2</b> Summary Table</a></li>
+<li class="chapter" data-level="8.3" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#plotting-mse-results"><i class="fa fa-check"></i><b>8.3</b> Plotting MSE Results</a><ul>
+<li class="chapter" data-level="8.3.1" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#trade-off-plots"><i class="fa fa-check"></i><b>8.3.1</b> Trade-Off Plots</a></li>
+<li class="chapter" data-level="8.3.2" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#wormplot"><i class="fa fa-check"></i><b>8.3.2</b> Wormplot</a></li>
+<li class="chapter" data-level="8.3.3" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#projection-plots"><i class="fa fa-check"></i><b>8.3.3</b> Projection Plots</a></li>
+<li class="chapter" data-level="8.3.4" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#kobe-plots"><i class="fa fa-check"></i><b>8.3.4</b> Kobe Plots</a></li>
+<li class="chapter" data-level="8.3.5" data-path="examining-the-mse-results.html"><a href="examining-the-mse-results.html#compare-to-current-conditions"><i class="fa fa-check"></i><b>8.3.5</b> Compare to Current Conditions</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="9" data-path="parallel-processing.html"><a href="parallel-processing.html"><i class="fa fa-check"></i><b>9</b> Parallel Processing</a><ul>
 <li class="chapter" data-level="9.1" data-path="parallel-processing.html"><a href="parallel-processing.html#setting-up-parallel-processing"><i class="fa fa-check"></i><b>9.1</b> Setting up Parallel Processing</a></li>
@@ -179,89 +184,110 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="10.6" data-path="creating-a-new-operating-model.html"><a href="creating-a-new-operating-model.html#import-the-om-into-r"><i class="fa fa-check"></i><b>10.6</b> Import the OM into R</a></li>
 <li class="chapter" data-level="10.7" data-path="creating-a-new-operating-model.html"><a href="creating-a-new-operating-model.html#documenting-an-existing-om"><i class="fa fa-check"></i><b>10.7</b> Documenting an Existing OM</a></li>
 </ul></li>
-<li class="chapter" data-level="11" data-path="operating-model-library.html"><a href="operating-model-library.html"><i class="fa fa-check"></i><b>11</b> Operating Model Library</a></li>
+<li class="chapter" data-level="11" data-path="generating-correlated-life-history-parameters.html"><a href="generating-correlated-life-history-parameters.html"><i class="fa fa-check"></i><b>11</b> Generating Correlated Life-History Parameters</a><ul>
+<li class="chapter" data-level="11.1" data-path="generating-correlated-life-history-parameters.html"><a href="generating-correlated-life-history-parameters.html#predicting-all-life-history-parameters"><i class="fa fa-check"></i><b>11.1</b> Predicting all life-history parameters</a></li>
+<li class="chapter" data-level="11.2" data-path="generating-correlated-life-history-parameters.html"><a href="generating-correlated-life-history-parameters.html#predicting-some-life-history-parameters"><i class="fa fa-check"></i><b>11.2</b> Predicting some life-history parameters</a></li>
+<li class="chapter" data-level="11.3" data-path="generating-correlated-life-history-parameters.html"><a href="generating-correlated-life-history-parameters.html#predicting-correlated-parameters"><i class="fa fa-check"></i><b>11.3</b> Predicting correlated parameters</a></li>
+<li class="chapter" data-level="11.4" data-path="generating-correlated-life-history-parameters.html"><a href="generating-correlated-life-history-parameters.html#introducing-custom-parameters"><i class="fa fa-check"></i><b>11.4</b> Introducing Custom Parameters</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="modifying-the-om.html"><a href="modifying-the-om.html"><i class="fa fa-check"></i><b>12</b> Modifying the OM</a><ul>
+<li class="chapter" data-level="12.1" data-path="modifying-the-om.html"><a href="modifying-the-om.html#the-tinyerr-function"><i class="fa fa-check"></i><b>12.1</b> The <code>tinyErr</code> function</a></li>
+<li class="chapter" data-level="12.2" data-path="modifying-the-om.html"><a href="modifying-the-om.html#the-replace-function"><i class="fa fa-check"></i><b>12.2</b> The <code>Replace</code> function</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="operating-model-library.html"><a href="operating-model-library.html"><i class="fa fa-check"></i><b>13</b> Operating Model Library</a></li>
 <li class="part"><span><b>Interpreting MSE Results</b></span></li>
-<li class="chapter" data-level="12" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html"><i class="fa fa-check"></i><b>12</b> Examining the MSE object</a><ul>
-<li class="chapter" data-level="12.1" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#run-an-mse"><i class="fa fa-check"></i><b>12.1</b> Run an MSE</a></li>
-<li class="chapter" data-level="12.2" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-mse-object"><i class="fa fa-check"></i><b>12.2</b> The MSE Object</a><ul>
-<li class="chapter" data-level="12.2.1" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-first-six-slots"><i class="fa fa-check"></i><b>12.2.1</b> The First Six Slots</a></li>
-<li class="chapter" data-level="12.2.2" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-om-slot"><i class="fa fa-check"></i><b>12.2.2</b> The <code>OM</code> Slot</a></li>
-<li class="chapter" data-level="12.2.3" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-obs-slot"><i class="fa fa-check"></i><b>12.2.3</b> The <code>Obs</code> Slot</a></li>
-<li class="chapter" data-level="12.2.4" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-b_bmsy-and-f_fmsy-slots"><i class="fa fa-check"></i><b>12.2.4</b> The <code>B_BMSY</code> and <code>F_FMSY</code> Slots</a></li>
-<li class="chapter" data-level="12.2.5" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-b-fm-c-and-tac-slots"><i class="fa fa-check"></i><b>12.2.5</b> The <code>B</code>, <code>FM</code>, <code>C</code> and <code>TAC</code> Slots</a></li>
-<li class="chapter" data-level="12.2.6" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-ssb_hist-cb_hist-and-fm_hist-slots"><i class="fa fa-check"></i><b>12.2.6</b> The <code>SSB_hist</code>, <code>CB_hist</code>, and <code>FM_hist</code> Slots</a></li>
-<li class="chapter" data-level="12.2.7" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-effort-slot"><i class="fa fa-check"></i><b>12.2.7</b> The <code>Effort</code> Slot</a></li>
+<li class="chapter" data-level="14" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html"><i class="fa fa-check"></i><b>14</b> Examining the MSE object</a><ul>
+<li class="chapter" data-level="14.1" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-first-six-slots"><i class="fa fa-check"></i><b>14.1</b> The First Six Slots</a></li>
+<li class="chapter" data-level="14.2" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-om-slot"><i class="fa fa-check"></i><b>14.2</b> The <code>OM</code> Slot</a></li>
+<li class="chapter" data-level="14.3" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-obs-slot"><i class="fa fa-check"></i><b>14.3</b> The <code>Obs</code> Slot</a></li>
+<li class="chapter" data-level="14.4" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-b_bmsy-and-f_fmsy-slots"><i class="fa fa-check"></i><b>14.4</b> The <code>B_BMSY</code> and <code>F_FMSY</code> Slots</a></li>
+<li class="chapter" data-level="14.5" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-b-fm-c-and-tac-slots"><i class="fa fa-check"></i><b>14.5</b> The <code>B</code>, <code>FM</code>, <code>C</code> and <code>TAC</code> Slots</a></li>
+<li class="chapter" data-level="14.6" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-ssb_hist-cb_hist-and-fm_hist-slots"><i class="fa fa-check"></i><b>14.6</b> The <code>SSB_hist</code>, <code>CB_hist</code>, and <code>FM_hist</code> Slots</a></li>
+<li class="chapter" data-level="14.7" data-path="examining-the-mse-object.html"><a href="examining-the-mse-object.html#the-effort-slot"><i class="fa fa-check"></i><b>14.7</b> The <code>Effort</code> Slot</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="performance-metrics.html"><a href="performance-metrics.html"><i class="fa fa-check"></i><b>15</b> Performance Metrics</a><ul>
+<li class="chapter" data-level="15.1" data-path="performance-metrics.html"><a href="performance-metrics.html#the-need-for-performance-metrics"><i class="fa fa-check"></i><b>15.1</b> The Need for Performance Metrics</a></li>
+<li class="chapter" data-level="15.2" data-path="performance-metrics.html"><a href="performance-metrics.html#inevitable-trade-offs"><i class="fa fa-check"></i><b>15.2</b> Inevitable Trade-Offs</a><ul>
+<li class="chapter" data-level="15.2.1" data-path="performance-metrics.html"><a href="performance-metrics.html#operational-management-objectives"><i class="fa fa-check"></i><b>15.2.1</b> Operational Management Objectives</a></li>
+</ul></li>
+<li class="chapter" data-level="15.3" data-path="performance-metrics.html"><a href="performance-metrics.html#commonly-used-performance-metrics"><i class="fa fa-check"></i><b>15.3</b> Commonly used Performance Metrics</a><ul>
+<li class="chapter" data-level="15.3.1" data-path="performance-metrics.html"><a href="performance-metrics.html#fishing-mortality"><i class="fa fa-check"></i><b>15.3.1</b> Fishing Mortality</a></li>
+<li class="chapter" data-level="15.3.2" data-path="performance-metrics.html"><a href="performance-metrics.html#stock-biomass"><i class="fa fa-check"></i><b>15.3.2</b> Stock Biomass</a></li>
+<li class="chapter" data-level="15.3.3" data-path="performance-metrics.html"><a href="performance-metrics.html#additional-performance-metrics"><i class="fa fa-check"></i><b>15.3.3</b> Additional Performance Metrics</a></li>
+</ul></li>
+<li class="chapter" data-level="15.4" data-path="performance-metrics.html"><a href="performance-metrics.html#performance-metrics-methods"><i class="fa fa-check"></i><b>15.4</b> Performance Metrics Methods</a><ul>
+<li class="chapter" data-level="15.4.1" data-path="performance-metrics.html"><a href="performance-metrics.html#overview-of-the-pm-functions"><i class="fa fa-check"></i><b>15.4.1</b> Overview of the <code>PM</code> Functions</a></li>
+<li class="chapter" data-level="15.4.2" data-path="performance-metrics.html"><a href="performance-metrics.html#customizing-the-pm-functions"><i class="fa fa-check"></i><b>15.4.2</b> Customizing the <code>PM</code> Functions</a></li>
+</ul></li>
+<li class="chapter" data-level="15.5" data-path="performance-metrics.html"><a href="performance-metrics.html#summarizing-management-procedure-performance"><i class="fa fa-check"></i><b>15.5</b> Summarizing Management Procedure Performance</a><ul>
+<li class="chapter" data-level="15.5.1" data-path="performance-metrics.html"><a href="performance-metrics.html#summary-table-1"><i class="fa fa-check"></i><b>15.5.1</b> <code>summary</code> Table</a></li>
+<li class="chapter" data-level="15.5.2" data-path="performance-metrics.html"><a href="performance-metrics.html#trade-off-plots-1"><i class="fa fa-check"></i><b>15.5.2</b> Trade-Off Plots</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="13" data-path="performance-metrics.html"><a href="performance-metrics.html"><i class="fa fa-check"></i><b>13</b> Performance Metrics</a><ul>
-<li class="chapter" data-level="13.1" data-path="performance-metrics.html"><a href="performance-metrics.html#the-need-for-performance-metrics"><i class="fa fa-check"></i><b>13.1</b> The Need for Performance Metrics</a></li>
-<li class="chapter" data-level="13.2" data-path="performance-metrics.html"><a href="performance-metrics.html#inevitable-trade-offs"><i class="fa fa-check"></i><b>13.2</b> Inevitable Trade-Offs</a><ul>
-<li class="chapter" data-level="13.2.1" data-path="performance-metrics.html"><a href="performance-metrics.html#operational-management-objectives"><i class="fa fa-check"></i><b>13.2.1</b> Operational Management Objectives</a></li>
-</ul></li>
-<li class="chapter" data-level="13.3" data-path="performance-metrics.html"><a href="performance-metrics.html#performance-metrics-in-the-dlmtool"><i class="fa fa-check"></i><b>13.3</b> Performance Metrics in the DLMtool</a><ul>
-<li class="chapter" data-level="13.3.1" data-path="performance-metrics.html"><a href="performance-metrics.html#fishing-mortality"><i class="fa fa-check"></i><b>13.3.1</b> Fishing Mortality</a></li>
-<li class="chapter" data-level="13.3.2" data-path="performance-metrics.html"><a href="performance-metrics.html#stock-biomass"><i class="fa fa-check"></i><b>13.3.2</b> Stock Biomass</a></li>
-<li class="chapter" data-level="13.3.3" data-path="performance-metrics.html"><a href="performance-metrics.html#developing-additional-performance-metrics"><i class="fa fa-check"></i><b>13.3.3</b> Developing Additional Performance Metrics</a></li>
-<li class="chapter" data-level="13.3.4" data-path="performance-metrics.html"><a href="performance-metrics.html#summarizing-management-procedure-performance"><i class="fa fa-check"></i><b>13.3.4</b> Summarizing Management Procedure Performance</a></li>
-<li class="chapter" data-level="13.3.5" data-path="performance-metrics.html"><a href="performance-metrics.html#plotting-mse-results"><i class="fa fa-check"></i><b>13.3.5</b> Plotting MSE Results</a></li>
-</ul></li>
-</ul></li>
-<li class="chapter" data-level="14" data-path="value-of-information.html"><a href="value-of-information.html"><i class="fa fa-check"></i><b>14</b> Value of Information</a></li>
+<li class="chapter" data-level="16" data-path="value-of-information.html"><a href="value-of-information.html"><i class="fa fa-check"></i><b>16</b> Value of Information</a></li>
 <li class="part"><span><b>Using Fishery Data</b></span></li>
-<li class="chapter" data-level="15" data-path="the-fishery-data-object-data.html"><a href="the-fishery-data-object-data.html"><i class="fa fa-check"></i><b>15</b> The Fishery Data Object (Data)</a><ul>
-<li class="chapter" data-level="15.1" data-path="the-fishery-data-object-data.html"><a href="the-fishery-data-object-data.html#in-the-mse"><i class="fa fa-check"></i><b>15.1</b> In the MSE</a></li>
-<li class="chapter" data-level="15.2" data-path="the-fishery-data-object-data.html"><a href="the-fishery-data-object-data.html#application-of-management-procedures-using-real-fisheries-data"><i class="fa fa-check"></i><b>15.2</b> Application of Management Procedures Using Real Fisheries Data</a></li>
+<li class="chapter" data-level="17" data-path="the-fishery-data-object.html"><a href="the-fishery-data-object.html"><i class="fa fa-check"></i><b>17</b> The Fishery Data Object</a><ul>
+<li class="chapter" data-level="17.1" data-path="the-fishery-data-object.html"><a href="the-fishery-data-object.html#in-the-mse"><i class="fa fa-check"></i><b>17.1</b> In the MSE</a></li>
+<li class="chapter" data-level="17.2" data-path="the-fishery-data-object.html"><a href="the-fishery-data-object.html#application-of-management-procedures-using-real-fisheries-data"><i class="fa fa-check"></i><b>17.2</b> Application of Management Procedures Using Real Fisheries Data</a></li>
 </ul></li>
-<li class="chapter" data-level="16" data-path="example-data-objects.html"><a href="example-data-objects.html"><i class="fa fa-check"></i><b>16</b> Example Data Objects</a></li>
-<li class="chapter" data-level="17" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html"><i class="fa fa-check"></i><b>17</b> Creating Your Own Data Object</a><ul>
-<li class="chapter" data-level="17.1" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#creating-a-data-file-in-excel"><i class="fa fa-check"></i><b>17.1</b> Creating a Data File in Excel</a></li>
-<li class="chapter" data-level="17.2" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#importing-the-data-object"><i class="fa fa-check"></i><b>17.2</b> Importing the Data object</a></li>
-<li class="chapter" data-level="17.3" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#example-fishery-data-files"><i class="fa fa-check"></i><b>17.3</b> Example Fishery Data Files</a></li>
-<li class="chapter" data-level="17.4" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#populating-a-data-object-in-r"><i class="fa fa-check"></i><b>17.4</b> Populating a Data Object in R</a></li>
+<li class="chapter" data-level="18" data-path="example-data-objects.html"><a href="example-data-objects.html"><i class="fa fa-check"></i><b>18</b> Example Data Objects</a></li>
+<li class="chapter" data-level="19" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html"><i class="fa fa-check"></i><b>19</b> Creating Your Own Data Object</a><ul>
+<li class="chapter" data-level="19.1" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#creating-a-data-file-in-excel"><i class="fa fa-check"></i><b>19.1</b> Creating a Data File in Excel</a></li>
+<li class="chapter" data-level="19.2" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#importing-the-data-object"><i class="fa fa-check"></i><b>19.2</b> Importing the Data object</a></li>
+<li class="chapter" data-level="19.3" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#example-fishery-data-files"><i class="fa fa-check"></i><b>19.3</b> Example Fishery Data Files</a></li>
+<li class="chapter" data-level="19.4" data-path="creating-your-own-data-object.html"><a href="creating-your-own-data-object.html#populating-a-data-object-in-r"><i class="fa fa-check"></i><b>19.4</b> Populating a Data Object in R</a></li>
 </ul></li>
-<li class="chapter" data-level="18" data-path="plotting-data-objects.html"><a href="plotting-data-objects.html"><i class="fa fa-check"></i><b>18</b> Plotting Data Objects</a></li>
-<li class="chapter" data-level="19" data-path="determining-which-mps-can-be-applied.html"><a href="determining-which-mps-can-be-applied.html"><i class="fa fa-check"></i><b>19</b> Determining Which MPs Can Be Applied</a></li>
-<li class="chapter" data-level="20" data-path="applying-management-procedures.html"><a href="applying-management-procedures.html"><i class="fa fa-check"></i><b>20</b> Applying Management Procedures</a></li>
+<li class="chapter" data-level="20" data-path="plotting-data-objects.html"><a href="plotting-data-objects.html"><i class="fa fa-check"></i><b>20</b> Plotting Data Objects</a></li>
+<li class="chapter" data-level="21" data-path="determining-feasible-and-available-management-procedures.html"><a href="determining-feasible-and-available-management-procedures.html"><i class="fa fa-check"></i><b>21</b> Determining Feasible and Available Management Procedures</a><ul>
+<li class="chapter" data-level="21.1" data-path="determining-feasible-and-available-management-procedures.html"><a href="determining-feasible-and-available-management-procedures.html#feasible-mps"><i class="fa fa-check"></i><b>21.1</b> Feasible MPs</a></li>
+<li class="chapter" data-level="21.2" data-path="determining-feasible-and-available-management-procedures.html"><a href="determining-feasible-and-available-management-procedures.html#available-mps"><i class="fa fa-check"></i><b>21.2</b> Available MPs</a></li>
+<li class="chapter" data-level="21.3" data-path="determining-feasible-and-available-management-procedures.html"><a href="determining-feasible-and-available-management-procedures.html#unavailable-mps"><i class="fa fa-check"></i><b>21.3</b> Unavailable MPs</a></li>
+</ul></li>
+<li class="chapter" data-level="22" data-path="applying-management-procedures.html"><a href="applying-management-procedures.html"><i class="fa fa-check"></i><b>22</b> Applying Management Procedures</a></li>
 <li class="part"><span><b>Advanced DLMtool</b></span></li>
-<li class="chapter" data-level="21" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html"><i class="fa fa-check"></i><b>21</b> Customizing the Operating Model</a><ul>
-<li class="chapter" data-level="21.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#accounting-for-historical-changes-in-fishing"><i class="fa fa-check"></i><b>21.1</b> Accounting for Historical Changes in Fishing</a><ul>
-<li class="chapter" data-level="21.1.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#historical-trends-in-fishing-mortality"><i class="fa fa-check"></i><b>21.1.1</b> Historical Trends in Fishing Mortality</a></li>
-<li class="chapter" data-level="21.1.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#historical-trends-in-selectivity-pattern"><i class="fa fa-check"></i><b>21.1.2</b> Historical Trends in Selectivity Pattern</a></li>
-<li class="chapter" data-level="21.1.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#including-existing-mpas"><i class="fa fa-check"></i><b>21.1.3</b> Including Existing MPAs</a></li>
+<li class="chapter" data-level="23" data-path="averaging-mps.html"><a href="averaging-mps.html"><i class="fa fa-check"></i><b>23</b> Averaging MPs</a></li>
+<li class="chapter" data-level="24" data-path="evaluating-om.html"><a href="evaluating-om.html"><i class="fa fa-check"></i><b>24</b> Evaluating OM</a></li>
+<li class="chapter" data-level="25" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html"><i class="fa fa-check"></i><b>25</b> Customizing the Operating Model</a><ul>
+<li class="chapter" data-level="25.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#accounting-for-historical-changes-in-fishing"><i class="fa fa-check"></i><b>25.1</b> Accounting for Historical Changes in Fishing</a><ul>
+<li class="chapter" data-level="25.1.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#historical-trends-in-fishing-mortality"><i class="fa fa-check"></i><b>25.1.1</b> Historical Trends in Fishing Mortality</a></li>
+<li class="chapter" data-level="25.1.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#historical-trends-in-selectivity-pattern"><i class="fa fa-check"></i><b>25.1.2</b> Historical Trends in Selectivity Pattern</a></li>
+<li class="chapter" data-level="25.1.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#including-existing-mpas"><i class="fa fa-check"></i><b>25.1.3</b> Including Existing MPAs</a></li>
 </ul></li>
-<li class="chapter" data-level="21.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#size-specific-natural-mortality"><i class="fa fa-check"></i><b>21.2</b> Size-Specific Natural Mortality</a><ul>
-<li class="chapter" data-level="21.2.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#constant-m-at-agesize"><i class="fa fa-check"></i><b>21.2.1</b> Constant M at age/size</a></li>
-<li class="chapter" data-level="21.2.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#lorenzen-function-of-weight"><i class="fa fa-check"></i><b>21.2.2</b> Lorenzen function of weight</a></li>
-<li class="chapter" data-level="21.2.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#map-age-specific-m"><i class="fa fa-check"></i><b>21.2.3</b> Map Age-Specific M</a></li>
-<li class="chapter" data-level="21.2.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#map-length-specific-m"><i class="fa fa-check"></i><b>21.2.4</b> Map Length-Specific M</a></li>
+<li class="chapter" data-level="25.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#size-specific-natural-mortality"><i class="fa fa-check"></i><b>25.2</b> Size-Specific Natural Mortality</a><ul>
+<li class="chapter" data-level="25.2.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#constant-m-at-agesize"><i class="fa fa-check"></i><b>25.2.1</b> Constant M at age/size</a></li>
+<li class="chapter" data-level="25.2.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#lorenzen-function-of-weight"><i class="fa fa-check"></i><b>25.2.2</b> Lorenzen function of weight</a></li>
+<li class="chapter" data-level="25.2.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#map-age-specific-m"><i class="fa fa-check"></i><b>25.2.3</b> Map Age-Specific M</a></li>
+<li class="chapter" data-level="25.2.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#map-length-specific-m"><i class="fa fa-check"></i><b>25.2.4</b> Map Length-Specific M</a></li>
 </ul></li>
-<li class="chapter" data-level="21.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#selection-retention-and-discard-mortality"><i class="fa fa-check"></i><b>21.3</b> Selection, Retention and Discard Mortality</a><ul>
-<li class="chapter" data-level="21.3.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#fishery-selection-curve"><i class="fa fa-check"></i><b>21.3.1</b> Fishery Selection Curve</a></li>
-<li class="chapter" data-level="21.3.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#fishery-retention-curve"><i class="fa fa-check"></i><b>21.3.2</b> Fishery Retention Curve</a></li>
-<li class="chapter" data-level="21.3.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#discard-mortality"><i class="fa fa-check"></i><b>21.3.3</b> Discard Mortality</a></li>
-<li class="chapter" data-level="21.3.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#general-discarding"><i class="fa fa-check"></i><b>21.3.4</b> General Discarding</a></li>
+<li class="chapter" data-level="25.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#selection-retention-and-discard-mortality"><i class="fa fa-check"></i><b>25.3</b> Selection, Retention and Discard Mortality</a><ul>
+<li class="chapter" data-level="25.3.1" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#fishery-selection-curve"><i class="fa fa-check"></i><b>25.3.1</b> Fishery Selection Curve</a></li>
+<li class="chapter" data-level="25.3.2" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#fishery-retention-curve"><i class="fa fa-check"></i><b>25.3.2</b> Fishery Retention Curve</a></li>
+<li class="chapter" data-level="25.3.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#discard-mortality"><i class="fa fa-check"></i><b>25.3.3</b> Discard Mortality</a></li>
+<li class="chapter" data-level="25.3.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#general-discarding"><i class="fa fa-check"></i><b>25.3.4</b> General Discarding</a></li>
+</ul></li>
+<li class="chapter" data-level="25.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#variable-management-interval"><i class="fa fa-check"></i><b>25.4</b> Variable Management Interval</a></li>
+</ul></li>
+<li class="chapter" data-level="26" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html"><i class="fa fa-check"></i><b>26</b> Developing Custom Management Procedures</a><ul>
+<li class="chapter" data-level="26.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#the-anatomy-of-an-mp"><i class="fa fa-check"></i><b>26.1</b> The Anatomy of an MP</a></li>
+<li class="chapter" data-level="26.2" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#a-constant-catch-mp"><i class="fa fa-check"></i><b>26.2</b> A Constant Catch MP</a></li>
+<li class="chapter" data-level="26.3" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#a-more-complex-mp"><i class="fa fa-check"></i><b>26.3</b> A More Complex MP</a></li>
+<li class="chapter" data-level="26.4" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#beyond-the-catch-limit"><i class="fa fa-check"></i><b>26.4</b> Beyond the Catch Limit</a><ul>
+<li class="chapter" data-level="26.4.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#an-example-effort-control"><i class="fa fa-check"></i><b>26.4.1</b> An Example Effort Control</a></li>
 </ul></li>
 </ul></li>
-<li class="chapter" data-level="22" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html"><i class="fa fa-check"></i><b>22</b> Developing Custom Management Procedures</a><ul>
-<li class="chapter" data-level="22.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#the-anatomy-of-an-mp"><i class="fa fa-check"></i><b>22.1</b> The Anatomy of an MP</a></li>
-<li class="chapter" data-level="22.2" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#a-constant-catch-mp"><i class="fa fa-check"></i><b>22.2</b> A Constant Catch MP</a></li>
-<li class="chapter" data-level="22.3" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#a-more-complex-mp"><i class="fa fa-check"></i><b>22.3</b> A More Complex MP</a></li>
-<li class="chapter" data-level="22.4" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#beyond-the-catch-limit"><i class="fa fa-check"></i><b>22.4</b> Beyond the Catch Limit</a><ul>
-<li class="chapter" data-level="22.4.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#an-example-effort-control"><i class="fa fa-check"></i><b>22.4.1</b> An Example Effort Control</a></li>
+<li class="chapter" data-level="27" data-path="custom-parameters.html"><a href="custom-parameters.html"><i class="fa fa-check"></i><b>27</b> Custom Parameters</a><ul>
+<li class="chapter" data-level="27.1" data-path="custom-parameters.html"><a href="custom-parameters.html#valid-cpars-names"><i class="fa fa-check"></i><b>27.1</b> Valid cpars names</a></li>
+<li class="chapter" data-level="27.2" data-path="custom-parameters.html"><a href="custom-parameters.html#correlated-samples"><i class="fa fa-check"></i><b>27.2</b> Correlated samples</a></li>
+<li class="chapter" data-level="27.3" data-path="custom-parameters.html"><a href="custom-parameters.html#custom-time-varying-parameters"><i class="fa fa-check"></i><b>27.3</b> Custom time-varying parameters</a></li>
 </ul></li>
+<li class="chapter" data-level="28" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html"><i class="fa fa-check"></i><b>28</b> Subsetting the MSE Object</a><ul>
+<li class="chapter" data-level="28.1" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html#subsetting-by-performance"><i class="fa fa-check"></i><b>28.1</b> Subsetting by Performance</a></li>
+<li class="chapter" data-level="28.2" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html#subsetting-by-operating-model-parameters"><i class="fa fa-check"></i><b>28.2</b> Subsetting by Operating Model Parameters</a></li>
 </ul></li>
-<li class="chapter" data-level="23" data-path="custom-parameters.html"><a href="custom-parameters.html"><i class="fa fa-check"></i><b>23</b> Custom Parameters</a><ul>
-<li class="chapter" data-level="23.1" data-path="custom-parameters.html"><a href="custom-parameters.html#valid-cpars-names"><i class="fa fa-check"></i><b>23.1</b> Valid cpars names</a></li>
-<li class="chapter" data-level="23.2" data-path="custom-parameters.html"><a href="custom-parameters.html#correlated-samples"><i class="fa fa-check"></i><b>23.2</b> Correlated samples</a></li>
-<li class="chapter" data-level="23.3" data-path="custom-parameters.html"><a href="custom-parameters.html#custom-time-varying-parameters"><i class="fa fa-check"></i><b>23.3</b> Custom time-varying parameters</a></li>
-</ul></li>
-<li class="chapter" data-level="24" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html"><i class="fa fa-check"></i><b>24</b> Subsetting the MSE Object</a><ul>
-<li class="chapter" data-level="24.1" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html#subsetting-by-performance"><i class="fa fa-check"></i><b>24.1</b> Subsetting by Performance</a></li>
-<li class="chapter" data-level="24.2" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html#subsetting-by-operating-model-parameters"><i class="fa fa-check"></i><b>24.2</b> Subsetting by Operating Model Parameters</a></li>
-</ul></li>
-<li class="chapter" data-level="25" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html"><i class="fa fa-check"></i><b>25</b> Custom Performance Metrics</a><ul>
-<li class="chapter" data-level="25.1" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#the-pm-object"><i class="fa fa-check"></i><b>25.1</b> The PM Object</a></li>
-<li class="chapter" data-level="25.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#developing-custom-pms"><i class="fa fa-check"></i><b>25.2</b> Developing Custom PMs</a></li>
+<li class="chapter" data-level="29" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html"><i class="fa fa-check"></i><b>29</b> Custom Performance Metrics</a><ul>
+<li class="chapter" data-level="29.1" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#necessity-of-complexity"><i class="fa fa-check"></i><b>29.1</b> Necessity of Complexity</a></li>
+<li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
+<li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
@@ -320,7 +346,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.1.3)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2)</a>
           </h1>
         </div>
 
@@ -329,42 +355,32 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
             <section class="normal" id="section-">
 <div id="custom-parameters" class="section level1">
-<h1><span class="header-section-number">Chapter 23</span> Custom Parameters</h1>
+<h1><span class="header-section-number">Chapter 27</span> Custom Parameters</h1>
 <p>By default, DLMtool samples the operating model parameters from a uniform distribution. Because the parameters are sampled independently, it is not possible to generate correlated samples. However, the <code>cpars</code> slot in the <code>OM</code> object can be used to pass custom samples into the MSE.</p>
-<p>The addition of the <code>cpars</code> slot provides a lot of flexibility to the DLMtool, and allows users full control of all parameters used in the model. For example, it is possible to generate operating models directly from the output of common stock assessment packages using functions in DLMtool (e.g <code>SS2DLM</code> for Stock Synthesis 3, and <code>iSCAM2DLM</code> for a iSCAM model). These functions take the correlated parameter values from the output of the stock assessment and provide them to DLMtool via the <code>cpars</code> slot, resulting in an operating model that is conditioned on the stock assessment.</p>
+<p>The addition of the <code>cpars</code> slot provides a lot of flexibility to the DLMtool, and allows users full control of all parameters used in the model. For example, it is possible to generate operating models directly from the output of common stock assessment packages using functions in DLMtool (e.g <code>SS2DLM</code> for Stock Synthesis 3, and <code>iSCAM2DLM</code> for a iSCAM model - Note: these functions have now been moved to <code>MSEtool</code>). These functions take the correlated parameter values from the output of the stock assessment and provide them to DLMtool via the <code>cpars</code> slot, resulting in an operating model that is conditioned on the stock assessment.</p>
 <p>The <code>cpars</code> feature is being continually developed as more features are requested for DLMtool.</p>
 <div id="valid-cpars-names" class="section level2">
-<h2><span class="header-section-number">23.1</span> Valid cpars names</h2>
+<h2><span class="header-section-number">27.1</span> Valid cpars names</h2>
 <p>The <code>cpars</code> slot requires a named list containing the custom parameter values. You can see the valid names for <code>cpars</code> by typing:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">validcpars</span>()</code></pre></div>
-<pre><code>##       [,1]         [,2]           [,3]       [,4]          [,5]         
-##  [1,] &quot;Abias&quot;      &quot;AC&quot;           &quot;Aerr&quot;     &quot;age95&quot;       &quot;ageM&quot;       
-##  [2,] &quot;Asize&quot;      &quot;betas&quot;        &quot;Brefbias&quot; &quot;CAA_ESS&quot;     &quot;CAA_nsamp&quot;  
-##  [3,] &quot;CAL_bins&quot;   &quot;CAL_binsmid&quot;  &quot;CAL_ESS&quot;  &quot;CAL_nsamp&quot;   &quot;Cbias&quot;      
-##  [4,] &quot;Crefbias&quot;   &quot;Csd&quot;          &quot;D&quot;        &quot;Dbias&quot;       &quot;Derr&quot;       
-##  [5,] &quot;dFfinal&quot;    &quot;DR&quot;           &quot;EffLower&quot; &quot;EffUpper&quot;    &quot;EffYears&quot;   
-##  [6,] &quot;Esd&quot;        &quot;Fdisc&quot;        &quot;Find&quot;     &quot;FMSY_Mbias&quot;  &quot;Frac_area_1&quot;
-##  [7,] &quot;hs&quot;         &quot;initdist&quot;     &quot;Irefbias&quot; &quot;Isd&quot;         &quot;K&quot;          
-##  [8,] &quot;Karray&quot;     &quot;Kbias&quot;        &quot;Kgrad&quot;    &quot;Krand&quot;       &quot;Ksd&quot;        
-##  [9,] &quot;L5&quot;         &quot;L50&quot;          &quot;L50_95&quot;   &quot;L95&quot;         &quot;LatASD&quot;     
-## [10,] &quot;Len_age&quot;    &quot;LenCV&quot;        &quot;lenMbias&quot; &quot;LFCbias&quot;     &quot;LFR&quot;        
-## [11,] &quot;LFS&quot;        &quot;LFSbias&quot;      &quot;Linf&quot;     &quot;Linfarray&quot;   &quot;Linfbias&quot;   
-## [12,] &quot;Linfgrad&quot;   &quot;Linfrand&quot;     &quot;Linfsd&quot;   &quot;LR5&quot;         &quot;M&quot;          
-## [13,] &quot;M_ageArray&quot; &quot;M_at_Length&quot;  &quot;Marray&quot;   &quot;Mat_age&quot;     &quot;maxage&quot;     
-## [14,] &quot;Mbias&quot;      &quot;Mgrad&quot;        &quot;mov&quot;      &quot;Mrand&quot;       &quot;Msd&quot;        
-## [15,] &quot;Perr&quot;       &quot;Prob_staying&quot; &quot;procsd&quot;   &quot;qcv&quot;         &quot;qinc&quot;       
-## [16,] &quot;R0&quot;         &quot;Recsd&quot;        &quot;Rmaxlen&quot;  &quot;Size_area_1&quot; &quot;Spat_targ&quot;  
-## [17,] &quot;t0&quot;         &quot;t0bias&quot;       &quot;V&quot;        &quot;Vmaxlen&quot;     &quot;Wt_age&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">validcpars</span>())</code></pre></div>
+<pre><code>##    Var.                       Dim.                         Desc.  Type
+## 1    R0 numeric vector length nsim            Virgin recruitment Stock
+## 2     M numeric vector length nsim             Natural mortality Stock
+## 3  Mexp numeric vector length nsim    Lorenzen M-weight exponent Stock
+## 4   Msd numeric vector length nsim Inter-annual variability in M Stock
+## 5 Mgrad numeric vector length nsim                 Gradient in M Stock
+## 6     h numeric vector length nsim                     Steepness Stock</code></pre>
+<p>The custom parameters are divided into 5 different types: ‘Stock’, ‘Fleet’, ‘Obs’, and ‘Imp’ corresponding to the OM components of the same names, and ‘internal’ for internal operating model parameters that over-ride or ignore the values in the <code>OM</code> slots.</p>
 <p>A warning message will alert you if variables appear in the named <code>cpars</code> list that are not in <code>validcpars()</code>, and these will be ignored in the MSE.</p>
 </div>
 <div id="correlated-samples" class="section level2">
-<h2><span class="header-section-number">23.2</span> Correlated samples</h2>
-<p>As the <code>cpars</code> function is used to provide correlated samples to the MSE, it is important that the same number of custom parameters are provided for each variable. In most cases, this is simply a vector <code>nsim</code> long.</p>
+<h2><span class="header-section-number">27.2</span> Correlated samples</h2>
+<p>As the <code>cpars</code> feature is used to provide correlated samples to the MSE, it is important that the same number of custom parameters are provided for each variable. In most cases, this is simply a vector <code>nsim</code> long.</p>
 <p>For example, if you wish to supply correlated samples of the von Bertalanffy growth parameters, you would create three vectors of length <code>nsim</code> containing the samples of Linf, K, and t0.</p>
 <p>If the vectors are shorter than <code>nsim</code> they will simply be recycled. An error message will alert you if the vectors are not the same length.</p>
 <p>As a demonstration, we will use the <code>ForceCor</code> function to generate correlated samples of <em>M</em>, <em>K</em>, <em>L50</em>, and <em>Linf</em> and examine the <code>cpars</code> slot in the resulting OM object:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">ForceCor</span>(DLMtool<span class="op">::</span>testOM)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-143-1.png" width="672" /></p>
+<p><img src="userguide_files/figure-html/unnamed-chunk-181-1.png" width="672" /></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(OM<span class="op">@</span>cpars)</code></pre></div>
 <pre><code>## List of 4
 ##  $ M   : num [1:48] 0.382 0.39 0.396 0.353 0.4 ...
@@ -384,9 +400,131 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##  $ t0  : num [1:4] -0.768 -0.759 -0.203 -0.168</code></pre>
 </div>
 <div id="custom-time-varying-parameters" class="section level2">
-<h2><span class="header-section-number">23.3</span> Custom time-varying parameters</h2>
-<p>It is also possible to supply custom generated time-varing values for some parameters using the <code>cpars</code> slot. For example, time-varying natural mortality or selectivity patterns.</p>
-<p>Additional details on using the <code>cpars</code> slot for this will be added to the userguide soon. If you find that this is a feature you wish to use but are unclear how to do it, bug us with an email!</p>
+<h2><span class="header-section-number">27.3</span> Custom time-varying parameters</h2>
+<p>It is also possible to supply custom generated time-varing values for some parameters using the <code>cpars</code> slot. For example, time-varying natural mortality or selectivity patterns. These are referred to as <em>internal</em> custom parameters.</p>
+<p>A list of valid internal cpars can be found by using the <code>validcpars</code> function. Here, for presentation purposes, we print just the first two columns:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">val_int &lt;-<span class="st"> </span><span class="kw">validcpars</span>(<span class="st">&#39;internal&#39;</span>)
+val_int[,<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)]</code></pre></div>
+<pre><code>##           Var.                                                   Dim.
+## 1     CAL_bins                                        numeric vector 
+## 2  CAL_binsmid                      numeric vector length(CAL_bins)-1
+## 3          L95                             numeric vector length nsim
+## 4       Perr_y numeric matrix dim = c(nsim, maxage+proyears+nyears-1)
+## 5  M_at_Length                   numeric matrix dim = c(n.lengths, 3)
+## 6        Asize                    numeric matrix dim = c(nsim, narea)
+## 7       Karray          numeric matrix dim = c(nsim, nyears+proyears)
+## 8    Linfarray          numeric matrix dim = c(nsim, nyears+proyears)
+## 9       Marray          numeric matrix dim = c(nsim, nyears+proyears)
+## 10       Krand          numeric matrix dim = c(nsim, nyears+proyears)
+## 11    Linfrand          numeric matrix dim = c(nsim, nyears+proyears)
+## 12       Mrand          numeric matrix dim = c(nsim, nyears+proyears)
+## 13        ageM          numeric matrix dim = c(nsim, nyears+proyears)
+## 14       age95          numeric matrix dim = c(nsim, nyears+proyears)
+## 15  M_ageArray   numeric array dim = c(nsim, maxage, nyears+proyears)
+## 16     Mat_age   numeric array dim = c(nsim, maxage, nyears+proyears)
+## 17      LatASD   numeric array dim = c(nsim, maxage, nyears+proyears)
+## 18      Wt_age   numeric array dim = c(nsim, maxage, nyears+proyears)
+## 19     Len_age   numeric array dim = c(nsim, maxage, nyears+proyears)
+## 20         mov      numeric array dim = c(nsim, maxage, narea, narea)
+## 21        Find                   numeric matrix dim = c(nsim, nyears)
+## 22     dFfinal                             numeric vector length nsim
+## 23           V   numeric array dim = c(nsim, maxage, nyears+proyears)
+## 24        retA   numeric array dim = c(nsim, maxage, nyears+proyears)
+## 25        retL numeric array dim = c(nsim, nCALbins, nyears+proyears)
+## 26    lenMbias                             numeric vector length nsim
+## 27       Mbias                             numeric vector length nsim
+## 28       Kbias                             numeric vector length nsim
+## 29      t0bias                             numeric vector length nsim
+## 30    Linfbias                             numeric vector length nsim
+## 31     LFCbias                             numeric vector length nsim
+## 32    FMSYbias                             numeric vector length nsim
+## 33  FMSY_Mbias                             numeric vector length nsim
+## 34 BMSY_B0bias                             numeric vector length nsim
+## 35    Irefbias                             numeric vector length nsim
+## 36    Brefbias                             numeric vector length nsim
+## 37    Crefbias                             numeric vector length nsim
+## 38       Dbias                             numeric vector length nsim
+## 39       hbias                             numeric vector length nsim</code></pre>
+<p>We can see that there are 39 valid internal cpars. The internal cpars are parameters that are derived from one or more of the <code>OM</code> slots.</p>
+<p>For example, <code>M_ageArray</code> is an internal array that describes the natural mortality rate at age for each simulation and year. Typically, this array is derived from the <code>M</code>, <code>M2</code>, <code>Mexp</code>, <code>Mgrad</code> and <code>Msd</code> slots in the <code>Stock</code> object. Using the <code>cpars</code> feature we can override these values in the <code>OM</code> and provide our own values for <em>M</em> for each simulation, age, and year.</p>
+<p>Information on the <code>M_ageArray</code> variable in cpars can be found in the output of the <code>validcpars</code> function:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">val_int[<span class="dv">15</span>,]</code></pre></div>
+<pre><code>##          Var.                                                 Dim.
+## 15 M_ageArray numeric array dim = c(nsim, maxage, nyears+proyears)
+##                                                     Desc.     Type
+## 15 M by simulation, age and year. No variability is added internal</code></pre>
+<p>To generate our own values of the M-at-age array we would populate <code>OM@cpars$M_ageArray</code> with an array with dimensions <code>OM@nsim</code>, <code>OM@maxage</code>, <code>OM@nyears+OM@proyears</code>.</p>
+<p>The <code>cpars</code> feature is very powerful but also somewhat complicated, especially if you are using internal custom parameters. For example, by default DLMtool uses the <code>OM@L50_95</code> slot (the increment between length at 50% maturity (<code>OM@L50</code>) and length at 95% maturity (<code>L95</code>)) to calculate the internal parameter <code>L95</code>. This is neccessary to ensure that <code>L95</code> is always greater than <code>L50</code>. Using internal parameters in <code>cpars</code> it is possible to pass values to <code>L95</code> directly, however now it is up to you to make sure that the <code>L95</code> values are greater than the corresponding <code>L50</code> values, otherwise you end up with a species where fraction mature decreases with age/size!</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span>testOM 
+OM<span class="op">@</span>cpars<span class="op">$</span>L95 &lt;-<span class="st"> </span><span class="kw">rep</span>(<span class="dv">80</span>, OM<span class="op">@</span>nsim)
+temp &lt;-<span class="st"> </span><span class="kw">runMSE</span>(OM, <span class="dt">Hist=</span><span class="ot">TRUE</span>)</code></pre></div>
+<pre><code>## Loading operating model</code></pre>
+<pre><code>## valid custom parameters (OM@cpars) found: 
+## L95</code></pre>
+<pre><code>## Optimizing for user-specified movement</code></pre>
+<pre><code>## Optimizing for user-specified depletion</code></pre>
+<pre><code>## 10 simulations have final biomass that is not close to sampled depletion</code></pre>
+<pre><code>## Re-sampling depletion, recruitment error, and fishing effort</code></pre>
+<pre><code>## Calculating historical stock and fishing dynamics</code></pre>
+<pre><code>## Calculating MSY reference points</code></pre>
+<pre><code>## Calculating B-low reference points</code></pre>
+<pre><code>## Calculating reference yield - best fixed F strategy</code></pre>
+<pre><code>## Returning historical simulations</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data.frame</span>(<span class="dt">L50=</span>temp<span class="op">$</span>SampPars<span class="op">$</span>L50, <span class="dt">L95=</span>temp<span class="op">$</span>SampPars<span class="op">$</span>L95, <span class="dt">diff=</span>temp<span class="op">$</span>SampPars<span class="op">$</span>L95 <span class="op">-</span><span class="st"> </span>temp<span class="op">$</span>SampPars<span class="op">$</span>L50)</code></pre></div>
+<pre><code>##         L50 L95       diff
+## 1  89.04273  80  -9.042727
+## 2  84.24741  80  -4.247406
+## 3  83.68463  80  -3.684629
+## 4  88.46969  80  -8.469689
+## 5  83.30473  80  -3.304726
+## 6  84.33086  80  -4.330862
+## 7  83.87020  80  -3.870200
+## 8  84.89773  80  -4.897730
+## 9  89.16130  80  -9.161301
+## 10 83.98488  80  -3.984878
+## 11 86.10303  80  -6.103030
+## 12 83.05547  80  -3.055465
+## 13 88.86433  80  -8.864327
+## 14 87.95561  80  -7.955609
+## 15 85.62968  80  -5.629683
+## 16 81.58190  80  -1.581904
+## 17 90.93998  80 -10.939979
+## 18 86.11846  80  -6.118459
+## 19 88.88535  80  -8.885348
+## 20 83.99212  80  -3.992123
+## 21 86.52170  80  -6.521703
+## 22 81.59508  80  -1.595075
+## 23 84.40471  80  -4.404715
+## 24 88.14052  80  -8.140517
+## 25 88.68731  80  -8.687307
+## 26 85.37907  80  -5.379065
+## 27 81.61598  80  -1.615975
+## 28 87.74099  80  -7.740989
+## 29 83.69400  80  -3.694005
+## 30 90.34677  80 -10.346768
+## 31 86.88600  80  -6.885997
+## 32 85.89163  80  -5.891633
+## 33 86.63998  80  -6.639976
+## 34 89.23919  80  -9.239189
+## 35 90.14945  80 -10.149446
+## 36 83.51455  80  -3.514550
+## 37 87.37439  80  -7.374391
+## 38 90.71974  80 -10.719740
+## 39 90.38542  80 -10.385425
+## 40 90.03452  80 -10.034515
+## 41 83.33089  80  -3.330892
+## 42 88.57439  80  -8.574392
+## 43 89.45315  80  -9.453146
+## 44 81.80111  80  -1.801110
+## 45 90.39487  80 -10.394870
+## 46 90.97161  80 -10.971610
+## 47 87.53739  80  -7.537389
+## 48 81.60970  80  -1.609695</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="dv">1</span><span class="op">:</span>OM<span class="op">@</span>maxage, temp<span class="op">$</span>AtAge<span class="op">$</span>Mat_age[<span class="dv">1</span>,,<span class="dv">1</span>], <span class="dt">type=</span><span class="st">&quot;l&quot;</span>, 
+     <span class="dt">xlab=</span><span class="st">&quot;Age&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Maturity&quot;</span>)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-185-1.png" width="672" /></p>
+<p>We have tried to include checks to ensure the model is simulating credible population dynamics, but as this somewhat contrived example shows, care is needed when using <code>OM@cpars</code> to specify internal parameters. We recommend first running the model with <code>Hist=TRUE</code> as in the above example and examining the generated values to ensure the parameters you have added in <code>OM@cpars</code> are being used as expected.</p>
+<p>If you find that this is a feature you wish to use but are unclear how to do it, bug us with an email!</p>
 </div>
 </div>
             </section>
