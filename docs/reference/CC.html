@@ -21,9 +21,11 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
 
@@ -34,6 +36,7 @@
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 <!-- mathjax -->
@@ -59,8 +62,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">DLMtool</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.999</span>
+        <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.2</span>
       </span>
     </div>
 
@@ -128,21 +131,21 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>CC</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='CC-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt;   [1] 0.6810725 0.5982481 0.7139673 0.6301242 0.6210347 0.5396529 0.5919947
-#&gt;   [8] 0.6609625 0.5638769 0.6713827 0.6007006 0.7252715 0.5157257 0.7886251
-#&gt;  [15] 0.6726483 0.6685617 0.7304484 0.6448218 0.7274235 0.8436361 0.6657727
-#&gt;  [22] 0.5835348 0.6755990 0.7883518 0.5801488 0.7833049 0.6062990 0.6615834
-#&gt;  [29] 0.6062828 0.6033699 0.5659596 0.6240156 0.5553128 0.8457855 0.5381550
-#&gt;  [36] 0.7186276 0.6344965 0.5635651 0.8079321 0.6080524 0.6048479 0.5788498
-#&gt;  [43] 0.8689991 0.6936558 0.7545490 0.6123460 0.5966950 0.7169032 0.6776835
-#&gt;  [50] 0.7902333 0.7587795 0.6762109 0.5958497 0.7820333 0.5797131 0.7494394
-#&gt;  [57] 0.6347419 0.5438160 0.5396759 0.6906727 0.6748280 0.7833787 0.7108008
-#&gt;  [64] 0.6397315 0.6104910 0.6138633 0.7151793 0.6362955 0.6557691 0.6573882
-#&gt;  [71] 0.5079814 0.4976069 0.5416147 0.6576504 0.8218223 0.7481438 0.6218151
-#&gt;  [78] 0.7708181 0.6372914 0.6551407 0.4757142 0.5455256 0.6985462 0.7016108
-#&gt;  [85] 0.8133365 0.6059519 0.6498260 0.5232407 0.5820664 0.5039602 0.5253692
-#&gt;  [92] 0.6535644 0.6843701 0.7182308 0.6237457 0.7248643 0.6922793 0.5216429
-#&gt;  [99] 0.6034341 0.7271149</div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>CC</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='CC-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt;   [1] 0.6241071 0.5786357 0.6421666 0.5961360 0.5911458 0.5464664 0.5752025
+#&gt;   [8] 0.6130665 0.5597656 0.6187873 0.5799822 0.6483727 0.5333302 0.6831544
+#&gt;  [15] 0.6194821 0.6172385 0.6512149 0.6042051 0.6495542 0.7133559 0.6157074
+#&gt;  [22] 0.5705580 0.6211021 0.6830044 0.5686991 0.6802336 0.5830557 0.6134074
+#&gt;  [29] 0.5830469 0.5814476 0.5609090 0.5927823 0.5550638 0.7145360 0.5456441
+#&gt;  [36] 0.6447252 0.5985364 0.5595944 0.6937541 0.5840184 0.5822591 0.5679859
+#&gt;  [43] 0.7272805 0.6310154 0.6644463 0.5863756 0.5777830 0.6437784 0.6222465
+#&gt;  [50] 0.6840373 0.6667689 0.6214380 0.5773190 0.6795355 0.5684598 0.6616411
+#&gt;  [57] 0.5986711 0.5487520 0.5464790 0.6293777 0.6206788 0.6802741 0.6404282
+#&gt;  [64] 0.6014105 0.5853572 0.5872086 0.6428320 0.5995241 0.6102153 0.6111042
+#&gt;  [71] 0.5290785 0.5233828 0.5475434 0.6112481 0.7013800 0.6609298 0.5915742
+#&gt;  [78] 0.6733782 0.6000708 0.6098703 0.5113635 0.5496906 0.6337003 0.6353828
+#&gt;  [85] 0.6967212 0.5828651 0.6069525 0.5374560 0.5697518 0.5268708 0.5386245
+#&gt;  [92] 0.6090049 0.6259175 0.6445073 0.5926341 0.6481492 0.6302597 0.5365788
+#&gt;  [99] 0.5814829 0.6493847</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>

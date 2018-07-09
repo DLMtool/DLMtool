@@ -21,9 +21,11 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
 
@@ -35,6 +37,7 @@ and compared to a target of 0.4." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 <!-- mathjax -->
@@ -60,8 +63,8 @@ and compared to a target of 0.4." />
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">DLMtool</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.999</span>
+        <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.2</span>
       </span>
     </div>
 
@@ -143,8 +146,8 @@ and compared to a target of 0.4.</p>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>Effort is increased by 10 per cent if the ratio of \(\frac{\textm{SPR}}{\textrm{SPR}_{\textrm{targ}}}\) is</p>
-<p>1.25, reduced by 10 per cent if the ratio is &lt; 0.75, and remains unchanged
+    <p>Effort is increased by 10 per cent if the ratio of \(\frac{\textrm{SPR}}{\textrm{SPR}_{\textrm{targ}}}\) is
+\(\geq 1.25\), reduced by 10 per cent if the ratio is &lt; 0.75, and remains unchanged
 otherwise.</p>
 <p>The effort HCR has not been tuned. The increase/decrease in effort can
 be adjusted using the <code>frac</code> argument.#'</p>
@@ -153,7 +156,7 @@ be adjusted using the <code>frac</code> argument.#'</p>
 
     
     <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
-    <p><code>LBSPR</code>: CAL, CAL_bins, L50, L95, LHYear, Mort, Year, vbK, vbLinf, wlb</p>
+    <p><code>LBSPR</code>: CAL, CAL_bins, L50, L95, LHYear, Mort, vbK, vbLinf, wlb, Year</p>
     
     <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
 

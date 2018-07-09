@@ -1,26 +1,29 @@
 title: DLMtool Documentation
 icon: logo.png
-templates:
-  params:
+templates: 
+   params: 
     bootswatch: yeti
-navbar:
-  title: DLMtool Documentation
-  type: inverse
-  left:
-  - text: User Guide
-    href: userguide/introduction.html
-  - text: Management Procedures
-    href: reference/index.html
+navbar: 
+   title: DLMtool Documentation
+   type: inverse
+   left: 
+   - text: User Guide
+     href: userguide/introduction.html
+   - text: Management Procedures
+     href: reference/index.html
 reference:
-- title: Output Controls
-  desc: Management Procedures that return a total allowable catch (TAC)
-  contents:
+- title:  Output Controls
+  desc:  Management Procedures that return a total allowable catch (TAC)
+  contents: 
   - '`AvC`'
   - '`BK`'
   - '`BK_CC`'
   - '`BK_ML`'
   - '`CC1`'
+  - '`CC2`'
+  - '`CC3`'
   - '`CC4`'
+  - '`CC5`'
   - '`CompSRA`'
   - '`CompSRA4010`'
   - '`DAAC`'
@@ -31,6 +34,7 @@ reference:
   - '`DCAC_40`'
   - '`DCAC_ML`'
   - '`DCAC4010`'
+  - '`DCACs`'
   - '`DD`'
   - '`DD4010`'
   - '`DepF`'
@@ -49,17 +53,28 @@ reference:
   - '`Gcontrol`'
   - '`HDAAC`'
   - '`ICI`'
+  - '`ICI2`'
+  - '`Iratio`'
   - '`Islope1`'
+  - '`Islope2`'
   - '`Islope4`'
   - '`IT10`'
   - '`IT5`'
   - '`Itarget1`'
+  - '`Itarget2`'
+  - '`Itarget3`'
   - '`Itarget4`'
   - '`ITM`'
   - '`L95target`'
+  - '`Lratio_BHI`'
+  - '`Lratio_BHI2`'
   - '`LstepCC1`'
+  - '`LstepCC2`'
+  - '`LstepCC3`'
   - '`LstepCC4`'
   - '`Ltarget1`'
+  - '`Ltarget2`'
+  - '`Ltarget3`'
   - '`Ltarget4`'
   - '`MCD`'
   - '`MCD4010`'
@@ -75,10 +90,9 @@ reference:
   - '`YPR`'
   - '`YPR_CC`'
   - '`YPR_ML`'
-- title: Input Controls
-  desc: Management Procedures that return a total allowable effort (TAE), spatial
-    closure, or size regulation
-  contents:
+- title:  Input Controls
+  desc:  Management Procedures that return a total allowable effort (TAE), spatial closure, or size regulation
+  contents: 
   - '`curE`'
   - '`curE75`'
   - '`DDe`'
@@ -88,9 +102,12 @@ reference:
   - '`DTe50`'
   - '`EtargetLopt`'
   - '`ItargetE1`'
+  - '`ItargetE2`'
+  - '`ItargetE3`'
   - '`ItargetE4`'
   - '`ITe10`'
   - '`ITe5`'
+  - '`LBSPR`'
   - '`LstepCE1`'
   - '`LstepCE2`'
   - '`LtargetE1`'
@@ -101,16 +118,15 @@ reference:
   - '`MRnoreal`'
   - '`MRreal`'
   - '`slotlim`'
-- title: Mixed Controls
-  desc: Management Procedures that return a combination of Output and Input controls
-  contents:
+- title:  Mixed Controls
+  desc:  Management Procedures that return a combination of Output and Input controls
+  contents: 
   - '`AvC_MLL`'
   - '`Itarget1_MPA`'
-- title: Reference
-  desc: Management Procedures used as Performance References
-  contents:
+- title:  Reference
+  desc:  Management Procedures used as Performance References
+  contents: 
   - '`FMSYref`'
   - '`FMSYref50`'
   - '`FMSYref75`'
   - '`NFref`'
-

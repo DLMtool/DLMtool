@@ -21,9 +21,11 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
 
@@ -34,6 +36,7 @@
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 <!-- mathjax -->
@@ -59,8 +62,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">DLMtool</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.999</span>
+        <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.2</span>
       </span>
     </div>
 
@@ -107,7 +110,9 @@
     <tr>
       <th>Yrs</th>
       <td><p>Numeric vector of length 2 with year indices to summarize performance.
-If NULL, the performance is summarized over all projection years.</p></td>
+If NULL, the performance is summarized over all projection years.
+<code>Yrs</code> can also be length one, in which case if it is positive it is the first <code>Yrs</code> and
+if negative the last <code>Yrs</code> of the projection period.</p></td>
     </tr>
     <tr>
       <th>MSEobj</th>
@@ -122,10 +127,12 @@ If NULL, the performance is summarized over all projection years.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='no'>MSE</span> <span class='kw'>&lt;-</span> <span class='no'>runMSE</span>
+<span class='no'>MSE</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='runMSE.html'>runMSE</a></span>()
 <span class='fu'>ChkYrs</span>(<span class='kw'>NULL</span>, <span class='no'>MSE</span>) <span class='co'># returns c(1, MSE@proyears)</span>
 <span class='fu'>ChkYrs</span>(<span class='fu'>c</span>(<span class='fl'>2</span>,<span class='fl'>5</span>), <span class='no'>MSE</span>) <span class='co'># returns c(2,5)</span>
 <span class='fu'>ChkYrs</span>(<span class='fu'>c</span>(<span class='fl'>70</span>,<span class='fl'>80</span>), <span class='no'>MSE</span>) <span class='co'># returns c(MSE@proyears-10,MSE@proyears)</span>
+<span class='fu'>ChkYrs</span>(<span class='fl'>5</span>, <span class='no'>MSE</span>) <span class='co'># returns c(1,5)</span>
+<span class='fu'>ChkYrs</span>(-<span class='fl'>5</span>, <span class='no'>MSE</span>) <span class='co'># returns c(46,50)</span>
 <span class='co'># }</span><div class='input'>
 </div></pre>
   </div>

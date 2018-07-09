@@ -21,9 +21,11 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
 
@@ -31,10 +33,11 @@
 <meta property="og:title" content="Replace an existing Stock, Fleet, Obs, or Imp object — Replace" />
 
 <meta property="og:description" content="A function that replaces a Stock, Fleet, Obs, or Imp object from an
-OM with one from another OM. Mainly used for internal functions." />
+OM with one from another object." />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 <!-- mathjax -->
@@ -60,8 +63,8 @@ OM with one from another OM. Mainly used for internal functions." />
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">DLMtool</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.999</span>
+        <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.2</span>
       </span>
     </div>
 
@@ -97,11 +100,12 @@ OM with one from another OM. Mainly used for internal functions." />
     <div class="ref-description">
     
     <p>A function that replaces a Stock, Fleet, Obs, or Imp object from an
-OM with one from another OM. Mainly used for internal functions.</p>
+OM with one from another object.</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>Replace</span>(<span class='no'>OM</span>, <span class='no'>from</span>, <span class='kw'>Sub</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"Stock"</span>, <span class='st'>"Fleet"</span>, <span class='st'>"Obs"</span>, <span class='st'>"Imp"</span>), <span class='kw'>Quiet</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
+    <pre class="usage"><span class='fu'>Replace</span>(<span class='no'>OM</span>, <span class='no'>from</span>, <span class='kw'>Sub</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='st'>"Stock"</span>, <span class='st'>"Fleet"</span>, <span class='st'>"Obs"</span>, <span class='st'>"Imp"</span>), <span class='kw'>Name</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -112,16 +116,20 @@ OM with one from another OM. Mainly used for internal functions.</p>
     </tr>
     <tr>
       <th>from</th>
-      <td><p>The OM object from which the sub-model is being taken</p></td>
+      <td><p>An object of class <code>OM</code>, <code>Stock</code>, <code>Fleet</code>, <code>Obs</code>, or <code>Imp</code> to be replace the values in <code>OM</code></p></td>
     </tr>
     <tr>
       <th>Sub</th>
-      <td><p>A character string specifying what object type to replace
+      <td><p>A character string specifying what object type to replace (only used if <code>from</code> is class <code>OM</code>)
 "Stock", "Fleet", "Obs" or "Imp" (default is all four which is probably not what you want to do)</p></td>
     </tr>
     <tr>
-      <th>Quiet</th>
-      <td><p>Should the function not return a text message</p></td>
+      <th>Name</th>
+      <td><p>Character. Name for the new OM object (<code>OM@Name</code>)</p></td>
+    </tr>
+    <tr>
+      <th>silent</th>
+      <td><p>Should messages be printed?</p></td>
     </tr>
     </table>
     
@@ -129,11 +137,22 @@ OM with one from another OM. Mainly used for internal functions.</p>
 
     <p>An object of class OM</p>
     
+    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+
+    <p>See relevant section of the <a href='https://dlmtool.github.io/DLMtool/userguide/modifying-the-om.html'>DLMtool User Guide</a> for more information.</p>
+    
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='no'>OM</span> <span class='kw'>&lt;-</span> <span class='fu'>Replace</span>(<span class='no'>OM</span>, <span class='no'>fromOM</span>, <span class='st'>"Stock"</span>)
-<span class='co'># }</span><div class='input'>
+    <pre class="examples"><div class='input'><span class='co'># Replace Stock </span>
+<span class='no'>OM</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/testOM'>testOM</a></span>
+<span class='no'>OM2</span> <span class='kw'>&lt;-</span> <span class='fu'>Replace</span>(<span class='no'>OM</span>, <span class='no'>Blue_shark</span>)</div><div class='output co'>#&gt; <span class='message'>Replacing sub-model: Stock</span></div><div class='input'>
+<span class='co'># Replace Fleet </span>
+<span class='no'>OM</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/testOM'>testOM</a></span>
+<span class='no'>OM2</span> <span class='kw'>&lt;-</span> <span class='fu'>Replace</span>(<span class='no'>OM</span>, <span class='no'>Generic_DecE</span>)</div><div class='output co'>#&gt; <span class='message'>Replacing sub-model: Fleet</span></div><div class='input'>
+<span class='co'># Replace Fleet from another OM </span>
+<span class='no'>OM1</span> <span class='kw'>&lt;-</span> <span class='fu'>new</span>(<span class='st'>"OM"</span>, <span class='no'>Albacore</span>, <span class='no'>Generic_DecE</span>, <span class='no'>Perfect_Info</span>, <span class='no'>Overages</span>)
+<span class='no'>OM2</span> <span class='kw'>&lt;-</span> <span class='fu'>new</span>(<span class='st'>"OM"</span>, <span class='no'>Blue_shark</span>, <span class='no'>Generic_IncE</span>, <span class='no'>Generic_Obs</span>, <span class='no'>Perfect_Imp</span>)
+<span class='no'>OM1a</span> <span class='kw'>&lt;-</span> <span class='fu'>Replace</span>(<span class='no'>OM1</span>, <span class='no'>OM2</span>, <span class='st'>"Fleet"</span>)</div><div class='output co'>#&gt; <span class='message'>Replacing sub-models: Fleet</span></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -142,6 +161,8 @@ OM with one from another OM. Mainly used for internal functions.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#note">Note</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

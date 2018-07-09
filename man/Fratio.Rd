@@ -81,7 +81,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 \code{Fratio_CC}: CAA, Cat, FMSY_M, Mort
 
 
-\code{Fratio_ML}: AvC, Bref, CAA, CAL, CAL_bins, Cat, Cref, Dep, Dt, FMSY_M, Ind, Iref, L50, L95, LFC, LFS, Lbar, Lc, LenCV, ML, MPeff, MPrec, MaxAge, Mort, Rec, SpAbun, sigmaL, sigmaR, t, vbK, vbLinf, vbt0, wla, wlb
+\code{Fratio_ML}: CAL, CAL_bins, Cat, FMSY_M, LFS, Mort, vbK, vbLinf
 }
 
 \section{Rendered Equations}{

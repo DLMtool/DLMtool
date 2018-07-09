@@ -21,9 +21,11 @@
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script>
 
+<!-- sticky kit -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script>
 <script src="../pkgdown.js"></script>
 
 
@@ -34,6 +36,7 @@
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
+
 
 
 <!-- mathjax -->
@@ -59,8 +62,8 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">DLMtool</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.1.999</span>
+        <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.2</span>
       </span>
     </div>
 
@@ -105,6 +108,9 @@
     
     <dl class='dl-horizontal'>
 <dt><code>Name</code></dt><dd><p>The name of the Data object. Single value. Character string</p></dd>
+    <dt><code>Common_Name</code></dt><dd><p>Common name of the species. Character string</p></dd>
+    <dt><code>Species</code></dt><dd><p>Scientific name of the species. Genus and species name. Character string</p></dd>
+    <dt><code>Region</code></dt><dd><p>Name of the general geographic region of the fishery. Character string</p></dd>
     <dt><code>Year</code></dt><dd><p>Years that corresponding to catch and relative abundance data. Vector nyears long. Positive integer</p></dd>
     <dt><code>Cat</code></dt><dd><p>Total annual catches. Matrix of nsim rows and nyears columns. Non-negative real numbers</p></dd>
     <dt><code>Ind</code></dt><dd><p>Relative abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers</p></dd>
@@ -133,6 +139,7 @@
     <dt><code>wla</code></dt><dd><p>Weight-Length parameter alpha. Vector nsim long. Positive real numbers</p></dd>
     <dt><code>wlb</code></dt><dd><p>Weight-Length parameter beta. Vector nsim long. Positive real numbers</p></dd>
     <dt><code>steep</code></dt><dd><p>Steepness of stock-recruitment relationship. Vector nsim long. Value in the range of one-fifth to 1</p></dd>
+    <dt><code>sigmaR</code></dt><dd><p>Recruitment variability. Vector nsim long. Positive real numbers</p></dd>
     <dt><code>CV_Cat</code></dt><dd><p>Coefficient of variation in annual catches. Vector nsim long. Positive real numbers</p></dd>
     <dt><code>CV_Dt</code></dt><dd><p>Coefficient of variation in depletion over time t. Vector nsim long. Positive real numbers</p></dd>
     <dt><code>CV_AvC</code></dt><dd><p>Coefficient of variation in average catches over time t. Vector nsim long. Positive real numbers</p></dd>
@@ -189,6 +196,8 @@
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='no'>newdata</span><span class='kw'>&lt;-</span><span class='fu'>new</span>(<span class='st'>'Data'</span>)</div><div class='output co'>#&gt; [1] "Couldn't find specified csv file, blank DLM object created"</div><div class='input'>
+
+
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
