@@ -278,7 +278,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="27" data-path="custom-parameters.html"><a href="custom-parameters.html"><i class="fa fa-check"></i><b>27</b> Custom Parameters</a><ul>
 <li class="chapter" data-level="27.1" data-path="custom-parameters.html"><a href="custom-parameters.html#valid-cpars-names"><i class="fa fa-check"></i><b>27.1</b> Valid cpars names</a></li>
 <li class="chapter" data-level="27.2" data-path="custom-parameters.html"><a href="custom-parameters.html#correlated-samples"><i class="fa fa-check"></i><b>27.2</b> Correlated samples</a></li>
-<li class="chapter" data-level="27.3" data-path="custom-parameters.html"><a href="custom-parameters.html#custom-time-varying-parameters"><i class="fa fa-check"></i><b>27.3</b> Custom time-varying parameters</a></li>
+<li class="chapter" data-level="27.3" data-path="custom-parameters.html"><a href="custom-parameters.html#custom-internal-parameters"><i class="fa fa-check"></i><b>27.3</b> Custom internal parameters</a></li>
 </ul></li>
 <li class="chapter" data-level="28" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html"><i class="fa fa-check"></i><b>28</b> Subsetting the MSE Object</a><ul>
 <li class="chapter" data-level="28.1" data-path="subsetting-the-mse-object.html"><a href="subsetting-the-mse-object.html#subsetting-by-performance"><i class="fa fa-check"></i><b>28.1</b> Subsetting by Performance</a></li>
@@ -399,9 +399,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##  $ Linf: num [1:48] 132 132 130 134 128 ...
 ##  $ t0  : num [1:4] -0.768 -0.759 -0.203 -0.168</code></pre>
 </div>
-<div id="custom-time-varying-parameters" class="section level2">
-<h2><span class="header-section-number">27.3</span> Custom time-varying parameters</h2>
-<p>It is also possible to supply custom generated time-varing values for some parameters using the <code>cpars</code> slot. For example, time-varying natural mortality or selectivity patterns. These are referred to as <em>internal</em> custom parameters.</p>
+<div id="custom-internal-parameters" class="section level2">
+<h2><span class="header-section-number">27.3</span> Custom internal parameters</h2>
+<p>It is also possible to supply custom generated time-varing values or other values to internal parameters using the <code>cpars</code> slot. For example, time-varying natural mortality or selectivity patterns. These are referred to as <em>internal</em> custom parameters.</p>
 <p>A list of valid internal cpars can be found by using the <code>validcpars</code> function. Here, for presentation purposes, we print just the first two columns:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">val_int &lt;-<span class="st"> </span><span class="kw">validcpars</span>(<span class="st">&#39;internal&#39;</span>)
 val_int[,<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)]</code></pre></div>
