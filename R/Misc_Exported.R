@@ -889,8 +889,8 @@ L2A <- function(t0c, Linfc, Kc, Len, maxage) {
 #' @param msg Logical. Should messages be printed to console?
 #' @param maxn Optional. Maximum number of cpus. Used for demo purposes
 #'
-#' @templateVar url determining-optimal-number-of-processors
-#' @templateVar ref NULL
+#' @templateVar url parallel-processing 
+#' @templateVar ref determining-optimal-number-of-processors
 #' @template userguide_link
 #' 
 #' @export

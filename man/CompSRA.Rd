@@ -63,7 +63,9 @@ See \href{https://dlmtool.github.io/DLMtool/reference/CompSRA.html}{Online Docum
 }
 
 \examples{
+\dontrun{
 CompSRA(1, DLMtool::SimulatedData, plot=TRUE)
+}
 
 CompSRA4010(1, DLMtool::SimulatedData, plot=TRUE)
 

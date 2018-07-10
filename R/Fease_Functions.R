@@ -19,10 +19,11 @@
 
 #' @author T. Carruthers & A. Hordyk
 #' @examples 
+#' \dontrun{
 #' Fease(TAC=FALSE)
 #' Fease(SL=FALSE, Spatial=FALSE)
-#' Data <- get(avail("Data")[1])
-#' Fease(Data, TAE=FALSE, names.only=FALSE)
+#' Fease(Atlantic_mackerel, TAE=FALSE, names.only=FALSE)
+#' }
 #' @export 
 Fease <- function(Data=NULL, TAC=TRUE, TAE=TRUE, SL=TRUE, Spatial=TRUE, names.only=TRUE, msg=TRUE, include.ref=FALSE) {
   if (msg) {

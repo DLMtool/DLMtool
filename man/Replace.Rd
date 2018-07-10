@@ -27,7 +27,7 @@ A function that replaces a Stock, Fleet, Obs, or Imp object from an
 OM with one from another object.
 }
 \note{
-See relevant section of the \href{https://dlmtool.github.io/DLMtool/userguide/modifying-the-om.html}{DLMtool User Guide} for more information.
+See relevant section of the \href{https://dlmtool.github.io/DLMtool/userguide/modifying-the-om.html#the-replace-function}{DLMtool User Guide} for more information.
 }
 \examples{
 # Replace Stock 

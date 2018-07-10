@@ -28,7 +28,7 @@ Generates an Excel spreadsheet and a source.rmd file in the current working dire
 specifying and documenting a DLMtool Operating Model.
 }
 \note{
-See relevant section of the \href{https://dlmtool.github.io/DLMtool/userguide/creating-a-new-operating-model.html}{DLMtool User Guide} for more information.
+See relevant section of the \href{https://dlmtool.github.io/DLMtool/userguide/creating-a-new-operating-model.html#initialize-a-new-om}{DLMtool User Guide} for more information.
 }
 \examples{
 \dontrun{

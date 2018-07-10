@@ -118,9 +118,6 @@ class(AvC_MLL) <- "MP"
 #' @return A function of class `MP` 
 #' @export
 #' @author A. Hordyk
-#' @note 
-#' See the relevant section of the DLMtool \href{https://dlmtool.github.io/DLMtool/userguide/management-procedures.html#Averaging-MPs}{User Manual} 
-#' for more information on this function. 
 #' @templateVar url averaging-mps 
 #' @templateVar ref NULL
 #' @template userguide_link

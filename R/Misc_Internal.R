@@ -441,7 +441,7 @@ genSizeCompWrap2<- function(i, vn, CAL_binsmid,
 
 userguide_link <- function(url, ref=NULL) {
   url <- paste0('https://dlmtool.github.io/DLMtool/userguide/', url, '.html')
-  if (!is.null(ref)) paste0(url, "#", ref)
+  if (ref!="NULL") url <- paste0(url, "#", ref)
   paste0("See relevant section of the \\href{", url, "}{DLMtool User Guide} for more information.")
 }
 

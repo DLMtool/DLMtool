@@ -494,7 +494,9 @@ CompSRA_ <- function(x, Data, reps=100) {
 #' @author T. Carruthers
 #' 
 #' @examples
+#' \dontrun{
 #' CompSRA(1, DLMtool::SimulatedData, plot=TRUE)
+#' }
 #' 
 #' @export 
 CompSRA <- function(x, Data, reps = 100, plot=FALSE) {

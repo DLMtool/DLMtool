@@ -34,10 +34,11 @@ What MPs may be run (best case scenario) for various data-availability
 scenarios and management constraints?
 }
 \examples{
+\dontrun{
 Fease(TAC=FALSE)
 Fease(SL=FALSE, Spatial=FALSE)
-Data <- get(avail("Data")[1])
-Fease(Data, TAE=FALSE, names.only=FALSE)
+Fease(Atlantic_mackerel, TAE=FALSE, names.only=FALSE)
+}
 }
 \author{
 T. Carruthers & A. Hordyk
