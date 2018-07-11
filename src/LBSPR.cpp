@@ -48,11 +48,11 @@ List LBSPRgen(double SL50, double SL95, double FM, int nage, int nlen, double CV
   NumericVector temp2 = (LenBins(nlen-1) - EL)/SDL;
   Prob(_, nlen-1) = 1 - pnorm(temp2, 0.0, 1.0);
   
-  NumericVector SL = 1/(1+exp(-log(19)*(LenMids-SL50)/(SL95-SL50)));
+  NumericVector SL = 1/(1+exp(-log(19.0)*(LenMids-SL50)/(SL95-SL50)));
   NumericVector Sx(nage);
   NumericVector MSX(nage);
   NumericVector Ns(nage);
-  NumericVector Ml = 1/(1+exp(-log(19)* (LenMids-L50)/(L95-L50)));
+  NumericVector Ml = 1/(1+exp(-log(19.0)* (LenMids-L50)/(L95-L50)));
   NumericVector Ma(nage);
   for (int a=0; a<nage; a++) {
     Sx(a) = sum(SL * Prob(a,_));
