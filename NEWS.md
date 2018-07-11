@@ -1,5 +1,10 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
+## DLMtool 5.2.999 Devolopment Version
+
+### Fixes
+- Fix issues with `PM` functions when `MSE@nMPs == 1`
+
 ## DLMtool 5.2
 
 ### New Features

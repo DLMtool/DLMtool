@@ -1363,7 +1363,7 @@ setClass("PMobj", representation(Name = "character",  Caption='label.class',
 #' @keywords internal
 #'
 calcProb <- function(PM) {
-  if (dim(PM)[2] > 1) {
+  if (length(dim(PM)) > 2) {
     mar <- 2 
   } else mar <- 1
   mar <- 1:mar
