@@ -649,9 +649,9 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # --- Simulate index of abundance from total biomass ----
   Ierr <- array(rlnorm((nyears + proyears) * nsim, mconv(1, rep(Isd, nyears + proyears)), 
                        sdconv(1, rep(Isd, nyears + proyears))), c(nsim, nyears + proyears))
-  II <- (apply(Biomass, c(1, 3), sum) * Ierr[, 1:nyears])^betas  # apply hyperstability / hyperdepletion
+  II <- (apply(Biomass, c(1, 3), sum)^betas) * Ierr[, 1:nyears]  # apply hyperstability / hyperdepletion
   II <- II/apply(II, 1, mean)  # normalize
-  
+
   # --- Calculate vulnerable and spawning biomass abundance ----
   if (nsim > 1) A <- apply(VBiomass[, , nyears, ], 1, sum)  + apply(CB[, , nyears, ], 1, sum) # Abundance before fishing
   if (nsim == 1) A <- sum(VBiomass[, , nyears, ]) +  sum(CB[,,nyears,]) # Abundance before fishing
@@ -988,11 +988,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     runMP <- applyMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply MP
     
     MPRecs <- runMP[[1]][[1]] # MP recommendations
-    Data <- runMP[[2]] # Data object object with saved info from MP 
-    Data@TAC <- MPRecs$TAC
+    Data_p <- runMP[[2]] # Data object object with saved info from MP 
+    Data_p@TAC <- MPRecs$TAC
     
     # calculate pstar quantile of TAC recommendation dist 
-    TACused <- apply(Data@TAC, 2, quantile, p = pstar, na.rm = T) 
+    TACused <- apply(Data_p@TAC, 2, quantile, p = pstar, na.rm = T) 
     
     LastEffort <- rep(1,nsim)
     LastSpatial <- array(MPA[nyears,], dim=c(nareas, nsim)) # 
@@ -1150,8 +1150,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         LFC[is.na(LFC)] <- 1
         LFC[LFC<1] <- 1
         
-        I2 <- cbind(apply(Biomass, c(1, 3), sum), apply(Biomass_P, c(1, 3), sum)[, 1:(y - 1)]) * 
-          Ierr[, 1:(nyears + (y - 1))]^betas
+        I2 <- (cbind(apply(Biomass, c(1, 3), sum), apply(Biomass_P, c(1, 3), sum)[, 1:(y - 1)])^betas) * Ierr[, 1:(nyears + (y - 1))]
         I2[is.na(I2)] <- tiny
         I2 <- I2/apply(I2, 1, mean)
         
@@ -1224,7 +1223,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         
         MSElist[[mm]]@Ref <- OFLreal
         MSElist[[mm]]@Ref_type <- "Simulated OFL"
-        MSElist[[mm]]@Misc <- Data@Misc
+        MSElist[[mm]]@Misc <- Data_p@Misc
         MSElist[[mm]]@MPrec <- MPCalcs$TACrec # last MP  TAC recommendation
         MSElist[[mm]]@MPeff <- Effort[, mm, y-1] # last recommended effort
         
@@ -1236,11 +1235,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         runMP <- applyMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply MP
        
         MPRecs <- runMP[[1]][[1]] # MP recommendations
-        Data <- runMP[[2]] # Data object object with saved info from MP 
-        Data@TAC <- MPRecs$TAC
+        Data_p <- runMP[[2]] # Data object object with saved info from MP 
+        Data_p@TAC <- MPRecs$TAC
         
         # calculate pstar quantile of TAC recommendation dist 
-        TACused <- apply(Data@TAC, 2, quantile, p = pstar, na.rm = T) 
+        TACused <- apply(Data_p@TAC, 2, quantile, p = pstar, na.rm = T) 
         
         MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim,
                                   LastEffort, LastSpatial, LastAllocat, LastCatch,
