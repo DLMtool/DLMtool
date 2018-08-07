@@ -380,10 +380,10 @@ VOIplot2 <- function(MSE, MP=1, type=c("Obs", "OM"), PM="Yield", n=5,
   type <- match.arg(type)
   
   if (type =="OM") {
-    Ptype <- OM_desc
+    Ptype <- OM_desc # OM_desc <- DLMtool:::OM_desc
     Xvals <- MSEobj@OM
   } else {
-    Ptype <- Obs_desc
+    Ptype <- Obs_desc  # Obs_desc <- DLMtool:::Obs_desc
     Xvals <- MSEobj@Obs
     
     reqdat <- Required(MSEobj@MPs)[,2]
@@ -404,12 +404,15 @@ VOIplot2 <- function(MSE, MP=1, type=c("Obs", "OM"), PM="Yield", n=5,
   rng <- quantile(Yval, c(0.025, 0.975))
   ind <- which(Yval > rng[1] & Yval < rng[2]) # filter out middle 95%
   Yval <- Yval[ind]
-  Xvals <- Xvals[,Ptype$VOI_include]
-  Xvals <- Xvals[ind,]
+  Xvals <- Xvals[,Ptype$VOI_include, drop=FALSE]
+  if (sum(Ptype$VOI_include) == 0) stop("No Observations for this MP", call.=FALSE)
+  Xvals <- Xvals[ind,, drop=FALSE]
   Xdf <- tidyr::gather(Xvals)
   
   
   Yval <- data.frame(Yval=rep(Yval, ncol(Xvals)))
+ 
+  
   df <- dplyr::bind_cols(Xdf, Yval)
   
   

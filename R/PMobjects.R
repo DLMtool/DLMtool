@@ -136,7 +136,7 @@ P10 <- function(MSEobj=NULL, Ref=0.1, Yrs=NULL) {
   
   PMobj@Ref <- Ref
   PMobj@Stat <- MSEobj@B_BMSY[,,Yrs[1]:Yrs[2]] # Performance Metric statistic of interest - here SB/SBMSY 
-  PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref) # calculate probability Stat > 0.1 nsim by nMP
+  PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref, MSEobj) # calculate probability Stat > 0.1 nsim by nMP
   
   PMobj@Mean <- calcMean(PMobj@Prob) # calculate mean probability by MP
   PMobj@MPs <- MSEobj@MPs
@@ -173,7 +173,7 @@ PNOF <- function(MSEobj=NULL, Ref=1, Yrs=NULL) {
 
   PMobj@Stat <- MSEobj@F_FMSY[,,Yrs[1]:Yrs[2]] # Performance Metric statistic of interest - here F/FMSY
   PMobj@Ref <- Ref
-  PMobj@Prob <- calcProb(PMobj@Stat < PMobj@Ref) # calculate probability Stat < 1 nsim by nMP
+  PMobj@Prob <- calcProb(PMobj@Stat < PMobj@Ref, MSEobj) # calculate probability Stat < 1 nsim by nMP
   
   
   PMobj@Mean <- calcMean(PMobj@Prob) # calculate mean probability by MP
@@ -199,7 +199,7 @@ LTY <- function(MSEobj=NULL, Ref=0.5, Yrs=-10) {
   
   PMobj@Stat <- MSEobj@C[,,Yrs[1]:Yrs[2]]/RefYd
   PMobj@Ref <- 0.5
-  PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref)  
+  PMobj@Prob <- calcProb(PMobj@Stat > PMobj@Ref, MSEobj)  
   
   PMobj@Mean <- calcMean(PMobj@Prob) # calculate mean probability by MP
   PMobj@MPs <- MSEobj@MPs
@@ -228,7 +228,7 @@ Yield <- function(MSEobj=NULL, Ref=1, Yrs=NULL) {
   
   PMobj@Stat <- MSEobj@C[,,Yrs[1]:Yrs[2]]/RefYd
   PMobj@Ref <- Ref
-  PMobj@Prob <- calcProb(PMobj@Stat) # no probability to calculate
+  PMobj@Prob <- calcProb(PMobj@Stat, MSEobj) # no probability to calculate
   
   PMobj@Mean <- calcMean(PMobj@Prob) # calculate mean probability by MP
   PMobj@MPs <- MSEobj@MPs
@@ -257,7 +257,7 @@ AAVY <- function(MSEobj=NULL, Ref=0.2, Yrs=NULL) {
   
   PMobj@Stat <- AAVY
   PMobj@Ref <- Ref
-  PMobj@Prob <- calcProb(PMobj@Stat < Ref)  # probability AAVY < 0.2 
+  PMobj@Prob <- calcProb(PMobj@Stat < Ref, MSEobj)  # probability AAVY < 0.2 
   
   PMobj@Mean <- calcMean(PMobj@Prob) # calculate mean probability by MP
   PMobj@MPs <- MSEobj@MPs
@@ -267,4 +267,32 @@ AAVY <- function(MSEobj=NULL, Ref=0.2, Yrs=NULL) {
 class(AAVY) <- "PM"
 
 
+
+#' Calculate Probability
+#' 
+#' @param PM A PM method 
+#'
+#' @export
+#' @keywords internal
+#'
+calcProb <- function(PM, MSEobj) {
+  if (MSEobj@nMPs > 1) {
+    mar <- 2 
+  } else mar <- 1
+  mar <- 1:mar
+  apply(PM, mar, mean)
+}
+
+
+#' Calculate Mean Probability
+#' 
+#' @param Prob Prob slot from an object of class PMobj 
+#'
+#' @export
+#' @keywords internal
+#'
+calcMean <- function(Prob) {
+  if (class(Prob) == 'matrix') return(apply(Prob , 2, mean, na.rm=TRUE))
+  if (class(Prob) == 'numeric') return(mean(Prob, na.rm=TRUE))
+}
 

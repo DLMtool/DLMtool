@@ -28,6 +28,8 @@ testthat::test_dir('tests/manual/test-code')
 #
 # testthat::test_file("tests/manual/test-code/test-cpars.R") # ok
 
+# testthat::test_file("tests/manual/test-code/test-PMobjects.R") # ok
+
 
 
 

@@ -1355,33 +1355,6 @@ setClass("PMobj", representation(Name = "character",  Caption='label.class',
                                  MPs="character"))
 
 
-#' Calculate Probability
-#' 
-#' @param PM A PM method 
-#'
-#' @export
-#' @keywords internal
-#'
-calcProb <- function(PM) {
-  if (length(dim(PM)) > 2) {
-    mar <- 2 
-  } else mar <- 1
-  mar <- 1:mar
-  apply(PM, mar, mean)
-}
-
-
-#' Calculate Mean Probability
-#' 
-#' @param Prob Prob slot from an object of class PMobj 
-#'
-#' @export
-#' @keywords internal
-#'
-calcMean <- function(Prob) {
-  if (class(Prob) == 'matrix') return(apply(Prob , 2, mean, na.rm=TRUE))
-  if (class(Prob) == 'numeric') return(mean(Prob, na.rm=TRUE))
-}
 
 show <- function(object) methods::show(object)
 
