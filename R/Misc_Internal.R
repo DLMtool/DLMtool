@@ -329,12 +329,12 @@ runMSEnomsg <- function(...) {
 
 
 run_parallel <- function(i, itsim, OM, MPs, CheckMPs, timelimit, Hist, ntrials, fracD, CalcBlow, 
-                         HZN, Bfrac, AnnualMSY, silent, PPD) {
+                         HZN, Bfrac, AnnualMSY, silent, PPD, control) {
   OM@nsim <- itsim[i]
   
   OM@seed <- OM@seed + i 
   mse <- runMSE_int(OM, MPs, CheckMPs, timelimit, Hist, ntrials, fracD, CalcBlow, 
-                    HZN, Bfrac, AnnualMSY, silent, PPD)
+                    HZN, Bfrac, AnnualMSY, silent, PPD=PPD, control=control)
   return(mse)
 }
 
