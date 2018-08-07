@@ -227,7 +227,9 @@ makePerf <- function(OMin, except = NULL) {
 #' MPtype(c("AvC", "curE", "matlenlim", "MRreal", "FMSYref"))
 #' 
 MPtype <- function(MPs=NA) {
+  if(class(MPs) == "MP") stop("MPs must be characters")
   if (any(is.na(MPs))) MPs <- avail("MP")
+  if (class(MPs) != 'character') stop("MPs must be characters")
   
   Data <- DLMtool::SimulatedData
   
