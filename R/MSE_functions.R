@@ -94,6 +94,7 @@ Converge <- function(MSEobj, PMs=list(Yield, P10, AAVY), maxMP=15, thresh=0.5, r
     for (xx in 1:nPMs) {
       PMval <- PMs[[xx]](subMSE)
       PMName[xx] <- PMval@Name
+      PMval@Prob[!is.finite(PMval@Prob)] <- 0
       cum_mean <- apply(PMval@Prob, 2, cumsum)/apply(PMval@Prob, 2, seq_along) * 100
       vals <- as.vector(cum_mean) 
       mp <- rep(subMSE@MPs, each=subMSE@nsim)

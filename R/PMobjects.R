@@ -280,7 +280,7 @@ calcProb <- function(PM, MSEobj) {
     mar <- 2 
   } else mar <- 1
   mar <- 1:mar
-  apply(PM, mar, mean)
+  apply(PM, mar, mean, na.rm=TRUE)
 }
 
 
