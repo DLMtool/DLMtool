@@ -610,8 +610,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # --- Simulate observed catch ---- 
   
-  if (length(control$Cbiasa) ==0) {
+  if (length(control$Cbias_yr) ==0) {
     Cbiasa <- array(Cbias, c(nsim, nyears + proyears))  # Bias array
+  } else {
+    Cbiasa <- matrix(1, nsim, nyears+proyears)
+    Cbiasa[,control$yrs] <- control$Cbias_yr
   }
   Cerr <- array(rlnorm((nyears + proyears) * nsim, mconv(1, rep(Csd, (nyears + proyears))), 
                        sdconv(1, rep(Csd, nyears + proyears))), c(nsim, nyears + proyears))  # composite of bias and observation error
@@ -687,7 +690,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
     P <- (hs-.2)/0.8
     hs_logit <- log(P/(1-P))
-    P2 <- exp(hs_logit * l_hbias)/(1+exp(hs_logit * l_hbias))
+    P2 <- (exp(hs_logit)* l_hbias)/(1+exp(hs_logit) * l_hbias)
     P2[is.nan(P2)] <- 1
     hsim <- (P2 * 0.8) + 0.2
     hbias <- hsim/hs  # back calculate the simulated bias
