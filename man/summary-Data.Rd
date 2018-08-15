@@ -5,7 +5,8 @@
 \alias{summary,Data-method}
 \title{Summary of Data object}
 \usage{
-\S4method{summary}{Data}(object, wait = TRUE, x = 1, plots = "all")
+\S4method{summary}{Data}(object, wait = TRUE, x = 1, plots = "all",
+  rmd = FALSE, head = "##")
 }
 \arguments{
 \item{object}{An object of class Data}
@@ -17,6 +18,10 @@
 \item{plots}{Character. What plots to show? \code{all}, \code{TS}, \code{CAA}, \code{CAL}, \code{PD}
 for all plots, time-series, catch-at-age, catch-at-length, and
 probability distributions respectively}
+
+\item{rmd}{Logical. Used in a rmd file?}
+
+\item{head}{Character. Heading for rmd file. Default is '##' (second level heading)}
 }
 \description{
 Summary of Data object

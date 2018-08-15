@@ -7,7 +7,7 @@
 XL2OM(name = NULL, cpars = NULL, msg = TRUE)
 }
 \arguments{
-\item{name}{Name of the OM Excel file in the current working directory.}
+\item{name}{Name of the OM Excel file. Provide full file path if not in current directory.}
 
 \item{cpars}{An optional list of custom parameters (single parameters are a vector nsim
 long, time series are a matrix nsim rows by nyears columns)}

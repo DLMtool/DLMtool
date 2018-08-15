@@ -1594,10 +1594,12 @@ setMethod('summary', signature="MSE", function(object, ..., silent=FALSE, Refs=N
 #' @param plots Character. What plots to show? `all`, `TS`, `CAA`, `CAL`, `PD` 
 #' for all plots, time-series, catch-at-age, catch-at-length, and 
 #' probability distributions respectively
+#' @param rmd Logical. Used in a rmd file?
+#' @param head Character. Heading for rmd file. Default is '##' (second level heading)
 #' @export
 setMethod("summary",
           signature(object = "Data"),
-          function(object, wait=TRUE, x=1, plots='all'){
+          function(object, wait=TRUE, x=1, plots='all', rmd=FALSE, head="##"){
             plots <- match.arg(plots, c('all', 'TS', 'CAA', 'CAL', 'PD'), several.ok = TRUE)
             if ('all' %in% plots) plots <- c('TS', 'CAA', 'CAL', 'PD')
             
@@ -1734,25 +1736,41 @@ setMethod("summary",
             }
             
             if (!is.null(P1)) {
-              message('Plotting Time-Series')
+              if (rmd) {
+                cat(head, 'Time-Series')
+              } else {
+                message('Plotting Time-Series')
+              }
               print(P1)
             }
             if (interactive() & wait & !is.null(P1)) 
               invisible(readline(prompt="Press [enter] to continue..."))
             if (!is.null(P2)) {
-              message('Plotting Catch-at-Age')
+              if (rmd) {
+                cat(head, 'Catch-at-Age')
+              } else {
+                message('Plotting Catch-at-Age')
+              }
               print(P2)
             }
             if (interactive() & wait & !is.null(P2)) 
               invisible(readline(prompt="Press [enter] to continue..."))
             if (!is.null(P3)) {
-              message('Plotting Catch-at-Length')
+              if (rmd) {
+                cat(head, 'Catch-at-Length')
+              } else {
+                message('Plotting Catch-at-Length')
+              }
               print(P3)
             }
             if (interactive() & wait & !is.null(P3))
               invisible(readline(prompt="Press [enter] to continue..."))
             if (!is.null(P4)) {
-              message('Plotting Parameter Distributions')
+              if (rmd) {
+                cat(head, 'Parameter Distributions')
+              } else {
+                message('PlottingParameter Distributions')
+              }
               print(P4)
             }
           })
