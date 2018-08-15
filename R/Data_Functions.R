@@ -46,8 +46,8 @@ DataInit <- function(name="Data", ext=c("xlsx", "csv"), overwrite=FALSE, dir=NUL
 
 #' Import a Data object from Excel file
 #'
-#' @param name Name of the data file, with or without file extension.
-#' @param dir Optional file path. Default is `getwd()`
+#' @param name Name of the data file, with or without file extension. 
+#' Include full file path if not in working directory
 #' @return An object of class 'Data'
 #' @export
 #' @author A. Hordyk
@@ -55,8 +55,16 @@ DataInit <- function(name="Data", ext=c("xlsx", "csv"), overwrite=FALSE, dir=NUL
 #' \dontrun{
 #' MyData <- XL2Data("MyData.xlsx")
 #' }
-XL2Data <- function(name="Data", dir=NULL) {
+XL2Data <- function(name="Data") {
   if (class(name) != 'character') stop("file name must be provided", call.=FALSE)
+  
+  dir <- dirname(name)
+  if (dir ==".") {
+    dir <- NULL
+  } else {
+    name <- basename(name)
+  }
+  
   if (is.null(dir)) dir <- getwd()
   if (nchar(tools::file_ext(name)) == 0) {
     xl.fname1 <- paste0(name, ".xlsx")

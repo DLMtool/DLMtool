@@ -228,7 +228,7 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), dir=NULL, overwrite=F
 #' An error message will alert if any slots are missing values, or if the Excel file is missing
 #' the required tabs.
 #'
-#' @param name Name of the OM Excel file in the current working directory.
+#' @param name Name of the OM Excel file. Provide full file path if not in current directory.
 #' @param cpars An optional list of custom parameters (single parameters are a vector nsim 
 #' long, time series are a matrix nsim rows by nyears columns)
 #' @param msg Should messages be printed?

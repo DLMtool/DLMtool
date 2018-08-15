@@ -675,29 +675,39 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   if (nsim == 1) Iref <- mean(I3[1:5]) * SSBMSY_SSB0
   
   # --- Simulate observed values in steepness ----
-  if (is.null(OM@cpars[['l_hbias']])) {
-    hsim <- rep(NA, nsim)  
-    cond <- hs > 0.6
-    hsim[cond] <- 0.2 + rbeta(sum(hs > 0.6), alphaconv((hs[cond] - 0.2)/0.8, (1 - (hs[cond] - 0.2)/0.8) * OM@hbiascv), 
-                              betaconv((hs[cond] - 0.2)/0.8,  (1 - (hs[cond] - 0.2)/0.8) * OM@hbiascv)) * 0.8
-    hsim[!cond] <- 0.2 + rbeta(sum(hs <= 0.6), alphaconv((hs[!cond] - 0.2)/0.8,  (hs[!cond] - 0.2)/0.8 * OM@hbiascv), 
-                               betaconv((hs[!cond] - 0.2)/0.8, (hs[!cond] - 0.2)/0.8 * OM@hbiascv)) * 0.8
+  if (!is.null(OM@cpars[['hsim']])) {
+    hsim <- OM@cpars[['hsim']]
     hbias <- hsim/hs  # back calculate the simulated bias
     if (OM@hbiascv == 0) hbias <- rep(1, nsim) 
     ObsPars$hbias <- hbias 
-  } else {
-    l_hbias <- sample(OM@cpars$l_hbias, OM@nsim, replace=TRUE)
-  
-    P <- (hs-.2)/0.8
-    hs_logit <- log(P/(1-P))
-    P2 <- (exp(hs_logit)* l_hbias)/(1+exp(hs_logit) * l_hbias)
-    P2[is.nan(P2)] <- 1
-    hsim <- (P2 * 0.8) + 0.2
-    hbias <- hsim/hs  # back calculate the simulated bias
     
-    ObsPars$hbias <- hbias
+  } else {
+    if (is.null(OM@cpars[['l_hbias']])) {
+      hsim <- rep(NA, nsim)  
+      cond <- hs > 0.6
+      hsim[cond] <- 0.2 + rbeta(sum(hs > 0.6), alphaconv((hs[cond] - 0.2)/0.8, (1 - (hs[cond] - 0.2)/0.8) * OM@hbiascv), 
+                                betaconv((hs[cond] - 0.2)/0.8,  (1 - (hs[cond] - 0.2)/0.8) * OM@hbiascv)) * 0.8
+      hsim[!cond] <- 0.2 + rbeta(sum(hs <= 0.6), alphaconv((hs[!cond] - 0.2)/0.8,  (hs[!cond] - 0.2)/0.8 * OM@hbiascv), 
+                                 betaconv((hs[!cond] - 0.2)/0.8, (hs[!cond] - 0.2)/0.8 * OM@hbiascv)) * 0.8
+      hbias <- hsim/hs  # back calculate the simulated bias
+      if (OM@hbiascv == 0) hbias <- rep(1, nsim) 
+      ObsPars$hbias <- hbias 
+    } else {
+      l_hbias <- sample(OM@cpars$l_hbias, OM@nsim, replace=TRUE)
+      
+      P <- (hs-.2)/0.8
+      hs_logit <- log(P/(1-P))
+      P2 <- (exp(hs_logit)* l_hbias)/(1+exp(hs_logit) * l_hbias)
+      P2[is.nan(P2)] <- 1
+      hsim <- (P2 * 0.8) + 0.2
+      hbias <- hsim/hs  # back calculate the simulated bias
+      
+      ObsPars$hbias <- hbias
+      
+    }
+  }
+  
 
-   }
 
   
   # --- Simulate error in observed recruitment index ----

@@ -4,12 +4,11 @@
 \alias{XL2Data}
 \title{Import a Data object from Excel file}
 \usage{
-XL2Data(name = "Data", dir = NULL)
+XL2Data(name = "Data")
 }
 \arguments{
-\item{name}{Name of the data file, with or without file extension.}
-
-\item{dir}{Optional file path. Default is \code{getwd()}}
+\item{name}{Name of the data file, with or without file extension.
+Include full file path if not in working directory}
 }
 \value{
 An object of class 'Data'
