@@ -94,6 +94,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   if (class(tt)!="try-error") {
     gl.funs <- as.vector(tt)
     pkg.funs <- as.vector(ls.str('package:DLMtool'))
+    if ('package:MSEtool' %in% search()) pkg.funs <- c(pkg.funs, as.vector(ls.str('package:MSEtool')))
     if (length(gl.funs)>0) {
       gl.clss <- unlist(lapply(lapply(gl.funs, get), class))
       gl.MP <- gl.funs[gl.clss %in% 'MP']
