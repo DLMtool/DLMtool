@@ -468,6 +468,9 @@ setup <- function(cpus=parallel::detectCores()*0.5, ...) {
   if(snowfall::sfIsRunning()) snowfall::sfStop()
   snowfall::sfInit(parallel=TRUE,cpus=cpus, ...)
   sfLibrary("DLMtool", character.only = TRUE, verbose=FALSE)
+  pkgs <- search()
+  if ("package::MSEtool" %in% pkgs) sfLibrary("MSEtool", character.only = TRUE, verbose=FALSE)
+  
 }
 
 

@@ -1354,6 +1354,7 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   }
   
   CparsInfo <- cpars_info # get internal data from sysdata
+  # CparsInfo <- DLMtool:::cpars_info # get internal data from sysdata
   
   sampCpars <- list()
   ncparsim<-cparscheck(cpars)

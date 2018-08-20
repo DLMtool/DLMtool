@@ -676,7 +676,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # --- Simulate observed values in steepness ----
   if (!is.null(OM@cpars[['hsim']])) {
-    hsim <- OM@cpars[['hsim']]
+    hsim <- SampCpars$hsim
     hbias <- hsim/hs  # back calculate the simulated bias
     if (OM@hbiascv == 0) hbias <- rep(1, nsim) 
     ObsPars$hbias <- hbias 
