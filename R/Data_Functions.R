@@ -944,8 +944,7 @@ joinData<-function(DataList){
   nD<-length(DataList)
  
   slots<-slotNames(Data)
-  slots_identical <- c("Name", "Common_Name", "Species", "Region", "Year", "MaxAge", "Year", 
-                       "Units", "Ref_type", "PosMPs", "MPs", "nareas", "LHYear")
+  slots_identical <- c("Name", "Common_Name", "Species", "Region", "Year", "MaxAge", "Units", "Ref_type", "PosMPs", "MPs", "nareas", "LHYear")
   #slots <- slots[!slots%in%c("Name","Ref","OM","MaxAge","CAL_bins","Year","Units","Ref","Ref_type","Log","params","PosMPs","MPs","Obs","Misc","nareas","LHYear")]
   slots <- slots[!slots %in% slots_identical]
   
