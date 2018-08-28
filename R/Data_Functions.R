@@ -944,7 +944,9 @@ joinData<-function(DataList){
   nD<-length(DataList)
  
   slots<-slotNames(Data)
-  slots <- slots[!slots%in%c("Name","Ref","OM","MaxAge","CAL_bins","Year","Units","Ref","Ref_type","Log","params","PosMPs","MPs","Obs","Misc","nareas","LHYear")]
+  slots_identical <- c("Name", "Common_Name", "Species", "Region", "Year", "MaxAge", "Units", "Ref_type", "PosMPs", "MPs", "nareas", "LHYear")
+  #slots <- slots[!slots%in%c("Name","Ref","OM","MaxAge","CAL_bins","Year","Units","Ref","Ref_type","Log","params","PosMPs","MPs","Obs","Misc","nareas","LHYear")]
+  slots <- slots[!slots %in% slots_identical]
   
   nslots<-length(slots)
   getslot<-function(obj,name)slot(obj,name) # weird issue with namespace conflict and the @Cat slot
@@ -959,15 +961,40 @@ joinData<-function(DataList){
   #nsims<-sapply(1:nD,function(x,DataList)length(DataList[[x]]@Dt),DataList)
 
   for (sn in 1:nslots){
-     
     templist<-lapply(DataList,getslot,name=slots[sn])
      
     if (sclass[sn] == "numeric"|sclass[sn]=="integer") {
-      attr(Data, slots[sn]) <- unlist(templist)
+      if (slots[sn] == "CAL_bins") {
+        nbin <- vapply(templist, length, numeric(1))
+        attr(Data, slots[sn]) <- templist[[which.max(nbin)]]
+      } else {
+        attr(Data, slots[sn]) <- unlist(templist)
+      }
     } else if (sclass[sn]== "matrix"|sclass[sn]=="array") {
-      attr(Data, slots[sn]) <- abind(templist, along=1)
-    } 
-  } 
+      
+      if(slots[sn] == "CAL") {
+        nbin <- vapply(templist, function(x) dim(x)[3], numeric(1))
+        templist2 <- vector("list", nD)
+        for (i in 1:nD) {
+          templist2[[i]] <- array(0, dim = c(dim(templist[[i]])[1:2], max(nbin)))
+          templist2[[i]][ , , 1:nbin[i]] <- templist[[i]]
+        }
+        attr(Data, slots[sn]) <- abind(templist2, along=1)
+      } else {
+        attr(Data, slots[sn]) <- abind(templist, along=1)
+      }
+      
+    } else if (sclass[sn] == "list") {
+      attr(Data, slots[sn]) <- do.call(c, templist)
+    } else if (sclass[sn] == "data.frame") {
+      attr(Data, slots[sn]) <- do.call(rbind, templist)
+    }
+  }
+  
+  for (sn in 1:length(slots_identical)) {
+    templist <- lapply(DataList, getslot, name = slots_identical[sn])
+    attr(Data, slots_identical[sn]) <- unique(do.call(c, templist))
+  }
     
   #checkdims<-sapply(1:nslots,function(x,obj,slots)getdim(getslot(obj,slots[x])),obj=Data,slots=slots)
   Data  
