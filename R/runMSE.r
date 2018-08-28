@@ -626,15 +626,16 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
 
   # generate CAA from retained catch-at-age 
   CAA <- array(NA, dim = c(nsim, nyears, maxage))  # Catch  at age array
-  cond <- apply(Cret, 1:2, sum, na.rm = T) < 1  # this is a fix for low sample sizes. If Cret is zero across the board a single fish is caught in age class of model selectivity (dumb I know)
-  fixind <- as.matrix(cbind(expand.grid(1:nsim, 1:nyears), rep(floor(maxage/3), nyears)))  # more fix
-  Cret[fixind[cond, ]] <- 1  # puts a catch in the most vulnerable age class
+  # cond <- apply(Cret, 1:2, sum, na.rm = T) < 1  # this is a fix for low sample sizes. If Cret is zero across the board a single fish is caught in age class of model selectivity (dumb I know)
+  # fixind <- as.matrix(cbind(expand.grid(1:nsim, 1:nyears), rep(floor(maxage/3), nyears)))  # more fix
+  # Cret[fixind[cond, ]] <- 1  # puts a catch in the most vulnerable age class
   
   # a multinomial observation model for catch-at-age data
   for (i in 1:nsim) 
     for (j in 1:nyears) 
       CAA[i, j, ] <- ceiling(-0.5 + rmultinom(1, CAA_ESS[i], Cret[i, j,]) * CAA_nsamp[i]/CAA_ESS[i]) 
   
+
   # --- Simulate observed catch-at-length ----
   # a multinomial observation model for catch-at-length data
   # assumed normally-distributed length-at-age truncated at 2 standard deviations from the mean
@@ -1128,9 +1129,9 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         # # a multinomial observation model for catch-at-age data
         for (i in 1:nsim) {
           for (j in 1:interval[mm]) {
-            if (all(CNtemp[i, , j]<1)) { # this is a fix for low sample sizes. If CAA is zero across the board a single fish is caught in age class of model selectivity (dumb I know)
-              CNtemp[i, floor(maxage/3), j] <- 1
-            }
+            # if (all(CNtemp[i, , j]<1)) { # this is a fix for low sample sizes. If CAA is zero across the board a single fish is caught in age class of model selectivity (dumb I know)
+            #   CNtemp[i, floor(maxage/3), j] <- 1
+            # }
             CAA[i, j, ] <- ceiling(-0.5 + rmultinom(1, CAA_ESS[i], CNtemp[i, , j]) * CAA_nsamp[i]/CAA_ESS[i])   # a multinomial observation model for catch-at-age data
           }
         }	  
