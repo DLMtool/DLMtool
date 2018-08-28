@@ -5,7 +5,7 @@
 \title{Sample Stock parameters}
 \usage{
 SampleStockPars(Stock, nsim = 48, nyears = 80, proyears = 50,
-  cpars = NULL, Msg = TRUE)
+  cpars = NULL, msg = TRUE)
 }
 \arguments{
 \item{Stock}{An object of class 'Stock' or class 'OM'}
@@ -18,7 +18,7 @@ SampleStockPars(Stock, nsim = 48, nyears = 80, proyears = 50,
 
 \item{cpars}{Optional named list of custom parameters. Ignored if 'Stock' is class 'OM'}
 
-\item{Msg}{logical. Warning message for M values?}
+\item{msg}{logical. Warning message for M values?}
 }
 \value{
 A named list of sampled Stock parameters

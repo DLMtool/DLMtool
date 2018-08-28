@@ -52,7 +52,7 @@ plotMPA <- function(OM, sim=NA) {
   on.exit(par(op))
   
   OM@Prob_staying <- c(0.5,0.5)
-  Stock <- SampleStockPars(OM, cpars=OM@cpars, Msg = FALSE)
+  Stock <- SampleStockPars(OM, cpars=OM@cpars, msg = FALSE)
  
   area_sizes <- Stock$Asize[sim,]
 
@@ -100,8 +100,8 @@ plotSelect <- function(OM, Pars=NULL, pyears=4, sim=NA, type="l") {
   years <- OM@nyears + OM@proyears
   yr.vert <- round(seq(1, years, length.out=pyears),0)
   if (is.null(Pars)) {
-    # stckPars <- SampleStockPars(OM, Msg=FALSE)
-    Pars <- SampleFleetPars(OM, Msg=FALSE)
+    stckPars <- SampleStockPars(OM, msg=FALSE)
+    Pars <- c(stckPars,SampleFleetPars(OM, Stock=stckPars, msg=FALSE))
   }
   
   set.seed(OM@seed)
@@ -190,7 +190,7 @@ plotM <- function(Stock, nsim=5) {
     Stock@nsim <- nsim
   }
   
-  StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars, Msg=FALSE)
+  StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars, msg=FALSE)
   # Assign Stock pars to function environment
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
   
@@ -313,7 +313,7 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
   
   # --- Sample Stock Parameters ----
 
-  StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars, Msg=FALSE)
+  StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars, msg=FALSE)
  
   # Assign Stock pars to function environment
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
@@ -549,7 +549,7 @@ plotFleet <- function(x, Stock=NULL, nsamp=3, nsim=500, proyears=28, col="darkgr
   
   its <- sample(1:nsim, nsamp)  
   
-  StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars, Msg=FALSE)
+  StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars, msg=FALSE)
   # Assign Stock pars to function environment
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
   

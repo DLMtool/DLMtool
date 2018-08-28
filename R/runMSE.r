@@ -110,8 +110,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     }
   }
   
-
-  
   # Check MPs 
   if (!all(is.na(MPs))) {
     for (mm in MPs) {
@@ -120,7 +118,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     }
   }
 
-  
   if (parallel) {
     if(!snowfall::sfIsRunning()) {
       # stop("Parallel processing hasn't been initialized. Use 'setup'", call. = FALSE)
@@ -256,7 +253,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   }
   
   # --- Sample Stock Parameters ----
-  StockPars <- SampleStockPars(OM, nsim, nyears, proyears, SampCpars, Msg=!silent)
+  StockPars <- SampleStockPars(OM, nsim, nyears, proyears, SampCpars, msg=!silent)
   # Assign Stock pars to function environment
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
 
@@ -458,7 +455,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
 
       if (length(OM2@cpars)>0) SampCpars2 <- SampleCpars(OM2@cpars, OM2@nsim, msg=FALSE) 
      
-      ResampStockPars <- SampleStockPars(OM2, cpars=SampCpars2, Msg=FALSE)  
+      ResampStockPars <- SampleStockPars(OM2, cpars=SampCpars2, msg=FALSE)  
       ResampStockPars$CAL_bins <- StockPars$CAL_bins
       ResampStockPars$CAL_binsmid <- StockPars$CAL_binsmid 
     

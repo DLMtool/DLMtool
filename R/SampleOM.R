@@ -20,13 +20,13 @@ myrunif <- function(n, val1, val2) {
 #' @param nyears Number of historical years. Ignored if 'Stock' is class 'OM'
 #' @param proyears Number of projection years. Ignored if 'Stock' is class 'OM'
 #' @param cpars Optional named list of custom parameters. Ignored if 'Stock' is class 'OM'
-#' @param Msg logical. Warning message for M values?
+#' @param msg logical. Warning message for M values?
 #'
 #' @return A named list of sampled Stock parameters
 #' @keywords internal
 #' @export
 #'   
-SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, Msg=TRUE) {
+SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, msg=TRUE) {
   if (class(Stock) != "Stock" & class(Stock) != "OM") 
     stop("First argument must be class 'Stock' or 'OM'")
   Stock <- updateMSE(Stock) # update to add missing slots with default values
@@ -255,9 +255,9 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       vB <- function(pars, ages) pars[1] * (1-exp(-pars[2]*(ages-pars[3])))
       fitVB <- function(pars, LatAge, ages) sum((vB(pars, ages) - LatAge)^2)
       starts <- c(max(Len_age), 0.2, 0)
-      if(Msg) message("Estimating growth parameters from length-at-age array in cpars")
+      if(msg) message("Estimating growth parameters from length-at-age array in cpars")
       for (ss in 1:nsim) {
-        if(Msg) {
+        if(msg) {
           cat(".")
           flush.console()
         }
@@ -269,7 +269,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       Linf <- Linfarray[, nyears]
       K <- Karray[, nyears]
       t0array <- matrix(t0, nrow=nsim, ncol=proyears+nyears)
-      if (Msg) cat("\n")
+      if (msg) cat("\n")
     }
     # MaxBin <- ceiling(max(Len_age) + 3 * max(Len_age) * max(Stock@LenCV)) 
     MaxBin <- ceiling(max(Linfarray) + 2 * max(Linfarray) * max(LenCV))
@@ -328,11 +328,11 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     L50[!is.finite(L50)] <- 0.8*Linf[!is.finite(L50)]
     L95[!is.finite(L95)] <- 0.99*Linf[!is.finite(L95)]
     if (any(L50>= Linf)) {
-      if (Msg) message("Note: Some samples of L50 are above Linf. Defaulting to 0.8*Linf")
+      if (msg) message("Note: Some samples of L50 are above Linf. Defaulting to 0.8*Linf")
       L50[L50>=Linf] <- 0.8* Linf[L50>=Linf]
     }
     if (any(L95> Linf)) {
-      if (Msg)  message("Note: Some samples of L95 are above Linf. Defaulting to 0.99*Linf")
+      if (msg)  message("Note: Some samples of L95 are above Linf. Defaulting to 0.99*Linf")
       L95[L95> Linf] <- 0.99* Linf[L95> Linf]
     }
     
@@ -384,11 +384,11 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   age95[age95 < 1] <- 1.5  # must be greater than 0 and ageM
   
   if (any(ageM >= maxage-1)) {
-    if (Msg) message("Note: Some samples of age of maturity are above 'maxage'-1. Defaulting to maxage-1")
+    if (msg) message("Note: Some samples of age of maturity are above 'maxage'-1. Defaulting to maxage-1")
     ageM[ageM >= (maxage-1)] <- maxage - 1 
   }
   if (any(age95 >= maxage)) {
-    if (Msg) message("Note: Some samples of age of 95 per cent maturity are above 'maxage'. Defaulting to maxage")
+    if (msg) message("Note: Some samples of age of 95 per cent maturity are above 'maxage'. Defaulting to maxage")
     age95[age95 >= maxage] <- maxage  
   }
   
@@ -429,7 +429,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   # == M-at-age has been provided in OM ====
   if (exists("Mage", inherits=FALSE)) {
     if (exists("M", inherits=FALSE) & length(cpars[["M"]])>0) 
-      if (Msg) message("M-at-age has been provided in OM. Overiding M from OM@cpars")
+      if (msg) message("M-at-age has been provided in OM. Overiding M from OM@cpars")
     # M is calculated as mean M of mature ages
     M <- rep(NA, nsim)
     for (sim in 1:nsim) M[sim] <- mean(Mage[sim,round(ageM[sim],0):maxage])
@@ -438,7 +438,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   # == Mean Natural mortality by simulation and year ====
   if (exists("M_ageArray", inherits=FALSE)) {
     if (!all(dim(M_ageArray) == c(nsim, maxage, proyears+nyears))) stop("'M_ageArray' must be array with dimensions: nsim, maxage, nyears + proyears") 
-    if(Msg) message("M_ageArray has been provided in OM@cpars. Ignoring OM@Mexp, OM@Msd, and OM@Mgrad")
+    if(msg) message("M_ageArray has been provided in OM@cpars. Ignoring OM@Mexp, OM@Msd, and OM@Mgrad")
     Mexp <- Msd <- Mgrad <- rep(0, nsim)
   }
    
@@ -500,7 +500,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   # Check if M-at-age is constant that Maxage makes sense
   if (all(M_ageArray[1,,1] == mean(M_ageArray[1,,1]))) { # constant M at age
     calcMax <- ceiling(-log(0.01)/(min(M)))        # Age at which 1% of cohort survives
-    if (maxage < 0.8*calcMax && Msg) {
+    if (maxage < 0.8*calcMax && msg) {
       message("Note: Maximum age (", maxage, ") is lower than assuming 1% of cohort survives to maximum age (", calcMax, ")")
     }  
   }
@@ -508,7 +508,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   # --- Calculate movement ----
   initdist <- Pinitdist <- NULL
   if (!exists("mov", inherits=FALSE)) {
-    if(Msg) message("Optimizing for user-specified movement")  # Print a progress update
+    if(msg) message("Optimizing for user-specified movement")  # Print a progress update
     nareas<-2 # default is a 2 area model
     mov1 <- array(t(sapply(1:nsim, getmov2, Frac_area_1 = Frac_area_1, 
                            Prob_staying = Prob_staying)), dim = c(nsim, nareas, nareas))
@@ -522,7 +522,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     
   }else{ # if mov is specified need to calculate age-based spatial distribution (Pinitdist to initdist)
     nareas<-dim(mov)[3]
-    if(Msg) message(paste("Custom movement matrix detected, simulating movement among",nareas,"areas"))
+    if(msg) message(paste("Custom movement matrix detected, simulating movement among",nareas,"areas"))
     
     mind<-as.matrix(expand.grid(1:nsim,maxage,1:nareas,1:nareas))
     movedarray<-array(0,c(nsim,nareas,nareas))
@@ -536,7 +536,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   }
   
   if (dim(Asize)[2]!=nareas) {
-    if(Msg) message('Asize is not length "nareas", assuming all areas equal size')
+    if(msg) message('Asize is not length "nareas", assuming all areas equal size')
     Asize <- matrix(1/nareas, nrow=nsim, ncol=nareas)
   }
   
@@ -600,13 +600,14 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
 #' @param nyears Number of historical years. Ignored if 'Fleet' is class 'OM'
 #' @param proyears Number of projection years. Ignored if 'Fleet' is class 'OM'
 #' @param cpars Optional named list of custom parameters. Ignored if 'Fleet' is class 'OM'
+#' @param msg Logical. Print messages?
 #' 
 #' @keywords internal
 #' 
 #' @return A named list of sampled Fleet parameters
 #' @export
 #'
-SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=NULL, cpars=NULL) {
+SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=NULL, cpars=NULL, msg=TRUE) {
   if (class(Fleet) != "Fleet" & class(Fleet) != "OM") 
     stop("First argument must be class 'Fleet' or 'OM'")
   
@@ -615,7 +616,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   
   # Get custom pars if they exist
   if (class(Fleet) == "OM" && length(Fleet@cpars) > 0 && is.null(cpars)) 
-    cpars <- SampleCpars(Fleet@cpars, Fleet@nsim)  # custom parameters exist in Stock/OM object
+    cpars <- SampleCpars(Fleet@cpars, Fleet@nsim, msg=msg)  # custom parameters exist in Stock/OM object
   if (length(cpars) > 0) { # custom pars exist - assign to function environment 
     Names <- names(cpars)
     for (X in 1:length(Names)) assign(names(cpars)[X], cpars[[X]])
@@ -625,7 +626,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
     nsim <- Fleet@nsim
     nyears <- Fleet@nyears 
     proyears <- Fleet@proyears
-    StockPars <- SampleStockPars(Fleet, nsim, nyears, proyears, cpars)
+    StockPars <- SampleStockPars(Fleet, nsim, nyears, proyears, cpars, msg=msg)
     for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
   }
   

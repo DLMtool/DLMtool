@@ -621,7 +621,7 @@ StochasticSRA<-function(OM,CAA,Chist,Ind=NA,ML=NA,CAL=NA,mulen=NA,wts=c(1,1,0.5,
 
   # Sample Stock Parameters 
   options(warn=-1)
-  StockPars <- SampleStockPars(OM, nsim, nyears, proyears, SampCpars, Msg=FALSE)
+  StockPars <- SampleStockPars(OM, nsim, nyears, proyears, SampCpars, msg=FALSE)
   options(warn=1)
  
   # Assign Stock pars to function environment
