@@ -933,6 +933,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   for (mm in 1:nMP) {  # MSE Loop over methods
     if(!silent) message(mm, "/", nMP, " Running MSE for ", MPs[mm])  # print a progress report
+    checkNA <- NA # save number of NAs
     
     # reset selectivity parameters for projections
     L5_P <- L5  
@@ -1001,7 +1002,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     
     # -- apply MP in initial projection year ----
     # Combined MP ----
-    runMP <- applyMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply MP
+    runMP <- applyMP(MSElist[[mm]], MPs = MPs[mm], reps = reps, silent=TRUE)  # Apply MP
     
     MPRecs <- runMP[[1]][[1]] # MP recommendations
     Data_p <- runMP[[2]] # Data object object with saved info from MP 
@@ -1009,7 +1010,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     
     # calculate pstar quantile of TAC recommendation dist 
     TACused <- apply(Data_p@TAC, 2, quantile, p = pstar, na.rm = T) 
-    
+    checkNA[y] <- sum(is.na(TACused))
     LastEffort <- rep(1,nsim)
     LastSpatial <- array(MPA[nyears,], dim=c(nareas, nsim)) # 
     LastAllocat <- rep(1, nsim) # default assumption of reallocation of effort to open areas
@@ -1248,7 +1249,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         # apply combined MP ----
         if("DataOut"%in%names(control))if(control$DataOut == y) return(MSElist)
           
-        runMP <- applyMP(MSElist[[mm]], MPs = MPs[mm], reps = reps)  # Apply MP
+        runMP <- applyMP(MSElist[[mm]], MPs = MPs[mm], reps = reps, silent=TRUE)  # Apply MP
        
         MPRecs <- runMP[[1]][[1]] # MP recommendations
         Data_p <- runMP[[2]] # Data object object with saved info from MP 
@@ -1269,7 +1270,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                   CAL_binsmid, Linf, Len_age, maxage, nareas, Asize,  nCALbins,
                                   qs, qvar, qinc)
 
-        TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
+        TACa[, mm, y] <- TACused # MPCalcs$TACrec # recommended TAC 
         LastSpatial <- MPCalcs$Si
         LastAllocat <- MPCalcs$Ai
         LastEffort <- MPCalcs$Effort
@@ -1309,7 +1310,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                   CAL_binsmid, Linf, Len_age, maxage, nareas, Asize,  nCALbins,
                                   qs, qvar, qinc)
         
-        TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
+        TACa[, mm, y] <- TACused #  MPCalcs$TACrec # recommended TAC 
         LastSpatial <- MPCalcs$Si
         LastAllocat <- MPCalcs$Ai
         LastEffort <- MPCalcs$Effort
@@ -1329,6 +1330,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
   
       }  # not an update year
+      checkNA[y] <- sum(is.na(TACused))
     }  # end of year
     
     B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY_P[,mm,]  # SSB relative to SSBMSY
@@ -1350,7 +1352,25 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     CAAout[ , mm, ] <- CNtemp[,,proyears] # nsim, maxage # catch-at-age
     CALout[ , mm, ] <- CAL[,max(dim(CAL)[2]),] # catch-at-length in last year
     
-    if (!silent) cat("\n")
+    if (!silent) {
+      cat("\n")
+      if (all(checkNA != nsim) & !all(checkNA == 0)) {
+        # print number of NAs
+        # message(checkNA)
+        # message(checkNA[upyrs])
+        ntot <- sum(checkNA[upyrs])
+        totyrs <- sum(checkNA[upyrs] >0)
+        nfrac <- round(ntot/(length(upyrs)*nsim),2)*100
+        
+        message(totyrs, ' years had TAC = NA for some simulations (', nfrac, "% of total simulations)")
+        message('Used TAC_y = TAC_y-1')  
+      }
+      
+    }
+    
+    
+    
+    
     if("progress"%in%names(control))if(control$progress)incProgress(1/nMP, detail = round(mm*100/nMP))
   }  # end of mm methods 
   
