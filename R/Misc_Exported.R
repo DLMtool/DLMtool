@@ -488,6 +488,16 @@ userguide <- function() {
   utils::browseURL("https://dlmtool.github.io/DLMtool/userguide/introduction.html")
 }
 
+#' Opens the DLMtool Cheat-Sheets (requires internet connection)
+#' 
+#' @export
+#' @examples
+#' \dontrun{
+#' cheatsheets()
+#' }
+cheatsheets <- function() {
+  utils::browseURL("https://dlmtool.github.io/DLMtool/cheat_sheets/DLMtool_CheatSheets.pdf")
+}
 
 RepmissingVal <- function(object, name, vals=NA) {
   miss <- FALSE
