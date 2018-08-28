@@ -1769,7 +1769,7 @@ setMethod("summary",
               if (rmd) {
                 cat(head, 'Parameter Distributions')
               } else {
-                message('PlottingParameter Distributions')
+                message('Plotting Parameter Distributions')
               }
               print(P4)
             }

@@ -1,5 +1,13 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
+## DLMtool 5.2.999
+
+### Minor changes
+- update `plotMPA` to include relative size of areas
+
+### Fixes
+- fix issue with CAA at very low stocks sizes
+
 ## DLMtool 5.2.2
 
 ### Fixes

@@ -3,7 +3,7 @@
 #' Plot the Historical Spatial Closures
 #'
 #' @param OM An object of class OM
-#'
+#' @param sim Optional. Simulation number to plot
 #'
 #' @export
 #' @author A. Hordyk
@@ -21,13 +21,17 @@
 #' OM@MPA <- matrix(c(cl1, cl2, cl3), ncol=3, byrow=TRUE)
 #' plotMPA(OM)
 #' 
-plotMPA <- function(OM) {
-  if (class(OM)!="OM") stop("Must supply object of class 'OM'")
+plotMPA <- function(OM, sim=NA) {
+  if (class(OM)!="OM") stop("Object must be class 'OM'")
   if (class(OM)=="OM") {
     proyears <- OM@proyears
   } else {
     proyears <- 0
   }
+  set.seed(OM@seed)
+  if (is.na(sim)) sim <- ceiling(runif(1, 1,OM@nsim))
+  if (sim > OM@nsim) sim <- OM@nsim
+  
   nyears <- OM@nyears
   if (all(!is.na(OM@MPA)) && sum(OM@MPA) != 0) { # historical spatial closures have been specified
     nareas <- ncol(OM@MPA)-1
@@ -44,13 +48,19 @@ plotMPA <- function(OM) {
   
   x <- 1:(nyears+proyears)
   nyrs <- length(x)
-  op <- par(mfrow=c(1,1), mar=c(3,3,0,0), oma=c(0,0,1,0))
+  op <- par(mfrow=c(1,1), mar=c(3,3,0,0), oma=c(0,0,1,0), no.readonly = TRUE)
+  on.exit(par(op))
   
-  
-  plot(c(1, nyears+proyears), c(0,nareas), type="n", bty="n", xlab="", ylab="", axes=FALSE)
-  origin <- seq(0, by=1, length.out = nareas)
+  OM@Prob_staying <- c(0.5,0.5)
+  Stock <- SampleStockPars(OM, cpars=OM@cpars, Msg = FALSE)
+ 
+  area_sizes <- Stock$Asize[sim,]
+
+  plot(c(1, nyears+proyears), c(0,sum(area_sizes)), type="n", bty="n", xlab="", ylab="", axes=FALSE)
+
+  origin <- cumsum(c(0, area_sizes)) #  seq(0, by=1, length.out = nareas)
   for (aa in 1:nareas) {
-    polygon(x=c(x, rev(x)), y=c(rep(origin[aa], nyrs), origin[aa]+rev(MPA[,aa])), 
+    polygon(x=c(x, rev(x)), y=c(rep(origin[aa], nyrs), origin[aa+1]*rev(MPA[,aa])), 
             col='lightgray', border = TRUE)
   }
   
@@ -63,12 +73,13 @@ plotMPA <- function(OM) {
   
   mtext(side=1, "Years", line=2, xpd=NA, cex=1.25)
   
-  axis(side=2, at=seq(0.5, by=1, length.out = nareas), labels=1:nareas, las=1, col = "white", tcl = 0)
+  axis(side=2, at=origin[1:(length(origin)-1)] + 0.5 * area_sizes, labels=1:nareas, las=1, col = "white", tcl = 0)
+  
   mtext(side=2, "Areas", line=2, xpd=NA, cex=1.25, las=3)
   abline(v=nyears, lty=2, col="darkgray")
   
-  title('Fraction open to fishing (grey)', outer=TRUE)
-  on.exit(par(op))
+  title(paste0('Fraction open to fishing (grey) (sim = ', sim, ")"), outer=TRUE)
+  
 }
 
 #' Plot the vulnerability and retention curves 
@@ -89,8 +100,8 @@ plotSelect <- function(OM, Pars=NULL, pyears=4, sim=NA, type="l") {
   years <- OM@nyears + OM@proyears
   yr.vert <- round(seq(1, years, length.out=pyears),0)
   if (is.null(Pars)) {
-    stckPars <- SampleStockPars(OM, Msg=FALSE)
-    Pars <- c(stckPars, SampleFleetPars(OM, Stock=stckPars))
+    # stckPars <- SampleStockPars(OM, Msg=FALSE)
+    Pars <- SampleFleetPars(OM, Msg=FALSE)
   }
   
   set.seed(OM@seed)

@@ -4,10 +4,12 @@
 \alias{plotMPA}
 \title{Plot the Historical Spatial Closures}
 \usage{
-plotMPA(OM)
+plotMPA(OM, sim = NA)
 }
 \arguments{
 \item{OM}{An object of class OM}
+
+\item{sim}{Optional. Simulation number to plot}
 }
 \description{
 Plot the Historical Spatial Closures

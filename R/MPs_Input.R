@@ -918,9 +918,21 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE) {
       CAL <- CALdata[y,]
       sl50start <- LenMids[which.max(CAL)]
       starts <- log(c(sl50start/Linf, sl50start/Linf*0.1, 1))
-      runOpt <- optim(starts, LBSPRopt, CAL=CAL, nage=101, nlen=length(LenMids), CVLinf=CVLinf, 
+      runOpt <- try(optim(starts, LBSPRopt, CAL=CAL, nage=101, nlen=length(LenMids), CVLinf=CVLinf, 
                       LenBins=LenBins, LenMids=LenMids, x=seq(0, to=1, length.out = 101),
-                      MK=MK, Linf=Linf, P=0.01, L50=L50, L95=L95, Beta=Beta)
+                      MK=MK, Linf=Linf, P=0.01, L50=L50, L95=L95, Beta=Beta), silent=TRUE)
+      if (class(runOpt) == 'try-error') {
+        if (MK > 5) {
+          runOpt <- optim(starts, LBSPRopt, CAL=CAL, nage=101, nlen=length(LenMids), CVLinf=CVLinf, 
+                              LenBins=LenBins, LenMids=LenMids, x=seq(0, to=1, length.out = 101),
+                              MK=5, Linf=Linf, P=0.01, L50=L50, L95=L95, Beta=Beta)
+        }
+        
+        
+      }
+      
+      
+      
       SL50 <- exp(runOpt$par[1]) * Linf 
       dSL50 <- exp(runOpt$par[2])
       SL95 <- SL50 + dSL50 * SL50

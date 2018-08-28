@@ -75,7 +75,11 @@ SketchFun <- function(nyears = NULL, Years = NULL) {
     years <- Years
   }
   if (length(Years) == 0) years <- 1:nyears
-  par(mfrow = c(1, 1), mar = c(5, 4, 5, 2))
+  try(dev.off(), silent=TRUE)
+
+  op <- par(mfrow = c(1, 1), mar = c(5, 4, 5, 2),no.readonly = TRUE)
+  on.exit(par(op))
+  
   ys <- seq(from = 0, to = 1, by = 0.05)
   years1 <- seq(from = years[1], by = 2, to = max(years))
   years2 <- seq(from = years[2], by = 2, to = max(years))
@@ -103,25 +107,20 @@ SketchFun <- function(nyears = NULL, Years = NULL) {
        line3, cex = 1, pos = 4)
   par(xpd = FALSE)
   message(line1, "\n", line2, "\n", line3, "\n")
-  flush.console()
-  
   
   out <- NULL
   out <- identifyPch(x = Xs, y = Ys, tolerance = 0.1)
   while (is.null(dim(out))) {
     message("Must choose more than one point")
-    flush.console()
     out <- identifyPch(x = Xs, y = Ys, tolerance = 0.1)
   }
   while (min(out[, 1]) != years[1]) {
     message("Choose point(s) for first year (usually 0)")
-    flush.console()
     dat <- rbind(out, identifyPch(x = Xs, y = Ys, tolerance = 0.1))
     out <- dat[order(dat[, 1]), ]
   }
   while (max(out[, 1]) != years[length(years)]) {
     message("Choose point(s) for last year (nyear)")
-    flush.console()
     dat <- rbind(out, identifyPch(x = Xs, y = Ys, tolerance = 0.1))
     out <- dat[order(dat[, 1]), ]
   }
@@ -155,8 +154,9 @@ identifyPch <- function(x, y = NULL, n = length(x), pch = 19, ...) {
   res <- integer(0)
   while (sum(sel) < n) {
     ans <- identify(x[!sel], y[!sel], n = 1, plot = FALSE, ...)
-    if (!length(ans)) 
+    if (!length(ans)) {
       break
+    } 
     ans <- which(!sel)[ans]
     points(x[ans], y[ans], pch = pch)
     sel[ans] <- TRUE

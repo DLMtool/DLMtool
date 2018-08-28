@@ -5,7 +5,7 @@ DLMtool::setup()
 Ntest <- NA # set to NA to run all tests 
 nsim <- 3
 
-context("Test runMSE with all MPs and all built-in objects")
+testthat::context("Test runMSE with all MPs and all built-in objects")
 
 MPs <- avail("MP") # NA # c("AvC", "matlenlim", "slotlim", "curE", "curE75", "MRnoreal", "MRreal")
 
