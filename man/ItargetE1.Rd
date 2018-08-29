@@ -10,13 +10,17 @@
 A management procedure that incrementally adjusts the fishing effort
 to reach a target CPUE / relative abundance index}
 \usage{
-ItargetE1(x, Data, reps = 100, plot = FALSE, yrsmth = 5, Imulti = 1.5)
+ItargetE1(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
+  Imulti = 1.5)
 
-ItargetE2(x, Data, reps = 100, plot = FALSE, yrsmth = 5, Imulti = 2)
+ItargetE2(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
+  Imulti = 2)
 
-ItargetE3(x, Data, reps = 100, plot = FALSE, yrsmth = 5, Imulti = 2.5)
+ItargetE3(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
+  Imulti = 2.5)
 
-ItargetE4(x, Data, reps = 100, plot = FALSE, yrsmth = 5, Imulti = 2.5)
+ItargetE4(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
+  Imulti = 2.5)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -71,7 +75,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 }
 
 \section{Rendered Equations}{
- 
+
 See \href{https://dlmtool.github.io/DLMtool/reference/ItargetE1.html}{Online Documentation} for correctly rendered equations
 }
 
@@ -99,3 +103,4 @@ Other Index methods: \code{\link{GB_slope}},
 \author{
 T. Carruthers
 }
+\concept{Index methods}

@@ -4,10 +4,10 @@
 \alias{StochasticSRA}
 \title{Stochastic SRA construction of operating models}
 \usage{
-StochasticSRA(OM, CAA, Chist, Ind = NA, ML = NA, CAL = NA, mulen = NA,
-  wts = c(1, 1, 0.5, 0.1, 1), Jump_fac = 1, nits = 4000, burnin = 500,
-  thin = 10, ESS = 300, MLsd = 0.1, ploty = T, nplot = 6,
-  SRAdir = NA)
+StochasticSRA(OM, CAA, Chist, Ind = NA, ML = NA, CAL = NA,
+  mulen = NA, wts = c(1, 1, 0.5, 0.1, 1), Jump_fac = 1,
+  nits = 4000, burnin = 500, thin = 10, ESS = 300, MLsd = 0.1,
+  ploty = T, nplot = 6, SRAdir = NA)
 }
 \arguments{
 \item{OM}{An operating model object with M, growth, stock-recruitment and maturity parameters specified.}

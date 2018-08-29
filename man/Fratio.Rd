@@ -85,7 +85,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 }
 
 \section{Rendered Equations}{
- 
+
 See \href{https://dlmtool.github.io/DLMtool/reference/Fratio.html}{Online Documentation} for correctly rendered equations
 
 
@@ -118,3 +118,4 @@ Other Fmsy/M methods: \code{\link{DynF}},
 \author{
 T. Carruthers
 }
+\concept{Fmsy/M methods}

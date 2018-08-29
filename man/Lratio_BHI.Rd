@@ -57,7 +57,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 }
 
 \section{Rendered Equations}{
- 
+
 See \href{https://dlmtool.github.io/DLMtool/reference/Lratio_BHI.html}{Online Documentation} for correctly rendered equations
 
 
@@ -82,3 +82,4 @@ Other Length target MPs: \code{\link{Ltarget1}},
 \author{
 Coded by Q. Huynh. Developed by Jardim et al. (2015)
 }
+\concept{Length target MPs}

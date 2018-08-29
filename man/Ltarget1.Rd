@@ -101,7 +101,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 }
 
 \section{Rendered Equations}{
- 
+
 See \href{https://dlmtool.github.io/DLMtool/reference/Ltarget1.html}{Online Documentation} for correctly rendered equations
 
 
@@ -135,3 +135,4 @@ Other Length target MPs: \code{\link{Lratio_BHI}},
 \author{
 T. Carruthers
 }
+\concept{Length target MPs}

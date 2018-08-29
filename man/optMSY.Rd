@@ -5,8 +5,8 @@
 \title{Optimize yield for a single simulation}
 \usage{
 optMSY(logFa, Asize_c, nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge,
-  Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc,
-  Qc, MPA, maxF, useCPP = TRUE, SSB0c)
+  Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc,
+  bRc, Qc, MPA, maxF, useCPP = TRUE, SSB0c)
 }
 \arguments{
 \item{logFa}{log apical fishing mortality}

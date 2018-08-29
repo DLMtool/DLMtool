@@ -4,8 +4,8 @@
 \alias{CSRAfunc}
 \title{Optimization function for CSRA}
 \usage{
-CSRAfunc(lnF, Mc, hc, maxage, nyears, AFSc, AFCc, Linfc, Kc, t0c, AMc, ac, bc,
-  vulnc, matc, MLc, CAL, CAA, opt = T, meth = "ML")
+CSRAfunc(lnF, Mc, hc, maxage, nyears, AFSc, AFCc, Linfc, Kc, t0c, AMc, ac,
+  bc, vulnc, matc, MLc, CAL, CAA, opt = T, meth = "ML")
 }
 \arguments{
 \item{lnF}{A proposed value of current instantaneous fishing mortality rate}

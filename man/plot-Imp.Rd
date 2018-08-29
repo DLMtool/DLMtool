@@ -4,7 +4,8 @@
 \alias{plotImp}
 \title{Plot the Implementation object parameters}
 \usage{
-plotImp(x, nsim = 500, nyears = 50, col = "darkgray", breaks = 10, ...)
+plotImp(x, nsim = 500, nyears = 50, col = "darkgray", breaks = 10,
+  ...)
 }
 \arguments{
 \item{x}{An object of class Imp (or of class OM)}

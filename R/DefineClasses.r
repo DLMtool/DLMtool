@@ -1737,7 +1737,7 @@ setMethod("summary",
             
             if (!is.null(P1)) {
               if (rmd) {
-                cat(head, 'Time-Series')
+                cat(head, 'Time-Series\n')
               } else {
                 message('Plotting Time-Series')
               }
@@ -1747,7 +1747,7 @@ setMethod("summary",
               invisible(readline(prompt="Press [enter] to continue..."))
             if (!is.null(P2)) {
               if (rmd) {
-                cat(head, 'Catch-at-Age')
+                cat(head, 'Catch-at-Age\n')
               } else {
                 message('Plotting Catch-at-Age')
               }
@@ -1757,7 +1757,7 @@ setMethod("summary",
               invisible(readline(prompt="Press [enter] to continue..."))
             if (!is.null(P3)) {
               if (rmd) {
-                cat(head, 'Catch-at-Length')
+                cat(head, 'Catch-at-Length\n')
               } else {
                 message('Plotting Catch-at-Length')
               }
@@ -1767,7 +1767,7 @@ setMethod("summary",
               invisible(readline(prompt="Press [enter] to continue..."))
             if (!is.null(P4)) {
               if (rmd) {
-                cat(head, 'Parameter Distributions')
+                cat(head, 'Parameter Distributions\n')
               } else {
                 message('Plotting Parameter Distributions')
               }

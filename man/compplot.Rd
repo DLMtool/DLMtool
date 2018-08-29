@@ -4,7 +4,8 @@
 \alias{compplot}
 \title{Generic comparison plot for simulation testing of Stochastic SRA method}
 \usage{
-compplot(simy, samy, xlab = "", ylab = "", maxplot = 10, type = "l")
+compplot(simy, samy, xlab = "", ylab = "", maxplot = 10,
+  type = "l")
 }
 \arguments{
 \item{simy}{The simulated time series}

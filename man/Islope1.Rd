@@ -7,17 +7,17 @@
 \alias{Islope4}
 \title{Index Slope Tracking MP}
 \usage{
-Islope1(x, Data, reps = 100, plot = FALSE, yrsmth = 5, lambda = 0.4,
-  xx = 0.2)
+Islope1(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
+  lambda = 0.4, xx = 0.2)
 
-Islope2(x, Data, reps = 100, plot = FALSE, yrsmth = 5, lambda = 0.4,
-  xx = 0.3)
+Islope2(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
+  lambda = 0.4, xx = 0.3)
 
-Islope3(x, Data, reps = 100, plot = FALSE, yrsmth = 5, lambda = 0.4,
-  xx = 0.4)
+Islope3(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
+  lambda = 0.4, xx = 0.4)
 
-Islope4(x, Data, reps = 100, plot = FALSE, yrsmth = 5, lambda = 0.2,
-  xx = 0.4)
+Islope4(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
+  lambda = 0.2, xx = 0.4)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -70,7 +70,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 }
 
 \section{Rendered Equations}{
- 
+
 See \href{https://dlmtool.github.io/DLMtool/reference/Islope1.html}{Online Documentation} for correctly rendered equations
 }
 
@@ -98,3 +98,4 @@ Other Index methods: \code{\link{GB_slope}},
 \author{
 T. Carruthers
 }
+\concept{Index methods}

@@ -4,8 +4,8 @@
 \alias{join_plots}
 \title{Plot several plots with a shared legend}
 \usage{
-join_plots(plots, ncol = length(plots), nrow = 1, position = c("right",
-  "bottom"))
+join_plots(plots, ncol = length(plots), nrow = 1,
+  position = c("right", "bottom"))
 }
 \arguments{
 \item{plots}{list of plot objects of class \code{gg} or \code{ggplot}}

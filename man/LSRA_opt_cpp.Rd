@@ -4,8 +4,8 @@
 \alias{LSRA_opt_cpp}
 \title{Internal estimation function for LSRA and LSRA2 functions}
 \usage{
-LSRA_opt_cpp(param, FF_a, Chist, M_a, Mat_age_a, Wt_age_a, sel_a, Recdevs_a,
-  h_a, Umax)
+LSRA_opt_cpp(param, FF_a, Chist, M_a, Mat_age_a, Wt_age_a, sel_a,
+  Recdevs_a, h_a, Umax)
 }
 \arguments{
 \item{param}{a numeric value representing log(R0)}

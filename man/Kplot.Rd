@@ -4,8 +4,8 @@
 \alias{Kplot}
 \title{KOBE plot: a projection by projection plot of F/FMSY and B/BMSY}
 \usage{
-Kplot(MSEobj, maxsim = 60, MPs = NA, sims = NULL, maxMP = 9, nam = NA,
-  cex.leg = 1.5)
+Kplot(MSEobj, maxsim = 60, MPs = NA, sims = NULL, maxMP = 9,
+  nam = NA, cex.leg = 1.5)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}

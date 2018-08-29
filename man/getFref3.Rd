@@ -4,9 +4,9 @@
 \alias{getFref3}
 \title{Calculate Reference Yield}
 \usage{
-getFref3(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age, V,
-  retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, MPA, maxF,
-  useCPP = TRUE, SSB0)
+getFref3(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
+  V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, MPA,
+  maxF, useCPP = TRUE, SSB0)
 }
 \arguments{
 \item{x}{Integer, the simulation number}

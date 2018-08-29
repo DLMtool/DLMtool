@@ -3,7 +3,6 @@
 \docType{data}
 \name{SimulatedData}
 \alias{SimulatedData}
-\alias{SimulatedData}
 \title{SimulatedData Data}
 \format{An object of class \code{Data} of length 1.}
 \usage{

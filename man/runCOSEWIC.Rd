@@ -13,11 +13,11 @@
 \usage{
 runCOSEWIC(OM, ...)
 
-COSEWIC_Pplot(MSEobj, syear = 2017, qcol = "#FFCB62", quants = c(0.05,
-  0.25, 0.5, 0.75, 0.95))
+COSEWIC_Pplot(MSEobj, syear = 2017, qcol = "#FFCB62",
+  quants = c(0.05, 0.25, 0.5, 0.75, 0.95))
 
-COSEWIC_Dplot(MSEobj, syear = 2017, qcol = "#79F48D", quants = c(0.05,
-  0.25, 0.5, 0.75, 0.95), nGT = 3)
+COSEWIC_Dplot(MSEobj, syear = 2017, qcol = "#79F48D",
+  quants = c(0.05, 0.25, 0.5, 0.75, 0.95), nGT = 3)
 
 COSEWIC_Blow(MSEobj, syear = 2017, qcol = rgb(0.4, 0.8, 0.95),
   quants = c(0.05, 0.25, 0.5, 0.75, 0.95), nGT = 3)
@@ -25,13 +25,13 @@ COSEWIC_Blow(MSEobj, syear = 2017, qcol = rgb(0.4, 0.8, 0.95),
 COSEWIC_Hplot(MSEobj, syear = 2017, qcol = rgb(0.4, 0.8, 0.95),
   quants = c(0.05, 0.25, 0.5, 0.75, 0.95))
 
-COSEWIC_report(MSEobj, output_file = NA, author = "Author not specified",
-  title = NA)
+COSEWIC_report(MSEobj, output_file = NA,
+  author = "Author not specified", title = NA)
 
 COSEWIC_tab(MSEobj, rnd = 0, GTs = c(3, 6), syear = 2017, nGT = 3)
 
-COSEWIC_tab_formatted(Ptab1, thresh = c(20, 40, 40, 20, 40, 40, 40, 30, 5),
-  ret_thresh = F)
+COSEWIC_tab_formatted(Ptab1, thresh = c(20, 40, 40, 20, 40, 40, 40, 30,
+  5), ret_thresh = F)
 }
 \arguments{
 \item{OM}{An operating model object of class OM}

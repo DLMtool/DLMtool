@@ -4,7 +4,8 @@
 \alias{plotObs}
 \title{Plot the Observation object parameters}
 \usage{
-plotObs(x, nsim = 500, nyears = 50, col = "darkgray", breaks = 10, ...)
+plotObs(x, nsim = 500, nyears = 50, col = "darkgray", breaks = 10,
+  ...)
 }
 \arguments{
 \item{x}{An object of class Obs (or of class OM)}

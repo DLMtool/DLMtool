@@ -5,9 +5,9 @@
 \title{Yet another Value of Information Plot}
 \usage{
 VOIplot(MSEobj, MPs = NA, nvars = 5, nMP = 4, Par = c("Obs", "OM"),
-  YVar = c("Y", "B"), doPlot = TRUE, incStat = FALSE, availMP = NULL,
-  acceptMP = NULL, incNames = TRUE, labcex = 0.8, quants = c(0.05,
-  0.95))
+  YVar = c("Y", "B"), doPlot = TRUE, incStat = FALSE,
+  availMP = NULL, acceptMP = NULL, incNames = TRUE, labcex = 0.8,
+  quants = c(0.05, 0.95))
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}

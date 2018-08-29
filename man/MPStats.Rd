@@ -4,8 +4,8 @@
 \alias{MPStats}
 \title{Calculate Statistics for MP Performance}
 \usage{
-MPStats(MSEobj, PMRefs = list(B_BMSY = 0.5, SSB_SSB0 = 0.2, F_FMSY = 1, AAVY =
-  30, AAVE = 30), lastYrs = 10, UseMean = TRUE, msg = TRUE)
+MPStats(MSEobj, PMRefs = list(B_BMSY = 0.5, SSB_SSB0 = 0.2, F_FMSY = 1,
+  AAVY = 30, AAVE = 30), lastYrs = 10, UseMean = TRUE, msg = TRUE)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}

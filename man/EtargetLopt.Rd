@@ -4,7 +4,8 @@
 \alias{EtargetLopt}
 \title{Effort Target Optimum Length}
 \usage{
-EtargetLopt(x, Data, reps = 100, plot = FALSE, yrsmth = 3, buffer = 0.1)
+EtargetLopt(x, Data, reps = 100, plot = FALSE, yrsmth = 3,
+  buffer = 0.1)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -48,7 +49,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 }
 
 \section{Rendered Equations}{
- 
+
 See \href{https://dlmtool.github.io/DLMtool/reference/EtargetLopt.html}{Online Documentation} for correctly rendered equations
 }
 
