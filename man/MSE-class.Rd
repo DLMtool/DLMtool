@@ -124,7 +124,7 @@ simulation conditions and performance of data-limited methods
 
 \item SSBMSY: spawning biomass MSY in last historical year
 
-\item SSBMSY_SSB0: ratio of SSB\link{MSY}/SSB0 in last historical year
+\item SSBMSY_SSB0: ratio of SSB_MSY/SSB0 in last historical year
 
 \item t0: theoretical length at age zero (von Bertalanffy t0 parameter)
 
