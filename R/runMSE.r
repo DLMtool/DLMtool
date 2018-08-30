@@ -628,11 +628,16 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # Cret[fixind[cond, ]] <- 1  # puts a catch in the most vulnerable age class
   
   # a multinomial observation model for catch-at-age data
-  for (i in 1:nsim) 
-    for (j in 1:nyears) 
-      CAA[i, j, ] <- ceiling(-0.5 + rmultinom(1, CAA_ESS[i], Cret[i, j,]) * CAA_nsamp[i]/CAA_ESS[i]) 
-  
-
+  for (i in 1:nsim) {
+    for (j in 1:nyears) {
+      if (!sum( Cret[i, j,])) {
+        CAA[i, j, ] <- 0 
+      } else {
+        CAA[i, j, ] <- ceiling(-0.5 + rmultinom(1, CAA_ESS[i], Cret[i, j,]) * CAA_nsamp[i]/CAA_ESS[i])   
+      }
+    }
+  }
+    
   # --- Simulate observed catch-at-length ----
   # a multinomial observation model for catch-at-length data
   # assumed normally-distributed length-at-age truncated at 2 standard deviations from the mean
@@ -1133,6 +1138,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
             CAA[i, j, ] <- ceiling(-0.5 + rmultinom(1, CAA_ESS[i], CNtemp[i, , j]) * CAA_nsamp[i]/CAA_ESS[i])   # a multinomial observation model for catch-at-age data
           }
         }	  
+       
         
         ## Calculate CAL ####
         CAL <- array(NA, dim = c(nsim, interval[mm], nCALbins))  # the catch at length array
