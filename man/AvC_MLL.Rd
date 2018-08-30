@@ -47,7 +47,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 }
 
 \section{Rendered Equations}{
- 
+
 See \href{https://dlmtool.github.io/DLMtool/reference/AvC_MLL.html}{Online Documentation} for correctly rendered equations
 }
 
@@ -58,3 +58,4 @@ Rec <- AvC_MLL(1, DLMtool::Cobia, reps=1000, plot=TRUE) # 1,000 log-normal sampl
 Other Average Catch MPs: \code{\link{AvC}},
   \code{\link{DCACs}}
 }
+\concept{Average Catch MPs}

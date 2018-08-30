@@ -4,8 +4,8 @@
 \alias{DD_R}
 \title{Delay-Difference Internal Function}
 \usage{
-DD_R(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hist, C_hist,
-  UMSYprior)
+DD_R(params, opty, So_DD, Alpha_DD, Rho_DD, ny_DD, k_DD, wa_DD, E_hist,
+  C_hist, UMSYprior)
 }
 \arguments{
 \item{params}{internal parameter}

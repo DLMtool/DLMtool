@@ -4,9 +4,9 @@
 \alias{simYears}
 \title{Simulate population dynamics for historical years}
 \usage{
-simYears(x, nareas, maxage, N, pyears, M_ageArray, Asize, Mat_age, Wt_age, V,
-  retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, qs, MPA,
-  maxF, useCPP = TRUE, SSB0)
+simYears(x, nareas, maxage, N, pyears, M_ageArray, Asize, Mat_age, Wt_age,
+  V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, qs,
+  MPA, maxF, useCPP = TRUE, SSB0)
 }
 \arguments{
 \item{x}{Integer, the simulation number}

@@ -60,7 +60,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 }
 
 \section{Rendered Equations}{
- 
+
 See \href{https://dlmtool.github.io/DLMtool/reference/DD.html}{Online Documentation} for correctly rendered equations
 
 
@@ -83,3 +83,4 @@ Other Delay-Difference MPs: \code{\link{DDe}}
 \author{
 T. Carruthers
 }
+\concept{Delay-Difference MPs}

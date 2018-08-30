@@ -4,7 +4,8 @@
 \alias{VOI2}
 \title{Calculate Value Of Information 2}
 \usage{
-VOI2(MSEobj, ncomp = 6, nbins = 4, Ut = NA, Utnam = "yield", lay = F)
+VOI2(MSEobj, ncomp = 6, nbins = 4, Ut = NA, Utnam = "yield",
+  lay = F)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}

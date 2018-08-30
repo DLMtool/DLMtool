@@ -28,8 +28,6 @@ An object of class \code{\link[=Rec-class]{Rec}} with the TAE slot(s) populated
 \description{
 An index target MP where the Effort is modified according to current index
 levels (mean index over last 5 years) relative to a target level.
-
-Index Target Effort-Based
 }
 \details{
 The TAE is calculated as:
@@ -58,7 +56,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 }
 
 \section{Rendered Equations}{
- 
+
 See \href{https://dlmtool.github.io/DLMtool/reference/ITe5.html}{Online Documentation} for correctly rendered equations
 
 

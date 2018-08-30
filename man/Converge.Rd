@@ -4,9 +4,9 @@
 \alias{Converge}
 \title{Check Convergence}
 \usage{
-Converge(MSEobj, PMs = list(Yield, P10, AAVY), maxMP = 15, thresh = 0.5,
-  ref.it = 20, inc.leg = FALSE, all.its = FALSE, nrow = NULL,
-  ncol = NULL)
+Converge(MSEobj, PMs = list(Yield, P10, AAVY), maxMP = 15,
+  thresh = 0.5, ref.it = 20, inc.leg = FALSE, all.its = FALSE,
+  nrow = NULL, ncol = NULL)
 }
 \arguments{
 \item{MSEobj}{An MSE object of class \code{'MSE'}}

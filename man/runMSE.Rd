@@ -6,16 +6,18 @@
 \title{Run a Management Strategy Evaluation}
 \usage{
 runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
-  "matlenlim", "MRreal"), CheckMPs = FALSE, timelimit = 1, Hist = FALSE,
-  ntrials = 50, fracD = 0.05, CalcBlow = TRUE, HZN = 2, Bfrac = 0.5,
-  AnnualMSY = TRUE, silent = FALSE, PPD = FALSE, parallel = FALSE,
-  save_name = NULL, checks = FALSE, control = NULL)
+  "matlenlim", "MRreal"), CheckMPs = FALSE, timelimit = 1,
+  Hist = FALSE, ntrials = 50, fracD = 0.05, CalcBlow = TRUE,
+  HZN = 2, Bfrac = 0.5, AnnualMSY = TRUE, silent = FALSE,
+  PPD = FALSE, parallel = FALSE, save_name = NULL, checks = FALSE,
+  control = NULL)
 
-runMSErobust(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
-  "matlenlim", "MRreal"), timelimit = 1, CheckMPs = FALSE, Hist = FALSE,
-  ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2, Bfrac = 0.5,
-  AnnualMSY = TRUE, maxsims = 64, name = NULL, unique = FALSE,
-  maxCrash = 10, saveMSE = TRUE, savePack = FALSE)
+runMSErobust(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref",
+  "curE", "matlenlim", "MRreal"), timelimit = 1, CheckMPs = FALSE,
+  Hist = FALSE, ntrials = 50, fracD = 0.05, CalcBlow = FALSE,
+  HZN = 2, Bfrac = 0.5, AnnualMSY = TRUE, maxsims = 64,
+  name = NULL, unique = FALSE, maxCrash = 10, saveMSE = TRUE,
+  savePack = FALSE)
 }
 \arguments{
 \item{OM}{An operating model object (class 'OM')}

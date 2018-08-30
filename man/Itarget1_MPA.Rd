@@ -60,7 +60,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 }
 
 \section{Rendered Equations}{
- 
+
 See \href{https://dlmtool.github.io/DLMtool/reference/Itarget1_MPA.html}{Online Documentation} for correctly rendered equations
 }
 
@@ -74,3 +74,4 @@ Other Index methods: \code{\link{GB_slope}},
   \code{\link{Islope1}}, \code{\link{Itarget1}},
   \code{\link{ItargetE1}}
 }
+\concept{Index methods}

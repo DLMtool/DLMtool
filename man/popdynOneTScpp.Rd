@@ -4,8 +4,8 @@
 \alias{popdynOneTScpp}
 \title{Population dynamics model for one annual time-step}
 \usage{
-popdynOneTScpp(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR,
-  aR, bR, mov, SRrel)
+popdynOneTScpp(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a,
+  SSBpR, aR, bR, mov, SRrel)
 }
 \arguments{
 \item{nareas}{The number of spatial areas}

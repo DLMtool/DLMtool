@@ -4,9 +4,10 @@
 \alias{OMdoc}
 \title{Generate OM Documentation Report}
 \usage{
-OMdoc(OM = NULL, rmd.source = NULL, overwrite = FALSE, out.file = NULL,
-  inc.plot = TRUE, render = TRUE, output = "html_document",
-  openFile = TRUE, quiet = FALSE, dir = NULL, ...)
+OMdoc(OM = NULL, rmd.source = NULL, overwrite = FALSE,
+  out.file = NULL, inc.plot = TRUE, render = TRUE,
+  output = "html_document", openFile = TRUE, quiet = FALSE,
+  dir = NULL, ...)
 }
 \arguments{
 \item{OM}{An object of class 'OM' or the name of an OM xlsx file}

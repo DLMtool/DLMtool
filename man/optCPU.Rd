@@ -4,7 +4,8 @@
 \alias{optCPU}
 \title{Determine optimal number of cpus}
 \usage{
-optCPU(nsim = 96, thresh = 5, plot = TRUE, msg = TRUE, maxn = NULL)
+optCPU(nsim = 96, thresh = 5, plot = TRUE, msg = TRUE,
+  maxn = NULL)
 }
 \arguments{
 \item{nsim}{Numeric. Number of simulations.}

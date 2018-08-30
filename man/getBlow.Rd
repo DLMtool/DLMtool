@@ -4,9 +4,9 @@
 \alias{getBlow}
 \title{Blow parallel optimization function}
 \usage{
-getBlow(x, N, Asize, SSBMSY, SSBpR, MPA, SSB0, nareas, retA, MGThorizon, Find,
-  Perr, M_ageArray, hs, Mat_age, Wt_age, R0a, V, nyears, maxage, mov, Spat_targ,
-  SRrel, aR, bR, Bfrac = 0.5, maxF, ploty = F)
+getBlow(x, N, Asize, SSBMSY, SSBpR, MPA, SSB0, nareas, retA, MGThorizon,
+  Find, Perr, M_ageArray, hs, Mat_age, Wt_age, R0a, V, nyears, maxage, mov,
+  Spat_targ, SRrel, aR, bR, Bfrac = 0.5, maxF, ploty = F)
 }
 \arguments{
 \item{x}{position in a vector}

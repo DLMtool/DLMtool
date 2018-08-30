@@ -48,7 +48,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 }
 
 \section{Rendered Equations}{
- 
+
 See \href{https://dlmtool.github.io/DLMtool/reference/GB_CC.html}{Online Documentation} for correctly rendered equations
 }
 
@@ -66,3 +66,4 @@ Other Constant Catch MPs: \code{\link{CC1}}
 \author{
 T. Carruthers
 }
+\concept{Constant Catch MPs}

@@ -4,9 +4,9 @@
 \alias{popdynCPP}
 \title{Population dynamics model in CPP}
 \usage{
-popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge, Vuln,
-  Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc,
-  Fapic, maxF, MPA, control, SSB0c)
+popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge,
+  Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc,
+  bRc, Qc, Fapic, maxF, MPA, control, SSB0c)
 }
 \arguments{
 \item{nareas}{The number of spatial areas}

@@ -49,7 +49,7 @@ LazyLoad: yes
 Suggests:
     testthat
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 URL: http://www.datalimitedtoolkit.org/
 BugReports: https://github.com/DLMtool/DLMtool/issues
 Roxygen: list(markdown = TRUE)

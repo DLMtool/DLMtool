@@ -5,11 +5,11 @@
 \alias{LstepCE2}
 \title{Step-wise Constant Effort}
 \usage{
-LstepCE1(x, Data, reps = 100, plot = FALSE, yrsmth = 5, stepsz = 0.05,
-  llim = c(0.96, 0.98, 1.05))
+LstepCE1(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
+  stepsz = 0.05, llim = c(0.96, 0.98, 1.05))
 
-LstepCE2(x, Data, reps = 100, plot = FALSE, yrsmth = 5, stepsz = 0.1,
-  llim = c(0.96, 0.98, 1.05))
+LstepCE2(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
+  stepsz = 0.1, llim = c(0.96, 0.98, 1.05))
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -68,7 +68,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 }
 
 \section{Rendered Equations}{
- 
+
 See \href{https://dlmtool.github.io/DLMtool/reference/LstepCE1.html}{Online Documentation} for correctly rendered equations
 }
 

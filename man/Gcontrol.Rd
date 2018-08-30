@@ -51,7 +51,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 }
 
 \section{Rendered Equations}{
- 
+
 See \href{https://dlmtool.github.io/DLMtool/reference/Gcontrol.html}{Online Documentation} for correctly rendered equations
 }
 
@@ -72,3 +72,4 @@ Other Index methods: \code{\link{GB_slope}},
 \author{
 C. Walters and T. Carruthers
 }
+\concept{Index methods}

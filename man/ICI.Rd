@@ -66,7 +66,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 }
 
 \section{Rendered Equations}{
- 
+
 See \href{https://dlmtool.github.io/DLMtool/reference/ICI.html}{Online Documentation} for correctly rendered equations
 
 
@@ -93,3 +93,4 @@ Other Index methods: \code{\link{GB_slope}},
 \author{
 Coded by Q. Huynh. Developed by Jardim et al. (2015)
 }
+\concept{Index methods}
