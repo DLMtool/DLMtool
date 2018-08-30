@@ -46,6 +46,7 @@ Imports:
     utils
 LazyData: yes
 LazyLoad: yes
+Encoding: UTF-8
 Suggests:
     testthat
 LinkingTo: Rcpp, RcppArmadillo
