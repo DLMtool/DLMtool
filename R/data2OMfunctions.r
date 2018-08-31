@@ -52,7 +52,7 @@ Growth2OM <- function(data=NULL, OM=NULL, nsim=48, seed=101, plot=TRUE, msg=TRUE
   if (!inherits(data, 'data.frame')) stop("data must be a data.frame")
   if (!all(c("Age", "Length") %in% colnames(data))) stop("data must have columns: Age, Length")
   
-  Length <- Weight <- av.len <- n <- st.age <- NULL # hacks from cran checks
+  Length <- av.len <- n <- st.age <- NULL # hacks from cran checks
   
   VB <- function(Linf,k,t0,age) Linf*(1- exp(-k*(age-t0)))
   nsamp <- ifelse(om, OM@nsim, nsim) 
@@ -158,6 +158,8 @@ LW2OM <- function(data=NULL, OM=NULL, plot=TRUE) {
   if (!inherits(OM, 'OM')) stop("OM must be class OM")
   if (!inherits(data, 'data.frame')) stop("data must be a data.frame")
   if (!all(c("Weight", "Length") %in% colnames(data))) stop("data must have columns: Length, Weight")
+  
+  Length <- Weight <- NULL # hacks from cran checks
   
   dat <- dplyr::select(data, Length, Weight)
   options(warn=-1)
