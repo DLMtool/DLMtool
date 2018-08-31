@@ -161,7 +161,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                              CheckMPs=CheckMPs, timelimit=timelimit, Hist=Hist, ntrials=ntrials, 
                              fracD=fracD, CalcBlow=CalcBlow, 
                              HZN=HZN, Bfrac=Bfrac, AnnualMSY=AnnualMSY, silent=TRUE, PPD=PPD,
-                             control=control)
+                             control=control, parallel=parallel)
     #assign_DLMenv() # grabs objects from DLMenv in cores, then merges and assigns to 'home' environment
   
     if (!is.null(save_name) && is.character(save_name)) saveRDS(temp, paste0(save_name, '.rdata'))
@@ -189,9 +189,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
 runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
                       CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=TRUE, 
                       HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=FALSE, checks=FALSE,
-                      control=NULL) {
-  
- 
+                      control=NULL, parallel=FALSE) {
   
   # For development - assign default argument values to to current workspace if they don't exist ####
   if (interactive()) { 
@@ -1374,11 +1372,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       
     }
     
+    if (!parallel) 
+      if("progress"%in%names(control))
+        if(control$progress) 
+          shiny::incProgress(1/nMP, detail = round(mm*100/nMP))
     
-    
-    
-    if("progress"%in%names(control))if(control$progress)
-      shiny::incProgress(1/nMP, detail = round(mm*100/nMP))
   }  # end of mm methods 
   
   # Miscellaneous reporting
