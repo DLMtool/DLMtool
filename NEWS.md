@@ -5,6 +5,8 @@ The current version of the DLMtool package is available for download from [CRAN]
 ### New features
 - A two-page cheat-sheet has been developed for main DLMtool functions. Access the 
 online version with `cheatsheets()`
+- New function to provide bootstrapped samples of von Bertalanffy growth parameters directly to cpars (`Growth2OM`)
+- New function to estimate length-weight parameters from data (`LW2OM`). 
 
 ### Minor changes
 - update `plotMPA` to include relative size of areas

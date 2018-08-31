@@ -53,6 +53,5 @@ newOM <- Growth2OM(data, OM)
 
 # Return a data.frame
 estPars <- Growth2OM(data)
-
-
+ 
 }
