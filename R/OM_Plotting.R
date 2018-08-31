@@ -916,12 +916,14 @@ ObsTSplot<-function(Cbias,Csd,nyears,labs, breaks, its, nsamp, col){
 #' A function that plots the parameters and resulting time series of an operating model.
 #' 
 #' @param x An object of class OM or a list with historical simulation information (ie runMSE(OM, Hist=TRUE))
+#' @param rmd Logical. Used in a rmd file?
+#' @param head Character. Heading for rmd file. Default is '##' (second level heading)
 #' @param ...  Optional additional arguments passed to \code{plot}
 #' @rdname plot-OM
 #' @method plot OM 
 #' @author T. Carruthers
 #' @export 
-plot.OM <-function(x, ...){
+plot.OM <-function(x, rmd=FALSE, head="##", ...){
   op <- par(no.readonly = TRUE)
   on.exit(par(op))
   if (class(x) == "OM") {
@@ -929,9 +931,33 @@ plot.OM <-function(x, ...){
     out<-runMSE(OM,Hist=T, ...)
     nsim<-OM@nsim
     nyears<-OM@nyears
+    if (rmd) {
+      cat('\n')
+      cat('\n')
+      cat(head, 'Stock Object')
+      cat('\n')
+    }
     plotStock(OM)
+    if (rmd) {
+      cat('\n')
+      cat('\n')
+      cat(head, 'Fleet Object')
+      cat('\n')
+    }
     plotFleet(OM)
+    if (rmd) {
+      cat('\n')
+      cat('\n')
+      cat(head, 'Obs Object')
+      cat('\n')
+    }
     plotObs(OM)
+    if (rmd) {
+      cat('\n')
+      cat('\n')
+      cat(head, 'Imp Object')
+      cat('\n')
+    }
     plotImp(OM)
     yrlab<-OM@CurrentYr-((nyears-1):0)
   } else if (class(x) == "list") {
@@ -940,6 +966,13 @@ plot.OM <-function(x, ...){
     nsim <- dim(out$TSdata[[1]])[2]
     yrlab<-nyears-((nyears-1):0)
   } else stop("argument must be class 'OM' or 'list' ")
+  
+  if (rmd) {
+    cat('\n')
+    cat('\n')
+    cat(head, 'OM Simulations')
+    cat('\n')
+  }
   
   # Time series
   par(mfrow=c(4,2),mai=c(0.7,0.7,0.05,0.05),omi=c(0.01,0.01,0.3,0.01))

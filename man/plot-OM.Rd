@@ -4,10 +4,14 @@
 \alias{plot.OM}
 \title{Plot the operating model (OM) object parameters}
 \usage{
-\method{plot}{OM}(x, ...)
+\method{plot}{OM}(x, rmd = FALSE, head = "##", ...)
 }
 \arguments{
 \item{x}{An object of class OM or a list with historical simulation information (ie runMSE(OM, Hist=TRUE))}
+
+\item{rmd}{Logical. Used in a rmd file?}
+
+\item{head}{Character. Heading for rmd file. Default is '##' (second level heading)}
 
 \item{...}{Optional additional arguments passed to \code{plot}}
 }

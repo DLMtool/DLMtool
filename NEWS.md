@@ -1,18 +1,16 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
-## DLMtool 5.2.999
+## DLMtool 5.2.3
 
 ### New features
 - A two-page cheat-sheet has been developed for main DLMtool functions. Access the 
 online version with `cheatsheets()`
-- New function to provide bootstrapped samples of von Bertalanffy growth parameters directly to cpars (`Growth2OM`)
-- New function to estimate length-weight parameters from data (`LW2OM`)
-- New functions to estimate vB parameters, growth, maturity, etc TODO - add to manual and cheatsheets
 
 ### Minor changes
 - update `plotMPA` to include relative size of areas
 
 ### Fixes
+- export built in MPs from MSEtool package to parallel cluster
 - fix issue with CAA at very low stocks sizes
 
 ## DLMtool 5.2.2
