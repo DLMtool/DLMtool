@@ -43,6 +43,7 @@ Imports:
     rfishbase,
     rmarkdown,
     stats,
+    shiny,
     tidyr,
     utils
 LazyData: yes

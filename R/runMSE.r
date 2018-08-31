@@ -14,7 +14,7 @@ Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "D", "Mgrad", "SRrel", "hs", "p
            "Linfarray", "Karray", "t0array", "mov",  "nareas", "AC", "LenCV", "a", "b", "FinF", 
            "Fdisc", "R50", "Rslope", "retA", "retL", "LR5", "LFR", "Rmaxlen",
            "V2", "SLarray2", "DR", "Asize", "Size_area_1", "L50array", "L95array",
-           "Fdisc_array", "Fdisc_array2", "Pinitdist", "incProgress", "DataOut",
+           "Fdisc_array", "Fdisc_array2", "Pinitdist", "DataOut",
            'Perr_y', "Cobs", "Iobs", "Dobs", "Btbiascv", 'Btobs', "h")
 
 
@@ -1377,7 +1377,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     
     
     
-    if("progress"%in%names(control))if(control$progress)incProgress(1/nMP, detail = round(mm*100/nMP))
+    if("progress"%in%names(control))if(control$progress)
+      shiny::incProgress(1/nMP, detail = round(mm*100/nMP))
   }  # end of mm methods 
   
   # Miscellaneous reporting

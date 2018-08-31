@@ -15,6 +15,7 @@
 #' @importFrom methods getClassDef getSlots .hasSlot new show slot slot<- slotNames
 #' @importFrom mvtnorm rmvnorm
 #' @importFrom parallel detectCores 
+#' @importFrom shiny incProgress
 #' @importFrom snowfall sfClusterEval sfInit sfExportAll sfIsRunning sfExport sfSapply sfLibrary
 #' @importFrom stats acf approx coef dbeta density dnorm dlnorm lm loess loess.smooth
 #' median nlm optim optimise optimize plogis pnorm predict qlnorm quantile rbeta
