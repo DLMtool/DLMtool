@@ -1,0 +1,318 @@
+<table class='gmisc_table' style='border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;' >
+<thead>
+<tr>
+<th style='border-bottom: 1px solid grey; border-top: 2px solid grey;'> </th>
+<th style='border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style='text-align: left;'>Name</td>
+<td style='text-align: left;'>Data-class</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>Description</td>
+<td style='background-color: #f7f7f7; text-align: left;'>An object for storing data for analysis using data-limited methods</td>
+</tr>
+<tr>
+<td style='text-align: left;'></td>
+<td style='text-align: left;'></td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>Slots</td>
+<td style='background-color: #f7f7f7; text-align: left;'></td>
+</tr>
+<tr>
+<td style='text-align: left;'>Name</td>
+<td style='text-align: left;'>The name of the case-study</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>Year</td>
+<td style='background-color: #f7f7f7; text-align: left;'>A vector of years that correspond to catch and relative abundance data</td>
+</tr>
+<tr>
+<td style='text-align: left;'>Cat</td>
+<td style='text-align: left;'>Total annual catches</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>Ind</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Relative abundance index</td>
+</tr>
+<tr>
+<td style='text-align: left;'>t</td>
+<td style='text-align: left;'>The number of years corresponding to AvC and Dt</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>AvC</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Average catch over time t</td>
+</tr>
+<tr>
+<td style='text-align: left;'>Dt</td>
+<td style='text-align: left;'>Depletion over time t e.g. Bnow/Bthen</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>ML</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Mean length time series</td>
+</tr>
+<tr>
+<td style='text-align: left;'>Mort</td>
+<td style='text-align: left;'>Natural mortality rate</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>FMSY_M</td>
+<td style='background-color: #f7f7f7; text-align: left;'>An assumed ratio of FMSY to M</td>
+</tr>
+<tr>
+<td style='text-align: left;'>BMSY_B0</td>
+<td style='text-align: left;'>The most productive stock size relative to unfished</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>L50</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Length at 50 percent maturity</td>
+</tr>
+<tr>
+<td style='text-align: left;'>L95</td>
+<td style='text-align: left;'>Length at 95 percent maturity</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>Lbar</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Mean length of catches over Lc (modal length)</td>
+</tr>
+<tr>
+<td style='text-align: left;'>Lc</td>
+<td style='text-align: left;'>Modal length</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>LFC</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Length at first capture</td>
+</tr>
+<tr>
+<td style='text-align: left;'>LFS</td>
+<td style='text-align: left;'>smallest Length at full selection</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>CAA</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Catch at Age data</td>
+</tr>
+<tr>
+<td style='text-align: left;'>Dep</td>
+<td style='text-align: left;'>Stock depletion Bnow/Bunfished (total stock)</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>Abun</td>
+<td style='background-color: #f7f7f7; text-align: left;'>An estimate of absolute current vulnerable abundance</td>
+</tr>
+<tr>
+<td style='text-align: left;'>SpAbun</td>
+<td style='text-align: left;'>An estimate of absolute current spawning stock abundance</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>vbK</td>
+<td style='background-color: #f7f7f7; text-align: left;'>The von Bertalanffy growth coefficient</td>
+</tr>
+<tr>
+<td style='text-align: left;'>vbLinf</td>
+<td style='text-align: left;'>Maximum length</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>vbt0</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Theoretical age at length zero</td>
+</tr>
+<tr>
+<td style='text-align: left;'>wla</td>
+<td style='text-align: left;'>Weight-Length parameter alpha</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>wlb</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Weight-Length parameter beta</td>
+</tr>
+<tr>
+<td style='text-align: left;'>steep</td>
+<td style='text-align: left;'>Steepness of the Beverton Holt stock-recruitment relationship</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>CV_Cat</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Coefficient of variation in annual catches</td>
+</tr>
+<tr>
+<td style='text-align: left;'>CV_Dt</td>
+<td style='text-align: left;'>Coefficient of variation in depletion over time t</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>CV_AvC</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Coefficient of variation in average catches over time t</td>
+</tr>
+<tr>
+<td style='text-align: left;'>CV_Ind</td>
+<td style='text-align: left;'>Coefficient of variation in the relative abundance index</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>CV_Mort</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Coefficient of variation in natural mortality rate</td>
+</tr>
+<tr>
+<td style='text-align: left;'>CV_FMSY_M</td>
+<td style='text-align: left;'>Coefficient of variation in the ratio in FMSY/M</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>CV_BMSY_B0</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Coefficient of variation in the position of the most productive stock size relative to unfished</td>
+</tr>
+<tr>
+<td style='text-align: left;'>CV_Dep</td>
+<td style='text-align: left;'>Coefficient of variation in current stock depletion</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>CV_Abun</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Coefficient of variation in estimate of absolute current stock size</td>
+</tr>
+<tr>
+<td style='text-align: left;'>CV_vbK</td>
+<td style='text-align: left;'>Coefficient of variation in the von Bert. k parameter</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>CV_vbLinf</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Coefficient of variation in maximum length</td>
+</tr>
+<tr>
+<td style='text-align: left;'>CV_vbt0</td>
+<td style='text-align: left;'>Coefficient of variation in age at length zero</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>CV_L50</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Coefficient of variation in length at 50 per cent maturity</td>
+</tr>
+<tr>
+<td style='text-align: left;'>CV_LFC</td>
+<td style='text-align: left;'>Coefficient of variation in length at first capture</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>CV_LFS</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Coefficient of variation in length at full selection</td>
+</tr>
+<tr>
+<td style='text-align: left;'>CV_wla</td>
+<td style='text-align: left;'>Coefficient of variation in weight-length parameter a</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>CV_wlb</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Coefficient of variation in weight-length parameter b</td>
+</tr>
+<tr>
+<td style='text-align: left;'>CV_steep</td>
+<td style='text-align: left;'>Coefficient of variation in steepness</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>sigmaL</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Assumed observaton error of the length composition data</td>
+</tr>
+<tr>
+<td style='text-align: left;'>MaxAge</td>
+<td style='text-align: left;'>Maximum age</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>Units</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Units of the catch/absolute abundance estimates</td>
+</tr>
+<tr>
+<td style='text-align: left;'>Ref</td>
+<td style='text-align: left;'>A reference quota level</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>Ref_type</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Its type</td>
+</tr>
+<tr>
+<td style='text-align: left;'>Log</td>
+<td style='text-align: left;'>A log of events</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>params</td>
+<td style='background-color: #f7f7f7; text-align: left;'>A place to store estimated parameters</td>
+</tr>
+<tr>
+<td style='text-align: left;'>PosMPs</td>
+<td style='text-align: left;'>The methods that can be applied to these data</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>MPs</td>
+<td style='background-color: #f7f7f7; text-align: left;'>The methods that were applied to these data</td>
+</tr>
+<tr>
+<td style='text-align: left;'>OM</td>
+<td style='text-align: left;'>A table of operating model conditions</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>Obs</td>
+<td style='background-color: #f7f7f7; text-align: left;'>A table of observation model conditions</td>
+</tr>
+<tr>
+<td style='text-align: left;'>TAC</td>
+<td style='text-align: left;'>The calculated TAC</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>TACbias</td>
+<td style='background-color: #f7f7f7; text-align: left;'>The known bias in the calculated TAC</td>
+</tr>
+<tr>
+<td style='text-align: left;'>Sense</td>
+<td style='text-align: left;'>The results of the sensitivity analysis</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>CAL_bins</td>
+<td style='background-color: #f7f7f7; text-align: left;'>The length bins for the catch-at-length data</td>
+</tr>
+<tr>
+<td style='text-align: left;'>CAL</td>
+<td style='text-align: left;'>Catch-at-length data</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>Cref</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Reference or target catch level</td>
+</tr>
+<tr>
+<td style='text-align: left;'>Iref</td>
+<td style='text-align: left;'>Reference or target relative abundance index level</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>Bref</td>
+<td style='background-color: #f7f7f7; text-align: left;'>Reference or target biomass level</td>
+</tr>
+<tr>
+<td style='text-align: left;'>CV_Cref</td>
+<td style='text-align: left;'>CV for reference or target catch level</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>CV_Iref</td>
+<td style='background-color: #f7f7f7; text-align: left;'>CV for reference or target relative abundance index level</td>
+</tr>
+<tr>
+<td style='text-align: left;'>CV_Bref</td>
+<td style='text-align: left;'>CV for reference or target biomass level</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>CV_Rec</td>
+<td style='background-color: #f7f7f7; text-align: left;'>CV for recent recruitment strength</td>
+</tr>
+<tr>
+<td style='text-align: left;'>Rec</td>
+<td style='text-align: left;'>Recent recruitment strength</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>MPrec</td>
+<td style='background-color: #f7f7f7; text-align: left;'>The previous recommendation of a management proceedure</td>
+</tr>
+<tr>
+<td style='text-align: left;'>MPeff</td>
+<td style='text-align: left;'>The current level of effort</td>
+</tr>
+<tr style='background-color: #f7f7f7;'>
+<td style='background-color: #f7f7f7; text-align: left;'>LHYear</td>
+<td style='background-color: #f7f7f7; text-align: left;'>The last historical year of the simulation (before projection)</td>
+</tr>
+<tr>
+<td style='border-bottom: 2px solid grey; text-align: left;'>Misc</td>
+<td style='border-bottom: 2px solid grey; text-align: left;'>Optional list which is passed to MPs</td>
+</tr>
+</tbody>
+</table>
