@@ -14,6 +14,7 @@ online version with `cheatsheets()`
 ### Fixes
 - export built in MPs from MSEtool package to parallel cluster
 - fix issue with CAA at very low stocks sizes
+- fix issue with MSY calculations with Ricker SRR
 
 ## DLMtool 5.2.2
 

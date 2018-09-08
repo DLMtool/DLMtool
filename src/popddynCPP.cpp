@@ -141,7 +141,7 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
   NumericVector SSB0a(nareas);
   double R0 = sum(R0c);
 
-
+  
   // Initial year
   Narray.subcube(0, 0, 0, maxage-1, 0, nareas-1) = Ncurr;
   
@@ -210,7 +210,7 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
   
     // fishdist = (pow(tempVec, Spat_targc))/mean((pow(tempVec, Spat_targc)));
     fishdist = (pow(tempVec, Spat_targc))/sum((pow(tempVec, Spat_targc)));
-    
+   
     arma::vec d1(nareas);
     for (int A=0; A<nareas; A++) {
       d1(A) = MPA(yr,A) * fishdist(A);// historical closures
@@ -229,12 +229,13 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
         FMretarray.subcube(0,yr+1, A, maxage-1, yr+1, A) =  (Effind(yr+1) * Qc * fishdist(A) * Retc.col(yr+1))/Asize_c(A);
       }
     }
-
+ 
     if (control == 2) {
       for (int A=0; A<nareas; A++) {
         FMarray.subcube(0,yr+1, A, maxage-1, yr+1, A) =  (Fapic * fishdist(A) * Vuln.col(yr+1))/Asize_c(A);
         FMretarray.subcube(0,yr+1, A, maxage-1, yr+1, A) =  (Fapic * fishdist(A) * Retc.col(yr+1))/Asize_c(A);
       }
+  
     }
     
     if (control ==3) { // simulate unfished dynamics & update recruitment by area
@@ -266,7 +267,7 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
     }
    
   }
-
+  
   List out(8);
   out(0) = Narray;
   out(1) = Barray;
