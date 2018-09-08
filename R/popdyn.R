@@ -853,7 +853,7 @@ simYears <- function(x, nareas, maxage, N, pyears, M_ageArray, Asize, Mat_age, W
 #' @param nareas The number of spatial areas
 #' @param maxage The maximum age
 #' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas.
-#' Only values from the first year (i.e N[,,1,]) are used, which is the current N-at-age.
+#' Only values from the first year (i.e `N[,,1,]`) are used, which is the current N-at-age.
 #' @param pyears The number of years to project forward. Equal to 'nyears' for optimizing for q.
 #' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year
 #' @param Mat_age A matrix (dimensions nsim, maxage) with the proportion mature for each age-class
