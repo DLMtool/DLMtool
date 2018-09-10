@@ -529,19 +529,9 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # --- Calculate MSY references ----  
   if(!silent) message("Calculating MSY reference points")  # Print a progress update
-  if (all(SRrel == 1)) { # only BH SRR works here
-    MSYrefs <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, maxage, 
-                      R0, SRrel, hs, yr=nyears)  
-  } 
-  if (all(SRrel == 2)) { # project population forward for Ricker SRR
-    
-    # MSY projection years
-    MSYyr <- 200
-    MSYrefs <- calcMSYRicker(MSYyr, M_ageArray, Wt_age, retA, V, Perr_y, maxage,
-                              nareas, Mat_age, nsim, Asize, N, Spat_targ, hs,
-                              SRrel, mov, Find, R0a, SSBpR, aR, bR, SSB0, 
-                              B0, maxF, cur.yr=nyears)
-  } 
+  
+  MSYrefs <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, maxage, 
+                    R0, SRrel, hs, yr=nyears) 
 
   MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
   FMSY <- MSYrefs[2, ]  # instantaneous FMSY (Vulnerable)
@@ -917,23 +907,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     for (y in 1:proyears) {
       if(!silent) cat('.')
       if (!silent) flush.console()
-      if (all(SRrel == 1)) { # only BH SRR works here
-        MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, yr=nyears+y)
-        MSY_P[,,y] <- MSYrefsYr[1, ]
-        FMSY_P[,,y] <- MSYrefsYr[2,]
-        SSBMSY_P[,,y] <- MSYrefsYr[3,]
-      }
-      if (all(SRrel == 2)) { # project population forward for Ricker SRR
-        # MSY projection years
-        MSYyr <- 200
-        MSYrefsYr <- calcMSYRicker(MSYyr, M_ageArray, Wt_age, retA, V, Perr_y, maxage,
-                                   nareas, Mat_age, nsim, Asize, N, Spat_targ, hs,
-                                   SRrel, mov, Find, R0a, SSBpR, aR, bR, SSB0, 
-                                   B0, maxF, cur.yr=y)
-        MSY_P[,,y] <- MSYrefsYr[1, ]
-        FMSY_P[,,y] <- MSYrefsYr[2,]
-        SSBMSY_P[,,y] <- MSYrefsYr[3,]
-      }
+      MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, yr=nyears+y)
+      MSY_P[,,y] <- MSYrefsYr[1, ]
+      FMSY_P[,,y] <- MSYrefsYr[2,]
+      SSBMSY_P[,,y] <- MSYrefsYr[3,]
+      
     }
     if(!silent) cat("\n")
   }
@@ -1085,25 +1063,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       
       # -- Calculate MSY stats for this year ----
       if (AnnualMSY & SelectChanged) { #
-        if (all(SRrel == 1)) { # only BH SRR works here
-          MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, 
-                              V_P, maxage, R0, SRrel, hs, yr=nyears+y)
-          MSY_P[,mm,y] <- MSYrefsYr[1, ]
-          FMSY_P[,mm,y] <- MSYrefsYr[2,]
-          SSBMSY_P[,mm,y] <- MSYrefsYr[3,]
-        } 
+        MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, 
+                            V_P, maxage, R0, SRrel, hs, yr=nyears+y)
+        MSY_P[,mm,y] <- MSYrefsYr[1, ]
+        FMSY_P[,mm,y] <- MSYrefsYr[2,]
+        SSBMSY_P[,mm,y] <- MSYrefsYr[3,]
         
-        if (all(SRrel == 2)) { # project population forward for Ricker SRR
-          # MSY projection years
-          MSYyr <- 200
-          MSYrefsYr <- calcMSYRicker(MSYyr, M_ageArray, Wt_age, retA_P, V_P, Perr_y, maxage,
-                                     nareas, Mat_age, nsim, Asize, N, Spat_targ, hs,
-                                     SRrel, mov, Find, R0a, SSBpR, aR, bR, SSB0, 
-                                     B0, maxF, cur.yr=y)
-          MSY_P[,mm,y] <- MSYrefsYr[1, ]
-          FMSY_P[,mm,y] <- MSYrefsYr[2,]
-          SSBMSY_P[,mm,y] <- MSYrefsYr[3,]
-        } 
       }
       
       TACa[, mm, y] <- TACa[, mm, y-1] # TAC same as last year unless changed 
