@@ -267,7 +267,7 @@ runMP <- function(Data, MPs = NA, reps = 100, perc=0.5, chkMPs=TRUE, silent=FALS
   }
   rownames(mat) <- MPs 
   names[length(names)] <- "Area 1"
-  names <- c(names, paste('Area', 2:Data@nareas))
+  if (Data@nareas > 1) names <- c(names, paste('Area', 2:Data@nareas))
   colnames(mat) <- names
   
   if (nrow(mat) > 1) {
@@ -531,7 +531,7 @@ DLMdiag <- function(Data, command = c("available", "not available", "needed"), r
       if (timey[[y]] > timelimit) {
         report[y] <- "Exceeded the user-specified time limit."
         good[y] <- FALSE
-      } else if (is.character(test[[y]])) { # Error message 
+      } else if (is.character(test[[y]]) | is.na(test[[y]])) { # Error message 
         report[y] <- "MP returned an error. Check MP function and/or Data object."
         good[y] <- FALSE
       } else if (inherits(test[[y]], "Rec")) {
