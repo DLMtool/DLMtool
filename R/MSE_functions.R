@@ -580,6 +580,7 @@ joinMSE <- function(MSEobjs = NULL) {
     tab <- table(mpnames)
     ind <- tab == npack
     commonMPs <- names(tab)[ind]
+    if (length(commonMPs)<1) stop("No common MPs in MSE objects", call.=FALSE)
     MSEobjs <- lapply(MSEobjs, Sub, MPs = commonMPs)
     message("MPs not in all MSE objects:")
     message(paste(names(tab)[!ind], ""))

@@ -17,7 +17,7 @@
 #' @importFrom parallel detectCores 
 #' @importFrom shiny incProgress
 #' @importFrom snowfall sfClusterEval sfInit sfExportAll sfIsRunning sfExport sfSapply sfLibrary
-#' @importFrom stats acf approx coef dbeta density dnorm dlnorm lm loess loess.smooth
+#' @importFrom stats acf approx coef dbeta density dnorm dlnorm lm loess loess.smooth nls SSasympOff
 #' median nlm optim optimise optimize plogis pnorm predict qlnorm quantile rbeta
 #' rlnorm rmultinom rnorm runif sd
 #' @importFrom utils  browseURL capture.output combn flush.console packageVersion ls.str lsf.str read.csv read.csv2

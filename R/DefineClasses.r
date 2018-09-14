@@ -145,8 +145,14 @@ setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ","
   # .Object }) .Object<-new('Data') run an error check here
   if (file.exists(stock)) {
     dec <- match.arg(dec)
-    if (dec == ".") dat <- read.csv(stock, header = F, colClasses = "character")  # read 1st sheet
-    if (dec == ",") dat <- read.csv2(stock, header = F, colClasses = "character")  # read 1st sheet
+    
+    Ncol <- max(unlist(lapply(strsplit(readLines(stock), ","), length)))
+    col.names <- paste0("V", 1:Ncol)
+
+    if (dec == ".") 
+      dat <- read.csv(stock, header = F, colClasses = "character", col.names=col.names)  # read 1st sheet
+    if (dec == ",") 
+      dat <- read.csv2(stock, header = F, colClasses = "character", col.names=col.names)  # read 1st sheet
     dname <- dat[, 1]
     dat <- dat[, 2:ncol(dat)]
     

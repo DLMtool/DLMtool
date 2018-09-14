@@ -1,3 +1,5 @@
+
+
 #' Generate bootstrapped estimates of von Bertalanffy growth parameters from length-at-age data
 #' 
 #' The von Bertalanffy model is fitted to length-at-age data and bootstrapped to 
@@ -38,10 +40,7 @@
 #' 
 #' # Return a data.frame
 #' estPars <- Growth2OM(data)
-#' 
-#' 
-#' @importFrom stats SSasympOff
-#' 
+#'  
 Growth2OM <- function(data=NULL, OM=NULL, nsim=48, seed=101, plot=TRUE, msg=TRUE) {
   om <- TRUE
   if (all(class(OM) != 'OM')) om <- FALSE
@@ -52,6 +51,8 @@ Growth2OM <- function(data=NULL, OM=NULL, nsim=48, seed=101, plot=TRUE, msg=TRUE
   }
   if (!inherits(data, 'data.frame')) stop("data must be a data.frame")
   if (!all(c("Age", "Length") %in% colnames(data))) stop("data must have columns: Age, Length")
+  
+  Length <- av.len <- n <- st.age <- NULL # hacks from cran checks
   
   VB <- function(Linf,k,t0,age) Linf*(1- exp(-k*(age-t0)))
   nsamp <- ifelse(om, OM@nsim, nsim) 
@@ -84,6 +85,15 @@ Growth2OM <- function(data=NULL, OM=NULL, nsim=48, seed=101, plot=TRUE, msg=TRUE
     xlim <- range(ages)
     plot(data$Age, data$Length, xlab="Age", ylab="Length", bty="l", las=1, xlim=xlim, pch=16)
     matplot(ages, fitVBs, type="l", col=1:nsamp, add=TRUE)
+    
+    mod <- nls(Length ~ SSasympOff(Age, Asym, lrc, c0), data = data)
+    bestests <- round(c(coef(mod)[1],exp(coef(mod)[2]), coef(mod)[3]),2)
+
+    leg <-c(paste0('Linf = ', bestests[1]), 
+            paste0('K = ', bestests[2]), 
+            paste0('t0 = ', bestests[3]))
+    legend('topleft', legend=leg, bty="n")
+    lines(ages, VB(bestests[1], bestests[2], bestests[3], ages), lwd=3)
   }
   
   Ages <- 0:max(data$Age)
@@ -149,6 +159,8 @@ LW2OM <- function(data=NULL, OM=NULL, plot=TRUE) {
   if (!inherits(data, 'data.frame')) stop("data must be a data.frame")
   if (!all(c("Weight", "Length") %in% colnames(data))) stop("data must have columns: Length, Weight")
   
+  Length <- Weight <- NULL # hacks from cran checks
+  
   dat <- dplyr::select(data, Length, Weight)
   options(warn=-1)
   dat$Length <- as.numeric(dat$Length)
@@ -163,6 +175,11 @@ LW2OM <- function(data=NULL, OM=NULL, plot=TRUE) {
     plot(dat$Length, dat$Weight, xlab="Length", ylab="Weight", las=1, pch=16)
     Lengths <- seq(min(dat$Length), max(dat$Length), length.out=100)
     lines(Lengths,  OM@a*Lengths^  OM@b , lwd=2)
+    
+    leg <-c(paste0('a = ', signif(OM@a,2)), 
+            paste0('b = ', signif(OM@b,2)))
+    legend('topleft', legend=leg, bty="n")
+    
   }
   return(OM)
 
