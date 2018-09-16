@@ -83,7 +83,8 @@ Growth2OM <- function(data=NULL, OM=NULL, nsim=48, seed=101, plot=TRUE, msg=TRUE
     ages <- 0:ceiling(max(data$Age))
     fitVBs <- sapply(1:nsamp, function(x) VB(ests$Linf[x], ests$K[x], ests$t0[x], ages))
     xlim <- range(ages)
-    plot(data$Age, data$Length, xlab="Age", ylab="Length", bty="l", las=1, xlim=xlim, pch=16)
+    plot(data$Age, data$Length, xlab="Age", ylab="Length", bty="l", las=1, 
+         xlim=xlim, pch=16, ylim=c(0, max(data$Length, na.rm=TRUE)))
     matplot(ages, fitVBs, type="l", col=1:nsamp, add=TRUE)
     
     mod <- nls(Length ~ SSasympOff(Age, Asym, lrc, c0), data = data)

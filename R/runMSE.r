@@ -832,7 +832,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     FleetPars$qs <- qs
     SampPars <- c(StockPars, FleetPars, ObsPars, ImpPars)
     Data@Misc <- list()
-    HistData <- list(SampPars=SampPars, TSdata=TSdata, AtAge=AtAge, MSYs=MSYs, Data=Data)
+    HistData <- list(SampPars=SampPars, TSdata=TSdata, AtAge=AtAge, MSYs=MSYs, 
+                     Data=Data)
     return(HistData)	
   }
   
@@ -1440,6 +1441,7 @@ cparscheck<-function(cpars){
   if (any(effNames %in% names(dims))) dims <- dims[-match(effNames,names(dims))]  # ignore effNames
   dims <- dims[!grepl("CAL_bins", names(dims))]  # ignore CAL_bins
   dims <- dims[!grepl("maxage", names(dims))]  # ignore CAL_bins
+  # dims <- dims[!grepl("Asize", names(dims))]  # ignore CAL_bins
   if (length(dims) > 0) {
     if(length(unique(dims))!=1){
       print(dims)
