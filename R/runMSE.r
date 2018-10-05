@@ -531,14 +531,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   if(!silent) message("Calculating MSY reference points")  # Print a progress update
   
   MSYrefs <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, maxage, 
-                    R0, SRrel, hs, yr=nyears)
-  
-  # M_ageArray2 <- M_ageArray
-  # M_ageArray2 <- M_ageArray[,,rep(1, 100)]
-  # Wt_age2 <- Wt_age
-  # Wt_age2 <- Wt_age[,,rep(1, 100)]
-  # MSYrefs <- sapply(1:nsim, optMSY_eq, M_ageArray2, Wt_age2, Mat_age, V, maxage, 
-  #                   R0, SRrel, hs, yr=nyears)
+                    R0, SRrel, hs, yr=nyears) 
 
   MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
   FMSY <- MSYrefs[2, ]  # instantaneous FMSY (Vulnerable)
@@ -549,7 +542,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   VBMSY <- (MSY/(1 - exp(-FMSY)))  # Biomass at MSY (Vulnerable)
   UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
   FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
- 
+
   if (checks) {
     Btemp <- apply(SSB, c(1,3), sum)
     x <- Btemp[,nyears]/SSBMSY
@@ -839,7 +832,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     FleetPars$qs <- qs
     SampPars <- c(StockPars, FleetPars, ObsPars, ImpPars)
     Data@Misc <- list()
-    HistData <- list(SampPars=SampPars, TSdata=TSdata, AtAge=AtAge, MSYs=MSYs, Data=Data)
+    HistData <- list(SampPars=SampPars, TSdata=TSdata, AtAge=AtAge, MSYs=MSYs, 
+                     Data=Data)
     return(HistData)	
   }
   
@@ -914,12 +908,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     for (y in 1:proyears) {
       if(!silent) cat('.')
       if (!silent) flush.console()
-      
       MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, yr=nyears+y)
       MSY_P[,,y] <- MSYrefsYr[1, ]
       FMSY_P[,,y] <- MSYrefsYr[2,]
       SSBMSY_P[,,y] <- MSYrefsYr[3,]
-
+      
     }
     if(!silent) cat("\n")
   }
@@ -1071,10 +1064,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       
       # -- Calculate MSY stats for this year ----
       if (AnnualMSY & SelectChanged) { #
-        MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V_P, maxage, R0, SRrel, hs, yr=nyears+y)
+        MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, 
+                            V_P, maxage, R0, SRrel, hs, yr=nyears+y)
         MSY_P[,mm,y] <- MSYrefsYr[1, ]
         FMSY_P[,mm,y] <- MSYrefsYr[2,]
         SSBMSY_P[,mm,y] <- MSYrefsYr[3,]
+        
       }
       
       TACa[, mm, y] <- TACa[, mm, y-1] # TAC same as last year unless changed 
@@ -1381,7 +1376,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # Miscellaneous reporting
   if(PPD)Misc<-MSElist
-  
+
   
   ## Create MSE Object #### 
   MSEout <- new("MSE", Name = OM@Name, nyears, proyears, nMPs=nMP, MPs, nsim, 
@@ -1446,6 +1441,7 @@ cparscheck<-function(cpars){
   if (any(effNames %in% names(dims))) dims <- dims[-match(effNames,names(dims))]  # ignore effNames
   dims <- dims[!grepl("CAL_bins", names(dims))]  # ignore CAL_bins
   dims <- dims[!grepl("maxage", names(dims))]  # ignore CAL_bins
+  # dims <- dims[!grepl("Asize", names(dims))]  # ignore CAL_bins
   if (length(dims) > 0) {
     if(length(unique(dims))!=1){
       print(dims)

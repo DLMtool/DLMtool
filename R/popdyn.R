@@ -425,7 +425,7 @@ MSYCalcs <- function(logapicF, MatAge, WtAge, MatureAge, VAge, maxage, R0, SRrel
   SB0 <- sum(l0 * WtAge * MatureAge) # same as eggs atm
   SBF <- sum(lx * WtAge * MatureAge)
 
-  B0 <- sum(l0 * WtAge) # same as eggs atm
+  B0 <- sum(l0 * WtAge) 
   BF <- sum(lx * WtAge)
 
   hs[hs>0.999] <- 0.999
@@ -436,11 +436,11 @@ MSYCalcs <- function(logapicF, MatAge, WtAge, MatureAge, VAge, maxage, R0, SRrel
     RelRec <- (reca * EggF-1)/(recb*EggF)
   }
   if (SRrel ==2) {
-    recb <- log(reca*Egg0)/(R0*Egg0) # Ricker SRR
-    RelRec <- (log(reca*EggF))/(recb*EggF)
+    bR <- (log(5*hs)/(0.8*SB0))
+    aR <- exp(bR*SB0)/(SB0/R0)
+    RelRec <- (log(aR*EggF/R0))/(bR*EggF/R0)
   }
 
-  
   RelRec[RelRec<0] <- 0
   
   Fa <- apicF*VAge
@@ -852,7 +852,7 @@ simYears <- function(x, nareas, maxage, N, pyears, M_ageArray, Asize, Mat_age, W
 # #' @param nareas The number of spatial areas
 # #' @param maxage The maximum age
 # #' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas.
-# #' Only values from the first year (i.e N[,,1,]) are used, which is the current N-at-age.
+# #' Only values from the first year (i.e `N[,,1,]`) are used, which is the current N-at-age.
 # #' @param pyears The number of years to project forward. Equal to 'nyears' for optimizing for q.
 # #' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year
 # #' @param Mat_age A matrix (dimensions nsim, maxage) with the proportion mature for each age-class
@@ -878,83 +878,86 @@ simYears <- function(x, nareas, maxage, N, pyears, M_ageArray, Asize, Mat_age, W
 # #' @author A. Hordyk
 # #'
 # getFMSY3 <- function(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
-#                      V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR,
-#                      SSB0, B0, MPA, maxF, useCPP=TRUE) {
+#                     V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR,
+#                     SSB0, B0, MPA, maxF, useCPP=TRUE) {
 # 
-#   opt <- optimize(optMSY, log(c(0.001, 10)), Asize_c=Asize[x,], nareas, maxage, Ncurr=N[x,,1,],
-#                   pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,,],
-#                   WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
-#                   movc=mov[x,,], SRrelc=SRrel[x],
-#                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
-#                   SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], MPA=MPA, maxF=maxF, useCPP=useCPP)
+#  opt <- optimize(optMSY, log(c(0.001, 10)), Asize_c=Asize[x,], nareas, maxage, Ncurr=N[x,,1,],
+#                  pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,,],
+#                  WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
+#                  movc=mov[x,,,], SRrelc=SRrel[x],
+#                  Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
+#                  SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], MPA=MPA, maxF=maxF, useCPP=useCPP,
+#                  SSB0c=SSB0[x])
 # 
-#   MSY <- -opt$objective
+#  MSY <- -opt$objective
 # 
-#   if (!useCPP) {
-#     simpop <- popdyn(nareas, maxage, Ncurr=N[x,,1,],
-#                      pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
-#                      MatAge=Mat_age[x,,],
-#                      WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
-#                      movc=mov[x,,], SRrelc=SRrel[x],
-#                      Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
-#                      SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Fapic=exp(opt$minimum), MPA=MPA, maxF=maxF, control=2)
+#  if (!useCPP) {
+#    # simpop <- popdyn(nareas, maxage, Ncurr=N[x,,1,],
+#    #                  pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
+#    #                  MatAge=Mat_age[x,,],
+#    #                  WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
+#    #                  movc=mov[x,,,], SRrelc=SRrel[x],
+#    #                  Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
+#    #                  SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Fapic=exp(opt$minimum), MPA=MPA, maxF=maxF, control=2)
+#    # 
+#    # # calculate B0 and SSB0 with current conditions
+#    # simpopF0 <- popdyn(nareas, maxage, Ncurr=N[x,,1,],
+#    #                    pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
+#    #                    MatAge=Mat_age[x,,],
+#    #                    WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
+#    #                    movc=mov[x,,,], SRrelc=SRrel[x],
+#    #                    Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
+#    #                    SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Fapic=0, MPA=MPA, maxF=maxF, control=2)
 # 
-#     # calculate B0 and SSB0 with current conditions
-#     simpopF0 <- popdyn(nareas, maxage, Ncurr=N[x,,1,],
+#  } else {
+#    simpop <- popdynCPP(nareas, maxage, Ncurr=N[x,,1,],
 #                        pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
 #                        MatAge=Mat_age[x,,],
 #                        WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
-#                        movc=mov[x,,], SRrelc=SRrel[x],
+#                        movc=mov[x,,,], SRrelc=SRrel[x],
 #                        Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
-#                        SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Fapic=0, MPA=MPA, maxF=maxF, control=2)
-# 
-#   } else {
-#     simpop <- popdynCPP(nareas, maxage, Ncurr=N[x,,1,],
-#                         pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
-#                         MatAge=Mat_age[x,,],
-#                         WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
-#                         movc=mov[x,,], SRrelc=SRrel[x],
-#                         Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
-#                         SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=0, Fapic=exp(opt$minimum), MPA=MPA, maxF=maxF, control=2)
-#     # calculate B0 and SSB0 with current conditions
-#     simpopF0 <- popdynCPP(nareas, maxage, Ncurr=N[x,,1,],
-#                           pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
-#                           MatAge=Mat_age[x,,],
-#                           WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
-#                           movc=mov[x,,], SRrelc=SRrel[x],
-#                           Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
-#                           SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=0, Fapic=0, MPA=MPA, maxF=maxF, control=2)
-#   }
+#                        SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=0, Fapic=exp(opt$minimum), 
+#                        MPA=MPA, maxF=maxF, control=2, SSB0c = SSB0[x])
+#    # calculate B0 and SSB0 with current conditions
+#    simpopF0 <- popdynCPP(nareas, maxage, Ncurr=N[x,,1,],
+#                          pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
+#                          MatAge=Mat_age[x,,],
+#                          WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
+#                          movc=mov[x,,,], SRrelc=SRrel[x],
+#                          Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
+#                          SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=0, Fapic=0, MPA=MPA, maxF=maxF, 
+#                          control=2, SSB0c = SSB0[x])
+#  }
 # 
 # 
-#   ## Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # retained catch
-#   Cn <- simpop[[6]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # removals
-#   Cb <- Cn[,pyears,] * Wt_age[x,,pyears]
+#  ## Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # retained catch
+#  Cn <- simpop[[6]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # removals
+#  Cb <- Cn[,pyears,] * Wt_age[x,,pyears]
 # 
-#   B <- sum(simpop[[2]][,pyears,] + Cb)
+#  B <- sum(simpop[[2]][,pyears,] + Cb)
 # 
-#   SSB_MSY <- sum(simpop[[4]][,pyears,])
+#  SSB_MSY <- sum(simpop[[4]][,pyears,])
 # 
-#   V_BMSY <- sum(simpop[[5]][,pyears,])
-#   F_MSYv <- -log(1 - (MSY/(V_BMSY+MSY)))
-# 
-# 
-#   SSB0_curr <- sum(simpopF0[[4]][,pyears,])
-#   B0_curr <- sum(simpopF0[[2]][,pyears,])
-#   SSBMSY_SSB0 <- sum(simpop[[4]][,pyears,])/SSB0_curr
-#   BMSY_B0 <- sum(simpop[[2]][,pyears,])/B0_curr
-#   # SSBMSY_SSB0 <- sum(simpop[[4]][,pyears,])/SSB0[x]
-#   # BMSY_B0 <- sum(simpop[[2]][,pyears,])/B0[x]
+#  V_BMSY <- sum(simpop[[5]][,pyears,])
+#  F_MSYv <- -log(1 - (MSY/(V_BMSY+MSY)))
 # 
 # 
-#   return(c(MSY = MSY, FMSY = F_MSYv, SSB = SSB_MSY, SSBMSY_SSB0=SSBMSY_SSB0,
-#            BMSY_B0=BMSY_B0, B = B, VB=V_BMSY+MSY))
+#  SSB0_curr <- sum(simpopF0[[4]][,pyears,])
+#  B0_curr <- sum(simpopF0[[2]][,pyears,])
+#  SSBMSY_SSB0 <- sum(simpop[[4]][,pyears,])/SSB0_curr
+#  BMSY_B0 <- sum(simpop[[2]][,pyears,])/B0_curr
+#  # SSBMSY_SSB0 <- sum(simpop[[4]][,pyears,])/SSB0[x]
+#  # BMSY_B0 <- sum(simpop[[2]][,pyears,])/B0[x]
+# 
+# 
+#  return(c(MSY = MSY, FMSY = F_MSYv, SSB = SSB_MSY, SSBMSY_SSB0=SSBMSY_SSB0,
+#           BMSY_B0=BMSY_B0, B = B, VB=V_BMSY+MSY))
 # 
 # }
 # 
-
-
-
+# 
+# 
+# 
 #' Optimize yield for a single simulation
 #' 
 #' @param logFa log apical fishing mortality
@@ -1026,7 +1029,7 @@ optMSY <- function(logFa, Asize_c, nareas, maxage, Ncurr, pyears, M_age,
 #' @param nareas The number of spatial areas
 #' @param maxage The maximum age
 #' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas. 
-#' Only values from the first year (i.e `N[,,1,]`) are used, which is the current N-at-age.
+#' Only values from the first year are used, which is the current N-at-age.
 #' @param pyears The number of years to project forward. Equal to 'nyears' for optimizing for q.
 #' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year 
 #' @param Mat_age An array (dimensions nsim, maxage, nyears+proyears) with the proportion mature for each age-class
@@ -1161,6 +1164,40 @@ projectEq <- function(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, 
   
 }
 
+
+# calcMSYRicker <- function(MSYyr, M_ageArray, Wt_age, retA, V, Perr_y, maxage,
+#                           nareas, Mat_age, nsim, Asize, N, Spat_targ, hs,
+#                           SRrel, mov, Find, R0a, SSBpR, aR, bR, SSB0, 
+#                           B0, maxF=maxF, cur.yr) {
+#   # Note: MSY and refY are calculated from total removals not total catch (different when Fdisc>0 and there is discarding)
+#   # Make arrays for future conditions assuming current conditions
+#   M_ageArrayp <- array(M_ageArray[,,cur.yr], dim=c(dim(M_ageArray)[1:2], MSYyr))
+#   Wt_agep <- array(Wt_age[,,cur.yr], dim=c(dim(Wt_age)[1:2], MSYyr))
+#   retAp <- array(retA[,,cur.yr], dim=c(dim(retA)[1:2], MSYyr))
+#   Vp <- array(V[,,cur.yr], dim=c(dim(V)[1:2], MSYyr))
+#   Perrp <- array(1, dim=c(dim(Perr_y)[1], MSYyr+maxage))
+#   noMPA <- matrix(1, nrow=MSYyr, ncol=nareas)
+#   Mat_agep <-abind::abind(rep(list(Mat_age[,,cur.yr]), MSYyr), along=3)
+#   # optimize for MSY reference points
+#   if (snowfall::sfIsRunning()) {
+#     MSYrefs <- snowfall::sfSapply(1:nsim, getFMSY3, Asize, nareas=nareas, 
+#                                   maxage=maxage, N=N, pyears=MSYyr,
+#                                   M_ageArray=M_ageArrayp, Mat_age=Mat_agep, 
+#                                   Wt_age=Wt_agep, V=Vp, retA=retAp,
+#                                   Perr=Perrp, mov=mov, SRrel=SRrel, 
+#                                   Find=Find, Spat_targ=Spat_targ, hs=hs,
+#                                   R0a=R0a, SSBpR=SSBpR, aR=aR, bR=bR, SSB0=SSB0, 
+#                                   B0=B0, MPA=noMPA, maxF=maxF)  
+#   } else {
+#     MSYrefs <- sapply(1:nsim, getFMSY3, Asize, nareas=nareas, maxage=maxage,
+#                       N=N, pyears=MSYyr, M_ageArray=M_ageArrayp, Mat_age=Mat_agep, 
+#                       Wt_age=Wt_agep, V=Vp, retA=retAp,Perr=Perrp, mov=mov, 
+#                       SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs,
+#                       R0a=R0a, SSBpR=SSBpR, aR=aR, bR=bR, SSB0=SSB0, B0=B0, 
+#                       MPA=noMPA, maxF=maxF) 
+#   }
+#   MSYrefs
+# }
   
 # #' Apply output control recommendations and calculate population dynamics  
 # #'
