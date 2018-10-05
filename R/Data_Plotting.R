@@ -46,6 +46,7 @@ boxplot.Data <- function(x, upq=0.9, lwq=0.1, outline = FALSE, ...) {
     allNAs <- colSums(apply(tacs, 2, is.na)) == nrow(tacs)
     tacs <- tacs[,!allNAs, drop=FALSE]
     MPs <- MPs[!allNAs]
+    nMPs<-length(MPs)
   }
   
   if (nMPs>1) {
