@@ -319,6 +319,8 @@ $(document).ready(function () {
 <thead>
 <tr>
 <th style="text-align:left;">
+</th>
+<th style="text-align:left;">
 Slot
 </th>
 <th style="text-align:left;">
@@ -329,6 +331,9 @@ Description
 <tbody>
 <tr>
 <td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
 Name
 </td>
 <td style="text-align:left;">
@@ -336,6 +341,9 @@ The name of the Data object. Single value. Character string
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+2
+</td>
 <td style="text-align:left;">
 Common_Name
 </td>
@@ -345,6 +353,9 @@ Common name of the species. Character string
 </tr>
 <tr>
 <td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
 Species
 </td>
 <td style="text-align:left;">
@@ -352,6 +363,9 @@ Scientific name of the species. Genus and species name. Character string
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+4
+</td>
 <td style="text-align:left;">
 Region
 </td>
@@ -361,6 +375,9 @@ Name of the general geographic region of the fishery. Character string
 </tr>
 <tr>
 <td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
 Year
 </td>
 <td style="text-align:left;">
@@ -368,6 +385,9 @@ Years that corresponding to catch and relative abundance data. Vector nyears lon
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+6
+</td>
 <td style="text-align:left;">
 Cat
 </td>
@@ -377,6 +397,9 @@ Total annual catches. Matrix of nsim rows and nyears columns. Non-negative real 
 </tr>
 <tr>
 <td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
 Ind
 </td>
 <td style="text-align:left;">
@@ -384,6 +407,9 @@ Relative abundance index. Matrix of nsim rows and nyears columns. Non-negative r
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+8
+</td>
 <td style="text-align:left;">
 Rec
 </td>
@@ -393,6 +419,9 @@ Recent recruitment strength. Matrix of nsim rows and nyears columns. Non-negativ
 </tr>
 <tr>
 <td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
 t
 </td>
 <td style="text-align:left;">
@@ -400,6 +429,9 @@ The number of years corresponding to AvC and Dt. Single value. Positive integer
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+10
+</td>
 <td style="text-align:left;">
 AvC
 </td>
@@ -409,6 +441,9 @@ Average catch over time t. Vector nsim long. Positive real numbers
 </tr>
 <tr>
 <td style="text-align:left;">
+11
+</td>
+<td style="text-align:left;">
 Dt
 </td>
 <td style="text-align:left;">
@@ -416,6 +451,9 @@ Depletion over time t SSB(now)/SSB(now-t+1). Vector nsim long. Fraction
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+12
+</td>
 <td style="text-align:left;">
 Mort
 </td>
@@ -425,6 +463,9 @@ Natural mortality rate. Vector nsim long. Positive real numbers
 </tr>
 <tr>
 <td style="text-align:left;">
+13
+</td>
+<td style="text-align:left;">
 FMSY_M
 </td>
 <td style="text-align:left;">
@@ -432,6 +473,9 @@ An assumed ratio of FMSY to M. Vector nsim long. Positive real numbers
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+14
+</td>
 <td style="text-align:left;">
 BMSY_B0
 </td>
@@ -441,6 +485,9 @@ The most productive stock size relative to unfished. Vector nsim long. Fraction
 </tr>
 <tr>
 <td style="text-align:left;">
+15
+</td>
+<td style="text-align:left;">
 L50
 </td>
 <td style="text-align:left;">
@@ -448,6 +495,9 @@ Length at 50 percent maturity. Vector nsim long. Positive real numbers
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+16
+</td>
 <td style="text-align:left;">
 L95
 </td>
@@ -457,6 +507,9 @@ Length at 95 percent maturity. Vector nsim long. Positive real numbers
 </tr>
 <tr>
 <td style="text-align:left;">
+17
+</td>
+<td style="text-align:left;">
 ML
 </td>
 <td style="text-align:left;">
@@ -464,6 +517,9 @@ Mean length time series. Matrix of nsim rows and nyears columns. Non-negative re
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+18
+</td>
 <td style="text-align:left;">
 Lbar
 </td>
@@ -473,6 +529,9 @@ Mean length of catches over Lc. Matrix of nsim rows and nyears columns. Positive
 </tr>
 <tr>
 <td style="text-align:left;">
+19
+</td>
+<td style="text-align:left;">
 Lc
 </td>
 <td style="text-align:left;">
@@ -480,6 +539,9 @@ Modal length of catches. Matrix of nsim rows and nyears columns. Positive real n
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+20
+</td>
 <td style="text-align:left;">
 LFC
 </td>
@@ -489,6 +551,9 @@ Length at first capture. Matrix of nsim rows and nyears columns. Positive real n
 </tr>
 <tr>
 <td style="text-align:left;">
+21
+</td>
+<td style="text-align:left;">
 LFS
 </td>
 <td style="text-align:left;">
@@ -496,6 +561,9 @@ Shortest length at full selection. Matrix of nsim rows and nyears columns. Posit
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+22
+</td>
 <td style="text-align:left;">
 CAA
 </td>
@@ -505,6 +573,9 @@ Catch at Age data. Array of dimensions nsim x nyears x MaxAge. Non-negative inte
 </tr>
 <tr>
 <td style="text-align:left;">
+23
+</td>
+<td style="text-align:left;">
 Dep
 </td>
 <td style="text-align:left;">
@@ -512,6 +583,9 @@ Stock depletion SSB(current)/SSB(unfished). Vector nsim long. Fraction.
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+24
+</td>
 <td style="text-align:left;">
 Abun
 </td>
@@ -521,6 +595,9 @@ An estimate of absolute current vulnerable abundance. Vector nsim long. Positive
 </tr>
 <tr>
 <td style="text-align:left;">
+25
+</td>
+<td style="text-align:left;">
 SpAbun
 </td>
 <td style="text-align:left;">
@@ -528,6 +605,9 @@ An estimate of absolute current spawning stock abundance. Vector nsim long. Posi
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+26
+</td>
 <td style="text-align:left;">
 vbK
 </td>
@@ -537,6 +617,9 @@ The von Bertalanffy growth coefficient K. Vector nsim long. Positive real number
 </tr>
 <tr>
 <td style="text-align:left;">
+27
+</td>
+<td style="text-align:left;">
 vbLinf
 </td>
 <td style="text-align:left;">
@@ -544,6 +627,9 @@ Maximum length. Vector nsim long. Positive real numbers
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+28
+</td>
 <td style="text-align:left;">
 vbt0
 </td>
@@ -553,6 +639,9 @@ Theoretical age at length zero. Vector nsim long. Non-positive real numbers
 </tr>
 <tr>
 <td style="text-align:left;">
+29
+</td>
+<td style="text-align:left;">
 LenCV
 </td>
 <td style="text-align:left;">
@@ -560,6 +649,9 @@ Coefficient of variation of length-at-age (assumed constant for all age classes)
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+30
+</td>
 <td style="text-align:left;">
 wla
 </td>
@@ -569,6 +661,9 @@ Weight-Length parameter alpha. Vector nsim long. Positive real numbers
 </tr>
 <tr>
 <td style="text-align:left;">
+31
+</td>
+<td style="text-align:left;">
 wlb
 </td>
 <td style="text-align:left;">
@@ -576,6 +671,9 @@ Weight-Length parameter beta. Vector nsim long. Positive real numbers
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+32
+</td>
 <td style="text-align:left;">
 steep
 </td>
@@ -585,6 +683,9 @@ Steepness of stock-recruitment relationship. Vector nsim long. Value in the rang
 </tr>
 <tr>
 <td style="text-align:left;">
+33
+</td>
+<td style="text-align:left;">
 sigmaR
 </td>
 <td style="text-align:left;">
@@ -592,6 +693,9 @@ Recruitment variability. Vector nsim long. Positive real numbers
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+34
+</td>
 <td style="text-align:left;">
 CV_Cat
 </td>
@@ -601,6 +705,9 @@ Coefficient of variation in annual catches. Vector nsim long. Positive real numb
 </tr>
 <tr>
 <td style="text-align:left;">
+35
+</td>
+<td style="text-align:left;">
 CV_Dt
 </td>
 <td style="text-align:left;">
@@ -608,6 +715,9 @@ Coefficient of variation in depletion over time t. Vector nsim long. Positive re
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+36
+</td>
 <td style="text-align:left;">
 CV_AvC
 </td>
@@ -617,6 +727,9 @@ Coefficient of variation in average catches over time t. Vector nsim long. Posit
 </tr>
 <tr>
 <td style="text-align:left;">
+37
+</td>
+<td style="text-align:left;">
 CV_Ind
 </td>
 <td style="text-align:left;">
@@ -624,6 +737,9 @@ Coefficient of variation in the relative abundance index. Vector nsim long. Posi
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+38
+</td>
 <td style="text-align:left;">
 CV_Mort
 </td>
@@ -633,6 +749,9 @@ Coefficient of variation in natural mortality rate. Vector nsim long. Positive r
 </tr>
 <tr>
 <td style="text-align:left;">
+39
+</td>
+<td style="text-align:left;">
 CV_FMSY_M
 </td>
 <td style="text-align:left;">
@@ -640,6 +759,9 @@ Coefficient of variation in the ratio in FMSY/M. Vector nsim long. Positive real
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+40
+</td>
 <td style="text-align:left;">
 CV_BMSY_B0
 </td>
@@ -649,6 +771,9 @@ Coefficient of variation in the position of the most productive stock size relat
 </tr>
 <tr>
 <td style="text-align:left;">
+41
+</td>
+<td style="text-align:left;">
 CV_Dep
 </td>
 <td style="text-align:left;">
@@ -656,6 +781,9 @@ Coefficient of variation in current stock depletion. Vector nsim long. Positive 
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+42
+</td>
 <td style="text-align:left;">
 CV_Abun
 </td>
@@ -665,6 +793,9 @@ Coefficient of variation in estimate of absolute current stock size. Vector nsim
 </tr>
 <tr>
 <td style="text-align:left;">
+43
+</td>
+<td style="text-align:left;">
 CV_vbK
 </td>
 <td style="text-align:left;">
@@ -672,6 +803,9 @@ Coefficient of variation in the von Bertalanffy K parameter. Vector nsim long. P
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+44
+</td>
 <td style="text-align:left;">
 CV_vbLinf
 </td>
@@ -681,6 +815,9 @@ Coefficient of variation in maximum length. Vector nsim long. Positive real numb
 </tr>
 <tr>
 <td style="text-align:left;">
+45
+</td>
+<td style="text-align:left;">
 CV_vbt0
 </td>
 <td style="text-align:left;">
@@ -688,6 +825,9 @@ Coefficient of variation in age at length zero. Vector nsim long. Positive real 
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+46
+</td>
 <td style="text-align:left;">
 CV_L50
 </td>
@@ -697,6 +837,9 @@ Coefficient of variation in length at 50 per cent maturity. Vector nsim long. Po
 </tr>
 <tr>
 <td style="text-align:left;">
+47
+</td>
+<td style="text-align:left;">
 CV_LFC
 </td>
 <td style="text-align:left;">
@@ -704,6 +847,9 @@ Coefficient of variation in length at first capture. Vector nsim long. Positive 
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+48
+</td>
 <td style="text-align:left;">
 CV_LFS
 </td>
@@ -713,6 +859,9 @@ Coefficient of variation in length at full selection. Vector nsim long. Positive
 </tr>
 <tr>
 <td style="text-align:left;">
+49
+</td>
+<td style="text-align:left;">
 CV_wla
 </td>
 <td style="text-align:left;">
@@ -720,6 +869,9 @@ Coefficient of variation in weight-length parameter a. Vector nsim long. Positiv
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+50
+</td>
 <td style="text-align:left;">
 CV_wlb
 </td>
@@ -729,6 +881,9 @@ Coefficient of variation in weight-length parameter b. Vector nsim long. Positiv
 </tr>
 <tr>
 <td style="text-align:left;">
+51
+</td>
+<td style="text-align:left;">
 CV_steep
 </td>
 <td style="text-align:left;">
@@ -736,6 +891,9 @@ Coefficient of variation in steepness. Vector nsim long. Positive real numbers
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+52
+</td>
 <td style="text-align:left;">
 sigmaL
 </td>
@@ -745,6 +903,9 @@ Assumed observaton error of the length composition data. Vector nsim long. Posit
 </tr>
 <tr>
 <td style="text-align:left;">
+53
+</td>
+<td style="text-align:left;">
 MaxAge
 </td>
 <td style="text-align:left;">
@@ -752,6 +913,9 @@ Maximum age. Vector nsim long. Positive integer
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+54
+</td>
 <td style="text-align:left;">
 CAL_bins
 </td>
@@ -761,6 +925,9 @@ The values delimiting the length bins for the catch-at-length data. Vector. Non-
 </tr>
 <tr>
 <td style="text-align:left;">
+55
+</td>
+<td style="text-align:left;">
 CAL
 </td>
 <td style="text-align:left;">
@@ -768,6 +935,9 @@ Catch-at-length data. An array with dimensions nsim x nyears x length(CAL_bins).
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+56
+</td>
 <td style="text-align:left;">
 TAC
 </td>
@@ -777,6 +947,9 @@ The calculated catch limits (function TAC). An array with dimensions PosMPs x re
 </tr>
 <tr>
 <td style="text-align:left;">
+57
+</td>
+<td style="text-align:left;">
 Sense
 </td>
 <td style="text-align:left;">
@@ -784,6 +957,9 @@ The results of the sensitivity analysis (function Sense). An array with dimensio
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+58
+</td>
 <td style="text-align:left;">
 Units
 </td>
@@ -793,6 +969,9 @@ Units of the catch/absolute abundance estimates. Single value. Character string
 </tr>
 <tr>
 <td style="text-align:left;">
+59
+</td>
+<td style="text-align:left;">
 Ref
 </td>
 <td style="text-align:left;">
@@ -800,6 +979,9 @@ A reference management level (eg a catch limit). Single value. Positive real num
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+60
+</td>
 <td style="text-align:left;">
 Ref_type
 </td>
@@ -809,6 +991,9 @@ Type of reference management level (eg 2009 catch limit). Single value. Characte
 </tr>
 <tr>
 <td style="text-align:left;">
+61
+</td>
+<td style="text-align:left;">
 Log
 </td>
 <td style="text-align:left;">
@@ -816,6 +1001,9 @@ A record of events. Single value. Character string
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+62
+</td>
 <td style="text-align:left;">
 params
 </td>
@@ -825,6 +1013,9 @@ A place to store estimated parameters. An object. R list
 </tr>
 <tr>
 <td style="text-align:left;">
+63
+</td>
+<td style="text-align:left;">
 PosMPs
 </td>
 <td style="text-align:left;">
@@ -832,6 +1023,9 @@ The methods that can be applied to these data. Vector. Character strings
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+64
+</td>
 <td style="text-align:left;">
 MPs
 </td>
@@ -841,6 +1035,9 @@ The methods that were applied to these data. Vector. Character strings
 </tr>
 <tr>
 <td style="text-align:left;">
+65
+</td>
+<td style="text-align:left;">
 OM
 </td>
 <td style="text-align:left;">
@@ -848,6 +1045,9 @@ A table of operating model conditions. R table object of nsim rows. Real numbers
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+66
+</td>
 <td style="text-align:left;">
 Obs
 </td>
@@ -857,6 +1057,9 @@ A table of observation model conditions. R table object of nsim rows. Real numbe
 </tr>
 <tr>
 <td style="text-align:left;">
+67
+</td>
+<td style="text-align:left;">
 Cref
 </td>
 <td style="text-align:left;">
@@ -864,6 +1067,9 @@ Reference or target catch level (eg MSY). Vector of length nsim. Positive real n
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+68
+</td>
 <td style="text-align:left;">
 Iref
 </td>
@@ -873,6 +1079,9 @@ Reference or target relative abundance index level (eg BMSY / B0). Vector of len
 </tr>
 <tr>
 <td style="text-align:left;">
+69
+</td>
+<td style="text-align:left;">
 Bref
 </td>
 <td style="text-align:left;">
@@ -880,6 +1089,9 @@ Reference or target biomass level (eg BMSY). Vector of length nsim. Positive rea
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+70
+</td>
 <td style="text-align:left;">
 CV_Cref
 </td>
@@ -889,6 +1101,9 @@ Log-normal CV for reference or target catch level. Vector of length nsim. Positi
 </tr>
 <tr>
 <td style="text-align:left;">
+71
+</td>
+<td style="text-align:left;">
 CV_Iref
 </td>
 <td style="text-align:left;">
@@ -896,6 +1111,9 @@ Log-normalCV for reference or target relative abundance index level. Vector of l
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+72
+</td>
 <td style="text-align:left;">
 CV_Bref
 </td>
@@ -905,6 +1123,9 @@ Log-normal CV for reference or target biomass level. Vector of length nsim. Posi
 </tr>
 <tr>
 <td style="text-align:left;">
+73
+</td>
+<td style="text-align:left;">
 CV_Rec
 </td>
 <td style="text-align:left;">
@@ -912,6 +1133,9 @@ Log-normal CV for recent recruitment strength. Vector of length nsim. Positive r
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+74
+</td>
 <td style="text-align:left;">
 MPrec
 </td>
@@ -921,6 +1145,9 @@ The previous recommendation of a management procedure. Vector of length nsim. Po
 </tr>
 <tr>
 <td style="text-align:left;">
+75
+</td>
+<td style="text-align:left;">
 MPeff
 </td>
 <td style="text-align:left;">
@@ -928,6 +1155,9 @@ The current level of effort. Vector of length nsim. Positive real numbers
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+76
+</td>
 <td style="text-align:left;">
 LHYear
 </td>
@@ -937,6 +1167,9 @@ The last historical year of the simulation (before projection). Single value. Po
 </tr>
 <tr>
 <td style="text-align:left;">
+77
+</td>
+<td style="text-align:left;">
 nareas
 </td>
 <td style="text-align:left;">
@@ -945,10 +1178,43 @@ Number of fishing areas. Vector of length nsim. Non-negative integer
 </tr>
 <tr>
 <td style="text-align:left;">
+78
+</td>
+<td style="text-align:left;">
 Misc
 </td>
 <td style="text-align:left;">
 Other information for MPs. An object. R list
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+80
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+82
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+84
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
 </td>
 </tr>
 </tbody>

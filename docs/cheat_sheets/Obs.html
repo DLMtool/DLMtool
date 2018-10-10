@@ -319,6 +319,8 @@ $(document).ready(function () {
 <thead>
 <tr>
 <th style="text-align:left;">
+</th>
+<th style="text-align:left;">
 Slot
 </th>
 <th style="text-align:left;">
@@ -329,6 +331,9 @@ Description
 <tbody>
 <tr>
 <td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
 Name
 </td>
 <td style="text-align:left;">
@@ -336,6 +341,9 @@ The name of the observation model object. Single value. Character string.
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+2
+</td>
 <td style="text-align:left;">
 Cobs
 </td>
@@ -345,6 +353,9 @@ Log-normal catch observation error expressed as a coefficient of variation. Unif
 </tr>
 <tr>
 <td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
 Cbiascv
 </td>
 <td style="text-align:left;">
@@ -352,6 +363,9 @@ Log-normal coefficient of variation controlling the sampling of bias in catch ob
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+4
+</td>
 <td style="text-align:left;">
 CAA_nsamp
 </td>
@@ -361,6 +375,9 @@ Number of catch-at-age observation per time step. Uniform distribution lower and
 </tr>
 <tr>
 <td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
 CAA_ESS
 </td>
 <td style="text-align:left;">
@@ -368,6 +385,9 @@ Effective sample size (independent age draws) of the multinomial catch-at-age ob
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+6
+</td>
 <td style="text-align:left;">
 CAL_nsamp
 </td>
@@ -377,6 +397,9 @@ Number of catch-at-length observation per time step. Uniform distribution lower 
 </tr>
 <tr>
 <td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
 CAL_ESS
 </td>
 <td style="text-align:left;">
@@ -384,6 +407,9 @@ Effective sample size (independent length draws) of the multinomial catch-at-len
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+8
+</td>
 <td style="text-align:left;">
 Iobs
 </td>
@@ -393,6 +419,9 @@ Observation error in the relative abundance indices expressed as a coefficient o
 </tr>
 <tr>
 <td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
 Ibiascv
 </td>
 <td style="text-align:left;">
@@ -400,6 +429,9 @@ Log-normal coefficient of variation controlling error in observations of relativ
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+10
+</td>
 <td style="text-align:left;">
 Btobs
 </td>
@@ -409,6 +441,9 @@ Log-normal coefficient of variation controlling error in observations of current
 </tr>
 <tr>
 <td style="text-align:left;">
+11
+</td>
+<td style="text-align:left;">
 Btbiascv
 </td>
 <td style="text-align:left;">
@@ -416,6 +451,9 @@ Uniform-log bounds for sampling persistent bias in current stock biomass. Unifor
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+12
+</td>
 <td style="text-align:left;">
 beta
 </td>
@@ -425,6 +463,9 @@ A parameter controlling hyperstability/hyperdepletion where values below 1 lead 
 </tr>
 <tr>
 <td style="text-align:left;">
+13
+</td>
+<td style="text-align:left;">
 LenMbiascv
 </td>
 <td style="text-align:left;">
@@ -432,6 +473,9 @@ Log-normal coefficient of variation for sampling persistent bias in length at 50
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+14
+</td>
 <td style="text-align:left;">
 Mbiascv
 </td>
@@ -441,6 +485,9 @@ Log-normal coefficient of variation for sampling persistent bias in observed nat
 </tr>
 <tr>
 <td style="text-align:left;">
+15
+</td>
+<td style="text-align:left;">
 Kbiascv
 </td>
 <td style="text-align:left;">
@@ -448,6 +495,9 @@ Log-normal coefficient of variation for sampling persistent bias in observed gro
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+16
+</td>
 <td style="text-align:left;">
 t0biascv
 </td>
@@ -457,6 +507,9 @@ Log-normal coefficient of variation for sampling persistent bias in observed t0.
 </tr>
 <tr>
 <td style="text-align:left;">
+17
+</td>
+<td style="text-align:left;">
 Linfbiascv
 </td>
 <td style="text-align:left;">
@@ -464,6 +517,9 @@ Log-normal coefficient of variation for sampling persistent bias in observed max
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+18
+</td>
 <td style="text-align:left;">
 LFCbiascv
 </td>
@@ -473,6 +529,9 @@ Log-normal coefficient of variation for sampling persistent bias in observed len
 </tr>
 <tr>
 <td style="text-align:left;">
+19
+</td>
+<td style="text-align:left;">
 LFSbiascv
 </td>
 <td style="text-align:left;">
@@ -480,6 +539,9 @@ Log-normal coefficient of variation for sampling persistent bias in length-at-fu
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+20
+</td>
 <td style="text-align:left;">
 FMSYbiascv
 </td>
@@ -489,6 +551,9 @@ Log-normal coefficient of variation for sampling persistent bias in FMSY. Unifor
 </tr>
 <tr>
 <td style="text-align:left;">
+21
+</td>
+<td style="text-align:left;">
 FMSY_Mbiascv
 </td>
 <td style="text-align:left;">
@@ -496,6 +561,9 @@ Log-normal coefficient of variation for sampling persistent bias in FMSY/M. Unif
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+22
+</td>
 <td style="text-align:left;">
 BMSY_B0biascv
 </td>
@@ -505,6 +573,9 @@ Log-normal coefficient of variation for sampling persistent bias in BMSY relativ
 </tr>
 <tr>
 <td style="text-align:left;">
+23
+</td>
+<td style="text-align:left;">
 Irefbiascv
 </td>
 <td style="text-align:left;">
@@ -512,6 +583,9 @@ Log-normal coefficient of variation for sampling persistent bias in relative abu
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+24
+</td>
 <td style="text-align:left;">
 Brefbiascv
 </td>
@@ -521,6 +595,9 @@ Log-normal coefficient of variation for sampling persistent bias in BMSY. Unifor
 </tr>
 <tr>
 <td style="text-align:left;">
+25
+</td>
+<td style="text-align:left;">
 Crefbiascv
 </td>
 <td style="text-align:left;">
@@ -528,6 +605,9 @@ Log-normal coefficient of variation for sampling persistent bias in MSY. Uniform
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+26
+</td>
 <td style="text-align:left;">
 Dbiascv
 </td>
@@ -537,6 +617,9 @@ Log-normal coefficient of variation for sampling persistent bias in stock deplet
 </tr>
 <tr>
 <td style="text-align:left;">
+27
+</td>
+<td style="text-align:left;">
 Dobs
 </td>
 <td style="text-align:left;">
@@ -544,6 +627,9 @@ Log-normal coefficient of variation controlling error in observations of stock d
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+28
+</td>
 <td style="text-align:left;">
 hbiascv
 </td>
@@ -553,10 +639,53 @@ Log-normal coefficient of variation for sampling persistent bias in steepness. U
 </tr>
 <tr>
 <td style="text-align:left;">
+29
+</td>
+<td style="text-align:left;">
 Recbiascv
 </td>
 <td style="text-align:left;">
 Log-normal coefficient of variation for sampling persistent bias in recent recruitment strength. Uniform distribution lower and upper bounds. Positive real numbers
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+31
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+33
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+35
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+37
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
 </td>
 </tr>
 </tbody>

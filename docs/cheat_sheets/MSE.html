@@ -319,6 +319,8 @@ $(document).ready(function () {
 <thead>
 <tr>
 <th style="text-align:left;">
+</th>
+<th style="text-align:left;">
 Slot
 </th>
 <th style="text-align:left;">
@@ -329,6 +331,9 @@ Description
 <tbody>
 <tr>
 <td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
 Name
 </td>
 <td style="text-align:left;">
@@ -336,6 +341,9 @@ Name of the MSE object. Single value. Character string
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+2
+</td>
 <td style="text-align:left;">
 nyears
 </td>
@@ -345,6 +353,9 @@ The number of years for the historical simulation. Single value. Positive intege
 </tr>
 <tr>
 <td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
 proyears
 </td>
 <td style="text-align:left;">
@@ -352,6 +363,9 @@ The number of years for the projections - closed loop simulations. Single value.
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+4
+</td>
 <td style="text-align:left;">
 nMPs
 </td>
@@ -361,6 +375,9 @@ Number of management procedures simulation tested. Single value. Positive intege
 </tr>
 <tr>
 <td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
 MPs
 </td>
 <td style="text-align:left;">
@@ -368,6 +385,9 @@ The names of the MPs that were tested. Vector of length nMPs. Character strings.
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+6
+</td>
 <td style="text-align:left;">
 nsim
 </td>
@@ -377,6 +397,9 @@ Number of simulations. Single value. Positive integer
 </tr>
 <tr>
 <td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
 OM
 </td>
 <td style="text-align:left;">
@@ -385,453 +408,568 @@ A table of sampled parameter of the operating model. Table object of nsim rows. 
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+8
 </td>
 <td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-NA
 </td>
 <td style="text-align:left;">
-NA
+• A: abundance (biomass) updated in each management update
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+9
 </td>
 <td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-NA
 </td>
 <td style="text-align:left;">
-NA
+• AC: autocorrelation in recruitment
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+10
 </td>
 <td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-NA
 </td>
 <td style="text-align:left;">
-NA
+• ageM: age at 50 per cent maturity
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+11
 </td>
 <td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-NA
 </td>
 <td style="text-align:left;">
-NA
+• B0: unfished total biomass
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+12
 </td>
 <td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-NA
 </td>
 <td style="text-align:left;">
-NA
+• Blow: SSB where it takes MGThorizon x MGT to reach Bfrac
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+13
 </td>
 <td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-NA
 </td>
 <td style="text-align:left;">
-NA
+• BMSY: BMSY in last historical year (total biomass)
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+14
 </td>
 <td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-NA
 </td>
 <td style="text-align:left;">
-NA
+• BMSY_B0: ratio of BMSY to unfished total biomass in last
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+15
 </td>
 <td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-NA
 </td>
 <td style="text-align:left;">
-NA
+• Depletion: stock depletion (spawning biomass / unfished
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+16
 </td>
 <td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-NA
 </td>
 <td style="text-align:left;">
-NA
+• dFfinal: gradient in fishing mortality rate over final
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+17
 </td>
 <td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-NA
 </td>
 <td style="text-align:left;">
-NA
+• DR: the fraction of caught fish that are discarded
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+18
 </td>
 <td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-NA
 </td>
 <td style="text-align:left;">
-NA
+• Esd: inter-annual variability in fishing mortality rate
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+19
 </td>
 <td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-NA
 </td>
 <td style="text-align:left;">
-NA
+• Fdisc: fraction of discarded fish that die
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+20
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• FMSY: fishing mortality at MSY in last historical year
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+21
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• FMSY_M: ratio of FMSY to M in last historical year
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+22
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Frac_area_1: fraction of the unfished biomass in stock 1
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+23
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• hs: steepness of the stock recruitment relationship (the
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+24
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• K: maximum growth rate (von Bertalanffy K parameter)
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+25
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Kgrad: mean gradient in maximum growth rate (per cent per
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+26
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Ksd: interannual variability in maximum growth rate (log
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+27
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• L5: length at 5/
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+28
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• L50: length at 50/
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+29
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• L95: length at 95/
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+30
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• LFC: length at first capture
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+31
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• LFR: first length at full retention
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+32
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• LFS: first length at full selection
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+33
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Linf: asymptotic length
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+34
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Linfgrad: mean gradient in maximum length (per cent per
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+35
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Linfsd: interannual variability in maximum length (log
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+36
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• LR5: first length at 5/
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+37
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• M: instantaneous natural mortality rate
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+38
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Mexp: exponent of Lorezen M-weight relationship
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+39
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Mgrad: mean average percentage gradient in natural
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+40
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• MGT: mean generation time
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+41
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Msd: interannual variability in natural mortality rate
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+42
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• MSY: maximum sustainable yield in last historical year
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+43
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• N0: equilibrium unfished total numbers
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+44
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• OFLreal: A * FMSY the true simulated Over Fishing Limit
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+45
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Prob_staying: probability of inviduals in area 1
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+46
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• procsd: process error - CV in log-normal recruitment
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+47
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• qcv: interannual variability in future fishing efficiency
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+48
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• qinc: mean percentage increase in fishing efficiency
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+49
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• RefY: reference yield, the highest long-term yield (mean
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+50
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Rmaxlen: retention of fish at asymptotic length
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+51
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Size_area_1: size of Area 1 relative to Area 2
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+52
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+• SizeLimFrac: fraction of average implementation error of
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+53
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+• SizeLimSD: log-normal coefficient of variation
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+• Spat_targ: distribution of fishing in relation to spatial
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+55
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+• SSB0: unfished spawning biomass
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+56
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+• SSBMSY: spawning biomass MSY in last historical year
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+57
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+• SSBMSY_SSB0: ratio of SSB_MSY/SSB0 in last historical
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+58
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+• t0: theoretical length at age zero (von Bertalanffy t0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+59
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+• TACFrac: mean fraction of TAC taken
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+60
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+• TACSD: log-normal coefficient of variation in the
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+61
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+• TAEFrac: mean fraction of TAE taken
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+62
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+• TAESD: log-normal coefficient of variation in the
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+63
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+• Vmaxlen: selection of fish at asymptotic length
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+64
+</td>
 <td style="text-align:left;">
 Obs
 </td>
@@ -841,213 +979,268 @@ A table of sampled parameters of the observation model. Table of nsim rows. Real
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+65
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Abias: bias in observed current absolute stock biomass
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+66
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Aerr: error in observed current absolute stock biomass
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+67
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• betas: hyper-stability/hyper-depletion parameter
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+68
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• BMSY_B0bias: bias in ratio of most productive stock size
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+69
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Brefbias: bias in BMSY stock levels (target or reference
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+70
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• CAA_ESS: the effective sample size of multinomial
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+71
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• CAA_nsamp: the number of catch-at-age observations per
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+72
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• CAL_ESS: the effective sample size of multinomial
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+73
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• CAL_nsamp: the number of catch-at-length observations per
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+74
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Cbias: bias in observed catches
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+75
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Crefbias: bias in MSY prediction (target or reference
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+76
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Csd: observation error in observed catches (lognormal CV)
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+77
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Dbias: bias in observed stock depletion (also applies to
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+78
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Derr: error in observed stock depletion
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+79
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• FMSY_Mbias: bias in ratio of FMSY to natural mortality
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+80
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• hbias: bias in observed steepness of the stock
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+81
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Irefbias: bias in abundance index corresponding to BMSY
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+82
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Isd: observation error in relative abundance index
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+83
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Kbias: bias in maximum growth rate (von Bertalanffy K
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+84
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• lenMbias: bias in length at 50 per cent maturity
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+85
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• LFCbias: bias in length at first capture
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+86
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• LFSbias: bias in length at full selection
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+87
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Linfbias: bias in maximum length (von Bertalanffy Linf
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+88
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Mbias: bias in observed natural mortality rate
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+89
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• Recsd: error in observed recruitment
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-NA
+90
 </td>
 <td style="text-align:left;">
-NA
+</td>
+<td style="text-align:left;">
+• t0bias: bias in theoretical length at age zero (von
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+91
+</td>
 <td style="text-align:left;">
 B_BMSY
 </td>
@@ -1057,6 +1250,9 @@ Simulated biomass relative to BMSY over the projection. An array with dimensions
 </tr>
 <tr>
 <td style="text-align:left;">
+92
+</td>
+<td style="text-align:left;">
 F_FMSY
 </td>
 <td style="text-align:left;">
@@ -1064,6 +1260,9 @@ Simulated fishing mortality rate relative to FMSY over the projection. An array 
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+93
+</td>
 <td style="text-align:left;">
 B
 </td>
@@ -1073,6 +1272,9 @@ Simulated stock biomass over the projection. An array with dimensions: nsim, nMP
 </tr>
 <tr>
 <td style="text-align:left;">
+94
+</td>
+<td style="text-align:left;">
 SSB
 </td>
 <td style="text-align:left;">
@@ -1080,6 +1282,9 @@ Simulated spawning stock biomass over the projection. An array with dimensions: 
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+95
+</td>
 <td style="text-align:left;">
 VB
 </td>
@@ -1089,6 +1294,9 @@ Simulated vulnerable biomass over the projection. An array with dimensions: nsim
 </tr>
 <tr>
 <td style="text-align:left;">
+96
+</td>
+<td style="text-align:left;">
 FM
 </td>
 <td style="text-align:left;">
@@ -1096,6 +1304,9 @@ Simulated fishing mortality rate over the projection. An array with dimensions: 
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+97
+</td>
 <td style="text-align:left;">
 C
 </td>
@@ -1105,6 +1316,9 @@ Simulated catches (taken) over the projection. An array with dimensions: nsim, n
 </tr>
 <tr>
 <td style="text-align:left;">
+98
+</td>
+<td style="text-align:left;">
 TAC
 </td>
 <td style="text-align:left;">
@@ -1112,6 +1326,9 @@ Simulated Total Allowable Catch (prescribed) over the projection (this is NA for
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+99
+</td>
 <td style="text-align:left;">
 SSB_hist
 </td>
@@ -1121,6 +1338,9 @@ Simulated historical spawning stock biomass. An array with dimensions: nsim, nag
 </tr>
 <tr>
 <td style="text-align:left;">
+100
+</td>
+<td style="text-align:left;">
 CB_hist
 </td>
 <td style="text-align:left;">
@@ -1128,6 +1348,9 @@ Simulated historical catches in weight. An array with dimensions: nsim, nages, n
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+101
+</td>
 <td style="text-align:left;">
 FM_hist
 </td>
@@ -1137,6 +1360,9 @@ Simulated historical fishing mortality rate. An array with dimensions: nsim, nag
 </tr>
 <tr>
 <td style="text-align:left;">
+102
+</td>
+<td style="text-align:left;">
 Effort
 </td>
 <td style="text-align:left;">
@@ -1144,6 +1370,9 @@ Simulated relative fishing effort in the projection years. An array with dimensi
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+103
+</td>
 <td style="text-align:left;">
 PAA
 </td>
@@ -1153,6 +1382,9 @@ Population at age in last projection year. An array with dimensions: nsim, nMPs,
 </tr>
 <tr>
 <td style="text-align:left;">
+104
+</td>
+<td style="text-align:left;">
 CAA
 </td>
 <td style="text-align:left;">
@@ -1160,6 +1392,9 @@ Catch at age in last projection year. An array with dimensions: nsim, nMPs, nage
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+105
+</td>
 <td style="text-align:left;">
 CAL
 </td>
@@ -1169,6 +1404,9 @@ Catch at length in last projection year. An array with dimensions: nsim, nMPs, n
 </tr>
 <tr>
 <td style="text-align:left;">
+106
+</td>
+<td style="text-align:left;">
 CALbins
 </td>
 <td style="text-align:left;">
@@ -1177,10 +1415,33 @@ Mid-points of the catch-at-length bins. Vector of length nCALbins. Positive real
 </tr>
 <tr>
 <td style="text-align:left;">
+107
+</td>
+<td style="text-align:left;">
 Misc
 </td>
 <td style="text-align:left;">
 Miscellanenous output such as posterior predictive data
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+109
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+111
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
 </td>
 </tr>
 </tbody>

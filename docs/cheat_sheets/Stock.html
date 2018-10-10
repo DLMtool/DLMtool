@@ -319,6 +319,8 @@ $(document).ready(function () {
 <thead>
 <tr>
 <th style="text-align:left;">
+</th>
+<th style="text-align:left;">
 Slot
 </th>
 <th style="text-align:left;">
@@ -329,6 +331,9 @@ Description
 <tbody>
 <tr>
 <td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
 Name
 </td>
 <td style="text-align:left;">
@@ -336,6 +341,9 @@ The name of the Stock object. Single value. Character string
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+2
+</td>
 <td style="text-align:left;">
 Common_Name
 </td>
@@ -345,6 +353,9 @@ Common name of the species. Character string
 </tr>
 <tr>
 <td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
 Species
 </td>
 <td style="text-align:left;">
@@ -352,6 +363,9 @@ Scientific name of the species. Genus and species name. Character string
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+4
+</td>
 <td style="text-align:left;">
 maxage
 </td>
@@ -361,6 +375,9 @@ The maximum age of individuals that is simulated (there is no plus group ). Sing
 </tr>
 <tr>
 <td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
 R0
 </td>
 <td style="text-align:left;">
@@ -368,6 +385,9 @@ The magnitude of unfished recruitment. Single value. Positive real number
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+6
+</td>
 <td style="text-align:left;">
 M
 </td>
@@ -377,6 +397,9 @@ Natural mortality rate. Uniform distribution lower and upper bounds. Positive re
 </tr>
 <tr>
 <td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
 M2
 </td>
 <td style="text-align:left;">
@@ -384,6 +407,9 @@ M2
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+8
+</td>
 <td style="text-align:left;">
 Mexp
 </td>
@@ -393,6 +419,9 @@ Exponent of the Lorenzen function assuming an inverse relationship between M and
 </tr>
 <tr>
 <td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
 Msd
 </td>
 <td style="text-align:left;">
@@ -400,6 +429,9 @@ Inter-annual variability in natural mortality rate expressed as a coefficient of
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+10
+</td>
 <td style="text-align:left;">
 Mgrad
 </td>
@@ -409,6 +441,9 @@ Mean temporal trend in natural mortality rate, expressed as a percentage change 
 </tr>
 <tr>
 <td style="text-align:left;">
+11
+</td>
+<td style="text-align:left;">
 h
 </td>
 <td style="text-align:left;">
@@ -416,6 +451,9 @@ Steepness of the stock recruit relationship. Uniform distribution lower and uppe
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+12
+</td>
 <td style="text-align:left;">
 SRrel
 </td>
@@ -425,6 +463,9 @@ Type of stock-recruit relationship. Single value, switch (1) Beverton-Holt (2) R
 </tr>
 <tr>
 <td style="text-align:left;">
+13
+</td>
+<td style="text-align:left;">
 Perr
 </td>
 <td style="text-align:left;">
@@ -432,6 +473,9 @@ Process error, the CV of lognormal recruitment deviations. Uniform distribution 
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+14
+</td>
 <td style="text-align:left;">
 AC
 </td>
@@ -441,6 +485,9 @@ Autocorrelation in recruitment deviations rec(t)=AC<em>rec(t-1)+(1-AC)</em>sigma
 </tr>
 <tr>
 <td style="text-align:left;">
+15
+</td>
+<td style="text-align:left;">
 Period
 </td>
 <td style="text-align:left;">
@@ -448,6 +495,9 @@ Period
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+16
+</td>
 <td style="text-align:left;">
 Amplitude
 </td>
@@ -457,6 +507,9 @@ Amplitude
 </tr>
 <tr>
 <td style="text-align:left;">
+17
+</td>
+<td style="text-align:left;">
 Linf
 </td>
 <td style="text-align:left;">
@@ -464,6 +517,9 @@ Maximum length. Uniform distribution lower and upper bounds. Positive real numbe
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+18
+</td>
 <td style="text-align:left;">
 K
 </td>
@@ -473,6 +529,9 @@ von Bertalanffy growth parameter k. Uniform distribution lower and upper bounds.
 </tr>
 <tr>
 <td style="text-align:left;">
+19
+</td>
+<td style="text-align:left;">
 t0
 </td>
 <td style="text-align:left;">
@@ -480,6 +539,9 @@ von Bertalanffy theoretical age at length zero. Uniform distribution lower and u
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+20
+</td>
 <td style="text-align:left;">
 LenCV
 </td>
@@ -489,6 +551,9 @@ Coefficient of variation of length-at-age (assumed constant for all age classes)
 </tr>
 <tr>
 <td style="text-align:left;">
+21
+</td>
+<td style="text-align:left;">
 Ksd
 </td>
 <td style="text-align:left;">
@@ -496,6 +561,9 @@ Inter-annual variability in growth parameter k. Uniform distribution lower and u
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+22
+</td>
 <td style="text-align:left;">
 Kgrad
 </td>
@@ -505,6 +573,9 @@ Mean temporal trend in growth parameter k, expressed as a percentage change in k
 </tr>
 <tr>
 <td style="text-align:left;">
+23
+</td>
+<td style="text-align:left;">
 Linfsd
 </td>
 <td style="text-align:left;">
@@ -512,6 +583,9 @@ Inter-annual variability in maximum length. Uniform distribution lower and upper
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+24
+</td>
 <td style="text-align:left;">
 Linfgrad
 </td>
@@ -521,6 +595,9 @@ Mean temporal trend in maximum length, expressed as a percentage change in Linf 
 </tr>
 <tr>
 <td style="text-align:left;">
+25
+</td>
+<td style="text-align:left;">
 L50
 </td>
 <td style="text-align:left;">
@@ -528,6 +605,9 @@ Length at 50 percent maturity. Uniform distribution lower and upper bounds. Posi
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+26
+</td>
 <td style="text-align:left;">
 L50_95
 </td>
@@ -537,6 +617,9 @@ Length increment from 50 percent to 95 percent maturity. Uniform distribution lo
 </tr>
 <tr>
 <td style="text-align:left;">
+27
+</td>
+<td style="text-align:left;">
 D
 </td>
 <td style="text-align:left;">
@@ -544,6 +627,9 @@ Current level of stock depletion SSB(current)/SSB(unfished). Uniform distributio
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+28
+</td>
 <td style="text-align:left;">
 a
 </td>
@@ -553,6 +639,9 @@ Length-weight parameter alpha. Single value. Positive real number
 </tr>
 <tr>
 <td style="text-align:left;">
+29
+</td>
+<td style="text-align:left;">
 b
 </td>
 <td style="text-align:left;">
@@ -560,6 +649,9 @@ Length-weight parameter beta. Single value. Positive real number
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+30
+</td>
 <td style="text-align:left;">
 Size_area_1
 </td>
@@ -569,6 +661,9 @@ The size of area 1 relative to area 2. Uniform distribution lower and upper boun
 </tr>
 <tr>
 <td style="text-align:left;">
+31
+</td>
+<td style="text-align:left;">
 Frac_area_1
 </td>
 <td style="text-align:left;">
@@ -576,6 +671,9 @@ The fraction of the unfished biomass in stock 1. Uniform distribution lower and 
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+32
+</td>
 <td style="text-align:left;">
 Prob_staying
 </td>
@@ -585,6 +683,9 @@ The probability of inviduals in area 1 remaining in area 1 over the course of on
 </tr>
 <tr>
 <td style="text-align:left;">
+33
+</td>
+<td style="text-align:left;">
 Fdisc
 </td>
 <td style="text-align:left;">
@@ -593,10 +694,43 @@ Fraction of discarded fish that die. Uniform distribution lower and upper bounds
 </tr>
 <tr>
 <td style="text-align:left;">
+34
+</td>
+<td style="text-align:left;">
 Source
 </td>
 <td style="text-align:left;">
 A reference to a website or article from which parameters were taken to define the stock object. Single value. Character string.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+36
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+38
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+40
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
 </td>
 </tr>
 </tbody>
