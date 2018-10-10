@@ -197,7 +197,7 @@ class(MRnoreal) <- "MP"
 curE <- function(x, Data, reps, plot=FALSE) {
   # current effort
   rec <- new("Rec") # create recommendation object
-  rec@Effort <- 1 * Data@MPeff[x] 
+  rec@Effort <- 1 #* Data@MPeff[x] 
   if (plot) curE_plot(x, rec, Data)
   rec
 }
@@ -212,7 +212,7 @@ class(curE) <- "MP"
 curE75 <- function(x, Data, reps, plot=FALSE) {
   # 75% current effort
   rec <- new("Rec") # create recommendation object
-  rec@Effort <- 0.75 * Data@MPeff[x]
+  rec@Effort <- 0.75 #* Data@MPeff[x]
   if (plot) curE_plot(x, rec, Data)
   rec
 }

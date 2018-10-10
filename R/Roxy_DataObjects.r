@@ -249,6 +249,13 @@ NULL
 "OMDescription"
 
 
+#'  MSEDescription 
+#'
+#'  A data.frame with description of slots for class MSE
+#'
+"MSEDescription"
+
+
 #'  LHdatabase 
 #'
 #'  Database from the FishLife package with predicted life-history parameters for all species on FishBase

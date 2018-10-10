@@ -531,7 +531,8 @@ DLMdiag <- function(Data, command = c("available", "not available", "needed"), r
       if (timey[[y]] > timelimit) {
         report[y] <- "Exceeded the user-specified time limit."
         good[y] <- FALSE
-      } else if (is.character(test[[y]]) | is.na(test[[y]])) { # Error message 
+      # } else if (is.character(test[[y]]) | is.na(test[[y]])) { # Error message 
+      } else if (is.character(test[[y]])) { # Error message 
         report[y] <- "MP returned an error. Check MP function and/or Data object."
         good[y] <- FALSE
       } else if (inherits(test[[y]], "Rec")) {

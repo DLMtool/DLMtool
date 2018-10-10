@@ -5,6 +5,8 @@ The current version of the DLMtool package is available for download from [CRAN]
 - fix issue where length-at-age was negative with high t0
 - allow custom area size for nareas > 2 in cpars
 
+- fix issue with curE75 which was ratcheting down effort 
+
 
 
 ## DLMtool 5.2.3
