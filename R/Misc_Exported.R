@@ -496,7 +496,8 @@ userguide <- function() {
 #' cheatsheets()
 #' }
 cheatsheets <- function() {
-  utils::browseURL("https://dlmtool.github.io/DLMtool/cheat_sheets/DLMtool_CheatSheets.pdf")
+  # utils::browseURL("https://dlmtool.github.io/DLMtool/cheat_sheets/DLMtool_CheatSheets.pdf")
+  utils::browseURL("https://dlmtool.github.io/DLMtool/cheat_sheets/CheatSheets.html")
 }
 
 RepmissingVal <- function(object, name, vals=NA) {
