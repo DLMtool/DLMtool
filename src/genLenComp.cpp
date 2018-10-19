@@ -74,7 +74,7 @@ double which_maxC(NumericVector x){
 
 // [[Rcpp::export]]
 NumericVector rnormSelect2(int N, int mi, int ma) {
-  RNGScope scope;
+  // RNGScope scope;
   int N2 = N * 1.25;
   NumericVector X = rnorm(N2, 0, 1);
   LogicalVector ind = (X >= mi) & (X <= ma);
@@ -88,7 +88,7 @@ NumericVector rnormSelect2(int N, int mi, int ma) {
 
 // [[Rcpp::export]]
 NumericVector tdnorm(NumericVector x, double mi, double ma) {
-  RNGScope scope;
+  // RNGScope scope;
   NumericVector dist = dnorm(x, 0.0, 1.0);
   
   NumericVector cdist = pnorm(x, 0.0, 1.0);
@@ -132,26 +132,29 @@ NumericMatrix  genSizeComp(NumericMatrix VulnN, NumericVector CAL_binsmid, Numer
       List Lens(k*12);
       int count = 0;
       for (int age=1; age <= k; age++) { // loop over 1:maxage
-        double Nage3 =  round(Nage2(age-1)); // number at this age
+        int Nage3 =  round(Nage2(age-1)); // number at this age
+    
         NumericVector rands = RcppArmadillo::sample(NumericVector::create(0,1,2,3,4,5,6,7,8,9,10,11), Nage3, TRUE, NumericVector::create()) ; //  assume ages are uniformly distributed across months
+        
         NumericVector subAgeVec = get_freq(rands, 1, 0, 12); // distribute n across months
+        
         for (int subage=0; subage<=11; subage++) { // loop over 12 months
           if (subAgeVec(subage) > 0) {
             double sage = varAges(subage) + age;
-            
+
             double mean = Linfs(yr) * (1-exp(-Ks(yr)* (sage - t0s(yr)))); // calculate mean length at sub-age;
             if (mean < 0) mean = 0.01;
             NumericVector dist = tdnorm((CAL_binsmid-mean)/(LenCV*mean), -truncSD, truncSD); // prob density of lengths for this age
             NumericVector newdist = dist * selCurve(_,yr); // probability = dist * size-selection curve
-            
+
             if (sum(newdist)!=0) {
               newdist = newdist/sum(newdist);
-              
+
               Lens(count) = RcppArmadillo::sample(CAL_binsmid, subAgeVec(subage), TRUE, newdist); // sample lengths for this sub-age class
             } else {
               Lens(count) = NA_INTEGER;
             }
-           
+
           } else {
             Lens(count) = NA_INTEGER;
           }

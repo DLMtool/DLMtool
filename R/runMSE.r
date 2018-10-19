@@ -425,82 +425,89 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   }
   
   # --- Optimize catchability (q) to fit depletion ---- 
-  if(!silent) message("Optimizing for user-specified depletion")  # Print a progress update
-  
-  bounds <- c(0.0001, 15) # q bounds for optimizer
-  qs <- sapply(1:nsim, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
-               M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr_y, mov, SRrel, Find, 
-               Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF) # find the q that gives current stock depletion
-
-  # --- Check that q optimizer has converged ---- 
-  LimBound <- c(1.1, 0.9)*range(bounds)  # bounds for q (catchability). Flag if bounded optimizer hits the bounds 
-  probQ <- which(qs > max(LimBound) | qs < min(LimBound))
-  Nprob <- length(probQ)
-  
-  # If q has hit bound, re-sample depletion and try again. Tries 'ntrials' times and then alerts user
-  if (length(probQ) > 0) {
-    Err <- TRUE
-    if(!silent) message(Nprob,' simulations have final biomass that is not close to sampled depletion') 
-    if(!silent) message('Re-sampling depletion, recruitment error, and fishing effort')
+  if ('unfished' %in% names(control) && control$unfished) {
+    if(!silent) message("Simulating unfished historical period")
+    Hist <- TRUE
+    CalcBlow <- FALSE
+    qs <- rep(0, nsim) # no fishing
+  } else {
     
-    count <- 0
-    OM2 <- OM 
-    while (Err & count < ntrials) {
-      # Re-sample Stock Parameters 
-      Nprob <- length(probQ)
-      OM2@nsim <- Nprob
-      SampCpars2 <- list()
-
-      if (length(OM2@cpars)>0) SampCpars2 <- SampleCpars(OM2@cpars, OM2@nsim, msg=FALSE) 
-     
-      ResampStockPars <- SampleStockPars(OM2, cpars=SampCpars2, msg=FALSE)  
-      ResampStockPars$CAL_bins <- StockPars$CAL_bins
-      ResampStockPars$CAL_binsmid <- StockPars$CAL_binsmid 
+    if(!silent) message("Optimizing for user-specified depletion")  # Print a progress update
     
-      # Re-sample depletion 
-      D[probQ] <- ResampStockPars$D 
+    bounds <- c(0.0001, 15) # q bounds for optimizer
+    qs <- sapply(1:nsim, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
+                 M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr_y, mov, SRrel, Find, 
+                 Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF) # find the q that gives current stock depletion
+    
+    # --- Check that q optimizer has converged ---- 
+    LimBound <- c(1.1, 0.9)*range(bounds)  # bounds for q (catchability). Flag if bounded optimizer hits the bounds 
+    probQ <- which(qs > max(LimBound) | qs < min(LimBound))
+    Nprob <- length(probQ)
+    
+    # If q has hit bound, re-sample depletion and try again. Tries 'ntrials' times and then alerts user
+    if (length(probQ) > 0) {
+      Err <- TRUE
+      if(!silent) message(Nprob,' simulations have final biomass that is not close to sampled depletion') 
+      if(!silent) message('Re-sampling depletion, recruitment error, and fishing effort')
       
-      # Re-sample recruitment deviations
-      procsd[probQ] <- ResampStockPars$procsd 
-      AC[probQ] <- ResampStockPars$AC
-      Perr_y[probQ,] <- ResampStockPars$Perr_y
-      hs[probQ] <- ResampStockPars$hs
-      
-      # Re-sample historical fishing effort
-      ResampFleetPars <- SampleFleetPars(SubOM(OM2, "Fleet"), Stock=ResampStockPars, 
-                                         OM2@nsim, nyears, proyears, cpars=SampCpars2)
-      Esd[probQ] <- ResampFleetPars$Esd
-      Find[probQ, ] <- ResampFleetPars$Find
-      dFfinal[probQ] <- ResampFleetPars$dFfinal
-      
-      # Optimize for q 
-      qs[probQ] <- sapply(probQ, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
-                          M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr_y, mov, SRrel, Find, 
-                          Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF)
-      
-      probQ <- which(qs > max(LimBound) | qs < min(LimBound))
-      count <- count + 1 
-      if (length(probQ) == 0) Err <- FALSE
-    }
-    if (Err) { # still a problem
-      tooLow <- length(which(qs > max(LimBound)))
-      tooHigh <- length(which(qs < min(LimBound)))
-      prErr <- length(probQ)/nsim
-      if (prErr > fracD & length(probQ) >= 1) {
-        if (length(tooLow) > 0) message(tooLow, " sims can't get down to the lower bound on depletion")
-        if (length(tooHigh) > 0) message(tooHigh, " sims can't get to the upper bound on depletion")
-        if(!silent) message("More than ", fracD*100, "% of simulations can't get to the specified level of depletion with these Operating Model parameters")
-        stop("Change OM@seed and try again for a complete new sample, modify the input parameters, or increase ntrials")
-      } else {
-        if (length(tooLow) > 0) message(tooLow, " sims can't get down to the lower bound on depletion")
-        if (length(tooHigh) > 0) message(tooHigh, " sims can't get to the upper bound on depletion")
-        if(!silent) message("More than ", 100-fracD*100, "% simulations can get to the sampled depletion.\nContinuing")
+      count <- 0
+      OM2 <- OM 
+      while (Err & count < ntrials) {
+        # Re-sample Stock Parameters 
+        Nprob <- length(probQ)
+        OM2@nsim <- Nprob
+        SampCpars2 <- list()
+        
+        if (length(OM2@cpars)>0) SampCpars2 <- SampleCpars(OM2@cpars, OM2@nsim, msg=FALSE) 
+        
+        ResampStockPars <- SampleStockPars(OM2, cpars=SampCpars2, msg=FALSE)  
+        ResampStockPars$CAL_bins <- StockPars$CAL_bins
+        ResampStockPars$CAL_binsmid <- StockPars$CAL_binsmid 
+        
+        # Re-sample depletion 
+        D[probQ] <- ResampStockPars$D 
+        
+        # Re-sample recruitment deviations
+        procsd[probQ] <- ResampStockPars$procsd 
+        AC[probQ] <- ResampStockPars$AC
+        Perr_y[probQ,] <- ResampStockPars$Perr_y
+        hs[probQ] <- ResampStockPars$hs
+        
+        # Re-sample historical fishing effort
+        ResampFleetPars <- SampleFleetPars(SubOM(OM2, "Fleet"), Stock=ResampStockPars, 
+                                           OM2@nsim, nyears, proyears, cpars=SampCpars2)
+        Esd[probQ] <- ResampFleetPars$Esd
+        Find[probQ, ] <- ResampFleetPars$Find
+        dFfinal[probQ] <- ResampFleetPars$dFfinal
+        
+        # Optimize for q 
+        qs[probQ] <- sapply(probQ, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
+                            M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr_y, mov, SRrel, Find, 
+                            Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF)
+        
+        probQ <- which(qs > max(LimBound) | qs < min(LimBound))
+        count <- count + 1 
+        if (length(probQ) == 0) Err <- FALSE
+      }
+      if (Err) { # still a problem
+        tooLow <- length(which(qs > max(LimBound)))
+        tooHigh <- length(which(qs < min(LimBound)))
+        prErr <- length(probQ)/nsim
+        if (prErr > fracD & length(probQ) >= 1) {
+          if (length(tooLow) > 0) message(tooLow, " sims can't get down to the lower bound on depletion")
+          if (length(tooHigh) > 0) message(tooHigh, " sims can't get to the upper bound on depletion")
+          if(!silent) message("More than ", fracD*100, "% of simulations can't get to the specified level of depletion with these Operating Model parameters")
+          stop("Change OM@seed and try again for a complete new sample, modify the input parameters, or increase ntrials")
+        } else {
+          if (length(tooLow) > 0) message(tooLow, " sims can't get down to the lower bound on depletion")
+          if (length(tooHigh) > 0) message(tooHigh, " sims can't get to the upper bound on depletion")
+          if(!silent) message("More than ", 100-fracD*100, "% simulations can get to the sampled depletion.\nContinuing")
+        }
       }
     }
+    
+    if(!silent) message("Calculating historical stock and fishing dynamics")  # Print a progress update
   }
-  
-  if(!silent) message("Calculating historical stock and fishing dynamics")  # Print a progress update
-  
   # --- Simulate historical years ----
   histYrs <- sapply(1:nsim, simYears, nareas, maxage, N, pyears=nyears, M_ageArray, Asize,
                     Mat_age, Wt_age, V, retA, Perr_y, mov, SRrel, Find, Spat_targ, hs, R0a, 
@@ -639,9 +646,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
 
   # Generate size comp data with variability in age
   tempSize <- lapply(1:nsim, genSizeCompWrap, vn, CAL_binsmid, retL, CAL_ESS, CAL_nsamp,
-                     Linfarray, Karray, t0array, LenCV, truncSD=2)
+                     Linfarray, Karray, t0array, LenCV, truncSD=2.5)
   
   CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), dim=c(nyears, length(CAL_binsmid), nsim)), c(3,1,2))
+
 
   # calculate LFC 
   LFC <- unlist(lapply(tempSize, function(x) getfifth(x[nyears, ], CAL_binsmid)))
