@@ -7,6 +7,10 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 - fix issue with curE75 which was ratcheting down effort 
 
+- added more [cheat sheets](https://dlmtool.github.io/DLMtool/cheat_sheets/CheatSheets.html)
+
+- fix random seed in `Turing` function
+- speed up plots in `Turing` function
 
 
 ## DLMtool 5.2.3

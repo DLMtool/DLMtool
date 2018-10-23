@@ -86,7 +86,7 @@ Turing <- function(OM, Data, wait=TRUE) {
     stop("OM@nyears is < length(Data@Year). Should OM@nyears be increased to match Data?", call. = FALSE) 
   }
   
-  set.seed(ceiling(runif(1, 1, 10001)))
+  set.seed( as.numeric(Sys.time()))
   samps <- sample(1:OM@nsim, nsamp)
 
   message("Randomly sampling 5 iterations")
@@ -124,6 +124,7 @@ Turing <- function(OM, Data, wait=TRUE) {
 plotCAAdata <- function(Ylab="Count", slot="CAA", message="Catch-at-Age Data", 
                         Data, SimDat, samps, YrInd, wait) {
   Year <- Val <- Freq <- Sim <- NULL # cran check hacks
+  
   realDat <- slot(Data, slot)[1,,]
   sampDat <- slot(SimDat, slot)[samps,YrInd,]
   nsamp <- length(samps)
@@ -202,17 +203,64 @@ plotCAAdata <- function(Ylab="Count", slot="CAA", message="Catch-at-Age Data",
     Bmax <- Bcount$Val[min(indmax+1, length(Bcount$Val))]
     df4 <- df4 %>% dplyr::filter(Val >= Bmin & Val <= Bmax)
     
+    nrow <- length(unique(df4$Sim))
+    ncol <- length(unique(df4$Year))
+    nplot <- nrow*ncol
     
-    P1 <- ggplot2::ggplot(df4, ggplot2::aes(x=Val, y=Freq)) + ggplot2::geom_bar(stat="identity") +
-      ggplot2::facet_grid(Sim~Year) + ggplot2::theme_classic() +
-      ggplot2::labs(x=Xlab, y=Ylab) + ggplot2::ggtitle(message)
+    pmat <- matrix(1:nplot, nrow=nrow, ncol=ncol, byrow=TRUE)
     
-    df5 <- df4 %>% dplyr::filter(Sim == realInd)
-    P2 <- P1 + ggplot2::geom_bar(fill="blue", data=df5, stat="identity")
-    print(P1)
-    if (wait) tt <- readline(paste0("Press any key to show real ", message, "..."))
-    print(P2)
-    if (wait)  tt <- readline("Press any key to continue...")
+    op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,1,1), oma=c(4,4,2,0))
+    on.exit(par(op))
+    
+    for (r in 1:nrow) {
+      col <- "grey"
+      for (c in 1:ncol) {
+        dat <- df4 %>% filter(Sim==r, Year == c)
+        if (r == nrow) {
+          barplot(dat$Freq, names=round(dat$Val, 2), axes=FALSE, col=col)    
+        } else {
+          barplot(dat$Freq, axes=FALSE, col=col)    
+        }
+        if (c == 1) axis(side=2)
+        if (c != 1) axis(side=2, label=FALSE)
+      }
+    }
+    mtext(side=1, outer=TRUE, Xlab, line=2, cex=1.5)
+    mtext(side=2, outer=TRUE, Ylab, line=2, cex=1.5)
+    title(message, outer=TRUE, cex=1.5)
+   
+    if (wait) tt <- readline(paste0("Press [enter] to show real ", message, "..."))
+ 
+    for (r in 1:nrow) {
+      col <- ifelse(r==realInd, "blue", "grey")
+      for (c in 1:ncol) {
+        dat <- df4 %>% filter(Sim==r, Year == c)
+        if (r == nrow) {
+          barplot(dat$Freq, names=round(dat$Val, 2), axes=FALSE, col=col)    
+        } else {
+          barplot(dat$Freq, axes=FALSE, col=col)    
+        }
+        if (c == 1) axis(side=2)
+        if (c != 1) axis(side=2, label=FALSE)
+      }
+    }
+    mtext(side=1, outer=TRUE, Xlab, line=2, cex=1.5)
+    mtext(side=2, outer=TRUE, Ylab, line=2, cex=1.5)
+    title(message, outer=TRUE, cex=1.5)
+    
+    if (wait) tt <- readline("Press [enter] to continue...")
+    
+    # 
+    # P1 <- ggplot2::ggplot(df4, ggplot2::aes(x=Val, y=Freq)) + ggplot2::geom_bar(stat="identity") +
+    #   ggplot2::facet_grid(Sim~Year) + ggplot2::theme_classic() +
+    #   ggplot2::labs(x=Xlab, y=Ylab) + ggplot2::ggtitle(message)
+    # 
+    # df5 <- df4 %>% dplyr::filter(Sim == realInd)
+    # P2 <- P1 + ggplot2::geom_bar(fill="blue", data=df5, stat="identity")
+    # print(P1)
+    # if (wait) tt <- readline(paste0("Press [enter] to show real ", message, "..."))
+    # print(P2)
+    # if (wait) tt <- readline("Press [enter] to continue...")
   
   } else {
     message("No ", message, " found in Data object")
@@ -222,7 +270,7 @@ plotCAAdata <- function(Ylab="Count", slot="CAA", message="Catch-at-Age Data",
 
 
 plotTSdata <- function(Ylab, slot, message, Data, SimDat, samps, YrInd, 
-                       wait=TRUE, standarise=TRUE) {
+                       wait=TRUE, standarise=TRUE, lwd=2) {
   Year <- Val <- Freq <- Sim <- value <- key <- NULL # cran check hacks
   realDat <- slot(Data, slot)[1,]
   # remove NAs
@@ -240,27 +288,69 @@ plotTSdata <- function(Ylab, slot, message, Data, SimDat, samps, YrInd,
                                               nrow=nrow(CombDat), ncol=ncol(CombDat))
     rownames(CombDat) <- rep("", nrow(CombDat))
     tCombDat <- as.data.frame(t(CombDat))
-    df <- tidyr::gather(tCombDat, factor_key=TRUE)
-    df$Year <- factor(rep(YrInd3, nrow(CombDat)))
     
-    P1 <- ggplot2::ggplot(df, ggplot2::aes(x=Year, y=value, group=1)) + ggplot2::geom_line(size=1.2) +
-      ggplot2::facet_wrap(~key, nrow=2) + ggplot2::theme_classic() +
-      ggplot2::labs(x="Year", y=Ylab) + ggplot2::ggtitle(message) +
-      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) 
+    nplot <- ncol(tCombDat)
+    nrow <- floor(sqrt(nplot))
+    ncol <- nplot/nrow
     
+    pmat <- matrix(1:nplot, nrow=nrow, ncol=ncol, byrow=TRUE)
     
-    df2 <- df %>% dplyr::filter(key == paste0("V", realInd))
-    P2 <- P1 + ggplot2::geom_line(size=1.2, data=df2, color='blue')
-    print(P1)
-    if (wait) tt <- readline(paste0("Press any key to show real ", message, "..."))
-    print(P2)
-    if (wait) tt <- readline("Press any key to continue...")
+    op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,1,1), oma=c(4,4,2,0))
+    on.exit(par(op))
+    
+    for (r in 1:nplot) {
+      plot(YrInd3, tCombDat[,r], type="l", axes=FALSE, xlab="", ylab="", lwd=lwd)
+      if (r %in% pmat[1,]) axis(side=1, label=FALSE)
+      if (r %in% pmat[2,]) axis(side=1, label=TRUE)
+      if (r %in% pmat[,1]) {
+        axis(side=2, label=TRUE)
+      } else {
+        axis(side=2, label=FALSE)
+      }
+    }
+    mtext(side=1, outer=TRUE, "Year", line=2, cex=1.5)
+    mtext(side=2, outer=TRUE, Ylab, line=2, cex=1.5)
+    title(message, outer=TRUE, cex=1.5)
+    
+    if (wait) tt <- readline(paste0("Press [enter] to show real ", message, "..."))
+    
+    for (r in 1:nplot) {
+      lcol <- ifelse(r==realInd, "blue", "black")
+      plot(YrInd3, tCombDat[,r], type="l", axes=FALSE, xlab="", ylab="", lwd=lwd, col=lcol)
+      if (r %in% pmat[1,]) axis(side=1, label=FALSE)
+      if (r %in% pmat[2,]) axis(side=1, label=TRUE)
+      if (r %in% pmat[,1]) {
+        axis(side=2, label=TRUE)
+      } else {
+        axis(side=2, label=FALSE)
+      }
+    }
+    mtext(side=1, outer=TRUE, "Year", line=2, cex=1.5)
+    mtext(side=2, outer=TRUE, Ylab, line=2, cex=1.5)
+    title(message, outer=TRUE, cex=1.5)
+    
+    if (wait) tt <- readline("Press [enter] to continue...")
+
+   
+    # df <- tidyr::gather(tCombDat, factor_key=TRUE)
+    # df$Year <- factor(rep(YrInd3, nrow(CombDat)))
+    # 
+    # P1 <- ggplot2::ggplot(df, ggplot2::aes(x=Year, y=value, group=1)) + ggplot2::geom_line(size=1.2) +
+    #   ggplot2::facet_wrap(~key, nrow=2) + ggplot2::theme_classic() +
+    #   ggplot2::labs(x="Year", y=Ylab) + ggplot2::ggtitle(message) +
+    #   ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) 
+    # 
+    # 
+    # df2 <- df %>% dplyr::filter(key == paste0("V", realInd))
+    # P2 <- P1 + ggplot2::geom_line(size=1.2, data=df2, color='blue')
+    # print(P1)
+    # if (wait) tt <- readline(paste0("Press any key to show real ", message, "..."))
+    # print(P2)
+    # if (wait) tt <- readline("Press any key to continue...")
     
   } else {
     message("No ", message, " found in Data object")
   }
 }
-  
-
-  
+ 
   
