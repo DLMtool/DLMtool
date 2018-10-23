@@ -1403,10 +1403,15 @@ setMethod("show", signature = (object="PMobj"), function(object) {
     nprint <- min(nsim, 10)
     if (nMP > 1) df <- data.frame(object@Prob[1:nprint,])
     if (nMP == 1) df <- data.frame(object@Prob[1:nprint])
-    if (nMP > 1) lst <- object@Prob[nprint+1,]
-    if (nMP == 1) lst <- object@Prob[nprint+1]
-    df <- signif(df,2)
-    lst <- signif(lst,2)
+    if (nsim > (nprint+1)) {
+      if (nMP > 1) lst <- object@Prob[nprint+1,]
+      if (nMP == 1) lst <- object@Prob[nprint+1]
+    } else {
+      if (nMP > 1) lst <- object@Prob[nprint,]
+      if (nMP == 1) lst <- object@Prob[nprint]
+    }
+    df <- round(df,2)
+    lst <- round(lst,2)
     colnames(df) <- object@MPs
     names(lst) <- object@MPs
     if (nsim > (nprint+1)) {
@@ -1420,13 +1425,9 @@ setMethod("show", signature = (object="PMobj"), function(object) {
     print(df)
     
     cat("\nMean\n")
-    print(signif(object@Mean,2))  
-    
-    
-  }
- 
+    print(round(object@Mean,2))  
   
-
+  }
 })
 
 
@@ -1608,8 +1609,7 @@ setMethod("summary",
           function(object, wait=TRUE, x=1, plots='all', rmd=FALSE, head="##"){
             plots <- match.arg(plots, c('all', 'TS', 'CAA', 'CAL', 'PD'), several.ok = TRUE)
             if ('all' %in% plots) plots <- c('TS', 'CAA', 'CAL', 'PD')
-            
-            
+        
             Freq <- n <- Var2 <- NULL # cran check
             if (class(object) != "Data") stop("Object must be class `Data`", call.=FALSE)
             
@@ -1633,6 +1633,20 @@ setMethod("summary",
             } else {
               P1 <- NULL
             }
+            if (!is.null(P1)) {
+              if (rmd) {
+                cat('\n')
+                cat('\n')
+                cat(head, 'Time-Series')
+                cat('\n')
+              } else { 
+                message('Plotting Time-Series')
+              }
+              print(P1)
+            }
+            
+            if (interactive() & wait & !is.null(P1)) 
+              invisible(readline(prompt="Press [enter] to continue..."))
             
             # CAA 
             CAA <- object@CAA[x,,]
@@ -1640,35 +1654,113 @@ setMethod("summary",
             if (NAor0(CAA)) {
               P2 <- NULL
             } else {
+              P2 <- TRUE
               dimnames(CAA) <- list(1:nyrs, 1:maxage)
               
               df1 <- as.data.frame.table(CAA, stringsAsFactors = FALSE)
               colnames(df1) <- c("Year", "Val", "Freq")
-              df1$Val <- factor(as.numeric(df1$Val))
+              df1$Val <- as.numeric(df1$Val)
               
               df1$Year <- as.numeric(df1$Year)
-              yrs <- rev(seq(from=Year[length(Year)], length.out = length(unique(df1$Year)), by=-1))
-              df1$Year <- factor(df1$Year)
-              levels(df1$Year) <- yrs
+              # yrs <- rev(seq(from=Year[length(Year)], length.out = length(unique(df1$Year)), by=-1))
+              # df1$Year <- df1$Year
+              # levels(df1$Year) <- yrs
               
               yr.n <- df1 %>% dplyr::group_by(Year) %>% dplyr::summarise(n=sum(Freq))
               yr.ind <- yr.n %>% dplyr::filter(n>0) %>% dplyr::select(Year)
-              df1 <- df1 %>% dplyr::filter(Year %in% yr.ind$Year == TRUE)
+              
+              Years <- object@Year
+              nyears <- length(unique(df1$Year))
+              df1$Year_val <- (Years[(length(Years)-nyears+1):length(Years)])
+              
+              # df1 <- df1 %>% dplyr::filter(Year %in% yr.ind$Year == TRUE)
               if (nrow(df1)>0 && 'CAA' %in% plots) {
                 
-                P2 <-   ggplot2::ggplot(df1, ggplot2::aes(x=Val, y=Freq, group=Year))+
-                  ggplot2::facet_wrap(~Year, scales="free_y") + ggplot2::geom_bar(stat='identity') +
-                  ggplot2::theme_classic() +  
-                  ggplot2::labs(y="Frequency", x="Age")
-              } else {
-                P2 <- NULL
+                if (rmd) {
+                  cat('\n')
+                  cat('\n')
+                  cat(paste(head, 'Catch-at-Age'))
+                  cat('\n')
+                } else {
+                  message('Plotting Catch-at-Age')
+                }
+                
+                nyears <- length(unique(df1$Year))
+                nbins <- length(unique(df1$Val))
+                tplot <- 25 # total plots per page
+                if (nyears > tplot) {
+                  npages <- ceiling(nyears/tplot) 
+                  ncol <- 5 
+                  nrow <- 5
+                  nplot <- ncol * nrow
+                } else {
+                  npages <- 1
+                  nrow <- ceiling(sqrt(nyears))
+                  ncol <- ceiling(nyears/nrow)
+                  nplot <- nyears
+                }
+                pmat <- matrix(1:nplot, nrow=nrow, ncol=ncol, byrow=TRUE)
+                
+                op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,2,1), oma=c(4,4,2,0))
+                on.exit(par(op))
+                
+                yr1 <- 1 
+                col <- "grey"
+                for (pg in 1:npages) {
+                  if(npages>1)message('Plot ', pg, ' of ', npages)
+                  yrind <- yr1:(yr1+nplot-1)
+                  yr1 <- max(yrind) + 1
+                  dat <- df1 %>% dplyr::filter(Year %in% yrind)
+                  un.yrs_val <- as.numeric(unique(dat$Year_val))
+                  un.yrs <- as.numeric(unique(dat$Year))
+                  
+                  if (pg >1 && pg == npages) {
+                    nplot <- nyears - (npages-1) * tplot
+                    ncol <- ceiling(sqrt(nplot))
+                    nrow <- ceiling(nplot/ncol)
+                    op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,2,1), oma=c(4,4,2,0))
+                    on.exit(par(op))
+                    pmat <- matrix(1:nplot, nrow=nrow, ncol=ncol, byrow=TRUE)
+                  }
+                  for (p in 1:nplot) {
+                    pdat <- dat %>% dplyr::filter(Year==un.yrs[p])
+                    if (nrow(pdat) > 0) {
+                      if (p %in% pmat[nrow,]) {
+                        barplot(pdat$Freq, names=round(pdat$Val, 2), axes=FALSE, col=col)  
+                      } else {
+                        barplot(pdat$Freq, names=FALSE, axes=FALSE, col=col)
+                      } 
+                      if (p %in% pmat[,1]) axis(side=2)
+                      if (!p %in% pmat[,1]) axis(side=2, label=TRUE)
+                      ncount <- round(sum(pdat$Freq),0)
+                      title(un.yrs_val[p])
+                      text(max(pdat$Val), max(pdat$Freq), paste('n = ', ncount),
+                           xpd=NA)
+                    }
+                   
+                  } 
+                  mtext(side=1, outer=TRUE, "Age", line=2, cex=1.5)
+                  mtext(side=2, outer=TRUE, "Frequency", line=2, cex=1.5)
+
+                }
+
+                # P2 <-   ggplot2::ggplot(df1, ggplot2::aes(x=Val, y=Freq, group=Year))+
+                #   ggplot2::facet_wrap(~Year, scales="free_y") + ggplot2::geom_bar(stat='identity') +
+                #   ggplot2::theme_classic() +  
+                #   ggplot2::labs(y="Frequency", x="Age")
+              # } else {
+              #   P2 <- NULL
               }
             }
+            if (interactive() & wait & !is.null(P2)) 
+              invisible(readline(prompt="Press [enter] to continue..."))
+            
             # CAL 
             CAL <- object@CAL[x,,]
             if (NAor0(CAL)) {
               P3 <- NULL
             } else {
+              P3 <- TRUE
               nyrs <- nrow(CAL); nbins <- length(object@CAL_bins) - 1
               By <- object@CAL_bins[2] - object@CAL_bins[1]
               BinsMid <- seq(object@CAL_bins[1] + 0.5*By, by=By,length.out = nbins)
@@ -1676,43 +1768,129 @@ setMethod("summary",
               
               df1 <- as.data.frame.table(CAL, stringsAsFactors = FALSE)
               colnames(df1) <- c("Year", "Val", "Freq")
-              df1$Val <- factor(as.numeric(df1$Val))
+              df1$Val <- as.numeric(df1$Val)
               
+              # df1$Year <- as.numeric(df1$Year)
+              # yrs <- rev(seq(from=Year[length(Year)], length.out = length(unique(df1$Year)), by=-1))
+              # df1$Year <- factor(df1$Year)
+              # levels(df1$Year) <- yrs
+              # 
+              # yr.n <- df1 %>% dplyr::group_by(Year) %>% dplyr::summarise(n=sum(Freq))
+              # yr.ind <- yr.n %>% dplyr::filter(n>0) %>% dplyr::select(Year)
+              # df1 <- df1 %>% dplyr::filter(Year %in% yr.ind$Year == TRUE)
+              # 
               df1$Year <- as.numeric(df1$Year)
-              yrs <- rev(seq(from=Year[length(Year)], length.out = length(unique(df1$Year)), by=-1))
-              df1$Year <- factor(df1$Year)
-              levels(df1$Year) <- yrs
+              # yrs <- rev(seq(from=Year[length(Year)], length.out = length(unique(df1$Year)), by=-1))
+              # df1$Year <- df1$Year
+              # levels(df1$Year) <- yrs
               
               yr.n <- df1 %>% dplyr::group_by(Year) %>% dplyr::summarise(n=sum(Freq))
               yr.ind <- yr.n %>% dplyr::filter(n>0) %>% dplyr::select(Year)
-              df1 <- df1 %>% dplyr::filter(Year %in% yr.ind$Year == TRUE)
               
-              if (length(object@CAL_bins)> 40) {
-                by <- 5
-              } else if (length(object@CAL_bins)> 20) {
-                by <- 3
-              } else {
-                by <- 2
-              }
-              ind <- seq(from=1, by=by, length.out=length(object@CAL_bins)/by)
-              breaks <- BinsMid[ind]
-              labels <- BinsMid[ind]
-              labels <- labels[!is.na(labels)]
-              breaks <- breaks[!is.na(breaks)]
+              Years <- object@Year
+              nyears <- length(unique(df1$Year))
+              df1$Year_val <- (Years[(length(Years)-nyears+1):length(Years)])
+              
+              # 
+              # if (length(object@CAL_bins)> 40) {
+              #   by <- 5
+              # } else if (length(object@CAL_bins)> 20) {
+              #   by <- 3
+              # } else {
+              #   by <- 2
+              # }
+              # ind <- seq(from=1, by=by, length.out=length(object@CAL_bins)/by)
+              # breaks <- BinsMid[ind]
+              # labels <- BinsMid[ind]
+              # labels <- labels[!is.na(labels)]
+              # breaks <- breaks[!is.na(breaks)]
               
               if (nrow(df1) > 0  && 'CAL' %in% plots) {
-                P3 <- ggplot2::ggplot(df1, ggplot2::aes(x=Val, y=Freq, group=Year))+
-                  ggplot2::facet_wrap(~Year, scales="free_y") + ggplot2::geom_bar(stat='identity') +
-                  ggplot2::theme_classic() +  
-                  ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) +
-                  ggplot2::scale_x_discrete(breaks = breaks, labels=labels) +
-                  ggplot2::labs(y="Frequency", x="Length")
                 
-              } else {
-                P3 <- NULL
+                if (rmd) {
+                  cat('\n')
+                  cat('\n')
+                  cat(paste(head, 'Catch-at-Length'))
+                  cat('\n')
+                } else {
+                  message('Plotting Catch-at-Length')
+                }
+                
+                nyears <- length(unique(df1$Year))
+                nbins <- length(unique(df1$Val))
+                tplot <- 25 # total plots per page
+                if (nyears > tplot) {
+                  npages <- ceiling(nyears/tplot) 
+                  ncol <- 5 
+                  nrow <- 5
+                  nplot <- ncol * nrow
+                } else {
+                  npages <- 1
+                  nrow <- ceiling(sqrt(nyears))
+                  ncol <- ceiling(nyears/nrow)
+                  nplot <- nyears
+                }
+                pmat <- matrix(1:nplot, nrow=nrow, ncol=ncol, byrow=TRUE)
+                
+                op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,2,1), oma=c(4,4,2,0))
+                on.exit(par(op))
+                
+                yr1 <- 1 
+                col <- "grey"
+                for (pg in 1:npages) {
+                  if(npages>1)message('Plot ', pg, ' of ', npages)
+                  yrind <- yr1:(yr1+nplot-1)
+                  yr1 <- max(yrind) + 1
+                  dat <- df1 %>% dplyr::filter(Year %in% yrind)
+                  un.yrs_val <- as.numeric(unique(dat$Year_val))
+                  un.yrs <- as.numeric(unique(dat$Year))
+                  
+                  if (pg >1 && pg == npages) {
+                    nplot <- nyears - (npages-1) * tplot
+                    ncol <- ceiling(sqrt(nplot))
+                    nrow <- ceiling(nplot/ncol)
+                    op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,2,1), oma=c(4,4,2,0))
+                    on.exit(par(op))
+                    pmat <- matrix(1:nplot, nrow=nrow, ncol=ncol, byrow=TRUE)
+                  }
+                  for (p in 1:nplot) {
+                    pdat <- dat %>% dplyr::filter(Year==un.yrs[p])
+                    if (nrow(pdat) > 0) {
+                      if (p %in% pmat[nrow,]) {
+                        barplot(pdat$Freq, names.arg=round(pdat$Val, 2), axes=FALSE, col=col, las=2)  
+                      } else {
+                        barplot(pdat$Freq, names.arg=FALSE, axes=FALSE, col=col)
+                      } 
+                      if (p %in% pmat[,1]) axis(side=2)
+                      if (!p %in% pmat[,1]) axis(side=2, label=TRUE)
+                      ncount <- round(sum(pdat$Freq),0)
+                      title(un.yrs_val[p])
+                      text(length(unique(df1$Val)), max(pdat$Freq), paste('n = ', ncount), xpd=NA)
+                    }
+                    
+                  } 
+                  mtext(side=1, outer=TRUE, "Age", line=2, cex=1.5)
+                  mtext(side=2, outer=TRUE, "Frequency", line=2, cex=1.5)
+                  
+                }
+              #   P3 <- ggplot2::ggplot(df1, ggplot2::aes(x=Val, y=Freq, group=Year))+
+              #     ggplot2::facet_wrap(~Year, scales="free_y") + ggplot2::geom_bar(stat='identity') +
+              #     ggplot2::theme_classic() +  
+              #     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) +
+              #     ggplot2::scale_x_discrete(breaks = breaks, labels=labels) +
+              #     ggplot2::labs(y="Frequency", x="Length")
+              #   
+              # } else {
+              #   P3 <- NULL
               }
             }
+            
+            if (interactive() & wait & !is.null(P3))
+              invisible(readline(prompt="Press [enter] to continue..."))
+            
             # Biology & Depletion
+          
+            
             slots<-c("Dep","Mort","FMSY_M","Dt","BMSY_B0","vbK", "vbLinf")
             namey<-c("Stock depletion", "Natural Mortality rate","Ratio of FMSY to M",
                      "Depletion over time t","BMSY relative to unfished",
@@ -1740,46 +1918,7 @@ setMethod("summary",
             } else {
               P4 <- NULL
             }
-            
-            if (!is.null(P1)) {
-              if (rmd) {
-                cat('\n')
-                cat('\n')
-                cat(head, 'Time-Series')
-                cat('\n')
-              } else { 
-                message('Plotting Time-Series')
-              }
-              print(P1)
-            }
-            if (interactive() & wait & !is.null(P1)) 
-              invisible(readline(prompt="Press [enter] to continue..."))
-            if (!is.null(P2)) {
-              if (rmd) {
-                cat('\n')
-                cat('\n')
-                cat(paste(head, 'Catch-at-Age'))
-                cat('\n')
-              } else {
-                message('Plotting Catch-at-Age')
-              }
-              print(P2)
-            }
-            if (interactive() & wait & !is.null(P2)) 
-              invisible(readline(prompt="Press [enter] to continue..."))
-            if (!is.null(P3)) {
-              if (rmd) {
-                cat('\n')
-                cat('\n')
-                cat(paste(head, 'Catch-at-Length'))
-                cat('\n')
-              } else {
-                message('Plotting Catch-at-Length')
-              }
-              print(P3)
-            }
-            if (interactive() & wait & !is.null(P3))
-              invisible(readline(prompt="Press [enter] to continue..."))
+        
             if (!is.null(P4)) {
               if (rmd) {
                 cat('\n')
@@ -1791,6 +1930,57 @@ setMethod("summary",
               }
               print(P4)
             }
+            
+            # if (!is.null(P1)) {
+            #   if (rmd) {
+            #     cat('\n')
+            #     cat('\n')
+            #     cat(head, 'Time-Series')
+            #     cat('\n')
+            #   } else { 
+            #     message('Plotting Time-Series')
+            #   }
+            #   print(P1)
+            # }
+            # if (interactive() & wait & !is.null(P1)) 
+            #   invisible(readline(prompt="Press [enter] to continue..."))
+            # if (!is.null(P2)) {
+            #   if (rmd) {
+            #     cat('\n')
+            #     cat('\n')
+            #     cat(paste(head, 'Catch-at-Age'))
+            #     cat('\n')
+            #   } else {
+            #     message('Plotting Catch-at-Age')
+            #   }
+            #   print(P2)
+            # }
+            # if (interactive() & wait & !is.null(P2)) 
+            #   invisible(readline(prompt="Press [enter] to continue..."))
+            # if (!is.null(P3)) {
+            #   if (rmd) {
+            #     cat('\n')
+            #     cat('\n')
+            #     cat(paste(head, 'Catch-at-Length'))
+            #     cat('\n')
+            #   } else {
+            #     message('Plotting Catch-at-Length')
+            #   }
+            #   print(P3)
+            # }
+            # if (interactive() & wait & !is.null(P3))
+            #   invisible(readline(prompt="Press [enter] to continue..."))
+            # if (!is.null(P4)) {
+            #   if (rmd) {
+            #     cat('\n')
+            #     cat('\n')
+            #     cat(paste(head, 'Parameter Distributions'))
+            #     cat('\n')
+            #   } else {
+            #     message('Plotting Parameter Distributions')
+            #   }
+            #   print(P4)
+            # }
           })
             
             # old_par <- par(no.readonly = TRUE)

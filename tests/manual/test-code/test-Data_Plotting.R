@@ -16,6 +16,14 @@ for (dat in Dat) {
     testthat::expect_error(plot(datobj), NA)
   })
 }
+
+
+for (dat in Dat) {
+  testthat::test_that(paste("`summary` works with ", dat), {
+    datobj <- get(dat)
+    testthat::expect_error(summary(datobj, wait=FALSE), NA)
+  })
+}
  
    
 

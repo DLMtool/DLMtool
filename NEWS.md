@@ -11,6 +11,7 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 - fix random seed in `Turing` function
 - speed up plots in `Turing` function
+- speed up plots in `summary(Data)`
 
 
 ## DLMtool 5.2.3
