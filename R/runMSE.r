@@ -411,7 +411,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   Biomass[SAYR] <- N[SAYR] * Wt_age[SAY]  # Calculate initial stock biomass
   SSB[SAYR] <- SSN[SAYR] * Wt_age[SAY]    # Calculate spawning stock biomass
   VBiomass[SAYR] <- Biomass[SAYR] * V[SAY]  # Calculate vunerable biomass
-
+  
   # --- Historical Spatial closures ----
   MPA <- matrix(1, nyears+proyears, ncol=nareas)
   if (all(!is.na(OM@MPA)) && sum(OM@MPA) != 0) { # historical spatial closures have been specified
@@ -509,9 +509,17 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     if(!silent) message("Calculating historical stock and fishing dynamics")  # Print a progress update
   }
   # --- Simulate historical years ----
-  histYrs <- sapply(1:nsim, simYears, nareas, maxage, N, pyears=nyears, M_ageArray, Asize,
-                    Mat_age, Wt_age, V, retA, Perr_y, mov, SRrel, Find, Spat_targ, hs, R0a, 
-                    SSBpR, aR, bR, qs, MPA, maxF, SSB0=SSB0)
+  # histYrs <- sapply(1:nsim, simYears, nareas, maxage, N, pyears=nyears, M_ageArray, Asize,
+  #                   Mat_age, Wt_age, V, retA, Perr_y, mov, SRrel, Find, Spat_targ, hs, R0a, 
+  #                   SSBpR, aR, bR, qs, MPA, maxF, SSB0=SSB0)
+  
+  histYrs <- sapply(1:nsim, function(x) 
+    popdynCPP(nareas, maxage, Ncurr=N[x,,1,], nyears,  
+              M_age=M_ageArray[x,,], Asize_c=Asize[x,], MatAge=Mat_age[x,,], WtAge=Wt_age[x,,],
+              Vuln=V[x,,], Retc=retA[x,,], Prec=Perr_y[x,], movc=mov[x,,,], SRrelc=SRrel[x], 
+              Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+              SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=qs[x], Fapic=0, MPA=MPA, maxF=maxF, 
+              control=1, SSB0c=SSB0[x]))
   
   N <- aperm(array(as.numeric(unlist(histYrs[1,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
   Biomass <- aperm(array(as.numeric(unlist(histYrs[2,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
@@ -524,6 +532,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
 
   if (nsim > 1) Depletion <- apply(SSB[,,nyears,],1,sum)/SSB0#^betas
   if (nsim == 1) Depletion <- sum(SSB[,,nyears,])/SSB0 #^betas
+  
+  
   # # apply hyperstability / hyperdepletion
   
   # Check that depletion is correct
@@ -1045,6 +1055,15 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
     Z_P <- MPCalcs$Z_P # total mortality
     
+    
+    #### DEBUG ####
+    
+    fs <- -log(1 - apply(CB_P[,,y,], c(1), sum, na.rm=TRUE)/apply(VBiomass_P[,,y,]+CB_P[,,y,], c(1), sum, na.rm=TRUE))		
+    fs/FMSY_P[,mm,y]
+    
+    #### DEBUG ####
+    
+    
     retA_P <- MPCalcs$retA_P # retained-at-age
     
     retL_P <- MPCalcs$retL_P # retained-at-length
@@ -1157,17 +1176,17 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), dim=c(length(yind), length(CAL_binsmid), nsim)), c(3,1,2))
         
         # check CAL 
-        chkCAL <- apply(CAL, c(1,2), sum)
-        if (any(chkCAL==0)) {
-          for (ss in 1:nrow(chkCAL)) {
-            for (yy in 1:ncol(chkCAL)) {
-              if (chkCAL[ss,yy]==0) {
-                bn <- ceiling(c(0.5*nCALbins, 0.5*nCALbins+1))
-                CAL[ss,yy,bn] <- 1 # if CAL is empty - put 1 individual in two middle bins - for robustness
-              }
-            }
-          }
-        }
+        # chkCAL <- apply(CAL, c(1,2), sum)
+        # if (any(chkCAL==0)) {
+        #   for (ss in 1:nrow(chkCAL)) {
+        #     for (yy in 1:ncol(chkCAL)) {
+        #       if (chkCAL[ss,yy]==0) {
+        #         bn <- ceiling(c(0.5*nCALbins, 0.5*nCALbins+1))
+        #         CAL[ss,yy,bn] <- 1 # if CAL is empty - put 1 individual in two middle bins - for robustness
+        #       }
+        #     }
+        #   }
+        # }
         
         # calculate LFC - approx 5th percentile 
         LFC <- unlist(lapply(tempSize, function(x) getfifth(x[nrow(x), ], CAL_binsmid)))

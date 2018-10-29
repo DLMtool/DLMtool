@@ -284,8 +284,8 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     
     availB <- apply(newVB * t(Si), 1, sum)
     
-    maxC <- (1 - exp(-maxF)) * availB # maximum catch given maxF
-    TACusedE[TACusedE > maxC] <- maxC[TACusedE > maxC] # apply maxF limit - catch can't be higher than maxF * vulnerable biomass
+    # maxC <- (1 - exp(-maxF)) * availB # maximum catch given maxF
+    # TACusedE[TACusedE > maxC] <- maxC[TACusedE > maxC] # apply maxF limit - catch can't be higher than maxF * vulnerable biomass
     
     CB_P[SAYR] <- (Biomass_P[SAYR] * V_P[SAYt] * fishdist[SR])/Asize[SR] # ignore magnitude of effort or q increase (just get distribution across age and fishdist across space
     # calculate distribution of retained effort 
@@ -303,7 +303,6 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     
     CB_P[,,y,] <- TACusedE *  ratio * temp # scale up total removals 
     
-    
     chk <- apply(CB_P[,,y,], 1, sum) > availB # total removals can't be more than available biomass
     if (sum(chk)>0) {
       c_temp <- apply(CB_P[chk,,y,, drop=FALSE], 1, sum)
@@ -313,6 +312,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     }
   
     # total removals
+    # apply(CB_P[,,y,],1, sum)
   
     temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
     temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF) # apply maxF constraint
@@ -321,6 +321,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     # update removals with maxF constraint
     CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR])) 
 
+    # apply(CB_P[,,y,],1, sum)
    
     # repeated because of approximation error in Pope's approximation - an issue if CB_P ~ AvailB
     chk <- apply(CB_P[,,y,], 1, sum) > availB # total removals can't be more than available biomass
@@ -790,58 +791,58 @@ optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_
 # }
 # 
 # 
-#' Simulate population dynamics for historical years
-#'
-#' @param x Integer, the simulation number 
-#' @param nareas The number of spatial areas
-#' @param maxage The maximum age
-#' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas. 
-#' Only values from the first year (i.e `N[,,1,]`) are used, which is the current N-at-age.
-#' @param pyears The number of years to project forward. Equal to 'nyears' for optimizing for q.
-#' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year
-#' @param Asize A matrix (dimensions nsim, nareas) of size of areas 
-#' @param Mat_age A matrix (dimensions nsim, maxage) with the proportion mature for each age-class
-#' @param Wt_age An array (dimensions nsim, maxage, nyears+proyears) with the weight-at-age and year 
-#' @param V An array (dimensions nsim, maxage, nyears+proyears) with the vulnerability-at-age and year
-#' @param retA An array (dimensions nsim, maxage, nyears+proyears) with the probability retained-at-age and year
-#' @param Perr A matrix (dimensions nsim, nyears+proyears) with the recruitment deviations
-#' @param mov An array (dimensions nsim, nareas, nareas) with the movement matrix
-#' @param SRrel A numeric vector nsim long specifying the recruitment curve to use
-#' @param Find A matrix (dimensions nsim, nyears) with the historical fishing effort 
-#' @param Spat_targ A numeric vector nsim long with the spatial targeting
-#' @param hs A numeric vector nsim long with the steepness values for each simulation
-#' @param R0a A matrix (dimensions nsim, nareas) with the unfished recruitment by area
-#' @param SSBpR A matrix (dimensions nsim, nareas) with the unfished spawning-per-recruit by area
-#' @param aR A numeric vector nsim long with the Ricker SRR a values
-#' @param bR A numeric vector nsim long with the Ricker SRR b values
-#' @param qs A numeric vector nsim long with catchability coefficients
-#' @param MPA A matrix of spatial closures by year
-#' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
-#' @param useCPP logical - use the CPP code? For testing purposes only 
-#' @param SSB0 SSB0
-#' @author A. Hordyk
-#' @keywords internal
-#' @export
-simYears <- function(x, nareas, maxage, N, pyears, M_ageArray, Asize, Mat_age, Wt_age,
-                     V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, qs, 
-                     MPA, maxF, useCPP=TRUE, SSB0) {
-  if(!useCPP) {
-    # popdyn(nareas, maxage, Ncurr=N[x,,1,], pyears,  
-    #        M_age=M_ageArray[x,,], Asize_c=Asize[x,], MatAge=Mat_age[x,,], WtAge=Wt_age[x,,],
-    #        Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=mov[x,,,], SRrelc=SRrel[x], 
-    #        Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-    #        SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=qs[x], MPA=MPA, maxF=maxF, control=1)
-    # doesn't currently work with age-based movement
-  } else {
-    popdynCPP(nareas, maxage, Ncurr=N[x,,1,], pyears,  
-           M_age=M_ageArray[x,,], Asize_c=Asize[x,], MatAge=Mat_age[x,,], WtAge=Wt_age[x,,],
-           Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=mov[x,,,], SRrelc=SRrel[x], 
-           Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-           SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=qs[x], Fapic=0, MPA=MPA, maxF=maxF, 
-           control=1, SSB0c=SSB0[x])
-  }
-  
-}
+# #' Simulate population dynamics for historical years
+# #'
+# #' @param x Integer, the simulation number 
+# #' @param nareas The number of spatial areas
+# #' @param maxage The maximum age
+# #' @param N Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas. 
+# #' Only values from the first year (i.e `N[,,1,]`) are used, which is the current N-at-age.
+# #' @param pyears The number of years to project forward. Equal to 'nyears' for optimizing for q.
+# #' @param M_ageArray An array (dimensions nsim, maxage, nyears+proyears) with the natural mortality-at-age and year
+# #' @param Asize A matrix (dimensions nsim, nareas) of size of areas 
+# #' @param Mat_age A matrix (dimensions nsim, maxage) with the proportion mature for each age-class
+# #' @param Wt_age An array (dimensions nsim, maxage, nyears+proyears) with the weight-at-age and year 
+# #' @param V An array (dimensions nsim, maxage, nyears+proyears) with the vulnerability-at-age and year
+# #' @param retA An array (dimensions nsim, maxage, nyears+proyears) with the probability retained-at-age and year
+# #' @param Perr A matrix (dimensions nsim, nyears+proyears) with the recruitment deviations
+# #' @param mov An array (dimensions nsim, nareas, nareas) with the movement matrix
+# #' @param SRrel A numeric vector nsim long specifying the recruitment curve to use
+# #' @param Find A matrix (dimensions nsim, nyears) with the historical fishing effort 
+# #' @param Spat_targ A numeric vector nsim long with the spatial targeting
+# #' @param hs A numeric vector nsim long with the steepness values for each simulation
+# #' @param R0a A matrix (dimensions nsim, nareas) with the unfished recruitment by area
+# #' @param SSBpR A matrix (dimensions nsim, nareas) with the unfished spawning-per-recruit by area
+# #' @param aR A numeric vector nsim long with the Ricker SRR a values
+# #' @param bR A numeric vector nsim long with the Ricker SRR b values
+# #' @param qs A numeric vector nsim long with catchability coefficients
+# #' @param MPA A matrix of spatial closures by year
+# #' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
+# #' @param useCPP logical - use the CPP code? For testing purposes only 
+# #' @param SSB0 SSB0
+# #' @author A. Hordyk
+# #' @keywords internal
+# #' @export
+# simYears <- function(x, nareas, maxage, N, pyears, M_ageArray, Asize, Mat_age, Wt_age,
+#                      V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, qs, 
+#                      MPA, maxF, useCPP=TRUE, SSB0) {
+#   if(!useCPP) {
+#     # popdyn(nareas, maxage, Ncurr=N[x,,1,], pyears,  
+#     #        M_age=M_ageArray[x,,], Asize_c=Asize[x,], MatAge=Mat_age[x,,], WtAge=Wt_age[x,,],
+#     #        Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=mov[x,,,], SRrelc=SRrel[x], 
+#     #        Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+#     #        SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=qs[x], MPA=MPA, maxF=maxF, control=1)
+#     # doesn't currently work with age-based movement
+#   } else {
+#     popdynCPP(nareas, maxage, Ncurr=N[x,,1,], pyears,  
+#            M_age=M_ageArray[x,,], Asize_c=Asize[x,], MatAge=Mat_age[x,,], WtAge=Wt_age[x,,],
+#            Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=mov[x,,,], SRrelc=SRrel[x], 
+#            Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+#            SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=qs[x], Fapic=0, MPA=MPA, maxF=maxF, 
+#            control=1, SSB0c=SSB0[x])
+#   }
+#   
+# }
 
 
 
