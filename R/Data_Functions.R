@@ -196,6 +196,8 @@ importnewXLData <- function(dir,name) {
         }
       } else if (sh == "CAL") {
         CAL_bins <- as.numeric(dat[1,])
+        if (!all(diff(CAL_bins) == diff(CAL_bins))) 
+          stop('Length bins do not have equal intervals' , call.=FALSE)
         if (any(!is.finite(Data@Year)))
           stop("'Year' in 'Time-Series' sheet is missing", call.=FALSE)
         CALMat <- array(NA, dim=c(1,length(Data@Year), length(CAL_bins)-1))
@@ -207,8 +209,12 @@ importnewXLData <- function(dir,name) {
           YrInd <- match(CALYr, Year) # match years
           if (max(CALYr) > max(Year))
             stop("More years in CAL than Time-Series Year", call.=FALSE)
-          ncol <- ncol(dat)-1
+          ncol <- ncol(dat)
           CALdat <- data.matrix(dat[3:nrow(dat),1:ncol])
+          if (!all(is.na(CALdat[,ncol]))) {
+            stop("Number of Catch-at-Length bins (CAL_bins) should \nbe 1 greater than number columns of CAL data", call.=FALSE)
+          }
+          CALdat <- CALdat[,1:(ncol-1)]
           CALMat[1, YrInd, ] <- CALdat
         }
         Data@CAL_bins <- CAL_bins
