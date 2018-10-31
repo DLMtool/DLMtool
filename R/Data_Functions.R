@@ -87,120 +87,8 @@ XL2Data <- function(name="Data") {
     # DataXLSlot <- DLMtool:::DataXLSlot
     NewSheetNames <- names(DataXLSlot)
     if (all(NewSheetNames %in% sheetnames)) {
-      Data <- new("Data", silent=TRUE)
-      BlankDat <-new("Data", silent=TRUE)
-      ignoreSheet <- NULL
-      for (sh in sheetnames) {
-        
-        datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), 
-                                                      sheet = sh, col_names = FALSE))
-        if (dim(datasheet)[2] > 1 ) {
-          dname <- datasheet[, 1]
-          dat  <- datasheet[, 2:ncol(datasheet), drop=FALSE]
-          df <- data.frame(XLRow=DataXLSlot[[sh]]$XLRow, 
-                           Slot=DataXLSlot[[sh]]$Slot, 
-                           Class=DataXLSlot[[sh]]$Class, 
-                           Ignore=DataXLSlot[[sh]]$Ignore,
-                           stringsAsFactors = FALSE)
-          df$Ignore[is.na(df$Slot)] <- TRUE
-          df$Ignore <- as.logical(df$Ignore)
-          df <- df[!df$Ignore,]
-          
-          if (sh %in% c("Main", "Biology", "Reference")) {
-            for (sl in 1:nrow(df)) {
-              temp <- dat[match(df$XLRow[sl], dname),1]
-              if (substr(df$Class[sl],start=1, stop=1) == "c") slot(Data, df$Slot[sl]) <- temp
-              if (substr(df$Class[sl],start=1, stop=1) == "n") slot(Data, df$Slot[sl]) <- as.numeric(temp)
-            }
-          } else if (sh == "Time-Series") {
-            YearInd <- match("Year", dname)
-            Year <- dat[YearInd,]
-            Year <- Year[!is.na(Year)]
-            Data@Year <- Year 
-            ncol_ts <- length(Year)
-            ncol_cv <- 1
-            for (sl in 1:nrow(df)) {
-              ncol <- ifelse(grepl("CV_", df$Slot[sl]), ncol_cv, ncol_ts)
-              temp <- dat[match(df$XLRow[sl], dname),1:ncol]
-              if (substr(df$Class[sl],start=1, stop=1) == "c") 
-                slot(Data, df$Slot[sl]) <- temp
-              if (substr(df$Class[sl],start=1, stop=1) == "n")
-                slot(Data, df$Slot[sl]) <- as.numeric(temp)
-              if (substr(df$Class[sl],start=1, stop=1) == "m")
-                slot(Data, df$Slot[sl]) <- as.matrix(temp, nrow=1)
-              if(all(is.na(slot(Data, df$Slot[sl]))))  
-                slot(Data, df$Slot[sl]) <- slot(BlankDat, df$Slot[sl]) 
-            }
-            
-          } else if (sh == "CAA") {
-          
-            CAAMat <- array(NA, dim=c(1,length(Data@Year),Data@MaxAge))
-            Year <- Data@Year
-            CAAYr <-as.numeric(dname[2:length(dname)])
-            if(length(CAAYr[!CAAYr %in% Year])>0) 
-              stop("Some CAA Years not in Time-Series Year", call.=FALSE)
-            
-            YrInd <- match(CAAYr, Year) # match years 
-            CAAdat <- (dat[2:nrow(dat),])
-            if (ncol(CAAdat)> Data@MaxAge) 
-              stop("Number of age-classes in CAA data > MaxAge", call.=FALSE)
-
-            CAAMat[1, YrInd, 1:ncol(CAAdat)] <- as.matrix(CAAdat)
-            Data@CAA <- CAAMat
-            ignoreSheet <- append(ignoreSheet, sh)
-          } else if (sh == "CAL") {
-            CAL_bins <- as.matrix(dat[1,])
-            if(class(CAL_bins[1]) == 'character') {
-              CAL_bins <- as.numeric(gsub("[[:space:]]", "", CAL_bins))
-            } else {
-              CAL_bins <- as.numeric(CAL_bins)
-            }
-          
-            CAL_dat <- dat[2:nrow(dat), ]
-            nlendat <- sum(apply(apply(CAL_dat, 2, is.na), 2, prod) == 0)
-            if (nlendat != (length(CAL_bins)-1)) 
-              stop("Number of columns of CAL data should be one less than length of CAL_bins", call.=FALSE)
-            CAL_dat <- CAL_dat[,1:(length(CAL_bins)-1)]
-            CALMat <- array(NA, dim=c(1,length(Data@Year),(length(CAL_bins)-1)))
-            Year <- Data@Year
-            CALYr <-as.numeric(dname[2:length(dname)])
-            if(length(CALYr[!CALYr %in% Year])>0) 
-              stop("Some CAL Years not in Time-Series Year", call.=FALSE)
-            
-            YrInd <- match(CALYr, Year) # match years
-            
-            CALMat[1, YrInd, 1:ncol(CAL_dat)] <- as.matrix(CAL_dat)
-            Data@CAL_bins <- CAL_bins
-            Data@CAL <- CALMat
-            ignoreSheet <- append(ignoreSheet, sh)
-          } else {
-            message('Ignoring sheet: ', sh )
-            ignoreSheet <- append(ignoreSheet, sh)
-          }
-          
-          notRead <- dname[!dname %in% DataXLSlot[[sh]]$XLRow]
-          notRead <- notRead[!is.na(notRead)] 
-          if (!sh %in% ignoreSheet) if (length(notRead)>0) message("Rows not imported from sheet ",  sh, ": ", paste(notRead, collapse=", "))
-          
-        }
-        
-        
-    }
-    
-     
-      # loop over rows in Excel - record all data that is not stored in slots
-      
-      
-      # checks 
-      # - all data is imported correctly
-      # - CAA and CAL are correct dimensions
-      # write function and run at end of new data if imported or else here
-      # - email 
-     
-    
-        
+      Data <- importnewXLData(dir,name)
     } else {
-      
       datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE))
       if (datasheet[1,1]== "Slot") 
         datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE, skip=1))
@@ -222,6 +110,116 @@ XL2Data <- function(name="Data") {
 }
 
   
+importnewXLData <- function(dir,name) {
+  Data <- new("Data", silent=TRUE)
+  BlankDat <-new("Data", silent=TRUE)
+  ignoreSheet <- NULL
+  
+  # sh <- NewSheetNames[1]
+  for (sh in NewSheetNames) { # import from individual worksheets
+    datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), 
+                                                  sheet = sh, col_names = FALSE))
+    if (dim(datasheet)[2] <= 1) {
+      message('No data found in sheet: ', sh)
+    } else {
+      message("Importing from: ", sh)
+      dname <- datasheet[, 1]
+      dat  <- datasheet[, 2:ncol(datasheet), drop=FALSE]
+      df <- data.frame(XLRow=DataXLSlot[[sh]]$XLRow, 
+                       Slot=DataXLSlot[[sh]]$Slot, 
+                       Class=DataXLSlot[[sh]]$Class, 
+                       Ignore=DataXLSlot[[sh]]$Ignore,
+                       stringsAsFactors = FALSE)
+      df$Ignore[is.na(df$Slot)] <- TRUE
+      df$Ignore[df$XLRow=="Fleet Type"] <- TRUE # temporary until new build
+      df$Ignore <- as.logical(df$Ignore)
+      df <- df[!df$Ignore,]
+      
+      # if (sh %in% c("Main", "Biology", "Reference")) {
+      if (sh %in% c("Main", "Biology", "Selectivity", "Reference")) {
+        for (sl in 1:nrow(df)) {
+          temp <- dat[match(df$XLRow[sl], dname),1]
+          if (substr(df$Class[sl],start=1, stop=1) == "c") 
+            slot(Data, df$Slot[sl]) <- temp
+          if (substr(df$Class[sl],start=1, stop=1) == "n") 
+            slot(Data, df$Slot[sl]) <- as.numeric(temp)
+        }
+      } else if (sh == "Time-Series") {
+        YearInd <- match("Year", dname)
+        Year <- dat[YearInd,]
+        Year <- Year[!is.na(Year)]
+        Data@Year <- as.numeric(Year)
+        if (!is.finite(Data@LHYear)) 
+          stop("'Current Year' in 'Main' sheet is missing", call.=FALSE)
+        if (max(Data@Year) != Data@LHYear) 
+          stop("Last year should be equal to 'Current Year' in 'Main' sheet", call.=FALSE)
+        ncol_ts <- length(Year)
+        ncol_cv <- 1
+        for (sl in 1:nrow(df)) {
+          ncol <- ifelse(grepl("CV_", df$Slot[sl]), ncol_cv, ncol_ts)
+          temp <- as.numeric(dat[match(df$XLRow[sl], dname),1:ncol])
+          
+          if (substr(df$Class[sl],start=1, stop=1) == "n")
+            slot(Data, df$Slot[sl]) <- temp
+          if (substr(df$Class[sl],start=1, stop=1) == "m")
+            slot(Data, df$Slot[sl]) <- matrix(temp, nrow=1)
+          if(all(is.na(slot(Data, df$Slot[sl]))))  
+            slot(Data, df$Slot[sl]) <- slot(BlankDat, df$Slot[sl]) 
+        }
+        
+      } else if (sh == "CAA") {
+        if (!is.finite(Data@MaxAge)) 
+          stop("'Maximum age' in 'Biology' sheet is missing", call.=FALSE)
+        if (any(!is.finite(Data@Year)))
+          stop("'Year' in 'Time-Series' sheet is missing", call.=FALSE)
+        CAAMat <- array(NA, dim=c(1,length(Data@Year),Data@MaxAge))
+        Year <- Data@Year
+        
+        CAAYr <- as.numeric(dname[dname !="Year"])
+        if (length(CAAYr)<1) {
+          message("No catch-at-age data found")
+        } else {
+          YrInd <- match(CAAYr, Year) # match years 
+          if (max(CAAYr) > max(Year))
+            stop("More years in CAA than Time-Series Year", call.=FALSE)
+          CAAdat <- data.matrix(dat[2:nrow(dat),])
+          
+          if (ncol(CAAdat)> Data@MaxAge) 
+            stop("Number of age-classes in CAA data > MaxAge", call.=FALSE)
+          if (ncol(CAAdat) < Data@MaxAge) {
+            message("Number of age-classes in CAA data < MaxAge. Filling with 0s")
+            zeromat <- matrix(0, nrow=nrow(CAAdat), ncol=Data@MaxAge-ncol(CAAdat))
+            CAAdat <- cbind(CAAdat, zeromat)
+          }
+          CAAMat[1, YrInd, 1:ncol(CAAdat)] <- CAAdat
+          Data@CAA <- CAAMat
+        }
+      } else if (sh == "CAL") {
+        CAL_bins <- as.numeric(dat[1,])
+        if (any(!is.finite(Data@Year)))
+          stop("'Year' in 'Time-Series' sheet is missing", call.=FALSE)
+        CALMat <- array(NA, dim=c(1,length(Data@Year), length(CAL_bins)-1))
+        Year <- Data@Year
+        CALYr <- as.numeric(dname[dname !="Year" & dname !="CAL_bins"])
+        if (length(CALYr)<1) {
+          message("No catch-at-length data found")
+        } else {
+          YrInd <- match(CALYr, Year) # match years
+          if (max(CALYr) > max(Year))
+            stop("More years in CAL than Time-Series Year", call.=FALSE)
+          ncol <- ncol(dat)-1
+          CALdat <- data.matrix(dat[3:nrow(dat),1:ncol])
+          CALMat[1, YrInd, ] <- CALdat
+        }
+        Data@CAL_bins <- CAL_bins
+        Data@CAL <- CALMat
+      }
+    }
+    
+  } # end sheet loop
+  Data
+}
+
 
 
 
