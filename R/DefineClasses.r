@@ -43,8 +43,8 @@ setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 #' @slot ML Mean length time series. Matrix of nsim rows and nyears columns. Non-negative real numbers
 #' @slot Lbar Mean length of catches over Lc. Matrix of nsim rows and nyears columns. Positive real numbers  
 #' @slot Lc Modal length of catches. Matrix of nsim rows and nyears columns. Positive real numbers  
-#' @slot LFC Length at first capture. Matrix of nsim rows and nyears columns. Positive real numbers 
-#' @slot LFS Shortest length at full selection. Matrix of nsim rows and nyears columns. Positive real numbers  
+#' @slot LFC Length at first capture. Vector nsim long. Positive real numbers 
+#' @slot LFS Shortest length at full selection.  Vector nsim long. Positive real numbers 
 #' @slot CAA Catch at Age data. Array of dimensions nsim x nyears x MaxAge. Non-negative integers
 #' @slot Dep Stock depletion SSB(current)/SSB(unfished). Vector nsim long. Fraction.  
 #' @slot Abun An estimate of absolute current vulnerable abundance. Vector nsim long. Positive real numbers 
@@ -109,8 +109,6 @@ setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 #' @examples
 #' 
 #' newdata<-new('Data')
-#' 
-#' 
 #' 
 setClass("Data", representation(Name = "character", Common_Name='character', Species='character', Region='character',
                                 Year = "vector", 

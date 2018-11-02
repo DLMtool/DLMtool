@@ -48,9 +48,9 @@ An object for storing data for analysis using data-limited methods
 
 \item{\code{Lc}}{Modal length of catches. Matrix of nsim rows and nyears columns. Positive real numbers}
 
-\item{\code{LFC}}{Length at first capture. Matrix of nsim rows and nyears columns. Positive real numbers}
+\item{\code{LFC}}{Length at first capture. Vector nsim long. Positive real numbers}
 
-\item{\code{LFS}}{Shortest length at full selection. Matrix of nsim rows and nyears columns. Positive real numbers}
+\item{\code{LFS}}{Shortest length at full selection.  Vector nsim long. Positive real numbers}
 
 \item{\code{CAA}}{Catch at Age data. Array of dimensions nsim x nyears x MaxAge. Non-negative integers}
 
@@ -175,8 +175,6 @@ An object for storing data for analysis using data-limited methods
 \examples{
 
 newdata<-new('Data')
-
-
 
 }
 \author{
