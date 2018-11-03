@@ -269,7 +269,8 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
     CB_Pret[SAYR] <- FM_Pret[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
     
-    M_age_area <- array(M_ageArray[,,y], dim=c(OM@nsim, OM@maxage, nareas))
+    M_age_area <- array(M_ageArray[,,y], dim=c(nsim, maxage, nareas))
+    
     Fs <- -log(1 - apply(CB_P[, , y, ], 1, sum)/apply(VBiomass_P[, , y, ]*exp(-(0.5*M_age_area)), 1, sum)) # Pope's approx
     
     Effort <- Ei  # (Fs/qs)/ FinF
@@ -338,10 +339,10 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     CB_Pret[SAYR] <- FM_Pret[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR])) 
     
     
-    M_age_area <- array(M_ageArray[,,y], dim=c(OM@nsim, OM@maxage, nareas))
+    M_age_area <- array(M_ageArray[,,y], dim=c(nsim, maxage, nareas))
     Fs <- -log(1 - apply(CB_P[, , y, ], 1, sum)/apply(VBiomass_P[, , y, ]*exp(-(0.5*M_age_area)), 1, sum)) # Pope's approx
   
-    Effort <- Fs/(FinF * qs) #  * qvar[,y] * ((1 + qinc/100)^y)) 
+    Effort <- Fs/(FinF * qs) # change in catchability not included in effort calc: * qvar[,y] * ((1 + qinc/100)^y)) 
 
     # Make sure Effort doesn't exceed regulated effort 
     if (length(MPRecs$Effort) >0 ) { # an effort regulation also exists
