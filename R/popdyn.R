@@ -355,11 +355,11 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
         SR <- SAYR[, c(1, 4)]
         S1 <- SAYR[, 1]
         SY1 <- SAYR[, c(1, 3)]
-        FM_P[SAYR] <- (FinF[S1] * Ei[S1] * V_P[SAYt] * Si[SR] * fishdist[SR] * qvar[SY1] * 
+        FM_P[SAYR] <- (FinF[S1] * Ei[S1] * V_P[SAYt] * t(Si)[SR] * fishdist[SR] * qvar[SY1] * 
                          (qs[S1]*(1 + qinc[S1]/100)^y))/Asize[SR]
         
         # retained fishing mortality with input control recommendation
-        FM_Pret[SAYR] <- (FinF[S1] * Ei[S1] * retA_P[SAYt] * Si[SR] * fishdist[SR] * 
+        FM_Pret[SAYR] <- (FinF[S1] * Ei[S1] * retA_P[SAYt] * t(Si)[SR] * fishdist[SR] * 
                             qvar[SY1] * qs[S1]*(1 + qinc[S1]/100)^y)/Asize[SR]
         
         Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt] # calculate total mortality 
