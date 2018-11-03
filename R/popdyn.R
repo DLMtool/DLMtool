@@ -223,12 +223,6 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     retL_P[,,allyrs] <- retL_P[,,allyrs] * SLarray_P[,,allyrs] 
   }
   
-  # sim <- 158
-  # plot(CAL_binsmid, selLen[sim,], type="b")
-  # lines(c(L5_P[yr,sim], L5_P[yr,sim]), c(0, 0.05), lty=2)
-  # lines(c(LFS_P[yr,sim], LFS_P[yr,sim]), c(0, 1), lty=2)
-  # lines(c(Linf[sim], Linf[sim]), c(0, Vmaxlen_P[yr,sim]), lty=2)
-  
   # indices 
   SAYRL <- as.matrix(expand.grid(1:nsim, 1:maxage, nyears, 1:nareas))  # Final historical year
   SAYRt <- as.matrix(expand.grid(1:nsim, 1:maxage, y + nyears, 1:nareas))  # Trajectory year
@@ -275,7 +269,10 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
     CB_Pret[SAYR] <- FM_Pret[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
     
-    Effort <- Ei 
+    M_age_area <- array(M_ageArray[,,y], dim=c(OM@nsim, OM@maxage, nareas))
+    Fs <- -log(1 - apply(CB_P[, , y, ], 1, sum)/apply(VBiomass_P[, , y, ]*exp(-(0.5*M_age_area)), 1, sum)) # Pope's approx
+    
+    Effort <- Ei  # (Fs/qs)/ FinF
     
   } else { # A TAC has been set
     TACused[is.na(TACused)] <- LastCatch[is.na(TACused)] # if MP returns NA - TAC is set to catch from last year
@@ -340,8 +337,11 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     # update catch with maxF constraint
     CB_Pret[SAYR] <- FM_Pret[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR])) 
     
-    Fs <- (-log(1 - apply(CB_P[, , y, ], 1, sum)/apply(VBiomass_P[, , y, ], 1, sum)))
-    Effort <-  Fs/(qs * qvar[,y] * ((1 + qinc/100)^y)) 
+    
+    M_age_area <- array(M_ageArray[,,y], dim=c(OM@nsim, OM@maxage, nareas))
+    Fs <- -log(1 - apply(CB_P[, , y, ], 1, sum)/apply(VBiomass_P[, , y, ]*exp(-(0.5*M_age_area)), 1, sum)) # Pope's approx
+  
+    Effort <- Fs/(FinF * qs) #  * qvar[,y] * ((1 + qinc/100)^y)) 
 
     # Make sure Effort doesn't exceed regulated effort 
     if (length(MPRecs$Effort) >0 ) { # an effort regulation also exists
