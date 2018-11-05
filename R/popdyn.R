@@ -1,3 +1,4 @@
+
 CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
                            LastEffort, LastSpatial, LastAllocat, LastCatch,
                            TACused, maxF,
@@ -271,9 +272,10 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     
     M_age_area <- array(M_ageArray[,,y], dim=c(nsim, maxage, nareas))
     
-    Fs <- -log(1 - apply(CB_P[, , y, ], 1, sum)/apply(VBiomass_P[, , y, ]*exp(-(0.5*M_age_area)), 1, sum)) # Pope's approx
+    Fs <- suppressWarnings(-log(1 - apply(CB_P[, , y, ], 1, sum)/apply(VBiomass_P[, , y, ]*exp(-(0.5*M_age_area)), 1, sum))) # Pope's approx
+    Fs[!is.finite(Fs)] <- 2  # NaN for very high Fs
     
-    Effort <- Ei  # (Fs/qs)/ FinF
+    Effort <- Ei # (Fs/qs)/ FinF # Ei  # (Fs/qs)/ FinF change in catchability not included in effort calc: * qvar[,y] * ((1 + qinc/100)^y)) 
     
   } else { # A TAC has been set
     TACused[is.na(TACused)] <- LastCatch[is.na(TACused)] # if MP returns NA - TAC is set to catch from last year
@@ -340,8 +342,10 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     
     
     M_age_area <- array(M_ageArray[,,y], dim=c(nsim, maxage, nareas))
-    Fs <- -log(1 - apply(CB_P[, , y, ], 1, sum)/apply(VBiomass_P[, , y, ]*exp(-(0.5*M_age_area)), 1, sum)) # Pope's approx
   
+    Fs <- suppressWarnings(-log(1 - apply(CB_P[, , y, ], 1, sum)/apply(VBiomass_P[, , y, ]*exp(-(0.5*M_age_area)), 1, sum))) # Pope's approx
+    Fs[!is.finite(Fs)] <- 2  # NaN for very high Fs
+   
     Effort <- Fs/(FinF * qs) # change in catchability not included in effort calc: * qvar[,y] * ((1 + qinc/100)^y)) 
 
     # Make sure Effort doesn't exceed regulated effort 
