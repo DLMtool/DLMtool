@@ -346,13 +346,13 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     Fs <- suppressWarnings(-log(1 - apply(CB_P[, , y, ], 1, sum)/apply(VBiomass_P[, , y, ]*exp(-(0.5*M_age_area)), 1, sum))) # Pope's approx
     Fs[!is.finite(Fs)] <- 2  # NaN for very high Fs
    
-    Effort <- Fs/(FinF * qs*qvar[,y]* (1 + qinc/100)^y) #  
+    Effort <- Fs/(FinF * qs*qvar[,y]* (1 + qinc/100)^y) * apply(fracE2, 1, sum)  
 
-    # Make sure Effort doesn't exceed regulated effort 
-    if (length(MPRecs$Effort) >0 ) { # an effort regulation also exists
+    # Make sure Effort doesn't exceed regulated effort
+    if (length(MPRecs$Effort) >0 | all(LastEi != 1)) { # an effort regulation also exists
       aboveE <- which(Effort > Ei)
       if (length(aboveE)>0) {
-        Effort[aboveE] <- Ei[aboveE] * FinF[abovE]
+        Effort[aboveE] <- Ei[aboveE] * FinF[aboveE] * apply(fracE2, 1, sum)[aboveE]
         SAYR <- as.matrix(expand.grid(aboveE, 1:maxage, y, 1:nareas))
         SAYRt <- as.matrix(expand.grid(aboveE, 1:maxage, y + nyears, 1:nareas))  # Trajectory year
         SYt <- SAYRt[, c(1, 3)]
