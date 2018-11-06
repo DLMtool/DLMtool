@@ -312,7 +312,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     }
   
     # total removals
-    # apply(CB_P[,,y,],1, sum)
+    # t1 <- apply(CB_P[,,y,],1, sum)
   
     temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
     temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF) # apply maxF constraint
@@ -321,7 +321,8 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     # update removals with maxF constraint
     CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR])) 
 
-    # apply(CB_P[,,y,],1, sum)
+    # t2 <- apply(CB_P[,,y,],1, sum)
+   
    
     # repeated because of approximation error in Pope's approximation - an issue if CB_P ~ AvailB
     chk <- apply(CB_P[,,y,], 1, sum) > availB # total removals can't be more than available biomass
@@ -345,7 +346,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     Fs <- suppressWarnings(-log(1 - apply(CB_P[, , y, ], 1, sum)/apply(VBiomass_P[, , y, ]*exp(-(0.5*M_age_area)), 1, sum))) # Pope's approx
     Fs[!is.finite(Fs)] <- 2  # NaN for very high Fs
    
-    Effort <- Fs/(FinF * qs) # change in catchability not included in effort calc: * qvar[,y] * ((1 + qinc/100)^y)) 
+    Effort <- Fs/(FinF * qs*qvar[,y]* (1 + qinc/100)^y) #  
 
     # Make sure Effort doesn't exceed regulated effort 
     if (length(MPRecs$Effort) >0 ) { # an effort regulation also exists
@@ -1020,7 +1021,7 @@ optMSY <- function(logFa, Asize_c, nareas, maxage, Ncurr, pyears, M_age,
   # -sum(Cb)
   Cb <- Cn[,(pyears-4):pyears,] * array(WtAge[,(pyears-4):pyears], dim=dim(Cn[,(pyears-4):pyears,]))
  
-  -mean( apply(Cb,2,sum))
+  -mean(apply(Cb,2,sum))
   
 
 }
