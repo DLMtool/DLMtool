@@ -1,6 +1,6 @@
 
 CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
-                           LastEffort, LastSpatial, LastAllocat, LastCatch,
+                           LastEi, LastSpatial, LastAllocat, LastCatch,
                            TACused, maxF,
                            LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
                            L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
@@ -12,8 +12,8 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
                            qs, qvar, qinc) {
   # Change in Effort 
   if (length(MPRecs$Effort) == 0) { # no effort recommendation
-    if (y==1) Ei <- LastEffort  * E_f[,y] # effort is unchanged but has implementation error
-    if (y>1) Ei <- LastEffort / E_f[,y-1]  * E_f[,y] # effort is unchanged but has implementation error
+    if (y==1) Ei <- LastEi * E_f[,y] # effort is unchanged but has implementation error
+    if (y>1) Ei <- LastEi / E_f[,y-1]  * E_f[,y] # effort is unchanged but has implementation error
   } else if (length(MPRecs$Effort) != nsim) {
     stop("Effort recommmendation is not 'nsim' long.\n Does MP return Effort recommendation under all conditions?")
   } else {
@@ -244,7 +244,8 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
   # update vulnerable biomass for selectivitity curve 
   VBiomass_P[SAYR] <- Biomass_P[SAYR] * V_P[SAYt] # update vulnerable biomass
   
-  newVB <- apply(VBiomass_P[,,y,], c(1,3), sum)  # calculate total vuln biomass by area 
+  # Calculate fishing distribution if all areas were open 
+  newVB <- apply(VBiomass_P[,,y,], c(1,3), sum) # calculate total vuln biomass by area 
   fishdist <- (newVB^Spat_targ)/apply(newVB^Spat_targ, 1, sum)  # spatial preference according to spatial vulnerable biomass
   
   d1 <- t(Si) * fishdist  # distribution of fishing effort
@@ -270,12 +271,11 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
     CB_Pret[SAYR] <- FM_Pret[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
     
-    M_age_area <- array(M_ageArray[,,y], dim=c(nsim, maxage, nareas))
+    # M_age_area <- array(M_ageArray[,,y], dim=c(nsim, maxage, nareas))
+    # Fs <- suppressWarnings(-log(1 - apply(CB_P[, , y, ], 1, sum)/apply(VBiomass_P[, , y, ]*exp(-(0.5*M_age_area)), 1, sum))) # Pope's approx
+    # Fs[!is.finite(Fs)] <- 2  # NaN for very high Fs
     
-    Fs <- suppressWarnings(-log(1 - apply(CB_P[, , y, ], 1, sum)/apply(VBiomass_P[, , y, ]*exp(-(0.5*M_age_area)), 1, sum))) # Pope's approx
-    Fs[!is.finite(Fs)] <- 2  # NaN for very high Fs
-    
-    Effort <- Ei # (Fs/qs)/ FinF # Ei  # (Fs/qs)/ FinF change in catchability not included in effort calc: * qvar[,y] * ((1 + qinc/100)^y)) 
+    Effort <- FinF *Ei * apply(fracE2, 1, sum) # (Fs/qs)/ FinF # Ei  # (Fs/qs)/ FinF change in catchability not included in effort calc: * qvar[,y] * ((1 + qinc/100)^y)) 
     
   } else { # A TAC has been set
     TACused[is.na(TACused)] <- LastCatch[is.na(TACused)] # if MP returns NA - TAC is set to catch from last year
@@ -340,7 +340,6 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     # update catch with maxF constraint
     CB_Pret[SAYR] <- FM_Pret[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR])) 
     
-    
     M_age_area <- array(M_ageArray[,,y], dim=c(nsim, maxage, nareas))
   
     Fs <- suppressWarnings(-log(1 - apply(CB_P[, , y, ], 1, sum)/apply(VBiomass_P[, , y, ]*exp(-(0.5*M_age_area)), 1, sum))) # Pope's approx
@@ -352,7 +351,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
     if (length(MPRecs$Effort) >0 ) { # an effort regulation also exists
       aboveE <- which(Effort > Ei)
       if (length(aboveE)>0) {
-        Effort[aboveE] <- Ei[aboveE]
+        Effort[aboveE] <- Ei[aboveE] * FinF[abovE]
         SAYR <- as.matrix(expand.grid(aboveE, 1:maxage, y, 1:nareas))
         SAYRt <- as.matrix(expand.grid(aboveE, 1:maxage, y + nyears, 1:nareas))  # Trajectory year
         SYt <- SAYRt[, c(1, 3)]

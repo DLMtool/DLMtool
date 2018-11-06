@@ -823,7 +823,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   Data@Obs <- ObsTable # put all the observation error model parameters in one table
   
   Data@LHYear <- OM@nyears  # Last historical year is nyears (for fixed MPs)
-  Data@MPrec <- Cobs[, nyears]
+  histCatches <- apply(CBret, c(1, 3), sum)
+  Data@MPrec <- histCatches[, nyears]
   Data@MPeff <- rep(1, nsim)
   Data@Misc <- vector("list", nsim)
   
@@ -1025,13 +1026,13 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     # calculate pstar quantile of TAC recommendation dist 
     TACused <- apply(Data_p@TAC, 2, quantile, p = pstar, na.rm = T) 
     checkNA[y] <- sum(is.na(TACused))
-    LastEffort <- rep(1,nsim)
+    LastEi <- rep(1,nsim) # no effort adjustment
     LastSpatial <- array(MPA[nyears,], dim=c(nareas, nsim)) # 
     LastAllocat <- rep(1, nsim) # default assumption of reallocation of effort to open areas
     LastCatch <- apply(CB[,,nyears,], 1, sum)
 
     MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim,
-                              LastEffort, LastSpatial, LastAllocat, LastCatch,
+                              LastEi, LastSpatial, LastAllocat, LastCatch,
                               TACused, maxF,
                               LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
                               L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
@@ -1045,10 +1046,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
     LastSpatial <- MPCalcs$Si
     LastAllocat <- MPCalcs$Ai
-    LastEffort <- MPCalcs$Effort
+    LastEi <- MPCalcs$Ei # adjustment to effort
     LastCatch <- MPCalcs$TACrec
     
-    Effort[, mm, y] <- MPCalcs$Effort #  
+    Effort[, mm, y] <- MPCalcs$Effort  
     CB_P <- MPCalcs$CB_P # removals
     CB_Pret <- MPCalcs$CB_Pret # retained catch 
     FM_P <- MPCalcs$FM_P # fishing mortality
@@ -1285,7 +1286,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         TACused <- apply(Data_p@TAC, 2, quantile, p = pstar, na.rm = T) 
         
         MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim,
-                                  LastEffort, LastSpatial, LastAllocat, LastCatch,
+                                  LastEi, LastSpatial, LastAllocat, LastCatch,
                                   TACused, maxF,
                                   LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
                                   L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
@@ -1299,9 +1300,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         TACa[, mm, y] <- TACused # MPCalcs$TACrec # recommended TAC 
         LastSpatial <- MPCalcs$Si
         LastAllocat <- MPCalcs$Ai
-        LastEffort <- MPCalcs$Effort
+        LastEi <- MPCalcs$Ei # adjustment to effort
  
-        Effort[, mm, y] <- MPCalcs$Effort #  
+        Effort[, mm, y] <- MPCalcs$Effort 
+
+        
         CB_P <- MPCalcs$CB_P # removals
         CB_Pret <- MPCalcs$CB_Pret # retained catch 
         
@@ -1325,7 +1328,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         NoMPRecs$Spatial <- NA
  
         MPCalcs <- CalcMPDynamics(NoMPRecs, y, nyears, proyears, nsim,
-                                  LastEffort, LastSpatial, LastAllocat, LastCatch,
+                                  LastEi, LastSpatial, LastAllocat, LastCatch,
                                   TACused, maxF,
                                   LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
                                   L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
@@ -1339,8 +1342,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         TACa[, mm, y] <- TACused #  MPCalcs$TACrec # recommended TAC 
         LastSpatial <- MPCalcs$Si
         LastAllocat <- MPCalcs$Ai
-        LastEffort <- MPCalcs$Effort
-        Effort[, mm, y] <- MPCalcs$Effort #  
+        LastEi <- MPCalcs$Ei
+        Effort[, mm, y] <- MPCalcs$Effort  
         CB_P <- MPCalcs$CB_P # removals
         CB_Pret <- MPCalcs$CB_Pret # retained catch 
         
@@ -1404,6 +1407,9 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # Miscellaneous reporting
   if(PPD)Misc<-MSElist
 
+  # rescale effort to today 
+
+  Effort <-  Effort/array(FinF, dim=c(nsim, nMP, proyears))
   
   ## Create MSE Object #### 
   MSEout <- new("MSE", Name = OM@Name, nyears, proyears, nMPs=nMP, MPs, nsim, 
