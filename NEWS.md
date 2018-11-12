@@ -17,6 +17,8 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 - new Data format in Excel
 
+- fix bug in CAL_nsamp and CAL_ESS when importing Obs object from CSV
+
 
 ## DLMtool 5.2.3
 
