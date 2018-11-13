@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.2</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.2.3</span>
       </span>
     </div>
 
@@ -126,8 +126,8 @@
     <dt><code>ML</code></dt><dd><p>Mean length time series. Matrix of nsim rows and nyears columns. Non-negative real numbers</p></dd>
     <dt><code>Lbar</code></dt><dd><p>Mean length of catches over Lc. Matrix of nsim rows and nyears columns. Positive real numbers</p></dd>
     <dt><code>Lc</code></dt><dd><p>Modal length of catches. Matrix of nsim rows and nyears columns. Positive real numbers</p></dd>
-    <dt><code>LFC</code></dt><dd><p>Length at first capture. Matrix of nsim rows and nyears columns. Positive real numbers</p></dd>
-    <dt><code>LFS</code></dt><dd><p>Shortest length at full selection. Matrix of nsim rows and nyears columns. Positive real numbers</p></dd>
+    <dt><code>LFC</code></dt><dd><p>Length at first capture. Vector nsim long. Positive real numbers</p></dd>
+    <dt><code>LFS</code></dt><dd><p>Shortest length at full selection.  Vector nsim long. Positive real numbers</p></dd>
     <dt><code>CAA</code></dt><dd><p>Catch at Age data. Array of dimensions nsim x nyears x MaxAge. Non-negative integers</p></dd>
     <dt><code>Dep</code></dt><dd><p>Stock depletion SSB(current)/SSB(unfished). Vector nsim long. Fraction.</p></dd>
     <dt><code>Abun</code></dt><dd><p>An estimate of absolute current vulnerable abundance. Vector nsim long. Positive real numbers</p></dd>
@@ -196,8 +196,6 @@
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='no'>newdata</span><span class='kw'>&lt;-</span><span class='fu'>new</span>(<span class='st'>'Data'</span>)</div><div class='output co'>#&gt; [1] "Couldn't find specified csv file, blank DLM object created"</div><div class='input'>
-
-
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

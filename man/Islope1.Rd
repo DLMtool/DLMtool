@@ -28,7 +28,7 @@ Islope4(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
 
 \item{plot}{Logical. Show the plot?}
 
-\item{yrsmth}{Years over which to smooth recent estimates of surplus production}
+\item{yrsmth}{Years over which to calculate index}
 
 \item{lambda}{A gain parameter controlling the speed in update in TAC.}
 

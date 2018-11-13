@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.2</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.2.3</span>
       </span>
     </div>
 
@@ -102,9 +102,9 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>getFref3</span>(<span class='no'>x</span>, <span class='no'>Asize</span>, <span class='no'>nareas</span>, <span class='no'>maxage</span>, <span class='no'>N</span>, <span class='no'>pyears</span>, <span class='no'>M_ageArray</span>, <span class='no'>Mat_age</span>, <span class='no'>Wt_age</span>, <span class='no'>V</span>,
-  <span class='no'>retA</span>, <span class='no'>Perr</span>, <span class='no'>mov</span>, <span class='no'>SRrel</span>, <span class='no'>Find</span>, <span class='no'>Spat_targ</span>, <span class='no'>hs</span>, <span class='no'>R0a</span>, <span class='no'>SSBpR</span>, <span class='no'>aR</span>, <span class='no'>bR</span>, <span class='no'>MPA</span>, <span class='no'>maxF</span>,
-  <span class='kw'>useCPP</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>SSB0</span>)</pre>
+    <pre class="usage"><span class='fu'>getFref3</span>(<span class='no'>x</span>, <span class='no'>Asize</span>, <span class='no'>nareas</span>, <span class='no'>maxage</span>, <span class='no'>N</span>, <span class='no'>pyears</span>, <span class='no'>M_ageArray</span>, <span class='no'>Mat_age</span>, <span class='no'>Wt_age</span>,
+  <span class='no'>V</span>, <span class='no'>retA</span>, <span class='no'>Perr</span>, <span class='no'>mov</span>, <span class='no'>SRrel</span>, <span class='no'>Find</span>, <span class='no'>Spat_targ</span>, <span class='no'>hs</span>, <span class='no'>R0a</span>, <span class='no'>SSBpR</span>, <span class='no'>aR</span>, <span class='no'>bR</span>, <span class='no'>MPA</span>,
+  <span class='no'>maxF</span>, <span class='kw'>useCPP</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>SSB0</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -128,7 +128,7 @@
     <tr>
       <th>N</th>
       <td><p>Array of the numbers-at-age in population. Dimensions are nsim, maxage, nyears, nareas.
-Only values from the first year (i.e <code>N[,,1,]</code>) are used, which is the current N-at-age.</p></td>
+Only values from the first year are used, which is the current N-at-age.</p></td>
     </tr>
     <tr>
       <th>pyears</th>

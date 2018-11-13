@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.2</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.2.3</span>
       </span>
     </div>
 
@@ -103,7 +103,8 @@
     </div>
 
     <pre class="usage"><span class='co'># S4 method for Data</span>
-<span class='fu'>summary</span>(<span class='no'>object</span>, <span class='kw'>wait</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>plots</span> <span class='kw'>=</span> <span class='st'>"all"</span>)</pre>
+<span class='fu'>summary</span>(<span class='no'>object</span>, <span class='kw'>wait</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>plots</span> <span class='kw'>=</span> <span class='st'>"all"</span>,
+  <span class='kw'>rmd</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>head</span> <span class='kw'>=</span> <span class='st'>"##"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -125,6 +126,14 @@
       <td><p>Character. What plots to show? <code>all</code>, <code>TS</code>, <code>CAA</code>, <code>CAL</code>, <code>PD</code>
 for all plots, time-series, catch-at-age, catch-at-length, and
 probability distributions respectively</p></td>
+    </tr>
+    <tr>
+      <th>rmd</th>
+      <td><p>Logical. Used in a rmd file?</p></td>
+    </tr>
+    <tr>
+      <th>head</th>
+      <td><p>Character. Heading for rmd file. Default is '##' (second level heading)</p></td>
     </tr>
     </table>
     

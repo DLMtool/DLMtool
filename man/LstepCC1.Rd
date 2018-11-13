@@ -28,8 +28,7 @@ LstepCC4(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.3,
 
 \item{plot}{Logical. Show the plot?}
 
-\item{yrsmth}{Years over which to smooth recent estimates of surplus
-production}
+\item{yrsmth}{Years over which to calculate mean length.}
 
 \item{xx}{Parameter controlling the fraction of mean catch to start using in
 first year}

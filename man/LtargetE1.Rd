@@ -18,8 +18,7 @@ LtargetE4(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xL = 1.15)
 
 \item{plot}{Logical. Show the plot?}
 
-\item{yrsmth}{Years over which to smooth recent estimates of surplus
-production}
+\item{yrsmth}{Years over which to calculate mean length}
 
 \item{xL}{Parameter controlling the magnitude of the target mean length of
 catches relative to average length in catches.}

@@ -494,8 +494,7 @@ class(ITe10) <- "MP"
 #' @param Data An object of class `Data`
 #' @param reps Number of replicates
 #' @param plot Logical. Show the plot?
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
+#' @param yrsmth Years over which to calculate index
 #' @param Imulti Parameter controlling how much larger target CPUE / index is
 #' compared with recent levels.
 #'
@@ -577,7 +576,7 @@ Itargeteff_ <- function(x, Data, reps, plot, yrsmth, Imulti) {
 #' @template MPtemplate
 #' @template MPuses
 #' 
-#' @param yrsmth Years over which to the average index is calculated.
+#' @param yrsmth Years over which the average index is calculated.
 #' @param Imulti Parameter controlling how much larger target CPUE / index is
 #' compared with recent levels.
 
@@ -655,8 +654,7 @@ class(ItargetE4) <- "MP"
 #' @template MPtemplate
 #' @template MPuses
 #' 
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
+#' @param yrsmth Years over which to calculate trend in mean length.
 #' @param stepsz Parameter controlling the size of update increment in effort.
 #' @param llim A vector of length reference points that determine the
 #' conditions for increasing, maintaining or reducing the effort.
@@ -759,8 +757,7 @@ class(LstepCE2) <- "MP"
 #' @template MPtemplate
 #' @template MPuses
 #' 
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
+#' @param yrsmth Years over which to calculate mean length
 #' @param xL Parameter controlling the magnitude of the target mean length of
 #' catches relative to average length in catches.
 #' 

@@ -63,7 +63,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.2</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.2.3</span>
       </span>
     </div>
 
@@ -180,45 +180,47 @@ cpars</p>
 #&gt; 52        TAESD                             numeric vector length nsim
 #&gt; 53  SizeLimFrac                             numeric vector length nsim
 #&gt; 54    SizeLimSD                             numeric vector length nsim
-#&gt; 55     CAL_bins                                        numeric vector 
-#&gt; 56  CAL_binsmid                      numeric vector length(CAL_bins)-1
-#&gt; 57          L95                             numeric vector length nsim
-#&gt; 58       Perr_y numeric matrix dim = c(nsim, maxage+proyears+nyears-1)
-#&gt; 59  M_at_Length                   numeric matrix dim = c(n.lengths, 3)
-#&gt; 60        Asize                    numeric matrix dim = c(nsim, narea)
-#&gt; 61       Karray          numeric matrix dim = c(nsim, nyears+proyears)
-#&gt; 62    Linfarray          numeric matrix dim = c(nsim, nyears+proyears)
-#&gt; 63       Marray          numeric matrix dim = c(nsim, nyears+proyears)
-#&gt; 64        Krand          numeric matrix dim = c(nsim, nyears+proyears)
-#&gt; 65     Linfrand          numeric matrix dim = c(nsim, nyears+proyears)
-#&gt; 66        Mrand          numeric matrix dim = c(nsim, nyears+proyears)
-#&gt; 67         ageM          numeric matrix dim = c(nsim, nyears+proyears)
-#&gt; 68        age95          numeric matrix dim = c(nsim, nyears+proyears)
-#&gt; 69   M_ageArray   numeric array dim = c(nsim, maxage, nyears+proyears)
-#&gt; 70      Mat_age   numeric array dim = c(nsim, maxage, nyears+proyears)
-#&gt; 71       LatASD   numeric array dim = c(nsim, maxage, nyears+proyears)
-#&gt; 72       Wt_age   numeric array dim = c(nsim, maxage, nyears+proyears)
-#&gt; 73      Len_age   numeric array dim = c(nsim, maxage, nyears+proyears)
-#&gt; 74          mov      numeric array dim = c(nsim, maxage, narea, narea)
-#&gt; 75         Find                   numeric matrix dim = c(nsim, nyears)
-#&gt; 76      dFfinal                             numeric vector length nsim
-#&gt; 77            V   numeric array dim = c(nsim, maxage, nyears+proyears)
-#&gt; 78         retA   numeric array dim = c(nsim, maxage, nyears+proyears)
-#&gt; 79         retL numeric array dim = c(nsim, nCALbins, nyears+proyears)
-#&gt; 80     lenMbias                             numeric vector length nsim
-#&gt; 81        Mbias                             numeric vector length nsim
-#&gt; 82        Kbias                             numeric vector length nsim
-#&gt; 83       t0bias                             numeric vector length nsim
-#&gt; 84     Linfbias                             numeric vector length nsim
-#&gt; 85      LFCbias                             numeric vector length nsim
-#&gt; 86     FMSYbias                             numeric vector length nsim
-#&gt; 87   FMSY_Mbias                             numeric vector length nsim
-#&gt; 88  BMSY_B0bias                             numeric vector length nsim
-#&gt; 89     Irefbias                             numeric vector length nsim
-#&gt; 90     Brefbias                             numeric vector length nsim
-#&gt; 91     Crefbias                             numeric vector length nsim
-#&gt; 92        Dbias                             numeric vector length nsim
-#&gt; 93        hbias                             numeric vector length nsim
+#&gt; 55        Cbias                             numeric vector length nsim
+#&gt; 56     CAL_bins                                        numeric vector 
+#&gt; 57  CAL_binsmid                      numeric vector length(CAL_bins)-1
+#&gt; 58          L95                             numeric vector length nsim
+#&gt; 59       Perr_y numeric matrix dim = c(nsim, maxage+proyears+nyears-1)
+#&gt; 60  M_at_Length                   numeric matrix dim = c(n.lengths, 3)
+#&gt; 61        Asize                    numeric matrix dim = c(nsim, narea)
+#&gt; 62       Karray          numeric matrix dim = c(nsim, nyears+proyears)
+#&gt; 63    Linfarray          numeric matrix dim = c(nsim, nyears+proyears)
+#&gt; 64       Marray          numeric matrix dim = c(nsim, nyears+proyears)
+#&gt; 65        Krand          numeric matrix dim = c(nsim, nyears+proyears)
+#&gt; 66     Linfrand          numeric matrix dim = c(nsim, nyears+proyears)
+#&gt; 67        Mrand          numeric matrix dim = c(nsim, nyears+proyears)
+#&gt; 68         ageM          numeric matrix dim = c(nsim, nyears+proyears)
+#&gt; 69        age95          numeric matrix dim = c(nsim, nyears+proyears)
+#&gt; 70   M_ageArray   numeric array dim = c(nsim, maxage, nyears+proyears)
+#&gt; 71      Mat_age   numeric array dim = c(nsim, maxage, nyears+proyears)
+#&gt; 72       LatASD   numeric array dim = c(nsim, maxage, nyears+proyears)
+#&gt; 73       Wt_age   numeric array dim = c(nsim, maxage, nyears+proyears)
+#&gt; 74      Len_age   numeric array dim = c(nsim, maxage, nyears+proyears)
+#&gt; 75          mov      numeric array dim = c(nsim, maxage, narea, narea)
+#&gt; 76         Find                   numeric matrix dim = c(nsim, nyears)
+#&gt; 77      dFfinal                             numeric vector length nsim
+#&gt; 78            V   numeric array dim = c(nsim, maxage, nyears+proyears)
+#&gt; 79         retA   numeric array dim = c(nsim, maxage, nyears+proyears)
+#&gt; 80         retL numeric array dim = c(nsim, nCALbins, nyears+proyears)
+#&gt; 81     lenMbias                             numeric vector length nsim
+#&gt; 82        Mbias                             numeric vector length nsim
+#&gt; 83        Kbias                             numeric vector length nsim
+#&gt; 84       t0bias                             numeric vector length nsim
+#&gt; 85     Linfbias                             numeric vector length nsim
+#&gt; 86      LFCbias                             numeric vector length nsim
+#&gt; 87     FMSYbias                             numeric vector length nsim
+#&gt; 88   FMSY_Mbias                             numeric vector length nsim
+#&gt; 89  BMSY_B0bias                             numeric vector length nsim
+#&gt; 90     Irefbias                             numeric vector length nsim
+#&gt; 91     Brefbias                             numeric vector length nsim
+#&gt; 92     Crefbias                             numeric vector length nsim
+#&gt; 93        Dbias                             numeric vector length nsim
+#&gt; 94        hbias                             numeric vector length nsim
+#&gt; 95         hsim                             numeric vector length nsim
 #&gt;                                                                                                    Desc.
 #&gt; 1                                                                                     Virgin recruitment
 #&gt; 2                                                                                      Natural mortality
@@ -274,45 +276,47 @@ cpars</p>
 #&gt; 52                                                                                   TAE imp variability
 #&gt; 53                                                                                     Size imp fraction
 #&gt; 54                                                                                  Size imp variability
-#&gt; 55                                                                      CAL bins. Largest must be &gt; Linf
-#&gt; 56                                                                                Mid-points of CAL bins
-#&gt; 57                                                                                Length at 95% maturity
-#&gt; 58                   Recruitment process error by simulation and year (plus maxage for initial age comp)
-#&gt; 59        Data frame with column 1 lengths in absolute units, and colums 2:3 lower and upper bounds on M
-#&gt; 60                                                                           Size of areas by simulation
-#&gt; 61                                               von B K by simulation and year. No variability is added
-#&gt; 62                                            von B Linf by simulation and year. No variability is added
-#&gt; 63                                                     M by simulation and year. No variability is added
-#&gt; 64                                                  Inter-annual variability in K by simulation and year
-#&gt; 65                                               Inter-annual variability in Linf by simulation and year
-#&gt; 66                                                  Inter-annual variability in M by simulation and year
-#&gt; 67                                                            Age at 50% maturity by simulation and year
-#&gt; 68                                                            Age at 95% maturity by simulation and year
-#&gt; 69                                                M by simulation, age and year. No variability is added
-#&gt; 70                                                                 Maturity by simulation, age and year.
-#&gt; 71                                                                   standard deviation of length-at-age
-#&gt; 72                                                            Weight-at-age by simulation, age, and year
-#&gt; 73                                                            Length-at-age by simulation, age, and year
-#&gt; 74                                            Movement matrix by simulation, age, and area (to and from)
-#&gt; 75                                                 Historical normalized F/Effort by simulation and year
-#&gt; 76                                                                   Final gradient in fishing mortality
-#&gt; 77                                                              Selectivity by simulation, age, and year
-#&gt; 78                                                                Retention by simulation, age, and year
-#&gt; 79                                                             Retention by simulation, length, and year
-#&gt; 80                                                                   Bias in observed length-at-maturity
-#&gt; 81                                                                                    Bias in observed M
-#&gt; 82                                                                                    Bias in observed K
-#&gt; 83                                                                                   Bias in observed t0
-#&gt; 84                                                                                 Bias in observed Linf
-#&gt; 85                                                                                  Bias in observed LFC
-#&gt; 86                                                                                 Bias in observed FMSY
-#&gt; 87                                                                               Bias in observed FMSY_M
-#&gt; 88                                                                              Bias in observed BMSY_B0
-#&gt; 89                                                                                 Bias in observed Iref
-#&gt; 90                                                                                 Bias in observed Bref
-#&gt; 91                                                                                 Bias in observed Cref
-#&gt; 92                                                                                    Bias in observed D
-#&gt; 93                                                                                    Bias in observed h
+#&gt; 55                                                                                Bias in observed catch
+#&gt; 56                                                                      CAL bins. Largest must be &gt; Linf
+#&gt; 57                                                                                Mid-points of CAL bins
+#&gt; 58                                                                                Length at 95% maturity
+#&gt; 59                   Recruitment process error by simulation and year (plus maxage for initial age comp)
+#&gt; 60        Data frame with column 1 lengths in absolute units, and colums 2:3 lower and upper bounds on M
+#&gt; 61                                                                           Size of areas by simulation
+#&gt; 62                                               von B K by simulation and year. No variability is added
+#&gt; 63                                            von B Linf by simulation and year. No variability is added
+#&gt; 64                                                     M by simulation and year. No variability is added
+#&gt; 65                                                  Inter-annual variability in K by simulation and year
+#&gt; 66                                               Inter-annual variability in Linf by simulation and year
+#&gt; 67                                                  Inter-annual variability in M by simulation and year
+#&gt; 68                                                            Age at 50% maturity by simulation and year
+#&gt; 69                                                            Age at 95% maturity by simulation and year
+#&gt; 70                                                M by simulation, age and year. No variability is added
+#&gt; 71                                                                 Maturity by simulation, age and year.
+#&gt; 72                                                                   standard deviation of length-at-age
+#&gt; 73                                                            Weight-at-age by simulation, age, and year
+#&gt; 74                                                            Length-at-age by simulation, age, and year
+#&gt; 75                                            Movement matrix by simulation, age, and area (to and from)
+#&gt; 76                                                 Historical normalized F/Effort by simulation and year
+#&gt; 77                                                                   Final gradient in fishing mortality
+#&gt; 78                                                              Selectivity by simulation, age, and year
+#&gt; 79                                                                Retention by simulation, age, and year
+#&gt; 80                                                             Retention by simulation, length, and year
+#&gt; 81                                                                   Bias in observed length-at-maturity
+#&gt; 82                                                                                    Bias in observed M
+#&gt; 83                                                                                    Bias in observed K
+#&gt; 84                                                                                   Bias in observed t0
+#&gt; 85                                                                                 Bias in observed Linf
+#&gt; 86                                                                                  Bias in observed LFC
+#&gt; 87                                                                                 Bias in observed FMSY
+#&gt; 88                                                                               Bias in observed FMSY_M
+#&gt; 89                                                                              Bias in observed BMSY_B0
+#&gt; 90                                                                                 Bias in observed Iref
+#&gt; 91                                                                                 Bias in observed Bref
+#&gt; 92                                                                                 Bias in observed Cref
+#&gt; 93                                                                                    Bias in observed D
+#&gt; 94                                                                                    Bias in observed h
+#&gt; 95                                                       Actual h values to pass directly to Data object
 #&gt;        Type
 #&gt; 1     Stock
 #&gt; 2     Stock
@@ -406,7 +410,9 @@ cpars</p>
 #&gt; 90 internal
 #&gt; 91 internal
 #&gt; 92 internal
-#&gt; 93 internal</div><div class='input'>
+#&gt; 93 internal
+#&gt; 94 internal
+#&gt; 95 internal</div><div class='input'>
 <span class='fu'>validcpars</span>(<span class='st'>"Obs"</span>, <span class='fl'>FALSE</span>) <span class='co'># invalid Obs cpars</span></div><div class='output co'>#&gt;             Var.              Desc. Type
 #&gt; 1        Cbiascv     Not stochastic  Obs
 #&gt; 2        Ibiascv Not currently used  Obs

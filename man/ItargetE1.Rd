@@ -31,7 +31,7 @@ ItargetE4(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
 
 \item{plot}{Logical. Show the plot?}
 
-\item{yrsmth}{Years over which to the average index is calculated.}
+\item{yrsmth}{Years over which the average index is calculated.}
 
 \item{Imulti}{Parameter controlling how much larger target CPUE / index is
 compared with recent levels.}

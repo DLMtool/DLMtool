@@ -15,8 +15,7 @@ Itargeteff_(x, Data, reps, plot, yrsmth, Imulti)
 
 \item{plot}{Logical. Show the plot?}
 
-\item{yrsmth}{Years over which to smooth recent estimates of surplus
-production}
+\item{yrsmth}{Years over which to calculate index}
 
 \item{Imulti}{Parameter controlling how much larger target CPUE / index is
 compared with recent levels.}

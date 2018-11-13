@@ -2557,7 +2557,7 @@ class(Iratio) <- "MP"
 #' @param x Iteration number
 #' @param Data An object of class `Data`
 #' @param reps Number of samples of the TAC
-#' @param yrsmth Years over which to smooth recent estimates of surplus production
+#' @param yrsmth Years over which to calculate index
 #' @param lambda  A gain parameter controlling the speed in update in TAC.
 #' @param xx Parameter controlling the fraction of mean catch to start using in
 #' first year
@@ -2608,7 +2608,7 @@ Islope_ <- function(x, Data, reps = 100, yrsmth = 5, lambda = 0.4,xx = 0.2) {
 #' @templateVar mp Islope1
 #' @template MPtemplate
 #' @template MPuses
-#' @param yrsmth Years over which to smooth recent estimates of surplus production
+#' @param yrsmth Years over which to calculate index
 #' @param lambda A gain parameter controlling the speed in update in TAC.
 #' @param xx Parameter controlling the fraction of mean catch to start using in
 #' first year
@@ -2780,7 +2780,7 @@ class(IT10) <- "MP"
 #' @param Data An object of class `Data`
 #' @param reps Number of replicates
 #' @param plot Logical. Show the plot?
-#' @param yrsmth Years over which to the average index is calculated.
+#' @param yrsmth Years over which the average index is calculated.
 #' @param xx Parameter controlling the fraction of mean catch to start using in
 #' first year
 #' @param Imulti Parameter controlling how much larger target CPUE / index is
@@ -2883,8 +2883,7 @@ Itarget_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, Imulti
 #' @template MPtemplate
 #' @template MPuses
 #' 
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
+#' @param yrsmth Years over which the average index is calculated.
 #' @param xx Parameter controlling the fraction of mean catch to start using in
 #' first year
 #' @param Imulti Parameter controlling how much larger target CPUE / index is
@@ -3081,8 +3080,7 @@ Ltarget_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, xL = 1
 #' @template MPtemplate
 #' @template MPuses
 #' 
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
+#' @param yrsmth Years over which to calculate mean length.
 #' @param xx Parameter controlling the fraction of mean catch to start using in
 #' first year
 #' @param xL Parameter controlling the magnitude of the target mean length of
@@ -3368,8 +3366,7 @@ LstepCC_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, stepsz
 #' @template MPtemplate
 #' @template MPuses
 #' 
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
+#' @param yrsmth Years over which to calculate mean length.
 #' @param xx Parameter controlling the fraction of mean catch to start using in
 #' first year
 #' @param stepsz Parameter controlling the size of update increment in TAC or effort.

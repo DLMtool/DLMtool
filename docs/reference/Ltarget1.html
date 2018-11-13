@@ -64,7 +64,7 @@ a target mean length in catches." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.2</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.2.3</span>
       </span>
     </div>
 
@@ -140,8 +140,7 @@ a target mean length in catches.</p>
     </tr>
     <tr>
       <th>yrsmth</th>
-      <td><p>Years over which to smooth recent estimates of surplus
-production</p></td>
+      <td><p>Years over which to calculate mean length.</p></td>
     </tr>
     <tr>
       <th>xx</th>
@@ -215,11 +214,11 @@ doi:10.1093/icesjms/fst232</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>Ltarget1</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Ltarget1-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     1706.516 </div><div class='input'><span class='fu'>Ltarget2</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Ltarget1-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     1548.271 </div><div class='input'><span class='fu'>Ltarget3</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Ltarget1-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     1436.828 </div><div class='input'><span class='fu'>Ltarget4</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Ltarget1-4.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
-#&gt;     1146.169 </div><div class='input'><span class='fu'>L95target</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Ltarget1-5.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+    <pre class="examples"><div class='input'><span class='fu'>Ltarget1</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/SimulatedData'>SimulatedData</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Ltarget1-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     1706.516 </div><div class='input'><span class='fu'>Ltarget2</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/SimulatedData'>SimulatedData</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Ltarget1-2.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     1548.271 </div><div class='input'><span class='fu'>Ltarget3</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/SimulatedData'>SimulatedData</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Ltarget1-3.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     1436.828 </div><div class='input'><span class='fu'>Ltarget4</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/SimulatedData'>SimulatedData</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Ltarget1-4.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+#&gt;     1146.169 </div><div class='input'><span class='fu'>L95target</span>(<span class='fl'>1</span>, <span class='kw'>Data</span><span class='kw'>=</span><span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/SimulatedData'>SimulatedData</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='Ltarget1-5.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
 #&gt;     509.9623 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

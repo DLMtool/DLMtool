@@ -65,7 +65,7 @@ its current depletion level (D)." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.2</span>
+        <span class="label label-default" data-toggle="tooltip" data-placement="bottom" title="Released package">5.2.3</span>
       </span>
     </div>
 
@@ -195,13 +195,13 @@ below BMSY, DCAC tends to chronically overfish.</p>
 
     
     <p>See <a href='Data-class.html'>Data</a> for information on the <code>Data</code> object <br /></p>
-    <p><code>DCACs</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, t, Year</p>
-    <p><code>DCAC</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, t, Year</p>
-    <p><code>DCAC_40</code>: AvC, BMSY_B0, FMSY_M, LHYear, Mort, t, Year</p>
-    <p><code>DCAC4010</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, t, Year</p>
-    <p><code>DCAC_ML</code>: AvC, CAL, CAL_bins, Cat, LFS, LHYear, Mort, t, vbK, vbLinf, Year</p>
-    <p><code>DAAC</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, t, Year</p>
-    <p><code>HDAAC</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, t, Year</p>
+    <p><code>DCACs</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t</p>
+    <p><code>DCAC</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t</p>
+    <p><code>DCAC_40</code>: AvC, BMSY_B0, FMSY_M, LHYear, Mort, Year, t</p>
+    <p><code>DCAC4010</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t</p>
+    <p><code>DCAC_ML</code>: AvC, CAL, CAL_bins, Cat, LFS, LHYear, Mort, Year, t, vbK, vbLinf</p>
+    <p><code>DAAC</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t</p>
+    <p><code>HDAAC</code>: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t</p>
     
     <h2 class="hasAnchor" id="rendered-equations"><a class="anchor" href="#rendered-equations"></a>Rendered Equations</h2>
 
@@ -233,7 +233,7 @@ static and adaptive management procedures. Fish. Res. 190, 84-94.</p>
 <span class='no'>Data</span>@<span class='kw'>LHYear</span> <span class='kw'>&lt;-</span> <span class='fl'>2005</span>
 <span class='fu'>DCAC4010</span>(<span class='fl'>1</span>, <span class='no'>Data</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DCAC-4.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
 #&gt;     1.469656 </div><div class='input'>
-<span class='fu'>DCAC_ML</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'>SimulatedData</span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DCAC-5.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
+<span class='fu'>DCAC_ML</span>(<span class='fl'>1</span>, <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/SimulatedData'>SimulatedData</a></span>, <span class='kw'>plot</span><span class='kw'>=</span><span class='fl'>TRUE</span>)</div><div class='img'><img src='DCAC-5.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; TAC (median) 
 #&gt;     1617.829 </div><div class='input'>
 <span class='no'>Data</span> <span class='kw'>&lt;-</span> <span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='http://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Atlantic_mackerel</a></span>
 <span class='no'>Data</span>@<span class='kw'>LHYear</span> <span class='kw'>&lt;-</span> <span class='fl'>2005</span>
