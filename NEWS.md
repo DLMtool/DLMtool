@@ -19,6 +19,8 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 - fix bug in CAL_nsamp and CAL_ESS when importing Obs object from CSV
 
+- fix typo in documentation for Itarget MPs
+
 
 ## DLMtool 5.2.3
 

@@ -577,8 +577,7 @@ Itargeteff_ <- function(x, Data, reps, plot, yrsmth, Imulti) {
 #' @template MPtemplate
 #' @template MPuses
 #' 
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
+#' @param yrsmth Years over which to the average index is calculated.
 #' @param Imulti Parameter controlling how much larger target CPUE / index is
 #' compared with recent levels.
 

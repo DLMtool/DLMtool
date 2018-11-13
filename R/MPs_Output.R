@@ -2780,8 +2780,7 @@ class(IT10) <- "MP"
 #' @param Data An object of class `Data`
 #' @param reps Number of replicates
 #' @param plot Logical. Show the plot?
-#' @param yrsmth Years over which to smooth recent estimates of surplus
-#' production
+#' @param yrsmth Years over which to the average index is calculated.
 #' @param xx Parameter controlling the fraction of mean catch to start using in
 #' first year
 #' @param Imulti Parameter controlling how much larger target CPUE / index is
