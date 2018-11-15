@@ -10,7 +10,7 @@
 #' @param keepNAs Boolean. Should slots with NAs still be written to the data file. 
 #' @author T. Carruthers
 #' @export
-Data2SS <- function(Data, file=NULL, simno = 1, overwrite=F, keepNAs=T) {
+Data2csv <- function(Data, file=NULL, simno = 1, overwrite=F, keepNAs=T) {
   
   if(class(Data)!='Data') stop("First argument 'Data' not an object of class 'Data' ")
   
