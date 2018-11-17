@@ -637,37 +637,47 @@ tdlnorm <- function(x, mu, cv) dlnorm(x, mconv(mu, mu * cv), sdconv(mu, mu * cv)
 #' @export 
 ML2D <- function(OM, ML, nsim = 100, ploty = T, Dlim = c(0.05, 0.6)) {
   
+  nsim2<-nsim*10
   maxage <- OM@maxage
-  M <- runif(nsim, OM@M[1], OM@M[2])  # Natural mortality rate
-  h <- runif(nsim, OM@h[1], OM@h[2])  # Steepness
-  Linf <- runif(nsim, OM@Linf[1], OM@Linf[2])  # Maximum length
-  K <- runif(nsim, OM@K[1], OM@K[2])  # Maximum growth rate
-  t0 <- runif(nsim, OM@t0[1], OM@t0[2])  # Theorectical length at age zero
+  M <- runif(nsim2, OM@M[1], OM@M[2])  # Natural mortality rate
+  h <- runif(nsim2, OM@h[1], OM@h[2])  # Steepness
+  Linf <- runif(nsim2, OM@Linf[1], OM@Linf[2])  # Maximum length
+  K <- runif(nsim2, OM@K[1], OM@K[2])  # Maximum growth rate
+  t0 <- runif(nsim2, OM@t0[1], OM@t0[2])  # Theorectical length at age zero
   
   if (OM@isRel == "0" | OM@isRel == "FALSE" | OM@isRel == FALSE) {
     if (max(OM@LFS) > 0) {
-      LFS <- runif(nsim, OM@LFS[1], OM@LFS[2])
+      LFS <- runif(nsim2*5, OM@LFS[1], OM@LFS[2])
     } else {
-      LFS <- runif(nsim, mean(OM@LFSLower), mean(OM@LFSUpper))
+      LFS <- runif(nsim2*5, mean(OM@LFSLower), mean(OM@LFSUpper))
     }
   } else {
     if (max(OM@LFS) > 0) {
-      LFS <- runif(nsim, OM@LFS[1], OM@LFS[2]) * mean(OM@L50)
+      LFS <- runif(nsim2*5, OM@LFS[1], OM@LFS[2]) * mean(OM@L50)
     } else {
-      LFS <- runif(nsim, mean(OM@LFSLower), mean(OM@LFSUpper)) * 
+      LFS <- runif(nsim2*5, mean(OM@LFSLower), mean(OM@LFSUpper)) * 
         mean(OM@L50)
     }
   }
+  LFS<-LFS[LFS<Linf][1:nsim2]
   AFS <- L2A(t0, Linf, K, LFS, maxage)
-  
-  L5 <- runif(nsim, OM@L5[1], OM@L5[2]) * mean(OM@L50)
+  AFS[AFS<1]<-1
+
+  if (OM@isRel == "0" | OM@isRel == "FALSE" | OM@isRel == FALSE) {
+    L5 <- runif(nsim2, OM@L5[1], OM@L5[2]) 
+  }else{
+    L5 <- runif(nsim2, OM@L5[1], OM@L5[2])* mean(OM@L50)
+  }
+   
   age05 <- L2A(t0, Linf, K, L5, maxage)
-  age05[age05<0] <- 0
+  age05[age05<0.5] <- 0.5
   
-  Vmaxage <- runif(nsim, OM@Vmaxlen[1], OM@Vmaxlen[2])  #runif(BT_fleet@Vmaxage[1],BT_fleet@Vmaxage[2]) # selectivity of oldest age class
+  Vmaxage <- runif(nsim2, OM@Vmaxlen[1], OM@Vmaxlen[2])  #runif(BT_fleet@Vmaxage[1],BT_fleet@Vmaxage[2]) # selectivity of oldest age class
   
-  LM <- runif(nsim, OM@L50[1], OM@L50[2])
+  LM <- runif(nsim2*5, OM@L50[1], OM@L50[2])
+  LM<-LM[LM<Linf][1:nsim2]
   AM <- L2A(t0, Linf, K, LM, maxage)
+  AM[AM<1]<-1
   
   # age at maturity
   a <- OM@a  # length-weight parameter a
@@ -675,37 +685,41 @@ ML2D <- function(OM, ML, nsim = 100, ploty = T, Dlim = c(0.05, 0.6)) {
   
   mod <- AFS  # the age at modal (or youngest max) selectivity
   
-  # deriv <- getDNvulnS(mod, age05, Vmaxage, maxage, nsim)  # The vulnerability schedule
+  # deriv <- getDNvulnS(mod, age05, Vmaxage, maxage, nsim2)  # The vulnerability schedule
   # vuln <- deriv[[1]]
   
   srs <- (maxage - AFS) / ((-log(Vmaxage,2))^0.5) # selectivity parameters are constant for all years
   sls <- (AFS - age05) /((-log(0.05,2))^0.5)
   
-  vuln <- t(sapply(1:nsim, getsel, lens=matrix(1:maxage, nrow=nsim, ncol=maxage, byrow=TRUE), 
+  vuln <- t(sapply(1:nsim2, DLMtool:::getsel, lens=matrix(1:maxage, nrow=nsim2, ncol=maxage, byrow=TRUE), 
                    lfs=AFS, sls=sls, srs=srs))
   
-  Agearray <- array(rep(1:maxage, each = nsim), c(nsim, maxage))
+  Agearray <- array(rep(1:maxage, each = nsim2), c(nsim2, maxage))
   mat <- 1/(1 + exp((AM - (Agearray))/(AM * 0.1)))  # Maturity at age array
   
   nyears <- 100
-  # bootfun<-function(dat,ind)mean(dat[ind]) MLo<-boot(MLt,bootfun,nsim)
+  # bootfun<-function(dat,ind)mean(dat[ind]) MLo<-boot(MLt,bootfun,nsim2)
   # ML<-MLo$t
-  out <- CSRA(M, h, Linf, K, t0, AM, a, b, vuln, mat, ML = rep(ML, nsim), 
+  out <- CSRA(M, h, Linf, K, t0, AM, a, b, vuln, mat, ML = rep(ML, nsim2), 
               NA, NA, maxage, nyears)
   cond <- out[, 1] > Dlim[1] & out[, 1] < Dlim[2] & out[, 2] < 2.5  # Stock levels are unlikely to be above 80% unfished, F is unlikely to be above 2.5
   
-  if (ploty & sum(cond) > 0) {
+  if (ploty & sum(cond) > 5) {
     par(mfrow = c(1, 2))
     plot(density(out[cond, 1], from = 0, adj = 0.4), main = "Depletion")
     plot(density(out[cond, 2], from = 0, adj = 0.4), main = "Fishing mortality rate")
-    OM@D <- quantile(out[cond, 1], c(0.05, 0.95))
   }
-  if (sum(cond) == 0) {
+  if (sum(cond) < 5) {
     message("All estimates of Depletion outside bounds of Dlim")
     message("Operating Model object not updated")
   }
-  if (!ploty) 
-    message("Operating Model object not updated")
+  
+  if(sum(cond)>nsim){
+      OM@cpars$D<-out[cond,1][1:nsim]
+  }
+  
+  if(sum(cond) > 5) OM@D <- quantile(out[cond, 1], c(0.05, 0.95))
+  
   OM
 }
 
@@ -880,18 +894,21 @@ getAFC <- function(t0c, Linfc, Kc, LFC, maxage) {
 #' @param Kc Maximum growth rate
 #' @param Len Length
 #' @param maxage Maximum age
+#' @param ploty Should a plot be included
 #' @return An age (vector of ages, matrix of ages) corresponding with Len
 #' @author T. Carruthers
 #' @keywords internal
-L2A <- function(t0c, Linfc, Kc, Len, maxage) {
+L2A <- function(t0c, Linfc, Kc, Len, maxage, ploty=F) {
   nsim <- length(t0c)
   agev <- c(1e-04, 1:maxage)
   agearray <- matrix(rep(agev, each = nsim), nrow = nsim)
   Larray <- Linfc * (1 - exp(-Kc * (agearray - t0c)))
-  matplot(agev, t(Larray), type = "l")
-  abline(h = Len, col = "#ff000030", lwd = 2)
   age <- (log(1 - (Len/Linfc))/-Kc) + t0c
-  abline(v = age, col = "#0000ff30", lwd = 2)
+  if(ploty){
+    matplot(agev, t(Larray), type = "l")
+    abline(h = Len, col = "#ff000030", lwd = 2)
+    abline(v = age, col = "#0000ff30", lwd = 2)
+  }
   age
 }
 
