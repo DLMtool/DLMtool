@@ -4,7 +4,7 @@
 \alias{L2A}
 \title{Length to age conversion}
 \usage{
-L2A(t0c, Linfc, Kc, Len, maxage)
+L2A(t0c, Linfc, Kc, Len, maxage, ploty = F)
 }
 \arguments{
 \item{t0c}{Theoretical age at length zero}
@@ -16,6 +16,8 @@ L2A(t0c, Linfc, Kc, Len, maxage)
 \item{Len}{Length}
 
 \item{maxage}{Maximum age}
+
+\item{ploty}{Should a plot be included}
 }
 \value{
 An age (vector of ages, matrix of ages) corresponding with Len
