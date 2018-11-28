@@ -72,22 +72,24 @@ DLMDataDir <- function(stock = NA) {
 #'
 #' Downloads the DLMextra package from GitHub 
 #' @param silent Logical. Should messages to printed?
+#' @param force Logical. For install from github if package is up-to-date?
 #' @export
 #'
-DLMextra <- function(silent=FALSE) {
+DLMextra <- function(silent=FALSE, force=FALSE) {
   if (!requireNamespace("devtools", quietly = TRUE)) {
     stop("devtools is needed for this function to work. Please install it.",
          call. = FALSE)
   }
   
   if (!silent) message("\nDownloading 'DLMextra' from GitHub")
-  tt <- devtools::install_github("DLMtool/DLMextra", quiet=TRUE)
-  if (tt) {
-    if (!silent) message("Use 'library(DLMextra)' to load additional data into workspace")
-  } else {
-    if (!silent) message("Package 'DLMextra' already up to date\n Use 'library(DLMextra)' to load additional data into workspace")
-  }
-  
+   devtools::install_github("DLMtool/DLMextra", quiet=FALSE, force=force)
+  if (!silent) message("Use 'library(DLMextra)' to load additional data into workspace")
+  # if (tt) {
+  #  
+  # } else {
+  #   if (!silent) message("Package 'DLMextra' already up to date\n Use 'library(DLMextra)' to load additional data into workspace")
+  # }
+  # 
 }
 
 
