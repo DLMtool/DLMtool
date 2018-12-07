@@ -43,10 +43,10 @@ Fease <- function(Data=NULL, TAC=TRUE, TAE=TRUE, SL=TRUE, Spatial=TRUE, names.on
     canMPs <- MPs
   }
   mptypes <- MPtype(MPs)
-  mprecs <- mptypes[,3]
+  mprecs <- mptypes[,3]#mptypes[match(MPs,mptypes[,1]),3]
   isfease <- rep(TRUE, length(MPs))
-  isfease[17]
-  cbind(MPs, mprecs)
+  #isfease[17]
+  #cbind(MPs, mprecs)
   
   if (!TAC) isfease[grepl("TAC", mprecs)] <- FALSE
   if (!TAE) isfease[grepl("TAE", mprecs)] <- FALSE
@@ -65,3 +65,35 @@ Fease <- function(Data=NULL, TAC=TRUE, TAE=TRUE, SL=TRUE, Spatial=TRUE, names.on
   }
 }
 
+
+#' MP feasibility diagnostic using real data
+#' 
+#' What MPs do not return NAs from the real data
+#' 
+#' 
+#' @param Data An object of class 'Data'. Optional. If Data object is included, the returned MPs are both feasible (in terms of management)
+#' and possible (sufficient data to run MP)
+#' @return a vector of MP names that calculate without errors for the specific data. 
+#' @author T. Carruthers 
+#' @export 
+RealFease <- function(Data=NULL){
+  if(is.null(Data))stop('no data provided')
+  if(class(Data)!="Data")stop('object not of class Data')
+  MPs <- avail('MP')
+  nMPs<-length(MPs)
+  Err<-rep(TRUE,nMPs)
+  
+  for(i in 1:nMPs){
+    
+    tryCatch({
+      test<-do.call(MPs[i],list(x=1,Data=Data))
+      Err[i]=FALSE
+    },
+    error = function(e){
+      #print(paste(i,MPs[i]))
+    })
+    
+  }
+  MPs[!Err]
+ 
+}

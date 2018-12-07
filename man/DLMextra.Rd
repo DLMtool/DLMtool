@@ -4,10 +4,12 @@
 \alias{DLMextra}
 \title{Load more data from DLMextra package}
 \usage{
-DLMextra(silent = FALSE)
+DLMextra(silent = FALSE, force = FALSE)
 }
 \arguments{
 \item{silent}{Logical. Should messages to printed?}
+
+\item{force}{Logical. For install from github if package is up-to-date?}
 }
 \description{
 Downloads the DLMextra package from GitHub
