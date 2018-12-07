@@ -317,7 +317,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     if (nsim > 1) {
       SSN0 <- apply(SSN[, , 1, ], c(1, 3), sum)  # Calculate unfished spawning stock numbers
       SSB0 <- apply(SSB[, , 1, ], 1, sum)  # Calculate unfished spawning stock biomass
-      SSBpR <- SSB0/R0  # Spawning stock biomass per recruit
+      #SSBpR <- SSB0/R0  # Spawning stock biomass per recruit
       SSBpR <- matrix(SSB0/R0, nrow=nsim, ncol=nareas)  # Spawning stock biomass per recruit
       SSB0a <- apply(SSB[, , 1, ], c(1, 3), sum)  # Calculate unfished spawning stock numbers
       B0 <- apply(Biomass[, , 1, ], 1, sum)

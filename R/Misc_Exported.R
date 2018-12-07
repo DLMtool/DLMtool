@@ -697,7 +697,7 @@ ML2D <- function(OM, ML, nsim = 100, ploty = T, Dlim = c(0.05, 0.6)) {
   Agearray <- array(rep(1:maxage, each = nsim2), c(nsim2, maxage))
   mat <- 1/(1 + exp((AM - (Agearray))/(AM * 0.1)))  # Maturity at age array
   
-  nyears <- 100
+  nyears <- OM@nyears
   # bootfun<-function(dat,ind)mean(dat[ind]) MLo<-boot(MLt,bootfun,nsim2)
   # ML<-MLo$t
   out <- CSRA(M, h, Linf, K, t0, AM, a, b, vuln, mat, ML = rep(ML, nsim2), 
@@ -903,6 +903,8 @@ L2A <- function(t0c, Linfc, Kc, Len, maxage, ploty=F) {
   agev <- c(1e-04, 1:maxage)
   agearray <- matrix(rep(agev, each = nsim), nrow = nsim)
   Larray <- Linfc * (1 - exp(-Kc * (agearray - t0c)))
+  temp<-Len/Linfc
+  temp[temp<0.95]<-0.95
   age <- (log(1 - (Len/Linfc))/-Kc) + t0c
   if(ploty){
     matplot(agev, t(Larray), type = "l")
