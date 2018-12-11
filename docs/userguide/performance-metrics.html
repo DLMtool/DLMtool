@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.2)</title>
+  <title>Data-Limited Methods Toolkit (DLMtool 5.2.2)</title>
   <meta name="description" content="User guide for the DLMtool R package">
   <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
+  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
+  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-07-09">
+<meta name="date" content="2018-08-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -265,7 +265,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="25.3.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#discard-mortality"><i class="fa fa-check"></i><b>25.3.3</b> Discard Mortality</a></li>
 <li class="chapter" data-level="25.3.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#general-discarding"><i class="fa fa-check"></i><b>25.3.4</b> General Discarding</a></li>
 </ul></li>
-<li class="chapter" data-level="25.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#variable-management-interval"><i class="fa fa-check"></i><b>25.4</b> Variable Management Interval</a></li>
 </ul></li>
 <li class="chapter" data-level="26" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html"><i class="fa fa-check"></i><b>26</b> Developing Custom Management Procedures</a><ul>
 <li class="chapter" data-level="26.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#the-anatomy-of-an-mp"><i class="fa fa-check"></i><b>26.1</b> The Anatomy of an MP</a></li>
@@ -346,7 +345,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2.2)</a>
           </h1>
         </div>
 
@@ -403,7 +402,8 @@ Management strategies that have a lower probability of overfishing occurring are
 <h2><span class="header-section-number">15.4</span> Performance Metrics Methods</h2>
 <p>DLMtool includes a set of functions, of class <code>PM</code>, for calculating Performance Metrics. The available <code>PM</code> functions (referred to as PMs) can be found using the <code>avail</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">avail</span>(<span class="st">&quot;PM&quot;</span>)</code></pre></div>
-<pre><code>## [1] &quot;AAVY&quot;  &quot;LTY&quot;   &quot;P10&quot;   &quot;P100&quot;  &quot;P50&quot;   &quot;PNOF&quot;  &quot;STY&quot;   &quot;Yield&quot;</code></pre>
+<pre><code>##  [1] &quot;AAVY&quot;  &quot;LTY&quot;   &quot;P10&quot;   &quot;P100&quot;  &quot;P50&quot;   &quot;PNOF&quot;  &quot;STY&quot;   &quot;Yield&quot;
+##  [9] &quot;MeanB&quot; &quot;MeanF&quot;</code></pre>
 <p>The PMs are used for summarizing the performance of the management procedures and plotting the results in trade-off plots.</p>
 <p>Here we briefly describe the built-in Performance Metrics functions and demonstrate their use. Advanced DLMtool users can develop their own <code>PM</code> methods, see the <a href="custom-performance-metrics.html#custom-performance-metrics">Custom Performance Metrics</a> chapter for details.</p>
 <p>Functions of class <code>PM</code> are used on an object of class <code>MSE</code> (i.e the object returned by <code>runMSE</code>), and return an object of class <code>PMobj</code>. Most of the time the <code>PM</code> functions are used internally in the <code>summary</code> or plotting functions, and it will not be neccessary to acess the <code>PMobj</code> directly.</p>
@@ -812,34 +812,38 @@ Management strategies that have a lower probability of overfishing occurring are
 <p>or all available <code>PM</code> functions:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(MSE, <span class="kw">avail</span>(<span class="st">&#39;PM&#39;</span>))</code></pre></div>
 <pre><code>## Calculating Performance Metrics</code></pre>
-<pre><code>##                                       Performance.Metrics 
-## 1        Average Annual Variability in Yield (Years 1-50) 
-## 2 Average Yield relative to Reference Yield (Years 41-50) 
-## 3                      Spawning Biomass relative to SBMSY 
-## 4                      Spawning Biomass relative to SBMSY 
-## 5                      Spawning Biomass relative to SBMSY 
-## 6                 Probability of not overfishing (F&lt;FMSY) 
-## 7  Average Yield relative to Reference Yield (Years 1-10) 
-## 8          Yield relative to Reference Yield (Years 1-50) 
-##                                             
-## 1              Prob. AAVY &lt; 20% (Years 1-50)
-## 2 Prob. Yield &gt; 0.5 Ref. Yield (Years 41-50)
-## 3        Prob. SB &gt; 0.1 SBMSY (Years 1 - 50)
-## 4            Prob. SB &gt; SBMSY (Years 1 - 50)
-## 5        Prob. SB &gt; 0.5 SBMSY (Years 1 - 50)
-## 6              Prob. F &lt; FMSY (Years 1 - 50)
-## 7  Prob. Yield &gt; 0.5 Ref. Yield (Years 1-10)
-## 8           Mean Relative Yield (Years 1-50)
+<pre><code>##                                        Performance.Metrics 
+## 1         Average Annual Variability in Yield (Years 1-50) 
+## 2  Average Yield relative to Reference Yield (Years 41-50) 
+## 3                       Spawning Biomass relative to SBMSY 
+## 4                       Spawning Biomass relative to SBMSY 
+## 5                       Spawning Biomass relative to SBMSY 
+## 6                  Probability of not overfishing (F&lt;FMSY) 
+## 7   Average Yield relative to Reference Yield (Years 1-10) 
+## 8           Yield relative to Reference Yield (Years 1-50) 
+## 9                       Spawning Biomass relative to SBMSY 
+## 10                      Fishing Mortality relative to FMSY 
+##                                              
+## 1               Prob. AAVY &lt; 20% (Years 1-50)
+## 2  Prob. Yield &gt; 0.5 Ref. Yield (Years 41-50)
+## 3         Prob. SB &gt; 0.1 SBMSY (Years 1 - 50)
+## 4             Prob. SB &gt; SBMSY (Years 1 - 50)
+## 5         Prob. SB &gt; 0.5 SBMSY (Years 1 - 50)
+## 6               Prob. F &lt; FMSY (Years 1 - 50)
+## 7   Prob. Yield &gt; 0.5 Ref. Yield (Years 1-10)
+## 8            Mean Relative Yield (Years 1-50)
+## 9               Mean SB/SBMSY (Years 46 - 50)
+## 10                Mean F/FMSY (Years 46 - 50)
 ## 
 ## 
 ## Probability:
-##          MP AAVY  LTY  P10 P100  P50 PNOF  STY Yield
-## 1       AvC 0.90 0.39 0.79 0.59 0.68 0.60 0.73  0.67
-## 2      DCAC 0.96 0.65 0.89 0.65 0.78 0.66 0.67  0.81
-## 3   FMSYref 1.00 1.00 1.00 0.37 0.93 0.42 0.90  1.10
-## 4      curE 0.17 0.80 0.96 0.65 0.80 0.68 0.82  0.83
-## 5 matlenlim 0.19 0.56 1.00 0.93 0.99 0.98 0.44  0.61
-## 6    MRreal 0.19 0.82 1.00 0.68 0.85 0.72 0.80  0.82</code></pre>
+##          MP AAVY  LTY  P10 P100  P50 PNOF  STY Yield MeanB MeanF
+## 1       AvC 0.90 0.39 0.79 0.59 0.68 0.60 0.73  0.67  1.40  1.20
+## 2      DCAC 0.96 0.65 0.89 0.65 0.78 0.66 0.67  0.81  0.88  1.40
+## 3   FMSYref 1.00 1.00 1.00 0.37 0.93 0.42 0.90  1.10  0.91  1.00
+## 4      curE 0.17 0.80 0.96 0.65 0.80 0.68 0.82  0.83  1.40  0.93
+## 5 matlenlim 0.19 0.56 1.00 0.93 0.99 0.98 0.44  0.61  2.30  0.34
+## 6    MRreal 0.19 0.82 1.00 0.68 0.85 0.72 0.80  0.82  1.50  0.78</code></pre>
 <p>The <code>summary</code> function returns a data frame which can be useful for referring to the PM results elsewhere in the analysis. For example,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Results &lt;-<span class="st"> </span><span class="kw">summary</span>(MSE, <span class="kw">avail</span>(<span class="st">&#39;PM&#39;</span>), <span class="dt">silent=</span><span class="ot">TRUE</span>) <span class="co"># silent=TRUE to hide print-out to console</span>
 Results<span class="op">$</span>Yield <span class="co"># access the PM results</span></code></pre></div>
@@ -913,7 +917,7 @@ Results<span class="op">$</span>Yield <span class="co"># access the PM results</
 ##   if (class(Lims)!=&quot;numeric&quot;) stop(&quot;Second argument must be numeric&quot;)
 ##   TradePlot(MSEobj, Lims=Lims, PMlist=list(&quot;PNOF&quot;, &quot;LTY&quot;, &quot;P100&quot;, &quot;LTY&quot;, &quot;P50&quot;, &quot;LTY&quot;, &quot;P10&quot;, &quot;LTY&quot;),  ...)
 ## }
-## &lt;bytecode: 0x0000000024bce8e8&gt;
+## &lt;bytecode: 0x000000001cbb81d8&gt;
 ## &lt;environment: namespace:DLMtool&gt;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Tplot</span>(MSE)</code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-102-1.png" width="672" /></p>

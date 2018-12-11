@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.2)</title>
+  <title>Data-Limited Methods Toolkit (DLMtool 5.2.2)</title>
   <meta name="description" content="User guide for the DLMtool R package">
   <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
+  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
+  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-07-09">
+<meta name="date" content="2018-08-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -265,7 +265,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="25.3.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#discard-mortality"><i class="fa fa-check"></i><b>25.3.3</b> Discard Mortality</a></li>
 <li class="chapter" data-level="25.3.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#general-discarding"><i class="fa fa-check"></i><b>25.3.4</b> General Discarding</a></li>
 </ul></li>
-<li class="chapter" data-level="25.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#variable-management-interval"><i class="fa fa-check"></i><b>25.4</b> Variable Management Interval</a></li>
 </ul></li>
 <li class="chapter" data-level="26" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html"><i class="fa fa-check"></i><b>26</b> Developing Custom Management Procedures</a><ul>
 <li class="chapter" data-level="26.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#the-anatomy-of-an-mp"><i class="fa fa-check"></i><b>26.1</b> The Anatomy of an MP</a></li>
@@ -346,7 +345,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2.2)</a>
           </h1>
         </div>
 
@@ -397,11 +396,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## Probability:
 ##             MP PNOF  P50  AAVY  LTY
 ## 1          AvC 0.53 0.60 0.810 0.43
-## 2     Itarget1 0.81 0.89 0.890 0.75
+## 2     Itarget1 0.83 0.90 0.900 0.74
 ## 3    matlenlim 0.91 0.96 0.065 0.62
 ## 4        ITe10 0.26 0.42 0.100 0.31
 ## 5      AvC_MLL 0.80 0.86 0.710 0.76
-## 6 Itarget1_MPA 0.80 0.90 0.940 0.75
+## 6 Itarget1_MPA 0.82 0.91 0.950 0.74
 ## 7      FMSYref 0.12 0.71 1.000 0.91
 ## 8        NFref 1.00 0.99 1.000 0.00</code></pre>
 <p>By default the <code>summary</code> function includes four performance metrics, and displays the probability that:</p>
@@ -444,11 +443,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p><img src="userguide_files/figure-html/unnamed-chunk-47-1.png" width="768" /></p>
 <pre><code>##             MP PNOF  LTY P100  P50  P10 Satisificed
 ## 1          AvC 0.53 0.43 0.51 0.60 0.70       FALSE
-## 2     Itarget1 0.81 0.75 0.75 0.89 0.99        TRUE
+## 2     Itarget1 0.83 0.74 0.77 0.90 0.99        TRUE
 ## 3    matlenlim 0.91 0.62 0.86 0.96 1.00        TRUE
 ## 4        ITe10 0.26 0.31 0.25 0.42 0.68       FALSE
 ## 5      AvC_MLL 0.80 0.76 0.70 0.86 0.98        TRUE
-## 6 Itarget1_MPA 0.80 0.75 0.74 0.90 1.00        TRUE
+## 6 Itarget1_MPA 0.82 0.74 0.76 0.91 1.00        TRUE
 ## 7      FMSYref 0.12 0.91 0.14 0.71 0.99       FALSE
 ## 8        NFref 1.00 0.00 0.98 0.99 1.00       FALSE</code></pre>
 <p>The <code>Tplot2</code> function shows the trade-off between long-term and short-term yield, and the trade-off between biomass being above <span class="math inline">\(0.1B_{MSY}\)</span> and the expected variability in the yield:</p>
@@ -456,11 +455,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p><img src="userguide_files/figure-html/unnamed-chunk-48-1.png" width="768" /></p>
 <pre><code>##             MP  STY  LTY  P10  AAVY Satisificed
 ## 1          AvC 0.83 0.43 0.70 0.810       FALSE
-## 2     Itarget1 0.61 0.75 0.99 0.890        TRUE
+## 2     Itarget1 0.60 0.74 0.99 0.900        TRUE
 ## 3    matlenlim 0.49 0.62 1.00 0.065       FALSE
 ## 4        ITe10 0.84 0.31 0.68 0.100       FALSE
 ## 5      AvC_MLL 0.77 0.76 0.98 0.710       FALSE
-## 6 Itarget1_MPA 0.61 0.75 1.00 0.940        TRUE
+## 6 Itarget1_MPA 0.60 0.74 1.00 0.950        TRUE
 ## 7      FMSYref 0.92 0.91 0.99 1.000        TRUE
 ## 8        NFref 0.00 0.00 1.00 1.000       FALSE</code></pre>
 <p>The <code>Tplot</code>, <code>Tplot2</code> and <code>Tplot3</code> functions are part of a family of plotting functions that are fully customizable, and designed to work with all Performance Metrics objects. See <code>?Tplot</code> and the <a href="performance-metrics.html#performance-metrics">Performance Metrics</a> chapter for more information.</p>

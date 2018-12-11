@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.2)</title>
+  <title>Data-Limited Methods Toolkit (DLMtool 5.2.2)</title>
   <meta name="description" content="User guide for the DLMtool R package">
   <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
+  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
+  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-07-09">
+<meta name="date" content="2018-08-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -265,7 +265,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="25.3.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#discard-mortality"><i class="fa fa-check"></i><b>25.3.3</b> Discard Mortality</a></li>
 <li class="chapter" data-level="25.3.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#general-discarding"><i class="fa fa-check"></i><b>25.3.4</b> General Discarding</a></li>
 </ul></li>
-<li class="chapter" data-level="25.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#variable-management-interval"><i class="fa fa-check"></i><b>25.4</b> Variable Management Interval</a></li>
 </ul></li>
 <li class="chapter" data-level="26" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html"><i class="fa fa-check"></i><b>26</b> Developing Custom Management Procedures</a><ul>
 <li class="chapter" data-level="26.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#the-anatomy-of-an-mp"><i class="fa fa-check"></i><b>26.1</b> The Anatomy of an MP</a></li>
@@ -346,7 +345,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2.2)</a>
           </h1>
         </div>
 
@@ -362,7 +361,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2><span class="header-section-number">9.1</span> Setting up Parallel Processing</h2>
 <p>The <code>setup</code> function is used to set up parallel processing.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">setup</span>()</code></pre></div>
-<pre><code>## R Version:  R version 3.5.0 (2018-04-23)</code></pre>
+<pre><code>## 
+## Stopping cluster</code></pre>
 <pre><code>## snowfall 1.84-6.1 initialized (using snow 0.4-2): parallel execution on 10 CPUs.</code></pre>
 <pre><code>## Library DLMtool loaded.</code></pre>
 <pre><code>## Library DLMtool loaded in cluster.</code></pre>
@@ -376,7 +376,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myMSE_200P &lt;-<span class="st"> </span><span class="kw">runMSE</span>(myOM, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</code></pre></div>
 <pre><code>## Running MSE in parallel on 10 processors</code></pre>
 <pre><code>## MSE completed</code></pre>
-<p>Parallel processing can increase the speed of running the MSE considerably. For example, although in this demonstration we are only running a low number of simulations, run time decreased from 1 to 10 seconds when using parallel processing on 10 processors.</p>
+<p>Parallel processing can increase the speed of running the MSE considerably. For example, although in this demonstration we are only running a low number of simulations, run time decreased from 2 to 11 seconds when using parallel processing on 10 processors.</p>
 </div>
 <div id="determining-optimal-number-of-processors" class="section level2">
 <h2><span class="header-section-number">9.3</span> Determining Optimal Number of Processors</h2>
@@ -384,18 +384,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">optCPU</span>()</code></pre></div>
 <p><img src="userguide_files/figure-html/optCPU-1.png" width="672" /></p>
 <pre><code>##    ncpu  time
-## 1     1 34.29
-## 2     2 18.24
-## 3     3 12.21
-## 4     4  9.50
-## 5     5  7.95
-## 6     6  6.92
-## 7     7  6.39
-## 8     8  5.84
-## 9     9  5.67
-## 10   10  5.62
-## 11   11  5.87
-## 12   12  6.15</code></pre>
+## 1     1 35.48
+## 2     2 18.40
+## 3     3 12.37
+## 4     4  9.66
+## 5     5  8.30
+## 6     6  7.18
+## 7     7  6.46
+## 8     8  6.06
+## 9     9  5.73
+## 10   10  5.67
+## 11   11  6.20
+## 12   12  5.94</code></pre>
 
 </div>
 </div>

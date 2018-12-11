@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.2)</title>
+  <title>Data-Limited Methods Toolkit (DLMtool 5.2.2)</title>
   <meta name="description" content="User guide for the DLMtool R package">
   <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
+  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
+  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-07-09">
+<meta name="date" content="2018-08-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -265,7 +265,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="25.3.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#discard-mortality"><i class="fa fa-check"></i><b>25.3.3</b> Discard Mortality</a></li>
 <li class="chapter" data-level="25.3.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#general-discarding"><i class="fa fa-check"></i><b>25.3.4</b> General Discarding</a></li>
 </ul></li>
-<li class="chapter" data-level="25.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#variable-management-interval"><i class="fa fa-check"></i><b>25.4</b> Variable Management Interval</a></li>
 </ul></li>
 <li class="chapter" data-level="26" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html"><i class="fa fa-check"></i><b>26</b> Developing Custom Management Procedures</a><ul>
 <li class="chapter" data-level="26.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#the-anatomy-of-an-mp"><i class="fa fa-check"></i><b>26.1</b> The Anatomy of an MP</a></li>
@@ -346,7 +345,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2.2)</a>
           </h1>
         </div>
 
@@ -380,7 +379,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## [61] &quot;Ltarget4&quot;    &quot;MCD&quot;         &quot;MCD4010&quot;     &quot;Rcontrol&quot;    &quot;Rcontrol2&quot;  
 ## [66] &quot;SBT1&quot;        &quot;SBT2&quot;        &quot;SPmod&quot;       &quot;SPMSY&quot;       &quot;SPslope&quot;    
 ## [71] &quot;SPSRA&quot;       &quot;SPSRA_ML&quot;    &quot;YPR&quot;         &quot;YPR_CC&quot;      &quot;YPR_ML&quot;     
-## [76] &quot;avgMP&quot;</code></pre>
+## [76] &quot;avgMP&quot;       &quot;TCPUE&quot;       &quot;THC&quot;</code></pre>
 <p>Since we’ve seen it used as a default MP in lots of the examples above, lets learn more about DCAC</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">?DCAC</code></pre></div>
 <p>We can even see all the code for this MP by simply typing the name of the MP into the console (this is a fantastic advantage of using R - there is complete transparency about package functions):</p>
@@ -396,7 +395,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##     Rec@TAC &lt;- TAC
 ##     Rec
 ## }
-## &lt;bytecode: 0x000000001c5f8998&gt;
+## &lt;bytecode: 0x0000000019211468&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
@@ -409,7 +408,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>##  [1] &quot;Atlantic_mackerel&quot;  &quot;China_rockfish&quot;     &quot;Cobia&quot;             
 ##  [4] &quot;Example_datafile&quot;   &quot;Gulf_blue_tilefish&quot; &quot;ourReefFish&quot;       
 ##  [7] &quot;Red_snapper&quot;        &quot;SimulatedData&quot;      &quot;Simulation_1&quot;      
-## [10] &quot;China_rockfish2&quot;    &quot;Madeup&quot;             &quot;Recs&quot;</code></pre>
+## [10] &quot;China_rockfish2&quot;    &quot;Data&quot;               &quot;Madeup&quot;            
+## [13] &quot;Recs&quot;</code></pre>
 <p>For simplicity lets use a Data object with just one simulation, <code>Simulation_1</code> and rename it <code>Data</code></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Data &lt;-<span class="st"> </span>Simulation_<span class="dv">1</span></code></pre></div>
 <p>Since there is only one simulation in this data set (1 position) we can now see a single value of natural mortality rate:</p>
@@ -434,7 +434,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>We could generate a single TAC recommendation from these data using DCAC by specifying position 1 (there is only 1 simulation) and by setting reps=1 (we want a single DCAC TAC recommendation)</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">DCAC</span>(<span class="dt">x=</span><span class="dv">1</span>,Data,<span class="dt">reps=</span><span class="dv">1</span>)</code></pre></div>
 <pre><code>## TAC (median) 
-##     37.42214</code></pre>
+##     37.49571</code></pre>
 <p>If we wanted a stochastic estimate of the TAC we could increase the number of reps:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hist</span>(<span class="kw">DCAC</span>(<span class="dt">x=</span><span class="dv">1</span>,Data,<span class="dt">reps=</span><span class="dv">1000</span>)<span class="op">@</span>TAC,<span class="dt">xlab=</span><span class="st">&quot;TAC&quot;</span>,<span class="dt">ylab=</span><span class="st">&quot;Freq.&quot;</span>,<span class="dt">col=</span><span class="st">&quot;blue&quot;</span>)</code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-164-1.png" width="672" /></p>
@@ -476,8 +476,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 }</code></pre></div>
 <p>We can quickly test our new MP for the example Data object</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">THC</span>(<span class="dt">x=</span><span class="dv">1</span>,Data,<span class="dt">reps=</span><span class="dv">10</span>)<span class="op">@</span>TAC</code></pre></div>
-<pre><code>##  [1] 90.21991 82.40292 92.91142 67.21367 75.08556 74.85677 80.09622
-##  [8] 67.34673 82.91729 66.61270</code></pre>
+<pre><code>##  [1] 75.08556 74.85677 80.09622 67.34673 82.91729 66.61270 83.49672
+##  [8] 85.44908 79.53824 81.45144</code></pre>
 <p>Now that we know it works, to make the function compatible with the DLMtool package we have to assign it the class ‘MP’ so that DLMtool recognizes the function as a management procedure</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(THC)&lt;-<span class="st">&quot;MP&quot;</span></code></pre></div>
 <p>If we want to run the MSE in parallel we need to export the newly created function to the cluster:</p>
@@ -547,7 +547,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##         curE_plot(x, rec, Data)
 ##     rec
 ## }
-## &lt;bytecode: 0x000000001de4cf28&gt;
+## &lt;bytecode: 0x00000000194f1e20&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
@@ -564,7 +564,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##             ylim = c(0, 1), names = 1:Data@nareas)
 ##     return(rec)
 ## }
-## &lt;bytecode: 0x00000000205fa268&gt;
+## &lt;bytecode: 0x0000000004dd45d0&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
@@ -580,7 +580,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##             ylim = c(0, 1), names = 1:Data@nareas)
 ##     return(rec)
 ## }
-## &lt;bytecode: 0x00000000205e9b58&gt;
+## &lt;bytecode: 0x0000000004dc9950&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
@@ -595,7 +595,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##         size_lim_plot(x, Data, rec)
 ##     rec
 ## }
-## &lt;bytecode: 0x00000000201df8a0&gt;
+## &lt;bytecode: 0x0000000004b16fb0&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
@@ -638,8 +638,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">NOAA_plot</span>(testMSE)</code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-179-1.png" width="672" /></p>
 <pre><code>##         PNOF  B50  LTY   VY
-## TCPUE   43.3 54.1 42.5 83.3
-## TCPUE_e 46.5 70.0 84.6  0.0</code></pre>
+## TCPUE   44.1 55.0 43.8 83.3
+## TCPUE_e 45.9 68.8 78.3  0.0</code></pre>
 </div>
 </div>
 </div>

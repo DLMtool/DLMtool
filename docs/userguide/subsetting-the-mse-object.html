@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.2)</title>
+  <title>Data-Limited Methods Toolkit (DLMtool 5.2.2)</title>
   <meta name="description" content="User guide for the DLMtool R package">
   <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
+  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
+  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-07-09">
+<meta name="date" content="2018-08-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -265,7 +265,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="25.3.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#discard-mortality"><i class="fa fa-check"></i><b>25.3.3</b> Discard Mortality</a></li>
 <li class="chapter" data-level="25.3.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#general-discarding"><i class="fa fa-check"></i><b>25.3.4</b> General Discarding</a></li>
 </ul></li>
-<li class="chapter" data-level="25.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#variable-management-interval"><i class="fa fa-check"></i><b>25.4</b> Variable Management Interval</a></li>
 </ul></li>
 <li class="chapter" data-level="26" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html"><i class="fa fa-check"></i><b>26</b> Developing Custom Management Procedures</a><ul>
 <li class="chapter" data-level="26.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#the-anatomy-of-an-mp"><i class="fa fa-check"></i><b>26.1</b> The Anatomy of an MP</a></li>
@@ -346,7 +345,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2.2)</a>
           </h1>
         </div>
 
@@ -382,20 +381,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## 1    Fratio 0.61 0.69 0.78 0.54
 ## 2      DCAC 0.64 0.75 0.89 0.65
 ## 3      Fdem 0.52 0.61 0.76 0.50
-## 4        DD 0.65 0.80 0.94 0.82
+## 4        DD 0.52 0.66 0.82 0.65
 ## 5 matlenlim 0.78 0.89 0.34 0.81</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">accept &lt;-<span class="st"> </span><span class="kw">which</span>(stats<span class="op">$</span>P50 <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.70</span>) <span class="co"># index of methods that pass the criteria</span>
 MPs &lt;-<span class="st"> </span>stats[accept,<span class="st">&quot;MP&quot;</span>] <span class="co"># the acceptable MPs</span>
 
 subMSE &lt;-<span class="st"> </span><span class="kw">Sub</span>(BSharkMSE, <span class="dt">MPs=</span>MPs)</code></pre></div>
-<p>Here we can see that the DCAC, DD, matlenlim methods (3 of the 5) met our specified criteria. We used the <code>Sub</code> function to create a new <code>MSE</code> object that only includes these Management Procedures.</p>
+<p>Here we can see that the DCAC, matlenlim methods (2 of the 5) met our specified criteria. We used the <code>Sub</code> function to create a new <code>MSE</code> object that only includes these Management Procedures.</p>
 <p>We can than proceed to continue our analysis on the <code>subMSE</code> object, e.g.:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Tplot</span>(subMSE)</code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-187-1.png" width="672" /></p>
 <pre><code>##          MP PNOF  LTY P100  P50  P10 Satisificed
 ## 1      DCAC 0.64 0.65 0.60 0.75 0.83        TRUE
-## 2        DD 0.65 0.82 0.52 0.80 0.93        TRUE
-## 3 matlenlim 0.78 0.81 0.71 0.89 0.99        TRUE</code></pre>
+## 2 matlenlim 0.78 0.81 0.71 0.89 0.99        TRUE</code></pre>
 </div>
 <div id="subsetting-by-operating-model-parameters" class="section level2">
 <h2><span class="header-section-number">28.2</span> Subsetting by Operating Model Parameters</h2>

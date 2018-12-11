@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.2)</title>
+  <title>Data-Limited Methods Toolkit (DLMtool 5.2.2)</title>
   <meta name="description" content="User guide for the DLMtool R package">
   <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
+  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
+  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-07-09">
+<meta name="date" content="2018-08-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -265,7 +265,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="25.3.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#discard-mortality"><i class="fa fa-check"></i><b>25.3.3</b> Discard Mortality</a></li>
 <li class="chapter" data-level="25.3.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#general-discarding"><i class="fa fa-check"></i><b>25.3.4</b> General Discarding</a></li>
 </ul></li>
-<li class="chapter" data-level="25.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#variable-management-interval"><i class="fa fa-check"></i><b>25.4</b> Variable Management Interval</a></li>
 </ul></li>
 <li class="chapter" data-level="26" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html"><i class="fa fa-check"></i><b>26</b> Developing Custom Management Procedures</a><ul>
 <li class="chapter" data-level="26.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#the-anatomy-of-an-mp"><i class="fa fa-check"></i><b>26.1</b> The Anatomy of an MP</a></li>
@@ -346,7 +345,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2.2)</a>
           </h1>
         </div>
 
@@ -394,8 +393,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##  [93] &quot;NFref&quot;        &quot;Rcontrol&quot;     &quot;Rcontrol2&quot;    &quot;SBT1&quot;        
 ##  [97] &quot;SBT2&quot;         &quot;slotlim&quot;      &quot;SPmod&quot;        &quot;SPMSY&quot;       
 ## [101] &quot;SPslope&quot;      &quot;SPSRA&quot;        &quot;SPSRA_ML&quot;     &quot;YPR&quot;         
-## [105] &quot;YPR_CC&quot;       &quot;YPR_ML&quot;</code></pre>
-<p>As you can see, there are 106 MPs built into the DLMtool.</p>
+## [105] &quot;YPR_CC&quot;       &quot;YPR_ML&quot;       &quot;avgMP&quot;        &quot;TCPUE&quot;       
+## [109] &quot;TCPUE_e&quot;      &quot;THC&quot;</code></pre>
+<p>As you can see, there are 110 MPs built into the DLMtool.</p>
 <p>DLMtool is extensible and it is relatively straightforward to develop your own MPs and include them in the MSE. This is covered in <a href="developing-custom-management-procedures.html#developing-custom-management-procedures">Developing Custom Management Procedures</a>.</p>
 </div>
 <div id="types-of-management-procedure" class="section level2">
@@ -532,7 +532,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##  [6] &quot;DTe40&quot;       &quot;DTe50&quot;       &quot;EtargetLopt&quot; &quot;ItargetE1&quot;   &quot;ItargetE2&quot;  
 ## [11] &quot;ItargetE3&quot;   &quot;ItargetE4&quot;   &quot;ITe10&quot;       &quot;ITe5&quot;        &quot;LBSPR&quot;      
 ## [16] &quot;LstepCE1&quot;    &quot;LstepCE2&quot;    &quot;LtargetE1&quot;   &quot;LtargetE4&quot;   &quot;matlenlim&quot;  
-## [21] &quot;matlenlim2&quot;  &quot;minlenLopt1&quot; &quot;MRnoreal&quot;    &quot;MRreal&quot;      &quot;slotlim&quot;</code></pre>
+## [21] &quot;matlenlim2&quot;  &quot;minlenLopt1&quot; &quot;MRnoreal&quot;    &quot;MRreal&quot;      &quot;slotlim&quot;    
+## [26] &quot;TCPUE_e&quot;</code></pre>
 <p>Remember, to access help documentation:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">?matlenlim</code></pre></div>
 <p>More information on input control MPs can be found in <a href="developing-custom-management-procedures.html#beyond-the-catch-limit">Beyond the Catch Limit</a>.</p>
@@ -557,7 +558,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## [56] &quot;LstepCC3&quot;    &quot;LstepCC4&quot;    &quot;Ltarget1&quot;    &quot;Ltarget2&quot;    &quot;Ltarget3&quot;   
 ## [61] &quot;Ltarget4&quot;    &quot;MCD&quot;         &quot;MCD4010&quot;     &quot;Rcontrol&quot;    &quot;Rcontrol2&quot;  
 ## [66] &quot;SBT1&quot;        &quot;SBT2&quot;        &quot;SPmod&quot;       &quot;SPMSY&quot;       &quot;SPslope&quot;    
-## [71] &quot;SPSRA&quot;       &quot;SPSRA_ML&quot;    &quot;YPR&quot;         &quot;YPR_CC&quot;      &quot;YPR_ML&quot;</code></pre>
+## [71] &quot;SPSRA&quot;       &quot;SPSRA_ML&quot;    &quot;YPR&quot;         &quot;YPR_CC&quot;      &quot;YPR_ML&quot;     
+## [76] &quot;avgMP&quot;       &quot;TCPUE&quot;       &quot;THC&quot;</code></pre>
 </div>
 <div id="mixed-mps" class="section level3">
 <h3><span class="header-section-number">5.3.3</span> Mixed MPs</h3>

@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.2)</title>
+  <title>Data-Limited Methods Toolkit (DLMtool 5.2.2)</title>
   <meta name="description" content="User guide for the DLMtool R package">
   <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
+  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
+  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-07-09">
+<meta name="date" content="2018-08-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -265,7 +265,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="25.3.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#discard-mortality"><i class="fa fa-check"></i><b>25.3.3</b> Discard Mortality</a></li>
 <li class="chapter" data-level="25.3.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#general-discarding"><i class="fa fa-check"></i><b>25.3.4</b> General Discarding</a></li>
 </ul></li>
-<li class="chapter" data-level="25.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#variable-management-interval"><i class="fa fa-check"></i><b>25.4</b> Variable Management Interval</a></li>
 </ul></li>
 <li class="chapter" data-level="26" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html"><i class="fa fa-check"></i><b>26</b> Developing Custom Management Procedures</a><ul>
 <li class="chapter" data-level="26.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#the-anatomy-of-an-mp"><i class="fa fa-check"></i><b>26.1</b> The Anatomy of an MP</a></li>
@@ -346,7 +345,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2.2)</a>
           </h1>
         </div>
 
@@ -406,53 +405,55 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">val_int &lt;-<span class="st"> </span><span class="kw">validcpars</span>(<span class="st">&#39;internal&#39;</span>)
 val_int[,<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)]</code></pre></div>
 <pre><code>##           Var.                                                   Dim.
-## 1     CAL_bins                                        numeric vector 
-## 2  CAL_binsmid                      numeric vector length(CAL_bins)-1
-## 3          L95                             numeric vector length nsim
-## 4       Perr_y numeric matrix dim = c(nsim, maxage+proyears+nyears-1)
-## 5  M_at_Length                   numeric matrix dim = c(n.lengths, 3)
-## 6        Asize                    numeric matrix dim = c(nsim, narea)
-## 7       Karray          numeric matrix dim = c(nsim, nyears+proyears)
-## 8    Linfarray          numeric matrix dim = c(nsim, nyears+proyears)
-## 9       Marray          numeric matrix dim = c(nsim, nyears+proyears)
-## 10       Krand          numeric matrix dim = c(nsim, nyears+proyears)
-## 11    Linfrand          numeric matrix dim = c(nsim, nyears+proyears)
-## 12       Mrand          numeric matrix dim = c(nsim, nyears+proyears)
-## 13        ageM          numeric matrix dim = c(nsim, nyears+proyears)
-## 14       age95          numeric matrix dim = c(nsim, nyears+proyears)
-## 15  M_ageArray   numeric array dim = c(nsim, maxage, nyears+proyears)
-## 16     Mat_age   numeric array dim = c(nsim, maxage, nyears+proyears)
-## 17      LatASD   numeric array dim = c(nsim, maxage, nyears+proyears)
-## 18      Wt_age   numeric array dim = c(nsim, maxage, nyears+proyears)
-## 19     Len_age   numeric array dim = c(nsim, maxage, nyears+proyears)
-## 20         mov      numeric array dim = c(nsim, maxage, narea, narea)
-## 21        Find                   numeric matrix dim = c(nsim, nyears)
-## 22     dFfinal                             numeric vector length nsim
-## 23           V   numeric array dim = c(nsim, maxage, nyears+proyears)
-## 24        retA   numeric array dim = c(nsim, maxage, nyears+proyears)
-## 25        retL numeric array dim = c(nsim, nCALbins, nyears+proyears)
-## 26    lenMbias                             numeric vector length nsim
-## 27       Mbias                             numeric vector length nsim
-## 28       Kbias                             numeric vector length nsim
-## 29      t0bias                             numeric vector length nsim
-## 30    Linfbias                             numeric vector length nsim
-## 31     LFCbias                             numeric vector length nsim
-## 32    FMSYbias                             numeric vector length nsim
-## 33  FMSY_Mbias                             numeric vector length nsim
-## 34 BMSY_B0bias                             numeric vector length nsim
-## 35    Irefbias                             numeric vector length nsim
-## 36    Brefbias                             numeric vector length nsim
-## 37    Crefbias                             numeric vector length nsim
-## 38       Dbias                             numeric vector length nsim
-## 39       hbias                             numeric vector length nsim</code></pre>
-<p>We can see that there are 39 valid internal cpars. The internal cpars are parameters that are derived from one or more of the <code>OM</code> slots.</p>
+## 1        Cbias                             numeric vector length nsim
+## 2     CAL_bins                                        numeric vector 
+## 3  CAL_binsmid                      numeric vector length(CAL_bins)-1
+## 4          L95                             numeric vector length nsim
+## 5       Perr_y numeric matrix dim = c(nsim, maxage+proyears+nyears-1)
+## 6  M_at_Length                   numeric matrix dim = c(n.lengths, 3)
+## 7        Asize                    numeric matrix dim = c(nsim, narea)
+## 8       Karray          numeric matrix dim = c(nsim, nyears+proyears)
+## 9    Linfarray          numeric matrix dim = c(nsim, nyears+proyears)
+## 10      Marray          numeric matrix dim = c(nsim, nyears+proyears)
+## 11       Krand          numeric matrix dim = c(nsim, nyears+proyears)
+## 12    Linfrand          numeric matrix dim = c(nsim, nyears+proyears)
+## 13       Mrand          numeric matrix dim = c(nsim, nyears+proyears)
+## 14        ageM          numeric matrix dim = c(nsim, nyears+proyears)
+## 15       age95          numeric matrix dim = c(nsim, nyears+proyears)
+## 16  M_ageArray   numeric array dim = c(nsim, maxage, nyears+proyears)
+## 17     Mat_age   numeric array dim = c(nsim, maxage, nyears+proyears)
+## 18      LatASD   numeric array dim = c(nsim, maxage, nyears+proyears)
+## 19      Wt_age   numeric array dim = c(nsim, maxage, nyears+proyears)
+## 20     Len_age   numeric array dim = c(nsim, maxage, nyears+proyears)
+## 21         mov      numeric array dim = c(nsim, maxage, narea, narea)
+## 22        Find                   numeric matrix dim = c(nsim, nyears)
+## 23     dFfinal                             numeric vector length nsim
+## 24           V   numeric array dim = c(nsim, maxage, nyears+proyears)
+## 25        retA   numeric array dim = c(nsim, maxage, nyears+proyears)
+## 26        retL numeric array dim = c(nsim, nCALbins, nyears+proyears)
+## 27    lenMbias                             numeric vector length nsim
+## 28       Mbias                             numeric vector length nsim
+## 29       Kbias                             numeric vector length nsim
+## 30      t0bias                             numeric vector length nsim
+## 31    Linfbias                             numeric vector length nsim
+## 32     LFCbias                             numeric vector length nsim
+## 33    FMSYbias                             numeric vector length nsim
+## 34  FMSY_Mbias                             numeric vector length nsim
+## 35 BMSY_B0bias                             numeric vector length nsim
+## 36    Irefbias                             numeric vector length nsim
+## 37    Brefbias                             numeric vector length nsim
+## 38    Crefbias                             numeric vector length nsim
+## 39       Dbias                             numeric vector length nsim
+## 40       hbias                             numeric vector length nsim
+## 41        hsim                             numeric vector length nsim</code></pre>
+<p>We can see that there are 41 valid internal cpars. The internal cpars are parameters that are derived from one or more of the <code>OM</code> slots.</p>
 <p>For example, <code>M_ageArray</code> is an internal array that describes the natural mortality rate at age for each simulation and year. Typically, this array is derived from the <code>M</code>, <code>M2</code>, <code>Mexp</code>, <code>Mgrad</code> and <code>Msd</code> slots in the <code>Stock</code> object. Using the <code>cpars</code> feature we can override these values in the <code>OM</code> and provide our own values for <em>M</em> for each simulation, age, and year.</p>
 <p>Information on the <code>M_ageArray</code> variable in cpars can be found in the output of the <code>validcpars</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">val_int[<span class="dv">15</span>,]</code></pre></div>
-<pre><code>##          Var.                                                 Dim.
-## 15 M_ageArray numeric array dim = c(nsim, maxage, nyears+proyears)
-##                                                     Desc.     Type
-## 15 M by simulation, age and year. No variability is added internal</code></pre>
+<pre><code>##     Var.                                          Dim.
+## 15 age95 numeric matrix dim = c(nsim, nyears+proyears)
+##                                         Desc.     Type
+## 15 Age at 95% maturity by simulation and year internal</code></pre>
 <p>To generate our own values of the M-at-age array we would populate <code>OM@cpars$M_ageArray</code> with an array with dimensions <code>OM@nsim</code>, <code>OM@maxage</code>, <code>OM@nyears+OM@proyears</code>.</p>
 <p>The <code>cpars</code> feature is very powerful but also somewhat complicated, especially if you are using internal custom parameters. For example, by default DLMtool uses the <code>OM@L50_95</code> slot (the increment between length at 50% maturity (<code>OM@L50</code>) and length at 95% maturity (<code>L95</code>)) to calculate the internal parameter <code>L95</code>. This is neccessary to ensure that <code>L95</code> is always greater than <code>L50</code>. Using internal parameters in <code>cpars</code> it is possible to pass values to <code>L95</code> directly, however now it is up to you to make sure that the <code>L95</code> values are greater than the corresponding <code>L50</code> values, otherwise you end up with a species where fraction mature decreases with age/size!</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span>testOM 

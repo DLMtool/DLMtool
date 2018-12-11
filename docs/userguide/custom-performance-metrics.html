@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.2)</title>
+  <title>Data-Limited Methods Toolkit (DLMtool 5.2.2)</title>
   <meta name="description" content="User guide for the DLMtool R package">
   <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
+  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
+  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-07-09">
+<meta name="date" content="2018-08-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -265,7 +265,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="25.3.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#discard-mortality"><i class="fa fa-check"></i><b>25.3.3</b> Discard Mortality</a></li>
 <li class="chapter" data-level="25.3.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#general-discarding"><i class="fa fa-check"></i><b>25.3.4</b> General Discarding</a></li>
 </ul></li>
-<li class="chapter" data-level="25.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#variable-management-interval"><i class="fa fa-check"></i><b>25.4</b> Variable Management Interval</a></li>
 </ul></li>
 <li class="chapter" data-level="26" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html"><i class="fa fa-check"></i><b>26</b> Developing Custom Management Procedures</a><ul>
 <li class="chapter" data-level="26.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#the-anatomy-of-an-mp"><i class="fa fa-check"></i><b>26.1</b> The Anatomy of an MP</a></li>
@@ -346,7 +345,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2.2)</a>
           </h1>
         </div>
 
@@ -358,7 +357,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1><span class="header-section-number">Chapter 29</span> Custom Performance Metrics</h1>
 <p><code>PM</code> methods were introduced in the <a href="performance-metrics.html#performance-metrics-methods">Performance Metrics Methods</a> chapter. DLMtool includes several built-in <code>PM</code> methods:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">avail</span>(<span class="st">&quot;PM&quot;</span>)</code></pre></div>
-<pre><code>## [1] &quot;AAVY&quot;  &quot;LTY&quot;   &quot;P10&quot;   &quot;P100&quot;  &quot;P50&quot;   &quot;PNOF&quot;  &quot;STY&quot;   &quot;Yield&quot;</code></pre>
+<pre><code>##  [1] &quot;AAVY&quot;  &quot;LTY&quot;   &quot;P10&quot;   &quot;P100&quot;  &quot;P50&quot;   &quot;PNOF&quot;  &quot;STY&quot;   &quot;Yield&quot;
+##  [9] &quot;MeanB&quot; &quot;MeanF&quot;</code></pre>
 <p>We saw in <a href="performance-metrics.html#customizing-the-pm-functions">Customizing the <code>PM</code> Functions</a> that it is straightforward to modify the years that the performance statistics are calculated over using the <code>Yrs</code> argument, and the reference level using the <code>Ref</code> argument. In this section we describe the <code>PM</code> functions in more detail for advanced users who wish to develop their own <code>PM</code> methods.</p>
 <p>We will demonstrate this using the <code>P50</code> performance metric function as an example.</p>
 <div id="necessity-of-complexity" class="section level2">
@@ -412,12 +412,12 @@ p_noverfish</code></pre></div>
 ##     }
 ##     PMobj@Ref &lt;- Ref
 ##     PMobj@Stat &lt;- MSEobj@B_BMSY[, , Yrs[1]:Yrs[2]]
-##     PMobj@Prob &lt;- calcProb(PMobj@Stat &gt; PMobj@Ref)
+##     PMobj@Prob &lt;- calcProb(PMobj@Stat &gt; PMobj@Ref, MSEobj)
 ##     PMobj@Mean &lt;- calcMean(PMobj@Prob)
 ##     PMobj@MPs &lt;- MSEobj@MPs
 ##     PMobj
 ## }
-## &lt;bytecode: 0x00000000211ba708&gt;
+## &lt;bytecode: 0x0000000005418ef8&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;PM&quot;</code></pre>
@@ -452,7 +452,7 @@ PMobj<span class="op">@</span>Name &lt;-<span class="st"> &quot;Spawning Biomass
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">PMobj<span class="op">@</span>Stat &lt;-<span class="st"> </span>MSEobj<span class="op">@</span>B_BMSY[, , Yrs[<span class="dv">1</span>]<span class="op">:</span>Yrs[<span class="dv">2</span>]]</code></pre></div>
 <p>Note that we are including all simulations and MPs and indexing the years specified in <code>Yrs</code>.</p>
 <p>Next we use the <code>calcProb</code> function to calculate the mean of <code>PMobj@Stat &gt; PMobj@Ref</code> over the years dimension. This results in a matrix with dimensions <code>MSE@nsim, MSE@nMPs</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">PMobj<span class="op">@</span>Prob &lt;-<span class="st"> </span><span class="kw">calcProb</span>(PMobj<span class="op">@</span>Stat <span class="op">&gt;</span><span class="st"> </span>PMobj<span class="op">@</span>Ref)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">PMobj<span class="op">@</span>Prob &lt;-<span class="st"> </span><span class="kw">calcProb</span>(PMobj<span class="op">@</span>Stat <span class="op">&gt;</span><span class="st"> </span>PMobj<span class="op">@</span>Ref, MSEobj)</code></pre></div>
 <p>Note that in order to calculate a probability the argument to the <code>calcProb</code> function must be a logical array, which is achieved using the <code>Ref</code> slot.</p>
 <p>Also note that in this case <code>PMobj@Stat &gt; PMobj@Ref</code> is equivalent to <code>MSEobj@B_BMSY[, , Yrs[1]:Yrs[2]] &gt; 0.5</code>. The <code>PM</code> functions have been designed this way so that in most cases the <code>PMobj@Prob &lt;- calcProb(PMobj@Stat &gt; PMobj@Ref)</code> line is identical in all <code>PM</code> functions and does not need to be modified. The exception to this is if we don’t want to calculate a probability but want the actual mean values of <code>PMobj@Stat</code>, demonstrated in the example below.</p>
 <p>In the next line we calculate the mean of <code>PMobj@Prob</code> over simulations using the <code>calcMean</code> function:</p>
@@ -476,7 +476,7 @@ PMobj<span class="op">@</span>Name &lt;-<span class="st"> &quot;Spawning Biomass
     
     PMobj<span class="op">@</span>Ref &lt;-<span class="st"> </span>Ref
     PMobj<span class="op">@</span>Stat &lt;-<span class="st"> </span>MSEobj<span class="op">@</span>B_BMSY[, , Yrs[<span class="dv">1</span>]<span class="op">:</span>Yrs[<span class="dv">2</span>]]
-    PMobj<span class="op">@</span>Prob &lt;-<span class="st"> </span><span class="kw">calcProb</span>(PMobj<span class="op">@</span>Stat)
+    PMobj<span class="op">@</span>Prob &lt;-<span class="st"> </span><span class="kw">calcProb</span>(PMobj<span class="op">@</span>Stat, MSEobj)
     PMobj<span class="op">@</span>Mean &lt;-<span class="st"> </span><span class="kw">calcMean</span>(PMobj<span class="op">@</span>Prob)
     PMobj<span class="op">@</span>MPs &lt;-<span class="st"> </span>MSEobj<span class="op">@</span>MPs
     PMobj
@@ -490,7 +490,7 @@ PMobj<span class="op">@</span>Name &lt;-<span class="st"> &quot;Spawning Biomass
     
     PMobj<span class="op">@</span>Ref &lt;-<span class="st"> </span>Ref
     PMobj<span class="op">@</span>Stat &lt;-<span class="st"> </span>MSEobj<span class="op">@</span>F_FMSY[, , Yrs[<span class="dv">1</span>]<span class="op">:</span>Yrs[<span class="dv">2</span>]]
-    PMobj<span class="op">@</span>Prob &lt;-<span class="st"> </span><span class="kw">calcProb</span>(PMobj<span class="op">@</span>Stat)
+    PMobj<span class="op">@</span>Prob &lt;-<span class="st"> </span><span class="kw">calcProb</span>(PMobj<span class="op">@</span>Stat, MSEobj)
     PMobj<span class="op">@</span>Mean &lt;-<span class="st"> </span><span class="kw">calcMean</span>(PMobj<span class="op">@</span>Prob)
     PMobj<span class="op">@</span>MPs &lt;-<span class="st"> </span>MSEobj<span class="op">@</span>MPs
     PMobj

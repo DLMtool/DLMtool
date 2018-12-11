@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.2)</title>
+  <title>Data-Limited Methods Toolkit (DLMtool 5.2.2)</title>
   <meta name="description" content="User guide for the DLMtool R package">
   <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
+  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2)" />
+  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-07-09">
+<meta name="date" content="2018-08-15">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -265,7 +265,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="25.3.3" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#discard-mortality"><i class="fa fa-check"></i><b>25.3.3</b> Discard Mortality</a></li>
 <li class="chapter" data-level="25.3.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#general-discarding"><i class="fa fa-check"></i><b>25.3.4</b> General Discarding</a></li>
 </ul></li>
-<li class="chapter" data-level="25.4" data-path="customizing-the-operating-model.html"><a href="customizing-the-operating-model.html#variable-management-interval"><i class="fa fa-check"></i><b>25.4</b> Variable Management Interval</a></li>
 </ul></li>
 <li class="chapter" data-level="26" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html"><i class="fa fa-check"></i><b>26</b> Developing Custom Management Procedures</a><ul>
 <li class="chapter" data-level="26.1" data-path="developing-custom-management-procedures.html"><a href="developing-custom-management-procedures.html#the-anatomy-of-an-mp"><i class="fa fa-check"></i><b>26.1</b> The Anatomy of an MP</a></li>
@@ -346,7 +345,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2.2)</a>
           </h1>
         </div>
 
@@ -372,7 +371,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <!-- MyFleet@EffLower <- c(0, 0.15, 0.15, 0.75, 0.85, 0.65) -->
 <!-- MyFleet@EffUpper <- c(0, 0.3, 0.3, 1, 1, 0.8) -->
 <!-- ``` -->
-<p><img src="images/EffortTraj.png" /><!-- --></p>
+<p><img src="images/EffortTraj.png" width="482" /></p>
 <p>If we take a look at the <code>MyFleet</code> object, we will see that three slots <code>EffYears</code>, <code>EffLower</code> and <code>EffUpper</code> have been replaced with the new values.</p>
 <p>Note that the trajectory that is mapped out here represents the bounds on the relative fishing mortality for each year. In this example, the fishing mortality rate was highest (on average) between 1980 and 2000, and is currently around 65 - 80% of this maximum level.</p>
 </div>
@@ -382,14 +381,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Like the <code>ChooseEffort</code> function described above, the <code>ChooseSelection</code> function takes a Fleet object as it’s first argument, and returns an updated Fleet object.</p>
 <p>Suppose the selectivity pattern changed in 1970 and then again in 1990, perhaps because of changes in fishing regulations. These change points in the selectivity curve can be mapped by the following command:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MyFleet &lt;-<span class="st"> </span><span class="kw">ChooseSelect</span>(MyFleet, <span class="dt">FstYr=</span><span class="dv">1950</span>, <span class="dt">SelYears=</span><span class="kw">c</span>(<span class="dv">1970</span>, <span class="dv">1990</span>))</code></pre></div>
-<p><img src="images/Select.png" /><!-- --></p>
+<p><img src="images/Select.png" width="482" /></p>
 <p>Note that the first year (<code>FstYr</code>) must also be specified, and the selectivity pattern is mapped for this year as well.</p>
 <p>When <code>ChooseSelect</code> is used, the <code>L5Lower</code>, <code>L5Upper</code>, <code>LFSLower</code>, <code>LFSUpper</code>, <code>VmaxLower</code>, <code>VmaxUpper</code>, and <code>SelYears</code> slots are updated in the <em>Fleet</em> object. If these slots are populated, the values in the <code>L5</code>, <code>LFS</code>, and <code>Vmaxlen</code> slots are ignored in the operating model.</p>
 </div>
 <div id="including-existing-mpas" class="section level3">
 <h3><span class="header-section-number">25.1.3</span> Including Existing MPAs</h3>
 <p>By default the MSE assumes that there are no spatial closures in the historical period. Existing spatial closures can be accounted for with the <code>MPA</code> slot in the <code>Fleet</code> or <code>OM</code> object.</p>
-<p>To account for historical MPAs, the <code>MPA</code> slot should be a matrix with each row should containing a year index (e.g 10 for 10th historical year) followed by fraction of area closed to fishing for each area. i.e. each row represents a change and the number of columns is <code>nareas</code> (default is 2) + 1.</p>
+<p>To account for historical MPAs, the <code>MPA</code> slot should be a matrix with each row should containing a year index (e.g 10 for 10th historical year) followed by fraction of area open to fishing for each area. i.e. each row represents a change and the number of columns is <code>nareas</code> (default is 2) + 1.</p>
 <p>The spatial closures are assumed to remain in place for the future projections unless changed by a MP. Default (if left blank) is all areas are open to fishing in historical period.</p>
 <p>For example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_Fleet, Perfect_Info, Perfect_Imp)
@@ -430,7 +429,7 @@ OM<span class="op">@</span>MPA &lt;-<span class="st"> </span><span class="kw">ma
 <p>Usually the <code>M</code> slot contains two values, a lower and upper bound for the constant <em>M</em>-at-age. Users who wish for more control of <em>M</em>-at-age can use the <code>M</code> and <code>M2</code> slots in the <code>Stock</code> object to directly input values for <em>M</em>-at-age (<code>M</code> for lower bound and <code>M2</code> for upper bound). <code>maxage</code> values of <em>M</em> must be supplied for slots <code>M</code> and <code>M2</code>. One way to do this is to use the <code>ChooseM</code> function to map out the bounds for age-specific <em>M</em>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Blue_shark, Generic_FlatE, Generic_Obs, Perfect_Imp)
 OM &lt;-<span class="st"> </span><span class="kw">ChooseM</span>(OM)</code></pre></div>
-<p><img src="images/chooseM_age.png" /><!-- --></p>
+<p><img src="images/chooseM_age.png" width="390" /></p>
 <p>Click <a href="images/chooseM_age.png">here</a> for a larger version of the image.</p>
 <p>Alternatively, users can input the values directly into the <code>M</code> and <code>M2</code> slots (must be length <code>maxage</code>):</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_FlatE, Generic_Obs, Perfect_Imp)
@@ -445,7 +444,7 @@ OM<span class="op">@</span>M2 &lt;-<span class="st"> </span><span class="kw">c</
 <p>There is also the option to map length-specific <em>M</em> using the plotting tool:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_FlatE, Generic_Obs, Perfect_Imp)
 OM &lt;-<span class="st"> </span><span class="kw">ChooseM</span>(OM, <span class="st">&quot;length&quot;</span>)</code></pre></div>
-<p><img src="images/chooseM_length.png" /><!-- --></p>
+<p><img src="images/chooseM_length.png" width="390" /></p>
 <p>Click <a href="images/chooseM_length.png">here</a> for a larger version of the image.</p>
 <p>This option uses the <a href="custom-parameters.html#custom-parameters">Custom Parameters</a> feature of DLMtool:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(OM<span class="op">@</span>cpars)</code></pre></div>
@@ -463,6 +462,8 @@ OM &lt;-<span class="st"> </span><span class="kw">ChooseM</span>(OM, <span class
 </div>
 <div id="selection-retention-and-discard-mortality" class="section level2">
 <h2><span class="header-section-number">25.3</span> Selection, Retention and Discard Mortality</h2>
+<p>Note that if <code>OM@isRel == FALSE</code> the selectivity and retention parameters are either in absolute units, the same units as <code>OM@Linf</code> and <code>OM@L50</code>.</p>
+<p>If <code>OM@isRel == TRUE</code> the selectivity and retention parameters are assumed to be multiples of the length at maturity (<code>OM@L50</code>).</p>
 <div id="fishery-selection-curve" class="section level3">
 <h3><span class="header-section-number">25.3.1</span> Fishery Selection Curve</h3>
 <p>The fishery selection or vulnerability to the fishing gear in DLMtool is modelled using a double-normal curve and the parameters in the <code>Fleet</code> object: <code>L5</code> - smallest length at 5% selection, <code>LFS</code> - smallest length at full selection, and <code>Vmaxlen</code> the vulnerability of the largest length class (defined as expected length at maximum age <code>Stock@maxage</code>).</p>
@@ -478,7 +479,7 @@ OM &lt;-<span class="st"> </span><span class="kw">ChooseM</span>(OM, <span class
 <p>In some cases the fishing gear selects fish (often small sizes) that are not retained in the catch and are discarded at sea. The fishery-retention curve can be specified following the same approach as selectivity, using the following slots in the <code>Fleet</code> or <code>OM</code> object:</p>
 <ul>
 <li><code>LR5</code> - the smallest length at 5% retention</li>
-<li><code>LFR</code> - the smallest length at full selection</li>
+<li><code>LFR</code> - the smallest length at full retention</li>
 <li><code>Rmaxlen</code> - the retention of the largest size class (defined as expected length at maximum age <code>Stock@maxage</code>).</li>
 </ul>
 <p>The default values for these parameters are:</p>
@@ -520,11 +521,8 @@ OM<span class="op">@</span>LFR &lt;-<span class="st"> </span><span class="kw">c<
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plotSelect</span>(OM, <span class="dt">sim=</span><span class="dv">1</span>)</code></pre></div>
 <pre><code>## Optimizing for user-specified movement</code></pre>
 <p><img src="userguide_files/figure-html/unnamed-chunk-155-1.png" width="672" /></p>
+<!-- ## Variable Management Interval -->
 </div>
-</div>
-<div id="variable-management-interval" class="section level2">
-<h2><span class="header-section-number">25.4</span> Variable Management Interval</h2>
-<p>TO DO</p>
 </div>
 </div>
             </section>
