@@ -1078,13 +1078,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     V_P <- MPCalcs$V_P  # vulnerable-at-age
     SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
     
-    Fsimyear[,y] <- sapply(1:nsim, function(sim)
-      CalculateF(CB_P[sim,,y,], M_ageArray[sim,,y], V_P[sim,,y], Biomass_P[sim,,y,], maxF=maxF, byage=FALSE))
-    
-    
-    ### DEBUG ####
-    # why isn't F = FMSY when MP = FMSYref
-    ##############
+    # Fsimyear[,y] <- sapply(1:nsim, function(sim)
+      # CalculateF(CB_P[sim,,y,], M_ageArray[sim,,y], V_P[sim,,y], Biomass_P[sim,,y,], maxF=maxF, byage=FALSE))
     
     upyrs <- 1 + (0:(floor(proyears/interval[mm]) - 1)) * interval[mm]  # the years in which there are updates (every three years)
     if(!silent) {
@@ -1376,15 +1371,15 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       }  # not an update year
       checkNA[y] <- sum(is.na(TACused))
       
-      Fsimyear[,y] <- sapply(1:nsim, function(sim)
-        CalculateF(CB_P[sim,,y,], M_ageArray[sim,,y], V_P[sim,,y], Biomass_P[sim,,y,], maxF=maxF, byage=FALSE))
+      # Fsimyear[,y] <- sapply(1:nsim, function(sim)
+        # CalculateF(CB_P[sim,,y,], M_ageArray[sim,,y], V_P[sim,,y], Biomass_P[sim,,y,], maxF=maxF, byage=FALSE))
       
     }  # end of year
     
     B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY_P[,mm,]  # SSB relative to SSBMSY
  
-    FMa[,mm,] <- Fsimyear
-    # FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum, na.rm=TRUE)/apply(VBiomass_P+CB_P, c(1, 3), sum, na.rm=TRUE))		
+    # FMa[,mm,] <- Fsimyear
+    FMa[, mm, ] <- -log(1 - apply(CB_P, c(1, 3), sum, na.rm=TRUE)/apply(VBiomass_P+CB_P, c(1, 3), sum, na.rm=TRUE))		
     F_FMSYa[, mm, ] <- FMa[, mm, ]/FMSY_P[,mm,]
     
     Ba[, mm, ] <- apply(Biomass_P, c(1, 3), sum, na.rm=TRUE) # biomass 
