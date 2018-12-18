@@ -253,7 +253,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   StockPars <- SampleStockPars(OM, nsim, nyears, proyears, SampCpars, msg=!silent)
   # Assign Stock pars to function environment
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
-
+  
   # --- Sample Fleet Parameters ----
   FleetPars <- SampleFleetPars(SubOM(OM, "Fleet"), Stock=StockPars, nsim, nyears, proyears, 
                                cpars=SampCpars)
@@ -577,7 +577,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   if (checks) {
     Btemp <- apply(SSB, c(1,3), sum)
     x <- Btemp[,nyears]/SSBMSY
-    y <-D/SSBMSY_SSB0
+    y <- D/SSBMSY_SSB0
     plot(x,y, xlim=c(0,max(x)), ylim=c(0,max(y)), xlab="SSB/SSBMSY", ylab="D/SSBMSY_SSB0")
     lines(c(-10,10),c(-10,10))
   }
@@ -627,11 +627,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   ## CHECK abundance ####
   # Calculate vulnerable and spawning biomass abundance --
-  if (nsim > 1) A <- apply(VBiomass[, , nyears, ], 1, sum) # + apply(CB[, , nyears, ], 1, sum) # Abundance before fishing
-  if (nsim == 1) A <- sum(VBiomass[, , nyears, ]) # +  sum(CB[,,nyears,]) # Abundance before fishing
-  if (nsim > 1) Asp <- apply(SSB[, , nyears, ], 1, sum)  # SSB Abundance
-  if (nsim == 1) Asp <- sum(SSB[, , nyears, ])  # SSB Abundance  
-  
+  Mmat <- array(M_ageArray[,,nyears] * 0.415, dim=c(nsim, maxage, nareas)) # account for M during year - ie Abundance approx mid-year
+  if (nsim > 1) A <- apply(VBiomass[, , nyears, ]* exp(-Mmat), 1, sum) #
+  if (nsim == 1) A <- sum(VBiomass[, , nyears, ]* exp(-Mmat)) # 
+  if (nsim > 1) Asp <- apply(SSB[, , nyears, ]* exp(-Mmat), 1, sum)  # 
+  if (nsim == 1) Asp <- sum(SSB[, , nyears, ]* exp(-Mmat))  #  
+
   OFLreal <- A * FMSY  # the true simulated Over Fishing Limit
   
   # --- Simulate Observed Data ----
@@ -971,6 +972,59 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     SAY <- SYA[, c(1, 3, 2)]
     S <- SYA[, 1]
     
+    # -- apply MP to last historical year data ----
+    runMP <- applyMP(MSElist[[mm]], MPs = MPs[mm], reps = reps, silent=TRUE)  # Apply MP
+    
+    MPRecs <- runMP[[1]][[1]] # MP recommendations
+    Data_p <- runMP[[2]] # Data object object with saved info from MP 
+    Data_p@TAC <- MPRecs$TAC
+    
+    # calculate pstar quantile of TAC recommendation dist 
+    y <- 1
+    TACused <- apply(Data_p@TAC, 2, quantile, p = pstar, na.rm = T) 
+    checkNA[y] <- sum(is.na(TACused))
+    LastEi <- rep(1,nsim) # effort in last historical year = 1 
+    LastSpatial <- array(MPA[nyears,], dim=c(nareas, nsim)) # 
+    LastAllocat <- rep(1, nsim) # default assumption of reallocation of effort to open areas
+    LastCatch <- apply(CB[,,nyears,], 1, sum)
+    
+
+    # Apply MP to stock & calculate F, Z, & selectivity 
+    CurrentB <- Biomass[,,nyears,] # total biomass at beginning of year 
+    MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim, CurrentB,
+                              LastEi, LastSpatial, LastAllocat, LastCatch,
+                              TACused, maxF,
+                              LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
+                              L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
+                              Fdisc_P, DR_P,
+                              M_ageArray, FM_P, FM_Pret, Z_P, CB_P, CB_Pret,
+                              TAC_f, E_f, SizeLim_f,
+                              FinF, Spat_targ,
+                              CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
+                              qs, qvar, qinc, checks)
+    
+    
+    quantile(MPCalcs)
+    
+    FSMY is super high!!
+    
+    
+    TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
+    LastSpatial <- MPCalcs$Si
+    LastAllocat <- MPCalcs$Ai
+    LastEi <- MPCalcs$Ei # adjustment to effort
+    LastCatch <- MPCalcs$TACrec
+    
+    Effort[, mm, y] <- MPCalcs$Effort  
+    CB_P <- MPCalcs$CB_P # removals
+    CB_Pret <- MPCalcs$CB_Pret # retained catch 
+    FM_P <- MPCalcs$FM_P # fishing mortality
+    FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
+    Z_P <- MPCalcs$Z_P # total mortality
+    
+    
+    
+    
     # -- First projection year ----
     y <- 1
    
@@ -988,47 +1042,14 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     SSB_P[SAYR] <- SSN_P[SAYR] * Wt_age[SAY1]
     FML <- apply(FM[, , nyears, ], c(1, 3), max)
     
-    # -- apply MP in initial projection year ----
-    # Combined MP ----
-    runMP <- applyMP(MSElist[[mm]], MPs = MPs[mm], reps = reps, silent=TRUE)  # Apply MP
+   
     
-    MPRecs <- runMP[[1]][[1]] # MP recommendations
-    Data_p <- runMP[[2]] # Data object object with saved info from MP 
-    Data_p@TAC <- MPRecs$TAC
+   
     
-    # calculate pstar quantile of TAC recommendation dist 
-    TACused <- apply(Data_p@TAC, 2, quantile, p = pstar, na.rm = T) 
-    checkNA[y] <- sum(is.na(TACused))
-    LastEi <- rep(1,nsim) # no effort adjustment
-    LastSpatial <- array(MPA[nyears,], dim=c(nareas, nsim)) # 
-    LastAllocat <- rep(1, nsim) # default assumption of reallocation of effort to open areas
-    LastCatch <- apply(CB[,,nyears,], 1, sum)
+
 
     ###--- up-to here - stop() ######
-    MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim,
-                              LastEi, LastSpatial, LastAllocat, LastCatch,
-                              TACused, maxF,
-                              LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
-                              L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
-                              Fdisc_P, DR_P,
-                              M_ageArray, FM_P, FM_Pret, Z_P, CB_P, CB_Pret,
-                              TAC_f, E_f, SizeLim_f,
-                              VBiomass_P, Biomass_P, FinF, Spat_targ,
-                              CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
-                              qs, qvar, qinc)
-  
-    TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
-    LastSpatial <- MPCalcs$Si
-    LastAllocat <- MPCalcs$Ai
-    LastEi <- MPCalcs$Ei # adjustment to effort
-    LastCatch <- MPCalcs$TACrec
-    
-    Effort[, mm, y] <- MPCalcs$Effort  
-    CB_P <- MPCalcs$CB_P # removals
-    CB_Pret <- MPCalcs$CB_Pret # retained catch 
-    FM_P <- MPCalcs$FM_P # fishing mortality
-    FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
-    Z_P <- MPCalcs$Z_P # total mortality
+   
     
     retA_P <- MPCalcs$retA_P # retained-at-age
     

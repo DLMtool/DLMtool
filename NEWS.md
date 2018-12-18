@@ -1,6 +1,7 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
 ## DLMtool 5.2.999 - development
+
 - fix issue with importing Data objects with larger number of length bins
 - fix issue where length-at-age was negative with high t0
 - allow custom area size for nareas > 2 in cpars

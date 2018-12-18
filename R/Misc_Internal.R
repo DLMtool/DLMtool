@@ -447,6 +447,97 @@ userguide_link <- function(url, ref=NULL) {
 
   
   
+#' Simulate Catch-at-Age Data
+#'
+#' CAA generated with a multinomial observation model from retained catch-at-age
+#' data
+#'
+#' @param nsim Number of simulations
+#' @param nyears Number of years 
+#' @param maxage Maximum age
+#' @param Cret Retained Catch at age in numbers - array(sim, years, maxage)
+#' @param CAA_ESS CAA effective sample size 
+#' @param CAA_nsamp CAA sample size
+#'
+#' @return CAA array 
+simCAA <- function(nsim, nyears, maxage, Cret, CAA_ESS, CAA_nsamp) {
+  # generate CAA from retained catch-at-age 
+  CAA <- array(NA, dim = c(nsim, nyears, maxage))  # Catch  at age array
+  
+  # a multinomial observation model for catch-at-age data
+  for (i in 1:nsim) {
+    for (j in 1:nyears) {
+      if (!sum(Cret[i, j,])) {
+        CAA[i, j, ] <- 0 
+      } else {
+        CAA[i, j, ] <- ceiling(-0.5 + rmultinom(1, CAA_ESS[i], Cret[i, j,]) * CAA_nsamp[i]/CAA_ESS[i])   
+      }
+    }
+  }
+  CAA
+}
+
+#' Simulate Catch-at-Length Data
+#' 
+#' Simulate CAL and calculate length-at-first capture (LFC),
+#' mean length (ML), modal length (Lc), and mean length over modal length (Lbar)  
+#' 
+#' @param nsim Number of simulations
+#' @param nyears Number of years 
+#' @param maxage Maximum age
+#' @param Cret Retained Catch in numbers - array(nsim, nyears, maxage)
+#' @param CAL_ESS CAA effective sample size 
+#' @param CAL_nsamp CAA sample size
+#' @param nCALbins number of CAL bins
+#' @param CAL_binsmid mid-points of CAL bins
+#' @param N Numbers by sim, age, year, region
+#' @param retA retained-at-age curve - sim, maxage, nyears+proyears
+#'
+#' @return named list with CAL array and LFC, ML, & Lc vectors
+simCAL <- function(nsim, nyears, maxage, Cret, CAL_ESS, CAL_nsamp, nCALbins, CAL_binsmid,  N, retA, retL, Linfarray, Karray, t0array, LenCV) {
+  # a multinomial observation model for catch-at-length data
+  # assumed normally-distributed length-at-age truncated at 2 standard deviations from the mean
+  CAL <- array(NA, dim=c(nsim,  nyears, nCALbins))
+  vn <- apply(N[,,,], c(1,2,3), sum) * retA[,,1:nyears] # numbers at age in population that would be retained
+  vn <- aperm(vn, c(1,3, 2))
+  
+  # Generate size comp data with variability in age
+  tempSize <- lapply(1:nsim, genSizeCompWrap, vn, CAL_binsmid, retL, CAL_ESS, CAL_nsamp,
+                     Linfarray, Karray, t0array, LenCV, truncSD=2)
+  CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), dim=c(nyears, length(CAL_binsmid), nsim)), c(3,1,2))
+  
+  # calculate LFC - length-at-first capture - 5th percentile
+  LFC <- rep(NA, nsim)
+  LFC <- unlist(lapply(tempSize, function(x) getfifth(x[nyears, ], CAL_binsmid)))
+  LFC[is.na(LFC)] <- 1
+  LFC[LFC<1] <- 1
+  
+  # Mean Length 
+  temp <- CAL * rep(CAL_binsmid, each = nsim * nyears)
+  ML <- apply(temp, 1:2, sum)/apply(CAL, 1:2, sum)
+  
+  # Lc - modal length 
+  Lc <- array(CAL_binsmid[apply(CAL, 1:2, which.max)], dim = c(nsim, nyears))
+  
+  # Lbar - mean length above Lc
+  nuCAL <- CAL
+  for (i in 1:nsim) for (j in 1:nyears) nuCAL[i, j, 1:match(max(1, Lc[i, j]), CAL_binsmid, nomatch=1)] <- NA
+  temp <- nuCAL * rep(CAL_binsmid, each = nsim * nyears)
+  Lbar <- apply(temp, 1:2, sum, na.rm=TRUE)/apply(nuCAL, 1:2, sum, na.rm=TRUE)
+  
+  out <- list()
+  out$CAL <- CAL
+  out$LFC <- LFC
+  out$ML <- ML 
+  out$Lc <- Lc
+  out$Lbar <- Lbar
+  
+  out
+}
+
+
+
+
 # 
 # makeSizeCompW <- function(i, maxage, Linfarray, Karray, t0array, LenCV,
 #                           CAL_bins, CAL_binsmid, retL, CAL_ESS, CAL_nsamp, 

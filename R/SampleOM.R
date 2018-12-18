@@ -500,7 +500,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   # Check if M-at-age is constant that Maxage makes sense
   if (all(M_ageArray[1,,1] == mean(M_ageArray[1,,1]))) { # constant M at age
     calcMax <- ceiling(-log(0.01)/(min(M)))        # Age at which 1% of cohort survives
-    if (maxage < 0.8*calcMax && msg) {
+    if (maxage < 0.95*calcMax && msg) {
       message("Note: Maximum age (", maxage, ") is lower than assuming 1% of cohort survives to maximum age (", calcMax, ")")
     }  
   }
@@ -522,7 +522,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     
   }else{ # if mov is specified need to calculate age-based spatial distribution (Pinitdist to initdist)
     nareas<-dim(mov)[3]
-    if(msg) message(paste("Custom movement matrix detected, simulating movement among",nareas,"areas"))
+    if(msg) message("Custom movement matrix detected: simulating movement among ",nareas," areas")
     
     mind<-as.matrix(expand.grid(1:nsim,maxage,1:nareas,1:nareas))
     movedarray<-array(0,c(nsim,nareas,nareas))
@@ -1011,6 +1011,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   retA <- retA * V2
   retL <- retL * SLarray2
   
+
   Fleetout$Fdisc <- Fdisc
   Fleetout$Fdisc_array1 <- Fdisc_array1
   Fleetout$Fdisc_array2 <- Fdisc_array2
