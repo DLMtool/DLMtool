@@ -265,7 +265,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # Assign Obs pars to function environment
   for (X in 1:length(ObsPars)) assign(names(ObsPars)[X], ObsPars[[X]])
   
-  # --- Sample Imp Paramerers ----
+  # --- Sample Imp Parameters ----
   ImpPars <- SampleImpPars(OM, nsim, cpars=SampCpars)
   # Assign Imp pars to function environment
   for (X in 1:length(ImpPars)) assign(names(ImpPars)[X], ImpPars[[X]])
@@ -628,8 +628,13 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   ## CHECK abundance ####
   # Calculate vulnerable and spawning biomass abundance --
   Mmat <- array(M_ageArray[,,nyears] * 0.415, dim=c(nsim, maxage, nareas)) # account for M during year - ie Abundance approx mid-year
+  # Vmat <- array(V[,,nyears+1], dim=c(nsim, maxage, nareas)) # selectivity pattern in first projection year
   if (nsim > 1) A <- apply(VBiomass[, , nyears, ]* exp(-Mmat), 1, sum) #
-  if (nsim == 1) A <- sum(VBiomass[, , nyears, ]* exp(-Mmat)) # 
+  if (nsim == 1) A <- sum(VBiomass[, , nyears, ]* exp(-Mmat)) #
+  # 
+  # if (nsim > 1) A <- apply(Biomass[, , nyears, ]* exp(-Mmat)*Vmat, 1, sum) #
+  # if (nsim == 1) A <- sum(Biomass[, , nyears, ]* exp(-Mmat)*Vmat) # 
+  
   if (nsim > 1) Asp <- apply(SSB[, , nyears, ]* exp(-Mmat), 1, sum)  # 
   if (nsim == 1) Asp <- sum(SSB[, , nyears, ]* exp(-Mmat))  #  
 
@@ -1004,9 +1009,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                               qs, qvar, qinc, checks)
     
     
-    quantile(MPCalcs)
-    
-    FSMY is super high!!
+    hist(MPCalcs, breaks=40, col='gray')
+    hist(MPCalcs/ FMSY_P[,1,1], breaks=40, col='gray')
     
     
     TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
