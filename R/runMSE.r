@@ -1489,6 +1489,7 @@ cparscheck<-function(cpars){
   if (any(effNames %in% names(dims))) dims <- dims[-match(effNames,names(dims))]  # ignore effNames
   dims <- dims[!grepl("CAL_bins", names(dims))]  # ignore CAL_bins
   dims <- dims[!grepl("maxage", names(dims))]  # ignore CAL_bins
+  dims <- dims[!grepl("CAL_binWidth", names(dims))]  # ignore binWidth
   # dims <- dims[!grepl("Asize", names(dims))]  # ignore CAL_bins
   if (length(dims) > 0) {
     if(length(unique(dims))!=1){

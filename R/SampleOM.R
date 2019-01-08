@@ -282,8 +282,16 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   # == Generate Catch at Length Classes ====
   if (!exists("LatASD", inherits=FALSE)) LatASD <- Len_age * array(LenCV, dim=dim(Len_age)) # SD of length-at-age 
   if (any(dim(LatASD) != dim(Len_age))) stop("Dimensions of 'LatASD' must match dimensions of 'Len_age'", .call=FALSE)
-  
-  binWidth <- ceiling(0.03 * MaxBin)
+
+
+  ## binWidth optionnaly set by CAL_binWidth (in cpars):
+  if ( ! exists("CAL_binWidth", inherits=FALSE))
+  {
+      binWidth <- ceiling(0.03 * MaxBin) # default about 33 bins.
+  }else{
+      binWidth <- CAL_binWidth
+  }
+
   if (!exists("CAL_bins", inherits=FALSE)) CAL_bins <- seq(from = 0, to = MaxBin + binWidth, by = binWidth)
   if (!exists("CAL_binsmid", inherits=FALSE)) CAL_binsmid <- seq(from = 0.5 * binWidth, by = binWidth, length = length(CAL_bins) - 1)
   if (length(CAL_bins) != length(CAL_binsmid)+1) stop("Length of 'CAL_bins' must be length(CAL_binsmid)+1", .call=FALSE)
@@ -1364,6 +1372,9 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   }
   if ('maxage' %in% names(cpars)) {
     sampCpars$maxage <- cpars$maxage
+  }
+  if ('CAL_binWidth' %in% names(cpars)) {
+    sampCpars$CAL_binWidth <- cpars$CAL_binWidth
   }
   # if (is.null(ncparsim)) return(sampCpars)
   
