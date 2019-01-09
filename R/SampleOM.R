@@ -243,9 +243,17 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     }
     # linfs <- gettempvar(maxLinf, 0, max(Stock@Linfgrad), nyears + proyears, 
     #            1, matrix(1, nrow=1, ncol=proyears+nyears))
-    # MaxBin <- ceiling(max(linfs) + 3 * max(linfs) * max(Stock@LenCV)) 
-    
-    MaxBin <- ceiling(max(Linfarray) + 2 * max(Linfarray) * max(LenCV))
+    # MaxBin <- ceiling(max(linfs) + 3 * max(linfs) * max(Stock@LenCV))
+
+    if (all(c("M", "K") %in% names(Stock@cpars)))
+    {
+        ## Detect possible M/k < 1 to increase the max observed length
+        ##   (size distribution may be truncated otherwise):
+        minMK <- min(c(1, Stock@cpars[["M"]] / Stock@cpars[["K"]]), na.rm = TRUE)
+    }else{
+        minMK <- 1
+    }
+    MaxBin <- ceiling(max(Linfarray) + (1 + 1/sqrt(minMK)) * max(Linfarray) * max(LenCV))
 
   } else { # Len_age has been passed in with cpars
     if (any(dim(Len_age) != c(nsim, maxage, nyears + proyears))) 
@@ -271,8 +279,17 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       t0array <- matrix(t0, nrow=nsim, ncol=proyears+nyears)
       if (msg) cat("\n")
     }
-    # MaxBin <- ceiling(max(Len_age) + 3 * max(Len_age) * max(Stock@LenCV)) 
-    MaxBin <- ceiling(max(Linfarray) + 2 * max(Linfarray) * max(LenCV))
+    # MaxBin <- ceiling(max(Len_age) + 3 * max(Len_age) * max(Stock@LenCV))
+
+    if (all(c("M", "K") %in% names(Stock@cpars)))
+    {
+        ## Detect possible M/k < 1 to increase the max observed length
+        ##   (size distribution may be truncated otherwise):
+        minMK <- min(c(1, Stock@cpars[["M"]] / Stock@cpars[["K"]]), na.rm = TRUE)
+    }else{
+        minMK <- 1
+    }
+    MaxBin <- ceiling(max(Linfarray) + (1 + 1/sqrt(minMK)) * max(Linfarray) * max(LenCV))
   }
   Len_age[Len_age<0] <- 0.001
   StockOut$maxlen <- maxlen <- Len_age[, maxage, nyears] # reference length for Vmaxlen 
