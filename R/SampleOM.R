@@ -33,6 +33,14 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (all(is.na(Stock@LenCV))) Stock@LenCV <- c(0.1, 0.1)
   if (all(is.na(Stock@Mexp))) Stock@Mexp <- c(0, 0)
   
+  # Warning alerts for deprecated slots 
+  if (any(Stock@Linfgrad !=0)) 
+    warning("Linfgrad is no longer used and values are being ignored. Use 'cpars' to specify time-varying changes to Linf", call.=FALSE)
+  if (any(Stock@Kgrad !=0)) 
+    warning("Kgrad is no longer used and values are being ignored. Use 'cpars' to specify time-varying changes to K", call.=FALSE)
+  if (any(Stock@Mgrad !=0))
+    warning("Mgrad is no longer used and values are being ignored. Use 'cpars' to specify time-varying changes to M", call.=FALSE)
+ 
   if (class(Stock) == "OM") {
     nsim <- Stock@nsim
     nyears <- Stock@nyears 
@@ -78,7 +86,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     stop("Slot M2 is used (upper bound on M-at-age) and is length 'maxage' but Slot M (lower bound on M-at-age) is not length 'maxage'.")
   }
   if (!exists("Msd", inherits=FALSE)) Msd <- myrunif(nsim, Stock@Msd[1], Stock@Msd[2])  # sample inter annual variability in M frStock specified range
-  if (!exists("Mgrad", inherits=FALSE)) Mgrad <- myrunif(nsim, Stock@Mgrad[1], Stock@Mgrad[2])  # sample gradient in M (M y-1)
+  # if (!exists("Mgrad", inherits=FALSE)) Mgrad <- myrunif(nsim, Stock@Mgrad[1], Stock@Mgrad[2])  # sample gradient in M (M y-1)
   if (.hasSlot(Stock, "Mexp") & !exists("Mexp", inherits=FALSE)) {
     if (all(is.numeric(Stock@Mexp) & is.finite(Stock@Mexp))) {
       Mexp <- myrunif(nsim, min(Stock@Mexp), max(Stock@Mexp)) # sample Lorenzen M-at-weight exponent     
@@ -172,13 +180,13 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   # }
   
   # == Growth parameters ====
-  vars <- c("Linf", "Linfsd", "Linfgrad", "K", "Ksd", "Kgrad", "t0")
+  vars <- c("Linf", "Linfsd", "K", "Ksd", "t0")
   for (var in vars) {
     if (!exists(var, inherits=FALSE)) {
       if (all(is.na(slot(Stock, var)))) {
         val <- rep(0, nsim)
       } else {
-        val <- myrunif(nsim, slot(Stock, var)[1],slot(Stock, var)[2])  # sample of asymptotic length
+        val <- myrunif(nsim, slot(Stock, var)[1],slot(Stock, var)[2])  
       }
       assign(var, val)
     } 
@@ -187,7 +195,6 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     
   # == Sample Fecundity-Length Exponent ===
   # if (!exists("FecB", inherits=FALSE))   FecB <- runif(nsim, min(Stock@FecB), max(Stock@FecB))
-  
   
   # == Sample Spatial Parameters ====
   if (!exists("Frac_area_1", inherits=FALSE)) Frac_area_1 <- myrunif(nsim, Stock@Frac_area_1[1], Stock@Frac_area_1[2])  # sampled fraction of unfished biStockass in area 1 (its a two area model by default)
@@ -214,8 +221,12 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   StockOut$Krand <- Krand
   
   # === Generate time-varying Linf, K and t0 arrays ====
-  if (!exists("Linfarray", inherits=FALSE)) Linfarray <- gettempvar(Linf, Linfsd, Linfgrad, nyears + proyears, nsim, Linfrand)  # Linf array  
-  if (!exists("Karray", inherits=FALSE)) Karray <- gettempvar(K, Ksd, Kgrad, nyears + proyears, nsim, Krand)  # the K array
+  # if (!exists("Linfarray", inherits=FALSE)) Linfarray <- gettempvar(Linf, Linfsd, Linfgrad, nyears + proyears, nsim, Linfrand)  # Linf array  
+  # if (!exists("Karray", inherits=FALSE)) Karray <- gettempvar(K, Ksd, Kgrad, nyears + proyears, nsim, Krand)  # the K array
+  
+  if (!exists("Linfarray", inherits=FALSE)) Linfarray <- gettempvar(Linf, Linfsd, targgrad=0, nyears + proyears, nsim, Linfrand)  # Linf array  
+  if (!exists("Karray", inherits=FALSE)) Karray <- gettempvar(K, Ksd, targgrad=0, nyears + proyears, nsim, Krand)  # the K array
+  
   if (!exists("Agearray", inherits=FALSE))  Agearray <- array(rep(1:maxage, each = nsim), dim = c(nsim, maxage))  # Age array
   
   if (all(dim(Linfarray) != c(nsim, nyears+proyears))) stop("Linfarray must be dimensions: nsim, proyears+nyears (", nsim, ", ", proyears+nyears, ")")
@@ -395,15 +406,11 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   # == Generate Maturity-at-Age array ====
   if (!exists("Mat_age", inherits=FALSE)) {
     Mat_age <- array(NA, dim=c(nsim, maxage, nyears+proyears))
-    
     for (XX in 1:(nyears+proyears)) {
       Mat_age[,,XX] <- 1/(1 + exp(-log(19) * ((Agearray - ageM[,XX])/(age95[,XX] - ageM[,XX])))) # Maturity at age array by year
     }
-    
   } 
  
-  
-  
   # == Calculate M-at-Age from M-at-Length if provided ====
   if (exists("M_at_Length", inherits=FALSE)) {  # M-at-length data.frame has been provided in cpars
     
@@ -453,7 +460,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   }
   
   if (!exists("Marray", inherits=FALSE)) {
-    Marray <- gettempvar(M, Msd, Mgrad, nyears + proyears, nsim, Mrand)  # M by sim and year according to gradient and inter annual variability
+    Marray <- gettempvar(M, Msd, targgrad=0, nyears + proyears, nsim, Mrand)  # M by sim and year according to gradient and inter annual variability
   } else {
     if (any(dim(Marray) != c(nsim, nyears + proyears))) stop("'Marray' must be array with dimensions: nsim, nyears + proyears") 
   }
@@ -544,7 +551,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   
   StockOut$Mexp <- Mexp 
   StockOut$Msd <- Msd 
-  StockOut$Mgrad <- Mgrad
+  # StockOut$Mgrad <- Mgrad
   
   StockOut$ageM <- ageM
   StockOut$age95 <- age95
@@ -557,11 +564,11 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   StockOut$Len_age <- Len_age
   StockOut$Linf <- Linf 
   StockOut$Linfsd <- Linfsd
-  StockOut$Linfgrad <- Linfgrad
+  # StockOut$Linfgrad <- Linfgrad
   # StockOut$recgrad <- recgrad
   StockOut$K <- K
   StockOut$Ksd <- Ksd
-  StockOut$Kgrad <- Kgrad
+  # StockOut$Kgrad <- Kgrad
   StockOut$t0 <- t0 
   StockOut$a <- Wa 
   StockOut$b <- Wb 

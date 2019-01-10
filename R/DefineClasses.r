@@ -424,22 +424,21 @@ setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ","
 #' @slot M2 (Optional) Natural mortality rate at age. Vector of length 'maxage'. Positive real number
 #' @slot Mexp Exponent of the Lorenzen function assuming an inverse relationship between M and weight. Uniform distribution lower and upper bounds. Real numbers <= 0.
 #' @slot Msd Inter-annual variability in natural mortality rate expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers 
-#' @slot Mgrad Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year. Uniform distribution lower and upper bounds. Real numbers 
+#' @slot Mgrad No longer used. Previously mean temporal trend in natural mortality rate, expressed as a percentage change in M per year. 
 #' @slot h Steepness of the stock recruit relationship. Uniform distribution lower and upper bounds. Values from 1/5 to 1 
 #' @slot SRrel Type of stock-recruit relationship. Single value, switch (1) Beverton-Holt (2) Ricker. Integer 
 #' @slot Perr Process error, the CV of lognormal recruitment deviations. Uniform distribution lower and upper bounds. Non-negative real numbers
 #' @slot AC Autocorrelation in recruitment deviations rec(t)=AC*rec(t-1)+(1-AC)*sigma(t). Uniform distribution lower and upper bounds. Non-negative real numbers 
-# #' @slot recgrad Mean temporal trend in log-normal recruitment deviations, expressed as a percentage change per year. Uniform distribution lower and upper bounds. Real numbers 
 #' @slot Period (Optional) Period for cyclical recruitment pattern in years. Uniform distribution lower and upper bounds. Non-negative real numbers  
 #' @slot Amplitude (Optional) Amplitude in deviation from long-term average recruitment during recruitment cycle (eg a range from 0 to 1 means recruitment decreases or increases by up to 100\% each cycle). Uniform distribution lower and upper bounds. 0 < Amplitude < 1 
 #' @slot Linf Maximum length. Uniform distribution lower and upper bounds. Positive real numbers 
 #' @slot K von Bertalanffy growth parameter k. Uniform distribution lower and upper bounds. Positive real numbers
 #' @slot t0 von Bertalanffy theoretical age at length zero. Uniform distribution lower and upper bounds. Non-positive real numbers
 #' @slot LenCV Coefficient of variation of length-at-age (assumed constant for all age classes). Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Ksd Inter-annual variability in growth parameter k. Uniform distribution lower and upper bounds. Non-negative real numbers 
-#' @slot Kgrad Mean temporal trend in growth parameter k, expressed as a percentage change in k per year. Uniform distribution lower and upper bounds. Real numbers 
-#' @slot Linfsd Inter-annual variability in maximum length. Uniform distribution lower and upper bounds. Non-negative real numbers 
-#' @slot Linfgrad Mean temporal trend in maximum length, expressed as a percentage change in Linf per year. Uniform distribution lower and upper bounds. Real numbers 
+#' @slot Ksd Inter-annual variability in growth parameter k expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers 
+#' @slot Kgrad No longer used. Previously mean temporal trend in growth parameter k, expressed as a percentage change in k per year. 
+#' @slot Linfsd Inter-annual variability in maximum length expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers 
+#' @slot Linfgrad No longer used. Previously mean temporal trend in maximum length, expressed as a percentage change in Linf per year. 
 #' @slot L50 Length at 50 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers 
 #' @slot L50_95 Length increment from 50 percent to 95 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers 
 # @slot FecB Exponent of the length-fecundity relationship, ie, (relative) fecundity-at-length is proportional to length^FecB (uniform distribution)

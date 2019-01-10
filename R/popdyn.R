@@ -909,105 +909,176 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,  CurrentB,
 # }
 # 
 
-MSYCalcs <- function(logapicF, M_at_Age, WtAge, MatureAge, VAge, maxage, R0, SRrel, hs, opt=1) {
+# MSYCalcs <- function(logapicF, M_at_Age, WtAge, MatureAge, VAge, maxage, R0, SRrel, hs, opt=1) {
+#   # Box 3.1 Walters & Martell 2004
+#   U <- exp(logU)
+#   lx <- l0 <- rep(1, maxage)
+#   for (a in 2:maxage) {
+#     l0[a] <- l0[a-1] * exp(-M_at_Age[a-1])
+#     lx[a] <- lx[a-1] * exp(-M_at_Age[a-1]) * (1-U*VAge[a-1])
+#   }
+#   Egg0 <- sum(l0 * WtAge * MatureAge) # unfished egg production (assuming fecundity proportional to weight)
+#   EggF <- sum(lx * WtAge * MatureAge) # fished egg production (assuming fecundity proportional to weight)
+# 
+#   vB0 <- sum(l0 * WtAge * VAge)
+#   vBF <- sum(lx * WtAge * VAge)
+# 
+#   SB0 <- sum(l0 * WtAge * MatureAge) # same as eggs atm
+#   SBF <- sum(lx * WtAge * MatureAge)
+# 
+#   B0 <- sum(l0 * WtAge) 
+#   BF <- sum(lx * WtAge)
+# 
+#   hs[hs>0.999] <- 0.999
+#   recK <- (4*hs)/(1-hs) # Goodyear compensation ratio
+#   reca <- recK/Egg0
+#   if (SRrel ==1) {
+#     recb <- (reca * Egg0 - 1)/(R0*Egg0) # BH SRR
+#     RelRec <- (reca * EggF-1)/(recb*EggF)
+#   }
+#   if (SRrel ==2) {
+#     bR <- (log(5*hs)/(0.8*SB0))
+#     aR <- exp(bR*SB0)/(SB0/R0)
+#     RelRec <- (log(aR*EggF/R0))/(bR*EggF/R0)
+#   }
+# 
+#   RelRec[RelRec<0] <- 0
+#   
+#   Fa <- apicF*VAge
+#   Za <- Fa + M_at_Age
+#   relyield <- Fa/Za * lx * (1-exp(-Za)) * WtAge
+#   YPR <- sum(relyield)
+#   Yield <- YPR * RelRec
+# 
+#   if (opt == 1)  return(-Yield)
+#   if (opt == 2) {
+#     out <- c(Yield=Yield,
+#              F= CalculateF(relyield * RelRec, M_at_Age, VAge, lx * WtAge * RelRec),
+#              SB = SBF * RelRec,
+#              SB_SB0 = (SBF * RelRec)/(SB0 * R0),
+#              B_B0 = (BF * RelRec)/(B0 * R0),
+#              B = BF * RelRec,
+#              VB = vBF * RelRec,
+#              VB_VB0 = (vBF * RelRec)/(vB0 * R0),
+#              RelRec=RelRec,
+#              SB0 = SB0 * R0,
+#              B0=B0 * R0,
+#              apicF=apicF)
+# 
+#     return(out)
+#   }
+# }
+
+optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, yr.ind=1) {
+  M_at_Age <- apply(M_ageArray[x,,yr.ind], 1, mean)
+  Wt_at_Age <- apply(Wt_age[x,, yr.ind], 1, mean)
+  Mat_at_Age <- apply(Mat_age[x,, yr.ind], 1, mean)
+  V_at_Age <- apply(V[x,, yr.ind], 1, mean)
+  
+  boundsU <- c(1E-3, 1)
+  
+  doopt <- optimise(MSYCalcs, log(boundsU), M_at_Age, Wt_at_Age, Mat_at_Age, 
+                    V_at_Age, maxage, R0x=R0[x], SRrelx=SRrel[x], hx=hs[x], opt=1)
+  
+  UMSY <- exp(doopt$minimum)
+  
+  MSYs <- MSYCalcs(doopt$minimum, M_at_Age, Wt_at_Age, Mat_at_Age, 
+                   V_at_Age, maxage, R0x=R0[x], SRrelx=SRrel[x], hx=hs[x], opt=2)
+  
+  return(MSYs)
+}
+
+MSYCalcs <- function(logU, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age, 
+                     maxage, R0x, SRrelx, hx, opt=1) {
   # Box 3.1 Walters & Martell 2004
-  apicF <- exp(logapicF)
-  lx <- l0 <- rep(1, maxage)
+  U <- exp(logU)
+  lx <- rep(1, maxage)
+  l0 <- c(1, exp(cumsum(-M_at_Age[1:(maxage-1)]))) # unfished survival
   for (a in 2:maxage) {
-    l0[a] <- l0[a-1] * exp(-M_at_Age[a-1])
-    lx[a] <- lx[a-1] * exp(-(M_at_Age[a-1] + apicF*VAge[a-1]))
+    lx[a] <- lx[a-1] * exp(-M_at_Age[a-1]) * (1-U*V_at_Age[a-1]) # fished survival
   }
-  Egg0 <- sum(l0 * WtAge * MatureAge) # unfished egg production (assuming fecundity proportional to weight)
-  EggF <- sum(lx * WtAge * MatureAge) # fished egg production (assuming fecundity proportional to weight)
-
-  vB0 <- sum(l0 * WtAge * VAge)
-  vBF <- sum(lx * WtAge * VAge)
-
-  SB0 <- sum(l0 * WtAge * MatureAge) # same as eggs atm
-  SBF <- sum(lx * WtAge * MatureAge)
-
-  B0 <- sum(l0 * WtAge) 
-  BF <- sum(lx * WtAge)
-
-  hs[hs>0.999] <- 0.999
-  recK <- (4*hs)/(1-hs) # Goodyear compensation ratio
+  
+  Egg0 <- sum(l0 * Wt_at_Age * Mat_at_Age) # unfished egg-per-recruit (assuming fecundity proportional to weight)
+  EggF <- sum(lx * Wt_at_Age * Mat_at_Age) # fished egg-per-recruit (assuming fecundity proportional to weight)
+  
+  vB0 <- sum(l0 * Wt_at_Age * V_at_Age) # unfished and fished vuln. biomass per-recruit
+  vBF <- sum(lx * Wt_at_Age * V_at_Age)
+  
+  SB0 <- sum(l0 * Wt_at_Age * Mat_at_Age) # spawning biomas per-recruit - same as eggs atm
+  SBF <- sum(lx * Wt_at_Age * Mat_at_Age)
+  
+  B0 <- sum(l0 * Wt_at_Age) # biomass-per-recruit
+  BF <- sum(lx * Wt_at_Age)
+  
+  hx[hx>0.999] <- 0.999
+  recK <- (4*hx)/(1-hx) # Goodyear compensation ratio
   reca <- recK/Egg0
-  if (SRrel ==1) {
-    recb <- (reca * Egg0 - 1)/(R0*Egg0) # BH SRR
+  
+  SPR <- EggF/Egg0
+  # Calculate equilibrium recruitment at this SPR
+  if (SRrelx ==1) { # BH SRR
+    recb <- (reca * Egg0 - 1)/(R0x*Egg0) 
     RelRec <- (reca * EggF-1)/(recb*EggF)
   }
-  if (SRrel ==2) {
+  if (SRrelx ==2) { # Ricker
     bR <- (log(5*hs)/(0.8*SB0))
     aR <- exp(bR*SB0)/(SB0/R0)
     RelRec <- (log(aR*EggF/R0))/(bR*EggF/R0)
   }
-
+  
   RelRec[RelRec<0] <- 0
   
-  Fa <- apicF*VAge
-  Za <- Fa + M_at_Age
-  relyield <- Fa/Za * lx * (1-exp(-Za)) * WtAge
-  YPR <- sum(relyield)
+  YPR <- U * vBF
   Yield <- YPR * RelRec
-
+  
   if (opt == 1)  return(-Yield)
   if (opt == 2) {
     out <- c(Yield=Yield,
-             F= CalculateF(relyield * RelRec, M_at_Age, VAge, lx * WtAge * RelRec),
+             F= -log(1-U),
              SB = SBF * RelRec,
-             SB_SB0 = (SBF * RelRec)/(SB0 * R0),
-             B_B0 = (BF * RelRec)/(B0 * R0),
+             SB_SB0 = (SBF * RelRec)/(SB0 * R0x),
+             B_B0 = (BF * RelRec)/(B0 * R0x),
              B = BF * RelRec,
              VB = vBF * RelRec,
-             VB_VB0 = (vBF * RelRec)/(vB0 * R0),
+             VB_VB0 = (vBF * RelRec)/(vB0 * R0x),
              RelRec=RelRec,
-             SB0 = SB0 * R0,
-             B0=B0 * R0,
-             apicF=apicF)
-
-    return(out)
+             SB0 = SB0 * R0x,
+             B0=B0 * R0x)
   }
 }
 
-
-
-
-
-
-
-
-optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, yr=1) {
-  bounds <- c(0.0000001, 5)
- 
-  doopt <- optimise(MSYCalcs, log(bounds), M_at_Age=M_ageArray[x,,yr], WtAge=Wt_age[x,,yr], 
-                    MatureAge=Mat_age[x,,yr], VAge=V[x,,yr], maxage, R0=R0[x], SRrel=SRrel[x], hs=hs[x], opt=1)
-  
-  apicFMSY <- exp(doopt$minimum)
-  apicFMSY2 <- apicFMSY
-  
-  MSYs <- MSYCalcs(log(apicFMSY), M_at_Age=M_ageArray[x,,yr], WtAge=Wt_age[x,,yr], 
-           MatureAge=Mat_age[x,,yr], VAge=V[x,,yr], maxage, R0=R0[x], SRrel=SRrel[x], hs=hs[x], opt=2)
-  
-  if (MSYs[1] < 1) {
-    count <- 0; stop <- FALSE
-    while (apicFMSY > 0.95 * max(bounds) & count < 50 & !stop) {
-      count <- count + 1
-      bounds <- c(0.0000001, max(bounds)-0.1)
-      if (bounds[1] < bounds[2]) {
-        doopt <- optimise(MSYCalcs, log(bounds), M_at_Age=M_ageArray[x,,yr], WtAge=Wt_age[x,,yr], 
-                          MatureAge=Mat_age[x,,yr], VAge=V[x,,yr], maxage, R0=R0[x], SRrel=SRrel[x], hs=hs[x], opt=1)
-        apicFMSY <- exp(doopt$minimum)
-      } else {
-        stop <- TRUE
-      }
-    }
-    if (count >=50 | stop) apicFMSY <- apicFMSY2
-    MSYs <- MSYCalcs(log(apicFMSY), M_at_Age=M_ageArray[x,,yr], WtAge=Wt_age[x,,yr], 
-                     MatureAge=Mat_age[x,,yr], VAge=V[x,,yr], maxage, R0=R0[x], SRrel=SRrel[x], hs=hs[x], opt=2)
-  }
-  return(MSYs)
-  
-}
+# optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, yr=1) {
+#   boundsU <- c(0.0000001, 1)
+#  
+#   doopt <- optimise(MSYCalcs, log(boundsU), M_at_Age=M_ageArray[x,,yr], WtAge=Wt_age[x,,yr], 
+#                     MatureAge=Mat_age[x,,yr], VAge=V[x,,yr], maxage, R0=R0[x], SRrel=SRrel[x], hs=hs[x], opt=1)
+#   
+#   apicFMSY <- exp(doopt$minimum)
+#   apicFMSY2 <- apicFMSY
+#   
+#   MSYs <- MSYCalcs(log(apicFMSY), M_at_Age=M_ageArray[x,,yr], WtAge=Wt_age[x,,yr], 
+#            MatureAge=Mat_age[x,,yr], VAge=V[x,,yr], maxage, R0=R0[x], SRrel=SRrel[x], hs=hs[x], opt=2)
+#   
+#   if (MSYs[1] < 1) {
+#     count <- 0; stop <- FALSE
+#     while (apicFMSY > 0.95 * max(bounds) & count < 50 & !stop) {
+#       count <- count + 1
+#       bounds <- c(0.0000001, max(bounds)-0.1)
+#       if (bounds[1] < bounds[2]) {
+#         doopt <- optimise(MSYCalcs, log(bounds), M_at_Age=M_ageArray[x,,yr], WtAge=Wt_age[x,,yr], 
+#                           MatureAge=Mat_age[x,,yr], VAge=V[x,,yr], maxage, R0=R0[x], SRrel=SRrel[x], hs=hs[x], opt=1)
+#         apicFMSY <- exp(doopt$minimum)
+#       } else {
+#         stop <- TRUE
+#       }
+#     }
+#     if (count >=50 | stop) apicFMSY <- apicFMSY2
+#     MSYs <- MSYCalcs(log(apicFMSY), M_at_Age=M_ageArray[x,,yr], WtAge=Wt_age[x,,yr], 
+#                      MatureAge=Mat_age[x,,yr], VAge=V[x,,yr], maxage, R0=R0[x], SRrel=SRrel[x], hs=hs[x], opt=2)
+#   }
+#   return(MSYs)
+#   
+# }
 
 
 #' optimize for catchability (q)
@@ -1673,27 +1744,23 @@ projectEq <- function(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, 
 }
 
 
-optDfun <- function(Perrmulti, x, initD, Nfrac, R0, initdist, Perr_y, surv, 
-                    SSN, N, Biomass, SSB, VBiomass, V, Wt_age, SSB0, maxage) {
+optDfun <- function(Perrmulti, x, initD, Nfrac, R0, Perr_y, surv, 
+                    Wt_age, SSB0, maxage) {
   
   initRecs <- rev(Perr_y[x,1:maxage]) * exp(Perrmulti)
-  SSN[x,,1,] <- Nfrac[x,] * R0[x] * initdist[x,,] * initRecs # Calculate initial spawning stock numbers
-  N[x,,1,] <- R0[x] * surv[x,] * initdist[x,,] *initRecs # Calculate initial stock numbers
   
-  Biomass[x,,1,] <- N[x,,1,] * Wt_age[x,,1]  # Calculate initial stock biomass
-  SSB[x,,1,] <- SSN[x,,1,] * Wt_age[x,,1]    # Calculate spawning stock biomass
-  VBiomass[x,,1,] <- Biomass[x,,1,] * V[x,,1]  # Calculate vunerable biomass
-  
-  (sum(SSB[x,,1,])/SSB0[x] - initD[x])^2
+  SSN <- Nfrac[x,] * R0[x] *  initRecs # Calculate initial spawning stock numbers
+  SSB <- SSN * Wt_age[x,,1]    # Calculate spawning stock biomass
+
+  (sum(SSB)/SSB0[x] - initD[x])^2
 }
 
-optDfunwrap <- function(x, initD, Nfrac, R0, initdist, Perr_y, surv, 
-                        SSN, N, Biomass, SSB, VBiomass, V, Wt_age, SSB0, maxage) {
+optDfunwrap <- function(x, initD, Nfrac, R0, initdist, Perr_y, surv,
+                        Wt_age, SSB0, maxage) {
   interval <- log(c(0.01, 10))
   
-  optD <- optimise(optDfun, interval=interval, x=x, initD=initD, Nfrac=Nfrac, R0=R0, 
-                   initdist=initdist, Perr_y=Perr_y, surv=surv, SSN=SSN, 
-                   N=N, Biomass=Biomass, SSB=SSB, VBiomass=VBiomass, V=V,
+  optD <- optimise(optDfun, interval=interval, x=x, initD=initD, Nfrac=Nfrac, 
+                   R0=R0, Perr_y=Perr_y, surv=surv, 
                    Wt_age=Wt_age, SSB0=SSB0, maxage=maxage)
   exp(optD$minimum)
 }

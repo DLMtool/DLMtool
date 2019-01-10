@@ -2,25 +2,36 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 ## DLMtool 5.2.999 - development
 
+### Major changes 
+- The slots for specifying gradients in life-history parameters (e.g `Stock@Mgrad`, `Stock@Linfgrad`) 
+have been removed. Time-varying parameters should now be specified with `cpars`
+
+- The `Stock@maxage` slot has been deprecated
+
+### Minor changes
+- SB0 is calculated dynamically for every year
+
+
+### New Features
+- added more [cheat sheets](https://dlmtool.github.io/DLMtool/cheat_sheets/CheatSheets.html)
+
+
+### Fixes
 - fix issue with importing Data objects with larger number of length bins
 - fix issue where length-at-age was negative with high t0
 - allow custom area size for nareas > 2 in cpars
-
 - fix issue with curE75 which was ratcheting down effort 
-
 - fix issue with effort calculation when both effort control and TAC are implemented
-
-- added more [cheat sheets](https://dlmtool.github.io/DLMtool/cheat_sheets/CheatSheets.html)
-
 - fix random seed in `Turing` function
 - speed up plots in `Turing` function
 - speed up plots in `summary(Data)`
+- fix bug in CAL_nsamp and CAL_ESS when importing Obs object from CSV
+- fix typo in documentation for Itarget MPs
+
 
 - new Data format in Excel
 
-- fix bug in CAL_nsamp and CAL_ESS when importing Obs object from CSV
 
-- fix typo in documentation for Itarget MPs
 
 
 ## DLMtool 5.2.3

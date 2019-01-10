@@ -233,30 +233,26 @@ getmov2 <- function(x, Prob_staying, Frac_area_1) {
   mov/array(apply(mov, 1, sum), dim = c(2, 2))
 }
 
-#' Creates a time series per simulation that has gradient grad and random normal walk with sigma
+#' Creates a time series per simulation that has a random normal walk with sigma
 #' 
 #' @param targ mean
 #' @param targsd standard deviation
-#' @param targgrad gradient 
-#' @param nyears number of historical years
+#' @param targgrad gradient - no longer used
+#' @param nyears number of years to simulate
 #' @param nsim number of simulations
 #' @keywords internal
 #'  
 gettempvar <- function(targ, targsd, targgrad, nyears, nsim, rands=NULL) {
   mutemp <- -0.5 * targsd^2
-  temp <- array(1, dim = c(nsim, nyears))
-  if (is.null(rands)) {
-    for (i in 2:nyears) {
-      temp[, i] <- temp[, i] * exp(rnorm(nsim, mutemp, targsd))
-    }
-  }
+  
   if (!is.null(rands)) {
-    for (i in 2:nyears) {
-      temp[, i] <- temp[, i] * rands[,i]
-    }
+    temp <- rands
+  } else {
+    temp <- array(exp(rnorm(nsim*nyears, mutemp, targsd)),dim = c(nsim, nyears))
   }
-  yarray <- array(rep((1:nyears) - 1, each = nsim), dim = c(nsim, nyears))
-  temp <- temp * (1 + targgrad/100)^yarray
+  
+  # yarray <- array(rep((1:nyears) - 1, each = nsim), dim = c(nsim, nyears))
+  # temp <- temp * (1 + targgrad/100)^yarray
   targ * temp/apply(temp, 1, mean)
 }
 
@@ -462,6 +458,7 @@ userguide_link <- function(url, ref=NULL) {
 #' @return CAA array 
 simCAA <- function(nsim, nyears, maxage, Cret, CAA_ESS, CAA_nsamp) {
   # generate CAA from retained catch-at-age 
+
   CAA <- array(NA, dim = c(nsim, nyears, maxage))  # Catch  at age array
   
   # a multinomial observation model for catch-at-age data
@@ -485,7 +482,6 @@ simCAA <- function(nsim, nyears, maxage, Cret, CAA_ESS, CAA_nsamp) {
 #' @param nsim Number of simulations
 #' @param nyears Number of years 
 #' @param maxage Maximum age
-#' @param Cret Retained Catch in numbers - array(nsim, nyears, maxage)
 #' @param CAL_ESS CAA effective sample size 
 #' @param CAL_nsamp CAA sample size
 #' @param nCALbins number of CAL bins
@@ -494,11 +490,11 @@ simCAA <- function(nsim, nyears, maxage, Cret, CAA_ESS, CAA_nsamp) {
 #' @param retA retained-at-age curve - sim, maxage, nyears+proyears
 #'
 #' @return named list with CAL array and LFC, ML, & Lc vectors
-simCAL <- function(nsim, nyears, maxage, Cret, CAL_ESS, CAL_nsamp, nCALbins, CAL_binsmid,  N, retA, retL, Linfarray, Karray, t0array, LenCV) {
+simCAL <- function(nsim, nyears, maxage,  CAL_ESS, CAL_nsamp, nCALbins, CAL_binsmid,  N, retA, retL, Linfarray, Karray, t0array, LenCV) {
   # a multinomial observation model for catch-at-length data
   # assumed normally-distributed length-at-age truncated at 2 standard deviations from the mean
   CAL <- array(NA, dim=c(nsim,  nyears, nCALbins))
-  vn <- apply(N[,,,], c(1,2,3), sum) * retA[,,1:nyears] # numbers at age in population that would be retained
+  vn <- apply(N, c(1,2,3), sum) * retA[,,1:nyears] # numbers at age in population that would be retained
   vn <- aperm(vn, c(1,3, 2))
   
   # Generate size comp data with variability in age
