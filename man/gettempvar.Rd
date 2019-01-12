@@ -2,7 +2,7 @@
 % Please edit documentation in R/Misc_Internal.R
 \name{gettempvar}
 \alias{gettempvar}
-\title{Creates a time series per simulation that has gradient grad and random normal walk with sigma}
+\title{Creates a time series per simulation that has a random normal walk with sigma}
 \usage{
 gettempvar(targ, targsd, targgrad, nyears, nsim, rands = NULL)
 }
@@ -11,13 +11,13 @@ gettempvar(targ, targsd, targgrad, nyears, nsim, rands = NULL)
 
 \item{targsd}{standard deviation}
 
-\item{targgrad}{gradient}
+\item{targgrad}{gradient - no longer used}
 
-\item{nyears}{number of historical years}
+\item{nyears}{number of years to simulate}
 
 \item{nsim}{number of simulations}
 }
 \description{
-Creates a time series per simulation that has gradient grad and random normal walk with sigma
+Creates a time series per simulation that has a random normal walk with sigma
 }
 \keyword{internal}

@@ -1,5 +1,6 @@
 
-CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,  CurrentB,
+CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
+                           VBiomass_P,
                            LastEi, LastSpatial, LastAllocat, LastCatch,
                            TACused, maxF,
                            LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
@@ -29,8 +30,9 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,  CurrentB,
   } else {
     Si <- MPRecs$Spatial # change spatial fishing
   }
+
   if (all(dim(Si) != c(nareas, nsim))) stop("Spatial recommmendation not nareas long")
-  
+
   # Allocation 
   if (length(MPRecs$Allocate) == 0) { # no allocation recommendation
     Ai <- LastAllocat # allocation is unchanged 
@@ -221,6 +223,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,  CurrentB,
     retL_P[,,allyrs] <- retL_P[,,allyrs] * SLarray_P[,,allyrs] 
   }
   
+  CurrentB <- Biomass_P[,,y,] # biomass at the beginning of year 
   CurrentVB <- array(NA, dim=dim(CurrentB))
   Catch_tot <- Catch_retain <- array(NA, dim=dim(CurrentB)) # catch this year arrays
   FMc <- Zc <- array(NA, dim=dim(CurrentB)) # fishing and total mortality this year
@@ -257,36 +260,25 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,  CurrentB,
   
   # Apply TAC recommendation
   if (all(is.na(TACused))) { # no TAC has been set
-    
-    # FIX THIS SECTION #####
-    # fishing mortality with effort control recommendation 
-    # FM_P[SAYR] <- (FinF[S1] * Ei[S1] * V_P[SAYt] * t(Si)[SR] * fishdist[SR] * 
-    #                  qvar[SY1] * (qs[S1]*(1 + qinc[S1]/100)^y))/Asize[SR]
-    # 
-    # # retained fishing mortality with effort control recommendation
-    # FM_Pret[SAYR] <- (FinF[S1] * Ei[S1] * retA_P[SAYt] * t(Si)[SR] * fishdist[SR] *
-    #                     qvar[SY1] * qs[S1]*(1 + qinc[S1]/100)^y)/Asize[SR]
-    # 
-    # Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt] # calculate total mortality 
-    # 
-    # CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
-    # CB_Pret[SAYR] <- FM_Pret[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
-    # 
-    # Effort <- FinF *Ei * apply(fracE2, 1, sum) # (Fs/qs)/ FinF # Ei  # (Fs/qs)/ FinF change in catchability not included in effort calc: * qvar[,y] * ((1 + qinc/100)^y)) 
-    # 
-  } 
-  
+    # fishing mortality with effort control recommendation
+    FM_P[SAYR] <- (FinF[S1] * Ei[S1] * V_P[SAYt] * t(Si)[SR] * fishdist[SR] *
+                     qvar[SY1] * (qs[S1]*(1 + qinc[S1]/100)^y))/Asize[SR]
+
+    # retained fishing mortality with effort control recommendation
+    FM_Pret[SAYR] <- (FinF[S1] * Ei[S1] * retA_P[SAYt] * t(Si)[SR] * fishdist[SR] *
+                        qvar[SY1] * qs[S1]*(1 + qinc[S1]/100)^y)/Asize[SR]
+
+    # Effort <- Ei * apply(fracE2, 1, sum) # change in catchability not included in effort calc: * qvar[,y] * ((1 + qinc/100)^y))
+  }
   if (!all(is.na(TACused))) { # a TAC has been set
     # if MP returns NA - TAC is set to catch from last year
     TACused[is.na(TACused)] <- LastCatch[is.na(TACused)] 
-    TACrec <- TACused             # TAC recommendation
     TACusedE <- TAC_f[,y]*TACused   # TAC taken after implementation error
     
-    availB <- apply(newVB * t(Si), 1, sum) # available biomass accounting for any changes in selectivity &/or spatial closures
-    # should be the same as Data@OM$A - unless selectivity or spatial closure has changed
-    if (checks) {
-      plot(availB, MSElist[[1]]@OM$A, xlab="available biomass", ylab="available B in Data object", pch=16)
-    }
+    # Calculate total vulnerable biomass available mid-year accounting for any changes in selectivity &/or spatial closures
+    M_array <- array(0.5*M_ageArray[,,nyears+y], dim=c(nsim, maxage, nareas))
+    Atemp <- apply(CurrentVB * exp(-M_array), c(1,3), sum) # mid-year before fishing
+    availB <- apply(Atemp * t(Si), 1, sum) # adjust for spatial closures
     
     # Calculate spatial distribution of catch - temporary values
     # get distribution across age and fishdist across space - ignore magnitude of effort or q increase 
@@ -305,7 +297,8 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,  CurrentB,
     temp <- Catch_tot/apply(Catch_tot, 1, sum) # distribution of removals
     Catch_tot <- TACusedE * ratio * temp # scale up total removals
     
-    chk <- apply(Catch_tot, 1, sum) > availB # total removals can't be more than available biomass
+    # total removals can't be more than available biomass
+    chk <- apply(Catch_tot, 1, sum) > availB 
     if (sum(chk)>0) {
       c_temp <- apply(Catch_tot[chk,,, drop=FALSE], 1, sum)
       ratio_temp <- (availB[chk]/c_temp) * 0.99
@@ -314,128 +307,78 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,  CurrentB,
       if (sum(chk)==1) Catch_tot[chk,, ] <- Catch_tot[chk,,] * array(ratio_temp, dim=c(maxage, nareas))
     }
     
-    # Calculate F by age class and area & apply maxF constraint
-    temp1 <- sapply(1:nsim, function(sim)
-      CalculateF(Catch_tot[sim,,], M_ageArray[sim,,y], V_P[sim,,y], CurrentB[sim,,], maxF=maxF, byage=TRUE))
+    # Populate catch arrays
+    CB_P[SAYR] <- Catch_tot[SAR] 
+    CB_Pret[SAYR] <- Catch_retain[SAR]
     
-    FMc[SAR] <- as.vector(aperm(temp1, c(2,1))) # F by age & region
-    Zc[SAR] <- FMc[SAR] + M_ageArray[SAYt] # calculate total mortality 
-    
-    # Total catch this year 
-    Catch_tot <- FMc/Zc * CurrentB * (1-exp(-Zc)) # should be the same as above
-  
-    Fs <- sapply(1:nsim, function(sim)
-      CalculateF(Catch_age_area=Catch_tot[sim,,], M_at_Age=M_ageArray[sim,,y], 
-                 Vuln_age=V_P[sim,,y], B_age_area=CurrentB[sim,,], 
-                 maxF=maxF, byage=FALSE))
-    
-    
-    # sim = 1  
-    # availB[sim]
-    # 
-    # MSElist[[1]]@OM$A[sim] * (1-exp(-FMSY[sim]))
-    # TACusedE[sim]
-    # apply(Catch_tot, 1, sum)[sim]
-    # sum(CurrentB[sim,,] * V_P[sim,,y])
-    # Fs
-    
+    # Calculate F by age class
+    # suppress warnings for high F where C > VB - adjusted in maxF constraint below
+    FM_P[SAYR] <- suppressWarnings(-log(1-(CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2)))))  # Pope's approximation)
+    FM_Pret[SAYR] <- suppressWarnings(-log(1-(CB_Pret[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2)))))  # Pope's approximation
+    FM_P[SAYR][!is.finite(FM_P[SAYR])] <- 1
+    FM_Pret[SAYR][!is.finite(FM_Pret[SAYR])] <- 1
   }
-  Fs
-  # x <- 1
-  # Data@OM$A[x] * (1 - exp(-Data@OM$FMSY[x]))
-  # 
-  # 
-  # # temp <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
-  # # temp[temp > (1 - exp(-maxF))] <- 1 - exp(-maxF) # apply maxF constraint
-  # # FM_P[SAYR] <- -log(1 - temp)
-  # 
-  # 
-  # 
-  # FM_P[SAYR] <- temp
-  # Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt] # calculate total mortality 
-  # # update removals with maxF constraint
-  # CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR])) 
-  # 
-  # # t2 <- apply(CB_P[,,y,],1, sum)
-  # 
-  # Fs <- sapply(1:nsim, function(sim)
-  #   CalculateF(Catch_age_area=CB_P[sim,,y,], M_at_Age=M_ageArray[sim,,y], 
-  #              Vuln_age=V_P[sim,,y], B_age_area=Biomass_P[sim,,y,], 
-  #              maxF=maxF, byage=FALSE))
-  # Fs/FMSY
   
+  # Apply maxF constraint 
+  FM_P[SAYR][FM_P[SAYR] > maxF] <- maxF 
+  FM_Pret[SAYR][FM_Pret[SAYR] > maxF] <- maxF
+  Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt] # calculate total mortality
   
+  # Update catches after maxF constraint
+  CB_P[SAYR] <- (1-exp(-FM_P[SAYR])) * (Biomass_P[SAYR] * exp(-0.5*M_ageArray[SAYt]))
+  CB_Pret[SAYR] <- (1-exp(-FM_Pret[SAYR])) * (Biomass_P[SAYR] * exp(-0.5*M_ageArray[SAYt]))
   
-  ########## DEBUG #######
+  # Calculate total fishing mortality & effort
+  M_array <- array(0.5*M_ageArray[,,nyears+y], dim=c(nsim, maxage, nareas))
+  Ftot <- -log(1-apply(CB_P[,,y,], 1, sum)/apply(VBiomass_P[,,y,] * exp(-M_array), 1, sum))
+ 
+  Effort <- Ftot/(FinF * qs*qvar[,y]* (1 + qinc/100)^y) * apply(fracE2, 1, sum) # effort relative to last historical
   
-  
-  # availB
-  # 
-  # x <- sim <- 1 
-  # Data <- MSElist[[sim]]
-  # Data@OM$A[x] * (1 - exp(-Data@OM$FMSY[x]))
-  # 
-  # sum(Biomass_P[sim,,y,] * V_P[sim,,y])
-  # availB
-  # 
-  # ZZ <- Fs + M_ageArray[sim,maxage,y]
-  # 
-  # Fs/ZZ * availB * (1-exp(-ZZ)) # is different to TAC used
-  # TACused 
-  # 
-  # TACused[x] <- Data@OM$A[x] * (1 - exp(-Data@OM$FMSY[x]))
-  # Data@OM$A[x] = Data@OM$A[x] * exp(-0.5 *M_ageArray[sim,maxage,y]) 
-  
-  # 2267.724 2969.838 3907.614
-  ###########################
-  # Make sure Effort doesn't exceed regulated effort
-  #   if (length(MPRecs$Effort) >0 | all(LastEi != 1)) { # an effort regulation also exists
-  #     aboveE <- which(Effort > Ei)
-  #     if (length(aboveE)>0) {
-  #       Effort[aboveE] <- Ei[aboveE] * FinF[aboveE] * apply(fracE2, 1, sum)[aboveE]
-  #       SAYR <- as.matrix(expand.grid(aboveE, 1:maxage, y, 1:nareas))
-  #       SAYRt <- as.matrix(expand.grid(aboveE, 1:maxage, y + nyears, 1:nareas))  # Trajectory year
-  #       SYt <- SAYRt[, c(1, 3)]
-  #       SAYt <- SAYRt[, 1:3]
-  #       SR <- SAYR[, c(1, 4)]
-  #       S1 <- SAYR[, 1]
-  #       SY1 <- SAYR[, c(1, 3)]
-  #       FM_P[SAYR] <- (FinF[S1] * Ei[S1] * V_P[SAYt] * t(Si)[SR] * fishdist[SR] * qvar[SY1] * 
-  #                        (qs[S1]*(1 + qinc[S1]/100)^y))/Asize[SR]
-  #       
-  #       # retained fishing mortality with input control recommendation
-  #       FM_Pret[SAYR] <- (FinF[S1] * Ei[S1] * retA_P[SAYt] * t(Si)[SR] * fishdist[SR] * 
-  #                           qvar[SY1] * qs[S1]*(1 + qinc[S1]/100)^y)/Asize[SR]
-  #       
-  #       Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt] # calculate total mortality 
-  #       
-  #       CB_P[SAYR] <- FM_P[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
-  #       CB_Pret[SAYR] <- FM_Pret[SAYR]/Z_P[SAYR] * Biomass_P[SAYR] * (1 - exp(-Z_P[SAYR]))
-  #     }
-  #     
-  #   }
-  #   
-  # }
-  # 
-  # # Returns
-  # out <- list()
-  # out$TACrec <- TACused
-  # out$V_P <- V_P
-  # out$SLarray_P <- SLarray_P
-  # out$retA_P <- retA_P
-  # out$retL_P <- retL_P
-  # out$Fdisc_P <- Fdisc_P
-  # out$VBiomass_ <- VBiomass_P
-  # out$Z_P <- Z_P
-  # out$FM_P <- FM_P
-  # out$FM_Pret <- FM_Pret
-  # out$CB_P <- CB_P
-  # out$CB_Pret <- CB_Pret
-  # out$Si <- Si
-  # out$Ai <- Ai
-  # out$Ei <- Ei
-  # out$Effort <- Effort
-  # out
+  if (length(MPRecs$Effort) >0 | all(Ei != 1)) { # an effort regulation also exists
+    #Make sure Effort doesn't exceed regulated effort
+    aboveE <- which(Effort > Ei)
+    if (length(aboveE)>0) {
+      Effort[aboveE] <- Ei[aboveE] * apply(fracE2, 1, sum)[aboveE]
+      SAYR <- as.matrix(expand.grid(aboveE, 1:maxage, y, 1:nareas))
+      SAYRt <- as.matrix(expand.grid(aboveE, 1:maxage, y + nyears, 1:nareas))  # Trajectory year
+      SYt <- SAYRt[, c(1, 3)]
+      SAYt <- SAYRt[, 1:3]
+      SR <- SAYR[, c(1, 4)]
+      S1 <- SAYR[, 1]
+      SY1 <- SAYR[, c(1, 3)]
+      FM_P[SAYR] <- (FinF[S1] * Ei[S1] * V_P[SAYt] * t(Si)[SR] * fishdist[SR] * qvar[SY1] *
+                       (qs[S1]*(1 + qinc[S1]/100)^y))/Asize[SR]
+      
+      # retained fishing mortality with input control recommendation
+      FM_Pret[SAYR] <- (FinF[S1] * Ei[S1] * retA_P[SAYt] * t(Si)[SR] * fishdist[SR] *
+                          qvar[SY1] * qs[S1]*(1 + qinc[S1]/100)^y)/Asize[SR]
+      
+      Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt] # calculate total mortality
+      CB_P[SAYR] <- (1-exp(-FM_P[SAYR])) * (Biomass_P[SAYR] * exp(-0.5*M_ageArray[SAYt]))
+      CB_Pret[SAYR] <- (1-exp(-FM_Pret[SAYR])) * (Biomass_P[SAYR] * exp(-0.5*M_ageArray[SAYt]))
+    }
+  }
+
+  # Returns
+  out <- list()
+  out$TACrec <- TACused
+  out$V_P <- V_P
+  out$SLarray_P <- SLarray_P
+  out$retA_P <- retA_P
+  out$retL_P <- retL_P
+  out$Fdisc_P <- Fdisc_P
+  out$VBiomass_ <- VBiomass_P
+  out$Z_P <- Z_P
+  out$FM_P <- FM_P
+  out$FM_Pret <- FM_Pret
+  out$CB_P <- CB_P
+  out$CB_Pret <- CB_Pret
+  out$Si <- Si
+  out$Ai <- Ai
+  out$Ei <- Ei
+  out$Effort <- Effort
+  out$Ftot <- Ftot
+  out
 }
 
 # CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
@@ -714,16 +657,6 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,  CurrentB,
 #   } else { # A TAC has been set
 #     
 #     
-#     ### DEBUG ######
-#     # x <- sim <- 1
-#     # y <- 1
-#     # Data <- MSElist[[sim]]
-#     # Data@OM$A[x] = availB[x]  * exp(-0.5 *M_ageArray[sim,maxage,y]) # Data@OM$A[x] * exp(-0.5 *M_ageArray[sim,maxage,y]) 
-#     # tt <- sapply(1:nsim, FMSYref, Data=Data, reps=1)
-#     # TACused <- unlist(lapply(tt, slot, "TAC"))
-#     # 
-#     ################
-#     
 #     TACused[is.na(TACused)] <- LastCatch[is.na(TACused)] # if MP returns NA - TAC is set to catch from last year
 #     TACrec <- TACused             # TAC recommendation
 #     TACusedE<- TAC_f[,y]*TACused   # TAC taken after implementation error
@@ -814,28 +747,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,  CurrentB,
 #   
 #    
 #     
-#     ########## DEBUG #######
-#     
-#     
-#     # availB
-#     # 
-#     # x <- sim <- 1 
-#     # Data <- MSElist[[sim]]
-#     # Data@OM$A[x] * (1 - exp(-Data@OM$FMSY[x]))
-#     # 
-#     # sum(Biomass_P[sim,,y,] * V_P[sim,,y])
-#     # availB
-#     # 
-#     # ZZ <- Fs + M_ageArray[sim,maxage,y]
-#     # 
-#     # Fs/ZZ * availB * (1-exp(-ZZ)) # is different to TAC used
-#     # TACused 
-#     # 
-#     # TACused[x] <- Data@OM$A[x] * (1 - exp(-Data@OM$FMSY[x]))
-#     # Data@OM$A[x] = Data@OM$A[x] * exp(-0.5 *M_ageArray[sim,maxage,y]) 
-#     
-#     # 2267.724 2969.838 3907.614
-#     ###########################
+#   
 #     
 #    
 #     # Fs <- suppressWarnings(-log(1 - apply(CB_P[, , y, ], 1, sum)/apply(VBiomass_P[, , y, ]*exp(-(0.5*M_age_area)), 1, sum))) # Pope's approx
@@ -1028,9 +940,9 @@ MSYCalcs <- function(logU, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age,
   
   RelRec[RelRec<0] <- 0
   
-  YPR <- U * vBF
+  YPR <- U * sum(lx * Wt_at_Age * V_at_Age * exp(-0.5*M_at_Age)) # caught-mid year
   Yield <- YPR * RelRec
-  
+
   if (opt == 1)  return(-Yield)
   if (opt == 2) {
     out <- c(Yield=Yield,

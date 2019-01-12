@@ -4,8 +4,8 @@
 \alias{simCAL}
 \title{Simulate Catch-at-Length Data}
 \usage{
-simCAL(nsim, nyears, maxage, Cret, CAL_ESS, CAL_nsamp, nCALbins,
-  CAL_binsmid, N, retA, retL, Linfarray, Karray, t0array, LenCV)
+simCAL(nsim, nyears, maxage, CAL_ESS, CAL_nsamp, nCALbins, CAL_binsmid, vn,
+  retL, Linfarray, Karray, t0array, LenCV)
 }
 \arguments{
 \item{nsim}{Number of simulations}
@@ -14,8 +14,6 @@ simCAL(nsim, nyears, maxage, Cret, CAL_ESS, CAL_nsamp, nCALbins,
 
 \item{maxage}{Maximum age}
 
-\item{Cret}{Retained Catch in numbers - array(nsim, nyears, maxage)}
-
 \item{CAL_ESS}{CAA effective sample size}
 
 \item{CAL_nsamp}{CAA sample size}
@@ -23,10 +21,6 @@ simCAL(nsim, nyears, maxage, Cret, CAL_ESS, CAL_nsamp, nCALbins,
 \item{nCALbins}{number of CAL bins}
 
 \item{CAL_binsmid}{mid-points of CAL bins}
-
-\item{N}{Numbers by sim, age, year, region}
-
-\item{retA}{retained-at-age curve - sim, maxage, nyears+proyears}
 }
 \value{
 named list with CAL array and LFC, ML, & Lc vectors

@@ -35,7 +35,6 @@ arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcu
   // arma::mat tempMat2(nareas, nareas);	
   arma::mat Nstore(maxage, nareas); 
 
-  
   // Recruitment assuming regional R0 and stock wide steepness
   for (int A=0; A < nareas; A++) {
     if (SRrel == 1) {
@@ -52,8 +51,7 @@ arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcu
       Nnext(age, A) = Ncurr(age-1, A) * exp(-Zcurr(age-1, A)); // Total mortality
     }
   }
-  // 
-  
+
   // Move stock
   for (int age=0; age<maxage; age++) {
   

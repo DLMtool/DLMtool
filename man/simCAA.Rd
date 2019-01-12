@@ -4,12 +4,12 @@
 \alias{simCAA}
 \title{Simulate Catch-at-Age Data}
 \usage{
-simCAA(nsim, nyears, maxage, Cret, CAA_ESS, CAA_nsamp)
+simCAA(nsim, yrs, maxage, Cret, CAA_ESS, CAA_nsamp)
 }
 \arguments{
 \item{nsim}{Number of simulations}
 
-\item{nyears}{Number of years}
+\item{yrs}{Number of years}
 
 \item{maxage}{Maximum age}
 

@@ -3,6 +3,11 @@
 
 library(DLMtool)
 
+# Bag limit dev 
+
+
+
+
 # Test Effort calculation with fixed TAC 
 
 # set equilbrium conditions 
@@ -20,25 +25,33 @@ OM@interval <- 10
 
 curCatch <- function(x, Data, ...) {
   Rec <- new("Rec")
-  Rec@Spatial <- c(0,1)
-  Rec@Allocate <- 0
   Rec@TAC <- Data@Cat[x, Data@Year == Data@LHYear]
   Rec
 }
 class(curCatch) <- 'MP'
 
+curCatch_MP <- function(x, Data, ...) {
+  Rec <- new("Rec")
+  Rec@Spatial <- c(0,1)
+  Rec@Allocate <- 1
+  Rec@TAC <- Data@Cat[x, Data@Year == Data@LHYear]
+  Rec
+}
+class(curCatch_MP) <- 'MP'
+
 # check effort if Area 1 is closed - should go up with current catch 
-devtools::load_all()
 
 OM@Cbiascv <- 0
 OM@Cobs <- c(0,0)
 OM@qinc <- c(0,0)
 OM@qcv <- c(0,0)
-OM@Prob_staying <- c(0.99,0.99)
+OM@Prob_staying <- c(0.5,0.5)
 OM@Size_area_1 <- OM@Frac_area_1 <- c(0.6,0.6)
-MSE <- runMSE(OM, MP=c('curCatch'))
+MSE <- runMSE(OM, MPs=c('curCatch', 'curCatch_MP'))
 
-MSE@Effort[1,1,]
+MSE@Effort[1,,]
+MSE@C[1,,1:10]
+
 
 plot(MSE@Effort[1,1,], type="l")
 
@@ -49,7 +62,7 @@ plot(MSE@F_FMSY[1,1,], type="l")
 HistCatches <- apply(MSE@CB_hist, c(1,3), sum)
 FutureCatch <- MSE@C
 HistCatches[,OM@nyears]
-FutureCatch[,1,1]
+FutureCatch[,1,1:5]
 
 y <- 1:10
 qinc <- 1

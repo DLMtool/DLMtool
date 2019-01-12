@@ -50,6 +50,7 @@ ChkObj <- function(OM, error=TRUE) {
   
   # Slots ok to not contain values
   Ignore <- optslots$Ignore
+  Ignore <- c(Ignore, "Mgrad", "Kgrad", "Linfgrad")
   
   # if values present for one they need to be there for all! 
   if (any(SelSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% SelSlots] 
@@ -395,8 +396,9 @@ genSizeCompWrap <- function(i, vn, CAL_binsmid, retL,
   VulnN <- round(VulnN,0)
   nyrs <- nrow(as.matrix(Linfarray[i,]))
   if (nyrs == 1) VulnN <- t(VulnN)
-
-  lens <- genSizeComp(VulnN, CAL_binsmid, retL[i,,],
+  retL <- as.matrix(retL[i,,])
+  
+  lens <- genSizeComp(VulnN, CAL_binsmid, retL,
               CAL_ESS=CAL_ESS[i], CAL_nsamp=CAL_nsamp[i],
               Linfs=Linfarray[i,], Ks=Karray[i,], t0s=t0array[i,],
               LenCV=LenCV[i], truncSD)
@@ -449,21 +451,21 @@ userguide_link <- function(url, ref=NULL) {
 #' data
 #'
 #' @param nsim Number of simulations
-#' @param nyears Number of years 
+#' @param yrs Number of years 
 #' @param maxage Maximum age
 #' @param Cret Retained Catch at age in numbers - array(sim, years, maxage)
 #' @param CAA_ESS CAA effective sample size 
 #' @param CAA_nsamp CAA sample size
 #'
 #' @return CAA array 
-simCAA <- function(nsim, nyears, maxage, Cret, CAA_ESS, CAA_nsamp) {
+simCAA <- function(nsim, yrs, maxage, Cret, CAA_ESS, CAA_nsamp) {
   # generate CAA from retained catch-at-age 
 
-  CAA <- array(NA, dim = c(nsim, nyears, maxage))  # Catch  at age array
+  CAA <- array(NA, dim = c(nsim, yrs, maxage))  # Catch  at age array
   
   # a multinomial observation model for catch-at-age data
   for (i in 1:nsim) {
-    for (j in 1:nyears) {
+    for (j in 1:yrs) {
       if (!sum(Cret[i, j,])) {
         CAA[i, j, ] <- 0 
       } else {
@@ -486,16 +488,13 @@ simCAA <- function(nsim, nyears, maxage, Cret, CAA_ESS, CAA_nsamp) {
 #' @param CAL_nsamp CAA sample size
 #' @param nCALbins number of CAL bins
 #' @param CAL_binsmid mid-points of CAL bins
-#' @param N Numbers by sim, age, year, region
-#' @param retA retained-at-age curve - sim, maxage, nyears+proyears
 #'
 #' @return named list with CAL array and LFC, ML, & Lc vectors
-simCAL <- function(nsim, nyears, maxage,  CAL_ESS, CAL_nsamp, nCALbins, CAL_binsmid,  N, retA, retL, Linfarray, Karray, t0array, LenCV) {
+simCAL <- function(nsim, nyears, maxage,  CAL_ESS, CAL_nsamp, nCALbins, CAL_binsmid,  
+                   vn, retL, Linfarray, Karray, t0array, LenCV) {
   # a multinomial observation model for catch-at-length data
   # assumed normally-distributed length-at-age truncated at 2 standard deviations from the mean
   CAL <- array(NA, dim=c(nsim,  nyears, nCALbins))
-  vn <- apply(N, c(1,2,3), sum) * retA[,,1:nyears] # numbers at age in population that would be retained
-  vn <- aperm(vn, c(1,3, 2))
   
   # Generate size comp data with variability in age
   tempSize <- lapply(1:nsim, genSizeCompWrap, vn, CAL_binsmid, retL, CAL_ESS, CAL_nsamp,
@@ -531,6 +530,20 @@ simCAL <- function(nsim, nyears, maxage,  CAL_ESS, CAL_nsamp, nCALbins, CAL_bins
   out
 }
 
+
+# initialize development mode
+dev.mode <- function() {
+  devtools::load_all()
+  DFargs <- formals(runMSE_int)
+  argNames <- names(DFargs)
+  ind <- which(unlist(lapply(argNames, exists)))
+  DFargs[ind] <- NULL
+  ind <- which(lapply(DFargs, class) == 'call')
+  for (x in ind) {
+    DFargs[[x]] <- eval((DFargs[[x]]))
+  }
+  DFargs
+}
 
 
 

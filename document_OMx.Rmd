@@ -21,7 +21,9 @@ Recruitment parameters are calculated from the unfished spawning-stock-per-recru
 Unfished biological reference points used to calculate depletion are calculated from average 10 years around last historical year - 
 i.e mean(N0[(nyears-5):(nyears+4)]). Unless proyears < 4
 
-SSB0 used for *both* initial and current depletion is calculated from average SB0 from today's conditions
+SSB0 used for *both* initial and current depletion is calculated from average SB0 from today's conditions and for future projections - ie Data@Dep is calculated as spawning biomass divided
+by expected unfished spawning biomass in last historical year
+
 
 MSY reference points are calculated from the same reference years - 10 years around current year 
 Selectivity is averaged over recent 10 years
@@ -30,4 +32,14 @@ MSY is calculated assuming that all fish that suffer fishing mortality are retai
 even if F is exactly FMSY
 
 Reference yield - calculate by projecting population forward from its current state (last historical year) and optimizing for highest yield from a fixed F policy
+
+
+Check effort calculations - with spatial closures, constant effort, constant catch
+add change in catchability to effort calculation?
+
+run checks for Effort controls 
+
+Survey is taken mid-year, before fishing occurs
+
+Maximum age - remove slot and replace with general assumption
 
