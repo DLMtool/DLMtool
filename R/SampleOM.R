@@ -530,8 +530,11 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   }else{ # if mov is specified need to calculate age-based spatial distribution (Pinitdist to initdist)
     nareas<-dim(mov)[3]
     if(msg) message("Custom movement matrix detected: simulating movement among ",nareas," areas")
-    
-    mind<-as.matrix(expand.grid(1:nsim,maxage,1:nareas,1:nareas))
+    if(is.na(dim(mov)[5])) {
+      mind<-as.matrix(expand.grid(1:nsim,maxage,1:nareas,1:nareas))
+    } else {
+      mind<-as.matrix(expand.grid(1:nsim,maxage,1:nareas,1:nareas, 1)) # movement for 1st year
+    }
     movedarray<-array(0,c(nsim,nareas,nareas))
     Pinitdist<-array(1/nareas,c(nsim,nareas))
     for(i in 1:20){ # convergence in initial distribution is assumed to occur in 20 iterations (generally overkill)
@@ -539,15 +542,15 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       Pinitdist<-apply(movedarray,c(1,3),sum) # add over to areas
       #print(initdist[1:2,]) # debugging to check convergence
     }
-    
   }
-  
+  if(is.na(dim(mov)[5])) { # movement matrix only specified for one year
+    mov <- array(mov, dim=c(dim(mov), nyears+proyears))
+  }
+
   if (dim(Asize)[2]!=nareas) {
     if(msg) message('Asize is not length "nareas", assuming all areas equal size')
     Asize <- matrix(1/nareas, nrow=nsim, ncol=nareas)
   }
-  
-  
   
   StockOut$Mexp <- Mexp 
   StockOut$Msd <- Msd 

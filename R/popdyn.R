@@ -1013,7 +1013,7 @@ MSYCalcs <- function(logU, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age,
 #' @param V An array (dimensions nsim, maxage, nyears+proyears) with the vulnerability-at-age and year
 #' @param retA An array (dimensions nsim, maxage, nyears+proyears) with the probability retained-at-age and year
 #' @param Perr A matrix (dimensions nsim, nyears+proyears) with the recruitment deviations
-#' @param mov An array (dimensions nsim, nareas, nareas) with the movement matrix
+#' @param mov An array (dimensions nsim, nareas, nareas, nyears+proyears) with the movement matrix
 #' @param SRrel A numeric vector nsim long specifying the recruitment curve to use
 #' @param Find A matrix (dimensions nsim, nyears) with the historical fishing effort 
 #' @param Spat_targ A numeric vector nsim long with the spatial targeting
@@ -1034,7 +1034,7 @@ getq3 <- function(x, D, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, As
   
   opt <- optimize(optQ, log(bounds), depc=D[x], SSB0c=SSB0[x], nareas, maxage, Ncurr=N[x,,1,], 
                   pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,,], Asize_c=Asize[x,], WtAge=Wt_age[x,,],
-                  Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=mov[x,,,], SRrelc=SRrel[x], 
+                  Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=mov[x,,,,], SRrelc=SRrel[x], 
                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
                   SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], maxF=maxF, MPA=MPA, useCPP=useCPP)
   return(exp(opt$minimum))
