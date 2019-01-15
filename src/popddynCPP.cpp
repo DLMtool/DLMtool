@@ -90,7 +90,7 @@ arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcu
 //' @param Vuln Numeric matrix (maxage, pyears) with vulnerability by age and year
 //' @param Retc Numeric matrix (maxage, pyears) with retention by age and year
 //' @param Prec Numeric vector (pyears) with recruitment error
-//' @param mov Numeric matrix (nareas by nareas) with the movement matrix
+//' @param movc Numeric array (nareas by nareas) with the movement matrix
 //' @param SRrelc Integer indicating the stock-recruitment relationship to use (1 for Beverton-Holt, 2 for Ricker)
 //' @param Effind Numeric vector (length pyears) with the fishing effort by year
 //' @param Spat_targc Integer. Spatial targetting
@@ -113,7 +113,7 @@ arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcu
 List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
                arma::mat M_age, arma::vec Asize_c, arma::mat MatAge, arma::mat WtAge,
                arma::mat Vuln, arma::mat Retc, arma::vec Prec,
-               arma::cube movc, double SRrelc, arma::vec Effind,
+               List movcy, double SRrelc, arma::vec Effind,
                double Spat_targc, double hc, NumericVector R0c, NumericVector SSBpRc,
                NumericVector aRc, NumericVector bRc, double Qc, double Fapic, double maxF, 
                arma::mat MPA, int control, double SSB0c) {
@@ -139,9 +139,12 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
   NumericVector SSB0a(nareas);
   double R0 = sum(R0c);
 
-  
   // Initial year
   Narray.subcube(0, 0, 0, maxage-1, 0, nareas-1) = Ncurr;
+  
+
+  int yr = 0;
+  arma::cube movc = movcy(yr);
   
   for (int A=0; A<nareas; A++) {
     Barray.subcube(0, 0, A, maxage-1, 0, A) = Ncurr.col(A) % WtAge.col(0);
@@ -180,6 +183,7 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
   for (int yr=0; yr<(pyears-1); yr++) {
     // Rcpp::Rcout << "yr = " << yr << std::endl;
     arma::vec SB(nareas);
+    arma::cube movc = movcy(yr);
     
     for (int A=0; A<nareas; A++) SB(A) = accu(SBarray.subcube(0, yr, A, maxage-1, yr, A));
     if ((yr >0) & (control==3)) SB = SSB0a;

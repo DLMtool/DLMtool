@@ -43,7 +43,7 @@ getBlow<-function(x, N, Asize, SSBMSY, SSBpR, MPA, SSB0, nareas, retA,MGThorizon
                  SSBpRc=SSBpR[x,], MPA=MPA, SSB0c=SSB0[x], nareas, retAc=retA[x,,],
                  MGThorizonc=MGThorizon[x], Fc=Find[x,],Perrc=Perr[x,], Mc=M_ageArray[x,,], 
                  hc=hs[x], Mac=Mat_age[x,,], Wac=Wt_age[x,,], R0c=R0a[x,], Vc=V[x,,], 
-                 nyears=nyears, maxage=maxage, movc=mov[x,,,], Spat_targc=Spat_targ[x], 
+                 nyears=nyears, maxage=maxage, movc=mov[x,,,,], Spat_targc=Spat_targ[x], 
                  SRrelc=SRrel[x], aRc=aR[x,], bRc=bR[x,], Bfrac, maxF, mode=1)
   
   if(ploty){
@@ -51,7 +51,7 @@ getBlow<-function(x, N, Asize, SSBMSY, SSBpR, MPA, SSB0, nareas, retA,MGThorizon
              SSBpRc=SSBpR[x,], MPA=MPA, SSB0c=SSB0[x], nareas, retAc=retA[x,,],
              MGThorizonc=MGThorizon[x], Fc=Find[x,],Perrc=Perr[x,], Mc=M_ageArray[x,,], 
              hc=hs[x], Mac=Mat_age[x,,], Wac=Wt_age[x,,], R0c=R0a[x,], Vc=V[x,,], 
-             nyears=nyears, maxage=maxage, movc=mov[x,,,], Spat_targc=Spat_targ[x], 
+             nyears=nyears, maxage=maxage, movc=mov[x,,,,], Spat_targc=Spat_targ[x], 
              SRrelc=SRrel[x], aRc=aR[x,], bRc=bR[x,], Bfrac, maxF, mode=3)
   }
   
@@ -59,7 +59,7 @@ getBlow<-function(x, N, Asize, SSBMSY, SSBpR, MPA, SSB0, nareas, retA,MGThorizon
            SSBpRc=SSBpR[x,], MPA=MPA, SSB0c=SSB0[x], nareas, retAc=retA[x,,],
            MGThorizonc=MGThorizon[x], Fc=Find[x,],Perrc=Perr[x,], Mc=M_ageArray[x,,], 
            hc=hs[x], Mac=Mat_age[x,,], Wac=Wt_age[x,,], R0c=R0a[x,], Vc=V[x,,], 
-           nyears=nyears, maxage=maxage, movc=mov[x,,,], Spat_targc=Spat_targ[x], 
+           nyears=nyears, maxage=maxage, movc=mov[x,,,,], Spat_targc=Spat_targ[x], 
            SRrelc=SRrel[x], aRc=aR[x,], bRc=bR[x,], Bfrac, maxF, mode=2)
   
   
@@ -121,7 +121,8 @@ Blow_opt<-function(lnq, N, Asize_c, SSBMSYc,SSBpRc, MPA, SSB0c, nareas, retAc,
   MPA <- MPA[c(1:nyears, rep(nyears, MGThorizonc)),]
 
   simpop <- popdynCPP(nareas, maxage, N, pyears, M_age, Asize_c,
-                      MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc,
+                      MatAge, WtAge, Vuln, Retc, Prec, split.along.dim(movc,4), 
+                      SRrelc, Effind, Spat_targc, hc,
                       R0c=R0c, SSBpRc=SSBpRc, aRc=aRc, bRc=bRc, Qc=exp(lnq), Fapic=0,
                       maxF=maxF, MPA=MPA, control=1, SSB0c=SSB0c)
 

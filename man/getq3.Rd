@@ -38,7 +38,7 @@ Only values from the first year (i.e \code{N[,,1,]}) are used, which is the curr
 
 \item{Perr}{A matrix (dimensions nsim, nyears+proyears) with the recruitment deviations}
 
-\item{mov}{An array (dimensions nsim, nareas, nareas) with the movement matrix}
+\item{mov}{An array (dimensions nsim, nareas, nareas, nyears+proyears) with the movement matrix}
 
 \item{SRrel}{A numeric vector nsim long specifying the recruitment curve to use}
 

@@ -993,6 +993,13 @@ MSYCalcs <- function(logU, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age,
 # }
 
 
+split.along.dim <- function(a, n) {
+  setNames(lapply(split(a, arrayInd(seq_along(a), dim(a))[, n]),
+                  array, dim = dim(a)[-n], dimnames(a)[-n]),
+           dimnames(a)[[n]])
+}
+  
+
 #' optimize for catchability (q)
 #' 
 #' Function optimizes catchability (q, where F=qE) required to get to user-specified stock
@@ -1034,12 +1041,12 @@ getq3 <- function(x, D, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, As
   
   opt <- optimize(optQ, log(bounds), depc=D[x], SSB0c=SSB0[x], nareas, maxage, Ncurr=N[x,,1,], 
                   pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,,], Asize_c=Asize[x,], WtAge=Wt_age[x,,],
-                  Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=mov[x,,,,], SRrelc=SRrel[x], 
+                  Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=split.along.dim(mov[x,,,,],4), 
+                  SRrelc=SRrel[x], 
                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
                   SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], maxF=maxF, MPA=MPA, useCPP=useCPP)
   return(exp(opt$minimum))
 }
-
 
 #' Optimize q for a single simulation 
 #'
@@ -1551,7 +1558,7 @@ getFref3 <- function(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, W
   opt <- optimize(optMSY, log(c(0.001, 10)), Asize_c=Asize[x,], nareas, maxage, Ncurr=N[x,,1,], 
                   pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,,], 
                   WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
-                  movc=mov[x,,,], SRrelc=SRrel[x], 
+                  movc=split.along.dim(mov[x,,,,],4), SRrelc=SRrel[x], 
                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
                   SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], MPA=MPA, maxF=maxF, useCPP=useCPP,
                   SSB0c=SSB0[x])

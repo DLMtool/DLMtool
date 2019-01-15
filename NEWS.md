@@ -8,6 +8,8 @@ have been removed. Time-varying parameters should now be specified with `cpars`
 
 - The `Stock@maxage` slot has been deprecated
 
+- add ability to specify movement matrix by year - document & write test & helper functions
+
 ### Minor changes
 - SB0 is calculated dynamically for every year
 

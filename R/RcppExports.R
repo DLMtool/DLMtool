@@ -181,7 +181,7 @@ popdynOneTScpp <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0
 #' @param Vuln Numeric matrix (maxage, pyears) with vulnerability by age and year
 #' @param Retc Numeric matrix (maxage, pyears) with retention by age and year
 #' @param Prec Numeric vector (pyears) with recruitment error
-#' @param mov Numeric matrix (nareas by nareas) with the movement matrix
+#' @param movc Numeric array (nareas by nareas) with the movement matrix
 #' @param SRrelc Integer indicating the stock-recruitment relationship to use (1 for Beverton-Holt, 2 for Ricker)
 #' @param Effind Numeric vector (length pyears) with the fishing effort by year
 #' @param Spat_targc Integer. Spatial targetting
@@ -200,7 +200,7 @@ popdynOneTScpp <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0
 #' @author A. Hordyk
 #' 
 #' @keywords internal
-popdynCPP <- function(nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc, Fapic, maxF, MPA, control, SSB0c) {
-    .Call('_DLMtool_popdynCPP', PACKAGE = 'DLMtool', nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc, Fapic, maxF, MPA, control, SSB0c)
+popdynCPP <- function(nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge, Vuln, Retc, Prec, movcy, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc, Fapic, maxF, MPA, control, SSB0c) {
+    .Call('_DLMtool_popdynCPP', PACKAGE = 'DLMtool', nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge, Vuln, Retc, Prec, movcy, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc, Fapic, maxF, MPA, control, SSB0c)
 }
 
