@@ -87,7 +87,7 @@ XL2Data <- function(name="Data") {
     # DataXLSlot <- DLMtool:::DataXLSlot
     NewSheetNames <- names(DataXLSlot)
     if (all(NewSheetNames %in% sheetnames)) {
-      Data <- importnewXLData(dir,name)
+      Data <- importnewXLData(dir,name, NewSheetNames)
     } else {
       datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE))
       if (datasheet[1,1]== "Slot") 
@@ -110,7 +110,7 @@ XL2Data <- function(name="Data") {
 }
 
   
-importnewXLData <- function(dir,name) {
+importnewXLData <- function(dir,name, NewSheetNames) {
   Data <- new("Data", silent=TRUE)
   BlankDat <-new("Data", silent=TRUE)
   ignoreSheet <- NULL
