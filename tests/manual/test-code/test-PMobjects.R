@@ -2,7 +2,7 @@ testthat::context("Test PM Functions")
 
 PMs <- avail("PM")
 
-MSE <- runMSE()
+MSE <- runMSE(silent=TRUE)
 
 for (pm in PMs) {
   testthat::test_that(paste("Test ", pm, " works with 6 MPs"), {
