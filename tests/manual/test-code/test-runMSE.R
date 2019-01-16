@@ -88,6 +88,14 @@ testthat::test_that(paste0("runMSE with all MPs and Ricker SRR: ",info), {
 })
 
 
+# Check runMSE works in parallel with historical simulations 
+OM@nsim <- 288
+info <- paste(OM@Name, "seed =", OM@seed)
+testthat::test_that(paste0("runMSE with Hist=TRUE and parallel=TRUE: ",info), {
+  testthat::expect_is(runMSE(OM, Hist=TRUE, parallel = TRUE), 'Hist', info=info)
+})
+
+
 
 # # Historical MPA 
 # for (x in 1:Ntest) {

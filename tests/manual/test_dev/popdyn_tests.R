@@ -5,7 +5,18 @@ library(DLMtool)
 
 # Bag limit dev 
 
+OM <- tinyErr(testOM)
+OM@interval <- 1
+MSE <- runMSE(OM, MP="FMSYref")
+Pplot(MSE)
 
+
+MPs='LstepCC1'
+MSE <- runMSE(MPs=MPs)
+
+DDe
+
+LstepCC1
 
 
 # Test Effort calculation with fixed TAC 
