@@ -571,7 +571,7 @@ joinMSE <- function(MSEobjs = NULL) {
   
   lapply(MSEobjs, checkMSE) # check that MSE objects contains all slots 
   
-  ishist <- all(lapply(MSEobjs, slotNames) %>% unlist() %>% unique() == slotNames('Hist'))
+  ishist <- all(lapply(MSEobjs, slotNames) %>% unlist() %>% unique() %in% slotNames('Hist'))
   
   if (ishist) {
     out <- new("Hist")
