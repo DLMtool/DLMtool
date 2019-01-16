@@ -13,6 +13,3 @@
 #'  <%= if(MPtype(mp)[2] == 'Mixed') paste0("An object of class \\code{\\link[=Rec-class]{Rec}} with the ", paste(MPtype(mp)[3], collapse=','), " slot(s) populated") %>
 #' 
 
-
-
-

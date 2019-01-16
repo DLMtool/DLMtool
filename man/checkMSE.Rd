@@ -31,7 +31,8 @@ Utility functions for MSE objects
 Use \code{updateMSE} to update the MSE object
 
 \item \code{joinMSE}: Joins two or more MSE objects together. MSE objects must have identical
-number of historical years, and projection years.
+number of historical years, and projection years. Also works for Hist objects returned
+by \code{runMSE(Hist=TRUE)}
 
 \item \code{updateMSE}: Updates an existing MSE object (class MSE) from a previous version of the
 DLMtool to include slots new to the lastest version. Also works with Stock,

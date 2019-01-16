@@ -5,7 +5,7 @@
 \title{Title}
 \usage{
 makeData(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars, FleetPars,
-  ObsPars, ImpPars, RefPoints, ErrList, OM, control = NULL,
+  ObsPars, ImpPars, RefPoints, ErrList, OM, SampCpars, control = NULL,
   silent = FALSE)
 }
 \arguments{

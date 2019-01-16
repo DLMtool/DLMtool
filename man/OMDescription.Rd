@@ -4,7 +4,7 @@
 \name{OMDescription}
 \alias{OMDescription}
 \title{OMDescription}
-\format{An object of class \code{data.frame} with 107 rows and 2 columns.}
+\format{An object of class \code{data.frame} with 106 rows and 2 columns.}
 \usage{
 OMDescription
 }

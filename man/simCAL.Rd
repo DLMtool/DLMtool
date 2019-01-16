@@ -21,6 +21,18 @@ simCAL(nsim, nyears, maxage, CAL_ESS, CAL_nsamp, nCALbins, CAL_binsmid, vn,
 \item{nCALbins}{number of CAL bins}
 
 \item{CAL_binsmid}{mid-points of CAL bins}
+
+\item{vn}{Vulnerable numbers-at-age}
+
+\item{retL}{Retention at length curve}
+
+\item{Linfarray}{Array of Linf values by simulation and year}
+
+\item{Karray}{Array of K values by simulation and year}
+
+\item{t0array}{Array of t0 values by simulation and year}
+
+\item{LenCV}{CV of length-at-age#'}
 }
 \value{
 named list with CAL array and LFC, ML, & Lc vectors
