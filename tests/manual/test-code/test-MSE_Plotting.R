@@ -19,11 +19,7 @@ for (ff in funs) {
       } else {
         testthat::expect_error(fun(MSEobj), NA, info=ff) 
       }
-       
     }
-    
   })
 }
-
-
 
