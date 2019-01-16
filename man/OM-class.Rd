@@ -84,7 +84,7 @@ the data inputs is used.}
 
 \item{\code{LenCV}}{Coefficient of variation of length-at-age (assumed constant for all age classes). Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Ksd}}{Inter-annual variability in growth parameter k expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers}
+\item{\code{Ksd}}{Inter-annual variability in growth parameter k expressed as coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
 \item{\code{Kgrad}}{No longer used. Previously mean temporal trend in growth parameter k, expressed as a percentage change in k per year.}
 

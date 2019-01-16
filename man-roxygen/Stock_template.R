@@ -17,7 +17,7 @@
 #' @slot K von Bertalanffy growth parameter k. Uniform distribution lower and upper bounds. Positive real numbers
 #' @slot t0 von Bertalanffy theoretical age at length zero. Uniform distribution lower and upper bounds. Non-positive real numbers
 #' @slot LenCV Coefficient of variation of length-at-age (assumed constant for all age classes). Uniform distribution lower and upper bounds. Positive real numbers 
-#' @slot Ksd Inter-annual variability in growth parameter k expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers 
+#' @slot Ksd Inter-annual variability in growth parameter k expressed as coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers 
 #' @slot Kgrad No longer used. Previously mean temporal trend in growth parameter k, expressed as a percentage change in k per year. 
 #' @slot Linfsd Inter-annual variability in maximum length expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers 
 #' @slot Linfgrad No longer used. Previously mean temporal trend in maximum length, expressed as a percentage change in Linf per year. 
