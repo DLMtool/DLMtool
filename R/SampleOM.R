@@ -34,12 +34,15 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (all(is.na(Stock@Mexp))) Stock@Mexp <- c(0, 0)
   
   # Warning alerts for deprecated slots 
-  if (any(Stock@Linfgrad !=0)) 
-    warning("Linfgrad is no longer used and values are being ignored. Use 'cpars' to specify time-varying changes to Linf", call.=FALSE)
-  if (any(Stock@Kgrad !=0)) 
-    warning("Kgrad is no longer used and values are being ignored. Use 'cpars' to specify time-varying changes to K", call.=FALSE)
-  if (any(Stock@Mgrad !=0))
-    warning("Mgrad is no longer used and values are being ignored. Use 'cpars' to specify time-varying changes to M", call.=FALSE)
+  if (msg) {
+    if (any(Stock@Linfgrad !=0)) 
+      warning("Linfgrad is no longer used and values are being ignored. Use 'cpars' to specify time-varying changes to Linf", call.=FALSE)
+    if (any(Stock@Kgrad !=0)) 
+      warning("Kgrad is no longer used and values are being ignored. Use 'cpars' to specify time-varying changes to K", call.=FALSE)
+    if (any(Stock@Mgrad !=0))
+      warning("Mgrad is no longer used and values are being ignored. Use 'cpars' to specify time-varying changes to M", call.=FALSE)
+  }
+ 
  
   if (class(Stock) == "OM") {
     nsim <- Stock@nsim
@@ -540,7 +543,6 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     for(i in 1:20){ # convergence in initial distribution is assumed to occur in 20 iterations (generally overkill)
       movedarray[mind[,c(1,3,4)]]<-Pinitdist[mind[,c(1,3)]]*mov[mind] # distribution in from areas mulitplied by movement array
       Pinitdist<-apply(movedarray,c(1,3),sum) # add over to areas
-      #print(initdist[1:2,]) # debugging to check convergence
     }
   }
   if(is.na(dim(mov)[5])) { # movement matrix only specified for one year
