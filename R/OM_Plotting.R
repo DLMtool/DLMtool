@@ -341,9 +341,10 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
   hist2(Msd, col=col, axes=FALSE, main="Msd", breaks=breaks)
   abline(v=Msd[its], col=1:nsamp, lwd=lwd)
   axis(side=1) 
-  hist2(Mgrad, col=col, axes=FALSE, main="Mgrad", breaks=breaks)
-  abline(v=Mgrad[its], col=1:nsamp, lwd=lwd)
-  axis(side=1)
+  plot(c(0,1), c(0,1), type="n", axes=FALSE, xlab="", ylab="")
+  # hist2(Mgrad, col=col, axes=FALSE, main="Mgrad", breaks=breaks)
+  # abline(v=Mgrad[its], col=1:nsamp, lwd=lwd)
+  # axis(side=1)
   
   # M traj
   matplot(t(Marray[its,]), type="l", lty=1, bty="l", main="M by Year", lwd=lwd)
@@ -394,9 +395,10 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
   hist2(Linfsd, col=col, axes=FALSE, main="Linfsd", breaks=breaks)
   abline(v=Linfsd[its], col=1:nsamp, lwd=lwd)
   axis(side=1)  
-  hist2(Linfgrad, col=col, axes=FALSE, main="Linfgrad", breaks=breaks)
-  abline(v=Linfgrad[its], col=1:nsamp, lwd=lwd)
-  axis(side=1)
+  plot(c(0,1), c(0,1), type="n", axes=FALSE, xlab="", ylab="")
+  # hist2(Linfgrad, col=col, axes=FALSE, main="Linfgrad", breaks=breaks)
+  # abline(v=Linfgrad[its], col=1:nsamp, lwd=lwd)
+  # axis(side=1)
   
   # Linf traj 
   matplot(t(Linfarray[its,]), type="l", bty="l", main="Linf by Year", lwd=lwd, lty=1)
@@ -413,9 +415,10 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
   hist2(Ksd, col=col, axes=FALSE, main="Ksd", breaks=breaks)
   abline(v=Ksd[its], col=1:nsamp, lwd=lwd)
   axis(side=1) 
-  hist2(Kgrad, col=col, axes=FALSE, main="Kgrad", breaks=breaks)
-  abline(v=Kgrad[its], col=1:nsamp, lwd=lwd)
-  axis(side=1)  
+  plot(c(0,1), c(0,1), type="n", axes=FALSE, xlab="", ylab="")
+  # hist2(Kgrad, col=col, axes=FALSE, main="Kgrad", breaks=breaks)
+  # abline(v=Kgrad[its], col=1:nsamp, lwd=lwd)
+  # axis(side=1)  
   
   # K traj 
   matplot(t(Karray[its,]), type="l", bty="l", main="K by Year", lwd=lwd, lty=1)
@@ -962,8 +965,8 @@ plot.OM <-function(x, rmd=FALSE, head="##", ...){
     yrlab<-OM@CurrentYr-((nyears-1):0)
   } else if (class(x) == "list") {
     out <- x 
-    nyears <- dim(out$TSdata[[1]])[1]
-    nsim <- dim(out$TSdata[[1]])[2]
+    nyears <- dim(out@TSdata[[1]])[1]
+    nsim <- dim(out@TSdata[[1]])[2]
     yrlab<-nyears-((nyears-1):0)
   } else stop("argument must be class 'OM' or 'list' ")
   
@@ -978,43 +981,39 @@ plot.OM <-function(x, rmd=FALSE, head="##", ...){
   par(mfrow=c(4,2),mai=c(0.7,0.7,0.05,0.05),omi=c(0.01,0.01,0.3,0.01))
   
   # SSB
-  TSplot(yrlab,out$TSdata$SSB,xlab="Historical year",ylab="Spawning biomass")
+  TSplot(yrlab,out@TSdata$SSB,xlab="Historical year",ylab="Spawning biomass")
   
   # Depletion
-  TSplot(yrlab,out$TSdata$SSB/rep(out$MSYs$SSB0,each=nyears),xlab="Historical year",ylab="Stock depletion (SSB)")
+  TSplot(yrlab,out@TSdata$SSB/rep(out@Ref$SSB0,each=nyears),xlab="Historical year",ylab="Stock depletion (SSB)")
   
   # Apical F
-  FM<-out$SampPars$Find*out$SampPars$qs
+  FM<-t(out@TSdata$Find)*out@OM$qs
   TSplot(yrlab,t(FM),xlab="Historical year",ylab="Fishing mortality rate (apical)")
   
   # Catches
-  TSplot(yrlab,out$TSdata$Catch,xlab="Historical year",ylab="Annual catches")
+  TSplot(yrlab,out@TSdata$Catch,xlab="Historical year",ylab="Annual catches")
   
   # Recruitment
-  TSplot(yrlab,out$TSdata$Rec,xlab="Historical year",ylab="Recruitment")
+  TSplot(yrlab,out@TSdata$Rec,xlab="Historical year",ylab="Recruitment")
   
   # SSB-Rec
-  TSplot(x=out$TSdata$SSB[2:nyears,],y=out$TSdata$Rec[2:nyears,],xlab="Spawning biomass",ylab="Recruitment",mat=F,type='p')
+  TSplot(x=out@TSdata$SSB[2:nyears,],y=out@TSdata$Rec[2:nyears,],xlab="Spawning biomass",ylab="Recruitment",mat=F,type='p')
   
-  F_FMSY<-FM/out$MSYs$FMSY
-  B_BMSY<-t(out$TSdata$SSB)/out$MSYs$SSBMSY
+  F_FMSY<-FM/out@Ref$FMSY
+  B_BMSY<-t(out@TSdata$SSB)/out@Ref$SSBMSY
   
   TSKplot(B_BMSY,F_FMSY,yrlab)
   
   # Age vulnerability
-  maxage<-dim(out$SampPars$V)[2]
+  maxage<-dim(out@AtAge$Select)[2]
   colors <- c("green","blue","grey45")
   for (x in 1:3) {
-    Zvals <- t(out$SampPars$V[x,,1:nyears])
+    Zvals <- t(out@AtAge$Select[x,,1:nyears])
     if(sd(Zvals, na.rm=TRUE) != 0) {
       if (x==1)contour(x=yrlab,y=1:maxage,z=Zvals,levels=c(0.25,0.75),col=colors[x],drawlabels=F,lwd=c(1,2))
       if (x!=1)contour(x=yrlab,y=1:maxage,z=Zvals,levels=c(0.25,0.75),col=colors[x],drawlabels=F, add=T,lwd=c(1,2))
     }
-    
   }
-  
-  # contour(x=yrlab,y=1:maxage,z=t(out$SampPars$V[2,,1:nyears]),levels=c(0.25,0.75),col='blue',drawlabels=F,add=T,lwd=c(1,2))
-  # contour(x=yrlab,y=1:maxage,z=t(out$SampPars$V[3,,1:nyears]),levels=c(0.25,0.75),col='grey45',drawlabels=F,add=T,lwd=c(1,2))
   
   legend('topright',legend=c(paste("Simulation",1:3)),text.col=c("green","blue","grey45"),bty='n')
   legend('topleft',legend="Age vulnerability (0.25, 0.75)",bty='n')

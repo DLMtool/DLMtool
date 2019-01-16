@@ -41,5 +41,10 @@ run checks for Effort controls
 
 Survey is taken mid-year, before fishing occurs
 
-Maximum age - remove slot and replace with general assumption
+Maximum age - remove slot and replace with general assumption - not done - used for M-at-age
+
+
+Hist object - document
+
+
 

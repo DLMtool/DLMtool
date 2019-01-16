@@ -561,7 +561,8 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
 }
 
 #' @describeIn checkMSE Joins two or more MSE objects together. MSE objects must have identical
-#' number of historical years, and projection years.
+#' number of historical years, and projection years. Also works for Hist objects returned
+#' by `runMSE(Hist=TRUE)`
 #' @export
 joinMSE <- function(MSEobjs = NULL) {
   # join two or more MSE objects
@@ -569,6 +570,34 @@ joinMSE <- function(MSEobjs = NULL) {
   if (length(MSEobjs) < 2) stop("MSEobjs list doesn't contain multiple MSE objects")
   
   lapply(MSEobjs, checkMSE) # check that MSE objects contains all slots 
+  
+  ishist <- all(lapply(MSEobjs, slotNames) %>% unlist() %>% unique() == slotNames('Hist'))
+  
+  if (ishist) {
+    out <- new("Hist")
+    sls <- slotNames('Hist')
+    nsim <- MSEobjs[[1]]@Ref$B0 %>% length()
+    for (sl in sls) {
+      obj <-lapply(MSEobjs, slot, name=sl)
+      if (sl == "Data") {
+        out@Data <- joinData(obj)
+      } else {
+        if (class(obj[[1]]) == "data.frame") {
+          slot(out, sl) <- do.call('rbind', obj)
+        }
+        if (class(obj[[1]]) == "list") {
+          out.list <- list()
+          for (nm in names(obj[[1]])) {
+            obj2 <- lapply(obj, '[[', nm)
+            ind <- which(dim(obj2[[1]]) == nsim)
+            out.list[[nm]] <- abind::abind(obj2, along=ind)
+          }
+          slot(out, sl) <- out.list
+        }
+      }
+    }
+    return(out)
+  }  
   
   MPNames <- lapply(MSEobjs, getElement, name = "MPs")  # MPs in each object 
   allsame <- length(unique(lapply(MPNames, unique))) == 1

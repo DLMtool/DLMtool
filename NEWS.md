@@ -13,10 +13,12 @@ have been removed. Time-varying parameters should now be specified with `cpars`
 ### Minor changes
 - SB0 is calculated dynamically for every year
 
+- runMSE(Hist=TRUE) now works with parallel processing
+
 
 ### New Features
 - added more [cheat sheets](https://dlmtool.github.io/DLMtool/cheat_sheets/CheatSheets.html)
-
+- runMSE(Hist=TRUE) returns a new object of class 'Hist'
 
 ### Fixes
 - fix issue with importing Data objects with larger number of length bins

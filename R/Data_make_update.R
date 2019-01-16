@@ -12,7 +12,7 @@
 #'
 makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars, 
                      FleetPars, ObsPars, ImpPars, RefPoints,
-                     ErrList, OM, control=NULL, silent=FALSE) {
+                     ErrList, OM, SampCpars, control=NULL, silent=FALSE) {
   
   if(!silent) message("Simulating observed data")
   
@@ -162,8 +162,8 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   
   ind <- which(lapply(ImpPars, length) == nsim)
   imp <- as.data.frame(ImpPars[ind])
-  refs <- RefPoints %>% select(MSY, FMSY, SSBMSY_SSB0, BMSY_B0,
-                               UMSY, FMSY_M, RefY, Blow, MGT)
+  refs <- RefPoints %>% select('MSY', 'FMSY', 'SSBMSY_SSB0', 'BMSY_B0',
+                               'UMSY', 'FMSY_M', 'RefY', 'Blow', 'MGT')
   
   OMtable <- data.frame(stock, fleet, imp, refs, ageM=StockPars$ageM[,nyears], 
                      L5=FleetPars$L5[nyears, ], LFS=FleetPars$LFS[nyears, ], 
@@ -287,18 +287,17 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   Data@CAL <- array(0, dim = c(nsim, nyears + y - 1, StockPars$nCALbins))
   Data@CAL[, 1:(nyears + y - interval[mm] - 1), ] <- oldCAL[, 1:(nyears + y - interval[mm] - 1), ]
   
-  
   CAL <- array(NA, dim = c(nsim, interval[mm], StockPars$nCALbins))  
   vn <- (apply(N_P[,,,], c(1,2,3), sum) * retA_P[,,(nyears+1):(nyears+proyears)]) # numbers at age that would be retained
   vn <- aperm(vn, c(1,3,2))
   
   CALdat <- simCAL(nsim, nyears=length(yind), StockPars$maxage, ObsPars$CAL_ESS, 
                    ObsPars$CAL_nsamp, StockPars$nCALbins, StockPars$CAL_binsmid, 
-                   vn=vn[,yind,, drop=FALSE], retL_P[,,nyears+yind, drop=FALSE],
-                   StockPars$Linfarray[,nyears + yind, drop=FALSE],  
-                   StockPars$Karray[,nyears + yind, drop=FALSE], 
-                   StockPars$t0array[,nyears + yind,drop=FALSE],
-                   StockPars$LenCV)
+                   vn=vn[,yind,, drop=FALSE], retL=retL_P[,,nyears+yind, drop=FALSE],
+                   Linfarray=StockPars$Linfarray[,nyears + yind, drop=FALSE],  
+                   Karray=StockPars$Karray[,nyears + yind, drop=FALSE], 
+                   t0array=StockPars$t0array[,nyears + yind,drop=FALSE],
+                   LenCV=StockPars$LenCV)
 
   Data@CAL[, nyears + yind, ] <- CALdat$CAL # observed catch-at-length
   Data@ML <- cbind(Data@ML, CALdat$ML) # mean length

@@ -330,7 +330,8 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
   
   # Calculate total fishing mortality & effort
   M_array <- array(0.5*M_ageArray[,,nyears+y], dim=c(nsim, maxage, nareas))
-  Ftot <- -log(1-apply(CB_P[,,y,], 1, sum)/apply(VBiomass_P[,,y,] * exp(-M_array), 1, sum))
+  Ftot <- suppressWarnings(-log(1-apply(CB_P[,,y,], 1, sum)/apply(VBiomass_P[,,y,] * exp(-M_array), 1, sum)))
+  Ftot[!is.finite(Ftot)] <- 1.5
  
   Effort <- Ftot/(FinF * qs*qvar[,y]* (1 + qinc/100)^y) * apply(fracE2, 1, sum) # effort relative to last historical
   
@@ -994,7 +995,7 @@ MSYCalcs <- function(logU, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age,
 
 
 split.along.dim <- function(a, n) {
-  setNames(lapply(split(a, arrayInd(seq_along(a), dim(a))[, n]),
+  stats::setNames(lapply(split(a, arrayInd(seq_along(a), dim(a))[, n]),
                   array, dim = dim(a)[-n], dimnames(a)[-n]),
            dimnames(a)[[n]])
 }
@@ -1653,7 +1654,7 @@ projectEq <- function(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, 
                       pyears, M_age=M_ageArray[x,,], Asize_c=Asize[x,],
                       MatAge=Mat_age[x,,],
                       WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,],
-                      movc=mov[x,,,], SRrelc=SRrel[x],
+                      movcy=split.along.dim(mov[x,,,,],4), SRrelc=SRrel[x],
                       Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,],
                       SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=0, Fapic=0, MPA=MPA,
                       maxF=maxF, control=3, SSB0c=SSB0[x])

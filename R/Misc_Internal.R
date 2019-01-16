@@ -488,7 +488,12 @@ simCAA <- function(nsim, yrs, maxage, Cret, CAA_ESS, CAA_nsamp) {
 #' @param CAL_nsamp CAA sample size
 #' @param nCALbins number of CAL bins
 #' @param CAL_binsmid mid-points of CAL bins
-#'
+#' @param vn Vulnerable numbers-at-age
+#' @param retL Retention at length curve
+#' @param Linfarray Array of Linf values by simulation and year
+#' @param Karray Array of K values by simulation and year
+#' @param t0array Array of t0 values by simulation and year
+#' @param LenCV CV of length-at-age#'
 #' @return named list with CAL array and LFC, ML, & Lc vectors
 simCAL <- function(nsim, nyears, maxage,  CAL_ESS, CAL_nsamp, nCALbins, CAL_binsmid,  
                    vn, retL, Linfarray, Karray, t0array, LenCV) {
@@ -510,6 +515,7 @@ simCAL <- function(nsim, nyears, maxage,  CAL_ESS, CAL_nsamp, nCALbins, CAL_bins
   # Mean Length 
   temp <- CAL * rep(CAL_binsmid, each = nsim * nyears)
   ML <- apply(temp, 1:2, sum)/apply(CAL, 1:2, sum)
+  ML[!is.finite(ML)] <- 0 
   
   # Lc - modal length 
   Lc <- array(CAL_binsmid[apply(CAL, 1:2, which.max)], dim = c(nsim, nyears))
@@ -519,7 +525,7 @@ simCAL <- function(nsim, nyears, maxage,  CAL_ESS, CAL_nsamp, nCALbins, CAL_bins
   for (i in 1:nsim) for (j in 1:nyears) nuCAL[i, j, 1:match(max(1, Lc[i, j]), CAL_binsmid, nomatch=1)] <- NA
   temp <- nuCAL * rep(CAL_binsmid, each = nsim * nyears)
   Lbar <- apply(temp, 1:2, sum, na.rm=TRUE)/apply(nuCAL, 1:2, sum, na.rm=TRUE)
-  
+  Lbar[!is.finite(Lbar)] <- 0 
   out <- list()
   out$CAL <- CAL
   out$LFC <- LFC

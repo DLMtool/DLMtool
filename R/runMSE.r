@@ -35,8 +35,8 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' if MPs can be run.
 #' @param timelimit Maximum time taken for a method to carry out 10 reps
 #' (methods are ignored that take longer)
-#' @param Hist Should model stop after historical simulations? Returns a list 
-#' containing all historical data
+#' @param Hist Should model stop after historical simulations? Returns an object of 
+#' class 'Hist' containing all historical data
 #' @param ntrials Maximum of times depletion and recruitment deviations are 
 #' resampled to optimize for depletion. After this the model stops if more than 
 #' percent of simulations are not close to the required depletion
@@ -81,16 +81,12 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                    save_name=NULL, checks=FALSE, control=NULL) {
   
   if (class(OM)!='OM') stop("OM is not class 'OM'", call. = FALSE)
-  if (Hist & parallel) {
-    message("Sorry! Historical simulations currently can't use parallel.")
-    parallel <- FALSE
-  }
   
   # Set DLMenv to be empty. Currently updated by Assess models in MSEtool
   rm(list = ls(DLMenv), envir = DLMenv)
   
   # check if custom MP names already exist in DLMtool
-  tt <-  suppressWarnings(try(lsf.str(envir=globalenv()), silent=TRUE))
+  tt <- suppressWarnings(try(lsf.str(envir=globalenv()), silent=TRUE))
   if (class(tt)!="try-error") {
     gl.funs <- as.vector(tt)
     pkg.funs <- as.vector(ls.str('package:DLMtool'))
@@ -119,6 +115,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   }
 
   if (parallel) {
+    if (OM@nsim<48) stop("nsim must be >=48 for parallel processing", call.=FALSE)
     if(!snowfall::sfIsRunning()) {
       # stop("Parallel processing hasn't been initialized. Use 'setup'", call. = FALSE)
       message("Parallel processing hasn't been initialized. Calling 'setup()' now")
@@ -131,8 +128,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     if (length(cMPs)>0) snowfall::sfExport(list=cMPs)
     
     ncpu <- snowfall::sfCpus()
-
-    if (OM@nsim<48) stop("nsim must be >=48")
     nits <- ceiling(OM@nsim/48)
     
     itsim <- rep(48,nits)
@@ -155,7 +150,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     }
     
    
-    if (!silent) message("Running MSE in parallel on ", ncpu, ' processors')
+    if (!silent & !Hist) message("Running MSE in parallel on ", ncpu, ' processors')
+    if (!silent & Hist) message("Running historical simulations in parallel on ", ncpu, ' processors')
     
     temp <- snowfall::sfClusterApplyLB(1:nits, run_parallel, itsim=itsim, OM=OM, MPs=MPs,  
                              CheckMPs=CheckMPs, timelimit=timelimit, Hist=Hist, ntrials=ntrials, 
@@ -169,6 +165,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     MSE1 <- joinMSE(temp) 
     if (class(MSE1) == "MSE") {
       if (!silent) message("MSE completed")
+    } else if (class(MSE1) == "Hist"){
+      if (!silent) message("Historical simulations completed")
     } else {
       warning("MSE completed but could not join MSE objects. Re-run with `save_name ='MyName'` to debug")
     }
@@ -191,7 +189,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                       HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=FALSE, checks=FALSE,
                       control=NULL, parallel=FALSE) {
   
-  # DEV SETUP ####
+  # Dev Setup ####
   # development mode - assign default argument values to current workspace if they don't exist
   # def.args <- DLMtool:::dev.mode() 
   # for (nm in names(def.args)) assign(nm, def.args[[nm]])
@@ -229,32 +227,25 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # --- Sample OM parameters ----
   # Custom Parameters
-  SampCpars <- list() # empty list 
   # custom parameters exist - sample and write to list
-  if(length(OM@cpars)>0){
-    # ncparsim<-cparscheck(OM@cpars)   # check each list object has the same length and if not stop and error report
-    SampCpars <- SampleCpars(OM@cpars, nsim, msg=!silent) 
-  }
-  
-  # Stock Parameters
+  SampCpars <- list()
+  SampCpars <- if(length(OM@cpars)>0) SampleCpars(OM@cpars, nsim, msg=!silent)
+
+  # Stock Parameters & assign to function environment
   StockPars <- SampleStockPars(OM, nsim, nyears, proyears, SampCpars, msg=!silent)
-  # Assign Stock pars to function environment
   for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
 
-  # Fleet Parameters
-  FleetPars <- SampleFleetPars(SubOM(OM, "Fleet"), Stock=StockPars, nsim, nyears, proyears, 
-                               cpars=SampCpars)
-  # Assign Fleet pars to function environment
+  # Fleet Parameters & assign to function environment
+  FleetPars <- SampleFleetPars(SubOM(OM, "Fleet"), Stock=StockPars, nsim, 
+                               nyears, proyears, cpars=SampCpars)
   for (X in 1:length(FleetPars)) assign(names(FleetPars)[X], FleetPars[[X]])
   
-  # Obs Parameters
+  # Obs Parameters & assign to function environment
   ObsPars <- SampleObsPars(OM, nsim, cpars=SampCpars)
-  # Assign Obs pars to function environment
   for (X in 1:length(ObsPars)) assign(names(ObsPars)[X], ObsPars[[X]])
   
-  # Imp Paramerers
+  # Imp Paramerers & assign to function environment
   ImpPars <- SampleImpPars(OM, nsim, cpars=SampCpars)
-  # Assign Imp pars to function environment
   for (X in 1:length(ImpPars)) assign(names(ImpPars)[X], ImpPars[[X]])
   
   # --- Initialize Arrays ----
@@ -285,9 +276,9 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   SY <- SAYR[, c(1, 3)]
   Sa[,2]<- maxage-Sa[,2] + 1 # This is the process error index for initial year
 
-  # CLEAN UP THIS SECTION #####
+
   # Calculate initial distribution if mov provided in cpars
-  if(!exists('initdist', inherits = FALSE)){ # movement matrix has been provided in cpars
+  if(!exists('initdist', inherits = FALSE)) { # movement matrix has been provided in cpars
     # Pinitdist is created in SampleStockPars instead of initdist if 
     # movement matrix is provided in cpars - OM@cpars$mov
     if (!exists('Asize', inherits = FALSE)) {
@@ -298,26 +289,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     SSN[SAYR] <- Nfrac[SA] * R0[S] * Pinitdist[SR]  # Calculate initial spawning stock numbers
     N[SAYR] <- R0[S] * surv[SA] * Pinitdist[SR]  # Calculate initial stock numbers
     Neq <- N
-    Biomass[SAYR] <- N[SAYR] * Wt_age[SAY]  # Calculate initial stock biomass
     SSB[SAYR] <- SSN[SAYR] * Wt_age[SAY]    # Calculate spawning stock biomass
-    VBiomass[SAYR] <- Biomass[SAYR] * V[SAY]  # Calculate vunerable biomass
-
-    if (nsim > 1) {
-      SSN0 <- apply(SSN[, , 1, ], c(1, 3), sum)  # Calculate unfished spawning stock numbers
-      SSB0 <- apply(SSB[, , 1, ], 1, sum)  # Calculate unfished spawning stock biomass
-      SSBpR <- matrix(SSB0/R0, nrow=nsim, ncol=nareas)  # Spawning stock biomass per recruit
-      SSB0a <- apply(SSB[, , 1, ], c(1, 3), sum)  # Calculate unfished spawning stock numbers
-      B0 <- apply(Biomass[, , 1, ], 1, sum)
-      N0 <- apply(N[, , 1, ], 1, sum)
-    } else {
-      SSN0 <- apply(SSN[, , 1, ], 2, sum)  # Calculate unfished spawning stock numbers
-      SSB0 <-  sum(SSB[, , 1, ])  # Calculate unfished spawning stock biomass
-      SSBpR <- SSB0/R0  # Spawning stock biomass per recruit
-      SSB0a <- apply(SSB[, , 1, ], 2, sum)  # Calculate unfished spawning stock numbers
-      B0 <- apply(Biomass[, , 1, ], 2, sum)
-      N0 <- apply(N[, , 1, ], 2, sum)
-    }
-
+    SSB0 <- apply(SSB[, , 1, ], 1, sum)  # Calculate unfished spawning stock biomass
+    SSBpR <- matrix(SSB0/R0, nrow=nsim, ncol=nareas)  # Spawning stock biomass per recruit
+    SSB0a <- apply(SSB[, , 1, ], c(1, 3), sum)  # Calculate unfished spawning stock numbers
+    
     bR <- matrix(log(5 * hs)/(0.8 * SSB0a), nrow=nsim)  # Ricker SR params
     aR <- matrix(exp(bR * SSB0a)/SSBpR, nrow=nsim)  # Ricker SR params
     R0a <- matrix(R0, nrow=nsim, ncol=nareas, byrow=FALSE) * 1/nareas # initial distribution of recruits
@@ -356,7 +332,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
 
     } 
   }
-  
+
   # Unfished recruitment by area - INITDIST OF AGE 1.
   R0a <- matrix(R0, nrow=nsim, ncol=nareas, byrow=FALSE) * initdist[,1,] # 
   
@@ -533,7 +509,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   histYrs <- sapply(1:nsim, function(x) 
     popdynCPP(nareas, maxage, Ncurr=N[x,,1,], nyears,  
               M_age=M_ageArray[x,,], Asize_c=Asize[x,], MatAge=Mat_age[x,,], WtAge=Wt_age[x,,],
-              Vuln=V[x,,], Retc=retA[x,,], Prec=Perr_y[x,], movc=split.along.dim(mov[x,,,,],4), 
+              Vuln=V[x,,], Retc=retA[x,,], Prec=Perr_y[x,], movcy=split.along.dim(mov[x,,,,],4), 
               SRrelc=SRrel[x], 
               Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
               SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=qs[x], Fapic=0, MPA=MPA, maxF=maxF, 
@@ -616,11 +592,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                  Perr=Perr_y[,(nyears):(nyears+maxage+proyears-1)], mov, SRrel, Find, 
                  Spat_targ, hs, R0a, SSBpR, aR, bR, MPA=MPA, maxF=maxF, SSB0=SSB0)
 
-  
   RefPoints <- data.frame(MSY=MSY, FMSY=FMSY, SSBMSY=SSBMSY, SSBMSY_SSB0=SSBMSY_SSB0,
                          BMSY_B0=BMSY_B0, BMSY=BMSY, VBMSY=VBMSY, UMSY=UMSY,
                          FMSY_M=FMSY_M, N0=N0, SSB0=SSB0, B0=B0, RefY=RefY, 
-                         Blow=Blow, MGT=MGT)
+                         Blow=Blow, MGT=MGT, R0=R0)
   
   # --- Calculate Historical Catch ----
   # Calculate catch-at-age 
@@ -671,34 +646,36 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                ErrList, OM, control=NULL, silent=FALSE)
   
   ObsPars <- Data@Obs # Obs pars updated in makeData 
- 
+  OMPars <- Data@OM
+  OMPars$qs <- qs
+  
   # --- Return Historical Simulations and Data from last historical year ----
-  ## CHECK - update Hist object ##### 
   if (Hist) { # Stop the model after historical simulations are complete
     if(!silent) message("Returning historical simulations")
-  
+    HistObj <- new("Hist")
+    Data@Misc <- list()
+    HistObj@Data <- Data 
+    HistObj@Obs <- ObsPars
+    om <- OMPars[,order(colnames(OMPars))]
+    ind <- which(!colnames(om) %in% colnames(RefPoints))
+    HistObj@OM <- om[,ind]
+    HistObj@AtAge <- list(Length=Len_age, Weight=Wt_age, Select=V, 
+                           Maturity=Mat_age, N.Mortality=M_ageArray,
+                           N=apply(N, 1:3, sum),
+                           SSB=apply(SSB, 1:3, sum)
+                           )
     nout <- t(apply(N, c(1, 3), sum)) 
     vb <- t(apply(VBiomass, c(1, 3), sum))
     b <- t(apply(Biomass, c(1, 3), sum))
     ssb <- t(apply(SSB, c(1, 3), sum))
     Cc <- t(apply(CB, c(1,3), sum))
+    Ccret <- t(apply(CBret, c(1,3), sum))
     rec <- t(apply((N)[, 1, , ], c(1,2), sum))
-    
-    TSdata <- list(VB=vb, SSB=ssb, Bio=b, Catch=Cc, Rec=rec, N=nout, E_f=E_f,TAC_f=TAC_f,SizeLim_f=SizeLim_f)
-    AtAge <- list(Len_age=Len_age, Wt_age=Wt_age, Sl_age=V, Mat_age=Mat_age, 
-                  Nage=apply(N, c(1:3), sum), SSBage=apply(SSB, c(1:3), sum), M_ageArray=M_ageArray,
-                  Z=Z, FM=FM, FMret=FMret)
-    MSYs <- list(MSY=MSY, FMSY=FMSY, VBMSY=VBMSY, UMSY=UMSY, 
-                 SSBMSY=SSBMSY, BMSY_B0=BMSY_B0, SSBMSY_SSB0=SSBMSY_SSB0, 
-                 SSB0=SSB0, B0=B0)
- 
-    StockPars$Depletion <- Depletion 
-    FleetPars$qs <- qs
-    SampPars <- c(StockPars, FleetPars, ObsPars, ImpPars)
-    Data@Misc <- list()
-    HistData <- list(SampPars=SampPars, TSdata=TSdata, AtAge=AtAge, MSYs=MSYs, 
-                     Data=Data)
-    return(HistData)	
+    TSdata <- list(VB=vb, SSB=ssb, B=b, Removals=Cc, Catch=Ccret, Rec=rec, N=nout,
+                   Find=t(Find))
+    HistObj@TSdata <- TSdata
+    HistObj@Ref <- RefPoints[,order(colnames(RefPoints))]
+    return(HistObj)	
   }
   
   # --- Check MPs ---- 
