@@ -150,14 +150,14 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     # Shape <- "sin"  # default sine wave - alternative - 'shift' for step changes
     Period <- myrunif(nsim, min(Stock@Period), max(Stock@Period))
     if (max(Stock@Amplitude)>1) {
-      message("Stock@Amplitude > 1. Defaulting to 1")
+      if (msg) message("Stock@Amplitude > 1. Defaulting to 1")
       Stock@Amplitude[Stock@Amplitude>1] <- 1
     }
     Amplitude <- myrunif(nsim, min(Stock@Amplitude), max(Stock@Amplitude))
     
     yrs <- 1:(nyears + proyears+maxage-1)
     recMulti <- t(sapply(1:nsim, function(x) 1+sin((runif(1, 0, 1)*max(yrs) + 2*yrs*pi)/Period[x])*Amplitude[x]))
-    message("Adding cyclic recruitment pattern")
+    if (msg) message("Adding cyclic recruitment pattern")
     
     # recMulti <-  t(sapply(1:nsim, SetRecruitCycle, Period, Amplitude, TotYears=length(yrs), Shape = "sin"))
     
