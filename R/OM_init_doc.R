@@ -541,7 +541,6 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   Pars <- NULL
   out <- NULL
   if (inc.plot) {
-    
     # --- Generate Historical Samples ----
     # Only required if the OM has changed #
     runSims <- FALSE
@@ -581,7 +580,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
           if (sum(changed)>0) runSims <- TRUE 
           if (sum(changed) == 0) {
             out <-  readRDS(file.path(dir,paste0('build/', fileName, 'Hist.dat')))
-            Pars <- c(out@OM, out@Obs, out@AtAge, out@TSdata, out@Ref)  
+            Pars <- c(out@AtAge, out@TSdata, out@Ref, out@SampPars)  
           }
         } else {
           file.remove(file.path(dir,paste0('build/',fileName, '.dat')))
@@ -606,7 +605,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
         OM2@nsim <- 48
       }
       out<- runMSE(OM2,Hist=T, parallel = FALSE, silent=TRUE, ...)
-      Pars <- c(out@OM, out@Obs, out@AtAge, out@TSdata, out@Ref) 
+      Pars <- c(out@AtAge, out@TSdata, out@Ref, out@SampPars)  
       saveRDS(out, file=file.path(dir,paste0('build/', fileName, 'Hist.dat')))
     }
   }
@@ -710,7 +709,6 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
     cat("```\n\n\n", append=TRUE, file=RMDfile, sep="")
 
   }
-  
   
   ## References ####
   message("writing Reference section")
@@ -1020,10 +1018,6 @@ writeCSV2 <- function(inobj, tmpfile = NULL, objtype = c("Stock", "Fleet",
   }
 }
 
-
-
-
-
 plotText <- function(OM, slots, RMDfile) {
   if (any(c("M", "h", "Linf", "L50", "D", "EffUpper", "qcv", "Vmaxlen", "DR") %in% slots)) {
     # slotstext <- paste("c(", paste(slots, sep=",", collapse = ","), ")")
@@ -1074,8 +1068,7 @@ plotSlot <- function(OM, Pars, slot) {
 
 plotSelHists <- function(OM, Pars, nsamp=3, col="darkgray", 
                          breaks=10, lwd=2) {
-  
-  
+
   ncol <- 3
   m <- layout(matrix(c(1,2,3,
                        4,5,6,
@@ -1180,7 +1173,7 @@ plotDep <- function(OM, Pars=NULL, nsim=48, nyears=50, proyears=50, nsamp=3, col
   if (is.null(Pars)) {
     OM <- updateMSE(OM) # update and add missing slots with default values
     out<- runMSE(OM,Hist=T)
-    Pars <- c(out$SampPars, out$TSdata, out$MSYs)
+    Pars <- c(out@SampPars, out@TSdata, out@Ref)
   }
   
   its <- sample(1:nsim, nsamp)
@@ -1191,8 +1184,9 @@ plotDep <- function(OM, Pars=NULL, nsim=48, nyears=50, proyears=50, nsamp=3, col
   op <- par(mar = c(3, 2, 2, 1), oma=c(2,3,2,1), las=1, no.readonly = TRUE)
   on.exit(par(op))
   
-  ssb0 <- matrix(rep(Pars$SSB0, nyears), nrow=nyears, byrow=TRUE)
-  dep <- Pars$SSB/ssb0
+  ssb0 <- matrix(rep(Pars$SSB0, nyears), nrow=nsim, ncol=nyears, byrow=FALSE)
+  dep <- t(Pars$SSB/ssb0)
+  
   ylim <- c(0, max(dep))
   matplot(dep,  type="l", bty="l", ylab="SB/SB0", xlab="Historical Years", xpd=NA, ylim=ylim)
   matplot(dep[, its],  type="l", bty="l", ylab="", xlab="", add=TRUE, lwd=4, col=1:nsamp, 
@@ -1247,11 +1241,10 @@ plotMat <- function(OM, Pars=NULL, nsim=48, nyears=50, proyears=50, nsamp=3, col
   matplot(Ls, Mat_len, type="l", bty="l", main="Maturity-at-length", lwd=lwd, lty=1, 
           ylab="Probability", xlab="Length", ylim=c(0,1), xpd=NA)
   
-  matplot(t(Pars$Mat_age[its,,nyears]), type="l", bty="l", main="Maturity-at-age", lwd=lwd, 
-          lty=1, axes=FALSE, xlim=c(0, Pars$maxage), ylab="", xlab="Age", ylim=c(0,1), xpd=NA)
+  matplot(t(Pars$Maturity[its,,nyears]), type="l", bty="l", main="Maturity-at-age", lwd=lwd, 
+          lty=1, axes=FALSE, xlim=c(0, max(Pars$maxage)), ylab="", xlab="Age", ylim=c(0,1), xpd=NA)
   axis(side=1)
   axis(side=2, labels=FALSE)
-  
 }
 
 
@@ -1333,8 +1326,8 @@ plotGrowth <- function(OM, Pars=NULL, nsim=48, nyears=50, proyears=50, nsamp=3, 
   
   
   # Growth curves
-  Len_age <- Pars$Len_age
-  Wt_age <- Pars$Wt_age
+  Len_age <- Pars$Length
+  Wt_age <- Pars$Weight
   cex.lab <- 1.25
   fstYr <- Len_age[its,,1]
   curYr <- Len_age[its,,nyears]
@@ -1434,11 +1427,8 @@ plotRec <- function(OM, Pars=NULL, nsim=48, nyears=50, proyears=50, nsamp=3, col
     hist2(0, col=col, axes=FALSE, main="Amplitude", breaks=breaks)
   }
   
-  
   # Recruitment
-  matplot(t(Pars$Perr_y[its,]), type="l", bty="l", main="Rec Devs by Year", lwd=lwd, lty=1, ylab="")
-  
-  
+  matplot(t(Pars$RecDev[its,]), type="l", bty="l", main="Rec Devs by Year", lwd=lwd, lty=1, ylab="")
 }
 
 

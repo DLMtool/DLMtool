@@ -1866,24 +1866,27 @@ setMethod("show", signature = (object="Rec"), function(object) {
 #'  \item Length: Length-at-age for each simulation, age, and year
 #'  \item Weight: Weight-at-age for each simulation, age, and year
 #'  \item Select: Selectivity-at-age for each simulation, age, and year 
+#'  \item Retention: Retention-at-age for each simulation, age, and year
 #'  \item Maturity: Maturity-at-age for each simulation, age, and year
 #'  \item N.Mortality: Natural mortality-at-age for each simulation, age, and year
-#'  \item N: Total numbers by simulation, age, and year
-#'  \item SSB: Spawning stock biomass by simulation, age, and year
+#'  \item Nage: Total numbers by simulation, age, and year
+#'  \item SSBage: Spawning stock biomass by simulation, age, and year
+#'  \item FM: Fishing mortality by simulation, age, year, and area
 #'  }
-#' @slot TSdata A named list with population dynamics by year and simulation:
+#' @slot TSdata A named list with population dynamics by simulation and year :
 #'  \itemize{
 #'  \item VB: Vulnerable biomass
 #'  \item SSB: Spawning stock biomass  
 #'  \item B: Total biomass
-#'  \item Removals: Removals by year and simulation
-#'  \item Catch: Retained catch by year and simulation (will be same as removals 
-#'  unless there is discard mortality)
-#'  \item Rec: Recruitment by year and simulation
-#'  \item N: Total numbers by year and simulation
-#'  \item Find: Historical fishing effort by year and simulation
-#'  \item Marray: Average adult natural mortality by year (historical) and simulation
+#'  \item Removals: Removals 
+#'  \item Catch: Retained catch (will be same as removals unless there is discard mortality)
+#'  \item Rec: Recruitment 
+#'  \item N: Total numbers 
+#'  \item Find: Historical fishing effort 
+#'  \item Marray: Average adult natural mortality (historical & projection)
+#'  \item RecDev: Recruitment deviations (historical & projection)
 #' } 
+#' 
 #' @slot Ref A numeric data.frame with nsim rows containing biological 
 #' reference points:
 #'  \itemize{
@@ -1906,6 +1909,8 @@ setMethod("show", signature = (object="Rec"), function(object) {
 #'   \item VBMSY: Average vulnerable biomass corresponding with MSY
 #' }
 #' 
+#' @slot SampPars All sampled Stock, Fleet, Obs, and Imp parameters
+#' 
 #' @author A. Hordyk
 #' @keywords classes
 setClass("Hist", representation(
@@ -1914,7 +1919,8 @@ setClass("Hist", representation(
   OM = 'data.frame',
   AtAge = 'list',
   TSdata = 'list',
-  Ref = "data.frame"
+  Ref = "data.frame",
+  SampPars='list'
   ))
 
 

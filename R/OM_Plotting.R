@@ -963,12 +963,12 @@ plot.OM <-function(x, rmd=FALSE, head="##", ...){
     }
     plotImp(OM)
     yrlab<-OM@CurrentYr-((nyears-1):0)
-  } else if (class(x) == "list") {
+  } else if (class(x) == "Hist") {
     out <- x 
     nyears <- dim(out@TSdata[[1]])[1]
     nsim <- dim(out@TSdata[[1]])[2]
     yrlab<-nyears-((nyears-1):0)
-  } else stop("argument must be class 'OM' or 'list' ")
+  } else stop("argument must be class 'OM' or 'Hist' ")
   
   if (rmd) {
     cat('\n')

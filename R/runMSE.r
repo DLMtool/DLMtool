@@ -641,7 +641,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   ObsPars <- Data@Obs # Obs pars updated in makeData 
   OMPars <- Data@OM
   OMPars$qs <- qs
-  
+
   # --- Return Historical Simulations and Data from last historical year ----
   if (Hist) { # Stop the model after historical simulations are complete
     if(!silent) message("Returning historical simulations")
@@ -652,10 +652,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     om <- OMPars[,order(colnames(OMPars))]
     ind <- which(!colnames(om) %in% colnames(RefPoints))
     HistObj@OM <- om[,ind]
-    HistObj@AtAge <- list(Length=Len_age, Weight=Wt_age, Select=V, 
-                           Maturity=Mat_age, N.Mortality=M_ageArray,
-                           N=apply(N, 1:3, sum),
-                           SSB=apply(SSB, 1:3, sum)
+    HistObj@AtAge <- list(Length=Len_age, Weight=Wt_age, Select=V,
+                          Retention=retA,
+                          Maturity=Mat_age, N.Mortality=M_ageArray,
+                          Nage=apply(N, 1:3, sum),
+                          SSBage=apply(SSB, 1:3, sum),
+                          FM=FM
                            )
     nout <- t(apply(N, c(1, 3), sum)) 
     vb <- t(apply(VBiomass, c(1, 3), sum))
@@ -664,10 +666,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     Cc <- t(apply(CB, c(1,3), sum))
     Ccret <- t(apply(CBret, c(1,3), sum))
     rec <- t(apply((N)[, 1, , ], c(1,2), sum))
-    TSdata <- list(VB=vb, SSB=ssb, B=b, Removals=Cc, Catch=Ccret, Rec=rec, N=nout,
-                   Find=t(Find), Marray=t(Marray[,1:nyears]))
+    TSdata <- list(VB=t(vb), SSB=t(ssb), B=t(b), Removals=t(Cc), Catch=t(Ccret),
+                   Rec=t(rec), N=t(nout),
+                   Find=Find, Marray=Marray, RecDev=Perr_y)
     HistObj@TSdata <- TSdata
     HistObj@Ref <- RefPoints[,order(colnames(RefPoints))]
+    HistObj@SampPars <- c(StockPars, FleetPars, ObsPars, ImpPars)
     return(HistObj)	
   }
   
