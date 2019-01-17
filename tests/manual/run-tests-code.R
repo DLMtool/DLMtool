@@ -24,7 +24,7 @@ testthat::test_dir('tests/manual/test-code')
 # 
 # testthat::test_file("tests/manual/test-code/test-runMSE.R") # to check still
 # 
-# testthat::test_file("tests/manual/test-code/test-slotDescription.R") # nope - needs to be fixed in slot_ripper - Ksd isn't saved for some reason
+# testthat::test_file("tests/manual/test-code/test-slotDescription.R") # ok
 #
 # testthat::test_file("tests/manual/test-code/test-cpars.R") # ok
 
