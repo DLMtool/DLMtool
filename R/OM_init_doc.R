@@ -55,9 +55,7 @@ OMexample <- function(dir) {
 #' 
 OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), dir=NULL, overwrite=FALSE) {
   files <- match.arg(files, several.ok = TRUE)
-  
   if(is.null(dir)) dir <- getwd()
-  
   if (is.null(name)) stop("Require OM name", call.=FALSE)
   
   if (tolower(name) == 'example') {
@@ -128,9 +126,9 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), dir=NULL, overwrite=F
       }
     }
   }
-
+  
   if ('xlsx' %in% files) {
-   
+    
     # Copy xlsx file over to working directory 
     # Copy the Excel File ####
     message("Creating ", name, " in ", dir)
@@ -172,14 +170,9 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), dir=NULL, overwrite=F
       
       # OM tab not currently updated
       openxlsx::saveWorkbook(wb, file.path(dir,name), overwrite = TRUE)
-    
-      
     }
-    
-      
-    }
-    
-
+  }
+  
   if ('rmd' %in% files) { 
     # RMD File ####
     rmdname <- paste0(nameNoExt, '.rmd')
