@@ -106,9 +106,6 @@ No justification provided.
 ## Msd
 No justification provided. 
 
-## Mgrad
-No justification provided. 
-
 ## h
 No justification provided. 
 
@@ -142,13 +139,7 @@ No justification provided.
 ## Ksd
 No justification provided. 
 
-## Kgrad
-No justification provided. 
-
 ## Linfsd
-No justification provided. 
-
-## Linfgrad
 No justification provided. 
 
 ## L50
