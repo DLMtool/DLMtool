@@ -150,21 +150,23 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), dir=NULL, overwrite=F
         if (!is.null(ObTemplates[objname])) {
           obj <- ObTemplates[objname][[1]]
           slots <- slotNames(obj)
-          
-          for (sl in seq_along(slots)) {
-            val <- slot(obj, slotNames(objname)[sl])
+          # ignore grad slots 
+          slots <- slots[!grepl("grad", slots)]
+          shtdata <- openxlsx::read.xlsx(wb, objname)
+          for (sl in seq_along(slots)) { 
+            row <- match(slots[sl], shtdata[,1])
+            val <- slot(obj, slots[sl])
             ln <- length(val)
-            if (ln >0 && !is.na(ln)) {
+            if (ln >0 && !is.na(val)) {
               df <- data.frame(t(val))
               openxlsx::writeData(wb, sheet = objname, x = df, 
-                                  startCol = 2, startRow = sl+1,
+                                  startCol = 2, startRow = row+1,
                                   colNames = FALSE, rowNames = FALSE, 
                                   withFilter = FALSE,
                                   keepNA = FALSE)         
-            }
-            
+            } 
           }
-          openxlsx::setColWidths(wb, sheet = objname, cols = 1, widths = 'auto')
+          # openxlsx::setColWidths(wb, sheet = objname, cols = 1, widths = 'auto')
         }
       }
       
@@ -374,7 +376,8 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
 #' OMdoc(myOM)
 #' }
 OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,  
-                  inc.plot=TRUE, render=TRUE, output="html_document", openFile=TRUE, quiet=FALSE,
+                  inc.plot=TRUE, render=TRUE, output="html_document", 
+                  openFile=TRUE, quiet=FALSE,
                   dir=NULL, ...) {
   # markdown compile options
   toc=TRUE; color="blue";  theme="flatly"
@@ -578,7 +581,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
           if (sum(changed)>0) runSims <- TRUE 
           if (sum(changed) == 0) {
             out <-  readRDS(file.path(dir,paste0('build/', fileName, 'Hist.dat')))
-            Pars <- c(out$SampPars, out$TSdata, out$MSYs)  
+            Pars <- c(out@OM, out@Obs, out@AtAge, out@TSdata, out@Ref)  
           }
         } else {
           file.remove(file.path(dir,paste0('build/',fileName, '.dat')))
@@ -603,7 +606,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
         OM2@nsim <- 48
       }
       out<- runMSE(OM2,Hist=T, parallel = FALSE, silent=TRUE, ...)
-      Pars <- c(out$SampPars, out$TSdata, out$MSYs)  
+      Pars <- c(out@OM, out@Obs, out@AtAge, out@TSdata, out@Ref) 
       saveRDS(out, file=file.path(dir,paste0('build/', fileName, 'Hist.dat')))
     }
   }
@@ -752,10 +755,10 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
 Template <- function(type=c("Stock", "Fleet", "Obs", "Imp")) {
   type <- match.arg(type)
   if (type == "Stock") mat <- 
-      matrix(c("Mortality and age:  maxage, R0, M, M2, Mexp, Msd, Mgrad",
+      matrix(c("Mortality and age:  maxage, R0, M, M2, Mexp, Msd",
                "Recruitment: h, SRrel, Perr, AC",
                "Non-stationarity in stock productivity: Period, Amplitude",
-               "Growth: Linf, K, t0, LenCV, Ksd, Kgrad, Linfsd, Linfgrad",
+               "Growth: Linf, K, t0, LenCV, Ksd, Linfsd",
                "Maturity: L50, L50_95",
                "Stock depletion: D",
                "Length-weight conversion parameters: a, b",
@@ -790,6 +793,8 @@ Template <- function(type=c("Stock", "Fleet", "Obs", "Imp")) {
  
   # Check slots 
   Slots <- names(methods::getSlots(type))
+  # ignore grad slots 
+  Slots <- Slots[!grepl("grad", Slots)]
   for (X in Slots) {
     tt <- grep(paste0("\\<", X, "\\>"), mat) 
     if (X != "Name" && X != "Source" && X!="Species" && X!="Common_Name" && X!="Latitude" && X!='Longitude') {
@@ -1304,9 +1309,9 @@ plotGrowth <- function(OM, Pars=NULL, nsim=48, nyears=50, proyears=50, nsamp=3, 
   axis(side=1)  
   
   # Linfgrad 
-  hist2(Pars$Linfgrad, col=col, axes=FALSE, main="Linfgrad", breaks=breaks)
-  abline(v=Pars$Linfgrad[its], col=1:nsamp, lwd=lwd)
-  axis(side=1) 
+  # hist2(Pars$Linfgrad, col=col, axes=FALSE, main="Linfgrad", breaks=breaks)
+  # abline(v=Pars$Linfgrad[its], col=1:nsamp, lwd=lwd)
+  # axis(side=1) 
   
   # Ksd 
   hist2(Pars$Ksd, col=col, axes=FALSE, main="Ksd", breaks=breaks)
@@ -1314,9 +1319,9 @@ plotGrowth <- function(OM, Pars=NULL, nsim=48, nyears=50, proyears=50, nsamp=3, 
   axis(side=1)  
   
   # Kgrad 
-  hist2(Pars$Kgrad, col=col, axes=FALSE, main="Kgrad", breaks=breaks)
-  abline(v=Pars$Kgrad[its], col=1:nsamp, lwd=lwd)
-  axis(side=1)  
+  # hist2(Pars$Kgrad, col=col, axes=FALSE, main="Kgrad", breaks=breaks)
+  # abline(v=Pars$Kgrad[its], col=1:nsamp, lwd=lwd)
+  # axis(side=1)  
   
   
   
@@ -1480,21 +1485,21 @@ plotM2 <- function(OM, Pars=NULL, nsim=48, nyears=50, proyears=50, nsamp=3, col=
   abline(v=Pars$Msd[its], col=1:nsamp, lwd=lwd)
   axis(side=1) 
   
-  hist2(Pars$Mgrad, col=col, axes=FALSE, main="Mgrad", breaks=breaks)
-  abline(v=Pars$Mgrad[its], col=1:nsamp, lwd=lwd)
-  axis(side=1)
-  
+  # hist2(Pars$Mgrad, col=col, axes=FALSE, main="Mgrad", breaks=breaks)
+  # abline(v=Pars$Mgrad[its], col=1:nsamp, lwd=lwd)
+  # axis(side=1)
+  # 
   # M by year 
-  ylims <- range(Pars$M_ageArray[its,, ]) * c(0.95, 1.05)
+  ylims <- range(Pars$N.Mortality[its,, ]) * c(0.95, 1.05)
   ylims[1] <- min(0, ylims[1] )
-  matplot(t(Pars$Marray[its,]), type="l", lty=1, bty="l", main="average adult M by Year", lwd=lwd, ylab="M", ylim=ylims)
+  matplot(t(Pars$Marray[,its]), type="l", lty=1, bty="l", main="average adult M by Year", lwd=lwd, ylab="M", ylim=ylims)
   abline(v=nyears, col="gray", lty=2)
-  text(nyears, min(Pars$Marray[its,]), "Last historical year", pos=4, col="gray")
+  text(nyears, min(Pars$Marray[,its]), "Last historical year", pos=4, col="gray")
   
   # M at age 
-  M_ageArray <- Pars$M_ageArray
-  Len_age <- Pars$Len_age
-  Wt_at_age <- Pars$Wt_age
+  M_ageArray <- Pars$N.Mortality
+  Len_age <- Pars$Length
+  Wt_at_age <- Pars$Weight
   
   
   matplot(t(M_ageArray[its,,1]), type="l", lty=1, bty="l", lwd=lwd, ylim=ylims, ylab="M")

@@ -665,7 +665,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     Ccret <- t(apply(CBret, c(1,3), sum))
     rec <- t(apply((N)[, 1, , ], c(1,2), sum))
     TSdata <- list(VB=vb, SSB=ssb, B=b, Removals=Cc, Catch=Ccret, Rec=rec, N=nout,
-                   Find=t(Find))
+                   Find=t(Find), Marray=t(Marray[,1:nyears]))
     HistObj@TSdata <- TSdata
     HistObj@Ref <- RefPoints[,order(colnames(RefPoints))]
     return(HistObj)	

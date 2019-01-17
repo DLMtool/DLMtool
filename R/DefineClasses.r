@@ -1882,6 +1882,7 @@ setMethod("show", signature = (object="Rec"), function(object) {
 #'  \item Rec: Recruitment by year and simulation
 #'  \item N: Total numbers by year and simulation
 #'  \item Find: Historical fishing effort by year and simulation
+#'  \item Marray: Average adult natural mortality by year (historical) and simulation
 #' } 
 #' @slot Ref A numeric data.frame with nsim rows containing biological 
 #' reference points:

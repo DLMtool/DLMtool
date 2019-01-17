@@ -35,14 +35,13 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   
   # Warning alerts for deprecated slots 
   if (msg) {
-    if (any(Stock@Linfgrad !=0)) 
-      warning("Linfgrad is no longer used and values are being ignored. Use 'cpars' to specify time-varying changes to Linf", call.=FALSE)
-    if (any(Stock@Kgrad !=0)) 
-      warning("Kgrad is no longer used and values are being ignored. Use 'cpars' to specify time-varying changes to K", call.=FALSE)
-    if (any(Stock@Mgrad !=0))
-      warning("Mgrad is no longer used and values are being ignored. Use 'cpars' to specify time-varying changes to M", call.=FALSE)
+    slots <- c("Linfgrad", "Kgrad", 'Mgrad')
+    for (sl in slots) {
+      val <- slot(Stock, sl)
+      if (!all(is.na(val)) & !all(val ==0))
+        warning(sl, " is no longer used and values are being ignored. Use 'cpars' to specify time-varying changes to ", sl, call.=FALSE)
+    }
   }
- 
  
   if (class(Stock) == "OM") {
     nsim <- Stock@nsim
