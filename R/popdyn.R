@@ -934,9 +934,9 @@ MSYCalcs <- function(logU, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age,
     RelRec <- (reca * EggF-1)/(recb*EggF)
   }
   if (SRrelx ==2) { # Ricker
-    bR <- (log(5*hs)/(0.8*SB0))
-    aR <- exp(bR*SB0)/(SB0/R0)
-    RelRec <- (log(aR*EggF/R0))/(bR*EggF/R0)
+    bR <- (log(5*hx)/(0.8*SB0))
+    aR <- exp(bR*SB0)/(SB0/R0x)
+    RelRec <- (log(aR*EggF/R0x))/(bR*EggF/R0x)
   }
   
   RelRec[RelRec<0] <- 0
