@@ -393,7 +393,8 @@ genSizeCompWrap <- function(i, vn, CAL_binsmid, retL,
                             LenCV, truncSD=2) {
   
   VulnN <- as.matrix(vn[i,,]) 
-  VulnN <- round(VulnN,0)
+  VulnN <- VulnN/rowSums(VulnN) * CAL_nsamp[i] # get relative numbers at age 
+  VulnN <- round(VulnN,0) # convert to integers
   nyrs <- nrow(as.matrix(Linfarray[i,]))
   if (nyrs == 1) VulnN <- t(VulnN)
   retL <- as.matrix(retL[i,,])

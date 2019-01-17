@@ -924,22 +924,21 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE) {
                               MK=5, Linf=Linf, P=0.01, L50=L50, L95=L95, Beta=Beta)
         }
         
+      } else {
+        SL50 <- exp(runOpt$par[1]) * Linf 
+        dSL50 <- exp(runOpt$par[2])
+        SL95 <- SL50 + dSL50 * SL50
+        FM <- exp(runOpt$par[3])
         
+        runMod <- LBSPRgen(SL50, SL95, FM, nage=101, nlen=length(LenMids), CVLinf, 
+                           LenBins, LenMids, x=seq(0, to=1, length.out = 101), 
+                           MK, Linf, P=0.01, L50, L95, Beta)
+        
+        Ests[y,] <- c(SL50, SL95, FM, runMod[[2]])
+        Fit[[y]] <- runMod[[1]] * sum(CALdata[y,])
       }
-      
-      
-      
-      SL50 <- exp(runOpt$par[1]) * Linf 
-      dSL50 <- exp(runOpt$par[2])
-      SL95 <- SL50 + dSL50 * SL50
-      FM <- exp(runOpt$par[3])
-      
-      runMod <- LBSPRgen(SL50, SL95, FM, nage=101, nlen=length(LenMids), CVLinf, 
-                         LenBins, LenMids, x=seq(0, to=1, length.out = 101), 
-                         MK, Linf, P=0.01, L50, L95, Beta)
-      
-      Ests[y,] <- c(SL50, SL95, FM, runMod[[2]])
-      Fit[[y]] <- runMod[[1]] * sum(CALdata[y,])
+   
+     
     }
     Ests <- as.data.frame(Ests)
     names(Ests) <- c("SL50", "SL95", "FM", "SPR")
@@ -951,11 +950,8 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE) {
     }
     Ests <-AllEsts
   }
-  
-  
+
  return(list(Ests=Ests, Fit=Fit))
-  
-  
 }
 
 

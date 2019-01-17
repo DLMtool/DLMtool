@@ -276,7 +276,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   SY <- SAYR[, c(1, 3)]
   Sa[,2]<- maxage-Sa[,2] + 1 # This is the process error index for initial year
 
-
   # Calculate initial distribution if mov provided in cpars
   if(!exists('initdist', inherits = FALSE)) { # movement matrix has been provided in cpars
     # Pinitdist is created in SampleStockPars instead of initdist if 
@@ -533,11 +532,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       print(cbind(round(D,2), round(Depletion,2)))
       warning("Possible problem in depletion calculations")
     } 
-    # x <- runif(1, 1, nsim)
-    # ssbdep <- apply(SSB,c(1,3),sum)/matrix(SSB0, nrow=nsim, ncol=nyears)
-    # plot(ssbdep[x,], ylim=c(0, max(ssbdep[x,])), type="l", lwd=2)
-    # points(1,initD[x], pch=16,cex=2)
-    # points(nyears, D[x], pch=17, cex=2)
   } 
   
   # --- Calculate MSY references ----  
@@ -599,8 +593,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # --- Calculate Historical Catch ----
   # Calculate catch-at-age 
-  # CN <- apply(N * (1 - exp(-Z)) * (FM/Z), c(1, 3, 2), sum)  # Catch in numbers (removed from population)
-  # CN[is.na(CN)] <- 0
   CB <- Biomass * (1 - exp(-Z)) * (FM/Z)  # Catch in biomass (removed from population)
   CB[is.na(CB)] <- 0
   
@@ -957,14 +949,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                     FleetPars, ObsPars, upyrs, interval, y, mm, 
                                     Misc=Data_p@Misc)
 
-
         # Update Abundance and FMSY for FMSYref MPs
         M_array <- array(0.5*M_ageArray[,,nyears+y], dim=c(nsim, maxage, nareas))
         Atemp <- apply(VBiomass_P[, , y, ] * exp(-M_array), 1, sum) # Abundance (mid-year before fishing)
         MSElist[[mm]]@OM$A <- Atemp
         MSElist[[mm]]@OM$FMSY <- FMSY_P[,mm,y]
 
-       
         # --- apply MP ----
         runMP <- applyMP(MSElist[[mm]], MPs = MPs[mm], reps = reps, silent=TRUE)  # Apply MP
         MPRecs <- runMP[[1]][[1]] # MP recommendations
