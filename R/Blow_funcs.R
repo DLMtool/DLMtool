@@ -120,8 +120,10 @@ Blow_opt<-function(lnq, N, Asize_c, SSBMSYc,SSBpRc, MPA, SSB0c, nareas, retAc,
   
   MPA <- MPA[c(1:nyears, rep(nyears, MGThorizonc)),]
 
+  movcx <- array(movc[,,,nyears], dim=c(maxage, nareas, nareas, pyears)) # current movement pattern
+
   simpop <- popdynCPP(nareas, maxage, N, pyears, M_age, Asize_c,
-                      MatAge, WtAge, Vuln, Retc, Prec, split.along.dim(movc,4), 
+                      MatAge, WtAge, Vuln, Retc, Prec, split.along.dim(movcx,4), 
                       SRrelc, Effind, Spat_targc, hc,
                       R0c=R0c, SSBpRc=SSBpRc, aRc=aRc, bRc=bRc, Qc=exp(lnq), Fapic=0,
                       maxF=maxF, MPA=MPA, control=1, SSB0c=SSB0c)

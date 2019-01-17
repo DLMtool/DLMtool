@@ -548,6 +548,9 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if(is.na(dim(mov)[5])) { # movement matrix only specified for one year
     mov <- array(mov, dim=c(dim(mov), nyears+proyears))
   }
+  # check dimensions 
+  if (any(dim(mov) != c(nsim,maxage,nareas,nareas, nyears+proyears)))
+      stop('cpars$mov must be array with dimensions: \nc(nsim, maxage, nareas, nareas) \nOR \nc(nsim, maxage, nareas, nareas, nyears+proyears)', call.=FALSE)
 
   if (dim(Asize)[2]!=nareas) {
     if(msg) message('Asize is not length "nareas", assuming all areas equal size')

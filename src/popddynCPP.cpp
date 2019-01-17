@@ -113,7 +113,7 @@ arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcu
 List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
                arma::mat M_age, arma::vec Asize_c, arma::mat MatAge, arma::mat WtAge,
                arma::mat Vuln, arma::mat Retc, arma::vec Prec,
-               List movcy, double SRrelc, arma::vec Effind,
+               List movc, double SRrelc, arma::vec Effind,
                double Spat_targc, double hc, NumericVector R0c, NumericVector SSBpRc,
                NumericVector aRc, NumericVector bRc, double Qc, double Fapic, double maxF, 
                arma::mat MPA, int control, double SSB0c) {
@@ -144,7 +144,7 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
   
 
   int yr = 0;
-  arma::cube movc = movcy(yr);
+  arma::cube movcy = movc(yr);
   
   for (int A=0; A<nareas; A++) {
     Barray.subcube(0, 0, A, maxage-1, 0, A) = Ncurr.col(A) % WtAge.col(0);
@@ -183,7 +183,7 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
   for (int yr=0; yr<(pyears-1); yr++) {
     // Rcpp::Rcout << "yr = " << yr << std::endl;
     arma::vec SB(nareas);
-    arma::cube movc = movcy(yr);
+    arma::cube movcy = movc(yr);
     
     for (int A=0; A<nareas; A++) SB(A) = accu(SBarray.subcube(0, yr, A, maxage-1, yr, A));
     if ((yr >0) & (control==3)) SB = SSB0a;
@@ -192,7 +192,7 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
     arma::mat Zcurr = Zarray.subcube(0, yr, 0, maxage-1, yr, nareas-1);
     
     arma::mat NextYrN = popdynOneTScpp(nareas, maxage, wrap(SB), wrap(Ncurr2), wrap(Zcurr), 
-                                       Prec(yr+1+maxage), hc, R0c2, SSBpRc, aRc2, bRc2, movc, SRrelc); 
+                                       Prec(yr+1+maxage), hc, R0c2, SSBpRc, aRc2, bRc2, movcy, SRrelc); 
   
     Narray.subcube(0, yr+1, 0, maxage-1, yr+1, nareas-1) = NextYrN;
     for (int A=0; A<nareas; A++) {
