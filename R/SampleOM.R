@@ -1434,25 +1434,31 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   }
   
   # if (!ncparsim < nsim) ind <- sample(1:ncparsim, nsim, replace=FALSE)
-  
-  for (i in 1:length(cpars)) {
-    samps <- cpars[[i]]
-    name <- names(cpars)[i]
-    if (any(c("maxage", "M_at_Length", "CAL_binsmid", "CAL_bins") %in% name)) {
-      sampCpars[[name]] <- samps
-    } else {
-      if (class(samps) == "numeric" | class(samps) == "integer") sampCpars[[name]] <- samps[ind]
-      
-      if (class(samps) == "matrix") sampCpars[[name]] <- samps[ind,, drop=FALSE] 
-      
-      if (class(samps) == "array") {
-        if (length(dim(samps)) == 3)  sampCpars[[name]] <- samps[ind, , ,drop=FALSE]
-        if (length(dim(samps)) == 4)  sampCpars[[name]] <- samps[ind, , , ,drop=FALSE]
+  if ('Data' %in% names(cpars)) {
+    sampCpars$Data <- cpars$Data
+    cpars$Data <- NULL
+    
+  }
+  if (length(cpars)>0) {
+    for (i in 1:length(cpars)) {
+      samps <- cpars[[i]]
+      name <- names(cpars)[i]
+      if (any(c("maxage", "M_at_Length", "CAL_binsmid", "CAL_bins") %in% name)) {
+        sampCpars[[name]] <- samps
+      } else {
+        if (class(samps) == "numeric" | class(samps) == "integer") sampCpars[[name]] <- samps[ind]
+        
+        if (class(samps) == "matrix") sampCpars[[name]] <- samps[ind,, drop=FALSE] 
+        
+        if (class(samps) == "array") {
+          if (length(dim(samps)) == 3)  sampCpars[[name]] <- samps[ind, , ,drop=FALSE]
+          if (length(dim(samps)) == 4)  sampCpars[[name]] <- samps[ind, , , ,drop=FALSE]
+        }
+        if (class(samps) == "data.frame")   sampCpars[[name]] <- samps 
       }
-      if (class(samps) == "data.frame")   sampCpars[[name]] <- samps 
     }
   }
-  
+
   sampCpars
 }
 

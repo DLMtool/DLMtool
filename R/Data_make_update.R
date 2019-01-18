@@ -32,6 +32,147 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   II <- II/apply(II, 1, mean)  # normalize
   Data@Ind <- II # index of total abundance
   
+  # --- Real Indices ----
+  if (!is.null(SampCpars$Data)) {
+    # real data has been provided 
+    types <- SampCpars$Data@Type
+    chk <- types %in% c("Biomass", "VBiomass", "SpBiomass")
+    if (any(!chk)) 
+      if (!is.na(types)) 
+        stop("Invalid index type in cpars$Data@Type. \nValid types are: 'Biomass', 'VBiomass', 'SpBiomass'", call.=FALSE)
+    if (all(is.na(types))) {
+      if (!silent) message("Data object provided in cpars but Data@Type is empty. Ignoring Data")
+    } else {
+      indices <- SampCpars$Data@RInd[1,,]
+      if (all(is.na(indices))) {
+        if (!silent) message("Data object provided in cpars but Data@RInd is empty. Ignoring Data")
+      } else {
+        if (!silent) message("Conditioning simulated RInd on cpars$Data@RInd")
+        # add Real indices to Data object 
+        Data@Type <- SampCpars$Data@Type
+        RInd <- SampCpars$Data@RInd[1,,]
+        temp <- array(RInd, dim=c(nrow(RInd), ncol(RInd), nsim))
+        Data@RInd <- aperm(temp, c(3,1,2))
+        
+        # Calculate implied observation error
+        sim.indices <- list(apply(Biomass, c(1, 3), sum),
+                            apply(VBiomass, c(1, 3), sum),
+                            apply(SSB, c(1, 3), sum))
+        
+        ind.type <- c('Biomass', 'VBiomass', 'SpBiomass')
+        out.list <- list()
+        for (type in Data@Type) {
+          out.list[[type]] <- sapply(1:nsim, indfitwrap, type=type, 
+                                  sim.indices=sim.indices, Data=Data)
+        }   
+      }
+    }
+  }
+  SpBeta <- out.list$SpBiomass[1,] %>% unlist()
+  SpAC <- out.list$SpBiomass[2,] %>% unlist()
+  SpSD <- out.list$SpBiomass[3,] %>% unlist()
+  
+
+  sim <- 2
+  Res <- rlnorm(nyears, 0, SpSD[sim])
+  for(y in 2:nyears)Res[y]<-SpAC[sim]*Res[y-1]+Res[y]*(1-SpAC[sim]*SpAC[sim])^0.5
+  index <- sim.indices[[3]]
+  stindex <- index[sim,]/mean(index[sim,])
+  index2 <- (stindex^SpBeta[sim]) * Res
+  index2 <- (index2/mean(index2)) * mean(index[sim,])
+  
+  plot(index2, ylim=c(0, max(c(index2,index[sim,] ))), type="l", col="green")
+  lines(Data@RInd[sim, 3, ], col="blue")
+  
+  lines(index[sim,], col="red")
+  
+  
+  ## UP TO HERE #####
+  
+  ErrList$Ierr <- array(rlnorm((nyears + proyears) * nsim, 
+                               mconv(1, rep(Isd, nyears + proyears)), 
+                               sdconv(1, rep(Isd, nyears + proyears))), 
+                        c(nsim, nyears + proyears))
+  
+
+  indfitwrap <- function(x, type, sim.indices, Data, plot=FALSE) {
+    sim.index <- sim.indices[[match(type, ind.type)]][x,]
+    obs.ind <- Data@RInd[x,match(type, Data@Type),]
+    Year <- Data@Year
+    indfit(sim.index,obs.ind, Year, plot, lcex=0.8)
+  }
+  
+  indfit <- function(sim.index,obs.ind, Year, plot=FALSE, lcex=0.8){
+    
+    lcs<-function(x){
+      x1<-x/mean(x) # rescale to mean 1
+      x2<-log(x1)     # log it
+      x3<-x2-mean(x2) # mean 0
+      x3
+    }
+    getbeta<-function(beta,x,y)sum((y-x^beta)^2)
+    
+    sim.index <- lcs(sim.index) # log space conversion of standardized simulated index
+    obs.ind <- lcs(obs.ind) # log space conversion of standardized observed ind
+  
+    if(plot){
+      par(mfrow=c(1,2),mai=c(0.7,0.5,0.05,0.01),omi=c(0.01,0.2,0.01,0.01))
+      plot(exp(sim.index),exp(obs.ind),xlab="",ylab="",pch=19,col=rgb(0,0,0,0.5))
+      mtext("Model estimate",1,line=2.2)
+      mtext("Index",2,outer=T,line=0)
+    }
+    
+    opt<-optimize(getbeta,x=exp(sim.index),y=exp(obs.ind),interval=c(0.1,10))
+    res<-exp(obs.ind)-(exp(sim.index)^opt$minimum)
+    ac<-acf(res,plot=F)$acf[2,1,1] # lag-1 autocorrelation
+    
+    res2<-obs.ind-sim.index                  # linear, without hyperdepletion / hyperstability
+    ac2<-acf(res2,plot=F)$acf[2,1,1] # linear AC
+    
+    if(plot){
+      SSBseq<-seq(min(exp(sim.index)),max(exp(sim.index)),length.out=1000)
+      lines(SSBseq,SSBseq^opt$minimum,col='#0000ff90',pch=19)
+      legend('bottomright',legend=round(c(sum((obs.ind-sim.index)^2),opt$objective),3),text.col=c("black","blue"),bty='n',title="SSQ",cex=lcex)
+      legend('topleft',legend=round(opt$minimum,3),text.col="blue",bty='n',title='Hyper-stability, beta',cex=lcex)
+      legend('left',legend=round(cor(sim.index,obs.ind),3),bty='n',title='Correlation',cex=lcex)
+      
+      plot(Year,sim.index,ylab="",xlab="",ylim=range(c(obs.ind,sim.index)),type="l")
+      mtext("Year",1,line=2.2)
+      points(Year,obs.ind,col='#ff000090',pch=19)
+      legend('topleft',legend=round(ac,3),text.col="red",bty='n',title="Lag 1 autocorrelation",cex=lcex)
+      legend('bottomleft',legend=round(sd(res),3),text.col="red",bty='n',title="Residual StDev",cex=lcex)
+      legend('topright',legend=c("Model estimate","Index"),text.col=c("black","red"),bty='n',cex=lcex)
+    }
+
+    data.frame(beta=opt$minimum,AC=ac,sd=sd(exp(obs.ind)/(exp(sim.index)^opt$minimum)),
+               cor=cor(sim.index,obs.ind),AC2=ac2,sd2=sd(obs.ind-sim.index))
+    
+    # list(stats=data.frame(beta=opt$minimum,AC=ac,sd=sd(exp(obs.ind)/(exp(sim.index)^opt$minimum)),
+    #                       cor=cor(sim.index,obs.ind),AC2=ac2,sd2=sd(obs.ind-sim.index)),
+    #      mult=exp(obs.ind)/(exp(sim.index)^opt$minimum))
+    
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   # --- Index of recruitment ----
   Data@Rec <- apply(N[, 1, , ], c(1, 2), sum) * ErrList$Recerr[, 1:nyears] 
   Data@t <- rep(nyears, nsim) # number of years of data

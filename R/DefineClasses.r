@@ -31,6 +31,8 @@ setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 #' @slot Year Years that corresponding to catch and relative abundance data. Vector nyears long. Positive integer
 #' @slot Cat Total annual catches. Matrix of nsim rows and nyears columns. Non-negative real numbers 
 #' @slot Ind Relative abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers
+#' @slot Type 
+#' @slot RInd 
 #' @slot Rec Recent recruitment strength. Matrix of nsim rows and nyears columns. Non-negative real numbers 
 #' @slot t The number of years corresponding to AvC and Dt. Single value. Positive integer  
 #' @slot AvC Average catch over time t. Vector nsim long. Positive real numbers  
@@ -112,7 +114,9 @@ setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 #' 
 setClass("Data", representation(Name = "character", Common_Name='character', Species='character', Region='character',
                                 Year = "vector", 
-                                Cat = "matrix", Ind = "matrix", Rec = "matrix", t = "vector",
+                                Cat = "matrix", Ind = "matrix", 
+                                Type = "vector", RInd = "array", 
+                                Rec = "matrix", t = "vector",
                                 AvC = "vector", Dt = "vector", Mort = "vector", FMSY_M = "vector", 
                                 BMSY_B0 = "vector", L50 = "vector", L95 = "vector", 
                                 ML = "array", Lbar = "array", Lc = "array",
@@ -162,6 +166,10 @@ setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ","
     # .Object@Cat <- matrix(as.numeric(dat[match("Catch", dname), dat[match("Catch", dname), ] != ""]), nrow = 1)
     .Object@Cat <- matrix(as.numeric(dat[match("Catch", dname), 1:length(.Object@Year)]), nrow = 1)
     .Object@Ind <- matrix(as.numeric(dat[match("Abundance index", dname), 1:length(.Object@Year)]), nrow = 1)
+    
+    .Object@Type 
+    .Object@RInd
+    
     .Object@Rec <- matrix(as.numeric(dat[match("Recruitment", dname), 1:length(.Object@Year)]), nrow = 1)
     .Object@t <- as.numeric(dat[match("Duration t", dname), 1])
     .Object@AvC <- as.numeric(dat[match("Average catch over time t", dname), 1])
@@ -299,6 +307,9 @@ setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ","
   if (length(.Object@ML) == 0)  .Object@ML <- array(NA, c(1, 1))
   if (length(.Object@Lbar) == 0) .Object@Lbar <- array(NA, c(1, 1))
   if (length(.Object@Lc) == 0) .Object@Lc <- array(NA, c(1, 1))
+  
+  if (length(.Object@Type) == 0) .Object@Type <- NA
+  if (length(.Object@RInd) == 0) .Object@RInd <- array(NA, c(1,1,1))
   
   .Object
 })
@@ -903,7 +914,8 @@ setClass("OM", representation(Name = "character", Agency="character",
                               Latitude="numeric", Longitude="numeric",
                               nsim="numeric", proyears="numeric", 
                               interval='numeric', pstar='numeric', maxF='numeric', reps='numeric',
-                              cpars="list",seed="numeric", Source="character"), contains=c("Stock", "Fleet", "Obs", "Imp"))
+                              cpars="list",seed="numeric", Source="character"), 
+         contains=c("Stock", "Fleet", "Obs", "Imp"))
 # initialize OM
 setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Generic_Fleet, 
                                        Obs=DLMtool::Generic_Obs, Imp=DLMtool::Perfect_Imp, 

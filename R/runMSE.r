@@ -184,6 +184,8 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   
 }
 
+
+
 runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
                       CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=TRUE, 
                       HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=FALSE, checks=FALSE,
@@ -627,6 +629,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                       sdconv(TAEFrac, TAESD)), c(nsim, proyears))  # composite of TAE fraction and error
   SizeLim_f<-array(rlnorm(proyears * nsim, mconv(SizeLimFrac, SizeLimSD),
                           sdconv(SizeLimFrac, SizeLimSD)), c(nsim, proyears))  # composite of size limit fraction and error
+  
   
   # --- Populate Data object with Historical Data ---- 
   Data <- makeData(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars, 
@@ -1098,8 +1101,8 @@ cparscheck<-function(cpars){
   # ignore 
   if (any(effNames %in% names(dims))) dims <- dims[-match(effNames,names(dims))]  # ignore effNames
   dims <- dims[!grepl("CAL_bins", names(dims))]  # ignore CAL_bins
-  dims <- dims[!grepl("maxage", names(dims))]  # ignore CAL_bins
-  # dims <- dims[!grepl("Asize", names(dims))]  # ignore CAL_bins
+  dims <- dims[!grepl("maxage", names(dims))]  # ignore maxage
+  
   if (length(dims) > 0) {
     if(length(unique(dims))!=1){
       print(dims)
