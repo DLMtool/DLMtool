@@ -590,7 +590,12 @@ joinMSE <- function(MSEobjs = NULL) {
           for (nm in names(obj[[1]])) {
             obj2 <- lapply(obj, '[[', nm)
             ind <- which(dim(obj2[[1]]) == nsim)
-            out.list[[nm]] <- abind::abind(obj2, along=ind)
+            if (length(ind) >0) {
+              out.list[[nm]] <- abind::abind(obj2, along=ind)  
+            } else {
+              out.list[[nm]] <- unlist(obj2) %>% unique()
+            }
+            
           }
           slot(out, sl) <- out.list
         }
