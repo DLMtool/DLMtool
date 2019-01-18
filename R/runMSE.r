@@ -247,7 +247,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # Imp Paramerers & assign to function environment
   ImpPars <- SampleImpPars(OM, nsim, cpars=SampCpars)
   for (X in 1:length(ImpPars)) assign(names(ImpPars)[X], ImpPars[[X]])
-  
+
   # --- Initialize Arrays ----
   N <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # stock numbers array
   Biomass <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # stock biomass array
@@ -386,17 +386,13 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # --- Optimize for Initial Depletion ----
   # Depletion in year 1 
-  initD <- control$initD # not implemented yet - Iref calculation won't work if 
-  # stock isn't unfished at beginning of time-series
-  # initD <- runif(nsim, 0.01, 1.5) # initial depletion SB/SB0 in year 1 
-  # Perr_y <- StockPars$Perr_y
-  
+  ### ADD TO FAQ ####
+  initD <- SampCpars$initD # 
   if (!is.null(initD)) { # initial depletion is not unfished
     if (!silent) message("Optimizing for user-specified depletion in first historical year")
     Perrmulti <- sapply(1:nsim, optDfunwrap, initD=initD, Nfrac=Nfrac[,,1], R0=R0,
                         Perr_y=Perr_y, surv=surv[,,1], Wt_age=Wt_age, SSB0=SSB0,
                         maxage=maxage)
-    
     Perr_y[,1:maxage] <- Perr_y[, 1:maxage] * Perrmulti
   }
   
@@ -498,6 +494,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # --- Simulate historical years ----
   if(!silent) message("Calculating historical stock and fishing dynamics")  # Print a progress update
   
+  # ADD TO FAQ ####
   if(!is.null(control$unfished)) { # generate unfished historical simulations
     if(!silent) message("Simulating unfished historical period")
     Hist <- TRUE
@@ -523,9 +520,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   FMret <- aperm(array(as.numeric(unlist(histYrs[7,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
   Z <-aperm(array(as.numeric(unlist(histYrs[8,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
   
-  if (nsim > 1) Depletion <- apply(SSB[,,nyears,],1,sum)/SSB0
-  if (nsim == 1) Depletion <- sum(SSB[,,nyears,])/SSB0 
-
+  Depletion <- apply(SSB[,,nyears,],1,sum)/SSB0
+  
   # Check that depletion is correct
   if (checks) {
     if (prod(round(D, 2)/ round(Depletion,2)) != 1) {
@@ -571,7 +567,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   if(CalcBlow){
     if(!silent) message("Calculating B-low reference points")            
     MGThorizon<-floor(HZN*MGT)
-    
     Blow <- sapply(1:nsim,getBlow, N, Asize, MSYrefs[3,],SSBpR, MPA, SSB0, nareas, retA, MGThorizon,
                    Find,Perr_y,M_ageArray,hs,Mat_age, Wt_age,R0a,V,nyears,maxage,mov,
                    Spat_targ,SRrel,aR,bR,Bfrac, maxF) 
@@ -636,7 +631,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # --- Populate Data object with Historical Data ---- 
   Data <- makeData(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars, 
                                FleetPars, ObsPars, ImpPars, RefPoints,
-                               ErrList, OM, control=NULL, silent=FALSE)
+                               ErrList, OM, SampCpars, initD, silent=FALSE)
   
   ObsPars <- Data@Obs # Obs pars updated in makeData 
   OMPars <- Data@OM
@@ -676,44 +671,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   }
   
   # --- Check MPs ---- 
-  ## TURN THIS INTO A FUNCTION #####
   if (is.na(MPs[1])) CheckMPs <- TRUE
-  if (CheckMPs) {
-    if(!silent) message("Determining available methods") 
-    PosMPs <- Can(Data, timelimit = timelimit)  # list all the methods that could be applied to a DLM data object 
-    if (is.na(MPs[1])) {
-      MPs <- PosMPs  # if the user does not supply an argument MPs run the MSE for all available methods
-      if(!silent) message("No MPs specified: running all available")
-    }
-    if (!is.na(MPs[1])) {
-      cant <- MPs[!MPs %in% PosMPs]
-      if (length(cant) > 0) {
-        if(!silent) message("Cannot run some MPs: ")
-        if(!silent) print(DLMdiag(Data, "not available", funcs1=cant, timelimit = timelimit))
-      }
-      MPs <- MPs[MPs %in% PosMPs]  # otherwise run the MSE for all methods that are deemed possible
-    }
-    if (length(MPs) == 0) {
-      if(!silent) message(Cant(Data, timelimit = timelimit))
-      stop("MSE stopped: no viable methods \n\n")  # if none of the user specified methods are possible stop the run
-    }
-  }
-  
-  ok <- rep(TRUE, length(MPs))
-  for (mm in seq_along(MPs)) {
-    test <- try(get(MPs[mm]), silent=TRUE)
-    if (!class(test) == 'MP') {
-      ok[mm] <- FALSE
-      if (class(test) == 'try-error') {
-        message('Object ', paste(MPs[mm], ""), " does not exist - Ignoring")
-      } else message('Dropping MP: ', paste(MPs[mm], ""), " - Not class 'MP'")
-    }
-  }
-
-  MPs <- MPs[ok]
+  if (CheckMPs) MPs <- MPCheck(MPs, Data, timelimit, silent)
   nMP <- length(MPs)  # the total number of methods used
-  
-  if (nMP < 1) stop("No valid MPs found")
+  if (nMP < 1) stop("No valid MPs found", call.=FALSE)
   
   # Calculate management interval for each MP
   if (length(interval) != nMP) interval <- rep(interval, nMP)[1:nMP]
