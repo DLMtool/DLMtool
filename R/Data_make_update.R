@@ -1,18 +1,8 @@
 
-#' Title
-#'
-#' @param CBret Simulated retained catch. Numeric array dim(nsim, maxage, nyears, nareas)
-#' @param ObsPars 
-#' @param OM 
-#' @param reps 
-#' @param control 
-#'
-#' @keywords internal
-#' @export
-#'
+
 makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars, 
                      FleetPars, ObsPars, ImpPars, RefPoints,
-                     ErrList, OM, SampCpars, control=NULL, silent=FALSE) {
+                     ErrList, OM, SampCpars, initD, silent=FALSE) {
   
   if(!silent) message("Simulating observed data")
   
@@ -112,7 +102,14 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   # should be calculated from unfished - won't be correct if initD is set
   I3 <- apply(Biomass, c(1, 3), sum)^ObsPars$betas  # apply hyperstability / hyperdepletion
   I3 <- I3/apply(I3, 1, mean)  # normalize index to mean 1
-  Iref <- apply(I3[, 1:5], 1, mean) * RefPoints$SSBMSY_SSB0  # return the real target abundance index corresponding to BMSY
+  if (!is.null(initD)) {
+    b1 <- apply(Biomass, c(1, 3), sum)
+    b2 <- matrix(RefPoints$BMSY, nrow=nsim, ncol=nyears)
+    ind <- apply(abs(b1/ b2 - 1), 1, which.min) # find years closest to BMSY
+    Iref <- diag(I3[1:nsim,ind])  # return the real target abundance index closest to BMSY
+  } else {
+    Iref <- apply(I3[, 1:5], 1, mean) * RefPoints$SSBMSY_SSB0  # return the real target abundance index corresponding to BMSY
+  }
   Data@Iref <- Iref * ObsPars$Irefbias # index reference with error
   
   # --- Abundance ----
