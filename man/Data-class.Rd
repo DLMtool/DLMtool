@@ -24,6 +24,10 @@ An object for storing data for analysis using data-limited methods
 
 \item{\code{Ind}}{Relative abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers}
 
+\item{\code{Type}}{}
+
+\item{\code{RInd}}{}
+
 \item{\code{Rec}}{Recent recruitment strength. Matrix of nsim rows and nyears columns. Non-negative real numbers}
 
 \item{\code{t}}{The number of years corresponding to AvC and Dt. Single value. Positive integer}
