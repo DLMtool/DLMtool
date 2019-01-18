@@ -4534,7 +4534,6 @@ YPRopt <- function(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage, reps = 100) {
   
   nf <- 200
   frates <- seq(0, 3, length.out = nf)
-  Winf = a * Linfc^b
   rat <- LFS/Linfc
   rat[rat > 0.8] <- 0.8  # need to robustify this for occasionally very high samples of LFS
   tc = log(1 - rat)/-Kc + t0c
@@ -4551,8 +4550,6 @@ YPRopt <- function(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage, reps = 100) {
   sbpr <- array(NA, dim = c(reps, nf))
   sbpr.ratio <- array(NA, dim = c(reps, nf))
   sbpr.dif <- array(NA, dim = c(reps, nf))
-  
-  f.max <- array(NA, dim = c(reps, maxage))
   
   # average weight at age - follow von Bertalanffy growth
   age <- array(rep(1:maxage, each = reps), dim = c(reps, maxage))
