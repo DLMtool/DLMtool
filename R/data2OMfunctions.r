@@ -26,7 +26,7 @@
 #' OM <- DLMtool::testOM 
 #' OM@nsim <- 2
 #' Hist <- runMSE(OM, Hist=TRUE)
-#' N <- Hist@AtAge$N[1,,1] * Hist@AtAge$Select[1,,1]
+#' N <- Hist@AtAge$Nage[1,,1] * Hist@AtAge$Select[1,,1]
 #' meanL <- Hist@AtAge$Length[1,,1]
 #' sdL <- Hist@AtAge$Length[1,,1] * 0.1
 #' nsamp <- ceiling(N/sum(N) * 1000)
