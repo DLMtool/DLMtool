@@ -1047,7 +1047,7 @@ TSplot<-function(x,y,xlab=NA,ylab=NA,zeroy=T,incx=T,incy=T,type='l',mat=T){
   abline(h=yl,col='white')
   
   if(mat){
-    matplot(x,y,type=type,col=cols,xlab="",ylab="",add=T)
+    matplot(x,t(y),type=type,col=cols,xlab="",ylab="",add=T)
   }else{
     if(type=='p')for(i in 1:nsim)points(x[,i],y[,i],col=cols[i],pch=19)
     if(type=='l')for(i in 1:nsim)lines(x[,i],y[,i],col=cols[i])
