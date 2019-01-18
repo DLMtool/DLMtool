@@ -3,6 +3,37 @@ tiny <- 1e-15  # define tiny variable
 proportionMat <- TL <- Wa <- SurvWeiMat <- r <- lx <- logNormDensity <- sumlogNormDen <- NULL
 proportionMat = vector()
 
+MPCheck <- function(MPs, Data, timelimit, silent=FALSE) {
+  if(!silent) message("Determining available methods") 
+  PosMPs <- Can(Data, timelimit = timelimit)  # list all the methods that could be applied
+  if (is.na(MPs[1])) {
+    MPs <- PosMPs  # if the user does not supply an argument MPs run the MSE for all available methods
+    if(!silent) message("No MPs specified: running all available")
+  }
+  cant <- MPs[!MPs %in% PosMPs]
+  if (length(cant) > 0) {
+    if(!silent) message("Cannot run some MPs: ")
+    if(!silent) print(DLMdiag(Data, "not available", funcs1=cant, timelimit = timelimit))
+  }
+  MPs <- MPs[MPs %in% PosMPs]  # otherwise run the MSE for all methods that are deemed possible
+  if (length(MPs) == 0) {
+    if(!silent) message(Cant(Data, timelimit = timelimit))
+    stop("MSE stopped: no viable methods \n\n", call. = FALSE)  # if none of the user specified methods are possible stop the run
+  }
+  
+  ok <- rep(TRUE, length(MPs))
+  for (mm in seq_along(MPs)) {
+    test <- try(get(MPs[mm]), silent=TRUE)
+    if (!class(test) == 'MP') {
+      ok[mm] <- FALSE
+      if (class(test) == 'try-error') {
+        message('Object ', paste(MPs[mm], ""), " does not exist - Ignoring")
+      } else message('Dropping MP: ', paste(MPs[mm], ""), " - Not class 'MP'")
+    }
+  }
+  MPs <- MPs[ok]
+  MPs
+}
 
 #' What Data objects can be used to run this MP?
 #'
