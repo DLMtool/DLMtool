@@ -639,7 +639,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   ObsPars <- Data@Obs # Obs pars updated in makeData 
   OMPars <- Data@OM
   OMPars$qs <- qs
-
+  
+  # --- Add Real Indices to Data object (if they exist) & calculate error stats ----
+  templist <- addRealInd(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, silent=silent)
+  Data <- templist$Data # update 
+  ErrList <- templist$ErrList # update
+  
   # --- Return Historical Simulations and Data from last historical year ----
   if (Hist) { # Stop the model after historical simulations are complete
     if(!silent) message("Returning historical simulations")
@@ -759,8 +764,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     SSB_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
     FM_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
     FM_Pret <- array(NA, dim = c(nsim, maxage, proyears, nareas)) # retained F 
-    # FM_nospace <- array(NA, dim = c(nsim, maxage, proyears, nareas))  # stores prospective F before reallocation to new areas
-    # FML <- array(NA, dim = c(nsim, nareas))  # last apical F
     Z_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
     CB_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
     CB_Pret <- array(NA, dim = c(nsim, maxage, proyears, nareas)) # retained catch 
@@ -784,6 +787,9 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     
     # -- First projection year ----
     y <- 1
+    if(!silent) {
+      cat("."); flush.console()
+    }
     # Recruitment and movement in first year 
     NextYrN <- lapply(1:nsim, function(x)
       popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB[x,,nyears, ]), Ncurr=N[x,,nyears,],
@@ -798,7 +804,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     SSN_P[SAYR] <- N_P[SAYR] * Mat_age[SAY1]  # Calculate spawning stock numbers
     SSB_P[SAYR] <- SSN_P[SAYR] * Wt_age[SAY1]
     
-    # Update abundance estimates - used for FMSY ref methods 
+    # Update abundance estimates - used for FMSY ref methods so that FMSY is applied to current abundance
     M_array <- array(0.5*M_ageArray[,,nyears+y], dim=c(nsim, maxage, nareas))
     Atemp <- apply(VBiomass_P[, , y, ] * exp(-M_array), 1, sum) # Abundance (mid-year before fishing)
     MSElist[[mm]]@OM$A <- Atemp 
@@ -835,16 +841,13 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     LastAllocat <- MPCalcs$Ai
     LastEi <- MPCalcs$Ei # adjustment to effort
     LastCatch <- MPCalcs$TACrec
-    
     Effort[, mm, y] <- MPCalcs$Effort  
     CB_P <- MPCalcs$CB_P # removals
     CB_Pret <- MPCalcs$CB_Pret # retained catch 
     FM_P <- MPCalcs$FM_P # fishing mortality
     FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
     Z_P <- MPCalcs$Z_P # total mortality
-    
     retA_P <- MPCalcs$retA_P # retained-at-age
-    
     retL_P <- MPCalcs$retL_P # retained-at-length
     V_P <- MPCalcs$V_P  # vulnerable-at-age
     SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
@@ -873,7 +876,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         }
         
         MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, 
-                            V_P, maxage, R0, SRrel, hs, yr.ind=yr.ind)
+                          V_P, maxage, R0, SRrel, hs, yr.ind=yr.ind)
         MSY_P[,mm,y] <- MSYrefsYr[1, ]
         FMSY_P[,mm,y] <- MSYrefsYr[2,]
         SSBMSY_P[,mm,y] <- MSYrefsYr[3,]
