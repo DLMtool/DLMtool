@@ -6,6 +6,7 @@ testthat::context("test Real indices in Data object")
 # Simulate some data # 
 library(DLMtool)
 OM <- DLMtool::testOM
+OM@nsim <- 5
 Hist <- runMSE(OM, Hist=TRUE)
 MPs <- "AvC"
 # Grab indices from one sim 
