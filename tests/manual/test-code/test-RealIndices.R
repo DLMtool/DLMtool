@@ -1,7 +1,7 @@
 
 testthat::context("test Real indices in Data object")
 
-# Simulate sOMe data # 
+# Simulate some data # 
 library(DLMtool)
 OM <- DLMtool::testOM
 OM@nsim <- 5

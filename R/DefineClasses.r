@@ -167,8 +167,10 @@ setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ","
     .Object@Cat <- matrix(as.numeric(dat[match("Catch", dname), 1:length(.Object@Year)]), nrow = 1)
     .Object@Ind <- matrix(as.numeric(dat[match("Abundance index", dname), 1:length(.Object@Year)]), nrow = 1)
     
-    .Object@Type <- dat[match("Index type", dname), ]
-    if (!all(is.na(.Object@Type))) {
+    .Object@Type <- dat[match("Index type", dname), ] %>% as.character()
+    .Object@Type <- .Object@Type[!is.na(.Object@Type)]
+    .Object@Type <- .Object@Type[nchar(.Object@Type)>0]
+    if (length(.Object@Type)>0) {
       .Object@Type <- .Object@Type[nchar(.Object@Type)>0] %>% as.character()
       n.ind <- length(.Object@Type)
       r.ind <- match("Real indices", dname)

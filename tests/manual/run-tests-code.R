@@ -30,6 +30,10 @@ testthat::test_dir('tests/manual/test-code')
 
 # testthat::test_file("tests/manual/test-code/test-PMobjects.R") # ok
 
+# testthat::test_file("tests/manual/test-code/test-RealIndices.R") # 
+
+# testthat::test_file("tests/manual/test-code/test-Data2csv.R") # 
+
 
 
 
