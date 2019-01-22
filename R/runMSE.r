@@ -636,14 +636,20 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                FleetPars, ObsPars, ImpPars, RefPoints,
                                ErrList, OM, SampCpars, initD, silent=FALSE)
   
+  
+ 
+  
+  # --- Add Real Indices to Data object (if they exist) & calculate error stats ----
+  templist <- addRealInd(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, nsim,
+                         nyears, proyears, silent=silent)
+  Data <- templist$Data # update 
+  ErrList <- templist$ErrList # update
+
+  Misc$RInd.stats <- ErrList$stats.df # return stats
+  
   ObsPars <- Data@Obs # Obs pars updated in makeData 
   OMPars <- Data@OM
   OMPars$qs <- qs
-  
-  # --- Add Real Indices to Data object (if they exist) & calculate error stats ----
-  templist <- addRealInd(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, silent=silent)
-  Data <- templist$Data # update 
-  ErrList <- templist$ErrList # update
   
   # --- Return Historical Simulations and Data from last historical year ----
   if (Hist) { # Stop the model after historical simulations are complete
@@ -916,7 +922,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       if (y %in% upyrs) {
         # --- Update Data object ---- 
         MSElist[[mm]] <- updateData(Data=MSElist[[mm]], OM, MPCalcs, Effort, Biomass, 
-                                    Biomass_P, CB_Pret, N_P, SSB_P, VBiomass_P, 
+                                    Biomass_P, CB_Pret, N_P, SSB, SSB_P, VBiomass, VBiomass_P, 
                                     RefPoints, ErrList, FMSY_P, retA_P, retL_P, StockPars, 
                                     FleetPars, ObsPars, upyrs, interval, y, mm, 
                                     Misc=Data_p@Misc)
@@ -1040,7 +1046,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   }  # end of mm methods 
   
   # Miscellaneous reporting
-  if(PPD)Misc<-MSElist
+  if(PPD) Misc$Data <- MSElist
 
   ## Create MSE Object #### 
   MSEout <- new("MSE", Name = OM@Name, nyears, proyears, nMPs=nMP, MPs, nsim, 

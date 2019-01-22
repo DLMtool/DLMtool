@@ -192,7 +192,8 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
 
 
 updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret, 
-                       N_P, SSB_P, VBiomass_P, RefPoints, ErrList, FMSY_P, retA_P, 
+                       N_P, SSB, SSB_P, VBiomass, VBiomass_P, RefPoints, ErrList, 
+                       FMSY_P, retA_P, 
                        retL_P, StockPars, FleetPars, ObsPars, 
                        upyrs, interval, y=2, 
                        mm=1, Misc) {
@@ -237,13 +238,13 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   if (!all(is.na(Data@RInd))) { # Real indices exist
 
     b1 <- cbind(apply(Biomass, c(1, 3), sum), apply(Biomass_P, c(1, 3), sum)[, 1:(y - 1)])
-    b1 <- (exp(lcs(b1))^ErrList$stats.df$Beta_B) * ErrList$RIerr$BIerr[, 1:(nyears+y-1)]
+    b1 <- (exp(lcs(b1))^filter(stats.df, Index=="Biomass")$beta) * ErrList$RIerr$BIerr[, 1:(nyears+y-1)]
     
     b2 <- cbind(apply(VBiomass, c(1, 3), sum), apply(VBiomass_P, c(1, 3), sum)[, 1:(y - 1)])
-    b2 <- (exp(lcs(b2))^ErrList$stats.df$Beta_VB) * ErrList$RIerr$VBIerr[, 1:(nyears+y-1)]
+    b2 <- (exp(lcs(b2))^filter(stats.df, Index=="VBiomass")$beta) * ErrList$RIerr$VBIerr[, 1:(nyears+y-1)]
     
     b3 <- cbind(apply(SSB, c(1, 3), sum), apply(SSB_P, c(1, 3), sum)[, 1:(y - 1)])
-    b3 <- (exp(lcs(b3))^ErrList$stats.df$Beta_SB) * ErrList$RIerr$SBIerr[, 1:(nyears+y-1)]
+    b3 <- (exp(lcs(b3))^filter(stats.df, Index=="SpBiomass")$beta) * ErrList$RIerr$SBIerr[, 1:(nyears+y-1)]
 
     sim.indices <- list(Biomass=b1,
                         VBiomass=b2,

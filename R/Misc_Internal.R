@@ -586,7 +586,7 @@ dev.mode <- function() {
 
 getbeta<-function(beta,x,y)sum((y-x^beta)^2)
 
-indfitwrap <- function(x, type, sim.indices, Data, plot=FALSE) {
+indfitwrap <- function(x, type, sim.indices, ind.type, Data, plot=FALSE) {
   sim.index <- sim.indices[[match(type, ind.type)]][x,]
   obs.ind <- Data@RInd[x,match(type, Data@Type),]
   Year <- Data@Year
@@ -612,9 +612,9 @@ lcs<-function(x){
 
 
 
-makeVec <- function(obj, row=1) {
+makeVec <- function(obj, row=1, nsim) {
   tt <- obj[row,] %>% unlist()
-  if (is.null(tt)) return(NA)
+  if (is.null(tt)) return(rep(NA, nsim))
   return(tt)
 }
 
@@ -661,8 +661,10 @@ indfit <- function(sim.index,obs.ind, Year, plot=FALSE, lcex=0.8){
   
 }
 
-generateRes <- function(sd, ac, nsim, proyears, lst.err) {
-  if (all(is.na(sd))) return(NULL)
+generateRes <- function(df, nsim, proyears, lst.err) {
+  sd <- df$sd 
+  ac <- df$ac
+  if (all(is.na(sd))) return(rep(NA, nsim))
   mu <- 0.5 * (sd)^2
   Res <- matrix(rnorm(proyears*nsim, mu, sd), nrow=proyears, ncol=nsim, byrow=TRUE) 
   # apply a pseudo AR1 autocorrelation 
@@ -682,7 +684,8 @@ applyAC <- function(x, res, ac, max.years, lst.err) {
   res[,x]
 }
 
-addRealInd <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, silent=FALSE) {
+addRealInd <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, nsim, nyears,
+                       proyears, silent=FALSE) {
   if (!is.null(SampCpars$Data)) {
     # real data has been provided 
     types <- SampCpars$Data@Type
@@ -713,23 +716,25 @@ addRealInd <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, silent=
         out.list <- list()
         for (type in Data@Type) {
           out.list[[type]] <- sapply(1:nsim, indfitwrap, type=type, 
-                                     sim.indices=sim.indices, Data=Data)
+                                     sim.indices=sim.indices, 
+                                     ind.type=ind.type, Data=Data)
         } 
         
         # Make data.frame 
-        stats.df <- data.frame(Beta_B=makeVec(out.list$Biomass, 1),
-                               Beta_VB=makeVec(out.list$VBiomass, 1),
-                               Beta_SB=makeVec(out.list$SpBiomass, 1),
-                               AC_B=makeVec(out.list$Biomass, 2),
-                               AC_VB=makeVec(out.list$VBiomass, 2),
-                               AC_SB=makeVec(out.list$SpBiomass, 2),
-                               SD_B=makeVec(out.list$Biomass, 3),
-                               SD_VB=makeVec(out.list$VBiomass, 3),
-                               SD_SB=makeVec(out.list$SpBiomass, 3),
-                               cor_B=makeVec(out.list$Biomass,4),
-                               cor_VB=makeVec(out.list$VBiomass,4),
-                               cor_SB=makeVec(out.list$SpBiomass,4))
-        
+        stats.df <- data.frame(Index=rep(c("Biomass", "VBiomass", 'SpBiomass'), each=nsim),
+                               beta=c(makeVec(out.list$Biomass, 1, nsim),
+                                      makeVec(out.list$VBiomass, 1, nsim),
+                                      makeVec(out.list$SpBiomass, 1, nsim)),
+                               ac = c(makeVec(out.list$Biomass, 2, nsim),
+                                      makeVec(out.list$VBiomass, 2, nsim),
+                                      makeVec(out.list$SpBiomass, 2, nsim)),
+                               sd = c(makeVec(out.list$Biomass, 3, nsim),
+                                      makeVec(out.list$VBiomass, 3, nsim),
+                                      makeVec(out.list$SpBiomass, 3, nsim)),
+                               cor =c(makeVec(out.list$Biomass, 4, nsim),
+                                      makeVec(out.list$VBiomass, 4, nsim),
+                                      makeVec(out.list$SpBiomass, 4, nsim)))
+
         RIndYrs <- data.frame(Type=Data@Type, NYears=apply(!apply(Data@RInd[1,,], 2, is.na), 1, sum))
         
         
@@ -739,32 +744,31 @@ addRealInd <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, silent=
         SBIerr <- array(NA, dim=c(nsim, nyears+proyears))
         
         # Calculate error where data exists
-        BErr <- exp(lcs(Data@RInd[,match("Biomass", Data@Type),]))/exp(lcs(sim.indices$Biomass))^stats.df$Beta_B
-        VBErr <- exp(lcs(Data@RInd[,match("VBiomass", Data@Type),]))/exp(lcs(sim.indices$VBiomass))^stats.df$Beta_VB
-        SpBErr <- exp(lcs(Data@RInd[,match("SpBiomass", Data@Type),]))/exp(lcs(sim.indices$SpBiomass))^stats.df$Beta_SB
+        bbeta <- stats.df %>% filter(Index=="Biomass") %>% select(beta)
+        BErr <- exp(lcs(Data@RInd[,match("Biomass", Data@Type),]))/exp(lcs(sim.indices$Biomass))^bbeta$beta
+        bbeta <- stats.df %>% filter(Index=="VBiomass") %>% select(beta)
+        VBErr <- exp(lcs(Data@RInd[,match("VBiomass", Data@Type),]))/exp(lcs(sim.indices$VBiomass))^bbeta$beta
+        bbeta <- stats.df %>% filter(Index=="SpBiomass") %>% select(beta)
+        SpBErr <- exp(lcs(Data@RInd[,match("SpBiomass", Data@Type),]))/exp(lcs(sim.indices$SpBiomass))^bbeta$beta
         
         BIerr[, 1:ncol(BErr)] <- BErr
         VBIerr[, 1:ncol(VBErr)] <- VBErr
         SBIerr[, 1:ncol(SpBErr)] <- SpBErr
         
         # Generate error for projection years 
-        BIerr[,(ncol(BErr)+1):ncol(BIerr)] <- generateRes(sd=stats.df$SD_B, 
-                                                          ac=stats.df$AC_B, nsim,
-                                                          proyears, 
+        BIerr[,(ncol(BErr)+1):ncol(BIerr)] <- generateRes(stats.df %>% filter(Index=="Biomass"), 
+                                                          nsim, proyears, 
                                                           lst.err=log(BIerr[,nyears]))
-        VBIerr[,(ncol(BErr)+1):ncol(VBIerr)] <- generateRes(stats.df$SD_VB, 
-                                                            stats.df$AC_VB, 
+        VBIerr[,(ncol(BErr)+1):ncol(VBIerr)] <- generateRes(stats.df %>% filter(Index=="VBiomass"),
                                                             nsim, proyears, 
                                                             lst.err=log(VBIerr[,nyears]))
-        SBIerr[,(ncol(BErr)+1):ncol(SBIerr)] <- generateRes(stats.df$SD_SB, 
-                                                            stats.df$AC_SB, 
+        SBIerr[,(ncol(BErr)+1):ncol(SBIerr)] <- generateRes(stats.df %>% filter(Index=="SpBiomass"),
                                                             nsim, proyears, 
                                                             lst.err=log(SBIerr[,nyears]))
         
         ErrList$stats.df <- stats.df
         ErrList$RIndYrs <- RIndYrs
         ErrList$RIerr <- list(BIerr=BIerr, VBIerr=VBIerr, SBIerr=SBIerr)
-        
       }
     }
   }
