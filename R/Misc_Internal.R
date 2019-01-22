@@ -704,8 +704,12 @@ addRealInd <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, nsim, n
         # add Real indices to Data object 
         Data@Type <- SampCpars$Data@Type
         RInd <- SampCpars$Data@RInd[1,,]
-        temp <- array(RInd, dim=c(nrow(RInd), ncol(RInd), nsim))
-        Data@RInd <- aperm(temp, c(3,1,2))
+        if (class(RInd) == "numeric") {
+          Data@RInd <- array(RInd, dim=c(nsim, 1, length(RInd)))
+        } else {
+          temp <- array(RInd, dim=c(nrow(RInd), ncol(RInd), nsim))
+          Data@RInd <- aperm(temp, c(3,1,2))  
+        }
         
         # Calculate implied observation error
         sim.indices <- list(Biomass=apply(Biomass, c(1, 3), sum),
@@ -735,7 +739,12 @@ addRealInd <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, nsim, n
                                       makeVec(out.list$VBiomass, 4, nsim),
                                       makeVec(out.list$SpBiomass, 4, nsim)))
 
-        RIndYrs <- data.frame(Type=Data@Type, NYears=apply(!apply(Data@RInd[1,,], 2, is.na), 1, sum))
+        if (dim(Data@RInd)[2] > 1) {
+          NYears <- apply(!apply(Data@RInd[1,,], 2, is.na), 1, sum)
+        } else {
+          NYears <- length(RInd)
+        }
+        RIndYrs <- data.frame(Type=Data@Type, NYears=NYears)
         
         
         # Generate index random error

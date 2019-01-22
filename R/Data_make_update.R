@@ -238,17 +238,15 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   if (!all(is.na(Data@RInd))) { # Real indices exist
 
     b1 <- cbind(apply(Biomass, c(1, 3), sum), apply(Biomass_P, c(1, 3), sum)[, 1:(y - 1)])
-    b1 <- (exp(lcs(b1))^filter(stats.df, Index=="Biomass")$beta) * ErrList$RIerr$BIerr[, 1:(nyears+y-1)]
+    b1 <- (exp(lcs(b1))^filter(ErrList$stats.df, Index=="Biomass")$beta) * ErrList$RIerr$BIerr[, 1:(nyears+y-1)]
     
     b2 <- cbind(apply(VBiomass, c(1, 3), sum), apply(VBiomass_P, c(1, 3), sum)[, 1:(y - 1)])
-    b2 <- (exp(lcs(b2))^filter(stats.df, Index=="VBiomass")$beta) * ErrList$RIerr$VBIerr[, 1:(nyears+y-1)]
+    b2 <- (exp(lcs(b2))^filter(ErrList$stats.df, Index=="VBiomass")$beta) * ErrList$RIerr$VBIerr[, 1:(nyears+y-1)]
     
     b3 <- cbind(apply(SSB, c(1, 3), sum), apply(SSB_P, c(1, 3), sum)[, 1:(y - 1)])
-    b3 <- (exp(lcs(b3))^filter(stats.df, Index=="SpBiomass")$beta) * ErrList$RIerr$SBIerr[, 1:(nyears+y-1)]
+    b3 <- (exp(lcs(b3))^filter(ErrList$stats.df, Index=="SpBiomass")$beta) * ErrList$RIerr$SBIerr[, 1:(nyears+y-1)]
 
-    sim.indices <- list(Biomass=b1,
-                        VBiomass=b2,
-                        SpBiomass=b3)
+    sim.indices <- list(Biomass=b1, VBiomass=b2, SpBiomass=b3)
     old <- Data@RInd
     Data@RInd <- array(NA, dim=c(nsim, length(Data@Type), nyears+y-1))
     for (type in Data@Type) {
