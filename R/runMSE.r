@@ -333,7 +333,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
 
     } 
   }
-
+ 
   # Unfished recruitment by area - INITDIST OF AGE 1.
   R0a <- matrix(R0, nrow=nsim, ncol=nareas, byrow=FALSE) * initdist[,1,] # 
   
@@ -634,7 +634,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # --- Populate Data object with Historical Data ---- 
   Data <- makeData(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars, 
                                FleetPars, ObsPars, ImpPars, RefPoints,
-                               ErrList, OM, SampCpars, initD, silent=FALSE)
+                               ErrList, OM, SampCpars, initD, silent=silent)
   
   # --- Add Real Indices to Data object (if they exist) & calculate error stats ----
   templist <- addRealInd(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, nsim,
@@ -922,7 +922,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                     Biomass_P, CB_Pret, N_P, SSB, SSB_P, VBiomass, VBiomass_P, 
                                     RefPoints, ErrList, FMSY_P, retA_P, retL_P, StockPars, 
                                     FleetPars, ObsPars, upyrs, interval, y, mm, 
-                                    Misc=Data_p@Misc)
+                                    Misc=Data_p@Misc, SampCpars)
 
         # Update Abundance and FMSY for FMSYref MPs
         M_array <- array(0.5*M_ageArray[,,nyears+y], dim=c(nsim, maxage, nareas))

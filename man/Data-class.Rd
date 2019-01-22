@@ -24,9 +24,10 @@ An object for storing data for analysis using data-limited methods
 
 \item{\code{Ind}}{Relative abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers}
 
-\item{\code{Type}}{}
+\item{\code{Type}}{Type of abundance index, corresponding with rows in \code{RInd}. Types are: "Biomass", "VBiomass",
+and "SpBiomass" for indices of total, vulnerable, and spawning biomass respectively. Character string.}
 
-\item{\code{RInd}}{}
+\item{\code{RInd}}{One or more vectors of abundance indices. Non-negative real numbers}
 
 \item{\code{Rec}}{Recent recruitment strength. Matrix of nsim rows and nyears columns. Non-negative real numbers}
 

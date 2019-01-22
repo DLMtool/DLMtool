@@ -31,8 +31,9 @@ setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 #' @slot Year Years that corresponding to catch and relative abundance data. Vector nyears long. Positive integer
 #' @slot Cat Total annual catches. Matrix of nsim rows and nyears columns. Non-negative real numbers 
 #' @slot Ind Relative abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers
-#' @slot Type 
-#' @slot RInd 
+#' @slot Type Type of abundance index, corresponding with rows in `RInd`. Types are: "Biomass", "VBiomass", 
+#' and "SpBiomass" for indices of total, vulnerable, and spawning biomass respectively. Character string. 
+#' @slot RInd One or more vectors of abundance indices. Non-negative real numbers 
 #' @slot Rec Recent recruitment strength. Matrix of nsim rows and nyears columns. Non-negative real numbers 
 #' @slot t The number of years corresponding to AvC and Dt. Single value. Positive integer  
 #' @slot AvC Average catch over time t. Vector nsim long. Positive real numbers  
@@ -147,7 +148,6 @@ setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ","
   # .Object }) .Object<-new('Data') run an error check here
   if (file.exists(stock)) {
     dec <- match.arg(dec)
-    
     Ncol <- max(unlist(lapply(strsplit(readLines(stock), ","), length)))
     col.names <- paste0("V", 1:Ncol)
 
@@ -167,9 +167,15 @@ setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ","
     .Object@Cat <- matrix(as.numeric(dat[match("Catch", dname), 1:length(.Object@Year)]), nrow = 1)
     .Object@Ind <- matrix(as.numeric(dat[match("Abundance index", dname), 1:length(.Object@Year)]), nrow = 1)
     
-    .Object@Type 
-    .Object@RInd
-    
+    .Object@Type <- dat[match("Index type", dname), ]
+    if (!all(is.na(.Object@Type))) {
+      .Object@Type <- .Object@Type[nchar(.Object@Type)>0] %>% as.character()
+      n.ind <- length(.Object@Type)
+      r.ind <- match("Real indices", dname)
+      RInd.dat <- dat[r.ind:(r.ind+n.ind-1),] %>% data.matrix()
+      .Object@RInd <- array(RInd.dat, dim=c(1, n.ind, ncol(RInd.dat)))
+    }
+
     .Object@Rec <- matrix(as.numeric(dat[match("Recruitment", dname), 1:length(.Object@Year)]), nrow = 1)
     .Object@t <- as.numeric(dat[match("Duration t", dname), 1])
     .Object@AvC <- as.numeric(dat[match("Average catch over time t", dname), 1])

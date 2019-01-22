@@ -196,7 +196,7 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
                        FMSY_P, retA_P, 
                        retL_P, StockPars, FleetPars, ObsPars, 
                        upyrs, interval, y=2, 
-                       mm=1, Misc) {
+                       mm=1, Misc, SampCpars) {
   
   yind <- upyrs[match(y, upyrs) - 1]:(upyrs[match(y, upyrs)] - 1) # index
   
@@ -250,10 +250,19 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
     old <- Data@RInd
     Data@RInd <- array(NA, dim=c(nsim, length(Data@Type), nyears+y-1))
     for (type in Data@Type) {
-      nyr <- ErrList$RIndYrs %>% filter(Type==type)
-      bio <- (sim.indices[[type]]/apply(sim.indices[[type]][,1:nyr$NYears], 1, mean)) *
-        mean(old[1, match(type,Data@Type),1:nyr$NYears])
+      yrs <- min(nyears, length(old[1, match(type,Data@Type),]))
+      bio <- (sim.indices[[type]]/apply(sim.indices[[type]][,1:yrs], 1, mean)) *
+        mean(old[1, match(type,Data@Type),1:yrs])
       Data@RInd[,match(type,Data@Type), ] <- array(bio, dim=c(nsim, 1, ncol(bio)))
+      
+      # Replace generated data with real data if more than nyears are provided
+      Data.temp <- SampCpars$Data@RInd[1,match(type,Data@Type),] 
+      Data.temp <- Data.temp[!is.na(Data.temp)]
+      Data.yr <- length(Data.temp)
+      Data.yr <- min(Data.yr, nyears-1+y)
+      temp <- array(SampCpars$Data@RInd[1,match(type,Data@Type),1:Data.yr], dim=c(1, Data.yr, nsim))
+      temp <- aperm(temp, c(3,1,2))
+      Data@RInd[,match(type,Data@Type), 1:Data.yr] <- temp
     }
   }
   
