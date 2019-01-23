@@ -987,7 +987,8 @@ plot.OM <-function(x, rmd=FALSE, head="##", ...){
   TSplot(yrlab,out@TSdata$SSB/rep(out@Ref$SSB0,each=nyears),xlab="Historical year",ylab="Stock depletion (SSB)")
   
   # Apical F
-  FM<-t(out@TSdata$Find)*out@OM$qs
+  FM<-t(out@TSdata$Find*out@OM$qs)
+  FM[FM > out@OM$maxF[1]] <- out@OM$maxF[1] # add maxF constraint
   TSplot(yrlab,t(FM),xlab="Historical year",ylab="Fishing mortality rate (apical)")
   
   # Catches

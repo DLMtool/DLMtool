@@ -167,7 +167,7 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
                      Vmaxlen=FleetPars$Vmaxlen[nyears, ],
                      LR5=FleetPars$LR5[nyears,], LFR=FleetPars$LFR[nyears,], 
                      Rmaxlen=FleetPars$Rmaxlen[nyears,], 
-                     DR=FleetPars$DR[nyears,], OFLreal)
+                     DR=FleetPars$DR[nyears,], OFLreal, maxF=OM@maxF)
                  
   OMtable <- OMtable[,order(names(OMtable))]
   Data@OM <- OMtable
