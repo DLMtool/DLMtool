@@ -918,7 +918,7 @@ ObsTSplot<-function(Cbias,Csd,nyears,labs, breaks, its, nsamp, col){
 #' 
 #' A function that plots the parameters and resulting time series of an operating model.
 #' 
-#' @param x An object of class OM or a list with historical simulation information (ie runMSE(OM, Hist=TRUE))
+#' @param x An object of class OM or an object of class Hist (ie runMSE(OM, Hist=TRUE))
 #' @param rmd Logical. Used in a rmd file?
 #' @param head Character. Heading for rmd file. Default is '##' (second level heading)
 #' @param ...  Optional additional arguments passed to \code{plot}
@@ -965,8 +965,8 @@ plot.OM <-function(x, rmd=FALSE, head="##", ...){
     yrlab<-OM@CurrentYr-((nyears-1):0)
   } else if (class(x) == "Hist") {
     out <- x 
-    nyears <- dim(out@TSdata[[1]])[1]
-    nsim <- dim(out@TSdata[[1]])[2]
+    nyears <- dim(out@TSdata[[1]])[2]
+    nsim <- dim(out@TSdata[[1]])[1]
     yrlab<-nyears-((nyears-1):0)
   } else stop("argument must be class 'OM' or 'Hist' ")
   
