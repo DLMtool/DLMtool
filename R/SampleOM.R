@@ -1045,7 +1045,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
     fails <- which(maxV < 0.01, arr.ind = TRUE)
     sims <- unique(fails[,1])
     yrs <- unique(fails[,2])
-    cat("Vulnerability (V) is <0.01 for all ages in:\nsims:", sims, "\nyears:", yrs)
+    cat("Vulnerability (V) is <0.01 for all ages in:\nsims:", sims, "\nyears:", yrs, "\n")
     stop('Check selectivity parameters. Is Fleet@isRel set correctly?', call.=FALSE)
   }
   
