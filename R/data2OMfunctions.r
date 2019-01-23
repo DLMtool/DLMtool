@@ -80,6 +80,8 @@ Growth2OM <- function(data=NULL, OM=NULL, nsim=48, seed=101, plot=TRUE, msg=TRUE
   }
   
   if (plot) {
+    op <- par(mfrow=c(1,1))
+    on.exit(par(op))
     ages <- 0:ceiling(max(data$Age))
     fitVBs <- sapply(1:nsamp, function(x) VB(ests$Linf[x], ests$K[x], ests$t0[x], ages))
     xlim <- range(ages)
@@ -173,6 +175,8 @@ LW2OM <- function(data=NULL, OM=NULL, plot=TRUE) {
   OM@b <- as.numeric(coef(mod)[2])
   
   if (plot) {
+    op <- par(mfrow=c(1,1))
+    on.exit(par(op))
     plot(dat$Length, dat$Weight, xlab="Length", ylab="Weight", las=1, pch=16)
     Lengths <- seq(min(dat$Length), max(dat$Length), length.out=100)
     lines(Lengths,  OM@a*Lengths^  OM@b , lwd=2)
@@ -186,3 +190,33 @@ LW2OM <- function(data=NULL, OM=NULL, plot=TRUE) {
 
 }
 
+# 
+# OM <- DLMtool::testOM 
+# OM@nsim <- 2
+# Hist <- runMSE(OM, Hist=TRUE)
+# N <- Hist@AtAge$Nage[1,,1] * Hist@AtAge$Select[1,,1]
+# meanL <- Hist@AtAge$Length[1,,1]
+# sdL <- Hist@AtAge$Length[1,,1] * 0.1
+# nsamp <- ceiling(N/sum(N) * 1000)
+# Length <- unlist(sapply(1:length(meanL), function(i) rnorm(nsamp[i], meanL[i], sdL[i])))
+# prob <- 1/(1 + exp(-log(19) * ((Length - OM@L50[1])/(OM@L50_95[1])))) # prob mature
+# Mature <- rbinom(n=sum(nsamp), size=1, prob=prob)
+# data <- data.frame(Length=Length, Mature=Mature)
+#  
+# 
+# Mat2OM <- function(data=NULL, OM=NULL, plot=TRUE) {
+#   if (!inherits(OM, 'OM')) stop("OM must be class OM")
+#   if (!inherits(data, 'data.frame')) stop("data must be a data.frame")
+#   if (!all(c("Length", "Mature") %in% colnames(data))) stop("data must have columns: Length, Mature")
+#   
+#   
+#   plot(data, alpha=0.1, pch=16)
+#   
+#   test <- glm(Mature~Length, family=binomial(link="logit"), data=data)
+#   coef(test)
+#   summary(test)
+#   plot(meanL, predict(test, newdata=data.frame(Length=meanL), type="response"))
+#   
+#  
+#   
+# }
