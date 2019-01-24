@@ -998,12 +998,13 @@ plot.OM <-function(x, rmd=FALSE, head="##", ...){
   TSplot(yrlab,out@TSdata$Rec,xlab="Historical year",ylab="Recruitment")
   
   # SSB-Rec
-  TSplot(x=out@TSdata$SSB[2:nyears,],y=out@TSdata$Rec[2:nyears,],xlab="Spawning biomass",ylab="Recruitment",mat=F,type='p')
+  TSplot(x=out@TSdata$SSB[,2:nyears],y=out@TSdata$Rec[,2:nyears],
+         xlab="Spawning biomass",ylab="Recruitment",mat=F,type='p')
   
-  F_FMSY<-FM/out@Ref$FMSY
-  B_BMSY<-t(out@TSdata$SSB)/out@Ref$SSBMSY
+  F_FMSY<-FM/matrix(out@Ref$FMSY, nrow=nyears, ncol=nsim, byrow=TRUE)
+  B_BMSY<-out@TSdata$SSB/matrix(out@Ref$SSBMSY, nrow=nsim, ncol=nyears)
   
-  TSKplot(B_BMSY,F_FMSY,yrlab)
+  TSKplot(B_BMSY,t(F_FMSY),yrlab)
   
   # Age vulnerability
   maxage<-dim(out@AtAge$Select)[2]
