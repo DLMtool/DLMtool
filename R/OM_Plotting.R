@@ -918,7 +918,7 @@ ObsTSplot<-function(Cbias,Csd,nyears,labs, breaks, its, nsamp, col){
 #' 
 #' A function that plots the parameters and resulting time series of an operating model.
 #' 
-#' @param x An object of class OM or a list with historical simulation information (ie runMSE(OM, Hist=TRUE))
+#' @param x An object of class OM or an object of class Hist (ie runMSE(OM, Hist=TRUE))
 #' @param rmd Logical. Used in a rmd file?
 #' @param head Character. Heading for rmd file. Default is '##' (second level heading)
 #' @param ...  Optional additional arguments passed to \code{plot}
@@ -965,8 +965,8 @@ plot.OM <-function(x, rmd=FALSE, head="##", ...){
     yrlab<-OM@CurrentYr-((nyears-1):0)
   } else if (class(x) == "Hist") {
     out <- x 
-    nyears <- dim(out@TSdata[[1]])[1]
-    nsim <- dim(out@TSdata[[1]])[2]
+    nyears <- dim(out@TSdata[[1]])[2]
+    nsim <- dim(out@TSdata[[1]])[1]
     yrlab<-nyears-((nyears-1):0)
   } else stop("argument must be class 'OM' or 'Hist' ")
   
@@ -987,7 +987,8 @@ plot.OM <-function(x, rmd=FALSE, head="##", ...){
   TSplot(yrlab,out@TSdata$SSB/rep(out@Ref$SSB0,each=nyears),xlab="Historical year",ylab="Stock depletion (SSB)")
   
   # Apical F
-  FM<-t(out@TSdata$Find)*out@OM$qs
+  FM<-t(out@TSdata$Find*out@OM$qs)
+  FM[FM > out@OM$maxF[1]] <- out@OM$maxF[1] # add maxF constraint
   TSplot(yrlab,t(FM),xlab="Historical year",ylab="Fishing mortality rate (apical)")
   
   # Catches
@@ -997,12 +998,13 @@ plot.OM <-function(x, rmd=FALSE, head="##", ...){
   TSplot(yrlab,out@TSdata$Rec,xlab="Historical year",ylab="Recruitment")
   
   # SSB-Rec
-  TSplot(x=out@TSdata$SSB[2:nyears,],y=out@TSdata$Rec[2:nyears,],xlab="Spawning biomass",ylab="Recruitment",mat=F,type='p')
+  TSplot(x=out@TSdata$SSB[,2:nyears],y=out@TSdata$Rec[,2:nyears],
+         xlab="Spawning biomass",ylab="Recruitment",mat=F,type='p')
   
-  F_FMSY<-FM/out@Ref$FMSY
-  B_BMSY<-t(out@TSdata$SSB)/out@Ref$SSBMSY
+  F_FMSY<-FM/matrix(out@Ref$FMSY, nrow=nyears, ncol=nsim, byrow=TRUE)
+  B_BMSY<-out@TSdata$SSB/matrix(out@Ref$SSBMSY, nrow=nsim, ncol=nyears)
   
-  TSKplot(B_BMSY,F_FMSY,yrlab)
+  TSKplot(B_BMSY,t(F_FMSY),yrlab)
   
   # Age vulnerability
   maxage<-dim(out@AtAge$Select)[2]

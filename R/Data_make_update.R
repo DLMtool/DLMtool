@@ -2,7 +2,7 @@
 
 makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars, 
                      FleetPars, ObsPars, ImpPars, RefPoints,
-                     ErrList, OM, SampCpars, initD, silent=FALSE) {
+                     ErrList, OM, SampCpars, initD, control, silent=FALSE) {
   
   if(!silent) message("Simulating observed data")
   
@@ -60,6 +60,11 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   Data@LenCV <- StockPars$LenCV # variablity in length-at-age - no error at this time
   Data@sigmaR <-  StockPars$procsd # observed sigmaR - assumed no obs error
   Data@MaxAge <- StockPars$maxage # maximum age - no error - used for setting up matrices only
+  
+  # if (!is.null(control$maxage)) {
+  #   if (!is.numeric(control$maxage)) stop('control$maxage must be numeric of length 1', call.=FALSE)
+  #   Data@MaxAge <- control$maxage
+  # }
   
   # Observed steepness values 
   hs <- StockPars$hs
@@ -126,7 +131,7 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   
   # --- Catch-at-age ----
   Data@CAA <- simCAA(nsim, nyears, StockPars$maxage, Cret, ObsPars$CAA_ESS, ObsPars$CAA_nsamp) 
-  
+
   # --- Catch-at-length ----
   vn <- apply(N, c(1,2,3), sum) * FleetPars$retA[,,1:nyears] # numbers at age in population that would be retained
   vn <- aperm(vn, c(1,3, 2))
@@ -167,7 +172,7 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
                      Vmaxlen=FleetPars$Vmaxlen[nyears, ],
                      LR5=FleetPars$LR5[nyears,], LFR=FleetPars$LFR[nyears,], 
                      Rmaxlen=FleetPars$Rmaxlen[nyears,], 
-                     DR=FleetPars$DR[nyears,], OFLreal)
+                     DR=FleetPars$DR[nyears,], OFLreal, maxF=OM@maxF)
                  
   OMtable <- OMtable[,order(names(OMtable))]
   Data@OM <- OMtable

@@ -633,9 +633,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # --- Populate Data object with Historical Data ---- 
   Data <- makeData(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars, 
-                               FleetPars, ObsPars, ImpPars, RefPoints,
-                               ErrList, OM, SampCpars, initD, silent=silent)
-  
+                   FleetPars, ObsPars, ImpPars, RefPoints,
+                   ErrList, OM, SampCpars, initD, control=control,
+                   silent=silent)
+
   # --- Add Real Indices to Data object (if they exist) & calculate error stats ----
   templist <- addRealInd(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, nsim,
                          nyears, proyears, silent=silent)
