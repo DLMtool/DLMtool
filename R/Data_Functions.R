@@ -1007,6 +1007,36 @@ joinData<-function(DataList){
 }
 
 
+#' Find the Management Procedures that use a particular data slot
+#'
+#' @param slot A slot from an object of class `Data`. Character string.
+#' @param silent Logical. Should messages be printed? 
+#'
+#' @return A character string of MPs that use the slot.
+#' @author A. Hordyk
+#' @export
+#'
+#' @examples
+#' Uses("Mort")
+Uses <- function(slot, silent=FALSE) {
+  if (class(slot) !="character") stop("Slot must be character", call. = FALSE)
+  if(length(slot)>1) stop("Slot must be length 1", call. = FALSE)
+  if (!slot %in% slotNames('Data')) stop("Slot is not a valid slot in Data object. Use slotNames('Data')", call.=FALSE)
+  MPs <- avail("MP")
+  List <- lapply(seq_along(MPs), function(x) Required(MPs[x]))
+  df <- data.frame(matrix(unlist(List), nrow=length(MPs), byrow=T), stringsAsFactors = FALSE)
+  mps <- df[grepl(slot, df[,2]),1]
+  if (length(mps) >0) {
+    if(!silent)
+      message("MPs that require Data slot '" , slot, "' are:")
+    return(mps)
+  } else {
+    if(!silent)
+      message("No MPs used Data slot '" , slot, "'.")
+    return(NULL)
+  }
+}
+
 
 
 
