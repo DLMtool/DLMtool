@@ -2535,6 +2535,7 @@ VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4,
   colnames(used) <- MPs
   rownames(used) <- varNames
   
+  
   # Find the highest Stat for each variable
   if (nMPs > 1) {
     stat <- lapply(senseDat, "[[", "OMStat")
@@ -2667,6 +2668,8 @@ VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4,
   # invisible(Out)
   
 }
+
+
 
 
 #' Biomass wormplot
@@ -2933,6 +2936,7 @@ calcStat <- function(rr, evalbreaks) {
   ind <- as.integer(evalbreaks/2)
   ind2 <- as.integer(0.1 * evalbreaks)
   ind3 <- as.integer(0.9 * evalbreaks)
+  if (all(is.na(rr))) return(0)
   if (all(rr$x == 0)) return(0)
   sum((rr$y - mean(rr$y, na.rm = TRUE))^2)
 }
@@ -3012,7 +3016,7 @@ calcMSESense <- function(MP = 1, MSEobj, YVar = c("Y", "B"), Par = c("Obs","OM")
       m <- m[order(m[, 1]), ]
       qnts <- quantile(m[, 1], quants, na.rm = TRUE)
       if (all(m[, 1] == 0)) {
-        OMSmooth[[xx]] <- NULL
+        OMSmooth[[xx]] <- NA
       } else {
         nas <- which(apply(!apply(m, 2, is.na), 1, prod) == 0)
         if (length(nas) > 0) m <- m[-nas, ]
