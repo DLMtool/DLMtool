@@ -72,7 +72,7 @@ Turing <- function(OM, Data, wait=TRUE) {
   
   nsamp <- 5
   OM@nsim <- nsamp +2 
-  SimDat <- runMSE(OM, Hist=TRUE, silent = TRUE)$Data
+  SimDat <- runMSE(OM, Hist=TRUE, silent = TRUE)@Data
   # if(!all(SimDat@CAL_bins == Data@CAL_bins)) stop("CAL_bins not correct length")
   
   YrInd <- 1:OM@nyears
