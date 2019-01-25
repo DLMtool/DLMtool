@@ -34,6 +34,8 @@ testthat::test_dir('tests/manual/test-code')
 
 # testthat::test_file("tests/manual/test-code/test-Data2csv.R") # 
 
+# testthat::test_file("tests/manual/test-code/test-checkPopdyn.R") # 
+
 
 
 
