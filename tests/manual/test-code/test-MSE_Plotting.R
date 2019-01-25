@@ -1,5 +1,5 @@
 testthat::context("Test MSE Plotting functions")
-windows()
+dev.new()       
 DLMextra()
 library(DLMextra)
 rm(list=ls())
@@ -23,3 +23,4 @@ for (ff in funs) {
   })
 }
 
+if(!is.null(dev.list()))  dev.off()
