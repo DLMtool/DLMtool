@@ -3,7 +3,7 @@ library(DLMtool)
 options(testthat.output_file = "test-out.xml")
 testthat::test_dir('tests/manual/test-code', reporter = "junit")
 
-# testthat::test_file("tests/manual/test-code/test-Data_Functions.R", reporter = "junit") # ok
+# testthat::test_file("tests/manual/test-code/test-Data_Functions.R") # ok
 
 # testthat::test_file("tests/manual/test-code/test-Data_Plotting.R") #  ok
 # 

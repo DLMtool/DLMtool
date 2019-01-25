@@ -1,11 +1,12 @@
 
 testthat::context("Test Data2csv function")
+rm(list=ls())
 
 dats<-avail('Data')
 file <- "test.csv"
 sim <- 1
 for (dat in dats) {
-  testthat::test_that(paste("Data2csv works with ", dat), {
+  # testthat::test_that(paste("Data2csv works with ", dat), {
     Data2csv(get(dat), file, simno = sim,overwrite=T)
     readDat <- new("Data", file)
     for (sl in slotNames('Data')) {
@@ -24,9 +25,10 @@ for (dat in dats) {
         }
       }
     }
-  })
+  # })
 }
 
+file.remove(file)
 
 
 
