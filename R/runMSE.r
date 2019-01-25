@@ -636,7 +636,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                    FleetPars, ObsPars, ImpPars, RefPoints,
                    ErrList, OM, SampCpars, initD, control=control,
                    silent=silent)
-
+  
   # --- Add Real Indices to Data object (if they exist) & calculate error stats ----
   templist <- addRealInd(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, nsim,
                          nyears, proyears, silent=silent)
@@ -814,11 +814,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     MSElist[[mm]]@OM$A <- Atemp 
 
     # -- Apply MP in initial projection year ----
-    runMP <- applyMP(MSElist[[mm]], MPs = MPs[mm], reps = reps, silent=TRUE)  # Apply MP
+    runMP <- applyMP(Data=MSElist[[mm]], MPs = MPs[mm], reps = reps, silent=TRUE)  # Apply MP
+    
     MPRecs <- runMP[[1]][[1]] # MP recommendations
     Data_p <- runMP[[2]] # Data object object with saved info from MP 
     Data_p@TAC <- MPRecs$TAC
-    
+
     # calculate pstar quantile of TAC recommendation dist 
     TACused <- apply(Data_p@TAC, 2, quantile, p = pstar, na.rm = T) 
     checkNA[y] <- sum(is.na(TACused))
@@ -932,7 +933,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         MSElist[[mm]]@OM$FMSY <- FMSY_P[,mm,y]
 
         # --- apply MP ----
-        runMP <- applyMP(MSElist[[mm]], MPs = MPs[mm], reps = reps, silent=TRUE)  # Apply MP
+        runMP <- applyMP(Data=MSElist[[mm]], MPs = MPs[mm], reps = reps, silent=TRUE)  # Apply MP
         MPRecs <- runMP[[1]][[1]] # MP recommendations
         Data_p <- runMP[[2]] # Data object object with saved info from MP 
         Data_p@TAC <- MPRecs$TAC

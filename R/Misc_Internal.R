@@ -420,15 +420,14 @@ genSizeCompWrap <- function(i, vn, CAL_binsmid, retL,
                             CAL_ESS, CAL_nsamp,
                             Linfarray, Karray, t0array,
                             LenCV, truncSD=2) {
-  
   VulnN <- as.matrix(vn[i,,]) 
   VulnN <- VulnN/rowSums(VulnN) * CAL_nsamp[i] # get relative numbers at age 
   VulnN <- round(VulnN,0) # convert to integers
   nyrs <- nrow(as.matrix(Linfarray[i,]))
   if (nyrs == 1) VulnN <- t(VulnN)
-  retL <- as.matrix(retL[i,,])
+  retLa <- as.matrix(retL[i,,])
   
-  lens <- genSizeComp(VulnN, CAL_binsmid, retL,
+  lens <- genSizeComp(VulnN, CAL_binsmid, retLa,
               CAL_ESS=CAL_ESS[i], CAL_nsamp=CAL_nsamp[i],
               Linfs=Linfarray[i,], Ks=Karray[i,], t0s=t0array[i,],
               LenCV=LenCV[i], truncSD)
@@ -532,9 +531,11 @@ simCAL <- function(nsim, nyears, maxage,  CAL_ESS, CAL_nsamp, nCALbins, CAL_bins
   CAL <- array(NA, dim=c(nsim,  nyears, nCALbins))
   
   # Generate size comp data with variability in age
+ 
   tempSize <- lapply(1:nsim, genSizeCompWrap, vn, CAL_binsmid, retL, CAL_ESS, CAL_nsamp,
                      Linfarray, Karray, t0array, LenCV, truncSD=2)
-  CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), dim=c(nyears, length(CAL_binsmid), nsim)), c(3,1,2))
+  CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), 
+                     dim=c(nyears, length(CAL_binsmid), nsim)), c(3,1,2))
   
   # calculate LFC - length-at-first capture - 5th percentile
   LFC <- rep(NA, nsim)

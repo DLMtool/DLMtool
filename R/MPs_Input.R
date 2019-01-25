@@ -867,32 +867,56 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE) {
   n <- min(n, nrow(Data@CAL[x,,]))
   if (length(Data@Misc) ==0) Data@Misc[[x]] <- NA 
   if (length(Data@Misc[[x]]) ==0) Data@Misc[[x]] <- NA 
+  
+  nage <- 101
+  P <- 0.01
+  xs <- seq(0, to=1, length.out = nage)
+  rLens <- 1-P^(xs/MK)
+  EL <- rLens * Linf 
+  SDL <- EL * CVLinf
+  Ml <- 1/(1+exp(-log(19.0)* (LenMids-L50)/(L95-L50)));
+  
+  Prob <- matrix(0, nrow=nage, ncol=length(LenMids))
+  for (aa in 1:nage) {
+    d1 <- dnorm(LenMids, EL[aa], SDL[aa])
+    t1 <- dnorm(EL[aa] + SDL[aa]*2.5, EL[aa], SDL[aa]) # truncate at 2.5 sd
+    d1[d1<t1] <- 0
+    if (!all(d1==0)) Prob[aa,] <- d1/sum(d1)
+  }
+  
   if (is.null(Data@Misc[[x]]) || is.na(Data@Misc[[x]])) { # first time it's being run
-    
+  
     # run model for n most recent years 
     yind <- match(Data@LHYear[1], Data@Year)
     CALdata <- Data@CAL[x, (yind-n+1):length(Data@Year),]
     if (class(CALdata) == 'numeric')  CALdata <- matrix(CALdata, ncol=length(LenMids))
     Ests <- matrix(NA, nrow=nrow(CALdata), ncol=4)
     Fit <- list()
+  
     for (y in 1:nrow(CALdata)) {
       CAL <- CALdata[y,]
-      sl50start <- LenMids[which.max(CAL)]
+      modalL <- LenMids[which.max(CAL)]
+      minL <- LenMids[min(which(CAL>0))]
+      sl50start <-  mean(c(modalL, minL))
       starts <- log(c(sl50start/Linf, sl50start/Linf*0.1, 1))
-      runOpt <- optim(starts, LBSPRopt, CAL=CAL, nage=101, nlen=length(LenMids), CVLinf=CVLinf, 
-                      LenBins=LenBins, LenMids=LenMids, x=seq(0, to=1, length.out = 101),
-                      MK=MK, Linf=Linf, P=0.01, L50=L50, L95=L95, Beta=Beta)
+   
+      runOpt <- optim(starts, LBSPRopt, CAL=CAL, nage=nage, nlen=length(LenMids), CVLinf=CVLinf, 
+                      LenBins=LenBins, LenMids=LenMids, 
+                      MK=MK, Linf=Linf, rLens=rLens, Prob=Prob, Ml=Ml,
+                      L50=L50, L95=L95, Beta=Beta)
+    
       SL50 <- exp(runOpt$par[1]) * Linf 
       dSL50 <- exp(runOpt$par[2])
       SL95 <- SL50 + dSL50 * SL50
       FM <- exp(runOpt$par[3])
-      
-      runMod <- LBSPRgen(SL50, SL95, FM, nage=101, nlen=length(LenMids), CVLinf, 
-                         LenBins, LenMids, x=seq(0, to=1, length.out = 101), 
-                         MK, Linf, P=0.01, L50, L95, Beta)
-      
+
+      runMod <- LBSPRgen(SL50, SL95, FM, nage=nage, nlen=length(LenMids), CVLinf,
+                         LenBins, LenMids,
+                         MK, Linf, rLens, Prob, Ml,L50, L95, Beta)
+
       Ests[y,] <- c(SL50, SL95, FM, runMod[[2]])
       Fit[[y]] <- runMod[[1]] * sum(CALdata[y,])
+
     }
     
     if (smoother && nrow(Ests) > 1) Ests <- apply(Ests, 2, FilterSmooth)
@@ -912,34 +936,41 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE) {
     Fit <- list()
     for (y in 1:nrow(CALdata)) {
       CAL <- CALdata[y,]
-      sl50start <- LenMids[which.max(CAL)]
+      modalL <- LenMids[which.max(CAL)]
+      minL <- LenMids[min(which(CAL>0))]
+      sl50start <-  mean(c(modalL, minL))
       starts <- log(c(sl50start/Linf, sl50start/Linf*0.1, 1))
+      if (MK > 5) MK <- 5 
+      if (MK < 0.4) MK <- 0.4
       runOpt <- try(optim(starts, LBSPRopt, CAL=CAL, nage=101, nlen=length(LenMids), CVLinf=CVLinf, 
-                      LenBins=LenBins, LenMids=LenMids, x=seq(0, to=1, length.out = 101),
-                      MK=MK, Linf=Linf, P=0.01, L50=L50, L95=L95, Beta=Beta), silent=TRUE)
+                      LenBins=LenBins, LenMids=LenMids,
+                      MK=MK, Linf=Linf, rLens=rLens, Prob=Prob, Ml=Ml, L50=L50, 
+                      L95=L95, Beta=Beta), silent=TRUE)
       if (class(runOpt) == 'try-error') {
-        if (MK > 5) {
-          runOpt <- optim(starts, LBSPRopt, CAL=CAL, nage=101, nlen=length(LenMids), CVLinf=CVLinf, 
-                              LenBins=LenBins, LenMids=LenMids, x=seq(0, to=1, length.out = 101),
-                              MK=5, Linf=Linf, P=0.01, L50=L50, L95=L95, Beta=Beta)
-        }
-        
+        warning("Error in LBSPR ignoring estimate and using previous year. Sim = ", x)
       } else {
-        SL50 <- exp(runOpt$par[1]) * Linf 
-        dSL50 <- exp(runOpt$par[2])
-        SL95 <- SL50 + dSL50 * SL50
-        FM <- exp(runOpt$par[3])
-        
-        runMod <- LBSPRgen(SL50, SL95, FM, nage=101, nlen=length(LenMids), CVLinf, 
-                           LenBins, LenMids, x=seq(0, to=1, length.out = 101), 
-                           MK, Linf, P=0.01, L50, L95, Beta)
-        
-        Ests[y,] <- c(SL50, SL95, FM, runMod[[2]])
-        Fit[[y]] <- runMod[[1]] * sum(CALdata[y,])
+      SL50 <- exp(runOpt$par[1]) * Linf 
+      dSL50 <- exp(runOpt$par[2])
+      SL95 <- SL50 + dSL50 * SL50
+      FM <- exp(runOpt$par[3])
+      
+      runMod <- LBSPRgen(SL50, SL95, FM, nage=101, nlen=length(LenMids), CVLinf, 
+                         LenBins, LenMids, 
+                         MK, Linf, rLens=rLens, Prob=Prob, Ml=Ml, L50, L95, Beta)
+      
+      Ests[y,] <- c(SL50, SL95, FM, runMod[[2]])
+      Fit[[y]] <- runMod[[1]] * sum(CALdata[y,])
       }
-   
-     
     }
+    
+    # 
+    # ## Plot ###
+    # par(mfrow=c(2,3))
+    # for (y in 1:nrow(CALdata)) {
+    #   tt <- barplot(CALdata[y,], names.arg=LenMids)
+    #   lines(tt, Fit[[y]], lwd=2)
+    # }
+    
     Ests <- as.data.frame(Ests)
     names(Ests) <- c("SL50", "SL95", "FM", "SPR")
     Ests$Year <- (length(Data@Year)-length(yrs)+1):length(Data@Year)

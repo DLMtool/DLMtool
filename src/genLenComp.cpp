@@ -141,15 +141,12 @@ NumericMatrix  genSizeComp(NumericMatrix VulnN, NumericVector CAL_binsmid, Numer
         for (int subage=0; subage<=11; subage++) { // loop over 12 months
           if (subAgeVec(subage) > 0) {
             double sage = varAges(subage) + age;
-
             double mean = Linfs(yr) * (1-exp(-Ks(yr)* (sage - t0s(yr)))); // calculate mean length at sub-age;
             if (mean < 0) mean = 0.01;
             NumericVector dist = tdnorm((CAL_binsmid-mean)/(LenCV*mean), -truncSD, truncSD); // prob density of lengths for this age
             NumericVector newdist = dist * selCurve(_,yr); // probability = dist * size-selection curve
-
             if (sum(newdist)!=0) {
               newdist = newdist/sum(newdist);
-
               Lens(count) = RcppArmadillo::sample(CAL_binsmid, subAgeVec(subage), TRUE, newdist); // sample lengths for this sub-age class
             } else {
               Lens(count) = NA_INTEGER;
@@ -174,7 +171,6 @@ NumericMatrix  genSizeComp(NumericMatrix VulnN, NumericVector CAL_binsmid, Numer
         // }
         
       }
-      
       NumericVector LenVals = combine(Lens); // unlist
       NumericVector templens = get_freq(LenVals, width, origin, nbins); // calculate frequencies
       double rat = CAL_nsamp/sum(templens);
@@ -186,8 +182,6 @@ NumericMatrix  genSizeComp(NumericMatrix VulnN, NumericVector CAL_binsmid, Numer
     }
 
   }
-
-
   return(CAL);
 }
 
@@ -207,7 +201,6 @@ NumericMatrix  genSizeComp2(NumericMatrix VulnN, NumericVector CAL_binsmid,
   NumericVector temp(k);
   
   for (int yr=0; yr < nyears; yr++) {
-    
     NumericVector probs = VulnN.row(yr)/sum(VulnN.row(yr)); // probability of each age class
     IntegerVector ageSamp1(k);
     rmultinom(CAL_ESS, probs.begin(), k, ageSamp1.begin()); // multinom age sample with ess
@@ -215,8 +208,7 @@ NumericMatrix  genSizeComp2(NumericMatrix VulnN, NumericVector CAL_binsmid,
     NumericVector ageSamp1a = temp * (CAL_nsamp/CAL_ESS); // scale up to CAL_nsamp
     NumericVector ageSamp1b = round(ageSamp1a,0); // round to integers at age
     List Lens(k);
-    
-    
+
     for (int age=1; age <= k; age++) {
       if (ageSamp1b(age-1)>0) {
         int ns = ageSamp1b(age-1);
@@ -231,14 +223,10 @@ NumericMatrix  genSizeComp2(NumericMatrix VulnN, NumericVector CAL_binsmid,
       } else {
         Lens(age-1) = NA_INTEGER; 
       }
-      
     }
-    
     NumericVector LenVals = combine(Lens); // unlist 
     CAL(yr,_) = get_freq(LenVals, width, origin, nbins); // calculate frequencies
-    
   }
-  
   return(CAL);
 }
 
