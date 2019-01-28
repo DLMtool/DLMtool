@@ -315,7 +315,6 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   CAA <- simCAA(nsim, yrs=length(yind), StockPars$maxage, Cret=CNtemp, ObsPars$CAA_ESS, ObsPars$CAA_nsamp)
   Data@CAA[, nyears + yind, ] <- CAA
   
-  
 
   # --- Catch-at-length ----
   oldCAL <- Data@CAL

@@ -885,7 +885,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         MSY_P[,mm,y] <- MSYrefsYr[1, ]
         FMSY_P[,mm,y] <- MSYrefsYr[2,]
         SSBMSY_P[,mm,y] <- MSYrefsYr[3,]
-        
       }
       
       TACa[, mm, y] <- TACa[, mm, y-1] # TAC same as last year unless changed 
