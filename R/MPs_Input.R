@@ -436,7 +436,6 @@ class(EtargetLopt) <- "MP"
 #' ITe5(1, DLMtool::SimulatedData, plot=TRUE)
 #' @export ITe5
 ITe5 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, mc = 0.05) {
-  
   ind <- max(1, (length(Data@Year) - yrsmth + 1)):length(Data@Year)
   deltaI <- mean(Data@Ind[x, ind])/Data@Iref[x]
   if (deltaI < (1 - mc)) deltaI <- 1 - mc

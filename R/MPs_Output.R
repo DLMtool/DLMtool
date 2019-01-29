@@ -453,8 +453,10 @@ CompSRA_ <- function(x, Data, reps=100) {
     pred <- pred[pred > 0]
     R0range <- c(mean(pred)/1000, mean(pred) * 1000)
     
-    fit <- optimize(SRAfunc, log(R0range), Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c, AMc, ac, bc, Catch, CAA)
-    getvals <- SRAfunc(fit$minimum, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c, AMc, ac, bc, Catch, CAA, opt = 2)
+    fit <- optimize(SRAfunc, log(R0range), Mc, hc, maxage, LFSc, LFCc, Linfc, 
+                    Kc, t0c, AMc, ac, bc, Catch, CAA)
+    getvals <- SRAfunc(fit$minimum, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c, 
+                       AMc, ac, bc, Catch, CAA, opt = 2)
     Ac[i] <- getvals$B
     Bt_K[i] <-  getvals$D
     predout[[i]] <- getvals$pred
@@ -2069,7 +2071,8 @@ class(DepF) <- "MP"
 #' @export
 Fratio_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
   # estimate abundance from average catch and F
-  MuC <- Data@Cat[x, length(Data@Cat[x, ])]
+  # MuC <- Data@Cat[x, length(Data@Cat[x, ])]
+  MuC <- mean(Data@Cat[x, ], na.rm=TRUE)
   Cc <- trlnorm(reps, MuC, Data@CV_Cat[x])
   Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
   Zdb <- CC(x, Data, reps = reps * 10)
@@ -2085,7 +2088,6 @@ Fratio_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
   }
   
   Ac <- Cc/(1 - exp(-Fdb))
-  
   runFrat <- Fratio_(x, Data, reps, Abun=Ac)
 
   TAC <- TACfilter(runFrat$TAC)

@@ -123,7 +123,8 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   A <- apply(VBiomass[, , nyears, ] * exp(-M_array), 1, sum) # Abundance (mid-year before fishing)
   Asp <- apply(SSB[, , nyears, ] * exp(-M_array), 1, sum)  # Spawning abundance (mid-year before fishing)
   OFLreal <- A * (1-exp(-RefPoints$FMSY))  # the true simulated Over Fishing Limit
-  
+  Data@OM$A <- A
+  Data@OM$Asp <- Asp
   Data@Abun <- A * ObsPars$Abias * 
     rlnorm(nsim, mconv(1, ObsPars$Aerr), sdconv(1, ObsPars$Aerr)) # observed vulnerable abundance
   Data@SpAbun <- Asp * ObsPars$Abias * 
@@ -151,7 +152,7 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   Data@LFS <- FleetPars$LFS[nyears,] * ObsPars$LFSbias # length at full selection
   
   # --- Previous Management Recommendations ----
-  Data@MPrec <- apply(CBret, c(1, 3), sum) # catch in last year
+  Data@MPrec <- apply(CBret, c(1, 3), sum)[,OM@nyears] # catch in last year
   Data@MPeff <- rep(1, nsim) # effort in last year = 1 
   
   # --- Store OM Parameters ----
@@ -305,6 +306,9 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   Data@Abun <- A * ObsPars$Abias * rlnorm(nsim, mconv(1, ObsPars$Aerr), sdconv(1, ObsPars$Aerr))
   Data@SpAbun <- Asp * ObsPars$Abias * rlnorm(nsim, mconv(1, ObsPars$Aerr), sdconv(1, ObsPars$Aerr))
   Data@Ref <- A * (1 - exp(-FMSY_P[,mm,y])) 
+  
+  Data@OM$A <- A
+  Data@OM$Asp <- Asp
   
   # --- Catch-at-age ----
   # previous CAA
