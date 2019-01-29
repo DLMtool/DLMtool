@@ -113,7 +113,7 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
     ind <- apply(abs(b1/ b2 - 1), 1, which.min) # find years closest to BMSY
     Iref <- diag(I3[1:nsim,ind])  # return the real target abundance index closest to BMSY
   } else {
-    Iref <- apply(I3[, 1:5], 1, mean) * RefPoints$SSBMSY_SSB0  # return the real target abundance index corresponding to BMSY
+    Iref <- apply(I3[, 1:5], 1, mean) * RefPoints$BMSY_B0  # return the real target abundance index corresponding to BMSY
   }
   Data@Iref <- Iref * ObsPars$Irefbias # index reference with error
   
