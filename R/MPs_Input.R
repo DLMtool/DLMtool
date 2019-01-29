@@ -1119,8 +1119,9 @@ class(LBSPR) <- 'MP'
 LBSPR_MLL <- function(x, Data, reps=1, plot=FALSE, SPRtarg=0.4, n=5, smoother=TRUE) {
   
   Rec <- new("Rec")
- 
-  if (is.null(Data@Misc[[x]]) || length(Data@Misc[[x]])<1) {
+  if (length(Data@Misc)<1) Data@Misc <- list(rep(NULL,x))
+  
+  if (is.null(Data@Misc[[x]]) || length(Data@Misc[[x]])<1 ||is.null(Data@Misc[[x]]$MLLset)) {
     runLBSPR <- LBSPR_(x, Data, reps, n, smoother)
     if (!smoother) Ests <- runLBSPR$Ests
     if (smoother) Ests <- runLBSPR$Ests_smooth

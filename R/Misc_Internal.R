@@ -650,7 +650,7 @@ indfit <- function(sim.index,obs.ind, Year, plot=FALSE, lcex=0.8){
     lines(SSBseq,SSBseq^opt$minimum,col='#0000ff90',pch=19)
     legend('bottomright',legend=round(c(sum((obs.ind-sim.index)^2),opt$objective),3),text.col=c("black","blue"),bty='n',title="SSQ",cex=lcex)
     legend('topleft',legend=round(opt$minimum,3),text.col="blue",bty='n',title='Hyper-stability, beta',cex=lcex)
-    legend('left',legend=round(cor(sim.index,obs.ind),3),bty='n',title='Correlation',cex=lcex)
+    legend('left',legend=round(stats::cor(sim.index,obs.ind),3),bty='n',title='Correlation',cex=lcex)
     
     plot(Year,sim.index,ylab="",xlab="",ylim=range(c(obs.ind,sim.index)),type="l")
     mtext("Year",1,line=2.2)
@@ -661,7 +661,7 @@ indfit <- function(sim.index,obs.ind, Year, plot=FALSE, lcex=0.8){
   }
   
   data.frame(beta=opt$minimum,AC=ac,sd=sd(exp(obs.ind)/(exp(sim.index)^opt$minimum)),
-             cor=cor(sim.index,obs.ind),AC2=ac2,sd2=sd(obs.ind-sim.index))
+             cor=stats::cor(sim.index,obs.ind),AC2=ac2,sd2=sd(obs.ind-sim.index))
   
   # list(stats=data.frame(beta=opt$minimum,AC=ac,sd=sd(exp(obs.ind)/(exp(sim.index)^opt$minimum)),
   #                       cor=cor(sim.index,obs.ind),AC2=ac2,sd2=sd(obs.ind-sim.index)),
