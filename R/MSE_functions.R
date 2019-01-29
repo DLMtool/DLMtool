@@ -700,9 +700,25 @@ joinMSE <- function(MSEobjs = NULL) {
   
   Misc<-list()
   if (length(MSEobjs[[1]]@Misc)>0) {
-    if(class(MSEobjs[[1]]@Misc[[1]])=="Data"){ #Posterior predicted data joining
-      for(i in 1: length(MSEobjs[[1]]@Misc))Misc[[i]]<-joinData(lapply(MSEobjs,function(x)slot(x,"Misc")[[i]]))
-    } 
+    if (!is.null(MSEobjs[[1]]@Misc$Data)) {
+      Misc$Data <- list()
+      # Posterior predicted data joining
+      for(i in 1:length(MSEobjs[[1]]@Misc$Data)) Misc$Data[[i]]<-joinData(lapply(MSEobjs,function(x)slot(x,"Misc")$Data[[i]]))
+    }
+    
+    if (!is.null(MSEobjs[[1]]@Misc$RInd.stats)) {
+      # Error from real indices
+      nms <- unique(MSEobjs[[1]]@Misc$RInd.stats$Index) %>% as.character()
+      temp <- list()
+      for (nm in seq_along(nms)) {
+        temp1 <- list()
+        for(i in 1:length(MSEobjs)) {
+          temp1[[i]] <- MSEobjs[[i]]@Misc$RInd.stats %>% dplyr::filter(Index==nms[nm])
+        }
+        temp[[nm]] <- do.call('rbind', temp1)
+      }
+      Misc$RInd.stats <- do.call('rbind', temp)
+    }
   }
   
   newMSE <- new("MSE", Name = outlist$Name, nyears = unique(outlist$nyears), 
