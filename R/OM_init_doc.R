@@ -87,8 +87,10 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), dir=NULL, overwrite=F
      inclasses <- unlist(lapply(InTemplates, class))
     if (!is.null(inclasses)) {
       # check if zip application exists
-      chck <- Sys.which("zip") # requires 'zip.exe' on file path
-      if (nchar(chck) <1) {
+      # chck <- Sys.which("zip") # requires 'zip.exe' on file path
+      chck <- Sys.getenv("R_ZIPCMD", "zip")
+      
+      if (!'zip' %in% chck) {
         message('zip application is required for templates. If a zip application is installed on your machine you may need to add it to the path. Try:')
         message('path <- Sys.getenv("PATH")')
         message('Sys.setenv("PATH" = paste(path, "path_to_zip.exe", sep = ";"))')
