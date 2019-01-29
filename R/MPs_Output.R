@@ -4653,7 +4653,8 @@ class(YPR) <- "MP"
 #' @export 
 YPR_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
 
-  MuC <- Data@Cat[x, length(Data@Cat[x, ])]
+  # MuC <- Data@Cat[x, length(Data@Cat[x, ])]
+  MuC <- mean(Data@Cat[x, ], na.rm=TRUE)
   Cc <- trlnorm(reps, MuC, Data@CV_Cat[x])
   
   Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])

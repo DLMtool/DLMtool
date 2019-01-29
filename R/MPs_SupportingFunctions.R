@@ -869,7 +869,6 @@ SRAfunc <- function(lnR0c, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c,
   pred <- CN[syear:ny, ]
   pred <- pred/array(apply(pred, 1, sum), dim = c(dim(CAA)[1], maxage))
   
-
   fobj <- pen - sum(log(pred + tiny) * CAA, na.rm = T)
   if (opt == 1) {
     return(fobj)
