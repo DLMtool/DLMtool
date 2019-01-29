@@ -4,7 +4,7 @@
 \alias{FilterSmooth}
 \title{Kalman filter and Rauch-Tung-Striebel smoother}
 \usage{
-FilterSmooth(RawEsts, R = 1, Q = 0.1, Int = 100)
+FilterSmooth(RawEsts, R = 0.2, Q = 0.1, Int = 100)
 }
 \arguments{
 \item{RawEsts}{a vector of estimated values}

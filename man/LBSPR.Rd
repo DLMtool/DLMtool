@@ -6,10 +6,11 @@
 \title{Length-Based SPR MPs}
 \usage{
 LBSPR(x, Data, reps = 1, plot = FALSE, SPRtarg = 0.4, theta1 = 0.3,
-  theta2 = 0.05, maxchange = 0.3, n = 5, smoother = TRUE)
+  theta2 = 0.05, maxchange = 0.3, n = 5, smoother = TRUE,
+  R = 0.2)
 
 LBSPR_MLL(x, Data, reps = 1, plot = FALSE, SPRtarg = 0.4, n = 5,
-  smoother = TRUE)
+  smoother = TRUE, R = 0.2)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -31,6 +32,8 @@ LBSPR_MLL(x, Data, reps = 1, plot = FALSE, SPRtarg = 0.4, n = 5,
 \item{n}{Last number of years to run the model on.}
 
 \item{smoother}{Logical. Should the SPR estimates be smoothed?}
+
+\item{R}{variance of sampling noise for smoother}
 }
 \value{
 An object of class \code{\link[=Rec-class]{Rec}} with the TAE slot(s) populated

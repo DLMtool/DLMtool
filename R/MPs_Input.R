@@ -846,10 +846,11 @@ class(LtargetE4) <- "MP"
 #' @param reps Number of samples. Not used in this method.
 #' @param n Numeric. Number of historical years to run the model.
 #' @param smoother Logical. Should estimates be smoothed over multiple years?
-#'
+#' @param R variance of sampling noise
+#' 
 #' @export
 #' @keywords internal
-LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE) {
+LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE, R=0.2) {
   if (NAor0(Data@L50[x])) stop("Data@L50 is NA")
   if (NAor0(Data@L95[x])) stop("Data@L95 is NA")
   if (NAor0(Data@wlb[x])) stop("Data@wlb is NA")
@@ -996,7 +997,7 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE) {
     Ests <-rbind(Data@Misc[[x]]$Ests, Ests)
     
     if (smoother) {
-      SmoothEsts <- apply(Ests_smooth[,1:4], 2, FilterSmooth)
+      SmoothEsts <- apply(Ests_smooth[,1:4], 2, FilterSmooth, R=R)
       Ests_smooth[,1:4] <- SmoothEsts
     }
   }
@@ -1023,6 +1024,7 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE) {
 #' @param maxchange Maximum change in effort
 #' @param n Last number of years to run the model on.
 #' @param smoother Logical. Should the SPR estimates be smoothed?
+#' @param R variance of sampling noise for smoother
 #' 
 #' @export
 #' @references  
@@ -1040,9 +1042,9 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE) {
 #' LBSPR(1, Data=DLMtool::SimulatedData, plot=TRUE)
 LBSPR <- function(x, Data, reps=1, plot=FALSE, SPRtarg=0.4, theta1=0.3, 
                   theta2=0.05, maxchange=0.3,
-                  n=5, smoother=TRUE) {
+                  n=5, smoother=TRUE, R=0.2) {
 
-  runLBSPR <- LBSPR_(x, Data, reps, n, smoother)
+  runLBSPR <- LBSPR_(x, Data, reps, n, smoother, R=R)
   
   if (!smoother) Ests <- runLBSPR$Ests
   if (smoother) Ests <- runLBSPR$Ests_smooth
@@ -1116,13 +1118,13 @@ class(LBSPR) <- 'MP'
 #' 
 #' @examples 
 #' LBSPR_MLL(1, Data=DLMtool::SimulatedData, plot=FALSE)
-LBSPR_MLL <- function(x, Data, reps=1, plot=FALSE, SPRtarg=0.4, n=5, smoother=TRUE) {
+LBSPR_MLL <- function(x, Data, reps=1, plot=FALSE, SPRtarg=0.4, n=5, smoother=TRUE, R=0.2) {
   
   Rec <- new("Rec")
   if (length(Data@Misc)<1) Data@Misc <- list(rep(NULL,x))
   
   if (is.null(Data@Misc[[x]]) || length(Data@Misc[[x]])<1 ||is.null(Data@Misc[[x]]$MLLset)) {
-    runLBSPR <- LBSPR_(x, Data, reps, n, smoother)
+    runLBSPR <- LBSPR_(x, Data, reps, n, smoother, R=R)
     if (!smoother) Ests <- runLBSPR$Ests
     if (smoother) Ests <- runLBSPR$Ests_smooth
     estSPR <- Ests$SPR[length(Ests$SPR)]
@@ -1151,7 +1153,7 @@ LBSPR_MLL <- function(x, Data, reps=1, plot=FALSE, SPRtarg=0.4, n=5, smoother=TR
       Rec@Misc$LR5 <- Rec@LR5
       Rec@Misc$MLLset <- TRUE
     } else {
-      runLBSPR <- LBSPR_(x, Data, reps, n, smoother)
+      runLBSPR <- LBSPR_(x, Data, reps, n, smoother, R=R)
       Rec@Misc$Ests <- runLBSPR$Ests
       Rec@Misc$Ests_smooth <- runLBSPR$Ests_smooth
       if (!smoother) Ests <- runLBSPR$Ests
@@ -1233,7 +1235,7 @@ class(LBSPR_MLL) <- 'MP'
 #'
 #' @export
 #' @keywords internal
-FilterSmooth <- function(RawEsts, R=1, Q=0.1, Int=100) {
+FilterSmooth <- function(RawEsts, R=0.2, Q=0.1, Int=100) {
   # Modified from \url{"http://read.pudn.com/downloads88/ebook/336360/Kalman%20Filtering%20Theory%20and%20Practice,%20Using%20MATLAB/CHAPTER4/RTSvsKF.m__.htm"}
   Ppred <-  rep(Int, length(RawEsts))
   nNA <- sum(is.na(RawEsts))
@@ -1260,10 +1262,5 @@ FilterSmooth <- function(RawEsts, R=1, Q=0.1, Int=100) {
   }
   return(xsmooth)
 }
-  
-  
-  
-  
-  
-  
-  
+
+
