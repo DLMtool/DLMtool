@@ -385,7 +385,6 @@ VOIplot2 <- function(MSE, MP=1, type=c("Obs", "OM"), PM="Yield", n=5,
   } else {
     Ptype <- Obs_desc  # Obs_desc <- DLMtool:::Obs_desc
     Xvals <- MSEobj@Obs
-    
     reqdat <- Required(MSEobj@MPs)[,2]
     reqdat <- trimws(unlist(strsplit(reqdat, ",")))
     
@@ -408,13 +407,9 @@ VOIplot2 <- function(MSE, MP=1, type=c("Obs", "OM"), PM="Yield", n=5,
   if (sum(Ptype$VOI_include) == 0) stop("No Observations for this MP", call.=FALSE)
   Xvals <- Xvals[ind,, drop=FALSE]
   Xdf <- tidyr::gather(Xvals)
-  
-  
+
   Yval <- data.frame(Yval=rep(Yval, ncol(Xvals)))
- 
-  
   df <- dplyr::bind_cols(Xdf, Yval)
-  
   
   ## Fit a loess smoother  ##
   span <- 0.75; degree <- 2
@@ -437,7 +432,7 @@ VOIplot2 <- function(MSE, MP=1, type=c("Obs", "OM"), PM="Yield", n=5,
   sdf <- df %>% dplyr::select(key, var) %>% dplyr::distinct() %>%  dplyr::top_n(n, var) %>% select(key)
   pdf <- df %>% filter(key %in% sdf$key)
   l.mod2 <- l.mod %>% filter(key %in% sdf$key)
-  
+
   title <- paste0(MSEobj@MPs, ' - ',  type, ' Parameters (top ', n, ")")
   nrow <- ceiling(n/5)
   

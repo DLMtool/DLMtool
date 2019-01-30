@@ -48,7 +48,7 @@ setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 #' @slot Lc Modal length of catches. Matrix of nsim rows and nyears columns. Positive real numbers  
 #' @slot LFC Length at first capture. Vector nsim long. Positive real numbers 
 #' @slot LFS Shortest length at full selection.  Vector nsim long. Positive real numbers 
-#' @slot CAA Catch at Age data. Array of dimensions nsim x nyears x MaxAge. Non-negative integers
+#' @slot CAA Catch at Age data (numbers). Array of dimensions nsim x nyears x MaxAge. Non-negative integers
 #' @slot Dep Stock depletion SSB(current)/SSB(unfished). Vector nsim long. Fraction.  
 #' @slot Abun An estimate of absolute current vulnerable abundance. Vector nsim long. Positive real numbers 
 #' @slot SpAbun An estimate of absolute current spawning stock abundance. Vector nsim long. Positive real numbers 

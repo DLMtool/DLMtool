@@ -32,15 +32,13 @@ simulation conditions and performance of data-limited methods
 
 \item ageM: age at 50 per cent maturity
 
-\item B0: unfished total biomass
+\item Asp: abundance (spawning biomass) updated in each management update of projection
 
 \item Blow: SSB where it takes MGThorizon x MGT to reach Bfrac of BMSY (spawning biomass)
 
-\item BMSY: BMSY in last historical year (total biomass)
-
 \item BMSY_B0: ratio of BMSY to unfished total biomass in last historical year
 
-\item Depletion: stock depletion (spawning biomass / unfished spawing biomass) in the final historical year (prior to projection)
+\item D: stock depletion (spawning biomass / unfished spawing biomass) in the final historical year (prior to projection)
 
 \item dFfinal: gradient in fishing mortality rate over final five years of the historical simulation
 
@@ -49,6 +47,8 @@ simulation conditions and performance of data-limited methods
 \item Esd: inter-annual variability in fishing mortality rate
 
 \item Fdisc: fraction of discarded fish that die
+
+\item FinF: F in last historical year
 
 \item FMSY: fishing mortality at MSY in last historical year
 
@@ -60,17 +60,17 @@ simulation conditions and performance of data-limited methods
 
 \item K: maximum growth rate (von Bertalanffy K parameter)
 
-\item Kgrad: mean gradient in maximum growth rate (per cent per time step)
-
 \item Ksd: interannual variability in maximum growth rate (log normal CV)
 
 \item L5: length at 5/% selectivity
 
 \item L50: length at 50/% maturity
 
+\item L50_95: increment between L50 and L95
+
 \item L95: length at 95/% maturity
 
-\item LFC: length at first capture
+\item LenCV: CV of length-at-age
 
 \item LFR: first length at full retention
 
@@ -78,17 +78,17 @@ simulation conditions and performance of data-limited methods
 
 \item Linf: asymptotic length
 
-\item Linfgrad: mean gradient in maximum length (per cent per time step)
-
 \item Linfsd: interannual variability in maximum length (log normal CV)
 
 \item LR5: first length at 5/% retention
 
 \item M: instantaneous natural mortality rate
 
-\item Mexp: exponent of Lorezen M-weight relationship
+\item maxF: NA
 
-\item Mgrad: mean average percentage gradient in natural mortality rate (percentage per time step)
+\item maxlen: NA
+
+\item Mexp: exponent of Lorezen M-weight relationship
 
 \item MGT: mean generation time
 
@@ -96,17 +96,19 @@ simulation conditions and performance of data-limited methods
 
 \item MSY: maximum sustainable yield in last historical year
 
-\item N0: equilibrium unfished total numbers
-
 \item OFLreal: A * FMSY  the true simulated Over Fishing Limit in last historical year
 
 \item Prob_staying: probability of inviduals in area 1 remaining in area 1 over the course of one year
+
+\item procmu: NA
 
 \item procsd: process error - CV in log-normal recruitment deviations
 
 \item qcv: interannual variability in future fishing efficiency (catchability) in projected years (input controls only)
 
 \item qinc: mean percentage increase in fishing efficiency (catchability) in projected years (input controls only)
+
+\item R0: NA
 
 \item RefY: reference yield, the highest long-term yield (mean over last five years of projection) obtained from a fixed F strategy. This is a useful reference point for framing performance of MPs because it standardizes for starting point and future productivity.
 
@@ -120,9 +122,9 @@ simulation conditions and performance of data-limited methods
 
 \item Spat_targ: distribution of fishing in relation to spatial biomass: fishing distribution is proportional to B^Spat_targ
 
-\item SSB0: unfished spawning biomass
+\item SRrel: NA
 
-\item SSBMSY: spawning biomass MSY in last historical year
+\item SSB0: unfished spawning biomass
 
 \item SSBMSY_SSB0: ratio of SSB_MSY/SSB0 in last historical year
 
@@ -135,6 +137,8 @@ simulation conditions and performance of data-limited methods
 \item TAEFrac: mean fraction of TAE taken
 
 \item TAESD: log-normal coefficient of variation in the fraction of TAE
+
+\item UMSY: MSY exploitation rate
 
 \item Vmaxlen: selection of fish at asymptotic length
 

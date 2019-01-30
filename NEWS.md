@@ -1,41 +1,34 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
-## DLMtool 5.2.999 - development
-
-### Major changes 
-- The slots for specifying gradients in life-history parameters (e.g `Stock@Mgrad`, `Stock@Linfgrad`) 
-have been removed. Time-varying parameters should now be specified with `cpars`
-
-- The `Stock@maxage` slot has been deprecated
-
-- add ability to specify movement matrix by year - document & write test & helper functions
-
-### Minor changes
-- SB0 is calculated dynamically for every year - document SSB0 etc ref points
-
-- runMSE(Hist=TRUE) now works with parallel processing
-
+## DLMtool 5.3 
 
 ### New Features
 - added more [cheat sheets](https://dlmtool.github.io/DLMtool/cheat_sheets/CheatSheets.html)
-- runMSE(Hist=TRUE) returns a new object of class 'Hist'
+- `runMSE(Hist=TRUE)` returns a new object of class 'Hist'
+- `runMSE(Hist=TRUE)` now works with parallel processing
+- movement matrix can be now specified by year (`OM@cpars$mov`)
+- `Uses` function has been added to return MPs that use a particular data slot.
+- The cheat sheets (`cheatsheets()`) have been updated to include new functions.
+- Depletion for the initial year of the simulations can now be specified using `OM@cpars$initD`.
+- Real indices of abundance can be added to the Data object and used to condition OM. See [userguide](https://dlmtool.github.io/DLMtool/userguide/using-real-indices.html) for details.
+
+### Major changes 
+- The slots for specifying gradients in life-history parameters (e.g `Stock@Mgrad`, `Stock@Linfgrad`) 
+have been removed. Time-varying parameters should now be specified with `OM@cpars`.
+- Biological reference points (SSB0, BMSY, FMSY, etc) are now calculated using a running average of the life-history 
+and selectivity parameters over a 10-year period.
 
 ### Fixes
 - fix issue with importing Data objects with larger number of length bins
 - fix issue where length-at-age was negative with high t0
 - allow custom area size for nareas > 2 in cpars
-- fix issue with curE75 which was ratcheting down effort 
+- fix issue with `curE75` which was ratcheting down effort 
 - fix issue with effort calculation when both effort control and TAC are implemented
 - fix random seed in `Turing` function
 - speed up plots in `Turing` function
 - speed up plots in `summary(Data)`
 - fix bug in CAL_nsamp and CAL_ESS when importing Obs object from CSV
 - fix typo in documentation for Itarget MPs
-
-
-- new Data format in Excel
-
-
 
 
 ## DLMtool 5.2.3

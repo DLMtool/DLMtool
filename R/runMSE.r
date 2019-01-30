@@ -388,7 +388,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # --- Optimize for Initial Depletion ----
   # Depletion in year 1 
-  ### ADD TO FAQ ####
   initD <- SampCpars$initD # 
   if (!is.null(initD)) { # initial depletion is not unfished
     if (!silent) message("Optimizing for user-specified depletion in first historical year")
@@ -496,7 +495,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # --- Simulate historical years ----
   if(!silent) message("Calculating historical stock and fishing dynamics")  # Print a progress update
   
-  # ADD TO FAQ ####
   if(!is.null(control$unfished)) { # generate unfished historical simulations
     if(!silent) message("Simulating unfished historical period")
     Hist <- TRUE
