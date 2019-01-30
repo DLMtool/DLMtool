@@ -450,25 +450,25 @@ getfifth <- function(lenvec, CAL_binsmid) {
   dens$x[min(which(cumsum(dens$y/sum(dens$y)) >0.05))]
 }
 
-genSizeCompWrap2<- function(i, vn, CAL_binsmid, 
-                            CAL_ESS, CAL_nsamp,
-                            Linfarray, Karray, t0array,
-                            LenCV, truncSD=2) {
-  
-  VulnN <- as.matrix(vn[i,,]) 
-  VulnN <- round(VulnN,0)
-  nyrs <- nrow(as.matrix(Linfarray[i,]))
-  if (nyrs == 1) VulnN <- t(VulnN)
-  
-  
-  lens <- genSizeComp2(VulnN, CAL_binsmid, 
-                      CAL_ESS=CAL_ESS[i], CAL_nsamp=CAL_nsamp[i],
-                      Linfs=Linfarray[i,], Ks=Karray[i,], t0s=t0array[i,],
-                      LenCV=LenCV[i], truncSD)
-  
-  lens
-  
-}
+# genSizeCompWrap2<- function(i, vn, CAL_binsmid, 
+#                             CAL_ESS, CAL_nsamp,
+#                             Linfarray, Karray, t0array,
+#                             LenCV, truncSD=2) {
+#   
+#   VulnN <- as.matrix(vn[i,,]) 
+#   VulnN <- round(VulnN,0)
+#   nyrs <- nrow(as.matrix(Linfarray[i,]))
+#   if (nyrs == 1) VulnN <- t(VulnN)
+#   
+#   
+#   lens <- genSizeComp2(VulnN, CAL_binsmid, 
+#                       CAL_ESS=CAL_ESS[i], CAL_nsamp=CAL_nsamp[i],
+#                       Linfs=Linfarray[i,], Ks=Karray[i,], t0s=t0array[i,],
+#                       LenCV=LenCV[i], truncSD)
+#   
+#   lens
+#   
+# }
 
 
 userguide_link <- function(url, ref=NULL) {

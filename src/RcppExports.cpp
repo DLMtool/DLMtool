@@ -208,25 +208,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// genSizeComp2
-NumericMatrix genSizeComp2(NumericMatrix VulnN, NumericVector CAL_binsmid, double CAL_ESS, double CAL_nsamp, NumericVector Linfs, NumericVector Ks, NumericVector t0s, double LenCV, double truncSD);
-RcppExport SEXP _DLMtool_genSizeComp2(SEXP VulnNSEXP, SEXP CAL_binsmidSEXP, SEXP CAL_ESSSEXP, SEXP CAL_nsampSEXP, SEXP LinfsSEXP, SEXP KsSEXP, SEXP t0sSEXP, SEXP LenCVSEXP, SEXP truncSDSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type VulnN(VulnNSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type CAL_binsmid(CAL_binsmidSEXP);
-    Rcpp::traits::input_parameter< double >::type CAL_ESS(CAL_ESSSEXP);
-    Rcpp::traits::input_parameter< double >::type CAL_nsamp(CAL_nsampSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Linfs(LinfsSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Ks(KsSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type t0s(t0sSEXP);
-    Rcpp::traits::input_parameter< double >::type LenCV(LenCVSEXP);
-    Rcpp::traits::input_parameter< double >::type truncSD(truncSDSEXP);
-    rcpp_result_gen = Rcpp::wrap(genSizeComp2(VulnN, CAL_binsmid, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD));
-    return rcpp_result_gen;
-END_RCPP
-}
 // movfit_Rcpp
 double movfit_Rcpp(NumericVector par, double prb, double frac);
 RcppExport SEXP _DLMtool_movfit_Rcpp(SEXP parSEXP, SEXP prbSEXP, SEXP fracSEXP) {
@@ -312,7 +293,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_DLMtool_rnormSelect2", (DL_FUNC) &_DLMtool_rnormSelect2, 3},
     {"_DLMtool_tdnorm", (DL_FUNC) &_DLMtool_tdnorm, 3},
     {"_DLMtool_genSizeComp", (DL_FUNC) &_DLMtool_genSizeComp, 10},
-    {"_DLMtool_genSizeComp2", (DL_FUNC) &_DLMtool_genSizeComp2, 9},
     {"_DLMtool_movfit_Rcpp", (DL_FUNC) &_DLMtool_movfit_Rcpp, 3},
     {"_DLMtool_popdynOneTScpp", (DL_FUNC) &_DLMtool_popdynOneTScpp, 13},
     {"_DLMtool_popdynCPP", (DL_FUNC) &_DLMtool_popdynCPP, 26},

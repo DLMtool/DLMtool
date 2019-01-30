@@ -111,10 +111,6 @@ genSizeComp <- function(VulnN, CAL_binsmid, selCurve, CAL_ESS, CAL_nsamp, Linfs,
     .Call('_DLMtool_genSizeComp', PACKAGE = 'DLMtool', VulnN, CAL_binsmid, selCurve, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD)
 }
 
-genSizeComp2 <- function(VulnN, CAL_binsmid, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD) {
-    .Call('_DLMtool_genSizeComp2', PACKAGE = 'DLMtool', VulnN, CAL_binsmid, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD)
-}
-
 #' Rcpp version of the Optimization function that returns the squared difference between user
 #' specified and calculated movement parameters. 
 #'
