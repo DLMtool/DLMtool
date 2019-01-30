@@ -591,11 +591,26 @@ joinMSE <- function(MSEobjs = NULL) {
             obj2 <- lapply(obj, '[[', nm)
             ind <- which(dim(obj2[[1]]) == nsim)
             if (length(ind) >0) {
+              if (class(obj2[[1]]) == "array") {
+                tempVal <- lapply(obj2, dim)
+                # check all dimensions the same (hack for different CAL bins)
+                tdf <- lapply(obj2, dim) %>% unlist() %>% 
+                  matrix(nrow=length(obj2), ncol=length(dim(obj2[[1]])),byrow=TRUE)
+                nBins <- tdf[,2]
+                Max <- max(nBins)
+                nyrs <- max(tdf[,3])
+                if (!mean(nBins) == max(nBins)) { # not all same size
+                  index <- which(nBins < Max)
+                  for (kk in index) {
+                    dif <- Max - dim(obj2[[kk]])[2]
+                    obj2[[kk]] <- abind::abind(obj2[[kk]], array(0, dim=c(nsims[kk], dif, nyrs)), along=2)
+                  }
+                }
+              }
               out.list[[nm]] <- abind::abind(obj2, along=ind)  
             } else {
               out.list[[nm]] <- unlist(obj2) %>% unique()
             }
-            
           }
           slot(out, sl) <- out.list
         }
