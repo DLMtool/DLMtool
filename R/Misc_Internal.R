@@ -558,7 +558,14 @@ simCAL <- function(nsim, nyears, maxage,  CAL_ESS, CAL_nsamp, nCALbins, CAL_bins
   
   # Lbar - mean length above Lc
   nuCAL <- CAL
-  for (i in 1:nsim) for (j in 1:nyears) nuCAL[i, j, 1:match(max(1, Lc[i, j]), CAL_binsmid, nomatch=1)] <- NA
+  for (i in 1:nsim) {
+    for (j in 1:nyears) {
+      # nuCAL[i, j, 1:match(max(1, Lc[i, j]), CAL_binsmid, nomatch=1)] <- NA
+      lcbin <- max(1,match(max(1, Lc[i, j]), CAL_binsmid, nomatch=1)-1)
+      nuCAL[i, j, 1:lcbin] <- NA
+    }
+  }
+  
   temp <- nuCAL * rep(CAL_binsmid, each = nsim * nyears)
   Lbar <- apply(temp, 1:2, sum, na.rm=TRUE)/apply(nuCAL, 1:2, sum, na.rm=TRUE)
   Lbar[!is.finite(Lbar)] <- 0 

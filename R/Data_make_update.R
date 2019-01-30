@@ -135,7 +135,7 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   # --- Catch-at-length ----
   vn <- apply(N, c(1,2,3), sum) * FleetPars$retA[,,1:nyears] # numbers at age in population that would be retained
   vn <- aperm(vn, c(1,3, 2))
-  
+
   CALdat <- simCAL(nsim, nyears, StockPars$maxage, ObsPars$CAL_ESS, 
                    ObsPars$CAL_nsamp, StockPars$nCALbins, StockPars$CAL_binsmid, 
                    vn, FleetPars$retL, StockPars$Linfarray, 
