@@ -57,7 +57,7 @@ and "SpBiomass" for indices of total, vulnerable, and spawning biomass respectiv
 
 \item{\code{LFS}}{Shortest length at full selection.  Vector nsim long. Positive real numbers}
 
-\item{\code{CAA}}{Catch at Age data. Array of dimensions nsim x nyears x MaxAge. Non-negative integers}
+\item{\code{CAA}}{Catch at Age data (numbers). Array of dimensions nsim x nyears x MaxAge. Non-negative integers}
 
 \item{\code{Dep}}{Stock depletion SSB(current)/SSB(unfished). Vector nsim long. Fraction.}
 

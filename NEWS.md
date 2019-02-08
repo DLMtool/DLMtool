@@ -12,6 +12,8 @@ The current version of the DLMtool package is available for download from [CRAN]
 - Depletion for the initial year of the simulations can now be specified using `OM@cpars$initD`.
 - Real indices of abundance can be added to the Data object and used to condition OM. See [userguide](https://dlmtool.github.io/DLMtool/userguide/using-real-indices.html) for details.
 
+- PM limit table function
+
 ### Major changes 
 - The slots for specifying gradients in life-history parameters (e.g `Stock@Mgrad`, `Stock@Linfgrad`) 
 have been removed. Time-varying parameters should now be specified with `OM@cpars`.
