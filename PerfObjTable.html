@@ -184,15 +184,19 @@ $(document).ready(function () {
          } );
          
 </script>
-<div id="minimum-performance-criteria" class="section level2">
-<h2>Minimum Performance Criteria</h2>
-<div id="management-procedures-must-have-at-least-an-0.8-probability-of-meeting-all-performance-limits" class="section level3">
-<h3>Management Procedures must have at least an 0.8 probability of meeting all Performance Limits</h3>
-<div id="perf.-limit-1-prob.-sb-0.5sbmsy-last-10-years" class="section level4">
-<h4>Perf. Limit 1: Prob. SB &gt; 0.5SBMSY (last 10 years)</h4>
+<div id="performance-objectives" class="section level2">
+<h2>Performance Objectives</h2>
+<div id="perf.-objective-1-average-yield-relative-to-reference-yield-years-41-50" class="section level4">
+<h4>Perf. Objective 1: Average Yield relative to Reference Yield (Years 41-50)</h4>
 </div>
-<div id="perf.-limit-2-prob.-sb-0.5sbmsy-last-40-years" class="section level4">
-<h4>Perf. Limit 2: Prob. SB &gt; 0.5SBMSY (last 40 years)</h4>
+<div id="perf.-objective-2-average-yield-relative-to-reference-yield-years-1-10" class="section level4">
+<h4>Perf. Objective 2: Average Yield relative to Reference Yield (Years 1-10)</h4>
+</div>
+<div id="perf.-objective-3-yield-relative-to-reference-yield-years-1-50" class="section level4">
+<h4>Perf. Objective 3: Yield relative to Reference Yield (Years 1-50)</h4>
+</div>
+<div id="perf.-objective-4-probability-of-not-overfishing-ffmsy" class="section level4">
+<h4>Perf. Objective 4: Probability of not overfishing (F&lt;FMSY)</h4>
 <table class="table table-striped table-hover table-condensed table-responsive" style="font-size: 14px; float: left; margin-right: 10px;">
 <thead>
 <tr>
@@ -211,41 +215,59 @@ Type
 <th style="text-align:center;">
 2
 </th>
+<th style="text-align:center;">
+3
+</th>
+<th style="text-align:center;">
+4
+</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align:left;font-weight: bold;">
+<td style="text-align:left;">
 1
 </td>
-<td style="text-align:left;font-weight: bold;">
-<a href="https://dlmtool.github.io/DLMtool/reference/AvC.html" style="     color: green;">AvC</a>
+<td style="text-align:left;">
+<a href="https://dlmtool.github.io/DLMtool/reference/AvC.html" style="     ">AvC</a>
 </td>
-<td style="text-align:left;font-weight: bold;">
+<td style="text-align:left;">
 Output
 </td>
-<td style="text-align:left;font-weight: bold;">
-<span style="     color: green;">0.8</span>
+<td style="text-align:left;">
+0.80
 </td>
-<td style="text-align:center;font-weight: bold;">
-<span style="     color: green;">0.8</span>
+<td style="text-align:center;">
+0.99
+</td>
+<td style="text-align:center;">
+0.71
+</td>
+<td style="text-align:center;">
+0.76
 </td>
 </tr>
 <tr>
-<td style="text-align:left;font-weight: bold;">
+<td style="text-align:left;">
 2
 </td>
-<td style="text-align:left;font-weight: bold;">
-<a href="https://dlmtool.github.io/DLMtool/reference/AvC_MLL.html" style="     color: green;">AvC_MLL</a>
+<td style="text-align:left;">
+<a href="https://dlmtool.github.io/DLMtool/reference/AvC_MLL.html" style="     ">AvC_MLL</a>
 </td>
-<td style="text-align:left;font-weight: bold;">
+<td style="text-align:left;">
 Mixed
 </td>
-<td style="text-align:left;font-weight: bold;">
-<span style="     color: green;">1</span>
+<td style="text-align:left;">
+1.00
 </td>
-<td style="text-align:center;font-weight: bold;">
-<span style="     color: green;">0.97</span>
+<td style="text-align:center;">
+0.90
+</td>
+<td style="text-align:center;">
+0.84
+</td>
+<td style="text-align:center;">
+0.86
 </td>
 </tr>
 <tr>
@@ -253,16 +275,22 @@ Mixed
 3
 </td>
 <td style="text-align:left;">
-<a href="https://dlmtool.github.io/DLMtool/reference/BK.html" style="     color: red;">BK_CC</a>
+<a href="https://dlmtool.github.io/DLMtool/reference/BK.html" style="     ">BK_CC</a>
 </td>
 <td style="text-align:left;">
 Output
 </td>
 <td style="text-align:left;">
-<span style="     color: red;">0.41</span>
+0.40
 </td>
 <td style="text-align:center;">
-<span style="     color: red;">0.26</span>
+0.85
+</td>
+<td style="text-align:center;">
+0.53
+</td>
+<td style="text-align:center;">
+0.31
 </td>
 </tr>
 <tr>
@@ -270,16 +298,22 @@ Output
 4
 </td>
 <td style="text-align:left;">
-<a href="https://dlmtool.github.io/DLMtool/reference/BK.html" style="     color: red;">BK_ML</a>
+<a href="https://dlmtool.github.io/DLMtool/reference/BK.html" style="     ">BK_ML</a>
 </td>
 <td style="text-align:left;">
 Output
 </td>
 <td style="text-align:left;">
-<span style="     color: red;">0.66</span>
+0.24
 </td>
 <td style="text-align:center;">
-<span style="     color: red;">0.65</span>
+0.77
+</td>
+<td style="text-align:center;">
+0.55
+</td>
+<td style="text-align:center;">
+0.60
 </td>
 </tr>
 <tr>
@@ -287,38 +321,49 @@ Output
 5
 </td>
 <td style="text-align:left;">
-<a href="https://dlmtool.github.io/DLMtool/reference/BK.html" style="     color: red;">BK</a>
+<a href="https://dlmtool.github.io/DLMtool/reference/BK.html" style="     ">BK</a>
 </td>
 <td style="text-align:left;">
 Output
 </td>
 <td style="text-align:left;">
-<span style="     color: red;">0.52</span>
+0.62
 </td>
 <td style="text-align:center;">
-<span style="     color: red;">0.48</span>
+0.83
+</td>
+<td style="text-align:center;">
+0.78
+</td>
+<td style="text-align:center;">
+0.38
 </td>
 </tr>
 <tr>
-<td style="text-align:left;font-weight: bold;">
+<td style="text-align:left;">
 6
 </td>
-<td style="text-align:left;font-weight: bold;">
-<span style="     color: green;">myMP</span>
+<td style="text-align:left;">
+<span style="     ">myMP</span>
 </td>
-<td style="text-align:left;font-weight: bold;">
+<td style="text-align:left;">
 Input
 </td>
-<td style="text-align:left;font-weight: bold;">
-<span style="     color: green;">0.85</span>
+<td style="text-align:left;">
+0.88
 </td>
-<td style="text-align:center;font-weight: bold;">
-<span style="     color: green;">0.9</span>
+<td style="text-align:center;">
+0.91
+</td>
+<td style="text-align:center;">
+0.92
+</td>
+<td style="text-align:center;">
+0.76
 </td>
 </tr>
 </tbody>
 </table>
-</div>
 </div>
 </div>
 

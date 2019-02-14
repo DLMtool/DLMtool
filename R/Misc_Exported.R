@@ -444,6 +444,7 @@ MPurl <- function(topic, url='https://dlmtool.github.io/DLMtool/reference/',
     res <- c(res, file.path(p, "help", f))
    
   }
+  if (length(res)<1) return(NA)
   
   if(nameonly) {
     return(basename(res))

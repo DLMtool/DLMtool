@@ -56,14 +56,14 @@ if (sum(chk)) {
   for (x in ind)
     Plimits[x] <- gsub("<", "\\\\<", Plimits[x])
 }
-if (length(Plimits)>1)
-  cat("## Minimum Performance Criteria\n")
-if (length(Plimits)==1)
-    cat("## Minimum Performance Criterion\n")
 
-cat("### Management Procedures must have at least an", Pthresh, "probability of meeting all Performance Limits \n")
+if (length(Plimits)>1)
+  cat("## Performance Objectives\n")
+if (length(Plimits)==1)
+    cat("## Performance Objective\n")
+
 for (xx in 1:length(Plimits)) {
-  cat("#### Perf. Limit ", xx, ": ", Plimits[xx], " \n\n", sep="")
+  cat("#### Perf. Objective ", xx, ": ", Plimits[xx], " \n\n", sep="")
 }
 
 ```
@@ -78,22 +78,20 @@ if (output_format != "html_document") {
 }
 
 htmlDF1 <- df %>% dplyr::filter(!is.na(url)) %>% dplyr::mutate(
-  Prob = cell_spec(Prob, format, color = ifelse(Prob < Pthresh, "red", "green")),
-    MP = cell_spec(MP, format, color = ifelse(min < Pthresh, "red", "green"), link=url)
+    MP = cell_spec(MP, format, link=url)
   )
 # custom MPs (no url)
 htmlDF2 <- df %>% dplyr::filter(is.na(url)) %>% dplyr::mutate(
-  Prob = cell_spec(Prob, format, color = ifelse(Prob < Pthresh, "red", "green")),
-    MP = cell_spec(MP, format, color = ifelse(min < Pthresh, "red", "green"))
+    MP = cell_spec(MP, format)
   )
 htmlDF <- bind_rows(htmlDF1, htmlDF2)
 
 TabDF <- tidyr::spread(htmlDF, PM, Prob)
 if (format!='latex') TabDF <- cbind(data.frame("#"=1:nMPs), TabDF)
 
-ind <- which(TabDF$min >= Pthresh)
 TabDF$min <- NULL
 TabDF$url <- NULL
+
 Tab <- TabDF %>% kable(format = format, escape = FALSE,  align="llllcccclll") %>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
                 full_width = full_width, position="float_left", font_size = font_size)
@@ -102,7 +100,7 @@ if (format == "latex") {
     column_spec(1, width = "2em") %>%
     column_spec(2, width = "5em")
 }
-Tab %>% kableExtra::row_spec(ind, bold = TRUE)
+Tab 
 
 ```
 
