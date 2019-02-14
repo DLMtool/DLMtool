@@ -7,6 +7,7 @@
 #' @param ... Names of Performance Metrics (PMs), or other arguments to `TradePlot`. First PM is recycled if number of PMs is not even
 #' @param Lims A numeric vector of acceptable risk/minimum probability thresholds. Recycled if not equal to number of PMs.
 #' @param Title Optional title for each plot. Character vector of `length(PMs)`/2. Recycled.
+#' @param Labels Optional named list specifying new labels for MPs. For example: `Labels = list(AvC="Average Catch", CC1="Constant Catch")`
 #' @param Satisficed Logical. Show only the MPs that meet minimum acceptable thresholds (specified in `Lims`)
 #' @param Show Logical. Show the Results table and plots?
 #' @param point.size Numeric. Size of the MP points
@@ -29,6 +30,7 @@
 #'
 TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8), 
                       Title=NULL,
+                      Labels=NULL,
                       Satisficed=FALSE,
                       Show=TRUE,
                       point.size=2,
@@ -127,7 +129,19 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
     MPType <- MPtype(MSEobj@MPs)
     Class <- MPType[match(MSEobj@MPs, MPType[,1]),2]
     
-    df <- data.frame(x=xvals, y=yvals, label=MSEobj@MPs, Class=Class,
+    labels <- MSEobj@MPs
+    if (class(Labels) == "list") {
+      repnames <- names(Labels)
+      invalid <- repnames[!repnames %in% labels]
+      if (length(invalid >0)) {
+        warning("Labels: ", paste(invalid, collapse=", "), " are not MPs in MSE")
+        Labels[invalid] <- NULL
+        repnames <- names(Labels)
+      }
+      labels[labels %in% repnames] <- Labels %>% unlist()
+    }
+    
+    df <- data.frame(x=xvals, y=yvals, label=labels, Class=Class,
                      pass=xvals>xline & yvals>yline, fontface="plain", xPM=xPM, yPM=yPM)
     df$fontface <- as.character(df$fontface)
     df$fontface[!df$pass] <- "italic"
