@@ -4,15 +4,19 @@
 \alias{PMObj}
 \title{Create a table of Performance Objectives}
 \usage{
-PMObj(MSE, ..., out.file = NULL, output_format = "html_document",
-  openFile = TRUE, quiet = TRUE, dir = NULL, RMDfile = NULL,
-  font_size = 14, full_width = TRUE, enableSearch = TRUE,
-  PMlist = NULL, build = TRUE)
+PMObj(MSE, ..., Labels = NULL, out.file = NULL,
+  output_format = "html_document", openFile = TRUE, quiet = TRUE,
+  dir = NULL, RMDfile = NULL, font_size = 14, use.colors = TRUE,
+  cols = NULL, show.legend = TRUE, full_width = TRUE,
+  enableSearch = TRUE, PMlist = NULL, build = TRUE, cex.tex = 0.75,
+  inc.title = TRUE, title = "Legend")
 }
 \arguments{
 \item{MSE}{An object of class 'MSE'}
 
 \item{...}{PM objects to be used as performance metrics. Characters (i.e names of PM objects)}
+
+\item{Labels}{Optional named list specifying new labels for MPs. For example: \code{Labels = list(AvC="Average Catch", CC1="Constant Catch")}}
 
 \item{out.file}{Name of the output file. If none provided, output file will be named 'PerfLimTable'}
 
@@ -28,6 +32,12 @@ PMObj(MSE, ..., out.file = NULL, output_format = "html_document",
 
 \item{font_size}{Numeric. Font size for text in the table}
 
+\item{use.colors}{Logical. Color scale the probability text?}
+
+\item{cols}{Optional character vector of colors for probability text}
+
+\item{show.legend}{Logical. Show the legend?}
+
 \item{full_width}{Logical. Should table be full width?}
 
 \item{enableSearch}{Logical. Should search be enabled in the html table?}
@@ -35,6 +45,12 @@ PMObj(MSE, ..., out.file = NULL, output_format = "html_document",
 \item{PMlist}{Optional. List of PM names.}
 
 \item{build}{Logical. Build the html table?}
+
+\item{cex.tex}{Size of legend text}
+
+\item{inc.title}{Logical. Include title for legend?}
+
+\item{title}{Title for the legend}
 }
 \value{
 Nothing is returned.

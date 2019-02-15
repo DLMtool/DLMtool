@@ -63,7 +63,7 @@ if (length(Plimits)==1)
 
 cat("### Management Procedures must have at least an", Pthresh, "probability of meeting all Performance Limits \n")
 for (xx in 1:length(Plimits)) {
-  cat("#### Perf. Limit ", xx, ": ", Plimits[xx], " \n\n", sep="")
+  cat("#### ", xx, ": ", Plimits[xx], " \n\n", sep="")
 }
 
 ```
@@ -91,9 +91,12 @@ htmlDF <- bind_rows(htmlDF1, htmlDF2)
 TabDF <- tidyr::spread(htmlDF, PM, Prob)
 if (format!='latex') TabDF <- cbind(data.frame("#"=1:nMPs), TabDF)
 
+TabDF <- TabDF %>% dplyr::arrange(desc(Feasible), desc(min))
+TabDF$X. <- 1:nrow(TabDF)
 ind <- which(TabDF$min >= Pthresh)
 TabDF$min <- NULL
 TabDF$url <- NULL
+if (all(TabDF$Feasible == "Yes")) TabDF$Feasible <- NULL
 Tab <- TabDF %>% kable(format = format, escape = FALSE,  align="llllcccclll") %>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
                 full_width = full_width, position="float_left", font_size = font_size)

@@ -4,7 +4,7 @@
 \alias{PMLimit}
 \title{Create a table of Performance Limits}
 \usage{
-PMLimit(MSE, ..., Pthresh = NULL, out.file = NULL,
+PMLimit(MSE, ..., Pthresh = NULL, Labels = NULL, out.file = NULL,
   output_format = "html_document", openFile = TRUE, quiet = TRUE,
   dir = NULL, RMDfile = NULL, font_size = 14, full_width = TRUE,
   enableSearch = TRUE, PMlist = NULL, build = TRUE)
@@ -15,6 +15,8 @@ PMLimit(MSE, ..., Pthresh = NULL, out.file = NULL,
 \item{...}{PM objects to be used as performance limits. Characters (i.e names of PM objects)}
 
 \item{Pthresh}{Minimum probability threshold}
+
+\item{Labels}{Optional named list specifying new labels for MPs. For example: \code{Labels = list(AvC="Average Catch", CC1="Constant Catch")}}
 
 \item{out.file}{Name of the output file. If none provided, output file will be named 'PerfLimTable'}
 

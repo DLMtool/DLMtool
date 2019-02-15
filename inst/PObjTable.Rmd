@@ -63,9 +63,20 @@ if (length(Plimits)==1)
     cat("## Performance Objective\n")
 
 for (xx in 1:length(Plimits)) {
-  cat("#### Perf. Objective ", xx, ": ", Plimits[xx], " \n\n", sep="")
+  cat("#### ", xx, ": ", Plimits[xx], " \n\n", sep="")
 }
 
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+if (use.colors) {
+  quants <- seq(0, 1, length.out=length(cols)+1)
+  levels <- cut(quants, quants) %>% levels()
+  cols <- cols[1:length(levels)]
+} else {
+  cols <- rep("black", length(quants)-1)
+  show.legend <- FALSE
+}
 ```
 
 
@@ -77,20 +88,33 @@ if (output_format != "html_document") {
   format <- 'latex'
 }
 
+colselect <- function(prob, cols, quants) {
+  prob[prob>1] <- 1
+  probCat <- prob %>% cut(quants) 
+  cats <- levels(probCat)
+  cols[match(probCat, cats)]
+}
+
 htmlDF1 <- df %>% dplyr::filter(!is.na(url)) %>% dplyr::mutate(
-    MP = cell_spec(MP, format, link=url)
+  Prob = cell_spec(Prob, format, color = colselect(Prob, cols, quants)),
+  MP = cell_spec(MP, format, link=url)
   )
 # custom MPs (no url)
 htmlDF2 <- df %>% dplyr::filter(is.na(url)) %>% dplyr::mutate(
-    MP = cell_spec(MP, format)
+  Prob = cell_spec(Prob, format, color = colselect(Prob, cols, quants)),
+  MP = cell_spec(MP, format)
   )
 htmlDF <- bind_rows(htmlDF1, htmlDF2)
 
 TabDF <- tidyr::spread(htmlDF, PM, Prob)
 if (format!='latex') TabDF <- cbind(data.frame("#"=1:nMPs), TabDF)
 
+TabDF <- TabDF %>% dplyr::arrange(desc(min))
+TabDF$X. <- 1:nrow(TabDF)
 TabDF$min <- NULL
 TabDF$url <- NULL
+TabDF$prob <- NULL
+
 
 Tab <- TabDF %>% kable(format = format, escape = FALSE,  align="llllcccclll") %>%
   kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
@@ -102,6 +126,25 @@ if (format == "latex") {
 }
 Tab 
 
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.width=3, fig.height=1, fig.align='right'}
+if (show.legend) {
+  
+  table.legend <- function(cols, cex.tex=0.75, inc.title=TRUE, title="Legend") {
+    quants <- seq(0, 1, length.out=length(cols)+1) 
+    levels <- cut(quants, quants) %>% levels()
+    par(mfrow=c(1,1), mar=c(2,0,2,0), oma=c(0,0,0,0))
+    legend <- data.frame(level=levels, col=cols)
+    legend$col <- as.character(legend$col)
+    tt = plot(legend$level, col=legend$col, axes=FALSE)
+    axis(side=1, labels=legend$level, at=tt[,1], lwd = 0, lwd.ticks = 1, cex.axis=cex.tex)
+    if (inc.title) title(title, cex.main=cex.tex)
+  }
+  
+  table.legend(cols)
+}
 ```
 
 
