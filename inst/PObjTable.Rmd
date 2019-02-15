@@ -49,7 +49,7 @@ suppressMessages(library(dplyr))
 suppressMessages(library(knitr))
 suppressMessages(library(kableExtra))
 
-Plimits <- lapply(runPM, function(x) x@Name) %>% unlist()
+Plimits <- lapply(runPM, function(x) x@Caption) %>% unlist()
 chk <- grepl("<", Plimits)
 if (sum(chk)) {
   ind <- which(chk)  
