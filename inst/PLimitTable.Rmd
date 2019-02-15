@@ -91,7 +91,7 @@ htmlDF <- bind_rows(htmlDF1, htmlDF2)
 TabDF <- tidyr::spread(htmlDF, PM, Prob)
 if (format!='latex') TabDF <- cbind(data.frame("#"=1:nMPs), TabDF)
 
-TabDF <- TabDF %>% dplyr::arrange(desc(Feasible), desc(min))
+TabDF <- TabDF %>% dplyr::arrange(desc(min), desc(Feasible))
 TabDF$X. <- 1:nrow(TabDF)
 ind <- which(TabDF$min >= Pthresh)
 TabDF$min <- NULL
