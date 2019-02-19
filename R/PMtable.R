@@ -78,7 +78,8 @@ PMLimit <- function(MSE, ..., Pthresh=NULL, Labels=NULL, FeaseMPs=NULL,
   df$Feasible <- TRUE
   if(!is.null(FeaseMPs)) {
     if(!class(FeaseMPs) == "character") stop("FeaseMPs must be character vector", call.=FALSE)
-    df$Feasible <- rep(MSE@MPs %in% FeaseMPs, each=2)
+    # df$Feasible <- rep(MSE@MPs %in% FeaseMPs, each=2)
+    df$Feasible <- df$MP %in% FeaseMPs
   }
   df$Feasible[df$Feasible != TRUE] <- "No"
   df$Feasible[df$Feasible == TRUE] <- "Yes"
