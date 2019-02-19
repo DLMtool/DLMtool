@@ -90,6 +90,7 @@ if (output_format != "html_document") {
 
 colselect <- function(prob, cols, quants) {
   prob[prob>1] <- 1
+  prob[prob<=0] <- 1E-5
   probCat <- prob %>% cut(quants) 
   cats <- levels(probCat)
   cols[match(probCat, cats)]

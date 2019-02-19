@@ -18,7 +18,7 @@ PMObj(MSE, ..., Labels = NULL, out.file = NULL,
 
 \item{Labels}{Optional named list specifying new labels for MPs. For example: \code{Labels = list(AvC="Average Catch", CC1="Constant Catch")}}
 
-\item{out.file}{Name of the output file. If none provided, output file will be named 'PerfLimTable'}
+\item{out.file}{Name of the output file. If none provided, output file will be named 'PerfObjTable'}
 
 \item{output_format}{Output file format. Currently only 'html_document' is supported}
 
