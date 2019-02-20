@@ -3018,7 +3018,7 @@ Ltarget_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, xL = 1
   C_dat <- Data@Cat[x, ind2]
   TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
   Lrecent <- mean(Data@ML[x,ind])
-  Lave <- mean(Data@ML[x,ind3])
+  Lave <- mean(Data@ML[x,ind3], na.rm=TRUE)
   if (is.null(L0)) L0 <- 0.9 * Lave
   if (is.null(Ltarget)) Ltarget <- xL * Lave
   if (Lrecent >= L0) {
