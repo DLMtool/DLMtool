@@ -97,17 +97,17 @@ colselect <- function(prob, cols, quants) {
 }
 
 htmlDF1 <- df %>% dplyr::filter(!is.na(url)) %>% dplyr::mutate(
-  Prob = cell_spec(Prob, format, color = colselect(Prob, cols, quants)),
+  prob = cell_spec(prob, format, color = colselect(prob, cols, quants)),
   MP = cell_spec(MP, format, link=url)
   )
 # custom MPs (no url)
 htmlDF2 <- df %>% dplyr::filter(is.na(url)) %>% dplyr::mutate(
-  Prob = cell_spec(Prob, format, color = colselect(Prob, cols, quants)),
+  prob = cell_spec(prob, format, color = colselect(prob, cols, quants)),
   MP = cell_spec(MP, format)
   )
 htmlDF <- bind_rows(htmlDF1, htmlDF2)
 
-TabDF <- tidyr::spread(htmlDF, PM, Prob)
+TabDF <- tidyr::spread(htmlDF, PM, prob)
 if (format!='latex') TabDF <- cbind(data.frame("#"=1:nMPs), TabDF)
 
 TabDF <- TabDF %>% dplyr::arrange(desc(min))

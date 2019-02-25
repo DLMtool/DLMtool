@@ -61,7 +61,7 @@ if (length(Plimits)>1)
 if (length(Plimits)==1)
     cat("## Minimum Performance Criterion\n")
 
-cat("### Management Procedures must have at least an", Pthresh, "probability of meeting all Performance Limits \n")
+cat("### Management Procedures must have at least an", Prob, "probability of meeting all Performance Limits \n")
 for (xx in 1:length(Plimits)) {
   cat("#### ", xx, ": ", Plimits[xx], " \n\n", sep="")
 }
@@ -78,22 +78,22 @@ if (output_format != "html_document") {
 }
 
 htmlDF1 <- df %>% dplyr::filter(!is.na(url)) %>% dplyr::mutate(
-  Prob = cell_spec(Prob, format, color = ifelse(Prob < Pthresh, "red", "green")),
-    MP = cell_spec(MP, format, color = ifelse(min < Pthresh, "red", "green"), link=url)
+  prob = cell_spec(prob, format, color = ifelse(prob < Prob, "red", "green")),
+    MP = cell_spec(MP, format, color = ifelse(min < Prob, "red", "green"), link=url)
   )
 # custom MPs (no url)
 htmlDF2 <- df %>% dplyr::filter(is.na(url)) %>% dplyr::mutate(
-  Prob = cell_spec(Prob, format, color = ifelse(Prob < Pthresh, "red", "green")),
-    MP = cell_spec(MP, format, color = ifelse(min < Pthresh, "red", "green"))
+  prob = cell_spec(prob, format, color = ifelse(prob < Prob, "red", "green")),
+    MP = cell_spec(MP, format, color = ifelse(min < Prob, "red", "green"))
   )
 htmlDF <- bind_rows(htmlDF1, htmlDF2)
 
-TabDF <- tidyr::spread(htmlDF, PM, Prob)
+TabDF <- tidyr::spread(htmlDF, PM, prob)
 if (format!='latex') TabDF <- cbind(data.frame("#"=1:nMPs), TabDF)
 
 TabDF <- TabDF %>% dplyr::arrange(desc(min), desc(Feasible))
 TabDF$X. <- 1:nrow(TabDF)
-ind <- which(TabDF$min >= Pthresh)
+ind <- which(TabDF$min >= Prob)
 TabDF$min <- NULL
 TabDF$url <- NULL
 if (all(TabDF$Feasible == "Yes")) TabDF$Feasible <- NULL

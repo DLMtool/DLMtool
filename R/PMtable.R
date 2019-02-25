@@ -49,10 +49,10 @@ PMLimit <- function(MSE, ..., Prob=NULL, Labels=NULL, FeaseMPs=NULL,
 
   # Create data frame of probs
   df <- data.frame(MP=lapply(runPM, function(x) x@MPs) %>% unlist(),
-             Prob=lapply(runPM, function(x) x@Mean) %>% unlist(),
+             prob=lapply(runPM, function(x) x@Mean) %>% unlist(),
              PM=rep(1:nPM, each=nMPs))
-  df$Prob <- round(df$Prob,2)
-  temp <- df %>% dplyr::group_by(MP) %>% dplyr::summarize(min=min(Prob))
+  df$prob <- round(df$prob,2)
+  temp <- df %>% dplyr::group_by(MP) %>% dplyr::summarize(min=min(prob))
   df <- dplyr::left_join(df, temp, by='MP') %>% dplyr::arrange(MP)
   df$MP <- as.character(df$MP)
   df$url <- sapply(df$MP, MPurl) %>% unlist()
@@ -96,16 +96,18 @@ PMLimit <- function(MSE, ..., Prob=NULL, Labels=NULL, FeaseMPs=NULL,
   } else {
     stop("output_format '", output_format, "' is not valid. Available options are: 'html_document', 'pdf_document'", call.=FALSE)
   }
-  if (!is.null(out.file))
+  if (!is.null(out.file)) {
     out.file <- tools::file_path_sans_ext(out.file)
-
+    out.file <- paste0(out.file, ext)
+  }
+    
   if (is.null(out.file)) out.file <- paste0('PerfLimTable', ext)
   if (is.null(dir)) dir <- getwd()
   RMDfileout <- file.path(dir, out.file)
 
   params <- list(df=df, runPM=runPM, Name=MSE@Name, font_size=font_size,
                  full_width=full_width, output_format=output_format,
-                 enableSearch=enableSearch, Pthresh=Prob)
+                 enableSearch=enableSearch, Prob=Prob)
   knitr::knit_meta(class=NULL, clean = TRUE)
 
   if(is.null(RMDfile))
@@ -182,10 +184,10 @@ PMObj <- function(MSE, ..., Labels=NULL, out.file=NULL,
   
   # Create data frame of probs
   df <- data.frame(MP=lapply(runPM, function(x) x@MPs) %>% unlist(),
-                   Prob=lapply(runPM, function(x) x@Mean) %>% unlist(),
+                   prob=lapply(runPM, function(x) x@Mean) %>% unlist(),
                    PM=rep(1:nPM, each=nMPs))
-  df$Prob <- round(df$Prob,2)
-  temp <- df %>% dplyr::group_by(MP) %>% dplyr::summarize(min=min(Prob))
+  df$prob <- round(df$prob,2)
+  temp <- df %>% dplyr::group_by(MP) %>% dplyr::summarize(min=min(prob))
   df <- dplyr::left_join(df, temp, by='MP') %>% dplyr::arrange(MP)
   df$MP <- as.character(df$MP)
   df$url <- sapply(df$MP, MPurl) %>% unlist()
@@ -219,8 +221,10 @@ PMObj <- function(MSE, ..., Labels=NULL, out.file=NULL,
   } else {
     stop("output_format '", output_format, "' is not valid. Available options are: 'html_document', 'pdf_document'", call.=FALSE)
   }
-  if (!is.null(out.file))
+  if (!is.null(out.file)) {
     out.file <- tools::file_path_sans_ext(out.file)
+    out.file <- paste0(out.file, ext)
+  }
   
   if (is.null(out.file)) out.file <- paste0('PerfObjTable', ext)
   if (is.null(dir)) dir <- getwd()
