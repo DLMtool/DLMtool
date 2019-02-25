@@ -1,6 +1,7 @@
 library(DLMtool)
 
-testthat::test_dir('tests/manual/test-code')
+options(testthat.output_file = "test-out.xml")
+testthat::test_dir('tests/manual/test-code', reporter = "junit")
 
 # testthat::test_file("tests/manual/test-code/test-Data_Functions.R") # ok
 
@@ -18,17 +19,23 @@ testthat::test_dir('tests/manual/test-code')
 # 
 # testthat::test_file("tests/manual/test-code/test-OM_functions.R") # ok
 # 
-# testthat::test_file("tests/manual/test-code/test-OM_init_doc.R") # ok
+# testthat::test_file("tests/manual/test-code/test-OM_init_doc.R") # NOT OKAY
 # 
-# testthat::test_file("tests/manual/test-code/test-OM_Plotting.R") # ok
+# testthat::test_file("tests/manual/test-code/test-OM_Plotting.R") # takes a while - some fail
 # 
-# testthat::test_file("tests/manual/test-code/test-runMSE.R") # ok
+# testthat::test_file("tests/manual/test-code/test-runMSE.R") # to check still
 # 
 # testthat::test_file("tests/manual/test-code/test-slotDescription.R") # ok
 #
 # testthat::test_file("tests/manual/test-code/test-cpars.R") # ok
 
 # testthat::test_file("tests/manual/test-code/test-PMobjects.R") # ok
+
+# testthat::test_file("tests/manual/test-code/test-RealIndices.R") # 
+
+# testthat::test_file("tests/manual/test-code/test-Data2csv.R") # 
+
+# testthat::test_file("tests/manual/test-code/test-checkPopdyn.R") # 
 
 
 

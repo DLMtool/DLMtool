@@ -30,8 +30,8 @@ if MPs can be run.}
 \item{timelimit}{Maximum time taken for a method to carry out 10 reps
 (methods are ignored that take longer)}
 
-\item{Hist}{Should model stop after historical simulations? Returns a list
-containing all historical data}
+\item{Hist}{Should model stop after historical simulations? Returns an object of
+class 'Hist' containing all historical data}
 
 \item{ntrials}{Maximum of times depletion and recruitment deviations are
 resampled to optimize for depletion. After this the model stops if more than

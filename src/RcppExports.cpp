@@ -7,8 +7,8 @@
 using namespace Rcpp;
 
 // LBSPRgen
-List LBSPRgen(double SL50, double SL95, double FM, int nage, int nlen, double CVLinf, NumericVector LenBins, NumericVector LenMids, NumericVector x, double MK, double Linf, double P, double L50, double L95, double Beta);
-RcppExport SEXP _DLMtool_LBSPRgen(SEXP SL50SEXP, SEXP SL95SEXP, SEXP FMSEXP, SEXP nageSEXP, SEXP nlenSEXP, SEXP CVLinfSEXP, SEXP LenBinsSEXP, SEXP LenMidsSEXP, SEXP xSEXP, SEXP MKSEXP, SEXP LinfSEXP, SEXP PSEXP, SEXP L50SEXP, SEXP L95SEXP, SEXP BetaSEXP) {
+List LBSPRgen(double SL50, double SL95, double FM, int nage, int nlen, double CVLinf, NumericVector LenBins, NumericVector LenMids, double MK, double Linf, NumericVector rLens, NumericMatrix Prob, NumericVector Ml, double L50, double L95, double Beta);
+RcppExport SEXP _DLMtool_LBSPRgen(SEXP SL50SEXP, SEXP SL95SEXP, SEXP FMSEXP, SEXP nageSEXP, SEXP nlenSEXP, SEXP CVLinfSEXP, SEXP LenBinsSEXP, SEXP LenMidsSEXP, SEXP MKSEXP, SEXP LinfSEXP, SEXP rLensSEXP, SEXP ProbSEXP, SEXP MlSEXP, SEXP L50SEXP, SEXP L95SEXP, SEXP BetaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -20,20 +20,21 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type CVLinf(CVLinfSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type LenBins(LenBinsSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type LenMids(LenMidsSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
     Rcpp::traits::input_parameter< double >::type MK(MKSEXP);
     Rcpp::traits::input_parameter< double >::type Linf(LinfSEXP);
-    Rcpp::traits::input_parameter< double >::type P(PSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type rLens(rLensSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type Prob(ProbSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Ml(MlSEXP);
     Rcpp::traits::input_parameter< double >::type L50(L50SEXP);
     Rcpp::traits::input_parameter< double >::type L95(L95SEXP);
     Rcpp::traits::input_parameter< double >::type Beta(BetaSEXP);
-    rcpp_result_gen = Rcpp::wrap(LBSPRgen(SL50, SL95, FM, nage, nlen, CVLinf, LenBins, LenMids, x, MK, Linf, P, L50, L95, Beta));
+    rcpp_result_gen = Rcpp::wrap(LBSPRgen(SL50, SL95, FM, nage, nlen, CVLinf, LenBins, LenMids, MK, Linf, rLens, Prob, Ml, L50, L95, Beta));
     return rcpp_result_gen;
 END_RCPP
 }
 // LBSPRopt
-double LBSPRopt(NumericVector pars, NumericVector CAL, int nage, int nlen, double CVLinf, NumericVector LenBins, NumericVector LenMids, NumericVector x, double MK, double Linf, double P, double L50, double L95, double Beta);
-RcppExport SEXP _DLMtool_LBSPRopt(SEXP parsSEXP, SEXP CALSEXP, SEXP nageSEXP, SEXP nlenSEXP, SEXP CVLinfSEXP, SEXP LenBinsSEXP, SEXP LenMidsSEXP, SEXP xSEXP, SEXP MKSEXP, SEXP LinfSEXP, SEXP PSEXP, SEXP L50SEXP, SEXP L95SEXP, SEXP BetaSEXP) {
+double LBSPRopt(NumericVector pars, NumericVector CAL, int nage, int nlen, double CVLinf, NumericVector LenBins, NumericVector LenMids, double MK, double Linf, NumericVector rLens, NumericMatrix Prob, NumericVector Ml, double L50, double L95, double Beta);
+RcppExport SEXP _DLMtool_LBSPRopt(SEXP parsSEXP, SEXP CALSEXP, SEXP nageSEXP, SEXP nlenSEXP, SEXP CVLinfSEXP, SEXP LenBinsSEXP, SEXP LenMidsSEXP, SEXP MKSEXP, SEXP LinfSEXP, SEXP rLensSEXP, SEXP ProbSEXP, SEXP MlSEXP, SEXP L50SEXP, SEXP L95SEXP, SEXP BetaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -44,14 +45,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type CVLinf(CVLinfSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type LenBins(LenBinsSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type LenMids(LenMidsSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
     Rcpp::traits::input_parameter< double >::type MK(MKSEXP);
     Rcpp::traits::input_parameter< double >::type Linf(LinfSEXP);
-    Rcpp::traits::input_parameter< double >::type P(PSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type rLens(rLensSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type Prob(ProbSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Ml(MlSEXP);
     Rcpp::traits::input_parameter< double >::type L50(L50SEXP);
     Rcpp::traits::input_parameter< double >::type L95(L95SEXP);
     Rcpp::traits::input_parameter< double >::type Beta(BetaSEXP);
-    rcpp_result_gen = Rcpp::wrap(LBSPRopt(pars, CAL, nage, nlen, CVLinf, LenBins, LenMids, x, MK, Linf, P, L50, L95, Beta));
+    rcpp_result_gen = Rcpp::wrap(LBSPRopt(pars, CAL, nage, nlen, CVLinf, LenBins, LenMids, MK, Linf, rLens, Prob, Ml, L50, L95, Beta));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -206,25 +208,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// genSizeComp2
-NumericMatrix genSizeComp2(NumericMatrix VulnN, NumericVector CAL_binsmid, double CAL_ESS, double CAL_nsamp, NumericVector Linfs, NumericVector Ks, NumericVector t0s, double LenCV, double truncSD);
-RcppExport SEXP _DLMtool_genSizeComp2(SEXP VulnNSEXP, SEXP CAL_binsmidSEXP, SEXP CAL_ESSSEXP, SEXP CAL_nsampSEXP, SEXP LinfsSEXP, SEXP KsSEXP, SEXP t0sSEXP, SEXP LenCVSEXP, SEXP truncSDSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type VulnN(VulnNSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type CAL_binsmid(CAL_binsmidSEXP);
-    Rcpp::traits::input_parameter< double >::type CAL_ESS(CAL_ESSSEXP);
-    Rcpp::traits::input_parameter< double >::type CAL_nsamp(CAL_nsampSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Linfs(LinfsSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Ks(KsSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type t0s(t0sSEXP);
-    Rcpp::traits::input_parameter< double >::type LenCV(LenCVSEXP);
-    Rcpp::traits::input_parameter< double >::type truncSD(truncSDSEXP);
-    rcpp_result_gen = Rcpp::wrap(genSizeComp2(VulnN, CAL_binsmid, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD));
-    return rcpp_result_gen;
-END_RCPP
-}
 // movfit_Rcpp
 double movfit_Rcpp(NumericVector par, double prb, double frac);
 RcppExport SEXP _DLMtool_movfit_Rcpp(SEXP parSEXP, SEXP prbSEXP, SEXP fracSEXP) {
@@ -262,7 +245,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // popdynCPP
-List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears, arma::mat M_age, arma::vec Asize_c, arma::mat MatAge, arma::mat WtAge, arma::mat Vuln, arma::mat Retc, arma::vec Prec, arma::cube movc, double SRrelc, arma::vec Effind, double Spat_targc, double hc, NumericVector R0c, NumericVector SSBpRc, NumericVector aRc, NumericVector bRc, double Qc, double Fapic, double maxF, arma::mat MPA, int control, double SSB0c);
+List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears, arma::mat M_age, arma::vec Asize_c, arma::mat MatAge, arma::mat WtAge, arma::mat Vuln, arma::mat Retc, arma::vec Prec, List movc, double SRrelc, arma::vec Effind, double Spat_targc, double hc, NumericVector R0c, NumericVector SSBpRc, NumericVector aRc, NumericVector bRc, double Qc, double Fapic, double maxF, arma::mat MPA, int control, double SSB0c);
 RcppExport SEXP _DLMtool_popdynCPP(SEXP nareasSEXP, SEXP maxageSEXP, SEXP NcurrSEXP, SEXP pyearsSEXP, SEXP M_ageSEXP, SEXP Asize_cSEXP, SEXP MatAgeSEXP, SEXP WtAgeSEXP, SEXP VulnSEXP, SEXP RetcSEXP, SEXP PrecSEXP, SEXP movcSEXP, SEXP SRrelcSEXP, SEXP EffindSEXP, SEXP Spat_targcSEXP, SEXP hcSEXP, SEXP R0cSEXP, SEXP SSBpRcSEXP, SEXP aRcSEXP, SEXP bRcSEXP, SEXP QcSEXP, SEXP FapicSEXP, SEXP maxFSEXP, SEXP MPASEXP, SEXP controlSEXP, SEXP SSB0cSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -278,7 +261,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type Vuln(VulnSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type Retc(RetcSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type Prec(PrecSEXP);
-    Rcpp::traits::input_parameter< arma::cube >::type movc(movcSEXP);
+    Rcpp::traits::input_parameter< List >::type movc(movcSEXP);
     Rcpp::traits::input_parameter< double >::type SRrelc(SRrelcSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type Effind(EffindSEXP);
     Rcpp::traits::input_parameter< double >::type Spat_targc(Spat_targcSEXP);
@@ -299,8 +282,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_DLMtool_LBSPRgen", (DL_FUNC) &_DLMtool_LBSPRgen, 15},
-    {"_DLMtool_LBSPRopt", (DL_FUNC) &_DLMtool_LBSPRopt, 14},
+    {"_DLMtool_LBSPRgen", (DL_FUNC) &_DLMtool_LBSPRgen, 16},
+    {"_DLMtool_LBSPRopt", (DL_FUNC) &_DLMtool_LBSPRopt, 15},
     {"_DLMtool_LSRA_opt_cpp", (DL_FUNC) &_DLMtool_LSRA_opt_cpp, 10},
     {"_DLMtool_LSRA_MCMC_sim", (DL_FUNC) &_DLMtool_LSRA_MCMC_sim, 21},
     {"_DLMtool_bhnoneq_LL", (DL_FUNC) &_DLMtool_bhnoneq_LL, 8},
@@ -310,7 +293,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_DLMtool_rnormSelect2", (DL_FUNC) &_DLMtool_rnormSelect2, 3},
     {"_DLMtool_tdnorm", (DL_FUNC) &_DLMtool_tdnorm, 3},
     {"_DLMtool_genSizeComp", (DL_FUNC) &_DLMtool_genSizeComp, 10},
-    {"_DLMtool_genSizeComp2", (DL_FUNC) &_DLMtool_genSizeComp2, 9},
     {"_DLMtool_movfit_Rcpp", (DL_FUNC) &_DLMtool_movfit_Rcpp, 3},
     {"_DLMtool_popdynOneTScpp", (DL_FUNC) &_DLMtool_popdynOneTScpp, 13},
     {"_DLMtool_popdynCPP", (DL_FUNC) &_DLMtool_popdynCPP, 26},

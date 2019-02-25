@@ -453,8 +453,10 @@ CompSRA_ <- function(x, Data, reps=100) {
     pred <- pred[pred > 0]
     R0range <- c(mean(pred)/1000, mean(pred) * 1000)
     
-    fit <- optimize(SRAfunc, log(R0range), Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c, AMc, ac, bc, Catch, CAA)
-    getvals <- SRAfunc(fit$minimum, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c, AMc, ac, bc, Catch, CAA, opt = 2)
+    fit <- optimize(SRAfunc, log(R0range), Mc, hc, maxage, LFSc, LFCc, Linfc, 
+                    Kc, t0c, AMc, ac, bc, Catch, CAA)
+    getvals <- SRAfunc(fit$minimum, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c, 
+                       AMc, ac, bc, Catch, CAA, opt = 2)
     Ac[i] <- getvals$B
     Bt_K[i] <-  getvals$D
     predout[[i]] <- getvals$pred
@@ -761,13 +763,22 @@ DCAC_ML <- function(x, Data, reps = 100, plot=FALSE) {
     return(Rec)
   }
   FM <- Z - Mdb
+  FM[FM<0.05] <- 0.05
+  
   nyears <- length(Data@Year)
   Ct1 <- mean(Data@Cat[x, 1:3])
   Ct2 <- mean(Data@Cat[x, (nyears - 2):nyears])
   dep <- rep(c(Ct1, Ct2), each = reps)/(1 - exp(-FM))
-  if (reps == 1)Bt_K <- dep[2]/dep[1]
-  if (reps > 1) Bt_K <- dep[, 2]/dep[, 1]
+  if (reps == 1) {
+    Bt_K <- dep[2]/dep[1]
+    Bt_K <- min(Bt_K, 0.8) # make depletion < 0.8 # sometimes estimated dep >> 1
+  } 
+  if (reps > 1) {
+    Bt_K <- dep[, 2]/dep[, 1]
+    for (rr in 1:reps) Bt_K[rr] <- min(Bt_K[rr], 0.8)
+  }
   
+
   rundcac <- DCAC_(x, Data, reps, Bt_K=Bt_K)
   TAC <- TACfilter(rundcac$dcac)
   
@@ -2069,7 +2080,8 @@ class(DepF) <- "MP"
 #' @export
 Fratio_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
   # estimate abundance from average catch and F
-  MuC <- Data@Cat[x, length(Data@Cat[x, ])]
+  # MuC <- Data@Cat[x, length(Data@Cat[x, ])]
+  MuC <- mean(Data@Cat[x, ], na.rm=TRUE)
   Cc <- trlnorm(reps, MuC, Data@CV_Cat[x])
   Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
   Zdb <- CC(x, Data, reps = reps * 10)
@@ -2085,7 +2097,6 @@ Fratio_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
   }
   
   Ac <- Cc/(1 - exp(-Fdb))
-  
   runFrat <- Fratio_(x, Data, reps, Abun=Ac)
 
   TAC <- TACfilter(runFrat$TAC)
@@ -3007,7 +3018,7 @@ Ltarget_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, xL = 1
   C_dat <- Data@Cat[x, ind2]
   TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
   Lrecent <- mean(Data@ML[x,ind])
-  Lave <- mean(Data@ML[x,ind3])
+  Lave <- mean(Data@ML[x,ind3], na.rm=TRUE)
   if (is.null(L0)) L0 <- 0.9 * Lave
   if (is.null(Ltarget)) Ltarget <- xL * Lave
   if (Lrecent >= L0) {
@@ -3279,6 +3290,58 @@ Lratio_BHI2 <- function(x, Data, reps=100, plot=FALSE, yrsmth = 3) {
 class(Lratio_BHI2) <- "MP"
 
 
+#' @templateVar mp Lratio_BHI3
+#' @template MPuses
+#' 
+#' @describeIn Lratio_BHI A modified version of Lratio_BHI2 where mean length 
+#' is calculated for lengths > modal length (Lc)
+#' @export
+#' @examples 
+#' Lratio_BHI3(1, Data=DLMtool::SimulatedData, plot=TRUE)
+#' 
+Lratio_BHI3 <- function(x, Data, reps=100, plot=FALSE, yrsmth = 3) {
+  
+  dependencies = "Data@vb_Linf, Data@CV_vbLinf, Data@Cat, Data@CV_Cat, Data@Mort, Data@CV_Mort,
+  Data@vb_K, Data@CV_vbK, Data@FMSY_M, Data@CV_FMSY_M, Data@CAL, Data@CAL_bins,
+  Data@LFS, Data@CV_LFS"
+  Linfc <- trlnorm(reps, Data@vbLinf[x], Data@CV_vbLinf[x])
+  Lc <- trlnorm(reps, Data@LFS[x], Data@CV_LFS[x])
+  
+  Mvec <- trlnorm(reps, Data@Mort[x], Data@CV_Mort[x])
+  Kvec <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
+  gamma <- trlnorm(reps, Data@FMSY_M[x], Data@CV_FMSY_M[x])
+  theta <- Kvec/Mvec
+  
+  Lref <- (theta * Linfc + Lc * (gamma + 1)) / (gamma + theta + 1)
+  
+  Cat <- Data@Cat[x, length(Data@Cat[x, ])]
+  Cc <- trlnorm(reps, Cat, Data@CV_Cat[x])
+  
+  LYear <- dim(Data@CAL)[2]
+  nlbin <- ncol(Data@CAL[x,,])
+  mlbin <- 0.5 * (Data@CAL_bins[1:nlbin] + Data@CAL_bins[2:(nlbin + 1)])
+  
+  ind.year <- (LYear - yrsmth + 1):LYear
+  CAL <- colSums(Data@CAL[x, ind.year, ])
+  
+  CAL <- CAL[mlbin >= mean(Lc)]
+  mlbin <- mlbin[mlbin >= mean(Lc)]
+  
+  LSQ <- rep(NA, reps)
+  for(i in 1:reps) {
+    lensamp <- sample(mlbin, 0.5*sum(CAL), replace = T, prob = CAL)
+    LSQ[i] <- mean(lensamp)
+  }
+  
+  TAC <- TACfilter((LSQ/Lref) * Cc)
+  
+  if (plot) Lratio_BHI_plot(mlbin, CAL, LSQ, Lref, Data, x, TAC, Cc, yrsmth)
+  
+  Rec <- new("Rec")
+  Rec@TAC <- TAC
+  Rec
+}
+class(Lratio_BHI3) <- "MP"
 
 
 
@@ -4395,12 +4458,22 @@ SPSRA_ML <- function(x, Data, reps = 100, plot=FALSE) {
     return(Rec)
   } 
   FM <- Z - Mvec
+  FM[FM<0.05] <- 0.05
+
   nyears <- length(Data@Year)
   Ct1 <- mean(Data@Cat[x, 1:3])
   Ct2 <- mean(Data@Cat[x, (nyears - 2):nyears])
   dep <- rep(c(Ct1, Ct2), each = reps)/(1 - exp(-FM))
-  if (reps == 1) dep <- dep[2]/dep[1]
-  if (reps > 1) dep <- dep[, 2]/dep[, 1]
+  if (reps == 1) {
+    dep <- dep[2]/dep[1]
+    dep <- min(dep, 0.8) # make depletion < 0.8 # sometimes estimated dep >> 1
+  } 
+  if (reps > 1) {
+    dep <- dep[, 2]/dep[, 1]
+    for (rr in 1:reps) dep[rr] <- min(dep[rr], 0.8)
+  }
+  
+  
   
   runSPSRA <- SPSRA_(x, Data, reps, dep=dep)
   TAC <- runSPSRA$TAC 
@@ -4534,7 +4607,6 @@ YPRopt <- function(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage, reps = 100) {
   
   nf <- 200
   frates <- seq(0, 3, length.out = nf)
-  Winf = a * Linfc^b
   rat <- LFS/Linfc
   rat[rat > 0.8] <- 0.8  # need to robustify this for occasionally very high samples of LFS
   tc = log(1 - rat)/-Kc + t0c
@@ -4551,8 +4623,6 @@ YPRopt <- function(Linfc, Kc, t0c, Mdb, a, b, LFS, maxage, reps = 100) {
   sbpr <- array(NA, dim = c(reps, nf))
   sbpr.ratio <- array(NA, dim = c(reps, nf))
   sbpr.dif <- array(NA, dim = c(reps, nf))
-  
-  f.max <- array(NA, dim = c(reps, maxage))
   
   # average weight at age - follow von Bertalanffy growth
   age <- array(rep(1:maxage, each = reps), dim = c(reps, maxage))
@@ -4654,7 +4724,8 @@ class(YPR) <- "MP"
 #' @export 
 YPR_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
 
-  MuC <- Data@Cat[x, length(Data@Cat[x, ])]
+  # MuC <- Data@Cat[x, length(Data@Cat[x, ])]
+  MuC <- mean(Data@Cat[x, ], na.rm=TRUE)
   Cc <- trlnorm(reps, MuC, Data@CV_Cat[x])
   
   Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])
@@ -4698,6 +4769,7 @@ YPR_ML <- function(x, Data, reps = 100, plot=FALSE) {
   Kc <- trlnorm(reps*10, Data@vbK[x], Data@CV_vbK[x])
   Mdb <- trlnorm(reps*10, Data@Mort[x], Data@CV_Mort[x])
   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
+
   if (all(is.na(Z))) {
     out <- new("Rec")
     out@TAC <- rep(as.numeric(NA), reps)
@@ -4717,6 +4789,7 @@ YPR_ML <- function(x, Data, reps = 100, plot=FALSE) {
   Rec
 }
 class(YPR_ML) <- "MP"
+
 
 
 

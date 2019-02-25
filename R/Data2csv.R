@@ -27,12 +27,16 @@ Data2csv<-function(Data, file=NULL, simno = 1, overwrite=F, keepNAs=T) {
   if(substr(file,nchar(file)-3,nchar(file))!=".csv") file=paste0(file,".csv")
   
   dirsplit<-unlist(strsplit(file,split="/"))
-  folder<-paste(dirsplit[1:(length(dirsplit)-1)],collapse="/")       
-  if(!dir.exists(folder)){
-    file=paste0(getwd(),"/",deparse(substitute(Data)),".csv")
-    message(paste0("Folder < ",folder," > does not exist -  data to be written to ",file))
-  }   
-  
+  folder<-paste(dirsplit[1:(length(dirsplit)-1)],collapse="/") 
+  if (folder != file) {
+    if(!dir.exists(folder)){
+      file=paste0(getwd(),"/",deparse(substitute(Data)),".csv")
+      message(paste0("Folder < ",folder," > does not exist -  data to be written to ",file))
+    }  
+  } else {
+    message("Data to be written to ", getwd(), "/", file)
+  }
+
   if(file.exists(file)){
     if(!overwrite){
       ANSWER<- readline("This file already exists. Is it ok to continue and overwrite it (y/n) ?")
@@ -72,6 +76,8 @@ Data2csv<-function(Data, file=NULL, simno = 1, overwrite=F, keepNAs=T) {
       "Year","Year", 
       "Cat", "Catch",
       "Ind", "Abundance index",
+      "Type", "Index type",
+      "RInd", "Real indices",
       "Rec", "Recruitment",
       "t","Duration t",
       "AvC","Average catch over time t",
@@ -155,9 +161,17 @@ Data2csv<-function(Data, file=NULL, simno = 1, overwrite=F, keepNAs=T) {
              
             }else if(length(dim(obj))==3){ # 3d array of composition data (CAL, CAA)
                ny<-dim(obj)[2]
-              for(yy in 1:ny){
-                write(paste(c(paste(lex,yrs[yy]),obj[simno,yy,]),collapse=","),file,1,append=appendy[i])
-              }
+               if (slots[i] == "RInd") {
+                 for(yy in 1:ny){
+                   if (yy ==1) write(paste(c(lex,obj[simno,yy,]),collapse=","),file,1,append=appendy[i])
+                   if (yy !=1) write(paste(c('',obj[simno,yy,]),collapse=","),file,1,append=appendy[i])
+                 }
+               } else {
+                 for(yy in 1:ny){
+                   write(paste(c(paste(lex,yrs[yy]),obj[simno,yy,]),collapse=","),file,1,append=appendy[i])
+                 }
+               }
+              
             } 
           } # end of slottest
         } # end of removeNAs

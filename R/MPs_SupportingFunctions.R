@@ -769,19 +769,20 @@ MLne <- function(x, Data, Linfc, Kc, ML_reps = 100, MLtype = "dep") {
 
   # dd <- dim(Data@CAL[x,,]) curLen <- Data@CAL[x,dd[1],] Lc <-
   # mlbin[which.max(curLen)] Lc <- Data@LFS[,x] Lc <- Lc[length(Lc)]
-  Lc <- Data@LFS[x]
+  Lc <- Data@Lc[x] # Data@LFS[x]
 
   for (i in 1:ML_reps) {
-    mlen <- rep(NA, length(year))
+    # mlen <- rep(NA, length(year))
     ss <- ceiling(apply(Data@CAL[x, , ], 1, sum)/2)
     if (MLtype == "dep") {
-      for (y in 1:length(year)) {
-        if (sum(Data@CAL[x, y, ] > 0) > 0.25 * length(Data@CAL[x, y, ])) {
-          temp2 <- sample(mlbin, ceiling(sum(Data@CAL[x, y, ])/2), replace = T, prob = Data@CAL[x, y, ])
-          mlen[y] <- mean(temp2[temp2 >= Lc], na.rm = TRUE)
-        }
-      }
-
+      mlen <- Data@Lbar[x,]
+      # for (y in 1:length(year)) {
+      #   if (sum(Data@CAL[x, y, ] > 0) > 0.25 * length(Data@CAL[x, y, ])) {
+      #     temp2 <- sample(mlbin, ceiling(sum(Data@CAL[x, y, ])/2), replace = T, prob = Data@CAL[x, y, ])
+      #     mlen[y] <- mean(temp2[temp2 >= Lc], na.rm = TRUE)
+      #   }
+      # }
+      # 
       fitmod <- bhnoneq(year = year, mlen = mlen, ss = ss, K = Kc[i], Linf = Linfc[i],
                         Lc = Lc, nbreaks = nbreaks, styrs = ceiling(length(year) * ((1:nbreaks)/(nbreaks + 1))),
                         stZ = rep(Data@Mort[x], nbreaks + 1))
@@ -791,12 +792,14 @@ MLne <- function(x, Data, Linfc, Kc, ML_reps = 100, MLtype = "dep") {
     } else {
 
       # ind<-(which.min(((Data@CAL_bins-Data@LFS[x])^2)^0.5)-1):(length(Data@CAL_bins)-1)
-      for (y in 1:length(year)) {
-        if (sum(Data@CAL[x, y, ] > 0) > 0.25 * length(Data@CAL[x, y, ])) {
-          temp2 <- sample(mlbin, ceiling(sum(Data@CAL[x, y, ])/2), replace = T, prob = Data@CAL[x, y, ])
-          mlen[y] <- mean(temp2[temp2 >= Lc], na.rm = TRUE)
-        }
-      }
+      # for (y in 1:length(year)) {
+      #   if (sum(Data@CAL[x, y, ] > 0) > 0.25 * length(Data@CAL[x, y, ])) {
+      #     temp2 <- sample(mlbin, ceiling(sum(Data@CAL[x, y, ])/2), replace = T, prob = Data@CAL[x, y, ])
+      #     mlen[y] <- mean(temp2[temp2 >= Lc], na.rm = TRUE)
+      #   }
+      # }
+      # mlen <- mean(mlen[(length(mlen) - 2):length(mlen)], na.rm = TRUE)
+      mlen <- Data@Lbar[x,]
       mlen <- mean(mlen[(length(mlen) - 2):length(mlen)], na.rm = TRUE)
       Z2[i] <- bheq(K = Kc[i], Linf = Linfc[i], Lc = Lc, Lbar = mlen)
 
@@ -869,7 +872,6 @@ SRAfunc <- function(lnR0c, Mc, hc, maxage, LFSc, LFCc, Linfc, Kc, t0c,
   pred <- CN[syear:ny, ]
   pred <- pred/array(apply(pred, 1, sum), dim = c(dim(CAA)[1], maxage))
   
-
   fobj <- pen - sum(log(pred + tiny) * CAA, na.rm = T)
   if (opt == 1) {
     return(fobj)

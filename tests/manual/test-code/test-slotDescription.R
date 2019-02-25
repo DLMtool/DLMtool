@@ -11,10 +11,6 @@ for (cl in classes) {
   })
 }
 
-cbind(slots, Desc[,1], slots == Desc[,1])
-
-cbind(sort(slots), sort(Desc[,1]), sort(slots) == sort(Desc[,1]))
-
 
                
                     

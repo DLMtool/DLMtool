@@ -4,7 +4,7 @@
 \name{DataDescription}
 \alias{DataDescription}
 \title{DataDescription}
-\format{An object of class \code{data.frame} with 78 rows and 2 columns.}
+\format{An object of class \code{data.frame} with 80 rows and 2 columns.}
 \usage{
 DataDescription
 }

@@ -72,7 +72,7 @@ Turing <- function(OM, Data, wait=TRUE) {
   
   nsamp <- 5
   OM@nsim <- nsamp +2 
-  SimDat <- runMSE(OM, Hist=TRUE, silent = TRUE)$Data
+  SimDat <- runMSE(OM, Hist=TRUE, silent = TRUE)@Data
   # if(!all(SimDat@CAL_bins == Data@CAL_bins)) stop("CAL_bins not correct length")
   
   YrInd <- 1:OM@nyears
@@ -222,7 +222,7 @@ plotCAAdata <- function(Ylab="Count", slot="CAA", message="Catch-at-Age Data",
           barplot(dat$Freq, axes=FALSE, col=col)    
         }
         if (c == 1) axis(side=2)
-        if (c != 1) axis(side=2, label=FALSE)
+        if (c != 1) axis(side=2, labels=FALSE)
       }
     }
     mtext(side=1, outer=TRUE, Xlab, line=2, cex=1.5)
@@ -241,7 +241,7 @@ plotCAAdata <- function(Ylab="Count", slot="CAA", message="Catch-at-Age Data",
           barplot(dat$Freq, axes=FALSE, col=col)    
         }
         if (c == 1) axis(side=2)
-        if (c != 1) axis(side=2, label=FALSE)
+        if (c != 1) axis(side=2, labels=FALSE)
       }
     }
     mtext(side=1, outer=TRUE, Xlab, line=2, cex=1.5)
@@ -300,12 +300,12 @@ plotTSdata <- function(Ylab, slot, message, Data, SimDat, samps, YrInd,
     
     for (r in 1:nplot) {
       plot(YrInd3, tCombDat[,r], type="l", axes=FALSE, xlab="", ylab="", lwd=lwd)
-      if (r %in% pmat[1,]) axis(side=1, label=FALSE)
-      if (r %in% pmat[2,]) axis(side=1, label=TRUE)
+      if (r %in% pmat[1,]) axis(side=1, labels=FALSE)
+      if (r %in% pmat[2,]) axis(side=1, labels=TRUE)
       if (r %in% pmat[,1]) {
-        axis(side=2, label=TRUE)
+        axis(side=2, labels=TRUE)
       } else {
-        axis(side=2, label=FALSE)
+        axis(side=2, labels=FALSE)
       }
     }
     mtext(side=1, outer=TRUE, "Year", line=2, cex=1.5)
@@ -317,12 +317,12 @@ plotTSdata <- function(Ylab, slot, message, Data, SimDat, samps, YrInd,
     for (r in 1:nplot) {
       lcol <- ifelse(r==realInd, "blue", "black")
       plot(YrInd3, tCombDat[,r], type="l", axes=FALSE, xlab="", ylab="", lwd=lwd, col=lcol)
-      if (r %in% pmat[1,]) axis(side=1, label=FALSE)
-      if (r %in% pmat[2,]) axis(side=1, label=TRUE)
+      if (r %in% pmat[1,]) axis(side=1, labels=FALSE)
+      if (r %in% pmat[2,]) axis(side=1, labels=TRUE)
       if (r %in% pmat[,1]) {
-        axis(side=2, label=TRUE)
+        axis(side=2, labels=TRUE)
       } else {
-        axis(side=2, label=FALSE)
+        axis(side=2, labels=FALSE)
       }
     }
     mtext(side=1, outer=TRUE, "Year", line=2, cex=1.5)

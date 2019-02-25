@@ -561,7 +561,8 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
 }
 
 #' @describeIn checkMSE Joins two or more MSE objects together. MSE objects must have identical
-#' number of historical years, and projection years.
+#' number of historical years, and projection years. Also works for Hist objects returned
+#' by `runMSE(Hist=TRUE)`
 #' @export
 joinMSE <- function(MSEobjs = NULL) {
   # join two or more MSE objects
@@ -569,6 +570,54 @@ joinMSE <- function(MSEobjs = NULL) {
   if (length(MSEobjs) < 2) stop("MSEobjs list doesn't contain multiple MSE objects")
   
   lapply(MSEobjs, checkMSE) # check that MSE objects contains all slots 
+  
+  ishist <- all(lapply(MSEobjs, slotNames) %>% unlist() %>% unique() %in% slotNames('Hist'))
+  
+  if (ishist) {
+    out <- new("Hist")
+    sls <- slotNames('Hist')
+    nsim <- MSEobjs[[1]]@Ref$B0 %>% length()
+    for (sl in sls) {
+      obj <-lapply(MSEobjs, slot, name=sl)
+      if (sl == "Data") {
+        out@Data <- joinData(obj)
+      } else {
+        if (class(obj[[1]]) == "data.frame") {
+          slot(out, sl) <- do.call('rbind', obj)
+        }
+        if (class(obj[[1]]) == "list") {
+          out.list <- list()
+          for (nm in names(obj[[1]])) {
+            obj2 <- lapply(obj, '[[', nm)
+            ind <- which(dim(obj2[[1]]) == nsim)
+            if (length(ind) >0) {
+              if (class(obj2[[1]]) == "array") {
+                tempVal <- lapply(obj2, dim)
+                # check all dimensions the same (hack for different CAL bins)
+                tdf <- lapply(obj2, dim) %>% unlist() %>% 
+                  matrix(nrow=length(obj2), ncol=length(dim(obj2[[1]])),byrow=TRUE)
+                nBins <- tdf[,2]
+                Max <- max(nBins)
+                nyrs <- max(tdf[,3])
+                if (!mean(nBins) == max(nBins)) { # not all same size
+                  index <- which(nBins < Max)
+                  for (kk in index) {
+                    dif <- Max - dim(obj2[[kk]])[2]
+                    obj2[[kk]] <- abind::abind(obj2[[kk]], array(0, dim=c(nsims[kk], dif, nyrs)), along=2)
+                  }
+                }
+              }
+              out.list[[nm]] <- abind::abind(obj2, along=ind)  
+            } else {
+              out.list[[nm]] <- unlist(obj2) %>% unique()
+            }
+          }
+          slot(out, sl) <- out.list
+        }
+      }
+    }
+    return(out)
+  }  
   
   MPNames <- lapply(MSEobjs, getElement, name = "MPs")  # MPs in each object 
   allsame <- length(unique(lapply(MPNames, unique))) == 1
@@ -666,9 +715,25 @@ joinMSE <- function(MSEobjs = NULL) {
   
   Misc<-list()
   if (length(MSEobjs[[1]]@Misc)>0) {
-    if(class(MSEobjs[[1]]@Misc[[1]])=="Data"){ #Posterior predicted data joining
-      for(i in 1: length(MSEobjs[[1]]@Misc))Misc[[i]]<-joinData(lapply(MSEobjs,function(x)slot(x,"Misc")[[i]]))
-    } 
+    if (!is.null(MSEobjs[[1]]@Misc$Data)) {
+      Misc$Data <- list()
+      # Posterior predicted data joining
+      for(i in 1:length(MSEobjs[[1]]@Misc$Data)) Misc$Data[[i]]<-joinData(lapply(MSEobjs,function(x)slot(x,"Misc")$Data[[i]]))
+    }
+    
+    if (!is.null(MSEobjs[[1]]@Misc$RInd.stats)) {
+      # Error from real indices
+      nms <- unique(MSEobjs[[1]]@Misc$RInd.stats$Index) %>% as.character()
+      temp <- list()
+      for (nm in seq_along(nms)) {
+        temp1 <- list()
+        for(i in 1:length(MSEobjs)) {
+          temp1[[i]] <- MSEobjs[[i]]@Misc$RInd.stats %>% dplyr::filter(Index==nms[nm])
+        }
+        temp[[nm]] <- do.call('rbind', temp1)
+      }
+      Misc$RInd.stats <- do.call('rbind', temp)
+    }
   }
   
   newMSE <- new("MSE", Name = outlist$Name, nyears = unique(outlist$nyears), 

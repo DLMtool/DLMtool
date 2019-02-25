@@ -87,6 +87,18 @@ testthat::test_that(paste0("runMSE with all MPs and Ricker SRR: ",info), {
   testthat::expect_is(runMSE(OM, MPs=NA, parallel=FALSE, silent=TRUE), 'MSE', info=info)
 })
 
+# OM <- new('OM', Blue_shark, IncE_HDom, Imprecise_Biased, Overages)
+# OM@seed <- 545 
+# OM@interval <- 2 
+# OM@SRrel <- 2 
+
+# Check runMSE works in parallel with historical simulations 
+OM@nsim <- 288
+info <- paste(OM@Name, "seed =", OM@seed)
+testthat::test_that(paste0("runMSE with Hist=TRUE and parallel=TRUE: ",info), {
+  testthat::expect_is(runMSE(OM, Hist=TRUE, parallel = TRUE), 'Hist', info=info)
+})
+
 
 
 # # Historical MPA 

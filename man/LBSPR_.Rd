@@ -4,7 +4,7 @@
 \alias{LBSPR_}
 \title{Internal Estimation Function for LBSPR MP}
 \usage{
-LBSPR_(x, Data, reps, n = 5, smoother = TRUE)
+LBSPR_(x, Data, reps, n = 5, smoother = TRUE, R = 0.2)
 }
 \arguments{
 \item{x}{Iteration number}
@@ -16,6 +16,8 @@ LBSPR_(x, Data, reps, n = 5, smoother = TRUE)
 \item{n}{Numeric. Number of historical years to run the model.}
 
 \item{smoother}{Logical. Should estimates be smoothed over multiple years?}
+
+\item{R}{variance of sampling noise}
 }
 \description{
 Internal Estimation Function for LBSPR MP

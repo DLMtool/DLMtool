@@ -62,7 +62,7 @@ the data inputs is used.}
 
 \item{\code{Msd}}{Inter-annual variability in natural mortality rate expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{Mgrad}}{Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year. Uniform distribution lower and upper bounds. Real numbers}
+\item{\code{Mgrad}}{No longer used. Previously mean temporal trend in natural mortality rate, expressed as a percentage change in M per year.}
 
 \item{\code{h}}{Steepness of the stock recruit relationship. Uniform distribution lower and upper bounds. Values from 1/5 to 1}
 
@@ -84,13 +84,13 @@ the data inputs is used.}
 
 \item{\code{LenCV}}{Coefficient of variation of length-at-age (assumed constant for all age classes). Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Ksd}}{Inter-annual variability in growth parameter k. Uniform distribution lower and upper bounds. Non-negative real numbers}
+\item{\code{Ksd}}{Inter-annual variability in growth parameter k expressed as coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{Kgrad}}{Mean temporal trend in growth parameter k, expressed as a percentage change in k per year. Uniform distribution lower and upper bounds. Real numbers}
+\item{\code{Kgrad}}{No longer used. Previously mean temporal trend in growth parameter k, expressed as a percentage change in k per year.}
 
-\item{\code{Linfsd}}{Inter-annual variability in maximum length. Uniform distribution lower and upper bounds. Non-negative real numbers}
+\item{\code{Linfsd}}{Inter-annual variability in maximum length expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{Linfgrad}}{Mean temporal trend in maximum length, expressed as a percentage change in Linf per year. Uniform distribution lower and upper bounds. Real numbers}
+\item{\code{Linfgrad}}{No longer used. Previously mean temporal trend in maximum length, expressed as a percentage change in Linf per year.}
 
 \item{\code{L50}}{Length at 50 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers}
 
@@ -109,6 +109,8 @@ the data inputs is used.}
 \item{\code{Prob_staying}}{The probability of inviduals in area 1 remaining in area 1 over the course of one year. Uniform distribution lower and upper bounds. Positive fraction.}
 
 \item{\code{Fdisc}}{Fraction of discarded fish that die. Uniform distribution lower and upper bounds. Non-negative real numbers}
+
+\item{\code{Source}}{A reference to a website or article from which parameters were taken to define the stock object. Single value. Character string.}
 
 \item{\code{nyears}}{The number of years for the historical 'spool-up' simulation. Single value. Positive integer}
 
@@ -130,7 +132,7 @@ the data inputs is used.}
 
 \item{\code{LFS}}{Shortest length that is fully vulnerable to fishing. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Vmaxlen}}{The vulnerability of fish at Stock@Linf. Uniform distribution lower and upper bounds. Fraction}
+\item{\code{Vmaxlen}}{The vulnerability of fish at \code{Stock@Linf}. Uniform distribution lower and upper bounds. Fraction}
 
 \item{\code{isRel}}{Selectivity parameters in units of size-of-maturity (or absolute eg cm). Single value. Boolean.}
 
@@ -138,7 +140,7 @@ the data inputs is used.}
 
 \item{\code{LFR}}{Shortest length that is fully retained. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{Rmaxlen}}{The retention of fish at Stock@Linf. Uniform distribution lower and upper bounds. Non-negative real numbers}
+\item{\code{Rmaxlen}}{The retention of fish at \code{Stock@Linf}. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
 \item{\code{DR}}{Discard rate - the fraction of caught fish that are discarded. Uniform distribution lower and upper bounds. Fraction}
 
@@ -158,12 +160,9 @@ the data inputs is used.}
 
 \item{\code{VmaxUpper}}{(Optional) Upper bound of Vmaxlen (use \code{ChooseSelect} function to set these). Vector. Fraction}
 
-\item{\code{CurrentYr}}{The current calendar year (final year) of the historical simulations (eg 2011). Single value. Positive integer. .}
+\item{\code{CurrentYr}}{The current calendar year (final year) of the historical simulations (eg 2011). Single value. Positive integer.}
 
-\item{\code{MPA}}{(Optional) Matrix specifying spatial closures for historical years. Each row should contain year index (e.g 10 for 10th historical year)
-followed by fraction of area closed to fishing for each area. i.e. each row represents a change and the number of columns is nareas + 1.
-The spatial closures are assumed to remain in place for the future projections unless changed by a MP.
-Default (if left blank) is all areas are open to fishing in historical period.}
+\item{\code{MPA}}{(Optional) Matrix specifying spatial closures for historical years.}
 
 \item{\code{Cobs}}{Log-normal catch observation error expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
@@ -179,7 +178,7 @@ Default (if left blank) is all areas are open to fishing in historical period.}
 
 \item{\code{Iobs}}{Observation error in the relative abundance indices expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Ibiascv}}{NOT CURRENTLY USED Log-normal coefficient of variation controlling error in observations of relative abundance index. Uniform distribution lower and upper bounds. Positive real numbers}
+\item{\code{Ibiascv}}{Log-normal coefficient of variation controlling error in observations of relative abundance index. Uniform distribution lower and upper bounds. Positive real numbers}
 
 \item{\code{Btobs}}{Log-normal coefficient of variation controlling error in observations of current stock biomass among years. Uniform distribution lower and upper bounds. Positive real numbers}
 
@@ -237,6 +236,14 @@ Default (if left blank) is all areas are open to fishing in historical period.}
 \section{Objects from the Class}{
  Objects can be created by calls of the form
 \code{new('OM', Stock, Fleet, Obs, Imp)}.
+}
+
+\section{MPA slot}{
+
+Each row should contain year index (e.g 10 for 10th historical year)
+followed by fraction of area closed to fishing for each area. i.e. each row represents a change and the number of columns is nareas + 1.
+The spatial closures are assumed to remain in place for the future projections unless changed by a MP.
+Default (if left blank) is all areas are open to fishing in historical period.
 }
 
 \author{

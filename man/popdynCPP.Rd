@@ -31,6 +31,8 @@ popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge,
 
 \item{Prec}{Numeric vector (pyears) with recruitment error}
 
+\item{movc}{Numeric array (nareas by nareas) with the movement matrix}
+
 \item{SRrelc}{Integer indicating the stock-recruitment relationship to use (1 for Beverton-Holt, 2 for Ricker)}
 
 \item{Effind}{Numeric vector (length pyears) with the fishing effort by year}
@@ -59,8 +61,6 @@ popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge,
 vulnerablity to calculate F.}
 
 \item{SSBcurr}{A numeric vector of length nareas with the current spawning biomass in each area}
-
-\item{mov}{Numeric matrix (nareas by nareas) with the movement matrix}
 }
 \description{
 Project population forward pyears given current numbers-at-age and total mortality, etc

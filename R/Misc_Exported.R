@@ -444,6 +444,7 @@ MPurl <- function(topic, url='https://dlmtool.github.io/DLMtool/reference/',
     res <- c(res, file.path(p, "help", f))
    
   }
+  if (length(res)<1) return(NA)
   
   if(nameonly) {
     return(basename(res))
@@ -693,7 +694,7 @@ ML2D <- function(OM, ML, nsim = 100, ploty = T, Dlim = c(0.05, 0.6)) {
   srs <- (maxage - AFS) / ((-log(Vmaxage,2))^0.5) # selectivity parameters are constant for all years
   sls <- (AFS - age05) /((-log(0.05,2))^0.5)
   
-  vuln <- t(sapply(1:nsim2, DLMtool:::getsel, lens=matrix(1:maxage, nrow=nsim2, ncol=maxage, byrow=TRUE), 
+  vuln <- t(sapply(1:nsim2, getsel, lens=matrix(1:maxage, nrow=nsim2, ncol=maxage, byrow=TRUE), 
                    lfs=AFS, sls=sls, srs=srs))
   
   Agearray <- array(rep(1:maxage, each = nsim2), c(nsim2, maxage))

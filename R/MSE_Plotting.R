@@ -1186,12 +1186,13 @@ Pplot <- function(MSEobj, nam = NA, maxMP = 10,MPs=NA,maxsims=20) {
 #' 'SSB_SSBMSY', 'F_FMSY', 'Yield')}
 #' @param MPs Optional subset by MP
 #' @param sims Optional subset by simulation
-#' @param traj Plot all projections (\code{all}) or only quantiles
-#' (\code{quant})
+#' @param traj Plot all projections (\code{all}), only quantiles
+#' (\code{quant}), or both projections and median (\code{both})
 #' @param quants Numeric vector of length 2 specifying the quantiles (e.g.,
 #' 10th and 90th. Median is always included)
 #' @param incquant Logical. Include the quantiles or only plot median?
 #' @param quantcol Colour of the quantile polygon
+#' @param ref.lines Numeric vector of y-values for horizontal reference lines. Set to NULL to remove lines.
 #' @param RefYield Should yield be relative to long-term optimum (\code{lto})
 #' or last historical year (\code{curr})
 #' @param LastYr Logical. Include the last historical year in the yield
@@ -1215,8 +1216,10 @@ Pplot <- function(MSEobj, nam = NA, maxMP = 10,MPs=NA,maxsims=20) {
 #' @author T. Carruthers & A.Hordyk
 #' @export Pplot2
 Pplot2 <- function(MSEobj, YVar = c("F_FMSY", "SSB_SSBMSY"), MPs = NA, sims = NULL, 
-                   traj = c("all", "quant"), quants = c(0.1, 0.9), incquant = TRUE, quantcol = "lightgray", 
-                   RefYield = c("lto", "curr"), LastYr = TRUE, maxMP = 6, alpha = 60, 
+                   traj = c("all", "quant", "both"), quants = c(0.1, 0.9), incquant = TRUE, 
+                   quantcol = "lightgray", 
+                   RefYield = c("lto", "curr"), LastYr = TRUE, 
+                   ref.lines=c(0.5, 1, 1.5), maxMP = 6, alpha = 60, 
                    cex.axis = 1, cex.lab = 1, YLab = NULL, incMP = TRUE, MPcex = 1, 
                    incLeg = TRUE, cex.leg = 1.5, legPos = "topleft", yline = NULL, parOR = FALSE, 
                    xaxis = TRUE, yaxis = TRUE, oneIt=TRUE, ...) {
@@ -1322,19 +1325,29 @@ Pplot2 <- function(MSEobj, YVar = c("F_FMSY", "SSB_SSBMSY"), MPs = NA, sims = NU
     for (mm in 1:nMPs) {
       plot(1:length(dat[1, mm, ]), dat[1, mm, ], ylim = ylim, type = "n", 
            axes = FALSE, xlab = "", ylab = "")
-      if (traj == "all") 
-        for (i in 1:MSEobj@nsim) lines(dat[i, mm, ], col = Col2[min(100, 
-                                                                    ceiling(dat[i, mm, length(dat[i, mm, ])] * 100))], lwd = lwd)
-      if (traj == "quant") {
+      
+      # add reference lines 
+      if (!is.null(ref.lines)) {
+        for (h in ref.lines) abline(h=h, lty=3, lwd=1, col="darkgray")
+      }
+      
+
+      if (traj == "all" | traj=="both") 
+        for (i in 1:MSEobj@nsim) lines(dat[i, mm, ], 
+                                       col = Col2[min(100, ceiling(dat[i, mm, length(dat[i, mm, ])] * 100))], lwd = lwd)
+      if (traj == "quant" | traj=="both") {
         stats <- apply(dat[, mm, , drop = FALSE], 3, quantile, 
                        c(quants[1], 0.5, quants[2]), na.rm = TRUE)
         if (length(quants) == 4) 
           stats2 <- apply(dat[, mm, , drop = FALSE], 3, quantile, 
                           c(quants[3], quants[4]), na.rm = TRUE)
-        if (length(quants) != 4) 
+        if (length(quants) != 4) stats2 <- NULL
+        if (traj=="both") {
           stats2 <- NULL
-        if (!incquant) 
-          lines(1:length(stats[2, ]), stats[2, ], lwd = 3)
+          incquant <- FALSE
+        }
+          
+        if (!incquant) lines(1:length(stats[2, ]), stats[2, ], lwd = 3)
         if (incquant) {
           if (!is.null(stats2)) {
             if (length(quantcol) < 2) 
@@ -1371,7 +1384,7 @@ Pplot2 <- function(MSEobj, YVar = c("F_FMSY", "SSB_SSBMSY"), MPs = NA, sims = NU
         mtext(side = 3, MSEobj@MPs[mm], cex = MPcex)
       
       # Legend #
-      if (mm == 1 & incLeg & traj == "quant" & X == 1) {
+      if (mm == 1 & incLeg & (traj == "quant"||traj=="both") & X == 1) {
         if (incquant) {
           if (is.null(stats2)) {
             pquants <- quants
@@ -2535,6 +2548,7 @@ VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4,
   colnames(used) <- MPs
   rownames(used) <- varNames
   
+  
   # Find the highest Stat for each variable
   if (nMPs > 1) {
     stat <- lapply(senseDat, "[[", "OMStat")
@@ -2667,6 +2681,8 @@ VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4,
   # invisible(Out)
   
 }
+
+
 
 
 #' Biomass wormplot
@@ -2933,6 +2949,7 @@ calcStat <- function(rr, evalbreaks) {
   ind <- as.integer(evalbreaks/2)
   ind2 <- as.integer(0.1 * evalbreaks)
   ind3 <- as.integer(0.9 * evalbreaks)
+  if (all(is.na(rr))) return(0)
   if (all(rr$x == 0)) return(0)
   sum((rr$y - mean(rr$y, na.rm = TRUE))^2)
 }
@@ -3012,7 +3029,7 @@ calcMSESense <- function(MP = 1, MSEobj, YVar = c("Y", "B"), Par = c("Obs","OM")
       m <- m[order(m[, 1]), ]
       qnts <- quantile(m[, 1], quants, na.rm = TRUE)
       if (all(m[, 1] == 0)) {
-        OMSmooth[[xx]] <- NULL
+        OMSmooth[[xx]] <- NA
       } else {
         nas <- which(apply(!apply(m, 2, is.na), 1, prod) == 0)
         if (length(nas) > 0) m <- m[-nas, ]

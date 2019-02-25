@@ -11,10 +11,11 @@
 #' @param CVLinf CV of length-at-age
 #' @param LenBins Vector of length bins
 #' @param LenMids Vector of mid-points of length bins
-#' @param x Vector of psuedo ages
 #' @param MK Ratio of M/K
 #' @param Linf Asymptotic length
-#' @param P Fraction of initial cohort alive at maximum age under unfished conditions
+#' @param rLens Vector of relative length at ate
+#' @param Prob ALK 
+#' @param Ml Maturity at age vector
 #' @param L50 Length at 50 percent maturity
 #' @param L95 Length at 95 percent maturity
 #' @param Beta Exponent of the length-weight relationship
@@ -22,12 +23,12 @@
 #' @useDynLib DLMtool
 #' @keywords internal
 #' @export
-LBSPRgen <- function(SL50, SL95, FM, nage, nlen, CVLinf, LenBins, LenMids, x, MK, Linf, P, L50, L95, Beta) {
-    .Call('_DLMtool_LBSPRgen', PACKAGE = 'DLMtool', SL50, SL95, FM, nage, nlen, CVLinf, LenBins, LenMids, x, MK, Linf, P, L50, L95, Beta)
+LBSPRgen <- function(SL50, SL95, FM, nage, nlen, CVLinf, LenBins, LenMids, MK, Linf, rLens, Prob, Ml, L50, L95, Beta) {
+    .Call('_DLMtool_LBSPRgen', PACKAGE = 'DLMtool', SL50, SL95, FM, nage, nlen, CVLinf, LenBins, LenMids, MK, Linf, rLens, Prob, Ml, L50, L95, Beta)
 }
 
-LBSPRopt <- function(pars, CAL, nage, nlen, CVLinf, LenBins, LenMids, x, MK, Linf, P, L50, L95, Beta) {
-    .Call('_DLMtool_LBSPRopt', PACKAGE = 'DLMtool', pars, CAL, nage, nlen, CVLinf, LenBins, LenMids, x, MK, Linf, P, L50, L95, Beta)
+LBSPRopt <- function(pars, CAL, nage, nlen, CVLinf, LenBins, LenMids, MK, Linf, rLens, Prob, Ml, L50, L95, Beta) {
+    .Call('_DLMtool_LBSPRopt', PACKAGE = 'DLMtool', pars, CAL, nage, nlen, CVLinf, LenBins, LenMids, MK, Linf, rLens, Prob, Ml, L50, L95, Beta)
 }
 
 #' Internal estimation function for LSRA and LSRA2 functions
@@ -110,10 +111,6 @@ genSizeComp <- function(VulnN, CAL_binsmid, selCurve, CAL_ESS, CAL_nsamp, Linfs,
     .Call('_DLMtool_genSizeComp', PACKAGE = 'DLMtool', VulnN, CAL_binsmid, selCurve, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD)
 }
 
-genSizeComp2 <- function(VulnN, CAL_binsmid, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD) {
-    .Call('_DLMtool_genSizeComp2', PACKAGE = 'DLMtool', VulnN, CAL_binsmid, CAL_ESS, CAL_nsamp, Linfs, Ks, t0s, LenCV, truncSD)
-}
-
 #' Rcpp version of the Optimization function that returns the squared difference between user
 #' specified and calculated movement parameters. 
 #'
@@ -181,7 +178,7 @@ popdynOneTScpp <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0
 #' @param Vuln Numeric matrix (maxage, pyears) with vulnerability by age and year
 #' @param Retc Numeric matrix (maxage, pyears) with retention by age and year
 #' @param Prec Numeric vector (pyears) with recruitment error
-#' @param mov Numeric matrix (nareas by nareas) with the movement matrix
+#' @param movc Numeric array (nareas by nareas) with the movement matrix
 #' @param SRrelc Integer indicating the stock-recruitment relationship to use (1 for Beverton-Holt, 2 for Ricker)
 #' @param Effind Numeric vector (length pyears) with the fishing effort by year
 #' @param Spat_targc Integer. Spatial targetting
