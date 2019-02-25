@@ -855,7 +855,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     V_P <- MPCalcs$V_P  # vulnerable-at-age
     SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
     FMa[,mm,y] <- MPCalcs$Ftot 
-    
+   
     # --- Begin projection years ----
     for (y in 2:proyears) {
       if(!silent) {
