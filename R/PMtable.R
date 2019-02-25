@@ -3,7 +3,7 @@
 #'
 #' @param MSE An object of class 'MSE'
 #' @param ... PM objects to be used as performance limits. Characters (i.e names of PM objects)
-#' @param Pthresh Minimum probability threshold
+#' @param Prob Minimum probability threshold
 #' @param Labels Optional named list specifying new labels for MPs. For example: `Labels = list(AvC="Average Catch", CC1="Constant Catch")`
 #' @param FeaseMPs Optional. Character vector of MP names that are considered feasible. e.g. the output from `Fease()`
 #' @param out.file Name of the output file. If none provided, output file will be named 'PerfLimTable' 
@@ -21,7 +21,7 @@
 #' @return Invisibly returns names of MPs that pass all performance limits
 #' @export
 #'
-PMLimit <- function(MSE, ..., Pthresh=NULL, Labels=NULL, FeaseMPs=NULL,
+PMLimit <- function(MSE, ..., Prob=NULL, Labels=NULL, FeaseMPs=NULL,
                     out.file=NULL,
                       output_format="html_document", openFile=TRUE,
                       quiet=TRUE, dir=NULL, RMDfile=NULL, font_size=14,
@@ -29,7 +29,7 @@ PMLimit <- function(MSE, ..., Pthresh=NULL, Labels=NULL, FeaseMPs=NULL,
 
   if (class(MSE) != 'MSE') stop("Object is not class 'MSE'", call. = FALSE)
   nMPs <- MSE@nMPs
-  if (is.null(Pthresh)) stop("Must specify 'Pthresh'", call. = FALSE)
+  if (is.null(Prob)) stop("Must specify 'Prob'", call. = FALSE)
 
   # Calculate prob of performace limits
   if (is.null(PMlist)) {
@@ -105,13 +105,13 @@ PMLimit <- function(MSE, ..., Pthresh=NULL, Labels=NULL, FeaseMPs=NULL,
 
   params <- list(df=df, runPM=runPM, Name=MSE@Name, font_size=font_size,
                  full_width=full_width, output_format=output_format,
-                 enableSearch=enableSearch, Pthresh=Pthresh)
+                 enableSearch=enableSearch, Pthresh=Prob)
   knitr::knit_meta(class=NULL, clean = TRUE)
 
   if(is.null(RMDfile))
     RMDfile <- file.path(system.file(package = "DLMtool"), 'PLimitTable.Rmd')
 
-  out <- df %>% filter(min >= Pthresh & Feasible=="Yes") %>% dplyr::select(MP) %>% unique()
+  out <- df %>% filter(min >= Prob & Feasible=="Yes") %>% dplyr::select(MP) %>% unique()
   if (build) {
     if (file.exists(RMDfileout)) unlink(RMDfileout)
     rmarkdown::render(input=RMDfile, output_file=RMDfileout, output_format=output_format,
