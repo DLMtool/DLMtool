@@ -738,306 +738,315 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   mm <- 1 # for debugging
 
   for (mm in 1:nMP) {  # MSE Loop over methods
-    if(!silent) message(mm, "/", nMP, " Running MSE for ", MPs[mm]) 
-    checkNA <- NA # save number of NAs
     
-    # years management is updated
-    upyrs <- seq(from=1, to=proyears, by=interval[mm]) # 1 + (0:(floor(proyears/interval[mm]) - 1)) * interval[mm] 
-    
-    # reset selectivity & retention parameters for projections
-    L5_P <- L5  
-    LFS_P <- LFS
-    Vmaxlen_P <- Vmaxlen
-    SLarray_P <- SLarray # selectivity at length array - projections
-    V_P <- V  #  selectivity at age array - projections
-    LR5_P <- LR5
-    LFR_P <- LFR
-    Rmaxlen_P <- Rmaxlen
-    retA_P <- retA # retention at age array - projections
-    retL_P <- retL # retention at length array - projections
-    Fdisc_P <- Fdisc # Discard mortality for projectons 
-    DR_P <- DR # Discard ratio for projections
- 
-    # projection arrays
-    N_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
-    Biomass_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
-    VBiomass_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
-    SSN_P <-array(NA, dim = c(nsim, maxage, proyears, nareas))
-    SSB_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
-    FM_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
-    FM_Pret <- array(NA, dim = c(nsim, maxage, proyears, nareas)) # retained F 
-    Z_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
-    CB_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
-    CB_Pret <- array(NA, dim = c(nsim, maxage, proyears, nareas)) # retained catch 
-    
-    # indexes
-    SAYRL <- as.matrix(expand.grid(1:nsim, 1:maxage, nyears, 1:nareas))  # Final historical year
-    SAYRt <- as.matrix(expand.grid(1:nsim, 1:maxage, 1 + nyears, 1:nareas))  # Trajectory year
-    SAYR <- as.matrix(expand.grid(1:nsim, 1:maxage, 1, 1:nareas))
-    SYt <- SAYRt[, c(1, 3)]
-    SAYt <- SAYRt[, 1:3]
-    SR <- SAYR[, c(1, 4)]
-    SA1 <- SAYR[, 1:2]
-    S1 <- SAYR[, 1]
-    SY1 <- SAYR[, c(1, 3)]
-    SAY1 <- SAYRt[, 1:3]
-    SYA <- as.matrix(expand.grid(1:nsim, 1, 1:maxage))  # Projection year
-    SY <- SYA[, 1:2]
-    SA <- SYA[, c(1, 3)]
-    SAY <- SYA[, c(1, 3, 2)]
-    S <- SYA[, 1]
-    
-    # -- First projection year ----
-    y <- 1
-    if(!silent) {
-      cat("."); flush.console()
-    }
-    # Recruitment and movement in first year 
-    NextYrN <- lapply(1:nsim, function(x)
-      popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB[x,,nyears, ]), Ncurr=N[x,,nyears,],
-                     Zcurr=Z[x,,nyears,], PerrYr=Perr_y[x, nyears+maxage-1], hs=hs[x],
-                     R0a=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
-                     mov=mov[x,,,,nyears+1], SRrel=SRrel[x]))
-
-    # The stock at the beginning of projection period
-    N_P[,,1,] <- aperm(array(unlist(NextYrN), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2))
-    Biomass_P[SAYR] <- N_P[SAYR] * Wt_age[SAY1]  # Calculate biomass
-    VBiomass_P[SAYR] <- Biomass_P[SAYR] * V_P[SAYt]  # Calculate vulnerable biomass
-    SSN_P[SAYR] <- N_P[SAYR] * Mat_age[SAY1]  # Calculate spawning stock numbers
-    SSB_P[SAYR] <- SSN_P[SAYR] * Wt_age[SAY1]
-    
-    # Update abundance estimates - used for FMSY ref methods so that FMSY is applied to current abundance
-    M_array <- array(0.5*M_ageArray[,,nyears+y], dim=c(nsim, maxage, nareas))
-    Atemp <- apply(VBiomass_P[, , y, ] * exp(-M_array), 1, sum) # Abundance (mid-year before fishing)
-    MSElist[[mm]]@OM$A <- Atemp 
-
-    # -- Apply MP in initial projection year ----
-    runMP <- applyMP(Data=MSElist[[mm]], MPs = MPs[mm], reps = reps, silent=TRUE)  # Apply MP
-    
-    MPRecs <- runMP[[1]][[1]] # MP recommendations
-    Data_p <- runMP[[2]] # Data object object with saved info from MP 
-    Data_p@TAC <- MPRecs$TAC
-
-    # calculate pstar quantile of TAC recommendation dist 
-    TACused <- apply(Data_p@TAC, 2, quantile, p = pstar, na.rm = T) 
-    checkNA[y] <- sum(is.na(TACused))
-    LastEi <- rep(1,nsim) # no effort adjustment
-    LastSpatial <- array(MPA[nyears,], dim=c(nareas, nsim)) # 
-    LastAllocat <- rep(1, nsim) # default assumption of reallocation of effort to open areas
-    LastCatch <- apply(CB[,,nyears,], 1, sum)
-    
-    # -- Calc stock dynamics ----
-    MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
-                              LastEi, LastSpatial, LastAllocat, LastCatch,
-                              TACused, maxF,
-                              LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
-                              L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
-                              Fdisc_P, DR_P,
-                              M_ageArray, FM_P, FM_Pret, Z_P, CB_P, CB_Pret,
-                              TAC_f, E_f, SizeLim_f,
-                              FinF, Spat_targ,
-                              CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
-                              qs, qvar, qinc)
-  
-    TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
-    LastSpatial <- MPCalcs$Si
-    LastAllocat <- MPCalcs$Ai
-    LastEi <- MPCalcs$Ei # adjustment to effort
-    LastCatch <- MPCalcs$TACrec
-    Effort[, mm, y] <- MPCalcs$Effort  
-    CB_P <- MPCalcs$CB_P # removals
-    CB_Pret <- MPCalcs$CB_Pret # retained catch 
-    FM_P <- MPCalcs$FM_P # fishing mortality
-    FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
-    Z_P <- MPCalcs$Z_P # total mortality
-    retA_P <- MPCalcs$retA_P # retained-at-age
-    retL_P <- MPCalcs$retL_P # retained-at-length
-    V_P <- MPCalcs$V_P  # vulnerable-at-age
-    SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
-    FMa[,mm,y] <- MPCalcs$Ftot 
-   
-    # --- Begin projection years ----
-    for (y in 2:proyears) {
+    tryMP <- tryCatch({
+      if(!silent) message(mm, "/", nMP, " Running MSE for ", MPs[mm]) 
+      checkNA <- NA # save number of NAs
+      
+      # years management is updated
+      upyrs <- seq(from=1, to=proyears, by=interval[mm]) # 1 + (0:(floor(proyears/interval[mm]) - 1)) * interval[mm] 
+      
+      # reset selectivity & retention parameters for projections
+      L5_P <- L5  
+      LFS_P <- LFS
+      Vmaxlen_P <- Vmaxlen
+      SLarray_P <- SLarray # selectivity at length array - projections
+      V_P <- V  #  selectivity at age array - projections
+      LR5_P <- LR5
+      LFR_P <- LFR
+      Rmaxlen_P <- Rmaxlen
+      retA_P <- retA # retention at age array - projections
+      retL_P <- retL # retention at length array - projections
+      Fdisc_P <- Fdisc # Discard mortality for projectons 
+      DR_P <- DR # Discard ratio for projections
+      
+      # projection arrays
+      N_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
+      Biomass_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
+      VBiomass_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
+      SSN_P <-array(NA, dim = c(nsim, maxage, proyears, nareas))
+      SSB_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
+      FM_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
+      FM_Pret <- array(NA, dim = c(nsim, maxage, proyears, nareas)) # retained F 
+      Z_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
+      CB_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
+      CB_Pret <- array(NA, dim = c(nsim, maxage, proyears, nareas)) # retained catch 
+      
+      # indexes
+      SAYRL <- as.matrix(expand.grid(1:nsim, 1:maxage, nyears, 1:nareas))  # Final historical year
+      SAYRt <- as.matrix(expand.grid(1:nsim, 1:maxage, 1 + nyears, 1:nareas))  # Trajectory year
+      SAYR <- as.matrix(expand.grid(1:nsim, 1:maxage, 1, 1:nareas))
+      SYt <- SAYRt[, c(1, 3)]
+      SAYt <- SAYRt[, 1:3]
+      SR <- SAYR[, c(1, 4)]
+      SA1 <- SAYR[, 1:2]
+      S1 <- SAYR[, 1]
+      SY1 <- SAYR[, c(1, 3)]
+      SAY1 <- SAYRt[, 1:3]
+      SYA <- as.matrix(expand.grid(1:nsim, 1, 1:maxage))  # Projection year
+      SY <- SYA[, 1:2]
+      SA <- SYA[, c(1, 3)]
+      SAY <- SYA[, c(1, 3, 2)]
+      S <- SYA[, 1]
+      
+      # -- First projection year ----
+      y <- 1
       if(!silent) {
         cat("."); flush.console()
       }
+      # Recruitment and movement in first year 
+      NextYrN <- lapply(1:nsim, function(x)
+        popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB[x,,nyears, ]), Ncurr=N[x,,nyears,],
+                       Zcurr=Z[x,,nyears,], PerrYr=Perr_y[x, nyears+maxage-1], hs=hs[x],
+                       R0a=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
+                       mov=mov[x,,,,nyears+1], SRrel=SRrel[x]))
       
-      SelectChanged <- FALSE
-      if (AnnualMSY) {
-        if (any(range(retA_P[,,nyears+y] - retA[,,nyears+y]) !=0)) SelectChanged <- TRUE
-        if (any(range(V_P[,,nyears+y] - V[,,nyears+y]) !=0))  SelectChanged <- TRUE
-      }
+      # The stock at the beginning of projection period
+      N_P[,,1,] <- aperm(array(unlist(NextYrN), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2))
+      Biomass_P[SAYR] <- N_P[SAYR] * Wt_age[SAY1]  # Calculate biomass
+      VBiomass_P[SAYR] <- Biomass_P[SAYR] * V_P[SAYt]  # Calculate vulnerable biomass
+      SSN_P[SAYR] <- N_P[SAYR] * Mat_age[SAY1]  # Calculate spawning stock numbers
+      SSB_P[SAYR] <- SSN_P[SAYR] * Wt_age[SAY1]
       
-      # -- Calculate MSY stats for this year ----
-      if (AnnualMSY & SelectChanged) { #
-        # average 10 year life-history & selecivity used for MSY calcs
-        y1 <- nyears + y
-        y2 <- y  
-        yr.ind <- (y1-5):(y1+4)
-        if (max(yr.ind) > nyears+proyears) {
-          yr.ind <- nyears + (proyears-9):(proyears)
+      # Update abundance estimates - used for FMSY ref methods so that FMSY is applied to current abundance
+      M_array <- array(0.5*M_ageArray[,,nyears+y], dim=c(nsim, maxage, nareas))
+      Atemp <- apply(VBiomass_P[, , y, ] * exp(-M_array), 1, sum) # Abundance (mid-year before fishing)
+      MSElist[[mm]]@OM$A <- Atemp 
+      
+      # -- Apply MP in initial projection year ----
+      runMP <- applyMP(Data=MSElist[[mm]], MPs = MPs[mm], reps = reps, silent=TRUE)  # Apply MP
+      
+      MPRecs <- runMP[[1]][[1]] # MP recommendations
+      Data_p <- runMP[[2]] # Data object object with saved info from MP 
+      Data_p@TAC <- MPRecs$TAC
+      
+      # calculate pstar quantile of TAC recommendation dist 
+      TACused <- apply(Data_p@TAC, 2, quantile, p = pstar, na.rm = T) 
+      checkNA[y] <- sum(is.na(TACused))
+      LastEi <- rep(1,nsim) # no effort adjustment
+      LastSpatial <- array(MPA[nyears,], dim=c(nareas, nsim)) # 
+      LastAllocat <- rep(1, nsim) # default assumption of reallocation of effort to open areas
+      LastCatch <- apply(CB[,,nyears,], 1, sum)
+      
+      # -- Calc stock dynamics ----
+      MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
+                                LastEi, LastSpatial, LastAllocat, LastCatch,
+                                TACused, maxF,
+                                LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
+                                L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
+                                Fdisc_P, DR_P,
+                                M_ageArray, FM_P, FM_Pret, Z_P, CB_P, CB_Pret,
+                                TAC_f, E_f, SizeLim_f,
+                                FinF, Spat_targ,
+                                CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
+                                qs, qvar, qinc)
+      
+      TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
+      LastSpatial <- MPCalcs$Si
+      LastAllocat <- MPCalcs$Ai
+      LastEi <- MPCalcs$Ei # adjustment to effort
+      LastCatch <- MPCalcs$TACrec
+      Effort[, mm, y] <- MPCalcs$Effort  
+      CB_P <- MPCalcs$CB_P # removals
+      CB_Pret <- MPCalcs$CB_Pret # retained catch 
+      FM_P <- MPCalcs$FM_P # fishing mortality
+      FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
+      Z_P <- MPCalcs$Z_P # total mortality
+      retA_P <- MPCalcs$retA_P # retained-at-age
+      retL_P <- MPCalcs$retL_P # retained-at-length
+      V_P <- MPCalcs$V_P  # vulnerable-at-age
+      SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
+      FMa[,mm,y] <- MPCalcs$Ftot 
+      
+      # --- Begin projection years ----
+      for (y in 2:proyears) {
+        if(!silent) {
+          cat("."); flush.console()
         }
         
-        MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, 
-                          V_P, maxage, R0, SRrel, hs, yr.ind=yr.ind)
-        MSY_P[,mm,y] <- MSYrefsYr[1, ]
-        FMSY_P[,mm,y] <- MSYrefsYr[2,]
-        SSBMSY_P[,mm,y] <- MSYrefsYr[3,]
+        SelectChanged <- FALSE
+        if (AnnualMSY) {
+          if (any(range(retA_P[,,nyears+y] - retA[,,nyears+y]) !=0)) SelectChanged <- TRUE
+          if (any(range(V_P[,,nyears+y] - V[,,nyears+y]) !=0))  SelectChanged <- TRUE
+        }
+        
+        # -- Calculate MSY stats for this year ----
+        if (AnnualMSY & SelectChanged) { #
+          # average 10 year life-history & selecivity used for MSY calcs
+          y1 <- nyears + y
+          y2 <- y  
+          yr.ind <- (y1-5):(y1+4)
+          if (max(yr.ind) > nyears+proyears) {
+            yr.ind <- nyears + (proyears-9):(proyears)
+          }
+          
+          MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, 
+                              V_P, maxage, R0, SRrel, hs, yr.ind=yr.ind)
+          MSY_P[,mm,y] <- MSYrefsYr[1, ]
+          FMSY_P[,mm,y] <- MSYrefsYr[2,]
+          SSBMSY_P[,mm,y] <- MSYrefsYr[3,]
+        }
+        
+        TACa[, mm, y] <- TACa[, mm, y-1] # TAC same as last year unless changed 
+        SAYRt <- as.matrix(expand.grid(1:nsim, 1:maxage, y + nyears, 1:nareas))  # Trajectory year
+        SAYt <- SAYRt[, 1:3]
+        SAYtMP <- cbind(SAYt, mm)
+        SYt <- SAYRt[, c(1, 3)]
+        SAY1R <- as.matrix(expand.grid(1:nsim, 1:maxage, y - 1, 1:nareas))
+        SAYR <- as.matrix(expand.grid(1:nsim, 1:maxage, y, 1:nareas))
+        SY <- SAYR[, c(1, 3)]
+        SA <- SAYR[, 1:2]
+        S1 <- SAYR[, 1]
+        SAY <- SAYR[, 1:3]
+        S <- SAYR[, 1]
+        SR <- SAYR[, c(1, 4)]
+        SA2YR <- as.matrix(expand.grid(1:nsim, 2:maxage, y, 1:nareas))
+        SA1YR <- as.matrix(expand.grid(1:nsim, 1:(maxage - 1), y -1, 1:nareas))
+        
+        # --- Age & Growth ----
+        NextYrN <- lapply(1:nsim, function(x)
+          popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB_P[x,,y-1, ]), Ncurr=N_P[x,,y-1,],
+                         Zcurr=Z_P[x,,y-1,], PerrYr=Perr_y[x, y+nyears+maxage-1], hs=hs[x],
+                         R0a=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
+                         mov=mov[x,,,, nyears+y], SRrel=SRrel[x]))
+        
+        N_P[,,y,] <- aperm(array(unlist(NextYrN), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2)) 
+        Biomass_P[SAYR] <- N_P[SAYR] * Wt_age[SAYt]  # Calculate biomass
+        VBiomass_P[SAYR] <- Biomass_P[SAYR] * V_P[SAYt]  # Calculate vulnerable biomass
+        SSN_P[SAYR] <- N_P[SAYR] * Mat_age[SAYt]  # Calculate spawning stock numbers
+        SSB_P[SAYR] <- SSN_P[SAYR] * Wt_age[SAYt]  # Calculate spawning stock biomass
+        
+        # --- An update year ----
+        if (y %in% upyrs) {
+          # --- Update Data object ---- 
+          MSElist[[mm]] <- updateData(Data=MSElist[[mm]], OM, MPCalcs, Effort, Biomass, 
+                                      Biomass_P, CB_Pret, N_P, SSB, SSB_P, VBiomass, VBiomass_P, 
+                                      RefPoints, ErrList, FMSY_P, retA_P, retL_P, StockPars, 
+                                      FleetPars, ObsPars, upyrs, interval, y, mm, 
+                                      Misc=Data_p@Misc, SampCpars)
+          
+          # Update Abundance and FMSY for FMSYref MPs
+          M_array <- array(0.5*M_ageArray[,,nyears+y], dim=c(nsim, maxage, nareas))
+          Atemp <- apply(VBiomass_P[, , y, ] * exp(-M_array), 1, sum) # Abundance (mid-year before fishing)
+          MSElist[[mm]]@OM$A <- Atemp
+          MSElist[[mm]]@OM$FMSY <- FMSY_P[,mm,y]
+          
+          # --- apply MP ----
+          runMP <- applyMP(Data=MSElist[[mm]], MPs = MPs[mm], reps = reps, silent=TRUE)  # Apply MP
+          MPRecs <- runMP[[1]][[1]] # MP recommendations
+          Data_p <- runMP[[2]] # Data object object with saved info from MP 
+          Data_p@TAC <- MPRecs$TAC
+          # calculate pstar quantile of TAC recommendation dist 
+          TACused <- apply(Data_p@TAC, 2, quantile, p = pstar, na.rm = T) 
+          
+          # -- Calc stock dynamics ----
+          MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
+                                    LastEi, LastSpatial, LastAllocat, LastCatch,
+                                    TACused, maxF,
+                                    LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
+                                    L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
+                                    Fdisc_P, DR_P,
+                                    M_ageArray, FM_P, FM_Pret, Z_P, CB_P, CB_Pret,
+                                    TAC_f, E_f, SizeLim_f,
+                                    FinF, Spat_targ,
+                                    CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
+                                    qs, qvar, qinc)
+          
+          TACa[, mm, y] <- TACused # recommended TAC 
+          LastSpatial <- MPCalcs$Si
+          LastAllocat <- MPCalcs$Ai
+          LastEi <- MPCalcs$Ei # adjustment to effort
+          Effort[, mm, y] <- MPCalcs$Effort 
+          FMa[,mm,y] <- MPCalcs$Ftot 
+          
+          CB_P <- MPCalcs$CB_P # removals
+          CB_Pret <- MPCalcs$CB_Pret # retained catch 
+          LastCatch <- apply(CB_Pret[,,y,], 1, sum, na.rm=TRUE) 
+          FM_P <- MPCalcs$FM_P # fishing mortality
+          FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
+          Z_P <- MPCalcs$Z_P # total mortality
+          retA_P <- MPCalcs$retA_P # retained-at-age
+          retL_P <- MPCalcs$retL_P # retained-at-length
+          V_P <- MPCalcs$V_P  # vulnerable-at-age
+          SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
+          
+        } else {
+          # --- Not an update yr ----
+          NoMPRecs <- MPRecs # TAC & TAE stay the same
+          NoMPRecs[lapply(NoMPRecs, length) > 0 ] <- NULL
+          NoMPRecs$Spatial <- NA
+          MPCalcs <- CalcMPDynamics(NoMPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
+                                    LastEi, LastSpatial, LastAllocat, LastCatch,
+                                    TACused, maxF,
+                                    LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
+                                    L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
+                                    Fdisc_P, DR_P,
+                                    M_ageArray, FM_P, FM_Pret, Z_P, CB_P, CB_Pret,
+                                    TAC_f, E_f, SizeLim_f,
+                                    FinF, Spat_targ,
+                                    CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
+                                    qs, qvar, qinc)
+          
+          TACa[, mm, y] <- TACused # 
+          LastSpatial <- MPCalcs$Si
+          LastAllocat <- MPCalcs$Ai
+          LastEi <- MPCalcs$Ei
+          Effort[, mm, y] <- MPCalcs$Effort  
+          CB_P <- MPCalcs$CB_P # removals
+          CB_Pret <- MPCalcs$CB_Pret # retained catch 
+          FMa[,mm,y] <- MPCalcs$Ftot 
+          LastCatch <- apply(CB_Pret[,,y,], 1, sum, na.rm=TRUE) 
+          FM_P <- MPCalcs$FM_P # fishing mortality
+          FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
+          Z_P <- MPCalcs$Z_P # total mortality
+          retA_P <- MPCalcs$retA_P # retained-at-age
+          retL_P <- MPCalcs$retL_P # retained-at-length
+          V_P <- MPCalcs$V_P  # vulnerable-at-age
+          SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
+        } # end of update loop 
+        checkNA[y] <- sum(is.na(TACused))
+      }  # end of year loop
+      
+      B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY_P[,mm,]  # SSB relative to SSBMSY
+      F_FMSYa[, mm, ] <- FMa[, mm, ]/FMSY_P[,mm,]
+      
+      Ba[, mm, ] <- apply(Biomass_P, c(1, 3), sum, na.rm=TRUE) # biomass 
+      SSBa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE) # spawning stock biomass
+      VBa[, mm, ] <- apply(VBiomass_P, c(1, 3), sum, na.rm=TRUE) # vulnerable biomass
+      
+      Ca[, mm, ] <- apply(CB_P, c(1, 3), sum, na.rm=TRUE) # removed
+      CaRet[, mm, ] <- apply(CB_Pret, c(1, 3), sum, na.rm=TRUE) # retained catch 
+      
+      # Store Pop and Catch-at-age and at-length for last projection year 
+      PAAout[ , mm, ] <- apply(N_P[ , , proyears, ], c(1,2), sum) # population-at-age
+      
+      CNtemp <- apply(CB_Pret, c(1,2,3), sum)/Wt_age[(nyears+1):nyears+proyears]
+      CAAout[ , mm, ] <- CNtemp[,,proyears] # nsim, maxage # catch-at-age
+      CALdat <- MSElist[[mm]]@CAL
+      CALout[ , mm, ] <- CALdat[,dim(CALdat)[2],] # catch-at-length in last year
+      
+      if (!silent) {
+        cat("\n")
+        if (all(checkNA != nsim) & !all(checkNA == 0)) {
+          ntot <- sum(checkNA[upyrs])
+          totyrs <- sum(checkNA[upyrs] >0)
+          nfrac <- round(ntot/(length(upyrs)*nsim),2)*100
+          message(totyrs, ' years had TAC = NA for some simulations (', nfrac, "% of total simulations)")
+          message('Used TAC_y = TAC_y-1')  
+        }
       }
       
-      TACa[, mm, y] <- TACa[, mm, y-1] # TAC same as last year unless changed 
-      SAYRt <- as.matrix(expand.grid(1:nsim, 1:maxage, y + nyears, 1:nareas))  # Trajectory year
-      SAYt <- SAYRt[, 1:3]
-      SAYtMP <- cbind(SAYt, mm)
-      SYt <- SAYRt[, c(1, 3)]
-      SAY1R <- as.matrix(expand.grid(1:nsim, 1:maxage, y - 1, 1:nareas))
-      SAYR <- as.matrix(expand.grid(1:nsim, 1:maxage, y, 1:nareas))
-      SY <- SAYR[, c(1, 3)]
-      SA <- SAYR[, 1:2]
-      S1 <- SAYR[, 1]
-      SAY <- SAYR[, 1:3]
-      S <- SAYR[, 1]
-      SR <- SAYR[, c(1, 4)]
-      SA2YR <- as.matrix(expand.grid(1:nsim, 2:maxage, y, 1:nareas))
-      SA1YR <- as.matrix(expand.grid(1:nsim, 1:(maxage - 1), y -1, 1:nareas))
+      if (!parallel) 
+        if("progress"%in%names(control))
+          if(control$progress) 
+            shiny::incProgress(1/nMP, detail = round(mm*100/nMP))
       
-      # --- Age & Growth ----
-      NextYrN <- lapply(1:nsim, function(x)
-        popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB_P[x,,y-1, ]), Ncurr=N_P[x,,y-1,],
-                       Zcurr=Z_P[x,,y-1,], PerrYr=Perr_y[x, y+nyears+maxage-1], hs=hs[x],
-                       R0a=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
-                       mov=mov[x,,,, nyears+y], SRrel=SRrel[x]))
-  
-      N_P[,,y,] <- aperm(array(unlist(NextYrN), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2)) 
-      Biomass_P[SAYR] <- N_P[SAYR] * Wt_age[SAYt]  # Calculate biomass
-      VBiomass_P[SAYR] <- Biomass_P[SAYR] * V_P[SAYt]  # Calculate vulnerable biomass
-      SSN_P[SAYR] <- N_P[SAYR] * Mat_age[SAYt]  # Calculate spawning stock numbers
-      SSB_P[SAYR] <- SSN_P[SAYR] * Wt_age[SAYt]  # Calculate spawning stock biomass
+    }, error=function(e) {
+      message("Note: ", MPs[mm], " failed. Skipping this MP.")
+      message(e, "\n")
+    }) # end tryCatch
     
-      # --- An update year ----
-      if (y %in% upyrs) {
-        # --- Update Data object ---- 
-        MSElist[[mm]] <- updateData(Data=MSElist[[mm]], OM, MPCalcs, Effort, Biomass, 
-                                    Biomass_P, CB_Pret, N_P, SSB, SSB_P, VBiomass, VBiomass_P, 
-                                    RefPoints, ErrList, FMSY_P, retA_P, retL_P, StockPars, 
-                                    FleetPars, ObsPars, upyrs, interval, y, mm, 
-                                    Misc=Data_p@Misc, SampCpars)
-
-        # Update Abundance and FMSY for FMSYref MPs
-        M_array <- array(0.5*M_ageArray[,,nyears+y], dim=c(nsim, maxage, nareas))
-        Atemp <- apply(VBiomass_P[, , y, ] * exp(-M_array), 1, sum) # Abundance (mid-year before fishing)
-        MSElist[[mm]]@OM$A <- Atemp
-        MSElist[[mm]]@OM$FMSY <- FMSY_P[,mm,y]
-
-        # --- apply MP ----
-        runMP <- applyMP(Data=MSElist[[mm]], MPs = MPs[mm], reps = reps, silent=TRUE)  # Apply MP
-        MPRecs <- runMP[[1]][[1]] # MP recommendations
-        Data_p <- runMP[[2]] # Data object object with saved info from MP 
-        Data_p@TAC <- MPRecs$TAC
-        # calculate pstar quantile of TAC recommendation dist 
-        TACused <- apply(Data_p@TAC, 2, quantile, p = pstar, na.rm = T) 
-        
-        # -- Calc stock dynamics ----
-        MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
-                                  LastEi, LastSpatial, LastAllocat, LastCatch,
-                                  TACused, maxF,
-                                  LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
-                                  L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
-                                  Fdisc_P, DR_P,
-                                  M_ageArray, FM_P, FM_Pret, Z_P, CB_P, CB_Pret,
-                                  TAC_f, E_f, SizeLim_f,
-                                  FinF, Spat_targ,
-                                  CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
-                                  qs, qvar, qinc)
-        
-        TACa[, mm, y] <- TACused # recommended TAC 
-        LastSpatial <- MPCalcs$Si
-        LastAllocat <- MPCalcs$Ai
-        LastEi <- MPCalcs$Ei # adjustment to effort
-        Effort[, mm, y] <- MPCalcs$Effort 
-        FMa[,mm,y] <- MPCalcs$Ftot 
-      
-        CB_P <- MPCalcs$CB_P # removals
-        CB_Pret <- MPCalcs$CB_Pret # retained catch 
-        LastCatch <- apply(CB_Pret[,,y,], 1, sum, na.rm=TRUE) 
-        FM_P <- MPCalcs$FM_P # fishing mortality
-        FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
-        Z_P <- MPCalcs$Z_P # total mortality
-        retA_P <- MPCalcs$retA_P # retained-at-age
-        retL_P <- MPCalcs$retL_P # retained-at-length
-        V_P <- MPCalcs$V_P  # vulnerable-at-age
-        SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
-        
-      } else {
-        # --- Not an update yr ----
-        NoMPRecs <- MPRecs # TAC & TAE stay the same
-        NoMPRecs[lapply(NoMPRecs, length) > 0 ] <- NULL
-        NoMPRecs$Spatial <- NA
-        MPCalcs <- CalcMPDynamics(NoMPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
-                                  LastEi, LastSpatial, LastAllocat, LastCatch,
-                                  TACused, maxF,
-                                  LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
-                                  L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
-                                  Fdisc_P, DR_P,
-                                  M_ageArray, FM_P, FM_Pret, Z_P, CB_P, CB_Pret,
-                                  TAC_f, E_f, SizeLim_f,
-                                  FinF, Spat_targ,
-                                  CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
-                                  qs, qvar, qinc)
-      
-        TACa[, mm, y] <- TACused # 
-        LastSpatial <- MPCalcs$Si
-        LastAllocat <- MPCalcs$Ai
-        LastEi <- MPCalcs$Ei
-        Effort[, mm, y] <- MPCalcs$Effort  
-        CB_P <- MPCalcs$CB_P # removals
-        CB_Pret <- MPCalcs$CB_Pret # retained catch 
-        FMa[,mm,y] <- MPCalcs$Ftot 
-        LastCatch <- apply(CB_Pret[,,y,], 1, sum, na.rm=TRUE) 
-        FM_P <- MPCalcs$FM_P # fishing mortality
-        FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
-        Z_P <- MPCalcs$Z_P # total mortality
-        retA_P <- MPCalcs$retA_P # retained-at-age
-        retL_P <- MPCalcs$retL_P # retained-at-length
-        V_P <- MPCalcs$V_P  # vulnerable-at-age
-        SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
-      } # end of update loop 
-      checkNA[y] <- sum(is.na(TACused))
-    }  # end of year loop
-    
-    B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY_P[,mm,]  # SSB relative to SSBMSY
-    F_FMSYa[, mm, ] <- FMa[, mm, ]/FMSY_P[,mm,]
-    
-    Ba[, mm, ] <- apply(Biomass_P, c(1, 3), sum, na.rm=TRUE) # biomass 
-    SSBa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE) # spawning stock biomass
-    VBa[, mm, ] <- apply(VBiomass_P, c(1, 3), sum, na.rm=TRUE) # vulnerable biomass
-    
-    Ca[, mm, ] <- apply(CB_P, c(1, 3), sum, na.rm=TRUE) # removed
-    CaRet[, mm, ] <- apply(CB_Pret, c(1, 3), sum, na.rm=TRUE) # retained catch 
-    
-    # Store Pop and Catch-at-age and at-length for last projection year 
-    PAAout[ , mm, ] <- apply(N_P[ , , proyears, ], c(1,2), sum) # population-at-age
-    
-    CNtemp <- apply(CB_Pret, c(1,2,3), sum)/Wt_age[(nyears+1):nyears+proyears]
-    CAAout[ , mm, ] <- CNtemp[,,proyears] # nsim, maxage # catch-at-age
-    CALdat <- MSElist[[mm]]@CAL
-    CALout[ , mm, ] <- CALdat[,dim(CALdat)[2],] # catch-at-length in last year
-    
-    if (!silent) {
-      cat("\n")
-      if (all(checkNA != nsim) & !all(checkNA == 0)) {
-        ntot <- sum(checkNA[upyrs])
-        totyrs <- sum(checkNA[upyrs] >0)
-        nfrac <- round(ntot/(length(upyrs)*nsim),2)*100
-        message(totyrs, ' years had TAC = NA for some simulations (', nfrac, "% of total simulations)")
-        message('Used TAC_y = TAC_y-1')  
-      }
-    }
-    
-    if (!parallel) 
-      if("progress"%in%names(control))
-        if(control$progress) 
-          shiny::incProgress(1/nMP, detail = round(mm*100/nMP))
+    if(inherits(tryMP, "error")) next
     
   }  # end of mm methods 
   

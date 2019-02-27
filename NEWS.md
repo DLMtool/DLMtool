@@ -15,6 +15,8 @@ The current version of the DLMtool package is available for download from [CRAN]
 - PM limit and objective table functions
 - specify labels for MPs in tradeplots
 
+- runMSErobust has been deprecated. MPs that fail (i.e. crash R are now skipped)
+
 ### Major changes 
 - The slots for specifying gradients in life-history parameters (e.g `Stock@Mgrad`, `Stock@Linfgrad`) 
 have been removed. Time-varying parameters should now be specified with `OM@cpars`.
