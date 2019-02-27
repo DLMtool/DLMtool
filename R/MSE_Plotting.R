@@ -2618,6 +2618,21 @@ VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4,
     AllMPs <- AllMPs[apply(used, 2, sum) > 0]  # only include MPs which use the parameter 
     AllMPs <- AllMPs[1:Nrow]  # first nMPs 
     
+    # find max y 
+    maxY <- 1
+    for (mm in AllMPs) {
+      for (vr in 1:Ncol) {
+        if (nMPs > 1)  varind <- topStat[vr, mm]  # Variable index 
+        if (nMPs == 1) varind <- topStat[vr]
+        if (nMPs > 1) {
+          ys <- senseDat[[mm]]$OMPoints[[varind]][, 2]
+        } else {
+          ys <- senseDat$OMPoints[[varind]][, 2]
+        }
+      }
+      maxY <- max(maxY, max(ys))
+    }
+    YLim <- c(0, maxY)
     for (mm in AllMPs) {
       # Loop along MPs Loop along variables
       for (vr in 1:Ncol) {
@@ -2635,9 +2650,9 @@ VOIplot <- function(MSEobj, MPs = NA, nvars = 5, nMP = 4,
         if (used[varSN, MPs[mm]]) {
           # variable is used
           Col <- makeTransparent(Cols[ceiling(Stat[varind, MPs[mm]]/highest * ncols)])
-          ylim <- c(0, quantile(ys, 0.95, na.rm = TRUE))
+          # ylim <- c(0, quantile(ys, 0.95, na.rm = TRUE))
           plot(xs, ys, col = Col, pch = pch, bty = "n", axes = FALSE, 
-               xlab = "", ylab = "", ylim = ylim)
+               xlab = "", ylab = "", ylim = YLim)
           if (vr == 1) {
             MyCol <- mpCols[match(MPs[mm], mpCols[, 1]), 2]
             axis(side = 2, las = 1, cex.axis = AxCex)
