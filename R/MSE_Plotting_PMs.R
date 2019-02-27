@@ -11,11 +11,12 @@
 #' @param Satisficed Logical. Show only the MPs that meet minimum acceptable thresholds (specified in `Lims`)
 #' @param Show Logical. Show the Results table and plots?
 #' @param point.size Numeric. Size of the MP points
-#' @param lab.size Numeric. Size of MP label
+#' @param lab.size Numeric. Size of MP label. Set to NULL to remove MP labels.
 #' @param axis.title.size Numeric. Size of axis titles
 #' @param axis.text.size Numeric. Size of axis text
 #' @param legend.title.size Numeric. Size of legend title text
 #' @param position Character. Position of legend - 'right' or 'bottom'
+#' @param cols Optional character vector of colors for the legend (MP Types).
 #' @param fill Character. Color of the fill
 #' @param alpha Numeric. Transparency of fill
 #' @param PMlist Optional list of PM names. Overrides any supplied in ... above
@@ -39,6 +40,7 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
                       axis.text.size=10,
                       legend.title.size=12,
                       position = c("right", "bottom"),
+                      cols=NULL,
                       fill="gray80",
                       alpha=0.4,
                       PMlist=NULL,
@@ -59,6 +61,11 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
   for (X in seq_along(PMlist))
     if (!PMlist[X] %in% avail("PM")) stop(PMlist[X], " is not a valid PM method")
   if (length(PMlist)<2) stop("Must provided more than 1 PM method")
+  
+  if (is.null(cols)) {
+    cols <- c("#1b9e77", "#d95f02", "#7570b3", "#e7298a")
+  }
+  
   
   nPMs <- length(PMlist)
   if (nPMs %% 2 != 0) {
@@ -149,20 +156,23 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
     listout[[pp]] <- df
     
     if (Satisficed) {
-     xlim <- c(xline, 1)
-     ylim <- c(yline, 1)
-     plots[[pp]] <- ggplot2::ggplot() 
+      xlim <- c(xline, 1)
+      ylim <- c(yline, 1)
+      plots[[pp]] <- ggplot2::ggplot() 
     } else {
       plots[[pp]] <- ggplot2::ggplot() + 
         ggplot2::geom_rect(data=xrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill=fill, alpha=alpha) +
         ggplot2::geom_rect(data=yrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill=fill, alpha=alpha)
     }
-      
+    
     plots[[pp]] <-  plots[[pp]] + 
-      ggplot2::geom_point(data=df, ggplot2::aes(x, y, shape=Class, color=Class), size=point.size, na.rm=TRUE) +
-      ggrepel::geom_text_repel(data=df, ggplot2::aes(x, y, color=Class, label=label, 
+      ggplot2::geom_point(data=df, ggplot2::aes(x, y, shape=Class, color=Class), size=point.size, na.rm=TRUE)
+    if (!is.null(lab.size)) 
+      plots[[pp]] <-  plots[[pp]] + 
+      ggrepel::geom_text_repel(data=df, ggplot2::aes(x, y, color=Class, label=label,
                                                      fontface = fontface), 
-                               show.legend=FALSE, size=lab.size, na.rm=TRUE) + 
+                               show.legend=FALSE, size=lab.size, na.rm=TRUE) 
+    plots[[pp]] <-  plots[[pp]] + 
       ggplot2::xlab(xcap) + ggplot2::ylab(ycap) +
       ggplot2::xlim(xlim) + ggplot2::ylim(ylim) +
       ggplot2::theme_classic() +
@@ -170,7 +180,8 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
                      axis.text = ggplot2::element_text(size=axis.text.size),
                      legend.text=ggplot2::element_text(size=legend.title.size),
                      legend.title = ggplot2::element_text(size=legend.title.size)) + 
-      ggplot2::labs(shape= "MP Type", color="MP Type")
+      ggplot2::labs(shape= "MP Type", color="MP Type") +
+      ggplot2::scale_colour_manual(values=cols)
     
     if (!is.null(Title)) 
       plots[[pp]] <-  plots[[pp]] + ggplot2::labs(title=Title[pp])
