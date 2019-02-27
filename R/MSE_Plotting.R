@@ -3018,6 +3018,7 @@ calcMSESense <- function(MP = 1, MSEobj, YVar = c("Y", "B"), Par = c("Obs","OM")
   # Ignore these parameters from VOI plot
   omvals$RefY <- 0
   omvals$A <- 0
+  omvals$Asp <- 0
   omvals$OFLreal <- 0
   omvals$FMSY <- 0
   omvals$MSY <- 0
@@ -3030,7 +3031,12 @@ calcMSESense <- function(MP = 1, MSEobj, YVar = c("Y", "B"), Par = c("Obs","OM")
   omvals$FMSY_M <- 0 
   omvals$BMSY_B0 <- 0
   omvals$SSBMSY_SSB0 <- 0 
-  
+  omvals$MGT <- 0 
+  omvals$Blow <- 0
+  omvals$FMSY_M <- 0 
+  omvals$maxlen <- 0 
+  omvals$SRrel <- 0 
+  omvals$FinF <- 0 
   omvals[is.na(omvals)] <- 0
   
   OMSmooth <- OMStat <- obvals <- OBSmooth <- OMPoints <- OMNames <- NULL
