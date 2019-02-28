@@ -25,6 +25,7 @@ Imports:
     boot,
     broom,
     devtools,
+    DT,
     dplyr,
     fmsb,
     methods,

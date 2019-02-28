@@ -180,6 +180,14 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     
   }
   
+
+  failedMPs <- MSE1@MPs[which(apply(apply(is.na(MSE1@C), c(1,2), sum) == OM@proyears, 2, sum) == OM@nsim)]
+  
+  if (length(failedMPs)>0) {
+    message("Dropping failed MPs: ", paste(failedMPs, collapse=","))
+    MSE1 <- Sub(MSE1, MPs=MSE1@MPs[!MSE1@MPs%in% failedMPs])  
+  }
+  
   return(MSE1)
   
 }
@@ -1062,7 +1070,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # Store MSE info
   attr(MSEout, "version") <- packageVersion("DLMtool")
   attr(MSEout, "date") <- date()
-  attr(MSEout, "R.version") <- R.version	
+  attr(MSEout, "R.version") <- R.version
   
   MSEout 
 }
