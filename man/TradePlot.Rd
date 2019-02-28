@@ -12,8 +12,8 @@ TradePlot(MSEobj, ..., Lims = c(0.2, 0.2, 0.8, 0.8), Title = NULL,
   Labels = NULL, Satisficed = FALSE, Show = TRUE, point.size = 2,
   lab.size = 4, axis.title.size = 12, axis.text.size = 10,
   legend.title.size = 12, position = c("right", "bottom"),
-  fill = "gray80", alpha = 0.4, PMlist = NULL, Refs = NULL,
-  Yrs = NULL)
+  cols = NULL, fill = "gray80", alpha = 0.4, PMlist = NULL,
+  Refs = NULL, Yrs = NULL)
 
 Tplot(MSEobj, Lims = c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...)
 
@@ -40,7 +40,7 @@ NOAA_plot2(MSEobj)
 
 \item{point.size}{Numeric. Size of the MP points}
 
-\item{lab.size}{Numeric. Size of MP label}
+\item{lab.size}{Numeric. Size of MP label. Set to NULL to remove MP labels.}
 
 \item{axis.title.size}{Numeric. Size of axis titles}
 
@@ -49,6 +49,8 @@ NOAA_plot2(MSEobj)
 \item{legend.title.size}{Numeric. Size of legend title text}
 
 \item{position}{Character. Position of legend - 'right' or 'bottom'}
+
+\item{cols}{Optional character vector of colors for the legend (MP Types).}
 
 \item{fill}{Character. Color of the fill}
 

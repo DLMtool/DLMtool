@@ -2,7 +2,6 @@
 % Please edit documentation in R/runMSE.r
 \name{runMSE}
 \alias{runMSE}
-\alias{runMSErobust}
 \title{Run a Management Strategy Evaluation}
 \usage{
 runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
@@ -11,13 +10,6 @@ runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
   HZN = 2, Bfrac = 0.5, AnnualMSY = TRUE, silent = FALSE,
   PPD = FALSE, parallel = FALSE, save_name = NULL, checks = FALSE,
   control = NULL)
-
-runMSErobust(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref",
-  "curE", "matlenlim", "MRreal"), timelimit = 1, CheckMPs = FALSE,
-  Hist = FALSE, ntrials = 50, fracD = 0.05, CalcBlow = FALSE,
-  HZN = 2, Bfrac = 0.5, AnnualMSY = TRUE, maxsims = 64,
-  name = NULL, unique = FALSE, maxCrash = 10, saveMSE = TRUE,
-  savePack = FALSE)
 }
 \arguments{
 \item{OM}{An operating model object (class 'OM')}
@@ -90,17 +82,6 @@ simulation) for a specified operating model
 \section{Functions}{
 \itemize{
 \item \code{runMSE}: Default function to use.
-
-\item \code{runMSErobust}: Save out the results to a Rdata
-file.  To increase speed and efficiency, particulary for runs with a large
-number simulations (\code{nsim}), the simulations are split into a number of
-packets.  The functions loops over the packets and combines the output into
-a single MSE object. If the MSE model crashes during a run, the MSE is run
-again until it is successfully completed. The MSE is stopped if the number
-of consecutive crashes exceeds \code{maxCrash}.  There is an option to save
-the packets as Rdata files to the current working directory (default is
-FALSE). By default, the functions saves the completed MSE object as a Rdata
-file (to the current working directory).
 }}
 
 \note{

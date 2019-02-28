@@ -1,0 +1,117 @@
+---
+output:
+  html_document:
+    theme: cosmo
+    highlight: tango
+  pdf_document:
+    toc: false
+---
+
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta http-equiv="Content-Language" content="en">
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r results='asis', echo=FALSE}
+havingIP <- function() {
+  if (.Platform$OS.type == "windows") {
+    ipmessage <- system("ipconfig", intern = TRUE)
+  } else {
+    ipmessage <- system("ifconfig", intern = TRUE)
+  }
+  validIP <- "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)[.]){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"
+  any(grep(validIP, ipmessage))
+}
+
+if (havingIP() & enableSearch) {
+  cat('<link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.5/css/jquery.dataTables.min.css">')
+  cat('<script src="http://code.jquery.com/jquery-2.1.2.min.js"></script>')
+  cat('<script src="http://cdn.datatables.net/1.10.5/js/jquery.dataTables.min.js"></script>')
+}
+
+```
+
+<script type="text/javascript">
+         $(document).ready(function() {
+             $("table").DataTable({
+               "aLengthMenu": [[50, 75, 100, -1], [50, 75, 100, "All"]],
+               "iDisplayLength": 50
+             });
+         } );
+         
+</script>
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'} 
+suppressMessages(library(dplyr))
+suppressMessages(library(knitr))
+suppressMessages(library(kableExtra))
+
+Plimits <- lapply(runPM, function(x) x@Caption) %>% unlist()
+chk <- grepl("<", Plimits)
+if (sum(chk)) {
+  ind <- which(chk)  
+  for (x in ind)
+    Plimits[x] <- gsub("<", "\\\\<", Plimits[x])
+}
+if (length(Plimits)>1)
+  cat("## Minimum Performance Criteria\n")
+if (length(Plimits)==1)
+    cat("## Minimum Performance Criterion\n")
+
+cat("### Management Procedures must have at least an", Prob, "probability of meeting all Performance Limits \n")
+for (xx in 1:length(Plimits)) {
+  cat("#### ", xx, ": ", Plimits[xx], " \n\n", sep="")
+}
+
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+if (output_format == "html_document") format <- 'html'
+if (output_format != "html_document") {
+  full_width <- FALSE
+  format <- 'latex'
+}
+
+htmlDF1 <- df %>% dplyr::filter(!is.na(url)) %>% dplyr::mutate(
+  prob = cell_spec(prob, format, color = ifelse(prob < Prob, "red", "green")),
+    MP = cell_spec(MP, format, color = ifelse(min < Prob, "red", "green"), link=url)
+  )
+# custom MPs (no url)
+htmlDF2 <- df %>% dplyr::filter(is.na(url)) %>% dplyr::mutate(
+  prob = cell_spec(prob, format, color = ifelse(prob < Prob, "red", "green")),
+    MP = cell_spec(MP, format, color = ifelse(min < Prob, "red", "green"))
+  )
+htmlDF <- bind_rows(htmlDF1, htmlDF2)
+
+TabDF <- tidyr::spread(htmlDF, PM, prob)
+if (format!='latex') TabDF <- cbind(data.frame("#"=1:nMPs), TabDF)
+
+TabDF <- TabDF %>% dplyr::arrange(desc(min), desc(Feasible))
+TabDF$X. <- 1:nrow(TabDF)
+ind <- which(TabDF$min >= Prob)
+TabDF$min <- NULL
+TabDF$url <- NULL
+if (all(TabDF$Feasible == "Yes")) TabDF$Feasible <- NULL
+Tab <- TabDF %>% kable(format = format, escape = FALSE,  align="llllcccclll") %>%
+  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+                full_width = full_width, position="float_left", font_size = font_size)
+if (format == "latex") {
+  Tab <- Tab %>%
+    column_spec(1, width = "2em") %>%
+    column_spec(2, width = "5em")
+}
+Tab %>% kableExtra::row_spec(ind, bold = TRUE)
+
+```
+
+
+
+
+
+
+  

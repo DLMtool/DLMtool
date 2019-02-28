@@ -16,33 +16,33 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r results='asis', echo=FALSE}
-havingIP <- function() {
-  if (.Platform$OS.type == "windows") {
-    ipmessage <- system("ipconfig", intern = TRUE)
-  } else {
-    ipmessage <- system("ifconfig", intern = TRUE)
-  }
-  validIP <- "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)[.]){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"
-  any(grep(validIP, ipmessage))
-}
-
-if (havingIP() & enableSearch) {
-  cat('<link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.5/css/jquery.dataTables.min.css">')
-  cat('<script src="http://code.jquery.com/jquery-2.1.2.min.js"></script>')
-  cat('<script src="http://cdn.datatables.net/1.10.5/js/jquery.dataTables.min.js"></script>')
-}
+# havingIP <- function() {
+#   if (.Platform$OS.type == "windows") {
+#     ipmessage <- system("ipconfig", intern = TRUE)
+#   } else {
+#     ipmessage <- system("ifconfig", intern = TRUE)
+#   }
+#   validIP <- "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)[.]){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"
+#   any(grep(validIP, ipmessage))
+# }
+# 
+# # if (havingIP() & enableSearch) {
+# #   cat('<link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.5/css/jquery.dataTables.min.css">')
+# #   cat('<script src="http://code.jquery.com/jquery-2.1.2.min.js"></script>')
+# #   cat('<script src="http://cdn.datatables.net/1.10.5/js/jquery.dataTables.min.js"></script>')
+# # }
 
 ```
 
-<script type="text/javascript">
-         $(document).ready(function() {
-             $("table").DataTable({
-               "aLengthMenu": [[50, 75, 100, -1], [50, 75, 100, "All"]],
-               "iDisplayLength": 50
-             });
-         } );
-         
-</script>
+<!-- <script type="text/javascript"> -->
+<!--          $(document).ready(function() { -->
+<!--              $("table").DataTable({ -->
+<!--                "aLengthMenu": [[50, 75, 100, -1], [50, 75, 100, "All"]], -->
+<!--                "iDisplayLength": 50 -->
+<!--              }); -->
+<!--          } ); -->
+
+<!-- </script> -->
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'} 
 suppressMessages(library(dplyr))
@@ -77,35 +77,71 @@ if (output_format != "html_document") {
   format <- 'latex'
 }
 
-htmlDF1 <- df %>% dplyr::filter(!is.na(url)) %>% dplyr::mutate(
-  prob = cell_spec(prob, format, color = ifelse(prob < Prob, "red", "green")),
-    MP = cell_spec(MP, format, color = ifelse(min < Prob, "red", "green"), link=url)
-  )
-# custom MPs (no url)
-htmlDF2 <- df %>% dplyr::filter(is.na(url)) %>% dplyr::mutate(
-  prob = cell_spec(prob, format, color = ifelse(prob < Prob, "red", "green")),
-    MP = cell_spec(MP, format, color = ifelse(min < Prob, "red", "green"))
-  )
-htmlDF <- bind_rows(htmlDF1, htmlDF2)
+# htmlDF1 <- df %>% dplyr::filter(!is.na(url)) %>% dplyr::mutate(
+#   prob = cell_spec(prob, format, color = ifelse(prob < Prob, "red", "green")),
+#     MP = cell_spec(MP, format, color = ifelse(min < Prob, "red", "green"), link=url)
+#   )
+# # custom MPs (no url)
+# htmlDF2 <- df %>% dplyr::filter(is.na(url)) %>% dplyr::mutate(
+#   prob = cell_spec(prob, format, color = ifelse(prob < Prob, "red", "green")),
+#     MP = cell_spec(MP, format, color = ifelse(min < Prob, "red", "green"))
+#   )
+htmlDF <- df # bind_rows(htmlDF1, htmlDF2)
 
 TabDF <- tidyr::spread(htmlDF, PM, prob)
-if (format!='latex') TabDF <- cbind(data.frame("#"=1:nMPs), TabDF)
+# if (format!='latex') TabDF <- cbind(data.frame("#"=1:nMPs), TabDF)
 
 TabDF <- TabDF %>% dplyr::arrange(desc(min), desc(Feasible))
-TabDF$X. <- 1:nrow(TabDF)
 ind <- which(TabDF$min >= Prob)
-TabDF$min <- NULL
+
+# TabDF$url <- NULL
+# TabDF$X. <- NULL
+
+# TabDF$Feasible <- factor(TabDF$Feasible)
+if (all(is.na(TabDF$Feasible))) TabDF$Feasible <- NULL
+
+MPwithurl <- !is.na(TabDF$url) 
+fail.ind <- TabDF$min <=Prob 
+TabDF$MP[!fail.ind&MPwithurl] <- 
+  paste0("<a href='", TabDF$url[!fail.ind&MPwithurl],"' style='color: #008000'>", TabDF$MP[!fail.ind&MPwithurl],"</a>")
+TabDF$MP[fail.ind&MPwithurl] <- 
+  paste0("<a href='", TabDF$url[fail.ind&MPwithurl],"' style='color: #FF0000'>", TabDF$MP[fail.ind&MPwithurl],"</a>")
+
 TabDF$url <- NULL
-if (all(TabDF$Feasible == "Yes")) TabDF$Feasible <- NULL
-Tab <- TabDF %>% kable(format = format, escape = FALSE,  align="llllcccclll") %>%
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
-                full_width = full_width, position="float_left", font_size = font_size)
-if (format == "latex") {
-  Tab <- Tab %>%
-    column_spec(1, width = "2em") %>%
-    column_spec(2, width = "5em")
-}
-Tab %>% kableExtra::row_spec(ind, bold = TRUE)
+# TabDF$Type <- as.factor(TabDF$Type)
+
+cnames <- colnames(TabDF)
+cind <- which(cnames == "Type")
+cnames <- cnames[(cind+1):length(cnames)]
+
+DT::datatable(TabDF, escape=FALSE, filter='top', 
+  extensions = c('Buttons', 'Responsive'), 
+  class = 'cell-border stripe', 
+  options = list(
+    dom = 'Blfrtip',
+     buttons = 
+      list('copy', 'print', list(
+        extend = 'collection',
+        buttons = c('csv', 'excel', 'pdf'),
+        text = 'Download'
+      )),
+    columnDefs = list(list(targets = 2, visible = FALSE)),
+    lengthMenu = list(c(10,20, 50, 100, -1), list('10', '20', '50','100', 'All')),
+    pageLength = 20, 
+    autoWidth = auto_width)) %>%
+  DT::formatStyle(2, target="row", 
+                  color = DT::styleInterval(cuts=c(0, Prob*0.999), values=c("black", "red", "green"))) %>%
+  DT::formatStyle(cnames, color = DT::styleInterval(cuts=c(-1, Prob*0.999), values=c("black", "red", "green"))) 
+  
+# Tab <- TabDF %>% kable(format = format, escape = FALSE,  align="llllcccclll") %>%
+#   kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+#                 full_width = full_width, position="float_left", font_size = font_size)
+# if (format == "latex") {
+#   Tab <- Tab %>%
+#     column_spec(1, width = "2em") %>%
+#     column_spec(2, width = "5em")
+# }
+# Tab %>% kableExtra::row_spec(ind, bold = TRUE)
 
 ```
 

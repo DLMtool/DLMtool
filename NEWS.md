@@ -13,7 +13,8 @@ The current version of the DLMtool package is available for download from [CRAN]
 - Real indices of abundance can be added to the Data object and used to condition OM. See [userguide](https://dlmtool.github.io/DLMtool/userguide/using-real-indices.html) for details.
 
 - PM limit and objective table functions
-- specify labels for MPs in tradeplots
+- Specify labels and colors for MPs in trade-off plots
+- MPs that fail (i.e. crash R are now skipped).  `runMSErobust` has been now removed from package (it was broken in the previous version). 
 
 ### Major changes 
 - The slots for specifying gradients in life-history parameters (e.g `Stock@Mgrad`, `Stock@Linfgrad`) 

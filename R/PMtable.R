@@ -13,8 +13,8 @@
 #' @param dir Optional. Directory for output file. Default is working directory.
 #' @param RMDfile Optional. RMD template file
 #' @param font_size Numeric. Font size for text in the table
-#' @param full_width Logical. Should table be full width?
-#' @param enableSearch Logical. Should search be enabled in the html table?
+#' @param auto_width Logical. Should table be width be automatic?
+#' @param enableSearch Currently disabled. Logical. Should search be enabled in the html table? 
 #' @param PMlist Optional. List of PM names.
 #' @param build Logical. Build the html table?
 #'
@@ -25,7 +25,7 @@ PMLimit <- function(MSE, ..., Prob=NULL, Labels=NULL, FeaseMPs=NULL,
                     out.file=NULL,
                       output_format="html_document", openFile=TRUE,
                       quiet=TRUE, dir=NULL, RMDfile=NULL, font_size=14,
-                      full_width=TRUE, enableSearch=TRUE, PMlist=NULL, build=TRUE) {
+                      auto_width=FALSE, enableSearch=TRUE, PMlist=NULL, build=TRUE) {
 
   if (class(MSE) != 'MSE') stop("Object is not class 'MSE'", call. = FALSE)
   nMPs <- MSE@nMPs
@@ -74,16 +74,16 @@ PMLimit <- function(MSE, ..., Prob=NULL, Labels=NULL, FeaseMPs=NULL,
   }
   
   
-  df$MP <- labels[match(df$MP,MSE@MPs)]
-  df$Feasible <- TRUE
+  df$Feasible <- NA
   if(!is.null(FeaseMPs)) {
     if(!class(FeaseMPs) == "character") stop("FeaseMPs must be character vector", call.=FALSE)
     # df$Feasible <- rep(MSE@MPs %in% FeaseMPs, each=2)
     df$Feasible <- df$MP %in% FeaseMPs
+    df$Feasible[is.na(df$Feasible)] <- FALSE
   }
   df$Feasible[df$Feasible != TRUE] <- "No"
   df$Feasible[df$Feasible == TRUE] <- "Yes"
-  
+  df$MP <- labels[match(df$MP,MSE@MPs)]
  
   if (output_format == "html_document") {
     ext <- '.html'
@@ -106,7 +106,7 @@ PMLimit <- function(MSE, ..., Prob=NULL, Labels=NULL, FeaseMPs=NULL,
   RMDfileout <- file.path(dir, out.file)
 
   params <- list(df=df, runPM=runPM, Name=MSE@Name, font_size=font_size,
-                 full_width=full_width, output_format=output_format,
+                 auto_width=auto_width, output_format=output_format,
                  enableSearch=enableSearch, Prob=Prob)
   knitr::knit_meta(class=NULL, clean = TRUE)
 
@@ -144,7 +144,7 @@ PMLimit <- function(MSE, ..., Prob=NULL, Labels=NULL, FeaseMPs=NULL,
 #' @param use.colors Logical. Color scale the probability text?
 #' @param cols Optional character vector of colors for probability text
 #' @param show.legend Logical. Show the legend?
-#' @param full_width Logical. Should table be full width?
+#' @param auto_width Logical. Should table be full width?
 #' @param enableSearch Logical. Should search be enabled in the html table?
 #' @param PMlist Optional. List of PM names.
 #' @param build Logical. Build the html table?
@@ -160,7 +160,7 @@ PMObj <- function(MSE, ..., Labels=NULL, out.file=NULL,
                   quiet=TRUE, dir=NULL, RMDfile=NULL, font_size=14,
                   use.colors=TRUE,
                   cols=NULL, show.legend=TRUE,
-                  full_width=TRUE, enableSearch=TRUE, PMlist=NULL, build=TRUE,
+                  auto_width=FALSE, enableSearch=TRUE, PMlist=NULL, build=TRUE,
                   cex.tex=0.75, inc.title=TRUE, title="Legend") {
   
   if (class(MSE) != 'MSE') stop("Object is not class 'MSE'", call. = FALSE)
@@ -235,7 +235,7 @@ PMObj <- function(MSE, ..., Labels=NULL, out.file=NULL,
     cols <- rev(colsfun(5))
   }
   params <- list(df=df, runPM=runPM, Name=MSE@Name, font_size=font_size,
-                 full_width=full_width, output_format=output_format,
+                 auto_width=auto_width, output_format=output_format,
                  enableSearch=enableSearch, cols=cols, use.colors=use.colors,
                  show.legend=show.legend)
   knitr::knit_meta(class=NULL, clean = TRUE)

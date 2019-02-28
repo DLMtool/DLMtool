@@ -201,9 +201,13 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (!exists("Prob_staying", inherits=FALSE)) Prob_staying <- myrunif(nsim, Stock@Prob_staying[1], Stock@Prob_staying[2])  # sampled probability of individuals staying in area 1 among years
   if (!exists("Size_area_1", inherits=FALSE)) Size_area_1 <- myrunif(nsim, Stock@Size_area_1[1], Stock@Size_area_1[2])  # currently redundant parameter for the habitat area size of area 1
   
-  if (max(Size_area_1) == 0) stop("Size_area_1 must be > 0")
-  if (max(Frac_area_1) == 0) stop("Frac_area_1 must be > 0")
-  if (max(Prob_staying) == 0) stop("Prob_staying must be > 0")
+  if (max(Size_area_1) == 0) stop("Size_area_1 must be > 0", call. = FALSE)
+  if (max(Frac_area_1) == 0) stop("Frac_area_1 must be > 0", call. = FALSE)
+  if (max(Prob_staying) == 0) stop("Prob_staying must be > 0", call. = FALSE)
+  
+  if (max(Size_area_1) >= 1) stop("Size_area_1 must be < 1", call. = FALSE)
+  if (max(Frac_area_1) >= 1) stop("Frac_area_1 must be < 1", call. = FALSE)
+  if (max(Prob_staying) >= 1) stop("Prob_staying must be < 1", call. = FALSE)
   
   StockOut$Frac_area_1 <- Frac_area_1
   StockOut$Prob_staying <- Prob_staying
