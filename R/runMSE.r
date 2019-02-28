@@ -193,8 +193,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # Dev Setup ####
   # development mode - assign default argument values to current workspace if they don't exist
-  # def.args <- DLMtool:::dev.mode() 
-  # for (nm in names(def.args)) assign(nm, def.args[[nm]])
+  # def.args <- DLMtool:::dev.mode(); for (nm in names(def.args)) assign(nm, def.args[[nm]])
   
   if (class(OM) != "OM") stop("You must specify an operating model")
   Misc<-new('list') #Blank miscellaneous slot created
@@ -353,9 +352,9 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
 
   # arrays for unfished biomass for all years 
   SSN_a <- array(NA, dim = c(nsim, maxage, nyears+proyears, nareas))  
-  N_a <-  array(NA, dim = c(nsim, maxage, nyears+proyears, nareas))
-  Biomass_a <-  array(NA, dim = c(nsim, maxage, nyears+proyears, nareas))
-  SSB_a <-  array(NA, dim = c(nsim, maxage, nyears+proyears, nareas))
+  N_a <- array(NA, dim = c(nsim, maxage, nyears+proyears, nareas))
+  Biomass_a <- array(NA, dim = c(nsim, maxage, nyears+proyears, nareas))
+  SSB_a <- array(NA, dim = c(nsim, maxage, nyears+proyears, nareas))
   
   SSN_a[SAYR_a] <- Nfrac[SAY_a] * R0[S_a] * initdist[SAR_a]  # Calculate initial spawning stock numbers for all years
   N_a[SAYR_a] <- R0[S_a] * surv[SAY_a] * initdist[SAR_a] # Calculate initial stock numbers for all years
@@ -369,6 +368,33 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   B0_a <- apply(Biomass_a, c(1,3), sum) # unfished biomass for each year
   
   # ---- Unfished Reference Points ----
+ 
+  SSBpRa <- array(SSB0_a/matrix(R0, nrow=nsim, ncol=nyears+proyears), dim = c(nsim, nyears+proyears))
+  
+  # calculate moving average for each year ?
+  CalcUnfishedRefs <- function(x, ageM, N0_a, SSB0_a, B0_a, SSBpRa) {
+    avg.ind <- 1:ceiling(ageM[x,1]) # unfished eq ref points averaged over these years 
+    N0 <- mean(N0_a[x, avg.ind])
+    SSB0 <- mean(SSB0_a[x, avg.ind])
+    B0 <- mean(B0_a[x, avg.ind])
+    SSBpR <- mean(SSBpRa[x, avg.ind])
+    data.frame(N0=N0, SSB0=SSB0, B0=B0, SSBpR=SSBpR )
+  }
+ 
+  UnfishedRefs <- sapply(1:nsim, CalcUnfishedRefs, ageM=ageM, N0_a=N0_a, 
+                         SSB0_a=SSB0_a, B0_a=B0_a, SSBpRa=SSBpRa) 
+                        
+  N0 <- UnfishedRefs[1,] %>% unlist() # average unfished numbers
+  SSB0 <- UnfishedRefs[2,] %>% unlist() # average unfished spawning biomass
+  B0 <- UnfishedRefs[3,] %>% unlist() # average unfished biomass
+  
+  # average spawning stock biomass per recruit 
+  SSBpR <- matrix(UnfishedRefs[4,] %>% unlist(), nrow=nsim, ncol=nareas)  
+   
+  bR <- matrix(log(5 * hs)/(0.8 * SSB0), nrow=nsim)  # Ricker SR params
+  aR <- matrix(exp(bR * SSB0)/SSBpR, nrow=nsim)  # Ricker SR params
+  
+  
   # Calculated average 10 years around current year
   yr.ind <- (nyears-5):(nyears+4)
   if (max(yr.ind) > nyears+proyears) {
@@ -380,11 +406,9 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   SSB0 <- apply(SSB0_a[,yr.ind], 1, mean) # average unfished spawning biomass
   B0 <- apply(B0_a[,yr.ind], 1, mean) # average unfished biomass
 
-  SSBpRa <- array(SSB0_a/matrix(R0, nrow=nsim, ncol=nyears+proyears), dim = c(nsim, nyears+proyears))
-  SSBpR <- matrix(apply(SSBpRa[, yr.ind], 1, mean), nrow=nsim, ncol=nareas) # average spawning stock biomass per recruit 
   
-  bR <- matrix(log(5 * hs)/(0.8 * apply(SSB0a[,1:10,], c(1,3), mean)), nrow=nsim)  # Ricker SR params
-  aR <- matrix(exp(bR * apply(SSB0a[,1:10,], c(1,3), mean))/SSBpR, nrow=nsim)  # Ricker SR params
+
+
   
   # --- Optimize for Initial Depletion ----
   # Depletion in year 1 
