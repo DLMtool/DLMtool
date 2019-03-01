@@ -308,7 +308,7 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
   Data <- updateMSE(Data)
   Dataout <- Data
-  if (is.na(nsims)) nsims <- length(Data@Mort)
+  if (is.na(nsims)) nsims <- nrow(Data@Cat)
   nMPs <- length(MPs)
   
   if (.hasSlot(Data, "nareas")) {
@@ -779,7 +779,6 @@ Sense <- function(Data, MP, nsense = 6, reps = 100, perc = c(0.05, 0.5, 0.95), p
   reqs <- Required(MP)  #read.csv(paste(getwd(),'/Data/Data requirements.csv',sep=''),header=T)
   ind <- (1:nrow(reqs))[reqs[, match(MP, names(reqs))] == "Y"]
   # for(i in 1:length(reqs))
-  
   
   slotsCV <- slotNames("Data")[grep("CV_", slotNames("Data"))]
   slots <- rep("", length(slotsCV))
