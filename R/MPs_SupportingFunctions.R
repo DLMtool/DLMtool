@@ -740,7 +740,8 @@ bheq <- function(K, Linf, Lc, Lbar) {
 
 bhnoneq <- function(year, mlen, ss, K, Linf, Lc, nbreaks, styrs, stZ) {
   mlen[mlen <= 0 | is.na(mlen)] <- -99
-  ss[ss <= 0 | is.na(ss) | mlen == -99] <- 0
+  ss[ss <= 0 | is.na(ss)] <- 0 
+  ss[mlen == -99] <- 0
   stpar <- c(stZ, styrs)
 
   # results <-
