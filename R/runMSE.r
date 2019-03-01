@@ -15,12 +15,22 @@ Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "D", "Mgrad", "SRrel", "hs", "p
            "Fdisc", "R50", "Rslope", "retA", "retL", "LR5", "LFR", "Rmaxlen",
            "V2", "SLarray2", "DR", "Asize", "Size_area_1", "L50array", "L95array",
            "Fdisc_array", "Fdisc_array2", "Pinitdist", "DataOut",
-           'Perr_y', "Cobs", "Iobs", "Dobs", "Btbiascv", 'Btobs', "h", 'Index')
+           'Perr_y', "Cobs", "Iobs", "Dobs", "Btbiascv", 'Btobs', "h", 'Index'
+           )
 
 
 if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 
-
+# Old arguments from runMSErobust
+# #' @param maxsims Maximum number of simulations per packet
+# #' @param name Character string for name of saved MSE packets (if \code{savePack=TRUE}) 
+# #' and final MSE object. If none provided, it uses the first five letters from the \code{OM} name
+# #' @param unique Logical. Should the name be unique? Current date and time appended to name. 
+# #' @param maxCrash Maximum number of consecutive crashes before the MSE stops
+# #' @param saveMSE Logical to indicate if final MSE object should be saved to current 
+# #' working directory (this is probably a good idea)
+# #' @param savePack Logical to indicate if packets should be save to current working directory
+# #' @param ... Arguments to runMSE function  
 
 
 #' Run a Management Strategy Evaluation
@@ -56,15 +66,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @param save_name Character. Optional name to save parallel MSE list
 #' @param checks Logical. Run tests?
 #' @param control control options for testing and debugging
-#' @param maxsims Maximum number of simulations per packet
-#' @param name Character string for name of saved MSE packets (if \code{savePack=TRUE}) 
-#' and final MSE object. If none provided, it uses the first five letters from the \code{OM} name
-#' @param unique Logical. Should the name be unique? Current date and time appended to name. 
-#' @param maxCrash Maximum number of consecutive crashes before the MSE stops
-#' @param saveMSE Logical to indicate if final MSE object should be saved to current 
-#' working directory (this is probably a good idea)
-#' @param savePack Logical to indicate if packets should be save to current working directory
-#' @param ... Arguments to runMSE function 
+#' @param ... Arguments to runMSErobust function (function no longer works)
 #' 
 #' @templateVar url running-the-mse
 #' @templateVar ref NULL 
@@ -543,28 +545,22 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     } 
   } 
   
-  # --- Check MPs ---- 
-  if (is.na(MPs[1])) CheckMPs <- TRUE
-  if (CheckMPs) MPs <- MPCheck(MPs, Data, timelimit, silent)
-  nMP <- length(MPs)  # the total number of methods used
-  if (nMP < 1) stop("No valid MPs found", call.=FALSE)
-  
   # --- Calculate MSY statistics for each year ----
-  MSY_y <- array(0, dim=c(nsim, nMP, nyears+proyears)) # store MSY for each sim, MP and year
-  FMSY_y <- MSY_y # store FMSY for each sim, MP and year
-  SSBMSY_y <- MSY_y # store SSBMSY for each sim, MP and year 
-  BMSY_y <- MSY_y # store BMSY for each sim, MP and year
-  VBMSY_y <- MSY_y # store VBMSY for each sim, MP and year 
+  MSY_y <- array(0, dim=c(nsim, nyears+proyears)) # store MSY for each sim and year
+  FMSY_y <- MSY_y # store FMSY for each sim, and year
+  SSBMSY_y <- MSY_y # store SSBMSY for each sim, and year 
+  BMSY_y <- MSY_y # store BMSY for each sim, and year
+  VBMSY_y <- MSY_y # store VBMSY for each sim, and year 
   
   if(!silent) message("Calculating MSY reference points for each year")
   # average life-history parameters over 10 years
   for (y in 1:(nyears+proyears)) {
     MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, yr.ind=y)
-    MSY_y[,,y] <- MSYrefsYr[1, ]
-    FMSY_y[,,y] <- MSYrefsYr[2,]
-    SSBMSY_y[,,y] <- MSYrefsYr[3,]
-    BMSY_y[,,y] <- MSYrefsYr[6,]
-    VBMSY_y[,,y] <- MSYrefsYr[7,] 
+    MSY_y[,y] <- MSYrefsYr[1, ]
+    FMSY_y[,y] <- MSYrefsYr[2,]
+    SSBMSY_y[,y] <- MSYrefsYr[3,]
+    BMSY_y[,y] <- MSYrefsYr[6,]
+    VBMSY_y[,y] <- MSYrefsYr[7,] 
   }
   
   # --- MSY reference points ----
@@ -626,10 +622,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                          FMSY_M=FMSY_M, N0=N0, SSB0=SSB0, B0=B0, VB0=VB0, RefY=RefY, 
                          Blow=Blow, MGT=MGT, R0=R0)
 
-  Misc$MSYRefs <- list(Refs=RefPoints, ByYear=list(MSY=MSY_y[,1,], FMSY=FMSY_y[,1,],
-                                                   SSBMSY=SSBMSY_y[,1,],
-                                                   BMSY=BMSY_y[,1,],
-                                                   VBMSY=VBMSY_y[,1,]))
+  Misc$MSYRefs <- list(Refs=RefPoints, ByYear=list(MSY=MSY_y, FMSY=FMSY_y,
+                                                   SSBMSY=SSBMSY_y,
+                                                   BMSY=BMSY_y,
+                                                   VBMSY=VBMSY_y))
   
   # --- Calculate Historical Catch ----
   # Calculate catch-at-age 
@@ -723,7 +719,19 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     return(HistObj)	
   }
 
+  # --- Check MPs ---- 
+  if (is.na(MPs[1])) CheckMPs <- TRUE
+  if (CheckMPs) MPs <- MPCheck(MPs, Data, timelimit, silent)
+  nMP <- length(MPs)  # the total number of methods used
+  if (nMP < 1) stop("No valid MPs found", call.=FALSE)
   
+  # --- Add nMP dimension to MSY stats  ----
+  MSY_y <- array(MSY_y, dim=c(nsim, nyears+proyears, nMP)) %>% aperm(c(1,3,2)) # store MSY for each sim, MP and year
+  FMSY_y <- array(FMSY_y, dim=c(nsim, nyears+proyears, nMP)) %>% aperm(c(1,3,2)) # store FMSY for each sim, MP and year
+  SSBMSY_y <- array(SSBMSY_y, dim=c(nsim, nyears+proyears, nMP)) %>% aperm(c(1,3,2)) # store SSBMSY for each sim, MP and year 
+  BMSY_y <- array(BMSY_y, dim=c(nsim, nyears+proyears, nMP)) %>% aperm(c(1,3,2)) # store BMSY for each sim, MP and year
+  VBMSY_y <- array(VBMSY_y, dim=c(nsim, nyears+proyears, nMP)) %>% aperm(c(1,3,2)) # store VBMSY for each sim, MP and year 
+
   # Calculate management interval for each MP
   if (length(interval) != nMP) interval <- rep(interval, nMP)[1:nMP]
   if (!all(interval == interval[1])) {
@@ -1159,7 +1167,13 @@ cparscheck<-function(cpars){
 # }
 
 
-# #' @describeIn runMSE Save out the results to a Rdata
+#' @describeIn runMSE This function has now been removed. Use `runMSE`.
+#' @export
+runMSErobust <- function(...) {
+  stop("runMSErobust is no longer working. Use `runMSE` instead.")
+}
+
+
 # #' file.  To increase speed and efficiency, particulary for runs with a large
 # #' number simulations (\code{nsim}), the simulations are split into a number of
 # #' packets.  The functions loops over the packets and combines the output into
@@ -1169,12 +1183,8 @@ cparscheck<-function(cpars){
 # #' the packets as Rdata files to the current working directory (default is
 # #' FALSE). By default, the functions saves the completed MSE object as a Rdata
 # #' file (to the current working directory).
-# #' @export
-# runMSErobust <- function(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE", "matlenlim", "MRreal"), 
-#                          timelimit = 1, CheckMPs = FALSE, Hist = FALSE, 
-#                          ntrials = 50, fracD = 0.05, CalcBlow = FALSE, HZN = 2, Bfrac = 0.5, AnnualMSY=TRUE,
-#                          maxsims = 64, name = NULL, unique=FALSE, maxCrash = 10, saveMSE = TRUE, 
-#                          savePack = FALSE) {
+# #' 
+# #' 
 #   
 #   if (!snowfall::sfIsRunning()) {
 #     message("Setting up parallel processing")
