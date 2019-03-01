@@ -27,6 +27,7 @@ PMLimit <- function(MSE, ..., Prob=NULL, Labels=NULL, FeaseMPs=NULL,
                       quiet=TRUE, dir=NULL, RMDfile=NULL, font_size=14,
                       auto_width=FALSE, enableSearch=TRUE, PMlist=NULL, build=TRUE) {
 
+  MP <- prob <- Feasible <- NULL # hacks for cran checks
   if (class(MSE) != 'MSE') stop("Object is not class 'MSE'", call. = FALSE)
   nMPs <- MSE@nMPs
   if (is.null(Prob)) stop("Must specify 'Prob'", call. = FALSE)
@@ -113,7 +114,7 @@ PMLimit <- function(MSE, ..., Prob=NULL, Labels=NULL, FeaseMPs=NULL,
   if(is.null(RMDfile))
     RMDfile <- file.path(system.file(package = "DLMtool"), 'PLimitTable.Rmd')
 
-  out <- df %>% filter(min >= Prob & Feasible=="Yes") %>% dplyr::select(MP) %>% unique()
+  out <- df %>% dplyr::filter(min >= Prob & Feasible=="Yes") %>% dplyr::select(MP) %>% unique()
   if (build) {
     if (file.exists(RMDfileout)) unlink(RMDfileout)
     rmarkdown::render(input=RMDfile, output_file=RMDfileout, output_format=output_format,
@@ -162,6 +163,8 @@ PMObj <- function(MSE, ..., Labels=NULL, out.file=NULL,
                   cols=NULL, show.legend=TRUE,
                   auto_width=FALSE, enableSearch=TRUE, PMlist=NULL, build=TRUE,
                   cex.tex=0.75, inc.title=TRUE, title="Legend") {
+  
+  MP <- prob <- NULL # hacks for cran checks
   
   if (class(MSE) != 'MSE') stop("Object is not class 'MSE'", call. = FALSE)
   nMPs <- MSE@nMPs
