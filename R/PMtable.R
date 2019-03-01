@@ -1,5 +1,5 @@
 
-#' Create a table of Performance Limits
+#' Create a table of Performance Limits and Performance Objectives
 #'
 #' @param MSE An object of class 'MSE'
 #' @param ... PM objects to be used as performance limits. Characters (i.e names of PM objects)
@@ -17,8 +17,16 @@
 #' @param enableSearch Currently disabled. Logical. Should search be enabled in the html table? 
 #' @param PMlist Optional. List of PM names.
 #' @param build Logical. Build the html table?
-#'
-#' @return Invisibly returns names of MPs that pass all performance limits
+#' @describeIn PMLimit Create a table of Performance Limits 
+#' @author A. Hordyk
+#' @return `PMLimit` invisibly returns names of MPs that pass all performance limits 
+#' @examples
+#' \dontrun{
+#' MSE <- runMSE()
+#' PMLimit(MSE, "P50", "PNOF", Prob=0.9)
+#' PMObj(MSE, "P100", "LTY")
+#' }
+#' 
 #' @export
 #'
 PMLimit <- function(MSE, ..., Prob=NULL, Labels=NULL, FeaseMPs=NULL,
@@ -130,31 +138,8 @@ PMLimit <- function(MSE, ..., Prob=NULL, Labels=NULL, FeaseMPs=NULL,
 
 }
 
-#' Create a table of Performance Objectives
-#'
-#' @param MSE An object of class 'MSE'
-#' @param ... PM objects to be used as performance metrics. Characters (i.e names of PM objects)
-#' @param Labels Optional named list specifying new labels for MPs. For example: `Labels = list(AvC="Average Catch", CC1="Constant Catch")`
-#' @param out.file Name of the output file. If none provided, output file will be named 'PerfObjTable' 
-#' @param output_format Output file format. Currently only 'html_document' is supported
-#' @param openFile Logical. Should the file be opened in browser?
-#' @param quiet Logical. An option to suppress printing of the pandoc command line.
-#' @param dir Optional. Directory for output file. Default is working directory.
-#' @param RMDfile Optional. RMD template file
-#' @param font_size Numeric. Font size for text in the table
-#' @param use.colors Logical. Color scale the probability text?
-#' @param cols Optional character vector of colors for probability text
-#' @param show.legend Logical. Show the legend?
-#' @param auto_width Logical. Should table be full width?
-#' @param enableSearch Logical. Should search be enabled in the html table?
-#' @param PMlist Optional. List of PM names.
-#' @param build Logical. Build the html table?
-#' @param cex.tex Size of legend text
-#' @param inc.title Logical. Include title for legend?
-#' @param title Title for the legend
-#' @return Nothing is returned. 
+#' @describeIn PMLimit Create a table of Performance Objectives. 
 #' @export
-#'
 #'
 PMObj <- function(MSE, ..., Labels=NULL, out.file=NULL,
                   output_format="html_document", openFile=TRUE,

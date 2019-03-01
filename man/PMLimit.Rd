@@ -2,13 +2,21 @@
 % Please edit documentation in R/PMtable.R
 \name{PMLimit}
 \alias{PMLimit}
-\title{Create a table of Performance Limits}
+\alias{PMObj}
+\title{Create a table of Performance Limits and Performance Objectives}
 \usage{
 PMLimit(MSE, ..., Prob = NULL, Labels = NULL, FeaseMPs = NULL,
   out.file = NULL, output_format = "html_document", openFile = TRUE,
   quiet = TRUE, dir = NULL, RMDfile = NULL, font_size = 14,
   auto_width = FALSE, enableSearch = TRUE, PMlist = NULL,
   build = TRUE)
+
+PMObj(MSE, ..., Labels = NULL, out.file = NULL,
+  output_format = "html_document", openFile = TRUE, quiet = TRUE,
+  dir = NULL, RMDfile = NULL, font_size = 14, use.colors = TRUE,
+  cols = NULL, show.legend = TRUE, auto_width = FALSE,
+  enableSearch = TRUE, PMlist = NULL, build = TRUE, cex.tex = 0.75,
+  inc.title = TRUE, title = "Legend")
 }
 \arguments{
 \item{MSE}{An object of class 'MSE'}
@@ -44,8 +52,26 @@ PMLimit(MSE, ..., Prob = NULL, Labels = NULL, FeaseMPs = NULL,
 \item{build}{Logical. Build the html table?}
 }
 \value{
-Invisibly returns names of MPs that pass all performance limits
+\code{PMLimit} invisibly returns names of MPs that pass all performance limits
 }
 \description{
-Create a table of Performance Limits
+Create a table of Performance Limits and Performance Objectives
+}
+\section{Functions}{
+\itemize{
+\item \code{PMLimit}: Create a table of Performance Limits
+
+\item \code{PMObj}: Create a table of Performance Objectives.
+}}
+
+\examples{
+\dontrun{
+MSE <- runMSE()
+PMLimit(MSE, "P50", "PNOF", Prob=0.9)
+PMObj(MSE, "P100", "LTY")
+}
+
+}
+\author{
+A. Hordyk
 }
