@@ -2,6 +2,7 @@
 % Please edit documentation in R/runMSE.r
 \name{runMSE}
 \alias{runMSE}
+\alias{runMSErobust}
 \title{Run a Management Strategy Evaluation}
 \usage{
 runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
@@ -10,6 +11,8 @@ runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
   HZN = 2, Bfrac = 0.5, AnnualMSY = TRUE, silent = FALSE,
   PPD = FALSE, parallel = FALSE, save_name = NULL, checks = FALSE,
   control = NULL)
+
+runMSErobust(...)
 }
 \arguments{
 \item{OM}{An operating model object (class 'OM')}
@@ -56,21 +59,7 @@ May differ from MSY statistics from last historical year if there are changes in
 
 \item{control}{control options for testing and debugging}
 
-\item{maxsims}{Maximum number of simulations per packet}
-
-\item{name}{Character string for name of saved MSE packets (if \code{savePack=TRUE})
-and final MSE object. If none provided, it uses the first five letters from the \code{OM} name}
-
-\item{unique}{Logical. Should the name be unique? Current date and time appended to name.}
-
-\item{maxCrash}{Maximum number of consecutive crashes before the MSE stops}
-
-\item{saveMSE}{Logical to indicate if final MSE object should be saved to current
-working directory (this is probably a good idea)}
-
-\item{savePack}{Logical to indicate if packets should be save to current working directory}
-
-\item{...}{Arguments to runMSE function}
+\item{...}{Arguments to runMSErobust function (function no longer works)}
 }
 \value{
 An object of class \linkS4class{MSE}
@@ -82,6 +71,8 @@ simulation) for a specified operating model
 \section{Functions}{
 \itemize{
 \item \code{runMSE}: Default function to use.
+
+\item \code{runMSErobust}: This function has now been removed. Use \code{runMSE}.
 }}
 
 \note{
