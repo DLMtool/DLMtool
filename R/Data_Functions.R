@@ -89,9 +89,9 @@ XL2Data <- function(name="Data") {
     if (all(NewSheetNames %in% sheetnames)) {
       Data <- importnewXLData(dir,name, NewSheetNames)
     } else {
-      datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE))
+      datasheet <- suppressMessages(as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE)))
       if (datasheet[1,1]== "Slot") 
-        datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE, skip=1))
+        datasheet <- suppressMessages(as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE, skip=1)))
       
       if (all(dim(datasheet) == 0)) stop("Nothing found in first sheet", call.=FALSE)
       tmpfile <- tempfile(fileext=".csv")
@@ -117,8 +117,8 @@ importnewXLData <- function(dir,name, NewSheetNames) {
   
   # sh <- NewSheetNames[1]
   for (sh in NewSheetNames) { # import from individual worksheets
-    datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), 
-                                                  sheet = sh, col_names = FALSE))
+    datasheet <- suppressMessages(as.data.frame(readxl::read_excel(file.path(dir,name), 
+                                                  sheet = sh, col_names = FALSE)))
     if (dim(datasheet)[2] <= 1) {
       message('No data found in sheet: ', sh)
     } else {
