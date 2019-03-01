@@ -271,7 +271,7 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
   count <- 1
   tempObj <- vector("list", 4)
   for (obj in c("Stock", "Fleet", "Obs", "Imp")) {
-    sht <- as.data.frame(readxl::read_excel(name, sheet = obj, col_names = FALSE))
+    sht <- suppressMessages(as.data.frame(readxl::read_excel(name, sheet = obj, col_names = FALSE)))
     rows <- sht[,1] 
     rows <- rows[!rows == "Slot"]
     ind <- which(!rows %in% slotNames(obj))
@@ -298,7 +298,7 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
             Obs = tempObj[[3]], Imp=tempObj[[4]])
   
   # Read in the OM sheet
-  sht <- as.data.frame(readxl::read_excel(name, sheet = "OM", col_names = FALSE))
+  sht <- suppressMessages(as.data.frame(readxl::read_excel(name, sheet = "OM", col_names = FALSE)))
   dat <- sht # sht[,1:2] 
   dat <- dat[which(dat[,1] != "Slot"),]
   # if (ncol(sht)>2) warning("More than two columns found in Sheet OM. Values in columns C+ are ignored")
@@ -332,7 +332,7 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
       stop("'cpars' must be a list", call.=FALSE)
     }
   }
-  ChkObj(OM, FALSE)
+  tt <- ChkObj(OM, FALSE)
   if (msg) {
     message('OM successfully imported\n')
     message("Document OM slots in .rmd file (probably ", tools::file_path_sans_ext(name), ".rmd),
@@ -1694,7 +1694,7 @@ Data_xl <- function(fname, stkname, fpath = "", saveCSV = FALSE) {
   # Data
   index <- which(pmatch(shtname, paste0(stkname, "Data")) == 1)
   if (length(index) > 1)  stop("More than one match")
-  data <- readxl::read_excel(infile, sheet = index, col_names = FALSE)
+  data <- suppressMessages(readxl::read_excel(infile, sheet = index, col_names = FALSE))
   data <- as.data.frame(data)
   tmpfile <- paste0(fpath, stkname, "Data.csv")
   if (file.exists(tmpfile)) unlink(tmpfile)
