@@ -7,7 +7,7 @@
 PMObj(MSE, ..., Labels = NULL, out.file = NULL,
   output_format = "html_document", openFile = TRUE, quiet = TRUE,
   dir = NULL, RMDfile = NULL, font_size = 14, use.colors = TRUE,
-  cols = NULL, show.legend = TRUE, full_width = TRUE,
+  cols = NULL, show.legend = TRUE, auto_width = FALSE,
   enableSearch = TRUE, PMlist = NULL, build = TRUE, cex.tex = 0.75,
   inc.title = TRUE, title = "Legend")
 }
@@ -38,7 +38,7 @@ PMObj(MSE, ..., Labels = NULL, out.file = NULL,
 
 \item{show.legend}{Logical. Show the legend?}
 
-\item{full_width}{Logical. Should table be full width?}
+\item{auto_width}{Logical. Should table be full width?}
 
 \item{enableSearch}{Logical. Should search be enabled in the html table?}
 

@@ -1036,7 +1036,7 @@ setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Gener
 #' @template OM_desc 
 #' @template Obs_desc 
 #' 
-#' @slot B_BMSY Simulated biomass relative to BMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers 
+#' @slot B_BMSY Simulated spawning biomass relative to spawning BMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers 
 #' @slot F_FMSY Simulated fishing mortality rate relative to FMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers
 #' @slot B Simulated stock biomass over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers 
 #' @slot SSB Simulated spawning stock biomass over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers
@@ -1930,7 +1930,7 @@ setMethod("show", signature = (object="Rec"), function(object) {
 #' }
 #' 
 #' @slot SampPars All sampled Stock, Fleet, Obs, and Imp parameters
-#' 
+#' @slot Misc A list of additional information
 #' @author A. Hordyk
 #' @keywords classes
 setClass("Hist", representation(
@@ -1940,7 +1940,8 @@ setClass("Hist", representation(
   AtAge = 'list',
   TSdata = 'list',
   Ref = "data.frame",
-  SampPars='list'
+  SampPars='list',
+  Misc = 'list'
   ))
 
 

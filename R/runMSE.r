@@ -48,7 +48,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @param HZN The number of mean generation times required to reach Bfrac SSBMSY
 #' in the Blow calculation
 #' @param Bfrac The target fraction of SSBMSY for calculating Blow
-#' @param AnnualMSY Logical. Should MSY statistics be calculated for each projection year? 
+#' @param AnnualMSY Deprecated. Always set to TRUE now. Logical. Should MSY statistics be calculated for each projection year? 
 #' May differ from MSY statistics from last historical year if there are changes in productivity
 #' @param silent Should messages be printed out to the console?
 #' @param PPD Logical. Should posterior predicted data be included in the MSE object Misc slot?
@@ -180,14 +180,15 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     
   }
   
-
-  failedMPs <- MSE1@MPs[which(apply(apply(is.na(MSE1@C), c(1,2), sum) == OM@proyears, 2, sum) == OM@nsim)]
-  
-  if (length(failedMPs)>0) {
-    message("Dropping failed MPs: ", paste(failedMPs, collapse=","))
-    MSE1 <- Sub(MSE1, MPs=MSE1@MPs[!MSE1@MPs%in% failedMPs])  
+  if (class(MSE1) == "MSE") {
+    failedMPs <- MSE1@MPs[which(apply(apply(is.na(MSE1@C), c(1,2), sum) == OM@proyears, 2, sum) == OM@nsim)]
+    
+    if (length(failedMPs)>0) {
+      message("Dropping failed MPs: ", paste(failedMPs, collapse=","))
+      MSE1 <- Sub(MSE1, MPs=MSE1@MPs[!MSE1@MPs%in% failedMPs])  
+    }
   }
-  
+ 
   return(MSE1)
   
 }
@@ -372,51 +373,31 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   SSN0_a <- apply(SSN_a, c(1,3), sum) # unfished spawning numbers for each year
   N0_a <- apply(N_a, c(1,3), sum) # unfished numbers for each year)
   SSB0_a <- apply(SSB_a, c(1,3), sum) # unfished spawning biomass for each year
-  SSB0a <- apply(SSB_a, c(1, 3,4), sum)  # Calculate unfished spawning stock biomass by area for each year
+  SSB0a_a <- apply(SSB_a, c(1, 3,4), sum)  # Calculate unfished spawning stock biomass by area for each year
   B0_a <- apply(Biomass_a, c(1,3), sum) # unfished biomass for each year
+  VB0_a <- apply(apply(Biomass_a, c(1,2,3), sum) * V, c(1,3), sum) # unfished vulnerable biomass for each year
+  
+  UnfishedByYear <- list(SSN0=SSN0_a, N0=N0_a, SSB0=SSB0_a, B0=B0_a, VB0=VB0_a)
   
   # ---- Unfished Reference Points ----
- 
   SSBpRa <- array(SSB0_a/matrix(R0, nrow=nsim, ncol=nyears+proyears), dim = c(nsim, nyears+proyears))
   
-  # calculate moving average for each year ?
-  CalcUnfishedRefs <- function(x, ageM, N0_a, SSB0_a, B0_a, SSBpRa) {
-    avg.ind <- 1:ceiling(ageM[x,1]) # unfished eq ref points averaged over these years 
-    N0 <- mean(N0_a[x, avg.ind])
-    SSB0 <- mean(SSB0_a[x, avg.ind])
-    B0 <- mean(B0_a[x, avg.ind])
-    SSBpR <- mean(SSBpRa[x, avg.ind])
-    data.frame(N0=N0, SSB0=SSB0, B0=B0, SSBpR=SSBpR )
-  }
- 
-  UnfishedRefs <- sapply(1:nsim, CalcUnfishedRefs, ageM=ageM, N0_a=N0_a, 
-                         SSB0_a=SSB0_a, B0_a=B0_a, SSBpRa=SSBpRa) 
+  UnfishedRefs <- sapply(1:nsim, CalcUnfishedRefs, ageM=ageM, N0_a=N0_a, SSN0_a=SSN0_a,
+                         SSB0_a=SSB0_a, B0_a=B0_a, VB0_a=VB0_a, SSBpRa=SSBpRa, SSB0a_a=SSB0a_a) 
                         
   N0 <- UnfishedRefs[1,] %>% unlist() # average unfished numbers
-  SSB0 <- UnfishedRefs[2,] %>% unlist() # average unfished spawning biomass
-  B0 <- UnfishedRefs[3,] %>% unlist() # average unfished biomass
+  SSN0 <- UnfishedRefs[2,] %>% unlist() # average spawning unfished numbers
+  SSB0 <- UnfishedRefs[3,] %>% unlist() # average unfished spawning biomass
+  B0 <- UnfishedRefs[4,] %>% unlist() # average unfished biomass
+  VB0 <- UnfishedRefs[5,] %>% unlist() # average unfished biomass
   
   # average spawning stock biomass per recruit 
-  SSBpR <- matrix(UnfishedRefs[4,] %>% unlist(), nrow=nsim, ncol=nareas)  
-   
-  bR <- matrix(log(5 * hs)/(0.8 * SSB0), nrow=nsim)  # Ricker SR params
-  aR <- matrix(exp(bR * SSB0)/SSBpR, nrow=nsim)  # Ricker SR params
+  SSBpR <- matrix(UnfishedRefs[6,] %>% unlist(), nrow=nsim, ncol=nareas) 
+  SSB0a <- UnfishedRefs[7,] %>% unlist() %>% matrix(nrow=nsim, ncol=nareas, byrow = TRUE)# average unfished biomass
+  bR <- matrix(log(5 * hs)/(0.8 * SSB0a), nrow=nsim)  # Ricker SR params
+  aR <- matrix(exp(bR * SSB0a)/SSBpR, nrow=nsim)  # Ricker SR params
   
-  
-  # Calculated average 10 years around current year
-  yr.ind <- (nyears-5):(nyears+4)
-  if (max(yr.ind) > nyears+proyears) {
-    t.yrs <- 9-proyears
-    yr.ind <- (nyears-8):(nyears+proyears)
-  }
-  
-  N0 <- apply(N0_a[,yr.ind], 1, mean) # average unfished numbers
-  SSB0 <- apply(SSB0_a[,yr.ind], 1, mean) # average unfished spawning biomass
-  B0 <- apply(B0_a[,yr.ind], 1, mean) # average unfished biomass
-
-  
-
-
+  Misc$Unfished <- list(Refs=UnfishedRefs, ByYear=UnfishedByYear)
   
   # --- Optimize for Initial Depletion ----
   # Depletion in year 1 
@@ -562,25 +543,51 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     } 
   } 
   
-  # --- Calculate MSY references ----  
-  if(!silent) message("Calculating MSY reference points") 
+  # --- Check MPs ---- 
+  if (is.na(MPs[1])) CheckMPs <- TRUE
+  if (CheckMPs) MPs <- MPCheck(MPs, Data, timelimit, silent)
+  nMP <- length(MPs)  # the total number of methods used
+  if (nMP < 1) stop("No valid MPs found", call.=FALSE)
   
-  # MSY reference points are calculated from life-history parameters averaged
-  # over 10 years (around current year - i.e last historical)
+  # --- Calculate MSY statistics for each year ----
+  MSY_y <- array(0, dim=c(nsim, nMP, nyears+proyears)) # store MSY for each sim, MP and year
+  FMSY_y <- MSY_y # store FMSY for each sim, MP and year
+  SSBMSY_y <- MSY_y # store SSBMSY for each sim, MP and year 
+  BMSY_y <- MSY_y # store BMSY for each sim, MP and year
+  VBMSY_y <- MSY_y # store VBMSY for each sim, MP and year 
   
-  MSYrefs <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, maxage, 
-                    R0, SRrel, hs, yr.ind=yr.ind) 
+  if(!silent) message("Calculating MSY reference points for each year")
+  # average life-history parameters over 10 years
+  for (y in 1:(nyears+proyears)) {
+    MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, yr.ind=y)
+    MSY_y[,,y] <- MSYrefsYr[1, ]
+    FMSY_y[,,y] <- MSYrefsYr[2,]
+    SSBMSY_y[,,y] <- MSYrefsYr[3,]
+    BMSY_y[,,y] <- MSYrefsYr[6,]
+    VBMSY_y[,,y] <- MSYrefsYr[7,] 
+  }
   
-  MSY <- MSYrefs[1, ]  # record the MSY results (Vulnerable)
-  FMSY <- MSYrefs[2, ]  # instantaneous FMSY (Vulnerable)
-  SSBMSY <- MSYrefs[3, ]  # Spawning Stock Biomass at MSY
-  SSBMSY_SSB0 <- MSYrefs[4, ] # SSBMSY relative to unfished (SSB)
-  BMSY_B0 <- MSYrefs[5, ] # Biomass relative to unfished (B0)
-  BMSY <- MSYrefs[6,] # total biomass at MSY
-  VBMSY <- MSYrefs[7,] # Biomass at MSY (Vulnerable)
-  UMSY <- MSY/VBMSY  # exploitation rate [equivalent to 1-exp(-FMSY)]
+  # --- MSY reference points ----
+  MSYRefPoints <- sapply(1:nsim, CalcMSYRefs, MSY_y=MSY_y, FMSY_y=FMSY_y, 
+                         SSBMSY_y=SSBMSY_y, BMSY_y=BMSY_y, VBMSY_y=VBMSY_y, 
+                         ageM=ageM, OM=OM)
+                         
+  MSY <- MSYRefPoints[1,] %>% unlist() # record the MSY results (Vulnerable)
+  FMSY <- MSYRefPoints[2,] %>% unlist()  # instantaneous FMSY (Vulnerable)
+  SSBMSY <- MSYRefPoints[3,] %>% unlist()  # Spawning Stock Biomass at MSY
+  BMSY <- MSYRefPoints[4,] %>% unlist() # total biomass at MSY
+  VBMSY <- MSYRefPoints[5,] %>% unlist() # Biomass at MSY (Vulnerable)
+  UMSY <- MSY/VBMSY  # exploitation rate 
   FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
-
+  
+  SSBMSY_SSB0 <- SSBMSY/SSB0 # SSBMSY relative to unfished (SSB)
+  BMSY_B0 <- BMSY/B0 # Biomass relative to unfished (B0)
+  VBMSY_VB0 <- VBMSY/VB0 # VBiomass relative to unfished (VB0)
+  
+  if (!AnnualMSY) {
+    warning('AnnualMSY argument is deprecated. MSY metrics are always calculated by year.\n Use `MSE@SSB` or `MSE@B` and `MSE@Misc$MSYRefs$ByYear` for alternative methods to calculate B/BMSY')
+  }
+ 
   if (checks) {
     Btemp <- apply(SSB, c(1,3), sum)
     x <- Btemp[,nyears]/SSBMSY
@@ -599,7 +606,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   if(CalcBlow){
     if(!silent) message("Calculating B-low reference points")            
     MGThorizon<-floor(HZN*MGT)
-    Blow <- sapply(1:nsim,getBlow, N, Asize, MSYrefs[3,],SSBpR, MPA, SSB0, nareas, retA, MGThorizon,
+    Blow <- sapply(1:nsim,getBlow, N, Asize, SSBMSY,SSBpR, MPA, SSB0, nareas, retA, MGThorizon,
                    Find,Perr_y,M_ageArray,hs,Mat_age, Wt_age,R0a,V,nyears,maxage,mov,
                    Spat_targ,SRrel,aR,bR,Bfrac, maxF) 
   }
@@ -615,9 +622,14 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                  Spat_targ, hs, R0a, SSBpR, aR, bR, MPA=MPA, maxF=maxF, SSB0=SSB0)
 
   RefPoints <- data.frame(MSY=MSY, FMSY=FMSY, SSBMSY=SSBMSY, SSBMSY_SSB0=SSBMSY_SSB0,
-                         BMSY_B0=BMSY_B0, BMSY=BMSY, VBMSY=VBMSY, UMSY=UMSY,
-                         FMSY_M=FMSY_M, N0=N0, SSB0=SSB0, B0=B0, RefY=RefY, 
+                         BMSY_B0=BMSY_B0, BMSY=BMSY, VBMSY=VBMSY, UMSY=UMSY, VBMSY_VB0=VBMSY_VB0,
+                         FMSY_M=FMSY_M, N0=N0, SSB0=SSB0, B0=B0, VB0=VB0, RefY=RefY, 
                          Blow=Blow, MGT=MGT, R0=R0)
+
+  Misc$MSYRefs <- list(Refs=RefPoints, ByYear=list(MSY=MSY_y[,1,], FMSY=FMSY_y[,1,],
+                                                   SSBMSY=SSBMSY_y[,1,],
+                                                   BMSY=BMSY_y[,1,],
+                                                   VBMSY=VBMSY_y[,1,]))
   
   # --- Calculate Historical Catch ----
   # Calculate catch-at-age 
@@ -660,7 +672,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   SizeLim_f<-array(rlnorm(proyears * nsim, mconv(SizeLimFrac, SizeLimSD),
                           sdconv(SizeLimFrac, SizeLimSD)), c(nsim, proyears))  # composite of size limit fraction and error
   
-  
   # --- Populate Data object with Historical Data ---- 
   Data <- makeData(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars, 
                    FleetPars, ObsPars, ImpPars, RefPoints,
@@ -672,7 +683,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                          nyears, proyears, silent=silent)
   Data <- templist$Data # update 
   ErrList <- templist$ErrList # update
-
   Misc$RInd.stats <- ErrList$stats.df # return stats
   
   ObsPars <- Data@Obs # Obs pars updated in makeData 
@@ -709,14 +719,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     HistObj@TSdata <- TSdata
     HistObj@Ref <- RefPoints[,order(colnames(RefPoints))]
     HistObj@SampPars <- c(StockPars, FleetPars, ObsPars, ImpPars)
+    HistObj@Misc <- Misc
     return(HistObj)	
   }
-  
-  # --- Check MPs ---- 
-  if (is.na(MPs[1])) CheckMPs <- TRUE
-  if (CheckMPs) MPs <- MPCheck(MPs, Data, timelimit, silent)
-  nMP <- length(MPs)  # the total number of methods used
-  if (nMP < 1) stop("No valid MPs found", call.=FALSE)
+
   
   # Calculate management interval for each MP
   if (length(interval) != nMP) interval <- rep(interval, nMP)[1:nMP]
@@ -743,29 +749,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   CALout <- array(NA, dim = c(nsim, nMP, nCALbins))  # store the population-at-length in last projection year
   # SPRa <- array(NA,dim=c(nsim,nMP,proyears)) # store the Spawning Potential Ratio
   
-  MSY_P <- array(MSY, dim=c(nsim, nMP, proyears)) # store MSY for each sim, MP and year
-  FMSY_P <- array(FMSY, dim=c(nsim, nMP, proyears)) # store FMSY for each sim, MP and year
-  SSBMSY_P <- array(SSBMSY, dim=c(nsim, nMP, proyears))# store SSBMSY for each sim, MP and year 
-  
-  # --- Calculate MSY statistics for each projection year ----
-  if (AnnualMSY) {
-    if(!silent) message("Calculating MSY reference points for each projection year")
-    # average life-history parameters over 10 years
-    for (y in (nyears+1):(nyears+proyears)) {
-      if(!silent) cat('.')
-      y2 <- y - nyears 
-      yr.ind <- (y-5):(y+4)
-      if (max(yr.ind) > nyears+proyears) {
-        yr.ind <- nyears + (proyears-9):(proyears)
-      }
-      MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, yr.ind=yr.ind)
-      MSY_P[,,y2] <- MSYrefsYr[1, ]
-      FMSY_P[,,y2] <- MSYrefsYr[2,]
-      SSBMSY_P[,,y2] <- MSYrefsYr[3,]
-    }
-    if(!silent) cat("\n")
-  }
-
   # --- Begin loop over MPs ----
   mm <- 1 # for debugging
 
@@ -904,19 +887,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         
         # -- Calculate MSY stats for this year ----
         if (AnnualMSY & SelectChanged) { #
-          # average 10 year life-history & selecivity used for MSY calcs
           y1 <- nyears + y
-          y2 <- y  
-          yr.ind <- (y1-5):(y1+4)
-          if (max(yr.ind) > nyears+proyears) {
-            yr.ind <- nyears + (proyears-9):(proyears)
-          }
-          
           MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, 
-                              V_P, maxage, R0, SRrel, hs, yr.ind=yr.ind)
-          MSY_P[,mm,y] <- MSYrefsYr[1, ]
-          FMSY_P[,mm,y] <- MSYrefsYr[2,]
-          SSBMSY_P[,mm,y] <- MSYrefsYr[3,]
+                              V_P, maxage, R0, SRrel, hs, yr.ind=y1)
+          MSY_y[,mm,y] <- MSYrefsYr[1, ]
+          FMSY_y[,mm,y] <- MSYrefsYr[2,]
+          SSBMSY_y[,mm,y] <- MSYrefsYr[3,]
         }
         
         TACa[, mm, y] <- TACa[, mm, y-1] # TAC same as last year unless changed 
@@ -953,7 +929,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           # --- Update Data object ---- 
           MSElist[[mm]] <- updateData(Data=MSElist[[mm]], OM, MPCalcs, Effort, Biomass, 
                                       Biomass_P, CB_Pret, N_P, SSB, SSB_P, VBiomass, VBiomass_P, 
-                                      RefPoints, ErrList, FMSY_P, retA_P, retL_P, StockPars, 
+                                      RefPoints, ErrList, FMSY_y, retA_P, retL_P, StockPars, 
                                       FleetPars, ObsPars, upyrs, interval, y, mm, 
                                       Misc=Data_p@Misc, SampCpars)
           
@@ -961,7 +937,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           M_array <- array(0.5*M_ageArray[,,nyears+y], dim=c(nsim, maxage, nareas))
           Atemp <- apply(VBiomass_P[, , y, ] * exp(-M_array), 1, sum) # Abundance (mid-year before fishing)
           MSElist[[mm]]@OM$A <- Atemp
-          MSElist[[mm]]@OM$FMSY <- FMSY_P[,mm,y]
+          MSElist[[mm]]@OM$FMSY <- FMSY_y[,mm,y+OM@nyears]
           
           # --- apply MP ----
           runMP <- applyMP(Data=MSElist[[mm]], MPs = MPs[mm], reps = reps, silent=TRUE)  # Apply MP
@@ -1039,8 +1015,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         checkNA[y] <- sum(is.na(TACused))
       }  # end of year loop
       
-      B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY_P[,mm,]  # SSB relative to SSBMSY
-      F_FMSYa[, mm, ] <- FMa[, mm, ]/FMSY_P[,mm,]
+      B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY_y[,mm,(OM@nyears+1):(OM@nyears+OM@proyears)]  # SSB relative to SSBMSY
+      F_FMSYa[, mm, ] <- FMa[, mm, ]/FMSY_y[,mm,(OM@nyears+1):(OM@nyears+OM@proyears)]
       
       Ba[, mm, ] <- apply(Biomass_P, c(1, 3), sum, na.rm=TRUE) # biomass 
       SSBa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE) # spawning stock biomass
@@ -1084,6 +1060,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # Miscellaneous reporting
   if(PPD) Misc$Data <- MSElist
+  
+  
 
   ## Create MSE Object #### 
   MSEout <- new("MSE", Name = OM@Name, nyears, proyears, nMPs=nMP, MPs, nsim, 

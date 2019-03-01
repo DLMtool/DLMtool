@@ -201,7 +201,7 @@ simulation conditions and performance of data-limited methods
 
 }}
 
-\item{\code{B_BMSY}}{Simulated biomass relative to BMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers}
+\item{\code{B_BMSY}}{Simulated spawning biomass relative to spawning BMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers}
 
 \item{\code{F_FMSY}}{Simulated fishing mortality rate relative to FMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers}
 

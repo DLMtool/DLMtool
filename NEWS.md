@@ -16,6 +16,10 @@ The current version of the DLMtool package is available for download from [CRAN]
 - Specify labels and colors for MPs in trade-off plots
 - MPs that fail (i.e. crash R are now skipped).  `runMSErobust` has been now removed from package (it was broken in the previous version). 
 
+- MSY and Depletion reference points
+
+- AnnualMSY argument deprecated - describe alternative ways to calculate B/BMSY 
+
 ### Major changes 
 - The slots for specifying gradients in life-history parameters (e.g `Stock@Mgrad`, `Stock@Linfgrad`) 
 have been removed. Time-varying parameters should now be specified with `OM@cpars`.

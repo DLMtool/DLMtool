@@ -122,6 +122,8 @@ reach Bfrac of BMSY
 }}
 
 \item{\code{SampPars}}{All sampled Stock, Fleet, Obs, and Imp parameters}
+
+\item{\code{Misc}}{A list of additional information}
 }}
 
 \author{

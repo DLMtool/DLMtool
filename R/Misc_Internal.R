@@ -797,8 +797,32 @@ addRealInd <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, nsim, n
 }
 
 
+# calculate average unfished ref points over first A50 years
+CalcUnfishedRefs <- function(x, ageM, N0_a, SSN0_a, SSB0_a, B0_a, VB0_a, SSBpRa, SSB0a_a) {
+  avg.ind <- 1:ceiling(ageM[x,1]) # unfished eq ref points averaged over these years 
+  N0 <- mean(N0_a[x, avg.ind])
+  SSN0  <- mean(SSN0_a[x, avg.ind])
+  SSB0 <- mean(SSB0_a[x, avg.ind])
+  B0 <- mean(B0_a[x, avg.ind])
+  VB0 <- mean(VB0_a[x, avg.ind])
+  SSBpR <- mean(SSBpRa[x, avg.ind])
+  SSB0a <- apply(SSB0a_a[x,avg.ind,], 2, mean)
+  list(N0=N0, SSN0=SSN0, SSB0=SSB0, B0=B0, VB0=VB0, SSBpR=SSBpR, SSB0a=SSB0a)
+}
 
-
+CalcMSYRefs <- function(x, MSY_y, FMSY_y, SSBMSY_y, BMSY_y, VBMSY_y, ageM, OM) {
+  n.yrs <- ceiling(ageM[x,OM@nyears]) # MSY ref points averaged over these years
+  minY <- floor(n.yrs/2) 
+  maxY <- n.yrs - minY - 1 
+  avg.ind <-  50 # (OM@nyears - minY):(OM@nyears + maxY)
+  
+  MSY <- mean(MSY_y[x, 1,avg.ind])
+  FMSY <- mean(FMSY_y[x, 1,avg.ind])
+  SSBMSY <- mean(SSBMSY_y[x, 1,avg.ind])
+  BMSY <- mean(BMSY_y[x, 1,avg.ind])
+  VBMSY <- mean(VBMSY_y[x,1,avg.ind])
+  data.frame(MSY=MSY, FMSY=FMSY, SSBMSY=SSBMSY, BMSY=BMSY, VBMSY=VBMSY)
+}
 
 # 
 # makeSizeCompW <- function(i, maxage, Linfarray, Karray, t0array, LenCV,

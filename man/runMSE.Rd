@@ -41,7 +41,7 @@ in the Blow calculation}
 
 \item{Bfrac}{The target fraction of SSBMSY for calculating Blow}
 
-\item{AnnualMSY}{Logical. Should MSY statistics be calculated for each projection year?
+\item{AnnualMSY}{Deprecated. Always set to TRUE now. Logical. Should MSY statistics be calculated for each projection year?
 May differ from MSY statistics from last historical year if there are changes in productivity}
 
 \item{silent}{Should messages be printed out to the console?}

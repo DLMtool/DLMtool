@@ -306,7 +306,7 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   Asp <- apply(SSB_P[, , y, ] * exp(-M_array), 1, sum)  # Spawning abundance (mid-year before fishing)
   Data@Abun <- A * ObsPars$Abias * rlnorm(nsim, mconv(1, ObsPars$Aerr), sdconv(1, ObsPars$Aerr))
   Data@SpAbun <- Asp * ObsPars$Abias * rlnorm(nsim, mconv(1, ObsPars$Aerr), sdconv(1, ObsPars$Aerr))
-  Data@Ref <- A * (1 - exp(-FMSY_P[,mm,y])) 
+  # Data@Ref <- A * (1 - exp(-FMSY_P[,mm,y])) 
 
   # --- Catch-at-age ----
   # previous CAA

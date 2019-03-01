@@ -883,11 +883,18 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
 # }
 
 optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, yr.ind=1) {
-  M_at_Age <- apply(M_ageArray[x,,yr.ind], 1, mean)
-  Wt_at_Age <- apply(Wt_age[x,, yr.ind], 1, mean)
-  Mat_at_Age <- apply(Mat_age[x,, yr.ind], 1, mean)
-  V_at_Age <- apply(V[x,, yr.ind], 1, mean)
-  
+  if (length(yr.ind)==1) {
+    M_at_Age <- M_ageArray[x,,yr.ind]
+    Wt_at_Age <- Wt_age[x,, yr.ind]
+    Mat_at_Age <- Mat_age[x,, yr.ind]
+    V_at_Age <- V[x,, yr.ind]
+  } else {
+    M_at_Age <- apply(M_ageArray[x,,yr.ind], 1, mean)
+    Wt_at_Age <- apply(Wt_age[x,, yr.ind], 1, mean)
+    Mat_at_Age <- apply(Mat_age[x,, yr.ind], 1, mean)
+    V_at_Age <- apply(V[x,, yr.ind], 1, mean)
+  }
+
   boundsU <- c(1E-3, 1)
   
   doopt <- optimise(MSYCalcs, log(boundsU), M_at_Age, Wt_at_Age, Mat_at_Age, 

@@ -7,7 +7,7 @@
 PMLimit(MSE, ..., Prob = NULL, Labels = NULL, FeaseMPs = NULL,
   out.file = NULL, output_format = "html_document", openFile = TRUE,
   quiet = TRUE, dir = NULL, RMDfile = NULL, font_size = 14,
-  full_width = TRUE, enableSearch = TRUE, PMlist = NULL,
+  auto_width = FALSE, enableSearch = TRUE, PMlist = NULL,
   build = TRUE)
 }
 \arguments{
@@ -35,9 +35,9 @@ PMLimit(MSE, ..., Prob = NULL, Labels = NULL, FeaseMPs = NULL,
 
 \item{font_size}{Numeric. Font size for text in the table}
 
-\item{full_width}{Logical. Should table be full width?}
+\item{auto_width}{Logical. Should table be width be automatic?}
 
-\item{enableSearch}{Logical. Should search be enabled in the html table?}
+\item{enableSearch}{Currently disabled. Logical. Should search be enabled in the html table?}
 
 \item{PMlist}{Optional. List of PM names.}
 
