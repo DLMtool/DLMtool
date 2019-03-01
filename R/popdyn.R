@@ -312,11 +312,14 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
     CB_Pret[SAYR] <- Catch_retain[SAR]
     
     # Calculate F by age class
-    # suppress warnings for high F where C > VB - adjusted in maxF constraint below
-    FM_P[SAYR] <- suppressWarnings(-log(1-(CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2)))))  # Pope's approximation)
-    FM_Pret[SAYR] <- suppressWarnings(-log(1-(CB_Pret[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2)))))  # Pope's approximation
-    FM_P[SAYR][!is.finite(FM_P[SAYR])] <- 1
-    FM_Pret[SAYR][!is.finite(FM_Pret[SAYR])] <- 1
+    FM_P[SAYR] <- CB_P[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2)) # Pope's approximation)
+    FM_Pret[SAYR] <- CB_Pret[SAYR]/(Biomass_P[SAYR] * exp(-M_ageArray[SAYt]/2))  # Pope's approximation
+    # check where C > VB (for high M species this can happen)
+    FM_P[SAYR][FM_P[SAYR] >= 1] <- 0.99
+    FM_Pret[SAYR][FM_Pret[SAYR] >= 1] <- 0.99
+    
+    FM_P[SAYR] <- -log(1-FM_P[SAYR]) # convert to instantanous
+    FM_Pret[SAYR] <- -log(1-FM_Pret[SAYR]) # convert to instantanous
   }
   
   # Apply maxF constraint 
@@ -331,7 +334,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
   # Calculate total fishing mortality & effort
   M_array <- array(0.5*M_ageArray[,,nyears+y], dim=c(nsim, maxage, nareas))
   Ftot <- suppressWarnings(-log(1-apply(CB_P[,,y,], 1, sum)/apply(VBiomass_P[,,y,] * exp(-M_array), 1, sum)))
-  Ftot[!is.finite(Ftot)] <- 1.5
+  Ftot[!is.finite(Ftot)] <- maxF
  
   Effort <- Ftot/(FinF * qs*qvar[,y]* (1 + qinc/100)^y) * apply(fracE2, 1, sum) # effort relative to last historical
   
