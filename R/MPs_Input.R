@@ -884,7 +884,7 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE, R=0.2) {
     if (!all(d1==0)) Prob[aa,] <- d1/sum(d1)
   }
   
-  if (is.na(Data@Misc[[x]])) { # first time it's being run
+  if (all(is.na(Data@Misc[[x]]))) { # first time it's being run
   
     # run model for n most recent years 
     yind <- match(Data@LHYear[1], Data@Year)
