@@ -50,6 +50,18 @@ PMObj(MSE, ..., Labels = NULL, out.file = NULL,
 \item{PMlist}{Optional. List of PM names.}
 
 \item{build}{Logical. Build the html table?}
+
+\item{use.colors}{Logical. Color scale the probability text?}
+
+\item{cols}{Optional character vector of colors for probability text}
+
+\item{show.legend}{Logical. Show the legend??}
+
+\item{cex.tex}{Size of legend text}
+
+\item{inc.title}{Logical. Include title for legend?}
+
+\item{title}{Title for the legend}
 }
 \value{
 \code{PMLimit} invisibly returns names of MPs that pass all performance limits

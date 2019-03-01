@@ -139,6 +139,12 @@ PMLimit <- function(MSE, ..., Prob=NULL, Labels=NULL, FeaseMPs=NULL,
 }
 
 #' @describeIn PMLimit Create a table of Performance Objectives. 
+#' @param use.colors Logical. Color scale the probability text?
+#' @param cols Optional character vector of colors for probability text
+#' @param show.legend Logical. Show the legend??
+#' @param cex.tex Size of legend text
+#' @param inc.title Logical. Include title for legend?
+#' @param title Title for the legend
 #' @export
 #'
 PMObj <- function(MSE, ..., Labels=NULL, out.file=NULL,
