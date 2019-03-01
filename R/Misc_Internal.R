@@ -806,7 +806,12 @@ CalcUnfishedRefs <- function(x, ageM, N0_a, SSN0_a, SSB0_a, B0_a, VB0_a, SSBpRa,
   B0 <- mean(B0_a[x, avg.ind])
   VB0 <- mean(VB0_a[x, avg.ind])
   SSBpR <- mean(SSBpRa[x, avg.ind])
-  SSB0a <- apply(SSB0a_a[x,avg.ind,], 2, mean)
+  if (length(avg.ind)>1) {
+    SSB0a <- apply(SSB0a_a[x,avg.ind,], 2, mean)  
+  } else {
+    SSB0a <- SSB0a_a[x,avg.ind,]
+  }
+  
   list(N0=N0, SSN0=SSN0, SSB0=SSB0, B0=B0, VB0=VB0, SSBpR=SSBpR, SSB0a=SSB0a)
 }
 
@@ -814,13 +819,13 @@ CalcMSYRefs <- function(x, MSY_y, FMSY_y, SSBMSY_y, BMSY_y, VBMSY_y, ageM, OM) {
   n.yrs <- ceiling(ageM[x,OM@nyears]) # MSY ref points averaged over these years
   minY <- floor(n.yrs/2) 
   maxY <- n.yrs - minY - 1 
-  avg.ind <-  50 # (OM@nyears - minY):(OM@nyears + maxY)
+  avg.ind <- (OM@nyears - minY):(OM@nyears + maxY)
   
-  MSY <- mean(MSY_y[x, 1,avg.ind])
-  FMSY <- mean(FMSY_y[x, 1,avg.ind])
-  SSBMSY <- mean(SSBMSY_y[x, 1,avg.ind])
-  BMSY <- mean(BMSY_y[x, 1,avg.ind])
-  VBMSY <- mean(VBMSY_y[x,1,avg.ind])
+  MSY <- mean(MSY_y[x, avg.ind])
+  FMSY <- mean(FMSY_y[x, avg.ind])
+  SSBMSY <- mean(SSBMSY_y[x, avg.ind])
+  BMSY <- mean(BMSY_y[x, avg.ind])
+  VBMSY <- mean(VBMSY_y[x, avg.ind])
   data.frame(MSY=MSY, FMSY=FMSY, SSBMSY=SSBMSY, BMSY=BMSY, VBMSY=VBMSY)
 }
 
