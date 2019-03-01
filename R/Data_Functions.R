@@ -307,6 +307,7 @@ runMP <- function(Data, MPs = NA, reps = 100, perc=0.5, chkMPs=TRUE, silent=FALS
 applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
   Data <- updateMSE(Data)
+  Dataout <- Data
   if (is.na(nsims)) nsims <- length(Data@Mort)
   nMPs <- length(MPs)
   
@@ -332,7 +333,7 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
         rec <- matrix(rec, nareas, nsims, byrow=FALSE)   
       }
       recList[[X]] <- rec
-      for (x in 1:nsims) Data@Misc[[x]] <- recList$Misc[[x]]
+      for (x in 1:nsims) Dataout@Misc[[x]] <- recList$Misc[[x]]
       recList$Misc <- NULL
     }
     if (length(recList$TAC)>0)  TACout[mp,,] <- recList$TAC 
@@ -340,36 +341,11 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
     if (!silent && any(apply(is.na(recList$TAC), 2, sum) > rep(0.5 * reps, nsims)))
       message("Method ", MPs[mp], " produced greater than 50% NA values")
   }
-  # } else {
-  #   for (mp in 1:nMPs) {
-  #     temp <- sfSapply(1:nsims, MPs[mp], Data = Data, reps = reps)  
-  #     slots <- slotNames(temp[[1]])
-  #     for (X in slots) { # sequence along recommendation slots 
-  #       if (X == "Misc") { # convert to a list nsim by nareas
-  #         rec <- lapply(temp, slot, name=X)
-  #       } else {
-  #         rec <- do.call("cbind", lapply(temp, slot, name=X)) # unlist(lapply(temp, slot, name=X))
-  #       }
-  #       if (X == "Spatial") { # convert to a matrix nsim by nareas
-  #         rec <- matrix(rec, nareas, nsims, byrow=FALSE)  
-  #       }
-  #       recList[[X]] <- rec
-  #       for (x in 1:nsims) Data@Misc[[x]] <- recList$Misc[[x]]
-  #       recList$Misc <- NULL
-  #     }
-  #     if (length(recList$TAC)>0) TACout[mp,,] <- recList$TAC
-  #     returnList[[mp]] <- recList
-  #     
-  #     if (!silent && sum(is.na(recList$TAC)) > 0.5 * reps)
-  #       message("Method ", MPs[mp], " produced greater than 50% NA values")
-  #   }
-  #   
-  # }
+
+  Dataout@TAC <- TACout
+  Dataout@MPs <- MPs
   
-  Data@TAC <- TACout
-  Data@MPs <- MPs
-  
-  list(returnList, Data)
+  list(returnList, Dataout)
 }
 
 # applyMP2 <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
