@@ -313,7 +313,7 @@ Cplot <- function(MSEobj, MPs = NA, lastYrs = 5,
   relYield <- relYield[,,(proyears - lastYrs + 1):proyears]
   
   # Biomass 
-  bio <- MSEobj@SSB[,,(proyears - lastYrs + 1):proyears] # biomass in lastyrs
+  bio <- MSEobj@B_BMSY[,,(proyears - lastYrs + 1):proyears] # biomass in lastyrs
   histSSB <- apply(MSEobj@SSB_hist[, , , , drop = FALSE], c(1, 3), sum, na.rm = TRUE)
   relSSB <- histSSB[,nyears]/ MSEobj@OM$SSBMSY # SSB/SSBmsy in last historical year
   temp <- array(replicate(nMPs, relSSB), dim=dim(bio)) # array with biomass in last projection year
