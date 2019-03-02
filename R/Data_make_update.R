@@ -164,8 +164,8 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   
   ind <- which(lapply(ImpPars, length) == nsim)
   imp <- as.data.frame(ImpPars[ind])
-  refs <- RefPoints %>% select('MSY', 'FMSY', 'SSBMSY_SSB0', 'BMSY_B0',
-                               'UMSY', 'FMSY_M', 'RefY', 'Blow', 'MGT', 'SSB0')
+  refs <- RefPoints %>% select('MSY', 'FMSY', 'SSBMSY_SSB0', 'BMSY_B0', 'SSBMSY',
+                               'BMSY', 'UMSY', 'FMSY_M', 'RefY', 'Blow', 'MGT', 'SSB0')
   
   OMtable <- data.frame(stock, fleet, imp, refs, ageM=StockPars$ageM[,nyears], 
                      L5=FleetPars$L5[nyears, ], LFS=FleetPars$LFS[nyears, ], 

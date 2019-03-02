@@ -599,6 +599,7 @@ joinMSE <- function(MSEobjs = NULL) {
                 nBins <- tdf[,2]
                 Max <- max(nBins)
                 nyrs <- max(tdf[,3])
+                nsims <- sapply(tempVal, function(x) x[1])
                 if (!mean(nBins) == max(nBins)) { # not all same size
                   index <- which(nBins < Max)
                   for (kk in index) {
