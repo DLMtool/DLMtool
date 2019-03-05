@@ -3,33 +3,32 @@ The current version of the DLMtool package is available for download from [CRAN]
 ## DLMtool 5.3 
 
 ### New Features
-- added more [cheat sheets](https://dlmtool.github.io/DLMtool/cheat_sheets/CheatSheets.html)
-- `runMSE(Hist=TRUE)` returns a new object of class 'Hist'
+- The `runMSE` function is now more robust. MPs that fail (i.e. crash R) are now skipped without stopping the entire MSE. A warning message alerts users which MPs have been dropped from the analysis. 
+- `runMSE(Hist=TRUE)` returns a new S4 object of class 'Hist'. This change means that information from historical simulations is now accessed using `@` instead of `$`. For example: 
+       `Hist <- runMSE(Hist=TRUE)` 
+       `TS <- Hist@TSdata # time-series data`
+       `Data <- Hist@Data # Data object from end of historical period `
 - `runMSE(Hist=TRUE)` now works with parallel processing
-- movement matrix can be now specified by year (`OM@cpars$mov`)
-- `Uses` function has been added to return MPs that use a particular data slot.
-- The cheat sheets (`cheatsheets()`) have been updated to include new functions.
+- The [cheat sheets](https://dlmtool.github.io/DLMtool/cheat_sheets/CheatSheets.html) have been updated. They can be accessed from within the R console using `cheatsheets`
+- It is now possible to specify time-varying movement between areas using `OM@cpars$mov`.
+- `Uses` function has been added to return MPs that use a particular data slot. For example: `Uses('AvC`)
 - Depletion for the initial year of the simulations can now be specified using `OM@cpars$initD`.
 - Real indices of abundance can be added to the Data object and used to condition OM. See [userguide](https://dlmtool.github.io/DLMtool/userguide/using-real-indices.html) for details.
+- The calculations for unfished and MSY reference points have been standardized and are now fully described in the [userguide](https://dlmtool.github.io/DLMtool/userguide/assumptions-of-dlmtool.html#calculating-reference-points.html)
+- New functions `PMLimit` and `PMObj` have been added to generate interacive HTML tables showing the performance of MPs (using objects of class `PM`)
+- An argument `Labels` has been added to the `TradePlot` function and related functions (`Tplot` etc). This allows users to replace the default MP name with something more user-friendly. For example: `TradePlot(MSE, Labels=list(AvC="Average Catch"))`. An argument `cols` has also been added so users have full control on the colors of the points and labels. The MP labels can be removed completely by setting the `lab.size` argument to `NULL`
 
-- PM limit and objective table functions
-- Specify labels and colors for MPs in trade-off plots
-- MPs that fail (i.e. crash R are now skipped).  `runMSErobust` has been now removed from package (it was broken in the previous version). 
-
-- MSY and Depletion reference points
-
-- AnnualMSY argument deprecated - describe alternative ways to calculate B/BMSY 
-
+ 
 ### Major changes 
 - The slots for specifying gradients in life-history parameters (e.g `Stock@Mgrad`, `Stock@Linfgrad`) 
 have been removed. Time-varying parameters should now be specified with `OM@cpars`.
 - Biological reference points (SSB0, BMSY, FMSY, etc) are now calculated using a running average of the life-history 
-and selectivity parameters over a 10-year period.
-
-
+and selectivity parameters over a period equal to the age of maturity for each simulation. See the [userguide](https://dlmtool.github.io/DLMtool/userguide/assumptions-of-dlmtool.html#calculating-reference-points.html) for more information. 
+- The `AnnualMSY` argument is now deprecated. MSY reference points are now always calculated in every time-step.
+- The `runMSErobust` function has been now removed from package (it was broken in the previous version). 
 
 ### Fixes
-- fix issue with importing Data objects with larger number of length bins
+- fix issue with importing `Data` objects with larger number of length bins
 - fix issue where length-at-age was negative with high t0
 - allow custom area size for nareas > 2 in cpars
 - fix issue with `curE75` which was ratcheting down effort 

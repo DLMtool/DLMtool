@@ -23,7 +23,7 @@ testthat::test_dir('tests/manual/test-code', reporter = "junit")
 
 # testthat::test_file("tests/manual/test-code/test-OM_Plotting.R") # Ok
 
-testthat::test_file("tests/manual/test-code/test-runMSE.R") # to check still
+# testthat::test_file("tests/manual/test-code/test-runMSE.R") # to check still
 
 # testthat::test_file("tests/manual/test-code/test-slotDescription.R") # Ok
 
