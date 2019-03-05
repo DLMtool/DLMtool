@@ -242,7 +242,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   # == Sample CV Length-at-age ====
   if (!exists("LenCV", inherits=FALSE)) LenCV <- myrunif(nsim, min(Stock@LenCV), max(Stock@LenCV))
   
-  if (any(LenCV < 0.05)) 
+  if (msg & any(LenCV < 0.05)) 
     warning('Stock@LenCV is very low for at least some simulations (<0.05).\nLength composition data may not be generated successfully and MPs using length data may crash or be unreliable. \nLenCV is the variation in length-at-age. Very low values implies all individuals exactly follow the average growth curve')
   
   # === Create Mean Length-at-Age array ====
