@@ -1,6 +1,7 @@
 #' @importFrom abind abind
 #' @importFrom devtools install_github
 #' @importFrom dplyr  %>%  filter group_by left_join mutate select summarize
+#' @importFrom DT datatable formatStyle styleInterval 
 #' @importFrom fmsb radarchart
 #' @importFrom ggplot2 aes element_blank expand_limits facet_wrap geom_boxplot ggplot ggplotGrob geom_rect geom_point labs theme theme_classic xlim ylim xlab ylab   
 #' @importFrom ggrepel geom_text_repel
@@ -28,4 +29,5 @@ NULL
 .onUnload <- function (libpath) {
   library.dynam.unload("DLMtool", libpath)
 }
+
 
