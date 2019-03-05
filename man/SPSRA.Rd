@@ -50,7 +50,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 \code{SPSRA}: Cat, Dep, FMSY_M, L50, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
 
 
-\code{SPSRA_ML}: CAL, CAL_bins, Cat, Dep, FMSY_M, L50, LFS, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
+\code{SPSRA_ML}: CAL, Cat, Dep, FMSY_M, L50, Lbar, Lc, MaxAge, Mort, steep, vbK, vbLinf, vbt0, wla, wlb
 }
 
 \section{Rendered Equations}{

@@ -5,7 +5,7 @@
 \alias{runMSErobust}
 \title{Run a Management Strategy Evaluation}
 \usage{
-runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCACs", "FMSYref", "curE",
+runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
   "matlenlim", "MRreal"), CheckMPs = FALSE, timelimit = 1,
   Hist = FALSE, ntrials = 50, fracD = 0.05, CalcBlow = TRUE,
   HZN = 2, Bfrac = 0.5, AnnualMSY = TRUE, silent = FALSE,

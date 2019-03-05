@@ -110,7 +110,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 \code{DCAC4010}: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t
 
 
-\code{DCAC_ML}: AvC, CAL, CAL_bins, Cat, LFS, LHYear, Mort, Year, t, vbK, vbLinf
+\code{DCAC_ML}: AvC, CAL, Cat, LHYear, Lbar, Lc, Mort, Year, t, vbK, vbLinf
 
 
 \code{DAAC}: AvC, BMSY_B0, Dt, FMSY_M, LHYear, Mort, Year, t

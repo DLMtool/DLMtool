@@ -649,7 +649,7 @@ setMethod("initialize", "Fleet", function(.Object, file = NA, dec=c(".", ",")) {
       isMPA <- grep('MPA', dname)
       if (length(isMPA)<1) isMPA <- NA
       if (!is.na(isMPA)) {
-        MPA <- temp <- data.matrix(dat[isMPA:nrow(dat),])
+        suppressWarnings(MPA <- temp <- data.matrix(dat[isMPA:nrow(dat),]))
         valCols <- !is.na(colSums(MPA))
         MPA <- MPA[,valCols, drop=FALSE]
         valRows <- !is.na(rowSums(MPA))

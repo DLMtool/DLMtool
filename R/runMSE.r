@@ -77,7 +77,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @describeIn runMSE Default function to use.
 #' @seealso \link{joinMSE} \link{checkMSE} \link{updateMSE}
 #' @export
-runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCACs","FMSYref","curE","matlenlim", "MRreal"), 
+runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
                    CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=TRUE, 
                    HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=FALSE, parallel=FALSE, 
                    save_name=NULL, checks=FALSE, control=NULL) {
@@ -197,7 +197,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCACs","FMSYref","curE",
 
 
 
-runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCACs","FMSYref","curE","matlenlim", "MRreal"), 
+runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
                       CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=TRUE, 
                       HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=FALSE, checks=FALSE,
                       control=NULL, parallel=FALSE) {

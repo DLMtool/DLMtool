@@ -36,6 +36,8 @@ simulation conditions and performance of data-limited methods
 
 \item Blow: SSB where it takes MGThorizon x MGT to reach Bfrac of BMSY (spawning biomass)
 
+\item BMSY: NA
+
 \item BMSY_B0: ratio of BMSY to unfished total biomass in last historical year
 
 \item D: stock depletion (spawning biomass / unfished spawing biomass) in the final historical year (prior to projection)
@@ -125,6 +127,8 @@ simulation conditions and performance of data-limited methods
 \item SRrel: NA
 
 \item SSB0: unfished spawning biomass
+
+\item SSBMSY: NA
 
 \item SSBMSY_SSB0: ratio of SSB_MSY/SSB0 in last historical year
 

@@ -242,7 +242,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   # == Sample CV Length-at-age ====
   if (!exists("LenCV", inherits=FALSE)) LenCV <- myrunif(nsim, min(Stock@LenCV), max(Stock@LenCV))
   
-  if (msg & any(LenCV < 0.05)) 
+  if (msg && any(LenCV < 0.05)) 
     warning('Stock@LenCV is very low for at least some simulations (<0.05).\nLength composition data may not be generated successfully and MPs using length data may crash or be unreliable. \nLenCV is the variation in length-at-age. Very low values implies all individuals exactly follow the average growth curve')
   
   # === Create Mean Length-at-Age array ====
@@ -337,6 +337,11 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
       L50array[,XX] <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,,XX], y=Len_age[x, , nyears], 0.5)))
       L95array[,XX]<- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,,XX], y=Len_age[x, , nyears], 0.95)))
     }
+    
+    L50array[!is.finite(L50array)] <- 0.8*Linfarray[!is.finite(L50array)]
+    L95array[!is.finite(L95array)] <- 0.99*Linfarray[!is.finite(L95array)]
+    
+    L95array[L50array >= L95array] <- L50array[L50array >= L95array] * 1.01
     L50 <- L50array[,nyears]
     L95 <- L95array[,nyears]
     L50[!is.finite(L50)] <- 0.8*Linf[!is.finite(L50)]
