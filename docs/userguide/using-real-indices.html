@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Chapter 16 Value of Information | Data-Limited Methods Toolkit (DLMtool 5.3)</title>
+  <title>Chapter 30 Using Real Indices | Data-Limited Methods Toolkit (DLMtool 5.3)</title>
   <meta name="description" content="User guide for the DLMtool R package">
   <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Chapter 16 Value of Information | Data-Limited Methods Toolkit (DLMtool 5.3)" />
+  <meta property="og:title" content="Chapter 30 Using Real Indices | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 16 Value of Information | Data-Limited Methods Toolkit (DLMtool 5.3)" />
+  <meta name="twitter:title" content="Chapter 30 Using Real Indices | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -32,8 +32,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   
   <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
-<link rel="prev" href="performance-metrics.html">
-<link rel="next" href="the-fishery-data-object.html">
+<link rel="prev" href="custom-performance-metrics.html">
+<link rel="next" href="acknowledgements.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -361,70 +361,89 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="value-of-information" class="section level1">
-<h1><span class="header-section-number">Chapter 16</span> Value of Information</h1>
-<p>The Value of Information (VOI) functions have been designed to explore the sensitivity of the performance of the Management Procedures to variability in the observation processes and operating model parameters.</p>
-<p>There are several VOI functions in DLMtool.</p>
-<p>The <code>VOI</code> function generates two plots, one corresponding to the operating model parameters, and the other to the observation model parameters, showing the gradient in long-term yield with respect to the individual parameters:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOI</span>(MSE)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-104-1.png" width="864" /><img src="userguide_files/figure-html/unnamed-chunk-104-2.png" width="864" /></p>
-<pre><code>## [[1]]
-##           MP     1      2       3      4       5      6
-## 1        AvC   Asp SSBMSY       M  LenCV      L5 FMSY_M
-## 2            21.01  20.91   20.56  20.41   19.43  17.77
-## 3       DCAC LenCV     L5 Vmaxlen      M BMSY_B0    Asp
-## 4            29.35  28.68   25.97  24.84   24.73  24.54
-## 5    FMSYref    hs   SSB0     LFS  LenCV       M    Asp
-## 6             4.47   4.22    3.94   3.94    3.69   3.62
-## 7       curE    AC      K    SSB0   qinc  procmu procsd
-## 8            16.84  16.64   15.03     15    14.6   14.6
-## 9  matlenlim  qinc SSBMSY     MGT maxlen       D      K
-## 10           22.98  20.99   20.37  20.24    19.8  18.69
-## 11    MRreal     K   qinc      AC      D  procmu procsd
-## 12           15.16  15.13   14.77  13.75   12.43  12.43
-## 
-## [[2]]
-##           MP        1     2     3     4          5     6
-## 1        AvC    Cbias   Csd                             
-## 2               25.22 17.03                             
-## 3       DCAC    Cbias   Csd  Derr Mbias FMSY_Mbias Dbias
-## 4               38.27 23.16 21.37 18.39      14.59  12.7
-## 5    FMSYref     &lt;NA&gt;                                   
-## 6                &lt;NA&gt;                                   
-## 7       curE     &lt;NA&gt;                                   
-## 8                &lt;NA&gt;                                   
-## 9  matlenlim lenMbias                                   
-## 10              19.65                                   
-## 11    MRreal     &lt;NA&gt;                                   
-## 12               &lt;NA&gt;</code></pre>
-<p>The <code>VOIplot</code> function shows something similar, but has an argument to specify either the Observation or Operating Model parameters:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># Observation Parameters</span>
-<span class="kw">VOIplot</span>(MSE, <span class="dt">nMP=</span><span class="dv">5</span>)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-105-1.png" width="864" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># OM Parameters</span>
-<span class="kw">VOIplot</span>(MSE, <span class="dt">Par=</span><span class="st">&quot;OM&quot;</span>, <span class="dt">nMP=</span><span class="dv">5</span>)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-105-2.png" width="864" /></p>
-<p>By default, the <code>VOIplot</code> function only shows the four Management Procedures with the greatest sensitivity. Here we’ve made it show all five methods using the <code>nMP</code> argument.</p>
-<p>In this example we can see that the <code>Fratio</code> method is particularly sensitive to bias in the current estimate of abundance, and over-estimates of the current abundance result in very low long-term yield (probably do to collapse of the stock). The DCAC method appears most sensitive to bias in the estimated catch.</p>
-<p>We can also use the <code>VOIplot</code> function to look at the sensitivity with respect to the final biomass by specifying the <code>YVar</code> argument:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOIplot</span>(MSE, <span class="dt">Par=</span><span class="st">&quot;OM&quot;</span>, <span class="dt">nMP=</span><span class="dv">5</span>, <span class="dt">YVar=</span><span class="st">&quot;B&quot;</span>)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-106-1.png" width="864" /></p>
-<p>This result shows, perhaps unsurprisingly, that the final biomass is often strongly sensitive to the initial depletion, particularly for the DCAC and matlenlim methods.</p>
-<p>The <code>VOIplot2</code> function is an updated version of <code>VOIplot</code> that uses the <code>PM</code> functions and plots the Value of Information for a single MP:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOIplot2</span>(MSE)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-107-1.png" width="672" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOIplot2</span>(MSE, <span class="dt">type=</span><span class="st">&quot;OM&quot;</span>)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-107-2.png" width="672" /></p>
-<p>and with a different MP and performance metric:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOIplot2</span>(MSE, <span class="dt">MP=</span><span class="st">&quot;DCAC&quot;</span>, <span class="dt">PM=</span><span class="st">&quot;P100&quot;</span>)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-108-1.png" width="672" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOIplot2</span>(MSE, <span class="dt">MP=</span><span class="st">&quot;DCAC&quot;</span>, <span class="dt">type=</span><span class="st">&quot;OM&quot;</span>, <span class="dt">PM=</span><span class="st">&quot;P100&quot;</span>)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-108-2.png" width="672" /></p>
-<p>The <code>VOI2</code> function relates the operating model parameters and parameters of the observation model to relative yield (yield over last 5 years of projection relative to a ‘best F’ scenario that maximizes yield.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">VOI2</span>(MSE)</code></pre></div>
-<p><img src="userguide_files/figure-html/unnamed-chunk-109-1.png" width="864" /></p>
-<p><code>VOI2</code> assumes that relative cost for each type of improvement in data is linearly related to the number of samples (e.g. nCAAobs) or square function of improved precision and bias e.g.: relative <span class="math inline">\(\text{cost}= \frac{1}{(\text{newCV}/\text{oldCV})^2}\)</span></p>
-<p>The VOI features of DLMtool are continuing to be developed and more VOI functions will be added soon.</p>
+<div id="using-real-indices" class="section level1">
+<h1><span class="header-section-number">Chapter 30</span> Using Real Indices</h1>
+<p>Since DLMtool V5.3 real indices of abundance can be added to the Data object and used to condition the OM.</p>
+<p>Three types of real indices can provided: ‘Biomass’, ‘VBiomass’ and “SpBiomass” for total, vulnerable, and spawning biomass respectively.</p>
+<p>The type(s) of index is specified in <code>Data@Type</code> and the index provided as a vector of length <code>OM@nyears</code> in <code>Data@RInd</code>, or a matrix with nrow = number of indices and ncol = <code>OM@nyears</code>.</p>
+<p>The <code>Data</code> object with the real indices can be included in the operating model using the <code>cpars</code> slot. The information in the <code>Data@RInd</code> slot used in the MSE will match exactly the provided indices during the historical simulation period. The hyper-stability/depletion (beta) and observation error are calculated by comparing the real indices with the simulated indices during the historical year period and used to generate the <code>Data@RInd</code> in the projection period.</p>
+<p>For example, here we first generate some indices of abundance and then include those indices as real indices of abundance in the OM.</p>
+<p>First we generate three indices (total biomass, vulnerable biomass, and spawning biomass):</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span>DLMtool<span class="op">::</span>testOM
+Hist &lt;-<span class="st"> </span><span class="kw">runMSE</span>(OM, <span class="dt">Hist=</span><span class="ot">TRUE</span>, <span class="dt">silent=</span><span class="ot">TRUE</span>)
+Bind &lt;-<span class="st"> </span>Hist<span class="op">@</span>TSdata<span class="op">$</span>B[<span class="dv">1</span>,] <span class="co"># use the first simulation as our &#39;real&#39; data</span>
+Bind &lt;-<span class="st"> </span>Bind<span class="op">/</span><span class="kw">mean</span>(Bind)
+VBind &lt;-<span class="st"> </span>Hist<span class="op">@</span>TSdata<span class="op">$</span>VB[<span class="dv">1</span>,]
+VBind &lt;-<span class="st"> </span>VBind<span class="op">/</span><span class="kw">mean</span>(VBind)
+SpBInd&lt;-<span class="st"> </span>Hist<span class="op">@</span>TSdata<span class="op">$</span>SSB[<span class="dv">1</span>,]
+SpBInd &lt;-<span class="st"> </span>SpBInd<span class="op">/</span><span class="kw">mean</span>(SpBInd)</code></pre></div>
+<p>Next we add these ‘real’ indices to a Data object:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Data &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Data&quot;</span>)
+Data<span class="op">@</span>Type &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Biomass&quot;</span>, <span class="st">&quot;VBiomass&quot;</span>, <span class="st">&#39;SpBiomass&#39;</span>)
+Data<span class="op">@</span>RInd &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="kw">rbind</span>(Bind, VBind, SpBInd), <span class="dt">dim=</span><span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="kw">length</span>(Bind)))</code></pre></div>
+<p>Note that <code>Data@RInd</code> is an array with dimensions: number of simulations (1 in this case because it is ‘real’ data), number of real indices (3 in this case), and the length of the longest index (all equal to <code>OM@nyears</code> in this case):</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(Data<span class="op">@</span>RInd)</code></pre></div>
+<pre><code>## [1]  1  3 50</code></pre>
+<p>Now we can add the Data object to our OM using the <code>cpars</code> slot:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM<span class="op">@</span>cpars<span class="op">$</span>Data &lt;-<span class="st"> </span>Data</code></pre></div>
+<p>And run the MSE (we use the argument <code>PPD=TRUE</code> here to return the simulated Data object at the end of the MSE):</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MSE &lt;-<span class="st"> </span><span class="kw">runMSE</span>(OM, <span class="dt">MPs=</span><span class="st">&quot;AvC&quot;</span>, <span class="dt">silent=</span><span class="ot">TRUE</span>, <span class="dt">PPD=</span><span class="ot">TRUE</span>)
+data &lt;-<span class="st"> </span>MSE<span class="op">@</span>Misc<span class="op">$</span>Data[[<span class="dv">1</span>]] <span class="co"># the simulated data from the first MP</span></code></pre></div>
+<p>Note the dimensions of the <code>RInd</code> array in the simulated data:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(data<span class="op">@</span>RInd)</code></pre></div>
+<pre><code>## [1] 48  3 98</code></pre>
+<p>The index is the same for every simulation for the historical years:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">all</span>(data<span class="op">@</span>RInd[<span class="dv">1</span>,,<span class="dv">1</span><span class="op">:</span>OM<span class="op">@</span>nyears] <span class="op">==</span><span class="st"> </span>data<span class="op">@</span>RInd[<span class="dv">2</span>,,<span class="dv">1</span><span class="op">:</span>OM<span class="op">@</span>nyears])</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">all</span>(data<span class="op">@</span>RInd[<span class="dv">1</span>,,<span class="dv">1</span><span class="op">:</span>OM<span class="op">@</span>nyears] <span class="op">==</span><span class="st"> </span>data<span class="op">@</span>RInd[OM<span class="op">@</span>nsim,,<span class="dv">1</span><span class="op">:</span>OM<span class="op">@</span>nyears])</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<p>And identical to the real indices provided in the Data object:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">all</span>(Data<span class="op">@</span>RInd[<span class="dv">1</span>,,] <span class="op">==</span><span class="st"> </span>data<span class="op">@</span>RInd[OM<span class="op">@</span>nsim,,<span class="dv">1</span><span class="op">:</span>OM<span class="op">@</span>nyears])</code></pre></div>
+<pre><code>## [1] TRUE</code></pre>
+<p>The hyper-stability/depletion coefficient (beta), auto-correlation, standard deviation, and correlation for each simulation and index are returned as a data frame in the <code>Misc</code> slot:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(MSE<span class="op">@</span>Misc<span class="op">$</span>RInd.stats)</code></pre></div>
+<pre><code>##     Index      beta        ac           sd       cor
+## 1 Biomass 0.9999971 0.8814744 6.770047e-07 1.0000000
+## 2 Biomass 0.9772490 0.5920802 1.466233e-01 0.8019266
+## 3 Biomass 0.4767877 0.4903107 1.461586e-01 0.8072193
+## 4 Biomass 1.3560009 0.6799227 1.772741e-01 0.6702492
+## 5 Biomass 0.2489784 0.5153964 1.221488e-01 0.8703264
+## 6 Biomass 1.2168390 0.5341129 1.370332e-01 0.8062220</code></pre>
+<p>Note that in this case there is perfect correlation for simulation 1. This is not surprising because our ‘real’ indices were generated from simulation 1 of the same OM. Low or negative correlation values indicate that the simulated trends in abundance are very different from the real indices provided in the Data object.</p>
+<p>The observation error stored in <code>RInd.stats</code> are used to maintain the same error structure in the projection simulations.</p>
+
+<!-- # (PART\*) FAQ & TroubleShooting {-} -->
+<!-- # Frequently Asked Questions -->
+<!-- ## How are the biological reference points such as BMSY calculated? -->
+<!-- For the historical simulations, the biological reference points (SSB0, BMSY, FMSY, etc) are calculated using the life-history and selectivity parameters averaged over a 10-year period around the current year. For example, the biological reference points at the end of the historical period are calculated from the average life-history and selectivity parameters from the last 5 years of the historical period and the first 5 years of the projection period. -->
+<!-- B0, SSB0 and depletion in both the initial and final historical years are calculated from the life-history parameters at the end of the historical period (i.e. the 'current' year). -->
+<!-- ## How is stock initialized in the first year?  -->
+<!-- The stock is unfished in the initial year. The initial unfished age-structure is subject to recruitment variability and therefore the stock is not at an unfished equilibrium in the initial year, but rather distributed around B0. -->
+<!-- ## Can I set the stock depletion level in the initial year?  -->
+<!-- The initial depletion can be set using `cpars$initD`, which must be a vector of length `nsim` specifying the stock depletion for the initial year of the simulations. -->
+<!-- ## Is the Data collected before or after fishing? -->
+<!-- The index (`Data@Ind`), abundance (`Data@Abun` or `Data@SpAbun`), and depletion (`Data@Dep`) are calculated at the beginning of the year before fishing occurs. -->
+<!-- ## What is the lag in data collection? -->
+<!-- The Data object is populated with data from the previous year. A greater lag in some or all of the data sources can be specified with custom management procedures. -->
+<!-- # TroubleShooting -->
+<!-- ## OM Documentation -->
+<!-- I'm getting the following error when I run `OMdoc()` (or something like it): -->
+<!-- ```{} -->
+<!-- Error in yaml::yaml.load(string, ...) : -->
+<!--   Parser error: while parsing a block mapping at line 1, column 1 did not find expected key at line 1, column 16 -->
+<!-- ``` -->
+<!-- This is usually caused by a special character in the first few lines of the Rmarkdown file (eg in Title, Subtitle, Author(s), or Date). -->
+<!-- A common culpit is a single apostrophe, usually used to indicate the possessive of a singular noun. -->
+<!-- For example, the following will result in an error: -->
+<!-- ```{} -->
+<!-- # Title -->
+<!-- Adrian's OM -->
+<!-- ``` -->
+<!-- The solution to this problem is to type two apostrophes in place of one: -->
+<!-- ```{} -->
+<!-- # Title -->
+<!-- Adrian''s OM -->
+<!-- ``` -->
 
 </div>
 
@@ -435,8 +454,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
           </div>
         </div>
       </div>
-<a href="performance-metrics.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="the-fishery-data-object.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="custom-performance-metrics.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="acknowledgements.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

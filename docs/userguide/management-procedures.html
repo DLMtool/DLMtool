@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.2.2)</title>
+  <title>Chapter 5 Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.3)</title>
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
+  <meta property="og:title" content="Chapter 5 Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
+  <meta name="twitter:title" content="Chapter 5 Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-08-15">
+<meta name="date" content="2019-03-05">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="running-the-mse.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -288,6 +289,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
 <li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
+<li class="chapter" data-level="30" data-path="using-real-indices.html"><a href="using-real-indices.html"><i class="fa fa-check"></i><b>30</b> Using Real Indices</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
 <li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
@@ -327,6 +329,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="D.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-and-method-application"><i class="fa fa-check"></i><b>D.4</b> Data and Method Application</a><ul>
 <li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-assumed-to-be-representative"><i class="fa fa-check"></i>Data Assumed to be Representative</a></li>
 </ul></li>
+<li class="chapter" data-level="D.5" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#calculating-reference-points"><i class="fa fa-check"></i><b>D.5</b> Calculating Reference Points</a><ul>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#depletion-and-unfished-reference-points"><i class="fa fa-check"></i>Depletion and Unfished Reference Points</a></li>
+<li class="chapter" data-level="D.5.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#initial-depletion"><i class="fa fa-check"></i><b>D.5.1</b> Initial Depletion</a></li>
+<li class="chapter" data-level="D.5.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#msy-reference-points"><i class="fa fa-check"></i><b>D.5.2</b> MSY Reference Points</a></li>
+<li class="chapter" data-level="D.5.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#setting-depletion-at-a-fraction-of-bmsy"><i class="fa fa-check"></i><b>D.5.3</b> Setting Depletion at a fraction of BMSY</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
@@ -345,7 +353,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2.2)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.3)</a>
           </h1>
         </div>
 
@@ -384,18 +392,17 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##  [57] &quot;IT5&quot;          &quot;Itarget1&quot;     &quot;Itarget1_MPA&quot; &quot;Itarget2&quot;    
 ##  [61] &quot;Itarget3&quot;     &quot;Itarget4&quot;     &quot;ItargetE1&quot;    &quot;ItargetE2&quot;   
 ##  [65] &quot;ItargetE3&quot;    &quot;ItargetE4&quot;    &quot;ITe10&quot;        &quot;ITe5&quot;        
-##  [69] &quot;ITM&quot;          &quot;L95target&quot;    &quot;LBSPR&quot;        &quot;Lratio_BHI&quot;  
-##  [73] &quot;Lratio_BHI2&quot;  &quot;LstepCC1&quot;     &quot;LstepCC2&quot;     &quot;LstepCC3&quot;    
-##  [77] &quot;LstepCC4&quot;     &quot;LstepCE1&quot;     &quot;LstepCE2&quot;     &quot;Ltarget1&quot;    
-##  [81] &quot;Ltarget2&quot;     &quot;Ltarget3&quot;     &quot;Ltarget4&quot;     &quot;LtargetE1&quot;   
-##  [85] &quot;LtargetE4&quot;    &quot;matlenlim&quot;    &quot;matlenlim2&quot;   &quot;MCD&quot;         
-##  [89] &quot;MCD4010&quot;      &quot;minlenLopt1&quot;  &quot;MRnoreal&quot;     &quot;MRreal&quot;      
-##  [93] &quot;NFref&quot;        &quot;Rcontrol&quot;     &quot;Rcontrol2&quot;    &quot;SBT1&quot;        
-##  [97] &quot;SBT2&quot;         &quot;slotlim&quot;      &quot;SPmod&quot;        &quot;SPMSY&quot;       
-## [101] &quot;SPslope&quot;      &quot;SPSRA&quot;        &quot;SPSRA_ML&quot;     &quot;YPR&quot;         
-## [105] &quot;YPR_CC&quot;       &quot;YPR_ML&quot;       &quot;avgMP&quot;        &quot;TCPUE&quot;       
-## [109] &quot;TCPUE_e&quot;      &quot;THC&quot;</code></pre>
-<p>As you can see, there are 110 MPs built into the DLMtool.</p>
+##  [69] &quot;ITM&quot;          &quot;L95target&quot;    &quot;LBSPR&quot;        &quot;LBSPR_MLL&quot;   
+##  [73] &quot;Lratio_BHI&quot;   &quot;Lratio_BHI2&quot;  &quot;Lratio_BHI3&quot;  &quot;LstepCC1&quot;    
+##  [77] &quot;LstepCC2&quot;     &quot;LstepCC3&quot;     &quot;LstepCC4&quot;     &quot;LstepCE1&quot;    
+##  [81] &quot;LstepCE2&quot;     &quot;Ltarget1&quot;     &quot;Ltarget2&quot;     &quot;Ltarget3&quot;    
+##  [85] &quot;Ltarget4&quot;     &quot;LtargetE1&quot;    &quot;LtargetE4&quot;    &quot;matlenlim&quot;   
+##  [89] &quot;matlenlim2&quot;   &quot;MCD&quot;          &quot;MCD4010&quot;      &quot;minlenLopt1&quot; 
+##  [93] &quot;MRnoreal&quot;     &quot;MRreal&quot;       &quot;NFref&quot;        &quot;Rcontrol&quot;    
+##  [97] &quot;Rcontrol2&quot;    &quot;SBT1&quot;         &quot;SBT2&quot;         &quot;slotlim&quot;     
+## [101] &quot;SPmod&quot;        &quot;SPMSY&quot;        &quot;SPslope&quot;      &quot;SPSRA&quot;       
+## [105] &quot;SPSRA_ML&quot;     &quot;YPR&quot;          &quot;YPR_CC&quot;       &quot;YPR_ML&quot;</code></pre>
+<p>As you can see, there are 108 MPs built into the DLMtool.</p>
 <p>DLMtool is extensible and it is relatively straightforward to develop your own MPs and include them in the MSE. This is covered in <a href="developing-custom-management-procedures.html#developing-custom-management-procedures">Developing Custom Management Procedures</a>.</p>
 </div>
 <div id="types-of-management-procedure" class="section level2">
@@ -426,17 +433,17 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## 13         ITe10     Input          TAE
 ## 14          ITe5     Input          TAE
 ## 15         LBSPR     Input          TAE
-## 16      LstepCE1     Input          TAE
-## 17      LstepCE2     Input          TAE
-## 18     LtargetE1     Input          TAE
-## 19     LtargetE4     Input          TAE
-## 20     matlenlim     Input           SL
-## 21    matlenlim2     Input           SL
-## 22   minlenLopt1     Input           SL
-## 23      MRnoreal     Input      Spatial
-## 24        MRreal     Input      Spatial
-## 25       slotlim     Input           SL
-## 26       TCPUE_e     Input          TAE
+## 16     LBSPR_MLL     Input           SL
+## 17      LstepCE1     Input          TAE
+## 18      LstepCE2     Input          TAE
+## 19     LtargetE1     Input          TAE
+## 20     LtargetE4     Input          TAE
+## 21     matlenlim     Input           SL
+## 22    matlenlim2     Input           SL
+## 23   minlenLopt1     Input           SL
+## 24      MRnoreal     Input      Spatial
+## 25        MRreal     Input      Spatial
+## 26       slotlim     Input           SL
 ## 27       AvC_MLL     Mixed      TAC, SL
 ## 28  Itarget1_MPA     Mixed TAC, Spatial
 ## 29           AvC    Output          TAC
@@ -492,35 +499,33 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## 79     L95target    Output          TAC
 ## 80    Lratio_BHI    Output          TAC
 ## 81   Lratio_BHI2    Output          TAC
-## 82      LstepCC1    Output          TAC
-## 83      LstepCC2    Output          TAC
-## 84      LstepCC3    Output          TAC
-## 85      LstepCC4    Output          TAC
-## 86      Ltarget1    Output          TAC
-## 87      Ltarget2    Output          TAC
-## 88      Ltarget3    Output          TAC
-## 89      Ltarget4    Output          TAC
-## 90           MCD    Output          TAC
-## 91       MCD4010    Output          TAC
-## 92      Rcontrol    Output          TAC
-## 93     Rcontrol2    Output          TAC
-## 94          SBT1    Output          TAC
-## 95          SBT2    Output          TAC
-## 96         SPmod    Output          TAC
-## 97         SPMSY    Output          TAC
-## 98       SPslope    Output          TAC
-## 99         SPSRA    Output          TAC
-## 100     SPSRA_ML    Output          TAC
-## 101          YPR    Output          TAC
-## 102       YPR_CC    Output          TAC
-## 103       YPR_ML    Output          TAC
-## 104        avgMP    Output          TAC
-## 105        TCPUE    Output          TAC
-## 106          THC    Output          TAC
-## 107      FMSYref Reference          TAC
-## 108    FMSYref50 Reference          TAC
-## 109    FMSYref75 Reference          TAC
-## 110        NFref Reference          TAC</code></pre>
+## 82   Lratio_BHI3    Output          TAC
+## 83      LstepCC1    Output          TAC
+## 84      LstepCC2    Output          TAC
+## 85      LstepCC3    Output          TAC
+## 86      LstepCC4    Output          TAC
+## 87      Ltarget1    Output          TAC
+## 88      Ltarget2    Output          TAC
+## 89      Ltarget3    Output          TAC
+## 90      Ltarget4    Output          TAC
+## 91           MCD    Output          TAC
+## 92       MCD4010    Output          TAC
+## 93      Rcontrol    Output          TAC
+## 94     Rcontrol2    Output          TAC
+## 95          SBT1    Output          TAC
+## 96          SBT2    Output          TAC
+## 97         SPmod    Output          TAC
+## 98         SPMSY    Output          TAC
+## 99       SPslope    Output          TAC
+## 100        SPSRA    Output          TAC
+## 101     SPSRA_ML    Output          TAC
+## 102          YPR    Output          TAC
+## 103       YPR_CC    Output          TAC
+## 104       YPR_ML    Output          TAC
+## 105      FMSYref Reference          TAC
+## 106    FMSYref50 Reference          TAC
+## 107    FMSYref75 Reference          TAC
+## 108        NFref Reference          TAC</code></pre>
 <p>You can access help documentation for the MPs in the usual fashion, for example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">?DCAC</code></pre></div>
 <div id="input-control-mps" class="section level3">
@@ -531,9 +536,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>##  [1] &quot;curE&quot;        &quot;curE75&quot;      &quot;DDe&quot;         &quot;DDe75&quot;       &quot;DDes&quot;       
 ##  [6] &quot;DTe40&quot;       &quot;DTe50&quot;       &quot;EtargetLopt&quot; &quot;ItargetE1&quot;   &quot;ItargetE2&quot;  
 ## [11] &quot;ItargetE3&quot;   &quot;ItargetE4&quot;   &quot;ITe10&quot;       &quot;ITe5&quot;        &quot;LBSPR&quot;      
-## [16] &quot;LstepCE1&quot;    &quot;LstepCE2&quot;    &quot;LtargetE1&quot;   &quot;LtargetE4&quot;   &quot;matlenlim&quot;  
-## [21] &quot;matlenlim2&quot;  &quot;minlenLopt1&quot; &quot;MRnoreal&quot;    &quot;MRreal&quot;      &quot;slotlim&quot;    
-## [26] &quot;TCPUE_e&quot;</code></pre>
+## [16] &quot;LBSPR_MLL&quot;   &quot;LstepCE1&quot;    &quot;LstepCE2&quot;    &quot;LtargetE1&quot;   &quot;LtargetE4&quot;  
+## [21] &quot;matlenlim&quot;   &quot;matlenlim2&quot;  &quot;minlenLopt1&quot; &quot;MRnoreal&quot;    &quot;MRreal&quot;     
+## [26] &quot;slotlim&quot;</code></pre>
 <p>Remember, to access help documentation:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">?matlenlim</code></pre></div>
 <p>More information on input control MPs can be found in <a href="developing-custom-management-procedures.html#beyond-the-catch-limit">Beyond the Catch Limit</a>.</p>
@@ -554,12 +559,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## [36] &quot;Gcontrol&quot;    &quot;HDAAC&quot;       &quot;ICI&quot;         &quot;ICI2&quot;        &quot;Iratio&quot;     
 ## [41] &quot;Islope1&quot;     &quot;Islope2&quot;     &quot;Islope4&quot;     &quot;IT10&quot;        &quot;IT5&quot;        
 ## [46] &quot;Itarget1&quot;    &quot;Itarget2&quot;    &quot;Itarget3&quot;    &quot;Itarget4&quot;    &quot;ITM&quot;        
-## [51] &quot;L95target&quot;   &quot;Lratio_BHI&quot;  &quot;Lratio_BHI2&quot; &quot;LstepCC1&quot;    &quot;LstepCC2&quot;   
-## [56] &quot;LstepCC3&quot;    &quot;LstepCC4&quot;    &quot;Ltarget1&quot;    &quot;Ltarget2&quot;    &quot;Ltarget3&quot;   
-## [61] &quot;Ltarget4&quot;    &quot;MCD&quot;         &quot;MCD4010&quot;     &quot;Rcontrol&quot;    &quot;Rcontrol2&quot;  
-## [66] &quot;SBT1&quot;        &quot;SBT2&quot;        &quot;SPmod&quot;       &quot;SPMSY&quot;       &quot;SPslope&quot;    
-## [71] &quot;SPSRA&quot;       &quot;SPSRA_ML&quot;    &quot;YPR&quot;         &quot;YPR_CC&quot;      &quot;YPR_ML&quot;     
-## [76] &quot;avgMP&quot;       &quot;TCPUE&quot;       &quot;THC&quot;</code></pre>
+## [51] &quot;L95target&quot;   &quot;Lratio_BHI&quot;  &quot;Lratio_BHI2&quot; &quot;Lratio_BHI3&quot; &quot;LstepCC1&quot;   
+## [56] &quot;LstepCC2&quot;    &quot;LstepCC3&quot;    &quot;LstepCC4&quot;    &quot;Ltarget1&quot;    &quot;Ltarget2&quot;   
+## [61] &quot;Ltarget3&quot;    &quot;Ltarget4&quot;    &quot;MCD&quot;         &quot;MCD4010&quot;     &quot;Rcontrol&quot;   
+## [66] &quot;Rcontrol2&quot;   &quot;SBT1&quot;        &quot;SBT2&quot;        &quot;SPmod&quot;       &quot;SPMSY&quot;      
+## [71] &quot;SPslope&quot;     &quot;SPSRA&quot;       &quot;SPSRA_ML&quot;    &quot;YPR&quot;         &quot;YPR_CC&quot;     
+## [76] &quot;YPR_ML&quot;</code></pre>
 </div>
 <div id="mixed-mps" class="section level3">
 <h3><span class="header-section-number">5.3.3</span> Mixed MPs</h3>
@@ -605,6 +610,10 @@ gitbook.start({
 "link": null,
 "text": null
 },
+"history": {
+"link": null,
+"text": null
+},
 "download": ["userguide.pdf"],
 "toc": {
 "collapse": "section",
@@ -621,7 +630,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;

@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.2.2)</title>
+  <title>Chapter 29 Custom Performance Metrics | Data-Limited Methods Toolkit (DLMtool 5.3)</title>
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
+  <meta property="og:title" content="Chapter 29 Custom Performance Metrics | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
+  <meta name="twitter:title" content="Chapter 29 Custom Performance Metrics | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-08-15">
+<meta name="date" content="2019-03-05">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -33,9 +33,10 @@
   
   <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
 <link rel="prev" href="subsetting-the-mse-object.html">
-<link rel="next" href="acknowledgements.html">
+<link rel="next" href="using-real-indices.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -288,6 +289,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
 <li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
+<li class="chapter" data-level="30" data-path="using-real-indices.html"><a href="using-real-indices.html"><i class="fa fa-check"></i><b>30</b> Using Real Indices</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
 <li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
@@ -327,6 +329,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="D.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-and-method-application"><i class="fa fa-check"></i><b>D.4</b> Data and Method Application</a><ul>
 <li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-assumed-to-be-representative"><i class="fa fa-check"></i>Data Assumed to be Representative</a></li>
 </ul></li>
+<li class="chapter" data-level="D.5" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#calculating-reference-points"><i class="fa fa-check"></i><b>D.5</b> Calculating Reference Points</a><ul>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#depletion-and-unfished-reference-points"><i class="fa fa-check"></i>Depletion and Unfished Reference Points</a></li>
+<li class="chapter" data-level="D.5.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#initial-depletion"><i class="fa fa-check"></i><b>D.5.1</b> Initial Depletion</a></li>
+<li class="chapter" data-level="D.5.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#msy-reference-points"><i class="fa fa-check"></i><b>D.5.2</b> MSY Reference Points</a></li>
+<li class="chapter" data-level="D.5.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#setting-depletion-at-a-fraction-of-bmsy"><i class="fa fa-check"></i><b>D.5.3</b> Setting Depletion at a fraction of BMSY</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
@@ -345,7 +353,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2.2)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.3)</a>
           </h1>
         </div>
 
@@ -357,8 +365,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h1><span class="header-section-number">Chapter 29</span> Custom Performance Metrics</h1>
 <p><code>PM</code> methods were introduced in the <a href="performance-metrics.html#performance-metrics-methods">Performance Metrics Methods</a> chapter. DLMtool includes several built-in <code>PM</code> methods:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">avail</span>(<span class="st">&quot;PM&quot;</span>)</code></pre></div>
-<pre><code>##  [1] &quot;AAVY&quot;  &quot;LTY&quot;   &quot;P10&quot;   &quot;P100&quot;  &quot;P50&quot;   &quot;PNOF&quot;  &quot;STY&quot;   &quot;Yield&quot;
-##  [9] &quot;MeanB&quot; &quot;MeanF&quot;</code></pre>
+<pre><code>## [1] &quot;AAVY&quot;  &quot;LTY&quot;   &quot;P10&quot;   &quot;P100&quot;  &quot;P50&quot;   &quot;PNOF&quot;  &quot;STY&quot;   &quot;Yield&quot;</code></pre>
 <p>We saw in <a href="performance-metrics.html#customizing-the-pm-functions">Customizing the <code>PM</code> Functions</a> that it is straightforward to modify the years that the performance statistics are calculated over using the <code>Yrs</code> argument, and the reference level using the <code>Ref</code> argument. In this section we describe the <code>PM</code> functions in more detail for advanced users who wish to develop their own <code>PM</code> methods.</p>
 <p>We will demonstrate this using the <code>P50</code> performance metric function as an example.</p>
 <div id="necessity-of-complexity" class="section level2">
@@ -373,7 +380,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MSEobj &lt;-<span class="st"> </span><span class="kw">runMSE</span>(<span class="dt">silent=</span><span class="ot">TRUE</span>) <span class="co"># run an exampe MSE</span>
 p_noverfish &lt;-<span class="st"> </span><span class="kw">P_Noverfished</span>(MSEobj) <span class="co"># calculate and store our performance statistic</span>
 p_noverfish</code></pre></div>
-<pre><code>## [1] 0.68 0.78 0.93 0.80 0.99 0.85</code></pre>
+<pre><code>## [1] 0.75 0.73 0.98 0.88 0.99 0.92</code></pre>
 <p>The <code>p_noverfish</code> variable now contains our performance statistic, which we could use to plot or tabulate results. However, the numeric vector returned by <code>P_Noverfished</code> includes no information on what these numbers represent. This makes it difficult to include the results in generic plotting or summary functions. Furthermore, it is easy to imagine that with several similiar performance metric functions, it will be easy to loose track of the meaning of the results unless an elaborate variable naming system is used.</p>
 <p>The <code>PM</code> functions have been designed to avoid this problem by returning all information related to the calculation of the performance statistic. Here we calculate the same performance metric using the relevant <code>PM</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">p1 &lt;-<span class="st"> </span><span class="kw">P50</span>(MSEobj)</code></pre></div>
@@ -388,7 +395,7 @@ p_noverfish</code></pre></div>
 <pre><code>## [1] &quot;Prob. SB &gt; 0.5 SBMSY (Years 1 - 50)&quot;</code></pre>
 <p>The last two slots contain the results of performance statistic and the names of the MPs:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">p1<span class="op">@</span>Mean</code></pre></div>
-<pre><code>## [1] 0.6829167 0.7845833 0.9287500 0.7958333 0.9933333 0.8512500</code></pre>
+<pre><code>## [1] 0.7475000 0.7325000 0.9845833 0.8762500 0.9933333 0.9195833</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">p1<span class="op">@</span>MPs</code></pre></div>
 <pre><code>## [1] &quot;AvC&quot;       &quot;DCAC&quot;      &quot;FMSYref&quot;   &quot;curE&quot;      &quot;matlenlim&quot; &quot;MRreal&quot;</code></pre>
 <p>We will look at the other 3 slots in detail in the next section. The main point here is to demonstrate the using functions of class <code>PM</code> that return objects of class <code>PMobj</code> has the advantage that the function output is completely self-contained and can be used elsewhere without requiring any additional information.</p>
@@ -417,7 +424,7 @@ p_noverfish</code></pre></div>
 ##     PMobj@MPs &lt;- MSEobj@MPs
 ##     PMobj
 ## }
-## &lt;bytecode: 0x0000000005418ef8&gt;
+## &lt;bytecode: 0x000000000da26560&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;PM&quot;</code></pre>
@@ -501,12 +508,12 @@ PMobj<span class="op">@</span>Name &lt;-<span class="st"> &quot;Spawning Biomass
 <p>Now we can test our performance metric functions:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data.frame</span>(<span class="dt">MP=</span><span class="kw">MeanB</span>(MSEobj)<span class="op">@</span>MPs, <span class="dt">B_BMSY=</span><span class="kw">MeanB</span>(MSEobj)<span class="op">@</span>Mean, <span class="dt">F_FMSY=</span><span class="kw">MeanF</span>(MSEobj)<span class="op">@</span>Mean)</code></pre></div>
 <pre><code>##          MP    B_BMSY    F_FMSY
-## 1       AvC 1.3553162 1.1987906
-## 2      DCAC 0.8845365 1.4408156
-## 3   FMSYref 0.9090203 1.0466349
-## 4      curE 1.4298469 0.9264642
-## 5 matlenlim 2.2738462 0.3421662
-## 6    MRreal 1.5169029 0.7801777</code></pre>
+## 1       AvC 1.5028154 1.8089924
+## 2      DCAC 0.7287867 2.7666544
+## 3   FMSYref 0.9561748 1.0202412
+## 4      curE 1.5474619 0.9160854
+## 5 matlenlim 2.6493047 0.8945637
+## 6    MRreal 1.6312194 0.7449103</code></pre>
 <p>How do these results compare to what is shown in <code>DFO_plot</code>?</p>
 <p>We could also use the <code>summary</code> function with our new <code>PM</code> functions, but note that these results are not probabilities:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(MSEobj, <span class="st">&#39;MeanB&#39;</span>, <span class="st">&#39;MeanF&#39;</span>)</code></pre></div>
@@ -518,23 +525,23 @@ PMobj<span class="op">@</span>Name &lt;-<span class="st"> &quot;Spawning Biomass
 ## 
 ## Probability:
 ##          MP MeanB MeanF
-## 1       AvC  1.40  1.20
-## 2      DCAC  0.88  1.40
-## 3   FMSYref  0.91  1.00
-## 4      curE  1.40  0.93
-## 5 matlenlim  2.30  0.34
-## 6    MRreal  1.50  0.78</code></pre>
+## 1       AvC  1.50  1.80
+## 2      DCAC  0.73  2.80
+## 3   FMSYref  0.96  1.00
+## 4      curE  1.50  0.92
+## 5 matlenlim  2.60  0.89
+## 6    MRreal  1.60  0.74</code></pre>
 <p>Finally, we will develop a customized plotting function to reproduce the image produced by <code>DFO_plot</code>.</p>
 <p>We can produced something fairly similar quite quickly using the <code>TradePlot</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TradePlot</span>(MSEobj, <span class="st">&#39;MeanB&#39;</span>, <span class="st">&#39;MeanF&#39;</span>, <span class="dt">Lims=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>))</code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-214-1.png" width="672" /></p>
 <pre><code>##          MP MeanB MeanF Satisificed
-## 1       AvC  1.40  1.20        TRUE
-## 2      DCAC  0.88  1.40        TRUE
-## 3   FMSYref  0.91  1.00        TRUE
-## 4      curE  1.40  0.93        TRUE
-## 5 matlenlim  2.30  0.34        TRUE
-## 6    MRreal  1.50  0.78        TRUE</code></pre>
+## 1       AvC  1.50  1.80        TRUE
+## 2      DCAC  0.73  2.80        TRUE
+## 3   FMSYref  0.96  1.00        TRUE
+## 4      curE  1.50  0.92        TRUE
+## 5 matlenlim  2.60  0.89        TRUE
+## 6    MRreal  1.60  0.74        TRUE</code></pre>
 <p>Adding the shaded polygons and text requires a little more tweaking and some knowledge of the <code>ggplot2</code> package. We will wrap up our code in a function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">NewPlot &lt;-<span class="st"> </span><span class="cf">function</span>(MSEobj) {
   <span class="co"># create but don&#39;t show the plot</span>
@@ -554,43 +561,15 @@ PMobj<span class="op">@</span>Name &lt;-<span class="st"> &quot;Spawning Biomass
 
 <span class="kw">NewPlot</span>(MSEobj)</code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-215-1.png" width="672" /></p>
-
-<!-- # (PART\*) Frequently Asked Questions  {-} -->
-<!-- # TroubleShooting  -->
-<!-- ## OM Documentation  -->
-<!-- I'm getting the following error when I run `OMdoc()` (or something like it): -->
-<!-- ```{} -->
-<!-- Error in yaml::yaml.load(string, ...) :  -->
-<!--   Parser error: while parsing a block mapping at line 1, column 1 did not find expected key at line 1, column 16 -->
-<!-- ``` -->
-<!-- This is usually caused by a special character in the first few lines of the Rmarkdown file (eg in Title, Subtitle, Author(s), or Date). -->
-<!-- A common culpit is a single apostrophe, usually used to indicate the possessive of a singular noun.   -->
-<!-- Example: -->
-<!-- ### Problem -->
-<!-- Results in an error -->
-<!-- ```{} -->
-<!-- # Title -->
-<!-- Adrian's OM -->
-<!-- ``` -->
-<!-- ### Solution  -->
-<!-- Type two apostrophes in place of one.  -->
-<!-- ```{} -->
-<!-- # Title -->
-<!-- Adrian''s OM -->
-<!-- ``` -->
-
 </div>
 </div>
-
-
-
             </section>
 
           </div>
         </div>
       </div>
 <a href="subsetting-the-mse-object.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="acknowledgements.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="using-real-indices.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -613,6 +592,10 @@ gitbook.start({
 "link": null,
 "text": null
 },
+"history": {
+"link": null,
+"text": null
+},
 "download": ["userguide.pdf"],
 "toc": {
 "collapse": "section",
@@ -629,7 +612,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;
