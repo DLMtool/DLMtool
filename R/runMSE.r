@@ -648,6 +648,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   if (!is.null(control$Cbias_yr)) { # catch bias specified with control argument 
     Cbiasa <- matrix(1, nsim, nyears+proyears)
     Cbiasa[,control$yrs] <- control$Cbias_yr
+    ErrList$Cbiasa <- Cbiasa
   } 
   # composite of bias and observation error
   ErrList$Cerr <- array(rlnorm((nyears + proyears) * nsim, 
