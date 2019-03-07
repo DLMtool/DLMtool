@@ -381,8 +381,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   UnfishedByYear <- list(SSN0=SSN0_a, N0=N0_a, SSB0=SSB0_a, B0=B0_a, VB0=VB0_a)
   
-  if (quantile(ageM[,1],0.95) > nyears) {
-    if(!silent) message('Note: number of historical year `nyears` is less than the highest age of maturity')
+  if (quantile(ageM[,1],0.95) > nyears + proyears) {
+    if(!silent) message('Note: number of historical year `nyears` + `proyears` is less than the highest age of maturity')
   }
     
   # ---- Unfished Reference Points ----

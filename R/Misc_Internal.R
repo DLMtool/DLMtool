@@ -820,9 +820,11 @@ CalcUnfishedRefs <- function(x, ageM, N0_a, SSN0_a, SSB0_a, B0_a, VB0_a, SSBpRa,
 
 CalcMSYRefs <- function(x, MSY_y, FMSY_y, SSBMSY_y, BMSY_y, VBMSY_y, ageM, OM) {
   n.yrs <- ceiling(ageM[x,OM@nyears]) # MSY ref points averaged over these years
+  nyears <- dim(ageM)[2]
   minY <- floor(n.yrs/2) 
   maxY <- n.yrs - minY - 1 
   avg.ind <- (OM@nyears - minY):(OM@nyears + maxY)
+  if (max(avg.ind) > nyears) avg.ind <- avg.ind[avg.ind < nyears]
   
   MSY <- mean(MSY_y[x, avg.ind])
   FMSY <- mean(FMSY_y[x, avg.ind])
