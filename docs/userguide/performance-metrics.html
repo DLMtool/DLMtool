@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2019-03-05">
+<meta name="date" content="2019-03-12">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -777,11 +777,16 @@ Management strategies that have a lower probability of overfishing occurring are
 <p>The <code>summary</code> function provides information on the performance of the Management Procedures with respect to the performance metrics. By default, <code>summary</code> includes the <code>PNOF</code>, <code>P50</code>, <code>AAVY</code> and <code>LTY</code> performance metrics:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(MSE)</code></pre></div>
 <pre><code>## Calculating Performance Metrics</code></pre>
-<pre><code>##                                       Performance.Metrics                                            
-## 1                 Probability of not overfishing (F&lt;FMSY)               Prob. F &lt; FMSY (Years 1 - 50)
-## 2                      Spawning Biomass relative to SBMSY         Prob. SB &gt; 0.5 SBMSY (Years 1 - 50)
-## 3        Average Annual Variability in Yield (Years 1-50)               Prob. AAVY &lt; 20% (Years 1-50)
-## 4 Average Yield relative to Reference Yield (Years 41-50)  Prob. Yield &gt; 0.5 Ref. Yield (Years 41-50)
+<pre><code>##                                       Performance.Metrics 
+## 1                 Probability of not overfishing (F&lt;FMSY) 
+## 2                      Spawning Biomass relative to SBMSY 
+## 3        Average Annual Variability in Yield (Years 1-50) 
+## 4 Average Yield relative to Reference Yield (Years 41-50) 
+##                                             
+## 1              Prob. F &lt; FMSY (Years 1 - 50)
+## 2        Prob. SB &gt; 0.5 SBMSY (Years 1 - 50)
+## 3              Prob. AAVY &lt; 20% (Years 1-50)
+## 4 Prob. Yield &gt; 0.5 Ref. Yield (Years 41-50)
 ## 
 ## 
 ## Probability:
@@ -795,9 +800,12 @@ Management strategies that have a lower probability of overfishing occurring are
 <p>It is straightforward to include other <code>PM</code> functions by adding the names of the <code>PM</code> functions, for example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(MSE, <span class="st">&#39;P100&#39;</span>, <span class="st">&#39;Yield&#39;</span>)</code></pre></div>
 <pre><code>## Calculating Performance Metrics</code></pre>
-<pre><code>##                              Performance.Metrics                                  
-## 1             Spawning Biomass relative to SBMSY   Prob. SB &gt; SBMSY (Years 1 - 50)
-## 2 Yield relative to Reference Yield (Years 1-50)  Mean Relative Yield (Years 1-50)
+<pre><code>##                              Performance.Metrics 
+## 1             Spawning Biomass relative to SBMSY 
+## 2 Yield relative to Reference Yield (Years 1-50) 
+##                                   
+## 1  Prob. SB &gt; SBMSY (Years 1 - 50)
+## 2 Mean Relative Yield (Years 1-50)
 ## 
 ## 
 ## Probability:
@@ -811,15 +819,24 @@ Management strategies that have a lower probability of overfishing occurring are
 <p>or all available <code>PM</code> functions:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(MSE, <span class="kw">avail</span>(<span class="st">&#39;PM&#39;</span>))</code></pre></div>
 <pre><code>## Calculating Performance Metrics</code></pre>
-<pre><code>##                                       Performance.Metrics                                            
-## 1        Average Annual Variability in Yield (Years 1-50)               Prob. AAVY &lt; 20% (Years 1-50)
-## 2 Average Yield relative to Reference Yield (Years 41-50)  Prob. Yield &gt; 0.5 Ref. Yield (Years 41-50)
-## 3                      Spawning Biomass relative to SBMSY         Prob. SB &gt; 0.1 SBMSY (Years 1 - 50)
-## 4                      Spawning Biomass relative to SBMSY             Prob. SB &gt; SBMSY (Years 1 - 50)
-## 5                      Spawning Biomass relative to SBMSY         Prob. SB &gt; 0.5 SBMSY (Years 1 - 50)
-## 6                 Probability of not overfishing (F&lt;FMSY)               Prob. F &lt; FMSY (Years 1 - 50)
-## 7  Average Yield relative to Reference Yield (Years 1-10)   Prob. Yield &gt; 0.5 Ref. Yield (Years 1-10)
-## 8          Yield relative to Reference Yield (Years 1-50)            Mean Relative Yield (Years 1-50)
+<pre><code>##                                       Performance.Metrics 
+## 1        Average Annual Variability in Yield (Years 1-50) 
+## 2 Average Yield relative to Reference Yield (Years 41-50) 
+## 3                      Spawning Biomass relative to SBMSY 
+## 4                      Spawning Biomass relative to SBMSY 
+## 5                      Spawning Biomass relative to SBMSY 
+## 6                 Probability of not overfishing (F&lt;FMSY) 
+## 7  Average Yield relative to Reference Yield (Years 1-10) 
+## 8          Yield relative to Reference Yield (Years 1-50) 
+##                                             
+## 1              Prob. AAVY &lt; 20% (Years 1-50)
+## 2 Prob. Yield &gt; 0.5 Ref. Yield (Years 41-50)
+## 3        Prob. SB &gt; 0.1 SBMSY (Years 1 - 50)
+## 4            Prob. SB &gt; SBMSY (Years 1 - 50)
+## 5        Prob. SB &gt; 0.5 SBMSY (Years 1 - 50)
+## 6              Prob. F &lt; FMSY (Years 1 - 50)
+## 7  Prob. Yield &gt; 0.5 Ref. Yield (Years 1-10)
+## 8           Mean Relative Yield (Years 1-50)
 ## 
 ## 
 ## Probability:
@@ -903,7 +920,7 @@ Results<span class="op">$</span>Yield <span class="co"># access the PM results</
 ##   if (class(Lims)!=&quot;numeric&quot;) stop(&quot;Second argument must be numeric&quot;)
 ##   TradePlot(MSEobj, Lims=Lims, PMlist=list(&quot;PNOF&quot;, &quot;LTY&quot;, &quot;P100&quot;, &quot;LTY&quot;, &quot;P50&quot;, &quot;LTY&quot;, &quot;P10&quot;, &quot;LTY&quot;),  ...)
 ## }
-## &lt;bytecode: 0x000000000fc3a4e8&gt;
+## &lt;bytecode: 0x0000000019b43ef0&gt;
 ## &lt;environment: namespace:DLMtool&gt;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Tplot</span>(MSE)</code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-102-1.png" width="672" /></p>

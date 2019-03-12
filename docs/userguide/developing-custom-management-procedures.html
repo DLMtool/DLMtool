@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2019-03-05">
+<meta name="date" content="2019-03-12">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -372,17 +372,22 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2><span class="header-section-number">26.1</span> The Anatomy of an MP</h2>
 <p>Let’s examine an existing output MP to identify the MP data requirements.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">avail</span>(<span class="st">&#39;Output&#39;</span>)</code></pre></div>
-<pre><code>##  [1] &quot;AvC&quot;         &quot;BK&quot;          &quot;BK_CC&quot;       &quot;BK_ML&quot;       &quot;CC1&quot;         &quot;CC2&quot;         &quot;CC3&quot;        
-##  [8] &quot;CC4&quot;         &quot;CC5&quot;         &quot;CompSRA&quot;     &quot;CompSRA4010&quot; &quot;DAAC&quot;        &quot;DBSRA&quot;       &quot;DBSRA_40&quot;   
-## [15] &quot;DBSRA4010&quot;   &quot;DCAC&quot;        &quot;DCAC_40&quot;     &quot;DCAC_ML&quot;     &quot;DCAC4010&quot;    &quot;DCACs&quot;       &quot;DD&quot;         
-## [22] &quot;DD4010&quot;      &quot;DepF&quot;        &quot;DynF&quot;        &quot;Fadapt&quot;      &quot;Fdem&quot;        &quot;Fdem_CC&quot;     &quot;Fdem_ML&quot;    
-## [29] &quot;Fratio&quot;      &quot;Fratio_CC&quot;   &quot;Fratio_ML&quot;   &quot;Fratio4010&quot;  &quot;GB_CC&quot;       &quot;GB_slope&quot;    &quot;GB_target&quot;  
-## [36] &quot;Gcontrol&quot;    &quot;HDAAC&quot;       &quot;ICI&quot;         &quot;ICI2&quot;        &quot;Iratio&quot;      &quot;Islope1&quot;     &quot;Islope2&quot;    
-## [43] &quot;Islope4&quot;     &quot;IT10&quot;        &quot;IT5&quot;         &quot;Itarget1&quot;    &quot;Itarget2&quot;    &quot;Itarget3&quot;    &quot;Itarget4&quot;   
-## [50] &quot;ITM&quot;         &quot;L95target&quot;   &quot;Lratio_BHI&quot;  &quot;Lratio_BHI2&quot; &quot;Lratio_BHI3&quot; &quot;LstepCC1&quot;    &quot;LstepCC2&quot;   
-## [57] &quot;LstepCC3&quot;    &quot;LstepCC4&quot;    &quot;Ltarget1&quot;    &quot;Ltarget2&quot;    &quot;Ltarget3&quot;    &quot;Ltarget4&quot;    &quot;MCD&quot;        
-## [64] &quot;MCD4010&quot;     &quot;Rcontrol&quot;    &quot;Rcontrol2&quot;   &quot;SBT1&quot;        &quot;SBT2&quot;        &quot;SPmod&quot;       &quot;SPMSY&quot;      
-## [71] &quot;SPslope&quot;     &quot;SPSRA&quot;       &quot;SPSRA_ML&quot;    &quot;YPR&quot;         &quot;YPR_CC&quot;      &quot;YPR_ML&quot;      &quot;avgMP&quot;</code></pre>
+<pre><code>##  [1] &quot;AvC&quot;         &quot;BK&quot;          &quot;BK_CC&quot;       &quot;BK_ML&quot;       &quot;CC1&quot;        
+##  [6] &quot;CC2&quot;         &quot;CC3&quot;         &quot;CC4&quot;         &quot;CC5&quot;         &quot;CompSRA&quot;    
+## [11] &quot;CompSRA4010&quot; &quot;DAAC&quot;        &quot;DBSRA&quot;       &quot;DBSRA_40&quot;    &quot;DBSRA4010&quot;  
+## [16] &quot;DCAC&quot;        &quot;DCAC_40&quot;     &quot;DCAC_ML&quot;     &quot;DCAC4010&quot;    &quot;DCACs&quot;      
+## [21] &quot;DD&quot;          &quot;DD4010&quot;      &quot;DepF&quot;        &quot;DynF&quot;        &quot;Fadapt&quot;     
+## [26] &quot;Fdem&quot;        &quot;Fdem_CC&quot;     &quot;Fdem_ML&quot;     &quot;Fratio&quot;      &quot;Fratio_CC&quot;  
+## [31] &quot;Fratio_ML&quot;   &quot;Fratio4010&quot;  &quot;GB_CC&quot;       &quot;GB_slope&quot;    &quot;GB_target&quot;  
+## [36] &quot;Gcontrol&quot;    &quot;HDAAC&quot;       &quot;ICI&quot;         &quot;ICI2&quot;        &quot;Iratio&quot;     
+## [41] &quot;Islope1&quot;     &quot;Islope2&quot;     &quot;Islope4&quot;     &quot;IT10&quot;        &quot;IT5&quot;        
+## [46] &quot;Itarget1&quot;    &quot;Itarget2&quot;    &quot;Itarget3&quot;    &quot;Itarget4&quot;    &quot;ITM&quot;        
+## [51] &quot;L95target&quot;   &quot;Lratio_BHI&quot;  &quot;Lratio_BHI2&quot; &quot;Lratio_BHI3&quot; &quot;LstepCC1&quot;   
+## [56] &quot;LstepCC2&quot;    &quot;LstepCC3&quot;    &quot;LstepCC4&quot;    &quot;Ltarget1&quot;    &quot;Ltarget2&quot;   
+## [61] &quot;Ltarget3&quot;    &quot;Ltarget4&quot;    &quot;MCD&quot;         &quot;MCD4010&quot;     &quot;Rcontrol&quot;   
+## [66] &quot;Rcontrol2&quot;   &quot;SBT1&quot;        &quot;SBT2&quot;        &quot;SPmod&quot;       &quot;SPMSY&quot;      
+## [71] &quot;SPslope&quot;     &quot;SPSRA&quot;       &quot;SPSRA_ML&quot;    &quot;YPR&quot;         &quot;YPR_CC&quot;     
+## [76] &quot;YPR_ML&quot;      &quot;avgMP&quot;</code></pre>
 <p>Since we’ve seen it used as a default MP in lots of the examples above, lets learn more about DCAC</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">?DCAC</code></pre></div>
 <p>We can even see all the code for this MP by simply typing the name of the MP into the console (this is a fantastic advantage of using R - there is complete transparency about package functions):</p>
@@ -398,7 +403,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##     Rec@TAC &lt;- TAC
 ##     Rec
 ## }
-## &lt;bytecode: 0x000000001acfd268&gt;
+## &lt;bytecode: 0x0000000016d22068&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
@@ -408,9 +413,10 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>However, in MSE we conduct many simulations and x refers to simulated data from simulation number <code>x</code>. Any single parameters such as natural mortality rate (<code>Mort</code>) are a vector (<code>nsim</code> long). See <code>Data@Mort[x]</code> in the DCAC code. Any time series such as annual catches or relative abundance indices, are a matrix of <code>nsim</code> rows and <code>nyears</code> columns.</p>
 <p>A range of objects of class Data are available:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">avail</span>(<span class="st">&#39;Data&#39;</span>)</code></pre></div>
-<pre><code>##  [1] &quot;Atlantic_mackerel&quot;  &quot;China_rockfish&quot;     &quot;Cobia&quot;              &quot;Example_datafile&quot;  
-##  [5] &quot;Gulf_blue_tilefish&quot; &quot;ourReefFish&quot;        &quot;Red_snapper&quot;        &quot;SimulatedData&quot;     
-##  [9] &quot;Simulation_1&quot;       &quot;China_rockfish2&quot;    &quot;Madeup&quot;             &quot;Recs&quot;</code></pre>
+<pre><code>##  [1] &quot;Atlantic_mackerel&quot;  &quot;China_rockfish&quot;     &quot;Cobia&quot;             
+##  [4] &quot;Example_datafile&quot;   &quot;Gulf_blue_tilefish&quot; &quot;ourReefFish&quot;       
+##  [7] &quot;Red_snapper&quot;        &quot;SimulatedData&quot;      &quot;Simulation_1&quot;      
+## [10] &quot;China_rockfish2&quot;    &quot;Madeup&quot;             &quot;Recs&quot;</code></pre>
 <p>For simplicity lets use a Data object with just one simulation, <code>Simulation_1</code> and rename it <code>Data</code></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Data &lt;-<span class="st"> </span>Simulation_<span class="dv">1</span></code></pre></div>
 <p>Since there is only one simulation in this data set (1 position) we can now see a single value of natural mortality rate:</p>
@@ -418,14 +424,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>## [1] 0.2244735</code></pre>
 <p>And a matrix of catches with only 1 row:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Data<span class="op">@</span>Cat</code></pre></div>
-<pre><code>##          [,1]     [,2]     [,3]     [,4]     [,5]     [,6]     [,7]     [,8]     [,9]    [,10]    [,11]
-## [1,] 4.275057 12.43761 14.63192 35.31725 28.69802 30.84651 24.14059 36.78335 29.27517 38.18088 59.30242
-##         [,12]    [,13]    [,14]    [,15]    [,16]    [,17]   [,18]   [,19]    [,20]    [,21]    [,22]
-## [1,] 56.08995 37.96849 51.84985 60.76729 41.53713 39.31114 57.9673 57.2248 72.37596 80.69301 76.63558
-##         [,23]    [,24]    [,25]    [,26]    [,27]    [,28]    [,29]  [,30]    [,31]    [,32]    [,33]
-## [1,] 59.37687 48.82643 50.38803 80.71158 53.35875 74.31955 48.83082 43.348 65.17864 49.94281 47.38492
-##         [,34]    [,35]    [,36]    [,37]    [,38]    [,39]    [,40]    [,41]    [,42]    [,43]    [,44]
-## [1,] 45.23197 80.92438 51.91477 29.36491 43.44834 49.46923 50.33217 49.53639 39.28779 27.31767 38.97092
+<pre><code>##          [,1]     [,2]     [,3]     [,4]     [,5]     [,6]     [,7]
+## [1,] 4.275057 12.43761 14.63192 35.31725 28.69802 30.84651 24.14059
+##          [,8]     [,9]    [,10]    [,11]    [,12]    [,13]    [,14]
+## [1,] 36.78335 29.27517 38.18088 59.30242 56.08995 37.96849 51.84985
+##         [,15]    [,16]    [,17]   [,18]   [,19]    [,20]    [,21]    [,22]
+## [1,] 60.76729 41.53713 39.31114 57.9673 57.2248 72.37596 80.69301 76.63558
+##         [,23]    [,24]    [,25]    [,26]    [,27]    [,28]    [,29]  [,30]
+## [1,] 59.37687 48.82643 50.38803 80.71158 53.35875 74.31955 48.83082 43.348
+##         [,31]    [,32]    [,33]    [,34]    [,35]    [,36]    [,37]
+## [1,] 65.17864 49.94281 47.38492 45.23197 80.92438 51.91477 29.36491
+##         [,38]    [,39]    [,40]    [,41]    [,42]    [,43]    [,44]
+## [1,] 43.44834 49.46923 50.33217 49.53639 39.28779 27.31767 38.97092
 ##        [,45]    [,46]    [,47]    [,48]    [,49]    [,50]
 ## [1,] 51.1054 37.34677 37.33128 24.24094 23.47756 21.08158</code></pre>
 <p>We could generate a single TAC recommendation from these data using DCAC by specifying position 1 (there is only 1 simulation) and by setting reps=1 (we want a single DCAC TAC recommendation)</p>
@@ -473,7 +483,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 }</code></pre></div>
 <p>We can quickly test our new MP for the example Data object</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">THC</span>(<span class="dt">x=</span><span class="dv">1</span>,Data,<span class="dt">reps=</span><span class="dv">10</span>)<span class="op">@</span>TAC</code></pre></div>
-<pre><code>##  [1] 79.11177 72.52747 82.94707 87.01687 87.66503 70.79588 78.22426 72.82187 75.81387 80.42515</code></pre>
+<pre><code>##  [1] 79.11177 72.52747 82.94707 87.01687 87.66503 70.79588 78.22426
+##  [8] 72.82187 75.81387 80.42515</code></pre>
 <p>Now that we know it works, to make the function compatible with the DLMtool package we have to assign it the class ‘MP’ so that DLMtool recognizes the function as a management procedure</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(THC)&lt;-<span class="st">&quot;MP&quot;</span></code></pre></div>
 <p>If we want to run the MSE in parallel we need to export the newly created function to the cluster:</p>
@@ -515,8 +526,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2><span class="header-section-number">26.4</span> Beyond the Catch Limit</h2>
 <p>All management procedures return an object of class ‘Rec’ that contains 13 slots:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">slotNames</span>(<span class="st">&quot;Rec&quot;</span>)</code></pre></div>
-<pre><code>##  [1] &quot;TAC&quot;      &quot;Effort&quot;   &quot;Spatial&quot;  &quot;Allocate&quot; &quot;LR5&quot;      &quot;LFR&quot;      &quot;HS&quot;       &quot;Rmaxlen&quot;  &quot;L5&quot;      
-## [10] &quot;LFS&quot;      &quot;Vmaxlen&quot;  &quot;Fdisc&quot;    &quot;Misc&quot;</code></pre>
+<pre><code>##  [1] &quot;TAC&quot;      &quot;Effort&quot;   &quot;Spatial&quot;  &quot;Allocate&quot; &quot;LR5&quot;      &quot;LFR&quot;     
+##  [7] &quot;HS&quot;       &quot;Rmaxlen&quot;  &quot;L5&quot;       &quot;LFS&quot;      &quot;Vmaxlen&quot;  &quot;Fdisc&quot;   
+## [13] &quot;Misc&quot;</code></pre>
 <p>We’ve already seen the TAC slot in the previous exercise. The remaining slots relate to various forms of input control:</p>
 <ul>
 <li>Effort (total allowable effort (TAE) relative to last historical year)</li>
@@ -542,7 +554,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##         curE_plot(x, rec, Data)
 ##     rec
 ## }
-## &lt;bytecode: 0x00000000057b6460&gt;
+## &lt;bytecode: 0x0000000018fea478&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
@@ -559,7 +571,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##             ylim = c(0, 1), names = 1:Data@nareas)
 ##     return(rec)
 ## }
-## &lt;bytecode: 0x00000000199a8aa0&gt;
+## &lt;bytecode: 0x0000000019d261b0&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
@@ -575,7 +587,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##             ylim = c(0, 1), names = 1:Data@nareas)
 ##     return(rec)
 ## }
-## &lt;bytecode: 0x00000000199d7b18&gt;
+## &lt;bytecode: 0x0000000019d1e728&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
@@ -590,7 +602,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##         size_lim_plot(x, Data, rec)
 ##     rec
 ## }
-## &lt;bytecode: 0x000000001a494f28&gt;
+## &lt;bytecode: 0x000000000ba61150&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>

@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2019-03-05">
+<meta name="date" content="2019-03-12">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -504,10 +504,10 @@ val_int[,<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2<
 <p>For example, <code>M_ageArray</code> is an internal array that describes the natural mortality rate at age for each simulation and year. Typically, this array is derived from the <code>M</code>, <code>M2</code>, <code>Mexp</code>, <code>Mgrad</code> and <code>Msd</code> slots in the <code>Stock</code> object. Using the <code>cpars</code> feature we can override these values in the <code>OM</code> and provide our own values for <em>M</em> for each simulation, age, and year.</p>
 <p>Information on the <code>M_ageArray</code> variable in cpars can be found in the output of the <code>validcpars</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">val_int[<span class="dv">15</span>,]</code></pre></div>
-<pre><code>##     Var.                                          Dim.                                      Desc.
-## 15 age95 numeric matrix dim = c(nsim, nyears+proyears) Age at 95% maturity by simulation and year
-##        Type
-## 15 internal</code></pre>
+<pre><code>##     Var.                                          Dim.
+## 15 age95 numeric matrix dim = c(nsim, nyears+proyears)
+##                                         Desc.     Type
+## 15 Age at 95% maturity by simulation and year internal</code></pre>
 <p>To generate our own values of the M-at-age array we would populate <code>OM@cpars$M_ageArray</code> with an array with dimensions <code>OM@nsim</code>, <code>OM@maxage</code>, <code>OM@nyears+OM@proyears</code>.</p>
 <p>The <code>cpars</code> feature is very powerful but also somewhat complicated, especially if you are using internal custom parameters. For example, by default DLMtool uses the <code>OM@L50_95</code> slot (the increment between length at 50% maturity (<code>OM@L50</code>) and length at 95% maturity (<code>L95</code>)) to calculate the internal parameter <code>L95</code>. This is neccessary to ensure that <code>L95</code> is always greater than <code>L50</code>. Using internal parameters in <code>cpars</code> it is possible to pass values to <code>L95</code> directly, however now it is up to you to make sure that the <code>L95</code> values are greater than the corresponding <code>L50</code> values, otherwise you end up with a species where fraction mature decreases with age/size!</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span>testOM 

@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2019-03-05">
+<meta name="date" content="2019-03-12">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -383,7 +383,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myMSE_200P &lt;-<span class="st"> </span><span class="kw">runMSE</span>(myOM, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</code></pre></div>
 <pre><code>## Running MSE in parallel on 10 processors</code></pre>
 <pre><code>## MSE completed</code></pre>
-<p>Parallel processing can increase the speed of running the MSE considerably. For example, although in this demonstration we are only running a low number of simulations, run time decreased from 2 to 13 seconds when using parallel processing on 10 processors.</p>
+<p>Parallel processing can increase the speed of running the MSE considerably. For example, although in this demonstration we are only running a low number of simulations, run time decreased from 7 to 11 seconds when using parallel processing on 10 processors.</p>
 </div>
 <div id="determining-optimal-number-of-processors" class="section level2">
 <h2><span class="header-section-number">9.3</span> Determining Optimal Number of Processors</h2>
@@ -391,18 +391,18 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">optCPU</span>()</code></pre></div>
 <p><img src="userguide_files/figure-html/optCPU-1.png" width="672" /></p>
 <pre><code>##    ncpu  time
-## 1     1 40.82
-## 2     2 19.98
-## 3     3 13.33
-## 4     4 10.40
-## 5     5  9.09
-## 6     6  7.91
-## 7     7  7.44
-## 8     8  6.91
-## 9     9  6.82
-## 10   10  6.91
-## 11   11  6.88
-## 12   12  6.89</code></pre>
+## 1     1 37.22
+## 2     2 18.96
+## 3     3 12.92
+## 4     4  9.95
+## 5     5  8.56
+## 6     6  7.32
+## 7     7  6.75
+## 8     8  6.20
+## 9     9  6.04
+## 10   10  5.79
+## 11   11  6.09
+## 12   12  6.23</code></pre>
 
 </div>
 </div>
