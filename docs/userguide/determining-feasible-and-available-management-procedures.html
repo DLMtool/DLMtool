@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2019-03-05">
+<meta name="date" content="2019-03-12">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -379,17 +379,22 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>## Feasible management:</code></pre>
 <pre><code>## TAC - total allowable catch</code></pre>
 <pre><code>## No Data object provided. Returning feasible MPs</code></pre>
-<pre><code>##  [1] &quot;AvC&quot;         &quot;BK&quot;          &quot;BK_CC&quot;       &quot;BK_ML&quot;       &quot;CC1&quot;         &quot;CC2&quot;         &quot;CC3&quot;        
-##  [8] &quot;CC4&quot;         &quot;CC5&quot;         &quot;CompSRA&quot;     &quot;CompSRA4010&quot; &quot;DAAC&quot;        &quot;DBSRA&quot;       &quot;DBSRA_40&quot;   
-## [15] &quot;DBSRA4010&quot;   &quot;DCAC&quot;        &quot;DCAC_40&quot;     &quot;DCAC_ML&quot;     &quot;DCAC4010&quot;    &quot;DCACs&quot;       &quot;DD&quot;         
-## [22] &quot;DD4010&quot;      &quot;DepF&quot;        &quot;DynF&quot;        &quot;Fadapt&quot;      &quot;Fdem&quot;        &quot;Fdem_CC&quot;     &quot;Fdem_ML&quot;    
-## [29] &quot;FMSYref&quot;     &quot;FMSYref50&quot;   &quot;FMSYref75&quot;   &quot;Fratio&quot;      &quot;Fratio_CC&quot;   &quot;Fratio_ML&quot;   &quot;Fratio4010&quot; 
-## [36] &quot;GB_CC&quot;       &quot;GB_slope&quot;    &quot;GB_target&quot;   &quot;Gcontrol&quot;    &quot;HDAAC&quot;       &quot;ICI&quot;         &quot;ICI2&quot;       
-## [43] &quot;Iratio&quot;      &quot;Islope1&quot;     &quot;Islope2&quot;     &quot;Islope4&quot;     &quot;IT10&quot;        &quot;IT5&quot;         &quot;Itarget1&quot;   
-## [50] &quot;Itarget2&quot;    &quot;Itarget3&quot;    &quot;Itarget4&quot;    &quot;ITM&quot;         &quot;L95target&quot;   &quot;Lratio_BHI&quot;  &quot;Lratio_BHI2&quot;
-## [57] &quot;Lratio_BHI3&quot; &quot;LstepCC1&quot;    &quot;LstepCC2&quot;    &quot;LstepCC3&quot;    &quot;LstepCC4&quot;    &quot;Ltarget1&quot;    &quot;Ltarget2&quot;   
-## [64] &quot;Ltarget3&quot;    &quot;Ltarget4&quot;    &quot;MCD&quot;         &quot;MCD4010&quot;     &quot;NFref&quot;       &quot;Rcontrol&quot;    &quot;Rcontrol2&quot;  
-## [71] &quot;SBT1&quot;        &quot;SBT2&quot;        &quot;SPmod&quot;       &quot;SPMSY&quot;       &quot;SPslope&quot;     &quot;SPSRA&quot;</code></pre>
+<pre><code>##  [1] &quot;AvC&quot;         &quot;BK&quot;          &quot;BK_CC&quot;       &quot;BK_ML&quot;       &quot;CC1&quot;        
+##  [6] &quot;CC2&quot;         &quot;CC3&quot;         &quot;CC4&quot;         &quot;CC5&quot;         &quot;CompSRA&quot;    
+## [11] &quot;CompSRA4010&quot; &quot;DAAC&quot;        &quot;DBSRA&quot;       &quot;DBSRA_40&quot;    &quot;DBSRA4010&quot;  
+## [16] &quot;DCAC&quot;        &quot;DCAC_40&quot;     &quot;DCAC_ML&quot;     &quot;DCAC4010&quot;    &quot;DCACs&quot;      
+## [21] &quot;DD&quot;          &quot;DD4010&quot;      &quot;DepF&quot;        &quot;DynF&quot;        &quot;Fadapt&quot;     
+## [26] &quot;Fdem&quot;        &quot;Fdem_CC&quot;     &quot;Fdem_ML&quot;     &quot;FMSYref&quot;     &quot;FMSYref50&quot;  
+## [31] &quot;FMSYref75&quot;   &quot;Fratio&quot;      &quot;Fratio_CC&quot;   &quot;Fratio_ML&quot;   &quot;Fratio4010&quot; 
+## [36] &quot;GB_CC&quot;       &quot;GB_slope&quot;    &quot;GB_target&quot;   &quot;Gcontrol&quot;    &quot;HDAAC&quot;      
+## [41] &quot;ICI&quot;         &quot;ICI2&quot;        &quot;Iratio&quot;      &quot;Islope1&quot;     &quot;Islope2&quot;    
+## [46] &quot;Islope4&quot;     &quot;IT10&quot;        &quot;IT5&quot;         &quot;Itarget1&quot;    &quot;Itarget2&quot;   
+## [51] &quot;Itarget3&quot;    &quot;Itarget4&quot;    &quot;ITM&quot;         &quot;L95target&quot;   &quot;Lratio_BHI&quot; 
+## [56] &quot;Lratio_BHI2&quot; &quot;Lratio_BHI3&quot; &quot;LstepCC1&quot;    &quot;LstepCC2&quot;    &quot;LstepCC3&quot;   
+## [61] &quot;LstepCC4&quot;    &quot;Ltarget1&quot;    &quot;Ltarget2&quot;    &quot;Ltarget3&quot;    &quot;Ltarget4&quot;   
+## [66] &quot;MCD&quot;         &quot;MCD4010&quot;     &quot;NFref&quot;       &quot;Rcontrol&quot;    &quot;Rcontrol2&quot;  
+## [71] &quot;SBT1&quot;        &quot;SBT2&quot;        &quot;SPmod&quot;       &quot;SPMSY&quot;       &quot;SPslope&quot;    
+## [76] &quot;SPSRA&quot;</code></pre>
 <p>We can confirm that all of these MPs are output controls (return a TAC) by using the <code>MPtype</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">feaseMPs &lt;-<span class="st"> </span><span class="kw">Fease</span>(<span class="dt">TAC=</span><span class="ot">TRUE</span>, <span class="dt">TAE=</span><span class="ot">FALSE</span>, <span class="dt">SL=</span><span class="ot">FALSE</span>, <span class="dt">Spatial=</span><span class="ot">FALSE</span>)</code></pre></div>
 <pre><code>## Feasible management:</code></pre>
@@ -501,66 +506,115 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2><span class="header-section-number">21.2</span> Available MPs</h2>
 <p>The <code>Can</code> function generates a list of the MPs that are available to be applied to the Data object:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Can</span>(Atlantic_mackerel)</code></pre></div>
-<pre><code>##  [1] &quot;AvC&quot;          &quot;AvC_MLL&quot;      &quot;BK&quot;           &quot;CC1&quot;          &quot;CC2&quot;          &quot;CC3&quot;         
-##  [7] &quot;CC4&quot;          &quot;CC5&quot;          &quot;curE&quot;         &quot;curE75&quot;       &quot;DAAC&quot;         &quot;DBSRA&quot;       
-## [13] &quot;DBSRA_40&quot;     &quot;DBSRA4010&quot;    &quot;DCAC&quot;         &quot;DCAC_40&quot;      &quot;DCAC4010&quot;     &quot;DCACs&quot;       
-## [19] &quot;DD&quot;           &quot;DD4010&quot;       &quot;DDe&quot;          &quot;DDe75&quot;        &quot;DDes&quot;         &quot;DepF&quot;        
-## [25] &quot;DTe40&quot;        &quot;DTe50&quot;        &quot;DynF&quot;         &quot;Fadapt&quot;       &quot;Fdem&quot;         &quot;Fratio&quot;      
-## [31] &quot;Fratio4010&quot;   &quot;GB_slope&quot;     &quot;Gcontrol&quot;     &quot;HDAAC&quot;        &quot;ICI&quot;          &quot;ICI2&quot;        
-## [37] &quot;Iratio&quot;       &quot;Islope1&quot;      &quot;Islope2&quot;      &quot;Islope4&quot;      &quot;Itarget1&quot;     &quot;Itarget1_MPA&quot;
-## [43] &quot;Itarget2&quot;     &quot;Itarget3&quot;     &quot;Itarget4&quot;     &quot;ItargetE1&quot;    &quot;ItargetE2&quot;    &quot;ItargetE3&quot;   
-## [49] &quot;ItargetE4&quot;    &quot;matlenlim&quot;    &quot;matlenlim2&quot;   &quot;MCD&quot;          &quot;MCD4010&quot;      &quot;minlenLopt1&quot; 
-## [55] &quot;MRnoreal&quot;     &quot;MRreal&quot;       &quot;NFref&quot;        &quot;Rcontrol&quot;     &quot;Rcontrol2&quot;    &quot;SBT1&quot;        
-## [61] &quot;slotlim&quot;      &quot;SPmod&quot;        &quot;SPMSY&quot;        &quot;SPslope&quot;      &quot;SPSRA&quot;        &quot;YPR&quot;</code></pre>
+<pre><code>##  [1] &quot;AvC&quot;          &quot;AvC_MLL&quot;      &quot;BK&quot;           &quot;CC1&quot;         
+##  [5] &quot;CC2&quot;          &quot;CC3&quot;          &quot;CC4&quot;          &quot;CC5&quot;         
+##  [9] &quot;curE&quot;         &quot;curE75&quot;       &quot;DAAC&quot;         &quot;DBSRA&quot;       
+## [13] &quot;DBSRA_40&quot;     &quot;DBSRA4010&quot;    &quot;DCAC&quot;         &quot;DCAC_40&quot;     
+## [17] &quot;DCAC4010&quot;     &quot;DCACs&quot;        &quot;DD&quot;           &quot;DD4010&quot;      
+## [21] &quot;DDe&quot;          &quot;DDe75&quot;        &quot;DDes&quot;         &quot;DepF&quot;        
+## [25] &quot;DTe40&quot;        &quot;DTe50&quot;        &quot;DynF&quot;         &quot;Fadapt&quot;      
+## [29] &quot;Fdem&quot;         &quot;Fratio&quot;       &quot;Fratio4010&quot;   &quot;GB_slope&quot;    
+## [33] &quot;Gcontrol&quot;     &quot;HDAAC&quot;        &quot;ICI&quot;          &quot;ICI2&quot;        
+## [37] &quot;Iratio&quot;       &quot;Islope1&quot;      &quot;Islope2&quot;      &quot;Islope4&quot;     
+## [41] &quot;Itarget1&quot;     &quot;Itarget1_MPA&quot; &quot;Itarget2&quot;     &quot;Itarget3&quot;    
+## [45] &quot;Itarget4&quot;     &quot;ItargetE1&quot;    &quot;ItargetE2&quot;    &quot;ItargetE3&quot;   
+## [49] &quot;ItargetE4&quot;    &quot;matlenlim&quot;    &quot;matlenlim2&quot;   &quot;MCD&quot;         
+## [53] &quot;MCD4010&quot;      &quot;minlenLopt1&quot;  &quot;MRnoreal&quot;     &quot;MRreal&quot;      
+## [57] &quot;NFref&quot;        &quot;Rcontrol&quot;     &quot;Rcontrol2&quot;    &quot;SBT1&quot;        
+## [61] &quot;slotlim&quot;      &quot;SPmod&quot;        &quot;SPMSY&quot;        &quot;SPslope&quot;     
+## [65] &quot;SPSRA&quot;        &quot;YPR&quot;</code></pre>
 <p>If all management methods are feasible, the list of MPs returned by the <code>Can</code> function will be the same as those returned by the <code>Fease</code> function when the <code>Data</code> object is provided.</p>
 </div>
 <div id="unavailable-mps" class="section level2">
 <h2><span class="header-section-number">21.3</span> Unavailable MPs</h2>
 <p>The <code>Cant</code> function displays a list of the MPs that cannot be applied to the Data object together with the reason why:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Cant</span>(Atlantic_mackerel)</code></pre></div>
-<pre><code>##       [,1]          [,2]                                                         
-##  [1,] &quot;BK_CC&quot;       &quot;Missing data: CAA&quot;                                          
-##  [2,] &quot;BK_ML&quot;       &quot;Missing data: Lbar, Lc, CAL&quot;                                
-##  [3,] &quot;CompSRA&quot;     &quot;Missing data: CAA&quot;                                          
-##  [4,] &quot;CompSRA4010&quot; &quot;Missing data: CAA&quot;                                          
-##  [5,] &quot;DCAC_ML&quot;     &quot;Missing data: Lbar, Lc, CAL&quot;                                
-##  [6,] &quot;EtargetLopt&quot; &quot;Missing data: ML&quot;                                           
-##  [7,] &quot;Fdem_CC&quot;     &quot;Missing data: CAA&quot;                                          
-##  [8,] &quot;Fdem_ML&quot;     &quot;Missing data: Lbar, Lc, CAL&quot;                                
-##  [9,] &quot;FMSYref&quot;     &quot;MP returned an error. Check MP function and/or Data object.&quot;
-## [10,] &quot;FMSYref50&quot;   &quot;MP returned an error. Check MP function and/or Data object.&quot;
-## [11,] &quot;FMSYref75&quot;   &quot;MP returned an error. Check MP function and/or Data object.&quot;
-## [12,] &quot;Fratio_CC&quot;   &quot;Missing data: CAA&quot;                                          
-## [13,] &quot;Fratio_ML&quot;   &quot;Missing data: Lbar, Lc, CAL&quot;                                
-## [14,] &quot;GB_CC&quot;       &quot;Missing data: Cref&quot;                                         
-## [15,] &quot;GB_target&quot;   &quot;Missing data: Cref, Iref&quot;                                   
-## [16,] &quot;IT10&quot;        &quot;Missing data: Iref, MPrec&quot;                                  
-## [17,] &quot;IT5&quot;         &quot;Missing data: Iref, MPrec&quot;                                  
-## [18,] &quot;ITe10&quot;       &quot;Missing data: Iref&quot;                                         
-## [19,] &quot;ITe5&quot;        &quot;Missing data: Iref&quot;                                         
-## [20,] &quot;ITM&quot;         &quot;Missing data: Iref, MPrec&quot;                                  
-## [21,] &quot;L95target&quot;   &quot;Missing data: ML&quot;                                           
-## [22,] &quot;LBSPR&quot;       &quot;Missing data: CAL&quot;                                          
-## [23,] &quot;LBSPR_MLL&quot;   &quot;Missing data: CAL&quot;                                          
-## [24,] &quot;Lratio_BHI&quot;  &quot;Missing data: CAL&quot;                                          
-## [25,] &quot;Lratio_BHI2&quot; &quot;Missing data: CAL&quot;                                          
-## [26,] &quot;Lratio_BHI3&quot; &quot;Missing data: CAL&quot;                                          
-## [27,] &quot;LstepCC1&quot;    &quot;Missing data: ML&quot;                                           
-## [28,] &quot;LstepCC2&quot;    &quot;Missing data: ML&quot;                                           
-## [29,] &quot;LstepCC3&quot;    &quot;Missing data: ML&quot;                                           
-## [30,] &quot;LstepCC4&quot;    &quot;Missing data: ML&quot;                                           
-## [31,] &quot;LstepCE1&quot;    &quot;Missing data: ML&quot;                                           
-## [32,] &quot;LstepCE2&quot;    &quot;Missing data: ML&quot;                                           
-## [33,] &quot;Ltarget1&quot;    &quot;Missing data: ML&quot;                                           
-## [34,] &quot;Ltarget2&quot;    &quot;Missing data: ML&quot;                                           
-## [35,] &quot;Ltarget3&quot;    &quot;Missing data: ML&quot;                                           
-## [36,] &quot;Ltarget4&quot;    &quot;Missing data: ML&quot;                                           
-## [37,] &quot;LtargetE1&quot;   &quot;Missing data: ML&quot;                                           
-## [38,] &quot;LtargetE4&quot;   &quot;Missing data: ML&quot;                                           
-## [39,] &quot;SBT2&quot;        &quot;Missing data: Rec, Cref&quot;                                    
-## [40,] &quot;SPSRA_ML&quot;    &quot;Missing data: Lbar, Lc, CAL&quot;                                
-## [41,] &quot;YPR_CC&quot;      &quot;Missing data: CAA&quot;                                          
-## [42,] &quot;YPR_ML&quot;      &quot;Missing data: Lbar, Lc, CAL&quot;</code></pre>
+<pre><code>##       [,1]         
+##  [1,] &quot;BK_CC&quot;      
+##  [2,] &quot;BK_ML&quot;      
+##  [3,] &quot;CompSRA&quot;    
+##  [4,] &quot;CompSRA4010&quot;
+##  [5,] &quot;DCAC_ML&quot;    
+##  [6,] &quot;EtargetLopt&quot;
+##  [7,] &quot;Fdem_CC&quot;    
+##  [8,] &quot;Fdem_ML&quot;    
+##  [9,] &quot;FMSYref&quot;    
+## [10,] &quot;FMSYref50&quot;  
+## [11,] &quot;FMSYref75&quot;  
+## [12,] &quot;Fratio_CC&quot;  
+## [13,] &quot;Fratio_ML&quot;  
+## [14,] &quot;GB_CC&quot;      
+## [15,] &quot;GB_target&quot;  
+## [16,] &quot;IT10&quot;       
+## [17,] &quot;IT5&quot;        
+## [18,] &quot;ITe10&quot;      
+## [19,] &quot;ITe5&quot;       
+## [20,] &quot;ITM&quot;        
+## [21,] &quot;L95target&quot;  
+## [22,] &quot;LBSPR&quot;      
+## [23,] &quot;LBSPR_MLL&quot;  
+## [24,] &quot;Lratio_BHI&quot; 
+## [25,] &quot;Lratio_BHI2&quot;
+## [26,] &quot;Lratio_BHI3&quot;
+## [27,] &quot;LstepCC1&quot;   
+## [28,] &quot;LstepCC2&quot;   
+## [29,] &quot;LstepCC3&quot;   
+## [30,] &quot;LstepCC4&quot;   
+## [31,] &quot;LstepCE1&quot;   
+## [32,] &quot;LstepCE2&quot;   
+## [33,] &quot;Ltarget1&quot;   
+## [34,] &quot;Ltarget2&quot;   
+## [35,] &quot;Ltarget3&quot;   
+## [36,] &quot;Ltarget4&quot;   
+## [37,] &quot;LtargetE1&quot;  
+## [38,] &quot;LtargetE4&quot;  
+## [39,] &quot;SBT2&quot;       
+## [40,] &quot;SPSRA_ML&quot;   
+## [41,] &quot;YPR_CC&quot;     
+## [42,] &quot;YPR_ML&quot;     
+##       [,2]                                                         
+##  [1,] &quot;Missing data: CAA&quot;                                          
+##  [2,] &quot;Missing data: Lbar, Lc, CAL&quot;                                
+##  [3,] &quot;Missing data: CAA&quot;                                          
+##  [4,] &quot;Missing data: CAA&quot;                                          
+##  [5,] &quot;Missing data: Lbar, Lc, CAL&quot;                                
+##  [6,] &quot;Missing data: ML&quot;                                           
+##  [7,] &quot;Missing data: CAA&quot;                                          
+##  [8,] &quot;Missing data: Lbar, Lc, CAL&quot;                                
+##  [9,] &quot;MP returned an error. Check MP function and/or Data object.&quot;
+## [10,] &quot;MP returned an error. Check MP function and/or Data object.&quot;
+## [11,] &quot;MP returned an error. Check MP function and/or Data object.&quot;
+## [12,] &quot;Missing data: CAA&quot;                                          
+## [13,] &quot;Missing data: Lbar, Lc, CAL&quot;                                
+## [14,] &quot;Missing data: Cref&quot;                                         
+## [15,] &quot;Missing data: Cref, Iref&quot;                                   
+## [16,] &quot;Missing data: Iref, MPrec&quot;                                  
+## [17,] &quot;Missing data: Iref, MPrec&quot;                                  
+## [18,] &quot;Missing data: Iref&quot;                                         
+## [19,] &quot;Missing data: Iref&quot;                                         
+## [20,] &quot;Missing data: Iref, MPrec&quot;                                  
+## [21,] &quot;Missing data: ML&quot;                                           
+## [22,] &quot;Missing data: CAL&quot;                                          
+## [23,] &quot;Missing data: CAL&quot;                                          
+## [24,] &quot;Missing data: CAL&quot;                                          
+## [25,] &quot;Missing data: CAL&quot;                                          
+## [26,] &quot;Missing data: CAL&quot;                                          
+## [27,] &quot;Missing data: ML&quot;                                           
+## [28,] &quot;Missing data: ML&quot;                                           
+## [29,] &quot;Missing data: ML&quot;                                           
+## [30,] &quot;Missing data: ML&quot;                                           
+## [31,] &quot;Missing data: ML&quot;                                           
+## [32,] &quot;Missing data: ML&quot;                                           
+## [33,] &quot;Missing data: ML&quot;                                           
+## [34,] &quot;Missing data: ML&quot;                                           
+## [35,] &quot;Missing data: ML&quot;                                           
+## [36,] &quot;Missing data: ML&quot;                                           
+## [37,] &quot;Missing data: ML&quot;                                           
+## [38,] &quot;Missing data: ML&quot;                                           
+## [39,] &quot;Missing data: Rec, Cref&quot;                                    
+## [40,] &quot;Missing data: Lbar, Lc, CAL&quot;                                
+## [41,] &quot;Missing data: CAA&quot;                                          
+## [42,] &quot;Missing data: Lbar, Lc, CAL&quot;</code></pre>
 </div>
 </div>
             </section>

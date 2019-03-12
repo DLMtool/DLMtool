@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2019-03-05">
+<meta name="date" content="2019-03-12">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -372,11 +372,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>We can do this using a combination of the <code>summary</code> function and the <code>Sub</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">stats &lt;-<span class="st"> </span><span class="kw">summary</span>(BSharkMSE) <span class="co"># save summary object to `stats`</span></code></pre></div>
 <pre><code>## Calculating Performance Metrics</code></pre>
-<pre><code>##                                       Performance.Metrics                                            
-## 1                 Probability of not overfishing (F&lt;FMSY)               Prob. F &lt; FMSY (Years 1 - 50)
-## 2                      Spawning Biomass relative to SBMSY         Prob. SB &gt; 0.5 SBMSY (Years 1 - 50)
-## 3        Average Annual Variability in Yield (Years 1-50)               Prob. AAVY &lt; 20% (Years 1-50)
-## 4 Average Yield relative to Reference Yield (Years 41-50)  Prob. Yield &gt; 0.5 Ref. Yield (Years 41-50)
+<pre><code>##                                       Performance.Metrics 
+## 1                 Probability of not overfishing (F&lt;FMSY) 
+## 2                      Spawning Biomass relative to SBMSY 
+## 3        Average Annual Variability in Yield (Years 1-50) 
+## 4 Average Yield relative to Reference Yield (Years 41-50) 
+##                                             
+## 1              Prob. F &lt; FMSY (Years 1 - 50)
+## 2        Prob. SB &gt; 0.5 SBMSY (Years 1 - 50)
+## 3              Prob. AAVY &lt; 20% (Years 1-50)
+## 4 Prob. Yield &gt; 0.5 Ref. Yield (Years 41-50)
 ## 
 ## 
 ## Probability:
