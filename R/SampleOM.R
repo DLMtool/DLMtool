@@ -297,11 +297,16 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (!exists("LatASD", inherits=FALSE)) LatASD <- Len_age * array(LenCV, dim=dim(Len_age)) # SD of length-at-age 
   if (any(dim(LatASD) != dim(Len_age))) stop("Dimensions of 'LatASD' must match dimensions of 'Len_age'", .call=FALSE)
   
-  binWidth <- ceiling(0.03 * MaxBin)
+  if (!exists("binWidth", inherits=FALSE)) 
+    binWidth <- ceiling(0.03 * MaxBin)
+  
   if (!exists("CAL_bins", inherits=FALSE)) CAL_bins <- seq(from = 0, to = MaxBin + binWidth, by = binWidth)
   if (!exists("CAL_binsmid", inherits=FALSE)) CAL_binsmid <- seq(from = 0.5 * binWidth, by = binWidth, length = length(CAL_bins) - 1)
   if (length(CAL_bins) != length(CAL_binsmid)+1) stop("Length of 'CAL_bins' must be length(CAL_binsmid)+1", .call=FALSE)
   
+  # Check bin width - in case both CAL_bins or CAL_binsmid AND binWidth have been passed in with cpars
+  if (!all(diff(CAL_bins) == binWidth)) stop("width of CAL_bins != binWidth", call.=FALSE)
+  if (!all(diff(CAL_binsmid) == binWidth)) stop("width of CAL_binsmid != binWidth", call.=FALSE)
   nCALbins <- length(CAL_binsmid)
   
   if (max(Linfarray) > max(CAL_bins)) stop("`max(CAL_bins)` must be larger than `max(Linfarray)`")
@@ -1396,13 +1401,16 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   if ('maxage' %in% names(cpars)) {
     sampCpars$maxage <- cpars$maxage
   }
+  if ('binWidth' %in% names(cpars)) {
+    sampCpars$binWidth <- cpars$binWidth
+  }
   # if (is.null(ncparsim)) return(sampCpars)
   
   Names <- names(cpars)
   
-  ValNames <- c(CparsInfo$Slot[CparsInfo$Valid], CparsInfo$Legacy[CparsInfo$Valid])
+  ValNames <- c(CparsInfo$Slot[which(CparsInfo$Valid>0)], CparsInfo$Legacy[which(CparsInfo$Valid>0)])
   ValNames <- ValNames[!is.na(ValNames)]
-  InvalNames <- c(CparsInfo$Slot[!CparsInfo$Valid], CparsInfo$Legacy[!CparsInfo$Valid])
+  InvalNames <- c(CparsInfo$Slot[!which(CparsInfo$Valid>0)], CparsInfo$Legacy[!which(CparsInfo$Valid>0)])
   InvalNames <- unique(InvalNames[!is.na(InvalNames)])
   
   # report invalid names 
@@ -1465,7 +1473,7 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
     for (i in 1:length(cpars)) {
       samps <- cpars[[i]]
       name <- names(cpars)[i]
-      if (any(c("maxage", "M_at_Length", "CAL_binsmid", "CAL_bins") %in% name)) {
+      if (any(c("maxage", "M_at_Length", "CAL_binsmid", "CAL_bins", "binWidth") %in% name)) {
         sampCpars[[name]] <- samps
       } else {
         if (class(samps) == "numeric" | class(samps) == "integer") sampCpars[[name]] <- samps[ind]
