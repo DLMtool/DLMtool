@@ -192,7 +192,7 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
     arma::mat Zcurr = Zarray.subcube(0, yr, 0, maxage-1, yr, nareas-1);
     
     arma::mat NextYrN = popdynOneTScpp(nareas, maxage, wrap(SB), wrap(Ncurr2), wrap(Zcurr), 
-                                       Prec(yr+1+maxage), hc, R0c2, SSBpRc, aRc2, bRc2, movcy, SRrelc); 
+                                       Prec(yr+maxage), hc, R0c2, SSBpRc, aRc2, bRc2, movcy, SRrelc); 
   
     Narray.subcube(0, yr+1, 0, maxage-1, yr+1, nareas-1) = NextYrN;
     for (int A=0; A<nareas; A++) {
