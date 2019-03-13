@@ -24,6 +24,11 @@ An object for storing data for analysis using data-limited methods
 
 \item{\code{Ind}}{Relative abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers}
 
+\item{\code{Type}}{Type of abundance index, corresponding with rows in \code{RInd}. Types are: "Biomass", "VBiomass",
+and "SpBiomass" for indices of total, vulnerable, and spawning biomass respectively. Character string.}
+
+\item{\code{RInd}}{One or more vectors of abundance indices. Non-negative real numbers}
+
 \item{\code{Rec}}{Recent recruitment strength. Matrix of nsim rows and nyears columns. Non-negative real numbers}
 
 \item{\code{t}}{The number of years corresponding to AvC and Dt. Single value. Positive integer}
@@ -52,7 +57,7 @@ An object for storing data for analysis using data-limited methods
 
 \item{\code{LFS}}{Shortest length at full selection.  Vector nsim long. Positive real numbers}
 
-\item{\code{CAA}}{Catch at Age data. Array of dimensions nsim x nyears x MaxAge. Non-negative integers}
+\item{\code{CAA}}{Catch at Age data (numbers). Array of dimensions nsim x nyears x MaxAge. Non-negative integers}
 
 \item{\code{Dep}}{Stock depletion SSB(current)/SSB(unfished). Vector nsim long. Fraction.}
 

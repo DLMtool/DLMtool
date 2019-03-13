@@ -24,15 +24,11 @@ NumericVector combine(const List& list)
   {
     NumericVector el = list[i];
     std::copy(el.begin(), el.end(), output.begin() + index);
-    
     // Update the index
     index += el.size();
   }
-  
   return output;
-  
 }
-
 
 
 // https://stackoverflow.com/questions/13661065/superimpose-histogram-fits-in-one-plot-ggplot
@@ -43,7 +39,6 @@ NumericVector get_freq(NumericVector x, double width, double origin = 0,
   int bin= 0;
   int nmissing = 0;
   std::vector<int> out(outlen);
-  
   NumericVector::iterator x_it = x.begin(), x_end;
   for(; x_it != x.end(); ++x_it) {
     double val = *x_it;
@@ -54,7 +49,6 @@ NumericVector get_freq(NumericVector x, double width, double origin = 0,
       ++out[bin];
     }
   }
-  
   return wrap(out);
 }
 
@@ -64,7 +58,6 @@ double which_maxC(NumericVector x){
   int out;
   out = std::distance(x.begin(),std::max_element(x.begin(),x.end()));
   out++;
-  
   return out;
 }
 
@@ -74,7 +67,6 @@ double which_maxC(NumericVector x){
 
 // [[Rcpp::export]]
 NumericVector rnormSelect2(int N, int mi, int ma) {
-  // RNGScope scope;
   int N2 = N * 1.25;
   NumericVector X = rnorm(N2, 0, 1);
   LogicalVector ind = (X >= mi) & (X <= ma);
@@ -88,15 +80,11 @@ NumericVector rnormSelect2(int N, int mi, int ma) {
 
 // [[Rcpp::export]]
 NumericVector tdnorm(NumericVector x, double mi, double ma) {
-  // RNGScope scope;
   NumericVector dist = dnorm(x, 0.0, 1.0);
-  
   NumericVector cdist = pnorm(x, 0.0, 1.0);
   LogicalVector ind = (cdist < R::pnorm(mi, 0.0, 1.0,1,0)) | (cdist >R::pnorm(ma, 0.0, 1.0,1,0));
-
   double sz = dist.size();
   int maxind = which_maxC(dist);
-
   NumericVector Y = dist;
   for (int i=0; (i<sz); i++) { // truncate
     if (ind[i]) Y(i) = 0;
@@ -113,7 +101,6 @@ NumericMatrix  genSizeComp(NumericMatrix VulnN, NumericVector CAL_binsmid, Numer
                            double CAL_ESS, double CAL_nsamp,
                            NumericVector Linfs, NumericVector Ks, NumericVector t0s,
                            double LenCV, double truncSD) {
-
   int nyears = VulnN.nrow();
   int k = VulnN.ncol();
   int nbins = CAL_binsmid.size();
@@ -121,9 +108,7 @@ NumericMatrix  genSizeComp(NumericMatrix VulnN, NumericVector CAL_binsmid, Numer
   double width = CAL_binsmid(1) - CAL_binsmid(0);
   double origin = CAL_binsmid(0) - 0.5* width;
   NumericVector temp(k);
-
   NumericVector varAges = NumericVector::create(-0.6, -0.5, -0.4, -0.3, -0.2, -0.1, 0.0, 0.1, 0.2, 0.3, 0.4, 0.5); // monthly ages
-
   for (int yr=0; yr < nyears; yr++) {
     NumericVector Nage = (VulnN.row(yr)); // numbers of catch-at-age this year
     double Ncatch = sum(Nage); // total catch this year
@@ -133,48 +118,28 @@ NumericMatrix  genSizeComp(NumericMatrix VulnN, NumericVector CAL_binsmid, Numer
       int count = 0;
       for (int age=1; age <= k; age++) { // loop over 1:maxage
         int Nage3 =  round(Nage2(age-1)); // number at this age
-    
         NumericVector rands = RcppArmadillo::sample(NumericVector::create(0,1,2,3,4,5,6,7,8,9,10,11), Nage3, TRUE, NumericVector::create()) ; //  assume ages are uniformly distributed across months
-        
         NumericVector subAgeVec = get_freq(rands, 1, 0, 12); // distribute n across months
-        
+        // NumericVector subAgeVec = Nage3/NumericVector::create(1,2,3,4,5,6,7,8,9,10,11,12); // distribute n across months
         for (int subage=0; subage<=11; subage++) { // loop over 12 months
           if (subAgeVec(subage) > 0) {
             double sage = varAges(subage) + age;
-
             double mean = Linfs(yr) * (1-exp(-Ks(yr)* (sage - t0s(yr)))); // calculate mean length at sub-age;
             if (mean < 0) mean = 0.01;
             NumericVector dist = tdnorm((CAL_binsmid-mean)/(LenCV*mean), -truncSD, truncSD); // prob density of lengths for this age
             NumericVector newdist = dist * selCurve(_,yr); // probability = dist * size-selection curve
-
             if (sum(newdist)!=0) {
               newdist = newdist/sum(newdist);
-
               Lens(count) = RcppArmadillo::sample(CAL_binsmid, subAgeVec(subage), TRUE, newdist); // sample lengths for this sub-age class
             } else {
               Lens(count) = NA_INTEGER;
             }
-
           } else {
             Lens(count) = NA_INTEGER;
           }
           count += 1;
         }
-        // double mean = Linfs(yr) * (1-exp(-Ks(yr)* (age - t0s(yr)))); // calculate mean length at age;
-        // if (mean < 0) mean = 0;
-        // NumericVector dist = tdnorm((CAL_binsmid-mean)/(LenCV*mean), -truncSD, truncSD); // prob density of lengths for this age
-        // NumericVector newdist = dist * selCurve; // probability = dist * size-selection curve
-        // newdist = newdist/sum(newdist);
-        // double Nage3 =  floor(Nage2(age-1));
-        // 
-        // if (Nage3 > 0) {
-        //   Lens(age-1) = RcppArmadillo::sample(CAL_binsmid, Nage3, TRUE, newdist); // sample lengths for this age class
-        // } else {
-        //   Lens(age-1) = NA_INTEGER;
-        // }
-        
       }
-      
       NumericVector LenVals = combine(Lens); // unlist
       NumericVector templens = get_freq(LenVals, width, origin, nbins); // calculate frequencies
       double rat = CAL_nsamp/sum(templens);
@@ -184,63 +149,54 @@ NumericMatrix  genSizeComp(NumericMatrix VulnN, NumericVector CAL_binsmid, Numer
       NumericVector zeros(nbins);
       CAL(yr,_) = zeros;
     }
-
   }
-
-
   return(CAL);
 }
 
 
-// [[Rcpp::export]]
-NumericMatrix  genSizeComp2(NumericMatrix VulnN, NumericVector CAL_binsmid, 
-                           double CAL_ESS, double CAL_nsamp,
-                           NumericVector Linfs, NumericVector Ks, NumericVector t0s,
-                           double LenCV, double truncSD) {
-  
-  int nyears = VulnN.nrow();
-  int k = VulnN.ncol();
-  int nbins = CAL_binsmid.size();
-  NumericMatrix CAL(nyears, nbins);
-  double width = CAL_binsmid(1) - CAL_binsmid(0);
-  double origin = CAL_binsmid(0) - 0.5* width;
-  NumericVector temp(k);
-  
-  for (int yr=0; yr < nyears; yr++) {
-    
-    NumericVector probs = VulnN.row(yr)/sum(VulnN.row(yr)); // probability of each age class
-    IntegerVector ageSamp1(k);
-    rmultinom(CAL_ESS, probs.begin(), k, ageSamp1.begin()); // multinom age sample with ess
-    temp = ageSamp1; // convert to numeric vector
-    NumericVector ageSamp1a = temp * (CAL_nsamp/CAL_ESS); // scale up to CAL_nsamp
-    NumericVector ageSamp1b = round(ageSamp1a,0); // round to integers at age
-    List Lens(k);
-    
-    
-    for (int age=1; age <= k; age++) {
-      if (ageSamp1b(age-1)>0) {
-        int ns = ageSamp1b(age-1);
-        NumericVector Age(1);
-        Age(0)= age;
-        NumericVector ageSamp2 = rep(Age(0), ns) - 0.5 + runif(ageSamp1b(age-1)); // add variability to ages
-        NumericVector means = Linfs(yr) * (1-exp(-Ks(yr)* (ageSamp2 - t0s(yr)))); // calculate mean length at age;
-        NumericVector rands = rnormSelect2(ageSamp1b(age-1), -truncSD, truncSD); // random normal truncated at truncSD 
-        NumericVector tempLens = (rands * means * LenCV) + means; // random sample of length-at-age
-        tempLens[tempLens<0] = 0;
-        Lens(age-1) = tempLens;
-      } else {
-        Lens(age-1) = NA_INTEGER; 
-      }
-      
-    }
-    
-    NumericVector LenVals = combine(Lens); // unlist 
-    CAL(yr,_) = get_freq(LenVals, width, origin, nbins); // calculate frequencies
-    
-  }
-  
-  return(CAL);
-}
+// // [[Rcpp::export]]
+// NumericMatrix  genSizeComp2(NumericMatrix VulnN, NumericVector CAL_binsmid, 
+//                            double CAL_ESS, double CAL_nsamp,
+//                            NumericVector Linfs, NumericVector Ks, NumericVector t0s,
+//                            double LenCV, double truncSD) {
+//   
+//   int nyears = VulnN.nrow();
+//   int k = VulnN.ncol();
+//   int nbins = CAL_binsmid.size();
+//   NumericMatrix CAL(nyears, nbins);
+//   double width = CAL_binsmid(1) - CAL_binsmid(0);
+//   double origin = CAL_binsmid(0) - 0.5* width;
+//   NumericVector temp(k);
+//   
+//   for (int yr=0; yr < nyears; yr++) {
+//     NumericVector probs = VulnN.row(yr)/sum(VulnN.row(yr)); // probability of each age class
+//     IntegerVector ageSamp1(k);
+//     rmultinom(CAL_ESS, probs.begin(), k, ageSamp1.begin()); // multinom age sample with ess
+//     temp = ageSamp1; // convert to numeric vector
+//     NumericVector ageSamp1a = temp * (CAL_nsamp/CAL_ESS); // scale up to CAL_nsamp
+//     NumericVector ageSamp1b = round(ageSamp1a,0); // round to integers at age
+//     List Lens(k);
+// 
+//     for (int age=1; age <= k; age++) {
+//       if (ageSamp1b(age-1)>0) {
+//         int ns = ageSamp1b(age-1);
+//         NumericVector Age(1);
+//         Age(0)= age;
+//         NumericVector ageSamp2 = rep(Age(0), ns) - 0.5 + runif(ageSamp1b(age-1)); // add variability to ages
+//         NumericVector means = Linfs(yr) * (1-exp(-Ks(yr)* (ageSamp2 - t0s(yr)))); // calculate mean length at age;
+//         NumericVector rands = rnormSelect2(ageSamp1b(age-1), -truncSD, truncSD); // random normal truncated at truncSD 
+//         NumericVector tempLens = (rands * means * LenCV) + means; // random sample of length-at-age
+//         tempLens[tempLens<0] = 0;
+//         Lens(age-1) = tempLens;
+//       } else {
+//         Lens(age-1) = NA_INTEGER; 
+//       }
+//     }
+//     NumericVector LenVals = combine(Lens); // unlist 
+//     CAL(yr,_) = get_freq(LenVals, width, origin, nbins); // calculate frequencies
+//   }
+//   return(CAL);
+// }
 
 
 // // [[Rcpp::export]]

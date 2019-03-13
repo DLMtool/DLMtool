@@ -7,6 +7,7 @@
 #' DLMtool package.
 #' 
 #' @param classy A class of object (character string, e.g. 'Fleet')
+#' @param builtin Logical. Only return Objects of class 'classy' from DLMtool & DLMextra packages?
 #' @examples
 #' avail("OM")
 #' @author T. Carruthers
@@ -16,7 +17,7 @@
 #' Fleets <- avail("Fleet")
 #' MPs <- avail("MP")
 #' @export 
-avail <- function(classy) {
+avail <- function(classy, builtin=FALSE) {
   temp <- try(class(classy), silent=TRUE)
   if (class(temp) == "try-error") classy <- deparse(substitute(classy))
   if (temp == "function") classy <- deparse(substitute(classy))
@@ -29,8 +30,13 @@ avail <- function(classy) {
     return(temp)
     
   } else {
-    temp <- c(ls("package:DLMtool")[vapply(ls("package:DLMtool"), getclass, logical(1), classy = classy)], 
-              ls(envir = .GlobalEnv)[vapply(ls(envir = .GlobalEnv), getclass, logical(1), classy = classy)])
+    if (builtin) {
+      temp <- c(ls("package:DLMtool")[vapply(ls("package:DLMtool"), getclass, logical(1), classy = classy)])
+    } else {
+      temp <- c(ls("package:DLMtool")[vapply(ls("package:DLMtool"), getclass, logical(1), classy = classy)], 
+                ls(envir = .GlobalEnv)[vapply(ls(envir = .GlobalEnv), getclass, logical(1), classy = classy)])
+    }
+    
     pkgs <- search()
     if ("package:DLMextra" %in% pkgs) {
       temp_extra <- ls("package:DLMextra")[vapply(ls("package:DLMextra"), getclass, logical(1), classy = classy)]
@@ -444,6 +450,7 @@ MPurl <- function(topic, url='https://dlmtool.github.io/DLMtool/reference/',
     res <- c(res, file.path(p, "help", f))
    
   }
+  if (length(res)<1) return(NA)
   
   if(nameonly) {
     return(basename(res))
@@ -693,7 +700,7 @@ ML2D <- function(OM, ML, nsim = 100, ploty = T, Dlim = c(0.05, 0.6)) {
   srs <- (maxage - AFS) / ((-log(Vmaxage,2))^0.5) # selectivity parameters are constant for all years
   sls <- (AFS - age05) /((-log(0.05,2))^0.5)
   
-  vuln <- t(sapply(1:nsim2, DLMtool:::getsel, lens=matrix(1:maxage, nrow=nsim2, ncol=maxage, byrow=TRUE), 
+  vuln <- t(sapply(1:nsim2, getsel, lens=matrix(1:maxage, nrow=nsim2, ncol=maxage, byrow=TRUE), 
                    lfs=AFS, sls=sls, srs=srs))
   
   Agearray <- array(rep(1:maxage, each = nsim2), c(nsim2, maxage))

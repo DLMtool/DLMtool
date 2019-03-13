@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.2.2)</title>
+  <title>Chapter 12 Modifying the OM | Data-Limited Methods Toolkit (DLMtool 5.3)</title>
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
+  <meta property="og:title" content="Chapter 12 Modifying the OM | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
+  <meta name="twitter:title" content="Chapter 12 Modifying the OM | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-08-15">
+<meta name="date" content="2019-03-12">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="operating-model-library.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -288,6 +289,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
 <li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
+<li class="chapter" data-level="30" data-path="using-real-indices.html"><a href="using-real-indices.html"><i class="fa fa-check"></i><b>30</b> Using Real Indices</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
 <li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
@@ -327,6 +329,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="D.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-and-method-application"><i class="fa fa-check"></i><b>D.4</b> Data and Method Application</a><ul>
 <li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-assumed-to-be-representative"><i class="fa fa-check"></i>Data Assumed to be Representative</a></li>
 </ul></li>
+<li class="chapter" data-level="D.5" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#calculating-reference-points"><i class="fa fa-check"></i><b>D.5</b> Calculating Reference Points</a><ul>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#depletion-and-unfished-reference-points"><i class="fa fa-check"></i>Depletion and Unfished Reference Points</a></li>
+<li class="chapter" data-level="D.5.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#initial-depletion"><i class="fa fa-check"></i><b>D.5.1</b> Initial Depletion</a></li>
+<li class="chapter" data-level="D.5.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#msy-reference-points"><i class="fa fa-check"></i><b>D.5.2</b> MSY Reference Points</a></li>
+<li class="chapter" data-level="D.5.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#setting-depletion-at-a-fraction-of-bmsy"><i class="fa fa-check"></i><b>D.5.3</b> Setting Depletion at a fraction of BMSY</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
@@ -345,7 +353,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2.2)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.3)</a>
           </h1>
         </div>
 
@@ -365,7 +373,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM<span class="op">@</span>Perr <span class="co"># recruitment process error</span></code></pre></div>
 <pre><code>## [1] 0.15 0.30</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM<span class="op">@</span>Linfgrad <span class="co"># gradient in Linf</span></code></pre></div>
-<pre><code>## [1] -0.25  0.25</code></pre>
+<pre><code>## numeric(0)</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM<span class="op">@</span>Cobs <span class="co"># error in observations</span></code></pre></div>
 <pre><code>## [1] 0.2 0.6</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM<span class="op">@</span>TACFrac <span class="co"># implementation error in TAC</span></code></pre></div>
@@ -432,6 +440,10 @@ gitbook.start({
 "link": null,
 "text": null
 },
+"history": {
+"link": null,
+"text": null
+},
 "download": ["userguide.pdf"],
 "toc": {
 "collapse": "section",
@@ -448,7 +460,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;

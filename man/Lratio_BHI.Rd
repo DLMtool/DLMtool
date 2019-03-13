@@ -3,11 +3,14 @@
 \name{Lratio_BHI}
 \alias{Lratio_BHI}
 \alias{Lratio_BHI2}
+\alias{Lratio_BHI3}
 \title{Mean length-based indicator MP of Jardim et al. 2015}
 \usage{
 Lratio_BHI(x, Data, reps = 100, plot = FALSE, yrsmth = 3)
 
 Lratio_BHI2(x, Data, reps = 100, plot = FALSE, yrsmth = 3)
+
+Lratio_BHI3(x, Data, reps = 100, plot = FALSE, yrsmth = 3)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -43,6 +46,9 @@ K are not used in this MP (see Appendix A of Jardim et al. 2015).
 
 \item \code{Lratio_BHI2}: More general version that calculates the reference mean length as a
 function of M, K, and presumed FMSY/M.
+
+\item \code{Lratio_BHI3}: A modified version of Lratio_BHI2 where mean length
+is calculated for lengths > modal length (Lc)
 }}
 
 \section{Required Data}{
@@ -54,11 +60,16 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
 \code{Lratio_BHI2}: CAL, CAL_bins, Cat, FMSY_M, LFS, Mort, vbK, vbLinf
+
+
+\code{Lratio_BHI3}: CAL, CAL_bins, Cat, FMSY_M, LFS, Mort, vbK, vbLinf
 }
 
 \section{Rendered Equations}{
 
 See \href{https://dlmtool.github.io/DLMtool/reference/Lratio_BHI.html}{Online Documentation} for correctly rendered equations
+
+
 
 
 }
@@ -67,6 +78,8 @@ See \href{https://dlmtool.github.io/DLMtool/reference/Lratio_BHI.html}{Online Do
 Lratio_BHI(1, Data=DLMtool::SimulatedData, plot=TRUE)
 
 Lratio_BHI2(1, Data=DLMtool::SimulatedData, plot=TRUE)
+
+Lratio_BHI3(1, Data=DLMtool::SimulatedData, plot=TRUE)
 
 }
 \references{

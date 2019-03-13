@@ -106,9 +106,6 @@ Borrowed from: Albacore
 ## Msd
 Borrowed from: Albacore
 
-## Mgrad
-Borrowed from: Albacore
-
 ## h
 Borrowed from: Albacore
 
@@ -142,13 +139,7 @@ Borrowed from: Albacore
 ## Ksd
 Borrowed from: Albacore
 
-## Kgrad
-Borrowed from: Albacore
-
 ## Linfsd
-Borrowed from: Albacore
-
-## Linfgrad
 Borrowed from: Albacore
 
 ## L50

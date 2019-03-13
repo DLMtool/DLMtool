@@ -27,7 +27,7 @@ An operating model component that specifies the degree of adherence to managemen
 
 \section{Objects from the Class}{
  Objects can be created by calls of the form
-\code{new('Imp')}
+\code{new('Imp')}#'
 }
 
 \examples{

@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.2.2)</title>
+  <title>Chapter 15 Performance Metrics | Data-Limited Methods Toolkit (DLMtool 5.3)</title>
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
+  <meta property="og:title" content="Chapter 15 Performance Metrics | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
+  <meta name="twitter:title" content="Chapter 15 Performance Metrics | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-08-15">
+<meta name="date" content="2019-03-12">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="value-of-information.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -288,6 +289,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
 <li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
+<li class="chapter" data-level="30" data-path="using-real-indices.html"><a href="using-real-indices.html"><i class="fa fa-check"></i><b>30</b> Using Real Indices</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
 <li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
@@ -327,6 +329,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="D.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-and-method-application"><i class="fa fa-check"></i><b>D.4</b> Data and Method Application</a><ul>
 <li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-assumed-to-be-representative"><i class="fa fa-check"></i>Data Assumed to be Representative</a></li>
 </ul></li>
+<li class="chapter" data-level="D.5" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#calculating-reference-points"><i class="fa fa-check"></i><b>D.5</b> Calculating Reference Points</a><ul>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#depletion-and-unfished-reference-points"><i class="fa fa-check"></i>Depletion and Unfished Reference Points</a></li>
+<li class="chapter" data-level="D.5.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#initial-depletion"><i class="fa fa-check"></i><b>D.5.1</b> Initial Depletion</a></li>
+<li class="chapter" data-level="D.5.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#msy-reference-points"><i class="fa fa-check"></i><b>D.5.2</b> MSY Reference Points</a></li>
+<li class="chapter" data-level="D.5.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#setting-depletion-at-a-fraction-of-bmsy"><i class="fa fa-check"></i><b>D.5.3</b> Setting Depletion at a fraction of BMSY</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
@@ -345,7 +353,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2.2)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.3)</a>
           </h1>
         </div>
 
@@ -402,8 +410,7 @@ Management strategies that have a lower probability of overfishing occurring are
 <h2><span class="header-section-number">15.4</span> Performance Metrics Methods</h2>
 <p>DLMtool includes a set of functions, of class <code>PM</code>, for calculating Performance Metrics. The available <code>PM</code> functions (referred to as PMs) can be found using the <code>avail</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">avail</span>(<span class="st">&quot;PM&quot;</span>)</code></pre></div>
-<pre><code>##  [1] &quot;AAVY&quot;  &quot;LTY&quot;   &quot;P10&quot;   &quot;P100&quot;  &quot;P50&quot;   &quot;PNOF&quot;  &quot;STY&quot;   &quot;Yield&quot;
-##  [9] &quot;MeanB&quot; &quot;MeanF&quot;</code></pre>
+<pre><code>## [1] &quot;AAVY&quot;  &quot;LTY&quot;   &quot;P10&quot;   &quot;P100&quot;  &quot;P50&quot;   &quot;PNOF&quot;  &quot;STY&quot;   &quot;Yield&quot;</code></pre>
 <p>The PMs are used for summarizing the performance of the management procedures and plotting the results in trade-off plots.</p>
 <p>Here we briefly describe the built-in Performance Metrics functions and demonstrate their use. Advanced DLMtool users can develop their own <code>PM</code> methods, see the <a href="custom-performance-metrics.html#custom-performance-metrics">Custom Performance Metrics</a> chapter for details.</p>
 <p>Functions of class <code>PM</code> are used on an object of class <code>MSE</code> (i.e the object returned by <code>runMSE</code>), and return an object of class <code>PMobj</code>. Most of the time the <code>PM</code> functions are used internally in the <code>summary</code> or plotting functions, and it will not be neccessary to acess the <code>PMobj</code> directly.</p>
@@ -418,27 +425,27 @@ Management strategies that have a lower probability of overfishing occurring are
 <pre><code>## Spawning Biomass relative to SBMSY
 ##  Prob. SB &gt; 0.5 SBMSY (Years 1 - 50)
 ##     AvC DCAC FMSYref curE matlenlim MRreal
-## 1  0.02 0.92     0.9    0      0.96   0.06
-## 2     1  0.6       1    1         1      1
-## 3  0.94  0.8    0.94    1         1      1
-## 4     1    1       1    1         1      1
-## 5  0.96 0.96    0.54    0      0.96      0
+## 1     1    1       1    1         1      1
+## 2     1 0.88       1    1         1      1
+## 3  0.04 0.06    0.96 0.24         1   0.78
+## 4     1  0.9    0.96    1         1      1
+## 5     1 0.98       1    1         1      1
 ## 6     1    1       1    1         1      1
-## 7  0.04 0.12    0.98 0.68         1   0.82
-## 8     1    1       1    1         1      1
-## 9     1    1       1    1         1      1
-## 10 0.94 0.92    0.96 0.08      0.98   0.52
+## 7     1 0.54       1    1         1      1
+## 8  0.38 0.36       1    1         1      1
+## 9  0.42 0.58       1 0.42         1    0.6
+## 10    1    1       1 0.96         1      1
 ## 11    .    .       .    .         .      .
 ## 12    .    .       .    .         .      .
 ## 13    .    .       .    .         .      .
-## 48    1    1       1    1         1      1
+## 48 0.44 0.42    0.96    1         1      1
 ## 
 ## Mean
-## [1] 0.68 0.78 0.93 0.80 0.99 0.85</code></pre>
+## [1] 0.75 0.73 0.98 0.88 0.99 0.92</code></pre>
 <p>We can see that the <code>PM</code> function calculated, for the 6 MPs in the <code>MSE</code> object, the probability <span class="math inline">\(\text{SB} &gt; 0.5\text{SB}_\text{MSY}\)</span> for all 50 projection years.</p>
 <p>The <code>PM</code> function prints out a summary table of the performance metrics statistics for the first 10 simulations and the last simulation (48 in this case) for each MP. The final line shows the overall probability of the performance metric, i.e the average performance across all simulations.</p>
 <p>We will look into this output in a little more detail.</p>
-<p>We can see that the first MP is AvC and the performance statistics for the first and second simulations are 0.02 and 1. How have these values been calculated and what do they mean?</p>
+<p>We can see that the first MP is AvC and the performance statistics for the first and second simulations are 1 and 1. How have these values been calculated and what do they mean?</p>
 <p>Let’s first plot the spawning biomass relative to BMSY for the first two simulations of the <code>AvC</code> MP:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))
 <span class="kw">plot</span>(<span class="dv">1</span><span class="op">:</span>MSE<span class="op">@</span>proyears, MSE<span class="op">@</span>B_BMSY[<span class="dv">1</span>,<span class="dv">1</span>,], <span class="dt">type=</span><span class="st">&#39;l&#39;</span>, 
@@ -453,7 +460,7 @@ Management strategies that have a lower probability of overfishing occurring are
 <p><img src="userguide_files/figure-html/unnamed-chunk-80-1.png" width="672" /></p>
 <p>Now we will calculate fraction of years where spawning biomass is above 0.5 <span class="math inline">\(\text{SB}_\text{MSY}\)</span> for the first and second simulations:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(MSE<span class="op">@</span>B_BMSY[<span class="dv">1</span>,<span class="dv">1</span>,] <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.5</span>) <span class="co"># first simulation</span></code></pre></div>
-<pre><code>## [1] 0.02</code></pre>
+<pre><code>## [1] 1</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(MSE<span class="op">@</span>B_BMSY[<span class="dv">2</span>,<span class="dv">1</span>,] <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.5</span>) <span class="co"># second simulation</span></code></pre></div>
 <pre><code>## [1] 1</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># identical to: </span>
@@ -462,10 +469,10 @@ Management strategies that have a lower probability of overfishing occurring are
 <p>Notice how the performance statistics for each simulation correspond with the plot shown above?</p>
 <p>The overall performance is then calculated by the probability over all simulations, i.e for the first MP AvC:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(MSE<span class="op">@</span>B_BMSY[,<span class="dv">1</span>,]<span class="op">&gt;</span><span class="fl">0.5</span>)</code></pre></div>
-<pre><code>## [1] 0.6829167</code></pre>
+<pre><code>## [1] 0.7475</code></pre>
 <p>And for 6 MPs:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">round</span>(<span class="kw">apply</span>(MSE<span class="op">@</span>B_BMSY <span class="op">&gt;</span><span class="fl">0.5</span>, <span class="dv">2</span>, mean),<span class="dv">2</span>)</code></pre></div>
-<pre><code>## [1] 0.68 0.78 0.93 0.80 0.99 0.85</code></pre>
+<pre><code>## [1] 0.75 0.73 0.98 0.88 0.99 0.92</code></pre>
 <p>which, reassuringly, is the same as the output of the <code>P50</code> function.</p>
 </div>
 <div id="customizing-the-pm-functions" class="section level3">
@@ -475,188 +482,188 @@ Management strategies that have a lower probability of overfishing occurring are
 <pre><code>## Spawning Biomass relative to SBMSY
 ##  Prob. SB &gt; 0.5 SBMSY (Years 41 - 50)
 ##    AvC DCAC FMSYref curE matlenlim MRreal
-## 1    0    1       1    0         1      0
-## 2    1    0       1    1         1      1
-## 3  0.7    0     0.8    1         1      1
-## 4    1    1       1    1         1      1
-## 5    1    1     0.3    0         1      0
+## 1    1    1       1    1         1      1
+## 2    1  0.4       1    1         1      1
+## 3    0    0       1    0         1    0.8
+## 4    1  0.5     0.9    1         1      1
+## 5    1  0.9       1    1         1      1
 ## 6    1    1       1    1         1      1
-## 7    0    0       1    1         1      1
-## 8    1    1       1    1         1      1
-## 9    1    1       1    1         1      1
-## 10   1  0.7       1    0         1    0.4
+## 7    1    0       1    1         1      1
+## 8    0    0       1    1         1      1
+## 9    0    0       1    0         1    0.2
+## 10   1    1       1  0.9         1      1
 ## 11   .    .       .    .         .      .
 ## 12   .    .       .    .         .      .
 ## 13   .    .       .    .         .      .
-## 48   1    1       1    1         1      1
+## 48   0    0       1    1         1      1
 ## 
 ## Mean
-## [1] 0.59 0.55 0.88 0.79 1.00 0.85</code></pre>
+## [1] 0.66 0.48 0.98 0.82 0.99 0.88</code></pre>
 <p>Or the first 10 years:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">P50</span>(MSE, <span class="dt">Yrs=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">10</span>))</code></pre></div>
 <pre><code>## Spawning Biomass relative to SBMSY
 ##  Prob. SB &gt; 0.5 SBMSY (Years 1 - 10)
 ##    AvC DCAC FMSYref curE matlenlim MRreal
-## 1  0.1  0.6     0.5    0       0.8    0.2
+## 1    1    1       1    1         1      1
 ## 2    1    1       1    1         1      1
-## 3    1    1       1    1         1      1
+## 3  0.2  0.3     0.8  0.3         1    0.7
 ## 4    1    1       1    1         1      1
-## 5  0.8  0.8     0.7    0       0.8      0
+## 5    1    1       1    1         1      1
 ## 6    1    1       1    1         1      1
-## 7  0.2  0.6     0.9  0.4         1    0.4
+## 7    1    1       1    1         1      1
 ## 8    1    1       1    1         1      1
 ## 9    1    1       1    1         1      1
-## 10 0.7  0.9     0.8  0.4       0.9    0.7
+## 10   1    1       1    1         1      1
 ## 11   .    .       .    .         .      .
 ## 12   .    .       .    .         .      .
 ## 13   .    .       .    .         .      .
 ## 48   1    1       1    1         1      1
 ## 
 ## Mean
-## [1] 0.83 0.92 0.92 0.80 0.97 0.83</code></pre>
+## [1] 0.91 0.95 0.98 0.91 0.99 0.95</code></pre>
 <p>The other biomass Performance Metric functions work in the same way:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">P10</span>(MSE) <span class="co"># probability SB &gt; 0.1SB_MSY for all years</span></code></pre></div>
 <pre><code>## Spawning Biomass relative to SBMSY
 ##  Prob. SB &gt; 0.1 SBMSY (Years 1 - 50)
 ##     AvC DCAC FMSYref curE matlenlim MRreal
-## 1  0.24    1       1 0.42         1      1
-## 2     1 0.98       1    1         1      1
-## 3     1    1       1    1         1      1
-## 4     1    1       1    1         1      1
-## 5     1    1       1 0.38         1   0.96
+## 1     1    1       1    1         1      1
+## 2     1    1       1    1         1      1
+## 3  0.22 0.34       1    1         1      1
+## 4     1 0.98       1    1         1      1
+## 5     1    1       1    1         1      1
 ## 6     1    1       1    1         1      1
-## 7   0.2 0.32       1    1         1      1
-## 8     1    1       1    1         1      1
-## 9     1    1       1    1         1      1
+## 7     1 0.64       1    1         1      1
+## 8  0.58 0.52       1    1         1      1
+## 9  0.58 0.72       1    1         1      1
 ## 10    1    1       1    1         1      1
 ## 11    .    .       .    .         .      .
 ## 12    .    .       .    .         .      .
 ## 13    .    .       .    .         .      .
-## 48    1    1       1    1         1      1
+## 48 0.56  0.5       1    1         1      1
 ## 
 ## Mean
-## [1] 0.79 0.89 1.00 0.96 1.00 1.00</code></pre>
+## [1] 0.81 0.82 1.00 0.99 1.00 1.00</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">P100</span>(MSE) <span class="co"># probability SB &gt; SB_MSY for all years</span></code></pre></div>
 <pre><code>## Spawning Biomass relative to SBMSY
 ##  Prob. SB &gt; SBMSY (Years 1 - 50)
 ##     AvC DCAC FMSYref curE matlenlim MRreal
-## 1     0  0.8    0.24    0      0.62      0
-## 2  0.86 0.46    0.82    1         1      1
-## 3  0.78 0.76     0.2 0.98         1      1
-## 4  0.92 0.86    0.84 0.96         1   0.96
-## 5   0.6 0.52       0    0      0.56      0
-## 6     1    1    0.84    1         1      1
-## 7     0    0    0.04 0.02      0.84   0.06
-## 8     1    1    0.58    1         1      1
-## 9  0.86 0.92    0.72 0.96      0.98   0.96
-## 10 0.86 0.64     0.5    0      0.94      0
+## 1     1 0.88     0.5    1         1      1
+## 2     1  0.8     0.5    1         1      1
+## 3     0    0     0.4    0      0.94      0
+## 4     1 0.82    0.42 0.86         1   0.86
+## 5  0.84 0.78     0.6 0.86       0.9   0.88
+## 6     1    1    0.42    1         1      1
+## 7  0.96  0.4    0.36    1         1      1
+## 8  0.22 0.24    0.74 0.98         1      1
+## 9     0 0.38    0.34    0      0.96      0
+## 10 0.96 0.98    0.66 0.16       0.7   0.34
 ## 11    .    .       .    .         .      .
 ## 12    .    .       .    .         .      .
 ## 13    .    .       .    .         .      .
-## 48    1    1    0.76 0.98      0.98   0.98
+## 48 0.26 0.28    0.44  0.9      0.96   0.92
 ## 
 ## Mean
-## [1] 0.59 0.65 0.37 0.65 0.93 0.68</code></pre>
+## [1] 0.66 0.63 0.41 0.67 0.94 0.71</code></pre>
 <p>Long-term, short-term and overall average yield are calculated using <code>LTY</code>, <code>STY</code> and <code>Yield</code> respectively:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">LTY</span>(MSE)</code></pre></div>
 <pre><code>## Average Yield relative to Reference Yield (Years 41-50)
 ##  Prob. Yield &gt; 0.5 Ref. Yield (Years 41-50)
 ##    AvC DCAC FMSYref curE matlenlim MRreal
-## 1    0    1       1    0         1      0
-## 2    1  0.6       1  0.9       0.2    0.9
-## 3    1  0.9       1    1         1      1
-## 4    1    1       1    1         0      1
-## 5    1    1       1    0         1    0.1
-## 6    0  0.6       1  0.1       0.1    0.1
-## 7    0    0       1    1       0.5      1
-## 8    0    1       1  0.8         0    0.8
-## 9    1    1       1    1       0.2      1
+## 1    1    1       1    1       0.5      1
+## 2    1    1       1  0.2         0    0.2
+## 3    0    0       1  0.9       0.7      1
+## 4    1    1       1    1       0.2      1
+## 5    1    1       1    1         1      1
+## 6    0    1       1    1       0.9      1
+## 7    1    0       1  0.8         0    0.8
+## 8    0    0       1    1         1      1
+## 9    0    0       1    1       0.2      1
 ## 10   1    1       1    1         1      1
 ## 11   .    .       .    .         .      .
 ## 12   .    .       .    .         .      .
 ## 13   .    .       .    .         .      .
-## 48   0    1       1  0.8         0    0.7
+## 48   0    0       1  0.8       0.3    0.8
 ## 
 ## Mean
-## [1] 0.39 0.65 1.00 0.80 0.56 0.82</code></pre>
+## [1] 0.54 0.61 0.99 0.77 0.59 0.79</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">STY</span>(MSE)</code></pre></div>
 <pre><code>## Average Yield relative to Reference Yield (Years 1-10)
 ##  Prob. Yield &gt; 0.5 Ref. Yield (Years 1-10)
 ##    AvC DCAC FMSYref curE matlenlim MRreal
-## 1    1    1       1    1       0.4    0.9
-## 2    1    1       1    1       0.2      1
-## 3    1    1       1    1       0.9      1
-## 4    1    1       1  0.7         0    0.7
-## 5    1  0.6       1    1       0.7      1
-## 6    0    0       1  0.1         0    0.1
-## 7  0.8    1     0.6  0.8       0.1    0.8
-## 8    0  0.2       1  0.9       0.1    0.9
-## 9    1  0.6     0.6  0.1         0    0.1
-## 10   1  0.6       1  0.9       0.7    0.9
+## 1    1    1       1  0.7         0    0.7
+## 2    1    1       1    1         0      1
+## 3    1    1       1    1         0      1
+## 4    1    1       1    1         0      1
+## 5    1    1       1  0.9       0.7    0.8
+## 6    0    0       1    1       0.5      1
+## 7    1    1       1    1         0      1
+## 8    1    1       1    1       0.8      1
+## 9    1    1       1    1         0      1
+## 10   1    1       1    1         1      1
 ## 11   .    .       .    .         .      .
 ## 12   .    .       .    .         .      .
 ## 13   .    .       .    .         .      .
-## 48   0    0     0.6  0.6         0    0.6
+## 48   1    1       1    1       0.6      1
 ## 
 ## Mean
-## [1] 0.73 0.67 0.90 0.82 0.44 0.80</code></pre>
+## [1] 0.86 0.81 0.99 0.87 0.43 0.86</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Yield</span>(MSE)</code></pre></div>
 <pre><code>## Yield relative to Reference Yield (Years 1-50)
 ##  Mean Relative Yield (Years 1-50)
 ##     AvC DCAC FMSYref curE matlenlim MRreal
-## 1  0.26 0.77    0.95  0.4      0.94   0.51
-## 2  0.97 0.89       1 0.76      0.39   0.74
-## 3   1.2  1.1     1.2  1.1       0.9    1.1
-## 4  0.69 0.81    0.91 0.66      0.29   0.65
-## 5  0.78 0.77    0.95 0.44      0.92   0.62
-## 6  0.37 0.41    0.77 0.37      0.31   0.37
-## 7  0.26 0.36    0.79 0.75      0.52   0.73
-## 8  0.47 0.64    0.86 0.69      0.31   0.67
-## 9  0.64 0.79    0.87 0.73      0.35   0.71
-## 10 0.59 0.85    0.86 0.72      0.99   0.71
+## 1  0.68 0.89    1.03 0.79      0.33   0.77
+## 2  0.76 0.93     1.1 0.63       0.3   0.62
+## 3  0.35 0.47    1.16 1.02      0.55      1
+## 4  0.76    1    1.06 1.01       0.4   0.97
+## 5  0.97  1.1    1.27 1.15      0.97   1.12
+## 6  0.46 0.66    0.88 0.71      0.57   0.68
+## 7  0.71 0.56     0.8 0.64      0.12   0.63
+## 8  0.73 0.68    1.11 1.04      0.86      1
+## 9  0.64 0.76    0.91 0.83      0.38   0.82
+## 10 0.98 0.91    1.25 1.25      1.38    1.2
 ## 11    .    .       .    .         .      .
 ## 12    .    .       .    .         .      .
 ## 13    .    .       .    .         .      .
-## 48  0.4 0.58    0.84 0.64      0.17   0.62
+## 48 0.65 0.62    0.98  0.8      0.53   0.77
 ## 
 ## Mean
-## [1] 0.67 0.81 1.10 0.83 0.61 0.82</code></pre>
+## [1] 0.62 0.73 1.02 0.82 0.61 0.81</code></pre>
 <p>The <code>PNOF</code> PM function calculates the probability of not overfishing:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">PNOF</span>(MSE)</code></pre></div>
 <pre><code>## Probability of not overfishing (F&lt;FMSY)
 ##  Prob. F &lt; FMSY (Years 1 - 50)
 ##     AvC DCAC FMSYref curE matlenlim MRreal
-## 1     0 0.98    0.32    0      0.78   0.02
-## 2  0.86 0.42    0.74    1         1      1
-## 3  0.78 0.74     0.4 0.96         1   0.96
-## 4     1 0.82    0.66    1         1      1
-## 5     1 0.96    0.56    0         1   0.02
-## 6     1    1    0.36    1         1      1
-## 7     0    0    0.16  0.2         1    0.4
-## 8     1    1    0.56 0.98         1   0.98
-## 9  0.96 0.88    0.38    1         1      1
-## 10 0.92 0.58    0.12    0         1   0.02
+## 1     1 0.84    0.32    1         1      1
+## 2     1  0.8     0.3    1         1      1
+## 3     0    0    0.36 0.04      0.08   0.12
+## 4     1 0.74    0.36 0.92      0.94   0.96
+## 5   0.9  0.8    0.38 0.94      0.92   0.96
+## 6     1    1    0.38    1         1      1
+## 7     1 0.32    0.48    1         1      1
+## 8  0.18  0.2     0.3 0.86      0.88   0.92
+## 9     0 0.44    0.44 0.04      0.06   0.08
+## 10    1    1    0.36  0.2       0.2   0.32
 ## 11    .    .       .    .         .      .
 ## 12    .    .       .    .         .      .
 ## 13    .    .       .    .         .      .
-## 48    1    1    0.34 0.98         1   0.98
+## 48 0.12  0.3     0.4 0.92      0.94   0.94
 ## 
 ## Mean
-## [1] 0.60 0.66 0.42 0.68 0.98 0.72</code></pre>
+## [1] 0.67 0.62 0.37 0.71 0.72 0.76</code></pre>
 <p>Finally, the average annual variability in yield (AAVY) can be calculated with the <code>AAVY</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">AAVY</span>(MSE)</code></pre></div>
 <pre><code>## Average Annual Variability in Yield (Years 1-50)
 ##  Prob. AAVY &lt; 20% (Years 1-50)
 ##    AvC DCAC FMSYref curE matlenlim MRreal
-## 1    0    1       1    0         0      0
-## 2    1    1       1    0         0      0
+## 1    1    1       1    0         0      0
+## 2    1    1       1    1         1      1
 ## 3    1    1       1    0         0      0
-## 4    1    1       1    0         0      0
+## 4    1    1       1    1         1      1
 ## 5    1    1       1    0         0      0
 ## 6    1    1       1    0         0      0
 ## 7    1    1       1    0         0      0
 ## 8    1    1       1    0         0      0
-## 9    1    1       1    1         1      1
+## 9    1    1       1    0         0      0
 ## 10   1    1       1    0         0      0
 ## 11   .    .       .    .         .      .
 ## 12   .    .       .    .         .      .
@@ -664,15 +671,15 @@ Management strategies that have a lower probability of overfishing occurring are
 ## 48   1    1       1    0         0      0
 ## 
 ## Mean
-## [1] 0.90 0.96 1.00 0.17 0.19 0.19</code></pre>
+## [1] 0.94 0.96 1.00 0.21 0.27 0.23</code></pre>
 <p>By default the <code>AAVY</code> PM function calculates the probability that AAVY is less than 20%. This reference level can easily be modified using the <code>Ref</code> argument:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">AAVY</span>(MSE, <span class="dt">Ref=</span><span class="fl">0.15</span>) <span class="co"># prob. AAVY &lt; 15%</span></code></pre></div>
 <pre><code>## Average Annual Variability in Yield (Years 1-50)
 ##  Prob. AAVY &lt; 15% (Years 1-50)
 ##    AvC DCAC FMSYref curE matlenlim MRreal
-## 1    0    1       1    0         0      0
+## 1    1    1       1    0         0      0
 ## 2    1    1       1    0         0      0
-## 3    1    1       1    0         0      0
+## 3    0    1       1    0         0      0
 ## 4    1    1       1    0         0      0
 ## 5    1    1       1    0         0      0
 ## 6    1    1       1    0         0      0
@@ -686,28 +693,28 @@ Management strategies that have a lower probability of overfishing occurring are
 ## 48   1    1       1    0         0      0
 ## 
 ## Mean
-## [1] 0.830 0.960 1.000 0.062 0.083 0.062</code></pre>
+## [1] 0.88 0.90 1.00 0.02 0.04 0.02</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">AAVY</span>(MSE, <span class="dt">Ref=</span><span class="fl">0.30</span>) <span class="co"># prob. AAVY &lt; 30%</span></code></pre></div>
 <pre><code>## Average Annual Variability in Yield (Years 1-50)
 ##  Prob. AAVY &lt; 30% (Years 1-50)
 ##    AvC DCAC FMSYref curE matlenlim MRreal
-## 1    1    1       1    0         1      1
-## 2    1    1       1    0         0      0
-## 3    1    1       1    0         0      0
-## 4    1    1       1    0         0      0
-## 5    1    1       1    1         1      1
-## 6    1    1       1    0         0      0
+## 1    1    1       1    1         1      1
+## 2    1    1       1    1         1      1
+## 3    1    1       1    0         0      1
+## 4    1    1       1    1         1      1
+## 5    1    1       1    0         0      0
+## 6    1    1       1    1         1      1
 ## 7    1    1       1    1         1      1
-## 8    1    1       1    1         1      1
+## 8    1    1       1    0         0      0
 ## 9    1    1       1    1         1      1
-## 10   1    1       1    0         1      0
+## 10   1    1       1    1         1      1
 ## 11   .    .       .    .         .      .
 ## 12   .    .       .    .         .      .
 ## 13   .    .       .    .         .      .
-## 48   1    1       1    0         0      0
+## 48   1    1       1    1         1      1
 ## 
 ## Mean
-## [1] 0.98 1.00 1.00 0.56 0.60 0.58</code></pre>
+## [1] 1.00 1.00 1.00 0.79 0.79 0.81</code></pre>
 <p>The other <code>PM</code> functions also have the <code>Ref</code> argument which can be used in the same way. For example, you may notice that the <code>P50</code> and <code>P100</code> functions are identical except for the value of the <code>Ref</code> argument:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">args</span>(P50)</code></pre></div>
 <pre><code>## function (MSEobj = NULL, Ref = 0.5, Yrs = NULL) 
@@ -719,45 +726,45 @@ Management strategies that have a lower probability of overfishing occurring are
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">P50</span>(MSE, <span class="dt">Ref=</span><span class="fl">0.05</span>)</code></pre></div>
 <pre><code>## Spawning Biomass relative to SBMSY
 ##  Prob. SB &gt; 0.05 SBMSY (Years 1 - 50)
-##    AvC DCAC FMSYref curE matlenlim MRreal
-## 1  0.3    1       1 0.56         1      1
-## 2    1    1       1    1         1      1
-## 3    1    1       1    1         1      1
-## 4    1    1       1    1         1      1
-## 5    1    1       1 0.48         1      1
-## 6    1    1       1    1         1      1
-## 7  0.3 0.58       1    1         1      1
-## 8    1    1       1    1         1      1
-## 9    1    1       1    1         1      1
-## 10   1    1       1    1         1      1
-## 11   .    .       .    .         .      .
-## 12   .    .       .    .         .      .
-## 13   .    .       .    .         .      .
-## 48   1    1       1    1         1      1
+##     AvC DCAC FMSYref curE matlenlim MRreal
+## 1     1    1       1    1         1      1
+## 2     1    1       1    1         1      1
+## 3  0.32  0.4       1    1         1      1
+## 4     1    1       1    1         1      1
+## 5     1    1       1    1         1      1
+## 6     1    1       1    1         1      1
+## 7     1 0.68       1    1         1      1
+## 8  0.74 0.72       1    1         1      1
+## 9  0.62 0.78       1    1         1      1
+## 10    1    1       1    1         1      1
+## 11    .    .       .    .         .      .
+## 12    .    .       .    .         .      .
+## 13    .    .       .    .         .      .
+## 48 0.64  0.6       1    1         1      1
 ## 
 ## Mean
-## [1] 0.84 0.93 1.00 0.97 1.00 1.00</code></pre>
+## [1] 0.83 0.85 1.00 0.99 1.00 1.00</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">P100</span>(MSE, <span class="dt">Ref=</span><span class="fl">0.05</span>)</code></pre></div>
 <pre><code>## Spawning Biomass relative to SBMSY
 ##  Prob. SB &gt; 0.05 SBMSY (Years 1 - 50)
-##    AvC DCAC FMSYref curE matlenlim MRreal
-## 1  0.3    1       1 0.56         1      1
-## 2    1    1       1    1         1      1
-## 3    1    1       1    1         1      1
-## 4    1    1       1    1         1      1
-## 5    1    1       1 0.48         1      1
-## 6    1    1       1    1         1      1
-## 7  0.3 0.58       1    1         1      1
-## 8    1    1       1    1         1      1
-## 9    1    1       1    1         1      1
-## 10   1    1       1    1         1      1
-## 11   .    .       .    .         .      .
-## 12   .    .       .    .         .      .
-## 13   .    .       .    .         .      .
-## 48   1    1       1    1         1      1
+##     AvC DCAC FMSYref curE matlenlim MRreal
+## 1     1    1       1    1         1      1
+## 2     1    1       1    1         1      1
+## 3  0.32  0.4       1    1         1      1
+## 4     1    1       1    1         1      1
+## 5     1    1       1    1         1      1
+## 6     1    1       1    1         1      1
+## 7     1 0.68       1    1         1      1
+## 8  0.74 0.72       1    1         1      1
+## 9  0.62 0.78       1    1         1      1
+## 10    1    1       1    1         1      1
+## 11    .    .       .    .         .      .
+## 12    .    .       .    .         .      .
+## 13    .    .       .    .         .      .
+## 48 0.64  0.6       1    1         1      1
 ## 
 ## Mean
-## [1] 0.84 0.93 1.00 0.97 1.00 1.00</code></pre>
+## [1] 0.83 0.85 1.00 0.99 1.00 1.00</code></pre>
 <p>More information on customizing <code>PM</code> functions can be found in the <a href="custom-performance-metrics.html#custom-performance-metrics">Custom Performance Metrics</a> chapter.</p>
 <p>In the next section we will demonstrate using <code>PM</code> functions in summarizing and plotting functions.</p>
 </div>
@@ -784,12 +791,12 @@ Management strategies that have a lower probability of overfishing occurring are
 ## 
 ## Probability:
 ##          MP PNOF  P50 AAVY  LTY
-## 1       AvC 0.60 0.68 0.90 0.39
-## 2      DCAC 0.66 0.78 0.96 0.65
-## 3   FMSYref 0.42 0.93 1.00 1.00
-## 4      curE 0.68 0.80 0.17 0.80
-## 5 matlenlim 0.98 0.99 0.19 0.56
-## 6    MRreal 0.72 0.85 0.19 0.82</code></pre>
+## 1       AvC 0.67 0.75 0.94 0.54
+## 2      DCAC 0.62 0.73 0.96 0.61
+## 3   FMSYref 0.37 0.98 1.00 0.99
+## 4      curE 0.71 0.88 0.21 0.77
+## 5 matlenlim 0.72 0.99 0.27 0.59
+## 6    MRreal 0.76 0.92 0.23 0.79</code></pre>
 <p>It is straightforward to include other <code>PM</code> functions by adding the names of the <code>PM</code> functions, for example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(MSE, <span class="st">&#39;P100&#39;</span>, <span class="st">&#39;Yield&#39;</span>)</code></pre></div>
 <pre><code>## Calculating Performance Metrics</code></pre>
@@ -803,51 +810,47 @@ Management strategies that have a lower probability of overfishing occurring are
 ## 
 ## Probability:
 ##          MP P100 Yield
-## 1       AvC 0.59  0.67
-## 2      DCAC 0.65  0.81
-## 3   FMSYref 0.37  1.10
-## 4      curE 0.65  0.83
-## 5 matlenlim 0.93  0.61
-## 6    MRreal 0.68  0.82</code></pre>
+## 1       AvC 0.66  0.62
+## 2      DCAC 0.63  0.73
+## 3   FMSYref 0.41  1.00
+## 4      curE 0.67  0.82
+## 5 matlenlim 0.94  0.61
+## 6    MRreal 0.71  0.81</code></pre>
 <p>or all available <code>PM</code> functions:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(MSE, <span class="kw">avail</span>(<span class="st">&#39;PM&#39;</span>))</code></pre></div>
 <pre><code>## Calculating Performance Metrics</code></pre>
-<pre><code>##                                        Performance.Metrics 
-## 1         Average Annual Variability in Yield (Years 1-50) 
-## 2  Average Yield relative to Reference Yield (Years 41-50) 
-## 3                       Spawning Biomass relative to SBMSY 
-## 4                       Spawning Biomass relative to SBMSY 
-## 5                       Spawning Biomass relative to SBMSY 
-## 6                  Probability of not overfishing (F&lt;FMSY) 
-## 7   Average Yield relative to Reference Yield (Years 1-10) 
-## 8           Yield relative to Reference Yield (Years 1-50) 
-## 9                       Spawning Biomass relative to SBMSY 
-## 10                      Fishing Mortality relative to FMSY 
-##                                              
-## 1               Prob. AAVY &lt; 20% (Years 1-50)
-## 2  Prob. Yield &gt; 0.5 Ref. Yield (Years 41-50)
-## 3         Prob. SB &gt; 0.1 SBMSY (Years 1 - 50)
-## 4             Prob. SB &gt; SBMSY (Years 1 - 50)
-## 5         Prob. SB &gt; 0.5 SBMSY (Years 1 - 50)
-## 6               Prob. F &lt; FMSY (Years 1 - 50)
-## 7   Prob. Yield &gt; 0.5 Ref. Yield (Years 1-10)
-## 8            Mean Relative Yield (Years 1-50)
-## 9               Mean SB/SBMSY (Years 46 - 50)
-## 10                Mean F/FMSY (Years 46 - 50)
+<pre><code>##                                       Performance.Metrics 
+## 1        Average Annual Variability in Yield (Years 1-50) 
+## 2 Average Yield relative to Reference Yield (Years 41-50) 
+## 3                      Spawning Biomass relative to SBMSY 
+## 4                      Spawning Biomass relative to SBMSY 
+## 5                      Spawning Biomass relative to SBMSY 
+## 6                 Probability of not overfishing (F&lt;FMSY) 
+## 7  Average Yield relative to Reference Yield (Years 1-10) 
+## 8          Yield relative to Reference Yield (Years 1-50) 
+##                                             
+## 1              Prob. AAVY &lt; 20% (Years 1-50)
+## 2 Prob. Yield &gt; 0.5 Ref. Yield (Years 41-50)
+## 3        Prob. SB &gt; 0.1 SBMSY (Years 1 - 50)
+## 4            Prob. SB &gt; SBMSY (Years 1 - 50)
+## 5        Prob. SB &gt; 0.5 SBMSY (Years 1 - 50)
+## 6              Prob. F &lt; FMSY (Years 1 - 50)
+## 7  Prob. Yield &gt; 0.5 Ref. Yield (Years 1-10)
+## 8           Mean Relative Yield (Years 1-50)
 ## 
 ## 
 ## Probability:
-##          MP AAVY  LTY  P10 P100  P50 PNOF  STY Yield MeanB MeanF
-## 1       AvC 0.90 0.39 0.79 0.59 0.68 0.60 0.73  0.67  1.40  1.20
-## 2      DCAC 0.96 0.65 0.89 0.65 0.78 0.66 0.67  0.81  0.88  1.40
-## 3   FMSYref 1.00 1.00 1.00 0.37 0.93 0.42 0.90  1.10  0.91  1.00
-## 4      curE 0.17 0.80 0.96 0.65 0.80 0.68 0.82  0.83  1.40  0.93
-## 5 matlenlim 0.19 0.56 1.00 0.93 0.99 0.98 0.44  0.61  2.30  0.34
-## 6    MRreal 0.19 0.82 1.00 0.68 0.85 0.72 0.80  0.82  1.50  0.78</code></pre>
+##          MP AAVY  LTY  P10 P100  P50 PNOF  STY Yield
+## 1       AvC 0.94 0.54 0.81 0.66 0.75 0.67 0.86  0.62
+## 2      DCAC 0.96 0.61 0.82 0.63 0.73 0.62 0.81  0.73
+## 3   FMSYref 1.00 0.99 1.00 0.41 0.98 0.37 0.99  1.00
+## 4      curE 0.21 0.77 0.99 0.67 0.88 0.71 0.87  0.82
+## 5 matlenlim 0.27 0.59 1.00 0.94 0.99 0.72 0.43  0.61
+## 6    MRreal 0.23 0.79 1.00 0.71 0.92 0.76 0.86  0.81</code></pre>
 <p>The <code>summary</code> function returns a data frame which can be useful for referring to the PM results elsewhere in the analysis. For example,</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Results &lt;-<span class="st"> </span><span class="kw">summary</span>(MSE, <span class="kw">avail</span>(<span class="st">&#39;PM&#39;</span>), <span class="dt">silent=</span><span class="ot">TRUE</span>) <span class="co"># silent=TRUE to hide print-out to console</span>
 Results<span class="op">$</span>Yield <span class="co"># access the PM results</span></code></pre></div>
-<pre><code>## [1] 0.67 0.81 1.10 0.83 0.61 0.82</code></pre>
+<pre><code>## [1] 0.62 0.73 1.00 0.82 0.61 0.81</code></pre>
 </div>
 <div id="trade-off-plots-1" class="section level3">
 <h3><span class="header-section-number">15.5.2</span> Trade-Off Plots</h3>
@@ -855,98 +858,98 @@ Results<span class="op">$</span>Yield <span class="co"># access the PM results</
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TradePlot</span>(MSE) <span class="co"># default plot </span></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-97-1.png" width="672" /></p>
 <pre><code>##          MP  STY  LTY  P10 AAVY Satisificed
-## 1       AvC 0.73 0.39 0.79 0.90       FALSE
-## 2      DCAC 0.67 0.65 0.89 0.96        TRUE
-## 3   FMSYref 0.90 1.00 1.00 1.00        TRUE
-## 4      curE 0.82 0.80 0.96 0.17       FALSE
-## 5 matlenlim 0.44 0.56 1.00 0.19       FALSE
-## 6    MRreal 0.80 0.82 1.00 0.19       FALSE</code></pre>
+## 1       AvC 0.86 0.54 0.81 0.94        TRUE
+## 2      DCAC 0.81 0.61 0.82 0.96        TRUE
+## 3   FMSYref 0.99 0.99 1.00 1.00        TRUE
+## 4      curE 0.87 0.77 0.99 0.21       FALSE
+## 5 matlenlim 0.43 0.59 1.00 0.27       FALSE
+## 6    MRreal 0.86 0.79 1.00 0.23       FALSE</code></pre>
 <p>The order of the <code>PM</code> function names determines plotting on the x and y axes. For example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TradePlot</span>(MSE, <span class="st">&#39;P50&#39;</span> ,<span class="st">&#39;LTY&#39;</span>)  <span class="co"># x = P50, y  = LTY</span></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-98-1.png" width="672" /></p>
 <pre><code>##          MP  P50  LTY Satisificed
-## 1       AvC 0.68 0.39        TRUE
-## 2      DCAC 0.78 0.65        TRUE
-## 3   FMSYref 0.93 1.00        TRUE
-## 4      curE 0.80 0.80        TRUE
-## 5 matlenlim 0.99 0.56        TRUE
-## 6    MRreal 0.85 0.82        TRUE</code></pre>
+## 1       AvC 0.75 0.54        TRUE
+## 2      DCAC 0.73 0.61        TRUE
+## 3   FMSYref 0.98 0.99        TRUE
+## 4      curE 0.88 0.77        TRUE
+## 5 matlenlim 0.99 0.59        TRUE
+## 6    MRreal 0.92 0.79        TRUE</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TradePlot</span>(MSE, <span class="st">&#39;LTY&#39;</span> ,<span class="st">&#39;P50&#39;</span>)  <span class="co"># x = LTY, y = P50</span></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-98-2.png" width="672" /></p>
 <pre><code>##          MP  LTY  P50 Satisificed
-## 1       AvC 0.39 0.68        TRUE
-## 2      DCAC 0.65 0.78        TRUE
-## 3   FMSYref 1.00 0.93        TRUE
-## 4      curE 0.80 0.80        TRUE
-## 5 matlenlim 0.56 0.99        TRUE
-## 6    MRreal 0.82 0.85        TRUE</code></pre>
+## 1       AvC 0.54 0.75        TRUE
+## 2      DCAC 0.61 0.73        TRUE
+## 3   FMSYref 0.99 0.98        TRUE
+## 4      curE 0.77 0.88        TRUE
+## 5 matlenlim 0.59 0.99        TRUE
+## 6    MRreal 0.79 0.92        TRUE</code></pre>
 <p>The PMs are recycled if an odd number are provided:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TradePlot</span>(MSE, <span class="st">&#39;P50&#39;</span> ,<span class="st">&#39;LTY&#39;</span>, <span class="st">&#39;STY&#39;</span>) </code></pre></div>
 <pre><code>## Odd number of PMs. Recycling first PM</code></pre>
 <p><img src="userguide_files/figure-html/unnamed-chunk-99-1.png" width="672" /></p>
 <pre><code>##          MP  P50  LTY  STY Satisificed
-## 1       AvC 0.68 0.39 0.73       FALSE
-## 2      DCAC 0.78 0.65 0.67       FALSE
-## 3   FMSYref 0.93 1.00 0.90        TRUE
-## 4      curE 0.80 0.80 0.82        TRUE
-## 5 matlenlim 0.99 0.56 0.44       FALSE
-## 6    MRreal 0.85 0.82 0.80        TRUE</code></pre>
+## 1       AvC 0.75 0.54 0.86        TRUE
+## 2      DCAC 0.73 0.61 0.81        TRUE
+## 3   FMSYref 0.98 0.99 0.99        TRUE
+## 4      curE 0.88 0.77 0.87        TRUE
+## 5 matlenlim 0.99 0.59 0.43       FALSE
+## 6    MRreal 0.92 0.79 0.86        TRUE</code></pre>
 <p>The <code>Lims</code> argument is used to set the vertical and horizontal acceptable risk thresholds and are interpreted in the same order as the names of the <code>PM</code> functions. For example:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TradePlot</span>(MSE, <span class="st">&#39;P50&#39;</span> ,<span class="st">&#39;LTY&#39;</span>, <span class="dt">Lims=</span><span class="kw">c</span>(<span class="fl">0.8</span>, <span class="dv">0</span>))  <span class="co"># 80% minimum acceptable risk for P50, no minimum for LTY</span></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-100-1.png" width="672" /></p>
 <pre><code>##          MP  P50  LTY Satisificed
-## 1       AvC 0.68 0.39       FALSE
-## 2      DCAC 0.78 0.65       FALSE
-## 3   FMSYref 0.93 1.00        TRUE
-## 4      curE 0.80 0.80       FALSE
-## 5 matlenlim 0.99 0.56        TRUE
-## 6    MRreal 0.85 0.82        TRUE</code></pre>
+## 1       AvC 0.75 0.54       FALSE
+## 2      DCAC 0.73 0.61       FALSE
+## 3   FMSYref 0.98 0.99        TRUE
+## 4      curE 0.88 0.77        TRUE
+## 5 matlenlim 0.99 0.59        TRUE
+## 6    MRreal 0.92 0.79        TRUE</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TradePlot</span>(MSE, <span class="st">&#39;P50&#39;</span> ,<span class="st">&#39;STY&#39;</span>, <span class="st">&#39;P100&#39;</span>, <span class="st">&#39;LTY&#39;</span>, <span class="dt">Lims=</span><span class="kw">c</span>(<span class="fl">0.8</span>, <span class="dv">0</span>, <span class="fl">0.5</span>, <span class="dv">0</span>))  <span class="co"># 80% minimum acceptable risk for P50, 50% for P100, no minimum for STY and LTY</span></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-100-2.png" width="672" /></p>
 <pre><code>##          MP  P50  STY P100  LTY Satisificed
-## 1       AvC 0.68 0.73 0.59 0.39       FALSE
-## 2      DCAC 0.78 0.67 0.65 0.65       FALSE
-## 3   FMSYref 0.93 0.90 0.37 1.00       FALSE
-## 4      curE 0.80 0.82 0.65 0.80       FALSE
-## 5 matlenlim 0.99 0.44 0.93 0.56        TRUE
-## 6    MRreal 0.85 0.80 0.68 0.82        TRUE</code></pre>
-<p>The <code>TradePlot</code> function returns a data frame with the results of the performance metrics, and a column indicating if an MP has met minimum performance criteria for <strong>all</strong> performance metrics. In the previous example, 2 MPs (matlenlim, MRreal) met the minimum performance criteria for all four performance metrics.</p>
+## 1       AvC 0.75 0.86 0.66 0.54       FALSE
+## 2      DCAC 0.73 0.81 0.63 0.61       FALSE
+## 3   FMSYref 0.98 0.99 0.41 0.99       FALSE
+## 4      curE 0.88 0.87 0.67 0.77        TRUE
+## 5 matlenlim 0.99 0.43 0.94 0.59        TRUE
+## 6    MRreal 0.92 0.86 0.71 0.79        TRUE</code></pre>
+<p>The <code>TradePlot</code> function returns a data frame with the results of the performance metrics, and a column indicating if an MP has met minimum performance criteria for <strong>all</strong> performance metrics. In the previous example, 3 MPs (curE, matlenlim, MRreal) met the minimum performance criteria for all four performance metrics.</p>
 <p>The <code>TradePlot</code> function can be used to make a variety of custom trade-off plots. For example, the <code>Tplot</code>, <code>Tplot2</code>, and <code>Tplot3</code> functions all use this function to produce different trade-off plots:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Tplot</code></pre></div>
 <pre><code>## function(MSEobj, Lims=c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...) {
 ##   if (class(Lims)!=&quot;numeric&quot;) stop(&quot;Second argument must be numeric&quot;)
 ##   TradePlot(MSEobj, Lims=Lims, PMlist=list(&quot;PNOF&quot;, &quot;LTY&quot;, &quot;P100&quot;, &quot;LTY&quot;, &quot;P50&quot;, &quot;LTY&quot;, &quot;P10&quot;, &quot;LTY&quot;),  ...)
 ## }
-## &lt;bytecode: 0x000000001cbb81d8&gt;
+## &lt;bytecode: 0x0000000019b43ef0&gt;
 ## &lt;environment: namespace:DLMtool&gt;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Tplot</span>(MSE)</code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-102-1.png" width="672" /></p>
 <pre><code>##          MP PNOF  LTY P100  P50  P10 Satisificed
-## 1       AvC 0.60 0.39 0.59 0.68 0.79       FALSE
-## 2      DCAC 0.66 0.65 0.65 0.78 0.89        TRUE
-## 3   FMSYref 0.42 1.00 0.37 0.93 1.00       FALSE
-## 4      curE 0.68 0.80 0.65 0.80 0.96        TRUE
-## 5 matlenlim 0.98 0.56 0.93 0.99 1.00        TRUE
-## 6    MRreal 0.72 0.82 0.68 0.85 1.00        TRUE</code></pre>
+## 1       AvC 0.67 0.54 0.66 0.75 0.81        TRUE
+## 2      DCAC 0.62 0.61 0.63 0.73 0.82        TRUE
+## 3   FMSYref 0.37 0.99 0.41 0.98 1.00       FALSE
+## 4      curE 0.71 0.77 0.67 0.88 0.99        TRUE
+## 5 matlenlim 0.72 0.59 0.94 0.99 1.00        TRUE
+## 6    MRreal 0.76 0.79 0.71 0.92 1.00        TRUE</code></pre>
 <p>Similarly, we can easily reproduce <code>NOAA_plot</code> using the <code>Tradeplot</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">NOAA_plot</span>(MSE)</code></pre></div>
 <pre><code>##           PNOF  B50   LTY    VY
-## AvC       60.5 68.3  37.5  83.3
-## DCAC      66.3 78.5  61.2  95.8
-## FMSYref   42.1 92.9 100.0 100.0
-## curE      68.2 79.6  80.8   6.2
-## matlenlim 97.6 99.3  56.7   8.3
-## MRreal    72.0 85.1  82.1   6.2</code></pre>
+## AvC       66.7 74.8  54.2  87.5
+## DCAC      62.2 73.2  58.3  89.6
+## FMSYref   59.8 98.5 100.0 100.0
+## curE      70.9 87.6  75.4   2.1
+## matlenlim 71.8 99.3  60.4   4.2
+## MRreal    75.8 92.0  78.3   2.1</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TradePlot</span>(MSE, <span class="dt">Lims=</span><span class="kw">c</span>(<span class="fl">0.5</span>, <span class="dv">0</span>, <span class="fl">0.8</span>, <span class="fl">0.5</span>), 
           <span class="dt">PMlist=</span><span class="kw">list</span>(<span class="st">&quot;PNOF&quot;</span>, <span class="st">&quot;LTY&quot;</span>, <span class="st">&quot;P50&quot;</span>, <span class="st">&quot;AAVY&quot;</span>), <span class="dt">Refs=</span><span class="kw">list</span>(<span class="dt">AAVY=</span><span class="fl">0.15</span>))</code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-103-1.png" width="672" /><img src="userguide_files/figure-html/unnamed-chunk-103-2.png" width="672" /></p>
 <pre><code>##          MP PNOF  LTY  P50  AAVY Satisificed
-## 1       AvC 0.60 0.39 0.68 0.830       FALSE
-## 2      DCAC 0.66 0.65 0.78 0.960       FALSE
-## 3   FMSYref 0.42 1.00 0.93 1.000       FALSE
-## 4      curE 0.68 0.80 0.80 0.062       FALSE
-## 5 matlenlim 0.98 0.56 0.99 0.083       FALSE
-## 6    MRreal 0.72 0.82 0.85 0.062       FALSE</code></pre>
+## 1       AvC 0.67 0.54 0.75 0.880       FALSE
+## 2      DCAC 0.62 0.61 0.73 0.900       FALSE
+## 3   FMSYref 0.37 0.99 0.98 1.000       FALSE
+## 4      curE 0.71 0.77 0.88 0.021       FALSE
+## 5 matlenlim 0.72 0.59 0.99 0.042       FALSE
+## 6    MRreal 0.76 0.79 0.92 0.021       FALSE</code></pre>
 <p>See the <a href="examining-the-mse-results.html#plotting-mse-results">Plotting MSE Results</a> section for examples on DLMtool plotting functions for the MSE object.</p>
 <p>Advanced users may wish to develop their own plotting and summary functions. See the <a href="custom-performance-metrics.html#custom-performance-metrics">Custom Performance Metrics</a> section for more details on this.</p>
 </div>
@@ -981,6 +984,10 @@ gitbook.start({
 "link": null,
 "text": null
 },
+"history": {
+"link": null,
+"text": null
+},
 "download": ["userguide.pdf"],
 "toc": {
 "collapse": "section",
@@ -997,7 +1004,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;

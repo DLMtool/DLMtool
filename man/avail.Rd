@@ -4,10 +4,12 @@
 \alias{avail}
 \title{What objects of this class are available}
 \usage{
-avail(classy)
+avail(classy, builtin = FALSE)
 }
 \arguments{
 \item{classy}{A class of object (character string, e.g. 'Fleet')}
+
+\item{builtin}{Logical. Only return Objects of class 'classy' from DLMtool & DLMextra packages?}
 }
 \description{
 Generic class finder

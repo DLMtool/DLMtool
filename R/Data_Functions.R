@@ -87,11 +87,11 @@ XL2Data <- function(name="Data") {
     # DataXLSlot <- DLMtool:::DataXLSlot
     NewSheetNames <- names(DataXLSlot)
     if (all(NewSheetNames %in% sheetnames)) {
-      Data <- importnewXLData(dir,name)
+      Data <- importnewXLData(dir,name, NewSheetNames)
     } else {
-      datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE))
+      datasheet <- suppressMessages(as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE)))
       if (datasheet[1,1]== "Slot") 
-        datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE, skip=1))
+        datasheet <- suppressMessages(as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE, skip=1)))
       
       if (all(dim(datasheet) == 0)) stop("Nothing found in first sheet", call.=FALSE)
       tmpfile <- tempfile(fileext=".csv")
@@ -110,15 +110,15 @@ XL2Data <- function(name="Data") {
 }
 
   
-importnewXLData <- function(dir,name) {
+importnewXLData <- function(dir,name, NewSheetNames) {
   Data <- new("Data", silent=TRUE)
   BlankDat <-new("Data", silent=TRUE)
   ignoreSheet <- NULL
   
   # sh <- NewSheetNames[1]
   for (sh in NewSheetNames) { # import from individual worksheets
-    datasheet <- as.data.frame(readxl::read_excel(file.path(dir,name), 
-                                                  sheet = sh, col_names = FALSE))
+    datasheet <- suppressMessages(as.data.frame(readxl::read_excel(file.path(dir,name), 
+                                                  sheet = sh, col_names = FALSE)))
     if (dim(datasheet)[2] <= 1) {
       message('No data found in sheet: ', sh)
     } else {
@@ -307,7 +307,8 @@ runMP <- function(Data, MPs = NA, reps = 100, perc=0.5, chkMPs=TRUE, silent=FALS
 applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
   Data <- updateMSE(Data)
-  if (is.na(nsims)) nsims <- length(Data@Mort)
+  Dataout <- Data
+  if (is.na(nsims)) nsims <- nrow(Data@Cat)
   nMPs <- length(MPs)
   
   if (.hasSlot(Data, "nareas")) {
@@ -332,7 +333,7 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
         rec <- matrix(rec, nareas, nsims, byrow=FALSE)   
       }
       recList[[X]] <- rec
-      for (x in 1:nsims) Data@Misc[[x]] <- recList$Misc[[x]]
+      for (x in 1:nsims) Dataout@Misc[[x]] <- recList$Misc[[x]]
       recList$Misc <- NULL
     }
     if (length(recList$TAC)>0)  TACout[mp,,] <- recList$TAC 
@@ -340,36 +341,11 @@ applyMP <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
     if (!silent && any(apply(is.na(recList$TAC), 2, sum) > rep(0.5 * reps, nsims)))
       message("Method ", MPs[mp], " produced greater than 50% NA values")
   }
-  # } else {
-  #   for (mp in 1:nMPs) {
-  #     temp <- sfSapply(1:nsims, MPs[mp], Data = Data, reps = reps)  
-  #     slots <- slotNames(temp[[1]])
-  #     for (X in slots) { # sequence along recommendation slots 
-  #       if (X == "Misc") { # convert to a list nsim by nareas
-  #         rec <- lapply(temp, slot, name=X)
-  #       } else {
-  #         rec <- do.call("cbind", lapply(temp, slot, name=X)) # unlist(lapply(temp, slot, name=X))
-  #       }
-  #       if (X == "Spatial") { # convert to a matrix nsim by nareas
-  #         rec <- matrix(rec, nareas, nsims, byrow=FALSE)  
-  #       }
-  #       recList[[X]] <- rec
-  #       for (x in 1:nsims) Data@Misc[[x]] <- recList$Misc[[x]]
-  #       recList$Misc <- NULL
-  #     }
-  #     if (length(recList$TAC)>0) TACout[mp,,] <- recList$TAC
-  #     returnList[[mp]] <- recList
-  #     
-  #     if (!silent && sum(is.na(recList$TAC)) > 0.5 * reps)
-  #       message("Method ", MPs[mp], " produced greater than 50% NA values")
-  #   }
-  #   
-  # }
+
+  Dataout@TAC <- TACout
+  Dataout@MPs <- MPs
   
-  Data@TAC <- TACout
-  Data@MPs <- MPs
-  
-  list(returnList, Data)
+  list(returnList, Dataout)
 }
 
 # applyMP2 <- function(Data, MPs = NA, reps = 100, nsims=NA, silent=FALSE) {
@@ -804,7 +780,6 @@ Sense <- function(Data, MP, nsense = 6, reps = 100, perc = c(0.05, 0.5, 0.95), p
   ind <- (1:nrow(reqs))[reqs[, match(MP, names(reqs))] == "Y"]
   # for(i in 1:length(reqs))
   
-  
   slotsCV <- slotNames("Data")[grep("CV_", slotNames("Data"))]
   slots <- rep("", length(slotsCV))
   for (i in 1:length(slotsCV)) slots[i] <- substr(slotsCV[i], 4, nchar(slotsCV[i]))
@@ -1006,6 +981,36 @@ joinData<-function(DataList){
 
 }
 
+
+#' Find the Management Procedures that use a particular data slot
+#'
+#' @param slot A slot from an object of class `Data`. Character string.
+#' @param silent Logical. Should messages be printed? 
+#'
+#' @return A character string of MPs that use the slot.
+#' @author A. Hordyk
+#' @export
+#'
+#' @examples
+#' Uses("Mort")
+Uses <- function(slot, silent=FALSE) {
+  if (class(slot) !="character") stop("Slot must be character", call. = FALSE)
+  if(length(slot)>1) stop("Slot must be length 1", call. = FALSE)
+  if (!slot %in% slotNames('Data')) stop("Slot is not a valid slot in Data object. Use slotNames('Data')", call.=FALSE)
+  MPs <- avail("MP")
+  List <- lapply(seq_along(MPs), function(x) Required(MPs[x]))
+  df <- data.frame(matrix(unlist(List), nrow=length(MPs), byrow=T), stringsAsFactors = FALSE)
+  mps <- df[grepl(slot, df[,2]),1]
+  if (length(mps) >0) {
+    if(!silent)
+      message("MPs that require Data slot '" , slot, "' are:")
+    return(mps)
+  } else {
+    if(!silent)
+      message("No MPs used Data slot '" , slot, "'.")
+    return(NULL)
+  }
+}
 
 
 

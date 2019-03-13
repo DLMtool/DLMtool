@@ -341,9 +341,10 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
   hist2(Msd, col=col, axes=FALSE, main="Msd", breaks=breaks)
   abline(v=Msd[its], col=1:nsamp, lwd=lwd)
   axis(side=1) 
-  hist2(Mgrad, col=col, axes=FALSE, main="Mgrad", breaks=breaks)
-  abline(v=Mgrad[its], col=1:nsamp, lwd=lwd)
-  axis(side=1)
+  plot(c(0,1), c(0,1), type="n", axes=FALSE, xlab="", ylab="")
+  # hist2(Mgrad, col=col, axes=FALSE, main="Mgrad", breaks=breaks)
+  # abline(v=Mgrad[its], col=1:nsamp, lwd=lwd)
+  # axis(side=1)
   
   # M traj
   matplot(t(Marray[its,]), type="l", lty=1, bty="l", main="M by Year", lwd=lwd)
@@ -394,9 +395,10 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
   hist2(Linfsd, col=col, axes=FALSE, main="Linfsd", breaks=breaks)
   abline(v=Linfsd[its], col=1:nsamp, lwd=lwd)
   axis(side=1)  
-  hist2(Linfgrad, col=col, axes=FALSE, main="Linfgrad", breaks=breaks)
-  abline(v=Linfgrad[its], col=1:nsamp, lwd=lwd)
-  axis(side=1)
+  plot(c(0,1), c(0,1), type="n", axes=FALSE, xlab="", ylab="")
+  # hist2(Linfgrad, col=col, axes=FALSE, main="Linfgrad", breaks=breaks)
+  # abline(v=Linfgrad[its], col=1:nsamp, lwd=lwd)
+  # axis(side=1)
   
   # Linf traj 
   matplot(t(Linfarray[its,]), type="l", bty="l", main="Linf by Year", lwd=lwd, lty=1)
@@ -413,9 +415,10 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
   hist2(Ksd, col=col, axes=FALSE, main="Ksd", breaks=breaks)
   abline(v=Ksd[its], col=1:nsamp, lwd=lwd)
   axis(side=1) 
-  hist2(Kgrad, col=col, axes=FALSE, main="Kgrad", breaks=breaks)
-  abline(v=Kgrad[its], col=1:nsamp, lwd=lwd)
-  axis(side=1)  
+  plot(c(0,1), c(0,1), type="n", axes=FALSE, xlab="", ylab="")
+  # hist2(Kgrad, col=col, axes=FALSE, main="Kgrad", breaks=breaks)
+  # abline(v=Kgrad[its], col=1:nsamp, lwd=lwd)
+  # axis(side=1)  
   
   # K traj 
   matplot(t(Karray[its,]), type="l", bty="l", main="K by Year", lwd=lwd, lty=1)
@@ -915,7 +918,7 @@ ObsTSplot<-function(Cbias,Csd,nyears,labs, breaks, its, nsamp, col){
 #' 
 #' A function that plots the parameters and resulting time series of an operating model.
 #' 
-#' @param x An object of class OM or a list with historical simulation information (ie runMSE(OM, Hist=TRUE))
+#' @param x An object of class OM or an object of class Hist (ie runMSE(OM, Hist=TRUE))
 #' @param rmd Logical. Used in a rmd file?
 #' @param head Character. Heading for rmd file. Default is '##' (second level heading)
 #' @param ...  Optional additional arguments passed to \code{plot}
@@ -960,12 +963,12 @@ plot.OM <-function(x, rmd=FALSE, head="##", ...){
     }
     plotImp(OM)
     yrlab<-OM@CurrentYr-((nyears-1):0)
-  } else if (class(x) == "list") {
+  } else if (class(x) == "Hist") {
     out <- x 
-    nyears <- dim(out$TSdata[[1]])[1]
-    nsim <- dim(out$TSdata[[1]])[2]
+    nyears <- dim(out@TSdata[[1]])[2]
+    nsim <- dim(out@TSdata[[1]])[1]
     yrlab<-nyears-((nyears-1):0)
-  } else stop("argument must be class 'OM' or 'list' ")
+  } else stop("argument must be class 'OM' or 'Hist' ")
   
   if (rmd) {
     cat('\n')
@@ -978,43 +981,41 @@ plot.OM <-function(x, rmd=FALSE, head="##", ...){
   par(mfrow=c(4,2),mai=c(0.7,0.7,0.05,0.05),omi=c(0.01,0.01,0.3,0.01))
   
   # SSB
-  TSplot(yrlab,out$TSdata$SSB,xlab="Historical year",ylab="Spawning biomass")
+  TSplot(yrlab,out@TSdata$SSB,xlab="Historical year",ylab="Spawning biomass")
   
   # Depletion
-  TSplot(yrlab,out$TSdata$SSB/rep(out$MSYs$SSB0,each=nyears),xlab="Historical year",ylab="Stock depletion (SSB)")
+  TSplot(yrlab,out@TSdata$SSB/rep(out@Ref$SSB0,each=nyears),xlab="Historical year",ylab="Stock depletion (SSB)")
   
   # Apical F
-  FM<-out$SampPars$Find*out$SampPars$qs
+  FM<-t(out@TSdata$Find*out@OM$qs)
+  FM[FM > out@OM$maxF[1]] <- out@OM$maxF[1] # add maxF constraint
   TSplot(yrlab,t(FM),xlab="Historical year",ylab="Fishing mortality rate (apical)")
   
   # Catches
-  TSplot(yrlab,out$TSdata$Catch,xlab="Historical year",ylab="Annual catches")
+  TSplot(yrlab,out@TSdata$Catch,xlab="Historical year",ylab="Annual catches")
   
   # Recruitment
-  TSplot(yrlab,out$TSdata$Rec,xlab="Historical year",ylab="Recruitment")
+  TSplot(yrlab,out@TSdata$Rec,xlab="Historical year",ylab="Recruitment")
   
   # SSB-Rec
-  TSplot(x=out$TSdata$SSB[2:nyears,],y=out$TSdata$Rec[2:nyears,],xlab="Spawning biomass",ylab="Recruitment",mat=F,type='p')
+  TSplot(x=out@TSdata$SSB[,2:nyears],y=out@TSdata$Rec[,2:nyears],
+         xlab="Spawning biomass",ylab="Recruitment",mat=F,type='p')
   
-  F_FMSY<-FM/out$MSYs$FMSY
-  B_BMSY<-t(out$TSdata$SSB)/out$MSYs$SSBMSY
+  F_FMSY<-FM/matrix(out@Ref$FMSY, nrow=nyears, ncol=nsim, byrow=TRUE)
+  B_BMSY<-out@TSdata$SSB/matrix(out@Ref$SSBMSY, nrow=nsim, ncol=nyears)
   
-  TSKplot(B_BMSY,F_FMSY,yrlab)
+  TSKplot(B_BMSY,t(F_FMSY),yrlab)
   
   # Age vulnerability
-  maxage<-dim(out$SampPars$V)[2]
+  maxage<-dim(out@AtAge$Select)[2]
   colors <- c("green","blue","grey45")
   for (x in 1:3) {
-    Zvals <- t(out$SampPars$V[x,,1:nyears])
+    Zvals <- t(out@AtAge$Select[x,,1:nyears])
     if(sd(Zvals, na.rm=TRUE) != 0) {
       if (x==1)contour(x=yrlab,y=1:maxage,z=Zvals,levels=c(0.25,0.75),col=colors[x],drawlabels=F,lwd=c(1,2))
       if (x!=1)contour(x=yrlab,y=1:maxage,z=Zvals,levels=c(0.25,0.75),col=colors[x],drawlabels=F, add=T,lwd=c(1,2))
     }
-    
   }
-  
-  # contour(x=yrlab,y=1:maxage,z=t(out$SampPars$V[2,,1:nyears]),levels=c(0.25,0.75),col='blue',drawlabels=F,add=T,lwd=c(1,2))
-  # contour(x=yrlab,y=1:maxage,z=t(out$SampPars$V[3,,1:nyears]),levels=c(0.25,0.75),col='grey45',drawlabels=F,add=T,lwd=c(1,2))
   
   legend('topright',legend=c(paste("Simulation",1:3)),text.col=c("green","blue","grey45"),bty='n')
   legend('topleft',legend="Age vulnerability (0.25, 0.75)",bty='n')
@@ -1048,7 +1049,7 @@ TSplot<-function(x,y,xlab=NA,ylab=NA,zeroy=T,incx=T,incy=T,type='l',mat=T){
   abline(h=yl,col='white')
   
   if(mat){
-    matplot(x,y,type=type,col=cols,xlab="",ylab="",add=T)
+    matplot(x,t(y),type=type,col=cols,xlab="",ylab="",add=T)
   }else{
     if(type=='p')for(i in 1:nsim)points(x[,i],y[,i],col=cols[i],pch=19)
     if(type=='l')for(i in 1:nsim)lines(x[,i],y[,i],col=cols[i])

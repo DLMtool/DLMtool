@@ -7,7 +7,7 @@
 \method{plot}{OM}(x, rmd = FALSE, head = "##", ...)
 }
 \arguments{
-\item{x}{An object of class OM or a list with historical simulation information (ie runMSE(OM, Hist=TRUE))}
+\item{x}{An object of class OM or an object of class Hist (ie runMSE(OM, Hist=TRUE))}
 
 \item{rmd}{Logical. Used in a rmd file?}
 

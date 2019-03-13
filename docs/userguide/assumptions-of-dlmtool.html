@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.2.2)</title>
+  <title>D Assumptions of DLMtool | Data-Limited Methods Toolkit (DLMtool 5.3)</title>
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
+  <meta property="og:title" content="D Assumptions of DLMtool | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
+  <meta name="twitter:title" content="D Assumptions of DLMtool | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-08-15">
+<meta name="date" content="2019-03-12">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="changes.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -288,6 +289,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
 <li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
+<li class="chapter" data-level="30" data-path="using-real-indices.html"><a href="using-real-indices.html"><i class="fa fa-check"></i><b>30</b> Using Real Indices</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
 <li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
@@ -327,6 +329,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="D.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-and-method-application"><i class="fa fa-check"></i><b>D.4</b> Data and Method Application</a><ul>
 <li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-assumed-to-be-representative"><i class="fa fa-check"></i>Data Assumed to be Representative</a></li>
 </ul></li>
+<li class="chapter" data-level="D.5" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#calculating-reference-points"><i class="fa fa-check"></i><b>D.5</b> Calculating Reference Points</a><ul>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#depletion-and-unfished-reference-points"><i class="fa fa-check"></i>Depletion and Unfished Reference Points</a></li>
+<li class="chapter" data-level="D.5.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#initial-depletion"><i class="fa fa-check"></i><b>D.5.1</b> Initial Depletion</a></li>
+<li class="chapter" data-level="D.5.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#msy-reference-points"><i class="fa fa-check"></i><b>D.5.2</b> MSY Reference Points</a></li>
+<li class="chapter" data-level="D.5.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#setting-depletion-at-a-fraction-of-bmsy"><i class="fa fa-check"></i><b>D.5.3</b> Setting Depletion at a fraction of BMSY</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
@@ -345,7 +353,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2.2)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.3)</a>
           </h1>
         </div>
 
@@ -424,6 +432,71 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The MSE model accounts for observation error in the simulated fishery data. However, the application of management procedures for management advice assumes that the provided fishery data is representative of the fishery and is the best available information on the stock. Processing of fishery data should take place before entering the data into the fishery data tables, and assumptions of the management procedures should be carefully evaluated when applying methods using DLMtool.</p>
 </div>
 </div>
+<div id="calculating-reference-points" class="section level2">
+<h2><span class="header-section-number">D.5</span> Calculating Reference Points</h2>
+<p>Biological reference points are used to initialize the simulations (e.g. Depletion) and evaluate the performance of management procedures (e.g., <span class="math inline">\(B/B_{MSY}\)</span>, <span class="math inline">\(B/B_0\)</span>, etc). Although these terms are used frequently, the definition of biological reference points can be ambiguous, and there may be multiple ways of defining or interpreting them. This is especially true when life-history and fishing parameters vary over time.</p>
+<p>Here we describe how the biological reference points are defined and calculated in DLMtool.</p>
+<div id="depletion-and-unfished-reference-points" class="section level3 unnumbered">
+<h3>Depletion and Unfished Reference Points</h3>
+<p>The Depletion parameter in the Stock Object (<code>Stock@D</code>) is used to initialize the historical simulations. Although the term <em>Depletion</em> is used frequently in fisheries science, it is rarely clearly defined. In most contexts, <em>Depletion</em> is used to mean <em>the biomass today relative to the average unfished biomass</em>. This raises two questions:</p>
+<ol style="list-style-type: decimal">
+<li>What do we mean by <em>biomass</em>? Is it total biomass (<em>B</em>), vulnerable biomass (<em>VB</em>), or spawning biomass (<em>SB</em>)?</li>
+<li>What do we mean by <em>average unfished biomass</em>? Average over what time-period? Does this refer to the average biomass at some time in history before fishing commenced? Or is the expected biomass today if the stock had not been fished?</li>
+</ol>
+<p>Examples can be found for all three definitions of biomass in the first question. We define <em>Depletion</em> with respect to spawning biomass (<em>SB</em>). That is, the values specified in <code>Stock@D</code> refer to the spawning biomass in the last historical year (i.e. ‘today’; <span class="math inline">\(SB_{y=\text{OM@nyears}}^{\text{unfished}}\)</span>) relative to the average unfished spawning biomass <span class="math inline">\((SB_0)\)</span>.</p>
+<p>The answer to the second question is a little more complicated. There are several ways to define <span class="math inline">\(SB_0\)</span> within the simulation model:</p>
+<ol style="list-style-type: decimal">
+<li>The unfished spawning biomass at the beginning of the simulations (i.e Year = 1).</li>
+<li>The unfished spawning biomass at the end of the historical simulations (i.e Year = <code>OM@nyears</code>).</li>
+<li>The <em>average</em> unfished spawning biomass over the first several years of the simulations. This could be different to 1 due to inter-annual variability in life-history parameters (e.g, <code>Stock@Linfsd</code>).</li>
+<li>The <em>average</em> unfished spawning biomass over all historical years (or the last several years). This could be different to 3 due to time-varying trends in parameters (e.g., by using <code>OM@cpars$Linfarray</code>).</li>
+</ol>
+<p>In DLMtool the operating model is specified based on the assumed or estimated spawning biomass today relative to the <em>average equilibrium</em> (i.e no process error in recruitment) biomass at the beginning of the fishery; i.e., the change in biomass over the history of the fishery (point 3 above). We use the age of 50% maturity (<span class="math inline">\(A_{50}\)</span> in the first historical year; calculated internally from <code>Stock@Linf</code>, <code>Stock@Linfsd</code>, <code>Stock@K</code>, <code>Stock@Ksd</code>, <code>Stock@t0</code>, and <code>Stock@L50</code>) as an approximation of generation time, and calculate the average unfished spawning biomass <span class="math inline">\((SB_0)\)</span> over the first <span class="math inline">\(A_{50}\)</span> years in the historical simulations. That is:</p>
+<p><span class="math display">\[
+SB_0 = \frac{\sum_{y=1}^{A_{50}} SB_y^{\text{unfished}}}{A_{50}}
+\]</span> where <span class="math inline">\(A_{50}\)</span> is rounded up to the nearest integer and <span class="math inline">\(SB_y^{\text{unfished}}\)</span> is the equilibrium unfished spawning biomass in year <span class="math inline">\(y\)</span>. The same calculation is used to calculate other unfished reference points (e.g, <span class="math inline">\(B_0\)</span>, <span class="math inline">\(VB_0\)</span>), as well as the unfished spawning-per-recruit parameters used in the Ricker stock-recruitment relationship.</p>
+<p>The unfished reference points and unfished biomass and numbers by year are returned as a list in the MSE and Hist objects; i.e <code>MSE@Misc$Unfished$Refs</code> and `<code>MSE@Misc$Unfished$ByYear</code> respectively.</p>
+<blockquote>
+<p><strong>Note</strong></p>
+<p>Note that although Depletion is calculated relative to the <em>average unfished equilibrium spawning biomass</em>, the population in the simulation model is initialized under dynamic conditions, that is, with process error in recruitment to all age classes. This means that, depending on the magnitude of recruitment variability, the initial biomass in Year 1 may be quite different to the equilibrium unfished biomass as calculated above.</p>
+</blockquote>
+</div>
+<div id="initial-depletion" class="section level3">
+<h3><span class="header-section-number">D.5.1</span> Initial Depletion</h3>
+<p>As noted above, the operating model initializes the population in an unfished dynamic state. Since DLMtool version 5.3 it is possible specify depletion in the first historical year by using <code>OM@cpars$initD</code>. When this feature is used, the population is initialized in a dynamic state with spawning biomass equal to <span class="math inline">\(\text{initD} * SB_0\)</span>; that is, initial spawning biomass in Year 1 is relative to the unfished spawning biomass in Year 1.</p>
+<p>Analysts need to be aware that if there are large time-varying trends in life-history parameters, the <span class="math inline">\(SB_0\)</span> in Year 1, which is no longer the first year that the fishery commenced, may be different to the <span class="math inline">\(SB_0\)</span> from the (not modeled) period before fishing.</p>
+</div>
+<div id="msy-reference-points" class="section level3">
+<h3><span class="header-section-number">D.5.2</span> MSY Reference Points</h3>
+<p>The calculation of maximum sustainable yield (MSY) and related reference points are also impacted by inter-annual variability in life-history and fishing parameters (i.e., selectivity pattern). For example, if there is large inter-annual variability in natural mortality or growth, MSY and <span class="math inline">\(B_{\text{MSY}}\)</span> may vary significantly between years.</p>
+<p>We calculate MSY and related metrics (e.g., <span class="math inline">\(B_{\text{MSY}}\)</span>) for each time-step in the model based on the life-history and fishing parameters in that year. The MSY reference points are used in both the simulated <code>Data</code> object, and to evaluate the performance of the management procedures.</p>
+<p>For the simulated <code>Data</code> object, we calculate MSY reference points following a similar procedure to that described above for <span class="math inline">\(B_0\)</span>. We use <span class="math inline">\(A_{50}\)</span> as an approximation of generation time, and average the annual MSY values over <span class="math inline">\(A_{50}\)</span> years around the last historical year. For example, if <code>OM@nyears</code> = 50 and <span class="math inline">\(A_{50}=5\)</span>, <span class="math inline">\(SB_{\text{MSY}}\)</span> is calculated as:</p>
+<p><span class="math display">\[
+SB_{\text{MSY}} = \sum_{y=48}^{52}{SB_y^{\text{MSY}}}
+\]</span> where <span class="math inline">\(SB_y^{\text{MSY}}\)</span> is the spawning biomass corresponding with maximum sustainable yield in year <span class="math inline">\(y\)</span>. The logic behind this is, if estimates of MSY, <span class="math inline">\(B_\text{MSY}\)</span>, etc are available, they are likely calculated based on current life-history information, which would be estimated from data spanning several age classes.</p>
+<p>The MSY reference points in the <code>Data</code> object are not updated in the future projection years. The MSY reference points and MSY values by year are returned in <code>MSE@Misc$MSYRefs</code>.</p>
+<blockquote>
+<p><strong>Note</strong></p>
+<p>In DLMtool the MSY metrics are always calculated by year. The slot <code>MSE@B_BMSY</code> returns the spawning biomass in the projections divided by <span class="math inline">\(SB_\text{MSY}\)</span> in each year of the projections. For alternative methods to calculate <span class="math inline">\(B/B_{\text{MSY}}\)</span>, such as relative to the constant <span class="math inline">\(B_\text{MSY}\)</span> described above, use <code>MSE@SSB</code> or <code>MSE@B</code> and the data stored in <code>MSE@Misc$MSYRefs</code>.</p>
+</blockquote>
+</div>
+<div id="setting-depletion-at-a-fraction-of-bmsy" class="section level3">
+<h3><span class="header-section-number">D.5.3</span> Setting Depletion at a fraction of BMSY</h3>
+<p>Relative reference points such as <span class="math inline">\(\frac{B_\text{MSY}}{B_0}\)</span>, and <span class="math inline">\(\frac{SB_\text{MSY}}{SB_0}\)</span> are calculated relative to the unfished biomass described in the previous section. This means that it is relatively straightforward to initialize the simulation model at a fraction of <span class="math inline">\(B_\text{MSY}\)</span> rather than <span class="math inline">\(B_0\)</span>.</p>
+<p>For example, suppose you wish to set the depletion in the final historical year at <span class="math inline">\(0.5SB_\text{MSY}\)</span>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(DLMtool)
+OM &lt;-<span class="st"> </span>testOM; OM<span class="op">@</span>nsim &lt;-<span class="st"> </span><span class="dv">2</span>
+OM<span class="op">@</span>cpars<span class="op">$</span>D &lt;-<span class="st"> </span><span class="kw">runif</span>(OM<span class="op">@</span>nsim, OM<span class="op">@</span>D[<span class="dv">1</span>], OM<span class="op">@</span>D[<span class="dv">2</span>]) <span class="co"># need to populate OM@cpars$D so that random samples are the same</span>
+Hist &lt;-<span class="st"> </span><span class="kw">runMSE</span>(OM, <span class="dt">Hist=</span><span class="ot">TRUE</span>, <span class="dt">silent=</span><span class="ot">TRUE</span>)
+OM<span class="op">@</span>cpars<span class="op">$</span>D &lt;-<span class="st"> </span><span class="fl">0.5</span> <span class="op">*</span><span class="st"> </span>Hist<span class="op">@</span>Ref<span class="op">$</span>SSBMSY_SSB0 <span class="co"># update Depletion to 0.5 BMSY using cpars</span>
+Hist &lt;-<span class="st"> </span><span class="kw">runMSE</span>(OM, <span class="dt">Hist=</span><span class="ot">TRUE</span>, <span class="dt">silent=</span><span class="ot">TRUE</span>)
+
+<span class="kw">matplot</span>(<span class="kw">t</span>(Hist<span class="op">@</span>TSdata<span class="op">$</span>SSB<span class="op">/</span>Hist<span class="op">@</span>Ref<span class="op">$</span>SSBMSY), <span class="dt">type=</span><span class="st">&quot;l&quot;</span>, <span class="dt">ylim=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">3</span>), 
+        <span class="dt">ylab=</span><span class="st">&quot;B/BMSY&quot;</span>, <span class="dt">xlab=</span><span class="st">&quot;Historical Years&quot;</span>, <span class="dt">bty=</span><span class="st">&quot;l&quot;</span>)
+<span class="kw">abline</span>(<span class="dt">h=</span><span class="fl">0.5</span>, <span class="dt">lty=</span><span class="dv">2</span>, <span class="dt">col=</span><span class="st">&quot;gray&quot;</span>)</code></pre></div>
+<p><img src="userguide_files/figure-html/unnamed-chunk-233-1.png" width="672" /></p>
+</div>
+</div>
 </div>
             </section>
 
@@ -454,6 +527,10 @@ gitbook.start({
 "link": null,
 "text": null
 },
+"history": {
+"link": null,
+"text": null
+},
 "download": ["userguide.pdf"],
 "toc": {
 "collapse": "section",
@@ -470,7 +547,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;

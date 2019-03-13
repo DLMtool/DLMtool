@@ -1,6 +1,7 @@
 #' @importFrom abind abind
 #' @importFrom devtools install_github
-#' @importFrom dplyr  %>%  filter group_by mutate select summarize
+#' @importFrom dplyr  %>%  filter group_by left_join mutate select summarize
+#' @importFrom DT datatable formatStyle styleInterval 
 #' @importFrom fmsb radarchart
 #' @importFrom ggplot2 aes element_blank expand_limits facet_wrap geom_boxplot ggplot ggplotGrob geom_rect geom_point labs theme theme_classic xlim ylim xlab ylab   
 #' @importFrom ggrepel geom_text_repel
@@ -17,7 +18,7 @@
 #' @importFrom parallel detectCores 
 #' @importFrom shiny incProgress
 #' @importFrom snowfall sfClusterEval sfInit sfExportAll sfIsRunning sfExport sfSapply sfLibrary
-#' @importFrom stats acf approx coef dbeta density dnorm dlnorm lm loess loess.smooth nls SSasympOff
+#' @importFrom stats acf approx coef cor dbeta density dnorm dlnorm lm loess loess.smooth nls setNames SSasympOff
 #' median nlm optim optimise optimize plogis pnorm predict qlnorm quantile rbeta
 #' rlnorm rmultinom rnorm runif sd
 #' @importFrom utils  browseURL capture.output combn flush.console packageVersion ls.str lsf.str read.csv read.csv2
@@ -28,4 +29,5 @@ NULL
 .onUnload <- function (libpath) {
   library.dynam.unload("DLMtool", libpath)
 }
+
 

@@ -12,12 +12,7 @@ runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
   PPD = FALSE, parallel = FALSE, save_name = NULL, checks = FALSE,
   control = NULL)
 
-runMSErobust(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref",
-  "curE", "matlenlim", "MRreal"), timelimit = 1, CheckMPs = FALSE,
-  Hist = FALSE, ntrials = 50, fracD = 0.05, CalcBlow = FALSE,
-  HZN = 2, Bfrac = 0.5, AnnualMSY = TRUE, maxsims = 64,
-  name = NULL, unique = FALSE, maxCrash = 10, saveMSE = TRUE,
-  savePack = FALSE)
+runMSErobust(...)
 }
 \arguments{
 \item{OM}{An operating model object (class 'OM')}
@@ -30,8 +25,8 @@ if MPs can be run.}
 \item{timelimit}{Maximum time taken for a method to carry out 10 reps
 (methods are ignored that take longer)}
 
-\item{Hist}{Should model stop after historical simulations? Returns a list
-containing all historical data}
+\item{Hist}{Should model stop after historical simulations? Returns an object of
+class 'Hist' containing all historical data}
 
 \item{ntrials}{Maximum of times depletion and recruitment deviations are
 resampled to optimize for depletion. After this the model stops if more than
@@ -49,7 +44,7 @@ in the Blow calculation}
 
 \item{Bfrac}{The target fraction of SSBMSY for calculating Blow}
 
-\item{AnnualMSY}{Logical. Should MSY statistics be calculated for each projection year?
+\item{AnnualMSY}{Deprecated. Always set to TRUE now. Logical. Should MSY statistics be calculated for each projection year?
 May differ from MSY statistics from last historical year if there are changes in productivity}
 
 \item{silent}{Should messages be printed out to the console?}
@@ -64,21 +59,7 @@ May differ from MSY statistics from last historical year if there are changes in
 
 \item{control}{control options for testing and debugging}
 
-\item{maxsims}{Maximum number of simulations per packet}
-
-\item{name}{Character string for name of saved MSE packets (if \code{savePack=TRUE})
-and final MSE object. If none provided, it uses the first five letters from the \code{OM} name}
-
-\item{unique}{Logical. Should the name be unique? Current date and time appended to name.}
-
-\item{maxCrash}{Maximum number of consecutive crashes before the MSE stops}
-
-\item{saveMSE}{Logical to indicate if final MSE object should be saved to current
-working directory (this is probably a good idea)}
-
-\item{savePack}{Logical to indicate if packets should be save to current working directory}
-
-\item{...}{Arguments to runMSE function}
+\item{...}{Arguments to runMSErobust function (function no longer works)}
 }
 \value{
 An object of class \linkS4class{MSE}
@@ -91,16 +72,7 @@ simulation) for a specified operating model
 \itemize{
 \item \code{runMSE}: Default function to use.
 
-\item \code{runMSErobust}: Save out the results to a Rdata
-file.  To increase speed and efficiency, particulary for runs with a large
-number simulations (\code{nsim}), the simulations are split into a number of
-packets.  The functions loops over the packets and combines the output into
-a single MSE object. If the MSE model crashes during a run, the MSE is run
-again until it is successfully completed. The MSE is stopped if the number
-of consecutive crashes exceeds \code{maxCrash}.  There is an option to save
-the packets as Rdata files to the current working directory (default is
-FALSE). By default, the functions saves the completed MSE object as a Rdata
-file (to the current working directory).
+\item \code{runMSErobust}: This function has now been removed. Use \code{runMSE}.
 }}
 
 \note{

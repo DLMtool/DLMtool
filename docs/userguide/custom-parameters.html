@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.2.2)</title>
+  <title>Chapter 27 Custom Parameters | Data-Limited Methods Toolkit (DLMtool 5.3)</title>
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
+  <meta property="og:title" content="Chapter 27 Custom Parameters | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
+  <meta name="twitter:title" content="Chapter 27 Custom Parameters | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-08-15">
+<meta name="date" content="2019-03-12">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="subsetting-the-mse-object.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -288,6 +289,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
 <li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
+<li class="chapter" data-level="30" data-path="using-real-indices.html"><a href="using-real-indices.html"><i class="fa fa-check"></i><b>30</b> Using Real Indices</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
 <li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
@@ -327,6 +329,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="D.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-and-method-application"><i class="fa fa-check"></i><b>D.4</b> Data and Method Application</a><ul>
 <li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-assumed-to-be-representative"><i class="fa fa-check"></i>Data Assumed to be Representative</a></li>
 </ul></li>
+<li class="chapter" data-level="D.5" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#calculating-reference-points"><i class="fa fa-check"></i><b>D.5</b> Calculating Reference Points</a><ul>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#depletion-and-unfished-reference-points"><i class="fa fa-check"></i>Depletion and Unfished Reference Points</a></li>
+<li class="chapter" data-level="D.5.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#initial-depletion"><i class="fa fa-check"></i><b>D.5.1</b> Initial Depletion</a></li>
+<li class="chapter" data-level="D.5.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#msy-reference-points"><i class="fa fa-check"></i><b>D.5.2</b> MSY Reference Points</a></li>
+<li class="chapter" data-level="D.5.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#setting-depletion-at-a-fraction-of-bmsy"><i class="fa fa-check"></i><b>D.5.3</b> Setting Depletion at a fraction of BMSY</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
@@ -345,7 +353,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2.2)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.3)</a>
           </h1>
         </div>
 
@@ -404,49 +412,95 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>A list of valid internal cpars can be found by using the <code>validcpars</code> function. Here, for presentation purposes, we print just the first two columns:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">val_int &lt;-<span class="st"> </span><span class="kw">validcpars</span>(<span class="st">&#39;internal&#39;</span>)
 val_int[,<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)]</code></pre></div>
-<pre><code>##           Var.                                                   Dim.
-## 1        Cbias                             numeric vector length nsim
-## 2     CAL_bins                                        numeric vector 
-## 3  CAL_binsmid                      numeric vector length(CAL_bins)-1
-## 4          L95                             numeric vector length nsim
-## 5       Perr_y numeric matrix dim = c(nsim, maxage+proyears+nyears-1)
-## 6  M_at_Length                   numeric matrix dim = c(n.lengths, 3)
-## 7        Asize                    numeric matrix dim = c(nsim, narea)
-## 8       Karray          numeric matrix dim = c(nsim, nyears+proyears)
-## 9    Linfarray          numeric matrix dim = c(nsim, nyears+proyears)
-## 10      Marray          numeric matrix dim = c(nsim, nyears+proyears)
-## 11       Krand          numeric matrix dim = c(nsim, nyears+proyears)
-## 12    Linfrand          numeric matrix dim = c(nsim, nyears+proyears)
-## 13       Mrand          numeric matrix dim = c(nsim, nyears+proyears)
-## 14        ageM          numeric matrix dim = c(nsim, nyears+proyears)
-## 15       age95          numeric matrix dim = c(nsim, nyears+proyears)
-## 16  M_ageArray   numeric array dim = c(nsim, maxage, nyears+proyears)
-## 17     Mat_age   numeric array dim = c(nsim, maxage, nyears+proyears)
-## 18      LatASD   numeric array dim = c(nsim, maxage, nyears+proyears)
-## 19      Wt_age   numeric array dim = c(nsim, maxage, nyears+proyears)
-## 20     Len_age   numeric array dim = c(nsim, maxage, nyears+proyears)
-## 21         mov      numeric array dim = c(nsim, maxage, narea, narea)
-## 22        Find                   numeric matrix dim = c(nsim, nyears)
-## 23     dFfinal                             numeric vector length nsim
-## 24           V   numeric array dim = c(nsim, maxage, nyears+proyears)
-## 25        retA   numeric array dim = c(nsim, maxage, nyears+proyears)
-## 26        retL numeric array dim = c(nsim, nCALbins, nyears+proyears)
-## 27    lenMbias                             numeric vector length nsim
-## 28       Mbias                             numeric vector length nsim
-## 29       Kbias                             numeric vector length nsim
-## 30      t0bias                             numeric vector length nsim
-## 31    Linfbias                             numeric vector length nsim
-## 32     LFCbias                             numeric vector length nsim
-## 33    FMSYbias                             numeric vector length nsim
-## 34  FMSY_Mbias                             numeric vector length nsim
-## 35 BMSY_B0bias                             numeric vector length nsim
-## 36    Irefbias                             numeric vector length nsim
-## 37    Brefbias                             numeric vector length nsim
-## 38    Crefbias                             numeric vector length nsim
-## 39       Dbias                             numeric vector length nsim
-## 40       hbias                             numeric vector length nsim
-## 41        hsim                             numeric vector length nsim</code></pre>
-<p>We can see that there are 41 valid internal cpars. The internal cpars are parameters that are derived from one or more of the <code>OM</code> slots.</p>
+<pre><code>##           Var.
+## 1        Cbias
+## 2     CAL_bins
+## 3  CAL_binsmid
+## 4          L95
+## 5       Perr_y
+## 6  M_at_Length
+## 7        Asize
+## 8       Karray
+## 9    Linfarray
+## 10      Marray
+## 11       Krand
+## 12    Linfrand
+## 13       Mrand
+## 14        ageM
+## 15       age95
+## 16  M_ageArray
+## 17     Mat_age
+## 18      LatASD
+## 19      Wt_age
+## 20     Len_age
+## 21         mov
+## 22       initD
+## 23        Find
+## 24     dFfinal
+## 25           V
+## 26        retA
+## 27        retL
+## 28    lenMbias
+## 29       Mbias
+## 30       Kbias
+## 31      t0bias
+## 32    Linfbias
+## 33     LFCbias
+## 34    FMSYbias
+## 35  FMSY_Mbias
+## 36 BMSY_B0bias
+## 37    Irefbias
+## 38    Brefbias
+## 39    Crefbias
+## 40       Dbias
+## 41       hbias
+## 42        hsim
+## 43        Data
+##                                                                                                          Dim.
+## 1                                                                                  numeric vector length nsim
+## 2                                                                                             numeric vector 
+## 3                                                                           numeric vector length(CAL_bins)-1
+## 4                                                                                  numeric vector length nsim
+## 5                                                      numeric matrix dim = c(nsim, maxage+proyears+nyears-1)
+## 6                                                                        numeric matrix dim = c(n.lengths, 3)
+## 7                                                                         numeric matrix dim = c(nsim, narea)
+## 8                                                               numeric matrix dim = c(nsim, nyears+proyears)
+## 9                                                               numeric matrix dim = c(nsim, nyears+proyears)
+## 10                                                              numeric matrix dim = c(nsim, nyears+proyears)
+## 11                                                              numeric matrix dim = c(nsim, nyears+proyears)
+## 12                                                              numeric matrix dim = c(nsim, nyears+proyears)
+## 13                                                              numeric matrix dim = c(nsim, nyears+proyears)
+## 14                                                              numeric matrix dim = c(nsim, nyears+proyears)
+## 15                                                              numeric matrix dim = c(nsim, nyears+proyears)
+## 16                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
+## 17                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
+## 18                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
+## 19                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
+## 20                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
+## 21 numeric array dim = c(nsim, maxage, narea, narea) OR  dim = c(nsim, maxage, narea, narea, nyears+proyears)
+## 22                                                                                 numeric vector length nsim
+## 23                                                                       numeric matrix dim = c(nsim, nyears)
+## 24                                                                                 numeric vector length nsim
+## 25                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
+## 26                                                       numeric array dim = c(nsim, maxage, nyears+proyears)
+## 27                                                     numeric array dim = c(nsim, nCALbins, nyears+proyears)
+## 28                                                                                 numeric vector length nsim
+## 29                                                                                 numeric vector length nsim
+## 30                                                                                 numeric vector length nsim
+## 31                                                                                 numeric vector length nsim
+## 32                                                                                 numeric vector length nsim
+## 33                                                                                 numeric vector length nsim
+## 34                                                                                 numeric vector length nsim
+## 35                                                                                 numeric vector length nsim
+## 36                                                                                 numeric vector length nsim
+## 37                                                                                 numeric vector length nsim
+## 38                                                                                 numeric vector length nsim
+## 39                                                                                 numeric vector length nsim
+## 40                                                                                 numeric vector length nsim
+## 41                                                                                 numeric vector length nsim
+## 42                                                                                 numeric vector length nsim
+## 43                                                                                       Object of class Data</code></pre>
+<p>We can see that there are 43 valid internal cpars. The internal cpars are parameters that are derived from one or more of the <code>OM</code> slots.</p>
 <p>For example, <code>M_ageArray</code> is an internal array that describes the natural mortality rate at age for each simulation and year. Typically, this array is derived from the <code>M</code>, <code>M2</code>, <code>Mexp</code>, <code>Mgrad</code> and <code>Msd</code> slots in the <code>Stock</code> object. Using the <code>cpars</code> feature we can override these values in the <code>OM</code> and provide our own values for <em>M</em> for each simulation, age, and year.</p>
 <p>Information on the <code>M_ageArray</code> variable in cpars can be found in the output of the <code>validcpars</code> function:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">val_int[<span class="dv">15</span>,]</code></pre></div>
@@ -463,65 +517,66 @@ temp &lt;-<span class="st"> </span><span class="kw">runMSE</span>(OM, <span clas
 <pre><code>## valid custom parameters (OM@cpars) found: 
 ## L95</code></pre>
 <pre><code>## Optimizing for user-specified movement</code></pre>
-<pre><code>## Optimizing for user-specified depletion</code></pre>
-<pre><code>## 10 simulations have final biomass that is not close to sampled depletion</code></pre>
+<pre><code>## Optimizing for user-specified depletion in last historical year</code></pre>
+<pre><code>## 11 simulations have final biomass that is not close to sampled depletion</code></pre>
 <pre><code>## Re-sampling depletion, recruitment error, and fishing effort</code></pre>
 <pre><code>## Calculating historical stock and fishing dynamics</code></pre>
-<pre><code>## Calculating MSY reference points</code></pre>
+<pre><code>## Calculating MSY reference points for each year</code></pre>
 <pre><code>## Calculating B-low reference points</code></pre>
 <pre><code>## Calculating reference yield - best fixed F strategy</code></pre>
+<pre><code>## Simulating observed data</code></pre>
 <pre><code>## Returning historical simulations</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data.frame</span>(<span class="dt">L50=</span>temp<span class="op">$</span>SampPars<span class="op">$</span>L50, <span class="dt">L95=</span>temp<span class="op">$</span>SampPars<span class="op">$</span>L95, <span class="dt">diff=</span>temp<span class="op">$</span>SampPars<span class="op">$</span>L95 <span class="op">-</span><span class="st"> </span>temp<span class="op">$</span>SampPars<span class="op">$</span>L50)</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data.frame</span>(<span class="dt">L50=</span>temp<span class="op">@</span>SampPars<span class="op">$</span>L50, <span class="dt">L95=</span>temp<span class="op">@</span>SampPars<span class="op">$</span>L95, <span class="dt">diff=</span>temp<span class="op">@</span>SampPars<span class="op">$</span>L95 <span class="op">-</span><span class="st"> </span>temp<span class="op">@</span>SampPars<span class="op">$</span>L50)</code></pre></div>
 <pre><code>##         L50 L95       diff
-## 1  89.04273  80  -9.042727
-## 2  84.24741  80  -4.247406
-## 3  83.68463  80  -3.684629
-## 4  88.46969  80  -8.469689
-## 5  83.30473  80  -3.304726
-## 6  84.33086  80  -4.330862
-## 7  83.87020  80  -3.870200
-## 8  84.89773  80  -4.897730
-## 9  89.16130  80  -9.161301
-## 10 83.98488  80  -3.984878
-## 11 86.10303  80  -6.103030
-## 12 83.05547  80  -3.055465
-## 13 88.86433  80  -8.864327
-## 14 87.95561  80  -7.955609
-## 15 85.62968  80  -5.629683
-## 16 81.58190  80  -1.581904
-## 17 90.93998  80 -10.939979
-## 18 86.11846  80  -6.118459
-## 19 88.88535  80  -8.885348
-## 20 83.99212  80  -3.992123
-## 21 86.52170  80  -6.521703
-## 22 81.59508  80  -1.595075
-## 23 84.40471  80  -4.404715
-## 24 88.14052  80  -8.140517
-## 25 88.68731  80  -8.687307
-## 26 85.37907  80  -5.379065
-## 27 81.61598  80  -1.615975
-## 28 87.74099  80  -7.740989
-## 29 83.69400  80  -3.694005
-## 30 90.34677  80 -10.346768
-## 31 86.88600  80  -6.885997
-## 32 85.89163  80  -5.891633
-## 33 86.63998  80  -6.639976
-## 34 89.23919  80  -9.239189
-## 35 90.14945  80 -10.149446
-## 36 83.51455  80  -3.514550
-## 37 87.37439  80  -7.374391
-## 38 90.71974  80 -10.719740
-## 39 90.38542  80 -10.385425
-## 40 90.03452  80 -10.034515
-## 41 83.33089  80  -3.330892
-## 42 88.57439  80  -8.574392
-## 43 89.45315  80  -9.453146
-## 44 81.80111  80  -1.801110
-## 45 90.39487  80 -10.394870
-## 46 90.97161  80 -10.971610
-## 47 87.53739  80  -7.537389
-## 48 81.60970  80  -1.609695</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="dv">1</span><span class="op">:</span>OM<span class="op">@</span>maxage, temp<span class="op">$</span>AtAge<span class="op">$</span>Mat_age[<span class="dv">1</span>,,<span class="dv">1</span>], <span class="dt">type=</span><span class="st">&quot;l&quot;</span>, 
+## 1  89.29632  80  -9.296324
+## 2  85.94840  80  -5.948397
+## 3  83.02974  80  -3.029737
+## 4  82.72569  80  -2.725685
+## 5  87.00959  80  -7.009591
+## 6  82.88771  80  -2.887705
+## 7  90.17793  80 -10.177931
+## 8  83.81742  80  -3.817423
+## 9  87.81777  80  -7.817765
+## 10 84.97352  80  -4.973519
+## 11 88.37993  80  -8.379927
+## 12 87.54484  80  -7.544837
+## 13 89.68775  80  -9.687752
+## 14 90.60570  80 -10.605700
+## 15 90.11753  80 -10.117530
+## 16 89.93550  80  -9.935500
+## 17 83.79199  80  -3.791989
+## 18 82.63972  80  -2.639718
+## 19 85.90402  80  -5.904019
+## 20 89.30135  80  -9.301353
+## 21 86.76698  80  -6.766979
+## 22 83.99262  80  -3.992624
+## 23 88.38363  80  -8.383626
+## 24 84.21836  80  -4.218363
+## 25 81.24307  80  -1.243072
+## 26 81.36054  80  -1.360544
+## 27 83.45353  80  -3.453532
+## 28 86.99403  80  -6.994028
+## 29 83.24743  80  -3.247426
+## 30 87.87676  80  -7.876755
+## 31 82.32874  80  -2.328738
+## 32 86.58952  80  -6.589517
+## 33 90.09740  80 -10.097400
+## 34 84.91566  80  -4.915659
+## 35 83.48538  80  -3.485384
+## 36 90.99788  80 -10.997882
+## 37 85.78385  80  -5.783854
+## 38 90.74749  80 -10.747493
+## 39 83.28700  80  -3.286995
+## 40 84.65751  80  -4.657509
+## 41 88.04526  80  -8.045262
+## 42 82.42479  80  -2.424794
+## 43 84.60668  80  -4.606678
+## 44 84.31737  80  -4.317373
+## 45 90.17543  80 -10.175434
+## 46 89.00868  80  -9.008677
+## 47 85.91241  80  -5.912413
+## 48 86.02250  80  -6.022501</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="dv">1</span><span class="op">:</span>OM<span class="op">@</span>maxage, temp<span class="op">@</span>AtAge<span class="op">$</span>Maturity[<span class="dv">1</span>,,<span class="dv">1</span>], <span class="dt">type=</span><span class="st">&quot;l&quot;</span>, 
      <span class="dt">xlab=</span><span class="st">&quot;Age&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;Maturity&quot;</span>)</code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-185-1.png" width="672" /></p>
 <p>We have tried to include checks to ensure the model is simulating credible population dynamics, but as this somewhat contrived example shows, care is needed when using <code>OM@cpars</code> to specify internal parameters. We recommend first running the model with <code>Hist=TRUE</code> as in the above example and examining the generated values to ensure the parameters you have added in <code>OM@cpars</code> are being used as expected.</p>
@@ -557,6 +612,10 @@ gitbook.start({
 "link": null,
 "text": null
 },
+"history": {
+"link": null,
+"text": null
+},
 "download": ["userguide.pdf"],
 "toc": {
 "collapse": "section",
@@ -573,7 +632,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;

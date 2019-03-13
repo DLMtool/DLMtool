@@ -2,10 +2,15 @@
 % Please edit documentation in R/MPs_Input.R
 \name{LBSPR}
 \alias{LBSPR}
-\title{Length-Based SPR Effort Control}
+\alias{LBSPR_MLL}
+\title{Length-Based SPR MPs}
 \usage{
-LBSPR(x, Data, reps = NA, plot = FALSE, n = 5, smoother = TRUE,
-  frac = 0.1)
+LBSPR(x, Data, reps = 1, plot = FALSE, SPRtarg = 0.4, theta1 = 0.3,
+  theta2 = 0.05, maxchange = 0.3, n = 5, smoother = TRUE,
+  R = 0.2)
+
+LBSPR_MLL(x, Data, reps = 1, plot = FALSE, SPRtarg = 0.4, n = 5,
+  smoother = TRUE, R = 0.2)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -16,11 +21,19 @@ LBSPR(x, Data, reps = NA, plot = FALSE, n = 5, smoother = TRUE,
 
 \item{plot}{Logical. Show the plot?}
 
+\item{SPRtarg}{The target SPR}
+
+\item{theta1}{Control parameter for the harvest control rule}
+
+\item{theta2}{Control parameter for the harvest control rule}
+
+\item{maxchange}{Maximum change in effort}
+
 \item{n}{Last number of years to run the model on.}
 
 \item{smoother}{Logical. Should the SPR estimates be smoothed?}
 
-\item{frac}{The fractional adjustment in effort if SPR is outside of target range}
+\item{R}{variance of sampling noise for smoother}
 }
 \value{
 An object of class \code{\link[=Rec-class]{Rec}} with the TAE slot(s) populated
@@ -30,13 +43,15 @@ The spawning potential ratio (SPR) is estimated using the LBSPR method
 and compared to a target of 0.4.
 }
 \details{
-Effort is increased by 10 per cent if the ratio of \eqn{\frac{\textrm{SPR}}{\textrm{SPR}_{\textrm{targ}}}} is
-\eqn{\geq 1.25}, reduced by 10 per cent if the ratio is < 0.75, and remains unchanged
-otherwise.
-
-The effort HCR has not been tuned. The increase/decrease in effort can
-be adjusted using the \code{frac} argument.#'
+Effort is modified according to the harvest control rules described in
+Hordyk et al. (2015b):
 }
+\section{Functions}{
+\itemize{
+\item \code{LBSPR_MLL}: Fishing retention-at-length is set equivalent to slightly
+higher than the maturity curve if SPR < 0.4
+}}
+
 \section{Required Data}{
 
 See \linkS4class{Data} for information on the \code{Data} object \cr
@@ -52,10 +67,16 @@ See \href{https://dlmtool.github.io/DLMtool/reference/LBSPR.html}{Online Documen
 
 \examples{
 LBSPR(1, Data=DLMtool::SimulatedData, plot=TRUE)
+LBSPR_MLL(1, Data=DLMtool::SimulatedData, plot=FALSE)
 }
 \references{
-Hordyk, A., Ono, K., Valencia, S., loneragan, N., and Prince J;
+Hordyk, A., Ono, K., Valencia, S., loneragan, N., and Prince J (2015a).
 A novel length-based empirical estimation method of spawning potential ratio (SPR),
 and tests of its performance, for small-scale, data-poor fisheries,
-ICES Journal of Marine Science, 72 (1) 2015, 217-231,
+ICES Journal of Marine Science, 72 (1), 217-231
+
+Hordyk, A. R., Loneragan, N. R., & Prince, J. D. (2015b). An evaluation of an
+iterative harvest strategy for data-poor fisheries using the length-based
+spawning potential ratio assessment methodology. Fisheries Research,
+171, 20–32. https://doi.org/10.1016/j.fishres.2014.12.018
 }

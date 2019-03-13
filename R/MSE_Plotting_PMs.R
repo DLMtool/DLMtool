@@ -7,14 +7,16 @@
 #' @param ... Names of Performance Metrics (PMs), or other arguments to `TradePlot`. First PM is recycled if number of PMs is not even
 #' @param Lims A numeric vector of acceptable risk/minimum probability thresholds. Recycled if not equal to number of PMs.
 #' @param Title Optional title for each plot. Character vector of `length(PMs)`/2. Recycled.
+#' @param Labels Optional named list specifying new labels for MPs. For example: `Labels = list(AvC="Average Catch", CC1="Constant Catch")`
 #' @param Satisficed Logical. Show only the MPs that meet minimum acceptable thresholds (specified in `Lims`)
 #' @param Show Logical. Show the Results table and plots?
 #' @param point.size Numeric. Size of the MP points
-#' @param lab.size Numeric. Size of MP label
+#' @param lab.size Numeric. Size of MP label. Set to NULL to remove MP labels.
 #' @param axis.title.size Numeric. Size of axis titles
 #' @param axis.text.size Numeric. Size of axis text
 #' @param legend.title.size Numeric. Size of legend title text
 #' @param position Character. Position of legend - 'right' or 'bottom'
+#' @param cols Optional character vector of colors for the legend (MP Types).
 #' @param fill Character. Color of the fill
 #' @param alpha Numeric. Transparency of fill
 #' @param PMlist Optional list of PM names. Overrides any supplied in ... above
@@ -29,6 +31,7 @@
 #'
 TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8), 
                       Title=NULL,
+                      Labels=NULL,
                       Satisficed=FALSE,
                       Show=TRUE,
                       point.size=2,
@@ -37,6 +40,7 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
                       axis.text.size=10,
                       legend.title.size=12,
                       position = c("right", "bottom"),
+                      cols=NULL,
                       fill="gray80",
                       alpha=0.4,
                       PMlist=NULL,
@@ -57,6 +61,11 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
   for (X in seq_along(PMlist))
     if (!PMlist[X] %in% avail("PM")) stop(PMlist[X], " is not a valid PM method")
   if (length(PMlist)<2) stop("Must provided more than 1 PM method")
+  
+  if (is.null(cols)) {
+    cols <- c("#1b9e77", "#d95f02", "#7570b3", "#e7298a")
+  }
+  
   
   nPMs <- length(PMlist)
   if (nPMs %% 2 != 0) {
@@ -127,7 +136,19 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
     MPType <- MPtype(MSEobj@MPs)
     Class <- MPType[match(MSEobj@MPs, MPType[,1]),2]
     
-    df <- data.frame(x=xvals, y=yvals, label=MSEobj@MPs, Class=Class,
+    labels <- MSEobj@MPs
+    if (class(Labels) == "list") {
+      repnames <- names(Labels)
+      invalid <- repnames[!repnames %in% labels]
+      if (length(invalid >0)) {
+        warning("Labels: ", paste(invalid, collapse=", "), " are not MPs in MSE")
+        Labels[invalid] <- NULL
+        repnames <- names(Labels)
+      }
+      labels[labels %in% repnames] <- Labels %>% unlist()
+    }
+    
+    df <- data.frame(x=xvals, y=yvals, label=labels, Class=Class,
                      pass=xvals>xline & yvals>yline, fontface="plain", xPM=xPM, yPM=yPM)
     df$fontface <- as.character(df$fontface)
     df$fontface[!df$pass] <- "italic"
@@ -135,20 +156,23 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
     listout[[pp]] <- df
     
     if (Satisficed) {
-     xlim <- c(xline, 1)
-     ylim <- c(yline, 1)
-     plots[[pp]] <- ggplot2::ggplot() 
+      xlim <- c(xline, 1)
+      ylim <- c(yline, 1)
+      plots[[pp]] <- ggplot2::ggplot() 
     } else {
       plots[[pp]] <- ggplot2::ggplot() + 
         ggplot2::geom_rect(data=xrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill=fill, alpha=alpha) +
         ggplot2::geom_rect(data=yrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill=fill, alpha=alpha)
     }
-      
+    
     plots[[pp]] <-  plots[[pp]] + 
-      ggplot2::geom_point(data=df, ggplot2::aes(x, y, shape=Class, color=Class), size=point.size, na.rm=TRUE) +
-      ggrepel::geom_text_repel(data=df, ggplot2::aes(x, y, color=Class, label=label, 
+      ggplot2::geom_point(data=df, ggplot2::aes(x, y, shape=Class, color=Class), size=point.size, na.rm=TRUE)
+    if (!is.null(lab.size)) 
+      plots[[pp]] <-  plots[[pp]] + 
+      ggrepel::geom_text_repel(data=df, ggplot2::aes(x, y, color=Class, label=label,
                                                      fontface = fontface), 
-                               show.legend=FALSE, size=lab.size, na.rm=TRUE) + 
+                               show.legend=FALSE, size=lab.size, na.rm=TRUE) 
+    plots[[pp]] <-  plots[[pp]] + 
       ggplot2::xlab(xcap) + ggplot2::ylab(ycap) +
       ggplot2::xlim(xlim) + ggplot2::ylim(ylim) +
       ggplot2::theme_classic() +
@@ -156,7 +180,8 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
                      axis.text = ggplot2::element_text(size=axis.text.size),
                      legend.text=ggplot2::element_text(size=legend.title.size),
                      legend.title = ggplot2::element_text(size=legend.title.size)) + 
-      ggplot2::labs(shape= "MP Type", color="MP Type")
+      ggplot2::labs(shape= "MP Type", color="MP Type") +
+      ggplot2::scale_colour_manual(values=cols)
     
     if (!is.null(Title)) 
       plots[[pp]] <-  plots[[pp]] + ggplot2::labs(title=Title[pp])
@@ -324,7 +349,7 @@ Cplot <- function(MSEobj, MPs = NA, lastYrs = 5,
                    legend.text=ggplot2::element_text(size=legend.title.size),
                    legend.title = ggplot2::element_text(size=legend.title.size)) +
     ggrepel::geom_text_repel(ggplot2::aes(label=mp), show.legend=FALSE) +
-    ggplot2::labs(x=paste("Median Biomass (last", lastYrs, 
+    ggplot2::labs(x=paste("Median Spawning Biomass (last", lastYrs, 
                  "years)\n relative to current"),
          y=paste("Median Yield (last", lastYrs, "years)\n relative to current"),
          shape= "MP Type", color="MP Type")
@@ -385,7 +410,6 @@ VOIplot2 <- function(MSE, MP=1, type=c("Obs", "OM"), PM="Yield", n=5,
   } else {
     Ptype <- Obs_desc  # Obs_desc <- DLMtool:::Obs_desc
     Xvals <- MSEobj@Obs
-    
     reqdat <- Required(MSEobj@MPs)[,2]
     reqdat <- trimws(unlist(strsplit(reqdat, ",")))
     
@@ -408,13 +432,9 @@ VOIplot2 <- function(MSE, MP=1, type=c("Obs", "OM"), PM="Yield", n=5,
   if (sum(Ptype$VOI_include) == 0) stop("No Observations for this MP", call.=FALSE)
   Xvals <- Xvals[ind,, drop=FALSE]
   Xdf <- tidyr::gather(Xvals)
-  
-  
+
   Yval <- data.frame(Yval=rep(Yval, ncol(Xvals)))
- 
-  
   df <- dplyr::bind_cols(Xdf, Yval)
-  
   
   ## Fit a loess smoother  ##
   span <- 0.75; degree <- 2
@@ -437,7 +457,7 @@ VOIplot2 <- function(MSE, MP=1, type=c("Obs", "OM"), PM="Yield", n=5,
   sdf <- df %>% dplyr::select(key, var) %>% dplyr::distinct() %>%  dplyr::top_n(n, var) %>% select(key)
   pdf <- df %>% filter(key %in% sdf$key)
   l.mod2 <- l.mod %>% filter(key %in% sdf$key)
-  
+
   title <- paste0(MSEobj@MPs, ' - ',  type, ' Parameters (top ', n, ")")
   nrow <- ceiling(n/5)
   

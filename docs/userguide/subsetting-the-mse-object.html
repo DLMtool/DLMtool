@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.2.2)</title>
+  <title>Chapter 28 Subsetting the MSE Object | Data-Limited Methods Toolkit (DLMtool 5.3)</title>
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
+  <meta property="og:title" content="Chapter 28 Subsetting the MSE Object | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
+  <meta name="twitter:title" content="Chapter 28 Subsetting the MSE Object | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-08-15">
+<meta name="date" content="2019-03-12">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="custom-performance-metrics.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -288,6 +289,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
 <li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
+<li class="chapter" data-level="30" data-path="using-real-indices.html"><a href="using-real-indices.html"><i class="fa fa-check"></i><b>30</b> Using Real Indices</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
 <li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
@@ -327,6 +329,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="D.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-and-method-application"><i class="fa fa-check"></i><b>D.4</b> Data and Method Application</a><ul>
 <li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-assumed-to-be-representative"><i class="fa fa-check"></i>Data Assumed to be Representative</a></li>
 </ul></li>
+<li class="chapter" data-level="D.5" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#calculating-reference-points"><i class="fa fa-check"></i><b>D.5</b> Calculating Reference Points</a><ul>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#depletion-and-unfished-reference-points"><i class="fa fa-check"></i>Depletion and Unfished Reference Points</a></li>
+<li class="chapter" data-level="D.5.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#initial-depletion"><i class="fa fa-check"></i><b>D.5.1</b> Initial Depletion</a></li>
+<li class="chapter" data-level="D.5.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#msy-reference-points"><i class="fa fa-check"></i><b>D.5.2</b> MSY Reference Points</a></li>
+<li class="chapter" data-level="D.5.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#setting-depletion-at-a-fraction-of-bmsy"><i class="fa fa-check"></i><b>D.5.3</b> Setting Depletion at a fraction of BMSY</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
@@ -345,7 +353,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2.2)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.3)</a>
           </h1>
         </div>
 
@@ -378,11 +386,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## 
 ## Probability:
 ##          MP PNOF  P50 AAVY  LTY
-## 1    Fratio 0.61 0.69 0.78 0.54
-## 2      DCAC 0.64 0.75 0.89 0.65
-## 3      Fdem 0.52 0.61 0.76 0.50
-## 4        DD 0.52 0.66 0.82 0.65
-## 5 matlenlim 0.78 0.89 0.34 0.81</code></pre>
+## 1    Fratio 0.49 0.58 0.59 0.46
+## 2      DCAC 0.60 0.72 0.77 0.63
+## 3      Fdem 0.54 0.62 0.64 0.52
+## 4        DD 0.50 0.69 0.78 0.69
+## 5 matlenlim 0.49 0.87 0.33 0.85</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">accept &lt;-<span class="st"> </span><span class="kw">which</span>(stats<span class="op">$</span>P50 <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.70</span>) <span class="co"># index of methods that pass the criteria</span>
 MPs &lt;-<span class="st"> </span>stats[accept,<span class="st">&quot;MP&quot;</span>] <span class="co"># the acceptable MPs</span>
 
@@ -392,8 +400,8 @@ subMSE &lt;-<span class="st"> </span><span class="kw">Sub</span>(BSharkMSE, <spa
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">Tplot</span>(subMSE)</code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-187-1.png" width="672" /></p>
 <pre><code>##          MP PNOF  LTY P100  P50  P10 Satisificed
-## 1      DCAC 0.64 0.65 0.60 0.75 0.83        TRUE
-## 2 matlenlim 0.78 0.81 0.71 0.89 0.99        TRUE</code></pre>
+## 1      DCAC 0.60 0.63 0.56 0.72 0.79        TRUE
+## 2 matlenlim 0.49 0.85 0.67 0.87 0.99       FALSE</code></pre>
 </div>
 <div id="subsetting-by-operating-model-parameters" class="section level2">
 <h2><span class="header-section-number">28.2</span> Subsetting by Operating Model Parameters</h2>
@@ -441,6 +449,10 @@ gitbook.start({
 "link": null,
 "text": null
 },
+"history": {
+"link": null,
+"text": null
+},
 "download": ["userguide.pdf"],
 "toc": {
 "collapse": "section",
@@ -457,7 +469,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;

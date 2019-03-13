@@ -9,10 +9,11 @@
 \title{Generic Trade-Plot Function}
 \usage{
 TradePlot(MSEobj, ..., Lims = c(0.2, 0.2, 0.8, 0.8), Title = NULL,
-  Satisficed = FALSE, Show = TRUE, point.size = 2, lab.size = 4,
-  axis.title.size = 12, axis.text.size = 10, legend.title.size = 12,
-  position = c("right", "bottom"), fill = "gray80", alpha = 0.4,
-  PMlist = NULL, Refs = NULL, Yrs = NULL)
+  Labels = NULL, Satisficed = FALSE, Show = TRUE, point.size = 2,
+  lab.size = 4, axis.title.size = 12, axis.text.size = 10,
+  legend.title.size = 12, position = c("right", "bottom"),
+  cols = NULL, fill = "gray80", alpha = 0.4, PMlist = NULL,
+  Refs = NULL, Yrs = NULL)
 
 Tplot(MSEobj, Lims = c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...)
 
@@ -31,13 +32,15 @@ NOAA_plot2(MSEobj)
 
 \item{Title}{Optional title for each plot. Character vector of \code{length(PMs)}/2. Recycled.}
 
+\item{Labels}{Optional named list specifying new labels for MPs. For example: \code{Labels = list(AvC="Average Catch", CC1="Constant Catch")}}
+
 \item{Satisficed}{Logical. Show only the MPs that meet minimum acceptable thresholds (specified in \code{Lims})}
 
 \item{Show}{Logical. Show the Results table and plots?}
 
 \item{point.size}{Numeric. Size of the MP points}
 
-\item{lab.size}{Numeric. Size of MP label}
+\item{lab.size}{Numeric. Size of MP label. Set to NULL to remove MP labels.}
 
 \item{axis.title.size}{Numeric. Size of axis titles}
 
@@ -46,6 +49,8 @@ NOAA_plot2(MSEobj)
 \item{legend.title.size}{Numeric. Size of legend title text}
 
 \item{position}{Character. Position of legend - 'right' or 'bottom'}
+
+\item{cols}{Optional character vector of colors for the legend (MP Types).}
 
 \item{fill}{Character. Color of the fill}
 

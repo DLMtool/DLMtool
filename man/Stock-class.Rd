@@ -29,7 +29,7 @@ dynamics model
 
 \item{\code{Msd}}{Inter-annual variability in natural mortality rate expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{Mgrad}}{Mean temporal trend in natural mortality rate, expressed as a percentage change in M per year. Uniform distribution lower and upper bounds. Real numbers}
+\item{\code{Mgrad}}{No longer used. Previously mean temporal trend in natural mortality rate, expressed as a percentage change in M per year.}
 
 \item{\code{h}}{Steepness of the stock recruit relationship. Uniform distribution lower and upper bounds. Values from 1/5 to 1}
 
@@ -51,13 +51,13 @@ dynamics model
 
 \item{\code{LenCV}}{Coefficient of variation of length-at-age (assumed constant for all age classes). Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Ksd}}{Inter-annual variability in growth parameter k. Uniform distribution lower and upper bounds. Non-negative real numbers}
+\item{\code{Ksd}}{Inter-annual variability in growth parameter k expressed as coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{Kgrad}}{Mean temporal trend in growth parameter k, expressed as a percentage change in k per year. Uniform distribution lower and upper bounds. Real numbers}
+\item{\code{Kgrad}}{No longer used. Previously mean temporal trend in growth parameter k, expressed as a percentage change in k per year.}
 
-\item{\code{Linfsd}}{Inter-annual variability in maximum length. Uniform distribution lower and upper bounds. Non-negative real numbers}
+\item{\code{Linfsd}}{Inter-annual variability in maximum length expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{Linfgrad}}{Mean temporal trend in maximum length, expressed as a percentage change in Linf per year. Uniform distribution lower and upper bounds. Real numbers}
+\item{\code{Linfgrad}}{No longer used. Previously mean temporal trend in maximum length, expressed as a percentage change in Linf per year.}
 
 \item{\code{L50}}{Length at 50 percent maturity. Uniform distribution lower and upper bounds. Positive real numbers}
 

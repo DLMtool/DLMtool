@@ -1,5 +1,5 @@
 testthat::context("Test OM Plotting functions")
-windows()
+dev.new()  
 # DLMextra(TRUE)
 # library(DLMextra)
 library(testthat)
@@ -91,6 +91,6 @@ testthat::test_that("plotOM works with all OMs", {
   }
 })
 
-graphics.off()
+if(!is.null(dev.list()))  dev.off()
 
 

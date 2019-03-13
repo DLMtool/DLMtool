@@ -303,7 +303,7 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
   }
   multi <- 100
   filterM <- filterK <- FALSE
-  if (prod(c("K", "M") %in% names) & filterMK & !(is.na(inpars_1$K) || is.na(inpars_1$M))) {
+  if (prod(c("K", "M") %in% names) & filterMK & !(all(is.na(inpars_1$K)) || all(is.na(inpars_1$M)))) {
     if (all(is.na(inpars$M))) {
       filterM <- TRUE
       if (msg) message("Filtering predicted M within bounds: ", paste0(inpars_1$M, " "))

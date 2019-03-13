@@ -39,9 +39,9 @@ or a data.frame with the estimated values.
 OM <- DLMtool::testOM 
 OM@nsim <- 2
 Hist <- runMSE(OM, Hist=TRUE)
-N <- Hist$AtAge$N[1,,1] * Hist$AtAge$Sl_age[1,,1]
-meanL <- Hist$AtAge$Len_age[1,,1]
-sdL <- Hist$AtAge$Len_age[1,,1] * 0.1
+N <- Hist@AtAge$Nage[1,,1] * Hist@AtAge$Select[1,,1]
+meanL <- Hist@AtAge$Length[1,,1]
+sdL <- Hist@AtAge$Length[1,,1] * 0.1
 nsamp <- ceiling(N/sum(N) * 1000)
 Length <- unlist(sapply(1:length(meanL), function(i) rnorm(nsamp[i], meanL[i], sdL[i])))
 Ages <- rep(1:length(N), nsamp)
@@ -53,5 +53,5 @@ newOM <- Growth2OM(data, OM)
 
 # Return a data.frame
 estPars <- Growth2OM(data)
- 
+
 }

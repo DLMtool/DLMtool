@@ -4,7 +4,8 @@
 \alias{boxplot.Data}
 \title{Boxplot of TAC recommendations}
 \usage{
-\method{boxplot}{Data}(x, upq = 0.9, lwq = 0.1, outline = FALSE, ...)
+\method{boxplot}{Data}(x, upq = 0.9, lwq = 0.1, ylim = NULL,
+  outline = FALSE, ...)
 }
 \arguments{
 \item{x}{An object of class MSE}
@@ -12,6 +13,8 @@
 \item{upq}{Upper quantile of TACs for max ylim}
 
 \item{lwq}{Lower quantile of TACs for min ylim}
+
+\item{ylim}{Optional numeric vector of length 2 to specify limits of y-axis.}
 
 \item{outline}{Logical. Include outliers in plot?}
 

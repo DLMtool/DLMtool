@@ -16,12 +16,13 @@ plot.Data <- function(x, upq=0.9, lwq=0.1, outline = FALSE, ...) {
 #' @param x An object of class MSE
 #' @param upq Upper quantile of TACs for max ylim
 #' @param lwq Lower quantile of TACs for min ylim
+#' @param ylim Optional numeric vector of length 2 to specify limits of y-axis.
 #' @param outline Logical. Include outliers in plot?
 #' @param ...  Optional additional arguments passed to \code{boxplot}
 #' @return Returns a data frame containing the information shown in the plot
 #' @author A. Hordyk
 #' @export
-boxplot.Data <- function(x, upq=0.9, lwq=0.1, outline = FALSE, ...) {
+boxplot.Data <- function(x, upq=0.9, lwq=0.1, ylim=NULL, outline = FALSE, ...) {
   Data <- updateMSE(x)
   if (class(Data) != "Data")  stop("Object must be of class 'Data'")
   tacs <- t(Data@TAC[, , 1])
@@ -56,11 +57,11 @@ boxplot.Data <- function(x, upq=0.9, lwq=0.1, outline = FALSE, ...) {
     tacs <- tacs[, ord]
     ymax <- max(apply(tacs, 2, quantile, upq, na.rm = TRUE))
     ymin <- min(apply(tacs, 2, quantile, lwq, na.rm = TRUE))
-    ylim <- c(ymin, ymax)
+    if (is.null(ylim)) ylim <- c(ymin, ymax)
     Median <- round(apply(tacs, 2, median, na.rm = TRUE), 2)
     SD <- round(apply(tacs, 2, sd, na.rm = TRUE), 2)
   } else {
-    ylim <- c(min(tacs), max(tacs))
+    if (is.null(ylim)) ylim <- c(min(tacs), max(tacs))
     Median <- median(tacs)
     SD <- sd(tacs)
     tacs <- as.numeric(tacs)

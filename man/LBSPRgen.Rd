@@ -4,8 +4,8 @@
 \alias{LBSPRgen}
 \title{Internal estimation function for LBSPR MP}
 \usage{
-LBSPRgen(SL50, SL95, FM, nage, nlen, CVLinf, LenBins, LenMids, x, MK, Linf,
-  P, L50, L95, Beta)
+LBSPRgen(SL50, SL95, FM, nage, nlen, CVLinf, LenBins, LenMids, MK, Linf,
+  rLens, Prob, Ml, L50, L95, Beta)
 }
 \arguments{
 \item{SL50}{Length at 50 percent selectivity}
@@ -24,13 +24,15 @@ LBSPRgen(SL50, SL95, FM, nage, nlen, CVLinf, LenBins, LenMids, x, MK, Linf,
 
 \item{LenMids}{Vector of mid-points of length bins}
 
-\item{x}{Vector of psuedo ages}
-
 \item{MK}{Ratio of M/K}
 
 \item{Linf}{Asymptotic length}
 
-\item{P}{Fraction of initial cohort alive at maximum age under unfished conditions}
+\item{rLens}{Vector of relative length at ate}
+
+\item{Prob}{ALK}
+
+\item{Ml}{Maturity at age vector}
 
 \item{L50}{Length at 50 percent maturity}
 

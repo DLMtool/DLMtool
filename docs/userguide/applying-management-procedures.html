@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.2.2)</title>
+  <title>Chapter 22 Applying Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.3)</title>
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
+  <meta property="og:title" content="Chapter 22 Applying Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
+  <meta name="twitter:title" content="Chapter 22 Applying Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-08-15">
+<meta name="date" content="2019-03-12">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="averaging-mps.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -288,6 +289,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
 <li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
+<li class="chapter" data-level="30" data-path="using-real-indices.html"><a href="using-real-indices.html"><i class="fa fa-check"></i><b>30</b> Using Real Indices</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
 <li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
@@ -327,6 +329,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="D.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-and-method-application"><i class="fa fa-check"></i><b>D.4</b> Data and Method Application</a><ul>
 <li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-assumed-to-be-representative"><i class="fa fa-check"></i>Data Assumed to be Representative</a></li>
 </ul></li>
+<li class="chapter" data-level="D.5" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#calculating-reference-points"><i class="fa fa-check"></i><b>D.5</b> Calculating Reference Points</a><ul>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#depletion-and-unfished-reference-points"><i class="fa fa-check"></i>Depletion and Unfished Reference Points</a></li>
+<li class="chapter" data-level="D.5.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#initial-depletion"><i class="fa fa-check"></i><b>D.5.1</b> Initial Depletion</a></li>
+<li class="chapter" data-level="D.5.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#msy-reference-points"><i class="fa fa-check"></i><b>D.5.2</b> MSY Reference Points</a></li>
+<li class="chapter" data-level="D.5.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#setting-depletion-at-a-fraction-of-bmsy"><i class="fa fa-check"></i><b>D.5.3</b> Setting Depletion at a fraction of BMSY</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
@@ -345,7 +353,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2.2)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.3)</a>
           </h1>
         </div>
 
@@ -376,75 +384,72 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>## running all available MPs</code></pre>
 <pre><code>## Method Rcontrol produced greater than 50% NA values</code></pre>
 <pre><code>##                TAC Effort   LR5    LFR     HS Area 1 Area 2
-## AvC          24.70                                         
-## AvC_MLL      24.51        90.25  95.00                     
-## BK           11.10                                         
-## CC1          23.50                                         
-## CC2          21.14                                         
-## CC3          18.65                                         
-## CC4          16.43                                         
-## CC5          14.03                                         
+## AvC          24.89                                         
+## AvC_MLL      24.31        90.25  95.00                     
+## BK           11.28                                         
+## CC1          23.37                                         
+## CC2          21.09                                         
+## CC3          18.80                                         
+## CC4          16.41                                         
+## CC5          14.00                                         
 ## curE                 1.00                                  
 ## curE75               0.75                                  
-## DAAC          2.87                                         
-## DBSRA         6.23                                         
-## DBSRA_40      9.87                                         
-## DBSRA4010     3.92                                         
-## DCAC          5.82                                         
+## DAAC          2.91                                         
+## DBSRA         6.22                                         
+## DBSRA_40      9.88                                         
+## DBSRA4010     4.06                                         
+## DCAC          5.69                                         
 ## DCAC_40       7.24                                         
-## DCAC4010      1.35                                         
-## DCACs         5.72                                         
-## DD            2.05                                         
+## DCAC4010      1.43                                         
+## DCACs         5.73                                         
+## DD            2.03                                         
 ## DD4010        0.45                                         
 ## DDe                  0.09                                  
 ## DDe75                0.07                                  
 ## DDes                 0.90                                  
-## DepF          3.02                                         
+## DepF          2.94                                         
 ## DTe40                0.90                                  
 ## DTe50                0.90                                  
-## DynF          4.83                                         
+## DynF          5.04                                         
 ## Fadapt        8.13                                         
-## Fdem          4.62                                         
-## Fratio        3.71                                         
-## Fratio4010    2.09                                         
+## Fdem          4.70                                         
+## Fratio        3.68                                         
+## Fratio4010    2.04                                         
 ## GB_slope     15.14                                         
 ## Gcontrol      6.53                                         
 ## HDAAC         2.86                                         
-## ICI          13.84                                         
-## ICI2         13.95                                         
-## Iratio        9.84                                         
-## Islope1      16.82                                         
-## Islope2      14.80                                         
-## Islope4      13.30                                         
+## ICI          13.91                                         
+## ICI2         14.03                                         
+## Iratio       10.04                                         
+## Islope1      16.91                                         
+## Islope2      14.74                                         
+## Islope4      13.42                                         
 ## Itarget1      7.06                                         
-## Itarget1_MPA  7.05                                 0      1
-## Itarget2      7.12                                         
+## Itarget1_MPA  7.08                                 0      1
+## Itarget2      7.04                                         
 ## Itarget3      7.07                                         
-## Itarget4      4.96                                         
+## Itarget4      4.98                                         
 ## ItargetE1            0.85                                  
 ## ItargetE2            0.85                                  
 ## ItargetE3            0.85                                  
 ## ItargetE4            0.85                                  
 ## matlenlim                 90.25  95.00                     
 ## matlenlim2                99.28 104.50                     
-## MCD          14.37                                         
-## MCD4010       9.41                                         
+## MCD          13.63                                         
+## MCD4010       8.82                                         
 ## minlenLopt1               89.75  99.72                     
 ## MRnoreal                                           0      1
 ## MRreal                                             0      1
 ## NFref         0.01                                         
 ## Rcontrol      6.53                                         
 ## Rcontrol2     6.53                                         
-## SBT1         15.22                                         
+## SBT1         14.91                                         
 ## slotlim                   99.28 104.50 142.55              
-## SPmod        15.60                                         
-## SPMSY        11.35                                         
-## SPslope      13.91                                         
-## SPSRA         5.70                                         
-## YPR           7.92                                         
-## avgMP         8.66                                         
-## TCPUE_e              0.95                                  
-## THC          43.19</code></pre>
+## SPmod        15.71                                         
+## SPMSY        11.53                                         
+## SPslope      13.82                                         
+## SPSRA         5.74                                         
+## YPR           7.89</code></pre>
 <p>The TAC recommendations from each Output control can be plotted:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">boxplot</span>(Atlantic_mackerel)</code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-132-1.png" width="576" /></p>
@@ -484,6 +489,10 @@ gitbook.start({
 "link": null,
 "text": null
 },
+"history": {
+"link": null,
+"text": null
+},
 "download": ["userguide.pdf"],
 "toc": {
 "collapse": "section",
@@ -500,7 +509,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;

@@ -1,0 +1,183 @@
+---
+output:
+  html_document:
+    theme: cosmo
+    highlight: tango
+  pdf_document:
+    toc: false
+---
+
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta http-equiv="Content-Language" content="en">
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r results='asis', echo=FALSE}
+# havingIP <- function() {
+#   if (.Platform$OS.type == "windows") {
+#     ipmessage <- system("ipconfig", intern = TRUE)
+#   } else {
+#     ipmessage <- system("ifconfig", intern = TRUE)
+#   }
+#   validIP <- "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)[.]){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"
+#   any(grep(validIP, ipmessage))
+# }
+# 
+# if (havingIP() & enableSearch) {
+#   cat('<link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.5/css/jquery.dataTables.min.css">')
+#   cat('<script src="http://code.jquery.com/jquery-2.1.2.min.js"></script>')
+#   cat('<script src="http://cdn.datatables.net/1.10.5/js/jquery.dataTables.min.js"></script>')
+# }
+
+```
+
+<!-- <script type="text/javascript"> -->
+<!--          $(document).ready(function() { -->
+<!--              $("table").DataTable({ -->
+<!--                "aLengthMenu": [[50, 75, 100, -1], [50, 75, 100, "All"]], -->
+<!--                "iDisplayLength": 50 -->
+<!--              }); -->
+<!--          } ); -->
+
+<!-- </script> -->
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, results='asis'} 
+suppressMessages(library(dplyr))
+suppressMessages(library(knitr))
+suppressMessages(library(kableExtra))
+
+Plimits <- lapply(runPM, function(x) x@Caption) %>% unlist()
+chk <- grepl("<", Plimits)
+if (sum(chk)) {
+  ind <- which(chk)  
+  for (x in ind)
+    Plimits[x] <- gsub("<", "\\\\<", Plimits[x])
+}
+
+if (length(Plimits)>1)
+  cat("## Performance Objectives\n")
+if (length(Plimits)==1)
+    cat("## Performance Objective\n")
+
+for (xx in 1:length(Plimits)) {
+  cat("#### ", xx, ": ", Plimits[xx], " \n\n", sep="")
+}
+
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+if (use.colors) {
+  quants <- seq(0, 1, length.out=length(cols)-1)
+  levels <- cut(quants, quants) %>% levels()
+} else {
+  # cols <- rep("black", length(quants)+1)
+  show.legend <- FALSE
+}
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+# if (output_format == "html_document") format <- 'html'
+# if (output_format != "html_document") {
+#   full_width <- FALSE
+#   format <- 'latex'
+# }
+
+# colselect <- function(prob, cols, quants) {
+#   prob[prob>1] <- 1
+#   prob[prob<=0] <- 1E-5
+#   probCat <- prob %>% cut(quants) 
+#   cats <- levels(probCat)
+#   cols[match(probCat, cats)]
+# }
+
+# htmlDF1 <- df %>% dplyr::filter(!is.na(url)) %>% dplyr::mutate(
+#   prob = cell_spec(prob, format, color = colselect(prob, cols, quants)),
+#   MP = cell_spec(MP, format, link=url)
+#   )
+# # custom MPs (no url)
+# htmlDF2 <- df %>% dplyr::filter(is.na(url)) %>% dplyr::mutate(
+#   prob = cell_spec(prob, format, color = colselect(prob, cols, quants)),
+#   MP = cell_spec(MP, format)
+#   )
+htmlDF <- df # bind_rows(htmlDF1, htmlDF2)
+
+TabDF <- tidyr::spread(htmlDF, PM, prob)
+# if (format!='latex') TabDF <- cbind(data.frame("#"=1:nMPs), TabDF)
+
+TabDF <- TabDF %>% dplyr::arrange(desc(min))
+
+TabDF$min <- NULL
+TabDF$prob <- NULL
+
+MPwithurl <- !is.na(TabDF$url) 
+TabDF$MP[MPwithurl] <- paste0("<a href='", TabDF$url[MPwithurl],"'>", TabDF$MP[MPwithurl],"</a>")
+TabDF$url <- NULL
+TabDF$Type <- as.factor(TabDF$Type)
+
+cnames <- colnames(TabDF)
+cind <- which(cnames == "Type")
+cnames <- cnames[(cind+1):length(cnames)]
+
+tabout <- DT::datatable(TabDF, escape=FALSE, filter='top', 
+  extensions = c('Buttons', 'Responsive'), 
+  class = 'cell-border stripe', 
+  options = list(
+    dom = 'Blfrtip',
+    buttons = 
+      list('copy', 'print', list(
+        extend = 'collection',
+        buttons = c('csv', 'excel', 'pdf'),
+        text = 'Download'
+      )),
+    columnDefs = list(list(targets = 2, visible = FALSE)),
+    lengthMenu = list(c(10,20, 50, 100, -1), list('10', '20', '50','100', 'All')),
+    pageLength = 20, 
+    autoWidth = auto_width)) 
+if (use.colors) tabout <- tabout %>% 
+  DT::formatStyle(cnames, color = DT::styleInterval(cuts=quants, values=cols)) 
+
+tabout
+
+
+# Tab <- TabDF %>% kable(format = format, escape = FALSE,  align="llllcccclll") %>%
+#   kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+#                 full_width = full_width, position="float_left", font_size = font_size)
+# if (format == "latex") {
+#   Tab <- Tab %>%
+#     column_spec(1, width = "2em") %>%
+#     column_spec(2, width = "5em")
+# }
+# Tab 
+
+```
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.width=3, fig.height=1, fig.align='right'}
+if (show.legend) {
+  
+  table.legend <- function(cols, cex.tex=0.75, inc.title=TRUE, title="Legend") {
+    quants <- seq(0, 1, length.out=length(cols)+1) 
+    levels <- cut(quants, quants) %>% levels()
+    par(mfrow=c(1,1), mar=c(2,0,2,0), oma=c(0,0,0,0))
+    legend <- data.frame(level=levels, col=cols)
+    legend$col <- as.character(legend$col)
+    tt = plot(legend$level, col=legend$col, axes=FALSE)
+    axis(side=1, labels=legend$level, at=tt[,1], lwd = 0, lwd.ticks = 1, cex.axis=cex.tex)
+    if (inc.title) title(title, cex.main=cex.tex)
+  }
+  
+  table.legend(cols)
+}
+```
+
+
+
+
+
+
+  

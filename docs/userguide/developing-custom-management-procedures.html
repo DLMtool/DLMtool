@@ -5,11 +5,11 @@
 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Data-Limited Methods Toolkit (DLMtool 5.2.2)</title>
+  <title>Chapter 26 Developing Custom Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.3)</title>
   <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown 0.7 and GitBook 2.6.7">
+  <meta name="generator" content="bookdown  and GitBook 2.6.7">
 
-  <meta property="og:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
+  <meta property="og:title" content="Chapter 26 Developing Custom Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,7 +17,7 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Data-Limited Methods Toolkit (DLMtool 5.2.2)" />
+  <meta name="twitter:title" content="Chapter 26 Developing Custom Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.3)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
@@ -25,7 +25,7 @@
 <meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
 
 
-<meta name="date" content="2018-08-15">
+<meta name="date" content="2019-03-12">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -36,6 +36,7 @@
 <link rel="next" href="custom-parameters.html">
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
@@ -288,6 +289,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
 <li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
+<li class="chapter" data-level="30" data-path="using-real-indices.html"><a href="using-real-indices.html"><i class="fa fa-check"></i><b>30</b> Using Real Indices</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
 <li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
@@ -327,6 +329,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="D.4" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-and-method-application"><i class="fa fa-check"></i><b>D.4</b> Data and Method Application</a><ul>
 <li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#data-assumed-to-be-representative"><i class="fa fa-check"></i>Data Assumed to be Representative</a></li>
 </ul></li>
+<li class="chapter" data-level="D.5" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#calculating-reference-points"><i class="fa fa-check"></i><b>D.5</b> Calculating Reference Points</a><ul>
+<li class="chapter" data-level="" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#depletion-and-unfished-reference-points"><i class="fa fa-check"></i>Depletion and Unfished Reference Points</a></li>
+<li class="chapter" data-level="D.5.1" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#initial-depletion"><i class="fa fa-check"></i><b>D.5.1</b> Initial Depletion</a></li>
+<li class="chapter" data-level="D.5.2" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#msy-reference-points"><i class="fa fa-check"></i><b>D.5.2</b> MSY Reference Points</a></li>
+<li class="chapter" data-level="D.5.3" data-path="assumptions-of-dlmtool.html"><a href="assumptions-of-dlmtool.html#setting-depletion-at-a-fraction-of-bmsy"><i class="fa fa-check"></i><b>D.5.3</b> Setting Depletion at a fraction of BMSY</a></li>
+</ul></li>
 </ul></li>
 <li class="chapter" data-level="E" data-path="changes.html"><a href="changes.html"><i class="fa fa-check"></i><b>E</b> Changes</a><ul>
 <li class="chapter" data-level="" data-path="changes.html"><a href="changes.html#important-changes---dlmtool-v4.1-and-greater"><i class="fa fa-check"></i>Important changes - DLMtool V4.1 and greater</a></li>
@@ -345,7 +353,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.2.2)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.3)</a>
           </h1>
         </div>
 
@@ -374,12 +382,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## [36] &quot;Gcontrol&quot;    &quot;HDAAC&quot;       &quot;ICI&quot;         &quot;ICI2&quot;        &quot;Iratio&quot;     
 ## [41] &quot;Islope1&quot;     &quot;Islope2&quot;     &quot;Islope4&quot;     &quot;IT10&quot;        &quot;IT5&quot;        
 ## [46] &quot;Itarget1&quot;    &quot;Itarget2&quot;    &quot;Itarget3&quot;    &quot;Itarget4&quot;    &quot;ITM&quot;        
-## [51] &quot;L95target&quot;   &quot;Lratio_BHI&quot;  &quot;Lratio_BHI2&quot; &quot;LstepCC1&quot;    &quot;LstepCC2&quot;   
-## [56] &quot;LstepCC3&quot;    &quot;LstepCC4&quot;    &quot;Ltarget1&quot;    &quot;Ltarget2&quot;    &quot;Ltarget3&quot;   
-## [61] &quot;Ltarget4&quot;    &quot;MCD&quot;         &quot;MCD4010&quot;     &quot;Rcontrol&quot;    &quot;Rcontrol2&quot;  
-## [66] &quot;SBT1&quot;        &quot;SBT2&quot;        &quot;SPmod&quot;       &quot;SPMSY&quot;       &quot;SPslope&quot;    
-## [71] &quot;SPSRA&quot;       &quot;SPSRA_ML&quot;    &quot;YPR&quot;         &quot;YPR_CC&quot;      &quot;YPR_ML&quot;     
-## [76] &quot;avgMP&quot;       &quot;TCPUE&quot;       &quot;THC&quot;</code></pre>
+## [51] &quot;L95target&quot;   &quot;Lratio_BHI&quot;  &quot;Lratio_BHI2&quot; &quot;Lratio_BHI3&quot; &quot;LstepCC1&quot;   
+## [56] &quot;LstepCC2&quot;    &quot;LstepCC3&quot;    &quot;LstepCC4&quot;    &quot;Ltarget1&quot;    &quot;Ltarget2&quot;   
+## [61] &quot;Ltarget3&quot;    &quot;Ltarget4&quot;    &quot;MCD&quot;         &quot;MCD4010&quot;     &quot;Rcontrol&quot;   
+## [66] &quot;Rcontrol2&quot;   &quot;SBT1&quot;        &quot;SBT2&quot;        &quot;SPmod&quot;       &quot;SPMSY&quot;      
+## [71] &quot;SPslope&quot;     &quot;SPSRA&quot;       &quot;SPSRA_ML&quot;    &quot;YPR&quot;         &quot;YPR_CC&quot;     
+## [76] &quot;YPR_ML&quot;      &quot;avgMP&quot;</code></pre>
 <p>Since we’ve seen it used as a default MP in lots of the examples above, lets learn more about DCAC</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">?DCAC</code></pre></div>
 <p>We can even see all the code for this MP by simply typing the name of the MP into the console (this is a fantastic advantage of using R - there is complete transparency about package functions):</p>
@@ -395,7 +403,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##     Rec@TAC &lt;- TAC
 ##     Rec
 ## }
-## &lt;bytecode: 0x0000000019211468&gt;
+## &lt;bytecode: 0x0000000016d22068&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
@@ -408,8 +416,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>##  [1] &quot;Atlantic_mackerel&quot;  &quot;China_rockfish&quot;     &quot;Cobia&quot;             
 ##  [4] &quot;Example_datafile&quot;   &quot;Gulf_blue_tilefish&quot; &quot;ourReefFish&quot;       
 ##  [7] &quot;Red_snapper&quot;        &quot;SimulatedData&quot;      &quot;Simulation_1&quot;      
-## [10] &quot;China_rockfish2&quot;    &quot;Data&quot;               &quot;Madeup&quot;            
-## [13] &quot;Recs&quot;</code></pre>
+## [10] &quot;China_rockfish2&quot;    &quot;Madeup&quot;             &quot;Recs&quot;</code></pre>
 <p>For simplicity lets use a Data object with just one simulation, <code>Simulation_1</code> and rename it <code>Data</code></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Data &lt;-<span class="st"> </span>Simulation_<span class="dv">1</span></code></pre></div>
 <p>Since there is only one simulation in this data set (1 position) we can now see a single value of natural mortality rate:</p>
@@ -434,7 +441,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>We could generate a single TAC recommendation from these data using DCAC by specifying position 1 (there is only 1 simulation) and by setting reps=1 (we want a single DCAC TAC recommendation)</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">DCAC</span>(<span class="dt">x=</span><span class="dv">1</span>,Data,<span class="dt">reps=</span><span class="dv">1</span>)</code></pre></div>
 <pre><code>## TAC (median) 
-##     37.49571</code></pre>
+##     37.61246</code></pre>
 <p>If we wanted a stochastic estimate of the TAC we could increase the number of reps:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hist</span>(<span class="kw">DCAC</span>(<span class="dt">x=</span><span class="dv">1</span>,Data,<span class="dt">reps=</span><span class="dv">1000</span>)<span class="op">@</span>TAC,<span class="dt">xlab=</span><span class="st">&quot;TAC&quot;</span>,<span class="dt">ylab=</span><span class="st">&quot;Freq.&quot;</span>,<span class="dt">col=</span><span class="st">&quot;blue&quot;</span>)</code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-164-1.png" width="672" /></p>
@@ -476,8 +483,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 }</code></pre></div>
 <p>We can quickly test our new MP for the example Data object</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">THC</span>(<span class="dt">x=</span><span class="dv">1</span>,Data,<span class="dt">reps=</span><span class="dv">10</span>)<span class="op">@</span>TAC</code></pre></div>
-<pre><code>##  [1] 75.08556 74.85677 80.09622 67.34673 82.91729 66.61270 83.49672
-##  [8] 85.44908 79.53824 81.45144</code></pre>
+<pre><code>##  [1] 79.11177 72.52747 82.94707 87.01687 87.66503 70.79588 78.22426
+##  [8] 72.82187 75.81387 80.42515</code></pre>
 <p>Now that we know it works, to make the function compatible with the DLMtool package we have to assign it the class ‘MP’ so that DLMtool recognizes the function as a management procedure</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(THC)&lt;-<span class="st">&quot;MP&quot;</span></code></pre></div>
 <p>If we want to run the MSE in parallel we need to export the newly created function to the cluster:</p>
@@ -542,12 +549,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <pre><code>## function (x, Data, reps, plot = FALSE) 
 ## {
 ##     rec &lt;- new(&quot;Rec&quot;)
-##     rec@Effort &lt;- 1 * Data@MPeff[x]
+##     rec@Effort &lt;- 1
 ##     if (plot) 
 ##         curE_plot(x, rec, Data)
 ##     rec
 ## }
-## &lt;bytecode: 0x00000000194f1e20&gt;
+## &lt;bytecode: 0x0000000018fea478&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
@@ -564,7 +571,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##             ylim = c(0, 1), names = 1:Data@nareas)
 ##     return(rec)
 ## }
-## &lt;bytecode: 0x0000000004dd45d0&gt;
+## &lt;bytecode: 0x0000000019d261b0&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
@@ -580,7 +587,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##             ylim = c(0, 1), names = 1:Data@nareas)
 ##     return(rec)
 ## }
-## &lt;bytecode: 0x0000000004dc9950&gt;
+## &lt;bytecode: 0x0000000019d1e728&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
@@ -595,7 +602,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ##         size_lim_plot(x, Data, rec)
 ##     rec
 ## }
-## &lt;bytecode: 0x0000000004b16fb0&gt;
+## &lt;bytecode: 0x000000000ba61150&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
@@ -638,8 +645,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">NOAA_plot</span>(testMSE)</code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-179-1.png" width="672" /></p>
 <pre><code>##         PNOF  B50  LTY   VY
-## TCPUE   44.1 55.0 43.8 83.3
-## TCPUE_e 45.9 68.8 78.3  0.0</code></pre>
+## TCPUE   45.8 57.8 45.4 81.2
+## TCPUE_e 53.8 75.1 80.4  2.1</code></pre>
 </div>
 </div>
 </div>
@@ -672,6 +679,10 @@ gitbook.start({
 "link": null,
 "text": null
 },
+"history": {
+"link": null,
+"text": null
+},
 "download": ["userguide.pdf"],
 "toc": {
 "collapse": "section",
@@ -688,7 +699,7 @@ gitbook.start({
     var script = document.createElement("script");
     script.type = "text/javascript";
     var src = "";
-    if (src === "" || src === "true") src = "https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
     if (location.protocol !== "file:" && /^https?:/.test(src))
       src = src.replace(/^https?:/, '');
     script.src = src;
