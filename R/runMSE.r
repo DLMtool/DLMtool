@@ -381,6 +381,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   UnfishedByYear <- list(SSN0=SSN0_a, N0=N0_a, SSB0=SSB0_a, B0=B0_a, VB0=VB0_a)
   
+  if (quantile(ageM[,1],0.95) > nyears + proyears) {
+    if(!silent) message('Note: number of historical year `nyears` + `proyears` is less than the highest age of maturity')
+  }
+    
   # ---- Unfished Reference Points ----
   SSBpRa <- array(SSB0_a/matrix(R0, nrow=nsim, ncol=nyears+proyears), dim = c(nsim, nyears+proyears))
   
@@ -644,6 +648,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   if (!is.null(control$Cbias_yr)) { # catch bias specified with control argument 
     Cbiasa <- matrix(1, nsim, nyears+proyears)
     Cbiasa[,control$yrs] <- control$Cbias_yr
+    ErrList$Cbiasa <- Cbiasa
   } 
   # composite of bias and observation error
   ErrList$Cerr <- array(rlnorm((nyears + proyears) * nsim, 
@@ -1134,6 +1139,7 @@ cparscheck<-function(cpars){
   if (any(effNames %in% names(dims))) dims <- dims[-match(effNames,names(dims))]  # ignore effNames
   dims <- dims[!grepl("CAL_bins", names(dims))]  # ignore CAL_bins
   dims <- dims[!grepl("maxage", names(dims))]  # ignore maxage
+  dims <- dims[!grepl("binWidth", names(dims))]  # ignore maxage
   
   if (length(dims) > 0) {
     if(length(unique(dims))!=1){

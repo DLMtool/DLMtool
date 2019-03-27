@@ -1,5 +1,17 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
+## DLMtool Development Version 
+
+ 
+### Minor changes 
+- add option to specify width of the CAL bins using `OM@cpars$binWidth`
+
+### Fixes
+- fix indexing issue for recruitment deviations
+
+
+
+
 ## DLMtool 5.3 
 
 ### New Features
