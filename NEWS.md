@@ -5,6 +5,7 @@ The current version of the DLMtool package is available for download from [CRAN]
  
 ### Minor changes 
 - add option to specify width of the CAL bins using `OM@cpars$binWidth`
+- change MGT calculation from Z to M
 
 ### Fixes
 - fix indexing issue for recruitment deviations

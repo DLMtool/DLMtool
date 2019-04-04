@@ -598,8 +598,13 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # --- Calculate B-low ---- 
   # (SSB where it takes MGThorizon x MGT to reach Bfrac of BMSY)
-  Znow<-apply(Z[,,nyears,]*N[,,nyears,],1:2,sum)/apply(N[,,nyears,],1:2,sum)
-  MGTsurv<-t(exp(-apply(Znow,1,cumsum)))
+  # Znow<-apply(Z[,,nyears,]*N[,,nyears,],1:2,sum)/apply(N[,,nyears,],1:2,sum)
+  # MGTsurv<-t(exp(-apply(Znow,1,cumsum)))
+  # MGT<-apply(Agearray*(Mat_age[,,nyears]*MGTsurv),1,sum)/apply(Mat_age[,,nyears]*MGTsurv,1,sum)
+  
+  MarrayArea <-abind::abind(M_ageArray[,,1:nyears],M_ageArray[,,1:nyears], along=4)
+  Mnow<-apply(MarrayArea[,,nyears,]*N[,,nyears,],1:2,sum)/apply(N[,,nyears,],1:2,sum)
+  MGTsurv<-t(exp(-apply(Mnow,1,cumsum)))
   MGT<-apply(Agearray*(Mat_age[,,nyears]*MGTsurv),1,sum)/apply(Mat_age[,,nyears]*MGTsurv,1,sum)
   
   Blow <- rep(NA,nsim)
