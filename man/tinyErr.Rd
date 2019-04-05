@@ -14,6 +14,8 @@ tinyErr(x, ...)
 \arguments{
 \item{x}{An object of class \code{OM}}
 
+\item{...}{Arguments to generic function}
+
 \item{obs}{Logical. Remove observation error? \code{Obs} is replaced with \code{Perfect_Info}}
 
 \item{imp}{Logical. Remove implementation error? \code{Imp} is replaced with \code{Perfect_Imp}}

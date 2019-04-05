@@ -78,7 +78,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 \code{BK_CC}: CAA, Cat, LFC, vbK, vbLinf
 
 
-\code{BK_ML}: CAL, Cat, LFC, Lbar, Lc, Mort, vbK, vbLinf
+\code{BK_ML}: CAL, Cat, Lbar, Lc, LFC, Mort, vbK, vbLinf
 }
 
 \section{Rendered Equations}{

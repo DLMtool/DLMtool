@@ -114,6 +114,7 @@ setGeneric("tinyErr", function(x, ...) standardGeneric("tinyErr"))
 #' @details Useful for debugging and testing that MPs perform as expected under perfect conditions.
 #'
 #' @param x An object of class `OM` 
+#' @param ... Arguments to generic function
 #' @param obs Logical. Remove observation error? `Obs` is replaced with `Perfect_Info`
 #' @param imp Logical. Remove implementation error? `Imp` is replaced with `Perfect_Imp`
 #' @param proc Logical. Remove process error? All `sd` and `cv` slots in `Stock` 
