@@ -1484,12 +1484,11 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
           dims <- dim(samps)
           tout <- array(NA, dim=c(length(ind), dims[2:length(dims)]))
           tlist <- c(list(ind), lapply(dims[2:length(dims)], seq))
+          tlist2 <- c(list(1:nsim), lapply(dims[2:length(dims)], seq))
           varind <- expand.grid(tlist) %>% as.matrix()
-          tout[varind] <- samps[varind]
+          varind2 <- expand.grid(tlist2) %>% as.matrix()
+          tout[varind2] <- samps[varind]
           sampCpars[[name]] <- tout
-          # if (length(dim(samps)) == 3)  sampCpars[[name]] <- samps[ind, , ,drop=FALSE]
-          # if (length(dim(samps)) == 4)  sampCpars[[name]] <- samps[ind, , , ,drop=FALSE]
-          # if (length(dim(samps)) == 5)  sampCpars[[name]] <- samps[ind, , , , , drop=FALSE]
         }
         if (class(samps) == "data.frame")   sampCpars[[name]] <- samps 
       }
