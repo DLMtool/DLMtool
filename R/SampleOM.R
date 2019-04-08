@@ -1481,8 +1481,15 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
         if (class(samps) == "matrix") sampCpars[[name]] <- samps[ind,, drop=FALSE] 
         
         if (class(samps) == "array") {
-          if (length(dim(samps)) == 3)  sampCpars[[name]] <- samps[ind, , ,drop=FALSE]
-          if (length(dim(samps)) == 4)  sampCpars[[name]] <- samps[ind, , , ,drop=FALSE]
+          dims <- dim(samps)
+          tout <- array(NA, dim=c(length(ind), dims[2:length(dims)]))
+          tlist <- c(list(ind), lapply(dims[2:length(dims)], seq))
+          varind <- expand.grid(tlist) %>% as.matrix()
+          tout[varind] <- samps[varind]
+          sampCpars[[name]] <- tout
+          # if (length(dim(samps)) == 3)  sampCpars[[name]] <- samps[ind, , ,drop=FALSE]
+          # if (length(dim(samps)) == 4)  sampCpars[[name]] <- samps[ind, , , ,drop=FALSE]
+          # if (length(dim(samps)) == 5)  sampCpars[[name]] <- samps[ind, , , , , drop=FALSE]
         }
         if (class(samps) == "data.frame")   sampCpars[[name]] <- samps 
       }
