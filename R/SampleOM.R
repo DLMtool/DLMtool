@@ -738,6 +738,10 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
     if (Fleet@isRel == 1) multi <- L50
     if (Fleet@isRel == 0) multi <- 1
   }
+  if (chk == "logical") {
+    if (Fleet@isRel) multi <- L50
+    if (!Fleet@isRel) multi <- 1
+  }
  
   if (exists("L5", inherits = FALSE) | exists("LFS", inherits = FALSE) | 
       exists("Vmaxlen", inherits = FALSE) | exists("V", inherits=FALSE)) {
