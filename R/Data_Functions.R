@@ -447,7 +447,7 @@ Cant <- function(Data, timelimit = 1) {
   DLMdiag(Data, "not available", timelimit = timelimit)
 }
 
-#' @describeIn Can
+#' @describeIn Can Internal function called by `Can` and `Cant`
 #' @param command What to calculate? Character. Options = c("available", "not available", "needed")
 DLMdiag <- function(Data, command = c("available", "not available", "needed"), reps = 5, 
                     timelimit = 1, funcs1=NA, dev=FALSE) {
