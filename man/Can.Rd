@@ -27,6 +27,10 @@ Needed(Data, timelimit = 1)
 \item{dev}{Logical. Run in development mode?}
 
 \item{command}{What to calculate? Character. Options = c("available", "not available", "needed")}
+
+\item{reps}{The number of replicates for the MP}
+
+\item{funcs1}{A character vector of the MP names (optional)}
 }
 \description{
 Diagnostic tools that look up the slot requirements of each MP and
