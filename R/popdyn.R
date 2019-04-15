@@ -947,6 +947,23 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
 #   }
 # }
 
+#' Internal wrapper function to calculate MSY reference points
+#'
+#' @param x Simulation number
+#' @param M_ageArray Array of M-at-age
+#' @param Wt_age Array of weight-at-age
+#' @param Mat_age Array of maturity-at-age
+#' @param V Array of selectivity-at-age
+#' @param maxage Vector of maximum age
+#' @param R0 Vector of R0s
+#' @param SRrel SRR type
+#' @param hs Vector of steepness
+#' @param yr.ind Year index used in calculations 
+#'
+#' @return Results from `MSYCalcs`
+#' @export
+#'
+#' @keywords internal
 optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, yr.ind=1) {
   if (length(yr.ind)==1) {
     M_at_Age <- M_ageArray[x,,yr.ind]
@@ -973,6 +990,24 @@ optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, 
   return(MSYs)
 }
 
+
+#' Internal function to calculate MSY Reference Points
+#'
+#' @param logU log exploitation rate
+#' @param M_at_Age Vector of M-at-age
+#' @param Wt_at_Age Vector of weight-at-age
+#' @param Mat_at_Age Vector of maturity-at-age
+#' @param V_at_Age Vector of selectivity-at-age
+#' @param maxage Maximum age
+#' @param R0x R0 for this simulation
+#' @param SRrelx SRR type for this simulation
+#' @param hx numeric. Steepness value for this simulation
+#' @param opt Option. 1 = return -Yield, 2= return all MSY calcs
+#'
+#' @return See `opt`
+#' @export 
+#'
+#' @keywords internal 
 MSYCalcs <- function(logU, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age, 
                      maxage, R0x, SRrelx, hx, opt=1) {
   # Box 3.1 Walters & Martell 2004

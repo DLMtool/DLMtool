@@ -416,6 +416,29 @@ getsel <- function(x, lens, lfs, sls, srs) {
 
 
 # Generate size comps
+
+
+#' Wrapper for C++ function to generate length composition
+#' 
+#' And other internal related functions 
+#'
+#' @param i Simulation number
+#' @param vn Array of vulnerable numbers
+#' @param CAL_binsmid Mid-points of CAL bins
+#' @param retL Array of retention-at-length
+#' @param CAL_ESS CAL effective sample size
+#' @param CAL_nsamp CAL sample size
+#' @param Linfarray Matrix of Linf
+#' @param Karray Matrix of K values
+#' @param t0array Matrix of t0 values
+#' @param LenCV Vector of LenCV
+#' @param truncSD Numeric. Number of standard deviations to truncate normal d
+#' distribution
+#'
+#' @return Generated length composition from `genSizeComp`
+#' @export
+#'
+#' @keywords internal
 genSizeCompWrap <- function(i, vn, CAL_binsmid, retL,
                             CAL_ESS, CAL_nsamp,
                             Linfarray, Karray, t0array,
@@ -442,6 +465,8 @@ genSizeCompWrap <- function(i, vn, CAL_binsmid, retL,
   
 }
 
+#' @describeIn genSizeCompWrap
+#' @param lenvec Vector of lengths 
 getfifth <- function(lenvec, CAL_binsmid) {
   temp <- rep(CAL_binsmid, lenvec)
   if(sum(lenvec)==0) return(NA)
