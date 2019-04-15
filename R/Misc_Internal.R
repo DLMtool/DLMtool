@@ -467,6 +467,7 @@ genSizeCompWrap <- function(i, vn, CAL_binsmid, retL,
 
 #' @describeIn genSizeCompWrap Internal function to calculate fifth percentile of size composition
 #' @param lenvec Vector of lengths 
+#' @export 
 getfifth <- function(lenvec, CAL_binsmid) {
   temp <- rep(CAL_binsmid, lenvec)
   if(sum(lenvec)==0) return(NA)
