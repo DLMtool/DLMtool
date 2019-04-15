@@ -447,6 +447,11 @@ Cant <- function(Data, timelimit = 1) {
   DLMdiag(Data, "not available", timelimit = timelimit)
 }
 
+#' @describeIn Can Internal function called by `Can` and `Cant`
+#' @param command What to calculate? Character. Options = c("available", "not available", "needed")
+#' @param reps The number of replicates for the MP
+#' @param funcs1 A character vector of the MP names (optional)
+
 DLMdiag <- function(Data, command = c("available", "not available", "needed"), reps = 5, 
                     timelimit = 1, funcs1=NA, dev=FALSE) {
   command <- match.arg(command)
@@ -635,6 +640,7 @@ Needed <- function(Data, timelimit = 1) {
 #'
 #' @param Data An object of class Data that has been run though TAC()
 #' @author T. Carruthers
+#' @export 
 #' @keywords internal 
 OneRep <- function(Data) {
   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)

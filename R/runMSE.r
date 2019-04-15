@@ -316,6 +316,14 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     Wt_agep <- array(Wt_age[,,1], dim=c(dim(Wt_age)[1:2], Nyrs))
     Mat_agep <- array(Mat_age[,,1], dim=c(dim(Mat_age)[1:2], Nyrs))
     Perr_yp <- array(1, dim=c(dim(Perr_y)[1], Nyrs+maxage)) # no process error 
+    
+    # update mov if needed
+    dimMov <- dim(mov)
+    movp <- mov
+    if (dimMov[length(dimMov)] < Nyrs) {
+      movp <- array(movp, dim=c(dimMov[1:(length(dimMov)-1)], Nyrs))
+    }
+
     # Not used but make the arrays anyway
     retAp <- array(retA[,,1], dim=c(dim(retA)[1:2], Nyrs))
     Vp <- array(V[,,1], dim=c(dim(V)[1:2], Nyrs))
@@ -323,7 +331,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     
     runProj <- lapply(1:nsim, projectEq, Asize, nareas=nareas, maxage=maxage, N=N, pyears=Nyrs,
            M_ageArray=M_ageArrayp, Mat_age=Mat_agep, Wt_age=Wt_agep, V=Vp, retA=retAp,
-           Perr=Perr_yp, mov=mov, SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs,
+           Perr=Perr_yp, mov=movp, SRrel=SRrel, Find=Find, Spat_targ=Spat_targ, hs=hs,
            R0a=R0a, SSBpR=SSBpR, aR=aR, bR=bR, SSB0=SSB0, B0=B0, MPA=noMPA, maxF=maxF,
            Nyrs)
     Neq1 <- aperm(array(as.numeric(unlist(runProj)), dim=c(maxage, nareas, nsim)), c(3,1,2))  # unpack the list 
@@ -381,6 +389,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   UnfishedByYear <- list(SSN0=SSN0_a, N0=N0_a, SSB0=SSB0_a, B0=B0_a, VB0=VB0_a)
   
+  if (quantile(ageM[,1],0.95) > nyears + proyears) {
+    if(!silent) message('Note: number of historical year `nyears` + `proyears` is less than the highest age of maturity')
+  }
+    
   # ---- Unfished Reference Points ----
   SSBpRa <- array(SSB0_a/matrix(R0, nrow=nsim, ncol=nyears+proyears), dim = c(nsim, nyears+proyears))
   
@@ -594,8 +606,13 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # --- Calculate B-low ---- 
   # (SSB where it takes MGThorizon x MGT to reach Bfrac of BMSY)
-  Znow<-apply(Z[,,nyears,]*N[,,nyears,],1:2,sum)/apply(N[,,nyears,],1:2,sum)
-  MGTsurv<-t(exp(-apply(Znow,1,cumsum)))
+  # Znow<-apply(Z[,,nyears,]*N[,,nyears,],1:2,sum)/apply(N[,,nyears,],1:2,sum)
+  # MGTsurv<-t(exp(-apply(Znow,1,cumsum)))
+  # MGT<-apply(Agearray*(Mat_age[,,nyears]*MGTsurv),1,sum)/apply(Mat_age[,,nyears]*MGTsurv,1,sum)
+  
+  MarrayArea <- replicate(nareas, M_ageArray[,,1:nyears])
+  Mnow<-apply(MarrayArea[,,nyears,]*N[,,nyears,],1:2,sum)/apply(N[,,nyears,],1:2,sum)
+  MGTsurv<-t(exp(-apply(Mnow,1,cumsum)))
   MGT<-apply(Agearray*(Mat_age[,,nyears]*MGTsurv),1,sum)/apply(Mat_age[,,nyears]*MGTsurv,1,sum)
   
   Blow <- rep(NA,nsim)
@@ -644,6 +661,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   if (!is.null(control$Cbias_yr)) { # catch bias specified with control argument 
     Cbiasa <- matrix(1, nsim, nyears+proyears)
     Cbiasa[,control$yrs] <- control$Cbias_yr
+    ErrList$Cbiasa <- Cbiasa
   } 
   # composite of bias and observation error
   ErrList$Cerr <- array(rlnorm((nyears + proyears) * nsim, 
@@ -1134,6 +1152,7 @@ cparscheck<-function(cpars){
   if (any(effNames %in% names(dims))) dims <- dims[-match(effNames,names(dims))]  # ignore effNames
   dims <- dims[!grepl("CAL_bins", names(dims))]  # ignore CAL_bins
   dims <- dims[!grepl("maxage", names(dims))]  # ignore maxage
+  dims <- dims[!grepl("binWidth", names(dims))]  # ignore maxage
   
   if (length(dims) > 0) {
     if(length(unique(dims))!=1){

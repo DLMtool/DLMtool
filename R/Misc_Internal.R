@@ -416,6 +416,29 @@ getsel <- function(x, lens, lfs, sls, srs) {
 
 
 # Generate size comps
+
+
+#' Wrapper for C++ function to generate length composition
+#' 
+#' And other internal related functions 
+#'
+#' @param i Simulation number
+#' @param vn Array of vulnerable numbers
+#' @param CAL_binsmid Mid-points of CAL bins
+#' @param retL Array of retention-at-length
+#' @param CAL_ESS CAL effective sample size
+#' @param CAL_nsamp CAL sample size
+#' @param Linfarray Matrix of Linf
+#' @param Karray Matrix of K values
+#' @param t0array Matrix of t0 values
+#' @param LenCV Vector of LenCV
+#' @param truncSD Numeric. Number of standard deviations to truncate normal d
+#' distribution
+#'
+#' @return Generated length composition from `genSizeComp`
+#' @export
+#'
+#' @keywords internal
 genSizeCompWrap <- function(i, vn, CAL_binsmid, retL,
                             CAL_ESS, CAL_nsamp,
                             Linfarray, Karray, t0array,
@@ -442,6 +465,8 @@ genSizeCompWrap <- function(i, vn, CAL_binsmid, retL,
   
 }
 
+#' @describeIn genSizeCompWrap Internal function to calculate fifth percentile of size composition
+#' @param lenvec Vector of lengths 
 getfifth <- function(lenvec, CAL_binsmid) {
   temp <- rep(CAL_binsmid, lenvec)
   if(sum(lenvec)==0) return(NA)
@@ -800,6 +825,9 @@ addRealInd <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, nsim, n
 # calculate average unfished ref points over first A50 years
 CalcUnfishedRefs <- function(x, ageM, N0_a, SSN0_a, SSB0_a, B0_a, VB0_a, SSBpRa, SSB0a_a) {
   avg.ind <- 1:ceiling(ageM[x,1]) # unfished eq ref points averaged over these years 
+  nyears <- dim(N0_a)[2]
+  if (length(avg.ind) > nyears) avg.ind <- 1:nyears
+  
   N0 <- mean(N0_a[x, avg.ind])
   SSN0  <- mean(SSN0_a[x, avg.ind])
   SSB0 <- mean(SSB0_a[x, avg.ind])
@@ -817,9 +845,11 @@ CalcUnfishedRefs <- function(x, ageM, N0_a, SSN0_a, SSB0_a, B0_a, VB0_a, SSBpRa,
 
 CalcMSYRefs <- function(x, MSY_y, FMSY_y, SSBMSY_y, BMSY_y, VBMSY_y, ageM, OM) {
   n.yrs <- ceiling(ageM[x,OM@nyears]) # MSY ref points averaged over these years
+  nyears <- dim(ageM)[2]
   minY <- floor(n.yrs/2) 
   maxY <- n.yrs - minY - 1 
   avg.ind <- (OM@nyears - minY):(OM@nyears + maxY)
+  if (max(avg.ind) > nyears) avg.ind <- avg.ind[avg.ind < nyears]
   
   MSY <- mean(MSY_y[x, avg.ind])
   FMSY <- mean(FMSY_y[x, avg.ind])
