@@ -16,7 +16,8 @@
 #' @param axis.text.size Numeric. Size of axis text
 #' @param legend.title.size Numeric. Size of legend title text
 #' @param position Character. Position of legend - 'right' or 'bottom'
-#' @param cols Optional character vector of colors for the legend (MP Types).
+#' @param cols Optional character vector of colors for the legend (MP Types) or if `cols` is a character vector of length `MSEobj@nMPs`, 
+#' then the MP labels are colored (no color legend). 
 #' @param fill Character. Color of the fill
 #' @param alpha Numeric. Transparency of fill
 #' @param PMlist Optional list of PM names. Overrides any supplied in ... above
@@ -54,9 +55,11 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
     PMlist <- unlist(PMlist)
   }
   position <- match.arg(position)
+  
   if(length(PMlist) == 0) PMlist <- c("STY", "LTY", "P10", "AAVY")
   if (class(PMlist) != 'character') stop("Must provide names of PM methods")
   # check
+  
   
   for (X in seq_along(PMlist))
     if (!PMlist[X] %in% avail("PM")) stop(PMlist[X], " is not a valid PM method")
@@ -66,6 +69,11 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
     cols <- c("#1b9e77", "#d95f02", "#7570b3", "#e7298a")
   }
   
+  if (length(cols) == MSEobj@nMPs) {
+    Col <- 'MP'
+  } else {
+    Col <- 'Class'
+  }
   
   nPMs <- length(PMlist)
   if (nPMs %% 2 != 0) {
@@ -113,7 +121,7 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
   yInd <- xInd + 1
   
   if (!(is.null(Title))) Title <- rep(Title, nplots)[1:nplots]
-    
+  
   for (pp in 1:nplots) {
     yPM <- PMlist[yInd[pp]]
     yvals <- runPM[[match(yPM, PMlist)]]@Mean
@@ -165,13 +173,24 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
         ggplot2::geom_rect(data=yrect, ggplot2::aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax), fill=fill, alpha=alpha)
     }
     
-    plots[[pp]] <-  plots[[pp]] + 
-      ggplot2::geom_point(data=df, ggplot2::aes(x, y, shape=Class, color=Class), size=point.size, na.rm=TRUE)
-    if (!is.null(lab.size)) 
+    if (Col == "Class") {
       plots[[pp]] <-  plots[[pp]] + 
-      ggrepel::geom_text_repel(data=df, ggplot2::aes(x, y, color=Class, label=label,
-                                                     fontface = fontface), 
-                               show.legend=FALSE, size=lab.size, na.rm=TRUE) 
+        ggplot2::geom_point(data=df, ggplot2::aes(x, y, shape=Class, color=Class), size=point.size, na.rm=TRUE)
+      if (!is.null(lab.size)) 
+        plots[[pp]] <-  plots[[pp]] + 
+          ggrepel::geom_text_repel(data=df, ggplot2::aes(x, y, color=Class, label=label,
+                                                         fontface = fontface), 
+                                   show.legend=FALSE, size=lab.size, na.rm=TRUE) 
+    } else if (Col == "MP") {
+      plots[[pp]] <-  plots[[pp]] + 
+        ggplot2::geom_point(data=df, ggplot2::aes(x, y, shape=Class, color=label), size=point.size, na.rm=TRUE)
+      if (!is.null(lab.size)) 
+        plots[[pp]] <-  plots[[pp]] + 
+          ggrepel::geom_text_repel(data=df, ggplot2::aes(x, y, color=label, label=label,
+                                                         fontface = fontface), 
+                                   show.legend=FALSE, size=lab.size, na.rm=TRUE) 
+    }
+    
     plots[[pp]] <-  plots[[pp]] + 
       ggplot2::xlab(xcap) + ggplot2::ylab(ycap) +
       ggplot2::xlim(xlim) + ggplot2::ylim(ylim) +
@@ -180,13 +199,17 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
                      axis.text = ggplot2::element_text(size=axis.text.size),
                      legend.text=ggplot2::element_text(size=legend.title.size),
                      legend.title = ggplot2::element_text(size=legend.title.size)) + 
-      ggplot2::labs(shape= "MP Type", color="MP Type") +
-      ggplot2::scale_colour_manual(values=cols)
+      ggplot2::labs(shape= "MP Type", color="MP Type")
+    if (Col == "Class") {
+      plots[[pp]] <-  plots[[pp]] +  ggplot2::scale_colour_manual(values=cols)
+    } else if (Col == "MP") {
+      plots[[pp]] <-  plots[[pp]] +  ggplot2::guides(color=FALSE)
+    }
     
     if (!is.null(Title)) 
       plots[[pp]] <-  plots[[pp]] + ggplot2::labs(title=Title[pp])
   }
-
+  
   out <- do.call("rbind", listout)
   tab <- table(out$label, out$pass)
   passall <- rownames(tab)[tab[,ncol(tab)] == nplots]

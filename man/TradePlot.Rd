@@ -50,7 +50,8 @@ NOAA_plot2(MSEobj)
 
 \item{position}{Character. Position of legend - 'right' or 'bottom'}
 
-\item{cols}{Optional character vector of colors for the legend (MP Types).}
+\item{cols}{Optional character vector of colors for the legend (MP Types) or if \code{cols} is a character vector of length \code{MSEobj@nMPs},
+then the MP labels are colored (no color legend).}
 
 \item{fill}{Character. Color of the fill}
 
