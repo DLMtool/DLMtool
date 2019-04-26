@@ -60,9 +60,8 @@ TradePlot <- function(MSEobj, ..., Lims=c(0.2, 0.2, 0.8, 0.8),
   if (class(PMlist) != 'character') stop("Must provide names of PM methods")
   # check
   
-  
-  for (X in seq_along(PMlist))
-    if (!PMlist[X] %in% avail("PM")) stop(PMlist[X], " is not a valid PM method")
+  # for (X in seq_along(PMlist))
+  #   if (!class(PMlist[X]) =="PM") stop(PMlist[X], " is not a valid PM method")
   if (length(PMlist)<2) stop("Must provided more than 1 PM method")
   
   if (is.null(cols)) {
