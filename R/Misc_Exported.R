@@ -99,17 +99,22 @@ DLMextra <- function(silent=FALSE, force=FALSE) {
 }
 
 
+#' @rdname tinyErr
+#' @export
+setGeneric("tinyErr", function(x, ...) standardGeneric("tinyErr")) 
 
-
-#' Remove observation, implementation, and process error
+#' @name tinyErr
+#' @aliases tinyErr,OM-method
+#' @title Remove observation, implementation, and process error
 #' 
-#' Takes an existing OM object and converts it to one without any observation
+#' @description Takes an existing OM object and converts it to one without any observation
 #' error, implementation error, very little process error, and/or gradients in
 #' life history parameters and catchability.  
 #' 
-#' Useful for debugging and testing that MPs perform as expected under perfect conditions.
+#' @details Useful for debugging and testing that MPs perform as expected under perfect conditions.
 #'
-#' @param OM An object of class `OM` 
+#' @param x An object of class `OM` 
+#' @param ... Arguments to generic function
 #' @param obs Logical. Remove observation error? `Obs` is replaced with `Perfect_Info`
 #' @param imp Logical. Remove implementation error? `Imp` is replaced with `Perfect_Imp`
 #' @param proc Logical. Remove process error? All `sd` and `cv` slots in `Stock` 
@@ -127,45 +132,46 @@ DLMextra <- function(silent=FALSE, force=FALSE) {
 #'
 #' @examples
 #' OM_noErr <- tinyErr(DLMtool::testOM)
-tinyErr <- function(OM, obs=TRUE, imp=TRUE, proc=TRUE, grad=TRUE, silent=FALSE) {
-  if (!inherits(OM, 'OM')) stop("Object must be class `OM`", call.=FALSE)
-  OMperf <- new("OM", DLMtool::Albacore, DLMtool::Generic_Fleet,
-                DLMtool::Perfect_Info, DLMtool::Perfect_Imp)
-  OMout <- OM 
-  
-  if (obs) {
-    if (!silent) message("Removing all Observation Error")
-    OMout <- Replace(OMout, OMperf, "Obs", silent = TRUE)
-  }
-  if (imp) {
-    if (!silent) message("Removing all Implementation Error")
-    OMout <- Replace(OMout, OMperf, "Imp", silent = TRUE)
-  }
-  if (proc) {
-    if (!silent) message("Removing all Process Error")
-    vars <- c("cv", "sd", "Perr")
-    nms <- c(slotNames('Stock'), slotNames('Fleet'))
-    ind <- unique(grep(paste(vars, collapse = "|"), nms, value = FALSE))
-    for (X in seq_along(ind)) {
-      n <- length(slot(OMout, nms[ind[X]]))
-      if (n == 0) n <- 2
-      slot(OMout, nms[ind[X]]) <- rep(0, n)
-    }
-  }
-  if (grad) {
-    if (!silent)  message("Removing all Gradients")
-    vars <- c("grad", "inc")
-    nms <- c(slotNames('Stock'), slotNames('Fleet'))
-    ind <- unique(grep(paste(vars, collapse = "|"), nms, value = FALSE))
-    for (X in seq_along(ind)) {
-      n <- length(slot(OMout, nms[ind[X]]))
-      if (n == 0) n <- 2
-      slot(OMout, nms[ind[X]]) <- rep(0, n)
-    }
-  }
-  OMout
-}
-
+setMethod("tinyErr", signature(x = "OM"),
+          function(x, obs=TRUE, imp=TRUE, proc=TRUE, grad=TRUE, silent=FALSE) {
+            OM <- x
+            if (!inherits(OM, 'OM')) stop("Object must be class `OM`", call.=FALSE)
+            OMperf <- new("OM", DLMtool::Albacore, DLMtool::Generic_Fleet,
+                          DLMtool::Perfect_Info, DLMtool::Perfect_Imp)
+            OMout <- OM 
+            
+            if (obs) {
+              if (!silent) message("Removing all Observation Error")
+              OMout <- Replace(OMout, OMperf, "Obs", silent = TRUE)
+            }
+            if (imp) {
+              if (!silent) message("Removing all Implementation Error")
+              OMout <- Replace(OMout, OMperf, "Imp", silent = TRUE)
+            }
+            if (proc) {
+              if (!silent) message("Removing all Process Error")
+              vars <- c("cv", "sd", "Perr")
+              nms <- c(slotNames('Stock'), slotNames('Fleet'))
+              ind <- unique(grep(paste(vars, collapse = "|"), nms, value = FALSE))
+              for (X in seq_along(ind)) {
+                n <- length(slot(OMout, nms[ind[X]]))
+                if (n == 0) n <- 2
+                slot(OMout, nms[ind[X]]) <- rep(0, n)
+              }
+            }
+            if (grad) {
+              if (!silent)  message("Removing all Gradients")
+              vars <- c("grad", "inc")
+              nms <- c(slotNames('Stock'), slotNames('Fleet'))
+              ind <- unique(grep(paste(vars, collapse = "|"), nms, value = FALSE))
+              for (X in seq_along(ind)) {
+                n <- length(slot(OMout, nms[ind[X]]))
+                if (n == 0) n <- 2
+                slot(OMout, nms[ind[X]]) <- rep(0, n)
+              }
+            }
+            OMout
+          })
 
 #' Convert a OM object to one without observation or process error
 #' 

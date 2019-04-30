@@ -107,7 +107,7 @@ arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcu
 //' vulnerablity to calculate F.
 //' 
 //' @author A. Hordyk
-//' 
+//' @export
 //' @keywords internal
 //[[Rcpp::export]]
 List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,

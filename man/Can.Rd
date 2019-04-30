@@ -3,12 +3,16 @@
 \name{Can}
 \alias{Can}
 \alias{Cant}
+\alias{DLMdiag}
 \alias{Needed}
 \title{Identify management procedures (MPs) based on data availability}
 \usage{
 Can(Data, timelimit = 1, MPs = NA, dev = FALSE)
 
 Cant(Data, timelimit = 1)
+
+DLMdiag(Data, command = c("available", "not available", "needed"),
+  reps = 5, timelimit = 1, funcs1 = NA, dev = FALSE)
 
 Needed(Data, timelimit = 1)
 }
@@ -21,6 +25,12 @@ Needed(Data, timelimit = 1)
 \item{MPs}{Optional list of MP names}
 
 \item{dev}{Logical. Run in development mode?}
+
+\item{command}{What to calculate? Character. Options = c("available", "not available", "needed")}
+
+\item{reps}{The number of replicates for the MP}
+
+\item{funcs1}{A character vector of the MP names (optional)}
 }
 \description{
 Diagnostic tools that look up the slot requirements of each MP and
@@ -33,6 +43,8 @@ and run within the time limit.
 
 \item \code{Cant}: Identifies MPs that don't have sufficient data, lead to errors, or don't run in
 time along with a list of their data requirements.
+
+\item \code{DLMdiag}: Internal function called by \code{Can} and \code{Cant}
 
 \item \code{Needed}: Identifies what data are needed to run
 the MPs that are currently not able to run given a Data

@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/DLMtool/DLMtool.svg?branch=master)](https://travis-ci.org/DLMtool/DLMtool)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/DLMtool)](https://CRAN.R-project.org/package=DLMtool)
 
-DLMtool is a R package for management strategy evalaution and implementation of data-limited fishery stock assessment methods. 
+DLMtool is a R package for management strategy evaluation and implementation of data-limited fishery stock assessment methods. 
 
 Find more information about DLMtool at [http://datalimitedtoolkit.org/](http://datalimitedtoolkit.org/).
 

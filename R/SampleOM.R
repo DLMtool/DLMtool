@@ -738,6 +738,10 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
     if (Fleet@isRel == 1) multi <- L50
     if (Fleet@isRel == 0) multi <- 1
   }
+  if (chk == "logical") {
+    if (Fleet@isRel) multi <- L50
+    if (!Fleet@isRel) multi <- 1
+  }
  
   if (exists("L5", inherits = FALSE) | exists("LFS", inherits = FALSE) | 
       exists("Vmaxlen", inherits = FALSE) | exists("V", inherits=FALSE)) {
@@ -1481,8 +1485,14 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
         if (class(samps) == "matrix") sampCpars[[name]] <- samps[ind,, drop=FALSE] 
         
         if (class(samps) == "array") {
-          if (length(dim(samps)) == 3)  sampCpars[[name]] <- samps[ind, , ,drop=FALSE]
-          if (length(dim(samps)) == 4)  sampCpars[[name]] <- samps[ind, , , ,drop=FALSE]
+          dims <- dim(samps)
+          tout <- array(NA, dim=c(length(ind), dims[2:length(dims)]))
+          tlist <- c(list(ind), lapply(dims[2:length(dims)], seq))
+          tlist2 <- c(list(1:nsim), lapply(dims[2:length(dims)], seq))
+          varind <- expand.grid(tlist) %>% as.matrix()
+          varind2 <- expand.grid(tlist2) %>% as.matrix()
+          tout[varind2] <- samps[varind]
+          sampCpars[[name]] <- tout
         }
         if (class(samps) == "data.frame")   sampCpars[[name]] <- samps 
       }

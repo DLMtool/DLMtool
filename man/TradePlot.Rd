@@ -9,7 +9,7 @@
 \title{Generic Trade-Plot Function}
 \usage{
 TradePlot(MSEobj, ..., Lims = c(0.2, 0.2, 0.8, 0.8), Title = NULL,
-  Labels = NULL, Satisficed = FALSE, Show = TRUE, point.size = 2,
+  Labels = NULL, Satisficed = FALSE, Show = "both", point.size = 2,
   lab.size = 4, axis.title.size = 12, axis.text.size = 10,
   legend.title.size = 12, position = c("right", "bottom"),
   cols = NULL, fill = "gray80", alpha = 0.4, PMlist = NULL,
@@ -36,7 +36,7 @@ NOAA_plot2(MSEobj)
 
 \item{Satisficed}{Logical. Show only the MPs that meet minimum acceptable thresholds (specified in \code{Lims})}
 
-\item{Show}{Logical. Show the Results table and plots?}
+\item{Show}{Character. Show the plots ('plots'), results table ('table')  or 'both' (default)}
 
 \item{point.size}{Numeric. Size of the MP points}
 
@@ -50,7 +50,8 @@ NOAA_plot2(MSEobj)
 
 \item{position}{Character. Position of legend - 'right' or 'bottom'}
 
-\item{cols}{Optional character vector of colors for the legend (MP Types).}
+\item{cols}{Optional character vector of colors for the legend (MP Types) or if \code{cols} is a character vector of length \code{MSEobj@nMPs},
+then the MP labels are colored (no color legend).}
 
 \item{fill}{Character. Color of the fill}
 

@@ -544,6 +544,14 @@ setMethod("initialize", "Stock", function(.Object, file = NA, dec=c(".", ",")) {
   
 })
 
+#' Class union for isRel slot
+#' 
+#' @description Used internally.
+#' @keywords internal
+#' @export
+setClassUnion(name="char.log", members=c("character", "logical"))
+
+
 # ---- Fleet Class -----
 #' Class \code{'Fleet'}
 #' 
@@ -567,7 +575,7 @@ setMethod("initialize", "Stock", function(.Object, file = NA, dec=c(".", ",")) {
 setClass("Fleet", slots = c(Name = "character", nyears = "numeric", Spat_targ = "numeric", 
                             EffYears = "numeric", EffLower = "numeric", EffUpper = "numeric", Esd = "numeric", 
                             qinc = "numeric", qcv = "numeric",   
-                            L5 = "numeric", LFS = "numeric", Vmaxlen = "numeric", isRel = "character",
+                            L5 = "numeric", LFS = "numeric", Vmaxlen = "numeric", isRel = "char.log",
                             LR5 = "numeric", LFR = "numeric", Rmaxlen = "numeric", DR = "numeric",
                             SelYears = "numeric", AbsSelYears = "numeric",
                             L5Lower = "numeric", L5Upper = "numeric", LFSLower = "numeric", LFSUpper = "numeric", VmaxLower = "numeric", 
@@ -645,6 +653,7 @@ setMethod("initialize", "Fleet", function(.Object, file = NA, dec=c(".", ",")) {
       
       .Object@isRel <- dat[match("isRel", dname), 1]  # Are selecivity parameters relative to maturity?
       if (NAor0(.Object@isRel)) .Object@isRel <- "TRUE"
+      .Object@isRel <- as.character(.Object@isRel)
       
       isMPA <- grep('MPA', dname)
       if (length(isMPA)<1) isMPA <- NA
@@ -875,6 +884,7 @@ setMethod("initialize", "Imp", function(.Object, file = NA, dec=c(".", ",")) {
   .Object
   
 })
+
 
 # ---- OM Class ----
 #' Class \code{'OM'}
