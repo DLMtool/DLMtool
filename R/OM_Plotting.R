@@ -507,6 +507,7 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
     title("Sampled length-at-age curves", outer=TRUE, cex.main=2)
   }
   
+  invisible(StockPars)
 }
 
 
@@ -663,6 +664,7 @@ plotFleet <- function(x, Stock=NULL, nsamp=3, nsim=500, proyears=28, col="darkgr
   # om <- new("OM", Stock, Fleet, Perfect_Info, Perfect_Imp)
   # plotSelect(om)
   
+  invisible(FleetPars)
 }
 
 
@@ -821,6 +823,7 @@ plotObs <- function(x, nsim=500, nyears=50,
   if (!is.na(Obs@Name)) mtext(paste0("Observation time series plots for observation object ",Obs@Name),3,outer=T,line= 0.7,font=2)
   if (is.na(Obs@Name)) mtext(paste0("Observation time series plots for observation object "),3,outer=T,line= 0.7,font=2)
   
+  invisible(ObsPars)
 }
 
 
@@ -877,6 +880,7 @@ plotImp<-function(x,nsim=500, nyears=50,
   
   mtext(paste0("Implementation error time series plots for implementation object ",Imp@Name),3,outer=T,line= 0.7,font=2)
   
+  invisible(ImpPars)
 }
 
 
