@@ -1,5 +1,11 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
+## DLMtool 5.3.9999 DEV VERSION
+
+### Fixes
+- fix bug in `Cplot` (thanks Sarah Valencia for picking this up)
+
+
 ## DLMtool 5.3.1 
  
 ### Minor changes 

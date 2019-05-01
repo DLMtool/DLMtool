@@ -331,7 +331,7 @@ Cplot <- function(MSEobj, MPs = NA, lastYrs = 5,
   lastYr <- temp[, , nyears, drop = FALSE]
   Yield <- abind::abind(lastYr, MSEobj@C[, , , drop = FALSE]/RefYd, along = 3) # 
   
-  ny <- MSEobj@nyears + 1
+  ny <- MSEobj@proyears + 1
   relYield <- Yield[, , , drop = FALSE]/Yield[, , rep(1, ny), drop = FALSE] # catch relative to last historical year
   relYield <- relYield[,,(proyears - lastYrs + 1):proyears]
   
