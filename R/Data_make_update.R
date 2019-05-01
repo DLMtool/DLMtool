@@ -159,6 +159,8 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   ind <- which(lapply(StockPars, length) == nsim)
   stock <- as.data.frame(StockPars[ind])
   stock$Fdisc <- NULL
+  stock$CAL_bins <- NULL
+  stock$CAL_binsmid <- NULL
   ind <- which(lapply(FleetPars, length) == nsim)
   fleet <- as.data.frame(FleetPars[ind])
   
