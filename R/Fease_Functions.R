@@ -35,6 +35,7 @@ Fease <- function(Data=NULL, TAC=TRUE, TAE=TRUE, SL=TRUE, Spatial=TRUE, names.on
   }
   if (!(TAC | TAE | SL | Spatial)) stop("No feasible management options!", call.=FALSE)
   MPs <- avail('MP')
+  
   if (class(Data) == "Data") {
     if (msg) message("Data object provided. Returning feasible and available MPs")
     canMPs <- Can(Data)  
@@ -42,9 +43,9 @@ Fease <- function(Data=NULL, TAC=TRUE, TAE=TRUE, SL=TRUE, Spatial=TRUE, names.on
     if (msg) message("No Data object provided. Returning feasible MPs")
     canMPs <- MPs
   }
-  mptypes <- MPtype(MPs)
+  mptypes <- MPtype(canMPs)
   mprecs <- mptypes[,3]#mptypes[match(MPs,mptypes[,1]),3]
-  isfease <- rep(TRUE, length(MPs))
+  isfease <- rep(TRUE, length(canMPs))
   #isfease[17]
   #cbind(MPs, mprecs)
   
