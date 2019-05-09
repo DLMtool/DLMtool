@@ -9,9 +9,9 @@ Pplot2(MSEobj, YVar = c("F_FMSY", "SSB_SSBMSY"), MPs = NA,
   0.9), incquant = TRUE, quantcol = "lightgray", RefYield = c("lto",
   "curr"), LastYr = TRUE, ref.lines = c(0.5, 1, 1.5), maxMP = 6,
   alpha = 60, cex.axis = 1, cex.lab = 1, YLab = NULL,
-  incMP = TRUE, MPcex = 1, incLeg = TRUE, cex.leg = 1.5,
-  legPos = "topleft", yline = NULL, parOR = FALSE, xaxis = TRUE,
-  yaxis = TRUE, oneIt = TRUE, ...)
+  incMP = TRUE, MPcex = 1, MPcol = "black", incLeg = TRUE,
+  cex.leg = 1.5, legPos = "topleft", yline = NULL, parOR = FALSE,
+  xaxis = TRUE, yaxis = TRUE, oneIt = TRUE, ...)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}
@@ -54,6 +54,8 @@ projections?}
 \item{incMP}{Logical. Include name of MP?}
 
 \item{MPcex}{Size of MP label}
+
+\item{MPcol}{Optional character vector of colors for MP labels}
 
 \item{incLeg}{Logical. Include a legend?}
 

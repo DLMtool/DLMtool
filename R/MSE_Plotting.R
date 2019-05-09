@@ -1204,6 +1204,7 @@ Pplot <- function(MSEobj, nam = NA, maxMP = 10,MPs=NA,maxsims=20) {
 #' @param YLab Optional label for y-axis
 #' @param incMP Logical. Include name of MP?
 #' @param MPcex Size of MP label
+#' @param MPcol Optional character vector of colors for MP labels
 #' @param incLeg Logical. Include a legend?
 #' @param cex.leg Size of legend text
 #' @param legPos Legend position
@@ -1221,6 +1222,7 @@ Pplot2 <- function(MSEobj, YVar = c("F_FMSY", "SSB_SSBMSY"), MPs = NA, sims = NU
                    RefYield = c("lto", "curr"), LastYr = TRUE, 
                    ref.lines=c(0.5, 1, 1.5), maxMP = 6, alpha = 60, 
                    cex.axis = 1, cex.lab = 1, YLab = NULL, incMP = TRUE, MPcex = 1, 
+                   MPcol='black',
                    incLeg = TRUE, cex.leg = 1.5, legPos = "topleft", yline = NULL, parOR = FALSE, 
                    xaxis = TRUE, yaxis = TRUE, oneIt=TRUE, ...) {
   old_par <- par(no.readonly = TRUE)
@@ -1378,10 +1380,12 @@ Pplot2 <- function(MSEobj, YVar = c("F_FMSY", "SSB_SSBMSY"), MPs = NA, sims = NU
           axis(side = 2, labels = TRUE, cex.axis = cex.axis, las = 1)
       }
       axis(side = 2, labels = FALSE)
+      
+      MPcol <- rep(MPcol, MSEobj@nMPs)[1:MSEobj@nMPs]
       if (incMP & X == 1 & !parOR) 
-        mtext(side = 3, MSEobj@MPs[mm], cex = MPcex)
+        mtext(side = 3, MSEobj@MPs[mm], cex = MPcex, col=MPcol)
       if (incMP & parOR) 
-        mtext(side = 3, MSEobj@MPs[mm], cex = MPcex)
+        mtext(side = 3, MSEobj@MPs[mm], cex = MPcex, col=MPcol)
       
       # Legend #
       if (mm == 1 & incLeg & (traj == "quant"||traj=="both") & X == 1) {
