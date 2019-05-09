@@ -1383,9 +1383,9 @@ Pplot2 <- function(MSEobj, YVar = c("F_FMSY", "SSB_SSBMSY"), MPs = NA, sims = NU
       
       MPcol <- rep(MPcol, MSEobj@nMPs)[1:MSEobj@nMPs]
       if (incMP & X == 1 & !parOR) 
-        mtext(side = 3, MSEobj@MPs[mm], cex = MPcex, col=MPcol)
+        mtext(side = 3, MSEobj@MPs[mm], cex = MPcex, col=MPcol[mm])
       if (incMP & parOR) 
-        mtext(side = 3, MSEobj@MPs[mm], cex = MPcex, col=MPcol)
+        mtext(side = 3, MSEobj@MPs[mm], cex = MPcex, col=MPcol[mm])
       
       # Legend #
       if (mm == 1 & incLeg & (traj == "quant"||traj=="both") & X == 1) {
