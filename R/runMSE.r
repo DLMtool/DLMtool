@@ -161,9 +161,9 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
                              HZN=HZN, Bfrac=Bfrac, AnnualMSY=AnnualMSY, silent=TRUE, PPD=PPD,
                              control=control, parallel=parallel)
     #assign_DLMenv() # grabs objects from DLMenv in cores, then merges and assigns to 'home' environment
-  
-    if (!is.null(save_name) && is.character(save_name)) saveRDS(temp, paste0(save_name, '.rdata'))
     
+    if (!is.null(save_name) && is.character(save_name)) saveRDS(temp, paste0(save_name, '.rdata'))
+
     MSE1 <- joinMSE(temp) 
     if (class(MSE1) == "MSE") {
       if (!silent) message("MSE completed")
@@ -179,20 +179,16 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     if (OM@nsim > 48 & !silent & !Hist) message("Suggest using 'parallel = TRUE' for large number of simulations")
     MSE1 <- runMSE_int(OM, MPs, CheckMPs, timelimit, Hist, ntrials, fracD, CalcBlow, 
                        HZN, Bfrac, AnnualMSY, silent, PPD, checks=checks, control=control)
-    
   }
   
   if (class(MSE1) == "MSE") {
-    failedMPs <- MSE1@MPs[which(apply(apply(is.na(MSE1@C), c(1,2), sum) == OM@proyears, 2, sum) == OM@nsim)]
-    
+    failedMPs <- MSE1@MPs[which(apply(is.na(MSE1@C), 2, sum) > 0.1 * MSE1@nsim)]
     if (length(failedMPs)>0) {
-      message("Dropping failed MPs: ", paste(failedMPs, collapse=","))
+      message("Dropping failed MPs: ", paste(failedMPs, collapse=", "))
       MSE1 <- Sub(MSE1, MPs=MSE1@MPs[!MSE1@MPs%in% failedMPs])  
     }
   }
- 
   return(MSE1)
-  
 }
 
 

@@ -965,9 +965,15 @@ joinData<-function(DataList){
           templist2[[i]] <- array(0, dim = c(dim(templist[[i]])[1:2], max(nbin)))
           templist2[[i]][ , , 1:nbin[i]] <- templist[[i]]
         }
-        attr(Data, slots[sn]) <- abind(templist2, along=1)
+        if (all(diff(do.call("rbind", lapply(templist2, dim))[,2]) == 0)) {
+          # arrays may be different dimensions if MPs fail
+          attr(Data, slots[sn]) <- abind(templist2, along=1)
+        }
       } else {
-        attr(Data, slots[sn]) <- abind(templist, along=1)
+        if (all(diff(do.call("rbind", lapply(templist, dim))[,2]) == 0)) {
+          # arrays may be different dimensions if MPs fail
+          attr(Data, slots[sn]) <- abind(templist, along=1)
+        }
       }
       
     } else if (sclass[sn] == "list") {
