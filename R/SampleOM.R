@@ -785,7 +785,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
       for (s in 1:nsim) {
         ind <- min(which(V[s,,yr] >=0.05))
         L5[yr, s] <- Len_age[s, ind, yr]
-        ind2 <- min(which(V[s,,yr] >=0.50))
+        ind2 <- which.max(V[s,,yr]) # min(which(V[s,,yr] >=0.50))
         if (ind2 == ind) ind2 <- ind + 1
         LFS[yr, s] <- Len_age[s, ind2, yr]
         Vmaxlen[yr, s] <- V[s, maxage, yr]

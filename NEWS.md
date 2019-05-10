@@ -17,6 +17,7 @@ The current version of the DLMtool package is available for download from [CRAN]
 ### Fixes
 - fix indexing issue for recruitment deviations
 - fix issue with `cpars$mov` when nareas>2
+- fix issue with running MSE in parallel when some MPs fail
 
 
 ## DLMtool 5.3 
