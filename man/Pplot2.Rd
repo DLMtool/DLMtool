@@ -10,8 +10,8 @@ Pplot2(MSEobj, YVar = c("F_FMSY", "SSB_SSBMSY"), MPs = NA,
   "curr"), LastYr = TRUE, ref.lines = c(0.5, 1, 1.5), maxMP = 6,
   alpha = 60, cex.axis = 1, cex.lab = 1, YLab = NULL,
   incMP = TRUE, MPcex = 1, MPcol = "black", incLeg = TRUE,
-  cex.leg = 1.5, legPos = "topleft", yline = NULL, parOR = FALSE,
-  xaxis = TRUE, yaxis = TRUE, oneIt = TRUE, ...)
+  cex.leg = 1.5, legPos = "topleft", yline = NULL, xline = NULL,
+  parOR = FALSE, xaxis = TRUE, yaxis = TRUE, oneIt = TRUE, ...)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}
@@ -63,7 +63,9 @@ projections?}
 
 \item{legPos}{Legend position}
 
-\item{yline}{Optional horizontal line}
+\item{yline}{Optional horizontal lines}
+
+\item{xline}{Optional vertical lines}
 
 \item{parOR}{Logical to over-ride the par parameters}
 

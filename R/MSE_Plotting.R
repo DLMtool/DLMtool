@@ -1208,7 +1208,8 @@ Pplot <- function(MSEobj, nam = NA, maxMP = 10,MPs=NA,maxsims=20) {
 #' @param incLeg Logical. Include a legend?
 #' @param cex.leg Size of legend text
 #' @param legPos Legend position
-#' @param yline Optional horizontal line
+#' @param yline Optional horizontal lines
+#' @param xline Optional vertical lines
 #' @param parOR Logical to over-ride the par parameters
 #' @param xaxis Logical. Should x-axis labels be displayed?
 #' @param yaxis Logical. Should y-axis labels be displayed?
@@ -1223,7 +1224,7 @@ Pplot2 <- function(MSEobj, YVar = c("F_FMSY", "SSB_SSBMSY"), MPs = NA, sims = NU
                    ref.lines=c(0.5, 1, 1.5), maxMP = 6, alpha = 60, 
                    cex.axis = 1, cex.lab = 1, YLab = NULL, incMP = TRUE, MPcex = 1, 
                    MPcol='black',
-                   incLeg = TRUE, cex.leg = 1.5, legPos = "topleft", yline = NULL, parOR = FALSE, 
+                   incLeg = TRUE, cex.leg = 1.5, legPos = "topleft", yline = NULL, xline=NULL, parOR = FALSE, 
                    xaxis = TRUE, yaxis = TRUE, oneIt=TRUE, ...) {
   old_par <- par(no.readonly = TRUE)
   on.exit(par(old_par))
@@ -1415,7 +1416,11 @@ Pplot2 <- function(MSEobj, YVar = c("F_FMSY", "SSB_SSBMSY"), MPs = NA, sims = NU
       }
       if (!is.null(yline)) 
         abline(h = yline[X], lwd = 2, col = "darkgray", lty = 2)
-      
+      if (!is.null(xline)) {
+        for (xx in 1:length(xline)) {
+          abline(v = xline[xx], lwd = 2, col = "darkgray", lty = xx+1)
+        }
+      }
     }
   }
   mtext(side = 1, "Projection Years", line = 2, cex = cex.lab, outer = TRUE)
