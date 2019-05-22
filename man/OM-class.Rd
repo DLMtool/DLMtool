@@ -231,6 +231,18 @@ the data inputs is used.}
 \item{\code{SizeLimFrac}}{The real minimum size that is retained expressed as a fraction of the size. Uniform distribution lower and upper bounds. Positive real number.}
 
 \item{\code{SizeLimSD}}{Log-normal coefficient of variation controlling mismatch between a minimum size limit and the real minimum size retained. Uniform distribution lower and upper bounds. Non-negative real numbers.}
+
+\item{\code{CostCurr}}{Cost of current effort. Uniform distribution lower and upper bounds. Non-negative real numbers}
+
+\item{\code{RevCurr}}{Revenue of current catch. Uniform distribution lower and upper bounds. Non-negative real numbers}
+
+\item{\code{CostInc}}{Annual increase in cost-per-unit-effort (percent). Uniform distribution lower and upper bounds. Non-negative real numbers}
+
+\item{\code{RevInc}}{Annual increase in price-per-unit-catch (percent). Uniform distribution lower and upper bounds. Non-negative real numbers}
+
+\item{\code{Response}}{Responsiveness of fishing effort to profitability. Uniform distribution lower and upper bounds. Non-negative real numbers}
+
+\item{\code{LatentEff}}{Limited entry fishery - fraction of total allowable effort that is not currently being used. Optional - leave blank for open-access. Uniform distribution lower and upper bounds. Fraction <= 1}
 }}
 
 \section{Objects from the Class}{
