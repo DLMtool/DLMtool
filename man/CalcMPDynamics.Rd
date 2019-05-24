@@ -5,11 +5,12 @@
 \title{Calculate population dynamics from MP recommendation}
 \usage{
 CalcMPDynamics(MPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
-  LastEi, LastSpatial, LastAllocat, LastCatch, TACused, maxF, LR5_P, LFR_P,
+  LastEi, LastSpatial, LastAllocat, LastTAC, TACused, maxF, LR5_P, LFR_P,
   Rmaxlen_P, retL_P, retA_P, L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
   Fdisc_P, DR_P, M_ageArray, FM_P, FM_Pret, Z_P, CB_P, CB_Pret, TAC_f, E_f,
   SizeLim_f, FinF, Spat_targ, CAL_binsmid, Linf, Len_age, maxage, nareas,
-  Asize, nCALbins, qs, qvar, qinc, checks = FALSE)
+  Asize, nCALbins, qs, qvar, qinc, RevCurr, CostCurr, RevInc, CostInc,
+  LatentEff_MP, Response, checks = FALSE)
 }
 \arguments{
 \item{MPRecs}{A named list of MP recommendations. The names are the same as \code{slotNames('Rec')}, except
@@ -36,7 +37,7 @@ MPs must either return a recommendation or no recommendation for every simulatio
 
 \item{LastAllocat}{A vector of length \code{nsim} with the most recent allocation}
 
-\item{LastCatch}{A vector of length \code{nsim} with the most recent catch}
+\item{LastTAC}{A vector of length \code{nsim} with the most recent TAC}
 
 \item{TACused}{A vector of length \code{nsim} with the most recent TAC}
 

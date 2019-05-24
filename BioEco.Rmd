@@ -1,0 +1,232 @@
+---
+title: "Bio-Economic Model"
+author: "Adrian Hordyk"
+date: "May 22, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(DLMtool)
+set.seed(101)
+```
+
+## Bio-Economic Model
+
+A relatively simple bio-economic model has been added to DLMtool. 
+
+## The `BioEco` object
+
+The parameters for the bio-economic model are provided in a new object of class `BioEco`. An object of class `BioEco` can be created following the same method as the other components of the operating model (class `OM`):
+
+
+```{r BioEco_new}
+BioEco <- new("BioEco")
+```
+
+The `BioEco` object has `r length(slotNames("BioEco"))` slots:
+
+```{r}
+slotNames("BioEco")
+```
+
+`r length(slotNames("BioEco")) -1` new parameters have been added for the bio-economic model. Similiar to the other parameters in the operating model, the bio-economic parameters are two values specifying the lower and upper bounds of a uniform distribution. 
+
+### Current Cost and Revenue
+The first two parameters, `CostCurr` and `RevCurr`, are used to specify the cost of the current effort and the revenue of the current retained catch respectively. 
+
+As a simple example, suppose the fishery is currently close to a bio-economic equilibrium (revenue = cost), with the cost of the current effort around $10,000:
+```{r}
+BioEco@CostCurr <- c(9500, 10500)
+````
+
+and the revenue from the current catch a similiar value:
+```{r}
+BioEco@RevCurr <- c(9500, 10500)
+```
+
+The cost of effort and the revenue in the last historical year (i.e., current time) are sampled from uniform distributions. For example, suppose there were 3 simulations:
+
+```{r}
+nsim <- 3
+CurrCost <- runif(nsim, BioEco@CostCurr[1], BioEco@CostCurr[2])
+CurrCost # cost of current effort in $
+CurrRev <- runif(nsim, BioEco@RevCurr[1], BioEco@RevCurr[2])
+CurrRev # revenue of current catch in $
+```
+
+### Fishing Effort Responsiveness
+The responsiveness parameter (\(\eta\)) is specified with the `Response` slot and determines the rate that fishers enter or leave the fishery each year based on the profit margin from the previous year. 
+
+The profit margin in the current year is calculated as: 
+
+$$ P_t = 1-\frac{C_t}{R_t}$$
+
+```{r}
+PM <- 1 - (CurrCost/CurrRev) # profit margin in the current year
+PM
+```
+In this example `r sum(CurrRev - CurrCost >0)` simulations had a profit and `r sum(CurrRev - CurrCost <0)` a loss. 
+
+The profit margin for each simulation, MP, and projection year is stored in `MSE@Misc$PMargin`.
+
+Note that because the profit margin is used rather than actual profit the response does not depend on the units of the cost and revenue. Consequently, the current cost and revenue parameters can also be specified in relative terms. For example, where current revenue is within 5% of the current costs:
+
+```{r eval=FALSE}
+BioEco@CostCurr <- c(1, 1)
+BioEco@RevCurr <- c(0.95, 1.05)
+```
+
+Effort in the next year is then calculated as:
+
+$$ E_{t+1} = \text{max}(E_t + \eta P_t), 0)$$
+
+The responsiveness parameter can be calculated as the expected annual change in fishing effort from an assumed profit margin. For example, suppose that with an expected profit margin of 5% (-5%) fishing effort in the next year is expected to increase (decrease) by 1% as new fishers enter (leave) the fishery:
+
+$$
+\begin{align}
+\eta &= \frac{\text{%Change in Effort}}{\text{%Profit Margin}} \\
+ &= \frac{0.01}{0.05} \\
+ &= 0.2 \\
+\end{align}
+$$
+
+The Response parameter is specified in the usual manner:
+
+```{r}
+BioEco@Response <- c(0.03, 0.05)
+```
+
+and sampled internally from a uniform distribution:
+```{r}
+Response <- runif(nsim, BioEco@Response[1], BioEco@Response[2]) 
+```
+
+Continuing the earlier example, the change in effort in the first projection year will be:
+```{r}
+EffCurr <- rep(1, nsim) # current effort
+EffNext <- EffCurr + Response*PM # effort in next year relative to current effort
+EffNext
+```
+
+
+### Future Changes in Cost and Price
+The annual percentage change in future costs and price are specified with `CostInc` and `RevInc`. 
+
+>Note that for now these annual increases/decreases are assumed to be constant. Future development will include inter-annual variability in cost and price.
+
+Suppose costs are expected to increase by 2 - 3% per year:
+```{r}
+BioEco@CostInc <- c(2, 3)
+```
+
+and the price per-unit-catch is assumed to either increase or decrease by up to 1% per year:
+```{r}
+BioEco@RevInc <- c(-1, 1)
+```
+
+The parameters are sampled internally from a uniform distribution and used to calculate change in the cost of effort and the price per-unit-catch in the future. Suppose there were 50 projection years: 
+
+```{r}
+CostInc <- runif(nsim, BioEco@CostInc[1], BioEco@CostInc[2]) 
+RevInc <- runif(nsim, BioEco@RevInc[1], BioEco@RevInc[2]) 
+
+ind <- as.matrix(expand.grid(y=1:50, sim=1:nsim))
+CpE <- RpC <- matrix(NA, nrow=50, ncol=nsim)
+CpE[ind] <- (1+CostInc[ind[,2]]/100)^ind[,1]
+RpC[ind] <- (1+RevInc[ind[,2]]/100)^ind[,1]
+
+par(mfrow=c(1,2))
+matplot(CpE, type="l", xlab="Projection Year", 
+        ylab='Change in cost per-unit-effort',
+        bty="l", lwd=2)
+matplot(RpC, type="l", xlab="Projection Year", 
+        ylab='Change in price per-unit-catch',
+        bty="l", lwd=2)
+
+```
+
+It's clear that this fishery is going to be a lot less profitable in the future!
+
+
+### Limited Entry Fishery
+The last parameter in the `BioEco` object is used when there is limited entry to the fishery (i.e., the fishery is not open access). 
+
+The `LatentEff` slot is used to specify the fraction of total allowed effort that is currently not deployed in the fishery. The total allowable effort is calculated and used to determine a ceiling on the amount of effort in the fishery (i.e., effort will not increase above this amount even if the fishery is profitable).
+
+For example, suppose that there were 100 licenses in the fishery but only 60 - 70 fishers were active, or similarly, all license operators may be active in the fishery, but may only operate for 60 - 70% of the fishing season:
+
+```{r}
+BioEco@LatentEff <- c(0.3, 0.4)
+LatentEff <- runif(nsim, BioEco@LatentEff[1], BioEco@LatentEff[2]) 
+ActiveEffort <- 1 - LatentEff
+CurrEffort <- rep(1, nsim) # 
+MaxEffort <- CurrEffort / ActiveEffort 
+MaxEffort # maximum allowed effort relative to current effort
+```
+
+In a limited entry fishery with an upper effort limit $E_\text{max}$, the bio-economic equation is:
+
+$$ E_{t+1} = \text{min}\left(\text{max}\left(E_t + \eta P_t, 0\right), E_\text{max}\right)$$
+
+In an open-access fishery there is no upper limit on the effort in the fishery. In this case, leave the `BioEco@LatentEff` slot empty. 
+
+##  Bio-Economic Model & Management Procedures
+### With only Output Control
+The effort for each year is determined at the beginning of the year and is based on the profit/loss from the previous year. When only an output control is used, the effort required to catch the TAC is calculated. If the required effort is greater than the actual effort in the fishery, the entire TAC is not caught. That is, the retained catch in that year is less than the TAC.
+
+If the effort required to catch the TAC is less than the effort entering the fishery at the beginning of the year, fishing is assumed to cease for the year, and the actual effort is less than that calculated by the bio-economic model. In these cases the TAC is limiting effort while the fishery is still profitable. 
+ 
+In a limited entry fishery, maximum effort in any year is determined by `BioEco@LatentEff`. As only an output control is used, the total allowed effort does not change over time.
+
+### With only Effort Control
+In an fishery managed with only an effort control (i.e., no TAC), the maximum allowed effort is determined by the management procedure. Actual effort is determined by the bio-economic model, but cannot exceed the total allowable effort (TAE) set by the MP. The actual effort can be less than the TAE. Latent effort is recorded in `MSE@Misc$LatEffort`.
+
+In an existing limited entry fishery (i.e., `BioEco@LatentEff` is populated), the effort control modifies the TAE, and sets the maximum allowed effort based on the current *active* effort. For example, if  `BioEco@LatentEff <- c(0.4, 0.4)` and the Current Effort MP (`curE`) will set the TAE to the current level of active effort, and the 40% latent effort will be removed from the fishery. 
+
+### With only Spatial or Size Controls
+For fisheries without a TAE or TAC control (e.g., a size limit or spatial closure) the fishing effort each year is determined by the bio-economic model. There are no restrictions on total effort unless the `BioEco@LatentEff` slot is populated.
+
+## Some Examples
+
+To demonstrate the bio-economic model we'll create a simple OM using the `Albacore` stock object, the `Generic_Fleet` fleet object, and perfect observation and implementation (`Perfect_Info` and `Perfect_Imp`):
+
+```{r }
+OM <- new("OM", 
+          Stock=Albacore, 
+          Fleet=Generic_Fleet, 
+          Obs=Perfect_Info, 
+          Imp=Perfect_Imp)
+
+OM@nsim <- 5 # five simulations
+OM@interval <- 2 # management applied every second year
+```
+
+### Open-access fishery at Bio-Economic Equilibrium
+First we'll assume an open access fishery currently at bio-economic equilibrium and no expected change in future costs or price:
+
+```{r}
+OM@CostCurr <- c(1,1)
+OM@RevCurr <- c(1,1) # current revenue = current cost
+
+OM@CostInc <- c(0,0) # price and costs are stable
+OM@RevInc <- c(0,0)
+
+OM@Response <- c(0.05, 0.05)
+```
+
+We'll run the MSE with 8 MPs: 
+
+```{r}
+MPs <- c('curE', 'curE75', 'ItargetE1',
+         'AvC', 'MCD', 'Itarget1',
+         'matlenlim', 'MRreal')
+
+MSE <- runMSE(OM, MPs, silent = TRUE)
+
+```
+
+
+
+
+

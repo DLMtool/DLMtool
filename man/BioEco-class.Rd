@@ -16,11 +16,11 @@ An operating model component that specifies the bio-economic parameters
 
 \item{\code{RevCurr}}{Revenue of current catch. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
+\item{\code{Response}}{Responsiveness of fishing effort to profitability. Uniform distribution lower and upper bounds. Non-negative real numbers}
+
 \item{\code{CostInc}}{Annual increase in cost-per-unit-effort (percent). Uniform distribution lower and upper bounds. Non-negative real numbers}
 
 \item{\code{RevInc}}{Annual increase in price-per-unit-catch (percent). Uniform distribution lower and upper bounds. Non-negative real numbers}
-
-\item{\code{Response}}{Responsiveness of fishing effort to profitability. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
 \item{\code{LatentEff}}{Limited entry fishery - fraction of total allowable effort that is not currently being used. Optional - leave blank for open-access. Uniform distribution lower and upper bounds. Fraction <= 1}
 }}

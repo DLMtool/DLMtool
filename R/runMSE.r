@@ -252,10 +252,14 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   ObsPars <- SampleObsPars(OM, nsim, cpars=SampCpars)
   for (X in 1:length(ObsPars)) assign(names(ObsPars)[X], ObsPars[[X]])
   
-  # Imp Paramerers & assign to function environment
+  # Imp Parameters & assign to function environment
   ImpPars <- SampleImpPars(OM, nsim, cpars=SampCpars)
   for (X in 1:length(ImpPars)) assign(names(ImpPars)[X], ImpPars[[X]])
 
+  # BioEco Parameters & assign to function environment
+  BioEcoPars <- SampleBioEcoPars(OM, nsim, cpars=SampCpars)
+  for (X in 1:length(BioEcoPars)) assign(names(BioEcoPars)[X], BioEcoPars[[X]])
+  
   # --- Initialize Arrays ----
   N <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # stock numbers array
   Biomass <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # stock biomass array
@@ -583,7 +587,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   VBMSY <- MSYRefPoints[5,] %>% unlist() # Biomass at MSY (Vulnerable)
   UMSY <- MSY/VBMSY  # exploitation rate 
   FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
-  
   SSBMSY_SSB0 <- SSBMSY/SSB0 # SSBMSY relative to unfished (SSB)
   BMSY_B0 <- BMSY/B0 # Biomass relative to unfished (B0)
   VBMSY_VB0 <- VBMSY/VB0 # VBiomass relative to unfished (VB0)
@@ -771,11 +774,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   CALout <- array(NA, dim = c(nsim, nMP, nCALbins))  # store the population-at-length in last projection year
   # SPRa <- array(NA,dim=c(nsim,nMP,proyears)) # store the Spawning Potential Ratio
   
+  PMargin <- array(NA, dim = c(nsim, nMP, proyears))  # store the Profit Margin
+  LatEffort <- array(NA, dim = c(nsim, nMP, proyears))  # store the Latent Effort
+ 
   # --- Begin loop over MPs ----
   mm <- 1 # for debugging
-
   for (mm in 1:nMP) {  # MSE Loop over methods
-    
     tryMP <- tryCatch({
       if(!silent) message(mm, "/", nMP, " Running MSE for ", MPs[mm]) 
       checkNA <- NA # save number of NAs
@@ -796,6 +800,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       retL_P <- retL # retention at length array - projections
       Fdisc_P <- Fdisc # Discard mortality for projectons 
       DR_P <- DR # Discard ratio for projections
+      LatentEff_MP <- BioEcoPars$LatentEff # Historical latent effort
       
       # projection arrays
       N_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
@@ -863,11 +868,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       LastEi <- rep(1,nsim) # no effort adjustment
       LastSpatial <- array(MPA[nyears,], dim=c(nareas, nsim)) # 
       LastAllocat <- rep(1, nsim) # default assumption of reallocation of effort to open areas
-      LastCatch <- apply(CB[,,nyears,], 1, sum)
+      LastTAC <- apply(CBret[,,nyears,], 1, sum)
       
       # -- Calc stock dynamics ----
       MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
-                                LastEi, LastSpatial, LastAllocat, LastCatch,
+                                LastEi, LastSpatial, LastAllocat, LastTAC,
                                 TACused, maxF,
                                 LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
                                 L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
@@ -876,16 +881,20 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                 TAC_f, E_f, SizeLim_f,
                                 FinF, Spat_targ,
                                 CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
-                                qs, qvar, qinc)
+                                qs, qvar, qinc,
+                                RevCurr, CostCurr, RevInc, CostInc, LatentEff_MP, Response,
+                                LastEffort=rep(1, nsim))
       
+      ActiveEffort <- MPCalcs$ActiveEffort # bio-economic effort next year
       TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
       LastSpatial <- MPCalcs$Si
       LastAllocat <- MPCalcs$Ai
       LastEi <- MPCalcs$Ei # adjustment to effort
-      LastCatch <- MPCalcs$TACrec
+      LastTAC <- MPCalcs$TACrec
       Effort[, mm, y] <- MPCalcs$Effort  
       CB_P <- MPCalcs$CB_P # removals
       CB_Pret <- MPCalcs$CB_Pret # retained catch 
+      # apply(CB_Pret[,,1,], 1, sum)
       FM_P <- MPCalcs$FM_P # fishing mortality
       FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
       Z_P <- MPCalcs$Z_P # total mortality
@@ -894,7 +903,9 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       V_P <- MPCalcs$V_P  # vulnerable-at-age
       SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
       FMa[,mm,y] <- MPCalcs$Ftot 
-      
+      PMargin[,mm,y] <- MPCalcs$PMargin # Profit margin this year
+      LatEffort[,mm,y] <- MPCalcs$LatEffort # Latent effort this year
+
       # --- Begin projection years ----
       for (y in 2:proyears) {
         if(!silent) {
@@ -971,7 +982,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           
           # -- Calc stock dynamics ----
           MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
-                                    LastEi, LastSpatial, LastAllocat, LastCatch,
+                                    LastEi, LastSpatial, LastAllocat, LastTAC,
                                     TACused, maxF,
                                     LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
                                     L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
@@ -980,7 +991,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                     TAC_f, E_f, SizeLim_f,
                                     FinF, Spat_targ,
                                     CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
-                                    qs, qvar, qinc)
+                                    qs, qvar, qinc,
+                                    RevCurr, CostCurr, RevInc, CostInc, LatentEff_MP, 
+                                    Response, LastEffort = Effort[,mm,y-1],
+                                    ActiveEffort=ActiveEffort)
           
           TACa[, mm, y] <- TACused # recommended TAC 
           LastSpatial <- MPCalcs$Si
@@ -991,7 +1005,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           
           CB_P <- MPCalcs$CB_P # removals
           CB_Pret <- MPCalcs$CB_Pret # retained catch 
-          LastCatch <- apply(CB_Pret[,,y,], 1, sum, na.rm=TRUE) 
+          LastTAC <- TACa[, mm, y] # apply(CB_Pret[,,y,], 1, sum, na.rm=TRUE) 
           FM_P <- MPCalcs$FM_P # fishing mortality
           FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
           Z_P <- MPCalcs$Z_P # total mortality
@@ -999,6 +1013,9 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           retL_P <- MPCalcs$retL_P # retained-at-length
           V_P <- MPCalcs$V_P  # vulnerable-at-age
           SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
+          PMargin[,mm,y] <- MPCalcs$PMargin # Profit margin this year
+          LatEffort[,mm,y] <- MPCalcs$LatEffort # Latent effort this year
+          
           
         } else {
           # --- Not an update yr ----
@@ -1006,7 +1023,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           NoMPRecs[lapply(NoMPRecs, length) > 0 ] <- NULL
           NoMPRecs$Spatial <- NA
           MPCalcs <- CalcMPDynamics(NoMPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
-                                    LastEi, LastSpatial, LastAllocat, LastCatch,
+                                    LastEi, LastSpatial, LastAllocat, LastTAC,
                                     TACused, maxF,
                                     LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
                                     L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
@@ -1015,8 +1032,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                     TAC_f, E_f, SizeLim_f,
                                     FinF, Spat_targ,
                                     CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
-                                    qs, qvar, qinc)
+                                    qs, qvar, qinc,
+                                    RevCurr, CostCurr, RevInc, CostInc, LatentEff_MP, 
+                                    Response, LastEffort=Effort[,mm,y-1],
+                                    ActiveEffort = ActiveEffort)
           
+          ActiveEffort <- MPCalcs$ActiveEffort # bio-economic effort next year
           TACa[, mm, y] <- TACused # 
           LastSpatial <- MPCalcs$Si
           LastAllocat <- MPCalcs$Ai
@@ -1025,7 +1046,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           CB_P <- MPCalcs$CB_P # removals
           CB_Pret <- MPCalcs$CB_Pret # retained catch 
           FMa[,mm,y] <- MPCalcs$Ftot 
-          LastCatch <- apply(CB_Pret[,,y,], 1, sum, na.rm=TRUE) 
+          LastTAC <- TACa[, mm, y]  # apply(CB_Pret[,,y,], 1, sum, na.rm=TRUE) 
           FM_P <- MPCalcs$FM_P # fishing mortality
           FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
           Z_P <- MPCalcs$Z_P # total mortality
@@ -1033,6 +1054,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           retL_P <- MPCalcs$retL_P # retained-at-length
           V_P <- MPCalcs$V_P  # vulnerable-at-age
           SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
+          PMargin[,mm,y] <- MPCalcs$PMargin # Profit margin this year
+          LatEffort[,mm,y] <- MPCalcs$LatEffort # Latent effort this year
+          
+          #apply(CB_Pret[,,y,], 1, sum)/TACa[, mm, y] 
         } # end of update loop 
         checkNA[y] <- sum(is.na(TACused))
       }  # end of year loop
@@ -1083,14 +1108,16 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # Miscellaneous reporting
   if(PPD) Misc$Data <- MSElist
   
+  # Report profit margin and latent effort
+  Misc$PMargin <- PMargin
+  Misc$LatEffort <- LatEffort
   
-
   ## Create MSE Object #### 
   MSEout <- new("MSE", Name = OM@Name, nyears, proyears, nMPs=nMP, MPs, nsim, 
                 Data@OM, Obs=Data@Obs, B_BMSY=B_BMSYa, F_FMSY=F_FMSYa, B=Ba, 
-                SSB=SSBa, VB=VBa, FM=FMa, CaRet, TAC=TACa, SSB_hist = SSB, CB_hist = CB, 
-                FM_hist = FM, Effort = Effort, PAA=PAAout, CAA=CAAout, CAL=CALout, CALbins=CAL_binsmid,
-                Misc = Misc)
+                SSB=SSBa, VB=VBa, FM=FMa, CaRet, TAC=TACa, SSB_hist = SSB, 
+                CB_hist = CB, FM_hist = FM, Effort = Effort, PAA=PAAout, 
+                CAA=CAAout, CAL=CALout, CALbins=CAL_binsmid, Misc = Misc)
   # Store MSE info
   attr(MSEout, "version") <- packageVersion("DLMtool")
   attr(MSEout, "date") <- date()

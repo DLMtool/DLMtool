@@ -4,16 +4,16 @@
 \alias{Replace}
 \title{Replace an existing Stock, Fleet, Obs, or Imp object}
 \usage{
-Replace(OM, from, Sub = c("Stock", "Fleet", "Obs", "Imp"), Name = NULL,
-  silent = FALSE)
+Replace(OM, from, Sub = c("Stock", "Fleet", "Obs", "Imp", "BioEco"),
+  Name = NULL, silent = FALSE)
 }
 \arguments{
 \item{OM}{An operating model object (class OM) which will be updated with a sub-model from another OM}
 
-\item{from}{An object of class \code{OM}, \code{Stock}, \code{Fleet}, \code{Obs}, or \code{Imp} to be replace the values in \code{OM}}
+\item{from}{An object of class \code{OM}, \code{Stock}, \code{Fleet}, \code{Obs}, \code{Imp}, or \code{BioEco} to be replace the values in \code{OM}}
 
 \item{Sub}{A character string specifying what object type to replace (only used if \code{from} is class \code{OM})
-"Stock", "Fleet", "Obs" or "Imp" (default is all four which is probably not what you want to do)}
+"Stock", "Fleet", "Obs", "Imp", or "BioEco" (default is all four which is probably not what you want to do)}
 
 \item{Name}{Character. Name for the new OM object (\code{OM@Name})}
 
