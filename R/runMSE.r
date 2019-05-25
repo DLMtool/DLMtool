@@ -868,7 +868,17 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       LastEi <- rep(1,nsim) # no effort adjustment
       LastSpatial <- array(MPA[nyears,], dim=c(nareas, nsim)) # 
       LastAllocat <- rep(1, nsim) # default assumption of reallocation of effort to open areas
-      LastTAC <- apply(CBret[,,nyears,], 1, sum)
+      LastTAC <- LastCatch <- apply(CBret[,,nyears,], 1, sum)
+      
+      # -- Bio-Economics ----
+      # Calculate Profit Margin from last historical year
+      RevPC <- RevCurr/LastCatch # cost-per unit catch in last historical year
+      PMargin <- 1 - CostCurr/(RevPC * LastCatch) # profit margin in last historical year
+      
+      # Latent Effort 
+      ActiveEffort <- LastEffort + Response*PMargin # potential effort in first projection year
+      ActiveEffort[ActiveEffort<0] <- tiny # potential effort this year
+      
       
       # -- Calc stock dynamics ----
       MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
