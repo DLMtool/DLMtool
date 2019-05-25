@@ -5,12 +5,11 @@
 \title{Calculate population dynamics from MP recommendation}
 \usage{
 CalcMPDynamics(MPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
-  LastEi, LastSpatial, LastAllocat, LastTAC, TACused, maxF, LR5_P, LFR_P,
+  LastTAE, LastSpatial, LastAllocat, LastTAC, TACused, maxF, LR5_P, LFR_P,
   Rmaxlen_P, retL_P, retA_P, L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
   Fdisc_P, DR_P, M_ageArray, FM_P, FM_Pret, Z_P, CB_P, CB_Pret, TAC_f, E_f,
   SizeLim_f, FinF, Spat_targ, CAL_binsmid, Linf, Len_age, maxage, nareas,
-  Asize, nCALbins, qs, qvar, qinc, RevCurr, CostCurr, RevInc, CostInc,
-  LatentEff_MP, Response, checks = FALSE)
+  Asize, nCALbins, qs, qvar, qinc, Effort_pot, checks = FALSE)
 }
 \arguments{
 \item{MPRecs}{A named list of MP recommendations. The names are the same as \code{slotNames('Rec')}, except
@@ -31,7 +30,7 @@ MPs must either return a recommendation or no recommendation for every simulatio
 
 \item{VBiomass_P}{An array with dimensions \code{nsim}, \code{maxage}, \code{proyears}, and \code{nareas} with vulnerable biomass in the projection years}
 
-\item{LastEi}{A vector of length \code{nsim} with the most recent effort modifier (fraction of historical effort)}
+\item{LastTAE}{A vector of length \code{nsim} with the most recent TAE}
 
 \item{LastSpatial}{A matrix of \code{nrow=nareas} and \code{ncol=nsim} with the most recent spatial management arrangements}
 

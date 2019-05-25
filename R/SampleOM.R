@@ -1352,8 +1352,8 @@ SampleBioEcoPars <- function(BioEco, nsim=NULL, cpars=NULL) {
     if (length(BioEco@LatentEff) ==  0) {
       BioEcoOut$LatentEff <- rep(NA, nsim)
     } else {
-      if (any(BioEco@LatentEff) <=0) stop("LatentEff must be fraction > 0 and <= 1")
-      if (any(BioEco@LatentEff) >1) stop("LatentEff must be fraction > 0 and <= 1")
+      if (any(BioEco@LatentEff<=0)) stop("LatentEff must be fraction > 0 and <= 1")
+      if (any(BioEco@LatentEff>1)) stop("LatentEff must be fraction > 0 and <= 1")
       BioEcoOut$LatentEff <- myrunif(nsim, BioEco@LatentEff[1], BioEco@LatentEff[2])   
     }
   } else {

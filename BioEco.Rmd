@@ -83,6 +83,9 @@ $$ E_{t+1} = \text{max}(E_t + \eta P_t), 0)$$
 
 The responsiveness parameter can be calculated as the expected annual change in fishing effort from an assumed profit margin. For example, suppose that with an expected profit margin of 5% (-5%) fishing effort in the next year is expected to increase (decrease) by 1% as new fishers enter (leave) the fishery:
 
+## NOTE: Don't think this holds for all conditions!
+## Only is true  when Et = 1; ie current historical effort
+## Make plot to show how this changes - ie contour plot?
 $$
 \begin{align}
 \eta &= \frac{\text{%Change in Effort}}{\text{%Profit Margin}} \\
@@ -148,6 +151,8 @@ matplot(RpC, type="l", xlab="Projection Year",
 
 It's clear that this fishery is going to be a lot less profitable in the future!
 
+### NOTE - not bio-economic equilibrium - just cost = revenue
+
 
 ### Limited Entry Fishery
 The last parameter in the `BioEco` object is used when there is limited entry to the fishery (i.e., the fishery is not open access). 
@@ -164,6 +169,12 @@ CurrEffort <- rep(1, nsim) #
 MaxEffort <- CurrEffort / ActiveEffort 
 MaxEffort # maximum allowed effort relative to current effort
 ```
+
+This means ... 
+
+For example, the `curE` MP sets the current fishing effort as the maximum effort limit for all years. 
+What are the implications of this when latent effort exists? 
+
 
 In a limited entry fishery with an upper effort limit $E_\text{max}$, the bio-economic equation is:
 

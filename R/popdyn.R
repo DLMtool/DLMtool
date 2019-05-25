@@ -15,7 +15,7 @@
 #' @param nsim The number of simulations
 #' @param Biomass_P An array with dimensions `nsim`, `maxage`, `proyears`, and `nareas` with total biomass in the projection years
 #' @param VBiomass_P An array with dimensions `nsim`, `maxage`, `proyears`, and `nareas` with vulnerable biomass in the projection years
-#' @param LastEi A vector of length `nsim` with the most recent effort modifier (fraction of historical effort)
+#' @param LastTAE A vector of length `nsim` with the most recent TAE
 #' @param LastSpatial A matrix of `nrow=nareas` and `ncol=nsim` with the most recent spatial management arrangements
 #' @param LastAllocat A vector of length `nsim` with the most recent allocation
 #' @param LastTAC A vector of length `nsim` with the most recent TAC
@@ -63,7 +63,7 @@
 #' @keywords internal
 CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
                            VBiomass_P,
-                           LastEi, LastSpatial, LastAllocat, LastTAC,
+                           LastTAE, LastSpatial, LastAllocat, LastTAC,
                            TACused, maxF,
                            LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
                            L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
@@ -73,19 +73,21 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
                            FinF, Spat_targ,
                            CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
                            qs, qvar, qinc, 
-                           RevCurr, CostCurr, RevInc, CostInc, LatentEff_MP, Response,
-                           LastEffort,
-                           ActiveEffort=NULL,
+                           Effort_pot,
                            checks=FALSE) {
   # Effort 
-  if (length(MPRecs$Effort) == 0) { # no effort recommendation
-    if (y==1) Ei <- LastEi * E_f[,y] # effort is unchanged but has implementation error
-    if (y>1) Ei <- LastEi / E_f[,y-1]  * E_f[,y] # effort is unchanged but has implementation error
+  if (length(MPRecs$Effort) == 0) { # no max effort recommendation
+    if (y==1) TAE <- LastTAE * E_f[,y] # max effort is unchanged but has implementation error
+    if (y>1) TAE <- LastTAE / E_f[,y-1]  * E_f[,y] # max effort is unchanged but has implementation error
   } else if (length(MPRecs$Effort) != nsim) {
     stop("Effort recommmendation is not 'nsim' long.\n Does MP return Effort recommendation under all conditions?")
   } else {
-    # an effort recommendation 
-    Ei <- MPRecs$Effort * E_f[,y] # effort adjustment with implementation error
+    # a maximum effort recommendation
+    if (!all(is.na(histTAE))) {
+      TAE <- histTAE * MPRecs$Effort * E_f[,y] # adjust existing TAE adjustment with implementation error  
+    } else {
+      TAE <- MPRecs$Effort * E_f[,y] # adjust existing TAE adjustment with implementation error
+    }
   }
   
   # Spatial 
@@ -96,7 +98,6 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
   } else {
     Si <- MPRecs$Spatial # change spatial fishing
   }
-
   if (all(dim(Si) != c(nareas, nsim))) stop("Spatial recommmendation not nareas long")
 
   # Allocation 
@@ -152,7 +153,6 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
                                                          ncol=nsim, byrow=TRUE) # recommendation
     RetentFlag <- TRUE
   }
-  
   
   # HS - harvest slot 
   if (length(MPRecs$HS) == 0) { # no  recommendation
@@ -324,28 +324,18 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
   fracE2 <- d1 * (fracE + (1-fracE) * Ai)/fracE # re-distribution of fishing effort accounting for re-allocation of effort
   fishdist <- fracE2 # fishing effort by area
   
-  # ---- Bio-economics ----
-  # Calculate Profit Margin from last historical year
-  if (y == 1) {
-    RetainCatch <- LastTAC # retained catch last historical year
-    RevPC <- RevCurr/RetainCatch # Revenue per unit catch
-    PMargin <- 1 - CostCurr/(RevPC * RetainCatch) # profit margin in last historical year
-    ActiveEffort <- LastEffort + Response*PMargin # potential effort in first projection year
-    ActiveEffort[ActiveEffort<0] <- tiny # potential effort this year
-  }
-  
-  # ---- No TAC recommendation ----
+  # ---- no TAC - calculate F with bio-economic effort ----
   if (all(is.na(TACused))) { 
     # fishing mortality with bio-economic effort
-    FM_P[SAYR] <- (FinF[S1] * ActiveEffort[S1] * V_P[SAYt] * t(Si)[SR] * fishdist[SR] *
+    FM_P[SAYR] <- (FinF[S1] * Effort_pot[S1] * V_P[SAYt] * t(Si)[SR] * fishdist[SR] *
                      qvar[SY1] * (qs[S1]*(1 + qinc[S1]/100)^y))/Asize[SR]
     
     # retained fishing mortality with bio-economic effort
-    FM_Pret[SAYR] <- (FinF[S1] * ActiveEffort[S1] * retA_P[SAYt] * t(Si)[SR] * fishdist[SR] *
+    FM_Pret[SAYR] <- (FinF[S1] * Effort_pot[S1] * retA_P[SAYt] * t(Si)[SR] * fishdist[SR] *
                         qvar[SY1] * qs[S1]*(1 + qinc[S1]/100)^y)/Asize[SR]
   }
   
-  # ---- Apply TAC recommendation ----
+  # ---- calculate required F and effort for TAC recommendation ----
   if (!all(is.na(TACused))) { # a TAC has been set
     # if MP returns NA - TAC is set to TAC from last year
     TACused[is.na(TACused)] <- LastTAC[is.na(TACused)] 
@@ -409,33 +399,28 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
   
   # Calculate total fishing mortality & effort
   M_array <- array(0.5*M_ageArray[,,nyears+y], dim=c(nsim, maxage, nareas))
-  Ftot <- suppressWarnings(-log(1-apply(CB_P[,,y,], 1, sum)/apply(VBiomass_P[,,y,] * exp(-M_array), 1, sum)))
+  Ftot <- suppressWarnings(-log(1-apply(CB_P[,,y,], 1, sum)/apply(CurrentVB * exp(-M_array), 1, sum)))
   Ftot[!is.finite(Ftot)] <- maxF
   
+  # Effort_req - effort required to catch TAC
+  # Effort_pot - potential effort this year (active fishers) from bio-economic model
+  # Effort_act - actual effort this year
+  # TAE - maximum actual effort limit
+  # Effort_act < Effort_pot if Effort_req < Effort_pot
+  
   # Effort relative to last historical with this potential catch
-  Effort_req <- Ftot/(FinF * qs*qvar[,y]* (1 + qinc/100)^y) * apply(fracE2, 1, sum) # effort required to get this catch
-
+  Effort_req <- Ftot/(FinF * qs*qvar[,y]* (1 + qinc/100)^y) * apply(fracE2, 1, sum) # effort required for this catch
+  
   # Limit effort to potential effort from bio-economic model
   Effort_act <- Effort_req 
-  excessEff <- Effort_req>ActiveEffort # simulations where required effort > actual effort
-  Effort_act[excessEff] <- ActiveEffort[excessEff] # actual effort is reduced if TAC is met
+  excessEff <- Effort_req>Effort_pot # simulations where required effort > potential effort
+  Effort_act[excessEff] <- Effort_pot[excessEff] # actual effort can't be more than bio-economic effort
   
-  # Apply effort cap if it exists
-  MaxEffort <- LatEffort <- rep(NA, nsim)
-  if (!all(is.na(LatentEff_MP)) & y==1) { # limited entry fishery
-    MaxEffort <- ActiveEffort / (1 - LatentEff_MP)
+  # Limit actual effort <= TAE 
+  if (!all(is.na(TAE))) { # a TAE exists
+    Effort_act[Effort_act>TAE] <- TAE[Effort_act>TAE]
   }
-  
-  if (length(MPRecs$Effort) >0 | all(Ei != 1)) { # an effort regulation also exists
-    MaxEffort <- Ei[1,] # max allowed effort is modified
-  }
-  
-  if (!all(is.na(MaxEffort))) { # max effort restriction exists
-    excessEff <- ActiveEffort>MaxEffort # simulations where actual effort > TAE
-    Effort_act[excessEff] <- MaxEffort[excessEff] # actual effort is capped at TAE
-    LatEffort <- MaxEffort-Effort_act
-  }
-
+  Effort_act[Effort_act<=0] <- tiny
   # --- Re-calculate catch given actual effort ----
   # fishing mortality with actual effort 
   FM_P[SAYR] <- (FinF[S1] * Effort_act[S1] * V_P[SAYt] * t(Si)[SR] * fishdist[SR] *
@@ -458,42 +443,6 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
   M_array <- array(0.5*M_ageArray[,,nyears+y], dim=c(nsim, maxage, nareas))
   Ftot <- suppressWarnings(-log(1-apply(CB_P[,,y,], 1, sum)/apply(VBiomass_P[,,y,] * exp(-M_array), 1, sum)))
   Ftot[!is.finite(Ftot)] <- maxF
-  
-  
-  # ---- Bio-economics ----
-  # Calculate Profit Margin for this year
-  RetainCatch <- apply(CB_Pret[,,y,], 1, sum) # retained catch this year
-
-  CostLast <- LastEffort * CostCurr*(1+CostInc/100)^(y) # cost of effort this year
-  PMargin <- 1 - CostLast/(RevPC*(1+RevInc/100)^(y)  * RetainCatch) # profit margin this year
-  ActiveEffort <- LastEffort + Response*PMargin  
-  ActiveEffort[ActiveEffort<0] <- tiny # potential effort next year
-  
-  
-  # if (length(MPRecs$Effort) >0 | all(Ei != 1)) { # an effort regulation also exists
-  #   #Make sure Effort doesn't exceed regulated effort
-  #   aboveE <- which(Effort > Ei)
-  #   if (length(aboveE)>0) {
-  #     Effort[aboveE] <- Ei[aboveE] * apply(fracE2, 1, sum)[aboveE]
-  #     SAYR <- as.matrix(expand.grid(aboveE, 1:maxage, y, 1:nareas))
-  #     SAYRt <- as.matrix(expand.grid(aboveE, 1:maxage, y + nyears, 1:nareas))  # Trajectory year
-  #     SYt <- SAYRt[, c(1, 3)]
-  #     SAYt <- SAYRt[, 1:3]
-  #     SR <- SAYR[, c(1, 4)]
-  #     S1 <- SAYR[, 1]
-  #     SY1 <- SAYR[, c(1, 3)]
-  #     FM_P[SAYR] <- (FinF[S1] * Ei[S1] * V_P[SAYt] * t(Si)[SR] * fishdist[SR] * qvar[SY1] *
-  #                      (qs[S1]*(1 + qinc[S1]/100)^y))/Asize[SR]
-  #     
-  #     # retained fishing mortality with input control recommendation
-  #     FM_Pret[SAYR] <- (FinF[S1] * Ei[S1] * retA_P[SAYt] * t(Si)[SR] * fishdist[SR] *
-  #                         qvar[SY1] * qs[S1]*(1 + qinc[S1]/100)^y)/Asize[SR]
-  #     
-  #     Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt] # calculate total mortality
-  #     CB_P[SAYR] <- (1-exp(-FM_P[SAYR])) * (Biomass_P[SAYR] * exp(-0.5*M_ageArray[SAYt]))
-  #     CB_Pret[SAYR] <- (1-exp(-FM_Pret[SAYR])) * (Biomass_P[SAYR] * exp(-0.5*M_ageArray[SAYt]))
-  #   }
-  # }
 
   # Returns
   out <- list()
@@ -511,14 +460,36 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
   out$CB_Pret <- CB_Pret
   out$Si <- Si
   out$Ai <- Ai
-  out$Ei <- Ei
-  out$Effort <- Effort_act
+  out$TAE <- TAE
+  out$Effort <- Effort_act # actual effort this year
   out$Ftot <- Ftot
-  out$PMargin <- PMargin
-  out$LatEffort <- LatEffort 
-  out$ActiveEffort <- ActiveEffort # bio-economic effort next year 
   out
 }
+
+# if (length(MPRecs$Effort) >0 | all(Ei != 1)) { # an effort regulation also exists
+#   #Make sure Effort doesn't exceed regulated effort
+#   aboveE <- which(Effort > Ei)
+#   if (length(aboveE)>0) {
+#     Effort[aboveE] <- Ei[aboveE] * apply(fracE2, 1, sum)[aboveE]
+#     SAYR <- as.matrix(expand.grid(aboveE, 1:maxage, y, 1:nareas))
+#     SAYRt <- as.matrix(expand.grid(aboveE, 1:maxage, y + nyears, 1:nareas))  # Trajectory year
+#     SYt <- SAYRt[, c(1, 3)]
+#     SAYt <- SAYRt[, 1:3]
+#     SR <- SAYR[, c(1, 4)]
+#     S1 <- SAYR[, 1]
+#     SY1 <- SAYR[, c(1, 3)]
+#     FM_P[SAYR] <- (FinF[S1] * Ei[S1] * V_P[SAYt] * t(Si)[SR] * fishdist[SR] * qvar[SY1] *
+#                      (qs[S1]*(1 + qinc[S1]/100)^y))/Asize[SR]
+#     
+#     # retained fishing mortality with input control recommendation
+#     FM_Pret[SAYR] <- (FinF[S1] * Ei[S1] * retA_P[SAYt] * t(Si)[SR] * fishdist[SR] *
+#                         qvar[SY1] * qs[S1]*(1 + qinc[S1]/100)^y)/Asize[SR]
+#     
+#     Z_P[SAYR] <- FM_P[SAYR] + M_ageArray[SAYt] # calculate total mortality
+#     CB_P[SAYR] <- (1-exp(-FM_P[SAYR])) * (Biomass_P[SAYR] * exp(-0.5*M_ageArray[SAYt]))
+#     CB_Pret[SAYR] <- (1-exp(-FM_Pret[SAYR])) * (Biomass_P[SAYR] * exp(-0.5*M_ageArray[SAYt]))
+#   }
+# }
 
 # CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim,
 #                            LastEi, LastSpatial, LastAllocat, LastCatch,
