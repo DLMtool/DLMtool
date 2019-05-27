@@ -81,7 +81,7 @@ ChkObj <- function(OM, error=TRUE) {
   
   # Slots ok to not contain values
   Ignore <- optslots$Ignore
-  Ignore <- c(Ignore, "Mgrad", "Kgrad", "Linfgrad", "LatentEff")
+  Ignore <- c(Ignore, "Mgrad", "Kgrad", "Linfgrad", "LatentEff", slotNames("BioEco"))
   
   # if values present for one they need to be there for all! 
   if (any(SelSlots %in% slots[Ok])) Ignore <- Ignore[!Ignore %in% SelSlots] 

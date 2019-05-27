@@ -3,9 +3,38 @@ library(DLMtool); library(dplyr)
 
 
 OM <- new("OM", Stock=Albacore, 
-          Fleet=Generic_Fleet, 
+          Fleet=Generic_FlatE, 
           Obs=Perfect_Info, 
           Imp=Perfect_Imp)
+OM@qinc <- c(0,0)
+OM@nsim <- 3
+
+# Test without bio-economic model - no BioEco parameters
+# - effort control - curE - OK 
+# - TAC - AvC - OK
+# - spatial or size limit - matlenlim - OK
+# - mixed - to test still
+
+# Example without bio-economic model
+MPs <- c('curE', 'curE75', 'NMref', 'ITM')
+MSE <- runMSE(OM, MPs=MPs)
+
+matplot(t(MSE@C[1,,]),type="l")
+matplot(t(MSE@Effort[1,,]),type="l")
+
+
+# with just an existing TAE - latent effort
+OM@LatentEff <- c(0.05,0.05)
+MSE2 <- runMSE(OM, MPs=MPs)
+
+matplot(t(MSE2@C[1,,]),type="l")
+matplot(t(MSE2@Effort[1,,]),type="l")
+# fix - curE should be actual not latent
+# - NMref doesn't work
+
+
+# Bio-economic model
+
 
 OM@CostCurr <- c(1,1)
 OM@RevCurr <- c(0.95,1.05)

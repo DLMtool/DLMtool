@@ -916,13 +916,13 @@ setClass("BioEco", representation(Name = "character",
 
 # initialize BioEco
 setMethod("initialize", "BioEco", function(.Object, file = NA, dec=c(".", ",")) {
-  .Object@Name <- "Bio-Economic Equilibrium - Open Access"
-  .Object@CostCurr <- c(1,1)
-  .Object@RevCurr <- c(1,1)
-  .Object@Response <- c(0.05,0.05)
-  .Object@CostInc <- c(1,1)
-  .Object@RevInc <-c(1,1)
-  .Object@LatentEff<- numeric(0)
+  # .Object@Name <- "Bio-Economic Equilibrium - Open Access"
+  # .Object@CostCurr <- c(1,1)
+  # .Object@RevCurr <- c(1,1)
+  # .Object@Response <- c(0.05,0.05)
+  # .Object@CostInc <- c(1,1)
+  # .Object@RevInc <-c(1,1)
+  # .Object@LatentEff<- numeric(0)
   
   if (!is.na(file)) {
     

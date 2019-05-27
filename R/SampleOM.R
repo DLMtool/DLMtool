@@ -2,6 +2,7 @@
 myrunif <- function(n, val1, val2) {
   min <- min(c(val1, val2))
   max <- max(c(val1, val2))
+  if (all(is.na(c(min, max)))) return(rep(NA,n))
   if (all(min == max)) {
     tt <- runif(n)
     return(rep(min, n))

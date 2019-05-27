@@ -257,9 +257,14 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   for (X in 1:length(ImpPars)) assign(names(ImpPars)[X], ImpPars[[X]])
 
   # BioEco Parameters & assign to function environment
-  
-  ## TODO - add message when bio-economic model detected ----
   BioEcoPars <- SampleBioEcoPars(OM, nsim, cpars=SampCpars)
+  nNAs <- BioEcoPars %>% unlist() %>% is.na() %>% sum()
+  if (nNAs ==(length(BioEcoPars)-1) * nsim | nNAs ==length(BioEcoPars) * nsim) {
+    # no bio-economic model
+    if (!silent) message("No bio-economic model parameters found. \nTAC and TAE assumed to be caught in full")
+  } else{
+    if (!silent) message("Bio-economic model parameters found.")
+  }
   for (X in 1:length(BioEcoPars)) assign(names(BioEcoPars)[X], BioEcoPars[[X]])
   
   # --- Initialize Arrays ----
@@ -890,7 +895,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
 
       # -- Calc stock dynamics ----
       MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
-                                LastTAE, LastSpatial, LastAllocat, LastTAC,
+                                LastTAE, histTAE, LastSpatial, LastAllocat, LastTAC,
                                 TACused, maxF,
                                 LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
                                 L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
@@ -1007,7 +1012,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           
           # -- Calc stock dynamics ----
           MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
-                                    LastTAE, LastSpatial, LastAllocat, LastTAC,
+                                    LastTAE, histTAE, LastSpatial, LastAllocat, LastTAC,
                                     TACused, maxF,
                                     LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
                                     L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
@@ -1054,7 +1059,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           NoMPRecs[lapply(NoMPRecs, length) > 0 ] <- NULL
           NoMPRecs$Spatial <- NA
           MPCalcs <- CalcMPDynamics(NoMPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
-                                    LastTAE, LastSpatial, LastAllocat, LastTAC,
+                                    LastTAE, histTAE, LastSpatial, LastAllocat, LastTAC,
                                     TACused, maxF,
                                     LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
                                     L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,

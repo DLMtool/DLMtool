@@ -63,7 +63,7 @@
 #' @keywords internal
 CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
                            VBiomass_P,
-                           LastTAE, LastSpatial, LastAllocat, LastTAC,
+                           LastTAE, histTAE, LastSpatial, LastAllocat, LastTAC,
                            TACused, maxF,
                            LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
                            L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
@@ -325,7 +325,9 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
   fishdist <- fracE2 # fishing effort by area
   
   # ---- no TAC - calculate F with bio-economic effort ----
-  if (all(is.na(TACused))) { 
+  if (all(is.na(TACused))) {
+    if (all(is.na(Effort_pot)) & all(is.na(TAE))) Effort_pot <- rep(1, nsim) # historical effort
+    if (all(is.na(Effort_pot))) Effort_pot <- TAE[1,]
     # fishing mortality with bio-economic effort
     FM_P[SAYR] <- (FinF[S1] * Effort_pot[S1] * V_P[SAYt] * t(Si)[SR] * fishdist[SR] *
                      qvar[SY1] * (qs[S1]*(1 + qinc[S1]/100)^y))/Asize[SR]
@@ -412,9 +414,11 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
   Effort_req <- Ftot/(FinF * qs*qvar[,y]* (1 + qinc/100)^y) * apply(fracE2, 1, sum) # effort required for this catch
   
   # Limit effort to potential effort from bio-economic model
-  Effort_act <- Effort_req 
-  excessEff <- Effort_req>Effort_pot # simulations where required effort > potential effort
-  Effort_act[excessEff] <- Effort_pot[excessEff] # actual effort can't be more than bio-economic effort
+  Effort_act <- Effort_req
+  if (!all(is.na(Effort_pot))) {
+    excessEff <- Effort_req>Effort_pot # simulations where required effort > potential effort
+    Effort_act[excessEff] <- Effort_pot[excessEff] # actual effort can't be more than bio-economic effort
+  }
   
   # Limit actual effort <= TAE 
   if (!all(is.na(TAE))) { # a TAE exists

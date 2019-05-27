@@ -12,8 +12,12 @@ set.seed(101)
 ```
 
 ## Bio-Economic Model
+Intro text - to do
 
-A relatively simple bio-economic model has been added to DLMtool. 
+
+# option to ignore Bio Eco parameters - add them to Fleet object - sample anyway to it is reproducible
+
+#
 
 ## The `BioEco` object
 

@@ -5,11 +5,12 @@
 \title{Calculate population dynamics from MP recommendation}
 \usage{
 CalcMPDynamics(MPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
-  LastTAE, LastSpatial, LastAllocat, LastTAC, TACused, maxF, LR5_P, LFR_P,
-  Rmaxlen_P, retL_P, retA_P, L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
-  Fdisc_P, DR_P, M_ageArray, FM_P, FM_Pret, Z_P, CB_P, CB_Pret, TAC_f, E_f,
-  SizeLim_f, FinF, Spat_targ, CAL_binsmid, Linf, Len_age, maxage, nareas,
-  Asize, nCALbins, qs, qvar, qinc, Effort_pot, checks = FALSE)
+  LastTAE, histTAE, LastSpatial, LastAllocat, LastTAC, TACused, maxF,
+  LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P, L5_P, LFS_P, Vmaxlen_P,
+  SLarray_P, V_P, Fdisc_P, DR_P, M_ageArray, FM_P, FM_Pret, Z_P, CB_P,
+  CB_Pret, TAC_f, E_f, SizeLim_f, FinF, Spat_targ, CAL_binsmid, Linf,
+  Len_age, maxage, nareas, Asize, nCALbins, qs, qvar, qinc, Effort_pot,
+  checks = FALSE)
 }
 \arguments{
 \item{MPRecs}{A named list of MP recommendations. The names are the same as \code{slotNames('Rec')}, except
