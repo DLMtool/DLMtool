@@ -14,6 +14,10 @@ set.seed(101)
 ## Bio-Economic Model
 Intro text - to do
 
+Extras:
+- price by size class
+- cost by area of fishing
+
 
 # option to ignore Bio Eco parameters - add them to Fleet object - sample anyway to it is reproducible
 

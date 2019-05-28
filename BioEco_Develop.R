@@ -15,12 +15,68 @@ OM@nsim <- 3
 # - spatial or size limit - matlenlim - OK
 # - mixed - to test still
 
+Plot <- function(MSE, mm=1, sim=1) {
+  
+  par(mfrow=c(3,3))
+  
+  plot(MSE@SSB[sim, mm, ]/MSE@OM$SSB0[sim], xlab="Year", ylab="Depletion", type="l",
+       bty="l", lwd=2, ylim=c(0, 1))
+  abline(h=MSE@OM$SSBMSY_SSB0[sim], lty=2)
+  
+  maxPM <- max(abs(MSE@Misc$PMargin[sim, mm,]))
+  ylim <- c(-maxPM, maxPM)
+  plot(MSE@Misc$PMargin[sim, mm,], xlab="Year", ylab="Profit Margin", type="l",
+       bty="l", lwd=2, ylim=ylim)
+  abline(h=0, lty=2)
+  
+  
+  plot(MSE@Misc$Cost[sim, mm,], xlab="Year", ylab="Cost", type="l",
+       bty="l", lwd=2, ylim=c(0, max(MSE@Misc$Cost[sim, mm,])))
+  abline(h=)
+  
+  plot(MSE@Misc$Revenue[sim, mm,], xlab="Year", ylab="Revenue", type="l",
+       bty="l", lwd=2, ylim=c(0, max(MSE@Misc$Revenue[sim, mm,])))
+  
+  
+  plot(MSE@Effort[sim, mm,], xlab="Year", ylab="Effort", type="l",
+       bty="l", lwd=2, ylim=c(0, max(MSE@Effort[sim, mm,])))
+  abline(h=)
+  
+  plot(MSE@C[sim, mm,], xlab="Year", ylab="Catch", type="l",
+       bty="l", lwd=2, ylim=c(0, max(MSE@C[sim, mm,])))
+  
+  
+  plot(MSE@B_BMSY[sim,mm,], MSE@Effort[sim,mm,],
+       type="l", xlab='B/BMSY', ylab="Effort/Current Effort",
+       bty="l")
+}
+
+
 # Example without bio-economic model
 MPs <- c('curE', 'curE75', 'NMref', 'ITM')
 MSE <- runMSE(OM, MPs=MPs)
 
-matplot(t(MSE@C[1,,]),type="l")
-matplot(t(MSE@Effort[1,,]),type="l")
+
+
+# with a bio-economic model
+OM <- tinyErr(OM)
+OM@Perr <- c(0.1,0.1)
+OM@proyears <- 100
+OM@h <- c(0.7, 0.7)
+OM@D <- c(0.1, 0.1)
+OM@CostCurr <- c(1,1)
+OM@RevCurr <- c(0.9, 0.9)
+OM@Response <- c(0.05, 0.05) # add checks
+OM@RevInc <- OM@CostInc <- c(0,0)# add checks if first two populated 
+
+MSE <- runMSE(OM, MPs=MPs)
+Plot(MSE, 3)
+
+
+
+
+
+# bio-economic model with existing TAE
 
 
 # with just an existing TAE - latent effort
@@ -74,13 +130,12 @@ OM@qinc <- c(0,0)
 MSE <- runMSE(OM, MPs=MPs)
 
 
+
 sim <- 2; mm <- 3
 
-par(mfrow=c(3,2))
 
-plot(MSE@SSB[sim, mm, ]/MSE@OM$SSB0[sim], xlab="Year", ylab="Depletion", type="l",
-     bty="l", lwd=2, ylim=c(0, 1))
-abline(h=MSE@OM$SSBMSY_SSB0[sim], lty=2)
+
+
 
 plot(MSE@B_BMSY[sim, mm, ], xlab="Year", ylab="B/BMSY", type="l",
      bty="l", lwd=2, ylim=c(0, max(max(MSE@B_BMSY[sim, mm, ]), 1.5)))
@@ -93,22 +148,16 @@ abline(h=1, lty=2)
      # bty="l", lwd=2, ylim=c(0, max(max(MSE@Effort[sim, mm,]),1) ))
 
 
-plot(MSE@Misc$Cost[sim, mm,], xlab="Year", ylab="Cost", type="l",
-     bty="l", lwd=2, ylim=c(0, max(MSE@Misc$Cost[sim, mm,])))
-
-plot(MSE@Misc$Revenue[sim, mm,], xlab="Year", ylab="Revenue", type="l",
-     bty="l", lwd=2, ylim=c(0, max(MSE@Misc$Revenue[sim, mm,])))
 
 
-plot(MSE@Misc$Revenue[sim, mm,]-MSE@Misc$Cost[sim, mm,], xlab="Year", ylab="Profit", type="l",
-     bty="l", lwd=2)
 
 
-maxPM <- min(1.5,max(abs(MSE@Misc$PMargin[sim, mm,])))
-ylim <- c(-maxPM, maxPM)
-plot(MSE@Misc$PMargin[sim, mm,], xlab="Year", ylab="Profit Margin", type="l",
-     bty="l", lwd=2, ylim=ylim)
-abline(h=0, lty=2)
+# 
+# plot(MSE@Misc$Revenue[sim, mm,]-MSE@Misc$Cost[sim, mm,], xlab="Year", ylab="Profit", type="l",
+#      bty="l", lwd=2)
+
+
+
 
 DF <- data.frame(TAC=MSE@TAC[sim,mm,], Catch=MSE@C[sim,mm,])
 

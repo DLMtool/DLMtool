@@ -262,6 +262,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   if (nNAs ==(length(BioEcoPars)-1) * nsim | nNAs ==length(BioEcoPars) * nsim) {
     # no bio-economic model
     if (!silent) message("No bio-economic model parameters found. \nTAC and TAE assumed to be caught in full")
+    BioEcoPars$LatentEff <- rep(NA, nsim) # ignore if other BioEco parameters are not populated
   } else{
     if (!silent) message("Bio-economic model parameters found.")
   }
