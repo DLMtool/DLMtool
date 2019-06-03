@@ -17,13 +17,26 @@ Intro text - to do
 Extras:
 - price by size class
 - cost by area of fishing
+- discount rate
 
+The distinction between the concepts of average and marginal revenue is very
+important in fisheries economics. Average revenue is the total revenue divided by
+total effort, whereas marginal revenue shows the change in total revenue as a result of
+a small change in effort. 
+
+- based on profit from last year? or last X years?
+- same response parameter for increase and decrease fleet?
+- landing tax MP
+
+excess profit - economic rent
+add ITQ?
 
 # option to ignore Bio Eco parameters - add them to Fleet object - sample anyway to it is reproducible
 
 #
 
-## The `BioEco` object
+## The `BioEco` object - add to fleet object
+check with Chris - what economic data is available from their survey?
 
 The parameters for the bio-economic model are provided in a new object of class `BioEco`. An object of class `BioEco` can be created following the same method as the other components of the operating model (class `OM`):
 

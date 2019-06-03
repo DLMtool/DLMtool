@@ -782,7 +782,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   CALout <- array(NA, dim = c(nsim, nMP, nCALbins))  # store the population-at-length in last projection year
   # SPRa <- array(NA,dim=c(nsim,nMP,proyears)) # store the Spawning Potential Ratio
   
-  PMargin_out <- array(NA, dim = c(nsim, nMP, proyears))  # store the Profit Margin
   Cost_out <- array(NA, dim = c(nsim, nMP, proyears))  # store Total Cost
   Rev_out <- array(NA, dim = c(nsim, nMP, proyears))  # store Total Revenue
   LatEffort_out<- array(NA, dim = c(nsim, nMP, proyears))  # store the Latent Effort
@@ -880,11 +879,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       LastTAC <- LastCatch <- apply(CBret[,,nyears,], 1, sum)
       
       # -- Bio-Economics ----
-      # Calculate Profit Margin from last historical year
+      # Calculate Profit from last historical year
       RevPC <- RevCurr/LastCatch # cost-per unit catch in last historical year
       PMargin <- 1 - CostCurr/(RevPC * LastCatch) # profit margin in last historical year
+      Profit <- (RevPC * LastCatch) - CostCurr # profit in last historical year
       HistEffort <- rep(1, nsim) # future effort is relative to today's effort
-      Effort_pot <- HistEffort + Response*PMargin # potential effort in first projection year
+      Effort_pot <- HistEffort + Response*Profit # potential effort in first projection year
       Effort_pot[Effort_pot<0] <- tiny # 
       
       # Latent Effort - Maximum Effort Limit
@@ -932,9 +932,9 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       Cost_out[,mm,y] <-  Effort[, mm, y] * CostCurr*(1+CostInc/100)^y # cost of effort this year
       Rev_out[,mm,y] <- (RevPC*(1+RevInc/100)^y * RetainCatch)
       PMargin <- 1 - Cost_out[,mm,y]/Rev_out[,mm,y] # profit margin this year
-      Effort_pot <- Effort_pot + Response*PMargin # bio-economic effort next year
+      Profit <- Rev_out[,mm,y] - Cost_out[,mm,y] # profit this year
+      Effort_pot <- Effort_pot + Response*Profit # bio-economic effort next year
       Effort_pot[Effort_pot<0] <- tiny # 
-      PMargin_out[,mm,y] <- PMargin  # store the Profit Margin
       LatEffort_out[,mm,y] <- LastTAE - Effort[, mm, y]  # store the Latent Effort
       
       # --- Begin projection years ----
@@ -1048,10 +1048,9 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           RetainCatch[RetainCatch<=0] <- tiny
           Cost_out[,mm,y] <-  Effort[, mm, y] * CostCurr*(1+CostInc/100)^y # cost of effort this year
           Rev_out[,mm,y] <- (RevPC*(1+RevInc/100)^y * RetainCatch)
-          PMargin <- 1 - Cost_out[,mm,y]/Rev_out[,mm,y] # profit margin this year
-          Effort_pot <- Effort_pot + Response*PMargin # bio-economic effort next year
+          Profit <- Rev_out[,mm,y] - Cost_out[,mm,y] # profit this year
+          Effort_pot <- Effort_pot + Response*Profit # bio-economic effort next year
           Effort_pot[Effort_pot<0] <- tiny # 
-          PMargin_out[,mm,y] <- PMargin  # store the Profit Margin
           LatEffort_out[,mm,y] <- LastTAE - Effort[, mm, y]  # store the Latent Effort
 
         } else {
@@ -1096,9 +1095,9 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           Cost_out[,mm,y] <-  Effort[, mm, y] * CostCurr*(1+CostInc/100)^y # cost of effort this year
           Rev_out[,mm,y] <- (RevPC*(1+RevInc/100)^y * RetainCatch)
           PMargin <- 1 - Cost_out[,mm,y]/Rev_out[,mm,y] # profit margin this year
-          Effort_pot <- Effort_pot + Response*PMargin # bio-economic effort next year
+          Profit <- Rev_out[,mm,y] - Cost_out[,mm,y] # profit this year
+          Effort_pot <- Effort_pot + Response*Profit # bio-economic effort next year
           Effort_pot[Effort_pot<0] <- tiny # 
-          PMargin_out[,mm,y] <- PMargin  # store the Profit Margin
           LatEffort_out[,mm,y] <- LastTAE - Effort[, mm, y]  # store the Latent Effort
         
         } # end of update loop 
@@ -1152,7 +1151,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   if(PPD) Misc$Data <- MSElist
 
   # Report profit margin and latent effort
-  Misc$PMargin <- PMargin_out
   Misc$LatEffort <- LatEffort_out
   Misc$Revenue <- Rev_out
   Misc$Cost <- Cost_out

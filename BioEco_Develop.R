@@ -17,63 +17,122 @@ OM@nsim <- 3
 
 Plot <- function(MSE, mm=1, sim=1) {
   
-  par(mfrow=c(3,3))
+  par(mfrow=c(3,2))
   
   plot(MSE@SSB[sim, mm, ]/MSE@OM$SSB0[sim], xlab="Year", ylab="Depletion", type="l",
        bty="l", lwd=2, ylim=c(0, 1))
   abline(h=MSE@OM$SSBMSY_SSB0[sim], lty=2)
   
-  maxPM <- max(abs(MSE@Misc$PMargin[sim, mm,]))
+  profit <- MSE@Misc$Revenue[sim, mm,] - MSE@Misc$Cost[sim, mm,]
+  maxPM <- max(abs(profit))
   ylim <- c(-maxPM, maxPM)
-  plot(MSE@Misc$PMargin[sim, mm,], xlab="Year", ylab="Profit Margin", type="l",
+  plot(profit, xlab="Year", ylab="Profit", type="l",
        bty="l", lwd=2, ylim=ylim)
   abline(h=0, lty=2)
   
   
-  plot(MSE@Misc$Cost[sim, mm,], xlab="Year", ylab="Cost", type="l",
-       bty="l", lwd=2, ylim=c(0, max(MSE@Misc$Cost[sim, mm,])))
-  abline(h=)
+  plot(MSE@Misc$Cost[sim, mm,], xlab="Year", ylab="Cost (solid) Revenue (dashed)", type="l",
+       bty="l", lwd=2, ylim=c(0, max(c(MSE@Misc$Cost[sim, mm,],MSE@Misc$Revenue[sim, mm,]))))
+  # abline(h=1)
   
-  plot(MSE@Misc$Revenue[sim, mm,], xlab="Year", ylab="Revenue", type="l",
-       bty="l", lwd=2, ylim=c(0, max(MSE@Misc$Revenue[sim, mm,])))
+  lines(MSE@Misc$Revenue[sim, mm,], lwd=2, lty=2)
+  
+  # 
+  # plot(MSE@Effort[sim, mm,], xlab="Year", ylab="Effort", type="l",
+  #      bty="l", lwd=2, ylim=c(0, max(MSE@Effort[sim, mm,])))
+  # abline(h=)
+  # 
+  # plot(MSE@C[sim, mm,], xlab="Year", ylab="Catch", type="l",
+  #      bty="l", lwd=2, ylim=c(0, max(MSE@C[sim, mm,])))
   
   
-  plot(MSE@Effort[sim, mm,], xlab="Year", ylab="Effort", type="l",
-       bty="l", lwd=2, ylim=c(0, max(MSE@Effort[sim, mm,])))
-  abline(h=)
-  
-  plot(MSE@C[sim, mm,], xlab="Year", ylab="Catch", type="l",
-       bty="l", lwd=2, ylim=c(0, max(MSE@C[sim, mm,])))
-  
-  
-  plot(MSE@B_BMSY[sim,mm,], MSE@Effort[sim,mm,],
-       type="l", xlab='B/BMSY', ylab="Effort/Current Effort",
+  plot(profit, MSE@Effort[sim,mm,],
+       type="l", xlab='Profit', ylab="Effort",
        bty="l")
+  
+  # plot(profit, MSE@C[sim,mm,],
+  #      type="l", xlab='Profit', ylab="Catch",
+  #      bty="l")
+  
+  plot(MSE@C[sim,mm,],MSE@Effort[sim,mm,],
+       type="l", xlab='Catch', ylab="Effort",
+       bty="l")
+  
+  # y1 <- 1:(OM@proyears-1)
+  # y2 <- y1+1
+  # ChangeEffort <- (MSE@Effort[sim,mm,y2]/ MSE@Effort[sim,mm,y1] - 1)
+  # 
+  # plot(ChangeEffort, MSE@Misc$PMargin[sim, mm,y1], type="l", 
+  #      bty="n", xlab="Change in Effort",
+  #      ylab="Profit Margin")
+  
+  
 }
 
 
-# Example without bio-economic model
-MPs <- c('curE', 'curE75', 'NMref', 'ITM')
-MSE <- runMSE(OM, MPs=MPs)
-
-
-
 # with a bio-economic model
-OM <- tinyErr(OM)
-OM@Perr <- c(0.1,0.1)
+# OM <- tinyErr(OM)
+# OM@Perr <- c(0.1,0.1)
 OM@proyears <- 100
 OM@h <- c(0.7, 0.7)
-OM@D <- c(0.1, 0.1)
+OM@D <- c(0.7, 0.7)
+OM@RevCurr <- c(1,1)
 OM@CostCurr <- c(1,1)
-OM@RevCurr <- c(0.9, 0.9)
-OM@Response <- c(0.05, 0.05) # add checks
-OM@RevInc <- OM@CostInc <- c(0,0)# add checks if first two populated 
+OM@Response <- c(0.1, 0.1) # add checks
+OM@RevInc <- OM@CostInc <- c(0, 0)# add checks if first two populated 
 
-MSE <- runMSE(OM, MPs=MPs)
-Plot(MSE, 3)
+MSE <- runMSE(OM, MPs=c('Itarget1', 'NMref', 'AvC'))
+
+sim <- 1
+Plot(MSE, 1, sim=sim)
+Plot(MSE, 2, sim=sim)
+Plot(MSE, 3, sim=sim)
+
+par(mfrow=c(1,2))
+matplot(t(MSE@B_BMSY[sim,,]), type="l") # >% round(2) %>% t()
+matplot(t(MSE@C[sim,,]), type="l")
+
+
+MSE@C[sim,,] %>% round(2) %>% t()
+
+
+sim <- 1; mm <-2 
+MSE@SSB[sim, mm, ]/MSE@OM$SSB0[sim]
 
 
 
+data.frame(Profit=MSE@Misc$Revenue[sim,1,] - MSE@Misc$Cost[sim,1,],
+           Effort=MSE@Effort[sim,1,]) %>% round(2)
+
+
+DF <- data.frame(Cost =MSE@Misc$Cost[sim,1,],
+           Revenue = MSE@Misc$Revenue[sim,1,],
+           Profit = MSE@Misc$Revenue[sim,1,] - MSE@Misc$Cost[sim,1,],
+           PM = 1 - MSE@Misc$Cost[sim,1,]/ MSE@Misc$Revenue[sim,1,])
+DF %>% round(2)
+
+par(mfrow=c(1,2))
+plot(DF$Profit, DF$Cost, type="b")
+
+plot(DF$PM, DF$Cost, type="b")
+
+
+# Check Response calculations and explanation 
+# write up as profit and profit margin and make equivalent
+
+# units of today's effort 
+0.5 * -.6
+
+MSE@Effort[1,1, ] %>% round(2)
+
+# effort by % change of each year
+
+# profit v profit margin
+
+
+y1 <- 1:(OM@proyears-1)
+y2 <- y1+1
+ChangeEffort <- (MSE@Effort[sim,mm,y2]/ MSE@Effort[sim,mm,y1] - 1)
 
 
 # bio-economic model with existing TAE
@@ -171,15 +230,7 @@ DF %>% round(2) %>%
 
 
 
-# Check Response calculations and explanation 
-y1 <- 1:(OM@proyears-1)
-y2 <- y1+1
-ChangeEffort <- (MSE@Effort[sim,mm,y2]/ MSE@Effort[sim,mm,y1] - 1)
 
-par(mfrow=c(1,1))
-plot(ChangeEffort, MSE@Misc$PMargin[sim, mm,y1], type="l", 
-     ylim=c(-1, 1),
-     xlim=c(0,OM@Response[1]*2))
 
 cbind((OM@Response[1] * MSE@Misc$PMargin[sim, mm,y1])/MSE@Effort[sim,mm,y1],
 ChangeEffort)
