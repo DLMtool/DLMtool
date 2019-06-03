@@ -734,9 +734,9 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
 #' OM with one from another object.
 #' 
 #' @param OM An operating model object (class OM) which will be updated with a sub-model from another OM
-#' @param from An object of class `OM`, `Stock`, `Fleet`, `Obs`, `Imp`, or `BioEco` to be replace the values in `OM`
+#' @param from An object of class `OM`, `Stock`, `Fleet`, `Obs`, or `Imp` to be replace the values in `OM`
 #' @param Sub A character string specifying what object type to replace (only used if `from` is class `OM`)
-#' "Stock", "Fleet", "Obs", "Imp", or "BioEco" (default is all four which is probably not what you want to do)
+#' "Stock", "Fleet", "Obs", or "Imp" (default is all four which is probably not what you want to do)
 #' @param Name Character. Name for the new OM object (`OM@Name`)
 #' @param silent Should messages be printed?
 #' 
@@ -761,19 +761,18 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
 #' OM1a <- Replace(OM1, OM2, "Fleet")
 #' 
 #' @export 
-Replace <- function(OM, from,Sub=c("Stock", "Fleet", "Obs", "Imp", "BioEco"),  Name=NULL, silent=FALSE) {
+Replace <- function(OM, from,Sub=c("Stock", "Fleet", "Obs", "Imp"),  Name=NULL, silent=FALSE) {
   if (class(OM) =="character") OM <- get(OM)
   if (class(OM) !="OM") stop("OM must be of class OM ", call.=FALSE)
   if (class(from) =="character") from <- get(from)
-  if (!class(from) %in% c("OM", "Stock", "Fleet", "Obs", "Imp", "BioEco")) 
-    stop("from must be class `OM`, `Stock`, `Fleet`, `Obs`, `Imp`, or `BioEco`", call.=FALSE)
+  if (!class(from) %in% c("OM", "Stock", "Fleet", "Obs", "Imp")) 
+    stop("from must be class `OM`, `Stock`, `Fleet`, `Obs`, `Imp`", call.=FALSE)
   
   Stock <- SubOM(OM, "Stock")
   Fleet <- SubOM(OM, "Fleet")
   Obs <- SubOM(OM, "Obs")
   Imp <- SubOM(OM, "Imp")
-  BioEco <- SubOM(OM, "BioEco") 
-  
+ 
   if (class(from) == "OM") {
     Sub <- match.arg(Sub, several.ok=TRUE)
     if (length(Sub)==4) warning("Replacing all OM components. Probably not what you want to do ...")
@@ -815,14 +814,14 @@ Replace <- function(OM, from,Sub=c("Stock", "Fleet", "Obs", "Imp", "BioEco"),  N
 #' 
 #' @param OM An operating model object (class OM)
 #' @param Sub A character string specifying what object type to strip out
-#' "Stock", "Fleet", "Obs", "Imp", or "BioEco"
-#' @return An object of class Stock, Fleet, Obs, Imp, or BioEco
+#' "Stock", "Fleet", "Obs", or "Imp"
+#' @return An object of class Stock, Fleet, Obs, or Imp
 #' @author A. Hordyk
 #' @examples 
 #' Stock <- SubOM(DLMtool::testOM, "Stock")
 #' class(Stock)
 #' @export 
-SubOM <- function(OM, Sub=c("Stock", "Fleet", "Obs", "Imp", "BioEco")) {
+SubOM <- function(OM, Sub=c("Stock", "Fleet", "Obs", "Imp")) {
   if (class(OM) !="OM") stop("OM must be of class OM ", call.=FALSE)
   Sub <- match.arg(Sub)
   temp <- new(Sub)
@@ -833,11 +832,11 @@ SubOM <- function(OM, Sub=c("Stock", "Fleet", "Obs", "Imp", "BioEco")) {
   
   colon <- gregexpr(":", temp@Name)
   space <- gregexpr("  ", temp@Name)
-  ind <- switch(Sub, Stock=1, Fleet=2, Obs=3, Imp=4, BioEco=5)
+  ind <- switch(Sub, Stock=1, Fleet=2, Obs=3, Imp=4)
   
   if (ind < 4) temp@Name <- substr(temp@Name, colon[[1]][ind]+1, space[[1]][ind]-1)
   if (ind == 4) temp@Name <- substr(temp@Name, colon[[1]][ind]+1, nchar(temp@Name))
-  if (ind == 5) temp@Name <- substr(temp@Name, colon[[1]][ind]+1, space[[1]][ind]-1)
+  # if (ind == 5) temp@Name <- substr(temp@Name, colon[[1]][ind]+1, space[[1]][ind]-1)
   temp 
 }
 

@@ -256,17 +256,28 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   ImpPars <- SampleImpPars(OM, nsim, cpars=SampCpars)
   for (X in 1:length(ImpPars)) assign(names(ImpPars)[X], ImpPars[[X]])
 
-  # BioEco Parameters & assign to function environment
-  BioEcoPars <- SampleBioEcoPars(OM, nsim, cpars=SampCpars)
-  nNAs <- BioEcoPars %>% unlist() %>% is.na() %>% sum()
-  if (nNAs ==(length(BioEcoPars)-1) * nsim | nNAs ==length(BioEcoPars) * nsim) {
+  # Bio-Economic Parameters
+  BioEcoPars <- c("RevCurr", "CostCurr", "Response", "CostInc", "RevInc", "LatentEff")
+  if (all(lapply(SampCpars[BioEcoPars], length) == 0)) {
     # no bio-economic model
     if (!silent) message("No bio-economic model parameters found. \nTAC and TAE assumed to be caught in full")
-    BioEcoPars$LatentEff <- rep(NA, nsim) # ignore if other BioEco parameters are not populated
-  } else{
+    RevCurr <- CostCurr <- Response <- CostInc <- RevInc <- LatentEff <- rep(NA, nsim)
+  } else {
     if (!silent) message("Bio-economic model parameters found.")
+    # Checks
+    if (length(SampCpars$CostCurr) != nsim) stop("OM@cpars$CostCurr is not length OM@nsim", call.=FALSE)
+    if (length(SampCpars$RevCurr) != nsim) stop("OM@cpars$RevCurr is not length OM@nsim", call.=FALSE)
+    if (length(SampCpars$Response) != nsim) stop("OM@cpars$Response is not length OM@nsim", call.=FALSE)
+    if (length(SampCpars$RevInc) != nsim) SampCpars$RevInc <- rep(0, nsim)
+    if (length(SampCpars$CostInc) != nsim) SampCpars$CostInc <- rep(0, nsim)
+    if (length(SampCpars$LatentEff) != nsim) SampCpars$LatentEff <- rep(NA, nsim)
+    RevCurr <- SampCpars$RevCurr
+    CostCurr <- SampCpars$CostCurr
+    Response <- SampCpars$Response
+    CostInc <- SampCpars$CostInc
+    RevInc <- SampCpars$RevInc
+    LatentEff <- SampCpars$LatentEff
   }
-  for (X in 1:length(BioEcoPars)) assign(names(BioEcoPars)[X], BioEcoPars[[X]])
   
   # --- Initialize Arrays ----
   N <- array(NA, dim = c(nsim, maxage, nyears, nareas))  # stock numbers array
@@ -785,7 +796,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   Cost_out <- array(NA, dim = c(nsim, nMP, proyears))  # store Total Cost
   Rev_out <- array(NA, dim = c(nsim, nMP, proyears))  # store Total Revenue
   LatEffort_out<- array(NA, dim = c(nsim, nMP, proyears))  # store the Latent Effort
- 
+  TAE_out <- array(NA, dim = c(nsim, nMP, proyears)) # store the TAE
+  
   # --- Begin loop over MPs ----
   mm <- 1 # for debugging
   for (mm in 1:nMP) {  # MSE Loop over methods
@@ -809,7 +821,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       retL_P <- retL # retention at length array - projections
       Fdisc_P <- Fdisc # Discard mortality for projectons 
       DR_P <- DR # Discard ratio for projections
-      LatentEff_MP <- BioEcoPars$LatentEff # Historical latent effort
+      LatentEff_MP <- LatentEff # Historical latent effort
       
       # projection arrays
       N_P <- array(NA, dim = c(nsim, maxage, proyears, nareas))
@@ -888,7 +900,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       Effort_pot[Effort_pot<0] <- tiny # 
       
       # Latent Effort - Maximum Effort Limit
-      if (length(LatentEff_MP)>0) {
+      if (!all(is.na(LatentEff_MP))) {
         LastTAE <- histTAE <- HistEffort / (1 - LatentEff_MP) # current TAE limit exists    
       } else {
         LastTAE <- histTAE <- rep(NA, nsim) # no current TAE exists  
@@ -936,6 +948,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       Effort_pot <- Effort_pot + Response*Profit # bio-economic effort next year
       Effort_pot[Effort_pot<0] <- tiny # 
       LatEffort_out[,mm,y] <- LastTAE - Effort[, mm, y]  # store the Latent Effort
+      TAE_out[,mm,y] <- LastTAE # store the TAE
       
       # --- Begin projection years ----
       for (y in 2:proyears) {
@@ -1052,6 +1065,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           Effort_pot <- Effort_pot + Response*Profit # bio-economic effort next year
           Effort_pot[Effort_pot<0] <- tiny # 
           LatEffort_out[,mm,y] <- LastTAE - Effort[, mm, y]  # store the Latent Effort
+          TAE_out[,mm,y] <- LastTAE # store the TAE
 
         } else {
           # --- Not an update yr ----
@@ -1099,6 +1113,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           Effort_pot <- Effort_pot + Response*Profit # bio-economic effort next year
           Effort_pot[Effort_pot<0] <- tiny # 
           LatEffort_out[,mm,y] <- LastTAE - Effort[, mm, y]  # store the Latent Effort
+          TAE_out[,mm,y] <- LastTAE # store the TAE
         
         } # end of update loop 
         checkNA[y] <- sum(is.na(TACused))
@@ -1154,6 +1169,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   Misc$LatEffort <- LatEffort_out
   Misc$Revenue <- Rev_out
   Misc$Cost <- Cost_out
+  Misc$TAE <- TAE_out
   
   ## Create MSE Object #### 
   MSEout <- new("MSE", Name = OM@Name, nyears, proyears, nMPs=nMP, MPs, nsim, 

@@ -884,53 +884,6 @@ setMethod("initialize", "Imp", function(.Object, file = NA, dec=c(".", ",")) {
   
 })
 
-# ---- BioEco Class ----
-#' Class \code{'BioEco'}
-#' 
-#' An operating model component that specifies the bio-economic parameters 
-#'  
-#' @name BioEco-class
-#' @docType class
-#' @slot Name The name of the Bio-Economic object. Single value. Character string.
-#' 
-#' @template BioEco_template
-#' 
-#' @section Objects from the Class: Objects can be created by calls of the form
-#' \code{new('BioEco')}#' 
-#'      
-#' @author A. Hordyk
-#' @export
-#' @keywords classes
-#' @examples
-#' 
-#' showClass('BioEco')
-#' 
-setClass("BioEco", representation(Name = "character", 
-                                  CostCurr = 'numeric',
-                                  RevCurr = "numeric",
-                                  Response = 'numeric',
-                                  CostInc = 'numeric',
-                                  RevInc = 'numeric',
-                                  LatentEff = 'numeric'
-                                  ))
-
-# initialize BioEco
-setMethod("initialize", "BioEco", function(.Object, file = NA, dec=c(".", ",")) {
-  # .Object@Name <- "Bio-Economic Equilibrium - Open Access"
-  # .Object@CostCurr <- c(1,1)
-  # .Object@RevCurr <- c(1,1)
-  # .Object@Response <- c(0.05,0.05)
-  # .Object@CostInc <- c(1,1)
-  # .Object@RevInc <-c(1,1)
-  # .Object@LatentEff<- numeric(0)
-  
-  if (!is.na(file)) {
-    
-  } else {
-    # message("File doesn't exist")
-  }
-  .Object
-})
 
 
 # ---- OM Class ----
@@ -969,7 +922,6 @@ setMethod("initialize", "BioEco", function(.Object, file = NA, dec=c(".", ",")) 
 #' @template Fleet_template
 #' @template Obs_template
 #' @template Imp_template
-#' @template BioEco_template
 #' 
 #' @author T. Carruthers and A. Hordyk
 #' @export
@@ -981,11 +933,10 @@ setClass("OM", representation(Name = "character", Agency="character",
                               nsim="numeric", proyears="numeric", 
                               interval='numeric', pstar='numeric', maxF='numeric', reps='numeric',
                               cpars="list",seed="numeric", Source="character"), 
-         contains=c("Stock", "Fleet", "Obs", "Imp", "BioEco"))
+         contains=c("Stock", "Fleet", "Obs", "Imp"))
 # initialize OM
 setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Generic_Fleet, 
-                                       Obs=DLMtool::Generic_Obs, Imp=DLMtool::Perfect_Imp, 
-                                       BioEco=new("BioEco"),
+                                       Obs=DLMtool::Generic_Obs, Imp=DLMtool::Perfect_Imp,
                                        interval=4, pstar=0.5, maxF=0.8, reps=1, nsim=48, proyears=50) {
   if (is.null(Stock)) {
     message("No Stock object found. Returning a blank OM object") 

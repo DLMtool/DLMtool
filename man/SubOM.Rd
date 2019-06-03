@@ -4,16 +4,16 @@
 \alias{SubOM}
 \title{Subset a Stock, Fleet, Obs, or Imp object from an OM object}
 \usage{
-SubOM(OM, Sub = c("Stock", "Fleet", "Obs", "Imp", "BioEco"))
+SubOM(OM, Sub = c("Stock", "Fleet", "Obs", "Imp"))
 }
 \arguments{
 \item{OM}{An operating model object (class OM)}
 
 \item{Sub}{A character string specifying what object type to strip out
-"Stock", "Fleet", "Obs", "Imp", or "BioEco"}
+"Stock", "Fleet", "Obs", or "Imp"}
 }
 \value{
-An object of class Stock, Fleet, Obs, Imp, or BioEco
+An object of class Stock, Fleet, Obs, or Imp
 }
 \description{
 A function that strips out a Stock, Fleet, Obs, or Imp object from a

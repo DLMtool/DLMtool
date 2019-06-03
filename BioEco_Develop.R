@@ -1,6 +1,7 @@
 ## TOP -----
 library(DLMtool); library(dplyr)
-
+library(ggplot2); library(tidyr)
+library(cowplot)
 
 OM <- new("OM", Stock=Albacore, 
           Fleet=Generic_FlatE, 
@@ -8,6 +9,108 @@ OM <- new("OM", Stock=Albacore,
           Imp=Perfect_Imp)
 OM@qinc <- c(0,0)
 OM@nsim <- 3
+OM@proyears <- 100
+OM@h <- c(0.7, 0.7)
+OM@D <- c(0.4, 0.4)
+
+
+OM2 <- OM 
+OM2@cpars$RevCurr <- runif(OM@nsim, 1.1, 1.3)
+OM2@cpars$CostCurr <- runif(OM@nsim,0.95, 1.05)
+OM2@cpars$Response <- runif(OM@nsim, 0.1, 0.1)
+OM2@cpars$CostInc <- runif(OM@nsim, 2,3)  
+OM2@cpars$RevInc <- runif(OM@nsim, 2,3)
+
+# OM2@cpars$LatentEff <- runif(OM@nsim, 0.2, 0.2) # get rid of
+
+Eff1 <- function(x, Data, ...) {
+  # Rec <- Itarget1(x, Data, ...)
+  Rec@Effort <- 1.5
+  Rec
+}
+class(Eff1) <- "MP"
+
+MPs <- c('NMref', 'Itarget1', "ItargetE1", 'curE', "Eff1")
+
+
+MSE1 <- runMSE(OM, MPs=MPs)
+MSE2 <- runMSE(OM2, MPs=MPs)
+
+sim <- 2
+
+MSEobj <- MSE2
+
+Depletion <- as.vector(MSEobj@SSB[sim, , ])/MSEobj@OM$SSB0[sim]
+BMSY_B0 <- MSEobj@OM$SSBMSY_SSB0[sim]
+MPs <- rep(MSEobj@MPs, MSEobj@proyears)
+Years <- rep(1:MSEobj@proyears, each=MSEobj@nMPs)
+
+Catch <- as.vector(MSEobj@C[sim, , ])/MSEobj@OM$RefY[sim]
+TAC <- as.vector(MSEobj@TAC[sim,,])/MSEobj@OM$RefY[sim]
+
+Effort <- as.vector(MSEobj@Effort[sim, , ])
+TAE <- as.vector(MSEobj@Misc$TAE[sim,,])
+
+Cost <- as.vector(MSEobj@Misc$Cost[sim, , ])
+Revenue <- as.vector(MSEobj@Misc$Revenue[sim, , ])
+Profit <- Revenue - Cost
+
+DF <- data.frame(MP=MPs, Year=Years, Depletion=Depletion, BMSY_B0=BMSY_B0,
+                 Catch=Catch, TAC=TAC,
+                 Effort=Effort, TAE=TAE,
+                 Cost=Cost, Revenue=Revenue, Profit=Profit)
+
+MP1 <- MSEobj@MPs[1]
+MP1 <- MSEobj@MPs[2]
+MP1 <- MSEobj@MPs[3]
+MP1 <- MSEobj@MPs[4]
+MP1 <- MSEobj@MPs[5]
+
+pDF <- DF %>% filter(MP==MP1)
+LineSize <- 1 
+p1 <- ggplot(pDF, aes(x=Year, y=Depletion)) + geom_line(size=LineSize) +
+  theme_classic() + expand_limits(y=c(0,1)) +
+  geom_abline(slope=0, intercept = BMSY_B0, lty=2)
+
+p2 <- ggplot(pDF, aes(x=Year, y=Catch)) + geom_line(size=LineSize) +
+  theme_classic() + expand_limits(y=0) +
+  geom_line(aes(x=Year, y=TAC))
+
+p3 <- ggplot(pDF, aes(x=Year, y=Effort)) + geom_line(size=LineSize) +
+  theme_classic() + expand_limits(y=0) +
+  geom_line(aes(x=Year, y=TAE))
+
+pDF2 <- pDF %>% gather("key", "value", 9:10)
+
+p4 <- ggplot(pDF2, aes(x=Year, y=value, color=key)) + geom_line(size=LineSize) +
+  geom_line(aes(x=Year, y=Profit, color="Profit"), size=LineSize) + 
+  theme_classic() + expand_limits(y=0) +
+  geom_abline(slope=0, intercept = 0, lty=2)
+
+p <- plot_grid( p1, p2, p3, p4, ncol=2, labels="auto")
+
+title <- ggdraw() + draw_label(MP1, fontface='bold')
+plot_grid(title, p, ncol=1, rel_heights=c(0.1, 1))
+
+# plot Catch & Revenue together
+# plot Effort & Cost together
+
+# Summarize performance in economic terms 
+# Net present value 
+# discounting ...
+
+
+
+DF2 <- DF %>% tidyr::gather('key', 'value', c(3,5,7,9,10,11))
+
+head(DF2)
+DF3 <- DF2 %>% filter(MP=="curE")
+
+
+ggplot(DF3, aes(x=Year, y=value)) + facet_wrap(~key, scales="free", ncol=6) +
+  geom_line()
+
+
 
 # Test without bio-economic model - no BioEco parameters
 # - effort control - curE - OK 
@@ -73,13 +176,7 @@ Plot <- function(MSE, mm=1, sim=1) {
 # with a bio-economic model
 # OM <- tinyErr(OM)
 # OM@Perr <- c(0.1,0.1)
-OM@proyears <- 100
-OM@h <- c(0.7, 0.7)
-OM@D <- c(0.7, 0.7)
-OM@RevCurr <- c(1,1)
-OM@CostCurr <- c(1,1)
-OM@Response <- c(0.1, 0.1) # add checks
-OM@RevInc <- OM@CostInc <- c(0, 0)# add checks if first two populated 
+
 
 MSE <- runMSE(OM, MPs=c('Itarget1', 'NMref', 'AvC'))
 
@@ -165,12 +262,7 @@ OM@interval <- 1
 
 # No TAC or TAE - cost = revenue - depleted
 
-nothing <- function(x, Data, ...) {
-  new("Rec")
-}
-class(nothing) <- "MP"
 
-MPs <- c('nothing', 'matlenlim', "ITM")
 
 OM@LatentEff <- numeric(0)
 OM@CostCurr <- c(1,1)
