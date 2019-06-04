@@ -5,7 +5,6 @@
 \alias{FMSYref50}
 \alias{FMSYref75}
 \alias{NFref}
-\alias{NMref}
 \title{Reference management procedures}
 \usage{
 FMSYref(x, Data, reps = 100, plot = FALSE)
@@ -15,8 +14,6 @@ FMSYref50(x, Data, reps = 100, plot = FALSE)
 FMSYref75(x, Data, reps = 100, plot = FALSE)
 
 NFref(x, Data, reps = 100, plot = FALSE)
-
-NMref(x, Data, ...)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -51,9 +48,6 @@ short-lived species of high temporal variability in productivity!
 \item \code{FMSYref75}: A reference FMSY method that fishes at 75\% of FMSY
 
 \item \code{NFref}: A reference MP that sets annual catch to almost zero (0.01)
-
-\item \code{NMref}: A reference MP with no management. Fishing effort is driven entirely
-by bio-economic model
 }}
 
 \section{Required Data}{

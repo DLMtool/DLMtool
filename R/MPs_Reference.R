@@ -67,10 +67,3 @@ NFref <- function(x, Data, reps = 100, plot=FALSE) {
 }
 class(NFref) <- "MP"
 
-#' @describeIn FMSYref A reference MP with no management. Fishing effort is driven entirely
-#' by bio-economic model
-#' @export
-NMref <- function(x, Data, ...) {
-  new("Rec")
-}
-class(NMref) <- "MP"
