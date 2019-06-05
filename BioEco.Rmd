@@ -89,7 +89,7 @@ With the bio-economic model the TAC and TAE act as total catch and effort limits
 
 Effort $E$ in year $t+1$ is calculated as:
 
-$$ E_{t+1} = \text{max}(E_t + \eta P_t), 0)$$
+$$ E_{t+1} = \text{max}(E_t + \eta P_t, 0)$$
 where \(\eta\) is a responsiveness parameter that determines the rate that fishers enter or leave the fishery based on the profit $\left(P_t\right)$ from the current year $t$. 
 
 Profit is calculated as: 
