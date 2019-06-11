@@ -10,6 +10,7 @@
 #' @examples
 #' testOM<-ForceCor(testOM)
 ForceCor<-function(OM,nsim=48,plot=T){
+  .Deprecated("LH2OM", msg="Life-history correlations are now calculated using data from FishBase.\nConsider using `LH2OM` instead.")
   
   if("nsim"%in%slotNames(OM))nsim<-OM@nsim
   if("seed"%in%slotNames(OM))set.seed(OM@seed)
