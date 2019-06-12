@@ -1,0 +1,39 @@
+---
+params: 
+    title: ""
+    StockPars: "`r list()`"
+    plotPars: "`r list()`"
+    tabs: "`r TRUE`"
+    its: " `r numeric()`"
+    nyears: " `r numeric()`"
+    proyears: " `r numeric()`"
+title: "`r params$title`"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+# Stock Parameters 
+
+```{r def-assign-params, include=FALSE}
+assign_params <- function(file) {
+  text <- readLines(file)
+  knit_params <- knitr::knit_params(text)
+  params <<- purrr::map(knit_params, "value")
+}
+```
+
+
+
+
+```{r Natural_M, child = 'Stock_NaturalMortality.Rmd'}
+```
+
+```{r Growth, child = 'Stock_Growth.Rmd'}
+```
+
+
+
