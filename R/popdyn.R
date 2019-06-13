@@ -1127,7 +1127,7 @@ split.along.dim <- function(a, n) {
 #' @param Wt_age An array (dimensions nsim, maxage, nyears+proyears) with the weight-at-age and year 
 #' @param V An array (dimensions nsim, maxage, nyears+proyears) with the vulnerability-at-age and year
 #' @param retA An array (dimensions nsim, maxage, nyears+proyears) with the probability retained-at-age and year
-#' @param Perr A matrix (dimensions nsim, nyears+proyears) with the recruitment deviations
+#' @param Perr_y A matrix (dimensions nsim, nyears+proyears) with the recruitment deviations
 #' @param mov An array (dimensions nsim, nareas, nareas, nyears+proyears) with the movement matrix
 #' @param SRrel A numeric vector nsim long specifying the recruitment curve to use
 #' @param Find A matrix (dimensions nsim, nyears) with the historical fishing effort 
@@ -1144,15 +1144,16 @@ split.along.dim <- function(a, n) {
 #' @author A. Hordyk
 #' @keywords internal
 getq3 <- function(x, D, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, Asize, Wt_age,
-                  V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, 
-                  bounds = c(1e-05, 15), maxF, MPA, useCPP=TRUE) {
+                  V, retA, Perr_y, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, 
+                  bounds = c(1e-05, 15), maxF, MPA, 
+                  nts, recTS, useCPP=TRUE) {
   
-  opt <- optimize(optQ, log(bounds), depc=D[x], SSB0c=SSB0[x], nareas, maxage, Ncurr=N[x,,1,], 
+  opt <- optimize(optQ, log(bounds), depc=D[x], SSB0c=SSB0[x], nareas, maxage, Ncurr=N[x,,nts,], 
                   pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,,], Asize_c=Asize[x,], WtAge=Wt_age[x,,],
-                  Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=split.along.dim(mov[x,,,,],4), 
-                  SRrelc=SRrel[x], 
-                  Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-                  SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], maxF=maxF, MPA=MPA, useCPP=useCPP)
+                  Vuln=V[x,,], Retc=retA[x,,], Prec=Perr_y[x,], movc=split.along.dim(mov[x,,,,],4), 
+                  SRrelc=SRrel[x], Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+                  SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], maxF=maxF, MPA=MPA, recTS=recTS,
+                  nts=nts, useCPP=useCPP)
   return(exp(opt$minimum))
 }
 
@@ -1189,7 +1190,7 @@ getq3 <- function(x, D, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, As
 
 optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_c,
                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
-                 R0c, SSBpRc, aRc, bRc, maxF, MPA, useCPP) {
+                 R0c, SSBpRc, aRc, bRc, maxF, MPA, recTS, nts, useCPP) {
   if (!useCPP) {
     # simpop <- popdyn(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
     #                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
@@ -1200,9 +1201,15 @@ optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_
     simpop <- popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
                         MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
                         R0c=R0c, SSBpRc=SSBpRc, aRc=aRc, bRc=bRc, Qc=exp(logQ), Fapic=0, 
-                        maxF=maxF, MPA=MPA, control=1,  SSB0c=SSB0c) 
+                        maxF=maxF, MPA=MPA, control=1,  SSB0c=SSB0c, recTS=recTS) 
   
-    ssb <- sum(simpop[[4]][,pyears,])
+    ssb <- simpop[[4]][,(pyears-nts+1):pyears,] # SSB at age, sub-year, and area
+    if (nts >1) {
+      ssb <- apply(ssb, 2, sum) # total SSB per sub-year
+      ssb <- mean(ssb) # average SSB in last year
+    } else {
+      ssb <- sum(ssb)
+    }
   }
   
   (log(depc) - log(ssb/SSB0c))^2

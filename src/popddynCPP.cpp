@@ -29,7 +29,7 @@ arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcu
                          NumericMatrix Ncurr,  Rcpp::NumericMatrix Zcurr, double PerrYr,
                          double hs,  Rcpp::NumericVector R0a,  Rcpp::NumericVector SSBpR,
                          Rcpp::NumericVector aR,  Rcpp::NumericVector bR,  arma::cube mov,
-                         double SRrel) {
+                         double SRrel, double rec_season) {
   
   arma::mat Nnext(maxage, nareas);
   // arma::mat tempMat2(nareas, nareas);	
@@ -39,12 +39,12 @@ arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcu
   for (int A=0; A < nareas; A++) {
     if (SRrel == 1) {
       // BH SRR
-      Nnext(0, A) = PerrYr * (4*R0a(A) * hs * SSBcurr(A))/(SSBpR(A) * R0a(A) * (1-hs) + (5*hs-1) * SSBcurr(A));
+      Nnext(0, A) = PerrYr * (4*R0a(A) * hs * SSBcurr(A))/(SSBpR(A) * R0a(A) * (1-hs) + (5*hs-1) * SSBcurr(A)) * rec_season;
     }	
     if (SRrel == 2) {
       // most transparent form of the Ricker uses alpha and beta params
       
-      Nnext(0, A) = PerrYr * aR(A) * SSBcurr(A) * exp(-bR(A) * SSBcurr(A));
+      Nnext(0, A) = PerrYr * aR(A) * SSBcurr(A) * exp(-bR(A) * SSBcurr(A)) * rec_season;
     }
     // Mortality
     for (int age=1; age<maxage; age++) {
@@ -116,7 +116,7 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
                List movc, double SRrelc, arma::vec Effind,
                double Spat_targc, double hc, NumericVector R0c, NumericVector SSBpRc,
                NumericVector aRc, NumericVector bRc, double Qc, double Fapic, double maxF, 
-               arma::mat MPA, int control, double SSB0c) {
+               arma::mat MPA, int control, double SSB0c, NumericVector recTS) {
   
   arma::cube Narray(maxage, pyears, nareas, arma::fill::zeros);
   arma::cube Barray(maxage, pyears, nareas, arma::fill::zeros);
@@ -142,7 +142,6 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
   // Initial year
   Narray.subcube(0, 0, 0, maxage-1, 0, nareas-1) = Ncurr;
   
-
   int yr = 0;
   arma::cube movcy = movc(yr);
   
@@ -191,8 +190,10 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
     arma::mat Ncurr2 = Narray.subcube(0, yr, 0, maxage-1, yr, nareas-1);
     arma::mat Zcurr = Zarray.subcube(0, yr, 0, maxage-1, yr, nareas-1);
     
+    double rec_season = recTS(yr);
     arma::mat NextYrN = popdynOneTScpp(nareas, maxage, wrap(SB), wrap(Ncurr2), wrap(Zcurr), 
-                                       Prec(yr+maxage), hc, R0c2, SSBpRc, aRc2, bRc2, movcy, SRrelc); 
+                                       Prec(yr+maxage), hc, R0c2, SSBpRc, aRc2, bRc2, movcy, SRrelc,
+                                       rec_season); 
   
     Narray.subcube(0, yr+1, 0, maxage-1, yr+1, nareas-1) = NextYrN;
     for (int A=0; A<nareas; A++) {
