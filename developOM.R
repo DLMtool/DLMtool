@@ -283,8 +283,6 @@ calcEqYr <- function(x, totyears=nyears+proyears, R0init, M_ageArray) {
   
   for (Yr in 1:totyears) {
     tsind <- seq(from=Yr*nts-nts+1, to=(Yr*nts-nts)+nts, by=1)
-    
-    
     if (nts > 1) {
       N[1,tsind] <-  R0init[,x]
       Ms <- diag(M_ageArray[x, 1:(maxage-1), rev(tsind)])  
@@ -316,13 +314,8 @@ N02[1,,1:nts] %>% head(20)
 N02[1,,5:8] %>% head(20)
 
 
-stop()
 
 
-
-
-# First Time-Step
-# Recruitment should follow recVec
 
 
 
