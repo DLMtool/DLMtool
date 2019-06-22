@@ -425,6 +425,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
     Effort_act[Effort_act>TAE] <- TAE[Effort_act>TAE]
   }
   Effort_act[Effort_act<=0] <- tiny
+  
   # --- Re-calculate catch given actual effort ----
   # fishing mortality with actual effort 
   FM_P[SAYR] <- (FinF[S1] * Effort_act[S1] * V_P[SAYt] * t(Si)[SR] * fishdist[SR] *
