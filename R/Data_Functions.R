@@ -617,13 +617,14 @@ match_slots <- function(func, slotnams = paste0("Data@", slotNames("Data")),
   if(internal) ind_MP <- vapply(slots, grepl, logical(1), x = func)
   if(!internal) ind_MP <- vapply(slotnams, grepl, logical(1), x = func)
   if(!is.null(Data) && inherits(Data, "Data")) { # check if Data slots return NA or zero
-    ind_NAor0 <- vapply(slots, function(x) all(NAor0(slot(Data, x))), logical(1))
+    ind_NAor0 <- vapply(slots, function(x) all(is.na(slot(Data, x))), logical(1))
     repp <- slots[ind_MP & ind_NAor0] # returns slots where both tests are true
   } else {
     repp <- slots[ind_MP]
   }
   return(paste(repp, collapse = ", "))
 }
+
 
 #' @describeIn Can Identifies what data are needed to run
 #' the MPs that are currently not able to run given a Data

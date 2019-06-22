@@ -555,7 +555,7 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
                     CB_hist = MSEobj@CB_hist[SubIts, , , , drop = FALSE], 
                     FM_hist = MSEobj@FM_hist[SubIts, , , , drop = FALSE], 
                     Effort = SubEffort, PAA=SubPAA, CAL=SubCAL, CAA=SubCAA , CALbins=CALbins,
-                    Misc=list())
+                    Misc=MSEobj@Misc)
   
   return(SubResults)
 }

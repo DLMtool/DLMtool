@@ -736,7 +736,7 @@ predictLH <- function(inpars=list(), Genus="predictive", Species="predictive", n
 #' @param OM An operating model object (class OM) which will be updated with a sub-model from another OM
 #' @param from An object of class `OM`, `Stock`, `Fleet`, `Obs`, or `Imp` to be replace the values in `OM`
 #' @param Sub A character string specifying what object type to replace (only used if `from` is class `OM`)
-#' "Stock", "Fleet", "Obs" or "Imp" (default is all four which is probably not what you want to do)
+#' "Stock", "Fleet", "Obs", or "Imp" (default is all four which is probably not what you want to do)
 #' @param Name Character. Name for the new OM object (`OM@Name`)
 #' @param silent Should messages be printed?
 #' 
@@ -766,13 +766,13 @@ Replace <- function(OM, from,Sub=c("Stock", "Fleet", "Obs", "Imp"),  Name=NULL, 
   if (class(OM) !="OM") stop("OM must be of class OM ", call.=FALSE)
   if (class(from) =="character") from <- get(from)
   if (!class(from) %in% c("OM", "Stock", "Fleet", "Obs", "Imp")) 
-    stop("from must be class `OM`, `Stock`, `Fleet`, `Obs`, or `Imp`", call.=FALSE)
+    stop("from must be class `OM`, `Stock`, `Fleet`, `Obs`, `Imp`", call.=FALSE)
   
   Stock <- SubOM(OM, "Stock")
   Fleet <- SubOM(OM, "Fleet")
   Obs <- SubOM(OM, "Obs")
   Imp <- SubOM(OM, "Imp")
-  
+ 
   if (class(from) == "OM") {
     Sub <- match.arg(Sub, several.ok=TRUE)
     if (length(Sub)==4) warning("Replacing all OM components. Probably not what you want to do ...")
@@ -836,7 +836,7 @@ SubOM <- function(OM, Sub=c("Stock", "Fleet", "Obs", "Imp")) {
   
   if (ind < 4) temp@Name <- substr(temp@Name, colon[[1]][ind]+1, space[[1]][ind]-1)
   if (ind == 4) temp@Name <- substr(temp@Name, colon[[1]][ind]+1, nchar(temp@Name))
-  
+  # if (ind == 5) temp@Name <- substr(temp@Name, colon[[1]][ind]+1, space[[1]][ind]-1)
   temp 
 }
 

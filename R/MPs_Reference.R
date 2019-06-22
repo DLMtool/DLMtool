@@ -67,4 +67,3 @@ NFref <- function(x, Data, reps = 100, plot=FALSE) {
 }
 class(NFref) <- "MP"
 
-

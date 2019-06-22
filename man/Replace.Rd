@@ -13,7 +13,7 @@ Replace(OM, from, Sub = c("Stock", "Fleet", "Obs", "Imp"), Name = NULL,
 \item{from}{An object of class \code{OM}, \code{Stock}, \code{Fleet}, \code{Obs}, or \code{Imp} to be replace the values in \code{OM}}
 
 \item{Sub}{A character string specifying what object type to replace (only used if \code{from} is class \code{OM})
-"Stock", "Fleet", "Obs" or "Imp" (default is all four which is probably not what you want to do)}
+"Stock", "Fleet", "Obs", or "Imp" (default is all four which is probably not what you want to do)}
 
 \item{Name}{Character. Name for the new OM object (\code{OM@Name})}
 
