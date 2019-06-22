@@ -247,7 +247,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   projnTS <- proyears * nts # number of time-steps in projection period
   
   # --------------------------------------- #
-  recVec <- rep(1, nts) # c(0.1, 0.2, 0.3, 0.4) # add check to sum to one etc
+  recVec <- c(0.1, 0.2, 0.3, 0.4) # add check to sum to one etc
   recVec <- recVec/sum(recVec)
   recTS <- rep(recVec, nyears+proyears) # recruitment per time-step
   
@@ -487,7 +487,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     Sa_a[,2] <- maxage-SA_a[,2] + 1 # This is the process error index for initial year
     
     # Calculate initial stock numbers for first nts time-steps
-    N[SAYR_a] <- R0[S_a] * histRec[SAYR_a[,2:3]] * surv[SAY_a] * initdist[SAR_a]*Perr_y[SY_a] 
+    N[SAYR_a] <- R0[S_a] * histRec[SAYR_a[,2:3]] * surv[SAY_a] * initdist[SAR_a]*Perr_y[Sa_a] 
     
   }
   
@@ -530,8 +530,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       MPA[tsindex:nrow(MPA),] <- matrix(OM@MPA[xx, 2:ncol(OM@MPA)], nrow=length(tsindex:nrow(MPA)),ncol=nareas, byrow = TRUE)
     }
   }
- 
-  ######### DEVELOP #############
  
   # --- Optimize catchability (q) to fit depletion ---- 
   if(!silent) message("Optimizing for user-specified depletion in last historical year")
@@ -642,7 +640,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     Depletion <- apply(SSB[,,nyears,],1,sum)/SSB0
   }
   
-  
   # Check that depletion is correct
   if (checks) {
     if (prod(round(D, 2)/ round(Depletion,2)) != 1) {
@@ -651,22 +648,18 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     } 
   } 
 
-  # Depletion should be exactly the same !
-
-  ################### END DEVELOP ###########
-  stop()
-  
   # --- Calculate MSY statistics for each year ----
   MSY_y <- array(0, dim=c(nsim, nyears+proyears)) # store MSY for each sim and year
   FMSY_y <- MSY_y # store FMSY for each sim, and year
-  SSBMSY_y <- MSY_y # store SSBMSY for each sim, and year 
+  SSBMSY_y <- MSY_y # store SSBMSY for each sim, and year
   BMSY_y <- MSY_y # store BMSY for each sim, and year
   VBMSY_y <- MSY_y # store VBMSY for each sim, and year 
   
   if(!silent) message("Calculating MSY reference points for each year")
-  # average life-history parameters over 10 years
+  # Calculate MSY ref points for each year 
   for (y in 1:(nyears+proyears)) {
-    MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, yr.ind=y)
+    MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, 
+                        maxage, R0, SRrel, hs, yr.ind=y, nts, tyears=nyears+proyears)
     MSY_y[,y] <- MSYrefsYr[1, ]
     FMSY_y[,y] <- MSYrefsYr[2,]
     SSBMSY_y[,y] <- MSYrefsYr[3,]
@@ -675,9 +668,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   }
   
   # --- MSY reference points ----
+  # MSY reference points are calculated by averaging the annual MSY refs (calculated
+  # above) over (nyears - average age-of-maturity):nyears - where nyears is the
+  # last historical year
   MSYRefPoints <- sapply(1:nsim, CalcMSYRefs, MSY_y=MSY_y, FMSY_y=FMSY_y, 
                          SSBMSY_y=SSBMSY_y, BMSY_y=BMSY_y, VBMSY_y=VBMSY_y, 
-                         ageM=ageM, OM=OM)
+                         ageM=ageM, nyears, nts)
                          
   MSY <- MSYRefPoints[1,] %>% unlist() # record the MSY results (Vulnerable)
   FMSY <- MSYRefPoints[2,] %>% unlist()  # instantaneous FMSY (Vulnerable)
@@ -685,11 +681,14 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   BMSY <- MSYRefPoints[4,] %>% unlist() # total biomass at MSY
   VBMSY <- MSYRefPoints[5,] %>% unlist() # Biomass at MSY (Vulnerable)
   UMSY <- MSY/VBMSY  # exploitation rate 
-  FMSY_M <- FMSY/M  # ratio of true FMSY to natural mortality rate M
+  FMSY_M <- FMSY/(M*nts)  # ratio of true FMSY to natural mortality rate M
   
   SSBMSY_SSB0 <- SSBMSY/SSB0 # SSBMSY relative to unfished (SSB)
   BMSY_B0 <- BMSY/B0 # Biomass relative to unfished (B0)
   VBMSY_VB0 <- VBMSY/VB0 # VBiomass relative to unfished (VB0)
+  
+  # fix these!
+  
   
   if (!AnnualMSY) {
     warning('AnnualMSY argument is deprecated. MSY metrics are always calculated by year.\n Use `MSE@SSB` or `MSE@B` and `MSE@Misc$MSYRefs$ByYear` for alternative methods to calculate B/BMSY')
@@ -702,6 +701,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     plot(x,y, xlim=c(0,max(x)), ylim=c(0,max(y)), xlab="SSB/SSBMSY", ylab="D/SSBMSY_SSB0")
     lines(c(-10,10),c(-10,10))
   }
+  
+  stop()
   
   # --- Calculate B-low ---- 
   # (SSB where it takes MGThorizon x MGT to reach Bfrac of BMSY)
@@ -1252,6 +1253,7 @@ cparscheck<-function(cpars){
   dims <- dims[!grepl("CAL_bins", names(dims))]  # ignore CAL_bins
   dims <- dims[!grepl("maxage", names(dims))]  # ignore maxage
   dims <- dims[!grepl("binWidth", names(dims))]  # ignore maxage
+  dims <- dims[!grepl("nts", names(dims))]  # ignore maxage
   
   if (length(dims) > 0) {
     if(length(unique(dims))!=1){

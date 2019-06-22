@@ -844,20 +844,108 @@ CalcUnfishedRefs <- function(x, ageM, N0_a, SSN0_a, SSB0_a, B0_a, VB0_a, SSBpRa,
   list(N0=N0, SSN0=SSN0, SSB0=SSB0, B0=B0, VB0=VB0, SSBpR=SSBpR, SSB0a=SSB0a)
 }
 
-CalcMSYRefs <- function(x, MSY_y, FMSY_y, SSBMSY_y, BMSY_y, VBMSY_y, ageM, OM) {
-  n.yrs <- ceiling(ageM[x,OM@nyears]) # MSY ref points averaged over these years
-  nyears <- dim(ageM)[2]
-  minY <- floor(n.yrs/2) 
-  maxY <- n.yrs - minY - 1 
-  avg.ind <- (OM@nyears - minY):(OM@nyears + maxY)
-  if (max(avg.ind) > nyears) avg.ind <- avg.ind[avg.ind < nyears]
-  
+CalcMSYRefs_TS <- function(x, MSY_y, FMSY_y, SSBMSY_y, BMSY_y, VBMSY_y, ageM, histnTS, nts) {
+  n.ts <- ceiling(ageM[x,histnTS]) # MSY ref points averaged over these time-steps
+  tot.ts <- dim(MSY_y)[2]
+  minY <- floor(n.ts/2)
+  maxY <- (n.ts - minY - 1)
+  avg.ind <- (histnTS - minY):(histnTS + maxY)
+
+  if (max(avg.ind) > tot.ts) avg.ind <- avg.ind[avg.ind < tot.ts]
+
   MSY <- mean(MSY_y[x, avg.ind])
   FMSY <- mean(FMSY_y[x, avg.ind])
   SSBMSY <- mean(SSBMSY_y[x, avg.ind])
   BMSY <- mean(BMSY_y[x, avg.ind])
   VBMSY <- mean(VBMSY_y[x, avg.ind])
   data.frame(MSY=MSY, FMSY=FMSY, SSBMSY=SSBMSY, BMSY=BMSY, VBMSY=VBMSY)
+}
+  
+CalcMSYRefs <- function(x, MSY_y, FMSY_y, SSBMSY_y, BMSY_y, VBMSY_y, ageM, nyears, nts) {
+  
+  n.yrs <- ceiling(ageM[x,nyears*nts]) /nts # MSY ref points averaged over these years
+  tot.years <- dim(MSY_y)[2]
+  minY <- floor(n.yrs/2)
+  maxY <- (n.yrs - minY - 1)
+  avg.ind <- (nyears - minY):(nyears + maxY)
+
+  if (max(avg.ind) > tot.years) avg.ind <- avg.ind[avg.ind < tot.years]
+
+  MSY <- mean(MSY_y[x, avg.ind])
+  FMSY <- mean(FMSY_y[x, avg.ind])
+  SSBMSY <- mean(SSBMSY_y[x, avg.ind])
+  BMSY <- mean(BMSY_y[x, avg.ind])
+  VBMSY <- mean(VBMSY_y[x, avg.ind])
+  data.frame(MSY=MSY, FMSY=FMSY, SSBMSY=SSBMSY, BMSY=BMSY, VBMSY=VBMSY)
+}
+
+# calcInitRec <- function(x, tempMat, nts, M_ageArray) {
+#   for (ts in 1:(nts-1)) {
+#     tempM <- M_ageArray[x, ts:(nts-1), 1:nts]
+#     if (!is.null(nrow(tempM))) {
+#       tempM <- apply(M_ageArray[x, ts:(nts-1), 1:nts], 2, sum)
+#     }
+#     tempMat[ts,] <- tempMat[ts,] * exp(tempM)
+#   }
+#   tempMat
+# }
+# 
+# calcHistRec <- function(recVec, maxage, nts, nsim, M_ageArray) {
+#   histRec <- matrix(NA, nrow=maxage, ncol=nts, byrow=TRUE)
+#   tempMat <- matrix(NA, ncol = length(recVec), nrow = length(recVec))
+#   trecVec <- rev(recVec)
+#   for (ts in 1:nts) {
+#     tempMat[,ts] <- trecVec
+#     trecVec <- c(trecVec[nts], (trecVec[1:(nts-1)]))
+#   }
+#   if (nts >1) {
+#     initRecs <- sapply(1:nsim, calcInitRec, tempMat=tempMat, nts=nts, M_ageArray=M_ageArray)
+#     initRecs <- array(initRecs, dim=c(nts, nts, nsim))
+#   } else {
+#     initRecs <- array(tempMat, dim=c(1, 1, nsim))
+#   }
+#   
+#   histRec <- do.call("rbind", rep.int(list(tempMat), (maxage-nts)/nts))
+#   histRec <- replicate(nsim, histRec)
+#   histRec <- abind::abind(initRecs, histRec, along=1)
+#   histRec <- aperm(histRec, c(3,1,2))
+#   histRec
+# }
+
+calcInitRec <- function(x, tempMat, nts, M_ageArray) {
+  for (ts in 1:(nts-1)) {
+    tempM <- M_ageArray[x,ts:(nts-1),] 
+    if (!is.null(nrow(tempM))) {
+      tempM <- apply(tempM, 2, sum)
+    }
+    tempMat[ts,] <- tempMat[ts,] * exp(tempM)
+  }
+  tempMat[1:(nts-1),]
+}
+
+
+calcHistRec <- function(recTS, maxage, nts, nsim, M_ageArray) {
+  tot_ts <- dim(M_ageArray)[3]
+  tempMat <- matrix(NA, ncol = length(recTS), nrow =maxage)
+  trecVec <- rev(recTS[1:maxage])
+  for (ts in 1:tot_ts) {
+    tempMat[,ts] <- trecVec
+    trecVec <- c(trecVec[nts], (trecVec[1:(nts-1)]))
+  }
+  
+  if (nts >1) {
+    initRecs <- sapply(1:nsim, calcInitRec, tempMat=tempMat, nts=nts, M_ageArray=M_ageArray)
+    initRecs <- array(initRecs, dim=c(nts-1, tot_ts, nsim))
+    initRecs <- aperm(initRecs, c(3,1,2))
+  } else {
+    initRecs <- array(tempMat, dim=c(1, 1, nsim))
+  }
+  
+  histRec <- replicate(nsim, tempMat)
+  histRec <- aperm(histRec, c(3,1,2))
+  histRec[,1:(nts-1),] <- initRecs
+
+  histRec
 }
 
 # 

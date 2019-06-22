@@ -959,38 +959,84 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
 #' @param SRrel SRR type
 #' @param hs Vector of steepness
 #' @param yr.ind Year index used in calculations 
-#'
+#' @param nts Number of sub-year time-steps
+#' 
 #' @return Results from `MSYCalcs`
 #' @export
 #'
 #' @keywords internal
-optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, yr.ind=1) {
-  if (length(yr.ind)==1) {
-    M_at_Age <- M_ageArray[x,,yr.ind]
-    Wt_at_Age <- Wt_age[x,, yr.ind]
-    Mat_at_Age <- Mat_age[x,, yr.ind]
-    V_at_Age <- V[x,, yr.ind]
+optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, 
+                      yr.ind=1, nts, tyears) {
+  
+  Nts <- dim(M_ageArray)[3] # total number of time-steps
+  TSvec <- 1:Nts
+  Yrvec <- rep(1:tyears, each=nts)
+  ts.ind  <- which(Yrvec ==yr.ind)
+  if (length(ts.ind)==1) {
+    M_at_Age <- M_ageArray[x,,ts.ind]
+    Wt_at_Age <- Wt_age[x,, ts.ind]
+    Mat_at_Age <- Mat_age[x,, ts.ind]
+    V_at_Age <- V[x,, ts.ind]
   } else {
-    M_at_Age <- apply(M_ageArray[x,,yr.ind], 1, mean)
-    Wt_at_Age <- apply(Wt_age[x,, yr.ind], 1, mean)
-    Mat_at_Age <- apply(Mat_age[x,, yr.ind], 1, mean)
-    V_at_Age <- apply(V[x,, yr.ind], 1, mean)
+    M_at_Age <- apply(M_ageArray[x,,ts.ind], 1, mean)
+    Wt_at_Age <- apply(Wt_age[x,, ts.ind], 1, mean)
+    Mat_at_Age <- apply(Mat_age[x,, ts.ind], 1, mean)
+    V_at_Age <- apply(V[x,, ts.ind], 1, mean)
+  }
+
+  # convert vectors from sub-years to years (if needed)
+  if (nts >1) {
+    maxage <- maxage/nts
+    M_at_Age <- .colMeans(M_at_Age, nts, maxage) * nts
+    Wt_at_Age <- .colMeans(Wt_at_Age, nts, maxage)
+    Mat_at_Age <- .colMeans(Mat_at_Age, nts, maxage)
+    V_at_Age <- .colMeans(V_at_Age, nts, maxage)
   }
 
   boundsU <- c(1E-3, 1)
-  
-  doopt <- optimise(MSYCalcs, log(boundsU), M_at_Age, Wt_at_Age, Mat_at_Age, 
+
+  doopt <- optimise(MSYCalcs, log(boundsU), M_at_Age, Wt_at_Age, Mat_at_Age,
                     V_at_Age, maxage, R0x=R0[x], SRrelx=SRrel[x], hx=hs[x], opt=1)
-  
+
   UMSY <- exp(doopt$minimum)
-  
-  MSYs <- MSYCalcs(doopt$minimum, M_at_Age, Wt_at_Age, Mat_at_Age, 
+
+  MSYs <- MSYCalcs(doopt$minimum, M_at_Age, Wt_at_Age, Mat_at_Age,
                    V_at_Age, maxage, R0x=R0[x], SRrelx=SRrel[x], hx=hs[x], opt=2)
-  
+
   return(MSYs)
 }
 
 
+optMSY_eq_ts <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, 
+                         ts.ind=1, recTS) {
+  
+  if (length(ts.ind)==1) {
+    M_at_Age <- M_ageArray[x,,ts.ind]
+    Wt_at_Age <- Wt_age[x,, ts.ind]
+    Mat_at_Age <- Mat_age[x,, ts.ind]
+    V_at_Age <- V[x,, ts.ind]
+  } else {
+    M_at_Age <- apply(M_ageArray[x,,ts.ind], 1, mean)
+    Wt_at_Age <- apply(Wt_age[x,, ts.ind], 1, mean)
+    Mat_at_Age <- apply(Mat_age[x,, ts.ind], 1, mean)
+    V_at_Age <- apply(V[x,, ts.ind], 1, mean)
+  }
+
+  seasonRec <- mean(recTS[ts.ind])
+
+  boundsU <- c(1E-3, 1)
+
+  doopt <- optimise(MSYCalcs, log(boundsU), M_at_Age, Wt_at_Age, Mat_at_Age,
+                    V_at_Age, maxage, R0x=R0[x]*seasonRec, SRrelx=SRrel[x], hx=hs[x], opt=1)
+
+  UMSY <- exp(doopt$minimum)
+
+  MSYs <- MSYCalcs(doopt$minimum, M_at_Age, Wt_at_Age, Mat_at_Age,
+                   V_at_Age, maxage, R0x=R0[x]*seasonRec, SRrelx=SRrel[x], hx=hs[x], opt=2)
+
+  return(MSYs)
+}
+  
 #' Internal function to calculate MSY Reference Points
 #'
 #' @param logU log exploitation rate
@@ -1140,20 +1186,19 @@ split.along.dim <- function(a, n) {
 #' @param bounds A numeric vector of length 2 with bounds for the optimizer
 #' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
 #' @param MPA A matrix of spatial closures by year
-#' @param useCPP logical - use the CPP code? For testing purposes only
 #' @author A. Hordyk
 #' @keywords internal
 getq3 <- function(x, D, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, Asize, Wt_age,
                   V, retA, Perr_y, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, 
                   bounds = c(1e-05, 15), maxF, MPA, 
-                  nts, recTS, useCPP=TRUE) {
+                  nts, recTS) {
   
   opt <- optimize(optQ, log(bounds), depc=D[x], SSB0c=SSB0[x], nareas, maxage, Ncurr=N[x,,nts,], 
                   pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,,], Asize_c=Asize[x,], WtAge=Wt_age[x,,],
                   Vuln=V[x,,], Retc=retA[x,,], Prec=Perr_y[x,], movc=split.along.dim(mov[x,,,,],4), 
                   SRrelc=SRrel[x], Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
                   SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], maxF=maxF, MPA=MPA, recTS=recTS,
-                  nts=nts, useCPP=useCPP)
+                  nts=nts)
   return(exp(opt$minimum))
 }
 
@@ -1184,34 +1229,26 @@ getq3 <- function(x, D, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, As
 #' @param bRc Ricker bR
 #' @param maxF maximum F
 #' @param MPA A matrix of spatial closures by year
-#' @param useCPP Logical. Use the CPP code?
 #' @author A. Hordyk
 #' @keywords internal
 
 optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_c,
                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
-                 R0c, SSBpRc, aRc, bRc, maxF, MPA, recTS, nts, useCPP) {
-  if (!useCPP) {
-    # simpop <- popdyn(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
-    #                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
-    #                  R0c=R0c, SSBpRc=SSBpRc, aRc=aRc, bRc=bRc, Qc=exp(logQ), maxF=maxF, MPA=MPA, control=1) 
-    # ssb <- sum(simpop$SBarray[,pyears,]) # doesn't currently work with age-based movement
-    
-  } else {
-    simpop <- popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
-                        MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
-                        R0c=R0c, SSBpRc=SSBpRc, aRc=aRc, bRc=bRc, Qc=exp(logQ), Fapic=0, 
-                        maxF=maxF, MPA=MPA, control=1,  SSB0c=SSB0c, recTS=recTS) 
+                 R0c, SSBpRc, aRc, bRc, maxF, MPA, recTS, nts) {
+  # if (!useCPP) {
+  #   # simpop <- popdyn(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
+  #   #                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
+  #   #                  R0c=R0c, SSBpRc=SSBpRc, aRc=aRc, bRc=bRc, Qc=exp(logQ), maxF=maxF, MPA=MPA, control=1) 
+  #   # ssb <- sum(simpop$SBarray[,pyears,]) # doesn't currently work with age-based movement
+  #   
+  # } else {
+  simpop <- popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
+                      MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
+                      R0c=R0c, SSBpRc=SSBpRc, aRc=aRc, bRc=bRc, Qc=exp(logQ), Fapic=0, 
+                      maxF=maxF, MPA=MPA, control=1,  SSB0c=SSB0c, recTS=recTS) 
   
-    ssb <- simpop[[4]][,(pyears-nts+1):pyears,] # SSB at age, sub-year, and area
-    if (nts >1) {
-      ssb <- apply(ssb, 2, sum) # total SSB per sub-year
-      ssb <- mean(ssb) # average SSB in last year
-    } else {
-      ssb <- sum(ssb)
-    }
-  }
-  
+  ind <- seq(nts, by=nts, to = maxage)
+  ssb <- simpop[[4]][ind,(pyears-nts+1):pyears,] %>% sum() # SSB at age, sub-year, and area
   (log(depc) - log(ssb/SSB0c))^2
   
 }
@@ -1597,7 +1634,6 @@ optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_
 #' @param Qc Catchability 
 #' @param MPA A matrix of spatial closures by year
 #' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
-#' @param useCPP logical - use the CPP code? For testing purposes only
 #' @param SSB0c SSB0
 #' @keywords internal
 #'
@@ -1605,21 +1641,15 @@ optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_
 #' 
 optMSY <- function(logFa, Asize_c, nareas, maxage, Ncurr, pyears, M_age,
                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc,
-                 R0c, SSBpRc, aRc, bRc, Qc, MPA, maxF, useCPP=TRUE, SSB0c) {
+                 R0c, SSBpRc, aRc, bRc, Qc, MPA, maxF, SSB0c, recTS) {
 
   FMSYc <- exp(logFa)
-  if(!useCPP) {
-    # simpop <- popdyn(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
-    #                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc,
-    #                  R0c, SSBpRc, aRc, bRc, Qc, Fapic=FMSYc, MPA=MPA, maxF=maxF, control=2)
-    # doesn't work with age-based movement
-    
-  } else {
-    simpop <- popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
-                     MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc,
-                     R0c, SSBpRc, aRc, bRc, Qc=0, Fapic=FMSYc, MPA=MPA, maxF=maxF, control=2,
-                     SSB0c=SSB0c)
-  }
+
+  simpop <- popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
+                      MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc,
+                      R0c, SSBpRc, aRc, bRc, Qc=0, Fapic=FMSYc, MPA=MPA, maxF=maxF, control=2,
+                      SSB0c=SSB0c, recTS = recTS)
+  
 
   # Yield
   # Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # retained catch
@@ -1668,15 +1698,15 @@ optMSY <- function(logFa, Asize_c, nareas, maxage, Ncurr, pyears, M_age,
 #' @keywords internal
 getFref3 <- function(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
                      V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, 
-                     MPA, maxF, useCPP=TRUE, SSB0) {
+                     MPA, maxF, SSB0, recTS) {
   
   opt <- optimize(optMSY, log(c(0.001, 10)), Asize_c=Asize[x,], nareas, maxage, Ncurr=N[x,,1,], 
                   pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,,], 
                   WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
                   movc=split.along.dim(mov[x,,,,],4), SRrelc=SRrel[x], 
                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-                  SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], MPA=MPA, maxF=maxF, useCPP=useCPP,
-                  SSB0c=SSB0[x])
+                  SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], MPA=MPA, maxF=maxF,
+                  SSB0c=SSB0[x], recTS=recTS)
   
   -opt$objective
   

@@ -70,16 +70,28 @@ OMts <- function(OM, ts=4, silent=FALSE) {
 
 OM_annual <- readRDS("saveOM.rdata")
 OM_annual@interval <- 1
-OM_annual@K <- c(0.11, 0.15)
+OM_annual@K <- c(0.10, 0.10)
+OM_annual@M <- c(0.2, 0.2)
+OM_annual@Linf  <- c(100, 100)
+OM_annual@L50 <- c(60, 60)
+OM_annual@L50_95 <- c(5,5)
+OM_annual@L5 <- c(55, 55)
+OM_annual@LFS <- c(60, 60)
+OM_annual@Vmaxlen <- c(1,1)
 OM_annual@cpars <- list()
 
-OM_annual@nsim <- 3
+OM_annual@nsim <- 4
 # OM_annual <- tinyErr(OM_annual)
-OM_annual@AC <- c(0,0)
 
+
+OM_annual@D <- c(0.2, 0.5)
 OM <- OMts(OM_annual, 4)
 
-MSE1 <- runMSE(OM, Hist=TRUE)
+# OM <- tinyErr(OM)
+
+MSE1 <- runMSE(OM, Hist=TRUE, checks=TRUE)
+
+
 
 MSE2 <- runMSE(OM_annual, Hist=TRUE)
 

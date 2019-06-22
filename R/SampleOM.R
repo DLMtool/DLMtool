@@ -1408,6 +1408,9 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   if ('binWidth' %in% names(cpars)) {
     sampCpars$binWidth <- cpars$binWidth
   }
+  if ('nts' %in% names(cpars)) {
+    sampCpars$nts <- cpars$nts
+  }
   # if (is.null(ncparsim)) return(sampCpars)
   
   Names <- names(cpars)
@@ -1419,6 +1422,9 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   
   # report invalid names 
   invalid <- Names[!Names %in% ValNames]
+  ind <- which(invalid == "nts")
+  if (length(ind)>0) invalid <- invalid[-ind]
+  
   if (length(invalid)>0) {
     invdf <- data.frame(name=invalid, action='ignoring', alt="", stringsAsFactors = FALSE)
     alt_inval <- invalid[invalid %in% InvalNames]
@@ -1435,7 +1441,7 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   valid <- which(Names %in% ValNames)
   cpars <- cpars[valid]
   if (length(valid) == 0) {
-    message("No valid names found in custompars (OM@cpars). Ignoring `OM@cpars`")
+    # message("No valid names found in custompars (OM@cpars). Ignoring `OM@cpars`")
     return(list())
   }
   
