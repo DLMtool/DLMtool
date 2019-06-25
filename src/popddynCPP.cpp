@@ -46,11 +46,11 @@ arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcu
       Nnext(0, A) = PerrYr * aR(A) * SSBcurr(A) * exp(-bR(A) * SSBcurr(A));
     }
     // Mortality
-    // for (int age=1; age<maxage; age++) {
-    //   Nnext(age, A) = Ncurr(age-1, A) * exp(-Zcurr(age-1, A)); // Total mortality
-    // }
+    for (int age=1; age<maxage; age++) {
+      Nnext(age, A) = Ncurr(age-1, A) * exp(-Zcurr(age-1, A)); // Total mortality
+    }
   }
-  return Nnext;
+
   // Move stock
   for (int age=0; age<maxage; age++) {
   
