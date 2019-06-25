@@ -29,7 +29,7 @@ arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcu
                          NumericMatrix Ncurr,  Rcpp::NumericMatrix Zcurr, double PerrYr,
                          double hs,  Rcpp::NumericVector R0a,  Rcpp::NumericVector SSBpR,
                          Rcpp::NumericVector aR,  Rcpp::NumericVector bR,  arma::cube mov,
-                         double SRrel, double rec_season) {
+                         double SRrel) {
   
   arma::mat Nnext(maxage, nareas);
   // arma::mat tempMat2(nareas, nareas);	
@@ -39,19 +39,18 @@ arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcu
   for (int A=0; A < nareas; A++) {
     if (SRrel == 1) {
       // BH SRR
-      Nnext(0, A) = PerrYr * (4*R0a(A) * hs * SSBcurr(A))/(SSBpR(A) * R0a(A) * (1-hs) + (5*hs-1) * SSBcurr(A)) * rec_season;
+      Nnext(0, A) = PerrYr * (4*R0a(A) * hs * SSBcurr(A))/(SSBpR(A) * R0a(A) * (1-hs) + (5*hs-1) * SSBcurr(A));
     }	
     if (SRrel == 2) {
       // most transparent form of the Ricker uses alpha and beta params
-      
-      Nnext(0, A) = PerrYr * aR(A) * SSBcurr(A) * exp(-bR(A) * SSBcurr(A)) * rec_season;
+      Nnext(0, A) = PerrYr * aR(A) * SSBcurr(A) * exp(-bR(A) * SSBcurr(A));
     }
     // Mortality
-    for (int age=1; age<maxage; age++) {
-      Nnext(age, A) = Ncurr(age-1, A) * exp(-Zcurr(age-1, A)); // Total mortality
-    }
+    // for (int age=1; age<maxage; age++) {
+    //   Nnext(age, A) = Ncurr(age-1, A) * exp(-Zcurr(age-1, A)); // Total mortality
+    // }
   }
-
+  return Nnext;
   // Move stock
   for (int age=0; age<maxage; age++) {
   
@@ -114,9 +113,9 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
                arma::mat M_age, arma::vec Asize_c, arma::mat MatAge, arma::mat WtAge,
                arma::mat Vuln, arma::mat Retc, arma::vec Prec,
                List movc, double SRrelc, arma::vec Effind,
-               double Spat_targc, double hc, NumericVector R0c, NumericVector SSBpRc,
+               double Spat_targc, double hc, NumericMatrix R0c, NumericVector SSBpRc,
                NumericVector aRc, NumericVector bRc, double Qc, double Fapic, double maxF, 
-               arma::mat MPA, int control, double SSB0c, NumericVector recTS) {
+               arma::mat MPA, int control, double SSB0c) {
   
   arma::cube Narray(maxage, pyears, nareas, arma::fill::zeros);
   arma::cube Barray(maxage, pyears, nareas, arma::fill::zeros);
@@ -132,7 +131,7 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
   arma::vec fishdist(nareas);
   
   // make clones of spawning/recruit by area because they are updated (sometimes)
-  NumericVector R0c2(clone(R0c));
+  NumericMatrix R0c2(clone(R0c));
   NumericVector aRc2(clone(aRc));
   NumericVector bRc2(clone(bRc));
   
@@ -190,10 +189,8 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
     arma::mat Ncurr2 = Narray.subcube(0, yr, 0, maxage-1, yr, nareas-1);
     arma::mat Zcurr = Zarray.subcube(0, yr, 0, maxage-1, yr, nareas-1);
     
-    double rec_season = recTS(yr);
     arma::mat NextYrN = popdynOneTScpp(nareas, maxage, wrap(SB), wrap(Ncurr2), wrap(Zcurr), 
-                                       Prec(yr+maxage), hc, R0c2, SSBpRc, aRc2, bRc2, movcy, SRrelc,
-                                       rec_season); 
+                                       Prec(yr+maxage), hc, R0c2(yr+1,_), SSBpRc, aRc2, bRc2, movcy, SRrelc); 
   
     Narray.subcube(0, yr+1, 0, maxage-1, yr+1, nareas-1) = NextYrN;
     for (int A=0; A<nareas; A++) {
@@ -241,11 +238,11 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
       // get spatial distribution 
       for (int A=0; A<nareas; A++) {
         SSB0a(A) = accu(SBarray.subcube(0, yr+1, A, maxage-1, yr+1, A));
-        R0c2(A) = accu(SBarray.subcube(0, yr, A, maxage-1, yr, A));
+        R0c2(yr,A) = accu(SBarray.subcube(0, yr, A, maxage-1, yr, A));
       }
       
       SSB0a =   SSB0a/ (sum(SSB0a)/SSB0c); 
-      R0c2 = R0c2/ (sum(R0c2)/R0);
+      // R0c2 = R0c2/ (sum(R0c2)/R0);
       
       // recalculate recruitment parameters
       for (int A=0; A<nareas; A++) {

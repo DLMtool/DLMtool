@@ -511,25 +511,27 @@ userguide_link <- function(url, ref=NULL) {
 #' data
 #'
 #' @param nsim Number of simulations
+#' @param nts Number of time-steps within a year
 #' @param yrs Number of years 
-#' @param maxage Maximum age
-#' @param Cret Retained Catch at age in numbers - array(sim, years, maxage)
+#' @param maxage Maximum age (in units of sub year time-steps)
+#' @param Cret Retained Catch at age in numbers - array(sim, total time-steps, maxage)
 #' @param CAA_ESS CAA effective sample size 
 #' @param CAA_nsamp CAA sample size
 #'
 #' @return CAA array 
-simCAA <- function(nsim, yrs, maxage, Cret, CAA_ESS, CAA_nsamp) {
+simCAA <- function(nsim, yrs, nts, maxage, Cret, CAA_ESS, CAA_nsamp) {
   # generate CAA from retained catch-at-age 
-
-  CAA <- array(NA, dim = c(nsim, yrs, maxage))  # Catch  at age array
+  CAA <- array(NA, dim = c(nsim, yrs, maxage/nts))  # Catch  at age array
   
   # a multinomial observation model for catch-at-age data
   for (i in 1:nsim) {
+    caa <- t(apply( Cret[i, ,], 1, function(x) tapply(x, ceiling(seq_along(x)/nts), sum))) 
+    caa <- apply(t(caa), 1, function(x) tapply(x, ceiling(seq_along(x)/nts), sum))
     for (j in 1:yrs) {
-      if (!sum(Cret[i, j,])) {
+      if (!sum(caa[j,])) {
         CAA[i, j, ] <- 0 
       } else {
-        CAA[i, j, ] <- ceiling(-0.5 + rmultinom(1, CAA_ESS[i], Cret[i, j,]) * CAA_nsamp[i]/CAA_ESS[i])   
+        CAA[i, j, ] <- ceiling(-0.5 + rmultinom(1, CAA_ESS[i], caa[j,]) * CAA_nsamp[i]/CAA_ESS[i])   
       }
     }
   }
@@ -542,6 +544,7 @@ simCAA <- function(nsim, yrs, maxage, Cret, CAA_ESS, CAA_nsamp) {
 #' mean length (ML), modal length (Lc), and mean length over modal length (Lbar)  
 #' 
 #' @param nsim Number of simulations
+#' @param nts Number of sub-year time-steps
 #' @param nyears Number of years 
 #' @param maxage Maximum age
 #' @param CAL_ESS CAA effective sample size 
@@ -555,7 +558,7 @@ simCAA <- function(nsim, yrs, maxage, Cret, CAA_ESS, CAA_nsamp) {
 #' @param t0array Array of t0 values by simulation and year
 #' @param LenCV CV of length-at-age#'
 #' @return named list with CAL array and LFC, ML, & Lc vectors
-simCAL <- function(nsim, nyears, maxage,  CAL_ESS, CAL_nsamp, nCALbins, CAL_binsmid,  
+simCAL <- function(nsim, nts, nyears, maxage,  CAL_ESS, CAL_nsamp, nCALbins, CAL_binsmid,  
                    vn, retL, Linfarray, Karray, t0array, LenCV) {
   # a multinomial observation model for catch-at-length data
   # assumed normally-distributed length-at-age truncated at 2 standard deviations from the mean
@@ -563,11 +566,21 @@ simCAL <- function(nsim, nyears, maxage,  CAL_ESS, CAL_nsamp, nCALbins, CAL_bins
   
   # Generate size comp data with variability in age
  
-  tempSize <- lapply(1:nsim, genSizeCompWrap, vn, CAL_binsmid, retL, CAL_ESS, CAL_nsamp,
+  tempSize <- lapply(1:nsim, genSizeCompWrap, vn, CAL_binsmid, retL, CAL_ESS/nts, CAL_nsamp/nts,
                      Linfarray, Karray, t0array, LenCV, truncSD=2)
-  CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), 
-                     dim=c(nyears, length(CAL_binsmid), nsim)), c(3,1,2))
   
+  CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), 
+                     dim=c(nyears*nts, length(CAL_binsmid), nsim)), c(3,1,2))
+  
+  # convert to annual samples if applicable
+  if (nts > 1) {
+    tempSize <- lapply(1:nsim, function(i) 
+      apply(t(CAL[i,,]), 1, function(x) 
+        tapply(x, ceiling(seq_along(x)/nts), sum)))
+    CAL <- aperm(array(as.numeric(unlist(tempSize, use.names=FALSE)), 
+                       dim=c(nyears, length(CAL_binsmid), nsim)), c(3,1,2))
+  }
+
   # calculate LFC - length-at-first capture - 5th percentile
   LFC <- rep(NA, nsim)
   LFC <- unlist(lapply(tempSize, function(x) getfifth(x[nyears, ], CAL_binsmid)))
@@ -725,7 +738,7 @@ applyAC <- function(x, res, ac, max.years, lst.err) {
   res[,x]
 }
 
-addRealInd <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, nsim, nyears,
+addRealInd <- function(Data, nts, SampCpars, ErrList, Biomass, VBiomass, SSB, nsim, nyears,
                        proyears, silent=FALSE) {
   if (!is.null(SampCpars$Data)) {
     # real data has been provided 
@@ -753,9 +766,16 @@ addRealInd <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, nsim, n
         }
         
         # Calculate implied observation error
-        sim.indices <- list(Biomass=apply(Biomass, c(1, 3), sum),
-                            VBiomass=apply(VBiomass, c(1, 3), sum),
-                            SpBiomass=apply(SSB, c(1, 3), sum))
+        if (nts > 1) {
+          Endind <- seq(from=nts, by=nts, length.out=nyears) # end of year index
+          sim.indices <- list(Biomass=apply(Biomass[,,Endind,], c(1, 3), sum),
+                              VBiomass=apply(VBiomass[,,Endind,], c(1, 3), sum),
+                              SpBiomass=apply(SSB[,,Endind,], c(1, 3), sum))
+        } else {
+          sim.indices <- list(Biomass=apply(Biomass, c(1, 3), sum),
+                              VBiomass=apply(VBiomass, c(1, 3), sum),
+                              SpBiomass=apply(SSB, c(1, 3), sum))
+        }
         
         ind.type <- c('Biomass', 'VBiomass', 'SpBiomass')
         out.list <- list()

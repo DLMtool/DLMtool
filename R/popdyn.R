@@ -965,7 +965,7 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
 #' @export
 #'
 #' @keywords internal
-optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, 
+optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0_annual, SRrel, hs, 
                       yr.ind=1, nts, tyears) {
   
   Nts <- dim(M_ageArray)[3] # total number of time-steps
@@ -986,22 +986,22 @@ optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs,
 
   # convert vectors from sub-years to years (if needed)
   if (nts >1) {
-    maxage <- maxage/nts
-    M_at_Age <- .colMeans(M_at_Age, nts, maxage) * nts
-    Wt_at_Age <- .colMeans(Wt_at_Age, nts, maxage)
-    Mat_at_Age <- .colMeans(Mat_at_Age, nts, maxage)
-    V_at_Age <- .colMeans(V_at_Age, nts, maxage)
+    ind <- seq(from=nts, by=nts, to=maxage)
+    M_at_Age <- M_at_Age[ind] * nts
+    Wt_at_Age <- Wt_at_Age[ind]
+    Mat_at_Age <- Mat_at_Age[ind]
+    V_at_Age <- V_at_Age[ind]
   }
 
   boundsU <- c(1E-3, 1)
 
   doopt <- optimise(MSYCalcs, log(boundsU), M_at_Age, Wt_at_Age, Mat_at_Age,
-                    V_at_Age, maxage, R0x=R0[x], SRrelx=SRrel[x], hx=hs[x], opt=1)
+                    V_at_Age, maxage/nts, R0x=R0_annual[x], SRrelx=SRrel[x], hx=hs[x], opt=1)
 
   UMSY <- exp(doopt$minimum)
 
   MSYs <- MSYCalcs(doopt$minimum, M_at_Age, Wt_at_Age, Mat_at_Age,
-                   V_at_Age, maxage, R0x=R0[x], SRrelx=SRrel[x], hx=hs[x], opt=2)
+                   V_at_Age, maxage/nts, R0x=R0_annual[x], SRrelx=SRrel[x], hx=hs[x], opt=2)
 
   return(MSYs)
 }
@@ -1027,12 +1027,12 @@ optMSY_eq_ts <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, h
   boundsU <- c(1E-3, 1)
 
   doopt <- optimise(MSYCalcs, log(boundsU), M_at_Age, Wt_at_Age, Mat_at_Age,
-                    V_at_Age, maxage, R0x=R0[x]*seasonRec, SRrelx=SRrel[x], hx=hs[x], opt=1)
+                    V_at_Age, maxage, R0x=R0[ts.ind,x], SRrelx=SRrel[x], hx=hs[x], opt=1)
 
   UMSY <- exp(doopt$minimum)
 
   MSYs <- MSYCalcs(doopt$minimum, M_at_Age, Wt_at_Age, Mat_at_Age,
-                   V_at_Age, maxage, R0x=R0[x]*seasonRec, SRrelx=SRrel[x], hx=hs[x], opt=2)
+                   V_at_Age, maxage, R0x=R0[ts.ind,x], SRrelx=SRrel[x], hx=hs[x], opt=2)
 
   return(MSYs)
 }
@@ -1191,13 +1191,13 @@ split.along.dim <- function(a, n) {
 getq3 <- function(x, D, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, Asize, Wt_age,
                   V, retA, Perr_y, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, 
                   bounds = c(1e-05, 15), maxF, MPA, 
-                  nts, recTS) {
+                  nts) {
   
-  opt <- optimize(optQ, log(bounds), depc=D[x], SSB0c=SSB0[x], nareas, maxage, Ncurr=N[x,,nts,], 
+  opt <- optimize(optQ, log(bounds), depc=D[x], SSB0c=SSB0[x], nareas, maxage, Ncurr=N[x,,1,], 
                   pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,,], Asize_c=Asize[x,], WtAge=Wt_age[x,,],
                   Vuln=V[x,,], Retc=retA[x,,], Prec=Perr_y[x,], movc=split.along.dim(mov[x,,,,],4), 
-                  SRrelc=SRrel[x], Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-                  SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], maxF=maxF, MPA=MPA, recTS=recTS,
+                  SRrelc=SRrel[x], Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,,], 
+                  SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], maxF=maxF, MPA=MPA,
                   nts=nts)
   return(exp(opt$minimum))
 }
@@ -1234,7 +1234,7 @@ getq3 <- function(x, D, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, As
 
 optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_c,
                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
-                 R0c, SSBpRc, aRc, bRc, maxF, MPA, recTS, nts) {
+                 R0c, SSBpRc, aRc, bRc, maxF, MPA, nts) {
   # if (!useCPP) {
   #   # simpop <- popdyn(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
   #   #                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
@@ -1245,10 +1245,9 @@ optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_
   simpop <- popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
                       MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
                       R0c=R0c, SSBpRc=SSBpRc, aRc=aRc, bRc=bRc, Qc=exp(logQ), Fapic=0, 
-                      maxF=maxF, MPA=MPA, control=1,  SSB0c=SSB0c, recTS=recTS) 
+                      maxF=maxF, MPA=MPA, control=1,  SSB0c=SSB0c) 
   
-  ind <- seq(nts, by=nts, to = maxage)
-  ssb <- simpop[[4]][ind,(pyears-nts+1):pyears,] %>% sum() # SSB at age, sub-year, and area
+  ssb <- simpop[[4]][,pyears,] %>% sum() # SSB at end of last year
   (log(depc) - log(ssb/SSB0c))^2
   
 }
@@ -1641,24 +1640,23 @@ optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_
 #' 
 optMSY <- function(logFa, Asize_c, nareas, maxage, Ncurr, pyears, M_age,
                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc,
-                 R0c, SSBpRc, aRc, bRc, Qc, MPA, maxF, SSB0c, recTS) {
+                 R0c, SSBpRc, aRc, bRc, Qc, MPA, maxF, SSB0c, nts) {
 
   FMSYc <- exp(logFa)
 
   simpop <- popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
                       MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc,
                       R0c, SSBpRc, aRc, bRc, Qc=0, Fapic=FMSYc, MPA=MPA, maxF=maxF, control=2,
-                      SSB0c=SSB0c, recTS = recTS)
+                      SSB0c=SSB0c)
   
-
   # Yield
   # Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # retained catch
   Cn <- simpop[[6]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # removals
   # Cb <- Cn[,pyears,] * WtAge[,pyears]
   # -sum(Cb)
-  Cb <- Cn[,(pyears-4):pyears,] * array(WtAge[,(pyears-4):pyears], dim=dim(Cn[,(pyears-4):pyears,]))
+  Cb <- Cn[,(pyears-nts+1):pyears,] * array(WtAge[,(pyears-nts+1):pyears], dim=dim(Cn[,(pyears-nts+1):pyears,]))
  
-  -mean(apply(Cb,2,sum))
+  -sum(Cb)
   
 
 }
@@ -1698,16 +1696,15 @@ optMSY <- function(logFa, Asize_c, nareas, maxage, Ncurr, pyears, M_age,
 #' @keywords internal
 getFref3 <- function(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
                      V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, 
-                     MPA, maxF, SSB0, recTS) {
+                     MPA, maxF, SSB0, nts) {
   
-  opt <- optimize(optMSY, log(c(0.001, 10)), Asize_c=Asize[x,], nareas, maxage, Ncurr=N[x,,1,], 
+  opt <- optimize(optMSY, log(c(0.01, max(M_ageArray[x,,])*3)), Asize_c=Asize[x,], nareas, maxage, Ncurr=N[x,,1,], 
                   pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,,], 
                   WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
                   movc=split.along.dim(mov[x,,,,],4), SRrelc=SRrel[x], 
-                  Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+                  Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,,], 
                   SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], MPA=MPA, maxF=maxF,
-                  SSB0c=SSB0[x], recTS=recTS)
-  
+                  SSB0c=SSB0[x], nts=nts)
   -opt$objective
   
 }

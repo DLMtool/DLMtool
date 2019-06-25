@@ -39,10 +39,10 @@ getBlow<-function(x, N, Asize, SSBMSY, SSBpR, MPA, SSB0, nareas, retA,MGThorizon
                   Perr,M_ageArray,hs,Mat_age,Wt_age,R0a,V,nyears,maxage,mov,Spat_targ,SRrel,
                   aR,bR,Bfrac=0.5, maxF, ploty=F){
   
-  opt <-optimize(Blow_opt,log(c(0.0075,15)),N=N[x,,1,], Asize_c =Asize[x,], SSBMSYc=SSBMSY[x],
+  opt <<-optimize(Blow_opt,log(c(0.0075,15)),N=N[x,,1,], Asize_c =Asize[x,], SSBMSYc=SSBMSY[x],
                  SSBpRc=SSBpR[x,], MPA=MPA, SSB0c=SSB0[x], nareas, retAc=retA[x,,],
                  MGThorizonc=MGThorizon[x], Fc=Find[x,],Perrc=Perr[x,], Mc=M_ageArray[x,,], 
-                 hc=hs[x], Mac=Mat_age[x,,], Wac=Wt_age[x,,], R0c=R0a[x,], Vc=V[x,,], 
+                 hc=hs[x], Mac=Mat_age[x,,], Wac=Wt_age[x,,], R0c=R0a[x,,], Vc=V[x,,], 
                  nyears=nyears, maxage=maxage, movc=mov[x,,,,], Spat_targc=Spat_targ[x], 
                  SRrelc=SRrel[x], aRc=aR[x,], bRc=bR[x,], Bfrac, maxF, mode=1)
   
@@ -50,7 +50,7 @@ getBlow<-function(x, N, Asize, SSBMSY, SSBpR, MPA, SSB0, nareas, retA,MGThorizon
     Blow_opt(opt$minimum,N=N[x,,1,], Asize_c =Asize[x,], SSBMSYc=SSBMSY[x],
              SSBpRc=SSBpR[x,], MPA=MPA, SSB0c=SSB0[x], nareas, retAc=retA[x,,],
              MGThorizonc=MGThorizon[x], Fc=Find[x,],Perrc=Perr[x,], Mc=M_ageArray[x,,], 
-             hc=hs[x], Mac=Mat_age[x,,], Wac=Wt_age[x,,], R0c=R0a[x,], Vc=V[x,,], 
+             hc=hs[x], Mac=Mat_age[x,,], Wac=Wt_age[x,,], R0c=R0a[x,,], Vc=V[x,,], 
              nyears=nyears, maxage=maxage, movc=mov[x,,,,], Spat_targc=Spat_targ[x], 
              SRrelc=SRrel[x], aRc=aR[x,], bRc=bR[x,], Bfrac, maxF, mode=3)
   }
@@ -58,7 +58,7 @@ getBlow<-function(x, N, Asize, SSBMSY, SSBpR, MPA, SSB0, nareas, retA,MGThorizon
   Blow_opt(opt$minimum,N=N[x,,1,], Asize_c =Asize[x,], SSBMSYc=SSBMSY[x],
            SSBpRc=SSBpR[x,], MPA=MPA, SSB0c=SSB0[x], nareas, retAc=retA[x,,],
            MGThorizonc=MGThorizon[x], Fc=Find[x,],Perrc=Perr[x,], Mc=M_ageArray[x,,], 
-           hc=hs[x], Mac=Mat_age[x,,], Wac=Wt_age[x,,], R0c=R0a[x,], Vc=V[x,,], 
+           hc=hs[x], Mac=Mat_age[x,,], Wac=Wt_age[x,,], R0c=R0a[x,,], Vc=V[x,,], 
            nyears=nyears, maxage=maxage, movc=mov[x,,,,], Spat_targc=Spat_targ[x], 
            SRrelc=SRrel[x], aRc=aR[x,], bRc=bR[x,], Bfrac, maxF, mode=2)
   
@@ -72,7 +72,7 @@ getBlow<-function(x, N, Asize, SSBMSY, SSBpR, MPA, SSB0, nareas, retA,MGThorizon
 #' to reach Bfrac x SSBMSY biomass level given zero catches
 #'
 #' @param lnq number: estimate of log catchability
-#' @param N marix maxage by nareas with initial numbers at age
+#' @param N matrix maxage by nareas with initial numbers at age
 #' @param Asize_c vector length nareas with size of each area
 #' @param SSBMSYc number: spawning biomass at MSY
 #' @param SSBpRc vector length nareas with SSBpR by area
@@ -122,7 +122,7 @@ Blow_opt<-function(lnq, N, Asize_c, SSBMSYc,SSBpRc, MPA, SSB0c, nareas, retAc,
 
   movcx <- array(movc[,,,nyears], dim=c(maxage, nareas, nareas, pyears)) # current movement pattern
 
-  simpop <- popdynCPP(nareas, maxage, N, pyears, M_age, Asize_c,
+  simpop <<- popdynCPP(nareas, maxage, N, pyears, M_age, Asize_c,
                       MatAge, WtAge, Vuln, Retc, Prec, split.along.dim(movcx,4), 
                       SRrelc, Effind, Spat_targc, hc,
                       R0c=R0c, SSBpRc=SSBpRc, aRc=aRc, bRc=bRc, Qc=exp(lnq), Fapic=0,
@@ -134,7 +134,8 @@ Blow_opt<-function(lnq, N, Asize_c, SSBMSYc,SSBpRc, MPA, SSB0c, nareas, retAc,
   if(mode==1){
     pen<-0
     if(SSBstore[nyears]>(0.8*SSBMSYc))pen<-(SSBstore[nyears]-(0.8*SSBMSYc))^2 # penalty to keep inital depletion under SSB for rebuilding
-    return(pen+(log(sum(SBiomass))-log(SSBMSYc*Bfrac))^2)
+    out <- pen+(log(sum(SBiomass))-log(SSBMSYc*Bfrac))^2
+    return(out)
   }else if(mode==2){
     return(SSBstore[nyears])
   }else{

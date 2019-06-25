@@ -12,8 +12,6 @@ OM_annual@Linf <- range(OM_annual@cpars$Linf)
 OM_annual@cpars <- list()
 
 
-
-
 OM_annual@K <- c(0.10, 0.10)
 OM_annual@M <- c(0.2, 0.2)
 OM_annual@Linf  <- c(100, 100)
@@ -22,12 +20,15 @@ OM_annual@L50 <- c(60, 60)
 OM_annual@L50_95 <- c(5,5)
 
 OM_annual@L5 <- c(18.127, 18.127)
-OM_annual@LFS <- c(39.347, 39.347)
+OM_annual@LFS <- c(46, 46)
 OM_annual@Vmaxlen <- c(1,1)
+OM_annual@LR5 <- c(0,0)
+OM_annual@LFR <- c(0.01,0.01)
+OM_annual@Rmaxlen <- c(1,1)
 
 OM_annual@D <- c(0.2, 0.5)
 OM_annual@maxage <- 14
-OM_annual@h <- c(0.9999, 0.999)
+OM_annual@h <- c(0.9, 0.9)
 
 OM_annual@nsim <- 10
 
@@ -35,21 +36,27 @@ OM_annual@nsim <- 10
 OM_annual <- tinyErr(OM_annual)
 
 OM <- OMts(OM_annual)
+recVec <- c(0.8, 0.05, 0.025, 0.125)
 
-OM@Perr <- c(0.0, 0.0)
+# OM <- OM_annual
+
+
+OM@Perr <- c(0, 0)
 OM@AC <- c(0,0)
 OM@Linfsd <- c(0,0)
 OM@Ksd <- c(0,0)
 
 
-OM@Msd <- c(0.1, 0.1)
 
-checks = TRUE
+# OM@Msd <- c(0.1, 0.1)
 
-recVec <- c(0.1, 0.2, 0.3, 0.4)
-recVec <- c(0.8, 0.05, 0.025, 0.125)
+checks = FALSE
 
-sum(recVec)
+# recVec <- c(0.1, 0.2, 0.3, 0.4)
+
+# recVec <- rep(0.25, 4)
+
+# sum(recVec)
 
 # recVec <- rep(1, OM@cpars$nts) # c(0.1, 0.2, 0.3, 0.4)
 
@@ -102,6 +109,7 @@ if (!is.null(OM@cpars$nts)) {
 } else {
   OM@cpars$nts <- 1
   nts <- 1
+  recVec <- 1
 }
 
 # ---- Time-step Parameters ----
@@ -152,6 +160,7 @@ Agearray <- array(rep(1:maxage, each = nsim), dim = c(nsim, maxage))  # Age arra
 
 #  --- Pre Equilibrium calcs ----
 
+# FIX  get spatial distribution  in popdynCPP.cpp
 ##### TO DO ####
 
 # # Survival array with M-at-age
@@ -257,10 +266,8 @@ calcInitRec <- function(x, R0, recVec, M_ageArray) {
   R0init
 }
 
-R0init <- sapply(1:nsim, calcInitRec, R0, recVec, M_ageArray)
-
-
-
+R0init <- sapply(1:nsim, calcInitRec, StockPars$R0, recVec, M_ageArray)
+R0 <- do.call("rbind", replicate(nyears+proyears, R0init, simplify = FALSE))
 
 calcEqYr <- function(x, totyears=nyears+proyears, R0init, M_ageArray) {
   maxage <- dim(M_ageArray)[2]
@@ -303,251 +310,30 @@ calcEqYr <- function(x, totyears=nyears+proyears, R0init, M_ageArray) {
 }
 
 
-N[,1:nts] %>% head()
-
 N0list <- lapply(1:nsim, calcEqYr, nyears+proyears, R0init, M_ageArray)
 N02 <- aperm(array(unlist(N0list), dim=c(maxage , histnTS+projnTS, nsim)), c(3,1,2))
-
-N02[1,,1:nts] %>% head(20)
-
-
-N02[1,,5:8] %>% head(20)
-
-
-
-
-
-
-
-
-RecMat[4,1] * exp(sum(-diag(M_ageArray[x,1:3,2:4])))
-
-
-
-
-N_a[x, ,1:nts,1]
-
-
-N_a[x,1:nts,1,1] <- R0init[x,1:nts]
-
-
-
-RecMat[,1:nts]
-
-surv <- array(1, dim=c(nsim, maxage, histnTS+projnTS)) # unfished survival for every year
-surv[, 2:maxage, ] <- aperm(exp(-apply(M_ageArray, c(1,3), cumsum))[1:(maxage-1), ,], c(2,1,3)) # Survival array
-
-RecMat[,1] * surv[x,,1]
-
-
-
-
-# 
-# R0Mat <- matrix(R0_ts, nrow=nsim, ncol=nts, byrow=TRUE) %>% apply(1, rev) %>% (t)
-# # R0Mat <- replicate(maxage, R0Mat) 
-# R0Mat <- do.call(cbind, replicate(maxage, R0Mat, simplify=FALSE))
-
-
-# recVec <- c(1/3, 1/3, 1/3); nts = 3
-# recVec <- c(0.5, 0.5); nts = 2
-
-recVec <- c(0.1, 0.2, 0.3, 0.4); nts = 4
-
-
-tt = calcInitRec(x=1, R0=R0, recVec=recVec, M_ageArray=M_ageArray)
-tt[1,]
-tt[2,]
-            
-# recVec <- 1 ; nts =1
-
-R0_ts <- vapply(1:nsim, calcInitRec, R0=R0, recVec=recVec, M_ageArray=M_ageArray, 
-                FUN.VALUE=matrix(0, nrow=histnTS+projnTS, ncol=maxage, byrow=TRUE))
-R0_ts <- aperm(R0_ts, c(3,2,1))
-
-surv <- array(1, dim=c(nsim, maxage, histnTS+projnTS)) # unfished survival for every year
-surv[, 2:maxage, ] <- aperm(exp(-apply(M_ageArray, c(1,3), cumsum))[1:(maxage-1), ,], c(2,1,3)) # Survival array
 
 SAYR_a <- as.matrix(expand.grid(1:nareas, 1:(histnTS+projnTS), 1:maxage, 1:nsim)[4:1]) 
 SY_a <- SAYR_a[,c(1,3)]
 SAR_a <- SAYR_a[, c(1,2,4)]
 SA_a <- SAYR_a[,c(1,2)]
 SAY_a <- SAYR_a[,c(1,2,3)]
-N_a[SAYR_a] <- surv[SAY_a] * R0_ts[SAY_a] * initdist[SAR_a]
-
-
-
-apply(N_a[1,1:5,1:10,], 1:2, sum)
-
-surv[x,1:56,1] * R0_ts[x,1,]
-surv[x,1:56,2] * R0_ts[x,2,]
-
-
-
-
-
-
-
-R0Mat[1, ] * surv[1,,1]
-
-SAYR_a <- as.matrix(expand.grid(1:nareas, 1, 1:maxage, 1:nsim)[4:1]) 
-SY_a <- SAYR_a[,c(1,3)]
-SAR_a <- SAYR_a[, c(1,2,4)]
-
-N_a[SAYR_a] <- R0_ts[SY_a] * initdist[SAR_a]
-
-
-
-
-
-
-
-
-
-
-
-
-
-SAYR_a <- as.matrix(expand.grid(1:nareas, 1, 1:(maxage-1), 1:nsim)[4:1]) 
-
-SAYR3_a <- as.matrix(expand.grid(1:nareas, nts, 2:maxage, 1:nsim)[4:1])
-
-#                                    Region    Rec Ages    Fst Lst Sim
-SAY1Y2A1A2R <- as.matrix(expand.grid(1:nareas, 1, 2:maxage, 1, nts, 1:nsim)[6:1]) 
-
-N_a[SAY1Y2A1A2R[,c(1,4,3,6)]] <- N_a[SAY1Y2A1A2R[, c(1, 5, 2, 6)]] * surv[SAY1Y2A1A2R[,c(1,4,3)]]
-
-
-
-SArYR_a <- as.matrix(expand.grid(1:nareas, 1, nts, 2:maxage, 1:nsim)[5:1]) 
-SArR_a <- SArYR_a[,c(1,2,3,5)]
-SAYR_a <- SArYR_a[,c(1,2,4,5)]
-SAY <- SArYR_a[,c(1,2,4)]
-
-N_a[SAYR_a] <- N_a[SArR_a] * surv[SAY]
-
-
-
-
-x <- 1
-matrix(R0_ts[,x], nrow=nts, ncol=nts, byrow = TRUE) * matrix(surv[x,1:nts,1], nrow=nts, ncol=nts)
-
-# First Year 
-SAYR_a <- as.matrix(expand.grid(1:nareas, 1, 1:maxage, 1:nsim)[4:1])  
-SAY_a <- SAYR_a[, 1:3]
-SAR_a <- SAYR_a[, c(1,2,4)]
-S_a <- SAYR_a[, 1]
-Y_a <- SAYR_a[,3]
-SA_a <- Sa_a <- SAYR_a[, 1:2]
-SR_a <- SAYR_a[, c(1, 4)]
-SY_a <- SAYR_a[, c(1, 3)]
-N_a[SAYR_a]  <- R0_ts[S_a] * histRec[SAY_a] * initdist[SAR_a] * surv[SAY_a]
-
-
-N_a[SAYR_a] <- R0[S_a] * histRec[SAY_a] * initdist[SAR_a] * surv[SAY_a]
-
-
-N_a[,1,,]
-
-x <- 1
-recVec[nts]
-
-R0[x] * recVec[nts] * exp(sum(diag(M_ageArray[x,,1:(nts-1)])))
-R0[x] * recVec[1] * exp(sum(diag(M_ageArray[x,,2:(nts)])))
-R0[x] * recVec[2] * exp(sum(diag(M_ageArray[x,,3:(nts)])))
-
-
-tot_ts <- dim(M_ageArray)[3]
-tempMat <- matrix(NA, ncol = length(recTS), nrow =maxage)
-trecVec <- rev(recTS[1:maxage])
-for (ts in 1:tot_ts) {
-  tempMat[,ts] <- trecVec
-  trecVec <- c(trecVec[nts], (trecVec[1:(nts-1)]))
-}
-
-x <-1 
-for (ts in 1:(nts-1)) {
-  tempM <- M_ageArray[x,ts:(nts-1),] 
-  if (!is.null(nrow(tempM))) {
-    tempM <- apply(tempM, 2, sum)
-  }
-  tempMat[ts,] <- tempMat[ts,] * exp(tempM)
-}
-tempMat[1:(nts-1),]
-
-tempMat[,1:4]
-
-
-recVec2 <- myRep(recVec, maxage) 
-
-
-
-surv <- array(1, dim=c(nsim, maxage, histnTS+projnTS)) # unfished survival for every year
-surv[, 2:maxage, ] <- aperm(exp(-apply(M_ageArray, c(1,3), cumsum))[1:(maxage-1), ,], c(2,1,3)) # Survival array
-
-surv[1,,1:4]
-
-# Recruitment to initialize population
-# Calculate initial stock numbers for all years
-histRec <- calcHistRec(recTS, maxage, nts, nsim, M_ageArray) # recruitment survival to each age
-SAYR_a <- as.matrix(expand.grid(1:nareas, 1:(histnTS+projnTS), 1:maxage, 1:nsim)[4:1])  
-SAY_a <- SAYR_a[, 1:3]
-SAR_a <- SAYR_a[, c(1,2,4)]
-S_a <- SAYR_a[, 1]
-Y_a <- SAYR_a[,3]
-SA_a <- Sa_a <- SAYR_a[, 1:2]
-SR_a <- SAYR_a[, c(1, 4)]
-SY_a <- SAYR_a[, c(1, 3)]
-N_a[SAYR_a] <- R0[S_a] * histRec[SAY_a] * initdist[SAR_a] * surv[SAY_a]
-
-Marray[1,1:4]
-apply(N_a[1,,1:4,], 1:2, sum) %>% round(2)
-
-apply(N_a[1,,5:8,], 1:2, sum) %>% round(2)
-
-apply(N_a[1,,(histnTS+projnTS-nts+1):(histnTS+projnTS),], 1:2, sum) %>% round(2)
-
-surv[1,,1:4]
-
-#### STOP ####
-stop()
-
-
-
-# indices for all years
-SAYR_a <- as.matrix(expand.grid(1:nareas, 1:(histnTS+projnTS), 1:maxage, 1:nsim)[4:1])  
-SAY_a <- SAYR_a[, 1:3]
-SAR_a <- SAYR_a[, c(1,2,4)]
-SA_a <- SAYR_a[, 1:2]
-SR_a <- SAYR_a[, c(1, 4)]
-S_a <- SAYR_a[, 1]
-SY_a <- SAYR_a[, c(1, 3)]
-
+# Unfished Equilibrium
+N_a[SAYR_a] <- N02[SAY_a] * initdist[SAR_a] # Calculate initial numbers for all years
 SSN_a[SAYR_a] <- N_a[SAYR_a] * Mat_age[SAY_a]  # Calculate initial spawning stock numbers for all years
 Biomass_a[SAYR_a] <- N_a[SAYR_a] * Wt_age[SAY_a]  # Calculate initial stock biomass
 SSB_a[SAYR_a] <- SSN_a[SAYR_a] * Wt_age[SAY_a]    # Calculate spawning stock biomass
 
 
 # Convert to annual reference points - calculated at the end of each year
-ind <- seq(from=nts, by=nts, to=maxage)
-YrMat <- matrix(1:(histnTS+projnTS), ncol=nts,byrow=TRUE)
-
-N0_a = sapply(1:(nyears+proyears), function(x)
-  apply(N_a[,ind, YrMat[x,],], 1, sum))  # unfished numbers for each year
-B0_a <- sapply(1:(nyears+proyears), function(x) 
-  apply(Biomass_a[,ind, YrMat[x,],], 1, sum))  # unfished biomass for each year and sub-year age
-SSN0_a <- sapply(1:(nyears+proyears), function(x) 
-  apply(SSN_a[,ind, YrMat[x,],], 1, sum)) # unfished spawning numbers for each year
-SSB0_a <- sapply(1:(nyears+proyears), function(x) 
-  apply(SSB_a[,ind, YrMat[x,],], 1, sum)) # unfished spawning biomass for each year 
+ind <- seq(from=nts, by=nts, to=histnTS+projnTS)
+N0_a <- apply(N_a[,,ind,], c(1,3), sum)  # unfished numbers at the end of each year
+B0_a <- apply(Biomass_a[,,ind,], c(1,3), sum) # unfished biomass for each year   
+SSN0_a <- apply(SSN_a[,,ind,], c(1,3), sum) # unfished spawning numbers for each year
+SSB0_a <- apply(SSB_a[,,ind,], c(1,3), sum) # unfished spawning biomass for each year 
 vb <- apply(Biomass_a, 1:3, sum) * V
-VB0_a <- sapply(1:(nyears+proyears), function(x) 
-  apply(vb[,ind, YrMat[x,]], 1, sum)) # unfished vulnerable biomass for each year 
-
-SSB0a_a <- sapply(1:(nyears+proyears), function(x) 
-  apply(SSB_a[,ind, YrMat[x,],], c(1,4), sum)) # Calculate unfished spawning stock biomass by area for each year
-
-SSB0a_a <- array(SSB0a_a, dim=c(nsim, nyears+proyears, nareas)) 
-
+VB0_a <- apply(vb[,,ind], c(1,3), sum) # unfished vulnerable biomass for each year 
+SSB0a_a <- apply(SSB_a[,,ind,], c(1,3,4), sum) # Calculate unfished spawning stock biomass by area for each year
 
 UnfishedByYear <- list(SSN0=SSN0_a, N0=N0_a, SSB0=SSB0_a, B0=B0_a, VB0=VB0_a)
 
@@ -570,7 +356,6 @@ SSB0 <- UnfishedRefs[3,] %>% unlist() # average unfished spawning biomass
 B0 <- UnfishedRefs[4,] %>% unlist() # average unfished biomass
 VB0 <- UnfishedRefs[5,] %>% unlist() # average unfished biomass
 
-
 # average spawning stock biomass per recruit 
 SSBpR <- matrix(UnfishedRefs[6,] %>% unlist(), nrow=nsim, ncol=nareas) 
 SSB0a <- UnfishedRefs[7,] %>% unlist() %>% matrix(nrow=nsim, ncol=nareas, byrow = TRUE)# average unfished biomass
@@ -580,7 +365,6 @@ aR <- matrix(exp(bR * SSB0a)/SSBpR, nrow=nsim)  # Ricker SR params
 Misc$Unfished <- list(Refs=UnfishedRefs, ByYear=UnfishedByYear)
 
 # --- Optimize for Initial Depletion ----
-
 ## DEVELOP ##############
 #### FIX initD and above sections for nts > 1 ###########
 Perr_y <- StockPars$Perr_y
@@ -596,30 +380,13 @@ if (!is.null(initD)) { # initial depletion is not unfished
 }
 
 # --- Non-equilibrium calcs ----
-# Initial Population for first year (nts = number of time-steps in the year)
-# R0 is recruitment alive at the end of initial year - ie ts = nts
+# Initial Population for initial time-step
 
-for (ts in 1:nts) {
-  SAYR_a <- as.matrix(expand.grid(1:nareas, ts, 1:maxage, 1:nsim)[4:1])  
-  SAY_a <- SAYR_a[, 1:3]
-  SAR_a <- SAYR_a[, c(1,2,4)]
-  S_a <- SAYR_a[, 1]
-  Y_a <- SAYR_a[,3]
-  SA_a <- Sa_a <- SAYR_a[, 1:2]
-  SR_a <- SAYR_a[, c(1, 4)]
-  SY_a <- SAYR_a[, c(1, 3)]
-  Sa_a[,2] <- maxage-SA_a[,2] + 1 # This is the process error index for initial year
-  N[SAYR_a] <- R0[S_a] * histRec[SAY_a] * initdist[SAR_a] * surv[SAY_a] * Perr_y[Sa_a]
-}
+SAYR <- as.matrix(expand.grid(1:nareas, 1, 1:maxage, 1:nsim)[4:1])  
+SAY <- SAYR[,1:3]
+Sa <- maxage-SAYR[,2] + 1 # This is the process error index for initial year
 
-SAYR <- as.matrix(expand.grid(1:nareas, 1:nts, 1:maxage, 1:nsim)[4:1])  
-SAY <- SAYR[, 1:3]
-SAR <- SAYR[, c(1,2,4)]
-SA <- Sa <- SAYR[, 1:2]
-SR <- SAYR[, c(1, 4)]
-S <- SAYR[, 1]
-SY <- SAYR[, c(1, 3)]
-
+N[SAYR] <- N_a[SAYR] * Perr_y[Sa] # Calculate initial stock numbers
 SSN[SAYR] <- N[SAYR] * Mat_age[SAY]  # Calculate initial spawning stock numbers
 Biomass[SAYR] <- N[SAYR] * Wt_age[SAY]  # Calculate initial stock biomass
 SSB[SAYR] <- SSN[SAYR] * Wt_age[SAY]    # Calculate spawning stock biomass
@@ -656,14 +423,19 @@ if (all(!is.na(OM@MPA)) && sum(OM@MPA) != 0) { # historical spatial closures hav
 # --- Optimize catchability (q) to fit depletion ---- 
 
 # Unfished recruitment by area - INITDIST OF AGE 1.
-R0a <- matrix(apply(N[,1,1:nts,], 1, sum), nrow=nsim, ncol=nareas, byrow=FALSE) * initdist[,1,] # Unfished annual recruitment
+SAYR <- as.matrix(expand.grid(1:nareas, 1:(histnTS+projnTS), 1, 1:nsim)[4:1])  
+YS <- SAYR[,c(3,1)]
+SYR <- SAYR[,c(1,3,4)]
+SAR <- SAYR[,c(1,2,4)]
+R0a <- array(NA, dim=c(nsim, histnTS+projnTS, nareas))
+R0a[SYR] <- R0[YS] * initdist[SAR]
 
 if(!silent) message("Optimizing for user-specified depletion in last historical year")
 bounds <- c(0.0001, 15) # q bounds for optimizer
 qs <- sapply(1:nsim, getq3, D, SSB0, nareas, maxage, N, pyears=histnTS, 
              M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr_y, mov, SRrel, Find, 
              Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, maxF=maxF,
-             MPA=MPA, nts=nts, recTS=recTS) # find the q that gives current stock depletion
+             MPA=MPA, nts=nts) # find the q that gives current stock depletion
 
 # --- Check that q optimizer has converged ---- 
 LimBound <- c(1.1, 0.9)*range(bounds)  # bounds for q (catchability). Flag if bounded optimizer hits the bounds 
@@ -745,9 +517,9 @@ histYrs <- sapply(1:nsim, function(x)
             M_age=M_ageArray[x,,], Asize_c=Asize[x,], MatAge=Mat_age[x,,], WtAge=Wt_age[x,,],
             Vuln=V[x,,], Retc=retA[x,,], Prec=Perr_y[x,], movc=split.along.dim(mov[x,,,,],4), 
             SRrelc=SRrel[x], 
-            Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
+            Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,,], 
             SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=qs[x], Fapic=0, MPA=MPA, maxF=maxF, 
-            control=1, SSB0c=SSB0[x], recTS=recTS))
+            control=1, SSB0c=SSB0[x]))
 
 N <- aperm(array(as.numeric(unlist(histYrs[1,], use.names=FALSE)), dim=c(maxage, histnTS, nareas, nsim)), c(4,1,2,3))
 Biomass <- aperm(array(as.numeric(unlist(histYrs[2,], use.names=FALSE)), dim=c(maxage, histnTS, nareas, nsim)), c(4,1,2,3))
@@ -759,13 +531,8 @@ FMret <- aperm(array(as.numeric(unlist(histYrs[7,], use.names=FALSE)), dim=c(max
 Z <-aperm(array(as.numeric(unlist(histYrs[8,], use.names=FALSE)), dim=c(maxage, histnTS, nareas, nsim)), c(4,1,2,3))
 
 
-if (nts >1) {
-  ind <- seq(nts, by=nts, to = maxage)
-  ssb_temp <- apply(SSB[,ind,(histnTS-nts+1):histnTS,],1,sum) # SSB in final year
-  Depletion <- ssb_temp/SSB0
-} else {
-  Depletion <- apply(SSB[,,nyears,],1,sum)/SSB0
-}
+Depletion <- apply(SSB[,,histnTS,],1,sum)/SSB0
+
 # Check that depletion is correct
 if (checks) {
   if (prod(round(D, 2)/ round(Depletion,2)) != 1) {
@@ -785,15 +552,19 @@ VBMSY_y <- MSY_y # store VBMSY for each sim, and year
 
 if(!silent) message("Calculating MSY reference points for each year")
 # Calculate MSY ref points for each year 
+
 for (y in 1:(nyears+proyears)) {
+  R0_annual <- apply(N_a[,nts,1:nts,], 1, sum)
+
   MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, 
-                      maxage, R0, SRrel, hs, yr.ind=y, nts, tyears=nyears+proyears)
+                      StockPars$maxage, R0_annual, SRrel, hs, yr.ind=y, nts, tyears=nyears+proyears)
   MSY_y[,y] <- MSYrefsYr[1, ]
   FMSY_y[,y] <- MSYrefsYr[2,]
   SSBMSY_y[,y] <- MSYrefsYr[3,]
   BMSY_y[,y] <- MSYrefsYr[6,]
   VBMSY_y[,y] <- MSYrefsYr[7,] 
 }
+
 
 # --- MSY reference points ----
 # MSY reference points are calculated by averaging the annual MSY refs (calculated
@@ -815,55 +586,9 @@ SSBMSY_SSB0 <- SSBMSY/SSB0 # SSBMSY relative to unfished (SSB)
 BMSY_B0 <- BMSY/B0 # Biomass relative to unfished (B0)
 VBMSY_VB0 <- VBMSY/VB0 # VBiomass relative to unfished (VB0)
 
-
-
-
-# --- Calculate MSY statistics for each time-step ----
-MSY_ts <- array(0, dim=c(nsim, histnTS+projnTS)) # store MSY for each sim and time-step
-FMSY_ts <- MSY_ts # store FMSY for each sim, and time-step
-SSBMSY_ts <- MSY_ts # store SSBMSY for each sim, and time-step
-BMSY_ts <- MSY_ts # store BMSY for each sim, and time-step
-VBMSY_ts <- MSY_ts # store VBMSY for each sim, and time-step 
-
-if(!silent) message("Calculating MSY reference points for each time-step")
- 
-for (ts in 1:(histnTS+projnTS)) {
-  MSYrefsTS <- sapply(1:nsim, optMSY_eq_ts, M_ageArray, Wt_age, Mat_age, V, 
-                      maxage, R0, SRrel, hs, ts.ind=ts, recTS)
-  MSY_ts[,ts] <- MSYrefsTS[1, ]
-  FMSY_ts[,ts] <- MSYrefsTS[2,]
-  SSBMSY_ts[,ts] <- MSYrefsTS[3,]
-  BMSY_ts[,ts] <- MSYrefsTS[6,]
-  VBMSY_ts[,ts] <- MSYrefsTS[7,] 
-}
-
-# --- MSY reference points ----
-# MSY reference points are calculated by averaging the annual MSY refs (calculated
-# above) over (nyears - average age-of-maturity):nyears - where nyears is the
-# last historical year
-
-MSYRefPoints_TS <- sapply(1:nsim, CalcMSYRefs_TS, MSY_y=MSY_ts, FMSY_y=FMSY_ts, 
-                       SSBMSY_y=SSBMSY_ts, BMSY_y=BMSY_ts, VBMSY_y=VBMSY_ts, 
-                       ageM=ageM, histnTS, nts)
-
-MSY_2 <- MSYRefPoints_TS[1,] %>% unlist() # record the MSY results (Vulnerable)
-FMSY_2 <- MSYRefPoints_TS[2,] %>% unlist()  # instantaneous FMSY (Vulnerable)
-SSBMSY_2 <- MSYRefPoints_TS[3,] %>% unlist()  # Spawning Stock Biomass at MSY
-BMSY_2 <- MSYRefPoints_TS[4,] %>% unlist() # total biomass at MSY
-VBMSY_2 <- MSYRefPoints_TS[5,] %>% unlist() # Biomass at MSY (Vulnerable)
-UMSY_2 <- MSY_2/VBMSY_2  # exploitation rate 
-FMSY_M_2 <- FMSY_2/(M)  # ratio of true FMSY to natural mortality rate M
-
-SSBMSY_SSB0_2 <- SSBMSY_2/SSB0 # SSBMSY relative to unfished (SSB)
-BMSY_B0_2 <- BMSY_2/B0 # Biomass relative to unfished (B0)
-VBMSY_VB0_2 <- VBMSY_2/VB0 # VBiomass relative to unfished (VB0)
-
 if (!AnnualMSY) {
   warning('AnnualMSY argument is deprecated. MSY metrics are always calculated by year.\n Use `MSE@SSB` or `MSE@B` and `MSE@Misc$MSYRefs$ByYear` for alternative methods to calculate B/BMSY')
 }
-
-print(MSY_2/MSY)
-print(BMSY_2/BMSY)
 
 
 if (checks) {
@@ -874,43 +599,281 @@ if (checks) {
   lines(c(-10,10),c(-10,10))
 }
 
-# do MSY calcs need to be calculated by time-step?
-
-# why aren't SSB/SSBMSY and D/SSBMSY_SSBO the same with process error?
-# initialized pop?
-
 
 # --- Calculate B-low ---- 
 
-## TO DO ####
+MarrayArea <- replicate(nareas, M_ageArray[,,1:histnTS])
+Mnow<-apply(MarrayArea[,,histnTS,]*N[,,histnTS,],1:2,sum)/apply(N[,,histnTS,],1:2,sum)
+MGTsurv<-t(exp(-apply(Mnow,1,cumsum)))
+MGT<-apply(Agearray*(Mat_age[,,histnTS]*MGTsurv),1,sum)/apply(Mat_age[,,histnTS]*MGTsurv,1,sum)
 
-
+Blow <- rep(NA,nsim)
+if(CalcBlow){
+  if(!silent) message("Calculating B-low reference points")            
+  MGThorizon<-floor(HZN*MGT)
+  Blow <- sapply(1:nsim,getBlow, N, Asize, SSBMSY,SSBpR, MPA, SSB0, nareas, retA, MGThorizon,
+                 Find,Perr_y,M_ageArray,hs,Mat_age, Wt_age,R0a,V,histnTS,maxage,mov,
+                 Spat_targ,SRrel,aR,bR,Bfrac, maxF) 
+}
 
 # --- Calculate Reference Yield ----
 if(!silent) message("Calculating reference yield - best fixed F strategy") 
 
-RefY <- sapply(1:nsim, getFref3, Asize, nareas, maxage, N=N[,,histnTS,, drop=FALSE], pyears=projnTS, 
+RefY <- sapply(1:nsim, getFref3, Asize, nareas, maxage, N=N[,,histnTS-3,, drop=FALSE], pyears=projnTS, 
                M_ageArray=M_ageArray[,,(histnTS):(histnTS+projnTS)], Mat_age[,,(histnTS):(histnTS+projnTS)], 
                Wt_age=Wt_age[,,histnTS:(histnTS+projnTS)], 
                V=V[, , (histnTS + 1):(histnTS + projnTS), drop=FALSE], 
                retA=retA[, , (histnTS + 1):(histnTS + projnTS), drop=FALSE],  
                Perr=Perr_y[,(histnTS):(histnTS+maxage+projnTS-1)], mov, SRrel, Find, 
-               Spat_targ, hs, R0a, SSBpR, aR, bR, MPA=MPA, maxF=maxF, SSB0=SSB0, recTS=recTS)
- ####### UP TO HERE @########
-
-stop()
-
+               Spat_targ, hs, R0a[,(histnTS+1):(histnTS+projnTS),], SSBpR, aR, bR, MPA=MPA, 
+               maxF=maxF, SSB0=SSB0, nts=nts)
 
 RefPoints <- data.frame(MSY=MSY, FMSY=FMSY, SSBMSY=SSBMSY, SSBMSY_SSB0=SSBMSY_SSB0,
                         BMSY_B0=BMSY_B0, BMSY=BMSY, VBMSY=VBMSY, UMSY=UMSY, VBMSY_VB0=VBMSY_VB0,
                         FMSY_M=FMSY_M, N0=N0, SSB0=SSB0, B0=B0, VB0=VB0, RefY=RefY, 
-                        Blow=Blow, MGT=MGT, R0=R0)
+                        Blow=Blow, MGT=MGT, R0=R0[1,])
 
 Misc$MSYRefs <- list(Refs=RefPoints, ByYear=list(MSY=MSY_y, FMSY=FMSY_y,
                                                  SSBMSY=SSBMSY_y,
                                                  BMSY=BMSY_y,
                                                  VBMSY=VBMSY_y))
 
+# --- Calculate Historical Catch ----
+# Calculate catch-at-age 
+CB <- Biomass * (1 - exp(-Z)) * (FM/Z)  # Catch in biomass (removed from population)
+CB[is.na(CB)] <- 0
+
+# Calculate retained-at-age
+Cret <- apply(N * (1 - exp(-Z)) * (FMret/Z), c(1, 3, 2), sum)  # Retained catch in numbers
+Cret[is.na(Cret)] <- 0
+CBret <- Biomass * (1 - exp(-Z)) * (FMret/Z)  # Retained catch in biomass 
+CBret[is.na(CBret)] <- 0
+
+# --- Observation errors for all years ----
+ErrList <- list()
+ErrList$Cbiasa <- array(ObsPars$Cbias, c(nsim, histnTS + projnTS))  # Catch bias array
+if (!is.null(control$Cbias_yr)) { # catch bias specified with control argument 
+  Cbiasa <- matrix(1, nsim, histnTS+proyears)
+  Cbiasa[,control$yrs] <- control$Cbias_yr
+  ErrList$Cbiasa <- Cbiasa
+} 
+# composite of bias and observation error
+ErrList$Cerr <- array(rlnorm((histnTS + projnTS) * nsim, 
+                             mconv(1, rep(ObsPars$Csd, (histnTS + projnTS))), 
+                             sdconv(1, rep(ObsPars$Csd, histnTS + projnTS))), 
+                      c(nsim, histnTS + projnTS))  
+# Index error
+ErrList$Ierr <- array(rlnorm((histnTS + projnTS) * nsim, 
+                             mconv(1, rep(Isd, histnTS + projnTS)), 
+                             sdconv(1, rep(Isd, histnTS + projnTS))), 
+                      c(nsim, histnTS + projnTS))
+
+# Simulate error in observed recruitment index 
+ErrList$Recerr <- array(rlnorm((histnTS + projnTS) * nsim, mconv(1, rep(Recsd, (histnTS + projnTS))), 
+                               sdconv(1, rep(Recsd, histnTS + projnTS))), c(nsim, histnTS + projnTS))
+
+# --- Implementation error time series ----
+TAC_f <- array(rlnorm(projnTS * nsim, mconv(TACFrac, TACSD),
+                      sdconv(TACFrac, TACSD)), c(nsim, projnTS))  # composite of TAC fraction and error
+E_f <- array(rlnorm(projnTS * nsim, mconv(TAEFrac, TAESD),
+                    sdconv(TAEFrac, TAESD)), c(nsim, projnTS))  # composite of TAE fraction and error
+SizeLim_f<-array(rlnorm(projnTS * nsim, mconv(SizeLimFrac, SizeLimSD),
+                        sdconv(SizeLimFrac, SizeLimSD)), c(nsim, projnTS))  # composite of size limit fraction and error
+
+
+# --- Populate Data object with Historical Data ---- 
+Data <- makeData(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars, 
+                 FleetPars, ObsPars, ImpPars, RefPoints,
+                 ErrList, OM, SampCpars, initD, control=control,
+                 silent=silent)
+
+# --- Add Real Indices to Data object (if they exist) & calculate error stats ----
+templist <- addRealInd(Data, nts, SampCpars, ErrList, Biomass, VBiomass, SSB, nsim,
+                       nyears, proyears, silent=silent)
+Data <- templist$Data # update 
+ErrList <- templist$ErrList # update
+Misc$RInd.stats <- ErrList$stats.df # return stats
+Misc$nts <- nts
+ObsPars <- Data@Obs # Obs pars updated in makeData 
+OMPars <- Data@OM
+OMPars$qs <- qs
+
+# --- Return Historical Simulations and Data from last historical year ----
+if (Hist) { # Stop the model after historical simulations are complete
+  if(!silent) message("Returning historical simulations")
+  HistObj <- new("Hist")
+  Data@Misc <- list()
+  HistObj@Data <- Data 
+  HistObj@Obs <- ObsPars
+  om <- OMPars[,order(colnames(OMPars))]
+  ind <- which(!colnames(om) %in% colnames(RefPoints))
+  HistObj@OM <- om[,ind]
+  HistObj@AtAge <- list(Length=Len_age, Weight=Wt_age, Select=V,
+                        Retention=retA,
+                        Maturity=Mat_age, N.Mortality=M_ageArray,
+                        Nage=apply(N, 1:3, sum),
+                        SSBage=apply(SSB, 1:3, sum),
+                        FM=FM
+  )
+  nout <- t(apply(N, c(1, 3), sum)) 
+  vb <- t(apply(VBiomass, c(1, 3), sum))
+  b <- t(apply(Biomass, c(1, 3), sum))
+  ssb <- t(apply(SSB, c(1, 3), sum))
+  Cc <- t(apply(CB, c(1,3), sum))
+  Ccret <- t(apply(CBret, c(1,3), sum))
+  rec <- t(apply((N)[, 1, , ], c(1,2), sum))
+  TSdata <- list(VB=t(vb), SSB=t(ssb), B=t(b), Removals=t(Cc), Catch=t(Ccret),
+                 Rec=t(rec), N=t(nout),
+                 Find=Find, Marray=Marray, RecDev=Perr_y)
+  HistObj@TSdata <- TSdata
+  HistObj@Ref <- RefPoints[,order(colnames(RefPoints))]
+  HistObj@SampPars <- c(StockPars, FleetPars, ObsPars, ImpPars)
+  HistObj@Misc <- Misc
+  return(HistObj)	
+}
+
+# --- Check MPs ---- 
+if (is.na(MPs[1])) CheckMPs <- TRUE
+if (CheckMPs) MPs <- MPCheck(MPs, Data, timelimit, silent)
+nMP <- length(MPs)  # the total number of methods used
+if (nMP < 1) stop("No valid MPs found", call.=FALSE)
+
+
+# --- Add nMP dimension to MSY stats  ----
+MSY_y <- array(MSY_y, dim=c(nsim, nyears+proyears, nMP)) %>% aperm(c(1,3,2)) # store MSY for each sim, MP and year
+FMSY_y <- array(FMSY_y, dim=c(nsim, nyears+proyears, nMP)) %>% aperm(c(1,3,2)) # store FMSY for each sim, MP and year
+SSBMSY_y <- array(SSBMSY_y, dim=c(nsim, nyears+proyears, nMP)) %>% aperm(c(1,3,2)) # store SSBMSY for each sim, MP and year 
+BMSY_y <- array(BMSY_y, dim=c(nsim, nyears+proyears, nMP)) %>% aperm(c(1,3,2)) # store BMSY for each sim, MP and year
+VBMSY_y <- array(VBMSY_y, dim=c(nsim, nyears+proyears, nMP)) %>% aperm(c(1,3,2)) # store VBMSY for each sim, MP and year 
+
+# Calculate management interval for each MP
+if (length(interval) != nMP) interval <- rep(interval, nMP)[1:nMP]
+if (!all(interval == interval[1])) {
+  message("Variable management intervals:")
+  df <- data.frame(MP=MPs,interval=interval)
+  message(paste(capture.output(print(df)), collapse = "\n"))
+}
+
+# ---- Set-up arrays and objects for projections ----
+MSElist <- list(Data)[rep(1, nMP)]  # create a data object for each method (they have identical historical data and branch in projected years)
+B_BMSYa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected B_BMSY
+F_FMSYa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected F_FMSY
+Ba <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected Biomass
+SSBa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected SSB
+VBa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected vulnerable biomass
+FMa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected fishing mortality rate
+Ca <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected removed catch
+CaRet <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected retained catch
+TACa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected TAC recommendation
+Effort <- array(NA, dim = c(nsim, nMP, proyears))  # store the Effort
+PAAout <- array(NA, dim = c(nsim, nMP, maxage))  # store the population-at-age in last projection year
+CAAout <- array(NA, dim = c(nsim, nMP, maxage))  # store the catch-at-age in last projection year
+CALout <- array(NA, dim = c(nsim, nMP, nCALbins))  # store the population-at-length in last projection year
+# SPRa <- array(NA,dim=c(nsim,nMP,proyears)) # store the Spawning Potential Ratio
+
+# --- Begin loop over MPs ----
+mm <- 1 # for debugging
+
+for (mm in 1:nMP) {  # MSE Loop over methods
+  tryMP <- tryCatch({
+    if(!silent) message(mm, "/", nMP, " Running MSE for ", MPs[mm]) 
+    checkNA <- NA # save number of NAs
+    
+    # years management is updated
+    upyrs <- seq(from=1, to=proyears, by=interval[mm]) # 1 + (0:(floor(proyears/interval[mm]) - 1)) * interval[mm] 
+    
+    # reset selectivity & retention parameters for projections
+    L5_P <- L5  
+    LFS_P <- LFS
+    Vmaxlen_P <- Vmaxlen
+    SLarray_P <- SLarray # selectivity at length array - projections
+    V_P <- V  #  selectivity at age array - projections
+    LR5_P <- LR5
+    LFR_P <- LFR
+    Rmaxlen_P <- Rmaxlen
+    retA_P <- retA # retention at age array - projections
+    retL_P <- retL # retention at length array - projections
+    Fdisc_P <- Fdisc # Discard mortality for projectons 
+    DR_P <- DR # Discard ratio for projections
+    
+    # projection arrays for each sub-year time-step
+    N_P <- array(NA, dim = c(nsim, maxage, projnTS, nareas))
+    Biomass_P <- array(NA, dim = c(nsim, maxage, projnTS, nareas))
+    VBiomass_P <- array(NA, dim = c(nsim, maxage, projnTS, nareas))
+    SSN_P <-array(NA, dim = c(nsim, maxage, projnTS, nareas))
+    SSB_P <- array(NA, dim = c(nsim, maxage, projnTS, nareas))
+    FM_P <- array(NA, dim = c(nsim, maxage, projnTS, nareas))
+    FM_Pret <- array(NA, dim = c(nsim, maxage, projnTS, nareas)) # retained F 
+    Z_P <- array(NA, dim = c(nsim, maxage, projnTS, nareas))
+    CB_P <- array(NA, dim = c(nsim, maxage, projnTS, nareas))
+    CB_Pret <- array(NA, dim = c(nsim, maxage, projnTS, nareas)) # retained catch 
+    
+    # indexes
+    SAYRL <- as.matrix(expand.grid(1:nsim, 1:maxage, histnTS, 1:nareas))  # Final historical year
+    SAYRt <- as.matrix(expand.grid(1:nsim, 1:maxage, 1 + histnTS, 1:nareas))  # First projection year
+    SAYR <- as.matrix(expand.grid(1:nsim, 1:maxage, 1, 1:nareas))
+    SYt <- SAYRt[, c(1, 3)]
+    SAYt <- SAYRt[, 1:3]
+    SR <- SAYR[, c(1, 4)]
+    SA1 <- SAYR[, 1:2]
+    S1 <- SAYR[, 1]
+    SY1 <- SAYR[, c(1, 3)]
+    SAY1 <- SAYRt[, 1:3]
+    SYA <- as.matrix(expand.grid(1:nsim, 1, 1:maxage))  # Projection year
+    SY <- SYA[, 1:2]
+    SA <- SYA[, c(1, 3)]
+    SAY <- SYA[, c(1, 3, 2)]
+    S <- SYA[, 1]
+    
+    y <- 1
+    if(!silent) {
+      cat("."); flush.console()
+    }
+    
+    # Recruitment and movement in first year 
+    NextYrN <- lapply(1:nsim, function(x)
+      popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB[x,,histnTS, ]), Ncurr=N[x,,histnTS,],
+                     Zcurr=Z[x,,histnTS,], PerrYr=Perr_y[x, histnTS+maxage-1], hs=hs[x],
+                     R0a=R0a[x,(histnTS+1),], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
+                     mov=mov[x,,,,histnTS+1], SRrel=SRrel[x]))
+    
+    # The stock at the beginning of projection period
+    N_P[,,1,] <- aperm(array(unlist(NextYrN), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2))
+    Biomass_P[SAYR] <- N_P[SAYR] * Wt_age[SAY1]  # Calculate biomass
+    VBiomass_P[SAYR] <- Biomass_P[SAYR] * V_P[SAYt]  # Calculate vulnerable biomass
+    SSN_P[SAYR] <- N_P[SAYR] * Mat_age[SAY1]  # Calculate spawning stock numbers
+    SSB_P[SAYR] <- SSN_P[SAYR] * Wt_age[SAY1]
+    
+    # Update abundance estimates - used for FMSY ref methods so that FMSY is applied to current abundance
+    
+    ########## TO DO - abundance should be mid-year abundance - not after first sub-year time-step ##########
+    
+    M_array <- array(0.5*M_ageArray[,,histnTS+y], dim=c(nsim, maxage, nareas))
+    Atemp <- apply(VBiomass_P[, , y, ] * exp(-M_array), 1, sum) # Abundance (mid-year before fishing)
+    MSElist[[mm]]@OM$A <- Atemp 
+    
+    # -- Apply MP in initial projection year ----
+    runMP <- applyMP(Data=MSElist[[mm]], MPs = MPs[mm], reps = reps, silent=TRUE)  # Apply MP
+    
+    MPRecs <- runMP[[1]][[1]] # MP recommendations
+    Data_p <- runMP[[2]] # Data object object with saved info from MP 
+    Data_p@TAC <- MPRecs$TAC
+    
+    # calculate pstar quantile of TAC recommendation dist 
+    TACused <- apply(Data_p@TAC, 2, quantile, p = pstar, na.rm = T) 
+    checkNA[y] <- sum(is.na(TACused))
+    LastEi <- rep(1,nsim) # no effort adjustment
+    LastSpatial <- array(MPA[histnTS,], dim=c(nareas, nsim)) # 
+    LastAllocat <- rep(1, nsim) # default assumption of reallocation of effort to open areas
+    LastCatch <- apply(CB[,,(histnTS-nts+1):histnTS,], 1, sum) # last years catch
+    
+    
+    
+    
+    
+    
+  }) # end tryCatch 
+} # end loop over MP
 
 
 
