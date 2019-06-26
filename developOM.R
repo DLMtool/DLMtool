@@ -106,22 +106,19 @@ if(!silent) message(crayon::black("Loading operating model"))
 # Check for time-step parameter
 if (!is.null(OM@cpars$nts)) {
   nts <- OM@cpars$nts
+  message(nts) # TO DO #######
 } else {
   OM@cpars$nts <- 1
   nts <- 1
   recVec <- 1
 }
 
-# ---- Time-step Parameters ----
-histnTS <- nyears * nts # number of time-steps in historical period
-projnTS <- proyears * nts # number of time-steps in projection period
-
-# --------------------------------------- #
- # add check to sum to one etc
 recVec <- recVec/sum(recVec)
 recTS <- rep(recVec, nyears+proyears) # recruitment per time-step
 
-
+# ---- Time-step Parameters ----
+histnTS <- nyears * nts # number of time-steps in historical period
+projnTS <- proyears * nts # number of time-steps in projection period
 
 # Custom Parameters
 # custom parameters exist - sample and write to list
@@ -145,6 +142,29 @@ for (X in 1:length(ObsPars)) assign(names(ObsPars)[X], ObsPars[[X]])
 # Imp Paramerers & assign to function environment
 ImpPars <- SampleImpPars(OM, nsim, cpars=SampCpars)
 for (X in 1:length(ImpPars)) assign(names(ImpPars)[X], ImpPars[[X]])
+
+# Bio-Economic Parameters
+BioEcoPars <- c("RevCurr", "CostCurr", "Response", "CostInc", "RevInc", "LatentEff")
+if (all(lapply(SampCpars[BioEcoPars], length) == 0)) {
+  # no bio-economic model
+  # if (!silent) message("No bio-economic model parameters found. \nTAC and TAE assumed to be caught in full")
+  RevCurr <- CostCurr <- Response <- CostInc <- RevInc <- LatentEff <- rep(NA, nsim)
+} else {
+  if (!silent) message("Bio-economic model parameters found.")
+  # Checks
+  if (length(SampCpars$CostCurr) != nsim) stop("OM@cpars$CostCurr is not length OM@nsim", call.=FALSE)
+  if (length(SampCpars$RevCurr) != nsim) stop("OM@cpars$RevCurr is not length OM@nsim", call.=FALSE)
+  if (length(SampCpars$Response) != nsim) stop("OM@cpars$Response is not length OM@nsim", call.=FALSE)
+  if (length(SampCpars$RevInc) != nsim) SampCpars$RevInc <- rep(0, nsim)
+  if (length(SampCpars$CostInc) != nsim) SampCpars$CostInc <- rep(0, nsim)
+  if (length(SampCpars$LatentEff) != nsim) SampCpars$LatentEff <- rep(NA, nsim)
+  RevCurr <- SampCpars$RevCurr
+  CostCurr <- SampCpars$CostCurr
+  Response <- SampCpars$Response
+  CostInc <- SampCpars$CostInc
+  RevInc <- SampCpars$RevInc
+  LatentEff <- SampCpars$LatentEff
+}
 
 # --- Initialize Arrays ----
 N <- array(NA, dim = c(nsim, maxage, histnTS, nareas))  # stock numbers array
@@ -542,7 +562,7 @@ if (checks) {
 } 
 
 
-######## Check MSY calcs once forward projections and yield calcs are sorted #####
+######## TODO Check MSY calcs once forward projections and yield calcs are sorted #####
 # --- Calculate MSY statistics for each year ----
 MSY_y <- array(0, dim=c(nsim, nyears+proyears)) # store MSY for each sim and year
 FMSY_y <- MSY_y # store FMSY for each sim, and year
@@ -762,6 +782,7 @@ Ba <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected Biomass
 SSBa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected SSB
 VBa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected vulnerable biomass
 FMa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected fishing mortality rate
+FMats <- array(NA, dim = c(nsim, nMP, projnTS))  # store the projected fishing mortality rate in each time-step
 Ca <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected removed catch
 CaRet <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected retained catch
 TACa <- array(NA, dim = c(nsim, nMP, proyears))  # store the projected TAC recommendation
@@ -770,6 +791,11 @@ PAAout <- array(NA, dim = c(nsim, nMP, maxage))  # store the population-at-age i
 CAAout <- array(NA, dim = c(nsim, nMP, maxage))  # store the catch-at-age in last projection year
 CALout <- array(NA, dim = c(nsim, nMP, nCALbins))  # store the population-at-length in last projection year
 # SPRa <- array(NA,dim=c(nsim,nMP,proyears)) # store the Spawning Potential Ratio
+
+Cost_out <- array(NA, dim = c(nsim, nMP, proyears))  # store Total Cost
+Rev_out <- array(NA, dim = c(nsim, nMP, proyears))  # store Total Revenue
+LatEffort_out<- array(NA, dim = c(nsim, nMP, proyears))  # store the Latent Effort
+TAE_out <- array(NA, dim = c(nsim, nMP, proyears)) # store the TAE
 
 # --- Begin loop over MPs ----
 mm <- 1 # for debugging
@@ -795,6 +821,7 @@ for (mm in 1:nMP) {  # MSE Loop over methods
     retL_P <- retL # retention at length array - projections
     Fdisc_P <- Fdisc # Discard mortality for projectons 
     DR_P <- DR # Discard ratio for projections
+    LatentEff_MP <- LatentEff # Historical latent effort
     
     # projection arrays for each sub-year time-step
     N_P <- array(NA, dim = c(nsim, maxage, projnTS, nareas))
@@ -825,7 +852,7 @@ for (mm in 1:nMP) {  # MSE Loop over methods
     SAY <- SYA[, c(1, 3, 2)]
     S <- SYA[, 1]
     
-    y <- 1
+    y <- 1; ts <- 1
     if(!silent) {
       cat("."); flush.console()
     }
@@ -862,10 +889,162 @@ for (mm in 1:nMP) {  # MSE Loop over methods
     # calculate pstar quantile of TAC recommendation dist 
     TACused <- apply(Data_p@TAC, 2, quantile, p = pstar, na.rm = T) 
     checkNA[y] <- sum(is.na(TACused))
-    LastEi <- rep(1,nsim) # no effort adjustment
     LastSpatial <- array(MPA[histnTS,], dim=c(nareas, nsim)) # 
     LastAllocat <- rep(1, nsim) # default assumption of reallocation of effort to open areas
-    LastCatch <- apply(CB[,,(histnTS-nts+1):histnTS,], 1, sum) # last years catch
+    LastTAC <- LastCatch <- apply(CB[,,(histnTS-nts+1):histnTS,], 1, sum) # last years catch
+    
+    # -- Bio-Economics ----
+    # Calculate Profit from last historical year
+    RevPC <- RevCurr/LastCatch # cost-per unit catch in last historical year
+    PMargin <- 1 - CostCurr/(RevPC * LastCatch) # profit margin in last historical year
+    Profit <- (RevPC * LastCatch) - CostCurr # profit in last historical year
+    HistEffort <- rep(1, nsim) # future effort is relative to today's effort
+    Effort_pot <- HistEffort + Response*Profit # potential effort in first projection year
+    Effort_pot[Effort_pot<0] <- tiny # 
+    
+    # Latent Effort - Maximum Effort Limit
+    if (!all(is.na(LatentEff_MP))) {
+      LastTAE <- histTAE <- HistEffort / (1 - LatentEff_MP) # current TAE limit exists    
+    } else {
+      LastTAE <- histTAE <- rep(NA, nsim) # no current TAE exists  
+    }
+    
+    # TO DO - add SeasonalEff to Rec object #####
+    MPRecs$SeasonalEff <- matrix(NA, nrow=nts, ncol=nsim)
+    SeasonalEff <- c(1,1, 1, 1)
+    SeasonalEff <- SeasonalEff/sum(SeasonalEff)
+    MPRecs$SeasonalEff <- matrix(SeasonalEff, nrow=nts, ncol=nsim)
+    ##############################################################
+    
+    for (ts in 1:nts) {
+      # loop over sub-year time-steps in first year
+      MPCalcs <- CalcMPDynamics(MPRecs, y, ts, histnTS, projnTS, nsim, Biomass_P, VBiomass_P,
+                                LastTAE, histTAE, LastSpatial, LastAllocat, LastTAC,
+                                TACused, maxF,
+                                LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P,
+                                L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
+                                Fdisc_P, DR_P,
+                                M_ageArray, FM_P, FM_Pret, Z_P, CB_P, CB_Pret,
+                                TAC_f, E_f, SizeLim_f,
+                                FinF, Spat_targ,
+                                CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
+                                qs, qvar, qinc,
+                                Effort_pot)
+      
+      CB_P <- MPCalcs$CB_P # removals
+      CB_Pret <- MPCalcs$CB_Pret # retained catch 
+      # apply(CB_Pret[,,1,], 1, sum)
+      FM_P <- MPCalcs$FM_P # fishing mortality
+      FM_Pret <- MPCalcs$FM_Pret # retained fishing mortality 
+      Z_P <- MPCalcs$Z_P # total mortality
+      retA_P <- MPCalcs$retA_P # retained-at-age
+      retL_P <- MPCalcs$retL_P # retained-at-length
+      V_P <- MPCalcs$V_P  # vulnerable-at-age
+      SLarray_P <- MPCalcs$SLarray_P # vulnerable-at-length
+      FMats[,mm,ts] <- MPCalcs$Ftot 
+      
+      # update population dynamics for next sub-year time-step (or next year if nts==1)
+      SAYRt <- as.matrix(expand.grid(1:nsim, 1:maxage, ts + histnTS+1, 1:nareas))  # Trajectory year
+      SAYt <- SAYRt[, 1:3]
+      SAYtMP <- cbind(SAYt, mm)
+      SYt <- SAYRt[, c(1, 3)]
+      SAY1R <- as.matrix(expand.grid(1:nsim, 1:maxage, ts, 1:nareas))
+      SAYR <- as.matrix(expand.grid(1:nsim, 1:maxage, ts+1, 1:nareas))
+      SY <- SAYR[, c(1, 3)]
+      SA <- SAYR[, 1:2]
+      S1 <- SAYR[, 1]
+      SAY <- SAYR[, 1:3]
+      S <- SAYR[, 1]
+      SR <- SAYR[, c(1, 4)]
+      SA2YR <- as.matrix(expand.grid(1:nsim, 2:maxage, ts+1, 1:nareas))
+      SA1YR <- as.matrix(expand.grid(1:nsim, 1:(maxage - 1), ts, 1:nareas))
+      
+      # --- Age & Growth ----
+      NextYrN <- lapply(1:nsim, function(x)
+        popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB_P[x,,ts, ]), Ncurr=N_P[x,,ts,],
+                       Zcurr=Z_P[x,,ts,], PerrYr=Perr_y[x, ts+histnTS+maxage], hs=hs[x],
+                       R0a=R0a[x,histnTS+1+ts,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
+                       mov=mov[x,,,, histnTS+ts+1], SRrel=SRrel[x]))
+      N_P[,,ts+1,] <- aperm(array(unlist(NextYrN), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2)) 
+      Biomass_P[SAYR] <- N_P[SAYR] * Wt_age[SAYt]  # Calculate biomass
+      VBiomass_P[SAYR] <- Biomass_P[SAYR] * V_P[SAYt]  # Calculate vulnerable biomass
+      SSN_P[SAYR] <- N_P[SAYR] * Mat_age[SAYt]  # Calculate spawning stock numbers
+      SSB_P[SAYR] <- SSN_P[SAYR] * Wt_age[SAYt]  # Calculate spawning stock biomass
+    
+    }
+    
+    TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
+    LastSpatial <- MPCalcs$Si
+    LastAllocat <- MPCalcs$Ai
+    LastTAE <- MPCalcs$TAE # TAE set by MP 
+    LastTAC <- MPCalcs$TACrec # TAC set by MP
+    
+    Effort[, mm, y] <- MPCalcs$Effort  ## TO DO ####### Average effort?
+    
+    # ---- Bio-economics ----
+    RetainCatch <- apply(CB_Pret[,,1:nts,], 1, sum) # retained catch this year
+    RetainCatch[RetainCatch<=0] <- tiny
+    Cost_out[,mm,y] <-  Effort[, mm, y] * CostCurr*(1+CostInc/100)^y # cost of effort this year
+    Rev_out[,mm,y] <- (RevPC*(1+RevInc/100)^y * RetainCatch)
+    PMargin <- 1 - Cost_out[,mm,y]/Rev_out[,mm,y] # profit margin this year
+    Profit <- Rev_out[,mm,y] - Cost_out[,mm,y] # profit this year
+    Effort_pot <- Effort_pot + Response*Profit # bio-economic effort next year
+    Effort_pot[Effort_pot<0] <- tiny # 
+    # LatEffort_out[,mm,y] <- LastTAE - Effort[, mm, y]  # store the Latent Effort
+    TAE_out[,mm,y] <- LastTAE # store the TAE
+    
+    # --- Begin projections ----
+    for (ts in (nts+1):projnTS) {
+      
+      if (ts %% nts == 1){
+        y <- y +1
+        if(!silent) {
+          cat("."); flush.console()  # update message every year
+        }  
+      }
+      
+      SelectChanged <- FALSE
+      if (AnnualMSY) {
+        if (any(range(retA_P[,,histnTS+ts] - retA[,,histnTS+ts]) !=0)) SelectChanged <- TRUE
+        if (any(range(V_P[,,histnTS+ts] - V[,,histnTS+ts]) !=0))  SelectChanged <- TRUE
+      }
+      
+      # -- Calculate MSY stats for this year ----
+      # if (AnnualMSY & SelectChanged) { #
+        # y1 <- nyears + y
+        # MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, 
+        #                     V_P, maxage, R0, SRrel, hs, yr.ind=y1)
+        # MSY_y[,mm,y] <- MSYrefsYr[1, ]
+        # FMSY_y[,mm,y] <- MSYrefsYr[2,]
+        # SSBMSY_y[,mm,y] <- MSYrefsYr[3,]
+      
+        ## TO DO ##########
+      # }    
+      
+      TACa[, mm, y] <- TACa[, mm, y-1] # TAC same as last year unless changed 
+      
+      upts <- seq(1, by=nts, length.out=proyears) # update at the beginning of year
+      # --- An update year ----
+      if (y %in% upyrs & ts %in% upts) {
+        # --- Update Data object ---- 
+        MSElist[[mm]] <- updateData(Data=MSElist[[mm]], OM, MPCalcs, Effort, Biomass, 
+                                    Biomass_P, CB_Pret, N_P, SSB, SSB_P, VBiomass, VBiomass_P, 
+                                    RefPoints, ErrList, FMSY_y, retA_P, retL_P, StockPars, 
+                                    FleetPars, ObsPars, upyrs, interval, y, mm, 
+                                    Misc=Data_p@Misc, SampCpars)
+        
+        
+      }
+      
+    }
+
+    
+    
+    
+   
+    
+    
+    
     
     
     

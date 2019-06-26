@@ -32,7 +32,8 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   # Index of abundance from total biomass - beginning of year before fishing
   # apply hyperstability / hyperdepletion
   Endind <- seq(from=nts, by=nts, length.out=nyears) # end of year index
-  II <- (apply(Biomass[,,Endind,], c(1, 3), sum)^ObsPars$betas) * ErrList$Ierr[, Endind]  
+  Begind <- seq(from=1, by=nts, length.out=nyears) # end of year index
+  II <- (apply(Biomass[,,Begind,], c(1, 3), sum)^ObsPars$betas) * ErrList$Ierr[, Begind]  
   II <- II/apply(II, 1, mean)  # normalize
   Data@Ind <- II # index of total abundance
   
@@ -112,10 +113,10 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   
   # Generate values for reference SBMSY/SB0
   # should be calculated from unfished - won't be correct if initD is set
-  I3 <- apply(Biomass[,,Endind,], c(1, 3), sum)^ObsPars$betas  # apply hyperstability / hyperdepletion
+  I3 <- apply(Biomass[,,Begind,], c(1, 3), sum)^ObsPars$betas  # apply hyperstability / hyperdepletion
   I3 <- I3/apply(I3, 1, mean)  # normalize index to mean 1
   if (!is.null(initD)) {
-    b1 <- apply(Biomass[,,ind,], c(1, 3), sum)
+    b1 <- apply(Biomass[,,Begind,], c(1, 3), sum)
     b2 <- matrix(RefPoints$BMSY, nrow=nsim, ncol=nyears)
     ind <- apply(abs(b1/ b2 - 1), 1, which.min) # find years closest to BMSY
     Iref <- diag(I3[1:nsim,ind])  # return the real target abundance index closest to BMSY
@@ -214,10 +215,13 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
                        N_P, SSB, SSB_P, VBiomass, VBiomass_P, RefPoints, ErrList, 
                        FMSY_P, retA_P, 
                        retL_P, StockPars, FleetPars, ObsPars, 
-                       upyrs, interval, y=2, 
+                       upyrs, upts, interval, y=2, ts, 
                        mm=1, Misc, SampCpars) {
   
   yind <- upyrs[match(y, upyrs) - 1]:(upyrs[match(y, upyrs)] - 1) # index
+  tsind <-  upts[match(ts, upts) - 1]:(upts[match(ts, upts)] - 1) 
+  
+  nts <- OM@cpars$nts
   
   nyears <- OM@nyears
   proyears <- OM@proyears
@@ -226,12 +230,13 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   reps <- OM@reps
   
   Data@Year <- 1:(nyears + y - 1)
-  Data@t <- rep(nyears + y, nsim)
+  Data@t <- rep(nyears + y-1, nsim)
   
+  histnTS <- nyears * nts
   # --- Simulate catches ---- 
-  CBtemp <- CB_Pret[, , yind, , drop=FALSE] # retained catch-at-age
-  CNtemp <- retA_P[,,yind+nyears, drop=FALSE] * 
-    apply(N_P[,,yind,, drop=FALSE], c(1,2,3), sum) # retained age structure
+  CBtemp <- CB_Pret[, , tsind, , drop=FALSE] # retained catch-at-age
+  CNtemp <- retA_P[,,tsind+histnTS, drop=FALSE] * 
+    apply(N_P[,,tsind,, drop=FALSE], c(1,2,3), sum) # retained age structure
   CBtemp[is.na(CBtemp)] <- tiny
   CBtemp[!is.finite(CBtemp)] <- tiny
   CNtemp[is.na(CNtemp)] <- tiny
@@ -240,9 +245,13 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   
   # --- Observed catch ----
   # Simulated observed retained catch (biomass)
-  Cobs <- ErrList$Cbiasa[, nyears + yind] * ErrList$Cerr[, nyears + yind] * 
+  Cobs <- ErrList$Cbiasa[, histnTS + tsind] * ErrList$Cerr[, histnTS + tsind] * 
     apply(CBtemp, c(1, 3), sum, na.rm = TRUE)
+  Cobs <- apply(Cobs, 1, function(x) tapply(x, ceiling(seq_along(x)/nts), sum)) # sum up sub-year catches
   Data@Cat <- cbind(Data@Cat, Cobs) 
+  
+  ################ UP TO HERE 
+  stop()
   
   # --- Index of total abundance ----
   I2 <- (cbind(apply(Biomass, c(1, 3), sum), 
