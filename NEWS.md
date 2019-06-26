@@ -3,6 +3,7 @@ The current version of the DLMtool package is available for download from [CRAN]
 ## DLMtool 5.3.9999 DEV VERSION
 
 ### Fixes
+- fix bug where TAE implementation error was affecting TAC controls (thanks to Robyn Forrest and Sean Anderson for finding this)
 - fix bug in `Cplot` (thanks Sarah Valencia for picking this up)
 - fix bug with `runMSE(Hist=TRUE)` where under some conditions the `Hist` object could not be stitched back together. 
 
