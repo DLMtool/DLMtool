@@ -1,0 +1,125 @@
+---
+title: "`r params$title`"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+
+
+
+```{r, echo=FALSE, results="asis"}
+if (params$tabs) {
+  cat('## Natural Mortality Parameters {.tabset .tabset-fade .tabset-pills}' )
+} else {
+  cat('## Natural Mortality Parameters')
+}
+
+dd <- StockPars$M_ageArray %>% dim()
+nsim <- dd[1]
+maxage <- dd[2]
+
+nsamp <- length(its)
+
+# cat(paste0("\n\nNumber of simulations: ", nsim))
+# cat(paste0("\n\nNumber of historical years: ", nyears))
+# cat(paste0("\n\nNumber of projection years: ", proyears))
+```
+
+
+
+### Sampled Parameters 
+Histograms of `r nsim` simulations of `M`, `Mexp`, and `Msd` parameters, with vertical colored lines indicating `r nsamp` randomly drawn values used in other plots:
+
+```{r M_samples, echo=FALSE}
+par(mfrow=c(1,3))
+hist2(StockPars$M, main="M", col=plotPars$col, axes=plotPars$axes,
+      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
+abline(v=StockPars$M[its], col=1:nsamp, lwd=plotPars$lwd)
+axis(side=1) 
+
+hist2(StockPars$Mexp, main="Mexp", col=plotPars$col, axes=plotPars$axes,
+      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
+abline(v=StockPars$Mexp[its], col=1:nsamp, lwd=plotPars$lwd)
+axis(side=1) 
+
+hist2(StockPars$Msd, main="Msd", col=plotPars$col, axes=plotPars$axes,
+      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
+abline(v=StockPars$Msd[its], col=1:nsamp, lwd=plotPars$lwd)
+axis(side=1) 
+```
+
+
+### Time-Series
+The average natural mortality rate by year for adult fish for `r nsamp` simulations. The vertical dashed line indicates the end of the historical period:
+
+```{r, echo=FALSE}
+ matplot(t(StockPars$Marray[its,]), type="l", lty=1, bty="l", main="M by Year", 
+         lwd=plotPars$lwd, ylab="M")
+abline(v=nyears, col="darkgray", lty=2)
+```
+
+
+
+### M-at-Age 
+Natural mortality-at-age for `r nsamp` simulations in the first historical year, the last historical year (i.e., current year), 
+and the last projeted year:
+
+```{r, echo=FALSE}
+par(mfrow=c(1,3))
+lims <- range(StockPars$M_ageArray[its,, ])
+ylab <- "Natural Mortality"
+matplot(t(StockPars$M_ageArray[its,,1]), type="l", lty=1, bty="l", 
+        lwd=plotPars$lwd, ylim=lims, ylab=ylab, las=1)
+mtext(side=3, "First historical year", cex=0.8, line=-1)
+mtext(side=1, "Age", line=2, cex=0.7)
+
+matplot(t(StockPars$M_ageArray[its,,nyears]), type="l", lty=1, bty="l", 
+        main="M-at-age", lwd=plotPars$lwd, ylim=lims, axes=FALSE,
+        ylab="")
+mtext(side=3, "Last historical year", cex=0.8, line=-1)
+axis(side=1)
+mtext(side=1, "Age", line=2, cex=0.7)
+matplot(t(StockPars$M_ageArray[its,,nyears+proyears]), type="l", lty=1, 
+        bty="l", lwd=plotPars$lwd, ylim=lims, axes=FALSE,
+        ylab="")
+mtext(side=3, "Last projected year", cex=0.8, line=-1)
+axis(side=1)
+mtext(side=1, "Age", line=2, cex=0.7)
+
+
+```
+
+### M-at-Length
+Natural mortality-at-length for `r nsamp` simulations in the first historical year, the last historical year (i.e., current year), 
+and the last projeted year:
+
+```{r, echo=FALSE}
+par(mfrow=c(1,3))
+lims <- range(StockPars$M_ageArray[its,, ])
+xlims <- range(StockPars$Len_age[its,,])
+matplot(t(StockPars$Len_age[its,,1]), t(StockPars$M_ageArray[its,,1]), type="l", 
+        lty=1, bty="l", lwd=plotPars$lwd, ylim=lims, xlim=xlims, ylab="Natural Mortality", xlab="")
+mtext(side=3, "First historical year", cex=0.8, line=-1)
+mtext(side=1, "Length", line=2, cex=0.7)
+  
+matplot(t(StockPars$Len_age[its,,nyears]), t(StockPars$M_ageArray[its,,nyears]), 
+        type="l", lty=1, bty="l", main="M-at-length", lwd=plotPars$lwd, ylim=lims, 
+        xlim=xlims, axes=FALSE, ylab="", xlab="")
+axis(side=1)
+mtext(side=1, "Length", line=2, cex=0.7)
+mtext(side=3, "Last historical year", cex=0.8, line=-1)
+
+matplot(t(StockPars$Len_age[its,,nyears+proyears]), 
+        t(StockPars$M_ageArray[its,,nyears+proyears]), 
+        type="l", lty=1, bty="l", lwd=plotPars$lwd, ylim=lims, 
+        axes=FALSE, xlim=xlims, ylab="", xlab="")
+
+mtext(side=3, "Last projected year", cex=0.8, line=-1)
+axis(side=1)
+mtext(side=1, "Length", line=2, cex=0.7)
+  ```
+
