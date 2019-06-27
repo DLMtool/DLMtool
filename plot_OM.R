@@ -14,11 +14,11 @@ Object <- Stock
 render_plot <- function(Object, RMD=NULL, nsamp=3, nsim=200, nyears=50, proyears=28, 
                         output_file=NULL, output_dir=getwd(), quiet=TRUE,
                         tabs=TRUE, title=NULL, date=NULL,
-                        plotPars =NULL) {
+                        plotPars =NULL, dev=FALSE) {
   
   SampCpars <- list() # empty list
   
-  if (is.null(plotPars)) plotPars <- list(breaks=50, col="grey", axes=TRUE, cex.main=1, lwd=2)
+  if (is.null(plotPars)) plotPars <- list(breaks=50, col="grey", axes=FALSE, cex.main=1, lwd=2)
   
   its <- sample(1:nsim, nsamp)
   
@@ -52,7 +52,12 @@ render_plot <- function(Object, RMD=NULL, nsamp=3, nsim=200, nyears=50, proyears
   message("Rendering HTML file")
   
   RMD <- paste0(RMD, ".Rmd")
-  input <- file.path(system.file(package = 'DLMtool'),'Rmd', Class, RMD)
+  if (dev) {
+    input <- file.path('inst/Rmd', Class, RMD) 
+  } else {
+    input <- file.path(system.file(package = 'DLMtool'),'Rmd', Class, RMD)  
+  }
+  
   
   rend <- try(rmarkdown::render(input, params=Params,
                     output_file=output_file,
@@ -69,7 +74,7 @@ render_plot <- function(Object, RMD=NULL, nsamp=3, nsim=200, nyears=50, proyears
 
 plot_M <- function(Stock=NULL, nsamp=3, nsim=200, nyears=50, proyears=28, 
                    output_file=NULL, output_dir=getwd(), quiet=TRUE, tabs=TRUE, title=NULL,
-                   date=NULL, plotPars=NULL) {
+                   date=NULL, plotPars=NULL, dev=FALSE) {
   
   SampCpars <- list() # empty list
   if (class(Stock) == "OM") {
@@ -90,22 +95,15 @@ plot_M <- function(Stock=NULL, nsamp=3, nsim=200, nyears=50, proyears=28,
               nyears=nyears, proyears=proyears,
               output_file=output_file, output_dir=output_dir, quiet=quiet,
               tabs=tabs, title=title, date=date,
-              plotPars=plotPars)
+              plotPars=plotPars, dev=dev)
 
   
 }
 
-plot_M(Stock)
-
-
-
-
-
 plot_Growth <- function(Stock=NULL, nsamp=3, nsim=200, nyears=50, proyears=28, 
-                        output_file=NULL, output_dir=getwd(), quiet=TRUE) {
+                        output_file=NULL, output_dir=getwd(), quiet=TRUE, tabs=TRUE, title=NULL,
+                        date=NULL, plotPars=NULL, dev=FALSE) {
   SampCpars <- list() # empty list
-  plotPars <- list(breaks=50, col="grey", axes=TRUE, cex.main=1, lwd=2)
-  
   if (class(Stock) == "OM") {
     Stock <- updateMSE(Stock) 
     if (is.finite(Stock@nyears)) nyears <- Stock@nyears
@@ -118,42 +116,51 @@ plot_Growth <- function(Stock=NULL, nsamp=3, nsim=200, nyears=50, proyears=28,
     }
     Stock <- SubOM(Stock)
   } 
-  if (class(Stock) == "Stock") {
-    StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars, msg=FALSE)
-    StockPars$Name <- Stock@Name
-    its <- sample(1:nsim, nsamp)
-    Params <- list(
-      title = NULL,
-      StockPars = StockPars,
-      plotPars=plotPars,
-      tabs = TRUE,
-      its = its,
-      nyears=nyears,
-      proyears=proyears,
-      date=NULL
-    )
-  } 
+  if (class(Stock) != "Stock") stop("Object must be class 'Stock' or 'OM'", call.=FALSE)
   
-  if (class(Stock) == "list") {
-    # check that list is ok 
-    if(!all(c("title", "StockPars", "plotPars", "tabs", "its", "nyears","proyears") %in% names(Stock)))
-      stop("Object must be class 'Stock' or 'OM', or a named list", call.=FALSE)
-    Params <- Stock 
-  }
-  
-  if (is.null(output_file)) output_file <- paste0(StockPars$Name, "_Growth.html")
-  message("Rendering ", output_file, " in ", output_dir)
-  
-  rmarkdown::render("inst/Rmd/Stock/Growth.Rmd", params=Params,
-                    output_file=output_file,
-                    output_dir=output_dir,
-                    quiet=quiet)
-  
+  render_plot(Object=Stock, RMD='Growth', nsamp=nsamp, nsim=nsim, 
+              nyears=nyears, proyears=proyears,
+              output_file=output_file, output_dir=output_dir, quiet=quiet,
+              tabs=tabs, title=title, date=date,
+              plotPars=plotPars, dev=dev)
 }
 
 
-plot_Growth(Stock, nsamp=5)
-plot_M(Params)
+plot_Maturity <- function(Stock=NULL, nsamp=3, nsim=200, nyears=50, proyears=28, 
+                        output_file=NULL, output_dir=getwd(), quiet=TRUE, tabs=TRUE, title=NULL,
+                        date=NULL, plotPars=NULL, dev=FALSE) {
+  SampCpars <- list() # empty list
+  if (class(Stock) == "OM") {
+    Stock <- updateMSE(Stock) 
+    if (is.finite(Stock@nyears)) nyears <- Stock@nyears
+    if (is.finite(Stock@proyears)) proyears <- Stock@proyears
+    if (is.finite(Stock@nsim)) nsim <- Stock@nsim	
+    
+    if(length(Stock@cpars)>0){ # custom parameters exist - sample and write to list
+      #ncparsim<-cparscheck(Stock@cpars)   # check each list object has the same length and if not stop and error report
+      SampCpars <- SampleCpars(Stock@cpars, nsim, msg=FALSE) 
+    }
+    Stock <- SubOM(Stock)
+  } 
+  if (class(Stock) != "Stock") stop("Object must be class 'Stock' or 'OM'", call.=FALSE)
+  
+  render_plot(Object=Stock, RMD='Maturity', nsamp=nsamp, nsim=nsim, 
+              nyears=nyears, proyears=proyears,
+              output_file=output_file, output_dir=output_dir, quiet=quiet,
+              tabs=tabs, title=title, date=date,
+              plotPars=plotPars, dev=dev)
+}
+
+plot_Maturity(Stock, dev=TRUE)
+
+plot_M(Stock)
+plot_Growth(Stock, nsamp=5, dev=TRUE)
+
+
+
+
+
+
 
 
 

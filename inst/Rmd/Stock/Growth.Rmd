@@ -1,7 +1,7 @@
 ---
 params: 
     title: ""
-    StockPars: "`r list()`"
+    Pars: "`r list()`"
     plotPars: "`r list()`"
     tabs: "`r TRUE`"
     its: " `r numeric()`"
@@ -22,7 +22,7 @@ if (params$tabs) {
   cat('## Growth Parameters')
 }
 
-dd <- StockPars$M_ageArray %>% dim()
+dd <- Pars$M_ageArray %>% dim()
 nsim <- dd[1]
 maxage <- dd[2]
 
@@ -38,29 +38,29 @@ Histograms of `r nsim` simulations of `Linf`, `Linfsd`, `K`, `Ksd`, and `t0` par
 
 ```{r, echo=FALSE}
 par(mfrow=c(2,3))
-hist2(StockPars$Linf, main="Linf", col=plotPars$col, axes=plotPars$axes,
+hist2(Pars$Linf, main="Linf", col=plotPars$col, axes=plotPars$axes,
       breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=StockPars$Linf[its], col=1:nsamp, lwd=plotPars$lwd)
+abline(v=Pars$Linf[its], col=1:nsamp, lwd=plotPars$lwd)
 axis(side=1) 
 
-hist2(StockPars$Linfsd, main="Linfsd", col=plotPars$col, axes=plotPars$axes,
+hist2(Pars$Linfsd, main="Linfsd", col=plotPars$col, axes=plotPars$axes,
       breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=StockPars$Linfsd[its], col=1:nsamp, lwd=plotPars$lwd)
+abline(v=Pars$Linfsd[its], col=1:nsamp, lwd=plotPars$lwd)
 axis(side=1) 
 
-hist2(StockPars$K, main="K", col=plotPars$col, axes=plotPars$axes,
+hist2(Pars$K, main="K", col=plotPars$col, axes=plotPars$axes,
       breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=StockPars$K[its], col=1:nsamp, lwd=plotPars$lwd)
+abline(v=Pars$K[its], col=1:nsamp, lwd=plotPars$lwd)
 axis(side=1) 
 
-hist2(StockPars$Ksd, main="Ksd", col=plotPars$col, axes=plotPars$axes,
+hist2(Pars$Ksd, main="Ksd", col=plotPars$col, axes=plotPars$axes,
       breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=StockPars$Ksd[its], col=1:nsamp, lwd=plotPars$lwd)
+abline(v=Pars$Ksd[its], col=1:nsamp, lwd=plotPars$lwd)
 axis(side=1)
 
-hist2(StockPars$t0, main="t0", col=plotPars$col, axes=plotPars$axes,
+hist2(Pars$t0, main="t0", col=plotPars$col, axes=plotPars$axes,
       breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=StockPars$t0[its], col=1:nsamp, lwd=plotPars$lwd)
+abline(v=Pars$t0[its], col=1:nsamp, lwd=plotPars$lwd)
 axis(side=1) 
 
 ```
@@ -68,8 +68,8 @@ axis(side=1)
 ### Time-Series
 
 ```{r, echo=FALSE}
-matplot(t(StockPars$Linfarray[its,]), type="l", bty="l", main="Linf by Year", lwd=plotPars$lwd, lty=1)
-matplot(t(StockPars$Karray[its,]), type="l", bty="l", main="K by Year", lwd=plotPars$lwd, lty=1)
+matplot(t(Pars$Linfarray[its,]), type="l", bty="l", main="Linf by Year", lwd=plotPars$lwd, lty=1)
+matplot(t(Pars$Karray[its,]), type="l", bty="l", main="K by Year", lwd=plotPars$lwd, lty=1)
 ```
 
 

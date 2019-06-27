@@ -28,9 +28,6 @@ maxage <- dd[2]
 
 nsamp <- length(its)
 
-# cat(paste0("\n\nNumber of simulations: ", nsim))
-# cat(paste0("\n\nNumber of historical years: ", nyears))
-# cat(paste0("\n\nNumber of projection years: ", proyears))
 ```
 
 
