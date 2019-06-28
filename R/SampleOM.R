@@ -659,7 +659,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   if (class(Stock) == "Stock") {
     Stock <- updateMSE(Stock) # update to add missing slots with default values
     # Sample Stock Pars - need some to calculate selectivity at age and length  
-    StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, cpars)
+    StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, cpars, msg=msg)
     for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
   } 
   if (class(Stock) == "list") for (X in 1:length(Stock)) assign(names(Stock)[X], Stock[[X]])

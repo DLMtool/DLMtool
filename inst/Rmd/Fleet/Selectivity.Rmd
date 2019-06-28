@@ -1,0 +1,79 @@
+---
+params: 
+    title: ""
+    Pars: "`r list()`"
+    plotPars: "`r list()`"
+    tabs: "`r TRUE`"
+    its: " `r numeric()`"
+    nyears: " `r numeric()`"
+    proyears: " `r numeric()`"
+    date: "`r Sys.Date()`"
+title: "`r params$title`"
+date: "`r params$date`"
+output:
+  html_document
+---
+
+
+```{r, echo=FALSE, results="asis"}
+if (params$tabs) {
+  cat('## Future Catchability {.tabset .tabset-fade .tabset-pills}' )
+} else {
+  cat('## Future Catchability')
+}
+
+dd <- Pars$M_ageArray %>% dim()
+nsim <- dd[1]
+maxage <- dd[2]
+
+nsamp <- length(its)
+```
+
+### Sampled Parameters
+
+
+L5 LFS Vmaxlen 
+
+LR5 LFR Rmaxlen
+
+ by year 
+
+
+Histograms of `r nsim` simulations of inter-annual variability in fishing efficiency (`qcv`) and average annual change in fishing efficiency (`qinc`), with vertical colored lines indicating `r nsamp` randomly drawn values used in the time-series plot:
+
+```{r, echo=FALSE}
+par(mfrow=c(1,2))
+
+hist2(Pars$qcv, col=col, axes=plotPars$axes, main="qcv", breaks=plotPars$breaks)
+abline(v=Pars$qcv[its], col=1:nsamp, lwd=plotPars$lwd)
+axis(side=1) 
+
+hist2(Pars$qinc, col=col, axes=plotPars$axes, main="qinc", breaks=plotPars$breaks)
+abline(v=Pars$qinc[its], col=1:nsamp, lwd=plotPars$lwd)
+axis(side=1)
+
+```
+
+
+### Time-Series
+Time-series plot showing `r nsamp` trends in future fishing efficiency (catchability):
+```{r, echo=FALSE}
+par(mfrow=c(1,1))
+
+ind <- as.matrix(expand.grid(its, 1:proyears, 1:nsamp))
+Qfuture <- matrix(NA, nrow=proyears, ncol=nsamp)
+X <- 0 
+for (sim in its) {
+   X <- X + 1 
+  Qfuture[,X] <- Pars$qvar[sim,1] * (1 + Pars$qinc[sim]/100)^(1:proyears)
+  Qfuture[,X] <- Qfuture[,X]/Qfuture[1,X]
+}
+
+CurrentYr <- Pars$CurrentYr
+futYr <- (CurrentYr+1):(CurrentYr+proyears)
+
+ylim <- range(Qfuture) %>% abs() %>% max()
+
+matplot(futYr, Qfuture,  type="l", lwd=plotPars$lwd, bty="l", lty=1,
+        ylab="Change in Efficiency (%)", xlab="Year", ylim=c(ylim, ylim))
+```

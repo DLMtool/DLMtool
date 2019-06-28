@@ -1,5 +1,207 @@
 
+render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, nyears=50, 
+                        proyears=28, output_file=NULL, output_dir=getwd(), 
+                        quiet=TRUE, tabs=TRUE, title=NULL, date=NULL,
+                        plotPars =NULL, open=TRUE, dev=FALSE) {
+  
+  SampCpars <- list() # empty list
+  
+  if (is.null(plotPars)) plotPars <- list(breaks=10, col="darkgray", axes=FALSE, 
+                                          cex.main=1, lwd=2)
+ 
+  if (class(Object) == "OM") {
+    nsim <- Object@nsim 
+    nyears <- Object@nyears
+    proyears <- Object@proyears
+    SampCpars <- if(length(Object@cpars)>0) SampCpars <- SampleCpars(Object@cpars, nsim, msg=FALSE)
+    set.seed(OM@seed)
+    Class <- "OM"
+  }
+  
+ 
+  if (Class == "Stock") {
+    Pars <- SampleStockPars(Object, nsim, nyears, proyears, SampCpars, 
+                            msg=FALSE)
+    Pars$Name <- gsub(" ", "_", Object@Name)  
+  } else if (Class == "Fleet") {
+    if (class(Stock)!="Stock") 
+      stop("Must provide object of class 'Stock'", call. = FALSE)
+    StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars, 
+                                 msg=FALSE)
+    FleetPars <- SampleFleetPars(Object, Stock, nsim, nyears, proyears,
+                                 SampCpars, msg=FALSE)
+  
+    Pars <- c(StockPars, FleetPars)
+    Pars$Name <- gsub(" ", "_", Object@Name)
+    Pars$CurrentYr <- Object@CurrentYr
+    
+  } else if (Class == "Obs") {
+    
+  } else if (Class == "Imp") {
+    
+  } else if (Class == "OM") {
+  
+    StockPars <- SampleStockPars(SubOM(Object, "Stock"), nsim, nyears, proyears, SampCpars, msg=FALSE)
+    FleetPars <- SampleFleetPars(SubOM(Object, "Fleet"), SubOM(Object, "Stock"), SampCpars, nsim, nyears, proyears, SampCpars, msg=FALSE)
+    ObsPars <- SampleObsPars(SubOM(Object, "Obs"), nsim, cpars=SampCpars)
+    ImpPars <- SampleImpPars(SubOM(Object, "Imp"), nsim, cpars=SampCpars)
 
+    Pars <- c(StockPars, FleetPars, ObsPars, ImpPars)
+  } else {
+    stop("Object must be class 'Stock', 'Fleet', 'Obs', or 'Imp'", call.=FALSE)  
+  }
+  
+  Pars$Name <- gsub(" ", "_", Object@Name)  
+  
+  its <- sample(1:nsim, nsamp)
+  
+  Params <- list(
+    title = title,
+    Pars = Pars,
+    plotPars=plotPars,
+    tabs = tabs,
+    its = its,
+    nyears=nyears,
+    proyears=proyears,
+    date=NULL
+  )
+  
+  outname <- paste0("_", RMD, ".html")
+  if (is.null(output_file)) output_file <- paste0(Pars$Name, outname)
+  message("Rendering HTML file")
+  
+  RMD <- paste0(RMD, ".Rmd")
+  if (dev) {
+    input <- file.path('inst/Rmd', Class, RMD) 
+  } else {
+    input <- file.path(system.file(package = 'DLMtool'),'Rmd', Class, RMD)  
+  }
+  
+  
+  rend <- try(rmarkdown::render(input, params=Params,
+                                output_file=output_file,
+                                output_dir=output_dir,
+                                quiet=quiet), silent=TRUE)
+  
+  if (class(rend) == "try-error") {
+    print(rend)
+  } else {
+    message("Rendered ", output_file, " in ", output_dir)
+    if (open) utils::browseURL(file.path(output_dir, output_file))
+  }
+}
+
+
+#' @method plot character
+#' @export
+plot.character <- function(x, Object, ...) {
+  plot.pars(x, Object, ...)  
+}
+
+
+#' Title
+#'
+#' @param x 
+#' @param Object 
+#' @param nsamp 
+#' @param nsim 
+#' @param nyears 
+#' @param proyears 
+#' @param output_file 
+#' @param output_dir 
+#' @param quiet 
+#' @param tabs 
+#' @param title 
+#' @param date 
+#' @param plotPars 
+#' @param open 
+#' @param dev 
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plot.pars <- function(x, Object, Stock=NULL, nsamp=3, nsim=200, nyears=50, 
+                      proyears=28, output_file=NULL, output_dir=getwd(), 
+                      quiet=TRUE, tabs=TRUE, title=NULL, date=NULL,
+                      plotPars =NULL, open=TRUE, dev=FALSE) {
+  
+  StockDF <- data.frame(chr=c("M",
+                              "Growth",
+                              "Maturity",
+                              "Recruitment",
+                              "Spatial",
+                              "Depletion"),
+                        Class="Stock",
+                        stringsAsFactors = FALSE)
+  
+ FleetDF <- data.frame(chr=c("Effort",
+                              "Catchability",
+                              "MPA",
+                              "Selectivity"),
+                        Class="Fleet",
+                        stringsAsFactors = FALSE)
+  
+ DF <- dplyr::bind_rows(StockDF, FleetDF)
+  
+  if (!x %in% DF[,1]) 
+    stop("Invalid argument. Valid arguments are: ", paste0(DF[,1], sep=" "), call.=FALSE)
+  
+  Class <- DF$Class[match(x, DF[,1])]
+  if (class(Object) !="OM" & class(Object) != Class) 
+    stop("Incorrect class object for this parameter", call.=FALSE)
+  
+  
+  if (x == "M") x <- "NaturalMortality"
+  
+  render_plot(Object=Object, Class=Class, Stock=Stock, RMD=x, nsamp=nsamp, nsim=nsim, 
+              nyears=nyears, proyears=proyears,
+              output_file=output_file, output_dir=output_dir, quiet=quiet,
+              tabs=tabs, title=title, date=date,
+              plotPars=plotPars, open=open, dev=dev)
+}  
+
+
+
+#' Title
+#' 
+#' @param x 
+#'
+#' @param nsamp 
+#' @param nsim 
+#' @param nyears 
+#' @param proyears 
+#' @param output_file 
+#' @param output_dir 
+#' @param quiet 
+#' @param tabs 
+#' @param title 
+#' @param date 
+#' @param plotPars 
+#' @param open 
+#' @param dev 
+#'
+#' @method plot Stock
+#' @export
+plot.Stock <- function(x, nsamp=3, nsim=200, nyears=50, 
+                       proyears=28, output_file=NULL, output_dir=getwd(), 
+                       quiet=TRUE, tabs=TRUE, title=NULL, date=NULL,
+                       plotPars =NULL, open=TRUE, dev=FALSE){
+  
+  render_plot(Object=x, Class="Stock", RMD='Stock', nsamp=nsamp, nsim=nsim, 
+              nyears=nyears, proyears=proyears,
+              output_file=output_file, output_dir=output_dir, quiet=quiet,
+              tabs=tabs, title=title, date=date,
+              plotPars=plotPars, dev=dev)
+}
+
+
+
+
+
+
+
+#### --- Old Code ----------------------------------------------------------####
 #' Plot the Historical Spatial Closures
 #'
 #' @param OM An object of class OM
@@ -269,9 +471,9 @@ hist2 <- function(x, col, axes=FALSE, main="", breaks=10,cex.main=1) {
 
 
 
-#' @method plot Stock
-#' @export
-plot.Stock <- function(x, ...)  plotStock(x, ...)
+# #' @method plot Stock
+# #' @export
+# plot.Stock <- function(x, ...)  plotStock(x, ...)
 
 #' Plot the Stock object parameters 
 #' 
@@ -292,7 +494,7 @@ plot.Stock <- function(x, ...)  plotStock(x, ...)
 #' @param ...  Optional additional arguments passed to \code{plot}
 #' @author A. Hordyk
 #' @export 
-plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28, 
+plotStock_old <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28, 
                       col="darkgray", breaks=10, lwd=2, ask=FALSE, incVB=TRUE, ...) {
   Stock <- x 
   SampCpars <- list() # empty list 

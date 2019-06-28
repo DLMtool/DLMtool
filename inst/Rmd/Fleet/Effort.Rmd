@@ -1,0 +1,59 @@
+---
+params: 
+    title: ""
+    Pars: "`r list()`"
+    plotPars: "`r list()`"
+    tabs: "`r TRUE`"
+    its: " `r numeric()`"
+    nyears: " `r numeric()`"
+    proyears: " `r numeric()`"
+    date: "`r Sys.Date()`"
+title: "`r params$title`"
+date: "`r params$date`"
+output:
+  html_document
+---
+
+
+```{r, echo=FALSE, results="asis"}
+if (params$tabs) {
+  cat('## Historical Effort {.tabset .tabset-fade .tabset-pills}' )
+} else {
+  cat('## Historical Effort')
+}
+
+dd <- Pars$M_ageArray %>% dim()
+nsim <- dd[1]
+maxage <- dd[2]
+
+nsamp <- length(its)
+```
+
+### Sampled Parameters
+Histograms of `r nsim` simulations of inter-annual variability in historical fishing mortality (`Esd`), with vertical colored lines indicating `r nsamp` randomly drawn values used in the time-series plot:
+
+```{r, echo=FALSE}
+par(mfrow=c(1,1))
+
+hist2(Pars$Esd, col=col, axes=plotPars$axes, main="Esd", breaks=plotPars$breaks)
+abline(v=Pars$Esd[its], col=1:nsamp, lwd=plotPars$lwd)
+axis(side=1) 
+
+```
+
+
+### Time-Series
+Time-series plot showing `r nsamp` trends in historical fishing mortality (`OM@EffUpper` and `OM@EffLower` or `OM@cpars$Find`):
+```{r, echo=FALSE}
+par(mfrow=c(1,1))
+
+
+CurrentYr <- Pars$CurrentYr
+histYr <- (CurrentYr-nyears+1):CurrentYr
+futYr <- (CurrentYr+1):(CurrentYr+proyears)
+Years <- histYr
+
+matplot(Years, t(Pars$Find[its,]), type="l", lwd=plotPars$lwd, bty="l", lty=1,
+        ylab="Relative F", xlab="Year")
+
+```
