@@ -37,11 +37,11 @@ Histograms of `r nsim` simulations of inter-annual variability in fishing effici
 ```{r, echo=FALSE}
 par(mfrow=c(1,2))
 
-hist2(Pars$qcv, col=col, axes=plotPars$axes, main="qcv", breaks=plotPars$breaks)
+hist2(Pars$qcv, col=plotPars$col, axes=plotPars$axes, main="qcv", breaks=plotPars$breaks)
 abline(v=Pars$qcv[its], col=1:nsamp, lwd=plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$qinc, col=col, axes=plotPars$axes, main="qinc", breaks=plotPars$breaks)
+hist2(Pars$qinc, col=plotPars$col, axes=plotPars$axes, main="qinc", breaks=plotPars$breaks)
 abline(v=Pars$qinc[its], col=1:nsamp, lwd=plotPars$lwd)
 axis(side=1)
 
@@ -68,5 +68,5 @@ futYr <- (CurrentYr+1):(CurrentYr+proyears)
 ylim <- range(Qfuture) %>% abs() %>% max()
 
 matplot(futYr, Qfuture,  type="l", lwd=plotPars$lwd, bty="l", lty=1,
-        ylab="Change in Efficiency (%)", xlab="Year", ylim=c(ylim, ylim))
+        ylab="Change in Efficiency (%)", xlab="Year", ylim=c(-ylim, ylim))
 ```

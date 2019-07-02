@@ -38,15 +38,15 @@ Histograms of `r nsim` simulations of steepness (`h`), recruitment process error
 
 ```{r, echo=FALSE}
 par(mfrow=c(2,3))
-hist2(Pars$hs, col=col, axes=plotPars$axes, main="Steepness (h)", breaks=plotPars$breaks)
+hist2(Pars$hs, col=plotPars$col, axes=plotPars$axes, main="Steepness (h)", breaks=plotPars$breaks)
 abline(v=Pars$hs[its], col=1:nsamp, lwd=plotPars$lwd)
 axis(side=1)  
 
-hist2(Pars$procsd, col=col, axes=plotPars$axes, main="Recruitment process error (Perr)", breaks=plotPars$breaks)
+hist2(Pars$procsd, col=plotPars$col, axes=plotPars$axes, main="Recruitment process error (Perr)", breaks=plotPars$breaks)
 abline(v=Pars$procsd[its], col=1:nsamp, lwd=plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$AC, col=col, axes=plotPars$axes, main="Auto-correlation (AC)", breaks=plotPars$breaks)
+hist2(Pars$AC, col=plotPars$col, axes=plotPars$axes, main="Auto-correlation (AC)", breaks=plotPars$breaks)
 abline(v=Pars$AC[its], col=1:nsamp, lwd=plotPars$lwd)
 axis(side=1)
 

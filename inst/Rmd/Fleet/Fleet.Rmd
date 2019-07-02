@@ -22,7 +22,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r echo=FALSE, include=FALSE}
-library(knitr)
+library(knitr); library(dplyr)
 rmd.files <- list.files()
 rmd.files <- rmd.files[-match("Fleet.Rmd", rmd.files)]
 rmd.files <- unique(rmd.files)

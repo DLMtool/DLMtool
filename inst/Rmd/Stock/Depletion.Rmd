@@ -36,7 +36,7 @@ Histograms of `r nsim` simulations of depletion (spawning biomass in the last hi
 
 ```{r, echo=FALSE}
 par(mfrow=c(2,3))
-hist2(Pars$D, col=col, axes=plotPars$axes, main="Depletion (D)", breaks=plotPars$breaks)
+hist2(Pars$D, col=plotPars$col, axes=plotPars$axes, main="Depletion (D)", breaks=plotPars$breaks)
 abline(v=Pars$D[its], col=1:nsamp, lwd=plotPars$lwd)
 axis(side=1)  
 ```

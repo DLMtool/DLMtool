@@ -28,22 +28,31 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
       stop("Must provide object of class 'Stock'", call. = FALSE)
     StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars, 
                                  msg=FALSE)
-    FleetPars <- SampleFleetPars(Object, Stock, nsim, nyears, proyears,
+    FleetPars <- SampleFleetPars(Object, StockPars, nsim, nyears, proyears,
                                  SampCpars, msg=FALSE)
   
     Pars <- c(StockPars, FleetPars)
     Pars$Name <- gsub(" ", "_", Object@Name)
     Pars$CurrentYr <- Object@CurrentYr
+    Pars$MPA <- Object@MPA
     
   } else if (Class == "Obs") {
+    ObsPars <- SampleObsPars(Object, nsim, cpars=SampCpars)
+    BMSY_B0bias <- array(rlnorm(nsim, 
+                                mconv(1, Object@BMSY_B0biascv), sdconv(1, Object@BMSY_B0biascv)), 
+                         dim = c(nsim))  # trial samples of BMSY relative to unfished  
+
+    ObsPars$BMSY_B0bias <- BMSY_B0bias
+    
+    Pars <- c(ObsPars)
     
   } else if (Class == "Imp") {
     
   } else if (Class == "OM") {
   
     StockPars <- SampleStockPars(SubOM(Object, "Stock"), nsim, nyears, proyears, SampCpars, msg=FALSE)
-    FleetPars <- SampleFleetPars(SubOM(Object, "Fleet"), SubOM(Object, "Stock"), SampCpars, nsim, nyears, proyears, SampCpars, msg=FALSE)
-    ObsPars <- SampleObsPars(SubOM(Object, "Obs"), nsim, cpars=SampCpars)
+    FleetPars <- SampleFleetPars(SubOM(Object, "Fleet"), StockPars, nsim, nyears, proyears, SampCpars, msg=FALSE)
+  
     ImpPars <- SampleImpPars(SubOM(Object, "Imp"), nsim, cpars=SampCpars)
 
     Pars <- c(StockPars, FleetPars, ObsPars, ImpPars)
@@ -196,9 +205,35 @@ plot.Stock <- function(x, nsamp=3, nsim=200, nyears=50,
 }
 
 
+#' @method plot Fleet
+#' @export
+plot.Fleet <- function(x, Stock=NULL, nsamp=3, nsim=200, nyears=50, 
+                       proyears=28, output_file=NULL, output_dir=getwd(), 
+                       quiet=TRUE, tabs=TRUE, title=NULL, date=NULL,
+                       plotPars =NULL, open=TRUE, dev=FALSE){
+  if (class(Stock) !="Stock")
+    stop("Must provide object of class 'Stock'")
+  
+  render_plot(Object=x, Class="Fleet", Stock=Stock, RMD='Fleet', nsamp=nsamp, nsim=nsim, 
+              nyears=nyears, proyears=proyears,
+              output_file=output_file, output_dir=output_dir, quiet=quiet,
+              tabs=tabs, title=title, date=date,
+              plotPars=plotPars, dev=dev)
+}
 
-
-
+#' @method plot Obs
+#' @export
+plot.Obs <- function(x, nsamp=3, nsim=200, nyears=50, 
+                       proyears=28, output_file=NULL, output_dir=getwd(), 
+                       quiet=TRUE, tabs=TRUE, title=NULL, date=NULL,
+                       plotPars =NULL, open=TRUE, dev=FALSE){
+  
+  render_plot(Object=x, Class="Obs", Stock=NULL, RMD='Obs', nsamp=nsamp, nsim=nsim, 
+              nyears=nyears, proyears=proyears,
+              output_file=output_file, output_dir=output_dir, quiet=quiet,
+              tabs=tabs, title=title, date=date,
+              plotPars=plotPars, dev=dev)
+}
 
 
 #### --- Old Code ----------------------------------------------------------####
@@ -716,9 +751,9 @@ plotStock_old <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
 
 
 
-#' @method plot Fleet
-#' @export
-plot.Fleet <- function(x, ...)  plotFleet(x, ...)
+# #' @method plot Fleet
+# #' @export
+# plot.Fleet <- function(x, ...)  plotFleet(x, ...)
 
 #' Plot the Fleet object parameters 
 #' 
@@ -734,7 +769,7 @@ plot.Fleet <- function(x, ...)  plotFleet(x, ...)
 #' @rdname plot-Fleet 
 #' @author A. Hordyk
 #' @export 
-plotFleet <- function(x, Stock=NULL, nsamp=3, nsim=500, proyears=28, col="darkgray", 
+plotFleet_old <- function(x, Stock=NULL, nsamp=3, nsim=500, proyears=28, col="darkgray", 
                       breaks=10, lwd=2, ...) { 
   
   Fleet <- updateMSE(x) # add missing slots with default values 
@@ -870,9 +905,9 @@ plotFleet <- function(x, Stock=NULL, nsamp=3, nsim=500, proyears=28, col="darkgr
 }
 
 
-#' @method plot Obs
-#' @export
-plot.Obs <- function(x, ...)  plotObs(x, ...)
+# #' @method plot Obs
+# #' @export
+# plot.Obs <- function(x, ...)  plotObs(x, ...)
 
 #' Plot the Observation object parameters 
 #' 
@@ -889,7 +924,7 @@ plot.Obs <- function(x, ...)  plotObs(x, ...)
 #' @rdname plot-Obs 
 #' @author T. Carruthers and A. Hordyk
 #' @export 
-plotObs <- function(x, nsim=500, nyears=50, 
+plotObs_old <- function(x, nsim=500, nyears=50, 
                     col="darkgray", breaks=10, ...) {
   
   Obs <- x

@@ -35,7 +35,7 @@ Histograms of `r nsim` simulations of inter-annual variability in historical fis
 ```{r, echo=FALSE}
 par(mfrow=c(1,1))
 
-hist2(Pars$Esd, col=col, axes=plotPars$axes, main="Esd", breaks=plotPars$breaks)
+hist2(Pars$Esd, col=plotPars$col, axes=plotPars$axes, main="Esd", breaks=plotPars$breaks)
 abline(v=Pars$Esd[its], col=1:nsamp, lwd=plotPars$lwd)
 axis(side=1) 
 
