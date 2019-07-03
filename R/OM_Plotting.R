@@ -14,7 +14,7 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
     nyears <- Object@nyears
     proyears <- Object@proyears
     SampCpars <- if(length(Object@cpars)>0) SampCpars <- SampleCpars(Object@cpars, nsim, msg=FALSE)
-    set.seed(OM@seed)
+    set.seed(Object@seed)
     Class <- "OM"
   }
   
@@ -67,7 +67,7 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
     if (nsim>=48 & parallel) dopar <- TRUE
     if (nsim<48& parallel) dopar <- FALSE
     message("Running Historical Simulations")
-    Hist <- runMSE(OM, Hist=TRUE, silent=TRUE, parallel = dopar)
+    Hist <- runMSE(Object, Hist=TRUE, silent=TRUE, parallel = dopar)
     Pars$Hist <- Hist
     Pars$Name <- "OM"
     
@@ -139,7 +139,7 @@ plot.character <- function(x, Object, ...) {
 plot.pars <- function(x, Object, Stock=NULL, nsamp=3, nsim=200, nyears=50, 
                       proyears=28, output_file=NULL, output_dir=getwd(), 
                       quiet=TRUE, tabs=TRUE, title=NULL, date=NULL,
-                      plotPars =NULL, open=TRUE, dev=FALSE) {
+                      plotPars =NULL, open=TRUE, dev=FALSE, ...) {
   
   StockDF <- data.frame(chr=c("M",
                               "Growth",
@@ -210,6 +210,7 @@ plot.pars <- function(x, Object, Stock=NULL, nsamp=3, nsim=200, nyears=50,
 #' }
 #' @param open Logical. Open the html file?
 #' @param dev Logical. For development use only.
+#' @param ... Not used
 #'
 #' @method plot Stock
 #' @export
@@ -258,7 +259,7 @@ plot.pars <- function(x, Object, Stock=NULL, nsamp=3, nsim=200, nyears=50,
 plot.Stock <- function(x, nsamp=3, nsim=200, nyears=50, 
                        proyears=28, output_file=NULL, output_dir=getwd(), 
                        quiet=TRUE, tabs=TRUE, title=NULL, date=NULL,
-                       plotPars =NULL, open=TRUE, dev=FALSE){
+                       plotPars =NULL, open=TRUE, dev=FALSE, ...){
   
   render_plot(Object=x, Class="Stock", RMD='Stock', nsamp=nsamp, nsim=nsim, 
               nyears=nyears, proyears=proyears,
@@ -274,7 +275,7 @@ plot.Stock <- function(x, nsamp=3, nsim=200, nyears=50,
 plot.Fleet <- function(x, Stock=NULL, nsamp=3, nsim=200, nyears=50, 
                        proyears=28, output_file=NULL, output_dir=getwd(), 
                        quiet=TRUE, tabs=TRUE, title=NULL, date=NULL,
-                       plotPars =NULL, open=TRUE, dev=FALSE){
+                       plotPars =NULL, open=TRUE, dev=FALSE, ...){
   if (class(Stock) !="Stock")
     stop("Must provide object of class 'Stock'")
   
@@ -291,7 +292,7 @@ plot.Fleet <- function(x, Stock=NULL, nsamp=3, nsim=200, nyears=50,
 plot.Obs <- function(x, nsamp=3, nsim=200, nyears=50, 
                        proyears=28, output_file=NULL, output_dir=getwd(), 
                        quiet=TRUE, tabs=TRUE, title=NULL, date=NULL,
-                       plotPars =NULL, open=TRUE, dev=FALSE){
+                       plotPars =NULL, open=TRUE, dev=FALSE, ...){
   
   render_plot(Object=x, Class="Obs", Stock=NULL, RMD='Obs', nsamp=nsamp, nsim=nsim, 
               nyears=nyears, proyears=proyears,
@@ -306,7 +307,7 @@ plot.Obs <- function(x, nsamp=3, nsim=200, nyears=50,
 plot.Imp <- function(x, nsamp=3, nsim=200, nyears=50, 
                      proyears=28, output_file=NULL, output_dir=getwd(), 
                      quiet=TRUE, tabs=TRUE, title=NULL, date=NULL,
-                     plotPars =NULL, open=TRUE, dev=FALSE){
+                     plotPars =NULL, open=TRUE, dev=FALSE, ...){
   
   render_plot(Object=x, Class="Imp", Stock=NULL, RMD='Imp', nsamp=nsamp, nsim=nsim, 
               nyears=nyears, proyears=proyears,
@@ -321,7 +322,7 @@ plot.Imp <- function(x, nsamp=3, nsim=200, nyears=50,
 plot.Hist <- function(x, nsamp=3, nsim=200, nyears=50, 
                       proyears=28, output_file=NULL, output_dir=getwd(), 
                       quiet=TRUE, tabs=TRUE, title=NULL, date=NULL,
-                      plotPars =NULL, open=TRUE, dev=FALSE) {
+                      plotPars =NULL, open=TRUE, dev=FALSE, ...) {
   render_plot(Object=x, Class="Hist", Stock=NULL, RMD='Hist', nsamp=nsamp, nsim=nsim, 
               nyears=nyears, proyears=proyears,
               output_file=output_file, output_dir=output_dir, quiet=quiet,
@@ -335,7 +336,7 @@ plot.Hist <- function(x, nsamp=3, nsim=200, nyears=50,
 plot.OM <- function(x, nsamp=3, nsim=200, nyears=50, 
                     proyears=28, output_file=NULL, output_dir=getwd(), 
                     quiet=TRUE, tabs=TRUE, title=NULL, date=NULL,
-                    plotPars =NULL, open=TRUE, dev=FALSE) {
+                    plotPars =NULL, open=TRUE, dev=FALSE, ...) {
   render_plot(Object=x, Class="OM", Stock=NULL, RMD='OM', nsamp=nsamp, nsim=nsim, 
               nyears=nyears, proyears=proyears,
               output_file=output_file, output_dir=output_dir, quiet=quiet,
@@ -355,6 +356,7 @@ plot.OM <- function(x, nsamp=3, nsim=200, nyears=50,
 #' @author A. Hordyk
 #'
 #' @examples
+#' \dontrun{
 #' OM <- new("OM", Albacore, Generic_Fleet, Perfect_Info, Perfect_Imp)
 #' 
 #' ## 50% of Area 1 was closed 30 years ago 
@@ -366,6 +368,7 @@ plot.OM <- function(x, nsamp=3, nsim=200, nyears=50,
 #' 
 #' OM@MPA <- matrix(c(cl1, cl2, cl3), ncol=3, byrow=TRUE)
 #' plotMPA(OM)
+#' }
 #' 
 plotMPA <- function(OM, sim=NA) {
   .Deprecated('plot("MPA", Fleet, Stock')
@@ -520,7 +523,10 @@ plotSelect <- function(OM, Pars=NULL, pyears=4, sim=NA, type="l") {
 #' @author A. Hordyk
 #' @export
 #'
-#' @examples plotM(Albacore)
+#' @examples 
+#' \dontrun{
+#' plotM(Albacore)
+#' }
 plotM <- function(Stock, nsim=5) {
   .Deprecated('plot("M", Stock')
   if (class(Stock) != "Stock" && class(Stock) != "OM") stop("Must supply object of class 'Stock' or 'OM'")
