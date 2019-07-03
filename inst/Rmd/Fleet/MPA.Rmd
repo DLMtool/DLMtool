@@ -1,0 +1,105 @@
+---
+params: 
+    title: ""
+    Pars: "`r list()`"
+    plotPars: "`r list()`"
+    tabs: "`r TRUE`"
+    its: " `r numeric()`"
+    nyears: " `r numeric()`"
+    proyears: " `r numeric()`"
+    date: "`r Sys.Date()`"
+title: "`r params$title`"
+date: "`r params$date`"
+output:
+  html_document
+---
+
+
+```{r, echo=FALSE, results="asis"}
+if (params$tabs) {
+  cat('## Historical MPA & Spatial Targeting {.tabset .tabset-fade .tabset-pills}' )
+} else {
+  cat('## Historical MPA & Spatial Targeting')
+}
+
+dd <- dim(Pars$M_ageArray)
+nsim <- dd[1]
+maxage <- dd[2]
+
+nsamp <- length(params$its)
+
+
+```
+
+### Existing Spatial Closures
+Plot of the fraction of each area open to fishing in each historical year. Spatial closures remain fixed in all projection years unless modified by an MP.
+
+```{r, echo=FALSE}
+if (all(is.na(Pars$MPA)) | sum(Pars$MPA) == 0) {
+  Pars$MPA <- matrix(NA, nrow=2, ncol=3)
+  Pars$MPA[,1] <- c(1, nyears)
+  Pars$MPA[,2:3] <- 1
+}
+
+# historical spatial closures have been specified
+sim <- params$its[1]
+nareas <- ncol(Pars$MPA)-1
+MPA <- matrix(1, nyears+proyears, ncol=nareas)
+yrindex <- Pars$MPA[,1]
+if (max(yrindex)>nyears) stop("Invalid year index for spatial closures: must be <= nyears")
+if (min(yrindex)<1) stop("Invalid year index for spatial closures: must be > 1")
+for (xx in seq_along(yrindex)) {
+  MPA[yrindex[xx]:nrow(MPA),] <- matrix(Pars$MPA[xx, 2:ncol(Pars$MPA)], 
+                                        nrow=length(yrindex[xx]:nrow(MPA)),ncol=nareas, byrow = TRUE)
+}
+x <- 1:(nyears+proyears)
+nyrs <- length(x)
+op <- par(mfrow=c(1,1), mar=c(3,3,0,0), oma=c(0,0,0,0), no.readonly = TRUE)
+on.exit(par(op))
+
+area_sizes <- Pars$Asize[sim,]
+names(area_sizes) <- NULL
+plot(c(1, nyears+proyears), c(0,sum(area_sizes)), type="n", bty="n", xlab="", ylab="", axes=FALSE)
+origin <- cumsum(c(0, area_sizes)) #  seq(0, by=1, length.out = nareas)
+
+for (aa in 1:nareas) {
+  if (aa ==1) {
+    df <- data.frame(Years=x, y1=0, y2=area_sizes[aa] * MPA[,aa])
+  } else {
+    df <- data.frame(Years=x, y1=sum(area_sizes[1:(aa-1)]), y2=sum(area_sizes[1:(aa-1)])+(area_sizes[aa] * MPA[,aa]))
+  }
+  polygon(x=c(df$Years, rev(df$Years)), y=c(df$y1, rev(df$y2)),
+          col='lightgray', border = TRUE)
+}
+
+if (Pars$CurrentYr < 1000) years <- (Pars$CurrentYr - nyears+1) : (Pars$CurrentYr+proyears) -Pars$CurrentYr
+if (Pars$CurrentYr > 1000) years <- (Pars$CurrentYr - nyears+1) : (Pars$CurrentYr+proyears) 
+
+xp <- seq(from=min(x), to=max(x), by=5)
+ind <- match(xp, x)
+
+axis(side=1, at=x[ind], labels=years[ind])
+mtext(side=1, "Years", line=2, xpd=NA, cex=1.25)
+
+axis(side=2, at=origin[1:(length(origin)-1)] + 0.5 * area_sizes, labels=1:nareas, las=1, col = "white", tcl = 0)
+
+mtext(side=2, "Areas", line=2, xpd=NA, cex=1.25, las=3)
+abline(v=nyears, lty=2, col="darkgray")
+
+mtext('Fraction open to fishing (grey)', side=3, line=2)
+
+```
+
+### Spatial Targeting
+Histograms of `r nsim` simulations of spatial targeting parameter (`Spat_targ`), with vertical colored lines indicating `r nsamp` randomly drawn values:
+
+```{r, echo=FALSE}
+par(mfrow=c(1,1))
+
+hist2(Pars$Spat_targ, col=params$plotPars$col, axes=params$plotPars$axes, main="Spat_targ", breaks=params$plotPars$breaks)
+abline(v=Pars$Spat_targ[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
+axis(side=1) 
+
+
+```
+

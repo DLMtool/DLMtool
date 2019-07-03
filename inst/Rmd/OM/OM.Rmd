@@ -1,0 +1,46 @@
+---
+params: 
+    title: ""
+    Pars: "`r list()`"
+    plotPars: "`r list()`"
+    tabs: "`r TRUE`"
+    its: " `r numeric()`"
+    nyears: " `r numeric()`"
+    proyears: " `r numeric()`"
+    date: "`r Sys.Date()`"
+title: "`r params$title`"
+date: "`r params$date`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r echo=FALSE, include=FALSE}
+library(knitr); library(dplyr)
+```
+
+
+```{r echo=FALSE, include=FALSE}
+library(knitr)
+rmd.files <- c("../Stock/Stock.Rmd",
+               "../Fleet/Fleet.Rmd",
+               "../Obs/Obs.Rmd",
+               "../Imp/Imp.Rmd",
+               "../Hist/Hist.Rmd")
+
+out <- NULL
+for (rmd in rmd.files) {
+  out <- c(out, knitr::knit_child(rmd))
+}
+```
+
+
+```{r, echo=FALSE, results="asis"}
+cat(paste(out, collapse = '\n'))
+```
+

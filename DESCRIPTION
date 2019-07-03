@@ -1,8 +1,8 @@
 Package: DLMtool
 Type: Package
 Title: Data-Limited Methods Toolkit
-Version: 5.3.99
-Date: 2019-06-27
+Version: 5.4.9999
+Date: 2019-07-03
 Authors@R: c(
     person("Tom", "Carruthers",, "t.carruthers@fisheries.ubc.ca", role=c("aut", "cre")),
     person("Adrian", "Hordyk", , "a.hordyk@oceans.ubc.ca", "aut"),
@@ -24,6 +24,7 @@ Imports:
     abind,
     boot,
     broom,
+    crayon,
     devtools,
     DT,
     dplyr,
