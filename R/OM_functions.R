@@ -835,8 +835,11 @@ SubOM <- function(OM, Sub=c("Stock", "Fleet", "Obs", "Imp")) {
   space <- gregexpr("  ", temp@Name)
   ind <- switch(Sub, Stock=1, Fleet=2, Obs=3, Imp=4)
   
-  if (ind < 4) temp@Name <- substr(temp@Name, colon[[1]][ind]+1, space[[1]][ind]-1)
-  if (ind == 4) temp@Name <- substr(temp@Name, colon[[1]][ind]+1, nchar(temp@Name))
+  if (all(colon[[1]] >0) & all(space[[1]]>0)) {
+    if (ind < 4) temp@Name <- substr(temp@Name, colon[[1]][ind]+1, space[[1]][ind]-1)
+    if (ind == 4) temp@Name <- substr(temp@Name, colon[[1]][ind]+1, nchar(temp@Name))
+    
+  }
   
   temp 
 }

@@ -68,6 +68,7 @@ The Linf and K parameters in each year for `r nsamp` simulations. The vertical d
 years <- c(seq(-nyears+1, 0, by=1), seq(1, proyears,1))
 
 matplot(years, t(Pars$Linfarray[its,]), type="l", bty="l", main="", lwd=plotPars$lwd, lty=1, ylab="Linf", xlab="Year")
+abline(v=0, col="darkgray", lty=2)
 matplot(years, t(Pars$Karray[its,]), type="l", bty="l", main="", lwd=plotPars$lwd, lty=1, ylab="K", xlab="Year")
 abline(v=0, col="darkgray", lty=2)
 ```
@@ -75,16 +76,19 @@ abline(v=0, col="darkgray", lty=2)
 ### Growth Curves
 Sampled length-at-age curves for `r nsamp` simulations in the first historical year, the last historical year, and the last projection year.
 ```{r, echo=FALSE}
-par(mfrow=c(1,3))
+par(mfrow=c(1,3), oma=c(2,3,1,1), mar=c(3,2,1,1))
 fstYr <- Pars$Len_age[its,,1]
 curYr <- Pars$Len_age[its,,nyears]
 lstYr <- Pars$Len_age[its,,proyears+nyears]
 MaxL <- max(Pars$Len_age)
-matplot(t(fstYr), type="l", bty="l", main="First historical year", ylim=c(0, MaxL), xlab="Age", ylab="Length", cex.lab=2, lwd=plotPars$lwd, lty=1)
-matplot(t(curYr), type="l", bty="l", main="Last historical year", ylim=c(0, MaxL),  axes=plotPars$axes, xlab="Age", ylab="", cex.lab=2, lwd=plotPars$lwd, lty=1)
+matplot(t(fstYr), type="l", bty="l", main="First historical year", ylim=c(0, MaxL), 
+        xlab="Age", ylab="Length", cex.lab=2, lwd=plotPars$lwd, lty=1, xpd=NA)
+matplot(t(curYr), type="l", bty="l", main="Last historical year", ylim=c(0, MaxL),  
+        axes=plotPars$axes, xlab="Age", ylab="", cex.lab=2, lwd=plotPars$lwd, lty=1, xpd=NA)
 axis(side=1)
 axis(side=2, labels=FALSE)  
-matplot(t(lstYr), type="l", bty="l", main="Last projected year", ylim=c(0, MaxL), axes=plotPars$axes, xlab="Age", ylab="", cex.lab=2, lwd=plotPars$lwd, lty=1)	
+matplot(t(lstYr), type="l", bty="l", main="Last projected year", ylim=c(0, MaxL),
+        axes=plotPars$axes, xlab="Age", ylab="", cex.lab=2, lwd=plotPars$lwd, lty=1, xpd=NA)	
 axis(side=1)
 axis(side=2, labels=FALSE)  
 ```

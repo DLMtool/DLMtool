@@ -30,8 +30,6 @@ nsamp <- length(its)
 ```
 
 ### Sampled Parameters
-
-
 Histograms of `r nsim` simulations of inter-annual variability in fishing efficiency (`qcv`) and average annual change in fishing efficiency (`qinc`), with vertical colored lines indicating `r nsamp` randomly drawn values used in the time-series plot:
 
 ```{r, echo=FALSE}
@@ -58,7 +56,7 @@ Qfuture <- matrix(NA, nrow=proyears, ncol=nsamp)
 X <- 0 
 for (sim in its) {
    X <- X + 1 
-  Qfuture[,X] <- Pars$qvar[sim,1] * (1 + Pars$qinc[sim]/100)^(1:proyears)
+  Qfuture[,X] <- Pars$qvar[sim,] * (1 + Pars$qinc[sim]/100)^(1:proyears)
   Qfuture[,X] <- Qfuture[,X]/Qfuture[1,X]
 }
 
@@ -69,4 +67,5 @@ ylim <- range(Qfuture) %>% abs() %>% max()
 
 matplot(futYr, Qfuture,  type="l", lwd=plotPars$lwd, bty="l", lty=1,
         ylab="Change in Efficiency (%)", xlab="Year", ylim=c(-ylim, ylim))
+abline(h=1, lty=2, col="lightgray")
 ```

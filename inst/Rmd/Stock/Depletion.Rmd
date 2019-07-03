@@ -17,9 +17,9 @@ output:
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Depletion {.tabset .tabset-fade .tabset-pills}' )
+  cat('## Depletion and Discard Mortality {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Depletion')
+  cat('## Depletion and Discard Mortality')
 }
 
 dd <- Pars$M_ageArray %>% dim()
@@ -32,13 +32,17 @@ nsamp <- length(its)
 ```
 
 ### Sampled Parameters 
-Histograms of `r nsim` simulations of depletion (spawning biomass in the last historical year over average unfished spawning biomass; `D`), with vertical colored lines indicating `r nsamp` randomly drawn values.
+Histograms of `r nsim` simulations of depletion (spawning biomass in the last historical year over average unfished spawning biomass; `D`) and the fraction of discarded fish that are killed by fishing mortality (`Fdisc`), with vertical colored lines indicating `r nsamp` randomly drawn values.
 
 ```{r, echo=FALSE}
-par(mfrow=c(2,3))
+par(mfrow=c(1,2))
 hist2(Pars$D, col=plotPars$col, axes=plotPars$axes, main="Depletion (D)", breaks=plotPars$breaks)
 abline(v=Pars$D[its], col=1:nsamp, lwd=plotPars$lwd)
-axis(side=1)  
+axis(side=1) 
+
+hist2(Pars$Fdisc, col=plotPars$col, axes=plotPars$axes, main="Fdisc", breaks=plotPars$breaks)
+abline(v=Pars$Fdisc[its], col=1:nsamp, lwd=plotPars$lwd)
+axis(side=1)
 ```
 
 

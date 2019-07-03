@@ -17,9 +17,9 @@ output:
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Recruitment Parameters {.tabset .tabset-fade .tabset-pills}' )
+  cat('## Spatial & Movement {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Recruitment Parameters')
+  cat('## Spatial & Movement')
 }
 
 dd <- Pars$M_ageArray %>% dim()
@@ -34,27 +34,21 @@ if (Pars$SRrel[1] == 2) SR <- "Ricker"
 ```
 
 ### Sampled Parameters 
-Histograms of `r nsim` simulations of steepness (`h`), recruitment process error (`Perr`) and auto-correlation (`AC`) for the `r SR` stock-recruitment relationship, with vertical colored lines indicating `r nsamp` randomly drawn values used in other plots:
+Histograms of `r nsim` simulations of size of area 1 (`Size_area_1`), fraction of unfished biomass in area 1 (`Frac_area_1`), and the probability of staying in area 1 in a year (`Frac_area_1`), with vertical colored lines indicating `r nsamp` randomly drawn values used in other plots:
 
 ```{r, echo=FALSE}
 par(mfrow=c(2,3))
-hist2(Pars$hs, col=plotPars$col, axes=plotPars$axes, main="Steepness (h)", breaks=plotPars$breaks)
-abline(v=Pars$hs[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$Size_area_1, col=plotPars$col, axes=plotPars$axes, main="Size_area_1", breaks=plotPars$breaks)
+abline(v=Pars$Size_area_1[its], col=1:nsamp, lwd=plotPars$lwd)
 axis(side=1)  
 
-hist2(Pars$procsd, col=plotPars$col, axes=plotPars$axes, main="Recruitment process error (Perr)", breaks=plotPars$breaks)
-abline(v=Pars$procsd[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$Frac_area_1, col=plotPars$col, axes=plotPars$axes, main="Frac_area_1", breaks=plotPars$breaks)
+abline(v=Pars$Frac_area_1[its], col=1:nsamp, lwd=plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$AC, col=plotPars$col, axes=plotPars$axes, main="Auto-correlation (AC)", breaks=plotPars$breaks)
-abline(v=Pars$AC[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$Prob_staying, col=plotPars$col, axes=plotPars$axes, main="Prob_staying", breaks=plotPars$breaks)
+abline(v=Pars$Prob_staying[its], col=1:nsamp, lwd=plotPars$lwd)
 axis(side=1)
 
-```
-
-### Time-Series
-
-```{r, echo=FALSE}
-matplot(t(Pars$Perr_y[its,]), type="l", bty="l", main="Rec Devs by Year", lwd=plotPars$lwd, lty=1)
 ```
 

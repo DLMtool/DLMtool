@@ -17,9 +17,9 @@ output:
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Historical MPA {.tabset .tabset-fade .tabset-pills}' )
+  cat('## Historical MPA & Spatial Targeting {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Historical MPA')
+  cat('## Historical MPA & Spatial Targeting')
 }
 
 dd <- Pars$M_ageArray %>% dim()
@@ -83,4 +83,16 @@ mtext('Fraction open to fishing (grey)', side=3, line=2)
 
 ```
 
+### Spatial Targeting
+Histograms of `r nsim` simulations of spatial targeting parameter (`Spat_targ`), with vertical colored lines indicating `r nsamp` randomly drawn values:
+
+```{r, echo=FALSE}
+par(mfrow=c(1,1))
+
+hist2(Pars$Spat_targ, col=plotPars$col, axes=plotPars$axes, main="Spat_targ", breaks=plotPars$breaks)
+abline(v=Pars$Spat_targ[its], col=1:nsamp, lwd=plotPars$lwd)
+axis(side=1) 
+
+
+```
 

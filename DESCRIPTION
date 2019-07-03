@@ -24,6 +24,7 @@ Imports:
     abind,
     boot,
     broom,
+    crayon,
     devtools,
     DT,
     dplyr,
