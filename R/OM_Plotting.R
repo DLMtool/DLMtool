@@ -2,7 +2,7 @@
 render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, nyears=50, 
                         proyears=28, output_file=NULL, output_dir=getwd(), 
                         quiet=TRUE, tabs=TRUE, title=NULL, date=NULL,
-                        plotPars =NULL, open=TRUE, dev=FALSE) {
+                        plotPars =NULL, open=TRUE, dev=FALSE, parallel=TRUE) {
   
   SampCpars <- list() # empty list
   
@@ -47,23 +47,43 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
     Pars <- c(ObsPars)
     
   } else if (Class == "Imp") {
-    
+    ImpPars <- SampleImpPars(Object, nsim, cpars=SampCpars)
+    Pars <- c(ImpPars)
   } else if (Class == "OM") {
   
     StockPars <- SampleStockPars(SubOM(Object, "Stock"), nsim, nyears, proyears, SampCpars, msg=FALSE)
     FleetPars <- SampleFleetPars(SubOM(Object, "Fleet"), StockPars, nsim, nyears, proyears, SampCpars, msg=FALSE)
-  
+    ObsPars <- SampleObsPars(Object, nsim, cpars=SampCpars)
+    BMSY_B0bias <- array(rlnorm(nsim, 
+                                mconv(1, Object@BMSY_B0biascv), sdconv(1, Object@BMSY_B0biascv)), 
+                         dim = c(nsim))  # trial samples of BMSY relative to unfished  
+    
+    ObsPars$BMSY_B0bias <- BMSY_B0bias
     ImpPars <- SampleImpPars(SubOM(Object, "Imp"), nsim, cpars=SampCpars)
 
     Pars <- c(StockPars, FleetPars, ObsPars, ImpPars)
+    Pars$CurrentYr <- Object@CurrentYr
+    
+    if (nsim>=48 & parallel) dopar <- TRUE
+    if (nsim<48& parallel) dopar <- FALSE
+    Hist <- runMSE(OM, Hist=TRUE, silent=TRUE, parallel = dopar)
+    Pars$Hist <- Hist
+    Pars$Name <- "OM"
+    
+  } else if (Class == "Hist") {
+    Pars <- list()
+    Pars$Hist <- Object
+
   } else {
     stop("Object must be class 'Stock', 'Fleet', 'Obs', or 'Imp'", call.=FALSE)  
   }
   
-  Pars$Name <- gsub(" ", "_", Object@Name)  
-  
+
+  if (Class !="Hist" & Class !="OM") {
+    Pars$Name <- gsub(" ", "_", Object@Name)  
+  } 
   its <- sample(1:nsim, nsamp)
-  
+
   Params <- list(
     title = title,
     Pars = Pars,
@@ -76,7 +96,11 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
   )
   
   outname <- paste0("_", RMD, ".html")
-  if (is.null(output_file)) output_file <- paste0(Pars$Name, outname)
+  if (Class !="Hist" & Class !="OM") {
+    if (is.null(output_file)) output_file <- paste0(Pars$Name, outname)
+  } else {
+    if (is.null(output_file)) output_file <-  paste0(RMD, ".html")
+  }
   message("Rendering HTML file")
   
   RMD <- paste0(RMD, ".Rmd")
@@ -85,8 +109,7 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
   } else {
     input <- file.path(system.file(package = 'DLMtool'),'Rmd', Class, RMD)  
   }
-  
-  
+
   rend <- try(rmarkdown::render(input, params=Params,
                                 output_file=output_file,
                                 output_dir=output_dir,
@@ -235,6 +258,44 @@ plot.Obs <- function(x, nsamp=3, nsim=200, nyears=50,
               plotPars=plotPars, dev=dev)
 }
 
+#' @method plot Imp
+#' @export
+plot.Imp <- function(x, nsamp=3, nsim=200, nyears=50, 
+                     proyears=28, output_file=NULL, output_dir=getwd(), 
+                     quiet=TRUE, tabs=TRUE, title=NULL, date=NULL,
+                     plotPars =NULL, open=TRUE, dev=FALSE){
+  
+  render_plot(Object=x, Class="Imp", Stock=NULL, RMD='Imp', nsamp=nsamp, nsim=nsim, 
+              nyears=nyears, proyears=proyears,
+              output_file=output_file, output_dir=output_dir, quiet=quiet,
+              tabs=tabs, title=title, date=date,
+              plotPars=plotPars, dev=dev)
+}
+
+
+plot.Hist <- function(x, nsamp=3, nsim=200, nyears=50, 
+                      proyears=28, output_file=NULL, output_dir=getwd(), 
+                      quiet=TRUE, tabs=TRUE, title=NULL, date=NULL,
+                      plotPars =NULL, open=TRUE, dev=FALSE) {
+  render_plot(Object=x, Class="Hist", Stock=NULL, RMD='Hist', nsamp=nsamp, nsim=nsim, 
+              nyears=nyears, proyears=proyears,
+              output_file=output_file, output_dir=output_dir, quiet=quiet,
+              tabs=tabs, title=title, date=date,
+              plotPars=plotPars, dev=dev)
+}
+
+plot.OM <- function(x, nsamp=3, nsim=200, nyears=50, 
+                    proyears=28, output_file=NULL, output_dir=getwd(), 
+                    quiet=TRUE, tabs=TRUE, title=NULL, date=NULL,
+                    plotPars =NULL, open=TRUE, dev=FALSE) {
+  render_plot(Object=x, Class="OM", Stock=NULL, RMD='OM', nsamp=nsamp, nsim=nsim, 
+              nyears=nyears, proyears=proyears,
+              output_file=output_file, output_dir=output_dir, quiet=quiet,
+              tabs=tabs, title=title, date=date,
+              plotPars=plotPars, dev=dev)
+  
+  
+}
 
 #### --- Old Code ----------------------------------------------------------####
 #' Plot the Historical Spatial Closures
@@ -1064,9 +1125,9 @@ plotObs_old <- function(x, nsim=500, nyears=50,
 }
 
 
-#' @method plot Imp
-#' @export
-plot.Imp <- function(x, ...)  plotImp(x, ...)
+# #' @method plot Imp
+# #' @export
+# plot.Imp <- function(x, ...)  plotImp(x, ...)
 
 #' Plot the Implementation object parameters 
 #' 
@@ -1083,7 +1144,7 @@ plot.Imp <- function(x, ...)  plotImp(x, ...)
 #' @rdname plot-Imp 
 #' @author T. Carruthers and A. Hordyk
 #' @export 
-plotImp<-function(x,nsim=500, nyears=50, 
+plotImp_old<-function(x,nsim=500, nyears=50, 
                   col="darkgray", breaks=10, ...){
   Imp <- x
   if (class(Imp) == "OM") {
@@ -1163,107 +1224,107 @@ ObsTSplot<-function(Cbias,Csd,nyears,labs, breaks, its, nsamp, col){
 #' @method plot OM 
 #' @author T. Carruthers
 #' @export 
-plot.OM <-function(x, rmd=FALSE, head="##", ...){
-  op <- par(no.readonly = TRUE)
-  on.exit(par(op))
-  if (class(x) == "OM") {
-    OM <- updateMSE(x) # update and add missing slots with default values
-    out<-runMSE(OM,Hist=T, ...)
-    nsim<-OM@nsim
-    nyears<-OM@nyears
-    if (rmd) {
-      cat('\n')
-      cat('\n')
-      cat(head, 'Stock Object')
-      cat('\n')
-    }
-    plotStock(OM)
-    if (rmd) {
-      cat('\n')
-      cat('\n')
-      cat(head, 'Fleet Object')
-      cat('\n')
-    }
-    plotFleet(OM)
-    if (rmd) {
-      cat('\n')
-      cat('\n')
-      cat(head, 'Obs Object')
-      cat('\n')
-    }
-    plotObs(OM)
-    if (rmd) {
-      cat('\n')
-      cat('\n')
-      cat(head, 'Imp Object')
-      cat('\n')
-    }
-    plotImp(OM)
-    yrlab<-OM@CurrentYr-((nyears-1):0)
-  } else if (class(x) == "Hist") {
-    out <- x 
-    nyears <- dim(out@TSdata[[1]])[2]
-    nsim <- dim(out@TSdata[[1]])[1]
-    yrlab<-nyears-((nyears-1):0)
-  } else stop("argument must be class 'OM' or 'Hist' ")
-  
-  if (rmd) {
-    cat('\n')
-    cat('\n')
-    cat(head, 'OM Simulations')
-    cat('\n')
-  }
-  
-  # Time series
-  par(mfrow=c(4,2),mai=c(0.7,0.7,0.05,0.05),omi=c(0.01,0.01,0.3,0.01))
-  
-  # SSB
-  TSplot(yrlab,out@TSdata$SSB,xlab="Historical year",ylab="Spawning biomass")
-  
-  # Depletion
-  TSplot(yrlab,out@TSdata$SSB/rep(out@Ref$SSB0,each=nyears),xlab="Historical year",ylab="Stock depletion (SSB)")
-  
-  # Apical F
-  FM<-t(out@TSdata$Find*out@OM$qs)
-  FM[FM > out@OM$maxF[1]] <- out@OM$maxF[1] # add maxF constraint
-  TSplot(yrlab,t(FM),xlab="Historical year",ylab="Fishing mortality rate (apical)")
-  
-  # Catches
-  TSplot(yrlab,out@TSdata$Catch,xlab="Historical year",ylab="Annual catches")
-  
-  # Recruitment
-  TSplot(yrlab,out@TSdata$Rec,xlab="Historical year",ylab="Recruitment")
-  
-  # SSB-Rec
-  TSplot(x=out@TSdata$SSB[,2:nyears],y=out@TSdata$Rec[,2:nyears],
-         xlab="Spawning biomass",ylab="Recruitment",mat=F,type='p')
-  
-  F_FMSY<-FM/matrix(out@Ref$FMSY, nrow=nyears, ncol=nsim, byrow=TRUE)
-  B_BMSY<-out@TSdata$SSB/matrix(out@Ref$SSBMSY, nrow=nsim, ncol=nyears)
-  
-  TSKplot(B_BMSY,t(F_FMSY),yrlab)
-  
-  # Age vulnerability
-  maxage<-dim(out@AtAge$Select)[2]
-  colors <- c("green","blue","grey45")
-  for (x in 1:3) {
-    Zvals <- t(out@AtAge$Select[x,,1:nyears])
-    if(sd(Zvals, na.rm=TRUE) != 0) {
-      if (x==1)contour(x=yrlab,y=1:maxage,z=Zvals,levels=c(0.25,0.75),col=colors[x],drawlabels=F,lwd=c(1,2))
-      if (x!=1)contour(x=yrlab,y=1:maxage,z=Zvals,levels=c(0.25,0.75),col=colors[x],drawlabels=F, add=T,lwd=c(1,2))
-    }
-  }
-  
-  legend('topright',legend=c(paste("Simulation",1:3)),text.col=c("green","blue","grey45"),bty='n')
-  legend('topleft',legend="Age vulnerability (0.25, 0.75)",bty='n')
-  
-  mtext("Historical year", 1, line = 2.5, cex = 1)
-  mtext("Age", 2, line = 2.3, cex = 1)
-  
-  if (class(x) == 'OM') mtext(paste0("Time series plots for operating model ",OM@Name),3,outer=T,line= 0.2,font=2)
-  
-  return(invisible(out))
-}
+# plot.OM <-function(x, rmd=FALSE, head="##", ...){
+#   op <- par(no.readonly = TRUE)
+#   on.exit(par(op))
+#   if (class(x) == "OM") {
+#     OM <- updateMSE(x) # update and add missing slots with default values
+#     out<-runMSE(OM,Hist=T, ...)
+#     nsim<-OM@nsim
+#     nyears<-OM@nyears
+#     if (rmd) {
+#       cat('\n')
+#       cat('\n')
+#       cat(head, 'Stock Object')
+#       cat('\n')
+#     }
+#     plotStock(OM)
+#     if (rmd) {
+#       cat('\n')
+#       cat('\n')
+#       cat(head, 'Fleet Object')
+#       cat('\n')
+#     }
+#     plotFleet(OM)
+#     if (rmd) {
+#       cat('\n')
+#       cat('\n')
+#       cat(head, 'Obs Object')
+#       cat('\n')
+#     }
+#     plotObs(OM)
+#     if (rmd) {
+#       cat('\n')
+#       cat('\n')
+#       cat(head, 'Imp Object')
+#       cat('\n')
+#     }
+#     plotImp(OM)
+#     yrlab<-OM@CurrentYr-((nyears-1):0)
+#   } else if (class(x) == "Hist") {
+#     out <- x 
+#     nyears <- dim(out@TSdata[[1]])[2]
+#     nsim <- dim(out@TSdata[[1]])[1]
+#     yrlab<-nyears-((nyears-1):0)
+#   } else stop("argument must be class 'OM' or 'Hist' ")
+#   
+#   if (rmd) {
+#     cat('\n')
+#     cat('\n')
+#     cat(head, 'OM Simulations')
+#     cat('\n')
+#   }
+#   
+#   # Time series
+#   par(mfrow=c(4,2),mai=c(0.7,0.7,0.05,0.05),omi=c(0.01,0.01,0.3,0.01))
+#   
+#   # SSB
+#   TSplot(yrlab,out@TSdata$SSB,xlab="Historical year",ylab="Spawning biomass")
+#   
+#   # Depletion
+#   TSplot(yrlab,out@TSdata$SSB/rep(out@Ref$SSB0,each=nyears),xlab="Historical year",ylab="Stock depletion (SSB)")
+#   
+#   # Apical F
+#   FM<-t(out@TSdata$Find*out@OM$qs)
+#   FM[FM > out@OM$maxF[1]] <- out@OM$maxF[1] # add maxF constraint
+#   TSplot(yrlab,t(FM),xlab="Historical year",ylab="Fishing mortality rate (apical)")
+#   
+#   # Catches
+#   TSplot(yrlab,out@TSdata$Catch,xlab="Historical year",ylab="Annual catches")
+#   
+#   # Recruitment
+#   TSplot(yrlab,out@TSdata$Rec,xlab="Historical year",ylab="Recruitment")
+#   
+#   # SSB-Rec
+#   TSplot(x=out@TSdata$SSB[,2:nyears],y=out@TSdata$Rec[,2:nyears],
+#          xlab="Spawning biomass",ylab="Recruitment",mat=F,type='p')
+#   
+#   F_FMSY<-FM/matrix(out@Ref$FMSY, nrow=nyears, ncol=nsim, byrow=TRUE)
+#   B_BMSY<-out@TSdata$SSB/matrix(out@Ref$SSBMSY, nrow=nsim, ncol=nyears)
+#   
+#   TSKplot(B_BMSY,t(F_FMSY),yrlab)
+#   
+#   # Age vulnerability
+#   maxage<-dim(out@AtAge$Select)[2]
+#   colors <- c("green","blue","grey45")
+#   for (x in 1:3) {
+#     Zvals <- t(out@AtAge$Select[x,,1:nyears])
+#     if(sd(Zvals, na.rm=TRUE) != 0) {
+#       if (x==1)contour(x=yrlab,y=1:maxage,z=Zvals,levels=c(0.25,0.75),col=colors[x],drawlabels=F,lwd=c(1,2))
+#       if (x!=1)contour(x=yrlab,y=1:maxage,z=Zvals,levels=c(0.25,0.75),col=colors[x],drawlabels=F, add=T,lwd=c(1,2))
+#     }
+#   }
+#   
+#   legend('topright',legend=c(paste("Simulation",1:3)),text.col=c("green","blue","grey45"),bty='n')
+#   legend('topleft',legend="Age vulnerability (0.25, 0.75)",bty='n')
+#   
+#   mtext("Historical year", 1, line = 2.5, cex = 1)
+#   mtext("Age", 2, line = 2.3, cex = 1)
+#   
+#   if (class(x) == 'OM') mtext(paste0("Time series plots for operating model ",OM@Name),3,outer=T,line= 0.2,font=2)
+#   
+#   return(invisible(out))
+# }
 
 TSplot<-function(x,y,xlab=NA,ylab=NA,zeroy=T,incx=T,incy=T,type='l',mat=T){
   

@@ -1,0 +1,172 @@
+---
+params: 
+    title: ""
+    Pars: "`r list()`"
+    plotPars: "`r list()`"
+    tabs: "`r TRUE`"
+    its: " `r numeric()`"
+    nyears: " `r numeric()`"
+    proyears: " `r numeric()`"
+    date: "`r Sys.Date()`"
+title: "`r params$title`"
+date: "`r params$date`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+# Observation Parameters
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+nsim <- Pars$TAESD %>% length()
+
+ImpList <- list()
+ImpList$TACbias <- array(Pars$TACFrac, c(nsim, nyears + proyears))  
+ImpList$TACsd <- array(rlnorm((nyears + proyears) * nsim, 
+                     mconv(1, rep(Pars$TACSD, (nyears + proyears))), 
+                     sdconv(1, rep(Pars$TACSD, nyears + proyears))), 
+              c(nsim, nyears + proyears))  
+
+ImpList$TAEbias <- array(Pars$TAEFrac, c(nsim, nyears + proyears))  
+ImpList$TAEsd <- array(rlnorm((nyears + proyears) * nsim, 
+                     mconv(1, rep(Pars$TAESD, (nyears + proyears))), 
+                     sdconv(1, rep(Pars$TAESD, nyears + proyears))), 
+              c(nsim, nyears + proyears)) 
+
+ImpList$SizeLimFrac <- array(Pars$SizeLimFrac, c(nsim, nyears + proyears))  
+ImpList$SizeLimSD <- array(rlnorm((nyears + proyears) * nsim, 
+                     mconv(1, rep(Pars$SizeLimSD, (nyears + proyears))), 
+                     sdconv(1, rep(Pars$SizeLimSD, nyears + proyears))), 
+              c(nsim, nyears + proyears)) 
+```
+
+
+
+```{r, echo=FALSE, results="asis"}
+if (params$tabs) {
+  cat('## TAC Implementation {.tabset .tabset-fade .tabset-pills}' )
+} else {
+  cat('## TAC Implementation')
+}
+```
+
+
+### Sampled Parameters
+Histograms of `r nsim` simulations of inter-annual variability in TAC implementation error (`TACSD`) and persistent bias in TAC implementation (`TACFrac`), with vertical colored lines indicating `r nsamp` randomly drawn values used in other plots:
+
+```{r, echo=FALSE}
+par(mfrow=c(1,2))
+hist2(Pars$TACSD, main="TACSD", col=plotPars$col, axes=plotPars$axes,
+      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
+abline(v=Pars$TACSD[its], col=1:nsamp, lwd=plotPars$lwd)
+axis(side=1) 
+
+hist2(Pars$TACFrac, main="TACFrac", col=plotPars$col, axes=plotPars$axes,
+      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
+abline(v=Pars$TACFrac[its], col=1:nsamp, lwd=plotPars$lwd)
+axis(side=1) 
+
+```
+
+### Time-Series
+
+```{r, echo=FALSE}
+par(mfrow=c(1,1), oma=c(3,3,1,1), mar=c(1,1,1,1))
+years <- c(seq(-nyears+1, 0, by=1), seq(1, proyears,1))
+
+ylim <- c(0, max(ImpList$TACbias[its, ] * ImpList$TACsd[its, ]))
+matplot(years, t(ImpList$TACbias[its, ] * ImpList$TACsd[its, ]),
+        type="l", lty=1, bty="l", main="TAC discrepancy by Year", 
+         lwd=plotPars$lwd, ylab="Observed/Real", xlab="Years", las=1, xpd=NA,
+        ylim=ylim)
+abline(v=0, col="darkgray", lty=2)
+abline(h=1, col="darkgray", lty=2)
+```
+
+
+
+```{r, echo=FALSE, results="asis"}
+if (params$tabs) {
+  cat('## TAE Implementation {.tabset .tabset-fade .tabset-pills}' )
+} else {
+  cat('## TAE Implementation')
+}
+```
+
+
+### Sampled Parameters
+Histograms of `r nsim` simulations of inter-annual variability in TAE implementation error (`TAESD`) and persistent bias in TAC implementation (`TAEFrac`), with vertical colored lines indicating `r nsamp` randomly drawn values used in other plots:
+
+```{r, echo=FALSE}
+par(mfrow=c(1,2))
+hist2(Pars$TAESD, main="TAESD", col=plotPars$col, axes=plotPars$axes,
+      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
+abline(v=Pars$TAESD[its], col=1:nsamp, lwd=plotPars$lwd)
+axis(side=1) 
+
+hist2(Pars$TAEFrac, main="TAEFrac", col=plotPars$col, axes=plotPars$axes,
+      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
+abline(v=Pars$TAEFrac[its], col=1:nsamp, lwd=plotPars$lwd)
+axis(side=1) 
+
+```
+
+### Time-Series
+
+```{r, echo=FALSE}
+par(mfrow=c(1,1), oma=c(3,3,1,1), mar=c(1,1,1,1))
+years <- c(seq(-nyears+1, 0, by=1), seq(1, proyears,1))
+
+ylim <- c(0, max(ImpList$TAEbias[its, ] * ImpList$TAEsd[its, ]))
+matplot(years, t(ImpList$TAEbias[its, ] * ImpList$TAEsd[its, ]),
+        type="l", lty=1, bty="l", main="TAE discrepancy by Year", 
+         lwd=plotPars$lwd, ylab="Observed/Real", xlab="Years", las=1, xpd=NA,
+        ylim=ylim)
+abline(v=0, col="darkgray", lty=2)
+abline(h=1, col="darkgray", lty=2)
+```
+
+
+```{r, echo=FALSE, results="asis"}
+if (params$tabs) {
+  cat('## Size Limit Implementation {.tabset .tabset-fade .tabset-pills}' )
+} else {
+  cat('## Size Limit Implementation')
+}
+```
+
+
+### Sampled Parameters
+Histograms of `r nsim` simulations of inter-annual variability in size limit implementation error (`SizeLimSD`) and persistent bias in size limit implementation (`SizeLimFrac`), with vertical colored lines indicating `r nsamp` randomly drawn values used in other plots:
+
+```{r, echo=FALSE}
+par(mfrow=c(1,2))
+hist2(Pars$SizeLimSD, main="SizeLimSD", col=plotPars$col, axes=plotPars$axes,
+      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
+abline(v=Pars$SizeLimSD[its], col=1:nsamp, lwd=plotPars$lwd)
+axis(side=1) 
+
+hist2(Pars$SizeLimFrac, main="SizeLimFrac", col=plotPars$col, axes=plotPars$axes,
+      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
+abline(v=Pars$SizeLimFrac[its], col=1:nsamp, lwd=plotPars$lwd)
+axis(side=1) 
+
+```
+
+### Time-Series
+
+```{r, echo=FALSE}
+par(mfrow=c(1,1), oma=c(3,3,1,1), mar=c(1,1,1,1))
+years <- c(seq(-nyears+1, 0, by=1), seq(1, proyears,1))
+
+ylim <- c(0, max(ImpList$SizeLimFrac[its, ] * ImpList$SizeLimSD[its, ]))
+matplot(years, t(ImpList$SizeLimFrac[its, ] * ImpList$SizeLimSD[its, ]),
+        type="l", lty=1, bty="l", main="Size Limit discrepancy by Year", 
+         lwd=plotPars$lwd, ylab="Observed/Real", xlab="Years", las=1, xpd=NA,
+        ylim=ylim)
+abline(v=0, col="darkgray", lty=2)
+abline(h=1, col="darkgray", lty=2)
+```
+

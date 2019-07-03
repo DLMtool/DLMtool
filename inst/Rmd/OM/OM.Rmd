@@ -16,16 +16,22 @@ output:
     toc_float: true
 ---
 
-# Stock Parameters
-```{r, include=FALSE}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r echo=FALSE, include=FALSE}
+library(knitr); library(dplyr)
+```
+
+
+```{r echo=FALSE, include=FALSE}
 library(knitr)
-rmd.files <- list.files()
-rmd.files <- rmd.files[-match("Stock.Rmd", rmd.files)]
-rmd.files <- unique(rmd.files)
+rmd.files <- c("../Stock/Stock.Rmd",
+               "../Fleet/Fleet.Rmd",
+               "../Obs/Obs.Rmd",
+               "../Imp/Imp.Rmd",
+               "../Hist/Hist.Rmd")
 
 out <- NULL
 for (rmd in rmd.files) {
@@ -38,7 +44,3 @@ for (rmd in rmd.files) {
 cat(paste(out, collapse = '\n'))
 ```
 
-```{r, echo=FALSE}
-# add spatial, weight- and b, discard mortality
-
-```
