@@ -26,7 +26,7 @@ dd <- Pars$M_ageArray %>% dim()
 nsim <- dd[1]
 maxage <- dd[2]
 
-nsamp <- length(its)
+nsamp <- length(params$its)
 
 ```
 
@@ -37,19 +37,19 @@ Histograms of `r nsim` simulations of `M`, `Mexp`, and `Msd` parameters, with ve
 
 ```{r M_samples, echo=FALSE}
 par(mfrow=c(1,3))
-hist2(Pars$M, main="M", col=plotPars$col, axes=plotPars$axes,
-      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=Pars$M[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$M, main="M", col=params$plotPars$col, axes=params$plotPars$axes,
+      breaks=params$plotPars$breaks, cex.main=params$plotPars$cex.main)
+abline(v=Pars$M[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$Mexp, main="Mexp", col=plotPars$col, axes=plotPars$axes,
-      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=Pars$Mexp[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$Mexp, main="Mexp", col=params$plotPars$col, axes=params$plotPars$axes,
+      breaks=params$plotPars$breaks, cex.main=params$plotPars$cex.main)
+abline(v=Pars$Mexp[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$Msd, main="Msd", col=plotPars$col, axes=plotPars$axes,
-      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=Pars$Msd[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$Msd, main="Msd", col=params$plotPars$col, axes=params$plotPars$axes,
+      breaks=params$plotPars$breaks, cex.main=params$plotPars$cex.main)
+abline(v=Pars$Msd[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 ```
 
@@ -59,8 +59,8 @@ The average natural mortality rate by year for adult fish for `r nsamp` simulati
 
 ```{r, echo=FALSE}
 years <- c(seq(-nyears+1, 0, by=1), seq(1, proyears,1))
-matplot(years, t(Pars$Marray[its,]), type="l", lty=1, bty="l", main="M by Year", 
-         lwd=plotPars$lwd, ylab="M", xlab="Years", las=1)
+matplot(years, t(Pars$Marray[params$its,]), type="l", lty=1, bty="l", main="M by Year", 
+         lwd=params$plotPars$lwd, ylab="M", xlab="Years", las=1)
 abline(v=0, col="darkgray", lty=2)
 ```
 
@@ -72,21 +72,21 @@ and the last projected year:
 
 ```{r, echo=FALSE}
 par(mfrow=c(1,3))
-lims <- range(Pars$M_ageArray[its,, ])
+lims <- range(Pars$M_ageArray[params$its,, ])
 ylab <- "Natural Mortality"
-matplot(t(Pars$M_ageArray[its,,1]), type="l", lty=1, bty="l", 
-        lwd=plotPars$lwd, ylim=lims, ylab=ylab, las=1)
+matplot(t(Pars$M_ageArray[params$its,,1]), type="l", lty=1, bty="l", 
+        lwd=params$plotPars$lwd, ylim=lims, ylab=ylab, las=1)
 mtext(side=3, "First historical year", cex=0.8, line=-1)
 mtext(side=1, "Age", line=2, cex=0.7)
 
-matplot(t(Pars$M_ageArray[its,,nyears]), type="l", lty=1, bty="l", 
-        main="M-at-age", lwd=plotPars$lwd, ylim=lims, axes=FALSE,
+matplot(t(Pars$M_ageArray[params$its,,nyears]), type="l", lty=1, bty="l", 
+        main="M-at-age", lwd=params$plotPars$lwd, ylim=lims, axes=FALSE,
         ylab="")
 mtext(side=3, "Last historical year", cex=0.8, line=-1)
 axis(side=1)
 mtext(side=1, "Age", line=2, cex=0.7)
-matplot(t(Pars$M_ageArray[its,,nyears+proyears]), type="l", lty=1, 
-        bty="l", lwd=plotPars$lwd, ylim=lims, axes=FALSE,
+matplot(t(Pars$M_ageArray[params$its,,nyears+proyears]), type="l", lty=1, 
+        bty="l", lwd=params$plotPars$lwd, ylim=lims, axes=FALSE,
         ylab="")
 mtext(side=3, "Last projected year", cex=0.8, line=-1)
 axis(side=1)
@@ -101,24 +101,24 @@ and the last projected year:
 
 ```{r, echo=FALSE}
 par(mfrow=c(1,3))
-lims <- range(Pars$M_ageArray[its,, ])
-xlims <- range(Pars$Len_age[its,,])
-matplot(t(Pars$Len_age[its,,1]), t(Pars$M_ageArray[its,,1]), type="l", 
-        lty=1, bty="l", lwd=plotPars$lwd, ylim=lims, xlim=xlims, ylab="Natural Mortality", 
+lims <- range(Pars$M_ageArray[params$its,, ])
+xlims <- range(Pars$Len_age[params$its,,])
+matplot(t(Pars$Len_age[params$its,,1]), t(Pars$M_ageArray[params$its,,1]), type="l", 
+        lty=1, bty="l", lwd=params$plotPars$lwd, ylim=lims, xlim=xlims, ylab="Natural Mortality", 
         xlab="", las=1)
 mtext(side=3, "First historical year", cex=0.8, line=-1)
 mtext(side=1, "Length", line=2, cex=0.7)
   
-matplot(t(Pars$Len_age[its,,nyears]), t(Pars$M_ageArray[its,,nyears]), 
-        type="l", lty=1, bty="l", main="M-at-length", lwd=plotPars$lwd, ylim=lims, 
+matplot(t(Pars$Len_age[params$its,,nyears]), t(Pars$M_ageArray[params$its,,nyears]), 
+        type="l", lty=1, bty="l", main="M-at-length", lwd=params$plotPars$lwd, ylim=lims, 
         xlim=xlims, axes=FALSE, ylab="", xlab="")
 axis(side=1)
 mtext(side=1, "Length", line=2, cex=0.7)
 mtext(side=3, "Last historical year", cex=0.8, line=-1)
 
-matplot(t(Pars$Len_age[its,,nyears+proyears]), 
-        t(Pars$M_ageArray[its,,nyears+proyears]), 
-        type="l", lty=1, bty="l", lwd=plotPars$lwd, ylim=lims, 
+matplot(t(Pars$Len_age[params$its,,nyears+proyears]), 
+        t(Pars$M_ageArray[params$its,,nyears+proyears]), 
+        type="l", lty=1, bty="l", lwd=params$plotPars$lwd, ylim=lims, 
         axes=FALSE, xlim=xlims, ylab="", xlab="")
 
 mtext(side=3, "Last projected year", cex=0.8, line=-1)

@@ -15,7 +15,9 @@ plotM(Stock, nsim = 5)
 Plot M-at-Age and Size
 }
 \examples{
+\dontrun{
 plotM(Albacore)
+}
 }
 \author{
 A. Hordyk

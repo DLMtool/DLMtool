@@ -26,7 +26,7 @@ dd <- Pars$M_ageArray %>% dim()
 nsim <- dd[1]
 maxage <- dd[2]
 
-nsamp <- length(its)
+nsamp <- length(params$its)
 
 if (Pars$SRrel[1] == 1) SR <- "Beverton-Holt"
 if (Pars$SRrel[1] == 2) SR <- "Ricker"
@@ -38,16 +38,16 @@ Histograms of `r nsim` simulations of steepness (`h`), recruitment process error
 
 ```{r, echo=FALSE}
 par(mfrow=c(1,3))
-hist2(Pars$hs, col=plotPars$col, axes=plotPars$axes, main="Steepness (h)", breaks=plotPars$breaks)
-abline(v=Pars$hs[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$hs, col=plotPars$col, axes=params$plotPars$axes, main="Steepness (h)", breaks=params$plotPars$breaks)
+abline(v=Pars$hs[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1)  
 
-hist2(Pars$procsd, col=plotPars$col, axes=plotPars$axes, main="Recruitment process error (Perr)", breaks=plotPars$breaks)
-abline(v=Pars$procsd[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$procsd, col=params$plotPars$col, axes=params$plotPars$axes, main="Recruitment process error (Perr)", breaks=params$plotPars$breaks)
+abline(v=Pars$procsd[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$AC, col=plotPars$col, axes=plotPars$axes, main="Auto-correlation (AC)", breaks=plotPars$breaks)
-abline(v=Pars$AC[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$AC, col=params$plotPars$col, axes=params$plotPars$axes, main="Auto-correlation (AC)", breaks=params$plotPars$breaks)
+abline(v=Pars$AC[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1)
 
 ```
@@ -56,8 +56,8 @@ axis(side=1)
 
 ```{r, echo=FALSE}
 years <- c(seq(-nyears+1, 0, by=1), seq(1, proyears,1))
-matplot(years, t(Pars$Perr_y[its,(maxage):ncol(Pars$Perr_y)]), type="l", bty="l", main="Rec Devs by Year", 
-        lwd=plotPars$lwd, lty=1, ylab="Rec Devs", xlab="Years")
+matplot(years, t(Pars$Perr_y[params$its,(maxage):ncol(Pars$Perr_y)]), type="l", bty="l", main="Rec Devs by Year", 
+        lwd=params$plotPars$lwd, lty=1, ylab="Rec Devs", xlab="Years")
 abline(h=1, col="lightgray", lty=2)
 abline(v=0, col="lightgray", lty=2)
 ```

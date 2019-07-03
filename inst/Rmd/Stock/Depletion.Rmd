@@ -22,11 +22,11 @@ if (params$tabs) {
   cat('## Depletion and Discard Mortality')
 }
 
-dd <- Pars$M_ageArray %>% dim()
+dd <- dim(Pars$M_ageArray)
 nsim <- dd[1]
 maxage <- dd[2]
 
-nsamp <- length(its)
+nsamp <- length(params$its)
 
 
 ```
@@ -36,12 +36,12 @@ Histograms of `r nsim` simulations of depletion (spawning biomass in the last hi
 
 ```{r, echo=FALSE}
 par(mfrow=c(1,2))
-hist2(Pars$D, col=plotPars$col, axes=plotPars$axes, main="Depletion (D)", breaks=plotPars$breaks)
-abline(v=Pars$D[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$D, col=params$plotPars$col, axes=params$plotPars$axes, main="Depletion (D)", breaks=params$plotPars$breaks)
+abline(v=Pars$D[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$Fdisc, col=plotPars$col, axes=plotPars$axes, main="Fdisc", breaks=plotPars$breaks)
-abline(v=Pars$Fdisc[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$Fdisc, col=params$plotPars$col, axes=params$plotPars$axes, main="Fdisc", breaks=params$plotPars$breaks)
+abline(v=Pars$Fdisc[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1)
 ```
 

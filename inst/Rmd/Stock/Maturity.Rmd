@@ -26,7 +26,7 @@ dd <- Pars$M_ageArray %>% dim()
 nsim <- dd[1]
 maxage <- dd[2]
 
-nsamp <- length(its)
+nsamp <- length(params$its)
 ```
 
 ### Sampled Parameters 
@@ -34,20 +34,20 @@ Histograms of `r nsim` simulations of `L50` (length at 50% maturity), `L95` (len
 
 ```{r, echo=FALSE}
 par(mfrow=c(2,2))
-hist2(Pars$L50, col=plotPars$col, axes=plotPars$axes, main="L50", breaks=plotPars$breaks)
-abline(v=Pars$L50[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$L50, col=params$plotPars$col, axes=params$plotPars$axes, main="L50", breaks=params$plotPars$breaks)
+abline(v=Pars$L50[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1)
 
-hist2(Pars$L95, col=plotPars$col, axes=plotPars$axes, main="L95", breaks=plotPars$breaks)
-abline(v=Pars$L95[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$L95, col=params$plotPars$col, axes=params$plotPars$axes, main="L95", breaks=params$plotPars$breaks)
+abline(v=Pars$L95[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1)
 
-hist2(Pars$ageM, col=plotPars$col, axes=plotPars$axes, main="A50", breaks=plotPars$breaks)
-abline(v=Pars$ageM[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$ageM, col=params$plotPars$col, axes=params$plotPars$axes, main="A50", breaks=params$plotPars$breaks)
+abline(v=Pars$ageM[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1)
 
-hist2(Pars$age95, col=plotPars$col, axes=plotPars$axes, main="A95", breaks=plotPars$breaks)
-abline(v=Pars$age95[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$age95, col=params$plotPars$col, axes=params$plotPars$axes, main="A95", breaks=params$plotPars$breaks)
+abline(v=Pars$age95[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1)
 
 ```
@@ -61,11 +61,11 @@ par(mfrow=c(1,2))
 slope <- log(19)/(Pars$L95-Pars$L50)
 Ls <- seq(0, to=max(Pars$Linf), length.out=200)
 
-Mat_len <- sapply(its, function(X)  plogis(Ls, Pars$L50[X], 1/slope[X]))
-matplot(Ls, Mat_len, type="l", bty="l", main="Maturity-at-length", lwd=plotPars$lwd, lty=1, 
+Mat_len <- sapply(params$its, function(X)  plogis(Ls, Pars$L50[X], 1/slope[X]))
+matplot(Ls, Mat_len, type="l", bty="l", main="Maturity-at-length", lwd=params$plotPars$lwd, lty=1, 
         ylab="Probability", xlab="Length", ylim=c(0,1), xpd=NA)
 
-matplot(t(Pars$Mat_age[its,,nyears]), type="l", bty="l", main="Maturity-at-age", lwd=plotPars$lwd, 
+matplot(t(Pars$Mat_age[params$its,,nyears]), type="l", bty="l", main="Maturity-at-age", lwd=params$plotPars$lwd, 
         lty=1, axes=FALSE, xlim=c(0, max(Pars$maxage)), ylab="", xlab="Age", ylim=c(0,1), xpd=NA)
 axis(side=1)
 axis(side=2, labels=FALSE)

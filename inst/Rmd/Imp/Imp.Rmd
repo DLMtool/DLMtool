@@ -16,7 +16,7 @@ output:
     toc_float: true
 ---
 
-# Observation Parameters
+# Implementation Parameters
 ```{r, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
@@ -58,14 +58,14 @@ Histograms of `r nsim` simulations of inter-annual variability in TAC implementa
 
 ```{r, echo=FALSE}
 par(mfrow=c(1,2))
-hist2(Pars$TACSD, main="TACSD", col=plotPars$col, axes=plotPars$axes,
-      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=Pars$TACSD[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$TACSD, main="TACSD", col=params$plotPars$col, axes=params$plotPars$axes,
+      breaks=params$plotPars$breaks, cex.main=params$plotPars$cex.main)
+abline(v=Pars$TACSD[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$TACFrac, main="TACFrac", col=plotPars$col, axes=plotPars$axes,
-      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=Pars$TACFrac[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$TACFrac, main="TACFrac", col=params$plotPars$col, axes=params$plotPars$axes,
+      breaks=params$plotPars$breaks, cex.main=params$plotPars$cex.main)
+abline(v=Pars$TACFrac[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
 ```
@@ -76,10 +76,10 @@ axis(side=1)
 par(mfrow=c(1,1), oma=c(3,3,1,1), mar=c(1,1,1,1))
 years <- c(seq(-nyears+1, 0, by=1), seq(1, proyears,1))
 
-ylim <- c(0, max(ImpList$TACbias[its, ] * ImpList$TACsd[its, ]))
-matplot(years, t(ImpList$TACbias[its, ] * ImpList$TACsd[its, ]),
+ylim <- c(0, max(ImpList$TACbias[params$its, ] * ImpList$TACsd[params$its, ]))
+matplot(years, t(ImpList$TACbias[params$its, ] * ImpList$TACsd[params$its, ]),
         type="l", lty=1, bty="l", main="TAC discrepancy by Year", 
-         lwd=plotPars$lwd, ylab="Observed/Real", xlab="Years", las=1, xpd=NA,
+         lwd=params$plotPars$lwd, ylab="Observed/Real", xlab="Years", las=1, xpd=NA,
         ylim=ylim)
 abline(v=0, col="darkgray", lty=2)
 abline(h=1, col="darkgray", lty=2)
@@ -101,14 +101,14 @@ Histograms of `r nsim` simulations of inter-annual variability in TAE implementa
 
 ```{r, echo=FALSE}
 par(mfrow=c(1,2))
-hist2(Pars$TAESD, main="TAESD", col=plotPars$col, axes=plotPars$axes,
-      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=Pars$TAESD[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$TAESD, main="TAESD", col=params$plotPars$col, axes=params$plotPars$axes,
+      breaks=params$plotPars$breaks, cex.main=params$plotPars$cex.main)
+abline(v=Pars$TAESD[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$TAEFrac, main="TAEFrac", col=plotPars$col, axes=plotPars$axes,
-      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=Pars$TAEFrac[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$TAEFrac, main="TAEFrac", col=params$plotPars$col, axes=params$plotPars$axes,
+      breaks=params$plotPars$breaks, cex.main=params$plotPars$cex.main)
+abline(v=Pars$TAEFrac[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
 ```
@@ -119,10 +119,10 @@ axis(side=1)
 par(mfrow=c(1,1), oma=c(3,3,1,1), mar=c(1,1,1,1))
 years <- c(seq(-nyears+1, 0, by=1), seq(1, proyears,1))
 
-ylim <- c(0, max(ImpList$TAEbias[its, ] * ImpList$TAEsd[its, ]))
-matplot(years, t(ImpList$TAEbias[its, ] * ImpList$TAEsd[its, ]),
+ylim <- c(0, max(ImpList$TAEbias[params$its, ] * ImpList$TAEsd[params$its, ]))
+matplot(years, t(ImpList$TAEbias[params$its, ] * ImpList$TAEsd[params$its, ]),
         type="l", lty=1, bty="l", main="TAE discrepancy by Year", 
-         lwd=plotPars$lwd, ylab="Observed/Real", xlab="Years", las=1, xpd=NA,
+         lwd=params$plotPars$lwd, ylab="Observed/Real", xlab="Years", las=1, xpd=NA,
         ylim=ylim)
 abline(v=0, col="darkgray", lty=2)
 abline(h=1, col="darkgray", lty=2)
@@ -143,14 +143,14 @@ Histograms of `r nsim` simulations of inter-annual variability in size limit imp
 
 ```{r, echo=FALSE}
 par(mfrow=c(1,2))
-hist2(Pars$SizeLimSD, main="SizeLimSD", col=plotPars$col, axes=plotPars$axes,
-      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=Pars$SizeLimSD[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$SizeLimSD, main="SizeLimSD", col=params$plotPars$col, axes=params$plotPars$axes,
+      breaks=params$plotPars$breaks, cex.main=params$plotPars$cex.main)
+abline(v=Pars$SizeLimSD[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$SizeLimFrac, main="SizeLimFrac", col=plotPars$col, axes=plotPars$axes,
-      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=Pars$SizeLimFrac[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$SizeLimFrac, main="SizeLimFrac", col=params$plotPars$col, axes=params$plotPars$axes,
+      breaks=params$plotPars$breaks, cex.main=params$plotPars$cex.main)
+abline(v=Pars$SizeLimFrac[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
 ```
@@ -161,10 +161,10 @@ axis(side=1)
 par(mfrow=c(1,1), oma=c(3,3,1,1), mar=c(1,1,1,1))
 years <- c(seq(-nyears+1, 0, by=1), seq(1, proyears,1))
 
-ylim <- c(0, max(ImpList$SizeLimFrac[its, ] * ImpList$SizeLimSD[its, ]))
-matplot(years, t(ImpList$SizeLimFrac[its, ] * ImpList$SizeLimSD[its, ]),
+ylim <- c(0, max(ImpList$SizeLimFrac[params$its, ] * ImpList$SizeLimSD[params$its, ]))
+matplot(years, t(ImpList$SizeLimFrac[params$its, ] * ImpList$SizeLimSD[params$its, ]),
         type="l", lty=1, bty="l", main="Size Limit discrepancy by Year", 
-         lwd=plotPars$lwd, ylab="Observed/Real", xlab="Years", las=1, xpd=NA,
+         lwd=params$plotPars$lwd, ylab="Observed/Real", xlab="Years", las=1, xpd=NA,
         ylim=ylim)
 abline(v=0, col="darkgray", lty=2)
 abline(h=1, col="darkgray", lty=2)

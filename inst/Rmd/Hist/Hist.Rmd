@@ -47,7 +47,7 @@ Depletion <- Pars@TSdata$SSB/matrix(Pars@Ref$SSB0, nrow=nsim, ncol=nyears)
 ylim <- c(0, max(Depletion))
 matplot(years, t(Depletion),
         type="l", lty=1, bty="l", main="", 
-         lwd=plotPars$lwd, ylab="Depletion (spawning biomass)", xlab="Historical Years", las=1, xpd=NA,
+         lwd=params$plotPars$lwd, ylab="Depletion (spawning biomass)", xlab="Historical Years", las=1, xpd=NA,
         ylim=ylim)
 abline(h=1, lty=2, lwd=2, col="darkgray")
 ```
@@ -63,7 +63,7 @@ SSB <- Pars@TSdata$SSB
 ylim <- c(0, max(SSB))
 matplot(years, t(SSB),
         type="l", lty=1, bty="l", main="", 
-         lwd=plotPars$lwd, ylab="SSB", xlab="Historical Years", las=1, xpd=NA,
+         lwd=params$plotPars$lwd, ylab="SSB", xlab="Historical Years", las=1, xpd=NA,
         ylim=ylim)
 ```
 
@@ -86,7 +86,7 @@ Depletion <- Pars@TSdata$VB/matrix(Pars@Ref$VB0, nrow=nsim, ncol=nyears)
 ylim <- c(0, max(Depletion))
 matplot(years, t(Depletion),
         type="l", lty=1, bty="l", main="", 
-         lwd=plotPars$lwd, ylab="Depletion (vulnerable biomass)", xlab="Historical Years", las=1, xpd=NA,
+         lwd=params$plotPars$lwd, ylab="Depletion (vulnerable biomass)", xlab="Historical Years", las=1, xpd=NA,
         ylim=ylim)
 abline(h=1, lty=2, lwd=2, col="darkgray")
 ```
@@ -101,7 +101,7 @@ Vb <- Pars@TSdata$VB
 ylim <- c(0, max(Vb))
 matplot(years, t(Vb),
         type="l", lty=1, bty="l", main="", 
-         lwd=plotPars$lwd, ylab="Vuln. Biomass", xlab="Historical Years", las=1, xpd=NA,
+         lwd=params$plotPars$lwd, ylab="Vuln. Biomass", xlab="Historical Years", las=1, xpd=NA,
         ylim=ylim)
 ```
 
@@ -123,7 +123,7 @@ Depletion <- Pars@TSdata$B/matrix(Pars@Ref$B0, nrow=nsim, ncol=nyears)
 ylim <- c(0, max(Depletion))
 matplot(years, t(Depletion),
         type="l", lty=1, bty="l", main="", 
-         lwd=plotPars$lwd, ylab="Depletion (total biomass)", xlab="Historical Years", las=1, xpd=NA,
+         lwd=params$plotPars$lwd, ylab="Depletion (total biomass)", xlab="Historical Years", las=1, xpd=NA,
         ylim=ylim)
 abline(h=1, lty=2, lwd=2, col="darkgray")
 ```
@@ -137,7 +137,7 @@ B <- Pars@TSdata$B
 ylim <- c(0, max(B))
 matplot(years, t(B),
         type="l", lty=1, bty="l", main="", 
-         lwd=plotPars$lwd, ylab="Total Biomass", xlab="Historical Years", las=1, xpd=NA,
+         lwd=params$plotPars$lwd, ylab="Total Biomass", xlab="Historical Years", las=1, xpd=NA,
         ylim=ylim)
 
 ```
@@ -160,7 +160,7 @@ Depletion <- Pars@TSdata$Rec/matrix(Pars@Ref$R0, nrow=nsim, ncol=nyears)
 ylim <- c(0, max(Depletion))
 matplot(years, t(Depletion),
         type="l", lty=1, bty="l", main="", 
-         lwd=plotPars$lwd, ylab="Recruitment (relative to R0)", xlab="Historical Years", las=1, xpd=NA,
+         lwd=params$plotPars$lwd, ylab="Recruitment (relative to R0)", xlab="Historical Years", las=1, xpd=NA,
         ylim=ylim)
 abline(h=1, lty=2, lwd=2, col="darkgray")
 ```
@@ -174,7 +174,7 @@ Rec <- Pars@TSdata$Rec
 ylim <- c(0, max(Rec))
 matplot(years, t(Rec),
         type="l", lty=1, bty="l", main="", 
-         lwd=plotPars$lwd, ylab="Recruitment", xlab="Historical Years", las=1, xpd=NA,
+         lwd=params$plotPars$lwd, ylab="Recruitment", xlab="Historical Years", las=1, xpd=NA,
         ylim=ylim)
 
 ```
@@ -197,7 +197,7 @@ Depletion <- Pars@TSdata$Catch/matrix(Pars@TSdata$Catch[,nyears], nrow=nsim, nco
 ylim <- c(0, max(Depletion))
 matplot(years, t(Depletion),
         type="l", lty=1, bty="l", main="", 
-         lwd=plotPars$lwd, ylab="Catch (relative to current year)", xlab="Historical Years", las=1, xpd=NA,
+         lwd=params$plotPars$lwd, ylab="Catch (relative to current year)", xlab="Historical Years", las=1, xpd=NA,
         ylim=ylim)
 abline(h=1, lty=2, lwd=2, col="darkgray")
 ```
@@ -211,7 +211,7 @@ Catch <- Pars@TSdata$Catch
 ylim <- c(0, max(Catch))
 matplot(years, t(Catch),
         type="l", lty=1, bty="l", main="", 
-         lwd=plotPars$lwd, ylab="Catch", xlab="Historical Years", las=1, xpd=NA,
+         lwd=params$plotPars$lwd, ylab="Catch", xlab="Historical Years", las=1, xpd=NA,
         ylim=ylim)
 
 ```
@@ -235,7 +235,7 @@ Find <- Pars@TSdata$Find
 ylim <- c(0, max(Find))
 matplot(years, t(Find),
         type="l", lty=1, bty="l", main="", 
-         lwd=plotPars$lwd, ylab="Fishing mortality rate (apical)", xlab="Historical Years", las=1, xpd=NA,
+         lwd=params$plotPars$lwd, ylab="Fishing mortality rate (apical)", xlab="Historical Years", las=1, xpd=NA,
         ylim=ylim)
 abline(h=1, lty=2, lwd=2, col="darkgray")
 ```

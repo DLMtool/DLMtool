@@ -26,7 +26,7 @@ dd <- Pars$M_ageArray %>% dim()
 nsim <- dd[1]
 maxage <- dd[2]
 
-nsamp <- length(its)
+nsamp <- length(params$its)
 ```
 
 ### Sampled Selectivity Parameters
@@ -36,45 +36,45 @@ Histograms of `r nsim` simulations of length at 5% selection (`L5`), first lengt
 par(mfrow=c(3,3), oma=c(0,0,3,0), mar=c(2,1,3,1))
 
 Yr <- 1
-hist2(Pars$L5[1,], col=plotPars$col, axes=plotPars$axes, main="L5", breaks=plotPars$breaks)
-abline(v=Pars$L5[1,its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$L5[1,], col=params$plotPars$col, axes=params$plotPars$axes, main="L5", breaks=params$plotPars$breaks)
+abline(v=Pars$L5[1,params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$LFS[1,], col=plotPars$col, axes=plotPars$axes, main="LFS", breaks=plotPars$breaks)
-abline(v=Pars$LFS[1,its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$LFS[1,], col=params$plotPars$col, axes=params$plotPars$axes, main="LFS", breaks=params$plotPars$breaks)
+abline(v=Pars$LFS[1,params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 mtext(side=3, "First Historical Year", xpd=NA)
 
-hist2(Pars$Vmaxlen[1,], col=plotPars$col, axes=plotPars$axes, main="Vmaxlen", breaks=plotPars$breaks)
-abline(v=Pars$Vmaxlen[1,its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$Vmaxlen[1,], col=params$plotPars$col, axes=params$plotPars$axes, main="Vmaxlen", breaks=params$plotPars$breaks)
+abline(v=Pars$Vmaxlen[1,params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
 Yr <- nyears
-hist2(Pars$L5[1,], col=plotPars$col, axes=plotPars$axes, main="L5", breaks=plotPars$breaks)
-abline(v=Pars$L5[1,its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$L5[1,], col=params$plotPars$col, axes=params$plotPars$axes, main="L5", breaks=params$plotPars$breaks)
+abline(v=Pars$L5[1,params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$LFS[1,], col=plotPars$col, axes=plotPars$axes, main="LFS", breaks=plotPars$breaks)
-abline(v=Pars$LFS[1,its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$LFS[1,], col=params$plotPars$col, axes=params$plotPars$axes, main="LFS", breaks=params$plotPars$breaks)
+abline(v=Pars$LFS[1,params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 mtext(side=3, "Last Historical Year", xpd=NA)
 
-hist2(Pars$Vmaxlen[1,], col=plotPars$col, axes=plotPars$axes, main="Vmaxlen", breaks=plotPars$breaks)
-abline(v=Pars$Vmaxlen[1,its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$Vmaxlen[1,], col=params$plotPars$col, axes=params$plotPars$axes, main="Vmaxlen", breaks=params$plotPars$breaks)
+abline(v=Pars$Vmaxlen[1,params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
 Yr <- nyears + proyears
-hist2(Pars$L5[1,], col=plotPars$col, axes=plotPars$axes, main="L5", breaks=plotPars$breaks)
-abline(v=Pars$L5[1,its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$L5[1,], col=params$plotPars$col, axes=params$plotPars$axes, main="L5", breaks=params$plotPars$breaks)
+abline(v=Pars$L5[1,params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$LFS[1,], col=plotPars$col, axes=plotPars$axes, main="LFS", breaks=plotPars$breaks)
-abline(v=Pars$LFS[1,its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$LFS[1,], col=params$plotPars$col, axes=params$plotPars$axes, main="LFS", breaks=params$plotPars$breaks)
+abline(v=Pars$LFS[1,params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 mtext(side=3, "Last Projection Year", xpd=NA)
 
-hist2(Pars$Vmaxlen[1,], col=plotPars$col, axes=plotPars$axes, main="Vmaxlen", breaks=plotPars$breaks)
-abline(v=Pars$Vmaxlen[1,its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$Vmaxlen[1,], col=params$plotPars$col, axes=params$plotPars$axes, main="Vmaxlen", breaks=params$plotPars$breaks)
+abline(v=Pars$Vmaxlen[1,params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
 ```
@@ -87,45 +87,45 @@ Histograms of `r nsim` simulations of length at 5% retention (`LR5`), first leng
 par(mfrow=c(3,3), oma=c(0,0,3,0), mar=c(2,1,3,1))
 
 Yr <- 1
-hist2(Pars$LR5[1,], col=plotPars$col, axes=plotPars$axes, main="LR5", breaks=plotPars$breaks)
-abline(v=Pars$LR5[1,its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$LR5[1,], col=params$plotPars$col, axes=params$plotPars$axes, main="LR5", breaks=params$plotPars$breaks)
+abline(v=Pars$LR5[1,params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$LFR[1,], col=plotPars$col, axes=plotPars$axes, main="LFR", breaks=plotPars$breaks)
-abline(v=Pars$LFR[1,its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$LFR[1,], col=params$plotPars$col, axes=params$plotPars$axes, main="LFR", breaks=params$plotPars$breaks)
+abline(v=Pars$LFR[1,params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 mtext(side=3, "First Historical Year", xpd=NA)
 
-hist2(Pars$Rmaxlen[1,], col=plotPars$col, axes=plotPars$axes, main="Rmaxlen", breaks=plotPars$breaks)
-abline(v=Pars$Rmaxlen[1,its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$Rmaxlen[1,], col=params$plotPars$col, axes=params$plotPars$axes, main="Rmaxlen", breaks=params$plotPars$breaks)
+abline(v=Pars$Rmaxlen[1,params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
 Yr <- nyears
-hist2(Pars$LR5[1,], col=plotPars$col, axes=plotPars$axes, main="LR5", breaks=plotPars$breaks)
-abline(v=Pars$LR5[1,its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$LR5[1,], col=params$plotPars$col, axes=params$plotPars$axes, main="LR5", breaks=params$plotPars$breaks)
+abline(v=Pars$LR5[1,params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$LFR[1,], col=plotPars$col, axes=plotPars$axes, main="LFR", breaks=plotPars$breaks)
-abline(v=Pars$LFR[1,its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$LFR[1,], col=params$plotPars$col, axes=params$plotPars$axes, main="LFR", breaks=params$plotPars$breaks)
+abline(v=Pars$LFR[1,params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 mtext(side=3, "Last Historical Year", xpd=NA)
 
-hist2(Pars$Rmaxlen[1,], col=plotPars$col, axes=plotPars$axes, main="Rmaxlen", breaks=plotPars$breaks)
-abline(v=Pars$Rmaxlen[1,its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$Rmaxlen[1,], col=params$plotPars$col, axes=params$plotPars$axes, main="Rmaxlen", breaks=params$plotPars$breaks)
+abline(v=Pars$Rmaxlen[1,params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
 Yr <- nyears + proyears
-hist2(Pars$LR5[1,], col=plotPars$col, axes=plotPars$axes, main="LR5", breaks=plotPars$breaks)
-abline(v=Pars$LR5[1,its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$LR5[1,], col=params$plotPars$col, axes=params$plotPars$axes, main="LR5", breaks=params$plotPars$breaks)
+abline(v=Pars$LR5[1,params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$LFR[1,], col=plotPars$col, axes=plotPars$axes, main="LFR", breaks=plotPars$breaks)
-abline(v=Pars$LFR[1,its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$LFR[1,], col=params$plotPars$col, axes=params$plotPars$axes, main="LFR", breaks=params$plotPars$breaks)
+abline(v=Pars$LFR[1,params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 mtext(side=3, "Last Projection Year", xpd=NA)
 
-hist2(Pars$Rmaxlen[1,], col=plotPars$col, axes=plotPars$axes, main="Rmaxlen", breaks=plotPars$breaks)
-abline(v=Pars$Rmaxlen[1,its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$Rmaxlen[1,], col=params$plotPars$col, axes=params$plotPars$axes, main="Rmaxlen", breaks=params$plotPars$breaks)
+abline(v=Pars$Rmaxlen[1,params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
 ```
@@ -141,23 +141,23 @@ YrText[yr.vert[1]] <- "First Historical Year"
 YrText[yr.vert[2]] <- "Last Historical Year"
 YrText[yr.vert[3]] <- "Last Projection Year"
 cnt <- 0 
-for (sim in its) {
+for (sim in params$its) {
    cnt <- cnt + 1
   for (yr in yr.vert) {
    
     # plot vulnerability & selection at length
-    plot(Pars$CAL_binsmid, Pars$SLarray2[sim,, yr], type='l', ylim=c(0,1), lwd=plotPars$lwd, 
+    plot(Pars$CAL_binsmid, Pars$SLarray2[sim,, yr], type='l', ylim=c(0,1), lwd=params$plotPars$lwd, 
          axes=FALSE, ylab="", xlab="")
-    if (sim == its[1]) {
+    if (sim == params$its[1]) {
       mtext(side=3, YrText[[yr]])
     }
-    if (sim == its[length(its)]) {
+    if (sim == params$its[length(params$its)]) {
       axis(side=1)
     } else {
        axis(side=1, labels = FALSE)
     }
-    if (sim == its[nsamp]) mtext(side=1, "Length", line=2.5)
-    if (yr == yr.vert[1] & sim ==its[1]) {
+    if (sim == params$its[nsamp]) mtext(side=1, "Length", line=2.5)
+    if (yr == yr.vert[1] & sim ==params$its[1]) {
       mtext(side=2, "Vulnerability/Retention", las=3, outer=TRUE, line=2)
     }
     if (yr == yr.vert[1]) {
@@ -168,10 +168,10 @@ for (sim in its) {
     
     polygon(x=c(Pars$CAL_binsmid, rev(Pars$CAL_binsmid)), 
             y=c(Pars$SLarray[sim,, yr], rev(Pars$retL[sim,, yr])), col="gray", border=FALSE)
-    lines(Pars$CAL_binsmid, Pars$SLarray[sim,, yr], col=2, lwd=plotPars$lwd, lty=2, type='l')
-    lines(Pars$CAL_binsmid, Pars$retL[sim,, yr], col=4, lwd=plotPars$lwd, lty=3, type='l')
+    lines(Pars$CAL_binsmid, Pars$SLarray[sim,, yr], col=2, lwd=params$plotPars$lwd, lty=2, type='l')
+    lines(Pars$CAL_binsmid, Pars$retL[sim,, yr], col=4, lwd=params$plotPars$lwd, lty=3, type='l')
     
-    if (yr == max(yr.vert) & sim == its[1]) {
+    if (yr == max(yr.vert) & sim == params$its[1]) {
       minval <- min(c(Pars$V[sim,Pars$maxage, yr],  Pars$retA[sim,Pars$maxage, yr]))
       if (minval >= 0.5) loc <- "bottomright"
       if (minval < 0.5) loc <- "topright"
@@ -193,23 +193,23 @@ YrText[yr.vert[1]] <- "First Historical Year"
 YrText[yr.vert[2]] <- "Last Historical Year"
 YrText[yr.vert[3]] <- "Last Projection Year"
 cnt <- 0 
-for (sim in its) {
+for (sim in params$its) {
    cnt <- cnt + 1
   for (yr in yr.vert) {
    
     # plot vulnerability & selection at length
-    plot(1:Pars$maxage, Pars$V2[sim,, yr], type='l', ylim=c(0,1), lwd=plotPars$lwd, 
+    plot(1:Pars$maxage, Pars$V2[sim,, yr], type='l', ylim=c(0,1), lwd=params$plotPars$lwd, 
          axes=FALSE, ylab="", xlab="")
-    if (sim == its[1]) {
+    if (sim == params$its[1]) {
       mtext(side=3, YrText[[yr]])
     }
-    if (sim == its[length(its)]) {
+    if (sim == params$its[length(params$its)]) {
       axis(side=1)
     } else {
        axis(side=1, labels = FALSE)
     }
-    if (sim == its[nsamp]) mtext(side=1, "Age", line=2.5)
-    if (yr == yr.vert[1] & sim ==its[1]) {
+    if (sim == params$its[nsamp]) mtext(side=1, "Age", line=2.5)
+    if (yr == yr.vert[1] & sim ==params$its[1]) {
       mtext(side=2, "Vulnerability/Retention", las=3, outer=TRUE, line=2)
     }
     if (yr == yr.vert[1]) {
@@ -220,10 +220,10 @@ for (sim in its) {
     
     polygon(x=c(1:Pars$maxage, rev(1:Pars$maxage)), 
             y=c(Pars$V[sim,, yr], rev(Pars$retA[sim,, yr])), col="gray", border=FALSE)
-    lines(1:Pars$maxage, Pars$V[sim,, yr], col=2, lwd=plotPars$lwd, lty=2, type='l')
-    lines(1:Pars$maxage, Pars$retA[sim,, yr], col=4, lwd=plotPars$lwd, lty=3, type='l')
+    lines(1:Pars$maxage, Pars$V[sim,, yr], col=2, lwd=params$plotPars$lwd, lty=2, type='l')
+    lines(1:Pars$maxage, Pars$retA[sim,, yr], col=4, lwd=params$plotPars$lwd, lty=3, type='l')
     
-    if (yr == max(yr.vert) & sim == its[1]) {
+    if (yr == max(yr.vert) & sim == params$its[1]) {
       minval <- min(c(Pars$V[sim,Pars$maxage, yr],  Pars$retA[sim,Pars$maxage, yr]))
       if (minval >= 0.5) loc <- "bottomright"
       if (minval < 0.5) loc <- "topright"

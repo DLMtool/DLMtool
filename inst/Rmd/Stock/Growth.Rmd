@@ -26,7 +26,7 @@ dd <- Pars$M_ageArray %>% dim()
 nsim <- dd[1]
 maxage <- dd[2]
 
-nsamp <- length(its)
+nsamp <- length(params$its)
 ```
 
 ### Sampled Parameters 
@@ -34,29 +34,29 @@ Histograms of `r nsim` simulations of von Bertalanffy growth parameters `Linf`, 
 
 ```{r, echo=FALSE}
 par(mfrow=c(2,3))
-hist2(Pars$Linf, main="Linf", col=plotPars$col, axes=plotPars$axes,
-      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=Pars$Linf[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$Linf, main="Linf", col=params$plotPars$col, axes=params$plotPars$axes,
+      breaks=params$plotPars$breaks, cex.main=params$plotPars$cex.main)
+abline(v=Pars$Linf[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$Linfsd, main="Linfsd", col=plotPars$col, axes=plotPars$axes,
-      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=Pars$Linfsd[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$Linfsd, main="Linfsd", col=params$plotPars$col, axes=params$plotPars$axes,
+      breaks=params$plotPars$breaks, cex.main=params$plotPars$cex.main)
+abline(v=Pars$Linfsd[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$K, main="K", col=plotPars$col, axes=plotPars$axes,
-      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=Pars$K[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$K, main="K", col=params$plotPars$col, axes=params$plotPars$axes,
+      breaks=params$plotPars$breaks, cex.main=params$plotPars$cex.main)
+abline(v=Pars$K[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
-hist2(Pars$Ksd, main="Ksd", col=plotPars$col, axes=plotPars$axes,
-      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=Pars$Ksd[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$Ksd, main="Ksd", col=params$plotPars$col, axes=params$plotPars$axes,
+      breaks=params$plotPars$breaks, cex.main=params$plotPars$cex.main)
+abline(v=Pars$Ksd[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1)
 
-hist2(Pars$t0, main="t0", col=plotPars$col, axes=plotPars$axes,
-      breaks=plotPars$breaks, cex.main=plotPars$cex.main)
-abline(v=Pars$t0[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$t0, main="t0", col=params$plotPars$col, axes=params$plotPars$axes,
+      breaks=params$plotPars$breaks, cex.main=params$plotPars$cex.main)
+abline(v=Pars$t0[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
 ```
@@ -67,9 +67,9 @@ The Linf and K parameters in each year for `r nsamp` simulations. The vertical d
 ```{r, echo=FALSE}
 years <- c(seq(-nyears+1, 0, by=1), seq(1, proyears,1))
 
-matplot(years, t(Pars$Linfarray[its,]), type="l", bty="l", main="", lwd=plotPars$lwd, lty=1, ylab="Linf", xlab="Year")
+matplot(years, t(Pars$Linfarray[params$its,]), type="l", bty="l", main="", lwd=params$plotPars$lwd, lty=1, ylab="Linf", xlab="Year")
 abline(v=0, col="darkgray", lty=2)
-matplot(years, t(Pars$Karray[its,]), type="l", bty="l", main="", lwd=plotPars$lwd, lty=1, ylab="K", xlab="Year")
+matplot(years, t(Pars$Karray[params$its,]), type="l", bty="l", main="", lwd=params$plotPars$lwd, lty=1, ylab="K", xlab="Year")
 abline(v=0, col="darkgray", lty=2)
 ```
 
@@ -77,18 +77,18 @@ abline(v=0, col="darkgray", lty=2)
 Sampled length-at-age curves for `r nsamp` simulations in the first historical year, the last historical year, and the last projection year.
 ```{r, echo=FALSE}
 par(mfrow=c(1,3), oma=c(2,3,1,1), mar=c(3,2,1,1))
-fstYr <- Pars$Len_age[its,,1]
-curYr <- Pars$Len_age[its,,nyears]
-lstYr <- Pars$Len_age[its,,proyears+nyears]
+fstYr <- Pars$Len_age[params$its,,1]
+curYr <- Pars$Len_age[params$its,,nyears]
+lstYr <- Pars$Len_age[params$its,,proyears+nyears]
 MaxL <- max(Pars$Len_age)
 matplot(t(fstYr), type="l", bty="l", main="First historical year", ylim=c(0, MaxL), 
-        xlab="Age", ylab="Length", cex.lab=2, lwd=plotPars$lwd, lty=1, xpd=NA)
+        xlab="Age", ylab="Length", cex.lab=2, lwd=params$plotPars$lwd, lty=1, xpd=NA)
 matplot(t(curYr), type="l", bty="l", main="Last historical year", ylim=c(0, MaxL),  
-        axes=plotPars$axes, xlab="Age", ylab="", cex.lab=2, lwd=plotPars$lwd, lty=1, xpd=NA)
+        axes=params$plotPars$axes, xlab="Age", ylab="", cex.lab=2, lwd=params$plotPars$lwd, lty=1, xpd=NA)
 axis(side=1)
 axis(side=2, labels=FALSE)  
 matplot(t(lstYr), type="l", bty="l", main="Last projected year", ylim=c(0, MaxL),
-        axes=plotPars$axes, xlab="Age", ylab="", cex.lab=2, lwd=plotPars$lwd, lty=1, xpd=NA)	
+        axes=params$plotPars$axes, xlab="Age", ylab="", cex.lab=2, lwd=params$plotPars$lwd, lty=1, xpd=NA)	
 axis(side=1)
 axis(side=2, labels=FALSE)  
 ```

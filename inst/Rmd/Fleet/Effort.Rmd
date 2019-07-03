@@ -26,7 +26,7 @@ dd <- Pars$M_ageArray %>% dim()
 nsim <- dd[1]
 maxage <- dd[2]
 
-nsamp <- length(its)
+nsamp <- length(params$its)
 ```
 
 ### Sampled Parameters
@@ -35,8 +35,8 @@ Histograms of `r nsim` simulations of inter-annual variability in historical fis
 ```{r, echo=FALSE}
 par(mfrow=c(1,1))
 
-hist2(Pars$Esd, col=plotPars$col, axes=plotPars$axes, main="Esd", breaks=plotPars$breaks)
-abline(v=Pars$Esd[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$Esd, col=params$plotPars$col, axes=params$plotPars$axes, main="Esd", breaks=params$plotPars$breaks)
+abline(v=Pars$Esd[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
 ```
@@ -53,7 +53,7 @@ histYr <- (CurrentYr-nyears+1):CurrentYr
 futYr <- (CurrentYr+1):(CurrentYr+proyears)
 Years <- histYr
 
-matplot(Years, t(Pars$Find[its,]), type="l", lwd=plotPars$lwd, bty="l", lty=1,
+matplot(Years, t(Pars$Find[params$its,]), type="l", lwd=params$plotPars$lwd, bty="l", lty=1,
         ylab="Relative F", xlab="Year")
 
 ```

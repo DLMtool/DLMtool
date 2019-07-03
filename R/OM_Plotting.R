@@ -15,7 +15,8 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
     proyears <- Object@proyears
     SampCpars <- if(length(Object@cpars)>0) SampCpars <- SampleCpars(Object@cpars, nsim, msg=FALSE)
     set.seed(Object@seed)
-    Class <- "OM"
+    Stock <- SubOM(Object, "Stock")
+    # Class <- "OM"
   }
   
  
@@ -84,7 +85,7 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
     Pars$Name <- gsub(" ", "_", Object@Name)  
   } 
   its <- sample(1:nsim, nsamp)
-  Pars <<- Pars
+  # Pars <<- Pars
   Params <- list(
     title = title,
     Pars = Pars,

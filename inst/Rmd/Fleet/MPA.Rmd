@@ -22,11 +22,11 @@ if (params$tabs) {
   cat('## Historical MPA & Spatial Targeting')
 }
 
-dd <- Pars$M_ageArray %>% dim()
+dd <- dim(Pars$M_ageArray)
 nsim <- dd[1]
 maxage <- dd[2]
 
-nsamp <- length(its)
+nsamp <- length(params$its)
 
 
 ```
@@ -42,7 +42,7 @@ if (all(is.na(Pars$MPA)) | sum(Pars$MPA) == 0) {
 }
 
 # historical spatial closures have been specified
-sim <- its[1]
+sim <- params$its[1]
 nareas <- ncol(Pars$MPA)-1
 MPA <- matrix(1, nyears+proyears, ncol=nareas)
 yrindex <- Pars$MPA[,1]
@@ -58,10 +58,17 @@ op <- par(mfrow=c(1,1), mar=c(3,3,0,0), oma=c(0,0,0,0), no.readonly = TRUE)
 on.exit(par(op))
 
 area_sizes <- Pars$Asize[sim,]
+names(area_sizes) <- NULL
 plot(c(1, nyears+proyears), c(0,sum(area_sizes)), type="n", bty="n", xlab="", ylab="", axes=FALSE)
 origin <- cumsum(c(0, area_sizes)) #  seq(0, by=1, length.out = nareas)
+
 for (aa in 1:nareas) {
-  polygon(x=c(x, rev(x)), y=c(rep(origin[aa], nyrs), origin[aa+1]*rev(MPA[,aa])), 
+  if (aa ==1) {
+    df <- data.frame(Years=x, y1=0, y2=area_sizes[aa] * MPA[,aa])
+  } else {
+    df <- data.frame(Years=x, y1=sum(area_sizes[1:(aa-1)]), y2=sum(area_sizes[1:(aa-1)])+(area_sizes[aa] * MPA[,aa]))
+  }
+  polygon(x=c(df$Years, rev(df$Years)), y=c(df$y1, rev(df$y2)),
           col='lightgray', border = TRUE)
 }
 
@@ -70,8 +77,8 @@ if (Pars$CurrentYr > 1000) years <- (Pars$CurrentYr - nyears+1) : (Pars$CurrentY
 
 xp <- seq(from=min(x), to=max(x), by=5)
 ind <- match(xp, x)
-axis(side=1, at=x[ind], labels=years[ind])
 
+axis(side=1, at=x[ind], labels=years[ind])
 mtext(side=1, "Years", line=2, xpd=NA, cex=1.25)
 
 axis(side=2, at=origin[1:(length(origin)-1)] + 0.5 * area_sizes, labels=1:nareas, las=1, col = "white", tcl = 0)
@@ -89,8 +96,8 @@ Histograms of `r nsim` simulations of spatial targeting parameter (`Spat_targ`),
 ```{r, echo=FALSE}
 par(mfrow=c(1,1))
 
-hist2(Pars$Spat_targ, col=plotPars$col, axes=plotPars$axes, main="Spat_targ", breaks=plotPars$breaks)
-abline(v=Pars$Spat_targ[its], col=1:nsamp, lwd=plotPars$lwd)
+hist2(Pars$Spat_targ, col=params$plotPars$col, axes=params$plotPars$axes, main="Spat_targ", breaks=params$plotPars$breaks)
+abline(v=Pars$Spat_targ[params$its], col=1:nsamp, lwd=params$plotPars$lwd)
 axis(side=1) 
 
 
