@@ -555,7 +555,7 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
                     CB_hist = MSEobj@CB_hist[SubIts, , , , drop = FALSE], 
                     FM_hist = MSEobj@FM_hist[SubIts, , , , drop = FALSE], 
                     Effort = SubEffort, PAA=SubPAA, CAL=SubCAL, CAA=SubCAA , CALbins=CALbins,
-                    Misc=list())
+                    Misc=MSEobj@Misc)
   
   return(SubResults)
 }
@@ -735,6 +735,15 @@ joinMSE <- function(MSEobjs = NULL) {
       }
       Misc$RInd.stats <- do.call('rbind', temp)
     }
+    
+    if (!is.null(MSEobjs[[1]]@Misc$TryMP)) {
+      temp1 <- list()
+      for(i in 1:length(MSEobjs)) {
+        temp1[[i]] <- MSEobjs[[i]]@Misc$TryMP 
+      }
+      Misc$TryMP <- do.call('rbind', temp1)   
+    }
+    
   }
   
   newMSE <- new("MSE", Name = outlist$Name, nyears = unique(outlist$nyears), 

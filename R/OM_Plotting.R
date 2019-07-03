@@ -462,6 +462,7 @@ plotSelect <- function(OM, Pars=NULL, pyears=4, sim=NA, type="l") {
   if (pyears > 1) gr <- c(2, pyears)
   if (pyears == 1) gr <- c(1, 2)
   op <- par(mfcol=gr, bty="l", las=1, mar=c(3,3,2,0), oma=c(3,3,2,1), xpd=NA)
+  on.exit(par(op))
   
   for (yr in yr.vert) {
     # plot vulnerability & selection at age
@@ -508,7 +509,6 @@ plotSelect <- function(OM, Pars=NULL, pyears=4, sim=NA, type="l") {
     
   }
   mtext(side=3, paste0("Selection and Retention curves for simulation: ", sim),  outer=TRUE)
-  on.exit(par(op))
   
   invisible(list(V=Pars$V, V2=Pars$V2 ,retA=Pars$retA, DR=Pars$DR, 
                  Fdisc=Pars$Fdisc, sim=sim))
@@ -555,7 +555,6 @@ plotM <- function(Stock, nsim=5) {
   Wt_at_age <- StockPars$Wt_age
   op <- par(no.readonly = TRUE)
   on.exit(par(op))
-  
   
   par(mfrow=c(3,3), bty="l", las=1, mar=c(3,3,2,1), oma=c(2,2,0,0))
   ylim <- c(0, max(M_at_age))
@@ -690,6 +689,7 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
   # layout.show(m)
   # stop()
   op <- par(mar = c(2, 1, 3, 1), oma=c(1,2,4,1), ask=FALSE, las=1)
+  on.exit(par(op))
   
   # Row 1 -- Natural Mortality ---- 
   hist2(M, col=col, axes=FALSE, main="M", breaks=breaks)
@@ -864,8 +864,7 @@ plotStock <- function(x, nsamp=3, nsim=500, nyears=50, proyears=28,
     title("Sampled length-at-age curves", outer=TRUE, cex.main=2)
   }
   
-  on.exit(par(op))
-  
+  invisible(StockPars)
 }
 
 
@@ -933,7 +932,8 @@ plotFleet <- function(x, Stock=NULL, nsamp=3, nsim=500, proyears=28, col="darkgr
   heights=c(1,0.2, 1,0.3, 1, 0.3, 1, 0.3, 1))
   # layout.show(m)				   
   
-  op <- par(mar = c(2,2, 2, 1), oma=c(2,2,4,1), las=1)  
+  op <- par(mar = c(2,2, 2, 1), oma=c(2,2,4,1), las=1)
+  on.exit(par(op))	 
   hist2(Esd, col=col, axes=FALSE, main="Esd", breaks=breaks)
   abline(v=Esd[its], col=1:nsamp, lwd=lwd)
   axis(side=1) 
@@ -1021,7 +1021,7 @@ plotFleet <- function(x, Stock=NULL, nsamp=3, nsim=500, proyears=28, col="darkgr
   # om <- new("OM", Stock, Fleet, Perfect_Info, Perfect_Imp)
   # plotSelect(om)
   
-  on.exit(par(op))	  
+  invisible(FleetPars)
 }
 
 
@@ -1071,6 +1071,7 @@ plotObs <- function(x, nsim=500, nyears=50,
   # === Non time series ==================================================================== 
   cex.main <- 0.5
   op <- par(mfrow=c(4,4),mai=c(0.6,0.6,0.25,0.01),omi=c(0.01,0.01,0.4,0.01))
+  on.exit(par(op))	 
   
   hist2(CAA_nsamp,col=col,axes=FALSE, main="No. annual catch-at-age obs (CAA_samp)", breaks=breaks,cex.main=cex.main)
   axis(side=1) 
@@ -1179,8 +1180,7 @@ plotObs <- function(x, nsim=500, nyears=50,
   if (!is.na(Obs@Name)) mtext(paste0("Observation time series plots for observation object ",Obs@Name),3,outer=T,line= 0.7,font=2)
   if (is.na(Obs@Name)) mtext(paste0("Observation time series plots for observation object "),3,outer=T,line= 0.7,font=2)
   
-  on.exit(par(op))
-  
+  invisible(ObsPars)
 }
 
 
@@ -1223,7 +1223,7 @@ plotImp<-function(x,nsim=500, nyears=50,
   its <- sample(1:nsim, nsamp)
   
   op <- par(mfrow=c(4,3),mai=c(0.6,0.6,0.2,0.01),omi=c(0.01,0.01,0.4,0.01))
-  
+  on.exit(par(op))	 
   
   ObsTSplot(TACFrac,TACSD,nyears,labs=c("Fraction of TAC (TACFrac)",
                                         "TAC error (TACSD)","TAC discrepancy for three samples",
@@ -1239,8 +1239,7 @@ plotImp<-function(x,nsim=500, nyears=50,
   
   mtext(paste0("Implementation error time series plots for implementation object ",Imp@Name),3,outer=T,line= 0.7,font=2)
   
-  on.exit(par(op))
-  
+  invisible(ImpPars)
 }
 
 

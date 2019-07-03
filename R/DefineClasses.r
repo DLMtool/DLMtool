@@ -446,7 +446,6 @@ setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ","
 #' 
 #' showClass('Stock')
 #' 
-# FecB = "numeric"
 setClass("Stock", representation(Name = "character", Common_Name='character', Species="character",
                                  maxage = "numeric", 
                                  R0 = "numeric", M = "numeric", M2 = "numeric", 
@@ -886,6 +885,7 @@ setMethod("initialize", "Imp", function(.Object, file = NA, dec=c(".", ",")) {
 })
 
 
+
 # ---- OM Class ----
 #' Class \code{'OM'}
 #' 
@@ -936,7 +936,7 @@ setClass("OM", representation(Name = "character", Agency="character",
          contains=c("Stock", "Fleet", "Obs", "Imp"))
 # initialize OM
 setMethod("initialize", "OM", function(.Object, Stock=NULL, Fleet=DLMtool::Generic_Fleet, 
-                                       Obs=DLMtool::Generic_Obs, Imp=DLMtool::Perfect_Imp, 
+                                       Obs=DLMtool::Generic_Obs, Imp=DLMtool::Perfect_Imp,
                                        interval=4, pstar=0.5, maxF=0.8, reps=1, nsim=48, proyears=50) {
   if (is.null(Stock)) {
     message("No Stock object found. Returning a blank OM object") 

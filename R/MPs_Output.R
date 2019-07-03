@@ -4239,7 +4239,10 @@ SPMSY <- function(x, Data, reps = 100, plot=FALSE) {
     cond <- (B[, nyears] >= LB) & (B[, nyears] <= UB)
   }
   Best <- B[cond,]
-  Best <- Best[1:reps,]
+  if (nrow(Best)>reps) {
+    Best <- Best[1:reps,]  
+  }
+  
   dep <- B[cond, nyears][1:reps]
   MSY <- rsamp[cond][1:reps] * Ksamp[cond][1:reps]/4
   Kc <- Ksamp[cond][1:reps]

@@ -2,6 +2,7 @@
 myrunif <- function(n, val1, val2) {
   min <- min(c(val1, val2))
   max <- max(c(val1, val2))
+  if (all(is.na(c(min, max)))) return(rep(NA,n))
   if (all(min == max)) {
     tt <- runif(n)
     return(rep(min, n))
@@ -1244,7 +1245,7 @@ SampleObsPars <- function(Obs, nsim=NULL, cpars=NULL){
 #' Sample Implementation Error Parameters
 #'
 #' @param Imp An object of class 'Imp' or class 'OM'
-#' @param nsim Number of simulations. Ignored if 'Stock' is class 'OM'
+#' @param nsim Number of simulations. Ignored if 'Imp' is class 'OM'
 #' @param cpars Optional named list of custom parameters. Ignored if 'OM' is class 'OM'
 #' @return A named list of sampled Implementation Error parameters
 #' @keywords internal
@@ -1262,7 +1263,6 @@ SampleImpPars <- function(Imp, nsim=NULL, cpars=NULL) {
     Names <- names(cpars)
     for (X in 1:length(Names)) assign(names(cpars)[X], cpars[[X]])
   }
-  
   
   ImpOut <- list() 
   # === Sample implementation error parameters ====
@@ -1296,12 +1296,72 @@ SampleImpPars <- function(Imp, nsim=NULL, cpars=NULL) {
   } else {
     ImpOut$SizeLimFrac <- SizeLimFrac
   }
-  
-  
+
   ImpOut
 }
 
-
+# #' Sample Bio-Economic Parameters
+# #'
+# #' @param BioEco An object of class 'BioEco' or class 'OM'
+# #' @param nsim Number of simulations. Ignored if 'BioEco' is class 'OM'
+# #' @param cpars Optional named list of custom parameters. Ignored if 'OM' is class 'OM'
+# #' @return A named list of sampled Bio-Economic parameters
+# #' @keywords internal
+# #' @export
+# #'
+# SampleBioEcoPars <- function(BioEco, nsim=NULL, cpars=NULL) {
+#   if (class(BioEco) != "BioEco" & class(BioEco) != "OM") 
+#     stop("First argument must be class 'BioEco' or 'OM'")
+#   if (class(BioEco) == "OM") nsim <- BioEco@nsim
+#   
+#   # Get custom pars if they exist
+#   if (class(BioEco) == "OM" && length(BioEco@cpars) > 0 && is.null(cpars)) 
+#     cpars <- SampleCpars(BioEco@cpars, BioEco@nsim)  # custom parameters exist in OM object
+#   if (length(cpars) > 0) { # custom pars exist - assign to function environment 
+#     Names <- names(cpars)
+#     for (X in 1:length(Names)) assign(names(cpars)[X], cpars[[X]])
+#   }
+#   
+#   BioEcoOut <- list() 
+#   
+#   if (!exists("CostCurr", inherits = FALSE)) {
+#     BioEcoOut$CostCurr <- myrunif(nsim, BioEco@CostCurr[1], BioEco@CostCurr[2]) 
+#   } else {
+#     BioEcoOut$CostCurr <- CostCurr
+#   }
+#   if (!exists("RevCurr", inherits = FALSE)) {
+#     BioEcoOut$RevCurr <- myrunif(nsim, BioEco@RevCurr[1], BioEco@RevCurr[2]) 
+#   } else {
+#     BioEcoOut$RevCurr <- RevCurr
+#   }
+#   if (!exists("CostInc", inherits = FALSE)) {
+#     BioEcoOut$CostInc <- myrunif(nsim, BioEco@CostInc[1], BioEco@CostInc[2]) 
+#   } else {
+#     BioEcoOut$CostInc <- CostInc
+#   }
+#   if (!exists("RevInc", inherits = FALSE)) {
+#     BioEcoOut$RevInc <- myrunif(nsim, BioEco@RevInc[1], BioEco@RevInc[2]) 
+#   } else {
+#     BioEcoOut$RevInc <- RevInc
+#   }
+#   if (!exists("Response", inherits = FALSE)) {
+#     BioEcoOut$Response <- myrunif(nsim, BioEco@Response[1], BioEco@Response[2]) 
+#   } else {
+#     BioEcoOut$Response <- Response
+#   }
+#   if (!exists("LatentEff", inherits = FALSE)) {
+#     if (length(BioEco@LatentEff) ==  0) {
+#       BioEcoOut$LatentEff <- rep(NA, nsim)
+#     } else {
+#       if (any(BioEco@LatentEff<=0)) stop("LatentEff must be fraction > 0 and <= 1")
+#       if (any(BioEco@LatentEff>1)) stop("LatentEff must be fraction > 0 and <= 1")
+#       BioEcoOut$LatentEff <- myrunif(nsim, BioEco@LatentEff[1], BioEco@LatentEff[2])   
+#     }
+#   } else {
+#     BioEcoOut$LatentEff <- LatentEff
+#   }
+#   BioEcoOut
+# }
 
 
 #' Valid custom parameters (cpars)
