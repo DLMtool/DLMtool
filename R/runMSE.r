@@ -18,6 +18,10 @@ Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "D", "Mgrad", "SRrel", "hs", "p
            'Perr_y', "Cobs", "Iobs", "Dobs", "Btbiascv", 'Btobs', "h", 'Index'
            )
 
+# change messages to blue text instead of default red
+message <- function(x, ...) {
+  base::message(crayon::blue(x, ...))
+}
 
 if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 
@@ -260,7 +264,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   BioEcoPars <- c("RevCurr", "CostCurr", "Response", "CostInc", "RevInc", "LatentEff")
   if (all(lapply(SampCpars[BioEcoPars], length) == 0)) {
     # no bio-economic model
-    if (!silent) message("No bio-economic model parameters found. \nTAC and TAE assumed to be caught in full")
+    # if (!silent) message("No bio-economic model parameters found. \nTAC and TAE assumed to be caught in full")
     RevCurr <- CostCurr <- Response <- CostInc <- RevInc <- LatentEff <- rep(NA, nsim)
   } else {
     if (!silent) message("Bio-economic model parameters found.")
@@ -800,6 +804,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # --- Begin loop over MPs ----
   mm <- 1 # for debugging
+  Misc$TryMP <- list()
   for (mm in 1:nMP) {  # MSE Loop over methods
     tryMP <- tryCatch({
       if(!silent) message(mm, "/", nMP, " Running MSE for ", MPs[mm]) 
@@ -1158,7 +1163,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       message(e, "\n")
     }) # end tryCatch
     
-    if(inherits(tryMP, "error")) next
+    if(inherits(tryMP, "error")) {
+      Misc$TryMP[[mm]] <- tryMP
+      next
+    } else {
+      Misc$TryMP[[mm]] <- "Okay"
+    }
     
   }  # end of mm methods 
   

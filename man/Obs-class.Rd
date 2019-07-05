@@ -26,7 +26,7 @@ An operating model component that controls the observation model
 
 \item{\code{Iobs}}{Observation error in the relative abundance indices expressed as a coefficient of variation. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{Ibiascv}}{Log-normal coefficient of variation controlling error in observations of relative abundance index. Uniform distribution lower and upper bounds. Positive real numbers}
+\item{\code{Ibiascv}}{Not Used. Log-normal coefficient of variation controlling error in observations of relative abundance index. Uniform distribution lower and upper bounds. Positive real numbers}
 
 \item{\code{Btobs}}{Log-normal coefficient of variation controlling error in observations of current stock biomass among years. Uniform distribution lower and upper bounds. Positive real numbers}
 
@@ -48,7 +48,7 @@ An operating model component that controls the observation model
 
 \item{\code{LFSbiascv}}{Log-normal coefficient of variation for sampling persistent bias in length-at-full selection. Uniform distribution lower and upper bounds. Positive real numbers}
 
-\item{\code{FMSYbiascv}}{Log-normal coefficient of variation for sampling persistent bias in FMSY. Uniform distribution lower and upper bounds. Positive real numbers}
+\item{\code{FMSYbiascv}}{Not used. Log-normal coefficient of variation for sampling persistent bias in FMSY. Uniform distribution lower and upper bounds. Positive real numbers}
 
 \item{\code{FMSY_Mbiascv}}{Log-normal coefficient of variation for sampling persistent bias in FMSY/M. Uniform distribution lower and upper bounds. Positive real numbers}
 

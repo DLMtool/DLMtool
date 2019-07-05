@@ -735,6 +735,15 @@ joinMSE <- function(MSEobjs = NULL) {
       }
       Misc$RInd.stats <- do.call('rbind', temp)
     }
+    
+    if (!is.null(MSEobjs[[1]]@Misc$TryMP)) {
+      temp1 <- list()
+      for(i in 1:length(MSEobjs)) {
+        temp1[[i]] <- MSEobjs[[i]]@Misc$TryMP 
+      }
+      Misc$TryMP <- do.call('rbind', temp1)   
+    }
+    
   }
   
   newMSE <- new("MSE", Name = outlist$Name, nyears = unique(outlist$nyears), 

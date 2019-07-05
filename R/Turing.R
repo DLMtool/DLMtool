@@ -86,7 +86,7 @@ Turing <- function(OM, Data, wait=TRUE) {
     stop("OM@nyears is < length(Data@Year). Should OM@nyears be increased to match Data?", call. = FALSE) 
   }
   
-  set.seed( as.numeric(Sys.time()))
+  set.seed(as.numeric(Sys.time()))
   samps <- sample(1:OM@nsim, nsamp)
 
   message("Randomly sampling 5 iterations")
@@ -212,14 +212,16 @@ plotCAAdata <- function(Ylab="Count", slot="CAA", message="Catch-at-Age Data",
     op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,1,1), oma=c(4,4,2,0))
     on.exit(par(op))
     
+    ylim <- c(0, max(df4$Freq))
+    
     for (r in 1:nrow) {
       col <- "grey"
       for (c in 1:ncol) {
         dat <- df4 %>% filter(Sim==r, Year == c)
         if (r == nrow) {
-          barplot(dat$Freq, names=round(dat$Val, 2), axes=FALSE, col=col)    
+          barplot(dat$Freq, names=round(dat$Val, 2), axes=FALSE, col=col, ylim=ylim)    
         } else {
-          barplot(dat$Freq, axes=FALSE, col=col)    
+          barplot(dat$Freq, axes=FALSE, col=col, ylim=ylim)    
         }
         if (c == 1) axis(side=2)
         if (c != 1) axis(side=2, labels=FALSE)
@@ -236,9 +238,9 @@ plotCAAdata <- function(Ylab="Count", slot="CAA", message="Catch-at-Age Data",
       for (c in 1:ncol) {
         dat <- df4 %>% filter(Sim==r, Year == c)
         if (r == nrow) {
-          barplot(dat$Freq, names=round(dat$Val, 2), axes=FALSE, col=col)    
+          barplot(dat$Freq, names=round(dat$Val, 2), axes=FALSE, col=col, ylim=ylim)    
         } else {
-          barplot(dat$Freq, axes=FALSE, col=col)    
+          barplot(dat$Freq, axes=FALSE, col=col, ylim=ylim)    
         }
         if (c == 1) axis(side=2)
         if (c != 1) axis(side=2, labels=FALSE)
@@ -298,8 +300,10 @@ plotTSdata <- function(Ylab, slot, message, Data, SimDat, samps, YrInd,
     op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,1,1), oma=c(4,4,2,0))
     on.exit(par(op))
     
+    ylim <- range(tCombDat)
     for (r in 1:nplot) {
-      plot(YrInd3, tCombDat[,r], type="l", axes=FALSE, xlab="", ylab="", lwd=lwd)
+      plot(YrInd3, tCombDat[,r], type="l", axes=FALSE, xlab="", ylab="", lwd=lwd, 
+           ylim=ylim)
       if (r %in% pmat[1,]) axis(side=1, labels=FALSE)
       if (r %in% pmat[2,]) axis(side=1, labels=TRUE)
       if (r %in% pmat[,1]) {
@@ -316,7 +320,8 @@ plotTSdata <- function(Ylab, slot, message, Data, SimDat, samps, YrInd,
     
     for (r in 1:nplot) {
       lcol <- ifelse(r==realInd, "blue", "black")
-      plot(YrInd3, tCombDat[,r], type="l", axes=FALSE, xlab="", ylab="", lwd=lwd, col=lcol)
+      plot(YrInd3, tCombDat[,r], type="l", axes=FALSE, xlab="", ylab="", lwd=lwd, 
+           col=lcol, ylim=ylim)
       if (r %in% pmat[1,]) axis(side=1, labels=FALSE)
       if (r %in% pmat[2,]) axis(side=1, labels=TRUE)
       if (r %in% pmat[,1]) {

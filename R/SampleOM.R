@@ -175,6 +175,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     StockOut$Perr_y <- Perr_y
   }
   
+  
   # if (nsim > 1) {
   #   cumlRecDev <- apply(Perr[, 1:(nyears+maxage-1)], 1, prod)
   #   dep[order(cumlRecDev)] <- dep[order(dep, decreasing = F)]  # robustifies 
@@ -660,7 +661,7 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   if (class(Stock) == "Stock") {
     Stock <- updateMSE(Stock) # update to add missing slots with default values
     # Sample Stock Pars - need some to calculate selectivity at age and length  
-    StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, cpars)
+    StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, cpars, msg=msg)
     for (X in 1:length(StockPars)) assign(names(StockPars)[X], StockPars[[X]])
   } 
   if (class(Stock) == "list") for (X in 1:length(Stock)) assign(names(Stock)[X], Stock[[X]])
@@ -1503,7 +1504,7 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   outNames <- paste(Names, "")
   for (i in seq(5, by=5, length.out=floor(length(outNames)/5)))
     outNames <- gsub(outNames[i], paste0(outNames[i], "\n"), outNames)
-  if(msg) message("valid custom parameters (OM@cpars) found: \n", outNames)
+  if(msg) message("valid custom parameters (OM@cpars) found: \n", paste0(outNames, collapse="\n"))
   
   # # report invalid names 
   # invalid <- which(!Names %in% ParsNames)
