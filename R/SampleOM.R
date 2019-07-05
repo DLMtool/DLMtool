@@ -175,6 +175,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     StockOut$Perr_y <- Perr_y
   }
   
+  
   # if (nsim > 1) {
   #   cumlRecDev <- apply(Perr[, 1:(nyears+maxage-1)], 1, prod)
   #   dep[order(cumlRecDev)] <- dep[order(dep, decreasing = F)]  # robustifies 
@@ -1503,7 +1504,7 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
   outNames <- paste(Names, "")
   for (i in seq(5, by=5, length.out=floor(length(outNames)/5)))
     outNames <- gsub(outNames[i], paste0(outNames[i], "\n"), outNames)
-  if(msg) message("valid custom parameters (OM@cpars) found: \n", outNames)
+  if(msg) message("valid custom parameters (OM@cpars) found: \n", paste0(outNames, collapse="\n"))
   
   # # report invalid names 
   # invalid <- which(!Names %in% ParsNames)
