@@ -1,13 +1,13 @@
 #' Copy example OM XL and OM Documentation 
 #'
-#' @param dir the file path to copy the files to 
+#' @param dir the file path to copy the files to. 
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' OMexample()
 #' }
-OMexample <- function(dir) {
+OMexample <- function(dir=getwd()) {
   fromRMD <- system.file("Example_Chile_Hake.Rmd", package="DLMtool")
   tt <- file.copy(fromRMD, dir, overwrite = TRUE)
   fromXL <- system.file("Example_Chile_hake.xlsx", package="DLMtool")
@@ -664,7 +664,7 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   
   cat("**nsim**: ", OMdesc$Description[OMdesc$Slot =='nsim'], ": ", "<span style='color:", color, "'>", " ", OM@nsim, "</span>", "\n\n", "\n\n", append=TRUE, file=RMDfile, sep="")
   
-  cat("**proyears**: ", OMdesc$Description[OMdesc$Slot =='proyears'], ": ", "<span style='color:", color, "'>", " ", OM@proyears, "</span>", "\n\n", "\n\n", "\n\n", append=TRUE, file=RMDfile, sep="")
+  cat("**proyears**: ", OMdesc$Description[OMdesc$Slot =='proyears'], ": ", "<span style='color:", color, "'>", " ", OM@proyears, "</span>", "\n\n", "\n\n", append=TRUE, file=RMDfile, sep="")
 
   cat("**interval**: ", OMdesc$Description[OMdesc$Slot =='interval'], " ", "<span style='color:", color, "'>", " ", OM@interval, "</span>", "\n\n",append=TRUE, file=RMDfile, sep="")
   
@@ -705,10 +705,10 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   
   ## OM Plots ####
   if (inc.plot) {
-    cat("# OM Plots\n\n", sep="", append=TRUE, file=RMDfile) # write heading
-    cat("```{r plotOM, echo=FALSE, fig.asp=2}\n", append=TRUE, file=RMDfile, sep="")
-    cat("plot.OM(out)\n", append=TRUE, file=RMDfile, sep="")
-    cat("```\n\n\n", append=TRUE, file=RMDfile, sep="")
+    # cat("# OM Plots\n\n", sep="", append=TRUE, file=RMDfile) # write heading
+    # cat("```{r plotOM, echo=FALSE, fig.asp=2}\n", append=TRUE, file=RMDfile, sep="")
+    # cat("plot.OM(out)\n", append=TRUE, file=RMDfile, sep="")
+    # cat("```\n\n\n", append=TRUE, file=RMDfile, sep="")
 
   }
   
@@ -735,7 +735,21 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
       Effvals <- data.frame(EffYears=EffYears, EffLower=signif(OM@EffLower,3), EffUpper=signif(OM@EffUpper,3))
     }
   
+    Pars$CurrentYr <- OM@CurrentYr
+    Pars$MPA <- OM@MPA
     params <- list(OM=OM, Pars=Pars, Effvals=Effvals, out=out)
+    
+ 
+    params$tabs <- TRUE
+    params$nyears <- OM@nyears
+    params$proyears <- OM@proyears
+    
+    params$its <- sample(1:params$OM@nsim, 3)
+    
+    params$plotPars <- list(breaks=10, col="darkgray", axes=FALSE, 
+                            cex.main=1, lwd=2)
+    
+    
     knitr::knit_meta(class=NULL, clean = TRUE)
     rmarkdown::render(input=RMDfile, output_file=RMDfileout, output_format=output, 
                       output_dir=dir, param=params, quiet=quiet)
@@ -760,10 +774,10 @@ Template <- function(type=c("Stock", "Fleet", "Obs", "Imp")) {
                "Non-stationarity in stock productivity: Period, Amplitude",
                "Growth: Linf, K, t0, LenCV, Ksd, Linfsd",
                "Maturity: L50, L50_95",
-               "Stock depletion: D",
+               "Stock depletion and Discard Mortality: D, Fdisc",
                "Length-weight conversion parameters: a, b",
-               "Spatial distribution and movement: Size_area_1, Frac_area_1, Prob_staying",
-               "Discard Mortality: Fdisc "), ncol=1)
+               "Spatial distribution and movement: Size_area_1, Frac_area_1, Prob_staying"),
+               ncol=1)
   if (type == "Fleet") mat <- 
       matrix(c(
         "Historical years of fishing, spatial targeting: nyears, Spat_targ",
@@ -983,10 +997,61 @@ writeSection <- function(class=c("Intro", "Stock", "Fleet", "Obs", "Imp", "Refer
           
           # Plots ####
           if (inc.plot) {
-            if (class %in% c("Stock", "Fleet")) {
-              if (sl == slots[length(slots)]) plotText(OM, slots, RMDfile)
-            } 
-        
+            if (sl == slots[length(slots)]) {
+             if (class == "Stock") {
+               
+               if (grepl("Mortality and age", ClTemp[rr])) {
+                 rmdfile <- 'NaturalMortality'
+               } else if (grepl("Recruitment", ClTemp[rr])) {
+                 rmdfile <- 'Recruitment'
+               } else if (grepl("Growth", ClTemp[rr])) {
+                 rmdfile <- 'Growth'
+               } else if (grepl("Maturity", ClTemp[rr])) {
+                 rmdfile <- 'Maturity'
+               } else if (grepl("Stock depletion ", ClTemp[rr])) {
+                 rmdfile <- 'Depletion'
+               } else if (grepl("Spatial ", ClTemp[rr])) {
+                 rmdfile <- 'Spatial'
+               } else {
+                 rmdfile <- NULL
+               }
+               if (!is.null(rmdfile)) {
+                 cat("```{r, echo=FALSE,include=FALSE}\n", append=TRUE, file=RMDfile, sep="")
+                 cat(paste0("input <- file.path(system.file(package = 'DLMtool'),'Rmd/", class, "/", rmdfile, ".Rmd')\n"), append=TRUE, file=RMDfile, sep="")  
+                 cat(" out <- knitr::knit_child(input) \n", append=TRUE, file=RMDfile, sep="")
+                 cat("```\n\n", append=TRUE, file=RMDfile, sep="")
+                 
+                 cat("```{r, echo=FALSE, results='asis'}\n", append=TRUE, file=RMDfile, sep="")
+                 cat("cat(out)\n", append=TRUE, file=RMDfile, sep="")
+                 cat("```\n\n", append=TRUE, file=RMDfile, sep="")
+               }
+               
+           
+             } 
+              if (class == "Fleet") {
+                if (grepl("Trend in historical ", ClTemp[rr])) {
+                  rmdfile <- 'Effort'
+                } else if (grepl("Annual increase", ClTemp[rr])) {
+                  rmdfile <- 'Catchability'
+                } else if (grepl("Time-varying selectivity ", ClTemp[rr])) {
+                  rmdfile <- 'Selectivity'
+                } else if (grepl("Existing Spatial Closure ", ClTemp[rr])) {
+                  rmdfile <- 'MPA'
+                } else {
+                  rmdfile <- NULL
+                }
+                if (!is.null(rmdfile)) {
+                  cat("```{r, echo=FALSE,include=FALSE}\n", append=TRUE, file=RMDfile, sep="")
+                  cat(paste0("input <- file.path(system.file(package = 'DLMtool'),'Rmd/", class, "/", rmdfile, ".Rmd')\n"), append=TRUE, file=RMDfile, sep="")  
+                  cat(" out <- knitr::knit_child(input) \n", append=TRUE, file=RMDfile, sep="")
+                  cat("```\n\n", append=TRUE, file=RMDfile, sep="")
+                  
+                  cat("```{r, echo=FALSE, results='asis'}\n", append=TRUE, file=RMDfile, sep="")
+                  cat("cat(out)\n", append=TRUE, file=RMDfile, sep="")
+                  cat("```\n\n", append=TRUE, file=RMDfile, sep="")
+                }
+              }
+            }
           }
         }
       }
