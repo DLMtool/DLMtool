@@ -19,8 +19,8 @@ Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "D", "Mgrad", "SRrel", "hs", "p
            )
 
 # change messages to blue text instead of default red
-message <- function(x, ...) {
-  base::message(crayon::blue(x, ...))
+message <- function(...) {
+  base::message(crayon::blue(...))
 }
 
 if(getRversion() >= "2.15.1") utils::globalVariables(Names)
@@ -807,7 +807,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   Misc$TryMP <- list()
   for (mm in 1:nMP) {  # MSE Loop over methods
     tryMP <- tryCatch({
-      if(!silent) message(mm, "/", nMP, " Running MSE for ", MPs[mm]) 
+      if(!silent) message(mm, "/", nMP, " Running MSE for", MPs[mm]) 
       checkNA <- NA # save number of NAs
       
       # years management is updated
