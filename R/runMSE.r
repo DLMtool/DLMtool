@@ -929,7 +929,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       LastSpatial <- MPCalcs$Si
       LastAllocat <- MPCalcs$Ai
       LastTAE <- MPCalcs$TAE # TAE set by MP 
-      LastTAC <- MPCalcs$TACrec # TAE et by MP
+      LastTAC <- MPCalcs$TACrec # TAC et by MP
       Effort[, mm, y] <- MPCalcs$Effort  
       CB_P <- MPCalcs$CB_P # removals
       CB_Pret <- MPCalcs$CB_Pret # retained catch 
