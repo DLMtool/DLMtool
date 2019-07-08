@@ -150,7 +150,7 @@ setMethod("tinyErr", signature(x = "OM"),
             }
             if (proc) {
               if (!silent) message("Removing all Process Error")
-              vars <- c("cv", "sd", "Perr")
+              vars <- c("cv", "sd", "Perr", "AC")
               nms <- c(slotNames('Stock'), slotNames('Fleet'))
               ind <- unique(grep(paste(vars, collapse = "|"), nms, value = FALSE))
               for (X in seq_along(ind)) {
