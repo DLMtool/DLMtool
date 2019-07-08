@@ -17,9 +17,9 @@ output:
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Selectivity and Retention {.tabset .tabset-fade .tabset-pills}' )
+  cat('### Selectivity and Retention {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Selectivity and Retention')
+  cat('### Selectivity and Retention')
 }
 
 dd <- Pars$M_ageArray %>% dim()
@@ -29,7 +29,7 @@ maxage <- dd[2]
 nsamp <- length(params$its)
 ```
 
-### Sampled Selectivity Parameters
+#### Sampled Selectivity Parameters
 Histograms of `r nsim` simulations of length at 5% selection (`L5`), first length at full selection (`LFS`), and vulnerability of animals at mean asymptotic length (`Vmaxlen`) for the first historical year, the last historical year, and the last projection year, wtih vertical colored lines indicating `r nsamp` randomly drawn values used in the other plots:
 
 ```{r, echo=FALSE}
@@ -79,7 +79,7 @@ axis(side=1)
 
 ```
 
-### Sampled Retention Parameters
+#### Sampled Retention Parameters
 
 Histograms of `r nsim` simulations of length at 5% retention (`LR5`), first length at full retention (`LFR`), and retention of animals at mean asymptotic length (`Rmaxlen`) for the first historical year, the last historical year, and the last projection year, wtih vertical colored lines indicating `r nsamp` randomly drawn values used in the other plots:
 
@@ -130,7 +130,7 @@ axis(side=1)
 
 ```
 
-### Selectivity & Retention at Length
+#### Selectivity & Retention at Length
 
 ```{r, echo=FALSE}
 par(mfrow=c(3,3), oma=c(3,3,1,1), mar=c(1,1,1,1))
@@ -183,7 +183,7 @@ for (sim in params$its) {
 
 ```
 
-### Selectivity & Retention at Age
+#### Selectivity & Retention at Age
 ```{r, echo=FALSE}
 par(mfrow=c(3,3), oma=c(3,3,1,1), mar=c(1,1,1,1))
 

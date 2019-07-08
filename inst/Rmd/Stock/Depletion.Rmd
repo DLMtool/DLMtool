@@ -17,9 +17,9 @@ output:
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Depletion and Discard Mortality {.tabset .tabset-fade .tabset-pills}' )
+  cat('### Depletion and Discard Mortality {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Depletion and Discard Mortality')
+  cat('### Depletion and Discard Mortality')
 }
 
 dd <- dim(Pars$M_ageArray)
@@ -31,7 +31,7 @@ nsamp <- length(params$its)
 
 ```
 
-### Sampled Parameters 
+#### Sampled Parameters 
 Histograms of `r nsim` simulations of depletion (spawning biomass in the last historical year over average unfished spawning biomass; `D`) and the fraction of discarded fish that are killed by fishing mortality (`Fdisc`), with vertical colored lines indicating `r nsamp` randomly drawn values.
 
 ```{r, echo=FALSE}

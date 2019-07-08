@@ -17,9 +17,9 @@ output:
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Growth Parameters {.tabset .tabset-fade .tabset-pills}' )
+  cat('### Growth Parameters {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Growth Parameters')
+  cat('### Growth Parameters')
 }
 
 dd <- Pars$M_ageArray %>% dim()
@@ -29,7 +29,7 @@ maxage <- dd[2]
 nsamp <- length(params$its)
 ```
 
-### Sampled Parameters 
+#### Sampled Parameters 
 Histograms of `r nsim` simulations of von Bertalanffy growth parameters `Linf`, `K`, and `t0`, and inter-annual variability in Linf and K (`Linfsd` and `Ksd`), with vertical colored lines indicating `r nsamp` randomly drawn values used in other plots:
 
 ```{r, echo=FALSE}
@@ -61,7 +61,7 @@ axis(side=1)
 
 ```
 
-### Time-Series
+#### Time-Series
 The Linf and K parameters in each year for `r nsamp` simulations. The vertical dashed line indicates the end of the historical period:
 
 ```{r, echo=FALSE}
@@ -73,7 +73,7 @@ matplot(years, t(Pars$Karray[params$its,]), type="l", bty="l", main="", lwd=para
 abline(v=0, col="darkgray", lty=2)
 ```
 
-### Growth Curves
+#### Growth Curves
 Sampled length-at-age curves for `r nsamp` simulations in the first historical year, the last historical year, and the last projection year.
 ```{r, echo=FALSE}
 par(mfrow=c(1,3), oma=c(2,3,1,1), mar=c(3,2,1,1))

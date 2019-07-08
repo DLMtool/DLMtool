@@ -17,9 +17,9 @@ output:
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Historical MPA & Spatial Targeting {.tabset .tabset-fade .tabset-pills}' )
+  cat('### Historical MPA & Spatial Targeting {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Historical MPA & Spatial Targeting')
+  cat('### Historical MPA & Spatial Targeting')
 }
 
 dd <- dim(Pars$M_ageArray)
@@ -31,7 +31,7 @@ nsamp <- length(params$its)
 
 ```
 
-### Existing Spatial Closures
+#### Existing Spatial Closures
 Plot of the fraction of each area open to fishing in each historical year. Spatial closures remain fixed in all projection years unless modified by an MP.
 
 ```{r, echo=FALSE}
@@ -90,7 +90,7 @@ mtext('Fraction open to fishing (grey)', side=3, line=2)
 
 ```
 
-### Spatial Targeting
+#### Spatial Targeting
 Histograms of `r nsim` simulations of spatial targeting parameter (`Spat_targ`), with vertical colored lines indicating `r nsamp` randomly drawn values:
 
 ```{r, echo=FALSE}

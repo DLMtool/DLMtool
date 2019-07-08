@@ -16,16 +16,16 @@ output:
     toc_float: true
 ---
 
-# Observation Parameters
+## Observation Parameters
 ```{r, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Catch Observations {.tabset .tabset-fade .tabset-pills}' )
+  cat('### Catch Observations {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Catch Observations')
+  cat('### Catch Observations')
 }
 
 nsim <- Pars$Csd %>% length()
@@ -67,7 +67,7 @@ ErrList$Abiasa <- array(Pars$Abias, c(nsim, nyears + proyears))  # Catch bias ar
 ```
 
 
-### Sampled Parameters
+#### Sampled Parameters
 Histograms of `r nsim` simulations of inter-annual variability in catch observations (`Csd`) and persistent bias in observed catch (`Cbias`), with vertical colored lines indicating `r nsamp` randomly drawn values used in other plots:
 
 ```{r, echo=FALSE}
@@ -84,7 +84,7 @@ axis(side=1)
 
 ```
 
-### Time-Series
+#### Time-Series
 
 ```{r, echo=FALSE}
 par(mfrow=c(1,1), oma=c(3,3,1,1), mar=c(1,1,1,1))
@@ -101,13 +101,13 @@ abline(h=1, col="darkgray", lty=2)
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Depletion Observations {.tabset .tabset-fade .tabset-pills}' )
+  cat('### Depletion Observations {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Depletion Observations')
+  cat('### Depletion Observations')
 }
 ```
 
-### Sampled Parameters
+#### Sampled Parameters
 Histograms of `r nsim` simulations of inter-annual variability in depletion observations (`Dobs`) and persistent bias in observed depletion (`Dbias`), with vertical colored lines indicating `r nsamp` randomly drawn values used in other plots:
 
 
@@ -127,7 +127,7 @@ axis(side=1)
 
 ```
 
-### Time-Series
+#### Time-Series
 
 ```{r, echo=FALSE}
 par(mfrow=c(1,1), oma=c(3,3,1,1), mar=c(1,1,1,1))
@@ -146,13 +146,13 @@ abline(h=1, col="darkgray", lty=2)
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Abundance Observations {.tabset .tabset-fade .tabset-pills}' )
+  cat('### Abundance Observations {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Abundance Observations')
+  cat('### Abundance Observations')
 }
 ```
 
-### Sampled Parameters
+#### Sampled Parameters
 Histograms of `r nsim` simulations of inter-annual variability in abundance observations (`Btobs`) and persistent bias in observed abundance (`Btbias`), with vertical colored lines indicating `r nsamp` randomly drawn values used in other plots:
 
 ```{r, echo=FALSE}
@@ -169,7 +169,7 @@ axis(side=1)
 
 ```
 
-### Time-Series
+#### Time-Series
 
 ```{r, echo=FALSE}
 par(mfrow=c(1,1), oma=c(3,3,1,1), mar=c(1,1,1,1))
@@ -188,13 +188,13 @@ abline(h=1, col="darkgray", lty=2)
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Index Observations {.tabset .tabset-fade .tabset-pills}' )
+  cat('### Index Observations {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Index Observations')
+  cat('### Index Observations')
 }
 ```
 
-### Sampled Parameters
+#### Sampled Parameters
 Histograms of `r nsim` simulations of inter-annual variability in index observations (`Iobs`) and hyper-stability/depletion in observed index (`beta`), with vertical colored lines indicating `r nsamp` randomly drawn values used in other plots:
 
 ```{r, echo=FALSE}
@@ -211,7 +211,7 @@ axis(side=1)
 
 ```
 
-### Time-Series
+#### Time-Series
 Time-series plot of `r nsamp` samples of index observation error:
 
 ```{r, echo=FALSE}
@@ -249,13 +249,13 @@ legend("topright", bty="n", col=c("blue", 1:nsamp), lwd=params$plotPars$lwd,
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Recruitment Observations {.tabset .tabset-fade .tabset-pills}' )
+  cat('### Recruitment Observations {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Recruitment Observations')
+  cat('### Recruitment Observations')
 }
 ```
 
-### Sampled Parameters
+#### Sampled Parameters
 Histograms of `r nsim` simulations of inter-annual variability in index observations (`Recsd`) , with vertical colored lines indicating `r nsamp` randomly drawn values used in other plots:
 
 ```{r, echo=FALSE}
@@ -268,7 +268,7 @@ axis(side=1)
 
 <!-- # to add hbiascv -->
 
-### Time-Series
+#### Time-Series
 
 ```{r, echo=FALSE}
 par(mfrow=c(1,1), oma=c(3,3,1,1), mar=c(1,1,1,1))
@@ -286,13 +286,13 @@ abline(h=1, col="darkgray", lty=2)
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Composition Observations {.tabset .tabset-fade .tabset-pills}' )
+  cat('### Composition Observations {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Composition Observations')
+  cat('### Composition Observations')
 }
 ```
 
-### Sampled Parameters
+#### Sampled Parameters
 Histograms of `r nsim` simulations of catch-at-age effective sample size (`CAA_ESS`) and sample size (`CAA_nsamp`) and catch-at-length effective (`CAL_ESS`) and actual sample size (`CAL_nsamp`) with vertical colored lines indicating `r nsamp` randomly drawn values:
 
 ```{r, echo=FALSE}
@@ -321,13 +321,13 @@ axis(side=1)
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Parameter Observations {.tabset .tabset-fade .tabset-pills}' )
+  cat('### Parameter Observations {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Parameter Observations')
+  cat('### Parameter Observations')
 }
 ```
 
-### Sampled Parameters
+#### Sampled Parameters
 Histograms of `r nsim` simulations of bias in observed natural mortality (`Mbias`), von Bertalanffy growth function parameters (`Linfbias`, `Kbias`, and `t0bias`), length-at-maturity (`lenMbias`), and bias in observed length at first capture (`LFCbias`) and first length at full capture (`LFSbias`) with vertical colored lines indicating `r nsamp` randomly drawn values:
 
 ```{r, echo=FALSE}
@@ -374,13 +374,13 @@ axis(side=1)
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Reference Point Observations {.tabset .tabset-fade .tabset-pills}' )
+  cat('### Reference Point Observations {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Reference Point Observations')
+  cat('### Reference Point Observations')
 }
 ```
 
-### Sampled Parameters
+#### Sampled Parameters
 Histograms of `r nsim` simulations of bias in observed FMSY/M (`FMSY_Mbias`), BMSY/B0 (`BMSY_B0bias`), reference index (`Irefbias`), reference abundance (`Brefbias`) and reference catch (`Crefbias`), with vertical colored lines indicating `r nsamp` randomly drawn values:
 
 
