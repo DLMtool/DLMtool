@@ -16,7 +16,7 @@ output:
     toc_float: true
 ---
 
-# Time-Series
+## Time-Series
 ```{r, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
@@ -71,9 +71,9 @@ matplot(years, t(SSB),
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Vulnerable Biomass {.tabset .tabset-fade .tabset-pills}' )
+  cat('### Vulnerable Biomass {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Vulnerable Biomass')
+  cat('### Vulnerable Biomass')
 }
 ```
 
@@ -108,9 +108,9 @@ matplot(years, t(Vb),
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Total Biomass {.tabset .tabset-fade .tabset-pills}' )
+  cat('### Total Biomass {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Total Biomass')
+  cat('### Total Biomass')
 }
 ```
 
@@ -145,9 +145,9 @@ matplot(years, t(B),
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Recruitment {.tabset .tabset-fade .tabset-pills}' )
+  cat('### Recruitment {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Recruitment')
+  cat('### Recruitment')
 }
 ```
 
@@ -182,9 +182,9 @@ matplot(years, t(Rec),
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Catch {.tabset .tabset-fade .tabset-pills}' )
+  cat('### Catch {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Catch')
+  cat('### Catch')
 }
 ```
 
@@ -220,9 +220,9 @@ matplot(years, t(Catch),
 
 ```{r, echo=FALSE, results="asis"}
 if (params$tabs) {
-  cat('## Historical Fishing Mortality {.tabset .tabset-fade .tabset-pills}' )
+  cat('### Historical Fishing Mortality {.tabset .tabset-fade .tabset-pills}' )
 } else {
-  cat('## Historical Fishing Mortality')
+  cat('### Historical Fishing Mortality')
 }
 ```
 

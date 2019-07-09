@@ -16,7 +16,7 @@ output:
     toc_float: true
 ---
 
-# Stock Parameters
+## Stock Parameters
 ```{r, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
