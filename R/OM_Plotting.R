@@ -65,6 +65,7 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
     Pars <- c(StockPars, FleetPars, ObsPars, ImpPars)
     Pars$CurrentYr <- Object@CurrentYr
     
+    if (!parallel) dopar <- FALSE
     if (nsim>=48 & parallel) dopar <- TRUE
     if (nsim<48& parallel) dopar <- FALSE
     message("Running Historical Simulations")
