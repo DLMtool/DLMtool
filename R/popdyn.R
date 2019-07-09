@@ -54,6 +54,7 @@
 #' @param qs A numeric vector of length `nsim` with catchability coefficient
 #' @param qvar A matrix with `nsim` rows and `proyears` columns with catchability variability 
 #' @param qinc A numeric vector of length `nsim` with average annual change in catchability
+#' @param Effort_pot A numeric vector of potential effort
 #' @param checks Logical. Run internal checks? Currently not used. 
 #'
 #' @return A named list with updated population dynamics

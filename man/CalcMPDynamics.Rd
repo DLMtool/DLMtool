@@ -109,6 +109,8 @@ MPs must either return a recommendation or no recommendation for every simulatio
 
 \item{qinc}{A numeric vector of length \code{nsim} with average annual change in catchability}
 
+\item{Effort_pot}{A numeric vector of potential effort}
+
 \item{checks}{Logical. Run internal checks? Currently not used.}
 }
 \value{
