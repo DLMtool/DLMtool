@@ -15,7 +15,7 @@ output:
 ---
 
 
-```{r, echo=FALSE, results="asis"}
+```{r hist_effort, echo=FALSE, results="asis"}
 if (params$tabs) {
   cat('### Historical Effort {.tabset .tabset-fade .tabset-pills}' )
 } else {
@@ -34,7 +34,7 @@ proyears <- params$proyears
 #### Sampled Parameters
 Histograms of `r nsim` simulations of inter-annual variability in historical fishing mortality (`Esd`), with vertical colored lines indicating `r nsamp` randomly drawn values used in the time-series plot:
 
-```{r, echo=FALSE}
+```{r Eff_parameters, echo=FALSE}
 par(mfrow=c(1,1))
 
 hist2(Pars$Esd, col=params$plotPars$col, axes=params$plotPars$axes, main="Esd", breaks=params$plotPars$breaks)
@@ -46,7 +46,7 @@ axis(side=1)
 
 #### Time-Series
 Time-series plot showing `r nsamp` trends in historical fishing mortality (`OM@EffUpper` and `OM@EffLower` or `OM@cpars$Find`):
-```{r, echo=FALSE}
+```{r Eff_time-series, echo=FALSE}
 par(mfrow=c(1,1))
 
 

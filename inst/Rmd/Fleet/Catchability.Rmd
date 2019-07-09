@@ -15,7 +15,7 @@ output:
 ---
 
 
-```{r, echo=FALSE, results="asis"}
+```{r catchability, echo=FALSE, results="asis"}
 if (params$tabs) {
   cat('### Future Catchability {.tabset .tabset-fade .tabset-pills}' )
 } else {
@@ -32,7 +32,7 @@ nsamp <- length(params$its)
 #### Sampled Parameters
 Histograms of `r nsim` simulations of inter-annual variability in fishing efficiency (`qcv`) and average annual change in fishing efficiency (`qinc`), with vertical colored lines indicating `r nsamp` randomly drawn values used in the time-series plot:
 
-```{r, echo=FALSE}
+```{r q_parameters, echo=FALSE}
 par(mfrow=c(1,2))
 
 hist2(Pars$qcv, col=params$plotPars$col, axes=params$plotPars$axes, main="qcv", breaks=params$plotPars$breaks)
@@ -48,7 +48,7 @@ axis(side=1)
 
 #### Time-Series
 Time-series plot showing `r nsamp` trends in future fishing efficiency (catchability):
-```{r, echo=FALSE}
+```{r q_time-series, echo=FALSE}
 par(mfrow=c(1,1))
 
 ind <- as.matrix(expand.grid(params$its, 1:proyears, 1:nsamp))

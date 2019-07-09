@@ -21,7 +21,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r echo=FALSE, include=FALSE}
+```{r FleetObj, echo=FALSE, include=FALSE}
 library(knitr); library(dplyr)
 rmd.files <- list.files()
 rmd.files <- rmd.files[-match("Fleet.Rmd", rmd.files)]
@@ -34,11 +34,7 @@ for (rmd in rmd.files) {
 ```
 
 
-```{r, echo=FALSE, results="asis"}
+```{r FleetObj_out, echo=FALSE, results="asis"}
 cat(paste(out, collapse = '\n'))
 ```
 
-```{r, echo=FALSE}
-# add spatial, weight- and b, discard mortality
-
-```

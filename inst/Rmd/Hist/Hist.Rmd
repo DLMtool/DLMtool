@@ -29,7 +29,7 @@ nyears <- dim(Pars@TSdata$VB)[2]
 
 
 
-```{r, echo=FALSE, results="asis"}
+```{r spbio, echo=FALSE, results="asis"}
 if (params$tabs) {
   cat('### Spawning Biomass {.tabset .tabset-fade .tabset-pills}' )
 } else {
@@ -69,7 +69,7 @@ matplot(years, t(SSB),
 
 
 
-```{r, echo=FALSE, results="asis"}
+```{r vbiomass, echo=FALSE, results="asis"}
 if (params$tabs) {
   cat('### Vulnerable Biomass {.tabset .tabset-fade .tabset-pills}' )
 } else {
@@ -106,7 +106,7 @@ matplot(years, t(Vb),
 ```
 
 
-```{r, echo=FALSE, results="asis"}
+```{r tbiomass, echo=FALSE, results="asis"}
 if (params$tabs) {
   cat('### Total Biomass {.tabset .tabset-fade .tabset-pills}' )
 } else {
@@ -143,7 +143,7 @@ matplot(years, t(B),
 ```
 
 
-```{r, echo=FALSE, results="asis"}
+```{r recruitment, echo=FALSE, results="asis"}
 if (params$tabs) {
   cat('### Recruitment {.tabset .tabset-fade .tabset-pills}' )
 } else {
@@ -180,7 +180,7 @@ matplot(years, t(Rec),
 ```
 
 
-```{r, echo=FALSE, results="asis"}
+```{r catch, echo=FALSE, results="asis"}
 if (params$tabs) {
   cat('### Catch {.tabset .tabset-fade .tabset-pills}' )
 } else {
@@ -218,7 +218,7 @@ matplot(years, t(Catch),
 
 
 
-```{r, echo=FALSE, results="asis"}
+```{r Fmort, echo=FALSE, results="asis"}
 if (params$tabs) {
   cat('### Historical Fishing Mortality {.tabset .tabset-fade .tabset-pills}' )
 } else {
