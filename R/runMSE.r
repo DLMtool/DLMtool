@@ -922,8 +922,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                 TAC_f, E_f, SizeLim_f,
                                 FinF, Spat_targ,
                                 CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
-                                qs, qvar, qinc,
-                                Effort_pot)
+                                qs, qvar, qinc)
   
       TACa[, mm, y] <- MPCalcs$TACrec # recommended TAC 
       LastSpatial <- MPCalcs$Si
@@ -1040,8 +1039,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                     TAC_f, E_f, SizeLim_f,
                                     FinF, Spat_targ,
                                     CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
-                                    qs, qvar, qinc,
-                                    Effort_pot)
+                                    qs, qvar, qinc)
           
           TACa[, mm, y] <- TACused # recommended TAC 
           LastSpatial <- MPCalcs$Si
@@ -1086,9 +1084,9 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                     M_ageArray, FM_P, FM_Pret, Z_P, CB_P, CB_Pret,
                                     TAC_f, E_f, SizeLim_f,
                                     FinF, Spat_targ,
-                                    CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
-                                    qs, qvar, qinc,
-                                    Effort_pot)
+                                    CAL_binsmid, Linf, Len_age, maxage, nareas,
+                                    Asize, nCALbins,
+                                    qs, qvar, qinc)
           
           
           TACa[, mm, y] <- TACused # 
