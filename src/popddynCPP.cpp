@@ -173,10 +173,15 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
   }
   
   // apply Fmax condition 
-  arma::uvec tempvals = arma::find(FMarray > (1-exp(-maxF)));
-  FMarray.elem(tempvals).fill(1-exp(-maxF));
-  arma::uvec tempvals2 = arma::find(FMretarray > (1-exp(-maxF)));
-  FMretarray.elem(tempvals2).fill(1-exp(-maxF));
+  // arma::uvec tempvals = arma::find(FMarray > (1-exp(-maxF)));
+  // FMarray.elem(tempvals).fill(1-exp(-maxF));
+  // arma::uvec tempvals2 = arma::find(FMretarray > (1-exp(-maxF)));
+  // FMretarray.elem(tempvals2).fill(1-exp(-maxF));
+  
+  arma::uvec tempvals = arma::find(FMarray > maxF);
+  FMarray.elem(tempvals).fill(maxF);
+  arma::uvec tempvals2 = arma::find(FMretarray > maxF);
+  FMretarray.elem(tempvals2).fill(maxF);
   
   Zarray.subcube(0,0, 0, maxage-1, 0, nareas-1) = Marray.subcube(0,0, 0, maxage-1, 0, nareas-1) + FMarray.subcube(0,0, 0, maxage-1, 0, nareas-1);
 
@@ -254,10 +259,15 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
 
     } else {
       // apply Fmax condition 
-      arma::uvec tempvals3 = arma::find(FMarray > (1-exp(-maxF)));
-      FMarray.elem(tempvals3).fill(1-exp(-maxF));
-      arma::uvec tempvals4 = arma::find(FMretarray > (1-exp(-maxF)));
-      FMretarray.elem(tempvals4).fill(1-exp(-maxF));
+      // arma::uvec tempvals3 = arma::find(FMarray > (1-exp(-maxF)));
+      // FMarray.elem(tempvals3).fill(1-exp(-maxF));
+      // arma::uvec tempvals4 = arma::find(FMretarray > (1-exp(-maxF)));
+      // FMretarray.elem(tempvals4).fill(1-exp(-maxF));
+      
+      arma::uvec tempvals3 = arma::find(FMarray > maxF);
+      FMarray.elem(tempvals3).fill(maxF);
+      arma::uvec tempvals4 = arma::find(FMretarray > maxF);
+      FMretarray.elem(tempvals4).fill(maxF);
       Zarray.subcube(0,yr+1, 0, maxage-1, yr+1, nareas-1) = Marray.subcube(0,yr+1, 0, maxage-1, yr+1, nareas-1) + FMarray.subcube(0,yr+1, 0, maxage-1, yr+1, nareas-1);
       
     }
