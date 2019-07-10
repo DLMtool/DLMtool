@@ -21,8 +21,8 @@ if (params$tabs) {
 } else {
   cat('### Depletion and Discard Mortality')
 }
-
-dd <- dim(params$Pars$M_ageArray)
+Pars <- params$Pars
+dd <- dim(Pars$M_ageArray)
 nsim <- dd[1]
 maxage <- dd[2]
 
