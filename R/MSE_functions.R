@@ -590,6 +590,7 @@ joinMSE <- function(MSEobjs = NULL) {
           for (nm in names(obj[[1]])) {
             obj2 <- lapply(obj, '[[', nm)
             ind <- which(dim(obj2[[1]]) == nsim)
+            if (length(ind)>1) ind <- ind[1]
             if (length(ind) >0) {
               if (class(obj2[[1]]) == "array") {
                 tempVal <- lapply(obj2, dim)
