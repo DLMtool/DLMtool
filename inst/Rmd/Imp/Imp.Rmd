@@ -20,6 +20,7 @@ output:
 ```{r, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
+Pars <- params$Pars
 nsim <- Pars$TAESD %>% length()
 
 ImpList <- list()

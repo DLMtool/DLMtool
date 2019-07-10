@@ -28,6 +28,7 @@ if (params$tabs) {
   cat('### Catch Observations')
 }
 
+Pars <- params$Pars
 nsim <- Pars$Csd %>% length()
 
 ErrList <- list()

@@ -22,7 +22,7 @@ if (params$tabs) {
   cat('### Maturity Parameters')
 }
 
-dd <- Pars$M_ageArray %>% dim()
+dd <- params$Pars$M_ageArray %>% dim()
 nsim <- dd[1]
 maxage <- dd[2]
 

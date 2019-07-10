@@ -20,7 +20,7 @@ output:
 ```{r, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
-Pars <- Pars$Hist
+Pars <- params$Pars$Hist
 nsim <- dim(Pars@TSdata$VB)[1]
 nyears <- dim(Pars@TSdata$VB)[2]
 
