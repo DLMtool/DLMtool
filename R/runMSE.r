@@ -186,11 +186,34 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
   }
   
   if (class(MSE1) == "MSE") {
-    failedMPs <- MSE1@MPs[which(apply(is.na(MSE1@C), 2, sum) > 0.1 * MSE1@nsim)]
-    if (length(failedMPs)>0) {
-      message("Dropping failed MPs: ", paste(failedMPs, collapse=", "))
+    # list in sequential mode
+    if (class(MSE1@Misc$TryMP) == "list") {
+      ok <- unlist(MSE1@Misc$TryMP) == "Okay"
+      fail <- unlist(MSE1@Misc$TryMP)
+    }
+      
+    if (class(MSE1@Misc$TryMP) == "matrix") {
+      ok <- colSums(MSE1@Misc$TryMP == "Okay") == snowfall::sfCpus()  
+      fail <- t(MSE1@Misc$TryMP)
+    }
+      
+    
+    if (any(!ok)) {
+      failedMPs <- MSE1@MPs[!ok]
+      warning("Dropping failed MPs: ", paste(failedMPs, collapse=", "),"\n\nSee MSE@Misc$TryMP for error messages\n\n")
+      
+      if (any(grepl("could not find function", unique(fail[!ok,])))) {
+        warning("MPs may have been dropped because of non-exported functions in parallel mode. \nUse `setup(); snowfall::sfExport('FUNCTION1', 'FUNCTION2')` to export functions to cores")
+      }
+      
+      # if (class(MSE1@Misc$TryMP) == "list")  print(data.frame(MP=MSE1@MPs[!ok], Error=fail[!ok]))
+      # if (class(MSE1@Misc$TryMP) == "matrix") 
+      #   print(data.frame(MP=MSE1@MPs[!ok], Core=fail[!ok,]))
+        
+      if (length(failedMPs) == MSE1@nMPs) stop("All MPs failed.", call.=FALSE)
       MSE1 <- Sub(MSE1, MPs=MSE1@MPs[!MSE1@MPs%in% failedMPs])  
     }
+    
   }
   return(MSE1)
 }
@@ -806,10 +829,10 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   mm <- 1 # for debugging
   Misc$TryMP <- list()
   for (mm in 1:nMP) {  # MSE Loop over methods
-    tryMP <- tryCatch({
+    tryMP <- try({
       if(!silent) message(mm, "/", nMP, " Running MSE for", MPs[mm]) 
       checkNA <- NA # save number of NAs
-      
+
       # years management is updated
       upyrs <- seq(from=1, to=proyears, by=interval[mm]) # 1 + (0:(floor(proyears/interval[mm]) - 1)) * interval[mm] 
       
@@ -1155,18 +1178,21 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         if("progress"%in%names(control))
           if(control$progress) 
             shiny::incProgress(1/nMP, detail = round(mm*100/nMP))
-      
-    }, error=function(e) {
-      message("Note: ", MPs[mm], " failed. Skipping this MP.")
-      message(e, "\n")
-    }) # end tryCatch
-    
-    if(inherits(tryMP, "error")) {
+
+    }, silent=TRUE)
+    # end try
+    # , error=function(e) {
+      # message("Note: ", MPs[mm], " failed. Skipping this MP.")
+      # message(e, "\n")
+    # }) # end tryCatch ####
+    if (!is.null(tryMP)) {
+      if(!silent) message("Note: ", MPs[mm], " failed. Skipping this MP. \nSee `MSE@Misc$tryMP` for details")
       Misc$TryMP[[mm]] <- tryMP
-      next
     } else {
       Misc$TryMP[[mm]] <- "Okay"
     }
+
+    
     
   }  # end of mm methods 
   
