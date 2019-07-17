@@ -2672,7 +2672,7 @@ class(Islope2) <- "MP"
 Islope3 <- Islope1 
 formals(Islope3)$lambda <- 0.4
 formals(Islope3)$xx <- 0.4
-class(Islope2) <- "MP"
+class(Islope3) <- "MP"
 
 
 #' @describeIn Islope1 The most biologically precautionary of the Islope methods. 
