@@ -20,6 +20,7 @@
 #' \code{LTY} \tab Probability Long-Term Yield > 0.5 Relative Yield \cr
 #' \code{STY} \tab Probability Short-Term Yield > 0.5 Relative Yield \cr
 #' \code{AAVY} \tab Probability AAVY < 0.2 (Average Annual Variability in Yield) \cr
+#' \code{AAVE} \tab Probability AAVE < 0.2 (Average Annual Variability in Effort) \cr
 #' \code{Yield} \tab Average Yield (relative to Reference Yield) \cr
 #' }
 #' 
@@ -30,7 +31,7 @@
 #' for `AAVY` is `Ref=0.2`)
 #' 
 #' The `Yrs` argument defines the number of years to calculate the performance statistic over. 
-#' A value of `NULL`, the default for `AAVY`, `P10`, `P50`, `P100`, and `PNOF`, means that the 
+#' A value of `NULL`, the default for `AAVY`, `AAVE`, `P10`, `P50`, `P100`, and `PNOF`, means that the 
 #' performance metric is calculated over all projection years. A numeric vector of length two is used 
 #' to specify the first and last year, e.g, if `Yrs=c(1,10)` the performance statistic is calculated 
 #' over the first 10 projection years. A numeric vector of length one with positive or negative value 
@@ -55,6 +56,7 @@
 #' LTY(myMSE)
 #' STY(myMSE)
 #' AAVY(myMSE)
+#' AAVE(myMSE)
 #' Yield(myMSE)
 #' }
 NULL
@@ -265,6 +267,35 @@ AAVY <- function(MSEobj=NULL, Ref=0.2, Yrs=NULL) {
   
 }
 class(AAVY) <- "PM"
+
+#' @rdname PerformanceMetric 
+#' @export
+AAVE <- function(MSEobj=NULL, Ref=0.2, Yrs=NULL) {
+  Yrs <- ChkYrs(Yrs, MSEobj)
+  PMobj <- new("PMobj")
+  PMobj@Name <- paste0("Average Annual Variability in Effort (Years ", Yrs[1], "-", Yrs[2], ")") 
+  PMobj@Caption <- paste0('Prob. AAVE < ', Ref*100, "% (Years ", Yrs[1], "-", Yrs[2], ")")
+  
+  y1<- Yrs[1]:(Yrs[2]-1) # year index
+  y2<-(Yrs[1]+1):Yrs[2] 
+  
+  if (MSEobj@nMPs > 1) {
+    AAVE <- apply(((((MSEobj@Effort[, , y1] - MSEobj@Effort[, , y2])/MSEobj@Effort[, , y2])^2)^0.5), c(1, 2), mean)
+  } else {
+    AAVE <- array(apply(((((MSEobj@Effort[,1,y1]-MSEobj@Effort[,1,y2])/MSEobj@Effort[,1,y2])^2)^0.5),c(1),mean))
+  }
+  
+  PMobj@Stat <- AAVE
+  PMobj@Ref <- Ref
+  PMobj@Prob <- calcProb(PMobj@Stat < Ref, MSEobj)  # probability AAVE < 0.2 
+  
+  PMobj@Mean <- calcMean(PMobj@Prob) # calculate mean probability by MP
+  PMobj@MPs <- MSEobj@MPs
+  PMobj
+  
+}
+class(AAVE) <- "PM"
+
 
 
 

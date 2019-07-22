@@ -10,6 +10,7 @@
 \alias{STY}
 \alias{Yield}
 \alias{AAVY}
+\alias{AAVE}
 \title{Performance Metrics Methods}
 \usage{
 P10(MSEobj = NULL, Ref = 0.1, Yrs = NULL)
@@ -27,6 +28,8 @@ STY(MSEobj = NULL, Ref = 0.5, Yrs = 10)
 Yield(MSEobj = NULL, Ref = 1, Yrs = NULL)
 
 AAVY(MSEobj = NULL, Ref = 0.2, Yrs = NULL)
+
+AAVE(MSEobj = NULL, Ref = 0.2, Yrs = NULL)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}
@@ -53,6 +56,7 @@ Performance Metric definitions:
 \code{LTY} \tab Probability Long-Term Yield > 0.5 Relative Yield \cr
 \code{STY} \tab Probability Short-Term Yield > 0.5 Relative Yield \cr
 \code{AAVY} \tab Probability AAVY < 0.2 (Average Annual Variability in Yield) \cr
+\code{AAVE} \tab Probability AAVE < 0.2 (Average Annual Variability in Effort) \cr
 \code{Yield} \tab Average Yield (relative to Reference Yield) \cr
 }
 
@@ -63,7 +67,7 @@ Reference Yield. For \code{AAVY} is it the maximum acceptable variability in yie
 for \code{AAVY} is \code{Ref=0.2})
 
 The \code{Yrs} argument defines the number of years to calculate the performance statistic over.
-A value of \code{NULL}, the default for \code{AAVY}, \code{P10}, \code{P50}, \code{P100}, and \code{PNOF}, means that the
+A value of \code{NULL}, the default for \code{AAVY}, \code{AAVE}, \code{P10}, \code{P50}, \code{P100}, and \code{PNOF}, means that the
 performance metric is calculated over all projection years. A numeric vector of length two is used
 to specify the first and last year, e.g, if \code{Yrs=c(1,10)} the performance statistic is calculated
 over the first 10 projection years. A numeric vector of length one with positive or negative value
@@ -86,6 +90,7 @@ PNOF(myMSE)
 LTY(myMSE)
 STY(myMSE)
 AAVY(myMSE)
+AAVE(myMSE)
 Yield(myMSE)
 }
 }
