@@ -350,7 +350,15 @@ CC5 <- CC1
 formals(CC5)$xx <- 0.4
 class(CC5) <- "MP"
 
- 
+#' @describeIn CC1 TAC is fixed at last historical catch 
+#' @examples 
+#' CurC(1, DLMtool::Cobia, plot=TRUE)
+#' 
+#' @export 
+CurC <- CC1
+formals(CurC)$yrsmth <- 1
+class(CurC) <- "MP"
+
 
 #' Geromont and Butterworth Constant Catch Harvest Control Rule
 #' 

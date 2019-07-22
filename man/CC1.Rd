@@ -6,6 +6,7 @@
 \alias{CC3}
 \alias{CC4}
 \alias{CC5}
+\alias{CurC}
 \title{Geromont and Butterworth (2015) Constant Catch}
 \usage{
 CC1(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0)
@@ -17,6 +18,8 @@ CC3(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.2)
 CC4(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.3)
 
 CC5(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.4)
+
+CurC(x, Data, reps = 100, plot = FALSE, yrsmth = 1, xx = 0)
 }
 \arguments{
 \item{x}{A position in a data-limited methods data object}
@@ -58,6 +61,8 @@ The TAC is constant for all future projections.
 \item \code{CC4}: TAC is average historical catch from recent \code{yrsmth} years reduced by 30\%.
 
 \item \code{CC5}: TAC is average historical catch from recent \code{yrsmth} years reduced by 40\%.
+
+\item \code{CurC}: TAC is fixed at last historical catch
 }}
 
 \section{Required Data}{
@@ -83,6 +88,8 @@ CC3(1, DLMtool::Cobia, plot=TRUE)
 CC4(1, DLMtool::Cobia, plot=TRUE)
 
 CC5(1, DLMtool::Cobia, plot=TRUE)
+
+CurC(1, DLMtool::Cobia, plot=TRUE)
 
 }
 \references{
