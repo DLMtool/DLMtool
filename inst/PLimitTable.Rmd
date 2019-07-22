@@ -63,7 +63,8 @@ if (length(Plimits)==1)
 
 cat("### Management Procedures must have at least an", Prob, "probability of meeting all Performance Limits \n")
 for (xx in 1:length(Plimits)) {
-  cat("#### ", xx, ": ", Plimits[xx], " \n\n", sep="")
+  # cat("#### ", xx, ": ", Plimits[xx], " \n\n", sep="")
+  cat(xx, ": ", Plimits[xx], " \n\n", sep="")
 }
 
 ```

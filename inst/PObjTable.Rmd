@@ -63,7 +63,8 @@ if (length(Plimits)==1)
     cat("## Performance Objective\n")
 
 for (xx in 1:length(Plimits)) {
-  cat("#### ", xx, ": ", Plimits[xx], " \n\n", sep="")
+  # cat("#### ", xx, ": ", Plimits[xx], " \n\n", sep="")
+  cat(xx, ": ", Plimits[xx], " \n\n", sep="")
 }
 
 ```
