@@ -8,6 +8,9 @@ The current version of the DLMtool package is available for download from [CRAN]
 - fix bug with `runMSE(Hist=TRUE)` where under some conditions the `Hist` object could not be stitched back together. 
 - add informative error message when MPs are dropped because they crash
 
+### New Additions
+- Added average annual variability in effort (`AAVE`) performance objective method
+- Added MP type as column in `PMObj` function
 
 ## DLMtool 5.3.1 
  
