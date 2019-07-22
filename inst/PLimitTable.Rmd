@@ -101,7 +101,7 @@ ind <- which(TabDF$min >= Prob)
 if (all(is.na(TabDF$Feasible))) TabDF$Feasible <- NULL
 
 MPwithurl <- !is.na(TabDF$url) 
-fail.ind <- TabDF$min <=Prob 
+fail.ind <- TabDF$min <Prob 
 TabDF$MP[!fail.ind&MPwithurl] <- 
   paste0("<a href='", TabDF$url[!fail.ind&MPwithurl],"' style='color: #008000'>", TabDF$MP[!fail.ind&MPwithurl],"</a>")
 TabDF$MP[fail.ind&MPwithurl] <- 
