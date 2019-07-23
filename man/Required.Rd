@@ -12,7 +12,8 @@ Required(funcs = NA, noCV = FALSE)
 \item{noCV}{Logical. Should the CV slots be left out?}
 }
 \value{
-A matrix of MPs and their required data in terms of Data slotnames
+A matrix of MPs and their required data in terms of \code{slotnames('Data')},
+and broad Data classes for each MP
 }
 \description{
 A function that finds all the MPs and searches the

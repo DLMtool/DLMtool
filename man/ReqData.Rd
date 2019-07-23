@@ -4,7 +4,7 @@
 \name{ReqData}
 \alias{ReqData}
 \title{ReqData}
-\format{An object of class \code{data.frame} with 108 rows and 2 columns.}
+\format{An object of class \code{data.frame} with 110 rows and 2 columns.}
 \usage{
 ReqData
 }
