@@ -195,21 +195,15 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     if (class(MSE1@Misc$TryMP) == "matrix") {
       ok <- colSums(MSE1@Misc$TryMP == "Okay") == snowfall::sfCpus()  
       fail <- t(MSE1@Misc$TryMP)
-    }
-      
-    
-    if (any(!ok)) {
-      failedMPs <- MSE1@MPs[!ok]
-      warning("Dropping failed MPs: ", paste(failedMPs, collapse=", "),"\n\nSee MSE@Misc$TryMP for error messages\n\n")
-      
       if (any(grepl("could not find function", unique(fail[!ok,])))) {
         warning("MPs may have been dropped because of non-exported functions in parallel mode. \nUse `setup(); snowfall::sfExport('FUNCTION1', 'FUNCTION2')` to export functions to cores")
       }
+    }
       
-      # if (class(MSE1@Misc$TryMP) == "list")  print(data.frame(MP=MSE1@MPs[!ok], Error=fail[!ok]))
-      # if (class(MSE1@Misc$TryMP) == "matrix") 
-      #   print(data.frame(MP=MSE1@MPs[!ok], Core=fail[!ok,]))
-        
+    if (any(!ok)) {
+      failedMPs <- MSE1@MPs[!ok]
+      warning("Dropping failed MPs: ", paste(failedMPs, collapse=", "),"\n\nSee MSE@Misc$TryMP for error messages\n\n")
+
       if (length(failedMPs) == MSE1@nMPs) stop("All MPs failed.", call.=FALSE)
       MSE1 <- Sub(MSE1, MPs=MSE1@MPs[!MSE1@MPs%in% failedMPs])  
     }
