@@ -379,7 +379,8 @@ plotFun <- function(class = c("MSE", "Data"), msg = TRUE) {
 #' @param funcs A character vector of management procedures
 #' @param noCV Logical. Should the CV slots be left out? 
 #' @author T. Carruthers
-#' @return A matrix of MPs and their required data in terms of Data slotnames
+#' @return A matrix of MPs and their required data in terms of `slotnames('Data')`,
+#' and broad Data classes for each MP
 #' @examples 
 #' Required(c("DCAC", "AvC"))
 #' Required() # For all MPs
@@ -418,6 +419,98 @@ Required <- function(funcs = NA, noCV=FALSE) {
       tt <- sort(trimws(sort(tt)))
       dfout$Data[rr] <- paste(tt, collapse = ", ")
     }
+  }
+  
+  # Add Data Classes 
+  dfout$DataClass <- NULL
+  for (i in 1:nrow(dfout)) {
+    DataClass <- NULL
+    
+    # Catch Data 
+    if (grepl("LHYear", dfout$Data[i]) & grepl("Cat", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Recent Catches')
+    }
+    if (!grepl("LHYear", dfout$Data[i]) & grepl("Cat", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Historical Catches')
+    }
+    if (grepl("AvC", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Average Catch')
+    }
+    
+    # Index 
+    if (grepl("Ind", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Index of Abundance')
+    }
+    
+    # Rec
+    if (grepl("Rec", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Recruitment Index')
+    }
+    
+    # Rec
+    if (grepl("Rec", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Recruitment Index')
+    }
+    
+    if (grepl("Abun", dfout$Data[i]) | grepl("SpAbun", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Current Abundance')
+    }
+    
+    if (grepl("Dep", dfout$Data[i]) | grepl("Dt", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Current Depletion')
+    }
+    
+    if (grepl("Mort", dfout$Data[i]) | grepl("MaxAge", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Natural Mortality')
+    }
+    
+    
+    if (grepl("FMSY_M", dfout$Data[i]) | grepl("BMSY_B0", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Reference Ratios')
+    }
+    
+    if (grepl("L50", dfout$Data[i]) | grepl("L95", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Maturity')
+    }
+    
+    if (grepl("ML", dfout$Data[i]) | grepl("Lbar", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Mean Length')
+    }
+    
+    if (grepl("Lc", dfout$Data[i]) | grepl("LFC", dfout$Data[i]) | grepl("LFS", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Selectivity')
+    }
+    
+    if (grepl("CAA", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Age Composition')
+    }
+    
+    if (grepl("vbK", dfout$Data[i]) | grepl("vbLinf", dfout$Data[i]) | 
+        grepl("vbt0", dfout$Data[i]) | grepl("LenCV", dfout$Data[i]) | 
+        grepl("wla", dfout$Data[i]) | grepl("wlb", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Growth Parameters')
+    }
+    
+    if (grepl("steep", dfout$Data[i]) | grepl("sigmaR", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Stock-Recruitment')
+    } 
+    
+    if (grepl("CAL_bins", dfout$Data[i]) | grepl("CAL", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Length Composition')
+    }    
+    
+    if (grepl("Cref", dfout$Data[i]) | grepl("Iref", dfout$Data[i]) | 
+        grepl("Bref", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Reference Levels')
+    } 
+    
+    if (grepl("MPrec", dfout$Data[i]) | grepl("MPeff", dfout$Data[i])) {
+      DataClass <- c(DataClass, 'Recent Management')
+    }
+    
+    DataClass <- sort(DataClass)
+    dfout$DataClass[i] <- paste0(DataClass, collapse=", ")
+    
   }
   
   as.matrix(dfout)
