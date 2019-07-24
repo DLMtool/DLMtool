@@ -46,6 +46,7 @@ axis(side=1)
 
 #### Time-Series
 Time-series plot showing `r nsamp` trends in historical fishing mortality (`OM@EffUpper` and `OM@EffLower` or `OM@cpars$Find`):
+
 ```{r Eff_time-series, echo=FALSE}
 par(mfrow=c(1,1))
 
