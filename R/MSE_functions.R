@@ -842,6 +842,118 @@ DOM <- function(MSEobj, MPtg = NA) {
 }
 
 
+#' Determine dominate MPs
+#' 
+#' MPs that perform worse than comparable MPs across all performance metrics are considered 'dominated' as 
+#' other options are always preferable. 
+#' 
+#' The `Dom` function compares the probabilities calculated in the performance metric
+#' (`PM`) functions and determines the MPs that have a lower probability across all PMs compared 
+#' to other MPs of the same management type (e.g., size limit, TAC, etc). 
+#' Consequently, it is important that all `PM` functions are constructed so that higher probabilities = better performance 
+#' (e.g, `PNOF` is the probability of NOT overfishing)
+#'
+#' @param MSEobj An object of class `MSE`
+#' @param ...  Names of Performance Metrics (PMs), or other arguments to `TradePlot`. 
+#' First PM is recycled if number of PMs is not even
+#' @param PMlist Optional list of PM names. Overrides any supplied in ... above 
+#' @param Refs An optional named list (matching the PM names) with numeric values to override the default `Ref` values. 
+#' @param Yrs An optional named list (matching the PM names) with numeric values to override the default `Yrs` values. 
+#' 
+#' @return A named list of length 2 with a character vector of non-dominated MPs in `MPs` and 
+#' a data.frame of dominated MPs and the names of the relevant dominated MPs in `DomMPs` 
+#' @export
+#' @author A. Hordyk
+#' @examples
+#' \dontrun{
+#' MSE <- runMSE(MPs=NA) # run all MPs
+#' Nondom <- Dom(MSE, "P10", "LTY", "PNOF")
+#' # Non-dominated MPs
+#' Nondom$MPs 
+#' 
+#' # Dominated MPs 
+#' Nondom$DomMPs
+#' 
+#' }
+#' 
+Dom <- function(MSEobj, ..., PMlist=NULL, Refs=NULL, Yrs=NULL) {
+  if (class(MSEobj) != 'MSE') stop("Object must be class `MSE`", call.=FALSE)
+  if (is.null(PMlist)) {
+    PMlist <- unlist(list(...))
+  } else {
+    PMlist <- unlist(PMlist)
+  }
+  
+  if (class(PMlist) != 'character') stop("Must provide names of PM methods")
+  
+  runPM <- vector("list", length(PMlist))
+  for (X in 1:length(PMlist)) {
+    ref <- Refs[[PMlist[X]]]
+    yrs <- Yrs[[PMlist[X]]]
+    if (is.null(ref)) {
+      if (is.null(yrs)) {
+        runPM[[X]] <- eval(call(PMlist[X], MSEobj))
+      } else {
+        runPM[[X]] <- eval(call(PMlist[X], MSEobj, Yrs=yrs))
+      }
+    } else {
+      if (is.null(yrs)) {
+        runPM[[X]] <- eval(call(PMlist[X], MSEobj, Ref=ref))
+      } else {
+        runPM[[X]] <- eval(call(PMlist[X], MSEobj, Ref=ref, Yrs=yrs))
+      }
+    }
+  }
+  
+  # Create Table
+  DF <- Required(MSEobj@MPs, TRUE) %>% data.frame(., stringsAsFactors = FALSE)
+  DF <- dplyr::left_join(DF, MPtype(MSEobj@MPs), by="MP")
+  
+  DF3 <- lapply(runPM, slot, name='Mean') %>% do.call("cbind", .)
+  colnames(DF3) <- PMlist
+  DF3 <- data.frame(MP=runPM[[1]]@MPs, DF3, stringsAsFactors = FALSE)
+  DF <- dplyr::left_join(DF, DF3, by="MP")
+  
+  DomList <- list()
+  for (i in 1:MSEobj@nMPs) {
+    # ind <- which(DF$DataClass == DF$DataClass[i] & DF$Rec == DF$Rec[i] & DF$Type ==DF$Type[i])
+    ind <- which(DF$Rec == DF$Rec[i] & DF$Type ==DF$Type[i]) # group MPs by Rec Type
+    ind <- ind[!ind==i]
+    if (length(ind)>0) {
+      df1 <- DF[i,] %>% 
+        dplyr::select(-MP, -Data, -DataClass, -Type, -Recs) %>% unlist()
+      m1 <- matrix(df1, nrow=length(ind), ncol=length(df1), byrow=TRUE) %>% 
+        round(2)
+      df2 <- DF[ind,] %>% 
+        dplyr::select(-MP, -Data, -DataClass, -Type, -Recs) %>% as.matrix() %>% 
+        round(2)
+      ind2 <- which(rowSums(m1 < df2) ==0) 
+      if (length(ind2)>0) {
+        DomList[[i]] <- data.frame(DominatedMPs=DF$MP[ind[ind2]], 
+                                   By=MSEobj@MPs[i], stringsAsFactors = FALSE)
+      } 
+    } 
+  }
+  DomDF <- do.call("rbind", DomList) %>% as.data.frame()
+  DomMPs <- unique(DomDF$DominatedMPs)
+  NonDom <- MSEobj@MPs[!MSEobj@MPs %in% DomMPs]
+  DomList <- list()
+  for (i in seq_along(DomMPs)) {
+    By <- DomDF %>% dplyr::filter(DominatedMPs ==DomMPs[i]) %>% dplyr::select(By) %>% unique() %>%
+      unlist(., use.names = FALSE)
+    By <- By[By %in% NonDom]
+    By <- By %>% paste(., collapse=", ") %>% sort()
+    if (nchar(By)>0)
+      DomList[[i]] <- data.frame(MP=DomMPs[i], By=By, stringsAsFactors = FALSE)
+  }
+  
+  DomDF <- do.call("rbind", DomList) %>% as.data.frame() %>% dplyr::arrange(MP)
+  NonDom %>% sort()
+  
+  list(MPs=NonDom, DomMPs=DomDF)
+}
+
+
 
 
 
