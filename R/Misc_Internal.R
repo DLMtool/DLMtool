@@ -522,17 +522,20 @@ userguide_link <- function(url, ref=NULL) {
 simCAA <- function(nsim, yrs, nts, maxage, Cret, CAA_ESS, CAA_nsamp) {
   # generate CAA from retained catch-at-age 
   CAA <- array(NA, dim = c(nsim, yrs, maxage/nts))  # Catch  at age array
-  
   # a multinomial observation model for catch-at-age data
   for (i in 1:nsim) {
     caa <- t(apply( Cret[i, ,], 1, function(x) tapply(x, ceiling(seq_along(x)/nts), sum))) 
     caa <- apply(t(caa), 1, function(x) tapply(x, ceiling(seq_along(x)/nts), sum))
-    for (j in 1:yrs) {
-      if (!sum(caa[j,])) {
-        CAA[i, j, ] <- 0 
-      } else {
-        CAA[i, j, ] <- ceiling(-0.5 + rmultinom(1, CAA_ESS[i], caa[j,]) * CAA_nsamp[i]/CAA_ESS[i])   
+    if (yrs > 1) {
+      for (j in 1:yrs) {
+        if (!sum(caa[j,])) {
+          CAA[i, j, ] <- 0 
+        } else {
+          CAA[i, j, ] <- ceiling(-0.5 + rmultinom(1, CAA_ESS[i], caa[j,]) * CAA_nsamp[i]/CAA_ESS[i])   
+        }
       }
+    } else {
+      CAA[i,1,] <- caa
     }
   }
   CAA
@@ -546,7 +549,7 @@ simCAA <- function(nsim, yrs, nts, maxage, Cret, CAA_ESS, CAA_nsamp) {
 #' @param nsim Number of simulations
 #' @param nts Number of sub-year time-steps
 #' @param nyears Number of years 
-#' @param maxage Maximum age
+#' @param maxage Maximum age - not used
 #' @param CAL_ESS CAA effective sample size 
 #' @param CAL_nsamp CAA sample size
 #' @param nCALbins number of CAL bins
@@ -583,7 +586,13 @@ simCAL <- function(nsim, nts, nyears, maxage,  CAL_ESS, CAL_nsamp, nCALbins, CAL
 
   # calculate LFC - length-at-first capture - 5th percentile
   LFC <- rep(NA, nsim)
-  LFC <- unlist(lapply(tempSize, function(x) getfifth(x[nyears, ], CAL_binsmid)))
+  LFC <- unlist(lapply(tempSize, function(x) {
+    if (nyears>1) {
+      return(getfifth(x[nyears, ], CAL_binsmid))
+    } else {
+      return(getfifth(x, CAL_binsmid))
+    }
+  }))
   LFC[is.na(LFC)] <- 1
   LFC[LFC<1] <- 1
   

@@ -11,7 +11,7 @@ Blow_opt(lnq, N, Asize_c, SSBMSYc, SSBpRc, MPA, SSB0c, nareas, retAc,
 \arguments{
 \item{lnq}{number: estimate of log catchability}
 
-\item{N}{marix maxage by nareas with initial numbers at age}
+\item{N}{matrix maxage by nareas with initial numbers at age}
 
 \item{Asize_c}{vector length nareas with size of each area}
 

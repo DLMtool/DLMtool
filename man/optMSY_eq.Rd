@@ -4,8 +4,8 @@
 \alias{optMSY_eq}
 \title{Internal wrapper function to calculate MSY reference points}
 \usage{
-optMSY_eq(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs,
-  yr.ind = 1)
+optMSY_eq(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0_annual, SRrel, hs,
+  yr.ind = 1, nts, tyears)
 }
 \arguments{
 \item{x}{Simulation number}
@@ -20,13 +20,15 @@ optMSY_eq(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs,
 
 \item{maxage}{Vector of maximum age}
 
-\item{R0}{Vector of R0s}
-
 \item{SRrel}{SRR type}
 
 \item{hs}{Vector of steepness}
 
 \item{yr.ind}{Year index used in calculations}
+
+\item{nts}{Number of sub-year time-steps}
+
+\item{R0}{Vector of R0s}
 }
 \value{
 Results from \code{MSYCalcs}

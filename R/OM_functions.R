@@ -938,3 +938,77 @@ Add_predictive = function(char_vec) {
 }
 
 
+
+#' Change the time-step for an Operating Model
+#' 
+#' All rate parameters and other values relating to time-scale
+#' are assumed to be in annual units in the input OM. For example, `OM@interval` 
+#' is in *years*, as are `OM@M` and `OM@K` etc.
+#' 
+#' Note: OMs with `cpars` are not currently supported
+#'
+#' @param OM An object of class `OM`
+#' @param ts The number of sub-year time-steps. e.g, `ts=4` means a model with 
+#' quarterly time-steps. Must be an integer
+#' @param silent Logical. Suppress messages?
+#'
+#' @return An object of class `OM` with sub-year time-steps
+#' @export
+#'
+#' @examples
+ChangeTS <- function(OM, ts=4, silent=FALSE) {
+  if(class(OM) != "OM") stop("Object must be class `OM`", call.=FALSE)
+  
+  if (!ts %% 1 ==0) stop("ts must be an integer", call.=FALSE)
+  is.integer(ts)
+  
+  OMout <- OM
+  # Natural mortality
+  OMout@M <- OM@M/ts
+  OMout@M2 <- OM@M2/ts
+  
+  
+  # Maximum age
+  OMout@maxage <- OM@maxage*ts
+  
+  # Growth Parameters
+  OMout@K <- OM@K/ts
+  OMout@t0 <- OM@t0 * ts
+  
+  # Effort Trends
+  OMout@EffYears <- OM@EffYears * ts
+  
+  # Interval & Years
+  OMout@interval <- OM@interval 
+  OMout@nyears <- OM@nyears 
+  OMout@proyears <- OM@proyears 
+  
+  # Cpars
+  if (length(OM@cpars) > 0) {
+    stop("Cannot convert OM with cpars")
+  }
+  
+  # if (length(OM@cpars$M_at_Length) >0) {
+  #   OMout@cpars$M_at_Length <- OM@cpars$M_at_Length/ts
+  # }
+  # 
+  # if (length(OM@cpars$ageM) >0) {
+  #   OMout@cpars$ageM <- OM@cpars$ageM*ts
+  # }
+  # if (length(OM@cpars$age95) >0) {
+  #   OMout@cpars$age95 <- OM@cpars$age95*ts
+  # }
+  # 
+  # # At-age - can't deal with for now
+  # nms <- c('M_ageArray', 'Mat_age', 'Len_age', "Wt_age", "V", "retA", "Find", 'Perr',
+  #          "Marray", "Karray")
+  # for (nm in nms) {
+  #   if (!is.null(OM@cpars[[nm]]))
+  #     stop("Cannot convert cpars$", nm, " to different time-step. Specify externally to converted OM", call.=FALSE)
+  # }
+  
+  # Message
+  if (!silent) message("Converting from annual time-step to ", ts, ' time-steps per year')
+  OMout@cpars$nts <- ts # add a new slot here
+  OMout
+}

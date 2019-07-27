@@ -4,12 +4,13 @@
 \alias{CalcMPDynamics}
 \title{Calculate population dynamics from MP recommendation}
 \usage{
-CalcMPDynamics(MPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
-  LastEi, LastSpatial, LastAllocat, LastCatch, TACused, maxF, LR5_P, LFR_P,
-  Rmaxlen_P, retL_P, retA_P, L5_P, LFS_P, Vmaxlen_P, SLarray_P, V_P,
-  Fdisc_P, DR_P, M_ageArray, FM_P, FM_Pret, Z_P, CB_P, CB_Pret, TAC_f, E_f,
-  SizeLim_f, FinF, Spat_targ, CAL_binsmid, Linf, Len_age, maxage, nareas,
-  Asize, nCALbins, qs, qvar, qinc, checks = FALSE)
+CalcMPDynamics(MPRecs, y, ts, histnTS, projnTS, nsim, Biomass_P,
+  VBiomass_P, LastTAE, histTAE, LastSpatial, LastAllocat, LastTAC, TACused,
+  maxF, LR5_P, LFR_P, Rmaxlen_P, retL_P, retA_P, L5_P, LFS_P, Vmaxlen_P,
+  SLarray_P, V_P, Fdisc_P, DR_P, M_ageArray, FM_P, FM_Pret, Z_P, CB_P,
+  CB_Pret, TAC_f, E_f, SizeLim_f, FinF, Spat_targ, CAL_binsmid, Linf,
+  Len_age, maxage, nareas, Asize, nCALbins, qs, qvar, qinc, Effort_pot,
+  checks = FALSE)
 }
 \arguments{
 \item{MPRecs}{A named list of MP recommendations. The names are the same as \code{slotNames('Rec')}, except
@@ -20,23 +21,15 @@ MPs must either return a recommendation or no recommendation for every simulatio
 
 \item{y}{The projection year}
 
-\item{nyears}{The number of historical years}
-
-\item{proyears}{The number of projection years}
-
 \item{nsim}{The number of simulations}
 
 \item{Biomass_P}{An array with dimensions \code{nsim}, \code{maxage}, \code{proyears}, and \code{nareas} with total biomass in the projection years}
 
 \item{VBiomass_P}{An array with dimensions \code{nsim}, \code{maxage}, \code{proyears}, and \code{nareas} with vulnerable biomass in the projection years}
 
-\item{LastEi}{A vector of length \code{nsim} with the most recent effort modifier (fraction of historical effort)}
-
 \item{LastSpatial}{A matrix of \code{nrow=nareas} and \code{ncol=nsim} with the most recent spatial management arrangements}
 
 \item{LastAllocat}{A vector of length \code{nsim} with the most recent allocation}
-
-\item{LastCatch}{A vector of length \code{nsim} with the most recent catch}
 
 \item{TACused}{A vector of length \code{nsim} with the most recent TAC}
 
@@ -109,6 +102,14 @@ MPs must either return a recommendation or no recommendation for every simulatio
 \item{qinc}{A numeric vector of length \code{nsim} with average annual change in catchability}
 
 \item{checks}{Logical. Run internal checks? Currently not used.}
+
+\item{nyears}{The number of historical years}
+
+\item{proyears}{The number of projection years}
+
+\item{LastEi}{A vector of length \code{nsim} with the most recent effort modifier (fraction of historical effort)}
+
+\item{LastCatch}{A vector of length \code{nsim} with the most recent catch}
 }
 \value{
 A named list with updated population dynamics

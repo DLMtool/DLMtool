@@ -217,7 +217,7 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
                        retL_P, StockPars, FleetPars, ObsPars, 
                        upyrs, upts, interval, y=2, ts, 
                        mm=1, Misc, SampCpars) {
-  
+ 
   yind <- upyrs[match(y, upyrs) - 1]:(upyrs[match(y, upyrs)] - 1) # index
   tsind <-  upts[match(ts, upts) - 1]:(upts[match(ts, upts)] - 1) 
   
@@ -228,6 +228,10 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   nsim <- OM@nsim 
   nareas <- StockPars$nareas
   reps <- OM@reps
+  
+  
+  Begind_hist <- seq(from=1, by=nts, length.out=nyears) # end of year index
+  Begind_pro <- seq(from=1, by=nts, length.out=y) # end of year index
   
   Data@Year <- 1:(nyears + y - 1)
   Data@t <- rep(nyears + y-1, nsim)
@@ -250,13 +254,11 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   Cobs <- apply(Cobs, 1, function(x) tapply(x, ceiling(seq_along(x)/nts), sum)) # sum up sub-year catches
   Data@Cat <- cbind(Data@Cat, Cobs) 
   
-  ################ UP TO HERE 
-  stop()
-  
+
   # --- Index of total abundance ----
-  I2 <- (cbind(apply(Biomass, c(1, 3), sum), 
-               apply(Biomass_P, c(1, 3), sum)[, 1:(y - 1)])^ObsPars$betas) * 
-    ErrList$Ierr[, 1:(nyears + (y - 1))]
+  I2 <- (cbind(apply(Biomass[,,Begind_hist,], c(1, 3), sum), 
+               apply(Biomass_P[,,Begind_pro,], c(1, 3), sum))^ObsPars$betas) * 
+    ErrList$Ierr[, c(Begind_hist, max(Begind_hist)+nts-1+Begind_pro) ]
   
   I2[is.na(I2)] <- tiny
   I2 <- I2/apply(I2, 1, mean)
@@ -264,7 +266,7 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   
   # --- Update real indices (if they exist) ----
   if (!all(is.na(Data@RInd))) { # Real indices exist
-
+    stop("Real Indices - Not currently supported") # TO DO ###########
     b1 <- cbind(apply(Biomass, c(1, 3), sum), apply(Biomass_P, c(1, 3), sum)[, 1:(y - 1)])
     b1 <- (exp(lcs(b1))^filter(ErrList$stats.df, Index=="Biomass")$beta) * ErrList$RIerr$BIerr[, 1:(nyears+y-1)]
     
@@ -295,36 +297,34 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   }
   
   # --- Index of recruitment ----
-  Recobs <- ErrList$Recerr[, nyears + yind] * apply(array(N_P[, 1, yind, ], 
-                                                          c(nsim, interval[mm], nareas)),
-                                                    c(1, 2), sum)
+  Recobs <- apply(ErrList$Recerr[, histnTS+tsind] * apply(N_P[, 1, tsind, ], c(1,2), sum), 1, sum)
   Data@Rec <- cbind(Data@Rec, Recobs)
   
   # --- Average catch ----
   Data@AvC <- apply(Data@Cat, 1, mean)
   
   # --- Depletion ----
-  Depletion <- apply(SSB_P[, , y, ], 1, sum)/RefPoints$SSB0 
+  Depletion <- apply(SSB_P[, , ts, ], 1, sum)/RefPoints$SSB0 
   Depletion[Depletion < tiny] <- tiny
   Data@Dt <- ObsPars$Dbias * Depletion * rlnorm(nsim, mconv(1, ObsPars$Derr), sdconv(1, ObsPars$Derr))
   Data@Dep <- ObsPars$Dbias * Depletion * rlnorm(nsim, mconv(1, ObsPars$Derr), sdconv(1, ObsPars$Derr))
   
+  
   # --- Update life-history parameter estimates for current year ----
-  Data@vbLinf <- StockPars$Linfarray[,nyears+y] * ObsPars$Linfbias # observed vB Linf
-  Data@vbK <- StockPars$Karray[,nyears+y] * ObsPars$Kbias # observed vB K
-  Data@vbt0 <- StockPars$t0array[,nyears+y] * ObsPars$t0bias # observed vB t0
-  Data@Mort <- StockPars$Marray[,nyears+y] * ObsPars$Mbias # natural mortality
-  Data@L50 <- StockPars$L50array[,nyears+y] * ObsPars$lenMbias # observed length at 50% maturity
-  Data@L95 <- StockPars$L95array[,nyears+y] * ObsPars$lenMbias # observed length at 95% maturity
+  Data@vbLinf <- StockPars$Linfarray[,histnTS+ts] * ObsPars$Linfbias # observed vB Linf
+  Data@vbK <- StockPars$Karray[,histnTS+ts] * nts * ObsPars$Kbias # observed vB K
+  Data@vbt0 <- StockPars$t0array[,histnTS+ts] / nts * ObsPars$t0bias # observed vB t0
+  Data@Mort <- StockPars$Marray[,histnTS+ts]*nts * ObsPars$Mbias # natural mortality
+  Data@L50 <- StockPars$L50array[,histnTS+ts] * ObsPars$lenMbias # observed length at 50% maturity
+  Data@L95 <- StockPars$L95array[,histnTS+ts] * ObsPars$lenMbias # observed length at 95% maturity
   Data@L95[Data@L95 > 0.9 * Data@vbLinf] <- 0.9 * Data@vbLinf[Data@L95 > 0.9 * Data@vbLinf]  # Set a hard limit on ratio of L95 to Linf
   Data@L50[Data@L50 > 0.9 * Data@L95] <- 0.9 * Data@L95[Data@L50 > 0.9 * Data@L95]  # Set a hard limit on ratio of L95 to Linf
   
-  
   # --- Abundance ----
   # Calculate vulnerable and spawning biomass abundance --
-  M_array <- array(0.5*StockPars$M_ageArray[,,nyears+y], dim=c(nsim, StockPars$maxage, nareas))
-  A <- apply(VBiomass_P[, , y, ] * exp(-M_array), 1, sum) # Abundance (mid-year before fishing)
-  Asp <- apply(SSB_P[, , y, ] * exp(-M_array), 1, sum)  # Spawning abundance (mid-year before fishing)
+  M_array <- array(0.5*StockPars$M_ageArray[,,histnTS+ts], dim=c(nsim, StockPars$maxage, nareas))
+  A <- apply(VBiomass_P[, , ts, ] * exp(-M_array), 1, sum) # Abundance (mid-year before fishing)
+  Asp <- apply(SSB_P[, , ts, ] * exp(-M_array), 1, sum)  # Spawning abundance (mid-year before fishing)
   Data@Abun <- A * ObsPars$Abias * rlnorm(nsim, mconv(1, ObsPars$Aerr), sdconv(1, ObsPars$Aerr))
   Data@SpAbun <- Asp * ObsPars$Abias * rlnorm(nsim, mconv(1, ObsPars$Aerr), sdconv(1, ObsPars$Aerr))
   # Data@Ref <- A * (1 - exp(-FMSY_P[,mm,y])) 
@@ -332,12 +332,14 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   # --- Catch-at-age ----
   # previous CAA
   oldCAA <- Data@CAA
-  Data@CAA <- array(0, dim = c(nsim, nyears + y - 1, StockPars$maxage))
+  Data@CAA <- array(0, dim = c(nsim, nyears + y - 1, Data@MaxAge))
   Data@CAA[, 1:(nyears + y - interval[mm] - 1), ] <- oldCAA[, 1:(nyears + y - interval[mm] - 1), ] 
   # update CAA
-  CAA <- simCAA(nsim, yrs=length(yind), StockPars$maxage, Cret=CNtemp, ObsPars$CAA_ESS, ObsPars$CAA_nsamp)
-  Data@CAA[, nyears + yind, ] <- CAA
+  CAA <- simCAA(nsim, interval[mm], nts, StockPars$maxage, CNtemp, 
+                ObsPars$CAA_ESS, ObsPars$CAA_nsamp)
   
+  CAA <- simCAA(nsim, yrs=length(yind), nts, StockPars$maxage, Cret=CNtemp, ObsPars$CAA_ESS, ObsPars$CAA_nsamp)
+  Data@CAA[, nyears + yind, ] <- CAA
 
   # --- Catch-at-length ----
   oldCAL <- Data@CAL
@@ -345,15 +347,16 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   Data@CAL[, 1:(nyears + y - interval[mm] - 1), ] <- oldCAL[, 1:(nyears + y - interval[mm] - 1), ]
   
   CAL <- array(NA, dim = c(nsim, interval[mm], StockPars$nCALbins))  
-  vn <- (apply(N_P[,,,], c(1,2,3), sum) * retA_P[,,(nyears+1):(nyears+proyears)]) # numbers at age that would be retained
+  vn <- (apply(N_P[,,tsind,], c(1,2,3), sum) * retA_P[,,tsind]) # numbers at age that would be retained
   vn <- aperm(vn, c(1,3,2))
   
-  CALdat <- simCAL(nsim, nyears=length(yind), StockPars$maxage, ObsPars$CAL_ESS, 
-                   ObsPars$CAL_nsamp, StockPars$nCALbins, StockPars$CAL_binsmid, 
-                   vn=vn[,yind,, drop=FALSE], retL=retL_P[,,nyears+yind, drop=FALSE],
-                   Linfarray=StockPars$Linfarray[,nyears + yind, drop=FALSE],  
-                   Karray=StockPars$Karray[,nyears + yind, drop=FALSE], 
-                   t0array=StockPars$t0array[,nyears + yind,drop=FALSE],
+  CALdat <- simCAL(nsim, nts, nyears=length(yind), maxage=Data@MaxAge, CAL_ESS=ObsPars$CAL_ESS, 
+                   CAL_nsamp=ObsPars$CAL_nsamp, nCALbins=StockPars$nCALbins, 
+                   CAL_binsmid=StockPars$CAL_binsmid, 
+                   vn, retL=FleetPars$retL[,,histnTS+tsind,drop=FALSE], 
+                   Linfarray=StockPars$Linfarray[,histnTS+tsind,drop=FALSE], 
+                   Karray=StockPars$Karray[,histnTS+tsind,drop=FALSE],
+                   t0array=StockPars$t0array[,histnTS+tsind,drop=FALSE], 
                    LenCV=StockPars$LenCV)
 
   Data@CAL[, nyears + yind, ] <- CALdat$CAL # observed catch-at-length
@@ -362,7 +365,7 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   Data@Lbar <- cbind(Data@Lbar, CALdat$Lbar) # mean length above Lc 
   
   Data@LFC <- CALdat$LFC * ObsPars$LFCbias # length at first capture
-  Data@LFS <- FleetPars$LFS[nyears+y,] * ObsPars$LFSbias # length at full selection
+  Data@LFS <- FleetPars$LFS[histnTS+ts,] * ObsPars$LFSbias # length at full selection
 
   # --- Previous Management Recommendations ----
   Data@MPrec <- MPCalcs$TACrec # last MP  TAC recommendation
@@ -372,5 +375,3 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   
   Data
 }
-
-

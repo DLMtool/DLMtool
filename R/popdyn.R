@@ -262,6 +262,7 @@ CalcMPDynamics <- function(MPRecs, y, ts, histnTS, projnTS, nsim, Biomass_P,
       retL_P[,, yy] <- relLen  # calculate new retention at length curve 
     }
     
+
     # upper harvest slot 
     aboveHS <- Len_age[,,allyrs, drop=FALSE]>array(HS, dim=c(nsim, maxage, length(allyrs)))
     tretA_P <- retA_P[,,allyrs]
@@ -326,6 +327,7 @@ CalcMPDynamics <- function(MPRecs, y, ts, histnTS, projnTS, nsim, Biomass_P,
   fishdist <- fracE2 # fishing effort by area
    
   currentTS <- ts %% nts # current sub-year time-step
+
   if (currentTS == 0) currentTS <- nts
   # ---- no TAC - calculate F with bio-economic effort ----
   if (all(is.na(TACused))) {
@@ -347,7 +349,7 @@ CalcMPDynamics <- function(MPRecs, y, ts, histnTS, projnTS, nsim, Biomass_P,
   if (!all(is.na(TACused))) { # a TAC has been set
     # if MP returns NA - TAC is set to TAC from last year
     TACused[is.na(TACused)] <- LastTAC[is.na(TACused)] 
-    TACusedE <- TAC_f[,ts]*TACused * MPRecs$SeasonalEff[ts,]  # TAC taken after implementation error & adjustment for seasonal effort
+    TACusedE <- TAC_f[,ts]*TACused * MPRecs$SeasonalEff[currentTS,]  # TAC taken after implementation error & adjustment for seasonal effort
     
     # Calculate total vulnerable biomass available mid-year accounting for any changes in selectivity &/or spatial closures
     M_array <- array(0.5*M_ageArray[,,histnTS+ts], dim=c(nsim, maxage, nareas))
@@ -371,6 +373,7 @@ CalcMPDynamics <- function(MPRecs, y, ts, histnTS, projnTS, nsim, Biomass_P,
     temp <- Catch_tot/apply(Catch_tot, 1, sum) # distribution of removals
     Catch_tot <- TACusedE * ratio * temp # scale up total removals
     
+
     # total removals can't be more than available biomass
     chk <- apply(Catch_tot, 1, sum) > availB 
     if (sum(chk)>0) {
