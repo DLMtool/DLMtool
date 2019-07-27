@@ -39,7 +39,7 @@ getBlow<-function(x, N, Asize, SSBMSY, SSBpR, MPA, SSB0, nareas, retA,MGThorizon
                   Perr,M_ageArray,hs,Mat_age,Wt_age,R0a,V,nyears,maxage,mov,Spat_targ,SRrel,
                   aR,bR,Bfrac=0.5, maxF, ploty=F){
   
-  opt <<-optimize(Blow_opt,log(c(0.0075,15)),N=N[x,,1,], Asize_c =Asize[x,], SSBMSYc=SSBMSY[x],
+  opt <-optimize(Blow_opt,log(c(0.0075,15)),N=N[x,,1,], Asize_c =Asize[x,], SSBMSYc=SSBMSY[x],
                  SSBpRc=SSBpR[x,], MPA=MPA, SSB0c=SSB0[x], nareas, retAc=retA[x,,],
                  MGThorizonc=MGThorizon[x], Fc=Find[x,],Perrc=Perr[x,], Mc=M_ageArray[x,,], 
                  hc=hs[x], Mac=Mat_age[x,,], Wac=Wt_age[x,,], R0c=R0a[x,,], Vc=V[x,,], 
@@ -122,7 +122,7 @@ Blow_opt<-function(lnq, N, Asize_c, SSBMSYc,SSBpRc, MPA, SSB0c, nareas, retAc,
 
   movcx <- array(movc[,,,nyears], dim=c(maxage, nareas, nareas, pyears)) # current movement pattern
 
-  simpop <<- popdynCPP(nareas, maxage, N, pyears, M_age, Asize_c,
+  simpop <- popdynCPP(nareas, maxage, N, pyears, M_age, Asize_c,
                       MatAge, WtAge, Vuln, Retc, Prec, split.along.dim(movcx,4), 
                       SRrelc, Effind, Spat_targc, hc,
                       R0c=R0c, SSBpRc=SSBpRc, aRc=aRc, bRc=bRc, Qc=exp(lnq), Fapic=0,
