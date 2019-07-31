@@ -20,7 +20,7 @@ Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "D", "Mgrad", "SRrel", "hs", "p
 
 # change messages to blue text instead of default red
 message <- function(...) {
-  base::message(crayon::blue(...), sep="")
+  base::message(crayon::blue(..., sep=""))
 }
 
 if(getRversion() >= "2.15.1") utils::globalVariables(Names)

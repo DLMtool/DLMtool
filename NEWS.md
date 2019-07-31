@@ -12,6 +12,9 @@ The current version of the DLMtool package is available for download from [CRAN]
 - Added average annual variability in effort (`AAVE`) performance objective method
 - Added MP type as column in `PMObj` function
 - Add a constant current catch MP - `CurC`
+- new `Dom` function (and remove old `DOM` function)
+
+
 
 ## DLMtool 5.3.1 
  
