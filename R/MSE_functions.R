@@ -611,7 +611,7 @@ joinMSE <- function(MSEobjs = NULL) {
               }
               out.list[[nm]] <- abind::abind(obj2, along=ind)  
             } else {
-              out.list[[nm]] <- unlist(obj2) %>% unique()
+              out.list[[nm]] <- unlist(obj2) #  %>% unique()
             }
           }
           slot(out, sl) <- out.list
