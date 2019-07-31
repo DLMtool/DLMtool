@@ -20,7 +20,7 @@ Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "D", "Mgrad", "SRrel", "hs", "p
 
 # change messages to blue text instead of default red
 message <- function(...) {
-  base::message(crayon::blue(...))
+  base::message(crayon::blue(...), sep="")
 }
 
 if(getRversion() >= "2.15.1") utils::globalVariables(Names)
@@ -828,7 +828,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   for (mm in 1:nMP) {  # MSE Loop over methods
     tryMP <- try({
       if(!silent) message(mm, "/", nMP, " Running MSE for", MPs[mm]) 
-      checkNA <- NA # save number of NAs
+      checkNA <- rep(0, OM@proyears) # save number of NAs
 
       # years management is updated
       upyrs <- seq(from=1, to=proyears, by=interval[mm]) # 1 + (0:(floor(proyears/interval[mm]) - 1)) * interval[mm] 
@@ -907,13 +907,18 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       Data_p <- runMP[[2]] # Data object object with saved info from MP 
       Data_p@TAC <- MPRecs$TAC
       
-      # calculate pstar quantile of TAC recommendation dist 
-      TACused <- apply(Data_p@TAC, 2, quantile, p = pstar, na.rm = T) 
-      checkNA[y] <- sum(is.na(TACused))
-     
       LastSpatial <- array(MPA[nyears,], dim=c(nareas, nsim)) # 
       LastAllocat <- rep(1, nsim) # default assumption of reallocation of effort to open areas
       LastTAC <- LastCatch <- apply(CBret[,,nyears,], 1, sum)
+      
+      # calculate pstar quantile of TAC recommendation dist 
+      TACused <- apply(Data_p@TAC, 2, quantile, p = pstar, na.rm = T) 
+      if (length(MPRecs$TAC) >0) {
+        # a TAC has been recommended
+        checkNA[y] <- sum(is.na(TACused))
+        TACused[is.na(TACused)] <- LastTAC[is.na(TACused)] # set to last yr TAC if NA
+        TACa[, mm, y] <- TACused # recommended TAC 
+      }
       
       # -- Bio-Economics ----
       # Calculate Profit from last historical year
@@ -1048,9 +1053,13 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           # calculate pstar quantile of TAC recommendation dist 
           
           TACused <- apply(Data_p@TAC, 2, quantile, p = pstar, na.rm = T) 
-          checkNA[y] <- sum(is.na(TACused))
-          TACused[is.na(TACused)] <- TACa[is.na(TACused), mm, y-1] # set to last yr TAC if NA
-          TACa[, mm, y] <- TACused # recommended TAC 
+          if (length(MPRecs$TAC) >0) {
+            # a TAC has been recommended
+            checkNA[y] <- sum(is.na(TACused))
+            TACused[is.na(TACused)] <- LastTAC[is.na(TACused)] # set to last yr TAC if NA
+            TACa[, mm, y] <- TACused # recommended TAC 
+          }
+          
           
           # -- Calc stock dynamics ----
           MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
@@ -1165,7 +1174,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       
       if (!silent) {
         cat("\n")
-        if (any(checkNA != nsim) & !all(checkNA == 0)) {
+        if (all(checkNA[upyrs] != nsim) & !all(checkNA == 0)) {
           ntot <- sum(checkNA[upyrs])
           totyrs <- sum(checkNA[upyrs] >0)
           nfrac <- round(ntot/(length(upyrs)*nsim),2)*100
