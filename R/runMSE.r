@@ -827,7 +827,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   Misc$TryMP <- list()
   for (mm in 1:nMP) {  # MSE Loop over methods
     tryMP <- try({
-      if(!silent) message(mm, "/", nMP, " Running MSE for", MPs[mm]) 
+      if(!silent) message(mm, "/", nMP, " Running MSE for ", MPs[mm]) 
       checkNA <- rep(0, OM@proyears) # save number of NAs
 
       # years management is updated
