@@ -328,8 +328,8 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     logW <- log(as.numeric(Wt_age))
     mod  <- lm(logW ~ logL)
     EstVar <- summary(mod)$sigma^2
-    Wa <- exp(coef(mod)[1]) * exp((EstVar)/2)
-    Wb <- coef(mod)[2]
+    Wa <- as.numeric(exp(coef(mod)[1]) * exp((EstVar)/2))
+    Wb <- as.numeric(coef(mod)[2])
   }
   
   # == Sample Maturity Parameters ====
