@@ -204,7 +204,10 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
       failedMPs <- MSE1@MPs[!ok]
       warning("Dropping failed MPs: ", paste(failedMPs, collapse=", "),"\n\nSee MSE@Misc$TryMP for error messages\n\n")
 
-      if (length(failedMPs) == MSE1@nMPs) stop("All MPs failed.", call.=FALSE)
+      if (length(failedMPs) == MSE1@nMPs) {
+        warning("All MPs failed.")
+        return(MSE1)
+      }
       MSE1 <- Sub(MSE1, MPs=MSE1@MPs[!MSE1@MPs%in% failedMPs])  
     }
     
