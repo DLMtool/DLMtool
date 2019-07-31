@@ -1046,7 +1046,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           Data_p <- runMP[[2]] # Data object object with saved info from MP 
           Data_p@TAC <- MPRecs$TAC
           # calculate pstar quantile of TAC recommendation dist 
+          
           TACused <- apply(Data_p@TAC, 2, quantile, p = pstar, na.rm = T) 
+          checkNA[y] <- sum(is.na(TACused))
+          TACused[is.na(TACused)] <- TACa[is.na(TACused), mm, y-1] # set to last yr TAC if NA
+          TACa[, mm, y] <- TACused # recommended TAC 
           
           # -- Calc stock dynamics ----
           MPCalcs <- CalcMPDynamics(MPRecs, y, nyears, proyears, nsim, Biomass_P, VBiomass_P,
@@ -1060,8 +1064,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                     FinF, Spat_targ,
                                     CAL_binsmid, Linf, Len_age, maxage, nareas, Asize, nCALbins,
                                     qs, qvar, qinc, Effort_pot)
-          
-          TACa[, mm, y] <- TACused # recommended TAC 
+        
           LastSpatial <- MPCalcs$Si
           LastAllocat <- MPCalcs$Ai
           LastTAE <- MPCalcs$TAE # adjustment to TAE
@@ -1139,7 +1142,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           TAE_out[,mm,y] <- LastTAE # store the TAE
         
         } # end of update loop 
-        checkNA[y] <- sum(is.na(TACused))
+       
       }  # end of year loop
       
       B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY_y[,mm,(OM@nyears+1):(OM@nyears+OM@proyears)]  # SSB relative to SSBMSY
@@ -1162,7 +1165,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       
       if (!silent) {
         cat("\n")
-        if (all(checkNA != nsim) & !all(checkNA == 0)) {
+        if (any(checkNA != nsim) & !all(checkNA == 0)) {
           ntot <- sum(checkNA[upyrs])
           totyrs <- sum(checkNA[upyrs] >0)
           nfrac <- round(ntot/(length(upyrs)*nsim),2)*100
