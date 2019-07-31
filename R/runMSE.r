@@ -1183,7 +1183,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       # message(e, "\n")
     # }) # end tryCatch ####
     if (!is.null(tryMP)) {
-      if(!silent) message("Note: ", MPs[mm], " failed. Skipping this MP. \nSee `MSE@Misc$tryMP` for details")
+      if(!silent) message("Note: ", MPs[mm], " failed. Skipping this MP. \nSee `MSE@Misc$TryMP` for details")
       Misc$TryMP[[mm]] <- tryMP
     } else {
       Misc$TryMP[[mm]] <- "Okay"
