@@ -157,7 +157,7 @@ movfit_Rcpp <- function(par, prb, frac) {
 #' 
 #' @export
 #' @keywords internal
-popdynOneTScpp <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel, plusgroup) {
+popdynOneTScpp <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel, plusgroup = 0L) {
     .Call('_DLMtool_popdynOneTScpp', PACKAGE = 'DLMtool', nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel, plusgroup)
 }
 

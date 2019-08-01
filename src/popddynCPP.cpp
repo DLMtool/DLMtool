@@ -29,7 +29,7 @@ arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcu
                          NumericMatrix Ncurr,  Rcpp::NumericMatrix Zcurr, double PerrYr,
                          double hs,  Rcpp::NumericVector R0a,  Rcpp::NumericVector SSBpR,
                          Rcpp::NumericVector aR,  Rcpp::NumericVector bR,  arma::cube mov,
-                         double SRrel, int plusgroup) {
+                         double SRrel, int plusgroup=0) {
   
   arma::mat Nnext(maxage, nareas);
   // arma::mat tempMat2(nareas, nareas);	
