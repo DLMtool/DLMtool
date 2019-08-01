@@ -2,7 +2,6 @@
 % Please edit documentation in R/runMSE.r
 \name{runMSE}
 \alias{runMSE}
-\alias{runMSErobust}
 \title{Run a Management Strategy Evaluation}
 \usage{
 runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
@@ -11,8 +10,6 @@ runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
   HZN = 2, Bfrac = 0.5, AnnualMSY = TRUE, silent = FALSE,
   PPD = FALSE, parallel = FALSE, save_name = NULL, checks = FALSE,
   control = NULL)
-
-runMSErobust(...)
 }
 \arguments{
 \item{OM}{An operating model object (class 'OM')}
@@ -58,8 +55,6 @@ May differ from MSY statistics from last historical year if there are changes in
 \item{checks}{Logical. Run tests?}
 
 \item{control}{control options for testing and debugging}
-
-\item{...}{Arguments to runMSErobust function (function no longer works)}
 }
 \value{
 An object of class \linkS4class{MSE}
@@ -71,8 +66,6 @@ simulation) for a specified operating model
 \section{Functions}{
 \itemize{
 \item \code{runMSE}: Default function to use.
-
-\item \code{runMSErobust}: This function has now been removed. Use \code{runMSE}.
 }}
 
 \note{

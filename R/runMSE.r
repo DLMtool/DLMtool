@@ -25,17 +25,16 @@ message <- function(...) {
 
 if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 
-# Old arguments from runMSErobust
-# #' @param maxsims Maximum number of simulations per packet
-# #' @param name Character string for name of saved MSE packets (if \code{savePack=TRUE}) 
-# #' and final MSE object. If none provided, it uses the first five letters from the \code{OM} name
-# #' @param unique Logical. Should the name be unique? Current date and time appended to name. 
-# #' @param maxCrash Maximum number of consecutive crashes before the MSE stops
-# #' @param saveMSE Logical to indicate if final MSE object should be saved to current 
-# #' working directory (this is probably a good idea)
-# #' @param savePack Logical to indicate if packets should be save to current working directory
-# #' @param ... Arguments to runMSE function  
 
+# fls <- list.files("R")
+# fls <- fls[!fls=="sysdata.rda"]
+# for (fl in fls) source(file.path('R', fl))
+# 
+# fls <- list.files("../MSEtool/R")
+# fls <- fls[!fls=="sysdata.rda"]
+# for (fl in fls) source(file.path("../MSEtool/R", fl))
+# cpars_info <- DLMtool:::cpars_info
+# library(dplyr)
 
 #' Run a Management Strategy Evaluation
 #' 
@@ -70,7 +69,6 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @param save_name Character. Optional name to save parallel MSE list
 #' @param checks Logical. Run tests?
 #' @param control control options for testing and debugging
-#' @param ... Arguments to runMSErobust function (function no longer works)
 #' 
 #' @templateVar url running-the-mse
 #' @templateVar ref NULL 
@@ -318,6 +316,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   #  --- Pre Equilibrium calcs ----
   # Survival array with M-at-age
   surv <- matrix(1, nsim, maxage)
+  # surv <- matrix(exp(-M_ageArray[,1,1]), nsim, maxage)
   surv[, 2:maxage] <- t(exp(-apply(M_ageArray[,,1], 1, cumsum)))[, 1:(maxage-1)]  # Survival array
   Nfrac <- surv * Mat_age[,,1]  # predicted Numbers of mature ages in first year
   
@@ -400,6 +399,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   # ---- Unfished Equilibrium calcs ----
   surv <- array(1, dim=c(nsim, maxage, nyears+proyears)) # unfished survival for every year
+  # surv <- array(exp(-M_ageArray[,1,]), dim=c(nsim, nyears+proyears, maxage))
+  # surv <- aperm(surv, c(1,3,2))
   surv[, 2:maxage, ] <- aperm(exp(-apply(M_ageArray, c(1,3), cumsum))[1:(maxage-1), ,], c(2,1,3)) # Survival array
   Nfrac <- surv * Mat_age  # predicted numbers of mature ages in all years
   
@@ -572,6 +573,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     qs <- rep(0, nsim) # no fishing
   }
   
+  plusgroup <- 0
+  if(control$plusgroup) {
+    plusgroup <- 1
+    N[,OM@maxage,1,] <- N[,OM@maxage,1,]/replicate(nareas, (1-exp(-M_ageArray[,OM@maxage,1])))
+  }
+  
   histYrs <- sapply(1:nsim, function(x) 
     popdynCPP(nareas, maxage, Ncurr=N[x,,1,], nyears,  
               M_age=M_ageArray[x,,], Asize_c=Asize[x,], MatAge=Mat_age[x,,], WtAge=Wt_age[x,,],
@@ -579,7 +586,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
               SRrelc=SRrel[x], 
               Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
               SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], Qc=qs[x], Fapic=0, MPA=MPA, maxF=maxF, 
-              control=1, SSB0c=SSB0[x]))
+              control=1, SSB0c=SSB0[x], plusgroup=plusgroup))
   
   N <- aperm(array(as.numeric(unlist(histYrs[1,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
   Biomass <- aperm(array(as.numeric(unlist(histYrs[2,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
@@ -589,7 +596,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   FM <- aperm(array(as.numeric(unlist(histYrs[6,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
   FMret <- aperm(array(as.numeric(unlist(histYrs[7,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
   Z <-aperm(array(as.numeric(unlist(histYrs[8,], use.names=FALSE)), dim=c(maxage, nyears, nareas, nsim)), c(4,1,2,3))
-  
+ 
   Depletion <- apply(SSB[,,nyears,],1,sum)/SSB0
   
   # Check that depletion is correct
@@ -1290,150 +1297,3 @@ cparscheck<-function(cpars){
   
 }
 
-
-# cparnamecheck<-function(cpars){
-# 
-#   Sampnames <- c("D","Esd","Find","procsd","AC","M","Msd",
-#                  "Mgrad","hs","Linf","Linfsd","Linfgrad",
-#                  "K","Ksd","Kgrad","t0","L50","L50_95","Spat_targ",
-#                  "Frac_area_1","Prob_staying",
-#                  "Csd","Cbias","CAA_nsamp","CAA_ESS","CAL_nsamp",
-#                  "CAL_ESS","betas","Isd","Derr","Dbias",
-#                  "Mbias","FMSY_Mbias","lenMbias","LFCbias",
-#                  "LFSbias","Aerr","Abias","Kbias","t0bias",
-#                  "Linfbias","Irefbias","Crefbias","Brefbias",
-#                  "Recsd","qinc","qcv","L5","LFS","Vmaxlen","L5s",
-#                  "LFSs","Vmaxlens","Perr","R0","Mat_age",
-#                  "Mrand","Linfrand","Krand","maxage","V","Depletion", # end of OM variables
-#                  "ageM", "age95", "V", "EffYears", "EffLower", "EffUpper","Mat_age", # start of runMSE derived variables
-#                  "Wt_age")
-# 
-# }
-
-
-#' @describeIn runMSE This function has now been removed. Use `runMSE`.
-#' @export
-runMSErobust <- function(...) {
-  stop("runMSErobust is no longer working. Use `runMSE` instead.")
-}
-
-
-# #' file.  To increase speed and efficiency, particulary for runs with a large
-# #' number simulations (\code{nsim}), the simulations are split into a number of
-# #' packets.  The functions loops over the packets and combines the output into
-# #' a single MSE object. If the MSE model crashes during a run, the MSE is run
-# #' again until it is successfully completed. The MSE is stopped if the number
-# #' of consecutive crashes exceeds \code{maxCrash}.  There is an option to save
-# #' the packets as Rdata files to the current working directory (default is
-# #' FALSE). By default, the functions saves the completed MSE object as a Rdata
-# #' file (to the current working directory).
-# #' 
-# #' 
-#   
-#   if (!snowfall::sfIsRunning()) {
-#     message("Setting up parallel processing")
-#     setup()
-#   }
-#   
-#   if (class(OM) != "OM") stop("You must specify an operating model")
-#   cpars <- NULL
-#   ncparsim <- nsim
-#   if(length(OM@cpars)>0){
-#     # ncparsim<-cparscheck(OM@cpars)   # check each list object has the same length and if not stop and error report
-#     cpars <- OM@cpars
-#   }
-#   
-#   # Backwards compatible with DLMtool v < 4
-#   if("nsim"%in%slotNames(OM))nsim<-OM@nsim
-#   if("proyears"%in%slotNames(OM))proyears<-OM@proyears
-#   
-#   OM@proyears<-proyears
-#   
-#   packets <- new("list")  # a list of completed MSE objects
-#   simsplit <- split(1:nsim, ceiling(seq_along(1:nsim)/maxsims))  # split the runs
-#   message(nsim, " simulations \n")
-#   message("Splitting into ", length(simsplit), " packets")
-#   flush.console()  
-#   
-#   # set name for saved MSE object 
-#   if (is.null(name)) {
-#     st <- as.numeric(regexpr(":", OM@Name)) + 1
-#     nd <- st + 4  # as.numeric(regexpr(' ', OM@Name))-1
-#     name <- substr(OM@Name, st, nd)
-#     name <- gsub("\\s+", "", name)
-#   }
-#   if (nchar(name) < 1)  name <- "MSE"
-#   if (unique) name <- paste0(name, "_", format(Sys.time(), "%H%M_%m%d%y"))
-#   
-#   stElap <- rep(NA, length(simsplit)) # store elapsed time 
-#   
-#   index <- 1:nsim
-#   
-#   
-#   for (i in 1:length(simsplit)) {
-#     message("Packet ", i, " of ", length(simsplit), " started")
-#     error <- 1
-#     crash <- 0
-#     st <- Sys.time()
-#     while (error == 1 & crash <= maxCrash) {
-#       assign("last.warning", NULL, envir = baseenv())
-#       tryOM <- OM
-#       tryOM@seed <- OM@seed + i + crash  # change seed 
-#       tryOM@nsim <- length(simsplit[[i]]) # sub number of sims 
-#       if (length(cpars) > 0) tryOM@cpars  <- SampleCpars(cpars, nsim=tryOM@nsim, msg=FALSE)
-#       
-#       trialMSE <- try(runMSE(OM = tryOM, MPs = MPs, timelimit = timelimit, CheckMPs = CheckMPs, 
-#                              Hist=Hist, ntrials=ntrials, fracD=fracD, CalcBlow = CalcBlow, HZN = HZN, 
-#                              Bfrac = Bfrac, AnnualMSY=AnnualMSY, parallel=TRUE))	
-#       
-#       if (!Hist & class(trialMSE) != "MSE") {
-#         crash <- crash + 1
-#         print(warnings())
-#         message("Packet ", i, " crashed. Trying again\n")
-#       }
-#       if (Hist & class(trialMSE) != "list") {
-#         crash <- crash + 1
-#         print(warnings())
-#         message("Packet ", i, " crashed. Trying again\n")
-#       }     
-#       if (crash >= maxCrash) stop("\nNumber of crashes exceeded 'maxCrash'\n", call.=FALSE)
-#       
-#       if (class(trialMSE) == "MSE" | class(trialMSE) == "list") {
-#         packets[[i]] <- trialMSE
-#         fname <- paste0(name, "_P", i, ".rdata")
-#         if (savePack) {
-#           saveRDS(trialMSE, file = fname)
-#           message("Saving" , fname, " to ", getwd())
-#           flush.console()
-#         }	
-#         error <- 0
-#         crash <- 0
-#       }
-#     }
-#     elapse <- Sys.time() - st 
-#     stElap[i] <- elapse
-#     message("Packet ", i, " of ", length(simsplit), " complete\n")
-#     flush.console()
-#     eta <- round(mean(stElap, na.rm=TRUE) * length(simsplit) - sum(stElap, na.rm=TRUE), 2)
-#     units <- attributes(elapse)$units
-#     if (eta > 120 && units == "secs") {
-#       eta <- round(eta/60,2)
-#       units <- "mins"
-#     }
-#     if (i != length(simsplit)) message("\nEstimated time to completion is: ", eta, " ", units)
-#     flush.console()
-#     
-#   }
-#   if (i == 1) MSEobj <- packets[[1]]
-#   
-#   if (i > 1 & ! Hist) MSEobj <- joinMSE(MSEobjs = packets)
-#   if (i > 1 & Hist) MSEobj <- unlist(packets,F)
-#   if (saveMSE) {
-#     fname <- paste0(name, ".rdata")
-#     saveRDS(MSEobj, file = fname)
-#     message("Saving ", fname, " to ", getwd())
-#     flush.console()
-#   }
-#   MSEobj
-# }
-# 
