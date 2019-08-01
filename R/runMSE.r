@@ -574,7 +574,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   }
   
   plusgroup <- 0
-  if(control$plusgroup) {
+  if(!is.null(control$plusgroup)) {
     plusgroup <- 1
     N[,OM@maxage,1,] <- N[,OM@maxage,1,]/replicate(nareas, (1-exp(-M_ageArray[,OM@maxage,1])))
   }
