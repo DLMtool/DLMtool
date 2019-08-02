@@ -358,6 +358,33 @@ runMSEnomsg <- function(...) {
 
 run_parallel <- function(i, itsim, OM, MPs, CheckMPs, timelimit, Hist, ntrials, fracD, CalcBlow, 
                          HZN, Bfrac, AnnualMSY, silent, PPD, control, parallel=FALSE) {
+  
+  if (length(OM@cpars)>0) {
+    ncparsim<-cparscheck(OM@cpars)  
+    if (ncparsim == OM@nsim) { # cpars for each simulation 
+      cpars <- OM@cpars
+  
+      if (i > 1) {
+        ind <- (sum(itsim[1:(i-1)]) + 1): sum(itsim[1:i])  
+      } else {
+        ind <- 1:itsim[i]
+      }
+      for (x in 1:length(cpars)) {
+        dd <- dim(cpars[[x]])
+        if (length(dd) == 2) {
+          cpars[[x]] <- cpars[[x]][ind,]
+        }
+        if (length(dd) == 3) {
+          cpars[[x]] <- cpars[[x]][ind,,]
+        }
+        if (is.null(dd)) {
+          cpars[[x]] <- cpars[[x]][ind]
+        }
+      }
+      OM@cpars <- cpars
+    }
+  }
+  
   OM@nsim <- itsim[i]
   
   OM@seed <- OM@seed + i 
