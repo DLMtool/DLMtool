@@ -6,7 +6,7 @@
 \usage{
 popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge,
   Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc,
-  bRc, Qc, Fapic, maxF, MPA, control, SSB0c)
+  bRc, Qc, Fapic, maxF, MPA, control, SSB0c, plusgroup = 0L)
 }
 \arguments{
 \item{nareas}{The number of spatial areas}
@@ -59,6 +59,8 @@ popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge,
 
 \item{control}{Integer. 1 to use q and effort to calculate F, 2 to use Fapic (apical F) and
 vulnerablity to calculate F.}
+
+\item{plusgroup}{Integer. Include a plus-group (1) or not (0)?}
 
 \item{SSBcurr}{A numeric vector of length nareas with the current spawning biomass in each area}
 }

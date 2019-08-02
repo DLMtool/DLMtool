@@ -764,83 +764,83 @@ joinMSE <- function(MSEobjs = NULL) {
 # how consistently an MP outperforms another.
 
 
-#' How dominant is an MP?
-#' 
-#' The DOM function examines how consistently an MP outperforms another. For
-#' example DCAC might provide higher yield than AvC on average but outperforms
-#' AvC in less than half of simulations.
-#' 
-#' 
-#' @param MSEobj An object of class 'MSE'
-#' @param MPtg A character vector of management procedures for cross
-#' examination
-#' @return A matrix of performance comparisons length(MPtg) rows by MSE@nMPs
-#' columns
-#' @author A. Hordyk
-#' @export DOM
-DOM <- function(MSEobj, MPtg = NA) {
-  if (any(is.na(MPtg))) 
-    MPtg <- MSEobj@MPs
-  proyears <- MSEobj@proyears
-  nMP <- MSEobj@nMPs
-  nsim <- MSEobj@nsim
-  ind <- which(MSEobj@MPs %in% MPtg)
-  MPr <- which(!(MSEobj@MPs %in% MPtg))
-  yind <- max(MSEobj@proyears - 4, 1):MSEobj@proyears
-  y1 <- 1:(MSEobj@proyears - 1)
-  y2 <- 2:MSEobj@proyears
-  Mat <- matrix(0, nrow = length(MPtg), ncol = nMP)
-  rownames(Mat) <- MPtg
-  colnames(Mat) <- MSEobj@MPs
-  POF <- P100 <- YieldMat <- IAVmat <- Mat
-  for (X in 1:length(MPtg)) {
-    # Overfishing (F > FMSY)
-    ind1 <- as.matrix(expand.grid(1:nsim, ind[X], 1:proyears))
-    ind2 <- as.matrix(expand.grid(1:nsim, 1:nMP, 1:proyears))
-    t1 <- apply(array(MSEobj@F_FMSY[ind1] > 1, dim = c(nsim, 1, proyears)), 
-                c(1, 2), sum, na.rm = TRUE)
-    t2 <- apply(array(MSEobj@F_FMSY[ind2] > 1, dim = c(nsim, nMP, proyears)), 
-                c(1, 2), sum, na.rm = TRUE)
-    POF[X, ] <- round(apply(matrix(rep(t1, nMP), nrow = nsim) < t2, 
-                            2, sum)/nsim * 100, 0)
-    # B < BMSY
-    t1 <- apply(array(MSEobj@B_BMSY[ind1] < 1, dim = c(nsim, 1, proyears)), 
-                c(1, 2), sum, na.rm = TRUE)
-    t2 <- apply(array(MSEobj@B_BMSY[ind2] < 1, dim = c(nsim, nMP, proyears)), 
-                c(1, 2), sum, na.rm = TRUE)
-    P100[X, ] <- round(apply(matrix(rep(t1, nMP), nrow = nsim) < t2, 
-                             2, sum, na.rm = TRUE)/nsim * 100, 0)
-    # Relative yield in last 5 years
-    ind1 <- as.matrix(expand.grid(1:nsim, ind[X], yind))
-    ind2 <- as.matrix(expand.grid(1:nsim, 1:nMP, yind))
-    t1 <- apply(array(MSEobj@C[ind1], dim = c(nsim, 1, length(yind))), 
-                c(1, 2), sum, na.rm = TRUE)
-    t2 <- apply(array(MSEobj@C[ind2], dim = c(nsim, nMP, length(yind))), 
-                c(1, 2), sum, na.rm = TRUE)
-    YieldMat[X, ] <- round(apply(matrix(rep(t1, nMP), nrow = nsim) > 
-                                   t2, 2, sum, na.rm = TRUE)/nsim * 100, 0)
-    # interannual variation in catch
-    ind1 <- as.matrix(expand.grid(1:nsim, ind[X], y1))
-    ind2 <- as.matrix(expand.grid(1:nsim, ind[X], y2))
-    AAVY1 <- apply(array(((MSEobj@C[ind1] - MSEobj@C[ind2])^2)^0.5, 
-                         dim = c(nsim, 1, length(y1))), 1, mean, na.rm = T)/apply(array(MSEobj@C[ind2], 
-                                                                                        dim = c(nsim, 1, length(y1))), 1, mean, na.rm = T)
-    ind1 <- as.matrix(expand.grid(1:nsim, 1:nMP, y1))
-    ind2 <- as.matrix(expand.grid(1:nsim, 1:nMP, y2))
-    AAVY2 <- apply(array(((MSEobj@C[ind1] - MSEobj@C[ind2])^2)^0.5, 
-                         dim = c(nsim, nMP, length(y1))), c(1, 2), mean, na.rm = T)/apply(array(MSEobj@C[ind2], 
-                                                                                                dim = c(nsim, nMP, length(y1))), c(1, 2), mean, na.rm = T)
-    IAVmat[X, ] <- round(apply(matrix(rep(AAVY1, nMP), nrow = nsim) < 
-                                 AAVY2, 2, sum, na.rm = TRUE)/nsim * 100, 0)
-  }
-  out <- list()
-  out$POF <- POF
-  out$P100 <- P100
-  out$Yd <- YieldMat
-  out$AAVY <- IAVmat
-  return(out)
-}
-
+# #' How dominant is an MP?
+# #' 
+# #' The DOM function examines how consistently an MP outperforms another. For
+# #' example DCAC might provide higher yield than AvC on average but outperforms
+# #' AvC in less than half of simulations.
+# #' 
+# #' 
+# #' @param MSEobj An object of class 'MSE'
+# #' @param MPtg A character vector of management procedures for cross
+# #' examination
+# #' @return A matrix of performance comparisons length(MPtg) rows by MSE@nMPs
+# #' columns
+# #' @author A. Hordyk
+# #' @export DOM
+# DOM <- function(MSEobj, MPtg = NA) {
+#   if (any(is.na(MPtg))) 
+#     MPtg <- MSEobj@MPs
+#   proyears <- MSEobj@proyears
+#   nMP <- MSEobj@nMPs
+#   nsim <- MSEobj@nsim
+#   ind <- which(MSEobj@MPs %in% MPtg)
+#   MPr <- which(!(MSEobj@MPs %in% MPtg))
+#   yind <- max(MSEobj@proyears - 4, 1):MSEobj@proyears
+#   y1 <- 1:(MSEobj@proyears - 1)
+#   y2 <- 2:MSEobj@proyears
+#   Mat <- matrix(0, nrow = length(MPtg), ncol = nMP)
+#   rownames(Mat) <- MPtg
+#   colnames(Mat) <- MSEobj@MPs
+#   POF <- P100 <- YieldMat <- IAVmat <- Mat
+#   for (X in 1:length(MPtg)) {
+#     # Overfishing (F > FMSY)
+#     ind1 <- as.matrix(expand.grid(1:nsim, ind[X], 1:proyears))
+#     ind2 <- as.matrix(expand.grid(1:nsim, 1:nMP, 1:proyears))
+#     t1 <- apply(array(MSEobj@F_FMSY[ind1] > 1, dim = c(nsim, 1, proyears)), 
+#                 c(1, 2), sum, na.rm = TRUE)
+#     t2 <- apply(array(MSEobj@F_FMSY[ind2] > 1, dim = c(nsim, nMP, proyears)), 
+#                 c(1, 2), sum, na.rm = TRUE)
+#     POF[X, ] <- round(apply(matrix(rep(t1, nMP), nrow = nsim) < t2, 
+#                             2, sum)/nsim * 100, 0)
+#     # B < BMSY
+#     t1 <- apply(array(MSEobj@B_BMSY[ind1] < 1, dim = c(nsim, 1, proyears)), 
+#                 c(1, 2), sum, na.rm = TRUE)
+#     t2 <- apply(array(MSEobj@B_BMSY[ind2] < 1, dim = c(nsim, nMP, proyears)), 
+#                 c(1, 2), sum, na.rm = TRUE)
+#     P100[X, ] <- round(apply(matrix(rep(t1, nMP), nrow = nsim) < t2, 
+#                              2, sum, na.rm = TRUE)/nsim * 100, 0)
+#     # Relative yield in last 5 years
+#     ind1 <- as.matrix(expand.grid(1:nsim, ind[X], yind))
+#     ind2 <- as.matrix(expand.grid(1:nsim, 1:nMP, yind))
+#     t1 <- apply(array(MSEobj@C[ind1], dim = c(nsim, 1, length(yind))), 
+#                 c(1, 2), sum, na.rm = TRUE)
+#     t2 <- apply(array(MSEobj@C[ind2], dim = c(nsim, nMP, length(yind))), 
+#                 c(1, 2), sum, na.rm = TRUE)
+#     YieldMat[X, ] <- round(apply(matrix(rep(t1, nMP), nrow = nsim) > 
+#                                    t2, 2, sum, na.rm = TRUE)/nsim * 100, 0)
+#     # interannual variation in catch
+#     ind1 <- as.matrix(expand.grid(1:nsim, ind[X], y1))
+#     ind2 <- as.matrix(expand.grid(1:nsim, ind[X], y2))
+#     AAVY1 <- apply(array(((MSEobj@C[ind1] - MSEobj@C[ind2])^2)^0.5, 
+#                          dim = c(nsim, 1, length(y1))), 1, mean, na.rm = T)/apply(array(MSEobj@C[ind2], 
+#                                                                                         dim = c(nsim, 1, length(y1))), 1, mean, na.rm = T)
+#     ind1 <- as.matrix(expand.grid(1:nsim, 1:nMP, y1))
+#     ind2 <- as.matrix(expand.grid(1:nsim, 1:nMP, y2))
+#     AAVY2 <- apply(array(((MSEobj@C[ind1] - MSEobj@C[ind2])^2)^0.5, 
+#                          dim = c(nsim, nMP, length(y1))), c(1, 2), mean, na.rm = T)/apply(array(MSEobj@C[ind2], 
+#                                                                                                 dim = c(nsim, nMP, length(y1))), c(1, 2), mean, na.rm = T)
+#     IAVmat[X, ] <- round(apply(matrix(rep(AAVY1, nMP), nrow = nsim) < 
+#                                  AAVY2, 2, sum, na.rm = TRUE)/nsim * 100, 0)
+#   }
+#   out <- list()
+#   out$POF <- POF
+#   out$P100 <- P100
+#   out$Yd <- YieldMat
+#   out$AAVY <- IAVmat
+#   return(out)
+# }
+# 
 
 #' Determine dominate MPs
 #' 

@@ -157,8 +157,8 @@ movfit_Rcpp <- function(par, prb, frac) {
 #' 
 #' @export
 #' @keywords internal
-popdynOneTScpp <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel) {
-    .Call('_DLMtool_popdynOneTScpp', PACKAGE = 'DLMtool', nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel)
+popdynOneTScpp <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel, plusgroup = 0L) {
+    .Call('_DLMtool_popdynOneTScpp', PACKAGE = 'DLMtool', nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0a, SSBpR, aR, bR, mov, SRrel, plusgroup)
 }
 
 #' Population dynamics model in CPP
@@ -193,11 +193,12 @@ popdynOneTScpp <- function(nareas, maxage, SSBcurr, Ncurr, Zcurr, PerrYr, hs, R0
 #' @param MPA Spatial closure by year and area
 #' @param control Integer. 1 to use q and effort to calculate F, 2 to use Fapic (apical F) and 
 #' vulnerablity to calculate F.
+#' @param plusgroup Integer. Include a plus-group (1) or not (0)?
 #' 
 #' @author A. Hordyk
 #' @export
 #' @keywords internal
-popdynCPP <- function(nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc, Fapic, maxF, MPA, control, SSB0c) {
-    .Call('_DLMtool_popdynCPP', PACKAGE = 'DLMtool', nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc, Fapic, maxF, MPA, control, SSB0c)
+popdynCPP <- function(nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc, Fapic, maxF, MPA, control, SSB0c, plusgroup = 0L) {
+    .Call('_DLMtool_popdynCPP', PACKAGE = 'DLMtool', nareas, maxage, Ncurr, pyears, M_age, Asize_c, MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc, bRc, Qc, Fapic, maxF, MPA, control, SSB0c, plusgroup)
 }
 

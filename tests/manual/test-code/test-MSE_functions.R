@@ -40,7 +40,7 @@ testthat::test_that("joinMSE returns same object", {
 })
 
 
-testthat::test_that("DOM", {
-  testthat::expect_error(DOM(Obj), NA)
-})
+# testthat::test_that("DOM", {
+#   testthat::expect_error(DOM(Obj), NA)
+# })
 

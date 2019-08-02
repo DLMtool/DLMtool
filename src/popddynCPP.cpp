@@ -29,7 +29,7 @@ arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcu
                          NumericMatrix Ncurr,  Rcpp::NumericMatrix Zcurr, double PerrYr,
                          double hs,  Rcpp::NumericVector R0a,  Rcpp::NumericVector SSBpR,
                          Rcpp::NumericVector aR,  Rcpp::NumericVector bR,  arma::cube mov,
-                         double SRrel) {
+                         double SRrel, int plusgroup=0) {
   
   arma::mat Nnext(maxage, nareas);
   // arma::mat tempMat2(nareas, nareas);	
@@ -46,9 +46,15 @@ arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcu
       
       Nnext(0, A) = PerrYr * aR(A) * SSBcurr(A) * exp(-bR(A) * SSBcurr(A));
     }
+
+    // Nnext(0, A) = Nnext(0, A) *exp(-Mage0);
+    
     // Mortality
     for (int age=1; age<maxage; age++) {
       Nnext(age, A) = Ncurr(age-1, A) * exp(-Zcurr(age-1, A)); // Total mortality
+    }
+    if (plusgroup > 0) {
+      Nnext(maxage-1, A) = Nnext(maxage-1, A)/ (1-exp(-Zcurr(maxage-1, A))); // Total mortality
     }
   }
 
@@ -105,6 +111,7 @@ arma::mat popdynOneTScpp(double nareas, double maxage, Rcpp::NumericVector SSBcu
 //' @param MPA Spatial closure by year and area
 //' @param control Integer. 1 to use q and effort to calculate F, 2 to use Fapic (apical F) and 
 //' vulnerablity to calculate F.
+//' @param plusgroup Integer. Include a plus-group (1) or not (0)?
 //' 
 //' @author A. Hordyk
 //' @export
@@ -116,7 +123,7 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
                List movc, double SRrelc, arma::vec Effind,
                double Spat_targc, double hc, NumericVector R0c, NumericVector SSBpRc,
                NumericVector aRc, NumericVector bRc, double Qc, double Fapic, double maxF, 
-               arma::mat MPA, int control, double SSB0c) {
+               arma::mat MPA, int control, double SSB0c, int plusgroup=0) {
   
   arma::cube Narray(maxage, pyears, nareas, arma::fill::zeros);
   arma::cube Barray(maxage, pyears, nareas, arma::fill::zeros);
@@ -195,9 +202,12 @@ List popdynCPP(double nareas, double maxage, arma::mat Ncurr, double pyears,
           
     arma::mat Ncurr2 = Narray.subcube(0, yr, 0, maxage-1, yr, nareas-1);
     arma::mat Zcurr = Zarray.subcube(0, yr, 0, maxage-1, yr, nareas-1);
+    // double age0M = M_age(0,yr+1);
     
     arma::mat NextYrN = popdynOneTScpp(nareas, maxage, wrap(SB), wrap(Ncurr2), wrap(Zcurr), 
-                                       Prec(yr+maxage), hc, R0c2, SSBpRc, aRc2, bRc2, movcy, SRrelc); 
+                                       Prec(yr+maxage), hc, R0c2, SSBpRc, 
+                                       aRc2, bRc2, movcy, SRrelc,
+                                       plusgroup); 
   
     Narray.subcube(0, yr+1, 0, maxage-1, yr+1, nareas-1) = NextYrN;
     for (int A=0; A<nareas; A++) {
