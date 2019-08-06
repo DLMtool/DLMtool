@@ -6,7 +6,8 @@
 \usage{
 getBlow(x, N, Asize, SSBMSY, SSBpR, MPA, SSB0, nareas, retA, MGThorizon,
   Find, Perr, M_ageArray, hs, Mat_age, Wt_age, R0a, V, nyears, maxage, mov,
-  Spat_targ, SRrel, aR, bR, Bfrac = 0.5, maxF, ploty = F)
+  Spat_targ, SRrel, aR, bR, Bfrac = 0.5, maxF, ploty = F,
+  plusgroup = 0)
 }
 \arguments{
 \item{x}{position in a vector}
@@ -64,6 +65,8 @@ getBlow(x, N, Asize, SSBMSY, SSBpR, MPA, SSB0, nareas, retA, MGThorizon,
 \item{maxF}{maximum apical fishing mortality}
 
 \item{ploty}{logical: should a plot be produced}
+
+\item{plusgroup}{Integer. Default = 0 = no plus-group. Use 1 to include a plus-group}
 }
 \description{
 Find the current biomass at which it would take HZN mean generation times

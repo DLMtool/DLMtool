@@ -6,7 +6,7 @@
 \usage{
 getFref3(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
   V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, MPA,
-  maxF, useCPP = TRUE, SSB0)
+  maxF, SSB0, plusgroup = 0)
 }
 \arguments{
 \item{x}{Integer, the simulation number}
@@ -56,9 +56,11 @@ Only values from the first year are used, which is the current N-at-age.}
 
 \item{maxF}{A numeric value specifying the maximum fishing mortality for any single age class}
 
-\item{useCPP}{logical - use the CPP code? For testing purposes only}
-
 \item{SSB0}{SSB0}
+
+\item{plusgroup}{Integer. Default = 0 = no plus-group. Use 1 to include a plus-group}
+
+\item{useCPP}{logical - use the CPP code? For testing purposes only}
 }
 \description{
 Calculate Reference Yield

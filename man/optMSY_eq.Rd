@@ -5,7 +5,7 @@
 \title{Internal wrapper function to calculate MSY reference points}
 \usage{
 optMSY_eq(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs,
-  yr.ind = 1)
+  yr.ind = 1, plusgroup = 0)
 }
 \arguments{
 \item{x}{Simulation number}
@@ -27,6 +27,8 @@ optMSY_eq(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs,
 \item{hs}{Vector of steepness}
 
 \item{yr.ind}{Year index used in calculations}
+
+\item{plusgroup}{Integer. Default = 0 = no plus-group. Use 1 to include a plus-group}
 }
 \value{
 Results from \code{MSYCalcs}
