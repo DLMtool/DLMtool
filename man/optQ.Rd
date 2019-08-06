@@ -6,7 +6,7 @@
 \usage{
 optQ(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_c,
   MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc,
-  R0c, SSBpRc, aRc, bRc, maxF, MPA, useCPP)
+  R0c, SSBpRc, aRc, bRc, maxF, MPA, plusgroup, useCPP)
 }
 \arguments{
 \item{logQ}{log q}

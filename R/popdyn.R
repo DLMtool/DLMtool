@@ -1195,14 +1195,15 @@ split.along.dim <- function(a, n) {
 #' @keywords internal
 getq3 <- function(x, D, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, Asize, Wt_age,
                   V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, 
-                  bounds = c(1e-05, 15), maxF, MPA, useCPP=TRUE) {
+                  bounds = c(1e-05, 15), maxF, MPA, plusgroup, useCPP=TRUE) {
   
   opt <- optimize(optQ, log(bounds), depc=D[x], SSB0c=SSB0[x], nareas, maxage, Ncurr=N[x,,1,], 
                   pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,,], Asize_c=Asize[x,], WtAge=Wt_age[x,,],
                   Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], movc=split.along.dim(mov[x,,,,],4), 
                   SRrelc=SRrel[x], 
                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-                  SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], maxF=maxF, MPA=MPA, useCPP=useCPP)
+                  SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], maxF=maxF, MPA=MPA, 
+                  plusgroup=plusgroup, useCPP=useCPP)
   return(exp(opt$minimum))
 }
 
@@ -1239,7 +1240,7 @@ getq3 <- function(x, D, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, As
 
 optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_c,
                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
-                 R0c, SSBpRc, aRc, bRc, maxF, MPA, useCPP) {
+                 R0c, SSBpRc, aRc, bRc, maxF, MPA, plusgroup, useCPP) {
   if (!useCPP) {
     # simpop <- popdyn(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
     #                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
@@ -1250,7 +1251,8 @@ optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_
     simpop <- popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
                         MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
                         R0c=R0c, SSBpRc=SSBpRc, aRc=aRc, bRc=bRc, Qc=exp(logQ), Fapic=0, 
-                        maxF=maxF, MPA=MPA, control=1,  SSB0c=SSB0c) 
+                        maxF=maxF, MPA=MPA, control=1,  SSB0c=SSB0c, 
+                        plusgroup=plusgroup) 
   
     ssb <- sum(simpop[[4]][,pyears,])
   }

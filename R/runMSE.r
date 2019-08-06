@@ -419,11 +419,20 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   Biomass_a <- array(NA, dim = c(nsim, maxage, nyears+proyears, nareas))
   SSB_a <- array(NA, dim = c(nsim, maxage, nyears+proyears, nareas))
   
+  plusgroup <- 0
+  if (!is.null(control$plusgroup)) plusgroup <- 1
+  
   SSN_a[SAYR_a] <- Nfrac[SAY_a] * R0[S_a] * initdist[SAR_a]  # Calculate initial spawning stock numbers for all years
   N_a[SAYR_a] <- R0[S_a] * surv[SAY_a] * initdist[SAR_a] # Calculate initial stock numbers for all years
+  if(plusgroup==1) {
+    N_a[,OM@maxage,,] <- N_a[,OM@maxage,,]/replicate(nareas, (1-exp(-M_ageArray[,OM@maxage,])))
+    SSN_a[,OM@maxage,,] <- SSN_a[,OM@maxage,,]/replicate(nareas, (1-exp(-M_ageArray[,OM@maxage,])))
+  }
+  
   Biomass_a[SAYR_a] <- N_a[SAYR_a] * Wt_age[SAY_a]  # Calculate initial stock biomass
   SSB_a[SAYR_a] <- SSN_a[SAYR_a] * Wt_age[SAY_a]    # Calculate spawning stock biomass
 
+  
   SSN0_a <- apply(SSN_a, c(1,3), sum) # unfished spawning numbers for each year
   N0_a <- apply(N_a, c(1,3), sum) # unfished numbers for each year)
   SSB0_a <- apply(SSB_a, c(1,3), sum) # unfished spawning biomass for each year
@@ -471,6 +480,12 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # --- Non-equilibrium calcs ----
   SSN[SAYR] <- Nfrac[SAY] * R0[S] * initdist[SAR]*Perr_y[Sa]  # Calculate initial spawning stock numbers
   N[SAYR] <- R0[S] * surv[SAY] * initdist[SAR]*Perr_y[Sa]  # Calculate initial stock numbers
+  
+  if(plusgroup==1) {
+    N[,OM@maxage,1,] <- N[,OM@maxage,1,]/replicate(nareas, (1-exp(-M_ageArray[,OM@maxage,1])))
+    SSN[,OM@maxage,1,] <- SSN[,OM@maxage,1,]/replicate(nareas, (1-exp(-M_ageArray[,OM@maxage,1])))
+  }
+  
   Biomass[SAYR] <- N[SAYR] * Wt_age[SAY]  # Calculate initial stock biomass
   SSB[SAYR] <- SSN[SAYR] * Wt_age[SAY]    # Calculate spawning stock biomass
   VBiomass[SAYR] <- Biomass[SAYR] * V[SAY]  # Calculate vunerable biomass
@@ -492,12 +507,20 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     }
   }
  
+ 
   # --- Optimize catchability (q) to fit depletion ---- 
   if(!silent) message("Optimizing for user-specified depletion in last historical year")
   bounds <- c(0.0001, 15) # q bounds for optimizer
-  qs <- sapply(1:nsim, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
-               M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr_y, mov, SRrel, Find, 
-               Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF) # find the q that gives current stock depletion
+  if (!is.null(control$qs)) {
+    qs <- rep(control$qs, nsim)
+  } else {
+
+    qs <- sapply(1:nsim, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
+                 M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr_y, mov, SRrel, Find, 
+                 Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF,
+                 plusgroup=plusgroup)
+  }
+ # find the q that gives current stock depletion
   
   # --- Check that q optimizer has converged ---- 
   LimBound <- c(1.1, 0.9)*range(bounds)  # bounds for q (catchability). Flag if bounded optimizer hits the bounds 
@@ -540,7 +563,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       # Optimize for q 
       qs[probQ] <- sapply(probQ, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
                           M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr_y, mov, SRrel, Find, 
-                          Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF)
+                          Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF,
+                          plusgroup=plusgroup)
       
       probQ <- which(qs > max(LimBound) | qs < min(LimBound))
       count <- count + 1 
@@ -573,12 +597,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     qs <- rep(0, nsim) # no fishing
   }
   
-  plusgroup <- 0
-  if(!is.null(control$plusgroup)) {
-    plusgroup <- 1
-    N[,OM@maxage,1,] <- N[,OM@maxage,1,]/replicate(nareas, (1-exp(-M_ageArray[,OM@maxage,1])))
-  }
-  
+
   histYrs <- sapply(1:nsim, function(x) 
     popdynCPP(nareas, maxage, Ncurr=N[x,,1,], nyears,  
               M_age=M_ageArray[x,,], Asize_c=Asize[x,], MatAge=Mat_age[x,,], WtAge=Wt_age[x,,],
