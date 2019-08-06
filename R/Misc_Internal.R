@@ -377,6 +377,13 @@ run_parallel <- function(i, itsim, OM, MPs, CheckMPs, timelimit, Hist, ntrials, 
         if (length(dd) == 3) {
           cpars[[x]] <- cpars[[x]][ind,,]
         }
+        if (length(dd) == 4) {
+          cpars[[x]] <- cpars[[x]][ind,,,]
+        }
+        if (length(dd) == 5) {
+          cpars[[x]] <- cpars[[x]][ind,,,,]
+        }
+        
         if (is.null(dd)) {
           cpars[[x]] <- cpars[[x]][ind]
         }
