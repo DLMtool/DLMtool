@@ -6,7 +6,7 @@
 \usage{
 optQ(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_c,
   MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc,
-  R0c, SSBpRc, aRc, bRc, maxF, MPA, plusgroup)
+  R0c, SSBpRc, aRc, bRc, maxF, MPA, plusgroup, useCPP)
 }
 \arguments{
 \item{logQ}{log q}
@@ -59,7 +59,7 @@ optQ(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_c,
 
 \item{MPA}{A matrix of spatial closures by year}
 
-\item{plusgroup}{Integer. Default = 0 = no plus-group. Use 1 to include a plus-group}
+\item{useCPP}{Logical. Use the CPP code?}
 }
 \description{
 Optimize q for a single simulation

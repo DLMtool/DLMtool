@@ -1009,13 +1009,12 @@ CalcMPDynamics <- function(MPRecs, y, nyears, proyears, nsim, Biomass_P,
 #' @param SRrel SRR type
 #' @param hs Vector of steepness
 #' @param yr.ind Year index used in calculations 
-#' @param plusgroup Integer. Default = 0 = no plus-group. Use 1 to include a plus-group 
+#'
 #' @return Results from `MSYCalcs`
 #' @export
 #'
 #' @keywords internal
-optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, 
-                      yr.ind=1, plusgroup=0) {
+optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, yr.ind=1) {
   if (length(yr.ind)==1) {
     M_at_Age <- M_ageArray[x,,yr.ind]
     Wt_at_Age <- Wt_age[x,, yr.ind]
@@ -1031,14 +1030,12 @@ optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs,
   boundsU <- c(1E-3, 1)
   
   doopt <- optimise(MSYCalcs, log(boundsU), M_at_Age, Wt_at_Age, Mat_at_Age, 
-                    V_at_Age, maxage, R0x=R0[x], SRrelx=SRrel[x], hx=hs[x], opt=1,
-                    plusgroup=plusgroup)
+                    V_at_Age, maxage, R0x=R0[x], SRrelx=SRrel[x], hx=hs[x], opt=1)
   
   UMSY <- exp(doopt$minimum)
   
   MSYs <- MSYCalcs(doopt$minimum, M_at_Age, Wt_at_Age, Mat_at_Age, 
-                   V_at_Age, maxage, R0x=R0[x], SRrelx=SRrel[x], hx=hs[x], opt=2,
-                   plusgroup=plusgroup)
+                   V_at_Age, maxage, R0x=R0[x], SRrelx=SRrel[x], hx=hs[x], opt=2)
   
   return(MSYs)
 }
@@ -1056,25 +1053,19 @@ optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs,
 #' @param SRrelx SRR type for this simulation
 #' @param hx numeric. Steepness value for this simulation
 #' @param opt Option. 1 = return -Yield, 2= return all MSY calcs
-#' @param plusgroup Integer. Default = 0 = no plus-group. Use 1 to include a plus-group 
+#'
 #' @return See `opt`
 #' @export 
 #'
 #' @keywords internal 
 MSYCalcs <- function(logU, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age, 
-                     maxage, R0x, SRrelx, hx, opt=1, plusgroup=0) {
+                     maxage, R0x, SRrelx, hx, opt=1) {
   # Box 3.1 Walters & Martell 2004
   U <- exp(logU)
   lx <- rep(1, maxage)
   l0 <- c(1, exp(cumsum(-M_at_Age[1:(maxage-1)]))) # unfished survival
   for (a in 2:maxage) {
     lx[a] <- lx[a-1] * exp(-M_at_Age[a-1]) * (1-U*V_at_Age[a-1]) # fished survival
-  }
-  
-  if (plusgroup == 1) {
-    l0[length(l0)] <- l0[length(l0)]/(1-exp(-M_at_Age[length(l0)]))
-    Z_at_Age <- M_at_Age + U*V_at_Age
-    lx[length(lx)] <- lx[length(lx)]/(1-exp(-Z_at_Age[length(lx)]))
   }
   
   Egg0 <- sum(l0 * Wt_at_Age * Mat_at_Age) # unfished egg-per-recruit (assuming fecundity proportional to weight)
@@ -1199,12 +1190,12 @@ split.along.dim <- function(a, n) {
 #' @param bounds A numeric vector of length 2 with bounds for the optimizer
 #' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
 #' @param MPA A matrix of spatial closures by year
-#' @param plusgroup Integer. Default = 0 = no plus-group. Use 1 to include a plus-group 
+#' @param useCPP logical - use the CPP code? For testing purposes only
 #' @author A. Hordyk
 #' @keywords internal
 getq3 <- function(x, D, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, Asize, Wt_age,
                   V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, 
-                  bounds = c(1e-05, 15), maxF, MPA, plusgroup) {
+                  bounds = c(1e-05, 15), maxF, MPA, plusgroup, useCPP=TRUE) {
   
   opt <- optimize(optQ, log(bounds), depc=D[x], SSB0c=SSB0[x], nareas, maxage, Ncurr=N[x,,1,], 
                   pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,,], Asize_c=Asize[x,], WtAge=Wt_age[x,,],
@@ -1212,8 +1203,7 @@ getq3 <- function(x, D, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, As
                   SRrelc=SRrel[x], 
                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
                   SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], maxF=maxF, MPA=MPA, 
-                  plusgroup=plusgroup)
-  
+                  plusgroup=plusgroup, useCPP=useCPP)
   return(exp(opt$minimum))
 }
 
@@ -1244,22 +1234,31 @@ getq3 <- function(x, D, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, As
 #' @param bRc Ricker bR
 #' @param maxF maximum F
 #' @param MPA A matrix of spatial closures by year
-#' @param plusgroup Integer. Default = 0 = no plus-group. Use 1 to include a plus-group 
+#' @param useCPP Logical. Use the CPP code?
 #' @author A. Hordyk
 #' @keywords internal
 
 optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_c,
                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
-                 R0c, SSBpRc, aRc, bRc, maxF, MPA, plusgroup) {
-
-  simpop <- popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
-                      MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
-                      R0c=R0c, SSBpRc=SSBpRc, aRc=aRc, bRc=bRc, Qc=exp(logQ), Fapic=0, 
-                      maxF=maxF, MPA=MPA, control=1,  SSB0c=SSB0c, 
-                      plusgroup=plusgroup) 
+                 R0c, SSBpRc, aRc, bRc, maxF, MPA, plusgroup, useCPP) {
+  if (!useCPP) {
+    # simpop <- popdyn(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
+    #                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
+    #                  R0c=R0c, SSBpRc=SSBpRc, aRc=aRc, bRc=bRc, Qc=exp(logQ), maxF=maxF, MPA=MPA, control=1) 
+    # ssb <- sum(simpop$SBarray[,pyears,]) # doesn't currently work with age-based movement
+    
+  } else {
+    simpop <- popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
+                        MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
+                        R0c=R0c, SSBpRc=SSBpRc, aRc=aRc, bRc=bRc, Qc=exp(logQ), Fapic=0, 
+                        maxF=maxF, MPA=MPA, control=1,  SSB0c=SSB0c, 
+                        plusgroup=plusgroup) 
   
-  ssb <- sum(simpop[[4]][,pyears,])
+    ssb <- sum(simpop[[4]][,pyears,])
+  }
+  
   (log(depc) - log(ssb/SSB0c))^2
+  
 }
 
 
@@ -1643,24 +1642,30 @@ optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_
 #' @param Qc Catchability 
 #' @param MPA A matrix of spatial closures by year
 #' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
+#' @param useCPP logical - use the CPP code? For testing purposes only
 #' @param SSB0c SSB0
-#' @param plusgroup Integer. Default = 0 = no plus-group. Use 1 to include a plus-group  
 #' @keywords internal
 #'
 #' @author A. Hordyk
 #' 
 optMSY <- function(logFa, Asize_c, nareas, maxage, Ncurr, pyears, M_age,
                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc,
-                 R0c, SSBpRc, aRc, bRc, Qc, MPA, maxF, SSB0c,
-                 plusgroup=0) {
+                 R0c, SSBpRc, aRc, bRc, Qc, MPA, maxF, useCPP=TRUE, SSB0c) {
 
   FMSYc <- exp(logFa)
+  if(!useCPP) {
+    # simpop <- popdyn(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
+    #                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc,
+    #                  R0c, SSBpRc, aRc, bRc, Qc, Fapic=FMSYc, MPA=MPA, maxF=maxF, control=2)
+    # doesn't work with age-based movement
+    
+  } else {
+    simpop <- popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
+                     MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc,
+                     R0c, SSBpRc, aRc, bRc, Qc=0, Fapic=FMSYc, MPA=MPA, maxF=maxF, control=2,
+                     SSB0c=SSB0c)
+  }
 
-  simpop <- popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
-                      MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc,
-                      R0c, SSBpRc, aRc, bRc, Qc=0, Fapic=FMSYc, MPA=MPA, maxF=maxF, control=2,
-                      SSB0c=SSB0c, plusgroup = plusgroup)
-  
   # Yield
   # Cn <- simpop[[7]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # retained catch
   Cn <- simpop[[6]]/simpop[[8]] * simpop[[1]] * (1-exp(-simpop[[8]])) # removals
@@ -1703,21 +1708,20 @@ optMSY <- function(logFa, Asize_c, nareas, maxage, Ncurr, pyears, M_age,
 #' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
 #' @param useCPP logical - use the CPP code? For testing purposes only
 #' @param SSB0 SSB0
-#' @param plusgroup Integer. Default = 0 = no plus-group. Use 1 to include a plus-group  
 #' @author A. Hordyk
 #' @export
 #' @keywords internal
 getFref3 <- function(x, Asize, nareas, maxage, N, pyears, M_ageArray, Mat_age, Wt_age,
                      V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, 
-                     MPA, maxF, SSB0, plusgroup=0) {
+                     MPA, maxF, useCPP=TRUE, SSB0) {
   
   opt <- optimize(optMSY, log(c(0.001, 10)), Asize_c=Asize[x,], nareas, maxage, Ncurr=N[x,,1,], 
                   pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,,], 
                   WtAge=Wt_age[x,,], Vuln=V[x,,], Retc=retA[x,,], Prec=Perr[x,], 
                   movc=split.along.dim(mov[x,,,,],4), SRrelc=SRrel[x], 
                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
-                  SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], MPA=MPA, maxF=maxF,
-                  SSB0c=SSB0[x], plusgroup=plusgroup)
+                  SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], MPA=MPA, maxF=maxF, useCPP=useCPP,
+                  SSB0c=SSB0[x])
   
   -opt$objective
   

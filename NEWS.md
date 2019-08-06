@@ -13,7 +13,7 @@ The current version of the DLMtool package is available for download from [CRAN]
 - Added MP type as column in `PMObj` function
 - Add a constant current catch MP - `CurC`
 - new `Dom` function (and remove old `DOM` function)
-- add option to include a plus-group (e.g., OMs from `SS2OM`). To use a plus-group, use `OM@cpars$plusgroup = 1`
+
 
 
 ## DLMtool 5.3.1 

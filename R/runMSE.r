@@ -255,13 +255,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   if (proyears < 2) stop('OM@proyears must be > 1', call.=FALSE)
   if(!silent) message("Loading operating model")
   
-  # Detect if a plus-group is used
-  plusgroup <- 0 
-  if(!is.null(OM@cpars$plusgroup)) {
-    plusgroup <- 1
-    OM@cpars$plusgroup <- NULL 
-  }
-  
   # --- Sample OM parameters ----
   # Custom Parameters
   # custom parameters exist - sample and write to list
@@ -425,10 +418,13 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   N_a <- array(NA, dim = c(nsim, maxage, nyears+proyears, nareas))
   Biomass_a <- array(NA, dim = c(nsim, maxage, nyears+proyears, nareas))
   SSB_a <- array(NA, dim = c(nsim, maxage, nyears+proyears, nareas))
-
+  
+  plusgroup <- 0
+  if (!is.null(control$plusgroup)) plusgroup <- 1
+  
   SSN_a[SAYR_a] <- Nfrac[SAY_a] * R0[S_a] * initdist[SAR_a]  # Calculate initial spawning stock numbers for all years
   N_a[SAYR_a] <- R0[S_a] * surv[SAY_a] * initdist[SAR_a] # Calculate initial stock numbers for all years
-  if (plusgroup==1) {
+  if(plusgroup==1) {
     N_a[,OM@maxage,,] <- N_a[,OM@maxage,,]/replicate(nareas, (1-exp(-M_ageArray[,OM@maxage,])))
     SSN_a[,OM@maxage,,] <- SSN_a[,OM@maxage,,]/replicate(nareas, (1-exp(-M_ageArray[,OM@maxage,])))
   }
@@ -436,6 +432,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   Biomass_a[SAYR_a] <- N_a[SAYR_a] * Wt_age[SAY_a]  # Calculate initial stock biomass
   SSB_a[SAYR_a] <- SSN_a[SAYR_a] * Wt_age[SAY_a]    # Calculate spawning stock biomass
 
+  
   SSN0_a <- apply(SSN_a, c(1,3), sum) # unfished spawning numbers for each year
   N0_a <- apply(N_a, c(1,3), sum) # unfished numbers for each year)
   SSB0_a <- apply(SSB_a, c(1,3), sum) # unfished spawning biomass for each year
@@ -514,11 +511,15 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   # --- Optimize catchability (q) to fit depletion ---- 
   if(!silent) message("Optimizing for user-specified depletion in last historical year")
   bounds <- c(0.0001, 15) # q bounds for optimizer
-  qs <- sapply(1:nsim, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
-               M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr_y, mov, SRrel, Find, 
-               Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF,
-               plusgroup=plusgroup)
-  
+  if (!is.null(control$qs)) {
+    qs <- rep(control$qs, nsim)
+  } else {
+
+    qs <- sapply(1:nsim, getq3, D, SSB0, nareas, maxage, N, pyears=nyears, 
+                 M_ageArray, Mat_age, Asize, Wt_age, V, retA, Perr_y, mov, SRrel, Find, 
+                 Spat_targ, hs, R0a, SSBpR, aR, bR, bounds=bounds, MPA=MPA, maxF=maxF,
+                 plusgroup=plusgroup)
+  }
  # find the q that gives current stock depletion
   
   # --- Check that q optimizer has converged ---- 
@@ -596,6 +597,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     qs <- rep(0, nsim) # no fishing
   }
   
+
   histYrs <- sapply(1:nsim, function(x) 
     popdynCPP(nareas, maxage, Ncurr=N[x,,1,], nyears,  
               M_age=M_ageArray[x,,], Asize_c=Asize[x,], MatAge=Mat_age[x,,], WtAge=Wt_age[x,,],
@@ -634,9 +636,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   if(!silent) message("Calculating MSY reference points for each year")
   # average life-history parameters over 10 years
   for (y in 1:(nyears+proyears)) {
-    MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V,
-                        maxage, R0, SRrel, hs, yr.ind=y,
-                        plusgroup=plusgroup)
+    MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs, yr.ind=y)
     MSY_y[,y] <- MSYrefsYr[1, ]
     FMSY_y[,y] <- MSYrefsYr[2,]
     SSBMSY_y[,y] <- MSYrefsYr[3,]
@@ -700,8 +700,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                  V=V[, , (nyears + 1):(nyears + proyears), drop=FALSE], 
                  retA=retA[, , (nyears + 1):(nyears + proyears), drop=FALSE],  
                  Perr=Perr_y[,(nyears):(nyears+maxage+proyears-1)], mov, SRrel, Find, 
-                 Spat_targ, hs, R0a, SSBpR, aR, bR, MPA=MPA, maxF=maxF, SSB0=SSB0,
-                 plusgroup=plusgroup)
+                 Spat_targ, hs, R0a, SSBpR, aR, bR, MPA=MPA, maxF=maxF, SSB0=SSB0)
 
   RefPoints <- data.frame(MSY=MSY, FMSY=FMSY, SSBMSY=SSBMSY, SSBMSY_SSB0=SSBMSY_SSB0,
                          BMSY_B0=BMSY_B0, BMSY=BMSY, VBMSY=VBMSY, UMSY=UMSY, VBMSY_VB0=VBMSY_VB0,
@@ -914,8 +913,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB[x,,nyears, ]), Ncurr=N[x,,nyears,],
                        Zcurr=Z[x,,nyears,], PerrYr=Perr_y[x, nyears+maxage-1], hs=hs[x],
                        R0a=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
-                       mov=mov[x,,,,nyears+1], SRrel=SRrel[x],
-                       plusgroup = plusgroup))
+                       mov=mov[x,,,,nyears+1], SRrel=SRrel[x]))
       
       # The stock at the beginning of projection period
       N_P[,,1,] <- aperm(array(unlist(NextYrN), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2))
@@ -1050,8 +1048,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
           popdynOneTScpp(nareas, maxage, SSBcurr=colSums(SSB_P[x,,y-1, ]), Ncurr=N_P[x,,y-1,],
                          Zcurr=Z_P[x,,y-1,], PerrYr=Perr_y[x, y+nyears+maxage-1], hs=hs[x],
                          R0a=R0a[x,], SSBpR=SSBpR[x,], aR=aR[x,], bR=bR[x,],
-                         mov=mov[x,,,, nyears+y], SRrel=SRrel[x],
-                         plusgroup=plusgroup))
+                         mov=mov[x,,,, nyears+y], SRrel=SRrel[x]))
         
         N_P[,,y,] <- aperm(array(unlist(NextYrN), dim=c(maxage, nareas, nsim, 1)), c(3,1,4,2)) 
         Biomass_P[SAYR] <- N_P[SAYR] * Wt_age[SAYt]  # Calculate biomass

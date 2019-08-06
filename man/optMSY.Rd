@@ -6,7 +6,7 @@
 \usage{
 optMSY(logFa, Asize_c, nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge,
   Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, R0c, SSBpRc, aRc,
-  bRc, Qc, MPA, maxF, SSB0c, plusgroup = 0)
+  bRc, Qc, MPA, maxF, useCPP = TRUE, SSB0c)
 }
 \arguments{
 \item{logFa}{log apical fishing mortality}
@@ -57,9 +57,9 @@ optMSY(logFa, Asize_c, nareas, maxage, Ncurr, pyears, M_age, MatAge, WtAge,
 
 \item{maxF}{A numeric value specifying the maximum fishing mortality for any single age class}
 
-\item{SSB0c}{SSB0}
+\item{useCPP}{logical - use the CPP code? For testing purposes only}
 
-\item{plusgroup}{Integer. Default = 0 = no plus-group. Use 1 to include a plus-group}
+\item{SSB0c}{SSB0}
 }
 \description{
 Optimize yield for a single simulation
