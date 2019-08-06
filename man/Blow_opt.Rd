@@ -6,7 +6,7 @@
 \usage{
 Blow_opt(lnq, N, Asize_c, SSBMSYc, SSBpRc, MPA, SSB0c, nareas, retAc,
   MGThorizonc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc,
-  Spat_targc, SRrelc, aRc, bRc, Bfrac, maxF, mode = 1)
+  Spat_targc, SRrelc, aRc, bRc, Bfrac, maxF, mode = 1, plusgroup = 0)
 }
 \arguments{
 \item{lnq}{number: estimate of log catchability}
@@ -64,6 +64,8 @@ Blow_opt(lnq, N, Asize_c, SSBMSYc, SSBpRc, MPA, SSB0c, nareas, retAc,
 \item{maxF}{maximum apical fishing mortality}
 
 \item{mode}{1: find Blow 2:report blow  3:plot results}
+
+\item{plusgroup}{Integer. Default = 0 = no plus-group. Use 1 to include a plus-group}
 }
 \description{
 Find the current biomass at which it would take HZN mean generation times

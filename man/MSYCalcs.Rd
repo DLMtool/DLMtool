@@ -5,7 +5,7 @@
 \title{Internal function to calculate MSY Reference Points}
 \usage{
 MSYCalcs(logU, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age, maxage, R0x,
-  SRrelx, hx, opt = 1)
+  SRrelx, hx, opt = 1, plusgroup = 0)
 }
 \arguments{
 \item{logU}{log exploitation rate}
@@ -27,6 +27,8 @@ MSYCalcs(logU, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age, maxage, R0x,
 \item{hx}{numeric. Steepness value for this simulation}
 
 \item{opt}{Option. 1 = return -Yield, 2= return all MSY calcs}
+
+\item{plusgroup}{Integer. Default = 0 = no plus-group. Use 1 to include a plus-group}
 }
 \value{
 See \code{opt}
