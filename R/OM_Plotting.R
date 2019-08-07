@@ -72,7 +72,7 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
     Hist <- runMSE(Object, Hist=TRUE, silent=TRUE, parallel = dopar)
     Pars$Hist <- Hist
     Pars$Name <- "OM"
-    
+    Pars$MPA <- Object@MPA
   } else if (Class == "Hist") {
     Pars <- list()
     Pars$Hist <- Object
@@ -112,7 +112,7 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
   } else {
     input <- file.path(system.file(package = 'DLMtool'),'Rmd', Class, RMD)  
   }
-
+ 
   rend <- try(rmarkdown::render(input, params=Params,
                                 output_file=output_file,
                                 output_dir=output_dir,
