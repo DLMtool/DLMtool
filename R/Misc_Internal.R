@@ -884,6 +884,7 @@ CalcMSYRefs <- function(x, MSY_y, FMSY_y, SSBMSY_y, BMSY_y, VBMSY_y, ageM, OM) {
   minY <- floor(n.yrs/2) 
   maxY <- n.yrs - minY - 1 
   avg.ind <- (OM@nyears - minY):(OM@nyears + maxY)
+  avg.ind <- avg.ind[avg.ind>0]
   if (max(avg.ind) > nyears) avg.ind <- avg.ind[avg.ind < nyears]
   
   MSY <- mean(MSY_y[x, avg.ind])
