@@ -81,7 +81,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @export
 runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
                    CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=TRUE, 
-                   HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=FALSE, parallel=FALSE, 
+                   HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=TRUE, parallel=FALSE, 
                    save_name=NULL, checks=FALSE, control=NULL) {
   
   if (class(OM)!='OM') stop("OM is not class 'OM'", call. = FALSE)
@@ -217,7 +217,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
 
 runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
                       CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=TRUE, 
-                      HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=FALSE, checks=FALSE,
+                      HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=TRUE, checks=FALSE,
                       control=NULL, parallel=FALSE) {
   
   # Dev Setup ####
