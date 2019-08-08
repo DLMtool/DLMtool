@@ -11,9 +11,9 @@
 TradePlot(MSEobj, ..., Lims = c(0.2, 0.2, 0.8, 0.8), Title = NULL,
   Labels = NULL, Satisficed = FALSE, Show = "both", point.size = 2,
   lab.size = 4, axis.title.size = 12, axis.text.size = 10,
-  legend.title.size = 12, position = c("right", "bottom"),
-  cols = NULL, fill = "gray80", alpha = 0.4, PMlist = NULL,
-  Refs = NULL, Yrs = NULL)
+  legend = TRUE, legend.title.size = 12, position = c("right",
+  "bottom"), cols = NULL, fill = "gray80", alpha = 0.4,
+  PMlist = NULL, Refs = NULL, Yrs = NULL)
 
 Tplot(MSEobj, Lims = c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...)
 
@@ -45,6 +45,8 @@ NOAA_plot2(MSEobj)
 \item{axis.title.size}{Numeric. Size of axis titles}
 
 \item{axis.text.size}{Numeric. Size of axis text}
+
+\item{legend}{Logical. Include legend?}
 
 \item{legend.title.size}{Numeric. Size of legend title text}
 

@@ -5,7 +5,7 @@
 \title{Plot several plots with a shared legend}
 \usage{
 join_plots(plots, ncol = length(plots), nrow = 1,
-  position = c("right", "bottom"))
+  position = c("right", "bottom"), legend = TRUE)
 }
 \arguments{
 \item{plots}{list of plot objects of class \code{gg} or \code{ggplot}}
@@ -15,6 +15,8 @@ join_plots(plots, ncol = length(plots), nrow = 1,
 \item{nrow}{Optional number of rows}
 
 \item{position}{position of the legend ("bottom" or "right")}
+
+\item{legend}{Logical. Use a legend?}
 }
 \description{
 Plot several plots with a shared legend

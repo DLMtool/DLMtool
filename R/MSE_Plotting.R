@@ -18,27 +18,35 @@ plot.MSE <- function(x, ...) {
 #' @param ncol Optional number of columns
 #' @param nrow Optional number of rows
 #' @param position position of the legend ("bottom" or "right")
-#'
+#' @param legend Logical. Use a legend?
 #' @export
 #'
 #' @note modified from https://github.com/tidyverse/ggplot2/wiki/share-a-legend-between-two-ggplot2-graphs
-join_plots <- function(plots, ncol = length(plots), nrow = 1, position = c("right", "bottom")) {
+join_plots <- function(plots, ncol = length(plots), nrow = 1, position = c("right", "bottom"),
+                       legend=TRUE) {
   position <- match.arg(position)
-  g <- ggplot2::ggplotGrob(plots[[1]] + ggplot2::theme(legend.position = position))$grobs
-  legend <- g[[which(sapply(g, function(x) x$name) == "guide-box")]]
-  lheight <- sum(legend$height)
-  lwidth <- sum(legend$width)
-  gl <- lapply(plots, function(x) x + ggplot2::theme(legend.position="none"))
-  gl <- c(gl, ncol = ncol, nrow = nrow)
-  combined <- switch(position,
-                     "bottom" = gridExtra::arrangeGrob(do.call(gridExtra::arrangeGrob, gl),
-                                                       legend,
-                                                       ncol = 1,
-                                                       heights = grid::unit.c(grid::unit(1, "npc") - lheight, lheight)),
-                     "right" = gridExtra::arrangeGrob(do.call(gridExtra::arrangeGrob, gl),
-                                                      legend,
-                                                      ncol = 2,
-                                                      widths = grid::unit.c(grid::unit(1, "npc") - lwidth, lwidth)))
+  if (legend) {
+    g <- ggplot2::ggplotGrob(plots[[1]] + ggplot2::theme(legend.position = position))$grobs
+    legend <- g[[which(sapply(g, function(x) x$name) == "guide-box")]]
+    lheight <- sum(legend$height)
+    lwidth <- sum(legend$width)
+    gl <- lapply(plots, function(x) x + ggplot2::theme(legend.position="none"))
+    gl <- c(gl, ncol = ncol, nrow = nrow)
+    combined <- switch(position,
+                       "bottom" = gridExtra::arrangeGrob(do.call(gridExtra::arrangeGrob, gl),
+                                                         legend,
+                                                         ncol = 1,
+                                                         heights = grid::unit.c(grid::unit(1, "npc") - lheight, lheight)),
+                       "right" = gridExtra::arrangeGrob(do.call(gridExtra::arrangeGrob, gl),
+                                                        legend,
+                                                        ncol = 2,
+                                                        widths = grid::unit.c(grid::unit(1, "npc") - lwidth, lwidth)))
+  } else {
+    gl <- lapply(plots, function(x) x + ggplot2::theme(legend.position="none"))
+    gl <- c(gl, ncol = ncol, nrow = nrow)
+    combined <- gridExtra::arrangeGrob(do.call(gridExtra::arrangeGrob, gl))
+  }
+
   grid::grid.newpage()
   grid::grid.draw(combined)
   
