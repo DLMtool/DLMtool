@@ -359,6 +359,15 @@ runMSEnomsg <- function(...) {
 run_parallel <- function(i, itsim, OM, MPs, CheckMPs, timelimit, Hist, ntrials, fracD, CalcBlow, 
                          HZN, Bfrac, AnnualMSY, silent, PPD, control, parallel=FALSE) {
   
+  # rename Perr in cpars to Perr_Y
+  if ("Perr" %in% names(OM@cpars)) {
+    if (!is.null(dim(OM@cpars[['Perr']]))) {
+      OM@cpars[['Perr_y']] <- OM@cpars[['Perr']]
+      OM@cpars[['Perr']] <- NULL
+    }
+  }
+  
+  
   if (length(OM@cpars)>0) {
     ncparsim<-cparscheck(OM@cpars)  
     if (ncparsim == OM@nsim) { # cpars for each simulation 
