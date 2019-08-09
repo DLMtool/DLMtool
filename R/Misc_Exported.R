@@ -135,6 +135,9 @@ setGeneric("tinyErr", function(x, ...) standardGeneric("tinyErr"))
 setMethod("tinyErr", signature(x = "OM"),
           function(x, obs=TRUE, imp=TRUE, proc=TRUE, grad=TRUE, silent=FALSE) {
             OM <- x
+            if (length(OM@cpars)>0) 
+              warning("Note that this function doesn't apply to parameters in cpars.\n Must be removed manually e.g `OM@cpars$Perr_y <- NULL`")
+            
             if (!inherits(OM, 'OM')) stop("Object must be class `OM`", call.=FALSE)
             OMperf <- new("OM", DLMtool::Albacore, DLMtool::Generic_Fleet,
                           DLMtool::Perfect_Info, DLMtool::Perfect_Imp)
