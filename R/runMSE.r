@@ -80,7 +80,7 @@ if(getRversion() >= "2.15.1") utils::globalVariables(Names)
 #' @seealso \link{joinMSE} \link{checkMSE} \link{updateMSE}
 #' @export
 runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
-                   CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=TRUE, 
+                   CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=100, fracD=0.05, CalcBlow=TRUE, 
                    HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=TRUE, parallel=FALSE, 
                    save_name=NULL, checks=FALSE, control=NULL) {
   
@@ -137,8 +137,14 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     itsim <- rep(48,nits)
     
     if (nits < ncpu) {
-      nits <- ncpu
-      itsim <- rep(ceiling(OM@nsim/ncpu), ncpu)
+      if (nits < 4) {
+        nits <- 4
+        itsim <- rep(ceiling(OM@nsim/4), 4)
+      } else{
+        nits <- ncpu
+        itsim <- rep(ceiling(OM@nsim/ncpu), ncpu)
+      }
+     
     }
     cnt <- 1
     while(sum(itsim) != OM@nsim | any(itsim<2)) {
@@ -156,7 +162,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
    
     if (!silent & !Hist) message("Running MSE in parallel on ", ncpu, ' processors')
     if (!silent & Hist) message("Running historical simulations in parallel on ", ncpu, ' processors')
-    
+   
     temp <- snowfall::sfClusterApplyLB(1:nits, run_parallel, itsim=itsim, OM=OM, MPs=MPs,  
                              CheckMPs=CheckMPs, timelimit=timelimit, Hist=Hist, ntrials=ntrials, 
                              fracD=fracD, CalcBlow=CalcBlow, 
@@ -191,7 +197,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     }
       
     if (class(MSE1@Misc$TryMP) == "matrix") {
-      ok <- colSums(MSE1@Misc$TryMP == "Okay") == snowfall::sfCpus()  
+      ok <- colSums(MSE1@Misc$TryMP == "Okay") == nrow(MSE1@Misc$TryMP)
       fail <- t(MSE1@Misc$TryMP)
       if (any(grepl("could not find function", unique(fail[!ok,])))) {
         warning("MPs may have been dropped because of non-exported functions in parallel mode. \nUse `setup(); snowfall::sfExport('FUNCTION1', 'FUNCTION2')` to export functions to cores")
@@ -216,7 +222,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
 
 
 runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
-                      CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=50, fracD=0.05, CalcBlow=TRUE, 
+                      CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=100, fracD=0.05, CalcBlow=TRUE, 
                       HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=TRUE, checks=FALSE,
                       control=NULL, parallel=FALSE) {
   
@@ -573,7 +579,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       tooLow <- length(which(qs > max(LimBound)))
       tooHigh <- length(which(qs < min(LimBound)))
       prErr <- length(probQ)/nsim
-      if (prErr > fracD & length(probQ) >= 1) {
+      if (prErr > fracD & length(probQ) > 1) {
         if (length(tooLow) > 0) message(tooLow, " sims can't get down to the lower bound on depletion")
         if (length(tooHigh) > 0) message(tooHigh, " sims can't get to the upper bound on depletion")
         if(!silent) message("More than ", fracD*100, "% of simulations can't get to the specified level of depletion with these Operating Model parameters")

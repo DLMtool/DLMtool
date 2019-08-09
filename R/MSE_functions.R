@@ -745,6 +745,49 @@ joinMSE <- function(MSEobjs = NULL) {
       Misc$TryMP <- do.call('rbind', temp1)   
     }
     
+    if (!is.null(MSEobjs[[1]]@Misc$Unfished)) {
+      Misc$Unfished <- list()
+      temp1 <- temp2 <- list()
+      for(i in 1:length(MSEobjs)) {
+        temp1[[i]] <- MSEobjs[[i]]@Misc$Unfished$Refs 
+        temp2[[i]] <- MSEobjs[[i]]@Misc$Unfished$ByYear 
+      }
+      Misc$Unfished$Refs <- do.call('cbind', temp1)
+      for (nm in names(temp2[[1]])) {
+        tt = lapply(temp2, "[[", nm)
+        tt <- do.call('rbind',tt)
+        Misc$Unfished$ByYear[[nm]] <- tt
+      }
+    }
+    if (!is.null(MSEobjs[[1]]@Misc$MSYRefs)) {
+      Misc$MSYRefs <- list()
+      temp1 <- temp2 <- list()
+      for(i in 1:length(MSEobjs)) {
+        temp1[[i]] <- MSEobjs[[i]]@Misc$MSYRefs$Refs 
+        temp2[[i]] <- MSEobjs[[i]]@Misc$MSYRefs$ByYear 
+      }
+      Misc$MSYRefs$Refs <- do.call('rbind', temp1)
+      for (nm in names(temp2[[1]])) {
+        tt = lapply(temp2, "[[", nm)
+        tt <- do.call('rbind',tt)
+        Misc$MSYRefs$ByYear[[nm]] <- tt
+      }
+    }
+    temp <- list()
+    nsim <- ncol(Misc$Unfished$Ref)
+    dims <- dim(MSEobjs[[1]]@Misc$LatEffort)
+    Misc$LatEffort <- array(NA, dim=c(nsim, dims[2], dims[3]))
+    Misc$Revenue <- array(NA, dim=c(nsim, dims[2], dims[3]))
+    Misc$Cost <- array(NA, dim=c(nsim, dims[2], dims[3]))
+    Misc$TAE <- array(NA, dim=c(nsim, dims[2], dims[3]))
+    nvec <- seq(1, nsim, by=dims[1])
+    for (i in 1:length(MSEobjs)) {
+      Misc$LatEffort[nvec[i]:(nvec[i]+dims[1]-1),,] <- MSEobjs[[i]]@Misc$LatEffort
+      Misc$Revenue[nvec[i]:(nvec[i]+dims[1]-1),,] <- MSEobjs[[i]]@Misc$Revenue
+      Misc$Cost[nvec[i]:(nvec[i]+dims[1]-1),,] <- MSEobjs[[i]]@Misc$Cost
+      Misc$TAE[nvec[i]:(nvec[i]+dims[1]-1),,] <- MSEobjs[[i]]@Misc$TAE
+    }
+    
   }
   
   newMSE <- new("MSE", Name = outlist$Name, nyears = unique(outlist$nyears), 
