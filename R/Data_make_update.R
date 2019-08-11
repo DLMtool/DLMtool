@@ -260,8 +260,8 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
     Data@RInd <- array(NA, dim=c(nsim, length(Data@Type), nyears+y-1))
     for (type in Data@Type) {
       yrs <- min(nyears, length(old[1, match(type,Data@Type),]))
-      bio <- (sim.indices[[type]]/apply(sim.indices[[type]][,1:yrs], 1, mean)) *
-        mean(old[1, match(type,Data@Type),1:yrs])
+      bio <- (sim.indices[[type]]/apply(sim.indices[[type]][,1:yrs], 1, mean, na.rm=TRUE)) *
+        mean(old[1, match(type,Data@Type),1:yrs], na.rm=TRUE)
       Data@RInd[,match(type,Data@Type), ] <- array(bio, dim=c(nsim, 1, ncol(bio)))
       
       # Replace generated data with real data if more than nyears are provided

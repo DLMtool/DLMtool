@@ -379,22 +379,24 @@ run_parallel <- function(i, itsim, OM, MPs, CheckMPs, timelimit, Hist, ntrials, 
         ind <- 1:itsim[i]
       }
       for (x in 1:length(cpars)) {
-        dd <- dim(cpars[[x]])
-        if (length(dd) == 2) {
-          cpars[[x]] <- cpars[[x]][ind,]
-        }
-        if (length(dd) == 3) {
-          cpars[[x]] <- cpars[[x]][ind,,]
-        }
-        if (length(dd) == 4) {
-          cpars[[x]] <- cpars[[x]][ind,,,]
-        }
-        if (length(dd) == 5) {
-          cpars[[x]] <- cpars[[x]][ind,,,,]
-        }
-        
-        if (is.null(dd)) {
-          cpars[[x]] <- cpars[[x]][ind]
+        if (names(cpars)[x] !="Data"){
+          dd <- dim(cpars[[x]])
+          if (length(dd) == 2) {
+            cpars[[x]] <- cpars[[x]][ind,]
+          }
+          if (length(dd) == 3) {
+            cpars[[x]] <- cpars[[x]][ind,,]
+          }
+          if (length(dd) == 4) {
+            cpars[[x]] <- cpars[[x]][ind,,,]
+          }
+          if (length(dd) == 5) {
+            cpars[[x]] <- cpars[[x]][ind,,,,]
+          }
+          
+          if (is.null(dd)) {
+            cpars[[x]] <- cpars[[x]][ind]
+          }
         }
       }
       OM@cpars <- cpars
@@ -666,11 +668,13 @@ dev.mode <- function() {
 
 getbeta<-function(beta,x,y)sum((y-x^beta)^2)
 
+
+
+
 indfitwrap <- function(x, type, sim.indices, ind.type, Data, nyears, plot=FALSE) {
   sim.index <- sim.indices[[match(type, ind.type)]][x,]
   dat <- Data@RInd[x,match(type, Data@Type),]
-  dat <- dat[!is.na(dat)]
-  nyears <- min(nyears, length(dat))
+
   obs.ind <- Data@RInd[x,match(type, Data@Type), 1:nyears]
   sim.index <- sim.index[1:nyears]
   Year <- Data@Year
@@ -681,17 +685,17 @@ lcs<-function(x){
   if (class(x) == "matrix") {
     nsim <- nrow(x)
     nyr <- ncol(x)
-    x1 <- x/matrix(apply(x, 1, mean), nrow=nsim, ncol=nyr) # rescale to mean 1
+    x1 <- x/matrix(apply(x, 1, mean, na.rm=TRUE), nrow=nsim, ncol=nyr) # rescale to mean 1
     x2<- log(x1) # log it
-    x3 <- x2 -matrix(apply(x2, 1, mean), nrow=nsim, ncol=nyr) # mean 0
+    x3 <- x2 -matrix(apply(x2, 1, mean, na.rm=TRUE), nrow=nsim, ncol=nyr) # mean 0
     x3
   } else {
-    x1<-x/mean(x) # rescale to mean 1
+    x1<-x/mean(x, na.rm=TRUE) # rescale to mean 1
     x2<-log(x1)     # log it
-    x3<-x2-mean(x2) # mean 0
+    x3<-x2-mean(x2, na.rm=TRUE) # mean 0
     x3
   }
-
+  
 }
 
 
@@ -704,8 +708,8 @@ makeVec <- function(obj, row=1, nsim) {
 
 indfit <- function(sim.index,obs.ind, Year, plot=FALSE, lcex=0.8){
   
-  sim.index <- lcs(sim.index) # log space conversion of standardized simulated index
-  obs.ind <- lcs(obs.ind) # log space conversion of standardized observed ind
+  sim.index <- lcs(sim.index[!is.na(obs.ind)]) # log space conversion of standardized simulated index
+  obs.ind <- lcs(obs.ind[!is.na(obs.ind)]) # log space conversion of standardized observed ind
   
   if(plot){
     par(mfrow=c(1,2),mai=c(0.7,0.5,0.05,0.01),omi=c(0.01,0.2,0.01,0.01))
@@ -789,7 +793,8 @@ addRealInd <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, nsim, n
         Data@Type <- SampCpars$Data@Type
         RInd <- SampCpars$Data@RInd[1,,]
         if (class(RInd) == "numeric") {
-          Data@RInd <- array(RInd, dim=c(nsim, 1, length(RInd)))
+          temp <- t(replicate(nsim, RInd))
+          Data@RInd <- array(temp, dim=c(nsim, 1, nyears))
         } else {
           temp <- array(RInd, dim=c(nrow(RInd), ncol(RInd), nsim))
           Data@RInd <- aperm(temp, c(3,1,2)) 
@@ -833,14 +838,23 @@ addRealInd <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, nsim, n
         bbeta <- stats.df %>% filter(Index=="Biomass") %>% select(beta)
         yrs1 <- min(nyears, length(Data@RInd[1,match("Biomass", Data@Type),]))
         BErr <- exp(lcs(Data@RInd[,match("Biomass", Data@Type),1:yrs1]))/exp(lcs(sim.indices$Biomass[, 1:yrs1]))^bbeta$beta
+        nayrs <- which(is.na(BErr[1,]))
+        if (!all(1:yrs1 %in% nayrs))
+          BErr[,nayrs] <- sample(BErr[,which(!is.na(BErr[1,]))], nsim*length(nayrs))
         
         bbeta <- stats.df %>% filter(Index=="VBiomass") %>% select(beta)
         yrs2 <- min(nyears, length(Data@RInd[1,match("VBiomass", Data@Type),]))
         VBErr <- exp(lcs(Data@RInd[,match("VBiomass", Data@Type),1:yrs2]))/exp(lcs(sim.indices$VBiomass[, 1:yrs2]))^bbeta$beta
+        nayrs <- which(is.na(VBErr[1,]))
+        if (!all(1:yrs2 %in% nayrs))
+          VBErr[,nayrs] <- sample(VBErr[,which(!is.na(VBErr[1,]))], nsim*length(nayrs))
         
         bbeta <- stats.df %>% filter(Index=="SpBiomass") %>% select(beta)
         yrs3 <- min(nyears, length(Data@RInd[1,match("SpBiomass", Data@Type),]))
         SpBErr <- exp(lcs(Data@RInd[,match("SpBiomass", Data@Type),1:yrs3]))/exp(lcs(sim.indices$SpBiomass[, 1:yrs3]))^bbeta$beta
+        nayrs <- which(is.na(SpBErr[1,]))
+        if (!all(1:yrs3 %in% nayrs))
+          SpBErr[,nayrs] <- sample(SpBErr[,which(!is.na(SpBErr[1,]))], nsim*length(nayrs))
         
         BIerr[, 1:ncol(BErr)] <- BErr
         VBIerr[, 1:ncol(VBErr)] <- VBErr

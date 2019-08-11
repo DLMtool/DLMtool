@@ -220,7 +220,6 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
 }
 
 
-
 runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","matlenlim", "MRreal"), 
                       CheckMPs = FALSE, timelimit = 1, Hist=FALSE, ntrials=100, fracD=0.05, CalcBlow=TRUE, 
                       HZN=2, Bfrac=0.5, AnnualMSY=TRUE, silent=FALSE, PPD=TRUE, checks=FALSE,
@@ -772,6 +771,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                          nyears, proyears, silent=silent)
   Data <- templist$Data # update 
   ErrList <- templist$ErrList # update
+
   Misc$RInd.stats <- ErrList$stats.df # return stats
   
   ObsPars <- Data@Obs # Obs pars updated in makeData 
@@ -1073,6 +1073,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                                       RefPoints, ErrList, FMSY_y, retA_P, retL_P, StockPars, 
                                       FleetPars, ObsPars, upyrs, interval, y, mm, 
                                       Misc=Data_p@Misc, SampCpars)
+          
           
           # Update Abundance and FMSY for FMSYref MPs
           M_array <- array(0.5*M_ageArray[,,nyears+y], dim=c(nsim, maxage, nareas))
