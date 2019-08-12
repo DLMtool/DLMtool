@@ -780,14 +780,17 @@ joinMSE <- function(MSEobjs = NULL) {
     Misc$Revenue <- array(NA, dim=c(nsim, dims[2], dims[3]))
     Misc$Cost <- array(NA, dim=c(nsim, dims[2], dims[3]))
     Misc$TAE <- array(NA, dim=c(nsim, dims[2], dims[3]))
-    nvec <- seq(1, nsim, by=dims[1])
+    st <- 1
     for (i in 1:length(MSEobjs)) {
-      Misc$LatEffort[nvec[i]:(nvec[i]+dims[1]-1),,] <- MSEobjs[[i]]@Misc$LatEffort
-      Misc$Revenue[nvec[i]:(nvec[i]+dims[1]-1),,] <- MSEobjs[[i]]@Misc$Revenue
-      Misc$Cost[nvec[i]:(nvec[i]+dims[1]-1),,] <- MSEobjs[[i]]@Misc$Cost
-      Misc$TAE[nvec[i]:(nvec[i]+dims[1]-1),,] <- MSEobjs[[i]]@Misc$TAE
+      dims <- dim(MSEobjs[[i]]@Misc$LatEffort)
+      indvec <- st:(st+dims[1]-1)
+      st <- indvec[length(indvec)] + 1
+      Misc$LatEffort[indvec,,] <- MSEobjs[[i]]@Misc$LatEffort
+      Misc$Cost[indvec,,] <- MSEobjs[[i]]@Misc$Cost
+      Misc$Revenue[indvec,,] <- MSEobjs[[i]]@Misc$Revenue
+      Misc$TAE[indvec,,] <- MSEobjs[[i]]@Misc$TAE
     }
-    
+  
   }
   
   newMSE <- new("MSE", Name = outlist$Name, nyears = unique(outlist$nyears), 
