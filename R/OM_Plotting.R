@@ -21,10 +21,12 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
   
  
   if (Class == "Stock") {
+    if (is.null(title)) title <- "plot Stock"
     Pars <- SampleStockPars(Object, nsim, nyears, proyears, SampCpars, 
                             msg=FALSE)
     Pars$Name <- gsub(" ", "_", Object@Name)  
   } else if (Class == "Fleet") {
+    if (is.null(title)) title <- "plot Fleet"
     if (class(Stock)!="Stock") 
       stop("Must provide object of class 'Stock'", call. = FALSE)
     StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars, 
@@ -38,6 +40,7 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
     Pars$MPA <- Object@MPA
     
   } else if (Class == "Obs") {
+    if (is.null(title)) title <- "plot Obs"
     ObsPars <- SampleObsPars(Object, nsim, cpars=SampCpars)
     BMSY_B0bias <- array(rlnorm(nsim, 
                                 mconv(1, Object@BMSY_B0biascv), sdconv(1, Object@BMSY_B0biascv)), 
@@ -48,10 +51,12 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
     Pars <- c(ObsPars)
     
   } else if (Class == "Imp") {
+    if (is.null(title)) title <- "plot Imp"
     ImpPars <- SampleImpPars(Object, nsim, cpars=SampCpars)
     Pars <- c(ImpPars)
   } else if (Class == "OM") {
-  
+    if (is.null(title)) title <- "plot OM"
+    message("Sampling Stock, Fleet, Obs, and Imp parameters")
     StockPars <- SampleStockPars(SubOM(Object, "Stock"), nsim, nyears, proyears, SampCpars, msg=FALSE)
     FleetPars <- SampleFleetPars(SubOM(Object, "Fleet"), StockPars, nsim, nyears, proyears, SampCpars, msg=FALSE)
     ObsPars <- SampleObsPars(Object, nsim, cpars=SampCpars)
@@ -113,11 +118,11 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
     input <- file.path(system.file(package = 'DLMtool'),'Rmd', Class, RMD)  
   }
  
+  knitr::knit_meta(class=NULL, clean = TRUE)
   rend <- try(rmarkdown::render(input, params=Params,
                                 output_file=output_file,
                                 output_dir=output_dir,
                                 quiet=quiet), silent=TRUE)
-  
   if (class(rend) == "try-error") {
     print(rend)
   } else {
@@ -278,7 +283,7 @@ plot.Fleet <- function(x, Stock=NULL, nsamp=3, nsim=200, nyears=50,
                        proyears=28, output_file=NULL, output_dir=getwd(), 
                        quiet=TRUE, tabs=TRUE, title=NULL, date=NULL,
                        plotPars =NULL, open=TRUE, dev=FALSE, ...){
-  if (class(Stock) !="Stock")
+  if (class(Stock) !="Stock" & class(x) !="OM")
     stop("Must provide object of class 'Stock'")
   
   render_plot(Object=x, Class="Fleet", Stock=Stock, RMD='Fleet', nsamp=nsamp, nsim=nsim, 
