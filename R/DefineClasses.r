@@ -17,7 +17,7 @@ setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 
 #' Class \code{'Data'}
 #' 
-#' An object for storing data for analysis using data-limited methods
+#' An object for storing fishery data for analysis
 #' 
 #' 
 #' @name Data-class
