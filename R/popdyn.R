@@ -1123,6 +1123,7 @@ MSYCalcs <- function(logU, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age,
              RelRec=RelRec,
              SB0 = SB0 * R0x,
              B0=B0 * R0x)
+    return(out)
   }
 }
 
