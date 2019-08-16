@@ -5,7 +5,7 @@
 \alias{Data-class}
 \title{Class \code{'Data'}}
 \description{
-An object for storing data for analysis using data-limited methods
+An object for storing fishery data for analysis
 }
 \section{Slots}{
 
