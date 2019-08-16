@@ -21,12 +21,12 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
   
  
   if (Class == "Stock") {
-    if (is.null(title)) title <- "plot Stock"
+    if (is.null(title)) title <- "Stock Object Plots"
     Pars <- SampleStockPars(Object, nsim, nyears, proyears, SampCpars, 
                             msg=FALSE)
     Pars$Name <- gsub(" ", "_", Object@Name)  
   } else if (Class == "Fleet") {
-    if (is.null(title)) title <- "plot Fleet"
+    if (is.null(title)) title <- "Fleet Object Plots"
     if (class(Stock)!="Stock") 
       stop("Must provide object of class 'Stock'", call. = FALSE)
     StockPars <- SampleStockPars(Stock, nsim, nyears, proyears, SampCpars, 
@@ -40,7 +40,7 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
     Pars$MPA <- Object@MPA
     
   } else if (Class == "Obs") {
-    if (is.null(title)) title <- "plot Obs"
+    if (is.null(title)) title <- "Obs Object Plots"
     ObsPars <- SampleObsPars(Object, nsim, cpars=SampCpars)
     BMSY_B0bias <- array(rlnorm(nsim, 
                                 mconv(1, Object@BMSY_B0biascv), sdconv(1, Object@BMSY_B0biascv)), 
@@ -51,11 +51,11 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
     Pars <- c(ObsPars)
     
   } else if (Class == "Imp") {
-    if (is.null(title)) title <- "plot Imp"
+    if (is.null(title)) title <- "Imp Object Plots"
     ImpPars <- SampleImpPars(Object, nsim, cpars=SampCpars)
     Pars <- c(ImpPars)
   } else if (Class == "OM") {
-    if (is.null(title)) title <- "plot OM"
+    if (is.null(title)) title <- "OM Object Plots"
     message("Sampling Stock, Fleet, Obs, and Imp parameters")
     StockPars <- SampleStockPars(SubOM(Object, "Stock"), nsim, nyears, proyears, SampCpars, msg=FALSE)
     FleetPars <- SampleFleetPars(SubOM(Object, "Fleet"), StockPars, nsim, nyears, proyears, SampCpars, msg=FALSE)
