@@ -1,0 +1,50 @@
+---
+title: "Data Object"
+author: "Adrian H"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+
+## Populating the Data Object
+
+
+### Main Information
+
+
+### Biology
+
+
+### Selectivity Pattern
+
+
+### Time-Series Information
+
+
+
+### Catch-at-Age
+
+
+### Catch-at-Length
+
+
+### Reference Points
+
+
+
+## Data Report
+
+
+## Using the Data Object
+
+
+

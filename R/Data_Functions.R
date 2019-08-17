@@ -109,8 +109,56 @@ XL2Data <- function(name="Data") {
   }
 }
 
+
+importnewXLData <- function(name) {
+  dir <- dirname(name)
+  if (dir ==".") {
+    dir <- NULL
+  } else {
+    name <- basename(name)
+  }
+  if (is.null(dir)) dir <- getwd()
+  if (nchar(tools::file_ext(name)) == 0) {
+    xl.fname1 <- paste0(name, ".xlsx")
+    xl.fname2 <- paste0(name, ".csv")
+    fls <- file.exists(c(file.path(dir, xl.fname1), file.path(dir,xl.fname2)))
+    if (sum(fls) == 0) stop(xl.fname1, " or ", xl.fname2, " not found in ", dir)
+    if (sum(fls) > 1) stop(name, " found with multiple extensions. Specify file extension.", call.=FALSE)
+    name <- c(xl.fname1, xl.fname2)[fls]
+  }
+  if (tools::file_ext(name) == "csv") {
+    datasheet <- read.csv(file.path(dir,name), stringsAsFactors = FALSE)
+  } else if(tools::file_ext(name) %in% c("xls", "xlsx")) {
+    datasheet <- readxl::read_excel(file.path(dir,name), sheet = 1, col_names = TRUE)
+  } else {
+    stop("File extension must be .csv, .xls, or .xlsx")
+  }
   
-importnewXLData <- function(dir,name, NewSheetNames) {
+  # TO DO - add a check that all Names are correct and haven't been modified
+  
+  Data <- new("Data", silent=TRUE)
+  # ---- Main ----
+  Data@Name <- datasheet$Data[which(datasheet$Name=="Name")]
+  Data@Common_Name <- datasheet$Data[which(datasheet$Name=="Common Name")]
+  Data@Species <- datasheet$Data[which(datasheet$Name=="Species")]
+  Data@Region <- datasheet$Data[which(datasheet$Name=="Region")]
+  Data@LHYear <- datasheet$Data[which(datasheet$Name=="Current Year")]
+  Data@MPrec <- datasheet$Data[which(datasheet$Name=="Previous TAC")]
+  Data@Units <- datasheet$Data[which(datasheet$Name=="Units")]
+  Data@MPeff <- datasheet$Data[which(datasheet$Name=="Previous TAE")]
+  Data@nareas <- datasheet$Data[which(datasheet$Name=="nareas")]
+ 
+  # ---- Biology ----
+  
+  
+  # ---- Selectivity ----
+  
+  
+  
+}
+
+
+importnewXLData_old <- function(dir,name, NewSheetNames) {
   Data <- new("Data", silent=TRUE)
   BlankDat <-new("Data", silent=TRUE)
   ignoreSheet <- NULL
