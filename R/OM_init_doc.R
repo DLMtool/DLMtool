@@ -705,11 +705,17 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   
   ## OM Plots ####
   if (inc.plot) {
-    # cat("# OM Plots\n\n", sep="", append=TRUE, file=RMDfile) # write heading
-    # cat("```{r plotOM, echo=FALSE, fig.asp=2}\n", append=TRUE, file=RMDfile, sep="")
-    # cat("plot.OM(out)\n", append=TRUE, file=RMDfile, sep="")
-    # cat("```\n\n\n", append=TRUE, file=RMDfile, sep="")
-
+    
+    cat("\n# Historical Simulation Plots\n", append=TRUE, file=RMDfile, sep="")
+    cat("```{r, echo=FALSE,include=FALSE}\n", append=TRUE, file=RMDfile, sep="")
+    cat(paste0("input <- file.path(system.file(package = 'DLMtool'),'Rmd/Hist/Hist.Rmd')\n"), append=TRUE, file=RMDfile, sep="")  
+    cat(" out <- knitr::knit_child(input) \n", append=TRUE, file=RMDfile, sep="")
+    cat("```\n\n", append=TRUE, file=RMDfile, sep="")
+    
+    cat("```{r, echo=FALSE, results='asis'}\n", append=TRUE, file=RMDfile, sep="")
+    cat("cat(out)\n", append=TRUE, file=RMDfile, sep="")
+    cat("```\n\n", append=TRUE, file=RMDfile, sep="")
+    
   }
   
   ## References ####
@@ -737,7 +743,8 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
   
     Pars$CurrentYr <- OM@CurrentYr
     Pars$MPA <- OM@MPA
-    params <- list(OM=OM, Pars=Pars, Effvals=Effvals, out=out)
+    Pars$Hist <- out
+    params <- list(OM=OM, Pars=Pars, Effvals=Effvals)
     
  
     params$tabs <- TRUE
@@ -1105,16 +1112,27 @@ plotText <- function(OM, slots, RMDfile) {
     cat("```\n\n\n", append=TRUE, file=RMDfile, sep="")   
     
   } else if ('Obs' %in% slots) {
+    
     cat("\n### Obs Plots\n", append=TRUE, file=RMDfile, sep="")
-    cat("```{r plot.Obs, echo=FALSE, fig.asp=1}\n", append=TRUE, file=RMDfile, sep="")
-    cat("plotObs(OM)\n", append=TRUE, file=RMDfile, sep="")
-    cat("```\n\n", append=TRUE, file=RMDfile, sep="")   
+    cat("```{r, echo=FALSE,include=FALSE}\n", append=TRUE, file=RMDfile, sep="")
+    cat(paste0("input <- file.path(system.file(package = 'DLMtool'),'Rmd/Obs/Obs.Rmd')\n"), append=TRUE, file=RMDfile, sep="")  
+    cat(" out <- knitr::knit_child(input) \n", append=TRUE, file=RMDfile, sep="")
+    cat("```\n\n", append=TRUE, file=RMDfile, sep="")
+    
+    cat("```{r, echo=FALSE, results='asis'}\n", append=TRUE, file=RMDfile, sep="")
+    cat("cat(out)\n", append=TRUE, file=RMDfile, sep="")
+    cat("```\n\n", append=TRUE, file=RMDfile, sep="")
     
   } else if ("Imp" %in% slots) {
     cat("\n### Imp Plots\n", append=TRUE, file=RMDfile, sep="")
-    cat("```{r plot.Imp, echo=FALSE, fig.asp=1}\n", append=TRUE, file=RMDfile, sep="")
-    cat("plotImp(OM)\n", append=TRUE, file=RMDfile, sep="")
-    cat("```\n\n", append=TRUE, file=RMDfile, sep="") 
+    cat("```{r, echo=FALSE,include=FALSE}\n", append=TRUE, file=RMDfile, sep="")
+    cat(paste0("input <- file.path(system.file(package = 'DLMtool'),'Rmd/Imp/Imp.Rmd')\n"), append=TRUE, file=RMDfile, sep="")  
+    cat(" out <- knitr::knit_child(input) \n", append=TRUE, file=RMDfile, sep="")
+    cat("```\n\n", append=TRUE, file=RMDfile, sep="")
+    
+    cat("```{r, echo=FALSE, results='asis'}\n", append=TRUE, file=RMDfile, sep="")
+    cat("cat(out)\n", append=TRUE, file=RMDfile, sep="")
+    cat("```\n\n", append=TRUE, file=RMDfile, sep="")
   } 
 }
 
