@@ -56,7 +56,8 @@ axis(side=1)
 
 ```{r, echo=FALSE}
 years <- c(seq(-nyears+1, 0, by=1), seq(1, proyears,1))
-matplot(years, t(Pars$Perr_y[params$its,(maxage):ncol(Pars$Perr_y)]), type="l", bty="l", main="Rec Devs by Year", 
+
+matplot(years, t(Pars$Perr_y[params$its,(maxage):(maxage+length(years)-1)]), type="l", bty="l", main="Rec Devs by Year", 
         lwd=params$plotPars$lwd, lty=1, ylab="Rec Devs", xlab="Years")
 abline(h=1, col="lightgray", lty=2)
 abline(v=0, col="lightgray", lty=2)
