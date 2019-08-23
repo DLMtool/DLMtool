@@ -7,6 +7,7 @@ rm(list=ls())
 MSEobj <- updateMSE(DLMextra::testMSE)
 COSEWICobj <- runCOSEWIC(testOM, silent=TRUE)
 funs <- plotFun(msg=FALSE)
+funs <- funs[!funs == "plotOM"]
 
 for (ff in funs) {
   testthat::test_that("main plot MSE functions", {

@@ -6,7 +6,7 @@ library(testthat)
 rm(list=ls())
 # setup()
 
-testthat::test_that("plotStock works with all available Stock objects", {
+testthat::test_that("plot.Stock works with all available Stock objects", {
    rm(list=ls())
   objs <- avail('Stock')
   
@@ -16,13 +16,13 @@ testthat::test_that("plotStock works with all available Stock objects", {
     seed <- ceiling(runif(1, 1, 1000))
     set.seed(seed)
     info <- paste(objs[i], seed)
-    testthat::expect_error(plot(obj), NA, info=info)
+    testthat::expect_error(plot(obj, open=FALSE), NA, info=info)
     # expect_warning(plot(obj), NA, info=objs[i])
     # graphics.off()
   }
 })
 
-testthat::test_that("plotFleet works with all available Fleet objects", {
+testthat::test_that("plot.Fleet works with all available Fleet objects", {
    rm(list=ls())
   objs <- avail('Fleet')
  
@@ -33,13 +33,13 @@ testthat::test_that("plotFleet works with all available Fleet objects", {
     set.seed(seed)
 	  stock <- sample(avail("Stock"),1)
     info <- paste(objs[i], stock, seed)
-    testthat::expect_error(plotFleet(obj, get(stock)), NA, info=info)
+    testthat::expect_error(plot(obj, get(stock), open=FALSE), NA, info=info)
     # expect_warning(plotFleet(obj, get(stock)), NA, info=info)
     # graphics.off()
   }
 })
 
-testthat::test_that("plotImp works with all available Imp objects", {
+testthat::test_that("plot.Imp works with all available Imp objects", {
   rm(list=ls()) 
   objs <- avail('Imp')
   
@@ -49,13 +49,13 @@ testthat::test_that("plotImp works with all available Imp objects", {
     seed <- ceiling(runif(1, 1, 1000))
     set.seed(seed)
     info <- paste(objs[i], seed)
-    testthat::expect_error(plot(obj), NA, info=info)
+    testthat::expect_error(plot(obj, open=FALSE), NA, info=info)
     # expect_warning(plot(obj), NA, info=objs[i])
     # graphics.off()
   }
 })
 
-testthat::test_that("plotObs works with all available Obs objects", {
+testthat::test_that("plot.Obs works with all available Obs objects", {
   rm(list=ls())
   objs <- avail('Obs')
   
@@ -65,7 +65,7 @@ testthat::test_that("plotObs works with all available Obs objects", {
     seed <- ceiling(runif(1, 1, 1000))
     set.seed(seed)
     info <- paste(objs[i], seed)
-    testthat::expect_error(plot(obj), NA, info=info)
+    testthat::expect_error(plot(obj, open=FALSE), NA, info=info)
     # expect_warning(plot(obj), NA, info=objs[i])
     # graphics.off()
   }
@@ -75,7 +75,7 @@ testthat::test_that("plotObs works with all available Obs objects", {
 DLMextra(TRUE)
 library(DLMextra)
 
-testthat::test_that("plotOM works with all OMs", {
+testthat::test_that("plot.OM works with all OMs", {
   rm(list=ls())
   objs <- avail('OM')
   for (i in seq_along(objs)) {
@@ -85,7 +85,7 @@ testthat::test_that("plotOM works with all OMs", {
     seed <- ceiling(runif(1, 1, 1000))
     obj@seed <- seed
     info <- paste(objs[i], seed)
-    testthat::expect_error(plot(obj, silent=TRUE), NA, info=info)
+    testthat::expect_error(plot(obj, silent=TRUE, open=FALSE), NA, info=info)
     # expect_warning(plot(obj), NA, info=objs[i])
     # graphics.off()
   }

@@ -20,7 +20,10 @@ for (dat in dats) {
           if (length(och)<1) och <- 0
           testthat::expect_equal(och, nchar(read))
         } else {
-          if (class(orig)=="matrix") testthat::expect_equal(orig[sim,], read[sim,])
+          if (class(orig)=="matrix") {
+            nonna <- which(!is.na(orig[sim,]))
+            testthat::expect_equal(orig[sim,nonna], read[sim,nonna])
+          }
           if (class(orig)=="numeric") testthat::expect_equal(orig[sim], read[sim])
         }
       }
