@@ -15,7 +15,8 @@ Names <- c("maxage", "R0", "Mexp", "Msd", "dep", "D", "Mgrad", "SRrel", "hs", "p
            "Fdisc", "R50", "Rslope", "retA", "retL", "LR5", "LFR", "Rmaxlen",
            "V2", "SLarray2", "DR", "Asize", "Size_area_1", "L50array", "L95array",
            "Fdisc_array", "Fdisc_array2", "Pinitdist", "DataOut",
-           'Perr_y', "Cobs", "Iobs", "Dobs", "Btbiascv", 'Btobs', "h", 'Index'
+           'Perr_y', "Cobs", "Iobs", "Dobs", "Btbiascv", 'Btobs', "h", 'Index',
+           '.', 'MP', 'Data', 'DataClass', "Type", "Recs", "DominatedMPs"
            )
 
 # change messages to blue text instead of default red

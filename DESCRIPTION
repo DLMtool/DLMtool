@@ -18,7 +18,7 @@ Description: Development, simulation testing, and implementation of management
     (see Carruthers & Hordyk (2018) <doi:10.1111/2041-210X.13081>).
 License: GPL-2
 Depends:
-    R (>= 2.10.0),
+    R (>= 3.5.0),
     snowfall
 Imports:
     abind,
