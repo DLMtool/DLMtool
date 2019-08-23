@@ -107,12 +107,37 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
   inval <- inval[!grepl("Index", inval)]
   inval <- inval[!grepl("CV Index", inval)]
   inval <- inval[!grepl("Index", inval)]
+  inval <- inval[!grepl("Modal length", inval)]
+  inval <- inval[!grepl("Mean length Lc", inval)]
+  inval <- inval[!grepl("Current spawning stock abundance", inval)]
+  inval <- inval[!grepl("Cref", inval)]
+  inval <- inval[!grepl("Iref", inval)]
+  inval <- inval[!grepl("Bref", inval)]
+  inval <- inval[!grepl("CV Cref", inval)]
+  inval <- inval[!grepl("CV Iref", inval)]
+  inval <- inval[!grepl("CV Bref", inval)]
+  inval <- inval[!grepl("CV Rec", inval)]
+  inval <- inval[!grepl("Recruitment", inval)]
+  inval <- inval[!grepl("LenCV", inval)]
+  
   inval <- inval[!is.na(inval)]
   if (length(inval)>0)
-    warning("These rows in the Data file were not imported:\n", paste(inval, collapse=', '))
+    warning("These rows in the Data file are not valid names and were not imported:\n", paste(inval, collapse=', '))
   
   datasheet$Name[datasheet$Name == "MPrec"] <- 'Previous TAC'
   datasheet$Name[datasheet$Name == "MPeff"] <- 'Previous TAE'
+  
+  datasheet$Name[datasheet$Name == "Modal length"] <- 'Modal length (Lc)'
+  datasheet$Name[datasheet$Name == "Mean length Lc"] <- 'Mean length above Lc'
+  datasheet$Name[datasheet$Name == "Current spawning stock abundance"] <- 'Current spawning abundance'
+  datasheet$Name[datasheet$Name == "Cref"] <- 'Catch Reference'
+  datasheet$Name[datasheet$Name == "Iref"] <- 'Index Reference'
+  datasheet$Name[datasheet$Name == "Bref"] <- 'Biomass Reference'
+  datasheet$Name[datasheet$Name == "CV Cref"] <- 'CV Catch Reference'
+  datasheet$Name[datasheet$Name == "CV Iref"] <- 'CV Index Reference'
+  datasheet$Name[datasheet$Name == "CV Bref"] <- 'CV Biomass Reference'
+  datasheet$Name[datasheet$Name == "Recruitment"] <- 'Recruitment Index'
+  datasheet$Name[datasheet$Name == "LenCV"] <- 'CV of length-at-age'
   
   
   Data <- new("Data")
@@ -158,6 +183,8 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
   Data@L50  <- datasheet$Data[which(datasheet$Name=="Length at 50% maturity")] %>% as.numeric() 
   Data@CV_L50 <- datasheet$Data[which(datasheet$Name=="CV Length at 50% maturity")] %>% as.numeric() 
   Data@L95 <- datasheet$Data[which(datasheet$Name=="Length at 95% maturity")] %>% as.numeric() 
+  Data@LenCV <- datasheet$Data[which(datasheet$Name=="CV of length-at-age")] %>% as.numeric()
+  
   
   # ---- Selectivity ----
   Data@LFC <- datasheet$Data[which(datasheet$Name=="Length at first capture")] %>% as.numeric() 
@@ -293,7 +320,9 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
   }
   
   ind <- which(grepl('CAA', datasheet$Name))
-  ind <- ind[!ind == which(datasheet$Name == "Vuln CAA")]
+  ind2 <-  which(datasheet$Name == "Vuln CAA")
+  if (length(ind2)>0) 
+    ind <- ind[!ind ==ind2]
   
   if (length(ind) ==1 & datasheet$Name[ind] == "CAA") {
     CAA_Yrs <- numeric(0)
@@ -338,7 +367,7 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
   ind <- which(grepl('CAL', datasheet$Name) & !grepl('CAL_bins', datasheet$Name) &
                  !grepl('Vuln CAL', datasheet$Name) &
                  !grepl('CAL_mids', datasheet$Name))
-  if (length(ind)==1 & datasheet$Name[ind] == "CAL") {
+  if (length(ind)==1 && datasheet$Name[ind] == "CAL") {
     ind <- numeric(0)
     CAL_Yrs <- numeric(0)
   } 
@@ -369,7 +398,9 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
     
   }
   
-  ind <- ind[!ind == which(datasheet$Name == "Vuln CAL")]
+  ind2 <- which(datasheet$Name == "Vuln CAL")
+  if (length(ind2)>01)
+    ind <- ind[!ind == ind2]
   
   CAL_Yrs <- sapply(strsplit(datasheet$Name[ind], " "), function(x) unlist(strsplit(x[2], " ")))
   if(!all(CAL_Yrs %in% Data@Year)) stop("All CAL Years must be included in `Year`")
