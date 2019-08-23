@@ -81,6 +81,7 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
   } else if (Class == "Hist") {
     Pars <- list()
     Pars$Hist <- Object
+    if (is.null(title)) title <- "Historical Simulations"
 
   } else {
     stop("Object must be class 'Stock', 'Fleet', 'Obs', or 'Imp'", call.=FALSE)  
