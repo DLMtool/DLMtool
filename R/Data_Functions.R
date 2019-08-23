@@ -309,7 +309,7 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
   
   # ---- Catch-at-Age ----
   ind <- which(datasheet$Name == "Vuln CAA")
-  if (length(ind)>0) {
+  if (length(ind)>0 && (!is.na(datasheet[ind,2]))) {
     VulnCAA <- datasheet[ind, 2:(Data@MaxAge+1)]
     nonNA <- as.vector(!is.na(VulnCAA[1,]))
     if (!all(is.na(VulnCAA)) & !all(nchar(VulnCAA[nonNA])==0)) {
@@ -348,7 +348,7 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
   
   # ---- Catch-at-Length ----
   ind <- which(datasheet$Name == "Vuln CAL")
-  if (length(ind)>0) {
+  if (length(ind)>0 && !is.na(datasheet$Data[ind])) {
     VulnCAL <- datasheet[ind, 2:(Data@MaxAge+1)]
     nonNA <- as.vector(!is.na(VulnCAL[1,]))
     if (!all(is.na(VulnCAL)) & !all(nchar(VulnCAL[nonNA])==0)) {
