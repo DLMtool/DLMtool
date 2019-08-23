@@ -73,76 +73,99 @@ Data2csv<-function(Data, file=NULL, simno = 1, overwrite=F, keepNAs=T) {
       "Common_Name", "Common Name",
       "Species", "Species",
       "Region",  "Region",
+      "LHYear","Last Historical Year",
+      "MPrec","Previous TAC",
+      "Units", "Units",
+      "MPeff","Previous TAE",
+      "nareas","nareas",
+      
+      "MaxAge","Maximum age",
+      "Mort","M",
+      "CV_Mort","CV M",
+      "vbLinf","Von Bertalanffy Linf parameter",
+      "CV_vbLinf","CV von B. Linf parameter",
+      "vbK","Von Bertalanffy K parameter",
+      "CV_vbK","CV von B. K parameter",
+      "vbt0","Von Bertalanffy t0 parameter",
+      "CV_vbt0","CV von B. t0 parameter",
+      "wla","Length-weight parameter a",
+      "CV_wla","CV Length-weight parameter a",
+      "wlb","Length-weight parameter b",
+      "CV_wlb","CV Length-weight parameter b",
+      
+      "steep","Steepness",
+      "CV_steep","CV Steepness",
+      "sigmaR","sigmaR",
+      "CV_sigmaR", "CV sigmaR",
+      "L50","Length at 50% maturity",
+      "CV_L50","CV Length at 50% maturity",
+      "L95","Length at 95% maturity",
+      "LenCV", "CV of length-at-age",
+      
+      "LFC","Length at first capture",
+      "CV_LFC","CV Length at first capture",
+      "LFS","Length at full selection",
+      "CV_LFS","CV Length at full selection",
+      "Vmaxlen", "Vulnerability at asymptotic length",
+      
       "Year","Year", 
       "Cat", "Catch",
+      "CV_Cat","CV Catch",
+      "Effort", "Effort",
+      "CV_Effort", "CV Effort",
       "Ind", "Abundance index",
-      "Type", "Index type",
-      "RInd", "Real indices",
-      "Rec", "Recruitment",
+      "CV_Ind","CV Abundance index",
+      
+      "Rec", "Recruitment index",
+      "CV_Rec","CV Recruitment index",
+      
+      "ML", "Mean length",
+      "Lc", "Modal length (Lc)",
+      "Lbar", "Mean length above Lc",
+  
+      "Vuln_CAA", "Vuln CAA",
+      "CAA", "CAA",
+      
+      'Vuln_CAL', "Vuln CAL",
+      "CAL_bins","CAL_bins",
+      "CAL_mids","CAL_mids",
+      "CAL","CAL",
+      
+      "Dep","Current stock depletion",
+      "CV_Dep","CV current stock depletion",
+      "Abun","Current stock abundance",
+      "CV_Abun","CV current stock abundance",
+      "SpAbun","Current spawning abundance",
+      "CV_SpAbun","CV current spawning abundance",
+      
+      "FMSY_M","FMSY/M",
+      "CV_FMSY_M","CV FMSY/M",
+      "BMSY_B0","BMSY/B0",
+      "CV_BMSY_B0","CV BMSY/B0",
+      
+      "Cref","Catch Reference",
+      "CV_Cref","CV Catch Reference",
+      "Bref","Biomass Reference",
+      "CV_Bref","CV Biomass Reference",
+      "Iref","Index Reference",
+      "CV_Iref","CV Index Reference",
       "t","Duration t",
       "AvC","Average catch over time t",
-      "Dt","Depletion over time t",
-      "Mort","M",
-      "FMSY_M","FMSY/M",
-      "BMSY_B0","BMSY/B0",
-      "L50","Length at 50% maturity",
-      "L95","Length at 95% maturity",
-      "ML", "Mean length",
-      "Lbar", "Mean length Lc",
-      "Lc", "Modal length",
-      "LFC","Length at first capture",
-      "LFS","Length at full selection",
-      "CAA", "CAA",
-      "CAL_bins","CAL_bins",
-      "CAL","CAL",
-      "Dep","Current stock depletion",
-      "Abun","Current stock abundance",
-      "SpAbun","Current spawning stock abundance",
-      "vbK","Von Bertalanffy K parameter",
-      "vbLinf","Von Bertalanffy Linf parameter",
-      "vbt0","Von Bertalanffy t0 parameter",
-      "LenCV","CV of length-at-age",
-      "wla","Length-weight parameter a",
-      "wlb","Length-weight parameter b",
-      "steep","Steepness",
-      "sigmaR","sigmaR",
-      "CV_Cat","CV Catch",
-      "CV_Dt","CV Depletion over time t",
       "CV_AvC","CV Average catch over time t",
-      "CV_Ind","CV Abundance index",
-      "CV_Mort","CV M",
-      "CV_FMSY_M","CV FMSY/M",
-      "CV_BMSY_B0","CV BMSY/B0",
-      "CV_Dep","CV current stock depletion",
-      "CV_Abun","CV current stock abundance",
-      "CV_vbK","CV von B. K parameter",
-      "CV_vbLinf","CV von B. Linf parameter",
-      "CV_vbt0","CV von B. t0 parameter",
-      "CV_L50","CV Length at 50% maturity",
-      "CV_LFC","CV Length at first capture",
-      "CV_LFS","CV Length at full selection",
-      "CV_wla","CV Length-weight parameter a",
-      "CV_wlb","CV Length-weight parameter b",
-      "CV_steep","CV Steepness",
-      "sigmaL","Sigma length composition",
-      "MaxAge","Maximum age",
-      "Units", "Units",
+      "Dt","Depletion over time t",
+      "CV_Dt","CV Depletion over time t",
       "Ref","Reference OFL",
-      "Ref_type", "Reference OFL type",
-      "Cref","Cref",
-      "Iref","Iref",
-      "Bref","Bref",
-      "CV_Cref","CV Cref",
-      "CV_Iref","CV Iref",
-      "CV_Bref","CV Bref",
-      "CV_Rec","CV Rec",
-      "MPrec","MPrec",
-      "MPeff","MPeff",
-      "LHYear","LHYear",
-      "nareas","nareas"),
+      "Ref_type", "Reference OFL type"),
       nrow=2))
- 
   
+  # TO DO - add AddInd & CV Index 1 etc
+  # if(!all(is.na(Data@AddInd))) {
+  #   nind <- dim(Data@AddInd)[2]
+  #   paste("Index", 1:nind)
+  #   
+  # }
+ 
+  nsim <- length(Data@Mort)
   for(i in 1:ns){
     obj<-slot(Data,slots[i])
     lex<-lexicon[match(slots[i],lexicon[,1]),2]
@@ -154,8 +177,11 @@ Data2csv<-function(Data, file=NULL, simno = 1, overwrite=F, keepNAs=T) {
             write(paste(c(lex,"NA"),collapse=","),file,1,append=appendy[i])
           }else{
             if(is.null(dim(obj))){  # vector or single value
-              write(paste(c(lex,obj),collapse=","),file,1,append=appendy[i])
-            
+              if (length(obj)==nsim) {
+                write(paste(c(lex,obj[simno]),collapse=","),file,1,append=appendy[i])  
+              } else {
+                write(paste(c(lex,obj),collapse=","),file,1,append=appendy[i])
+              }
             }else if(length(dim(obj))==2){ # a matrix (time series)
               write(paste(c(lex,obj[simno,]),collapse=","),file,1,append=appendy[i])
              
@@ -178,7 +204,6 @@ Data2csv<-function(Data, file=NULL, simno = 1, overwrite=F, keepNAs=T) {
       }
     }#end of na lex  
   }
-  
 }
 
 

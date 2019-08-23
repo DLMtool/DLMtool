@@ -28,82 +28,99 @@ setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 #' @slot Common_Name Common name of the species. Character string
 #' @slot Species Scientific name of the species. Genus and species name. Character string
 #' @slot Region Name of the general geographic region of the fishery. Character string
+#' @slot LHYear The last historical year of the simulation (before projection). Single value. Positive integer 
+#' @slot MPrec The previous recommendation of a management procedure. Vector of length nsim. Positive real numbers   
+#' @slot Units Units of the catch/absolute abundance estimates. Single value. Character string
+#' @slot MPeff The current level of effort. Vector of length nsim. Positive real numbers 
+#' @slot nareas Number of fishing areas. Vector of length nsim. Non-negative integer 
+#' 
+#' @slot MaxAge Maximum age. Vector nsim long. Positive integer
+#' @slot Mort Natural mortality rate. Vector nsim long. Positive real numbers 
+#' @slot CV_Mort Coefficient of variation in natural mortality rate. Vector nsim long. Positive real numbers 
+#' @slot vbLinf Maximum length. Vector nsim long. Positive real numbers
+#' @slot CV_vbLinf Coefficient of variation in maximum length. Vector nsim long. Positive real numbers 
+#' @slot vbK The von Bertalanffy growth coefficient K. Vector nsim long. Positive real numbers
+#' @slot CV_vbK Coefficient of variation in the von Bertalanffy K parameter. Vector nsim long. Positive real numbers 
+#' @slot vbt0 Theoretical age at length zero. Vector nsim long. Non-positive real numbers
+#' @slot CV_vbt0 Coefficient of variation in age at length zero. Vector nsim long. Positive real numbers 
+#' @slot wla Weight-Length parameter alpha. Vector nsim long. Positive real numbers 
+#' @slot CV_wla Coefficient of variation in weight-length parameter a. Vector nsim long. Positive real numbers
+#' @slot wlb Weight-Length parameter beta. Vector nsim long. Positive real numbers 
+#' @slot CV_wlb Coefficient of variation in weight-length parameter b. Vector nsim long. Positive real numbers
+#' @slot steep Steepness of stock-recruitment relationship. Vector nsim long. Value in the range of one-fifth to 1 
+#' @slot CV_steep Coefficient of variation in steepness. Vector nsim long. Positive real numbers   
+#' @slot sigmaR Recruitment variability. Vector nsim long. Positive real numbers
+#' @slot CV_sigmaR Coefficient of variation in recruitment variability. Vector nsim long. Positive real numbers 
+#' @slot L50 Length at 50 percent maturity. Vector nsim long. Positive real numbers 
+#' @slot CV_L50 Coefficient of variation in length at 50 per cent maturity. Vector nsim long. Positive real numbers 
+#' @slot L95 Length at 95 percent maturity. Vector nsim long. Positive real numbers 
+#' @slot LenCV Coefficient of variation of length-at-age (assumed constant for all age classes). Vector nsim long. Positive real numbers 
+#' @slot LFC Length at first capture. Vector nsim long. Positive real numbers 
+#' @slot CV_LFC Coefficient of variation in length at first capture. Vector nsim long. Positive real numbers 
+#' @slot LFS Shortest length at full selection.  Vector nsim long. Positive real numbers 
+#' @slot CV_LFS Coefficient of variation in length at full selection. Vector nsim long. Positive real numbers 
+#' @slot Vmaxlen Vulnerability of individuals at asymptotic length. Vector nsim long. Real number between 0 and 1.
+#' 
 #' @slot Year Years that corresponding to catch and relative abundance data. Vector nyears long. Positive integer
 #' @slot Cat Total annual catches. Matrix of nsim rows and nyears columns. Non-negative real numbers 
-#' @slot Ind Relative abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers
-#' @slot Type Type of abundance index, corresponding with rows in `RInd`. Types are: "Biomass", "VBiomass", 
-#' and "SpBiomass" for indices of total, vulnerable, and spawning biomass respectively. Character string. 
-#' @slot RInd One or more vectors of abundance indices. Non-negative real numbers 
-#' @slot Rec Recent recruitment strength. Matrix of nsim rows and nyears columns. Non-negative real numbers 
+#' @slot CV_Cat Coefficient of variation in annual catches. Matrix nsim rows and either 1 or nyear columns.
+#'  Positive real numbers. Note: built-in MPs use only the first value of `CV_Cat` for all years.
+#' @slot Ind Relative total abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers
+#' @slot CV_Ind Coefficient of variation in the relative total abundance index. Matrix nsim rows and either 1 or nyear columns.
+#'  Positive real numbers. Note: built-in MPs use only the first value of `CV_Ind` for all years
+#' @slot AddInd Optional additional indices. Array of dimensions `nsim`, n additional arrays, and `nyears` (length `Year`).  
+#' @slot CV_AddInd Coefficient of variation for additional indices. Array of same dimensions as `AddInd`
+#' @slot AddIndV Vulnerability-at-age schedules for the additional indices. Array with dimensions: `nsim`, n additional arrays,
+#' and `MaxAge`.  
+#' @slot Rec Recent recruitment strength. Matrix of nsim rows and nyears columns. Non-negative real numbers
+#' @slot CV_Rec Log-normal CV for recent recruitment strength.  Matrix nsim rows and either 1 or nyear columns.
+#'  Positive real numbers. Note: built-in MPs use only the first value of `CV_Rec` for all years.
+#' @slot ML Mean length time series. Matrix of nsim rows and nyears columns. Non-negative real numbers
+#' @slot Lc Modal length of catches. Matrix of nsim rows and nyears columns. Positive real numbers 
+#' @slot Lbar Mean length of catches over Lc. Matrix of nsim rows and nyears columns. Positive real numbers  
+#' @slot Vuln_CAA Optional vulnerability-at-age schedule for catch-at-age samples. Used to condition OM for closed-loop
+#' simulation testing. Replaces the fleet selectivity schedule in the OM used to generate CAA samples. Matrix
+#' with dimensions `nsim` x `MaxAge`.
+#' @slot CAA Catch at Age data (numbers). Array of dimensions nsim x nyears x MaxAge. Non-negative integers
+#' @slot Vuln_CAL Optional vulnerability-at-length schedule for catch-at-length samples. Used to condition OM for closed-loop
+#' simulation testing. Replaces the fleet selectivity schedule in the OM used to generate CAL samples. Matrix
+#' with dimensions `nsim` x `length(CAL_mids)`.
+#' @slot CAL_bins The values delimiting the length bins for the catch-at-length data. Vector. Non-negative real numbers
+#' @slot CAL_mids The values of the mid-points of the length bins. Optional, calculated from `CAL_bins` if not entered. Vector. Non-negative real numbers.
+#' @slot CAL Catch-at-length data. An array with dimensions nsim x nyears x length(CAL_mids). Non-negative integers  
+#'    
+#' @slot Dep Stock depletion SSB(current)/SSB(unfished). Vector nsim long. Fraction.  
+#' @slot CV_Dep Coefficient of variation in current stock depletion. Vector nsim long. Positive real numbers
+#' @slot Abun An estimate of absolute current vulnerable abundance. Vector nsim long. Positive real numbers    
+#' @slot CV_Abun Coefficient of variation in estimate of absolute current stock size. Vector nsim long. Positive real numbers 
+#' @slot SpAbun An estimate of absolute current spawning stock abundance. Vector nsim long. Positive real numbers
+#' @slot CV_SpAbun Coefficient of variation in estimate of absolute spawning current stock size. Vector nsim long. Positive real numbers  
+#' 
+#' @slot FMSY_M An assumed ratio of FMSY to M. Vector nsim long. Positive real numbers  
+#' @slot CV_FMSY_M Coefficient of variation in the ratio in FMSY/M. Vector nsim long. Positive real numbers 
+#' @slot BMSY_B0 The most productive stock size relative to unfished. Vector nsim long. Fraction 
+#' @slot CV_BMSY_B0 Coefficient of variation in the position of the most productive stock size relative to unfished. Vector nsim long. Positive real numbers 
+#' @slot Cref Reference or target catch level (eg MSY). Vector of length nsim. Positive real numbers 
+#' @slot CV_Cref Log-normal CV for reference or target catch level. Vector of length nsim. Positive real numbers 
+#' @slot Bref Reference or target biomass level (eg BMSY). Vector of length nsim. Positive real numbers 
+#' @slot CV_Bref Log-normal CV for reference or target biomass level. Vector of length nsim. Positive real numbers 
+#' @slot Iref Reference or target relative abundance index level (eg BMSY / B0). Vector of length nsim. Positive real numbers 
+#' @slot CV_Iref Log-normalCV for reference or target relative abundance index level. Vector of length nsim. Positive real numbers
 #' @slot t The number of years corresponding to AvC and Dt. Single value. Positive integer  
 #' @slot AvC Average catch over time t. Vector nsim long. Positive real numbers  
-#' @slot Dt Depletion over time t SSB(now)/SSB(now-t+1). Vector nsim long. Fraction  
-#' @slot Mort Natural mortality rate. Vector nsim long. Positive real numbers 
-#' @slot FMSY_M An assumed ratio of FMSY to M. Vector nsim long. Positive real numbers  
-#' @slot BMSY_B0 The most productive stock size relative to unfished. Vector nsim long. Fraction  
-#' @slot L50 Length at 50 percent maturity. Vector nsim long. Positive real numbers 
-#' @slot L95 Length at 95 percent maturity. Vector nsim long. Positive real numbers 
-#' @slot ML Mean length time series. Matrix of nsim rows and nyears columns. Non-negative real numbers
-#' @slot Lbar Mean length of catches over Lc. Matrix of nsim rows and nyears columns. Positive real numbers  
-#' @slot Lc Modal length of catches. Matrix of nsim rows and nyears columns. Positive real numbers  
-#' @slot LFC Length at first capture. Vector nsim long. Positive real numbers 
-#' @slot LFS Shortest length at full selection.  Vector nsim long. Positive real numbers 
-#' @slot CAA Catch at Age data (numbers). Array of dimensions nsim x nyears x MaxAge. Non-negative integers
-#' @slot Dep Stock depletion SSB(current)/SSB(unfished). Vector nsim long. Fraction.  
-#' @slot Abun An estimate of absolute current vulnerable abundance. Vector nsim long. Positive real numbers 
-#' @slot SpAbun An estimate of absolute current spawning stock abundance. Vector nsim long. Positive real numbers 
-#' @slot vbK The von Bertalanffy growth coefficient K. Vector nsim long. Positive real numbers  
-#' @slot vbLinf Maximum length. Vector nsim long. Positive real numbers
-#' @slot vbt0 Theoretical age at length zero. Vector nsim long. Non-positive real numbers
-#' @slot LenCV Coefficient of variation of length-at-age (assumed constant for all age classes). Vector nsim long. Positive real numbers 
-#' @slot wla Weight-Length parameter alpha. Vector nsim long. Positive real numbers 
-#' @slot wlb Weight-Length parameter beta. Vector nsim long. Positive real numbers  
-#' @slot steep Steepness of stock-recruitment relationship. Vector nsim long. Value in the range of one-fifth to 1 
-#' @slot sigmaR Recruitment variability. Vector nsim long. Positive real numbers
-#' @slot CV_Cat Coefficient of variation in annual catches. Vector nsim long. Positive real numbers 
-#' @slot CV_Dt Coefficient of variation in depletion over time t. Vector nsim long. Positive real numbers  
 #' @slot CV_AvC Coefficient of variation in average catches over time t. Vector nsim long. Positive real numbers
-#' @slot CV_Ind Coefficient of variation in the relative abundance index. Vector nsim long. Positive real numbers 
-#' @slot CV_Mort Coefficient of variation in natural mortality rate. Vector nsim long. Positive real numbers 
-#' @slot CV_FMSY_M Coefficient of variation in the ratio in FMSY/M. Vector nsim long. Positive real numbers 
-#' @slot CV_BMSY_B0 Coefficient of variation in the position of the most productive stock size relative to unfished. Vector nsim long. Positive real numbers 
-#' @slot CV_Dep Coefficient of variation in current stock depletion. Vector nsim long. Positive real numbers 
-#' @slot CV_Abun Coefficient of variation in estimate of absolute current stock size. Vector nsim long. Positive real numbers 
-#' @slot CV_vbK Coefficient of variation in the von Bertalanffy K parameter. Vector nsim long. Positive real numbers 
-#' @slot CV_vbLinf Coefficient of variation in maximum length. Vector nsim long. Positive real numbers 
-#' @slot CV_vbt0 Coefficient of variation in age at length zero. Vector nsim long. Positive real numbers 
-#' @slot CV_L50 Coefficient of variation in length at 50 per cent maturity. Vector nsim long. Positive real numbers 
-#' @slot CV_LFC Coefficient of variation in length at first capture. Vector nsim long. Positive real numbers 
-#' @slot CV_LFS Coefficient of variation in length at full selection. Vector nsim long. Positive real numbers 
-#' @slot CV_wla Coefficient of variation in weight-length parameter a. Vector nsim long. Positive real numbers 
-#' @slot CV_wlb Coefficient of variation in weight-length parameter b. Vector nsim long. Positive real numbers 
-#' @slot CV_steep Coefficient of variation in steepness. Vector nsim long. Positive real numbers   
-#' @slot sigmaL Assumed observaton error of the length composition data. Vector nsim long. Positive real numbers 
-#' @slot MaxAge Maximum age. Vector nsim long. Positive integer 
-#' @slot CAL_bins The values delimiting the length bins for the catch-at-length data. Vector. Non-negative real numbers
-#' @slot CAL Catch-at-length data. An array with dimensions nsim x nyears x length(CAL_bins). Non-negative integers 
-#' @slot TAC The calculated catch limits (function TAC). An array with dimensions PosMPs x replicate TAC samples x nsim. Positive real numbers  
-#' @slot Sense The results of the sensitivity analysis (function Sense). An array with dimensions PosMPs x sensitivity increments. Positive real numbers  
-#' @slot Units Units of the catch/absolute abundance estimates. Single value. Character string
+#' @slot Dt Depletion over time t SSB(now)/SSB(now-t+1). Vector nsim long. Fraction  
+#' @slot CV_Dt Coefficient of variation in depletion over time t. Vector nsim long. Positive real numbers  
 #' @slot Ref A reference management level (eg a catch limit). Single value. Positive real number  
 #' @slot Ref_type Type of reference management level (eg 2009 catch limit). Single value. Character string 
 #' @slot Log A record of events. Single value. Character string 
-#' @slot params A place to store estimated parameters. An object. R list    
-#' @slot PosMPs The methods that can be applied to these data. Vector. Character strings  
+#' @slot params A place to store estimated parameters. An object. R list 
+#' @slot PosMPs The methods that can be applied to these data. Vector. Character strings 
+#' @slot TAC The calculated catch limits (function TAC). An array with dimensions PosMPs x replicate TAC samples x nsim. Positive real numbers  
+#' @slot Sense The results of the sensitivity analysis (function Sense). An array with dimensions PosMPs x sensitivity increments. Positive real numbers  
 #' @slot MPs The methods that were applied to these data. Vector. Character strings  
 #' @slot OM A table of operating model conditions. R table object of nsim rows. Real numbers  
 #' @slot Obs A table of observation model conditions. R table object of nsim rows. Real numbers 
-#' @slot Cref Reference or target catch level (eg MSY). Vector of length nsim. Positive real numbers 
-#' @slot Iref Reference or target relative abundance index level (eg BMSY / B0). Vector of length nsim. Positive real numbers 
-#' @slot Bref Reference or target biomass level (eg BMSY). Vector of length nsim. Positive real numbers 
-#' @slot CV_Cref Log-normal CV for reference or target catch level. Vector of length nsim. Positive real numbers  
-#' @slot CV_Iref Log-normalCV for reference or target relative abundance index level. Vector of length nsim. Positive real numbers
-#' @slot CV_Bref Log-normal CV for reference or target biomass level. Vector of length nsim. Positive real numbers 
-#' @slot CV_Rec Log-normal CV for recent recruitment strength. Vector of length nsim. Positive real numbers 
-#' @slot MPrec The previous recommendation of a management procedure. Vector of length nsim. Positive real numbers   
-#' @slot MPeff The current level of effort. Vector of length nsim. Positive real numbers  
-#' @slot LHYear The last historical year of the simulation (before projection). Single value. Positive integer  
-#' @slot nareas Number of fishing areas. Vector of length nsim. Non-negative integer 
 #' @slot Misc Other information for MPs. An object. R list   
 #' 
 #' @author T. Carruthers and A. Hordyk
@@ -113,214 +130,258 @@ setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 #' 
 #' newdata<-new('Data')
 #' 
-setClass("Data", representation(Name = "character", Common_Name='character', Species='character', Region='character',
-                                Year = "vector", 
-                                Cat = "matrix", Ind = "matrix", 
-                                Type = "vector", RInd = "array", 
-                                Rec = "matrix", t = "vector",
-                                AvC = "vector", Dt = "vector", Mort = "vector", FMSY_M = "vector", 
-                                BMSY_B0 = "vector", L50 = "vector", L95 = "vector", 
-                                ML = "array", Lbar = "array", Lc = "array",
-                                LFC = "vector", LFS = "vector", CAA = "array", Dep = "vector", 
-                                Abun = "vector", SpAbun="vector", vbK = "vector", vbLinf = "vector", vbt0 = "vector", 
-                                LenCV="vector", wla = "vector", wlb = "vector",  steep = "vector", 
-                                sigmaR='vector',
-                                CV_Cat = "vector", CV_Dt = "vector", CV_AvC = "vector", 
-                                CV_Ind = "vector", CV_Mort = "vector", CV_FMSY_M = "vector",
-                                CV_BMSY_B0 = "vector", CV_Dep = "vector", CV_Abun = "vector",
-                                CV_vbK = "vector", CV_vbLinf = "vector", CV_vbt0 = "vector",
-                                CV_L50 = "vector", CV_LFC = "vector", CV_LFS = "vector", 
-                                CV_wla = "vector", CV_wlb = "vector", CV_steep = "vector", 
-                                sigmaL = "vector", MaxAge = "vector",
-                                CAL_bins = "numeric", CAL = "array", 
-                                TAC = "array", Sense = "array",
-                                Units = "character", Ref = "numeric", Ref_type = "character", 
-                                Log = "list", params = "list", PosMPs = "vector",
-                                MPs = "vector", OM = "data.frame", Obs = "data.frame", 
-                                Cref = "vector", Iref = "vector",  Bref = "vector", 
-                                CV_Cref = "vector", CV_Iref = "vector", CV_Bref = "vector", 
-                                CV_Rec = "vector",  
-                                MPrec = "vector", MPeff = "vector", LHYear = "numeric", 
-                                nareas = "numeric", Misc = "list"))
-
-# initialize Data
-setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ","), silent=TRUE) {
-  # .Object }) .Object<-new('Data') run an error check here
+setClass("Data", 
+         representation(Name = "character", Common_Name='character', 
+                        Species='character', Region='character',
+                        LHYear = "numeric", MPrec = "vector", 
+                        Units = "character", MPeff = "vector", 
+                        nareas = "numeric",
+                        
+                        MaxAge = "vector", Mort = "vector", CV_Mort = "vector",
+                        vbLinf = "vector", CV_vbLinf = "vector",
+                        vbK = "vector", CV_vbK = "vector",
+                        vbt0 = "vector", CV_vbt0 = "vector",
+                        wla = "vector", CV_wla = "vector", 
+                        wlb = "vector", CV_wlb = "vector",
+                        steep = "vector", CV_steep = "vector", 
+                        sigmaR='vector', CV_sigmaR='vector',
+                        L50 = "vector",  CV_L50 = "vector",
+                        L95 = "vector",
+                        LenCV="vector",
+                        
+                        LFC = "vector", CV_LFC = "vector",
+                        LFS = "vector", CV_LFS = "vector", 
+                        Vmaxlen = 'vector',
+                        
+                        Year = "vector", 
+                        Cat = "matrix", CV_Cat = "matrix",
+                        Effort = 'matrix', CV_Effort = 'matrix',
+                        Ind = "matrix", CV_Ind = "matrix", 
+                        
+                        AddInd = "array", CV_AddInd = "array", AddIndV = "array",
+                        Rec = "matrix", CV_Rec = "matrix", 
+                        ML = "matrix",  Lc = "matrix", Lbar = "matrix", 
+                        
+                        Vuln_CAA = "matrix", CAA = "array",
+                        Vuln_CAL = 'matrix', CAL_bins = "numeric",
+                        CAL_mids = "numeric", CAL = "array",
+                        
+                        Dep = "vector", CV_Dep = "vector",
+                        Abun = "vector", CV_Abun = "vector",
+                        SpAbun= "vector",  CV_SpAbun = "vector",
+                        
+                        FMSY_M = "vector", CV_FMSY_M = "vector",
+                        BMSY_B0 = "vector", CV_BMSY_B0 = "vector", 
+                        
+                        Cref = "vector", CV_Cref = "vector",
+                        Bref = "vector", CV_Bref = "vector", 
+                        Iref = "vector", CV_Iref = "vector", 
+                        t = "vector",  AvC = "vector", CV_AvC = "vector",  
+                        Dt = "vector",   CV_Dt = "vector",
+                        
+                        Ref = "numeric", Ref_type = "character", 
+                        Log = "list", params = "list", PosMPs = "vector",
+                        TAC = "array", Sense = "array",
+                        MPs = "vector", OM = "data.frame", Obs = "data.frame", 
+                        Misc = "list"))       
+                              
+                                 
+setMethod("initialize", "Data", function(.Object, stock="nada", ...) {
   if (file.exists(stock)) {
-    dec <- match.arg(dec)
-    Ncol <- max(unlist(lapply(strsplit(readLines(stock), ","), length)))
-    col.names <- paste0("V", 1:Ncol)
-
-    if (dec == ".") 
-      dat <- read.csv(stock, header = F, colClasses = "character", col.names=col.names)  # read 1st sheet
-    if (dec == ",") 
-      dat <- read.csv2(stock, header = F, colClasses = "character", col.names=col.names)  # read 1st sheet
-    dname <- dat[, 1]
-    dat <- dat[, 2:ncol(dat)]
-    
-    .Object@Name <- dat[match("Name", dname), 1]
-    .Object@Common_Name <- dat[match("Common Name", dname), 1]
-    .Object@Species <- dat[match("Species", dname), 1]
-    .Object@Region <- dat[match("Region", dname), 1]
-    .Object@Year <- as.numeric(dat[match("Year", dname), dat[match("Year", dname), ] != ""])
-    # .Object@Cat <- matrix(as.numeric(dat[match("Catch", dname), dat[match("Catch", dname), ] != ""]), nrow = 1)
-    .Object@Cat <- matrix(as.numeric(dat[match("Catch", dname), 1:length(.Object@Year)]), nrow = 1)
-    .Object@Ind <- matrix(as.numeric(dat[match("Abundance index", dname), 1:length(.Object@Year)]), nrow = 1)
-    
-    .Object@Type <- dat[match("Index type", dname), ] %>% as.character()
-    .Object@Type <- .Object@Type[!is.na(.Object@Type)]
-    .Object@Type <- .Object@Type[nchar(.Object@Type)>0]
-    if (length(.Object@Type)>0) {
-      .Object@Type <- .Object@Type[nchar(.Object@Type)>0] %>% as.character()
-      n.ind <- length(.Object@Type)
-      r.ind <- match("Real indices", dname)
-      RInd.dat <- dat[r.ind:(r.ind+n.ind-1),] %>% data.matrix()
-      .Object@RInd <- array(RInd.dat, dim=c(1, n.ind, ncol(RInd.dat)))
-    }
-
-    .Object@Rec <- matrix(as.numeric(dat[match("Recruitment", dname), 1:length(.Object@Year)]), nrow = 1)
-    .Object@t <- as.numeric(dat[match("Duration t", dname), 1])
-    .Object@AvC <- as.numeric(dat[match("Average catch over time t", dname), 1])
-    .Object@Dt <- as.numeric(dat[match("Depletion over time t", dname), 1])
-    .Object@Mort <- as.numeric(dat[match("M", dname), 1])
-    .Object@FMSY_M <- as.numeric(dat[match("FMSY/M", dname), 1])
-    .Object@BMSY_B0 <- as.numeric(dat[match("BMSY/B0", dname), 1])
-    .Object@L50 <- as.numeric(dat[match("Length at 50% maturity", dname), 1])
-    .Object@L95 <- as.numeric(dat[match("Length at 95% maturity", dname), 1])
-    .Object@ML <- matrix(as.numeric(dat[match("Mean length", dname), 1:length(.Object@Year)]), nrow = 1)
-    .Object@Lbar <- matrix(as.numeric(dat[match("Mean length Lc", dname), 1:length(.Object@Year)]), nrow = 1)
-    .Object@Lc <- matrix(as.numeric(dat[match("Modal length", dname), 1:length(.Object@Year)]), nrow = 1)
-    .Object@LFC <- as.numeric(dat[match("Length at first capture",  dname), 1])
-    .Object@LFS <- as.numeric(dat[match("Length at full selection", dname), 1])
-  
-    CAAy <- grep("CAA", dname)[1:length(grep("CAA", dname))]
-    CAAa <- sum(dat[CAAy[1], ] != "")
-    if (!is.na(CAAa)) {
-      .Object@CAA <- array(as.numeric(as.matrix(dat[CAAy, 1:CAAa])),  dim = c(1, length(CAAy), CAAa))
-    }
-    .Object@Dep <- as.numeric(dat[match("Current stock depletion",  dname), 1])
-    .Object@Abun <- as.numeric(dat[match("Current stock abundance",  dname), 1]) 
-    .Object@SpAbun <- as.numeric(dat[match("Current spawning stock abundance",  dname), 1])
-    .Object@vbK <- as.numeric(dat[match("Von Bertalanffy K parameter", dname), 1])
-    .Object@vbLinf <- as.numeric(dat[match("Von Bertalanffy Linf parameter", dname), 1])
-    .Object@vbt0 <- as.numeric(dat[match("Von Bertalanffy t0 parameter", dname), 1])
-    .Object@LenCV <- as.numeric(dat[match("CV of length-at-age", dname), 1])
-    .Object@wla <- as.numeric(dat[match("Length-weight parameter a", dname), 1])
-    .Object@wlb <- as.numeric(dat[match("Length-weight parameter b", dname), 1])
-    .Object@steep <- as.numeric(dat[match("Steepness", dname), 1])
-    .Object@sigmaR <- as.numeric(dat[match("sigmaR", dname), 1])
-    
-    .Object@CV_Cat <- as.numeric(dat[match("CV Catch", dname), 1])
-    .Object@CV_Dt <- as.numeric(dat[match("CV Depletion over time t", dname), 1])
-    .Object@CV_AvC <- as.numeric(dat[match("CV Average catch over time t", dname), 1])
-    .Object@CV_Ind <- as.numeric(dat[match("CV Abundance index", dname), 1])
-    .Object@CV_Mort <- as.numeric(dat[match("CV M", dname), 1])
-    .Object@CV_FMSY_M <- as.numeric(dat[match("CV FMSY/M", dname),  1])
-    .Object@CV_BMSY_B0 <- as.numeric(dat[match("CV BMSY/B0", dname), 1])
-    .Object@CV_Dep <- as.numeric(dat[match("CV current stock depletion", dname), 1])
-    .Object@CV_Abun <- as.numeric(dat[match("CV current stock abundance", dname), 1])
-    .Object@CV_vbK <- as.numeric(dat[match("CV von B. K parameter", dname), 1])
-    .Object@CV_vbLinf <- as.numeric(dat[match("CV von B. Linf parameter", dname), 1])
-    .Object@CV_vbt0 <- as.numeric(dat[match("CV von B. t0 parameter", dname), 1])
-    .Object@CV_L50 <- as.numeric(dat[match("CV Length at 50% maturity", dname), 1])
-    .Object@CV_LFC <- as.numeric(dat[match("CV Length at first capture", dname), 1])
-    .Object@CV_LFS <- as.numeric(dat[match("CV Length at full selection", dname), 1])
-    .Object@CV_wla <- as.numeric(dat[match("CV Length-weight parameter a", dname), 1])
-    .Object@CV_wlb <- as.numeric(dat[match("CV Length-weight parameter b", dname), 1])
-    .Object@CV_steep <- as.numeric(dat[match("CV Steepness", dname),  1])
-    .Object@sigmaL <- as.numeric(dat[match("Sigma length composition", dname), 1])
-    
-    .Object@MaxAge <- as.numeric(dat[match("Maximum age", dname), 1])
-    
-    if (length(grep("CAL", dname)) > 1) {
-      CAL_bins <- as.numeric(dat[match("CAL_bins", dname), dat[match("CAL_bins", dname), ] != ""])
-      nCAL <- length(CAL_bins) - 1
-      .Object@CAL_bins <- CAL_bins
-      CALdat <- grep("CAL ", dname)
-      if (length(CALdat) > 0) .Object@CAL <- array(as.numeric(as.matrix(dat[CALdat, 1:nCAL])),dim = c(1, length(CALdat), nCAL))
-    }
-    
-    .Object@Units <- dat[match("Units", dname), 1]
-    .Object@Ref <- as.numeric(dat[match("Reference OFL", dname), 1])
-    .Object@Ref_type <- dat[match("Reference OFL type", dname), 1]
-    
-    .Object@Cref <- as.numeric(dat[match("Cref", dname), 1])
-    .Object@Iref <- as.numeric(dat[match("Iref", dname), 1])
-    .Object@Bref <- as.numeric(dat[match("Bref", dname), 1])
-    
-    .Object@CV_Cref <- as.numeric(dat[match("CV Cref", dname), 1])
-    .Object@CV_Iref <- as.numeric(dat[match("CV Iref", dname), 1])
-    .Object@CV_Bref <- as.numeric(dat[match("CV Bref", dname), 1])
-    .Object@CV_Rec <- as.numeric(dat[match("CV Rec", dname), 1])
-
-    .Object@MPrec <- as.numeric(dat[match("MPrec", dname), 1])
-    .Object@MPeff <- as.numeric(dat[match("MPeff", dname), 1])
-    
-    .Object@LHYear <- as.numeric(dat[match("LHYear", dname), 1])
-    .Object@nareas <- as.numeric(dat[match("nareas", dname), 1])
-
-    .Object@Log[[1]] <- paste("Created:", Sys.time())
-    .Object@params <- new("list")
-    .Object@OM <- data.frame(NA)
-    .Object@Obs <- data.frame(NA)
-    .Object@TAC <- array(NA, dim = c(1, 1, 1))
-    .Object@Sense <- array(NA, dim = c(1, 1, 1))
-    .Object@PosMPs <- NA
-    .Object@MPs <- NA
-    
+    .Object <- XL2Data(stock, ...)  
   } else {
-    if (stock != "MSE") {
-      if (!is.na(stock) && !silent) print("Couldn't find specified csv file, blank DLM object created")
+    slots <- slotNames('Data')
+    for (x in seq_along(slots)) {
+      sl <- slots[x]
+      cl <- class(slot(.Object, sl))
+      if (cl == "logical") slot(.Object, sl) <- as.numeric(NA)
+      if (cl == "character") slot(.Object, sl) <- ''
+      if (cl == "matrix") slot(.Object, sl) <- matrix(NA)
+      if (cl == "array") slot(.Object, sl) <- array(NA, dim=c(1,1,1))
+      if (cl == "vector") slot(.Object, sl) <- NA
+      if (cl == "numeric") slot(.Object, sl) <- as.numeric(NA)
+      if (cl == "list") slot(.Object, sl) <- list()
     }
   }
-  
-  if (is.na(.Object@MPeff) || length(.Object@MPeff)==0) .Object@MPeff <- 1 
-  
-  # Standardise Index if not already 
-  .Object@Ind <- .Object@Ind/mean(.Object@Ind, na.rm=TRUE)
-  
-  # Default value
-  if (NAor0(.Object@LenCV)) .Object@LenCV <- 0.1
-  if (NAor0(.Object@CV_Cat)) .Object@CV_Cat <- 0.2
-  if (NAor0(.Object@CV_Dt)) .Object@CV_Dt <- 0.25
-  if (NAor0(.Object@CV_AvC)) .Object@CV_AvC <- 0.2
-  if (NAor0(.Object@CV_Ind)) .Object@CV_Ind <- 0.2
-  if (NAor0(.Object@CV_Mort)) .Object@CV_Mort <- 0.2
-  if (NAor0(.Object@CV_FMSY_M)) .Object@CV_FMSY_M <- 0.2
-  if (NAor0(.Object@CV_BMSY_B0)) .Object@CV_BMSY_B0 <- 0.045
-  if (NAor0(.Object@CV_Cref)) .Object@CV_Cref <- 0.2
-  if (NAor0(.Object@CV_Bref)) .Object@CV_Bref <- 0.2
-  if (NAor0(.Object@CV_Iref)) .Object@CV_Iref <- 0.2
-  if (NAor0(.Object@CV_Rec)) .Object@CV_Rec <- 0.2
-  if (NAor0(.Object@CV_Dep)) .Object@CV_Dep <- 0.25
-  if (NAor0(.Object@CV_Abun)) .Object@CV_Abun <- 0.25
-  if (NAor0(.Object@CV_vbK)) .Object@CV_vbK <- 0.1
-  if (NAor0(.Object@CV_vbLinf)) .Object@CV_vbLinf <- 0.1
-  if (NAor0(.Object@CV_vbt0)) .Object@CV_vbt0 <- 0.1
-  if (NAor0(.Object@CV_L50))  .Object@CV_L50 <- 0.1
-  if (NAor0(.Object@CV_LFC))  .Object@CV_LFC <- 0.2
-  if (NAor0(.Object@CV_LFS))  .Object@CV_LFS <- 0.2
-  if (NAor0(.Object@CV_wla))  .Object@CV_wla <- 0.1
-  if (NAor0(.Object@CV_wlb))  .Object@CV_wlb <- 0.1
-  if (NAor0(.Object@CV_steep)) .Object@CV_steep <- 0.2
-  if (NAor0(.Object@nareas)) .Object@nareas <- 2
-  
-  if (length(.Object@sigmaL) == 0) .Object@sigmaL <- 0.2
-  if (length(.Object@CAA) == 0) .Object@CAA <- array(NA, c(1, 1, 1))
-  if (length(.Object@CAL) == 0) .Object@CAL <- array(NA, c(1, 1, 1))
-  if (length(.Object@CAL_bins) == 0) .Object@CAL_bins <- 1
-  if (length(.Object@TAC) == 0) .Object@TAC <- array(1, c(1, 1))
-  # if (length(.Object@TACbias) == 0) .Object@TACbias <- array(1, c(1, 1))
-  if (length(.Object@Sense) == 0) .Object@Sense <- array(1, c(1, 1))
-  if (length(.Object@ML) == 0)  .Object@ML <- array(NA, c(1, 1))
-  if (length(.Object@Lbar) == 0) .Object@Lbar <- array(NA, c(1, 1))
-  if (length(.Object@Lc) == 0) .Object@Lc <- array(NA, c(1, 1))
-  
-  if (length(.Object@Type) == 0) .Object@Type <- NA
-  if (length(.Object@RInd) == 0) .Object@RInd <- array(NA, c(1,1,1))
-  
-  .Object
+  return(.Object)
 })
+
+# setMethod("initialize", "Data", function(.Object, stock = "nada", dec=c(".", ","), silent=TRUE) {
+#   if (file.exists(stock)) {
+#     dec <- match.arg(dec)
+#     Ncol <- max(unlist(lapply(strsplit(readLines(stock), ","), length)))
+#     col.names <- paste0("V", 1:Ncol)
+# 
+#     if (dec == ".")
+#       dat <- read.csv(stock, header = F, colClasses = "character", col.names=col.names)  # read 1st sheet
+#     if (dec == ",")
+#       dat <- read.csv2(stock, header = F, colClasses = "character", col.names=col.names)  # read 1st sheet
+#     dname <- dat[, 1]
+#     dat <- dat[, 2:ncol(dat)]
+# 
+#     .Object@Name <- dat[match("Name", dname), 1]
+#     .Object@Common_Name <- dat[match("Common Name", dname), 1]
+#     .Object@Species <- dat[match("Species", dname), 1]
+#     .Object@Region <- dat[match("Region", dname), 1]
+#     .Object@Year <- as.numeric(dat[match("Year", dname), dat[match("Year", dname), ] != ""])
+#     # .Object@Cat <- matrix(as.numeric(dat[match("Catch", dname), dat[match("Catch", dname), ] != ""]), nrow = 1)
+#     .Object@Cat <- matrix(as.numeric(dat[match("Catch", dname), 1:length(.Object@Year)]), nrow = 1)
+#     .Object@Ind <- matrix(as.numeric(dat[match("Abundance index", dname), 1:length(.Object@Year)]), nrow = 1)
+# 
+#     # .Object@Type <- dat[match("Index type", dname), ] %>% as.character()
+#     # .Object@Type <- .Object@Type[!is.na(.Object@Type)]
+#     # .Object@Type <- .Object@Type[nchar(.Object@Type)>0]
+#     # if (length(.Object@Type)>0) {
+#     #   .Object@Type <- .Object@Type[nchar(.Object@Type)>0] %>% as.character()
+#     #   n.ind <- length(.Object@Type)
+#     #   r.ind <- match("Real indices", dname)
+#     #   RInd.dat <- dat[r.ind:(r.ind+n.ind-1),] %>% data.matrix()
+#     #   .Object@RInd <- array(RInd.dat, dim=c(1, n.ind, ncol(RInd.dat)))
+#     # }
+# 
+#     .Object@Rec <- matrix(as.numeric(dat[match("Recruitment", dname), 1:length(.Object@Year)]), nrow = 1)
+#     .Object@t <- as.numeric(dat[match("Duration t", dname), 1])
+#     .Object@AvC <- as.numeric(dat[match("Average catch over time t", dname), 1])
+#     .Object@Dt <- as.numeric(dat[match("Depletion over time t", dname), 1])
+#     .Object@Mort <- as.numeric(dat[match("M", dname), 1])
+#     .Object@FMSY_M <- as.numeric(dat[match("FMSY/M", dname), 1])
+#     .Object@BMSY_B0 <- as.numeric(dat[match("BMSY/B0", dname), 1])
+#     .Object@L50 <- as.numeric(dat[match("Length at 50% maturity", dname), 1])
+#     .Object@L95 <- as.numeric(dat[match("Length at 95% maturity", dname), 1])
+#     .Object@ML <- matrix(as.numeric(dat[match("Mean length", dname), 1:length(.Object@Year)]), nrow = 1)
+#     .Object@Lbar <- matrix(as.numeric(dat[match("Mean length Lc", dname), 1:length(.Object@Year)]), nrow = 1)
+#     .Object@Lc <- matrix(as.numeric(dat[match("Modal length", dname), 1:length(.Object@Year)]), nrow = 1)
+#     .Object@LFC <- as.numeric(dat[match("Length at first capture",  dname), 1])
+#     .Object@LFS <- as.numeric(dat[match("Length at full selection", dname), 1])
+# 
+#     CAAy <- grep("CAA", dname)[1:length(grep("CAA", dname))]
+#     CAAa <- sum(dat[CAAy[1], ] != "")
+#     if (!is.na(CAAa)) {
+#       .Object@CAA <- array(as.numeric(as.matrix(dat[CAAy, 1:CAAa])),  dim = c(1, length(CAAy), CAAa))
+#     }
+#     .Object@Dep <- as.numeric(dat[match("Current stock depletion",  dname), 1])
+#     .Object@Abun <- as.numeric(dat[match("Current stock abundance",  dname), 1])
+#     .Object@SpAbun <- as.numeric(dat[match("Current spawning stock abundance",  dname), 1])
+#     .Object@vbK <- as.numeric(dat[match("Von Bertalanffy K parameter", dname), 1])
+#     .Object@vbLinf <- as.numeric(dat[match("Von Bertalanffy Linf parameter", dname), 1])
+#     .Object@vbt0 <- as.numeric(dat[match("Von Bertalanffy t0 parameter", dname), 1])
+#     .Object@LenCV <- as.numeric(dat[match("CV of length-at-age", dname), 1])
+#     .Object@wla <- as.numeric(dat[match("Length-weight parameter a", dname), 1])
+#     .Object@wlb <- as.numeric(dat[match("Length-weight parameter b", dname), 1])
+#     .Object@steep <- as.numeric(dat[match("Steepness", dname), 1])
+#     .Object@sigmaR <- as.numeric(dat[match("sigmaR", dname), 1])
+# 
+#     .Object@CV_Cat <- as.numeric(dat[match("CV Catch", dname), 1])
+#     .Object@CV_Dt <- as.numeric(dat[match("CV Depletion over time t", dname), 1])
+#     .Object@CV_AvC <- as.numeric(dat[match("CV Average catch over time t", dname), 1])
+#     .Object@CV_Ind <- as.numeric(dat[match("CV Abundance index", dname), 1])
+#     .Object@CV_Mort <- as.numeric(dat[match("CV M", dname), 1])
+#     .Object@CV_FMSY_M <- as.numeric(dat[match("CV FMSY/M", dname),  1])
+#     .Object@CV_BMSY_B0 <- as.numeric(dat[match("CV BMSY/B0", dname), 1])
+#     .Object@CV_Dep <- as.numeric(dat[match("CV current stock depletion", dname), 1])
+#     .Object@CV_Abun <- as.numeric(dat[match("CV current stock abundance", dname), 1])
+#     .Object@CV_vbK <- as.numeric(dat[match("CV von B. K parameter", dname), 1])
+#     .Object@CV_vbLinf <- as.numeric(dat[match("CV von B. Linf parameter", dname), 1])
+#     .Object@CV_vbt0 <- as.numeric(dat[match("CV von B. t0 parameter", dname), 1])
+#     .Object@CV_L50 <- as.numeric(dat[match("CV Length at 50% maturity", dname), 1])
+#     .Object@CV_LFC <- as.numeric(dat[match("CV Length at first capture", dname), 1])
+#     .Object@CV_LFS <- as.numeric(dat[match("CV Length at full selection", dname), 1])
+#     .Object@CV_wla <- as.numeric(dat[match("CV Length-weight parameter a", dname), 1])
+#     .Object@CV_wlb <- as.numeric(dat[match("CV Length-weight parameter b", dname), 1])
+#     .Object@CV_steep <- as.numeric(dat[match("CV Steepness", dname),  1])
+#     .Object@sigmaL <- as.numeric(dat[match("Sigma length composition", dname), 1])
+# 
+#     .Object@MaxAge <- as.numeric(dat[match("Maximum age", dname), 1])
+# 
+#     if (length(grep("CAL", dname)) > 1) {
+#       CAL_bins <- as.numeric(dat[match("CAL_bins", dname), dat[match("CAL_bins", dname), ] != ""])
+#       nCAL <- length(CAL_bins) - 1
+#       .Object@CAL_bins <- CAL_bins
+#       CALdat <- grep("CAL ", dname)
+#       if (length(CALdat) > 0) .Object@CAL <- array(as.numeric(as.matrix(dat[CALdat, 1:nCAL])),dim = c(1, length(CALdat), nCAL))
+#     }
+# 
+#     .Object@Units <- dat[match("Units", dname), 1]
+#     .Object@Ref <- as.numeric(dat[match("Reference OFL", dname), 1])
+#     .Object@Ref_type <- dat[match("Reference OFL type", dname), 1]
+# 
+#     .Object@Cref <- as.numeric(dat[match("Cref", dname), 1])
+#     .Object@Iref <- as.numeric(dat[match("Iref", dname), 1])
+#     .Object@Bref <- as.numeric(dat[match("Bref", dname), 1])
+# 
+#     .Object@CV_Cref <- as.numeric(dat[match("CV Cref", dname), 1])
+#     .Object@CV_Iref <- as.numeric(dat[match("CV Iref", dname), 1])
+#     .Object@CV_Bref <- as.numeric(dat[match("CV Bref", dname), 1])
+#     .Object@CV_Rec <- as.numeric(dat[match("CV Rec", dname), 1])
+# 
+#     .Object@MPrec <- as.numeric(dat[match("MPrec", dname), 1])
+#     .Object@MPeff <- as.numeric(dat[match("MPeff", dname), 1])
+# 
+#     .Object@LHYear <- as.numeric(dat[match("LHYear", dname), 1])
+#     .Object@nareas <- as.numeric(dat[match("nareas", dname), 1])
+# 
+#     .Object@Log[[1]] <- paste("Created:", Sys.time())
+#     .Object@params <- new("list")
+#     .Object@OM <- data.frame(NA)
+#     .Object@Obs <- data.frame(NA)
+#     .Object@TAC <- array(NA, dim = c(1, 1, 1))
+#     .Object@Sense <- array(NA, dim = c(1, 1, 1))
+#     .Object@PosMPs <- NA
+#     .Object@MPs <- NA
+# 
+#   } else {
+#     if (stock != "MSE") {
+#       if (!is.na(stock) && !silent) print("Couldn't find specified csv file, blank DLM object created")
+#     }
+#   }
+# 
+#   if (is.na(.Object@MPeff) || length(.Object@MPeff)==0) .Object@MPeff <- 1
+# 
+#   # Standardise Index if not already
+#   .Object@Ind <- .Object@Ind/mean(.Object@Ind, na.rm=TRUE)
+# 
+#   # Default value
+#   if (NAor0(.Object@LenCV)) .Object@LenCV <- 0.1
+#   if (NAor0(.Object@CV_Cat)) .Object@CV_Cat <- 0.2
+#   if (NAor0(.Object@CV_Dt)) .Object@CV_Dt <- 0.25
+#   if (NAor0(.Object@CV_AvC)) .Object@CV_AvC <- 0.2
+#   if (NAor0(.Object@CV_Ind)) .Object@CV_Ind <- 0.2
+#   if (NAor0(.Object@CV_Mort)) .Object@CV_Mort <- 0.2
+#   if (NAor0(.Object@CV_FMSY_M)) .Object@CV_FMSY_M <- 0.2
+#   if (NAor0(.Object@CV_BMSY_B0)) .Object@CV_BMSY_B0 <- 0.045
+#   if (NAor0(.Object@CV_Cref)) .Object@CV_Cref <- 0.2
+#   if (NAor0(.Object@CV_Bref)) .Object@CV_Bref <- 0.2
+#   if (NAor0(.Object@CV_Iref)) .Object@CV_Iref <- 0.2
+#   if (NAor0(.Object@CV_Rec)) .Object@CV_Rec <- 0.2
+#   if (NAor0(.Object@CV_Dep)) .Object@CV_Dep <- 0.25
+#   if (NAor0(.Object@CV_Abun)) .Object@CV_Abun <- 0.25
+#   if (NAor0(.Object@CV_vbK)) .Object@CV_vbK <- 0.1
+#   if (NAor0(.Object@CV_vbLinf)) .Object@CV_vbLinf <- 0.1
+#   if (NAor0(.Object@CV_vbt0)) .Object@CV_vbt0 <- 0.1
+#   if (NAor0(.Object@CV_L50))  .Object@CV_L50 <- 0.1
+#   if (NAor0(.Object@CV_LFC))  .Object@CV_LFC <- 0.2
+#   if (NAor0(.Object@CV_LFS))  .Object@CV_LFS <- 0.2
+#   if (NAor0(.Object@CV_wla))  .Object@CV_wla <- 0.1
+#   if (NAor0(.Object@CV_wlb))  .Object@CV_wlb <- 0.1
+#   if (NAor0(.Object@CV_steep)) .Object@CV_steep <- 0.2
+#   if (NAor0(.Object@nareas)) .Object@nareas <- 2
+# 
+#   if (length(.Object@sigmaL) == 0) .Object@sigmaL <- 0.2
+#   if (length(.Object@CAA) == 0) .Object@CAA <- array(NA, c(1, 1, 1))
+#   if (length(.Object@CAL) == 0) .Object@CAL <- array(NA, c(1, 1, 1))
+#   if (length(.Object@CAL_bins) == 0) .Object@CAL_bins <- 1
+#   if (length(.Object@TAC) == 0) .Object@TAC <- array(1, c(1, 1))
+#   # if (length(.Object@TACbias) == 0) .Object@TACbias <- array(1, c(1, 1))
+#   if (length(.Object@Sense) == 0) .Object@Sense <- array(1, c(1, 1))
+#   if (length(.Object@ML) == 0)  .Object@ML <- array(NA, c(1, 1))
+#   if (length(.Object@Lbar) == 0) .Object@Lbar <- array(NA, c(1, 1))
+#   if (length(.Object@Lc) == 0) .Object@Lc <- array(NA, c(1, 1))
+# 
+#   if (length(.Object@Type) == 0) .Object@Type <- NA
+#   if (length(.Object@RInd) == 0) .Object@RInd <- array(NA, c(1,1,1))
+# 
+#   .Object
+# })
 
 
 
