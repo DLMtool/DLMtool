@@ -78,6 +78,7 @@ render_plot <- function(Object, Class, Stock=NULL, RMD=NULL, nsamp=3, nsim=200, 
     Pars$Hist <- Hist
     Pars$Name <- "OM"
     Pars$MPA <- Object@MPA
+    Pars$CurrentYr <- Object@CurrentYr
   } else if (Class == "Hist") {
     Pars <- list()
     Pars$Hist <- Object
