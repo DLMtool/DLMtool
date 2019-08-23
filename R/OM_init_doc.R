@@ -750,8 +750,8 @@ OMdoc <- function(OM=NULL, rmd.source=NULL, overwrite=FALSE, out.file=NULL,
     params$tabs <- TRUE
     params$nyears <- OM@nyears
     params$proyears <- OM@proyears
-    
-    params$its <- sample(1:params$OM@nsim, 3)
+    nsim <- dim(out@SampPars$Marray)[1]
+    params$its <- sample(1:nsim, 3)
     
     params$plotPars <- list(breaks=10, col="darkgray", axes=FALSE, 
                             cex.main=1, lwd=2)
