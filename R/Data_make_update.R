@@ -233,7 +233,7 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   # Simulated observed retained catch (biomass)
   Cobs <- ErrList$Cbiasa[, nyears + yind] * ErrList$Cerr[, nyears + yind] * 
     apply(CBtemp, c(1, 3), sum, na.rm = TRUE)
-  if (ncol(SampCpars$Data@Cat)>nyears) {
+  if (!is.null(SampCpars$Data) && ncol(SampCpars$Data@Cat)>nyears) {
     # update projection catches with observed catches
     addYr <- min(y,ncol(SampCpars$Data@Cat) - nyears)
     Cobs[,1:addYr] <- matrix(SampCpars$Data@Cat[1, (nyears+1):(nyears+addYr)],
@@ -249,7 +249,7 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   I2[is.na(I2)] <- tiny
   I2 <- I2/apply(I2, 1, mean, na.rm=TRUE)
   
-  if (ncol(SampCpars$Data@Ind)>nyears) {
+  if (!is.null(SampCpars$Data) && ncol(SampCpars$Data@Ind)>nyears) {
     # update projection index with observed index
     addYr <- min(y,ncol(SampCpars$Data@Ind) - nyears)
     I2[,(nyears+1):(nyears+addYr)] <- matrix(SampCpars$Data@Ind[1, (nyears+1):(nyears+addYr)],
