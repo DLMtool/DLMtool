@@ -65,6 +65,9 @@ setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 #' @slot Cat Total annual catches. Matrix of nsim rows and nyears columns. Non-negative real numbers 
 #' @slot CV_Cat Coefficient of variation in annual catches. Matrix nsim rows and either 1 or nyear columns.
 #'  Positive real numbers. Note: built-in MPs use only the first value of `CV_Cat` for all years.
+#' @slot Effort Annual fishing effort. Matrix of nsim rows and nyears columns. Non-negative real numbers 
+#' @slot CV_Effort Coefficient of variation in annual effort. Matrix nsim rows and either 1 or nyear columns.
+#'  Positive real numbers. Note: built-in MPs use only the first value of `CV_Effort` for all years.
 #' @slot Ind Relative total abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers
 #' @slot CV_Ind Coefficient of variation in the relative total abundance index. Matrix nsim rows and either 1 or nyear columns.
 #'  Positive real numbers. Note: built-in MPs use only the first value of `CV_Ind` for all years

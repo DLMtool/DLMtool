@@ -323,8 +323,9 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
   ind2 <-  which(datasheet$Name == "Vuln CAA")
   if (length(ind2)>0) 
     ind <- ind[!ind ==ind2]
-  
-  if (length(ind) ==1 & datasheet$Name[ind] == "CAA") {
+  CAAexists <- datasheet$Name[ind] == "CAA"
+  if (length(CAAexists) < 1) CAAexists <- FALSE
+  if (length(ind) <=1 || !CAAexists) {
     CAA_Yrs <- numeric(0)
   } else {
     CAA_Yrs <- sapply(strsplit(datasheet$Name[ind], " "), function(x) unlist(strsplit(x[2], " ")))
@@ -367,7 +368,10 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
   ind <- which(grepl('CAL', datasheet$Name) & !grepl('CAL_bins', datasheet$Name) &
                  !grepl('Vuln CAL', datasheet$Name) &
                  !grepl('CAL_mids', datasheet$Name))
-  if (length(ind)==1 && datasheet$Name[ind] == "CAL") {
+  
+  CALexists <- datasheet$Name[ind] == "CAL"
+  if (length(CALexists) < 1) CALexists <- FALSE
+  if (length(ind) <=1 || !CALexists) {
     ind <- numeric(0)
     CAL_Yrs <- numeric(0)
   } 

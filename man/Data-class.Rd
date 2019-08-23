@@ -87,6 +87,11 @@ An object for storing fishery data for analysis
 \item{\code{CV_Cat}}{Coefficient of variation in annual catches. Matrix nsim rows and either 1 or nyear columns.
 Positive real numbers. Note: built-in MPs use only the first value of \code{CV_Cat} for all years.}
 
+\item{\code{Effort}}{Annual fishing effort. Matrix of nsim rows and nyears columns. Non-negative real numbers}
+
+\item{\code{CV_Effort}}{Coefficient of variation in annual effort. Matrix nsim rows and either 1 or nyear columns.
+Positive real numbers. Note: built-in MPs use only the first value of \code{CV_Effort} for all years.}
+
 \item{\code{Ind}}{Relative total abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers}
 
 \item{\code{CV_Ind}}{Coefficient of variation in the relative total abundance index. Matrix nsim rows and either 1 or nyear columns.

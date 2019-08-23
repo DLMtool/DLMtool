@@ -23,13 +23,16 @@
 #' @rdname Data-class-objects 
 "Red_snapper"
 
+#' @rdname Data-class-objects 
+"Simulation_1"
+
 #' Data class objects
 #' 
 #' Example objects of class Data
 #' 
 #' @name Data-class-objects
 #' @examples
-#' Red_snapper@Name
+#' Simulation_1@Name
 #' 
 #' avail("Data")
 NULL
