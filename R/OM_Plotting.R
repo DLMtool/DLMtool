@@ -272,7 +272,7 @@ plot.Stock <- function(x, nsamp=3, nsim=200, nyears=50,
               nyears=nyears, proyears=proyears,
               output_file=output_file, output_dir=output_dir, quiet=quiet,
               tabs=tabs, title=title, date=date,
-              plotPars=plotPars, dev=dev)
+              plotPars=plotPars, open=open, dev=dev)
 }
 
 
@@ -290,7 +290,7 @@ plot.Fleet <- function(x, Stock=NULL, nsamp=3, nsim=200, nyears=50,
               nyears=nyears, proyears=proyears,
               output_file=output_file, output_dir=output_dir, quiet=quiet,
               tabs=tabs, title=title, date=date,
-              plotPars=plotPars, dev=dev)
+              plotPars=plotPars, open=open, dev=dev)
 }
 
 #' @rdname plot.Stock
@@ -305,7 +305,7 @@ plot.Obs <- function(x, nsamp=3, nsim=200, nyears=50,
               nyears=nyears, proyears=proyears,
               output_file=output_file, output_dir=output_dir, quiet=quiet,
               tabs=tabs, title=title, date=date,
-              plotPars=plotPars, dev=dev)
+              plotPars=plotPars, open=open, dev=dev)
 }
 
 #' @rdname plot.Stock
@@ -320,7 +320,7 @@ plot.Imp <- function(x, nsamp=3, nsim=200, nyears=50,
               nyears=nyears, proyears=proyears,
               output_file=output_file, output_dir=output_dir, quiet=quiet,
               tabs=tabs, title=title, date=date,
-              plotPars=plotPars, dev=dev)
+              plotPars=plotPars, open=open, dev=dev)
 }
 
 #' @rdname plot.Stock
@@ -334,7 +334,7 @@ plot.Hist <- function(x, nsamp=3, nsim=200, nyears=50,
               nyears=nyears, proyears=proyears,
               output_file=output_file, output_dir=output_dir, quiet=quiet,
               tabs=tabs, title=title, date=date,
-              plotPars=plotPars, dev=dev)
+              plotPars=plotPars, open=open, dev=dev)
 }
 
 #' @rdname plot.Stock
@@ -348,7 +348,7 @@ plot.OM <- function(x, nsamp=3, nsim=200, nyears=50,
               nyears=nyears, proyears=proyears,
               output_file=output_file, output_dir=output_dir, quiet=quiet,
               tabs=tabs, title=title, date=date,
-              plotPars=plotPars, dev=dev)
+              plotPars=plotPars, open=open, dev=dev)
   
   
 }
