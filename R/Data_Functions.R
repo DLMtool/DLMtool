@@ -48,6 +48,9 @@ DataInit <- function(name="Data", ext=c("xlsx", "csv"), overwrite=FALSE, dir=NUL
 #'
 #' @param name Name of the data file, with or without file extension. 
 #' Include full file path if not in working directory
+#' @param dec the character used in the file for decimal points.
+#' @param sheet Sheet number if importing Data from XL file
+#' @param silent Logical. Hide messages?
 #' @return An object of class 'Data'
 #' @export
 #' @author A. Hordyk
@@ -55,62 +58,8 @@ DataInit <- function(name="Data", ext=c("xlsx", "csv"), overwrite=FALSE, dir=NUL
 #' \dontrun{
 #' MyData <- XL2Data("MyData.xlsx")
 #' }
-XL2Data <- function(name="Data") {
-  if (class(name) != 'character') stop("file name must be provided", call.=FALSE)
-  
-  dir <- dirname(name)
-  if (dir ==".") {
-    dir <- NULL
-  } else {
-    name <- basename(name)
-  }
-  
-  if (is.null(dir)) dir <- getwd()
-  if (nchar(tools::file_ext(name)) == 0) {
-    xl.fname1 <- paste0(name, ".xlsx")
-    xl.fname2 <- paste0(name, ".csv")
-    fls <- file.exists(c(file.path(dir, xl.fname1), file.path(dir,xl.fname2)))
-    if (sum(fls) == 0) stop(xl.fname1, " or ", xl.fname2, " not found in ", dir)
-    if (sum(fls) > 1) stop(name, " found with multiple extensions. Specify file extension.", call.=FALSE)
-    name <- c(xl.fname1, xl.fname2)[fls]
-  }
-  
-  if (!file.exists(file.path(dir, name))) stop(file.path(dir, name), " not found", call.=FALSE) 
-  
-  isCSV <- grepl('.csv', name)
-  message("Reading ", name)
-  if (isCSV) {
-    Data <- new("Data", file.path(dir,name))
-  } else {
-    sheetnames <- readxl::excel_sheets(file.path(dir,name))  # names of the sheets
-    
-    # DataXLSlot <- DLMtool:::DataXLSlot
-    NewSheetNames <- names(DataXLSlot)
-    if (all(NewSheetNames %in% sheetnames)) {
-      Data <- importnewXLData(dir,name, NewSheetNames)
-    } else {
-      datasheet <- suppressMessages(as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE)))
-      if (datasheet[1,1]== "Slot") 
-        datasheet <- suppressMessages(as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE, skip=1)))
-      
-      if (all(dim(datasheet) == 0)) stop("Nothing found in first sheet", call.=FALSE)
-      tmpfile <- tempfile(fileext=".csv")
-      writeCSV2(inobj = datasheet, tmpfile, objtype = "Data")
-      
-      if (ncol(datasheet)<2) {
-        unlink(tmpfile)
-        stop("No parameter values found in first worksheet ", call.=FALSE)
-      } else {
-        Data <- new("Data", tmpfile)
-        unlink(tmpfile)
-      }
-    }
-    return(Data)
-  }
-}
-
-
-importnewXLData <- function(name) {
+XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
+  dec <- match.arg(dec)
   dir <- dirname(name)
   if (dir ==".") {
     dir <- NULL
@@ -127,152 +76,597 @@ importnewXLData <- function(name) {
     name <- c(xl.fname1, xl.fname2)[fls]
   }
   if (tools::file_ext(name) == "csv") {
-    datasheet <- read.csv(file.path(dir,name), stringsAsFactors = FALSE)
+    Ncol <- max(unlist(lapply(strsplit(readLines(file.path(dir,name)), ","), length)))
+    col.names <- paste0("V", 1:Ncol)
+    if (dec == ".") {
+      datasheet <- read.csv(file.path(dir,name), header = F, 
+                            colClasses = "character", col.names=col.names,
+                            stringsAsFactors = FALSE)  
+    } else {
+      datasheet <- read.csv2(file.path(dir,name), header = F, 
+                             colClasses = "character", col.names=col.names,
+                             stringsAsFactors = FALSE)  
+    }
   } else if(tools::file_ext(name) %in% c("xls", "xlsx")) {
-    datasheet <- readxl::read_excel(file.path(dir,name), sheet = 1, col_names = TRUE)
+    datasheet <- readxl::read_excel(file.path(dir,name), sheet = sheet, 
+                                    col_names = TRUE, .name_repair = "minimal")
   } else {
     stop("File extension must be .csv, .xls, or .xlsx")
   }
+  colnames(datasheet) <- c("Name", "Data", colnames(datasheet)[3:length(colnames(datasheet))])
   
-  # TO DO - add a check that all Names are correct and haven't been modified
+  # check names in Column 1 
+  input <- file.path(system.file(package = 'DLMtool'), "Data.csv")
+  valnames <- read.csv(input, header=FALSE, stringsAsFactors = FALSE)
+  valnames <- valnames[,1]
+  valnames <- c(valnames, "LHYear", "MPrec", 'MPeff')
+  InNames <- datasheet$Name
+  inval <- InNames[!InNames %in% valnames]
+  inval <- inval[!grepl("CAL", inval)]
+  inval <- inval[!grepl("CAA", inval)]
+  inval <- inval[!grepl("Index", inval)]
+  inval <- inval[!grepl("CV Index", inval)]
+  inval <- inval[!grepl("Index", inval)]
+  inval <- inval[!grepl("Modal length", inval)]
+  inval <- inval[!grepl("Mean length Lc", inval)]
+  inval <- inval[!grepl("Current spawning stock abundance", inval)]
+  inval <- inval[!grepl("Cref", inval)]
+  inval <- inval[!grepl("Iref", inval)]
+  inval <- inval[!grepl("Bref", inval)]
+  inval <- inval[!grepl("CV Cref", inval)]
+  inval <- inval[!grepl("CV Iref", inval)]
+  inval <- inval[!grepl("CV Bref", inval)]
+  inval <- inval[!grepl("CV Rec", inval)]
+  inval <- inval[!grepl("Recruitment", inval)]
+  inval <- inval[!grepl("LenCV", inval)]
   
-  Data <- new("Data", silent=TRUE)
+  inval <- inval[!is.na(inval)]
+  if (length(inval)>0)
+    warning("These rows in the Data file are not valid names and were not imported:\n", paste(inval, collapse=', '))
+  
+  datasheet$Name[datasheet$Name == "MPrec"] <- 'Previous TAC'
+  datasheet$Name[datasheet$Name == "MPeff"] <- 'Previous TAE'
+  
+  datasheet$Name[datasheet$Name == "Modal length"] <- 'Modal length (Lc)'
+  datasheet$Name[datasheet$Name == "Mean length Lc"] <- 'Mean length above Lc'
+  datasheet$Name[datasheet$Name == "Current spawning stock abundance"] <- 'Current spawning abundance'
+  datasheet$Name[datasheet$Name == "Cref"] <- 'Catch Reference'
+  datasheet$Name[datasheet$Name == "Iref"] <- 'Index Reference'
+  datasheet$Name[datasheet$Name == "Bref"] <- 'Biomass Reference'
+  datasheet$Name[datasheet$Name == "CV Cref"] <- 'CV Catch Reference'
+  datasheet$Name[datasheet$Name == "CV Iref"] <- 'CV Index Reference'
+  datasheet$Name[datasheet$Name == "CV Bref"] <- 'CV Biomass Reference'
+  datasheet$Name[datasheet$Name == "Recruitment"] <- 'Recruitment Index'
+  datasheet$Name[datasheet$Name == "LenCV"] <- 'CV of length-at-age'
+  
+  
+  Data <- new("Data")
+  
   # ---- Main ----
   Data@Name <- datasheet$Data[which(datasheet$Name=="Name")]
   Data@Common_Name <- datasheet$Data[which(datasheet$Name=="Common Name")]
   Data@Species <- datasheet$Data[which(datasheet$Name=="Species")]
   Data@Region <- datasheet$Data[which(datasheet$Name=="Region")]
-  Data@LHYear <- datasheet$Data[which(datasheet$Name=="Current Year")]
-  Data@MPrec <- datasheet$Data[which(datasheet$Name=="Previous TAC")]
+  tryLHyear <- datasheet$Data[which(datasheet$Name=="LHYear")]
+  if (length(tryLHyear)<1) {
+    tryLHyear <- datasheet$Data[which(datasheet$Name=="Last Historical Year")]
+  }
+  tryLHyear <- as.numeric(tryLHyear)
+  if (length(tryLHyear)<1 | is.na(tryLHyear))
+    stop("Last Historical Year must be specified (single numeric value)")
+  
+  Data@LHYear <- tryLHyear
+  Data@MPrec <- datasheet$Data[which(datasheet$Name=="Previous TAC")] %>% as.numeric()
   Data@Units <- datasheet$Data[which(datasheet$Name=="Units")]
-  Data@MPeff <- datasheet$Data[which(datasheet$Name=="Previous TAE")]
-  Data@nareas <- datasheet$Data[which(datasheet$Name=="nareas")]
- 
+  Data@MPeff <- datasheet$Data[which(datasheet$Name=="Previous TAE")]  %>% as.numeric()
+  Data@nareas <- datasheet$Data[which(datasheet$Name=="nareas")] %>% as.numeric()
+  
+  
   # ---- Biology ----
+  Data@MaxAge <- datasheet$Data[which(datasheet$Name=="Maximum age")] %>% as.numeric()
+  Data@Mort <- datasheet$Data[which(datasheet$Name=="M")] %>% as.numeric()
+  Data@CV_Mort  <- datasheet$Data[which(datasheet$Name=="CV M")] %>% as.numeric()
+  Data@vbLinf <- datasheet$Data[which(datasheet$Name=="Von Bertalanffy Linf parameter")] %>% as.numeric()
+  Data@CV_vbLinf  <- datasheet$Data[which(datasheet$Name=="CV von B. Linf parameter")] %>% as.numeric()
+  Data@vbK <- datasheet$Data[which(datasheet$Name=="Von Bertalanffy K parameter")] %>% as.numeric()
+  Data@CV_vbK <- datasheet$Data[which(datasheet$Name=="CV von B. K parameter")] %>% as.numeric()
+  Data@vbt0 <- datasheet$Data[which(datasheet$Name=="Von Bertalanffy t0 parameter")] %>% as.numeric() 
+  Data@CV_vbt0 <- datasheet$Data[which(datasheet$Name=="CV von B. t0 parameter")] %>% as.numeric() 
+  Data@wla <- datasheet$Data[which(datasheet$Name=="Length-weight parameter a")] %>% as.numeric()
+  Data@CV_wla <- datasheet$Data[which(datasheet$Name=="CV Length-weight parameter a")] %>% as.numeric()
+  Data@wlb <- datasheet$Data[which(datasheet$Name=="Length-weight parameter b")] %>% as.numeric()
+  Data@CV_wlb <- datasheet$Data[which(datasheet$Name=="CV Length-weight parameter b")] %>% as.numeric()
+  Data@steep <- datasheet$Data[which(datasheet$Name=="Steepness")] %>% as.numeric()
+  Data@CV_steep <- datasheet$Data[which(datasheet$Name=="CV Steepness")] %>% as.numeric()
+  Data@sigmaR <- datasheet$Data[which(datasheet$Name=="sigmaR")] %>% as.numeric()
+  Data@CV_sigmaR <- datasheet$Data[which(datasheet$Name=="CV sigmaR")] %>% as.numeric()
+  Data@L50  <- datasheet$Data[which(datasheet$Name=="Length at 50% maturity")] %>% as.numeric() 
+  Data@CV_L50 <- datasheet$Data[which(datasheet$Name=="CV Length at 50% maturity")] %>% as.numeric() 
+  Data@L95 <- datasheet$Data[which(datasheet$Name=="Length at 95% maturity")] %>% as.numeric() 
+  Data@LenCV <- datasheet$Data[which(datasheet$Name=="CV of length-at-age")] %>% as.numeric()
   
   
   # ---- Selectivity ----
+  Data@LFC <- datasheet$Data[which(datasheet$Name=="Length at first capture")] %>% as.numeric() 
+  Data@CV_LFC <- datasheet$Data[which(datasheet$Name=="CV Length at first capture")] %>% as.numeric() 
+  Data@LFS <- datasheet$Data[which(datasheet$Name=="Length at full selection")] %>% as.numeric() 
+  Data@CV_LFS <- datasheet$Data[which(datasheet$Name=="CV Length at full selection")] %>% as.numeric() 
+  Data@Vmaxlen <-datasheet$Data[which(datasheet$Name=="Vulnerability at asymptotic length")] %>% as.numeric()  
   
+  # ---- Time-Series ----
+  row <- which(datasheet$Name == "Year")
+  Year <- datasheet[row,2:ncol(datasheet)] %>% as.numeric()
+  if (!Data@LHYear %in% Year) 
+    stop("`Year` must include Last Historical Year", call. = FALSE)
+  Year <- Year[!is.na(Year)]
+  if (!all(seq(Year[1], Year[length(Year)], 1) == Year))
+    stop("`Year` must be sequential and include all years")
+  Data@Year <- Year   
+  Nyears <- length(Year)
+  # Catch time-series
+  Data@Cat <- datasheet[which(datasheet$Name=="Catch"), 2:(Nyears+1)] %>% 
+    as.numeric() %>% matrix(., nrow=1)
+  CV_Cat <- datasheet[which(datasheet$Name=="CV Catch"), 2:(Nyears+1)]
+  if (!is.na(CV_Cat[1]) & all(is.na(CV_Cat[2:length(CV_Cat)])))
+    CV_Cat <- rep(CV_Cat[1], Nyears)
+  Data@CV_Cat <- CV_Cat %>% as.numeric %>% matrix(., nrow=1)
   
+  # Effort time-series
+  Data@Effort <- suppressWarnings(datasheet[which(datasheet$Name=="Effort"), 2:(Nyears+1)] %>% 
+                                    as.numeric() %>% matrix(., nrow=1))
+  CV_Effort <- datasheet[which(datasheet$Name=="CV Effort"), 2:(Nyears+1)]
+  if (nrow(CV_Effort)>0) {
+    if (!is.na(CV_Effort[1]) & all(is.na(CV_Effort[2:length(CV_Effort)])))
+      CV_Effort <- rep(CV_Effort[1], Nyears)
+    Data@CV_Effort <- CV_Effort %>% as.numeric %>% matrix(., nrow=1)
+  }
   
-}
-
-
-importnewXLData_old <- function(dir,name, NewSheetNames) {
-  Data <- new("Data", silent=TRUE)
-  BlankDat <-new("Data", silent=TRUE)
-  ignoreSheet <- NULL
+  # Vulnerable abundance index - fishery dependant
+  Data@Ind <- suppressWarnings(datasheet[which(datasheet$Name=="Abundance index"), 2:(Nyears+1)] %>%
+                                 as.numeric() %>% matrix(., nrow=1) )
+  CV_Ind <- datasheet[which(datasheet$Name=="CV Abundance index"), 2:(Nyears+1)]
+  if (!is.na(CV_Ind[1]) & all(is.na(CV_Ind[2:length(CV_Ind)])))
+    CV_Ind <- rep(CV_Ind[1], Nyears)
+  Data@CV_Ind <- CV_Ind %>% as.numeric %>% matrix(., nrow=1)
   
-  # sh <- NewSheetNames[1]
-  for (sh in NewSheetNames) { # import from individual worksheets
-    datasheet <- suppressMessages(as.data.frame(readxl::read_excel(file.path(dir,name), 
-                                                  sheet = sh, col_names = FALSE)))
-    if (dim(datasheet)[2] <= 1) {
-      message('No data found in sheet: ', sh)
-    } else {
-      message("Importing from: ", sh)
-      dname <- datasheet[, 1]
-      dat  <- datasheet[, 2:ncol(datasheet), drop=FALSE]
-      df <- data.frame(XLRow=DataXLSlot[[sh]]$XLRow, 
-                       Slot=DataXLSlot[[sh]]$Slot, 
-                       Class=DataXLSlot[[sh]]$Class, 
-                       Ignore=DataXLSlot[[sh]]$Ignore,
-                       stringsAsFactors = FALSE)
-      df$Ignore[is.na(df$Slot)] <- TRUE
-      df$Ignore[df$XLRow=="Fleet Type"] <- TRUE # temporary until new build
-      df$Ignore <- as.logical(df$Ignore)
-      df <- df[!df$Ignore,]
-      
-      # if (sh %in% c("Main", "Biology", "Reference")) {
-      if (sh %in% c("Main", "Biology", "Selectivity", "Reference")) {
-        for (sl in 1:nrow(df)) {
-          temp <- dat[match(df$XLRow[sl], dname),1]
-          if (substr(df$Class[sl],start=1, stop=1) == "c") 
-            slot(Data, df$Slot[sl]) <- temp
-          if (substr(df$Class[sl],start=1, stop=1) == "n") 
-            slot(Data, df$Slot[sl]) <- as.numeric(temp)
-        }
-      } else if (sh == "Time-Series") {
-        YearInd <- match("Year", dname)
-        Year <- dat[YearInd,]
-        Year <- Year[!is.na(Year)]
-        Data@Year <- as.numeric(Year)
-        if (!is.finite(Data@LHYear)) 
-          stop("'Current Year' in 'Main' sheet is missing", call.=FALSE)
-        if (max(Data@Year) != Data@LHYear) 
-          stop("Last year should be equal to 'Current Year' in 'Main' sheet", call.=FALSE)
-        ncol_ts <- length(Year)
-        ncol_cv <- 1
-        for (sl in 1:nrow(df)) {
-          ncol <- ifelse(grepl("CV_", df$Slot[sl]), ncol_cv, ncol_ts)
-          temp <- as.numeric(dat[match(df$XLRow[sl], dname),1:ncol])
-          
-          if (substr(df$Class[sl],start=1, stop=1) == "n")
-            slot(Data, df$Slot[sl]) <- temp
-          if (substr(df$Class[sl],start=1, stop=1) == "m")
-            slot(Data, df$Slot[sl]) <- matrix(temp, nrow=1)
-          if(all(is.na(slot(Data, df$Slot[sl]))))  
-            slot(Data, df$Slot[sl]) <- slot(BlankDat, df$Slot[sl]) 
-        }
-        
-      } else if (sh == "CAA") {
-        if (!is.finite(Data@MaxAge)) 
-          stop("'Maximum age' in 'Biology' sheet is missing", call.=FALSE)
-        if (any(!is.finite(Data@Year)))
-          stop("'Year' in 'Time-Series' sheet is missing", call.=FALSE)
-        CAAMat <- array(NA, dim=c(1,length(Data@Year),Data@MaxAge))
-        Year <- Data@Year
-        
-        CAAYr <- as.numeric(dname[dname !="Year"])
-        if (length(CAAYr)<1) {
-          message("No catch-at-age data found")
-        } else {
-          YrInd <- match(CAAYr, Year) # match years 
-          if (max(CAAYr) > max(Year))
-            stop("More years in CAA than Time-Series Year", call.=FALSE)
-          CAAdat <- data.matrix(dat[2:nrow(dat),])
-          
-          if (ncol(CAAdat)> Data@MaxAge) 
-            stop("Number of age-classes in CAA data > MaxAge", call.=FALSE)
-          if (ncol(CAAdat) < Data@MaxAge) {
-            message("Number of age-classes in CAA data < MaxAge. Filling with 0s")
-            zeromat <- matrix(0, nrow=nrow(CAAdat), ncol=Data@MaxAge-ncol(CAAdat))
-            CAAdat <- cbind(CAAdat, zeromat)
-          }
-          CAAMat[1, YrInd, 1:ncol(CAAdat)] <- CAAdat
-          Data@CAA <- CAAMat
-        }
-      } else if (sh == "CAL") {
-        CAL_bins <- as.numeric(dat[1,])
-        if (!all(diff(CAL_bins) == diff(CAL_bins))) 
-          stop('Length bins do not have equal intervals' , call.=FALSE)
-        if (any(!is.finite(Data@Year)))
-          stop("'Year' in 'Time-Series' sheet is missing", call.=FALSE)
-        CALMat <- array(NA, dim=c(1,length(Data@Year), length(CAL_bins)-1))
-        Year <- Data@Year
-        CALYr <- as.numeric(dname[dname !="Year" & dname !="CAL_bins"])
-        if (length(CALYr)<1) {
-          message("No catch-at-length data found")
-        } else {
-          YrInd <- match(CALYr, Year) # match years
-          if (max(CALYr) > max(Year))
-            stop("More years in CAL than Time-Series Year", call.=FALSE)
-          ncol <- ncol(dat)
-          CALdat <- data.matrix(dat[3:nrow(dat),1:ncol])
-          if (!all(is.na(CALdat[,ncol]))) {
-            stop("Number of Catch-at-Length bins (CAL_bins) should \nbe 1 greater than number columns of CAL data", call.=FALSE)
-          }
-          CALdat <- CALdat[,1:(ncol-1)]
-          CALMat[1, YrInd, ] <- CALdat
-        }
-        Data@CAL_bins <- CAL_bins
-        Data@CAL <- CALMat
-      }
+  # # Spawning abundance index - subject to hyper-stability beta
+  # Data@SpInd <- suppressWarnings(datasheet[which(datasheet$Name=="SpAbun index"), 2:(Nyears+1)] %>%
+  #                                  as.numeric() %>% matrix(., nrow=1) )
+  # CV_SpInd <- datasheet[which(datasheet$Name=="CV SpAbun index"), 2:(Nyears+1)]
+  # if (nrow(CV_SpInd)>0) {
+  #   if (!is.na(CV_SpInd[1]) & all(is.na(CV_SpInd[2:length(CV_SpInd)])))
+  #     CV_SpInd <- rep(CV_SpInd[1], Nyears)
+  #   Data@CV_SpInd <- CV_SpInd %>% as.numeric %>% matrix(., nrow=1)
+  # }
+  
+  # Additional indices
+  ind <- grepl("Index", datasheet$Name)
+  index_text <- datasheet$Name[ind]
+  index_text <- index_text[! index_text %in% c("Index Reference", "CV Index Reference")]
+  n_indices <- sum(sub(" .*$", "", index_text) == "Index")
+  n_cv <- sum(sub(" .*$", "", index_text) == "CV")
+  n_vuln <- sum(sub(" .*$", "", index_text) == "Vuln")
+  if (n_cv != n_indices) stop("CV missing for some or all additional indices", call. = FALSE)
+  if (n_vuln != n_indices) stop("Vulnerability-at-age schedule missing for some or all additional indices", call. = FALSE)
+  
+  if (!all(is.na(datasheet[which(datasheet$Name == "Index 1"),2:(Nyears+1)]))) {
+    indexexist <- TRUE
+  } else {
+    indexexist <- FALSE
+  }
+  if (indexexist) {
+    if (is.na(Data@MaxAge))
+      stop("Require `Maximum age` to use Additional Indices", call. = FALSE)
+    Data@AddInd <- Data@CV_AddInd <- array(NA, dim=c(1, n_indices, Nyears))
+    Data@AddIndV <- array(NA, dim=c(1, n_indices, Data@MaxAge))
+  } else {
+    Data@AddInd <- Data@CV_AddInd <- array(NA, dim=c(1,1,1))
+    Data@AddIndV <- array(NA, dim=c(1,1,1))
+  }
+  
+  # Loop over additional indices 
+  if (indexexist) {
+    for (x in 1:n_indices) {
+      ind <- which(datasheet$Name == paste("Index", x))
+      Data@AddInd[1,x,] <- datasheet[ind, 2:(Nyears+1)] %>% as.numeric()
+      ind <- which(datasheet$Name == paste("CV Index", x))
+      Data@CV_AddInd[1,x,] <- datasheet[ind, 2:(Nyears+1)] %>% as.numeric()
+      ind <- which(datasheet$Name == paste("Vuln Index", x))
+      Data@AddIndV[1,x,] <- datasheet[ind, 2:(Data@MaxAge+1)] %>% as.numeric() 
+      if (any(is.na(Data@AddIndV[1,x,])))
+        warning("Vuln Index must be length `Maximum age` and contain only numeric values (no NA)")
+    }
+  }
+  
+  # Standarise indices 
+  slot(Data, 'Ind') <- slot(Data, 'Ind')/mean(slot(Data,'Ind'), na.rm=TRUE)
+  
+  if (indexexist) {
+    dims <- dim(Data@AddInd)
+    nind <- dims[2]
+    for (i in 1:nind) {
+     Data@AddInd[1,i,] <-   Data@AddInd[1,i,]/mean(Data@AddInd[1,i,], na.rm=TRUE)
+    }
+  } 
+ 
+  # Recruitment index 
+  ind <- grepl('Recruitment', datasheet$Name) %>% which()
+  Data@Rec <- suppressWarnings(datasheet[ind[1], 2:(Nyears+1)] %>% as.numeric() %>%
+                                 matrix(., nrow=1))
+  Data@CV_Rec <- suppressWarnings(datasheet[ind[2], 2:(Nyears+1)] %>% as.numeric() %>%
+                                    matrix(., nrow=1))
+  
+  # Mean length
+  ind <- which(datasheet$Name == "Mean length")
+  Data@ML <- suppressWarnings(datasheet[ind[1], 2:(Nyears+1)] %>% as.numeric() %>%
+                                matrix(., nrow=1))
+  ind <- which(datasheet$Name == "Modal length (Lc)")
+  Data@Lc <- suppressWarnings(datasheet[ind[1], 2:(Nyears+1)] %>% as.numeric() %>%
+                                matrix(., nrow=1))
+  ind <- which(datasheet$Name == "Mean length above Lc")
+  Data@Lbar <- suppressWarnings(datasheet[ind[1], 2:(Nyears+1)] %>% as.numeric() %>%
+                                  matrix(., nrow=1))
+  
+  # ---- Catch-at-Age ----
+  ind <- which(datasheet$Name == "Vuln CAA")
+  if (length(ind)>0) {
+    VulnCAA <- datasheet[ind, 2:(Data@MaxAge+1)]
+    nonNA <- as.vector(!is.na(VulnCAA[1,]))
+    if (!all(is.na(VulnCAA)) & !all(nchar(VulnCAA[nonNA])==0)) {
+      if (any(is.na(VulnCAA))) 
+        warning("Vuln CAA must be length `Maximum age` and contain only numeric values (no NA)")
+    }
+    Data@Vuln_CAA <- suppressWarnings(matrix(as.numeric(VulnCAA), nrow=1))
+  }
+  
+  ind <- which(grepl('CAA', datasheet$Name))
+  ind2 <-  which(datasheet$Name == "Vuln CAA")
+  if (length(ind2)>0) 
+    ind <- ind[!ind ==ind2]
+  
+  if (length(ind) ==1 & datasheet$Name[ind] == "CAA") {
+    CAA_Yrs <- numeric(0)
+  } else {
+    CAA_Yrs <- sapply(strsplit(datasheet$Name[ind], " "), function(x) unlist(strsplit(x[2], " ")))
+    if (any(is.na(CAA_Yrs))) 
+      stop("Missing years for CAA data. Must be of the form `CAA YEAR` e.g., `CAA 2019`", call. = FALSE)
+    
+    if(!all(CAA_Yrs %in% Data@Year)) stop("All CAA Years must be included in `Year`")
+  }
+ 
+  
+  if (length(CAA_Yrs)>0) {
+    Data@CAA <- array(NA, dim=c(1, Nyears, Data@MaxAge))
+    CAAdat <- datasheet[ind, 2:(Data@MaxAge+1)] %>% as.matrix() %>% as.numeric() %>% matrix(., nrow=length(ind), ncol=Data@MaxAge)
+    if (any(is.na(CAAdat))) 
+      stop("NAs in CAA data. Is each row of length `Maximum age`?", call. = FALSE)
+    yrind <- match(CAA_Yrs, Data@Year)
+    Data@CAA[1, yrind,] <- CAAdat
+  } else{
+    Data@CAA <- array(NA, dim=c(1,1,1))
+  }
+  
+  # ---- Catch-at-Length ----
+  ind <- which(datasheet$Name == "Vuln CAL")
+  if (length(ind)>0) {
+    VulnCAL <- datasheet[ind, 2:(Data@MaxAge+1)]
+    nonNA <- as.vector(!is.na(VulnCAL[1,]))
+    if (!all(is.na(VulnCAL)) & !all(nchar(VulnCAL[nonNA])==0)) {
+      if (any(is.na(VulnCAL))) 
+        warning("Vuln CAL must be length `Maximum age` and contain only numeric values (no NA)")
+    }
+    Data@Vuln_CAL <- suppressWarnings(matrix(as.numeric(VulnCAL), nrow=1))
+  }
+  
+  CAL_bins <- suppressWarnings(datasheet[which(datasheet$Name == "CAL_bins"),] %>% as.numeric())
+  CAL_bins <- CAL_bins[!is.na(CAL_bins)]
+  
+  CAL_mids <- suppressWarnings(datasheet[which(datasheet$Name == "CAL_mids"),] %>% as.numeric())
+  CAL_mids <- CAL_mids[!is.na(CAL_mids)]
+  
+  ind <- which(grepl('CAL', datasheet$Name) & !grepl('CAL_bins', datasheet$Name) &
+                 !grepl('Vuln CAL', datasheet$Name) &
+                 !grepl('CAL_mids', datasheet$Name))
+  if (length(ind)==1 && datasheet$Name[ind] == "CAL") {
+    ind <- numeric(0)
+    CAL_Yrs <- numeric(0)
+  } 
+  if (length(ind)>0) {
+    # CAL data exists
+    if (length(CAL_bins)<1 & length(CAL_mids) < 1)
+      stop("Require either CAL_mids or CAL_bins", call. = FALSE)
+    if (length(CAL_bins)>1  & length(CAL_mids) > 1) {
+      if (!length(CAL_mids) == length(CAL_bins)-1)
+        stop("CAL_mids should be of length `length(CAL_bins)-1`", call. = FALSE)
+      if (all(CAL_mids != seq(CAL_bins[1]+0.5*by, by=by, length.out = length(CAL_bins)-1)))
+        stop("CAL_mids should be mid-points of CAL_bins", call. = FALSE)
+    } 
+    if (length(CAL_bins)>1) {
+      if (!all(diff(CAL_bins[2:length(CAL_bins)]) == diff(CAL_bins)[2])) 
+        stop("Inconsistent bin width in CAL_bins", call. = FALSE)
+    }
+    if (length(CAL_mids)>1) {
+      if(!all(diff(CAL_mids) == mean(diff(CAL_mids)))) 
+        stop("Inconsistent bin width in CAL_mids", call. = FALSE)
+    }
+    if (length(CAL_bins)>1 & length(CAL_mids)<1) {
+      by <- CAL_bins[2] - CAL_bins[1]
+      CAL_mids <- seq(CAL_bins[1]+0.5*by, by=by, length.out = length(CAL_bins)-1)
     }
     
-  } # end sheet loop
-  Data
+    CAL_Yrs <- sapply(strsplit(datasheet$Name[ind], " "), function(x) unlist(strsplit(x[2], " ")))
+    
+  }
+  
+  ind2 <- which(datasheet$Name == "Vuln CAL")
+  if (length(ind2)>01)
+    ind <- ind[!ind == ind2]
+  
+  CAL_Yrs <- sapply(strsplit(datasheet$Name[ind], " "), function(x) unlist(strsplit(x[2], " ")))
+  if(!all(CAL_Yrs %in% Data@Year)) stop("All CAL Years must be included in `Year`")
+  
+  NMids <- length(CAL_mids)
+  Data@CAL <- array(NA, dim=c(1, Nyears, NMids))
+  
+  CALdat <- datasheet[ind, 2:(NMids+1)] %>% as.matrix() %>% as.numeric() %>% matrix(., nrow=length(ind), ncol=NMids)
+  if (any(is.na(CALdat))) 
+    stop("NAs in CAL data. Is each row same length as `CAL_mids`? (or `length(CAL_bins)-1`)", call. = FALSE)
+  yrind <- match(CAL_Yrs, Data@Year)
+  Data@CAL_bins <- CAL_bins
+  Data@CAL_mids <- CAL_mids
+  Data@CAL[1, yrind,] <- CALdat
+  
+  # ---- Reference ----
+  Data@Dep <- datasheet[which(datasheet$Name=="Current stock depletion"),2] %>% as.numeric()
+  Data@CV_Dep <- datasheet[which(datasheet$Name=="CV current stock depletion"),2] %>% as.numeric()
+  Data@Abun <- datasheet[which(datasheet$Name=="Current stock abundance"),2] %>% as.numeric()
+  Data@CV_Abun <- datasheet[which(datasheet$Name=="CV current stock abundance"),2] %>% as.numeric()
+  Data@SpAbun <- datasheet[which(datasheet$Name=="Current spawning abundance"),2] %>% as.numeric()
+  Data@CV_SpAbun <- datasheet[which(datasheet$Name=="CV current spawning abundance"),2] %>% as.numeric()
+  
+  Data@FMSY_M <- datasheet[which(datasheet$Name=="FMSY/M"),2] %>% as.numeric()
+  Data@CV_FMSY_M <- datasheet[which(datasheet$Name=="CV FMSY/M"),2] %>% as.numeric()
+  Data@BMSY_B0 <- datasheet[which(datasheet$Name=="BMSY/B0"),2] %>% as.numeric()
+  Data@CV_BMSY_B0 <- datasheet[which(datasheet$Name=="CV BMSY/B0"),2] %>% as.numeric()
+  Data@Cref <- datasheet[which(datasheet$Name=="Catch Reference"),2] %>% as.numeric()
+  Data@CV_Cref <- datasheet[which(datasheet$Name=="CV Catch Reference"),2] %>% as.numeric()
+  Data@Bref <- datasheet[which(datasheet$Name=="Biomass Reference"),2] %>% as.numeric()
+  Data@CV_Bref <- datasheet[which(datasheet$Name=="CV Biomass Reference"),2] %>% as.numeric()
+  
+  Data@Iref <- datasheet[which(datasheet$Name=="Index Reference"),2] %>% as.numeric()
+  Data@CV_Iref <- datasheet[which(datasheet$Name=="CV Index Reference"),2] %>% as.numeric()
+  Data@t <- datasheet[which(datasheet$Name=="Duration t"),2] %>% as.numeric()
+  Data@AvC <- datasheet[which(datasheet$Name=="Average catch over time t"),2] %>% as.numeric()
+  Data@CV_AvC <- datasheet[which(datasheet$Name=="CV Average catch over time t"),2] %>% as.numeric()
+  Data@Dt <- datasheet[which(datasheet$Name=="Depletion over time t"),2] %>% as.numeric()
+  Data@CV_Dt <- datasheet[which(datasheet$Name=="CV Depletion over time t"),2] %>% as.numeric()
+  Data@Ref <- datasheet[which(datasheet$Name=="Reference OFL"),2] %>% as.numeric()
+  Data@Ref_type <- datasheet[which(datasheet$Name=="Reference OFL type"),2] %>% as.character() 
+  
+  # Default values
+  if (all(is.na(Data@CV_Cat))) Data@CV_Cat <- matrix(0.2, nrow=1, ncol=Nyears)
+  if (all(is.na(Data@CV_Ind))) Data@CV_Ind <- matrix(0.2, nrow=1, ncol=Nyears)
+  # if (all(is.na(Data@CV_SpInd))) Data@CV_SpInd <- matrix(0.2, nrow=1, ncol=Nyears)
+  if (all(is.na(Data@CV_Effort))) Data@CV_Effort <- matrix(0.2, nrow=1, ncol=Nyears)
+  if (all(is.na(Data@CV_Rec))) Data@CV_Rec <- matrix(0.2, nrow=1, ncol=Nyears)
+  
+  if (NAor0(Data@LenCV)) Data@LenCV <- 0.1
+  if (NAor0(Data@CV_Dt)) Data@CV_Dt <- 0.25
+  if (NAor0(Data@CV_AvC)) Data@CV_AvC <- 0.2
+  if (NAor0(Data@CV_Mort)) Data@CV_Mort <- 0.2
+  if (NAor0(Data@CV_FMSY_M)) Data@CV_FMSY_M <- 0.2
+  if (NAor0(Data@CV_BMSY_B0)) Data@CV_BMSY_B0 <- 0.045
+  if (NAor0(Data@CV_Cref)) Data@CV_Cref <- 0.2
+  if (NAor0(Data@CV_Bref)) Data@CV_Bref <- 0.2
+  if (NAor0(Data@CV_Iref)) Data@CV_Iref <- 0.2
+  if (NAor0(Data@CV_Dep)) Data@CV_Dep <- 0.25
+  if (NAor0(Data@CV_Abun)) Data@CV_Abun <- 0.25
+  if (NAor0(Data@CV_vbK)) Data@CV_vbK <- 0.1
+  if (NAor0(Data@CV_vbLinf)) Data@CV_vbLinf <- 0.1
+  if (NAor0(Data@CV_vbt0)) Data@CV_vbt0 <- 0.1
+  if (NAor0(Data@CV_L50))  Data@CV_L50 <- 0.1
+  if (NAor0(Data@CV_LFC))  Data@CV_LFC <- 0.2
+  if (NAor0(Data@CV_LFS))  Data@CV_LFS <- 0.2
+  if (NAor0(Data@CV_wla))  Data@CV_wla <- 0.1
+  if (NAor0(Data@CV_wlb))  Data@CV_wlb <- 0.1
+  if (NAor0(Data@CV_steep)) Data@CV_steep <- 0.2
+  if (NAor0(Data@nareas)) Data@nareas <- 2
+  
+  if (length(Data@CAA) == 0) Data@CAA <- array(NA, c(1, 1, 1))
+  if (length(Data@CAL) == 0) Data@CAL <- array(NA, c(1, 1, 1))
+  if (length(Data@CAL_bins) == 0) Data@CAL_bins <- 1
+  if (length(Data@TAC) == 0) Data@TAC <- array(1, c(1, 1))
+  # if (length(Data@TACbias) == 0) Data@TACbias <- array(1, c(1, 1))
+  if (length(Data@Sense) == 0) Data@Sense <- array(1, c(1, 1))
+  if (length(Data@ML) == 0)  Data@ML <- array(NA, c(1, 1))
+  if (length(Data@Lbar) == 0) Data@Lbar <- array(NA, c(1, 1))
+  if (length(Data@Lc) == 0) Data@Lc <- array(NA, c(1, 1))
+  
+  if (is.na(Data@MPeff) || length(Data@MPeff)==0) Data@MPeff <- 1
+  
+  Data@Log[[1]] <- paste("Created:", Sys.time())
+  Data@params <- new("list")
+  Data@OM <- data.frame(NA)
+  Data@Obs <- data.frame(NA)
+  Data@PosMPs <- NA
+  Data@MPs <- NA
+  
+  Data  
 }
+
+# XL2Data <- function(name="Data") {
+#   if (class(name) != 'character') stop("file name must be provided", call.=FALSE)
+#   
+#   dir <- dirname(name)
+#   if (dir ==".") {
+#     dir <- NULL
+#   } else {
+#     name <- basename(name)
+#   }
+#   
+#   if (is.null(dir)) dir <- getwd()
+#   if (nchar(tools::file_ext(name)) == 0) {
+#     xl.fname1 <- paste0(name, ".xlsx")
+#     xl.fname2 <- paste0(name, ".csv")
+#     fls <- file.exists(c(file.path(dir, xl.fname1), file.path(dir,xl.fname2)))
+#     if (sum(fls) == 0) stop(xl.fname1, " or ", xl.fname2, " not found in ", dir)
+#     if (sum(fls) > 1) stop(name, " found with multiple extensions. Specify file extension.", call.=FALSE)
+#     name <- c(xl.fname1, xl.fname2)[fls]
+#   }
+#   
+#   if (!file.exists(file.path(dir, name))) stop(file.path(dir, name), " not found", call.=FALSE) 
+#   
+#   isCSV <- grepl('.csv', name)
+#   message("Reading ", name)
+#   if (isCSV) {
+#     Data <- new("Data", file.path(dir,name))
+#   } else {
+#     sheetnames <- readxl::excel_sheets(file.path(dir,name))  # names of the sheets
+#     
+#     # DataXLSlot <- DLMtool:::DataXLSlot
+#     NewSheetNames <- names(DataXLSlot)
+#     if (all(NewSheetNames %in% sheetnames)) {
+#       Data <- importnewXLData(dir,name, NewSheetNames)
+#     } else {
+#       datasheet <- suppressMessages(as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE)))
+#       if (datasheet[1,1]== "Slot") 
+#         datasheet <- suppressMessages(as.data.frame(readxl::read_excel(file.path(dir,name), sheet = 1, col_names = FALSE, skip=1)))
+#       
+#       if (all(dim(datasheet) == 0)) stop("Nothing found in first sheet", call.=FALSE)
+#       tmpfile <- tempfile(fileext=".csv")
+#       writeCSV2(inobj = datasheet, tmpfile, objtype = "Data")
+#       
+#       if (ncol(datasheet)<2) {
+#         unlink(tmpfile)
+#         stop("No parameter values found in first worksheet ", call.=FALSE)
+#       } else {
+#         Data <- new("Data", tmpfile)
+#         unlink(tmpfile)
+#       }
+#     }
+#     return(Data)
+#   }
+# }
+
+
+
+
+
+# importnewXLData_old <- function(dir,name, NewSheetNames) {
+#   Data <- new("Data", silent=TRUE)
+#   BlankDat <-new("Data", silent=TRUE)
+#   ignoreSheet <- NULL
+#   
+#   # sh <- NewSheetNames[1]
+#   for (sh in NewSheetNames) { # import from individual worksheets
+#     datasheet <- suppressMessages(as.data.frame(readxl::read_excel(file.path(dir,name), 
+#                                                   sheet = sh, col_names = FALSE)))
+#     if (dim(datasheet)[2] <= 1) {
+#       message('No data found in sheet: ', sh)
+#     } else {
+#       message("Importing from: ", sh)
+#       dname <- datasheet[, 1]
+#       dat  <- datasheet[, 2:ncol(datasheet), drop=FALSE]
+#       df <- data.frame(XLRow=DataXLSlot[[sh]]$XLRow, 
+#                        Slot=DataXLSlot[[sh]]$Slot, 
+#                        Class=DataXLSlot[[sh]]$Class, 
+#                        Ignore=DataXLSlot[[sh]]$Ignore,
+#                        stringsAsFactors = FALSE)
+#       df$Ignore[is.na(df$Slot)] <- TRUE
+#       df$Ignore[df$XLRow=="Fleet Type"] <- TRUE # temporary until new build
+#       df$Ignore <- as.logical(df$Ignore)
+#       df <- df[!df$Ignore,]
+#       
+#       # if (sh %in% c("Main", "Biology", "Reference")) {
+#       if (sh %in% c("Main", "Biology", "Selectivity", "Reference")) {
+#         for (sl in 1:nrow(df)) {
+#           temp <- dat[match(df$XLRow[sl], dname),1]
+#           if (substr(df$Class[sl],start=1, stop=1) == "c") 
+#             slot(Data, df$Slot[sl]) <- temp
+#           if (substr(df$Class[sl],start=1, stop=1) == "n") 
+#             slot(Data, df$Slot[sl]) <- as.numeric(temp)
+#         }
+#       } else if (sh == "Time-Series") {
+#         YearInd <- match("Year", dname)
+#         Year <- dat[YearInd,]
+#         Year <- Year[!is.na(Year)]
+#         Data@Year <- as.numeric(Year)
+#         if (!is.finite(Data@LHYear)) 
+#           stop("'Current Year' in 'Main' sheet is missing", call.=FALSE)
+#         if (max(Data@Year) != Data@LHYear) 
+#           stop("Last year should be equal to 'Current Year' in 'Main' sheet", call.=FALSE)
+#         ncol_ts <- length(Year)
+#         ncol_cv <- 1
+#         for (sl in 1:nrow(df)) {
+#           ncol <- ifelse(grepl("CV_", df$Slot[sl]), ncol_cv, ncol_ts)
+#           temp <- as.numeric(dat[match(df$XLRow[sl], dname),1:ncol])
+#           
+#           if (substr(df$Class[sl],start=1, stop=1) == "n")
+#             slot(Data, df$Slot[sl]) <- temp
+#           if (substr(df$Class[sl],start=1, stop=1) == "m")
+#             slot(Data, df$Slot[sl]) <- matrix(temp, nrow=1)
+#           if(all(is.na(slot(Data, df$Slot[sl]))))  
+#             slot(Data, df$Slot[sl]) <- slot(BlankDat, df$Slot[sl]) 
+#         }
+#         
+#       } else if (sh == "CAA") {
+#         if (!is.finite(Data@MaxAge)) 
+#           stop("'Maximum age' in 'Biology' sheet is missing", call.=FALSE)
+#         if (any(!is.finite(Data@Year)))
+#           stop("'Year' in 'Time-Series' sheet is missing", call.=FALSE)
+#         CAAMat <- array(NA, dim=c(1,length(Data@Year),Data@MaxAge))
+#         Year <- Data@Year
+#         
+#         CAAYr <- as.numeric(dname[dname !="Year"])
+#         if (length(CAAYr)<1) {
+#           message("No catch-at-age data found")
+#         } else {
+#           YrInd <- match(CAAYr, Year) # match years 
+#           if (max(CAAYr) > max(Year))
+#             stop("More years in CAA than Time-Series Year", call.=FALSE)
+#           CAAdat <- data.matrix(dat[2:nrow(dat),])
+#           
+#           if (ncol(CAAdat)> Data@MaxAge) 
+#             stop("Number of age-classes in CAA data > MaxAge", call.=FALSE)
+#           if (ncol(CAAdat) < Data@MaxAge) {
+#             message("Number of age-classes in CAA data < MaxAge. Filling with 0s")
+#             zeromat <- matrix(0, nrow=nrow(CAAdat), ncol=Data@MaxAge-ncol(CAAdat))
+#             CAAdat <- cbind(CAAdat, zeromat)
+#           }
+#           CAAMat[1, YrInd, 1:ncol(CAAdat)] <- CAAdat
+#           Data@CAA <- CAAMat
+#         }
+#       } else if (sh == "CAL") {
+#         CAL_bins <- as.numeric(dat[1,])
+#         if (!all(diff(CAL_bins) == diff(CAL_bins))) 
+#           stop('Length bins do not have equal intervals' , call.=FALSE)
+#         if (any(!is.finite(Data@Year)))
+#           stop("'Year' in 'Time-Series' sheet is missing", call.=FALSE)
+#         CALMat <- array(NA, dim=c(1,length(Data@Year), length(CAL_bins)-1))
+#         Year <- Data@Year
+#         CALYr <- as.numeric(dname[dname !="Year" & dname !="CAL_bins"])
+#         if (length(CALYr)<1) {
+#           message("No catch-at-length data found")
+#         } else {
+#           YrInd <- match(CALYr, Year) # match years
+#           if (max(CALYr) > max(Year))
+#             stop("More years in CAL than Time-Series Year", call.=FALSE)
+#           ncol <- ncol(dat)
+#           CALdat <- data.matrix(dat[3:nrow(dat),1:ncol])
+#           if (!all(is.na(CALdat[,ncol]))) {
+#             stop("Number of Catch-at-Length bins (CAL_bins) should \nbe 1 greater than number columns of CAL data", call.=FALSE)
+#           }
+#           CALdat <- CALdat[,1:(ncol-1)]
+#           CALMat[1, YrInd, ] <- CALdat
+#         }
+#         Data@CAL_bins <- CAL_bins
+#         Data@CAL <- CALMat
+#       }
+#     }
+#     
+#   } # end sheet loop
+#   Data
+# }
 
 
 
@@ -694,7 +1088,11 @@ Needed <- function(Data, timelimit = 1) {
 OneRep <- function(Data) {
   if (class(Data) != "Data") stop("First argument must be object of class 'Data'", call.=FALSE)
   Data <- updateMSE(Data)
-  Data@CV_Cat = Data@CV_Dt = Data@CV_AvC = Data@CV_Ind = Data@CV_Mort = Data@CV_FMSY_M = Data@CV_BMSY_B0 = Data@CV_Cref = Data@CV_Bref = Data@CV_Iref = Data@CV_Rec = Data@CV_Dep = Data@CV_Abun = Data@CV_L50 = Data@CV_vbK = Data@CV_vbLinf = Data@CV_vbt0 = Data@CV_LFC = Data@CV_LFS = Data@CV_wla = Data@CV_wlb = Data@CV_steep = Data@sigmaL = tiny
+  Data@CV_Cat =  Data@CV_Ind = Data@CV_Rec = matrix(tiny, nrow=1, ncol=1)
+  Data@CV_Dt = Data@CV_AvC = Data@CV_Mort = Data@CV_FMSY_M = Data@CV_BMSY_B0 = 
+    Data@CV_Cref = Data@CV_Bref = Data@CV_Iref = Data@CV_Dep = Data@CV_Abun = 
+    Data@CV_L50 = Data@CV_vbK = Data@CV_vbLinf = Data@CV_vbt0 = Data@CV_LFC = 
+    Data@CV_LFS = Data@CV_wla = Data@CV_wlb = Data@CV_steep = tiny
   Data
 }
 

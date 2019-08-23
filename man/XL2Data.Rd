@@ -4,11 +4,17 @@
 \alias{XL2Data}
 \title{Import a Data object from Excel file}
 \usage{
-XL2Data(name = "Data")
+XL2Data(name, dec = c(".", ","), sheet = 1, silent = TRUE)
 }
 \arguments{
 \item{name}{Name of the data file, with or without file extension.
 Include full file path if not in working directory}
+
+\item{dec}{the character used in the file for decimal points.}
+
+\item{sheet}{Sheet number if importing Data from XL file}
+
+\item{silent}{Logical. Hide messages?}
 }
 \value{
 An object of class 'Data'

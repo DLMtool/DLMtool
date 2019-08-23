@@ -1,71 +1,95 @@
-"Data Object"
-"Name"
-"Common name"
-"Species name"
-"Region"
-"Year"
-"Catch"
-"Abundance index"
-"Index type"
-"Real indices"
-"Recruitment"
-"Duration t"
-"Average catch over time t"
-"Depletion over time t"
-"M"
-"FMSY/M"
-"BMSY/B0"
-"Length at 50% maturity"
-"Length at 95% maturity"
-"Mean length"
-"Mean length Lc"
-"Modal length"
-"Length at first capture"
-"Length at full selection"
-"CAA"
-"Current stock depletion"
-"Current stock abundance"
-"Current spawning stock abundance"
-"Von Bertalanffy K parameter"
-"Von Bertalanffy Linf parameter"
-"Von Bertalanffy t0 parameter"
-"CV of length-at-age"
-"Length-weight parameter a"
-"Length-weight parameter b"
-"Steepness"
-"CV Catch"
-"CV Depletion over time t"
-"CV Average catch over time t"
-"CV Abundance index"
-"CV M"
-"CV FMSY/M"
-"CV BMSY/B0"
-"CV current stock depletion"
-"CV current stock abundance"
-"CV von B. K parameter"
-"CV von B. Linf parameter"
-"CV von B. t0 parameter"
-"CV Length at 50% maturity"
-"CV Length at first capture"
-"CV Length at full selection"
-"CV Length-weight parameter a"
-"CV Length-weight parameter b"
-"CV Steepness"
-"Sigma length composition"
-"Maximum age"
-"CAL_bins"
-"CAL"
-"Units"
-"Reference OFL"
-"Reference OFL type"
-"Cref"
-"Iref"
-"Bref"
-"CV Cref"
-"CV Iref"
-"CV Bref"
-"CV Rec"
-"MPrec"
-"MPeff"
-"LHYear"
-"nareas"
+Name,Data
+Name,
+Common Name,
+Species,
+Region,
+Last Historical Year,
+Previous TAC,
+Units,
+Previous TAE,
+nareas,
+,
+Biology,
+Maximum age,
+M,
+CV M,
+Von Bertalanffy Linf parameter,
+CV von B. Linf parameter,
+Von Bertalanffy K parameter,
+CV von B. K parameter,
+Von Bertalanffy t0 parameter,
+CV von B. t0 parameter,
+Length-weight parameter a,
+CV Length-weight parameter a,
+Length-weight parameter b,
+CV Length-weight parameter b,
+Steepness,
+CV Steepness,
+sigmaR,
+CV sigmaR,
+Length at 50% maturity,
+CV Length at 50% maturity,
+Length at 95% maturity,
+CV of length-at-age,
+,
+Selectivity,
+Length at first capture,
+CV Length at first capture,
+Length at full selection,
+CV Length at full selection,
+Vulnerability at asymptotic length,
+,
+Time-Series,
+Year,
+Catch,
+CV Catch,
+Effort,
+CV Effort,
+Abundance index,
+CV Abundance index,
+Index 1,
+CV Index 1,
+Vuln Index 1,
+Index 2,
+CV Index 2,
+Vuln Index 2,
+Recruitment index,
+CV Recruitment index,
+Mean length,
+Modal length (Lc),
+Mean length above Lc,
+,
+Catch-at-Age,
+Vuln CAA,
+CAA,
+,
+Catch-at-Length,
+Vuln CAL,
+CAL_bins,
+CAL_mids,
+CAL,
+,
+Reference,
+Current stock depletion,
+CV current stock depletion,
+Current stock abundance,
+CV current stock abundance,
+Current spawning abundance,
+CV current spawning abundance,
+FMSY/M,
+CV FMSY/M,
+BMSY/B0,
+CV BMSY/B0,
+Catch Reference,
+CV Catch Reference,
+Biomass Reference,
+CV Biomass Reference,
+Index Reference,
+CV Index Reference,
+Duration t,
+Average catch over time t,
+CV Average catch over time t,
+Depletion over time t,
+CV Depletion over time t,
+Reference OFL,
+Reference OFL type,

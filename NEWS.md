@@ -2,6 +2,8 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 ## DLMtool 5.3.9999 DEV VERSION
 
+Update new `Data` object
+
 ### Fixes
 - fix bug where TAE implementation error was affecting TAC controls (thanks to Robyn Forrest and Sean Anderson for finding this)
 - fix bug in `Cplot` (thanks Sarah Valencia for picking this up)

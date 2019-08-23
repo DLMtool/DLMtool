@@ -766,13 +766,11 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                    ErrList, OM, SampCpars, initD, control=control,
                    silent=silent)
   
-  # --- Add Real Indices to Data object (if they exist) & calculate error stats ----
-  templist <- addRealInd(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, nsim,
-                         nyears, proyears, silent=silent)
+  # --- Condition Simulated Data on input Data object (if it exists) & calculate error stats ----
+  templist <- addRealData(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, CBret,
+                          nsim, nyears, proyears, silent=silent)
   Data <- templist$Data # update 
   ErrList <- templist$ErrList # update
-
-  Misc$RInd.stats <- ErrList$stats.df # return stats
   
   ObsPars <- Data@Obs # Obs pars updated in makeData 
   OMPars <- Data@OM
