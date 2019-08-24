@@ -369,9 +369,9 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
                  !grepl('Vuln CAL', datasheet$Name) &
                  !grepl('CAL_mids', datasheet$Name))
   
-  CALexists <- datasheet$Name[ind] == "CAL"
+  CALexists <- grepl("CAL", datasheet$Name[ind])
   if (length(CALexists) < 1) CALexists <- FALSE
-  if (length(ind) <=1 || !CALexists) {
+  if (length(ind) <=1 || !any(CALexists)) {
     ind <- numeric(0)
     CAL_Yrs <- numeric(0)
   } 
@@ -382,6 +382,7 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
     if (length(CAL_bins)>1  & length(CAL_mids) > 1) {
       if (!length(CAL_mids) == length(CAL_bins)-1)
         stop("CAL_mids should be of length `length(CAL_bins)-1`", call. = FALSE)
+      by <- CAL_mids[2] - CAL_mids[1]
       if (all(CAL_mids != seq(CAL_bins[1]+0.5*by, by=by, length.out = length(CAL_bins)-1)))
         stop("CAL_mids should be mid-points of CAL_bins", call. = FALSE)
     } 
