@@ -8,9 +8,9 @@ SPmod(x, Data, reps = 100, plot = FALSE, alp = c(0.8, 1.2),
   bet = c(0.8, 1.2))
 }
 \arguments{
-\item{x}{A position in a data-limited methods data object}
+\item{x}{A position in the data object}
 
-\item{Data}{A data-limited methods data object}
+\item{Data}{A data object}
 
 \item{reps}{The number of stochastic samples of the MP recommendation(s)}
 

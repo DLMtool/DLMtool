@@ -16,9 +16,9 @@ minlenLopt1(x, Data, reps, plot = FALSE, buffer = 0.1)
 slotlim(x, Data, reps, plot = FALSE)
 }
 \arguments{
-\item{x}{A position in a data-limited methods data object}
+\item{x}{A position in the data object}
 
-\item{Data}{A data-limited methods data object}
+\item{Data}{A data object}
 
 \item{reps}{The number of stochastic samples of the MP recommendation(s)}
 

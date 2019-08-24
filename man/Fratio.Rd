@@ -19,9 +19,9 @@ Fratio_CC(x, Data, reps = 100, plot = FALSE, Fmin = 0.005)
 Fratio_ML(x, Data, reps = 100, plot = FALSE)
 }
 \arguments{
-\item{x}{A position in a data-limited methods data object}
+\item{x}{A position in the data object}
 
-\item{Data}{A data-limited methods data object}
+\item{Data}{A data object}
 
 \item{reps}{The number of stochastic samples of the MP recommendation(s)}
 

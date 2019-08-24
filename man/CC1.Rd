@@ -22,9 +22,9 @@ CC5(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.4)
 CurC(x, Data, reps = 100, plot = FALSE, yrsmth = 1, xx = 0)
 }
 \arguments{
-\item{x}{A position in a data-limited methods data object}
+\item{x}{A position in the data object}
 
-\item{Data}{A data-limited methods data object}
+\item{Data}{A data object}
 
 \item{reps}{The number of stochastic samples of the MP recommendation(s)}
 

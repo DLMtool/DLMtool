@@ -1,5 +1,5 @@
-#' @param x A position in a data-limited methods data object
-#' @param Data A data-limited methods data object
+#' @param x A position in the data object
+#' @param Data A data object
 #' @param reps The number of stochastic samples of the MP recommendation(s)
 #' @param plot Logical. Show the plot?
 #' 
