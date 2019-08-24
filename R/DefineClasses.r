@@ -1627,7 +1627,7 @@ setMethod("summary",
             
             # CAL 
             CAL <- object@CAL[x,,]
-            if (NAor0(CAL)) {
+            if (all(is.na(CAL))) {
               P3 <- NULL
             } else {
               P3 <- TRUE
@@ -1661,6 +1661,9 @@ setMethod("summary",
                 }
                 
                 nyears <- length(unique(df1$Year))
+                nayears <- df1 %>% group_by(Year) %>% summarize(isna=all(is.na(Freq)))
+                nyears <- sum(!nayears$isna)
+                
                 nbins <- length(unique(df1$Val))
                 tplot <- 25 # total plots per page
                 if (nyears > tplot) {
@@ -1680,11 +1683,11 @@ setMethod("summary",
                 op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,2,1), oma=c(4,4,2,0))
                 on.exit(par(op))
                 
-                yr1 <- 1 
+                yr1 <- 1
                 col <- "grey"
                 for (pg in 1:npages) {
                   if(npages>1)message('Plot ', pg, ' of ', npages)
-                  yrind <- yr1:(yr1+nplot-1)
+                  yrind <- yr.ind$Year[1:(nplot)]
                   yr1 <- max(yrind) + 1
                   dat <- df1 %>% dplyr::filter(Year %in% yrind)
                   un.yrs_val <- as.numeric(unique(dat$Year_val))
@@ -1702,20 +1705,25 @@ setMethod("summary",
                   for (p in 1:nplot) {
                     pdat <- dat %>% dplyr::filter(Year==un.yrs[p])
                     if (nrow(pdat) > 0) {
-                      if (p %in% pmat[nrow,]) {
-                        barplot(pdat$Freq, names.arg=round(pdat$Val, 2), axes=FALSE, col=col, las=2)  
-                      } else {
-                        barplot(pdat$Freq, names.arg=FALSE, axes=FALSE, col=col)
-                      } 
-                      if (p %in% pmat[,1]) axis(side=2)
-                      if (!p %in% pmat[,1]) axis(side=2, labels=TRUE)
-                      ncount <- round(sum(pdat$Freq),0)
-                      title(un.yrs_val[p])
-                      text(length(unique(df1$Val)), max(pdat$Freq), paste('n = ', ncount), xpd=NA)
+                      if (all(is.na(pdat$Freq))) {
+                       
+                      } else{
+                        if (p %in% pmat[nrow,]) {
+                          barplot(pdat$Freq, names.arg=round(pdat$Val, 2), axes=FALSE, col=col, las=2)  
+                        } else {
+                          barplot(pdat$Freq, names.arg=FALSE, axes=FALSE, col=col)
+                        } 
+                        if (p %in% pmat[,1]) axis(side=2)
+                        if (!p %in% pmat[,1]) axis(side=2, labels=TRUE)
+                        ncount <- round(sum(pdat$Freq),0)
+                        title(un.yrs_val[p])
+                        text(length(unique(df1$Val)), max(pdat$Freq), paste('n = ', ncount), xpd=NA)
+                      }
+                      
                     }
                     
                   } 
-                  mtext(side=1, outer=TRUE, "Age", line=2, cex=1.5)
+                  mtext(side=1, outer=TRUE, "Length", line=2, cex=1.5)
                   mtext(side=2, outer=TRUE, "Frequency", line=2, cex=1.5)
                   
                 }
