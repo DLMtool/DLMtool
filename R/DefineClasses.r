@@ -206,6 +206,46 @@ setMethod("initialize", "Data", function(.Object, stock="nada", ...) {
       if (cl == "list") slot(.Object, sl) <- list()
     }
   }
+  
+  # Default values
+  if (all(is.na(.Object@CV_Cat))) .Object@CV_Cat <- matrix(0.2, nrow=1, ncol=1)
+  if (all(is.na(.Object@CV_Ind))) .Object@CV_Ind <- matrix(0.2, nrow=1, ncol=1)
+  # if (all(is.na(.Object@CV_SpInd))) .Object@CV_SpInd <- matrix(0.2, nrow=1, ncol=1)
+  if (all(is.na(.Object@CV_Effort))) .Object@CV_Effort <- matrix(0.2, nrow=1, ncol=1)
+  if (all(is.na(.Object@CV_Rec))) .Object@CV_Rec <- matrix(0.2, nrow=1, ncol=1)
+  
+  if (NAor0(.Object@LenCV)) .Object@LenCV <- 0.1
+  if (NAor0(.Object@CV_Dt)) .Object@CV_Dt <- 0.25
+  if (NAor0(.Object@CV_AvC)) .Object@CV_AvC <- 0.2
+  if (NAor0(.Object@CV_Mort)) .Object@CV_Mort <- 0.2
+  if (NAor0(.Object@CV_FMSY_M)) .Object@CV_FMSY_M <- 0.2
+  if (NAor0(.Object@CV_BMSY_B0)) .Object@CV_BMSY_B0 <- 0.045
+  if (NAor0(.Object@CV_Cref)) .Object@CV_Cref <- 0.2
+  if (NAor0(.Object@CV_Bref)) .Object@CV_Bref <- 0.2
+  if (NAor0(.Object@CV_Iref)) .Object@CV_Iref <- 0.2
+  if (NAor0(.Object@CV_Dep)) .Object@CV_Dep <- 0.25
+  if (NAor0(.Object@CV_Abun)) .Object@CV_Abun <- 0.25
+  if (NAor0(.Object@CV_vbK)) .Object@CV_vbK <- 0.1
+  if (NAor0(.Object@CV_vbLinf)) .Object@CV_vbLinf <- 0.1
+  if (NAor0(.Object@CV_vbt0)) .Object@CV_vbt0 <- 0.1
+  if (NAor0(.Object@CV_L50))  .Object@CV_L50 <- 0.1
+  if (NAor0(.Object@CV_LFC))  .Object@CV_LFC <- 0.2
+  if (NAor0(.Object@CV_LFS))  .Object@CV_LFS <- 0.2
+  if (NAor0(.Object@CV_wla))  .Object@CV_wla <- 0.1
+  if (NAor0(.Object@CV_wlb))  .Object@CV_wlb <- 0.1
+  if (NAor0(.Object@CV_steep)) .Object@CV_steep <- 0.2
+  if (NAor0(.Object@nareas)) .Object@nareas <- 2
+  
+  if (length(.Object@CAA) == 0) .Object@CAA <- array(NA, c(1, 1, 1))
+  if (length(.Object@CAL) == 0) .Object@CAL <- array(NA, c(1, 1, 1))
+  if (length(.Object@CAL_bins) == 0) .Object@CAL_bins <- 1
+  if (length(.Object@TAC) == 0) .Object@TAC <- array(1, c(1, 1))
+  # if (length(.Object@TACbias) == 0) .Object@TACbias <- array(1, c(1, 1))
+  if (length(.Object@Sense) == 0) .Object@Sense <- array(1, c(1, 1))
+  if (length(.Object@ML) == 0)  .Object@ML <- array(NA, c(1, 1))
+  if (length(.Object@Lbar) == 0) .Object@Lbar <- array(NA, c(1, 1))
+  if (length(.Object@Lc) == 0) .Object@Lc <- array(NA, c(1, 1))
+  
   return(.Object)
 })
 
