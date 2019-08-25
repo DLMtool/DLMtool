@@ -1687,7 +1687,14 @@ setMethod("summary",
                 col <- "grey"
                 for (pg in 1:npages) {
                   if(npages>1)message('Plot ', pg, ' of ', npages)
-                  yrind <- yr.ind$Year[1:(nplot)]
+                  if (pg ==1) {
+                    yrind <- yr.ind$Year[1:(nplot)]  
+                  } else {
+                    t1 <- nplot * (pg-1) +1 
+                    t2 <- t1+nplot
+                    yrind <- yr.ind$Year[t1:t2]
+                  }
+                  
                   yr1 <- max(yrind) + 1
                   dat <- df1 %>% dplyr::filter(Year %in% yrind)
                   un.yrs_val <- as.numeric(unique(dat$Year_val))
