@@ -2716,7 +2716,7 @@ IT_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, mc = 0.05) {
   dependencies = "Data@Ind, Data@MPrec, Data@CV_Ind, Data@Iref"
   ind <- max(1, (length(Data@Year) - yrsmth + 1)):length(Data@Year)
   if(is.na(Data@Iref[x])) return(list(TAC=rep(as.numeric(NA), reps)))
-  deltaI <- mean(Data@Ind[x, ind])/Data@Iref[x]
+  deltaI <- mean(Data@Ind[x, ind], na.rm=TRUE)/Data@Iref[x]
   if (deltaI < (1 - mc)) deltaI <- 1 - mc
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
   TAC <- Data@MPrec[x] * deltaI * trlnorm(reps, 1, Data@CV_Ind[x])
