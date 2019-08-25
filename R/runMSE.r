@@ -130,8 +130,27 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     if (all(is.na(MPs))) MPs <- avail("MP")
     # Export Custom MPs # 
     cMPs <- MPs[!MPs %in% pkg.funs]
-    if (length(cMPs)>0) snowfall::sfExport(list=cMPs)
-    
+    globalMP <- NULL
+    extra_package <- NULL
+    for (mm in seq_along(cMPs)) {
+      nmspace <- find(cMPs[mm])
+      if (nmspace==".GlobalEnv") {
+        globalMP <- c(globalMP, cMPs[mm]) 
+      } else {
+        extra_package <- c(extra_package, strsplit(nmspace, ":")[[1]][2])
+      }
+      extra_package <- unique(extra_package)
+    }
+    if (!is.null(globalMP)) {
+      message("Exporting custom MPs in global environment")
+      snowfall::sfExport(list=globalMP)
+    } 
+    if (!is.null(extra_package)) {
+      message("Exporting additional packages with MPs")
+      for (pk in extra_package)
+        sfLibrary(pk, character.only = TRUE, verbose=FALSE)
+    }
+
     ncpu <- snowfall::sfCpus()
     nits <- ceiling(OM@nsim/48)
     
