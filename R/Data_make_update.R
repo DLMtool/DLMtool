@@ -242,21 +242,23 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   Data@Cat <- cbind(Data@Cat, Cobs)   
   
   # --- Index of total abundance ----
-  I2 <- (cbind(apply(Biomass, c(1, 3), sum), 
-               apply(Biomass_P, c(1, 3), sum)[, 1:(y - 1)])^ObsPars$betas) * 
-    ErrList$Ierr[, 1:(nyears + (y - 1))]
-  
-  I2[is.na(I2)] <- tiny
-  I2 <- I2/apply(I2, 1, mean, na.rm=TRUE)
+  I2 <- cbind(apply(Biomass, c(1, 3), sum), 
+              apply(Biomass_P, c(1, 3), sum)[, 1:(y - 1)])
+    
+  # standardize, apply  beta & obs error  
+  I2 <- exp(lcs(I2))^ObsPars$betas * ErrList$Ierr[,1:(nyears + (y - 1))]
+   
+  yind <- max(which(!is.na(Data@Ind[1,])))
+  scaler <- Data@Ind[,yind]/I2[,yind]
+  scaler <- matrix(scaler, nrow=nsim, ncol=nyears+y-1)
+  I2 <- I2 * scaler # convert back to historical index scale
   
   if (!is.null(SampCpars$Data) && ncol(SampCpars$Data@Ind)>nyears) {
-    # update projection index with observed index
+    # update projection index with observed index if it exists
     addYr <- min(y,ncol(SampCpars$Data@Ind) - nyears)
     I2[,(nyears+1):(nyears+addYr)] <- matrix(SampCpars$Data@Ind[1, (nyears+1):(nyears+addYr)],
                              nrow=nsim, ncol=addYr, byrow=TRUE)
   }
-  I2[is.na(I2)] <- tiny
-  I2 <- I2/apply(I2, 1, mean, na.rm=TRUE)
   Data@Ind <- I2
   
   # --- Update additional indices (if they exist) ----
@@ -272,8 +274,14 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
      b1 <- apply(b1 * Ind_V[,,1:nyears], c(1,3), sum)
      b2 <- apply(Biomass_P, c(1, 2, 3), sum)
      b2 <- apply(b2 * Ind_V[(nyears+1):(nyears+proyears)], c(1,3), sum)
-     tempI <- cbind(b1, b2[, 1:(y - 1)]^ErrList$AddIbeta[,i]) * ErrList$AddIerr[,i,1:(nyears + (y - 1))]
-     tempI <- tempI/apply(tempI, 1, mean, na.rm=TRUE)
+     tempI <- cbind(b1, b2[, 1:(y - 1)])
+     # standardize, apply  beta & obs error  
+     tempI <- exp(lcs(tempI))^ErrList$AddIbeta[,i] * ErrList$AddIerr[,i,1:(nyears + (y - 1))]
+     yind <- max(which(!is.na(SampCpars$Data@AddInd[1,i,])))
+     
+     scaler <- SampCpars$Data@AddInd[,i,yind]/tempI[,yind]
+     scaler <- matrix(scaler, nrow=nsim, ncol=nyears+y-1)
+     tempI <- tempI * scaler # convert back to historical index scale
      Data@AddInd[,i,] <- tempI
    }
   }

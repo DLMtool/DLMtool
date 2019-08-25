@@ -278,17 +278,6 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
     }
   }
   
-  # Standarise indices 
-  slot(Data, 'Ind') <- slot(Data, 'Ind')/mean(slot(Data,'Ind'), na.rm=TRUE)
-  
-  if (indexexist) {
-    dims <- dim(Data@AddInd)
-    nind <- dims[2]
-    for (i in 1:nind) {
-     Data@AddInd[1,i,] <-   Data@AddInd[1,i,]/mean(Data@AddInd[1,i,], na.rm=TRUE)
-    }
-  } 
- 
   # Recruitment index 
   ind <- grepl('Recruitment', datasheet$Name) %>% which()
   Data@Rec <- suppressWarnings(datasheet[ind[1], 2:(Nyears+1)] %>% as.numeric() %>%

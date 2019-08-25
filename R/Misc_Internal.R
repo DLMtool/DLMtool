@@ -796,6 +796,8 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, CBret,
       Cerr <- cbind(Cerr, Cerr_proj)
       ErrList$Cbiasa <- Cbias
       ErrList$Cerr <- Cerr
+      # sim <- sample(1:nsim, 1)
+      # simcatch[sim,] * ErrList$Cerr[sim,1:nyears] * ErrList$Cbiasa[sim,1:nyears]/ RealDat@Cat[1,1:nyears]
     }
 
 
@@ -812,19 +814,21 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, CBret,
       I_Err <- do.call('rbind', I_Err)
       ObsPars$betas <- I_Err$beta
       
-      stind <- SimBiomass/apply(SimBiomass, 1, mean)
-      Ierr <- exp(lcs(Data@Ind))/exp(lcs(stind))^ObsPars$betas
+      Ierr <- exp(lcs(Data@Ind))/exp(lcs(SimBiomass))^ObsPars$betas
       ErrList$Ierr[,1:nyears] <- Ierr
-      # Sample to replace NAs in historical years
-      for (i in 1:nsim) {
-        temp <- ErrList$Ierr[i,1:nyears]
-        n <- sum(is.na(temp))
-        temp2 <- temp[!is.na(temp)]
-        temp[is.na(temp)] <- sample(temp2, n, replace=TRUE)
-        ErrList$Ierr[i,1:nyears] <- temp 
-      }
+      
+      # # Sample to replace NAs in historical years
+      # for (i in 1:nsim) {
+      #   temp <- ErrList$Ierr[i,1:nyears]
+      #   n <- sum(is.na(temp))
+      #   temp2 <- temp[!is.na(temp)]
+      #   temp[is.na(temp)] <- sample(temp2, n, replace=TRUE)
+      #   ErrList$Ierr[i,1:nyears] <- temp 
+      # }
+      
       # Sample for projection years 
-      ErrList$Ierr[, (nyears+1):(nyears+proyears)] <- generateRes(df=I_Err, nsim, proyears, lst.err=log(ErrList$Ierr[,nyears]))
+      yr.ind <- max(which(!is.na(RealDat@Ind[1,1:nyears])))
+      ErrList$Ierr[, (nyears+1):(nyears+proyears)] <- generateRes(df=I_Err, nsim, proyears, lst.err=log(ErrList$Ierr[,yr.ind]))
       ErrList$Ind_Stat <- I_Err # return index statistics
     }
     
@@ -851,8 +855,7 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, CBret,
         Ind_V <- matrix(Ind_V, nrow=Data@MaxAge, ncol= nyears)
         Ind_V <- replicate(nsim, Ind_V) %>% aperm(., c(3,1,2))
         SimBiomass <- apply(SimBiomass*Ind_V, c(1,3), sum) # apply vuln curve
-        stind <- SimBiomass/apply(SimBiomass, 1, mean)
-        
+  
         I_Err <- lapply(1:nsim, function(i) indfit(SimBiomass[i,],  ind))
         I_Err <- do.call('rbind', I_Err)
         ind <- matrix(ind, nrow=nsim, ncol=nyears, byrow=TRUE)
@@ -860,15 +863,17 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, CBret,
         ErrList$AddIerr[,i, 1:nyears] <- Ierr
         ErrList$AddIbeta[,i] <- I_Err$beta
         # Sample to replace NAs in historical years and for projection years
-        for (j in 1:nsim) {
-          temp <- ErrList$AddIerr[j, i,1:nyears]
-          n <- sum(is.na(temp))
-          temp2 <- temp[!is.na(temp)]
-          temp[is.na(temp)] <- sample(temp2, n, replace=TRUE)
-          ErrList$AddIerr[j, i,1:nyears] <- temp 
-        }
+        # for (j in 1:nsim) {
+        #   temp <- ErrList$AddIerr[j, i,1:nyears]
+        #   n <- sum(is.na(temp))
+        #   temp2 <- temp[!is.na(temp)]
+        #   temp[is.na(temp)] <- sample(temp2, n, replace=TRUE)
+        #   ErrList$AddIerr[j, i,1:nyears] <- temp 
+        # }
+        
         # Sample for projection years 
-        ErrList$AddIerr[,i, (nyears+1):(nyears+proyears)] <- generateRes(df=I_Err, nsim, proyears, lst.err=log(ErrList$AddIerr[,i,nyears]))
+        yr.ind <- max(which(!is.na(RealDat@AddInd[1,i,1:nyears])))
+        ErrList$AddIerr[,i, (nyears+1):(nyears+proyears)] <- generateRes(df=I_Err, nsim, proyears, lst.err=log(ErrList$AddIerr[,i,yr.ind]))
         ErrList$AddInd_Stat[[i]] <- I_Err # index fit statistics
       }
     }
