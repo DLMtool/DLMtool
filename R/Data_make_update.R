@@ -248,8 +248,8 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   # standardize, apply  beta & obs error  
   I2 <- exp(lcs(I2))^ObsPars$betas * ErrList$Ierr[,1:(nyears + (y - 1))]
    
-  yind <- max(which(!is.na(Data@Ind[1,])))
-  scaler <- Data@Ind[,yind]/I2[,yind]
+  year.ind <- max(which(!is.na(Data@Ind[1,])))
+  scaler <- Data@Ind[,year.ind]/I2[,year.ind]
   scaler <- matrix(scaler, nrow=nsim, ncol=nyears+y-1)
   I2 <- I2 * scaler # convert back to historical index scale
   
@@ -277,9 +277,9 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
      tempI <- cbind(b1, b2[, 1:(y - 1)])
      # standardize, apply  beta & obs error  
      tempI <- exp(lcs(tempI))^ErrList$AddIbeta[,i] * ErrList$AddIerr[,i,1:(nyears + (y - 1))]
-     yind <- max(which(!is.na(SampCpars$Data@AddInd[1,i,])))
+     year.ind <- max(which(!is.na(SampCpars$Data@AddInd[1,i,])))
      
-     scaler <- SampCpars$Data@AddInd[,i,yind]/tempI[,yind]
+     scaler <- SampCpars$Data@AddInd[,i,year.ind]/tempI[,year.ind]
      scaler <- matrix(scaler, nrow=nsim, ncol=nyears+y-1)
      tempI <- tempI * scaler # convert back to historical index scale
      Data@AddInd[,i,] <- tempI
