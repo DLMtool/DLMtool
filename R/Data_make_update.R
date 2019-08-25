@@ -24,6 +24,7 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   # Simulated observed retained catch (biomass)
   Cobs <- ErrList$Cbiasa[, 1:nyears] * ErrList$Cerr[, 1:nyears] * apply(CBret, c(1, 3), sum)  
   Data@Cat <- Cobs 
+  Data@CV_Cat <- matrix(Data@CV_Cat[,1], nrow=nsim, ncol=nyears)
   
   # --- Index of total abundance ----
   # Index of abundance from total biomass - beginning of year before fishing
@@ -31,6 +32,7 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
   II <- (apply(Biomass, c(1, 3), sum)^ObsPars$betas) * ErrList$Ierr[, 1:nyears]  
   II <- II/apply(II, 1, mean)  # normalize
   Data@Ind <- II # index of total abundance
+  Data@CV_Ind <- matrix(Data@CV_Ind[,1], nrow=nsim, ncol=nyears)
   
   # --- Index of recruitment ----
   Data@Rec <- apply(N[, 1, , ], c(1, 2), sum) * ErrList$Recerr[, 1:nyears] 
@@ -228,18 +230,26 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   CNtemp[is.na(CNtemp)] <- tiny
   CNtemp[!is.finite(CNtemp)] <- tiny
   CNtemp <- aperm(CNtemp, c(1,3,2))
-  
+  yr.index <- max(which(!is.na(Data@CV_Cat[1,])))
+  newCV_Cat <- matrix(Data@CV_Cat[,yr.index], nrow=nsim, ncol=length(yind))
+  Data@CV_Cat <- cbind(Data@CV_Cat, newCV_Cat)
   # --- Observed catch ----
   # Simulated observed retained catch (biomass)
   Cobs <- ErrList$Cbiasa[, nyears + yind] * ErrList$Cerr[, nyears + yind] * 
     apply(CBtemp, c(1, 3), sum, na.rm = TRUE)
+  Data@Cat <- cbind(Data@Cat, Cobs) 
+  
   if (!is.null(SampCpars$Data) && ncol(SampCpars$Data@Cat)>nyears) {
     # update projection catches with observed catches
     addYr <- min(y,ncol(SampCpars$Data@Cat) - nyears)
-    Cobs[,1:addYr] <- matrix(SampCpars$Data@Cat[1, (nyears+1):(nyears+addYr)],
-                                               nrow=nsim, ncol=addYr, byrow=TRUE)
+    Cobs <- matrix(SampCpars$Data@Cat[1, 1:(nyears+addYr)],
+                   nrow=nsim, ncol=nyears+addYr, 
+                   byrow=TRUE)
+    newCV_Cat  <- matrix(SampCpars$Data@CV_Cat[1, 1:(nyears+addYr)],
+                         nrow=nsim, ncol=nyears+addYr)
+    Data@CV_Cat <- newCV_Cat
+    Data@Cat <- Cobs
   } 
-  Data@Cat <- cbind(Data@Cat, Cobs)   
   
   # --- Index of total abundance ----
   I2 <- cbind(apply(Biomass, c(1, 3), sum), 
@@ -253,13 +263,23 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   scaler <- matrix(scaler, nrow=nsim, ncol=nyears+y-1)
   I2 <- I2 * scaler # convert back to historical index scale
   
+  yr.index <- max(which(!is.na(Data@CV_Ind[1,])))
+  newCV_Ind <- matrix(Data@CV_Ind[,yr.index], nrow=nsim, ncol=length(yind))
+  Data@Ind <- I2
+  Data@CV_Ind <- cbind(Data@CV_Ind, newCV_Ind)
+  
   if (!is.null(SampCpars$Data) && ncol(SampCpars$Data@Ind)>nyears) {
     # update projection index with observed index if it exists
     addYr <- min(y,ncol(SampCpars$Data@Ind) - nyears)
-    I2[,(nyears+1):(nyears+addYr)] <- matrix(SampCpars$Data@Ind[1, (nyears+1):(nyears+addYr)],
-                             nrow=nsim, ncol=addYr, byrow=TRUE)
+    I2 <- matrix(SampCpars$Data@Ind[1, 1:(nyears+addYr)],
+                 nrow=nsim, ncol=nyears+addYr, byrow=TRUE)
+    newCV_Ind  <- matrix(SampCpars$Data@CV_Ind[1, 1:(nyears+addYr)],
+                         nrow=nsim, ncol=nyears+addYr)
+    
+    Data@CV_Ind <- newCV_Ind
+    Data@Ind <- I2
   }
-  Data@Ind <- I2
+
   
   # --- Update additional indices (if they exist) ----
   if (length(ErrList$AddIerr)>0) {
