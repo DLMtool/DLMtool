@@ -812,9 +812,8 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, CBret,
       SimBiomass <- apply(Biomass, c(1, 3), sum)
       I_Err <- lapply(1:nsim, function(i) indfit(SimBiomass[i,],  Data@Ind[i,]))
       I_Err <- do.call('rbind', I_Err)
-      ObsPars$betas <- I_Err$beta
-      
-      Ierr <- exp(lcs(Data@Ind))/exp(lcs(SimBiomass))^ObsPars$betas
+  
+      Ierr <- exp(lcs(Data@Ind))/exp(lcs(SimBiomass))^I_Err$beta
       ErrList$Ierr[,1:nyears] <- Ierr
       
       # # Sample to replace NAs in historical years
@@ -859,7 +858,7 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, CBret,
         I_Err <- lapply(1:nsim, function(i) indfit(SimBiomass[i,],  ind))
         I_Err <- do.call('rbind', I_Err)
         ind <- matrix(ind, nrow=nsim, ncol=nyears, byrow=TRUE)
-        Ierr <- exp(lcs(ind))/exp(lcs(stind))^I_Err$beta
+        Ierr <- exp(lcs(ind))/exp(lcs(SimBiomass[i,]))^I_Err$beta
         ErrList$AddIerr[,i, 1:nyears] <- Ierr
         ErrList$AddIbeta[,i] <- I_Err$beta
         # Sample to replace NAs in historical years and for projection years
