@@ -1368,8 +1368,8 @@ setMethod('summary', signature="MSE", function(object, ..., silent=FALSE, Refs=N
   if (class(PMlist) != 'character') stop("Must provide names of PM methods")
   # check
   for (X in seq_along(PMlist)) 
-    if (!PMlist[X] %in% avail("PM")) stop(PMlist[X], " is not a valid PM method")
-  
+    if (class(get(PMlist[X])) != "PM") stop(PMlist[X], " is not a valid PM method")
+    
   if (!silent) message("Calculating Performance Metrics")
   storeMean <- vector('list', length(PMlist))
   storeName <- vector('list', length(PMlist))
@@ -1397,7 +1397,7 @@ setMethod('summary', signature="MSE", function(object, ..., silent=FALSE, Refs=N
     names(dfprint)[2:3] <- ''
     print(dfprint)
     cat("\n")
-    cat("\nProbability:\n")
+    cat("\nPerformance Statistics:\n")
     print(df)  
   }
   
