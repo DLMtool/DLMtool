@@ -657,7 +657,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   VBMSY_y <- MSY_y # store VBMSY for each sim, and year 
   
   if(!silent) message("Calculating MSY reference points for each year")
-  # average life-history parameters over 10 years
+  # average life-history parameters over ageM years
   for (y in 1:(nyears+proyears)) {
     MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, V,
                         maxage, R0, SRrel, hs, yr.ind=y,
