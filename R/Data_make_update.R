@@ -240,7 +240,7 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
     apply(CBtemp, c(1, 3), sum, na.rm = TRUE)
   Data@Cat <- cbind(Data@Cat, Cobs) 
   
-  if (!is.null(SampCpars$Data) && ncol(SampCpars$Data@Cat)>nyears &
+  if (!is.null(SampCpars$Data) && ncol(SampCpars$Data@Cat)>nyears &&
       !all(is.na(SampCpars$Data@Cat[1,(nyears+1):length(SampCpars$Data@Cat[1,])]))) {
     # update projection catches with observed catches
     addYr <- min(y,ncol(SampCpars$Data@Cat) - nyears)
@@ -271,7 +271,7 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   newCV_Ind <- matrix(Data@CV_Ind[,yr.index], nrow=nsim, ncol=length(yind))
   Data@CV_Ind <- cbind(Data@CV_Ind, newCV_Ind)
   
-  if (!is.null(SampCpars$Data) && ncol(SampCpars$Data@Ind)>nyears &
+  if (!is.null(SampCpars$Data) && ncol(SampCpars$Data@Ind)>nyears &&
       !all(is.na(SampCpars$Data@Ind[1,(nyears+1):length(SampCpars$Data@Ind[1,])]))) {
     # update projection index with observed index if it exists
     addYr <- min(y,ncol(SampCpars$Data@Ind) - nyears)
@@ -315,7 +315,7 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
      newCV_Ind <- matrix(Data@CV_AddInd[,i,yr.index], nrow=nsim, ncol=length(yind))
      CV_AddInd[,i,] <- cbind(Data@CV_AddInd[,i,], newCV_Ind)
      
-     if (!is.null(SampCpars$Data) && length(SampCpars$Data@AddInd[1,i,])>nyears &
+     if (!is.null(SampCpars$Data) && length(SampCpars$Data@AddInd[1,i,])>nyears &&
          !all(is.na(SampCpars$Data@AddInd[1,i,(nyears+1):length(SampCpars$Data@AddInd[1,i,])]))) {
        # update projection index with observed index if it exists
        addYr <- min(y,length(SampCpars$Data@AddInd[1,i,]) - nyears)
