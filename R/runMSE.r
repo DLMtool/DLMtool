@@ -1221,7 +1221,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       # Store Pop and Catch-at-age and at-length for last projection year 
       PAAout[ , mm, ] <- apply(N_P[ , , proyears, ], c(1,2), sum) # population-at-age
       
-      CNtemp <- apply(CB_Pret, c(1,2,3), sum)/Wt_age[(nyears+1):nyears+proyears]
+      CNtemp <- apply(CB_Pret, c(1,2,3), sum)/Wt_age[,,(nyears+1):(nyears+proyears)]
       CAAout[ , mm, ] <- CNtemp[,,proyears] # nsim, maxage # catch-at-age
       CALdat <- MSElist[[mm]]@CAL
       CALout[ , mm, ] <- CALdat[,dim(CALdat)[2],] # catch-at-length in last year
