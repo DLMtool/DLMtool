@@ -43,7 +43,7 @@ if (all(is.na(Pars$MPA)) | sum(Pars$MPA) == 0) {
 
 # historical spatial closures have been specified
 sim <- params$its[1]
-nareas <- ncol(Pars$MPA)-1
+nareas <- dim(Pars$mov)[3] # ncol(Pars$MPA)-1
 MPA <- matrix(1, nyears+proyears, ncol=nareas)
 yrindex <- Pars$MPA[,1]
 if (max(yrindex)>nyears) stop("Invalid year index for spatial closures: must be <= nyears")
