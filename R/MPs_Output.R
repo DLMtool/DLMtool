@@ -154,7 +154,7 @@ BK_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
   Kc <- trlnorm(reps, Data@vbK[x], Data@CV_vbK[x])
   Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps, MuC, Data@CV_Cat[x])
+  Cc <- trlnorm(reps, MuC, Data@CV_Cat[x,1])
   Zdb <- CC(x, Data, reps = reps * 10)
   Fdb <- Zdb - Mdb
   Ac <- Cc/(1 - exp(-Fdb))
@@ -217,7 +217,7 @@ BK_ML <- function(x, Data, reps = 100, plot=FALSE) {
   FM <- Z - Mdb
   
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
+  Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x,1])
   Ac <- Cc/(1 - exp(-FM))
   ind <- Ac>0
   
@@ -1865,7 +1865,7 @@ Fdem_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
   
   Mvec <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps, MuC, Data@CV_Cat[x])
+  Cc <- trlnorm(reps, MuC, Data@CV_Cat[x,1])
   Zdb <- CC(x, Data, reps = reps * 10)
   Fdb <- Zdb - Mvec
   ind <- (1:(reps * 10))[Fdb > Fmin][1:reps]
@@ -1900,7 +1900,7 @@ Fdem_ML <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
   Kc <- trlnorm(reps * 10, Data@vbK[x], Data@CV_vbK[x])
   Linfc = trlnorm(reps * 10, Data@vbLinf[x], Data@CV_vbLinf[x])
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
+  Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x,1])
   Z <- MLne(x, Data, Linfc = Linfc, Kc = Kc, ML_reps = reps * 10, MLtype = "F")
   
   if (all(is.na(Z))) {
@@ -2090,7 +2090,7 @@ Fratio_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
   # estimate abundance from average catch and F
   # MuC <- Data@Cat[x, length(Data@Cat[x, ])]
   MuC <- mean(Data@Cat[x, ], na.rm=TRUE)
-  Cc <- trlnorm(reps, MuC, Data@CV_Cat[x])
+  Cc <- trlnorm(reps, MuC, Data@CV_Cat[x,1])
   Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
   Zdb <- CC(x, Data, reps = reps * 10)
   Fdb <- Zdb - Mdb
@@ -2127,7 +2127,7 @@ class(Fratio_CC) <- "MP"
 Fratio_ML <- function(x, Data, reps = 100, plot=FALSE) {
   # estimate abundance from average catch and F
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x])
+  Cc <- trlnorm(reps * 10, MuC, Data@CV_Cat[x,1])
   Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])  # CV of 0.5 as in MacCall 2009
   Linfc <- trlnorm(reps * 10, Data@vbLinf[x], Data@CV_vbLinf[x])
   Kc <- trlnorm(reps * 10, Data@vbK[x], Data@CV_vbK[x])
@@ -2208,7 +2208,7 @@ GB_slope <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, lambda = 1) {
   }
   
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <-  trlnorm(reps, MuC, Data@CV_Cat[x])
+  Cc <-  trlnorm(reps, MuC, Data@CV_Cat[x,1])
 
   TAC <- Cc * (1 + lambda * Islp)
   TAC[TAC > (1.2 * Catrec)] <- 1.2 * Catrec
@@ -2423,7 +2423,7 @@ ICI <- function(x, Data, reps=100, plot=FALSE) {
   if (reps ==1) {
     Ind.samp <-Index
   }else {
-    Ind.samp <- trlnorm(reps * nI, Index, Data@CV_Ind[x])
+    Ind.samp <- trlnorm(reps * nI, Index, Data@CV_Ind[x,1])
   }
   Ind.samp <- matrix(Ind.samp, ncol = reps)
   
@@ -2443,7 +2443,7 @@ ICI <- function(x, Data, reps=100, plot=FALSE) {
   alpha[Ind >= ci.low & Ind <= ci.high] <- 1
   
   Cat <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps, Cat, Data@CV_Cat[x])
+  Cc <- trlnorm(reps, Cat, Data@CV_Cat[x,1])
   
   TAC <- TACfilter(alpha * Cc)
   if (plot) ICI_plot(Years, Index, ci.low, ci.high, TAC, Cat, Data)
@@ -2471,7 +2471,7 @@ ICI2 <- function(x, Data, reps=100, plot=FALSE) {
   Years <- Data@Year[!is.na(Index)]
   Index <- Index[!is.na(Index)]
   nI <- length(Index)
-  Ind.samp <- trlnorm(reps * nI, Index, Data@CV_Ind[x])
+  Ind.samp <- trlnorm(reps * nI, Index, Data@CV_Ind[x,1])
   Ind.samp <- matrix(Ind.samp, ncol = reps)
   
   muI <- apply(Ind.samp, 2, mean, na.rm = TRUE)
@@ -2490,7 +2490,7 @@ ICI2 <- function(x, Data, reps=100, plot=FALSE) {
   alpha[Ind >= ci.low & Ind <= ci.high] <- 1
   
   Cat <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps, Cat, Data@CV_Cat[x])
+  Cc <- trlnorm(reps, Cat, Data@CV_Cat[x,1])
   
   TAC <- alpha * Cc
   TAC <- TACfilter(alpha * Cc)
@@ -2544,8 +2544,8 @@ Iratio <- function(x, Data, reps=100, plot=FALSE, yrs = c(2, 5)) {
     I.num <- Data@Ind[x, ind.num]
     I.den <-  Data@Ind[x, ind.den]
   } else {
-    I.num <- trlnorm(reps * length(ind.num), Data@Ind[x, ind.num], Data@CV_Ind[x])
-    I.den <- trlnorm(reps * length(ind.den), Data@Ind[x, ind.den], Data@CV_Ind[x])
+    I.num <- trlnorm(reps * length(ind.num), Data@Ind[x, ind.num], Data@CV_Ind[x,1])
+    I.den <- trlnorm(reps * length(ind.den), Data@Ind[x, ind.den], Data@CV_Ind[x,1])
   }
   
   I.num <- matrix(I.num, ncol = reps)
@@ -2553,7 +2553,7 @@ Iratio <- function(x, Data, reps=100, plot=FALSE, yrs = c(2, 5)) {
   
   alpha <- apply(I.num, 2, mean, na.rm = TRUE)/apply(I.den, 2, mean, na.rm = TRUE)
   Cat <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps, Cat, Data@CV_Cat[x])
+  Cc <- trlnorm(reps, Cat, Data@CV_Cat[x,1])
   TAC <- alpha * Cc
   TAC <- TACfilter(TAC)
   
@@ -2719,7 +2719,7 @@ IT_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, mc = 0.05) {
   deltaI <- mean(Data@Ind[x, ind], na.rm=TRUE)/Data@Iref[x]
   if (deltaI < (1 - mc)) deltaI <- 1 - mc
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
-  TAC <- Data@MPrec[x] * deltaI * trlnorm(reps, 1, Data@CV_Ind[x])
+  TAC <- Data@MPrec[x] * deltaI * trlnorm(reps, 1, Data@CV_Ind[x,1])
   TAC <- TACfilter(TAC) 
   if (plot) {
     op <- par(no.readonly = TRUE)
@@ -2815,7 +2815,7 @@ Itarget_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, Imulti
   ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
   ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
   C_dat <- Data@Cat[x, ind2]
-  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat[x]/(yrsmth^0.5))
+  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat[x,1]/(yrsmth^0.5))
   Irecent <- mean(Data@Ind[x, ind])
   Iave <- mean(Data@Ind[x, ind3])
   Itarget <- Iave * Imulti
@@ -2989,7 +2989,7 @@ ITM <- function(x, Data, reps = 100, plot=FALSE) {
   if (deltaI < (1 - mc)) deltaI <- 1 - mc
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
   
-  TAC <- Data@MPrec[x] * deltaI * trlnorm(reps, 1, Data@CV_Ind[x])
+  TAC <- Data@MPrec[x] * deltaI * trlnorm(reps, 1, Data@CV_Ind[x,1])
   TAC <- TACfilter(TAC)
   
   if (plot) {
@@ -3220,7 +3220,7 @@ Lratio_BHI <- function(x, Data, reps=100, plot=FALSE, yrsmth = 3) {
   Lref <- 0.75 * Lc + 0.25 * Linfc
   
   Cat <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps, Cat, Data@CV_Cat[x])
+  Cc <- trlnorm(reps, Cat, Data@CV_Cat[x,1])
   
   LYear <- dim(Data@CAL)[2]
   nlbin <- ncol(Data@CAL[x,,])
@@ -3272,7 +3272,7 @@ Lratio_BHI2 <- function(x, Data, reps=100, plot=FALSE, yrsmth = 3) {
   Lref <- (theta * Linfc + Lc * (gamma + 1)) / (gamma + theta + 1)
   
   Cat <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps, Cat, Data@CV_Cat[x])
+  Cc <- trlnorm(reps, Cat, Data@CV_Cat[x,1])
   
   LYear <- dim(Data@CAL)[2]
   nlbin <- ncol(Data@CAL[x,,])
@@ -3323,7 +3323,7 @@ Lratio_BHI3 <- function(x, Data, reps=100, plot=FALSE, yrsmth = 3) {
   Lref <- (theta * Linfc + Lc * (gamma + 1)) / (gamma + theta + 1)
   
   Cat <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps, Cat, Data@CV_Cat[x])
+  Cc <- trlnorm(reps, Cat, Data@CV_Cat[x,1])
   
   LYear <- dim(Data@CAL)[2]
   nlbin <- ncol(Data@CAL[x,,])
@@ -3526,7 +3526,7 @@ MCD <- function(x, Data, reps = 100, plot=FALSE) {
   # current depletion
   dependencies = "Data@Dep, Data@CV_Dep, Data@Cat"
   if (all(is.na(Data@Cat[x, ]))) stop("No catch data")
-  if (NAor0(Data@CV_Cat[x])) stop("Data@CV_Cat is NA")
+  if (NAor0(Data@CV_Cat[x,1])) stop("Data@CV_Cat is NA")
   if (NAor0(Data@Dep[x])) stop("Data@Dep is NA")
   if (NAor0(Data@CV_Dep[x])) stop("Data@CV_Dep is NA")
   depo <- max(0.01, min(0.99, Data@Dep[x]))  # known depletion is between 1% and 99% - needed to generalise the Dick and MacCall method to extreme depletion scenarios
@@ -3536,7 +3536,7 @@ MCD <- function(x, Data, reps = 100, plot=FALSE) {
   Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1:reps]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
 
   if (reps > 1) {
-    AvC <- stats::rlnorm(reps, log(mean(Data@Cat[x, ], na.rm = T)), Data@CV_Cat[x])
+    AvC <- stats::rlnorm(reps, log(mean(Data@Cat[x, ], na.rm = T)), Data@CV_Cat[x,1])
   } else {
     AvC <- mean(Data@Cat[x, ], na.rm = T)
   }
@@ -3563,7 +3563,7 @@ MCD4010 <- function(x, Data, reps = 100, plot=FALSE) {
   # current depletion
   dependencies = "Data@Dep, Data@CV_Dep, Data@Cat"
   if (all(is.na(Data@Cat[x, ]))) stop("No catch data")
-  if (NAor0(Data@CV_Cat[x])) stop("Data@CV_Cat is NA")
+  if (NAor0(Data@CV_Cat[x,1])) stop("Data@CV_Cat is NA")
   if (NAor0(Data@CV_Dep[x])) stop("Data@CV_Dep is NA")
   if (is.na(Data@Dep[x])) {
     Rec <- new("Rec")
@@ -3576,7 +3576,7 @@ MCD4010 <- function(x, Data, reps = 100, plot=FALSE) {
                                                                                                   (1 - depo) * Data@CV_Dep[x])))  # CV 0.25 is the default for Dick and MacCall mu=0.4, sd =0.1
   Bt_K <- Bt_K[Bt_K > 0.00999 & Bt_K < 0.99001][1:reps]  # interval censor (0.01,0.99)  as in Dick and MacCall 2011
   if (reps > 1) {
-    AvC <- stats::rlnorm(reps, log(mean(Data@Cat[x, ], na.rm = T)), Data@CV_Cat[x])
+    AvC <- stats::rlnorm(reps, log(mean(Data@Cat[x, ], na.rm = T)), Data@CV_Cat[x,1])
   } else {
     AvC <- mean(Data@Cat[x, ], na.rm = T)
   }
@@ -4009,8 +4009,8 @@ SPmod <- function(x, Data, reps = 100, plot=FALSE, alp = c(0.8, 1.2), bet = c(0.
   dependencies = "Data@Cat, Data@Ind, Data@Abun, Data@CV_Ind, Data@CV_Cat,  Data@CV_Abun"
   Ir <- length(Data@Ind[x, ])
   Cr <- length(Data@Cat[x, ])
-  rat <- trlnorm(reps, Data@Ind[x, Ir], Data@CV_Ind[x])/trlnorm(reps, Data@Ind[x, Ir - 1], Data@CV_Ind[x])
-  cct <- trlnorm(reps, Data@Cat[x, Cr], Data@CV_Cat[x])
+  rat <- trlnorm(reps, Data@Ind[x, Ir], Data@CV_Ind[x,1])/trlnorm(reps, Data@Ind[x, Ir - 1], Data@CV_Ind[x,1])
+  cct <- trlnorm(reps, Data@Cat[x, Cr], Data@CV_Cat[x,1])
   Abun <- trlnorm(reps, Data@Abun[x], Data@CV_Abun[x])
   TAC <- rep(NA, reps)
   TAC[rat < alp[1]] <- cct[rat < alp[1]] * bet[1]
@@ -4019,10 +4019,10 @@ SPmod <- function(x, Data, reps = 100, plot=FALSE, alp = c(0.8, 1.2), bet = c(0.
   cond <- rat > alp[2]
   reps2 <- sum(cond)
   if (reps2 > 0) {
-    qq1 <- trlnorm(reps2, Data@Ind[x, Ir]/Abun[cond], Data@CV_Ind[x])
+    qq1 <- trlnorm(reps2, Data@Ind[x, Ir]/Abun[cond], Data@CV_Ind[x,1])
     bio1 <- Data@Ind[x, Ir - 1]/qq1
     bio2 <- Data@Ind[x, Ir]/qq1
-    cct1 <- trlnorm(reps2, Data@Cat[x, Cr - 1], Data@CV_Cat[x])
+    cct1 <- trlnorm(reps2, Data@Cat[x, Cr - 1], Data@CV_Cat[x,1])
     PP <- bio2 - bio1 + cct1
     TAC[cond] <- bet[2] * PP
   }
@@ -4101,11 +4101,11 @@ SPslope <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 4, alp = c(0.9, 1.
   C_dat <- Data@Cat[x, ind]
   B_dat <- Data@Ind[x, ind]/Data@Ind[x, ind[yrsmth]] * Data@Abun[x]
   Pt_mu <- max(B_dat[yrsmth] - B_dat[yrsmth - 1] + C_dat[yrsmth - 1], tiny)
-  Pt_1 <- trlnorm(reps, Pt_mu, Data@CV_Cat[x])
+  Pt_1 <- trlnorm(reps, Pt_mu, Data@CV_Cat[x,1])
   It <- exp(predict(lm(log(B_dat) ~ yind), newdat = list(yind = yrsmth + 1)))
   Ilast <- B_dat[yrsmth]
   MC <- max(mean(C_dat), tiny)
-  Ct_1 <- trlnorm(reps, MC, Data@CV_Cat[x]/(yrsmth^0.5))  # mean catches over the interval
+  Ct_1 <- trlnorm(reps, MC, Data@CV_Cat[x,1]/(yrsmth^0.5))  # mean catches over the interval
   
   rat <- It/Ilast
   
@@ -4348,7 +4348,7 @@ SPSRA_ <- function(x, Data, reps = 100, dep=NULL) {
   if (is.null(dep)) dep <- trlnorm(reps, Data@Dep[x], Data@CV_Dep[x])
   Ct <- Data@Cat[x, ]
   Csamp <- array(rep(Ct, each = reps) * trlnorm(length(Ct) * reps, 1, 
-                                                Data@CV_Cat[x]), dim = c(reps, length(Ct)))
+                                                Data@CV_Cat[x,1]), dim = c(reps, length(Ct)))
   Psamp <- array(trlnorm(length(Ct) * reps, 1, 0.1), dim = c(reps, length(Ct)))
   Ksamp <- rep(NA, reps)
   for (i in 1:reps) Ksamp[i] <- exp(optimize(SPSRAopt, log(c(mean(Csamp[i, ]), 
@@ -4737,7 +4737,7 @@ YPR_CC <- function(x, Data, reps = 100, plot=FALSE, Fmin = 0.005) {
 
   # MuC <- Data@Cat[x, length(Data@Cat[x, ])]
   MuC <- mean(Data@Cat[x, ], na.rm=TRUE)
-  Cc <- trlnorm(reps, MuC, Data@CV_Cat[x])
+  Cc <- trlnorm(reps, MuC, Data@CV_Cat[x,1])
   
   Mdb <- trlnorm(reps * 10, Data@Mort[x], Data@CV_Mort[x])
   Zdb <- CC(x, Data, reps = reps * 10)
@@ -4775,7 +4775,7 @@ class(YPR_CC) <- "MP"
 YPR_ML <- function(x, Data, reps = 100, plot=FALSE) {
 
   MuC <- Data@Cat[x, length(Data@Cat[x, ])]
-  Cc <- trlnorm(reps*10, MuC, Data@CV_Cat[x])
+  Cc <- trlnorm(reps*10, MuC, Data@CV_Cat[x,1])
   Linfc <- trlnorm(reps*10, Data@vbLinf[x], Data@CV_vbLinf[x])
   Kc <- trlnorm(reps*10, Data@vbK[x], Data@CV_vbK[x])
   Mdb <- trlnorm(reps*10, Data@Mort[x], Data@CV_Mort[x])

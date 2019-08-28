@@ -441,7 +441,7 @@ ITe5 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, mc = 0.05) {
   if (deltaI < (1 - mc)) deltaI <- 1 - mc
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
   
-  Effort <- Data@MPeff[x] * deltaI * trlnorm(reps, 1, Data@CV_Ind[x])
+  Effort <- Data@MPeff[x] * deltaI * trlnorm(reps, 1, Data@CV_Ind[x,1])
   if (reps == 1)  Effort <- Data@MPeff[x] * deltaI
   Effort[Effort < 0.01] <- 0.01  # for simulations in case Effort goes negative
   rec <- new("Rec")
@@ -473,7 +473,7 @@ ITe10 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, mc = 0.1) {
   if (deltaI < (1 - mc)) deltaI <- 1 - mc
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
   
-  Effort <- Data@MPeff[x] * deltaI * trlnorm(reps, 1, Data@CV_Ind[x])
+  Effort <- Data@MPeff[x] * deltaI * trlnorm(reps, 1, Data@CV_Ind[x,1])
   if (reps == 1) 
     Effort <- Data@MPeff[x] * deltaI
   Allocate <- 1
