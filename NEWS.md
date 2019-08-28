@@ -1,8 +1,14 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
-## DLMtool 5.3.9999 DEV VERSION
+## DLMtool 5.4.0
 
+
+
+### Minor changes 
+
+### Major changes 
 Update new `Data` object
+
 
 ### Fixes
 - fix bug where TAE implementation error was affecting TAC controls (thanks to Robyn Forrest and Sean Anderson for finding this)
@@ -14,7 +20,7 @@ Update new `Data` object
 - Added average annual variability in effort (`AAVE`) performance objective method
 - Added MP type as column in `PMObj` function
 - Add a constant current catch MP - `CurC`
-- new `Dom` function (and remove old `DOM` function)
+- new `Dom` function (and removed old `DOM` function)
 - add option to include a plus-group (e.g., OMs from `SS2OM`). To use a plus-group, use `OM@cpars$plusgroup = 1`
 
 
