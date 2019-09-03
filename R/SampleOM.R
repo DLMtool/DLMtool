@@ -635,7 +635,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
 #' @export
 #'
 SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=NULL, cpars=NULL, msg=TRUE) {
-  if (class(Fleet) != "Fleet" & class(Fleet) != "OM") 
+   if (class(Fleet) != "Fleet" & class(Fleet) != "OM") 
     stop("First argument must be class 'Fleet' or 'OM'")
   
   if (class(Fleet) != "OM" & class(Stock) != "Stock" & class(Stock) != "list") 
@@ -1042,7 +1042,6 @@ SampleFleetPars <- function(Fleet, Stock=NULL, nsim=NULL, nyears=NULL, proyears=
   retA <- retA * V2
   retL <- retL * SLarray2
   
-
   Fleetout$Fdisc <- Fdisc
   Fleetout$Fdisc_array1 <- Fdisc_array1
   Fleetout$Fdisc_array2 <- Fdisc_array2
