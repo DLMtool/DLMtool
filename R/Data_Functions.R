@@ -1479,243 +1479,6 @@ Uses <- function(slot, silent=FALSE) {
 }
 
 
-Report <- function(Data=NULL, md=NULL, name="Data-Report", 
-                   title="Data Documentation",
-                   author="Author Name",
-                   date=Sys.Date(),
-                   output_format=c("html_document"),
-                   dir=NULL,
-                   overwrite=FALSE) {
-
-  if (class(Data) != "Data" & class(Data) != "character")
-    stop("Must provide a Data object or file path to import a Data Object")
-  
-  if (class(Data) == "character") {
-    Data <- XL2Data(Data)
-  }
-  
-  # Load md documentation
-  if (is.null(md)){
-    message("No Data Documentation file provided")
-    mdtext <- NULL
-  } else {
-    if (!file.exists(md)) {
-      stop(md, " not found")
-    } 
-    mdtext <- readLines(md)
-    
-    try.title <- mdtext[grepl("title", mdtext)]
-    try.title <- strsplit(try.title, ":")[[1]][2] %>% trimws()
-    if (nchar(try.title)>0) {
-      message('Using title from ', basename(md))
-      title <- try.title
-    } 
-    try.author <- mdtext[grepl("author", mdtext)]
-    try.author <- strsplit(try.author, ":")[[1]][2] %>% trimws()
-    if (nchar(try.author)>0) {
-      message('Using author from ', basename(md))
-      author <- try.author
-    } 
-    
-    try.date <- mdtext[grepl("date", mdtext)]
-    try.date <- strsplit(try.date, ":")[[1]][2] %>% trimws()
-    if (nchar(try.date)>0) {
-      message('Using date from ', basename(md))
-      date <- try.date
-    } 
-    
-  }
-  
-  # Create Rmd file 
-  if (is.null(dir)) dir <- getwd()
-  rmdfile <- file.path(dir, paste0(name, '.Rmd'))
-  if (file.exists(rmdfile) & !overwrite)
-    stop(rmdfile, " already exists. Use `overwrite=TRUE` to overwrite")
-  file.create(rmdfile)
-  
-  cat("---\n", file = rmdfile, sep = " ", append = TRUE)
-  cat(paste("title:", title, "\n"), file = rmdfile, sep = " ", append = TRUE)
-  cat(paste("author:", author, "\n"), file = rmdfile, sep = " ", append = TRUE)
-  cat(paste("date:", date, "\n"), file = rmdfile, sep = " ", append = TRUE)
-  cat("---\n", file = rmdfile, sep = " ", append = TRUE)
-  cat("\n", file = rmdfile, sep = " ", append = TRUE)
-  cat("\n", file = rmdfile, sep = " ", append = TRUE)
-  
-  # Metadata section
-  cat("## Metadata\n", file = rmdfile, sep = " ", append = TRUE)
-  if (!is.null(mdtext)) {
-   mdloc <- grepl("## Metadata", mdtext)
-   if (all(!mdloc)) stop("'## Metadata' heading missing from ", md)
-   temp <- grepl("## Biology", mdtext)
-   if (all(!temp)) stop("'## Biology' heading missing from ", md)
-   ind1 <- which(mdloc) +1 
-   ind2 <- which(temp) -1
-
-   text <- mdtext[ind1:ind2]
-   for (i in seq_along(text)){
-     cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
-   }
-  }
-  
-  df <- data.frame(Data@Name,
-                   Data@Common_Name,
-                   Data@Species,
-                   Data@Region,
-                   Data@LHYear,
-                   Data@MPrec,
-                   Data@Units,
-                   Data@MPeff,
-                   Data@nareas)
-  
-  cat("```{r, echo=FALSE} \n", file = rmdfile, sep = " ", append = TRUE)
-  cat("metadatatable(Data)", file = rmdfile, sep = " ", append = TRUE))
-  cat("```\n", file = rmdfile, sep = " ", append = TRUE)
-  
-  # Biology section
-  cat("## Biology\n", file = rmdfile, sep = " ", append = TRUE)
-  if (!is.null(mdtext)) {
-    mdloc <- grepl("## Biology", mdtext)
-    if (all(!mdloc)) stop("'## Biology' heading missing from ", md)
-    temp <- grepl("## Selectivity", mdtext)
-    if (all(!temp)) stop("'## Selectivity' heading missing from ", md)
-    ind1 <- which(mdloc) +1 
-    ind2 <- which(temp) -1
-    
-    text <- mdtext[ind1:ind2]
-    for (i in seq_along(text)){
-      cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
-    }
-    
-  }
-
-  
-  # Selectivity section
-  cat("## Selectivity\n", file = rmdfile, sep = " ", append = TRUE)
-  if (!is.null(mdtext)) {
-    mdloc <- grepl("## Selectivity", mdtext)
-    if (all(!mdloc)) stop("'## Selectivity' heading missing from ", md)
-    temp <- grepl("## Time-Series", mdtext)
-    if (all(!temp)) stop("'## Time-Series' heading missing from ", md)
-    ind1 <- which(mdloc) +1 
-    ind2 <- which(temp) -1
-    
-    text <- mdtext[ind1:ind2]
-    for (i in seq_along(text)){
-      cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
-    }
-    
-  }
-  
-  # Time-Series section
-  cat("## Time-Series\n", file = rmdfile, sep = " ", append = TRUE)
-  if (!is.null(mdtext)) {
-    mdloc <- grepl("## Time-Series", mdtext)
-    if (all(!mdloc)) stop("'## Time-Series' heading missing from ", md)
-    temp <- grepl("## Catch-at-Age", mdtext)
-    if (all(!temp)) stop("'## Catch-at-Age' heading missing from ", md)
-    ind1 <- which(mdloc) +1 
-    ind2 <- which(temp) -1
-    
-    text <- mdtext[ind1:ind2]
-    for (i in seq_along(text)){
-      cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
-    }
-    
-  }
-  
-  # Catch-at-Age section
-  cat("## Catch-at-Age\n", file = rmdfile, sep = " ", append = TRUE)
-  if (!is.null(mdtext)) {
-    mdloc <- grepl("## Catch-at-Age", mdtext)
-    if (all(!mdloc)) stop("'## Catch-at-Age' heading missing from ", md)
-    temp <- grepl("## Catch-at-Length", mdtext)
-    if (all(!temp)) stop("'## Catch-at-Length' heading missing from ", md)
-    ind1 <- which(mdloc) +1 
-    ind2 <- which(temp) -1
-    
-    text <- mdtext[ind1:ind2]
-    for (i in seq_along(text)){
-      cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
-    }
-    
-  }
-  
-  # Catch-at-Length section
-  cat("## Catch-at-Length\n", file = rmdfile, sep = " ", append = TRUE)
-  if (!is.null(mdtext)) {
-    mdloc <- grepl("## Catch-at-Length", mdtext)
-    if (all(!mdloc)) stop("'## Catch-at-Length' heading missing from ", md)
-    temp <- grepl("## Reference", mdtext)
-    if (all(!temp)) stop("'## Reference' heading missing from ", md)
-    temp2 <- grepl("## Reference List", mdtext)
-    if (all(!temp2)) stop("'## Reference List' heading missing from ", md)
-    ind1 <- which(mdloc) +1 
-    ind2 <- which(temp!=temp2) -1
-    
-    text <- mdtext[ind1:ind2]
-    for (i in seq_along(text)){
-      cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
-    }
-  }
-  
-  # Reference section
-  cat("## Reference\n", file = rmdfile, sep = " ", append = TRUE)
-  if (!is.null(mdtext)) {
-    ind1 <- ind2 +2 
-    ind2 <- which(temp2)-1
-                  
-    text <- mdtext[ind1:ind2]
-    for (i in seq_along(text)){
-      cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
-    }
-  }
-  
-  # Reference List
-  cat("## Reference List\n", file = rmdfile, sep = " ", append = TRUE)
-  ind1 <- ind2 +2 
-  ind2 <- length(mdtext)
-  text <- mdtext[ind1:ind2]
-  for (i in seq_along(text)){
-    cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
-  }
-  
-  # Render output file
-  message("Rendering to ", dir)
-  rmarkdown::render(rmdfile, output_format =output_format,
-                    output_dir = dir, params=Data)
-  
-}
-
-metadatatable <- function(Data, i=1) {
-  df <- data.frame(Data@Name[1],
-                   Data@Common_Name[1],
-                   Data@Species[1],
-                   Data@Region[1],
-                   Data@LHYear[1],
-                   Data@MPrec[i],
-                   Data@Units[1],
-                   Data@MPeff[i],
-                   Data@nareas[1])
-  df <- t(df)
-  rownames(df) = c(
-    'Name', 
-    'Common Name',
-    'Species',
-    'Region',
-    'Last Historical Year',
-    'Last TAC',
-    'Units',
-    'Last TAE',
-    'Number of areas')
-  
-  df %>% kable(caption='Table 1. Summary of metadata') %>% kable_styling()
-}
-
-biology_plots <- function(Data, i=1, n=5000) {
-  vals <- trlnorm(n, Data@Mort[i], Data@CV_Mort[i])
-  
-  
-}
 
 
 
@@ -1831,3 +1594,323 @@ biology_plots <- function(Data, i=1, n=5000) {
 #   Data
 # }
 # 
+
+Report <- function(Data=NULL, md=NULL, name="Data-Report", 
+                   title="Data Documentation",
+                   author="Author Name",
+                   date=Sys.Date(),
+                   output_format=c("html_document"),
+                   open=TRUE,
+                   dir=NULL,
+                   overwrite=FALSE) {
+  
+  if (class(Data) != "Data" & class(Data) != "character")
+    stop("Must provide a Data object or file path to import a Data Object")
+  
+  if (class(Data) == "character") {
+    Data <- XL2Data(Data)
+  }
+  
+  # Load md documentation
+  if (is.null(md)){
+    message("No Data Documentation file provided")
+    mdtext <- NULL
+  } else {
+    if (!file.exists(md)) {
+      stop(md, " not found")
+    } 
+    mdtext <- readLines(md)
+    
+    try.title <- mdtext[grepl("title", mdtext)]
+    try.title <- strsplit(try.title, ":")[[1]][2] %>% trimws()
+    if (nchar(try.title)>0) {
+      message('Using title from ', basename(md))
+      title <- try.title
+    } 
+    try.author <- mdtext[grepl("author", mdtext)]
+    try.author <- strsplit(try.author, ":")[[1]][2] %>% trimws()
+    if (nchar(try.author)>0) {
+      message('Using author from ', basename(md))
+      author <- try.author
+    } 
+    
+    try.date <- mdtext[grepl("date", mdtext)]
+    try.date <- strsplit(try.date, ":")[[1]][2] %>% trimws()
+    if (nchar(try.date)>0) {
+      message('Using date from ', basename(md))
+      date <- try.date
+    } 
+    
+  }
+  
+  # Create Rmd file 
+  if (is.null(dir)) dir <- getwd()
+  rmdfile <- file.path(dir, paste0(name, '.Rmd'))
+  if (file.exists(rmdfile) & !overwrite)
+    stop(rmdfile, " already exists. Use `overwrite=TRUE` to overwrite")
+  file.create(rmdfile)
+  
+  cat("---\n", file = rmdfile, sep = " ", append = TRUE)
+  cat(paste("title:", title, "\n"), file = rmdfile, sep = " ", append = TRUE)
+  cat(paste("author:", author, "\n"), file = rmdfile, sep = " ", append = TRUE)
+  cat(paste("date:", date, "\n"), file = rmdfile, sep = " ", append = TRUE)
+  cat("---\n", file = rmdfile, sep = " ", append = TRUE)
+  cat("\n", file = rmdfile, sep = " ", append = TRUE)
+  cat("\n", file = rmdfile, sep = " ", append = TRUE)
+  
+  # Metadata section
+  cat("## Metadata\n", file = rmdfile, sep = " ", append = TRUE)
+  if (!is.null(mdtext)) {
+    mdloc <- grepl("## Metadata", mdtext)
+    if (all(!mdloc)) stop("'## Metadata' heading missing from ", md)
+    temp <- grepl("## Biology", mdtext)
+    if (all(!temp)) stop("'## Biology' heading missing from ", md)
+    ind1 <- which(mdloc) +1 
+    ind2 <- which(temp) -1
+    
+    text <- mdtext[ind1:ind2]
+    for (i in seq_along(text)){
+      cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
+    }
+  }
+  
+  cat("```{r, echo=FALSE} \n", file = rmdfile, sep = " ", append = TRUE)
+  cat("metadatatable(Data)\n", file = rmdfile, sep = " ", append = TRUE)
+  cat("```\n", file = rmdfile, sep = " ", append = TRUE)
+  
+  # Biology section
+  cat("## Biology\n", file = rmdfile, sep = " ", append = TRUE)
+  if (!is.null(mdtext)) {
+    mdloc <- grepl("## Biology", mdtext)
+    if (all(!mdloc)) stop("'## Biology' heading missing from ", md)
+    temp <- grepl("## Selectivity", mdtext)
+    if (all(!temp)) stop("'## Selectivity' heading missing from ", md)
+    ind1 <- which(mdloc) +1 
+    ind2 <- which(temp) -1
+    
+    text <- mdtext[ind1:ind2]
+    for (i in seq_along(text)){
+      cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
+    }
+  }
+  cat("```{r, echo=FALSE} \n", file = rmdfile, sep = " ", append = TRUE)
+  cat("biology_plots(Data)\n", file = rmdfile, sep = " ", append = TRUE)
+  cat("```\n\n", file = rmdfile, sep = " ", append = TRUE)
+  
+  
+  # Selectivity section
+  cat("## Selectivity\n", file = rmdfile, sep = " ", append = TRUE)
+  if (!is.null(mdtext)) {
+    mdloc <- grepl("## Selectivity", mdtext)
+    if (all(!mdloc)) stop("'## Selectivity' heading missing from ", md)
+    temp <- grepl("## Time-Series", mdtext)
+    if (all(!temp)) stop("'## Time-Series' heading missing from ", md)
+    ind1 <- which(mdloc) +1 
+    ind2 <- which(temp) -1
+    
+    text <- mdtext[ind1:ind2]
+    for (i in seq_along(text)){
+      cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
+    }
+    
+  }
+  
+  # Time-Series section
+  cat("## Time-Series\n", file = rmdfile, sep = " ", append = TRUE)
+  if (!is.null(mdtext)) {
+    mdloc <- grepl("## Time-Series", mdtext)
+    if (all(!mdloc)) stop("'## Time-Series' heading missing from ", md)
+    temp <- grepl("## Catch-at-Age", mdtext)
+    if (all(!temp)) stop("'## Catch-at-Age' heading missing from ", md)
+    ind1 <- which(mdloc) +1 
+    ind2 <- which(temp) -1
+    
+    text <- mdtext[ind1:ind2]
+    for (i in seq_along(text)){
+      cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
+    }
+    
+  }
+  
+  # Catch-at-Age section
+  cat("## Catch-at-Age\n", file = rmdfile, sep = " ", append = TRUE)
+  if (!is.null(mdtext)) {
+    mdloc <- grepl("## Catch-at-Age", mdtext)
+    if (all(!mdloc)) stop("'## Catch-at-Age' heading missing from ", md)
+    temp <- grepl("## Catch-at-Length", mdtext)
+    if (all(!temp)) stop("'## Catch-at-Length' heading missing from ", md)
+    ind1 <- which(mdloc) +1 
+    ind2 <- which(temp) -1
+    
+    text <- mdtext[ind1:ind2]
+    for (i in seq_along(text)){
+      cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
+    }
+    
+  }
+  
+  # Catch-at-Length section
+  cat("## Catch-at-Length\n", file = rmdfile, sep = " ", append = TRUE)
+  if (!is.null(mdtext)) {
+    mdloc <- grepl("## Catch-at-Length", mdtext)
+    if (all(!mdloc)) stop("'## Catch-at-Length' heading missing from ", md)
+    temp <- grepl("## Reference", mdtext)
+    if (all(!temp)) stop("'## Reference' heading missing from ", md)
+    temp2 <- grepl("## Reference List", mdtext)
+    if (all(!temp2)) stop("'## Reference List' heading missing from ", md)
+    ind1 <- which(mdloc) +1 
+    ind2 <- which(temp!=temp2) -1
+    
+    text <- mdtext[ind1:ind2]
+    for (i in seq_along(text)){
+      cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
+    }
+  }
+  
+  # Reference section
+  cat("## Reference\n", file = rmdfile, sep = " ", append = TRUE)
+  if (!is.null(mdtext)) {
+    ind1 <- ind2 +2 
+    ind2 <- which(temp2)-1
+    
+    text <- mdtext[ind1:ind2]
+    for (i in seq_along(text)){
+      cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
+    }
+  }
+  
+  # Reference List
+  cat("## Reference List\n", file = rmdfile, sep = " ", append = TRUE)
+  temp <- grepl("## Reference List", mdtext)
+  ind1 <- which(temp) + 1
+  ind2 <- length(mdtext)
+  if (ind2 > ind1) {
+    text <- mdtext[ind1:ind2]
+    for (i in seq_along(text)){
+      cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
+    }
+  }
+  
+  
+  # Render output file
+  message("Rendering to ", dir)
+  output_file <- file.path(dir, paste0(name, '.html'))
+  rmarkdown::render(rmdfile, output_format =output_format,
+                    output_file=output_file,
+                    output_dir = dir, params=Data)
+  
+  if (open) browseURL(output_file)
+  
+}
+
+
+metadatatable <- function(Data, i=1) {
+  df <- data.frame(Data@Name[1],
+                   Data@Common_Name[1],
+                   Data@Species[1],
+                   Data@Region[1],
+                   Data@LHYear[1],
+                   Data@MPrec[i],
+                   Data@Units[1],
+                   Data@MPeff[i],
+                   Data@nareas[1])
+  df <- t(df)
+  rownames(df) = c(
+    'Name', 
+    'Common Name',
+    'Species',
+    'Region',
+    'Last Historical Year',
+    'Last TAC',
+    'Units',
+    'Last TAE',
+    'Number of areas')
+  
+  df %>% knitr::kable(caption='Table 1. Summary of metadata') %>% 
+    kableExtra::kable_styling(
+      bootstrap_options = c("striped", "hover", "responsive"), full_width = F,
+      position = "left"
+    ) %>%
+    kableExtra::column_spec(1, bold=TRUE)
+}
+
+biology_plots <- function(Data, i=1, n=20000) {
+  
+  slots <- c("Mort", "vbLinf", 'vbK', 'vbt0', 'wla', 'wlb', 'steep', 'sigmaR',
+             'L50', 'L95')
+  
+  lout <- list()
+  for (x in seq_along(slots)) {
+    sl <- slots[x]
+    mean <- slot(Data, sl)[i]
+    if (sl == "L95") {
+      cv <- slot(Data, "CV_L50")[i]
+    } else {
+      cv <- slot(Data, paste0("CV_",sl))[i]  
+    }
+    
+    if (is.na(cv) | length(cv)<1) {
+      vals <- rep(mean, n)
+    } else {
+      if (sl =="steep") {
+        vals <- sample_steepness2(n, mean, cv)
+      } else {
+        if (mean < 0) {
+          vals <- -trlnorm(n, -mean, cv) 
+        } else {
+          vals <- trlnorm(n, mean, cv)   
+        }
+      }
+    }
+    lout[[x]] <- data.frame(Var=sl, val=vals, mean=mean, cv=cv)
+  }
+  
+  plist <- do.call("rbind", lout)
+  df <- plist %>% group_by(Var) %>% dplyr::distinct(mean, cv)
+  df$x <- df$mean
+  # df$mean[df$mean>0.01] <-round(df$mean[df$mean>0.01],)
+  # df$mean[df$mean < -0.01] <-round(df$mean[df$mean < -0.01],2)
+  df$cv <- round(df$cv,2)
+  lab <- sprintf("mu ==%G", df$mean)
+  lab2 <- sprintf("CV ==%G", df$cv)
+  
+  fignum <- 1
+  p1 <- ggplot2::ggplot(plist, ggplot2::aes(x=val, y=..scaled..)) + 
+    ggplot2::geom_density(show.legend = F, fill="lightgray") +
+    ggplot2::facet_wrap(~Var, scales="free") + 
+    ggplot2::theme_minimal() + ggplot2::theme(axis.title.y = ggplot2::element_blank(),
+                                              axis.text.y = ggplot2::element_blank(),
+                                              axis.title.x=ggplot2::element_blank()) +
+    ggplot2::geom_text(data=df, ggplot2::aes(x=x, y=1.3), parse=TRUE, label=lab) +
+    ggplot2::geom_text(data=df, ggplot2::aes(x=x, y=1.1), parse=TRUE, label=lab2) +
+    ggplot2::expand_limits(y=1.4) +
+    ggplot2::labs(title=paste0('Figure ', fignum, '. Density plots of biological parameters'))
+  
+  suppressWarnings(plot(p1))
+  
+  
+  # Mean length-at-age
+  if (length(Data@vbLinf[i]) > 0 && !is.na(Data@vbLinf[i])) {
+    fignum <- fignum +1 
+    vonB <- function(Linf, t0, K, ages) Linf * (1-exp(-K*(ages-t0)))
+    
+    meanL <- vonB(Data@vbLinf[i], Data@vbt0[i], Data@vbK[i], 0:Data@MaxAge)
+    Lup <- meanL + 1.96*meanL * Data@LenCV[i]
+    Llow <- meanL - 1.96*meanL * Data@LenCV[i]
+    df <- data.frame(mean=meanL, up=Lup, lo=Llow)
+    
+    p2 <- ggplot2::ggplot(df, ggplot2::aes(x=0:Data@MaxAge, ymin=lo, ymax=up)) +
+      ggplot2::geom_ribbon() +
+      ggplot2::geom_line(ggplot2::aes(y=mean), size=1.2) +
+      ggplot2::expand_limits(y=0) +
+      ggplot2::labs(x="Age", y="Length", 
+                    title=paste0('Figure ', fignum, '. Distribution of length-at-age'),
+                    subtitle='Mean length-at-age (solid line) and  2 standard deviations (shaded region)') +
+      ggplot2::theme_minimal() + 
+      ggplot2::geom_text(x=0.75*Data@MaxAge, y=0.5*Data@vbLinf[i],
+                         label=paste0("LenCV = ", round(Data@LenCV[i],3))) 
+    suppressWarnings(plot(p2))
+  }
+  
+  
+}
