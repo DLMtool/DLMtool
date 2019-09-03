@@ -1612,7 +1612,7 @@ Report <- function(Data=NULL, md=NULL, name="Data-Report",
   }
   
   # Load md documentation
-  if (is.null(md)){
+  if (is.null(md)) {
     message("No Data Documentation file provided")
     mdtext <- NULL
   } else {
@@ -1850,15 +1850,20 @@ biology_plots <- function(Data, i=1, n=20000) {
     }
     
     if (is.na(cv) | length(cv)<1) {
-      vals <- rep(mean, n)
+      vals <- rep(mean,n)
     } else {
-      if (sl =="steep") {
-        vals <- sample_steepness2(n, mean, cv)
+      if (is.na(mean)) {
+        vals <- NA
       } else {
-        if (mean < 0) {
-          vals <- -trlnorm(n, -mean, cv) 
+        if (sl =="steep") {
+          vals <- sample_steepness2(n, mean, cv)
         } else {
-          vals <- trlnorm(n, mean, cv)   
+          
+          if (mean < 0) {
+            vals <- -trlnorm(n, -mean, cv) 
+          } else {
+            vals <- trlnorm(n, mean, cv)   
+          }
         }
       }
     }
@@ -1874,6 +1879,12 @@ biology_plots <- function(Data, i=1, n=20000) {
   lab <- sprintf("mu ==%G", df$mean)
   lab2 <- sprintf("CV ==%G", df$cv)
   
+  plist <- dplyr::distinct(plist)
+  
+  textdf <- plist %>% filter(is.na(val))
+  textdf$Text <- "No values"
+  
+
   fignum <- 1
   p1 <- ggplot2::ggplot(plist, ggplot2::aes(x=val, y=..scaled..)) + 
     ggplot2::geom_density(show.legend = F, fill="lightgray") +
@@ -1884,7 +1895,8 @@ biology_plots <- function(Data, i=1, n=20000) {
     ggplot2::geom_text(data=df, ggplot2::aes(x=x, y=1.3), parse=TRUE, label=lab) +
     ggplot2::geom_text(data=df, ggplot2::aes(x=x, y=1.1), parse=TRUE, label=lab2) +
     ggplot2::expand_limits(y=1.4) +
-    ggplot2::labs(title=paste0('Figure ', fignum, '. Density plots of biological parameters'))
+    ggplot2::labs(title=paste0('Figure ', fignum, '. Density plots of biological parameters')) + 
+    ggplot2::geom_text(data=textdf, ggplot2::aes(x=.5, y=1, label=Text) )
   
   suppressWarnings(plot(p1))
   
