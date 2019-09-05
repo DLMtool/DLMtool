@@ -2,25 +2,26 @@
 % Please edit documentation in R/Data_Functions.R
 \name{DataInit}
 \alias{DataInit}
-\title{Initialize an empty Data workbook or CSV}
+\title{Initialize Data Input Files}
 \usage{
 DataInit(name = "Data", ext = c("xlsx", "csv"), overwrite = FALSE,
   dir = NULL)
 }
 \arguments{
-\item{name}{Name of the data file. Default is Data.xlsx}
+\item{name}{Name of the data input files. Default is 'Data'}
 
-\item{ext}{Optional file extension. 'xlsx' (default) or 'csv'}
+\item{ext}{Optional file extension for input file. 'xlsx' (default) or 'csv'}
 
 \item{overwrite}{Logical. Overwrite existing files?}
 
-\item{dir}{Optional directory path to create the Data file. Default is `getwd()``}
+\item{dir}{Optional directory path to create the Data files. Default is `getwd()``}
 }
 \value{
-Nothing. Creates a data file in the working directory.
+Nothing. Creates template data files in the working directory.
 }
 \description{
-Initialize an empty Data workbook or CSV
+Creates template for the Data input file (Excel or CSV) and Data documentation file (Markdown)
+in the working directory or the directory specified by the \code{dir} argument
 }
 \examples{
 \dontrun{

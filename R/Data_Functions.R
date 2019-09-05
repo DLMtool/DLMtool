@@ -1595,6 +1595,32 @@ Uses <- function(slot, silent=FALSE) {
 # }
 # 
 
+#' Generate a Data Report
+#' 
+#' A HTML Data Report is generated and opened in a web browser
+#'
+#' @param Data Either an object of class `Data` or the file path to a valid
+#' file to be imported with `XL2Data`
+#' @param md Full file path to a valid text file documentating the Data
+#' @param name Optional. Name of the output file
+#' @param title Title for the Report. Title in the markdown file will override this value
+#' @param author Author of the Report. Author in the markdown file will override this value
+#' @param date Date of the Report. Date in the markdown file will override this value
+#' @param output_format Currently only accepts `html_document`
+#' @param open Logical. Open the report in a web browser?
+#' @param dir Optional. Directory to save the file. Defaults to `getwd()`
+#' @param overwrite Logical. Overwrite an existing file with the same name?
+#'
+#' @return Nothing. A Data Report is generated and saved in `dir`
+#' @export
+#' @author A. Hordyk
+#' @examples
+#' \dontrun{
+#' DataInit() # generate Data Input and Documentation files
+#' # enter fishery data in Input file and document in Documentation file
+#' Data <- XL2Data()
+#' Report(Data, "path.to.md.file/Data.md")
+#' }
 Report <- function(Data=NULL, md=NULL, name="Data-Report", 
                    title="Data Documentation",
                    author="Author Name",
@@ -1693,8 +1719,8 @@ Report <- function(Data=NULL, md=NULL, name="Data-Report",
       cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
     }
   }
-  cat("```{r, echo=FALSE} \n", file = rmdfile, sep = " ", append = TRUE)
-  cat("biology_plots(Data)\n", file = rmdfile, sep = " ", append = TRUE)
+  cat("```{r, echo=FALSE, out.width='90%'} \n", file = rmdfile, sep = " ", append = TRUE)
+  cat("fignum <- biology_plots(Data)\n", file = rmdfile, sep = " ", append = TRUE)
   cat("```\n\n", file = rmdfile, sep = " ", append = TRUE)
   
   
@@ -1715,6 +1741,10 @@ Report <- function(Data=NULL, md=NULL, name="Data-Report",
     
   }
   
+  cat("```{r, echo=FALSE, out.width='90%'} \n", file = rmdfile, sep = " ", append = TRUE)
+  cat("fignum <- select_plots(Data, fignum=fignum+1)\n", file = rmdfile, sep = " ", append = TRUE)
+  cat("```\n\n", file = rmdfile, sep = " ", append = TRUE)
+  
   # Time-Series section
   cat("## Time-Series\n", file = rmdfile, sep = " ", append = TRUE)
   if (!is.null(mdtext)) {
@@ -1732,6 +1762,11 @@ Report <- function(Data=NULL, md=NULL, name="Data-Report",
     
   }
   
+  cat("```{r, echo=FALSE, out.width='90%'} \n", file = rmdfile, sep = " ", append = TRUE)
+  cat("fignum <- ts_plots(Data,fignum=fignum+1)\n", file = rmdfile, sep = " ", append = TRUE)
+  cat("```\n\n", file = rmdfile, sep = " ", append = TRUE)
+  
+  
   # Catch-at-Age section
   cat("## Catch-at-Age\n", file = rmdfile, sep = " ", append = TRUE)
   if (!is.null(mdtext)) {
@@ -1748,6 +1783,10 @@ Report <- function(Data=NULL, md=NULL, name="Data-Report",
     }
     
   }
+  
+  cat("```{r, echo=FALSE, out.width='90%'} \n", file = rmdfile, sep = " ", append = TRUE)
+  cat("fignum <- caa_plot(Data, fignum=fignum+1)\n", file = rmdfile, sep = " ", append = TRUE)
+  cat("```\n\n", file = rmdfile, sep = " ", append = TRUE)
   
   # Catch-at-Length section
   cat("## Catch-at-Length\n", file = rmdfile, sep = " ", append = TRUE)
@@ -1767,6 +1806,10 @@ Report <- function(Data=NULL, md=NULL, name="Data-Report",
     }
   }
   
+  cat("```{r, echo=FALSE, out.width='90%'} \n", file = rmdfile, sep = " ", append = TRUE)
+  cat("fignum <- cal_plot(Data, fignum=fignum)\n", file = rmdfile, sep = " ", append = TRUE)
+  cat("```\n\n", file = rmdfile, sep = " ", append = TRUE)
+  
   # Reference section
   cat("## Reference\n", file = rmdfile, sep = " ", append = TRUE)
   if (!is.null(mdtext)) {
@@ -1779,6 +1822,10 @@ Report <- function(Data=NULL, md=NULL, name="Data-Report",
     }
   }
   
+  cat("```{r, echo=FALSE, out.width='90%'} \n", file = rmdfile, sep = " ", append = TRUE)
+  cat("fignum <- ref_plots(Data, fignum=fignum)\n", file = rmdfile, sep = " ", append = TRUE)
+  cat("```\n\n", file = rmdfile, sep = " ", append = TRUE)
+  
   # Reference List
   cat("## Reference List\n", file = rmdfile, sep = " ", append = TRUE)
   temp <- grepl("## Reference List", mdtext)
@@ -1790,7 +1837,6 @@ Report <- function(Data=NULL, md=NULL, name="Data-Report",
       cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
     }
   }
-  
   
   # Render output file
   message("Rendering to ", dir)
@@ -1881,9 +1927,13 @@ biology_plots <- function(Data, i=1, n=20000) {
   
   plist <- dplyr::distinct(plist)
   
+  addText <- FALSE
   textdf <- plist %>% filter(is.na(val))
-  textdf$Text <- "No values"
-  
+  if (nrow(textdf) > 0) {
+    textdf$Text <- "No values"
+    textdf <- dplyr::distinct(textdf)  
+    addText <- TRUE
+  }
 
   fignum <- 1
   p1 <- ggplot2::ggplot(plist, ggplot2::aes(x=val, y=..scaled..)) + 
@@ -1894,15 +1944,18 @@ biology_plots <- function(Data, i=1, n=20000) {
                                               axis.title.x=ggplot2::element_blank()) +
     ggplot2::geom_text(data=df, ggplot2::aes(x=x, y=1.3), parse=TRUE, label=lab) +
     ggplot2::geom_text(data=df, ggplot2::aes(x=x, y=1.1), parse=TRUE, label=lab2) +
-    ggplot2::expand_limits(y=1.4) +
+    
     ggplot2::labs(title=paste0('Figure ', fignum, '. Density plots of biological parameters')) + 
-    ggplot2::geom_text(data=textdf, ggplot2::aes(x=.5, y=1, label=Text) )
-  
+    ggplot2::expand_limits(y=1.4) +
+    ggplot2::theme(strip.text = ggplot2::element_text(size=14))
+  if (addText) p1 <- p1 + ggplot2::geom_text(data=textdf, ggplot2::aes(x=0, y=3, label=Text) ) 
   suppressWarnings(plot(p1))
   
   
   # Mean length-at-age
+  doGrowth <- FALSE
   if (length(Data@vbLinf[i]) > 0 && !is.na(Data@vbLinf[i])) {
+    doGrowth <- TRUE
     fignum <- fignum +1 
     vonB <- function(Linf, t0, K, ages) Linf * (1-exp(-K*(ages-t0)))
     
@@ -1916,13 +1969,535 @@ biology_plots <- function(Data, i=1, n=20000) {
       ggplot2::geom_line(ggplot2::aes(y=mean), size=1.2) +
       ggplot2::expand_limits(y=0) +
       ggplot2::labs(x="Age", y="Length", 
-                    title=paste0('Figure ', fignum, '. Distribution of length-at-age'),
+                    title=paste0('\n\nFigure ', fignum, '. Distribution of length-at-age'),
                     subtitle='Mean length-at-age (solid line) and  2 standard deviations (shaded region)') +
       ggplot2::theme_minimal() + 
       ggplot2::geom_text(x=0.75*Data@MaxAge, y=0.5*Data@vbLinf[i],
                          label=paste0("LenCV = ", round(Data@LenCV[i],3))) 
     suppressWarnings(plot(p2))
   }
+  fignum
+}
+
+
+select_plots <- function(Data, i=1, n=20000, fignum=1) {
+  lout <- list()
+  slots <- c('LFC', 'LFS', 'Vmaxlen')
+  for (x in seq_along(slots)) {
+    sl <- slots[x]
+    mean <- slot(Data, sl)[i]
+    if (sl == "L95") {
+      cv <- slot(Data, "CV_L50")[i]
+    } else if (sl=="Vmaxlen"){
+      cv <- NA
+    } else {
+      cv <- slot(Data, paste0("CV_",sl))[i]  
+    }
+    
+    if (is.na(cv) | length(cv)<1) {
+      vals <- rep(mean,n)
+    } else {
+      if (is.na(mean)) {
+        vals <- NA
+      } else {
+        if (sl =="steep") {
+          vals <- sample_steepness2(n, mean, cv)
+        } else {
+          
+          if (mean < 0) {
+            vals <- -trlnorm(n, -mean, cv) 
+          } else {
+            vals <- trlnorm(n, mean, cv)   
+          }
+        }
+      }
+    }
+    lout[[x]] <- data.frame(Var=sl, val=vals, mean=mean, cv=cv)
+  }
+  
+  plist <- do.call("rbind", lout)
+  df <- plist %>% group_by(Var) %>% dplyr::distinct(mean, cv)
+  df$x <- df$mean
+  # df$mean[df$mean>0.01] <-round(df$mean[df$mean>0.01],)
+  # df$mean[df$mean < -0.01] <-round(df$mean[df$mean < -0.01],2)
+  df$cv <- round(df$cv,2)
+  lab <- sprintf("mu ==%G", df$mean)
+  lab2 <- sprintf("CV ==%G", df$cv)
+  lab2[3] <- ''
+  
+  addText <- FALSE
+  textdf <- plist %>% filter(is.na(val))
+  if (nrow(textdf) > 0) {
+    textdf$Text <- "No values"
+    textdf <- dplyr::distinct(textdf)  
+    addText <- TRUE
+  }
+  
+  
+  p3 <- ggplot2::ggplot(plist, ggplot2::aes(x=val, y=..scaled..)) + 
+    ggplot2::geom_density(show.legend = F, fill="lightgray") +
+    ggplot2::facet_wrap(~Var, scales="free") + 
+    ggplot2::theme_minimal() + ggplot2::theme(axis.title.y = ggplot2::element_blank(),
+                                              axis.text.y = ggplot2::element_blank(),
+                                              axis.title.x=ggplot2::element_blank()) +
+    ggplot2::geom_text(data=df, ggplot2::aes(x=x, y=1.3), parse=TRUE, label=lab) +
+    ggplot2::geom_text(data=df, ggplot2::aes(x=x, y=1.1), parse=TRUE, label=lab2) +
+    
+    ggplot2::labs(title=paste0('Figure ', fignum, '. Density plots of selectivity parameters')) + 
+    ggplot2::expand_limits(y=1.4) +
+    ggplot2::theme(strip.text = ggplot2::element_text(size=14))
+  if (addText) p3 <- p3 + ggplot2::geom_text(data=textdf, ggplot2::aes(x=0, y=3, label=Text) ) 
+  
+  suppressWarnings(plot(p3))
+  
+  if (all(!is.na(df$mean)) && all(df$mean >0) ) {
+    if(!is.na(Data@MaxAge) & doGrowth) {
+      # selectivity-at-age
+      
+      Lens <- 0:Data@vbLinf[i]
+      iVB2 <- function(t0, K, Linf, L) {
+        (-log(1 - L/Linf))/K + t0
+      }
+      Age <- sapply(seq_along(Lens), function(x) iVB2(Data@vbt0[i], Data@vbK[i], 
+                                                      Data@vbLinf[i], Lens[x]))
+      srs <- (Data@vbLinf[i] - Data@LFS[i]) / ((-log(Data@Vmaxlen[i],2))^0.5)
+      srs[!is.finite(srs)] <- Inf
+      sls <- (Data@LFS[i] - Data@LFC[i]) /((-log(0.05,2))^0.5)
+      SelA <- getsel(lens=Lens[Age>0], lfs=Data@LFS[i], sls=sls, srs=srs)
+      SelL <- getsel(lens=Lens, lfs=Data@LFS[i], sls=sls, srs=srs)
+      
+      DF <- data.frame(Age=Age[Age>0], Select=SelA)
+      
+      fignum <- fignum +1 
+      p4 <- ggplot2::ggplot(DF, ggplot2::aes(x=Age, y=Select)) +
+        ggplot2::geom_line(size=1.2) + 
+        ggplot2::expand_limits(y=c(0,1), x=0) +
+        ggplot2::theme_minimal() + 
+        ggplot2::labs(x="Age", y="Selectivity",
+                      title=paste0('\n\nFigure ', fignum, '. Selectivity-at-age '))+
+        ggplot2::theme(strip.text = ggplot2::element_text(size=14))
+      
+      
+      DF <- data.frame(Length=Lens, Select=SelL)
+      
+      fignum <- fignum +1 
+      p5 <- ggplot2::ggplot(DF, ggplot2::aes(x=Length, y=Select)) +
+        ggplot2::geom_line(size=1.2) + 
+        ggplot2::expand_limits(y=c(0,1), x=0) +
+        ggplot2::theme_minimal() + 
+        ggplot2::labs(x="Length", y="Selectivity",
+                      title=paste0('\n\nFigure ', fignum, '. Selectivity-at-length '))+
+        ggplot2::theme(strip.text = ggplot2::element_text(size=14))
+      
+      suppressWarnings(plot(p4))
+      suppressWarnings(plot(p5))
+    }
+  }
+  fignum
+}
+
+
+makeDF <- function(Data, slot, i ) {
+  Year <- Data@Year
+  if (slot=="AddInd") {
+    dat <- slot(Data, slot)[i,,]
+    dat_cv <- slot(Data, "CV_AddInd")[i,,]
+    dat_v <- slot(Data, "AddIndV")[i,,]
+
+    if (!all(is.na(dat))) {
+      nind <- dim(dat)[1]
+      tlist <- list()
+      vlist <- list()
+      for (x in 1:nind) {
+        tdat <- dat[x,]
+        tcv <- dat_cv[x,]
+        tv <- dat_v[x,]
+        
+        sdvec <- sdconv(tdat,  tdat * tcv)
+        muvec <- log(tdat)
+        up <- exp(muvec + 1.96*sdvec)
+        dw <- exp(muvec - 1.96*sdvec)
+        
+        tDF <- data.frame(Year, y=tdat, up, dw)
+        tDF$Data <- paste0("Add. Index ", x)
+        vlist[[x]] <- data.frame(V=tv, Ind=x)
+        tlist[[x]] <- tDF  
+      }
+      DF <- do.call('rbind', tlist)
+      DF2 <- do.call('rbind', vlist)
+      return(list(DF, DF2))
+    } else {
+      return(NULL)
+    }
+  } else {
+    dat <- slot(Data, slot)[i,]
+    dat_cv <- slot(Data, paste0("CV_",slot))[i,]
+    # find first non NA CV 
+    if (!is.na(dat_cv[1]) & all(is.na(dat_cv[2:length(dat_cv)]))) {
+      message(paste0("CV_", slot, " only provided for first year. Assumed for all years"))
+      dat_cv[2:length(dat_cv)] <- dat_cv[1]
+    }
+    sdvec <- sdconv(dat,  dat * dat_cv)
+    muvec <- log(dat)
+    up <- exp(muvec + 1.96*sdvec)
+    dw <- exp(muvec - 1.96*sdvec)
+    
+    DF <- data.frame(Year, y=dat, up, dw)
+    DF$Data <- slot
+  }
+
+  DF
+}
+
+ts_plots <- function(Data, i=1, fignum=1) {
+  
+  DF <- makeDF(Data, "Cat", i)
+  DF <- rbind(DF, makeDF(Data, "Ind", i))
+  
+  AddInd <- makeDF(Data, "AddInd", i)
+  vDF <- NULL
+  if (!is.null(AddInd)) {
+    DF <- rbind(DF, AddInd[[1]])
+    vDF <- AddInd[[2]]
+  }
+  
+  DF <- rbind(DF, makeDF(Data, "Rec", i))
+  
+  DF$Data[DF$Data == "Cat"] <- paste0("Catch (", Data@Units, ")")
+  DF$Data[DF$Data == "Ind"] <- "Index"
+  DF$Data[DF$Data == "Rec"] <- "Recruitment"
+  DF$Data <- factor(DF$Data, ordered = TRUE,
+                    levels=unique(DF$Data))
+  
+  p1 <- ggplot2::ggplot(DF, ggplot2::aes(x=Year, y=y, ymin=dw, ymax=up)) +
+    ggplot2::facet_wrap(~Data, scales="free", ncol=2) + 
+    ggplot2::expand_limits(y=0) +
+    ggplot2::geom_ribbon(fill='lightgray') + ggplot2::geom_line(size=1.1) +
+    ggplot2::labs(x="Year", y="Mean (95% intervals)",
+                  title=paste0('Figure ', fignum, '. Time-Series Data')) +
+    ggplot2::theme_minimal() + 
+    ggplot2::theme(strip.text = ggplot2::element_text(size=14))
+  
+  p2 <- NULL
+  if (!is.null(vDF)) {
+    fignum <- fignum+1
+    vDF$Ind <- factor(vDF$Ind)
+    nind <- length(levels(vDF$Ind))
+    vDF$X <- rep(1:Data@MaxAge, nind)
+    p2 <- ggplot2::ggplot(vDF, ggplot2::aes(x=X, y=V, linetype=Ind)) +
+      ggplot2::geom_line() +
+      ggplot2::expand_limits(y=c(0,1)) +
+      ggplot2::labs(x="Age", y="Vulnerability",
+                    title=paste0('\n\nFigure ', fignum, '. Vulnerability-at-age schedules for Additional Indices'),
+                    linetype="Additional Index") +
+      ggplot2::theme_minimal() 
+    
+  }
+  
+  
+  DF <- data.frame(Year=Data@Year, ML=Data@ML[i,], Lc=Data@Lc[i,], Lbar=Data@Lbar[i,])
+  p3 <- NULL
+  if (!all(is.na(DF[,2:4]))) {
+    fignum <- fignum+1
+    
+    DF <- tidyr::gather(DF, "key", "value", 2:4)
+    DF$key[DF$key == "ML"] <- "Mean length"
+    DF$key[DF$key == "Lc"] <- "Modal length (Lc)"
+    DF$key[DF$key == "Lbar"] <- "Mean length above Lc"
+    DF$key <- factor(DF$key, ordered = TRUE, 
+                     levels=c("Mean length",
+                              "Modal length (Lc)",
+                              "Mean length above Lc"))
+    
+    p3 <- ggplot2::ggplot(DF, ggplot2::aes(x=Year, y=value, linetype=key)) +
+      ggplot2::geom_line(size=1.1) + 
+      ggplot2::expand_limits(y=c(0)) +
+      ggplot2::labs(y="Length", linetype="Legend",
+                    title=paste0('\n\nFigure ', fignum, '. Mean Length Time-Series')) +
+      ggplot2::theme_minimal() 
+    
+  }
+  
+  
+  suppressWarnings(plot(p1))
+  if (!is.null(p2)) suppressWarnings(plot(p2))
+  if (!is.null(p3)) suppressWarnings(plot(p3))
+  
+  
+  fignum 
+}
+
+
+caa_plot <- function(Data, i=1, fignum=1) {
+  # CAA 
+  CAA <- Data@CAA[i,,]
+  nyrs <- nrow(CAA); maxage <- ncol(CAA)
+  if (NAor0(CAA)) {
+    P2 <- NULL
+  } else {
+    P2 <- TRUE
+    dimnames(CAA) <- list(1:nyrs, 1:maxage)
+    
+    df1 <- as.data.frame.table(CAA, stringsAsFactors = FALSE)
+    colnames(df1) <- c("Year", "Val", "Freq")
+    df1$Val <- as.numeric(df1$Val)
+    
+    df1$Year <- as.numeric(df1$Year)
+    
+    yr.n <- df1 %>% dplyr::group_by(Year) %>% dplyr::summarise(n=sum(Freq))
+    yr.ind <- yr.n %>% dplyr::filter(n>0) %>% dplyr::select(Year)
+    
+    Years <- Data@Year
+    nyears <- length(unique(df1$Year))
+    df1$Year_val <- (Years[(length(Years)-nyears+1):length(Years)])
+    
+    if (nrow(df1)>0 ) {
+      nyears <- length(unique(df1$Year))
+      nbins <- length(unique(df1$Val))
+      tplot <- 25 # total plots per page
+      if (nyears > tplot) {
+        npages <- ceiling(nyears/tplot) 
+        ncol <- 5 
+        nrow <- 5
+        nplot <- ncol * nrow
+      } else {
+        npages <- 1
+        nrow <- ceiling(sqrt(nyears))
+        ncol <- ceiling(nyears/nrow)
+        nplot <- nyears
+      }
+      pmat <- matrix(1:(nrow*ncol), nrow=nrow, ncol=ncol, byrow=TRUE)
+      pmat[pmat >nplot] <- NA
+      
+      op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,2,1), oma=c(4,4,2,0))
+      on.exit(par(op))
+      
+      yr1 <- 1 
+      col <- "grey"
+      for (pg in 1:npages) {
+        yrind <- yr1:(yr1+nplot-1)
+        yr1 <- max(yrind) + 1
+        dat <- df1 %>% dplyr::filter(Year %in% yrind)
+        un.yrs_val <- as.numeric(unique(dat$Year_val))
+        un.yrs <- as.numeric(unique(dat$Year))
+        
+        if (pg >1 && pg == npages) {
+          nplot <- nyears - (npages-1) * tplot
+          ncol <- ceiling(sqrt(nplot))
+          nrow <- ceiling(nplot/ncol)
+          op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,2,1), oma=c(4,4,2,0))
+          on.exit(par(op))
+          pmat <- matrix(1:nplot, nrow=nrow, ncol=ncol, byrow=TRUE)
+        }
+        for (p in 1:nplot) {
+          pdat <- dat %>% dplyr::filter(Year==un.yrs[p])
+          if (nrow(pdat) > 0) {
+            if (p %in% pmat[nrow,]) {
+              barplot(pdat$Freq, names=round(pdat$Val, 2), axes=FALSE, col=col)  
+            } else {
+              barplot(pdat$Freq, names=FALSE, axes=FALSE, col=col)
+            } 
+            if (p %in% pmat[,1]) axis(side=2)
+            if (!p %in% pmat[,1]) axis(side=2, labels=TRUE)
+            ncount <- round(sum(pdat$Freq),0)
+            title(un.yrs_val[p])
+            text(max(pdat$Val), max(pdat$Freq), paste('n = ', ncount),
+                 xpd=NA)
+          }
+          if (p == 1) {
+            title(main=paste0('Figure ', fignum, ". Catch-at-Age (Years ", min(un.yrs), " - ", max(un.yrs), ")"), 
+                  xpd=NA, line=2)
+            fignum <- fignum + 1
+          }
+        } 
+        mtext(side=1, outer=TRUE, "Age", line=2, cex=1.1)
+        mtext(side=2, outer=TRUE, "Frequency", line=2, cex=1.1)
+        
+      }
+    }
+  }
+  
+  fignum
+}
+
+cal_plot <- function(Data, i=1, fignum=1) {
+  
+  CAL <- Data@CAL[i,,]
+  if (all(is.na(CAL))) {
+    P3 <- NULL
+  } else {
+    P3 <- TRUE
+    nyrs <- nrow(CAL); nbins <- length(Data@CAL_bins) - 1
+    By <- Data@CAL_bins[2] - Data@CAL_bins[1]
+    BinsMid <- seq(Data@CAL_bins[1] + 0.5*By, by=By,length.out = nbins)
+    dimnames(CAL) <- list(1:nyrs, BinsMid)
+    
+    df1 <- as.data.frame.table(CAL, stringsAsFactors = FALSE)
+    colnames(df1) <- c("Year", "Val", "Freq")
+    df1$Val <- as.numeric(df1$Val)
+    
+    df1$Year <- as.numeric(df1$Year)
+    
+    yr.n <- df1 %>% dplyr::group_by(Year) %>% dplyr::summarise(n=sum(Freq))
+    yr.ind <- yr.n %>% dplyr::filter(n>0) %>% dplyr::select(Year)
+    
+    Years <- Data@Year
+    nyears <- length(unique(df1$Year))
+    df1$Year_val <- (Years[(length(Years)-nyears+1):length(Years)])
+    
+    if (nrow(df1) > 0) {
+      nyears <- length(unique(df1$Year))
+      nayears <- df1 %>% group_by(Year) %>% summarize(isna=all(is.na(Freq)))
+      nyears <- sum(!nayears$isna)
+      
+      nbins <- length(unique(df1$Val))
+      tplot <- 25 # total plots per page
+      if (nyears > tplot) {
+        npages <- ceiling(nyears/tplot) 
+        ncol <- 5 
+        nrow <- 5
+        nplot <- ncol * nrow
+      } else {
+        npages <- 1
+        nrow <- ceiling(sqrt(nyears))
+        ncol <- ceiling(nyears/nrow)
+        nplot <- nyears
+      }
+      pmat <- matrix(1:(ncol*nrow), nrow=nrow, ncol=ncol, byrow=TRUE)
+      pmat[pmat>nplot] <- NA
+      
+      op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,2,1), oma=c(4,4,2,0))
+      on.exit(par(op))
+      
+      yr1 <- 1
+      col <- "grey"
+      for (pg in 1:npages) {
+        if (pg ==1) {
+          yrind <- yr.ind$Year[1:(nplot)]  
+        } else {
+          t1 <- nplot * (pg-1) +1 
+          t2 <- t1+nplot
+          yrind <- yr.ind$Year[t1:t2]
+        }
+        
+        yr1 <- max(yrind) + 1
+        dat <- df1 %>% dplyr::filter(Year %in% yrind)
+        un.yrs_val <- as.numeric(unique(dat$Year_val))
+        un.yrs <- as.numeric(unique(dat$Year))
+        
+        if (pg >1 && pg == npages) {
+          nplot <- nyears - (npages-1) * tplot
+          ncol <- ceiling(sqrt(nplot))
+          nrow <- ceiling(nplot/ncol)
+          op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,2,1), oma=c(4,4,2,0))
+          on.exit(par(op))
+          pmat <- matrix(1:(ncol*nrow), nrow=nrow, ncol=ncol, byrow=TRUE)
+          pmat[pmat>nplot] <- NA
+        }
+        for (p in 1:nplot) {
+          pdat <- dat %>% dplyr::filter(Year==un.yrs[p])
+          if (nrow(pdat) > 0) {
+            if (all(is.na(pdat$Freq))) {
+              
+            } else{
+              if (p %in% pmat[nrow,]) {
+                barplot(pdat$Freq, names.arg=round(pdat$Val, 2), axes=FALSE, col=col, las=2)  
+              } else {
+                barplot(pdat$Freq, names.arg=FALSE, axes=FALSE, col=col)
+              } 
+              if (p %in% pmat[,1]) axis(side=2)
+              if (!p %in% pmat[,1]) axis(side=2, labels=TRUE)
+              ncount <- round(sum(pdat$Freq),0)
+              title(un.yrs_val[p])
+              text(length(unique(df1$Val)), max(pdat$Freq), paste('n = ', ncount), xpd=NA)
+            }
+            
+          }
+          if (p == 1) {
+            title(main=paste0('Figure ', fignum, ". Catch-at-Length (Years ", min(un.yrs), " - ", max(un.yrs), ")"), 
+                  xpd=NA, line=2)
+            fignum <- fignum + 1
+          }
+        } 
+        mtext(side=1, outer=TRUE, "Length", line=2, cex=1.1)
+        mtext(side=2, outer=TRUE, "Frequency", line=2, cex=1.1)
+        
+      }
+    }
+  }
+  
+  fignum
+}
+
+ref_plots <- function(Data, i=1, n=20000, fignum=1) {
+  
+  slots <- c('Dep', 'Abun', 'SpAbun', 'FMSY_M', 'BMSY_B0', 'Cref', 'Bref', 'Iref',
+             't', "AvC", 'Dt', 'Ref')
+    
+  lout <- list()
+  for (x in seq_along(slots)) {
+    sl <- slots[x]
+    mean <- slot(Data, sl)[i]
+    if (sl %in% c("t", "Ref")) {
+      cv <- NA
+    } else {
+      cv <- slot(Data, paste0("CV_",sl))[i]    
+    }
+    
+    
+    if (is.na(cv) | length(cv)<1) {
+      vals <- rep(mean,n)
+    } else {
+      if (is.na(mean)) {
+        vals <- NA
+      } else {
+        if (mean < 0) {
+          vals <- -trlnorm(n, -mean, cv) 
+        } else {
+          vals <- trlnorm(n, mean, cv)   
+        }
+      }
+      
+    }
+    lout[[x]] <- data.frame(Var=sl, val=vals, mean=mean, cv=cv)
+  }
+  
+  plist <- do.call("rbind", lout)
+  df <- plist %>% group_by(Var) %>% dplyr::distinct(mean, cv)
+  df$x <- df$mean
+  # df$mean[df$mean>0.01] <-round(df$mean[df$mean>0.01],)
+  # df$mean[df$mean < -0.01] <-round(df$mean[df$mean < -0.01],2)
+  df$cv <- round(df$cv,2)
+  lab <- sprintf("mu ==%G", df$mean)
+  lab2 <- sprintf("CV ==%G", df$cv)
+  
+  # plist <- dplyr::distinct(plist)
+  
+  addText <- FALSE
+  textdf <- plist %>% filter(is.na(val))
+  if (nrow(textdf) > 0) {
+    textdf$Text <- "No values"
+    textdf <- dplyr::distinct(textdf)  
+    addText <- TRUE
+  }
+  
+  p1 <- ggplot2::ggplot(plist, ggplot2::aes(x=val, y=..scaled..)) + 
+    ggplot2::geom_density(show.legend = F, fill="lightgray") +
+    ggplot2::facet_wrap(~Var, scales="free") + 
+    ggplot2::theme_minimal() + ggplot2::theme(axis.title.y = ggplot2::element_blank(),
+                                              axis.text.y = ggplot2::element_blank(),
+                                              axis.title.x=ggplot2::element_blank()) +
+    ggplot2::geom_text(data=df, ggplot2::aes(x=x, y=1.3), parse=TRUE, label=lab) +
+    ggplot2::geom_text(data=df, ggplot2::aes(x=x, y=1.1), parse=TRUE, label=lab2) +
+    
+    ggplot2::labs(title=paste0('Figure ', fignum, '. Density plots of Reference parameters')) + 
+    ggplot2::expand_limits(y=1.4) +
+    ggplot2::theme(strip.text = ggplot2::element_text(size=14))
+  if (addText) p1 <- p1 + ggplot2::geom_text(data=textdf, ggplot2::aes(x=0, y=3, label=Text) ) 
+  
+  suppressWarnings(plot(p1))
+  
+  fignum
   
   
 }
