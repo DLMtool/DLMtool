@@ -293,7 +293,7 @@ CC1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0) {
   yrfirst <- yrlast - yrsmth + 1
   # C_dat <- Data@Cat[x, (length(Data@Year) - (yrsmth - 1)):length(Data@Year)]
   C_dat <- Data@Cat[x, yrfirst:yrlast]
-  TAC <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))  # mean catches over the interval
+  TAC <- (1 - xx) * trlnorm(reps, mean(C_dat, na.rm=TRUE), Data@CV_Cat/(yrsmth^0.5))  # mean catches over the interval
   Rec <- new("Rec")
   Rec@TAC <- TACfilter(TAC)
   if (plot) {
@@ -305,7 +305,7 @@ CC1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0) {
          xlab="Year", ylab=paste0("Catch (", Data@Units, ")"),
          cex.lab=1.5, cex.axis=1.25, ylim=ylim)
     abline(v=Data@LHYear[1], lty=3, col="darkgray")
-    lines(Data@Year[yrfirst:yrlast], rep(mean(C_dat), yrsmth), col="blue", lwd=3)
+    lines(Data@Year[yrfirst:yrlast], rep(mean(C_dat, na.rm=TRUE), yrsmth), col="blue", lwd=3)
     boxplot(Rec@TAC, at=max(Data@Year)+1, add=TRUE, axes=FALSE)
   }
   
@@ -457,7 +457,7 @@ CompSRA_ <- function(x, Data, reps=100) {
     pred <- Nac * Wac
     pred[1:(KES - 1)] <- 0
     pred <- pred/sum(pred)
-    pred <- ((mean(Catch)/0.1) * pred/Wac)/exp(-(1:maxage) * Mc)
+    pred <- ((mean(Catch, na.rm=TRUE)/0.1) * pred/Wac)/exp(-(1:maxage) * Mc)
     pred <- pred[pred > 0]
     R0range <- c(mean(pred)/1000, mean(pred) * 1000)
     
@@ -774,8 +774,8 @@ DCAC_ML <- function(x, Data, reps = 100, plot=FALSE) {
   FM[FM<0.05] <- 0.05
   
   nyears <- length(Data@Year)
-  Ct1 <- mean(Data@Cat[x, 1:3])
-  Ct2 <- mean(Data@Cat[x, (nyears - 2):nyears])
+  Ct1 <- mean(Data@Cat[x, 1:3], na.rm=TRUE)
+  Ct2 <- mean(Data@Cat[x, (nyears - 2):nyears], na.rm=TRUE)
   dep <- rep(c(Ct1, Ct2), each = reps)/(1 - exp(-FM))
   if (reps == 1) {
     Bt_K <- dep[2]/dep[1]
@@ -989,9 +989,9 @@ DBSRA_ <- function(x, Data, reps = 100, depo=NULL, hcr=NULL) {
     adelay <- max(floor(iVB(Data@vbt0[x], Data@vbK[x], Data@vbLinf[x],  Data@L50[x])), 1)
     
     # scale catches for optimization
-    scaler <- 1000/mean(C_hist)
+    scaler <- 1000/mean(C_hist, na.rm=TRUE)
     C_hist2 <- scaler * C_hist
-    opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist2), 1000 * mean(C_hist2))), C_hist = C_hist2, 
+    opt <- optimize(DBSRAopt, log(c(0.01 * mean(C_hist2, na.rm=TRUE), 1000 * mean(C_hist2, na.rm=TRUE))), C_hist = C_hist2, 
                     nys = length(C_hist2), Mdb = Mdb, FMSY_M = FMSY_M, BMSY_K = BMSY_K, 
                     Bt_K = Bt_K, adelay = adelay, tol = 0.01)
     
@@ -1253,7 +1253,7 @@ DD_ <- function(x, Data, reps = 100, hcr=NULL) {
     I_hist <- approx(x = I.xind[!is.na(I_hist)], y = I_hist[!is.na(I_hist)], n = length(I.xind))$y
   }
   E_hist <- C_hist/I_hist
-  E_hist <- E_hist/mean(E_hist)
+  E_hist <- E_hist/mean(E_hist, na.rm=TRUE)
   ny_DD <- length(C_hist)
   k_DD <- ceiling(a50V)  # get age nearest to 50% vulnerability (ascending limb)  
   k_DD[k_DD > Data@MaxAge/2] <- ceiling(Data@MaxAge/2)  # to stop stupidly high estimates of age at 50% vulnerability
@@ -1661,7 +1661,7 @@ Fadapt <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 7, gg = 1) {
     G_new <- Glm[1]
   }
   
-  Fold <- mean(C_hist/B_hist)
+  Fold <- mean(C_hist/B_hist, na.rm=TRUE)
   
   if (Fold < Flim[1]) Fmod1 <- (-2)
   if (Fold > Flim[2]) Fmod1 <- 2
@@ -2591,7 +2591,7 @@ Islope_ <- function(x, Data, reps = 100, yrsmth = 5, lambda = 0.4,xx = 0.2) {
   ylast <- (Data@LHYear[1] - Data@Year[1]) + 1  #last historical year
   C_dat <- Data@Cat[x, ind]
   if (is.na(Data@MPrec[x]) || length(Data@Year) == ylast + 1) {
-    TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
+    TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat, na.rm=TRUE), Data@CV_Cat/(yrsmth^0.5))
   } else {
     TACstar <- rep(Data@MPrec[x], reps)
   }
@@ -2729,9 +2729,9 @@ IT_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, mc = 0.05) {
     plot(Data@Year[ind], Data@Ind[x,ind], xlab="Year", 
          ylab= paste0("Index (previous ", yrsmth, "years)"), bty="l", type="l",
          lwd=2, ylim=ylim)
-    lines(Data@Year[ind], rep(mean(Data@Ind[x, ind]), length(ind)), lty=2)
-    text(quantile(Data@Year[ind],0.15), mean(Data@Ind[x, ind]), "Mean Index", pos=3)
-    lines(Data@Year[ind], rep(mean(Data@Iref[x]), length(ind)), lty=3)
+    lines(Data@Year[ind], rep(mean(Data@Ind[x, ind], na.rm=TRUE), length(ind)), lty=2)
+    text(quantile(Data@Year[ind],0.15), mean(Data@Ind[x, ind], na.rm=TRUE), "Mean Index", pos=3)
+    lines(Data@Year[ind], rep(mean(Data@Iref[x], na.rm=TRUE), length(ind)), lty=3)
     text(quantile(Data@Year[ind],0.15), Data@Iref[x], "Reference Index", pos=3)
     
     boxplot(TAC, ylab=paste0("TAC (", Data@Units, ")"))
@@ -2815,9 +2815,9 @@ Itarget_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, Imulti
   ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
   ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
   C_dat <- Data@Cat[x, ind2]
-  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat[x,1]/(yrsmth^0.5))
-  Irecent <- mean(Data@Ind[x, ind])
-  Iave <- mean(Data@Ind[x, ind3])
+  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat, na.rm=TRUE), Data@CV_Cat[x,1]/(yrsmth^0.5))
+  Irecent <- mean(Data@Ind[x, ind], na.rm=TRUE)
+  Iave <- mean(Data@Ind[x, ind3], na.rm=TRUE)
   Itarget <- Iave * Imulti
   I0 <- 0.8 * Iave
   if (Irecent > I0) {
@@ -2835,11 +2835,11 @@ Itarget_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, Imulti
     ylim <- range(c(Data@Ind[x, ], Itarget, I0))
     plot(Data@Year, Data@Ind[x, ], type="l", lwd=2, bty="l",
          xlab="Year", ylab="Index", ylim=ylim)
-    points(max(Data@Year), mean(Data@Ind[x, ind]), cex=2, pch=16,col='blue')
-    text(max(Data@Year), mean(Data@Ind[x, ind]), cex=1, 'Irecent', pos=3, col='blue', xpd=NA)
+    points(max(Data@Year), mean(Data@Ind[x, ind], na.rm=TRUE), cex=2, pch=16,col='blue')
+    text(max(Data@Year), mean(Data@Ind[x, ind], na.rm=TRUE), cex=1, 'Irecent', pos=3, col='blue', xpd=NA)
     
-    lines(Data@Year[ind3], rep(mean(Data@Ind[x, ind3]), length(ind3)), lty=2, col="orange")
-    text(mean(Data@Year[ind3]), mean(Data@Ind[x, ind3]), "Iave", col="orange", pos=1)
+    lines(Data@Year[ind3], rep(mean(Data@Ind[x, ind3], na.rm=TRUE), length(ind3)), lty=2, col="orange")
+    text(mean(Data@Year[ind3]), mean(Data@Ind[x, ind3], na.rm=TRUE), "Iave", col="orange", pos=1)
     
     points(max(Data@Year), Itarget, cex=2, pch=16,col='green')
     text(max(Data@Year), Itarget, cex=1, 'Itarget', pos=3, col='green', xpd=NA)
@@ -2861,8 +2861,8 @@ Itarget_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, Imulti
     
     # lines(Years[(length(Years)-yrs):length(Years)], Data@Cat[x, (length(Data@Cat[x,])-yrs):length(Data@Cat[x,])])
     
-    points(max(Data@Year[ind2]), mean(TACstar), cex=2, col="orange", pch=16)
-    text(max(Data@Year[ind2]), mean(TACstar), "mean TAC*", pos=2, xpd=NA, col="orange")
+    points(max(Data@Year[ind2]), mean(TACstar, na.rm=TRUE), cex=2, col="orange", pch=16)
+    text(max(Data@Year[ind2]), mean(TACstar, na.rm=TRUE), "mean TAC*", pos=2, xpd=NA, col="orange")
     
     boxplot(TAC, at=max(Years)+1, add=TRUE, col="gray", axes=FALSE)
     
@@ -2985,7 +2985,7 @@ ITM <- function(x, Data, reps = 100, plot=FALSE) {
   yrsmth <- floor(4 * (1/Data@Mort[x])^(1/4))
   ind <- max(1, (length(Data@Year) - yrsmth + 1)):length(Data@Year)
   
-  deltaI <- mean(Data@Ind[x, ind])/Data@Iref[x]
+  deltaI <- mean(Data@Ind[x, ind], na.rm=TRUE)/Data@Iref[x]
   if (deltaI < (1 - mc)) deltaI <- 1 - mc
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
   
@@ -3024,8 +3024,8 @@ Ltarget_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, xL = 1
   ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
   ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
   C_dat <- Data@Cat[x, ind2]
-  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat), Data@CV_Cat/(yrsmth^0.5))
-  Lrecent <- mean(Data@ML[x,ind])
+  TACstar <- (1 - xx) * trlnorm(reps, mean(C_dat, na.rm=TRUE), Data@CV_Cat/(yrsmth^0.5))
+  Lrecent <- mean(Data@ML[x,ind], na.rm=TRUE)
   Lave <- mean(Data@ML[x,ind3], na.rm=TRUE)
   if (is.null(L0)) L0 <- 0.9 * Lave
   if (is.null(Ltarget)) Ltarget <- xL * Lave
@@ -3233,7 +3233,7 @@ Lratio_BHI <- function(x, Data, reps=100, plot=FALSE, yrsmth = 3) {
 
   for(i in 1:reps) {
     lensamp <- sample(mlbin, 0.5*sum(CAL), replace = T, prob = CAL)
-    LSQ[i] <- mean(lensamp)
+    LSQ[i] <- mean(lensamp, na.rm=TRUE)
   }
   
   TAC <- TACfilter((LSQ/Lref) * Cc)
@@ -3284,7 +3284,7 @@ Lratio_BHI2 <- function(x, Data, reps=100, plot=FALSE, yrsmth = 3) {
   LSQ <- rep(NA, reps)
   for(i in 1:reps) {
     lensamp <- sample(mlbin, 0.5*sum(CAL), replace = T, prob = CAL)
-    LSQ[i] <- mean(lensamp)
+    LSQ[i] <- mean(lensamp, na.rm=TRUE)
   }
   
   TAC <- TACfilter((LSQ/Lref) * Cc)
@@ -3332,13 +3332,13 @@ Lratio_BHI3 <- function(x, Data, reps=100, plot=FALSE, yrsmth = 3) {
   ind.year <- (LYear - yrsmth + 1):LYear
   CAL <- colSums(Data@CAL[x, ind.year, ])
   
-  CAL <- CAL[mlbin >= mean(Lc)]
-  mlbin <- mlbin[mlbin >= mean(Lc)]
+  CAL <- CAL[mlbin >= mean(Lc, na.rm=TRUE)]
+  mlbin <- mlbin[mlbin >= mean(Lc, na.rm=TRUE)]
   
   LSQ <- rep(NA, reps)
   for(i in 1:reps) {
     lensamp <- sample(mlbin, 0.5*sum(CAL), replace = T, prob = CAL)
-    LSQ[i] <- mean(lensamp)
+    LSQ[i] <- mean(lensamp, na.rm=TRUE)
   }
   
   TAC <- TACfilter((LSQ/Lref) * Cc)
@@ -3369,8 +3369,8 @@ LstepCC_ <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xx = 0, stepsz
     TACstar <- rep(Data@MPrec[x], reps)
   }
   step <- stepsz * TACstar
-  Lrecent <- mean(Data@ML[x,ind])
-  Lave <- mean(Data@ML[x,ind3])
+  Lrecent <- mean(Data@ML[x,ind], na.rm=TRUE)
+  Lave <- mean(Data@ML[x,ind3], na.rm=TRUE)
   rat <- Lrecent/Lave
   if (rat < llim[1]) {
     TAC <- TACstar - 2 * step
@@ -3923,8 +3923,8 @@ SBT2 <- function(x, Data, reps = 100, plot=FALSE, epsR = 0.75, tauR = 5,
   dependencies = "Data@Cref, Data@Rec, Data@Cat"
   
   Ctarg <- trlnorm(reps, Data@Cref[x], Data@CV_Cref)
-  muR <- mean(Data@Rec[x, (length(Data@Rec[x, ]) - tauR + 1):length(Data@Rec[x, ])])
-  phi <- mean(Data@Rec[x, (length(Data@Rec[x, ]) - 9):length(Data@Rec[x,])])
+  muR <- mean(Data@Rec[x, (length(Data@Rec[x, ]) - tauR + 1):length(Data@Rec[x, ])], na.rm=TRUE)
+  phi <- mean(Data@Rec[x, (length(Data@Rec[x, ]) - 9):length(Data@Rec[x,])], na.rm=TRUE)
   Rrat <- muR/phi
   deltaR <- rep(NA, reps)
   deltaR[Rrat > 1] <- Rrat[Rrat > 1]^(1 - epsR)
@@ -4104,7 +4104,7 @@ SPslope <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 4, alp = c(0.9, 1.
   Pt_1 <- trlnorm(reps, Pt_mu, Data@CV_Cat[x,1])
   It <- exp(predict(lm(log(B_dat) ~ yind), newdat = list(yind = yrsmth + 1)))
   Ilast <- B_dat[yrsmth]
-  MC <- max(mean(C_dat), tiny)
+  MC <- max(mean(C_dat, na.rm=TRUE), tiny)
   Ct_1 <- trlnorm(reps, MC, Data@CV_Cat[x,1]/(yrsmth^0.5))  # mean catches over the interval
   
   rat <- It/Ilast
@@ -4215,7 +4215,7 @@ SPMSY <- function(x, Data, reps = 100, plot=FALSE) {
   if (mean(rule) > 2.5 & mean(rule) < 3.5)  rsamp <- runif(nsamp, 0.05, 0.5)
   if (mean(rule) > 3.5) rsamp <- runif(nsamp, 0.015, 0.1)
   
-  Ksamp <- runif(nsamp, mean(Data@Cat[x, ])/rsamp, (10 * mean(Data@Cat[x, ]))/rsamp)
+  Ksamp <- runif(nsamp, mean(Data@Cat[x, ], na.rm=TRUE)/rsamp, (10 * mean(Data@Cat[x, ], na.rm=TRUE))/rsamp)
   nyears <- length(Data@Cat[x, ])
   B <- array(NA, dim = c(nsamp, nyears))
   
@@ -4351,8 +4351,8 @@ SPSRA_ <- function(x, Data, reps = 100, dep=NULL) {
                                                 Data@CV_Cat[x,1]), dim = c(reps, length(Ct)))
   Psamp <- array(trlnorm(length(Ct) * reps, 1, 0.1), dim = c(reps, length(Ct)))
   Ksamp <- rep(NA, reps)
-  for (i in 1:reps) Ksamp[i] <- exp(optimize(SPSRAopt, log(c(mean(Csamp[i, ]), 
-                                                             1000 * mean(Csamp[i, ]))), 
+  for (i in 1:reps) Ksamp[i] <- exp(optimize(SPSRAopt, log(c(mean(Csamp[i, ], na.rm=TRUE), 
+                                                             1000 * mean(Csamp[i, ], na.rm=TRUE))), 
                                              dep = dep[i], r = rsamp[i], Ct = Csamp[i,],
                                              PE = Psamp[i, ])$minimum)
   MSY <- Ksamp * rsamp/4
@@ -4472,8 +4472,8 @@ SPSRA_ML <- function(x, Data, reps = 100, plot=FALSE) {
   FM[FM<0.05] <- 0.05
 
   nyears <- length(Data@Year)
-  Ct1 <- mean(Data@Cat[x, 1:3])
-  Ct2 <- mean(Data@Cat[x, (nyears - 2):nyears])
+  Ct1 <- mean(Data@Cat[x, 1:3], na.rm=TRUE)
+  Ct2 <- mean(Data@Cat[x, (nyears - 2):nyears], na.rm=TRUE)
   dep <- rep(c(Ct1, Ct2), each = reps)/(1 - exp(-FM))
   if (reps == 1) {
     dep <- dep[2]/dep[1]
