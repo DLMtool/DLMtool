@@ -6,7 +6,8 @@
 #' Creates template for the Data input file (Excel or CSV) and Data documentation file (Markdown)
 #' in the working directory or the directory specified by the `dir` argument
 #'
-#' @param name Name of the data input files. Default is 'Data'
+#' @param name Name of the data input files. Default is 'Data'. Use 'Example'
+#' to create populated example Data Input and Data Documenation files. 
 #' @param ext Optional file extension for input file. 'xlsx' (default) or 'csv'
 #' @param overwrite Logical. Overwrite existing files?
 #' @param dir Optional directory path to create the Data files. Default is `getwd()``
@@ -17,41 +18,59 @@
 #' @author A. Hordyk
 #' @examples
 #' \dontrun{
-#' DataInit("MyData")
+#' DataInit("Example") # populated example
+#' DataInit("myData") # empty template
 #' }
 DataInit <- function(name="Data", ext=c("xlsx", "csv"), overwrite=FALSE, dir=NULL) {
   ext <- match.arg(ext)
   if (is.null(dir)) dir <- getwd()
   mdname <- paste(name, "md", sep=".")
-  name <- paste(name, ext, sep=".")
+  if (name == "Example") {
+    name <- paste(name, ext, sep=".")
+    md.path <- system.file("Data_Example.md", package = "DLMtool")
+    md.pathout <- gsub("Data_Example.md", mdname, md.path)
+    if (ext == "xlsx") {
+      par.path <- system.file("Data_Example.xlsx", package = "DLMtool")
+      pathout <- gsub("Data_Example.xlsx", name, par.path)
+      pathout <- gsub(dirname(pathout), dir, pathout)
+    } else {
+      par.path <- system.file("Data_Example.csv", package = "DLMtool")
+      pathout <- gsub("Data_Example.csv", name, par.path)
+      pathout <- gsub(dirname(pathout), dir, pathout) 
+    }
+    
+  } else{
+    name <- paste(name, ext, sep=".")
+    md.path <- system.file("Rmd/Data/DataDoc.md", package = "DLMtool")
+    md.pathout <- gsub("Data.md", mdname, md.path)
+    if (ext == "xlsx") {
+      par.path <- system.file("Data.xlsx", package = "DLMtool")
+      pathout <- gsub("Data.xlsx", name, par.path)
+      pathout <- gsub(dirname(pathout), dir, pathout)
+    } else {
+      par.path <- system.file("Data.csv", package = "DLMtool")
+      pathout <- gsub("Data.csv", name, par.path)
+      pathout <- gsub(dirname(pathout), dir, pathout) 
+    }
+  }
+  
+  
   # Copy xlsx file over to working directory 
  
   message("Creating ", name, " and ", mdname, " in ", dir)
   
-  if (ext == "xlsx") {
-    path <- system.file("Data.xlsx", package = "DLMtool")
-    pathout <- gsub("Data.xlsx", name, path)
-    pathout <- gsub(dirname(pathout), dir, pathout)
-  } else {
-    path <- system.file("Data.csv", package = "DLMtool")
-    pathout <- gsub("Data.csv", name, path)
-    pathout <- gsub(dirname(pathout), dir, pathout) 
-  }
-
   # Check if file exists 
   exist <- file.exists(pathout)
   if (exist & !overwrite) stop(name, " already exists in ", dir, ". Use 'overwrite=TRUE' to overwrite", call.=FALSE)
-  copy <- file.copy(path, pathout, overwrite = overwrite)
-  if (!copy) stop("Excel file not copied from ", path)
+  copy <- file.copy(par.path, pathout, overwrite = overwrite)
+  if (!copy) stop("Excel file not copied from ", par.path)
 
   # Check if file exists 
-  path <- system.file("Rmd/Data/DataDoc.md", package = "DLMtool")
-  pathout <- gsub("Data.md", mdname, path)
-  pathout <- gsub(dirname(pathout), dir, pathout)
-  exist <- file.exists(pathout)
+  md.pathout <- gsub(dirname(md.pathout), dir, md.pathout)
+  exist <- file.exists(md.pathout)
   if (exist & !overwrite) stop(mdname, " already exists in ", dir, ". Use 'overwrite=TRUE' to overwrite", call.=FALSE)
-  copy <- file.copy(path, pathout, overwrite = overwrite)
-  if (!copy) stop("Markdown file not copied from ", path)
+  copy <- file.copy(md.path, md.pathout, overwrite = overwrite)
+  if (!copy) stop("Markdown file not copied from ", md.path)
   
 }
 
@@ -325,7 +344,7 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
   ind2 <-  which(datasheet$Name == "Vuln CAA")
   if (length(ind2)>0) 
     ind <- ind[!ind ==ind2]
-  CAAexists <- datasheet$Name[ind] == "CAA"
+  CAAexists <- grepl('CAA', datasheet$Name[ind])
   if (length(CAAexists) < 1) CAAexists <- FALSE
   if (length(ind) <=1 || !CAAexists) {
     CAA_Yrs <- numeric(0)
@@ -1606,8 +1625,9 @@ Uses <- function(slot, silent=FALSE) {
 #' @param title Title for the Report. Title in the markdown file will override this value
 #' @param author Author of the Report. Author in the markdown file will override this value
 #' @param date Date of the Report. Date in the markdown file will override this value
-#' @param output_format Currently only accepts `html_document`
-#' @param open Logical. Open the report in a web browser?
+#' @param output_format Output file format: `html_document` or `pdf_document`
+#' @param open Logical. Open the compiled report?
+#' @param quiet Logical.An option to suppress printing of the pandoc command line.
 #' @param dir Optional. Directory to save the file. Defaults to `getwd()`
 #' @param overwrite Logical. Overwrite an existing file with the same name?
 #'
@@ -1616,20 +1636,18 @@ Uses <- function(slot, silent=FALSE) {
 #' @author A. Hordyk
 #' @examples
 #' \dontrun{
-#' DataInit() # generate Data Input and Documentation files
-#' # enter fishery data in Input file and document in Documentation file
-#' Data <- XL2Data()
-#' Report(Data, "path.to.md.file/Data.md")
+#' DataInit('Example') # generate example Data Input and Documentation files
+#' Report('Example', 'Example.md')
 #' }
 Report <- function(Data=NULL, md=NULL, name="Data-Report", 
                    title="Data Documentation",
                    author="Author Name",
                    date=Sys.Date(),
-                   output_format=c("html_document"),
-                   open=TRUE,
+                   output_format=c("html_document", "pdf_document"),
+                   open=TRUE, quiet=TRUE,
                    dir=NULL,
                    overwrite=FALSE) {
-  
+  output_format <- match.arg(output_format)
   if (class(Data) != "Data" & class(Data) != "character")
     stop("Must provide a Data object or file path to import a Data Object")
   
@@ -1680,6 +1698,14 @@ Report <- function(Data=NULL, md=NULL, name="Data-Report",
   cat(paste("title:", title, "\n"), file = rmdfile, sep = " ", append = TRUE)
   cat(paste("author:", author, "\n"), file = rmdfile, sep = " ", append = TRUE)
   cat(paste("date:", date, "\n"), file = rmdfile, sep = " ", append = TRUE)
+  cat("always_allow_html: yes\n", file = rmdfile, sep = " ", append = TRUE)
+  cat("output: 
+        html_document:
+          toc: true
+          toc_float: true
+        pdf_document:
+          toc: true\n", file = rmdfile, sep = " ", append = TRUE)
+  
   cat("---\n", file = rmdfile, sep = " ", append = TRUE)
   cat("\n", file = rmdfile, sep = " ", append = TRUE)
   cat("\n", file = rmdfile, sep = " ", append = TRUE)
@@ -1692,6 +1718,7 @@ Report <- function(Data=NULL, md=NULL, name="Data-Report",
     temp <- grepl("## Biology", mdtext)
     if (all(!temp)) stop("'## Biology' heading missing from ", md)
     ind1 <- which(mdloc) +1 
+    if (length(ind1)>1) ind1 <- ind1[1]
     ind2 <- which(temp) -1
     
     text <- mdtext[ind1:ind2]
@@ -1701,7 +1728,7 @@ Report <- function(Data=NULL, md=NULL, name="Data-Report",
   }
   
   cat("```{r, echo=FALSE} \n", file = rmdfile, sep = " ", append = TRUE)
-  cat("metadatatable(Data)\n", file = rmdfile, sep = " ", append = TRUE)
+  cat("metadatatable(Data, output_format=output_format)\n", file = rmdfile, sep = " ", append = TRUE)
   cat("```\n", file = rmdfile, sep = " ", append = TRUE)
   
   # Biology section
@@ -1719,8 +1746,9 @@ Report <- function(Data=NULL, md=NULL, name="Data-Report",
       cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
     }
   }
-  cat("```{r, echo=FALSE, out.width='90%'} \n", file = rmdfile, sep = " ", append = TRUE)
+  cat("```{r, echo=FALSE, out.width='90%', tidy=FALSE, fig.align='center', fig.show='asis'} \n", file = rmdfile, sep = " ", append = TRUE)
   cat("fignum <- biology_plots(Data)\n", file = rmdfile, sep = " ", append = TRUE)
+  cat("fignum <- growth_plots(Data, fignum=fignum)\n", file = rmdfile, sep = " ", append = TRUE)
   cat("```\n\n", file = rmdfile, sep = " ", append = TRUE)
   
   
@@ -1784,7 +1812,7 @@ Report <- function(Data=NULL, md=NULL, name="Data-Report",
     
   }
   
-  cat("```{r, echo=FALSE, out.width='90%'} \n", file = rmdfile, sep = " ", append = TRUE)
+  cat("```{r, echo=FALSE, out.width='90%', fig.align='center', fig.show='asis'} \n", file = rmdfile, sep = " ", append = TRUE)
   cat("fignum <- caa_plot(Data, fignum=fignum+1)\n", file = rmdfile, sep = " ", append = TRUE)
   cat("```\n\n", file = rmdfile, sep = " ", append = TRUE)
   
@@ -1806,7 +1834,7 @@ Report <- function(Data=NULL, md=NULL, name="Data-Report",
     }
   }
   
-  cat("```{r, echo=FALSE, out.width='90%'} \n", file = rmdfile, sep = " ", append = TRUE)
+  cat("```{r, echo=FALSE, out.width='90%', fig.align='center', fig.show='asis'} \n", file = rmdfile, sep = " ", append = TRUE)
   cat("fignum <- cal_plot(Data, fignum=fignum)\n", file = rmdfile, sep = " ", append = TRUE)
   cat("```\n\n", file = rmdfile, sep = " ", append = TRUE)
   
@@ -1840,17 +1868,20 @@ Report <- function(Data=NULL, md=NULL, name="Data-Report",
   
   # Render output file
   message("Rendering to ", dir)
-  output_file <- file.path(dir, paste0(name, '.html'))
+  if (grepl('html', output_format)) 
+    output_file <- file.path(dir, paste0(name, '.html'))
+  if (grepl('pdf', output_format)) 
+    output_file <- file.path(dir, paste0(name, '.pdf'))
   rmarkdown::render(rmdfile, output_format =output_format,
                     output_file=output_file,
-                    output_dir = dir, params=Data)
+                    output_dir = dir, params=Data, quiet = quiet)
   
   if (open) browseURL(output_file)
   
 }
 
 
-metadatatable <- function(Data, i=1) {
+metadatatable <- function(Data, i=1, output_format) {
   df <- data.frame(Data@Name[1],
                    Data@Common_Name[1],
                    Data@Species[1],
@@ -1871,13 +1902,20 @@ metadatatable <- function(Data, i=1) {
     'Units',
     'Last TAE',
     'Number of areas')
-  
-  df %>% knitr::kable(caption='Table 1. Summary of metadata') %>% 
+ 
+  if (output_format == "html_document") {
+    suppressWarnings(tab <- knitr::kable(df, caption='Table 1. Summary of metadata'))
+  } 
+  if (output_format == "pdf_document") {
+    suppressWarnings(tab <- knitr::kable(df, caption='Table 1. Summary of metadata', format='markdown'))
+  }
+  suppressWarnings(
+  tab %>%
     kableExtra::kable_styling(
       bootstrap_options = c("striped", "hover", "responsive"), full_width = F,
       position = "left"
     ) %>%
-    kableExtra::column_spec(1, bold=TRUE)
+    kableExtra::column_spec(1, bold=TRUE))
 }
 
 biology_plots <- function(Data, i=1, n=20000) {
@@ -1950,13 +1988,17 @@ biology_plots <- function(Data, i=1, n=20000) {
     ggplot2::theme(strip.text = ggplot2::element_text(size=14))
   if (addText) p1 <- p1 + ggplot2::geom_text(data=textdf, ggplot2::aes(x=0, y=3, label=Text) ) 
   suppressWarnings(plot(p1))
+  fignum
   
   
+}
+
+growth_plots <- function(Data, i=1, fignum=1) {
   # Mean length-at-age
   doGrowth <- FALSE
   if (length(Data@vbLinf[i]) > 0 && !is.na(Data@vbLinf[i])) {
     doGrowth <- TRUE
-    fignum <- fignum +1 
+    fignum <- fignum+1
     vonB <- function(Linf, t0, K, ages) Linf * (1-exp(-K*(ages-t0)))
     
     meanL <- vonB(Data@vbLinf[i], Data@vbt0[i], Data@vbK[i], 0:Data@MaxAge)
@@ -1978,7 +2020,6 @@ biology_plots <- function(Data, i=1, n=20000) {
   }
   fignum
 }
-
 
 select_plots <- function(Data, i=1, n=20000, fignum=1) {
   lout <- list()
@@ -2232,7 +2273,7 @@ caa_plot <- function(Data, i=1, fignum=1) {
   # CAA 
   CAA <- Data@CAA[i,,]
   nyrs <- nrow(CAA); maxage <- ncol(CAA)
-  if (NAor0(CAA)) {
+  if  (all(is.na(CAA))){
     P2 <- NULL
   } else {
     P2 <- TRUE
@@ -2243,6 +2284,7 @@ caa_plot <- function(Data, i=1, fignum=1) {
     df1$Val <- as.numeric(df1$Val)
     
     df1$Year <- as.numeric(df1$Year)
+    df1$Year <- Data@Year
     
     yr.n <- df1 %>% dplyr::group_by(Year) %>% dplyr::summarise(n=sum(Freq))
     yr.ind <- yr.n %>% dplyr::filter(n>0) %>% dplyr::select(Year)
@@ -2253,12 +2295,16 @@ caa_plot <- function(Data, i=1, fignum=1) {
     
     if (nrow(df1)>0 ) {
       nyears <- length(unique(df1$Year))
+      nayears <- df1 %>% group_by(Year) %>% summarize(isna=all(is.na(Freq)))
+      nyears <- sum(!nayears$isna)
+      
       nbins <- length(unique(df1$Val))
-      tplot <- 25 # total plots per page
+      tplot <- 16 # total plots per page
+      
       if (nyears > tplot) {
         npages <- ceiling(nyears/tplot) 
-        ncol <- 5 
-        nrow <- 5
+        ncol <- 4 
+        nrow <- 4
         nplot <- ncol * nrow
       } else {
         npages <- 1
@@ -2269,13 +2315,19 @@ caa_plot <- function(Data, i=1, fignum=1) {
       pmat <- matrix(1:(nrow*ncol), nrow=nrow, ncol=ncol, byrow=TRUE)
       pmat[pmat >nplot] <- NA
       
-      op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,2,1), oma=c(4,4,2,0))
+      op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,2,1), oma=c(4,4,4,0))
       on.exit(par(op))
       
       yr1 <- 1 
       col <- "grey"
       for (pg in 1:npages) {
-        yrind <- yr1:(yr1+nplot-1)
+        if (pg ==1) {
+          yrind <- yr.ind$Year[1:(nplot)]  
+        } else {
+          t1 <- nplot * (pg-1) +1 
+          t2 <- t1+nplot
+          yrind <- yr.ind$Year[t1:t2]
+        }
         yr1 <- max(yrind) + 1
         dat <- df1 %>% dplyr::filter(Year %in% yrind)
         un.yrs_val <- as.numeric(unique(dat$Year_val))
@@ -2285,28 +2337,35 @@ caa_plot <- function(Data, i=1, fignum=1) {
           nplot <- nyears - (npages-1) * tplot
           ncol <- ceiling(sqrt(nplot))
           nrow <- ceiling(nplot/ncol)
-          op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,2,1), oma=c(4,4,2,0))
+          op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,2,1), oma=c(4,4,4,0))
           on.exit(par(op))
-          pmat <- matrix(1:nplot, nrow=nrow, ncol=ncol, byrow=TRUE)
+          suppressWarnings(
+          pmat <- matrix(1:nplot, nrow=nrow, ncol=ncol, byrow=TRUE))
+          pmat[pmat>nplot] <- NA
         }
         for (p in 1:nplot) {
           pdat <- dat %>% dplyr::filter(Year==un.yrs[p])
           if (nrow(pdat) > 0) {
-            if (p %in% pmat[nrow,]) {
-              barplot(pdat$Freq, names=round(pdat$Val, 2), axes=FALSE, col=col)  
-            } else {
-              barplot(pdat$Freq, names=FALSE, axes=FALSE, col=col)
-            } 
-            if (p %in% pmat[,1]) axis(side=2)
-            if (!p %in% pmat[,1]) axis(side=2, labels=TRUE)
-            ncount <- round(sum(pdat$Freq),0)
-            title(un.yrs_val[p])
-            text(max(pdat$Val), max(pdat$Freq), paste('n = ', ncount),
-                 xpd=NA)
+            if (all(is.na(pdat$Freq))) {
+              
+            } else{
+              
+              if (p %in% pmat[nrow,]) {
+                barplot(pdat$Freq, names=round(pdat$Val, 2), axes=FALSE, col=col)  
+              } else {
+                barplot(pdat$Freq, names=FALSE, axes=FALSE, col=col)
+              } 
+              if (p %in% pmat[,1]) axis(side=2)
+              if (!p %in% pmat[,1]) axis(side=2, labels=TRUE)
+              ncount <- round(sum(pdat$Freq),0)
+              title(un.yrs_val[p])
+              text(max(pdat$Val), max(pdat$Freq), paste('n = ', ncount),
+                   xpd=NA)
+            }
           }
           if (p == 1) {
             title(main=paste0('Figure ', fignum, ". Catch-at-Age (Years ", min(un.yrs), " - ", max(un.yrs), ")"), 
-                  xpd=NA, line=2)
+                  xpd=NA, line=1, outer=TRUE)
             fignum <- fignum + 1
           }
         } 
@@ -2319,6 +2378,7 @@ caa_plot <- function(Data, i=1, fignum=1) {
   
   fignum
 }
+
 
 cal_plot <- function(Data, i=1, fignum=1) {
   
@@ -2337,6 +2397,7 @@ cal_plot <- function(Data, i=1, fignum=1) {
     df1$Val <- as.numeric(df1$Val)
     
     df1$Year <- as.numeric(df1$Year)
+    df1$Year <- Data@Year
     
     yr.n <- df1 %>% dplyr::group_by(Year) %>% dplyr::summarise(n=sum(Freq))
     yr.ind <- yr.n %>% dplyr::filter(n>0) %>% dplyr::select(Year)
@@ -2351,11 +2412,11 @@ cal_plot <- function(Data, i=1, fignum=1) {
       nyears <- sum(!nayears$isna)
       
       nbins <- length(unique(df1$Val))
-      tplot <- 25 # total plots per page
+      tplot <- 16 # total plots per page
       if (nyears > tplot) {
         npages <- ceiling(nyears/tplot) 
-        ncol <- 5 
-        nrow <- 5
+        ncol <- 4 
+        nrow <- 4
         nplot <- ncol * nrow
       } else {
         npages <- 1
@@ -2366,7 +2427,7 @@ cal_plot <- function(Data, i=1, fignum=1) {
       pmat <- matrix(1:(ncol*nrow), nrow=nrow, ncol=ncol, byrow=TRUE)
       pmat[pmat>nplot] <- NA
       
-      op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,2,1), oma=c(4,4,2,0))
+      op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,2,1), oma=c(4,4,4,0))
       on.exit(par(op))
       
       yr1 <- 1
@@ -2389,9 +2450,11 @@ cal_plot <- function(Data, i=1, fignum=1) {
           nplot <- nyears - (npages-1) * tplot
           ncol <- ceiling(sqrt(nplot))
           nrow <- ceiling(nplot/ncol)
-          op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,2,1), oma=c(4,4,2,0))
+          op <- par(mfrow=c(nrow, ncol), no.readonly = TRUE, mar=c(2,2,2,1), oma=c(4,4,4,0))
           on.exit(par(op))
+          suppressWarnings(
           pmat <- matrix(1:(ncol*nrow), nrow=nrow, ncol=ncol, byrow=TRUE)
+          )
           pmat[pmat>nplot] <- NA
         }
         for (p in 1:nplot) {
@@ -2415,7 +2478,7 @@ cal_plot <- function(Data, i=1, fignum=1) {
           }
           if (p == 1) {
             title(main=paste0('Figure ', fignum, ". Catch-at-Length (Years ", min(un.yrs), " - ", max(un.yrs), ")"), 
-                  xpd=NA, line=2)
+                  xpd=NA, line=1, outer=TRUE)
             fignum <- fignum + 1
           }
         } 
