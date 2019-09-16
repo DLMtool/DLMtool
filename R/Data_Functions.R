@@ -1919,6 +1919,7 @@ metadatatable <- function(Data, i=1, output_format) {
 }
 
 biology_plots <- function(Data, i=1, n=20000) {
+  Var <- val <- ..scaled.. <- Text <- NA
   
   slots <- c("Mort", "vbLinf", 'vbK', 'vbt0', 'wla', 'wlb', 'steep', 'sigmaR',
              'L50', 'L95')
@@ -1995,6 +1996,7 @@ biology_plots <- function(Data, i=1, n=20000) {
 
 growth_plots <- function(Data, i=1, fignum=1) {
   # Mean length-at-age
+  lo <- up <- NA
   doGrowth <- FALSE
   if (length(Data@vbLinf[i]) > 0 && !is.na(Data@vbLinf[i])) {
     doGrowth <- TRUE
@@ -2022,6 +2024,7 @@ growth_plots <- function(Data, i=1, fignum=1) {
 }
 
 select_plots <- function(Data, i=1, n=20000, fignum=1) {
+  Var <- val <- ..scaled.. <- Text <- Select <- Length <- NA 
   lout <- list()
   slots <- c('LFC', 'LFS', 'Vmaxlen')
   for (x in seq_along(slots)) {
@@ -2092,7 +2095,7 @@ select_plots <- function(Data, i=1, n=20000, fignum=1) {
   suppressWarnings(plot(p3))
   
   if (all(!is.na(df$mean)) && all(df$mean >0) ) {
-    if(!is.na(Data@MaxAge) & doGrowth) {
+    if(!is.na(Data@MaxAge)) {
       # selectivity-at-age
       
       Lens <- 0:Data@vbLinf[i]
@@ -2191,7 +2194,7 @@ makeDF <- function(Data, slot, i ) {
 }
 
 ts_plots <- function(Data, i=1, fignum=1) {
-  
+  Year <- y <- dw <- up <- X <- Ind <- value <- key <- NA
   DF <- makeDF(Data, "Cat", i)
   DF <- rbind(DF, makeDF(Data, "Ind", i))
   
@@ -2271,6 +2274,7 @@ ts_plots <- function(Data, i=1, fignum=1) {
 
 caa_plot <- function(Data, i=1, fignum=1) {
   # CAA 
+  Year <- Freq <- n <- NA 
   CAA <- Data@CAA[i,,]
   nyrs <- nrow(CAA); maxage <- ncol(CAA)
   if  (all(is.na(CAA))){
@@ -2381,7 +2385,7 @@ caa_plot <- function(Data, i=1, fignum=1) {
 
 
 cal_plot <- function(Data, i=1, fignum=1) {
-  
+  Year <- Freq <- n <- NA 
   CAL <- Data@CAL[i,,]
   if (all(is.na(CAL))) {
     P3 <- NULL
@@ -2493,7 +2497,7 @@ cal_plot <- function(Data, i=1, fignum=1) {
 }
 
 ref_plots <- function(Data, i=1, n=20000, fignum=1) {
-  
+  Var <- val <- ..scaled.. <- Text <- NA
   slots <- c('Dep', 'Abun', 'SpAbun', 'FMSY_M', 'BMSY_B0', 'Cref', 'Bref', 'Iref',
              't', "AvC", 'Dt', 'Ref')
     
