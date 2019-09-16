@@ -76,24 +76,25 @@ If using the DLMtool or MSEtool R packages in a R session, the template files ca
 
 ```{r, eval=FALSE}
 library(DLMtool)
-# replace "MyDataFile" with the name of the data files you wish to create
+DataInit("Example") # create example populated Input and Documentation files 
+# or create blank templates:
 DataInit("MyDataFile") 
+# replace "MyDataFile" with the name of the data files you wish to create
 ```
-
-It is important to note that, in most cases, the data input file allows only one entry for each data type. For example, multiple catch-at-age data sets may be available (e.g., from a commercial fishery and from a fishery-independent survey). However, to be used in stock assessment or analysis, the two data sets must be combined in some way (or one data set ignored if it is not considered representative or reliable). 
-Consequently, the data included in the Data Input file must represent the best available data. That is, the data sets must be combined in some manner (ideally described in the Data Documentation File) and the single data set entered into the data input file so it can be used in assessment or by management procedures.
-
-This same principle applies to other data entered into the data input file. The only exception is for indices of abundance where multiple indices are allowed. This is explained in more detail in later sections of this guide.
-
 
 # Populating the Fishery Data Files
 This section of the guide describes how to enter data in the Data Input file and document the data in the Data Documentation file.
 
-**Important Note 1:** It is important that the text in the first column of the input file (column A) is not modified at all. These names are used to import the data file into MERA or the R packages.
+**Important Note 1:** It is important to note that, in most cases, the data input file allows only one entry for each data type. For example, multiple catch-at-age data sets may be available (e.g., from a commercial fishery and from a fishery-independent survey). However, to be used in stock assessment or analysis, the two data sets must be combined in some way (or one data set ignored if it is not considered representative or reliable). 
+Consequently, the data included in the Data Input file must represent the best available data. That is, the data sets must be combined in some manner (ideally described in the Data Documentation File) and the single data set entered into the data input file so it can be used in assessment or by management procedures.
 
-**Important Note 2:** The data input file requires both character string (i.e., text) and numeric inputs. The data format for each entry is described below. It is important that no text is entered into the entries that require numeric inputs. For example, "Previous TAC" is a numeric input. A value of '1000' (without the quotations) is acceptable, while an input of 'about 1000' is not. 
+This same principle applies to other data entered into the data input file. The only exception is for indices of abundance where multiple indices are allowed. This is explained in more detail in later sections of this guide.
 
-**Important Note 3:** Do not use any thousands separators. For example 1 000 000 and 1,000,000 may introduce errors during the data import. Entries like 1000000 are preferable. 
+**Important Note 2:** It is important that the text in the first column of the input file (column A) is not modified at all. These names are used to import the data file into MERA or the R packages.
+
+**Important Note 3:** The data input file requires both character string (i.e., text) and numeric inputs. The data format for each entry is described below. It is important that no text is entered into the entries that require numeric inputs. For example, "Previous TAC" is a numeric input. A value of '1000' (without the quotations) is acceptable, while an input of 'about 1000' is not. 
+
+**Important Note 4:** Do not use any thousands separators. For example 1 000 000 and 1,000,000 may introduce errors during the data import. Entries like 1000000 are preferable. 
 
 The fishery data are grouped into 7 categories:
 
