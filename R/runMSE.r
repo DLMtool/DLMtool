@@ -133,7 +133,7 @@ runMSE <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","curE","
     globalMP <- NULL
     extra_package <- NULL
     for (mm in seq_along(cMPs)) {
-      nmspace <- find(cMPs[mm])
+      nmspace <- utils::find(cMPs[mm])
       if (nmspace==".GlobalEnv") {
         globalMP <- c(globalMP, cMPs[mm]) 
       } else {
