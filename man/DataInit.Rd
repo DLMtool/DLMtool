@@ -8,7 +8,8 @@ DataInit(name = "Data", ext = c("xlsx", "csv"), overwrite = FALSE,
   dir = NULL)
 }
 \arguments{
-\item{name}{Name of the data input files. Default is 'Data'}
+\item{name}{Name of the data input files. Default is 'Data'. Use 'Example'
+to create populated example Data Input and Data Documenation files.}
 
 \item{ext}{Optional file extension for input file. 'xlsx' (default) or 'csv'}
 
@@ -25,7 +26,8 @@ in the working directory or the directory specified by the \code{dir} argument
 }
 \examples{
 \dontrun{
-DataInit("MyData")
+DataInit("Example") # populated example
+DataInit("myData") # empty template
 }
 }
 \author{

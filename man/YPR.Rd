@@ -67,7 +67,7 @@ See \linkS4class{Data} for information on the \code{Data} object \cr
 \code{YPR_CC}: CAA, Cat, LFS, MaxAge, vbK, vbLinf, vbt0
 
 
-\code{YPR_ML}: CAL, Cat, LFS, Lbar, Lc, MaxAge, Mort, vbK, vbLinf, vbt0
+\code{YPR_ML}: CAL, Cat, Lbar, Lc, LFS, MaxAge, Mort, vbK, vbLinf, vbt0
 }
 
 \section{Rendered Equations}{

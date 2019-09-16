@@ -6,8 +6,9 @@
 \usage{
 Report(Data = NULL, md = NULL, name = "Data-Report",
   title = "Data Documentation", author = "Author Name",
-  date = Sys.Date(), output_format = c("html_document"), open = TRUE,
-  dir = NULL, overwrite = FALSE)
+  date = Sys.Date(), output_format = c("html_document",
+  "pdf_document"), open = TRUE, quiet = TRUE, dir = NULL,
+  overwrite = FALSE)
 }
 \arguments{
 \item{Data}{Either an object of class \code{Data} or the file path to a valid
@@ -23,9 +24,11 @@ file to be imported with \code{XL2Data}}
 
 \item{date}{Date of the Report. Date in the markdown file will override this value}
 
-\item{output_format}{Currently only accepts \code{html_document}}
+\item{output_format}{Output file format: \code{html_document} or \code{pdf_document}}
 
-\item{open}{Logical. Open the report in a web browser?}
+\item{open}{Logical. Open the compiled report?}
+
+\item{quiet}{Logical.An option to suppress printing of the pandoc command line.}
 
 \item{dir}{Optional. Directory to save the file. Defaults to \code{getwd()}}
 
@@ -39,10 +42,8 @@ A HTML Data Report is generated and opened in a web browser
 }
 \examples{
 \dontrun{
-DataInit() # generate Data Input and Documentation files
-# enter fishery data in Input file and document in Documentation file
-Data <- XL2Data()
-Report(Data, "path.to.md.file/Data.md")
+DataInit('Example') # generate example Data Input and Documentation files
+Report('Example', 'Example.md')
 }
 }
 \author{
