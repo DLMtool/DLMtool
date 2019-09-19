@@ -1,14 +1,11 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
 ## DLMtool 5.4.0
-
-
-
 ### Minor changes 
-
-### Major changes 
-Update new `Data` object
-
+- The `Data` object has been updated, main new features are the addition of an Effort slot
+(`Data@Effort` and `Data@CV_Effort`) and all CV by year for all time-series information.
+- the `Data@RInd` slot has been removed and replaced with `Data@AddInd`
+- Additional information on the Data object can be found [here](https://dlmtool.github.io/DLMtool/Data/Data.html).
 
 ### Fixes
 - fix bug where TAE implementation error was affecting TAC controls (thanks to Robyn Forrest and Sean Anderson for finding this)
