@@ -41,7 +41,7 @@ DataInit <- function(name="Data", ext=c("xlsx", "csv"), overwrite=FALSE, dir=NUL
     
   } else{
     name <- paste(name, ext, sep=".")
-    md.path <- system.file("Rmd/Data/DataDoc.md", package = "DLMtool")
+    md.path <- system.file("Rmd/Data/Data.md", package = "DLMtool")
     md.pathout <- gsub("Data.md", mdname, md.path)
     if (ext == "xlsx") {
       par.path <- system.file("Data.xlsx", package = "DLMtool")
