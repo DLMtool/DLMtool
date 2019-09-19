@@ -360,8 +360,8 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
   if (length(CAA_Yrs)>0) {
     Data@CAA <- array(NA, dim=c(1, Nyears, Data@MaxAge))
     CAAdat <- datasheet[ind, 2:(Data@MaxAge+1)] %>% as.matrix() %>% as.numeric() %>% matrix(., nrow=length(ind), ncol=Data@MaxAge)
-    if (any(is.na(CAAdat))) 
-      stop("NAs in CAA data. Is each row of length `Maximum age`?", call. = FALSE)
+    # if (any(is.na(CAAdat))) 
+    #   stop("NAs in CAA data. Is each row of length `Maximum age`?", call. = FALSE)
     yrind <- match(CAA_Yrs, Data@Year)
     Data@CAA[1, yrind,] <- CAAdat
   } else{
@@ -435,8 +435,8 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
   Data@CAL <- array(NA, dim=c(1, Nyears, NMids))
   
   CALdat <- datasheet[ind, 2:(NMids+1)] %>% as.matrix() %>% as.numeric() %>% matrix(., nrow=length(ind), ncol=NMids)
-  if (any(is.na(CALdat))) 
-    stop("NAs in CAL data. Is each row same length as `CAL_mids`? (or `length(CAL_bins)-1`)", call. = FALSE)
+  # if (any(is.na(CALdat))) 
+    # stop("NAs in CAL data. Is each row same length as `CAL_mids`? (or `length(CAL_bins)-1`)", call. = FALSE)
   yrind <- match(CAL_Yrs, Data@Year)
   Data@CAL_bins <- CAL_bins
   Data@CAL_mids <- CAL_mids
