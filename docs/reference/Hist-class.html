@@ -8,6 +8,13 @@
 
 <title>Class <code>'Hist'</code> — Hist-class • DLMtool Documentation</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
@@ -16,13 +23,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -49,6 +58,7 @@
 <![endif]-->
 
 
+
   </head>
 
   <body>
@@ -65,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
       </span>
     </div>
 
@@ -88,6 +98,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -108,9 +119,11 @@
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
     
-    <dl class='dl-horizontal'>
+
+<dl class='dl-horizontal'>
 <dt><code>Data</code></dt><dd><p>The Data object at the end of the historical period</p></dd>
-    <dt><code>Obs</code></dt><dd><p>A table of sampled parameters of the observation model. Table of nsim rows. Real numbers<br />
+
+<dt><code>Obs</code></dt><dd><p>A table of sampled parameters of the observation model. Table of nsim rows. Real numbers<br />
 <ul>
 <li><p>Abias: bias in observed current absolute stock biomass</p></li>
 <li><p>Aerr: error in observed current absolute stock biomass</p></li>
@@ -139,9 +152,11 @@
 <li><p>Recsd: error in observed recruitment</p></li>
 <li><p>t0bias: bias in theoretical length at age zero (von Bertalanffy t0 parameter)</p></li>
 </ul></p></dd>
-    <dt><code>OM</code></dt><dd><p>A numeric data.frame with nsim rows with sampled Stock &amp; Fleet
+
+<dt><code>OM</code></dt><dd><p>A numeric data.frame with nsim rows with sampled Stock &amp; Fleet
 parameters</p></dd>
-    <dt><code>AtAge</code></dt><dd><p>A named list with arrays (dim nsim, maxage, nyears+proyears):
+
+<dt><code>AtAge</code></dt><dd><p>A named list with arrays (dim nsim, maxage, nyears+proyears):
 <ul>
 <li><p>Length: Length-at-age for each simulation, age, and year</p></li>
 <li><p>Weight: Weight-at-age for each simulation, age, and year</p></li>
@@ -153,7 +168,8 @@ parameters</p></dd>
 <li><p>SSBage: Spawning stock biomass by simulation, age, and year</p></li>
 <li><p>FM: Fishing mortality by simulation, age, year, and area</p></li>
 </ul></p></dd>
-    <dt><code>TSdata</code></dt><dd><p>A named list with population dynamics by simulation and year :
+
+<dt><code>TSdata</code></dt><dd><p>A named list with population dynamics by simulation and year :
 <ul>
 <li><p>VB: Vulnerable biomass</p></li>
 <li><p>SSB: Spawning stock biomass</p></li>
@@ -166,7 +182,8 @@ parameters</p></dd>
 <li><p>Marray: Average adult natural mortality (historical &amp; projection)</p></li>
 <li><p>RecDev: Recruitment deviations (historical &amp; projection)</p></li>
 </ul></p></dd>
-    <dt><code>Ref</code></dt><dd><p>A numeric data.frame with nsim rows containing biological
+
+<dt><code>Ref</code></dt><dd><p>A numeric data.frame with nsim rows containing biological
 reference points:
 <ul>
 <li><p>B0: Average unfished total biomass</p></li>
@@ -187,8 +204,11 @@ reach Bfrac of BMSY</p></li>
 <li><p>UMSY: Exploitation rate corresponding with MSY</p></li>
 <li><p>VBMSY: Average vulnerable biomass corresponding with MSY</p></li>
 </ul></p></dd>
-    <dt><code>SampPars</code></dt><dd><p>All sampled Stock, Fleet, Obs, and Imp parameters</p></dd>
-    <dt><code>Misc</code></dt><dd><p>A list of additional information</p></dd>
+
+<dt><code>SampPars</code></dt><dd><p>All sampled Stock, Fleet, Obs, and Imp parameters</p></dd>
+
+<dt><code>Misc</code></dt><dd><p>A list of additional information</p></dd>
+
 </dl>
     
 
@@ -205,19 +225,23 @@ reach Bfrac of BMSY</p></li>
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by Tom Carruthers, Adrian Hordyk.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

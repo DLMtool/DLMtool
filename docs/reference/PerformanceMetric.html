@@ -8,6 +8,13 @@
 
 <title>Performance Metrics Methods — PerformanceMetric • DLMtool Documentation</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
@@ -16,13 +23,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -49,6 +58,7 @@
 <![endif]-->
 
 
+
   </head>
 
   <body>
@@ -65,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
       </span>
     </div>
 
@@ -88,6 +98,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -118,7 +129,9 @@
 
 <span class='fu'>Yield</span>(<span class='kw'>MSEobj</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Ref</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>Yrs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
-<span class='fu'>AAVY</span>(<span class='kw'>MSEobj</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Ref</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>Yrs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+<span class='fu'>AAVY</span>(<span class='kw'>MSEobj</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Ref</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>Yrs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+
+<span class='fu'>AAVE</span>(<span class='kw'>MSEobj</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>Ref</span> <span class='kw'>=</span> <span class='fl'>0.2</span>, <span class='kw'>Yrs</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -146,31 +159,25 @@ If NULL, the performance is summarized over all projection years.</p></td>
 
     <p>Performance Metric definitions:</p>
 <table class='table'>
-<tr><td></td><td><code>P10</code></td></tr>
-<tr><td></td><td>Probability B &gt; 0.1 BMSY</td></tr>
-<tr><td></td><td><code>P50</code></td></tr>
-<tr><td></td><td>Probability B &gt; 0.5 BMSY</td></tr>
-<tr><td></td><td><code>P100</code></td></tr>
-<tr><td></td><td>Probability B &gt; BMSY</td></tr>
-<tr><td></td><td><code>PNOF</code></td></tr>
-<tr><td></td><td>Probability F &lt; FMSY</td></tr>
-<tr><td></td><td><code>LTY</code></td></tr>
-<tr><td></td><td>Probability Long-Term Yield &gt; 0.5 Relative Yield</td></tr>
-<tr><td></td><td><code>STY</code></td></tr>
-<tr><td></td><td>Probability Short-Term Yield &gt; 0.5 Relative Yield</td></tr>
-<tr><td></td><td><code>AAVY</code></td></tr>
-<tr><td></td><td>Probability AAVY &lt; 0.2 (Average Annual Variability in Yield)</td></tr>
-<tr><td></td><td><code>Yield</code></td></tr>
-<tr><td></td><td>Average Yield (relative to Reference Yield)</td></tr>
-<tr><td></td><td></td></tr>
+<tr><td><code>P10</code></td><td>Probability B &gt; 0.1 BMSY</td></tr>
+<tr><td><code>P50</code></td><td>Probability B &gt; 0.5 BMSY</td></tr>
+<tr><td><code>P100</code></td><td>Probability B &gt; BMSY</td></tr>
+<tr><td><code>PNOF</code></td><td>Probability F &lt; FMSY</td></tr>
+<tr><td><code>LTY</code></td><td>Probability Long-Term Yield &gt; 0.5 Relative Yield</td></tr>
+<tr><td><code>STY</code></td><td>Probability Short-Term Yield &gt; 0.5 Relative Yield</td></tr>
+<tr><td><code>AAVY</code></td><td>Probability AAVY &lt; 0.2 (Average Annual Variability in Yield)</td></tr>
+<tr><td><code>AAVE</code></td><td>Probability AAVE &lt; 0.2 (Average Annual Variability in Effort)</td></tr>
+<tr><td><code>Yield</code></td><td>Average Yield (relative to Reference Yield)</td></tr>
 </table>
-    <p>Argument <code>Ref</code> provides the ratio relative to the reference point for calculating
+
+
+<p>Argument <code>Ref</code> provides the ratio relative to the reference point for calculating
 the performance metric. For biomass-based PMs (<code>P10</code>, <code>P50</code>, <code>P100</code>), this is the fraction of
 BMSY. For <code>PNOF</code>, the fraction of FMSY. For <code>Yield</code> (and <code>LTY</code>/<code>STY</code>), the fraction of the
 Reference Yield. For <code>AAVY</code> is it the maximum acceptable variability in yield (i.e, default
 for <code>AAVY</code> is <code>Ref=0.2</code>)</p>
 <p>The <code>Yrs</code> argument defines the number of years to calculate the performance statistic over.
-A value of <code>NULL</code>, the default for <code>AAVY</code>, <code>P10</code>, <code>P50</code>, <code>P100</code>, and <code>PNOF</code>, means that the
+A value of <code>NULL</code>, the default for <code>AAVY</code>, <code>AAVE</code>, <code>P10</code>, <code>P50</code>, <code>P100</code>, and <code>PNOF</code>, means that the
 performance metric is calculated over all projection years. A numeric vector of length two is used
 to specify the first and last year, e.g, if <code>Yrs=c(1,10)</code> the performance statistic is calculated
 over the first 10 projection years. A numeric vector of length one with positive or negative value
@@ -185,7 +192,7 @@ and Short-Term Yield (<code>STY</code>) is that in the first 10 years of the pro
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><span class='co'># NOT RUN {</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> (<span class='fl'>FALSE</span>) {
 <span class='no'>myMSE</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='runMSE.html'>runMSE</a></span>()
 <span class='fu'>P10</span>(<span class='no'>myMSE</span>)
 <span class='fu'>P50</span>(<span class='no'>myMSE</span>)
@@ -194,8 +201,9 @@ and Short-Term Yield (<code>STY</code>) is that in the first 10 years of the pro
 <span class='fu'>LTY</span>(<span class='no'>myMSE</span>)
 <span class='fu'>STY</span>(<span class='no'>myMSE</span>)
 <span class='fu'>AAVY</span>(<span class='no'>myMSE</span>)
+<span class='fu'>AAVE</span>(<span class='no'>myMSE</span>)
 <span class='fu'>Yield</span>(<span class='no'>myMSE</span>)
-<span class='co'># }</span></pre>
+}</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -214,19 +222,23 @@ and Short-Term Yield (<code>STY</code>) is that in the first 10 years of the pro
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by Tom Carruthers, Adrian Hordyk.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

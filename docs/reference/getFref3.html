@@ -8,6 +8,13 @@
 
 <title>Calculate Reference Yield — getFref3 • DLMtool Documentation</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
@@ -16,13 +23,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -49,6 +58,7 @@
 <![endif]-->
 
 
+
   </head>
 
   <body>
@@ -65,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
       </span>
     </div>
 
@@ -88,6 +98,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -106,7 +117,7 @@
 
     <pre class="usage"><span class='fu'>getFref3</span>(<span class='no'>x</span>, <span class='no'>Asize</span>, <span class='no'>nareas</span>, <span class='no'>maxage</span>, <span class='no'>N</span>, <span class='no'>pyears</span>, <span class='no'>M_ageArray</span>, <span class='no'>Mat_age</span>, <span class='no'>Wt_age</span>,
   <span class='no'>V</span>, <span class='no'>retA</span>, <span class='no'>Perr</span>, <span class='no'>mov</span>, <span class='no'>SRrel</span>, <span class='no'>Find</span>, <span class='no'>Spat_targ</span>, <span class='no'>hs</span>, <span class='no'>R0a</span>, <span class='no'>SSBpR</span>, <span class='no'>aR</span>, <span class='no'>bR</span>, <span class='no'>MPA</span>,
-  <span class='no'>maxF</span>, <span class='kw'>useCPP</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>SSB0</span>)</pre>
+  <span class='no'>maxF</span>, <span class='no'>SSB0</span>, <span class='kw'>plusgroup</span> <span class='kw'>=</span> <span class='fl'>0</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -205,12 +216,16 @@ Only values from the first year are used, which is the current N-at-age.</p></td
       <td><p>A numeric value specifying the maximum fishing mortality for any single age class</p></td>
     </tr>
     <tr>
-      <th>useCPP</th>
-      <td><p>logical - use the CPP code? For testing purposes only</p></td>
-    </tr>
-    <tr>
       <th>SSB0</th>
       <td><p>SSB0</p></td>
+    </tr>
+    <tr>
+      <th>plusgroup</th>
+      <td><p>Integer. Default = 0 = no plus-group. Use 1 to include a plus-group</p></td>
+    </tr>
+    <tr>
+      <th>useCPP</th>
+      <td><p>logical - use the CPP code? For testing purposes only</p></td>
     </tr>
     </table>
     
@@ -227,19 +242,23 @@ Only values from the first year are used, which is the current N-at-age.</p></td
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by Tom Carruthers, Adrian Hordyk.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

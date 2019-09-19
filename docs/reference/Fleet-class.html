@@ -8,6 +8,13 @@
 
 <title>Class <code>'Fleet'</code> — Fleet-class • DLMtool Documentation</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
@@ -16,13 +23,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -49,6 +58,7 @@
 <![endif]-->
 
 
+
   </head>
 
   <body>
@@ -65,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
       </span>
     </div>
 
@@ -88,6 +98,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -108,40 +119,69 @@
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
     
-    <dl class='dl-horizontal'>
+
+<dl class='dl-horizontal'>
 <dt><code>Name</code></dt><dd><p>Name of the Fleet object. Single value. Character string.</p></dd>
-    <dt><code>nyears</code></dt><dd><p>The number of years for the historical 'spool-up' simulation. Single value. Positive integer</p></dd>
-    <dt><code>Spat_targ</code></dt><dd><p>Distribution of fishing in relation to spatial biomass: fishing distribution is proportional to B^Spat_targ. Uniform distribution lower and upper bounds. Real numbers</p></dd>
-    <dt><code>EffYears</code></dt><dd><p>Years representing join-points (vertices) of time-varying effort. Vector. Non-negative real numbers</p></dd>
-    <dt><code>EffLower</code></dt><dd><p>Lower bound on relative effort corresponding to EffYears. Vector. Non-negative real numbers</p></dd>
-    <dt><code>EffUpper</code></dt><dd><p>Upper bound on relative effort corresponding to EffYears. Vector. Non-negative real numbers</p></dd>
-    <dt><code>Esd</code></dt><dd><p>Additional inter-annual variability in fishing mortality rate. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
-    <dt><code>qinc</code></dt><dd><p>Average percentage change in fishing efficiency (applicable only to forward projection and input controls). Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
-    <dt><code>qcv</code></dt><dd><p>Inter-annual variability in fishing efficiency (applicable only to forward projection and input controls). Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
-    <dt><code>L5</code></dt><dd><p>Shortest length corresponding to 5 percent vulnerability. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
-    <dt><code>LFS</code></dt><dd><p>Shortest length that is fully vulnerable to fishing. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
-    <dt><code>Vmaxlen</code></dt><dd><p>The vulnerability of fish at <code>Stock@Linf</code>. Uniform distribution lower and upper bounds. Fraction</p></dd>
-    <dt><code>isRel</code></dt><dd><p>Selectivity parameters in units of size-of-maturity (or absolute eg cm). Single value. Boolean.</p></dd>
-    <dt><code>LR5</code></dt><dd><p>Shortest length corresponding ot 5 percent retention. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
-    <dt><code>LFR</code></dt><dd><p>Shortest length that is fully retained. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
-    <dt><code>Rmaxlen</code></dt><dd><p>The retention of fish at <code>Stock@Linf</code>. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
-    <dt><code>DR</code></dt><dd><p>Discard rate - the fraction of caught fish that are discarded. Uniform distribution lower and upper bounds. Fraction</p></dd>
-    <dt><code>SelYears</code></dt><dd><p>(Optional) Years representing join-points (vertices) at which historical selectivity pattern changes. Vector. Positive real numbers</p></dd>
-    <dt><code>AbsSelYears</code></dt><dd><p>(Optional) Calendar years corresponding with SelYears (eg 1951, rather than 1), used for plotting only. Vector (of same length as SelYears). Positive real numbers</p></dd>
-    <dt><code>L5Lower</code></dt><dd><p>(Optional) Lower bound of L5 (use <code>ChooseSelect</code> function to set these). Vector. Non-negative real numbers</p></dd>
-    <dt><code>L5Upper</code></dt><dd><p>(Optional) Upper bound of L5 (use <code>ChooseSelect</code> function to set these). Vector. Non-negative real numbers</p></dd>
-    <dt><code>LFSLower</code></dt><dd><p>(Optional) Lower bound of LFS (use <code>ChooseSelect</code> function to set these). Vector. Non-negative real numbers</p></dd>
-    <dt><code>LFSUpper</code></dt><dd><p>(Optional) Upper bound of LFS (use <code>ChooseSelect</code> function to set these). Vector. Non-negative real numbers</p></dd>
-    <dt><code>VmaxLower</code></dt><dd><p>(Optional) Lower bound of Vmaxlen (use <code>ChooseSelect</code> function to set these). Vector. Fraction</p></dd>
-    <dt><code>VmaxUpper</code></dt><dd><p>(Optional) Upper bound of Vmaxlen (use <code>ChooseSelect</code> function to set these). Vector. Fraction</p></dd>
-    <dt><code>CurrentYr</code></dt><dd><p>The current calendar year (final year) of the historical simulations (eg 2011). Single value. Positive integer.</p></dd>
-    <dt><code>MPA</code></dt><dd><p>(Optional) Matrix specifying spatial closures for historical years.</p></dd>
+
+<dt><code>nyears</code></dt><dd><p>The number of years for the historical 'spool-up' simulation. Single value. Positive integer</p></dd>
+
+<dt><code>Spat_targ</code></dt><dd><p>Distribution of fishing in relation to spatial biomass: fishing distribution is proportional to B^Spat_targ. Uniform distribution lower and upper bounds. Real numbers</p></dd>
+
+<dt><code>EffYears</code></dt><dd><p>Years representing join-points (vertices) of time-varying effort. Vector. Non-negative real numbers</p></dd>
+
+<dt><code>EffLower</code></dt><dd><p>Lower bound on relative effort corresponding to EffYears. Vector. Non-negative real numbers</p></dd>
+
+<dt><code>EffUpper</code></dt><dd><p>Upper bound on relative effort corresponding to EffYears. Vector. Non-negative real numbers</p></dd>
+
+<dt><code>Esd</code></dt><dd><p>Additional inter-annual variability in fishing mortality rate. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+
+<dt><code>qinc</code></dt><dd><p>Average percentage change in fishing efficiency (applicable only to forward projection and input controls). Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+
+<dt><code>qcv</code></dt><dd><p>Inter-annual variability in fishing efficiency (applicable only to forward projection and input controls). Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+
+<dt><code>L5</code></dt><dd><p>Shortest length corresponding to 5 percent vulnerability. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+
+<dt><code>LFS</code></dt><dd><p>Shortest length that is fully vulnerable to fishing. Uniform distribution lower and upper bounds. Positive real numbers</p></dd>
+
+<dt><code>Vmaxlen</code></dt><dd><p>The vulnerability of fish at <code>Stock@Linf</code>. Uniform distribution lower and upper bounds. Fraction</p></dd>
+
+<dt><code>isRel</code></dt><dd><p>Selectivity parameters in units of size-of-maturity (or absolute eg cm). Single value. Boolean.</p></dd>
+
+<dt><code>LR5</code></dt><dd><p>Shortest length corresponding ot 5 percent retention. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+
+<dt><code>LFR</code></dt><dd><p>Shortest length that is fully retained. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+
+<dt><code>Rmaxlen</code></dt><dd><p>The retention of fish at <code>Stock@Linf</code>. Uniform distribution lower and upper bounds. Non-negative real numbers</p></dd>
+
+<dt><code>DR</code></dt><dd><p>Discard rate - the fraction of caught fish that are discarded. Uniform distribution lower and upper bounds. Fraction</p></dd>
+
+<dt><code>SelYears</code></dt><dd><p>(Optional) Years representing join-points (vertices) at which historical selectivity pattern changes. Vector. Positive real numbers</p></dd>
+
+<dt><code>AbsSelYears</code></dt><dd><p>(Optional) Calendar years corresponding with SelYears (eg 1951, rather than 1), used for plotting only. Vector (of same length as SelYears). Positive real numbers</p></dd>
+
+<dt><code>L5Lower</code></dt><dd><p>(Optional) Lower bound of L5 (use <code>ChooseSelect</code> function to set these). Vector. Non-negative real numbers</p></dd>
+
+<dt><code>L5Upper</code></dt><dd><p>(Optional) Upper bound of L5 (use <code>ChooseSelect</code> function to set these). Vector. Non-negative real numbers</p></dd>
+
+<dt><code>LFSLower</code></dt><dd><p>(Optional) Lower bound of LFS (use <code>ChooseSelect</code> function to set these). Vector. Non-negative real numbers</p></dd>
+
+<dt><code>LFSUpper</code></dt><dd><p>(Optional) Upper bound of LFS (use <code>ChooseSelect</code> function to set these). Vector. Non-negative real numbers</p></dd>
+
+<dt><code>VmaxLower</code></dt><dd><p>(Optional) Lower bound of Vmaxlen (use <code>ChooseSelect</code> function to set these). Vector. Fraction</p></dd>
+
+<dt><code>VmaxUpper</code></dt><dd><p>(Optional) Upper bound of Vmaxlen (use <code>ChooseSelect</code> function to set these). Vector. Fraction</p></dd>
+
+<dt><code>CurrentYr</code></dt><dd><p>The current calendar year (final year) of the historical simulations (eg 2011). Single value. Positive integer.</p></dd>
+
+<dt><code>MPA</code></dt><dd><p>(Optional) Matrix specifying spatial closures for historical years.</p></dd>
+
 </dl>
     
     <h2 class="hasAnchor" id="mpa-slot"><a class="anchor" href="#mpa-slot"></a>MPA slot</h2>
 
     
-    <p>Each row should contain year index (e.g 10 for 10th historical year)
+
+<p>Each row should contain year index (e.g 10 for 10th historical year)
 followed by fraction of area closed to fishing for each area. i.e. each row represents a change and the number of columns is nareas + 1.
 The spatial closures are assumed to remain in place for the future projections unless changed by a MP.
 Default (if left blank) is all areas are open to fishing in historical period.</p>
@@ -149,7 +189,8 @@ Default (if left blank) is all areas are open to fishing in historical period.</
     <h2 class="hasAnchor" id="creating-object"><a class="anchor" href="#creating-object"></a>Creating Object</h2>
 
     
-    <p>Objects can be created by calls of the form <code>new('Fleet')</code></p>
+
+<p>Objects can be created by calls of the form <code>new('Fleet')</code></p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -165,7 +206,7 @@ Default (if left blank) is all areas are open to fishing in historical period.</
 #&gt; Class:     numeric     numeric     numeric     numeric     numeric     numeric
 #&gt;                                                                               
 #&gt; Name:        isRel         LR5         LFR     Rmaxlen          DR    SelYears
-#&gt; Class:   character     numeric     numeric     numeric     numeric     numeric
+#&gt; Class:    char.log     numeric     numeric     numeric     numeric     numeric
 #&gt;                                                                               
 #&gt; Name:  AbsSelYears     L5Lower     L5Upper    LFSLower    LFSUpper   VmaxLower
 #&gt; Class:     numeric     numeric     numeric     numeric     numeric     numeric
@@ -194,19 +235,23 @@ Default (if left blank) is all areas are open to fishing in historical period.</
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by Tom Carruthers, Adrian Hordyk.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

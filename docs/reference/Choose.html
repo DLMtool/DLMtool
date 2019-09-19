@@ -8,6 +8,13 @@
 
 <title>Manually map parameters for the historical period of operating model — Choose • DLMtool Documentation</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
@@ -16,13 +23,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -51,6 +60,7 @@ operating model." />
 <![endif]-->
 
 
+
   </head>
 
   <body>
@@ -67,7 +77,7 @@ operating model." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
       </span>
     </div>
 
@@ -90,6 +100,7 @@ operating model." />
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -110,7 +121,7 @@ operating model.</p>
 
     <pre class="usage"><span class='fu'>ChooseEffort</span>(<span class='no'>Fleet</span>, <span class='kw'>Years</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
-<span class='fu'>ChooseM</span>(<span class='no'>OM</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"age"</span>, <span class='st'>"length"</span>), <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
+<span class='fu'>ChooseM</span>(<span class='no'>OM</span>, <span class='kw'>type</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"age"</span>, <span class='st'>"length"</span>), <span class='kw'>x</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)
 
 <span class='fu'>ChooseSelect</span>(<span class='no'>Fleet</span>, <span class='no'>Stock</span>, <span class='kw'>FstYr</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>SelYears</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
     
@@ -166,20 +177,25 @@ separated).</p></td>
     
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <table class='table'>
-<tr><td></td><td><code>ChooseEffort</code></td></tr>
-<tr><td></td><td>Interactive plot which allows users to specify the</td></tr>
-<tr><td>relative trajectory and variability in the historical fishing effort and</td><td>populates Fleet object.</td></tr>
-<tr><td></td><td><code>ChooseM</code></td></tr>
-<tr><td></td><td>Interactive plot which allows users to specify M by age</td></tr>
-<tr><td>or size class</td><td></td></tr>
-<tr><td><code>ChooseSelect</code></td><td></td></tr>
-<tr><td>Input the first historical year, and all years where</td><td>selectivity pattern</td></tr>
-<tr><td>changed (separated by comma).  Interactive plot which allows users to</td><td>specify a range for the length at 5% and full selection (LFS), as well as</td></tr>
-<tr><td>selectivity at maximum length for each year.  Produces a simple plot which</td><td>shows the range in selectivity pattern for each break-point year.</td></tr>
-<tr><td>Selectivity-at-length is fixed in between break-point years.  Note that this</td><td>function replaces 'nyears' in the Fleet object with the value defined here</td></tr>
-<tr><td>(FstYr:current year).</td><td></td></tr>
+    
+<table class='table'>
+<tr><td><code>ChooseEffort</code></td><td>Interactive plot which allows users to specify the
+relative trajectory and variability in the historical fishing effort and
+populates Fleet object.</td></tr>
+<tr><td><code>ChooseM</code></td><td>Interactive plot which allows users to specify M by age
+or size class</td></tr>
+<tr><td><code>ChooseSelect</code></td><td>Input the first historical year, and all years where
+selectivity pattern
+changed (separated by comma).  Interactive plot which allows users to
+specify a range for the length at 5% and full selection (LFS), as well as
+selectivity at maximum length for each year.  Produces a simple plot which
+shows the range in selectivity pattern for each break-point year.
+Selectivity-at-length is fixed in between break-point years.  Note that this
+function replaces 'nyears' in the Fleet object with the value defined here
+(FstYr:current year).</td></tr>
 </table>
+
+
     
 
   </div>
@@ -198,19 +214,23 @@ separated).</p></td>
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by Tom Carruthers, Adrian Hordyk.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

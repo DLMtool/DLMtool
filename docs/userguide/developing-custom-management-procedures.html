@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html >
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Chapter 26 Developing Custom Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.3)</title>
-  <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 26 Developing Custom Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.4.0)</title>
+  <meta name="description" content="User guide for the DLMtool R package" />
+  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 26 Developing Custom Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.3)" />
+  <meta property="og:title" content="Chapter 26 Developing Custom Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,23 +16,23 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 26 Developing Custom Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.3)" />
+  <meta name="twitter:title" content="Chapter 26 Developing Custom Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
 
-<meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
+<meta name="author" content="Tom Carruthers &amp; Adrian Hordyk" />
 
 
-<meta name="date" content="2019-03-12">
+<meta name="date" content="2019-09-19" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
-  <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
-<link rel="prev" href="customizing-the-operating-model.html">
-<link rel="next" href="custom-parameters.html">
+  <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon" />
+<link rel="prev" href="customizing-the-operating-model.html"/>
+<link rel="next" href="custom-parameters.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -51,41 +50,66 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -289,7 +313,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
 <li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
-<li class="chapter" data-level="30" data-path="using-real-indices.html"><a href="using-real-indices.html"><i class="fa fa-check"></i><b>30</b> Using Real Indices</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
 <li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
@@ -353,7 +376,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.3)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.0)</a>
           </h1>
         </div>
 
@@ -366,44 +389,44 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>DLMtool was designed to be extensible in order to promote the development of new Management Procedures. In this chapter we design a series of new Management Procedures that include spatial controls and input controls in the form of size limit restrictions.</p>
 <p>If you wish, you can also add your newly developed MPs to the DLMtool package so they are accessible to other uses. Of course you will be credited as the author. Please <a href="http://www.datalimitedtoolkit.org/contact">contact us</a> for details how to do this.</p>
 <p>As we saw before, real data are stored in a class of objects <code>Data</code>.</p>
-<p>The DLMtool MSE function generates simulated data and puts it in exactly the same format as real data. This is highly desirable because it means that the same MP code that is tested in the MSE can then be used to make management recommendations.</p>
+<p>The DLMtool MSE function generates simulated data and puts it in exactly the same format as real data. This is highly desirable because
+it means that the same MP code that is tested in the MSE can then be used to make management recommendations.</p>
 <p>If an MP is coded incorrectly it may catastrophically fail MSE testing and will therefore be excluded from use in management.</p>
 <div id="the-anatomy-of-an-mp" class="section level2">
 <h2><span class="header-section-number">26.1</span> The Anatomy of an MP</h2>
 <p>Let’s examine an existing output MP to identify the MP data requirements.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">avail</span>(<span class="st">&#39;Output&#39;</span>)</code></pre></div>
+<div class="sourceCode" id="cb468"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb468-1" title="1"><span class="kw">avail</span>(<span class="st">&#39;Output&#39;</span>)</a></code></pre></div>
 <pre><code>##  [1] &quot;AvC&quot;         &quot;BK&quot;          &quot;BK_CC&quot;       &quot;BK_ML&quot;       &quot;CC1&quot;        
 ##  [6] &quot;CC2&quot;         &quot;CC3&quot;         &quot;CC4&quot;         &quot;CC5&quot;         &quot;CompSRA&quot;    
-## [11] &quot;CompSRA4010&quot; &quot;DAAC&quot;        &quot;DBSRA&quot;       &quot;DBSRA_40&quot;    &quot;DBSRA4010&quot;  
-## [16] &quot;DCAC&quot;        &quot;DCAC_40&quot;     &quot;DCAC_ML&quot;     &quot;DCAC4010&quot;    &quot;DCACs&quot;      
-## [21] &quot;DD&quot;          &quot;DD4010&quot;      &quot;DepF&quot;        &quot;DynF&quot;        &quot;Fadapt&quot;     
-## [26] &quot;Fdem&quot;        &quot;Fdem_CC&quot;     &quot;Fdem_ML&quot;     &quot;Fratio&quot;      &quot;Fratio_CC&quot;  
-## [31] &quot;Fratio_ML&quot;   &quot;Fratio4010&quot;  &quot;GB_CC&quot;       &quot;GB_slope&quot;    &quot;GB_target&quot;  
-## [36] &quot;Gcontrol&quot;    &quot;HDAAC&quot;       &quot;ICI&quot;         &quot;ICI2&quot;        &quot;Iratio&quot;     
-## [41] &quot;Islope1&quot;     &quot;Islope2&quot;     &quot;Islope4&quot;     &quot;IT10&quot;        &quot;IT5&quot;        
-## [46] &quot;Itarget1&quot;    &quot;Itarget2&quot;    &quot;Itarget3&quot;    &quot;Itarget4&quot;    &quot;ITM&quot;        
-## [51] &quot;L95target&quot;   &quot;Lratio_BHI&quot;  &quot;Lratio_BHI2&quot; &quot;Lratio_BHI3&quot; &quot;LstepCC1&quot;   
-## [56] &quot;LstepCC2&quot;    &quot;LstepCC3&quot;    &quot;LstepCC4&quot;    &quot;Ltarget1&quot;    &quot;Ltarget2&quot;   
-## [61] &quot;Ltarget3&quot;    &quot;Ltarget4&quot;    &quot;MCD&quot;         &quot;MCD4010&quot;     &quot;Rcontrol&quot;   
-## [66] &quot;Rcontrol2&quot;   &quot;SBT1&quot;        &quot;SBT2&quot;        &quot;SPmod&quot;       &quot;SPMSY&quot;      
-## [71] &quot;SPslope&quot;     &quot;SPSRA&quot;       &quot;SPSRA_ML&quot;    &quot;YPR&quot;         &quot;YPR_CC&quot;     
-## [76] &quot;YPR_ML&quot;      &quot;avgMP&quot;</code></pre>
+## [11] &quot;CompSRA4010&quot; &quot;CurC&quot;        &quot;DAAC&quot;        &quot;DBSRA&quot;       &quot;DBSRA_40&quot;   
+## [16] &quot;DBSRA4010&quot;   &quot;DCAC&quot;        &quot;DCAC_40&quot;     &quot;DCAC_ML&quot;     &quot;DCAC4010&quot;   
+## [21] &quot;DCACs&quot;       &quot;DD&quot;          &quot;DD4010&quot;      &quot;DepF&quot;        &quot;DynF&quot;       
+## [26] &quot;Fadapt&quot;      &quot;Fdem&quot;        &quot;Fdem_CC&quot;     &quot;Fdem_ML&quot;     &quot;Fratio&quot;     
+## [31] &quot;Fratio_CC&quot;   &quot;Fratio_ML&quot;   &quot;Fratio4010&quot;  &quot;GB_CC&quot;       &quot;GB_slope&quot;   
+## [36] &quot;GB_target&quot;   &quot;Gcontrol&quot;    &quot;HDAAC&quot;       &quot;ICI&quot;         &quot;ICI2&quot;       
+## [41] &quot;Iratio&quot;      &quot;Islope1&quot;     &quot;Islope2&quot;     &quot;Islope3&quot;     &quot;Islope4&quot;    
+## [46] &quot;IT10&quot;        &quot;IT5&quot;         &quot;Itarget1&quot;    &quot;Itarget2&quot;    &quot;Itarget3&quot;   
+## [51] &quot;Itarget4&quot;    &quot;ITM&quot;         &quot;L95target&quot;   &quot;Lratio_BHI&quot;  &quot;Lratio_BHI2&quot;
+## [56] &quot;Lratio_BHI3&quot; &quot;LstepCC1&quot;    &quot;LstepCC2&quot;    &quot;LstepCC3&quot;    &quot;LstepCC4&quot;   
+## [61] &quot;Ltarget1&quot;    &quot;Ltarget2&quot;    &quot;Ltarget3&quot;    &quot;Ltarget4&quot;    &quot;MCD&quot;        
+## [66] &quot;MCD4010&quot;     &quot;Rcontrol&quot;    &quot;Rcontrol2&quot;   &quot;SBT1&quot;        &quot;SBT2&quot;       
+## [71] &quot;SPmod&quot;       &quot;SPMSY&quot;       &quot;SPslope&quot;     &quot;SPSRA&quot;       &quot;SPSRA_ML&quot;   
+## [76] &quot;YPR&quot;         &quot;YPR_CC&quot;      &quot;YPR_ML&quot;      &quot;avgMP&quot;</code></pre>
 <p>Since we’ve seen it used as a default MP in lots of the examples above, lets learn more about DCAC</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">?DCAC</code></pre></div>
+<div class="sourceCode" id="cb470"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb470-1" title="1">?DCAC</a></code></pre></div>
 <p>We can even see all the code for this MP by simply typing the name of the MP into the console (this is a fantastic advantage of using R - there is complete transparency about package functions):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">DCAC</code></pre></div>
-<pre><code>## function (x, Data, reps = 100, plot = FALSE) 
-## {
-##     rundcac &lt;- DCAC_(x, Data, reps, updateD = TRUE)
-##     TAC &lt;- TACfilter(rundcac$dcac)
-##     if (plot) 
-##         DCAC_plot(x, Data, dcac = rundcac$dcac, TAC, Bt_K = rundcac$Bt_K, 
-##             yrs = 1:length(Data@Year))
-##     Rec &lt;- new(&quot;Rec&quot;)
-##     Rec@TAC &lt;- TAC
-##     Rec
+<div class="sourceCode" id="cb471"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb471-1" title="1">DCAC</a></code></pre></div>
+<pre><code>## function(x, Data, reps = 100, plot=FALSE) {
+##   rundcac &lt;- DCAC_(x, Data, reps, updateD=TRUE)
+##   TAC &lt;- TACfilter(rundcac$dcac)
+##   
+##   if (plot)  DCAC_plot(x, Data, dcac=rundcac$dcac, TAC, Bt_K=rundcac$Bt_K, yrs=1:length(Data@Year))
+##   
+##   Rec &lt;- new(&quot;Rec&quot;)
+##   Rec@TAC &lt;- TAC
+##   Rec
 ## }
-## &lt;bytecode: 0x0000000016d22068&gt;
+## &lt;bytecode: 0x000001b0e8653c30&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
@@ -412,38 +435,48 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The argument <code>x</code> is the position in the Data object. When real data are stored in a Data object, there is only one position - there is only one real data set.</p>
 <p>However, in MSE we conduct many simulations and x refers to simulated data from simulation number <code>x</code>. Any single parameters such as natural mortality rate (<code>Mort</code>) are a vector (<code>nsim</code> long). See <code>Data@Mort[x]</code> in the DCAC code. Any time series such as annual catches or relative abundance indices, are a matrix of <code>nsim</code> rows and <code>nyears</code> columns.</p>
 <p>A range of objects of class Data are available:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">avail</span>(<span class="st">&#39;Data&#39;</span>)</code></pre></div>
+<div class="sourceCode" id="cb473"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb473-1" title="1"><span class="kw">avail</span>(<span class="st">&#39;Data&#39;</span>)</a></code></pre></div>
 <pre><code>##  [1] &quot;Atlantic_mackerel&quot;  &quot;China_rockfish&quot;     &quot;Cobia&quot;             
 ##  [4] &quot;Example_datafile&quot;   &quot;Gulf_blue_tilefish&quot; &quot;ourReefFish&quot;       
-##  [7] &quot;Red_snapper&quot;        &quot;SimulatedData&quot;      &quot;Simulation_1&quot;      
-## [10] &quot;China_rockfish2&quot;    &quot;Madeup&quot;             &quot;Recs&quot;</code></pre>
-<p>For simplicity lets use a Data object with just one simulation, <code>Simulation_1</code> and rename it <code>Data</code></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Data &lt;-<span class="st"> </span>Simulation_<span class="dv">1</span></code></pre></div>
-<p>Since there is only one simulation in this data set (1 position) we can now see a single value of natural mortality rate:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Data<span class="op">@</span>Mort</code></pre></div>
-<pre><code>## [1] 0.2244735</code></pre>
-<p>And a matrix of catches with only 1 row:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Data<span class="op">@</span>Cat</code></pre></div>
-<pre><code>##          [,1]     [,2]     [,3]     [,4]     [,5]     [,6]     [,7]
-## [1,] 4.275057 12.43761 14.63192 35.31725 28.69802 30.84651 24.14059
-##          [,8]     [,9]    [,10]    [,11]    [,12]    [,13]    [,14]
-## [1,] 36.78335 29.27517 38.18088 59.30242 56.08995 37.96849 51.84985
-##         [,15]    [,16]    [,17]   [,18]   [,19]    [,20]    [,21]    [,22]
-## [1,] 60.76729 41.53713 39.31114 57.9673 57.2248 72.37596 80.69301 76.63558
-##         [,23]    [,24]    [,25]    [,26]    [,27]    [,28]    [,29]  [,30]
-## [1,] 59.37687 48.82643 50.38803 80.71158 53.35875 74.31955 48.83082 43.348
-##         [,31]    [,32]    [,33]    [,34]    [,35]    [,36]    [,37]
-## [1,] 65.17864 49.94281 47.38492 45.23197 80.92438 51.91477 29.36491
-##         [,38]    [,39]    [,40]    [,41]    [,42]    [,43]    [,44]
-## [1,] 43.44834 49.46923 50.33217 49.53639 39.28779 27.31767 38.97092
-##        [,45]    [,46]    [,47]    [,48]    [,49]    [,50]
-## [1,] 51.1054 37.34677 37.33128 24.24094 23.47756 21.08158</code></pre>
-<p>We could generate a single TAC recommendation from these data using DCAC by specifying position 1 (there is only 1 simulation) and by setting reps=1 (we want a single DCAC TAC recommendation)</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">DCAC</span>(<span class="dt">x=</span><span class="dv">1</span>,Data,<span class="dt">reps=</span><span class="dv">1</span>)</code></pre></div>
+##  [7] &quot;Red_snapper&quot;        &quot;SimulatedData&quot;      &quot;China_rockfish2&quot;   
+## [10] &quot;Data&quot;               &quot;Madeup&quot;             &quot;Recs&quot;</code></pre>
+<p>For simplicity lets use a Data object with just two simulations, <code>SimulatedData</code> and rename it <code>Data</code></p>
+<div class="sourceCode" id="cb475"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb475-1" title="1">Data &lt;-<span class="st">  </span>SimulatedData</a></code></pre></div>
+<p>Since there are only two simulations in this data set (2 positions) we can now see two values of natural mortality rate:</p>
+<div class="sourceCode" id="cb476"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb476-1" title="1">Data<span class="op">@</span>Mort</a></code></pre></div>
+<pre><code>## [1] 0.3178309 0.3055330</code></pre>
+<p>And a matrix of catches with two rows:</p>
+<div class="sourceCode" id="cb478"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb478-1" title="1">Data<span class="op">@</span>Cat</a></code></pre></div>
+<pre><code>##          [,1]      [,2]     [,3]     [,4]     [,5]     [,6]     [,7]
+## [1,] 17.93249  77.94086 188.9142 356.8789 476.9043 251.3876 483.1683
+## [2,] 45.11819 272.96765 254.9031 833.6652 660.0164 930.0886 820.9845
+##           [,8]      [,9]     [,10]     [,11]    [,12]     [,13]    [,14]
+## [1,] 1437.1550  675.0914  597.1793  993.9574 1370.630  983.1828 1109.963
+## [2,]  858.5306 2263.8694 1717.7018 1742.2750 1698.691 1032.4159 2287.460
+##         [,15]    [,16]    [,17]    [,18]    [,19]    [,20]    [,21]
+## [1,] 1378.250 1757.686 1059.046 1623.116 1110.535 1170.769 1573.469
+## [2,] 3306.927 2545.953 2140.442 2247.550 2003.491 2424.214 1320.244
+##         [,22]    [,23]     [,24]    [,25]    [,26]    [,27]    [,28]
+## [1,] 1177.603 1495.526  899.6538 1327.325  855.511 1557.337 1452.049
+## [2,] 2908.740 1448.226 1312.5287 1167.325 2160.353 1611.643 2320.037
+##          [,29]     [,30]    [,31]     [,32]     [,33]    [,34]    [,35]
+## [1,]  525.2323  727.7376 1860.114 1156.2178  669.2713 1128.633 845.7756
+## [2,] 1895.7002 1248.7462 1233.820  903.9822 1666.1382 1227.194 963.6662
+##         [,36]    [,37]    [,38]    [,39]    [,40]    [,41]     [,42]
+## [1,] 2027.297 1536.299 2077.296 1193.401 1682.116 1502.634  804.0391
+## [2,] 1614.708 1719.729 1194.298 1312.921 1136.461 1135.720 1214.5330
+##         [,43]    [,44]    [,45]    [,46]     [,47]     [,48]    [,49]
+## [1,] 1538.469 1321.569 1665.702 1226.550 1280.9438  895.6957 2269.158
+## [2,] 2360.975 1141.793 2103.845 1508.142  946.3396 2077.0564 1082.846
+##          [,50]
+## [1,]  976.7893
+## [2,] 1215.4729</code></pre>
+<p>We could generate a single TAC recommendation from these data using DCAC by specifying position 1 (for the first simulation) and by setting reps=1 (we want a single DCAC TAC recommendation)</p>
+<div class="sourceCode" id="cb480"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb480-1" title="1"><span class="kw">DCAC</span>(<span class="dt">x=</span><span class="dv">1</span>,Data,<span class="dt">reps=</span><span class="dv">1</span>)</a></code></pre></div>
 <pre><code>## TAC (median) 
-##     37.61246</code></pre>
+##     840.1807</code></pre>
 <p>If we wanted a stochastic estimate of the TAC we could increase the number of reps:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hist</span>(<span class="kw">DCAC</span>(<span class="dt">x=</span><span class="dv">1</span>,Data,<span class="dt">reps=</span><span class="dv">1000</span>)<span class="op">@</span>TAC,<span class="dt">xlab=</span><span class="st">&quot;TAC&quot;</span>,<span class="dt">ylab=</span><span class="st">&quot;Freq.&quot;</span>,<span class="dt">col=</span><span class="st">&quot;blue&quot;</span>)</code></pre></div>
+<div class="sourceCode" id="cb482"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb482-1" title="1"><span class="kw">hist</span>(<span class="kw">DCAC</span>(<span class="dt">x=</span><span class="dv">1</span>,Data,<span class="dt">reps=</span><span class="dv">1000</span>)<span class="op">@</span>TAC,<span class="dt">xlab=</span><span class="st">&quot;TAC&quot;</span>,<span class="dt">ylab=</span><span class="st">&quot;Freq.&quot;</span>,<span class="dt">col=</span><span class="st">&quot;blue&quot;</span>)</a></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-164-1.png" width="672" /></p>
 </div>
 <div id="a-constant-catch-mp" class="section level2">
@@ -456,76 +489,77 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 </ul>
 <p>Let’s have a go at designing our own custom MP that can work with DLMtool. We’re going to develop an MP that sets the TAC as the ‘3rd highest catch’.</p>
 <p>We decide to call our function <code>THC</code></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">THC&lt;-<span class="cf">function</span>(x, Data, reps){
-  
-  <span class="co"># Find the position of third highest catch</span>
-  
-  THCpos&lt;-<span class="kw">order</span>(Data<span class="op">@</span>Cat[x,],<span class="dt">decreasing=</span>T)[<span class="dv">3</span>]
-  
-  <span class="co"># Make this the mean TAC recommendation</span>
-  
-  THCmu&lt;-Data<span class="op">@</span>Cat[x,THCpos]
-  
-  <span class="co"># A sample of the THC is taken according to a fixed CV of 10%</span>
-  TACs &lt;-<span class="st"> </span>THCmu <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(<span class="kw">rnorm</span>(reps, <span class="op">-</span><span class="fl">0.1</span><span class="op">^</span><span class="dv">2</span><span class="op">/</span><span class="dv">2</span>, <span class="fl">0.1</span>)) <span class="co"># this is a lognormal distribution</span>
-
-  Rec &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Rec&quot;</span>) <span class="co"># create a &#39;Rec&#39;object</span>
-  Rec<span class="op">@</span>TAC &lt;-<span class="st"> </span>TACs <span class="co"># assign the TACs to the TAC slot</span>
-  Rec <span class="co"># return the Rec object</span>
-}</code></pre></div>
+<div class="sourceCode" id="cb483"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb483-1" title="1">THC&lt;-<span class="cf">function</span>(x, Data, reps){</a>
+<a class="sourceLine" id="cb483-2" title="2">  </a>
+<a class="sourceLine" id="cb483-3" title="3">  <span class="co"># Find the position of third highest catch</span></a>
+<a class="sourceLine" id="cb483-4" title="4">  </a>
+<a class="sourceLine" id="cb483-5" title="5">  THCpos&lt;-<span class="kw">order</span>(Data<span class="op">@</span>Cat[x,],<span class="dt">decreasing=</span>T)[<span class="dv">3</span>]</a>
+<a class="sourceLine" id="cb483-6" title="6">  </a>
+<a class="sourceLine" id="cb483-7" title="7">  <span class="co"># Make this the mean TAC recommendation</span></a>
+<a class="sourceLine" id="cb483-8" title="8">  </a>
+<a class="sourceLine" id="cb483-9" title="9">  THCmu&lt;-Data<span class="op">@</span>Cat[x,THCpos]</a>
+<a class="sourceLine" id="cb483-10" title="10">  </a>
+<a class="sourceLine" id="cb483-11" title="11">  <span class="co"># A sample of the THC is taken according to a fixed CV of 10%</span></a>
+<a class="sourceLine" id="cb483-12" title="12">  TACs &lt;-<span class="st"> </span>THCmu <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(<span class="kw">rnorm</span>(reps, <span class="fl">-0.1</span><span class="op">^</span><span class="dv">2</span><span class="op">/</span><span class="dv">2</span>, <span class="fl">0.1</span>)) <span class="co"># this is a lognormal distribution</span></a>
+<a class="sourceLine" id="cb483-13" title="13"></a>
+<a class="sourceLine" id="cb483-14" title="14">  Rec &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Rec&quot;</span>) <span class="co"># create a &#39;Rec&#39;object</span></a>
+<a class="sourceLine" id="cb483-15" title="15">  Rec<span class="op">@</span>TAC &lt;-<span class="st"> </span>TACs <span class="co"># assign the TACs to the TAC slot</span></a>
+<a class="sourceLine" id="cb483-16" title="16">  Rec <span class="co"># return the Rec object</span></a>
+<a class="sourceLine" id="cb483-17" title="17">}</a></code></pre></div>
 <p>To recap that’s just seven lines of code:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">THC&lt;-<span class="cf">function</span>(x, Data, reps){
-  THCpos&lt;-<span class="kw">order</span>(Data<span class="op">@</span>Cat[x,],<span class="dt">decreasing=</span>T)[<span class="dv">3</span>]
-  THCmu&lt;-Data<span class="op">@</span>Cat[x,THCpos]
-  Rec &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Rec&quot;</span>)
-  Rec<span class="op">@</span>TAC &lt;-<span class="st"> </span>THCmu <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(<span class="kw">rnorm</span>(reps, <span class="op">-</span><span class="fl">0.1</span><span class="op">^</span><span class="dv">2</span><span class="op">/</span><span class="dv">2</span>, <span class="fl">0.1</span>))
-  Rec
-}</code></pre></div>
+<div class="sourceCode" id="cb484"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb484-1" title="1">THC&lt;-<span class="cf">function</span>(x, Data, reps){</a>
+<a class="sourceLine" id="cb484-2" title="2">  THCpos&lt;-<span class="kw">order</span>(Data<span class="op">@</span>Cat[x,],<span class="dt">decreasing=</span>T)[<span class="dv">3</span>]</a>
+<a class="sourceLine" id="cb484-3" title="3">  THCmu&lt;-Data<span class="op">@</span>Cat[x,THCpos]</a>
+<a class="sourceLine" id="cb484-4" title="4">  Rec &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Rec&quot;</span>)</a>
+<a class="sourceLine" id="cb484-5" title="5">  Rec<span class="op">@</span>TAC &lt;-<span class="st"> </span>THCmu <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(<span class="kw">rnorm</span>(reps, <span class="fl">-0.1</span><span class="op">^</span><span class="dv">2</span><span class="op">/</span><span class="dv">2</span>, <span class="fl">0.1</span>))</a>
+<a class="sourceLine" id="cb484-6" title="6">  Rec</a>
+<a class="sourceLine" id="cb484-7" title="7">}</a></code></pre></div>
 <p>We can quickly test our new MP for the example Data object</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">THC</span>(<span class="dt">x=</span><span class="dv">1</span>,Data,<span class="dt">reps=</span><span class="dv">10</span>)<span class="op">@</span>TAC</code></pre></div>
-<pre><code>##  [1] 79.11177 72.52747 82.94707 87.01687 87.66503 70.79588 78.22426
-##  [8] 72.82187 75.81387 80.42515</code></pre>
+<div class="sourceCode" id="cb485"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb485-1" title="1"><span class="kw">THC</span>(<span class="dt">x=</span><span class="dv">1</span>,Data,<span class="dt">reps=</span><span class="dv">10</span>)<span class="op">@</span>TAC</a></code></pre></div>
+<pre><code>##  [1] 2190.356 2183.969 2127.416 2004.166 2115.241 2094.272 1943.361
+##  [8] 2188.873 2091.100 1859.232</code></pre>
 <p>Now that we know it works, to make the function compatible with the DLMtool package we have to assign it the class ‘MP’ so that DLMtool recognizes the function as a management procedure</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(THC)&lt;-<span class="st">&quot;MP&quot;</span></code></pre></div>
+<div class="sourceCode" id="cb487"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb487-1" title="1"><span class="kw">class</span>(THC)&lt;-<span class="st">&quot;MP&quot;</span></a></code></pre></div>
 <p>If we want to run the MSE in parallel we need to export the newly created function to the cluster:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sfExport</span>(<span class="st">&#39;THC&#39;</span>)</code></pre></div>
+<div class="sourceCode" id="cb488"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb488-1" title="1"><span class="kw">sfExport</span>(<span class="st">&#39;THC&#39;</span>)</a></code></pre></div>
 </div>
 <div id="a-more-complex-mp" class="section level2">
 <h2><span class="header-section-number">26.3</span> A More Complex MP</h2>
 <p>The THC MP is simple and frankly not a great performer (depending on depletion, life-history, adherence to TAC recommendations).</p>
 <p>Let’s innovate and create a brand new MP that could suit a catch-data-only stock like Indian Ocean Longtail tuna!</p>
-<p>It may be possible to choose a single fleet and establish a catch rate that is ‘reasonable’ or ‘fairly productive’ relative to current catch rates. This could be for example, 40% of the highest catch rate observed for this fleet or, for example, 150% of current cpue levels.</p>
+<p>It may be possible to choose a single fleet and establish a catch rate that is ‘reasonable’ or ‘fairly productive’ relative to current catch rates. This could be for example, 40% of the
+highest catch rate observed for this fleet or, for example, 150% of current cpue levels.</p>
 <p>It is straightforward to design an MP that will aim for this target index level by making adjustments to the TAC.</p>
 <p>We will call this MP <code>TCPUE</code>, short for target catch per unit effort:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">TCPUE&lt;-<span class="cf">function</span>(x,Data,reps){
-  
-  mc&lt;-<span class="fl">0.05</span>                             <span class="co"># max change in TAC </span>
-  frac&lt;-<span class="fl">0.3</span>                            <span class="co"># target index is 30% of max</span>
-  nyears&lt;-<span class="kw">length</span>(Data<span class="op">@</span>Ind[x,])         <span class="co"># number of years of data</span>
-  
-  smoothI&lt;-<span class="kw">smooth.spline</span>(Data<span class="op">@</span>Ind[x,]) <span class="co"># smoothed index  </span>
-  targetI&lt;-<span class="kw">max</span>(smoothI<span class="op">$</span>y)<span class="op">*</span>frac         <span class="co"># target </span>
-  
-  currentI&lt;-<span class="kw">mean</span>(Data<span class="op">@</span>Ind[x,(nyears<span class="op">-</span><span class="dv">2</span>)<span class="op">:</span>nyears]) <span class="co"># current index</span>
-  
-  ratio&lt;-currentI<span class="op">/</span>targetI              <span class="co"># ratio currentI/targetI</span>
-  
-  <span class="cf">if</span>(ratio <span class="op">&lt;</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>mc)) ratio &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">-</span><span class="st"> </span>mc <span class="co"># if currentI &lt; targetI</span>
-  <span class="cf">if</span>(ratio <span class="op">&gt;</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>mc)) ratio &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>mc <span class="co"># if currentI &gt; targetI</span>
- 
-  Rec &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Rec&quot;</span>)
-  Rec<span class="op">@</span>TAC &lt;-<span class="st">  </span>Data<span class="op">@</span>MPrec[x] <span class="op">*</span><span class="st"> </span>ratio <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(<span class="kw">rnorm</span>(reps, <span class="op">-</span>Data<span class="op">@</span>CV_Ind[x]<span class="op">^</span><span class="dv">2</span><span class="op">/</span><span class="dv">2</span>, Data<span class="op">@</span>CV_Ind[x]))
-  Rec
-}</code></pre></div>
+<div class="sourceCode" id="cb489"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb489-1" title="1">TCPUE&lt;-<span class="cf">function</span>(x,Data,reps){</a>
+<a class="sourceLine" id="cb489-2" title="2">  </a>
+<a class="sourceLine" id="cb489-3" title="3">  mc&lt;-<span class="fl">0.05</span>                             <span class="co"># max change in TAC </span></a>
+<a class="sourceLine" id="cb489-4" title="4">  frac&lt;-<span class="fl">0.3</span>                            <span class="co"># target index is 30% of max</span></a>
+<a class="sourceLine" id="cb489-5" title="5">  nyears&lt;-<span class="kw">length</span>(Data<span class="op">@</span>Ind[x,])         <span class="co"># number of years of data</span></a>
+<a class="sourceLine" id="cb489-6" title="6">  </a>
+<a class="sourceLine" id="cb489-7" title="7">  smoothI&lt;-<span class="kw">smooth.spline</span>(Data<span class="op">@</span>Ind[x,]) <span class="co"># smoothed index  </span></a>
+<a class="sourceLine" id="cb489-8" title="8">  targetI&lt;-<span class="kw">max</span>(smoothI<span class="op">$</span>y)<span class="op">*</span>frac         <span class="co"># target </span></a>
+<a class="sourceLine" id="cb489-9" title="9">  </a>
+<a class="sourceLine" id="cb489-10" title="10">  currentI&lt;-<span class="kw">mean</span>(Data<span class="op">@</span>Ind[x,(nyears<span class="dv">-2</span>)<span class="op">:</span>nyears]) <span class="co"># current index</span></a>
+<a class="sourceLine" id="cb489-11" title="11">  </a>
+<a class="sourceLine" id="cb489-12" title="12">  ratio&lt;-currentI<span class="op">/</span>targetI              <span class="co"># ratio currentI/targetI</span></a>
+<a class="sourceLine" id="cb489-13" title="13">  </a>
+<a class="sourceLine" id="cb489-14" title="14">  <span class="cf">if</span>(ratio <span class="op">&lt;</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>mc)) ratio &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">-</span><span class="st"> </span>mc <span class="co"># if currentI &lt; targetI</span></a>
+<a class="sourceLine" id="cb489-15" title="15">  <span class="cf">if</span>(ratio <span class="op">&gt;</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>mc)) ratio &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>mc <span class="co"># if currentI &gt; targetI</span></a>
+<a class="sourceLine" id="cb489-16" title="16"> </a>
+<a class="sourceLine" id="cb489-17" title="17">  Rec &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Rec&quot;</span>)</a>
+<a class="sourceLine" id="cb489-18" title="18">  Rec<span class="op">@</span>TAC &lt;-<span class="st">  </span>Data<span class="op">@</span>MPrec[x] <span class="op">*</span><span class="st"> </span>ratio <span class="op">*</span><span class="st"> </span><span class="kw">exp</span>(<span class="kw">rnorm</span>(reps, <span class="op">-</span>Data<span class="op">@</span>CV_Ind[x]<span class="op">^</span><span class="dv">2</span><span class="op">/</span><span class="dv">2</span>, Data<span class="op">@</span>CV_Ind[x]))</a>
+<a class="sourceLine" id="cb489-19" title="19">  Rec</a>
+<a class="sourceLine" id="cb489-20" title="20">}</a></code></pre></div>
 <p>The <code>TCPUE</code> function simply decreases the past TAC (stored in <code>Data@MPrec</code>) if the index is lower than the target and increases the TAC if the index is higher than the target.</p>
 <p>All that is left is to make it compatible with DLMtool:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(TCPUE)&lt;-<span class="st">&quot;MP&quot;</span>
-<span class="kw">sfExport</span>(<span class="st">&quot;TCPUE&quot;</span>)</code></pre></div>
+<div class="sourceCode" id="cb490"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb490-1" title="1"><span class="kw">class</span>(TCPUE)&lt;-<span class="st">&quot;MP&quot;</span></a>
+<a class="sourceLine" id="cb490-2" title="2"><span class="kw">sfExport</span>(<span class="st">&quot;TCPUE&quot;</span>)</a></code></pre></div>
 </div>
 <div id="beyond-the-catch-limit" class="section level2">
 <h2><span class="header-section-number">26.4</span> Beyond the Catch Limit</h2>
 <p>All management procedures return an object of class ‘Rec’ that contains 13 slots:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">slotNames</span>(<span class="st">&quot;Rec&quot;</span>)</code></pre></div>
+<div class="sourceCode" id="cb491"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb491-1" title="1"><span class="kw">slotNames</span>(<span class="st">&quot;Rec&quot;</span>)</a></code></pre></div>
 <pre><code>##  [1] &quot;TAC&quot;      &quot;Effort&quot;   &quot;Spatial&quot;  &quot;Allocate&quot; &quot;LR5&quot;      &quot;LFR&quot;     
 ##  [7] &quot;HS&quot;       &quot;Rmaxlen&quot;  &quot;L5&quot;       &quot;LFS&quot;      &quot;Vmaxlen&quot;  &quot;Fdisc&quot;   
 ## [13] &quot;Misc&quot;</code></pre>
@@ -545,108 +579,111 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>Misc - An optional slot for storing additional information</li>
 </ul>
 <p>The <code>curE</code> MP just keeps effort constant at current levels:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">curE</code></pre></div>
-<pre><code>## function (x, Data, reps, plot = FALSE) 
-## {
-##     rec &lt;- new(&quot;Rec&quot;)
-##     rec@Effort &lt;- 1
-##     if (plot) 
-##         curE_plot(x, rec, Data)
-##     rec
+<div class="sourceCode" id="cb493"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb493-1" title="1">curE</a></code></pre></div>
+<pre><code>## function(x, Data, reps, plot=FALSE) {
+##   # current effort
+##   rec &lt;- new(&quot;Rec&quot;) # create recommendation object
+##   rec@Effort &lt;- 1 #* Data@MPeff[x] 
+##   if (plot) curE_plot(x, rec, Data)
+##   rec
 ## }
-## &lt;bytecode: 0x0000000018fea478&gt;
+## &lt;bytecode: 0x000001b0e83f6398&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
 <p>Note that only the <code>Effort</code> slot in the <code>Rec</code> object is populated in this case.</p>
 <p>To highlight the differences among Input control MPs examine spatial control MP <code>MRreal</code> that closes area 1 to fishing and reallocates fishing to the open area 2:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MRreal</code></pre></div>
-<pre><code>## function (x, Data, reps, plot = FALSE) 
-## {
-##     rec &lt;- new(&quot;Rec&quot;)
-##     rec@Allocate &lt;- 1
-##     rec@Spatial &lt;- c(0, rep(1, Data@nareas - 1))
-##     if (plot) 
-##         barplot(rec@Spatial, xlab = &quot;Area&quot;, ylab = &quot;Fraction Open&quot;, 
-##             ylim = c(0, 1), names = 1:Data@nareas)
-##     return(rec)
+<div class="sourceCode" id="cb495"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb495-1" title="1">MRreal</a></code></pre></div>
+<pre><code>## function(x, Data, reps, plot=FALSE) {
+##   # A Marine reserve in area 1 with spatial reallocation of effort
+##   
+##   rec &lt;- new(&quot;Rec&quot;) # create recommendation object
+##   rec@Allocate &lt;- 1
+##   rec@Spatial &lt;- c(0, rep(1, Data@nareas-1))
+##   
+##   if (plot)  barplot(rec@Spatial, xlab=&quot;Area&quot;, ylab=&quot;Fraction Open&quot;, ylim=c(0,1),
+##                       names=1:Data@nareas)
+##   return(rec)
 ## }
-## &lt;bytecode: 0x0000000019d261b0&gt;
+## &lt;bytecode: 0x000001b0e00c31f8&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
 <p>In contrast <code>MRnoreal</code> does not reallocate fishing effort:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MRnoreal</code></pre></div>
-<pre><code>## function (x, Data, reps, plot = FALSE) 
-## {
-##     rec &lt;- new(&quot;Rec&quot;)
-##     rec@Allocate &lt;- 0
-##     rec@Spatial &lt;- c(0, rep(1, Data@nareas - 1))
-##     if (plot) 
-##         barplot(rec@Spatial, xlab = &quot;Area&quot;, ylab = &quot;Fraction Open&quot;, 
-##             ylim = c(0, 1), names = 1:Data@nareas)
-##     return(rec)
+<div class="sourceCode" id="cb497"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb497-1" title="1">MRnoreal</a></code></pre></div>
+<pre><code>## function(x, Data, reps, plot=FALSE) {
+##   # A Marine reserve in area 1 with no spatial reallocation of effort
+##   
+##   rec &lt;- new(&quot;Rec&quot;) # create recommendation object
+##   rec@Allocate &lt;- 0
+##   rec@Spatial &lt;- c(0, rep(1, Data@nareas-1))
+##   
+##   if (plot)   barplot(rec@Spatial, xlab=&quot;Area&quot;, ylab=&quot;Fraction Open&quot;, ylim=c(0,1),
+##                       names=1:Data@nareas)
+##   return(rec)
 ## }
-## &lt;bytecode: 0x0000000019d1e728&gt;
+## &lt;bytecode: 0x000001b0e0175538&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
 <p>The MP <code>matlenlim</code> only specifies the parameters of length retention using an estimate of length at 50% maturity (<code>Stock@L50</code>):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">matlenlim</code></pre></div>
-<pre><code>## function (x, Data, reps, plot = FALSE) 
-## {
-##     rec &lt;- new(&quot;Rec&quot;)
-##     rec@LFR &lt;- Data@L50[x]
-##     rec@LR5 &lt;- rec@LFR * 0.95
-##     if (plot) 
-##         size_lim_plot(x, Data, rec)
-##     rec
+<div class="sourceCode" id="cb499"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb499-1" title="1">matlenlim</a></code></pre></div>
+<pre><code>## function(x, Data, reps, plot=FALSE) {
+##   # Knife-edge vulnerability at estimated length-at-maturity  
+##   rec &lt;- new(&quot;Rec&quot;) # create recommendation object
+##   rec@LFR &lt;- Data@L50[x] # new length at full retention   
+##   rec@LR5  &lt;- rec@LFR * 0.95 # new length at 5% retention   
+##   if(plot) size_lim_plot(x, Data, rec)
+##   # other slots aren&#39;t specified so remain unchanged
+##   rec
 ## }
-## &lt;bytecode: 0x000000000ba61150&gt;
+## &lt;bytecode: 0x000001b0e0644350&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;MP&quot;</code></pre>
 <div id="an-example-effort-control" class="section level3">
 <h3><span class="header-section-number">26.4.1</span> An Example Effort Control</h3>
 <p>Here we will copy and modify the MP we developed earlier to specify a new version of the target catch per unit effort MP (<code>TCPUE</code>) that provides effort recommendations:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">TCPUE_e&lt;-<span class="cf">function</span>(x,Data,reps){
-  
-  mc&lt;-<span class="fl">0.05</span>                             <span class="co"># max change in TAC </span>
-  frac&lt;-<span class="fl">0.3</span>                            <span class="co"># target index is 30% of max</span>
-  nyears&lt;-<span class="kw">length</span>(Data<span class="op">@</span>Ind[x,])         <span class="co"># number of years of data</span>
-  
-  smoothI&lt;-<span class="kw">smooth.spline</span>(Data<span class="op">@</span>Ind[x,]) <span class="co"># smoothed index  </span>
-  targetI&lt;-<span class="kw">max</span>(smoothI<span class="op">$</span>y)<span class="op">*</span>frac         <span class="co"># target </span>
-  
-  currentI&lt;-<span class="kw">mean</span>(Data<span class="op">@</span>Ind[x,(nyears<span class="op">-</span><span class="dv">2</span>)<span class="op">:</span>nyears]) <span class="co"># current index</span>
-  
-  ratio&lt;-currentI<span class="op">/</span>targetI              <span class="co"># ratio currentI/targetI</span>
-  
-  <span class="cf">if</span>(ratio <span class="op">&lt;</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>mc)) ratio &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">-</span><span class="st"> </span>mc <span class="co"># if currentI &lt; targetI</span>
-  <span class="cf">if</span>(ratio <span class="op">&gt;</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>mc)) ratio &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>mc <span class="co"># if currentI &gt; targetI</span>
-  
-  rec &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Rec&quot;</span>)
-  rec<span class="op">@</span>Effort &lt;-<span class="st"> </span>Data<span class="op">@</span>MPeff[x] <span class="op">*</span><span class="st"> </span>ratio
-  rec
-  
-}</code></pre></div>
+<div class="sourceCode" id="cb501"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb501-1" title="1">TCPUE_e&lt;-<span class="cf">function</span>(x,Data,reps){</a>
+<a class="sourceLine" id="cb501-2" title="2">  </a>
+<a class="sourceLine" id="cb501-3" title="3">  mc&lt;-<span class="fl">0.05</span>                             <span class="co"># max change in TAC </span></a>
+<a class="sourceLine" id="cb501-4" title="4">  frac&lt;-<span class="fl">0.3</span>                            <span class="co"># target index is 30% of max</span></a>
+<a class="sourceLine" id="cb501-5" title="5">  nyears&lt;-<span class="kw">length</span>(Data<span class="op">@</span>Ind[x,])         <span class="co"># number of years of data</span></a>
+<a class="sourceLine" id="cb501-6" title="6">  </a>
+<a class="sourceLine" id="cb501-7" title="7">  smoothI&lt;-<span class="kw">smooth.spline</span>(Data<span class="op">@</span>Ind[x,]) <span class="co"># smoothed index  </span></a>
+<a class="sourceLine" id="cb501-8" title="8">  targetI&lt;-<span class="kw">max</span>(smoothI<span class="op">$</span>y)<span class="op">*</span>frac         <span class="co"># target </span></a>
+<a class="sourceLine" id="cb501-9" title="9">  </a>
+<a class="sourceLine" id="cb501-10" title="10">  currentI&lt;-<span class="kw">mean</span>(Data<span class="op">@</span>Ind[x,(nyears<span class="dv">-2</span>)<span class="op">:</span>nyears]) <span class="co"># current index</span></a>
+<a class="sourceLine" id="cb501-11" title="11">  </a>
+<a class="sourceLine" id="cb501-12" title="12">  ratio&lt;-currentI<span class="op">/</span>targetI              <span class="co"># ratio currentI/targetI</span></a>
+<a class="sourceLine" id="cb501-13" title="13">  </a>
+<a class="sourceLine" id="cb501-14" title="14">  <span class="cf">if</span>(ratio <span class="op">&lt;</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span>mc)) ratio &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">-</span><span class="st"> </span>mc <span class="co"># if currentI &lt; targetI</span></a>
+<a class="sourceLine" id="cb501-15" title="15">  <span class="cf">if</span>(ratio <span class="op">&gt;</span><span class="st"> </span>(<span class="dv">1</span> <span class="op">+</span><span class="st"> </span>mc)) ratio &lt;-<span class="st"> </span><span class="dv">1</span> <span class="op">+</span><span class="st"> </span>mc <span class="co"># if currentI &gt; targetI</span></a>
+<a class="sourceLine" id="cb501-16" title="16">  </a>
+<a class="sourceLine" id="cb501-17" title="17">  rec &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Rec&quot;</span>)</a>
+<a class="sourceLine" id="cb501-18" title="18">  rec<span class="op">@</span>Effort &lt;-<span class="st"> </span>Data<span class="op">@</span>MPeff[x] <span class="op">*</span><span class="st"> </span>ratio</a>
+<a class="sourceLine" id="cb501-19" title="19">  rec</a>
+<a class="sourceLine" id="cb501-20" title="20">  </a>
+<a class="sourceLine" id="cb501-21" title="21">}</a></code></pre></div>
 <p>There have been surprisingly few changes to make TCPUE an input control MP that sets total allowable effort.</p>
 <ol style="list-style-type: decimal">
 <li>We have had to use stored recommendations of effort in the <code>Data@MPeff</code> slot, and</li>
 <li>The final line of the MP is our input control recommendatation that only modified the Effort.</li>
 </ol>
-<p>That is all. Again, we need to assign our new function to class <code>MP</code> and export it to the cluster:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(TCPUE_e)&lt;-<span class="st">&quot;MP&quot;</span>
-<span class="kw">sfExport</span>(<span class="st">&#39;TCPUE_e&#39;</span>)</code></pre></div>
+<p>That is all.
+Again, we need to assign our new function to class <code>MP</code> and export it to the cluster:</p>
+<div class="sourceCode" id="cb502"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb502-1" title="1"><span class="kw">class</span>(TCPUE_e)&lt;-<span class="st">&quot;MP&quot;</span></a>
+<a class="sourceLine" id="cb502-2" title="2"><span class="kw">sfExport</span>(<span class="st">&#39;TCPUE_e&#39;</span>)</a></code></pre></div>
 <p>Let’s test the two MPs and see how they peform:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">testMSE&lt;-<span class="kw">runMSE</span>(testOM,<span class="dt">MPs=</span><span class="kw">c</span>(<span class="st">&quot;TCPUE&quot;</span>,<span class="st">&quot;TCPUE_e&quot;</span>), <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<pre><code>## Running MSE in parallel on 10 processors</code></pre>
+<div class="sourceCode" id="cb503"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb503-1" title="1">testMSE&lt;-<span class="kw">runMSE</span>(testOM,<span class="dt">MPs=</span><span class="kw">c</span>(<span class="st">&quot;TCPUE&quot;</span>,<span class="st">&quot;TCPUE_e&quot;</span>), <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<pre><code>## Exporting custom MPs in global environment</code></pre>
+<pre><code>## Running MSE in parallel on 8 processors</code></pre>
 <pre><code>## MSE completed</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">NOAA_plot</span>(testMSE)</code></pre></div>
+<div class="sourceCode" id="cb507"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb507-1" title="1"><span class="kw">NOAA_plot</span>(testMSE)</a></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-179-1.png" width="672" /></p>
 <pre><code>##         PNOF  B50  LTY   VY
-## TCPUE   45.8 57.8 45.4 81.2
-## TCPUE_e 53.8 75.1 80.4  2.1</code></pre>
+## TCPUE   48.1 57.2 45.0 70.8
+## TCPUE_e 59.3 82.0 87.1  4.2</code></pre>
 </div>
 </div>
 </div>
@@ -698,10 +735,11 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
+    var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:" && /^https?:/.test(src))
-      src = src.replace(/^https?:/, '');
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
     script.src = src;
     document.getElementsByTagName("head")[0].appendChild(script);
   })();

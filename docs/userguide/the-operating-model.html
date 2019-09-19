@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html >
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Chapter 4 The Operating Model | Data-Limited Methods Toolkit (DLMtool 5.3)</title>
-  <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 The Operating Model | Data-Limited Methods Toolkit (DLMtool 5.4.0)</title>
+  <meta name="description" content="User guide for the DLMtool R package" />
+  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 4 The Operating Model | Data-Limited Methods Toolkit (DLMtool 5.3)" />
+  <meta property="og:title" content="Chapter 4 The Operating Model | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,23 +16,23 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 4 The Operating Model | Data-Limited Methods Toolkit (DLMtool 5.3)" />
+  <meta name="twitter:title" content="Chapter 4 The Operating Model | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
 
-<meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
+<meta name="author" content="Tom Carruthers &amp; Adrian Hordyk" />
 
 
-<meta name="date" content="2019-03-12">
+<meta name="date" content="2019-09-19" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
-  <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
-<link rel="prev" href="a-very-quick-demo.html">
-<link rel="next" href="management-procedures.html">
+  <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon" />
+<link rel="prev" href="a-very-quick-demo.html"/>
+<link rel="next" href="management-procedures.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -51,41 +50,66 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -289,7 +313,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
 <li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
-<li class="chapter" data-level="30" data-path="using-real-indices.html"><a href="using-real-indices.html"><i class="fa fa-check"></i><b>30</b> Using Real Indices</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
 <li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
@@ -353,7 +376,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.3)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.0)</a>
           </h1>
         </div>
 
@@ -379,19 +402,19 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h3><span class="header-section-number">4.1.1</span> Stock Object</h3>
 <p>The <code>avail</code> function can be used to examine the available Objects of a particular Class.</p>
 <p>For example, to see the available objects of class <em>Stock</em>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">avail</span>(<span class="st">&#39;Stock&#39;</span>)</code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb17-1" title="1"><span class="kw">avail</span>(<span class="st">&#39;Stock&#39;</span>)</a></code></pre></div>
 <pre><code>##  [1] &quot;Albacore&quot;          &quot;Blue_shark&quot;        &quot;Bluefin_tuna&quot;     
 ##  [4] &quot;Bluefin_tuna_WAtl&quot; &quot;Butterfish&quot;        &quot;Herring&quot;          
 ##  [7] &quot;Mackerel&quot;          &quot;Porgy&quot;             &quot;Rockfish&quot;         
 ## [10] &quot;Snapper&quot;           &quot;Sole&quot;              &quot;Toothfish&quot;</code></pre>
 <p>This shows that there are 12 objects of class <em>Stock</em>. We can confirm the class of this object by using the <code>class</code> function. For example, to examine the class of the object <code>Albacore</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(Albacore)</code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb19-1" title="1"><span class="kw">class</span>(Albacore)</a></code></pre></div>
 <pre><code>## [1] &quot;Stock&quot;
 ## attr(,&quot;package&quot;)
 ## [1] &quot;DLMtool&quot;</code></pre>
 <p>As expected, the <code>Albacore</code> object is class <em>Stock</em>.</p>
 <p>Let’s take a quick look at the contents of the Albacore Stock object:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">slotNames</span>(Albacore)</code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb21-1" title="1"><span class="kw">slotNames</span>(Albacore)</a></code></pre></div>
 <pre><code>##  [1] &quot;Name&quot;         &quot;Common_Name&quot;  &quot;Species&quot;      &quot;maxage&quot;      
 ##  [5] &quot;R0&quot;           &quot;M&quot;            &quot;M2&quot;           &quot;Mexp&quot;        
 ##  [9] &quot;Msd&quot;          &quot;Mgrad&quot;        &quot;h&quot;            &quot;SRrel&quot;       
@@ -403,25 +426,25 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## [33] &quot;Fdisc&quot;        &quot;Source&quot;</code></pre>
 <p>The output tells us that there are 34 slots in the <code>Albacore</code> Stock object. Each of these slots contains information relating to stock that is used in the MSE.</p>
 <p>We can examine the information that is stored in the slots using the @ symbol. For example, the name of the species in the Stock object is:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Albacore<span class="op">@</span>Name</code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb23-1" title="1">Albacore<span class="op">@</span>Name</a></code></pre></div>
 <pre><code>## [1] &quot;Albacore&quot;</code></pre>
 <p>The maximum age parameter is:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Albacore<span class="op">@</span>maxage </code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" title="1">Albacore<span class="op">@</span>maxage </a></code></pre></div>
 <pre><code>## [1] 15</code></pre>
 <p>The values for the natural mortality (<em>M</em>) parameter for this stock are:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Albacore<span class="op">@</span>M</code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" title="1">Albacore<span class="op">@</span>M</a></code></pre></div>
 <pre><code>## [1] 0.35 0.45</code></pre>
 <p>Note that the natural mortality parameter (<em>M</em>) has two values, while the maximum age (<em>maxage</em>) only has one value.</p>
 <p>The MSE in the DLMtool is a stochastic model, and almost all parameters are drawn from a distribution. By default this distribution is assumed to be uniform, and the two values for the <em>M</em> parameter represent the lower and upper bounds of this uniform distribution.</p>
 <p>Some parameters, such as maximum age (<em>maxage</em>), species name (<em>Name</em>), or initial recruitment (<em>R0</em>) have only a single value and are fixed in the MSE.</p>
 <p>You can see more information on the content of the <em>Stock</em> object by using the help function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">class?Stock</code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb29-1" title="1">class?Stock</a></code></pre></div>
 </div>
 <div id="fleet-object" class="section level3">
 <h3><span class="header-section-number">4.1.2</span> Fleet Object</h3>
 <p>While the <em>Stock</em> object contains all the information relating to the fish stock that is being modeled, the <em>Fleet</em> object is populated with information relating to the fishing fleet and historical pattern of exploitation.</p>
 <p>Like the <em>Stock</em> objects, there are a number of <em>Fleet</em> objects that are built into the DLMtoo:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">avail</span>(<span class="st">&#39;Fleet&#39;</span>)</code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb30-1" title="1"><span class="kw">avail</span>(<span class="st">&#39;Fleet&#39;</span>)</a></code></pre></div>
 <pre><code>##  [1] &quot;DecE_Dom&quot;              &quot;DecE_HDom&quot;            
 ##  [3] &quot;DecE_NDom&quot;             &quot;FlatE_Dom&quot;            
 ##  [5] &quot;FlatE_HDom&quot;            &quot;FlatE_NDom&quot;           
@@ -431,11 +454,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## [13] &quot;Low_Effort_Non_Target&quot; &quot;Target_All_Fish&quot;      
 ## [15] &quot;Targeting_Small_Fish&quot;</code></pre>
 <p>Here we will look at the <code>Generic_Fleet</code> object.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(Generic_Fleet)</code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb32-1" title="1"><span class="kw">class</span>(Generic_Fleet)</a></code></pre></div>
 <pre><code>## [1] &quot;Fleet&quot;
 ## attr(,&quot;package&quot;)
 ## [1] &quot;DLMtool&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">slotNames</span>(Generic_Fleet)</code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb34-1" title="1"><span class="kw">slotNames</span>(Generic_Fleet)</a></code></pre></div>
 <pre><code>##  [1] &quot;Name&quot;        &quot;nyears&quot;      &quot;Spat_targ&quot;   &quot;EffYears&quot;    &quot;EffLower&quot;   
 ##  [6] &quot;EffUpper&quot;    &quot;Esd&quot;         &quot;qinc&quot;        &quot;qcv&quot;         &quot;L5&quot;         
 ## [11] &quot;LFS&quot;         &quot;Vmaxlen&quot;     &quot;isRel&quot;       &quot;LR5&quot;         &quot;LFR&quot;        
@@ -444,16 +467,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## [26] &quot;CurrentYr&quot;   &quot;MPA&quot;</code></pre>
 <p>There are 27 slots in the <em>Fleet</em> object. The parameters in the <em>Fleet</em> object relate to the exploitation pattern of the stock.</p>
 <p>For example, the number of years that the stock has been exploited is specified in the <code>nyears</code> slot:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Generic_Fleet<span class="op">@</span>nyears</code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb36-1" title="1">Generic_Fleet<span class="op">@</span>nyears</a></code></pre></div>
 <pre><code>## [1] 50</code></pre>
 <p>As another example, the smallest length at full selection is specified in the <code>LFS</code> slot:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Generic_Fleet<span class="op">@</span>LFS</code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb38-1" title="1">Generic_Fleet<span class="op">@</span>LFS</a></code></pre></div>
 <pre><code>## [1] 0.75 1.10</code></pre>
 <p>Note that by default the values in the <code>LFS</code> (and the <code>L5</code> [smallest length at 5% selectivity]) slots are specified as multiples of the length of maturity (e.g., <code>Albacore@L50</code>). This is necessary because the <em>Fleet</em> objects built into the DLMtool are all generic, in the sense that they can be used with any <em>Stock</em> object.</p>
 <p>You will notice that the <code>isRel</code> slot in the <code>Generic_Fleet</code> object is set to “TRUE”. This means that the selectivity parameters are relative to the length of maturity in the <em>Stock</em> object. Absolute values for the selectivity parameters can be used, for example by specifying <code>LFS</code> and <code>L5</code> to, say, 100 - 150 and 50 - 70 respectively. The <code>isRel</code> parameter must then be set to “FALSE”, so that the Operating Model knows that these selectivity values are in absolute terms, and does not multiply them by the length of maturity (strange things may happen if the model assumes that the size of first capture is 50 to 70 times greater than the size of maturity!).</p>
 <p>Note that all the parameters in the <em>Fleet</em> object have two values, representing the minimum and maximum bounds of a uniform distribution (with some exceptions that will be discussed in more detail later).</p>
 <p>More information on the <em>Fleet</em> object can be found by typing:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">class?Fleet</code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" title="1">class?Fleet</a></code></pre></div>
 </div>
 <div id="obs-object" class="section level3">
 <h3><span class="header-section-number">4.1.3</span> Obs Object</h3>
@@ -462,15 +485,15 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Although the MSE may be conditioned on real data and information about the fishery, all <em>data</em> is generated inside the model. Because it is a simulation model and the data was generated by a computer, rather than some unobserved real world process, the <em>fishery data</em> is known perfectly. In the real world, however, all data sources and parameter estimates are subject to some observation error. The degree of uncertainty may vary between different data types, and between fisheries.</p>
 <p>The advantage of the MSE process is that the performance of a management procedure using the realistically noisy simulated data can be compared to the performance under conditions of perfect knowledge. This comparison, which unfortunately is never possible in the real world, can reveal important information about the robustness (or sensitivity) of certain methods to variability and error in particular data types. This knowledge can help to prioritize research to reduce uncertainty in the parameters and data sets that are most crucial to the performance of the method.</p>
 <p>Like the other two objects, there are a number of built-in <em>Obs</em> objects in the DLMtool.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">avail</span>(<span class="st">&#39;Obs&#39;</span>)</code></pre></div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb41-1" title="1"><span class="kw">avail</span>(<span class="st">&#39;Obs&#39;</span>)</a></code></pre></div>
 <pre><code>## [1] &quot;Generic_Obs&quot;        &quot;Imprecise_Biased&quot;   &quot;Imprecise_Unbiased&quot;
 ## [4] &quot;Perfect_Info&quot;       &quot;Precise_Biased&quot;     &quot;Precise_Unbiased&quot;</code></pre>
 <p>Let’s take a look at the <code>Imprecise_Unbiased</code> object:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(Imprecise_Unbiased)</code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb43-1" title="1"><span class="kw">class</span>(Imprecise_Unbiased)</a></code></pre></div>
 <pre><code>## [1] &quot;Obs&quot;
 ## attr(,&quot;package&quot;)
 ## [1] &quot;DLMtool&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">slotNames</span>(Imprecise_Unbiased)</code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb45-1" title="1"><span class="kw">slotNames</span>(Imprecise_Unbiased)</a></code></pre></div>
 <pre><code>##  [1] &quot;Name&quot;          &quot;Cobs&quot;          &quot;Cbiascv&quot;       &quot;CAA_nsamp&quot;    
 ##  [5] &quot;CAA_ESS&quot;       &quot;CAL_nsamp&quot;     &quot;CAL_ESS&quot;       &quot;Iobs&quot;         
 ##  [9] &quot;Ibiascv&quot;       &quot;Btobs&quot;         &quot;Btbiascv&quot;      &quot;beta&quot;         
@@ -481,49 +504,49 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## [29] &quot;Recbiascv&quot;</code></pre>
 <p>There are 29 slots in <em>Obs</em> objects, each with information relating to the uncertainty of a data type.</p>
 <p>For example, the <code>LenMbiascv</code> slot defines the bias (coefficient of variability) in the length of maturity:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Imprecise_Biased<span class="op">@</span>LenMbiascv</code></pre></div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb47-1" title="1">Imprecise_Biased<span class="op">@</span>LenMbiascv</a></code></pre></div>
 <pre><code>## [1] 0.2</code></pre>
 <p>This means that the assumed length of maturity that is generated by the Operating Model, and used in the simulated application of a management procedure, is not the ‘true’ value set in the <em>Stock</em> object, but a value sampled with a 20% coefficient of variation.</p>
 <p>More information on the <em>Obs</em> object can be found by typing:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">class?Obs</code></pre></div>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb49-1" title="1">class?Obs</a></code></pre></div>
 </div>
 <div id="imp-object" class="section level3">
 <h3><span class="header-section-number">4.1.4</span> Imp Object</h3>
 <p>The final component for the <em>Operating Model</em> is the <em>Imp</em> (Implementation) object. This object contains all the information relating to how the management recommendation is actually implemented in the fishery, i.e., the implementation error. The <code>Imp</code> object includes slots for the over or under catch of TAC, implementation error in total allowable effort, and variability in size regulations.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">avail</span>(<span class="st">&#39;Imp&#39;</span>)</code></pre></div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb50-1" title="1"><span class="kw">avail</span>(<span class="st">&#39;Imp&#39;</span>)</a></code></pre></div>
 <pre><code>## [1] &quot;Overages&quot;    &quot;Perfect_Imp&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(Overages)</code></pre></div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb52-1" title="1"><span class="kw">class</span>(Overages)</a></code></pre></div>
 <pre><code>## [1] &quot;Imp&quot;
 ## attr(,&quot;package&quot;)
 ## [1] &quot;DLMtool&quot;</code></pre>
 <p>More information on the <em>Imp</em> object can be found by typing:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">class?Imp</code></pre></div>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb54-1" title="1">class?Imp</a></code></pre></div>
 </div>
 </div>
 <div id="plotting-om-components" class="section level2">
 <h2><span class="header-section-number">4.2</span> Plotting OM Components</h2>
 <p>The OM Components <em>Stock</em>, <em>Fleet</em>, <em>Obs</em>, and <em>Imp</em> can be plotted to visually examine the contents.</p>
 <p>For example, to plot a <em>Stock</em> object (note that the figures are not shown here):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(Albacore)</code></pre></div>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb55-1" title="1"><span class="kw">plot</span>(Albacore)</a></code></pre></div>
 <p>To plot a <em>Fleet</em> object you must also provide an object of class <em>Stock</em>, for example:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(FlatE_Dom, Albacore)</code></pre></div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb56-1" title="1"><span class="kw">plot</span>(FlatE_Dom, Albacore)</a></code></pre></div>
 <p>The <em>Obs</em> and <em>Imp</em> objects can also be plotted:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(Generic_Obs)
-<span class="kw">plot</span>(Overages)</code></pre></div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb57-1" title="1"><span class="kw">plot</span>(Generic_Obs)</a>
+<a class="sourceLine" id="cb57-2" title="2"><span class="kw">plot</span>(Overages)</a></code></pre></div>
 </div>
 <div id="building-an-om-from-component-objects" class="section level2">
 <h2><span class="header-section-number">4.3</span> Building an OM from Component Objects</h2>
 <p>We will now look at how to combine objects of the four classes into an OM. For now we will work with the OM components that are built into DLMtool. In later sections of the user manual we will cover how to build your own Stock, Fleet, Obs, and Imp objects that characterises your fishery.</p>
 <p>Objects of class <em>Stock</em>, <em>Fleet</em>, <em>Obs</em> and <em>Imp</em> are used to create an Operating Model object (class <code>OM</code>). The simplest way to do this is to use <code>new</code> command.</p>
 <p>For example, here we are building a OM using the <code>Rockfish</code> Stock object, <code>Generic_Fleet</code> Fleet object, <code>Generic_Obs</code> Obs object, and <code>Perfect_Imp</code> Imp object and assigning it the name <code>myOM</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myOM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Rockfish, Generic_Fleet, Generic_Obs, Perfect_Imp)</code></pre></div>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb58-1" title="1">myOM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Rockfish, Generic_Fleet, Generic_Obs, Perfect_Imp)</a></code></pre></div>
 <p>What is the class of our newly created objects <code>myOM</code>?</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(myOM)</code></pre></div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb59-1" title="1"><span class="kw">class</span>(myOM)</a></code></pre></div>
 <pre><code>## [1] &quot;OM&quot;
 ## attr(,&quot;package&quot;)
 ## [1] &quot;DLMtool&quot;</code></pre>
 <p>If you use the <code>slotNames</code> function on the <code>myOM</code> object that was just created, you will see that it contains all of the information from the <em>Stock</em>, <em>Fleet</em>, <em>Obs</em>, and <em>Imp</em> objects:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">slotNames</span>(myOM)</code></pre></div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb61-1" title="1"><span class="kw">slotNames</span>(myOM)</a></code></pre></div>
 <pre><code>##   [1] &quot;Name&quot;          &quot;Agency&quot;        &quot;Region&quot;        &quot;Sponsor&quot;      
 ##   [5] &quot;Latitude&quot;      &quot;Longitude&quot;     &quot;nsim&quot;          &quot;proyears&quot;     
 ##   [9] &quot;interval&quot;      &quot;pstar&quot;         &quot;maxF&quot;          &quot;reps&quot;         
@@ -552,27 +575,27 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## [101] &quot;Recbiascv&quot;     &quot;TACFrac&quot;       &quot;TACSD&quot;         &quot;TAEFrac&quot;      
 ## [105] &quot;TAESD&quot;         &quot;SizeLimFrac&quot;   &quot;SizeLimSD&quot;</code></pre>
 <p>You can access individual slots in the OM object using the @ symbol and confirm that these values are the same as those in the Stock object used to create the OM:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Rockfish<span class="op">@</span>M</code></pre></div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb63-1" title="1">Rockfish<span class="op">@</span>M</a></code></pre></div>
 <pre><code>## [1] 0.04 0.08</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myOM<span class="op">@</span>M</code></pre></div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb65-1" title="1">myOM<span class="op">@</span>M</a></code></pre></div>
 <pre><code>## [1] 0.04 0.08</code></pre>
 <p>In addition to the information from the Stock, Fleet, Obs, and Imp objects, the OM object also contains other values relating to the MSE, including the number of simulations to run (<code>nsim</code>), the number of projection years (<code>proyears</code>), and the management interval (<code>interval</code>):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myOM<span class="op">@</span>nsim </code></pre></div>
+<div class="sourceCode" id="cb67"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb67-1" title="1">myOM<span class="op">@</span>nsim </a></code></pre></div>
 <pre><code>## [1] 48</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myOM<span class="op">@</span>proyears</code></pre></div>
+<div class="sourceCode" id="cb69"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb69-1" title="1">myOM<span class="op">@</span>proyears</a></code></pre></div>
 <pre><code>## [1] 50</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myOM<span class="op">@</span>interval</code></pre></div>
+<div class="sourceCode" id="cb71"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb71-1" title="1">myOM<span class="op">@</span>interval</a></code></pre></div>
 <pre><code>## [1] 4</code></pre>
 <p>These slots all have default values that can be modified easily, for example:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myOM<span class="op">@</span>proyears &lt;-<span class="st"> </span><span class="dv">60</span></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb73-1" title="1">myOM<span class="op">@</span>proyears &lt;-<span class="st"> </span><span class="dv">60</span></a></code></pre></div>
 <p>Remember, you can access the help information for objects by typing ? followed by the class name, for example:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">class?OM</code></pre></div>
+<div class="sourceCode" id="cb74"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb74-1" title="1">class?OM</a></code></pre></div>
 <p>In later chapters we will cover a range of methods to build new Stock, Fleet, Obs, and Imp objects and constructing OMs that characterise your fishery.</p>
 </div>
 <div id="visualizing-an-om" class="section level2">
 <h2><span class="header-section-number">4.4</span> Visualizing an OM</h2>
 <p>The newly created OM object <code>myOM</code> contains all the parameters that will be used to simulate our fishery, both the historical conditions and the future projections. The OM can visualized with the <code>plot</code> function (plots not shown here):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(myOM)</code></pre></div>
+<div class="sourceCode" id="cb75"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb75-1" title="1"><span class="kw">plot</span>(myOM)</a></code></pre></div>
 </div>
 </div>
             </section>
@@ -623,10 +646,11 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
+    var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:" && /^https?:/.test(src))
-      src = src.replace(/^https?:/, '');
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
     script.src = src;
     document.getElementsByTagName("head")[0].appendChild(script);
   })();

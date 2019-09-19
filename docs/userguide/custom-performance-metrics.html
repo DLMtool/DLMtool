@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html >
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Chapter 29 Custom Performance Metrics | Data-Limited Methods Toolkit (DLMtool 5.3)</title>
-  <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 29 Custom Performance Metrics | Data-Limited Methods Toolkit (DLMtool 5.4.0)</title>
+  <meta name="description" content="User guide for the DLMtool R package" />
+  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 29 Custom Performance Metrics | Data-Limited Methods Toolkit (DLMtool 5.3)" />
+  <meta property="og:title" content="Chapter 29 Custom Performance Metrics | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,23 +16,23 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 29 Custom Performance Metrics | Data-Limited Methods Toolkit (DLMtool 5.3)" />
+  <meta name="twitter:title" content="Chapter 29 Custom Performance Metrics | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
 
-<meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
+<meta name="author" content="Tom Carruthers &amp; Adrian Hordyk" />
 
 
-<meta name="date" content="2019-03-12">
+<meta name="date" content="2019-09-19" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
-  <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
-<link rel="prev" href="subsetting-the-mse-object.html">
-<link rel="next" href="using-real-indices.html">
+  <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon" />
+<link rel="prev" href="subsetting-the-mse-object.html"/>
+<link rel="next" href="acknowledgements.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -51,41 +50,66 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -289,7 +313,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
 <li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
-<li class="chapter" data-level="30" data-path="using-real-indices.html"><a href="using-real-indices.html"><i class="fa fa-check"></i><b>30</b> Using Real Indices</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
 <li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
@@ -353,7 +376,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.3)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.0)</a>
           </h1>
         </div>
 
@@ -364,46 +387,46 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="custom-performance-metrics" class="section level1">
 <h1><span class="header-section-number">Chapter 29</span> Custom Performance Metrics</h1>
 <p><code>PM</code> methods were introduced in the <a href="performance-metrics.html#performance-metrics-methods">Performance Metrics Methods</a> chapter. DLMtool includes several built-in <code>PM</code> methods:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">avail</span>(<span class="st">&quot;PM&quot;</span>)</code></pre></div>
-<pre><code>## [1] &quot;AAVY&quot;  &quot;LTY&quot;   &quot;P10&quot;   &quot;P100&quot;  &quot;P50&quot;   &quot;PNOF&quot;  &quot;STY&quot;   &quot;Yield&quot;</code></pre>
+<div class="sourceCode" id="cb549"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb549-1" title="1"><span class="kw">avail</span>(<span class="st">&quot;PM&quot;</span>)</a></code></pre></div>
+<pre><code>## [1] &quot;AAVE&quot;  &quot;AAVY&quot;  &quot;LTY&quot;   &quot;P10&quot;   &quot;P100&quot;  &quot;P50&quot;   &quot;PNOF&quot;  &quot;STY&quot;   &quot;Yield&quot;</code></pre>
 <p>We saw in <a href="performance-metrics.html#customizing-the-pm-functions">Customizing the <code>PM</code> Functions</a> that it is straightforward to modify the years that the performance statistics are calculated over using the <code>Yrs</code> argument, and the reference level using the <code>Ref</code> argument. In this section we describe the <code>PM</code> functions in more detail for advanced users who wish to develop their own <code>PM</code> methods.</p>
 <p>We will demonstrate this using the <code>P50</code> performance metric function as an example.</p>
 <div id="necessity-of-complexity" class="section level2">
 <h2><span class="header-section-number">29.1</span> Necessity of Complexity</h2>
 <p>While at first glance the <code>PM</code> functions may appear overly complicated, they are actually quite straightforward. This level of complexity is required because functions of class <code>PM</code> not only return the required performance statistic, but also relevant contextual information.</p>
 <p>Imagine we want to develop a function to calculate the probability that <span class="math inline">\(B &gt; 0.5 B_\text{MSY}\)</span>, which we will define as <em>not overfished</em>. We could do something like this:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">P_Noverfished &lt;-<span class="st"> </span><span class="cf">function</span>(MSEobj) {
-  <span class="kw">round</span>(<span class="kw">apply</span>(MSEobj<span class="op">@</span>B_BMSY <span class="op">&gt;</span><span class="fl">0.5</span>, <span class="dv">2</span>, mean),<span class="dv">2</span>)
-}</code></pre></div>
+<div class="sourceCode" id="cb551"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb551-1" title="1">P_Noverfished &lt;-<span class="st"> </span><span class="cf">function</span>(MSEobj) {</a>
+<a class="sourceLine" id="cb551-2" title="2">  <span class="kw">round</span>(<span class="kw">apply</span>(MSEobj<span class="op">@</span>B_BMSY <span class="op">&gt;</span><span class="fl">0.5</span>, <span class="dv">2</span>, mean),<span class="dv">2</span>)</a>
+<a class="sourceLine" id="cb551-3" title="3">}</a></code></pre></div>
 <p>We could increase the flexibility of the function by adding additional arguments to specify the years to calculate the statistic over, but for this demonstration we will keep it simple.</p>
 <p>Applying our function to calculate the performance statistic is straightforward:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MSEobj &lt;-<span class="st"> </span><span class="kw">runMSE</span>(<span class="dt">silent=</span><span class="ot">TRUE</span>) <span class="co"># run an exampe MSE</span>
-p_noverfish &lt;-<span class="st"> </span><span class="kw">P_Noverfished</span>(MSEobj) <span class="co"># calculate and store our performance statistic</span>
-p_noverfish</code></pre></div>
-<pre><code>## [1] 0.75 0.73 0.98 0.88 0.99 0.92</code></pre>
+<div class="sourceCode" id="cb552"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb552-1" title="1">MSEobj &lt;-<span class="st"> </span><span class="kw">runMSE</span>(<span class="dt">silent=</span><span class="ot">TRUE</span>) <span class="co"># run an exampe MSE</span></a>
+<a class="sourceLine" id="cb552-2" title="2">p_noverfish &lt;-<span class="st"> </span><span class="kw">P_Noverfished</span>(MSEobj) <span class="co"># calculate and store our performance statistic</span></a>
+<a class="sourceLine" id="cb552-3" title="3">p_noverfish</a></code></pre></div>
+<pre><code>## [1] 0.74 0.72 0.98 0.87 0.99 0.96</code></pre>
 <p>The <code>p_noverfish</code> variable now contains our performance statistic, which we could use to plot or tabulate results. However, the numeric vector returned by <code>P_Noverfished</code> includes no information on what these numbers represent. This makes it difficult to include the results in generic plotting or summary functions. Furthermore, it is easy to imagine that with several similiar performance metric functions, it will be easy to loose track of the meaning of the results unless an elaborate variable naming system is used.</p>
 <p>The <code>PM</code> functions have been designed to avoid this problem by returning all information related to the calculation of the performance statistic. Here we calculate the same performance metric using the relevant <code>PM</code> function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">p1 &lt;-<span class="st"> </span><span class="kw">P50</span>(MSEobj)</code></pre></div>
+<div class="sourceCode" id="cb554"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb554-1" title="1">p1 &lt;-<span class="st"> </span><span class="kw">P50</span>(MSEobj)</a></code></pre></div>
 <p>Note that we don’t need to use a descriptive variable name; the <code>p1</code> variable includes relevant information on the performance metric. Note also that <code>PM</code> function are most often passed directly to plotting or table functions instead of being called and stored directly.</p>
 <p>The <code>p1</code> variable is an object of class PMobj and includes the following slots:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">slotNames</span>(p1)</code></pre></div>
+<div class="sourceCode" id="cb555"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb555-1" title="1"><span class="kw">slotNames</span>(p1)</a></code></pre></div>
 <pre><code>## [1] &quot;Name&quot;    &quot;Caption&quot; &quot;Stat&quot;    &quot;Ref&quot;     &quot;Prob&quot;    &quot;Mean&quot;    &quot;MPs&quot;</code></pre>
 <p>The first two slots contain a descriptive name of the performance statistic, and a caption that can be used in plots or summary tables:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">p1<span class="op">@</span>Name</code></pre></div>
+<div class="sourceCode" id="cb557"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb557-1" title="1">p1<span class="op">@</span>Name</a></code></pre></div>
 <pre><code>## [1] &quot;Spawning Biomass relative to SBMSY&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">p1<span class="op">@</span>Caption</code></pre></div>
+<div class="sourceCode" id="cb559"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb559-1" title="1">p1<span class="op">@</span>Caption</a></code></pre></div>
 <pre><code>## [1] &quot;Prob. SB &gt; 0.5 SBMSY (Years 1 - 50)&quot;</code></pre>
 <p>The last two slots contain the results of performance statistic and the names of the MPs:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">p1<span class="op">@</span>Mean</code></pre></div>
-<pre><code>## [1] 0.7475000 0.7325000 0.9845833 0.8762500 0.9933333 0.9195833</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">p1<span class="op">@</span>MPs</code></pre></div>
+<div class="sourceCode" id="cb561"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb561-1" title="1">p1<span class="op">@</span>Mean</a></code></pre></div>
+<pre><code>## [1] 0.7408333 0.7191667 0.9800000 0.8733333 0.9933333 0.9604167</code></pre>
+<div class="sourceCode" id="cb563"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb563-1" title="1">p1<span class="op">@</span>MPs</a></code></pre></div>
 <pre><code>## [1] &quot;AvC&quot;       &quot;DCAC&quot;      &quot;FMSYref&quot;   &quot;curE&quot;      &quot;matlenlim&quot; &quot;MRreal&quot;</code></pre>
 <p>We will look at the other 3 slots in detail in the next section. The main point here is to demonstrate the using functions of class <code>PM</code> that return objects of class <code>PMobj</code> has the advantage that the function output is completely self-contained and can be used elsewhere without requiring any additional information.</p>
 </div>
 <div id="pm-methods-in-detail" class="section level2">
 <h2><span class="header-section-number">29.2</span> <code>PM</code> Methods in Detail</h2>
 <p>Let’s go through the <code>P50</code> function in detail to see how it works:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">P50</code></pre></div>
+<div class="sourceCode" id="cb565"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb565-1" title="1">P50</a></code></pre></div>
 <pre><code>## function (MSEobj = NULL, Ref = 0.5, Yrs = NULL) 
 ## {
 ##     Yrs &lt;- ChkYrs(Yrs, MSEobj)
@@ -424,12 +447,12 @@ p_noverfish</code></pre></div>
 ##     PMobj@MPs &lt;- MSEobj@MPs
 ##     PMobj
 ## }
-## &lt;bytecode: 0x000000001a55c460&gt;
+## &lt;bytecode: 0x000001b0dd225f50&gt;
 ## &lt;environment: namespace:DLMtool&gt;
 ## attr(,&quot;class&quot;)
 ## [1] &quot;PM&quot;</code></pre>
 <p>Firstly, functions of class <code>PM</code> must have three arguments: <code>MSEobj</code>, <code>Ref</code>, and <code>Yrs</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">args</span>(P50)</code></pre></div>
+<div class="sourceCode" id="cb567"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb567-1" title="1"><span class="kw">args</span>(P50)</a></code></pre></div>
 <pre><code>## function (MSEobj = NULL, Ref = 0.5, Yrs = NULL) 
 ## NULL</code></pre>
 <ol style="list-style-type: decimal">
@@ -438,32 +461,32 @@ p_noverfish</code></pre></div>
 <li>The third argument <code>Yrs</code> can have a default value of <code>NULL</code> or specify a numeric vector of length 2 with the first and last years to calculate the performance statistic, or a numeric vector of length 1 in which case if it is positive it is the first <code>Yrs</code> and if negative the last <code>Yrs</code> of the projection period.</li>
 </ol>
 <p>The first line of a <code>PM</code> function must be <code>Yrs &lt;- ChkYrs(Yrs, MSEobj)</code>. This line updates the <code>Yrs</code> variable and makes sure that the specified year indices are valid. For example:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ChkYrs</span>(<span class="ot">NULL</span>, MSEobj) <span class="co"># returns all projection years </span>
-<span class="kw">ChkYrs</span>(<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">10</span>), MSEobj) <span class="co"># returns first 10 years </span>
-<span class="kw">ChkYrs</span>(<span class="kw">c</span>(<span class="dv">60</span>,<span class="dv">80</span>), MSEobj) <span class="co"># returns message and last 20 years</span>
-<span class="kw">ChkYrs</span>(<span class="dv">5</span>, MSEobj) <span class="co"># first 5 years</span>
-<span class="kw">ChkYrs</span>(<span class="op">-</span><span class="dv">5</span>, MSEobj) <span class="co"># last 5 years</span>
-<span class="kw">ChkYrs</span>(<span class="kw">c</span>(<span class="dv">50</span>,<span class="dv">10</span>), MSEobj) <span class="co"># returns an error</span></code></pre></div>
+<div class="sourceCode" id="cb569"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb569-1" title="1"><span class="kw">ChkYrs</span>(<span class="ot">NULL</span>, MSEobj) <span class="co"># returns all projection years </span></a>
+<a class="sourceLine" id="cb569-2" title="2"><span class="kw">ChkYrs</span>(<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">10</span>), MSEobj) <span class="co"># returns first 10 years </span></a>
+<a class="sourceLine" id="cb569-3" title="3"><span class="kw">ChkYrs</span>(<span class="kw">c</span>(<span class="dv">60</span>,<span class="dv">80</span>), MSEobj) <span class="co"># returns message and last 20 years</span></a>
+<a class="sourceLine" id="cb569-4" title="4"><span class="kw">ChkYrs</span>(<span class="dv">5</span>, MSEobj) <span class="co"># first 5 years</span></a>
+<a class="sourceLine" id="cb569-5" title="5"><span class="kw">ChkYrs</span>(<span class="op">-</span><span class="dv">5</span>, MSEobj) <span class="co"># last 5 years</span></a>
+<a class="sourceLine" id="cb569-6" title="6"><span class="kw">ChkYrs</span>(<span class="kw">c</span>(<span class="dv">50</span>,<span class="dv">10</span>), MSEobj) <span class="co"># returns an error</span></a></code></pre></div>
 <p>When the default value for <code>Yrs</code> is <code>NULL</code>, the <code>Yrs</code> variable is updated to include all projection years:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Yrs &lt;-<span class="st"> </span><span class="kw">ChkYrs</span>(<span class="ot">NULL</span>, MSEobj)
-Yrs</code></pre></div>
+<div class="sourceCode" id="cb570"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb570-1" title="1">Yrs &lt;-<span class="st"> </span><span class="kw">ChkYrs</span>(<span class="ot">NULL</span>, MSEobj)</a>
+<a class="sourceLine" id="cb570-2" title="2">Yrs</a></code></pre></div>
 <pre><code>## [1]  1 50</code></pre>
 <p>Next we create a new object of class <code>PMobj</code>, and populate the <code>Name</code> slot with a short but descriptive name:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">PMobj &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;PMobj&quot;</span>)
-PMobj<span class="op">@</span>Name &lt;-<span class="st"> &quot;Spawning Biomass relative to SBMSY&quot;</span></code></pre></div>
+<div class="sourceCode" id="cb572"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb572-1" title="1">PMobj &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;PMobj&quot;</span>)</a>
+<a class="sourceLine" id="cb572-2" title="2">PMobj<span class="op">@</span>Name &lt;-<span class="st"> &quot;Spawning Biomass relative to SBMSY&quot;</span></a></code></pre></div>
 <p>The next line populates the <code>Caption</code> slot with a brief caption including the years over which the performance statistic is calculated. The <em>if</em> statement is not crucial, but avoids the redundant <code>SB &gt; 1 SBMSY</code> in cases where <code>Ref=1</code>.</p>
 <p>Next we store the value of the <code>Ref</code> argument in the <code>PMobj@Ref</code> slot so that information is contained in the function output.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">PMobj<span class="op">@</span>Ref &lt;-<span class="st"> </span>Ref</code></pre></div>
+<div class="sourceCode" id="cb573"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb573-1" title="1">PMobj<span class="op">@</span>Ref &lt;-<span class="st"> </span>Ref</a></code></pre></div>
 <p>The <code>Stat</code> slot is an array that stores the variable which we wish to calculate the performance statistic; an output from the <code>runMSE</code> function with dimensions <code>MSE@nsim</code>, <code>MSE@nMPs</code>, and <code>MSE@proyears</code> (or fewer if the argument <code>Yrs != NULL</code>).</p>
 <p>In this case we want to calculate a performance statistic related to the biomass relative to BMSY, and so we assign the <code>Stat</code> slot as follows:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">PMobj<span class="op">@</span>Stat &lt;-<span class="st"> </span>MSEobj<span class="op">@</span>B_BMSY[, , Yrs[<span class="dv">1</span>]<span class="op">:</span>Yrs[<span class="dv">2</span>]]</code></pre></div>
+<div class="sourceCode" id="cb574"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb574-1" title="1">PMobj<span class="op">@</span>Stat &lt;-<span class="st"> </span>MSEobj<span class="op">@</span>B_BMSY[, , Yrs[<span class="dv">1</span>]<span class="op">:</span>Yrs[<span class="dv">2</span>]]</a></code></pre></div>
 <p>Note that we are including all simulations and MPs and indexing the years specified in <code>Yrs</code>.</p>
 <p>Next we use the <code>calcProb</code> function to calculate the mean of <code>PMobj@Stat &gt; PMobj@Ref</code> over the years dimension. This results in a matrix with dimensions <code>MSE@nsim, MSE@nMPs</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">PMobj<span class="op">@</span>Prob &lt;-<span class="st"> </span><span class="kw">calcProb</span>(PMobj<span class="op">@</span>Stat <span class="op">&gt;</span><span class="st"> </span>PMobj<span class="op">@</span>Ref, MSEobj)</code></pre></div>
+<div class="sourceCode" id="cb575"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb575-1" title="1">PMobj<span class="op">@</span>Prob &lt;-<span class="st"> </span><span class="kw">calcProb</span>(PMobj<span class="op">@</span>Stat <span class="op">&gt;</span><span class="st"> </span>PMobj<span class="op">@</span>Ref, MSEobj)</a></code></pre></div>
 <p>Note that in order to calculate a probability the argument to the <code>calcProb</code> function must be a logical array, which is achieved using the <code>Ref</code> slot.</p>
 <p>Also note that in this case <code>PMobj@Stat &gt; PMobj@Ref</code> is equivalent to <code>MSEobj@B_BMSY[, , Yrs[1]:Yrs[2]] &gt; 0.5</code>. The <code>PM</code> functions have been designed this way so that in most cases the <code>PMobj@Prob &lt;- calcProb(PMobj@Stat &gt; PMobj@Ref)</code> line is identical in all <code>PM</code> functions and does not need to be modified. The exception to this is if we don’t want to calculate a probability but want the actual mean values of <code>PMobj@Stat</code>, demonstrated in the example below.</p>
 <p>In the next line we calculate the mean of <code>PMobj@Prob</code> over simulations using the <code>calcMean</code> function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">PMobj<span class="op">@</span>Mean &lt;-<span class="st"> </span><span class="kw">calcMean</span>(PMobj<span class="op">@</span>Prob)</code></pre></div>
+<div class="sourceCode" id="cb576"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb576-1" title="1">PMobj<span class="op">@</span>Mean &lt;-<span class="st"> </span><span class="kw">calcMean</span>(PMobj<span class="op">@</span>Prob)</a></code></pre></div>
 <p>Similiar to the previous line, this line is identical in all <code>PM</code> functions and can be simply copy/pasted from other <code>PM</code> functions without being modified. The <code>Mean</code> slot is a numeric vector of length <code>MSEobj@nMPs</code> with the overall performance statistic, in this case the probability of <span class="math inline">\(B &gt; 0.5B_\text{MSY}\)</span> across all simulations and years.</p>
 <p>Finally, we store the names of the MPs and return the <code>PMobj</code>.</p>
 </div>
@@ -471,105 +494,206 @@ PMobj<span class="op">@</span>Name &lt;-<span class="st"> &quot;Spawning Biomass
 <h2><span class="header-section-number">29.3</span> Creating Example <code>PMs</code> and Plot</h2>
 <p>As an example, we will create another version of <code>DFO_plot</code> using some custom <code>PM</code> functions and a customized version of <code>TradePlot</code>.</p>
 <p>First we create the plot using <code>DFO_plot</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">DFO_plot</span>(MSEobj)</code></pre></div>
+<div class="sourceCode" id="cb577"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb577-1" title="1"><span class="kw">DFO_plot</span>(MSEobj)</a></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-208-1.png" width="672" /></p>
-<p>From the help documentation (<code>?DFO_plot</code>) we can see that this function plots mean biomass relative to BMSY and fishing mortality rate relative to FMSY over the final 5 years of the projection.</p>
+<p>From the help documentation (<code>?DFO_plot</code>) we can see that this function plots mean biomass relative to BMSY and fishing mortality rate relative to FMSY
+over the final 5 years of the projection.</p>
 <p>First we’ll develop a <code>PM</code> function to calculate the mean B/BMSY for the last 5 years of the projection period. Notice that this is very similiar to <code>P50</code> described above, with the modification of the <code>Caption</code> and the <code>Prob</code> slots, and the <code>Yrs</code> argument. We are calculating a mean here instead of a probability and are not using the <code>Ref</code> argument:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MeanB &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">MSEobj =</span> <span class="ot">NULL</span>, <span class="dt">Ref =</span> <span class="dv">1</span>, <span class="dt">Yrs =</span> <span class="op">-</span><span class="dv">5</span>) {
-    Yrs &lt;-<span class="st"> </span><span class="kw">ChkYrs</span>(Yrs, MSEobj)
-    PMobj &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;PMobj&quot;</span>)
-    PMobj<span class="op">@</span>Name &lt;-<span class="st"> &quot;Spawning Biomass relative to SBMSY&quot;</span>
-    PMobj<span class="op">@</span>Caption &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;Mean SB/SBMSY (Years &quot;</span>, Yrs[<span class="dv">1</span>], <span class="st">&quot; - &quot;</span>, Yrs[<span class="dv">2</span>], <span class="st">&quot;)&quot;</span>)
-    
-    PMobj<span class="op">@</span>Ref &lt;-<span class="st"> </span>Ref
-    PMobj<span class="op">@</span>Stat &lt;-<span class="st"> </span>MSEobj<span class="op">@</span>B_BMSY[, , Yrs[<span class="dv">1</span>]<span class="op">:</span>Yrs[<span class="dv">2</span>]]
-    PMobj<span class="op">@</span>Prob &lt;-<span class="st"> </span><span class="kw">calcProb</span>(PMobj<span class="op">@</span>Stat, MSEobj)
-    PMobj<span class="op">@</span>Mean &lt;-<span class="st"> </span><span class="kw">calcMean</span>(PMobj<span class="op">@</span>Prob)
-    PMobj<span class="op">@</span>MPs &lt;-<span class="st"> </span>MSEobj<span class="op">@</span>MPs
-    PMobj
-}</code></pre></div>
+<div class="sourceCode" id="cb578"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb578-1" title="1">MeanB &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">MSEobj =</span> <span class="ot">NULL</span>, <span class="dt">Ref =</span> <span class="dv">1</span>, <span class="dt">Yrs =</span> <span class="dv">-5</span>) {</a>
+<a class="sourceLine" id="cb578-2" title="2">    Yrs &lt;-<span class="st"> </span><span class="kw">ChkYrs</span>(Yrs, MSEobj)</a>
+<a class="sourceLine" id="cb578-3" title="3">    PMobj &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;PMobj&quot;</span>)</a>
+<a class="sourceLine" id="cb578-4" title="4">    PMobj<span class="op">@</span>Name &lt;-<span class="st"> &quot;Spawning Biomass relative to SBMSY&quot;</span></a>
+<a class="sourceLine" id="cb578-5" title="5">    PMobj<span class="op">@</span>Caption &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;Mean SB/SBMSY (Years &quot;</span>, Yrs[<span class="dv">1</span>], <span class="st">&quot; - &quot;</span>, Yrs[<span class="dv">2</span>], <span class="st">&quot;)&quot;</span>)</a>
+<a class="sourceLine" id="cb578-6" title="6">    </a>
+<a class="sourceLine" id="cb578-7" title="7">    PMobj<span class="op">@</span>Ref &lt;-<span class="st"> </span>Ref</a>
+<a class="sourceLine" id="cb578-8" title="8">    PMobj<span class="op">@</span>Stat &lt;-<span class="st"> </span>MSEobj<span class="op">@</span>B_BMSY[, , Yrs[<span class="dv">1</span>]<span class="op">:</span>Yrs[<span class="dv">2</span>]]</a>
+<a class="sourceLine" id="cb578-9" title="9">    PMobj<span class="op">@</span>Prob &lt;-<span class="st"> </span><span class="kw">calcProb</span>(PMobj<span class="op">@</span>Stat, MSEobj)</a>
+<a class="sourceLine" id="cb578-10" title="10">    PMobj<span class="op">@</span>Mean &lt;-<span class="st"> </span><span class="kw">calcMean</span>(PMobj<span class="op">@</span>Prob)</a>
+<a class="sourceLine" id="cb578-11" title="11">    PMobj<span class="op">@</span>MPs &lt;-<span class="st"> </span>MSEobj<span class="op">@</span>MPs</a>
+<a class="sourceLine" id="cb578-12" title="12">    PMobj</a>
+<a class="sourceLine" id="cb578-13" title="13">}</a></code></pre></div>
 <p>We develop a <code>PM</code> function to calculate average F/FMSY in a similar way:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MeanF &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">MSEobj =</span> <span class="ot">NULL</span>, <span class="dt">Ref =</span> <span class="dv">1</span>, <span class="dt">Yrs =</span> <span class="op">-</span><span class="dv">5</span>) {
-    Yrs &lt;-<span class="st"> </span><span class="kw">ChkYrs</span>(Yrs, MSEobj)
-    PMobj &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;PMobj&quot;</span>)
-    PMobj<span class="op">@</span>Name &lt;-<span class="st"> &quot;Fishing Mortality relative to FMSY&quot;</span>
-    PMobj<span class="op">@</span>Caption &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;Mean F/FMSY (Years &quot;</span>, Yrs[<span class="dv">1</span>], <span class="st">&quot; - &quot;</span>, Yrs[<span class="dv">2</span>], <span class="st">&quot;)&quot;</span>)
-    
-    PMobj<span class="op">@</span>Ref &lt;-<span class="st"> </span>Ref
-    PMobj<span class="op">@</span>Stat &lt;-<span class="st"> </span>MSEobj<span class="op">@</span>F_FMSY[, , Yrs[<span class="dv">1</span>]<span class="op">:</span>Yrs[<span class="dv">2</span>]]
-    PMobj<span class="op">@</span>Prob &lt;-<span class="st"> </span><span class="kw">calcProb</span>(PMobj<span class="op">@</span>Stat, MSEobj)
-    PMobj<span class="op">@</span>Mean &lt;-<span class="st"> </span><span class="kw">calcMean</span>(PMobj<span class="op">@</span>Prob)
-    PMobj<span class="op">@</span>MPs &lt;-<span class="st"> </span>MSEobj<span class="op">@</span>MPs
-    PMobj
-}</code></pre></div>
+<div class="sourceCode" id="cb579"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb579-1" title="1">MeanF &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">MSEobj =</span> <span class="ot">NULL</span>, <span class="dt">Ref =</span> <span class="dv">1</span>, <span class="dt">Yrs =</span> <span class="dv">-5</span>) {</a>
+<a class="sourceLine" id="cb579-2" title="2">    Yrs &lt;-<span class="st"> </span><span class="kw">ChkYrs</span>(Yrs, MSEobj)</a>
+<a class="sourceLine" id="cb579-3" title="3">    PMobj &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;PMobj&quot;</span>)</a>
+<a class="sourceLine" id="cb579-4" title="4">    PMobj<span class="op">@</span>Name &lt;-<span class="st"> &quot;Fishing Mortality relative to FMSY&quot;</span></a>
+<a class="sourceLine" id="cb579-5" title="5">    PMobj<span class="op">@</span>Caption &lt;-<span class="st"> </span><span class="kw">paste0</span>(<span class="st">&quot;Mean F/FMSY (Years &quot;</span>, Yrs[<span class="dv">1</span>], <span class="st">&quot; - &quot;</span>, Yrs[<span class="dv">2</span>], <span class="st">&quot;)&quot;</span>)</a>
+<a class="sourceLine" id="cb579-6" title="6">    </a>
+<a class="sourceLine" id="cb579-7" title="7">    PMobj<span class="op">@</span>Ref &lt;-<span class="st"> </span>Ref</a>
+<a class="sourceLine" id="cb579-8" title="8">    PMobj<span class="op">@</span>Stat &lt;-<span class="st"> </span>MSEobj<span class="op">@</span>F_FMSY[, , Yrs[<span class="dv">1</span>]<span class="op">:</span>Yrs[<span class="dv">2</span>]]</a>
+<a class="sourceLine" id="cb579-9" title="9">    PMobj<span class="op">@</span>Prob &lt;-<span class="st"> </span><span class="kw">calcProb</span>(PMobj<span class="op">@</span>Stat, MSEobj)</a>
+<a class="sourceLine" id="cb579-10" title="10">    PMobj<span class="op">@</span>Mean &lt;-<span class="st"> </span><span class="kw">calcMean</span>(PMobj<span class="op">@</span>Prob)</a>
+<a class="sourceLine" id="cb579-11" title="11">    PMobj<span class="op">@</span>MPs &lt;-<span class="st"> </span>MSEobj<span class="op">@</span>MPs</a>
+<a class="sourceLine" id="cb579-12" title="12">    PMobj</a>
+<a class="sourceLine" id="cb579-13" title="13">}</a></code></pre></div>
 <p>Similar to developing custom MPs we need to tell R that these new functions are <code>PM</code> methods:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(MeanB) &lt;-<span class="st"> &quot;PM&quot;</span>
-<span class="kw">class</span>(MeanF) &lt;-<span class="st"> &quot;PM&quot;</span></code></pre></div>
+<div class="sourceCode" id="cb580"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb580-1" title="1"><span class="kw">class</span>(MeanB) &lt;-<span class="st"> &quot;PM&quot;</span></a>
+<a class="sourceLine" id="cb580-2" title="2"><span class="kw">class</span>(MeanF) &lt;-<span class="st"> &quot;PM&quot;</span></a></code></pre></div>
 <p>Now we can test our performance metric functions:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data.frame</span>(<span class="dt">MP=</span><span class="kw">MeanB</span>(MSEobj)<span class="op">@</span>MPs, <span class="dt">B_BMSY=</span><span class="kw">MeanB</span>(MSEobj)<span class="op">@</span>Mean, <span class="dt">F_FMSY=</span><span class="kw">MeanF</span>(MSEobj)<span class="op">@</span>Mean)</code></pre></div>
+<div class="sourceCode" id="cb581"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb581-1" title="1"><span class="kw">data.frame</span>(<span class="dt">MP=</span><span class="kw">MeanB</span>(MSEobj)<span class="op">@</span>MPs, <span class="dt">B_BMSY=</span><span class="kw">MeanB</span>(MSEobj)<span class="op">@</span>Mean, <span class="dt">F_FMSY=</span><span class="kw">MeanF</span>(MSEobj)<span class="op">@</span>Mean)</a></code></pre></div>
 <pre><code>##          MP    B_BMSY    F_FMSY
-## 1       AvC 1.5028154 1.8089924
-## 2      DCAC 0.7287867 2.7666544
-## 3   FMSYref 0.9561748 1.0202412
-## 4      curE 1.5474619 0.9160854
-## 5 matlenlim 2.6493047 0.8945637
-## 6    MRreal 1.6312194 0.7449103</code></pre>
+## 1       AvC 1.4861185 1.9455987
+## 2      DCAC 0.6947469 2.9901421
+## 3   FMSYref 0.9238824 1.0489709
+## 4      curE 1.5642205 0.9044180
+## 5 matlenlim 2.6575828 0.8873824
+## 6    MRreal 1.7086972 0.6895289</code></pre>
 <p>How do these results compare to what is shown in <code>DFO_plot</code>?</p>
 <p>We could also use the <code>summary</code> function with our new <code>PM</code> functions, but note that these results are not probabilities:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(MSEobj, <span class="st">&#39;MeanB&#39;</span>, <span class="st">&#39;MeanF&#39;</span>)</code></pre></div>
+<div class="sourceCode" id="cb583"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb583-1" title="1"><span class="kw">summary</span>(MSEobj, <span class="st">&#39;MeanB&#39;</span>, <span class="st">&#39;MeanF&#39;</span>)</a></code></pre></div>
 <pre><code>## Calculating Performance Metrics</code></pre>
 <pre><code>##                  Performance.Metrics                               
 ## 1 Spawning Biomass relative to SBMSY  Mean SB/SBMSY (Years 46 - 50)
 ## 2 Fishing Mortality relative to FMSY    Mean F/FMSY (Years 46 - 50)
 ## 
 ## 
-## Probability:
+## Performance Statistics:
 ##          MP MeanB MeanF
-## 1       AvC  1.50  1.80
-## 2      DCAC  0.73  2.80
-## 3   FMSYref  0.96  1.00
-## 4      curE  1.50  0.92
-## 5 matlenlim  2.60  0.89
-## 6    MRreal  1.60  0.74</code></pre>
+## 1       AvC  1.50  1.90
+## 2      DCAC  0.69  3.00
+## 3   FMSYref  0.92  1.00
+## 4      curE  1.60  0.90
+## 5 matlenlim  2.70  0.89
+## 6    MRreal  1.70  0.69</code></pre>
 <p>Finally, we will develop a customized plotting function to reproduce the image produced by <code>DFO_plot</code>.</p>
 <p>We can produced something fairly similar quite quickly using the <code>TradePlot</code> function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">TradePlot</span>(MSEobj, <span class="st">&#39;MeanB&#39;</span>, <span class="st">&#39;MeanF&#39;</span>, <span class="dt">Lims=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>))</code></pre></div>
+<div class="sourceCode" id="cb586"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb586-1" title="1"><span class="kw">TradePlot</span>(MSEobj, <span class="st">&#39;MeanB&#39;</span>, <span class="st">&#39;MeanF&#39;</span>, <span class="dt">Lims=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>))</a></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-214-1.png" width="672" /></p>
 <pre><code>##          MP MeanB MeanF Satisificed
-## 1       AvC  1.50  1.80        TRUE
-## 2      DCAC  0.73  2.80        TRUE
-## 3   FMSYref  0.96  1.00        TRUE
-## 4      curE  1.50  0.92        TRUE
-## 5 matlenlim  2.60  0.89        TRUE
-## 6    MRreal  1.60  0.74        TRUE</code></pre>
+## 1       AvC  1.50  1.90        TRUE
+## 2      DCAC  0.69  3.00        TRUE
+## 3   FMSYref  0.92  1.00        TRUE
+## 4      curE  1.60  0.90        TRUE
+## 5 matlenlim  2.70  0.89        TRUE
+## 6    MRreal  1.70  0.69        TRUE</code></pre>
 <p>Adding the shaded polygons and text requires a little more tweaking and some knowledge of the <code>ggplot2</code> package. We will wrap up our code in a function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">NewPlot &lt;-<span class="st"> </span><span class="cf">function</span>(MSEobj) {
-  <span class="co"># create but don&#39;t show the plot</span>
-  P &lt;-<span class="st"> </span><span class="kw">TradePlot</span>(MSEobj, <span class="st">&#39;MeanB&#39;</span>, <span class="st">&#39;MeanF&#39;</span>, <span class="dt">Lims=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>), <span class="dt">Show=</span><span class="ot">FALSE</span>) 
-  P1 &lt;-<span class="st"> </span>P<span class="op">$</span>Plots[[<span class="dv">1</span>]] <span class="co"># the ggplot objects are returned as a list</span>
-  
-  <span class="co"># add the shaded regions and the text</span>
-  P1 <span class="op">+</span><span class="st"> </span>ggplot2<span class="op">::</span><span class="kw">geom_rect</span>(ggplot2<span class="op">::</span><span class="kw">aes</span>(<span class="dt">xmin=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>), <span class="dt">xmax=</span><span class="kw">c</span>(<span class="fl">0.4</span>, <span class="fl">0.8</span>, <span class="ot">Inf</span>), 
-                                       <span class="dt">ymin=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="dt">ymax=</span><span class="kw">rep</span>(<span class="ot">Inf</span>,<span class="dv">3</span>)),
-                          <span class="dt">alpha=</span><span class="kw">c</span>(<span class="fl">0.8</span>, <span class="fl">0.6</span>, <span class="fl">0.4</span>), <span class="dt">fill=</span><span class="st">&quot;grey86&quot;</span>) <span class="op">+</span>
-<span class="st">    </span>ggplot2<span class="op">::</span><span class="kw">annotate</span>(<span class="dt">geom =</span> <span class="st">&quot;text&quot;</span>, <span class="dt">x =</span> <span class="kw">c</span>(<span class="fl">0.25</span>, <span class="fl">0.6</span>, <span class="fl">1.25</span>), <span class="dt">y =</span> <span class="ot">Inf</span>, 
-                      <span class="dt">label =</span> <span class="kw">c</span>(<span class="st">&quot;Critical&quot;</span>, <span class="st">&quot;Cautious&quot;</span>, <span class="st">&quot;Healthy&quot;</span>) , 
-                      <span class="dt">color =</span> <span class="kw">c</span>(<span class="st">&#39;white&#39;</span>, <span class="st">&#39;darkgray&#39;</span>, <span class="st">&#39;darkgray&#39;</span>), 
-                      <span class="dt">size=</span><span class="dv">5</span>, <span class="dt">angle =</span> <span class="dv">270</span>, <span class="dt">hjust=</span><span class="op">-</span><span class="fl">0.25</span>)
-
-}
-
-<span class="kw">NewPlot</span>(MSEobj)</code></pre></div>
+<div class="sourceCode" id="cb588"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb588-1" title="1">NewPlot &lt;-<span class="st"> </span><span class="cf">function</span>(MSEobj) {</a>
+<a class="sourceLine" id="cb588-2" title="2">  <span class="co"># create but don&#39;t show the plot</span></a>
+<a class="sourceLine" id="cb588-3" title="3">  P &lt;-<span class="st"> </span><span class="kw">TradePlot</span>(MSEobj, <span class="st">&#39;MeanB&#39;</span>, <span class="st">&#39;MeanF&#39;</span>, <span class="dt">Lims=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>), <span class="dt">Show=</span><span class="ot">FALSE</span>) </a>
+<a class="sourceLine" id="cb588-4" title="4">  P1 &lt;-<span class="st"> </span>P<span class="op">$</span>Plots[[<span class="dv">1</span>]] <span class="co"># the ggplot objects are returned as a list</span></a>
+<a class="sourceLine" id="cb588-5" title="5">  </a>
+<a class="sourceLine" id="cb588-6" title="6">  <span class="co"># add the shaded regions and the text</span></a>
+<a class="sourceLine" id="cb588-7" title="7">  P1 <span class="op">+</span><span class="st"> </span>ggplot2<span class="op">::</span><span class="kw">geom_rect</span>(ggplot2<span class="op">::</span><span class="kw">aes</span>(<span class="dt">xmin=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>), <span class="dt">xmax=</span><span class="kw">c</span>(<span class="fl">0.4</span>, <span class="fl">0.8</span>, <span class="ot">Inf</span>), </a>
+<a class="sourceLine" id="cb588-8" title="8">                                       <span class="dt">ymin=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="dt">ymax=</span><span class="kw">rep</span>(<span class="ot">Inf</span>,<span class="dv">3</span>)),</a>
+<a class="sourceLine" id="cb588-9" title="9">                          <span class="dt">alpha=</span><span class="kw">c</span>(<span class="fl">0.8</span>, <span class="fl">0.6</span>, <span class="fl">0.4</span>), <span class="dt">fill=</span><span class="st">&quot;grey86&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb588-10" title="10"><span class="st">    </span>ggplot2<span class="op">::</span><span class="kw">annotate</span>(<span class="dt">geom =</span> <span class="st">&quot;text&quot;</span>, <span class="dt">x =</span> <span class="kw">c</span>(<span class="fl">0.25</span>, <span class="fl">0.6</span>, <span class="fl">1.25</span>), <span class="dt">y =</span> <span class="ot">Inf</span>, </a>
+<a class="sourceLine" id="cb588-11" title="11">                      <span class="dt">label =</span> <span class="kw">c</span>(<span class="st">&quot;Critical&quot;</span>, <span class="st">&quot;Cautious&quot;</span>, <span class="st">&quot;Healthy&quot;</span>) , </a>
+<a class="sourceLine" id="cb588-12" title="12">                      <span class="dt">color =</span> <span class="kw">c</span>(<span class="st">&#39;white&#39;</span>, <span class="st">&#39;darkgray&#39;</span>, <span class="st">&#39;darkgray&#39;</span>), </a>
+<a class="sourceLine" id="cb588-13" title="13">                      <span class="dt">size=</span><span class="dv">5</span>, <span class="dt">angle =</span> <span class="dv">270</span>, <span class="dt">hjust=</span><span class="op">-</span><span class="fl">0.25</span>)</a>
+<a class="sourceLine" id="cb588-14" title="14"></a>
+<a class="sourceLine" id="cb588-15" title="15">}</a>
+<a class="sourceLine" id="cb588-16" title="16"></a>
+<a class="sourceLine" id="cb588-17" title="17"><span class="kw">NewPlot</span>(MSEobj)</a></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-215-1.png" width="672" /></p>
+<pre><code>##          MP MeanB MeanF Satisificed
+## 1       AvC  1.50  1.90        TRUE
+## 2      DCAC  0.69  3.00        TRUE
+## 3   FMSYref  0.92  1.00        TRUE
+## 4      curE  1.60  0.90        TRUE
+## 5 matlenlim  2.70  0.89        TRUE
+## 6    MRreal  1.70  0.69        TRUE</code></pre>
+<p><img src="userguide_files/figure-html/unnamed-chunk-215-2.png" width="672" /></p>
+<!-- # Using Real Indices -->
+<!-- Since DLMtool V5.3 real indices of abundance can be added to the Data object and used to condition the OM.  -->
+<!-- Three types of real indices can provided: 'Biomass', 'VBiomass' and "SpBiomass" for total, vulnerable, and spawning biomass respectively.  -->
+<!-- The type(s) of index is specified in `Data@Type` and the index provided as a vector of length `OM@nyears` in `Data@RInd`, or a matrix with nrow = number of indices and ncol = `OM@nyears`.  -->
+<!-- The `Data` object with the real indices can be included in the operating model using the `cpars` slot. The information in the `Data@RInd` slot used in the MSE will match exactly the provided indices during the historical simulation period. The hyper-stability/depletion (beta) and observation error are calculated by comparing the real indices with the simulated indices during the historical year period and used to generate the `Data@RInd` in the projection period.  -->
+<!-- For example, here we first generate some indices of abundance and then include those indices as real indices of abundance in the OM.  -->
+<!-- First we generate three indices (total biomass, vulnerable biomass, and spawning biomass): -->
+<!-- ```{r} -->
+<!-- OM <- DLMtool::testOM -->
+<!-- Hist <- runMSE(OM, Hist=TRUE, silent=TRUE) -->
+<!-- Bind <- Hist@TSdata$B[1,] # use the first simulation as our 'real' data -->
+<!-- Bind <- Bind/mean(Bind) -->
+<!-- VBind <- Hist@TSdata$VB[1,] -->
+<!-- VBind <- VBind/mean(VBind) -->
+<!-- SpBInd<- Hist@TSdata$SSB[1,] -->
+<!-- SpBInd <- SpBInd/mean(SpBInd) -->
+<!-- ``` -->
+<!-- Next we add these 'real' indices to a Data object: -->
+<!-- ```{r} -->
+<!-- Data <- new("Data") -->
+<!-- Data@Type <- c("Biomass", "VBiomass", 'SpBiomass') -->
+<!-- Data@RInd <- array(rbind(Bind, VBind, SpBInd), dim=c(1, 3, length(Bind))) -->
+<!-- ``` -->
+<!-- Note that `Data@RInd` is an array with dimensions: number of simulations (1 in this case because it is 'real' data), number of real indices (3 in this case), and the length of the longest index (all equal to `OM@nyears` in this case): -->
+<!-- ```{r} -->
+<!-- dim(Data@RInd) -->
+<!-- ``` -->
+<!-- Now we can add the Data object to our OM using the `cpars` slot: -->
+<!-- ```{r} -->
+<!-- OM@cpars$Data <- Data -->
+<!-- ``` -->
+<!-- And run the MSE (we use the argument `PPD=TRUE` here to return the simulated Data object at the end of the MSE): -->
+<!-- ```{r} -->
+<!-- MSE <- runMSE(OM, MPs="AvC", silent=TRUE, PPD=TRUE) -->
+<!-- data <- MSE@Misc$Data[[1]] # the simulated data from the first MP -->
+<!-- ``` -->
+<!-- Note the dimensions of the `RInd` array in the simulated data: -->
+<!-- ```{r} -->
+<!-- dim(data@RInd) -->
+<!-- ``` -->
+<!-- The index is the same for every simulation for the historical years:  -->
+<!-- ```{r} -->
+<!-- all(data@RInd[1,,1:OM@nyears] == data@RInd[2,,1:OM@nyears]) -->
+<!-- all(data@RInd[1,,1:OM@nyears] == data@RInd[OM@nsim,,1:OM@nyears]) -->
+<!-- ``` -->
+<!-- And identical to the real indices provided in the Data object: -->
+<!-- ```{r} -->
+<!-- all(Data@RInd[1,,] == data@RInd[OM@nsim,,1:OM@nyears]) -->
+<!-- ``` -->
+<!-- The hyper-stability/depletion coefficient (beta), auto-correlation, standard deviation, and correlation for each simulation and index are returned as a data frame in the `Misc` slot: -->
+<!-- ```{r} -->
+<!-- head(MSE@Misc$RInd.stats) -->
+<!-- ``` -->
+<!-- Note that in this case there is perfect correlation for simulation 1. This is not surprising because our 'real' indices were generated from simulation 1 of the same OM. Low or negative correlation values indicate that the simulated trends in abundance are very different from the real indices provided in the Data object. -->
+<!-- The observation error stored in `RInd.stats` are used to maintain the same error structure in the projection simulations.  -->
+
+<!-- # (PART\*) FAQ & TroubleShooting {-} -->
+<!-- # Frequently Asked Questions -->
+<!-- ## How are the biological reference points such as BMSY calculated? -->
+<!-- For the historical simulations, the biological reference points (SSB0, BMSY, FMSY, etc) are calculated using the life-history and selectivity parameters averaged over a 10-year period around the current year. For example, the biological reference points at the end of the historical period are calculated from the average life-history and selectivity parameters from the last 5 years of the historical period and the first 5 years of the projection period. -->
+<!-- B0, SSB0 and depletion in both the initial and final historical years are calculated from the life-history parameters at the end of the historical period (i.e. the 'current' year). -->
+<!-- ## How is stock initialized in the first year?  -->
+<!-- The stock is unfished in the initial year. The initial unfished age-structure is subject to recruitment variability and therefore the stock is not at an unfished equilibrium in the initial year, but rather distributed around B0. -->
+<!-- ## Can I set the stock depletion level in the initial year?  -->
+<!-- The initial depletion can be set using `cpars$initD`, which must be a vector of length `nsim` specifying the stock depletion for the initial year of the simulations. -->
+<!-- ## Is the Data collected before or after fishing? -->
+<!-- The index (`Data@Ind`), abundance (`Data@Abun` or `Data@SpAbun`), and depletion (`Data@Dep`) are calculated at the beginning of the year before fishing occurs. -->
+<!-- ## What is the lag in data collection? -->
+<!-- The Data object is populated with data from the previous year. A greater lag in some or all of the data sources can be specified with custom management procedures. -->
+<!-- # TroubleShooting -->
+<!-- ## OM Documentation -->
+<!-- I'm getting the following error when I run `OMdoc()` (or something like it): -->
+<!-- ```{} -->
+<!-- Error in yaml::yaml.load(string, ...) : -->
+<!--   Parser error: while parsing a block mapping at line 1, column 1 did not find expected key at line 1, column 16 -->
+<!-- ``` -->
+<!-- This is usually caused by a special character in the first few lines of the Rmarkdown file (eg in Title, Subtitle, Author(s), or Date). -->
+<!-- A common culpit is a single apostrophe, usually used to indicate the possessive of a singular noun. -->
+<!-- For example, the following will result in an error: -->
+<!-- ```{} -->
+<!-- # Title -->
+<!-- Adrian's OM -->
+<!-- ``` -->
+<!-- The solution to this problem is to type two apostrophes in place of one: -->
+<!-- ```{} -->
+<!-- # Title -->
+<!-- Adrian''s OM -->
+<!-- ``` -->
+
 </div>
 </div>
+
+
+
             </section>
 
           </div>
         </div>
       </div>
 <a href="subsetting-the-mse-object.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="using-real-indices.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="acknowledgements.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
@@ -611,10 +735,11 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
+    var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:" && /^https?:/.test(src))
-      src = src.replace(/^https?:/, '');
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
     script.src = src;
     document.getElementsByTagName("head")[0].appendChild(script);
   })();

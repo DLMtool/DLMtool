@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html >
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Chapter 14 Examining the MSE object | Data-Limited Methods Toolkit (DLMtool 5.3)</title>
-  <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 14 Examining the MSE object | Data-Limited Methods Toolkit (DLMtool 5.4.0)</title>
+  <meta name="description" content="User guide for the DLMtool R package" />
+  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 14 Examining the MSE object | Data-Limited Methods Toolkit (DLMtool 5.3)" />
+  <meta property="og:title" content="Chapter 14 Examining the MSE object | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,23 +16,23 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 14 Examining the MSE object | Data-Limited Methods Toolkit (DLMtool 5.3)" />
+  <meta name="twitter:title" content="Chapter 14 Examining the MSE object | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
 
-<meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
+<meta name="author" content="Tom Carruthers &amp; Adrian Hordyk" />
 
 
-<meta name="date" content="2019-03-12">
+<meta name="date" content="2019-09-19" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
-  <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
-<link rel="prev" href="operating-model-library.html">
-<link rel="next" href="performance-metrics.html">
+  <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon" />
+<link rel="prev" href="operating-model-library.html"/>
+<link rel="next" href="performance-metrics.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -51,41 +50,66 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -289,7 +313,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
 <li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
-<li class="chapter" data-level="30" data-path="using-real-indices.html"><a href="using-real-indices.html"><i class="fa fa-check"></i><b>30</b> Using Real Indices</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
 <li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
@@ -353,7 +376,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.3)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.0)</a>
           </h1>
         </div>
 
@@ -366,21 +389,21 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The MSE object contains all of the output from the MSE. In this chapter we will examine the MSE object in more detail.</p>
 <p>First we will run an MSE so that we have an MSE object to work with. We will then briefly examine some of the contents of the MSE object. The chapters <a href="performance-metrics.html#performance-metrics">Performance Metrics</a> and <a href="custom-performance-metrics.html#custom-performance-metrics">Custom Performance Metrics</a> contain more information on the MSE object.</p>
 <p>We create an OM based on the Blue Shark stock object and other built-in objects:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;OM&#39;</span>, Blue_shark, Generic_Fleet, Imprecise_Biased, Perfect_Imp, <span class="dt">nsim=</span><span class="dv">200</span>)</code></pre></div>
+<div class="sourceCode" id="cb227"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb227-1" title="1">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;OM&#39;</span>, Blue_shark, Generic_Fleet, Imprecise_Biased, Perfect_Imp, <span class="dt">nsim=</span><span class="dv">200</span>)</a></code></pre></div>
 <p>Note that we have increased the number of simulations from the default 48 to 200:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM<span class="op">@</span>nsim</code></pre></div>
+<div class="sourceCode" id="cb228"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb228-1" title="1">OM<span class="op">@</span>nsim</a></code></pre></div>
 <pre><code>## [1] 200</code></pre>
 <p>Let’s choose an arbitrary set of MPs:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MPs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Fratio&quot;</span>, <span class="st">&quot;DCAC&quot;</span>, <span class="st">&quot;Fdem&quot;</span>, <span class="st">&quot;DD&quot;</span>, <span class="st">&quot;matlenlim&quot;</span>) </code></pre></div>
+<div class="sourceCode" id="cb230"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb230-1" title="1">MPs &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Fratio&quot;</span>, <span class="st">&quot;DCAC&quot;</span>, <span class="st">&quot;Fdem&quot;</span>, <span class="st">&quot;DD&quot;</span>, <span class="st">&quot;matlenlim&quot;</span>) </a></code></pre></div>
 <p>Set up parallel processing:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">setup</span>()</code></pre></div>
+<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb231-1" title="1"><span class="kw">setup</span>()</a></code></pre></div>
 <pre><code>## Library DLMtool loaded.</code></pre>
 <p>And run the MSE using parallel processing and save the output to an object called <code>BSharkMSE</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">BSharkMSE &lt;-<span class="st"> </span><span class="kw">runMSE</span>(OM, MPs, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</code></pre></div>
-<pre><code>## Running MSE in parallel on 10 processors</code></pre>
+<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb233-1" title="1">BSharkMSE &lt;-<span class="st"> </span><span class="kw">runMSE</span>(OM, MPs, <span class="dt">parallel =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<pre><code>## Running MSE in parallel on 8 processors</code></pre>
 <pre><code>## MSE completed</code></pre>
 <p>The names of the slots in an object of class <code>MSE</code> can be displayed using the <code>slotNames</code> function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">slotNames</span>(BSharkMSE)</code></pre></div>
+<div class="sourceCode" id="cb236"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb236-1" title="1"><span class="kw">slotNames</span>(BSharkMSE)</a></code></pre></div>
 <pre><code>##  [1] &quot;Name&quot;     &quot;nyears&quot;   &quot;proyears&quot; &quot;nMPs&quot;     &quot;MPs&quot;      &quot;nsim&quot;    
 ##  [7] &quot;OM&quot;       &quot;Obs&quot;      &quot;B_BMSY&quot;   &quot;F_FMSY&quot;   &quot;B&quot;        &quot;SSB&quot;     
 ## [13] &quot;VB&quot;       &quot;FM&quot;       &quot;C&quot;        &quot;TAC&quot;      &quot;SSB_hist&quot; &quot;CB_hist&quot; 
@@ -390,14 +413,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="the-first-six-slots" class="section level2">
 <h2><span class="header-section-number">14.1</span> The First Six Slots</h2>
 <p>The first six slots contain information on the structure of the MSE. For example the first slot (<code>Name</code>), is a combination of the names of the <code>Stock</code>, <code>Fleet</code>, and <code>Obs</code> objects that were used in the MSE:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">BSharkMSE<span class="op">@</span>Name</code></pre></div>
+<div class="sourceCode" id="cb238"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb238-1" title="1">BSharkMSE<span class="op">@</span>Name</a></code></pre></div>
 <pre><code>## [1] &quot;Stock:Blue shark  Fleet:Generic_Fleet  Obs model:Imprecise-Biased  Imp model:Perfect_Imp&quot;</code></pre>
 <p>Other information in these first slots includes the number of historical years (<code>nyears</code>), the number of projection years (<code>proyears</code>), the number of name of the Management Procedures (<code>nMPs</code> and <code>MPs</code>), and the number of simulations (<code>nsim</code>).</p>
 </div>
 <div id="the-om-slot" class="section level2">
 <h2><span class="header-section-number">14.2</span> The <code>OM</code> Slot</h2>
 <p>The <code>OM</code> slot in the <code>MSE</code> object is a data frame that the values of the parameters used in the Operating Model:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(BSharkMSE<span class="op">@</span>OM)</code></pre></div>
+<div class="sourceCode" id="cb240"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb240-1" title="1"><span class="kw">names</span>(BSharkMSE<span class="op">@</span>OM)</a></code></pre></div>
 <pre><code>##  [1] &quot;A&quot;            &quot;AC&quot;           &quot;ageM&quot;         &quot;Asp&quot;         
 ##  [5] &quot;Blow&quot;         &quot;BMSY&quot;         &quot;BMSY_B0&quot;      &quot;D&quot;           
 ##  [9] &quot;dFfinal&quot;      &quot;DR&quot;           &quot;Esd&quot;          &quot;Fdisc&quot;       
@@ -419,7 +442,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="the-obs-slot" class="section level2">
 <h2><span class="header-section-number">14.3</span> The <code>Obs</code> Slot</h2>
 <p>The <code>Obs</code> slot contains another data frame, this one with 26 columns corresponding to the values drawn from the Observation model:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">names</span>(BSharkMSE<span class="op">@</span>Obs)</code></pre></div>
+<div class="sourceCode" id="cb242"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb242-1" title="1"><span class="kw">names</span>(BSharkMSE<span class="op">@</span>Obs)</a></code></pre></div>
 <pre><code>##  [1] &quot;Abias&quot;       &quot;Aerr&quot;        &quot;betas&quot;       &quot;BMSY_B0bias&quot; &quot;Brefbias&quot;   
 ##  [6] &quot;CAA_ESS&quot;     &quot;CAA_nsamp&quot;   &quot;CAL_ESS&quot;     &quot;CAL_nsamp&quot;   &quot;Cbias&quot;      
 ## [11] &quot;Crefbias&quot;    &quot;Csd&quot;         &quot;Dbias&quot;       &quot;Derr&quot;        &quot;FMSY_Mbias&quot; 
@@ -433,16 +456,16 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2><span class="header-section-number">14.4</span> The <code>B_BMSY</code> and <code>F_FMSY</code> Slots</h2>
 <p>The <code>B_BMSY</code> and <code>F_FMSY</code> are data frames containing the biomass relative to biomass at maximum sustainable yield <span class="math inline">\(\left(\frac{B}{B_{MSY}}\right)\)</span>, and fishing mortality relative to the rate corresponding to maximum sustainable yield <span class="math inline">\(\left(\frac{F}{F_{MSY}}\right)\)</span> for each simulation, Management Procedure and projection year.</p>
 <p>If we look at the class of the <code>B_BMSY</code> slot, we see that it is an <code>array</code>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(BSharkMSE<span class="op">@</span>B_BMSY)</code></pre></div>
+<div class="sourceCode" id="cb244"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb244-1" title="1"><span class="kw">class</span>(BSharkMSE<span class="op">@</span>B_BMSY)</a></code></pre></div>
 <pre><code>## [1] &quot;array&quot;</code></pre>
 <p>Using the <code>dim</code> function we can see that it is a 3-dimensional array, with the size corresponding to the number of simulations (<code>nsim</code>), the number of Management Procedures (<code>nMPs</code>), and the number of projection years (<code>proyears</code>):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dim</span>(BSharkMSE<span class="op">@</span>B_BMSY)</code></pre></div>
+<div class="sourceCode" id="cb246"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb246-1" title="1"><span class="kw">dim</span>(BSharkMSE<span class="op">@</span>B_BMSY)</a></code></pre></div>
 <pre><code>## [1] 200   5  50</code></pre>
 <p>This information can be used to calculate statistics relating to the performance of each Management Procedure with respect to these metrics.</p>
 <p>For example, if you wish to look at the distribution of <span class="math inline">\(\frac{B}{B_{MSY}}\)</span> for the second Management Procedure (DCAC), you could use the <code>boxplot</code> function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">boxplot</span>(BSharkMSE<span class="op">@</span>B_BMSY[,<span class="dv">2</span>,], <span class="dt">xlab=</span><span class="st">&quot;Year&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;B/BMSY&quot;</span>)</code></pre></div>
+<div class="sourceCode" id="cb248"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb248-1" title="1"><span class="kw">boxplot</span>(BSharkMSE<span class="op">@</span>B_BMSY[,<span class="dv">2</span>,], <span class="dt">xlab=</span><span class="st">&quot;Year&quot;</span>, <span class="dt">ylab=</span><span class="st">&quot;B/BMSY&quot;</span>)</a></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-74-1.png" width="672" /></p>
-<p>This plot shows that the relative biomass for the stock generally increases through the projection period when the DCAC method is used, with the median relative biomass increasing from about 0.98 in the first year to 0.93 in the final year.</p>
+<p>This plot shows that the relative biomass for the stock generally increases through the projection period when the DCAC method is used, with the median relative biomass increasing from about 0.93 in the first year to 0.4 in the final year.</p>
 <p>However, the distribution appears to have quite high variability, which suggests that although the method works well on average, the final biomass was very low in some simulations.</p>
 </div>
 <div id="the-b-fm-c-and-tac-slots" class="section level2">
@@ -465,11 +488,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2><span class="header-section-number">14.7</span> The <code>Effort</code> Slot</h2>
 <p>The <code>Effort</code> slot is a 3-dimensional array containing information on the relative fishing effort (relative to last historical year, or current conditions) for each simulation, Management Procedure and projection year.</p>
 <p>We can look at the distribution of fishing effort for each Management Procedure in the final year of the projection period:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pyear &lt;-<span class="st"> </span>BSharkMSE<span class="op">@</span>proyears
-<span class="kw">boxplot</span>(BSharkMSE<span class="op">@</span>Effort[,, pyear], <span class="dt">outline=</span><span class="ot">FALSE</span>, 
-        <span class="dt">names=</span>BSharkMSE<span class="op">@</span>MPs, <span class="dt">ylab=</span><span class="st">&quot;Relative fishing effort&quot;</span>)</code></pre></div>
+<div class="sourceCode" id="cb249"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb249-1" title="1">pyear &lt;-<span class="st"> </span>BSharkMSE<span class="op">@</span>proyears</a>
+<a class="sourceLine" id="cb249-2" title="2"><span class="kw">boxplot</span>(BSharkMSE<span class="op">@</span>Effort[,, pyear], <span class="dt">outline=</span><span class="ot">FALSE</span>, </a>
+<a class="sourceLine" id="cb249-3" title="3">        <span class="dt">names=</span>BSharkMSE<span class="op">@</span>MPs, <span class="dt">ylab=</span><span class="st">&quot;Relative fishing effort&quot;</span>)</a></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-75-1.png" width="672" /></p>
-<p>This plot shows that the median fishing effort in the final year ranges from 0.77 to 1.81 for the first four output control methods, and is constant for the input control method (<code>matlenlim</code>).</p>
+<p>This plot shows that the median fishing effort in the final year ranges from 0.83 to 2.31 for the first four output control methods, and is constant for the input control method (<code>matlenlim</code>).</p>
 <p>This is because the output control method adjusts the total allowable catch, which depending on the amount of available stock, also impacts the amount of fishing activity.</p>
 <p>The input control methods assume that fishing effort is held at constant levels in the future, although the catchability is able to randomly or systematically vary between years. Furthermore, input control methods can also adjust the amount of fishing effort in each year.</p>
 </div>
@@ -522,10 +545,11 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
+    var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:" && /^https?:/.test(src))
-      src = src.replace(/^https?:/, '');
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
     script.src = src;
     document.getElementsByTagName("head")[0].appendChild(script);
   })();

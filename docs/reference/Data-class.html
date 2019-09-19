@@ -8,6 +8,13 @@
 
 <title>Class <code>'Data'</code> — Data-class • DLMtool Documentation</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
@@ -16,13 +23,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -32,7 +41,7 @@
 
 <meta property="og:title" content="Class <code>'Data'</code> — Data-class" />
 
-<meta property="og:description" content="An object for storing data for analysis using data-limited methods" />
+<meta property="og:description" content="An object for storing fishery data for analysis" />
 
 <meta property="og:image" content="/logo.png" />
 <meta name="twitter:card" content="summary" />
@@ -47,6 +56,7 @@
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]-->
+
 
 
   </head>
@@ -65,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
       </span>
     </div>
 
@@ -88,6 +98,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -100,7 +111,7 @@
 
     <div class="ref-description">
     
-    <p>An object for storing data for analysis using data-limited methods</p>
+    <p>An object for storing fishery data for analysis</p>
     
     </div>
 
@@ -108,88 +119,193 @@
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
     
-    <dl class='dl-horizontal'>
+
+<dl class='dl-horizontal'>
 <dt><code>Name</code></dt><dd><p>The name of the Data object. Single value. Character string</p></dd>
-    <dt><code>Common_Name</code></dt><dd><p>Common name of the species. Character string</p></dd>
-    <dt><code>Species</code></dt><dd><p>Scientific name of the species. Genus and species name. Character string</p></dd>
-    <dt><code>Region</code></dt><dd><p>Name of the general geographic region of the fishery. Character string</p></dd>
-    <dt><code>Year</code></dt><dd><p>Years that corresponding to catch and relative abundance data. Vector nyears long. Positive integer</p></dd>
-    <dt><code>Cat</code></dt><dd><p>Total annual catches. Matrix of nsim rows and nyears columns. Non-negative real numbers</p></dd>
-    <dt><code>Ind</code></dt><dd><p>Relative abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers</p></dd>
-    <dt><code>Type</code></dt><dd><p>Type of abundance index, corresponding with rows in <code>RInd</code>. Types are: "Biomass", "VBiomass",
-and "SpBiomass" for indices of total, vulnerable, and spawning biomass respectively. Character string.</p></dd>
-    <dt><code>RInd</code></dt><dd><p>One or more vectors of abundance indices. Non-negative real numbers</p></dd>
-    <dt><code>Rec</code></dt><dd><p>Recent recruitment strength. Matrix of nsim rows and nyears columns. Non-negative real numbers</p></dd>
-    <dt><code>t</code></dt><dd><p>The number of years corresponding to AvC and Dt. Single value. Positive integer</p></dd>
-    <dt><code>AvC</code></dt><dd><p>Average catch over time t. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>Dt</code></dt><dd><p>Depletion over time t SSB(now)/SSB(now-t+1). Vector nsim long. Fraction</p></dd>
-    <dt><code>Mort</code></dt><dd><p>Natural mortality rate. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>FMSY_M</code></dt><dd><p>An assumed ratio of FMSY to M. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>BMSY_B0</code></dt><dd><p>The most productive stock size relative to unfished. Vector nsim long. Fraction</p></dd>
-    <dt><code>L50</code></dt><dd><p>Length at 50 percent maturity. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>L95</code></dt><dd><p>Length at 95 percent maturity. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>ML</code></dt><dd><p>Mean length time series. Matrix of nsim rows and nyears columns. Non-negative real numbers</p></dd>
-    <dt><code>Lbar</code></dt><dd><p>Mean length of catches over Lc. Matrix of nsim rows and nyears columns. Positive real numbers</p></dd>
-    <dt><code>Lc</code></dt><dd><p>Modal length of catches. Matrix of nsim rows and nyears columns. Positive real numbers</p></dd>
-    <dt><code>LFC</code></dt><dd><p>Length at first capture. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>LFS</code></dt><dd><p>Shortest length at full selection.  Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CAA</code></dt><dd><p>Catch at Age data (numbers). Array of dimensions nsim x nyears x MaxAge. Non-negative integers</p></dd>
-    <dt><code>Dep</code></dt><dd><p>Stock depletion SSB(current)/SSB(unfished). Vector nsim long. Fraction.</p></dd>
-    <dt><code>Abun</code></dt><dd><p>An estimate of absolute current vulnerable abundance. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>SpAbun</code></dt><dd><p>An estimate of absolute current spawning stock abundance. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>vbK</code></dt><dd><p>The von Bertalanffy growth coefficient K. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>vbLinf</code></dt><dd><p>Maximum length. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>vbt0</code></dt><dd><p>Theoretical age at length zero. Vector nsim long. Non-positive real numbers</p></dd>
-    <dt><code>LenCV</code></dt><dd><p>Coefficient of variation of length-at-age (assumed constant for all age classes). Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>wla</code></dt><dd><p>Weight-Length parameter alpha. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>wlb</code></dt><dd><p>Weight-Length parameter beta. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>steep</code></dt><dd><p>Steepness of stock-recruitment relationship. Vector nsim long. Value in the range of one-fifth to 1</p></dd>
-    <dt><code>sigmaR</code></dt><dd><p>Recruitment variability. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CV_Cat</code></dt><dd><p>Coefficient of variation in annual catches. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CV_Dt</code></dt><dd><p>Coefficient of variation in depletion over time t. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CV_AvC</code></dt><dd><p>Coefficient of variation in average catches over time t. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CV_Ind</code></dt><dd><p>Coefficient of variation in the relative abundance index. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CV_Mort</code></dt><dd><p>Coefficient of variation in natural mortality rate. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CV_FMSY_M</code></dt><dd><p>Coefficient of variation in the ratio in FMSY/M. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CV_BMSY_B0</code></dt><dd><p>Coefficient of variation in the position of the most productive stock size relative to unfished. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CV_Dep</code></dt><dd><p>Coefficient of variation in current stock depletion. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CV_Abun</code></dt><dd><p>Coefficient of variation in estimate of absolute current stock size. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CV_vbK</code></dt><dd><p>Coefficient of variation in the von Bertalanffy K parameter. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CV_vbLinf</code></dt><dd><p>Coefficient of variation in maximum length. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CV_vbt0</code></dt><dd><p>Coefficient of variation in age at length zero. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CV_L50</code></dt><dd><p>Coefficient of variation in length at 50 per cent maturity. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CV_LFC</code></dt><dd><p>Coefficient of variation in length at first capture. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CV_LFS</code></dt><dd><p>Coefficient of variation in length at full selection. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CV_wla</code></dt><dd><p>Coefficient of variation in weight-length parameter a. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CV_wlb</code></dt><dd><p>Coefficient of variation in weight-length parameter b. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>CV_steep</code></dt><dd><p>Coefficient of variation in steepness. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>sigmaL</code></dt><dd><p>Assumed observaton error of the length composition data. Vector nsim long. Positive real numbers</p></dd>
-    <dt><code>MaxAge</code></dt><dd><p>Maximum age. Vector nsim long. Positive integer</p></dd>
-    <dt><code>CAL_bins</code></dt><dd><p>The values delimiting the length bins for the catch-at-length data. Vector. Non-negative real numbers</p></dd>
-    <dt><code>CAL</code></dt><dd><p>Catch-at-length data. An array with dimensions nsim x nyears x length(CAL_bins). Non-negative integers</p></dd>
-    <dt><code>TAC</code></dt><dd><p>The calculated catch limits (function TAC). An array with dimensions PosMPs x replicate TAC samples x nsim. Positive real numbers</p></dd>
-    <dt><code>Sense</code></dt><dd><p>The results of the sensitivity analysis (function Sense). An array with dimensions PosMPs x sensitivity increments. Positive real numbers</p></dd>
-    <dt><code>Units</code></dt><dd><p>Units of the catch/absolute abundance estimates. Single value. Character string</p></dd>
-    <dt><code>Ref</code></dt><dd><p>A reference management level (eg a catch limit). Single value. Positive real number</p></dd>
-    <dt><code>Ref_type</code></dt><dd><p>Type of reference management level (eg 2009 catch limit). Single value. Character string</p></dd>
-    <dt><code>Log</code></dt><dd><p>A record of events. Single value. Character string</p></dd>
-    <dt><code>params</code></dt><dd><p>A place to store estimated parameters. An object. R list</p></dd>
-    <dt><code>PosMPs</code></dt><dd><p>The methods that can be applied to these data. Vector. Character strings</p></dd>
-    <dt><code>MPs</code></dt><dd><p>The methods that were applied to these data. Vector. Character strings</p></dd>
-    <dt><code>OM</code></dt><dd><p>A table of operating model conditions. R table object of nsim rows. Real numbers</p></dd>
-    <dt><code>Obs</code></dt><dd><p>A table of observation model conditions. R table object of nsim rows. Real numbers</p></dd>
-    <dt><code>Cref</code></dt><dd><p>Reference or target catch level (eg MSY). Vector of length nsim. Positive real numbers</p></dd>
-    <dt><code>Iref</code></dt><dd><p>Reference or target relative abundance index level (eg BMSY / B0). Vector of length nsim. Positive real numbers</p></dd>
-    <dt><code>Bref</code></dt><dd><p>Reference or target biomass level (eg BMSY). Vector of length nsim. Positive real numbers</p></dd>
-    <dt><code>CV_Cref</code></dt><dd><p>Log-normal CV for reference or target catch level. Vector of length nsim. Positive real numbers</p></dd>
-    <dt><code>CV_Iref</code></dt><dd><p>Log-normalCV for reference or target relative abundance index level. Vector of length nsim. Positive real numbers</p></dd>
-    <dt><code>CV_Bref</code></dt><dd><p>Log-normal CV for reference or target biomass level. Vector of length nsim. Positive real numbers</p></dd>
-    <dt><code>CV_Rec</code></dt><dd><p>Log-normal CV for recent recruitment strength. Vector of length nsim. Positive real numbers</p></dd>
-    <dt><code>MPrec</code></dt><dd><p>The previous recommendation of a management procedure. Vector of length nsim. Positive real numbers</p></dd>
-    <dt><code>MPeff</code></dt><dd><p>The current level of effort. Vector of length nsim. Positive real numbers</p></dd>
-    <dt><code>LHYear</code></dt><dd><p>The last historical year of the simulation (before projection). Single value. Positive integer</p></dd>
-    <dt><code>nareas</code></dt><dd><p>Number of fishing areas. Vector of length nsim. Non-negative integer</p></dd>
-    <dt><code>Misc</code></dt><dd><p>Other information for MPs. An object. R list</p></dd>
+
+<dt><code>Common_Name</code></dt><dd><p>Common name of the species. Character string</p></dd>
+
+<dt><code>Species</code></dt><dd><p>Scientific name of the species. Genus and species name. Character string</p></dd>
+
+<dt><code>Region</code></dt><dd><p>Name of the general geographic region of the fishery. Character string</p></dd>
+
+<dt><code>LHYear</code></dt><dd><p>The last historical year of the simulation (before projection). Single value. Positive integer</p></dd>
+
+<dt><code>MPrec</code></dt><dd><p>The previous recommendation of a management procedure. Vector of length nsim. Positive real numbers</p></dd>
+
+<dt><code>Units</code></dt><dd><p>Units of the catch/absolute abundance estimates. Single value. Character string</p></dd>
+
+<dt><code>MPeff</code></dt><dd><p>The current level of effort. Vector of length nsim. Positive real numbers</p></dd>
+
+<dt><code>nareas</code></dt><dd><p>Number of fishing areas. Vector of length nsim. Non-negative integer</p></dd>
+
+<dt><code>MaxAge</code></dt><dd><p>Maximum age. Vector nsim long. Positive integer</p></dd>
+
+<dt><code>Mort</code></dt><dd><p>Natural mortality rate. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>CV_Mort</code></dt><dd><p>Coefficient of variation in natural mortality rate. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>vbLinf</code></dt><dd><p>Maximum length. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>CV_vbLinf</code></dt><dd><p>Coefficient of variation in maximum length. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>vbK</code></dt><dd><p>The von Bertalanffy growth coefficient K. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>CV_vbK</code></dt><dd><p>Coefficient of variation in the von Bertalanffy K parameter. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>vbt0</code></dt><dd><p>Theoretical age at length zero. Vector nsim long. Non-positive real numbers</p></dd>
+
+<dt><code>CV_vbt0</code></dt><dd><p>Coefficient of variation in age at length zero. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>wla</code></dt><dd><p>Weight-Length parameter alpha. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>CV_wla</code></dt><dd><p>Coefficient of variation in weight-length parameter a. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>wlb</code></dt><dd><p>Weight-Length parameter beta. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>CV_wlb</code></dt><dd><p>Coefficient of variation in weight-length parameter b. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>steep</code></dt><dd><p>Steepness of stock-recruitment relationship. Vector nsim long. Value in the range of one-fifth to 1</p></dd>
+
+<dt><code>CV_steep</code></dt><dd><p>Coefficient of variation in steepness. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>sigmaR</code></dt><dd><p>Recruitment variability. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>CV_sigmaR</code></dt><dd><p>Coefficient of variation in recruitment variability. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>L50</code></dt><dd><p>Length at 50 percent maturity. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>CV_L50</code></dt><dd><p>Coefficient of variation in length at 50 per cent maturity. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>L95</code></dt><dd><p>Length at 95 percent maturity. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>LenCV</code></dt><dd><p>Coefficient of variation of length-at-age (assumed constant for all age classes). Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>LFC</code></dt><dd><p>Length at first capture. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>CV_LFC</code></dt><dd><p>Coefficient of variation in length at first capture. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>LFS</code></dt><dd><p>Shortest length at full selection.  Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>CV_LFS</code></dt><dd><p>Coefficient of variation in length at full selection. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>Vmaxlen</code></dt><dd><p>Vulnerability of individuals at asymptotic length. Vector nsim long. Real number between 0 and 1.</p></dd>
+
+<dt><code>Year</code></dt><dd><p>Years that corresponding to catch and relative abundance data. Vector nyears long. Positive integer</p></dd>
+
+<dt><code>Cat</code></dt><dd><p>Total annual catches. Matrix of nsim rows and nyears columns. Non-negative real numbers</p></dd>
+
+<dt><code>CV_Cat</code></dt><dd><p>Coefficient of variation in annual catches. Matrix nsim rows and either 1 or nyear columns.
+Positive real numbers. Note: built-in MPs use only the first value of <code>CV_Cat</code> for all years.</p></dd>
+
+<dt><code>Effort</code></dt><dd><p>Annual fishing effort. Matrix of nsim rows and nyears columns. Non-negative real numbers</p></dd>
+
+<dt><code>CV_Effort</code></dt><dd><p>Coefficient of variation in annual effort. Matrix nsim rows and either 1 or nyear columns.
+Positive real numbers. Note: built-in MPs use only the first value of <code>CV_Effort</code> for all years.</p></dd>
+
+<dt><code>Ind</code></dt><dd><p>Relative total abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers</p></dd>
+
+<dt><code>CV_Ind</code></dt><dd><p>Coefficient of variation in the relative total abundance index. Matrix nsim rows and either 1 or nyear columns.
+Positive real numbers. Note: built-in MPs use only the first value of <code>CV_Ind</code> for all years</p></dd>
+
+<dt><code>AddInd</code></dt><dd><p>Optional additional indices. Array of dimensions <code>nsim</code>, n additional arrays, and <code>nyears</code> (length <code>Year</code>).</p></dd>
+
+<dt><code>CV_AddInd</code></dt><dd><p>Coefficient of variation for additional indices. Array of same dimensions as <code>AddInd</code></p></dd>
+
+<dt><code>AddIndV</code></dt><dd><p>Vulnerability-at-age schedules for the additional indices. Array with dimensions: <code>nsim</code>, n additional arrays,
+and <code>MaxAge</code>.</p></dd>
+
+<dt><code>Rec</code></dt><dd><p>Recent recruitment strength. Matrix of nsim rows and nyears columns. Non-negative real numbers</p></dd>
+
+<dt><code>CV_Rec</code></dt><dd><p>Log-normal CV for recent recruitment strength.  Matrix nsim rows and either 1 or nyear columns.
+Positive real numbers. Note: built-in MPs use only the first value of <code>CV_Rec</code> for all years.</p></dd>
+
+<dt><code>ML</code></dt><dd><p>Mean length time series. Matrix of nsim rows and nyears columns. Non-negative real numbers</p></dd>
+
+<dt><code>Lc</code></dt><dd><p>Modal length of catches. Matrix of nsim rows and nyears columns. Positive real numbers</p></dd>
+
+<dt><code>Lbar</code></dt><dd><p>Mean length of catches over Lc. Matrix of nsim rows and nyears columns. Positive real numbers</p></dd>
+
+<dt><code>Vuln_CAA</code></dt><dd><p>Optional vulnerability-at-age schedule for catch-at-age samples. Used to condition OM for closed-loop
+simulation testing. Replaces the fleet selectivity schedule in the OM used to generate CAA samples. Matrix
+with dimensions <code>nsim</code> x <code>MaxAge</code>.</p></dd>
+
+<dt><code>CAA</code></dt><dd><p>Catch at Age data (numbers). Array of dimensions nsim x nyears x MaxAge. Non-negative integers</p></dd>
+
+<dt><code>Vuln_CAL</code></dt><dd><p>Optional vulnerability-at-length schedule for catch-at-length samples. Used to condition OM for closed-loop
+simulation testing. Replaces the fleet selectivity schedule in the OM used to generate CAL samples. Matrix
+with dimensions <code>nsim</code> x <code><a href='https://rdrr.io/r/base/length.html'>length(CAL_mids)</a></code>.</p></dd>
+
+<dt><code>CAL_bins</code></dt><dd><p>The values delimiting the length bins for the catch-at-length data. Vector. Non-negative real numbers</p></dd>
+
+<dt><code>CAL_mids</code></dt><dd><p>The values of the mid-points of the length bins. Optional, calculated from <code>CAL_bins</code> if not entered. Vector. Non-negative real numbers.</p></dd>
+
+<dt><code>CAL</code></dt><dd><p>Catch-at-length data. An array with dimensions nsim x nyears x length(CAL_mids). Non-negative integers</p></dd>
+
+<dt><code>Dep</code></dt><dd><p>Stock depletion SSB(current)/SSB(unfished). Vector nsim long. Fraction.</p></dd>
+
+<dt><code>CV_Dep</code></dt><dd><p>Coefficient of variation in current stock depletion. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>Abun</code></dt><dd><p>An estimate of absolute current vulnerable abundance. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>CV_Abun</code></dt><dd><p>Coefficient of variation in estimate of absolute current stock size. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>SpAbun</code></dt><dd><p>An estimate of absolute current spawning stock abundance. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>CV_SpAbun</code></dt><dd><p>Coefficient of variation in estimate of absolute spawning current stock size. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>FMSY_M</code></dt><dd><p>An assumed ratio of FMSY to M. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>CV_FMSY_M</code></dt><dd><p>Coefficient of variation in the ratio in FMSY/M. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>BMSY_B0</code></dt><dd><p>The most productive stock size relative to unfished. Vector nsim long. Fraction</p></dd>
+
+<dt><code>CV_BMSY_B0</code></dt><dd><p>Coefficient of variation in the position of the most productive stock size relative to unfished. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>Cref</code></dt><dd><p>Reference or target catch level (eg MSY). Vector of length nsim. Positive real numbers</p></dd>
+
+<dt><code>CV_Cref</code></dt><dd><p>Log-normal CV for reference or target catch level. Vector of length nsim. Positive real numbers</p></dd>
+
+<dt><code>Bref</code></dt><dd><p>Reference or target biomass level (eg BMSY). Vector of length nsim. Positive real numbers</p></dd>
+
+<dt><code>CV_Bref</code></dt><dd><p>Log-normal CV for reference or target biomass level. Vector of length nsim. Positive real numbers</p></dd>
+
+<dt><code>Iref</code></dt><dd><p>Reference or target relative abundance index level (eg BMSY / B0). Vector of length nsim. Positive real numbers</p></dd>
+
+<dt><code>CV_Iref</code></dt><dd><p>Log-normalCV for reference or target relative abundance index level. Vector of length nsim. Positive real numbers</p></dd>
+
+<dt><code>t</code></dt><dd><p>The number of years corresponding to AvC and Dt. Single value. Positive integer</p></dd>
+
+<dt><code>AvC</code></dt><dd><p>Average catch over time t. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>CV_AvC</code></dt><dd><p>Coefficient of variation in average catches over time t. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>Dt</code></dt><dd><p>Depletion over time t SSB(now)/SSB(now-t+1). Vector nsim long. Fraction</p></dd>
+
+<dt><code>CV_Dt</code></dt><dd><p>Coefficient of variation in depletion over time t. Vector nsim long. Positive real numbers</p></dd>
+
+<dt><code>Ref</code></dt><dd><p>A reference management level (eg a catch limit). Single value. Positive real number</p></dd>
+
+<dt><code>Ref_type</code></dt><dd><p>Type of reference management level (eg 2009 catch limit). Single value. Character string</p></dd>
+
+<dt><code>Log</code></dt><dd><p>A record of events. Single value. Character string</p></dd>
+
+<dt><code>params</code></dt><dd><p>A place to store estimated parameters. An object. R list</p></dd>
+
+<dt><code>PosMPs</code></dt><dd><p>The methods that can be applied to these data. Vector. Character strings</p></dd>
+
+<dt><code>TAC</code></dt><dd><p>The calculated catch limits (function TAC). An array with dimensions PosMPs x replicate TAC samples x nsim. Positive real numbers</p></dd>
+
+<dt><code>Sense</code></dt><dd><p>The results of the sensitivity analysis (function Sense). An array with dimensions PosMPs x sensitivity increments. Positive real numbers</p></dd>
+
+<dt><code>MPs</code></dt><dd><p>The methods that were applied to these data. Vector. Character strings</p></dd>
+
+<dt><code>OM</code></dt><dd><p>A table of operating model conditions. R table object of nsim rows. Real numbers</p></dd>
+
+<dt><code>Obs</code></dt><dd><p>A table of observation model conditions. R table object of nsim rows. Real numbers</p></dd>
+
+<dt><code>Misc</code></dt><dd><p>Other information for MPs. An object. R list</p></dd>
+
 </dl>
     
     <h2 class="hasAnchor" id="objects-from-the-class"><a class="anchor" href="#objects-from-the-class"></a>Objects from the Class</h2>
@@ -218,19 +334,23 @@ and "SpBiomass" for indices of total, vulnerable, and spawning biomass respectiv
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by Tom Carruthers, Adrian Hordyk.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

@@ -8,6 +8,13 @@
 
 <title>A projection by projection plot of F/FMSY, B/BMSY, B/B0, and yield — Pplot2 • DLMtool Documentation</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
@@ -16,13 +23,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -49,6 +58,7 @@
 <![endif]-->
 
 
+
   </head>
 
   <body>
@@ -65,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
       </span>
     </div>
 
@@ -88,6 +98,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -104,14 +115,14 @@
     
     </div>
 
-    <pre class="usage"><span class='fu'>Pplot2</span>(<span class='no'>MSEobj</span>, <span class='kw'>YVar</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"F_FMSY"</span>, <span class='st'>"SSB_SSBMSY"</span>), <span class='kw'>MPs</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
-  <span class='kw'>sims</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>traj</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"quant"</span>, <span class='st'>"both"</span>), <span class='kw'>quants</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>0.1</span>,
-  <span class='fl'>0.9</span>), <span class='kw'>incquant</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>quantcol</span> <span class='kw'>=</span> <span class='st'>"lightgray"</span>, <span class='kw'>RefYield</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='st'>"lto"</span>,
-  <span class='st'>"curr"</span>), <span class='kw'>LastYr</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>ref.lines</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>0.5</span>, <span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='kw'>maxMP</span> <span class='kw'>=</span> <span class='fl'>6</span>,
+    <pre class="usage"><span class='fu'>Pplot2</span>(<span class='no'>MSEobj</span>, <span class='kw'>YVar</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"F_FMSY"</span>, <span class='st'>"SSB_SSBMSY"</span>), <span class='kw'>MPs</span> <span class='kw'>=</span> <span class='fl'>NA</span>,
+  <span class='kw'>sims</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>traj</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"all"</span>, <span class='st'>"quant"</span>, <span class='st'>"both"</span>), <span class='kw'>quants</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.1</span>,
+  <span class='fl'>0.9</span>), <span class='kw'>incquant</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>quantcol</span> <span class='kw'>=</span> <span class='st'>"lightgray"</span>, <span class='kw'>RefYield</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"lto"</span>,
+  <span class='st'>"curr"</span>), <span class='kw'>LastYr</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>ref.lines</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.5</span>, <span class='fl'>1</span>, <span class='fl'>1.5</span>), <span class='kw'>maxMP</span> <span class='kw'>=</span> <span class='fl'>6</span>,
   <span class='kw'>alpha</span> <span class='kw'>=</span> <span class='fl'>60</span>, <span class='kw'>cex.axis</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>cex.lab</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>YLab</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>incMP</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>MPcex</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>incLeg</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>cex.leg</span> <span class='kw'>=</span> <span class='fl'>1.5</span>,
-  <span class='kw'>legPos</span> <span class='kw'>=</span> <span class='st'>"topleft"</span>, <span class='kw'>yline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>parOR</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>xaxis</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>yaxis</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>oneIt</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+  <span class='kw'>incMP</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>MPcex</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>MPcol</span> <span class='kw'>=</span> <span class='st'>"black"</span>, <span class='kw'>incLeg</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
+  <span class='kw'>cex.leg</span> <span class='kw'>=</span> <span class='fl'>1.5</span>, <span class='kw'>legPos</span> <span class='kw'>=</span> <span class='st'>"topleft"</span>, <span class='kw'>yline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>xline</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>parOR</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>xaxis</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>yaxis</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>oneIt</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -122,7 +133,7 @@
     </tr>
     <tr>
       <th>YVar</th>
-      <td><p>What to plot on the y-axis? Options are: <code><a href='https://www.rdocumentation.org/packages/base/topics/c'>c('SSB_SSB0',
+      <td><p>What to plot on the y-axis? Options are: <code><a href='https://rdrr.io/r/base/c.html'>c('SSB_SSB0',
 'SSB_SSBMSY', 'F_FMSY', 'Yield')</a></code></p></td>
     </tr>
     <tr>
@@ -194,6 +205,10 @@ projections?</p></td>
       <td><p>Size of MP label</p></td>
     </tr>
     <tr>
+      <th>MPcol</th>
+      <td><p>Optional character vector of colors for MP labels</p></td>
+    </tr>
+    <tr>
       <th>incLeg</th>
       <td><p>Logical. Include a legend?</p></td>
     </tr>
@@ -207,7 +222,11 @@ projections?</p></td>
     </tr>
     <tr>
       <th>yline</th>
-      <td><p>Optional horizontal line</p></td>
+      <td><p>Optional horizontal lines</p></td>
+    </tr>
+    <tr>
+      <th>xline</th>
+      <td><p>Optional vertical lines</p></td>
     </tr>
     <tr>
       <th>parOR</th>
@@ -244,19 +263,23 @@ projections?</p></td>
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by Tom Carruthers, Adrian Hordyk.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

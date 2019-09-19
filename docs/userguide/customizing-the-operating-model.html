@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html >
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Chapter 25 Customizing the Operating Model | Data-Limited Methods Toolkit (DLMtool 5.3)</title>
-  <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 25 Customizing the Operating Model | Data-Limited Methods Toolkit (DLMtool 5.4.0)</title>
+  <meta name="description" content="User guide for the DLMtool R package" />
+  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 25 Customizing the Operating Model | Data-Limited Methods Toolkit (DLMtool 5.3)" />
+  <meta property="og:title" content="Chapter 25 Customizing the Operating Model | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,23 +16,23 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 25 Customizing the Operating Model | Data-Limited Methods Toolkit (DLMtool 5.3)" />
+  <meta name="twitter:title" content="Chapter 25 Customizing the Operating Model | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
 
-<meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
+<meta name="author" content="Tom Carruthers &amp; Adrian Hordyk" />
 
 
-<meta name="date" content="2019-03-12">
+<meta name="date" content="2019-09-19" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
-  <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
-<link rel="prev" href="evaluating-om.html">
-<link rel="next" href="developing-custom-management-procedures.html">
+  <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon" />
+<link rel="prev" href="evaluating-om.html"/>
+<link rel="next" href="developing-custom-management-procedures.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -51,41 +50,66 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -289,7 +313,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
 <li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
-<li class="chapter" data-level="30" data-path="using-real-indices.html"><a href="using-real-indices.html"><i class="fa fa-check"></i><b>30</b> Using Real Indices</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
 <li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
@@ -353,7 +376,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.3)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.0)</a>
           </h1>
         </div>
 
@@ -373,13 +396,13 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Suppose that we know the fishery began in 1950, and fishing effort increased slowly over the next decade, was relatively stable between 1960 and 1970, then increased dramatically over the next 10 years. We also know that, while fishing effort stayed relatively constant from 1980 to around 2000, there has been a general decline in fishing effort in recent years.</p>
 <p>This information can be included in the Operating Model by using the <code>ChooseEffort</code> function. The <code>ChooseEffort</code> function takes an existing Fleet object as its first argument, and allows the user to manually map out the range for the historical trend in fishing effort. The <code>ChooseEffort</code> function then returns the updated Fleet object.</p>
 <p>A second optional argument can be used to specify the historical years. If used, this will replace the <code>nyears</code> in the Fleet object with the length of the <code>Years</code> vector.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MyFleet &lt;-<span class="st"> </span><span class="kw">ChooseEffort</span>(MyFleet, <span class="dt">Years=</span><span class="dv">1950</span><span class="op">:</span><span class="dv">2016</span>)</code></pre></div>
+<div class="sourceCode" id="cb436"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb436-1" title="1">MyFleet &lt;-<span class="st"> </span><span class="kw">ChooseEffort</span>(MyFleet, <span class="dt">Years=</span><span class="dv">1950</span><span class="op">:</span><span class="dv">2016</span>)</a></code></pre></div>
 <!-- ```{r, include=FALSE} -->
 <!-- MyFleet@EffYears <- c(1950, 1960, 1970, 1978, 1998, 2016) -->
 <!-- MyFleet@EffLower <- c(0, 0.15, 0.15, 0.75, 0.85, 0.65) -->
 <!-- MyFleet@EffUpper <- c(0, 0.3, 0.3, 1, 1, 0.8) -->
 <!-- ``` -->
-<p><img src="images/EffortTraj.png" width="482" /></p>
+<p><img src="images/EffortTraj.png" /><!-- --></p>
 <p>If we take a look at the <code>MyFleet</code> object, we will see that three slots <code>EffYears</code>, <code>EffLower</code> and <code>EffUpper</code> have been replaced with the new values.</p>
 <p>Note that the trajectory that is mapped out here represents the bounds on the relative fishing mortality for each year. In this example, the fishing mortality rate was highest (on average) between 1980 and 2000, and is currently around 65 - 80% of this maximum level.</p>
 </div>
@@ -388,28 +411,32 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>Suppose that we may knew there had been changes in the selectivity pattern of the fishery over time. This information can be included in the Operating Model by using the <code>ChooseSelect</code> function.</p>
 <p>Like the <code>ChooseEffort</code> function described above, the <code>ChooseSelection</code> function takes a Fleet object as it’s first argument, and returns an updated Fleet object.</p>
 <p>Suppose the selectivity pattern changed in 1970 and then again in 1990, perhaps because of changes in fishing regulations. These change points in the selectivity curve can be mapped by the following command:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MyFleet &lt;-<span class="st"> </span><span class="kw">ChooseSelect</span>(MyFleet, <span class="dt">FstYr=</span><span class="dv">1950</span>, <span class="dt">SelYears=</span><span class="kw">c</span>(<span class="dv">1970</span>, <span class="dv">1990</span>))</code></pre></div>
-<p><img src="images/Select.png" width="482" /></p>
+<div class="sourceCode" id="cb437"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb437-1" title="1">MyFleet &lt;-<span class="st"> </span><span class="kw">ChooseSelect</span>(MyFleet, <span class="dt">FstYr=</span><span class="dv">1950</span>, <span class="dt">SelYears=</span><span class="kw">c</span>(<span class="dv">1970</span>, <span class="dv">1990</span>))</a></code></pre></div>
+<p><img src="images/Select.png" /><!-- --></p>
 <p>Note that the first year (<code>FstYr</code>) must also be specified, and the selectivity pattern is mapped for this year as well.</p>
 <p>When <code>ChooseSelect</code> is used, the <code>L5Lower</code>, <code>L5Upper</code>, <code>LFSLower</code>, <code>LFSUpper</code>, <code>VmaxLower</code>, <code>VmaxUpper</code>, and <code>SelYears</code> slots are updated in the <em>Fleet</em> object. If these slots are populated, the values in the <code>L5</code>, <code>LFS</code>, and <code>Vmaxlen</code> slots are ignored in the operating model.</p>
 </div>
 <div id="including-existing-mpas" class="section level3">
 <h3><span class="header-section-number">25.1.3</span> Including Existing MPAs</h3>
 <p>By default the MSE assumes that there are no spatial closures in the historical period. Existing spatial closures can be accounted for with the <code>MPA</code> slot in the <code>Fleet</code> or <code>OM</code> object.</p>
-<p>To account for historical MPAs, the <code>MPA</code> slot should be a matrix with each row should containing a year index (e.g 10 for 10th historical year) followed by fraction of area open to fishing for each area. i.e. each row represents a change and the number of columns is <code>nareas</code> (default is 2) + 1.</p>
+<p>To account for historical MPAs, the <code>MPA</code> slot should be a matrix with each row should containing a year index (e.g 10 for 10th historical year)
+followed by fraction of area open to fishing for each area. i.e. each row represents a change and the number of columns is <code>nareas</code> (default is 2) + 1.</p>
 <p>The spatial closures are assumed to remain in place for the future projections unless changed by a MP. Default (if left blank) is all areas are open to fishing in historical period.</p>
 <p>For example:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_Fleet, Perfect_Info, Perfect_Imp)
-
-## 50% of Area 1 was closed 30 years ago 
-cl1 &lt;-<span class="st"> </span><span class="kw">c</span>(OM<span class="op">@</span>nyears<span class="op">-</span><span class="dv">30</span>, <span class="fl">0.5</span>, <span class="dv">1</span>)
-## 80% of Area 1 was closed 15 years ago
-cl2 &lt;-<span class="st"> </span><span class="kw">c</span>(OM<span class="op">@</span>nyears<span class="op">-</span><span class="dv">15</span>, <span class="fl">0.2</span>, <span class="dv">1</span>)
-## 100% of Area 1 was closed last year
-cl3 &lt;-<span class="st"> </span><span class="kw">c</span>(OM<span class="op">@</span>nyears<span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>)
-
-OM<span class="op">@</span>MPA &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(cl1, cl2, cl3), <span class="dt">ncol=</span><span class="dv">3</span>, <span class="dt">byrow=</span><span class="ot">TRUE</span>)
-<span class="kw">plotMPA</span>(OM)</code></pre></div>
+<div class="sourceCode" id="cb438"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb438-1" title="1">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_Fleet, Perfect_Info, Perfect_Imp)</a>
+<a class="sourceLine" id="cb438-2" title="2"></a>
+<a class="sourceLine" id="cb438-3" title="3"><span class="co">## 50% of Area 1 was closed 30 years ago </span></a>
+<a class="sourceLine" id="cb438-4" title="4">cl1 &lt;-<span class="st"> </span><span class="kw">c</span>(OM<span class="op">@</span>nyears<span class="dv">-30</span>, <span class="fl">0.5</span>, <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb438-5" title="5"><span class="co">## 80% of Area 1 was closed 15 years ago</span></a>
+<a class="sourceLine" id="cb438-6" title="6">cl2 &lt;-<span class="st"> </span><span class="kw">c</span>(OM<span class="op">@</span>nyears<span class="dv">-15</span>, <span class="fl">0.2</span>, <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb438-7" title="7"><span class="co">## 100% of Area 1 was closed last year</span></a>
+<a class="sourceLine" id="cb438-8" title="8">cl3 &lt;-<span class="st"> </span><span class="kw">c</span>(OM<span class="op">@</span>nyears<span class="dv">-1</span>, <span class="dv">0</span>, <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb438-9" title="9"></a>
+<a class="sourceLine" id="cb438-10" title="10">OM<span class="op">@</span>MPA &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(cl1, cl2, cl3), <span class="dt">ncol=</span><span class="dv">3</span>, <span class="dt">byrow=</span><span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb438-11" title="11"><span class="kw">plotMPA</span>(OM)</a></code></pre></div>
+<pre><code>## Warning: &#39;plotMPA&#39; is deprecated.
+## Use &#39;plot(&quot;MPA&quot;, Fleet, Stock&#39; instead.
+## See help(&quot;Deprecated&quot;)</code></pre>
 <p><img src="userguide_files/figure-html/unnamed-chunk-140-1.png" width="672" /></p>
 </div>
 </div>
@@ -424,45 +451,56 @@ OM<span class="op">@</span>MPA &lt;-<span class="st"> </span><span class="kw">ma
 <div id="lorenzen-function-of-weight" class="section level3">
 <h3><span class="header-section-number">25.2.2</span> Lorenzen function of weight</h3>
 <p>Natural mortality is often assumed to be a function of weight. Size-specific <em>M</em> can be included in DLMtool following the approach of Lorenzen (1996):</p>
-<p><span class="math display">\[M_w = M\left(\frac{W}{W_\infty}\right)^b\]</span> where <span class="math inline">\(M_w\)</span> is the natural mortality at weight <span class="math inline">\(W\)</span>, <span class="math inline">\(M\)</span> is the natural mortality rate of adult fish, <span class="math inline">\(W_\infty\)</span> is the asymptotic weight, and <span class="math inline">\(b\)</span> is the allometric scaling factor (<code>Stock@Mexp</code>). Lorezen (1996) found that the exponent <span class="math inline">\(b\)</span> had an average value of -0.288, with 90% confidence intervals of -0.315 – -0.261 for fish from natural systems.</p>
+<p><span class="math display">\[M_w = M\left(\frac{W}{W_\infty}\right)^b\]</span>
+where <span class="math inline">\(M_w\)</span> is the natural mortality at weight <span class="math inline">\(W\)</span>, <span class="math inline">\(M\)</span> is the natural mortality rate of adult fish, <span class="math inline">\(W_\infty\)</span> is the asymptotic weight, and <span class="math inline">\(b\)</span> is the allometric scaling factor (<code>Stock@Mexp</code>). Lorezen (1996) found that the exponent <span class="math inline">\(b\)</span> had an average value of -0.288, with 90% confidence intervals of -0.315 – -0.261 for fish from natural systems.</p>
 <p>Because DLMtool uses an age-structured model, <em>M</em> is calculated as a function of age:</p>
-<p><span class="math display">\[M_a = M\left(\frac{W_a}{W_\infty}\right)^b\]</span> where <span class="math inline">\(M_a\)</span> is natural mortality at age <span class="math inline">\(a\)</span> and <span class="math inline">\(W_a\)</span> is the mean weight at age <span class="math inline">\(a\)</span>. <em>M</em>-at-age is then rescaled so that the mean <em>M</em> of adult age classes (mean age of maturity and greater) is equal to the natural mortality rate sampled from the stock object (<code>Stock@M</code>).</p>
+<p><span class="math display">\[M_a = M\left(\frac{W_a}{W_\infty}\right)^b\]</span>
+where <span class="math inline">\(M_a\)</span> is natural mortality at age <span class="math inline">\(a\)</span> and <span class="math inline">\(W_a\)</span> is the mean weight at age <span class="math inline">\(a\)</span>. <em>M</em>-at-age is then rescaled so that the mean <em>M</em> of adult age classes (mean age of maturity and greater) is equal to the natural mortality rate sampled from the stock object (<code>Stock@M</code>).</p>
 <p>The <code>plotM</code> function can be used to visually inspect samples of the <em>M</em>-at-age, -length, and -weight that are generated by the model:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Mackerel<span class="op">@</span>Mexp &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="op">-</span><span class="fl">0.315</span>, <span class="op">-</span><span class="fl">0.261</span>)
-<span class="kw">plotM</span>(Mackerel)</code></pre></div>
+<div class="sourceCode" id="cb440"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb440-1" title="1">Mackerel<span class="op">@</span>Mexp &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="op">-</span><span class="fl">0.315</span>, <span class="fl">-0.261</span>)</a>
+<a class="sourceLine" id="cb440-2" title="2"><span class="kw">plotM</span>(Mackerel)</a></code></pre></div>
+<pre><code>## Warning: &#39;plotM&#39; is deprecated.
+## Use &#39;plot(&quot;M&quot;, Stock&#39; instead.
+## See help(&quot;Deprecated&quot;)</code></pre>
 <p><img src="userguide_files/figure-html/unnamed-chunk-141-1.png" width="672" /></p>
 </div>
 <div id="map-age-specific-m" class="section level3">
 <h3><span class="header-section-number">25.2.3</span> Map Age-Specific M</h3>
 <p>Usually the <code>M</code> slot contains two values, a lower and upper bound for the constant <em>M</em>-at-age. Users who wish for more control of <em>M</em>-at-age can use the <code>M</code> and <code>M2</code> slots in the <code>Stock</code> object to directly input values for <em>M</em>-at-age (<code>M</code> for lower bound and <code>M2</code> for upper bound). <code>maxage</code> values of <em>M</em> must be supplied for slots <code>M</code> and <code>M2</code>. One way to do this is to use the <code>ChooseM</code> function to map out the bounds for age-specific <em>M</em>:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Blue_shark, Generic_FlatE, Generic_Obs, Perfect_Imp)
-OM &lt;-<span class="st"> </span><span class="kw">ChooseM</span>(OM)</code></pre></div>
-<p><img src="images/chooseM_age.png" width="390" /></p>
+<div class="sourceCode" id="cb442"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb442-1" title="1">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Blue_shark, Generic_FlatE, Generic_Obs, Perfect_Imp)</a>
+<a class="sourceLine" id="cb442-2" title="2">OM &lt;-<span class="st"> </span><span class="kw">ChooseM</span>(OM)</a></code></pre></div>
+<p><img src="images/chooseM_age.png" /><!-- --></p>
 <p>Click <a href="images/chooseM_age.png">here</a> for a larger version of the image.</p>
 <p>Alternatively, users can input the values directly into the <code>M</code> and <code>M2</code> slots (must be length <code>maxage</code>):</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_FlatE, Generic_Obs, Perfect_Imp)
-OM<span class="op">@</span>M &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.7</span>, <span class="fl">0.65</span>, <span class="fl">0.60</span>, <span class="fl">0.55</span>, <span class="fl">0.61</span>, <span class="fl">0.68</span>, <span class="fl">0.75</span>, <span class="fl">0.63</span>, <span class="fl">0.51</span>, <span class="fl">0.39</span>, <span class="fl">0.27</span>, <span class="fl">0.15</span>, <span class="fl">0.15</span>, <span class="fl">0.15</span>, <span class="fl">0.15</span>)
-OM<span class="op">@</span>M2 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.85</span>, <span class="fl">0.8</span>, <span class="fl">0.75</span>, <span class="fl">0.7</span>, <span class="fl">0.76</span>, <span class="fl">0.83</span>, <span class="fl">0.9</span>, <span class="fl">0.78</span>, <span class="fl">0.66</span>, <span class="fl">0.54</span>, <span class="fl">0.42</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>)</code></pre></div>
+<div class="sourceCode" id="cb443"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb443-1" title="1">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_FlatE, Generic_Obs, Perfect_Imp)</a>
+<a class="sourceLine" id="cb443-2" title="2">OM<span class="op">@</span>M &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.7</span>, <span class="fl">0.65</span>, <span class="fl">0.60</span>, <span class="fl">0.55</span>, <span class="fl">0.61</span>, <span class="fl">0.68</span>, <span class="fl">0.75</span>, <span class="fl">0.63</span>, <span class="fl">0.51</span>, <span class="fl">0.39</span>, <span class="fl">0.27</span>, <span class="fl">0.15</span>, <span class="fl">0.15</span>, <span class="fl">0.15</span>, <span class="fl">0.15</span>)</a>
+<a class="sourceLine" id="cb443-3" title="3">OM<span class="op">@</span>M2 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.85</span>, <span class="fl">0.8</span>, <span class="fl">0.75</span>, <span class="fl">0.7</span>, <span class="fl">0.76</span>, <span class="fl">0.83</span>, <span class="fl">0.9</span>, <span class="fl">0.78</span>, <span class="fl">0.66</span>, <span class="fl">0.54</span>, <span class="fl">0.42</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>, <span class="fl">0.3</span>)</a></code></pre></div>
 <p>The <code>plotM</code> function can then be used to visually display samples of the resulting <em>M</em> at age and size:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plotM</span>(OM)</code></pre></div>
+<div class="sourceCode" id="cb444"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb444-1" title="1"><span class="kw">plotM</span>(OM)</a></code></pre></div>
+<pre><code>## Warning: &#39;plotM&#39; is deprecated.
+## Use &#39;plot(&quot;M&quot;, Stock&#39; instead.
+## See help(&quot;Deprecated&quot;)</code></pre>
 <p><img src="userguide_files/figure-html/plotM1-1.png" width="672" /></p>
 </div>
 <div id="map-length-specific-m" class="section level3">
 <h3><span class="header-section-number">25.2.4</span> Map Length-Specific M</h3>
 <p>There is also the option to map length-specific <em>M</em> using the plotting tool:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_FlatE, Generic_Obs, Perfect_Imp)
-OM &lt;-<span class="st"> </span><span class="kw">ChooseM</span>(OM, <span class="st">&quot;length&quot;</span>)</code></pre></div>
-<p><img src="images/chooseM_length.png" width="390" /></p>
+<div class="sourceCode" id="cb446"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb446-1" title="1">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, Generic_FlatE, Generic_Obs, Perfect_Imp)</a>
+<a class="sourceLine" id="cb446-2" title="2">OM &lt;-<span class="st"> </span><span class="kw">ChooseM</span>(OM, <span class="st">&quot;length&quot;</span>)</a></code></pre></div>
+<p><img src="images/chooseM_length.png" /><!-- --></p>
 <p>Click <a href="images/chooseM_length.png">here</a> for a larger version of the image.</p>
 <p>This option uses the <a href="custom-parameters.html#custom-parameters">Custom Parameters</a> feature of DLMtool:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">str</span>(OM<span class="op">@</span>cpars)</code></pre></div>
+<div class="sourceCode" id="cb447"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb447-1" title="1"><span class="kw">str</span>(OM<span class="op">@</span>cpars)</a></code></pre></div>
 <pre><code>## List of 1
 ##  $ M_at_Length:&#39;data.frame&#39;: 42 obs. of  3 variables:
 ##   ..$ Lens: int [1:42] 0 5 10 15 20 25 30 35 40 45 ...
 ##   ..$ M1  : num [1:42] 0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.8 0.725 ...
 ##   ..$ M2  : num [1:42] 0.9 0.9 0.9 0.9 0.9 ...</code></pre>
 <p>Again, samples of the resulting <em>M</em> at age and size can be plotted:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plotM</span>(OM)</code></pre></div>
+<div class="sourceCode" id="cb449"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb449-1" title="1"><span class="kw">plotM</span>(OM)</a></code></pre></div>
+<pre><code>## Warning: &#39;plotM&#39; is deprecated.
+## Use &#39;plot(&quot;M&quot;, Stock&#39; instead.
+## See help(&quot;Deprecated&quot;)</code></pre>
 <pre><code>## valid custom parameters (OM@cpars) found: 
 ## M_at_Length</code></pre>
 <p><img src="userguide_files/figure-html/unnamed-chunk-148-1.png" width="672" /></p>
@@ -476,8 +514,11 @@ OM &lt;-<span class="st"> </span><span class="kw">ChooseM</span>(OM, <span class
 <h3><span class="header-section-number">25.3.1</span> Fishery Selection Curve</h3>
 <p>The fishery selection or vulnerability to the fishing gear in DLMtool is modelled using a double-normal curve and the parameters in the <code>Fleet</code> object: <code>L5</code> - smallest length at 5% selection, <code>LFS</code> - smallest length at full selection, and <code>Vmaxlen</code> the vulnerability of the largest length class (defined as expected length at maximum age <code>Stock@maxage</code>).</p>
 <p>Here we set up a Operating Model with dome-shaped selectivity and plot a sample of the selectivity-at-age and -length using the <code>plotSelect</code> function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, FlatE_Dom, Generic_Obs, Perfect_Imp, <span class="dt">nsim=</span><span class="dv">5</span>)
-<span class="kw">plotSelect</span>(OM, <span class="dt">sim=</span><span class="dv">1</span>)</code></pre></div>
+<div class="sourceCode" id="cb452"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb452-1" title="1">OM &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;OM&quot;</span>, Albacore, FlatE_Dom, Generic_Obs, Perfect_Imp, <span class="dt">nsim=</span><span class="dv">5</span>)</a>
+<a class="sourceLine" id="cb452-2" title="2"><span class="kw">plotSelect</span>(OM, <span class="dt">sim=</span><span class="dv">1</span>)</a></code></pre></div>
+<pre><code>## Warning: &#39;plotSelect&#39; is deprecated.
+## Use &#39;plot(&quot;Selectivity&quot;, Fleet, Stock&#39; instead.
+## See help(&quot;Deprecated&quot;)</code></pre>
 <p><img src="userguide_files/figure-html/unnamed-chunk-149-1.png" width="672" /></p>
 <p>The plot shows three curves - vulnerability, realized selection and retention - in each panel. In this case they are all the same, because the default setting of DLMtool is to assume that all selected fish are retained in the catch.</p>
 </div>
@@ -490,18 +531,21 @@ OM &lt;-<span class="st"> </span><span class="kw">ChooseM</span>(OM, <span class
 <li><code>Rmaxlen</code> - the retention of the largest size class (defined as expected length at maximum age <code>Stock@maxage</code>).</li>
 </ul>
 <p>The default values for these parameters are:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM<span class="op">@</span>LR5</code></pre></div>
+<div class="sourceCode" id="cb454"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb454-1" title="1">OM<span class="op">@</span>LR5</a></code></pre></div>
 <pre><code>## [1] 0 0</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM<span class="op">@</span>LFR</code></pre></div>
+<div class="sourceCode" id="cb456"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb456-1" title="1">OM<span class="op">@</span>LFR</a></code></pre></div>
 <pre><code>## [1] 0 0</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM<span class="op">@</span>Rmaxlen</code></pre></div>
+<div class="sourceCode" id="cb458"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb458-1" title="1">OM<span class="op">@</span>Rmaxlen</a></code></pre></div>
 <pre><code>## [1] 1 1</code></pre>
 <p>meaning that the default assumption is that all size classes are fully retained by the fishery.</p>
 <p>The retention curve can be modified by providing values for these slots:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM<span class="op">@</span>LR5 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.6</span>, <span class="fl">0.7</span>)
-OM<span class="op">@</span>LFR &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.9</span>, <span class="dv">1</span>)</code></pre></div>
+<div class="sourceCode" id="cb460"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb460-1" title="1">OM<span class="op">@</span>LR5 &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.6</span>, <span class="fl">0.7</span>)</a>
+<a class="sourceLine" id="cb460-2" title="2">OM<span class="op">@</span>LFR &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.9</span>, <span class="dv">1</span>)</a></code></pre></div>
 <p>Note that the values in the <code>LR5</code> and <code>LFR</code> slots must be in the same units as those in the <code>L5</code> and <code>LFS</code> slots. Here we are specifying the values relative to the size of maturity, and assuming that the fishery discards the smaller sized fish:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plotSelect</span>(OM, <span class="dt">sim=</span><span class="dv">1</span>)</code></pre></div>
+<div class="sourceCode" id="cb461"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb461-1" title="1"><span class="kw">plotSelect</span>(OM, <span class="dt">sim=</span><span class="dv">1</span>)</a></code></pre></div>
+<pre><code>## Warning: &#39;plotSelect&#39; is deprecated.
+## Use &#39;plot(&quot;Selectivity&quot;, Fleet, Stock&#39; instead.
+## See help(&quot;Deprecated&quot;)</code></pre>
 <p><img src="userguide_files/figure-html/unnamed-chunk-152-1.png" width="672" /></p>
 <p>The plot shows that the retention curve for the fishery has shifted to the right, towards larger and older fish, while the vulnerability of the fishing gear remains the same.</p>
 <p>Because we are assuming no discard mortality in this case, the realized selection and retention curves are equivalent. This means that although fish of age/length between the vulnerability and retention curves are selected by the fishery, they are discarded with 100% survival and therefore are not removed from the population.</p>
@@ -509,8 +553,11 @@ OM<span class="op">@</span>LFR &lt;-<span class="st"> </span><span class="kw">c<
 <div id="discard-mortality" class="section level3">
 <h3><span class="header-section-number">25.3.3</span> Discard Mortality</h3>
 <p>The assumption of 100% survival of discarded fish may be unrealistic in many situations. Discard mortality can be specified by the <code>Fdisc</code> slot in the <code>Stock</code> or <code>OM</code> object. The <code>Fdisc</code> slot represents the fraction of discarded fish that die, or <span class="math inline">\(1-\text{survival}\)</span>. Here we assume that between 30 and 50% of discarded fish suffer fishing mortality:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM<span class="op">@</span>Fdisc &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.3</span>, <span class="fl">0.5</span>)
-<span class="kw">plotSelect</span>(OM, <span class="dt">sim=</span><span class="dv">1</span>)</code></pre></div>
+<div class="sourceCode" id="cb463"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb463-1" title="1">OM<span class="op">@</span>Fdisc &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.3</span>, <span class="fl">0.5</span>)</a>
+<a class="sourceLine" id="cb463-2" title="2"><span class="kw">plotSelect</span>(OM, <span class="dt">sim=</span><span class="dv">1</span>)</a></code></pre></div>
+<pre><code>## Warning: &#39;plotSelect&#39; is deprecated.
+## Use &#39;plot(&quot;Selectivity&quot;, Fleet, Stock&#39; instead.
+## See help(&quot;Deprecated&quot;)</code></pre>
 <p><img src="userguide_files/figure-html/unnamed-chunk-153-1.png" width="672" /></p>
 <p>We can see now that the realized selection and the retention curves are different for the age/size classes that are discarded by the fishery. The realized selection curve (dashed red line) represents the actual selectivity of the fish removed from the population.</p>
 <p>The retention curve (dotted blue line) shows the age/size classes that are retained by the fishery and appear in the total cathc, catch-at-age, and catch-at-length fishery data.</p>
@@ -521,9 +568,12 @@ OM<span class="op">@</span>LFR &lt;-<span class="st"> </span><span class="kw">c<
 <h3><span class="header-section-number">25.3.4</span> General Discarding</h3>
 <p>General discarding across all age or size classes can be included using the discarding rate slot <code>DR</code> in the <code>Fleet</code> or <code>OM</code> object.</p>
 <p>For example, here we assume that between 10 and 20% of all age/size classes are discarded by the fishery:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">OM<span class="op">@</span>DR &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.1</span>, <span class="fl">0.2</span>)</code></pre></div>
+<div class="sourceCode" id="cb465"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb465-1" title="1">OM<span class="op">@</span>DR &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="fl">0.1</span>, <span class="fl">0.2</span>)</a></code></pre></div>
 <p>Plotting the selectivity and retention curves shows that a proportion of all age and size classes are now discarded, with the survival rate determined by the <code>Fdisc</code> parameter:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plotSelect</span>(OM, <span class="dt">sim=</span><span class="dv">1</span>)</code></pre></div>
+<div class="sourceCode" id="cb466"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb466-1" title="1"><span class="kw">plotSelect</span>(OM, <span class="dt">sim=</span><span class="dv">1</span>)</a></code></pre></div>
+<pre><code>## Warning: &#39;plotSelect&#39; is deprecated.
+## Use &#39;plot(&quot;Selectivity&quot;, Fleet, Stock&#39; instead.
+## See help(&quot;Deprecated&quot;)</code></pre>
 <p><img src="userguide_files/figure-html/unnamed-chunk-155-1.png" width="672" /></p>
 <!-- ## Variable Management Interval -->
 </div>
@@ -577,10 +627,11 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
+    var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:" && /^https?:/.test(src))
-      src = src.replace(/^https?:/, '');
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
     script.src = src;
     document.getElementsByTagName("head")[0].appendChild(script);
   })();

@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html >
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Chapter 19 Creating Your Own Data Object | Data-Limited Methods Toolkit (DLMtool 5.3)</title>
-  <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 19 Creating Your Own Data Object | Data-Limited Methods Toolkit (DLMtool 5.4.0)</title>
+  <meta name="description" content="User guide for the DLMtool R package" />
+  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 19 Creating Your Own Data Object | Data-Limited Methods Toolkit (DLMtool 5.3)" />
+  <meta property="og:title" content="Chapter 19 Creating Your Own Data Object | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,23 +16,23 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 19 Creating Your Own Data Object | Data-Limited Methods Toolkit (DLMtool 5.3)" />
+  <meta name="twitter:title" content="Chapter 19 Creating Your Own Data Object | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
 
-<meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
+<meta name="author" content="Tom Carruthers &amp; Adrian Hordyk" />
 
 
-<meta name="date" content="2019-03-12">
+<meta name="date" content="2019-09-19" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
-  <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
-<link rel="prev" href="example-data-objects.html">
-<link rel="next" href="plotting-data-objects.html">
+  <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon" />
+<link rel="prev" href="example-data-objects.html"/>
+<link rel="next" href="plotting-data-objects.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -51,41 +50,66 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -289,7 +313,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
 <li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
-<li class="chapter" data-level="30" data-path="using-real-indices.html"><a href="using-real-indices.html"><i class="fa fa-check"></i><b>30</b> Using Real Indices</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
 <li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
@@ -353,7 +376,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.3)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.0)</a>
           </h1>
         </div>
 
@@ -373,52 +396,55 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2><span class="header-section-number">19.1</span> Creating a Data File in Excel</h2>
 <p>Probably the easiest way to get your data into the DLMtool is to populate a data table in an Excel workbook.</p>
 <p>You can create a Data workbook using the <code>DataInit</code> function, for example:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">DataInit</span>(<span class="st">&quot;MyData&quot;</span>)</code></pre></div>
+<div class="sourceCode" id="cb342"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb342-1" title="1"><span class="kw">DataInit</span>(<span class="st">&quot;MyData&quot;</span>)</a></code></pre></div>
 <p>This will create a file ‘MyData.xlsx’ in your current working directory, which can be populate with your fishery data.</p>
 <p>Remember, to see the help documentation for information on the slots in the Data object:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">?<span class="kw">class</span>(<span class="st">&quot;Data&quot;</span>)</code></pre></div>
+<div class="sourceCode" id="cb343"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb343-1" title="1">?<span class="kw">class</span>(<span class="st">&quot;Data&quot;</span>)</a></code></pre></div>
 <p>You do not have to enter data for every line of the data file, if data are not available simply put an ‘NA’ next to any given field.</p>
 </div>
 <div id="importing-the-data-object" class="section level2">
 <h2><span class="header-section-number">19.2</span> Importing the Data object</h2>
 <p>Once populated, the Excel Data file can be imported into R:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">MyData &lt;-<span class="st"> </span><span class="kw">XL2Data</span>(<span class="st">&#39;MyData&#39;</span>)</code></pre></div>
+<div class="sourceCode" id="cb344"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb344-1" title="1">MyData &lt;-<span class="st"> </span><span class="kw">XL2Data</span>(<span class="st">&#39;MyData&#39;</span>)</a></code></pre></div>
 <p>In this case we get an error because the Data file is empty: we haven’t populated it with an data yet. Luckily for us, DLMtool includes several example Data files.</p>
 </div>
 <div id="example-fishery-data-files" class="section level2">
 <h2><span class="header-section-number">19.3</span> Example Fishery Data Files</h2>
 <p>One example Data file is the China rockfish. You can <a href="docs/ExampleData/China_rockfish.csv">download</a> this Data file to your current working directory and import into R:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">China_rockfish &lt;-<span class="st"> </span><span class="kw">XL2Data</span>(<span class="st">&quot;China_rockfish.csv&quot;</span>)</code></pre></div>
+<div class="sourceCode" id="cb345"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb345-1" title="1">China_rockfish &lt;-<span class="st"> </span><span class="kw">XL2Data</span>(<span class="st">&quot;China_rockfish.csv&quot;</span>)</a></code></pre></div>
 <p>The CSV files for the other example Fishery Data objects are also included in the DLMtool package. To find the location where these files are located on your machine, use the <code>DLMDataDir</code> function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">DLMDataDir</span>()</code></pre></div>
-<pre><code>## [1] &quot;C:/Users/User/Documents/R/win-library/3.5/DLMtool&quot;</code></pre>
+<div class="sourceCode" id="cb346"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb346-1" title="1"><span class="kw">DLMDataDir</span>()</a></code></pre></div>
+<pre><code>## [1] &quot;C:/~/R/win-library/3.6/DLMtool&quot;</code></pre>
 <p>We can then load one of the example CSV files using the <code>XL2Data</code> function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">China_rockfish2 &lt;-<span class="st"> </span><span class="kw">XL2Data</span>(<span class="kw">file.path</span>(<span class="kw">DLMDataDir</span>(), <span class="st">&quot;China_rockfish.csv&quot;</span>))</code></pre></div>
-<pre><code>## Reading China_rockfish.csv</code></pre>
+<div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb348-1" title="1">China_rockfish2 &lt;-<span class="st"> </span><span class="kw">XL2Data</span>(<span class="kw">file.path</span>(<span class="kw">DLMDataDir</span>(), <span class="st">&quot;China_rockfish.csv&quot;</span>))</a></code></pre></div>
+<pre><code>## Warning in XL2Data(file.path(DLMDataDir(), &quot;China_rockfish.csv&quot;)): These rows in the Data file are not valid names and were not imported:
+## MSY, BMSY, Sigma length composition</code></pre>
 <p>or the <code>new</code> function:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">China_rockfish2 &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Data&quot;</span>, <span class="kw">file.path</span>(<span class="kw">DLMDataDir</span>(),<span class="st">&quot;China_rockfish.csv&quot;</span>))</code></pre></div>
+<div class="sourceCode" id="cb350"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb350-1" title="1">China_rockfish2 &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&quot;Data&quot;</span>, <span class="kw">file.path</span>(<span class="kw">DLMDataDir</span>(),<span class="st">&quot;China_rockfish.csv&quot;</span>))</a></code></pre></div>
+<pre><code>## Warning in XL2Data(stock, ...): These rows in the Data file are not valid names and were not imported:
+## MSY, BMSY, Sigma length composition</code></pre>
 <p>Alternatively, you can navigate to the data directory (<code>DLMDataDir()</code>) on your machine and examine the contents and structure of the CSV data files in MS Excel or other software.</p>
 </div>
 <div id="populating-a-data-object-in-r" class="section level2">
 <h2><span class="header-section-number">19.4</span> Populating a Data Object in R</h2>
 <p>You can create a blank <code>Data</code> object and fill the slots directly in R. For example:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Madeup &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;Data&#39;</span>)                             <span class="co">#  Create a blank DLM object</span>
-Madeup<span class="op">@</span>Name &lt;-<span class="st"> &#39;Test&#39;</span>                                 <span class="co">#  Name it</span>
-Madeup<span class="op">@</span>Cat &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">20</span><span class="op">:</span><span class="dv">11</span><span class="op">*</span><span class="kw">rlnorm</span>(<span class="dv">10</span>,<span class="dv">0</span>,<span class="fl">0.2</span>),<span class="dt">nrow=</span><span class="dv">1</span>)   <span class="co">#  Generate fake catch data</span>
-Madeup<span class="op">@</span>Units &lt;-<span class="st"> &quot;Million metric tonnes&quot;</span>               <span class="co">#  State units of catch</span>
-Madeup<span class="op">@</span>AvC &lt;-<span class="st"> </span><span class="kw">mean</span>(Madeup<span class="op">@</span>Cat)                        <span class="co">#  Average catches for time t (DCAC)</span>
-Madeup<span class="op">@</span>t &lt;-<span class="st"> </span><span class="kw">ncol</span>(Madeup<span class="op">@</span>Cat)                          <span class="co">#  No. yrs for Av. catch (DCAC)</span>
-Madeup<span class="op">@</span>Dt &lt;-<span class="st"> </span><span class="fl">0.5</span>                                      <span class="co">#  Depletion over time t (DCAC)</span>
-Madeup<span class="op">@</span>Dep &lt;-<span class="st"> </span><span class="fl">0.5</span>                                     <span class="co">#  Depletion relative to unfished </span>
-Madeup<span class="op">@</span>vbK &lt;-<span class="st"> </span><span class="fl">0.2</span>                                     <span class="co">#  VB maximum growth rate</span>
-Madeup<span class="op">@</span>vbt0 &lt;-<span class="st"> </span>(<span class="op">-</span><span class="fl">0.5</span>)                                 <span class="co">#  VB theoretical age at zero length</span>
-Madeup<span class="op">@</span>vbLinf &lt;-<span class="st"> </span><span class="dv">200</span>                                  <span class="co">#  VB maximum length</span>
-Madeup<span class="op">@</span>Mort &lt;-<span class="st"> </span><span class="fl">0.1</span>                                    <span class="co">#  Natural mortality rate</span>
-Madeup<span class="op">@</span>Abun &lt;-<span class="st"> </span><span class="dv">200</span>                                    <span class="co">#  Current abundance</span>
-Madeup<span class="op">@</span>FMSY_M &lt;-<span class="st"> </span><span class="fl">0.75</span>                                 <span class="co">#  Ratio of FMSY/M</span>
-Madeup<span class="op">@</span>L50 &lt;-<span class="st"> </span><span class="dv">100</span>                                     <span class="co">#  Length at 50% maturity</span>
-Madeup<span class="op">@</span>L95 &lt;-<span class="st"> </span><span class="dv">120</span>                                     <span class="co">#  Length at 95% maturity</span>
-Madeup<span class="op">@</span>BMSY_B0 &lt;-<span class="st"> </span><span class="fl">0.35</span>                                <span class="co">#  BMSY relative to unfished</span></code></pre></div>
+<div class="sourceCode" id="cb352"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb352-1" title="1">Madeup &lt;-<span class="st"> </span><span class="kw">new</span>(<span class="st">&#39;Data&#39;</span>)                             <span class="co">#  Create a blank DLM object</span></a>
+<a class="sourceLine" id="cb352-2" title="2">Madeup<span class="op">@</span>Name &lt;-<span class="st"> &#39;Test&#39;</span>                                 <span class="co">#  Name it</span></a>
+<a class="sourceLine" id="cb352-3" title="3">Madeup<span class="op">@</span>Cat &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="dv">20</span><span class="op">:</span><span class="dv">11</span><span class="op">*</span><span class="kw">rlnorm</span>(<span class="dv">10</span>,<span class="dv">0</span>,<span class="fl">0.2</span>),<span class="dt">nrow=</span><span class="dv">1</span>)   <span class="co">#  Generate fake catch data</span></a>
+<a class="sourceLine" id="cb352-4" title="4">Madeup<span class="op">@</span>Units &lt;-<span class="st"> &quot;Million metric tonnes&quot;</span>               <span class="co">#  State units of catch</span></a>
+<a class="sourceLine" id="cb352-5" title="5">Madeup<span class="op">@</span>AvC &lt;-<span class="st"> </span><span class="kw">mean</span>(Madeup<span class="op">@</span>Cat)                        <span class="co">#  Average catches for time t (DCAC)</span></a>
+<a class="sourceLine" id="cb352-6" title="6">Madeup<span class="op">@</span>t &lt;-<span class="st"> </span><span class="kw">ncol</span>(Madeup<span class="op">@</span>Cat)                          <span class="co">#  No. yrs for Av. catch (DCAC)</span></a>
+<a class="sourceLine" id="cb352-7" title="7">Madeup<span class="op">@</span>Dt &lt;-<span class="st"> </span><span class="fl">0.5</span>                                      <span class="co">#  Depletion over time t (DCAC)</span></a>
+<a class="sourceLine" id="cb352-8" title="8">Madeup<span class="op">@</span>Dep &lt;-<span class="st"> </span><span class="fl">0.5</span>                                     <span class="co">#  Depletion relative to unfished </span></a>
+<a class="sourceLine" id="cb352-9" title="9">Madeup<span class="op">@</span>vbK &lt;-<span class="st"> </span><span class="fl">0.2</span>                                     <span class="co">#  VB maximum growth rate</span></a>
+<a class="sourceLine" id="cb352-10" title="10">Madeup<span class="op">@</span>vbt0 &lt;-<span class="st"> </span>(<span class="op">-</span><span class="fl">0.5</span>)                                 <span class="co">#  VB theoretical age at zero length</span></a>
+<a class="sourceLine" id="cb352-11" title="11">Madeup<span class="op">@</span>vbLinf &lt;-<span class="st"> </span><span class="dv">200</span>                                  <span class="co">#  VB maximum length</span></a>
+<a class="sourceLine" id="cb352-12" title="12">Madeup<span class="op">@</span>Mort &lt;-<span class="st"> </span><span class="fl">0.1</span>                                    <span class="co">#  Natural mortality rate</span></a>
+<a class="sourceLine" id="cb352-13" title="13">Madeup<span class="op">@</span>Abun &lt;-<span class="st"> </span><span class="dv">200</span>                                    <span class="co">#  Current abundance</span></a>
+<a class="sourceLine" id="cb352-14" title="14">Madeup<span class="op">@</span>FMSY_M &lt;-<span class="st"> </span><span class="fl">0.75</span>                                 <span class="co">#  Ratio of FMSY/M</span></a>
+<a class="sourceLine" id="cb352-15" title="15">Madeup<span class="op">@</span>L50 &lt;-<span class="st"> </span><span class="dv">100</span>                                     <span class="co">#  Length at 50% maturity</span></a>
+<a class="sourceLine" id="cb352-16" title="16">Madeup<span class="op">@</span>L95 &lt;-<span class="st"> </span><span class="dv">120</span>                                     <span class="co">#  Length at 95% maturity</span></a>
+<a class="sourceLine" id="cb352-17" title="17">Madeup<span class="op">@</span>BMSY_B0 &lt;-<span class="st"> </span><span class="fl">0.35</span>                                <span class="co">#  BMSY relative to unfished</span></a></code></pre></div>
 </div>
 </div>
             </section>
@@ -469,10 +495,11 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
+    var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:" && /^https?:/.test(src))
-      src = src.replace(/^https?:/, '');
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
     script.src = src;
     document.getElementsByTagName("head")[0].appendChild(script);
   })();

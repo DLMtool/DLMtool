@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html >
-
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
 <head>
 
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Chapter 22 Applying Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.3)</title>
-  <meta name="description" content="User guide for the DLMtool R package">
-  <meta name="generator" content="bookdown  and GitBook 2.6.7">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 22 Applying Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.4.0)</title>
+  <meta name="description" content="User guide for the DLMtool R package" />
+  <meta name="generator" content="bookdown 0.13 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 22 Applying Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.3)" />
+  <meta property="og:title" content="Chapter 22 Applying Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://dlmtool.github.io/DLMtool/userguide/introduction.html" />
   
@@ -17,23 +16,23 @@
   <meta name="github-repo" content="DLMtool/DLMtool" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 22 Applying Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.3)" />
+  <meta name="twitter:title" content="Chapter 22 Applying Management Procedures | Data-Limited Methods Toolkit (DLMtool 5.4.0)" />
   
   <meta name="twitter:description" content="User guide for the DLMtool R package" />
   
 
-<meta name="author" content="Tom Carruthers &amp; Adrian Hordyk">
+<meta name="author" content="Tom Carruthers &amp; Adrian Hordyk" />
 
 
-<meta name="date" content="2019-03-12">
+<meta name="date" content="2019-09-19" />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
-  <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon">
-<link rel="prev" href="determining-feasible-and-available-management-procedures.html">
-<link rel="next" href="averaging-mps.html">
+  <link rel="shortcut icon" href="favicon-16x16.png" type="image/x-icon" />
+<link rel="prev" href="determining-feasible-and-available-management-procedures.html"/>
+<link rel="next" href="averaging-mps.html"/>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -51,41 +50,66 @@
 
 
 <style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code > span.dt { color: #902000; } /* DataType */
-code > span.dv { color: #40a070; } /* DecVal */
-code > span.bn { color: #40a070; } /* BaseN */
-code > span.fl { color: #40a070; } /* Float */
-code > span.ch { color: #4070a0; } /* Char */
-code > span.st { color: #4070a0; } /* String */
-code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code > span.ot { color: #007020; } /* Other */
-code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code > span.fu { color: #06287e; } /* Function */
-code > span.er { color: #ff0000; font-weight: bold; } /* Error */
-code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #880000; } /* Constant */
-code > span.sc { color: #4070a0; } /* SpecialChar */
-code > span.vs { color: #4070a0; } /* VerbatimString */
-code > span.ss { color: #bb6688; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #19177c; } /* Variable */
-code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #666666; } /* Operator */
-code > span.bu { } /* BuiltIn */
-code > span.ex { } /* Extension */
-code > span.pp { color: #bc7a00; } /* Preprocessor */
-code > span.at { color: #7d9029; } /* Attribute */
-code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 <link rel="stylesheet" href="style.css" type="text/css" />
@@ -289,7 +313,6 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li class="chapter" data-level="29.2" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#pm-methods-in-detail"><i class="fa fa-check"></i><b>29.2</b> <code>PM</code> Methods in Detail</a></li>
 <li class="chapter" data-level="29.3" data-path="custom-performance-metrics.html"><a href="custom-performance-metrics.html#creating-example-pms-and-plot"><i class="fa fa-check"></i><b>29.3</b> Creating Example <code>PMs</code> and Plot</a></li>
 </ul></li>
-<li class="chapter" data-level="30" data-path="using-real-indices.html"><a href="using-real-indices.html"><i class="fa fa-check"></i><b>30</b> Using Real Indices</a></li>
 <li class="appendix"><span><b>Appendix</b></span></li>
 <li class="chapter" data-level="A" data-path="acknowledgements.html"><a href="acknowledgements.html"><i class="fa fa-check"></i><b>A</b> Acknowledgements</a></li>
 <li class="chapter" data-level="B" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i><b>B</b> References</a></li>
@@ -353,7 +376,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
       <div class="body-inner">
         <div class="book-header" role="navigation">
           <h1>
-            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.3)</a>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Data-Limited Methods Toolkit (DLMtool 5.4.0)</a>
           </h1>
         </div>
 
@@ -364,94 +387,163 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <div id="applying-management-procedures" class="section level1">
 <h1><span class="header-section-number">Chapter 22</span> Applying Management Procedures</h1>
 <p>The <code>runMP</code> function can be used to apply a MP to a Data object. For example, to apply the <code>AvC</code> method:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">runMP</span>(Atlantic_mackerel, <span class="st">&quot;AvC&quot;</span>, <span class="dt">reps=</span><span class="dv">1000</span>)</code></pre></div>
+<div class="sourceCode" id="cb384"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb384-1" title="1"><span class="kw">runMP</span>(Atlantic_mackerel, <span class="st">&quot;AvC&quot;</span>, <span class="dt">reps=</span><span class="dv">1000</span>)</a></code></pre></div>
 <pre><code>##       TAC
 ## AvC 24.33</code></pre>
 <p>The <code>runMP</code> prints out the MP recommendations to the console. In the case of a TAC, where multiple repititions where (see <code>reps</code> = 1000 above) used the <code>runMP</code> function prints the median TAC recommendation.</p>
 <p>Although it only displays a summary, <code>runMP</code> invisibly returns the Data object with the TAC slot populated:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Recs &lt;-<span class="st"> </span><span class="kw">runMP</span>(Atlantic_mackerel, <span class="st">&quot;AvC&quot;</span>)</code></pre></div>
+<div class="sourceCode" id="cb386"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb386-1" title="1">Recs &lt;-<span class="st"> </span><span class="kw">runMP</span>(Atlantic_mackerel, <span class="st">&quot;AvC&quot;</span>)</a></code></pre></div>
 <pre><code>##       TAC
 ## AvC 24.76</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">hist</span>(Recs<span class="op">@</span>TAC)</code></pre></div>
+<div class="sourceCode" id="cb388"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb388-1" title="1"><span class="kw">hist</span>(Recs<span class="op">@</span>TAC)</a></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-129-1.png" width="672" /></p>
 <p><code>runMP</code> can be used to run several MPs:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">runMP</span>(Atlantic_mackerel, <span class="kw">c</span>(<span class="st">&quot;AvC&quot;</span>, <span class="st">&quot;AvC_MLL&quot;</span>))</code></pre></div>
+<div class="sourceCode" id="cb389"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb389-1" title="1"><span class="kw">runMP</span>(Atlantic_mackerel, <span class="kw">c</span>(<span class="st">&quot;AvC&quot;</span>, <span class="st">&quot;AvC_MLL&quot;</span>))</a></code></pre></div>
 <pre><code>##           TAC   LR5 LFR
 ## AvC     24.54          
 ## AvC_MLL 23.88 90.25  95</code></pre>
 <p>Or all available MPs:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">Atlantic_mackerel &lt;-<span class="st"> </span><span class="kw">runMP</span>(Atlantic_mackerel, <span class="dt">reps=</span><span class="dv">1000</span>)</code></pre></div>
+<div class="sourceCode" id="cb391"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb391-1" title="1">Atlantic_mackerel &lt;-<span class="st"> </span><span class="kw">runMP</span>(Atlantic_mackerel, <span class="dt">reps=</span><span class="dv">1000</span>)</a></code></pre></div>
 <pre><code>## running all available MPs</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced
+
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced
+
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced
+
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced
+
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced
+
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced
+
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced
+
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced
+
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced
+
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced
+
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced
+
+## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced</code></pre>
+<pre><code>## Method CC1 produced greater than 50% NA values</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced</code></pre>
+<pre><code>## Method CC2 produced greater than 50% NA values</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced</code></pre>
+<pre><code>## Method CC3 produced greater than 50% NA values</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced</code></pre>
+<pre><code>## Method CC4 produced greater than 50% NA values</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced</code></pre>
+<pre><code>## Method CC5 produced greater than 50% NA values</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced</code></pre>
+<pre><code>## Method CurC produced greater than 50% NA values</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced</code></pre>
+<pre><code>## Method Islope1 produced greater than 50% NA values</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced</code></pre>
+<pre><code>## Method Islope2 produced greater than 50% NA values</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced</code></pre>
+<pre><code>## Method Islope3 produced greater than 50% NA values</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced</code></pre>
+<pre><code>## Method Islope4 produced greater than 50% NA values</code></pre>
 <pre><code>## Method Rcontrol produced greater than 50% NA values</code></pre>
+<pre><code>## Warning in rlnorm(reps, mconv(mu, mu * cv), sdconv(mu, mu * cv)): NAs
+## produced</code></pre>
+<pre><code>## Method SBT1 produced greater than 50% NA values</code></pre>
 <pre><code>##                TAC Effort   LR5    LFR     HS Area 1 Area 2
-## AvC          24.89                                         
-## AvC_MLL      24.31        90.25  95.00                     
-## BK           11.28                                         
-## CC1          23.37                                         
-## CC2          21.09                                         
-## CC3          18.80                                         
-## CC4          16.41                                         
-## CC5          14.00                                         
+## AvC          24.70                                         
+## AvC_MLL      24.43        90.25  95.00                     
+## BK           11.13                                         
+## CC1          23.50                                         
+## CC2          20.58                                         
+## CC3          18.82                                         
+## CC4          16.50                                         
+## CC5          14.09                                         
+## CurC         18.24                                         
 ## curE                 1.00                                  
 ## curE75               0.75                                  
-## DAAC          2.91                                         
-## DBSRA         6.22                                         
-## DBSRA_40      9.88                                         
-## DBSRA4010     4.06                                         
-## DCAC          5.69                                         
-## DCAC_40       7.24                                         
-## DCAC4010      1.43                                         
-## DCACs         5.73                                         
-## DD            2.03                                         
+## DAAC          2.88                                         
+## DBSRA         6.30                                         
+## DBSRA_40      9.83                                         
+## DBSRA4010     3.97                                         
+## DCAC          5.70                                         
+## DCAC_40       7.16                                         
+## DCAC4010      1.48                                         
+## DCACs         5.81                                         
+## DD            1.99                                         
 ## DD4010        0.45                                         
 ## DDe                  0.09                                  
 ## DDe75                0.07                                  
 ## DDes                 0.90                                  
-## DepF          2.94                                         
+## DepF          2.88                                         
 ## DTe40                0.90                                  
 ## DTe50                0.90                                  
-## DynF          5.04                                         
+## DynF          4.92                                         
 ## Fadapt        8.13                                         
 ## Fdem          4.70                                         
-## Fratio        3.68                                         
-## Fratio4010    2.04                                         
+## Fratio        3.70                                         
+## Fratio4010    2.24                                         
 ## GB_slope     15.14                                         
 ## Gcontrol      6.53                                         
 ## HDAAC         2.86                                         
-## ICI          13.91                                         
-## ICI2         14.03                                         
-## Iratio       10.04                                         
-## Islope1      16.91                                         
-## Islope2      14.74                                         
-## Islope4      13.42                                         
-## Itarget1      7.06                                         
-## Itarget1_MPA  7.08                                 0      1
-## Itarget2      7.04                                         
-## Itarget3      7.07                                         
-## Itarget4      4.98                                         
+## ICI          13.75                                         
+## ICI2         13.98                                         
+## Iratio       10.24                                         
+## Islope1      16.90                                         
+## Islope2      15.22                                         
+## Islope3      12.47                                         
+## Islope4      13.23                                         
+## Itarget1      7.10                                         
+## Itarget1_MPA  7.03                                 0      1
+## Itarget2      7.08                                         
+## Itarget3      7.09                                         
+## Itarget4      4.94                                         
 ## ItargetE1            0.85                                  
 ## ItargetE2            0.85                                  
 ## ItargetE3            0.85                                  
 ## ItargetE4            0.85                                  
 ## matlenlim                 90.25  95.00                     
 ## matlenlim2                99.28 104.50                     
-## MCD          13.63                                         
-## MCD4010       8.82                                         
+## MCD          14.29                                         
+## MCD4010       8.88                                         
 ## minlenLopt1               89.75  99.72                     
 ## MRnoreal                                           0      1
 ## MRreal                                             0      1
 ## NFref         0.01                                         
 ## Rcontrol      6.53                                         
 ## Rcontrol2     6.53                                         
-## SBT1         14.91                                         
+## SBT1         14.16                                         
 ## slotlim                   99.28 104.50 142.55              
-## SPmod        15.71                                         
-## SPMSY        11.53                                         
-## SPslope      13.82                                         
-## SPSRA         5.74                                         
-## YPR           7.89</code></pre>
+## SPmod        15.90                                         
+## SPMSY        12.04                                         
+## SPslope      13.85                                         
+## SPSRA         5.75                                         
+## YPR           8.09                                         
+## avgMP         8.62</code></pre>
 <p>The TAC recommendations from each Output control can be plotted:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">boxplot</span>(Atlantic_mackerel)</code></pre></div>
+<div class="sourceCode" id="cb417"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb417-1" title="1"><span class="kw">boxplot</span>(Atlantic_mackerel)</a></code></pre></div>
 <p><img src="userguide_files/figure-html/unnamed-chunk-132-1.png" width="576" /></p>
 
 <!-- # (PART\*) Example Workflow  {-} -->
@@ -508,10 +600,11 @@ gitbook.start({
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    var src = "";
+    var src = "true";
     if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
-    if (location.protocol !== "file:" && /^https?:/.test(src))
-      src = src.replace(/^https?:/, '');
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
     script.src = src;
     document.getElementsByTagName("head")[0].appendChild(script);
   })();

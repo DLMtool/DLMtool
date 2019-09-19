@@ -8,6 +8,13 @@
 
 <title>Changelog • DLMtool Documentation</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
@@ -16,13 +23,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -47,6 +56,7 @@
 <![endif]-->
 
 
+
   </head>
 
   <body>
@@ -63,7 +73,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
       </span>
     </div>
 
@@ -86,6 +96,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -95,16 +106,77 @@
       
     </div>
 
-    <div id="dlmtool-5-3" class="section level2">
+    <div id="dlmtool-540" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dlmtool-5-3" class="anchor"></a>DLMtool 5.3</h2>
+<a href="#dlmtool-540" class="anchor"></a>DLMtool 5.4.0</h2>
+<div id="minor-changes" class="section level3">
+<h3 class="hasAnchor">
+<a href="#minor-changes" class="anchor"></a>Minor changes</h3>
+<ul>
+<li>The <code>Data</code> object has been updated, main new features are the addition of an Effort slot (<code>Data@Effort</code> and <code>Data@CV_Effort</code>) and all CV by year for all time-series information.</li>
+<li>the <code>Data@RInd</code> slot has been removed and replaced with <code>Data@AddInd</code>
+</li>
+<li>Additional information on the Data object can be found <a href="https://dlmtool.github.io/DLMtool/Data/Data.html">here</a>.</li>
+</ul>
+</div>
+<div id="fixes" class="section level3">
+<h3 class="hasAnchor">
+<a href="#fixes" class="anchor"></a>Fixes</h3>
+<ul>
+<li>fix bug where TAE implementation error was affecting TAC controls (thanks to Robyn Forrest and Sean Anderson for finding this)</li>
+<li>fix bug in <code>Cplot</code> (thanks Sarah Valencia for picking this up)</li>
+<li>fix bug with <code><a href="../reference/runMSE.html">runMSE(Hist=TRUE)</a></code> where under some conditions the <code>Hist</code> object could not be stitched back together.</li>
+<li>add informative error message when MPs are dropped because they crash</li>
+</ul>
+</div>
+<div id="new-additions" class="section level3">
+<h3 class="hasAnchor">
+<a href="#new-additions" class="anchor"></a>New Additions</h3>
+<ul>
+<li>Added average annual variability in effort (<code>AAVE</code>) performance objective method</li>
+<li>Added MP type as column in <code>PMObj</code> function</li>
+<li>Add a constant current catch MP - <code>CurC</code>
+</li>
+<li>new <code>Dom</code> function (and removed old <code>DOM</code> function)</li>
+<li>add option to include a plus-group (e.g., OMs from <code>SS2OM</code>). To use a plus-group, use <code>OM@cpars$plusgroup = 1</code>
+</li>
+</ul>
+</div>
+</div>
+    <div id="dlmtool-531" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dlmtool-531" class="anchor"></a>DLMtool 5.3.1</h2>
+<div id="minor-changes-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#minor-changes-1" class="anchor"></a>Minor changes</h3>
+<ul>
+<li>add option to specify width of the CAL bins using <code>OM@cpars$binWidth</code>
+</li>
+<li>change MGT calculation from Z to M</li>
+<li>add option to hide printed results in <code>TradePlot</code>
+</li>
+</ul>
+</div>
+<div id="fixes-1" class="section level3">
+<h3 class="hasAnchor">
+<a href="#fixes-1" class="anchor"></a>Fixes</h3>
+<ul>
+<li>fix indexing issue for recruitment deviations</li>
+<li>fix issue with <code>cpars$mov</code> when nareas&gt;2</li>
+<li>fix issue with running MSE in parallel when some MPs fail</li>
+</ul>
+</div>
+</div>
+    <div id="dlmtool-53" class="section level2">
+<h2 class="hasAnchor">
+<a href="#dlmtool-53" class="anchor"></a>DLMtool 5.3</h2>
 <div id="new-features" class="section level3">
 <h3 class="hasAnchor">
 <a href="#new-features" class="anchor"></a>New Features</h3>
 <ul>
 <li>The <code>runMSE</code> function is now more robust. MPs that fail (i.e. crash R) are now skipped without stopping the entire MSE. A warning message alerts users which MPs have been dropped from the analysis.</li>
 <li>
-<code><a href="../reference/runMSE.html">runMSE(Hist=TRUE)</a></code> returns a new S4 object of class ‘Hist’. This change means that information from historical simulations is now accessed using <code>@</code> instead of <code>$</code>. For example: <code>Hist &lt;- runMSE(Hist=TRUE)</code> <code>TS &lt;- Hist@TSdata # time-series data</code> <code>Data &lt;- Hist@Data # Data object from end of historical period</code>
+<code><a href="../reference/runMSE.html">runMSE(Hist=TRUE)</a></code> returns a new S4 object of class ‘Hist’. This change means that information from historical simulations is now accessed using <code>@</code> instead of <code><a href="https://rdrr.io/r/base/Extract.html">$</a></code>. For example: <code>Hist &lt;- runMSE(Hist=TRUE)</code> <code>TS &lt;- Hist@TSdata # time-series data</code> <code>Data &lt;- Hist@Data # Data object from end of historical period</code>
 </li>
 <li>
 <code><a href="../reference/runMSE.html">runMSE(Hist=TRUE)</a></code> now works with parallel processing</li>
@@ -132,9 +204,9 @@
 <li>The <code>runMSErobust</code> function has been now removed from package (it was broken in the previous version).</li>
 </ul>
 </div>
-<div id="fixes" class="section level3">
+<div id="fixes-2" class="section level3">
 <h3 class="hasAnchor">
-<a href="#fixes" class="anchor"></a>Fixes</h3>
+<a href="#fixes-2" class="anchor"></a>Fixes</h3>
 <ul>
 <li>fix issue with importing <code>Data</code> objects with larger number of length bins</li>
 <li>fix issue where length-at-age was negative with high t0</li>
@@ -143,16 +215,16 @@
 <li>fix issue with effort calculation when both effort control and TAC are implemented</li>
 <li>fix random seed in <code>Turing</code> function</li>
 <li>speed up plots in <code>Turing</code> function</li>
-<li>speed up plots in <code><a href="https://www.rdocumentation.org/packages/base/topics/summary">summary(Data)</a></code>
+<li>speed up plots in <code><a href="https://rdrr.io/r/base/summary.html">summary(Data)</a></code>
 </li>
 <li>fix bug in CAL_nsamp and CAL_ESS when importing Obs object from CSV</li>
 <li>fix typo in documentation for Itarget MPs</li>
 </ul>
 </div>
 </div>
-    <div id="dlmtool-5-2-3" class="section level2">
+    <div id="dlmtool-523" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dlmtool-5-2-3" class="anchor"></a>DLMtool 5.2.3</h2>
+<a href="#dlmtool-523" class="anchor"></a>DLMtool 5.2.3</h2>
 <div id="new-features-1" class="section level3">
 <h3 class="hasAnchor">
 <a href="#new-features-1" class="anchor"></a>New features</h3>
@@ -163,16 +235,16 @@
 <li>New function to estimate length-weight parameters from data (<code>LW2OM</code>).</li>
 </ul>
 </div>
-<div id="minor-changes" class="section level3">
+<div id="minor-changes-2" class="section level3">
 <h3 class="hasAnchor">
-<a href="#minor-changes" class="anchor"></a>Minor changes</h3>
+<a href="#minor-changes-2" class="anchor"></a>Minor changes</h3>
 <ul>
 <li>update <code>plotMPA</code> to include relative size of areas</li>
 </ul>
 </div>
-<div id="fixes-1" class="section level3">
+<div id="fixes-3" class="section level3">
 <h3 class="hasAnchor">
-<a href="#fixes-1" class="anchor"></a>Fixes</h3>
+<a href="#fixes-3" class="anchor"></a>Fixes</h3>
 <ul>
 <li>export built in MPs from MSEtool package to parallel cluster</li>
 <li>fix issue with CAA at very low stocks sizes</li>
@@ -180,26 +252,26 @@
 </ul>
 </div>
 </div>
-    <div id="dlmtool-5-2-2" class="section level2">
+    <div id="dlmtool-522" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dlmtool-5-2-2" class="anchor"></a>DLMtool 5.2.2</h2>
-<div id="fixes-2" class="section level3">
+<a href="#dlmtool-522" class="anchor"></a>DLMtool 5.2.2</h2>
+<div id="fixes-4" class="section level3">
 <h3 class="hasAnchor">
-<a href="#fixes-2" class="anchor"></a>Fixes</h3>
+<a href="#fixes-4" class="anchor"></a>Fixes</h3>
 <ul>
 <li>fix issue with hyperstability/depletion for future projections</li>
 <li>
 <code>MSE@OM</code> has been updated to only include historical conditions.</li>
 <li>Fix issue with <code>Converge</code> in 5.2.1</li>
 <li>improvement to <code>XL2Data</code> to read files from other than working directory</li>
-<li>more flexibility to <code><a href="https://www.rdocumentation.org/packages/base/topics/summary">summary(Data)</a></code>
+<li>more flexibility to <code><a href="https://rdrr.io/r/base/summary.html">summary(Data)</a></code>
 </li>
 </ul>
 </div>
 </div>
-    <div id="dlmtool-5-2-1" class="section level2">
+    <div id="dlmtool-521" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dlmtool-5-2-1" class="anchor"></a>DLMtool 5.2.1</h2>
+<a href="#dlmtool-521" class="anchor"></a>DLMtool 5.2.1</h2>
 <div id="minor-fixes" class="section level3">
 <h3 class="hasAnchor">
 <a href="#minor-fixes" class="anchor"></a>Minor fixes</h3>
@@ -210,14 +282,14 @@
 </ul>
 </div>
 </div>
-    <div id="dlmtool-5-2" class="section level2">
+    <div id="dlmtool-52" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dlmtool-5-2" class="anchor"></a>DLMtool 5.2</h2>
+<a href="#dlmtool-52" class="anchor"></a>DLMtool 5.2</h2>
 <div id="new-features-2" class="section level3">
 <h3 class="hasAnchor">
 <a href="#new-features-2" class="anchor"></a>New Features</h3>
 <ul>
-<li>option for variable management interval by MP in <code>runMSE</code>. <code>OM@interval</code> can now be a vector of length <code>nMPs</code>, to specify different management intervals for different MPs. For example, with <code>OM@interval=c(1,5)</code> and <code>runMSE(OM, MPs=c('AvC', 'BK')),</code>AvC<code>is applied every year and</code>BK<code>is applied every 5 years.</code><a href="mailto:OM@interval">OM@interval</a>` is recycled if not the same length as number of MPs.</li>
+<li>option for variable management interval by MP in <code>runMSE</code>. <code>OM@interval</code> can now be a vector of length <code>nMPs</code>, to specify different management intervals for different MPs. For example, with <code>OM@interval=c(1,5)</code> and <code>runMSE(OM, MPs=c('AvC', 'BK')),</code>AvC<code>is applied every year and</code>BK<code>is applied every 5 years.</code><a href="mailto:OM@interval" class="email">OM@interval</a>` is recycled if not the same length as number of MPs.</li>
 </ul>
 </div>
 <div id="new-functions" class="section level3">
@@ -239,7 +311,7 @@
 <li>improved convergence diagnostic with updated <code>Converge</code> function</li>
 <li>
 <code>Replace</code> function has been updated to replace directly from individual Stock, Fleet, Obs, and Imp objects instead of from only OM objects</li>
-<li>The plots produced by <code><a href="https://www.rdocumentation.org/packages/base/topics/summary">summary(Data)</a></code> function have been improved</li>
+<li>The plots produced by <code><a href="https://rdrr.io/r/base/summary.html">summary(Data)</a></code> function have been improved</li>
 <li>
 <code>makePerf</code> has been replaced with <code>tinyErr</code> function with options to remove process error, observation error, and gradients</li>
 <li>additional MPs have been added: effort-based LBSPR and variants of existing MPAs</li>
@@ -274,9 +346,9 @@
 </ul>
 </div>
 </div>
-    <div id="dlmtool-5-1-3" class="section level2">
+    <div id="dlmtool-513" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dlmtool-5-1-3" class="anchor"></a>DLMtool 5.1.3</h2>
+<a href="#dlmtool-513" class="anchor"></a>DLMtool 5.1.3</h2>
 <ul>
 <li>fix Replace function for new OM slots</li>
 <li>fix indexing issue for size comps when there are only two size classes</li>
@@ -288,23 +360,23 @@
 </li>
 </ul>
 </div>
-    <div id="dlmtool-5-1-2" class="section level2">
+    <div id="dlmtool-512" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dlmtool-5-1-2" class="anchor"></a>DLMtool 5.1.2</h2>
+<a href="#dlmtool-512" class="anchor"></a>DLMtool 5.1.2</h2>
 <ul>
 <li>Add contributors and more examples</li>
 </ul>
 </div>
-    <div id="dlmtool-5-1-1" class="section level2">
+    <div id="dlmtool-511" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dlmtool-5-1-1" class="anchor"></a>DLMtool 5.1.1</h2>
+<a href="#dlmtool-511" class="anchor"></a>DLMtool 5.1.1</h2>
 <ul>
 <li>Patch for indexing error in first projection year population dynamics.</li>
 </ul>
 </div>
-    <div id="dlmtool-5-1" class="section level2">
+    <div id="dlmtool-51" class="section level2">
 <h2 class="hasAnchor">
-<a href="#dlmtool-5-1" class="anchor"></a>DLMtool 5.1</h2>
+<a href="#dlmtool-51" class="anchor"></a>DLMtool 5.1</h2>
 <div id="operating-model" class="section level3">
 <h3 class="hasAnchor">
 <a href="#operating-model" class="anchor"></a>Operating Model</h3>
@@ -352,20 +424,23 @@
     <div id="tocnav">
       <h2>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-        <li><a href="#dlmtool-5-3">5.3</a></li>
-        <li><a href="#dlmtool-5-2-3">5.2.3</a></li>
-        <li><a href="#dlmtool-5-2-2">5.2.2</a></li>
-        <li><a href="#dlmtool-5-2-1">5.2.1</a></li>
-        <li><a href="#dlmtool-5-2">5.2</a></li>
-        <li><a href="#dlmtool-5-1-3">5.1.3</a></li>
-        <li><a href="#dlmtool-5-1-2">5.1.2</a></li>
-        <li><a href="#dlmtool-5-1-1">5.1.1</a></li>
-        <li><a href="#dlmtool-5-1">5.1</a></li>
+        <li><a href="#dlmtool-540">5.4.0</a></li>
+        <li><a href="#dlmtool-531">5.3.1</a></li>
+        <li><a href="#dlmtool-53">5.3</a></li>
+        <li><a href="#dlmtool-523">5.2.3</a></li>
+        <li><a href="#dlmtool-522">5.2.2</a></li>
+        <li><a href="#dlmtool-521">5.2.1</a></li>
+        <li><a href="#dlmtool-52">5.2</a></li>
+        <li><a href="#dlmtool-513">5.1.3</a></li>
+        <li><a href="#dlmtool-512">5.1.2</a></li>
+        <li><a href="#dlmtool-511">5.1.1</a></li>
+        <li><a href="#dlmtool-51">5.1</a></li>
       </ul>
     </div>
   </div>
 
 </div>
+
 
       <footer>
       <div class="copyright">
@@ -373,13 +448,16 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

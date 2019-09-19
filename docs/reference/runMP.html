@@ -8,6 +8,13 @@
 
 <title>Run a Management Procedure — runMP • DLMtool Documentation</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
@@ -16,13 +23,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -49,6 +58,7 @@
 <![endif]-->
 
 
+
   </head>
 
   <body>
@@ -65,7 +75,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
       </span>
     </div>
 
@@ -88,6 +98,7 @@
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -142,24 +153,44 @@
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>Data_TAc</span> <span class='kw'>&lt;-</span> <span class='fu'>runMP</span>(<span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://www.rdocumentation.org/packages/DLMtool/topics/Data-class-objects'>Cobia</a></span>)</div><div class='output co'>#&gt; <span class='message'>running all available MPs</span></div><div class='output co'>#&gt;               TAC Effort    LR5   LFR     HS Area 1 Area 2
-#&gt; AvC        471.21                                         
-#&gt; AvC_MLL    457.16        611.80 644.0                     
-#&gt; BK_CC      743.14                                         
-#&gt; CC1        805.41                                         
-#&gt; CC2        719.91                                         
-#&gt; CC3        651.40                                         
-#&gt; CC4        567.79                                         
-#&gt; CC5        480.34                                         
-#&gt; curE                1.00                                  
-#&gt; curE75              0.75                                  
-#&gt; matlenlim                611.80 644.0                     
-#&gt; matlenlim2               672.98 708.4                     
-#&gt; MRnoreal                                          0      1
-#&gt; MRreal                                            0      1
-#&gt; NFref        0.01                                         
-#&gt; slotlim                  672.98 708.4 1170.4              
-#&gt; SPMSY      352.77                                         </div></pre>
+    <pre class="examples"><div class='input'><span class='no'>Data_TAc</span> <span class='kw'>&lt;-</span> <span class='fu'>runMP</span>(<span class='kw pkg'>DLMtool</span><span class='kw ns'>::</span><span class='no'><a href='https://rdrr.io/pkg/DLMtool/man/Data-class-objects.html'>Cobia</a></span>)</div><div class='output co'>#&gt; <span class='message'><span style='color: #0000BB;'>running all available MPs</span><span></span></div><div class='output co'>#&gt;                 TAC Effort    LR5   LFR     HS Area 1 Area 2
+#&gt; AvC          477.03                                         
+#&gt; AvC_MLL      476.58        611.80 644.0                     
+#&gt; BK_CC        738.64                                         
+#&gt; CC1          796.60                                         
+#&gt; CC2          716.21                                         
+#&gt; CC3          633.77                                         
+#&gt; CC4          568.43                                         
+#&gt; CC5          481.03                                         
+#&gt; CurC         502.45                                         
+#&gt; curE                  1.00                                  
+#&gt; curE75                0.75                                  
+#&gt; GB_slope     432.96                                         
+#&gt; ICI          451.80                                         
+#&gt; ICI2         483.28                                         
+#&gt; Iratio       309.71                                         
+#&gt; Islope1      599.78                                         
+#&gt; Islope2      521.24                                         
+#&gt; Islope3      444.09                                         
+#&gt; Islope4      465.03                                         
+#&gt; Itarget1     566.19                                         
+#&gt; Itarget1_MPA 575.49                                 0      1
+#&gt; Itarget2     493.29                                         
+#&gt; Itarget3     474.03                                         
+#&gt; Itarget4     336.75                                         
+#&gt; ItargetE1             0.85                                  
+#&gt; ItargetE2             0.85                                  
+#&gt; ItargetE3             0.85                                  
+#&gt; ItargetE4             0.85                                  
+#&gt; matlenlim                  611.80 644.0                     
+#&gt; matlenlim2                 672.98 708.4                     
+#&gt; MRnoreal                                            0      1
+#&gt; MRreal                                              0      1
+#&gt; NFref          0.01                                         
+#&gt; SBT1         534.15                                         
+#&gt; slotlim                    672.98 708.4 1170.4              
+#&gt; SPmod        464.11                                         
+#&gt; SPMSY        355.64                                         </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -174,19 +205,23 @@
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by Tom Carruthers, Adrian Hordyk.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 

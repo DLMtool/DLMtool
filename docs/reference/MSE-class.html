@@ -8,6 +8,13 @@
 
 <title>Class <code>'MSE'</code> — MSE-class • DLMtool Documentation</title>
 
+<!-- favicons -->
+<link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png" />
+<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png" />
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
@@ -16,13 +23,15 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
-<!-- sticky kit -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script>
+<!-- headroom.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -50,6 +59,7 @@ simulation conditions and performance of data-limited methods" />
 <![endif]-->
 
 
+
   </head>
 
   <body>
@@ -66,7 +76,7 @@ simulation conditions and performance of data-limited methods" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">DLMtool Documentation</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">5.4.0</span>
       </span>
     </div>
 
@@ -89,6 +99,7 @@ simulation conditions and performance of data-limited methods" />
 </div><!--/.navbar -->
 
       
+
       </header>
 
 <div class="row">
@@ -110,14 +121,21 @@ simulation conditions and performance of data-limited methods</p>
     <h2 class="hasAnchor" id="slots"><a class="anchor" href="#slots"></a>Slots</h2>
 
     
-    <dl class='dl-horizontal'>
+
+<dl class='dl-horizontal'>
 <dt><code>Name</code></dt><dd><p>Name of the MSE object. Single value. Character string</p></dd>
-    <dt><code>nyears</code></dt><dd><p>The number of years for the historical simulation. Single value. Positive integer</p></dd>
-    <dt><code>proyears</code></dt><dd><p>The number of years for the projections - closed loop simulations. Single value. Positive integer</p></dd>
-    <dt><code>nMPs</code></dt><dd><p>Number of management procedures simulation tested. Single value. Positive integer.</p></dd>
-    <dt><code>MPs</code></dt><dd><p>The names of the MPs that were tested. Vector of length nMPs. Character strings.</p></dd>
-    <dt><code>nsim</code></dt><dd><p>Number of simulations. Single value. Positive integer</p></dd>
-    <dt><code>OM</code></dt><dd><p>A table of sampled parameter of the operating model. Table object of nsim rows. Real numbers<br />
+
+<dt><code>nyears</code></dt><dd><p>The number of years for the historical simulation. Single value. Positive integer</p></dd>
+
+<dt><code>proyears</code></dt><dd><p>The number of years for the projections - closed loop simulations. Single value. Positive integer</p></dd>
+
+<dt><code>nMPs</code></dt><dd><p>Number of management procedures simulation tested. Single value. Positive integer.</p></dd>
+
+<dt><code>MPs</code></dt><dd><p>The names of the MPs that were tested. Vector of length nMPs. Character strings.</p></dd>
+
+<dt><code>nsim</code></dt><dd><p>Number of simulations. Single value. Positive integer</p></dd>
+
+<dt><code>OM</code></dt><dd><p>A table of sampled parameter of the operating model. Table object of nsim rows. Real numbers<br />
 <ul>
 <li><p>A: abundance (biomass) updated in each management update of projection</p></li>
 <li><p>AC: autocorrelation in recruitment</p></li>
@@ -180,7 +198,8 @@ simulation conditions and performance of data-limited methods</p>
 <li><p>UMSY: MSY exploitation rate</p></li>
 <li><p>Vmaxlen: selection of fish at asymptotic length</p></li>
 </ul></p></dd>
-    <dt><code>Obs</code></dt><dd><p>A table of sampled parameters of the observation model. Table of nsim rows. Real numbers<br />
+
+<dt><code>Obs</code></dt><dd><p>A table of sampled parameters of the observation model. Table of nsim rows. Real numbers<br />
 <ul>
 <li><p>Abias: bias in observed current absolute stock biomass</p></li>
 <li><p>Aerr: error in observed current absolute stock biomass</p></li>
@@ -209,23 +228,41 @@ simulation conditions and performance of data-limited methods</p>
 <li><p>Recsd: error in observed recruitment</p></li>
 <li><p>t0bias: bias in theoretical length at age zero (von Bertalanffy t0 parameter)</p></li>
 </ul></p></dd>
-    <dt><code>B_BMSY</code></dt><dd><p>Simulated spawning biomass relative to spawning BMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
-    <dt><code>F_FMSY</code></dt><dd><p>Simulated fishing mortality rate relative to FMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
-    <dt><code>B</code></dt><dd><p>Simulated stock biomass over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
-    <dt><code>SSB</code></dt><dd><p>Simulated spawning stock biomass over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
-    <dt><code>VB</code></dt><dd><p>Simulated vulnerable biomass over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
-    <dt><code>FM</code></dt><dd><p>Simulated fishing mortality rate over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
-    <dt><code>C</code></dt><dd><p>Simulated catches (taken) over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
-    <dt><code>TAC</code></dt><dd><p>Simulated Total Allowable Catch (prescribed) over the projection (this is NA for input controls). An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
-    <dt><code>SSB_hist</code></dt><dd><p>Simulated historical spawning stock biomass. An array with dimensions: nsim, nages, nyears, nareas. Non-negative real numbers</p></dd>
-    <dt><code>CB_hist</code></dt><dd><p>Simulated historical catches in weight. An array with dimensions: nsim, nages, nyears, nareas. Non-negative real numbers</p></dd>
-    <dt><code>FM_hist</code></dt><dd><p>Simulated historical fishing mortality rate. An array with dimensions: nsim, nages, nyears, nareas. Non-negative real numbers</p></dd>
-    <dt><code>Effort</code></dt><dd><p>Simulated relative fishing effort in the projection years. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
-    <dt><code>PAA</code></dt><dd><p>Population at age in last projection year. An array with dimensions: nsim, nMPs, nages. Non-negative real numbers</p></dd>
-    <dt><code>CAA</code></dt><dd><p>Catch at age in last projection year. An array with dimensions: nsim, nMPs, nages. Non-negative real numbers</p></dd>
-    <dt><code>CAL</code></dt><dd><p>Catch at length in last projection year. An array with dimensions: nsim, nMPs, nCALbins. Non-negative real numbers</p></dd>
-    <dt><code>CALbins</code></dt><dd><p>Mid-points of the catch-at-length bins. Vector of length nCALbins. Positive real numbers.</p></dd>
-    <dt><code>Misc</code></dt><dd><p>Miscellanenous output such as posterior predictive data</p></dd>
+
+<dt><code>B_BMSY</code></dt><dd><p>Simulated spawning biomass relative to spawning BMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
+
+<dt><code>F_FMSY</code></dt><dd><p>Simulated fishing mortality rate relative to FMSY over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
+
+<dt><code>B</code></dt><dd><p>Simulated stock biomass over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
+
+<dt><code>SSB</code></dt><dd><p>Simulated spawning stock biomass over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
+
+<dt><code>VB</code></dt><dd><p>Simulated vulnerable biomass over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
+
+<dt><code>FM</code></dt><dd><p>Simulated fishing mortality rate over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
+
+<dt><code>C</code></dt><dd><p>Simulated catches (taken) over the projection. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
+
+<dt><code>TAC</code></dt><dd><p>Simulated Total Allowable Catch (prescribed) over the projection (this is NA for input controls). An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
+
+<dt><code>SSB_hist</code></dt><dd><p>Simulated historical spawning stock biomass. An array with dimensions: nsim, nages, nyears, nareas. Non-negative real numbers</p></dd>
+
+<dt><code>CB_hist</code></dt><dd><p>Simulated historical catches in weight. An array with dimensions: nsim, nages, nyears, nareas. Non-negative real numbers</p></dd>
+
+<dt><code>FM_hist</code></dt><dd><p>Simulated historical fishing mortality rate. An array with dimensions: nsim, nages, nyears, nareas. Non-negative real numbers</p></dd>
+
+<dt><code>Effort</code></dt><dd><p>Simulated relative fishing effort in the projection years. An array with dimensions: nsim, nMPs, proyears. Non-negative real numbers</p></dd>
+
+<dt><code>PAA</code></dt><dd><p>Population at age in last projection year. An array with dimensions: nsim, nMPs, nages. Non-negative real numbers</p></dd>
+
+<dt><code>CAA</code></dt><dd><p>Catch at age in last projection year. An array with dimensions: nsim, nMPs, nages. Non-negative real numbers</p></dd>
+
+<dt><code>CAL</code></dt><dd><p>Catch at length in last projection year. An array with dimensions: nsim, nMPs, nCALbins. Non-negative real numbers</p></dd>
+
+<dt><code>CALbins</code></dt><dd><p>Mid-points of the catch-at-length bins. Vector of length nCALbins. Positive real numbers.</p></dd>
+
+<dt><code>Misc</code></dt><dd><p>Miscellanenous output such as posterior predictive data</p></dd>
+
 </dl>
     
     <h2 class="hasAnchor" id="objects-from-the-class"><a class="anchor" href="#objects-from-the-class"></a>Objects from the Class</h2>
@@ -250,19 +287,23 @@ B_BMSYa, F_FMSYa, Ba, FMa, Ca, OFLa, Effort, PAA, CAA, CAL, CALbins)</code></p>
   </div>
 </div>
 
+
       <footer>
       <div class="copyright">
   <p>Developed by Tom Carruthers, Adrian Hordyk.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.3.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
 </div>
+
       </footer>
    </div>
 
   
 
+
   </body>
 </html>
+
 
