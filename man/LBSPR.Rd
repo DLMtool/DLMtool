@@ -35,6 +35,9 @@ LBSPR_MLL(x, Data, reps = 1, plot = FALSE, SPRtarg = 0.4, n = 5,
 
 \item{R}{variance of sampling noise for smoother}
 }
+\value{
+An object of class \code{\link[=Rec-class]{Rec}} with the TAE slot(s) populated
+}
 \description{
 The spawning potential ratio (SPR) is estimated using the LBSPR method
 and compared to a target of 0.4.
@@ -54,7 +57,7 @@ higher than the maturity curve if SPR < 0.4
 See \linkS4class{Data} for information on the \code{Data} object \cr
 
 
-\code{LBSPR}: CAL, CAL_bins, L50, L95, LHYear, Mort, vbK, vbLinf, wlb, Year
+\code{LBSPR}: CAL, CAL_bins, L50, L95, LHYear, Mort, Year, vbK, vbLinf, wlb
 }
 
 \section{Rendered Equations}{
