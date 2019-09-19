@@ -2,15 +2,15 @@
 title: Fishery Data Guide
 author: "Adrian Hordyk <a.hordyk@oceans.ubc.ca>"
 output:
+  bookdown::pdf_book:
+    toc: true
+    toc_depth: 2
   bookdown::html_document2:
     toc: true
     toc_depth: 2
     toc_float: true
     number_sections: true
     fig_caption: yes
-  bookdown::pdf_book:
-    toc: true
-    toc_depth: 2
 ---
 
 ```{r setup, include=FALSE}
@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introduction
 In this context, fishery data includes any information that can be used for one 
-of three purposes:
+of three purposes: 
 
 1. to estimate the status of an exploited stock (e.g., stock assessment or a similar analysis), 
 2. to condition an operating model (OM) for evaluating the performance of alternative management 
