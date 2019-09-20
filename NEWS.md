@@ -47,7 +47,7 @@ The current version of the DLMtool package is available for download from [CRAN]
 - It is now possible to specify time-varying movement between areas using `OM@cpars$mov`.
 - `Uses` function has been added to return MPs that use a particular data slot. For example: `Uses('AvC`)
 - Depletion for the initial year of the simulations can now be specified using `OM@cpars$initD`.
-- Real indices of abundance can be added to the Data object and used to condition OM. See [userguide](https://dlmtool.github.io/DLMtool/userguide/using-real-indices.html) for details.
+- Real indices of abundance can be added to the Data object and used to condition OM. 
 - The calculations for unfished and MSY reference points have been standardized and are now fully described in the [userguide](https://dlmtool.github.io/DLMtool/userguide/assumptions-of-dlmtool.html#calculating-reference-points.html)
 - New functions `PMLimit` and `PMObj` have been added to generate interacive HTML tables showing the performance of MPs (using objects of class `PM`)
 - An argument `Labels` has been added to the `TradePlot` function and related functions (`Tplot` etc). This allows users to replace the default MP name with something more user-friendly. For example: `TradePlot(MSE, Labels=list(AvC="Average Catch"))`. An argument `cols` has also been added so users have full control on the colors of the points and labels. The MP labels can be removed completely by setting the `lab.size` argument to `NULL`
