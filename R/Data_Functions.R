@@ -1856,16 +1856,17 @@ Report <- function(Data=NULL, md=NULL, name="Data-Report",
   
   # Reference List
   cat("## Reference List\n", file = rmdfile, sep = " ", append = TRUE)
-  temp <- grepl("## Reference List", mdtext)
-  ind1 <- which(temp) + 1
-  ind2 <- length(mdtext)
-  if (ind2 > ind1) {
-    text <- mdtext[ind1:ind2]
-    for (i in seq_along(text)){
-      cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
+  if (!is.null(mdtext)) {
+    temp <- grepl("## Reference List", mdtext)
+    ind1 <- which(temp) + 1
+    ind2 <- length(mdtext)
+    if (ind2 > ind1) {
+      text <- mdtext[ind1:ind2]
+      for (i in seq_along(text)){
+        cat(text[i], "\n", file = rmdfile, sep = "", append = TRUE)
+      }
     }
   }
-  
   # Render output file
   message("Rendering to ", dir)
   if (grepl('html', output_format)) 
