@@ -1014,7 +1014,16 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE, R=0.2) {
 #' Hordyk et al. (2015b):
 #' 
 #' @templateVar mp LBSPR 
-#' @template MPtemplate
+#' @param x A position in the data object
+#' @param Data A data object
+#' @param reps The number of stochastic samples of the MP recommendation(s)
+#' @param plot Logical. Show the plot?
+#' 
+#' @section Required Data:
+#' See \linkS4class{Data} for information on the \code{Data} object \cr 
+#' 
+#' @return An object of class \\code{\\link[=Rec-class]{Rec}} with the TAE slot populated
+#' 
 #' @template MPuses 
 #' 
 #' @param SPRtarg The target SPR
@@ -1027,7 +1036,7 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE, R=0.2) {
 #' 
 #' @export
 #' @references  
-#' Hordyk, A., Ono, K., Valencia, S., loneragan, N., and Prince J (2015a). 
+#' Hordyk, A., Ono, K., Valencia, S., Loneragan, N., and Prince J (2015a). 
 #' A novel length-based empirical estimation method of spawning potential ratio (SPR),
 #' and tests of its performance, for small-scale, data-poor fisheries, 
 #' ICES Journal of Marine Science, 72 (1), 217-231

@@ -9,6 +9,7 @@
 \alias{Gulf_blue_tilefish}
 \alias{ourReefFish}
 \alias{Red_snapper}
+\alias{Simulation_1}
 \alias{Data-class-objects}
 \title{Data class objects}
 \format{An object of class \code{Data} of length 1.}
@@ -26,12 +27,14 @@ Gulf_blue_tilefish
 ourReefFish
 
 Red_snapper
+
+Simulation_1
 }
 \description{
 Example objects of class Data
 }
 \examples{
-Red_snapper@Name
+Simulation_1@Name
 
 avail("Data")
 }

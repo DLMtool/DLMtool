@@ -1,0 +1,50 @@
+---
+title: Data Documentation 
+author: Author Name 
+date: 2019-09-23 
+always_allow_html: yes
+output: 
+        html_document:
+          toc: true
+          toc_float: true
+        pdf_document:
+          toc: true
+---
+
+
+## Metadata
+```{r, echo=FALSE} 
+metadatatable(Data, output_format=output_format)
+```
+## Biology
+```{r, echo=FALSE, out.width='90%', tidy=FALSE, fig.align='center', fig.show='asis'} 
+fignum <- biology_plots(Data)
+fignum <- growth_plots(Data, fignum=fignum)
+```
+
+## Selectivity
+```{r, echo=FALSE, out.width='90%'} 
+fignum <- select_plots(Data, fignum=fignum+1)
+```
+
+## Time-Series
+```{r, echo=FALSE, out.width='90%'} 
+fignum <- ts_plots(Data,fignum=fignum+1)
+```
+
+## Catch-at-Age
+```{r, echo=FALSE, out.width='90%', fig.align='center', fig.show='asis'} 
+fignum <- caa_plot(Data, fignum=fignum+1)
+```
+
+## Catch-at-Length
+```{r, echo=FALSE, out.width='90%', fig.align='center', fig.show='asis'} 
+fignum <- cal_plot(Data, fignum=fignum)
+```
+
+## Reference
+```{r, echo=FALSE, out.width='90%'} 
+fignum <- ref_plots(Data, fignum=fignum)
+```
+
+## Reference List

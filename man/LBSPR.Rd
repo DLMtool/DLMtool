@@ -36,7 +36,7 @@ LBSPR_MLL(x, Data, reps = 1, plot = FALSE, SPRtarg = 0.4, n = 5,
 \item{R}{variance of sampling noise for smoother}
 }
 \value{
-An object of class \code{\link[=Rec-class]{Rec}} with the TAE slot(s) populated
+An object of class \\code{\\link[=Rec-class]{Rec}} with the TAE slot populated
 }
 \description{
 The spawning potential ratio (SPR) is estimated using the LBSPR method
@@ -70,7 +70,7 @@ LBSPR(1, Data=DLMtool::SimulatedData, plot=TRUE)
 LBSPR_MLL(1, Data=DLMtool::SimulatedData, plot=FALSE)
 }
 \references{
-Hordyk, A., Ono, K., Valencia, S., loneragan, N., and Prince J (2015a).
+Hordyk, A., Ono, K., Valencia, S., Loneragan, N., and Prince J (2015a).
 A novel length-based empirical estimation method of spawning potential ratio (SPR),
 and tests of its performance, for small-scale, data-poor fisheries,
 ICES Journal of Marine Science, 72 (1), 217-231
