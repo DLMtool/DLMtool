@@ -36,7 +36,7 @@ LBSPR_MLL(x, Data, reps = 1, plot = FALSE, SPRtarg = 0.4, n = 5,
 \item{R}{variance of sampling noise for smoother}
 }
 \value{
-An object of class \\code{\\link[=Rec-class]{Rec}} with the TAE slot populated
+An object of class \code{\link[=Rec-class]{Rec}} with the TAE slot populated
 }
 \description{
 The spawning potential ratio (SPR) is estimated using the LBSPR method
