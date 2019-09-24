@@ -1074,6 +1074,7 @@ needed <- function(Data, funcs) {
 }
 
 
+
 # Internal function for:
 ## Required(): 
 ## needed(): matches slotnames of Data class to those that are required in an MP func
@@ -1081,8 +1082,8 @@ needed <- function(Data, funcs) {
 match_slots <- function(func, slotnams = paste0("Data@", slotNames("Data")), 
                         slots = slotNames("Data"), Data = NULL, internal=FALSE) {
   # check if each slotname in Data class is required in an MP (T/F)
-  
-  if(internal) ind_MP <- vapply(slots, grepl, logical(1), x = func)
+  slot2 <- paste0('\\b', slots, '\\b')
+  if(internal) ind_MP <- vapply(slot2, grepl, logical(1), x = func)
   if(!internal) ind_MP <- vapply(slotnams, grepl, logical(1), x = func)
   if(!is.null(Data) && inherits(Data, "Data")) { # check if Data slots return NA or zero
     ind_NAor0 <- vapply(slots, function(x) all(is.na(slot(Data, x))), logical(1))
