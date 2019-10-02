@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Quang Huynh (q.huynh@oceans.ubc.ca)" />
+
+<meta name="date" content="2019-10-01" />
+
+<title>Description of the SRA model for conditioning DLMtool operating models</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Description of the SRA model for conditioning DLMtool operating models</h1>
+<h4 class="author">Quang Huynh (<a href="mailto:q.huynh@oceans.ubc.ca" class="email">q.huynh@oceans.ubc.ca</a>)</h4>
+<h4 class="date">2019-10-01</h4>
+
+
+<div id="TOC">
+<ul>
+<li><a href="#introduction"><span class="toc-section-number">1</span> Introduction</a></li>
+<li><a href="#stock-reduction-analysis-sra-for-conditioning-dlmtool-operating-models"><span class="toc-section-number">2</span> Stock Reduction Analysis (SRA) for conditioning DLMtool operating models</a><ul>
+<li><a href="#model-configuration-of-the-sra"><span class="toc-section-number">2.1</span> Model configuration of the SRA</a></li>
+<li><a href="#updated-parameters-and-sra-model-evaluation"><span class="toc-section-number">2.2</span> Updated parameters and SRA model evaluation</a></li>
+</ul></li>
+<li><a href="#case-study"><span class="toc-section-number">3</span> Case study</a></li>
+<li><a href="#mathematical-description-of-the-sra-model"><span class="toc-section-number">4</span> Mathematical description of the SRA model</a><ul>
+<li><a href="#dynamics-equations"><span class="toc-section-number">4.1</span> Dynamics equations</a></li>
+<li><a href="#likelihoods"><span class="toc-section-number">4.2</span> Likelihoods</a></li>
+</ul></li>
+<li><a href="#references"><span class="toc-section-number">5</span> References</a></li>
+</ul>
+</div>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({ TeX: { equationNumbers: {autoNumber: "all"} } });
+</script>
+<style type="text/css">
+
+body{ /* Normal  */
+   font-size: 12px;
+}
+td {  /* Table  */
+   font-size: 8px;
+}
+h1 { /* Header 1 */
+ font-size: 18px;
+ color: DarkBlue;
+}
+h2 { /* Header 2 */
+ font-size: 15px;
+ color: DarkBlue;
+}
+h3 { /* Header 3 */
+ font-size: 14px;
+ color: DarkBlue;
+}
+code.r{ /* Code block */
+  font-size: 10px;
+}
+pre { /* Code block */
+  font-size: 10px
+}
+</style>
+<p><br></p>
+<div id="introduction" class="section level1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p>For conditioning an operating model, it is desirable that some objective method be available (as opposed to intuition or a simple guess) to inform key historical parameters. Biological studies can be used to inform life history parameters such as growth and maturity, while other parameters such as depletion and fishing mortality have typically been informed by an assessment model. In data-limited or data-moderate settings, the lack of an accepted assessment makes it difficult to parameterize depletion and F.</p>
+<p>Historically, the term “stock reduction analysis” has been used to describe a model in which the predicted total catch matches the observed catch. Kimura and Tagart (1982) presented SRA as an alternative to a VPA model, for situations where catch-at-age data weren’t available, and a surplus production model, where the SRA utilizes an age-structured modeling approach that utilizes natural mortality and recruitment information for reconstructing the stock history instead a pooled biomass dynamics approach.</p>
+<p>Stock reduction analysis (SRA) is a potential tool for creating operating models in the absence of assessments. In any assessment, point estimates of depletion and unfished recruitment may not be credible if there is high uncertainty of input values to the model such as natural mortality, recruitment compensation (i.e., steepness). Walters et al. (2006) used SRA as an approach to address a broader question: what combinations of historical fishing mortality and recruitment could have generated the observed data?</p>
+<p>In this context, we don’t look at point estimates, but rather try to reduce the range of plausible parameters. For example, what combinations of values for unfished recruitment and steepness could have generated the observed catch AND created the observed decrease in the indices of abundance. We would exclude parameters that would otherwise generate unlikely scenarios.</p>
+<p>Consider two extreme scenarios. If the productivity or unfished stock size is too low, then the modeled population would crash while trying to explain the observed catches over time. On the other hand, if the productivity or unfished stock size is too high, then the observed catches are tiny in relation to the population, and implies still unfished conditions despite the observed fishing history. Finding a suitable range of parameters is akin to “threading the needle” in order to avoid these two extreme scenarios.</p>
+</div>
+<div id="stock-reduction-analysis-sra-for-conditioning-dlmtool-operating-models" class="section level1">
+<h1><span class="header-section-number">2</span> Stock Reduction Analysis (SRA) for conditioning DLMtool operating models</h1>
+<p>The stock reduction paradigm can be quite useful for informing the historical scenarios in a DLMtool operating model. Suppose that we are unsure about how to specify certain life history parameters, e.g. steepness. For other life history parameters such as growth, we may be more certain or we prefer to incorporate uncertainty in other parameters. With some data, we can try to fit an age-structured model that estimates values of historical depletion (spawning biomass relative to unfished conditions in the last year of the historical period), recruitment, and fishing mortality that are consistent with the specified parameter values.</p>
+<p>In MSEtool, <code>SRA_scope()</code> will be the main function for scoping historical scenarios for an operating model <code>OM</code>. <code>SRA_scope</code> takes an operating model, data, in order to run the SRA and then returns a list with an updated OM and predicted outputs from the SRA. All model configurations for the SRA will also be specified through arguments passed through <code>SRA_scope</code>.</p>
+<p>The approach can be stochastic (with Monte Carlo sampling) if the operating model is specified as such. For example, steepness is highly uncertain, then one could specify a range of values, for example, between 0.6 and 0.9 with a uniform distribution, in an operating model. If one wishes to run 250 simulations in the closed-loop simulation, then <code>SRA_scope</code> will sample 250 steepness values from this distribution and then fit the SRA model 250 times. The SRA model output from <code>i-th</code> fit will be conditioned on the <code>i-th</code> sampled value of steepness. The samples values of steepness (as well as all input parameters to the SRA) are saved in the OM object returned by <code>SRA_scope</code> to ensure consistency.</p>
+<div id="model-configuration-of-the-sra" class="section level2">
+<h2><span class="header-section-number">2.1</span> Model configuration of the SRA</h2>
+<p>The first order of business with set-up of the SRA model is to decide whether to condition the model on catch, e.g., <code>SRA_scope(..., condition = &quot;catch&quot;)</code> or effort. If the model is conditioned on catch, then the SRA will generate predicted catches that match the observed. If conditioned on effort, the estimated fishing mortality in the model will be proportional to the observed effort. A full time series of the conditioning variable is needed, and length of the historical period <code>OM@nyears</code> will be the length of the conditioned time series.</p>
+<p>Ideally, the time series begins at unfished conditions. One could pass the asssumed equilibrium catch or equilibrium effort prior to the first year of data to <code>SRA_scope</code>. The SRA will then attempt to estimate the initial depletion in the first year of the historical period. However, this is generally difficult to estimate in the first place (consider what data are informative to estimate initial depletion, perhaps an age or length sample from that first year that shows the truncation of the composition data relative to unfished conditions).</p>
+<p>If catch or effort data are unavailable going back to unfished conditions, then the data could be extrapolated back in time using reconstruction. Examples of catch reconstruction methods for the purposes of a stock asesssment can be found in Porch et al. (2004) and Appendix A of Starr and Haigh (2017).</p>
+<p>In addition to the conditioning variable, additional data types can be used: - Indices of abundance (either as surveyed biomass or fishery-dependent catch-per-unit time series) - Age compositions - Length compositions - Mean lengths (this option is generally for very sparse data scenarios when mean length data are available but not the composition data)</p>
+<p>Multiple surveys and fleets can be accommodated with <code>SRA_scope</code>. One of these several data types in addition to catch or effort is generally needed to obtain depletion estimates. Availability of these data can be quite sparse over time, yet still informative. For example, a recent age composition sample from a single year that shows a very truncated age structure can sufficient to imply a heavily depleted stock.</p>
+<p>Here are the required pre-specified OM parameters needed for SRA scoping:</p>
+<ul>
+<li>Growth (length-at-age) using slots <code>OM@Linf, OM@K, OM@t0</code> (or alternatively, <code>OM@cpars$Len_age</code>) and <code>OM@LenCV</code></li>
+<li>Length-weight conversion factors using slots <code>OM@a</code> and <code>OM@b</code></li>
+<li>Natural mortality using slots <code>OM@M, OM@M2</code> or <code>OM@cpars$M_ageArray</code></li>
+<li>Maturity using slots <code>OM@L50, OM@L50_95</code> or <code>OM@cpars$Mat_age</code></li>
+<li>Standard deviation of recruitment deviations using slot <code>OM@Perr</code> or <code>OM@cpars$Perr</code></li>
+<li>Stock-recruit relationship with <code>OM@SRrel</code></li>
+<li>If no age or length compositions, selectivity is needed with <code>OM@L5, OM@LFS, and OM@Vmaxlen</code></li>
+</ul>
+<p>If growth, natural mortality, or maturity are time-varying in the historical period, then the SRA will implement time-varying life history in the estimation model as well. For example, we’re setting up an operating model where the length of the historical period is 50 years, and we believe that natural mortality has doubled from 0.2 to 0.4 since Year 30 and will remain so into the future. This code can be used to setup this scenario:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>OM<span class="op">@</span>nyears &lt;-<span class="st"> </span><span class="dv">50</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a>OM<span class="op">@</span>proyears &lt;-<span class="st"> </span><span class="dv">30</span></span>
+<span id="cb1-3"><a href="#cb1-3"></a></span>
+<span id="cb1-4"><a href="#cb1-4"></a>M_ageArray &lt;-<span class="st"> </span><span class="kw">array</span>(<span class="fl">0.4</span>, <span class="kw">c</span>(OM<span class="op">@</span>nsim, OM<span class="op">@</span>maxage, OM<span class="op">@</span>nyears <span class="op">+</span><span class="st"> </span>OM<span class="op">@</span>proyears)) <span class="co"># Default M = 0.4</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a>M_ageArray[, , <span class="dv">1</span><span class="op">:</span><span class="dv">30</span>] &lt;-<span class="st"> </span><span class="fl">0.2</span> <span class="co"># M = 0.2 in the first 30 years of the simulation</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a>OM<span class="op">@</span>cpars<span class="op">$</span>M_ageArray &lt;-<span class="st"> </span>M_ageArray</span></code></pre></div>
+<p>The SRA will pick up this change in the model as well.</p>
+<p>Note that time-varying life history affects calculation of reference points, in particular unfished depletion. The <code>SRA_scope</code> function will annually calculate the unfished depletion associated with that year’s life history values. The easiest way to turn off time-varying growth and M is to set:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>OM<span class="op">@</span>Linfsd &lt;-<span class="st"> </span>OM<span class="op">@</span>Ksd &lt;-<span class="st"> </span>OM<span class="op">@</span>Msd &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>)</span></code></pre></div>
+<p>Selectivity is fixed if no age or length compositions are provided. Otherwise, the ascending limb of selectivity is estimated with age or length composition data. If the selectivity is assumed to be dome-shaped, then the descending limb can either be fixed values sampled from slot <code>OM@Vmaxlen</code> or estimated in the SRA.</p>
+<p>Information about the slots in the OM object can be viewed through <code>class?OM</code>. If passing custom objects to the operating model that override default inputs (e.g., for time-varying parameters), then <code>DLMtool::validcpars()</code> will be helpful for setting up and indexing the dimensions of the custom objects.</p>
+</div>
+<div id="updated-parameters-and-sra-model-evaluation" class="section level2">
+<h2><span class="header-section-number">2.2</span> Updated parameters and SRA model evaluation</h2>
+<p>Historical OM parameters that are updated by the SRA scoping function include:</p>
+<ul>
+<li>Unfished recruitment <code>OM@R0</code>, only if catch is provided</li>
+<li>Initial depletion <code>OM@cpars$initD</code></li>
+<li>Depletion <code>OM@D</code></li>
+<li>Relative effort <code>OM@cpars$Find</code>.</li>
+<li>Annual recruitment deviations <code>OM@cpars$Perr_y</code>.</li>
+<li>If age or length compositions were used, selectivity parameters <code>OM@L5, OM@LFS, and OM@Vmaxlen</code>.</li>
+</ul>
+<p>The SRA model will estimate and return <code>R0</code> when conditioned on catch. When conditioning on effort, the model is generally scale-independent; there can be information to inform depletion but not the stock size.</p>
+<p>The exception occurs when the SRA is conditioned on effort from multiple-fleets, in which case, catch data from all fleets are needed in inform the relative F’s among fleets. In this scenario, R0 is estimated.</p>
+<p>Additionally, if multiple fleets are used for conditioning, then the annual selectivity can change basd on the relative F among fleets. In this case, the annual selectivity is passed the OM output in the <code>OM@cpars$V</code> slot. The default assumption in the projection period of the closed-loop simulation is that the selectivity and relative F among fleets are identical to those in the last historical year. Fleet allocation in management procedures can be exploration in <code>multiMSE</code>, see <code>vignette(&quot;multiMSE&quot;)</code>.</p>
+<p>The relative effort provided in the output is the apical F from the SRA. When running the management strategy evaluation with <code>DLMtool::runMSE()</code>, the apical F may be re-scaled to ensure that specified depletion has been reached at the beginning and end of the historical period. For simple operating models, i.e. those with conditions identical to the SRA, the apical F’s in the MSE should be nearly identical to those from the SRA. To confirm that this is the case, one can run the <code>plot</code> function on output returned by <code>SRA_scope</code>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>output &lt;-<span class="st"> </span><span class="kw">SRA_scope</span>(...)</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="kw">plot</span>(output)</span></code></pre></div>
+<p>This function returns a markdown report with:</p>
+<ul>
+<li>Histograms of updated parameters in the OM object</li>
+<li>Fits of the SRA model to the provided data</li>
+<li>Output from the SRA model, e.g. predicted recruitment</li>
+<li>Fits to an additional run of the SRA model to mean life history values among simulations (only when <code>SRA_scope(..., mean_fit = TRUE)</code> is run)</li>
+<li>Comparisons of the historical period of the updated OM to the SRA output</li>
+</ul>
+<p>Currently, it is possible to create a more complex operating model than the SRA model itself. For example, discard mortality, movement, and spatial targetting are currently not modeled in the SRA. If these processes are specified in the operating model, then it is possible that the operating model may not necessarily match all output from the SRA.</p>
+</div>
+</div>
+<div id="case-study" class="section level1">
+<h1><span class="header-section-number">3</span> Case study</h1>
+<p>To be added later.</p>
+</div>
+<div id="mathematical-description-of-the-sra-model" class="section level1">
+<h1><span class="header-section-number">4</span> Mathematical description of the SRA model</h1>
+<div id="dynamics-equations" class="section level2">
+<h2><span class="header-section-number">4.1</span> Dynamics equations</h2>
+<p>Selectivity <span class="math inline">\(v\)</span> for length bin <span class="math inline">\(\ell\)</span> and fleet <span class="math inline">\(f\)</span> is length-based, where <span class="math display">\[ v_{\ell,f} = \left[1 + \exp\left(-\log(19) \left(\dfrac{L^{50}_f - L_{\ell}}{L^{95}_f - L^{50}_f}\right)\right)\right]^{-1} \]</span> if logistic shaped, with <span class="math inline">\(L\)</span> is the midpoint of length bin <span class="math inline">\(\ell\)</span> and <span class="math inline">\(L^{95}_f\)</span> and <span class="math inline">\(L^{50}_f\)</span> are the lengths at 95 and 50% selectivity, respectively.</p>
+<p>If dome shaped, selectivity is <span class="math display">\[ v_{\ell,f} = 
+\begin{cases}
+\exp\left(-\dfrac{(L_{\ell} - \mu_f)^2}{2(\sigma^L_f)^2}\right) &amp; L_{\ell} &lt; \mu_f\\
+\exp\left(-\dfrac{(L_{\ell} - \mu_f)^2}{2(\sigma^R_f)^2}\right) &amp; L_{\ell} \ge \mu_f
+\end{cases},
+\]</span> where <span class="math inline">\(\mu_f\)</span> is the length of full selectivity and <span class="math inline">\(\sigma^L_f\)</span> and <span class="math inline">\(\sigma^R_f\)</span> control the shape of the ascending and descending limbs, respectively, of the selectivity function.</p>
+<p>Total mortality <span class="math inline">\(Z\)</span> in year <span class="math inline">\(y\)</span> and for age <span class="math inline">\(a\)</span> and length bin is the sum of fishing mortality <span class="math inline">\(F\)</span> from all fleets for that length bin and natural mortality <span class="math inline">\(M\)</span> for that age,</p>
+<p><span class="math display">\[ Z_{y,a,\ell} = M_{y,a} + \Sigma_f v_{\ell,f} F_{y,f}.\]</span> The catch (in numbers) <span class="math inline">\(C^N\)</span> at age and length for fleet <span class="math inline">\(f\)</span> is <span class="math display">\[ C^N_{y,a,\ell,f} = \dfrac{v_{\ell,f} F_{y,f}}{Z_{y,a,\ell}} N_{y,a,\ell} (1 - \exp[-Z_{y,a,\ell}]).\]</span></p>
+<p>If the model is conditioned on catch, then <span class="math inline">\(F_{y,f}\)</span> are estimated. If the model is conditioned on effort, then <span class="math display">\[ F_{y,f} = q_f E_{y,f},\]</span> where <span class="math inline">\(E_{y,f}\)</span> is the observed effort and <span class="math inline">\(q^f\)</span> is a scaling coefficient.</p>
+<p>The population abundance <span class="math inline">\(N\)</span> at age and length is calculated assuming a normally distributed length-at-age <span class="math inline">\(P(\ell,a)\)</span>, where <span class="math display">\[ N_{y,a,\ell} = N_{y,a} P(\ell|a) \]</span> and</p>
+<p><span class="math display">\[ P(\ell|a) = 
+\begin{cases}
+      \phi(L&#39;_{\ell+1}) &amp; \ell = 1\\
+      \phi(L&#39;_{\ell+1}) - \phi(L&#39;_\ell) &amp; \ell = 2, \ldots, L - 1,\\
+      1 -\phi(L&#39;_\ell) &amp; \ell = L
+\end{cases}
+\]</span> with <span class="math inline">\(L&#39;_{\ell}\)</span> as the length at the lower boundary of length bin <span class="math inline">\(\ell\)</span> and <span class="math inline">\(\phi(L&#39;_{\ell})\)</span> as the cumulative distribution function of a normal variable with mean <span class="math inline">\(\tilde{L}_{y,a}\)</span> (the expected mean length at age <span class="math inline">\(a\)</span>) and standard deviation <span class="math inline">\(\tilde{L}_{y,a} \times CV^L\)</span> (<span class="math inline">\(CV^L\)</span> is the coefficient of variation in mean length at age).</p>
+<p>After setting the equilibrium population age distribution in the first year of the model, the population abundance (after summing across all length bins) in subsequent years is <span class="math display">\[ N_{y,a} =
+\begin{cases}
+      R_y &amp; a = 1\\
+      \Sigma_{\ell} N_{y-1,a-1,\ell} \exp(-Z_{y-1,a-1,\ell}) &amp; a = 2, \ldots, A - 1,\\
+      \Sigma_{\ell} N_{y-1,a-1,\ell} \exp(-Z_{y-1,a-1,\ell}) + \Sigma_{\ell} N_{y-1,a,\ell} \exp(-Z_{y-1,a,\ell}) &amp; a = A
+\end{cases}
+\]</span> where <span class="math inline">\(R_y\)</span> is the recruitment predicted in year <span class="math inline">\(y\)</span>.</p>
+<p>The catch in weight <span class="math inline">\(\tilde{C}\)</span> is <span class="math display">\[ \tilde{C}_{y,f} = \Sigma_{\ell}\Sigma_a C^N_{y,a,\ell,f} w_{\ell},\]</span> where <span class="math inline">\(w\)</span> is the weight at length bin <span class="math inline">\(\ell\)</span>.</p>
+<p>The mean length of the catch <span class="math inline">\(\bar{L}_{y,f}\)</span> is <span class="math display">\[ \bar{L}_{y,f} = \dfrac{\Sigma_{\ell} L_{\ell}\Sigma_a C^N_{y,a,\ell,f}}{\Sigma_a\Sigma_{\ell} C^N_{y,a,\ell,f}}. \]</span></p>
+<p>The proportion of the catch-at-age is <span class="math display">\[ p_{y,a,f} = \dfrac{\Sigma_{\ell}C^N_{y,a,\ell,f}}{\Sigma_a \Sigma_{\ell}C^N_{y,a,\ell,f}}.\]</span></p>
+<p>The proportion of the catch-at-length is <span class="math display">\[ p_{y,\ell,f} = \dfrac{\Sigma_a C^N_{y,a,\ell,f}}{\Sigma_a \Sigma_{\ell}C^N_{y,a,\ell,f}}.\]</span></p>
+<p>The spawning biomass is <span class="math inline">\(B^S_y\)</span> is <span class="math display">\[B^S_y = \Sigma_{\ell} w_{\ell} \Sigma_a m_a N_{y,a,\ell},\]</span></p>
+<p>where <span class="math inline">\(m_a\)</span> is the maturity at age.</p>
+</div>
+<div id="likelihoods" class="section level2">
+<h2><span class="header-section-number">4.2</span> Likelihoods</h2>
+<p>If the model is conditioned on catch, then the log-likelihood component <span class="math inline">\(\Lambda_1\)</span> of the catch is <span class="math display">\[\Lambda_1 = \Sigma_y \Sigma_f \left(-\log(0.01) - \dfrac{[\log(\tilde{C}^{\textrm{obs}}_{y,f}) - \log(\tilde{C}^{\textrm{pred}}_{y,f})]^2}{2 \times 0.01^2}\right),\]</span></p>
+<p>where <span class="math inline">\(\textrm{obs}\)</span> and <span class="math inline">\(\textrm{pred}\)</span> indicate observed and predicted quantities, respectively. With a small standard deviation for the catch likelihood relative to the variance in other likelihood components, the predicted catch will generally match the observed catch.</p>
+<p>The log-likelihood component <span class="math inline">\(\Lambda_2\)</span> of survey data is <span class="math display">\[\Lambda_2 = \Sigma_y \Sigma_s \left(-\log(\sigma_{y,s}) - \dfrac{[\log(I_{y,s}) - \log(q_s B_{y,s})]^2}{2\sigma_{y,s}^2}\right),\]</span> where <span class="math inline">\(I\)</span> is the value of the survey with <span class="math inline">\(s\)</span> indexing survey, <span class="math inline">\(\sigma_{y,s}\)</span> is the corresponding standard deviation of the survey, <span class="math inline">\(q\)</span> is a scaling coefficient, and <span class="math inline">\(B_{y,s}\)</span> is the reference biomass that corresponds to the index, e.g., spawning biomass or vulnerable biomass.</p>
+<p>The log-likelihood component <span class="math inline">\(\Lambda_3\)</span> of catch-at-age data is <span class="math display">\[\Lambda_3 = \Sigma_y \Sigma_f O^A_{y,f} \log(p_{y,a,f})\]</span> where <span class="math inline">\(O^A\)</span> is the annual sample sizes for the age compositions.</p>
+<p>The log-likelihood component <span class="math inline">\(\Lambda_4\)</span> of catch-at-length data is <span class="math display">\[\Lambda_4 = \Sigma_y \Sigma_f O^L_{y,f} \log(p_{y,\ell,f})\]</span> where <span class="math inline">\(O^L\)</span> is the annual sample sizes for the length compositions.</p>
+<p>The log-likelihood component <span class="math inline">\(\Lambda_5\)</span> of observed mean lengths in the catch is <span class="math display">\[\Lambda_5 = \Sigma_y \Sigma_f \left(-\log(\omega_f) - \dfrac{[\tilde{L}^{\textrm{obs}}_{y,f} - \tilde{L}^{\textrm{pred}}_{y,f}]^2}{2 \omega^2_f}\right),\]</span> where <span class="math inline">\(\omega_f\)</span> is the standard deviation of mean lengths.</p>
+<p>The log-likelihood component <span class="math inline">\(\Lambda_6\)</span> of annual estimated recruitment deviates <span class="math inline">\(\delta_y\)</span> in log space is <span class="math display">\[\Lambda_6 = \Sigma_y\left(-\log(\tau) - \dfrac{\delta_y^2}{2 \tau^2}\right),\]</span> where <span class="math inline">\(\tau\)</span> is the standard deviation of recruitment deviates.</p>
+</div>
+</div>
+<div id="references" class="section level1">
+<h1><span class="header-section-number">5</span> References</h1>
+<p>Kimura, D.K. and Tagart, J.V. 1982. Stock Reduction Analysis, Another Solution to the Catch Equations. Can. J. Fish. Aquat. Sci. 39: 1467-1472.</p>
+<p>Porch, C.E., Turner, S.C., and Schirripa, M.J. 2004. The commercial landings of red snapper in the Gulf of Mexico from 1872 to 1962. SEDAR7-AW-22. SEDAR, North Charleston, South Carolina. Available at: <a href="http://sedarweb.org/docs/wpapers/SEDAR7-AW-22.pdf" class="uri">http://sedarweb.org/docs/wpapers/SEDAR7-AW-22.pdf</a> (Retrieved July 9, 2019)</p>
+<p>Starr, P.J. and Haigh, R. 2017. Stock assessment of the coastwide population of Shortspine Thornyhead (Sebastolobus alascanus) in 2015 off the British Columbia coast. DFO Can. Sci. Advis. Sec. Res. Doc. 2017/015. ix + 174 p. Available at: <a href="http://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2017/2017_015-eng.html" class="uri">http://www.dfo-mpo.gc.ca/csas-sccs/Publications/ResDocs-DocRech/2017/2017_015-eng.html</a> (Retrieved July 9, 2019)</p>
+<p>Walters, C.J., Martell, S.J.D., and Korman, J. 2004. A stochastic approach to stock reduction analysis. Can. J. Fish. Aquat. Sci. 63: 212-223.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
