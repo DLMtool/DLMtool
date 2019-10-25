@@ -88,7 +88,9 @@ boxplot.Data <- function(x, upq=0.9, lwq=0.1, ylim=NULL, outline = FALSE, col = 
     mtext(side = 3, MPs, outer = TRUE, line=-1, cex = 1.25, xpd=NA)
   }
  
-  if (units) data.frame(MP = MPs, Median = Median, SD = SD, Units = Data@Units)
-  if (!units) data.frame(MP = MPs, Median = Median, SD = SD)
-  
+  if (units) {
+      data.frame(MP = MPs, Median = Median, SD = SD, Units = Data@Units)
+  } else {
+      data.frame(MP = MPs, Median = Median, SD = SD)
+  }
 }
