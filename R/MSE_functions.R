@@ -430,6 +430,7 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
   if (Class == "character") subMPs <- MPs
   if (Class == "factor") subMPs <- as.character(MPs)
   subMPs <- subMPs[!is.na(subMPs)]
+  subMPs <- unique(subMPs)
   
   SubMPs <- match(subMPs, MSEobj@MPs)  #  which(MSEobj@MPs %in% subMPs)
   if (any(is.na(SubMPs))) {
@@ -445,7 +446,7 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
     message("Warning: MPs not found - ", paste0(subMPs[ind], " "))
     message("Subsetting by MPs: ", paste0(newMPs, " "))
   }
-  
+ 
   
   ClassSims <- class(sims)
   if (ClassSims == "NULL")  SubIts <- 1:MSEobj@nsim
