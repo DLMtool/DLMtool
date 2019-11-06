@@ -792,7 +792,7 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, CBret,
                       nrow=nsim, ncol=nyears+proyears)
       
       Cerr <- (Data@Cat /simcatch)/Cbias[,1:nyears]
-      Cerr_proj <- apply(Cerr, 1, sample, size=proyears) %>% t()
+      Cerr_proj <- apply(Cerr[,max(nyears-10, 1):nyears], 1, sample, size=proyears, replace=TRUE) %>% t()
       Cerr <- cbind(Cerr, Cerr_proj)
       ErrList$Cbiasa <- Cbias
       ErrList$Cerr <- Cerr

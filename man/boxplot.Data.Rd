@@ -5,7 +5,7 @@
 \title{Boxplot of TAC recommendations}
 \usage{
 \method{boxplot}{Data}(x, upq = 0.9, lwq = 0.1, ylim = NULL,
-  outline = FALSE, ...)
+  outline = FALSE, col = NULL, ...)
 }
 \arguments{
 \item{x}{An object of class MSE}
@@ -17,6 +17,8 @@
 \item{ylim}{Optional numeric vector of length 2 to specify limits of y-axis.}
 
 \item{outline}{Logical. Include outliers in plot?}
+
+\item{col}{Optional colours to pass to \code{boxplot}}
 
 \item{...}{Optional additional arguments passed to \code{boxplot}}
 }
