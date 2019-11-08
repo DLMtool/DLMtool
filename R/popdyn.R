@@ -1067,14 +1067,15 @@ MSYCalcs <- function(logU, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age,
   U <- exp(logU)
   lx <- rep(1, maxage)
   l0 <- c(1, exp(cumsum(-M_at_Age[1:(maxage-1)]))) # unfished survival
+  
+  surv <- exp(-M_at_Age) * (1 - U*V_at_Age)
   for (a in 2:maxage) {
-    lx[a] <- lx[a-1] * exp(-M_at_Age[a-1]) * (1-U*V_at_Age[a-1]) # fished survival
+    lx[a] <- lx[a-1] * surv[a-1] # fished survival
   }
   
   if (plusgroup == 1) {
     l0[length(l0)] <- l0[length(l0)]/(1-exp(-M_at_Age[length(l0)]))
-    Z_at_Age <- M_at_Age + U*V_at_Age
-    lx[length(lx)] <- lx[length(lx)]/(1-exp(-Z_at_Age[length(lx)]))
+    lx[length(lx)] <- lx[length(lx)]/(1-surv[length(lx)])
   }
   
   Egg0 <- sum(l0 * Wt_at_Age * Mat_at_Age) # unfished egg-per-recruit (assuming fecundity proportional to weight)
