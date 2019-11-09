@@ -1048,7 +1048,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         if (AnnualMSY & SelectChanged) { #
           y1 <- nyears + y
           MSYrefsYr <- sapply(1:nsim, optMSY_eq, M_ageArray, Wt_age, Mat_age, 
-                              V_P, maxage, R0, SRrel, hs, yr.ind=y1)
+                              V_P, maxage, R0, SRrel, hs, yr.ind=y1, plusgroup=plusgroup)
           MSY_y[,mm,y] <- MSYrefsYr[1, ]
           FMSY_y[,mm,y] <- MSYrefsYr[2,]
           SSBMSY_y[,mm,y] <- MSYrefsYr[3,]
