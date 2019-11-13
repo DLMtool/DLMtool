@@ -382,16 +382,16 @@ run_parallel <- function(i, itsim, OM, MPs, CheckMPs, timelimit, Hist, ntrials, 
         if (names(cpars)[x] !="Data"){
           dd <- dim(cpars[[x]])
           if (length(dd) == 2) {
-            cpars[[x]] <- cpars[[x]][ind,]
+            cpars[[x]] <- cpars[[x]][ind,,drop=FALSE]
           }
           if (length(dd) == 3) {
-            cpars[[x]] <- cpars[[x]][ind,,]
+            cpars[[x]] <- cpars[[x]][ind,,,drop=FALSE]
           }
           if (length(dd) == 4) {
-            cpars[[x]] <- cpars[[x]][ind,,,]
+            cpars[[x]] <- cpars[[x]][ind,,,,drop=FALSE]
           }
           if (length(dd) == 5) {
-            cpars[[x]] <- cpars[[x]][ind,,,,]
+            cpars[[x]] <- cpars[[x]][ind,,,,,drop=FALSE]
           }
           
           if (is.null(dd)) {
@@ -836,7 +836,7 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, CBret,
     if (!all(is.na(RealDat@AddInd))) {
       if (!silent) 
         message('Adding Additional Indices to Simulated Data from `OM@cpars$Data@AddInd`')
-      n.ind <- nrow(RealDat@AddInd[1,,])
+      n.ind <- nrow(RealDat@AddInd[1,,,drop=FALSE])
       Data@AddInd <- Data@CV_AddInd <- array(NA, dim=c(nsim, n.ind, nyears))
       
       ErrList$AddIerr <- array(NA, dim=c(nsim, n.ind, nyears+proyears))
