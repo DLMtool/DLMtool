@@ -56,10 +56,7 @@ MSE <- runMSE(OM, MPs=c('curE', 'NMref'))
 cur <- cbind(Hist_Effort, MSE@Effort[,1,])
 sq <- cbind(Hist_Effort, MSE@Effort[,2,])
 
-sim <- 5
-plot(sq[sim,], type="b")
-lines(cur[sim,], col='blue')
-abline(h=1, lty=3)
+sim <- 1
 
 
 # Plot Catch, Effort, and Profit
@@ -68,18 +65,34 @@ totC <- c(Catch[sim,], MSE@C[sim, mm, ])
 eff <- cbind(Hist_Effort, MSE@Effort[,mm,])
 Cost <- eff[sim,] * CPE[sim]
 Rev <- totC * PPC[sim]
-Profit <- Cost - Rev
+Profit <- Rev - Cost 
 
-par(mfrow=c(2,2))
+par(mfrow=c(1,2))
 plot(totC, type="l")
-plot(eff[sim,], type="l")
+
+plot(eff[sim,], type="l", ylim=c(0, 2))
+par(new=TRUE)
+plot(Profit, type="l", ylim=c(-200, 200), col="blue")
+abline(h=0, lty=2)
+axis(side=4)
+
+
+t1 <- eff[sim,51:(OM@nyears+OM@proyears)]
+deltaE <- t1[2:length(t1)]-t1[1:(length(t1)-1)]
+plot(Profit[51:(length(Profit)-1)], deltaE)
+abline(h=0, lty=2)
+abline(v=0, lty=2)
+
 plot(Profit, type="l")
-plot(Profit, type="l")
+abline(h=0, lty=2)
 
 par(mfrow=c(1,2))
 plot(Profit, type="l", col="blue")
 abline(h=0, lty=2)
 plot(eff[sim,]/max(eff[sim,]), col="blue", type="l")
+
+
+0.98 + rho[sim]*(Profit[51])
 
 
 
