@@ -791,13 +791,17 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, CBret,
       Cbias <- matrix(apply(simcatch, 1, mean) / apply(Data@Cat, 1, mean),
                       nrow=nsim, ncol=nyears+proyears)
       
-      Cerr <- (Data@Cat /simcatch)/Cbias[,1:nyears]
-      Cerr_proj <- apply(Cerr[,max(nyears-10, 1):nyears], 1, sample, size=proyears, replace=TRUE) %>% t()
+      Cerr <- Data@Cat/(simcatch/Cbias[,1:nyears])
+      t1<-  Cerr[,max(nyears-10, 1):nyears]/apply(Cerr[,max(nyears-10, 1):nyears],1,mean)
+      SDs <- apply(log(t1), 1, sd)
+      Cerr_proj <- matrix(NA, nsim, proyears)
+      for (i in 1:nsim) {
+        Cerr_proj[i,] <- exp(rnorm(proyears, -((SDs[i]^2)/2), SDs[i]))     
+      }
       Cerr <- cbind(Cerr, Cerr_proj)
+
       ErrList$Cbiasa <- Cbias
       ErrList$Cerr <- Cerr
-      # sim <- sample(1:nsim, 1)
-      # simcatch[sim,] * ErrList$Cerr[sim,1:nyears] * ErrList$Cbiasa[sim,1:nyears]/ RealDat@Cat[1,1:nyears]
     }
 
 
