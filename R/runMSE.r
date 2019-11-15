@@ -1255,9 +1255,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     } else {
       Misc$TryMP[[mm]] <- "Okay"
     }
-
-    
-    
   }  # end of mm methods 
   
   # Miscellaneous reporting
@@ -1282,9 +1279,6 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   
   MSEout 
 }
-
-
-
 
 #' Internal function of runMSE for checking that the OM slot cpars slot is formatted correctly
 #'
