@@ -236,8 +236,7 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
   
   # --- Observed catch ----
   # Simulated observed retained catch (biomass)
-  Cobs <- ErrList$Cbiasa[, nyears + yind] * ErrList$Cerr[, nyears + yind] * 
-    apply(CBtemp, c(1, 3), sum, na.rm = TRUE)
+  Cobs <- ErrList$Cerr[, nyears + yind] * apply(CBtemp, c(1, 3), sum, na.rm = TRUE) * ErrList$Cbiasa[, nyears + yind]
   Data@Cat <- cbind(Data@Cat, Cobs) 
   
   if (!is.null(SampCpars$Data) && ncol(SampCpars$Data@Cat)>nyears &&
