@@ -971,6 +971,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         # a TAC has been recommended
         checkNA[y] <- sum(is.na(TACused))
         TACused[is.na(TACused)] <- LastTAC[is.na(TACused)] # set to last yr TAC if NA
+        TACused[TACused<tiny] <- tiny 
         TACa[, mm, y] <- TACused # recommended TAC 
       }
       
