@@ -304,11 +304,11 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
      tempI <- exp(lcs(tempI))^ErrList$AddIbeta[,i] * ErrList$AddIerr[,i,yr.ind:(nyears + (y - 1))]
      year.ind <- max(which(!is.na(SampCpars$Data@AddInd[1,i,1:nyears])))
     
-     scaler <- SampCpars$Data@AddInd[,i,year.ind]/tempI[,1]
+     scaler <- SampCpars$Data@AddInd[1:nsim,i,year.ind]/tempI[,1]
      scaler <- matrix(scaler, nrow=nsim, ncol=ncol(tempI))
      tempI <- tempI * scaler # convert back to historical index scale
      
-     AddInd[,i,] <- cbind(Data@AddInd[,i,1:year.ind], tempI[,2:ncol(tempI)])
+     AddInd[,i,] <- cbind(Data@AddInd[1:nsim,i,1:year.ind], tempI[,2:ncol(tempI)])
      
      yr.index <- max(which(!is.na(Data@CV_AddInd[1,i,1:nyears])))
      newCV_Ind <- matrix(Data@CV_AddInd[,i,yr.index], nrow=nsim, ncol=length(yind))
