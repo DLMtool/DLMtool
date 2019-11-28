@@ -1,5 +1,13 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
+## DLMtool 5.4.999 - Development version 
+
+## Minor changes
+
+## Fixes 
+- fix issue with calculating F in the bio-economic model
+- fix index issue in `Data@AddInd`
+
 ## DLMtool 5.4.0
 ### Minor changes 
 - The `Data` object has been updated, main new features are the addition of an Effort slot
