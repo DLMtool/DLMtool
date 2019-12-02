@@ -1066,13 +1066,13 @@ optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs,
     V_at_Age <- apply(V[x,, yr.ind], 1, mean)
   }
 
-  boundsU <- c(1E-3, 1)
+  boundsF <- c(1E-3, 3)
   
-  doopt <- optimise(MSYCalcs, log(boundsU), M_at_Age, Wt_at_Age, Mat_at_Age, 
+  doopt <- optimise(MSYCalcs, log(boundsF), M_at_Age, Wt_at_Age, Mat_at_Age, 
                     V_at_Age, maxage, R0x=R0[x], SRrelx=SRrel[x], hx=hs[x], opt=1,
                     plusgroup=plusgroup)
   
-  UMSY <- exp(doopt$minimum)
+  #UMSY <- exp(doopt$minimum)
   
   MSYs <- MSYCalcs(doopt$minimum, M_at_Age, Wt_at_Age, Mat_at_Age, 
                    V_at_Age, maxage, R0x=R0[x], SRrelx=SRrel[x], hx=hs[x], opt=2,
@@ -1099,14 +1099,14 @@ optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs,
 #' @export 
 #'
 #' @keywords internal 
-MSYCalcs <- function(logU, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age, 
+MSYCalcs <- function(logF, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age, 
                      maxage, R0x, SRrelx, hx, opt=1, plusgroup=0) {
   # Box 3.1 Walters & Martell 2004
-  U <- exp(logU)
+  FF <- exp(logF)
   lx <- rep(1, maxage)
   l0 <- c(1, exp(cumsum(-M_at_Age[1:(maxage-1)]))) # unfished survival
   
-  surv <- exp(-M_at_Age) * (1 - U*V_at_Age)
+  surv <- exp(-M_at_Age - FF * V_at_Age)
   for (a in 2:maxage) {
     lx[a] <- lx[a-1] * surv[a-1] # fished survival
   }
@@ -1146,13 +1146,14 @@ MSYCalcs <- function(logU, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age,
   
   RelRec[RelRec<0] <- 0
   
-  YPR <- U * sum(lx * Wt_at_Age * V_at_Age * exp(-0.5*M_at_Age)) # caught-mid year
+  Z_at_Age <- FF * V_at_Age + M_at_Age
+  YPR <- sum(lx * Wt_at_Age * FF * V_at_Age * (1 - exp(-Z_at_Age))/Z_at_Age)
   Yield <- YPR * RelRec
-
+  
   if (opt == 1)  return(-Yield)
   if (opt == 2) {
     out <- c(Yield=Yield,
-             F= -log(1-U),
+             F= FF,
              SB = SBF * RelRec,
              SB_SB0 = (SBF * RelRec)/(SB0 * R0x),
              B_B0 = (BF * RelRec)/(B0 * R0x),
