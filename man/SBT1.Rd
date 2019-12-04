@@ -46,8 +46,8 @@ and catch levels relative to target levels (MSY).
 For \code{SBT1} the TAC is calculated as:
 \deqn{\textrm{TAC}_y = 
              \left\{\begin{array}{ll} 
-             C_{y-1} (1+K_2 \lvert \lambda \rvert ) & \textrm{if } \lambda \geq 0 \\ 
-              C_{y-1} (1-K_1 \lvert \lambda \rvert ^\gamma) & \textrm{if } \lambda < 0\\ 
+              C_{y-1} (1+K_2 \left| \lambda \right| ) & \textrm{if } \lambda \geq 0 \\ 
+              C_{y-1} (1-K_1 \left| \lambda \right| ^\gamma) & \textrm{if } \lambda < 0\\ 
              \end{array}\right.
            }{}
 where \eqn{\lambda} is the slope of index over the last \code{yrmsth} years, and
