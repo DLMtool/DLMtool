@@ -1084,7 +1084,7 @@ optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs,
 
 #' Internal function to calculate MSY Reference Points
 #'
-#' @param logU log exploitation rate
+#' @param logF log fishing mortality
 #' @param M_at_Age Vector of M-at-age
 #' @param Wt_at_Age Vector of weight-at-age
 #' @param Mat_at_Age Vector of maturity-at-age

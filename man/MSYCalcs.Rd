@@ -4,11 +4,11 @@
 \alias{MSYCalcs}
 \title{Internal function to calculate MSY Reference Points}
 \usage{
-MSYCalcs(logU, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age, maxage, R0x,
+MSYCalcs(logF, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age, maxage, R0x,
   SRrelx, hx, opt = 1, plusgroup = 0)
 }
 \arguments{
-\item{logU}{log exploitation rate}
+\item{logF}{log fishing mortality}
 
 \item{M_at_Age}{Vector of M-at-age}
 
