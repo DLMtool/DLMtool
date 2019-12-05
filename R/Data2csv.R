@@ -12,7 +12,7 @@
 #' @export
 Data2csv<-function(Data, file=NULL, simno = 1, overwrite=F, keepNAs=T) {
   
-  if(class(Data)!='Data') stop("First argument 'Data' not an object of class 'Data' ")
+  if(!inherits(Data,'Data')) stop("First argument 'Data' not an object of class 'Data' ")
   
   if(is.null(file)){
     file=paste0(getwd(),"/",deparse(substitute(Data)),".csv")
@@ -59,7 +59,7 @@ Data2csv<-function(Data, file=NULL, simno = 1, overwrite=F, keepNAs=T) {
   slottest<-function(obj){
     #if(sum(!is.na(obj))==0){
     #  return(TRUE)
-    if(class(obj)=="character"){
+    if(inherits(obj,"character")){
       return(FALSE)
     }else if(sum(obj,na.rm=T)==0){
       return(TRUE)
@@ -170,7 +170,7 @@ Data2csv<-function(Data, file=NULL, simno = 1, overwrite=F, keepNAs=T) {
     obj<-slot(Data,slots[i])
     lex<-lexicon[match(slots[i],lexicon[,1]),2]
     if(!is.na(lex)){
-      if(class(obj)!="list" & class(obj)!="data.frame"){
+      if(!inherits(obj,"list") & !inherits(obj,"data.frame")){
         allNA<-sum(!is.na(obj))==0
         if(!(allNA & !keepNAs)){ # write NA values
           if(slottest(obj)){ # is the slot empty or all NAs?

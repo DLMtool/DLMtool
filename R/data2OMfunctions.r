@@ -43,7 +43,7 @@
 #' 
 Growth2OM <- function(data=NULL, OM=NULL, nsim=48, seed=101, plot=TRUE, msg=TRUE) {
   om <- TRUE
-  if (all(class(OM) != 'OM')) om <- FALSE
+  if (all(!inherits(OM,'OM'))) om <- FALSE
   if (om) {
     set.seed(OM@seed)
   } else {
