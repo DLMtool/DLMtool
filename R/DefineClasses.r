@@ -197,13 +197,21 @@ setMethod("initialize", "Data", function(.Object, stock="nada", ...) {
     for (x in seq_along(slots)) {
       sl <- slots[x]
       cl <- class(slot(.Object, sl))
-      if (cl == "logical") slot(.Object, sl) <- as.numeric(NA)
-      if (cl == "character") slot(.Object, sl) <- ''
-      if (cl == "matrix") slot(.Object, sl) <- matrix(NA)
-      if (cl == "array") slot(.Object, sl) <- array(NA, dim=c(1,1,1))
-      if (cl == "vector") slot(.Object, sl) <- NA
-      if (cl == "numeric") slot(.Object, sl) <- as.numeric(NA)
-      if (cl == "list") slot(.Object, sl) <- list()
+      if (inherits(cl,"logical")) {
+        slot(.Object, sl) <- as.numeric(NA)
+      } else if (inherits(cl,"character")) {
+        slot(.Object, sl) <- ''
+      } else if (inherits(cl,"matrix")) {
+        slot(.Object, sl) <- matrix(NA)
+      } else if (inherits(cl,"array")) {
+        slot(.Object, sl) <- array(NA, dim=c(1,1,1))
+      } else if (inherits(cl,"vector")){
+        slot(.Object, sl) <- NA
+      } else if (inherits(cl,"numeric")) {
+        slot(.Object, sl) <- as.numeric(NA)
+      } else if (inherits(cl,"list")) {
+        slot(.Object, sl) <- list()
+      }
     }
   }
   
