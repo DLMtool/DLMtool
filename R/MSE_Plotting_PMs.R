@@ -467,10 +467,15 @@ VOIplot2 <- function(MSE, MP=1, type=c("Obs", "OM"), PM="Yield", n=5,
   
   ## Fit a loess smoother  ##
   span <- 0.75; degree <- 2
-  l.mod <- df %>% tidyr::nest(-key) %>%
-    dplyr::mutate(fit = purrr::map(data, ~ loess(Yval ~ value, span=span, degree=degree, .))) %>%
-    tidyr::unnest(purrr::map2(fit, data, broom::augment))
+  # l.mod_old <- df %>% tidyr::nest_legacy(-key) %>%
+  #   dplyr::mutate(fit = purrr::map(data, ~ loess(Yval ~ value, span=span, degree=degree, .))) %>%
+  #   tidyr::unnest_legacy(purrr::map2(fit, data, broom::augment))
   
+  l.mod <- df %>% tidyr::nest(.,data=c('value', 'Yval')) %>%
+    dplyr::mutate(fit = purrr::map(data, ~ loess(Yval ~ value, span=span, degree=degree, .)))
+  l.mod2 <- purrr::map2(l.mod$fit, l.mod$data, broom::augment) %>% do.call("rbind",.)
+  l.mod <- left_join(df, l.mod2,  by=c("value", "Yval"))
+
   # Calculate variance of fitted line and order by descending variance
   lev.ord <- l.mod %>% group_by(key) %>%
     dplyr::summarize(var=var(.fitted)) %>%
