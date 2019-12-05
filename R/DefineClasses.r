@@ -200,8 +200,20 @@ setMethod("initialize", "Data", function(.Object, stock="nada", ...) {
       cl <- class(slot(.Object, sl))
       if ("logical" %in% cl) slot(.Object, sl) <- as.numeric(NA)
       if ("character" %in% cl) slot(.Object, sl) <- ''
-      if ("matrix" %in% cl) slot(.Object, sl) <- matrix(NA)
-      if ("array" %in% cl) slot(.Object, sl) <- array(NA, dim=c(1,1,1))
+      if ("matrix" %in% cl) {
+        if (length(dim(slot(.Object, sl))) > 2) {
+          slot(.Object, sl) <- array(NA, dim=c(1,1,1))
+        } else {
+          slot(.Object, sl) <- matrix(NA)  
+        }
+      }
+      if ("array" %in% cl) {
+        if (length(dim(slot(.Object, sl))) > 2) {
+          slot(.Object, sl) <- array(NA, dim=c(1,1,1))
+        } else {
+          slot(.Object, sl) <- matrix(NA)  
+        }
+      }
       if ("vector" %in% cl) slot(.Object, sl) <- NA
       if ("numeric" %in% cl) slot(.Object, sl) <- as.numeric(NA)
       if ("list" %in% cl) slot(.Object, sl) <- list()
