@@ -944,7 +944,7 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE, R=0.2) {
     yrs <- (lastYr+1):curYr
     
     CALdata <- Data@CAL[x, (length(Data@Year)-length(yrs)+1):length(Data@Year),]
-    if (class(CALdata) == 'numeric')  CALdata <- matrix(CALdata, ncol=length(LenMids))
+    if (inherits(CALdata,'numeric'))  CALdata <- matrix(CALdata, ncol=length(LenMids))
     Ests <- Ests_smooth <- matrix(NA, nrow=nrow(CALdata), ncol=5)
     Fit <- list()
     for (y in 1:nrow(CALdata)) {
