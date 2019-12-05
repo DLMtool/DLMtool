@@ -196,7 +196,7 @@ setMethod("initialize", "Data", function(.Object, stock="nada", ...) {
     slots <- slotNames('Data')
     for (x in seq_along(slots)) {
       sl <- slots[x]
-      cl <- class(slot(.Object, sl))
+      cl <- slot(.Object, sl)
       if (inherits(cl,"logical")) {
         slot(.Object, sl) <- as.numeric(NA)
       } else if (inherits(cl,"character")) {
