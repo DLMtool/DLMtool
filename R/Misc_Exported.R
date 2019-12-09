@@ -637,7 +637,7 @@ updateMSE <- function(MSEobj) {
     classDef <- getClassDef(class(MSEobj))
     slotTypes <- classDef@slots
     tt <- try(slot(MSEobj, slots[X]), silent = TRUE)
-    if (class(tt) == "try-error") {
+    if (inherits(tt, "try-error")) {
       fun <- get(as.character(slotTypes[X]))
       if(as.character(slotTypes[X]) == "vector") {
         slot(MSEobj, slots[X]) <- fun("numeric", length=0)

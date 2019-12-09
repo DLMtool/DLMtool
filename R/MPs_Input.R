@@ -889,7 +889,7 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE, R=0.2) {
     # run model for n most recent years 
     yind <- match(Data@LHYear[1], Data@Year)
     CALdata <- Data@CAL[x, (yind-n+1):length(Data@Year),]
-    if (class(CALdata) == 'numeric')  CALdata <- matrix(CALdata, ncol=length(LenMids))
+    if (inherits(CALdata,'numeric'))  CALdata <- matrix(CALdata, ncol=length(LenMids))
     Ests <- Ests_smooth <- matrix(NA, nrow=nrow(CALdata), ncol=5)
     Fit <- list()
   
@@ -944,7 +944,7 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE, R=0.2) {
     yrs <- (lastYr+1):curYr
     
     CALdata <- Data@CAL[x, (length(Data@Year)-length(yrs)+1):length(Data@Year),]
-    if (class(CALdata) == 'numeric')  CALdata <- matrix(CALdata, ncol=length(LenMids))
+    if (inherits(CALdata,'numeric'))  CALdata <- matrix(CALdata, ncol=length(LenMids))
     Ests <- Ests_smooth <- matrix(NA, nrow=nrow(CALdata), ncol=5)
     Fit <- list()
     for (y in 1:nrow(CALdata)) {
@@ -959,7 +959,7 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE, R=0.2) {
                       LenBins=LenBins, LenMids=LenMids,
                       MK=MK, Linf=Linf, rLens=rLens, Prob=Prob, Ml=Ml, L50=L50, 
                       L95=L95, Beta=Beta), silent=TRUE)
-      if (class(runOpt) == 'try-error') {
+      if (inherits(runOpt,'try-error')) {
         warning("Error in LBSPR ignoring estimate and using previous year. Sim = ", x)
       } else {
       SL50 <- exp(runOpt$par[1]) * Linf 

@@ -1,12 +1,14 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
-## DLMtool 5.4.999 - Development version 
+## DLMtool 5.4.1
 
 ## Minor changes
+- minor changes to comply with new R standard (matrices are now class matrix and class array)
 
 ## Fixes 
 - fix issue with calculating F in the bio-economic model
 - fix index issue in `Data@AddInd`
+
 
 ## DLMtool 5.4.0
 ### Minor changes 
