@@ -840,7 +840,7 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, CBret,
     if (!all(is.na(RealDat@AddInd))) {
       if (!silent) 
         message('Adding Additional Indices to Simulated Data from `OM@cpars$Data@AddInd`')
-      n.ind <- nrow(RealDat@AddInd[1,,,drop=FALSE])
+      n.ind <- dim(RealDat@AddInd)[2]
       Data@AddInd <- Data@CV_AddInd <- array(NA, dim=c(nsim, n.ind, nyears))
       
       ErrList$AddIerr <- array(NA, dim=c(nsim, n.ind, nyears+proyears))
