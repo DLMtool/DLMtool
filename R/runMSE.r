@@ -254,6 +254,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   if("seed"%in%slotNames(OM)) set.seed(OM@seed) # set seed for reproducibility 
   
   OM <- updateMSE(OM)
+  if (OM@nsim <=1) stop("OM@nsim must be > 1", call.=FALSE)
   tiny <- 1e-15  # define tiny variable
   
   # Backwards compatible with DLMtool v < 4
