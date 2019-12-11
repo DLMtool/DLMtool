@@ -13,25 +13,50 @@
 \usage{
 runCOSEWIC(OM, ...)
 
-COSEWIC_Pplot(MSEobj, syear = 2017, qcol = "#FFCB62",
-  quants = c(0.05, 0.25, 0.5, 0.75, 0.95))
+COSEWIC_Pplot(
+  MSEobj,
+  syear = 2017,
+  qcol = "#FFCB62",
+  quants = c(0.05, 0.25, 0.5, 0.75, 0.95)
+)
 
-COSEWIC_Dplot(MSEobj, syear = 2017, qcol = "#79F48D",
-  quants = c(0.05, 0.25, 0.5, 0.75, 0.95), nGT = 3)
+COSEWIC_Dplot(
+  MSEobj,
+  syear = 2017,
+  qcol = "#79F48D",
+  quants = c(0.05, 0.25, 0.5, 0.75, 0.95),
+  nGT = 3
+)
 
-COSEWIC_Blow(MSEobj, syear = 2017, qcol = rgb(0.4, 0.8, 0.95),
-  quants = c(0.05, 0.25, 0.5, 0.75, 0.95), nGT = 3)
+COSEWIC_Blow(
+  MSEobj,
+  syear = 2017,
+  qcol = rgb(0.4, 0.8, 0.95),
+  quants = c(0.05, 0.25, 0.5, 0.75, 0.95),
+  nGT = 3
+)
 
-COSEWIC_Hplot(MSEobj, syear = 2017, qcol = rgb(0.4, 0.8, 0.95),
-  quants = c(0.05, 0.25, 0.5, 0.75, 0.95))
+COSEWIC_Hplot(
+  MSEobj,
+  syear = 2017,
+  qcol = rgb(0.4, 0.8, 0.95),
+  quants = c(0.05, 0.25, 0.5, 0.75, 0.95)
+)
 
-COSEWIC_report(MSEobj, output_file = NA,
-  author = "Author not specified", title = NA)
+COSEWIC_report(
+  MSEobj,
+  output_file = NA,
+  author = "Author not specified",
+  title = NA
+)
 
 COSEWIC_tab(MSEobj, rnd = 0, GTs = c(3, 6), syear = 2017, nGT = 3)
 
-COSEWIC_tab_formatted(Ptab1, thresh = c(20, 40, 40, 20, 40, 40, 40, 30,
-  5), ret_thresh = F)
+COSEWIC_tab_formatted(
+  Ptab1,
+  thresh = c(20, 40, 40, 20, 40, 40, 40, 30, 5),
+  ret_thresh = F
+)
 }
 \arguments{
 \item{OM}{An operating model object of class OM}
@@ -91,16 +116,16 @@ to inform COSEWIC processes in Canadian fish stocks).
 
 \item \code{COSEWIC_tab}: Creates a standard COSEWIC performance table:
 \itemize{
-\item \code{P_Cr} is the probability of being in the critical zone (less than 20% depletion)
-\item \code{P_Ct} is the probability of being in the cautious zone (between 20% and 40% depletion)
-\item \code{P_H} is the probability of being in the healthy zone (above 40% depletion)
-\item \code{P_Cr_MSY} is the probability of being in the critical zone (less than 40% BMSY)
-\item \code{P_Ct_MSY} is the probability of being in the cautious zone (between 40% and 80% BMSY)
-\item \code{P_H_MSY} is the probability of being in the healthy zone (above 80% BMSY)
+\item \code{P_Cr} is the probability of being in the critical zone (less than 20\% depletion)
+\item \code{P_Ct} is the probability of being in the cautious zone (between 20\% and 40\% depletion)
+\item \code{P_H} is the probability of being in the healthy zone (above 40\% depletion)
+\item \code{P_Cr_MSY} is the probability of being in the critical zone (less than 40\% BMSY)
+\item \code{P_Ct_MSY} is the probability of being in the cautious zone (between 40\% and 80\% BMSY)
+\item \code{P_H_MSY} is the probability of being in the healthy zone (above 80\% BMSY)
 \item \code{Caut} is the probability of being in the cautious zone in the last 10 projected years
-\item \code{P_A1} is the probability of being designated threatened according to COSEWIC Indicator A1 (Spawning biomass less than 70% that three generation times previously)
-\item \code{P_A2} is the probability of being designated threatened according to COSEWIC Indicator A2 (Spawning biomass less than 50% that three generation times previously)
-\item \code{Blow} is the probability that the stock is below the biomass for which it takes 3 generation times to reach 50% BMSY with zero fishing
+\item \code{P_A1} is the probability of being designated threatened according to COSEWIC Indicator A1 (Spawning biomass less than 70\% that three generation times previously)
+\item \code{P_A2} is the probability of being designated threatened according to COSEWIC Indicator A2 (Spawning biomass less than 50\% that three generation times previously)
+\item \code{Blow} is the probability that the stock is below the biomass for which it takes 3 generation times to reach 50\% BMSY with zero fishing
 }
 
 \item \code{COSEWIC_tab_formatted}: A formatted version of the standard COSEWIC performance plot,

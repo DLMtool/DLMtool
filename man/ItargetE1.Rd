@@ -10,17 +10,13 @@
 A management procedure that incrementally adjusts the fishing effort
 to reach a target CPUE / relative abundance index}
 \usage{
-ItargetE1(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
-  Imulti = 1.5)
+ItargetE1(x, Data, reps = 100, plot = FALSE, yrsmth = 5, Imulti = 1.5)
 
-ItargetE2(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
-  Imulti = 2)
+ItargetE2(x, Data, reps = 100, plot = FALSE, yrsmth = 5, Imulti = 2)
 
-ItargetE3(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
-  Imulti = 2.5)
+ItargetE3(x, Data, reps = 100, plot = FALSE, yrsmth = 5, Imulti = 2.5)
 
-ItargetE4(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
-  Imulti = 2.5)
+ItargetE4(x, Data, reps = 100, plot = FALSE, yrsmth = 5, Imulti = 2.5)
 }
 \arguments{
 \item{x}{A position in the data object}
@@ -93,11 +89,15 @@ data-poor fisheries; forecasting with few data. ICES J. Mar. Sci. 72, 251-261.
 doi:10.1093/icesjms/fst232
 }
 \seealso{
-Other Index methods: \code{\link{GB_slope}},
-  \code{\link{GB_target}}, \code{\link{Gcontrol}},
-  \code{\link{ICI}}, \code{\link{Iratio}},
-  \code{\link{Islope1}}, \code{\link{Itarget1_MPA}},
-  \code{\link{Itarget1}}
+Other Index methods: 
+\code{\link{GB_slope}()},
+\code{\link{GB_target}()},
+\code{\link{Gcontrol}()},
+\code{\link{ICI}()},
+\code{\link{Iratio}()},
+\code{\link{Islope1}()},
+\code{\link{Itarget1_MPA}()},
+\code{\link{Itarget1}()}
 }
 \author{
 T. Carruthers

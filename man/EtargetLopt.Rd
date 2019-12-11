@@ -4,8 +4,7 @@
 \alias{EtargetLopt}
 \title{Effort Target Optimum Length}
 \usage{
-EtargetLopt(x, Data, reps = 100, plot = FALSE, yrsmth = 3,
-  buffer = 0.1)
+EtargetLopt(x, Data, reps = 100, plot = FALSE, yrsmth = 3, buffer = 0.1)
 }
 \arguments{
 \item{x}{A position in the data object}

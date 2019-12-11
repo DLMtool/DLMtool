@@ -17,8 +17,6 @@ derive_beta_par(mu, sigma)
 \item{cv}{cv of h}
 
 \item{sigma}{sd of h}
-
-\item{mu}{mean h}
 }
 \description{
 Sample steepness given mean and cv

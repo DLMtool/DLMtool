@@ -4,8 +4,19 @@
 \alias{MSYCalcs}
 \title{Internal function to calculate MSY Reference Points}
 \usage{
-MSYCalcs(logF, M_at_Age, Wt_at_Age, Mat_at_Age, V_at_Age, maxage, R0x,
-  SRrelx, hx, opt = 1, plusgroup = 0)
+MSYCalcs(
+  logF,
+  M_at_Age,
+  Wt_at_Age,
+  Mat_at_Age,
+  V_at_Age,
+  maxage,
+  R0x,
+  SRrelx,
+  hx,
+  opt = 1,
+  plusgroup = 0
+)
 }
 \arguments{
 \item{logF}{log fishing mortality}

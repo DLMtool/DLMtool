@@ -5,11 +5,9 @@
 \alias{DTe50}
 \title{Effort searching MP aiming for a fixed stock depletion}
 \usage{
-DTe40(x, Data, reps = 100, plot = FALSE, alpha = 0.4, LB = 0.9,
-  UB = 1.1)
+DTe40(x, Data, reps = 100, plot = FALSE, alpha = 0.4, LB = 0.9, UB = 1.1)
 
-DTe50(x, Data, reps = 100, plot = FALSE, alpha = 0.5, LB = 0.9,
-  UB = 1.1)
+DTe50(x, Data, reps = 100, plot = FALSE, alpha = 0.5, LB = 0.9, UB = 1.1)
 }
 \arguments{
 \item{x}{A position in the data object}

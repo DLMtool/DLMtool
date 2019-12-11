@@ -84,11 +84,15 @@ Fisheries Research, Volume 171, November 2015, Pages 12-19, ISSN 0165-7836,
 https://doi.org/10.1016/j.fishres.2014.11.013
 }
 \seealso{
-Other Index methods: \code{\link{GB_slope}},
-  \code{\link{GB_target}}, \code{\link{Gcontrol}},
-  \code{\link{Iratio}}, \code{\link{Islope1}},
-  \code{\link{Itarget1_MPA}}, \code{\link{Itarget1}},
-  \code{\link{ItargetE1}}
+Other Index methods: 
+\code{\link{GB_slope}()},
+\code{\link{GB_target}()},
+\code{\link{Gcontrol}()},
+\code{\link{Iratio}()},
+\code{\link{Islope1}()},
+\code{\link{Itarget1_MPA}()},
+\code{\link{Itarget1}()},
+\code{\link{ItargetE1}()}
 }
 \author{
 Coded by Q. Huynh. Developed by Jardim et al. (2015)

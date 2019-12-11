@@ -7,17 +7,49 @@
 \alias{LstepCC4}
 \title{Step-wise Constant Catch}
 \usage{
-LstepCC1(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0,
-  stepsz = 0.05, llim = c(0.96, 0.98, 1.05))
+LstepCC1(
+  x,
+  Data,
+  reps = 100,
+  plot = FALSE,
+  yrsmth = 5,
+  xx = 0,
+  stepsz = 0.05,
+  llim = c(0.96, 0.98, 1.05)
+)
 
-LstepCC2(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.1,
-  stepsz = 0.05, llim = c(0.96, 0.98, 1.05))
+LstepCC2(
+  x,
+  Data,
+  reps = 100,
+  plot = FALSE,
+  yrsmth = 5,
+  xx = 0.1,
+  stepsz = 0.05,
+  llim = c(0.96, 0.98, 1.05)
+)
 
-LstepCC3(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.2,
-  stepsz = 0.05, llim = c(0.96, 0.98, 1.05))
+LstepCC3(
+  x,
+  Data,
+  reps = 100,
+  plot = FALSE,
+  yrsmth = 5,
+  xx = 0.2,
+  stepsz = 0.05,
+  llim = c(0.96, 0.98, 1.05)
+)
 
-LstepCC4(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.3,
-  stepsz = 0.05, llim = c(0.96, 0.98, 1.05))
+LstepCC4(
+  x,
+  Data,
+  reps = 100,
+  plot = FALSE,
+  yrsmth = 5,
+  xx = 0.3,
+  stepsz = 0.05,
+  llim = c(0.96, 0.98, 1.05)
+)
 }
 \arguments{
 \item{x}{A position in the data object}

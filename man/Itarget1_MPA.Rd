@@ -4,8 +4,15 @@
 \alias{Itarget1_MPA}
 \title{Itarget1 with an MPA}
 \usage{
-Itarget1_MPA(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0,
-  Imulti = 1.5)
+Itarget1_MPA(
+  x,
+  Data,
+  reps = 100,
+  plot = FALSE,
+  yrsmth = 5,
+  xx = 0,
+  Imulti = 1.5
+)
 }
 \arguments{
 \item{x}{A position in the data object}
@@ -68,10 +75,14 @@ See \href{https://dlmtool.github.io/DLMtool/reference/Itarget1_MPA.html}{Online 
 Itarget1_MPA(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 }
 \seealso{
-Other Index methods: \code{\link{GB_slope}},
-  \code{\link{GB_target}}, \code{\link{Gcontrol}},
-  \code{\link{ICI}}, \code{\link{Iratio}},
-  \code{\link{Islope1}}, \code{\link{Itarget1}},
-  \code{\link{ItargetE1}}
+Other Index methods: 
+\code{\link{GB_slope}()},
+\code{\link{GB_target}()},
+\code{\link{Gcontrol}()},
+\code{\link{ICI}()},
+\code{\link{Iratio}()},
+\code{\link{Islope1}()},
+\code{\link{Itarget1}()},
+\code{\link{ItargetE1}()}
 }
 \concept{Index methods}

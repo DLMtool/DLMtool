@@ -4,8 +4,19 @@
 \alias{optMSY_eq}
 \title{Internal wrapper function to calculate MSY reference points}
 \usage{
-optMSY_eq(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs,
-  yr.ind = 1, plusgroup = 0)
+optMSY_eq(
+  x,
+  M_ageArray,
+  Wt_age,
+  Mat_age,
+  V,
+  maxage,
+  R0,
+  SRrel,
+  hs,
+  yr.ind = 1,
+  plusgroup = 0
+)
 }
 \arguments{
 \item{x}{Simulation number}

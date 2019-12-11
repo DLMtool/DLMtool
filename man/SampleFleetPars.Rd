@@ -4,8 +4,15 @@
 \alias{SampleFleetPars}
 \title{Sample Fleet Parameters}
 \usage{
-SampleFleetPars(Fleet, Stock = NULL, nsim = NULL, nyears = NULL,
-  proyears = NULL, cpars = NULL, msg = TRUE)
+SampleFleetPars(
+  Fleet,
+  Stock = NULL,
+  nsim = NULL,
+  nyears = NULL,
+  proyears = NULL,
+  cpars = NULL,
+  msg = TRUE
+)
 }
 \arguments{
 \item{Fleet}{An object of class 'Fleet' or class 'OM'}

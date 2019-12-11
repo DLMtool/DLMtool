@@ -4,9 +4,16 @@
 \alias{Fease}
 \title{MP feasibility diagnostic}
 \usage{
-Fease(Data = NULL, TAC = TRUE, TAE = TRUE, SL = TRUE,
-  Spatial = TRUE, names.only = TRUE, msg = TRUE,
-  include.ref = FALSE)
+Fease(
+  Data = NULL,
+  TAC = TRUE,
+  TAE = TRUE,
+  SL = TRUE,
+  Spatial = TRUE,
+  names.only = TRUE,
+  msg = TRUE,
+  include.ref = FALSE
+)
 }
 \arguments{
 \item{Data}{An object of class 'Data'. Optional. If Data object is included, the returned MPs are both feasible (in terms of management)

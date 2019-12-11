@@ -4,8 +4,7 @@
 \alias{SPmod}
 \title{Surplus production based catch-limit modifier}
 \usage{
-SPmod(x, Data, reps = 100, plot = FALSE, alp = c(0.8, 1.2),
-  bet = c(0.8, 1.2))
+SPmod(x, Data, reps = 100, plot = FALSE, alp = c(0.8, 1.2), bet = c(0.8, 1.2))
 }
 \arguments{
 \item{x}{A position in the data object}
@@ -69,9 +68,12 @@ SPmod(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
 http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf
 }
 \seealso{
-Other Surplus production MPs: \code{\link{Fadapt}},
-  \code{\link{Rcontrol}}, \code{\link{SPMSY}},
-  \code{\link{SPSRA}}, \code{\link{SPslope}}
+Other Surplus production MPs: 
+\code{\link{Fadapt}()},
+\code{\link{Rcontrol}()},
+\code{\link{SPMSY}()},
+\code{\link{SPSRA}()},
+\code{\link{SPslope}()}
 }
 \author{
 T. Carruthers

@@ -35,7 +35,7 @@ The TAC is modified by a harvest control rule in \code{MCD4010}.
 }
 \section{Functions}{
 \itemize{
-\item \code{MCD}: The calculated TAC = 2 * depletion * AvC
+\item \code{MCD}: The calculated TAC = 2 \* depletion \* AvC
 
 \item \code{MCD4010}: Linked to a 40-10 harvest control rule
 }}

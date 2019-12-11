@@ -61,7 +61,8 @@ simple management procedures for efficient fisheries management: a
 comparative study. ICES J. Mar. Sci. doi:10.1093/icesjms/fsu017
 }
 \seealso{
-Other Constant Catch MPs: \code{\link{CC1}}
+Other Constant Catch MPs: 
+\code{\link{CC1}()}
 }
 \author{
 T. Carruthers

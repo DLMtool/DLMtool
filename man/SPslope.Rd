@@ -4,8 +4,15 @@
 \alias{SPslope}
 \title{Slope in surplus production MP}
 \usage{
-SPslope(x, Data, reps = 100, plot = FALSE, yrsmth = 4, alp = c(0.9,
-  1.1), bet = c(1.5, 0.9))
+SPslope(
+  x,
+  Data,
+  reps = 100,
+  plot = FALSE,
+  yrsmth = 4,
+  alp = c(0.9, 1.1),
+  bet = c(1.5, 0.9)
+)
 }
 \arguments{
 \item{x}{A position in the data object}
@@ -73,9 +80,12 @@ SPslope(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
 http://www.iattc.org/Meetings/Meetings2014/MAYSAC/PDFs/SAC-05-10b-Management-Strategy-Evaluation.pdf
 }
 \seealso{
-Other Surplus production MPs: \code{\link{Fadapt}},
-  \code{\link{Rcontrol}}, \code{\link{SPMSY}},
-  \code{\link{SPSRA}}, \code{\link{SPmod}}
+Other Surplus production MPs: 
+\code{\link{Fadapt}()},
+\code{\link{Rcontrol}()},
+\code{\link{SPMSY}()},
+\code{\link{SPSRA}()},
+\code{\link{SPmod}()}
 }
 \author{
 T. Carruthers

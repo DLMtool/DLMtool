@@ -4,8 +4,16 @@
 \alias{Cplot}
 \title{Plot the median biomass and yield relative to last historical year}
 \usage{
-Cplot(MSEobj, MPs = NA, lastYrs = 5, point.size = 2, lab.size = 4,
-  axis.title.size = 12, axis.text.size = 10, legend.title.size = 12)
+Cplot(
+  MSEobj,
+  MPs = NA,
+  lastYrs = 5,
+  point.size = 2,
+  lab.size = 4,
+  axis.title.size = 12,
+  axis.text.size = 10,
+  legend.title.size = 12
+)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}

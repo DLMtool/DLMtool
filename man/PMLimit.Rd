@@ -5,18 +5,47 @@
 \alias{PMObj}
 \title{Create a table of Performance Limits and Performance Objectives}
 \usage{
-PMLimit(MSE, ..., Prob = NULL, Labels = NULL, FeaseMPs = NULL,
-  out.file = NULL, output_format = "html_document", openFile = TRUE,
-  quiet = TRUE, dir = NULL, RMDfile = NULL, font_size = 14,
-  auto_width = FALSE, enableSearch = TRUE, PMlist = NULL,
-  build = TRUE)
+PMLimit(
+  MSE,
+  ...,
+  Prob = NULL,
+  Labels = NULL,
+  FeaseMPs = NULL,
+  out.file = NULL,
+  output_format = "html_document",
+  openFile = TRUE,
+  quiet = TRUE,
+  dir = NULL,
+  RMDfile = NULL,
+  font_size = 14,
+  auto_width = FALSE,
+  enableSearch = TRUE,
+  PMlist = NULL,
+  build = TRUE
+)
 
-PMObj(MSE, ..., Labels = NULL, out.file = NULL,
-  output_format = "html_document", openFile = TRUE, quiet = TRUE,
-  dir = NULL, RMDfile = NULL, font_size = 14, use.colors = TRUE,
-  cols = NULL, show.legend = TRUE, auto_width = FALSE,
-  enableSearch = TRUE, PMlist = NULL, build = TRUE, cex.tex = 0.75,
-  inc.title = TRUE, title = "Legend")
+PMObj(
+  MSE,
+  ...,
+  Labels = NULL,
+  out.file = NULL,
+  output_format = "html_document",
+  openFile = TRUE,
+  quiet = TRUE,
+  dir = NULL,
+  RMDfile = NULL,
+  font_size = 14,
+  use.colors = TRUE,
+  cols = NULL,
+  show.legend = TRUE,
+  auto_width = FALSE,
+  enableSearch = TRUE,
+  PMlist = NULL,
+  build = TRUE,
+  cex.tex = 0.75,
+  inc.title = TRUE,
+  title = "Legend"
+)
 }
 \arguments{
 \item{MSE}{An object of class 'MSE'}

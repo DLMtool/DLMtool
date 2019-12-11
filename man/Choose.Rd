@@ -55,7 +55,7 @@ or size class \cr
 \code{ChooseSelect} \tab Input the first historical year, and all years where
 selectivity pattern
 changed (separated by comma).  Interactive plot which allows users to
-specify a range for the length at 5\% and full selection (LFS), as well as
+specify a range for the length at 5\\% and full selection (LFS), as well as
 selectivity at maximum length for each year.  Produces a simple plot which
 shows the range in selectivity pattern for each break-point year.
 Selectivity-at-length is fixed in between break-point years.  Note that this

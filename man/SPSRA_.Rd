@@ -17,7 +17,7 @@ SPSRAopt(lnK, dep, r, Ct, PE)
 \item{reps}{The number of samples of the TAC taken for the calculation of
 the quota}
 
-\item{dep}{Optional numeric vector of depletion}
+\item{dep}{internal parameter}
 
 \item{lnK}{internal parameter}
 
@@ -26,8 +26,6 @@ the quota}
 \item{Ct}{internal parameter}
 
 \item{PE}{internal parameter}
-
-\item{dep}{internal parameter}
 }
 \description{
 Surplus Production Stock Reduction Analysis Internal Function

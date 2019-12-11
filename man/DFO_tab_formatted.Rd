@@ -4,8 +4,11 @@
 \alias{DFO_tab_formatted}
 \title{A formatted version of the standard DFO performance plot, color coded by thresholds}
 \usage{
-DFO_tab_formatted(Ptab1, thresh = c(30, 50, 40, 60, 50, 20, 40, 50, 60,
-  50, 30, 50), ret_thresh = F)
+DFO_tab_formatted(
+  Ptab1,
+  thresh = c(30, 50, 40, 60, 50, 20, 40, 50, 60, 50, 30, 50),
+  ret_thresh = F
+)
 }
 \arguments{
 \item{Ptab1}{A DFO performance table made by DFO_tab()}

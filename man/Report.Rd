@@ -4,11 +4,19 @@
 \alias{Report}
 \title{Generate a Data Report}
 \usage{
-Report(Data = NULL, md = NULL, name = "Data-Report",
-  title = "Data Documentation", author = "Author Name",
-  date = Sys.Date(), output_format = c("html_document",
-  "pdf_document"), open = TRUE, quiet = TRUE, dir = NULL,
-  overwrite = FALSE)
+Report(
+  Data = NULL,
+  md = NULL,
+  name = "Data-Report",
+  title = "Data Documentation",
+  author = "Author Name",
+  date = Sys.Date(),
+  output_format = c("html_document", "pdf_document"),
+  open = TRUE,
+  quiet = TRUE,
+  dir = NULL,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{Data}{Either an object of class \code{Data} or the file path to a valid

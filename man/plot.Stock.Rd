@@ -10,40 +10,134 @@
 \alias{plot.OM}
 \title{Plot Operating Model Object}
 \usage{
-\method{plot}{pars}(x, Object, Stock = NULL, nsamp = 3, nsim = 200,
-  nyears = 50, proyears = 28, output_file = NULL,
-  output_dir = getwd(), quiet = TRUE, tabs = TRUE, title = NULL,
-  date = NULL, plotPars = NULL, open = TRUE, dev = FALSE, ...)
+\method{plot}{pars}(
+  x,
+  Object,
+  Stock = NULL,
+  nsamp = 3,
+  nsim = 200,
+  nyears = 50,
+  proyears = 28,
+  output_file = NULL,
+  output_dir = getwd(),
+  quiet = TRUE,
+  tabs = TRUE,
+  title = NULL,
+  date = NULL,
+  plotPars = NULL,
+  open = TRUE,
+  dev = FALSE,
+  ...
+)
 
-\method{plot}{Stock}(x, nsamp = 3, nsim = 200, nyears = 50,
-  proyears = 28, output_file = NULL, output_dir = getwd(),
-  quiet = TRUE, tabs = TRUE, title = NULL, date = NULL,
-  plotPars = NULL, open = TRUE, dev = FALSE, ...)
+\method{plot}{Stock}(
+  x,
+  nsamp = 3,
+  nsim = 200,
+  nyears = 50,
+  proyears = 28,
+  output_file = NULL,
+  output_dir = getwd(),
+  quiet = TRUE,
+  tabs = TRUE,
+  title = NULL,
+  date = NULL,
+  plotPars = NULL,
+  open = TRUE,
+  dev = FALSE,
+  ...
+)
 
-\method{plot}{Fleet}(x, Stock = NULL, nsamp = 3, nsim = 200,
-  nyears = 50, proyears = 28, output_file = NULL,
-  output_dir = getwd(), quiet = TRUE, tabs = TRUE, title = NULL,
-  date = NULL, plotPars = NULL, open = TRUE, dev = FALSE, ...)
+\method{plot}{Fleet}(
+  x,
+  Stock = NULL,
+  nsamp = 3,
+  nsim = 200,
+  nyears = 50,
+  proyears = 28,
+  output_file = NULL,
+  output_dir = getwd(),
+  quiet = TRUE,
+  tabs = TRUE,
+  title = NULL,
+  date = NULL,
+  plotPars = NULL,
+  open = TRUE,
+  dev = FALSE,
+  ...
+)
 
-\method{plot}{Obs}(x, nsamp = 3, nsim = 200, nyears = 50,
-  proyears = 28, output_file = NULL, output_dir = getwd(),
-  quiet = TRUE, tabs = TRUE, title = NULL, date = NULL,
-  plotPars = NULL, open = TRUE, dev = FALSE, ...)
+\method{plot}{Obs}(
+  x,
+  nsamp = 3,
+  nsim = 200,
+  nyears = 50,
+  proyears = 28,
+  output_file = NULL,
+  output_dir = getwd(),
+  quiet = TRUE,
+  tabs = TRUE,
+  title = NULL,
+  date = NULL,
+  plotPars = NULL,
+  open = TRUE,
+  dev = FALSE,
+  ...
+)
 
-\method{plot}{Imp}(x, nsamp = 3, nsim = 200, nyears = 50,
-  proyears = 28, output_file = NULL, output_dir = getwd(),
-  quiet = TRUE, tabs = TRUE, title = NULL, date = NULL,
-  plotPars = NULL, open = TRUE, dev = FALSE, ...)
+\method{plot}{Imp}(
+  x,
+  nsamp = 3,
+  nsim = 200,
+  nyears = 50,
+  proyears = 28,
+  output_file = NULL,
+  output_dir = getwd(),
+  quiet = TRUE,
+  tabs = TRUE,
+  title = NULL,
+  date = NULL,
+  plotPars = NULL,
+  open = TRUE,
+  dev = FALSE,
+  ...
+)
 
-\method{plot}{Hist}(x, nsamp = 3, nsim = 200, nyears = 50,
-  proyears = 28, output_file = NULL, output_dir = getwd(),
-  quiet = TRUE, tabs = TRUE, title = NULL, date = NULL,
-  plotPars = NULL, open = TRUE, dev = FALSE, ...)
+\method{plot}{Hist}(
+  x,
+  nsamp = 3,
+  nsim = 200,
+  nyears = 50,
+  proyears = 28,
+  output_file = NULL,
+  output_dir = getwd(),
+  quiet = TRUE,
+  tabs = TRUE,
+  title = NULL,
+  date = NULL,
+  plotPars = NULL,
+  open = TRUE,
+  dev = FALSE,
+  ...
+)
 
-\method{plot}{OM}(x, nsamp = 3, nsim = 200, nyears = 50,
-  proyears = 28, output_file = NULL, output_dir = getwd(),
-  quiet = TRUE, tabs = TRUE, title = NULL, date = NULL,
-  plotPars = NULL, open = TRUE, dev = FALSE, ...)
+\method{plot}{OM}(
+  x,
+  nsamp = 3,
+  nsim = 200,
+  nyears = 50,
+  proyears = 28,
+  output_file = NULL,
+  output_dir = getwd(),
+  quiet = TRUE,
+  tabs = TRUE,
+  title = NULL,
+  date = NULL,
+  plotPars = NULL,
+  open = TRUE,
+  dev = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{An object of class \code{Stock}, \code{Fleet}, \code{Obs}, \code{Imp}, \code{Hist}, or \code{OM}, OR one

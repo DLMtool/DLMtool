@@ -4,10 +4,25 @@
 \alias{StochasticSRA}
 \title{Stochastic SRA construction of operating models}
 \usage{
-StochasticSRA(OM, CAA, Chist, Ind = NA, ML = NA, CAL = NA,
-  mulen = NA, wts = c(1, 1, 0.5, 0.1, 1), Jump_fac = 1,
-  nits = 4000, burnin = 500, thin = 10, ESS = 300, MLsd = 0.1,
-  ploty = T, nplot = 6, SRAdir = NA)
+StochasticSRA(
+  OM,
+  CAA,
+  Chist,
+  Ind = NA,
+  ML = NA,
+  CAL = NA,
+  mulen = NA,
+  wts = c(1, 1, 0.5, 0.1, 1),
+  Jump_fac = 1,
+  nits = 4000,
+  burnin = 500,
+  thin = 10,
+  ESS = 300,
+  MLsd = 0.1,
+  ploty = T,
+  nplot = 6,
+  SRAdir = NA
+)
 }
 \arguments{
 \item{OM}{An operating model object with M, growth, stock-recruitment and maturity parameters specified.}
@@ -45,7 +60,7 @@ StochasticSRA(OM, CAA, Chist, Ind = NA, ML = NA, CAL = NA,
 \item{SRAdir}{A directory where the SRA diagnostics / fit are stored}
 }
 \value{
-A list with three positions. Position 1 is the filled OM object, position 2 is the custompars data.frame that may be submitted as an argument to runMSE() and position 3 is the matrix of effort histories \code{[nyears x nsim]} vector of objects of class\code{classy}
+A list with three positions. Position 1 is the filled OM object, position 2 is the custompars data.frame that may be submitted as an argument to runMSE() and position 3 is the matrix of effort histories \verb{[nyears x nsim]} vector of objects of class\code{classy}
 }
 \description{
 Specify an operating model, using catch composition data and a historical catch series. Returns and operating model with depletion (D), selectivity parameters (L5, LFS) and effort trajectory (Effyears, EffLower, EffUpper) filled.

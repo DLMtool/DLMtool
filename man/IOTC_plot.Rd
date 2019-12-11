@@ -4,8 +4,15 @@
 \alias{IOTC_plot}
 \title{Indian Ocean Tuna Commission trade-off plot}
 \usage{
-IOTC_plot(MSEobj, Bref = 0.75, Yref = 0.75, Bsat = 0.8, Ysat = 0.8,
-  xlim = c(0, 1.1), ylim = c(0, 1.1))
+IOTC_plot(
+  MSEobj,
+  Bref = 0.75,
+  Yref = 0.75,
+  Bsat = 0.8,
+  Ysat = 0.8,
+  xlim = c(0, 1.1),
+  ylim = c(0, 1.1)
+)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE created by the function runMSE()}

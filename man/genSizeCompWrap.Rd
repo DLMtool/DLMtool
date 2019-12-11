@@ -5,8 +5,19 @@
 \alias{getfifth}
 \title{Wrapper for C++ function to generate length composition}
 \usage{
-genSizeCompWrap(i, vn, CAL_binsmid, retL, CAL_ESS, CAL_nsamp, Linfarray,
-  Karray, t0array, LenCV, truncSD = 2)
+genSizeCompWrap(
+  i,
+  vn,
+  CAL_binsmid,
+  retL,
+  CAL_ESS,
+  CAL_nsamp,
+  Linfarray,
+  Karray,
+  t0array,
+  LenCV,
+  truncSD = 2
+)
 
 getfifth(lenvec, CAL_binsmid)
 }

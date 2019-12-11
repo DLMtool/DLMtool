@@ -5,11 +5,25 @@
 \alias{Rcontrol2}
 \title{Intrinsic rate of Increase MP}
 \usage{
-Rcontrol(x, Data, reps = 100, plot = FALSE, yrsmth = 10, gg = 2,
-  glim = c(0.5, 2))
+Rcontrol(
+  x,
+  Data,
+  reps = 100,
+  plot = FALSE,
+  yrsmth = 10,
+  gg = 2,
+  glim = c(0.5, 2)
+)
 
-Rcontrol2(x, Data, reps = 100, plot = FALSE, yrsmth = 10, gg = 2,
-  glim = c(0.5, 2))
+Rcontrol2(
+  x,
+  Data,
+  reps = 100,
+  plot = FALSE,
+  yrsmth = 10,
+  gg = 2,
+  glim = c(0.5, 2)
+)
 }
 \arguments{
 \item{x}{A position in the data object}
@@ -48,7 +62,7 @@ is the smoothed biomass overlast \code{yrsmth} years and:
 
 The TAC is subject to conditions limit the maximum change from the smoothed catch
 over the last \code{yrsmth} years by the \code{glim} argument, e.g, default values of \code{glim = c(0.5, 2)}
-means that maximum decrease in TAC is 50% of average catch and maximum increase
+means that maximum decrease in TAC is 50\% of average catch and maximum increase
 is 2 x average catch.
 }
 \section{Functions}{
@@ -81,9 +95,12 @@ Rcontrol2(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
 Made-up for this package.
 }
 \seealso{
-Other Surplus production MPs: \code{\link{Fadapt}},
-  \code{\link{SPMSY}}, \code{\link{SPSRA}},
-  \code{\link{SPmod}}, \code{\link{SPslope}}
+Other Surplus production MPs: 
+\code{\link{Fadapt}()},
+\code{\link{SPMSY}()},
+\code{\link{SPSRA}()},
+\code{\link{SPmod}()},
+\code{\link{SPslope}()}
 }
 \author{
 C. Walters and T. Carruthers

@@ -28,7 +28,7 @@ that estimates the TAC using a time-series of catches and a relative
 \details{
 This DD model is observation error only and has does not estimate
 process error (recruitment deviations). Assumption is that knife-edge
-selectivity occurs at the age of 50% maturity. Similar to many other assessment
+selectivity occurs at the age of 50\% maturity. Similar to many other assessment
 models it depends on a whole host of dubious assumptions such as temporally
 stationary productivity and proportionality between the abundance index and
 real abundance. Unsurprisingly the extent to which these assumptions are
@@ -78,7 +78,8 @@ Hilborn, R., and Walters, C. 1992. Quantitative Fisheries Stock Assessment: Choi
 Dynamics and Uncertainty. Chapman and Hall, New York.
 }
 \seealso{
-Other Delay-Difference MPs: \code{\link{DDe}}
+Other Delay-Difference MPs: 
+\code{\link{DDe}()}
 }
 \author{
 T. Carruthers

@@ -4,10 +4,25 @@
 \alias{StochasticSRAcpp}
 \title{Stochastic SRA construction of operating models}
 \usage{
-StochasticSRAcpp(OM, CAA, Chist, Ind, Cobs = 0.1, sigmaR = 0.5,
-  Umax = 0.9, nsim = 48, proyears = 50, Jump_fac = 1,
-  nits = 20000, burnin = 1000, thin = 50, ESS = 300, ploty = T,
-  nplot = 6, SRAdir = NA)
+StochasticSRAcpp(
+  OM,
+  CAA,
+  Chist,
+  Ind,
+  Cobs = 0.1,
+  sigmaR = 0.5,
+  Umax = 0.9,
+  nsim = 48,
+  proyears = 50,
+  Jump_fac = 1,
+  nits = 20000,
+  burnin = 1000,
+  thin = 50,
+  ESS = 300,
+  ploty = T,
+  nplot = 6,
+  SRAdir = NA
+)
 }
 \arguments{
 \item{OM}{An operating model object with M, growth, stock-recruitment and maturity parameters specified.}
@@ -45,7 +60,7 @@ StochasticSRAcpp(OM, CAA, Chist, Ind, Cobs = 0.1, sigmaR = 0.5,
 \item{SRAdir}{A directory where the SRA diagnostics / fit are stored}
 }
 \value{
-A list with three positions. Position 1 is the filled OM object, position 2 is the custompars data.frame that may be submitted as an argument to runMSE() and position 3 is the matrix of effort histories \code{[nyears x nsim]} vector of objects of class\code{classy}
+A list with three positions. Position 1 is the filled OM object, position 2 is the custompars data.frame that may be submitted as an argument to runMSE() and position 3 is the matrix of effort histories \verb{[nyears x nsim]} vector of objects of class\code{classy}
 }
 \description{
 Specify an operating model, using catch composition data and a historical catch series.

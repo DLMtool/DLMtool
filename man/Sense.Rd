@@ -4,8 +4,7 @@
 \alias{Sense}
 \title{Sensitivity analysis}
 \usage{
-Sense(Data, MP, nsense = 6, reps = 100, perc = c(0.05, 0.5, 0.95),
-  ploty = T)
+Sense(Data, MP, nsense = 6, reps = 100, perc = c(0.05, 0.5, 0.95), ploty = T)
 }
 \arguments{
 \item{Data}{A data-limited methods data object}

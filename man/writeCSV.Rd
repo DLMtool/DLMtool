@@ -4,8 +4,11 @@
 \alias{writeCSV}
 \title{Internal function to write CSVs for objects}
 \usage{
-writeCSV(inobj, tmpfile = NULL, objtype = c("Stock", "Fleet", "Obs",
-  "Imp", "Data", "OM"))
+writeCSV(
+  inobj,
+  tmpfile = NULL,
+  objtype = c("Stock", "Fleet", "Obs", "Imp", "Data", "OM")
+)
 }
 \arguments{
 \item{inobj}{A object of class Stock, Fleet, Obs, Imp, Data, or OM}

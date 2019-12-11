@@ -4,12 +4,25 @@
 \alias{runMSE}
 \title{Run a Management Strategy Evaluation}
 \usage{
-runMSE(OM = DLMtool::testOM, MPs = c("AvC", "DCAC", "FMSYref", "curE",
-  "matlenlim", "MRreal"), CheckMPs = FALSE, timelimit = 1,
-  Hist = FALSE, ntrials = 100, fracD = 0.05, CalcBlow = TRUE,
-  HZN = 2, Bfrac = 0.5, AnnualMSY = TRUE, silent = FALSE,
-  PPD = TRUE, parallel = FALSE, save_name = NULL, checks = FALSE,
-  control = NULL)
+runMSE(
+  OM = DLMtool::testOM,
+  MPs = c("AvC", "DCAC", "FMSYref", "curE", "matlenlim", "MRreal"),
+  CheckMPs = FALSE,
+  timelimit = 1,
+  Hist = FALSE,
+  ntrials = 100,
+  fracD = 0.05,
+  CalcBlow = TRUE,
+  HZN = 2,
+  Bfrac = 0.5,
+  AnnualMSY = TRUE,
+  silent = FALSE,
+  PPD = TRUE,
+  parallel = FALSE,
+  save_name = NULL,
+  checks = FALSE,
+  control = NULL
+)
 }
 \arguments{
 \item{OM}{An operating model object (class 'OM')}

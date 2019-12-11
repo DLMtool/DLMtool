@@ -4,9 +4,16 @@
 \alias{DFO_quant}
 \title{Deparment of Fisheries and Oceans biomass quantile plot}
 \usage{
-DFO_quant(MSEobj, maxcol = 6, qcol = rgb(0.4, 0.8, 0.95),
-  lcol = "dodgerblue4", curyr = 2018, quants = c(0.05, 0.25, 0.75,
-  0.95), addline = T, forreport = T)
+DFO_quant(
+  MSEobj,
+  maxcol = 6,
+  qcol = rgb(0.4, 0.8, 0.95),
+  lcol = "dodgerblue4",
+  curyr = 2018,
+  quants = c(0.05, 0.25, 0.75, 0.95),
+  addline = T,
+  forreport = T
+)
 }
 \arguments{
 \item{MSEobj}{An MSE object of class MSE produced by DLMtool function runMSE}

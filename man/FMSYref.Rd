@@ -43,9 +43,9 @@ short-lived species of high temporal variability in productivity!
 \itemize{
 \item \code{FMSYref}: A reference FMSY method that fishes at FMSY
 
-\item \code{FMSYref50}: A reference FMSY method that fishes at 50\% of FMSY
+\item \code{FMSYref50}: A reference FMSY method that fishes at 50\\% of FMSY
 
-\item \code{FMSYref75}: A reference FMSY method that fishes at 75\% of FMSY
+\item \code{FMSYref75}: A reference FMSY method that fishes at 75\\% of FMSY
 
 \item \code{NFref}: A reference MP that sets annual catch to almost zero (0.01)
 }}

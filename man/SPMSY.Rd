@@ -62,9 +62,12 @@ MSY from catch and resilience. Fish and Fisheries. DOI:
 10.1111/j.1467-2979.2012.00485.x
 }
 \seealso{
-Other Surplus production MPs: \code{\link{Fadapt}},
-  \code{\link{Rcontrol}}, \code{\link{SPSRA}},
-  \code{\link{SPmod}}, \code{\link{SPslope}}
+Other Surplus production MPs: 
+\code{\link{Fadapt}()},
+\code{\link{Rcontrol}()},
+\code{\link{SPSRA}()},
+\code{\link{SPmod}()},
+\code{\link{SPslope}()}
 }
 \author{
 T. Carruthers

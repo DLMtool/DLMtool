@@ -4,8 +4,7 @@
 \alias{boxplot.Data}
 \title{Boxplot of TAC recommendations}
 \usage{
-\method{boxplot}{Data}(x, upq = 0.9, lwq = 0.1, ylim = NULL,
-  outline = FALSE, col = NULL, ...)
+\method{boxplot}{Data}(x, upq = 0.9, lwq = 0.1, ylim = NULL, outline = FALSE, col = NULL, ...)
 }
 \arguments{
 \item{x}{An object of class MSE}

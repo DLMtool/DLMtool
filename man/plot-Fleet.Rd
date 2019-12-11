@@ -4,8 +4,17 @@
 \alias{plotFleet}
 \title{Plot the Fleet object parameters}
 \usage{
-plotFleet(x, Stock = NULL, nsamp = 3, nsim = 500, proyears = 28,
-  col = "darkgray", breaks = 10, lwd = 2, ...)
+plotFleet(
+  x,
+  Stock = NULL,
+  nsamp = 3,
+  nsim = 500,
+  proyears = 28,
+  col = "darkgray",
+  breaks = 10,
+  lwd = 2,
+  ...
+)
 }
 \arguments{
 \item{x}{An object of class Fleet (or of class OM)}

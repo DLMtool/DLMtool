@@ -4,8 +4,7 @@
 \alias{Itarget_}
 \title{Incremental Index Target MP Internal Function}
 \usage{
-Itarget_(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0,
-  Imulti = 1.5)
+Itarget_(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0, Imulti = 1.5)
 }
 \arguments{
 \item{x}{Iteration number}

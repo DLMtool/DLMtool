@@ -60,11 +60,15 @@ ICES. 2012. ICES Implementation of Advice for Data-limited Stocks in 2012 in its
 Advice. ICES CM 2012/ACOM 68. 42 pp.
 }
 \seealso{
-Other Index methods: \code{\link{GB_slope}},
-  \code{\link{GB_target}}, \code{\link{Gcontrol}},
-  \code{\link{ICI}}, \code{\link{Islope1}},
-  \code{\link{Itarget1_MPA}}, \code{\link{Itarget1}},
-  \code{\link{ItargetE1}}
+Other Index methods: 
+\code{\link{GB_slope}()},
+\code{\link{GB_target}()},
+\code{\link{Gcontrol}()},
+\code{\link{ICI}()},
+\code{\link{Islope1}()},
+\code{\link{Itarget1_MPA}()},
+\code{\link{Itarget1}()},
+\code{\link{ItargetE1}()}
 }
 \author{
 Coded by Q. Huynh. Developed by Jardim et al. (2015)

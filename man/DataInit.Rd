@@ -4,8 +4,7 @@
 \alias{DataInit}
 \title{Initialize Data Input Files}
 \usage{
-DataInit(name = "Data", ext = c("xlsx", "csv"), overwrite = FALSE,
-  dir = NULL)
+DataInit(name = "Data", ext = c("xlsx", "csv"), overwrite = FALSE, dir = NULL)
 }
 \arguments{
 \item{name}{Name of the data input files. Default is 'Data'. Use 'Example'

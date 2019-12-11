@@ -4,8 +4,7 @@
 \alias{Input}
 \title{Function to run a set of input control methods}
 \usage{
-Input(Data, MPs = NA, reps = 100, timelimit = 10, CheckMPs = TRUE,
-  msg = TRUE)
+Input(Data, MPs = NA, reps = 100, timelimit = 10, CheckMPs = TRUE, msg = TRUE)
 }
 \arguments{
 \item{Data}{A Data object}

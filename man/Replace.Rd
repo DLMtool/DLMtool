@@ -4,8 +4,13 @@
 \alias{Replace}
 \title{Replace an existing Stock, Fleet, Obs, or Imp object}
 \usage{
-Replace(OM, from, Sub = c("Stock", "Fleet", "Obs", "Imp"), Name = NULL,
-  silent = FALSE)
+Replace(
+  OM,
+  from,
+  Sub = c("Stock", "Fleet", "Obs", "Imp"),
+  Name = NULL,
+  silent = FALSE
+)
 }
 \arguments{
 \item{OM}{An operating model object (class OM) which will be updated with a sub-model from another OM}

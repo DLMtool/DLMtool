@@ -74,8 +74,9 @@ DynF(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
 Made-up for this package.
 }
 \seealso{
-Other Fmsy/M methods: \code{\link{Fadapt}},
-  \code{\link{Fratio}}
+Other Fmsy/M methods: 
+\code{\link{Fadapt}()},
+\code{\link{Fratio}()}
 }
 \author{
 T. Carruthers

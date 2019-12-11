@@ -36,7 +36,7 @@ where \eqn{C_{y-1}} is the catch from the previous year and \eqn{I_\delta} is
 the ratio of the mean index over the past \code{yrsmth} years to a reference index level.
 The maximum allowable change in TAC is determined by \code{mc}: e.g \code{mc=0.05}
 means that the maximum change in TAC from the previous
-catch is 5%.
+catch is 5\%.
 
 The reference index level (\code{Data@Iref}) is assumed to be a proxy for MSY. In the
 MSE \code{Iref} is the index at MSY subject to observation error (\code{Obs@Irefbiascv}).

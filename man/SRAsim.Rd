@@ -4,9 +4,18 @@
 \alias{SRAsim}
 \title{Simulates catch at age and catch history data for testing SRA methods}
 \usage{
-SRAsim(OM, qmult = 0.5, CAApatchy = 0.4, Cpatchy = 1,
-  Ipatchy = 0.4, MLpatchy = 0.4, nCAA = 100, nL = 200,
-  sigmaE = 0.25, sigmaI = 0.1)
+SRAsim(
+  OM,
+  qmult = 0.5,
+  CAApatchy = 0.4,
+  Cpatchy = 1,
+  Ipatchy = 0.4,
+  MLpatchy = 0.4,
+  nCAA = 100,
+  nL = 200,
+  sigmaE = 0.25,
+  sigmaI = 0.1
+)
 }
 \arguments{
 \item{OM}{An operating model object with M, growth, stock-recruitment and maturity parameters specified.}

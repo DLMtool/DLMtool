@@ -55,7 +55,8 @@ See \href{https://dlmtool.github.io/DLMtool/reference/AvC_MLL.html}{Online Docum
 Rec <- AvC_MLL(1, DLMtool::Cobia, reps=1000, plot=TRUE) # 1,000 log-normal samples with CV = 0.2
 }
 \seealso{
-Other Average Catch MPs: \code{\link{AvC}},
-  \code{\link{DCACs}}
+Other Average Catch MPs: 
+\code{\link{AvC}()},
+\code{\link{DCACs}()}
 }
 \concept{Average Catch MPs}

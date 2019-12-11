@@ -80,8 +80,9 @@ data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
 doi:10.1093/icesjms/fst232
 }
 \seealso{
-Other Length target MPs: \code{\link{Lratio_BHI}},
-  \code{\link{Ltarget1}}
+Other Length target MPs: 
+\code{\link{Lratio_BHI}()},
+\code{\link{Ltarget1}()}
 }
 \author{
 T. Carruthers

@@ -4,14 +4,37 @@
 \alias{Pplot2}
 \title{A projection by projection plot of F/FMSY, B/BMSY, B/B0, and yield}
 \usage{
-Pplot2(MSEobj, YVar = c("F_FMSY", "SSB_SSBMSY"), MPs = NA,
-  sims = NULL, traj = c("all", "quant", "both"), quants = c(0.1,
-  0.9), incquant = TRUE, quantcol = "lightgray", RefYield = c("lto",
-  "curr"), LastYr = TRUE, ref.lines = c(0.5, 1, 1.5), maxMP = 6,
-  alpha = 60, cex.axis = 1, cex.lab = 1, YLab = NULL,
-  incMP = TRUE, MPcex = 1, MPcol = "black", incLeg = TRUE,
-  cex.leg = 1.5, legPos = "topleft", yline = NULL, xline = NULL,
-  parOR = FALSE, xaxis = TRUE, yaxis = TRUE, oneIt = TRUE, ...)
+Pplot2(
+  MSEobj,
+  YVar = c("F_FMSY", "SSB_SSBMSY"),
+  MPs = NA,
+  sims = NULL,
+  traj = c("all", "quant", "both"),
+  quants = c(0.1, 0.9),
+  incquant = TRUE,
+  quantcol = "lightgray",
+  RefYield = c("lto", "curr"),
+  LastYr = TRUE,
+  ref.lines = c(0.5, 1, 1.5),
+  maxMP = 6,
+  alpha = 60,
+  cex.axis = 1,
+  cex.lab = 1,
+  YLab = NULL,
+  incMP = TRUE,
+  MPcex = 1,
+  MPcol = "black",
+  incLeg = TRUE,
+  cex.leg = 1.5,
+  legPos = "topleft",
+  yline = NULL,
+  xline = NULL,
+  parOR = FALSE,
+  xaxis = TRUE,
+  yaxis = TRUE,
+  oneIt = TRUE,
+  ...
+)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}

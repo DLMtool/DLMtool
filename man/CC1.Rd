@@ -54,13 +54,13 @@ The TAC is constant for all future projections.
 \itemize{
 \item \code{CC1}: TAC is average historical catch from recent \code{yrsmth} years
 
-\item \code{CC2}: TAC is average historical catch from recent \code{yrsmth} years reduced by 10\%.
+\item \code{CC2}: TAC is average historical catch from recent \code{yrsmth} years reduced by 10\\%.
 
-\item \code{CC3}: TAC is average historical catch from recent \code{yrsmth} years reduced by 20\%.
+\item \code{CC3}: TAC is average historical catch from recent \code{yrsmth} years reduced by 20\\%.
 
-\item \code{CC4}: TAC is average historical catch from recent \code{yrsmth} years reduced by 30\%.
+\item \code{CC4}: TAC is average historical catch from recent \code{yrsmth} years reduced by 30\\%.
 
-\item \code{CC5}: TAC is average historical catch from recent \code{yrsmth} years reduced by 40\%.
+\item \code{CC5}: TAC is average historical catch from recent \code{yrsmth} years reduced by 40\\%.
 
 \item \code{CurC}: TAC is fixed at last historical catch
 }}
@@ -98,7 +98,8 @@ Generic Management Procedures for Data-Poor Fisheries: Forecasting with Few Data
 ICES Journal of Marine Science: Journal Du Conseil 72 (1). 251-61.
 }
 \seealso{
-Other Constant Catch MPs: \code{\link{GB_CC}}
+Other Constant Catch MPs: 
+\code{\link{GB_CC}()}
 }
 \author{
 T. Carruthers

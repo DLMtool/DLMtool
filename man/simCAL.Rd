@@ -4,8 +4,21 @@
 \alias{simCAL}
 \title{Simulate Catch-at-Length Data}
 \usage{
-simCAL(nsim, nyears, maxage, CAL_ESS, CAL_nsamp, nCALbins, CAL_binsmid, vn,
-  retL, Linfarray, Karray, t0array, LenCV)
+simCAL(
+  nsim,
+  nyears,
+  maxage,
+  CAL_ESS,
+  CAL_nsamp,
+  nCALbins,
+  CAL_binsmid,
+  vn,
+  retL,
+  Linfarray,
+  Karray,
+  t0array,
+  LenCV
+)
 }
 \arguments{
 \item{nsim}{Number of simulations}

@@ -8,15 +8,32 @@
 \url{https://github.com/James-Thorson/FishLife/}
 }
 \usage{
-LH2OM(OM, dist = c("unif", "norm"), filterMK = FALSE, plot = TRUE,
-  Class = "predictive", Order = "predictive", Family = "predictive",
-  msg = TRUE, db = DLMtool::LHdatabase)
+LH2OM(
+  OM,
+  dist = c("unif", "norm"),
+  filterMK = FALSE,
+  plot = TRUE,
+  Class = "predictive",
+  Order = "predictive",
+  Family = "predictive",
+  msg = TRUE,
+  db = DLMtool::LHdatabase
+)
 
-predictLH(inpars = list(), Genus = "predictive",
-  Species = "predictive", nsamp = 100, db = DLMtool::LHdatabase,
-  dist = c("unif", "norm"), filterMK = TRUE, plot = TRUE,
-  Class = "predictive", Order = "predictive", Family = "predictive",
-  msg = TRUE)
+predictLH(
+  inpars = list(),
+  Genus = "predictive",
+  Species = "predictive",
+  nsamp = 100,
+  db = DLMtool::LHdatabase,
+  dist = c("unif", "norm"),
+  filterMK = TRUE,
+  plot = TRUE,
+  Class = "predictive",
+  Order = "predictive",
+  Family = "predictive",
+  msg = TRUE
+)
 }
 \arguments{
 \item{OM}{An object of class 'OM'}

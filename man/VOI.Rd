@@ -4,8 +4,15 @@
 \alias{VOI}
 \title{Calculate Value Of Information}
 \usage{
-VOI(MSEobj, ncomp = 6, nbins = 8, maxrow = 8, Ut = NA,
-  Utnam = "Utility", plot = TRUE)
+VOI(
+  MSEobj,
+  ncomp = 6,
+  nbins = 8,
+  maxrow = 8,
+  Ut = NA,
+  Utnam = "Utility",
+  plot = TRUE
+)
 }
 \arguments{
 \item{MSEobj}{An object of class MSE}

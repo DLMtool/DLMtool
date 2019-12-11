@@ -5,11 +5,18 @@
 \alias{SBT2}
 \title{SBT simple MP}
 \usage{
-SBT1(x, Data, reps = 100, plot = FALSE, yrsmth = 10, k1 = 1.5,
-  k2 = 3, gamma = 1)
+SBT1(
+  x,
+  Data,
+  reps = 100,
+  plot = FALSE,
+  yrsmth = 10,
+  k1 = 1.5,
+  k2 = 3,
+  gamma = 1
+)
 
-SBT2(x, Data, reps = 100, plot = FALSE, epsR = 0.75, tauR = 5,
-  gamma = 1)
+SBT2(x, Data, reps = 100, plot = FALSE, epsR = 0.75, tauR = 5, gamma = 1)
 }
 \arguments{
 \item{x}{A position in the data object}

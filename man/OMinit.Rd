@@ -4,8 +4,13 @@
 \alias{OMinit}
 \title{Initialize Operating Model}
 \usage{
-OMinit(name = NULL, ..., files = c("xlsx", "rmd"), dir = NULL,
-  overwrite = FALSE)
+OMinit(
+  name = NULL,
+  ...,
+  files = c("xlsx", "rmd"),
+  dir = NULL,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{name}{The name of the Excel and source.rmd file to be created in the working directory (character).

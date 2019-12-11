@@ -4,9 +4,37 @@
 \alias{Blow_opt}
 \title{Blow internal parallel optimization function}
 \usage{
-Blow_opt(lnq, N, Asize_c, SSBMSYc, SSBpRc, MPA, SSB0c, nareas, retAc,
-  MGThorizonc, Fc, Perrc, Mc, hc, Mac, Wac, R0c, Vc, nyears, maxage, movc,
-  Spat_targc, SRrelc, aRc, bRc, Bfrac, maxF, mode = 1, plusgroup = 0)
+Blow_opt(
+  lnq,
+  N,
+  Asize_c,
+  SSBMSYc,
+  SSBpRc,
+  MPA,
+  SSB0c,
+  nareas,
+  retAc,
+  MGThorizonc,
+  Fc,
+  Perrc,
+  Mc,
+  hc,
+  Mac,
+  Wac,
+  R0c,
+  Vc,
+  nyears,
+  maxage,
+  movc,
+  Spat_targc,
+  SRrelc,
+  aRc,
+  bRc,
+  Bfrac,
+  maxF,
+  mode = 1,
+  plusgroup = 0
+)
 }
 \arguments{
 \item{lnq}{number: estimate of log catchability}

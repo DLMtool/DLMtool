@@ -4,8 +4,15 @@
 \alias{Gcontrol}
 \title{G-control MP}
 \usage{
-Gcontrol(x, Data, reps = 100, plot = FALSE, yrsmth = 10, gg = 2,
-  glim = c(0.5, 2))
+Gcontrol(
+  x,
+  Data,
+  reps = 100,
+  plot = FALSE,
+  yrsmth = 10,
+  gg = 2,
+  glim = c(0.5, 2)
+)
 }
 \arguments{
 \item{x}{A position in the data object}
@@ -63,11 +70,15 @@ Carruthers et al. 2015. Performance evaluation of simple
 management procedures. ICES J. Mar Sci. 73, 464-482.
 }
 \seealso{
-Other Index methods: \code{\link{GB_slope}},
-  \code{\link{GB_target}}, \code{\link{ICI}},
-  \code{\link{Iratio}}, \code{\link{Islope1}},
-  \code{\link{Itarget1_MPA}}, \code{\link{Itarget1}},
-  \code{\link{ItargetE1}}
+Other Index methods: 
+\code{\link{GB_slope}()},
+\code{\link{GB_target}()},
+\code{\link{ICI}()},
+\code{\link{Iratio}()},
+\code{\link{Islope1}()},
+\code{\link{Itarget1_MPA}()},
+\code{\link{Itarget1}()},
+\code{\link{ItargetE1}()}
 }
 \author{
 C. Walters and T. Carruthers

@@ -4,25 +4,36 @@
 \alias{LSRA_opt}
 \title{Internal estimation function for LSRA and LSRA2 functions}
 \usage{
-LSRA_opt(param, FF_a, Chist, M_a, Mat_age_a, Wt_age_a, sel_a, Recdevs_a,
-  h_a, Umax = 0.5, mode = 1)
+LSRA_opt(
+  param,
+  FF_a,
+  Chist,
+  M_a,
+  Mat_age_a,
+  Wt_age_a,
+  sel_a,
+  Recdevs_a,
+  h_a,
+  Umax = 0.5,
+  mode = 1
+)
 }
 \arguments{
 \item{param}{a numeric value representing log(R0)}
 
 \item{FF_a}{numeric value, recent fishign mortality rate (apical F)}
 
-\item{Chist}{a vector of historical catch observations \code{[nyears]}}
+\item{Chist}{a vector of historical catch observations \verb{[nyears]}}
 
 \item{M_a}{numeric value, natural mortality rate}
 
-\item{Mat_age_a}{a vector of maturity at age \code{[nage]}}
+\item{Mat_age_a}{a vector of maturity at age \verb{[nage]}}
 
-\item{Wt_age_a}{a vector of weight at age \code{[nage]}}
+\item{Wt_age_a}{a vector of weight at age \verb{[nage]}}
 
-\item{sel_a}{a vector of selectivity at age \code{[nage]}}
+\item{sel_a}{a vector of selectivity at age \verb{[nage]}}
 
-\item{Recdevs_a}{a vector of recruitment deviations \code{[nyears]}}
+\item{Recdevs_a}{a vector of recruitment deviations \verb{[nyears]}}
 
 \item{h_a}{a numeric value of steepness values of the Bev-Holt Stock-Recruitment relationship}
 

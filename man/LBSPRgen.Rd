@@ -4,8 +4,24 @@
 \alias{LBSPRgen}
 \title{Internal estimation function for LBSPR MP}
 \usage{
-LBSPRgen(SL50, SL95, FM, nage, nlen, CVLinf, LenBins, LenMids, MK, Linf,
-  rLens, Prob, Ml, L50, L95, Beta)
+LBSPRgen(
+  SL50,
+  SL95,
+  FM,
+  nage,
+  nlen,
+  CVLinf,
+  LenBins,
+  LenMids,
+  MK,
+  Linf,
+  rLens,
+  Prob,
+  Ml,
+  L50,
+  L95,
+  Beta
+)
 }
 \arguments{
 \item{SL50}{Length at 50 percent selectivity}

@@ -8,12 +8,28 @@
 \alias{NOAA_plot2}
 \title{Generic Trade-Plot Function}
 \usage{
-TradePlot(MSEobj, ..., Lims = c(0.2, 0.2, 0.8, 0.8), Title = NULL,
-  Labels = NULL, Satisficed = FALSE, Show = "both", point.size = 2,
-  lab.size = 4, axis.title.size = 12, axis.text.size = 10,
-  legend = TRUE, legend.title.size = 12, position = c("right",
-  "bottom"), cols = NULL, fill = "gray80", alpha = 0.4,
-  PMlist = NULL, Refs = NULL, Yrs = NULL)
+TradePlot(
+  MSEobj,
+  ...,
+  Lims = c(0.2, 0.2, 0.8, 0.8),
+  Title = NULL,
+  Labels = NULL,
+  Satisficed = FALSE,
+  Show = "both",
+  point.size = 2,
+  lab.size = 4,
+  axis.title.size = 12,
+  axis.text.size = 10,
+  legend = TRUE,
+  legend.title.size = 12,
+  position = c("right", "bottom"),
+  cols = NULL,
+  fill = "gray80",
+  alpha = 0.4,
+  PMlist = NULL,
+  Refs = NULL,
+  Yrs = NULL
+)
 
 Tplot(MSEobj, Lims = c(0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5), ...)
 
@@ -76,7 +92,7 @@ Generic Trade-Plot Function
 \itemize{
 \item \code{Tplot}: A trade-off plot showing probabilities that:
 \itemize{
-\item not overfishing (PNOF) against long-term yield is > 50\% of reference yield (LTY)
+\item not overfishing (PNOF) against long-term yield is > 50\\% of reference yield (LTY)
 \item spawning biomass is below BMSY (P100) against LTY
 \item spawning biomass is below 0.5BMSY (P50) against LTY
 \item spawning biomass is below 0.1BMSY (P10) against LTY
@@ -84,20 +100,20 @@ Generic Trade-Plot Function
 
 \item \code{Tplot2}: A trade-off plot showing probabilities that:
 \itemize{
-\item short-term yield is > 50\% of reference yield(STY) against long-term yield is > 50\% of reference yield (LTY)
-\item spawning biomass is below 0.1BMSY (P10) against average annual variability in yield is < 20\% (AAVY)
+\item short-term yield is > 50\\% of reference yield(STY) against long-term yield is > 50\\% of reference yield (LTY)
+\item spawning biomass is below 0.1BMSY (P10) against average annual variability in yield is < 20\\% (AAVY)
 }
 
 \item \code{Tplot3}: A trade-off plot showing probabilities that:
 \itemize{
-\item not overfishing (PNOF) against long-term yield is > 50\% of reference yield (LTY)
-\item spawning biomass is below 0.1BMSY (P10) against average annual variability in yield is < 20\% (AAVY)
+\item not overfishing (PNOF) against long-term yield is > 50\\% of reference yield (LTY)
+\item spawning biomass is below 0.1BMSY (P10) against average annual variability in yield is < 20\\% (AAVY)
 }
 
 \item \code{NOAA_plot2}: A trade-off plot developed for NOAA showing probabilities that:
 \itemize{
-\item not overfishing (PNOF) against long-term yield is > 50\% of reference yield (LTY)
-\item spawning biomass is below 0.5BMSY (P50) against average annual variability in yield is < 15\% (AAVY)
+\item not overfishing (PNOF) against long-term yield is > 50\\% of reference yield (LTY)
+\item spawning biomass is below 0.5BMSY (P50) against average annual variability in yield is < 15\\% (AAVY)
 }
 }}
 

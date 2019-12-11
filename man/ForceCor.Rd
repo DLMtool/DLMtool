@@ -17,7 +17,7 @@ ForceCor(OM, nsim = 48, plot = T)
 An object of class OM with a populated (or appended) cpars slot
 }
 \description{
-Uses typical correlations among estimated parameters to generate realistic samples for natural mortality rate (M), growth rate (K), maximum length (Linf) and length at 50% maturity (L50), these are placed in the cpars slot
+Uses typical correlations among estimated parameters to generate realistic samples for natural mortality rate (M), growth rate (K), maximum length (Linf) and length at 50\% maturity (L50), these are placed in the cpars slot
 }
 \examples{
 testOM<-ForceCor(testOM)

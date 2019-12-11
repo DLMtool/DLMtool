@@ -52,7 +52,7 @@ parameters (\code{Rec@L5}, \code{Rec@LFS} and \code{Rec@Vmaxlen}).
 \itemize{
 \item \code{matlenlim}: Fishing retention-at-length is set equivalent to the maturity curve.
 
-\item \code{matlenlim2}: Fishing retention-at-length is set slightly higher (110\%)
+\item \code{matlenlim2}: Fishing retention-at-length is set slightly higher (110\\%)
 than the length-at-maturity
 
 \item \code{minlenLopt1}: The minimum length of retention is set to a fraction of

@@ -29,9 +29,9 @@ in catchability determined by \code{OM@qcv}. This MP is intended to represent a
 }
 \section{Functions}{
 \itemize{
-\item \code{curE}: Set effort to 100\% of that in final year of historical simulations.
+\item \code{curE}: Set effort to 100\\% of that in final year of historical simulations.
 
-\item \code{curE75}: Set effort to 75\% of that in final year.
+\item \code{curE75}: Set effort to 75\\% of that in final year.
 }}
 
 \section{Required Data}{

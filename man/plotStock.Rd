@@ -4,9 +4,19 @@
 \alias{plotStock}
 \title{Plot the Stock object parameters}
 \usage{
-plotStock(x, nsamp = 3, nsim = 500, nyears = 50, proyears = 28,
-  col = "darkgray", breaks = 10, lwd = 2, ask = FALSE,
-  incVB = TRUE, ...)
+plotStock(
+  x,
+  nsamp = 3,
+  nsim = 500,
+  nyears = 50,
+  proyears = 28,
+  col = "darkgray",
+  breaks = 10,
+  lwd = 2,
+  ask = FALSE,
+  incVB = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{An object of class Stock (or of class OM)}

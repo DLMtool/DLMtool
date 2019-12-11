@@ -4,10 +4,19 @@
 \alias{TradePlot_old}
 \title{Generic Trade-off Plot}
 \usage{
-TradePlot_old(MSEobj, XAxis = c("Overfishing", "Biomass:BMSY"),
-  YAxis = c("Long-term Yield", "AnnualVar"), XThresh = c(30, 80),
-  YThresh = c(0, 50), maxVar = 15, BmsyRef = 0.5, B0Ref = 0.2,
-  AvailMPs = NULL, ShowLabs = FALSE, ShowCols = TRUE)
+TradePlot_old(
+  MSEobj,
+  XAxis = c("Overfishing", "Biomass:BMSY"),
+  YAxis = c("Long-term Yield", "AnnualVar"),
+  XThresh = c(30, 80),
+  YThresh = c(0, 50),
+  maxVar = 15,
+  BmsyRef = 0.5,
+  B0Ref = 0.2,
+  AvailMPs = NULL,
+  ShowLabs = FALSE,
+  ShowCols = TRUE
+)
 }
 \arguments{
 \item{MSEobj}{Object of class MSE, output of the runMSE function}
@@ -20,10 +29,10 @@ and same length as YAxis. See \code{PMs}}
 y-axis (or y-axes if vector; max 4). Must be chosen for list of existing PMs
 and same length as XAxis. See \code{PMs}}
 
-\item{XThresh}{Minimum threshold values in percent (i.e., 50 = 50\%) for the
+\item{XThresh}{Minimum threshold values in percent (i.e., 50 = 50\\%) for the
 x-axes (must be same length as XAxis)}
 
-\item{YThresh}{Minimum threshold values in percent (i.e., 50 = 50\%) for the
+\item{YThresh}{Minimum threshold values in percent (i.e., 50 = 50\\%) for the
 y-axes (must be same length as YAxis)}
 
 \item{maxVar}{Reference for average annual variability in yield in percent}

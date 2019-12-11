@@ -7,17 +7,13 @@
 \alias{Islope4}
 \title{Index Slope Tracking MP}
 \usage{
-Islope1(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
-  lambda = 0.4, xx = 0.2)
+Islope1(x, Data, reps = 100, plot = FALSE, yrsmth = 5, lambda = 0.4, xx = 0.2)
 
-Islope2(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
-  lambda = 0.4, xx = 0.3)
+Islope2(x, Data, reps = 100, plot = FALSE, yrsmth = 5, lambda = 0.4, xx = 0.3)
 
-Islope3(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
-  lambda = 0.4, xx = 0.4)
+Islope3(x, Data, reps = 100, plot = FALSE, yrsmth = 5, lambda = 0.4, xx = 0.4)
 
-Islope4(x, Data, reps = 100, plot = FALSE, yrsmth = 5,
-  lambda = 0.2, xx = 0.4)
+Islope4(x, Data, reps = 100, plot = FALSE, yrsmth = 5, lambda = 0.2, xx = 0.4)
 }
 \arguments{
 \item{x}{A position in the data object}
@@ -89,11 +85,15 @@ data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
 doi:10.1093/icesjms/fst232
 }
 \seealso{
-Other Index methods: \code{\link{GB_slope}},
-  \code{\link{GB_target}}, \code{\link{Gcontrol}},
-  \code{\link{ICI}}, \code{\link{Iratio}},
-  \code{\link{Itarget1_MPA}}, \code{\link{Itarget1}},
-  \code{\link{ItargetE1}}
+Other Index methods: 
+\code{\link{GB_slope}()},
+\code{\link{GB_target}()},
+\code{\link{Gcontrol}()},
+\code{\link{ICI}()},
+\code{\link{Iratio}()},
+\code{\link{Itarget1_MPA}()},
+\code{\link{Itarget1}()},
+\code{\link{ItargetE1}()}
 }
 \author{
 T. Carruthers

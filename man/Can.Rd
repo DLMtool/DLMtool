@@ -11,8 +11,14 @@ Can(Data, timelimit = 1, MPs = NA, dev = FALSE)
 
 Cant(Data, timelimit = 1)
 
-DLMdiag(Data, command = c("available", "not available", "needed"),
-  reps = 5, timelimit = 1, funcs1 = NA, dev = FALSE)
+DLMdiag(
+  Data,
+  command = c("available", "not available", "needed"),
+  reps = 5,
+  timelimit = 1,
+  funcs1 = NA,
+  dev = FALSE
+)
 
 Needed(Data, timelimit = 1)
 }

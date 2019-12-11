@@ -64,13 +64,13 @@ simulation conditions and performance of data-limited methods
 
 \item Ksd: interannual variability in maximum growth rate (log normal CV)
 
-\item L5: length at 5/% selectivity
+\item L5: length at 5/\% selectivity
 
-\item L50: length at 50/% maturity
+\item L50: length at 50/\% maturity
 
 \item L50_95: increment between L50 and L95
 
-\item L95: length at 95/% maturity
+\item L95: length at 95/\% maturity
 
 \item LenCV: CV of length-at-age
 
@@ -82,7 +82,7 @@ simulation conditions and performance of data-limited methods
 
 \item Linfsd: interannual variability in maximum length (log normal CV)
 
-\item LR5: first length at 5/% retention
+\item LR5: first length at 5/\% retention
 
 \item M: instantaneous natural mortality rate
 

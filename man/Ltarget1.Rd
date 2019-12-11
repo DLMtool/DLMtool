@@ -8,20 +8,15 @@
 \alias{L95target}
 \title{Length Target TAC MP}
 \usage{
-Ltarget1(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0,
-  xL = 1.05)
+Ltarget1(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0, xL = 1.05)
 
-Ltarget2(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0,
-  xL = 1.1)
+Ltarget2(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0, xL = 1.1)
 
-Ltarget3(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0,
-  xL = 1.15)
+Ltarget3(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0, xL = 1.15)
 
-Ltarget4(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.2,
-  xL = 1.15)
+Ltarget4(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0.2, xL = 1.15)
 
-L95target(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0,
-  xL = 1.05)
+L95target(x, Data, reps = 100, plot = FALSE, yrsmth = 5, xx = 0, xL = 1.05)
 }
 \arguments{
 \item{x}{A position in the data object}
@@ -128,8 +123,9 @@ data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
 doi:10.1093/icesjms/fst232
 }
 \seealso{
-Other Length target MPs: \code{\link{Lratio_BHI}},
-  \code{\link{LtargetE1}}
+Other Length target MPs: 
+\code{\link{Lratio_BHI}()},
+\code{\link{LtargetE1}()}
 }
 \author{
 T. Carruthers

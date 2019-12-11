@@ -4,8 +4,14 @@
 \alias{Growth2OM}
 \title{Generate bootstrapped estimates of von Bertalanffy growth parameters from length-at-age data}
 \usage{
-Growth2OM(data = NULL, OM = NULL, nsim = 48, seed = 101,
-  plot = TRUE, msg = TRUE)
+Growth2OM(
+  data = NULL,
+  OM = NULL,
+  nsim = 48,
+  seed = 101,
+  plot = TRUE,
+  msg = TRUE
+)
 }
 \arguments{
 \item{data}{A data.frame with columns names 'Age' and 'Length'}

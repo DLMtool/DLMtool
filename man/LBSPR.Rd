@@ -5,12 +5,30 @@
 \alias{LBSPR_MLL}
 \title{Length-Based SPR MPs}
 \usage{
-LBSPR(x, Data, reps = 1, plot = FALSE, SPRtarg = 0.4, theta1 = 0.3,
-  theta2 = 0.05, maxchange = 0.3, n = 5, smoother = TRUE,
-  R = 0.2)
+LBSPR(
+  x,
+  Data,
+  reps = 1,
+  plot = FALSE,
+  SPRtarg = 0.4,
+  theta1 = 0.3,
+  theta2 = 0.05,
+  maxchange = 0.3,
+  n = 5,
+  smoother = TRUE,
+  R = 0.2
+)
 
-LBSPR_MLL(x, Data, reps = 1, plot = FALSE, SPRtarg = 0.4, n = 5,
-  smoother = TRUE, R = 0.2)
+LBSPR_MLL(
+  x,
+  Data,
+  reps = 1,
+  plot = FALSE,
+  SPRtarg = 0.4,
+  n = 5,
+  smoother = TRUE,
+  R = 0.2
+)
 }
 \arguments{
 \item{x}{A position in the data object}

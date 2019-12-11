@@ -112,8 +112,9 @@ Martell, S., Froese, R., 2012. A simple method for estimating MSY from catch
 and resilience. Fish Fish. doi: 10.1111/j.1467-2979.2012.00485.x.
 }
 \seealso{
-Other Fmsy/M methods: \code{\link{DynF}},
-  \code{\link{Fadapt}}
+Other Fmsy/M methods: 
+\code{\link{DynF}()},
+\code{\link{Fadapt}()}
 }
 \author{
 T. Carruthers

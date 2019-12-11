@@ -4,8 +4,11 @@
 \alias{MPurl}
 \title{Get help topic URL}
 \usage{
-MPurl(topic, url = "https://dlmtool.github.io/DLMtool/reference/",
-  nameonly = FALSE)
+MPurl(
+  topic,
+  url = "https://dlmtool.github.io/DLMtool/reference/",
+  nameonly = FALSE
+)
 }
 \arguments{
 \item{topic}{Name of the functions}

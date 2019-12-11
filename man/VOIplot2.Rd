@@ -4,9 +4,17 @@
 \alias{VOIplot2}
 \title{Value of Information Plot using PM functions}
 \usage{
-VOIplot2(MSE, MP = 1, type = c("Obs", "OM"), PM = "Yield", n = 5,
-  axis.title.size = 12, axis.text.size = 10, legend.title.size = 10,
-  include.leg = TRUE)
+VOIplot2(
+  MSE,
+  MP = 1,
+  type = c("Obs", "OM"),
+  PM = "Yield",
+  n = 5,
+  axis.title.size = 12,
+  axis.text.size = 10,
+  legend.title.size = 10,
+  include.leg = TRUE
+)
 }
 \arguments{
 \item{MSE}{An object of class \code{MSE}}

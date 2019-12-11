@@ -54,7 +54,7 @@ Encoding: UTF-8
 Suggests:
     testthat
 LinkingTo: Rcpp, RcppArmadillo
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.2
 URL: http://www.datalimitedtoolkit.org/
 BugReports: https://github.com/DLMtool/DLMtool/issues
 Roxygen: list(markdown = TRUE)
