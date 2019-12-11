@@ -41,7 +41,7 @@ dynamics model
 
 \item{\code{Period}}{(Optional) Period for cyclical recruitment pattern in years. Uniform distribution lower and upper bounds. Non-negative real numbers}
 
-\item{\code{Amplitude}}{(Optional) Amplitude in deviation from long-term average recruitment during recruitment cycle (eg a range from 0 to 1 means recruitment decreases or increases by up to 100\\% each cycle). Uniform distribution lower and upper bounds. 0 < Amplitude < 1}
+\item{\code{Amplitude}}{(Optional) Amplitude in deviation from long-term average recruitment during recruitment cycle (eg a range from 0 to 1 means recruitment decreases or increases by up to 100\% each cycle). Uniform distribution lower and upper bounds. 0 < Amplitude < 1}
 
 \item{\code{Linf}}{Maximum length. Uniform distribution lower and upper bounds. Positive real numbers}
 
