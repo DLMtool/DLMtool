@@ -274,6 +274,7 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
     sht <- suppressMessages(as.data.frame(readxl::read_excel(name, sheet = obj, col_names = FALSE)))
     rows <- sht[,1] 
     rows <- rows[!rows == "Slot"]
+    rows <- rows[!is.na(rows)]
     ind <- which(!rows %in% slotNames(obj))
     if (length(ind)>0) {
       warning(paste(rows[ind], ""), "are not valid slots in object class ", obj)
