@@ -158,7 +158,8 @@ OptionalSlots <- function() {
 getEffhist <- function(Esd, nyears, EffYears, EffLower, EffUpper) {
   if (length(EffLower) == length(EffUpper) & length(EffUpper) == length(EffYears)) {
     nsim <- length(Esd)  # get nsim 
-    refYear <- floor(range01(EffYears + 0.5) * nyears) + 1  # standardize years 
+    refYear <- floor(range01(EffYears + 0.5) * nyears) # standardize years 
+    refYear[1] <- 1 # first year is year 1 
     refYear[length(refYear)] <- nyears  # first year is year 1 
     if (any(EffLower > EffUpper)) {
       ind <- which(EffLower > EffUpper)
