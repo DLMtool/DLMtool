@@ -236,8 +236,8 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
   Data@Year <- Year   
   Nyears <- length(Year)
   # Catch time-series
-  Data@Cat <- datasheet[which(datasheet$Name=="Catch"), 2:(Nyears+1)] %>% 
-    as.numeric() %>% matrix(., nrow=1)
+  Data@Cat <- suppressWarnings(datasheet[which(datasheet$Name=="Catch"), 2:(Nyears+1)] %>% 
+    as.numeric() %>% matrix(., nrow=1))
   CV_Cat <- datasheet[which(datasheet$Name=="CV Catch"), 2:(Nyears+1)]
   if (!is.na(CV_Cat[1]) & all(is.na(CV_Cat[2:length(CV_Cat)])))
     CV_Cat <- rep(CV_Cat[1], Nyears)
