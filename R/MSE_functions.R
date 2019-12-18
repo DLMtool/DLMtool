@@ -721,7 +721,8 @@ joinMSE <- function(MSEobjs = NULL) {
     if (!is.null(MSEobjs[[1]]@Misc$Data)) {
       Misc$Data <- list()
       # Posterior predicted data joining
-      for(i in 1:length(MSEobjs[[1]]@Misc$Data)) Misc$Data[[i]]<-joinData(lapply(MSEobjs,function(x)slot(x,"Misc")$Data[[i]]))
+      for(i in 1:length(MSEobjs[[1]]@Misc$Data)) 
+        Misc$Data[[i]]<-joinData(lapply(MSEobjs,function(x)slot(x,"Misc")$Data[[i]]))
     }
     
     if (!is.null(MSEobjs[[1]]@Misc$RInd.stats)) {
@@ -769,8 +770,12 @@ joinMSE <- function(MSEobjs = NULL) {
       }
       Misc$MSYRefs$Refs <- do.call('rbind', temp1)
       for (nm in names(temp2[[1]])) {
-        tt = lapply(temp2, "[[", nm)
-        tt <- do.call('rbind',tt)
+        tt <- lapply(temp2, "[[", nm)
+        if (length(dim(tt[[1]])) == 3) {
+          tt <- abind::abind(tt, along=1)
+        } else {
+          tt <- do.call('rbind',tt)  
+        }
         Misc$MSYRefs$ByYear[[nm]] <- tt
       }
     }
