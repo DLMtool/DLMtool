@@ -125,8 +125,18 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
   } else {
     stop("File extension must be .csv, .xls, or .xlsx")
   }
-  colnames(datasheet) <- c("Name", "Data", colnames(datasheet)[3:length(colnames(datasheet))])
   
+  if (datasheet[1,1] == "Common Name") { # no header in data file
+    datasheet <- readxl::read_excel(file.path(dir,name), sheet = sheet, 
+                                    col_names = FALSE, .name_repair = "minimal")
+  }
+  
+  if (ncol(datasheet) == 1)  stop("Data file has no data") # no data in data file 
+  if (all(is.na(datasheet[,2]))) stop("Data file has no data in column B") # no data in data file 
+  
+  # Add column names
+  colnames(datasheet) <- c("Name", "Data")
+
   # check names in Column 1 
   input <- file.path(system.file(package = 'DLMtool'), "Data.csv")
   valnames <- read.csv(input, header=FALSE, stringsAsFactors = FALSE)
