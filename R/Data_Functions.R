@@ -1432,15 +1432,17 @@ joinData<-function(DataList){
 
   for (sn in 1:nslots){
     templist<-lapply(DataList,getslot,name=slots[sn])
+    tempval <- templist[[1]]
+  
      
-    if (inherits(sclass[sn],"numeric")| inherits(sclass[sn],"integer")) {
+    if (inherits(tempval,"numeric")| inherits(tempval,"integer")) {
       if (slots[sn] == "CAL_bins") {
         nbin <- vapply(templist, length, numeric(1))
         attr(Data, slots[sn]) <- templist[[which.max(nbin)]]
       } else {
         attr(Data, slots[sn]) <- unlist(templist)
       }
-    } else if (inherits(sclass[sn],"matrix")| inherits(sclass[sn],"array")) {
+    } else if (inherits(tempval,"matrix")| inherits(tempval,"array")) {
       
       if(slots[sn] == "CAL") {
         nbin <- vapply(templist, function(x) dim(x)[3], numeric(1))
