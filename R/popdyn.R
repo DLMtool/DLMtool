@@ -1066,7 +1066,7 @@ optMSY_eq <- function(x, M_ageArray, Wt_age, Mat_age, V, maxage, R0, SRrel, hs,
     V_at_Age <- apply(V[x,, yr.ind], 1, mean)
   }
 
-  boundsF <- c(1E-3, 3)
+  boundsF <- c(1E-8, 3)
   
   doopt <- optimise(MSYCalcs, log(boundsF), M_at_Age, Wt_at_Age, Mat_at_Age, 
                     V_at_Age, maxage, R0x=R0[x], SRrelx=SRrel[x], hx=hs[x], opt=1,
