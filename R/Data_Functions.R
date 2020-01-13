@@ -1434,9 +1434,11 @@ joinData<-function(DataList){
     templist<-lapply(DataList,getslot,name=slots[sn])
     tempval <- templist[[1]]
   
-     
     if (inherits(tempval,"numeric")| inherits(tempval,"integer")) {
       if (slots[sn] == "CAL_bins") {
+        nbin <- vapply(templist, length, numeric(1))
+        attr(Data, slots[sn]) <- templist[[which.max(nbin)]]
+      } else if (slots[sn] == "CAL_mids") {
         nbin <- vapply(templist, length, numeric(1))
         attr(Data, slots[sn]) <- templist[[which.max(nbin)]]
       } else {
@@ -1453,18 +1455,18 @@ joinData<-function(DataList){
         }
         if (all(diff(do.call("rbind", lapply(templist2, dim))[,2]) == 0)) {
           # arrays may be different dimensions if MPs fail
-          attr(Data, slots[sn]) <- abind(templist2, along=1)
+          attr(Data, slots[sn]) <- abind::abind(templist2, along=1)
         }
       } else {
         if (all(diff(do.call("rbind", lapply(templist, dim))[,2]) == 0)) {
           # arrays may be different dimensions if MPs fail
-          attr(Data, slots[sn]) <- abind(templist, along=1)
+          attr(Data, slots[sn]) <- abind::abind(templist, along=1)
         }
       }
       
-    } else if (inherits(sclass[sn],"list")) {
+    } else if (inherits(tempval,"list")) {
       attr(Data, slots[sn]) <- do.call(c, templist)
-    } else if (inherits(sclass[sn],"data.frame")) {
+    } else if (inherits(tempval,"data.frame")) {
       attr(Data, slots[sn]) <- do.call(rbind, templist)
     }
   }
