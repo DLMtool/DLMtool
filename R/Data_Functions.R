@@ -407,6 +407,7 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
     CAL_Yrs <- numeric(0)
   } 
   if (length(ind)>0) {
+  
     # CAL data exists
     if (length(CAL_bins)<1 & length(CAL_mids) < 1)
       stop("Require either CAL_mids or CAL_bins", call. = FALSE)
@@ -425,9 +426,13 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
       if(!all(diff(CAL_mids) == mean(diff(CAL_mids)))) 
         stop("Inconsistent bin width in CAL_mids", call. = FALSE)
     }
-    if (length(CAL_bins)>1 & length(CAL_mids)<1) {
+    if (length(CAL_bins)>1 & length(CAL_mids)<=1) {
       by <- CAL_bins[2] - CAL_bins[1]
       CAL_mids <- seq(CAL_bins[1]+0.5*by, by=by, length.out = length(CAL_bins)-1)
+    }
+    if (length(CAL_mids)>1 & length(CAL_bins)<=1) {
+      by <- CAL_mids[2] - CAL_mids[1]
+      CAL_bins <- seq(CAL_mids[1]-0.5*by, by=by, length.out = length(CAL_mids)+1)
     }
     
     CAL_Yrs <- sapply(strsplit(datasheet$Name[ind], " "), function(x) unlist(strsplit(x[2], " ")))
