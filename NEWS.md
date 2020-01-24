@@ -1,5 +1,10 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
+## DLMtool 5.4.99 - Dev Version
+
+### Fixes
+- fix bug where CAL_bins wasn't calculated when only CAL_mids was provided in Data
+
 ## DLMtool 5.4.1
 
 ## Minor changes
