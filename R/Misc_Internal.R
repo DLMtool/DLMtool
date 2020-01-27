@@ -161,7 +161,7 @@ getEffhist <- function(Esd, nyears, EffYears, EffLower, EffUpper) {
     if (EffYears[1] == 1 & EffYears[length(EffYears)] == nyears & length(EffYears) == nyears) {
       refYear <- EffYears
     } else{
-      refYear <- floor(range01(EffYears + 0.5) * nyears) # standardize years 
+      refYear <- ceiling(range01(EffYears + 0.5) * nyears) # standardize years 
       refYear[1] <- 1 # first year is year 1 
       refYear[length(refYear)] <- nyears  # first year is year 1 
     }
