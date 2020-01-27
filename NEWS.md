@@ -4,6 +4,7 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 ### Fixes
 - fix bug where CAL_bins wasn't calculated when only CAL_mids was provided in Data
+- fix issue when all values for maturity-at-age (provided in cpars; cpars$Mat_age) are greater than 0.5. Assume A50 is 1 in this case.
 
 ## DLMtool 5.4.1
 

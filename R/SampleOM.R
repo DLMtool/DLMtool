@@ -342,9 +342,20 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     # Calculate L50, L95, ageM and age95 
     ageM <- age95 <- L50array <- L95array <- matrix(NA, nsim, nyears+proyears)
     for (XX in 1:(nyears+proyears)) {
-      ageM[,XX] <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,, XX], y=1:maxage, 0.5)))
+      # check that Mat_age < 0.5 values exist
+      oksims <- which(apply(Mat_age[,,XX], 1, min) < 0.5)
+      if (length(oksims)<1) {
+        ageM[,XX] <- 1 # set to 1 if < 1
+        L50array[,XX] <- 1 # set to 1 if < 1
+      } else {
+        noksims <- (1:nsim)[-oksims]
+        ageM[oksims,XX] <- unlist(sapply(oksims, function(x) LinInterp(Mat_age[x,, XX], y=1:maxage, 0.5)))
+        ageM[noksims,XX] <- 1 # set to 1 
+        L50array[oksims,XX] <- unlist(sapply(oksims, function(x) LinInterp(Mat_age[x,,XX], y=Len_age[x, , nyears], 0.5)))
+        L50array[noksims,XX] <- 1 # set to 1 
+      }
+    
       age95[,XX] <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,, XX], y=1:maxage, 0.95)))
-      L50array[,XX] <- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,,XX], y=Len_age[x, , nyears], 0.5)))
       L95array[,XX]<- unlist(sapply(1:nsim, function(x) LinInterp(Mat_age[x,,XX], y=Len_age[x, , nyears], 0.95)))
     }
     
