@@ -31,7 +31,9 @@ getq3(
   bounds = c(1e-05, 15),
   maxF,
   MPA,
-  plusgroup
+  plusgroup,
+  VB0,
+  optVB
 )
 }
 \arguments{
@@ -89,6 +91,10 @@ Only values from the first year (i.e \code{N[,,1,]}) are used, which is the curr
 \item{MPA}{A matrix of spatial closures by year}
 
 \item{plusgroup}{Integer. Default = 0 = no plus-group. Use 1 to include a plus-group}
+
+\item{VB0}{numeric vector nsim long of total unfished vulnerable biomass}
+
+\item{optVB}{Logical. Optimize for vulnerable biomass?}
 }
 \description{
 Function optimizes catchability (q, where F=qE) required to get to user-specified stock

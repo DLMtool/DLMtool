@@ -1241,11 +1241,13 @@ split.along.dim <- function(a, n) {
 #' @param maxF A numeric value specifying the maximum fishing mortality for any single age class
 #' @param MPA A matrix of spatial closures by year
 #' @param plusgroup Integer. Default = 0 = no plus-group. Use 1 to include a plus-group 
+#' @param VB0  numeric vector nsim long of total unfished vulnerable biomass
+#' @param optVB Logical. Optimize for vulnerable biomass?
 #' @author A. Hordyk
 #' @keywords internal
 getq3 <- function(x, D, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, Asize, Wt_age,
                   V, retA, Perr, mov, SRrel, Find, Spat_targ, hs, R0a, SSBpR, aR, bR, 
-                  bounds = c(1e-05, 15), maxF, MPA, plusgroup) {
+                  bounds = c(1e-05, 15), maxF, MPA, plusgroup, VB0, optVB) {
   
   opt <- optimize(optQ, log(bounds), depc=D[x], SSB0c=SSB0[x], nareas, maxage, Ncurr=N[x,,1,], 
                   pyears, M_age=M_ageArray[x,,], MatAge=Mat_age[x,,], Asize_c=Asize[x,], WtAge=Wt_age[x,,],
@@ -1253,7 +1255,7 @@ getq3 <- function(x, D, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, As
                   SRrelc=SRrel[x], 
                   Effind=Find[x,],  Spat_targc=Spat_targ[x], hc=hs[x], R0c=R0a[x,], 
                   SSBpRc=SSBpR[x,], aRc=aR[x,], bRc=bR[x,], maxF=maxF, MPA=MPA, 
-                  plusgroup=plusgroup)
+                  plusgroup=plusgroup, VB0[x], optVB)
   
   return(exp(opt$minimum))
 }
@@ -1286,12 +1288,14 @@ getq3 <- function(x, D, SSB0, nareas, maxage, N, pyears, M_ageArray, Mat_age, As
 #' @param maxF maximum F
 #' @param MPA A matrix of spatial closures by year
 #' @param plusgroup Integer. Default = 0 = no plus-group. Use 1 to include a plus-group 
+#' @param VB0c  Unfished vulnerable biomass
+#' @param optVB Logical. Optimize for vulnerable biomass? 
 #' @author A. Hordyk
 #' @keywords internal
 
 optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_c,
                  MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
-                 R0c, SSBpRc, aRc, bRc, maxF, MPA, plusgroup) {
+                 R0c, SSBpRc, aRc, bRc, maxF, MPA, plusgroup, VB0c, optVB) {
 
   simpop <- popdynCPP(nareas, maxage, Ncurr, pyears, M_age, Asize_c,
                       MatAge, WtAge, Vuln, Retc, Prec, movc, SRrelc, Effind, Spat_targc, hc, 
@@ -1300,7 +1304,13 @@ optQ <- function(logQ, depc, SSB0c, nareas, maxage, Ncurr, pyears, M_age, Asize_
                       plusgroup=plusgroup) 
   
   ssb <- sum(simpop[[4]][,pyears,])
-  (log(depc) - log(ssb/SSB0c))^2
+  vb <- sum(simpop[[5]][,pyears,])
+  if (optVB) {
+    return((log(depc) - log(vb/VB0c))^2)
+  }
+  else {
+    return((log(depc) - log(ssb/SSB0c))^2)
+  }
 }
 
 

@@ -30,7 +30,9 @@ optQ(
   bRc,
   maxF,
   MPA,
-  plusgroup
+  plusgroup,
+  VB0c,
+  optVB
 )
 }
 \arguments{
@@ -85,6 +87,10 @@ optQ(
 \item{MPA}{A matrix of spatial closures by year}
 
 \item{plusgroup}{Integer. Default = 0 = no plus-group. Use 1 to include a plus-group}
+
+\item{VB0c}{Unfished vulnerable biomass}
+
+\item{optVB}{Logical. Optimize for vulnerable biomass?}
 }
 \description{
 Optimize q for a single simulation
