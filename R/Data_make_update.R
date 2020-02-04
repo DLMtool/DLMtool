@@ -304,7 +304,7 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
      tempI <- exp(lcs(tempI))^ErrList$AddIbeta[,i] * ErrList$AddIerr[,i,yr.ind:(nyears + (y - 1))]
      year.ind <- max(which(!is.na(SampCpars$Data@AddInd[1,i,1:nyears])))
     
-     scaler <- SampCpars$Data@AddInd[1:nsim,i,year.ind]/tempI[,1]
+     scaler <- SampCpars$Data@AddInd[1,i,year.ind]/tempI[,1]
      scaler <- matrix(scaler, nrow=nsim, ncol=ncol(tempI))
      tempI <- tempI * scaler # convert back to historical index scale
      
