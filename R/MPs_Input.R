@@ -1,56 +1,56 @@
 ## Size limit MPs ####
 
 #' Size limit management procedures
-#' 
+#'
 #' A set of size-selectivity MPs that adjust the retention curve of the fishery.
-#' 
-#' The the `LF5` and `LFR` slots in the `Rec` object are modified to change the 
-#' retention curve (length at 5 per cent and smallest length at full retention 
+#'
+#' The the `LF5` and `LFR` slots in the `Rec` object are modified to change the
+#' retention curve (length at 5 per cent and smallest length at full retention
 #' respectively). A upper harvest slot limit can be set using the `Rec@HS` slot.
-#' The underlying selectivity pattern of the fishing gear does 
-#' not change, and therefore the performance of these methods depends on the 
-#' degree of discard mortality on fish that are selected by the gear but not 
-#' retained by the fishery (`Stock@Fdisc`). 
-#' 
-#' The level of discard mortality can be  modified using the `Rec@Fdisc` slot 
-#' which over-rides the discard mortality set in the operating model. 
-#'  
+#' The underlying selectivity pattern of the fishing gear does
+#' not change, and therefore the performance of these methods depends on the
+#' degree of discard mortality on fish that are selected by the gear but not
+#' retained by the fishery (`Stock@Fdisc`).
+#'
+#' The level of discard mortality can be  modified using the `Rec@Fdisc` slot
+#' which over-rides the discard mortality set in the operating model.
+#'
 #' The selectivity pattern can be adjusted by creating MPs that modify the selection
-#' parameters (`Rec@L5`, `Rec@LFS` and `Rec@Vmaxlen`). 
-#' 
+#' parameters (`Rec@L5`, `Rec@LFS` and `Rec@Vmaxlen`).
+#'
 #' @templateVar mp matlenlim
 #' @template MPtemplate
 #' @template MPuses
 #' @author T. Carruthers & A. Hordyk
 #' @describeIn matlenlim Fishing retention-at-length is set equivalent to the maturity curve.
-#' @examples 
+#' @examples
 #' matlenlim(1, DLMtool::Atlantic_mackerel, plot=TRUE)
-#' @export 
+#' @export
 matlenlim <- function(x, Data, reps, plot=FALSE) {
-  # Knife-edge vulnerability at estimated length-at-maturity  
+  # Knife-edge vulnerability at estimated length-at-maturity
   rec <- new("Rec") # create recommendation object
-  rec@LFR <- Data@L50[x] # new length at full retention   
-  rec@LR5  <- rec@LFR * 0.95 # new length at 5% retention   
+  rec@LFR <- Data@L50[x] # new length at full retention
+  rec@LR5  <- rec@LFR * 0.95 # new length at 5% retention
   if(plot) size_lim_plot(x, Data, rec)
   # other slots aren't specified so remain unchanged
   rec
 }
 class(matlenlim) <- "MP"
 
-#' @describeIn matlenlim Fishing retention-at-length is set slightly higher (110\%) 
+#' @describeIn matlenlim Fishing retention-at-length is set slightly higher (110\%)
 #' than the length-at-maturity
-#' 
+#'
 #' @templateVar mp matlenlim2
 #' @template MPuses
-#' @export 
-#' @examples 
+#' @export
+#' @examples
 #' matlenlim2(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 matlenlim2 <- function(x, Data, reps, plot=FALSE) {
   # Knife-edge vulnerability slightly higher than length at maturity
   dependencies = "Data@L50"
-  
+
   rec <- new("Rec") # create recommendation object
-  rec@LFR <-  1.1 * Data@L50[x]  # new length at full retention   
+  rec@LFR <-  1.1 * Data@L50[x]  # new length at full retention
   rec@LR5 <-  0.95 * rec@LFR # new length at 5% retention
   # other slots aren't specified so remain unchanged
   if(plot) size_lim_plot(x, Data, rec)
@@ -64,56 +64,56 @@ class(matlenlim2) <- "MP"
 #' @template MPuses
 #' @param buffer Parameter controlling the fraction of Lopt to set the minimum
 #' length of fish caught: minlen=Lopt*(0.7+buffer).
-#' 
-#' @describeIn matlenlim The minimum length of retention is set to a fraction of 
-#' the length that maximises the biomass, Lopt. The aim 
+#'
+#' @describeIn matlenlim The minimum length of retention is set to a fraction of
+#' the length that maximises the biomass, Lopt. The aim
 #' of this simple MP is restrict the catch of small fish to rebuild
 #' the stock biomass towards the optimal length, Lopt, expressed in terms of
-#' the growth parameters Lopt=b/(M/k+b) (Hordyk et al. 2015) 
+#' the growth parameters Lopt=b/(M/k+b) (Hordyk et al. 2015)
 #' @author HF Geromont
-#' @export 
+#' @export
 #' @references
 #' Hordyk, A., Ono, K., Sainsbury, K., Loneragan, N., and J.
 #' Prince. 2015. Some explorations of the life history ratios to describe
 #' length composition, spawning-per-recruit, and the spawning potential ratio
 #' ICES Journal of Marine Science, doi:10.1093/icesjms/fst235.
-#' @examples 
+#' @examples
 #' minlenLopt1(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 minlenLopt1 <- function(x, Data, reps, plot=FALSE, buffer = 0.1) {
-  
+
   # Minimum length MPs: Fix length-at-full-selectivity to 0.8*Lopt and
   # set length-at-first-capture 10% below LFs
-  
+
   dependencies = "Data@vbLinf, Data@wlb, Data@Mort, Data@vbK"
   Lopt <- Data@vbLinf[x] * Data@wlb[x]/((Data@Mort[x]/Data@vbK[x]) +  Data@wlb[x])
-  
+
   rec <- new("Rec") # create recommendation object
   rec@LFR <- Lopt * (0.7 + buffer) # Lopt too precautionary, so set it to % below
   rec@LR5 <- rec@LFR * 0.9
   if(plot) size_lim_plot(x, Data, rec)
   rec
-  
+
 }
 class(minlenLopt1) <- "MP"
 
 
 #' @templateVar mp slotlim
 #' @template MPuses
-#' @describeIn matlenlim Retention-at-length is set using a upper harvest slot limit; 
-#' that is, a minimum and maximum legal length. The maximum limit is set here, 
-#' completely arbitrarily, as the 75th percentile between the new minimum legal 
+#' @describeIn matlenlim Retention-at-length is set using a upper harvest slot limit;
+#' that is, a minimum and maximum legal length. The maximum limit is set here,
+#' completely arbitrarily, as the 75th percentile between the new minimum legal
 #' length and the estimated asymptotic length Linf. This MP has been included
 #' to demonstrate an upper harvest slot limit.
-#' @export 
-#' @examples 
+#' @export
+#' @examples
 #' slotlim(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 slotlim <- function(x, Data, reps, plot=FALSE) {
   # Example of slot limit between 0.95 and 1.25 * L50
   dependencies = "Data@L50, Data@vbLinf"
-  
+
   rec <- new("Rec") # create recommendation object
   rec@LFR <- 1.1 * Data@L50[x]
-  rec@LR5 <- 0.95 * rec@LFR 
+  rec@LR5 <- 0.95 * rec@LFR
   rec@HS <- as.numeric(quantile(c(rec@LFR , Data@vbLinf[x]), 0.75))
   if(plot) size_lim_plot(x, Data, rec)
   rec
@@ -125,28 +125,28 @@ class(slotlim) <- "MP"
 # --- Spatial Closure MPs ----
 
 #' Spatial closure and allocation management procedures
-#' 
-#' Management procedures that close Area 1 to fishing and reallocate 
+#'
+#' Management procedures that close Area 1 to fishing and reallocate
 #' fishing effort spatially.
-#' 
+#'
 #' @describeIn MRreal A spatial control that prevents fishing in area 1 and reallocates this
 #' fishing effort to area 2 (or over other areas).
 #'
-#' @templateVar mp MRreal 
+#' @templateVar mp MRreal
 #' @template MPtemplate
 #' @template MPuses
-#' 
+#'
 #' @author T. Carruthers
-#' @export 
-#' @examples 
+#' @export
+#' @examples
 #' MRreal(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 MRreal <- function(x, Data, reps, plot=FALSE) {
   # A Marine reserve in area 1 with spatial reallocation of effort
-  
+
   rec <- new("Rec") # create recommendation object
   rec@Allocate <- 1
   rec@Spatial <- c(0, rep(1, Data@nareas-1))
-  
+
   if (plot)  barplot(rec@Spatial, xlab="Area", ylab="Fraction Open", ylim=c(0,1),
                       names=1:Data@nareas)
   return(rec)
@@ -155,18 +155,18 @@ class(MRreal) <- "MP"
 
 #' @templateVar mp MRnoreal
 #' @template MPuses
-#' @describeIn MRreal A spatial control that prevents fishing in area 1 
+#' @describeIn MRreal A spatial control that prevents fishing in area 1
 #' and does not reallocate this fishing effort to area 2.
-#' @export 
-#' @examples 
+#' @export
+#' @examples
 #' MRnoreal(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 MRnoreal <- function(x, Data, reps, plot=FALSE) {
   # A Marine reserve in area 1 with no spatial reallocation of effort
-  
+
   rec <- new("Rec") # create recommendation object
   rec@Allocate <- 0
   rec@Spatial <- c(0, rep(1, Data@nareas-1))
-  
+
   if (plot)   barplot(rec@Spatial, xlab="Area", ylab="Fraction Open", ylim=c(0,1),
                       names=1:Data@nareas)
   return(rec)
@@ -179,35 +179,35 @@ class(MRnoreal) <- "MP"
 # --- Effort Control MPs ----
 
 #' Fishing at current effort levels
-#' 
+#'
 #' Constant fishing effort set at final year of historical simulations subject
 #' to changes in catchability determined by `OM@qinc` and interannual variability
 #' in catchability determined by `OM@qcv`. This MP is intended to represent a
 #' 'status quo' management approach.
-#' 
-#' @templateVar mp curE 
+#'
+#' @templateVar mp curE
 #' @template MPtemplate
 #' @template MPuses
-#' 
+#'
 #' @author T. Carruthers.
 #' @describeIn curE Set effort to 100\% of that in final year of historical simulations.
-#' @export 
-#' @examples 
+#' @export
+#' @examples
 #' curE(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 curE <- function(x, Data, reps, plot=FALSE) {
   # current effort
   rec <- new("Rec") # create recommendation object
-  rec@Effort <- 1 #* Data@MPeff[x] 
+  rec@Effort <- 1 #* Data@MPeff[x]
   if (plot) curE_plot(x, rec, Data)
   rec
 }
 class(curE) <- "MP"
 
-#' @templateVar mp curE75 
+#' @templateVar mp curE75
 #' @template MPuses
 #' @describeIn curE Set effort to 75\% of that in final year.
-#' @export 
-#' @examples 
+#' @export
+#' @examples
 #' curE75(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 curE75 <- function(x, Data, reps, plot=FALSE) {
   # 75% current effort
@@ -221,45 +221,45 @@ class(curE75) <- "MP"
 
 #### Delay-Difference Effort MPs ####
 
-#' Effort-based Delay - Difference Stock Assessment 
-#' 
-#' A simple delay-difference assessment with UMSY and MSY as leading parameters 
+#' Effort-based Delay - Difference Stock Assessment
+#'
+#' A simple delay-difference assessment with UMSY and MSY as leading parameters
 #' that estimates \eqn{E_{\textrm{MSY}}} using a
-#' time-series of catches and a relative abundance index. 
-#' 
+#' time-series of catches and a relative abundance index.
+#'
 #' This DD model is observation error only and has does not estimate
-#' process error (recruitment deviations). Assumption is that knife-edge 
+#' process error (recruitment deviations). Assumption is that knife-edge
 #' selectivity occurs at the age of 50% maturity. Similar to many other assessment
 #' models it depends on a whole host of dubious assumptions such as temporally
 #' stationary productivity and proportionality between the abundance index and
 #' real abundance. Unsurprisingly the extent to which these assumptions are
 #' violated tends to be the biggest driver of performance for this method.
-#' 
+#'
 #' The method is conditioned on effort and estimates catch. The effort is calculated
 #' as the ratio of catch and index. Thus, to get a complete effort time series, a full
 #' time series of catch and index is also needed. Missing values are linearly interpolated.
-#' 
-#' A detailed description of the delay-difference model can be found in Chapter 9 of Hilborn 
+#'
+#' A detailed description of the delay-difference model can be found in Chapter 9 of Hilborn
 #' and Walters (1992).
 #'
-#' @templateVar mp DDe 
+#' @templateVar mp DDe
 #' @template MPtemplate
 #' @template MPuses
 #'
 #' @describeIn DDe Effort-control version. The recommended effort is EMSY.
 #' @family Delay-Difference MPs
-#' @examples 
+#' @examples
 #' DDe(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
-#' @export 
+#' @export
 DDe <- function(x, Data, reps = 100, plot=FALSE) {
-  
+
   runDD <- DD_(x, Data, reps)
-  Eff <- runDD$eff 
+  Eff <- runDD$eff
   rec <- new("Rec")
   rec@Effort <- max(0.01, Data@MPeff[x] * Eff)
-  
+
   if (plot) DD_plot(x, runDD, Data, Eff=rec@Effort)
-  rec 
+  rec
 }
 class(DDe) <- "MP"
 
@@ -268,28 +268,28 @@ class(DDe) <- "MP"
 #' @param LB The lowest permitted factor of previous fishing effort
 #' @param UB The highest permitted factor of previous fishing effort
 #' @describeIn DDe Variant of `DDe` that limits the maximum change in effort to 10 percent.
-#' @export 
+#' @export
 #' @examples
 #' DDes(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
 DDes <- function(x, Data, reps = 100, plot=FALSE, LB = 0.9, UB = 1.1) {
   runDD <- DD_(x, Data, reps)
-  Eff <- runDD$eff 
+  Eff <- runDD$eff
   if (Eff < LB) Eff <- LB
   if (Eff > UB) Eff <- UB
-  
+
   rec <- new("Rec")
   rec@Effort <- max(0.01, Data@MPeff[x] * Eff)
   if (plot) DD_plot(x, runDD, Data, Eff=rec@Effort)
   rec
-  
+
 }
 class(DDes) <- "MP"
 
 
 
 #' @describeIn DDe Variant of `DDe` where the recommended effort is 75\% EMSY.
-#' @export 
-#' @examples 
+#' @export
+#' @examples
 #' DDe75(1, Data=DLMtool::Atlantic_mackerel, plot=TRUE)
 DDe75 <- function(x, Data, reps = 100, plot=FALSE) {
   runDD <- DD_(x, Data, reps)
@@ -297,7 +297,7 @@ DDe75 <- function(x, Data, reps = 100, plot=FALSE) {
   rec <- new("Rec")
   rec@Effort <- max(0.01, Data@MPeff[x] * Eff)
   if (plot) DD_plot(x, runDD, Data, Eff=rec@Effort)
-  rec 
+  rec
 }
 class(DDe75) <- "MP"
 
@@ -305,57 +305,57 @@ class(DDe75) <- "MP"
 
 
 #' Effort searching MP aiming for a fixed stock depletion
-#' 
+#'
 #' Effort is adjusted using a simple rule that aims for a specified level of depletion.
-#' 
+#'
 #' The TAE is calculated as:
 #' \deqn{\textrm{TAE}_y = \frac{D}{\alpha} \textrm{TAE}_{y-1}}
 #' where \eqn{D} is estimated current level of depletion and \eqn{\alpha} is argument
 #' `alpha` specifying the target level of depletion.
-#' 
+#'
 #' The maximum fractional change in TAE is specified with arguments `LB` and `UB`
-#' 
+#'
 #' @templateVar mp DTe40
 #' @template MPtemplate
 #' @template MPuses
-#' 
+#'
 #' @param alpha The target level of depletion
 #' @param LB The lowest permitted factor of previous fishing effort
 #' @param UB The highest permitted factor of previous fishing effort
 #' @author T. Carruthers
-#' @export 
-#' @examples 
+#' @export
+#' @examples
 #' DTe40(1, DLMtool::Atlantic_mackerel, plot=TRUE)
-#' @describeIn DTe40 Effort is adjusted to reach 40 percent stock depletion 
+#' @describeIn DTe40 Effort is adjusted to reach 40 percent stock depletion
 DTe40 <- function(x, Data, reps = 100, plot=FALSE, alpha = 0.4, LB = 0.9, UB = 1.1) {
-  
+
   fac <- Data@Dep[x]/alpha
-  
+
   if (fac < LB) fac <- LB
   if (fac > UB) fac <- UB
-  
+
   rec <- new("Rec")
   rec@Effort <- max(0.01, Data@MPeff[x] * fac)
   if (plot) curE_plot(x, rec, Data)
   rec
-  
+
 }
 class(DTe40) <- "MP"
 
 
 #' @describeIn DTe40 Effort is adjusted to reach 50 percent stock depletion
-#' @export 
+#' @export
 DTe50 <- function(x, Data, reps = 100, plot=FALSE, alpha = 0.5, LB = 0.9, UB = 1.1) {
-  
+
   fac <- Data@Dep[x]/alpha
   if (fac < LB) fac <- LB
   if (fac > UB) fac <- UB
-  
+
   rec <- new("Rec")
   rec@Effort <- max(0.01, Data@MPeff[x] * fac)
   if (plot) curE_plot(x, rec, Data)
   rec
-  
+
 }
 class(DTe50) <- "MP"
 
@@ -363,73 +363,73 @@ class(DTe50) <- "MP"
 
 
 #' Effort Target Optimum Length
-#' 
-#' This MP adjusts effort limit based on the ratio of recent mean length (over 
+#'
+#' This MP adjusts effort limit based on the ratio of recent mean length (over
 #' last `yrsmth` years) and a target length defined as \eqn{L_{\textrm{opt}}}.
 #' Effort MP: adjust effort up/down if mean length above/below Ltarget
-#' 
+#'
 #' The TAE is calculated as:
 #' \deqn{\textrm{TAE}_y = \textrm{TAE}_{y-1} \left((1-\textrm{buffer}) (w + (1-w)r) \right)}
 #' where \eqn{\textrm{buffer}} is specified in argument `buffer`, \eqn{w} is fixed at 0.5, and:
 #' \deqn{r = \frac{L_{\textrm{recent}}}{L_{\textrm{opt}}}}
 #' where \eqn{L_{\textrm{recent}}}is mean
-#' length over last `yrmsth` years, and: 
+#' length over last `yrmsth` years, and:
 #' \deqn{L_{\textrm{opt}} = \frac{L_\infty W_b}{\frac{M}{K} + W_b }}
-#' where \eqn{L_\infty} is von Bertalanffy asymptotic length, \eqn{W_b} is 
-#' exponent of the length-weight relationship, \eqn{M} is natural mortality, and 
-#' \eqn{K} is von Bertalanffy growth coefficient.#' 
-#' 
-#' @templateVar mp EtargetLopt 
+#' where \eqn{L_\infty} is von Bertalanffy asymptotic length, \eqn{W_b} is
+#' exponent of the length-weight relationship, \eqn{M} is natural mortality, and
+#' \eqn{K} is von Bertalanffy growth coefficient.#'
+#'
+#' @templateVar mp EtargetLopt
 #' @template MPtemplate
 #' @template MPuses
-#' 
+#'
 #' @param yrsmth Number of years to calculate average length
 #' @param buffer Parameter controlling the fraction of calculated effor - acts as a precautionary buffer
-#' 
+#'
 #' @author HF Geromont
-#' @export 
-#' @examples 
+#' @export
+#' @examples
 #' EtargetLopt(1, DLMtool::SimulatedData, plot=TRUE)
 EtargetLopt <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 3, buffer = 0.1) {
-  
+
   # Effort MP: adjust effort up/down if mean length above/below Ltarget
- 
+
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 3 years
   Lrecent <- mean(Data@ML[ind])
   Lopt <- Data@vbLinf[x] * Data@wlb[x]/((Data@Mort[x]/Data@vbK[x]) + Data@wlb[x])
   ratio <- Lrecent/Lopt
-  
+
   rec <- new("Rec")
   w <- 0.5
   eff <- (1 - buffer) * (w + (1 - w) * ratio)
   rec@Effort <-  max(0.01, Data@MPeff[x] * eff)
   if (plot) EtargetLopt_plot(x, rec, Data, ind, Lopt)
-  rec 
+  rec
 }
 class(EtargetLopt) <- "MP"
 
 
 
 
-#' Index Target Effort-Based 
-#' 
+#' Index Target Effort-Based
+#'
 #' An index target MP where the Effort is modified according to current index
 #' levels (mean index over last 5 years) relative to a target level.
-#' 
+#'
 #' The TAE is calculated as:
 #' \deqn{\textrm{TAE}_y = \textrm{TAE}_{y-1} \delta}
 #' where \eqn{\delta} is \eqn{\frac{I} {I_{\textrm{ref}}}} averaged over last
 #' `yrsmth` years. \eqn{I_{\textrm{ref}}} is the index target (`Data@Iref`).
-#' 
+#'
 #' The maximum fractional change in TAE is specified in `mc`.
-#' 
-#' @templateVar mp ITe5 
+#'
+#' @templateVar mp ITe5
 #' @template MPtemplate
 #' @template MPuses
-#' 
+#'
 #' @param yrsmth The number of historical years over which to average the index
 #' @param mc The maximum fractional change in the effort among years.
-#' 
+#'
 #' @author T. Carruthers
 #' @describeIn ITe5  Maximum annual changes are 5 per cent.
 #' @examples
@@ -440,48 +440,48 @@ ITe5 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, mc = 0.05) {
   deltaI <- mean(Data@Ind[x, ind])/Data@Iref[x]
   if (deltaI < (1 - mc)) deltaI <- 1 - mc
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
-  
+
   Effort <- Data@MPeff[x] * deltaI * trlnorm(reps, 1, Data@CV_Ind[x,1])
   if (reps == 1)  Effort <- Data@MPeff[x] * deltaI
   Effort[Effort < 0.01] <- 0.01  # for simulations in case Effort goes negative
   rec <- new("Rec")
-  rec@Effort <- mean(Effort) 
-  
-  if (plot) ITe_plot(x, Data, rec, yrsmth) 
-  rec 
+  rec@Effort <- mean(Effort)
+
+  if (plot) ITe_plot(x, Data, rec, yrsmth)
+  rec
 }
 class(ITe5) <- "MP"
 
 
 
 
-#' Index Target Effort-Based 
-#' 
-#' 
-#' @templateVar mp ITe10 
+#' Index Target Effort-Based
+#'
+#'
+#' @templateVar mp ITe10
 #' @template MPuses
-#' 
+#'
 #' @describeIn ITe5  Maximum annual changes are 10 per cent.
 #' @examples
 #' ITe10(1, DLMtool::SimulatedData, plot=TRUE)
-#' @export 
+#' @export
 ITe10 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, mc = 0.1) {
-  
+
   ind <- max(1, (length(Data@Year) - yrsmth + 1)):length(Data@Year)
-  
+
   deltaI <- mean(Data@Ind[x, ind])/Data@Iref[x]
   if (deltaI < (1 - mc)) deltaI <- 1 - mc
   if (deltaI > (1 + mc)) deltaI <- 1 + mc
-  
+
   Effort <- Data@MPeff[x] * deltaI * trlnorm(reps, 1, Data@CV_Ind[x,1])
-  if (reps == 1) 
+  if (reps == 1)
     Effort <- Data@MPeff[x] * deltaI
   Allocate <- 1
   Effort[Effort < 0.01] <- 0.01  # for simulations in case Effort goes negative
   rec <- new("Rec")
-  rec@Effort <- mean(Effort) 
-  if (plot) ITe_plot(x, Data, rec, yrsmth) 
-  rec 
+  rec@Effort <- mean(Effort)
+  if (plot) ITe_plot(x, Data, rec, yrsmth)
+  rec
 }
 class(ITe10) <- "MP"
 
@@ -497,7 +497,7 @@ class(ITe10) <- "MP"
 #' @param Imulti Parameter controlling how much larger target CPUE / index is
 #' compared with recent levels.
 #'
-#' @return A named list with Effort recommendations 
+#' @return A named list with Effort recommendations
 #' @export
 #'
 #' @keywords internal
@@ -506,7 +506,7 @@ Itargeteff_ <- function(x, Data, reps, plot, yrsmth, Imulti) {
   ylast <- (Data@LHYear[1] - Data@Year[1]) + 1  #last historical year
   ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
   ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
-  
+
   Irecent <- mean(Data@Ind[x, ind])
   Iave <- mean(Data@Ind[x, ind3])
   Itarget <- Iave * Imulti
@@ -516,65 +516,65 @@ Itargeteff_ <- function(x, Data, reps, plot, yrsmth, Imulti) {
   } else {
     Effort <- 0.5 * Data@MPeff[x] * (Irecent/I0)^2
   }
-  
-  Step <- (Effort/Data@MPeff[x])  # step change in effort 
+
+  Step <- (Effort/Data@MPeff[x])  # step change in effort
   Step[Step < 0.85] <- 0.85
   Step[Step > 1.15] <- 1.15
   Allocate <- 1
   Effort <- Step * Data@MPeff[x]
   Effort[Effort < 0.01] <- 0.01  # for simulations in case Effort goes negative
-  
-  
+
+
   if (plot) {
     op <- par(no.readonly = TRUE)
     on.exit(op)
     par(mfrow=c(1,1))
-    
+
     ylim <- range(c(Data@Ind[x, ], Itarget, I0))
     plot(Data@Year, Data@Ind[x, ], type="l", lwd=2, bty="l",
          xlab="Year", ylab="Index", ylim=ylim)
     points(max(Data@Year), mean(Data@Ind[x, ind]), cex=2, pch=16,col='blue')
     text(max(Data@Year), mean(Data@Ind[x, ind]), cex=1, 'Irecent', pos=3, col='blue', xpd=NA)
-    
+
     lines(Data@Year[ind3], rep(mean(Data@Ind[x, ind3]), length(ind3)), lty=2, col="orange")
     text(mean(Data@Year[ind3]), mean(Data@Ind[x, ind3]), "Iave", col="orange", pos=1)
-    
+
     points(max(Data@Year), Itarget, cex=2, pch=16,col='green')
     text(max(Data@Year), Itarget, cex=1, 'Itarget', pos=3, col='green', xpd=NA)
-    
+
     points(max(Data@Year), I0, cex=2, pch=16,col='red')
     text(max(Data@Year), I0, cex=1, 'I0', pos=3, col='red', xpd=NA)
-  
-    
+
+
   }
-  
+
   list(Effort=Effort )
 }
 
 
 
 #' Incremental Index Target MP - Effort-Based
-#'  
-#' A management procedure that incrementally adjusts the fishing effort 
+#'
+#' A management procedure that incrementally adjusts the fishing effort
 #' to reach a target CPUE / relative abundance index
-#' 
-#' Four index/CPUE target MPs proposed by Geromont and Butterworth 2014. 
-#' 
+#'
+#' Four index/CPUE target MPs proposed by Geromont and Butterworth 2014.
+#'
 #' The TAE is calculated as:
 #' If  \eqn{I_\textrm{recent} \geq I_0}:
 #' \deqn{\textrm{TAE}_y = 0.5 \textrm{TAE}_{y-1}  \left[1+ \left( \frac{I_{\textrm{recent}} - I_0}{I_{\textrm{target}} - I_0} \right)\right]}
-#' 
+#'
 #' else:
 #' \deqn{\textrm{TAE}_y= 0.5 \textrm{TAE}_{y-1} \left( \frac{I_{\textrm{recent}}}{I_0}^2 \right)}
-#' 
-#' where \eqn{I_0} is \eqn{0.8 I_{\textrm{ave}}} (the average index over the 2 x `yrsmth` years prior to the projection period), 
-#' \eqn{I_\textrm{recent}} is the average index over the past `yrsmth` years, and 
+#'
+#' where \eqn{I_0} is \eqn{0.8 I_{\textrm{ave}}} (the average index over the 2 x `yrsmth` years prior to the projection period),
+#' \eqn{I_\textrm{recent}} is the average index over the past `yrsmth` years, and
 #' \eqn{I_\textrm{target}} is `Imulti` times \eqn{I_{\textrm{ave}}}.
-#' 
-#' @templateVar mp ItargetE1 
+#'
+#' @templateVar mp ItargetE1
 #' @template MPtemplate
 #' @template MPuses
-#' 
+#'
 #' @param yrsmth Years over which the average index is calculated.
 #' @param Imulti Parameter controlling how much larger target CPUE / index is
 #' compared with recent levels.
@@ -582,19 +582,19 @@ Itargeteff_ <- function(x, Data, reps, plot, yrsmth, Imulti) {
 #' @author T. Carruthers
 #' @references Carruthers et al. 2015. Performance evaluation of simple
 #' management procedures. ICES J. Mar Sci. 73, 464-482.
-#' 
+#'
 #' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
 #' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci. 72, 251-261.
 #' doi:10.1093/icesjms/fst232
 #' @describeIn ItargetE1 The less precautionary TAE-based MP
 #' @family Index methods
-#' @export 
-#' @examples 
+#' @export
+#' @examples
 #' ItargetE1(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 ItargetE1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, Imulti = 1.5) {
-  
+
   runItargetE <- Itargeteff_(x, Data, reps, plot, yrsmth, Imulti)
-  
+
   rec <- new("Rec")
   rec@Effort <- mean(runItargetE$Effort)
   rec
@@ -603,24 +603,24 @@ class(ItargetE1) <- "MP"
 
 
 #' @describeIn ItargetE1 Increasing biologically precautionary TAE-based MP
-#' @export 
-#' @examples 
+#' @export
+#' @examples
 #' ItargetE2(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 ItargetE2 <- ItargetE1
 formals(ItargetE2)$Imulti <- 2
 class(ItargetE2) <- "MP"
 
 #' @describeIn ItargetE1 Increasing biologically precautionary TAE-based MP
-#' @export 
-#' @examples 
+#' @export
+#' @examples
 #' ItargetE3(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 ItargetE3 <- ItargetE1
 formals(ItargetE3)$Imulti <- 2.5
 class(ItargetE3) <- "MP"
 
 #' @describeIn ItargetE1 The most biologically precautionary TAE-based MP
-#' @export 
-#' @examples 
+#' @export
+#' @examples
 #' ItargetE4(1, DLMtool::Atlantic_mackerel, plot=TRUE)
 ItargetE4 <- ItargetE1
 formals(ItargetE4)$Imulti <- 2.5
@@ -629,58 +629,58 @@ class(ItargetE4) <- "MP"
 
 
 #' Step-wise Constant Effort
-#' 
+#'
 #' A management procedure that incrementally adjusts the total allowable
 #' effort (TAE) according to the mean length of recent catches.
-#' 
+#'
 #' The TAE is calculated as:
-#'   \deqn{\textrm{TAE} = 
-#'              \left\{\begin{array}{ll} 
-#'              \textrm{TAE}^* - 2 S\textrm{TAE}^* & \textrm{if } r < 0.96  \\ 
-#'              \textrm{TAE}^* - S \textrm{TAE}^* & \textrm{if } r < 0.98 \\ 
+#'   \deqn{\textrm{TAE} =
+#'              \left\{\begin{array}{ll}
+#'              \textrm{TAE}^* - 2 S\textrm{TAE}^* & \textrm{if } r < 0.96  \\
+#'              \textrm{TAE}^* - S \textrm{TAE}^* & \textrm{if } r < 0.98 \\
 #'              \textrm{TAE}^* & \textrm{if } > 1.058 \\
 #'              \end{array}\right.
 #'            }{}
-#' where \eqn{\textrm{TAE}^*} is effort in the previous year, \eqn{S} is 
+#' where \eqn{\textrm{TAE}^*} is effort in the previous year, \eqn{S} is
 #' step-size determined by `stepsz`,
-#' and \eqn{r} is the ratio of \eqn{L_\textrm{recent}} and \eqn{L_\textrm{ave}} 
+#' and \eqn{r} is the ratio of \eqn{L_\textrm{recent}} and \eqn{L_\textrm{ave}}
 #' which are mean length over the most recent `yrsmth`  years and 2 x `yrsmth` historical
-#' years respectively. 
-#' 
-#' The conditions are specified in the `llim` argument to the function. 
-#'            
+#' years respectively.
+#'
+#' The conditions are specified in the `llim` argument to the function.
+#'
 #' @templateVar mp LstepCE1
 #' @template MPtemplate
 #' @template MPuses
-#' 
+#'
 #' @param yrsmth Years over which to calculate trend in mean length.
 #' @param stepsz Parameter controlling the size of update increment in effort.
 #' @param llim A vector of length reference points that determine the
 #' conditions for increasing, maintaining or reducing the effort.
-#' 
+#'
 #' @author T. Carruthers
 #' @references Carruthers et al. 2015. Performance evaluation of simple
 #' management procedures. ICES J. Mar Sci. 73, 464-482.
-#' 
+#'
 #' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
 #' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
 #' doi:10.1093/icesjms/fst232
-#' @export 
-#' @examples 
+#' @export
+#' @examples
 #' LstepCE1(1, Data=DLMtool::SimulatedData, plot=TRUE)
 #' @seealso LstepCC1
 #' @describeIn LstepCE1 The least biologically precautionary effort-based MP.
-LstepCE1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, stepsz = 0.05, 
+LstepCE1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, stepsz = 0.05,
                      llim = c(0.96, 0.98, 1.05)) {
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
   ylast <- (Data@LHYear[1] - Data@Year[1]) + 1  #last historical year
   # ind2<-((ylast-(yrsmth-1)):ylast) # historical 5 pre-projection years
   ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
-  
+
   Lrecent <- mean(Data@ML[ind])
   Lave <- mean(Data@ML[ind3])
   rat <- Lrecent/Lave
-  
+
   step <- stepsz
 
   if (rat < llim[1]) {
@@ -692,12 +692,12 @@ LstepCE1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, stepsz = 0.05,
   } else {
     Effort <- Data@MPeff[x]
   }
-  
+
   Allocate <- 1
   Effort[Effort < 0.01] <- 0.01  # for simulations in case Effort goes negative
   rec <- new("Rec")
   rec@Effort <- mean(Effort)
-  
+
   if (plot) {
     op <- par(no.readonly = TRUE)
     on.exit(op)
@@ -707,23 +707,23 @@ LstepCE1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, stepsz = 0.05,
          type="l", ylim=ylim)
     lines(Data@Year[ind], rep(Lrecent, length(ind)), lty=2)
     text(max(Data@Year[ind]), Lrecent, "Lrecent", xpd=NA, pos=3)
-    
+
     lines(Data@Year[ind3], rep(Lave, length(ind3)), lty=2, col='blue')
     text(max(Data@Year[ind3]), Lave, "Lave", xpd=NA, pos=3, col='blue')
-    
-    plot(c(max(Data@Year), max(Data@Year)+1), c(Data@MPeff[x], rec@Effort), 
+
+    plot(c(max(Data@Year), max(Data@Year)+1), c(Data@MPeff[x], rec@Effort),
          type="b", xlab="Year", ylab="Effort", bty="l", lwd=2)
   }
   rec
-  
+
 }
 class(LstepCE1) <- "MP"
 
 
 #' @describeIn LstepCE1 Step size is increased to 0.1
-#' @examples 
+#' @examples
 #' LstepCE2(1, Data=DLMtool::SimulatedData, plot=TRUE)
-#' @export 
+#' @export
 LstepCE2 <- LstepCE1
 formals(LstepCE2)$stepsz <- 0.1
 class(LstepCE2) <- "MP"
@@ -731,54 +731,54 @@ class(LstepCE2) <- "MP"
 
 
 
-#' Length Target TAE MP 
-#' 
-#' A management procedure that incrementally adjusts the TAE to reach 
+#' Length Target TAE MP
+#'
+#' A management procedure that incrementally adjusts the TAE to reach
 #' a target mean length in catches.
-#' 
+#'
 #' Four target length MPs proposed by Geromont and Butterworth 2014.
 #' Tested by Carruthers et al. 2015.
-#' 
+#'
 #' The TAE is calculated as:
-#' 
+#'
 #' If \eqn{L_\textrm{recent} \geq L_0}:
 #' \deqn{\textrm{TAE} = 0.5 \textrm{TAE}^* \left[1+\left(\frac{L_\textrm{recent}-L_0}{L_\textrm{target}-L_0}\right)\right]  }
-#' 
+#'
 #' else:
 #' \deqn{\textrm{TAE} = 0.5 \textrm{TAE}^* \left[\frac{L_\textrm{recent}}{L_0}^2\right] }
-#' 
+#'
 #' where \eqn{\textrm{TAE}^*} is the effort in the previous year,
 #' \eqn{L_\textrm{recent}} is mean length in last `yrmsth` years, \eqn{L_0} is (except for `L95target`) 0.9 average catch in the last
-#' 2 x `yrsmth` historical (pre-projection years) (\eqn{L_\textrm{ave}}), and \eqn{L_\textrm{target}} is 
+#' 2 x `yrsmth` historical (pre-projection years) (\eqn{L_\textrm{ave}}), and \eqn{L_\textrm{target}} is
 #' (except for `L95target`) `xL` \eqn{L_\textrm{ave}}.
-#' 
-#' @templateVar mp LtargetE1 
+#'
+#' @templateVar mp LtargetE1
 #' @template MPtemplate
 #' @template MPuses
-#' 
+#'
 #' @param yrsmth Years over which to calculate mean length
 #' @param xL Parameter controlling the magnitude of the target mean length of
 #' catches relative to average length in catches.
-#' 
+#'
 #' @author T. Carruthers
 #' @references Carruthers et al. 2015. Performance evaluation of simple
 #' management procedures. ICES J. Mar Sci. 73, 464-482.
-#' 
+#'
 #' Geromont, H.F., Butterworth, D.S. 2014. Generic management procedures for
 #' data-poor fisheries; forecasting with few data. ICES J. Mar. Sci.
 #' doi:10.1093/icesjms/fst232
 #' @describeIn LtargetE1 The least biologically precautionary TAE-based MP.
 #' @family Length target MPs
-#' @export 
-#' @examples 
+#' @export
+#' @examples
 #' LtargetE1(1, Data=DLMtool::SimulatedData, plot=TRUE)
 LtargetE1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xL = 1.05) {
-  
+
   ind <- (length(Data@Year) - (yrsmth - 1)):length(Data@Year)  # recent 5 years
   ylast <- (Data@LHYear[1] - Data@Year[1]) + 1  #last historical year
   ind2 <- ((ylast - (yrsmth - 1)):ylast)  # historical 5 pre-projection years
   ind3 <- ((ylast - (yrsmth * 2 - 1)):ylast)  # historical 10 pre-projection years
-  
+
   Lrecent <- mean(Data@ML[ind])
   Lave <- mean(Data@ML[ind3])
   L0 <- 0.9 * Lave
@@ -788,10 +788,10 @@ LtargetE1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xL = 1.05) {
   } else {
     Effort <- 0.5 * Data@MPeff[x] * (Lrecent/L0)^2
   }
-  Step <- (Effort/Data@MPeff[x])  # step change in effort 
+  Step <- (Effort/Data@MPeff[x])  # step change in effort
   Step[Step < 0.85] <- 0.85
   Step[Step > 1.15] <- 1.15
-  
+
   Allocate <- 1
   Effort <- Step * Data@MPeff[x]
   Effort[Effort < 0.01] <- 0.01  # for simulations in case Effort goes negative
@@ -802,22 +802,22 @@ LtargetE1 <- function(x, Data, reps = 100, plot=FALSE, yrsmth = 5, xL = 1.05) {
     on.exit(op)
     par(mfrow=c(1,2))
     ylim <- range(c(Data@ML[x,], Lrecent, Lave, Ltarget, L0))
-    plot(Data@Year, Data@ML[x,], type="l", xlab="Year", ylab="Mean Length", 
+    plot(Data@Year, Data@ML[x,], type="l", xlab="Year", ylab="Mean Length",
          lwd=2,  bty="l", ylim=ylim)
     lines(Data@Year[ind], rep(Lrecent, length(ind)), lty=2, col="green")
     text(quantile(Data@Year[ind],0.15),Lrecent, "Lrecent", pos=3, col='green')
-    
+
     lines(Data@Year[ind3], rep(Lave, length(ind3)), lty=2, col="orange")
     text(quantile(Data@Year[ind3],0.15),Lave, "Lave", pos=3, col='orange')
-    
+
     points(max(Data@Year[ind3]), Ltarget, lty=2, col="blue", pch=16)
     text(max(Data@Year[ind3]), Ltarget, "Ltarget", pos=3, col='blue', xpd=NA)
-    
+
     points(max(Data@Year[ind3]), L0, lty=2, col="red", pch=16)
     text(max(Data@Year[ind3]), L0, "L0", pos=3, col='red', xpd=NA)
-    
-    
-    plot(c(max(Data@Year), max(Data@Year)+1), c(Data@MPeff[x], rec@Effort), 
+
+
+    plot(c(max(Data@Year), max(Data@Year)+1), c(Data@MPeff[x], rec@Effort),
          type="b", xlab="Year", ylab="Effort", bty="l", lwd=2)
   }
   rec
@@ -826,8 +826,8 @@ class(LtargetE1) <- "MP"
 
 
 #' @describeIn LtargetE1 The `xL` argument is increased to 1.15.
-#' @export 
-#' @examples 
+#' @export
+#' @examples
 #' LtargetE4(1, Data=DLMtool::SimulatedData, plot=TRUE)
 LtargetE4 <- LtargetE1
 formals(LtargetE4)$xL <- 1.15
@@ -838,7 +838,7 @@ class(LtargetE4) <- "MP"
 #### Length-Based SPR ####
 
 
-#' Internal Estimation Function for LBSPR MP 
+#' Internal Estimation Function for LBSPR MP
 #'
 #' @param x Iteration number
 #' @param Data An object of class `Data`
@@ -846,14 +846,14 @@ class(LtargetE4) <- "MP"
 #' @param n Numeric. Number of historical years to run the model.
 #' @param smoother Logical. Should estimates be smoothed over multiple years?
 #' @param R variance of sampling noise
-#' 
+#'
 #' @export
 #' @keywords internal
 LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE, R=0.2) {
   if (NAor0(Data@L50[x])) stop("Data@L50 is NA")
   if (NAor0(Data@L95[x])) stop("Data@L95 is NA")
   if (NAor0(Data@wlb[x])) stop("Data@wlb is NA")
-  
+
   LenBins <- Data@CAL_bins
   By <- LenBins[2] - LenBins[1]
   LenMids <- seq(from=By*0.5, by=By, length.out = length(LenBins)-1)
@@ -863,19 +863,19 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE, R=0.2) {
   L50 <- Data@L50[x]
   L95 <- Data@L95[x]
   Beta <- Data@wlb[x]
-  
+
   n <- min(n, nrow(Data@CAL[x,,]))
-  if (length(Data@Misc) ==0) Data@Misc[[x]] <- NA 
-  if (length(Data@Misc[[x]]) ==0) Data@Misc[[x]] <- NA 
-  
+  if (length(Data@Misc) ==0) Data@Misc[[x]] <- NA
+  if (length(Data@Misc[[x]]) ==0) Data@Misc[[x]] <- NA
+
   nage <- 101
   P <- 0.01
   xs <- seq(0, to=1, length.out = nage)
   rLens <- 1-P^(xs/MK)
-  EL <- rLens * Linf 
+  EL <- rLens * Linf
   SDL <- EL * CVLinf
   Ml <- 1/(1+exp(-log(19.0)* (LenMids-L50)/(L95-L50)));
-  
+
   Prob <- matrix(0, nrow=nage, ncol=length(LenMids))
   for (aa in 1:nage) {
     d1 <- dnorm(LenMids, EL[aa], SDL[aa])
@@ -883,29 +883,29 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE, R=0.2) {
     d1[d1<t1] <- 0
     if (!all(d1==0)) Prob[aa,] <- d1/sum(d1)
   }
-  
+
   if (all(is.na(Data@Misc[[x]]))) { # first time it's being run
-  
-    # run model for n most recent years 
+
+    # run model for n most recent years
     yind <- match(Data@LHYear[1], Data@Year)
     CALdata <- Data@CAL[x, (yind-n+1):length(Data@Year),]
     if (inherits(CALdata,'numeric'))  CALdata <- matrix(CALdata, ncol=length(LenMids))
     Ests <- Ests_smooth <- matrix(NA, nrow=nrow(CALdata), ncol=5)
     Fit <- list()
-  
+
     for (y in 1:nrow(CALdata)) {
       CAL <- CALdata[y,]
       modalL <- LenMids[which.max(CAL)]
       minL <- LenMids[min(which(CAL>0))]
       sl50start <-  mean(c(modalL, minL))
       starts <- log(c(sl50start/Linf, sl50start/Linf*0.1, 1))
-   
-      runOpt <- optim(starts, LBSPRopt, CAL=CAL, nage=nage, nlen=length(LenMids), CVLinf=CVLinf, 
-                      LenBins=LenBins, LenMids=LenMids, 
+
+      runOpt <- optim(starts, LBSPRopt, CAL=CAL, nage=nage, nlen=length(LenMids), CVLinf=CVLinf,
+                      LenBins=LenBins, LenMids=LenMids,
                       MK=MK, Linf=Linf, rLens=rLens, Prob=Prob, Ml=Ml,
                       L50=L50, L95=L95, Beta=Beta)
-    
-      SL50 <- exp(runOpt$par[1]) * Linf 
+
+      SL50 <- exp(runOpt$par[1]) * Linf
       dSL50 <- exp(runOpt$par[2])
       SL95 <- SL50 + dSL50 * SL50
       FM <- exp(runOpt$par[3])
@@ -917,7 +917,7 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE, R=0.2) {
       Ests[y,] <- c(SL50, SL95, FM, runMod[[2]], runOpt$value)
       Fit[[y]] <- runMod[[1]] * sum(CALdata[y,])
     }
-    
+
     # # ## Plot ###
     # par(mfrow=c(2,3))
     # for (y in 1:nrow(CALdata)) {
@@ -926,23 +926,23 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE, R=0.2) {
     #   lines(tt, Fit[[y]], lwd=2)
     #   }
     # Ests[1:16,]
-    
+
     if (nrow(Ests)>1) Ests_smooth <- apply(Ests, 2, FilterSmooth)
     # if (smoother && nrow(Ests) > 1) Ests <- apply(Ests, 2, FilterSmooth)
-      
+
     Ests <- as.data.frame(Ests)
     names(Ests) <- c("SL50", "SL95", "FM", "SPR", "NLL")
     Ests$Year <- (yind-n+1):length(Data@Year)
-    
+
     Ests_smooth <- as.data.frame(Ests_smooth[,1:4])
     names(Ests_smooth) <- c("SL50", "SL95", "FM", "SPR")
     Ests_smooth$Year <- (yind-n+1):length(Data@Year)
-    
+
   } else {
     lastYr <- max(Data@Misc[[x]]$Ests$Year)
     curYr <- max(Data@Year)
     yrs <- (lastYr+1):curYr
-    
+
     CALdata <- Data@CAL[x, (length(Data@Year)-length(yrs)+1):length(Data@Year),]
     if (inherits(CALdata,'numeric'))  CALdata <- matrix(CALdata, ncol=length(LenMids))
     Ests <- Ests_smooth <- matrix(NA, nrow=nrow(CALdata), ncol=5)
@@ -953,48 +953,48 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE, R=0.2) {
       minL <- LenMids[min(which(CAL>0))]
       sl50start <-  mean(c(modalL, minL))
       starts <- log(c(sl50start/Linf, sl50start/Linf*0.1, 1))
-      if (MK > 5) MK <- 5 
+      if (MK > 5) MK <- 5
       if (MK < 0.4) MK <- 0.4
-      runOpt <- try(optim(starts, LBSPRopt, CAL=CAL, nage=101, nlen=length(LenMids), CVLinf=CVLinf, 
+      runOpt <- try(optim(starts, LBSPRopt, CAL=CAL, nage=101, nlen=length(LenMids), CVLinf=CVLinf,
                       LenBins=LenBins, LenMids=LenMids,
-                      MK=MK, Linf=Linf, rLens=rLens, Prob=Prob, Ml=Ml, L50=L50, 
+                      MK=MK, Linf=Linf, rLens=rLens, Prob=Prob, Ml=Ml, L50=L50,
                       L95=L95, Beta=Beta), silent=TRUE)
       if (inherits(runOpt,'try-error')) {
         warning("Error in LBSPR ignoring estimate and using previous year. Sim = ", x)
       } else {
-      SL50 <- exp(runOpt$par[1]) * Linf 
+      SL50 <- exp(runOpt$par[1]) * Linf
       dSL50 <- exp(runOpt$par[2])
       SL95 <- SL50 + dSL50 * SL50
       FM <- exp(runOpt$par[3])
-      
-      runMod <- LBSPRgen(SL50, SL95, FM, nage=101, nlen=length(LenMids), CVLinf, 
-                         LenBins, LenMids, 
+
+      runMod <- LBSPRgen(SL50, SL95, FM, nage=101, nlen=length(LenMids), CVLinf,
+                         LenBins, LenMids,
                          MK, Linf, rLens=rLens, Prob=Prob, Ml=Ml, L50, L95, Beta)
-      
+
       Ests[y,] <- c(SL50, SL95, FM, runMod[[2]], runOpt$value)
       Fit[[y]] <- runMod[[1]] * sum(CALdata[y,])
       }
     }
-    
-    # 
+
+    #
     # ## Plot ###
     # par(mfrow=c(2,3))
     # for (y in 1:nrow(CALdata)) {
     #   tt <- barplot(CALdata[y,], names.arg=LenMids)
     #   lines(tt, Fit[[y]], lwd=2)
     # }
-    
+
     Ests <- as.data.frame(Ests)
     names(Ests) <- c("SL50", "SL95", "FM", "SPR", "NLL")
     Ests$Year <- (length(Data@Year)-length(yrs)+1):length(Data@Year)
-    
+
     Ests_smooth <- as.data.frame(Ests[,1:4])
     names(Ests_smooth) <- c("SL50", "SL95", "FM", "SPR")
     Ests_smooth$Year <- (length(Data@Year)-length(yrs)+1):length(Data@Year)
-    
+
     Ests_smooth <- rbind(Data@Misc[[x]]$Ests, Ests)
     Ests <-rbind(Data@Misc[[x]]$Ests, Ests)
-    
+
     if (smoother) {
       SmoothEsts <- apply(Ests_smooth[,1:4], 2, FilterSmooth, R=R)
       Ests_smooth[,1:4] <- SmoothEsts
@@ -1006,83 +1006,83 @@ LBSPR_ <- function(x, Data, reps, n=5, smoother=TRUE, R=0.2) {
 
 
 #' Length-Based SPR MPs
-#' 
-#' The spawning potential ratio (SPR) is estimated using the LBSPR method 
+#'
+#' The spawning potential ratio (SPR) is estimated using the LBSPR method
 #' and compared to a target of 0.4.
-#' 
-#' Effort is modified according to the harvest control rules described in 
+#'
+#' Effort is modified according to the harvest control rules described in
 #' Hordyk et al. (2015b):
-#' 
-#' @templateVar mp LBSPR 
+#'
+#' @templateVar mp LBSPR
 #' @param x A position in the data object
 #' @param Data A data object
 #' @param reps The number of stochastic samples of the MP recommendation(s)
 #' @param plot Logical. Show the plot?
-#' 
+#'
 #' @section Required Data:
-#' See \linkS4class{Data} for information on the \code{Data} object \cr 
-#' 
+#' See \linkS4class{Data} for information on the \code{Data} object \cr
+#'
 #' @return An object of class \code{\link[=Rec-class]{Rec}} with the TAE slot populated
-#' 
-#' @template MPuses 
-#' 
+#'
+#' @template MPuses
+#'
 #' @param SPRtarg The target SPR
 #' @param theta1 Control parameter for the harvest control rule
-#' @param theta2 Control parameter for the harvest control rule 
+#' @param theta2 Control parameter for the harvest control rule
 #' @param maxchange Maximum change in effort
 #' @param n Last number of years to run the model on.
 #' @param smoother Logical. Should the SPR estimates be smoothed?
 #' @param R variance of sampling noise for smoother
-#' 
+#'
 #' @export
-#' @references  
-#' Hordyk, A., Ono, K., Valencia, S., Loneragan, N., and Prince J (2015a). 
+#' @references
+#' Hordyk, A., Ono, K., Valencia, S., Loneragan, N., and Prince J (2015a).
 #' A novel length-based empirical estimation method of spawning potential ratio (SPR),
-#' and tests of its performance, for small-scale, data-poor fisheries, 
+#' and tests of its performance, for small-scale, data-poor fisheries,
 #' ICES Journal of Marine Science, 72 (1), 217-231
-#' 
+#'
 #' Hordyk, A. R., Loneragan, N. R., & Prince, J. D. (2015b). An evaluation of an
-#'  iterative harvest strategy for data-poor fisheries using the length-based 
-#'  spawning potential ratio assessment methodology. Fisheries Research, 
-#'  171, 20–32. https://doi.org/10.1016/j.fishres.2014.12.018
-#' 
-#' @examples 
+#'  iterative harvest strategy for data-poor fisheries using the length-based
+#'  spawning potential ratio assessment methodology. Fisheries Research,
+#'  171, 20-32. https://doi.org/10.1016/j.fishres.2014.12.018
+#'
+#' @examples
 #' LBSPR(1, Data=DLMtool::SimulatedData, plot=TRUE)
-LBSPR <- function(x, Data, reps=1, plot=FALSE, SPRtarg=0.4, theta1=0.3, 
+LBSPR <- function(x, Data, reps=1, plot=FALSE, SPRtarg=0.4, theta1=0.3,
                   theta2=0.05, maxchange=0.3,
                   n=5, smoother=TRUE, R=0.2) {
 
   runLBSPR <- LBSPR_(x, Data, reps, n, smoother, R=R)
-  
+
   if (!smoother) Ests <- runLBSPR$Ests
   if (smoother) Ests <- runLBSPR$Ests_smooth
-  
+
   estSPR <- Ests$SPR[length(Ests$SPR)]
   ratio <- estSPR/SPRtarg - 1
-  
+
   vt <- theta1 * (ratio^3) + theta2*ratio
-  vt[vt< -maxchange]  <- -maxchange 
+  vt[vt< -maxchange]  <- -maxchange
   vt[vt> maxchange]  <- maxchange
-  
+
   Eff <- 1+vt
-  
+
   if (plot) {
-  
+
     nyr <- length(runLBSPR$Fit)
-    
+
     CAL <- Data@CAL[x,,]
     nyears <- dim(CAL)[1]
     CAL <- CAL[(nyears-nyr+1):nyears,]
     LenBins <- Data@CAL_bins
     By <- LenBins[2] - LenBins[1]
     LenMids <- seq(from=By*0.5, by=By, length.out = length(LenBins)-1)
-    
+
     op <- par(no.readonly = TRUE)
     on.exit(op)
     nrow <- ceiling(sqrt(nyr))
     ncol <- ceiling((nyr + 1)/nrow)
-    par(mfrow=c(nrow,ncol)) 
-    
+    par(mfrow=c(nrow,ncol))
+
     if (nyr > 1) {
       ymin <- min(unlist(apply(CAL > 0, 1, which)))
       ymax <- max(unlist(apply(CAL > 0, 1, which)))
@@ -1102,44 +1102,44 @@ LBSPR <- function(x, Data, reps=1, plot=FALSE, SPRtarg=0.4, theta1=0.3,
         lines(tt, runLBSPR$Fit[[1]][ind], lwd=2)
         title(paste0("Year ", runLBSPR$Ests$Year[p]))
     }
-   
-    plot(runLBSPR$Ests$Year, runLBSPR$Ests$SPR, ylim=c(0,1), xlab="Year", 
+
+    plot(runLBSPR$Ests$Year, runLBSPR$Ests$SPR, ylim=c(0,1), xlab="Year",
          ylab="SPR", type="b", las=1, bty="l")
-    
+
   }
   Rec <- new("Rec")
   Rec@Effort <- Eff
   Rec@Misc$Ests <- runLBSPR$Ests
   Rec@Misc$Ests_smooth <- runLBSPR$Ests_smooth
   Rec
-  
+
 }
 class(LBSPR) <- 'MP'
 
- 
-#' Length-Based SPR 
-#' 
-#' @describeIn LBSPR Fishing retention-at-length is set equivalent to slightly 
+
+#' Length-Based SPR
+#'
+#' @describeIn LBSPR Fishing retention-at-length is set equivalent to slightly
 #' higher than the maturity curve if SPR < 0.4
-#' 
+#'
 #' @export
-#' 
-#' @examples 
+#'
+#' @examples
 #' LBSPR_MLL(1, Data=DLMtool::SimulatedData, plot=FALSE)
 LBSPR_MLL <- function(x, Data, reps=1, plot=FALSE, SPRtarg=0.4, n=5, smoother=TRUE, R=0.2) {
-  
+
   Rec <- new("Rec")
   if (length(Data@Misc)<1) Data@Misc <- list(rep(NULL,x))
-  
+
   if (is.null(Data@Misc[[x]]) || length(Data@Misc[[x]])<1 ||is.null(Data@Misc[[x]]$MLLset)) {
     runLBSPR <- LBSPR_(x, Data, reps, n, smoother, R=R)
     if (!smoother) Ests <- runLBSPR$Ests
     if (smoother) Ests <- runLBSPR$Ests_smooth
     estSPR <- Ests$SPR[length(Ests$SPR)]
-    
+
     Rec@Misc$Ests <- runLBSPR$Ests
     Rec@Misc$Ests_smooth <- runLBSPR$Ests_smooth
-    
+
     if (estSPR < SPRtarg) {
       # estimated SPR < SPRtarg --> set size limit at 1.1 L50
       Rec@LFR <- 1.1 * Data@L50[x]
@@ -1182,24 +1182,24 @@ LBSPR_MLL <- function(x, Data, reps=1, plot=FALSE, SPRtarg=0.4, n=5, smoother=TR
       }
     }
   }
-  
+
   if (plot) {
-    
+
     nyr <- length(runLBSPR$Fit)
-    
+
     CAL <- Data@CAL[x,,]
     nyears <- dim(CAL)[1]
     CAL <- CAL[(nyears-nyr+1):nyears,]
     LenBins <- Data@CAL_bins
     By <- LenBins[2] - LenBins[1]
     LenMids <- seq(from=By*0.5, by=By, length.out = length(LenBins)-1)
-    
+
     op <- par(no.readonly = TRUE)
     on.exit(op)
     nrow <- ceiling(sqrt(nyr))
     ncol <- ceiling((nyr + 1)/nrow)
-    par(mfrow=c(nrow,ncol)) 
-    
+    par(mfrow=c(nrow,ncol))
+
     if (nyr > 1) {
       ymin <- min(unlist(apply(CAL > 0, 1, which)))
       ymax <- max(unlist(apply(CAL > 0, 1, which)))
@@ -1219,13 +1219,13 @@ LBSPR_MLL <- function(x, Data, reps=1, plot=FALSE, SPRtarg=0.4, n=5, smoother=TR
       lines(tt, runLBSPR$Fit[[1]][ind], lwd=2)
       title(paste0("Year ", runLBSPR$Ests$Year[p]))
     }
-    
-    plot(runLBSPR$Ests$Year, runLBSPR$Ests$SPR, ylim=c(0,1), xlab="Year", 
+
+    plot(runLBSPR$Ests$Year, runLBSPR$Ests$SPR, ylim=c(0,1), xlab="Year",
          ylab="SPR", type="b", las=1, bty="l")
-    
+
   }
   Rec
-  
+
 }
 class(LBSPR_MLL) <- 'MP'
 
@@ -1270,5 +1270,3 @@ FilterSmooth <- function(RawEsts, R=0.2, Q=0.1, Int=100) {
   }
   return(xsmooth)
 }
-
-
