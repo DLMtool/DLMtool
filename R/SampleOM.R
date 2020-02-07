@@ -78,12 +78,17 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (length(Stock@M) == maxage) { # Stock@M is vector of M-at-age 
     if (length(Stock@M2) == maxage && !exists("Mage", inherits=FALSE)) {
       mmat <- rbind(Stock@M, Stock@M2)
-      if (all(mmat[1,] < mmat[2,]) | all(mmat[1,] > mmat[2,])) {
-        Mage <- matrix(NA, nsim, maxage)
-        Mage[,1] <- myrunif(nsim, min(mmat[,1]), max(mmat[,1]))
-        val <- (Mage[,1] - min(mmat[,1]))/ diff(mmat[,1])
-        for (X in 2:maxage) Mage[,X] <- min(mmat[,X]) + diff(mmat[,X])*val  
-      } else stop("All values in slot 'M' must be greater or less than corresponding values in slot 'M2'", call.=FALSE)
+      if (all(mmat[1,] == mmat[2,])) {
+        Mage <- matrix(mmat[1,], nsim, maxage, byrow=TRUE)
+      } else {
+        if (all(mmat[1,] < mmat[2,]) | all(mmat[1,] > mmat[2,])) {
+          Mage <- matrix(NA, nsim, maxage)
+          Mage[,1] <- myrunif(nsim, min(mmat[,1]), max(mmat[,1]))
+          val <- (Mage[,1] - min(mmat[,1]))/ diff(mmat[,1])
+          for (X in 2:maxage) Mage[,X] <- min(mmat[,X]) + diff(mmat[,X])*val  
+        } else stop("All values in slot 'M' must be greater or less than corresponding values in slot 'M2'", call.=FALSE)
+      }
+     
     } else stop("slot 'M2' must be length 'maxage'", call.=FALSE)
   } 
   if (length(Stock@M) != maxage & length(Stock@M) != 2) stop("slot 'M' must be either length 2 or length maxage", call.=FALSE)
