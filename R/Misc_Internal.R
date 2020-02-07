@@ -373,12 +373,11 @@ run_parallel <- function(i, itsim, OM, MPs, CheckMPs, timelimit, Hist, ntrials, 
     }
   }
   
-  
   if (length(OM@cpars)>0) {
-    ncparsim<-cparscheck(OM@cpars)  
-    if (ncparsim == OM@nsim) { # cpars for each simulation 
+    ncparsim<-cparscheck(OM@cpars)
+    if (!is.null(ncparsim) && ncparsim == OM@nsim) { # cpars for each simulation 
       cpars <- OM@cpars
-  
+      
       if (i > 1) {
         ind <- (sum(itsim[1:(i-1)]) + 1): sum(itsim[1:i])  
       } else {
