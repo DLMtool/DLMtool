@@ -96,5 +96,5 @@ ICES Journal of Marine Science, 72 (1), 217-231
 Hordyk, A. R., Loneragan, N. R., & Prince, J. D. (2015b). An evaluation of an
 iterative harvest strategy for data-poor fisheries using the length-based
 spawning potential ratio assessment methodology. Fisheries Research,
-171, 20–32. https://doi.org/10.1016/j.fishres.2014.12.018
+171, 20-32. https://doi.org/10.1016/j.fishres.2014.12.018
 }

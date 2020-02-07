@@ -50,10 +50,10 @@ effort (TAE) according to the mean length of recent catches.
 }
 \details{
 The TAE is calculated as:
-\deqn{\textrm{TAE} = 
-             \left\{\begin{array}{ll} 
-             \textrm{TAE}^* - 2 S\textrm{TAE}^* & \textrm{if } r < 0.96  \\ 
-             \textrm{TAE}^* - S \textrm{TAE}^* & \textrm{if } r < 0.98 \\ 
+\deqn{\textrm{TAE} =
+             \left\{\begin{array}{ll}
+             \textrm{TAE}^* - 2 S\textrm{TAE}^* & \textrm{if } r < 0.96  \\
+             \textrm{TAE}^* - S \textrm{TAE}^* & \textrm{if } r < 0.98 \\
              \textrm{TAE}^* & \textrm{if } > 1.058 \\
              \end{array}\right.
            }{}

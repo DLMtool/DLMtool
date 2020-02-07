@@ -5,10 +5,7 @@
 \alias{ItargetE2}
 \alias{ItargetE3}
 \alias{ItargetE4}
-\title{Incremental Index Target MP - Effort-Based
-
-A management procedure that incrementally adjusts the fishing effort
-to reach a target CPUE / relative abundance index}
+\title{Incremental Index Target MP - Effort-Based}
 \usage{
 ItargetE1(x, Data, reps = 100, plot = FALSE, yrsmth = 5, Imulti = 1.5)
 
@@ -36,9 +33,12 @@ compared with recent levels.}
 An object of class \code{\link[=Rec-class]{Rec}} with the TAE slot(s) populated
 }
 \description{
-Four index/CPUE target MPs proposed by Geromont and Butterworth 2014.
+A management procedure that incrementally adjusts the fishing effort
+to reach a target CPUE / relative abundance index
 }
 \details{
+Four index/CPUE target MPs proposed by Geromont and Butterworth 2014.
+
 The TAE is calculated as:
 If  \eqn{I_\textrm{recent} \geq I_0}:
 \deqn{\textrm{TAE}_y = 0.5 \textrm{TAE}_{y-1}  \left[1+ \left( \frac{I_{\textrm{recent}} - I_0}{I_{\textrm{target}} - I_0} \right)\right]}
