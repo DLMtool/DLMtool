@@ -1224,6 +1224,15 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
        
       }  # end of year loop
       
+      if (max(upyrs) < proyears) { # One more call to complete Data object
+        MSElist[[mm]] <- updateData(Data=MSElist[[mm]], OM, MPCalcs, Effort, Biomass, 
+                                    Biomass_P, CB_Pret, N_P, SSB, SSB_P, VBiomass, VBiomass_P, 
+                                    RefPoints, ErrList, FMSY_y, retA_P, retL_P, StockPars, 
+                                    FleetPars, ObsPars, c(upyrs, proyears), 
+                                    interval = rep(proyears - max(upyrs), length(interval)), 
+                                    proyears, mm, Misc=Data_p@Misc, SampCpars)
+      }
+      
       B_BMSYa[, mm, ] <- apply(SSB_P, c(1, 3), sum, na.rm=TRUE)/SSBMSY_y[,mm,(OM@nyears+1):(OM@nyears+OM@proyears)]  # SSB relative to SSBMSY
       F_FMSYa[, mm, ] <- FMa[, mm, ]/FMSY_y[,mm,(OM@nyears+1):(OM@nyears+OM@proyears)]
       
