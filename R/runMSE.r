@@ -850,6 +850,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
     HistObj@SampPars <- c(StockPars, FleetPars, ObsPars, ImpPars)
     HistObj@Misc <- Misc
     HistObj@Misc$CurrentYr <- OM@CurrentYr
+    HistObj@Misc$ErrList <- ErrList
     return(HistObj)	
   }
 
