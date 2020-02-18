@@ -813,7 +813,7 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, CBret,
     # ---- Index (total biomass) ----
     if (!all(is.na(RealDat@Ind[1,]))) { # Index exists
       if (!silent) 
-        message('Updating Simulated Index from `OM@cpars$Data@Ind` (OM Index observation parameters are ignored)')
+        message('Updating Simulated Index from `OM@cpars$Data@Ind` (OM Index observation parameters are ignored). \nSee Misc@ErrList for updated observation error and hyper-stability parameters')
       Data@Ind <- matrix(RealDat@Ind[1,1:nyears], nrow=nsim, ncol=nyears, byrow=TRUE)
       Data@CV_Ind <- matrix(RealDat@CV_Ind[1,1:nyears], nrow=nsim, ncol=nyears, byrow=TRUE)
       
@@ -844,7 +844,7 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, CBret,
     # ---- Index (spawning biomass) ----
     if (!all(is.na(RealDat@SpInd[1,]))) { # Index exists
       if (!silent) 
-        message('Updating Simulated Index from `OM@cpars$Data@SpInd` (OM Index observation parameters are ignored)')
+        message('Updating Simulated Index from `OM@cpars$Data@SpInd` (OM Index observation parameters are ignored). \nSee Misc@ErrList for updated observation error and hyper-stability parameters')
       Data@SpInd <- matrix(RealDat@SpInd[1,1:nyears], nrow=nsim, ncol=nyears, byrow=TRUE)
       Data@CV_SpInd <- matrix(RealDat@CV_SpInd[1,1:nyears], nrow=nsim, ncol=nyears, byrow=TRUE)
       
@@ -875,7 +875,7 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, CBret,
     # ---- Index (vulnerable biomass) ----
     if (!all(is.na(RealDat@VInd[1,]))) { # Index exists
       if (!silent) 
-        message('Updating Simulated Index from `OM@cpars$Data@VInd` (OM Index observation parameters are ignored)')
+        message('Updating Simulated Index from `OM@cpars$Data@VInd` (OM Index observation parameters are ignored). \nSee Misc@ErrList for updated observation error and hyper-stability parameters')
       Data@VInd <- matrix(RealDat@VInd[1,1:nyears], nrow=nsim, ncol=nyears, byrow=TRUE)
       Data@CV_VInd <- matrix(RealDat@CV_VInd[1,1:nyears], nrow=nsim, ncol=nyears, byrow=TRUE)
       
