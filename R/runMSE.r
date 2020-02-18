@@ -1300,6 +1300,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   Misc$Cost <- Cost_out
   Misc$TAE <- TAE_out
   
+  Misc$ErrList <- ErrList
+  
   Misc$MSYRefs <- list(Refs=RefPoints, ByYear=list(MSY=MSY_y, FMSY=FMSY_y,
                                                    SSBMSY=SSBMSY_y,
                                                    BMSY=BMSY_y,
