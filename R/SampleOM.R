@@ -171,7 +171,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     recMulti <- 1 
   }
   
-  StockOut$procmu <- procmu <- -0.5 * (procsd)^2  # adjusted log normal mean
+  StockOut$procmu <- procmu <- -0.5 * procsd^2  * (1 - AC)/sqrt(1 - AC^2) #  # adjusted log normal mean http://dx.doi.org/10.1139/cjfas-2016-0167
   if (!exists("Perr_y", inherits=FALSE)) {
     Perr_y <- array(rnorm((nyears + proyears+maxage-1) * nsim, rep(procmu, nyears + proyears+maxage-1), 
                         rep(procsd, nyears + proyears+maxage-1)), c(nsim, nyears + proyears+maxage-1))
