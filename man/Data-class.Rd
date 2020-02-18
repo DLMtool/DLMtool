@@ -97,6 +97,16 @@ Positive real numbers. Note: built-in MPs use only the first value of \code{CV_E
 \item{\code{CV_Ind}}{Coefficient of variation in the relative total abundance index. Matrix nsim rows and either 1 or nyear columns.
 Positive real numbers. Note: built-in MPs use only the first value of \code{CV_Ind} for all years}
 
+\item{\code{SpInd}}{Relative spawning abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers}
+
+\item{\code{CV_SpInd}}{Coefficient of variation in the relative spawning abundance index. Matrix nsim rows and either 1 or nyear columns.
+Positive real numbers.}
+
+\item{\code{VInd}}{Relative vulnerable abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers}
+
+\item{\code{CV_VInd}}{Coefficient of variation in the relative vulnerable abundance index. Matrix nsim rows and either 1 or nyear columns.
+Positive real numbers.}
+
 \item{\code{AddInd}}{Optional additional indices. Array of dimensions \code{nsim}, n additional arrays, and \code{nyears} (length \code{Year}).}
 
 \item{\code{CV_AddInd}}{Coefficient of variation for additional indices. Array of same dimensions as \code{AddInd}}

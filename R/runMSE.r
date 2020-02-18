@@ -775,6 +775,16 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                        mconv(1, rep(Isd, nyears + proyears)), 
                        sdconv(1, rep(Isd, nyears + proyears))), 
                 c(nsim, nyears + proyears))
+  ErrList$SpIerr <- array(rlnorm((nyears + proyears) * nsim, 
+                               mconv(1, rep(Isd, nyears + proyears)), 
+                               sdconv(1, rep(Isd, nyears + proyears))), 
+                        c(nsim, nyears + proyears))
+  
+  ErrList$VIerr <- array(rlnorm((nyears + proyears) * nsim, 
+                               mconv(1, rep(Isd, nyears + proyears)), 
+                               sdconv(1, rep(Isd, nyears + proyears))), 
+                        c(nsim, nyears + proyears))
+  
   
   # Simulate error in observed recruitment index 
   ErrList$Recerr <- array(rlnorm((nyears + proyears) * nsim, mconv(1, rep(Recsd, (nyears + proyears))), 

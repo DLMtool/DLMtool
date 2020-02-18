@@ -71,6 +71,12 @@ setClassUnion(name="prob.class", members=c("matrix", "numeric", "data.frame"))
 #' @slot Ind Relative total abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers
 #' @slot CV_Ind Coefficient of variation in the relative total abundance index. Matrix nsim rows and either 1 or nyear columns.
 #'  Positive real numbers. Note: built-in MPs use only the first value of `CV_Ind` for all years
+#' @slot SpInd Relative spawning abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers
+#' @slot CV_SpInd Coefficient of variation in the relative spawning abundance index. Matrix nsim rows and either 1 or nyear columns.
+#'  Positive real numbers. 
+#' @slot VInd Relative vulnerable abundance index. Matrix of nsim rows and nyears columns. Non-negative real numbers
+#' @slot CV_VInd Coefficient of variation in the relative vulnerable abundance index. Matrix nsim rows and either 1 or nyear columns.
+#'  Positive real numbers. 
 #' @slot AddInd Optional additional indices. Array of dimensions `nsim`, n additional arrays, and `nyears` (length `Year`).  
 #' @slot CV_AddInd Coefficient of variation for additional indices. Array of same dimensions as `AddInd`
 #' @slot AddIndV Vulnerability-at-age schedules for the additional indices. Array with dimensions: `nsim`, n additional arrays,
@@ -160,6 +166,8 @@ setClass("Data",
                         Cat = "matrix", CV_Cat = "matrix",
                         Effort = 'matrix', CV_Effort = 'matrix',
                         Ind = "matrix", CV_Ind = "matrix", 
+                        SpInd = "matrix", CV_SpInd = "matrix", 
+                        VInd = "matrix", CV_VInd = "matrix", 
                         
                         AddInd = "array", CV_AddInd = "array", AddIndV = "array",
                         Rec = "matrix", CV_Rec = "matrix", 
@@ -223,7 +231,8 @@ setMethod("initialize", "Data", function(.Object, stock="nada", ...) {
   # Default values
   if (all(is.na(.Object@CV_Cat))) .Object@CV_Cat <- matrix(0.2, nrow=1, ncol=1)
   if (all(is.na(.Object@CV_Ind))) .Object@CV_Ind <- matrix(0.2, nrow=1, ncol=1)
-  # if (all(is.na(.Object@CV_SpInd))) .Object@CV_SpInd <- matrix(0.2, nrow=1, ncol=1)
+  if (all(is.na(.Object@CV_SpInd))) .Object@CV_SpInd <- matrix(0.2, nrow=1, ncol=1)
+  if (all(is.na(.Object@CV_VInd))) .Object@CV_VInd <- matrix(0.2, nrow=1, ncol=1)
   if (all(is.na(.Object@CV_Effort))) .Object@CV_Effort <- matrix(0.2, nrow=1, ncol=1)
   if (all(is.na(.Object@CV_Rec))) .Object@CV_Rec <- matrix(0.2, nrow=1, ncol=1)
   
