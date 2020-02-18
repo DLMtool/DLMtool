@@ -547,6 +547,36 @@ Sub <- function(MSEobj, MPs = NULL, sims = NULL, years = NULL) {
   
   CALbins <- MSEobj@CALbins 
   
+  # Subset Misc 
+  mpind <- match(newMPs, MSEobj@MPs)
+  MSEobj@Misc$Unfished$Refs <- MSEobj@Misc$Unfished$Refs[,SubIts]
+  for (i in 1:length(MSEobj@Misc$Unfished$ByYear)) {
+    MSEobj@Misc$Unfished$ByYear[[i]] <- MSEobj@Misc$Unfished$ByYear[[i]][SubIts,Years]
+  }
+  MSEobj@Misc$MSYRefs$Refs <- MSEobj@Misc$MSYRefs$Refs[SubIts, ]
+  for (i in 1:length(MSEobj@Misc$MSYRefs$ByYear)) {
+    MSEobj@Misc$MSYRefs$ByYear[[i]] <- MSEobj@Misc$MSYRefs$ByYear[[i]][SubIts, mpind, Years]
+  }
+  MSEobj@Misc$TryMP <- MSEobj@Misc$TryMP[mpind]
+  
+  
+  MSEobj@Misc$LatEffort <- MSEobj@Misc$LatEffort[SubIts, mpind,]
+  MSEobj@Misc$Revenue <- MSEobj@Misc$Revenue[SubIts, mpind,]
+  MSEobj@Misc$Cost <- MSEobj@Misc$Cost[SubIts, mpind,]
+  MSEobj@Misc$TAE <- MSEobj@Misc$TAE[SubIts, mpind,]
+  
+  MSEobj@Misc$ErrList$Cbiasa <- MSEobj@Misc$ErrList$Cbiasa[SubIts, Years]
+  MSEobj@Misc$ErrList$Cerr <- MSEobj@Misc$ErrList$Cerr[SubIts, Years]
+  MSEobj@Misc$ErrList$Ierr <- MSEobj@Misc$ErrList$Ierr[SubIts, Years]
+  MSEobj@Misc$ErrList$SpIerr <- MSEobj@Misc$ErrList$SpIerr[SubIts, Years]
+  MSEobj@Misc$ErrList$VIerr <- MSEobj@Misc$ErrList$VIerr[SubIts, Years]
+  MSEobj@Misc$ErrList$Recerr <- MSEobj@Misc$ErrList$Recerr[SubIts, Years]
+  
+  if ('Data' %in% names(MSEobj@Misc)) {
+    # Subset Data by MP
+    MSEobj@Misc$Data <- MSEobj@Misc$Data[match(newMPs, MSEobj@MPs)]
+  }
+  
   SubResults <- new("MSE", Name = MSEobj@Name, nyears = MSEobj@nyears, 
                     proyears = MSEobj@proyears, nMPs = length(SubMPs), MPs = newMPs, 
                     nsim = length(SubIts), OM = OutOM, Obs = MSEobj@Obs[SubIts, , drop = FALSE],
