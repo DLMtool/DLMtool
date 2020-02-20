@@ -307,12 +307,17 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   if (!exists("LatASD", inherits=FALSE)) LatASD <- Len_age * array(LenCV, dim=dim(Len_age)) # SD of length-at-age 
   if (any(dim(LatASD) != dim(Len_age))) stop("Dimensions of 'LatASD' must match dimensions of 'Len_age'", .call=FALSE)
   
-  if (!exists("binWidth", inherits=FALSE)) 
-    binWidth <- ceiling(0.03 * MaxBin)
+  if (exists("CAL_bins", inherits=FALSE)) binWidth <- CAL_bins[2] - CAL_bins[1]
+  if (exists("CAL_binsmid", inherits=FALSE)) binWidth <- CAL_binsmid[2] - CAL_binsmid[1]
+    
+  if (!exists("binWidth", inherits=FALSE)) binWidth <- ceiling(0.03 * MaxBin)
   
   if (!exists("CAL_bins", inherits=FALSE)) CAL_bins <- seq(from = 0, to = MaxBin + binWidth, by = binWidth)
   if (!exists("CAL_binsmid", inherits=FALSE)) CAL_binsmid <- seq(from = 0.5 * binWidth, by = binWidth, length = length(CAL_bins) - 1)
   if (length(CAL_bins) != length(CAL_binsmid)+1) stop("Length of 'CAL_bins' must be length(CAL_binsmid)+1", .call=FALSE)
+  
+  if (is.null(cpars$binWidth))
+    binWidth <- CAL_binsmid[2] - CAL_binsmid[1]
   
   # Check bin width - in case both CAL_bins or CAL_binsmid AND binWidth have been passed in with cpars
   if (!all(diff(CAL_bins) == binWidth)) stop("width of CAL_bins != binWidth", call.=FALSE)
