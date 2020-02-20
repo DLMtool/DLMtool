@@ -19,7 +19,7 @@
 #' Additional or alternative performance metrics objects can be supplied. Advanced users can develop their own performance metrics.
 #'  
 #' @param MSEobj An MSE object of class \code{'MSE'}
-#' @param PMs A list of PM objects
+#' @param PMs A character vector of names of the PM methods or a list of the PM methods
 #' @param maxMP Maximum number of MPs to include in a single plot
 #' @param thresh The convergence threshold. Maximum root mean square deviation over the last `ref.it` iterations
 #' @param ref.it The number of iterations to calculate the convergence statistics. For example,
@@ -28,11 +28,13 @@
 #' @param all.its Logical. Plot all iterations? Otherwise only (nsim-ref.it):nsim
 #' @param nrow Numeric. Optional. Number of rows
 #' @param ncol Numeric. Optional. Number of columns
+#' @param silent Hide the messages printed in console?
 #' 
 #' @templateVar url checking-convergence
 #' @templateVar ref NULL
 #' @template userguide_link
 #' 
+#' @return A table of convergence results for each MP
 #' @examples 
 #' \dontrun{
 #' MSE <- runMSE()
@@ -42,14 +44,22 @@
 #' @author A. Hordyk
 #' @export 
 #' 
-Converge <- function(MSEobj, PMs=list(Yield, P10, AAVY), maxMP=15, thresh=0.5, ref.it=20,
-                     inc.leg=FALSE, all.its=FALSE, nrow=NULL, ncol=NULL) {
+Converge <- function(MSEobj, PMs=c('Yield', 'P10', 'AAVY'), maxMP=15, thresh=0.5, ref.it=20,
+                     inc.leg=FALSE, all.its=FALSE, nrow=NULL, ncol=NULL, silent=FALSE) {
   
   
   if(class(MSEobj) != "MSE") stop("MSEobj must be object of class 'MSE'", call.=FALSE)
   if(MSEobj@nMPs <2) stop("Converge requires more than 1 MP in the MSE object", call.=FALSE)
   
   nPMs <- length(PMs)
+  
+  if (mode(PMs) == 'character') {
+    PMnames <- PMs
+    PMs <- lapply(PMs, get)
+  } else if (mode(PMs) == 'list') {
+    PMnames <- 1:length(PMs)
+  } 
+  
   if (is.null(ncol)) ncol <- floor(sqrt(nPMs))
   if (is.null(nrow)) nrow <- ceiling(nPMs)/ncol
   if (ncol * nrow < nPMs) stop("ncol x nrow must be > length(PMs)")
@@ -63,12 +73,12 @@ Converge <- function(MSEobj, PMs=list(Yield, P10, AAVY), maxMP=15, thresh=0.5, r
   nsim <- MSEobj@nsim
   if (nsim-ref.it < 1) {
     ref.it.new <- nsim - 1
-    message("nsim (", nsim, ") - ref.it (", ref.it,") < 1. Setting ref.it to ", ref.it.new, "\n")
+    if (!silent) message("nsim (", nsim, ") - ref.it (", ref.it,") < 1. Setting ref.it to ", ref.it.new, "\n")
     ref.it <- ref.it.new 
   }
   
-  message("Checking if order of MPs is changing in last ", ref.it, " iterations\n")
-  message("Checking average difference in PM over last ", ref.it, " iterations is > ", thresh, "\n")
+  if (!silent) message ("Checking if order of MPs is changing in last ", ref.it, " iterations\n")
+  if (!silent) message("Checking average difference in PM over last ", ref.it, " iterations is > ", thresh, "\n")
 
   SwitchOrd <- vector(mode = "list", length = nPMs)
   NonCon <- vector(mode = "list", length = nPMs)
@@ -76,14 +86,13 @@ Converge <- function(MSEobj, PMs=list(Yield, P10, AAVY), maxMP=15, thresh=0.5, r
   
   getPalette <- colorRampPalette(c("#00007F", "blue", "#007FFF", "cyan",
                                    "#7FFF7F", "yellow", "#FF7F00", "red", "#7F0000"))
-  
   st <- 1 
   end <- min(maxMP, MSEobj@nMPs)
   it <- MP <- NULL # cran check hacks 
   
   for (nplot in 1:nplots) {
     
-    message('Plotting MPs ', st, ' - ', end)
+    if (!silent) message('Plotting MPs ', st, ' - ', end)
     subMSE <- Sub(MSEobj, MPs=MSEobj@MPs[st:end])
     
     nMPs <-  subMSE@nMPs
@@ -151,20 +160,31 @@ Converge <- function(MSEobj, PMs=list(Yield, P10, AAVY), maxMP=15, thresh=0.5, r
   }
   
   ## Report Performance 
+  resultsTab <- matrix(NA,nrow=2,ncol=nPMs)
+  rownames(resultsTab) <- c("MPs Not Converging", "Unstable MPs")
+  colnames(resultsTab) <- PMnames
+  
   for (x in 1:nPMs) {
     SwitchOrds <- SwitchOrd[[x]]
     NonCons <- NonCon[[x]]
-    if (length(SwitchOrds)>0  | length(NonCons)>0) {
-      message("\n", PMName[x], "\n")
-      if (length(SwitchOrds)>0) {
-        message("Order over last ", ref.it, ' iterations is not consistent for:\n ', paste(SwitchOrds, ""), ' \n')
+    # save results in table
+    resultsTab[1,x] <- length(NonCons)
+    resultsTab[2,x] <- length(SwitchOrds)
+    
+    if (!silent) {
+      if (length(SwitchOrds)>0  | length(NonCons)>0) {
+        message("\n", PMName[x], "\n")
+        if (length(SwitchOrds)>0) {
+          message("Order over last ", ref.it, ' iterations is not consistent for:\n ', paste(SwitchOrds, ""), ' \n')
+        }
+        if (length(NonCons)>0) {
+          message("Mean difference over last ", ref.it, " iterations is > ", thresh, " for:\n",
+                  paste(NonCons, ""), '\n')
+        }
       }
-      if (length(NonCons)>0) {
-        message("Mean difference over last ", ref.it, " iterations is > ", thresh, " for:\n",
-                paste(NonCons, ""), '\n')
-      }
-    } 
+    }
   }
+  return(resultsTab)
 }
 
 
