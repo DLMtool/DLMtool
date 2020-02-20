@@ -6,20 +6,21 @@
 \usage{
 Converge(
   MSEobj,
-  PMs = list(Yield, P10, AAVY),
+  PMs = c("Yield", "P10", "AAVY"),
   maxMP = 15,
   thresh = 0.5,
   ref.it = 20,
   inc.leg = FALSE,
   all.its = FALSE,
   nrow = NULL,
-  ncol = NULL
+  ncol = NULL,
+  silent = FALSE
 )
 }
 \arguments{
 \item{MSEobj}{An MSE object of class \code{'MSE'}}
 
-\item{PMs}{A list of PM objects}
+\item{PMs}{A character vector of names of the PM methods or a list of the PM methods}
 
 \item{maxMP}{Maximum number of MPs to include in a single plot}
 
@@ -35,6 +36,11 @@ a value of 20 means convergence diagnostics are calculated over last 20 simulati
 \item{nrow}{Numeric. Optional. Number of rows}
 
 \item{ncol}{Numeric. Optional. Number of columns}
+
+\item{silent}{Hide the messages printed in console?}
+}
+\value{
+A table of convergence results for each MP
 }
 \description{
 Have I undertaken enough simulations (nsim)? Has my MSE converged on stable
