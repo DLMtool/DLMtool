@@ -97,8 +97,13 @@ OMinit <- function(name=NULL, ..., files=c('xlsx', 'rmd'), dir=NULL, overwrite=F
         stop("Can't use templates without zip application. You may need to install Rtools to use templates", call.=FALSE)
       }
     }
-   
+    
+     
     for (x in seq_along(inclasses)) {
+      if (inclasses[x] == 'character') {
+        InTemplates[[x]] <- get(InTemplates[[x]])
+        inclasses[x] <- class(InTemplates[[x]])
+      }
       if (!inclasses[x] %in% c("Stock", "Fleet", "Obs", "Imp", "OM")) stop(InTemplates[[x]], " is not a valid DLMtool object")
     }
     isOM <- which(inclasses == "OM")
@@ -373,8 +378,8 @@ XL2OM <- function(name=NULL, cpars=NULL, msg=TRUE) {
 #' @author A. Hordyk
 #' @examples 
 #' \dontrun{
-#' OMinit('myOM', templates=list(Stock='Herring', Fleet='Generic_Fleet', Obs='Generic_Obs',
-#' Imp='Perfect_Imp'), overwrite=TRUE)
+#' OMinit('myOM', Stock='Herring', Fleet='Generic_Fleet', Obs='Generic_Obs',
+#' Imp='Perfect_Imp', overwrite=TRUE)
 #' myOM <- XL2OM('myOM.xlsx')
 #' OMdoc(myOM)
 #' }
