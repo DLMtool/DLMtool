@@ -55,8 +55,8 @@ See relevant section of the \href{https://dlmtool.github.io/DLMtool/userguide/cr
 }
 \examples{
 \dontrun{
-OMinit('myOM', templates=list(Stock='Herring', Fleet='Generic_Fleet', Obs='Generic_Obs',
-Imp='Perfect_Imp'), overwrite=TRUE)
+OMinit('myOM', Stock='Herring', Fleet='Generic_Fleet', Obs='Generic_Obs',
+Imp='Perfect_Imp', overwrite=TRUE)
 myOM <- XL2OM('myOM.xlsx')
 OMdoc(myOM)
 }
