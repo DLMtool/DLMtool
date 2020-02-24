@@ -116,6 +116,12 @@ Data2csv<-function(Data, file=NULL, simno = 1, overwrite=F, keepNAs=T) {
       "Ind", "Abundance index",
       "CV_Ind","CV Abundance index",
       
+      'SpInd', 'Spawning Abundance index',
+      'CV_SpInd', 'CV Spawning Abundance index',
+      
+      'VInd', 'Vulnerable Abundance index',
+      'CV_VInd', 'CV Vulnerable Abundance index',
+      
       "Rec", "Recruitment index",
       "CV_Rec","CV Recruitment index",
       
