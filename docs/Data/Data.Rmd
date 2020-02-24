@@ -2,15 +2,15 @@
 title: Fishery Data Guide
 author: "Adrian Hordyk <a.hordyk@oceans.ubc.ca>"
 output:
-  bookdown::pdf_book:
-    toc: true
-    toc_depth: 2
   bookdown::html_document2:
     toc: true
     toc_depth: 2
     toc_float: true
     number_sections: true
     fig_caption: yes
+  bookdown::pdf_book:
+    toc: true
+    toc_depth: 2
 ---
 
 ```{r setup, include=FALSE}
@@ -340,6 +340,17 @@ Numeric entries.
 Relative or absolute annual index of total abundance and associated CVs. Leave blank if no data exists or use NA for years where data is missing.
 
 The abundance index for the cobia example data set begins in 1981. All years before this are NA. There is no information on CV of the abundance index for the cobia example (Figures \@ref(fig:ts1) and  \@ref(fig:ts2)).
+
+### Spawning Abundance Index and CV {#spabundance-index}
+Numeric entries.
+
+Relative or absolute annual index of spawning abundance and associated CVs. Leave blank if no data exists or use NA for years where data is missing.
+
+### Vulernable Abundance Index and CV {#vabundance-index}
+Numeric entries.
+
+Relative or absolute annual index of vulnerable abundance and associated CVs. Leave blank if no data exists or use NA for years where data is missing.
+
 
 ### Additional Indices
 Numeric entries.
