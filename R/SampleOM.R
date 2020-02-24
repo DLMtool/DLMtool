@@ -182,8 +182,7 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
   } else {
     StockOut$Perr_y <- Perr_y
   }
-  
-  
+
   # if (nsim > 1) {
   #   cumlRecDev <- apply(Perr[, 1:(nyears+maxage-1)], 1, prod)
   #   dep[order(cumlRecDev)] <- dep[order(dep, decreasing = F)]  # robustifies 
@@ -1393,14 +1392,15 @@ SampleImpPars <- function(Imp, nsim=NULL, cpars=NULL) {
 #' @param type What cpars to show? 'all', 'Stock', 'Fleet', 'Obs', 'Imp', or 'internal'
 #' @param valid Logical. Show valid cpars?
 #'
-#' @return a dataframe with variable name, description and type of valid/invalid
-#' cpars
+#' @return a HTML datatable with variable name, description and type of valid cpars
 #' @export
 #' 
 #' @examples
+#' \dontrun{
 #' validcpars() # all valid cpars
 #' 
 #' validcpars("Obs", FALSE) # invalid Obs cpars
+#' }
 #'
 validcpars <- function(type=c("all", "Stock", "Fleet", "Obs", "Imp", "internal"),
                        valid=TRUE) {
@@ -1411,6 +1411,7 @@ validcpars <- function(type=c("all", "Stock", "Fleet", "Obs", "Imp", "internal")
   
   Valid <- Slot <- Dim <- Description <- NULL
   
+  # cpars_info <- DLMtool:::cpars_info
   cpars_info <- cpars_info[!duplicated(cpars_info$Slot),] # remove duplicated 'Name'
   
   cpars_info$type <- NA
@@ -1447,8 +1448,13 @@ validcpars <- function(type=c("all", "Stock", "Fleet", "Obs", "Imp", "internal")
     if (valid) message("No valid  parameters")
     if (!valid) message("No invalid parameters")
   } 
-  return(dfout)
- 
+  
+  dfout$Type <- as.factor(dfout$Type)
+  dfout$Var. <- as.factor(dfout$Var.)
+  DT::datatable(dfout, filter = 'top', options = list(
+    columnDefs = list(list(searchable = FALSE, targets = c(2,3))),
+    pageLength = 25, autoWidth = TRUE))
+
 }
 
 
