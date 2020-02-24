@@ -40,6 +40,8 @@ simulation conditions and performance of data-limited methods
 
 \item BMSY_B0: ratio of BMSY to unfished total biomass in last historical year
 
+\item CurrentYr: The last historical year
+
 \item D: stock depletion (spawning biomass / unfished spawing biomass) in the final historical year (prior to projection)
 
 \item dFfinal: gradient in fishing mortality rate over final five years of the historical simulation
