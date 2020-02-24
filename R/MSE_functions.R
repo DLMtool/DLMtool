@@ -61,7 +61,7 @@ Converge <- function(MSEobj, PMs=c('Yield', 'P10', 'AAVY'), maxMP=15, thresh=0.5
   } 
   
   if (is.null(ncol)) ncol <- floor(sqrt(nPMs))
-  if (is.null(nrow)) nrow <- ceiling(nPMs)/ncol
+  if (is.null(nrow)) nrow <- ceiling(nPMs/ncol)
   if (ncol * nrow < nPMs) stop("ncol x nrow must be > length(PMs)")
  
   if (MSEobj@nMPs > maxMP) {
