@@ -1557,12 +1557,16 @@ setMethod("summary",
             
             # Time-Series
             Year <- object@Year
-            Val <- c(object@Cat[x,], object@Ind[x,], object@Rec[x,], object@ML[x,], object@Lc[x,])
-            Var <- rep(c("Catch", "Index", "Recruitment", "Mean Length", "Mean Length above Lc"), each=length(Year))
+            l <- length(Year)
+            Val <- c(object@Cat[x,1:l], object@Ind[x,1:l], object@SpInd[x,1:l], object@SpInd[x,1:l],
+                     object@Rec[x,1:l], object@ML[x,1:l], object@Lc[x,1:l])
+            Var <- rep(c("Catch", "Total Index", "Spawning Index",
+                         "Vuln. Index", "Recruitment", "Mean Length", "Mean Length above Lc"), each=length(Year))
             ts.df <- data.frame(Year=Year, Val=Val, Var=Var, stringsAsFactors = TRUE)
             # ts.df$Year <- as.factor(ts.df$Year)
             ts.df$Var <- factor(ts.df$Var, levels=
-                                  c("Catch", "Index", "Recruitment", "Mean Length", "Mean Length above Lc"))
+                                  c("Catch", "Total Index", "Spawning Index",
+                                    "Vuln. Index", "Recruitment", "Mean Length", "Mean Length above Lc"))
             ts.df <- subset(ts.df, !is.na(Val))
             if (nrow(ts.df)>0 && 'TS' %in% plots) {
               P1 <- ggplot2::ggplot(ts.df, ggplot2::aes(x=Year, y=Val, group = Var)) +
