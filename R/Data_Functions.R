@@ -263,7 +263,7 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
     Data@CV_Effort <- CV_Effort %>% as.numeric %>% matrix(., nrow=1)
   }
   
-  # Vulnerable abundance index - fishery dependant
+  # Total abundance index - fishery dependant
   Data@Ind <- suppressWarnings(datasheet[which(datasheet$Name=="Abundance index"), 2:(Nyears+1)] %>%
                                  as.numeric() %>% matrix(., nrow=1) )
   CV_Ind <- datasheet[which(datasheet$Name=="CV Abundance index"), 2:(Nyears+1)]
@@ -271,6 +271,35 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
     CV_Ind <- rep(CV_Ind[1], Nyears)
   Data@CV_Ind <- CV_Ind %>% as.numeric %>% matrix(., nrow=1)
   
+  # Spawning abundance index - fishery dependant
+  Data@SpInd <- matrix(NA, nrow=1, ncol=length(Year))
+  if ('Spawning Abundance index' %in% datasheet$Name) {
+    Data@SpInd <- suppressWarnings(datasheet[which(datasheet$Name=="Spawning Abundance index"), 2:(Nyears+1)] %>%
+                                     as.numeric() %>% matrix(., nrow=1) )  
+  }
+
+  CV_Ind <- datasheet[which(datasheet$Name=="CV Spawning Abundance index"), 2:(Nyears+1)]
+  if (dim(CV_Ind)[1] >0) {
+    if (!is.na(CV_Ind[1]) & all(is.na(CV_Ind[2:length(CV_Ind)])))
+      CV_Ind <- rep(CV_Ind[1], Nyears)
+    Data@CV_SpInd <- CV_Ind %>% as.numeric %>% matrix(., nrow=1)
+  }
+ 
+  
+  # Vulnerable abundance index - fishery dependant
+  Data@VInd <- matrix(NA, nrow=1, ncol=length(Year))
+  if ('Vulnerable Abundance index' %in% datasheet$Name) {
+    Data@VInd <- suppressWarnings(datasheet[which(datasheet$Name=="Vulnerable Abundance index"), 2:(Nyears+1)] %>%
+                                    as.numeric() %>% matrix(., nrow=1) )
+  }
+
+  CV_Ind <- datasheet[which(datasheet$Name=="CV Vulnerable Abundance index"), 2:(Nyears+1)]
+  if (dim(CV_Ind)[1] >0) {
+    if (!is.na(CV_Ind[1]) & all(is.na(CV_Ind[2:length(CV_Ind)])))
+      CV_Ind <- rep(CV_Ind[1], Nyears)
+    Data@CV_VInd <- CV_Ind %>% as.numeric %>% matrix(., nrow=1)
+  }
+
   # # Spawning abundance index - subject to hyper-stability beta
   # Data@SpInd <- suppressWarnings(datasheet[which(datasheet$Name=="SpAbun index"), 2:(Nyears+1)] %>%
   #                                  as.numeric() %>% matrix(., nrow=1) )
