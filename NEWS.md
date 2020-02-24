@@ -1,9 +1,9 @@
 The current version of the DLMtool package is available for download from [CRAN](https://CRAN.R-project.org/package=DLMtool).
 
-## DLMtool 5.4.99 - Dev Version
-
+## DLMtool 5.4.2 
 
 ## Minor changes
+- `validcpars` now returns a HTML data table with information on parameters that can be passed in `OM@cpars`
 - add new slots to Data object: `Data@VInd` and `Data@SpInd` for relative vulnerable and spawning abundance respectively. Also add CV slots for each. Note that these use the same observation error and betas as `Data@Ind` (total abundance) and all built-in MPs use `Data@Ind`. 
 - `Sub` function now subsets Data in MSE object by MP.
 - `Converge` now returns a summary table of convergence diagnostics (thanks to Sarah Valencia)
