@@ -383,7 +383,7 @@ run_parallel <- function(i, itsim, OM, MPs, CheckMPs, timelimit, Hist, ntrials, 
       } else {
         ind <- 1:itsim[i]
       }
-      fixed_size_cpars <- c("CAL_bins", "CAL_binsmid", "binWidth", "M_at_length", "plusgroup", "Data")
+      fixed_size_cpars <- c("CAL_bins", "CAL_binsmid", "binWidth", "M_at_length", "plusgroup", "Data", "AddIunits")
       for (x in 1:length(cpars)) {
         if (!names(cpars)[x] %in% fixed_size_cpars) {
           dd <- dim(cpars[[x]])
@@ -777,8 +777,8 @@ applyAC <- function(x, res, ac, max.years, lst.err) {
   res[,x]
 }
 
-addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, CBret,
-                        nsim, nyears,  proyears, silent=FALSE) {
+addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, N, SSB, CBret,
+                        nsim, nyears, proyears, silent=FALSE) {
  
   if (!is.null(SampCpars$Data)) {
     RealDat <- SampCpars$Data
@@ -927,7 +927,9 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, CBret,
       } else {
         ErrList$AddIerr <- array(NA, dim=c(nsim, n.ind, nyears+proyears))
       }
-
+      
+      if (!is.null(SampCpars$AddIunits) && length(SampCpars$AddIunits) != n.ind) stop("cpars$AddIunits must be length n.ind")
+      
       ErrList$AddInd_Stat <- list()
 
       for (i in 1:n.ind) {
@@ -939,15 +941,19 @@ addRealData <- function(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, CBret,
         
         # Calculate observation error for future projections 
         Ind_V <- RealDat@AddIndV[1,i, ]
-        SimBiomass <- apply(Biomass, c(1, 2, 3), sum)
+        if (is.null(SampCpars$AddIunits) || SampCpars$AddIunits[i]) { 
+          SimIndex <- apply(Biomass, c(1, 2, 3), sum) # Biomass-based index
+        } else {
+          SimIndex <- apply(N, c(1, 2, 3), sum) # Abundance-based index
+        }
         Ind_V <- matrix(Ind_V, nrow=Data@MaxAge, ncol= nyears)
         Ind_V <- replicate(nsim, Ind_V) %>% aperm(., c(3,1,2))
-        SimBiomass <- apply(SimBiomass*Ind_V, c(1,3), sum) # apply vuln curve
+        SimIndex <- apply(SimIndex*Ind_V, c(1,3), sum) # apply vuln curve
         
-        I_Err <- lapply(1:nsim, function(i) indfit(SimBiomass[i,],  ind))
+        I_Err <- lapply(1:nsim, function(i) indfit(SimIndex[i,],  ind))
         I_Err <- do.call('rbind', I_Err)
         ind <- matrix(ind, nrow=nsim, ncol=nyears, byrow=TRUE)
-        Ierr <- exp(lcs(ind))/exp(lcs(SimBiomass))^I_Err$beta
+        Ierr <- exp(lcs(ind))/exp(lcs(SimIndex))^I_Err$beta
         if (fitIerr) ErrList$AddIerr[,i, 1:nyears] <- Ierr
         if (fitbeta) ErrList$AddIbeta[,i] <- I_Err$beta
         # Sample to replace NAs in historical years and for projection years

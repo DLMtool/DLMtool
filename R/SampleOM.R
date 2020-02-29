@@ -1567,7 +1567,7 @@ SampleCpars <- function(cpars, nsim=48, msg=TRUE) {
     for (i in 1:length(cpars)) {
       samps <- cpars[[i]]
       name <- names(cpars)[i]
-      if (any(c("maxage", "M_at_Length", "CAL_binsmid", "CAL_bins", "binWidth") %in% name)) {
+      if (any(c("maxage", "M_at_Length", "CAL_binsmid", "CAL_bins", "binWidth", "AddIunits") %in% name)) {
         sampCpars[[name]] <- samps
       } else {
         if (class(samps) == "numeric" | class(samps) == "integer") sampCpars[[name]] <- samps[ind]

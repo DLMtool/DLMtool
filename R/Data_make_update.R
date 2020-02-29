@@ -219,7 +219,7 @@ makeData <- function(Biomass, CBret, Cret, N, SSB, VBiomass, StockPars,
 }
 
 
-updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret, 
+updateData <- function(Data, OM, MPCalcs, Effort, Biomass, N, Biomass_P, CB_Pret, 
                        N_P, SSB, SSB_P, VBiomass, VBiomass_P, RefPoints, ErrList, 
                        FMSY_P, retA_P, 
                        retL_P, StockPars, FleetPars, ObsPars, 
@@ -369,9 +369,15 @@ updateData <- function(Data, OM, MPCalcs, Effort, Biomass, Biomass_P, CB_Pret,
      
      yr.ind <- max(which(!is.na(ErrList$AddIerr[1,i, 1:nyears])))
      
-     b1 <- apply(Biomass[,,yr.ind:nyears,, drop=FALSE], c(1, 2, 3), sum)
+     if (is.null(SampCpars$AddIunits) || SampCpars$AddIunits[i]) { # Biomass-based index
+       b1 <- apply(Biomass[,,yr.ind:nyears,, drop=FALSE], c(1, 2, 3), sum)
+       b2 <- apply(Biomass_P, c(1, 2, 3), sum)
+     } else {
+       b1 <- apply(N[,,yr.ind:nyears,, drop=FALSE], c(1, 2, 3), sum) # Abundance-based index
+       b2 <- apply(N_P, c(1, 2, 3), sum)
+     }
+     
      b1 <- apply(b1 * Ind_V[,,yr.ind:nyears, drop=FALSE], c(1,3), sum)
-     b2 <- apply(Biomass_P, c(1, 2, 3), sum)
      b2 <- apply(b2 * Ind_V[,,(nyears+1):(nyears+proyears), drop=FALSE], c(1,3), sum)
      tempI <- cbind(b1, b2[, 1:(y - 1)])
      

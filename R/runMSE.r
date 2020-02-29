@@ -805,7 +805,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
                    silent=silent)
   
   # --- Condition Simulated Data on input Data object (if it exists) & calculate error stats ----
-  templist <- addRealData(Data, SampCpars, ErrList, Biomass, VBiomass, SSB, CBret,
+  templist <- addRealData(Data, SampCpars, ErrList, Biomass, VBiomass, N, SSB, CBret, 
                           nsim, nyears, proyears, silent=silent)
   Data <- templist$Data # update 
   ErrList <- templist$ErrList # update
@@ -1112,7 +1112,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
         # --- An update year ----
         if (y %in% upyrs) {
           # --- Update Data object ---- 
-          MSElist[[mm]] <- updateData(Data=MSElist[[mm]], OM, MPCalcs, Effort, Biomass, 
+          MSElist[[mm]] <- updateData(Data=MSElist[[mm]], OM, MPCalcs, Effort, Biomass, N,
                                       Biomass_P, CB_Pret, N_P, SSB, SSB_P, VBiomass, VBiomass_P, 
                                       RefPoints, ErrList, FMSY_y, retA_P, retL_P, StockPars, 
                                       FleetPars, ObsPars, upyrs, interval, y, mm, 
@@ -1236,7 +1236,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
       }  # end of year loop
       
       if (max(upyrs) < proyears) { # One more call to complete Data object
-        MSElist[[mm]] <- updateData(Data=MSElist[[mm]], OM, MPCalcs, Effort, Biomass, 
+        MSElist[[mm]] <- updateData(Data=MSElist[[mm]], OM, MPCalcs, Effort, Biomass, N,
                                     Biomass_P, CB_Pret, N_P, SSB, SSB_P, VBiomass, VBiomass_P, 
                                     RefPoints, ErrList, FMSY_y, retA_P, retL_P, StockPars, 
                                     FleetPars, ObsPars, c(upyrs, proyears), 
@@ -1372,6 +1372,7 @@ cparscheck<-function(cpars){
   dims <- dims[!grepl("maxage", names(dims))]  # ignore maxage
   dims <- dims[!grepl("binWidth", names(dims))]  # ignore binWidth
   dims <- dims[!grepl("plusgroup", names(dims))]  # ignore plusgroup
+  dims <- dims[!grepl("AddIunits", names(dims))]  # ignore AddIunits
   
   if (length(dims) > 0) {
     if(length(unique(dims))!=1){
