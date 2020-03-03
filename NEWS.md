@@ -7,13 +7,14 @@ The current version of the DLMtool package is available for download from [CRAN]
 - add new slots to Data object: `Data@VInd` and `Data@SpInd` for relative vulnerable and spawning abundance respectively. Also add CV slots for each. Note that these use the same observation error and betas as `Data@Ind` (total abundance) and all built-in MPs use `Data@Ind`. 
 - `Sub` function now subsets Data in MSE object by MP.
 - `Converge` now returns a summary table of convergence diagnostics (thanks to Sarah Valencia)
+- add total removals (catch plus discards) to `MSE@Misc$Removals`
 
 ### Fixes
 - fix bug where CAL_bins wasn't calculated when only CAL_mids was provided in Data
 - fix issue when all values for maturity-at-age (provided in cpars; cpars$Mat_age) are greater than 0.5. Assume A50 is 1 in this case.
 - fix issue in parallel mode when cpars only is `cpars$Data`
 - fix issue in SubOM when OM is empty
-- correction for auto-correlated variability in recruitment 
+- correction for auto-correlated variability in recruitment per http://dx.doi.org/10.1139/cjfas-2016-0167
 - fix warning message when creating PMLimit and PMobject tables
 - fix error passing `CAL_bins` or `binWidth` in cpars 
 
