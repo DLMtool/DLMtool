@@ -15,15 +15,16 @@ validcpars(
 \item{valid}{Logical. Show valid cpars?}
 }
 \value{
-a dataframe with variable name, description and type of valid/invalid
-cpars
+a HTML datatable with variable name, description and type of valid cpars
 }
 \description{
 Valid custom parameters (cpars)
 }
 \examples{
+\dontrun{
 validcpars() # all valid cpars
 
 validcpars("Obs", FALSE) # invalid Obs cpars
+}
 
 }
