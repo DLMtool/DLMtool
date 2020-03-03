@@ -1300,8 +1300,8 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   Misc$Revenue <- Rev_out
   Misc$Cost <- Cost_out
   Misc$TAE <- TAE_out
-  
   Misc$ErrList <- ErrList
+  Misc$Removals <- Ca # total removals
   
   Misc$MSYRefs <- list(Refs=RefPoints, ByYear=list(MSY=MSY_y, FMSY=FMSY_y,
                                                    SSBMSY=SSBMSY_y,
@@ -1312,7 +1312,7 @@ runMSE_int <- function(OM = DLMtool::testOM, MPs = c("AvC","DCAC","FMSYref","cur
   MSEout <- new("MSE", Name = OM@Name, nyears, proyears, nMPs=nMP, MPs, nsim, 
                 Data@OM, Obs=Data@Obs, B_BMSY=B_BMSYa, F_FMSY=F_FMSYa, B=Ba, 
                 SSB=SSBa, VB=VBa, FM=FMa, CaRet, TAC=TACa, SSB_hist = SSB, 
-                CB_hist = CB, FM_hist = FM, Effort = Effort, PAA=PAAout, 
+                CB_hist = CBret, FM_hist = FM, Effort = Effort, PAA=PAAout, 
                 CAA=CAAout, CAL=CALout, CALbins=CAL_binsmid, Misc = Misc)
   # Store MSE info
   attr(MSEout, "version") <- packageVersion("DLMtool")
