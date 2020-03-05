@@ -1560,6 +1560,7 @@ setMethod("summary",
             l <- length(Year)
             
             slts <- c("Cat", 'Ind', 'SpInd', 'VInd', 'Rec', 'ML', 'Lc')
+            Cat <- Ind <- SpInd <- VInd <- Rec <- ML <- Lc <- NULL # cran checks
             for (sl in slts) {
               tt <- slot(object, sl)[x,]
               if (length(tt)!=l) tt <- c(tt, rep(NA,l-length(tt)))
