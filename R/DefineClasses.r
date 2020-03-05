@@ -1558,8 +1558,14 @@ setMethod("summary",
             # Time-Series
             Year <- object@Year
             l <- length(Year)
-            Val <- c(object@Cat[x,1:l], object@Ind[x,1:l], object@SpInd[x,1:l], object@SpInd[x,1:l],
-                     object@Rec[x,1:l], object@ML[x,1:l], object@Lc[x,1:l])
+            
+            slts <- c("Cat", 'Ind', 'SpInd', 'VInd', 'Rec', 'ML', 'Lc')
+            for (sl in slts) {
+              tt <- slot(object, sl)[x,]
+              if (length(tt)!=l) tt <- c(tt, rep(NA,l-length(tt)))
+              assign(sl, tt)
+            }
+            Val <- c(Cat, Ind, SpInd, VInd, Rec, ML, Lc)
             Var <- rep(c("Catch", "Total Index", "Spawning Index",
                          "Vuln. Index", "Recruitment", "Mean Length", "Mean Length above Lc"), each=length(Year))
             ts.df <- data.frame(Year=Year, Val=Val, Var=Var, stringsAsFactors = TRUE)
@@ -1571,7 +1577,8 @@ setMethod("summary",
             if (nrow(ts.df)>0 && 'TS' %in% plots) {
               P1 <- ggplot2::ggplot(ts.df, ggplot2::aes(x=Year, y=Val, group = Var)) +
                 ggplot2::facet_wrap(~Var, scales='free_y') + ggplot2::geom_line(size=1.25) +
-                ggplot2::theme_classic() +  
+                ggplot2::theme_classic() + 
+                ggplot2::expand_limits(y=0) +
                 ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) +
                 ggplot2::scale_x_continuous(breaks=pretty(rev(Year), length(Year)/5)) +
                 ggplot2::labs(y="")
@@ -1595,12 +1602,18 @@ setMethod("summary",
               invisible(readline(prompt="Press [enter] to continue..."))
             
             # CAA 
-            CAA <- object@CAA[x,,]
-            nyrs <- nrow(CAA); maxage <- ncol(CAA)
-            if (NAor0(CAA)) {
-              P2 <- NULL
+            if (all(is.na(object@CAA))) {
+              P2 <- FALSE
+            } else if (NAor0(object@CAA[x,,])) {
+              P2 <- FALSE
             } else {
               P2 <- TRUE
+            }
+          
+            if (P2 == TRUE) {
+              CAA <- object@CAA[x,,]
+              nyrs <- nrow(CAA); maxage <- ncol(CAA)
+    
               dimnames(CAA) <- list(1:nyrs, 1:maxage)
               
               df1 <- as.data.frame.table(CAA, stringsAsFactors = FALSE)
@@ -1691,12 +1704,18 @@ setMethod("summary",
             if (interactive() & wait & !is.null(P2)) 
               invisible(readline(prompt="Press [enter] to continue..."))
             
+            
             # CAL 
-            CAL <- object@CAL[x,,]
-            if (all(is.na(CAL))) {
-              P3 <- NULL
+            if (all(is.na(object@CAL))) {
+              P3 <- FALSE
+            } else if (NAor0(object@CAL[x,,])) {
+              P3 <- FALSE
             } else {
               P3 <- TRUE
+            }
+            
+            if (P3 == TRUE) {
+              CAL <- object@CAL[x,,]
               nyrs <- nrow(CAL); nbins <- length(object@CAL_bins) - 1
               By <- object@CAL_bins[2] - object@CAL_bins[1]
               BinsMid <- seq(object@CAL_bins[1] + 0.5*By, by=By,length.out = nbins)
