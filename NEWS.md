@@ -12,7 +12,7 @@ The current version of the DLMtool package is available for download from [CRAN]
 
 ### Fixes
 - fix bug where CAL_bins wasn't calculated when only CAL_mids was provided in Data
-- fix issue when all values for maturity-at-age (provided in cpars; cpars$Mat_age) are greater than 0.5. Assume A50 is 1 in this case.
+- fix issue when all values for maturity-at-age (provided in cpars; `cpars$Mat_age`) are greater than 0.5. Assume A50 is 1 in this case.
 - fix issue in parallel mode when cpars only is `cpars$Data`
 - fix issue in SubOM when OM is empty
 - correction for auto-correlated variability in recruitment per http://dx.doi.org/10.1139/cjfas-2016-0167
