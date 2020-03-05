@@ -352,7 +352,11 @@ SampleStockPars <- function(Stock, nsim=48, nyears=80, proyears=50, cpars=NULL, 
     ageM <- age95 <- L50array <- L95array <- matrix(NA, nsim, nyears+proyears)
     for (XX in 1:(nyears+proyears)) {
       # check that Mat_age < 0.5 values exist
-      oksims <- which(apply(Mat_age[,,XX], 1, min) < 0.5)
+     if (nsim == 1) {
+       oksims <- which(min(Mat_age[1,,XX]) < 0.5)
+     } else {
+       oksims <- which(apply(Mat_age[,,XX], 1, min) < 0.5) 
+     }
       if (length(oksims)<1) {
         ageM[,XX] <- 1 # set to 1 if < 1
         L50array[,XX] <- 1 # set to 1 if < 1
