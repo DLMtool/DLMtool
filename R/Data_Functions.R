@@ -770,6 +770,7 @@ runMP <- function(Data, MPs = NA, reps = 100, perc=0.5, chkMPs=TRUE, silent=FALS
   
   MPrecs <- applyMP(Data, MPs, reps, nsims=1, silent=silent)
   
+  if (is.na(Data@nareas)) Data@nareas <- 2
   names <- c("TAC", "Effort", "LR5", "LFR", "HS", "Rmaxlen",
              "L5", "LFS", 'Vmaxlen', 'Spatial')
   mat <- matrix(0, nrow=length(MPs), ncol=length(names)+Data@nareas-1)
@@ -1019,8 +1020,9 @@ DLMdiag <- function(Data, command = c("available", "not available", "needed"), r
     if(!chk_needed[y]) {
       setTimeLimit(timelimit * 1.5)
       time1 <- Sys.time()
-      test[[y]] <- tryCatch(do.call(funcs1[y], list(x = 1, Data = Data, reps = reps)), 
+      test[[y]] <- tryCatch(do.call(funcs1[y], list(x = 1, Data = Data, reps = reps)),
                             error = function(e) as.character(e))
+  
       time2 <- Sys.time()
       setTimeLimit(Inf)
       timey[[y]] <- time2 - time1
