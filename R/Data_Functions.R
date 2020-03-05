@@ -203,7 +203,6 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
   Data@MPeff <- datasheet$Data[which(datasheet$Name=="Previous TAE")]  %>% as.numeric()
   Data@nareas <- datasheet$Data[which(datasheet$Name=="nareas")] %>% as.numeric()
   
-  
   # ---- Biology ----
   Data@MaxAge <- datasheet$Data[which(datasheet$Name=="Maximum age")] %>% as.numeric()
   Data@Mort <- datasheet$Data[which(datasheet$Name=="M")] %>% as.numeric()
@@ -260,7 +259,8 @@ XL2Data <- function(name, dec=c(".", ","), sheet=1, silent=TRUE) {
   if (nrow(CV_Effort)>0) {
     if (!is.na(CV_Effort[1]) & all(is.na(CV_Effort[2:length(CV_Effort)])))
       CV_Effort <- rep(CV_Effort[1], Nyears)
-    Data@CV_Effort <- CV_Effort %>% as.numeric %>% matrix(., nrow=1)
+    CV_Effort <- suppressWarnings(as.numeric(CV_Effort))
+    Data@CV_Effort <-  matrix(CV_Effort, nrow=1)
   }
   
   # Total abundance index - fishery dependant
